@@ -1,0 +1,312 @@
+================================================================================
+src2/ 文件夹汉化审核报告 - 三次扫描（result3.txt）
+================================================================================
+说明：
+- 三次扫描，覆盖工具目录和其他未扫描文件
+- 格式：行号：原始英文代码 → 准备汉化后的中文
+- 长文本已截断到约128字符
+- 在"是否需要执行汉化="后写 1 表示汉化，写 0 或留空表示跳过
+- 注意：发给 AI 模型的系统提示词（prompt.ts 中的大部分内容）建议保留英文
+================================================================================
+
+================================================================================
+【工具 UI 消息 - 用户直接看到的错误和状态】
+================================================================================
+
+src2/tools/GrepTool/GrepTool.ts
+行号 218: Path does not exist: ${path}. → 路径不存在：${path}。
+行号 222: Did you mean ${cwdSuggestion}? → 您是不是要找 ${cwdSuggestion}？
+行号 267: [Showing results with pagination = ${limitInfo}] → [显示分页结果 = ${limitInfo}]
+行号 275: No matches found → 未找到匹配项
+行号 280: Found ${matches} total ${occurrences} across ${files} ${files}. → 共在 ${files} 个文件中找到 ${matches} 处匹配
+行号 299: No files found → 未找到文件
+是否需要执行汉化=   1
+
+src2/tools/GlobTool/GlobTool.ts
+行号 105: Directory does not exist: ${path}. → 目录不存在：${path}。
+行号 109: Did you mean ${cwdSuggestion}? → 您是不是要找 ${cwdSuggestion}？
+行号 118: Path is not a directory: ${path} → 路径不是目录：${path}
+行号 182: No files found → 未找到文件
+行号 190: (Results are truncated. Consider using a more specific path or pattern.) → （结果已截断。请考虑使用更具体的路径或模式。）
+是否需要执行汉化=   1
+
+src2/tools/TaskListTool/TaskListTool.ts
+行号 97: No tasks found → 未找到任务
+是否需要执行汉化=   1
+
+src2/tools/TaskGetTool/TaskGetTool.ts
+行号 105: Task not found → 未找到任务
+是否需要执行汉化=   1
+
+src2/tools/NotebookEditTool/NotebookEditTool.ts
+行号 168: Unknown edit mode → 未知的编辑模式
+行号 193: File must be a Jupyter notebook (.ipynb file). For editing other file types, use the FileEdit tool. → 文件必须是 Jupyter notebook（.ipynb 文件）。编辑其他文件类型时，请使用 FileEdit 工具。
+行号 213: Cell type is required when using edit_mode=insert. → 使用 edit_mode=insert 时必须指定单元格类型。
+是否需要执行汉化=   1
+
+src2/tools/FileEditTool/FileEditTool.ts
+行号 255: Cannot create new file - file already exists. → 无法创建新文件 - 文件已存在。
+行号 271: File is a Jupyter Notebook. Use the NotebookEditTool to edit this file. → 文件是 Jupyter Notebook。请使用 NotebookEditTool 编辑此文件。
+行号 283: File has not been read yet. Read it first before writing to it. → 文件尚未读取。请先读取后再写入。
+行号 304: File has been modified since read, either by the user or by a linter... → 自读取以来文件已被修改（由用户或 linter）。请在尝试写入前再次读取。
+行号 319: String to replace not found in file.\nString: ${old_string} → 文件中未找到要替换的字符串。\n字符串：${old_string}
+行号 330: Found ${matches} matches of the string to replace, but replace_all is false... → 找到 ${matches} 处匹配，但 replace_all 为 false。要替换所有匹配，请将 replace_all 设为 true。
+是否需要执行汉化=   1
+
+src2/tools/SkillTool/SkillTool.ts
+行号 646: Command processing failed → 命令处理失败
+行号 1001: Failed to load remote skill ${slug}: ${msg} → 加载远程技能 ${slug} 失败：${msg}
+是否需要执行汉化=   1
+
+src2/tools/EnterPlanModeTool/EnterPlanModeTool.ts
+行号 79: EnterPlanMode tool cannot be used in agent contexts → EnterPlanMode 工具不能在代理上下文中使用
+是否需要执行汉化=   1
+
+src2/tools/EnterWorktreeTool/EnterWorktreeTool.ts
+行号 80: Already in a worktree session → 已处于工作树会话中
+是否需要执行汉化=   1
+
+src2/tools/ExitWorktreeTool/ExitWorktreeTool.ts
+行号 232: Not in a worktree session → 不处于工作树会话中
+是否需要执行汉化=   1
+
+src2/tools/ReadMcpResourceTool/ReadMcpResourceTool.ts
+行号 87: Server "${serverName}" is not connected → 服务器 "${serverName}" 未连接
+行号 91: Server "${serverName}" does not support resources → 服务器 "${serverName}" 不支持资源
+是否需要执行汉化=   1
+
+src2/tools/RemoteTriggerTool/RemoteTriggerTool.ts
+行号 88: Unable to resolve organization UUID. → 无法解析组织 UUID。
+行号 110: get requires trigger_id → get 操作需要 trigger_id
+行号 115: create requires body → create 操作需要 body
+行号 121: update requires trigger_id → update 操作需要 trigger_id
+行号 122: update requires body → update 操作需要 body
+行号 128: run requires trigger_id → run 操作需要 trigger_id
+是否需要执行汉化=   
+
+src2/tools/BashTool/bashCommandHelpers.ts
+行号 194: Failed to parse command → 解析命令失败
+行号 249: No pipes found in command → 命令中未找到管道
+是否需要执行汉化=   1
+
+src2/tools/PowerShellTool/powershellSecurity.ts
+行号 174: Command uses encoded parameters which obscure intent → 命令使用编码参数，意图不明确
+行号 248: Command downloads and executes remote code → 命令下载并执行远程代码
+行号 285: Command downloads files via BITS transfer → 命令通过 BITS 传输下载文件
+行号 300: Command uses certutil to download from a URL → 命令使用 certutil 从 URL 下载
+行号 327: Command compiles and loads .NET code → 命令编译并加载 .NET 代码
+行号 567: Command requests elevated privileges → 命令请求提升的权限
+行号 707: Command contains script block that may execute arbitrary code → 命令包含可能执行任意代码的脚本块
+行号 920: Command modifies environment variables → 命令修改环境变量
+行号 1050: Could not parse command for security analysis → 无法解析命令进行安全分析
+是否需要执行汉化=   1
+
+src2/tools/BashTool/sedValidation.ts
+行号 399: Dangerous flag combination detected → 检测到危险的标志组合
+行号 406: Malformed shell syntax: ${parseResult.error} → Shell 语法格式错误：${parseResult.error}
+是否需要执行汉化=   1
+
+src2/tools/shared/spawnMultiAgent.ts
+行号 316: name and prompt are required for spawn operation → spawn 操作需要 name 和 prompt
+行号 363: Teammate spawn cancelled - iTerm2 setup required → 队友 spawn 已取消 - 需要 iTerm2 设置
+是否需要执行汉化=   1
+
+src2/tools/AgentTool/resumeAgent.ts
+行号 68: No transcript found for agent ID: ${agentId} → 未找到代理 ID ${agentId} 的记录
+是否需要执行汉化=   1
+
+src2/tools/AgentTool/agentToolUtils.ts
+行号 299: No assistant messages found → 未找到助理消息
+是否需要执行汉化=   1
+
+src2/tools/FileReadTool/FileReadTool.ts
+行号 1110: Image file is empty: ${filePath} → 图片文件为空：${filePath}
+是否需要执行汉化=   1
+
+src2/tools/FileEditTool/utils.ts
+行号 326: String not found in file. Failed to apply edit. → 文件中未找到字符串。编辑应用失败。
+是否需要执行汉化=   1
+
+================================================================================
+【TodoWriteTool 用户可见消息】
+================================================================================
+
+src2/tools/TodoWriteTool/TodoWriteTool.ts
+行号 95: Todos have been modified successfully. Ensure that you continue to use the todo list to track your progress. Please proceed with the current tasks if applicable → 待办事项已成功修改。请继续使用待办事项跟踪您的进度。如适用，请继续处理当前任务。
+行号 97-99: NOTE: You just closed out 3+ tasks and none of them was a verification step. Before writing your final summary, spawn the verification agent... → 注意：您刚刚完成了 3 个以上的任务，其中没有一个是验证步骤。在编写最终摘要之前，请生成验证代理...
+是否需要执行汉化=   1
+
+================================================================================
+【SendMessageTool 团队相关消息】
+================================================================================
+
+src2/tools/SendMessageTool/SendMessageTool.ts
+行号 457: Only the team lead can approve plans. Teammates cannot approve their own or other plans. → 只有团队负责人可以批准计划。队友不能批准自己或其他人的计划。
+行号 513: Only the team lead can reject plans. Teammates cannot reject their own or other plans. → 只有团队负责人可以拒绝计划。队友不能拒绝自己或其他人的计划。
+行号 681: structured messages cannot be broadcast (to: "*") → 结构化消息不能广播（to: "*"）
+是否需要执行汉化=   1
+
+================================================================================
+【ExitPlanModeTool 用户可见消息】
+================================================================================
+
+src2/tools/ExitPlanModeTool/ExitPlanModeV2Tool.ts
+行号 146: Prompts the user to exit plan mode and start coding → 提示用户退出计划模式并开始编码
+行号 296: No plan file found at ${filePath}. Please write your plan to this file before calling ExitPlanMode. → 未在 ${filePath} 找到计划文件。请在调用 ExitPlanMode 之前将计划写入此文件。
+行号 337-353: Your plan has been submitted to the team lead for approval...\n\nPlan file: ${filePath}\n\n**What happens next:**... → 您的计划已提交给团队负责人审批。\n\n计划文件：${filePath}\n\n**接下来会发生什么：**...
+行号 368: User has approved the plan. There is nothing else needed from you now. Please respond with "ok" → 用户已批准计划。现在不需要您做任何操作。请回复"ok"
+行号 375: User has approved exiting plan mode. You can now proceed. → 用户已批准退出计划模式。您现在可以继续。
+行号 385-395: User has approved your plan. You can now start coding... → 用户已批准您的计划。您现在可以开始编码...
+是否需要执行汉化=   1
+
+================================================================================
+【BashTool 安全分析消息】
+================================================================================
+
+src2/tools/BashTool/bashSecurity.ts
+行号 17-40: 多个安全分析消息（process substitution <()、$() command substitution 等） → 多个安全分析消息（进程替换 <()、$() 命令替换等）
+行号 241: Command is not empty → 命令不为空
+行号 257: Command appears to be an incomplete fragment (starts with tab) → 命令看起来是不完整的片段（以制表符开头）
+行号 285: Command appears complete → 命令看起来完整
+行号 2411: Command passed all security checks → 命令通过所有安全检查
+是否需要执行汉化=   1
+
+================================================================================
+【系统提示词模板（发给模型的指令）- 建议保留英文】
+================================================================================
+
+注意：以下文件中的英文文本是发给 AI 模型的 system prompt，不是用户界面文本。
+这些指令控制模型的行为，汉化后可能影响模型理解。建议保留英文。
+
+src2/tools/GrepTool/prompt.ts
+行号 7-18: GrepTool 描述和使用说明 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/GlobTool/prompt.ts
+行号 3-8: GlobTool 描述和使用说明 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/TodoWriteTool/prompt.ts
+行号 3-177: TodoWriteTool 完整提示词（大量英文示例和说明） → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/TaskCreateTool/prompt.ts
+行号 23-45: TaskCreateTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/TaskListTool/prompt.ts
+行号 20-36: TaskListTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/TaskGetTool/prompt.ts
+行号 5-17: TaskGetTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/TaskUpdateTool/prompt.ts
+行号 5-52: TaskUpdateTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/TaskStopTool/prompt.ts
+行号 3-7: TaskStopTool 描述 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/TeamCreateTool/prompt.ts
+行号 2-88: TeamCreateTool 完整提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/TeamDeleteTool/prompt.ts
+行号 2-14: TeamDeleteTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/ExitPlanModeTool/prompt.ts
+行号 8-28: ExitPlanModeTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/EnterPlanModeTool/prompt.ts
+行号 3-28: EnterPlanModeTool 说明 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/ExitWorktreeTool/prompt.ts
+行号 2-40: ExitWorktreeTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/EnterWorktreeTool/prompt.ts
+行号 2-37: EnterWorktreeTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/SendMessageTool/prompt.ts
+行号 6-10: SendMessageTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/SkillTool/prompt.ts
+行号 160-180: SkillTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/AgentTool/prompt.ts
+行号 68-216: AgentTool 提示词（何时分叉、撰写提示、示例等） → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/AskUserQuestionTool/prompt.ts
+行号 9-30: AskUserQuestionTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/SleepTool/prompt.ts
+行号 7-15: SleepTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/ScheduleCronTool/prompt.ts
+行号 53-83: ScheduleCronTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/RemoteTriggerTool/prompt.ts
+行号 7-15: RemoteTriggerTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/ListMcpResourcesTool/prompt.ts
+行号 3-19: ListMcpResourcesTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/ReadMcpResourceTool/prompt.ts
+行号 10-17: ReadMcpResourceTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/tools/BriefTool/prompt.ts
+行号 5-14: BriefTool 提示词 → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+================================================================================
+汇总统计（三次扫描）
+================================================================================
+高优先级文件（用户频繁看到的错误和状态消息）：
+  - GrepTool/GrepTool.ts: 6 条
+  - GlobTool/GlobTool.ts: 5 条
+  - FileEditTool/FileEditTool.ts: 6 条
+  - NotebookEditTool/NotebookEditTool.ts: 3 条
+  - TodoWriteTool/TodoWriteTool.ts: 2 条
+  - SendMessageTool/SendMessageTool.ts: 3 条
+  - ExitPlanModeTool/ExitPlanModeV2Tool.ts: 6 条
+
+中优先级文件（特定场景触发的错误）：
+  - TaskListTool/TaskListTool.ts: 1 条
+  - TaskGetTool/TaskGetTool.ts: 1 条
+  - SkillTool/SkillTool.ts: 2 条
+  - EnterPlanModeTool/EnterPlanModeTool.ts: 1 条
+  - EnterWorktreeTool/EnterWorktreeTool.ts: 1 条
+  - ExitWorktreeTool/ExitWorktreeTool.ts: 1 条
+  - ReadMcpResourceTool/ReadMcpResourceTool.ts: 2 条
+  - RemoteTriggerTool/RemoteTriggerTool.ts: 6 条
+  - BashTool/bashCommandHelpers.ts: 2 条
+  - PowerShellTool/powershellSecurity.ts: 9 条
+  - BashTool/sedValidation.ts: 2 条
+  - shared/spawnMultiAgent.ts: 2 条
+  - AgentTool/resumeAgent.ts: 1 条
+  - AgentTool/agentToolUtils.ts: 1 条
+  - FileReadTool/FileReadTool.ts: 1 条
+  - FileEditTool/utils.ts: 1 条
+  - BashTool/bashSecurity.ts: 5 条
+
+低优先级文件（系统提示词，建议保留英文）：
+  - 约 20 个 prompt.ts 文件：建议保留英文
+
+总计三次扫描：约 65 条用户界面文本值得汉化，涉及约 25 个文件
+================================================================================
