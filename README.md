@@ -1,6 +1,6 @@
 # Doge Code
 
-> Claude Code 的一个 Fork。不是官方正史，而是平行世界番外篇；不是萌豚整活仓库，而是“认真修、顺手发癫一点点”的工程分支。
+> Claude Code 分支克隆后，不断试错，不断回退，逐步汉化，还在进行中的一个项目。纯粹就是为了好用，贴地好用。
 
 [![Fork](https://img.shields.io/badge/Fork-Claude%20Code-f59e0b)](README.md)
 [![Status](https://img.shields.io/badge/status-restored%20%2B%20modded-10b981)](README.md)
