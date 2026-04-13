@@ -1,4 +1,0 @@
-set OPENAI_BASE_URL=http://127.0.0.1:9000/v1
-set OPENAI_API_KEY=dummy
-set OPENAI_MODEL=Qwen/Qwen3.5-397B-A17B
-qwen
