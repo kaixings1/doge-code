@@ -18,12 +18,7 @@
     "dev": "bun run ./src/bootstrap-entry.ts",
     "start": "bun run ./src/bootstrap-entry.ts",
     "version": "bun run ./src/bootstrap-entry.ts --version",
-    "dev:restore-check": "bun run ./src/dev-entry.ts",
-    "build": "bun build --target=bun --outdir=dist ./src/bootstrap-entry.ts",
-    "build:prod": "bun build --target=bun --production --outdir=dist ./src/bootstrap-entry.ts",
-    "build:exe": "bun build --compile --production --outfile=dist/doge.exe ./src/bootstrap-entry.ts",
-    "clean": "rimraf dist",
-    "lint": "eslint . --ext .ts --fix"
+    "dev:restore-check": "bun run ./src/dev-entry.ts"
   },
   "bin": {
     "doge": "./src/bootstrap-entry.ts"
@@ -33,14 +28,12 @@
     "@ant/claude-for-chrome-mcp": "file:./shims/ant-claude-for-chrome-mcp",
     "@ant/computer-use-input": "file:./shims/ant-computer-use-input",
     "@ant/computer-use-mcp": "file:./shims/ant-computer-use-mcp",
+    "@ant/computer-use-swift": "file:./shims/ant-computer-use-swift",
     "@anthropic-ai/claude-agent-sdk": "*",
-    "@anthropic-ai/foundry-sdk": "^0.2.3",
     "@anthropic-ai/mcpb": "*",
     "@anthropic-ai/sandbox-runtime": "*",
     "@anthropic-ai/sdk": "*",
-    "@anthropic-ai/vertex-sdk": "^0.16.0",
     "@aws-sdk/client-bedrock-runtime": "*",
-    "@azure/identity": "^4.13.1",
     "@commander-js/extra-typings": "*",
     "@growthbook/growthbook": "*",
     "@modelcontextprotocol/sdk": "*",
@@ -61,7 +54,6 @@
     "chokidar": "*",
     "cli-boxes": "*",
     "code-excerpt": "*",
-    "color-diff-napi": "file:./shims/color-diff-napi",
     "diff": "*",
     "emoji-regex": "*",
     "env-paths": "*",
@@ -71,7 +63,6 @@
     "get-east-asian-width": "*",
     "highlight.js": "*",
     "https-proxy-agent": "*",
-    "i18next": "^26.0.4",
     "ignore": "*",
     "indent-string": "*",
     "ink": "*",
@@ -79,14 +70,11 @@
     "lodash-es": "*",
     "lru-cache": "*",
     "marked": "*",
-    "modifiers-napi": "file:./shims/modifiers-napi",
     "p-map": "*",
     "picomatch": "*",
     "proper-lockfile": "*",
     "qrcode": "*",
-    "react": "^19.2.4",
-    "react-compiler-runtime": "^1.0.0",
-    "react-dom": "^19.2.4",
+    "react": "*",
     "react-reconciler": "*",
     "semver": "*",
     "shell-quote": "*",
@@ -97,7 +85,6 @@
     "tree-kill": "*",
     "type-fest": "*",
     "undici": "*",
-    "url-handler-napi": "file:./shims/url-handler-napi",
     "usehooks-ts": "*",
     "vscode-jsonrpc": "*",
     "vscode-languageserver-protocol": "*",
@@ -106,12 +93,13 @@
     "ws": "*",
     "xss": "*",
     "yaml": "*",
-    "zod": "*"
+    "zod": "*",
+    "color-diff-napi": "file:./shims/color-diff-napi",
+    "modifiers-napi": "file:./shims/modifiers-napi",
+    "url-handler-napi": "file:./shims/url-handler-napi"
   },
   "devDependencies": {
-    "google-auth-library": "*",
-    "i18next-cli": "^1.51.7",
-    "i18next-parser": "^9.4.0"
+    "google-auth-library": "*"
   },
   "peerDependencies": {
     "google-auth-library": "*"
