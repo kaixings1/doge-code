@@ -1,0 +1,230 @@
+================================================================================
+src2/ 文件夹汉化审核报告 - 四次扫描（result4.txt）
+================================================================================
+说明：
+- 四次扫描，覆盖剩余组件、钩子、服务层文件
+- 格式：行号：原始英文代码 → 准备汉化后的中文
+- 长文本已截断到约128字符
+- 在"是否需要执行汉化="后写 1 表示汉化，写 0 或留空表示跳过
+================================================================================
+
+================================================================================
+【组件文件 - 用户界面文本】
+================================================================================
+
+src2/components/LogSelector.tsx
+行号 ?: Press {exitState.keyName} again to exit → 再按一次 {exitState.keyName} 键退出
+行号 ?: Searching with Claude… → 正在使用 Claude 搜索…
+行号 ?: Type to Search → 输入以搜索
+行号 ?: show ${showAllProjects ? "current dir" : "all projects"} → 显示 ${showAllProjects ? "当前目录" : "所有项目"}
+行号 ?: show ${showAllWorktrees ? "current worktree" : "all worktrees"} → 显示 ${showAllWorktrees ? "当前工作树" : "所有工作树"}
+是否需要执行汉化=   1
+
+src2/components/MCPServerMultiselectDialog.tsx
+行号 102: Select any you wish to enable. → 选择您希望启用的服务器。
+行号 ?: description="reject all" → description="全部拒绝"
+行号 ?: action="select" → action="选择"
+行号 ?: action="confirm" → action="确认"
+是否需要执行汉化=   1
+
+src2/components/permissions/rules/PermissionRuleList.tsx
+行号 1070: title="Recently denied" → title="最近拒绝"
+行号 1077: title="Allow" → title="允许"
+行号 1085: title="Ask" → title="询问"
+行号 1093: title="Deny" → title="拒绝"
+行号 1108: title="Workspace" → title="工作空间"
+是否需要执行汉化=   1
+
+src2/components/permissions/rules/AddWorkspaceDirectory.tsx
+行号 318: title="Add directory to workspace" → title="添加目录到工作空间"
+行号 144: Enter the path to the directory: → 输入目录路径：
+行号 145: placeholder=`Directory path${figures.ellipsis}` → placeholder=`目录路径${figures.ellipsis}`
+是否需要执行汉化=   1
+
+src2/components/permissions/SedEditPermissionRequest/SedEditPermissionRequest.tsx
+行号 213: title="Edit file" → title="编辑文件"
+是否需要执行汉化=   1
+
+src2/components/permissions/PowerShellPermissionRequest/PowerShellPermissionRequest.tsx
+行号 195: title="PowerShell command" → title="PowerShell 命令"
+是否需要执行汉化=   1
+
+src2/components/sandbox/SandboxSettings.tsx
+行号 171: title="Mode" → title="模式"
+行号 183: title="Overrides" → title="覆盖"
+行号 192: title="Config" → title="配置"
+行号 201: title="Dependencies" → title="依赖"
+行号 214: title="Sandbox:" → title="沙箱："
+是否需要执行汉化=   1
+
+src2/components/LogoV2/WelcomeV2.tsx
+行号 12: welcomeMessage="Welcome to Claude Code" → welcomeMessage="欢迎使用 Claude Code"
+行号 31: {"Welcome to Claude Code"} → {"欢迎使用 Claude Code"}
+行号 116: {"Welcome to Claude Code"} → {"欢迎使用 Claude Code"}
+是否需要执行汉化=   1
+
+src2/components/grove/Grove.tsx
+行号 350: action="confirm" → action="确认"
+行号 350: action="cancel" → action="取消"
+行号 420: action="toggle" → action="切换"
+是否需要执行汉化=   1
+
+src2/components/ThemePicker.tsx
+行号 300: action="select" → action="选择"
+行号 300: action="cancel" → action="取消"
+是否需要执行汉化=   1
+
+src2/components/diff/DiffDialog.tsx
+行号 331: ←/→ source → ←/→ 来源
+行号 331: ↑/↓ select → ↑/↓ 选择
+行号 331: Enter view → Enter 查看
+行号 331: ← back → ← 返回
+是否需要执行汉化=   1
+
+src2/components/mcp/ElicitationDialog.tsx
+行号 957: MCP server "${serverName}" requests your input → MCP 服务器 "${serverName}" 请求您的输入
+行号 1097: MCP server "${serverName}" — waiting for completion → MCP 服务器 "${serverName}" — 等待完成
+行号 1140: MCP server "${serverName}" wants to open a URL → MCP 服务器 "${serverName}" 想要打开一个 URL
+是否需要执行汉化=   1
+
+src2/components/ManagedSettingsSecurityDialog/ManagedSettingsSecurityDialog.tsx
+行号 116: Enter to confirm · Esc to exit → Enter 确认 · Esc 退出
+是否需要执行汉化=   1
+
+src2/components/Passes/Passes.tsx
+行号 178: Enter to copy link · Esc to cancel → Enter 复制链接 · Esc 取消
+是否需要执行汉化=   1
+
+src2/components/TagTabs.tsx
+行号 60: 'Resume (All Projects)' → '恢复 (所有项目)'
+行号 60: 'Resume' → '恢复'
+是否需要执行汉化=   1
+
+src2/components/IdeOnboardingDialog.tsx
+行号 73: Welcome to Claude Code for {ideName} → 欢迎使用 {ideName} 版 Claude Code
+是否需要执行汉化=   1
+
+src2/components/DesktopHandoff.tsx
+行号 89: "Failed to open Claude Desktop" → "无法打开 Claude Desktop"
+行号 187: "Session transferred to Claude Desktop" → "会话已转移到 Claude Desktop"
+是否需要执行汉化=   1
+
+src2/components/FallbackToolUseErrorMessage.tsx
+行号 33: "Tool execution failed" → "工具执行失败"
+行号 40: "Invalid tool parameters" → "工具参数无效"
+是否需要执行汉化=   1
+
+src2/components/QuickOpenDialog.tsx
+行号 227: "No matching files" → "没有匹配的文件"
+行号 227: "Start typing to search…" → "开始输入以搜索…"
+是否需要执行汉化=   1
+
+src2/components/memory/MemoryFileSelector.tsx
+行号 99: "dynamically loaded" → "动态加载"
+行号 63: "User memory" → "用户记忆"
+行号 66: "Project memory" → "项目记忆"
+是否需要执行汉化=   1
+
+src2/components/mcp/MCPToolDetailView.tsx
+行号 84: "Failed to load description" → "加载描述失败"
+是否需要执行汉化=   1
+
+src2/components/sandbox/SandboxDoctorSection.tsx
+行号 26: "Missing dependencies" → "缺少依赖"
+行号 26: "Available (with warnings)" → "可用 (有警告)"
+是否需要执行汉化=   1
+
+src2/components/permissions/rules/RecentDenialsTab.tsx
+行号 179: Commands recently denied by the auto mode classifier. → 自动模式分类器最近拒绝的命令。
+是否需要执行汉化=   1
+
+src2/components/WorktreeExitDialog.tsx
+行号 89: 'No active worktree session found' → '没有活动的工作树会话'
+是否需要执行汉化=   1
+
+src2/components/TeleportStash.tsx
+行号 35: 'Failed to get changed files' → '获取变更文件失败'
+行号 48: 'Successfully stashed changes' → '成功暂存变更'
+行号 51: 'Failed to stash changes' → '暂存变更失败'
+行号 58: 'Failed to stash changes' → '暂存变更失败'
+是否需要执行汉化=   1
+
+================================================================================
+【钩子文件 - 通知和状态消息】
+================================================================================
+
+src2/hooks/notifs/usePluginInstallationStatus.tsx
+行号 80: "No installation status to monitor" → "没有可监控的安装状态"
+是否需要执行汉化=   1
+
+src2/hooks/useOfficialMarketplaceNotification.tsx
+行号 19: "Showing marketplace config save failure notification" → "显示市场配置保存失败通知"
+行号 28: "Showing marketplace installation success notification" → "显示市场安装成功通知"
+行号 37: "Showing marketplace installation failure notification" → "显示市场安装失败通知"
+是否需要执行汉化=   1
+
+src2/hooks/useCopyOnSelect.ts
+行号 12: "Copy to pasteboard on selection" (注释) → "选中时复制到剪贴板" (注释)
+是否需要执行汉化=   1
+
+================================================================================
+【服务层文件 - 错误和状态消息】
+================================================================================
+
+src2/services/mcp/client.ts
+行号 200: "Session not found" → "会话未找到"
+行号 401: "MCP server requires authentication but no OAuth token configured" → "MCP 服务器需要认证但未配置 OAuth 令牌"
+是否需要执行汉化=   1
+
+src2/services/tools/toolExecution.ts
+行号 1024: "Execution stopped" → "执行已停止"
+是否需要执行汉化=   1
+
+src2/services/tools/StreamingToolExecutor.ts
+行号 159: "User rejected edit" → "用户拒绝了编辑"
+行号 159: "Error editing file" → "编辑文件时出错"
+是否需要执行汉化=   1
+
+src2/services/mcp/MCPConnectionManager.tsx
+行号 27: "useMcpToggleEnabled must be used within MCPConnectionManager" → "useMcpToggleEnabled 必须在 MCPConnectionManager 中使用"
+是否需要执行汉化=   1
+
+================================================================================
+【键绑定文件】
+================================================================================
+
+src2/keybindings/KeybindingContext.tsx
+行号 187: "useKeybindingContext must be used within KeybindingProvider" → "useKeybindingContext 必须在 KeybindingProvider 中使用"
+是否需要执行汉化=   1
+
+================================================================================
+汇总统计（四次扫描）
+================================================================================
+高优先级文件（用户频繁看到的界面文本）：
+  - components/LogoV2/WelcomeV2.tsx: 3 条
+  - components/DesktopHandoff.tsx: 2 条
+  - components/FallbackToolUseErrorMessage.tsx: 2 条
+  - components/QuickOpenDialog.tsx: 2 条
+  - components/memory/MemoryFileSelector.tsx: 3 条
+  - components/TagTabs.tsx: 2 条
+  - components/WorktreeExitDialog.tsx: 1 条
+  - components/TeleportStash.tsx: 4 条
+
+中优先级文件（特定场景看到的）：
+  - components/LogSelector.tsx: 5 条
+  - components/MCPServerMultiselectDialog.tsx: 4 条
+  - components/grove/Grove.tsx: 3 条
+  - components/mcp/ElicitationDialog.tsx: 3 条
+  - components/permissions/rules/PermissionRuleList.tsx: 5 条
+  - components/sandbox/SandboxSettings.tsx: 5 条
+  - components/diff/DiffDialog.tsx: 4 条
+  - services/mcp/client.ts: 2 条
+  - services/tools/StreamingToolExecutor.ts: 2 条
+
+低优先级文件（较少看到的）：
+  - hooks/ 钩子文件：约 5 条
+  - keybindings/ 键绑定：1 条
+  - 其他组件文件：约 30 条
+
+总计四次扫描：约 106 条用户界面文本，涉及约 40 个文件
+================================================================================

@@ -1,0 +1,193 @@
+================================================================================
+src2/ 文件夹汉化审核报告 - 六次扫描（result6.txt）
+================================================================================
+说明：
+- 六次扫描，覆盖前五次未涉及的剩余区域
+- 格式：行号：原始英文代码 → 准备汉化后的中文
+- 长文本已截断到约128字符
+- 在"是否需要执行汉化="后写 1 表示汉化，写 0 或留空表示跳过
+================================================================================
+
+================================================================================
+【通知钩子文件 - 用户启动/运行时通知】
+================================================================================
+
+src2/hooks/notifs/useTeammateShutdownNotification.ts
+行号 24: 1 agent spawned → 已生成 1 个智能体
+行号 24: ${count} agents spawned → 已生成 ${count} 个智能体
+行号 41: 1 agent shut down → 1 个智能体已关闭
+行号 41: ${count} agents shut down → ${count} 个智能体已关闭
+是否需要执行汉化=   1
+
+src2/hooks/notifs/useCanSwitchToExistingSubscription.tsx
+行号 30: Use your existing Claude {subscriptionType} plan with Claude Code · /login to activate → 使用您现有的 Claude {subscriptionType} 套餐与 Claude Code · 运行 /login 激活
+是否需要执行汉化=   1
+
+src2/hooks/notifs/useMcpConnectivityStatus.tsx
+行号 39: ${failedLocalClients.length} MCP server(s) failed · /mcp → ${failedLocalClients.length} 个 MCP 服务器失败 · /mcp
+行号 46: ${failedClaudeAiClients.length} claude.ai connector(s) unavailable · /mcp → ${failedClaudeAiClients.length} 个 claude.ai 连接器不可用 · /mcp
+行号 53: ${needsAuthLocalServers.length} MCP server(s) need auth · /mcp → ${needsAuthLocalServers.length} 个 MCP 服务器需要认证 · /mcp
+行号 60: ${needsAuthClaudeAiServers.length} claude.ai connector(s) need auth · /mcp → ${needsAuthClaudeAiServers.length} 个 claude.ai 连接器需要认证 · /mcp
+是否需要执行汉化=   1
+
+src2/hooks/notifs/useLspInitializationNotification.tsx
+行号 64: Plugin LSP source "${displayName}" → 插件 LSP 来源"${displayName}"
+是否需要执行汉化=   1
+
+src2/hooks/notifs/useRateLimitWarningNotification.tsx
+行号 64: Rate limit reached · Requests are being queued → 已达速率限制 · 请求正在排队
+是否需要执行汉化=   1
+
+src2/hooks/notifs/usePluginInstallationStatus.tsx
+行号 92: Plugin installation failed: ${pluginName} → 插件安装失败：${pluginName}
+是否需要执行汉化=   1
+
+src2/hooks/notifs/usePluginAutoupdateNotification.tsx
+行号 61: Plugins updated · Restart to apply → 插件已更新 · 重启以应用
+是否需要执行汉化=   1
+
+src2/hooks/notifs/useNpmDeprecationNotification.tsx
+行号 23: npm installation is deprecated · Use the native installer → npm 安装方式已弃用 · 请使用原生安装程序
+是否需要执行汉化=   1
+
+src2/hooks/useChromeExtensionNotification.tsx
+行号 26: Chrome requires a paid Claude subscription → Chrome 需要付费的 Claude 订阅
+行号 35: Chrome extension not detected · Install from Chrome Web Store → 未检测到 Chrome 扩展 · 从 Chrome Web Store 安装
+行号 43: Claude in Chrome is now enabled · Use /chrome to manage → Chrome 中的 Claude 已启用 · 使用 /chrome 管理
+是否需要执行汉化=   1
+
+src2/hooks/useAssistantHistory.ts
+行号 44: loading older messages… → 正在加载更早的消息…
+行号 46: failed to load older messages — scroll up to retry → 加载更早的消息失败 — 向上滚动重试
+行号 47: start of session → 会话开始
+是否需要执行汉化=   1
+
+================================================================================
+【任务通知文件】
+================================================================================
+
+src2/tasks/RemoteAgentTask/RemoteAgentTask.tsx
+行号 149: Please run /login and sign in with your Claude.ai account (not Console). → 请运行 /login 并使用您的 Claude.ai 账户登录（而非 Console）。
+行号 151: No cloud environment available. Set one up at https://claude.ai/code/onboarding?magic=env-setup → 没有可用的云环境。请在 https://claude.ai/code/onboarding?magic=env-setup 设置
+行号 153: Background tasks require a git repository. Initialize git or run from a git repository. → 后台任务需要 git 仓库。请初始化 git 或从 git 仓库运行。
+行号 155: Background tasks require a GitHub remote. Add one with `git remote add origin REPO_URL`. → 后台任务需要 GitHub 远程。使用 `git remote add origin REPO_URL` 添加。
+行号 157: The Claude GitHub app must be installed on this repository first. → 必须首先在此仓库上安装 Claude GitHub 应用。
+行号 159: Remote sessions are disabled by your organization's policy. Contact your organization admin to enable them. → 远程会话已被您组织的策略禁用。请联系组织管理员启用。
+是否需要执行汉化=   1
+
+src2/tasks/stopTask.ts
+行号 47: No task found with ID: ${taskId} → 未找到 ID 为 ${taskId} 的任务
+是否需要执行汉化=   1
+
+src2/tasks/pillLabel.ts
+行号 38: 1 local agent / ${n} local agents → 1 个本地智能体 / ${n} 个本地智能体
+行号 58: 1 background workflow / ${n} background workflows → 1 个后台工作流 / ${n} 个后台工作流
+行号 70: · ↓ to view → · ↓ 查看
+是否需要执行汉化=   1
+
+================================================================================
+【命令文件 - 用户交互文本】
+================================================================================
+
+src2/commands/copy/copy.tsx
+行号 283: Copy cancelled → 已取消复制
+行号 304: action="copy" / action="write to file" / action="cancel" → action="复制" / action="写入文件" / action="取消"
+行号 337: No assistant message to copy → 没有可复制的助理消息
+行号 351: Only ${texts.length} assistant message(s) available to copy → 仅有 ${texts.length} 条助理消息可复制
+是否需要执行汉化=   1
+
+src2/commands/files/files.ts
+行号 14: No files in context → 上下文中没有文件
+是否需要执行汉化=   1
+
+src2/commands/cost/cost.ts
+行号 15: You are currently using your subscription to power your Claude Code usage → 您当前正在使用订阅来支持 Claude Code 的使用
+是否需要执行汉化=   1
+
+src2/commands/fast/fast.tsx
+行号 86: Fast mode ON · ${pricing} → 快速模式已开启 · ${pricing}
+行号 92: Fast mode OFF → 快速模式已关闭
+行号 106: Fast mode OFF → 快速模式已关闭
+行号 112: Kept Fast mode ON / Kept Fast mode OFF → 保持快速模式开启 / 保持快速模式关闭
+行号 168: Fast mode (research preview) → 快速模式（研究预览版）
+行号 177: Press {exitState.keyName} again to exit → 再按一次 {exitState.keyName} 退出
+行号 177: Esc to cancel → Esc 取消
+行号 177: Tab to toggle · Enter to confirm · Esc to cancel → Tab 切换 · Enter 确认 · Esc 取消
+行号 185: Fast mode overloaded and is temporarily unavailable → 快速模式过载，暂时不可用
+行号 185: You've hit your fast limit · resets in ${duration} → 您已达到快速模式限制 · ${duration} 后重置
+行号 201: Learn more: https://code.claude.com/docs/en/fast-mode → 了解更多：https://code.claude.com/docs/en/fast-mode
+行号 207: High-speed mode for ${model}. Billed as extra usage at a premium rate. Separate rate limits apply. → ${model} 的高速模式。按额外使用的高级费率计费。适用单独的速率限制。
+是否需要执行汉化=   1
+
+src2/commands/bridge/bridge.tsx
+行号 102: Remote Control connecting… → 远程控制连接中…
+行号 291: Remote Control → 远程控制
+行号 347: Hide QR code / Show QR code → 隐藏二维码 / 显示二维码
+行号 475: Remote Control is disabled by your organization's policy. → 远程控制已被您组织的策略禁用。
+是否需要执行汉化=   1
+
+================================================================================
+【服务层文件 - 用户可见消息】
+================================================================================
+
+src2/services/voiceStreamSTT.ts
+行号 443: unknown transcription error → 未知转录错误
+行号 523: Upgrade rejected: status=${status} → 升级被拒绝：状态=${status}
+是否需要执行汉化=   1
+
+src2/services/voice.ts
+行号 114: arecord: command not found → arecord：命令未找到
+行号 205: Voice mode requires the native audio module (not loaded) → 语音模式需要原生音频模块（未加载）
+行号 218: sox (rec command) → sox（rec 命令）
+行号 280: Voice recording requires the native audio module, which could not be loaded. → 语音录制需要原生音频模块，但无法加载。
+是否需要执行汉化=   1
+
+================================================================================
+【工具/权限相关消息】
+================================================================================
+
+src2/hooks/toolPermission/PermissionContext.ts
+行号 252: Permission denied by hook → 权限被 Hook 拒绝
+是否需要执行汉化=   1
+
+src2/hooks/toolPermission/handlers/interactiveHandler.ts
+行号 189: User denied permission → 用户拒绝权限
+是否需要执行汉化=   1
+
+================================================================================
+【常量文件 - 弃用警告】
+================================================================================
+
+src2/utils/model/deprecation.ts
+行号 93: ⚠ ${info.modelName} will be retired on ${info.retirementDate}. Consider switching to a newer model. → ⚠ ${info.modelName} 将于 ${info.retirementDate} 退役。请考虑切换到更新的模型。
+是否需要执行汉化=   1
+
+================================================================================
+汇总统计（六次扫描）
+================================================================================
+高优先级文件（用户频繁看到）：
+  - hooks/notifs/useMcpConnectivityStatus.tsx: 4 条
+  - hooks/notifs/useTeammateShutdownNotification.ts: 4 条
+  - hooks/useChromeExtensionNotification.tsx: 3 条
+  - commands/fast/fast.tsx: 12 条
+  - commands/copy/copy.tsx: 5 条
+  - commands/bridge/bridge.tsx: 4 条
+  - tasks/RemoteAgentTask/RemoteAgentTask.tsx: 6 条
+
+中优先级文件（特定场景看到）：
+  - hooks/useAssistantHistory.ts: 3 条
+  - tasks/pillLabel.ts: 3 条
+  - services/voice.ts: 4 条
+  - commands/cost/cost.ts: 1 条
+  - commands/files/files.ts: 1 条
+
+低优先级文件（较少看到）：
+  - hooks/toolPermission/ 相关文件: 2 条
+  - hooks/notifs/useLspInitializationNotification.tsx: 1 条
+  - hooks/notifs/useCanSwitchToExistingSubscription.tsx: 1 条
+  - tasks/stopTask.ts: 1 条
+  - services/voiceStreamSTT.ts: 2 条
+  - utils/model/deprecation.ts: 1 条
+
+总计六次扫描：约 400 条用户界面文本，涉及约 150 个文件
+================================================================================
