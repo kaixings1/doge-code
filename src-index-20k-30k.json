@@ -1,0 +1,692 @@
+﻿[
+    {
+        "path":  "bridge\\initReplBridge.ts",
+        "size":  24418,
+        "translated":  true
+    },
+    {
+        "path":  "cli\\transports\\SSETransport.ts",
+        "size":  24469,
+        "translated":  true
+    },
+    {
+        "path":  "cli\\transports\\WebSocketTransport.ts",
+        "size":  28995,
+        "translated":  true
+    },
+    {
+        "path":  "cli\\structuredIO.ts",
+        "size":  29578,
+        "translated":  true
+    },
+    {
+        "path":  "commands\\btw\\btw.tsx",
+        "size":  30492,
+        "translated":  true
+    },
+    {
+        "path":  "commands\\effort\\effort.tsx",
+        "size":  22316,
+        "translated":  true
+    },
+    {
+        "path":  "commands\\install-github-app\\ApiKeyStep.tsx",
+        "size":  23748,
+        "translated":  true
+    },
+    {
+        "path":  "commands\\install-github-app\\ChooseRepoStep.tsx",
+        "size":  21489,
+        "translated":  true
+    },
+    {
+        "path":  "commands\\mobile\\mobile.tsx",
+        "size":  22070,
+        "translated":  true
+    },
+    {
+        "path":  "commands\\plugin\\AddMarketplace.tsx",
+        "size":  21982,
+        "translated":  true
+    },
+    {
+        "path":  "commands\\plugin\\PluginErrors.tsx",
+        "size":  23439,
+        "translated":  true
+    },
+    {
+        "path":  "commands\\rate-limit-options\\rate-limit-options.tsx",
+        "size":  23949,
+        "translated":  true
+    },
+    {
+        "path":  "commands\\remote-setup\\remote-setup.tsx",
+        "size":  21973,
+        "translated":  true
+    },
+    {
+        "path":  "commands\\tag\\tag.tsx",
+        "size":  21226,
+        "translated":  true
+    },
+    {
+        "path":  "commands\\init.ts",
+        "size":  21210,
+        "translated":  true
+    },
+    {
+        "path":  "components\\agents\\new-agent-creation\\wizard-steps\\GenerateStep.tsx",
+        "size":  22233,
+        "translated":  true
+    },
+    {
+        "path":  "components\\agents\\AgentDetail.tsx",
+        "size":  23785,
+        "translated":  true
+    },
+    {
+        "path":  "components\\agents\\AgentEditor.tsx",
+        "size":  26628,
+        "translated":  true
+    },
+    {
+        "path":  "components\\CustomSelect\\SelectMulti.tsx",
+        "size":  30096,
+        "translated":  true
+    },
+    {
+        "path":  "components\\diff\\DiffDetailView.tsx",
+        "size":  22895,
+        "translated":  true
+    },
+    {
+        "path":  "components\\diff\\DiffFileList.tsx",
+        "size":  25633,
+        "translated":  true
+    },
+    {
+        "path":  "components\\FeedbackSurvey\\useMemorySurvey.tsx",
+        "size":  30630,
+        "translated":  true
+    },
+    {
+        "path":  "components\\FeedbackSurvey\\usePostCompactSurvey.tsx",
+        "size":  24276,
+        "translated":  true
+    },
+    {
+        "path":  "components\\HelpV2\\HelpV2.tsx",
+        "size":  21167,
+        "translated":  true
+    },
+    {
+        "path":  "components\\LogoV2\\ChannelsNotice.tsx",
+        "size":  29768,
+        "translated":  true
+    },
+    {
+        "path":  "components\\mcp\\MCPAgentServerMenu.tsx",
+        "size":  26795,
+        "translated":  true
+    },
+    {
+        "path":  "components\\mcp\\McpParsingWarnings.tsx",
+        "size":  22291,
+        "translated":  true
+    },
+    {
+        "path":  "components\\mcp\\MCPStdioServerMenu.tsx",
+        "size":  28578,
+        "translated":  true
+    },
+    {
+        "path":  "components\\mcp\\MCPToolDetailView.tsx",
+        "size":  23352,
+        "translated":  true
+    },
+    {
+        "path":  "components\\messages\\AssistantTextMessage.tsx",
+        "size":  30696,
+        "translated":  true
+    },
+    {
+        "path":  "components\\messages\\PlanApprovalMessage.tsx",
+        "size":  25560,
+        "translated":  true
+    },
+    {
+        "path":  "components\\messages\\UserTeammateMessage.tsx",
+        "size":  24331,
+        "translated":  true
+    },
+    {
+        "path":  "components\\messages\\UserTextMessage.tsx",
+        "size":  29325,
+        "translated":  true
+    },
+    {
+        "path":  "components\\Passes\\Passes.tsx",
+        "size":  27563,
+        "translated":  true
+    },
+    {
+        "path":  "components\\permissions\\AskUserQuestionPermissionRequest\\PreviewBox.tsx",
+        "size":  26187,
+        "translated":  true
+    },
+    {
+        "path":  "components\\permissions\\AskUserQuestionPermissionRequest\\QuestionNavigationBar.tsx",
+        "size":  23140,
+        "translated":  true
+    },
+    {
+        "path":  "components\\permissions\\BashPermissionRequest\\bashToolUseOptions.tsx",
+        "size":  21574,
+        "translated":  true
+    },
+    {
+        "path":  "components\\permissions\\FilePermissionDialog\\FilePermissionDialog.tsx",
+        "size":  30518,
+        "translated":  true
+    },
+    {
+        "path":  "components\\permissions\\FilePermissionDialog\\permissionOptions.tsx",
+        "size":  22545,
+        "translated":  true
+    },
+    {
+        "path":  "components\\permissions\\NotebookEditPermissionRequest\\NotebookEditToolDiff.tsx",
+        "size":  24914,
+        "translated":  true
+    },
+    {
+        "path":  "components\\permissions\\rules\\AddPermissionRules.tsx",
+        "size":  22194,
+        "translated":  true
+    },
+    {
+        "path":  "components\\permissions\\SedEditPermissionRequest\\SedEditPermissionRequest.tsx",
+        "size":  21091,
+        "translated":  true
+    },
+    {
+        "path":  "components\\permissions\\WebFetchPermissionRequest\\WebFetchPermissionRequest.tsx",
+        "size":  23152,
+        "translated":  true
+    },
+    {
+        "path":  "components\\permissions\\PermissionExplanation.tsx",
+        "size":  23964,
+        "translated":  true
+    },
+    {
+        "path":  "components\\permissions\\shellPermissionHelpers.tsx",
+        "size":  22680,
+        "translated":  true
+    },
+    {
+        "path":  "components\\sandbox\\SandboxOverridesTab.tsx",
+        "size":  20665,
+        "translated":  true
+    },
+    {
+        "path":  "components\\sandbox\\SandboxSettings.tsx",
+        "size":  30207,
+        "translated":  true
+    },
+    {
+        "path":  "components\\Settings\\Status.tsx",
+        "size":  26117,
+        "translated":  true
+    },
+    {
+        "path":  "components\\skills\\SkillsMenu.tsx",
+        "size":  27745,
+        "translated":  true
+    },
+    {
+        "path":  "components\\Spinner\\GlimmerMessage.tsx",
+        "size":  27282,
+        "translated":  true
+    },
+    {
+        "path":  "components\\Spinner\\TeammateSpinnerTree.tsx",
+        "size":  28323,
+        "translated":  true
+    },
+    {
+        "path":  "components\\tasks\\AsyncAgentDetailDialog.tsx",
+        "size":  30037,
+        "translated":  true
+    },
+    {
+        "path":  "components\\tasks\\DreamDetailDialog.tsx",
+        "size":  26138,
+        "translated":  true
+    },
+    {
+        "path":  "components\\tasks\\RemoteSessionProgress.tsx",
+        "size":  28204,
+        "translated":  true
+    },
+    {
+        "path":  "components\\EffortCallout.tsx",
+        "size":  25039,
+        "translated":  true
+    },
+    {
+        "path":  "components\\FileEditToolDiff.tsx",
+        "size":  22080,
+        "translated":  true
+    },
+    {
+        "path":  "components\\Markdown.tsx",
+        "size":  28395,
+        "translated":  true
+    },
+    {
+        "path":  "components\\MCPServerDesktopImportDialog.tsx",
+        "size":  21219,
+        "translated":  true
+    },
+    {
+        "path":  "components\\NativeAutoUpdater.tsx",
+        "size":  26706,
+        "translated":  true
+    },
+    {
+        "path":  "components\\QuickOpenDialog.tsx",
+        "size":  28809,
+        "translated":  true
+    },
+    {
+        "path":  "components\\StructuredDiff.tsx",
+        "size":  25196,
+        "translated":  true
+    },
+    {
+        "path":  "components\\TagTabs.tsx",
+        "size":  20994,
+        "translated":  true
+    },
+    {
+        "path":  "components\\TextInput.tsx",
+        "size":  21121,
+        "translated":  true
+    },
+    {
+        "path":  "components\\TokenWarning.tsx",
+        "size":  21663,
+        "translated":  true
+    },
+    {
+        "path":  "context\\stats.tsx",
+        "size":  22223,
+        "translated":  true
+    },
+    {
+        "path":  "hooks\\notifs\\useIDEStatusIndicator.tsx",
+        "size":  20960,
+        "translated":  true
+    },
+    {
+        "path":  "hooks\\toolPermission\\handlers\\interactiveHandler.ts",
+        "size":  20733,
+        "translated":  true
+    },
+    {
+        "path":  "hooks\\fileSuggestions.ts",
+        "size":  27963,
+        "translated":  true
+    },
+    {
+        "path":  "hooks\\useLspPluginRecommendation.tsx",
+        "size":  21781,
+        "translated":  true
+    },
+    {
+        "path":  "hooks\\useRemoteSession.ts",
+        "size":  23617,
+        "translated":  true
+    },
+    {
+        "path":  "ink\\components\\Box.tsx",
+        "size":  21865,
+        "translated":  true
+    },
+    {
+        "path":  "ink\\log-update.ts",
+        "size":  27983,
+        "translated":  true
+    },
+    {
+        "path":  "ink\\output.ts",
+        "size":  26980,
+        "translated":  true
+    },
+    {
+        "path":  "ink\\parse-keypress.ts",
+        "size":  24259,
+        "translated":  true
+    },
+    {
+        "path":  "ink\\styles.ts",
+        "size":  21660,
+        "translated":  true
+    },
+    {
+        "path":  "keybindings\\KeybindingContext.tsx",
+        "size":  26242,
+        "translated":  true
+    },
+    {
+        "path":  "memdir\\memdir.ts",
+        "size":  21681,
+        "translated":  true
+    },
+    {
+        "path":  "memdir\\memoryTypes.ts",
+        "size":  23137,
+        "translated":  true
+    },
+    {
+        "path":  "services\\analytics\\firstPartyEventLoggingExporter.ts",
+        "size":  27168,
+        "translated":  true
+    },
+    {
+        "path":  "services\\api\\filesApi.ts",
+        "size":  22242,
+        "translated":  true
+    },
+    {
+        "path":  "services\\api\\logging.ts",
+        "size":  24979,
+        "translated":  true
+    },
+    {
+        "path":  "services\\api\\promptCacheBreakDetection.ts",
+        "size":  27015,
+        "translated":  true
+    },
+    {
+        "path":  "services\\api\\withRetry.ts",
+        "size":  29060,
+        "translated":  true
+    },
+    {
+        "path":  "services\\compact\\sessionMemoryCompact.ts",
+        "size":  21688,
+        "translated":  true
+    },
+    {
+        "path":  "services\\extractMemories\\extractMemories.ts",
+        "size":  22299,
+        "translated":  true
+    },
+    {
+        "path":  "services\\tips\\tipRegistry.ts",
+        "size":  23802,
+        "translated":  true
+    },
+    {
+        "path":  "services\\tools\\toolHooks.ts",
+        "size":  22983,
+        "translated":  true
+    },
+    {
+        "path":  "services\\mockRateLimits.ts",
+        "size":  30580,
+        "translated":  true
+    },
+    {
+        "path":  "services\\voiceStreamSTT.ts",
+        "size":  21919,
+        "translated":  true
+    },
+    {
+        "path":  "state\\AppState.tsx",
+        "size":  23679,
+        "translated":  true
+    },
+    {
+        "path":  "state\\AppStateStore.ts",
+        "size":  22416,
+        "translated":  true
+    },
+    {
+        "path":  "tools\\AgentTool\\agentToolUtils.ts",
+        "size":  23398,
+        "translated":  true
+    },
+    {
+        "path":  "tools\\AgentTool\\loadAgentsDir.ts",
+        "size":  26975,
+        "translated":  true
+    },
+    {
+        "path":  "tools\\BashTool\\prompt.ts",
+        "size":  21499,
+        "translated":  true
+    },
+    {
+        "path":  "tools\\BashTool\\sedValidation.ts",
+        "size":  22202,
+        "translated":  true
+    },
+    {
+        "path":  "tools\\BashTool\\UI.tsx",
+        "size":  25397,
+        "translated":  true
+    },
+    {
+        "path":  "tools\\FileEditTool\\FileEditTool.ts",
+        "size":  21122,
+        "translated":  true
+    },
+    {
+        "path":  "tools\\FileEditTool\\utils.ts",
+        "size":  23291,
+        "translated":  true
+    },
+    {
+        "path":  "tools\\FileReadTool\\UI.tsx",
+        "size":  22725,
+        "translated":  true
+    },
+    {
+        "path":  "tools\\GrepTool\\GrepTool.ts",
+        "size":  20663,
+        "translated":  true
+    },
+    {
+        "path":  "tools\\GrepTool\\UI.tsx",
+        "size":  21984,
+        "translated":  true
+    },
+    {
+        "path":  "tools\\LSPTool\\LSPTool.ts",
+        "size":  26562,
+        "translated":  true
+    },
+    {
+        "path":  "tools\\LSPTool\\UI.tsx",
+        "size":  25265,
+        "translated":  true
+    },
+    {
+        "path":  "tools\\SendMessageTool\\SendMessageTool.ts",
+        "size":  28392,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\bash\\ShellSnapshot.ts",
+        "size":  22362,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\computerUse\\executor.ts",
+        "size":  24470,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\git\\gitFilesystem.ts",
+        "size":  23039,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\model\\model.ts",
+        "size":  22027,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\plugins\\mcpPluginIntegration.ts",
+        "size":  20747,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\plugins\\pluginInstallationHelpers.ts",
+        "size":  21224,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\plugins\\validatePlugin.ts",
+        "size":  29263,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\processUserInput\\processBashCommand.tsx",
+        "size":  22418,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\swarm\\backends\\TmuxBackend.ts",
+        "size":  22255,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\swarm\\permissionSync.ts",
+        "size":  27401,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\swarm\\teamHelpers.ts",
+        "size":  22068,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\telemetry\\instrumentation.ts",
+        "size":  26365,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\telemetry\\sessionTracing.ts",
+        "size":  28918,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\api.ts",
+        "size":  26796,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\commitAttribution.ts",
+        "size":  30555,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\conversationRecovery.ts",
+        "size":  21674,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\cronScheduler.ts",
+        "size":  22043,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\doctorDiagnostic.ts",
+        "size":  21127,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\forkedAgent.ts",
+        "size":  25324,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\fsOperations.ts",
+        "size":  25000,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\gracefulShutdown.ts",
+        "size":  20690,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\handlePromptSubmit.ts",
+        "size":  22322,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\imageResizer.ts",
+        "size":  27579,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\markdownConfigLoader.ts",
+        "size":  22457,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\ripgrep.ts",
+        "size":  21867,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\sessionRestore.ts",
+        "size":  20957,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\sessionStoragePortable.ts",
+        "size":  26241,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\tasks.ts",
+        "size":  27216,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\theme.ts",
+        "size":  27469,
+        "translated":  true
+    },
+    {
+        "path":  "utils\\toolSearch.ts",
+        "size":  27362,
+        "translated":  true
+    },
+    {
+        "path":  "commands.ts",
+        "size":  26136,
+        "translated":  true
+    },
+    {
+        "path":  "dialogLaunchers.tsx",
+        "size":  23080,
+        "translated":  true
+    },
+    {
+        "path":  "setup.ts",
+        "size":  21235,
+        "translated":  true
+    },
+    {
+        "path":  "Tool.ts",
+        "size":  30308,
+        "translated":  true
+    }
+]
