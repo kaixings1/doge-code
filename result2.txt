@@ -1,0 +1,298 @@
+================================================================================
+src2/ 文件夹汉化审核报告 - 二次扫描（result2.txt）
+================================================================================
+说明：
+- 二次扫描，覆盖更多之前未报告的文件
+- 格式：行号：原始英文代码 → 准备汉化后的中文
+- 长文本已截断到约128字符
+- 在"是否需要执行汉化="后写 1 表示汉化，写 0 或留空表示跳过
+================================================================================
+
+================================================================================
+【上下文建议和帮助消息】
+================================================================================
+
+src2/utils/contextSuggestions.ts
+行号 66: Autocompact will trigger soon, which discards older messages. Use /compact now to control what gets kept. → 自动压缩即将触发，将丢弃较早的消息。立即执行 /compact 以控制保留内容。
+行号 68: Autocompact is disabled. Use /compact to free space, or enable autocompact in /config. → 自动压缩已禁用。使用 /compact 释放空间，或在 /config 中启用自动压缩。
+行号 103: Pipe output through head, tail, or grep to reduce result size. Avoid cat on large files — use Read with offset/limit instead. → 通过 head、tail 或 grep 管道输出以减小结果大小。避免对大文件使用 cat — 改用带 offset/limit 的 Read。
+行号 111: Use offset and limit parameters to read only the sections you need. Avoid re-reading entire files... → 使用 offset 和 limit 参数仅读取所需部分。避免仅需几行时重新读取整个文件。
+行号 119: Add more specific patterns or use the glob or type parameter to narrow file types... → 添加更具体的模式或使用 glob/type 参数缩小文件类型。考虑使用 Glob 进行文件发现而非 Grep。
+行号 127: Web page content can be very large. Consider extracting only the specific information needed. → 网页内容可能非常大。考虑仅提取所需的具体信息。
+行号 135: This tool is consuming a significant portion of context. → 此工具正在占用大量上下文空间。
+行号 165: If you are re-reading files, consider referencing earlier reads. Use offset/limit for large files. → 如果重新读取文件，考虑引用之前的读取结果。大文件使用 offset/limit。
+行号 194: Largest: ${largestFiles}. Use /memory to review and prune stale entries. → 最大文件：${largestFiles}。使用 /memory 查看并清理过期条目。
+是否需要执行汉化=   1
+
+src2/utils/fastMode.ts
+行号 55: Fast mode requires a paid subscription → 快速模式需要付费订阅
+行号 56: Fast mode unavailable during evaluation. Please purchase credits. → 快速模式在评估期间不可用。请购买积分。
+行号 58: Fast mode has been disabled by your organization → 快速模式已被您的组织禁用
+行号 61: Fast mode requires extra usage billing · /extra-usage to enable → 快速模式需要额外使用计费 · 运行 /extra-usage 启用
+行号 63: Fast mode unavailable due to network connectivity issues → 由于网络连接问题，快速模式不可用
+行号 65: Fast mode is currently unavailable → 快速模式当前不可用
+行号 69: Fast mode is not available → 快速模式不可用
+行号 89: Fast mode requires the native binary · Install from: https://claude.com/product/claude-code → 快速模式需要原生二进制文件 · 安装地址：https://claude.com/product/claude-code
+行号 100: Fast mode is not available in the Agent SDK → 快速模式在 Agent SDK 中不可用
+行号 108: Fast mode is not available on Bedrock, Vertex, or Foundry → 快速模式在 Bedrock、Vertex 或 Foundry 上不可用
+行号 237: Fast mode disabled · extra usage credits exhausted → 快速模式已禁用 · 额外使用积分已耗尽
+行号 239: Fast mode disabled · extra usage disabled by your organization → 快速模式已禁用 · 您的组织已禁用额外使用
+行号 241: Fast mode disabled · extra usage spending cap reached → 快速模式已禁用 · 已达额外使用支出上限
+行号 243: Fast mode disabled · extra usage disabled for your account → 快速模式已禁用 · 您的账户已禁用额外使用
+行号 246: Fast mode disabled · extra usage not available for your plan → 快速模式已禁用 · 您的计划不支持额外使用
+行号 249: Fast mode requires extra usage billing · /extra-usage to enable → 快速模式需要额外使用计费 · 运行 /extra-usage 启用
+行号 251: Fast mode disabled · extra usage not available → 快速模式已禁用 · 额外使用不可用
+是否需要执行汉化=   1
+
+================================================================================
+【深度链接和横幅警告】
+================================================================================
+
+src2/utils/deepLink/banner.ts
+行号 58: This session was opened by an external deep link in ${tildify(info.cwd)} → 此会话由外部深度链接在 ${tildify(info.cwd)} 中打开
+行号 66: Resolved ${info.repo} from local clones · last fetched ${age}${stale ? ' — CLAUDE.md may be stale' : ''} → 从本地克隆中解析 ${info.repo} · 最后获取时间 ${age}${stale ? ' — CLAUDE.md 可能已过期' : ''}
+行号 71: The prompt below (${formatNumber(info.prefillLength)} chars) was supplied by the link... → 以下提示（${formatNumber(info.prefillLength)} 字符）由链接提供 — 按 Enter 前请滚动查看完整提示。
+行号 73: The prompt below was supplied by the link — review carefully before pressing Enter. → 以下提示由链接提供 — 按 Enter 前请仔细查看。
+是否需要执行汉化=   1
+
+================================================================================
+【插件安装帮助】
+================================================================================
+
+src2/utils/plugins/pluginInstallationHelpers.ts
+行号 100: Path traversal detected: "${relativePath}" would escape the base directory → 检测到路径遍历："${relativePath}" 将逃逸基础目录
+行号 267: Dependency cycle: ${r.chain.join(' → ')} → 依赖循环：${r.chain.join(' → ')}
+行号 275: Dependency "${r.dependency}" (required by ${r.requiredBy}) is in ${where}, which is not in the allowlist... → 依赖 "${r.dependency}"（由 ${r.requiredBy} 需要）位于 ${where}，不在允许列表中 — 跨市场依赖默认被阻止。请先手动安装。
+行号 280: Dependency "${r.missing}" (required by ${r.requiredBy}) not found. Is the "${depMkt}" marketplace added? → 未找到依赖 "${r.missing}"（由 ${r.requiredBy} 需要）。是否已添加 "${depMkt}" 市场？
+行号 282: Dependency "${r.missing}" (required by ${r.requiredBy}) not found in any configured marketplace → 未在任何已配置的市场中找到依赖 "${r.missing}"（由 ${r.requiredBy} 需要）
+行号 400: Cannot install local plugin "${result.pluginName}" without marketplace install location → 无法在没有市场安装位置的情况下安装本地插件 "${result.pluginName}"
+行号 405: Failed to update settings: ${result.message} → 更新设置失败：${result.message}
+行号 410: Plugin "${result.pluginName}" is blocked by your organization's policy and cannot be installed → 插件 "${result.pluginName}" 被您组织的策略阻止，无法安装
+行号 415: Cannot install "${result.pluginName}": dependency "${result.blockedDependency}" is blocked by... → 无法安装 "${result.pluginName}"：依赖 "${result.blockedDependency}" 被您组织的策略阻止
+行号 444: ✓ Installed ${entry.name}${result.depNote}. Run /reload-plugins to activate. → ✓ 已安装 ${entry.name}${result.depNote}。运行 /reload-plugins 激活。
+行号 450: Failed to install: ${errorMessage} → 安装失败：${errorMessage}
+是否需要执行汉化=   1
+
+================================================================================
+【Doctor 诊断警告】
+================================================================================
+
+src2/utils/doctorContextWarnings.ts
+行号 55: Large CLAUDE.md file detected (${largeFiles[0]!.content.length.toLocaleString()} chars > ${MAX_MEMORY... → 检测到大型 CLAUDE.md 文件（${...} 字符 > ${...}）
+行号 56: ${largeFiles.length} large CLAUDE.md files detected (each > ${MAX_MEMORY_CHARACTER_COUNT.toLocaleString()}... → 检测到 ${largeFiles.length} 个大型 CLAUDE.md 文件（每个 > ${...} 字符）
+行号 100: Large agent descriptions (~${totalTokens.toLocaleString()} tokens > ${AGENT_DESCRIPTIONS_THRESHOLD... → 大型 Agent 描述（约 ${...} token > ${...}）
+行号 158: ${name}: ${info.count} tools (~${info.tokens.toLocaleString()} tokens) → ${name}：${info.count} 个工具（约 ${...} token）
+行号 163: (${sortedServers.length - 5} more servers) → （还有 ${...} 个服务器）
+行号 169: Large MCP tools context (~${mcpToolTokens.toLocaleString()} tokens > ${MCP_TOOLS_THRESHOLD... → 大型 MCP 工具上下文（约 ${...} token > ${...}）
+行号 186: Large MCP tools context (~${estimatedTokens.toLocaleString()} tokens estimated > ${MCP_TOOLS_THRESHOLD... → 大型 MCP 工具上下文（估计约 ${...} token > ${...}）
+行号 189: ${mcpTools.length} MCP tools detected (token count estimated) → 检测到 ${mcpTools.length} 个 MCP 工具（token 数量为估算值）
+行号 220: ${unreachable.length} ${plural(unreachable.length, 'unreachable permission rule')} detected → 检测到 ${unreachable.length} 个不可达的权限规则
+是否需要执行汉化=   1
+
+================================================================================
+【MCP 相关界面】
+================================================================================
+
+src2/commands/mcp/mcp.tsx
+行号 33: All MCP servers are already ${isEnabling ? "enabled" : "disabled"} → 所有 MCP 服务器已${isEnabling ? "启用" : "禁用"}
+行号 33: MCP server "${target}" not found → 未找到 MCP 服务器"${target}"
+行号 39: Enabled ${toToggle.length} MCP server(s) → 已启用 ${toToggle.length} 个 MCP 服务器
+行号 39: Disabled ${toToggle.length} MCP server(s) → 已禁用 ${toToggle.length} 个 MCP 服务器
+行号 39: MCP server "${target}" ${isEnabling ? "enabled" : "disabled"} → MCP 服务器"${target}"已${isEnabling ? "启用" : "禁用"}
+是否需要执行汉化=   1
+
+src2/screens/Doctor.tsx
+行号 68: └ Failed to fetch versions → └ 获取版本失败
+行号 74: └ Stable version: {distTags.stable} → └ 稳定版版本：{distTags.stable}
+是否需要执行汉化=   1
+
+================================================================================
+【反馈调查和自动运行】
+================================================================================
+
+src2/utils/autoRunIssue.tsx
+行号 107: You responded "Bad" to the feedback survey → 您在反馈调查中选择了"差"
+行号 109: You responded "Good" to the feedback survey → 您在反馈调查中选择了"好"
+行号 111: Unknown reason → 未知原因
+是否需要执行汉化=   1
+
+================================================================================
+【日志和调试界面】
+================================================================================
+
+src2/utils/log.ts
+行号 51: Autonomous session → 自主会话
+行号 229: No logs found at ${path} → 未在 ${path} 找到日志
+行号 253: No prompt → 无提示
+是否需要执行汉化=   1
+
+src2/utils/permissions/filesystem.ts
+行号 372: Scratchpad directory feature is not enabled → 暂存目录功能未启用
+是否需要执行汉化=   1
+
+================================================================================
+【系统提示词模板（发给模型的指令）】
+================================================================================
+
+注意：以下文件中的英文文本是发给 AI 模型的 system prompt，不是用户界面文本。
+这些指令控制模型的行为，汉化后可能影响模型理解。建议保留英文。
+
+src2/constants/prompts.ts
+行号 127: Users may configure 'hooks', shell commands that execute in response to events... → [系统提示词，建议保留英文]
+行号 131: Toolresults and user messages may include <system-reminder> tags... → [系统提示词，建议保留英文]
+行号 132: The conversation has unlimited context through automatic summarization. → [系统提示词，建议保留英文]
+是否需要执行汉化=   
+
+src2/constants/outputStyles.ts
+行号 ?: Explanatory and Learning mode prompts → [模型指令，建议保留英文]
+是否需要执行汉化=   
+
+src2/constants/cyberRiskInstruction.ts
+行号 28: IMPORTANT: Assist with authorized security testing, defensive security... → [安全策略指令，建议保留英文]
+是否需要执行汉化=   
+
+================================================================================
+【其他 UI 组件文件】
+================================================================================
+
+src2/components/grove/Grove.tsx
+行号 ?: 隐私条款对话框大量英文文本 → 隐私条款对话框中文文本
+是否需要执行汉化=   
+
+src2/components/ClaudeInChromeOnboarding.tsx
+行号 ?: Chrome 扩展引导英文文本 → Chrome 扩展引导中文文本
+是否需要执行汉化=   
+
+src2/components/WorkflowMultiselectDialog.tsx
+行号 ?: 工作流多选对话框英文文本 → 工作流多选对话框中文文本
+是否需要执行汉化=   
+
+src2/components/design-system/KeyboardShortcutHint.tsx
+行号 ?: 键盘快捷键提示英文文本 → 键盘快捷键提示中文文本
+是否需要执行汉化=   
+
+src2/components/HelpV2/HelpV2.tsx
+行号 ?: 帮助界面英文文本 → 帮助界面中文文本
+是否需要执行汉化=   
+
+src2/components/HelpV2/General.tsx
+行号 ?: 帮助 - 通用说明英文文本 → 帮助 - 通用说明中文文本
+是否需要执行汉化=   
+
+src2/components/HelpV2/Commands.tsx
+行号 ?: 帮助 - 命令列表英文文本 → 帮助 - 命令列表中文文本
+是否需要执行汉化=   
+
+src2/components/hooks/ViewHookMode.tsx
+行号 ?: Esc to go back → Esc 返回
+是否需要执行汉化=   
+
+src2/components/hooks/SelectMatcherMode.tsx
+行号 ?: Hook 匹配器选择英文文本 → Hook 匹配器选择中文文本
+是否需要执行汉化=   
+
+src2/components/hooks/SelectHookMode.tsx
+行号 ?: Hook 选择模式英文文本 → Hook 选择模式中文文本
+是否需要执行汉化=   
+
+src2/components/hooks/SelectEventMode.tsx
+行号 ?: Hook 事件选择英文文本 → Hook 事件选择中文文本
+是否需要执行汉化=   
+
+src2/components/hooks/HooksConfigMenu.tsx
+行号 ?: Hook 配置菜单英文文本 → Hook 配置菜单中文文本
+是否需要执行汉化=   
+
+src2/components/agents/new-agent-creation/wizard-steps/ConfirmStep.tsx
+行号 ?: 智能体创建 - 确认步骤英文文本 → 智能体创建 - 确认步骤中文文本
+是否需要执行汉化=   
+
+================================================================================
+【服务层文件 - 错误消息】
+================================================================================
+
+src2/services/api/withRetry.ts
+行号 ?: Unable to parse max_tokens from response → 无法从响应中解析 max_tokens
+是否需要执行汉化=   
+
+src2/services/tools/toolExecution.ts
+行号 ?: UnknownError → 未知错误
+是否需要执行汉化=   
+
+src2/services/tools/toolHooks.ts
+行号 ?: Hook approved tool use by {toolName} → Hook 已批准 {toolName} 的工具使用
+是否需要执行汉化=   
+
+src2/services/teamMemorySync/index.ts
+行号 ?: Network error → 网络错误
+是否需要执行汉化=   
+
+================================================================================
+【通知钩子文件】
+================================================================================
+
+src2/hooks/notifs/ 目录下约 12 个通知钩子文件
+行号 ?: 各种通知消息 (组织警告、自动模式、LSP、插件更新、速率限制、弃用警告等) → 各种通知消息 (组织警告、自动模式、LSP、插件更新、速率限制、弃用警告等)
+是否需要执行汉化=   
+
+================================================================================
+【入口和引导文件】
+================================================================================
+
+src2/main.tsx
+行号 ?: CLI 选项描述和启动消息 → CLI 选项描述和启动消息
+是否需要执行汉化=   
+
+src2/interactiveHelpers.tsx
+行号 ?: 交互助手英文文本 → 交互助手中文文本
+是否需要执行汉化=   
+
+src2/bootstrap/state.ts
+行号 ?: 引导状态消息 → 引导状态消息
+是否需要执行汉化=   
+
+src2/setup.ts
+行号 ?: 安装设置英文文本 → 安装设置中文文本
+是否需要执行汉化=   
+
+================================================================================
+【ResumeConversation 界面】
+================================================================================
+
+src2/screens/ResumeConversation.tsx
+行号 ?: Failed to load conversation → 加载对话失败
+是否需要执行汉化=   
+
+================================================================================
+【CLI 处理文件】
+================================================================================
+
+src2/cli/print.ts
+行号 ?: 打印输出消息（中英文混合） → 打印输出消息（全中文）
+是否需要执行汉化=   
+
+src2/cli/structuredIO.ts
+行号 ?: Tool permission request failed → 工具权限请求失败
+是否需要执行汉化=   
+
+================================================================================
+汇总统计（二次扫描）
+================================================================================
+高优先级文件（用户频繁看到）：
+  - contextSuggestions.ts: 9 条
+  - fastMode.ts: 17 条
+  - pluginInstallationHelpers.ts: 11 条
+  - doctorContextWarnings.ts: 9 条
+
+中优先级文件（特定场景触发）：
+  - deepLink/banner.ts: 4 条
+  - mcp/mcp.tsx: 5 条
+  - autoRunIssue.tsx: 3 条
+  - log.ts: 3 条
+
+低优先级文件（较少看到或系统提示词）：
+  - 系统提示词文件（prompts.ts 等）：建议保留英文
+  - 服务和钩子文件：约 15 个文件
+
+总计二次扫描：约 60+ 个条目，涉及约 40 个文件
+================================================================================

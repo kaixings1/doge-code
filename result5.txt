@@ -1,0 +1,187 @@
+================================================================================
+src2/ 文件夹汉化审核报告 - 五次扫描（result5.txt）
+================================================================================
+说明：
+- 五次扫描，覆盖剩余组件、CLI、屏幕和其他区域
+- 格式：行号：原始英文代码 → 准备汉化后的中文
+- 长文本已截断到约128字符
+- 在"是否需要执行汉化="后写 1 表示汉化，写 0 或留空表示跳过
+================================================================================
+
+================================================================================
+【智能体组件文件】
+================================================================================
+
+src2/components/agents/ColorPicker.tsx
+行号 63: Automatic color → 自动颜色
+是否需要执行汉化=   1
+
+src2/components/agents/utils.ts
+行号 9: Agents → 智能体
+行号 15: Plugin agents → 插件智能体
+是否需要执行汉化=   1
+
+src2/components/agents/AgentEditor.tsx
+行号 46: Opened ${agent.agentType} in editor. If you made edits, restart to load the latest version. → 已在编辑器中打开 ${agent.agentType}。如果进行了修改，请重启以加载最新版本。
+行号 89: Updated agent: ${chalk.bold(agent.agentType)} → 已更新智能体：${chalk.bold(agent.agentType)}
+是否需要执行汉化=   1
+
+src2/components/agents/AgentsList.tsx
+行号 61:  memory →  记忆
+行号 62:  shadowed by  →  被...覆盖
+行号 255: ${t23} agents → ${t23} 个智能体
+是否需要执行汉化=   1
+
+src2/components/agents/validateAgent.ts
+行号 58: Agent type "${agent.agentType}" already exists in ${getAgentSourceDisplayName(duplicate.source)} → 智能体类型 "${agent.agentType}" 已存在于 ${getAgentSourceDisplayName(duplicate.source)} 中
+行号 90: Invalid tools: ${resolvedTools.invalidTools.join(', ')} → 无效工具：${resolvedTools.invalidTools.join(', ')}
+是否需要执行汉化=   1
+
+================================================================================
+【对话框和 UI 组件文件】
+================================================================================
+
+src2/components/IdleReturnDialog.tsx
+行号 49: If this is a new task, clearing context will save usage and be faster. → 如果是新任务，清除上下文将节省用量并更快执行。
+是否需要执行汉化=   1
+
+src2/components/IdeStatusIndicator.tsx
+行号 29: ⧉ {ideSelection.lineCount}{" "}{t1} selected → ⧉ 已选择 {ideSelection.lineCount} {t1}
+行号 49: ⧉ In {t1} → ⧉ 在 {t1} 中
+是否需要执行汉化=   1
+
+src2/components/IdeOnboardingDialog.tsx
+行号 82: ⧉ open files → ⧉ 打开的文件
+行号 89: • Claude has context of {t8}{" "}and <Text color="suggestion">⧉ selected lines</Text> → • Claude 具有 {t8} 和 ⧉ 选中行的上下文
+行号 134: Press Enter to continue → 按 Enter 继续
+是否需要执行汉化=   1
+
+src2/components/ClaudeInChromeOnboarding.tsx
+行号 59: Claude in Chrome works with the Chrome extension to let you control your browser directly from Claude Code. You can navigate websites, fill forms, capture screenshots, record GIFs, and debug with console logs and network requests. → Claude in Chrome 与 Chrome 扩展程序配合使用，让您可以直接从 Claude Code 控制浏览器。您可以浏览网站、填写表单、截取屏幕截图、录制 GIF，以及使用控制台日志和网络请求进行调试。
+是否需要执行汉化=   1
+
+src2/components/ContextVisualization.tsx
+行号 73: Project → 项目
+行号 73: User → 用户
+行号 73: Managed → 托管
+行号 73: Plugin → 插件
+行号 73: Built-in → 内置
+行号 266: MCP tools → MCP 工具
+行号 266: loaded on-demand → 按需加载
+行号 266: Loaded → 已加载
+行号 266: Available → 可用
+行号 273: [ANT-ONLY] System tools → [ANT-ONLY] 系统工具
+行号 273: some loaded on-demand → 部分按需加载
+行号 315: Custom agents → 自定义智能体
+行号 323: Memory files → 记忆文件
+行号 331: Skills → 技能
+行号 50: Collapse errors: {h.totalErrors}/{h.totalSpawns} spawns failed → 折叠错误：{h.totalErrors}/{h.totalSpawns} 次生成失败
+行号 54: Collapse idle: {h.totalEmptySpawns} consecutive empty runs → 折叠空闲：{h.totalEmptySpawns} 次连续空运行
+行号 57: Context strategy: collapse ({summary}) → 上下文策略：折叠 ({summary})
+行号 193: tokens → 令牌
+行号 208: Estimated usage by category → 按类别估算用量
+行号 235: Free space: → 剩余空间：
+是否需要执行汉化=   1
+
+src2/components/DesktopHandoff.tsx
+行号 39: Unknown error → 未知错误
+是否需要执行汉化=   1
+
+================================================================================
+【CLI 处理文件】
+================================================================================
+
+src2/cli/update.ts
+行号 54:  (currently running) →  (当前运行中)
+行号 123: Claude 被 Homebrew 管理。 → Claude 由 Homebrew 管理。
+行号 134: Claude 被 winget 管理。 → Claude 由 winget 管理。
+行号 147: Claude 被 apk 管理。 → Claude 由 apk 管理。
+行号 193: Warning: Configuration mismatch → 警告：配置不匹配
+行号 241: Claude Code is up to date (${MACRO.VERSION}) → Claude Code 已是最新版本 (${MACRO.VERSION})
+是否需要执行汉化=   1
+
+src2/cli/handlers/util.tsx
+行号 43: This will guide you through long-lived (1-year) auth token setup for your Claude account. Claude subscription required. → 这将指导您为 Claude 账户设置长期（1 年）身份验证令牌。需要 Claude 订阅。
+是否需要执行汉化=   1
+
+src2/cli/handlers/autoMode.ts
+行号 84: No custom auto mode rules found. → 未找到自定义自动模式规则。
+行号 85: Add rules to your settings file under autoMode.{allow, soft_deny, environment}. → 在设置文件的 autoMode.{allow, soft_deny, environment} 下添加规则。
+行号 86: Run `claude auto-mode defaults` to see the default rules for reference. → 运行 `claude auto-mode defaults` 查看默认规则作为参考。
+行号 111: Analyzing your auto mode rules… → 正在分析您的自动模式规则…
+行号 137: Failed to analyze rules:  → 分析规则失败：
+行号 145: No critique was generated. Please try again. → 未生成评审意见。请再试一次。
+是否需要执行汉化=   1
+
+src2/cli/print.ts
+行号 591: \错误: sandbox required but unavailable: ${sandboxUnavailableReason} → \错误：需要沙盒但不可用：${sandboxUnavailableReason}
+行号 592:   sandbox.failIfUnavailable is set — refusing to start without a working sandbox. →   sandbox.failIfUnavailable 已设置 — 在没有可用沙盒的情况下拒绝启动。
+行号 596: \n⚠ Sandbox disabled: ${sandboxUnavailableReason} → \n⚠ 沙盒已禁用：${sandboxUnavailableReason}
+行号 597:   Commands will run WITHOUT sandboxing. Network and filesystem restrictions will NOT be enforced. →   命令将在无沙盒环境下运行。网络和文件系统限制将不会生效。
+行号 605: \n❌ Sandbox Error: ${errorMessage(err)} → \n❌ 沙盒错误：${errorMessage(err)}
+是否需要执行汉化=   1
+
+================================================================================
+【屏幕文件】
+================================================================================
+
+src2/screens/Doctor.tsx
+行号 225: Claude Code diagnostics dismissed → Claude Code 诊断已关闭
+行号 314: OK → 正常
+行号 315: Not working → 不工作
+行号 315: bundled → 内置
+行号 315: vendor → 供应商
+行号 315: system → 系统
+行号 327: Recommendation: {diagnostic.recommendation.split("\n")[0]} → 建议：{diagnostic.recommendation.split("\n")[0]}
+行号 335: Warning: Multiple installations found → 警告：发现多个安装
+行号 351: Invalid Settings → 无效设置
+行号 381: Managed by package manager → 由包管理器管理
+行号 384: └ Auto-updates:{" "} → └ 自动更新：
+行号 392: └ Update permissions:{" "} → └ 更新权限：
+行号 392: Yes → 是
+行号 392: No (requires sudo) → 否（需要 sudo）
+行号 429: Environment Variables → 环境变量
+行号 435: Version Locks → 版本锁
+行号 435: └ Cleaned {versionLockInfo.staleLocksCleaned} stale lock(s) → └ 已清理 {versionLockInfo.staleLocksCleaned} 个过期锁
+行号 435: └ No active version locks → └ 无活动版本锁
+行号 442: Agent Parse Errors → 智能体解析错误
+行号 442: └ Failed to parse {agentInfo.failedFiles.length} agent file(s): → └ 解析 {agentInfo.failedFiles.length} 个智能体文件失败：
+行号 450: Plugin Errors → 插件错误
+行号 450: └ {pluginsErrors.length} plugin error(s) detected: → └ 检测到 {pluginsErrors.length} 个插件错误：
+行号 458: Unreachable Permission Rules → 无法访问的权限规则
+行号 466: Context Usage Warnings → 上下文使用警告
+行号 516: unknown → 未知
+是否需要执行汉化=   1
+
+================================================================================
+【服务层文件】
+================================================================================
+
+src2/services/SessionMemory/sessionMemory.ts
+行号 392: No messages to summarize → 没有可总结的消息
+是否需要执行汉化=   1
+
+================================================================================
+汇总统计（五次扫描）
+================================================================================
+高优先级文件（用户频繁看到）：
+  - components/ContextVisualization.tsx: 17 条
+  - screens/Doctor.tsx: 22 条
+  - cli/print.ts: 5 条
+  - cli/handlers/autoMode.ts: 6 条
+
+中优先级文件（特定场景看到）：
+  - components/IdleReturnDialog.tsx: 1 条
+  - components/IdeOnboardingDialog.tsx: 3 条
+  - components/ClaudeInChromeOnboarding.tsx: 1 条
+  - components/DesktopHandoff.tsx: 1 条
+  - cli/update.ts: 6 条
+  - cli/handlers/util.tsx: 1 条
+
+低优先级文件（较少看到）：
+  - components/agents/ 相关文件: 8 条
+  - components/IdeStatusIndicator.tsx: 2 条
+  - services/SessionMemory/sessionMemory.ts: 1 条
+
+总计五次扫描：约 75 条用户界面文本，涉及约 15 个文件
+================================================================================

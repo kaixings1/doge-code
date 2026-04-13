@@ -1,0 +1,31 @@
+name: Sync Fork From Upstream
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-fork-main
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Merge upstream main into fork main
+        env:
+          UPSTREAM_URL: ${{ vars.UPSTREAM_URL }}
+          UPSTREAM_BRANCH: ${{ vars.UPSTREAM_BRANCH }}
+          TARGET_BRANCH: ${{ vars.TARGET_BRANCH }}
+        run: |
+          chmod +x scripts/sync-upstream.sh
+          ./scripts/sync-upstream.sh
