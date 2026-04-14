@@ -45,7 +45,7 @@ export async function runExtraUsage(): Promise<ExtraUsageResult> {
       return {
         type: 'message',
         value:
-          'Your organization already has unlimited extra usage. No request needed.',
+          '您的组织已拥有无限额外用量。无需请求。',
       }
     }
 

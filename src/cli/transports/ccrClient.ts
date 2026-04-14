@@ -54,7 +54,7 @@ export type CCRInitFailReason =
 /** Thrown by initialize(); carries a typed reason for the diag classifier. */
 export class CCRInitError extends Error {
   constructor(readonly reason: CCRInitFailReason) {
-    super(`CCRClient init failed: ${reason}`)
+    super(`CCRClient 初始化失败: ${reason}`)
   }
 }
 
@@ -335,7 +335,7 @@ export class CCRClient {
     // Session URL: https://host/v1/code/sessions/{id}
     if (sessionUrl.protocol !== 'http:' && sessionUrl.protocol !== 'https:') {
       throw new Error(
-        `CCRClient: Expected http(s) URL, got ${sessionUrl.protocol}`,
+        `CCRClient: 期望 http(s) URL，得到 ${sessionUrl.protocol}`,
       )
     }
     const pathname = sessionUrl.pathname.replace(/\/$/, '')
@@ -374,7 +374,7 @@ export class CCRClient {
         )
         if (!result.ok) {
           throw new RetryableError(
-            'client event POST failed',
+            '客户端事件 POST 失败',
             result.retryAfterMs,
           )
         }
@@ -397,7 +397,7 @@ export class CCRClient {
         )
         if (!result.ok) {
           throw new RetryableError(
-            'internal event POST failed',
+            '内部事件 POST 失败',
             result.retryAfterMs,
           )
         }
@@ -486,7 +486,7 @@ export class CCRClient {
           task_summary: null,
         },
       },
-      'PUT worker (init)',
+      'PUT worker (初始化)',
     )
     if (!result.ok) {
       // 409 → onEpochMismatch may throw, but request() catches it and returns
@@ -505,7 +505,7 @@ export class CCRClient {
       void this.writeEvent({ type: 'keep_alive' })
     })
 
-    logForDebugging(`CCRClient: initialized, epoch=${this.workerEpoch}`)
+    logForDebugging(`CCRClient: 已初始化，epoch=${this.workerEpoch}`)
     logForDiagnosticsNoPII('info', 'cli_worker_lifecycle_initialized', {
       epoch: this.workerEpoch,
       duration_ms: Date.now() - startMs,
@@ -612,7 +612,7 @@ export class CCRClient {
           this.onEpochMismatch()
         }
       }
-      logForDebugging(`CCRClient: ${label} returned ${response.status}`, {
+      logForDebugging(`CCRClient: ${label} 返回 ${response.status}`, {
         level: 'warn',
       })
       logForDiagnosticsNoPII('warn', 'cli_worker_request_failed', {
@@ -629,7 +629,7 @@ export class CCRClient {
       }
       return { ok: false }
     } catch (error) {
-      logForDebugging(`CCRClient: ${label} failed: ${errorMessage(error)}`, {
+      logForDebugging(`CCRClient: ${label} 失败: ${errorMessage(error)}`, {
         level: 'warn',
       })
       logForDiagnosticsNoPII('warn', 'cli_worker_request_error', {
@@ -667,7 +667,7 @@ export class CCRClient {
    * this one — exit immediately.
    */
   private handleEpochMismatch(): never {
-    logForDebugging('CCRClient: Epoch mismatch (409), shutting down', {
+    logForDebugging('CCRClient: Epoch 不匹配 (409)，正在关闭', {
       level: 'error',
     })
     logForDiagnosticsNoPII('error', 'cli_worker_epoch_mismatch')
@@ -715,7 +715,7 @@ export class CCRClient {
         { timeout: 5_000 },
       )
       if (result.ok) {
-        logForDebugging('CCRClient: Heartbeat sent')
+        logForDebugging('CCRClient: 心跳已发送')
       }
     } finally {
       this.heartbeatInFlight = false
@@ -921,7 +921,7 @@ export class CCRClient {
         })
       } catch (error) {
         logForDebugging(
-          `CCRClient: GET ${url} failed (attempt ${attempt}/10): ${errorMessage(error)}`,
+          `CCRClient: GET ${url} 失败 (第 ${attempt}/10 次尝试): ${errorMessage(error)}`,
           { level: 'warn' },
         )
         if (attempt < 10) {
@@ -939,7 +939,7 @@ export class CCRClient {
         this.handleEpochMismatch()
       }
       logForDebugging(
-        `CCRClient: GET ${url} returned ${response.status} (attempt ${attempt}/10)`,
+        `CCRClient: GET ${url} 返回 ${response.status} (第 ${attempt}/10 次尝试)`,
         { level: 'warn' },
       )
 
@@ -950,7 +950,7 @@ export class CCRClient {
       }
     }
 
-    logForDebugging('CCRClient: GET retries exhausted', { level: 'error' })
+    logForDebugging('CCRClient: GET 重试已耗尽', { level: 'error' })
     logForDiagnosticsNoPII('error', 'cli_worker_get_retries_exhausted', {
       context,
     })

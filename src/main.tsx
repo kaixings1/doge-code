@@ -2318,7 +2318,7 @@ async function run(): Promise<CommanderCommand> {
     // trigger code execution before the process exits (e.g. we don't want apiKeyHelper
     // to run if trust was not established).
     if (process.exitCode !== undefined) {
-      logForDebugging('Graceful shutdown initiated, skipping further initialization');
+      logForDebugging('已启动优雅关闭，跳过进一步初始化');
       return;
     }
 
@@ -3513,7 +3513,7 @@ async function run(): Promise<CommanderCommand> {
         if (teleport === true || teleport === '') {
           // Interactive mode: show task selector and handle resume
           logEvent('tengu_teleport_interactive_mode', {});
-          logForDebugging('selectAndResumeTeleportTask: Starting teleport flow...');
+          logForDebugging('selectAndResumeTeleportTask: 正在启动teleport流程...');
           const teleportResult = await launchTeleportResumeWrapper(root);
           if (!teleportResult) {
             // User cancelled or error occurred
@@ -3686,7 +3686,7 @@ async function run(): Promise<CommanderCommand> {
               entrypoint: 'cli_flag' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
               success: false
             });
-            return await exitWithError(root, `No conversation found with session ID: ${sessionId}`);
+            return await exitWithError(root, `未找到会话 ID 为 ${sessionId} 的对话`);
           }
           const fullPath = matchedLog?.fullPath ?? result.fullPath;
           processedResume = await processResumedConversation(result, {
@@ -3708,7 +3708,7 @@ async function run(): Promise<CommanderCommand> {
             success: false
           });
           logError(error);
-          await exitWithError(root, `Failed to resume session ${sessionId}`);
+          await exitWithError(root, `恢复会话 ${sessionId} 失败`);
         }
       }
 
@@ -3813,7 +3813,7 @@ async function run(): Promise<CommanderCommand> {
         pendingHookMessages
       }, renderAndRun);
     }
-  }).version(`${MACRO.VERSION} (Claude Code)`, '-v, --version', 'Output the version number');
+  }).version(`${MACRO.VERSION} (Claude Code)`, '-v, --version', '输出版本号');
 
   // Worktree flags
   program.option('-w, --worktree [name]', 'Create a new git worktree for this session (optionally specify a name)');
@@ -3835,10 +3835,10 @@ async function run(): Promise<CommanderCommand> {
     program.option('--agent-teams', '[ANT-ONLY] Force Claude to use multi-agent mode for solving problems', () => true);
   }
   if (feature('TRANSCRIPT_CLASSIFIER')) {
-    program.addOption(new Option('--enable-auto-mode', 'Opt in to auto mode').hideHelp());
+    program.addOption(new Option('--enable-auto-mode', '启用 auto 模式').hideHelp());
   }
   if (feature('PROACTIVE') || feature('KAIROS')) {
-    program.addOption(new Option('--proactive', 'Start in proactive autonomous mode'));
+    program.addOption(new Option('--proactive', '以主动自主模式启动'));
   }
   if (feature('UDS_INBOX')) {
     program.addOption(new Option('--messaging-socket-path <path>', 'Unix domain socket path for the UDS messaging server (defaults to a tmp path)'));
@@ -3899,7 +3899,7 @@ async function run(): Promise<CommanderCommand> {
 
   // claude mcp
 
-  const mcp = program.command('mcp').description('Configure and manage MCP servers').configureHelp(createSortedHelpConfig()).enablePositionalOptions();
+  const mcp = program.command('mcp').description('配置和管理 MCP 服务器').configureHelp(createSortedHelpConfig()).enablePositionalOptions();
   mcp.command('serve').description(`Start the Claude Code MCP server`).option('-d, --debug', 'Enable debug mode', () => true).option('--verbose', 'Override verbose mode setting from config', () => true).action(async ({
     debug,
     verbose
@@ -4105,8 +4105,8 @@ async function run(): Promise<CommanderCommand> {
 
   // claude auth
 
-  const auth = program.command('auth').description('Manage authentication').configureHelp(createSortedHelpConfig());
-  auth.command('login').description('Sign in to your Anthropic account').option('--email <email>', 'Pre-populate email address on the login page').option('--sso', 'Force SSO login flow').option('--console', 'Use Anthropic Console (API usage billing) instead of Claude subscription').option('--claudeai', 'Use Claude subscription (default)').action(async ({
+  const auth = program.command('auth').description('管理认证').configureHelp(createSortedHelpConfig());
+  auth.command('login').description('登录到您的 Anthropic 账户').option('--email <email>', '在登录页面预填充电子邮件地址').option('--sso', '强制 SSO 登录流程').option('--console', '使用 Anthropic Console (API 用量计费) 而非 Claude 订阅').option('--claudeai', '使用 Claude 订阅(默认)').action(async ({
     email,
     sso,
     console: useConsole,
@@ -4127,7 +4127,7 @@ async function run(): Promise<CommanderCommand> {
       claudeai
     });
   });
-  auth.command('status').description('Show authentication status').option('--json', 'Output as JSON (default)').option('--text', 'Output as human-readable text').action(async (opts: {
+  auth.command('status').description('显示认证状态').option('--json', '输出为 JSON(默认)').option('--text', '输出为人类可读文本').action(async (opts: {
     json?: boolean;
     text?: boolean;
   }) => {
@@ -4153,8 +4153,8 @@ async function run(): Promise<CommanderCommand> {
   const coworkOption = () => new Option('--cowork', 'Use cowork_plugins directory').hideHelp();
 
   // Plugin validate command
-  const pluginCmd = program.command('plugin').alias('plugins').description('Manage Claude Code plugins').configureHelp(createSortedHelpConfig());
-  pluginCmd.command('validate <path>').description('Validate a plugin or marketplace manifest').addOption(coworkOption()).action(async (manifestPath: string, options: {
+  const pluginCmd = program.command('plugin').alias('plugins').description('管理 Claude Code 插件').configureHelp(createSortedHelpConfig());
+  pluginCmd.command('validate <path>').description('验证插件或市场清单文件').addOption(coworkOption()).action(async (manifestPath: string, options: {
     cowork?: boolean;
   }) => {
     const {
@@ -4176,8 +4176,8 @@ async function run(): Promise<CommanderCommand> {
   });
 
   // Marketplace subcommands
-  const marketplaceCmd = pluginCmd.command('marketplace').description('Manage Claude Code marketplaces').configureHelp(createSortedHelpConfig());
-  marketplaceCmd.command('add <source>').description('Add a marketplace from a URL, path, or GitHub repo').addOption(coworkOption()).option('--sparse <paths...>', 'Limit checkout to specific directories via git sparse-checkout (for monorepos). Example: --sparse .claude-plugin plugins').option('--scope <scope>', 'Where to declare the marketplace: user (default), project, or local').action(async (source: string, options: {
+  const marketplaceCmd = pluginCmd.command('marketplace').description('管理 Claude Code 市场').configureHelp(createSortedHelpConfig());
+  marketplaceCmd.command('add <source>').description('从 URL、路径或 GitHub 仓库添加市场').addOption(coworkOption()).option('--sparse <paths...>', '通过 git sparse-checkout 限制检特定目录(用于 monorepo)。例如: --sparse .claude-plugin plugins').option('--scope <scope>', '声明市场的位置: user(默认), project, 或 local').action(async (source: string, options: {
     cowork?: boolean;
     sparse?: string[];
     scope?: string;

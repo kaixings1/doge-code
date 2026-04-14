@@ -33,7 +33,7 @@ Format the comments as:
 
   [any replies indented]
 
-If there are no comments, return "No comments found."
+If there are no comments, return "未找到评论。"
 
 Remember:
 1. Only show the actual comments, no explanatory text

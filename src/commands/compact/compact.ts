@@ -131,7 +131,7 @@ export const call: LocalCommandCall = async (args, context) => {
       throw new Error(ERROR_MESSAGE_INCOMPLETE_RESPONSE)
     } else {
       logError(error)
-      throw new Error(`Error during compaction: ${error}`)
+      throw new Error(`压缩过程中出错: ${error}`)
     }
   }
 }
@@ -240,7 +240,7 @@ function buildDisplayText(
   const dimmed = [
     ...(context.options.verbose
       ? []
-      : [`(${expandShortcut} to see full summary)`]),
+      : [`(${expandShortcut} 查看完整摘要)`]),
     ...(userDisplayMessage ? [userDisplayMessage] : []),
     ...(upgradeMessage ? [upgradeMessage] : []),
   ]

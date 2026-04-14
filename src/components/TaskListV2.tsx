@@ -180,7 +180,7 @@ export function TaskListV2({
       parts.push(`${hiddenPending} pending`);
     }
     if (hiddenCompleted > 0) {
-      parts.push(`${hiddenCompleted} completed`);
+      parts.push(`${hiddenCompleted} 已完成`);
     }
     hiddenSummary = ` … +${parts.join(', ')}`;
   }
@@ -193,12 +193,12 @@ export function TaskListV2({
         <Box>
           <Text dimColor>
             <Text bold>{tasks.length}</Text>
-            {' tasks ('}
+            {' 个任务 ('}
             <Text bold>{completedCount}</Text>
-            {' done, '}
+            {' 已完成, '}
             {inProgressCount > 0 && <>
                 <Text bold>{inProgressCount}</Text>
-                {' in progress, '}
+                {' 进行中, '}
               </>}
             <Text bold>{pendingCount}</Text>
             {' open)'}

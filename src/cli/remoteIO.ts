@@ -57,7 +57,7 @@ export class RemoteIO extends StructuredIO {
     if (sessionToken) {
       headers['Authorization'] = `Bearer ${sessionToken}`
     } else {
-      logForDebugging('[remote-io] No session ingress token available', {
+      logForDebugging('[remote-io] 无可用的会话入口令牌', {
         level: 'error',
       })
     }

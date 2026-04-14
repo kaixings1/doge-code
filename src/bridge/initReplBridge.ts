@@ -157,7 +157,7 @@ export async function initReplBridge(
       'policy_denied',
       '[bridge:repl] Skipping: allow_remote_control policy not allowed',
     )
-    onStateChange?.('failed', "disabled by your organization's policy")
+    onStateChange?.('failed', "被您组织的策略禁用")
     return null
   }
 
@@ -415,7 +415,7 @@ export async function initReplBridge(
         `[bridge:repl] Skipping: ${versionError}`,
         true,
       )
-      onStateChange?.('failed', 'run `claude update` to upgrade')
+      onStateChange?.('failed', '运行 `claude update` 进行升级')
       return null
     }
     logForDebugging(

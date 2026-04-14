@@ -7,7 +7,7 @@ export const call: LocalCommandCall = async (args, _context) => {
   if (!targetModel) {
     return {
       type: 'text',
-      value: 'Usage: /remove-model <model-name>',
+      value: '用法: /remove-model <模型名称>',
     }
   }
 
@@ -50,6 +50,6 @@ export const call: LocalCommandCall = async (args, _context) => {
 
   return {
     type: 'text',
-    value: `Removed custom model: ${targetModel}`,
+    value: `已移除自定义模型: ${targetModel}`,
   }
 }
