@@ -82,7 +82,7 @@ export const FileEditTool = buildTool({
   maxResultSizeChars: 100_000,
   strict: true,
   async description() {
-    return 'A tool for editing files';
+    return '一个编辑文件的工具';
   },
   async prompt() {
     return getEditToolDescription();
@@ -153,12 +153,10 @@ export const FileEditTool = buildTool({
       return { result: false, message: secretError, errorCode: 0 };
     }
     if (old_string === new_string) {
+      // Return success instead of error to prevent AI from retrying the same edit
       return {
-        result: false,
-        behavior: 'ask',
-        message:
-          '没有更改要做：old_string 和 new_string 完全相同。',
-        errorCode: 1,
+        result: true,
+        message: '文件已是最新状态，无需更改。',
       };
     }
 
@@ -310,7 +308,7 @@ export const FileEditTool = buildTool({
             result: false,
             behavior: 'ask',
             message:
-              '文件自读取后已被修改（可能由用户或 linter 导致）。请在尝试写入前再次读取。',
+              '文件自从被读取后已被修改（可能由用户或 linter 导致）。请在尝试写入前再次读取。',
             errorCode: 7,
           };
         }
@@ -326,8 +324,7 @@ export const FileEditTool = buildTool({
       return {
         result: false,
         behavior: 'ask',
-        message: `文件中未找到要替换的字符串。
-字符串：${old_string}`,
+        message: `文件中未找到要替换的字符串。字符串：${old_string}`,
         meta: {
           isFilePathAbsolute: String(isAbsolute(file_path)),
         },
@@ -342,8 +339,7 @@ export const FileEditTool = buildTool({
       return {
         result: false,
         behavior: 'ask',
-        message: `找到 ${matches} 处匹配要替换的字符串，但 replace_all 为 false。要替换所有匹配项，请将 replace_all 设为 true。要仅替换一处匹配，请提供更多上下文来唯一标识实例。
-字符串：${old_string}`,
+        message: `找到 ${matches} 处匹配要替换的字符串，但 replace_all 为 false。要替换所有匹配项，请将 replace_all 设为 true。要仅替换一处匹配，请提供更多上下文来唯一标识实例。字符串：${old_string}`,
         meta: {
           isFilePathAbsolute: String(isAbsolute(file_path)),
           actualOldString,
@@ -407,6 +403,21 @@ export const FileEditTool = buildTool({
   ) {
     const { file_path, old_string, new_string, replace_all = false } = input;
 
+    // Early return if old_string equals new_string to prevent unnecessary processing
+    // This also prevents infinite retry loops when AI attempts the same edit
+    if (old_string === new_string) {
+      return {
+        data: {
+          filePath: file_path,
+          oldString: old_string,
+          newString: new_string,
+          originalFile: old_string,
+          structuredPatch: [],
+          userModified: userModified ?? false,
+          replaceAll: replace_all,
+        },
+      };
+    }
 
     // 1. Get current state
     const fs = getFsImplementation();

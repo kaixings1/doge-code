@@ -235,8 +235,7 @@ export function CollapsedReadSearchContent({
       })}
         {message.hookInfos && message.hookInfos.length > 0 && <>
             <Text dimColor>
-              {'  ⎿  '}Ran {message.hookCount} PreToolUse{' '}
-              {message.hookCount === 1 ? 'hook' : 'hooks'} (
+              {'  ⎿  '}运行了 {message.hookCount} 个 PreToolUse 钩子 (
               {formatSecondsShort(message.hookTotalMs ?? 0)})
             </Text>
             {message.hookInfos.map((info, idx) => <Text key={`hook-${idx}`} dimColor>

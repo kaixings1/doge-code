@@ -234,7 +234,7 @@ async function installBindingsForVSCodeTerminal(editor: 'VSCode' | 'Cursor' | 'W
       try {
         await copyFile(keybindingsPath, backupPath);
       } catch {
-        return `${color('warning', theme)(`Error backing up existing ${editor} terminal keybindings. Bailing out.`)}${EOL}${chalk.dim(`See ${formatPathLink(keybindingsPath)}`)}${EOL}${chalk.dim(`Backup path: ${formatPathLink(backupPath)}`)}${EOL}`;
+        return `${color('warning', theme)(`备份现有 ${editor} 终端键绑定时出错。正在退出。`)}${EOL}${chalk.dim(`参见 ${formatPathLink(keybindingsPath)}`)}${EOL}${chalk.dim(`备份路径：${formatPathLink(backupPath)}`)}${EOL}`;
       }
     }
 

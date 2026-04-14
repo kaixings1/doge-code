@@ -1049,7 +1049,7 @@ export function useManageMCPConnections(
         .getState()
         .mcp.clients.find(c => c.name === serverName)
       if (!client) {
-        throw new Error(`MCP server ${serverName} not found`)
+        throw new Error(`找不到 MCP 服务器 ${serverName}`)
       }
 
       // Cancel any pending automatic reconnection attempt
@@ -1077,7 +1077,7 @@ export function useManageMCPConnections(
         .getState()
         .mcp.clients.find(c => c.name === serverName)
       if (!client) {
-        throw new Error(`MCP server ${serverName} not found`)
+        throw new Error(`找不到 MCP 服务器 ${serverName}`)
       }
 
       const isCurrentlyDisabled = client.type === 'disabled'

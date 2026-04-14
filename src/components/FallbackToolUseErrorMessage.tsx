@@ -42,7 +42,7 @@ export function FallbackToolUseErrorMessage(t0) {
         if (trimmed.startsWith("Error: ") || trimmed.startsWith("Cancelled: ")) {
           error = trimmed;
         } else {
-          error = `Error: ${trimmed}`;
+          error = `错误：${trimmed}`;
         }
       }
     }

@@ -254,17 +254,17 @@ export function Feedback({
     // Don't cancel when done - let other keys close the dialog
     if (step === 'done') {
       if (error) {
-        onDone('Error submitting feedback / bug report', {
+        onDone('提交反馈 / 错误报告时出错', {
           display: 'system'
         });
       } else {
-        onDone('Feedback / bug report submitted', {
+        onDone('反馈 / 错误报告已提交', {
           display: 'system'
         });
       }
       return;
     }
-    onDone('Feedback / bug report cancelled', {
+    onDone('反馈 / 错误报告已取消', {
       display: 'system'
     });
   }, [step, error, onDone]);
@@ -284,11 +284,11 @@ export function Feedback({
         void openBrowser(issueUrl);
       }
       if (error) {
-        onDone('Error submitting feedback / bug report', {
+        onDone('提交反馈 / 错误报告时出错', {
           display: 'system'
         });
       } else {
-        onDone('Feedback / bug report submitted', {
+        onDone('反馈 / 错误报告已提交', {
           display: 'system'
         });
       }
@@ -298,7 +298,7 @@ export function Feedback({
     // When in userInput step with error, allow user to edit and retry
     // (don't close on any keypress - they can still press Esc to cancel)
     if (error && step !== 'userInput') {
-      onDone('Error submitting feedback / bug report', {
+      onDone('提交反馈 / 错误报告时出错', {
         display: 'system'
       });
       return;

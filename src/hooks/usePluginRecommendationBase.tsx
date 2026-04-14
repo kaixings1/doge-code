@@ -81,13 +81,13 @@ export async function installPluginAndNotify(pluginId: string, pluginName: strin
   try {
     const pluginData = await getPluginById(pluginId);
     if (!pluginData) {
-      throw new Error(`Plugin ${pluginId} not found in marketplace`);
+      throw new Error(`在市场中也找不到插件 ${pluginId}`);
     }
     await install(pluginData);
     addNotification({
       key: `${keyPrefix}-installed`,
       jsx: <Text color="success">
-          {figures.tick} {pluginName} installed · restart to apply
+          {figures.tick} {pluginName} 已安装 · 重启以应用
         </Text>,
       priority: 'immediate',
       timeoutMs: 5000
@@ -96,7 +96,7 @@ export async function installPluginAndNotify(pluginId: string, pluginName: strin
     logError(error);
     addNotification({
       key: `${keyPrefix}-install-failed`,
-      jsx: <Text color="error">Failed to install {pluginName}</Text>,
+      jsx: <Text color="error">安装 {pluginName} 失败</Text>,
       priority: 'immediate',
       timeoutMs: 5000
     });

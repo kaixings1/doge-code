@@ -4013,11 +4013,11 @@ You have exited auto mode. The user may now want to interact more directly. You 
 
       if (attachment.outputFilePath) {
         messageParts.push(
-          `Read the output file to retrieve the result: ${attachment.outputFilePath}`,
+          `读取输出文件以获取结果：${attachment.outputFilePath}`,
         )
       } else {
         messageParts.push(
-          `You can check its output using the ${TASK_OUTPUT_TOOL_NAME} tool.`,
+          `你可以使用 ${TASK_OUTPUT_TOOL_NAME} 工具来查看其输出。`,
         )
       }
 
@@ -4249,7 +4249,7 @@ You have exited auto mode. The user may now want to interact more directly. You 
         process.env.CLAUDE_CODE_VERIFY_PLAN === 'true'
           ? 'VerifyPlanExecution'
           : ''
-      const content = `You have completed implementing the plan. Please call the "${toolName}" tool directly (NOT the ${AGENT_TOOL_NAME} tool or an agent) to verify that all plan items were completed correctly.`
+      const content = `你已完成计划的实施。请直接调用 "${toolName}" 工具（而不是 ${AGENT_TOOL_NAME} 工具或代理）来验证所有计划项是否已正确完成。`
       return wrapMessagesInSystemReminder([
         createUserMessage({ content, isMeta: true }),
       ])

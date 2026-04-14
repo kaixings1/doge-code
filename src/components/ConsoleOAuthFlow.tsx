@@ -349,7 +349,7 @@ export function ConsoleOAuthFlow({
         const sslHint_0 = getSSLErrorHint(err_1);
         setOAuthStatus({
           state: 'error',
-          message: sslHint_0 ?? (isTokenExchangeError ? 'Failed to exchange authorization code for access token. Please try again.' : err_1.message),
+          message: sslHint_0 ?? (isTokenExchangeError ? '交换授权码失败。请重试。' : err_1.message),
           toRetry: mode === 'setup-token' ? {
             state: 'ready_to_start'
           } : {

@@ -2537,10 +2537,10 @@ export async function refreshMarketplace(
             ? `We've deprecated "claude-code-plugins" in favor of "claude-plugins-official".`
             : `This marketplace may have been deprecated or moved to a new location.`
         throw new Error(
-          `The marketplace.json file is no longer present in this repository.\n\n` +
+          `此仓库中不再存在 marketplace.json 文件。\n\n` +
             `${reason}\n` +
-            `Source: ${sourceDisplay}\n\n` +
-            `You can remove this marketplace with: claude plugin marketplace remove "${name}"`,
+            `来源：${sourceDisplay}\n\n` +
+            `你可以使用以下命令移除此市场：claude plugin marketplace remove "${name}"`,
         )
       }
     } else if (source.source === 'url') {

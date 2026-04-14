@@ -147,7 +147,7 @@ export function MCPSettings(t0) {
         return;
       }
       if (servers.length === 0 && agentMcpServers.length === 0) {
-        onComplete("No MCP servers configured. Please run /doctor if this is unexpected. Otherwise, run `claude mcp --help` or visit https://code.claude.com/docs/en/mcp to learn more.");
+        onComplete("未配置 MCP 服务器。如果这是意外情况，请运行 /doctor。否则，运行 `claude mcp --help` 或访问 https://code.claude.com/docs/en/mcp 了解更多信息。");
       }
     };
     t8 = [servers.length, filteredClients.length, agentMcpServers.length, onComplete];

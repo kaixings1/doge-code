@@ -173,7 +173,7 @@ export async function readNotebook(
   if (cellId) {
     const cell = notebook.cells.find(c => c.id === cellId)
     if (!cell) {
-      throw new Error(`Cell with ID "${cellId}" not found in notebook`)
+      throw new Error(`在笔记本中找不到 ID 为 "${cellId}" 的单元格`)
     }
     return [processCell(cell, notebook.cells.indexOf(cell), language, true)]
   }

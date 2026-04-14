@@ -33,7 +33,7 @@ const DISK_CACHE_TTL_MS = 24 * 60 * 60 * 1000
 async function _fetchMetricsEnabled(): Promise<MetricsEnabledResponse> {
   const authResult = getAuthHeaders()
   if (authResult.error) {
-    throw new Error(`Auth error: ${authResult.error}`)
+    throw new Error(`认证错误：${authResult.error}`)
   }
 
   const headers = {

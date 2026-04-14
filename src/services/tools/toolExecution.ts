@@ -398,12 +398,12 @@ export async function* runToolUse(
         content: [
           {
             type: 'tool_result',
-            content: `<tool_use_error>Error: No such tool available: ${toolName}</tool_use_error>`,
+            content: `<tool_use_error>错误：没有可用的工具：${toolName}</tool_use_error>`,
             is_error: true,
             tool_use_id: toolUse.id,
           },
         ],
-        toolUseResult: `Error: No such tool available: ${toolName}`,
+        toolUseResult: `错误：没有可用的工具：${toolName}`,
         sourceToolAssistantUUID: assistantMessage.uuid,
       }),
     }
@@ -470,7 +470,7 @@ export async function* runToolUse(
     logError(error)
     const errorMessage = error instanceof Error ? error.message : String(error)
     const toolInfo = tool ? ` (${tool.name})` : ''
-    const detailedError = `Error calling tool${toolInfo}: ${errorMessage}`
+    const detailedError = `调用工具时出错${toolInfo}：${errorMessage}`
 
     yield {
       message: createUserMessage({
@@ -725,7 +725,7 @@ async function checkPermissionsAndCallTool(
               tool_use_id: toolUseID,
             },
           ],
-          toolUseResult: `Error: ${isValidCall.message}`,
+          toolUseResult: `错误：${isValidCall.message}`,
           sourceToolAssistantUUID: assistantMessage.uuid,
         }),
       },
@@ -853,7 +853,7 @@ async function checkPermissionsAndCallTool(
         resultingMessages.push({
           message: createUserMessage({
             content: [createToolResultStopMessage(toolUseID)],
-            toolUseResult: `Error: ${stopReason}`,
+            toolUseResult: `错误：${stopReason}`,
             sourceToolAssistantUUID: assistantMessage.uuid,
           }),
         })
@@ -1065,7 +1065,7 @@ async function checkPermissionsAndCallTool(
       message: createUserMessage({
         content: messageContent,
         imagePasteIds: rejectImageIds,
-        toolUseResult: `Error: ${errorMessage}`,
+        toolUseResult: `错误：${errorMessage}`,
         sourceToolAssistantUUID: assistantMessage.uuid,
       }),
     })
@@ -1723,7 +1723,7 @@ async function checkPermissionsAndCallTool(
               tool_use_id: toolUseID,
             },
           ],
-          toolUseResult: `Error: ${content}`,
+          toolUseResult: `错误：${content}`,
           mcpMeta: toolUseContext.agentId
             ? undefined
             : error instanceof

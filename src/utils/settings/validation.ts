@@ -240,7 +240,7 @@ export function filterInvalidPermissionRules(
         warnings.push({
           file: filePath,
           path: `permissions.${key}`,
-          message: `Non-string value in ${key} array was removed`,
+          message: `${key} 数组中的非字符串值已被移除`,
           invalidValue: rule,
         })
         return false

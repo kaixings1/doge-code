@@ -67,7 +67,7 @@ export { VALID_INSTALLABLE_SCOPES, VALID_UPDATE_SCOPES }
  */
 export function handleMarketplaceError(error: unknown, action: string): never {
   logError(error)
-  cliError(`${figures.cross} Failed to ${action}: ${errorMessage(error)}`)
+  cliError(`${figures.cross} ${action} 失败：${errorMessage(error)}`)
 }
 
 function printValidationResult(result: ValidationResult): void {
@@ -465,7 +465,7 @@ export async function marketplaceAddHandler(
     const scope = options.scope ?? 'user'
     if (scope !== 'user' && scope !== 'project' && scope !== 'local') {
       cliError(
-        `${figures.cross} Invalid scope '${scope}'. Use: user, project, or local`,
+        `${figures.cross} 无效的作用域 '${scope}'。请使用：user、project 或 local`,
       )
     }
     const settingSource = scopeToSettingSource(scope)
@@ -605,7 +605,7 @@ export async function marketplaceRemoveHandler(
         name as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
     })
 
-    cliOk(`${figures.tick} Successfully removed marketplace: ${name}`)
+    cliOk(`${figures.tick} 成功移除市场：${name}`)
   } catch (error) {
     handleMarketplaceError(error, 'remove marketplace')
   }

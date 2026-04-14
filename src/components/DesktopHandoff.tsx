@@ -44,12 +44,12 @@ export function DesktopHandoff(t0) {
       if (state === "prompt-download") {
         if (input === "y" || input === "Y") {
           openBrowser(getDownloadUrl()).catch(_temp);
-          onDone(`Starting download. Re-run /desktop once you\u2019ve installed the app.\nLearn more at ${DESKTOP_DOCS_URL}`, {
+          onDone(`开始下载。安装应用后请重新运行 /desktop。\n了解更多信息：${DESKTOP_DOCS_URL}`, {
             display: "system"
           });
         } else {
           if (input === "n" || input === "N") {
-            onDone(`The desktop app is required for /desktop. Learn more at ${DESKTOP_DOCS_URL}`, {
+            onDone(`/desktop 功能需要桌面应用程序。了解更多信息：${DESKTOP_DOCS_URL}`, {
               display: "system"
             });
           }
@@ -72,12 +72,12 @@ export function DesktopHandoff(t0) {
         setState("checking");
         const installStatus = await getDesktopInstallStatus();
         if (installStatus.status === "not-installed") {
-          setDownloadMessage("Claude Desktop is not installed.");
+          setDownloadMessage("未安装 Claude Desktop。");
           setState("prompt-download");
           return;
         }
         if (installStatus.status === "version-too-old") {
-          setDownloadMessage(`Claude Desktop needs to be updated (found v${installStatus.version}, need v1.1.2396+).`);
+          setDownloadMessage(`Claude Desktop 需要更新（当前版本 v${installStatus.version}，需要 v1.1.2396+）。`);
           setState("prompt-download");
           return;
         }
@@ -110,7 +110,7 @@ export function DesktopHandoff(t0) {
   if (state === "error") {
     let t4;
     if ($[7] !== error) {
-      t4 = <Text color="error">Error: {error}</Text>;
+      t4 = <Text color="error">错误：{error}</Text>;
       $[7] = error;
       $[8] = t4;
     } else {

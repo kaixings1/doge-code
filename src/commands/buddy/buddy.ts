@@ -78,14 +78,14 @@ export async function call(
   // ── /buddy off — mute companion ──
   if (sub === 'off') {
     saveGlobalConfig(cfg => ({ ...cfg, companionMuted: true }))
-    onDone('companion muted', { display: 'system' })
+    onDone('伙伴已静音', { display: 'system' })
     return null
   }
 
   // ── /buddy on — unmute companion ──
   if (sub === 'on') {
     saveGlobalConfig(cfg => ({ ...cfg, companionMuted: false }))
-    onDone('companion unmuted', { display: 'system' })
+    onDone('伙伴已取消静音', { display: 'system' })
     return null
   }
 
@@ -93,7 +93,7 @@ export async function call(
   if (sub === 'pet') {
     const companion = getCompanion()
     if (!companion) {
-      onDone('no companion yet \u00b7 run /buddy first', { display: 'system' })
+      onDone('还没有伙伴 · 请先运行 /buddy', { display: 'system' })
       return null
     }
 
@@ -110,7 +110,7 @@ export async function call(
       ),
     )
 
-    onDone(`petted ${companion.name}`, { display: 'system' })
+    onDone(`已抚摸 ${companion.name}`, { display: 'system' })
     return null
   }
 
@@ -162,16 +162,16 @@ export async function call(
   const shiny = r.bones.shiny ? ' \u2728 Shiny!' : ''
 
   const lines = [
-    'A wild companion appeared!',
+    '一个野生伙伴出现了！',
     '',
     ...sprite,
     '',
-    `${name} the ${speciesLabel(r.bones.species)}${shiny}`,
-    `Rarity: ${stars} (${r.bones.rarity})`,
+    `${name} - ${speciesLabel(r.bones.species)}${shiny}`,
+    `稀有度: ${stars} (${r.bones.rarity})`,
     `"${personality}"`,
     '',
-    'Your companion will now appear beside your input box!',
-    'Say its name to get its take \u00b7 /buddy pet \u00b7 /buddy off',
+    '您的伙伴现在将显示在输入框旁边！',
+    '叫它的名字来获取它的想法 · /buddy pet · /buddy off',
   ]
   onDone(lines.join('\n'), { display: 'system' })
   return null

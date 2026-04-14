@@ -51,7 +51,7 @@ function validateCommandForMode(
 
   return {
     behavior: 'passthrough',
-    message: `No mode-specific handling for '${baseCmd}' in ${toolPermissionContext.mode} mode`,
+    message: `在 ${toolPermissionContext.mode} 模式下未找到 '${baseCmd}' 的特定处理方式`,
   }
 }
 

@@ -407,7 +407,7 @@ function ThinkbackFlow(t0) {
   if ($[1] !== onDone) {
     t2 = message => {
       setInstallError(message);
-      onDone(`Error with thinkback: ${message}. Try running /plugin to manually install the think-back plugin.`, {
+      onDone(`Thinkback 出错：${message}。尝试运行 /plugin 手动安装 think-back 插件。`, {
         display: "system"
       });
     };

@@ -565,20 +565,20 @@ export async function runHeadless(
   void initializeGrowthBook()
 
   if (options.resumeSessionAt && !options.resume) {
-    process.stderr.write(`Error: --resume-session-at requires --resume\n`)
+    process.stderr.write(`错误：--resume-session-at 需要配合 --resume 使用\n`)
     gracefulShutdownSync(1)
     return
   }
 
   if (options.rewindFiles && !options.resume) {
-    process.stderr.write(`Error: --rewind-files requires --resume\n`)
+    process.stderr.write(`错误：--rewind-files 需要配合 --resume 使用\n`)
     gracefulShutdownSync(1)
     return
   }
 
   if (options.rewindFiles && inputPrompt) {
     process.stderr.write(
-      `Error: --rewind-files is a standalone operation and cannot be used with a prompt\n`,
+      `错误：--rewind-files 是独立操作，不能与 prompt 一起使用\n`,
     )
     gracefulShutdownSync(1)
     return
@@ -602,15 +602,15 @@ export async function runHeadless(
   if (sandboxUnavailableReason) {
     if (SandboxManager.isSandboxRequired()) {
       process.stderr.write(
-        `\nError: sandbox required but unavailable: ${sandboxUnavailableReason}\n` +
-          `  sandbox.failIfUnavailable is set — refusing to start without a working sandbox.\n\n`,
+        `\n错误：需要沙盒但不可用：${sandboxUnavailableReason}\n` +
+          `  sandbox.failIfUnavailable 已设置——在没有正常工作的沙盒的情况下拒绝启动。\n\n`,
       )
       gracefulShutdownSync(1)
       return
     }
     process.stderr.write(
-      `\n⚠ Sandbox disabled: ${sandboxUnavailableReason}\n` +
-        `  Commands will run WITHOUT sandboxing. Network and filesystem restrictions will NOT be enforced.\n\n`,
+      `\n⚠ 沙盒已禁用：${sandboxUnavailableReason}\n` +
+        `  命令将在没有沙盒的情况下运行。网络和文件系统限制将不会强制执行。\n\n`,
     )
   } else if (SandboxManager.isSandboxingEnabled()) {
     // Initialize sandbox with a callback that forwards network permission
@@ -619,7 +619,7 @@ export async function runHeadless(
     try {
       await SandboxManager.initialize(structuredIO.createSandboxAskCallback())
     } catch (err) {
-      process.stderr.write(`\n❌ Sandbox Error: ${errorMessage(err)}\n`)
+      process.stderr.write(`\n❌ 沙盒错误：${errorMessage(err)}\n`)
       gracefulShutdownSync(1, 'other')
       return
     }
@@ -743,7 +743,7 @@ export async function runHeadless(
 
     if (!targetMessage || targetMessage.type !== 'user') {
       process.stderr.write(
-        `Error: --rewind-files requires a user message UUID, but ${options.rewindFiles} is not a user message in this session\n`,
+        `错误：--rewind-files 需要用户消息 UUID，但 ${options.rewindFiles} 不是此会话中的用户消息\n`,
       )
       gracefulShutdownSync(1)
       return
@@ -757,7 +757,7 @@ export async function runHeadless(
       false,
     )
     if (!result.canRewind) {
-      process.stderr.write(`Error: ${result.error || 'Unexpected error'}\n`)
+      process.stderr.write(`错误：${result.error || '未知错误'}\n`)
       gracefulShutdownSync(1)
       return
     }
@@ -778,7 +778,7 @@ export async function runHeadless(
 
   if (!inputPrompt && !hasValidResumeSessionId && !isUsingSdkUrl) {
     process.stderr.write(
-      `Error: Input must be provided either through stdin or as a prompt argument when using --print\n`,
+      `错误：使用 --print 时，必须通过 stdin 或 prompt 参数提供输入\n`,
     )
     gracefulShutdownSync(1)
     return
@@ -786,7 +786,7 @@ export async function runHeadless(
 
   if (options.outputFormat === 'stream-json' && !options.verbose) {
     process.stderr.write(
-      'Error: When using --print, --output-format=stream-json requires --verbose\n',
+      '错误：使用 --print 时，--output-format=stream-json 需要配合 --verbose 使用\n',
     )
     gracefulShutdownSync(1)
     return
@@ -941,17 +941,17 @@ export async function runHeadless(
           )
           break
         case 'error_during_execution':
-          writeToStdout(`Execution error`)
+          writeToStdout(`执行错误`)
           break
         case 'error_max_turns':
-          writeToStdout(`Error: Reached max turns (${options.maxTurns})`)
+          writeToStdout(`错误：已达到最大轮数 (${options.maxTurns})`)
           break
         case 'error_max_budget_usd':
-          writeToStdout(`Error: Exceeded USD budget (${options.maxBudgetUsd})`)
+          writeToStdout(`错误：已超出美元预算 (${options.maxBudgetUsd})`)
           break
         case 'error_max_structured_output_retries':
           writeToStdout(
-            `Error: Failed to provide valid structured output after maximum retries`,
+            `错误：在最大重试次数后仍无法提供有效的结构化输出`,
           )
       }
   }
@@ -3508,15 +3508,15 @@ function runHeadlessStreaming(
           } else {
             sendControlResponseError(
               message,
-              `No active OAuth flow for server: ${serverName}`,
+              `OAuth 认证流程未激活：${serverName}`,
             )
           }
         } else if (message.request.subtype === 'claude_authenticate') {
           // Anthropic OAuth over the control channel. The SDK client owns
           // the user's browser (we're headless in -p mode); we hand back
-          // both URLs and wait. Automatic URL → localhost listener catches
-          // the redirect if the browser is on this host; manual URL → the
-          // success page shows "code#state" for claude_oauth_callback.
+          // both URLs and wait. 自动 URL → localhost listener 捕获
+          // 重定向（如果浏览器在此主机上）；手动 URL → success page 显示
+          // "code#state" for claude_oauth_callback。
           const { loginWithClaudeAi } = message.request
 
           // Clean up any prior flow. cleanup() closes the localhost listener
@@ -3615,9 +3615,8 @@ function runHeadlessStreaming(
               'No active claude_authenticate flow',
             )
           } else {
-            // Inject the manual code synchronously — must happen in stdin
-            // message order so a subsequent claude_authenticate doesn't
-            // replace the service before this code lands.
+            // 注入手动代码同步——必须在 stdin message order 中，以便后续的
+            // claude_authenticate 在注入此代码之前不替换服务。
             if (message.request.subtype === 'claude_oauth_callback') {
               claudeOAuth.service.handleManualAuthCodeInput({
                 authorizationCode: message.request.authorizationCode,
@@ -4309,13 +4308,13 @@ export function getCanUseToolFn(
         toolMatchesName(t, permissionPromptToolName),
       ) as PermissionPromptTool | undefined
       if (!permissionPromptTool) {
-        const error = `Error: MCP tool ${permissionPromptToolName} (passed via --permission-prompt-tool) not found. Available MCP tools: ${mcpTools.map(t => t.name).join(', ') || 'none'}`
+        const error = `错误：找不到 MCP 工具 ${permissionPromptToolName}（通过 --permission-prompt-tool 传递）。可用的 MCP 工具：${mcpTools.map(t => t.name).join(', ') || '无'}`
         process.stderr.write(`${error}\n`)
         gracefulShutdownSync(1)
         throw new Error(error)
       }
       if (!permissionPromptTool.inputJSONSchema) {
-        const error = `Error: tool ${permissionPromptToolName} (passed via --permission-prompt-tool) must be an MCP tool`
+        const error = `错误：工具 ${permissionPromptToolName}（通过 --permission-prompt-tool 传递）必须是 MCP 工具`
         process.stderr.write(`${error}\n`)
         gracefulShutdownSync(1)
         throw new Error(error)
@@ -4357,7 +4356,7 @@ async function handleInitializeRequest(
       type: 'control_response',
       response: {
         subtype: 'error',
-        error: 'Already initialized',
+        error: '已初始化',
         request_id: requestId,
         pending_permission_requests:
           structuredIO.getPendingPermissionRequests(),
@@ -4524,12 +4523,12 @@ async function handleRewindFiles(
   dryRun: boolean,
 ): Promise<RewindFilesResult> {
   if (!fileHistoryEnabled()) {
-    return { canRewind: false, error: 'File rewinding is not enabled.' }
+    return { canRewind: false, error: '文件回退功能未启用。' }
   }
   if (!fileHistoryCanRestore(appState.fileHistory, userMessageId)) {
     return {
       canRewind: false,
-      error: 'No file checkpoint found for this message.',
+      error: '未找到该消息的文件检查点。',
     }
   }
 
@@ -4612,8 +4611,8 @@ function handleSetPermissionMode(
         subtype: 'error',
         request_id: requestId,
         error: reason
-          ? `Cannot set permission mode to auto: ${getAutoModeUnavailableNotification(reason)}`
-          : 'Cannot set permission mode to auto',
+          ? `无法将权限模式设置为自动模式：${getAutoModeUnavailableNotification(reason)}`
+          : '无法将权限模式设置为自动模式',
       },
     })
     return toolPermissionContext
@@ -5036,9 +5035,9 @@ async function loadInitialMessages(
       )
       if (!parsedSessionId) {
         let errorMessage =
-          'Error: --resume requires a valid session ID when used with --print. Usage: claude -p --resume <session-id>'
+          '错误：使用 --print 时，--resume 需要提供有效的会话 ID。用法：claude -p --resume <session-id>'
         if (typeof options.resume === 'string') {
-          errorMessage += `. Session IDs must be in UUID format (e.g., 550e8400-e29b-41d4-a716-446655440000). Provided value "${options.resume}" is not a valid UUID`
+          errorMessage += `。会话 ID 必须是 UUID 格式（例如：550e8400-e29b-41d4-a716-446655440000）。提供的值 "${options.resume}" 不是有效的 UUID`
         }
         emitLoadError(errorMessage, options.outputFormat)
         gracefulShutdownSync(1)
@@ -5094,7 +5093,7 @@ async function loadInitialMessages(
           }
         } else {
           emitLoadError(
-            `No conversation found with session ID: ${parsedSessionId.sessionId}`,
+            `会话未找到，会话 ID: ${parsedSessionId.sessionId}`,
             options.outputFormat,
           )
           gracefulShutdownSync(1)
@@ -5109,7 +5108,7 @@ async function loadInitialMessages(
         )
         if (index < 0) {
           emitLoadError(
-            `No message found with message.uuid of: ${options.resumeSessionAt}`,
+            `未找到消息，消息 ID: ${options.resumeSessionAt}`,
             options.outputFormat,
           )
           gracefulShutdownSync(1)
@@ -5119,7 +5118,7 @@ async function loadInitialMessages(
         result.messages = index >= 0 ? result.messages.slice(0, index + 1) : []
       }
 
-      // Match coordinator mode to the resumed session's mode
+      // 匹配协调员模式到恢复会话的模式
       if (feature('COORDINATOR_MODE') && coordinatorModeModule) {
         const warning = coordinatorModeModule.matchSessionMode(result.mode)
         if (warning) {

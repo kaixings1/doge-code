@@ -195,7 +195,7 @@ ${DESCRIPTION}`
     } catch {
       return {
         result: false,
-        message: `Error: Invalid URL "${url}". The URL provided could not be parsed.`,
+        message: `错误：无效的 URL "${url}"。提供的 URL 无法解析。`,
         meta: { reason: 'invalid_url' },
         errorCode: 1,
       }
@@ -217,20 +217,20 @@ ${DESCRIPTION}`
     if ('type' in response && response.type === 'redirect') {
       const statusText =
         response.statusCode === 301
-          ? 'Moved Permanently'
+          ? '永久移动'
           : response.statusCode === 308
-            ? 'Permanent Redirect'
+            ? '永久重定向'
             : response.statusCode === 307
-              ? 'Temporary Redirect'
-              : 'Found'
+              ? '临时重定向'
+              : '找到'
 
-      const message = `REDIRECT DETECTED: The URL redirects to a different host.
+      const message = `检测到重定向：该 URL 重定向到不同的主机。
 
-Original URL: ${response.originalUrl}
-Redirect URL: ${response.redirectUrl}
-Status: ${response.statusCode} ${statusText}
+原始 URL：${response.originalUrl}
+重定向 URL：${response.redirectUrl}
+状态：${response.statusCode} ${statusText}
 
-To complete your request, I need to fetch content from the redirected URL. Please use WebFetch again with these parameters:
+要完成您的请求，我需要从重定向 URL 获取内容。请再次使用 WebFetch，参数如下：
 - url: "${response.redirectUrl}"
 - prompt: "${prompt}"`
 
@@ -281,7 +281,7 @@ To complete your request, I need to fetch content from the redirected URL. Pleas
     // mime-derived extension. Note it so Claude can inspect the raw file
     // if the Haiku summary above isn't enough.
     if (persistedPath) {
-      result += `\n\n[Binary content (${contentType}, ${formatFileSize(persistedSize ?? bytes)}) also saved to ${persistedPath}]`
+      result += `\n\n[二进制内容（${contentType}，${formatFileSize(persistedSize ?? bytes)}）也已保存到 ${persistedPath}]`
     }
 
     const output: Output = {

@@ -268,7 +268,7 @@ export async function* handleStopHooks(
       // Check if hook wants to prevent continuation
       if (result.preventContinuation) {
         preventedContinuation = true
-        stopReason = result.stopReason || 'Stop hook prevented continuation'
+        stopReason = result.stopReason || '停止钩子阻止继续执行'
         // Create attachment to track the stopped continuation (for structured data)
         yield createAttachmentMessage({
           type: 'hook_stopped_continuation',
@@ -316,7 +316,7 @@ export async function* handleStopHooks(
         )
         toolUseContext.addNotification?.({
           key: 'stop-hook-error',
-          text: `Stop hook error occurred \u00b7 ${expandShortcut} to see`,
+          text: `停止钩子错误 \u00b7 ${expandShortcut} 查看详情`,
           priority: 'immediate',
         })
       }
@@ -384,7 +384,7 @@ export async function* handleStopHooks(
           if (result.preventContinuation) {
             teammatePreventedContinuation = true
             teammateStopReason =
-              result.stopReason || 'TaskCompleted hook prevented continuation'
+              result.stopReason || 'TaskCompleted 钩子阻止继续执行'
             yield createAttachmentMessage({
               type: 'hook_stopped_continuation',
               message: teammateStopReason,
@@ -426,7 +426,7 @@ export async function* handleStopHooks(
         if (result.preventContinuation) {
           teammatePreventedContinuation = true
           teammateStopReason =
-            result.stopReason || 'TeammateIdle hook prevented continuation'
+            result.stopReason || 'TeammateIdle 钩子阻止继续执行'
           yield createAttachmentMessage({
             type: 'hook_stopped_continuation',
             message: teammateStopReason,
@@ -465,7 +465,7 @@ export async function* handleStopHooks(
     // Yield a system message that is not visible to the model for the user
     // to debug their hook.
     yield createSystemMessage(
-      `Stop hook failed: ${errorMessage(error)}`,
+      `停止钩子失败：${errorMessage(error)}`,
       'warning',
     )
     return { blockingErrors: [], preventContinuation: false }

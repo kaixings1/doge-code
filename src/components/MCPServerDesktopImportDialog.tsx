@@ -93,9 +93,9 @@ export function MCPServerDesktopImportDialog(t0) {
   if ($[8] !== onDone || $[9] !== scope || $[10] !== theme) {
     t6 = importedCount_0 => {
       if (importedCount_0 > 0) {
-        writeToStdout(`\n${color("success", theme)(`Successfully imported ${importedCount_0} MCP ${plural(importedCount_0, "server")} to ${scope} config.`)}\n`);
+        writeToStdout(`\n${color("success", theme)(`成功导入 ${importedCount_0} 个 MCP ${plural(importedCount_0, "服务器")} 到 ${scope} 配置。`)}\n`);
       } else {
-        writeToStdout("\nNo servers were imported.");
+        writeToStdout("\n未导入任何服务器。");
       }
       onDone();
       gracefulShutdown();
@@ -123,16 +123,16 @@ export function MCPServerDesktopImportDialog(t0) {
   const t8 = serverNames.length;
   let t9;
   if ($[14] !== serverNames.length) {
-    t9 = plural(serverNames.length, "server");
+    t9 = plural(serverNames.length, "服务器");
     $[14] = serverNames.length;
     $[15] = t9;
   } else {
     t9 = $[15];
   }
-  const t10 = `Found ${t8} MCP ${t9} in Claude Desktop.`;
+  const t10 = `在 Claude Desktop 中找到 ${t8} 个 MCP ${t9}。`;
   let t11;
   if ($[16] !== collisions.length) {
-    t11 = collisions.length > 0 && <Text color="warning">Note: Some servers already exist with the same name. If selected, they will be imported with a numbered suffix.</Text>;
+    t11 = collisions.length > 0 && <Text color="warning">注意：某些服务器已经存在同名。如果选择，它们将以编号后缀导入。</Text>;
     $[16] = collisions.length;
     $[17] = t11;
   } else {
@@ -140,7 +140,7 @@ export function MCPServerDesktopImportDialog(t0) {
   }
   let t12;
   if ($[18] === Symbol.for("react.memo_cache_sentinel")) {
-    t12 = <Text>Please select the servers you want to import:</Text>;
+    t12 = <Text>请选择要导入的服务器：</Text>;
     $[18] = t12;
   } else {
     t12 = $[18];
@@ -149,7 +149,7 @@ export function MCPServerDesktopImportDialog(t0) {
   let t14;
   if ($[19] !== collisions || $[20] !== serverNames) {
     t13 = serverNames.map(server => ({
-      label: `${server}${collisions.includes(server) ? " (already exists)" : ""}`,
+      label: `${server}${collisions.includes(server) ? "（已存在）" : ""}`,
       value: server
     }));
     t14 = serverNames.filter(name_0 => !collisions.includes(name_0));
