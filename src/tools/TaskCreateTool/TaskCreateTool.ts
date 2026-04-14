@@ -62,7 +62,7 @@ export const TaskCreateTool = buildTool({
     return outputSchema()
   },
   userFacingName() {
-    return 'TaskCreate'
+    return '创建任务'
   },
   shouldDefer: true,
   isEnabled() {

@@ -170,11 +170,11 @@ function _temp() {
 function getContentFieldLabel(config: IndividualHookConfig['config']): string {
   switch (config.type) {
     case 'command':
-      return 'Command';
+      return '命令';
     case 'prompt':
-      return 'Prompt';
+      return '提示词';
     case 'agent':
-      return 'Prompt';
+      return '提示词';
     case 'http':
       return 'URL';
   }

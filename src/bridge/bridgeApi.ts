@@ -55,7 +55,7 @@ export function validateBridgeId(id: string, label: string): string {
 /** Fatal bridge errors that should not be retried (e.g. auth failures). */
 export class BridgeFatalError extends Error {
   readonly status: number
-  /** Server-provided error type, e.g. "environment_expired". */
+  /** 服务器提供的错误类型，例如 "environment_expired"。 */
   readonly errorType: string | undefined
   constructor(message: string, status: number, errorType?: string) {
     super(message)
@@ -494,7 +494,7 @@ function handleErrorStatus(
       throw new Error(`${context}：速率限制 (429)。轮询过于频繁。`)
     default:
       throw new Error(
-        `${context}: Failed with status ${status}${detail ? `: ${detail}` : ''}`,
+        `${context}: 请求失败，状态码 ${status}${detail ? `: ${detail}` : ''}`,
       )
   }
 }

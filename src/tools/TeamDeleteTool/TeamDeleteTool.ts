@@ -48,7 +48,7 @@ export const TeamDeleteTool: Tool<InputSchema, Output> = buildTool({
   },
 
   async description() {
-    return 'Clean up team and task directories when the swarm is complete'
+    return '在集群完成后清理团队和任务目录'
   },
 
   async prompt() {
@@ -127,8 +127,8 @@ export const TeamDeleteTool: Tool<InputSchema, Output> = buildTool({
       data: {
         success: true,
         message: teamName
-          ? `Cleaned up directories and worktrees for team "${teamName}"`
-          : 'No team name found, nothing to clean up',
+          ? `已清理团队 "${teamName}" 的目录和工作树`
+          : '未找到团队名称，无需清理',
         team_name: teamName,
       },
     }
