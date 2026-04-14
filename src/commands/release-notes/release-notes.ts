@@ -45,6 +45,6 @@ export async function call(): Promise<LocalCommandResult> {
   // Nothing available, show link
   return {
     type: 'text',
-    value: `See the full changelog at: ${CHANGELOG_URL}`,
+    value: `查看完整更新日志: ${CHANGELOG_URL}`,
   }
 }

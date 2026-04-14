@@ -77,7 +77,7 @@ export function registerElicitationHandler(
     client.setRequestHandler(ElicitRequestSchema, async (request, extra) => {
       logMCPDebug(
         serverName,
-        `Received elicitation request: ${jsonStringify(request)}`,
+        `收到征求请求: ${jsonStringify(request)}`,
       )
 
       const mode = getElicitationMode(request.params)
@@ -96,7 +96,7 @@ export function registerElicitationHandler(
         if (hookResponse) {
           logMCPDebug(
             serverName,
-            `Elicitation resolved by hook: ${jsonStringify(hookResponse)}`,
+            `征求通过钩子解决: ${jsonStringify(hookResponse)}`,
           )
           logEvent('tengu_mcp_elicitation_response', {
             mode: mode as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -178,10 +178,10 @@ export function registerElicitationHandler(
         const { elicitationId } = notification.params
         logMCPDebug(
           serverName,
-          `Received elicitation completion notification: ${elicitationId}`,
+          `征求完成通知: ${elicitationId}`,
         )
         void executeNotificationHooks({
-          message: `MCP server "${serverName}" confirmed elicitation ${elicitationId} complete`,
+          message: `MCP 服务器 "${serverName}" 确认征求 ${elicitationId} 完成`,
           notificationType: 'elicitation_complete',
         })
         let found = false

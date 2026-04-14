@@ -194,7 +194,7 @@ export function Usage(): React.ReactNode {
         };
       };
       const responseBody = axiosError.response?.data ? jsonStringify(axiosError.response.data) : undefined;
-      setError(responseBody ? `Failed to load usage data: ${responseBody}` : 'Failed to load usage data');
+      setError(responseBody ? `加载用量数据失败: ${responseBody}` : '加载用量数据失败');
     } finally {
       setIsLoading(false);
     }

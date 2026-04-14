@@ -68,7 +68,7 @@ function uploadsDir(): string {
 async function resolveOne(att: InboundAttachment): Promise<string | undefined> {
   const token = getBridgeAccessToken()
   if (!token) {
-    debug('skip: no oauth token')
+    debug('跳过: 无 oauth 令牌')
     return undefined
   }
 
@@ -86,7 +86,7 @@ async function resolveOne(att: InboundAttachment): Promise<string | undefined> {
       validateStatus: () => true,
     })
     if (response.status !== 200) {
-      debug(`fetch ${att.file_uuid} failed: status=${response.status}`)
+      debug(`获取 ${att.file_uuid} 失败: 状态=${response.status}`)
       return undefined
     }
     data = Buffer.from(response.data)
@@ -108,7 +108,7 @@ async function resolveOne(att: InboundAttachment): Promise<string | undefined> {
     await mkdir(dir, { recursive: true })
     await writeFile(outPath, data)
   } catch (e) {
-    debug(`write ${outPath} failed: ${e}`)
+    debug(`写入 ${outPath} 失败: ${e}`)
     return undefined
   }
 
@@ -124,7 +124,7 @@ export async function resolveInboundAttachments(
   attachments: InboundAttachment[],
 ): Promise<string> {
   if (attachments.length === 0) return ''
-  debug(`resolving ${attachments.length} attachment(s)`)
+  debug(`正在解析 ${attachments.length} 个附件`)
   const paths = await Promise.all(attachments.map(resolveOne))
   const ok = paths.filter((p): p is string => p !== undefined)
   if (ok.length === 0) return ''

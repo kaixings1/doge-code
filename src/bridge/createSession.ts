@@ -160,7 +160,7 @@ export async function createBridgeSession({
   if (!isSuccess) {
     const detail = extractErrorDetail(response.data)
     logForDebugging(
-      `[bridge] Session creation failed with status ${response.status}${detail ? `: ${detail}` : ''}`,
+      `[bridge] 会话创建失败，状态码 ${response.status}${detail ? `: ${detail}` : ''}`,
     )
     return null
   }
@@ -172,7 +172,7 @@ export async function createBridgeSession({
     !('id' in sessionData) ||
     typeof sessionData.id !== 'string'
   ) {
-    logForDebugging('[bridge] No session ID in response')
+    logForDebugging('[bridge] 响应中没有会话 ID')
     return null
   }
 
@@ -235,7 +235,7 @@ export async function getBridgeSession(
   if (response.status !== 200) {
     const detail = extractErrorDetail(response.data)
     logForDebugging(
-      `[bridge] Session fetch failed with status ${response.status}${detail ? `: ${detail}` : ''}`,
+      `[bridge] 会话获取失败，状态码 ${response.status}${detail ? `: ${detail}` : ''}`,
     )
     return null
   }
@@ -311,7 +311,7 @@ export async function archiveBridgeSession(
   } else {
     const detail = extractErrorDetail(response.data)
     logForDebugging(
-      `[bridge] Session archive failed with status ${response.status}${detail ? `: ${detail}` : ''}`,
+      `[bridge] 会话归档失败，状态码 ${response.status}${detail ? `: ${detail}` : ''}`,
     )
   }
 }
@@ -373,7 +373,7 @@ export async function updateBridgeSessionTitle(
     } else {
       const detail = extractErrorDetail(response.data)
       logForDebugging(
-        `[bridge] Session title update failed with status ${response.status}${detail ? `: ${detail}` : ''}`,
+        `[bridge] 会话标题更新失败，状态码 ${response.status}${detail ? `: ${detail}` : ''}`,
       )
     }
   } catch (err: unknown) {

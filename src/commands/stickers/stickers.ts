@@ -10,7 +10,7 @@ export async function call(): Promise<LocalCommandResult> {
   } else {
     return {
       type: 'text',
-      value: `Failed to open browser. Visit: ${url}`,
+      value: `无法打开浏览器。请访问: ${url}`,
     }
   }
 }

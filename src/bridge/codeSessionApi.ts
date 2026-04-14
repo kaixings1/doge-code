@@ -55,7 +55,7 @@ export async function createCodeSession(
   if (response.status !== 200 && response.status !== 201) {
     const detail = extractErrorDetail(response.data)
     logForDebugging(
-      `[code-session] Session create failed ${response.status}${detail ? `: ${detail}` : ''}`,
+      `[code-session] 会话创建失败 ${response.status}${detail ? `: ${detail}` : ''}`,
     )
     return null
   }

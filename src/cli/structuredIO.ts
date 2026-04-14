@@ -435,7 +435,7 @@ export class StructuredIO {
         message.type !== 'assistant' &&
         message.type !== 'system'
       ) {
-        logForDebugging(`Ignoring unknown message type: ${message.type}`, {
+        logForDebugging(`忽略未知消息类型: ${message.type}`, {
           level: 'warn',
         })
         return undefined
@@ -641,7 +641,7 @@ export class StructuredIO {
         return permissionPromptToolResultToPermissionDecision(
           {
             behavior: 'deny',
-            message: `Tool permission request failed: ${error}`,
+            message: `工具权限请求失败: ${error}`,
             toolUseID,
           },
           tool,
@@ -741,7 +741,7 @@ export class StructuredIO {
             tool_name: SANDBOX_NETWORK_ACCESS_TOOL_NAME,
             input: { host: hostPattern.host },
             tool_use_id: randomUUID(),
-            description: `Allow network connection to ${hostPattern.host}?`,
+            description: `允许连接到 ${hostPattern.host}?`,
           },
           permissionToolOutputSchema(),
         )
@@ -846,7 +846,7 @@ async function executePermissionRequestHooksForSDK(
         return {
           behavior: 'deny',
           message:
-            decision.message || 'Permission denied by PermissionRequest hook',
+            decision.message || '权限被 PermissionRequest 钩子拒绝',
           decisionReason: {
             type: 'hook',
             hookName: 'PermissionRequest',

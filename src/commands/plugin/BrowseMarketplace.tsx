@@ -221,7 +221,7 @@ export function BrowseMarketplace({
               setViewState('plugin-details');
             }
           } else {
-            setError(`Plugin "${targetPlugin}" not found in any marketplace`);
+            setError(`插件 "${targetPlugin}" 在任何市场中都未找到`);
           }
         } else if (targetMarketplace) {
           // Navigate directly to the specified marketplace
@@ -230,7 +230,7 @@ export function BrowseMarketplace({
             setSelectedMarketplace(targetMarketplace);
             setViewState('plugin-list');
           } else {
-            setError(`Marketplace "${targetMarketplace}" not found`);
+            setError(`市场 "${targetMarketplace}" 未找到`);
           }
         }
       } catch (err) {

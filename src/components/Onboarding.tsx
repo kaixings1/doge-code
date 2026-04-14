@@ -59,7 +59,7 @@ export function Onboarding({
 
   // Define all onboarding steps
   const themeStep = <Box marginX={1}>
-      <ThemePicker onThemeSelect={handleThemeSelection} showIntroText={true} helpText="To change this later, run /theme" hideEscToCancel={true} skipExitHandling={true} // Skip exit handling as Onboarding already handles it
+      <ThemePicker onThemeSelect={handleThemeSelection} showIntroText={true} helpText="如需稍后更改，请运行 /theme" hideEscToCancel={true} skipExitHandling={true} // Skip exit handling as Onboarding already handles it
     />
     </Box>;
   const securityStep = <Box flexDirection="column" gap={1} paddingLeft={1}>

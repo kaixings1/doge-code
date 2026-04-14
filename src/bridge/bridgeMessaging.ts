@@ -378,7 +378,7 @@ export function handleServerControlRequest(
         response: {
           subtype: 'error',
           request_id: request.request_id,
-          error: `REPL bridge does not handle control_request subtype: ${request.request.subtype}`,
+          error: `REPL bridge 不处理 control_request 子类型: ${request.request.subtype}`,
         },
       }
   }
