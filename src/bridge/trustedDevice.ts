@@ -102,7 +102,7 @@ export async function enrollTrustedDevice(): Promise<void> {
     // reading the gate, so we get the post-refresh value.
     if (!(await checkGate_CACHED_OR_BLOCKING(TRUSTED_DEVICE_GATE))) {
       logForDebugging(
-        `[trusted-device] Gate ${TRUSTED_DEVICE_GATE} is off, skipping enrollment`,
+        `[trusted-device] 门控 ${TRUSTED_DEVICE_GATE} 已关闭，跳过注册`,
       )
       return
     }
@@ -124,7 +124,7 @@ export async function enrollTrustedDevice(): Promise<void> {
      
     const accessToken = getClaudeAIOAuthTokens()?.accessToken
     if (!accessToken) {
-      logForDebugging('[trusted-device] No OAuth token, skipping enrollment')
+      logForDebugging('[trusted-device] 无 OAuth 令牌，跳过注册')
       return
     }
     // Always re-enroll on /login — the existing token may belong to a
@@ -134,7 +134,7 @@ export async function enrollTrustedDevice(): Promise<void> {
 
     if (isEssentialTrafficOnly()) {
       logForDebugging(
-        '[trusted-device] Essential traffic only, skipping enrollment',
+        '[trusted-device] 仅基本流量，跳过注册',
       )
       return
     }
@@ -174,7 +174,7 @@ export async function enrollTrustedDevice(): Promise<void> {
     const token = response.data?.device_token
     if (!token || typeof token !== 'string') {
       logForDebugging(
-        '[trusted-device] Enrollment response missing device_token field',
+        '[trusted-device] 注册响应缺少 device_token 字段',
       )
       return
     }

@@ -91,7 +91,7 @@ async function resolveOne(att: InboundAttachment): Promise<string | undefined> {
     }
     data = Buffer.from(response.data)
   } catch (e) {
-    debug(`fetch ${att.file_uuid} threw: ${e}`)
+    debug(`获取附件 ${att.file_uuid} 失败：${e}`)
     return undefined
   }
 

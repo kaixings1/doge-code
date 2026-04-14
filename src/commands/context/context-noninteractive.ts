@@ -182,7 +182,7 @@ function formatContextAsMarkdownTable(data: ContextData): string {
         (autocompactCategory.tokens / rawMaxTokens) *
         100
       ).toFixed(1)
-      output += `| Autocompact buffer | ${formatTokens(autocompactCategory.tokens)} | ${percentDisplay}% |\n`
+      output += `| 自动压缩缓冲区 | ${formatTokens(autocompactCategory.tokens)} | ${percentDisplay}% |\n`
     }
 
     output += `\n`

@@ -1364,7 +1364,7 @@ function runHeadlessStreaming(
               `征求完成通知: ${elicitationId}`,
             )
             void executeNotificationHooks({
-              message: `MCP server "${serverName}" confirmed elicitation ${elicitationId} complete`,
+              message: `MCP 服务器 "${serverName}" 已确认触发请求 ${elicitationId} 完成`,
               notificationType: 'elicitation_complete',
             })
             output.enqueue({
@@ -3579,7 +3579,7 @@ function runHeadlessStreaming(
           // The claude_oauth_callback handler re-awaits flow for the manual
           // path and surfaces the real error to the client.
           void flow.catch(err =>
-            logForDebugging(`claude_authenticate flow ended: ${err}`, {
+            logForDebugging(`claude_authenticate 流程已结束：${err}`, {
               level: 'info',
             }),
           )
