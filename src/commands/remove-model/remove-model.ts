@@ -16,7 +16,7 @@ export const call: LocalCommandCall = async (args, _context) => {
   if (!savedModels.includes(targetModel)) {
     return {
       type: 'text',
-      value: `Model not found in saved list: ${targetModel}`,
+      value: `在保存的列表中未找到模型：${targetModel}`,
     }
   }
 

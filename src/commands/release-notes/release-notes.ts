@@ -9,7 +9,7 @@ import {
 function formatReleaseNotes(notes: Array<[string, string[]]>): string {
   return notes
     .map(([version, notes]) => {
-      const header = `Version ${version}:`
+      const header = `版本 ${version}：`
       const bulletPoints = notes.map(note => `· ${note}`).join('\n')
       return `${header}\n${bulletPoints}`
     })

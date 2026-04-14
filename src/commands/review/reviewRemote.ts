@@ -71,7 +71,7 @@ export async function checkOverageGate(): Promise<OverageGate> {
   if (quota.reviews_remaining > 0) {
     return {
       kind: 'proceed',
-      billingNote: ` This is free ultrareview ${quota.reviews_used + 1} of ${quota.reviews_limit}.`,
+      billingNote: ` 这是免费的 ultrareview，第 ${quota.reviews_used + 1} 次，共 ${quota.reviews_limit} 次。`,
     }
   }
 
@@ -108,7 +108,7 @@ export async function checkOverageGate(): Promise<OverageGate> {
 
   return {
     kind: 'proceed',
-    billingNote: ' This review bills as Extra Usage.',
+    billingNote: ' 此审查将按额外使用量计费。',
   }
 }
 

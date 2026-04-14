@@ -51,9 +51,9 @@ function MemoryCommand({
         editorSource = '$EDITOR';
         editorValue = process.env.EDITOR;
       }
-      const editorInfo = editorSource !== 'default' ? `Using ${editorSource}="${editorValue}".` : '';
-      const editorHint = editorInfo ? `> ${editorInfo} To change editor, set $EDITOR or $VISUAL environment variable.` : `> To use a different editor, set the $EDITOR or $VISUAL environment variable.`;
-      onDone(`Opened memory file at ${getRelativeMemoryPath(memoryPath)}\n\n${editorHint}`, {
+      const editorInfo = editorSource !== 'default' ? `使用 ${editorSource}="${editorValue}"。` : '';
+      const editorHint = editorInfo ? `> ${editorInfo} 要更改编辑器，请设置 $EDITOR 或 $VISUAL 环境变量。` : `> 要使用不同的编辑器，请设置 $EDITOR 或 $VISUAL 环境变量。`;
+      onDone(`已在 ${getRelativeMemoryPath(memoryPath)} 打开记忆文件\n\n${editorHint}`, {
         display: 'system'
       });
     } catch (error) {

@@ -469,11 +469,11 @@ function ErrorsTabContent(t0) {
               await removeMarketplaceSource(action.name);
               clearAllCaches();
               setMarketplaceLoadFailures(prev => prev.filter(f => f.name !== action.name));
-              setActionMessage(`${figures.tick} Removed marketplace "${action.name}"`);
+              setActionMessage(`${figures.tick} 已移除市场 "${action.name}"`);
               markPluginsChanged();
             } catch (t6) {
               const err = t6;
-              setActionMessage(`Failed to remove "${action.name}": ${err instanceof Error ? err.message : String(err)}`);
+              setActionMessage(`移除 "${action.name}" 失败：${err instanceof Error ? err.message : String(err)}`);
             }
           })();
           break bb77;

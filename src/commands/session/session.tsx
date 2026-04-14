@@ -129,7 +129,7 @@ function _temp3(line) {
   return line.length > 0;
 }
 function _temp2(e) {
-  logForDebugging("QR code generation failed", e);
+  logForDebugging("二维码生成失败", e);
 }
 function _temp(s) {
   return s.remoteSessionUrl;

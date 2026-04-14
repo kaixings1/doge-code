@@ -83,7 +83,7 @@ export async function importGithubToken(
     if (response.status === 401) {
       return { ok: false, error: { kind: 'not_signed_in' } }
     }
-    logForDebugging(`import-token returned ${response.status}`, {
+    logForDebugging(`import-token 返回 ${response.status}`, {
       level: 'error',
     })
     return { ok: false, error: { kind: 'server', status: response.status } }
@@ -91,7 +91,7 @@ export async function importGithubToken(
     if (axios.isAxiosError(err)) {
       // err.config.data would contain the POST body with the raw token.
       // Do not include it in any log. The error code alone is enough.
-      logForDebugging(`import-token network error: ${err.code ?? 'unknown'}`, {
+      logForDebugging(`import-token 网络错误：${err.code ?? 'unknown'}`, {
         level: 'error',
       })
     }
