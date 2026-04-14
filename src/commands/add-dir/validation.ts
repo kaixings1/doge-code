@@ -97,14 +97,14 @@ export function addDirHelpMessage(result: AddDirectoryResult): string {
     case 'emptyPath':
       return '请提供目录路径.'
     case 'pathNotFound':
-      return `Path ${chalk.bold(result.absolutePath)} was not found.`
+      return `路径 ${chalk.bold(result.absolutePath)} 不存在。`
     case 'notADirectory': {
       const parentDir = dirname(result.absolutePath)
-      return `${chalk.bold(result.directoryPath)} is not a directory. Did you mean to add the parent directory ${chalk.bold(parentDir)}?`
+      return `${chalk.bold(result.directoryPath)} 不是一个目录。您是否想添加父目录 ${chalk.bold(parentDir)}?`
     }
     case 'alreadyInWorkingDirectory':
-      return `${chalk.bold(result.directoryPath)} is already accessible within the existing working directory ${chalk.bold(result.workingDir)}.`
+      return `${chalk.bold(result.directoryPath)} 已包含在现有工作目录 ${chalk.bold(result.workingDir)} 中。`
     case 'success':
-      return `Added ${chalk.bold(result.absolutePath)} as a working directory.`
+      return `已将 ${chalk.bold(result.absolutePath)} 添加为工作目录。`
   }
 }

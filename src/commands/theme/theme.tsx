@@ -20,7 +20,7 @@ function ThemePickerCommand(t0) {
   if ($[0] !== onDone || $[1] !== setTheme) {
     t1 = setting => {
       setTheme(setting);
-      onDone(`Theme set to ${setting}`);
+      onDone(`主题已设置为 ${setting}`);
     };
     $[0] = onDone;
     $[1] = setTheme;

@@ -629,7 +629,7 @@ export async function addMcpConfig(
 ): Promise<void> {
   if (name.match(/[^a-zA-Z0-9_-]/)) {
     throw new Error(
-      `Invalid name ${name}. Names can only contain letters, numbers, hyphens, and underscores.`,
+      `名称 ${name} 无效。名称只能包含字母、数字、连字符和下划线。`,
     )
   }
 
@@ -660,7 +660,7 @@ export async function addMcpConfig(
     const formattedErrors = result.error.issues
       .map(err => `${err.path.join('.')}: ${err.message}`)
       .join(', ')
-    throw new Error(`Invalid configuration: ${formattedErrors}`)
+    throw new Error(`配置无效：${formattedErrors}`)
   }
   const validatedConfig = result.data
 
@@ -683,21 +683,21 @@ export async function addMcpConfig(
     case 'project': {
       const { servers } = getProjectMcpConfigsFromCwd()
       if (servers[name]) {
-        throw new Error(`MCP server ${name} already exists in .mcp.json`)
+        throw new Error(`MCP 服务器 ${name} 已存在于 .mcp.json 中`)
       }
       break
     }
     case 'user': {
       const globalConfig = getGlobalConfig()
       if (globalConfig.mcpServers?.[name]) {
-        throw new Error(`MCP server ${name} already exists in user config`)
+        throw new Error(`MCP 服务器 ${name} 已存在于用户配置中`)
       }
       break
     }
     case 'local': {
       const projectConfig = getCurrentProjectConfig()
       if (projectConfig.mcpServers?.[name]) {
-        throw new Error(`MCP server ${name} already exists in local config`)
+        throw new Error(`MCP 服务器 ${name} 已存在于本地配置中`)
       }
       break
     }
@@ -728,7 +728,7 @@ export async function addMcpConfig(
       try {
         await writeMcpjsonFile(mcpConfig)
       } catch (error) {
-        throw new Error(`Failed to write to .mcp.json: ${error}`)
+        throw new Error(`写入 .mcp.json 失败：${error}`)
       }
       break
     }
@@ -792,7 +792,7 @@ export async function removeMcpConfig(
       try {
         await writeMcpjsonFile(mcpConfig)
       } catch (error) {
-        throw new Error(`Failed to remove from .mcp.json: ${error}`)
+        throw new Error(`从 .mcp.json 移除失败：${error}`)
       }
       break
     }
@@ -800,7 +800,7 @@ export async function removeMcpConfig(
     case 'user': {
       const config = getGlobalConfig()
       if (!config.mcpServers?.[name]) {
-        throw new Error(`No user-scoped MCP server found with name: ${name}`)
+        throw new Error(`未找到用户级 MCP 服务器：${name}`)
       }
       saveGlobalConfig(current => {
         const { [name]: _, ...restMcpServers } = current.mcpServers ?? {}
@@ -816,7 +816,7 @@ export async function removeMcpConfig(
       // Check if server exists before updating
       const config = getCurrentProjectConfig()
       if (!config.mcpServers?.[name]) {
-        throw new Error(`No project-local MCP server found with name: ${name}`)
+        throw new Error(`未找到项目本地 MCP 服务器：${name}`)
       }
       saveCurrentProjectConfig(current => {
         const { [name]: _, ...restMcpServers } = current.mcpServers ?? {}

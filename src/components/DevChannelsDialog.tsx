@@ -41,7 +41,7 @@ export function DevChannelsDialog(t0) {
   let t3;
   if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
     t2 = <Text>--dangerously-load-development-channels is for local channel development only. Do not use this option to run channels you have downloaded off the internet.</Text>;
-    t3 = <Text>Please use --channels to run a list of approved channels.</Text>;
+    t3 = <Text>请使用 --channels 运行已批准的频道列表。</Text>;
     $[2] = t2;
     $[3] = t3;
   } else {

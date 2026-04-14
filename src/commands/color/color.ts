@@ -33,7 +33,7 @@ export async function call(
 
   if (!args || args.trim() === '') {
     const colorList = AGENT_COLORS.join(', ')
-    onDone(`Please provide a color. Available colors: ${colorList}, default`, {
+    onDone(`请提供一个颜色。可用颜色: ${colorList}, default`, {
       display: 'system',
     })
     return null
@@ -66,7 +66,7 @@ export async function call(
   if (!AGENT_COLORS.includes(colorArg as AgentColorName)) {
     const colorList = AGENT_COLORS.join(', ')
     onDone(
-      `Invalid color "${colorArg}". Available colors: ${colorList}, default`,
+      `无效的颜色 "${colorArg}"。可用颜色: ${colorList}, default`,
       { display: 'system' },
     )
     return null
@@ -88,6 +88,6 @@ export async function call(
     },
   }))
 
-  onDone(`Session color set to: ${colorArg}`, { display: 'system' })
+  onDone(`会话颜色已设置为: ${colorArg}`, { display: 'system' })
   return null
 }

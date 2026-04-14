@@ -142,7 +142,7 @@ export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'
   if (!verbose && typeof result === 'string' && extractTag(result, 'tool_use_error')) {
     const errorMessage = extractTag(result, 'tool_use_error');
     // Show a less scary message for intended behavior
-    if (errorMessage?.includes('File has not been read yet')) {
+    if (errorMessage?.includes('文件尚未读取！')) {
       return <MessageResponse>
           <Text dimColor>必须先读取文件才能进行编辑</Text>
         </MessageResponse>;
@@ -152,8 +152,15 @@ export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'
           <Text color="error">未找到指定的文件</Text>
         </MessageResponse>;
     }
+    // Handle "no changes to make" error specifically
+    if (errorMessage?.includes('没有更改要做') || errorMessage?.includes('old_string 和 new_string 完全相同')) {
+      return <MessageResponse>
+          <Text color="warning">无需更改：新旧内容相同</Text>
+        </MessageResponse>;
+    }
+    // Show the actual error message for better debugging (first line only)
     return <MessageResponse>
-        <Text color="error">编辑文件时发生错误</Text>
+        <Text color="error">编辑文件时发生错误：{errorMessage?.split('\n')[0]}</Text>
       </MessageResponse>;
   }
   return <FallbackToolUseErrorMessage result={result} verbose={verbose} />;
