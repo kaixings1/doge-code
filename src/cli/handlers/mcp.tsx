@@ -52,7 +52,7 @@ export async function mcpServeHandler({
     await stat(providedCwd);
   } catch (error) {
     if (isFsInaccessible(error)) {
-      cliError(`Error: Directory ${providedCwd} does not exist`);
+      cliError(`错误：目录 ${providedCwd} 不存在`);
     }
     throw error;
   }
@@ -66,7 +66,7 @@ export async function mcpServeHandler({
     } = await import('../../entrypoints/mcp.js');
     await startMCPServer(providedCwd, debug ?? false, verbose ?? false);
   } catch (error) {
-    cliError(`Error: Failed to start MCP server: ${error}`);
+    cliError(`错误：启动 MCP 服务器失败：${error}`);
   }
 }
 
@@ -91,8 +91,8 @@ export async function mcpRemoveHandler(name: string, options: {
       });
       await removeMcpConfig(name, scope);
       cleanupSecureStorage();
-      process.stdout.write(`Removed MCP server ${name} from ${scope} config\n`);
-      cliOk(`File modified: ${describeMcpConfigFilePath(scope)}`);
+      process.stdout.write(`已从 ${scope} 配置中移除 MCP 服务器 ${name}\n`);
+      cliOk(`文件已修改：${describeMcpConfigFilePath(scope)}`);
     }
 
     // If no scope specified, check where the server exists
@@ -111,7 +111,7 @@ export async function mcpRemoveHandler(name: string, options: {
     if (mcpJsonExists) scopes.push('project');
     if (globalConfig.mcpServers?.[name]) scopes.push('user');
     if (scopes.length === 0) {
-      cliError(`No MCP server found with name: "${name}"`);
+      cliError(`找不到名称为 "${name}" 的 MCP 服务器`);
     } else if (scopes.length === 1) {
       // Server exists in only one scope, remove it
       const scope = scopes[0]!;
@@ -121,8 +121,8 @@ export async function mcpRemoveHandler(name: string, options: {
       });
       await removeMcpConfig(name, scope);
       cleanupSecureStorage();
-      process.stdout.write(`Removed MCP server "${name}" from ${scope} config\n`);
-      cliOk(`File modified: ${describeMcpConfigFilePath(scope)}`);
+      process.stdout.write(`已从 ${scope} 配置中移除 MCP 服务器 "${name}"\n`);
+      cliOk(`文件已修改：${describeMcpConfigFilePath(scope)}`);
     } else {
       // Server exists in multiple scopes
       process.stderr.write(`MCP server "${name}" exists in multiple scopes:\n`);
@@ -307,7 +307,7 @@ export async function mcpAddJsonHandler(name: string, json: string, options: {
       source: 'json' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
       type: transportType as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
     });
-    cliOk(`Added ${transportType} MCP server ${name} to ${scope} config`);
+    cliOk(`已将 ${transportType} MCP 服务器 ${name} 添加到 ${scope} 配置`);
   } catch (error) {
     cliError((error as Error).message);
   }

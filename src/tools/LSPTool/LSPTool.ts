@@ -179,7 +179,7 @@ export const LSPTool = buildTool({
       if (isENOENT(error)) {
         return {
           result: false,
-          message: `File does not exist: ${input.filePath}`,
+          message: `文件不存在：${input.filePath}`,
           errorCode: 1,
         }
       }
@@ -200,7 +200,7 @@ export const LSPTool = buildTool({
     if (!stats.isFile()) {
       return {
         result: false,
-        message: `Path is not a file: ${input.filePath}`,
+        message: `路径不是文件：${input.filePath}`,
         errorCode: 2,
       }
     }
@@ -243,7 +243,7 @@ export const LSPTool = buildTool({
       const output: Output = {
         operation: input.operation,
         result:
-          'LSP server manager not initialized. This may indicate a startup issue.',
+          'LSP 服务器管理器未初始化。这可能表明存在启动问题。',
         filePath: input.filePath,
       }
       return {
@@ -265,7 +265,7 @@ export const LSPTool = buildTool({
           if (stats.size > MAX_LSP_FILE_SIZE_BYTES) {
             const output: Output = {
               operation: input.operation,
-              result: `File too large for LSP analysis (${Math.ceil(stats.size / 1_000_000)}MB exceeds 10MB limit)`,
+              result: `文件过大，无法进行 LSP 分析（${Math.ceil(stats.size / 1_000_000)}MB，超过 10MB 限制）`,
               filePath: input.filePath,
             }
             return { data: output }
@@ -288,7 +288,7 @@ export const LSPTool = buildTool({
 
         const output: Output = {
           operation: input.operation,
-          result: `No LSP server available for file type: ${path.extname(absolutePath)}`,
+          result: `没有适用于该文件类型的 LSP 服务器：${path.extname(absolutePath)}`,
           filePath: input.filePath,
         }
         return {
@@ -307,7 +307,7 @@ export const LSPTool = buildTool({
         if (!callItems || callItems.length === 0) {
           const output: Output = {
             operation: input.operation,
-            result: 'No call hierarchy item found at this position',
+            result: '在此位置未找到调用层次项',
             filePath: input.filePath,
             resultCount: 0,
             fileCount: 0,
@@ -404,7 +404,7 @@ export const LSPTool = buildTool({
 
       const output: Output = {
         operation: input.operation,
-        result: `Error performing ${input.operation}: ${errorMessage}`,
+        result: `执行 ${input.operation} 时出错：${errorMessage}`,
         filePath: input.filePath,
       }
       return {

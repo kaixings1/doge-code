@@ -1986,7 +1986,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
   }
   if (parsed.error) {
     // biome-ignore lint/suspicious/noConsole: intentional error output
-    console.error(`Error: ${parsed.error}`)
+    console.error(`错误：${parsed.error}`)
     // eslint-disable-next-line custom-rules/no-process-exit
     process.exit(1)
   }
@@ -2026,7 +2026,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
     if (!valid.includes(permissionMode)) {
       // biome-ignore lint/suspicious/noConsole: intentional error output
       console.error(
-        `Error: Invalid permission mode '${permissionMode}'. Valid modes: ${valid.join(', ')}`,
+        `错误：无效的权限模式 '${permissionMode}'。有效模式：${valid.join(', ')}`,
       )
       // eslint-disable-next-line custom-rules/no-process-exit
       process.exit(1)
@@ -2069,7 +2069,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
     ]).catch(() => {})
     // biome-ignore lint/suspicious/noConsole: intentional error output
     console.error(
-      'Error: Multi-session Remote Control is not enabled for your account yet.',
+      '错误：你的账户尚未启用多会话远程控制功能。',
     )
     // eslint-disable-next-line custom-rules/no-process-exit
     process.exit(1)
@@ -2086,7 +2086,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
   if (!checkHasTrustDialogAccepted()) {
     // biome-ignore lint/suspicious/noConsole:: intentional console output
     console.error(
-      `Error: Workspace not trusted. Please run \`claude\` in ${dir} first to review and accept the workspace trust dialog.`,
+      `错误：工作区不受信任。请先在 ${dir} 中运行 \`claude\` 以审查并接受工作区信任对话框。`,
     )
     // eslint-disable-next-line custom-rules/no-process-exit
     process.exit(1)
@@ -2154,7 +2154,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
     if (!found) {
       // biome-ignore lint/suspicious/noConsole: intentional error output
       console.error(
-        `Error: No recent session found in this directory or its worktrees. Run \`claude remote-control\` to start a new one.`,
+        `错误：在此目录或其工作树中未找到最近的会话。运行 \`claude remote-control\` 启动新会话。`,
       )
       // eslint-disable-next-line custom-rules/no-process-exit
       process.exit(1)
@@ -2186,7 +2186,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
   ) {
     // biome-ignore lint/suspicious/noConsole:: intentional console output
     console.error(
-      'Error: Remote Control base URL uses HTTP. Only HTTPS or localhost HTTP is allowed.',
+      '错误：远程控制基础 URL 使用 HTTP。仅允许 HTTPS 或 localhost HTTP。',
     )
     // eslint-disable-next-line custom-rules/no-process-exit
     process.exit(1)
@@ -2225,7 +2225,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
   if (savedSpawnMode === 'worktree' && !worktreeAvailable) {
     // biome-ignore lint/suspicious/noConsole: intentional warning output
     console.error(
-      'Warning: Saved spawn mode is worktree but this directory is not a git repository. Falling back to same-dir.',
+      '警告：保存的生成模式是 worktree，但此目录不是 git 仓库。回退到 same-dir。',
     )
     savedSpawnMode = undefined
     saveCurrentProjectConfig(current => {
@@ -2331,7 +2331,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
   if (spawnMode === 'worktree' && !worktreeAvailable) {
     // biome-ignore lint/suspicious/noConsole: intentional error output
     console.error(
-      `Error: Worktree mode requires a git repository or WorktreeCreate hooks configured. Use --spawn=session for single-session mode.`,
+      `错误：Worktree 模式需要 git 仓库或配置了 WorktreeCreate 钩子。使用 --spawn=session 进行单会话模式。`,
     )
     // eslint-disable-next-line custom-rules/no-process-exit
     process.exit(1)
@@ -2366,7 +2366,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
     } catch {
       // biome-ignore lint/suspicious/noConsole: intentional error output
       console.error(
-        `Error: Invalid session ID "${resumeSessionId}". Session IDs must not contain unsafe characters.`,
+        `错误：无效的会话 ID "${resumeSessionId}"。会话 ID 不能包含不安全字符。`,
       )
       // eslint-disable-next-line custom-rules/no-process-exit
       process.exit(1)
@@ -2392,7 +2392,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
       }
       // biome-ignore lint/suspicious/noConsole: intentional error output
       console.error(
-        `Error: Session ${resumeSessionId} not found. It may have been archived or expired, or your login may have lapsed (run \`claude /login\`).`,
+        `错误：未找到会话 ${resumeSessionId}。该会话可能已被归档或过期，或者你的登录已失效（运行 \`claude /login\`）。`,
       )
       // eslint-disable-next-line custom-rules/no-process-exit
       process.exit(1)
@@ -2404,7 +2404,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
       }
       // biome-ignore lint/suspicious/noConsole: intentional error output
       console.error(
-        `Error: Session ${resumeSessionId} has no environment_id. It may never have been attached to a bridge.`,
+        `错误：会话 ${resumeSessionId} 没有 environment_id。该会话可能从未关联到桥接器。`,
       )
       // eslint-disable-next-line custom-rules/no-process-exit
       process.exit(1)
@@ -2459,8 +2459,8 @@ export async function bridgeMain(args: string[]): Promise<void> {
     // biome-ignore lint/suspicious/noConsole:: intentional console output
     console.error(
       err instanceof BridgeFatalError && err.status === 404
-        ? 'Remote Control environments are not available for your account.'
-        : `Error: ${errorMessage(err)}`,
+        ? '你的账户不可用远程控制环境。'
+        : `错误：${errorMessage(err)}`,
     )
     // eslint-disable-next-line custom-rules/no-process-exit
     process.exit(1)
@@ -2535,8 +2535,8 @@ export async function bridgeMain(args: string[]): Promise<void> {
         // biome-ignore lint/suspicious/noConsole: intentional error output
         console.error(
           isFatal
-            ? `Error: ${errorMessage(err)}`
-            : `Error: Failed to reconnect session ${resumeSessionId}: ${errorMessage(err)}\nThe session may still be resumable — try running the same command again.`,
+            ? `错误：${errorMessage(err)}`
+            : `错误：重新连接会话 ${resumeSessionId} 失败：${errorMessage(err)}\n该会话可能仍然可以重新连接——请尝试再次运行相同的命令。`,
         )
         // eslint-disable-next-line custom-rules/no-process-exit
         process.exit(1)

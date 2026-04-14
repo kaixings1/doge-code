@@ -44,12 +44,12 @@ export async function stopTask(
   const task = appState.tasks?.[taskId] as TaskStateBase | undefined
 
   if (!task) {
-    throw new StopTaskError(`No task found with ID: ${taskId}`, 'not_found')
+    throw new StopTaskError(`找不到 ID 为 ${taskId} 的任务`, 'not_found')
   }
 
   if (task.status !== 'running') {
     throw new StopTaskError(
-      `Task ${taskId} is not running (status: ${task.status})`,
+      `任务 ${taskId} 未运行（状态：${task.status}）`,
       'not_running',
     )
   }
@@ -57,7 +57,7 @@ export async function stopTask(
   const taskImpl = getTaskByType(task.type)
   if (!taskImpl) {
     throw new StopTaskError(
-      `Unsupported task type: ${task.type}`,
+      `不支持的任务类型：${task.type}`,
       'unsupported_type',
     )
   }

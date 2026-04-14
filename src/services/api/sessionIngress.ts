@@ -82,7 +82,7 @@ async function appendSessionLogImpl(
       if (response.status === 200 || response.status === 201) {
         lastUuidMap.set(sessionId, entry.uuid)
         logForDebugging(
-          `Successfully persisted session log entry for session ${sessionId}`,
+          `会话日志成功写入 session ${sessionId}`,
         )
         return true
       }
@@ -299,7 +299,7 @@ export async function getTeleportEvents(
     'x-organization-uuid': orgUUID,
   }
 
-  logForDebugging(`[teleport] Fetching events from: ${baseUrl}`)
+  logForDebugging(`[teleport] 从 ${baseUrl} 获取事件`)
 
   const all: Entry[] = []
   let cursor: string | undefined
@@ -346,7 +346,7 @@ export async function getTeleportEvents(
       // 404 mid-pagination (pages > 0) means session was deleted between
       // pages — return what we have.
       logForDebugging(
-        `[teleport] Session ${sessionId} not found (page ${pages})`,
+        `[teleport] 会话 ${sessionId} 未找到 (第 ${pages} 页)`,
       )
       logForDiagnosticsNoPII('warn', 'teleport_events_not_found')
       return pages === 0 ? null : all
@@ -448,7 +448,7 @@ async function fetchSessionLogsFromUrl(
 
       const logs = data.loglines as Entry[]
       logForDebugging(
-        `Fetched ${logs.length} session logs for session ${sessionId}`,
+        `获取了 ${logs.length} 条会话日志，最后一条的 UUID 为 ${logs[logs.length - 1]?.uuid || 'N/A'}`,
       )
       return logs
     }

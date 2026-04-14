@@ -128,7 +128,7 @@ export async function findSuitableShell(): Promise<string> {
   if (!shellPath) {
     const errorMsg =
       '未找到合适的 shell。Claude CLI 需要 Posix shell 环境。' +
-      'Please ensure you have a valid shell installed and the SHELL environment variable set.'
+      '请确保你已安装有效的 shell 并设置了 SHELL 环境变量。'
     logError(new Error(errorMsg))
     throw new Error(errorMsg)
   }
@@ -232,7 +232,7 @@ export async function exec(
       cwd = fallback
     } catch {
       return createFailedCommand(
-        `Working directory "${cwd}" no longer exists. Please restart Claude from an existing directory.`,
+        `工作目录 "${cwd}" 不再存在。请从现有目录重新启动 Claude。`,
       )
     }
   }
@@ -456,7 +456,7 @@ export function setCwd(path: string, relativeTo?: string): void {
     physicalPath = getFsImplementation().realpathSync(resolved)
   } catch (e) {
     if (isENOENT(e)) {
-      throw new Error(`Path "${resolved}" does not exist`)
+      throw new Error(`路径 "${resolved}" 不存在`)
     }
     throw e
   }
