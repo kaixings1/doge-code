@@ -98,7 +98,7 @@ export function RemoteEnvironmentDialog(t0) {
           defaultEnvironmentId: selectedEnv.environment_id
         }
       });
-      onDone(`Set default remote environment to ${chalk.bold(selectedEnv.name)} (${selectedEnv.environment_id})`);
+      onDone(`已将默认远程环境设置为 ${chalk.bold(selectedEnv.name)} (${selectedEnv.environment_id})`);
     };
     $[3] = environments;
     $[4] = onDone;
@@ -148,7 +148,7 @@ export function RemoteEnvironmentDialog(t0) {
   if (!selectedEnvironment) {
     let t5;
     if ($[14] === Symbol.for("react.memo_cache_sentinel")) {
-      t5 = <Text>No remote environments available.</Text>;
+      t5 = <Text>没有可用的远程环境。</Text>;
       $[14] = t5;
     } else {
       t5 = $[14];
@@ -213,7 +213,7 @@ function EnvironmentLabel(t0) {
   }
   let t3;
   if ($[4] !== t1 || $[5] !== t2) {
-    t3 = <Text>{figures.tick} Using {t1}{" "}{t2}</Text>;
+    t3 = <Text>{figures.tick} 正在使用 {t1}{" "}{t2}</Text>;
     $[4] = t1;
     $[5] = t2;
     $[6] = t3;
@@ -269,7 +269,7 @@ function MultipleEnvironmentsContent(t0) {
   } = t0;
   let t1;
   if ($[0] !== selectedEnvironmentSource) {
-    t1 = selectedEnvironmentSource && selectedEnvironmentSource !== "localSettings" ? ` (from ${getSettingSourceName(selectedEnvironmentSource)} settings)` : "";
+    t1 = selectedEnvironmentSource && selectedEnvironmentSource !== "localSettings" ? `（来自 ${getSettingSourceName(selectedEnvironmentSource)} 设置）` : "";
     $[0] = selectedEnvironmentSource;
     $[1] = t1;
   } else {
@@ -286,7 +286,7 @@ function MultipleEnvironmentsContent(t0) {
   }
   let t3;
   if ($[4] !== sourceSuffix || $[5] !== t2) {
-    t3 = <Text>Currently using: {t2}{sourceSuffix}</Text>;
+    t3 = <Text>当前使用：{t2}{sourceSuffix}</Text>;
     $[4] = sourceSuffix;
     $[5] = t2;
     $[6] = t3;

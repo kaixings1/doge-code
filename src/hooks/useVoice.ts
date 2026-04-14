@@ -988,7 +988,7 @@ export function useVoice({
             '[voice] Failed to connect to voice_stream (no OAuth token?)',
           )
           onErrorRef.current?.(
-            'Voice mode requires a Claude.ai account. Please run /login to sign in.',
+            '语音模式需要 Claude.ai 账户。请运行 /login 登录。',
           )
           // Clear the audio buffer on failure
           audioBuffer.length = 0

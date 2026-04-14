@@ -65,7 +65,7 @@ export function SkillPermissionRequest(props) {
   let t4;
   if ($[5] === Symbol.for("react.memo_cache_sentinel")) {
     t4 = [{
-      label: "Yes",
+      label: "是",
       value: "yes",
       feedbackConfig: {
         type: "accept"
@@ -300,10 +300,10 @@ export function SkillPermissionRequest(props) {
     t11 = $[32];
   }
   const handleCancel = t11;
-  const t12 = `Use skill "${skill}"?`;
+  const t12 = `使用技能 "${skill}"？`;
   let t13;
   if ($[33] === Symbol.for("react.memo_cache_sentinel")) {
-    t13 = <Text>Claude may use instructions, code, or files from this Skill.</Text>;
+    t13 = <Text>Claude 可能会使用此技能中的指令、代码或文件。</Text>;
     $[33] = t13;
   } else {
     t13 = $[33];

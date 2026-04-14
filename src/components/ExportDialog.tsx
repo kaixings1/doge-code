@@ -64,12 +64,12 @@ export function ExportDialog({
       });
       onDone({
         success: true,
-        message: `Conversation exported to: ${filepath}`
+        message: `对话已导出到：${filepath}`
       });
     } catch (error) {
       onDone({
         success: false,
-        message: `Failed to export conversation: ${error instanceof Error ? error.message : '未知错误'}`
+        message: `导出对话失败：${error instanceof Error ? error.message : '未知错误'}`
       });
     }
   };

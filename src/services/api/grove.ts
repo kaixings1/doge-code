@@ -59,7 +59,7 @@ export const getGroveSettings = memoize(
       const response = await withOAuth401Retry(() => {
         const authHeaders = getAuthHeaders()
         if (authHeaders.error) {
-          throw new Error(`Failed to get auth headers: ${authHeaders.error}`)
+          throw new Error(`获取认证头部失败：${authHeaders.error}`)
         }
         return axios.get<AccountSettings>(
           `${getOauthConfig().BASE_API_URL}/api/oauth/account/settings`,
@@ -92,7 +92,7 @@ export async function markGroveNoticeViewed(): Promise<void> {
     await withOAuth401Retry(() => {
       const authHeaders = getAuthHeaders()
       if (authHeaders.error) {
-        throw new Error(`Failed to get auth headers: ${authHeaders.error}`)
+        throw new Error(`获取认证头部失败：${authHeaders.error}`)
       }
       return axios.post(
         `${getOauthConfig().BASE_API_URL}/api/oauth/account/grove_notice_viewed`,
@@ -124,7 +124,7 @@ export async function updateGroveSettings(
     await withOAuth401Retry(() => {
       const authHeaders = getAuthHeaders()
       if (authHeaders.error) {
-        throw new Error(`Failed to get auth headers: ${authHeaders.error}`)
+        throw new Error(`获取认证头部失败：${authHeaders.error}`)
       }
       return axios.patch(
         `${getOauthConfig().BASE_API_URL}/api/oauth/account/settings`,
@@ -239,7 +239,7 @@ export const getGroveNoticeConfig = memoize(
       const response = await withOAuth401Retry(() => {
         const authHeaders = getAuthHeaders()
         if (authHeaders.error) {
-          throw new Error(`Failed to get auth headers: ${authHeaders.error}`)
+          throw new Error(`获取认证头部失败：${authHeaders.error}`)
         }
         return axios.get<GroveConfig>(
           `${getOauthConfig().BASE_API_URL}/api/claude_code_grove`,

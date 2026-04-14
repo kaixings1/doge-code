@@ -290,7 +290,7 @@ export async function call(
   } catch (error) {
     const message =
       error instanceof Error ? error.message : '发生未知错误'
-    onDone(`Failed to branch conversation: ${message}`)
+    onDone(`分支对话失败: ${message}`)
     return null
   }
 }

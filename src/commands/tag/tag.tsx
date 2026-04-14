@@ -19,10 +19,10 @@ function ConfirmRemoveTag(t0) {
     onConfirm,
     onCancel
   } = t0;
-  const t1 = `Current tag: #${tagName}`;
+  const t1 = `当前标记：#${tagName}`;
   let t2;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-    t2 = <Text>This will remove the tag from the current session.</Text>;
+    t2 = <Text>这将从当前会话中移除此标记。</Text>;
     $[0] = t2;
   } else {
     t2 = $[0];
@@ -116,7 +116,7 @@ function ToggleTagAndClose(t0) {
         (async () => {
           const fullPath = getTranscriptPath();
           await saveTag(id, normalizedTag, fullPath);
-          onDone(`Tagged session with ${chalk.cyan(`#${normalizedTag}`)}`, {
+          onDone(`会话已添加标记 ${chalk.cyan(`#${normalizedTag}`)}`, {
             display: "system"
           });
         })();
@@ -139,7 +139,7 @@ function ToggleTagAndClose(t0) {
         logEvent("tengu_tag_command_remove_confirmed", {});
         const fullPath_0 = getTranscriptPath();
         await saveTag(sessionId, "", fullPath_0);
-        onDone(`Removed tag ${chalk.cyan(`#${normalizedTag}`)}`, {
+        onDone(`已移除标记 ${chalk.cyan(`#${normalizedTag}`)}`, {
           display: "system"
         });
       };
@@ -154,7 +154,7 @@ function ToggleTagAndClose(t0) {
     if ($[10] !== normalizedTag || $[11] !== onDone) {
       t5 = () => {
         logEvent("tengu_tag_command_remove_cancelled", {});
-        onDone(`Kept tag ${chalk.cyan(`#${normalizedTag}`)}`, {
+        onDone(`保留标记 ${chalk.cyan(`#${normalizedTag}`)}`, {
           display: "system"
         });
       };
@@ -187,7 +187,7 @@ function ShowHelp(t0) {
   let t2;
   if ($[0] !== onDone) {
     t1 = () => {
-      onDone("Usage: /tag <tag-name>\n\nToggle a searchable tag on the current session.\nRun the same command again to remove the tag.\nTags are displayed after the branch name in /resume and can be searched with /.\n\nExamples:\n  /tag bugfix        # Add tag\n  /tag bugfix        # Remove tag (toggle)\n  /tag feature-auth\n  /tag wip", {
+      onDone("用法: /tag <标记名>\n\n为当前会话切换可搜索的标记。\n再次运行同一命令可移除标记。\n标记会显示在 /resume 的分支名后，可使用 / 搜索。\n\n示例:\n  /tag bugfix        # 添加标记\n  /tag bugfix        # 移除标记（切换）\n  /tag feature-auth\n  /tag wip", {
         display: "system"
       });
     };

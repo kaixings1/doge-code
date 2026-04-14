@@ -97,7 +97,7 @@ export async function runExtraUsage(): Promise<ExtraUsageResult> {
 
     return {
       type: 'message',
-      value: 'Please contact your admin to manage extra usage settings.',
+      value: '请联系你的管理员来管理额外用量设置。',
     }
   }
 

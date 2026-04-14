@@ -530,7 +530,7 @@ function InstallGitHubApp(props: {
     if (state.step === 'success') {
       logEvent('tengu_install_github_app_completed', {});
     }
-    props.onDone(state.step === 'success' ? 'GitHub Actions setup complete!' : state.error ? `Couldn't install GitHub App: ${state.error}\nFor manual setup instructions, see: ${GITHUB_ACTION_SETUP_DOCS_URL}` : `GitHub App installation failed\nFor manual setup instructions, see: ${GITHUB_ACTION_SETUP_DOCS_URL}`);
+    props.onDone(state.step === 'success' ? 'GitHub Actions 设置完成！' : state.error ? `无法安装 GitHub App：${state.error}\n有关手动设置说明，请参阅：${GITHUB_ACTION_SETUP_DOCS_URL}` : `GitHub App 安装失败\n有关手动设置说明，请参阅：${GITHUB_ACTION_SETUP_DOCS_URL}`);
   }
   switch (state.step) {
     case 'check-gh':

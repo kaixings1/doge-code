@@ -46,7 +46,7 @@ export function Passes({
       void setClipboard(referralLink).then(raw => {
         if (raw) process.stdout.write(raw);
         logEvent('tengu_guest_passes_link_copied', {});
-        onDone(`Referral link copied to clipboard!`);
+        onDone(`推荐链接已复制到剪贴板！`);
       });
     }
   });
@@ -109,7 +109,7 @@ export function Passes({
   if (loading) {
     return <Pane>
         <Box flexDirection="column" gap={1}>
-          <Text dimColor>Loading guest pass information…</Text>
+          <Text dimColor>正在加载来宾通行证信息…</Text>
           <Text dimColor italic>
             {exitState.pending ? <>再次按 {exitState.keyName} 退出</> : <>按 Esc 取消</>}
           </Text>
@@ -119,7 +119,7 @@ export function Passes({
   if (!isAvailable) {
     return <Pane>
         <Box flexDirection="column" gap={1}>
-          <Text>Guest passes are not currently available.</Text>
+          <Text>来宾通行证当前不可用。</Text>
           <Text dimColor italic>
             {exitState.pending ? <>再次按 {exitState.keyName} 退出</> : <>按 Esc 取消</>}
           </Text>
@@ -154,7 +154,7 @@ export function Passes({
   };
   return <Pane>
       <Box flexDirection="column" gap={1}>
-        <Text color="permission">Guest passes · {availableCount} left</Text>
+        <Text color="permission">来宾通行证 · 剩余 {availableCount} 个</Text>
 
         <Box flexDirection="row" marginLeft={2}>
           {sortedPasses.slice(0, 3).map(pass_0 => renderTicket(pass_0))}
@@ -166,9 +166,9 @@ export function Passes({
 
         <Box flexDirection="column" marginLeft={2}>
           <Text dimColor>
-            {referrerReward ? `Share a free week of Claude Code with friends. If they love it and subscribe, you'll get ${formatCreditAmount(referrerReward)} of extra usage to keep building. ` : 'Share a free week of Claude Code with friends. '}
+            {referrerReward ? `与朋友分享一周免费 Claude Code。如果他们喜欢并订阅，您将获得 ${formatCreditAmount(referrerReward)} 的额外使用额度来继续构建。` : '与朋友分享一周免费 Claude Code。'}
             <Link url={referrerReward ? 'https://support.claude.com/en/articles/13456702-claude-code-guest-passes' : 'https://support.claude.com/en/articles/12875061-claude-code-guest-passes'}>
-              Terms apply.
+              适用条款。
             </Link>
           </Text>
         </Box>

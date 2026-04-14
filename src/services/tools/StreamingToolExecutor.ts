@@ -88,12 +88,12 @@ export class StreamingToolExecutor {
             content: [
               {
                 type: 'tool_result',
-                content: `<tool_use_error>Error: No such tool available: ${block.name}</tool_use_error>`,
+                content: `<tool_use_error>错误：没有可用的工具：${block.name}</tool_use_error>`,
                 is_error: true,
                 tool_use_id: block.id,
               },
             ],
-            toolUseResult: `Error: No such tool available: ${block.name}`,
+            toolUseResult: `错误：没有可用的工具：${block.name}`,
             sourceToolAssistantUUID: assistantMessage.uuid,
           }),
         ],

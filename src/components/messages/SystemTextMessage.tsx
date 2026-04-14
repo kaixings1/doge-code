@@ -162,7 +162,7 @@ export function SystemTextMessage(t0) {
     let t3;
     if ($[27] === Symbol.for("react.memo_cache_sentinel")) {
       t2 = <Text dimColor={true}>{TEARDROP_ASTERISK} </Text>;
-      t3 = <Text>Allowed </Text>;
+      t3 = <Text>已允许 </Text>;
       $[27] = t2;
       $[28] = t3;
     } else {
@@ -292,17 +292,15 @@ function StopHookSummaryMessage(t0) {
   }
   const totalStr = t2;
   if (message.hookLabel) {
-    const t3 = hookCount === 1 ? "hook" : "hooks";
     let t4;
-    if ($[5] !== hookCount || $[6] !== message.hookLabel || $[7] !== t3 || $[8] !== totalStr) {
-      t4 = <Text dimColor={true}>{"  \u23BF  "}Ran {hookCount} {message.hookLabel}{" "}{t3}{totalStr}</Text>;
+    if ($[5] !== hookCount || $[6] !== message.hookLabel || $[7] !== totalStr) {
+      t4 = <Text dimColor={true}>{"  ⎿  "}运行了 {hookCount} 个 {message.hookLabel} 钩子{totalStr}</Text>;
       $[5] = hookCount;
       $[6] = message.hookLabel;
-      $[7] = t3;
-      $[8] = totalStr;
-      $[9] = t4;
+      $[7] = totalStr;
+      $[8] = t4;
     } else {
-      t4 = $[9];
+      t4 = $[8];
     }
     let t5;
     if ($[10] !== hookInfos || $[11] !== isTranscriptMode) {
