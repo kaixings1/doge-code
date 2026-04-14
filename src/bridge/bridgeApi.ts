@@ -464,15 +464,15 @@ function handleErrorStatus(
   switch (status) {
     case 401:
       throw new BridgeFatalError(
-        `${context}: Authentication failed (401)${detail ? `: ${detail}` : ''}. ${BRIDGE_LOGIN_INSTRUCTION}`,
+        `${context}: 认证失败 (401)${detail ? `: ${detail}` : ''}. ${BRIDGE_LOGIN_INSTRUCTION}`,
         401,
         errorType,
       )
     case 403:
       throw new BridgeFatalError(
         isExpiredErrorType(errorType)
-          ? 'Remote Control session has expired. Please restart with `claude remote-control` or /remote-control.'
-          : `${context}: Access denied (403)${detail ? `: ${detail}` : ''}. Check your organization permissions.`,
+          ? 'Remote Control 会话已过期。请使用 `claude remote-control` 或 /remote-control 重新启动。'
+          : `${context}: 访问被拒绝 (403)${detail ? `: ${detail}` : ''}。检查您的组织权限。`,
         403,
         errorType,
       )

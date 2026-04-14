@@ -144,7 +144,7 @@ export function createBridgeLogger(options: {
         renderStatusLine()
       })
       .catch(e => {
-        logForDebugging(`QR code generation failed: ${e}`, { level: 'error' })
+        logForDebugging(`二维码生成失败: ${e}`, { level: 'error' })
       })
   }
 

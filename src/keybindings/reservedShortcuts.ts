@@ -43,12 +43,12 @@ export const NON_REBINDABLE: ReservedShortcut[] = [
 export const TERMINAL_RESERVED: ReservedShortcut[] = [
   {
     key: 'ctrl+z',
-    reason: 'Unix process suspend (SIGTSTP)',
+    reason: 'Unix 进程挂起 (SIGTSTP)',
     severity: 'warning',
   },
   {
     key: 'ctrl+\\',
-    reason: 'Terminal quit signal (SIGQUIT)',
+    reason: '终端退出信号 (SIGQUIT)',
     severity: 'error',
   },
 ]
@@ -60,10 +60,10 @@ export const MACOS_RESERVED: ReservedShortcut[] = [
   { key: 'cmd+c', reason: 'macOS system copy', severity: 'error' },
   { key: 'cmd+v', reason: 'macOS system paste', severity: 'error' },
   { key: 'cmd+x', reason: 'macOS system cut', severity: 'error' },
-  { key: 'cmd+q', reason: 'macOS quit application', severity: 'error' },
-  { key: 'cmd+w', reason: 'macOS close window/tab', severity: 'error' },
-  { key: 'cmd+tab', reason: 'macOS app switcher', severity: 'error' },
-  { key: 'cmd+space', reason: 'macOS Spotlight', severity: 'error' },
+  { key: 'cmd+q', reason: 'macOS 退出应用程序', severity: 'error' },
+  { key: 'cmd+w', reason: 'macOS 关闭窗口/标签', severity: 'error' },
+  { key: 'cmd+tab', reason: 'macOS 应用程序切换器', severity: 'error' },
+  { key: 'cmd+space', reason: 'macOS Spotlight 搜索', severity: 'error' },
 ]
 
 /**

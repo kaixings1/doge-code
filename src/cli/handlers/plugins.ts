@@ -518,7 +518,7 @@ export async function marketplaceAddHandler(
         : `${figures.tick} 成功添加市场：${name}（已在 ${scope} 设置中声明）`,
     )
   } catch (error) {
-    handleMarketplaceError(error, 'add marketplace')
+    handleMarketplaceError(error, '添加市场')
   }
 }
 
@@ -586,7 +586,7 @@ export async function marketplaceListHandler(options: {
 
     cliOk()
   } catch (error) {
-    handleMarketplaceError(error, 'list marketplaces')
+    handleMarketplaceError(error, '列出市场')
   }
 }
 
@@ -607,7 +607,7 @@ export async function marketplaceRemoveHandler(
 
     cliOk(`${figures.tick} 成功移除市场：${name}`)
   } catch (error) {
-    handleMarketplaceError(error, 'remove marketplace')
+    handleMarketplaceError(error, '移除市场')
   }
 }
 
@@ -659,7 +659,7 @@ export async function marketplaceUpdateHandler(
       )
     }
   } catch (error) {
-    handleMarketplaceError(error, 'update marketplace(s)')
+    handleMarketplaceError(error, '更新市场')
   }
 }
 

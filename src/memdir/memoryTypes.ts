@@ -35,7 +35,7 @@ export function parseMemoryType(raw: unknown): MemoryType | undefined {
  * Includes <scope> tags and team/private qualifiers in examples.
  */
 export const TYPES_SECTION_COMBINED: readonly string[] = [
-  '## Types of memory',
+  '## 记忆类型',
   '',
   'There are several discrete types of memory that you can store in your memory system. Each type below declares a <scope> of `private`, `team`, or guidance for choosing between the two.',
   '',
@@ -111,7 +111,7 @@ export const TYPES_SECTION_COMBINED: readonly string[] = [
  * only makes sense with a private/team split is reworded.
  */
 export const TYPES_SECTION_INDIVIDUAL: readonly string[] = [
-  '## Types of memory',
+  '## 记忆类型',
   '',
   'There are several discrete types of memory that you can store in your memory system:',
   '',
@@ -181,17 +181,15 @@ export const TYPES_SECTION_INDIVIDUAL: readonly string[] = [
  * `## What NOT to save in memory` section. Identical across both modes.
  */
 export const WHAT_NOT_TO_SAVE_SECTION: readonly string[] = [
-  '## What NOT to save in memory',
+  '## 不应保存到记忆的内容',
   '',
-  '- Code patterns, conventions, architecture, file paths, or project structure — these can be derived by reading the current project state.',
-  '- Git history, recent changes, or who-changed-what — `git log` / `git blame` are authoritative.',
-  '- Debugging solutions or fix recipes — the fix is in the code; the commit message has the context.',
-  '- Anything already documented in CLAUDE.md files.',
-  '- Ephemeral task details: in-progress work, temporary state, current conversation context.',
+  '- 代码模式、约定、架构、文件路径或项目结构 — 这些可通过读取当前项目状态获得。',
+  '- Git 历史、最近更改或谁改了什么 — `git log` / `git blame` 是权威来源。',
+  '- 调试解决方案或修复配方 — 修复在代码中；提交消息有上下文。',
+  '- 已在 CLAUDE.md 文件中记录的任何内容。',
+  '- 临时任务详情：进行中的工作、临时状态、当前对话上下文。',
   '',
-  // H2: explicit-save gate. Eval-validated (memory-prompt-iteration case 3,
-  // 0/2 → 3/3): prevents "save this week's PR list" → activity-log noise.
-  'These exclusions apply even when the user explicitly asks you to save. If they ask you to save a PR list or activity summary, ask what was *surprising* or *non-obvious* about it — that is the part worth keeping.',
+  '即使用户明确要求保存，这些排除也适用。如果要求保存 PR 列表或活动摘要，请问其中什么是*令人惊讶*或*不明显*的 — 那才是值得保留的部分。',
 ]
 
 /**

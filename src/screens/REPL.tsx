@@ -2174,7 +2174,7 @@ export function REPL({
     } else if (focusedInputDialog === 'prompt') {
       // Reject all pending prompts and clear the queue
       for (const item of promptQueue) {
-        item.reject(new Error('Prompt cancelled by user'));
+        item.reject(new Error('用户取消了提示'));
       }
       setPromptQueue([]);
       abortController?.abort('user-cancel');
@@ -2355,7 +2355,7 @@ export function REPL({
       gracefulShutdownSync(1, 'other');
       return;
     }
-    logForDebugging(`sandbox disabled: ${reason}`, {
+    logForDebugging(`沙盒已禁用: ${reason}`, {
       level: 'warn'
     });
     addNotification({
@@ -2535,7 +2535,7 @@ export function REPL({
             setSpinnerMessage(event.hookType === 'pre_compact' ? 'Running PreCompact hooks\u2026' : event.hookType === 'post_compact' ? 'Running PostCompact hooks\u2026' : 'Running SessionStart hooks\u2026');
             break;
           case 'compact_start':
-            setSpinnerMessage('Compacting conversation');
+            setSpinnerMessage('正在压缩对话');
             break;
           case 'compact_end':
             setSpinnerMessage(null);
@@ -3414,7 +3414,7 @@ export function REPL({
           ...prev,
           attribution: incrementPromptCount(prev.attribution, snapshot => {
             void recordAttributionSnapshot(snapshot).catch(error => {
-              logForDebugging(`Attribution: Failed to save snapshot: ${error}`);
+              logForDebugging(`归因: 保存快照失败: ${error}`);
             });
           })
         }));
@@ -3619,7 +3619,7 @@ export function REPL({
       clearBuffer: () => {},
       resetHistory: () => {}
     }).catch(err => {
-      logForDebugging(`Auto-run ${command} failed: ${errorMessage(err)}`);
+      logForDebugging(`自动运行 ${command} 失败: ${errorMessage(err)}`);
     });
   }, [onSubmit, autoRunIssueReason]);
   const handleCancelAutoRunIssue = useCallback(() => {
@@ -3834,7 +3834,7 @@ export function REPL({
         const fileList = memoryFiles.map(f => `  [${f.type}] ${f.path} (${f.content.length} chars)${f.parent ? ` (included by ${f.parent})` : ''}`).join('\n');
         logForDebugging(`Loaded ${memoryFiles.length} CLAUDE.md/rules files:\n${fileList}`);
       } else {
-        logForDebugging('No CLAUDE.md/rules files found');
+        logForDebugging('未找到 CLAUDE.md/rules 文件');
       }
       for (const file of memoryFiles) {
         // When the injected content doesn't match disk (stripped HTML comments,
@@ -4721,7 +4721,7 @@ export function REPL({
           }} onAbort={() => {
             const item = promptQueue[0];
             if (!item) return;
-            item.reject(new Error('Prompt cancelled by user'));
+            item.reject(new Error('用户取消了提示'));
             setPromptQueue(([, ...tail]) => tail);
           }} />}
                 {/* Show pending indicator on worker while waiting for leader approval */}

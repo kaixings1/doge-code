@@ -38,29 +38,29 @@ const SPECIES_NAMES: Record<string, string> = {
 }
 
 const SPECIES_PERSONALITY: Record<string, string> = {
-  duck: 'Quirky and easily amused. Leaves rubber duck debugging tips everywhere.',
-  goose: 'Assertive and honks at bad code. Takes no prisoners in code reviews.',
-  blob: 'Adaptable and goes with the flow. Sometimes splits into two when confused.',
-  cat: 'Independent and judgmental. Watches you type with mild disdain.',
+  duck: '古怪且容易满足。到处留下橡皮鸭调试技巧。',
+  goose: '强势且对糟糕代码毫不留情。代码审查中不留情面。',
+  blob: '适应性强，随遇而安。困惑时有时会分裂成两个。',
+  cat: '独立且有判断力。带着轻微鄙夷看着你打字。',
   dragon:
-    'Fiery and passionate about architecture. Hoards good variable names.',
+    '对架构充满热情。珍藏好的变量名。',
   octopus:
-    'Multitasker extraordinaire. Wraps tentacles around every problem at once.',
-  owl: 'Wise but verbose. Always says "let me think about that" for exactly 3 seconds.',
-  penguin: 'Cool under pressure. Slides gracefully through merge conflicts.',
-  turtle: 'Patient and thorough. Believes slow and steady wins the deploy.',
-  snail: 'Methodical and leaves a trail of useful comments. Never rushes.',
+    '多任务大师。用触手同时解决所有问题。',
+  owl: '智慧但啰嗦。总是说"让我想想"整整3秒。',
+  penguin: '压力下保持冷静。优雅地滑过合并冲突。',
+  turtle: '耐心且细致。相信慢工出细活。',
+  snail: '有条不紊，留下一路有用的注释。从不匆忙。',
   ghost:
-    'Ethereal and appears at the worst possible moments with spooky insights.',
-  axolotl: 'Regenerative and cheerful. Recovers from any bug with a smile.',
-  capybara: 'Zen master. Remains calm while everything around is on fire.',
+    '神秘莫测，总在最糟糕的时刻出现，带来诡异的见解。',
+  axolotl: '再生能力强且快乐。带着微笑从任何bug中恢复。',
+  capybara: '禅宗大师。在周围一片火海时保持冷静。',
   cactus:
-    'Prickly on the outside but full of good intentions. Thrives on neglect.',
-  robot: 'Efficient and literal. Processes feedback in binary.',
-  rabbit: 'Energetic and hops between tasks. Finishes before you start.',
-  mushroom: 'Quietly insightful. Grows on you over time.',
+    '外表带刺但充满善意。在忽视中茁壮成长。',
+  robot: '高效且字面意思。用二进制处理反馈。',
+  rabbit: '精力充沛，在任务间跳跃。在你开始前就完成了。',
+  mushroom: '安静而有洞察力。随着时间推移让你喜欢上。',
   chonk:
-    'Big, warm, and takes up the whole couch. Prioritizes comfort over elegance.',
+    '大而温暖，占据了整个沙发。舒适度优先于优雅。',
 }
 
 function speciesLabel(species: string): string {
@@ -146,7 +146,7 @@ export async function call(
 
   const name = SPECIES_NAMES[r.bones.species] ?? 'Buddy'
   const personality =
-    SPECIES_PERSONALITY[r.bones.species] ?? 'Mysterious and code-savvy.'
+    SPECIES_PERSONALITY[r.bones.species] ?? '神秘且精通代码。'
 
   const stored: StoredCompanion = {
     name,

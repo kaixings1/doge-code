@@ -736,7 +736,7 @@ export class WebSocketTransport implements Transport {
 
         if (!this.pongReceived) {
           logForDebugging(
-            'WebSocketTransport: No pong received, connection appears dead',
+            'WebSocketTransport: 未收到 pong，连接似乎已死',
             { level: 'error' },
           )
           logForDiagnosticsNoPII('error', 'cli_websocket_pong_timeout')
@@ -748,7 +748,7 @@ export class WebSocketTransport implements Transport {
         try {
           this.ws.ping?.()
         } catch (error) {
-          logForDebugging(`WebSocketTransport: Ping failed: ${error}`, {
+          logForDebugging(`WebSocketTransport: Ping 失败: ${error}`, {
             level: 'error',
           })
           logForDiagnosticsNoPII('error', 'cli_websocket_ping_failed')
@@ -778,11 +778,11 @@ export class WebSocketTransport implements Transport {
           this.ws.send(KEEP_ALIVE_FRAME)
           this.lastActivityTime = Date.now()
           logForDebugging(
-            'WebSocketTransport: Sent periodic keep_alive data frame',
+            'WebSocketTransport: 已发送定期 keep_alive 数据帧',
           )
         } catch (error) {
           logForDebugging(
-            `WebSocketTransport: Periodic keep_alive failed: ${error}`,
+            `WebSocketTransport: 定期 keep_alive 失败: ${error}`,
             { level: 'error' },
           )
           logForDiagnosticsNoPII('error', 'cli_websocket_keepalive_failed')

@@ -256,7 +256,7 @@ export function DiffDialog(t0) {
     t17 = $[39];
   }
   const subtitle = t17;
-  const headerTitle = currentTurn ? `Turn ${currentTurn.turnIndex}` : "Uncommitted changes";
+  const headerTitle = currentTurn ? `第 ${currentTurn.turnIndex} 轮` : "未提交的更改";
   const headerSubtitle = currentTurn ? currentTurn.userPromptPreview ? `"${currentTurn.userPromptPreview}"` : "" : "(git diff HEAD)";
   let t18;
   if ($[40] !== sourceIndex || $[41] !== sources) {
@@ -280,14 +280,14 @@ export function DiffDialog(t0) {
       break bb0;
     }
     if (currentTurn) {
-      t19 = "No file changes in this turn";
+      t19 = "本轮无文件更改";
       break bb0;
     }
     if (diffData.stats && diffData.stats.filesCount > 0 && diffData.files.length === 0) {
-      t19 = "Too many files to display details";
+      t19 = "文件太多，无法显示详细信息";
       break bb0;
     }
-    t19 = "Working tree is clean";
+    t19 = "工作树是干净的";
   }
   const emptyMessage = t19;
   let t20;

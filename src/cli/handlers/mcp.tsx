@@ -29,7 +29,7 @@ async function checkMcpServerHealth(name: string, server: ScopedMcpServerConfig)
     if (result.type === 'connected') {
       return '✓ Connected';
     } else if (result.type === 'needs-auth') {
-      return '! Needs authentication';
+      return '! 需要认证';
     } else {
       return '✗ Failed to connect';
     }

@@ -33,23 +33,23 @@ export function formatErrorMessage(error: PluginError): string {
     case 'mcpb-download-failed':
       return `从 ${error.url} 下载 MCPB 失败：${error.reason}`;
     case 'mcpb-extract-failed':
-      return `Failed to extract MCPB ${error.mcpbPath}: ${error.reason}`;
+      return `提取 MCPB 失败 ${error.mcpbPath}: ${error.reason}`;
     case 'mcpb-invalid-manifest':
-      return `MCPB manifest invalid at ${error.mcpbPath}: ${error.validationError}`;
+      return `MCPB 清单无效 ${error.mcpbPath}: ${error.validationError}`;
     case 'marketplace-blocked-by-policy':
-      return error.blockedByBlocklist ? `Marketplace "${error.marketplace}" is blocked by enterprise policy` : `Marketplace "${error.marketplace}" is not in the allowed marketplace list`;
+      return error.blockedByBlocklist ? `市场 "${error.marketplace}" 被企业策略阻止` : `市场 "${error.marketplace}" 不在允许的市场列表中`;
     case 'dependency-unsatisfied':
-      return error.reason === 'not-enabled' ? `Dependency "${error.dependency}" is disabled` : `Dependency "${error.dependency}" is not installed`;
+      return error.reason === 'not-enabled' ? `依赖 "${error.dependency}" 已禁用` : `依赖 "${error.dependency}" 未安装`;
     case 'lsp-config-invalid':
       return `Invalid LSP server config for "${error.serverName}": ${error.validationError}`;
     case 'lsp-server-start-failed':
-      return `LSP server "${error.serverName}" failed to start: ${error.reason}`;
+      return `LSP 服务器 "${error.serverName}" 启动失败: ${error.reason}`;
     case 'lsp-server-crashed':
-      return error.signal ? `LSP server "${error.serverName}" crashed with signal ${error.signal}` : `LSP server "${error.serverName}" crashed with exit code ${error.exitCode ?? 'unknown'}`;
+      return error.signal ? `LSP 服务器 "${error.serverName}" 崩溃，信号 ${error.signal}` : `LSP 服务器 "${error.serverName}" 崩溃，退出码 ${error.exitCode ?? '未知'}`;
     case 'lsp-request-timeout':
-      return `LSP server "${error.serverName}" timed out on ${error.method} after ${error.timeoutMs}ms`;
+      return `LSP 服务器 "${error.serverName}" 在 ${error.method} 上超时，${error.timeoutMs}ms 后超时`;
     case 'lsp-request-failed':
-      return `LSP server "${error.serverName}" ${error.method} failed: ${error.error}`;
+      return `LSP 服务器 "${error.serverName}" ${error.method} 失败: ${error.error}`;
     case 'plugin-cache-miss':
       return `插件 "${error.plugin}" 未缓存在 ${error.installPath}`;
     case 'generic-error':

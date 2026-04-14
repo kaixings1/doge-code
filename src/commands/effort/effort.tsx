@@ -65,7 +65,7 @@ export function showCurrentEffort(appStateEffort: EffortValue | undefined, model
   if (effectiveValue === undefined) {
     const level = getDisplayedEffortLevel(model, appStateEffort);
     return {
-      message: `Effort level: auto (currently ${level})`
+      message: `努力程度: auto (当前 ${level})`
     };
   }
   const description = getEffortValueDescription(effectiveValue);
@@ -79,7 +79,7 @@ function unsetEffortLevel(): EffortCommandResult {
   });
   if (result.error) {
     return {
-      message: `Failed to set effort level: ${result.error.message}`
+      message: `设置努力程度失败: ${result.error.message}`
     };
   }
   logEvent('tengu_effort_command', {

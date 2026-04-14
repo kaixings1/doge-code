@@ -252,7 +252,7 @@ export async function runBridgeLoop(
         )
       } catch (err) {
         logger.logError(
-          `Failed to refresh session ${sessionId} token: ${errorMessage(err)}`,
+          `刷新会话 ${sessionId} 令牌失败: ${errorMessage(err)}`,
         )
         logForDebugging(
           `[bridge:heartbeat] reconnectSession(${sessionId}) failed: ${errorMessage(err)}`,
@@ -291,13 +291,13 @@ export async function runBridgeLoop(
           }
           if (v2Sessions.has(sessionId)) {
             logger.logVerbose(
-              `Refreshing session ${sessionId} token via bridge/reconnect`,
+              `通过 bridge/reconnect 刷新会话 ${sessionId} 令牌`,
             )
             void api
               .reconnectSession(environmentId, sessionId)
               .catch((err: unknown) => {
                 logger.logError(
-                  `Failed to refresh session ${sessionId} token: ${errorMessage(err)}`,
+                  `刷新会话 ${sessionId} 令牌失败: ${errorMessage(err)}`,
                 )
                 logForDebugging(
                   `[bridge:token] reconnectSession(${sessionId}) failed: ${errorMessage(err)}`,
@@ -506,13 +506,13 @@ export async function runBridgeLoop(
           // Also skip for timeout-killed sessions — the timeout watchdog
           // already logged a clear timeout message.
           if (!wasTimedOut && !loopSignal.aborted) {
-            failureMessage = stderrSummary ?? 'Process exited with error'
+            failureMessage = stderrSummary ?? '进程因错误退出'
             logger.logSessionFailed(sessionId, failureMessage)
             logError(new Error(`Bridge session failed: ${failureMessage}`))
           }
           break
         case 'interrupted':
-          logger.logVerbose(`Session ${sessionId} interrupted`)
+          logger.logVerbose(`会话 ${sessionId} 中断`)
           break
       }
 
@@ -544,7 +544,7 @@ export async function runBridgeLoop(
             wt.hookBased,
           ).catch((err: unknown) =>
             logger.logVerbose(
-              `Failed to remove worktree ${wt.worktreePath}: ${errorMessage(err)}`,
+              `移除工作树 ${wt.worktreePath} 失败: ${errorMessage(err)}`,
             ),
           ),
         )
@@ -567,7 +567,7 @@ export async function runBridgeLoop(
               .archiveSession(compatId)
               .catch((err: unknown) =>
                 logger.logVerbose(
-                  `Failed to archive session ${sessionId}: ${errorMessage(err)}`,
+                  `归档会话 ${sessionId} 失败: ${errorMessage(err)}`,
                 ),
               ),
           )
@@ -854,7 +854,7 @@ export async function runBridgeLoop(
         case 'healthcheck':
           await ackWork()
           logForDebugging('[bridge:work] Healthcheck received')
-          logger.logVerbose('Healthcheck received')
+          logger.logVerbose('收到健康检查')
           break
         case 'session': {
           const sessionId = work.data.id
@@ -1061,7 +1061,7 @@ export async function runBridgeLoop(
           )
           if (typeof spawnResult === 'string') {
             logger.logError(
-              `Failed to spawn session ${sessionId}: ${spawnResult}`,
+              `生成会话 ${sessionId} 失败: ${spawnResult}`,
             )
             // Clean up worktree if one was created for this session
             const wt = sessionWorktrees.get(sessionId)
@@ -1120,7 +1120,7 @@ export async function runBridgeLoop(
           sessionStartTimes.set(sessionId, startTime)
 
           // Use a generic prompt description since we no longer get startup_context
-          logger.logSessionStart(sessionId, `Session ${sessionId}`)
+          logger.logSessionStart(sessionId, `会话 ${sessionId}`)
 
           // Compute the actual debug file path (mirrors sessionRunner.ts logic)
           const safeId = safeFilenameId(sessionId)
@@ -1141,7 +1141,7 @@ export async function runBridgeLoop(
           }
 
           if (sessionDebugFile) {
-            logger.logVerbose(`Debug log: ${sessionDebugFile}`)
+            logger.logVerbose(`调试日志: ${sessionDebugFile}`)
           }
 
           // Register in the sessions Map before starting status updates so the
@@ -1529,7 +1529,7 @@ export async function runBridgeLoop(
     !fatalExit
   ) {
     logger.logStatus(
-      `Resume this session by running \`claude remote-control --continue\``,
+      `通过运行 \`claude remote-control --continue\` 恢复此会话`,
     )
     logForDebugging(
       `[bridge:shutdown] Skipping archive+deregister to allow resume of session ${initialSessionId}`,
@@ -1565,9 +1565,9 @@ export async function runBridgeLoop(
     logForDebugging(
       `[bridge:shutdown] Environment deregistered, bridge offline`,
     )
-    logger.logVerbose('Environment deregistered.')
+    logger.logVerbose('环境已注销。')
   } catch (err) {
-    logger.logVerbose(`Failed to deregister environment: ${errorMessage(err)}`)
+    logger.logVerbose(`注销环境失败: ${errorMessage(err)}`)
   }
 
   // Clear the crash-recovery pointer — the env is gone, pointer would be
@@ -1576,7 +1576,7 @@ export async function runBridgeLoop(
   const { clearBridgePointer } = await import('./bridgePointer.js')
   await clearBridgePointer(config.dir)
 
-  logger.logVerbose('Environment offline.')
+  logger.logVerbose('环境离线。')
 }
 
 const CONNECTION_ERROR_CODES = new Set([
@@ -1665,7 +1665,7 @@ async function stopWorkWithRetry(
         await sleep(delay)
       } else {
         logger.logError(
-          `Failed to stop work ${workId} after ${MAX_ATTEMPTS} attempts: ${errMsg}`,
+          `在 ${MAX_ATTEMPTS} 次尝试后停止工作 ${workId} 失败: ${errMsg}`,
         )
         logForDiagnosticsNoPII('error', 'bridge_stop_work_failed', {
           attempts: MAX_ATTEMPTS,
@@ -1690,7 +1690,7 @@ function onSessionTimeout(
   })
   logger.logSessionFailed(
     sessionId,
-    `Session timed out after ${formatDuration(timeoutMs)}`,
+    `会话在 ${formatDuration(timeoutMs)} 后超时`,
   )
   timedOutSessions.add(sessionId)
   handle.kill()
@@ -2162,7 +2162,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
     const { pointer, dir: pointerDir } = found
     const ageMin = Math.round(pointer.ageMs / 60_000)
     const ageStr = ageMin < 60 ? `${ageMin}m` : `${Math.round(ageMin / 60)}h`
-    const fromWt = pointerDir !== dir ? ` from worktree ${pointerDir}` : ''
+    const fromWt = pointerDir !== dir ? ` 来自工作树 ${pointerDir}` : ''
     // biome-ignore lint/suspicious/noConsole: intentional info output
     console.error(
       `Resuming session ${pointer.sessionId} (${ageStr} ago)${fromWt}\u2026`,
@@ -2830,7 +2830,7 @@ export async function runBridgeHeadless(
 
   if (!checkHasTrustDialogAccepted()) {
     throw new BridgeHeadlessPermanentError(
-      `Workspace not trusted: ${dir}. Run \`claude\` in that directory first to accept the trust dialog.`,
+      `工作区不受信任: ${dir}。请先在该目录中运行 \`claude\` 以接受信任对话框。`,
     )
   }
 
@@ -2943,10 +2943,10 @@ export async function runBridgeHeadless(
       })
       if (sid) {
         initialSessionId = sid
-        log(`created initial session ${sid}`)
+        log(`创建初始会话 ${sid}`)
       }
     } catch (err) {
-      log(`session pre-creation failed (non-fatal): ${errorMessage(err)}`)
+      log(`会话预创建失败(非致命): ${errorMessage(err)}`)
     }
   }
 
@@ -2970,7 +2970,7 @@ function createHeadlessBridgeLogger(log: (s: string) => void): BridgeLogger {
   return {
     printBanner: (cfg, envId) =>
       log(
-        `registered environmentId=${envId} dir=${cfg.dir} spawnMode=${cfg.spawnMode} capacity=${cfg.maxSessions}`,
+        `已注册 environmentId=${envId} 目录=${cfg.dir} 生成模式=${cfg.spawnMode} 容量=${cfg.maxSessions}`,
       ),
     logSessionStart: (id, _prompt) => log(`会话开始 ${id}`),
     logSessionComplete: (id, ms) => log(`会话完成 ${id}（${ms}毫秒）`),

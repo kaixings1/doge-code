@@ -516,7 +516,7 @@ export function wrapFetchWithTimeout(baseFetch: FetchLike): FetchLike {
     const controller = new AbortController()
     const timer = setTimeout(
       c =>
-        c.abort(new DOMException('The operation timed out.', 'TimeoutError')),
+        c.abort(new DOMException('操作超时。', 'TimeoutError')),
       MCP_REQUEST_TIMEOUT_MS,
       controller,
     )
@@ -1059,8 +1059,8 @@ export const connectToServer = memoize(
           transport.close().catch(() => {})
           reject(
             new TelemetrySafeError_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS(
-              `MCP server "${name}" connection timed out after ${getConnectionTimeoutMs()}ms`,
-              'MCP connection timeout',
+              `MCP 服务器 "${name}" 连接超时，经过 ${getConnectionTimeoutMs()}ms`,
+              'MCP 连接超时',
             ),
           )
         }, getConnectionTimeoutMs())
@@ -1696,8 +1696,8 @@ export async function ensureConnectedClient(
   const connectedClient = await connectToServer(client.name, client.config)
   if (connectedClient.type !== 'connected') {
     throw new TelemetrySafeError_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS(
-      `MCP server "${client.name}" is not connected`,
-      'MCP server not connected',
+      `MCP 服务器 "${client.name}" 未连接`,
+      'MCP 服务器未连接',
     )
   }
   return connectedClient
@@ -1814,7 +1814,7 @@ export const fetchToolsForClient = memoizeWithLRU(
             async checkPermissions() {
               return {
                 behavior: 'passthrough' as const,
-                message: 'MCPTool requires permission.',
+                message: 'MCP 工具需要权限。',
                 suggestions: [
                   {
                     type: 'addRules' as const,
@@ -2697,11 +2697,11 @@ export async function transformMCPResult(
     }
   }
 
-  const errorMessage = `MCP server "${name}" tool "${tool}": unexpected response format`
+  const errorMessage = `MCP 服务器 "${name}" 工具 "${tool}": 响应格式意外`
   logMCPError(name, errorMessage)
   throw new TelemetrySafeError_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS(
     errorMessage,
-    'MCP tool unexpected response format',
+    'MCP 工具响应格式意外',
   )
 }
 
@@ -3143,7 +3143,7 @@ async function callMCPTool({
       logMCPError(name, errorDetails)
       throw new McpToolCallError_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS(
         errorDetails,
-        'MCP tool returned error',
+        'MCP 工具返回错误',
         '_meta' in result && result._meta ? { _meta: result._meta } : undefined,
       )
     }
@@ -3198,12 +3198,12 @@ async function callMCPTool({
       if (errorCode === 401 || e instanceof UnauthorizedError) {
         logMCPDebug(
           name,
-          `Tool call returned 401 Unauthorized - token may have expired`,
+          `工具调用返回 401 未授权 - 令牌可能已过期`,
         )
         logEvent('tengu_mcp_tool_call_auth_error', {})
         throw new McpAuthError(
           name,
-          `MCP server "${name}" requires re-authorization (token expired)`,
+          `MCP 服务器 "${name}" 需要重新授权(令牌已过期)`,
         )
       }
 

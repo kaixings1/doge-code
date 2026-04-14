@@ -77,7 +77,7 @@ const pollIntervalConfigSchema = lazySchema(() =>
         cfg.poll_interval_ms_at_capacity > 0,
       {
         message:
-          'at-capacity liveness requires non_exclusive_heartbeat_interval_ms > 0 or poll_interval_ms_at_capacity > 0',
+          '满容量存活需要 non_exclusive_heartbeat_interval_ms > 0 或 poll_interval_ms_at_capacity > 0',
       },
     )
     .refine(
@@ -86,7 +86,7 @@ const pollIntervalConfigSchema = lazySchema(() =>
         cfg.multisession_poll_interval_ms_at_capacity > 0,
       {
         message:
-          'at-capacity liveness requires non_exclusive_heartbeat_interval_ms > 0 or multisession_poll_interval_ms_at_capacity > 0',
+          '满容量存活需要 non_exclusive_heartbeat_interval_ms > 0 或 multisession_poll_interval_ms_at_capacity > 0',
       },
     ),
 )

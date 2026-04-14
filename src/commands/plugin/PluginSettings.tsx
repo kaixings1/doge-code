@@ -240,7 +240,7 @@ function buildErrorRows(failedMarketplaces: Array<{
     const scope = sourceInfo.isInPolicy ? 'managed' : sourceInfo.editableSources[0]?.scope;
     rows.push({
       label: m.name,
-      message: m.error ?? 'Installation failed',
+      message: m.error ?? '安装失败',
       guidance: action.kind === 'managed-only' ? 'Managed by your organization — contact your admin' : undefined,
       action,
       scope

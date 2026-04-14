@@ -186,7 +186,7 @@ function handleInteractivePermission(
       if (bridgeCallbacks && bridgeRequestId) {
         bridgeCallbacks.sendResponse(bridgeRequestId, {
           behavior: 'deny',
-          message: feedback ?? 'User denied permission',
+          message: feedback ?? '用户拒绝权限',
         })
         bridgeCallbacks.cancelRequest(bridgeRequestId)
       }

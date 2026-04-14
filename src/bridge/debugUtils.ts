@@ -39,7 +39,7 @@ export function debugTruncate(s: string): string {
   if (flat.length <= DEBUG_MSG_LIMIT) {
     return flat
   }
-  return flat.slice(0, DEBUG_MSG_LIMIT) + `... (${flat.length} chars)`
+  return flat.slice(0, DEBUG_MSG_LIMIT) + `... (${flat.length} 字符)`
 }
 
 /** Truncate a JSON-serializable value for debug logging. */
@@ -49,7 +49,7 @@ export function debugBody(data: unknown): string {
   if (s.length <= DEBUG_MSG_LIMIT) {
     return s
   }
-  return s.slice(0, DEBUG_MSG_LIMIT) + `... (${s.length} chars)`
+  return s.slice(0, DEBUG_MSG_LIMIT) + `... (${s.length} 字符)`
 }
 
 /**

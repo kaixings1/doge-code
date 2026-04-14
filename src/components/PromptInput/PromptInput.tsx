@@ -1344,7 +1344,7 @@ function PromptInput({
       }
       addNotification({
         key: 'external-editor-error',
-        text: `External editor failed: ${errorMessage(err)}`,
+        text: `外部编辑器失败: ${errorMessage(err)}`,
         color: 'warning',
         priority: 'high'
       });

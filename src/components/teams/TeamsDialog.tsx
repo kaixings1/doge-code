@@ -166,9 +166,9 @@ export function TeamsDialog({
     if (input === 's') {
       if (dialogLevel.type === 'teammateList' && teammateStatuses[selectedIndex]) {
         const teammate = teammateStatuses[selectedIndex];
-        void sendShutdownRequestToMailbox(teammate.name, dialogLevel.teamName, 'Graceful shutdown requested by team lead');
+        void sendShutdownRequestToMailbox(teammate.name, dialogLevel.teamName, '队长请求优雅地关闭');
       } else if (dialogLevel.type === 'teammateDetail' && currentTeammate) {
-        void sendShutdownRequestToMailbox(currentTeammate.name, dialogLevel.teamName, 'Graceful shutdown requested by team lead');
+        void sendShutdownRequestToMailbox(currentTeammate.name, dialogLevel.teamName, '队长请求优雅地关闭');
         goBackToList();
       }
       return;

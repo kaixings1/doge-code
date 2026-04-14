@@ -833,9 +833,9 @@ function formatTranscriptForFacets(log: LogOption): string {
   const meta = logToSessionMeta(log)
 
   lines.push(`Session: ${meta.session_id.slice(0, 8)}`)
-  lines.push(`Date: ${meta.start_time}`)
-  lines.push(`Project: ${meta.project_path}`)
-  lines.push(`Duration: ${meta.duration_minutes} min`)
+  lines.push(`日期: ${meta.start_time}`)
+  lines.push(`项目: ${meta.project_path}`)
+  lines.push(`持续时间: ${meta.duration_minutes} 分钟`)
   lines.push('')
 
   for (const msg of log.messages) {
@@ -931,7 +931,7 @@ async function formatTranscriptWithSummarization(
     `Date: ${meta.start_time}`,
     `Project: ${meta.project_path}`,
     `Duration: ${meta.duration_minutes} min`,
-    `[Long session - ${chunks.length} parts summarized]`,
+    `[长会话 - 已摘要 ${chunks.length} 个部分]`,
     '',
   ].join('\n')
 
@@ -3103,13 +3103,13 @@ Then access at: ${s3Url}`
     const sessionLabel =
       data.total_sessions_scanned &&
       data.total_sessions_scanned > data.total_sessions
-        ? `${data.total_sessions_scanned.toLocaleString()} sessions total · ${data.total_sessions} analyzed`
-        : `${data.total_sessions} sessions`
+        ? `共 ${data.total_sessions_scanned.toLocaleString()} 个会话 · 已分析 ${data.total_sessions} 个`
+        : `${data.total_sessions} 个会话`
     const stats = [
       sessionLabel,
       `${data.total_messages.toLocaleString()} messages`,
       `${Math.round(data.total_duration_hours)}h`,
-      `${data.git_commits} commits`,
+      `${data.git_commits} 次提交`,
     ].join(' · ')
 
     // Build remote host info (ant-only)
