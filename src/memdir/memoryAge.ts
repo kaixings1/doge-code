@@ -14,9 +14,9 @@ export function memoryAgeDays(mtimeMs: number): number {
  */
 export function memoryAge(mtimeMs: number): string {
   const d = memoryAgeDays(mtimeMs)
-  if (d === 0) return 'today'
-  if (d === 1) return 'yesterday'
-  return `${d} days ago`
+  if (d === 0) return '今天'
+  if (d === 1) return '昨天'
+  return `${d} 天前`
 }
 
 /**
@@ -34,10 +34,10 @@ export function memoryFreshnessText(mtimeMs: number): string {
   const d = memoryAgeDays(mtimeMs)
   if (d <= 1) return ''
   return (
-    `This memory is ${d} days old. ` +
-    `Memories are point-in-time observations, not live state — ` +
-    `claims about code behavior or file:line citations may be outdated. ` +
-    `Verify against current code before asserting as fact.`
+    `此记忆已有 ${d} 天历史。` +
+    `记忆是时间点快照，而非实时状态 — ` +
+    `关于代码行为或文件行号引用可能已过时。` +
+    `在断言为事实前，请与当前代码核对。`
   )
 }
 

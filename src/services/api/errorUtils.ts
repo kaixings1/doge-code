@@ -206,7 +206,7 @@ export function formatAPIError(error: APIError): string {
 
     // Handle timeout errors
     if (code === 'ETIMEDOUT') {
-      return 'Request timed out. Check your internet connection and proxy settings'
+      return '请求超时。请检查您的互联网连接和代理设置'
     }
 
     // Handle SSL/TLS errors with specific messages
@@ -234,7 +234,7 @@ export function formatAPIError(error: APIError): string {
     }
   }
 
-  if (error.message === 'Connection error.') {
+  if (error.message === '连接错误。') {
     // If we have a code but it's not SSL, include it for debugging
     if (connectionDetails?.code) {
       return `无法连接到 API (${connectionDetails.code})`

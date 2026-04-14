@@ -960,7 +960,7 @@ export async function initBridgeCore(
       logEvent('tengu_bridge_repl_reconnect_failed', {
         close_code: closeCode,
       })
-      onStateChange?.('failed', 'reconnection failed')
+      onStateChange?.('failed', '重新连接失败')
       triggerTeardown()
     })
   }
@@ -1064,7 +1064,7 @@ export async function initBridgeCore(
       wakePollLoop()
       onStateChange?.(
         'reconnecting',
-        'Work item lease expired, fetching fresh token',
+        '工作项租约已过期，正在获取新令牌',
       )
     },
     async onEnvironmentLost() {
@@ -2230,13 +2230,13 @@ async function startWorkPollLoop({
           )
           onStateChange?.(
             'failed',
-            'Environment deleted and re-registration limit reached',
+            '环境已删除且达到重新注册限制',
           )
           onFatalError?.()
           break
         }
 
-        onStateChange?.('reconnecting', 'environment lost, recreating session')
+        onStateChange?.('reconnecting', '环境丢失，正在重新创建会话')
         const newCreds = await onEnvironmentLost()
         // doReconnect() makes several sequential network calls (1-5s).
         // If the user triggered teardown during that window, its internal
@@ -2263,7 +2263,7 @@ async function startWorkPollLoop({
 
         onStateChange?.(
           'failed',
-          'Environment deleted and re-registration failed',
+          '环境已删除且重新注册失败',
         )
         onFatalError?.()
         break
@@ -2359,7 +2359,7 @@ async function startWorkPollLoop({
           elapsedMs: elapsed,
           lastStatus: httpStatus,
         } as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS)
-        onStateChange?.('failed', 'connection to server lost')
+        onStateChange?.('failed', '与服务器的连接丢失')
         break
       }
 

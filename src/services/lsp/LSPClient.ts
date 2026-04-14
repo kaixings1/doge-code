@@ -72,7 +72,7 @@ export function createLSPClient(
 
   function checkStartFailed(): void {
     if (startFailed) {
-      throw startError || new Error(`LSP server ${serverName} failed to start`)
+      throw startError || new Error(`LSP 服务器 ${serverName} 启动失败`)
     }
   }
 
@@ -104,7 +104,7 @@ export function createLSPClient(
         })
 
         if (!process.stdout || !process.stdin) {
-          throw new Error('LSP server process stdio not available')
+          throw new Error('LSP 服务器进程 stdio 不可用')
         }
 
         // 1.5. Wait for process to successfully spawn before using streams
@@ -147,7 +147,7 @@ export function createLSPClient(
             startError = error
             logError(
               new Error(
-                `LSP server ${serverName} failed to start: ${error.message}`,
+                `LSP 服务器 ${serverName} 启动失败: ${error.message}`,
               ),
             )
           }
@@ -159,7 +159,7 @@ export function createLSPClient(
             startFailed = false
             startError = undefined
             const crashError = new Error(
-              `LSP server ${serverName} crashed with exit code ${code}`,
+              `LSP 服务器 ${serverName} 崩溃，退出码 ${code}`,
             )
             logError(crashError)
             onCrash?.(crashError)
@@ -171,7 +171,7 @@ export function createLSPClient(
         process.stdin.on('error', (error: Error) => {
           if (!isStopping) {
             logForDebugging(
-              `LSP server ${serverName} stdin error: ${error.message}`,
+              `LSP 服务器 ${serverName} stdin 错误: ${error.message}`,
             )
           }
           // Error is logged but not thrown - the connection error handler will catch this
@@ -191,7 +191,7 @@ export function createLSPClient(
             startError = error
             logError(
               new Error(
-                `LSP server ${serverName} connection error: ${error.message}`,
+                `LSP 服务器 ${serverName} 连接错误: ${error.message}`,
               ),
             )
           }
@@ -202,7 +202,7 @@ export function createLSPClient(
           if (!isStopping) {
             isInitialized = false
             // Don't set startFailed here - the connection may close after graceful shutdown
-            logForDebugging(`LSP server ${serverName} connection closed`)
+            logForDebugging(`LSP 服务器 ${serverName} 连接已关闭`)
           }
         })
 
@@ -255,7 +255,7 @@ export function createLSPClient(
 
     async initialize(params: InitializeParams): Promise<InitializeResult> {
       if (!connection) {
-        throw new Error('LSP client not started')
+        throw new Error('LSP 客户端未启动')
       }
 
       checkStartFailed()
@@ -272,14 +272,14 @@ export function createLSPClient(
         await connection.sendNotification('initialized', {})
 
         isInitialized = true
-        logForDebugging(`LSP server ${serverName} initialized`)
+        logForDebugging(`LSP 服务器 ${serverName} 已初始化`)
 
         return result
       } catch (error) {
         const err = error as Error
         logError(
           new Error(
-            `LSP server ${serverName} initialize failed: ${err.message}`,
+            `LSP 服务器 ${serverName} 初始化失败: ${err.message}`,
           ),
         )
         throw error
@@ -291,13 +291,13 @@ export function createLSPClient(
       params: unknown,
     ): Promise<TResult> {
       if (!connection) {
-        throw new Error('LSP client not started')
+        throw new Error('LSP 客户端未启动')
       }
 
       checkStartFailed()
 
       if (!isInitialized) {
-        throw new Error('LSP server not initialized')
+        throw new Error('LSP 服务器未初始化')
       }
 
       try {
@@ -306,7 +306,7 @@ export function createLSPClient(
         const err = error as Error
         logError(
           new Error(
-            `LSP server ${serverName} request ${method} failed: ${err.message}`,
+            `LSP 服务器 ${serverName} 请求 ${method} 失败: ${err.message}`,
           ),
         )
         throw error
@@ -315,7 +315,7 @@ export function createLSPClient(
 
     async sendNotification(method: string, params: unknown): Promise<void> {
       if (!connection) {
-        throw new Error('LSP client not started')
+        throw new Error('LSP 客户端未启动')
       }
 
       checkStartFailed()
@@ -326,11 +326,11 @@ export function createLSPClient(
         const err = error as Error
         logError(
           new Error(
-            `LSP server ${serverName} notification ${method} failed: ${err.message}`,
+            `LSP 服务器 ${serverName} 通知 ${method} 失败: ${err.message}`,
           ),
         )
         // Don't re-throw for notifications - they're fire-and-forget
-        logForDebugging(`Notification ${method} failed but continuing`)
+        logForDebugging(`通知 ${method} 失败但继续`)
       }
     },
 
@@ -385,7 +385,7 @@ export function createLSPClient(
       } catch (error) {
         const err = error as Error
         logError(
-          new Error(`LSP server ${serverName} stop failed: ${err.message}`),
+          new Error(`LSP 服务器 ${serverName} 停止失败: ${err.message}`),
         )
         shutdownError = err
         // Continue to cleanup despite shutdown failure

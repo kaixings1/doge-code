@@ -775,7 +775,7 @@ export async function removeMcpConfig(
       const { servers: existingServers } = getProjectMcpConfigsFromCwd()
 
       if (!existingServers[name]) {
-        throw new Error(`No MCP server found with name: ${name} in .mcp.json`)
+        throw new Error(`在 .mcp.json 中未找到名为 ${name} 的 MCP 服务器`)
       }
 
       // Strip scope information when writing back to .mcp.json
@@ -860,7 +860,7 @@ export function getProjectMcpConfigsFromCwd(): {
   // Missing .mcp.json is expected, but malformed files should report errors
   if (!config) {
     const nonMissingErrors = errors.filter(
-      e => !e.message.startsWith('MCP config file not found'),
+      e => !e.message.startsWith('MCP 配置文件未找到'),
     )
     if (nonMissingErrors.length > 0) {
       logForDebugging(
@@ -932,7 +932,7 @@ export function getMcpConfigsByScope(
         // Missing .mcp.json in parent directories is expected, but malformed files should report errors
         if (!config) {
           const nonMissingErrors = errors.filter(
-            e => !e.message.startsWith('MCP config file not found'),
+            e => !e.message.startsWith('MCP 配置文件未找到'),
           )
           if (nonMissingErrors.length > 0) {
             logForDebugging(
@@ -1005,7 +1005,7 @@ export function getMcpConfigsByScope(
       // Missing enterprise config file is expected, but malformed files should report errors
       if (!config) {
         const nonMissingErrors = errors.filter(
-          e => !e.message.startsWith('MCP config file not found'),
+          e => !e.message.startsWith('MCP 配置文件未找到'),
         )
         if (nonMissingErrors.length > 0) {
           logForDebugging(
@@ -1311,7 +1311,7 @@ export function parseMcpConfig(params: {
       errors: schemaResult.error.issues.map(issue => ({
         ...(filePath && { file: filePath }),
         path: issue.path.join('.'),
-        message: 'Does not adhere to MCP server configuration schema',
+        message: '不符合 MCP 服务器配置架构',
         mcpErrorMetadata: {
           scope,
           severity: 'fatal',
@@ -1404,8 +1404,8 @@ export function parseMcpConfigFromFilePath(params: {
           {
             file: filePath,
             path: '',
-            message: `MCP config file not found: ${filePath}`,
-            suggestion: 'Check that the file path is correct',
+            message: `MCP 配置文件未找到: ${filePath}`,
+            suggestion: '检查文件路径是否正确',
             mcpErrorMetadata: {
               scope,
               severity: 'fatal',
@@ -1424,8 +1424,8 @@ export function parseMcpConfigFromFilePath(params: {
         {
           file: filePath,
           path: '',
-          message: `Failed to read file: ${error}`,
-          suggestion: 'Check file permissions and ensure the file exists',
+          message: `读取文件失败: ${error}`,
+          suggestion: '检查文件权限并确保文件存在',
           mcpErrorMetadata: {
             scope,
             severity: 'fatal',
@@ -1448,8 +1448,8 @@ export function parseMcpConfigFromFilePath(params: {
         {
           file: filePath,
           path: '',
-          message: `MCP config is not a valid JSON`,
-          suggestion: 'Fix the JSON syntax errors in the file',
+          message: `MCP 配置文件不是有效的 JSON`,
+          suggestion: '修复文件中的 JSON 语法错误',
           mcpErrorMetadata: {
             scope,
             severity: 'fatal',

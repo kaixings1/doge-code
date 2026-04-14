@@ -689,16 +689,16 @@ export function getAssistantMessageFromError(
       const baseMessage = `API Error: 400 ${error.message}\n\nRun /share and post the JSON file to ${MACRO.FEEDBACK_CHANNEL}.`
       const rewindInstruction = getIsNonInteractiveSession()
         ? ''
-        : ' Then, use /rewind to recover the conversation.'
+        : ' 然后，使用 /rewind 恢复对话。'
       return createAssistantAPIErrorMessage({
         content: baseMessage + rewindInstruction,
         error: 'invalid_request',
       })
     } else {
-      const baseMessage = 'API Error: 400 due to tool use concurrency issues.'
+      const baseMessage = 'API 错误: 400 工具使用并发问题。'
       const rewindInstruction = getIsNonInteractiveSession()
         ? ''
-        : ' Run /rewind to recover the conversation.'
+        : ' 运行 /rewind 恢复对话。'
       return createAssistantAPIErrorMessage({
         content: baseMessage + rewindInstruction,
         error: 'invalid_request',
@@ -725,9 +725,9 @@ export function getAssistantMessageFromError(
     logEvent('tengu_duplicate_tool_use_id', {})
     const rewindInstruction = getIsNonInteractiveSession()
       ? ''
-      : ' Run /rewind to recover the conversation.'
+      : ' 运行 /rewind 恢复对话。'
     return createAssistantAPIErrorMessage({
-      content: `API Error: 400 duplicate tool_use ID in conversation history.${rewindInstruction}`,
+      content: `API 错误: 400 对话历史中工具使用 ID 重复。${rewindInstruction}`,
       error: 'invalid_request',
       errorDetails: error.message,
     })
@@ -974,7 +974,7 @@ function get3PModelFallbackSuggestion(model: string): string | undefined {
  */
 export function classifyAPIError(error: unknown): string {
   // Aborted requests
-  if (error instanceof Error && error.message === 'Request was aborted.') {
+  if (error instanceof Error && error.message === '请求已中止。') {
     return 'aborted'
   }
 
