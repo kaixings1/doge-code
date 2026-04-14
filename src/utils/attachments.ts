@@ -764,7 +764,8 @@ export async function getAttachments(
   // TODO: Compute attachments as the user types, not here (though we use this
   // function for slash command prompts too)
   const abortController = createAbortController()
-  const timeoutId = setTimeout(ac => ac.abort(), 1000, abortController)
+  // 增加超时时间到 5 秒（原 1 秒），避免大文件读取、PDF 处理、技能发现等操作超时
+  const timeoutId = setTimeout(ac => ac.abort(), 5000, abortController)
   const context = { ...toolUseContext, abortController }
 
   const isMainThread = !toolUseContext.agentId

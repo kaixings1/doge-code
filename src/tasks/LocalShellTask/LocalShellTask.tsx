@@ -21,21 +21,62 @@ import { killTask } from './killShellTasks.js';
 
 /** Prefix that identifies a LocalShellTask summary to the UI collapse transform. */
 export const BACKGROUND_BASH_SUMMARY_PREFIX = 'Background command ';
-const STALL_CHECK_INTERVAL_MS = 5_000;
-const STALL_THRESHOLD_MS = 45_000;
-const STALL_TAIL_BYTES = 1024;
+const STALL_CHECK_INTERVAL_MS = 3_000;  // 每 3 秒检查一次（原 5 秒）
+const STALL_THRESHOLD_MS = 20_000;      // 20 秒无输出后开始检测（原 45 秒）
+const STALL_TAIL_BYTES = 2048;          // 读取更多尾部内容（原 1024）
 
 // Last-line patterns that suggest a command is blocked waiting for keyboard
 // input. Used to gate the stall notification — we stay silent on commands that
 // are merely slow (git log -S, long builds) and only notify when the tail
 // looks like an interactive prompt the model can act on. See CC-1175.
-const PROMPT_PATTERNS = [/\(y\/n\)/i,
-// (Y/n), (y/N)
-/\[y\/n\]/i,
-// [Y/n], [y/N]
-/\(yes\/no\)/i, /\b(?:Do you|Would you|Shall I|Are you sure|Ready to)\b.*\? *$/i,
-// directed questions
-/Press (any key|Enter)/i, /Continue\?/i, /Overwrite\?/i];
+const PROMPT_PATTERNS = [
+  // Standard y/n formats（带括号的格式，最明确）
+  /\(y\/n\)/i,          // (Y/n), (y/N)
+  /\[y\/n\]/i,          // [Y/n], [y/N]
+  /\(yes\/no\)/i,       // (yes/no)
+  /\[yes\/no\]/i,       // [yes/no]
+  
+  // Simple y/n without parentheses（无括号但明确是选项）
+  /^\s*y\/n\s*$/i,      // y/n（整行只有这个）
+  /^\s*yes\/no\s*$/i,   // yes/no（整行只有这个）
+  /^\s*[yY]\/[nN]\s*$/, // Y/N, y/n, Y/n, y/N（整行）
+  
+  // 单独的 y 或 n 作为选项（必须有上下文）
+  /\?\s*\[?[yYnN]\]?$/,        // ? [y] 或 ? y 结尾
+  /\(default\s*[:：]?\s*[yYnN]\)/i,    // (default: Y) 或 (default Y) 或 (default：Y)
+  /\[default\s*[:：]?\s*[yYnN]\]/i,    // [default: Y] 或 [default Y]
+  /default\s*[:：]\s*[yYnN]$/i,        // default: Y （行尾）
+  
+  // 带默认值的格式
+  /\(default\s*[yY]es\)/i,    // (default Yes)
+  /\(default\s*[nN]o\)/i,     // (default No)
+  
+  // 问句格式（明确的交互提示）
+  /\b(?:Do you|Would you|Shall I|Are you sure|Ready to)\b.*\? *$/i,
+  /\b(?:Continue|Proceed|Install|Download|Delete|Remove|Overwrite|Replace)\b.*\?\s*\(?[yYnN]\/[yYnN]\)?/i,
+  /\?.*?\(y\/n\)/i,           // ? ... (y/n)
+  /\?.*?\[y\/n\]/i,           // ? ... [y/n]
+  /\?\s*y\/n/i,               // ? y/n
+  
+  // 按键提示
+  /Press\s+(any key|Enter)\s*(to\s+continue)?/i, 
+  
+  // 明确的继续/覆盖提示
+  /^Continue\?\s*$/i, 
+  /^Overwrite\?\s*$/i,
+  
+  // npm/node 常见提示格式（更精确的匹配）
+  /Is this OK\?\s*\(y\/n\)/i,  // npm 标准确认格式
+  
+  // yes or no / ok or cancel（必须成对出现且是选择）
+  /^\s*yes\s+or\s+no\s*$/i,
+  /^\s*ok\s+(?:or|\/)\s+cancel\s*$/i,
+  /^\s*ok\/cancel\s*$/i,            // ok/cancel 斜杠格式
+  
+  // 明确的确认/接受提示
+  /Confirm\s+(?:installation|this action)\s*\(y\/n\)/i,
+  /Accept\s+.*\?\s*\(y\/n\)/i,
+];
 export function looksLikePrompt(tail: string): boolean {
   const lastLine = tail.trimEnd().split('\n').pop() ?? '';
   return PROMPT_PATTERNS.some(p => p.test(lastLine));

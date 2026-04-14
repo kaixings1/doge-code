@@ -54,7 +54,7 @@ export const EnterWorktreeTool: Tool<InputSchema, Output> = buildTool({
   searchHint: '创建隔离的 git worktree 并切换进入',
   maxResultSizeChars: 100_000,
   async description() {
-    return 'Creates an isolated worktree (via git or configured hooks) and switches the session into it'
+    return '创建隔离的 git worktree（通过 git 或配置的钩子）并切换进入'
   },
   async prompt() {
     return getEnterWorktreeToolPrompt()
@@ -66,7 +66,7 @@ export const EnterWorktreeTool: Tool<InputSchema, Output> = buildTool({
     return outputSchema()
   },
   userFacingName() {
-    return 'Creating worktree'
+    return '创建工作树'
   },
   shouldDefer: true,
   toAutoClassifierInput(input) {

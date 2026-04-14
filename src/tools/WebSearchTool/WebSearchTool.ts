@@ -158,12 +158,12 @@ export const WebSearchTool = buildTool({
     return `Claude wants to search the web for: ${input.query}`
   },
   userFacingName() {
-    return 'Web Search'
+    return '网页搜索'
   },
   getToolUseSummary,
   getActivityDescription(input) {
     const summary = getToolUseSummary(input)
-    return summary ? `Searching for ${summary}` : 'Searching the web'
+    return summary ? `正在搜索 ${summary}` : '正在搜索网页'
   },
   isEnabled() {
     const provider = getAPIProvider()
@@ -255,7 +255,7 @@ export const WebSearchTool = buildTool({
     const startTime = performance.now()
     const { query } = input
     const userMessage = createUserMessage({
-      content: 'Perform a web search for the query: ' + query,
+      content: '为以下查询执行网页搜索：' + query,
     })
     const toolSchema = makeToolSchema(input)
 
@@ -268,7 +268,7 @@ export const WebSearchTool = buildTool({
     const queryStream = queryModelWithStreaming({
       messages: [userMessage],
       systemPrompt: asSystemPrompt([
-        'You are an assistant for performing a web search tool use',
+        '你是一个用于执行网页搜索工具调用的助手',
       ]),
       thinkingConfig: useHaiku
         ? { type: 'disabled' as const }
@@ -401,7 +401,7 @@ export const WebSearchTool = buildTool({
   mapToolResultToToolResultBlockParam(output, toolUseID) {
     const { query, results } = output
 
-    let formattedOutput = `Web search results for query: "${query}"\n\n`
+    let formattedOutput = `网页搜索结果（查询："${query}"）\n\n`
 
     // Process the results array - it can contain both string summaries and search result objects.
     // Guard against null/undefined entries that can appear after JSON round-tripping
@@ -416,15 +416,15 @@ export const WebSearchTool = buildTool({
       } else {
         // Search result with links
         if (result.content?.length > 0) {
-          formattedOutput += `Links: ${jsonStringify(result.content)}\n\n`
+          formattedOutput += `链接：${jsonStringify(result.content)}\n\n`
         } else {
-          formattedOutput += 'No links found.\n\n'
+          formattedOutput += '未找到链接。\n\n'
         }
       }
     })
 
     formattedOutput +=
-      '\nREMINDER: You MUST include the sources above in your response to the user using markdown hyperlinks.'
+      '\n提醒：你必须在回复用户使用上述结果，并使用 markdown 超链接。'
 
     return {
       tool_use_id: toolUseID,
