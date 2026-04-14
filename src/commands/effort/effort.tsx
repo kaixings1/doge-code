@@ -70,7 +70,7 @@ export function showCurrentEffort(appStateEffort: EffortValue | undefined, model
   }
   const description = getEffortValueDescription(effectiveValue);
   return {
-    message: `Current effort level: ${effectiveValue} (${description})`
+    message: `当前努力程度：${effectiveValue}（${description}）`
   };
 }
 function unsetEffortLevel(): EffortCommandResult {
