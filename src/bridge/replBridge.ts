@@ -937,7 +937,7 @@ export async function initBridgeCore(
     // doReconnect completes.
     onStateChange?.(
       'reconnecting',
-      `Remote Control connection lost (code ${closeCode})`,
+      `远程控制连接已断开 (代码 ${closeCode})`,
     )
     logForDebugging(
       `[bridge:repl] Transport reconnect budget exhausted (code=${closeCode}), attempting env reconnect`,

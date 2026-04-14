@@ -120,7 +120,7 @@ export async function registerWorker(
     !Number.isSafeInteger(epoch)
   ) {
     throw new Error(
-      `registerWorker: invalid worker_epoch in response: ${jsonStringify(response.data)}`,
+      `registerWorker: 响应中的 worker_epoch 无效：${jsonStringify(response.data)}`,
     )
   }
   return epoch
