@@ -664,7 +664,7 @@ export function useVoice({
         `[voice] Recording not available: ${availability.reason ?? 'unknown'}`,
       )
       onErrorRef.current?.(
-        availability.reason ?? 'Audio recording is not available.',
+        availability.reason ?? '音频录制不可用。',
       )
       cleanup()
       updateState('idle')

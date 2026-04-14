@@ -63,7 +63,7 @@ export function WorktreeExitDialog({
             getPlansDirectory.cache.clear?.();
             setResultMessage('工作树已移除（无更改）');
           }).catch(error => {
-            logForDebugging(`Failed to clean up worktree: ${error}`, {
+            logForDebugging(`清理工作树失败: ${error}`, {
               level: 'error'
             });
             setResultMessage('工作树清理失败，仍将退出');

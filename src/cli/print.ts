@@ -1282,7 +1282,7 @@ function runHeadlessStreaming(
           async (request, extra) => {
             logMCPDebug(
               serverName,
-              `Elicitation request received in print mode: ${jsonStringify(request)}`,
+              `在打印模式下收到征求请求: ${jsonStringify(request)}`,
             )
 
             const mode = request.params.mode === 'url' ? 'url' : 'form'
@@ -1300,7 +1300,7 @@ function runHeadlessStreaming(
             if (hookResponse) {
               logMCPDebug(
                 serverName,
-                `Elicitation resolved by hook: ${jsonStringify(hookResponse)}`,
+                `征求通过钩子解决: ${jsonStringify(hookResponse)}`,
               )
               logEvent('tengu_mcp_elicitation_response', {
                 mode: mode as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -1361,7 +1361,7 @@ function runHeadlessStreaming(
             const { elicitationId } = notification.params
             logMCPDebug(
               serverName,
-              `Elicitation completion notification: ${elicitationId}`,
+              `征求完成通知: ${elicitationId}`,
             )
             void executeNotificationHooks({
               message: `MCP server "${serverName}" confirmed elicitation ${elicitationId} complete`,
@@ -1816,7 +1816,7 @@ function runHeadlessStreaming(
       void updateSdkMcp()
     }
     logForDebugging(
-      `Headless MCP refresh: added=${response.added.length}, removed=${response.removed.length}`,
+      `无头 MCP 刷新: 已添加=${response.added.length}, 已移除=${response.removed.length}`,
     )
   }
 
@@ -1894,7 +1894,7 @@ function runHeadlessStreaming(
         if (result === 'timeout') {
           logError(
             new Error(
-              `CLAUDE_CODE_SYNC_PLUGIN_INSTALL: plugin installation timed out after ${timeoutMs}ms`,
+              `CLAUDE_CODE_SYNC_PLUGIN_INSTALL: 插件安装在 ${timeoutMs}ms 后超时`,
             ),
           )
           logEvent('tengu_sync_plugin_install_timeout', {
@@ -1939,7 +1939,7 @@ function runHeadlessStreaming(
             command.mode !== 'task-notification'
           ) {
             throw new Error(
-              'only prompt commands are supported in streaming mode',
+              '流式模式下仅支持提示命令',
             )
           }
 
@@ -2519,7 +2519,7 @@ function runHeadlessStreaming(
 
           if (!hasActiveTeammates) {
             logForDebugging(
-              '[print.ts] No more active teammates, stopping poll',
+              '[print.ts] 没有更多活跃队友，停止轮询',
             )
             break
           }
@@ -2531,7 +2531,7 @@ function runHeadlessStreaming(
 
           if (unread.length > 0) {
             logForDebugging(
-              `[print.ts] Team-lead found ${unread.length} unread messages`,
+              `[print.ts] 队长找到 ${unread.length} 条未读消息`,
             )
 
             // Mark as read immediately to avoid duplicate processing
@@ -2617,7 +2617,7 @@ function runHeadlessStreaming(
           if (inputClosed && !shutdownPromptInjected) {
             shutdownPromptInjected = true
             logForDebugging(
-              '[print.ts] Input closed with active teammates, injecting shutdown prompt',
+              '[print.ts] 输入已关闭且有活跃队友，注入关闭提示',
             )
             enqueue({
               mode: 'prompt',
@@ -3148,7 +3148,7 @@ function runHeadlessStreaming(
               ?.config ??
             null
           if (!config) {
-            sendControlResponseError(message, `Server not found: ${serverName}`)
+            sendControlResponseError(message, `找不到服务器: ${serverName}`)
           } else {
             const result = await reconnectMcpServerImpl(serverName, config)
             // Update appState.mcp with the new client, tools, commands, and resources
@@ -3199,7 +3199,7 @@ function runHeadlessStreaming(
               const errorMessage =
                 result.client.type === 'failed'
                   ? (result.client.error ?? 'Connection failed')
-                  : `Server status: ${result.client.type}`
+                  : `服务器状态: ${result.client.type}`
               sendControlResponseError(message, errorMessage)
             }
           }
@@ -3220,7 +3220,7 @@ function runHeadlessStreaming(
             null
 
           if (!config) {
-            sendControlResponseError(message, `Server not found: ${serverName}`)
+            sendControlResponseError(message, `找不到服务器: ${serverName}`)
           } else if (!enabled) {
             // Disabling: persist + disconnect (matches TUI toggleMcpServer behavior)
             setMcpServerEnabled(serverName, false)
@@ -3290,7 +3290,7 @@ function runHeadlessStreaming(
               const errorMessage =
                 result.client.type === 'failed'
                   ? (result.client.error ?? 'Connection failed')
-                  : `Server status: ${result.client.type}`
+                  : `服务器状态: ${result.client.type}`
               sendControlResponseError(message, errorMessage)
             }
           }
@@ -3317,11 +3317,11 @@ function runHeadlessStreaming(
               ?.config ??
             null
           if (!config) {
-            sendControlResponseError(message, `Server not found: ${serverName}`)
+            sendControlResponseError(message, `找不到服务器: ${serverName}`)
           } else if (config.type !== 'sse' && config.type !== 'http') {
             sendControlResponseError(
               message,
-              `Server type "${config.type}" does not support OAuth authentication`,
+              `服务器类型 "${config.type}" 不支持 OAuth 认证`,
             )
           } else {
             try {
@@ -3498,7 +3498,7 @@ function runHeadlessStreaming(
                     message,
                     error instanceof Error
                       ? error.message
-                      : 'OAuth authentication failed',
+                      : 'OAuth 认证失败',
                   )
                 }
               } else {
@@ -3594,7 +3594,7 @@ function runHeadlessStreaming(
               urlPromise,
               flow.then(() => {
                 throw new Error(
-                  'OAuth flow completed without producing auth URLs',
+                  'OAuth 流程完成但未生成认证 URL',
                 )
               }),
             ])
@@ -3612,7 +3612,7 @@ function runHeadlessStreaming(
           if (!claudeOAuth) {
             sendControlResponseError(
               message,
-              'No active claude_authenticate flow',
+              '无活跃的 claude_authenticate 流程',
             )
           } else {
             // 注入手动代码同步——必须在 stdin message order 中，以便后续的
@@ -3657,7 +3657,7 @@ function runHeadlessStreaming(
               ?.config ??
             null
           if (!config) {
-            sendControlResponseError(message, `Server not found: ${serverName}`)
+            sendControlResponseError(message, `找不到服务器: ${serverName}`)
           } else if (config.type !== 'sse' && config.type !== 'http') {
             sendControlResponseError(
               message,
@@ -3977,7 +3977,7 @@ function runHeadlessStreaming(
                   sendControlResponseError(
                     message,
                     bridgeFailureDetail ??
-                      'Remote Control initialization failed',
+                      '远程控制初始化失败',
                   )
                 } else {
                   bridgeHandle = handle
@@ -4022,7 +4022,7 @@ function runHeadlessStreaming(
           // the caller doesn't hang waiting for a reply that never comes.
           sendControlResponseError(
             message,
-            `Unsupported control request subtype: ${(message.request as { subtype: string }).subtype}`,
+            `不支持的控制请求子类型: ${(message.request as { subtype: string }).subtype}`,
           )
         }
         continue
@@ -4068,7 +4068,7 @@ function runHeadlessStreaming(
 
         // Check both historical duplicates (from file) and runtime duplicates (this session)
         if (existsInSession || receivedMessageUuids.has(message.uuid)) {
-          logForDebugging(`Skipping duplicate user message: ${message.uuid}`)
+          logForDebugging(`跳过重复的用户消息: ${message.uuid}`)
           // Send acknowledgment for duplicate message if replay mode is enabled
           if (options.replayUserMessages) {
             logForDebugging(
@@ -4113,7 +4113,7 @@ function runHeadlessStreaming(
           ...prev,
           attribution: incrementPromptCount(prev.attribution, snapshot => {
             void recordAttributionSnapshot(snapshot).catch(error => {
-              logForDebugging(`Attribution: Failed to save snapshot: ${error}`)
+              logForDebugging(`归属: 保存快照失败: ${error}`)
             })
           }),
         }))
@@ -4192,7 +4192,7 @@ export function createCanUseToolWithPermissionPrompt(
       cleanupAbortListener()
       return {
         behavior: 'deny',
-        message: 'Permission prompt was aborted.',
+        message: '权限提示已中止。',
         decisionReason: {
           type: 'permissionPromptTool' as const,
           permissionPromptToolName: tool.name,
@@ -4224,7 +4224,7 @@ export function createCanUseToolWithPermissionPrompt(
     if (raceResult === 'aborted' || combinedSignal.aborted) {
       return {
         behavior: 'deny',
-        message: 'Permission prompt was aborted.',
+        message: '权限提示已中止。',
         decisionReason: {
           type: 'permissionPromptTool' as const,
           permissionPromptToolName: tool.name,
@@ -4557,7 +4557,7 @@ async function handleRewindFiles(
   } catch (error) {
     return {
       canRewind: false,
-      error: `Failed to rewind: ${errorMessage(error)}`,
+      error: `回退失败: ${errorMessage(error)}`,
     }
   }
 
@@ -4671,7 +4671,7 @@ function handleChannelEnable(
     })
 
   if (!(feature('KAIROS') || feature('KAIROS_CHANNELS'))) {
-    return respondError('channels feature not available in this build')
+    return respondError('此构建中不提供频道功能')
   }
 
   // Only a 'connected' client has .capabilities and .client to register the
@@ -4680,7 +4680,7 @@ function handleChannelEnable(
     c => c.name === serverName && c.type === 'connected',
   )
   if (!connection || connection.type !== 'connected') {
-    return respondError(`server ${serverName} is not connected`)
+    return respondError(`服务器 ${serverName} 未连接`)
   }
 
   const pluginSource = connection.config.pluginSource
@@ -4690,7 +4690,7 @@ function handleChannelEnable(
     // marketplace}-keyed allowlist. Short-circuit with the same reason the
     // gate would produce.
     return respondError(
-      `server ${serverName} is not plugin-sourced; channel_enable requires a marketplace plugin`,
+      `服务器 ${serverName} 不是来自插件; channel_enable 需要市场插件`,
     )
   }
 
@@ -4722,7 +4722,7 @@ function handleChannelEnable(
 
   const pluginId =
     `${entry.name}@${entry.marketplace}` as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
-  logMCPDebug(serverName, 'Channel notifications registered')
+  logMCPDebug(serverName, '频道通知已注册')
   logEvent('tengu_mcp_channel_enable', { plugin: pluginId })
 
   // Identical enqueue shape to the interactive register block in
@@ -4803,7 +4803,7 @@ function reregisterChannelHandlerAfterReconnect(
 
   logMCPDebug(
     connection.name,
-    'Channel notifications re-registered after reconnect',
+    '频道通知在重新连接后重新注册',
   )
   connection.client.setNotificationHandler(
     ChannelMessageNotificationSchema(),
@@ -4989,7 +4989,7 @@ async function loadInitialMessages(
     try {
       if (!isPolicyAllowed('allow_remote_sessions')) {
         throw new Error(
-          "Remote sessions are disabled by your organization's policy.",
+          '您组织的策略已禁用远程会话。',
         )
       }
 
@@ -5178,8 +5178,8 @@ async function loadInitialMessages(
       logError(error)
       const errorMessage =
         error instanceof Error
-          ? `Failed to resume session: ${error.message}`
-          : 'Failed to resume session with --print mode'
+          ? `恢复会话失败: ${error.message}`
+          : '在 --print 模式下恢复会话失败'
       emitLoadError(errorMessage, options.outputFormat)
       gracefulShutdownSync(1)
       return { messages: [] }
@@ -5364,7 +5364,7 @@ export async function handleMcpSetServers(
   const policyErrors: Record<string, string> = {}
   for (const name of blocked) {
     policyErrors[name] =
-      'Blocked by enterprise policy (allowedMcpServers/deniedMcpServers)'
+      '被企业策略阻止 (allowedMcpServers/deniedMcpServers)'
   }
 
   // Separate SDK servers from process-based servers

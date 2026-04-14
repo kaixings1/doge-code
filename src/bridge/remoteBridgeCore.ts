@@ -239,7 +239,7 @@ export async function initEnvLessBridgeCore(
       `[remote-bridge] v2 transport setup failed: ${errorMessage(err)}`,
       { level: 'error' },
     )
-    onStateChange?.('failed', `Transport setup failed: ${errorMessage(err)}`)
+    onStateChange?.('failed', `传输设置失败: ${errorMessage(err)}`)
     logBridgeSkip('v2_transport_setup_failed', undefined, true)
     void archiveSession(
       sessionId,
@@ -333,7 +333,7 @@ export async function initEnvLessBridgeCore(
         // both fetch, the first rebuild gets a stale epoch and 409s).
         if (authRecoveryInFlight || tornDown) {
           logForDebugging(
-            '[remote-bridge] Recovery already in flight, skipping proactive refresh',
+            '[remote-bridge] 恢复已在进行中，跳过主动刷新',
           )
           return
         }
@@ -347,7 +347,7 @@ export async function initEnvLessBridgeCore(
                 oauthToken,
                 cfg.http_timeout_ms,
               ),
-            'fetchRemoteCredentials (proactive)',
+            'fetchRemoteCredentials (主动)',
             cfg,
           )
           if (!fresh || tornDown) return
@@ -365,7 +365,7 @@ export async function initEnvLessBridgeCore(
             'bridge_repl_v2_proactive_refresh_failed',
           )
           if (!tornDown) {
-            onStateChange?.('failed', `Refresh failed: ${errorMessage(err)}`)
+            onStateChange?.('failed', `刷新失败: ${errorMessage(err)}`)
           }
         } finally {
           authRecoveryInFlight = false
@@ -461,7 +461,7 @@ export async function initEnvLessBridgeCore(
         void recoverFromAuthFailure()
         return
       }
-      onStateChange?.('failed', `Transport closed (code ${code})`)
+      onStateChange?.('failed', `传输已关闭 (代码 ${code})`)
     })
   }
 
@@ -545,7 +545,7 @@ export async function initEnvLessBridgeCore(
       const oauthToken = getAccessToken() ?? stale
       if (!oauthToken || tornDown) {
         if (!tornDown) {
-          onStateChange?.('failed', 'JWT refresh failed: no OAuth token')
+          onStateChange?.('failed', 'JWT 刷新失败: 无 OAuth 令牌')
         }
         return
       }
@@ -558,7 +558,7 @@ export async function initEnvLessBridgeCore(
             oauthToken,
             cfg.http_timeout_ms,
           ),
-        'fetchRemoteCredentials (recovery)',
+        'fetchRemoteCredentials (恢复)',
         cfg,
       )
       if (!fresh || tornDown) {
@@ -582,7 +582,7 @@ export async function initEnvLessBridgeCore(
       )
       logForDiagnosticsNoPII('error', 'bridge_repl_v2_jwt_refresh_failed')
       if (!tornDown) {
-        onStateChange?.('failed', `JWT refresh failed: ${errorMessage(err)}`)
+        onStateChange?.('failed', `JWT 刷新失败: ${errorMessage(err)}`)
       }
     } finally {
       authRecoveryInFlight = false
@@ -616,7 +616,7 @@ export async function initEnvLessBridgeCore(
       transport.reportState('running')
     }
     logForDebugging(
-      `[remote-bridge] Drained ${msgs.length} queued message(s) after flush`,
+      `[remote-bridge] 刷新后排空 ${msgs.length} 条排队消息`,
     )
     void transport.writeBatch(events)
   }
@@ -789,7 +789,7 @@ export async function initEnvLessBridgeCore(
 
       if (flushGate.enqueue(...filtered)) {
         logForDebugging(
-          `[remote-bridge] Queued ${filtered.length} message(s) during flush`,
+          `[remote-bridge] 刷新期间排队 ${filtered.length} 条消息`,
         )
         return
       }
@@ -840,7 +840,7 @@ export async function initEnvLessBridgeCore(
     sendControlResponse(response: SDKControlResponse) {
       if (authRecoveryInFlight) {
         logForDebugging(
-          '[remote-bridge] Dropping control_response during 401 recovery',
+          '[remote-bridge] 在 401 恢复期间丢弃 control_response',
         )
         return
       }
@@ -872,7 +872,7 @@ export async function initEnvLessBridgeCore(
     },
     sendResult() {
       if (authRecoveryInFlight) {
-        logForDebugging('[remote-bridge] Dropping result during 401 recovery')
+        logForDebugging('[remote-bridge] 在 401 恢复期间丢弃 result')
         return
       }
       transport.reportState('idle')

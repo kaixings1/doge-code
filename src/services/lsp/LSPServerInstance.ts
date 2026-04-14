@@ -142,7 +142,7 @@ export function createLSPServerInstance(
     const maxRestarts = config.maxRestarts ?? 3
     if (state === 'error' && crashRecoveryCount > maxRestarts) {
       const error = new Error(
-        `LSP server '${name}' exceeded max crash recovery attempts (${maxRestarts})`,
+        `LSP 服务器 '${name}' 超过最大崩溃恢复尝试次数 (${maxRestarts})`,
       )
       lastError = error
       logError(error)
@@ -152,7 +152,7 @@ export function createLSPServerInstance(
     let initPromise: Promise<unknown> | undefined
     try {
       state = 'starting'
-      logForDebugging(`Starting LSP server instance: ${name}`)
+      logForDebugging(`正在启动 LSP 服务器实例: ${name}`)
 
       // Start the client
       await client.start(config.command, config.args || [], {
@@ -241,7 +241,7 @@ export function createLSPServerInstance(
         await withTimeout(
           initPromise,
           config.startupTimeout,
-          `LSP server '${name}' timed out after ${config.startupTimeout}ms during initialization`,
+          `LSP 服务器 '${name}' 在初始化期间超时，经过 ${config.startupTimeout}ms`,
         )
       } else {
         await initPromise
@@ -250,7 +250,7 @@ export function createLSPServerInstance(
       state = 'running'
       startTime = new Date()
       crashRecoveryCount = 0
-      logForDebugging(`LSP server instance started: ${name}`)
+      logForDebugging(`LSP 服务器实例已启动: ${name}`)
     } catch (error) {
       // Clean up the spawned child process on timeout/error
       client.stop().catch(() => {})
@@ -280,7 +280,7 @@ export function createLSPServerInstance(
       state = 'stopping'
       await client.stop()
       state = 'stopped'
-      logForDebugging(`LSP server instance stopped: ${name}`)
+      logForDebugging(`LSP 服务器实例已停止: ${name}`)
     } catch (error) {
       state = 'error'
       lastError = error as Error
@@ -302,7 +302,7 @@ export function createLSPServerInstance(
       await stop()
     } catch (error) {
       const stopError = new Error(
-        `Failed to stop LSP server '${name}' during restart: ${errorMessage(error)}`,
+        `重启期间停止 LSP 服务器 '${name}' 失败: ${errorMessage(error)}`,
       )
       logError(stopError)
       throw stopError

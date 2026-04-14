@@ -122,20 +122,20 @@ function formatContextAsMarkdownTable(data: ContextData): string {
       const parts = []
       if (s.collapsedSpans > 0) {
         parts.push(
-          `${s.collapsedSpans} ${plural(s.collapsedSpans, 'span')} summarized (${s.collapsedMessages} messages)`,
+          `${s.collapsedSpans} 个${plural(s.collapsedSpans, '跨度')} 已摘要 (${s.collapsedMessages} 条消息)`,
         )
       }
-      if (s.stagedSpans > 0) parts.push(`${s.stagedSpans} staged`)
+      if (s.stagedSpans > 0) parts.push(`${s.stagedSpans} 已暂存`)
       const summary =
         parts.length > 0
           ? parts.join(', ')
           : h.totalSpawns > 0
-            ? `${h.totalSpawns} ${plural(h.totalSpawns, 'spawn')}, nothing staged yet`
-            : 'waiting for first trigger'
+            ? `${h.totalSpawns} 个${plural(h.totalSpawns, '生成')}，尚未暂存`
+            : '等待首次触发'
       output += `**Context strategy:** collapse (${summary})\n`
 
       if (h.totalErrors > 0) {
-        output += `**Collapse errors:** ${h.totalErrors}/${h.totalSpawns} spawns failed`
+        output += `**收起错误:** ${h.totalErrors}/${h.totalSpawns} 个生成失败`
         if (h.lastError) {
           output += ` (last: ${h.lastError.slice(0, 80)})`
         }
@@ -152,7 +152,7 @@ function formatContextAsMarkdownTable(data: ContextData): string {
     cat =>
       cat.tokens > 0 &&
       cat.name !== 'Free space' &&
-      cat.name !== 'Autocompact buffer',
+      cat.name !== '自动压缩缓冲区',
   )
 
   if (visibleCategories.length > 0) {

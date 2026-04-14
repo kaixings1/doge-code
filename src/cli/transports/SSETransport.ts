@@ -280,7 +280,7 @@ export class SSETransport implements Transport {
       if (!response.ok) {
         const isPermanent = PERMANENT_HTTP_CODES.has(response.status)
         logForDebugging(
-          `SSETransport: HTTP ${response.status}${isPermanent ? ' (permanent)' : ''}`,
+          `SSETransport: HTTP ${response.status}${isPermanent ? ' (永久)' : ''}`,
           { level: 'error' },
         )
         logForDiagnosticsNoPII('error', 'cli_sse_connect_http_error', {
@@ -298,14 +298,14 @@ export class SSETransport implements Transport {
       }
 
       if (!response.body) {
-        logForDebugging('SSETransport: No response body')
+        logForDebugging('SSETransport: 无响应体')
         this.handleConnectionError()
         return
       }
 
       // Successfully connected
       const connectDuration = Date.now() - connectStartTime
-      logForDebugging('SSETransport: Connected')
+      logForDebugging('SSETransport: 已连接')
       logForDiagnosticsNoPII('info', 'cli_sse_connect_connected', {
         duration_ms: connectDuration,
       })
@@ -324,7 +324,7 @@ export class SSETransport implements Transport {
       }
 
       logForDebugging(
-        `SSETransport: Connection error: ${errorMessage(error)}`,
+        `SSETransport: 连接错误: ${errorMessage(error)}`,
         { level: 'error' },
       )
       logForDiagnosticsNoPII('error', 'cli_sse_connect_error')
@@ -359,7 +359,7 @@ export class SSETransport implements Transport {
             if (!isNaN(seqNum)) {
               if (this.seenSequenceNums.has(seqNum)) {
                 logForDebugging(
-                  `SSETransport: DUPLICATE frame seq=${seqNum} (lastSequenceNum=${this.lastSequenceNum}, seenCount=${this.seenSequenceNums.size})`,
+                  `SSETransport: 重复帧 seq=${seqNum} (lastSequenceNum=${this.lastSequenceNum}, seenCount=${this.seenSequenceNums.size})`,
                   { level: 'warn' },
                 )
                 logForDiagnosticsNoPII('warn', 'cli_sse_duplicate_sequence')
@@ -399,7 +399,7 @@ export class SSETransport implements Transport {
     } catch (error) {
       if (this.abortController?.signal.aborted) return
       logForDebugging(
-        `SSETransport: Stream read error: ${errorMessage(error)}`,
+        `SSETransport: 流读取错误: ${errorMessage(error)}`,
         { level: 'error' },
       )
       logForDiagnosticsNoPII('error', 'cli_sse_stream_read_error')
@@ -409,7 +409,7 @@ export class SSETransport implements Transport {
 
     // Stream ended — reconnect unless we're closing
     if (this.state !== 'closing' && this.state !== 'closed') {
-      logForDebugging('SSETransport: Stream ended, reconnecting')
+      logForDebugging('SSETransport: 流已结束，正在重新连接')
       this.handleConnectionError()
     }
   }
@@ -425,7 +425,7 @@ export class SSETransport implements Transport {
   private handleSSEFrame(eventType: string, data: string): void {
     if (eventType !== 'client_event') {
       logForDebugging(
-        `SSETransport: Unexpected SSE event type '${eventType}' on worker stream`,
+        `SSETransport: 意外的 SSE 事件类型 '${eventType}'`,
         { level: 'warn' },
       )
       logForDiagnosticsNoPII('warn', 'cli_sse_unexpected_event_type', {
@@ -439,7 +439,7 @@ export class SSETransport implements Transport {
       ev = jsonParse(data) as StreamClientEvent
     } catch (error) {
       logForDebugging(
-        `SSETransport: Failed to parse client_event data: ${errorMessage(error)}`,
+        `SSETransport: 解析 client_event 数据失败: ${errorMessage(error)}`,
         { level: 'error' },
       )
       return
@@ -449,7 +449,7 @@ export class SSETransport implements Transport {
     if (payload && typeof payload === 'object' && 'type' in payload) {
       const sessionLabel = this.sessionId ? ` session=${this.sessionId}` : ''
       logForDebugging(
-        `SSETransport: Event seq=${ev.sequence_num} event_id=${ev.event_id} event_type=${ev.event_type} payload_type=${String(payload.type)}${sessionLabel}`,
+        `SSETransport: 事件 seq=${ev.sequence_num} event_id=${ev.event_id} event_type=${ev.event_type} payload_type=${String(payload.type)}${sessionLabel}`,
       )
       logForDiagnosticsNoPII('info', 'cli_sse_message_received')
       // Pass the unwrapped payload as newline-delimited JSON,
@@ -457,7 +457,7 @@ export class SSETransport implements Transport {
       this.onData?.(jsonStringify(payload) + '\n')
     } else {
       logForDebugging(
-        `SSETransport: Ignoring client_event with no type in payload: event_id=${ev.event_id}`,
+        `SSETransport: 忽略负载中无类型的 client_event: event_id=${ev.event_id}`,
       )
     }
 
@@ -541,7 +541,7 @@ export class SSETransport implements Transport {
    */
   private readonly onLivenessTimeout = (): void => {
     this.livenessTimer = null
-    logForDebugging('SSETransport: Liveness timeout, reconnecting', {
+    logForDebugging('SSETransport: 活跃性超时，正在重新连接', {
       level: 'error',
     })
     logForDiagnosticsNoPII('error', 'cli_sse_liveness_timeout')
@@ -596,7 +596,7 @@ export class SSETransport implements Transport {
         })
 
         if (response.status === 200 || response.status === 201) {
-          logForDebugging(`SSETransport: POST success type=${message.type}`)
+          logForDebugging(`SSETransport: POST 成功 type=${message.type}`)
           return
         }
 
@@ -610,7 +610,7 @@ export class SSETransport implements Transport {
           response.status !== 429
         ) {
           logForDebugging(
-            `SSETransport: POST returned ${response.status} (client error), not retrying`,
+            `SSETransport: POST 返回 ${response.status} (客户端错误)，不重试`,
           )
           logForDiagnosticsNoPII('warn', 'cli_sse_post_client_error', {
             status: response.status,
@@ -620,7 +620,7 @@ export class SSETransport implements Transport {
 
         // 429 or 5xx - retry
         logForDebugging(
-          `SSETransport: POST returned ${response.status}, attempt ${attempt}/${POST_MAX_RETRIES}`,
+          `SSETransport: POST 返回 ${response.status}，第 ${attempt}/${POST_MAX_RETRIES} 次尝试`,
         )
         logForDiagnosticsNoPII('warn', 'cli_sse_post_retryable_error', {
           status: response.status,
@@ -629,7 +629,7 @@ export class SSETransport implements Transport {
       } catch (error) {
         const axiosError = error as AxiosError
         logForDebugging(
-          `SSETransport: POST error: ${axiosError.message}, attempt ${attempt}/${POST_MAX_RETRIES}`,
+          `SSETransport: POST 错误: ${axiosError.message}，第 ${attempt}/${POST_MAX_RETRIES} 次尝试`,
         )
         logForDiagnosticsNoPII('warn', 'cli_sse_post_network_error', {
           attempt,
@@ -638,7 +638,7 @@ export class SSETransport implements Transport {
 
       if (attempt === POST_MAX_RETRIES) {
         logForDebugging(
-          `SSETransport: POST failed after ${POST_MAX_RETRIES} attempts, continuing`,
+          `SSETransport: POST 在 ${POST_MAX_RETRIES} 次尝试后失败，继续`,
         )
         logForDiagnosticsNoPII('warn', 'cli_sse_post_retries_exhausted')
         return

@@ -228,13 +228,13 @@ export class HybridTransport extends WebSocketTransport {
       )
     } catch (error) {
       const axiosError = error as AxiosError
-      logForDebugging(`HybridTransport: POST error: ${axiosError.message}`)
+      logForDebugging(`HybridTransport: POST 错误: ${axiosError.message}`)
       logForDiagnosticsNoPII('warn', 'cli_hybrid_post_network_error')
       throw error
     }
 
     if (response.status >= 200 && response.status < 300) {
-      logForDebugging(`HybridTransport: POST success count=${events.length}`)
+      logForDebugging(`HybridTransport: POST 成功 count=${events.length}`)
       return
     }
 
@@ -245,7 +245,7 @@ export class HybridTransport extends WebSocketTransport {
       response.status !== 429
     ) {
       logForDebugging(
-        `HybridTransport: POST returned ${response.status} (permanent), dropping`,
+        `HybridTransport: POST 返回 ${response.status} (永久)，正在丢弃`,
       )
       logForDiagnosticsNoPII('warn', 'cli_hybrid_post_client_error', {
         status: response.status,
@@ -255,12 +255,12 @@ export class HybridTransport extends WebSocketTransport {
 
     // 429 / 5xx — retryable. Throw so uploader re-queues and backs off.
     logForDebugging(
-      `HybridTransport: POST returned ${response.status} (retryable)`,
+      `HybridTransport: POST 返回 ${response.status} (可重试)`,
     )
     logForDiagnosticsNoPII('warn', 'cli_hybrid_post_retryable_error', {
       status: response.status,
     })
-    throw new Error(`POST failed with ${response.status}`)
+    throw new Error(`POST 失败，状态码 ${response.status}`)
   }
 }
 
