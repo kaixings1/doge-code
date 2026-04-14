@@ -174,7 +174,7 @@ export function DiscoverPlugins({
           }
         } catch (error_0) {
           // Log the error, then gracefully degrade to alphabetical sort
-          logForDebugging(`Failed to fetch install counts: ${errorMessage(error_0)}`);
+          logForDebugging(`获取安装计数失败：${errorMessage(error_0)}`);
           uninstalledPlugins.sort((a, b) => a.entry.name.localeCompare(b.entry.name));
         }
         setAvailablePlugins(uninstalledPlugins);
@@ -194,7 +194,7 @@ export function DiscoverPlugins({
         const errorResult = formatMarketplaceLoadingErrors(failures, successCount);
         if (errorResult) {
           if (errorResult.type === 'warning') {
-            setWarning(errorResult.message + '. Showing available plugins.');
+            setWarning(errorResult.message + '。显示可用的插件。');
           } else {
             throw new Error(errorResult.message);
           }
@@ -212,7 +212,7 @@ export function DiscoverPlugins({
               setViewState('plugin-details');
             }
           } else {
-            setError(`Plugin "${targetPlugin}" not found in any marketplace`);
+            setError(`在任何市场中都未找到插件 "${targetPlugin}"`);
           }
         }
       } catch (err) {

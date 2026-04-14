@@ -131,7 +131,7 @@ export function ManageMarketplaces({
             const targetState = states[targetIndex];
             if (action) {
               // Mark the action as pending and execute
-              setSelectedIndex(targetIndex + 1); // +1 because "Add Marketplace" is at index 0
+              setSelectedIndex(targetIndex + 1); // +1 because "添加市场" is at index 0
               const newStates = [...states];
               if (action === 'update') {
                 newStates[targetIndex]!.pendingUpdate = true;
@@ -143,12 +143,12 @@ export function ManageMarketplaces({
               setTimeout(applyChanges, 100, newStates);
             } else if (targetState) {
               // No action - just show the details view for this marketplace
-              setSelectedIndex(targetIndex + 1); // +1 because "Add Marketplace" is at index 0
+              setSelectedIndex(targetIndex + 1); // +1 because "添加市场" is at index 0
               setSelectedMarketplace(targetState);
               setInternalView('details');
             }
           } else if (setError) {
-            setError(`Marketplace not found: ${targetMarketplace}`);
+            setError(`未找到市场：${targetMarketplace}`);
           }
         }
       } catch (err) {
@@ -305,11 +305,11 @@ export function ManageMarketplaces({
       // Build success message
       const actions: string[] = [];
       if (updatedCount > 0) {
-        const pluginPart = updatedPluginCount > 0 ? ` (${updatedPluginCount} ${plural(updatedPluginCount, 'plugin')} bumped)` : '';
-        actions.push(`Updated ${updatedCount} ${plural(updatedCount, 'marketplace')}${pluginPart}`);
+        const pluginPart = updatedPluginCount > 0 ? `（${updatedPluginCount} 个${plural(updatedPluginCount, '插件')}已更新）` : '';
+        actions.push(`已更新 ${updatedCount} 个${plural(updatedCount, '市场')}${pluginPart}`);
       }
       if (removedCount > 0) {
-        actions.push(`Removed ${removedCount} ${plural(removedCount, 'marketplace')}`);
+        actions.push(`已移除 ${removedCount} 个${plural(removedCount, '市场')}`);
       }
       if (actions.length > 0) {
         const successMsg = `${figures.tick} ${actions.join(', ')}`;
@@ -365,18 +365,18 @@ export function ManageMarketplaces({
       secondaryLabel?: string;
       value: string;
     }> = [{
-      label: `Browse plugins (${marketplace.pluginCount ?? 0})`,
+      label: `浏览插件（${marketplace.pluginCount ?? 0}）`,
       value: 'browse'
     }, {
       label: '更新市场',
-      secondaryLabel: marketplace.lastUpdated ? `(last updated ${new Date(marketplace.lastUpdated).toLocaleDateString()})` : undefined,
+      secondaryLabel: marketplace.lastUpdated ? `（上次更新时间 ${new Date(marketplace.lastUpdated).toLocaleDateString()}）` : undefined,
       value: 'update'
     }];
 
     // Only show auto-update toggle if auto-updater is not globally disabled
     if (!shouldSkipPluginAutoupdate()) {
       options.push({
-        label: marketplace.autoUpdate ? 'Disable auto-update' : 'Enable auto-update',
+        label: marketplace.autoUpdate ? '禁用自动更新' : '启用自动更新',
         value: 'toggle-auto-update'
       });
     }

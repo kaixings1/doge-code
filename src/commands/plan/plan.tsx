@@ -104,9 +104,9 @@ export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXComma
   if (argList[0] === 'open') {
     const result = await editFileInEditor(planPath);
     if (result.error) {
-      onDone(`Failed to open plan in editor: ${result.error}`);
+      onDone(`在编辑器中打开计划失败：${result.error}`);
     } else {
-      onDone(`Opened plan in editor: ${planPath}`);
+      onDone(`已在编辑器中打开计划：${planPath}`);
     }
     return null;
   }

@@ -263,7 +263,7 @@ export function initializeTelemetryAfterTrust(): void {
     void waitForRemoteManagedSettingsToLoad()
       .then(async () => {
         logForDebugging(
-          '[3P telemetry] Remote managed settings loaded, initializing telemetry',
+          '[第三方遥测] 远程管理设置已加载，正在初始化遥测',
         )
         // Re-apply env vars to pick up remote settings before initializing telemetry.
         applyConfigEnvironmentVariables()
