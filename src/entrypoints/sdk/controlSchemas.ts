@@ -99,7 +99,7 @@ export const SDKControlInterruptRequestSchema = lazySchema(() =>
     .object({
       subtype: z.literal('interrupt'),
     })
-    .describe('Interrupts the currently running conversation turn.'),
+    .describe('中断当前正在运行的对话轮次。'),
 )
 
 
@@ -118,7 +118,7 @@ export const SDKControlPermissionRequestSchema = lazySchema(() =>
       agent_id: z.string().optional(),
       description: z.string().optional(),
     })
-    .describe('Requests permission to use a tool with the given input.'),
+    .describe('请求使用具有给定输入的工具的权限。'),
 )
 
 export const SDKControlSetPermissionModeRequestSchema = lazySchema(() =>
@@ -129,9 +129,9 @@ export const SDKControlSetPermissionModeRequestSchema = lazySchema(() =>
       ultraplan: z
         .boolean()
         .optional()
-        .describe('@internal CCR ultraplan session marker.'),
+        .describe('@internal CCR 超计划会话标记。'),
     })
-    .describe('Sets the permission mode for tool execution handling.'),
+    .describe('设置工具执行处理的权限模式。'),
 )
 
 export const SDKControlSetModelRequestSchema = lazySchema(() =>
@@ -140,7 +140,7 @@ export const SDKControlSetModelRequestSchema = lazySchema(() =>
       subtype: z.literal('set_model'),
       model: z.string().optional(),
     })
-    .describe('Sets the model to use for subsequent conversation turns.'),
+    .describe('设置用于后续对话轮次的模型。'),
 )
 
 export const SDKControlSetMaxThinkingTokensRequestSchema = lazySchema(() =>
@@ -150,7 +150,7 @@ export const SDKControlSetMaxThinkingTokensRequestSchema = lazySchema(() =>
       max_thinking_tokens: z.number().nullable(),
     })
     .describe(
-      'Sets the maximum number of thinking tokens for extended thinking.',
+      '设置扩展思考的最大 token 数量。',
     ),
 )
 
@@ -159,7 +159,7 @@ export const SDKControlMcpStatusRequestSchema = lazySchema(() =>
     .object({
       subtype: z.literal('mcp_status'),
     })
-    .describe('Requests the current status of all MCP server connections.'),
+    .describe('请求所有 MCP 服务器连接的当前状态。'),
 )
 
 export const SDKControlMcpStatusResponseSchema = lazySchema(() =>
@@ -168,7 +168,7 @@ export const SDKControlMcpStatusResponseSchema = lazySchema(() =>
       mcpServers: z.array(McpServerStatusSchema()),
     })
     .describe(
-      'Response containing the current status of all MCP server connections.',
+      '包含所有 MCP 服务器连接当前状态的响应。',
     ),
 )
 
@@ -178,7 +178,7 @@ export const SDKControlGetContextUsageRequestSchema = lazySchema(() =>
       subtype: z.literal('get_context_usage'),
     })
     .describe(
-      'Requests a breakdown of current context window usage by category.',
+      '请求按类别划分的当前上下文窗口使用情况。',
     ),
 )
 
@@ -312,7 +312,7 @@ export const SDKControlRewindFilesRequestSchema = lazySchema(() =>
       user_message_id: z.string(),
       dry_run: z.boolean().optional(),
     })
-    .describe('Rewinds file changes made since a specific user message.'),
+    .describe('回滚自特定用户消息以来的文件更改。'),
 )
 
 export const SDKControlRewindFilesResponseSchema = lazySchema(() =>
@@ -324,7 +324,7 @@ export const SDKControlRewindFilesResponseSchema = lazySchema(() =>
       insertions: z.number().optional(),
       deletions: z.number().optional(),
     })
-    .describe('Result of a rewindFiles operation.'),
+    .describe('rewindFiles 操作的结果。'),
 )
 
 export const SDKControlCancelAsyncMessageRequestSchema = lazySchema(() =>

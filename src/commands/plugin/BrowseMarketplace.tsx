@@ -163,7 +163,7 @@ export function BrowseMarketplace({
         const errorResult = formatMarketplaceLoadingErrors(failures, successCount);
         if (errorResult) {
           if (errorResult.type === 'warning') {
-            setWarning(errorResult.message + '. Showing available marketplaces.');
+            setWarning(errorResult.message + '。显示可用的市场。');
           } else {
             throw new Error(errorResult.message);
           }
@@ -291,7 +291,7 @@ export function BrowseMarketplace({
         } catch (error_0) {
           if (cancelled) return;
           // Log the error, then gracefully degrade to alphabetical sort
-          logForDebugging(`Failed to fetch install counts: ${errorMessage(error_0)}`);
+          logForDebugging(`获取安装计数失败：${errorMessage(error_0)}`);
           installablePlugins.sort((a_0, b_0) => a_0.entry.name.localeCompare(b_0.entry.name));
         }
         setAvailablePlugins(installablePlugins);
@@ -345,14 +345,14 @@ export function BrowseMarketplace({
     // Handle installation results
     if (failureCount === 0) {
       // All succeeded
-      const message = `✓ Installed ${successCount_0} ${plural(successCount_0, 'plugin')}. ` + `Run /reload-plugins to activate.`;
+      const message = `✓ 已安装 ${successCount_0} 个${plural(successCount_0, '插件')}。` + `运行 /reload-plugins 以激活。`;
       setResult(message);
     } else if (successCount_0 === 0) {
       // All failed - show error with reasons
-      setError(`安装失败: ${formatFailureDetails(newFailedPlugins, true)}`);
+      setError(`安装失败：${formatFailureDetails(newFailedPlugins, true)}`);
     } else {
       // Mixed results - show partial success
-      const message_0 = `✓ Installed ${successCount_0} of ${successCount_0 + failureCount} plugins. ` + `Failed: ${formatFailureDetails(newFailedPlugins, false)}. ` + `Run /reload-plugins to activate successfully installed plugins.`;
+      const message_0 = `✓ 已安装 ${successCount_0} / ${successCount_0 + failureCount} 个插件。` + `失败：${formatFailureDetails(newFailedPlugins, false)}。` + `运行 /reload-plugins 以激活成功安装的插件。`;
       setResult(message_0);
     }
 
@@ -553,13 +553,13 @@ export function BrowseMarketplace({
     return <PluginOptionsFlow plugin={plugin_5} pluginId={pluginId_2} onDone={(outcome, detail) => {
       switch (outcome) {
         case 'configured':
-          finish(`✓ Installed and configured ${plugin_5.name}. Run /reload-plugins to apply.`);
+          finish(`✓ 已安装并配置 ${plugin_5.name}。运行 /reload-plugins 以应用。`);
           break;
         case 'skipped':
-          finish(`✓ Installed ${plugin_5.name}. Run /reload-plugins to apply.`);
+          finish(`✓ 已安装插件 ${plugin_5.name}。运行 /reload-plugins 以应用。`);
           break;
         case 'error':
-          finish(`Installed but failed to save config: ${detail}`);
+          finish(`已安装但保存配置失败：${detail}`);
           break;
       }
     }} />;

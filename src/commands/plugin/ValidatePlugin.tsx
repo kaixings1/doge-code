@@ -71,7 +71,7 @@ export function ValidatePlugin(t0) {
           const error = t3;
           process.exitCode = 2;
           logError(error);
-          onComplete(`${figures.cross} Unexpected error during validation: ${errorMessage(error)}`);
+          onComplete(`${figures.cross} 验证期间发生意外错误：${errorMessage(error)}`);
         }
       };
       runValidation();

@@ -167,29 +167,29 @@ export const McpServerStatusConfigSchema = lazySchema(() =>
 export const McpServerStatusSchema = lazySchema(() =>
   z
     .object({
-      name: z.string().describe('Server name as configured'),
+      name: z.string().describe('按配置设置的服务器名称'),
       status: z
         .enum(['connected', 'failed', 'needs-auth', 'pending', 'disabled'])
-        .describe('Current connection status'),
+        .describe('当前连接状态'),
       serverInfo: z
         .object({
           name: z.string(),
           version: z.string(),
         })
         .optional()
-        .describe('Server information (available when connected)'),
+        .describe('服务器信息（连接时可用）'),
       error: z
         .string()
         .optional()
-        .describe("Error message (available when status is 'failed')"),
+        .describe('错误消息（状态为 \'failed\' 时可用）'),
       config: McpServerStatusConfigSchema()
         .optional()
-        .describe('Server configuration (includes URL for HTTP/SSE servers)'),
+        .describe('服务器配置（包含 HTTP/SSE 服务器的 URL）'),
       scope: z
         .string()
         .optional()
         .describe(
-          'Configuration scope (e.g., project, user, local, claudeai, managed)',
+          '配置范围（例如 project、user、local、claudeai、managed）',
         ),
       tools: z
         .array(
@@ -206,33 +206,33 @@ export const McpServerStatusSchema = lazySchema(() =>
           }),
         )
         .optional()
-        .describe('Tools provided by this server (available when connected)'),
+        .describe('此服务器提供的工具（连接时可用）'),
       capabilities: z
         .object({
           experimental: z.record(z.string(), z.unknown()).optional(),
         })
         .optional()
         .describe(
-          "@internal Server capabilities (available when connected). experimental['claude/channel'] is only present if the server's plugin is on the approved channels allowlist — use its presence to decide whether to show an Enable-channel prompt.",
+          '@internal 服务器能力（连接时可用）。experimental[\'claude/channel\'] 仅在服务器的插件位于批准的频道允许列表时存在 — 用其存在来决定是否显示启用频道提示。',
         ),
     })
-    .describe('Status information for an MCP server connection.'),
+    .describe('MCP 服务器连接的状态信息。'),
 )
 
 export const McpSetServersResultSchema = lazySchema(() =>
   z
     .object({
-      added: z.array(z.string()).describe('Names of servers that were added'),
+      added: z.array(z.string()).describe('已添加的服务器名称'),
       removed: z
         .array(z.string())
-        .describe('Names of servers that were removed'),
+        .describe('已移除的服务器名称'),
       errors: z
         .record(z.string(), z.string())
         .describe(
-          'Map of server names to error messages for servers that failed to connect',
+          '连接失败的服务器的名称到错误消息的映射',
         ),
     })
-    .describe('Result of a setMcpServers operation.'),
+    .describe('setMcpServers 操作的结果。'),
 )
 
 // ============================================================================
@@ -303,12 +303,11 @@ export const PermissionDecisionClassificationSchema = lazySchema(() =>
     .enum(['user_temporary', 'user_permanent', 'user_reject'])
     .describe(
       'Classification of this permission decision for telemetry. SDK hosts ' +
-        'that prompt users (desktop apps, IDEs) should set this to reflect ' +
-        'what actually happened: user_temporary for allow-once, user_permanent ' +
-        'for always-allow (both the click and later cache hits), user_reject ' +
-        'for deny. If unset, the CLI infers conservatively (temporary for ' +
-        'allow, reject for deny). The vocabulary matches tool_decision OTel ' +
-        'events (monitoring-usage docs).',
+        '提示用户的客户端（桌面应用、IDE）应将其设置为反映实际发生的情况：user_temporary 表示允许一次，user_permanent ' +
+        '表示始终允许（点击和后续缓存命中），user_reject ' +
+        '表示拒绝。如果未设置，CLI 会保守推断（' +
+        '允许时为临时，拒绝时为拒绝）。词汇与 tool_decision OTel ' +
+        '事件匹配（监控使用文档）。',
     ),
 )
 
@@ -338,12 +337,12 @@ export const PermissionModeSchema = lazySchema(() =>
   z
     .enum(['default', 'acceptEdits', 'bypassPermissions', 'plan', 'dontAsk'])
     .describe(
-      'Permission mode for controlling how tool executions are handled. ' +
-        "'default' - Standard behavior, prompts for dangerous operations. " +
-        "'acceptEdits' - Auto-accept file edit operations. " +
-        "'bypassPermissions' - Bypass all permission checks (requires allowDangerouslySkipPermissions). " +
-        "'plan' - Planning mode, no actual tool execution. " +
-        "'dontAsk' - Don't prompt for permissions, deny if not pre-approved.",
+      '控制工具执行处理方式的权限模式。' +
+        "'default' - 标准行为，提示危险操作。" +
+        "'acceptEdits' - 自动接受文件编辑操作。" +
+        "'bypassPermissions' - 绕过所有权限检查（需要 allowDangerouslySkipPermissions）。" +
+        "'plan' - 计划模式，不实际执行工具。" +
+        "'dontAsk' - 不提示权限，如果未预先批准则拒绝。",
     ),
 )
 
@@ -403,9 +402,9 @@ export const BaseHookInputSchema = lazySchema(() =>
       .string()
       .optional()
       .describe(
-        'Agent type name (e.g., "general-purpose", "code-reviewer"). Present when the ' +
-          'hook fires from within a subagent (alongside agent_id), or on the main thread ' +
-          'of a session started with --agent (without agent_id).',
+        '代理类型名称（例如 "general-purpose"、"code-reviewer"）。当' +
+          '钩子在子代理内触发时存在（与 agent_id 一起），或在主线程上' +
+          '通过 --agent 启动的会话（不带 agent_id）。',
       ),
   }),
 )

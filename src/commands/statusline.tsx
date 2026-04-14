@@ -16,7 +16,7 @@ const statusline = {
     const prompt = args.trim() || 'Configure my statusLine from my shell PS1 configuration';
     return [{
       type: 'text',
-      text: `Create an ${AGENT_TOOL_NAME} with subagent_type "statusline-setup" and the prompt "${prompt}"`
+      text: `创建一个 ${AGENT_TOOL_NAME}，subagent_type 为 "statusline-setup"，提示词为 "${prompt}"`
     }];
   }
 } satisfies Command;

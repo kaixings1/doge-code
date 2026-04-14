@@ -47,7 +47,7 @@ export async function call(): Promise<{ type: 'text'; value: string }> {
   return {
     type: 'text',
     value: fileExists
-      ? `Opened ${keybindingsPath} in your editor.`
-      : `Created ${keybindingsPath} with template. Opened in your editor.`,
+      ? `已在编辑器中打开 ${keybindingsPath}。`
+      : `已使用模板创建 ${keybindingsPath}。已在编辑器中打开。`,
   }
 }

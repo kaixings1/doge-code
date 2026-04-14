@@ -98,13 +98,13 @@ async function createWorkflowFile(
     })
 
     const helpText =
-      '\n\nNeed help? Common issues:\n' +
-      '· Permission denied → Run: gh auth refresh -h github.com -s repo,workflow\n' +
-      '· Not authorized → Ensure you have admin access to the repository\n' +
-      '· For manual setup → Visit: https://github.com/anthropics/claude-code-action'
+      '\n\n需要帮助？常见问题：\n' +
+      '· 权限被拒绝 → 运行：gh auth refresh -h github.com -s repo,workflow\n' +
+      '· 未授权 → 确保你对仓库有管理员权限\n' +
+      '· 手动设置 → 访问：https://github.com/anthropics/claude-code-action'
 
     throw new Error(
-      `Failed to create workflow file ${workflowPath}: ${createFileResult.stderr}${helpText}`,
+      `创建工作流文件 ${workflowPath} 失败：${createFileResult.stderr}${helpText}`,
     )
   }
 }
@@ -149,7 +149,7 @@ export async function setupGitHubActions(
         ...context,
       })
       throw new Error(
-        `Failed to access repository ${repoName}: ${repoCheckResult.stderr}`,
+        `无法访问仓库 ${repoName}：${repoCheckResult.stderr}`,
       )
     }
 

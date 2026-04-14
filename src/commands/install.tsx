@@ -97,7 +97,7 @@ function Install({
   useEffect(() => {
     async function run() {
       try {
-        logForDebugging(`Install: Starting installation process (force=${force}, target=${target})`);
+        logForDebugging(`安装：开始安装流程 (force=${force}, target=${target})`);
 
         // Install native build first
         const channelOrVersion = target || getInitialSettings()?.autoUpdatesChannel || 'latest';
@@ -107,9 +107,9 @@ function Install({
         });
 
         // Pass force flag to trigger reinstall even if up to date
-        logForDebugging(`Install: Calling installLatest(channelOrVersion=${channelOrVersion}, forceReinstall=${force})`);
+        logForDebugging(`安装：调用 installLatest(channelOrVersion=${channelOrVersion}, forceReinstall=${force})`);
         const result = await installLatest(channelOrVersion, force);
-        logForDebugging(`Install: installLatest returned version=${result.latestVersion}, wasUpdated=${result.wasUpdated}, lockFailed=${result.lockFailed}`);
+        logForDebugging(`安装：installLatest 返回 version=${result.latestVersion}, wasUpdated=${result.wasUpdated}, lockFailed=${result.lockFailed}`);
 
         // Check specifically for lock failure
         if (result.lockFailed) {
@@ -118,12 +118,12 @@ function Install({
 
         // If we couldn't get the version, there might be an issue
         if (!result.latestVersion) {
-          logForDebugging('Install: Failed to retrieve version information during install', {
+          logForDebugging('安装：安装期间无法获取版本信息', {
             level: 'error'
           });
         }
         if (!result.wasUpdated) {
-          logForDebugging('Install: Already up to date');
+          logForDebugging('安装：已是最新版本');
         }
 
         // Set up launcher and shell integration
@@ -131,30 +131,30 @@ function Install({
           type: 'setting-up'
         });
         const setupMessages = await checkInstall(true);
-        logForDebugging(`Install: Setup launcher completed with ${setupMessages.length} messages`);
+        logForDebugging(`安装：设置启动器完成，共 ${setupMessages.length} 条消息`);
         if (setupMessages.length > 0) {
-          setupMessages.forEach(msg => logForDebugging(`Install: Setup message: ${msg.message}`));
+          setupMessages.forEach(msg => logForDebugging(`安装：设置消息：${msg.message}`));
         }
 
         // Now that native installation succeeded, clean up old npm installations
-        logForDebugging('Install: Cleaning up npm installations after successful install');
+        logForDebugging('安装：原生安装成功后清理 npm 安装');
         const {
           removed,
           errors,
           warnings
         } = await cleanupNpmInstallations();
         if (removed > 0) {
-          logForDebugging(`Cleaned up ${removed} npm installation(s)`);
+          logForDebugging(`已清理 ${removed} 个 npm 安装`);
         }
         if (errors.length > 0) {
-          logForDebugging(`Cleanup errors: ${errors.join(', ')}`);
+          logForDebugging(`清理错误：${errors.join(', ')}`);
           // Continue despite cleanup errors - native install already succeeded
         }
 
         // Clean up old shell aliases
         const aliasMessages = await cleanupShellAliases();
         if (aliasMessages.length > 0) {
-          logForDebugging(`Shell alias cleanup: ${aliasMessages.map(m => m.message).join('; ')}`);
+          logForDebugging(`Shell 别名清理：${aliasMessages.map(m => m.message).join('; ')}`);
         }
 
         // Log success event
@@ -168,7 +168,7 @@ function Install({
           updateSettingsForSource('userSettings', {
             autoUpdatesChannel: target
           });
-          logForDebugging(`Install: Saved autoUpdatesChannel=${target} to user settings`);
+          logForDebugging(`安装：已将 autoUpdatesChannel=${target} 保存到用户设置`);
         }
 
         // Combine all warning/info messages (convert SetupMessage to string)
@@ -188,7 +188,7 @@ function Install({
           });
         } else {
           // No setup messages, go straight to success (but still show cleanup warnings if any)
-          logForDebugging('Install: Shell PATH already configured');
+          logForDebugging('安装：Shell PATH 已配置');
           setState({
             type: 'success',
             version: result.latestVersion || 'current',
@@ -196,7 +196,7 @@ function Install({
           });
         }
       } catch (error) {
-        logForDebugging(`Install command failed: ${error}`, {
+        logForDebugging(`安装命令失败：${error}`, {
           level: 'error'
         });
         setState({
