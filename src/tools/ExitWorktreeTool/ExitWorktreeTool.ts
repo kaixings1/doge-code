@@ -150,7 +150,7 @@ export const ExitWorktreeTool: Tool<InputSchema, Output> = buildTool({
   searchHint: '退出 worktree 会话并返回原始目录',
   maxResultSizeChars: 100_000,
   async description() {
-    return 'Exits a worktree session created by EnterWorktree and restores the original working directory'
+    return '退出由 EnterWorktree 创建的工作树会话，并恢复原始工作目录'
   },
   async prompt() {
     return getExitWorktreeToolPrompt()
@@ -162,7 +162,7 @@ export const ExitWorktreeTool: Tool<InputSchema, Output> = buildTool({
     return outputSchema()
   },
   userFacingName() {
-    return 'Exiting worktree'
+    return '退出工作树'
   },
   shouldDefer: true,
   isDestructive(input) {

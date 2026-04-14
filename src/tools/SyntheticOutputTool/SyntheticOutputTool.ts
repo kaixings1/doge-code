@@ -45,10 +45,10 @@ export const SyntheticOutputTool = buildTool({
   searchHint: '以结构化 JSON 返回最终响应',
   maxResultSizeChars: 100_000,
   async description(): Promise<string> {
-    return 'Return structured output in the requested format'
+    return '以请求的格式返回结构化输出'
   },
   async prompt(): Promise<string> {
-    return `Use this tool to return your final response in the requested structured format. You MUST call this tool exactly once at the end of your response to provide the structured output.`
+    return `使用此工具以请求的格式返回你的最终响应。你必须在响应末尾恰好调用此工具一次，以提供结构化输出。`
   },
   get inputSchema(): InputSchema {
     return inputSchema()
@@ -80,10 +80,10 @@ export const SyntheticOutputTool = buildTool({
     return `${keys.length} fields: ${keys.slice(0, 3).join(', ')}…`
   },
   renderToolUseRejectedMessage() {
-    return 'Structured output rejected'
+    return '结构化输出被拒绝'
   },
   renderToolUseErrorMessage() {
-    return 'Structured output error'
+    return '结构化输出错误'
   },
   renderToolUseProgressMessage() {
     return null

@@ -149,13 +149,13 @@ export const TaskOutputTool: Tool<InputSchema, TaskOutputToolOutput> = buildTool
   // Backwards-compatible aliases for renamed tools
   aliases: ['AgentOutputTool', 'BashOutputTool'],
   userFacingName() {
-    return 'Task Output';
+    return '任务输出';
   },
   get inputSchema(): InputSchema {
     return inputSchema();
   },
   async description() {
-    return '[Deprecated] — prefer Read on the task output file path';
+    return '[已弃用] — 建议改为读取任务输出文件路径';
   },
   isConcurrencySafe(_input) {
     return this.isReadOnly?.(_input) ?? false;
@@ -170,15 +170,15 @@ export const TaskOutputTool: Tool<InputSchema, TaskOutputToolOutput> = buildTool
     return input.task_id;
   },
   async prompt() {
-    return `DEPRECATED: Prefer using the Read tool on the task's output file path instead. Background tasks return their output file path in the tool result, and you receive a <task-notification> with the same path when the task completes — Read that file directly.
+    return `已弃用：建议改为使用 Read 工具读取任务的输出文件路径。后台任务会在结果中返回输出文件路径，当任务完成时你会收到 <task-notification> — 直接读取该文件即可。
 
-- Retrieves output from a running or completed task (background shell, agent, or remote session)
-- Takes a task_id parameter identifying the task
-- Returns the task output along with status information
-- Use block=true (default) to wait for task completion
-- Use block=false for non-blocking check of current status
-- Task IDs can be found using the /tasks command
-- Works with all task types: background shells, async agents, and remote sessions`;
+- 从正在运行或已完成的任务中获取输出（后台 shell、代理或远程会话）
+- 使用 task_id 参数来识别任务
+- 返回任务输出以及状态信息
+- 使用 block=true（默认）来等待任务完成
+- 使用 block=false 来非阻塞检查当前状态
+- 可以使用 /tasks 命令找到任务 ID
+- 适用于所有任务类型：后台 shell、异步代理和远程会话`;
   },
   async validateInput({
     task_id

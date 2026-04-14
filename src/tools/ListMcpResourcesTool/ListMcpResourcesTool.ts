@@ -111,7 +111,7 @@ export const ListMcpResourcesTool = buildTool({
         tool_use_id: toolUseID,
         type: 'tool_result',
         content:
-          'No resources found. MCP servers may still provide tools even if they have no resources.',
+          '未找到资源。即使没有资源，MCP 服务器仍可能提供工具。',
       }
     }
     return {

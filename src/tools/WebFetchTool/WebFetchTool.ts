@@ -79,7 +79,7 @@ export const WebFetchTool = buildTool({
     }
   },
   userFacingName() {
-    return 'Fetch'
+    return '获取网页'
   },
   getToolUseSummary,
   getActivityDescription(input) {

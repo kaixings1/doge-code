@@ -38,7 +38,7 @@ export const EnterPlanModeTool: Tool<InputSchema, Output> = buildTool({
   searchHint: '切换到计划模式以在编码前设计方案',
   maxResultSizeChars: 100_000,
   async description() {
-    return 'Requests permission to enter plan mode for complex tasks requiring exploration and design'
+    return '请求进入计划模式以探索代码库和设计实现方案'
   },
   async prompt() {
     return getEnterPlanModeToolPrompt()
@@ -96,7 +96,7 @@ export const EnterPlanModeTool: Tool<InputSchema, Output> = buildTool({
     return {
       data: {
         message:
-          'Entered plan mode. You should now focus on exploring the codebase and designing an implementation approach.',
+          '已进入计划模式。你现在应该专注于探索代码库和设计实现方案。',
       },
     }
   },
@@ -104,18 +104,18 @@ export const EnterPlanModeTool: Tool<InputSchema, Output> = buildTool({
     const instructions = isPlanModeInterviewPhaseEnabled()
       ? `${message}
 
-DO NOT write or edit any files except the plan file. Detailed workflow instructions will follow.`
+不要编写或编辑任何文件，除了计划文件。详细的工作流程指令将会随后提供。`
       : `${message}
 
-In plan mode, you should:
-1. Thoroughly explore the codebase to understand existing patterns
-2. Identify similar features and architectural approaches
-3. Consider multiple approaches and their trade-offs
-4. Use AskUserQuestion if you need to clarify the approach
-5. Design a concrete implementation strategy
-6. When ready, use ExitPlanMode to present your plan for approval
+在计划模式下，你应该：
+1. 深入探索代码库以了解现有模式
+2. 识别类似的功能和架构方案
+3. 考虑多种方案及其权衡
+4. 如果需要澄清方案，使用 AskUserQuestion
+5. 设计具体的实现策略
+6. 准备好后，使用 ExitPlanMode 提交你的计划以获得批准
 
-Remember: DO NOT write or edit any files yet. This is a read-only exploration and planning phase.`
+记住：不要编写或编辑任何文件。这是一个只读的探索和规划阶段。`
 
     return {
       type: 'tool_result',
