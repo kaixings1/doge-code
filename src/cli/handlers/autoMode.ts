@@ -67,8 +67,8 @@ const CRITIQUE_SYSTEM_PROMPT =
   '3. **Conflicts**: Do any of the rules conflict with each other?\n' +
   '4. **Actionability**: Is the rule specific enough for the classifier to act on?\n' +
   '\n' +
-  'Be concise and constructive. Only comment on rules that could be improved. ' +
-  'If all rules look good, say so.'
+  '请简洁并具建设性。仅评论可能需要改进的规则。' +
+  '如果所有规则看起来都不错，请说明。'
 
 export async function autoModeCritiqueHandler(options: {
   model?: string

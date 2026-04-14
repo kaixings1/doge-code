@@ -162,9 +162,9 @@ function InstallGitHubApp(props: {
         setState(prev_2 => ({
           ...prev_2,
           step: 'error',
-          error: 'A Claude workflow file already exists in this repository.',
-          errorReason: 'Workflow file conflict',
-          errorInstructions: ['The file .github/workflows/claude.yml already exists', 'You can either:', '  1. Delete the existing file and run this command again', '  2. Update the existing file manually using the template from:', `     ${GITHUB_ACTION_SETUP_DOCS_URL}`]
+          error: '此仓库中已存在 Claude 工作流文件。',
+          errorReason: '工作流文件冲突',
+          errorInstructions: ['文件 .github/workflows/claude.yml 已存在', '你可以：', '  1. 删除现有文件并重新运行此命令', '  2. 使用以下模板手动更新现有文件：', `     ${GITHUB_ACTION_SETUP_DOCS_URL}`]
         }));
       } else {
         logEvent('tengu_install_github_app_error', {
@@ -174,7 +174,7 @@ function InstallGitHubApp(props: {
           ...prev_3,
           step: 'error',
           error: errorMessage,
-          errorReason: 'GitHub Actions setup failed',
+          errorReason: 'GitHub Actions 设置失败',
           errorInstructions: []
         }));
       }
@@ -287,7 +287,7 @@ function InstallGitHubApp(props: {
           repoWarnings.push({
             title: 'GitHub URL 格式无效',
             message: '仓库 URL 格式似乎无效。',
-            instructions: ['Use format: owner/repo or https://github.com/owner/repo', 'Example: anthropics/claude-cli']
+            instructions: ['使用格式：owner/repo 或 https://github.com/owner/repo', '示例：anthropics/claude-cli']
           });
         } else {
           repoName_1 = match[1]?.replace(/\.git$/, '') || '';
@@ -297,21 +297,21 @@ function InstallGitHubApp(props: {
         repoWarnings.push({
           title: '仓库格式警告',
           message: '仓库格式应为 "owner/repo"',
-          instructions: ['Use format: owner/repo', 'Example: anthropics/claude-cli']
+          instructions: ['使用格式：owner/repo', '示例：anthropics/claude-cli']
         });
       }
       const permissionCheck = await checkRepositoryPermissions(repoName_1);
       if (permissionCheck.error === 'repository_not_found') {
         repoWarnings.push({
           title: '未找到仓库',
-          message: `Repository ${repoName_1} was not found or you don't have access.`,
-          instructions: [`Check that the repository name is correct: ${repoName_1}`, 'Ensure you have access to this repository', 'For private repositories, make sure your GitHub token has the "repo" scope', 'You can add the repo scope with: gh auth refresh -h github.com -s repo,workflow']
+          message: `未找到仓库 ${repoName_1} 或你无权访问。`,
+          instructions: [`检查仓库名称是否正确：${repoName_1}`, '确保你有权访问此仓库', '对于私有仓库，请确保 GitHub 令牌具有 "repo" 作用域', '你可以使用以下命令添加 repo 作用域：gh auth refresh -h github.com -s repo,workflow']
         });
       } else if (!permissionCheck.hasAccess) {
         repoWarnings.push({
           title: '需要管理员权限',
-          message: `You might need admin permissions on ${repoName_1} to set up GitHub Actions.`,
-          instructions: ['Repository admins can install GitHub Apps and set secrets', 'Ask a repository admin to run this command if setup fails', 'Alternatively, you can use the manual setup instructions']
+          message: `你可能需要 ${repoName_1} 的管理员权限才能设置 GitHub Actions。`,
+          instructions: ['仓库管理员可以安装 GitHub 应用并设置密钥', '如果设置失败，请让仓库管理员运行此命令', '或者，你可以使用手动设置说明']
         });
       }
       const workflowExists = await checkExistingWorkflowFile(repoName_1);

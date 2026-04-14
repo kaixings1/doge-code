@@ -563,7 +563,7 @@ export async function initEnvLessBridgeCore(
       )
       if (!fresh || tornDown) {
         if (!tornDown) {
-          onStateChange?.('failed', 'JWT refresh failed after 401')
+          onStateChange?.('failed', 'JWT 刷新失败 (401)')
         }
         return
       }

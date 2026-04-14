@@ -182,7 +182,7 @@ export async function createV2ReplTransport(opts: {
 
   const epoch = opts.epoch ?? (await registerWorker(sessionUrl, ingressToken))
   logForDebugging(
-    `[bridge:repl] CCR v2: worker sessionId=${sessionId} epoch=${epoch}${opts.epoch !== undefined ? ' (from /bridge)' : ' (via registerWorker)'}`,
+    `[bridge:repl] CCR v2: 工作器 sessionId=${sessionId} epoch=${epoch}${opts.epoch !== undefined ? ' (来自 /bridge)' : ' (通过 registerWorker)'}`,
   )
 
   // Derive SSE stream URL. Same logic as transportUtils.ts:26-33 but

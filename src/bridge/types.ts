@@ -56,7 +56,7 @@ export type SessionActivityType = 'tool_start' | 'text' | 'result' | 'error'
 
 export type SessionActivity = {
   type: SessionActivityType
-  summary: string // e.g. "Editing src/foo.ts", "Reading package.json"
+  summary: string // 例如 "正在编辑 src/foo.ts"，"正在读取 package.json"
   timestamp: number
 }
 

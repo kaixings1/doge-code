@@ -168,7 +168,7 @@ function extractActivities(
       if (subtype === 'success') {
         activities.push({
           type: 'result',
-          summary: 'Session completed',
+          summary: '会话已完成',
           timestamp: now,
         })
         onDebug(
