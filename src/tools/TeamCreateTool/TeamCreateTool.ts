@@ -105,7 +105,7 @@ export const TeamCreateTool: Tool<InputSchema, Output> = buildTool({
   },
 
   async description() {
-    return 'Create a new team for coordinating multiple agents'
+    return '创建一个新的团队以协调多个代理'
   },
 
   async prompt() {

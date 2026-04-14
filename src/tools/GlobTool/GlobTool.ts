@@ -65,7 +65,7 @@ export const GlobTool = buildTool({
   getToolUseSummary,
   getActivityDescription(input) {
     const summary = getToolUseSummary(input)
-    return summary ? `Finding ${summary}` : 'Finding files'
+    return summary ? `正在查找 ${summary}` : '正在查找文件'
   },
   get inputSchema(): InputSchema {
     return inputSchema()

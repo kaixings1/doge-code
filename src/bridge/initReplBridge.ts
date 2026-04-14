@@ -455,8 +455,8 @@ export async function initReplBridge(
 
   const versionError = checkBridgeMinVersion()
   if (versionError) {
-    logBridgeSkip('version_too_old', `[bridge:repl] Skipping: ${versionError}`)
-    onStateChange?.('failed', 'run `claude update` to upgrade')
+    logBridgeSkip('version_too_old', `[bridge:repl] 跳过：${versionError}`)
+    onStateChange?.('failed', '运行 `claude update` 以升级')
     return null
   }
 
