@@ -40,6 +40,6 @@ export function getTransportForUrl(
     }
     return new WebSocketTransport(url, headers, sessionId, refreshHeaders)
   } else {
-    throw new Error(`Unsupported protocol: ${url.protocol}`)
+    throw new Error(`不支持的协议：${url.protocol}`)
   }
 }
