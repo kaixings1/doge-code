@@ -93,7 +93,7 @@ export function ShellDetailDialog(t0) {
   useEffect(t2, t3);
   let t4;
   if ($[7] !== onDone) {
-    t4 = () => onDone("Shell 详细信息 dismissed", {
+    t4 = () => onDone("Shell 详细信息已关闭", {
       display: "system"
     });
     $[7] = onDone;
@@ -127,7 +127,7 @@ export function ShellDetailDialog(t0) {
     t7 = e => {
       if (e.key === " ") {
         e.preventDefault();
-        onDone("Shell 详细信息 dismissed", {
+        onDone("Shell 详细信息已关闭", {
           display: "system"
         });
       } else {

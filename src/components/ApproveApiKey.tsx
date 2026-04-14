@@ -75,7 +75,7 @@ export function ApproveApiKey(t0) {
   }
   let t5;
   if ($[8] === Symbol.for("react.memo_cache_sentinel")) {
-    t5 = <Text>Do you want to use this API key?</Text>;
+    t5 = <Text>您要使用此 API 密钥吗？</Text>;
     $[8] = t5;
   } else {
     t5 = $[8];
@@ -93,7 +93,7 @@ export function ApproveApiKey(t0) {
   let t7;
   if ($[10] === Symbol.for("react.memo_cache_sentinel")) {
     t7 = [t6, {
-      label: <Text>No (<Text bold={true}>recommended</Text>)</Text>,
+      label: <Text>否（<Text bold={true}>推荐</Text>）</Text>,
       value: "no"
     }];
     $[10] = t7;

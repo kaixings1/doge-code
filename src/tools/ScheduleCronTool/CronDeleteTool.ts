@@ -64,7 +64,7 @@ export const CronDeleteTool = buildTool({
     if (!task) {
       return {
         result: false,
-        message: `No scheduled job with id '${input.id}'`,
+        message: `找不到 ID 为 '${input.id}' 的定时任务`,
         errorCode: 1,
       }
     }

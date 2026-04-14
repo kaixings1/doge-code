@@ -104,7 +104,7 @@ export async function startMCPServer(
       const tools = getTools(toolPermissionContext)
       const tool = findToolByName(tools, name)
       if (!tool) {
-        throw new Error(`Tool ${name} not found`)
+        throw new Error(`找不到工具 ${name}`)
       }
 
       // Assume MCP servers do not read messages separately from the tool
@@ -136,7 +136,7 @@ export async function startMCPServer(
       // TODO: validate input types with zod
       try {
         if (!tool.isEnabled()) {
-          throw new Error(`Tool ${name} is not enabled`)
+          throw new Error(`工具 ${name} 未启用`)
         }
         const validationResult = await tool.validateInput?.(
           (args as never) ?? {},
@@ -144,7 +144,7 @@ export async function startMCPServer(
         )
         if (validationResult && !validationResult.result) {
           throw new Error(
-            `Tool ${name} input is invalid: ${validationResult.message}`,
+            `工具 ${name} 的输入无效：${validationResult.message}`,
           )
         }
         const finalResult = await tool.call(

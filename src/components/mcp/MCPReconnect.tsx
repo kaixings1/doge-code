@@ -32,9 +32,9 @@ export function MCPReconnect(t0) {
         try {
           const server = store.getState().mcp.clients.find(c => c.name === serverName);
           if (!server) {
-            setError(`MCP server "${serverName}" not found`);
+            setError(`未找到 MCP 服务器 "${serverName}"`);
             setIsReconnecting(false);
-            onComplete(`MCP server "${serverName}" not found`);
+            onComplete(`未找到 MCP 服务器 "${serverName}"`);
             return;
           }
           const result = await reconnectMcpServer(serverName);
@@ -42,23 +42,23 @@ export function MCPReconnect(t0) {
             case "connected":
               {
                 setIsReconnecting(false);
-                onComplete(`Successfully reconnected to ${serverName}`);
+                onComplete(`成功连接到 ${serverName}`);
                 break bb43;
               }
             case "needs-auth":
               {
-                setError(`${serverName} requires authentication`);
+                setError(`${serverName} 需要身份验证`);
                 setIsReconnecting(false);
-                onComplete(`${serverName} requires authentication. Use /mcp to authenticate.`);
+                onComplete(`${serverName} 需要身份验证。请使用 /mcp 进行身份验证。`);
                 break bb43;
               }
             case "pending":
             case "failed":
             case "disabled":
               {
-                setError(`Failed to reconnect to ${serverName}`);
+                setError(`重新连接到 ${serverName} 失败`);
                 setIsReconnecting(false);
-                onComplete(`Failed to reconnect to ${serverName}`);
+                onComplete(`重新连接到 ${serverName} 失败`);
               }
           }
         } catch (t3) {
@@ -66,7 +66,7 @@ export function MCPReconnect(t0) {
           const errorMessage = err instanceof Error ? err.message : String(err);
           setError(errorMessage);
           setIsReconnecting(false);
-          onComplete(`Error: ${errorMessage}`);
+          onComplete(`错误：${errorMessage}`);
         }
       };
       attemptReconnect();
@@ -86,7 +86,7 @@ export function MCPReconnect(t0) {
   if (isReconnecting) {
     let t3;
     if ($[6] !== serverName) {
-      t3 = <Text color="text">Reconnecting to <Text bold={true}>{serverName}</Text></Text>;
+      t3 = <Text color="text">正在重新连接到 <Text bold={true}>{serverName}</Text></Text>;
       $[6] = serverName;
       $[7] = t3;
     } else {
@@ -94,7 +94,7 @@ export function MCPReconnect(t0) {
     }
     let t4;
     if ($[8] === Symbol.for("react.memo_cache_sentinel")) {
-      t4 = <Box><Spinner /><Text> Establishing connection to MCP server</Text></Box>;
+      t4 = <Box><Spinner /><Text> 正在建立与 MCP 服务器的连接</Text></Box>;
       $[8] = t4;
     } else {
       t4 = $[8];
@@ -128,7 +128,7 @@ export function MCPReconnect(t0) {
     }
     let t5;
     if ($[15] !== serverName) {
-      t5 = <Text color="error">Failed to reconnect to {serverName}</Text>;
+      t5 = <Text color="error">重新连接到 {serverName} 失败</Text>;
       $[15] = serverName;
       $[16] = t5;
     } else {
@@ -145,7 +145,7 @@ export function MCPReconnect(t0) {
     }
     let t7;
     if ($[20] !== error) {
-      t7 = <Text dimColor={true}>Error: {error}</Text>;
+      t7 = <Text dimColor={true}>错误：{error}</Text>;
       $[20] = error;
       $[21] = t7;
     } else {

@@ -66,7 +66,7 @@ const MAX_WORKTREE_SLUG_LENGTH = 64
 export function validateWorktreeSlug(slug: string): void {
   if (slug.length > MAX_WORKTREE_SLUG_LENGTH) {
     throw new Error(
-      `Invalid worktree name: must be ${MAX_WORKTREE_SLUG_LENGTH} characters or fewer (got ${slug.length})`,
+      `无效的 worktree 名称：必须为 ${MAX_WORKTREE_SLUG_LENGTH} 个字符或更少（当前为 ${slug.length} 个字符）`,
     )
   }
   // Leading or trailing `/` would make path.join produce an absolute path
@@ -75,12 +75,12 @@ export function validateWorktreeSlug(slug: string): void {
   for (const segment of slug.split('/')) {
     if (segment === '.' || segment === '..') {
       throw new Error(
-        `Invalid worktree name "${slug}": must not contain "." or ".." path segments`,
+        `无效的 worktree 名称 "${slug}"：不能包含 "." 或 ".." 路径段`,
       )
     }
     if (!VALID_WORKTREE_SLUG_SEGMENT.test(segment)) {
       throw new Error(
-        `Invalid worktree name "${slug}": each "/"-separated segment must be non-empty and contain only letters, digits, dots, underscores, and dashes`,
+        `无效的 worktree 名称 "${slug}"：每个 "/" 分隔的段必须非空，且只能包含字母、数字、点、下划线和短划线`,
       )
     }
   }
@@ -270,7 +270,7 @@ async function getOrCreateWorktree(
       )
     if (prFetchCode !== 0) {
       throw new Error(
-        `Failed to fetch PR #${options.prNumber}: ${prFetchStderr.trim() || 'PR may not exist or the repository may not have a remote named "origin"'}`,
+        `无法获取 PR #${options.prNumber}：${prFetchStderr.trim() || 'PR 可能不存在，或者仓库可能没有名为 "origin" 的远程'}`,
       )
     }
     baseBranch = 'FETCH_HEAD'
@@ -312,7 +312,7 @@ async function getOrCreateWorktree(
     )
     if (shaCode !== 0) {
       throw new Error(
-        `Failed to resolve base branch "${baseBranch}": git rev-parse failed`,
+        `无法解析基础分支 "${baseBranch}"：git rev-parse 失败`,
       )
     }
     baseSha = stdout.trim()
@@ -330,7 +330,7 @@ async function getOrCreateWorktree(
   const { code: createCode, stderr: createStderr } =
     await execFileNoThrowWithCwd(gitExe(), addArgs, { cwd: repoRoot })
   if (createCode !== 0) {
-    throw new Error(`Failed to create worktree: ${createStderr}`)
+    throw new Error(`无法创建 worktree：${createStderr}`)
   }
 
   if (sparsePaths?.length) {
@@ -353,7 +353,7 @@ async function getOrCreateWorktree(
         { cwd: worktreePath },
       )
     if (sparseCode !== 0) {
-      await tearDown(`Failed to configure sparse-checkout: ${sparseErr}`)
+      await tearDown(`配置 sparse-checkout 失败：${sparseErr}`)
     }
     const { code: coCode, stderr: coErr } = await execFileNoThrowWithCwd(
       gitExe(),
@@ -361,7 +361,7 @@ async function getOrCreateWorktree(
       { cwd: worktreePath },
     )
     if (coCode !== 0) {
-      await tearDown(`Failed to checkout sparse worktree: ${coErr}`)
+      await tearDown(`检出 sparse worktree 失败：${coErr}`)
     }
   }
 
@@ -659,14 +659,14 @@ export function getTmuxInstallInstructions(): string {
   const platform = getPlatform()
   switch (platform) {
     case 'macos':
-      return 'Install tmux with: brew install tmux'
+      return '使用以下命令安装 tmux：brew install tmux'
     case 'linux':
     case 'wsl':
-      return 'Install tmux with: sudo apt install tmux (Debian/Ubuntu) or sudo dnf install tmux (Fedora/RHEL)'
+      return '使用以下命令安装 tmux：sudo apt install tmux（Debian/Ubuntu）或 sudo dnf install tmux（Fedora/RHEL）'
     case 'windows':
-      return 'tmux is not natively available on Windows. Consider using WSL or Cygwin.'
+      return 'tmux 在 Windows 上不可原生使用。请考虑使用 WSL 或 Cygwin。'
     default:
-      return 'Install tmux using your system package manager.'
+      return '使用系统包管理器安装 tmux。'
   }
 }
 
@@ -798,10 +798,10 @@ export async function keepWorktree(): Promise<void> {
     }))
 
     logForDebugging(
-      `Linked worktree preserved at: ${worktreePath}${worktreeBranch ? ` on branch: ${worktreeBranch}` : ''}`,
+      `链接的 worktree 已保留在：${worktreePath}${worktreeBranch ? `，分支：${worktreeBranch}` : ''}`,
     )
     logForDebugging(
-      `You can continue working there by running: cd ${worktreePath}`,
+      `你可以通过运行以下命令继续工作：cd ${worktreePath}`,
     )
   } catch (error) {
     logForDebugging(`Error keeping worktree: ${error}`, {
@@ -1185,7 +1185,7 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
   if (process.platform === 'win32') {
     return {
       handled: false,
-      error: 'Error: --tmux is not supported on Windows',
+      error: '错误：Windows 不支持 --tmux 模式',
     }
   }
 
@@ -1194,11 +1194,11 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
   if (tmuxCheck.status !== 0) {
     const installHint =
       process.platform === 'darwin'
-        ? 'Install tmux with: brew install tmux'
-        : 'Install tmux with: sudo apt install tmux'
+        ? '使用以下命令安装 tmux：brew install tmux'
+        : '使用以下命令安装 tmux：sudo apt install tmux'
     return {
       handled: false,
-      error: `Error: tmux is not installed. ${installHint}`,
+      error: `错误：未安装 tmux。${installHint}`,
     }
   }
 
@@ -1248,7 +1248,7 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
   } catch (e) {
     return {
       handled: false,
-      error: `Error: ${(e as Error).message}`,
+      error: `错误：${(e as Error).message}`,
     }
   }
 
@@ -1276,7 +1276,7 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
     if (!repoRoot) {
       return {
         handled: false,
-        error: 'Error: --worktree requires a git repository',
+        error: '错误：--worktree 需要在 git 仓库中运行',
       }
     }
 

@@ -1468,9 +1468,9 @@ function getConfig<A>(
       const backupPath = findMostRecentBackup(file)
       if (backupPath) {
         process.stderr.write(
-          `\nClaude configuration file not found at: ${file}\n` +
-            `A backup file exists at: ${backupPath}\n` +
-            `You can manually restore it by running: cp "${backupPath}" "${file}"\n\n`,
+          `\n未能在以下位置找到 Claude 配置文件：${file}\n` +
+            `存在备份文件：${backupPath}\n` +
+            `你可以手动运行以下命令来恢复：cp "${backupPath}" "${file}"\n\n`,
         )
       }
       return createDefault()
@@ -1586,8 +1586,8 @@ function getConfig<A>(
 
       if (backupPath) {
         process.stderr.write(
-          `A backup file exists at: ${backupPath}\n` +
-            `You can manually restore it by running: cp "${backupPath}" "${file}"\n\n`,
+          `存在备份文件：${backupPath}\n` +
+            `你可以手动运行以下命令来恢复：cp "${backupPath}" "${file}"\n\n`,
         )
       } else {
         process.stderr.write(`\n`)

@@ -50,20 +50,20 @@ export function getPastedTextRefNumLines(text: string): number {
 
 export function formatPastedTextRef(id: number, numLines: number): string {
   if (numLines === 0) {
-    return `[Pasted text #${id}]`
+    return `[粘贴文本 #${id}]`
   }
-  return `[Pasted text #${id} +${numLines} lines]`
+  return `[粘贴文本 #${id} +${numLines} 行]`
 }
 
 export function formatImageRef(id: number): string {
-  return `[Image #${id}]`
+  return `[图片 #${id}]`
 }
 
 export function parseReferences(
   input: string,
 ): Array<{ id: number; match: string; index: number }> {
   const referencePattern =
-    /\[(Pasted text|Image|\.\.\.Truncated text) #(\d+)(?: \+\d+ lines)?(\.)*\]/g
+    /\[(粘贴文本|图片|\.\.\.已截断文本) #(\d+)(?: \+\d+ 行)?(\.)*\]/g
   const matches = [...input.matchAll(referencePattern)]
   return matches
     .map(match => ({

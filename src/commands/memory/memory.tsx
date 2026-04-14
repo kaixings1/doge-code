@@ -58,7 +58,7 @@ function MemoryCommand({
       });
     } catch (error) {
       logError(error);
-      onDone(`Error opening memory file: ${error}`);
+      onDone(`打开记忆文件时出错：${error}`);
     }
   };
   const handleCancel = () => {

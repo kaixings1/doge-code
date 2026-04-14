@@ -4178,7 +4178,7 @@ export function REPL({
   useEffect(() => {
     const handleSuspend = () => {
       // Print suspension instructions
-      process.stdout.write(`\nClaude Code has been suspended. Run \`fg\` to bring Claude Code back.\nNote: ctrl + z now suspends Claude Code, ctrl + _ undoes input.\n`);
+      process.stdout.write(`\nClaude Code 已挂起。运行 \`fg\` 将 Claude Code 恢复。\n注意：现在 ctrl + z 挂起 Claude Code，ctrl + _ 撤销输入。\n`);
     };
     const handleResume = () => {
       // Force complete component tree replacement instead of terminal clear

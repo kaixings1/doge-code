@@ -28,7 +28,7 @@ export function TeammateViewHeader() {
   const nameColor = t0;
   let t1;
   if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
-    t1 = <Text>Viewing </Text>;
+    t1 = <Text>正在查看 </Text>;
     $[2] = t1;
   } else {
     t1 = $[2];

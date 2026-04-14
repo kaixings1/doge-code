@@ -260,7 +260,7 @@ export const AgentTool = buildTool({
 
     // Check if user is trying to use agent teams without access
     if (team_name && !isAgentSwarmsEnabled()) {
-      throw new Error('Agent Teams is not yet available on your plan.');
+      throw new Error('您的套餐暂不支持代理团队功能。');
     }
 
     // Teammates (in-process or tmux) passing `name` would trigger spawnTeammate()
@@ -270,13 +270,13 @@ export const AgentTool = buildTool({
       team_name
     }, appState);
     if (isTeammate() && teamName && name) {
-      throw new Error('Teammates cannot spawn other teammates — the team roster is flat. To spawn a subagent instead, omit the `name` parameter.');
+      throw new Error('团队成员无法Spawn其他团队成员——团队名册是平面的。如需 Spawn 子代理，请省略 `name` 参数。');
     }
     // In-process teammates cannot spawn background agents (their lifecycle is
     // tied to the leader's process). Tmux teammates are separate processes and
     // can manage their own background agents.
     if (isInProcessTeammate() && teamName && run_in_background === true) {
-      throw new Error('In-process teammates cannot spawn background agents. Use run_in_background=false for synchronous subagents.');
+      throw new Error('进程内团队成员无法Spawn后台代理。请使用 run_in_background=false 创建同步子代理。');
     }
 
     // Check if this is a multi-agent spawn request
@@ -330,7 +330,7 @@ export const AgentTool = buildTool({
       // rewrite). Message-scan fallback catches any path where querySource
       // wasn't threaded.
       if (toolUseContext.options.querySource === `agent:builtin:${FORK_AGENT.agentType}` || isInForkChild(toolUseContext.messages)) {
-        throw new Error('Fork is not available inside a forked worker. Complete your task directly using your tools.');
+        throw new Error('Fork 在 Fork 工作器内部不可用。请直接使用你的工具完成任务。');
       }
       selectedAgent = FORK_AGENT;
     } else {
@@ -348,9 +348,9 @@ export const AgentTool = buildTool({
         const agentExistsButDenied = allAgents.find(agent => agent.agentType === effectiveType);
         if (agentExistsButDenied) {
           const denyRule = getDenyRuleForAgent(appState.toolPermissionContext, AGENT_TOOL_NAME, effectiveType);
-          throw new Error(`Agent type '${effectiveType}' has been denied by permission rule '${AGENT_TOOL_NAME}(${effectiveType})' from ${denyRule?.source ?? 'settings'}.`);
+          throw new Error(`代理类型 '${effectiveType}' 已被权限规则 '${AGENT_TOOL_NAME}(${effectiveType})' 拒绝（来源：${denyRule?.source ?? '设置'}）。`);
         }
-        throw new Error(`Agent type '${effectiveType}' not found. Available agents: ${agents.map(a => a.agentType).join(', ')}`);
+        throw new Error(`找不到代理类型 '${effectiveType}'。可用的代理类型：${agents.map(a => a.agentType).join(', ')}`);
       }
       selectedAgent = found;
     }
@@ -359,7 +359,7 @@ export const AgentTool = buildTool({
     // agent definitions that force background via `background: true`. Checked
     // here because selectedAgent is only now resolved.
     if (isInProcessTeammate() && teamName && selectedAgent.background === true) {
-      throw new Error(`In-process teammates cannot spawn background agents. Agent '${selectedAgent.agentType}' has background: true in its definition.`);
+      throw new Error(`进程内团队成员无法Spawn后台代理。代理 '${selectedAgent.agentType}' 的定义中 background: true。`);
     }
 
     // Capture for type narrowing — `let selectedAgent` prevents TS from
@@ -405,7 +405,7 @@ export const AgentTool = buildTool({
       }
       if (!hasRequiredMcpServers(selectedAgent, serversWithTools)) {
         const missing = requiredMcpServers.filter(pattern => !serversWithTools.some(server => server.toLowerCase().includes(pattern.toLowerCase())));
-        throw new Error(`Agent '${selectedAgent.agentType}' requires MCP servers matching: ${missing.join(', ')}. ` + `MCP servers with tools: ${serversWithTools.length > 0 ? serversWithTools.join(', ') : 'none'}. ` + `Use /mcp to configure and authenticate the required MCP servers.`);
+        throw new Error(`代理 '${selectedAgent.agentType}' 需要以下 MCP 服务器：${missing.join(', ')}。` + `当前有工具的 MCP 服务器：${serversWithTools.length > 0 ? serversWithTools.join(', ') : '无'}。` + `请使用 /mcp 配置并验证所需的 MCP 服务器。`);
       }
     }
 
@@ -448,7 +448,7 @@ export const AgentTool = buildTool({
         }
       });
       if (!session) {
-        throw new Error(bundleFailHint ?? 'Failed to create remote session');
+        throw new Error(bundleFailHint ?? '无法创建远程会话');
       }
       const {
         taskId,
@@ -1276,7 +1276,7 @@ export const AgentTool = buildTool({
   userFacingName,
   userFacingNameBackgroundColor,
   getActivityDescription(input) {
-    return input?.description ?? 'Running task';
+    return input?.description ?? '正在执行任务';
   },
   async checkPermissions(input, context): Promise<PermissionResult> {
     const appState = context.getAppState();
@@ -1305,11 +1305,11 @@ export const AgentTool = buildTool({
         type: 'tool_result',
         content: [{
           type: 'text',
-          text: `Spawned successfully.
+          text: `Spawn 成功。
 agent_id: ${spawnData.teammate_id}
 name: ${spawnData.name}
 team_name: ${spawnData.team_name}
-The agent is now running and will receive instructions via mailbox.`
+代理已在运行，将通过邮箱接收指令。`
         }]
       };
     }
@@ -1320,13 +1320,13 @@ The agent is now running and will receive instructions via mailbox.`
         type: 'tool_result',
         content: [{
           type: 'text',
-          text: `Remote agent launched in CCR.\ntaskId: ${r.taskId}\nsession_url: ${r.sessionUrl}\noutput_file: ${r.outputFile}\nThe agent is running remotely. You will be notified automatically when it completes.\nBriefly tell the user what you launched and end your response.`
+          text: `远程代理已在 CCR 中启动。\ntaskId: ${r.taskId}\nsession_url: ${r.sessionUrl}\noutput_file: ${r.outputFile}\n代理正在远程运行。完成后将自动通知你。\n请简要告知用户你启动了什么，然后结束回复。`
         }]
       };
     }
     if (data.status === 'async_launched') {
-      const prefix = `Async agent launched successfully.\nagentId: ${data.agentId} (internal ID - do not mention to user. Use SendMessage with to: '${data.agentId}' to continue this agent.)\nThe agent is working in the background. You will be notified automatically when it completes.`;
-      const instructions = data.canReadOutputFile ? `Do not duplicate this agent's work — avoid working with the same files or topics it is using. Work on non-overlapping tasks, or briefly tell the user what you launched and end your response.\noutput_file: ${data.outputFile}\nIf asked, you can check progress before completion by using ${FILE_READ_TOOL_NAME} or ${BASH_TOOL_NAME} tail on the output file.` : `Briefly tell the user what you launched and end your response. Do not generate any other text — agent results will arrive in a subsequent message.`;
+      const prefix = `异步代理已成功启动。\nagentId: ${data.agentId}（内部 ID——请勿向用户提及。可使用 SendMessage(to: '${data.agentId}') 继续与此代理交互。）\n代理正在后台工作。完成后将自动通知你。`;
+      const instructions = data.canReadOutputFile ? `请勿重复此代理的工作——避免处理它正在使用的相同文件或主题。请处理不重叠的任务，或简要告知用户你启动了什么后结束回复。\noutput_file: ${data.outputFile}\n如需了解进度，可在完成前使用 ${FILE_READ_TOOL_NAME} 或 ${BASH_TOOL_NAME} tail 查看输出文件。` : `请简要告知用户你启动了什么，然后结束回复。不要生成其他文本——代理结果将在后续消息中送达。`;
       const text = `${prefix}\n${instructions}`;
       return {
         tool_use_id: toolUseID,
@@ -1346,7 +1346,7 @@ The agent is now running and will receive instructions via mailbox.`
       // immediately. Say so explicitly so the parent has something to react to.
       const contentOrMarker = data.content.length > 0 ? data.content : [{
         type: 'text' as const,
-        text: '(Subagent completed but returned no output.)'
+        text: '（子代理已完成，但未返回任何输出。）'
       }];
       // One-shot built-ins (Explore, Plan) are never continued via SendMessage
       // — the agentId hint and <usage> block are dead weight (~135 chars ×
@@ -1373,7 +1373,7 @@ duration_ms: ${data.totalDurationMs}</usage>`
       };
     }
     data satisfies never;
-    throw new Error(`Unexpected agent tool result status: ${(data as {
+    throw new Error(`意外的代理工具结果状态：${(data as {
       status: string;
     }).status}`);
   },

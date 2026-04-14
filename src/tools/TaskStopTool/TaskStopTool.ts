@@ -74,7 +74,7 @@ export const TaskStopTool = buildTool({
     if (!task) {
       return {
         result: false,
-        message: `No task found with ID: ${id}`,
+        message: `找不到 ID 为 ${id} 的任务`,
         errorCode: 1,
       }
     }
@@ -82,7 +82,7 @@ export const TaskStopTool = buildTool({
     if (task.status !== 'running') {
       return {
         result: false,
-        message: `Task ${id} is not running (status: ${task.status})`,
+        message: `任务 ${id} 未运行（状态：${task.status}）`,
         errorCode: 3,
       }
     }

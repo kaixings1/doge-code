@@ -19,11 +19,11 @@ export function getFormatDescription(
 ): string {
   switch (type) {
     case 'toolResult':
-      return 'Plain text'
+      return '纯文本'
     case 'structuredContent':
-      return schema ? `JSON with schema: ${schema}` : 'JSON'
+      return schema ? `JSON，架构：${schema}` : 'JSON'
     case 'contentArray':
-      return schema ? `JSON array with schema: ${schema}` : 'JSON array'
+      return schema ? `JSON 数组，架构：${schema}` : 'JSON 数组'
   }
 }
 
@@ -43,17 +43,17 @@ export function getLargeOutputInstructions(
   maxReadLength?: number,
 ): string {
   const baseInstructions =
-    `Error: result (${contentLength.toLocaleString()} characters) exceeds maximum allowed tokens. Output has been saved to ${rawOutputPath}.\n` +
-    `Format: ${formatDescription}\n` +
-    `Use offset and limit parameters to read specific portions of the file, search within it for specific content, and jq to make structured queries.\n` +
-    `REQUIREMENTS FOR SUMMARIZATION/ANALYSIS/REVIEW:\n` +
-    `- You MUST read the content from the file at ${rawOutputPath} in sequential chunks until 100% of the content has been read.\n`
+    `错误：结果（${contentLength.toLocaleString()} 个字符）超出最大允许令牌数。输出已保存到 ${rawOutputPath}。\n` +
+    `格式：${formatDescription}\n` +
+    `使用 offset 和 limit 参数读取文件的特定部分，搜索其中的特定内容，并使用 jq 进行结构化查询。\n` +
+    `摘要/分析/审查的要求：\n` +
+    `- 你必须从 ${rawOutputPath} 文件的顺序读取内容，直到 100% 的内容被读取。\n`
 
   const truncationWarning = maxReadLength
-    ? `- If you receive truncation warnings when reading the file ("[N lines truncated]"), reduce the chunk size until you have read 100% of the content without truncation ***DO NOT PROCEED UNTIL YOU HAVE DONE THIS***. Bash output is limited to ${maxReadLength.toLocaleString()} chars.\n`
-    : `- If you receive truncation warnings when reading the file, reduce the chunk size until you have read 100% of the content without truncation.\n`
+    ? `- 如果你在读取文件时收到截断警告（"[N lines truncated]"），请减小块大小，直到你读取了 100% 的内容而没有截断 ***在你完成此操作之前不要继续***。Bash 输出限制为 ${maxReadLength.toLocaleString()} 个字符。\n`
+    : `- 如果你在读取文件时收到截断警告，请减小块大小，直到你读取了 100% 的内容而没有截断。\n`
 
-  const completionRequirement = `- Before producing ANY summary or analysis, you MUST explicitly describe what portion of the content you have read. ***If you did not read the entire content, you MUST explicitly state this.***\n`
+  const completionRequirement = `- 在生成任何摘要或分析之前，你必须明确描述你已读取的内容部分。***如果你没有读取全部内容，你必须明确说明这一点。***\n`
 
   return baseInstructions + truncationWarning + completionRequirement
 }

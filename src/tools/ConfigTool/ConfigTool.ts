@@ -102,7 +102,7 @@ export const ConfigTool = buildTool({
     }
     return {
       behavior: 'ask' as const,
-      message: `Set ${input.setting} to ${jsonStringify(input.value)}`,
+      message: `将 ${input.setting} 设置为 ${jsonStringify(input.value)}`,
     }
   },
   renderToolUseMessage,
@@ -119,13 +119,13 @@ export const ConfigTool = buildTool({
       )
       if (!isVoiceGrowthBookEnabled()) {
         return {
-          data: { success: false, error: `Unknown setting: "${setting}"` },
+          data: { success: false, error: `未知设置："${setting}"` },
         }
       }
     }
     if (!isSupported(setting)) {
       return {
-        data: { success: false, error: `Unknown setting: "${setting}"` },
+        data: { success: false, error: `未知设置："${setting}"` },
       }
     }
 
@@ -194,7 +194,7 @@ export const ConfigTool = buildTool({
             success: false,
             operation: 'set',
             setting,
-            error: `${setting} requires true or false.`,
+            error: `${setting} 需要 true 或 false。`,
           },
         }
       }
@@ -208,7 +208,7 @@ export const ConfigTool = buildTool({
           success: false,
           operation: 'set',
           setting,
-          error: `Invalid value "${value}". Options: ${options.join(', ')}`,
+          error: `无效的值 "${value}"。可选项：${options.join(', ')}`,
         },
       }
     }
@@ -243,8 +243,8 @@ export const ConfigTool = buildTool({
           data: {
             success: false,
             error: !isAnthropicAuthEnabled()
-              ? 'Voice mode requires a Claude.ai account. Please run /login to sign in.'
-              : 'Voice mode is not available.',
+              ? '语音模式需要 Claude.ai 账户。请运行 /login 登录。'
+              : '语音模式不可用。',
           },
         }
       }
@@ -264,7 +264,7 @@ export const ConfigTool = buildTool({
             success: false,
             error:
               recording.reason ??
-              'Voice mode is not available in this environment.',
+              '语音模式在此环境中不可用。',
           },
         }
       }
@@ -273,7 +273,7 @@ export const ConfigTool = buildTool({
           data: {
             success: false,
             error:
-              'Voice mode requires a Claude.ai account. Please run /login to sign in.',
+              '语音模式需要 Claude.ai 账户。请运行 /login 登录。',
           },
         }
       }
@@ -283,25 +283,25 @@ export const ConfigTool = buildTool({
           data: {
             success: false,
             error:
-              'No audio recording tool found.' +
-              (deps.installCommand ? ` Run: ${deps.installCommand}` : ''),
+              '未找到音频录音工具。' +
+              (deps.installCommand ? ` 运行：${deps.installCommand}` : ''),
           },
         }
       }
       if (!(await requestMicrophonePermission())) {
         let guidance: string
         if (process.platform === 'win32') {
-          guidance = 'Settings \u2192 Privacy \u2192 Microphone'
+          guidance = '设置 \u2192 隐私 \u2192 麦克风'
         } else if (process.platform === 'linux') {
-          guidance = "your system's audio settings"
+          guidance = '系统的音频设置'
         } else {
           guidance =
-            'System Settings \u2192 Privacy & Security \u2192 Microphone'
+            '系统设置 \u2192 隐私与安全 \u2192 麦克风'
         }
         return {
           data: {
             success: false,
-            error: `Microphone access is denied. To enable it, go to ${guidance}, then try again.`,
+            error: `麦克风访问被拒绝。要启用它，请前往 ${guidance}，然后重试。`,
           },
         }
       }
@@ -319,7 +319,7 @@ export const ConfigTool = buildTool({
               success: false,
               operation: 'set',
               setting,
-              error: 'Invalid setting path',
+              error: '无效的设置路径',
             },
           }
         }
@@ -421,13 +421,13 @@ export const ConfigTool = buildTool({
       return {
         tool_use_id: toolUseID,
         type: 'tool_result' as const,
-        content: `Set ${content.setting} to ${jsonStringify(content.newValue)}`,
+        content: `已将 ${content.setting} 设置为 ${jsonStringify(content.newValue)}`,
       }
     }
     return {
       tool_use_id: toolUseID,
       type: 'tool_result' as const,
-      content: `Error: ${content.error}`,
+      content: `错误：${content.error}`,
       is_error: true,
     }
   },

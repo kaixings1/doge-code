@@ -231,7 +231,7 @@ function SuggestionDisplay(t0) {
     }
     let t3;
     if ($[3] === Symbol.for("react.memo_cache_sentinel")) {
-      t3 = <Text>None</Text>;
+      t3 = <Text>无</Text>;
       $[3] = t3;
     } else {
       t3 = $[3];

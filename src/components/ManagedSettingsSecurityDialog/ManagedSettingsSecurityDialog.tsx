@@ -51,14 +51,14 @@ export function ManagedSettingsSecurityDialog(t0) {
   const T0 = PermissionDialog;
   const t3 = "warning";
   const t4 = "warning";
-  const t5 = "Managed settings require approval";
+  const t5 = "管理设置需要审批";
   const T1 = Box;
   const t6 = "column";
   const t7 = 1;
   const t8 = 1;
   let t9;
   if ($[4] === Symbol.for("react.memo_cache_sentinel")) {
-    t9 = <Text>Your organization has configured managed settings that could allow execution of arbitrary code or interception of your prompts and responses.</Text>;
+    t9 = <Text>您的组织已配置管理设置，可能允许执行任意代码或拦截您的提示和响应。</Text>;
     $[4] = t9;
   } else {
     t9 = $[4];
@@ -67,7 +67,7 @@ export function ManagedSettingsSecurityDialog(t0) {
   const t10 = "column";
   let t11;
   if ($[5] === Symbol.for("react.memo_cache_sentinel")) {
-    t11 = <Text dimColor={true}>Settings requiring approval:</Text>;
+    t11 = <Text dimColor={true}>需要审批的设置：</Text>;
     $[5] = t11;
   } else {
     t11 = $[5];
@@ -85,7 +85,7 @@ export function ManagedSettingsSecurityDialog(t0) {
   }
   let t14;
   if ($[10] === Symbol.for("react.memo_cache_sentinel")) {
-    t14 = <Text>Only accept if you trust your organization's IT administration and expect these settings to be configured.</Text>;
+    t14 = <Text>仅在您信任组织的 IT 管理员并期望配置这些设置时才接受。</Text>;
     $[10] = t14;
   } else {
     t14 = $[10];

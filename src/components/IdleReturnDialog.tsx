@@ -35,10 +35,10 @@ export function IdleReturnDialog(t0) {
     t2 = $[3];
   }
   const formattedTokens = t2;
-  const t3 = `You've been away ${formattedIdle} and this conversation is ${formattedTokens} tokens.`;
+  const t3 = `您已离开 ${formattedIdle}，此对话已使用 ${formattedTokens} tokens。`;
   let t4;
   if ($[4] !== onDone) {
-    t4 = () => onDone("dismiss");
+    t4 = () => onDone("关闭");
     $[4] = onDone;
     $[5] = t4;
   } else {

@@ -141,7 +141,7 @@ async function main(): Promise<void> {
     }
     const disabledReason = await getBridgeDisabledReason();
     if (disabledReason) {
-      exitWithError(`Error: ${disabledReason}`);
+      exitWithError(`错误：${disabledReason}`);
     }
     const versionError = checkBridgeMinVersion();
     if (versionError) {
@@ -155,7 +155,7 @@ async function main(): Promise<void> {
     } = await import('../services/policyLimits/index.js');
     await waitForPolicyLimitsToLoad();
     if (!isPolicyAllowed('allow_remote_control')) {
-      exitWithError("Error: Remote Control is disabled by your organization's policy.");
+      exitWithError("错误：远程控制已被组织策略禁用。");
     }
     await bridgeMain(args.slice(1));
     return;

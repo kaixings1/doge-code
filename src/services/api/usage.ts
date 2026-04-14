@@ -43,7 +43,7 @@ export async function fetchUtilization(): Promise<Utilization | null> {
 
   const authResult = getAuthHeaders()
   if (authResult.error) {
-    throw new Error(`Auth error: ${authResult.error}`)
+    throw new Error(`认证错误：${authResult.error}`)
   }
 
   const headers = {

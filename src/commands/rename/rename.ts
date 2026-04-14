@@ -40,7 +40,7 @@ export async function call(
     )
     if (!generated) {
       onDone(
-        'Could not generate a name: no conversation context yet. Usage: /rename <name>',
+        '无法生成名称: 尚无对话上下文。用法: /rename <名称>',
         { display: 'system' },
       )
       return null
@@ -82,6 +82,6 @@ export async function call(
     },
   }))
 
-  onDone(`Session renamed to: ${newName}`, { display: 'system' })
+  onDone(`会话已重命名为: ${newName}`, { display: 'system' })
   return null
 }

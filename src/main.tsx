@@ -438,7 +438,7 @@ function loadSettingsFromFlag(settingsFile: string): void {
       // It's a JSON string - validate and create temp file
       const parsedJson = safeParseJSON(trimmedSettings);
       if (!parsedJson) {
-        process.stderr.write(chalk.red('Error: Invalid JSON provided to --settings\n'));
+        process.stderr.write(chalk.red('错误：提供给 --settings 的 JSON 无效\n'));
         process.exit(1);
       }
 
@@ -464,7 +464,7 @@ function loadSettingsFromFlag(settingsFile: string): void {
         readFileSync(resolvedSettingsPath, 'utf8');
       } catch (e) {
         if (isENOENT(e)) {
-          process.stderr.write(chalk.red(`Error: Settings file not found: ${resolvedSettingsPath}\n`));
+          process.stderr.write(chalk.red(`错误：未找到设置文件：${resolvedSettingsPath}\n`));
           process.exit(1);
         }
         throw e;
@@ -477,7 +477,7 @@ function loadSettingsFromFlag(settingsFile: string): void {
     if (error instanceof Error) {
       logError(error);
     }
-    process.stderr.write(chalk.red(`Error processing settings: ${errorMessage(error)}\n`));
+    process.stderr.write(chalk.red(`处理设置时出错：${errorMessage(error)}\n`));
     process.exit(1);
   }
 }
@@ -490,7 +490,7 @@ function loadSettingSourcesFromFlag(settingSourcesArg: string): void {
     if (error instanceof Error) {
       logError(error);
     }
-    process.stderr.write(chalk.red(`Error processing --setting-sources: ${errorMessage(error)}\n`));
+    process.stderr.write(chalk.red(`处理 --setting-sources 时出错：${errorMessage(error)}\n`));
     process.exit(1);
   }
 }
@@ -790,7 +790,7 @@ export async function main() {
       // Headless (-p) mode is not supported with SSH in v1 — reject early
       // so the flag doesn't silently cause local execution.
       if (rest.includes('-p') || rest.includes('--print')) {
-        process.stderr.write('Error: headless (-p/--print) mode is not supported with claude ssh\n');
+        process.stderr.write('错误：claude ssh 不支持无头 (-p/--print) 模式\n');
         gracefulShutdownSync(1);
         return;
       }
@@ -884,7 +884,7 @@ async function getInputPrompt(prompt: string, inputFormat: 'text' | 'stream-json
     const timedOut = await peekForStdinData(process.stdin, 3000);
     process.stdin.off('data', onData);
     if (timedOut) {
-      process.stderr.write('Warning: no stdin data received in 3s, proceeding without it. ' + 'If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n');
+      process.stderr.write('警告：3 秒内未收到标准输入数据，将继续执行而不等待。' + '如果从慢速命令管道输入，请显式重定向标准输入：< /dev/null 跳过，或等待更长时间。\n');
     }
     return [prompt, data].filter(Boolean).join('\n');
   }
@@ -1028,7 +1028,7 @@ async function run(): Promise<CommanderCommand> {
     if (prompt === 'code') {
       logEvent('tengu_code_prompt_ignored', {});
       // biome-ignore lint/suspicious/noConsole:: intentional console output
-      console.warn(chalk.yellow('Tip: You can launch Claude Code with just `claude`'));
+      console.warn(chalk.yellow('提示：您可以仅使用 `claude` 命令启动 Claude Code'));
       prompt = undefined;
     }
 
@@ -1067,7 +1067,7 @@ async function run(): Promise<CommanderCommand> {
     }).agentId && kairosGate) {
       if (!checkHasTrustDialogAccepted()) {
         // biome-ignore lint/suspicious/noConsole:: intentional console output
-        console.warn(chalk.yellow('Assistant mode disabled: directory is not trusted. Accept the trust dialog and restart.'));
+        console.warn(chalk.yellow('助手模式已禁用：目录不受信任。接受信任对话框并重启。'));
       } else {
         // Blocking gate check — returns cached `true` instantly; if disk
         // cache is false/missing, lazily inits GrowthBook and fetches fresh
@@ -1170,15 +1170,15 @@ async function run(): Promise<CommanderCommand> {
     // Validate tmux option
     if (tmuxEnabled) {
       if (!worktreeEnabled) {
-        process.stderr.write(chalk.red('Error: --tmux requires --worktree\n'));
+        process.stderr.write(chalk.red('错误：--tmux 需要配合 --worktree 使用\n'));
         process.exit(1);
       }
       if (getPlatform() === 'windows') {
-        process.stderr.write(chalk.red('Error: --tmux is not supported on Windows\n'));
+        process.stderr.write(chalk.red('错误：--tmux 不支持 Windows\n'));
         process.exit(1);
       }
       if (!(await isTmuxAvailable())) {
-        process.stderr.write(chalk.red(`Error: tmux is not installed.\n${getTmuxInstallInstructions()}\n`));
+        process.stderr.write(chalk.red(`错误：未安装 tmux。\n${getTmuxInstallInstructions()}\n`));
         process.exit(1);
       }
     }
@@ -1196,7 +1196,7 @@ async function run(): Promise<CommanderCommand> {
       const hasAnyTeammateOpt = teammateOpts.agentId || teammateOpts.agentName || teammateOpts.teamName;
       const hasAllRequiredTeammateOpts = teammateOpts.agentId && teammateOpts.agentName && teammateOpts.teamName;
       if (hasAnyTeammateOpt && !hasAllRequiredTeammateOpts) {
-        process.stderr.write(chalk.red('Error: --agent-id, --agent-name, and --team-name must all be provided together\n'));
+        process.stderr.write(chalk.red('错误：--agent-id、--agent-name 和 --team-name 必须一起提供\n'));
         process.exit(1);
       }
 
@@ -1281,7 +1281,7 @@ async function run(): Promise<CommanderCommand> {
       // --session-id can be used with --continue or --resume when --fork-session is also provided
       // (to specify a custom ID for the forked session)
       if ((options.continue || options.resume) && !options.forkSession) {
-        process.stderr.write(chalk.red('Error: --session-id can only be used with --continue or --resume if --fork-session is also specified.\n'));
+        process.stderr.write(chalk.red('错误：--session-id 只能在配合 --continue 或 --resume 使用时与 --fork-session 一起指定。\n'));
         process.exit(1);
       }
 
@@ -1291,13 +1291,13 @@ async function run(): Promise<CommanderCommand> {
       if (!sdkUrl) {
         const validatedSessionId = validateUuid(sessionId);
         if (!validatedSessionId) {
-          process.stderr.write(chalk.red('Error: Invalid session ID. Must be a valid UUID.\n'));
+          process.stderr.write(chalk.red('错误：会话 ID 无效。必须是有效的 UUID。\n'));
           process.exit(1);
         }
 
         // Check if session ID already exists
         if (sessionIdExists(validatedSessionId)) {
-          process.stderr.write(chalk.red(`Error: Session ID ${validatedSessionId} is already in use.\n`));
+          process.stderr.write(chalk.red(`错误：会话 ID ${validatedSessionId} 已被使用。\n`));
           process.exit(1);
         }
       }
@@ -1311,7 +1311,7 @@ async function run(): Promise<CommanderCommand> {
       // Get session ingress token (provided by EnvManager via CLAUDE_CODE_SESSION_ACCESS_TOKEN)
       const sessionToken = getSessionIngressAuthToken();
       if (!sessionToken) {
-        process.stderr.write(chalk.red('Error: Session token required for file downloads. CLAUDE_CODE_SESSION_ACCESS_TOKEN must be set.\n'));
+        process.stderr.write(chalk.red('错误：下载文件需要会话令牌。必须设置 CLAUDE_CODE_SESSION_ACCESS_TOKEN。\n'));
         process.exit(1);
       }
 
@@ -1337,7 +1337,7 @@ async function run(): Promise<CommanderCommand> {
 
     // Validate that fallback model is different from main model
     if (fallbackModel && options.model && fallbackModel === options.model) {
-      process.stderr.write(chalk.red('Error: Fallback model cannot be the same as the main model. Please specify a different model for --fallback-model.\n'));
+      process.stderr.write(chalk.red('错误：备用模型不能与主模型相同。请为 --fallback-model 指定不同的模型。\n'));
       process.exit(1);
     }
 
@@ -1345,7 +1345,7 @@ async function run(): Promise<CommanderCommand> {
     let systemPrompt = options.systemPrompt;
     if (options.systemPromptFile) {
       if (options.systemPrompt) {
-        process.stderr.write(chalk.red('Error: Cannot use both --system-prompt and --system-prompt-file. Please use only one.\n'));
+        process.stderr.write(chalk.red('错误：不能同时使用 --system-prompt 和 --system-prompt-file。请仅使用其中一个。\n'));
         process.exit(1);
       }
       try {
@@ -1354,10 +1354,10 @@ async function run(): Promise<CommanderCommand> {
       } catch (error) {
         const code = getErrnoCode(error);
         if (code === 'ENOENT') {
-          process.stderr.write(chalk.red(`Error: System prompt file not found: ${resolve(options.systemPromptFile)}\n`));
+          process.stderr.write(chalk.red(`错误：未找到系统提示文件：${resolve(options.systemPromptFile)}\n`));
           process.exit(1);
         }
-        process.stderr.write(chalk.red(`Error reading system prompt file: ${errorMessage(error)}\n`));
+        process.stderr.write(chalk.red(`错误：读取系统提示文件时出错：${errorMessage(error)}\n`));
         process.exit(1);
       }
     }
@@ -1366,7 +1366,7 @@ async function run(): Promise<CommanderCommand> {
     let appendSystemPrompt = options.appendSystemPrompt;
     if (options.appendSystemPromptFile) {
       if (options.appendSystemPrompt) {
-        process.stderr.write(chalk.red('Error: Cannot use both --append-system-prompt and --append-system-prompt-file. Please use only one.\n'));
+        process.stderr.write(chalk.red('错误：不能同时使用 --append-system-prompt 和 --append-system-prompt-file。请仅使用其中一个。\n'));
         process.exit(1);
       }
       try {
@@ -1375,10 +1375,10 @@ async function run(): Promise<CommanderCommand> {
       } catch (error) {
         const code = getErrnoCode(error);
         if (code === 'ENOENT') {
-          process.stderr.write(chalk.red(`Error: Append system prompt file not found: ${resolve(options.appendSystemPromptFile)}\n`));
+          process.stderr.write(chalk.red(`错误：未找到追加系统提示文件：${resolve(options.appendSystemPromptFile)}\n`));
           process.exit(1);
         }
-        process.stderr.write(chalk.red(`Error reading append system prompt file: ${errorMessage(error)}\n`));
+        process.stderr.write(chalk.red(`错误：读取追加系统提示文件时出错：${errorMessage(error)}\n`));
         process.exit(1);
       }
     }
@@ -1468,7 +1468,7 @@ async function run(): Promise<CommanderCommand> {
         logForDebugging(`--mcp-config validation failed (${allErrors.length} errors): ${formattedErrors}`, {
           level: 'error'
         });
-        process.stderr.write(`Error: Invalid MCP configuration:\n${formattedErrors}\n`);
+        process.stderr.write(`错误：MCP 配置无效：\n${formattedErrors}\n`);
         process.exit(1);
       }
       if (Object.keys(allConfigs).length > 0) {
@@ -1490,7 +1490,7 @@ async function run(): Promise<CommanderCommand> {
         if (reservedNameError) {
           // stderr+exit(1) — a throw here becomes a silent unhandled
           // rejection in stream-json mode (void main() in cli.tsx).
-          process.stderr.write(`Error: ${reservedNameError}\n`);
+          process.stderr.write(`错误：${reservedNameError}\n`);
           process.exit(1);
         }
 
@@ -1517,7 +1517,7 @@ async function run(): Promise<CommanderCommand> {
           blocked
         } = filterMcpServersByPolicy(scopedConfigs);
         if (blocked.length > 0) {
-          process.stderr.write(`Warning: MCP ${plural(blocked.length, 'server')} blocked by enterprise policy: ${blocked.join(', ')}\n`);
+          process.stderr.write(`警告：MCP ${plural(blocked.length, '服务器')} 被企业策略阻止：${blocked.join(', ')}\n`);
         }
         dynamicMcpConfig = {
           ...dynamicMcpConfig,
@@ -1560,7 +1560,7 @@ async function run(): Promise<CommanderCommand> {
         logForDebugging(`[Claude in Chrome] Error: ${error}`);
         logError(error);
         // biome-ignore lint/suspicious/noConsole:: intentional console output
-        console.error(`Error: Failed to run with Claude in Chrome.`);
+        console.error(`错误：无法使用 Claude in Chrome 运行。`);
         process.exit(1);
       }
     } else if (autoEnableClaudeInChrome) {
@@ -1587,13 +1587,13 @@ async function run(): Promise<CommanderCommand> {
     // configs that contain special server types (sdk)
     if (doesEnterpriseMcpConfigExist()) {
       if (strictMcpConfig) {
-        process.stderr.write(chalk.red('You cannot use --strict-mcp-config when an enterprise MCP config is present'));
+        process.stderr.write(chalk.red('当存在企业 MCP 配置时，不能使用 --strict-mcp-config'));
         process.exit(1);
       }
 
       // For --mcp-config, allow if all servers are internal types (sdk)
       if (dynamicMcpConfig && !areMcpConfigsAllowedWithEnterpriseMcpConfig(dynamicMcpConfig)) {
-        process.stderr.write(chalk.red('You cannot dynamically configure MCP servers when an enterprise MCP config is present'));
+        process.stderr.write(chalk.red('当存在企业 MCP 配置时，不能动态配置 MCP 服务器'));
         process.exit(1);
       }
     }
@@ -1677,7 +1677,7 @@ async function run(): Promise<CommanderCommand> {
           }
         }
         if (bad.length > 0) {
-          process.stderr.write(chalk.red(`${flag} entries must be tagged: ${bad.join(', ')}\n` + `  plugin:<name>@<marketplace>  — plugin-provided channel (allowlist enforced)\n` + `  server:<name>                — manually configured MCP server\n`));
+          process.stderr.write(chalk.red(`${flag} 条目必须添加标签：${bad.join(', ')}\n` + `  plugin:<名称>@<市场>  — 插件提供的频道（强制执行允许列表）\n` + `  server:<名称>                — 手动配置的 MCP 服务器\n`));
           process.exit(1);
         }
         return entries;
@@ -1795,7 +1795,7 @@ async function run(): Promise<CommanderCommand> {
         blocked
       } = filterMcpServersByPolicy(configs);
       if (blocked.length > 0) {
-        process.stderr.write(`Warning: claude.ai MCP ${plural(blocked.length, 'server')} blocked by enterprise policy: ${blocked.join(', ')}\n`);
+        process.stderr.write(`警告：claude.ai MCP ${plural(blocked.length, '服务器')} 被企业策略阻止：${blocked.join(', ')}\n`);
       }
       return allowed;
     }) : Promise.resolve({});
@@ -1821,12 +1821,12 @@ async function run(): Promise<CommanderCommand> {
 
     if (inputFormat && inputFormat !== 'text' && inputFormat !== 'stream-json') {
       // biome-ignore lint/suspicious/noConsole:: intentional console output
-      console.error(`Error: Invalid input format "${inputFormat}".`);
+      console.error(`错误：输入格式 "${inputFormat}" 无效。`);
       process.exit(1);
     }
     if (inputFormat === 'stream-json' && outputFormat !== 'stream-json') {
       // biome-ignore lint/suspicious/noConsole:: intentional console output
-      console.error(`Error: --input-format=stream-json requires output-format=stream-json.`);
+      console.error(`错误：--input-format=stream-json 需要配合 output-format=stream-json 使用。`);
       process.exit(1);
     }
 
@@ -1834,7 +1834,7 @@ async function run(): Promise<CommanderCommand> {
     if (sdkUrl) {
       if (inputFormat !== 'stream-json' || outputFormat !== 'stream-json') {
         // biome-ignore lint/suspicious/noConsole:: intentional console output
-        console.error(`Error: --sdk-url requires both --input-format=stream-json and --output-format=stream-json.`);
+        console.error(`错误：--sdk-url 需要同时使用 --input-format=stream-json 和 --output-format=stream-json。`);
         process.exit(1);
       }
     }
@@ -1843,7 +1843,7 @@ async function run(): Promise<CommanderCommand> {
     if (options.replayUserMessages) {
       if (inputFormat !== 'stream-json' || outputFormat !== 'stream-json') {
         // biome-ignore lint/suspicious/noConsole:: intentional console output
-        console.error(`Error: --replay-user-messages requires both --input-format=stream-json and --output-format=stream-json.`);
+        console.error(`错误：--replay-user-messages 需要同时使用 --input-format=stream-json 和 --output-format=stream-json。`);
         process.exit(1);
       }
     }
@@ -1851,14 +1851,14 @@ async function run(): Promise<CommanderCommand> {
     // Validate includePartialMessages is only used with print mode and stream-json output
     if (effectiveIncludePartialMessages) {
       if (!isNonInteractiveSession || outputFormat !== 'stream-json') {
-        writeToStderr(`Error: --include-partial-messages requires --print and --output-format=stream-json.`);
+        writeToStderr(`错误：--include-partial-messages 需要 --print 和 --output-format=stream-json。`);
         process.exit(1);
       }
     }
 
     // Validate --no-session-persistence is only used with print mode
     if (options.sessionPersistence === false && !isNonInteractiveSession) {
-      writeToStderr(`Error: --no-session-persistence can only be used with --print mode.`);
+      writeToStderr(`错误：--no-session-persistence 只能在 --print 模式下使用。`);
       process.exit(1);
     }
     const effectivePrompt = prompt || '';
@@ -2121,12 +2121,12 @@ async function run(): Promise<CommanderCommand> {
       if (advisorOption) {
         logForDebugging(`[AdvisorTool] --advisor ${advisorOption}`);
         if (!modelSupportsAdvisor(resolvedInitialModel)) {
-          process.stderr.write(chalk.red(`Error: The model "${resolvedInitialModel}" does not support the advisor tool.\n`));
+          process.stderr.write(chalk.red(`错误：模型 "${resolvedInitialModel}" 不支持 advisor 工具。\n`));
           process.exit(1);
         }
         const normalizedAdvisorModel = normalizeModelStringForAPI(parseUserSpecifiedModel(advisorOption));
         if (!isValidAdvisorModel(normalizedAdvisorModel)) {
-          process.stderr.write(chalk.red(`Error: The model "${advisorOption}" cannot be used as an advisor.\n`));
+          process.stderr.write(chalk.red(`错误：模型 "${advisorOption}" 不能用作 advisor。\n`));
           process.exit(1);
         }
       }
@@ -2909,7 +2909,7 @@ async function run(): Promise<CommanderCommand> {
       const n = displayList.length;
       initialNotifications.push({
         key: 'overly-broad-bash-notification',
-        text: `${displays} allow ${plural(n, 'rule')} from ${sources} ${plural(n, 'was', 'were')} ignored \u2014 not available for Ants, please use auto-mode instead`,
+        text: `${displays} allow ${plural(n, 'rule')} from ${sources} ${plural(n, 'was', 'were')} 已忽略 — Ant 不可用，请改用自动模式`,
         color: 'warning',
         priority: 'high'
       });
@@ -3122,7 +3122,7 @@ async function run(): Promise<CommanderCommand> {
           logEvent('tengu_continue', {
             success: false
           });
-          return await exitWithError(root, 'No conversation found to continue');
+          return await exitWithError(root, '未找到可继续的对话');
         }
         const loaded = await processResumedConversation(result, {
           forkSession: !!options.forkSession,
@@ -3212,14 +3212,14 @@ async function run(): Promise<CommanderCommand> {
       let sshSession;
       try {
         if (_pendingSSH.local) {
-          process.stderr.write('Starting local ssh-proxy test session...\n');
+          process.stderr.write('正在启动本地 ssh-proxy 测试会话...\n');
           sshSession = createLocalSSHSession({
             cwd: _pendingSSH.cwd,
             permissionMode: _pendingSSH.permissionMode,
             dangerouslySkipPermissions: _pendingSSH.dangerouslySkipPermissions
           });
         } else {
-          process.stderr.write(`Connecting to ${_pendingSSH.host}…\n`);
+          process.stderr.write(`正在连接到 ${_pendingSSH.host}…\n`);
           // In-place progress: \r + EL0 (erase to end of line). Final \n on
           // success so the next message lands on a fresh line. No-op when
           // stderr isn't a TTY (piped/redirected) — \r would just emit noise.
@@ -3325,7 +3325,7 @@ async function run(): Promise<CommanderCommand> {
       try {
         apiCreds = await prepareApiRequest();
       } catch (e) {
-        return await exitWithError(root, `Error: ${e instanceof Error ? e.message : 'Failed to authenticate'}`, () => gracefulShutdown(1));
+        return await exitWithError(root, `错误：${e instanceof Error ? e.message : '身份验证失败'}`, () => gracefulShutdown(1));
       }
       const getAccessToken = (): string => getClaudeAIOAuthTokens()?.accessToken ?? apiCreds.accessToken;
 
@@ -3411,7 +3411,7 @@ async function run(): Promise<CommanderCommand> {
       if (remote !== null || teleport) {
         await waitForPolicyLimitsToLoad();
         if (!isPolicyAllowed('allow_remote_sessions')) {
-          return await exitWithError(root, "Error: Remote sessions are disabled by your organization's policy.", () => gracefulShutdown(1));
+          return await exitWithError(root, "错误：您的组织策略已禁用远程会话。", () => gracefulShutdown(1));
         }
       }
       if (remote !== null) {
@@ -3421,7 +3421,7 @@ async function run(): Promise<CommanderCommand> {
         // Check if TUI mode is enabled - description is only optional in TUI mode
         const isRemoteTuiEnabled = getFeatureValue_CACHED_MAY_BE_STALE('tengu_remote_backend', false);
         if (!isRemoteTuiEnabled && !hasInitialPrompt) {
-          return await exitWithError(root, 'Error: --remote requires a description.\nUsage: claude --remote "your task description"', () => gracefulShutdown(1));
+          return await exitWithError(root, '错误：--remote 需要提供描述信息。\n用法：claude --remote "您的任务描述"', () => gracefulShutdown(1));
         }
         logEvent('tengu_remote_create_session', {
           has_initial_prompt: String(hasInitialPrompt) as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
@@ -3434,7 +3434,7 @@ async function run(): Promise<CommanderCommand> {
           logEvent('tengu_remote_create_session_error', {
             error: 'unable_to_create_session' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
           });
-          return await exitWithError(root, 'Error: Unable to create remote session', () => gracefulShutdown(1));
+          return await exitWithError(root, '错误：无法创建远程会话', () => gracefulShutdown(1));
         }
         logEvent('tengu_remote_create_session_success', {
           session_id: createdSession.id as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
@@ -3443,9 +3443,9 @@ async function run(): Promise<CommanderCommand> {
         // Check if new remote TUI mode is enabled via feature gate
         if (!isRemoteTuiEnabled) {
           // Original behavior: print session info and exit
-          process.stdout.write(`Created remote session: ${createdSession.title}\n`);
-          process.stdout.write(`View: ${getRemoteSessionUrl(createdSession.id)}?m=0\n`);
-          process.stdout.write(`Resume with: claude --teleport ${createdSession.id}\n`);
+          process.stdout.write(`已创建远程会话：${createdSession.title}\n`);
+          process.stdout.write(`查看：${getRemoteSessionUrl(createdSession.id)}?m=0\n`);
+          process.stdout.write(`恢复会话：claude --teleport ${createdSession.id}\n`);
           await gracefulShutdown(0);
           process.exit(0);
         }
@@ -3464,7 +3464,7 @@ async function run(): Promise<CommanderCommand> {
           apiCreds = await prepareApiRequest();
         } catch (error) {
           logError(toError(error));
-          return await exitWithError(root, `Error: ${errorMessage(error) || 'Failed to authenticate'}`, () => gracefulShutdown(1));
+          return await exitWithError(root, `错误：${errorMessage(error) || '身份验证失败'}`, () => gracefulShutdown(1));
         }
 
         // Create remote session config for the REPL
@@ -3561,7 +3561,7 @@ async function run(): Promise<CommanderCommand> {
                 }
               }
             } else if (repoValidation.status === 'error') {
-              throw new TeleportOperationError(repoValidation.errorMessage || 'Failed to validate session', chalk.red(`Error: ${repoValidation.errorMessage || 'Failed to validate session'}\n`));
+              throw new TeleportOperationError(repoValidation.errorMessage || '验证会话失败', chalk.red(`错误：${repoValidation.errorMessage || '验证会话失败'}\n`));
             }
             await validateGitState();
 
@@ -3580,7 +3580,7 @@ async function run(): Promise<CommanderCommand> {
               process.stderr.write(error.formattedMessage + '\n');
             } else {
               logError(error);
-              process.stderr.write(chalk.red(`Error: ${errorMessage(error)}\n`));
+              process.stderr.write(chalk.red(`错误：${errorMessage(error)}\n`));
             }
             await gracefulShutdown(1);
           }
@@ -3718,10 +3718,10 @@ async function run(): Promise<CommanderCommand> {
           const results = await fileDownloadPromise;
           const failedCount = count(results, r => !r.success);
           if (failedCount > 0) {
-            process.stderr.write(chalk.yellow(`Warning: ${failedCount}/${results.length} file(s) failed to download.\n`));
+            process.stderr.write(chalk.yellow(`警告：${failedCount}/${results.length} 个文件下载失败。\n`));
           }
         } catch (error) {
-          return await exitWithError(root, `Error downloading files: ${errorMessage(error)}`);
+          return await exitWithError(root, `下载文件时出错：${errorMessage(error)}`);
         }
       }
 
@@ -4055,7 +4055,7 @@ async function run(): Promise<CommanderCommand> {
       // Argv rewriting in main() should have consumed `ssh <host>` before
       // commander runs. Reaching here means host was missing or the
       // rewrite predicate didn't match.
-      process.stderr.write('Usage: claude ssh <user@host | ssh-config-alias> [dir]\n\n' + "Runs Claude Code on a remote Linux host. You don't need to install\n" + 'anything on the remote or run `claude auth login` there — the binary is\n' + 'deployed over SSH and API auth tunnels back through your local machine.\n');
+      process.stderr.write('用法：claude ssh <user@host | ssh-config-alias> [目录]\n\n' + '在远程 Linux 主机上运行 Claude Code。您无需在远程主机上\n' + '安装任何东西或运行 `claude auth login` — 二进制文件会通过\n' + 'SSH 部署，API 身份验证会隧道传回本地机器。\n');
       process.exit(1);
     });
   }
@@ -4345,7 +4345,7 @@ async function run(): Promise<CommanderCommand> {
       // before commander runs. Reaching here means a root flag came first
       // (e.g. `--debug assistant`) and the position-0 predicate
       // didn't match. Print usage like the ssh stub does.
-      process.stderr.write('Usage: claude assistant [sessionId]\n\n' + 'Attach the REPL as a viewer client to a running bridge session.\n' + 'Omit sessionId to discover and pick from available sessions.\n');
+      process.stderr.write('用法：claude assistant [sessionId]\n\n' + '将 REPL 作为查看器客户端附加到运行中的桥接会话。\n' + '省略 sessionId 以发现并从可用会话中选择。\n');
       process.exit(1);
     });
   }

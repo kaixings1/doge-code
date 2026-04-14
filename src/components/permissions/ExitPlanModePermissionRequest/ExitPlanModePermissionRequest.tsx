@@ -208,7 +208,7 @@ export function ExitPlanModePermissionRequest({
   const [currentPlan, setCurrentPlan] = useState(() => {
     if (inputPlan) return inputPlan;
     const plan = getPlan();
-    return plan ?? 'No plan found. Please write your plan to the plan file first.';
+    return plan ?? '未找到计划。请先将你的计划写入计划文件。';
   });
   const [showSaveMessage, setShowSaveMessage] = useState(false);
   // Track Ctrl+G local edits so updatedInput can include the plan (the tool
@@ -287,7 +287,7 @@ export function ExitPlanModePermissionRequest({
       });
       onDone();
       onReject();
-      toolUseConfirm.onReject('Plan being refined via Ultraplan — please wait for the result.');
+      toolUseConfirm.onReject('计划正在通过 Ultraplan 优化——请等待结果。');
       void launchUltraplan({
         blurb: '',
         seedPlan: currentPlan,
@@ -690,17 +690,17 @@ export function buildPlanApprovalOptions({
   if (showClearContext) {
     if (feature('TRANSCRIPT_CLASSIFIER') && isAutoModeAvailable) {
       options.push({
-        label: `Yes, clear context${usedLabel} and use auto mode`,
+        label: `是，清除上下文${usedLabel}并使用自动模式`,
         value: 'yes-auto-clear-context'
       });
     } else if (isBypassPermissionsModeAvailable) {
       options.push({
-        label: `Yes, clear context${usedLabel} and bypass permissions`,
+        label: `是，清除上下文${usedLabel}并跳过权限确认`,
         value: 'yes-bypass-permissions'
       });
     } else {
       options.push({
-        label: `Yes, clear context${usedLabel} and auto-accept edits`,
+        label: `是，清除上下文${usedLabel}并自动接受编辑`,
         value: 'yes-accept-edits'
       });
     }

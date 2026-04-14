@@ -85,7 +85,7 @@ export const getGitStatus = memoize(async (): Promise<string | null> => {
     const truncatedStatus =
       status.length > MAX_STATUS_CHARS
         ? status.substring(0, MAX_STATUS_CHARS) +
-          '\n... (truncated because it exceeds 2k characters. If you need more information, run "git status" using BashTool)'
+          '\n... (已截断，因为超过了 2k 字符。如果你需要更多信息，请使用 Bash 工具运行 "git status")'
         : status
 
     logForDiagnosticsNoPII('info', 'git_status_completed', {
@@ -94,12 +94,12 @@ export const getGitStatus = memoize(async (): Promise<string | null> => {
     })
 
     return [
-      `This is the git status at the start of the conversation. Note that this status is a snapshot in time, and will not update during the conversation.`,
-      `Current branch: ${branch}`,
-      `Main branch (you will usually use this for PRs): ${mainBranch}`,
-      ...(userName ? [`Git user: ${userName}`] : []),
-      `Status:\n${truncatedStatus || '(clean)'}`,
-      `Recent commits:\n${log}`,
+      `这是对话开始时的 git 状态。注意，这个状态是时间快照，在对话期间不会更新。`,
+      `当前分支: ${branch}`,
+      `主分支 (你通常会用它来提交 PR): ${mainBranch}`,
+      ...(userName ? [`Git 用户: ${userName}`] : []),
+      `状态:\n${truncatedStatus || '(干净)'}`,
+      `最近的提交:\n${log}`,
     ].join('\n\n')
   } catch (error) {
     logForDiagnosticsNoPII('error', 'git_status_failed', {

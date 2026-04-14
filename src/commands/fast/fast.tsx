@@ -79,8 +79,8 @@ export function FastModePicker(t0) {
       });
       if (enableFastMode) {
         const fastIcon = getFastIconString(enableFastMode);
-        const modelUpdated = !isFastModeSupportedByModel(model) ? ` · model set to ${FAST_MODE_MODEL_DISPLAY}` : "";
-        onDone(`${fastIcon} Fast mode ON${modelUpdated} · ${pricing}`);
+        const modelUpdated = !isFastModeSupportedByModel(model) ? ` · 模型已切换至 ${FAST_MODE_MODEL_DISPLAY}` : "";
+        onDone(`${fastIcon} 快速模式已开启${modelUpdated} · ${pricing}`);
       } else {
         setAppState(_temp3);
         onDone("快速模式已关闭");
@@ -103,7 +103,7 @@ export function FastModePicker(t0) {
         if (initialFastMode) {
           applyFastMode(false, setAppState);
         }
-        onDone("Fast mode OFF", {
+        onDone("快速模式已关闭", {
           display: "system"
         });
         return;
@@ -164,7 +164,7 @@ export function FastModePicker(t0) {
   useKeybindings(t6, t7);
   let t8;
   if ($[19] === Symbol.for("react.memo_cache_sentinel")) {
-    t8 = <Text><FastIcon cooldown={isCooldown} /> Fast mode (research preview)</Text>;
+    t8 = <Text><FastIcon cooldown={isCooldown} /> 快速模式（研究预览版）</Text>;
     $[19] = t8;
   } else {
     t8 = $[19];
@@ -191,14 +191,14 @@ export function FastModePicker(t0) {
   }
   let t11;
   if ($[25] === Symbol.for("react.memo_cache_sentinel")) {
-    t11 = <Text dimColor={true}>Learn more:{" "}<Link url="https://code.claude.com/docs/en/fast-mode">https://code.claude.com/docs/en/fast-mode</Link></Text>;
+    t11 = <Text dimColor={true}>了解更多：{" "}<Link url="https://code.claude.com/docs/en/fast-mode">https://code.claude.com/docs/en/fast-mode</Link></Text>;
     $[25] = t11;
   } else {
     t11 = $[25];
   }
   let t12;
   if ($[26] !== handleCancel || $[27] !== t10 || $[28] !== t9) {
-    t12 = <Dialog title={title} subtitle={`High-speed mode for ${FAST_MODE_MODEL_DISPLAY}. Billed as extra usage at a premium rate. Separate rate limits apply.`} onCancel={handleCancel} color="fastMode" inputGuide={t9}>{t10}{t11}</Dialog>;
+    t12 = <Dialog title={title} subtitle={`针对 ${FAST_MODE_MODEL_DISPLAY} 的高速模式。将按溢价费率计为额外用量。独立速率限制适用。`} onCancel={handleCancel} color="fastMode" inputGuide={t9}>{t10}{t11}</Dialog>;
     $[26] = handleCancel;
     $[27] = t10;
     $[28] = t9;
@@ -226,7 +226,7 @@ function _temp(s) {
 async function handleFastModeShortcut(enable: boolean, getAppState: () => AppState, setAppState: (f: (prev: AppState) => AppState) => void): Promise<string> {
   const unavailableReason = getFastModeUnavailableReason();
   if (unavailableReason) {
-    return `Fast mode unavailable: ${unavailableReason}`;
+    return `快速模式不可用: ${unavailableReason}`;
   }
   const {
     mainLoopModel
@@ -238,9 +238,9 @@ async function handleFastModeShortcut(enable: boolean, getAppState: () => AppSta
   });
   if (enable) {
     const fastIcon = getFastIconString(true);
-    const modelUpdated = !isFastModeSupportedByModel(mainLoopModel) ? ` · model set to ${FAST_MODE_MODEL_DISPLAY}` : '';
+    const modelUpdated = !isFastModeSupportedByModel(mainLoopModel) ? ` · 模型已切换至 ${FAST_MODE_MODEL_DISPLAY}` : '';
     const pricing = formatModelPricing(getOpus46CostTier(true));
-    return `${fastIcon} Fast mode ON${modelUpdated} · ${pricing}`;
+    return `${fastIcon} 快速模式已开启${modelUpdated} · ${pricing}`;
   } else {
     return `快速模式已关闭`;
   }

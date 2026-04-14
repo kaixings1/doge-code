@@ -197,7 +197,7 @@ function CopyPicker(t0) {
           message_age: messageAge
         });
         const result = await copyOrWriteToFile(content.text, content.filename);
-        onDone(`${result}\nPreference saved. Use /config to change copyFullResponse`);
+        onDone(`${result}\n偏好设置已保存。使用 /config 可更改 copyFullResponse`);
         return;
       }
       logEvent("tengu_copy", {
@@ -230,10 +230,10 @@ function CopyPicker(t0) {
       ;
       try {
         const filePath = await writeToFile(content_0.text, content_0.filename);
-        onDone(`Written to ${filePath}`);
+        onDone(`已写入 ${filePath}`);
       } catch (t7) {
         const e = t7;
-        onDone(`Failed to write file: ${e instanceof Error ? e.message : e}`);
+        onDone(`写入文件失败：${e instanceof Error ? e.message : e}`);
       }
     };
     t6 = function handleKeyDown(e_0) {
@@ -344,11 +344,11 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
   if (arg) {
     const n = Number(arg);
     if (!Number.isInteger(n) || n < 1) {
-      onDone(`Usage: /copy [N] where N is 1 (latest), 2, 3, \u2026 Got: ${arg}`);
+      onDone(`用法：/copy [N]，其中 N 为 1（最新）、2、3、… 当前输入：${arg}`);
       return null;
     }
     if (n > texts.length) {
-      onDone(`Only ${texts.length} assistant ${texts.length === 1 ? 'message' : 'messages'} available to copy`);
+      onDone(`只有 ${texts.length} 条助手${texts.length === 1 ? '消息' : '消息'}可供复制`);
       return null;
     }
     age = n - 1;
