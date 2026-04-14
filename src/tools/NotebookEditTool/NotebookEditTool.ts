@@ -99,12 +99,12 @@ export const NotebookEditTool = buildTool({
     return PROMPT
   },
   userFacingName() {
-    return 'Edit Notebook'
+    return '编辑笔记本'
   },
   getToolUseSummary,
   getActivityDescription(input) {
     const summary = getToolUseSummary(input)
-    return summary ? `Editing notebook ${summary}` : 'Editing notebook'
+    return summary ? `正在编辑笔记本 ${summary}` : '正在编辑笔记本'
   },
   get inputSchema(): InputSchema {
     return inputSchema()

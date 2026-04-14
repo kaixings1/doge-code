@@ -10,6 +10,7 @@ import { toInkColor } from '../../utils/ink.js';
 import type { Theme } from '../../utils/theme.js';
 import { Byline } from '../design-system/Byline.js';
 import { GlimmerMessage } from './GlimmerMessage.js';
+import { TimeGradientMessage } from './TimeGradientMessage.js';
 import { SpinnerGlyph } from './SpinnerGlyph.js';
 import type { SpinnerMode } from './types.js';
 import { useStalledAnimation } from './useStalledAnimation.js';
@@ -66,6 +67,9 @@ export type SpinnerAnimationRowProps = {
   // Thinking (state owned by parent, mode-dependent)
   thinkingStatus: 'thinking' | number | null;
   effortSuffix: string;
+
+  // 时间渐变效果（后台仍在执行的视觉提示）
+  useTimeGradient?: boolean;
 };
 
 /**
@@ -98,7 +102,8 @@ export function SpinnerAnimationRow({
   foregroundedTeammate,
   leaderIsIdle = false,
   thinkingStatus,
-  effortSuffix
+  effortSuffix,
+  useTimeGradient = false,
 }: SpinnerAnimationRowProps): React.ReactNode {
   const [viewportRef, time] = useAnimationFrame(reducedMotion ? null : 50);
 
@@ -225,7 +230,27 @@ export function SpinnerAnimationRow({
         </> : null;
   return <Box ref={viewportRef} flexDirection="row" flexWrap="wrap" marginTop={1} width="100%">
       <SpinnerGlyph frame={frame} messageColor={messageColor} stalledIntensity={overrideColor ? 0 : stalledIntensity} reducedMotion={reducedMotion} time={time} />
-      <GlimmerMessage message={message} mode={mode} messageColor={messageColor} glimmerIndex={glimmerIndex} flashOpacity={flashOpacity} shimmerColor={shimmerColor} stalledIntensity={overrideColor ? 0 : stalledIntensity} />
+      {(() => {
+        console.log('[SpinnerAnimationRow] useTimeGradient:', useTimeGradient, 'effectiveElapsedMs:', effectiveElapsedMs);
+        return useTimeGradient ? (
+          <TimeGradientMessage
+            message={message}
+            messageColor={messageColor}
+            elapsedTimeMs={effectiveElapsedMs}
+            glimmerIndex={glimmerIndex}
+          />
+        ) : (
+          <GlimmerMessage
+            message={message}
+            mode={mode}
+            messageColor={messageColor}
+            glimmerIndex={glimmerIndex}
+            flashOpacity={flashOpacity}
+            shimmerColor={shimmerColor}
+            stalledIntensity={overrideColor ? 0 : stalledIntensity}
+          />
+        );
+      })()}
       {status}
     </Box>;
 }

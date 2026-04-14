@@ -722,9 +722,9 @@ export function LogSelector(t0) {
       const isExpanded = expandedGroupSessionIds.has(sessionId_0);
       const isChildNode = sessionLogs.indexOf(focusedLog) > 0;
       if (isChildNode) {
-        return "\u2190 to collapse";
+        return "按 ← 折叠";
       }
-      return isExpanded ? "\u2190 to collapse" : "\u2192 to expand";
+      return isExpanded ? "按 ← 折叠" : "按 → 展开";
     };
     $[84] = displayedLogs;
     $[85] = expandedGroupSessionIds;

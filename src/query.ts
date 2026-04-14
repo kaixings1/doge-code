@@ -101,6 +101,8 @@ import { recordContentReplacement } from './utils/sessionStorage.js'
 import { handleStopHooks } from './query/stopHooks.js'
 import { buildQueryConfig } from './query/config.js'
 import { productionDeps, type QueryDeps } from './query/deps.js'
+import { handleEmptyContentResponse } from './query/emptyContentHandler.js'
+import { playTaskCompleteSound } from './utils/soundNotification.js'
 import type { Terminal, Continue } from './query/transitions.js'
 import { feature } from 'bun:bundle'
 import {
@@ -1053,7 +1055,16 @@ async function* queryLoop(
 
     // Yield tool use summary from previous turn — haiku (~1s) resolved during model streaming (5-30s)
     if (pendingToolUseSummary) {
+      const summaryStart = Date.now()
       const summary = await pendingToolUseSummary
+      const summaryDuration = Date.now() - summaryStart
+      
+      if (summaryDuration > 1000) {
+        logEvent('tengu_slow_tool_summary', {
+          duration_ms: summaryDuration,
+        })
+      }
+      
       if (summary) {
         yield summary
       }
@@ -1061,6 +1072,29 @@ async function* queryLoop(
 
     if (!needsFollowUp) {
       const lastMessage = assistantMessages.at(-1)
+
+      // 检测模型返回空内容的情况
+      if (lastMessage?.type === 'assistant' && !lastMessage.isApiErrorMessage) {
+        const emptyContentResult = handleEmptyContentResponse(
+          lastMessage,
+          queryChainIdForAnalytics,
+          queryTracking.depth,
+        )
+
+        if (emptyContentResult.isEmptyContent) {
+          // 向用户显示警告信息和选择提示
+          for (const warning of emptyContentResult.warnings) {
+            yield warning
+          }
+
+          // 返回特殊状态，标记需要用户确认是否重试
+          return { 
+            reason: 'empty_content', 
+            finishReason: emptyContentResult.finishReason,
+            canRetry: true 
+          }
+        }
+      }
 
       // Prompt-too-long recovery: the streaming loop withheld the error
       // (see withheldByCollapse / withheldByReactive above). Try collapse
@@ -1261,6 +1295,8 @@ async function* queryLoop(
       // error → hook blocking → retry → error → …
       if (lastMessage?.isApiErrorMessage) {
         void executeStopFailureHooks(lastMessage, toolUseContext)
+        // 播放错误提示音
+        playTaskCompleteSound()
         return { reason: 'completed' }
       }
 
@@ -1354,6 +1390,8 @@ async function* queryLoop(
         }
       }
 
+      // 任务正常完成，播放完成提示音
+      playTaskCompleteSound()
       return { reason: 'completed' }
     }
 
@@ -1601,10 +1639,19 @@ async function* queryLoop(
       pendingMemoryPrefetch.settledAt !== null &&
       pendingMemoryPrefetch.consumedOnIteration === -1
     ) {
+      const memoryPrefetchStart = Date.now()
       const memoryAttachments = filterDuplicateMemoryAttachments(
         await pendingMemoryPrefetch.promise,
         toolUseContext.readFileState,
       )
+      const memoryPrefetchDuration = Date.now() - memoryPrefetchStart
+      
+      if (memoryPrefetchDuration > 1000) {
+        logEvent('tengu_slow_memory_prefetch', {
+          duration_ms: memoryPrefetchDuration,
+        })
+      }
+      
       for (const memAttachment of memoryAttachments) {
         const msg = createAttachmentMessage(memAttachment)
         yield msg

@@ -1075,7 +1075,7 @@ export async function runBridgeLoop(
                   wt.hookBased,
                 ).catch((err: unknown) =>
                   logger.logVerbose(
-                    `Failed to remove worktree ${wt.worktreePath}: ${errorMessage(err)}`,
+                    `移除工作树失败 ${wt.worktreePath}: ${errorMessage(err)}`,
                   ),
                 ),
               )
@@ -1551,7 +1551,7 @@ export async function runBridgeLoop(
           )
           .catch(err =>
             logger.logVerbose(
-              `Failed to archive session ${sessionId}: ${errorMessage(err)}`,
+              `归档会话失败 ${sessionId}: ${errorMessage(err)}`,
             ),
           ),
       ),
