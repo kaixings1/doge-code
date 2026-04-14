@@ -252,11 +252,11 @@ function ShowModelAndClose(t0) {
   const mainLoopModelForSession = useAppState(_temp8);
   const effortValue = useAppState(_temp9);
   const displayModel = renderModelLabel(mainLoopModel);
-  const effortInfo = effortValue !== undefined ? ` (effort: ${effortValue})` : "";
+  const effortInfo = effortValue !== undefined ? `（努力程度：${effortValue}）` : "";
   if (mainLoopModelForSession) {
-    onDone(`当前模型: ${chalk.bold(renderModelLabel(mainLoopModelForSession))} (计划模式会话覆盖)\n基础模型: ${displayModel}${effortInfo}`);
+    onDone(`当前模型：${chalk.bold(renderModelLabel(mainLoopModelForSession))}（计划模式会话覆盖）\n基础模型：${displayModel}${effortInfo}`);
   } else {
-    onDone(`当前模型: ${displayModel}${effortInfo}`);
+    onDone(`当前模型：${displayModel}${effortInfo}`);
   }
   return null;
 }

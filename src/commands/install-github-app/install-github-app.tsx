@@ -383,7 +383,7 @@ function InstallGitHubApp(props: {
         setState(prev_16 => ({
           ...prev_16,
           step: 'error',
-          error: 'API key is required'
+          error: '需要 API 密钥'
         }));
         return;
       }
