@@ -130,7 +130,7 @@ async function* makeLogEntryReader(): AsyncGenerator<LogEntry> {
         yield entry
       } catch (error) {
         // Not a critical error - just skip malformed lines
-        logForDebugging(`Failed to parse history line: ${error}`)
+        logForDebugging(`解析历史行失败：${error}`)
       }
     }
   } catch (e: unknown) {
@@ -318,7 +318,7 @@ async function immediateFlushHistory(): Promise<void> {
 
     await appendFile(historyPath, jsonLines.join(''), { mode: 0o600 })
   } catch (error) {
-    logForDebugging(`Failed to write prompt history: ${error}`)
+    logForDebugging(`写入提示历史失败：${error}`)
   } finally {
     if (release) {
       await release()

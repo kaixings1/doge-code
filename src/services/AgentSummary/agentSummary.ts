@@ -32,15 +32,15 @@ function buildSummaryPrompt(previousSummary: string | null): string {
 
   return `Describe your most recent action in 3-5 words using present tense (-ing). Name the file or function, not the branch. Do not use tools.
 ${prevLine}
-Good: "Reading runAgent.ts"
-Good: "Fixing null check in validate.ts"
-Good: "Running auth module tests"
-Good: "Adding retry logic to fetchUser"
+正确示例: "正在读取 runAgent.ts"
+正确示例: "正在修复 validate.ts 中的空值检查"
+正确示例: "正在运行认证模块测试"
+正确示例: "正在为 fetchUser 添加重试逻辑"
 
-Bad (past tense): "Analyzed the branch diff"
-Bad (too vague): "Investigating the issue"
-Bad (too long): "Reviewing full branch diff and AgentTool.tsx integration"
-Bad (branch name): "Analyzed adam/background-summary branch diff"`
+错误示例（过去时）: "已分析分支差异"
+错误示例（过于模糊）: "正在调查问题"
+错误示例（过长）: "正在审查完整分支差异和 AgentTool.tsx 集成"
+错误示例（分支名）: "已分析 adam/background-summary 分支差异"`
 }
 
 export function startAgentSummarization(

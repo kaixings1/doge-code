@@ -223,7 +223,7 @@ export async function* handleStopHooks(
           ) {
             if (attachment.type === 'hook_non_blocking_error') {
               hookErrors.push(
-                attachment.stderr || `Exit code ${attachment.exitCode}`,
+                attachment.stderr || `退出码 ${attachment.exitCode}`,
               )
               // Non-blocking errors always have output
               hasOutput = true

@@ -89,11 +89,11 @@ export class DirectConnectSessionManager {
             // Send an error response for unrecognized subtypes so the
             // server doesn't hang waiting for a reply that never comes.
             logForDebugging(
-              `[DirectConnect] Unsupported control request subtype: ${parsed.request.subtype}`,
+              `[DirectConnect] 不支持的控制请求子类型: ${parsed.request.subtype}`,
             )
             this.sendErrorResponse(
               parsed.request_id,
-              `Unsupported control request subtype: ${parsed.request.subtype}`,
+              `不支持的控制请求子类型: ${parsed.request.subtype}`,
             )
           }
           continue
@@ -118,7 +118,7 @@ export class DirectConnectSessionManager {
     })
 
     this.ws.addEventListener('error', () => {
-      this.callbacks.onError?.(new Error('WebSocket connection error'))
+      this.callbacks.onError?.(new Error('WebSocket 连接错误'))
     })
   }
 

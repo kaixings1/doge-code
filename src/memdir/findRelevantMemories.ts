@@ -15,26 +15,23 @@ export type RelevantMemory = {
   mtimeMs: number
 }
 
-const SELECT_MEMORIES_SYSTEM_PROMPT = `You are selecting memories that will be useful to Claude Code as it processes a user's query. You will be given the user's query and a list of available memory files with their filenames and descriptions.
+const SELECT_MEMORIES_SYSTEM_PROMPT = `你正在为 Claude Code 处理用户查询时选择有用的记忆。你将收到用户的查询以及可用记忆文件列表，包括文件名和描述。
 
-Return a list of filenames for the memories that will clearly be useful to Claude Code as it processes the user's query (up to 5). Only include memories that you are certain will be helpful based on their name and description.
-- If you are unsure if a memory will be useful in processing the user's query, then do not include it in your list. Be selective and discerning.
-- If there are no memories in the list that would clearly be useful, feel free to return an empty list.
-- If a list of recently-used tools is provided, do not select memories that are usage reference or API documentation for those tools (Claude Code is already exercising them). DO still select memories containing warnings, gotchas, or known issues about those tools — active use is exactly when those matter.
+返回一个文件名列表，这些记忆将对 Claude Code 处理用户查询明显有用（最多 5 个）。仅包含你确信会有帮助的记忆，基于它们的名称和描述。
+- 如果不确定某个记忆在处理用户查询时是否有用，请不要将其包含在列表中。要严格筛选。
+- 如果列表中没有明显有用的记忆，可以返回空列表。
+- 如果提供了最近使用的工具列表，请不要选择那些工具的用法参考或 API 文档的记忆（Claude Code 已经在使用它们）。但仍然应该选择包含警告、陷阱或已知问题的记忆——活跃使用时正是这些最有价值。
 `
 
 /**
- * Find memory files relevant to a query by scanning memory file headers
- * and asking Sonnet to select the most relevant ones.
+ * 通过扫描记忆文件头部并请求 Sonnet 选择最相关的记忆，查找与查询相关的记忆文件。
  *
- * Returns absolute file paths + mtime of the most relevant memories
- * (up to 5). Excludes MEMORY.md (already loaded in system prompt).
- * mtime is threaded through so callers can surface freshness to the
- * main model without a second stat.
+ * 返回最相关记忆的绝对文件路径和修改时间（最多 5 个）。
+ * 排除 MEMORY.md（已加载到系统提示词中）。
+ * mtime 会一并返回，以便调用者无需再次 stat 即可向主模型展示新鲜度。
  *
- * `alreadySurfaced` filters paths shown in prior turns before the
- * Sonnet call, so the selector spends its 5-slot budget on fresh
- * candidates instead of re-picking files the caller will discard.
+ * `alreadySurfaced` 用于过滤掉在 Sonnet 调用之前已经展示过的路径，
+ * 这样选择器就能将 5 个名额用于新候选者，而不是重复选择会被调用者丢弃的文件。
  */
 export async function findRelevantMemories(
   query: string,
@@ -61,8 +58,8 @@ export async function findRelevantMemories(
     .map(filename => byFilename.get(filename))
     .filter((m): m is MemoryHeader => m !== undefined)
 
-  // Fires even on empty selection: selection-rate needs the denominator,
-  // and -1 ages distinguish "ran, picked nothing" from "never ran".
+  // 即使选择为空也会触发：选择率需要分母，
+  // 并且 -1 的年龄可以区分“运行了但未选中”与“从未运行”。
   if (feature('MEMORY_SHAPE_TELEMETRY')) {
      
     const { logMemoryRecallShape } =
@@ -84,14 +81,12 @@ async function selectRelevantMemories(
 
   const manifest = formatMemoryManifest(memories)
 
-  // When Claude Code is actively using a tool (e.g. mcp__X__spawn),
-  // surfacing that tool's reference docs is noise — the conversation
-  // already contains working usage.  The selector otherwise matches
-  // on keyword overlap ("spawn" in query + "spawn" in a memory
-  // description → false positive).
+  // 当 Claude Code 正在积极使用某个工具时（例如 mcp__X__spawn），
+  // 展示该工具的参考文档会成为噪音——对话中已经包含其工作用法。
+  // 否则选择器可能会基于关键词重叠产生误判（查询中的“spawn”与记忆描述中的“spawn” → 误报）。
   const toolsSection =
     recentTools.length > 0
-      ? `\n\nRecently used tools: ${recentTools.join(', ')}`
+      ? `\n\n最近使用的工具：${recentTools.join(', ')}`
       : ''
 
   try {
@@ -102,7 +97,7 @@ async function selectRelevantMemories(
       messages: [
         {
           role: 'user',
-          content: `Query: ${query}\n\nAvailable memories:\n${manifest}${toolsSection}`,
+          content: `查询：${query}\n\n可用记忆：\n${manifest}${toolsSection}`,
         },
       ],
       max_tokens: 256,
@@ -133,7 +128,7 @@ async function selectRelevantMemories(
       return []
     }
     logForDebugging(
-      `[memdir] selectRelevantMemories failed: ${errorMessage(e)}`,
+      `[memdir] selectRelevantMemories 失败：${errorMessage(e)}`,
       { level: 'warn' },
     )
     return []

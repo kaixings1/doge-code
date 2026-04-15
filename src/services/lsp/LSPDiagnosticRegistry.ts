@@ -166,11 +166,11 @@ function deduplicateDiagnosticFiles(
       } catch (error: unknown) {
         const err = toError(error)
         const truncatedMessage =
-          diag.message?.substring(0, 100) || '<no message>'
+          diag.message?.substring(0, 100) || '<无消息>'
         logError(
           new Error(
-            `Failed to deduplicate diagnostic in ${file.uri}: ${err.message}. ` +
-              `Diagnostic message: ${truncatedMessage}`,
+            `在 ${file.uri} 中去重诊断失败: ${err.message}。` +
+              `诊断消息: ${truncatedMessage}`,
           ),
         )
         // Include the diagnostic anyway to avoid losing information
@@ -195,7 +195,7 @@ export function checkForLSPDiagnostics(): Array<{
   files: DiagnosticFile[]
 }> {
   logForDebugging(
-    `LSP Diagnostics: Checking registry - ${pendingDiagnostics.size} pending`,
+    `LSP 诊断: 检查注册表 - ${pendingDiagnostics.size} 条待处理`,
   )
 
   // Collect all diagnostic files from all pending notifications
@@ -249,7 +249,7 @@ export function checkForLSPDiagnostics(): Array<{
 
   if (originalCount > dedupedCount) {
     logForDebugging(
-      `LSP Diagnostics: Deduplication removed ${originalCount - dedupedCount} duplicate diagnostic(s)`,
+      `LSP 诊断: 去重已移除 ${originalCount - dedupedCount} 条重复诊断`,
     )
   }
 
@@ -300,11 +300,11 @@ export function checkForLSPDiagnostics(): Array<{
         // Log but continue - failure to track shouldn't prevent delivery
         const err = toError(error)
         const truncatedMessage =
-          diag.message?.substring(0, 100) || '<no message>'
+          diag.message?.substring(0, 100) || '<无消息>'
         logError(
           new Error(
-            `Failed to track delivered diagnostic in ${file.uri}: ${err.message}. ` +
-              `Diagnostic message: ${truncatedMessage}`,
+            `在 ${file.uri} 中跟踪已传递诊断失败: ${err.message}。` +
+              `诊断消息: ${truncatedMessage}`,
           ),
         )
       }
@@ -345,7 +345,7 @@ export function checkForLSPDiagnostics(): Array<{
  */
 export function clearAllLSPDiagnostics(): void {
   logForDebugging(
-    `LSP Diagnostics: Clearing ${pendingDiagnostics.size} pending diagnostic(s)`,
+    `LSP 诊断: 清除 ${pendingDiagnostics.size} 条待处理诊断`,
   )
   pendingDiagnostics.clear()
 }
@@ -356,7 +356,7 @@ export function clearAllLSPDiagnostics(): void {
  */
 export function resetAllLSPDiagnosticState(): void {
   logForDebugging(
-    `LSP Diagnostics: Resetting all state (${pendingDiagnostics.size} pending, ${deliveredDiagnostics.size} files tracked)`,
+    `LSP 诊断: 重置所有状态（${pendingDiagnostics.size} 条待处理，${deliveredDiagnostics.size} 个文件被跟踪）`,
   )
   pendingDiagnostics.clear()
   deliveredDiagnostics.clear()

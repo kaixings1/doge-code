@@ -83,11 +83,11 @@ export function usePluginInstallationStatus() {
       if (totalFailed === 0) {
         return;
       }
-      logForDebugging(`Plugin installation status: ${failedMarketplacesCount} failed marketplaces, ${failedPluginsCount} failed plugins`);
+      logForDebugging(`插件安装状态：${failedMarketplacesCount} 个市场失败，${failedPluginsCount} 个插件失败`);
       if (totalFailed === 0) {
         return;
       }
-      logForDebugging(`Adding notification for ${totalFailed} failed installations`);
+      logForDebugging(`为 ${totalFailed} 个失败安装添加通知`);
       addNotification({
         key: "plugin-install-failed",
         jsx: <><Text color="error">{totalFailed} {plural(totalFailed, "插件")}安装失败</Text><Text dimColor={true}> · /plugin 获取详情</Text></>,
