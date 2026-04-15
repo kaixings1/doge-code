@@ -1,12 +1,10 @@
 /**
- * Prompt templates for the background memory extraction agent.
+ * 后台记忆提取代理的提示模板。
  *
- * The extraction agent runs as a perfect fork of the main conversation — same
- * system prompt, same message prefix. The main agent's system prompt always
- * has full save instructions; when the main agent writes memories itself,
- * extractMemories.ts skips that turn (hasMemoryWritesSince). This prompt
- * fires only when the main agent didn't write, so the save-criteria here
- * overlap the system prompt's harmlessly.
+ * 提取代理作为主对话的完美分叉运行——相同的系统提示、相同的消息前缀。
+ * 主代理的系统提示始终包含完整的保存指令；当主代理自己写入记忆时，
+ * extractMemories.ts 会跳过该轮（hasMemoryWritesSince）。此提示仅在主代理
+ * 没有写入时触发，因此这里的保存标准与系统提示无冲突地重叠。
  */
 
 import { feature } from 'bun:bundle'
@@ -24,7 +22,7 @@ import { GLOB_TOOL_NAME } from '../../tools/GlobTool/prompt.js'
 import { GREP_TOOL_NAME } from '../../tools/GrepTool/prompt.js'
 
 /**
- * Shared opener for both extract-prompt variants.
+ * 两种提取提示变体共享的开场白。
  */
 function opener(newMessageCount: number, existingMemories: string): string {
   const manifest =
@@ -32,20 +30,20 @@ function opener(newMessageCount: number, existingMemories: string): string {
       ? `\n\n## Existing memory files\n\n${existingMemories}\n\nCheck this list before writing — update an existing file rather than creating a duplicate.`
       : ''
   return [
-    `You are now acting as the memory extraction subagent. Analyze the most recent ~${newMessageCount} messages above and use them to update your persistent memory systems.`,
+    `你现在担任记忆提取子代理。分析上面最近的 ~${newMessageCount} 条消息，并使用它们来更新你的持久记忆系统。`,
     '',
-    `Available tools: ${FILE_READ_TOOL_NAME}, ${GREP_TOOL_NAME}, ${GLOB_TOOL_NAME}, read-only ${BASH_TOOL_NAME} (ls/find/cat/stat/wc/head/tail and similar), and ${FILE_EDIT_TOOL_NAME}/${FILE_WRITE_TOOL_NAME} for paths inside the memory directory only. ${BASH_TOOL_NAME} rm is not permitted. All other tools — MCP, Agent, write-capable ${BASH_TOOL_NAME}, etc — will be denied.`,
+    `可用工具：${FILE_READ_TOOL_NAME}、${GREP_TOOL_NAME}、${GLOB_TOOL_NAME}、只读 ${BASH_TOOL_NAME}（ls/find/cat/stat/wc/head/tail 等），以及仅限内存目录内的 ${FILE_EDIT_TOOL_NAME}/${FILE_WRITE_TOOL_NAME}。不允许使用 ${BASH_TOOL_NAME} rm。所有其他工具——MCP、Agent、可写 ${BASH_TOOL_NAME} 等——都将被拒绝。`,
     '',
-    `You have a limited turn budget. ${FILE_EDIT_TOOL_NAME} requires a prior ${FILE_READ_TOOL_NAME} of the same file, so the efficient strategy is: turn 1 — issue all ${FILE_READ_TOOL_NAME} calls in parallel for every file you might update; turn 2 — issue all ${FILE_WRITE_TOOL_NAME}/${FILE_EDIT_TOOL_NAME} calls in parallel. Do not interleave reads and writes across multiple turns.`,
+    `你有有限的轮次预算。${FILE_EDIT_TOOL_NAME} 需要先对同一文件调用 ${FILE_READ_TOOL_NAME}，因此高效的策略是：第 1 轮——并行调用所有可能需要更新文件的 ${FILE_READ_TOOL_NAME}；第 2 轮——并行调用所有 ${FILE_WRITE_TOOL_NAME}/${FILE_EDIT_TOOL_NAME}。不要在多轮之间交错读取和写入。`,
     '',
-    `You MUST only use content from the last ~${newMessageCount} messages to update your persistent memories. Do not waste any turns attempting to investigate or verify that content further — no grepping source files, no reading code to confirm a pattern exists, no git commands.` +
+    `你只能使用最近 ~${newMessageCount} 条消息中的内容来更新你的持久记忆。不要浪费任何轮次尝试进一步调查或验证该内容——不要 grep 源文件、不要读取代码来确认模式是否存在、不要执行 git 命令。` +
       manifest,
   ].join('\n')
 }
 
 /**
- * Build the extraction prompt for auto-only memory (no team memory).
- * Four-type taxonomy, no scope guidance (single directory).
+ * 为仅自动记忆（无团队记忆）构建提取提示。
+ * 四种分类法，无范围指导（单个目录）。
  */
 export function buildExtractAutoOnlyPrompt(
   newMessageCount: number,
@@ -54,37 +52,40 @@ export function buildExtractAutoOnlyPrompt(
 ): string {
   const howToSave = skipIndex
     ? [
-        '## How to save memories',
+        '## 如何保存记忆',
         '',
-        'Write each memory to its own file (e.g., `user_role.md`, `feedback_testing.md`) using this frontmatter format:',
+        '将每条记忆写入单独的文件（例如 `user_role.md`、`feedback_testing.md`），使用以下 frontmatter 格式:',
         '',
         ...MEMORY_FRONTMATTER_EXAMPLE,
         '',
-        '- Organize memory semantically by topic, not chronologically',
-        '- Update or remove memories that turn out to be wrong or outdated',
-        '- Do not write duplicate memories. First check if there is an existing memory you can update before writing a new one.',
+        '- 按主题语义组织记忆，而非按时间顺序',
+        '- 更新或删除发现错误或过时的记忆',
+        '- 不要写入重复的记忆。在写入新记忆之前，先检查是否有可更新的现有记忆。',
       ]
     : [
-        '## How to save memories',
+        '## 如何保存记忆',
         '',
-        'Saving a memory is a two-step process:',
+        '保存记忆分两步进行:',
         '',
-        '**Step 1** — write the memory to its own file (e.g., `user_role.md`, `feedback_testing.md`) using this frontmatter format:',
+        '**第一步** — 将记忆写入单独的文件（例如 `user_role.md`、`feedback_testing.md`），使用以下 frontmatter 格式:',
         '',
         ...MEMORY_FRONTMATTER_EXAMPLE,
         '',
-        '**Step 2** — add a pointer to that file in `MEMORY.md`. `MEMORY.md` is an index, not a memory — each entry should be one line, under ~150 characters: `- [Title](file.md) — one-line hook`. It has no frontmatter. Never write memory content directly into `MEMORY.md`.',
+        '- 按主题语义组织记忆，而非按时间顺序',
+        '- 更新或删除发现错误或过时的记忆',
+        '- 不要写入重复的记忆。在写入新记忆之前，先检查是否有可更新的现有记忆。',
+        '**第二步** — 在 `MEMORY.md` 中添加指向该文件的指针。`MEMORY.md` 是一个索引，不是记忆——每条应该是一行，约 150 字符以内: `- [标题](file.md) — 一行简介`。它没有 frontmatter。切勿将记忆内容直接写入 `MEMORY.md`。',
         '',
-        '- `MEMORY.md` is always loaded into your system prompt — lines after 200 will be truncated, so keep the index concise',
-        '- Organize memory semantically by topic, not chronologically',
-        '- Update or remove memories that turn out to be wrong or outdated',
-        '- Do not write duplicate memories. First check if there is an existing memory you can update before writing a new one.',
+        '- `MEMORY.md` 始终会加载到你的系统提示中——200 行之后的内容将被截断，因此请保持索引简洁',
+        '- 按主题语义组织记忆，而非按时间顺序',
+        '- 更新或删除发现错误或过时的记忆',
+        '- 不要写入重复的记忆。在写入新记忆之前，先检查是否有可更新的现有记忆。',
       ]
 
   return [
     opener(newMessageCount, existingMemories),
     '',
-    'If the user explicitly asks you to remember something, save it immediately as whichever type fits best. If they ask you to forget something, find and remove the relevant entry.',
+    '如果用户明确要求你记住某些内容，请立即将其保存为最合适的类型。如果用户要求你忘记某些内容，请查找并删除相关条目。',
     '',
     ...TYPES_SECTION_INDIVIDUAL,
     ...WHAT_NOT_TO_SAVE_SECTION,
@@ -94,9 +95,9 @@ export function buildExtractAutoOnlyPrompt(
 }
 
 /**
- * Build the extraction prompt for combined auto + team memory.
- * Four-type taxonomy with per-type <scope> guidance (directory choice
- * is baked into each type block, no separate routing section needed).
+ * 为自动 + 团队组合记忆构建提取提示。
+ * 四种分类法，每种类型都有 <scope> 指导（目录选择
+ * 已嵌入到每个类型块中，不需要单独的路由部分）。
  */
 export function buildExtractCombinedPrompt(
   newMessageCount: number,
@@ -113,41 +114,41 @@ export function buildExtractCombinedPrompt(
 
   const howToSave = skipIndex
     ? [
-        '## How to save memories',
+        '## 如何保存记忆',
         '',
-        "Write each memory to its own file in the chosen directory (private or team, per the type's scope guidance) using this frontmatter format:",
+        '将每条记忆写入所选目录（私人或团队，根据类型的范围指引）中的单独文件，使用以下 frontmatter 格式:',
         '',
         ...MEMORY_FRONTMATTER_EXAMPLE,
         '',
-        '- Organize memory semantically by topic, not chronologically',
-        '- Update or remove memories that turn out to be wrong or outdated',
-        '- Do not write duplicate memories. First check if there is an existing memory you can update before writing a new one.',
+        '- 按主题语义组织记忆，而非按时间顺序',
+        '- 更新或删除发现错误或过时的记忆',
+        '- 不要写入重复的记忆。在写入新记忆之前，先检查是否有可更新的现有记忆。',
       ]
     : [
-        '## How to save memories',
+        '## 如何保存记忆',
         '',
-        'Saving a memory is a two-step process:',
+        '保存记忆分两步进行:',
         '',
-        "**Step 1** — write the memory to its own file in the chosen directory (private or team, per the type's scope guidance) using this frontmatter format:",
+        '**第一步** — 将记忆写入所选目录（私人或团队，根据类型的范围指引）中的单独文件，使用以下 frontmatter 格式:',
         '',
         ...MEMORY_FRONTMATTER_EXAMPLE,
         '',
-        "**Step 2** — add a pointer to that file in the same directory's `MEMORY.md`. Each directory (private and team) has its own `MEMORY.md` index — each entry should be one line, under ~150 characters: `- [Title](file.md) — one-line hook`. They have no frontmatter. Never write memory content directly into a `MEMORY.md`.",
+        '**第二步** — 在同一目录的 `MEMORY.md` 中添加指向该文件的指针。每个目录（私人和团队）都有自己的 `MEMORY.md` 索引 — 每行一个条目，约 150 字符以内: `- [标题](file.md) — 一行简介`。它们没有 frontmatter。切勿将记忆内容直接写入 `MEMORY.md`。',
         '',
-        '- Both `MEMORY.md` indexes are loaded into your system prompt — lines after 200 will be truncated, so keep them concise',
-        '- Organize memory semantically by topic, not chronologically',
-        '- Update or remove memories that turn out to be wrong or outdated',
-        '- Do not write duplicate memories. First check if there is an existing memory you can update before writing a new one.',
+        '- 两个 `MEMORY.md` 索引都会加载到你的系统提示中 — 200 行之后的内容将被截断，因此请保持简洁',
+        '- 按主题语义组织记忆，而非按时间顺序',
+        '- 更新或删除发现错误或过时的记忆',
+        '- 不要写入重复的记忆。在写入新记忆之前，先检查是否有可更新的现有记忆。',
       ]
 
   return [
     opener(newMessageCount, existingMemories),
     '',
-    'If the user explicitly asks you to remember something, save it immediately as whichever type fits best. If they ask you to forget something, find and remove the relevant entry.',
+    '如果用户明确要求你记住某些内容，请立即将其保存为最合适的类型。如果用户要求你忘记某些内容，请查找并删除相关条目。',
     '',
     ...TYPES_SECTION_COMBINED,
     ...WHAT_NOT_TO_SAVE_SECTION,
-    '- You MUST avoid saving sensitive data within shared team memories. For example, never save API keys or user credentials.',
+    '- 你必须避免在共享团队记忆中保存敏感数据。例如，绝不要保存 API 密钥或用户凭证。',
     '',
     ...howToSave,
   ].join('\n')

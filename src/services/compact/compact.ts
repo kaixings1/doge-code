@@ -223,7 +223,7 @@ export function stripReinjectedAttachments(messages: Message[]): Message[] {
 }
 
 export const ERROR_MESSAGE_NOT_ENOUGH_MESSAGES =
-  'Not enough messages to compact.'
+  '没有足够的消息可供压缩。'
 const MAX_PTL_RETRIES = 3
 const PTL_RETRY_MARKER = '[earlier conversation truncated for compaction retry]'
 
@@ -802,8 +802,8 @@ export async function partialCompactConversation(
     if (messagesToSummarize.length === 0) {
       throw new Error(
         direction === 'up_to'
-          ? 'Nothing to summarize before the selected message.'
-          : 'Nothing to summarize after the selected message.',
+          ? '所选消息之前没有可总结的内容。'
+          : '所选消息之后没有可总结的内容。',
       )
     }
 
@@ -830,7 +830,7 @@ export async function partialCompactConversation(
     } else if (hookResult.newCustomInstructions) {
       customInstructions = hookResult.newCustomInstructions
     } else if (userFeedback) {
-      customInstructions = `User context: ${userFeedback}`
+      customInstructions = `用户上下文: ${userFeedback}`
     }
 
     context.setStreamMode?.('requesting')
@@ -1125,10 +1125,10 @@ function addErrorNotificationIfNeeded(
 export function createCompactCanUseTool(): CanUseToolFn {
   return async () => ({
     behavior: 'deny' as const,
-    message: 'Tool use is not allowed during compaction',
+    message: '压缩期间不允许使用工具',
     decisionReason: {
       type: 'other' as const,
-      reason: 'compaction agent should only produce text summary',
+      reason: '压缩代理应仅生成文本摘要',
     },
   })
 }
@@ -1300,7 +1300,7 @@ async function streamCompactSummary({
           context.options.tools,
         ),
         systemPrompt: asSystemPrompt([
-          'You are a helpful AI assistant tasked with summarizing conversations.',
+          '你是一个有用的 AI 助手，负责总结对话内容。',
         ]),
         thinkingConfig: { type: 'disabled' as const },
         tools,

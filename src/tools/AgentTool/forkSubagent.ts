@@ -16,18 +16,15 @@ import { createUserMessage } from '../../utils/messages.js'
 import type { BuiltInAgentDefinition } from './loadAgentsDir.js'
 
 /**
- * Fork subagent feature gate.
+ * 分支子代理功能门控。
  *
- * When enabled:
- * - `subagent_type` becomes optional on the Agent tool schema
- * - Omitting `subagent_type` triggers an implicit fork: the child inherits
- *   the parent's full conversation context and system prompt
- * - All agent spawns run in the background (async) for a unified
- *   `<task-notification>` interaction model
- * - `/fork <directive>` slash command is available
+ * 当启用时：
+ * - Agent 工具的 `subagent_type` 模式变为可选
+ * - 省略 `subagent_type` 会触发隐式分支：子代理继承父代理的完整对话上下文和系统提示词
+ * - 所有代理派生都在后台异步运行，采用统一的 `<task-notification>` 交互模型
+ * - `/fork <指令>` 斜杠命令可用
  *
- * Mutually exclusive with coordinator mode — coordinator already owns the
- * orchestration role and has its own delegation model.
+ * 与协调者模式互斥——协调者已经承担编排角色并拥有自己的委托模型。
  */
 export function isForkSubagentEnabled(): boolean {
   if (feature('FORK_SUBAGENT')) {
@@ -38,29 +35,25 @@ export function isForkSubagentEnabled(): boolean {
   return false
 }
 
-/** Synthetic agent type name used for analytics when the fork path fires. */
+/** 分支路径触发时用于分析的合成代理类型名称。 */
 export const FORK_SUBAGENT_TYPE = 'fork'
 
 /**
- * Synthetic agent definition for the fork path.
+ * 分支路径的合成代理定义。
  *
- * Not registered in builtInAgents — used only when `!subagent_type` and the
- * experiment is active. `tools: ['*']` with `useExactTools` means the fork
- * child receives the parent's exact tool pool (for cache-identical API
- * prefixes). `permissionMode: 'bubble'` surfaces permission prompts to the
- * parent terminal. `model: 'inherit'` keeps the parent's model for context
- * length parity.
+ * 未在 builtInAgents 中注册——仅在 `!subagent_type` 且实验激活时使用。
+ * `tools: ['*']` 配合 `useExactTools` 意味着分支子代理接收父代理的确切工具池（用于缓存相同的 API 前缀）。
+ * `permissionMode: 'bubble'` 将权限提示浮出到父终端。
+ * `model: 'inherit'` 保持父代理的模型以匹配上下文长度。
  *
- * The getSystemPrompt here is unused: the fork path passes
- * `override.systemPrompt` with the parent's already-rendered system prompt
- * bytes, threaded via `toolUseContext.renderedSystemPrompt`. Reconstructing
- * by re-calling getSystemPrompt() can diverge (GrowthBook cold→warm) and
- * bust the prompt cache; threading the rendered bytes is byte-exact.
+ * 此处的 getSystemPrompt 未使用：分支路径通过 `toolUseContext.renderedSystemPrompt` 传递已渲染的父系统提示词字节，
+ * 经由 `override.systemPrompt` 传入。通过重新调用 getSystemPrompt() 重建可能产生差异（GrowthBook 冷→热），
+ * 并破坏提示词缓存；直接传递渲染后的字节才能做到逐字节精确。
  */
 export const FORK_AGENT = {
   agentType: FORK_SUBAGENT_TYPE,
   whenToUse:
-    'Implicit fork — inherits full conversation context. Not selectable via subagent_type; triggered by omitting subagent_type when the fork experiment is active.',
+    '隐式分支 — 继承完整对话上下文。不可通过 subagent_type 选择；当分支实验激活时，通过省略 subagent_type 触发。',
   tools: ['*'],
   maxTurns: 200,
   model: 'inherit',
@@ -71,9 +64,8 @@ export const FORK_AGENT = {
 } satisfies BuiltInAgentDefinition
 
 /**
- * Guard against recursive forking. Fork children keep the Agent tool in their
- * tool pool for cache-identical tool definitions, so we reject fork attempts
- * at call time by detecting the fork boilerplate tag in conversation history.
+ * 防止递归分支。分支子代理在工具池中保留 Agent 工具以保持缓存相同的工具定义，
+ * 因此我们在调用时通过检测对话历史中的分支样板标签来拒绝分支尝试。
  */
 export function isInForkChild(messages: MessageType[]): boolean {
   return messages.some(m => {
@@ -88,28 +80,27 @@ export function isInForkChild(messages: MessageType[]): boolean {
   })
 }
 
-/** Placeholder text used for all tool_result blocks in the fork prefix.
- * Must be identical across all fork children for prompt cache sharing. */
-const FORK_PLACEHOLDER_RESULT = 'Fork started — processing in background'
+/** 分支前缀中所有 tool_result 块使用的占位文本。
+ * 必须在所有分支子代理之间保持相同以共享提示词缓存。 */
+const FORK_PLACEHOLDER_RESULT = '分支已启动 — 后台处理中'
 
 /**
- * Build the forked conversation messages for the child agent.
+ * 为子代理构建分支后的对话消息。
  *
- * For prompt cache sharing, all fork children must produce byte-identical
- * API request prefixes. This function:
- * 1. Keeps the full parent assistant message (all tool_use blocks, thinking, text)
- * 2. Builds a single user message with tool_results for every tool_use block
- *    using an identical placeholder, then appends a per-child directive text block
+ * 为了共享提示词缓存，所有分支子代理必须生成字节相同的 API 请求前缀。
+ * 此函数：
+ * 1. 保留完整的父代理助手消息（所有 tool_use 块、思考、文本）
+ * 2. 构建单条用户消息，为每个 tool_use 块填充使用相同占位符的 tool_result，
+ *    然后追加每个子代理特有的指令文本块
  *
- * Result: [...history, assistant(all_tool_uses), user(placeholder_results..., directive)]
- * Only the final text block differs per child, maximizing cache hits.
+ * 结果：[...history, assistant(all_tool_uses), user(placeholder_results..., directive)]
+ * 只有最后的文本块因不同子代理而异，从而最大化缓存命中率。
  */
 export function buildForkedMessages(
   directive: string,
   assistantMessage: AssistantMessage,
 ): MessageType[] {
-  // Clone the assistant message to avoid mutating the original, keeping all
-  // content blocks (thinking, text, and every tool_use)
+  // 克隆助手消息以避免修改原对象，保留所有内容块（思考、文本及每个 tool_use）
   const fullAssistantMessage: AssistantMessage = {
     ...assistantMessage,
     uuid: randomUUID(),
@@ -119,14 +110,14 @@ export function buildForkedMessages(
     },
   }
 
-  // Collect all tool_use blocks from the assistant message
+  // 收集助手消息中的所有 tool_use 块
   const toolUseBlocks = assistantMessage.message.content.filter(
     (block): block is BetaToolUseBlock => block.type === 'tool_use',
   )
 
   if (toolUseBlocks.length === 0) {
     logForDebugging(
-      `No tool_use blocks found in assistant message for fork directive: ${directive.slice(0, 50)}...`,
+      `未在助手消息中找到 tool_use 块，分支指令: ${directive.slice(0, 50)}...`,
       { level: 'error' },
     )
     return [
@@ -138,7 +129,7 @@ export function buildForkedMessages(
     ]
   }
 
-  // Build tool_result blocks for every tool_use, all with identical placeholder text
+  // 为每个 tool_use 构建 tool_result 块，全部使用相同的占位文本
   const toolResultBlocks = toolUseBlocks.map(block => ({
     type: 'tool_result' as const,
     tool_use_id: block.id,
@@ -150,11 +141,11 @@ export function buildForkedMessages(
     ],
   }))
 
-  // Build a single user message: all placeholder tool_results + the per-child directive
-  // TODO(smoosh): this text sibling creates a [tool_result, text] pattern on the wire
-  // (renders as </function_results>\n\nHuman:<text>). One-off per-child construction,
-  // not a repeated teacher, so low-priority. If we ever care, use smooshIntoToolResult
-  // from src/utils/messages.ts to fold the directive into the last tool_result.content.
+  // 构建单条用户消息：所有占位 tool_result + 每个子代理特有的指令
+  // TODO(smoosh): 此文本同级块在线路上创建了 [tool_result, text] 模式
+  // （渲染为 </function_results>\n\nHuman:<text>）。每个子代理构造一次，
+  // 不是重复的教学者，优先级低。如有需要，可使用 src/utils/messages.ts 中的
+  // smooshIntoToolResult 将指令折叠进最后一个 tool_result.content。
   const toolResultMessage = createUserMessage({
     content: [
       ...toolResultBlocks,
@@ -170,41 +161,40 @@ export function buildForkedMessages(
 
 export function buildChildMessage(directive: string): string {
   return `<${FORK_BOILERPLATE_TAG}>
-STOP. READ THIS FIRST.
+停。先阅读此处。
 
-You are a forked worker process. You are NOT the main agent.
+你是一个分支工作进程。你并非主代理。
 
-RULES (non-negotiable):
-1. Your system prompt says "default to forking." IGNORE IT \u2014 that's for the parent. You ARE the fork. Do NOT spawn sub-agents; execute directly.
-2. Do NOT converse, ask questions, or suggest next steps
-3. Do NOT editorialize or add meta-commentary
-4. USE your tools directly: Bash, Read, Write, etc.
-5. If you modify files, commit your changes before reporting. Include the commit hash in your report.
-6. Do NOT emit text between tool calls. Use tools silently, then report once at the end.
-7. Stay strictly within your directive's scope. If you discover related systems outside your scope, mention them in one sentence at most — other workers cover those areas.
-8. Keep your report under 500 words unless the directive specifies otherwise. Be factual and concise.
-9. Your response MUST begin with "Scope:". No preamble, no thinking-out-loud.
-10. REPORT structured facts, then stop
+规则（不可协商）：
+1. 你的系统提示词说“默认使用分支”。忽略它——那是给父代理的。你本身就是分支。不要派生子代理；直接执行。
+2. 不要对话、提问或建议后续步骤
+3. 不要添加评论或元评注
+4. 直接使用你的工具：Bash、Read、Write 等。
+5. 如果你修改了文件，请在报告前提交你的更改。在报告中包含提交哈希。
+6. 不要在工具调用之间输出文本。静默使用工具，然后在最后报告一次。
+7. 严格保持在你的指令范围内。如果你发现超出范围的关联系统，最多用一句话提及——其他工作进程会覆盖这些方面。
+8. 除非指令另有规定，报告控制在 500 词以内。保持事实性和简洁。
+9. 你的响应必须以 "Scope:" 开头。不要前导语，不要出声思考。
+10. 报告结构化事实，然后停止
 
-Output format (plain text labels, not markdown headers):
-  Scope: <echo back your assigned scope in one sentence>
-  Result: <the answer or key findings, limited to the scope above>
-  Key files: <relevant file paths — include for research tasks>
-  Files changed: <list with commit hash — include only if you modified files>
-  Issues: <list — include only if there are issues to flag>
+输出格式（纯文本标签，而非 Markdown 标题）：
+  Scope: <用一句话回显分配给你的范围>
+  Result: <答案或关键发现，限于上述范围>
+  Key files: <相关文件路径——研究任务需包含>
+  Files changed: <列表，附提交哈希——仅当你修改了文件时包含>
+  Issues: <列表——仅当有需要标记的问题时包含>
 </${FORK_BOILERPLATE_TAG}>
 
 ${FORK_DIRECTIVE_PREFIX}${directive}`
 }
 
 /**
- * Notice injected into fork children running in an isolated worktree.
- * Tells the child to translate paths from the inherited context, re-read
- * potentially stale files, and that its changes are isolated.
+ * 注入到在隔离工作树中运行的分支子代理的通知。
+ * 告知子代理需翻译继承上下文中的路径、重新读取可能过时的文件，并知晓其更改是隔离的。
  */
 export function buildWorktreeNotice(
   parentCwd: string,
   worktreeCwd: string,
 ): string {
-  return `You've inherited the conversation context above from a parent agent working in ${parentCwd}. You are operating in an isolated git worktree at ${worktreeCwd} — same repository, same relative file structure, separate working copy. Paths in the inherited context refer to the parent's working directory; translate them to your worktree root. Re-read files before editing if the parent may have modified them since they appear in the context. Your changes stay in this worktree and will not affect the parent's files.`
+  return `你继承了上述对话上下文，来自在 ${parentCwd} 工作的父代理。你当前在一个隔离的 git 工作树中操作，位于 ${worktreeCwd}——相同的仓库，相同的相对文件结构，独立的工作副本。继承上下文中的路径指向父工作目录；请将它们转换到你的工作树根目录。如果父代理可能在上下文出现后修改了文件，请在编辑前重新读取这些文件。你的更改会保留在此工作树中，不会影响父代理的文件。`
 }

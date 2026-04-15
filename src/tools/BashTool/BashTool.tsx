@@ -231,7 +231,7 @@ const fullInputSchema = lazySchema(() => z.strictObject({
 
 For simple commands (git, npm, standard CLI tools), keep it brief (5-10 words):
 - ls → "List files in current directory"
-- git status → "Show working tree status"
+- git status → "Show working tree 状态"
 - npm install → "Install package dependencies"
 
 For commands that are harder to parse at a glance (piped commands, obscure flags, etc.), add enough context to clarify what it does:

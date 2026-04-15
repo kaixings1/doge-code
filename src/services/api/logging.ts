@@ -284,7 +284,7 @@ export function logAPIError({
   // Log detailed connection error info to debug logs (visible via --debug)
   const connectionDetails = extractConnectionErrorDetails(error)
   if (connectionDetails) {
-    const sslLabel = connectionDetails.isSSLError ? ' (SSL error)' : ''
+    const sslLabel = connectionDetails.isSSLError ? '（SSL 错误）' : ''
     logForDebugging(
       `Connection error details: code=${connectionDetails.code}${sslLabel}, message=${connectionDetails.message}`,
       { level: 'error' },

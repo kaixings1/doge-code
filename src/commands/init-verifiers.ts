@@ -3,213 +3,212 @@ import type { Command } from '../commands.js'
 const command = {
   type: 'prompt',
   name: 'init-verifiers',
-  description:
-    'Create verifier skill(s) for automated verification of code changes',
-  contentLength: 0, // Dynamic content
+  description: '创建用于自动化验证代码变更的验证器技能',
+  contentLength: 0, // 动态内容
   progressMessage: '正在分析你的项目并创建验证器技能',
   source: 'builtin',
   async getPromptForCommand() {
     return [
       {
         type: 'text',
-        text: `Use the TodoWrite tool to track your progress through this multi-step task.
+        text: `使用 TodoWrite 工具跟踪这个多步骤任务的进度。
 
-## Goal
+## 目标
 
-Create one or more verifier skills that can be used by the Verify agent to automatically verify code changes in this project or folder. You may create multiple verifiers if the project has different verification needs (e.g., both web UI and API endpoints).
+创建一个或多个验证器技能，供 Verify 代理用于自动验证本项目或文件夹中的代码变更。如果项目有不同的验证需求（例如同时有 Web UI 和 API 端点），你可以创建多个验证器。
 
-**Do NOT create verifiers for unit tests or typechecking.** Those are already handled by the standard build/test workflow and don't need dedicated verifier skills. Focus on functional verification: web UI (Playwright), CLI (Tmux), and API (HTTP) verifiers.
+**不要为单位测试或类型检查创建验证器。** 这些已由标准的构建/测试工作流处理，不需要专门的验证器技能。请专注于功能验证：Web UI（Playwright）、CLI（Tmux）和 API（HTTP）验证器。
 
-## Phase 1: Auto-Detection
+## 阶段 1：自动检测
 
-Analyze the project to detect what's in different subdirectories. The project may contain multiple sub-projects or areas that need different verification approaches (e.g., a web frontend, an API backend, and shared libraries all in one repo).
+分析项目以检测不同子目录中的内容。项目可能包含多个子项目或需要不同验证方式的区域（例如一个仓库中同时包含 Web 前端、API 后端和共享库）。
 
-1. **Scan top-level directories** to identify distinct project areas:
-   - Look for separate package.json, Cargo.toml, pyproject.toml, go.mod in subdirectories
-   - Identify distinct application types in different folders
+1. **扫描顶层目录** 以识别不同的项目区域：
+   - 查找子目录中单独的 package.json、Cargo.toml、pyproject.toml、go.mod
+   - 识别不同文件夹中的不同应用类型
 
-2. **For each area, detect:**
+2. **针对每个区域，检测：**
 
-   a. **Project type and stack**
-      - Primary language(s) and frameworks
-      - Package managers (npm, yarn, pnpm, pip, cargo, etc.)
+   a. **项目类型和技术栈**
+      - 主要语言和框架
+      - 包管理器（npm、yarn、pnpm、pip、cargo 等）
 
-   b. **Application type**
-      - Web app (React, Next.js, Vue, etc.) → suggest Playwright-based verifier
-      - CLI tool → suggest Tmux-based verifier
-      - API service (Express, FastAPI, etc.) → suggest HTTP-based verifier
+   b. **应用类型**
+      - Web 应用（React、Next.js、Vue 等）→ 建议基于 Playwright 的验证器
+      - CLI 工具 → 建议基于 Tmux 的验证器
+      - API 服务（Express、FastAPI 等）→ 建议基于 HTTP 的验证器
 
-   c. **Existing verification tools**
-      - Test frameworks (Jest, Vitest, pytest, etc.)
-      - E2E tools (Playwright, Cypress, etc.)
-      - Dev server scripts in package.json
+   c. **已有的验证工具**
+      - 测试框架（Jest、Vitest、pytest 等）
+      - E2E 工具（Playwright、Cypress 等）
+      - package.json 中的开发服务器脚本
 
-   d. **Dev server configuration**
-      - How to start the dev server
-      - What URL it runs on
-      - What text indicates it's ready
+   d. **开发服务器配置**
+      - 如何启动开发服务器
+      - 运行在哪个 URL
+      - 就绪信号（服务器启动完成时显示的文本）
 
-3. **Installed verification packages** (for web apps)
-   - Check if Playwright is installed (look in package.json dependencies/devDependencies)
-   - Check MCP configuration (.mcp.json) for browser automation tools:
-     - Playwright MCP server
-     - Chrome DevTools MCP server
-     - Claude Chrome Extension MCP (browser-use via Claude's Chrome extension)
-   - For Python projects, check for playwright, pytest-playwright
+3. **已安装的验证包**（针对 Web 应用）
+   - 检查是否安装了 Playwright（查看 package.json 的 dependencies/devDependencies）
+   - 检查 MCP 配置（.mcp.json）中的浏览器自动化工具：
+     - Playwright MCP 服务器
+     - Chrome DevTools MCP 服务器
+     - Claude Chrome 扩展 MCP（通过 Claude 的 Chrome 扩展进行浏览器操作）
+   - 对于 Python 项目，检查 playwright、pytest-playwright
 
-## Phase 2: Verification Tool Setup
+## 阶段 2：验证工具设置
 
-Based on what was detected in Phase 1, help the user set up appropriate verification tools.
+根据阶段 1 的检测结果，帮助用户设置合适的验证工具。
 
-### For Web Applications
+### 对于 Web 应用
 
-1. **If browser automation tools are already installed/configured**, ask the user which one they want to use:
-   - Use AskUserQuestion to present the detected options
-   - Example: "I found Playwright and Chrome DevTools MCP configured. Which would you like to use for verification?"
+1. **如果已安装/配置浏览器自动化工具**，询问用户想使用哪一个：
+   - 使用 AskUserQuestion 展示检测到的选项
+   - 示例："我发现配置了 Playwright 和 Chrome DevTools MCP。你希望使用哪一个进行验证？"
 
-2. **If NO browser automation tools are detected**, ask if they want to install/configure one:
-   - Use AskUserQuestion: "No browser automation tools detected. Would you like to set one up for UI verification?"
-   - Options to offer:
-     - **Playwright** (Recommended) - Full browser automation library, works headless, great for CI
-     - **Chrome DevTools MCP** - Uses Chrome DevTools Protocol via MCP
-     - **Claude Chrome Extension** - Uses the Claude Chrome extension for browser interaction (requires the extension installed in Chrome)
-     - **None** - Skip browser automation (will use basic HTTP checks only)
+2. **如果没有检测到任何浏览器自动化工具**，询问是否要安装/配置一个：
+   - 使用 AskUserQuestion："未检测到浏览器自动化工具。是否要设置一个用于 UI 验证？"
+   - 提供的选项：
+     - **Playwright**（推荐）- 完整的浏览器自动化库，支持无头模式，适合 CI 环境
+     - **Chrome DevTools MCP** - 通过 MCP 使用 Chrome DevTools 协议
+     - **Claude Chrome 扩展** - 使用 Claude Chrome 扩展进行浏览器交互（需要在 Chrome 中安装该扩展）
+     - **不安装** - 跳过浏览器自动化（仅使用基础的 HTTP 检查）
 
-3. **If user chooses to install Playwright**, run the appropriate command based on package manager:
-   - For npm: \`npm install -D @playwright/test && npx playwright install\`
-   - For yarn: \`yarn add -D @playwright/test && yarn playwright install\`
-   - For pnpm: \`pnpm add -D @playwright/test && pnpm exec playwright install\`
-   - For bun: \`bun add -D @playwright/test && bun playwright install\`
+3. **如果用户选择安装 Playwright**，根据包管理器运行相应命令：
+   - 对于 npm：\`npm install -D @playwright/test && npx playwright install\`
+   - 对于 yarn：\`yarn add -D @playwright/test && yarn playwright install\`
+   - 对于 pnpm：\`pnpm add -D @playwright/test && pnpm exec playwright install\`
+   - 对于 bun：\`bun add -D @playwright/test && bun playwright install\`
 
-4. **If user chooses Chrome DevTools MCP or Claude Chrome Extension**:
-   - These require MCP server configuration rather than package installation
-   - Ask if they want you to add the MCP server configuration to .mcp.json
-   - For Claude Chrome Extension, inform them they need the extension installed from the Chrome Web Store
+4. **如果用户选择 Chrome DevTools MCP 或 Claude Chrome 扩展**：
+   - 这些需要配置 MCP 服务器，而不是安装 npm 包
+   - 询问是否要将 MCP 服务器配置添加到 .mcp.json
+   - 对于 Claude Chrome 扩展，提醒用户需要从 Chrome 网上应用店安装该扩展
 
-5. **MCP Server Setup** (if applicable):
-   - If user selected an MCP-based option, configure the appropriate entry in .mcp.json
-   - Update the verifier skill's allowed-tools to use the appropriate mcp__* tools
+5. **MCP 服务器设置**（如果适用）：
+   - 如果用户选择了基于 MCP 的选项，在 .mcp.json 中配置相应的条目
+   - 更新验证器技能的 allowed-tools 以使用相应的 mcp__* 工具
 
-### For CLI Tools
+### 对于 CLI 工具
 
-1. Check if asciinema is available (run \`which asciinema\`)
-2. If not available, inform the user that asciinema can help record verification sessions but is optional
-3. Tmux is typically system-installed, just verify it's available
+1. 检查 asciinema 是否可用（运行 \`which asciinema\`）
+2. 如果不可用，告知用户 asciinema 可以帮助录制验证会话，但这是可选的
+3. Tmux 通常由系统安装，只需确认其可用性
 
-### For API Services
+### 对于 API 服务
 
-1. Check if HTTP testing tools are available:
-   - curl (usually system-installed)
-   - httpie (\`http\` command)
-2. No installation typically needed
+1. 检查 HTTP 测试工具是否可用：
+   - curl（通常系统已安装）
+   - httpie（\`http\` 命令）
+2. 通常无需安装
 
-## Phase 3: Interactive Q&A
+## 阶段 3：交互式问答
 
-Based on the areas detected in Phase 1, you may need to create multiple verifiers. For each distinct area, use the AskUserQuestion tool to confirm:
+根据阶段 1 检测到的区域，你可能需要创建多个验证器。对于每个不同的区域，使用 AskUserQuestion 工具确认：
 
-1. **Verifier name** - Based on detection, suggest a name but let user choose:
+1. **验证器名称** - 根据检测结果建议一个名称，但允许用户选择：
 
-   If there is only ONE project area, use the simple format:
-   - "verifier-playwright" for web UI testing
-   - "verifier-cli" for CLI/terminal testing
-   - "verifier-api" for HTTP API testing
+   如果只有一个项目区域，使用简单格式：
+   - 对于 Web UI 测试："verifier-playwright"
+   - 对于 CLI/终端测试："verifier-cli"
+   - 对于 HTTP API 测试："verifier-api"
 
-   If there are MULTIPLE project areas, use the format \`verifier-<project>-<type>\`:
-   - "verifier-frontend-playwright" for the frontend web UI
-   - "verifier-backend-api" for the backend API
-   - "verifier-admin-playwright" for an admin dashboard
+   如果有多个项目区域，使用格式 \`verifier-<项目>-<类型>\`：
+   - 对于前端 Web UI："verifier-frontend-playwright"
+   - 对于后端 API："verifier-backend-api"
+   - 对于管理后台："verifier-admin-playwright"
 
-   The \`<project>\` portion should be a short identifier for the subdirectory or project area (e.g., the folder name or package name).
+   \`<项目>\` 部分应该是子目录或项目区域的简短标识（例如文件夹名称或包名称）。
 
-   Custom names are allowed but MUST include "verifier" in the name — the Verify agent discovers skills by looking for "verifier" in the folder name.
+   允许自定义名称，但必须包含 "verifier" —— Verify 代理通过在文件夹名中查找 "verifier" 来发现技能。
 
-2. **Project-specific questions** based on type:
+2. **根据类型提出的项目特定问题**：
 
-   For web apps (playwright):
-   - Dev server command (e.g., "npm run dev")
-   - Dev server URL (e.g., "http://localhost:3000")
-   - Ready signal (text that appears when server is ready)
+   对于 Web 应用（playwright）：
+   - 开发服务器命令（例如 "npm run dev"）
+   - 开发服务器 URL（例如 "http://localhost:3000"）
+   - 就绪信号（服务器启动时出现的文本）
 
-   For CLI tools:
-   - Entry point command (e.g., "node ./cli.js" or "./target/debug/myapp")
-   - Whether to record with asciinema
+   对于 CLI 工具：
+   - 入口命令（例如 "node ./cli.js" 或 "./target/debug/myapp"）
+   - 是否使用 asciinema 录制
 
-   For APIs:
-   - API server command
-   - Base URL
+   对于 API：
+   - API 服务器命令
+   - 基础 URL
 
-3. **Authentication & Login** (for web apps and APIs):
+3. **认证与登录**（针对 Web 应用和 API）：
 
-   Use AskUserQuestion to ask: "Does your app require authentication/login to access the pages or endpoints being verified?"
-   - **No authentication needed** - App is publicly accessible, no login required
-   - **Yes, login required** - App requires authentication before verification can proceed
-   - **Some pages require auth** - Mix of public and authenticated routes
+   使用 AskUserQuestion 询问："你的应用在访问需要验证的页面或端点前是否需要认证/登录？"
+   - **无需认证** - 应用公开可访问，无需登录
+   - **需要登录** - 应用在进行验证前需要认证
+   - **部分页面需要认证** - 混合了公开路由和需认证路由
 
-   If the user selects login required (or partial), ask follow-up questions:
-   - **Login method**: How does a user log in?
-     - Form-based login (username/password on a login page)
-     - API token/key (passed as header or query param)
-     - OAuth/SSO (redirect-based flow)
-     - Other (let user describe)
-   - **Test credentials**: What credentials should the verifier use?
-     - Ask for the login URL (e.g., "/login", "http://localhost:3000/auth")
-     - Ask for test username/email and password, or API key
-     - Note: Suggest the user use environment variables for secrets (e.g., \`TEST_USER\`, \`TEST_PASSWORD\`) rather than hardcoding
-   - **Post-login indicator**: How to confirm login succeeded?
-     - URL redirect (e.g., redirects to "/dashboard")
-     - Element appears (e.g., "Welcome" text, user avatar)
-     - Cookie/token is set
+   如果用户选择需要登录（或部分需要），询问后续问题：
+   - **登录方式**：用户如何登录？
+     - 表单登录（在登录页输入用户名/密码）
+     - API 令牌/密钥（作为请求头或查询参数传递）
+     - OAuth/SSO（基于重定向的流程）
+     - 其他（让用户描述）
+   - **测试凭证**：验证器应使用什么凭证？
+     - 询问登录 URL（例如 "/login"、"http://localhost:3000/auth"）
+     - 询问测试用户名/邮箱和密码，或 API 密钥
+     - 注意：建议用户使用环境变量存储敏感信息（例如 \`TEST_USER\`、\`TEST_PASSWORD\`），而不是硬编码
+   - **登录成功指示**：如何确认登录成功？
+     - URL 重定向（例如重定向到 "/dashboard"）
+     - 元素出现（例如显示 "欢迎" 文本、用户头像）
+     - Cookie/令牌被设置
 
-## Phase 4: Generate Verifier Skill
+## 阶段 4：生成验证器技能
 
-**All verifier skills are created in the project root's \`.claude/skills/\` directory.** This ensures they are automatically loaded when Claude runs in the project.
+**所有验证器技能都创建在项目根目录的 \`.claude/skills/\` 目录下。** 这确保了在项目中运行 Claude 时技能会自动加载。
 
-Write the skill file to \`.claude/skills/<verifier-name>/SKILL.md\`.
+将技能文件写入 \`.claude/skills/<验证器名称>/SKILL.md\`。
 
-### Skill Template Structure
+### 技能模板结构
 
 \`\`\`markdown
 ---
-name: <verifier-name>
-description: <description based on type>
+name: <验证器名称>
+description: <基于类型的描述>
 allowed-tools:
-  # Tools appropriate for the verifier type
+  # 适用于该验证器类型的工具
 ---
 
-# <Verifier Title>
+# <验证器标题>
 
-You are a verification executor. You receive a verification plan and execute it EXACTLY as written.
+你是一个验证执行器。你会收到一个验证计划，并严格按照书面说明执行。
 
-## Project Context
-<Project-specific details from detection>
+## 项目上下文
+<来自检测步骤的项目特定详情>
 
-## Setup Instructions
-<How to start any required services>
+## 设置说明
+<如何启动所需的服务>
 
-## Authentication
-<If auth is required, include step-by-step login instructions here>
-<Include login URL, credential env vars, and post-login verification>
-<If no auth needed, omit this section>
+## 认证
+<如果需要认证，此处包含逐步登录说明>
+<包含登录 URL、凭证环境变量以及登录成功的验证方法>
+<如果无需认证，则省略此部分>
 
-## Reporting
+## 报告
 
-Report PASS or FAIL for each step using the format specified in the verification plan.
+使用验证计划中指定的格式，为每个步骤报告通过或失败。
 
-## Cleanup
+## 清理
 
-After verification:
-1. Stop any dev servers started
-2. Close any browser sessions
-3. Report final summary
+验证完成后：
+1. 停止已启动的任何开发服务器
+2. 关闭任何浏览器会话
+3. 报告最终摘要
 
-## Self-Update
+## 自我更新
 
-If verification fails because this skill's instructions are outdated (dev server command/port/ready-signal changed, etc.) — not because the feature under test is broken — or if the user corrects you mid-run, use AskUserQuestion to confirm and then Edit this SKILL.md with a minimal targeted fix.
+如果验证失败是由于本技能的指令已过时（例如开发服务器命令/端口/就绪信号已变更）—— 而不是因为被测功能本身损坏 —— 或者用户在运行过程中纠正了你，请使用 AskUserQuestion 确认，然后用最小化的针对性修复编辑本 SKILL.md 文件。
 \`\`\`
 
-### Allowed Tools by Type
+### 按类型划分的 allowed-tools
 
-**verifier-playwright**:
+**verifier-playwright**：
 \`\`\`yaml
 allowed-tools:
   - Bash(npm:*)
@@ -222,7 +221,7 @@ allowed-tools:
   - Grep
 \`\`\`
 
-**verifier-cli**:
+**verifier-cli**：
 \`\`\`yaml
 allowed-tools:
   - Tmux
@@ -232,7 +231,7 @@ allowed-tools:
   - Grep
 \`\`\`
 
-**verifier-api**:
+**verifier-api**：
 \`\`\`yaml
 allowed-tools:
   - Bash(curl:*)
@@ -244,15 +243,14 @@ allowed-tools:
   - Grep
 \`\`\`
 
+## 阶段 5：确认创建
 
-## Phase 5: Confirm Creation
-
-After writing the skill file(s), inform the user:
-1. Where each skill was created (always in \`.claude/skills/\`)
-2. How the Verify agent will discover them — the folder name must contain "verifier" (case-insensitive) for automatic discovery
-3. That they can edit the skills to customize them
-4. That they can run /init-verifiers again to add more verifiers for other areas
-5. That the verifier will offer to self-update if it detects its own instructions are outdated (wrong dev server command, changed ready signal, etc.)
+写入技能文件后，告知用户：
+1. 每个技能创建的位置（始终在 \`.claude/skills/\` 中）
+2. Verify 代理如何发现它们 —— 文件夹名称必须包含 "verifier"（不区分大小写）才能被自动发现
+3. 他们可以编辑这些技能进行自定义
+4. 他们可以再次运行 /init-verifiers 为其他区域添加更多验证器
+5. 验证器在检测到自身指令已过时（错误的开发服务器命令、已变更的就绪信号等）时会主动提供自我更新的选项
 `,
       },
     ]

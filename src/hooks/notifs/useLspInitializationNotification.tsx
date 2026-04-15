@@ -42,7 +42,7 @@ export function useLspInitializationNotification() {
         return;
       }
       notifiedErrorsRef.current.add(errorKey);
-      logForDebugging(`LSP error: ${source} - ${errorMessage}`);
+      logForDebugging(`LSP 错误：${source} - ${errorMessage}`);
       setAppState(prev => {
         const existingKeys = new Set(prev.plugins.errors.map(_temp2));
         const stateErrorKey = `generic-error:${source}:${errorMessage}`;

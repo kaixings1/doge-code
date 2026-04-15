@@ -144,7 +144,7 @@ async function updateMagicDoc(
     // no .code, so check the message in addition to isFsInaccessible (EACCES/EPERM).
     if (
       isFsInaccessible(e) ||
-      (e instanceof Error && e.message.startsWith('File does not exist'))
+      (e instanceof Error && e.message.startsWith('文件不存在'))
     ) {
       trackedMagicDocs.delete(docInfo.path)
       return
@@ -186,7 +186,7 @@ async function updateMagicDoc(
       message: `only ${FILE_EDIT_TOOL_NAME} is allowed for ${docInfo.path}`,
       decisionReason: {
         type: 'other' as const,
-        reason: `only ${FILE_EDIT_TOOL_NAME} is allowed`,
+        reason: `仅允许使用 ${FILE_EDIT_TOOL_NAME}`,
       },
     }
   }

@@ -30,8 +30,8 @@ const IfConditionSchema = lazySchema(() =>
 // discriminated union members and the HookCommandSchema factory)
 function buildHookSchemas() {
   const BashCommandHookSchema = z.object({
-    type: z.literal('command').describe('Shell command hook type'),
-    command: z.string().describe('Shell command to execute'),
+    type: z.literal('command').describe('Shell 命令钩子类型'),
+    command: z.string().describe('要执行的 Shell 命令'),
     if: IfConditionSchema(),
     shell: z
       .enum(SHELL_TYPES)
@@ -51,11 +51,11 @@ function buildHookSchemas() {
     once: z
       .boolean()
       .optional()
-      .describe('If true, hook runs once and is removed after execution'),
+      .describe('如果为 true，钩子运行一次后在执行后移除'),
     async: z
       .boolean()
       .optional()
-      .describe('If true, hook runs in background without blocking'),
+      .describe('如果为 true，钩子在后台运行而不阻塞'),
     asyncRewake: z
       .boolean()
       .optional()
@@ -65,7 +65,7 @@ function buildHookSchemas() {
   })
 
   const PromptHookSchema = z.object({
-    type: z.literal('prompt').describe('LLM prompt hook type'),
+    type: z.literal('prompt').describe('LLM 提示词钩子类型'),
     prompt: z
       .string()
       .describe(
@@ -91,12 +91,12 @@ function buildHookSchemas() {
     once: z
       .boolean()
       .optional()
-      .describe('If true, hook runs once and is removed after execution'),
+      .describe('如果为 true，钩子运行一次后在执行后移除'),
   })
 
   const HttpHookSchema = z.object({
-    type: z.literal('http').describe('HTTP hook type'),
-    url: z.string().url().describe('URL to POST the hook input JSON to'),
+    type: z.literal('http').describe('HTTP 钩子类型'),
+    url: z.string().url().describe('要 POST 钩子输入 JSON 的 URL'),
     if: IfConditionSchema(),
     timeout: z
       .number()
@@ -122,11 +122,11 @@ function buildHookSchemas() {
     once: z
       .boolean()
       .optional()
-      .describe('If true, hook runs once and is removed after execution'),
+      .describe('如果为 true，钩子运行一次后在执行后移除'),
   })
 
   const AgentHookSchema = z.object({
-    type: z.literal('agent').describe('Agentic verifier hook type'),
+    type: z.literal('agent').describe('智能体验证钩子类型'),
     // DO NOT add .transform() here. This schema is used by parseSettingsFile,
     // and updateSettingsForSource round-trips the parsed result through
     // JSON.stringify — a transformed function value is silently dropped,
@@ -196,10 +196,10 @@ export const HookMatcherSchema = lazySchema(() =>
     matcher: z
       .string()
       .optional()
-      .describe('String pattern to match (e.g. tool names like "Write")'), // String (e.g. Write) to match values related to the hook event, e.g. tool names
+      .describe('要匹配的字符串模式（例如工具名 "Write"）'), // String (e.g. Write) to match values related to the hook event, e.g. tool names
     hooks: z
       .array(HookCommandSchema())
-      .describe('List of hooks to execute when the matcher matches'),
+      .describe('匹配器匹配时要执行的钩子列表'),
   }),
 )
 

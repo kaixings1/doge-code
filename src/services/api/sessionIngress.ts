@@ -118,13 +118,13 @@ async function appendSessionLogImpl(
           if (adoptedUuid) {
             lastUuidMap.set(sessionId, adoptedUuid)
             logForDebugging(
-              `Session 409: re-fetched ${logs!.length} entries, adopting lastUuid=${adoptedUuid}, retrying entry ${entry.uuid}`,
+              `Session 409: 重新获取 ${logs!.length} 条记录，采用 lastUuid=${adoptedUuid}，重试条目 ${entry.uuid}`,
             )
           } else {
             // Can't determine server state — give up
             const errorData = response.data as SessionIngressError
             const errorMessage =
-              errorData.error?.message || 'Concurrent modification detected'
+              errorData.error?.message || '检测到并发修改'
             logError(
               new Error(
                 `Session persistence conflict: UUID mismatch for session ${sessionId}, entry ${entry.uuid}. ${errorMessage}`,
@@ -142,14 +142,14 @@ async function appendSessionLogImpl(
       }
 
       if (response.status === 401) {
-        logForDebugging('Session token expired or invalid')
+        logForDebugging('会话令牌已过期或无效')
         logForDiagnosticsNoPII('error', 'session_persist_fail_bad_token')
         return false // Non-retryable
       }
 
       // Other 4xx (429, etc.) - retryable
       logForDebugging(
-        `Failed to persist session log: ${response.status} ${response.statusText}`,
+        `持久化会话日志失败: ${response.status} ${response.statusText}`,
       )
       logForDiagnosticsNoPII('error', 'session_persist_fail_status', {
         status: response.status,
@@ -166,7 +166,7 @@ async function appendSessionLogImpl(
     }
 
     if (attempt === MAX_RETRIES) {
-      logForDebugging(`Remote persistence failed after ${MAX_RETRIES} attempts`)
+      logForDebugging(`远程持久化失败，已重试 ${MAX_RETRIES} 次`)
       logForDiagnosticsNoPII(
         'error',
         'session_persist_error_retries_exhausted',
@@ -362,7 +362,7 @@ export async function getTeleportEvents(
     if (response.status !== 200) {
       logError(
         new Error(
-          `Teleport events returned ${response.status}: ${jsonStringify(response.data)}`,
+          `Teleport 事件返回 ${response.status}: ${jsonStringify(response.data)}`,
         ),
       )
       logForDiagnosticsNoPII('error', 'teleport_events_bad_status')
@@ -373,7 +373,7 @@ export async function getTeleportEvents(
     if (!Array.isArray(data)) {
       logError(
         new Error(
-          `Teleport events invalid response shape: ${jsonStringify(response.data)}`,
+          `Teleport 事件响应格式无效: ${jsonStringify(response.data)}`,
         ),
       )
       logForDiagnosticsNoPII('error', 'teleport_events_invalid_shape')
@@ -439,7 +439,7 @@ async function fetchSessionLogsFromUrl(
       if (!data || typeof data !== 'object' || !Array.isArray(data.loglines)) {
         logError(
           new Error(
-            `Invalid session logs response format: ${jsonStringify(data)}`,
+            `获取会话日志的响应格式无效: ${jsonStringify(data)}`,
           ),
         )
         logForDiagnosticsNoPII('error', 'session_get_fail_invalid_response')
@@ -460,7 +460,7 @@ async function fetchSessionLogsFromUrl(
     }
 
     if (response.status === 401) {
-      logForDebugging('Auth token expired or invalid')
+      logForDebugging('认证令牌已过期或无效')
       logForDiagnosticsNoPII('error', 'session_get_fail_bad_token')
       throw new Error(
         'Your session has expired. Please run /login to sign in again.',
@@ -468,7 +468,7 @@ async function fetchSessionLogsFromUrl(
     }
 
     logForDebugging(
-      `Failed to fetch session logs: ${response.status} ${response.statusText}`,
+      `获取会话日志失败: ${response.status} ${response.statusText}`,
     )
     logForDiagnosticsNoPII('error', 'session_get_fail_status', {
       status: response.status,

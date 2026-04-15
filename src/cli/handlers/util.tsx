@@ -29,10 +29,9 @@ export async function setupTokenHandler(root: Root): Promise<void> {
           <Box flexDirection="column" gap={1}>
             <WelcomeV2 />
             {showAuthWarning && <Box flexDirection="column">
-                <Text color="warning">
-                  Warning: You already have authentication configured via
-                  environment variable or API key helper.
-                </Text>
+				<Text color="warning">
+				  警告：您已通过环境变量或 API 密钥助手配置了身份验证。
+				</Text>
                 <Text color="warning">
                   The setup-token command will create a new OAuth token which
                   you can use instead.

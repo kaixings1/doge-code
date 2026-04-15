@@ -61,7 +61,7 @@ Good examples:
 {"title": "Fix login button on mobile"}
 {"title": "Add OAuth authentication"}
 {"title": "Debug failing CI tests"}
-{"title": "Refactor API client error handling"}
+{"title": "Refactor API client 错误 handling"}
 
 Bad (too vague): {"title": "Code changes"}
 Bad (too long): {"title": "Investigate and fix the issue where the login button does not respond on mobile devices"}

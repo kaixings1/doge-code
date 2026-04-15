@@ -190,7 +190,7 @@ async function mergeUntrackedIntoNormalizedCache(
   await fileIndex.loadFromFileListAsync(allPaths).done
   loadedMergedSignature = sig
   logForDebugging(
-    `[FileIndex] rebuilt index with ${cachedTrackedFiles.length} tracked + ${normalizedUntracked.length} untracked files`,
+    `[FileIndex] 重建索引，包含 ${cachedTrackedFiles.length} 个已跟踪 + ${normalizedUntracked.length} 个未跟踪文件`,
   )
 }
 
@@ -255,7 +255,7 @@ async function getFilesUsingGit(
   // Check if we're in a git repo. findGitRoot is LRU-memoized per path.
   const repoRoot = findGitRoot(getCwd())
   if (!repoRoot) {
-    logForDebugging(`[FileIndex] not a git repo, returning null`)
+    logForDebugging(`[FileIndex] 不是 git 仓库，返回 null`)
     return null
   }
 
@@ -468,14 +468,14 @@ async function getProjectFiles(
   const gitFiles = await getFilesUsingGit(abortSignal, respectGitignore)
   if (gitFiles !== null) {
     logForDebugging(
-      `[FileIndex] using git ls-files result (${gitFiles.length} files)`,
+      `[FileIndex] 使用 git ls-files 结果（${gitFiles.length} 个文件）`,
     )
     return gitFiles
   }
 
   // Fall back to ripgrep
   logForDebugging(
-    `[FileIndex] git ls-files returned null, falling back to ripgrep`,
+    `[FileIndex] git ls-files 返回 null，回退到 ripgrep`,
   )
   const startTime = Date.now()
   const rgArgs = [

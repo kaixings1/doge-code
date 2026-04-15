@@ -144,8 +144,8 @@ export function registerLSPNotificationHandlers(
         typeof serverInstance.onNotification !== 'function'
       ) {
         const errorMsg = !serverInstance
-          ? 'Server instance is null/undefined'
-          : 'Server instance has no onNotification method'
+          ? '服务器实例为 null/undefined'
+          : '服务器实例缺少 onNotification 方法'
 
         registrationErrors.push({ serverName, error: errorMsg })
 
@@ -223,9 +223,9 @@ export function registerLSPNotificationHandlers(
               logError(err)
               logForDebugging(
                 `Error registering LSP diagnostics from ${serverName}: ` +
-                  `URI: ${diagnosticParams.uri}, ` +
-                  `Diagnostic count: ${firstFile.diagnostics.length}, ` +
-                  `Error: ${err.message}`,
+                  `URI: ${diagnosticParams.uri}，` +
+                  `诊断数量: ${firstFile.diagnostics.length}，` +
+                  `错误: ${err.message}`,
               )
 
               // Track consecutive failures and warn after 3+
@@ -265,10 +265,10 @@ export function registerLSPNotificationHandlers(
 
             if (failures.count >= 3) {
               logForDebugging(
-                `WARNING: LSP diagnostic handler for ${serverName} has failed ${failures.count} times consecutively. ` +
-                  `Last error: ${failures.lastError}. ` +
-                  `This may indicate a problem with the LSP server or diagnostic processing. ` +
-                  `Check logs for details.`,
+                `警告: LSP 诊断处理程序 ${serverName} 已连续失败 ${failures.count} 次。` +
+                  `上次错误: ${failures.lastError}。` +
+                  `这可能表明 LSP 服务器或诊断处理存在问题。` +
+                  `请检查日志了解详情。`,
               )
             }
 
@@ -289,8 +289,8 @@ export function registerLSPNotificationHandlers(
 
       logError(err)
       logForDebugging(
-        `Failed to register diagnostics handler for ${serverName}: ` +
-          `Error: ${err.message}`,
+        `为 ${serverName} 注册诊断处理程序失败: ` +
+          `错误: ${err.message}`,
       )
     }
   }
@@ -308,9 +308,9 @@ export function registerLSPNotificationHandlers(
       ),
     )
     logForDebugging(
-      `LSP notification handler registration: ${successCount}/${totalServers} succeeded. ` +
-        `Failed servers: ${failedServers}. ` +
-        `Diagnostics from failed servers will not be delivered.`,
+      `LSP 通知处理程序注册: ${successCount}/${totalServers} 成功。` +
+        `失败的服务器: ${failedServers}。` +
+        `来自失败服务器的诊断将无法传递。`,
     )
   } else {
     logForDebugging(

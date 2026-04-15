@@ -81,7 +81,7 @@ export function getInitializationStatus():
   if (initializationState === 'failed') {
     return {
       status: 'failed',
-      error: initializationError || new Error('Initialization failed'),
+      error: initializationError || new Error('初始化失败'),
     }
   }
   if (initializationState === 'not-started') {
@@ -153,7 +153,7 @@ export function initializeLspServerManager(): void {
   // Skip if already initialized or currently initializing
   if (lspManagerInstance !== undefined && initializationState !== 'failed') {
     logForDebugging(
-      '[LSP MANAGER] Already initialized or initializing, skipping',
+      '[LSP MANAGER] 已初始化或正在初始化，跳过',
     )
     return
   }
@@ -183,7 +183,7 @@ export function initializeLspServerManager(): void {
       // Only update state if this is still the current initialization
       if (currentGeneration === initializationGeneration) {
         initializationState = 'success'
-        logForDebugging('LSP server manager initialized successfully')
+        logForDebugging('LSP 服务器管理器初始化成功')
 
         // Register passive notification handlers for diagnostics
         if (lspManagerInstance) {
@@ -201,7 +201,7 @@ export function initializeLspServerManager(): void {
 
         logError(error as Error)
         logForDebugging(
-          `Failed to initialize LSP server manager: ${errorMessage(error)}`,
+          `初始化 LSP 服务器管理器失败: ${errorMessage(error)}`,
         )
       }
     })
@@ -271,11 +271,11 @@ export async function shutdownLspServerManager(): Promise<void> {
 
   try {
     await lspManagerInstance.shutdown()
-    logForDebugging('LSP server manager shut down successfully')
+    logForDebugging('LSP 服务器管理器已关闭')
   } catch (error: unknown) {
     logError(error as Error)
     logForDebugging(
-      `Failed to shutdown LSP server manager: ${errorMessage(error)}`,
+      `关闭 LSP 服务器管理器失败: ${errorMessage(error)}`,
     )
   } finally {
     // Always clear state even if shutdown failed

@@ -505,16 +505,16 @@ export async function checkResponseForCacheBreak(
           charDelta === 0
             ? ''
             : charDelta > 0
-              ? ` (+${charDelta} chars)`
-              : ` (${charDelta} chars)`
-        parts.push(`system prompt changed${charInfo}`)
+              ? `（+${charDelta} 字符）`
+              : `（${charDelta} 字符）`
+        parts.push(`系统提示词已更改${charInfo}`)
       }
       if (changes.toolSchemasChanged) {
         const toolDiff =
           changes.addedToolCount > 0 || changes.removedToolCount > 0
-            ? ` (+${changes.addedToolCount}/-${changes.removedToolCount} tools)`
-            : ' (tool prompt/schema changed, same tool set)'
-        parts.push(`tools changed${toolDiff}`)
+            ? `（+${changes.addedToolCount}/-${changes.removedToolCount} 个工具）`
+            : '（工具提示/架构已更改，工具集相同）'
+        parts.push(`工具已更改${toolDiff}`)
       }
       if (changes.fastModeChanged) {
         parts.push('fast mode toggled')
@@ -531,7 +531,7 @@ export async function checkResponseForCacheBreak(
       ) {
         // Only report as standalone cause if nothing else explains it —
         // otherwise the scope/TTL flip is a consequence, not the root cause.
-        parts.push('cache_control changed (scope or TTL)')
+        parts.push('cache_control 已更改（范围或 TTL）')
       }
       if (changes.betasChanged) {
         const added = changes.addedBetas.length
@@ -541,16 +541,16 @@ export async function checkResponseForCacheBreak(
           ? `-${changes.removedBetas.join(',')}`
           : ''
         const diff = [added, removed].filter(Boolean).join(' ')
-        parts.push(`betas changed${diff ? ` (${diff})` : ''}`)
+        parts.push(`betas 已更改${diff ? `（${diff}）` : ''}`)
       }
       if (changes.autoModeChanged) {
         parts.push('auto mode toggled')
       }
       if (changes.overageChanged) {
-        parts.push('overage state changed (TTL latched, no flip)')
+        parts.push('超额状态已更改（TTL 锁定，未翻转）')
       }
       if (changes.cachedMCChanged) {
-        parts.push('cached microcompact toggled')
+        parts.push('微型压缩缓存已切换')
       }
       if (changes.effortChanged) {
         parts.push(
@@ -558,7 +558,7 @@ export async function checkResponseForCacheBreak(
         )
       }
       if (changes.extraBodyChanged) {
-        parts.push('extra body params changed')
+        parts.push('额外 body 参数已更改')
       }
     }
 
@@ -578,11 +578,11 @@ export async function checkResponseForCacheBreak(
     if (parts.length > 0) {
       reason = parts.join(', ')
     } else if (lastAssistantMsgOver1hAgo) {
-      reason = 'possible 1h TTL expiry (prompt unchanged)'
+      reason = '可能 1 小时 TTL 过期（提示词未更改）'
     } else if (lastAssistantMsgOver5minAgo) {
-      reason = 'possible 5min TTL expiry (prompt unchanged)'
+      reason = '可能 5 分钟 TTL 过期（提示词未更改）'
     } else if (timeSinceLastAssistantMsg !== null) {
-      reason = 'likely server-side (prompt unchanged, <5min gap)'
+      reason = '可能是服务器端原因（提示词未更改，间隔 <5 分钟）'
     } else {
       reason = 'unknown cause'
     }
