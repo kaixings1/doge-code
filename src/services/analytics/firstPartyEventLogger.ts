@@ -120,7 +120,7 @@ export async function shutdown1PEventLogging(): Promise<void> {
   try {
     await firstPartyEventLoggerProvider.shutdown()
     if (process.env.USER_TYPE === 'ant') {
-      logForDebugging('1P event logging: final shutdown complete')
+      logForDebugging('1P 事件日志: 最终关闭完成')
     }
   } catch {
     // Ignore shutdown errors
@@ -315,7 +315,7 @@ export function initialize1PEventLogging(): void {
 
   if (!enabled) {
     if (process.env.USER_TYPE === 'ant') {
-      logForDebugging('1P event logging not enabled')
+      logForDebugging('1P 事件日志: 未启用')
     }
     return
   }
@@ -417,7 +417,7 @@ export async function reinitialize1PEventLoggingIfConfigChanged(): Promise<void>
 
   if (process.env.USER_TYPE === 'ant') {
     logForDebugging(
-      `1P event logging: ${BATCH_CONFIG_NAME} changed, reinitializing`,
+      `1P 事件日志: ${BATCH_CONFIG_NAME} 已更改，正在重新初始化`,
     )
   }
 

@@ -29,7 +29,7 @@ function getPromptContent(
 ): string {
   const { commit: commitAttribution, pr: defaultPrAttribution } =
     getAttributionTexts()
-  // Use provided PR attribution or fall back to default
+  // 使用提供的 PR 归属文本，或回退到默认值
   const effectivePrAttribution = prAttribution ?? defaultPrAttribution
   const safeUser = process.env.SAFEUSER || ''
   const username = process.env.USER || ''
@@ -64,30 +64,30 @@ function getPromptContent(
 - \`git diff ${defaultBranch}...HEAD\`: !\`git diff ${defaultBranch}...HEAD\`
 - \`gh pr view --json number 2>/dev/null || true\`: !\`gh pr view --json number 2>/dev/null || true\`
 
-## Git Safety Protocol
+## Git 安全协议
 
-- NEVER update the git config
-- NEVER run destructive/irreversible git commands (like push --force, hard reset, etc) unless the user explicitly requests them
-- NEVER skip hooks (--no-verify, --no-gpg-sign, etc) unless the user explicitly requests it
-- NEVER run force push to main/master, warn the user if they request it
-- Do not commit files that likely contain secrets (.env, credentials.json, etc)
-- Never use git commands with the -i flag (like git rebase -i or git add -i) since they require interactive input which is not supported
+- 绝不更新 git 配置
+- 绝不执行破坏性/不可逆的 git 命令（如 push --force、hard reset 等），除非用户明确要求
+- 绝不跳过钩子（--no-verify、--no-gpg-sign 等），除非用户明确要求
+- 绝不向 main/master 执行强制推送，如果用户要求则警告
+- 不要提交可能包含秘密的文件（.env、credentials.json 等）
+- 绝不使用带 -i 标志的 git 命令（如 git rebase -i 或 git add -i），因为它们需要交互式输入，而这是不支持的
 
-## Your task
+## 你的任务
 
-Analyze all changes that will be included in the pull request, making sure to look at all relevant commits (NOT just the latest commit, but ALL commits that will be included in the pull request from the git diff ${defaultBranch}...HEAD output above).
+分析将包含在拉取请求中的所有更改，确保查看所有相关提交（不仅是最新提交，而是所有将包含在拉取请求中的提交，来自上面的 git diff ${defaultBranch}...HEAD 输出）。
 
-Based on the above changes:
-1. Create a new branch if on ${defaultBranch} (use SAFEUSER from context above for the branch name prefix, falling back to whoami if SAFEUSER is empty, e.g., \`username/feature-name\`)
-2. Create a single commit with an appropriate message using heredoc syntax${commitAttribution ? `, ending with the attribution text shown in the example below` : ''}:
+基于上述更改：
+1. 如果在 ${defaultBranch} 上，创建新分支（使用上面上下文中的 SAFEUSER 作为分支名前缀，如果 SAFEUSER 为空则回退到 whoami，例如：\`username/feature-name\`）
+2. 使用 heredoc 语法创建单个提交，并带有适当的提交消息${commitAttribution ? `，以下面示例中显示的归属文本结尾` : ''}：
 \`\`\`
 git commit -m "$(cat <<'EOF'
-Commit message here.${commitAttribution ? `\n\n${commitAttribution}` : ''}
+提交消息在这里。${commitAttribution ? `\n\n${commitAttribution}` : ''}
 EOF
 )"
 \`\`\`
-3. Push the branch to origin
-4. If a PR already exists for this branch (check the gh pr view output above), update the PR title and body using \`gh pr edit\` to reflect the current diff${addReviewerArg}. Otherwise, create a pull request using \`gh pr create\` with heredoc syntax for the body${reviewerArg}.
+3. 将分支推送到 origin
+4. 如果此分支已存在 PR（检查上面的 gh pr view 输出），使用 \`gh pr edit\` 更新 PR 标题和正文以反映当前的 diff${addReviewerArg}。否则，使用 \`gh pr create\` 创建拉取请求，正文使用 heredoc 语法${reviewerArg}。
    - 重要提示：PR 标题要简短（不超过 70 个字符）。使用正文添加详细信息。
 \`\`\`
 gh pr create --title "简短且具有描述性的标题" --body "$(cat <<'EOF'
@@ -100,9 +100,9 @@ EOF
 )"
 \`\`\`
 
-You have the capability to call multiple tools in a single response. You MUST do all of the above in a single message.${slackStep}
+你具有在单个响应中调用多个工具的能力。你必须在一条消息中完成上述所有操作。${slackStep}
 
-Return the PR URL when you're done, so the user can see it.`
+完成后返回 PR URL，以便用户可以查看。`
 }
 
 const command = {
@@ -111,20 +111,20 @@ const command = {
   description: '提交、推送并创建拉取请求',
   allowedTools: ALLOWED_TOOLS,
   get contentLength() {
-    // Use 'main' as estimate for content length calculation
+    // 使用 'main' 作为内容长度计算的估算值
     return getPromptContent('main').length
   },
   progressMessage: '正在创建提交和 PR',
   source: 'builtin',
   async getPromptForCommand(args, context) {
-    // Get default branch and enhanced PR attribution
+    // 获取默认分支和增强的 PR 归属文本
     const [defaultBranch, prAttribution] = await Promise.all([
       getDefaultBranch(),
       getEnhancedPRAttribution(context.getAppState),
     ])
     let promptContent = getPromptContent(defaultBranch, prAttribution)
 
-    // Append user instructions if args provided
+    // 如果提供了参数，追加用户指令
     const trimmedArgs = args?.trim()
     if (trimmedArgs) {
       promptContent += `\n\n## Additional instructions from user\n\n${trimmedArgs}`

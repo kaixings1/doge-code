@@ -568,7 +568,7 @@ export async function verifyApiKey(
     if (
       error instanceof Error &&
       error.message.includes(
-        '{"type":"error","error":{"type":"authentication_error","message":"invalid x-api-key"}}',
+        '{"type":"error","error":{"type":"authentication_error","message":"无效 x-api-key"}}',
       )
     ) {
       return false
@@ -1811,7 +1811,7 @@ async function* queryModel(
         // BetaMessageStream calls partialParse() on every input_json_delta, which we don't need
         // since we handle tool input accumulation ourselves
         // biome-ignore lint/plugin: main conversation loop handles attribution separately
-        const compatProvider = readCustomApiStorage().provider ?? 'anthropic'
+        const compatProvider = readCustomApiStorage().provider ?? 'openai'  // 默认使用 openai 格式以支持流式输出
         if (compatProvider === 'openai') {
           const openAIRequest = convertAnthropicRequestToOpenAI({
             model: params.model,
@@ -2328,7 +2328,7 @@ async function* queryModel(
               // perspective, both mean "response was cut off, continue from
               // where you left off."
               yield createAssistantAPIErrorMessage({
-                content: `${API_ERROR_MESSAGE_PREFIX}: The model has reached its context window limit.`,
+                content: `${API_ERROR_MESSAGE_PREFIX}: 模型已达到其上下文窗口限制。`,
                 apiError: 'max_output_tokens',
                 error: 'max_output_tokens',
               })
@@ -2374,7 +2374,7 @@ async function* queryModel(
         // Prevent double-emit: this throw lands in the catch block below,
         // whose exit_path='error' probe guards on streamWatchdogFiredAt.
         streamWatchdogFiredAt = null
-        throw new Error('Stream idle timeout - no chunks received')
+        throw new Error('流空闲超时 - 未收到任何数据块')
       }
 
       // Detect when the stream completed without producing any assistant messages.
@@ -2393,8 +2393,8 @@ async function* queryModel(
       if (!partialMessage || (newMessages.length === 0 && !stopReason)) {
         logForDebugging(
           !partialMessage
-            ? 'Stream completed without receiving message_start event - triggering non-streaming fallback'
-            : 'Stream completed with message_start but no content blocks completed - triggering non-streaming fallback',
+            ? '流完成但未收到 message_start 事件 - 正在触发非流式回退'
+            : '流已完成（收到 message_start），但没有内容块完成 - 正在触发非流式回退',
           { level: 'error' },
         )
         logEvent('tengu_stream_no_events', {
@@ -2403,7 +2403,7 @@ async function* queryModel(
           request_id: (streamRequestId ??
             'unknown') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         })
-        throw new Error('Stream ended without receiving any events')
+        throw new Error('流结束但未收到任何事件')
       }
 
       // Log summary if any stalls occurred during streaming
@@ -2481,7 +2481,7 @@ async function* queryModel(
         if (signal.aborted) {
           // This is a real user abort (ESC key was pressed)
           logForDebugging(
-            `Streaming aborted by user: ${errorMessage(streamingError)}`,
+            `用户已中止流式传输: ${errorMessage(streamingError)}`,
           )
           if (isAdvisorInProgress) {
             logEvent('tengu_advisor_tool_interrupted', {
@@ -2496,7 +2496,7 @@ async function* queryModel(
           // The SDK threw APIUserAbortError but our signal wasn't aborted
           // This means it's a timeout from the SDK's internal timeout
           logForDebugging(
-            `Streaming timeout (SDK abort): ${streamingError.message}`,
+            `流式传输超时（SDK 中止）: ${streamingError.message}`,
             { level: 'error' },
           )
           // Throw a more specific error for timeout
@@ -2518,7 +2518,7 @@ async function* queryModel(
 
       if (disableFallback) {
         logForDebugging(
-          `Error streaming (non-streaming fallback disabled): ${errorMessage(streamingError)}`,
+          `流式传输错误（非流式回退已禁用）: ${errorMessage(streamingError)}`,
           { level: 'error' },
         )
         logEvent('tengu_streaming_fallback_to_non_streaming', {
@@ -2545,7 +2545,7 @@ async function* queryModel(
       }
 
       logForDebugging(
-        `Error streaming, falling back to non-streaming mode: ${errorMessage(streamingError)}`,
+        `流式传输错误，回退到非流式模式: ${errorMessage(streamingError)}`,
         { level: 'error' },
       )
       didFallBackToNonStreaming = true
@@ -2665,7 +2665,7 @@ async function* queryModel(
       const failedRequestId =
         (errorFromRetry.originalError as APIError).requestID ?? 'unknown'
       logForDebugging(
-        'Streaming endpoint returned 404, falling back to non-streaming mode',
+        '流式端点返回 404，回退到非流式模式',
         { level: 'warn' },
       )
       didFallBackToNonStreaming = true
@@ -2738,7 +2738,7 @@ async function* queryModel(
 
         // Fallback also failed, handle as normal error
         logForDebugging(
-          `Non-streaming fallback also failed: ${errorMessage(fallbackError)}`,
+          `非流式回退也失败了: ${errorMessage(fallbackError)}`,
           { level: 'error' },
         )
 
@@ -2792,7 +2792,7 @@ async function* queryModel(
       }
     } else {
       // Original error handling for non-404 errors
-      logForDebugging(`Error in API request: ${errorMessage(errorFromRetry)}`, {
+      logForDebugging(`API 请求错误: ${errorMessage(errorFromRetry)}`, {
         level: 'error',
       })
 

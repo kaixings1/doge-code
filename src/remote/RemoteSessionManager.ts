@@ -199,14 +199,14 @@ export class RemoteSessionManager {
       // Send an error response for unrecognized subtypes so the server
       // doesn't hang waiting for a reply that never comes.
       logForDebugging(
-        `[RemoteSessionManager] Unsupported control request subtype: ${inner.subtype}`,
+        `[RemoteSessionManager] 不支持的控制请求子类型: ${inner.subtype}`,
       )
       const response: SDKControlResponse = {
         type: 'control_response',
         response: {
           subtype: 'error',
           request_id,
-          error: `Unsupported control request subtype: ${inner.subtype}`,
+          error: `不支持的控制请求子类型: ${inner.subtype}`,
         },
       }
       this.websocket?.sendControlResponse(response)
@@ -221,7 +221,7 @@ export class RemoteSessionManager {
     opts?: { uuid?: string },
   ): Promise<boolean> {
     logForDebugging(
-      `[RemoteSessionManager] Sending message to session ${this.config.sessionId}`,
+      `[RemoteSessionManager] 正在向会话 ${this.config.sessionId} 发送消息`,
     )
 
     const success = await sendEventToRemoteSession(
@@ -233,7 +233,7 @@ export class RemoteSessionManager {
     if (!success) {
       logError(
         new Error(
-          `[RemoteSessionManager] Failed to send message to session ${this.config.sessionId}`,
+          `[RemoteSessionManager] 向会话 ${this.config.sessionId} 发送消息失败`,
         ),
       )
     }

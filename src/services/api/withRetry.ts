@@ -162,7 +162,7 @@ export class FallbackTriggeredError extends Error {
     public readonly originalModel: string,
     public readonly fallbackModel: string,
   ) {
-    super(`Model fallback triggered: ${originalModel} -> ${fallbackModel}`)
+    super(`模型已回退: ${originalModel} -> ${fallbackModel}`)
     this.name = 'FallbackTriggeredError'
   }
 }
@@ -398,7 +398,7 @@ export async function* withRetry<T>(
           if (availableContext < FLOOR_OUTPUT_TOKENS) {
             logError(
               new Error(
-                `availableContext ${availableContext} is less than FLOOR_OUTPUT_TOKENS ${FLOOR_OUTPUT_TOKENS}`,
+                `可用上下文 ${availableContext} 小于 FLOOR_OUTPUT_TOKENS ${FLOOR_OUTPUT_TOKENS}`,
               ),
             )
             throw error

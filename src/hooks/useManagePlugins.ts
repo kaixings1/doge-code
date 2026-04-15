@@ -80,7 +80,7 @@ export function useManagePlugins({
         errors.push({
           type: 'generic-error',
           source: 'plugin-commands',
-          error: `Failed to load plugin commands: ${errorMessage}`,
+          error: `加载插件命令失败：${errorMessage}`,
         })
       }
 
@@ -92,7 +92,7 @@ export function useManagePlugins({
         errors.push({
           type: 'generic-error',
           source: 'plugin-agents',
-          error: `Failed to load plugin agents: ${errorMessage}`,
+          error: `加载插件代理失败：${errorMessage}`,
         })
       }
 
@@ -104,7 +104,7 @@ export function useManagePlugins({
         errors.push({
           type: 'generic-error',
           source: 'plugin-hooks',
-          error: `Failed to load plugin hooks: ${errorMessage}`,
+          error: `加载插件钩子失败：${errorMessage}`,
         })
       }
 
@@ -224,7 +224,7 @@ export function useManagePlugins({
       // Only plugin loading errors should reach here - log for monitoring
       const errorObj = toError(error)
       logError(errorObj)
-      logForDebugging(`Error loading plugins: ${error}`)
+      logForDebugging(`加载插件时出错：${error}`)
       // Set empty state on error, but preserve LSP errors and add the new error
       setAppState(prevState => {
         // Keep existing LSP/non-plugin-loading errors

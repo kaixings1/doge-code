@@ -974,7 +974,7 @@ async function run(): Promise<CommanderCommand> {
     }
     profileCheckpoint('preAction_after_settings_sync');
   });
-  program.name('doge').description(`Doge Code - starts an interactive session by default, use -p/--print for non-interactive output`).argument('[prompt]', 'Your prompt', String)
+  program.name('doge').description(`Doge Code - 默认启动交互式会话，使用 -p/--print 进行非交互式输出`).argument('[prompt]', '您的提示', String)
   // Subcommands inherit helpOption via commander's copyInheritedSettings —
   // setting it once here covers mcp, plugin, auth, and all other subcommands.
   .helpOption('-h, --help', 'Display help for command').option('-d, --debug [filter]', 'Enable debug mode with optional category filtering (e.g., "api,hooks" or "!1p,!file")', (_value: string | true) => {
@@ -1006,7 +1006,7 @@ async function run(): Promise<CommanderCommand> {
       throw new InvalidArgumentError(`It must be one of: ${allowed.join(', ')}`);
     }
     return value;
-  })).option('--agent <agent>', `Agent for the current session. Overrides the 'agent' setting.`).option('--betas <betas...>', 'Beta headers to include in API requests (API key users only)').option('--fallback-model <model>', 'Enable automatic fallback to specified model when default model is overloaded (only works with --print)').addOption(new Option('--workload <tag>', 'Workload tag for billing-header attribution (cc_workload). Process-scoped; set by SDK daemon callers that spawn subprocesses for cron work. (only works with --print)').hideHelp()).option('--settings <file-or-json>', 'Path to a settings JSON file or a JSON string to load additional settings from').option('--add-dir <directories...>', 'Additional directories to allow tool access to').option('--ide', 'Automatically connect to IDE on startup if exactly one valid IDE is available', () => true).option('--strict-mcp-config', 'Only use MCP servers from --mcp-config, ignoring all other MCP configurations', () => true).option('--session-id <uuid>', 'Use a specific session ID for the conversation (must be a valid UUID)').option('-n, --name <name>', 'Set a display name for this session (shown in /resume and terminal title)').option('--agents <json>', 'JSON object defining custom agents (e.g. \'{"reviewer": {"description": "Reviews code", "prompt": "You are a code reviewer"}}\')').option('--setting-sources <sources>', 'Comma-separated list of setting sources to load (user, project, local).')
+	})).option('--agent <agent>', `用于当前会话的 Agent。覆盖 'agent' 设置。`).option('--betas <betas...>', '要包含在 API 请求中的 Beta 头信息（仅限 API 密钥用户）').option('--fallback-model <model>', '当默认模型过载时，自动回退到指定模型（仅适用于 --print 模式）').addOption(new Option('--workload <tag>', '用于计费标头归因的工作负载标签（cc_workload）。进程范围；由生成子进程执行定时任务的 SDK 守护进程调用方设置。（仅适用于 --print 模式）').hideHelp()).option('--settings <file-or-json>', '指向设置 JSON 文件的路径或包含额外设置的 JSON 字符串').option('--add-dir <directories...>', '额外允许工具访问的目录').option('--ide', '如果恰好有一个可用的有效 IDE，则在启动时自动连接', () => true).option('--strict-mcp-config', '仅使用 --mcp-config 中指定的 MCP 服务器，忽略所有其他 MCP 配置', () => true).option('--session-id <uuid>', '为本次会话使用特定的会话 ID（必须是有效的 UUID）').option('-n, --name <name>', '为此会话设置显示名称（在 /resume 和终端标题中显示）').option('--agents <json>', '定义自定义 Agent 的 JSON 对象（例如 \'{"reviewer": {"description": "审查代码", "prompt": "你是一名代码审查员"}}\')').option('--setting-sources <sources>', '要加载的设置来源列表，以逗号分隔（user, project, local）。')
   // gh-33508: <paths...> (variadic) consumed everything until the next
   // --flag. `claude --plugin-dir /path mcp add --transport http` swallowed
   // `mcp` and `add` as paths, then choked on --transport as an unknown
@@ -2199,7 +2199,7 @@ async function run(): Promise<CommanderCommand> {
       /* eslint-disable @typescript-eslint/no-require-imports */
       const briefVisibility = feature('KAIROS') || feature('KAIROS_BRIEF') ? (require('./tools/BriefTool/BriefTool.js') as typeof import('./tools/BriefTool/BriefTool.js')).isBriefEnabled() ? 'Call SendUserMessage at checkpoints to mark where things stand.' : 'The user will see any text you output.' : 'The user will see any text you output.';
       /* eslint-enable @typescript-eslint/no-require-imports */
-      const proactivePrompt = `\n# Proactive Mode\n\nYou are in proactive mode. Take initiative — explore, act, and make progress without waiting for instructions.\n\nStart by briefly greeting the user.\n\nYou will receive periodic <tick> prompts. These are check-ins. Do whatever seems most useful, or call Sleep if there's nothing to do. ${briefVisibility}`;
+	  const proactivePrompt = `\n# 主动模式\n\n您处于主动模式。请主动行事 — 探索、行动、推进，无需等待指令。\n\n首先简要问候用户。\n\n您将定期收到 <tick> 提示。这些是检查点。请执行您认为最有用的操作，若无事可做则调用 Sleep。${briefVisibility}`;
       appendSystemPrompt = appendSystemPrompt ? `${appendSystemPrompt}\n\n${proactivePrompt}` : proactivePrompt;
     }
     if (feature('KAIROS') && kairosEnabled && assistantModule) {
@@ -3557,7 +3557,7 @@ async function run(): Promise<CommanderCommand> {
                   }
                 } else {
                   // No known paths - show original error
-                  throw new TeleportOperationError(`You must run claude --teleport ${teleport} from a checkout of ${sessionRepo}.`, chalk.red(`You must run claude --teleport ${teleport} from a checkout of ${chalk.bold(sessionRepo)}.\n`));
+					throw new TeleportOperationError(`您必须在 ${sessionRepo} 的检出目录中运行 claude --teleport ${teleport}。`, chalk.red(`您必须在 ${chalk.bold(sessionRepo)} 的检出目录中运行 claude --teleport ${teleport}。\n`));
                 }
               }
             } else if (repoValidation.status === 'error') {
@@ -4064,7 +4064,7 @@ async function run(): Promise<CommanderCommand> {
   // Interactive mode (without -p) is handled by early argv rewriting in main()
   // which redirects to the main command with full TUI support.
   if (feature('DIRECT_CONNECT')) {
-    program.command('open <cc-url>').description('Connect to a Claude Code server (internal — use cc:// URLs)').option('-p, --print [prompt]', 'Print mode (headless)').option('--output-format <format>', 'Output format: text, json, stream-json', 'text').action(async (ccUrl: string, opts: {
+    program.command('open <cc-url>').description('Connect to a Claude Code server (internal — use cc:// URLs)').option('-p, --print [prompt]', '打印模式（无头模式）').option('--output-format <format>', '输出格式：text、json、stream-json', 'text').action(async (ccUrl: string, opts: {
       print?: string | boolean;
       outputFormat: string;
     }) => {
@@ -4150,7 +4150,7 @@ async function run(): Promise<CommanderCommand> {
    * @param action Description of the action that failed
    */
   // Hidden flag on all plugin/marketplace subcommands to target cowork_plugins.
-  const coworkOption = () => new Option('--cowork', 'Use cowork_plugins directory').hideHelp();
+  const coworkOption = () => new Option('--cowork', '使用 cowork_plugins 目录').hideHelp();
 
   // Plugin validate command
   const pluginCmd = program.command('plugin').alias('plugins').description('管理 Claude Code 插件').configureHelp(createSortedHelpConfig());
@@ -4164,7 +4164,7 @@ async function run(): Promise<CommanderCommand> {
   });
 
   // Plugin list command
-  pluginCmd.command('list').description('List installed plugins').option('--json', 'Output as JSON').option('--available', 'Include available plugins from marketplaces (requires --json)').addOption(coworkOption()).action(async (options: {
+  pluginCmd.command('list').description('列出已安装的插件').option('--json', 'Output as JSON').option('--available', 'Include available plugins from marketplaces (requires --json)').addOption(coworkOption()).action(async (options: {
     json?: boolean;
     available?: boolean;
     cowork?: boolean;
@@ -4196,7 +4196,7 @@ async function run(): Promise<CommanderCommand> {
     } = await import('./cli/handlers/plugins.js');
     await marketplaceListHandler(options);
   });
-  marketplaceCmd.command('remove <name>').alias('rm').description('Remove a configured marketplace').addOption(coworkOption()).action(async (name: string, options: {
+  marketplaceCmd.command('remove <name>').alias('rm').description('移除已配置的市场').addOption(coworkOption()).action(async (name: string, options: {
     cowork?: boolean;
   }) => {
     const {
@@ -4204,7 +4204,7 @@ async function run(): Promise<CommanderCommand> {
     } = await import('./cli/handlers/plugins.js');
     await marketplaceRemoveHandler(name, options);
   });
-  marketplaceCmd.command('update [name]').description('Update marketplace(s) from their source - updates all if no name specified').addOption(coworkOption()).action(async (name: string | undefined, options: {
+  marketplaceCmd.command('update [name]').description('从源更新市场——如果未指定名称则更新所有市场').addOption(coworkOption()).action(async (name: string | undefined, options: {
     cowork?: boolean;
   }) => {
     const {
@@ -4214,7 +4214,7 @@ async function run(): Promise<CommanderCommand> {
   });
 
   // Plugin install command
-  pluginCmd.command('install <plugin>').alias('i').description('Install a plugin from available marketplaces (use plugin@marketplace for specific marketplace)').option('-s, --scope <scope>', 'Installation scope: user, project, or local', 'user').addOption(coworkOption()).action(async (plugin: string, options: {
+  pluginCmd.command('install <plugin>').alias('i').description('Install a plugin from available marketplaces (use plugin@marketplace for specific marketplace)').option('-s, --scope <scope>', '安装范围：user、project 或 local', 'user').addOption(coworkOption()).action(async (plugin: string, options: {
     scope?: string;
     cowork?: boolean;
   }) => {
@@ -4225,7 +4225,7 @@ async function run(): Promise<CommanderCommand> {
   });
 
   // Plugin uninstall command
-  pluginCmd.command('uninstall <plugin>').alias('remove').alias('rm').description('Uninstall an installed plugin').option('-s, --scope <scope>', 'Uninstall from scope: user, project, or local', 'user').option('--keep-data', "Preserve the plugin's persistent data directory (~/.claude/plugins/data/{id}/)").addOption(coworkOption()).action(async (plugin: string, options: {
+  pluginCmd.command('uninstall <plugin>').alias('remove').alias('rm').description('卸载已安装的插件').option('-s, --scope <scope>', 'Uninstall from scope: user, project, or local', 'user').option('--keep-data', '保留插件的持久数据目录 (~/.claude/plugins/data/{id}/)').addOption(coworkOption()).action(async (plugin: string, options: {
     scope?: string;
     cowork?: boolean;
     keepData?: boolean;
@@ -4237,7 +4237,7 @@ async function run(): Promise<CommanderCommand> {
   });
 
   // Plugin enable command
-  pluginCmd.command('enable <plugin>').description('Enable a disabled plugin').option('-s, --scope <scope>', `Installation scope: ${VALID_INSTALLABLE_SCOPES.join(', ')} (default: auto-detect)`).addOption(coworkOption()).action(async (plugin: string, options: {
+  pluginCmd.command('enable <plugin>').description('启用已禁用的插件').option('-s, --scope <scope>', `Installation scope: ${VALID_INSTALLABLE_SCOPES.join(', ')} (default: auto-detect)`).addOption(coworkOption()).action(async (plugin: string, options: {
     scope?: string;
     cowork?: boolean;
   }) => {
@@ -4248,7 +4248,7 @@ async function run(): Promise<CommanderCommand> {
   });
 
   // Plugin disable command
-  pluginCmd.command('disable [plugin]').description('Disable an enabled plugin').option('-a, --all', 'Disable all enabled plugins').option('-s, --scope <scope>', `Installation scope: ${VALID_INSTALLABLE_SCOPES.join(', ')} (default: auto-detect)`).addOption(coworkOption()).action(async (plugin: string | undefined, options: {
+  pluginCmd.command('disable [plugin]').description('禁用已启用的插件').option('-a, --all', '禁用所有已启用的插件').option('-s, --scope <scope>', `Installation scope: ${VALID_INSTALLABLE_SCOPES.join(', ')} (default: auto-detect)`).addOption(coworkOption()).action(async (plugin: string | undefined, options: {
     scope?: string;
     cowork?: boolean;
     all?: boolean;
@@ -4283,7 +4283,7 @@ async function run(): Promise<CommanderCommand> {
   });
 
   // Agents command - list configured agents
-  program.command('agents').description('List configured agents').option('--setting-sources <sources>', 'Comma-separated list of setting sources to load (user, project, local).').action(async () => {
+  program.command('agents').description('列出已配置的代理').option('--setting-sources <sources>', '要加载的设置源逗号分隔列表（user、project、local）。').action(async () => {
     const {
       agentsHandler
     } = await import('./cli/handlers/agents.js');
@@ -4294,7 +4294,7 @@ async function run(): Promise<CommanderCommand> {
     // Skip when tengu_auto_mode_config.enabled === 'disabled' (circuit breaker).
     // Reads from disk cache — GrowthBook isn't initialized at registration time.
     if (getAutoModeEnabledStateIfCached() !== 'disabled') {
-      const autoModeCmd = program.command('auto-mode').description('Inspect auto mode classifier configuration');
+      const autoModeCmd = program.command('auto-mode').description('检查自动模式分类器配置');
       autoModeCmd.command('defaults').description('Print the default auto mode environment, allow, and deny rules as JSON').action(async () => {
         const {
           autoModeDefaultsHandler
@@ -4309,7 +4309,7 @@ async function run(): Promise<CommanderCommand> {
         autoModeConfigHandler();
         process.exit(0);
       });
-      autoModeCmd.command('critique').description('Get AI feedback on your custom auto mode rules').option('--model <model>', 'Override which model is used').action(async options => {
+      autoModeCmd.command('critique').description('获取 AI 对你自定义自动模式规则的反馈').option('--model <model>', '覆盖使用的模型').action(async options => {
         const {
           autoModeCritiqueHandler
         } = await import('./cli/handlers/autoMode.js');
@@ -4400,7 +4400,7 @@ async function run(): Promise<CommanderCommand> {
   }
 
   // claude install
-  program.command('install [target]').description('Install Claude Code native build. Use [target] to specify version (stable, latest, or specific version)').option('--force', 'Force installation even if already installed').action(async (target: string | undefined, options: {
+  program.command('install [target]').description('Install Claude Code native build. Use [target] to specify version (stable, latest, or specific version)').option('--force', '即使已安装也强制安装').action(async (target: string | undefined, options: {
     force?: boolean;
   }) => {
     const {
@@ -4446,7 +4446,7 @@ Examples:
     });
     if ("external" === 'ant') {
       const taskCmd = program.command('task').description('[ANT-ONLY] Manage task list tasks');
-      taskCmd.command('create <subject>').description('Create a new task').option('-d, --description <text>', 'Task description').option('-l, --list <id>', 'Task list ID (defaults to "tasklist")').action(async (subject: string, opts: {
+      taskCmd.command('create <subject>').description('创建新任务').option('-d, --description <text>', '任务描述').option('-l, --list <id>', '任务列表 ID（默认为 "tasklist"）').action(async (subject: string, opts: {
         description?: string;
         list?: string;
       }) => {
@@ -4455,7 +4455,7 @@ Examples:
         } = await import('./cli/handlers/ant.js');
         await taskCreateHandler(subject, opts);
       });
-      taskCmd.command('list').description('List all tasks').option('-l, --list <id>', 'Task list ID (defaults to "tasklist")').option('--pending', 'Show only pending tasks').option('--json', 'Output as JSON').action(async (opts: {
+      taskCmd.command('list').description('列出所有任务').option('-l, --list <id>', '任务列表 ID（默认为 "tasklist"）').option('--pending', '仅显示待处理任务').option('--json', 'Output as JSON').action(async (opts: {
         list?: string;
         pending?: boolean;
         json?: boolean;
@@ -4465,7 +4465,7 @@ Examples:
         } = await import('./cli/handlers/ant.js');
         await taskListHandler(opts);
       });
-      taskCmd.command('get <id>').description('Get details of a task').option('-l, --list <id>', 'Task list ID (defaults to "tasklist")').action(async (id: string, opts: {
+      taskCmd.command('get <id>').description('获取任务详情').option('-l, --list <id>', '任务列表 ID（默认为 "tasklist"）').action(async (id: string, opts: {
         list?: string;
       }) => {
         const {
@@ -4473,7 +4473,7 @@ Examples:
         } = await import('./cli/handlers/ant.js');
         await taskGetHandler(id, opts);
       });
-      taskCmd.command('update <id>').description('Update a task').option('-l, --list <id>', 'Task list ID (defaults to "tasklist")').option('-s, --status <status>', `Set status (${TASK_STATUSES.join(', ')})`).option('--subject <text>', 'Update subject').option('-d, --description <text>', 'Update description').option('--owner <agentId>', 'Set owner').option('--clear-owner', 'Clear owner').action(async (id: string, opts: {
+      taskCmd.command('update <id>').description('更新任务').option('-l, --list <id>', '任务列表 ID（默认为 "tasklist"）').option('-s, --status <status>', `Set status (${TASK_STATUSES.join(', ')})`).option('--subject <text>', 'Update subject').option('-d, --description <text>', '更新描述').option('--owner <agentId>', 'Set owner').option('--clear-owner', 'Clear owner').action(async (id: string, opts: {
         list?: string;
         status?: string;
         subject?: string;
@@ -4486,7 +4486,7 @@ Examples:
         } = await import('./cli/handlers/ant.js');
         await taskUpdateHandler(id, opts);
       });
-      taskCmd.command('dir').description('Show the tasks directory path').option('-l, --list <id>', 'Task list ID (defaults to "tasklist")').action(async (opts: {
+      taskCmd.command('dir').description('显示任务目录路径').option('-l, --list <id>', '任务列表 ID（默认为 "tasklist"）').action(async (opts: {
         list?: string;
       }) => {
         const {
@@ -4499,7 +4499,7 @@ Examples:
     // claude completion <shell>
     program.command('completion <shell>', {
       hidden: true
-    }).description('Generate shell completion script (bash, zsh, or fish)').option('--output <file>', 'Write completion script directly to a file instead of stdout').action(async (shell: string, opts: {
+    }).description('生成 shell 补全脚本（bash、zsh 或 fish）').option('--output <file>', '将补全脚本直接写入文件而不是标准输出').action(async (shell: string, opts: {
       output?: string;
     }) => {
       const {

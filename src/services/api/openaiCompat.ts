@@ -244,7 +244,7 @@ export async function createOpenAICompatStream(
       responseText = ''
     }
     throw new Error(
-      `OpenAI compatible request failed with status ${response.status}${responseText ? `: ${responseText}` : ''}`,
+      `OpenAI 兼容请求失败，状态码 ${response.status}${responseText ? `: ${responseText}` : ''}`,
     )
   }
 
