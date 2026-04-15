@@ -80,7 +80,7 @@ export function createLSPServerManager(): LSPServerManager {
     } catch (error) {
       const err = error as Error
       logError(
-        new Error(`Failed to load LSP server configuration: ${err.message}`),
+        new Error(`加载 LSP 服务器配置失败: ${err.message}`),
       )
       throw error
     }
@@ -91,7 +91,7 @@ export function createLSPServerManager(): LSPServerManager {
         // Validate config before using it
         if (!config.command) {
           throw new Error(
-            `Server ${serverName} missing required 'command' field`,
+            `服务器 ${serverName} 缺少必填字段 'command'`,
           )
         }
         if (
@@ -99,7 +99,7 @@ export function createLSPServerManager(): LSPServerManager {
           Object.keys(config.extensionToLanguage).length === 0
         ) {
           throw new Error(
-            `Server ${serverName} missing required 'extensionToLanguage' field`,
+            `服务器 ${serverName} 缺少必填字段 'extensionToLanguage'`,
           )
         }
 
@@ -137,14 +137,14 @@ export function createLSPServerManager(): LSPServerManager {
         const err = error as Error
         logError(
           new Error(
-            `Failed to initialize LSP server ${serverName}: ${err.message}`,
+            `初始化 LSP 服务器 ${serverName} 失败: ${err.message}`,
           ),
         )
         // Continue with other servers - don't fail entire initialization
       }
     }
 
-    logForDebugging(`LSP manager initialized with ${servers.size} servers`)
+    logForDebugging(`LSP 管理器初始化完成，包含 ${servers.size} 个服务器`)
   }
 
   /**
@@ -301,7 +301,7 @@ export function createLSPServerManager(): LSPServerManager {
       )
     } catch (error) {
       const err = new Error(
-        `Failed to sync file open ${filePath}: ${errorMessage(error)}`,
+        `同步打开文件 ${filePath} 失败: ${errorMessage(error)}`,
       )
       logError(err)
       // Re-throw to propagate error to caller
@@ -334,7 +334,7 @@ export function createLSPServerManager(): LSPServerManager {
       logForDebugging(`LSP: Sent didChange for ${filePath}`)
     } catch (error) {
       const err = new Error(
-        `Failed to sync file change ${filePath}: ${errorMessage(error)}`,
+        `同步文件更改 ${filePath} 失败: ${errorMessage(error)}`,
       )
       logError(err)
       // Re-throw to propagate error to caller
@@ -359,7 +359,7 @@ export function createLSPServerManager(): LSPServerManager {
       logForDebugging(`LSP: Sent didSave for ${filePath}`)
     } catch (error) {
       const err = new Error(
-        `Failed to sync file save ${filePath}: ${errorMessage(error)}`,
+        `同步保存文件 ${filePath} 失败: ${errorMessage(error)}`,
       )
       logError(err)
       // Re-throw to propagate error to caller
@@ -391,7 +391,7 @@ export function createLSPServerManager(): LSPServerManager {
       logForDebugging(`LSP: Sent didClose for ${filePath}`)
     } catch (error) {
       const err = new Error(
-        `Failed to sync file close ${filePath}: ${errorMessage(error)}`,
+        `同步关闭文件 ${filePath} 失败: ${errorMessage(error)}`,
       )
       logError(err)
       // Re-throw to propagate error to caller

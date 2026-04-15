@@ -129,7 +129,7 @@ export class SessionsWebSocket {
 
       ws.addEventListener('open', () => {
         logForDebugging(
-          '[SessionsWebSocket] Connection opened, authenticated via headers',
+          '[SessionsWebSocket] 连接已打开，通过 headers 完成认证',
         )
         this.state = 'connected'
         this.reconnectAttempts = 0
@@ -172,7 +172,7 @@ export class SessionsWebSocket {
 
       ws.on('open', () => {
         logForDebugging(
-          '[SessionsWebSocket] Connection opened, authenticated via headers',
+          '[SessionsWebSocket] 连接已打开，通过 headers 完成认证',
         )
         // Auth is handled via headers, so we're immediately connected
         this.state = 'connected'
@@ -246,7 +246,7 @@ export class SessionsWebSocket {
     // Permanent codes: stop reconnecting — server has definitively ended the session
     if (PERMANENT_CLOSE_CODES.has(closeCode)) {
       logForDebugging(
-        `[SessionsWebSocket] Permanent close code ${closeCode}, not reconnecting`,
+        `[SessionsWebSocket] 永久关闭码 ${closeCode}，不再重连`,
       )
       this.callbacks.onClose?.()
       return
@@ -259,7 +259,7 @@ export class SessionsWebSocket {
       this.sessionNotFoundRetries++
       if (this.sessionNotFoundRetries > MAX_SESSION_NOT_FOUND_RETRIES) {
         logForDebugging(
-          `[SessionsWebSocket] 4001 retry budget exhausted (${MAX_SESSION_NOT_FOUND_RETRIES}), not reconnecting`,
+          `[SessionsWebSocket] 4001 重试次数已达上限 (${MAX_SESSION_NOT_FOUND_RETRIES})，不再重连`,
         )
         this.callbacks.onClose?.()
         return

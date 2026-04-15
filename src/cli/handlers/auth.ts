@@ -144,7 +144,7 @@ export async function authLogin({
       process.stderr.write(
         '使用 CLAUDE_CODE_OAUTH_REFRESH_TOKEN 时需要设置 CLAUDE_CODE_OAUTH_SCOPES。\n' +
           '请将其设置为刷新令牌授予时对应的空格分隔的作用域\n' +
-          '（例如 "user:inference" 或 "user:profile user:inference user:sessions:claude_code user:mcp_servers"）。\n',
+          '（例如 "user:inference" 或 "user:profile user:inference user:sessions:claude_code user:mcp_个服务器"）。\n',
       )
       process.exit(1)
     }

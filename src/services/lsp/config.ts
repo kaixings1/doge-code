@@ -70,7 +70,7 @@ export async function getAllLspServers(): Promise<{
     // into why plugin loading fails to improve the feature.
     logError(toError(error))
 
-    logForDebugging(`Error loading LSP servers: ${errorMessage(error)}`)
+    logForDebugging(`加载 LSP 服务器配置失败: ${errorMessage(error)}`)
   }
 
   return {

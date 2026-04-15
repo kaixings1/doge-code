@@ -41,17 +41,15 @@ export type PermissionPromptTool = Tool<
   ReturnType<typeof permissionToolOutputSchema>
 >
 
-// Small cache size for ask operations which typically access few files
-// during permission prompts or limited tool operations
+// ask 操作使用较小的缓存大小，通常在权限提示或受限工具操作期间仅访问少量文件
 const ASK_READ_FILE_STATE_CACHE_SIZE = 10
 
 /**
- * Checks if the result should be considered successful based on the last message.
- * Returns true if:
- * - Last message is assistant with text/thinking content
- * - Last message is user with only tool_result blocks
- * - Last message is the user prompt but the API completed with end_turn
- *   (model chose to emit no content blocks)
+ * 根据最后一条消息判断结果是否应视为成功。
+ * 以下情况返回 true：
+ * - 最后一条消息是包含文本或思考内容的助手消息
+ * - 最后一条消息是仅含 tool_result 块的用户消息
+ * - 最后一条消息是用户提示，但 API 以 end_turn 完成（模型选择不输出任何内容块）
  */
 export function isResultSuccessful(
   message: Message | undefined,
@@ -69,7 +67,7 @@ export function isResultSuccessful(
   }
 
   if (message.type === 'user') {
-    // Check if all content blocks are tool_result type
+    // 检查所有内容块是否均为 tool_result 类型
     const content = message.message.content
     if (
       Array.isArray(content) &&
@@ -80,21 +78,16 @@ export function isResultSuccessful(
     }
   }
 
-  // Carve-out: API completed (message_delta set stop_reason) but yielded
-  // no assistant content — last(messages) is still this turn's prompt.
-  // claude.ts:2026 recognizes end_turn-with-zero-content-blocks as
-  // legitimate and passes through without throwing. Observed on
-  // task_notification drain turns: model returns stop_reason=end_turn,
-  // outputTokens=4, textContentLength=0 — it saw the subagent result
-  // and decided nothing needed saying. Without this, QueryEngine emits
-  // error_during_execution with errors[] = the entire process's
-  // accumulated logError() buffer. Covers both string-content and
-  // text-block-content user prompts, and any other non-passing shape.
+  // 例外情况：API 已完成（message_delta 设置了 stop_reason）但未产出助手内容 —
+  // last(messages) 仍是本轮次的提示。claude.ts:2026 将 end_turn-with-zero-content-blocks 视为合法并通过，不抛出错误。
+  // 在 task_notification 排空轮次中观察到：模型返回 stop_reason=end_turn, outputTokens=4, textContentLength=0 —
+  // 它看到了子代理结果并判断无需多言。若无此处理，QueryEngine 会发出 error_during_execution，
+  // 其 errors[] 为整个进程累积的 logError() 缓冲区。涵盖字符串内容及文本块内容的用户提示，以及任何其他未通过的情况。
   return stopReason === 'end_turn'
 }
 
-// Track last sent time for tool progress messages per tool use ID
-// Keep only the last 100 entries to prevent unbounded growth
+// 按工具使用 ID 跟踪工具进度消息的最后发送时间
+// 仅保留最后 100 条记录以防止无限制增长
 const MAX_TOOL_PROGRESS_TRACKING_ENTRIES = 100
 const TOOL_PROGRESS_THROTTLE_MS = 30000
 const toolProgressLastSentTime = new Map<string, number>()
@@ -103,7 +96,7 @@ export function* normalizeMessage(message: Message): Generator<SDKMessage> {
   switch (message.type) {
     case 'assistant':
       for (const _ of normalizeMessages([message])) {
-        // Skip empty messages (e.g., "(no content)") that shouldn't be output to SDK
+        // 跳过不应输出到 SDK 的空消息（例如 "(无内容)"）
         if (!isNotEmptyMessage(_)) {
           continue
         }
@@ -125,7 +118,7 @@ export function* normalizeMessage(message: Message): Generator<SDKMessage> {
         for (const _ of normalizeMessages([message.data.message])) {
           switch (_.type) {
             case 'assistant':
-              // Skip empty messages (e.g., "(no content)") that shouldn't be output to SDK
+              // 跳过不应输出到 SDK 的空消息（例如 "(无内容)"）
               if (!isNotEmptyMessage(_)) {
                 break
               }
@@ -158,8 +151,8 @@ export function* normalizeMessage(message: Message): Generator<SDKMessage> {
         message.data.type === 'bash_progress' ||
         message.data.type === 'powershell_progress'
       ) {
-        // Filter bash progress to send only one per minute
-        // Only emit for Claude Code Remote for now
+        // 过滤 bash 进度，每分钟最多发送一次
+        // 目前仅针对 Claude Code Remote 发出
         if (
           !isEnvTruthy(process.env.CLAUDE_CODE_REMOTE) &&
           !process.env.CLAUDE_CODE_CONTAINER_ID
@@ -167,15 +160,15 @@ export function* normalizeMessage(message: Message): Generator<SDKMessage> {
           break
         }
 
-        // Use parentToolUseID as the key since toolUseID changes for each progress message
+        // 使用 parentToolUseID 作为键，因为 toolUseID 在每次进度消息中都会变化
         const trackingKey = message.parentToolUseID
         const now = Date.now()
         const lastSent = toolProgressLastSentTime.get(trackingKey) || 0
         const timeSinceLastSent = now - lastSent
 
-        // Send if at least 30 seconds have passed since last update
+        // 距离上次更新至少 30 秒才发送
         if (timeSinceLastSent >= TOOL_PROGRESS_THROTTLE_MS) {
-          // Remove oldest entry if we're at capacity (LRU eviction)
+          // 若容量已满，移除最旧的条目（LRU 驱逐）
           if (
             toolProgressLastSentTime.size >= MAX_TOOL_PROGRESS_TRACKING_ENTRIES
           ) {
@@ -217,7 +210,7 @@ export function* normalizeMessage(message: Message): Generator<SDKMessage> {
       }
       return
     default:
-    // yield nothing
+    // 不产出任何内容
   }
 }
 
@@ -258,14 +251,14 @@ export async function* handleOrphanedPermission(
     return
   }
 
-  // Create ToolUseBlock with the updated input if permission was allowed
+  // 若权限被允许，则使用更新后的输入创建 ToolUseBlock
   let finalInput = toolInput
   if (permissionResult.behavior === 'allow') {
     if (permissionResult.updatedInput !== undefined) {
       finalInput = permissionResult.updatedInput
     } else {
       logForDebugging(
-        `Orphaned permission for ${toolName}: updatedInput is undefined, falling back to original tool input`,
+        `${toolName} 的孤立权限：updatedInput 未定义，回退到原始工具输入`,
         { level: 'warn' },
       )
     }
@@ -283,19 +276,15 @@ export async function* handleOrphanedPermission(
     },
   })
 
-  // Add the assistant message with tool_use to messages BEFORE executing
-  // so the conversation history is complete (tool_use -> tool_result).
+  // 在执行前将包含 tool_use 的助手消息添加到 messages 中，以便对话历史完整（tool_use -> tool_result）。
   //
-  // On CCR resume, mutableMessages is seeded from the transcript and may already
-  // contain this tool_use. Pushing again would make normalizeMessagesForAPI merge
-  // same-ID assistants (concatenating content) and produce a duplicate tool_use
-  // ID, which the API rejects with "tool_use ids must be unique".
+  // 在 CCR 恢复时，mutableMessages 从记录中初始化，可能已包含此 tool_use。再次压入会导致 normalizeMessagesForAPI
+  // 合并相同 ID 的助手消息（拼接内容）并产生重复的 tool_use ID，API 会因 "tool_use ids must be unique" 而拒绝。
   //
-  // Check for the specific tool_use_id rather than message.id: streaming yields
-  // each content block as a separate AssistantMessage sharing one message.id, so
-  // a [text, tool_use] response lands as two entries. filterUnresolvedToolUses may
-  // strip the tool_use entry but keep the text one; an id-based check would then
-  // wrongly skip the push while runTools below still executes, orphaning the result.
+  // 检查特定的 tool_use_id 而非 message.id：流式输出将每个内容块作为单独的 AssistantMessage 产出，
+  // 它们共享同一个 message.id，因此 [text, tool_use] 响应会以两条记录形式存在。filterUnresolvedToolUses
+  // 可能移除 tool_use 条目但保留文本条目；基于 id 的检查此时会错误地跳过压入，而 runTools 下方仍会执行，
+  // 导致结果成为孤儿。
   const alreadyPresent = mutableMessages.some(
     m =>
       m.type === 'assistant' &&
@@ -318,7 +307,7 @@ export async function* handleOrphanedPermission(
   } as SDKMessage
   yield sdkAssistantMessage
 
-  // Execute the tool - errors are handled internally by runToolUse
+  // 执行工具 - 错误由 runToolUse 内部处理
   for await (const update of runTools(
     [finalToolUseBlock],
     [assistantMessage],
@@ -342,7 +331,7 @@ export async function* handleOrphanedPermission(
   }
 }
 
-// Create a function to extract read files from messages
+// 从消息中提取读取文件的函数
 export function extractReadFilesFromMessages(
   messages: Message[],
   cwd: string,
@@ -350,7 +339,7 @@ export function extractReadFilesFromMessages(
 ): FileStateCache {
   const cache = createFileStateCacheWithSizeLimit(maxSize)
 
-  // First pass: find all FileReadTool/FileWriteTool/FileEditTool uses in assistant messages
+  // 第一遍：在助手消息中查找所有 FileReadTool/FileWriteTool/FileEditTool 的使用
   const fileReadToolUseIds = new Map<string, string>() // toolUseId -> filePath
   const fileWriteToolUseIds = new Map<
     string,
@@ -368,15 +357,15 @@ export function extractReadFilesFromMessages(
           content.type === 'tool_use' &&
           content.name === FILE_READ_TOOL_NAME
         ) {
-          // Extract file_path from the tool use input
+          // 从工具使用输入中提取 file_path
           const input = content.input as FileReadInput | undefined
-          // Ranged reads are not added to the cache.
+          // 范围读取不加入缓存。
           if (
             input?.file_path &&
             input?.offset === undefined &&
             input?.limit === undefined
           ) {
-            // Normalize to absolute path for consistent cache lookups
+            // 规范化为绝对路径以便缓存查找一致
             const absolutePath = expandPath(input.file_path, cwd)
             fileReadToolUseIds.set(content.id, absolutePath)
           }
@@ -384,12 +373,12 @@ export function extractReadFilesFromMessages(
           content.type === 'tool_use' &&
           content.name === FILE_WRITE_TOOL_NAME
         ) {
-          // Extract file_path and content from the Write tool use input
+          // 从 Write 工具使用输入中提取 file_path 和 content
           const input = content.input as
             | { file_path?: string; content?: string }
             | undefined
           if (input?.file_path && input?.content) {
-            // Normalize to absolute path for consistent cache lookups
+            // 规范化为绝对路径以便缓存查找一致
             const absolutePath = expandPath(input.file_path, cwd)
             fileWriteToolUseIds.set(content.id, {
               filePath: absolutePath,
@@ -400,8 +389,8 @@ export function extractReadFilesFromMessages(
           content.type === 'tool_use' &&
           content.name === FILE_EDIT_TOOL_NAME
         ) {
-          // Edit's input has old_string/new_string, not the resulting content.
-          // Track the path so the second pass can read current disk state.
+          // Edit 的输入包含 old_string/new_string，而非最终内容。
+          // 跟踪路径，以便第二遍读取当前磁盘状态。
           const input = content.input as { file_path?: string } | undefined
           if (input?.file_path) {
             const absolutePath = expandPath(input.file_path, cwd)
@@ -412,36 +401,34 @@ export function extractReadFilesFromMessages(
     }
   }
 
-  // Second pass: find corresponding tool results and extract content
+  // 第二遍：查找对应的工具结果并提取内容
   for (const message of messages) {
     if (message.type === 'user' && Array.isArray(message.message.content)) {
       for (const content of message.message.content) {
         if (content.type === 'tool_result' && content.tool_use_id) {
-          // Handle Read tool results
+          // 处理 Read 工具结果
           const readFilePath = fileReadToolUseIds.get(content.tool_use_id)
           if (
             readFilePath &&
             typeof content.content === 'string' &&
-            // Dedup stubs contain no file content — the earlier real Read
-            // already cached it. Chronological last-wins would otherwise
-            // overwrite the real entry with stub text.
+            // 去重存根不包含文件内容 — 更早的真实 Read 已缓存。按时间顺序最后覆盖会错误地用存根文本覆盖真实条目。
             !content.content.startsWith(FILE_UNCHANGED_STUB)
           ) {
-            // Remove system-reminder blocks from the content
+            // 从内容中移除系统提醒块
             const processedContent = content.content.replace(
               /<system-reminder>[\s\S]*?<\/system-reminder>/g,
               '',
             )
 
-            // Extract the actual file content from the tool result
-            // Tool results for text files contain line numbers, we need to strip those
+            // 从工具结果中提取实际文件内容
+            // 文本文件的工具结果包含行号，需要去除
             const fileContent = processedContent
               .split('\n')
               .map(stripLineNumberPrefix)
               .join('\n')
               .trim()
 
-            // Cache the file content with the message timestamp
+            // 使用消息时间戳缓存文件内容
             if (message.timestamp) {
               const timestamp = new Date(message.timestamp).getTime()
               cache.set(readFilePath, {
@@ -453,7 +440,7 @@ export function extractReadFilesFromMessages(
             }
           }
 
-          // Handle Write tool results - use content from the tool input
+          // 处理 Write 工具结果 - 使用工具输入中的内容
           const writeToolData = fileWriteToolUseIds.get(content.tool_use_id)
           if (writeToolData && message.timestamp) {
             const timestamp = new Date(message.timestamp).getTime()
@@ -465,15 +452,11 @@ export function extractReadFilesFromMessages(
             })
           }
 
-          // Handle Edit tool results — post-edit content isn't in the
-          // tool_use input (only old_string/new_string) nor fully in the
-          // result (only a snippet). Read from disk now, using actual mtime
-          // so getChangedFiles's mtime check passes on the next turn.
+          // 处理 Edit 工具结果 — 编辑后的内容既不在 tool_use 输入中（仅有 old_string/new_string），
+          // 也不完全在结果中（仅含片段）。从磁盘读取，使用实际 mtime，以便下一轮次 getChangedFiles 的 mtime 检查通过。
           //
-          // Callers seed the cache once at process start (print.ts --resume,
-          // Cowork cold-restart per turn), so disk content at extraction time
-          // IS the post-edit state. No dedup: processing every Edit preserves
-          // last-wins semantics when Read/Write interleave (Edit→Read→Edit).
+          // 调用方在进程启动时初始化一次缓存（print.ts --resume、Cowork 每轮次冷重启），
+          // 因此提取时的磁盘内容即为编辑后的状态。无需去重：处理每个 Edit 可保持 Read/Write 交错时的最后覆盖语义。
           const editFilePath = fileEditToolUseIds.get(content.tool_use_id)
           if (editFilePath && content.is_error !== true) {
             try {
@@ -489,7 +472,7 @@ export function extractReadFilesFromMessages(
               if (!isFsInaccessible(e)) {
                 throw e
               }
-              // File deleted or inaccessible since the Edit — skip
+              // 文件自 Edit 后被删除或无法访问 — 跳过
             }
           }
         }
@@ -501,8 +484,8 @@ export function extractReadFilesFromMessages(
 }
 
 /**
- * Extract the top-level CLI tools used in BashTool calls from message history.
- * Returns a deduplicated set of command names (e.g. 'vercel', 'aws', 'git').
+ * 从消息历史中提取 BashTool 调用所使用的顶层 CLI 工具名称。
+ * 返回去重后的命令名称集合（例如 'vercel'、'aws'、'git'）。
  */
 export function extractBashToolsFromMessages(messages: Message[]): Set<string> {
   const tools = new Set<string>()
@@ -536,9 +519,8 @@ export function extractBashToolsFromMessages(messages: Message[]): Set<string> {
 const STRIPPED_COMMANDS = new Set(['sudo'])
 
 /**
- * Extract the actual CLI name from a bash command string, skipping
- * env var assignments (e.g. `FOO=bar vercel` → `vercel`) and prefixes
- * in STRIPPED_COMMANDS.
+ * 从 bash 命令字符串中提取实际的 CLI 名称，跳过环境变量赋值（如 `FOO=bar vercel` → `vercel`）
+ * 以及 STRIPPED_COMMANDS 中的前缀。
  */
 function extractCliName(command: string | undefined): string | undefined {
   if (!command) return undefined

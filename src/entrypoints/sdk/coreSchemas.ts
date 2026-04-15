@@ -518,8 +518,8 @@ export const StopHookInputSchema = lazySchema(() =>
         .string()
         .optional()
         .describe(
-          'Text content of the last assistant message before stopping. ' +
-            'Avoids the need to read and parse the transcript file.',
+          '停止前最后一条助手消息的文本内容。' +
+            '避免需要读取和解析转录文件。',
         ),
     }),
   ),
@@ -558,8 +558,8 @@ export const SubagentStopHookInputSchema = lazySchema(() =>
         .string()
         .optional()
         .describe(
-          'Text content of the last assistant message before stopping. ' +
-            'Avoids the need to read and parse the transcript file.',
+          '停止前最后一条助手消息的文本内容。' +
+            '避免需要读取和解析转录文件。',
         ),
     }),
   ),
@@ -582,7 +582,7 @@ export const PostCompactHookInputSchema = lazySchema(() =>
       trigger: z.enum(['manual', 'auto']),
       compact_summary: z
         .string()
-        .describe('The conversation summary produced by compaction'),
+        .describe('压缩产生的对话摘要'),
     }),
   ),
 )
@@ -981,7 +981,7 @@ export const PromptRequestOptionSchema = lazySchema(() =>
     description: z
       .string()
       .optional()
-      .describe('Optional description shown below the label'),
+      .describe('标签下方显示的可选描述'),
   }),
 )
 
@@ -990,12 +990,12 @@ export const PromptRequestSchema = lazySchema(() =>
     prompt: z
       .string()
       .describe(
-        'Request ID. Presence of this key marks the line as a prompt request.',
+        '请求 ID。此键的存在将此行标记为提示请求。',
       ),
-    message: z.string().describe('The prompt message to display to the user'),
+    message: z.string().describe('向用户显示的提示消息'),
     options: z
       .array(PromptRequestOptionSchema())
-      .describe('Available options for the user to choose from'),
+      .describe('供用户选择的可用选项'),
   }),
 )
 
@@ -1003,8 +1003,8 @@ export const PromptResponseSchema = lazySchema(() =>
   z.object({
     prompt_response: z
       .string()
-      .describe('The request ID from the corresponding prompt request'),
-    selected: z.string().describe('The key of the selected option'),
+      .describe('对应提示请求中的请求 ID'),
+    selected: z.string().describe('所选选项的键'),
   }),
 )
 
@@ -1015,66 +1015,66 @@ export const PromptResponseSchema = lazySchema(() =>
 export const SlashCommandSchema = lazySchema(() =>
   z
     .object({
-      name: z.string().describe('Skill name (without the leading slash)'),
-      description: z.string().describe('Description of what the skill does'),
+      name: z.string().describe('技能名称（不带前导斜杠）'),
+      description: z.string().describe('技能的作用描述'),
       argumentHint: z
         .string()
-        .describe('Hint for skill arguments (e.g., "<file>")'),
+        .describe('技能参数提示（例如 "<file>"）'),
     })
     .describe(
-      'Information about an available skill (invoked via /command syntax).',
+      '可用技能的信息（通过 /command 语法调用）。',
     ),
 )
 
 export const AgentInfoSchema = lazySchema(() =>
   z
     .object({
-      name: z.string().describe('Agent type identifier (e.g., "Explore")'),
-      description: z.string().describe('Description of when to use this agent'),
+      name: z.string().describe('代理类型标识符（例如 "Explore"）'),
+      description: z.string().describe('何时使用此代理的描述'),
       model: z
         .string()
         .optional()
         .describe(
-          "Model alias this agent uses. If omitted, inherits the parent's model",
+          '此代理使用的模型别名。如果省略，则继承父级的模型',
         ),
     })
     .describe(
-      'Information about an available subagent that can be invoked via the Task tool.',
+      '可通过 Task 工具调用的可用子代理的信息。',
     ),
 )
 
 export const ModelInfoSchema = lazySchema(() =>
   z
     .object({
-      value: z.string().describe('Model identifier to use in API calls'),
-      displayName: z.string().describe('Human-readable display name'),
+      value: z.string().describe('API 调用中使用的模型标识符'),
+      displayName: z.string().describe('人类可读的显示名称'),
       description: z
         .string()
-        .describe("Description of the model's capabilities"),
+        .describe('模型能力的描述'),
       supportsEffort: z
         .boolean()
         .optional()
-        .describe('Whether this model supports effort levels'),
+        .describe('此模型是否支持努力程度设置'),
       supportedEffortLevels: z
         .array(z.enum(['low', 'medium', 'high', 'max']))
         .optional()
-        .describe('Available effort levels for this model'),
+        .describe('此模型的可用努力程度'),
       supportsAdaptiveThinking: z
         .boolean()
         .optional()
         .describe(
-          'Whether this model supports adaptive thinking (Claude decides when and how much to think)',
+          '此模型是否支持自适应思考（Claude 决定何时以及思考多少）',
         ),
       supportsFastMode: z
         .boolean()
         .optional()
-        .describe('Whether this model supports fast mode'),
+        .describe('此模型是否支持快速模式'),
       supportsAutoMode: z
         .boolean()
         .optional()
-        .describe('Whether this model supports auto mode'),
+        .describe('此模型是否支持自动模式'),
     })
-    .describe('Information about an available model.'),
+    .describe('可用模型的信息。'),
 )
 
 export const AccountInfoSchema = lazySchema(() =>
@@ -1089,10 +1089,10 @@ export const AccountInfoSchema = lazySchema(() =>
         .enum(['firstParty', 'bedrock', 'vertex', 'foundry'])
         .optional()
         .describe(
-          'Active API backend. Anthropic OAuth login only applies when "firstParty"; for 3P providers the other fields are absent and auth is external (AWS creds, gcloud ADC, etc.).',
+          '当前使用的 API 后端。仅在 "firstParty" 时使用 Anthropic OAuth 登录；对于第三方提供商，其他字段不存在且身份验证是外部的（AWS 凭证、gcloud ADC 等）。',
         ),
     })
-    .describe("Information about the logged in user's account."),
+    .describe('已登录用户账户的信息。'),
 )
 
 // ============================================================================
@@ -1111,38 +1111,38 @@ export const AgentDefinitionSchema = lazySchema(() =>
     .object({
       description: z
         .string()
-        .describe('Natural language description of when to use this agent'),
+        .describe('何时使用此代理的自然语言描述'),
       tools: z
         .array(z.string())
         .optional()
         .describe(
-          'Array of allowed tool names. If omitted, inherits all tools from parent',
+          '允许的工具名称数组。如果省略，则继承父级的所有工具',
         ),
       disallowedTools: z
         .array(z.string())
         .optional()
-        .describe('Array of tool names to explicitly disallow for this agent'),
-      prompt: z.string().describe("The agent's system prompt"),
+        .describe('明确禁止此代理使用的工具名称数组'),
+      prompt: z.string().describe('代理的系统提示词'),
       model: z
         .string()
         .optional()
         .describe(
-          "Model alias (e.g. 'sonnet', 'opus', 'haiku') or full model ID (e.g. 'claude-opus-4-5'). If omitted or 'inherit', uses the main model",
+          "模型别名（例如 'sonnet'、'opus'、'haiku'）或完整模型 ID（例如 'claude-opus-4-5'）。如果省略或为 'inherit'，则使用主模型",
         ),
       mcpServers: z.array(AgentMcpServerSpecSchema()).optional(),
       criticalSystemReminder_EXPERIMENTAL: z
         .string()
         .optional()
-        .describe('Experimental: Critical reminder added to system prompt'),
+        .describe('实验性：添加到系统提示词中的关键提醒'),
       skills: z
         .array(z.string())
         .optional()
-        .describe('Array of skill names to preload into the agent context'),
+        .describe('要预加载到代理上下文中的技能名称数组'),
       initialPrompt: z
         .string()
         .optional()
         .describe(
-          'Auto-submitted as the first user turn when this agent is the main thread agent. Slash commands are processed. Prepended to any user-provided prompt.',
+          '当此代理作为主线程代理时，自动作为第一个用户回合提交。斜杠命令会被处理。添加到用户提供的提示词之前。',
         ),
       maxTurns: z
         .number()
@@ -1150,34 +1150,34 @@ export const AgentDefinitionSchema = lazySchema(() =>
         .positive()
         .optional()
         .describe(
-          'Maximum number of agentic turns (API round-trips) before stopping',
+          '停止前的最大代理轮次（API 往返次数）',
         ),
       background: z
         .boolean()
         .optional()
         .describe(
-          'Run this agent as a background task (non-blocking, fire-and-forget) when invoked',
+          '调用时将此代理作为后台任务运行（非阻塞、即发即忘）',
         ),
       memory: z
         .enum(['user', 'project', 'local'])
         .optional()
         .describe(
-          "Scope for auto-loading agent memory files. 'user' - ~/.claude/agent-memory/<agentType>/, 'project' - .claude/agent-memory/<agentType>/, 'local' - .claude/agent-memory-local/<agentType>/",
+          "自动加载代理内存文件的作用域。'user' - ~/.claude/agent-memory/<agentType>/，'project' - .claude/agent-memory/<agentType>/，'local' - .claude/agent-memory-local/<agentType>/",
         ),
       effort: z
         .union([z.enum(['low', 'medium', 'high', 'max']), z.number().int()])
         .optional()
         .describe(
-          'Reasoning effort level for this agent. Either a named level or an integer',
+          '此代理的推理努力程度。可以是命名级别或整数',
         ),
       permissionMode: PermissionModeSchema()
         .optional()
         .describe(
-          'Permission mode controlling how tool executions are handled',
+          '控制工具执行处理方式的权限模式',
         ),
     })
     .describe(
-      'Definition for a custom subagent that can be invoked via the Agent tool.',
+      '可通过 Agent 工具调用的自定义子代理的定义。',
     ),
 )
 
@@ -1189,10 +1189,10 @@ export const SettingSourceSchema = lazySchema(() =>
   z
     .enum(['user', 'project', 'local'])
     .describe(
-      'Source for loading filesystem-based settings. ' +
-        "'user' - Global user settings (~/.claude/settings.json). " +
-        "'project' - Project settings (.claude/settings.json). " +
-        "'local' - Local settings (.claude/settings.local.json).",
+      '用于加载基于文件系统设置的来源。' +
+        "'user' - 全局用户设置（~/.claude/settings.json）。" +
+        "'project' - 项目设置（.claude/settings.json）。" +
+        "'local' - 本地设置（.claude/settings.local.json）。",
     ),
 )
 
@@ -1201,12 +1201,12 @@ export const SdkPluginConfigSchema = lazySchema(() =>
     .object({
       type: z
         .literal('local')
-        .describe("Plugin type. Currently only 'local' is supported"),
+        .describe("插件类型。目前仅支持 'local'"),
       path: z
         .string()
-        .describe('Absolute or relative path to the plugin directory'),
+        .describe('插件目录的绝对或相对路径'),
     })
-    .describe('Configuration for loading a plugin.'),
+    .describe('用于加载插件的配置。'),
 )
 
 // ============================================================================
@@ -1222,7 +1222,7 @@ export const RewindFilesResultSchema = lazySchema(() =>
       insertions: z.number().optional(),
       deletions: z.number().optional(),
     })
-    .describe('Result of a rewindFiles operation.'),
+    .describe('rewindFiles 操作的结果。'),
 )
 
 // ============================================================================
@@ -1362,7 +1362,7 @@ export const SDKRateLimitEventSchema = lazySchema(() =>
       uuid: UUIDPlaceholder(),
       session_id: z.string(),
     })
-    .describe('Rate limit event emitted when rate limit info changes.'),
+    .describe('速率限制信息变化时发出的速率限制事件。'),
 )
 
 export const SDKStreamlinedTextMessageSchema = lazySchema(() =>
@@ -1371,12 +1371,12 @@ export const SDKStreamlinedTextMessageSchema = lazySchema(() =>
       type: z.literal('streamlined_text'),
       text: z
         .string()
-        .describe('Text content preserved from the assistant message'),
+        .describe('从助手消息保留的文本内容'),
       session_id: z.string(),
       uuid: UUIDPlaceholder(),
     })
     .describe(
-      '@internal Streamlined text message - replaces SDKAssistantMessage in streamlined output. Text content preserved, thinking and tool_use blocks removed.',
+      '@internal 精简文本消息 — 在精简输出中替代 SDKAssistantMessage。保留文本内容，移除思考和 tool_use 块。',
     ),
 )
 
@@ -1386,12 +1386,12 @@ export const SDKStreamlinedToolUseSummaryMessageSchema = lazySchema(() =>
       type: z.literal('streamlined_tool_use_summary'),
       tool_summary: z
         .string()
-        .describe('Summary of tool calls (e.g., "Read 2 files, wrote 1 file")'),
+        .describe('工具调用摘要（例如 "读取 2 个文件，写入 1 个文件"）'),
       session_id: z.string(),
       uuid: UUIDPlaceholder(),
     })
     .describe(
-      '@internal Streamlined tool use summary - replaces tool_use blocks in streamlined output with a cumulative summary string.',
+      '@internal 精简工具使用摘要 — 在精简输出中用累积摘要字符串替代 tool_use 块。',
     ),
 )
 
@@ -1518,10 +1518,10 @@ export const SDKCompactBoundaryMessageSchema = lazySchema(() =>
         .optional()
         .describe(
           'Relink info for messagesToKeep. Loaders splice the preserved ' +
-            'segment at anchor_uuid (summary for suffix-preserving, ' +
-            'boundary for prefix-preserving partial compact) so resume ' +
-            'includes preserved content. Unset when compaction summarizes ' +
-            'everything (no messagesToKeep).',
+            '锚定在 anchor_uuid 的段（保留后缀的摘要，' +
+            '保留前缀的部分压缩的边界），以便恢复 ' +
+            '包含保留的内容。当压缩总结 ' +
+            '所有内容时未设置（没有 messagesToKeep）。',
         ),
     }),
     uuid: UUIDPlaceholder(),
@@ -1811,43 +1811,43 @@ export const SDKPromptSuggestionMessageSchema = lazySchema(() =>
 export const SDKSessionInfoSchema = lazySchema(() =>
   z
     .object({
-      sessionId: z.string().describe('Unique session identifier (UUID).'),
+      sessionId: z.string().describe('唯一会话标识符（UUID）。'),
       summary: z
         .string()
         .describe(
-          'Display title for the session: custom title, auto-generated summary, or first prompt.',
+          '会话的显示标题：自定义标题、自动生成的摘要或首个提示。',
         ),
       lastModified: z
         .number()
-        .describe('Last modified time in milliseconds since epoch.'),
+        .describe('最后修改时间（自纪元以来的毫秒数）。'),
       fileSize: z
         .number()
         .optional()
         .describe(
-          'File size in bytes. Only populated for local JSONL storage.',
+          '文件大小（字节）。仅为本地 JSONL 存储时填充。',
         ),
       customTitle: z
         .string()
         .optional()
-        .describe('User-set session title via /rename.'),
+        .describe('用户通过 /rename 设置的会话标题。'),
       firstPrompt: z
         .string()
         .optional()
-        .describe('First meaningful user prompt in the session.'),
+        .describe('会话中首个有意义的用户提示。'),
       gitBranch: z
         .string()
         .optional()
-        .describe('Git branch at the end of the session.'),
-      cwd: z.string().optional().describe('Working directory for the session.'),
-      tag: z.string().optional().describe('User-set session tag.'),
+        .describe('会话结束时的 Git 分支。'),
+      cwd: z.string().optional().describe('会话的工作目录。'),
+      tag: z.string().optional().describe('用户设置的会话标签。'),
       createdAt: z
         .number()
         .optional()
         .describe(
-          "Creation time in milliseconds since epoch, extracted from the first entry's timestamp.",
+          '创建时间（自纪元以来的毫秒数），从首个条目的时间戳提取。',
         ),
     })
-    .describe('Session metadata returned by listSessions and getSessionInfo.'),
+    .describe('listSessions 和 getSessionInfo 返回的会话元数据。'),
 )
 
 export const SDKMessageSchema = lazySchema(() =>

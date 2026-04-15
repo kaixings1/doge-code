@@ -275,7 +275,7 @@ function truncateToolInputValue(value: unknown, depth = 0): unknown {
       .slice(0, TOOL_INPUT_MAX_COLLECTION_ITEMS)
       .map(([k, v]) => [k, truncateToolInputValue(v, depth + 1)])
     if (entries.length > TOOL_INPUT_MAX_COLLECTION_ITEMS) {
-      mapped.push(['…', `${entries.length} keys`])
+      mapped.push(['…', `${entries.length} 个键`])
     }
     return Object.fromEntries(mapped)
   }

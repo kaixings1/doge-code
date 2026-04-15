@@ -160,7 +160,7 @@ export class DiagnosticTrackingService {
         ) {
           logError(
             new DiagnosticsTrackingError(
-              `Diagnostics file path mismatch: expected ${filePath}, got ${diagnosticFile.uri})`,
+              `诊断文件路径不匹配: 预期 ${filePath}，实际 ${diagnosticFile.uri})`,
             ),
           )
           return

@@ -1186,7 +1186,7 @@ export function REPL({
     }
   }, [isLoading, isWaitingForApproval, isShowingLocalJSXCommand]);
   const sessionStatus: TabStatusKind = isWaitingForApproval || isShowingLocalJSXCommand ? 'waiting' : isLoading ? 'busy' : 'idle';
-  const waitingFor = sessionStatus !== 'waiting' ? undefined : toolUseConfirmQueue.length > 0 ? `approve ${toolUseConfirmQueue[0]!.tool.name}` : pendingWorkerRequest ? 'worker request' : pendingSandboxRequest ? 'sandbox request' : isShowingLocalJSXCommand ? 'dialog open' : 'input needed';
+          const waitingFor = sessionStatus !== 'waiting' ? undefined : toolUseConfirmQueue.length > 0 ? `批准 ${toolUseConfirmQueue[0]!.tool.name}` : pendingWorkerRequest ? 'worker request' : pendingSandboxRequest ? 'sandbox request' : isShowingLocalJSXCommand ? 'dialog open' : 'input needed';
 
   // Push status to the PID file for `claude ps`. Fire-and-forget; ps falls
   // back to transcript-tail derivation when this is missing/stale.
@@ -2306,7 +2306,7 @@ export function REPL({
           const bridgeRequestId = randomUUID();
           bridgeCallbacks.sendRequest(bridgeRequestId, SANDBOX_NETWORK_ACCESS_TOOL_NAME, {
             host: hostPattern.host
-          }, randomUUID(), `Allow network connection to ${hostPattern.host}?`);
+          }, randomUUID(), `允许连接到 ${hostPattern.host}？`);
           const unsubscribe = bridgeCallbacks.onResponse(bridgeRequestId, response => {
             unsubscribe();
             const allow = response.behavior === 'allow';
@@ -3592,7 +3592,7 @@ export function REPL({
           toolUseContext: getToolUseContext(messagesRef.current, [], new AbortController(), mainLoopModel),
           canUseTool
         }).catch(err => {
-          logForDebugging(`resumeAgentBackground failed: ${errorMessage(err)}`);
+          logForDebugging(`resumeAgentBackground 失败: ${errorMessage(err)}`);
           addNotification({
             key: `resume-agent-failed-${task.id}`,
             jsx: <Text color="error">
@@ -4373,7 +4373,7 @@ export function REPL({
           const path = join(tmpdir(), `cc-transcript-${Date.now()}.txt`);
           await writeFile(path, text);
           const opened = openFileInExternalEditor(path);
-          setStatus(opened ? `opening ${path}` : `wrote ${path} · no $VISUAL/$EDITOR set`);
+          setStatus(opened ? `正在打开 ${path}` : `已写入 ${path} · 未设置 $VISUAL/$EDITOR`);
         } catch (e) {
           setStatus(`render failed: ${e instanceof Error ? e.message : String(e)}`);
         }
