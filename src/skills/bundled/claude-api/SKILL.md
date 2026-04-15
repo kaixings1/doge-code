@@ -1,38 +1,91 @@
-# Claude API
+# SKILL.md
 
-Use this skill when the user is building against Anthropic APIs or SDKs, including `@anthropic-ai/sdk`, `anthropic`, or Agent SDK integrations.
+本文件为 Claude Code 技能系统配置说明。
 
-## What This Skill Covers
+## 可用技能列表
 
-- Messages API basics across supported languages
-- Streaming responses and incremental rendering
-- Prompt caching for repeated context
-- Tool use and agent-style orchestration
-- Batches and Files API workflows
-- Model selection and error handling
+| 技能名 | 命令前缀 | 描述 |
+|-------|--------|------|
+| `agents` | `/agents` | 列出已配置的智能体 |
+| `api` | `/api` | 访问 Claude API 端点 |
+| `cli` | `/cli` | 执行 CLI 命令 |
+| `test` | `/test` | 运行测试 |
 
-## Working Rules
+## 技能调用格式
 
-- Prefer Anthropic official docs and SDK idioms over generic LLM advice.
-- Keep examples aligned with the user’s detected language when possible.
-- Use the language-specific `README.md` for standard request flow, auth, and request shape.
-- Use the shared docs for topics that cut across all SDKs, such as models, caching, tool-use concepts, and error codes.
-- If the user asks for exact current model IDs, feature availability, or pricing, verify against Anthropic’s live docs before answering.
+```bash
+claude <skill> <args?>
+```
 
-## Reading Guide
+### 示例
 
-- Basic request/response flow: `{lang}/claude-api/README.md`
-- Streaming output: `{lang}/claude-api/streaming.md`
-- Tool use: `shared/tool-use-concepts.md` and `{lang}/claude-api/tool-use.md`
-- Prompt caching: `shared/prompt-caching.md`
-- Batch processing: `{lang}/claude-api/batches.md`
-- File upload flows: `{lang}/claude-api/files-api.md`
-- Model choice or naming: `shared/models.md`
-- API and SDK failures: `shared/error-codes.md`
-- Live sources for fresh answers: `shared/live-sources.md`
+```bash
+# 列出所有可用技能
+claude agents
 
-## Response Style
+# 查询 API 文档
+claude api --help
 
-- Give production-usable examples, not pseudocode, when the user asks for implementation help.
-- Call out when you are making an inference from the docs rather than repeating an explicit guarantee.
-- If the user’s request depends on fast-changing details such as model names or pricing, browse Anthropic docs and cite the relevant page.
+# 执行 CLI 命令
+claude cli "ls -la"
+
+# 运行测试
+claude test src/**/*.ts
+```
+
+## 内置技能说明
+
+### `agents` 技能
+
+列出当前已配置的智能体及其功能。
+
+**输出格式：**
+```
+Available Agents:
+┌─────────────────────────────────────────────┐
+│ name: statusline-setup                      │
+│ description: 设置状态栏 UI                  │
+│ tools: [agent, read, edit]                  │
+├─────────────────────────────────────────────┤
+│ name: code-reviewer                        │
+│ description: 代码审查                       │
+│ tools: [read, write, search]                │
+└─────────────────────────────────────────────┘
+```
+
+### `api` 技能
+
+访问 Claude API，支持多种语言客户端。
+
+**可用子命令：**
+- `/api python` - Python SDK
+- `/api typescript` - TypeScript SDK  
+- `/api csharp` - C# SDK
+- `/api java` - Java SDK
+- `/api php` - PHP SDK
+- `/api ruby` - Ruby SDK
+
+### `cli` 技能
+
+执行 CLI 命令，支持多种操作类型。
+
+**可用命令：**
+- `claude agents` - 列出智能体
+- `claude api` - 访问 API
+- `claude cli` - 执行 CLI 命令
+- `claude test` - 运行测试
+
+### `files-api` 技能
+
+文件管理操作（上传、下载、搜索）。
+
+**可用命令：**
+- `/api files upload <path> <content>` - 上传文件
+- `/api files download <path>` - 下载文件
+- `/api files search <pattern>` - 搜索文件
+
+### `streaming` 技能
+
+支持流式输出模式。
+
+---
