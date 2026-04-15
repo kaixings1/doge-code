@@ -1,14 +1,12 @@
 /**
- * Memory type taxonomy.
+ * 记忆类型分类。
  *
- * Memories are constrained to four types capturing context NOT derivable
- * from the current project state. Code patterns, architecture, git history,
- * and file structure are derivable (via grep/git/CLAUDE.md) and should NOT
- * be saved as memories.
+ * 记忆被限制为四种类型，这些类型捕获的是无法从当前项目状态推导出的上下文。
+ * 代码模式、架构、git 历史和文件结构都是可推导的（通过 grep/git/CLAUDE.md），
+ * 因此不应被保存为记忆。
  *
- * The two TYPES_SECTION_* exports below are intentionally duplicated rather
- * than generated from a shared spec — keeping them flat makes per-mode edits
- * trivial without reasoning through a helper's conditional rendering.
+ * 下面导出的两个 TYPES_SECTION_* 是故意重复的，而不是从共享规范生成的——
+ * 保持它们扁平化使得在每种模式下进行编辑都很简单，无需推理辅助函数中的条件渲染。
  */
 
 export const MEMORY_TYPES = [
@@ -21,9 +19,9 @@ export const MEMORY_TYPES = [
 export type MemoryType = (typeof MEMORY_TYPES)[number]
 
 /**
- * Parse a raw frontmatter value into a MemoryType.
- * Invalid or missing values return undefined — legacy files without a
- * `type:` field keep working, files with unknown types degrade gracefully.
+ * 将原始的 frontmatter 值解析为 MemoryType。
+ * 无效或缺失的值将返回 undefined —— 没有 `type:` 字段的旧文件可继续工作，
+ * 带有未知类型的文件会优雅降级。
  */
 export function parseMemoryType(raw: unknown): MemoryType | undefined {
   if (typeof raw !== 'string') return undefined
@@ -31,74 +29,74 @@ export function parseMemoryType(raw: unknown): MemoryType | undefined {
 }
 
 /**
- * `## Types of memory` section for COMBINED mode (private + team directories).
- * Includes <scope> tags and team/private qualifiers in examples.
+ * 用于组合模式（私有 + 团队目录）的 `## 记忆类型` 部分。
+ * 在示例中包含 <scope> 标签以及团队/私有限定符。
  */
 export const TYPES_SECTION_COMBINED: readonly string[] = [
   '## 记忆类型',
   '',
-  'There are several discrete types of memory that you can store in your memory system. Each type below declares a <scope> of `private`, `team`, or guidance for choosing between the two.',
+  '你可以在记忆系统中存储几种不同类型的记忆。下面的每种类型都声明了一个 `<scope>`，其值为 `private`（私有）、`team`（团队），或在两者之间选择的指导。',
   '',
   '<types>',
   '<type>',
   '    <name>user</name>',
-  '    <scope>always private</scope>',
-  "    <description>Contain information about the user's role, goals, responsibilities, and knowledge. Great user memories help you tailor your future behavior to the user's preferences and perspective. Your goal in reading and writing these memories is to build up an understanding of who the user is and how you can be most helpful to them specifically. For example, you should collaborate with a senior software engineer differently than a student who is coding for the very first time. Keep in mind, that the aim here is to be helpful to the user. Avoid writing memories about the user that could be viewed as a negative judgement or that are not relevant to the work you're trying to accomplish together.</description>",
-  "    <when_to_save>When you learn any details about the user's role, preferences, responsibilities, or knowledge</when_to_save>",
-  "    <how_to_use>When your work should be informed by the user's profile or perspective. For example, if the user is asking you to explain a part of the code, you should answer that question in a way that is tailored to the specific details that they will find most valuable or that helps them build their mental model in relation to domain knowledge they already have.</how_to_use>",
+  '    <scope>始终为私有</scope>',
+  '    <description>包含关于用户角色、目标、职责和知识的信息。优秀的用户记忆有助于你根据用户的偏好和视角来定制未来的行为。你阅读和写入这些记忆的目标是建立对用户是谁以及如何对他们最有帮助的理解。例如，你与资深软件工程师的合作方式应不同于与第一次编码的学生合作。请记住，这里的目的是对用户有帮助。避免写入可能被视为负面评价或与你们共同完成的工作无关的关于用户的记忆。</description>',
+  '    <when_to_save>当你了解到关于用户角色、偏好、职责或知识的任何细节时</when_to_save>',
+  '    <how_to_use>当你的工作应基于用户的个人资料或视角时。例如，如果用户要求你解释代码的一部分，你应该以对他们最有价值的特定细节来回答问题，或者帮助他们基于已有的领域知识建立心智模型。</how_to_use>',
   '    <examples>',
-  "    user: I'm a data scientist investigating what logging we have in place",
-  '    assistant: [saves private user memory: user is a data scientist, currently focused on observability/logging]',
+  '    用户：我是一名数据科学家，正在调查我们现有的日志记录情况',
+  '    助手：[保存私有用户记忆：用户是一名数据科学家，当前专注于可观测性/日志记录]',
   '',
-  "    user: I've been writing Go for ten years but this is my first time touching the React side of this repo",
-  "    assistant: [saves private user memory: deep Go expertise, new to React and this project's frontend — frame frontend explanations in terms of backend analogues]",
+  '    用户：我写 Go 已经十年了，但这是我第一次接触这个仓库的 React 部分',
+  '    助手：[保存私有用户记忆：深厚的 Go 专业知识，但对 React 和此项目的前端不熟悉——使用后端类比来构建前端解释]',
   '    </examples>',
   '</type>',
   '<type>',
   '    <name>feedback</name>',
-  '    <scope>default to private. Save as team only when the guidance is clearly a project-wide convention that every contributor should follow (e.g., a testing policy, a build invariant), not a personal style preference.</scope>',
-  "    <description>Guidance the user has given you about how to approach work — both what to avoid and what to keep doing. These are a very important type of memory to read and write as they allow you to remain coherent and responsive to the way you should approach work in the project. Record from failure AND success: if you only save corrections, you will avoid past mistakes but drift away from approaches the user has already validated, and may grow overly cautious. Before saving a private feedback memory, check that it doesn't contradict a team feedback memory — if it does, either don't save it or note the override explicitly.</description>",
-  '    <when_to_save>Any time the user corrects your approach ("no not that", "don\'t", "stop doing X") OR confirms a non-obvious approach worked ("yes exactly", "perfect, keep doing that", accepting an unusual choice without pushback). Corrections are easy to notice; confirmations are quieter — watch for them. In both cases, save what is applicable to future conversations, especially if surprising or not obvious from the code. Include *why* so you can judge edge cases later.</when_to_save>',
-  '    <how_to_use>Let these memories guide your behavior so that the user and other users in the project do not need to offer the same guidance twice.</how_to_use>',
-  '    <body_structure>Lead with the rule itself, then a **Why:** line (the reason the user gave — often a past incident or strong preference) and a **How to apply:** line (when/where this guidance kicks in). Knowing *why* lets you judge edge cases instead of blindly following the rule.</body_structure>',
+  '    <scope>默认为私有。仅当指导明显是每个贡献者都应遵循的项目级约定（例如测试策略、构建不变量），而非个人风格偏好时，才保存为团队。</scope>',
+  '    <description>用户就如何处理工作给出的指导——包括要避免什么以及要继续做什么。这是非常重要的一类记忆，读取和写入它们能让你保持连贯，并响应用户期望你在项目中处理工作的方式。从失败和成功中都要记录：如果你只保存纠正，你将避免过去的错误，但会偏离用户已验证的方法，并可能变得过于谨慎。在保存私有反馈记忆之前，请检查它是否与团队反馈记忆相矛盾——如果是，要么不保存它，要么明确注明覆盖关系。</description>',
+  '    <when_to_save>每当用户纠正你的方法时（"不，不是那样"，"不要"，"停止做 X"）或者确认一个非显而易见的方法有效时（"是的，正是如此"，"完美，继续这样做"，毫无异议地接受一个不寻常的选择）。纠正容易注意到；确认则更安静——要留意它们。在这两种情况下，保存对未来对话适用的内容，特别是如果它令人惊讶或从代码中不明显时。要包含*原因*，以便日后能判断边缘情况。</when_to_save>',
+  '    <how_to_use>让这些记忆指导你的行为，以便用户和项目中的其他用户无需重复提供相同的指导。</how_to_use>',
+  '    <body_structure>以规则本身开头，然后是**原因：**一行（用户给出的理由——通常是过去的事件或强烈的偏好）和**如何应用：**一行（此指导何时/何地生效）。知道*原因*可以让你判断边缘情况，而不是盲目遵循规则。</body_structure>',
   '    <examples>',
-  "    user: don't mock the database in these tests — we got burned last quarter when mocked tests passed but the prod migration failed",
-  '    assistant: [saves team feedback memory: integration tests must hit a real database, not mocks. Reason: prior incident where mock/prod divergence masked a broken migration. Team scope: this is a project testing policy, not a personal preference]',
+  '    用户：不要在这些测试中模拟数据库——上季度我们因为模拟测试通过但生产迁移失败而吃了亏',
+  '    助手：[保存团队反馈记忆：集成测试必须连接真实数据库，而非模拟。原因：之前发生过模拟/生产环境差异掩盖了破损迁移的事故。团队范围：这是一个项目测试策略，不是个人偏好]',
   '',
-  '    user: stop summarizing what you just did at the end of every response, I can read the diff',
-  "    assistant: [saves private feedback memory: this user wants terse responses with no trailing summaries. Private because it's a communication preference, not a project convention]",
+  '    用户：不要在每次回复末尾总结你刚刚做了什么，我可以看 diff',
+  '    助手：[保存私有反馈记忆：该用户希望回复简洁，不带结尾总结。私有，因为这是沟通偏好，而非项目约定]',
   '',
-  "    user: yeah the single bundled PR was the right call here, splitting this one would've just been churn",
-  '    assistant: [saves private feedback memory: for refactors in this area, user prefers one bundled PR over many small ones. Confirmed after I chose this approach — a validated judgment call, not a correction]',
+  '    用户：是的，这次单一的合并 PR 是正确的选择，拆分开来只会是徒增变动',
+  '    助手：[保存私有反馈记忆：对于此领域的重构，用户偏好一个合并的 PR 而非许多小 PR。在我选择此方法后得到确认——一个经过验证的判断，而非纠正]',
   '    </examples>',
   '</type>',
   '<type>',
   '    <name>project</name>',
-  '    <scope>private or team, but strongly bias toward team</scope>',
-  '    <description>Information that you learn about ongoing work, goals, initiatives, bugs, or incidents within the project that is not otherwise derivable from the code or git history. Project memories help you understand the broader context and motivation behind the work users are working on within this working directory.</description>',
-  '    <when_to_save>When you learn who is doing what, why, or by when. These states change relatively quickly so try to keep your understanding of this up to date. Always convert relative dates in user messages to absolute dates when saving (e.g., "Thursday" → "2026-03-05"), so the memory remains interpretable after time passes.</when_to_save>',
-  "    <how_to_use>Use these memories to more fully understand the details and nuance behind the user's request, anticipate coordination issues across users, make better informed suggestions.</how_to_use>",
-  '    <body_structure>Lead with the fact or decision, then a **Why:** line (the motivation — often a constraint, deadline, or stakeholder ask) and a **How to apply:** line (how this should shape your suggestions). Project memories decay fast, so the why helps future-you judge whether the memory is still load-bearing.</body_structure>',
+  '    <scope>私有或团队，但强烈倾向于团队</scope>',
+  '    <description>你了解到的关于项目中正在进行的工作、目标、倡议、错误或事件的信息，这些信息无法从代码或 git 历史中推导出来。项目记忆有助于你理解用户在此工作目录中工作的更广泛背景和动机。</description>',
+  '    <when_to_save>当你了解到谁在做什么、为什么做或何时完成时。这些状态变化相对较快，所以尽量保持你对这些信息的理解是最新的。在保存时，始终将用户消息中的相对日期转换为绝对日期（例如，"星期四" → "2026-03-05"），以便记忆在时间流逝后仍可解读。</when_to_save>',
+  '    <how_to_use>利用这些记忆更全面地理解用户请求背后的细节和细微差别，预测用户之间的协调问题，提出更明智的建议。</how_to_use>',
+  '    <body_structure>以事实或决定开头，然后是**原因：**一行（动机——通常是约束、截止日期或相关方的要求）和**如何应用：**一行（这应如何影响你的建议）。项目记忆衰减很快，所以原因有助于未来的你判断该记忆是否仍然有效。</body_structure>',
   '    <examples>',
-  "    user: we're freezing all non-critical merges after Thursday — mobile team is cutting a release branch",
-  '    assistant: [saves team project memory: merge freeze begins 2026-03-05 for mobile release cut. Flag any non-critical PR work scheduled after that date]',
+  '    用户：星期四之后我们将冻结所有非关键合并——移动团队正在切发布分支',
+  '    助手：[保存团队项目记忆：合并冻结从 2026-03-05 开始，因移动端发布切分支。标记该日期之后安排的任何非关键 PR 工作]',
   '',
-  "    user: the reason we're ripping out the old auth middleware is that legal flagged it for storing session tokens in a way that doesn't meet the new compliance requirements",
-  '    assistant: [saves team project memory: auth middleware rewrite is driven by legal/compliance requirements around session token storage, not tech-debt cleanup — scope decisions should favor compliance over ergonomics]',
+  '    用户：我们拆除旧认证中间件的原因是法务部门指出它存储会话令牌的方式不符合新的合规要求',
+  '    助手：[保存团队项目记忆：认证中间件重写是由法律/合规要求驱动的，涉及会话令牌存储，而非技术债务清理——决策范围应优先考虑合规性而非工效学]',
   '    </examples>',
   '</type>',
   '<type>',
   '    <name>reference</name>',
-  '    <scope>usually team</scope>',
-  '    <description>Stores pointers to where information can be found in external systems. These memories allow you to remember where to look to find up-to-date information outside of the project directory.</description>',
-  '    <when_to_save>When you learn about resources in external systems and their purpose. For example, that bugs are tracked in a specific project in Linear or that feedback can be found in a specific Slack channel.</when_to_save>',
-  '    <how_to_use>When the user references an external system or information that may be in an external system.</how_to_use>',
+  '    <scope>通常是团队</scope>',
+  '    <description>存储指向外部系统中信息位置的指针。这些记忆让你记住去哪里查找项目目录之外的最新信息。</description>',
+  '    <when_to_save>当你了解到外部系统中的资源及其用途时。例如，错误跟踪在 Linear 的某个特定项目中，或者反馈可以在某个特定的 Slack 频道中找到。</when_to_save>',
+  '    <how_to_use>当用户提及外部系统或可能位于外部系统中的信息时。</how_to_use>',
   '    <examples>',
-  '    user: check the Linear project "INGEST" if you want context on these tickets, that\'s where we track all pipeline bugs',
-  '    assistant: [saves team reference memory: pipeline bugs are tracked in Linear project "INGEST"]',
+  '    用户：如果你想了解这些工单的背景，请查看 Linear 项目 "INGEST"，我们所有的管道错误都在那里跟踪',
+  '    助手：[保存团队参考记忆：管道错误在 Linear 项目 "INGEST" 中跟踪]',
   '',
-  "    user: the Grafana board at grafana.internal/d/api-latency is what oncall watches — if you're touching request handling, that's the thing that'll page someone",
-  '    assistant: [saves team reference memory: grafana.internal/d/api-latency is the oncall latency dashboard — check it when editing request-path code]',
+  '    用户：grafana.internal/d/api-latency 上的 Grafana 看板是值班人员监控的——如果你在修改请求处理相关的代码，那个看板就是会触发告警的东西',
+  '    助手：[保存团队参考记忆：grafana.internal/d/api-latency 是值班延迟看板——编辑请求路径代码时请检查它]',
   '    </examples>',
   '</type>',
   '</types>',
@@ -106,71 +104,71 @@ export const TYPES_SECTION_COMBINED: readonly string[] = [
 ]
 
 /**
- * `## Types of memory` section for INDIVIDUAL-ONLY mode (single directory).
- * No <scope> tags. Examples use plain `[saves X memory: …]`. Prose that
- * only makes sense with a private/team split is reworded.
+ * 用于仅个人模式（单一目录）的 `## 记忆类型` 部分。
+ * 没有 <scope> 标签。示例使用简单的 `[保存 X 记忆：...]`。
+ * 仅在有私有/团队区分时才有意义的表述已被改写。
  */
 export const TYPES_SECTION_INDIVIDUAL: readonly string[] = [
   '## 记忆类型',
   '',
-  'There are several discrete types of memory that you can store in your memory system:',
+  '你可以在记忆系统中存储几种不同类型的记忆：',
   '',
   '<types>',
   '<type>',
   '    <name>user</name>',
-  "    <description>Contain information about the user's role, goals, responsibilities, and knowledge. Great user memories help you tailor your future behavior to the user's preferences and perspective. Your goal in reading and writing these memories is to build up an understanding of who the user is and how you can be most helpful to them specifically. For example, you should collaborate with a senior software engineer differently than a student who is coding for the very first time. Keep in mind, that the aim here is to be helpful to the user. Avoid writing memories about the user that could be viewed as a negative judgement or that are not relevant to the work you're trying to accomplish together.</description>",
-  "    <when_to_save>When you learn any details about the user's role, preferences, responsibilities, or knowledge</when_to_save>",
-  "    <how_to_use>When your work should be informed by the user's profile or perspective. For example, if the user is asking you to explain a part of the code, you should answer that question in a way that is tailored to the specific details that they will find most valuable or that helps them build their mental model in relation to domain knowledge they already have.</how_to_use>",
+  '    <description>包含关于用户角色、目标、职责和知识的信息。优秀的用户记忆有助于你根据用户的偏好和视角来定制未来的行为。你阅读和写入这些记忆的目标是建立对用户是谁以及如何对他们最有帮助的理解。例如，你与资深软件工程师的合作方式应不同于与第一次编码的学生合作。请记住，这里的目的是对用户有帮助。避免写入可能被视为负面评价或与你们共同完成的工作无关的关于用户的记忆。</description>',
+  '    <when_to_save>当你了解到关于用户角色、偏好、职责或知识的任何细节时</when_to_save>',
+  '    <how_to_use>当你的工作应基于用户的个人资料或视角时。例如，如果用户要求你解释代码的一部分，你应该以对他们最有价值的特定细节来回答问题，或者帮助他们基于已有的领域知识建立心智模型。</how_to_use>',
   '    <examples>',
-  "    user: I'm a data scientist investigating what logging we have in place",
-  '    assistant: [saves user memory: user is a data scientist, currently focused on observability/logging]',
+  '    用户：我是一名数据科学家，正在调查我们现有的日志记录情况',
+  '    助手：[保存用户记忆：用户是一名数据科学家，当前专注于可观测性/日志记录]',
   '',
-  "    user: I've been writing Go for ten years but this is my first time touching the React side of this repo",
-  "    assistant: [saves user memory: deep Go expertise, new to React and this project's frontend — frame frontend explanations in terms of backend analogues]",
+  '    用户：我写 Go 已经十年了，但这是我第一次接触这个仓库的 React 部分',
+  '    助手：[保存用户记忆：深厚的 Go 专业知识，但对 React 和此项目的前端不熟悉——使用后端类比来构建前端解释]',
   '    </examples>',
   '</type>',
   '<type>',
   '    <name>feedback</name>',
-  '    <description>Guidance the user has given you about how to approach work — both what to avoid and what to keep doing. These are a very important type of memory to read and write as they allow you to remain coherent and responsive to the way you should approach work in the project. Record from failure AND success: if you only save corrections, you will avoid past mistakes but drift away from approaches the user has already validated, and may grow overly cautious.</description>',
-  '    <when_to_save>Any time the user corrects your approach ("no not that", "don\'t", "stop doing X") OR confirms a non-obvious approach worked ("yes exactly", "perfect, keep doing that", accepting an unusual choice without pushback). Corrections are easy to notice; confirmations are quieter — watch for them. In both cases, save what is applicable to future conversations, especially if surprising or not obvious from the code. Include *why* so you can judge edge cases later.</when_to_save>',
-  '    <how_to_use>Let these memories guide your behavior so that the user does not need to offer the same guidance twice.</how_to_use>',
-  '    <body_structure>Lead with the rule itself, then a **Why:** line (the reason the user gave — often a past incident or strong preference) and a **How to apply:** line (when/where this guidance kicks in). Knowing *why* lets you judge edge cases instead of blindly following the rule.</body_structure>',
+  '    <description>用户就如何处理工作给出的指导——包括要避免什么以及要继续做什么。这是非常重要的一类记忆，读取和写入它们能让你保持连贯，并响应用户期望你在项目中处理工作的方式。从失败和成功中都要记录：如果你只保存纠正，你将避免过去的错误，但会偏离用户已验证的方法，并可能变得过于谨慎。</description>',
+  '    <when_to_save>每当用户纠正你的方法时（"不，不是那样"，"不要"，"停止做 X"）或者确认一个非显而易见的方法有效时（"是的，正是如此"，"完美，继续这样做"，毫无异议地接受一个不寻常的选择）。纠正容易注意到；确认则更安静——要留意它们。在这两种情况下，保存对未来对话适用的内容，特别是如果它令人惊讶或从代码中不明显时。要包含*原因*，以便日后能判断边缘情况。</when_to_save>',
+  '    <how_to_use>让这些记忆指导你的行为，以便用户无需重复提供相同的指导。</how_to_use>',
+  '    <body_structure>以规则本身开头，然后是**原因：**一行（用户给出的理由——通常是过去的事件或强烈的偏好）和**如何应用：**一行（此指导何时/何地生效）。知道*原因*可以让你判断边缘情况，而不是盲目遵循规则。</body_structure>',
   '    <examples>',
-  "    user: don't mock the database in these tests — we got burned last quarter when mocked tests passed but the prod migration failed",
-  '    assistant: [saves feedback memory: integration tests must hit a real database, not mocks. Reason: prior incident where mock/prod divergence masked a broken migration]',
+  '    用户：不要在这些测试中模拟数据库——上季度我们因为模拟测试通过但生产迁移失败而吃了亏',
+  '    助手：[保存反馈记忆：集成测试必须连接真实数据库，而非模拟。原因：之前发生过模拟/生产环境差异掩盖了破损迁移的事故]',
   '',
-  '    user: stop summarizing what you just did at the end of every response, I can read the diff',
-  '    assistant: [saves feedback memory: this user wants terse responses with no trailing summaries]',
+  '    用户：不要在每次回复末尾总结你刚刚做了什么，我可以看 diff',
+  '    助手：[保存反馈记忆：该用户希望回复简洁，不带结尾总结]',
   '',
-  "    user: yeah the single bundled PR was the right call here, splitting this one would've just been churn",
-  '    assistant: [saves feedback memory: for refactors in this area, user prefers one bundled PR over many small ones. Confirmed after I chose this approach — a validated judgment call, not a correction]',
+  '    用户：是的，这次单一的合并 PR 是正确的选择，拆分开来只会是徒增变动',
+  '    助手：[保存反馈记忆：对于此领域的重构，用户偏好一个合并的 PR 而非许多小 PR。在我选择此方法后得到确认——一个经过验证的判断，而非纠正]',
   '    </examples>',
   '</type>',
   '<type>',
   '    <name>project</name>',
-  '    <description>Information that you learn about ongoing work, goals, initiatives, bugs, or incidents within the project that is not otherwise derivable from the code or git history. Project memories help you understand the broader context and motivation behind the work the user is doing within this working directory.</description>',
-  '    <when_to_save>When you learn who is doing what, why, or by when. These states change relatively quickly so try to keep your understanding of this up to date. Always convert relative dates in user messages to absolute dates when saving (e.g., "Thursday" → "2026-03-05"), so the memory remains interpretable after time passes.</when_to_save>',
-  "    <how_to_use>Use these memories to more fully understand the details and nuance behind the user's request and make better informed suggestions.</how_to_use>",
-  '    <body_structure>Lead with the fact or decision, then a **Why:** line (the motivation — often a constraint, deadline, or stakeholder ask) and a **How to apply:** line (how this should shape your suggestions). Project memories decay fast, so the why helps future-you judge whether the memory is still load-bearing.</body_structure>',
+  '    <description>你了解到的关于项目中正在进行的工作、目标、倡议、错误或事件的信息，这些信息无法从代码或 git 历史中推导出来。项目记忆有助于你理解用户在此工作目录中工作的更广泛背景和动机。</description>',
+  '    <when_to_save>当你了解到谁在做什么、为什么做或何时完成时。这些状态变化相对较快，所以尽量保持你对这些信息的理解是最新的。在保存时，始终将用户消息中的相对日期转换为绝对日期（例如，"星期四" → "2026-03-05"），以便记忆在时间流逝后仍可解读。</when_to_save>',
+  '    <how_to_use>利用这些记忆更全面地理解用户请求背后的细节和细微差别，并做出更明智的建议。</how_to_use>',
+  '    <body_structure>以事实或决定开头，然后是**原因：**一行（动机——通常是约束、截止日期或相关方的要求）和**如何应用：**一行（这应如何影响你的建议）。项目记忆衰减很快，所以原因有助于未来的你判断该记忆是否仍然有效。</body_structure>',
   '    <examples>',
-  "    user: we're freezing all non-critical merges after Thursday — mobile team is cutting a release branch",
-  '    assistant: [saves project memory: merge freeze begins 2026-03-05 for mobile release cut. Flag any non-critical PR work scheduled after that date]',
+  '    用户：星期四之后我们将冻结所有非关键合并——移动团队正在切发布分支',
+  '    助手：[保存项目记忆：合并冻结从 2026-03-05 开始，因移动端发布切分支。标记该日期之后安排的任何非关键 PR 工作]',
   '',
-  "    user: the reason we're ripping out the old auth middleware is that legal flagged it for storing session tokens in a way that doesn't meet the new compliance requirements",
-  '    assistant: [saves project memory: auth middleware rewrite is driven by legal/compliance requirements around session token storage, not tech-debt cleanup — scope decisions should favor compliance over ergonomics]',
+  '    用户：我们拆除旧认证中间件的原因是法务部门指出它存储会话令牌的方式不符合新的合规要求',
+  '    助手：[保存项目记忆：认证中间件重写是由法律/合规要求驱动的，涉及会话令牌存储，而非技术债务清理——决策范围应优先考虑合规性而非工效学]',
   '    </examples>',
   '</type>',
   '<type>',
   '    <name>reference</name>',
-  '    <description>Stores pointers to where information can be found in external systems. These memories allow you to remember where to look to find up-to-date information outside of the project directory.</description>',
-  '    <when_to_save>When you learn about resources in external systems and their purpose. For example, that bugs are tracked in a specific project in Linear or that feedback can be found in a specific Slack channel.</when_to_save>',
-  '    <how_to_use>When the user references an external system or information that may be in an external system.</how_to_use>',
+  '    <description>存储指向外部系统中信息位置的指针。这些记忆让你记住去哪里查找项目目录之外的最新信息。</description>',
+  '    <when_to_save>当你了解到外部系统中的资源及其用途时。例如，错误跟踪在 Linear 的某个特定项目中，或者反馈可以在某个特定的 Slack 频道中找到。</when_to_save>',
+  '    <how_to_use>当用户提及外部系统或可能位于外部系统中的信息时。</how_to_use>',
   '    <examples>',
-  '    user: check the Linear project "INGEST" if you want context on these tickets, that\'s where we track all pipeline bugs',
-  '    assistant: [saves reference memory: pipeline bugs are tracked in Linear project "INGEST"]',
+  '    用户：如果你想了解这些工单的背景，请查看 Linear 项目 "INGEST"，我们所有的管道错误都在那里跟踪',
+  '    助手：[保存参考记忆：管道错误在 Linear 项目 "INGEST" 中跟踪]',
   '',
-  "    user: the Grafana board at grafana.internal/d/api-latency is what oncall watches — if you're touching request handling, that's the thing that'll page someone",
-  '    assistant: [saves reference memory: grafana.internal/d/api-latency is the oncall latency dashboard — check it when editing request-path code]',
+  '    用户：grafana.internal/d/api-latency 上的 Grafana 看板是值班人员监控的——如果你在修改请求处理相关的代码，那个看板就是会触发告警的东西',
+  '    助手：[保存参考记忆：grafana.internal/d/api-latency 是值班延迟看板——编辑请求路径代码时请检查它]',
   '    </examples>',
   '</type>',
   '</types>',
@@ -178,7 +176,7 @@ export const TYPES_SECTION_INDIVIDUAL: readonly string[] = [
 ]
 
 /**
- * `## What NOT to save in memory` section. Identical across both modes.
+ * `## 不应保存到记忆的内容` 部分。两种模式相同。
  */
 export const WHAT_NOT_TO_SAVE_SECTION: readonly string[] = [
   '## 不应保存到记忆的内容',
@@ -193,77 +191,69 @@ export const WHAT_NOT_TO_SAVE_SECTION: readonly string[] = [
 ]
 
 /**
- * Recall-side drift caveat. Single bullet under `## When to access memories`.
- * Proactive: verify memory against current state before answering.
+ * 回忆侧漂移警告。位于 `## 何时访问记忆` 下的单个项目符号。
+ * 主动：在回答之前根据当前状态验证记忆。
  */
 export const MEMORY_DRIFT_CAVEAT =
-  '- Memory records can become stale over time. Use memory as context for what was true at a given point in time. Before answering the user or building assumptions based solely on information in memory records, verify that the memory is still correct and up-to-date by reading the current state of the files or resources. If a recalled memory conflicts with current information, trust what you observe now — and update or remove the stale memory rather than acting on it.'
+  '- 记忆记录可能随时间变得陈旧。将记忆用作了解过去某个时间点真实情况的上下文。在回答用户或仅基于记忆记录中的信息构建假设之前，通过阅读文件或资源的当前状态来验证记忆是否仍然正确且最新。如果回忆起的记忆与当前信息冲突，相信你现在观察到的——并更新或删除陈旧的记忆，而不是按其行事。'
 
 /**
- * `## When to access memories` section. Includes MEMORY_DRIFT_CAVEAT.
+ * `## 何时访问记忆` 部分。包含 MEMORY_DRIFT_CAVEAT。
  *
- * H6 (branch-pollution evals #22856, case 5 1/3 on capy): the "ignore" bullet
- * is the delta. Failure mode: user says "ignore memory about X" → Claude reads
- * code correctly but adds "not Y as noted in memory" — treats "ignore" as
- * "acknowledge then override" rather than "don't reference at all." The bullet
- * names that anti-pattern explicitly.
+ * H6（分支污染评估 #22856，capy 案例 5 1/3）："忽略"项目符号是区别所在。
+ * 失败模式：用户说"忽略关于 X 的记忆" → Claude 正确读取代码但添加"并非如记忆中所记的 Y"
+ * —— 将"忽略"视为"确认然后覆盖"而非"根本不要引用"。该项目符号明确指出了这种反模式。
  *
- * Token budget (H6a): merged old bullets 1+2, tightened both. Old 4 lines
- * were ~70 tokens; new 4 lines are ~73 tokens. Net ~+3.
+ * Token 预算 (H6a)：合并了旧的 1+2 项目符号，并精简了两者。旧的 4 行约为 70 tokens；新的 4 行约为 73 tokens。净增约 +3。
  */
 export const WHEN_TO_ACCESS_SECTION: readonly string[] = [
-  '## When to access memories',
-  '- When memories seem relevant, or the user references prior-conversation work.',
-  '- You MUST access memory when the user explicitly asks you to check, recall, or remember.',
-  '- If the user says to *ignore* or *not use* memory: proceed as if MEMORY.md were empty. Do not apply remembered facts, cite, compare against, or mention memory content.',
+  '## 何时访问记忆',
+  '- 当记忆看起来相关时，或者用户提到了之前对话中的工作。',
+  '- 当用户明确要求你检查、召回或记住时，你必须访问记忆。',
+  '- 如果用户说*忽略*或*不要使用*记忆：就像 MEMORY.md 是空的一样继续。不要应用记住的事实、引用、对比或提及记忆内容。',
   MEMORY_DRIFT_CAVEAT,
 ]
 
 /**
- * `## Trusting what you recall` section. Heavier-weight guidance on HOW to
- * treat a memory once you've recalled it — separate from WHEN to access.
+ * `## 在从记忆中推荐之前` 部分。关于一旦回忆起记忆后如何处理的更重量级指导——
+ * 与何时访问是分开的。
  *
- * Eval-validated (memory-prompt-iteration.eval.ts, 2026-03-17):
- *   H1 (verify function/file claims): 0/2 → 3/3 via appendSystemPrompt. When
- *      buried as a bullet under "When to access", dropped to 0/3 — position
- *      matters. The H1 cue is about what to DO with a memory, not when to
- *      look, so it needs its own section-level trigger context.
- *   H5 (read-side noise rejection): 0/2 → 3/3 via appendSystemPrompt, 2/3
- *      in-place as a bullet. Partial because "snapshot" is intuitively closer
- *      to "when to access" than H1 is.
+ * 评估已验证 (memory-prompt-iteration.eval.ts, 2026-03-17):
+ *   H1（验证函数/文件声明）：通过 appendSystemPrompt 从 0/2 提升至 3/3。
+ *      当作为"何时访问"下的项目符号隐藏时，降至 0/3——位置很重要。
+ *      H1 提示是关于如何处理记忆，而非何时查找，因此它需要自己的章节级触发上下文。
+ *   H5（读取端噪声抑制）：通过 appendSystemPrompt 从 0/2 提升至 3/3，作为项目符号嵌入时为 2/3。
+ *      部分原因可能是"快照"在直觉上比 H1 更接近"何时访问"。
  *
- * Known gap: H1 doesn't cover slash-command claims (0/3 on the /fork case —
- * slash commands aren't files or functions in the model's ontology).
+ * 已知差距：H1 不涵盖斜杠命令声明（/fork 案例为 0/3——斜杠命令在模型本体中并非文件或函数）。
  */
 export const TRUSTING_RECALL_SECTION: readonly string[] = [
-  // Header wording matters: "Before recommending" (action cue at the decision
-  // point) tested better than "Trusting what you recall" (abstract). The
-  // appendSystemPrompt variant with this header went 3/3; the abstract header
-  // went 0/3 in-place. Same body text — only the header differed.
-  '## Before recommending from memory',
+  // 标题措辞很重要："在从记忆中推荐之前"（决策点的行动提示）测试效果优于"相信你回忆的内容"（抽象）。
+  // 带有此标题的 appendSystemPrompt 变体达到了 3/3；抽象标题在嵌入时达到了 0/3。正文相同——仅标题不同。
+  '## 在从记忆中推荐之前',
   '',
-  'A memory that names a specific function, file, or flag is a claim that it existed *when the memory was written*. It may have been renamed, removed, or never merged. Before recommending it:',
+  '命名了具体函数、文件或标志的记忆是一个声明，表示它在*记忆写入时*存在。它可能已被重命名、删除或从未合并。在推荐它之前:',
   '',
-  '- If the memory names a file path: check the file exists.',
-  '- If the memory names a function or flag: grep for it.',
-  '- If the user is about to act on your recommendation (not just asking about history), verify first.',
+  '- 如果记忆指定了文件路径：检查文件是否存在。',
+  '- 如果记忆指定了函数或标志：用 grep 搜索它。',
+  '- 如果用户即将根据你的推荐采取行动（而不仅仅是询问历史），请先验证。',
   '',
-  '"The memory says X exists" is not the same as "X exists now."',
+  '"记忆说 X 存在"不等同于"X 现在存在。"',
   '',
-  'A memory that summarizes repo state (activity logs, architecture snapshots) is frozen in time. If the user asks about *recent* or *current* state, prefer `git log` or reading the code over recalling the snapshot.',
+  '总结仓库状态的记忆（活动日志、架构快照）是冻结在时间中的。如果用户询问*最近*或*当前*状态，请优先使用 `git log` 或阅读代码，而不是依赖记忆快照。',
 ]
 
 /**
- * Frontmatter format example with the `type` field.
+ * 带有 `type` 字段的 Frontmatter 格式示例。
  */
 export const MEMORY_FRONTMATTER_EXAMPLE: readonly string[] = [
   '```markdown',
   '---',
-  'name: {{memory name}}',
-  'description: {{one-line description — used to decide relevance in future conversations, so be specific}}',
+  'name: {{记忆名称}}',
+  'description: {{单行描述——用于在未来对话中判断相关性，因此要具体}}',
   `type: {{${MEMORY_TYPES.join(', ')}}}`,
   '---',
   '',
-  '{{memory content — for feedback/project types, structure as: rule/fact, then **Why:** and **How to apply:** lines}}',
+  '{{记忆内容——对于反馈/项目类型，结构为：规则/事实，然后是 **原因：** 和 **如何应用：** 行}}',
   '```',
 ]

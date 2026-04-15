@@ -248,7 +248,7 @@ export function formatAPIError(error: APIError): string {
   if (!error.message) {
     return (
       extractNestedErrorMessage(error) ??
-      `API error (status ${error.status ?? 'unknown'})`
+      `API 错误（状态码 ${error.status ?? 'unknown'}）`
     )
   }
 

@@ -58,20 +58,20 @@ export async function createDirectConnectSession({
     })
   } catch (err) {
     throw new DirectConnectError(
-      `Failed to connect to server at ${serverUrl}: ${errorMessage(err)}`,
+      `连接服务器失败 (${serverUrl}): ${errorMessage(err)}`,
     )
   }
 
   if (!resp.ok) {
     throw new DirectConnectError(
-      `Failed to create session: ${resp.status} ${resp.statusText}`,
+      `创建会话失败: ${resp.status} ${resp.statusText}`,
     )
   }
 
   const result = connectResponseSchema().safeParse(await resp.json())
   if (!result.success) {
     throw new DirectConnectError(
-      `Invalid session response: ${result.error.message}`,
+      `无效的会话响应: ${result.error.message}`,
     )
   }
 

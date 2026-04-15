@@ -179,7 +179,7 @@ export async function normalizeOAuthErrorBody(
         error: 'invalid_grant',
         error_description:
           result.data.error_description ??
-          `Server returned non-standard error code: ${result.data.error}`,
+          `服务器返回非标准错误码: ${result.data.error}`,
       }
     : result.data
   return new Response(jsonStringify(normalized), {
@@ -295,7 +295,7 @@ async function fetchAuthServerMetadata(
     // to the legacy path-aware retry.
     logMCPDebug(
       serverName,
-      `RFC 9728 discovery failed, falling back: ${errorMessage(err)}`,
+      `RFC 9728 发现失败，回退: ${errorMessage(err)}`,
     )
   }
 
@@ -312,7 +312,7 @@ async function fetchAuthServerMetadata(
 
 export class AuthenticationCancelledError extends Error {
   constructor() {
-    super('Authentication was cancelled')
+    super('认证已取消')
     this.name = 'AuthenticationCancelledError'
   }
 }
@@ -429,7 +429,7 @@ async function revokeToken({
 
   try {
     await axios.post(endpoint, params, { headers })
-    logMCPDebug(serverName, `Successfully revoked ${tokenTypeHint}`)
+    logMCPDebug(serverName, `成功撤销 ${tokenTypeHint}`)
   } catch (error: unknown) {
     // Fallback for non-RFC-7009-compliant servers that require Bearer auth
     if (
@@ -439,7 +439,7 @@ async function revokeToken({
     ) {
       logMCPDebug(
         serverName,
-        `Got 401, retrying ${tokenTypeHint} revocation with Bearer auth`,
+        `收到 401，使用 Bearer 认证重试撤销 ${tokenTypeHint}`,
       )
       // RFC 6749 §2.3.1: must not send more than one auth method. The retry
       // switches to Bearer — clear any client creds from the body.
@@ -450,7 +450,7 @@ async function revokeToken({
       })
       logMCPDebug(
         serverName,
-        `Successfully revoked ${tokenTypeHint} with Bearer auth`,
+        `成功使用 Bearer 认证撤销 ${tokenTypeHint}`,
       )
     } else {
       throw error
@@ -490,14 +490,14 @@ export async function revokeServerTokens(
       )
 
       if (!metadata) {
-        logMCPDebug(serverName, 'No OAuth metadata found')
+        logMCPDebug(serverName, '未找到 OAuth 元数据')
       } else {
         const revocationEndpoint =
           'revocation_endpoint' in metadata
             ? metadata.revocation_endpoint
             : null
         if (!revocationEndpoint) {
-          logMCPDebug(serverName, 'Server does not support token revocation')
+          logMCPDebug(serverName, '服务器不支持令牌撤销')
         } else {
           const revocationEndpointStr = String(revocationEndpoint)
           // RFC 7009 defines revocation_endpoint_auth_methods_supported
@@ -517,7 +517,7 @@ export async function revokeServerTokens(
               : 'client_secret_basic'
           logMCPDebug(
             serverName,
-            `Revoking tokens via ${revocationEndpointStr} (${authMethod})`,
+            `通过 ${revocationEndpointStr} 撤销令牌（${authMethod}）`,
           )
 
           // Revoke refresh token first (more important - prevents future access token generation)
@@ -537,7 +537,7 @@ export async function revokeServerTokens(
               // Log but continue
               logMCPDebug(
                 serverName,
-                `Failed to revoke refresh token: ${errorMessage(error)}`,
+                `撤销刷新令牌失败: ${errorMessage(error)}`,
               )
             }
           }
@@ -558,7 +558,7 @@ export async function revokeServerTokens(
             } catch (error: unknown) {
               logMCPDebug(
                 serverName,
-                `Failed to revoke access token: ${errorMessage(error)}`,
+                `撤销访问令牌失败: ${errorMessage(error)}`,
               )
             }
           }
@@ -566,10 +566,10 @@ export async function revokeServerTokens(
       }
     } catch (error: unknown) {
       // Log error but don't throw - revocation is best-effort
-      logMCPDebug(serverName, `Failed to revoke tokens: ${errorMessage(error)}`)
+      logMCPDebug(serverName, `撤销令牌失败: ${errorMessage(error)}`)
     }
   } else {
-    logMCPDebug(serverName, 'No tokens to revoke')
+    logMCPDebug(serverName, '没有可撤销的令牌')
   }
 
   // Always clear local tokens, regardless of server-side revocation result.
@@ -613,7 +613,7 @@ export async function revokeServerTokens(
       },
     }
     storage.update(updatedData)
-    logMCPDebug(serverName, 'Preserved step-up auth state across revocation')
+    logMCPDebug(serverName, '跨撤销保留了逐步认证状态')
   }
 }
 
@@ -669,7 +669,7 @@ async function performMCPXaaAuth(
   skipBrowserOpen?: boolean,
 ): Promise<void> {
   if (!serverConfig.oauth?.xaa) {
-    throw new Error('XAA: oauth.xaa must be set') // guarded by caller
+    throw new Error('XAA: 必须设置 oauth.xaa') // guarded by caller
   }
 
   // IdP config comes from user-level settings, not per-server.
@@ -683,7 +683,7 @@ async function performMCPXaaAuth(
   const clientId = serverConfig.oauth?.clientId
   if (!clientId) {
     throw new Error(
-      `XAA: server '${serverName}' needs an AS client_id. Re-add with --client-id.`,
+      `XAA: 服务器 '${serverName}' 需要 AS client_id。请使用 --client-id 重新添加。`,
     )
   }
 
@@ -710,7 +710,7 @@ async function performMCPXaaAuth(
     )
   }
 
-  logMCPDebug(serverName, 'XAA: starting cross-app access flow')
+  logMCPDebug(serverName, 'XAA: 开始跨应用访问流程')
 
   // IdP client secret lives in a separate keychain slot (keyed by IdP issuer),
   // NOT the AS secret — different trust domain. Optional: if absent, PKCE-only.
@@ -773,7 +773,7 @@ async function performMCPXaaAuth(
           clearIdpIdToken(idp.issuer)
           logMCPDebug(
             serverName,
-            'XAA: cleared cached id_token after token-exchange failure',
+            'XAA: 令牌交换失败后已清除缓存的 id_token',
           )
         }
       } else if (
@@ -822,7 +822,7 @@ async function performMCPXaaAuth(
       },
     })
 
-    logMCPDebug(serverName, 'XAA: tokens saved')
+    logMCPDebug(serverName, 'XAA: 令牌已保存')
     logEvent('tengu_mcp_oauth_flow_success', {
       authMethod:
         'xaa' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -925,7 +925,7 @@ export async function performMCPOAuthFlow(
     } catch {
       logMCPDebug(
         serverName,
-        `Invalid cached resourceMetadataUrl: ${cachedResourceMetadataUrl}`,
+        `缓存的 resourceMetadataUrl 无效: ${cachedResourceMetadataUrl}`,
       )
     }
   }
@@ -994,7 +994,7 @@ export async function performMCPOAuthFlow(
     } catch (error) {
       logMCPDebug(
         serverName,
-        `Failed to fetch OAuth metadata: ${errorMessage(error)}`,
+        `获取 OAuth 元数据失败: ${errorMessage(error)}`,
       )
     }
 
@@ -1022,7 +1022,7 @@ export async function performMCPOAuthFlow(
         abortSignal.removeEventListener('abort', abortHandler)
         abortHandler = null
       }
-      logMCPDebug(serverName, `MCP OAuth server cleaned up`)
+      logMCPDebug(serverName, `MCP OAuth 服务器已清理`)
     }
 
     // Setup a server to receive the callback
@@ -1066,7 +1066,7 @@ export async function performMCPOAuthFlow(
                 parsed.searchParams.get('error_description') || ''
               cleanup()
               rejectOnce(
-                new Error(`OAuth error: ${error} - ${errorDescription}`),
+                new Error(`OAuth 错误: ${error} - ${errorDescription}`),
               )
               return
             }
@@ -1079,14 +1079,14 @@ export async function performMCPOAuthFlow(
             if (state !== oauthState) {
               cleanup()
               rejectOnce(
-                new Error('OAuth state mismatch - possible CSRF attack'),
+                new Error('OAuth 状态不匹配 - 可能存在 CSRF 攻击'),
               )
               return
             }
 
             logMCPDebug(
               serverName,
-              `Received auth code via manual callback URL`,
+              `通过手动回调 URL 收到认证码`,
             )
             cleanup()
             resolveOnce(code)

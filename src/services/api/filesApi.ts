@@ -107,9 +107,9 @@ async function retryWithBackoff<T>(
       return result.value
     }
 
-    lastError = result.error || `${operation} failed`
+    lastError = result.error || `${operation} 失败`
     logDebug(
-      `${operation} attempt ${attempt}/${MAX_RETRIES} failed: ${lastError}`,
+      `${operation} 第 ${attempt}/${MAX_RETRIES} 次尝试失败: ${lastError}`,
     )
 
     if (attempt < MAX_RETRIES) {
@@ -142,9 +142,9 @@ export async function downloadFile(
     'anthropic-beta': FILES_API_BETA_HEADER,
   }
 
-  logDebug(`Downloading file ${fileId} from ${url}`)
+  logDebug(`正在从 ${url} 下载文件 ${fileId}`)
 
-  return retryWithBackoff(`Download file ${fileId}`, async () => {
+  return retryWithBackoff(`下载文件 ${fileId}`, async () => {
     try {
       const response = await axios.get(url, {
         headers,
@@ -169,7 +169,7 @@ export async function downloadFile(
         throw new Error(`拒绝访问文件：${fileId}`)
       }
 
-      return { done: false, error: `status ${response.status}` }
+      return { done: false, error: `状态码 ${response.status}` }
     } catch (error) {
       if (!axios.isAxiosError(error)) {
         throw error
@@ -192,7 +192,7 @@ export function buildDownloadPath(
   const normalized = path.normalize(relativePath)
   if (normalized.startsWith('..')) {
     logDebugError(
-      `Invalid file path: ${relativePath}. Path must not traverse above workspace`,
+      `无效的文件路径: ${relativePath}。路径不能遍历到工作区之外`,
     )
     return null
   }
@@ -228,7 +228,7 @@ export async function downloadAndSaveFile(
       fileId,
       path: '',
       success: false,
-      error: `Invalid file path: ${relativePath}`,
+      error: `无效的文件路径: ${relativePath}`,
     }
   }
 
@@ -252,7 +252,7 @@ export async function downloadAndSaveFile(
       bytesWritten: content.length,
     }
   } catch (error) {
-    logDebugError(`Failed to download file ${fileId}: ${errorMessage(error)}`)
+    logDebugError(`下载文件 ${fileId} 失败: ${errorMessage(error)}`)
     if (error instanceof Error) {
       logError(error)
     }
@@ -338,7 +338,7 @@ export async function downloadSessionFiles(
   const elapsedMs = Date.now() - startTime
   const successCount = count(results, r => r.success)
   logDebug(
-    `Downloaded ${successCount}/${files.length} file(s) in ${elapsedMs}ms`,
+    `已下载 ${successCount}/${files.length} 个文件，用时 ${elapsedMs}ms`,
   )
 
   return results
@@ -417,7 +417,7 @@ export async function uploadFile(
     })
     return {
       path: relativePath,
-      error: `File exceeds maximum size of ${MAX_FILE_SIZE_BYTES} bytes (actual: ${fileSize})`,
+      error: `文件大小超过最大值 ${MAX_FILE_SIZE_BYTES} 字节（实际: ${fileSize}）`,
       success: false,
     }
   }
@@ -455,7 +455,7 @@ export async function uploadFile(
   const body = Buffer.concat(bodyParts)
 
   try {
-    return await retryWithBackoff(`Upload file ${relativePath}`, async () => {
+    return await retryWithBackoff(`上传文件 ${relativePath}`, async () => {
       try {
         const response = await axios.post(url, body, {
           headers: {
@@ -473,7 +473,7 @@ export async function uploadFile(
           if (!fileId) {
             return {
               done: false,
-              error: 'Upload succeeded but no file ID returned',
+              error: '上传成功但未返回文件 ID',
             }
           }
           logDebug(`Uploaded file ${filePath} -> ${fileId} (${fileSize} bytes)`)
@@ -495,7 +495,7 @@ export async function uploadFile(
               'auth' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
           })
           throw new UploadNonRetriableError(
-            'Authentication failed: invalid or missing API key',
+            '认证失败: API 密钥无效或缺失',
           )
         }
 
@@ -515,7 +515,7 @@ export async function uploadFile(
           throw new UploadNonRetriableError('File too large for upload')
         }
 
-        return { done: false, error: `status ${response.status}` }
+        return { done: false, error: `状态码 ${response.status}` }
       } catch (error) {
         // Non-retriable errors propagate up
         if (error instanceof UploadNonRetriableError) {
@@ -640,7 +640,7 @@ export async function listFilesCreatedAfter(
     }
 
     const page = await retryWithBackoff(
-      `List files after ${afterCreatedAt}`,
+      `列出 ${afterCreatedAt} 之后创建的文件`,
       async () => {
         try {
           const response = await axios.get(`${baseUrl}/v1/files`, {
@@ -659,7 +659,7 @@ export async function listFilesCreatedAfter(
               error_type:
                 'auth' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
             })
-            throw new Error('Authentication failed: invalid or missing API key')
+            throw new Error('认证失败: API 密钥无效或缺失')
           }
           if (response.status === 403) {
             logEvent('tengu_file_list_failed', {
@@ -669,7 +669,7 @@ export async function listFilesCreatedAfter(
             throw new Error('拒绝访问，无法列出文件')
           }
 
-          return { done: false, error: `status ${response.status}` }
+          return { done: false, error: `状态码 ${response.status}` }
         } catch (error) {
           if (!axios.isAxiosError(error)) {
             throw error
@@ -736,7 +736,7 @@ export function parseFileSpecs(fileSpecs: string[]): File[] {
 
     if (!fileId || !relativePath) {
       logDebugError(
-        `Invalid file spec: ${spec}. Both file_id and path are required`,
+        `无效的文件规格: ${spec}。file_id 和 path 均为必填项`,
       )
       continue
     }

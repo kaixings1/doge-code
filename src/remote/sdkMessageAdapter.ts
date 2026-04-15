@@ -75,7 +75,7 @@ function convertInitMessage(msg: SDKSystemMessage): SystemMessage {
   return {
     type: 'system',
     subtype: 'informational',
-    content: `Remote session initialized (model: ${msg.model})`,
+    content: `远程会话已初始化（模型: ${msg.model}）`,
     level: 'info',
     uuid: msg.uuid,
     timestamp: new Date().toISOString(),
@@ -95,8 +95,8 @@ function convertStatusMessage(msg: SDKStatusMessage): SystemMessage | null {
     subtype: 'informational',
     content:
       msg.status === 'compacting'
-        ? 'Compacting conversation…'
-        : `Status: ${msg.status}`,
+        ? '正在压缩对话...'
+        : `状态: ${msg.status}`,
     level: 'info',
     uuid: msg.uuid,
     timestamp: new Date().toISOString(),
@@ -131,7 +131,7 @@ function convertCompactBoundaryMessage(
   return {
     type: 'system',
     subtype: 'compact_boundary',
-    content: 'Conversation compacted',
+    content: '对话已压缩',
     level: 'info',
     uuid: msg.uuid,
     timestamp: new Date().toISOString(),

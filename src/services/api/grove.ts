@@ -181,14 +181,14 @@ export async function isQualifiedForGrove(): Promise<boolean> {
   // Cache exists but is stale - return cached value and refresh in background
   if (now - cachedEntry.timestamp > GROVE_CACHE_EXPIRATION_MS) {
     logForDebugging(
-      'Grove: Cache stale, returning cached data and refreshing in background',
+      'Grove: 缓存已过期，正在返回缓存数据并在后台刷新',
     )
     void fetchAndStoreGroveConfig(accountId)
     return cachedEntry.grove_enabled
   }
 
   // Cache is fresh - return it immediately
-  logForDebugging('Grove: Using fresh cached config')
+  logForDebugging('Grove: 使用新鲜的缓存配置')
   return cachedEntry.grove_enabled
 }
 
@@ -220,7 +220,7 @@ async function fetchAndStoreGroveConfig(accountId: string): Promise<void> {
       },
     }))
   } catch (err) {
-    logForDebugging(`Grove: Failed to fetch and store config: ${err}`)
+    logForDebugging(`Grove: 获取并存储配置失败: ${err}`)
   }
 }
 
@@ -271,7 +271,7 @@ export const getGroveNoticeConfig = memoize(
         },
       }
     } catch (err) {
-      logForDebugging(`Failed to fetch Grove notice config: ${err}`)
+      logForDebugging(`获取 Grove 通知配置失败: ${err}`)
       return { success: false }
     }
   },

@@ -623,7 +623,7 @@ export async function trySessionMemoryCompaction(
     // (e.g., file not found, path issues) and shouldn't go to error logs
     logEvent('tengu_sm_compact_error', {})
     if (process.env.USER_TYPE === 'ant') {
-      logForDebugging(`Session memory compaction error: ${errorMessage(error)}`)
+      logForDebugging(`会话内存压缩错误: ${errorMessage(error)}`)
     }
     return null
   }

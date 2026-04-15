@@ -261,14 +261,14 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
     if (failedEvents.length === 0) {
       await this.deleteFile(filePath)
       if (process.env.USER_TYPE === 'ant') {
-        logForDebugging('1P event logging: previous batch retry succeeded')
+        logForDebugging('1P 事件日志: 之前批次重试成功')
       }
     } else {
       // Save only the failed events back (not all original events)
       await this.saveEventsToFile(filePath, failedEvents)
       if (process.env.USER_TYPE === 'ant') {
         logForDebugging(
-          `1P event logging: previous batch retry failed, ${failedEvents.length} events remain`,
+          `1P 事件日志: 之前批次重试失败，仍有 ${failedEvents.length} 个事件`,
         )
       }
     }
@@ -281,7 +281,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
     if (this.isShutdown) {
       if (process.env.USER_TYPE === 'ant') {
         logForDebugging(
-          '1P event logging export failed: Exporter has been shutdown',
+          '1P 事件日志导出失败: 导出器已关闭',
         )
       }
       resultCallback({
@@ -331,7 +331,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
         resultCallback({
           code: ExportResultCode.FAILED,
           error: new Error(
-            `Dropped ${events.length} events: max attempts (${this.maxAttempts}) reached`,
+            `丢弃 ${events.length} 个事件: 已达到最大尝试次数 (${this.maxAttempts})`,
           ),
         })
         return
@@ -438,7 +438,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
     const context = this.lastExportErrorContext
       ? ` (${this.lastExportErrorContext})`
       : ''
-    const message = `1P event logging: ${events.length} events failed to export${context}`
+    const message = `1P 事件日志: ${events.length} 个事件导出失败${context}`
     logError(new Error(message))
   }
 
@@ -456,7 +456,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
 
     if (process.env.USER_TYPE === 'ant') {
       logForDebugging(
-        `1P event logging: scheduling backoff retry in ${delay}ms (attempt ${this.attempts})`,
+        `1P 事件日志: 计划在 ${delay}ms 后进行回退重试（第 ${this.attempts} 次）`,
       )
     }
 
@@ -477,7 +477,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
       if (this.attempts >= this.maxAttempts) {
         if (process.env.USER_TYPE === 'ant') {
           logForDebugging(
-            `1P event logging: max attempts (${this.maxAttempts}) reached, dropping ${events.length} events`,
+            `1P 事件日志: 已达到最大尝试次数 (${this.maxAttempts})，丢弃 ${events.length} 个事件`,
           )
         }
         await this.deleteFile(filePath)
@@ -511,7 +511,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
       // Success - reset backoff and continue loop to drain any newly queued events
       this.resetBackoff()
       if (process.env.USER_TYPE === 'ant') {
-        logForDebugging('1P event logging: backoff retry succeeded')
+        logForDebugging('1P 事件日志: 回退重试成功')
       }
     }
   }
@@ -532,7 +532,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
       // everything to disk. Zero network traffic while killed; the backoff
       // timer keeps ticking and will resume POSTs as soon as the GrowthBook
       // cache picks up the cleared flag.
-      throw new Error('firstParty sink killswitch active')
+      throw new Error('firstParty 出口 killswitch 已激活')
     }
 
     const baseHeaders: Record<string, string> = {
@@ -547,7 +547,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
     const hasTrust =
       checkHasTrustDialogAccepted() || getIsNonInteractiveSession()
     if (process.env.USER_TYPE === 'ant' && !hasTrust) {
-      logForDebugging('1P event logging: Trust not accepted')
+      logForDebugging('1P 事件日志: 未建立信任')
     }
 
     // Skip auth when the OAuth token is expired or lacks user:profile
@@ -575,7 +575,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
 
     if (!useAuth && process.env.USER_TYPE === 'ant') {
       logForDebugging(
-        `1P event logging: auth not available, sending without auth`,
+        '1P 事件日志: 未建立信任或 OAuth 令牌已过期',
       )
     }
 
@@ -599,7 +599,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
       ) {
         if (process.env.USER_TYPE === 'ant') {
           logForDebugging(
-            '1P event logging: 401 auth error, retrying without auth',
+            '1P 事件日志: 401 认证错误，正在尝试不携带认证重试',
           )
         }
         const response = await axios.post(this.endpoint, payload, {
@@ -621,7 +621,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
   ): void {
     if (process.env.USER_TYPE === 'ant') {
       logForDebugging(
-        `1P event logging: ${eventCount} events exported successfully${withAuth ? ' (with auth)' : ' (without auth)'}`,
+        `1P 事件日志: ${eventCount} 个事件导出成功${withAuth ? '（携带认证）' : '（不携带认证）'}`,
       )
       logForDebugging(`API Response: ${jsonStringify(responseData, null, 2)}`)
     }
@@ -684,7 +684,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
         // Emit partial event if core metadata is missing
         if (process.env.USER_TYPE === 'ant') {
           logForDebugging(
-            `1P event logging: core_metadata missing for event ${eventName}`,
+            `1P 事件日志: core_metadata 缺失（事件 ${eventName}）`,
           )
         }
         events.push({
@@ -696,7 +696,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
             session_id: getSessionId(),
             additional_metadata: Buffer.from(
               jsonStringify({
-                transform_error: 'core_metadata attribute is missing',
+                transform_error: 'core_metadata 属性缺失',
               }),
             ).toString('base64'),
           }),
@@ -766,14 +766,14 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
     this.resetBackoff()
     await this.forceFlush()
     if (process.env.USER_TYPE === 'ant') {
-      logForDebugging('1P event logging exporter shutdown complete')
+      logForDebugging('1P 事件日志导出器关闭完成')
     }
   }
 
   async forceFlush(): Promise<void> {
     await Promise.all(this.pendingExports)
     if (process.env.USER_TYPE === 'ant') {
-      logForDebugging('1P event logging exporter flush complete')
+      logForDebugging('1P 事件日志导出器刷新完成')
     }
   }
 }

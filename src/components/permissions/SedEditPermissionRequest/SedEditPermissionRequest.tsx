@@ -145,7 +145,7 @@ function SedEditPermissionRequestInner(t0) {
   let t3;
   bb1: {
     if (!fileExists) {
-      t3 = "File does not exist";
+      t3 = "文件不存在";
       break bb1;
     }
     t3 = "Pattern did not match any content";

@@ -6,7 +6,7 @@ import { getFsImplementation } from '../../utils/fsOperations.js'
  * Get the Magic Docs update prompt template
  */
 function getUpdatePromptTemplate(): string {
-  return `IMPORTANT: This message and these instructions are NOT part of the actual user conversation. Do NOT include any references to "documentation updates", "magic docs", or these update instructions in the document content.
+  return `IMPORTANT: This message and these instructions are NOT part of the actual user conversation. Do NOT include any references to "文档更新"、"magic docs"或这些更新说明到文档内容中。
 
 Based on the user conversation above (EXCLUDING this documentation update instruction message), update the Magic Doc file to incorporate any NEW learnings, insights, or information that would be valuable to preserve.
 
@@ -25,7 +25,7 @@ CRITICAL RULES FOR EDITING:
 - If there's an italicized line immediately after the header, preserve it exactly as-is
 - Keep the document CURRENT with the latest state of the codebase - this is NOT a changelog or history
 - Update information IN-PLACE to reflect the current state - do NOT append historical notes or track changes over time
-- Remove or replace outdated information rather than adding "Previously..." or "Updated to..." notes
+- Remove or replace outdated information rather than adding "Previously..." or "已更新为..." notes
 - Clean up or DELETE sections that are no longer relevant or don't align with the document's purpose
 - Fix obvious errors: typos, grammar mistakes, broken formatting, incorrect information, or confusing statements
 - Keep the document well organized: use clear headings, logical section order, consistent formatting, and proper nesting

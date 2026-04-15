@@ -77,7 +77,7 @@ User: "Implement dark mode"
 User: "Add a delete button to the user profile"
 - Seems simple but involves: where to place it, confirmation dialog, API call, error handling, state updates
 
-User: "Update the error handling in the API"
+User: "Update the 错误 handling in the API"
 - Affects multiple files, user should approve the approach
 
 ### BAD - Don't use EnterPlanMode:
@@ -151,7 +151,7 @@ User: "Add a delete button to the user profile"
 User: "Can we work on the search feature?"
 - User wants to get started, not plan
 
-User: "Update the error handling in the API"
+User: "Update the 错误 handling in the API"
 - Start working; ask specific questions if needed
 
 User: "Fix the typo in the README"

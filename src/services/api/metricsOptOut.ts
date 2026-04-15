@@ -64,7 +64,7 @@ async function _checkMetricsEnabledAPI(): Promise<MetricsStatus> {
     })
 
     logForDebugging(
-      `Metrics opt-out API response: enabled=${data.metrics_logging_enabled}`,
+      `指标退出状态 API 响应: enabled=${data.metrics_logging_enabled}`,
     )
 
     return {
@@ -73,7 +73,7 @@ async function _checkMetricsEnabledAPI(): Promise<MetricsStatus> {
     }
   } catch (error) {
     logForDebugging(
-      `Failed to check metrics opt-out status: ${errorMessage(error)}`,
+      `检查指标退出状态失败: ${errorMessage(error)}`,
     )
     logError(error)
     return { enabled: false, hasError: true }

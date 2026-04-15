@@ -32,7 +32,7 @@ export function usePluginAutoupdateNotification() {
         return;
       }
       const unsubscribe = onPluginsAutoUpdated(plugins => {
-        logForDebugging(`Plugin autoupdate notification: ${plugins.length} plugin(s) updated`);
+        logForDebugging(`插件自动更新通知：${plugins.length} 个插件已更新`);
         setUpdatedPlugins(plugins);
       });
       return unsubscribe;
@@ -56,14 +56,14 @@ export function usePluginAutoupdateNotification() {
         return;
       }
       const pluginNames = updatedPlugins.map(_temp);
-      const displayNames = pluginNames.length <= 2 ? pluginNames.join(" and ") : `${pluginNames.length} plugins`;
+      const displayNames = pluginNames.length <= 2 ? pluginNames.join(" 和 ") : `${pluginNames.length} 个插件`;
       addNotification({
         key: "plugin-autoupdate-restart",
         jsx: <><Text color="success">{pluginNames.length === 1 ? "插件" : "插件"}已更新：{" "}{displayNames}</Text><Text dimColor={true}> · 运行 /reload-plugins 以应用</Text></>,
         priority: "low",
         timeoutMs: 10000
       });
-      logForDebugging(`Showing plugin autoupdate notification for: ${pluginNames.join(", ")}`);
+      logForDebugging(`显示插件自动更新通知：${pluginNames.join(", ")}`);
     };
     t4 = [updatedPlugins, addNotification];
     $[3] = addNotification;

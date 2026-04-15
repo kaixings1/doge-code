@@ -77,7 +77,7 @@ export function ConsoleOAuthFlow({
     ...(getGlobalConfig().customApiEndpoint ?? {}),
     ...readCustomApiStorage()
   }), []);
-  const persistedProvider = persistedCustomApiEndpoint.provider ?? 'anthropic';
+  const persistedProvider = persistedCustomApiEndpoint.provider;  // 不使用默认值，要求用户明确配置
   const terminal = useTerminalNotification();
   const [oauthStatus, setOAuthStatus] = useState<OAuthStatus>(() => {
     if (mode === 'setup-token') {
@@ -97,7 +97,9 @@ export function ConsoleOAuthFlow({
   const safeOauthStatus = oauthStatus ?? {
     state: 'provider_select' as const
   };
-  const [compatibleApiProvider, setCompatibleApiProvider] = useState<CompatibleApiProvider>(persistedProvider);
+  const [compatibleApiProvider, setCompatibleApiProvider] = useState<CompatibleApiProvider>(
+    persistedProvider ?? 'openai'  // 初始值，仅在用户未配置时使用，但在 OAuth 流程中会要求用户明确选择
+  );
   const [pastedCode, setPastedCode] = useState('');
   const [cursorOffset, setCursorOffset] = useState(0);
   const [customBaseURL, setCustomBaseURL] = useState(persistedCustomApiEndpoint.baseURL ?? process.env.ANTHROPIC_BASE_URL ?? '');

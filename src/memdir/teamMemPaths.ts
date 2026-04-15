@@ -137,7 +137,7 @@ async function realpathDeepestExisting(absolutePath: string): Promise<string> {
           const st = await lstat(current)
           if (st.isSymbolicLink()) {
             throw new PathTraversalError(
-              `Dangling symlink detected (target does not exist): "${current}"`,
+              `发现悬空符号链接（目标不存在）: "${current}"`,
             )
           }
           // lstat succeeded but isn't a symlink — ENOENT from realpath was
@@ -151,7 +151,7 @@ async function realpathDeepestExisting(absolutePath: string): Promise<string> {
       } else if (code === 'ELOOP') {
         // Symlink loop — corrupted or malicious filesystem state.
         throw new PathTraversalError(
-          `Symlink loop detected in path: "${current}"`,
+          `路径中发现符号链接环: "${current}"`,
         )
       } else if (code !== 'ENOTDIR' && code !== 'ENAMETOOLONG') {
         // EACCES, EIO, etc. — cannot verify containment. Fail closed by wrapping
@@ -229,7 +229,7 @@ export async function validateTeamMemWritePath(
   filePath: string,
 ): Promise<string> {
   if (filePath.includes('\0')) {
-    throw new PathTraversalError(`Null byte in path: "${filePath}"`)
+    throw new PathTraversalError(`路径中发现空字节: "${filePath}"`)
   }
   // First pass: normalize .. segments and check string-level containment.
   // This is a fast rejection for obvious traversal attempts before we touch
@@ -240,7 +240,7 @@ export async function validateTeamMemWritePath(
   // so "team-evil/" won't match "team/"
   if (!resolvedPath.startsWith(teamDir)) {
     throw new PathTraversalError(
-      `Path escapes team memory directory: "${filePath}"`,
+      `路径越界（超出 team memory 目录）: "${filePath}"`,
     )
   }
   // Second pass: resolve symlinks on the deepest existing ancestor and verify
@@ -249,7 +249,7 @@ export async function validateTeamMemWritePath(
   const realPath = await realpathDeepestExisting(resolvedPath)
   if (!(await isRealPathWithinTeamDir(realPath))) {
     throw new PathTraversalError(
-      `Path escapes team memory directory via symlink: "${filePath}"`,
+      `路径通过符号链接越界（超出 team memory 目录）: "${filePath}"`,
     )
   }
   return resolvedPath
@@ -270,14 +270,14 @@ export async function validateTeamMemKey(relativeKey: string): Promise<string> {
   const resolvedPath = resolve(fullPath)
   if (!resolvedPath.startsWith(teamDir)) {
     throw new PathTraversalError(
-      `Key escapes team memory directory: "${relativeKey}"`,
+      `键越界（超出 team memory 目录）: "${relativeKey}"`,
     )
   }
   // Second pass: resolve symlinks and verify real containment.
   const realPath = await realpathDeepestExisting(resolvedPath)
   if (!(await isRealPathWithinTeamDir(realPath))) {
     throw new PathTraversalError(
-      `Key escapes team memory directory via symlink: "${relativeKey}"`,
+      `键通过符号链接越界（超出 team memory 目录）: "${relativeKey}"`,
     )
   }
   return resolvedPath

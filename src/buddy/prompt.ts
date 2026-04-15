@@ -11,11 +11,11 @@ type CompanionIntroAttachment = {
 }
 
 export function companionIntroText(name: string, species: string): string {
-  return `# Companion
+  return `# 伙伴
 
-A small ${species} named ${name} sits beside the user's input box and occasionally comments in a speech bubble. You're not ${name} — it's a separate watcher.
+一个名叫 ${name} 的小${species}坐在用户输入框旁边，偶尔会在对话气泡中发表评论。你不是 ${name} ——它是一个独立的观察者。
 
-When the user addresses ${name} directly (by name), its bubble will answer. Your job in that moment is to stay out of the way: respond in ONE line or less, or just answer any part of the message meant for you. Don't explain that you're not ${name} — they know. Don't narrate what ${name} might say — the bubble handles that.`
+当用户直接称呼 ${name} 的名字时，它的气泡会回答。在那一刻，你的工作是让路：用一行或更少的文字回应，或者只回答消息中对你说的部分。不要解释你不是 ${name} ——用户知道。不要叙述 ${name} 可能会说什么——气泡会处理这些。`
 }
 
 export function getCompanionIntroAttachment(

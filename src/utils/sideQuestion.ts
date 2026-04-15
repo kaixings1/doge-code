@@ -1,9 +1,8 @@
 /**
- * Side Question ("/btw") feature - allows asking quick questions without
- * interrupting the main agent context.
+ * 附加问题（"/btw"）功能 - 允许提出快速问题而不中断主代理上下文。
  *
- * Uses runForkedAgent to leverage prompt caching from the parent context
- * while keeping the side question response separate from main conversation.
+ * 使用 runForkedAgent 利用父上下文的提示缓存，同时保持附加问题
+ * 响应与主对话分离。
  */
 
 import { formatAPIError } from '../services/api/errorUtils.js'
@@ -12,12 +11,12 @@ import type { Message, SystemAPIErrorMessage } from '../types/message.js'
 import { type CacheSafeParams, runForkedAgent } from './forkedAgent.js'
 import { createUserMessage, extractTextContent } from './messages.js'
 
-// Pattern to detect "/btw" at start of input (case-insensitive, word boundary)
+// 检测输入开头处 "/btw" 的模式（不区分大小写，单词边界）
 const BTW_PATTERN = /^\/btw\b/gi
 
 /**
- * Find positions of "/btw" keyword at the start of text for highlighting.
- * Similar to findThinkingTriggerPositions in thinking.ts.
+ * 查找文本开头处 "/btw" 关键词的位置以进行高亮显示。
+ * 类似于 thinking.ts 中的 findThinkingTriggerPositions。
  */
 export function findBtwTriggerPositions(text: string): Array<{
   word: string
@@ -46,9 +45,9 @@ export type SideQuestionResult = {
 }
 
 /**
- * Run a side question using a forked agent.
- * Shares the parent's prompt cache — no thinking override, no cache write.
- * All tools are blocked and we cap at 1 turn.
+ * 使用分叉代理运行附加问题。
+ * 共享父级的提示缓存——不覆盖思考、不写入缓存。
+ * 所有工具都被阻止，我们限制为 1 轮。
  */
 export async function runSideQuestion({
   question,
@@ -57,31 +56,31 @@ export async function runSideQuestion({
   question: string
   cacheSafeParams: CacheSafeParams
 }): Promise<SideQuestionResult> {
-  // Wrap the question with instructions to answer without tools
-  const wrappedQuestion = `<system-reminder>This is a side question from the user. You must answer this question directly in a single response.
+  // 用指令包装问题，指示不使用工具回答
+  const wrappedQuestion = `<system-reminder>这是用户提出的一个附加问题。你必须直接在一个响应中回答这个问题。
 
-IMPORTANT CONTEXT:
-- You are a separate, lightweight agent spawned to answer this one question
-- The main agent is NOT interrupted - it continues working independently in the background
-- You share the conversation context but are a completely separate instance
-- Do NOT reference being interrupted or what you were "previously doing" - that framing is incorrect
+重要上下文：
+- 你是一个独立的轻量级代理，被派来回答这一个问题
+- 主代理不会被中断——它继续在后台独立工作
+- 你共享对话上下文，但是一个完全独立的实例
+- 不要提及被打断或你"之前在做什么"——这种框架是不正确的
 
-CRITICAL CONSTRAINTS:
-- You have NO tools available - you cannot read files, run commands, search, or take any actions
-- This is a one-off response - there will be no follow-up turns
-- You can ONLY provide information based on what you already know from the conversation context
-- NEVER say things like "Let me try...", "I'll now...", "Let me check...", or promise to take any action
-- If you don't know the answer, say so - do not offer to look it up or investigate
+关键约束：
+- 你没有可用工具——不能读取文件、运行命令、搜索或采取任何行动
+- 这是一次性的响应——不会有后续轮次
+- 你只能根据你已从对话上下文中知道的信息提供答案
+- 绝不要说"让我试试..."、"我现在..."、"让我检查一下..."，或承诺采取任何行动
+- 如果你不知道答案，就说出来——不要提出要去查找或调查
 
-Simply answer the question with the information you have.</system-reminder>
+仅用你掌握的信息回答问题。</system-reminder>
 
 ${question}`
 
   const agentResult = await runForkedAgent({
     promptMessages: [createUserMessage({ content: wrappedQuestion })],
-    // Do NOT override thinkingConfig — thinking is part of the API cache key,
-    // and diverging from the main thread's config busts the prompt cache.
-    // Adaptive thinking on a quick Q&A has negligible overhead.
+    // 不要覆盖 thinkingConfig——思考是 API 缓存键的一部分，
+    // 与主线程的配置不同会破坏提示缓存。
+    // 快速问答的自适应思考开销可以忽略不计。
     cacheSafeParams,
     canUseTool: async () => ({
       behavior: 'deny' as const,
@@ -90,8 +89,8 @@ ${question}`
     }),
     querySource: 'side_question',
     forkLabel: 'side_question',
-    maxTurns: 1, // Single turn only - no tool use loops
-    // No future request shares this suffix; skip writing cache entries.
+    maxTurns: 1, // 仅限单轮——无工具使用循环
+    // 没有未来请求共享此后缀；跳过写入缓存条目。
     skipCacheWrite: true,
   })
 
@@ -102,53 +101,48 @@ ${question}`
 }
 
 /**
- * Extract a display string from forked agent messages.
+ * 从分叉代理消息中提取显示字符串。
  *
- * IMPORTANT: claude.ts yields one AssistantMessage PER CONTENT BLOCK, not one
- * per API response. With adaptive thinking enabled (inherited from the main
- * thread to preserve the cache key), a thinking response arrives as:
+ * 重要：claude.ts 每个内容块生成一个 AssistantMessage，而不是每个 API 响应一个。
+ * 启用自适应思考后（从主线程继承以保留缓存键），思考响应到达方式为：
  *   messages[0] = assistant { content: [thinking_block] }
  *   messages[1] = assistant { content: [text_block] }
  *
- * The old code used `.find(m => m.type === 'assistant')` which grabbed the
- * first (thinking-only) message, found no text block, and returned null →
- * "No response received". Repos with large context (many skills, big CLAUDE.md)
- * trigger thinking more often, which is why this reproduced in the monorepo
- * but not here.
+ * 旧代码使用 `.find(m => m.type === 'assistant')` 获取第一个（仅思考）消息，
+ * 未找到文本块，返回 null → "未收到响应"。具有大上下文的仓库（许多技能、大型 CLAUDE.md）
+ * 更常触发思考，这就是为什么在 monorepo 中重现而这里没有。
  *
- * Secondary failure modes also surfaced as "No response received":
- *   - Model attempts tool_use → content = [thinking, tool_use], no text.
- *     Rare — the system-reminder usually prevents this, but handled here.
- *   - API error exhausts retries → query yields system api_error + user
- *     interruption, no assistant message at all.
+ * 次要失败模式也表现为"未收到响应"：
+ *   - 模型尝试 tool_use → content = [thinking, tool_use]，无文本。
+ *     罕见——系统提醒通常会阻止这种情况，但这里已处理。
+ *   - API 错误耗尽重试 → 查询产生系统 api_error + 用户中断，完全没有助手消息。
  */
 function extractSideQuestionResponse(messages: Message[]): string | null {
-  // Flatten all assistant content blocks across the per-block messages.
+  // 跨每个块的消息扁平化所有助手内容块。
   const assistantBlocks = messages.flatMap(m =>
     m.type === 'assistant' ? m.message.content : [],
   )
 
   if (assistantBlocks.length > 0) {
-    // Concatenate all text blocks (there's normally at most one, but be safe).
+    // 连接所有文本块（通常最多一个，但为了安全）。
     const text = extractTextContent(assistantBlocks, '\n\n').trim()
     if (text) return text
 
-    // No text — check if the model tried to call a tool despite instructions.
+    // 无文本——检查模型是否无视指令尝试调用工具。
     const toolUse = assistantBlocks.find(b => b.type === 'tool_use')
     if (toolUse) {
-      const toolName = 'name' in toolUse ? toolUse.name : 'a tool'
-      return `(The model tried to call ${toolName} instead of answering directly. Try rephrasing or ask in the main conversation.)`
+      const toolName = 'name' in toolUse ? toolUse.name : '一个工具'
+      return `(模型尝试调用 ${toolName} 而不是直接回答。请尝试重新表述或在主对话中提问。)`
     }
   }
 
-  // No assistant content — likely API error exhausted retries. Surface the
-  // first system api_error message so the user sees what happened.
+  // 无助手内容——可能是 API 错误耗尽重试。显示第一个系统 api_error 消息，以便用户看到发生了什么。
   const apiErr = messages.find(
     (m): m is SystemAPIErrorMessage =>
       m.type === 'system' && 'subtype' in m && m.subtype === 'api_error',
   )
   if (apiErr) {
-    return `(API error: ${formatAPIError(apiErr.error)})`
+    return `(API 错误：${formatAPIError(apiErr.error)})`
   }
 
   return null

@@ -247,7 +247,7 @@ export function createLSPClient(
       } catch (error) {
         const err = error as Error
         logError(
-          new Error(`LSP server ${serverName} failed to start: ${err.message}`),
+          new Error(`LSP 服务器 ${serverName} 启动失败: ${err.message}`),
         )
         throw error
       }

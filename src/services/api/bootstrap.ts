@@ -77,7 +77,7 @@ async function fetchBootstrapAPI(): Promise<BootstrapResponse | null> {
       } else if (apiKey) {
         authHeaders = { 'x-api-key': apiKey }
       } else {
-        logForDebugging('[Bootstrap] No auth available on retry, aborting')
+        logForDebugging('[Bootstrap] 重试时没有可用认证，正在中止')
         return null
       }
 
@@ -129,7 +129,7 @@ export async function fetchBootstrapData(): Promise<void> {
       return
     }
 
-    logForDebugging('[Bootstrap] Cache updated, persisting to disk')
+    logForDebugging('[Bootstrap] 缓存已更新，正在持久化到磁盘')
     saveGlobalConfig(current => ({
       ...current,
       clientDataCache: clientData,

@@ -190,7 +190,7 @@ export function computeEditsFromContents(
   if (singleHunk && patch.length > 1) {
     logError(
       new Error(
-        `Unexpected number of hunks: ${patch.length}. Expected 1 hunk.`,
+        `意外的 hunk 数量：${patch.length}。预期 1 个 hunk。`,
       ),
     )
   }
@@ -332,7 +332,7 @@ async function closeTabInIDE(
 ): Promise<void> {
   try {
     if (!ideClient || ideClient.type !== 'connected') {
-      throw new Error('IDE client not available')
+      throw new Error('IDE 客户端不可用')
     }
 
     // Use direct RPC to close the tab

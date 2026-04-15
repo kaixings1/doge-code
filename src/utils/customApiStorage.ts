@@ -23,7 +23,7 @@ export function readCustomApiStorage(): CustomApiStorageData {
     provider:
       value.provider === 'openai' || value.provider === 'anthropic'
         ? value.provider
-        : undefined,
+        : undefined,  // 不设置默认值，要求用户明确配置
     baseURL: typeof value.baseURL === 'string' ? value.baseURL : undefined,
     apiKey: typeof value.apiKey === 'string' ? value.apiKey : undefined,
     model: typeof value.model === 'string' ? value.model : undefined,

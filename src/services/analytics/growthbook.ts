@@ -168,7 +168,7 @@ function getEnvOverrides(): Record<string, unknown> | null {
         } catch {
           logError(
             new Error(
-              `GrowthBook: Failed to parse CLAUDE_INTERNAL_FC_OVERRIDES: ${raw}`,
+              `GrowthBook: 解析 CLAUDE_INTERNAL_FC_OVERRIDES 失败: ${raw}`,
             ),
           )
         }
@@ -484,7 +484,7 @@ const getGrowthBookClient = memoize(
     const clientKey = getGrowthBookClientKey()
     if (process.env.USER_TYPE === 'ant') {
       logForDebugging(
-        `GrowthBook: Creating client with clientKey=${clientKey}, attributes: ${jsonStringify(attributes)}`,
+        `GrowthBook: 正在创建客户端，clientKey=${clientKey}，属性: ${jsonStringify(attributes)}`,
       )
     }
     const baseUrl =
@@ -504,7 +504,7 @@ const getGrowthBookClient = memoize(
       getIsNonInteractiveSession()
     const authHeaders = hasTrust
       ? getAuthHeaders()
-      : { headers: {}, error: 'trust not established' }
+      : { headers: {}, error: '未建立信任' }
     const hasAuth = !authHeaders.error
     clientCreatedWithAuth = hasAuth
 
@@ -545,7 +545,7 @@ const getGrowthBookClient = memoize(
         if (client !== thisClient) {
           if (process.env.USER_TYPE === 'ant') {
             logForDebugging(
-              'GrowthBook: Skipping init callback for replaced client',
+              'GrowthBook: 跳过已替换客户端的 init 回调',
             )
           }
           return
@@ -553,7 +553,7 @@ const getGrowthBookClient = memoize(
 
         if (process.env.USER_TYPE === 'ant') {
           logForDebugging(
-            `GrowthBook initialized successfully, source: ${result.source}, success: ${result.success}`,
+            `GrowthBook 初始化成功，来源: ${result.source}，成功: ${result.success}`,
           )
         }
 
@@ -626,7 +626,7 @@ export const initializeGrowthBook = memoize(
         if (!currentAuth.error) {
           if (process.env.USER_TYPE === 'ant') {
             logForDebugging(
-              'GrowthBook: Auth became available after client creation, reinitializing',
+              'GrowthBook: 客户端创建后认证已可用，正在重新初始化',
             )
           }
           // Use resetGrowthBook to properly destroy old client and stop periodic refresh
@@ -1045,7 +1045,7 @@ export async function refreshGrowthBookFeatures(): Promise<void> {
     if (growthBookClient !== client) return
 
     if (process.env.USER_TYPE === 'ant') {
-      logForDebugging('GrowthBook: Light refresh completed')
+      logForDebugging('GrowthBook: 轻量刷新完成')
     }
 
     // Gate on hadFeatures: if the payload was empty/malformed,

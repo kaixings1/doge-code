@@ -32,7 +32,7 @@ export async function fetchUltrareviewQuota(): Promise<UltrareviewQuotaResponse 
     )
     return response.data
   } catch (error) {
-    logForDebugging(`fetchUltrareviewQuota failed: ${error}`)
+    logForDebugging(`fetchUltrareviewQuota 失败: ${error}`)
     return null
   }
 }

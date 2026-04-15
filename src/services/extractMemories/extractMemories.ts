@@ -457,7 +457,7 @@ export function initExtractMemories(): void {
           `[extractMemories] memories saved: ${writtenPaths.join(', ')}`,
         )
       } else {
-        logForDebugging('[extractMemories] no memories saved this run')
+        logForDebugging('[extractMemories] 本次运行未保存任何记忆')
       }
 
       // Index file updates are mechanical — the agent touches MEMORY.md to add
