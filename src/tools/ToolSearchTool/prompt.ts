@@ -24,7 +24,7 @@ export { TOOL_SEARCH_TOOL_NAME } from './constants.js'
 
 import { TOOL_SEARCH_TOOL_NAME } from './constants.js'
 
-const PROMPT_HEAD = `Fetches full schema definitions for deferred tools so they can be called.
+const PROMPT_HEAD = `获取延迟加载工具的完整模式定义，以便后续调用。
 
 `
 
@@ -37,18 +37,18 @@ function getToolLocationHint(): string {
     process.env.USER_TYPE === 'ant' ||
     getFeatureValue_CACHED_MAY_BE_STALE('tengu_glacier_2xr', false)
   return deltaEnabled
-    ? 'Deferred tools appear by name in <system-reminder> messages.'
-    : 'Deferred tools appear by name in <available-deferred-tools> messages.'
+    ? '延迟加载工具的名称会出现在 <system-reminder> 消息中。'
+    : '延迟加载工具的名称会出现在 <available-deferred-tools> 消息中。'
 }
 
-const PROMPT_TAIL = ` Until fetched, only the name is known — there is no parameter schema, so the tool cannot be invoked. This tool takes a query, matches it against the deferred tool list, and returns the matched tools' complete JSONSchema definitions inside a <functions> block. Once a tool's schema appears in that result, it is callable exactly like any tool defined at the top of the prompt.
+const PROMPT_TAIL = ` 在获取完整定义之前，仅知道工具名称——没有参数模式，因此无法调用该工具。本工具接受一个查询条件，将其与延迟工具列表进行匹配，并返回匹配工具的完整 JSONSchema 定义，包裹在 <functions> 块内。一旦工具的模式出现在该结果中，即可像调用提示词顶部定义好的任何工具一样正常调用。
 
-Result format: each matched tool appears as one <function>{"description": "...", "name": "...", "parameters": {...}}</function> line inside the <functions> block — the same encoding as the tool list at the top of this prompt.
+结果格式：每个匹配的工具会作为一行 <function>{"description": "...", "name": "...", "parameters": {...}}</function> 出现在 <functions> 块内——编码方式与提示词顶部工具列表相同。
 
-Query forms:
-- "select:Read,Edit,Grep" — fetch these exact tools by name
-- "notebook jupyter" — keyword search, up to max_results best matches
-- "+slack send" — require "slack" in the name, rank by remaining terms`
+查询形式：
+- "select:Read,Edit,Grep" —— 按名称精确获取指定工具
+- "notebook jupyter" —— 关键词搜索，返回最多 max_results 个最佳匹配
+- "+slack send" —— 要求名称中包含 "slack"，并按其余关键词排序`
 
 /**
  * Check if a tool should be deferred (requires ToolSearch to load).

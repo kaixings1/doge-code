@@ -1,6 +1,6 @@
 /**
- * PowerShell-specific permission checking, adapted from bashPermissions.ts
- * for case-insensitive cmdlet matching.
+ * PowerShell 特定的权限检查，改编自 bashPermissions.ts
+ * 以实现不区分大小写的 cmdlet 匹配。
  */
 
 import { resolve } from 'path'
@@ -57,15 +57,15 @@ import {
 } from './readOnlyValidation.js'
 import { POWERSHELL_TOOL_NAME } from './toolName.js'
 
-// Matches `$var = `, `$var += `, `$env:X = `, `$x ??= ` etc. Used to strip
-// nested assignment prefixes in the parse-failed fallback path.
+// 匹配 `$var = `, `$var += `, `$env:X = `, `$x ??= ` 等。
+// 在解析失败的回退路径中用于剥离嵌套的赋值前缀。
 const PS_ASSIGN_PREFIX_RE = /^\$[\w:]+\s*(?:[+\-*/%]|\?\?)?\s*=\s*/
 
 /**
- * Cmdlets that can place a file at a caller-specified path. The
- * git-internal-paths guard checks whether any arg is a git-internal path
- * (hooks/, refs/, objects/, HEAD). Non-creating writers (remove-item,
- * clear-content) are intentionally absent — they can't plant new hooks.
+ * 可以将文件放置到调用者指定路径的 cmdlet。
+ * git-internal-paths 守卫会检查任何参数是否为 git 内部路径
+ * (hooks/, refs/, objects/, HEAD)。非创建性的写入操作 (remove-item,
+ * clear-content) 故意未包含在内 — 它们无法植入新的钩子。
  */
 const GIT_SAFETY_WRITE_CMDLETS = new Set([
   'new-item',
@@ -84,14 +84,12 @@ const GIT_SAFETY_WRITE_CMDLETS = new Set([
 ])
 
 /**
- * External archive-extraction applications that write files to cwd with
- * archive-controlled paths. `tar -xf payload.tar; git status` defeats
- * isCurrentDirectoryBareGitRepo (TOCTOU): the check runs at
- * permission-eval time, tar extracts HEAD/hooks/refs/ AFTER the check and
- * BEFORE git runs. Unlike GIT_SAFETY_WRITE_CMDLETS (where we can inspect
- * args for git-internal paths), archive contents are opaque — any
- * extraction preceding git must ask. Matched by name only (lowercase,
- * with and without .exe).
+ * 将文件写入 cwd 且路径由归档文件控制的外部解压程序。
+ * `tar -xf payload.tar; git status` 会击败 isCurrentDirectoryBareGitRepo (TOCTOU)：
+ * 检查在权限评估时运行，tar 在检查之后、git 运行之前提取 HEAD/hooks/refs/。
+ * 与 GIT_SAFETY_WRITE_CMDLETS（可以检查参数中的 git 内部路径）不同，
+ * 归档内容是未知的 — 任何在 git 之前的解压操作都必须询问。
+ * 仅按名称匹配（小写，带或不带 .exe）。
  */
 const GIT_SAFETY_ARCHIVE_EXTRACTORS = new Set([
   'tar',
@@ -112,8 +110,8 @@ const GIT_SAFETY_ARCHIVE_EXTRACTORS = new Set([
 ])
 
 /**
- * Extract the command name from a PowerShell command string.
- * Uses the parser to get the first command name from the AST.
+ * 从 PowerShell 命令字符串中提取命令名称。
+ * 使用解析器从 AST 中获取第一个命令名称。
  */
 async function extractCommandName(command: string): Promise<string> {
   const trimmed = command.trim()
@@ -126,8 +124,8 @@ async function extractCommandName(command: string): Promise<string> {
 }
 
 /**
- * Parse a permission rule string into a structured rule object.
- * Delegates to shared parsePermissionRule.
+ * 将权限规则字符串解析为结构化的规则对象。
+ * 委托给共享的 parsePermissionRule。
  */
 export function powershellPermissionRule(
   permissionRule: string,
@@ -136,16 +134,15 @@ export function powershellPermissionRule(
 }
 
 /**
- * Generate permission update suggestion for exact command match.
+ * 为精确匹配的命令生成权限更新建议。
  *
- * Skip exact-command suggestion for commands that can't round-trip cleanly:
- * - Multi-line: newlines don't survive normalization, rule would never match
- * - Literal *: storing `Remove-Item * -Force` verbatim re-parses as a wildcard
- *   rule via hasWildcards() (matches `^Remove-Item .* -Force$`). Escaping to
- *   `\*` creates a dead rule — parsePermissionRule's exact branch returns the
- *   raw string with backslash intact, so `Remove-Item \* -Force` never matches
- *   the incoming `Remove-Item * -Force`. Globs are unsafe to exact-auto-allow
- *   anyway; prefix suggestion still offered. (finding #12)
+ * 对于无法干净往返的命令，跳过精确命令建议：
+ * - 多行：换行符无法在标准化后保留，规则永远不会匹配
+ * - 字面量 *：将 `Remove-Item * -Force` 原样存储时，会通过 hasWildcards() 重新解析为通配符规则
+ *   （匹配 `^Remove-Item .* -Force$`）。转义为 `\*` 会创建一个死规则 — parsePermissionRule 的精确分支
+ *   原样返回包含反斜杠的字符串，因此 `Remove-Item \* -Force` 永远无法匹配
+ *   传入的 `Remove-Item * -Force`。无论如何，通配符对精确自动允许是不安全的；
+ *   仍会提供前缀建议。（发现 #12）
  */
 function suggestionForExactCommand(command: string): PermissionUpdate[] {
   if (command.includes('\n') || command.includes('*')) {
@@ -155,7 +152,7 @@ function suggestionForExactCommand(command: string): PermissionUpdate[] {
 }
 
 /**
- * PowerShell input schema type - simplified for initial implementation
+ * PowerShell 输入模式类型 - 初始实现时的简化版本
  */
 type PowerShellInput = {
   command: string
@@ -163,9 +160,9 @@ type PowerShellInput = {
 }
 
 /**
- * Filter rules by contents matching an input command.
- * PowerShell-specific: uses case-insensitive matching throughout.
- * Follows the same structure as BashTool's local filterRulesByContentsMatchingInput.
+ * 根据与输入命令匹配的内容过滤规则。
+ * PowerShell 专用：全程使用不区分大小写的匹配。
+ * 遵循与 BashTool 的本地 filterRulesByContentsMatchingInput 相同的结构。
  */
 function filterRulesByContentsMatchingInput(
   input: PowerShellInput,
@@ -181,11 +178,10 @@ function filterRulesByContentsMatchingInput(
   function strStartsWith(str: string, prefix: string): boolean {
     return str.toLowerCase().startsWith(prefix.toLowerCase())
   }
-  // SECURITY: stripModulePrefix on RULE names widens the
-  // secondary-canonical match — a deny rule `Module\Remove-Item:*` blocking
-  // `rm` is the intent (fail-safe over-match), but an allow rule
-  // `ModuleA\Get-Thing:*` also matching `ModuleB\Get-Thing` is fail-OPEN.
-  // Deny/ask over-match is fine; allow must never over-match.
+  // 安全性：对规则名称使用 stripModulePrefix 会扩展次要规范形式的匹配
+  // — 一条拒绝规则 `Module\Remove-Item:*` 能阻止 `rm` 是预期行为（故障安全的过度匹配），
+  // 但一条允许规则 `ModuleA\Get-Thing:*` 也匹配 `ModuleB\Get-Thing` 则是故障开放的。
+  // 拒绝/询问的过度匹配是可以的；允许绝不能过度匹配。
   function stripModulePrefixForRule(name: string): string {
     if (behavior === 'allow') {
       return name
@@ -193,24 +189,22 @@ function filterRulesByContentsMatchingInput(
     return stripModulePrefix(name)
   }
 
-  // Extract the first word (command name) from the input for canonical matching.
-  // Keep both raw (for slicing the original `command` string) and stripped
-  // (for canonical resolution) versions. For module-qualified inputs like
-  // `Microsoft.PowerShell.Utility\Invoke-Expression foo`, rawCmdName holds the
-  // full token so `command.slice(rawCmdName.length)` yields the correct rest.
+  // 从输入中提取第一个单词（命令名称）用于规范形式匹配。
+  // 保留原始版本（用于切割原始的 `command` 字符串）和剥离版本
+  // （用于规范形式解析）。对于如
+  // `Microsoft.PowerShell.Utility\Invoke-Expression foo` 的模块限定输入，rawCmdName 保存完整标记，
+  // 因此 `command.slice(rawCmdName.length)` 能产生正确的剩余部分。
   const rawCmdName = command.split(/\s+/)[0] ?? ''
   const inputCmdName = stripModulePrefix(rawCmdName)
   const inputCanonical = resolveToCanonical(inputCmdName)
 
-  // Build a version of the command with the canonical name substituted
-  // e.g., 'rm foo.txt' -> 'remove-item foo.txt' so deny rules on Remove-Item also block rm.
-  // SECURITY: Normalize the whitespace separator between name and args to a
-  // single space. PowerShell accepts any whitespace (tab, etc.) as separator,
-  // but prefix rule matching uses `prefix + ' '` (literal space). Without this,
-  // `rm\t./x` canonicalizes to `remove-item\t./x` and misses the deny rule
-  // `Remove-Item:*`, while acceptEdits auto-allow (using AST cmd.name) still
-  // matches — a deny-rule bypass. Build unconditionally (not just when the
-  // canonical differs) so non-space-separated raw commands are also normalized.
+  // 构建一个命令的规范名称替换版本
+  // 例如，'rm foo.txt' -> 'remove-item foo.txt'，以便 Remove-Item 上的拒绝规则也能阻止 rm。
+  // 安全性：将名称和参数之间的空白分隔符标准化为单个空格。PowerShell 接受任意空白符（制表符等）作为分隔符，
+  // 但前缀规则匹配使用 `prefix + ' '`（字面空格）。如果不这样处理，
+  // `rm\t./x` 规范化为 `remove-item\t./x` 就会错过拒绝规则
+  // `Remove-Item:*`，而 acceptEdits 自动允许（使用 AST cmd.name）仍然匹配
+  // — 一个拒绝规则绕过。无条件构建（而不仅当规范形式不同时）以便原始的非空格分隔命令也被标准化。
   const rest = command.slice(rawCmdName.length).replace(/^\s+/, ' ')
   const canonicalCommand = inputCanonical + rest
 
@@ -218,8 +212,8 @@ function filterRulesByContentsMatchingInput(
     .filter(([ruleContent]) => {
       const rule = powershellPermissionRule(ruleContent)
 
-      // Also resolve the rule's command name to canonical for cross-matching
-      // e.g., a deny rule for 'rm' should also block 'Remove-Item'
+      // 同时将规则的命令名称解析为规范形式以便交叉匹配
+      // 例如，针对 'rm' 的拒绝规则也应该阻止 'Remove-Item'
       function matchesCommand(cmd: string): boolean {
         switch (rule.type) {
           case 'exact':
@@ -244,35 +238,33 @@ function filterRulesByContentsMatchingInput(
         }
       }
 
-      // Check against the original command
+      // 检查原始命令
       if (matchesCommand(command)) {
         return true
       }
 
-      // Also check against the canonical form of the command
-      // This ensures 'deny Remove-Item' also blocks 'rm', 'del', 'ri', etc.
+      // 同时检查命令的规范形式
+      // 这确保了 'deny Remove-Item' 也能阻止 'rm', 'del', 'ri' 等。
       if (matchesCommand(canonicalCommand)) {
         return true
       }
 
-      // Also resolve the rule's command name to canonical and compare
-      // This ensures 'deny rm' also blocks 'Remove-Item'
-      // SECURITY: stripModulePrefix applied to DENY/ASK rule command
-      // names too, not just input. Otherwise a deny rule written as
-      // `Microsoft.PowerShell.Management\Remove-Item:*` is bypassed by `rm`,
-      // `del`, or plain `Remove-Item` — resolveToCanonical won't match the
-      // module-qualified form against COMMON_ALIASES.
+      // 同时将规则的命令名称解析为规范形式并比较
+      // 这确保了 'deny rm' 也能阻止 'Remove-Item'
+      // 安全性：stripModulePrefix 也应用于拒绝/询问规则的命令名称，而不仅仅是输入。
+      // 否则，写为 `Microsoft.PowerShell.Management\Remove-Item:*` 的拒绝规则会被 `rm`、
+      // `del` 或普通的 `Remove-Item` 绕过 — resolveToCanonical 不会将模块限定形式与 COMMON_ALIASES 匹配。
       if (rule.type === 'exact') {
         const rawRuleCmdName = rule.command.split(/\s+/)[0] ?? ''
         const ruleCanonical = resolveToCanonical(
           stripModulePrefixForRule(rawRuleCmdName),
         )
         if (ruleCanonical === inputCanonical) {
-          // Rule and input resolve to same canonical cmdlet
-          // SECURITY: use normalized `rest` not a raw re-slice
-          // from `command`. The raw slice preserves tab separators so
-          // `Remove-Item\t./secret.txt` vs deny rule `rm ./secret.txt` misses.
-          // Normalize both sides identically.
+          // 规则和输入解析为相同的规范 cmdlet
+          // 安全性：使用标准化的 `rest` 而不是从 `command` 重新切片。
+          // 原始切片保留了制表符分隔符，因此
+          // `Remove-Item\t./secret.txt` 与拒绝规则 `rm ./secret.txt` 会错过匹配。
+          // 两边使用相同的标准化。
           const ruleRest = rule.command
             .slice(rawRuleCmdName.length)
             .replace(/^\s+/, ' ')
@@ -305,18 +297,17 @@ function filterRulesByContentsMatchingInput(
           }
         }
       } else if (rule.type === 'wildcard') {
-        // Resolve the wildcard pattern's command name to canonical and re-match
-        // This ensures 'deny rm *' also blocks 'Remove-Item secret.txt'
+        // 将通配符模式的命令名称解析为规范形式并重新匹配
+        // 这确保了 'deny rm *' 也能阻止 'Remove-Item secret.txt'
         const rawRuleCmdName = rule.pattern.split(/\s+/)[0] ?? ''
         const ruleCanonical = resolveToCanonical(
           stripModulePrefixForRule(rawRuleCmdName),
         )
         if (ruleCanonical === inputCanonical && matchMode !== 'exact') {
-          // Rebuild the pattern with the canonical cmdlet name
-          // Normalize separator same as exact and prefix branches.
-          // Without this, a wildcard rule `rm\t*` produces canonicalPattern
-          // with a literal tab that never matches the space-normalized
-          // canonicalCommand.
+          // 使用规范 cmdlet 名称重建模式
+          // 与精确和前缀分支一样标准化分隔符。
+          // 否则，通配符规则 `rm\t*` 会生成一个包含字面制表符的 canonicalPattern，
+          // 永远无法匹配以空格标准化的 canonicalCommand。
           const ruleRest = rule.pattern
             .slice(rawRuleCmdName.length)
             .replace(/^\s+/, ' ')
@@ -333,7 +324,7 @@ function filterRulesByContentsMatchingInput(
 }
 
 /**
- * Get matching rules for input across all rule types (deny, ask, allow)
+ * 获取所有规则类型（拒绝、询问、允许）中与输入匹配的规则
  */
 function matchingRulesForInput(
   input: PowerShellInput,
@@ -380,7 +371,7 @@ function matchingRulesForInput(
 }
 
 /**
- * Check if the command is an exact match for a permission rule.
+ * 检查命令是否精确匹配某条权限规则。
  */
 export function powershellToolCheckExactMatchPermission(
   input: PowerShellInput,
@@ -393,7 +384,7 @@ export function powershellToolCheckExactMatchPermission(
   if (matchingDenyRules[0] !== undefined) {
     return {
       behavior: 'deny',
-      message: `Permission to use ${POWERSHELL_TOOL_NAME} with command ${trimmedCommand} has been denied.`,
+      message: `使用命令 ${trimmedCommand} 执行 ${POWERSHELL_TOOL_NAME} 的权限已被拒绝。`,
       decisionReason: { type: 'rule', rule: matchingDenyRules[0] },
     }
   }
@@ -416,7 +407,7 @@ export function powershellToolCheckExactMatchPermission(
 
   const decisionReason: PermissionDecisionReason = {
     type: 'other' as const,
-    reason: 'This command requires approval',
+    reason: '此命令需要批准',
   }
   return {
     behavior: 'passthrough',
@@ -430,7 +421,7 @@ export function powershellToolCheckExactMatchPermission(
 }
 
 /**
- * Check permission for a PowerShell command including prefix matches.
+ * 检查 PowerShell 命令的权限，包括前缀匹配。
  */
 export function powershellToolCheckPermission(
   input: PowerShellInput,
@@ -438,13 +429,13 @@ export function powershellToolCheckPermission(
 ): PermissionResult {
   const command = input.command.trim()
 
-  // 1. Check exact match first
+  // 1. 首先检查精确匹配
   const exactMatchResult = powershellToolCheckExactMatchPermission(
     input,
     toolPermissionContext,
   )
 
-  // 1a. Deny/ask if exact command has a rule
+  // 1a. 如果精确命令有规则则拒绝/询问
   if (
     exactMatchResult.behavior === 'deny' ||
     exactMatchResult.behavior === 'ask'
@@ -452,15 +443,15 @@ export function powershellToolCheckPermission(
     return exactMatchResult
   }
 
-  // 2. Find all matching rules (prefix or exact)
+  // 2. 查找所有匹配的规则（前缀或精确）
   const { matchingDenyRules, matchingAskRules, matchingAllowRules } =
     matchingRulesForInput(input, toolPermissionContext, 'prefix')
 
-  // 2a. Deny if command has a deny rule
+  // 2a. 如果命令有拒绝规则则拒绝
   if (matchingDenyRules[0] !== undefined) {
     return {
       behavior: 'deny',
-      message: `Permission to use ${POWERSHELL_TOOL_NAME} with command ${command} has been denied.`,
+      message: `使用命令 ${command} 执行 ${POWERSHELL_TOOL_NAME} 的权限已被拒绝。`,
       decisionReason: {
         type: 'rule',
         rule: matchingDenyRules[0],
@@ -468,7 +459,7 @@ export function powershellToolCheckPermission(
     }
   }
 
-  // 2b. Ask if command has an ask rule
+  // 2b. 如果命令有询问规则则询问
   if (matchingAskRules[0] !== undefined) {
     return {
       behavior: 'ask',
@@ -480,12 +471,12 @@ export function powershellToolCheckPermission(
     }
   }
 
-  // 3. Allow if command had an exact match allow
+  // 3. 如果命令有精确匹配的允许规则则允许
   if (exactMatchResult.behavior === 'allow') {
     return exactMatchResult
   }
 
-  // 4. Allow if command has an allow rule
+  // 4. 如果命令有允许规则则允许
   if (matchingAllowRules[0] !== undefined) {
     return {
       behavior: 'allow',
@@ -497,10 +488,10 @@ export function powershellToolCheckPermission(
     }
   }
 
-  // 5. Passthrough since no rules match, will trigger permission prompt
+  // 5. 无规则匹配，传递以触发权限提示
   const decisionReason = {
     type: 'other' as const,
-    reason: 'This command requires approval',
+    reason: '此命令需要批准',
   }
   return {
     behavior: 'passthrough',
@@ -514,7 +505,7 @@ export function powershellToolCheckPermission(
 }
 
 /**
- * Information about a sub-command for permission checking.
+ * 用于权限检查的子命令信息。
  */
 type SubCommandInfo = {
   text: string
@@ -524,24 +515,22 @@ type SubCommandInfo = {
 }
 
 /**
- * Extract sub-commands that need independent permission checking from a parsed command.
- * Safe output cmdlets (Format-Table, Select-Object, etc.) are flagged but NOT
- * filtered out — step 4.4 still checks deny rules against them (deny always
- * wins), step 5 skips them for approval collection (they inherit the permission
- * of the preceding command).
+ * 从解析后的命令中提取需要独立权限检查的子命令。
+ * 安全的输出 cmdlet（Format-Table、Select-Object 等）被标记但不会被过滤掉
+ * — 步骤 4.4 仍会检查针对它们的拒绝规则（拒绝总是胜出），
+ * 步骤 5 在收集批准时会跳过它们（它们继承前一个命令的权限）。
  *
- * Also includes nested commands from control flow statements (if, for, foreach, etc.)
- * to ensure commands hidden inside control flow are checked.
+ * 同时包含控制流语句（if、for、foreach 等）中的嵌套命令，
+ * 以确保隐藏在控制流中的命令也被检查。
  *
- * Returns sub-command info including both text and the parsed element for accurate
- * suggestion generation.
+ * 返回子命令信息，包括文本和解析后的元素，以便准确生成建议。
  */
 async function getSubCommandsForPermissionCheck(
   parsed: ParsedPowerShellCommand,
   originalCommand: string,
 ): Promise<SubCommandInfo[]> {
   if (!parsed.valid) {
-    // Return a fallback element for unparsed commands
+    // 为未解析的命令返回一个回退元素
     return [
       {
         text: originalCommand,
@@ -560,10 +549,10 @@ async function getSubCommandsForPermissionCheck(
 
   const subCommands: SubCommandInfo[] = []
 
-  // Check direct commands in pipelines
+  // 检查管道中的直接命令
   for (const statement of parsed.statements) {
     for (const cmd of statement.commands) {
-      // Only check actual commands (CommandAst), not expressions
+      // 仅检查实际命令 (CommandAst)，而非表达式
       if (cmd.elementType !== 'CommandAst') {
         continue
       }
@@ -571,14 +560,14 @@ async function getSubCommandsForPermissionCheck(
         text: cmd.text,
         element: cmd,
         statement,
-        // SECURITY: nameType gate — scripts\\Out-Null strips to Out-Null and
-        // would match SAFE_OUTPUT_CMDLETS, but PowerShell runs the .ps1 file.
-        // isSafeOutput: true causes step 5 to filter this command out of the
-        // approval list, so it would silently execute. See isAllowlistedCommand.
-        // SECURITY: args.length === 0 gate — Out-Null -InputObject:(1 > /etc/x)
-        // was filtered as safe-output (name-only) → step-5 subCommands empty →
-        // auto-allow → redirection inside paren writes file. Only zero-arg
-        // Out-String/Out-Null/Out-Host invocations are provably safe.
+        // 安全性：nameType 门禁 — scripts\\Out-Null 剥离后变为 Out-Null，
+        // 会匹配 SAFE_OUTPUT_CMDLETS，但 PowerShell 会运行 .ps1 文件。
+        // isSafeOutput: true 会导致步骤 5 将此命令从批准列表中过滤掉，
+        // 从而悄悄执行。参见 isAllowlistedCommand。
+        // 安全性：args.length === 0 门禁 — Out-Null -InputObject:(1 > /etc/x)
+        // 曾被视为安全输出（仅名称匹配）→ 步骤 5 的 subCommands 为空 →
+        // 自动允许 → 括号内的重定向会写入文件。仅零参数的
+        // Out-String/Out-Null/Out-Host 调用是经证明安全的。
         isSafeOutput:
           cmd.nameType !== 'application' &&
           isSafeOutputCommand(cmd.name) &&
@@ -586,7 +575,7 @@ async function getSubCommandsForPermissionCheck(
       })
     }
 
-    // Also check nested commands from control flow statements
+    // 同时检查控制流语句中的嵌套命令
     if (statement.nestedCommands) {
       for (const cmd of statement.nestedCommands) {
         subCommands.push({
@@ -606,7 +595,7 @@ async function getSubCommandsForPermissionCheck(
     return subCommands
   }
 
-  // Fallback for commands with no sub-commands
+  // 没有子命令时的回退
   return [
     {
       text: originalCommand,
@@ -624,17 +613,17 @@ async function getSubCommandsForPermissionCheck(
 }
 
 /**
- * Main permission check function for PowerShell tool.
+ * PowerShell 工具的主要权限检查函数。
  *
- * This function implements the full permission flow:
- * 1. Check exact match against deny/ask/allow rules
- * 2. Check prefix match against rules
- * 3. Run security check via powershellCommandIsSafe()
- * 4. Return appropriate PermissionResult
+ * 此函数实现完整的权限流程：
+ * 1. 检查与拒绝/询问/允许规则的精确匹配
+ * 2. 检查与规则的前缀匹配
+ * 3. 通过 powershellCommandIsSafe() 运行安全检查
+ * 4. 返回适当的 PermissionResult
  *
- * @param input - The PowerShell tool input
- * @param context - The tool use context (for abort signal and session info)
- * @returns Promise resolving to PermissionResult
+ * @param input - PowerShell 工具输入
+ * @param context - 工具使用上下文（用于中止信号和会话信息）
+ * @returns 解析为 PermissionResult 的 Promise
  */
 export async function powershellToolHasPermission(
   input: PowerShellInput,
@@ -643,47 +632,47 @@ export async function powershellToolHasPermission(
   const toolPermissionContext = context.getAppState().toolPermissionContext
   const command = input.command.trim()
 
-  // Empty command check
+  // 空命令检查
   if (!command) {
     return {
       behavior: 'allow',
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Empty command is safe',
+        reason: '空命令是安全的',
       },
     }
   }
 
-  // Parse the command once and thread through all sub-functions
+  // 解析命令一次，并传递给所有子函数
   const parsed = await parsePowerShellCommand(command)
 
-  // SECURITY: Check deny/ask rules BEFORE parse validity check.
-  // Deny rules operate on the raw command string and don't need the parsed AST.
-  // This ensures explicit deny rules still block commands even when parsing fails.
-  // 1. Check exact match first
+  // 安全性：在检查解析有效性之前检查拒绝/询问规则。
+  // 拒绝规则操作原始命令字符串，不需要解析后的 AST。
+  // 这确保了即使解析失败，显式拒绝规则仍会阻止命令。
+  // 1. 首先检查精确匹配
   const exactMatchResult = powershellToolCheckExactMatchPermission(
     input,
     toolPermissionContext,
   )
 
-  // Exact command was denied
+  // 精确命令被拒绝
   if (exactMatchResult.behavior === 'deny') {
     return exactMatchResult
   }
 
-  // 2. Check prefix/wildcard rules
+  // 2. 检查前缀/通配符规则
   const { matchingDenyRules, matchingAskRules } = matchingRulesForInput(
     input,
     toolPermissionContext,
     'prefix',
   )
 
-  // 2a. Deny if command has a deny rule
+  // 2a. 如果命令有拒绝规则则拒绝
   if (matchingDenyRules[0] !== undefined) {
     return {
       behavior: 'deny',
-      message: `Permission to use ${POWERSHELL_TOOL_NAME} with command ${command} has been denied.`,
+      message: `使用命令 ${command} 执行 ${POWERSHELL_TOOL_NAME} 的权限已被拒绝。`,
       decisionReason: {
         type: 'rule',
         rule: matchingDenyRules[0],
@@ -691,13 +680,12 @@ export async function powershellToolHasPermission(
     }
   }
 
-  // 2b. Ask if command has an ask rule — DEFERRED into decisions[].
-  // Previously this early-returned before sub-command deny checks ran, so
-  // `Get-Process; Invoke-Expression evil` with ask(Get-Process:*) +
-  // deny(Invoke-Expression:*) would show the ask dialog and the deny never
-  // fired. Now: store the ask, push into decisions[] after parse succeeds.
-  // If parse fails, returned before the parse-error ask (preserves the
-  // rule-attributed decisionReason when pwsh is unavailable).
+  // 2b. 如果命令有询问规则则询问 — 延迟加入 decisions[]。
+  // 之前这里会提前返回，导致子命令拒绝检查无法运行。因此
+  // `Get-Process; Invoke-Expression evil` 在有 ask(Get-Process:*) +
+  // deny(Invoke-Expression:*) 的情况下会显示询问对话框而拒绝规则永远不会触发。
+  // 现在：存储询问，在解析成功后推入 decisions[]。
+  // 如果解析失败，则在解析错误询问前返回（当 pwsh 不可用时保留规则属性的 decisionReason）。
   let preParseAskDecision: PermissionResult | null = null
   if (matchingAskRules[0] !== undefined) {
     preParseAskDecision = {
@@ -710,43 +698,32 @@ export async function powershellToolHasPermission(
     }
   }
 
-  // Block UNC paths — reading from UNC paths can trigger network requests
-  // and leak NTLM/Kerberos credentials. DEFERRED into decisions[].
-  // The raw-string UNC check must not early-return before sub-command deny
-  // (step 4+). Same fix as 2b above.
+  // 阻止 UNC 路径 — 从 UNC 路径读取可能触发网络请求
+  // 并泄漏 NTLM/Kerberos 凭据。延迟加入 decisions[]。
+  // 原始字符串 UNC 检查不能在子命令拒绝（步骤 4+）之前提前返回。
+  // 与上面的 2b 相同修复。
   if (preParseAskDecision === null && containsVulnerableUncPath(command)) {
     preParseAskDecision = {
       behavior: 'ask',
-      message:
-        'Command contains a UNC path that could trigger network requests',
+      message: '命令包含可能触发网络请求的 UNC 路径',
     }
   }
 
-  // 2c. Exact allow rules short-circuit here ONLY when parsing failed AND
-  // no pre-parse ask (2b prefix or UNC) is pending. Converting 2b/UNC from
-  // early-return to deferred-assign meant 2c
-  // fired before L648 consumed preParseAskDecision — silently overriding the
-  // ask with allow. Parse-succeeded path enforces ask > allow via the reduce
-  // (L917); without this guard, parse-failed was inconsistent.
-  // This ensures user-configured exact allow rules work even when pwsh is
-  // unavailable. When parsing succeeds, the exact allow check is deferred to
-  // after step 4.4 (sub-command deny/ask) — matching BashTool's ordering where
-  // the main-flow exact allow at bashPermissions.ts:1520 runs after sub-command
-  // deny checks (1442-1458). Without this, an exact allow on a compound command
-  // would bypass deny rules on sub-commands.
+  // 2c. 精确允许规则仅当解析失败且没有待处理的预解析询问（2b 前缀或 UNC）时才在此处短路。
+  // 将 2b/UNC 从提前返回改为延迟赋值意味着 2c 会在 L648 消费 preParseAskDecision 之前触发，
+  // 悄悄用允许覆盖询问。解析成功的路径通过 reduce 强制执行 ask > allow (L917)；
+  // 没有此守卫，解析失败的情况会不一致。
+  // 这确保了即使 pwsh 不可用，用户配置的精确允许规则也能工作。当解析成功时，精确允许检查推迟到步骤 4.4（子命令拒绝/询问）之后
+  // — 与 BashTool 的顺序一致，其中 bashPermissions.ts:1520 的主流程精确允许在子命令拒绝检查（1442-1458）之后运行。
+  // 否则，对复合命令的精确允许会绕过对子命令的拒绝规则。
   //
-  // SECURITY (parse-failed branch): the nameType guard in step 5 lives
-  // inside the sub-command loop, which only runs when parsed.valid.
-  // This is the !parsed.valid escape hatch. Input-side stripModulePrefix
-  // is unconditional — `scripts\build.exe --flag` strips to `build.exe`,
-  // canonicalCommand matches exact allow, and without this guard we'd
-  // return allow here and execute the local script. classifyCommandName
-  // is a pure string function (no AST needed). `scripts\build.exe` →
-  // 'application' (has `\`). Same tradeoff as step 5: `build.exe` alone
-  // also classifies 'application' (has `.`) so legitimate executable
-  // exact-allows downgrade to ask when pwsh is degraded — fail-safe.
-  // Module-qualified cmdlets (Module\Cmdlet) also classify 'application'
-  // (same `\`); same fail-safe over-fire.
+  // 安全性（解析失败分支）：步骤 5 中的 nameType 守卫存在于子命令循环内部，
+  // 该循环仅在 parsed.valid 时运行。这是 !parsed.valid 的逃生舱口。
+  // 输入侧的 stripModulePrefix 是无条件的 — `scripts\\build.exe --flag` 剥离为 `build.exe`，
+  // canonicalCommand 匹配精确允许，而没有此守卫我们会在此处返回允许并执行本地脚本。
+  // classifyCommandName 是纯字符串函数（无需 AST）。`scripts\\build.exe` → 'application'（有 `\`）。
+  // 与步骤 5 相同的权衡：`build.exe` 单独也会分类为 'application'（有 `.`），因此合法的可执行文件精确允许在 pwsh 降级时会被降级为询问 — 故障安全。
+  // 模块限定的 cmdlet (Module\Cmdlet) 也会分类为 'application'（同样的 `\`）；相同的故障安全过度触发。
   if (
     exactMatchResult.behavior === 'allow' &&
     !parsed.valid &&
@@ -756,43 +733,33 @@ export async function powershellToolHasPermission(
     return exactMatchResult
   }
 
-  // 0. Check if command can be parsed - if not, require approval but don't suggest persisting
-  // This matches Bash behavior: invalid syntax triggers a permission prompt but we don't
-  // recommend saving invalid commands to settings
-  // NOTE: This check is intentionally AFTER deny/ask rules so explicit rules still work
-  // even when the parser fails (e.g., pwsh unavailable).
+  // 0. 检查命令是否可解析 - 如果不能，需要批准但不建议持久化
+  // 这与 Bash 行为一致：无效语法会触发权限提示，但我们不建议将无效命令保存到设置中
+  // 注意：此检查有意放在拒绝/询问规则之后，以便即使解析器失败（例如 pwsh 不可用），显式规则仍然有效。
   if (!parsed.valid) {
-    // SECURITY: Fallback sub-command deny scan for parse-failed path.
-    // The sub-command deny loop at L851+ needs the AST; when parsing fails
-    // (command exceeds MAX_COMMAND_LENGTH, pwsh unavailable, timeout, bad
-    // JSON), we'd return 'ask' without ever checking sub-command deny rules.
-    // Attack: `Get-ChildItem # <~2000 chars padding> ; Invoke-Expression evil`
-    // → padding forces valid=false → generic ask prompt, deny(iex:*) never
-    // fires. This fallback splits on PowerShell separators/grouping and runs
-    // each fragment through the SAME rule matcher as step 2a (prefix deny).
-    // Conservative: fragments inside string literals/comments may false-positive
-    // deny — safe here (parse-failed is already a degraded state, and this is
-    // a deny-DOWNGRADE fix). Match against full fragment (not just first token)
-    // so multi-word rules like `Remove-Item foo:*` still fire; the matcher's
-    // canonical resolution handles aliases (`iex` → `Invoke-Expression`).
+    // 安全性：解析失败路径的回退子命令拒绝扫描。
+    // L851+ 的子命令拒绝循环需要 AST；当解析失败时
+    // （命令超出 MAX_COMMAND_LENGTH、pwsh 不可用、超时、错误的 JSON），
+    // 我们会返回 'ask' 而从未检查子命令拒绝规则。
+    // 攻击：`Get-ChildItem # <~2000 chars padding> ; Invoke-Expression evil`
+    // → 填充迫使 valid=false → 通用询问提示，deny(iex:*) 从不触发。
+    // 此回退根据 PowerShell 分隔符/分组进行分割，并将每个片段通过相同的规则匹配器（步骤 2a 前缀拒绝）运行。
+    // 保守：字符串字面量/注释内的片段可能会误报拒绝 — 此处安全（解析失败已经是降级状态，且这是拒绝降级修复）。
+    // 匹配完整片段（不仅仅是第一个标记），以便多词规则如 `Remove-Item foo:*` 仍能触发；匹配器的规范解析处理别名（`iex` → `Invoke-Expression`）。
     //
-    // SECURITY: backtick is PS escape/line-continuation, NOT a separator.
-    // Splitting on it would fragment `Invoke-Ex`pression` into non-matching
-    // pieces. Instead: collapse backtick-newline (line continuation) so
-    // `Invoke-Ex`<nl>pression` rejoins, strip remaining backticks (escape
-    // chars — ``x → x), then split on actual statement/grouping separators.
+    // 安全性：反引号是 PS 的转义/续行符，不是分隔符。
+    // 按反引号分割会将 `Invoke-Ex`pression` 分解为不匹配的部分。
+    // 替代方案：折叠反引号换行（续行），以便 `Invoke-Ex`<nl>pression` 重新连接，剥离其余反引号（转义字符 — ``x → x），
+    // 然后按实际的语句/分组分隔符分割。
     const backtickStripped = command
       .replace(/`[\r\n]+\s*/g, '')
       .replace(/`/g, '')
     for (const fragment of backtickStripped.split(/[;|\n\r{}()&]+/)) {
       const trimmedFrag = fragment.trim()
-      if (!trimmedFrag) continue // skip empty fragments
-      // Skip the full command ONLY if it starts with a cmdlet name (no
-      // assignment prefix). The full command was already checked at 2a, but
-      // 2a uses the raw text — $x %= iex as first token `$x` misses the
-      // deny(iex:*) rule. If normalization would change the fragment
-      // (assignment prefix, dot-source), don't skip — let it be re-checked
-      // after normalization. (bug #10/#24)
+      if (!trimmedFrag) continue // 跳过空片段
+      // 仅当完整命令以 cmdlet 名称开头（无赋值前缀）时才跳过。
+      // 完整命令已在 2a 检查过，但 2a 使用原始文本 — 作为第一个标记的 `$x %= iex` 会错过 deny(iex:*) 规则。
+      // 如果标准化会改变片段（赋值前缀、点源），则不要跳过 — 让它在标准化后重新检查。（缺陷 #10/#24）
       if (
         trimmedFrag === command &&
         !/^\$[\w:]/.test(trimmedFrag) &&
@@ -800,36 +767,29 @@ export async function powershellToolHasPermission(
       ) {
         continue
       }
-      // SECURITY: Normalize invocation-operator and assignment prefixes before
-      // rule matching (findings #5/#22). The splitter gives us the raw fragment
-      // text; matchingRulesForInput extracts the first token as the cmdlet name.
-      // Without normalization:
-      //   `$x = Invoke-Expression 'p'` → first token `$x` → deny(iex:*) misses
-      //   `. Invoke-Expression 'p'`    → first token `.`  → deny(iex:*) misses
-      //   `& 'Invoke-Expression' 'p'`  → first token `&` removed by split but
-      //                                  `'Invoke-Expression'` retains quotes
-      //                                  → deny(iex:*) misses
-      // The parse-succeeded path handles these via AST (parser.ts:839 strips
-      // quotes from rawNameUnstripped; invocation operators are separate AST
-      // nodes). This fallback mirrors that normalization.
-      // Loop strips nested assignments: $x = $y = iex → $y = iex → iex
+      // 安全性：在规则匹配之前标准化调用操作符和赋值前缀（发现 #5/#22）。
+      // 分割器给我们原始片段文本；matchingRulesForInput 提取第一个标记作为 cmdlet 名称。
+      // 如果不标准化：
+      //   `$x = Invoke-Expression 'p'` → 第一个标记 `$x` → deny(iex:*) 错过
+      //   `. Invoke-Expression 'p'`    → 第一个标记 `.`  → deny(iex:*) 错过
+      //   `& 'Invoke-Expression' 'p'`  → 第一个标记 `&` 被分割移除，但 `'Invoke-Expression'` 保留引号 → deny(iex:*) 错过
+      // 解析成功的路径通过 AST 处理这些（parser.ts:839 从 rawNameUnstripped 剥离引号；调用操作符是单独的 AST 节点）。
+      // 此回退镜像了该标准化。
+      // 循环剥离嵌套赋值：$x = $y = iex → $y = iex → iex
       let normalized = trimmedFrag
       let m: RegExpMatchArray | null
       while ((m = normalized.match(PS_ASSIGN_PREFIX_RE))) {
         normalized = normalized.slice(m[0].length)
       }
-      normalized = normalized.replace(/^[&.]\s+/, '') // & cmd, . cmd (dot-source)
+      normalized = normalized.replace(/^[&.]\s+/, '') // & cmd, . cmd (点源)
       const rawFirst = normalized.split(/\s+/)[0] ?? ''
       const firstTok = rawFirst.replace(/^['"]|['"]$/g, '')
       const normalizedFrag = firstTok + normalized.slice(rawFirst.length)
-      // SECURITY: parse-independent dangerous-removal hard-deny. The
-      // isDangerousRemovalPath check in checkPathConstraintsForStatement
-      // requires a valid AST; when pwsh times out or is unavailable,
-      // `Remove-Item /` degrades from hard-deny to generic ask. Check
-      // raw positional args here so root/home/system deletion is denied
-      // regardless of parser availability. Conservative: only positional
-      // args (skip -Param tokens); over-deny in degraded state is safe
-      // (same deny-downgrade rationale as the sub-command scan above).
+      // 安全性：解析独立的危险删除硬拒绝。checkPathConstraintsForStatement 中的 isDangerousRemovalPath 检查
+      // 需要有效的 AST；当 pwsh 超时或不可用时，`Remove-Item /` 会从硬拒绝降级为通用询问。
+      // 在此检查原始位置参数，以便无论解析器是否可用，根目录/家目录/系统删除都被拒绝。
+      // 保守：仅位置参数（跳过 -Param 标记）；在降级状态下过度拒绝是安全的
+      // （与上面的子命令扫描相同的拒绝降级理由）。
       if (resolveToCanonical(firstTok) === 'remove-item') {
         for (const arg of normalized.split(/\s+/).slice(1)) {
           if (PS_TOKENIZER_DASH_CHARS.has(arg[0] ?? '')) continue
@@ -846,21 +806,20 @@ export async function powershellToolHasPermission(
       if (fragDenyRules[0] !== undefined) {
         return {
           behavior: 'deny',
-          message: `Permission to use ${POWERSHELL_TOOL_NAME} with command ${command} has been denied.`,
+          message: `使用命令 ${command} 执行 ${POWERSHELL_TOOL_NAME} 的权限已被拒绝。`,
           decisionReason: { type: 'rule', rule: fragDenyRules[0] },
         }
       }
     }
-    // Preserve pre-parse ask messaging when parse fails. The deferred ask
-    // (2b prefix rule or UNC) carries a better decisionReason than the
-    // generic parse-error ask. Sub-command deny can't run the AST loop
-    // without a parse, so the fallback scan above is best-effort.
+    // 当解析失败时保留预解析询问消息。延迟的询问（2b 前缀规则或 UNC）
+    // 比通用的解析错误询问携带更好的 decisionReason。子命令拒绝无法在没有解析的情况下运行 AST 循环，
+    // 因此上面的回退扫描是尽力而为的。
     if (preParseAskDecision !== null) {
       return preParseAskDecision
     }
     const decisionReason = {
       type: 'other' as const,
-      reason: `Command contains malformed syntax that cannot be parsed: ${parsed.errors[0]?.message ?? 'unknown error'}`,
+      reason: `命令包含无法解析的畸形语法: ${parsed.errors[0]?.message ?? '未知错误'}`,
     }
     return {
       behavior: 'ask',
@@ -869,46 +828,42 @@ export async function powershellToolHasPermission(
         POWERSHELL_TOOL_NAME,
         decisionReason,
       ),
-      // No suggestions - don't recommend persisting invalid syntax
+      // 没有建议 - 不建议持久化无效语法
     }
   }
 
   // ========================================================================
-  // COLLECT-THEN-REDUCE: post-parse decisions (deny > ask > allow > passthrough)
+  // 收集然后归约：解析后的决策（拒绝 > 询问 > 允许 > 传递）
   // ========================================================================
-  // Ported from bashPermissions.ts:1446-1472. Every post-parse check pushes
-  // its decision into a single array; a single reduce applies precedence.
-  // This structurally closes the ask-before-deny bug class: an 'ask' from an
-  // earlier check (security flags, provider paths, cd+git) can no longer mask
-  // a 'deny' from a later check (sub-command deny, checkPathConstraints).
+  // 移植自 bashPermissions.ts:1446-1472。每个解析后检查将其决策推入一个单一数组；
+  // 单次归约应用优先级。这在结构上关闭了询问先于拒绝的错误类别：
+  // 早期检查（安全标志、提供程序路径、cd+git）的 'ask' 无法再掩盖
+  // 后期检查（子命令拒绝、checkPathConstraints）的 'deny'。
   //
-  // Supersedes the firstSubCommandAskRule stash from commit 8f5ae6c56b — that
-  // fix only patched step 4; steps 3, 3.5, 4.42 had the same flaw. The stash
-  // pattern is also fragile: the next author who writes `return ask` is back
-  // where we started. Collect-then-reduce makes the bypass impossible to write.
+  // 取代了提交 8f5ae6c56b 中的 firstSubCommandAskRule 暂存 — 该修复仅修补了步骤 4；
+  // 步骤 3、3.5、4.42 存在同样的缺陷。暂存模式也很脆弱：下一个编写 `return ask` 的人
+  // 会回到原点。收集-然后-归约使绕过不可能编写。
   //
-  // First-of-each-behavior wins (array order = step order), so single-check
-  // ask messages are unchanged vs. sequential-early-return.
+  // 每种行为的第一个胜出（数组顺序 = 步骤顺序），因此单检查的询问消息与顺序提前返回相同。
   //
-  // Pre-parse deny checks above (exact/prefix deny) stay sequential: they
-  // fire even when pwsh is unavailable. Pre-parse asks (prefix ask, raw UNC)
-  // are now deferred here so sub-command deny (step 4) beats them.
+  // 预解析拒绝检查（精确/前缀拒绝）保持顺序：它们在 pwsh 不可用时仍会触发。
+  // 预解析询问（前缀询问、原始 UNC）现在延迟至此，以便子命令拒绝（步骤 4）胜过它们。
 
-  // Gather sub-commands once (used by decisions 3, 4, and fallthrough step 5).
+  // 收集一次子命令（用于决策 3、4 和回退步骤 5）。
   const allSubCommands = await getSubCommandsForPermissionCheck(parsed, command)
 
   const decisions: PermissionResult[] = []
 
-  // Decision: deferred pre-parse ask (2b prefix ask or UNC path).
-  // Pushed first so its message wins over later asks (first-of-behavior wins),
-  // but the reduce ensures any deny in decisions[] still beats it.
+  // 决策：延迟的预解析询问（2b 前缀询问或 UNC 路径）。
+  // 首先推入，以便其消息胜过后续的询问（每种行为的第一个胜出），
+  // 但归约确保 decisions[] 中的任何拒绝仍胜过它。
   if (preParseAskDecision !== null) {
     decisions.push(preParseAskDecision)
   }
 
-  // Decision: security check — was step 3 (:630-650).
-  // powershellCommandIsSafe returns 'ask' for subexpressions, script blocks,
-  // encoded commands, download cradles, etc. Only 'ask' | 'passthrough'.
+  // 决策：安全检查 — 原步骤 3 (:630-650)。
+  // powershellCommandIsSafe 对子表达式、脚本块、编码命令、下载摇篮等返回 'ask'。
+  // 仅 'ask' | 'passthrough'。
   const safetyResult = powershellCommandIsSafe(command, parsed)
   if (safetyResult.behavior !== 'passthrough') {
     const decisionReason: PermissionDecisionReason = {
@@ -916,7 +871,7 @@ export async function powershellToolHasPermission(
       reason:
         safetyResult.behavior === 'ask' && safetyResult.message
           ? safetyResult.message
-          : 'This command contains patterns that could pose security risks and requires approval',
+          : '此命令包含可能带来安全风险的模式，需要批准',
     }
     decisions.push({
       behavior: 'ask',
@@ -929,19 +884,18 @@ export async function powershellToolHasPermission(
     })
   }
 
-  // Decision: using statements / script requirements — invisible to AST block walk.
-  // `using module ./evil.psm1` loads and executes a module's top-level script body;
-  // `using assembly ./evil.dll` loads a .NET assembly (module initializers run).
-  // `#Requires -Modules <name>` triggers module loading from PSModulePath.
-  // These are siblings of the named blocks on ScriptBlockAst, not children, so
-  // Process-BlockStatements and all downstream command walkers never see them.
-  // Without this check, a decoy cmdlet like Get-Process fills subCommands,
-  // bypassing the empty-statement fallback, and isReadOnlyCommand auto-allows.
+  // 决策：using 语句 / 脚本要求 — AST 块遍历看不见。
+  // `using module ./evil.psm1` 加载并执行模块的顶级脚本体；
+  // `using assembly ./evil.dll` 加载 .NET 程序集（模块初始化器运行）。
+  // `#Requires -Modules <name>` 触发从 PSModulePath 加载模块。
+  // 这些是 ScriptBlockAst 上与命名块并列的兄弟节点，而不是子节点，因此
+  // Process-BlockStatements 和所有下游命令遍历器都看不见它们。
+  // 没有此检查，像 Get-Process 这样的诱饵 cmdlet 填充 subCommands，
+  // 绕过空语句回退，而 isReadOnlyCommand 自动允许。
   if (parsed.hasUsingStatements) {
     const decisionReason: PermissionDecisionReason = {
       type: 'other' as const,
-      reason:
-        'Command contains a `using` statement that may load external code (module or assembly)',
+      reason: '命令包含可能加载外部代码（模块或程序集）的 `using` 语句',
     }
     decisions.push({
       behavior: 'ask',
@@ -956,8 +910,7 @@ export async function powershellToolHasPermission(
   if (parsed.hasScriptRequirements) {
     const decisionReason: PermissionDecisionReason = {
       type: 'other' as const,
-      reason:
-        'Command contains a `#Requires` directive that may trigger module loading',
+      reason: '命令包含可能触发模块加载的 `#Requires` 指令',
     }
     decisions.push({
       behavior: 'ask',
@@ -970,34 +923,29 @@ export async function powershellToolHasPermission(
     })
   }
 
-  // Decision: resolved-arg provider/UNC scan — was step 3.5 (:652-709).
-  // Provider paths (env:, HKLM:, function:) access non-filesystem resources.
-  // UNC paths can leak NTLM/Kerberos credentials on Windows. The raw-string
-  // UNC check above (pre-parse) misses backtick-escaped forms; cmd.args has
-  // backtick escapes resolved by the parser. Labeled loop breaks on FIRST
-  // match (same as the previous early-return).
-  // Provider prefix matches both the short form (`env:`, `HKLM:`) and the
-  // fully-qualified form (`Microsoft.PowerShell.Core\Registry::HKLM\...`).
-  // The optional `(?:[\w.]+\\)?` handles the module-qualified prefix; `::?`
-  // matches either single-colon drive syntax or double-colon provider syntax.
+  // 决策：解析后的参数提供程序/UNC 扫描 — 原步骤 3.5 (:652-709)。
+  // 提供程序路径（env:, HKLM:, function:）访问非文件系统资源。
+  // UNC 路径在 Windows 上可能泄漏 NTLM/Kerberos 凭据。上面的原始字符串 UNC 检查
+  // （预解析）遗漏了反引号转义的形式；cmd.args 中解析器已解析反引号转义。
+  // 带标签的循环在第一个匹配时中断（与之前的提前返回相同）。
+  // 提供程序前缀同时匹配短格式（`env:`、`HKLM:`）和完全限定格式（`Microsoft.PowerShell.Core\Registry::HKLM\...`）。
+  // 可选的 `(?:[\w.]+\\)?` 处理模块限定前缀；`::?` 匹配单冒号驱动器语法或双冒号提供程序语法。
   const NON_FS_PROVIDER_PATTERN =
     /^(?:[\w.]+\\)?(env|hklm|hkcu|function|alias|variable|cert|wsman|registry)::?/i
   function extractProviderPathFromArg(arg: string): string {
-    // Handle colon parameter syntax: -Path:env:HOME → extract 'env:HOME'.
-    // SECURITY: PowerShell's tokenizer accepts en-dash/em-dash/horizontal-bar
-    // (U+2013/2014/2015) as parameter prefixes. `–Path:env:HOME` (en-dash)
-    // must also strip the `–Path:` prefix or NON_FS_PROVIDER_PATTERN won't
-    // match (pattern is `^(env|...):` which fails on `–Path:env:...`).
+    // 处理冒号参数语法：-Path:env:HOME → 提取 'env:HOME'。
+    // 安全性：PowerShell 的分词器接受 en-dash/em-dash/horizontal-bar
+    // (U+2013/2014/2015) 作为参数前缀。`–Path:env:HOME`（en-dash）
+    // 也必须剥离 `–Path:` 前缀，否则 NON_FS_PROVIDER_PATTERN 无法匹配（模式是 `^(env|...):`，在 `–Path:env:...` 上失败）。
     let s = arg
     if (s.length > 0 && PS_TOKENIZER_DASH_CHARS.has(s[0]!)) {
-      const colonIdx = s.indexOf(':', 1) // skip the leading dash
+      const colonIdx = s.indexOf(':', 1) // 跳过前导破折号
       if (colonIdx > 0) {
         s = s.substring(colonIdx + 1)
       }
     }
-    // Strip backtick escapes before matching: `Registry`::HKLM\...` has a
-    // backtick before `::` that the PS tokenizer removes at runtime but that
-    // would otherwise prevent the ^-anchored pattern from matching.
+    // 在匹配前剥离反引号转义：`Registry`::HKLM\...` 在 `::` 前有一个反引号，
+    // PS 分词器在运行时会移除它，但否则会阻止 ^ 锚定的模式匹配。
     return s.replace(/`/g, '')
   }
   function providerOrUncDecisionForArg(arg: string): PermissionResult | null {
@@ -1005,13 +953,13 @@ export async function powershellToolHasPermission(
     if (NON_FS_PROVIDER_PATTERN.test(value)) {
       return {
         behavior: 'ask',
-        message: `Command argument '${arg}' uses a non-filesystem provider path and requires approval`,
+        message: `命令参数 '${arg}' 使用了非文件系统提供程序路径，需要批准`,
       }
     }
     if (containsVulnerableUncPath(value)) {
       return {
         behavior: 'ask',
-        message: `Command argument '${arg}' contains a UNC path that could trigger network requests`,
+        message: `命令参数 '${arg}' 包含可能触发网络请求的 UNC 路径`,
       }
     }
     return null
@@ -1040,27 +988,26 @@ export async function powershellToolHasPermission(
     }
   }
 
-  // Decision: per-sub-command deny/ask rules — was step 4 (:711-803).
-  // Each sub-command produces at most one decision (deny or ask). Deny rules
-  // on LATER sub-commands still beat ask rules on EARLIER ones via the reduce.
-  // No stash needed — the reduce structurally enforces deny > ask.
+  // 决策：每个子命令的拒绝/询问规则 — 原步骤 4 (:711-803)。
+  // 每个子命令最多产生一个决策（拒绝或询问）。后续子命令上的拒绝规则
+  // 仍通过归约胜过先前子命令上的询问规则。
+  // 不需要暂存 — 归约在结构上强制执行拒绝 > 询问。
   //
-  // SECURITY: Always build a canonical command string from AST-derived data
-  // (element.name + space-joined args) and check rules against it too. Deny
-  // and allow must use the same normalized form to close asymmetries:
-  //   - Invocation operators (`& 'Remove-Item' ./x`): raw text starts with `&`,
-  //     splitting on whitespace yields the operator, not the cmdlet name.
-  //   - Non-space whitespace (`rm\t./x`): raw prefix match uses `prefix + ' '`
-  //     (literal space), but PowerShell accepts any whitespace separator.
-  //     checkPermissionMode auto-allow (using AST cmd.name) WOULD match while
-  //     deny-rule match on raw text would miss — a deny-rule bypass.
-  //   - Module prefixes (`Microsoft.PowerShell.Management\Remove-Item`):
-  //     element.name has the module prefix stripped.
+  // 安全性：始终从 AST 派生的数据（element.name + 空格连接的参数）构建规范命令字符串，
+  // 并同样检查规则。拒绝和允许必须使用相同的标准化形式以消除不对称：
+  //   - 调用操作符（`& 'Remove-Item' ./x`）：原始文本以 `&` 开头，
+  //     按空格分割产生操作符，而非 cmdlet 名称。
+  //   - 非空格空白符（`rm\t./x`）：原始前缀匹配使用 `prefix + ' '`（字面空格），
+  //     但 PowerShell 接受任何空白符作为分隔符。
+  //     checkPermissionMode 自动允许（使用 AST cmd.name）会匹配，
+  //     而对原始文本的拒绝规则匹配会错过 — 一个拒绝规则绕过。
+  //   - 模块前缀（`Microsoft.PowerShell.Management\Remove-Item`）：
+  //     element.name 已剥离模块前缀。
   for (const { text: subCmd, element } of allSubCommands) {
-    // element.name is quote-stripped at the parser (transformCommandAst) so
-    // `& 'Invoke-Expression' 'x'` yields name='Invoke-Expression', not
-    // "'Invoke-Expression'". canonicalSubCmd is built from the same stripped
-    // name, so deny-rule prefix matching on `Invoke-Expression:*` hits.
+    // element.name 在解析器 (transformCommandAst) 处已剥离引号，
+    // 因此 `& 'Invoke-Expression' 'x'` 产生 name='Invoke-Expression'，
+    // 而不是 "'Invoke-Expression'"。canonicalSubCmd 从相同的剥离名称构建，
+    // 因此对 `Invoke-Expression:*` 的拒绝规则前缀匹配会命中。
     const canonicalSubCmd =
       element.name !== '' ? [element.name, ...element.args].join(' ') : null
 
@@ -1088,7 +1035,7 @@ export async function powershellToolHasPermission(
     if (matchedDenyRule !== undefined) {
       decisions.push({
         behavior: 'deny',
-        message: `Permission to use ${POWERSHELL_TOOL_NAME} with command ${command} has been denied.`,
+        message: `使用命令 ${command} 执行 ${POWERSHELL_TOOL_NAME} 的权限已被拒绝。`,
         decisionReason: {
           type: 'rule',
           rule: matchedDenyRule,
@@ -1106,30 +1053,26 @@ export async function powershellToolHasPermission(
     }
   }
 
-  // Decision: cd+git compound guard — was step 4.42 (:805-833).
-  // When cd/Set-Location is paired with git, don't allow without prompting —
-  // cd to a malicious directory makes git dangerous (fake hooks, bare repo
-  // attacks). Collect-then-reduce keeps the improvement over BashTool: in
-  // bash, cd+git (B9, line 1416) runs BEFORE sub-command deny (B11), so cd+git
-  // ask masks deny. Here, both are in the same decision array; deny wins.
+  // 决策：cd+git 复合守卫 — 原步骤 4.42 (:805-833)。
+  // 当 cd/Set-Location 与 git 配对时，未经提示不允许执行 —
+  // 切换到恶意目录会使 git 变得危险（伪造钩子、裸仓库攻击）。
+  // 收集-然后-归约保持了相对于 BashTool 的改进：在 bash 中，
+  // cd+git (B9, 行 1416) 在子命令拒绝 (B11) 之前运行，因此 cd+git 询问会掩盖拒绝。
+  // 此处，两者在同一决策数组中；拒绝胜出。
   //
-  // SECURITY: NO cd-to-CWD no-op exclusion. A previous iteration excluded
-  // `Set-Location .` as a no-op, but the "first non-dash arg" heuristic used
-  // to extract the target is fooled by colon-bound params:
-  // `Set-Location -Path:/etc .` — real target is /etc, heuristic sees `.`,
-  // exclusion fires, bypass. The UX case (model emitting `Set-Location .; foo`)
-  // is rare; the attack surface isn't worth the special-case. Any cd-family
-  // cmdlet in the compound sets this flag, period.
-  // Only flag compound cd when there are multiple sub-commands. A standalone
-  // `Set-Location ./subdir` is not a TOCTOU risk (no later statement resolves
-  // relative paths against stale cwd). Without this, standalone cd forces the
-  // compound guard, suppressing the per-subcommand auto-allow path. (bug #25)
+  // 安全性：没有 cd-to-CWD 空操作排除。之前的迭代将
+  // `Set-Location .` 排除为空操作，但用于提取目标路径的“第一个非破折号参数”启发式方法
+  // 被冒号绑定的参数愚弄：`Set-Location -Path:/etc .` — 真实目标是 /etc，启发式看到 `.`，
+  // 排除触发，绕过。UX 情况（模型发出 `Set-Location .; foo`）罕见；
+  // 不值得为特殊情况冒攻击风险。复合命令中的任何 cd 系列 cmdlet 都会设置此标志。
+  // 仅当有多个子命令时才标记复合 cd。单独的 `Set-Location ./subdir` 不是 TOCTOU 风险
+  // （没有后续语句在过时的 cwd 上解析相对路径）。否则，单独的 cd 会强制复合守卫，
+  // 抑制每个子命令的自动允许路径。（缺陷 #25）
   const hasCdSubCommand =
     allSubCommands.length > 1 &&
     allSubCommands.some(({ element }) => isCwdChangingCmdlet(element.name))
-  // Symlink-create compound guard (finding #18 / bug 001+004): when the
-  // compound creates a filesystem link, subsequent writes through that link
-  // land outside the validator's view. Same TOCTOU shape as cwd desync.
+  // 符号链接创建复合守卫（发现 #18 / 缺陷 001+004）：当复合命令创建文件系统链接时，
+  // 后续通过该链接的写入会落在验证器视图之外。与 cwd 不同步相同的 TOCTOU 形式。
   const hasSymlinkCreate =
     allSubCommands.length > 1 &&
     allSubCommands.some(({ element }) => isSymlinkCreatingCommand(element))
@@ -1140,50 +1083,45 @@ export async function powershellToolHasPermission(
     decisions.push({
       behavior: 'ask',
       message:
-        'Compound commands with cd/Set-Location and git require approval to prevent bare repository attacks',
+        '包含 cd/Set-Location 和 git 的复合命令需要批准，以防止裸仓库攻击',
     })
   }
 
-  // cd+write compound guard — SUBSUMED by checkPathConstraints(compoundCommandHasCd).
-  // Previously this block pushed 'ask' when hasCdSubCommand && hasAcceptEditsWrite,
-  // but checkPathConstraints now receives hasCdSubCommand and pushes 'ask' for ANY
-  // path operation (read or write) in a cd-compound — broader coverage at the path
-  // layer (BashTool parity). The step-5 !hasCdSubCommand gates and modeValidation's
-  // compound-cd guard remain as defense-in-depth for paths that don't reach
-  // checkPathConstraints (e.g., cmdlets not in CMDLET_PATH_CONFIG).
+  // cd+write 复合守卫 — 被 checkPathConstraints(compoundCommandHasCd) 取代。
+  // 之前此块在 hasCdSubCommand && hasAcceptEditsWrite 时推送 'ask'，
+  // 但现在 checkPathConstraints 接收 hasCdSubCommand 并针对 cd 复合命令中的任何路径操作（读或写）
+  // 推送 'ask' — 在路径层面覆盖范围更广（与 BashTool 一致）。步骤 5 的 !hasCdSubCommand 门禁
+  // 和 modeValidation 的 compound-cd 守卫作为纵深防御保留，用于不经过 checkPathConstraints 的路径
+  // （例如，不在 CMDLET_PATH_CONFIG 中的 cmdlet）。
 
-  // Decision: bare-git-repo guard — bash parity.
-  // If cwd has HEAD/objects/refs/ without a valid .git/HEAD, Git treats
-  // cwd as a bare repository and runs hooks from cwd. Attacker creates
-  // hooks/pre-commit, deletes .git/HEAD, then any git subcommand runs it.
-  // Port of BashTool readOnlyValidation.ts isCurrentDirectoryBareGitRepo.
+  // 决策：裸 git 仓库守卫 — bash 对等。
+  // 如果 cwd 有 HEAD/objects/refs/ 而没有有效的 .git/HEAD，Git 会将 cwd 视为裸仓库
+  // 并从 cwd 运行钩子。攻击者创建 hooks/pre-commit，删除 .git/HEAD，然后任何 git 子命令都会运行它。
+  // 移植自 BashTool readOnlyValidation.ts 的 isCurrentDirectoryBareGitRepo。
   if (hasGitSubCommand && isCurrentDirectoryBareGitRepo()) {
     decisions.push({
       behavior: 'ask',
       message:
-        'Git command in a directory with bare-repository indicators (HEAD, objects/, refs/ in cwd without .git/HEAD). Git may execute hooks from cwd.',
+        '在具有裸仓库指示符（cwd 中有 HEAD、objects/、refs/ 但没有 .git/HEAD）的目录中执行 git 命令。Git 可能从 cwd 执行钩子。',
     })
   }
 
-  // Decision: git-internal-paths write guard — bash parity.
-  // Compound command creates HEAD/objects/refs/hooks/ then runs git → the
-  // git subcommand executes freshly-created malicious hooks. Check all
-  // extracted write paths + redirection targets against git-internal patterns.
-  // Port of BashTool commandWritesToGitInternalPaths, adapted for AST.
+  // 决策：git 内部路径写入守卫 — bash 对等。
+  // 复合命令创建 HEAD/objects/refs/hooks/ 然后运行 git → 新创建的恶意钩子被执行。
+  // 检查所有提取的写入路径 + 重定向目标是否符合 git 内部模式。
+  // 移植自 BashTool 的 commandWritesToGitInternalPaths，适配 AST。
   if (hasGitSubCommand) {
     const writesToGitInternal = allSubCommands.some(
       ({ element, statement }) => {
-        // Redirection targets on this sub-command (raw Extent.Text — quotes
-        // and ./ intact; normalizer handles both)
+        // 此子命令上的重定向目标（原始 Extent.Text — 引号和 ./ 完整保留；标准化器处理两者）
         for (const r of element.redirections ?? []) {
           if (isGitInternalPathPS(r.target)) return true
         }
-        // Write cmdlet args (new-item HEAD; mkdir hooks; set-content hooks/pre-commit)
+        // 写入 cmdlet 参数 (new-item HEAD; mkdir hooks; set-content hooks/pre-commit)
         const canonical = resolveToCanonical(element.name)
         if (!GIT_SAFETY_WRITE_CMDLETS.has(canonical)) return false
-        // Raw arg text — normalizer strips colon-bound params, quotes, ./, case.
-        // PS ArrayLiteralAst (`New-Item a,hooks/pre-commit`) surfaces as a single
-        // comma-joined arg — split before checking.
+        // 原始参数文本 — 标准化器剥离冒号绑定的参数、引号、./、大小写。
+        // PS ArrayLiteralAst (`New-Item a,hooks/pre-commit`) 表现为单个逗号连接的参数 — 在检查前分割。
         if (
           element.args
             .flatMap(a => a.split(','))
@@ -1191,11 +1129,9 @@ export async function powershellToolHasPermission(
         ) {
           return true
         }
-        // Pipeline input: `"hooks/pre-commit" | New-Item -ItemType File` binds the
-        // string to -Path at runtime. The path is in a non-CommandAst pipeline
-        // element, not in element.args. The hasExpressionSource guard at step 5
-        // already forces approval here; this check just adds the git-internal
-        // warning text.
+        // 管道输入：`"hooks/pre-commit" | New-Item -ItemType File` 在运行时将字符串绑定到 -Path。
+        // 路径在非 CommandAst 的管道元素中，不在 element.args 中。
+        // 步骤 5 的 hasExpressionSource 守卫已经在此强制批准；此检查仅添加 git 内部警告文本。
         if (statement !== null) {
           for (const c of statement.commands) {
             if (c.elementType === 'CommandAst') continue
@@ -1205,7 +1141,7 @@ export async function powershellToolHasPermission(
         return false
       },
     )
-    // Also check top-level file redirections (> hooks/pre-commit)
+    // 同时检查顶级文件重定向 (> hooks/pre-commit)
     const redirWritesToGitInternal = getFileRedirections(parsed).some(r =>
       isGitInternalPathPS(r.target),
     )
@@ -1213,14 +1149,13 @@ export async function powershellToolHasPermission(
       decisions.push({
         behavior: 'ask',
         message:
-          'Command writes to a git-internal path (HEAD, objects/, refs/, hooks/, .git/) and runs git. This could plant a malicious hook that git then executes.',
+          '命令写入 git 内部路径（HEAD、objects/、refs/、hooks/、.git/）并运行 git。这可能植入恶意钩子，随后由 git 执行。',
       })
     }
-    // SECURITY: Archive-extraction TOCTOU. isCurrentDirectoryBareGitRepo
-    // checks at permission-eval time; `tar -xf x.tar; git status` extracts
-    // bare-repo indicators AFTER the check, BEFORE git runs. Unlike write
-    // cmdlets (where we inspect args for git-internal paths), archive
-    // contents are opaque — any extraction in a compound with git must ask.
+    // 安全性：归档解压 TOCTOU。isCurrentDirectoryBareGitRepo 在权限评估时检查；
+    // `tar -xf x.tar; git status` 在检查之后、git 运行之前提取裸仓库指示符。
+    // 与可以检查参数中 git 内部路径的写入 cmdlet 不同，归档内容是未知的 —
+    // 任何与 git 复合的解压操作都必须询问。
     const hasArchiveExtractor = allSubCommands.some(({ element }) =>
       GIT_SAFETY_ARCHIVE_EXTRACTORS.has(element.name.toLowerCase()),
     )
@@ -1228,15 +1163,14 @@ export async function powershellToolHasPermission(
       decisions.push({
         behavior: 'ask',
         message:
-          'Compound command extracts an archive and runs git. Archive contents may plant bare-repository indicators (HEAD, hooks/, refs/) that git then treats as the repository root.',
+          '复合命令解压归档文件并运行 git。归档内容可能植入裸仓库指示符（HEAD、hooks/、refs/），git 随后会将其视为仓库根目录。',
       })
     }
   }
 
-  // .git/ writes are dangerous even WITHOUT a git subcommand — a planted
-  // .git/hooks/pre-commit fires on the user's next commit. Unlike the
-  // bare-repo check above (which gates on hasGitSubCommand because `hooks/`
-  // is a common project dirname), `.git/` is unambiguous.
+  // .git/ 写入即使没有 git 子命令也是危险的 — 植入的 .git/hooks/pre-commit 会在用户下次提交时触发。
+  // 与上面的裸仓库检查不同（后者因 `hooks/` 是常见项目目录名而门控于 hasGitSubCommand），
+  // `.git/` 是明确的。
   {
     const found =
       allSubCommands.some(({ element }) => {
@@ -1251,23 +1185,20 @@ export async function powershellToolHasPermission(
       decisions.push({
         behavior: 'ask',
         message:
-          'Command writes to .git/ — hooks or config planted there execute on the next git operation.',
+          '命令写入 .git/ — 植入其中的钩子或配置将在下次 git 操作时执行。',
       })
     }
   }
 
-  // Decision: path constraints — was step 4.44 (:835-845).
-  // The deny-capable check that was being masked by earlier asks. Returns
-  // 'deny' when an Edit(...) deny rule matches an extracted path (pathValidation
-  // lines ~994, 1088, 1160, 1210), 'ask' for paths outside working dirs, or
-  // 'passthrough'.
+  // 决策：路径约束 — 原步骤 4.44 (:835-845)。
+  // 之前被早期询问掩盖的拒绝能力检查。当 Edit(...) 拒绝规则匹配提取的路径时返回 'deny'
+  // （pathValidation 第 ~994, 1088, 1160, 1210 行），对工作目录外的路径返回 'ask'，
+  // 否则 'passthrough'。
   //
-  // Thread hasCdSubCommand (BashTool compoundCommandHasCd parity): when the
-  // compound contains a cwd-changing cmdlet, checkPathConstraints forces 'ask'
-  // for any statement with path operations — relative paths resolve against the
-  // stale validator cwd, not PowerShell's runtime cwd. This is the architectural
-  // fix for the CWD-desync cluster (findings #3/#21/#27/#28), replacing the
-  // per-auto-allow-site guards with a single gate at the path-resolution layer.
+  // 传递 hasCdSubCommand（与 BashTool 的 compoundCommandHasCd 对等）：当复合命令包含改变 cwd 的 cmdlet 时，
+  // checkPathConstraints 对任何包含路径操作的语句强制 'ask' — 相对路径会相对于过时的验证器 cwd 解析，
+  // 而不是 PowerShell 的运行时 cwd。这是针对 CWD 不同步集群（发现 #3/#21/#27/#28）的架构性修复，
+  // 用路径解析层的单一门禁取代了每个自动允许点的守卫。
   const pathResult = checkPathConstraints(
     input,
     parsed,
@@ -1278,31 +1209,24 @@ export async function powershellToolHasPermission(
     decisions.push(pathResult)
   }
 
-  // Decision: exact allow (parse-succeeded case) — was step 4.45 (:861-867).
-  // Matches BashTool ordering: sub-command deny → path constraints → exact
-  // allow. Reduce enforces deny > ask > allow, so the exact allow only
-  // surfaces when no deny or ask fired — same as sequential.
+  // 决策：精确允许（解析成功的情况）— 原步骤 4.45 (:861-867)。
+  // 与 BashTool 顺序一致：子命令拒绝 → 路径约束 → 精确允许。
+  // 归约强制执行拒绝 > 询问 > 允许，因此精确允许仅在没有拒绝或询问触发时才出现 — 与顺序相同。
   //
-  // SECURITY: nameType gate — mirrors the parse-failed guard at L696-700.
-  // Input-side stripModulePrefix is unconditional: `scripts\Get-Content`
-  // strips to `Get-Content`, canonicalCommand matches exact allow. Without
-  // this gate, allow enters decisions[] and reduce returns it before step 5
-  // can inspect nameType — PowerShell runs the local .ps1 file. The AST's
-  // nameType for the first command element is authoritative when parse
-  // succeeded; 'application' means a script/executable path, not a cmdlet.
-  // SECURITY: Same argLeaksValue gate as the per-subcommand loop below
-  // (finding #32). Without it, `PowerShell(Write-Output:*)` exact-matches
-  // `Write-Output $env:DOGE_API_KEY`, pushes allow to decisions[], and
-  // reduce returns it before the per-subcommand gate ever runs. The
-  // allSubCommands.every check ensures NO command in the statement leaks
-  // (a single-command exact-allow has one element; a pipeline has several).
+  // 安全性：nameType 门禁 — 镜像 L696-700 处的解析失败守卫。
+  // 输入侧的 stripModulePrefix 是无条件的：`scripts\Get-Content` 剥离为 `Get-Content`，
+  // canonicalCommand 匹配精确允许。没有此门禁，allow 进入 decisions[] 且归约会在步骤 5
+  // 检查 nameType 之前返回它 — PowerShell 运行本地 .ps1 文件。解析成功时 AST 的第一个命令元素的 nameType 是权威的；
+  // 'application' 表示脚本/可执行文件路径，而非 cmdlet。
+  // 安全性：与下面每个子命令循环相同的 argLeaksValue 门禁（发现 #32）。
+  // 没有它，`PowerShell(Write-Output:*)` 精确匹配 `Write-Output $env:DOGE_API_KEY`，
+  // 将 allow 推入 decisions[]，归约在每个子命令门禁运行之前返回它。allSubCommands.every 检查确保语句中没有命令泄漏
+  // （单命令精确允许有一个元素；管道有多个）。
   //
-  // SECURITY: nameType gate must check ALL subcommands, not just [0]
-  // (finding #10). canonicalCommand at L171 collapses `\n` → space, so
-  // `code\n.\build.ps1` (two statements) matches exact rule
-  // `PowerShell(code .\build.ps1)`. Checking only allSubCommands[0] lets the
-  // second statement (nameType=application, a script path) through. Require
-  // EVERY subcommand to have nameType !== 'application'.
+  // 安全性：nameType 门禁必须检查所有子命令，而不仅仅是 [0]（发现 #10）。
+  // L171 处的 canonicalCommand 将 `\n` 折叠为空格，因此 `code\n.\build.ps1`（两个语句）
+  // 匹配精确规则 `PowerShell(code .\build.ps1)`。仅检查 allSubCommands[0] 会让第二个语句（nameType=application，脚本路径）通过。
+  // 要求每个子命令的 nameType !== 'application'。
   if (
     exactMatchResult.behavior === 'allow' &&
     allSubCommands[0] !== undefined &&
@@ -1315,45 +1239,43 @@ export async function powershellToolHasPermission(
     decisions.push(exactMatchResult)
   }
 
-  // Decision: read-only allowlist — was step 4.5 (:869-885).
-  // Mirrors Bash auto-allow for ls, cat, git status, etc. PowerShell
-  // equivalents: Get-Process, Get-ChildItem, Get-Content, git log, etc.
-  // Reduce places this below sub-command ask rules (ask > allow).
+  // 决策：只读允许列表 — 原步骤 4.5 (:869-885)。
+  // 镜像 Bash 对 ls、cat、git status 等的自动允许。PowerShell 等效项：
+  // Get-Process、Get-ChildItem、Get-Content、git log 等。
+  // 归约将其置于子命令询问规则之下（询问 > 允许）。
   if (isReadOnlyCommand(command, parsed)) {
     decisions.push({
       behavior: 'allow',
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Command is read-only and safe to execute',
+        reason: '命令是只读的，可以安全执行',
       },
     })
   }
 
-  // Decision: file redirections — was :887-900.
-  // Redirections (>, >>, 2>) write to arbitrary paths. isReadOnlyCommand
-  // already rejects redirections internally so this can't conflict with the
-  // read-only allow above. Reduce places it above checkPermissionMode allow.
+  // 决策：文件重定向 — 原 :887-900。
+  // 重定向（>、>>、2>）写入任意路径。isReadOnlyCommand 内部已经拒绝重定向，
+  // 因此这不会与上面的只读允许冲突。归约将其置于 checkPermissionMode 允许之上。
   const fileRedirections = getFileRedirections(parsed)
   if (fileRedirections.length > 0) {
     decisions.push({
       behavior: 'ask',
-      message:
-        'Command contains file redirections that could write to arbitrary paths',
+      message: '命令包含可能写入任意路径的文件重定向',
       suggestions: suggestionForExactCommand(command),
     })
   }
 
-  // Decision: mode-specific handling (acceptEdits) — was step 4.7 (:902-906).
-  // checkPermissionMode only returns 'allow' | 'passthrough'.
+  // 决策：模式特定处理（acceptEdits）— 原步骤 4.7 (:902-906)。
+  // checkPermissionMode 仅返回 'allow' | 'passthrough'。
   const modeResult = checkPermissionMode(input, parsed, toolPermissionContext)
   if (modeResult.behavior !== 'passthrough') {
     decisions.push(modeResult)
   }
 
-  // REDUCE: deny > ask > allow > passthrough. First of each behavior type
-  // wins (preserves step-order messaging for single-check cases). If nothing
-  // decided, fall through to step 5 per-sub-command approval collection.
+  // 归约：拒绝 > 询问 > 允许 > 传递。每种行为类型的第一个胜出
+  // （对单检查情况保留步骤顺序的消息）。如果没有决策，
+  // 则落入步骤 5 的每个子命令批准收集。
   const deniedDecision = decisions.find(d => d.behavior === 'deny')
   if (deniedDecision !== undefined) {
     return deniedDecision
@@ -1367,36 +1289,34 @@ export async function powershellToolHasPermission(
     return allowDecision
   }
 
-  // 5. Pipeline/statement splitting: check each sub-command independently.
-  // This prevents a prefix rule like "Get-Process:*" from silently allowing
-  // piped commands like "Get-Process | Stop-Process -Force".
-  // Note: deny rules are already checked above (4.4), so this loop handles
-  // ask rules, explicit allow rules, and read-only allowlist fallback.
+  // 5. 管道/语句分割：独立检查每个子命令。
+  // 这防止了像 "Get-Process:*" 这样的前缀规则悄悄允许
+  // 管道命令如 "Get-Process | Stop-Process -Force"。
+  // 注意：拒绝规则已在上面（4.4）检查，因此此循环处理
+  // 询问规则、显式允许规则和只读允许列表回退。
 
-  // Filter out safe output cmdlets (Format-Table, etc.) — they were checked
-  // for deny rules in step 4.4 but shouldn't need independent approval here.
-  // Also filter out cd/Set-Location to CWD (model habit, Bash parity).
+  // 过滤掉安全的输出 cmdlet（Format-Table 等）— 它们在步骤 4.4 中已检查拒绝规则，
+  // 但这里不应需要独立批准。
+  // 同时过滤掉 cd/Set-Location 到 CWD 的情况（模型习惯，与 Bash 对等）。
   const subCommands = allSubCommands.filter(({ element, isSafeOutput }) => {
     if (isSafeOutput) {
       return false
     }
-    // SECURITY: nameType gate — sixth location. Filtering out of the approval
-    // list is a form of auto-allow. scripts\\Set-Location . would match below
-    // (stripped name 'Set-Location', arg '.' → CWD) and be silently dropped,
-    // then scripts\\Set-Location.ps1 executes with no prompt. Keep 'application'
-    // commands in the list so they reach isAllowlistedCommand (which rejects them).
+    // 安全性：nameType 门禁 — 第六处位置。从批准列表中过滤掉是一种自动允许形式。
+    // scripts\\Set-Location . 会在下方匹配（剥离后的名称 'Set-Location'，参数 '.' → CWD）并被悄悄丢弃，
+    // 然后 scripts\\Set-Location.ps1 无需提示即可执行。将 'application' 命令保留在列表中，
+    // 以便它们到达 isAllowlistedCommand（其会拒绝它们）。
     if (element.nameType === 'application') {
       return true
     }
     const canonical = resolveToCanonical(element.name)
     if (canonical === 'set-location' && element.args.length > 0) {
-      // SECURITY: use PS_TOKENIZER_DASH_CHARS, not ASCII-only startsWith('-').
-      // `Set-Location –Path .` (en-dash) would otherwise treat `–Path` as the
-      // target, resolve it against cwd (mismatch), and keep the command in the
-      // approval list — correct. But `Set-Location –LiteralPath evil` with
-      // en-dash would find `–LiteralPath` as "target", mismatch cwd, stay in
-      // list — also correct. The risk is the inverse: a Unicode-dash parameter
-      // being treated as the positional target. Use the tokenizer dash set.
+      // 安全性：使用 PS_TOKENIZER_DASH_CHARS，而非仅限于 ASCII 的 startsWith('-')。
+      // `Set-Location –Path .`（en-dash）会将 `–Path` 视为目标，
+      // 相对于 cwd 解析（不匹配），并将命令保留在批准列表中 — 正确。
+      // 但 `Set-Location –LiteralPath evil` 使用 en-dash 会找到 `–LiteralPath` 作为“目标”，
+      // 与 cwd 不匹配，保留在列表中 — 也是正确的。风险是相反情况：
+      // Unicode 破折号参数被视为位置目标。使用分词器破折号集合。
       const target = element.args.find(
         a => a.length === 0 || !PS_TOKENIZER_DASH_CHARS.has(a[0]!),
       )
@@ -1407,32 +1327,26 @@ export async function powershellToolHasPermission(
     return true
   })
 
-  // Note: cd+git compound guard already ran at step 4.42. If we reach here,
-  // either there's no cd or no git in the compound.
+  // 注意：cd+git 复合守卫已在步骤 4.42 运行。如果到达此处，则要么没有 cd，要么没有 git 在复合命令中。
 
   const subCommandsNeedingApproval: string[] = []
-  // Statements whose sub-commands were PUSHED to subCommandsNeedingApproval
-  // in the step-5 loop below. The fail-closed gate (after the loop) only
-  // pushes statements NOT tracked here — prevents duplicate suggestions where
-  // both "Get-Process" (sub-command) AND "$x = Get-Process" (full statement)
-  // appear.
+  // 其子命令在下方步骤 5 循环中被推入 subCommandsNeedingApproval 的语句。
+  // 故障关闭门禁（循环之后）仅推送未在此跟踪的语句 — 防止重复建议，
+  // 例如同时出现 "Get-Process"（子命令）和 "$x = Get-Process"（完整语句）。
   //
-  // SECURITY: track on PUSH only, not on loop entry.
-  // If a statement's only sub-commands `continue` via user allow rules
-  // (L1113), marking it seen at loop-entry would make the fail-closed gate
-  // skip it — auto-allowing invisible non-CommandAst content like bare
-  // `$env:SECRET` inside control flow. Example attack: user approves
-  // Get-Process, then `if ($true) { Get-Process; $env:SECRET }` — Get-Process
-  // is allow-ruled (continue, no push), $env:SECRET is VariableExpressionAst
-  // (not a sub-command), statement marked seen → gate skips → auto-allow →
-  // secret leaks. Tracking on push only: statement stays unseen → gate fires
-  // → ask.
+  // 安全性：仅在推送时跟踪，而非循环入口。
+  // 如果一个语句仅有的子命令通过用户允许规则 `continue`（L1113），
+  // 在循环入口标记它会使得故障关闭门禁跳过它 — 自动允许不可见的非 CommandAst 内容，
+  // 如控制流中的裸 `$env:SECRET`。攻击示例：用户批准 Get-Process，
+  // 然后 `if ($true) { Get-Process; $env:SECRET }` — Get-Process 被允许规则命中（continue，无推送），
+  // $env:SECRET 是 VariableExpressionAst（非子命令），语句标记为已见 → 门禁跳过 → 自动允许 → 秘密泄漏。
+  // 仅在推送时跟踪：语句保持未标记 → 门禁触发 → 询问。
   const statementsSeenInLoop = new Set<
     ParsedPowerShellCommand['statements'][number]
   >()
 
   for (const { text: subCmd, element, statement } of subCommands) {
-    // Check deny rules FIRST - user explicit rules take precedence over allowlist
+    // 首先检查拒绝规则 - 用户显式规则优先于允许列表
     const subInput = { command: subCmd }
     const subResult = powershellToolCheckPermission(
       subInput,
@@ -1442,7 +1356,7 @@ export async function powershellToolHasPermission(
     if (subResult.behavior === 'deny') {
       return {
         behavior: 'deny',
-        message: `Permission to use ${POWERSHELL_TOOL_NAME} with command ${command} has been denied.`,
+        message: `使用命令 ${command} 执行 ${POWERSHELL_TOOL_NAME} 的权限已被拒绝。`,
         decisionReason: subResult.decisionReason,
       }
     }
@@ -1455,32 +1369,29 @@ export async function powershellToolHasPermission(
       continue
     }
 
-    // Explicitly allowed by a user rule — BUT NOT for applications/scripts.
-    // SECURITY: INPUT-side stripModulePrefix is unconditional, so
-    // `scripts\Get-Content /etc/shadow` strips to 'Get-Content' and matches
-    // an allow rule `Get-Content:*`. Without the nameType guard, continue
-    // skips all checks and the local script runs. nameType is classified from
-    // the RAW name pre-strip — `scripts\Get-Content` → 'application' (has `\`).
-    // Module-qualified cmdlets also classify 'application' — fail-safe over-fire.
-    // An application should NEVER be auto-allowed by a cmdlet allow rule.
+    // 由用户规则显式允许 — 但不适用于应用程序/脚本。
+    // 安全性：输入侧的 stripModulePrefix 是无条件的，因此
+    // `scripts\Get-Content /etc/shadow` 剥离为 'Get-Content' 并匹配
+    // 允许规则 `Get-Content:*`。没有 nameType 守卫，continue 会跳过所有检查，
+    // 本地脚本运行。nameType 根据剥离前的原始名称分类 —
+    // `scripts\Get-Content` → 'application'（有 `\`）。
+    // 模块限定的 cmdlet 也会分类为 'application' — 故障安全的过度触发。
+    // 应用程序绝不应被 cmdlet 允许规则自动允许。
     if (
       subResult.behavior === 'allow' &&
       element.nameType !== 'application' &&
       !hasSymlinkCreate
     ) {
-      // SECURITY: User allow rule asserts the cmdlet is safe, NOT that
-      // arbitrary variable expansion through it is safe. A user who allows
-      // PowerShell(Write-Output:*) did not intend to auto-allow
-      // `Write-Output $env:DOGE_API_KEY`. Apply the same argLeaksValue
-      // gate that protects the built-in allowlist path below — rejects
-      // Variable/Other/ScriptBlock/SubExpression elementTypes and colon-bound
-      // expression children. (security finding #32)
+      // 安全性：用户允许规则断言 cmdlet 是安全的，而不是断言
+      // 通过它进行的任意变量扩展是安全的。允许 PowerShell(Write-Output:*) 的用户
+      // 并非有意自动允许 `Write-Output $env:DOGE_API_KEY`。
+      // 应用与下方保护内置允许列表路径相同的 argLeaksValue 门禁 — 拒绝
+      // Variable/Other/ScriptBlock/SubExpression 元素类型和冒号绑定的表达式子节点。（安全发现 #32）
       //
-      // SECURITY: Also skip when the compound contains a symlink-creating
-      // command (finding — symlink+read gap). New-Item -ItemType SymbolicLink
-      // can redirect subsequent reads to arbitrary paths. The built-in
-      // allowlist path (below) and acceptEdits path both gate on
-      // !hasSymlinkCreate; the user-rule path must too.
+      // 安全性：当复合命令包含符号链接创建命令时也跳过（发现 — 符号链接+读取间隙）。
+      // New-Item -ItemType SymbolicLink 可以将后续读取重定向到任意路径。
+      // 内置允许列表路径（下方）和 acceptEdits 路径均门控于 !hasSymlinkCreate；
+      // 用户规则路径也必须如此。
       if (argLeaksValue(subCmd, element)) {
         if (statement !== null) {
           statementsSeenInLoop.add(statement)
@@ -1491,10 +1402,9 @@ export async function powershellToolHasPermission(
       continue
     }
     if (subResult.behavior === 'allow') {
-      // nameType === 'application' with a matching allow rule: the rule was
-      // written for a cmdlet, but this is a script/executable masquerading.
-      // Don't continue; fall through to approval (NOT deny — the user may
-      // actually want to run `scripts\Get-Content` and will see a prompt).
+      // nameType === 'application' 且匹配允许规则：规则是为 cmdlet 编写的，
+      // 但这是一个冒充的脚本/可执行文件。不要 continue；落入批准（非拒绝 — 用户可能
+      // 确实想运行 `scripts\Get-Content` 并会看到提示）。
       if (statement !== null) {
         statementsSeenInLoop.add(statement)
       }
@@ -1502,24 +1412,20 @@ export async function powershellToolHasPermission(
       continue
     }
 
-    // SECURITY: fail-closed gate. Do NOT take the allowlist shortcut unless
-    // the parent statement is a PipelineAst where every element is a
-    // CommandAst. This subsumes the previous hasExpressionSource check
-    // (expression sources are one way a statement fails the gate) and also
-    // rejects assignments, chain operators, control flow, and any future
-    // AST type by construction. Examples this blocks:
-    //   'env:SECRET_API_KEY' | Get-Content  — CommandExpressionAst element
+    // 安全性：故障关闭门禁。除非父语句是 PipelineAst 且其每个元素都是 CommandAst，
+    // 否则不采取允许列表捷径。这取代了之前的 hasExpressionSource 检查
+    // （表达式源是一种导致语句不通过门禁的方式），并且按构造也拒绝赋值、链操作符、控制流
+    // 以及任何未来的 AST 类型。此门禁阻止的示例：
+    //   'env:SECRET_API_KEY' | Get-Content  — CommandExpressionAst 元素
     //   $x = Get-Process                   — AssignmentStatementAst
     //   Get-Process && Get-Service         — PipelineChainAst
-    // Explicit user allow rules (above) run before this gate but apply their
-    // own argLeaksValue check; both paths now gate argument elementTypes.
+    // 显式用户允许规则（上面）在此门禁之前运行，但应用其自己的 argLeaksValue 检查；
+    // 两条路径现在都门控参数 elementTypes。
     //
-    // SECURITY: Also skip when the compound contains a cwd-changing cmdlet
-    // (finding #27 — cd+read gap). isAllowlistedCommand validates Get-Content
-    // in isolation, but `Set-Location ~; Get-Content ./.ssh/id_rsa` runs
-    // Get-Content from ~, not from the validator's cwd. Path validation saw
-    // /project/.ssh/id_rsa; runtime reads ~/.ssh/id_rsa. Same gate as the
-    // checkPermissionMode call below and the checkPathConstraints threading.
+    // 安全性：当复合命令包含改变 cwd 的 cmdlet 时也跳过（发现 #27 — cd+读取间隙）。
+    // isAllowlistedCommand 独立验证 Get-Content，但 `Set-Location ~; Get-Content ./.ssh/id_rsa`
+    // 从 ~ 运行 Get-Content，而非验证器的 cwd。路径验证看到 /project/.ssh/id_rsa；
+    // 运行时读取 ~/.ssh/id_rsa。与下方的 checkPermissionMode 调用和 checkPathConstraints 传递相同的门禁。
     if (
       statement !== null &&
       !hasCdSubCommand &&
@@ -1530,27 +1436,21 @@ export async function powershellToolHasPermission(
       continue
     }
 
-    // Check per-sub-command acceptEdits mode (BashTool parity).
-    // Delegate to checkPermissionMode on a single-statement AST so that ALL
-    // of its guards apply: expression pipeline sources (non-CommandAst elements),
-    // security flags (subexpressions, script blocks, assignments, splatting, etc.),
-    // and the ACCEPT_EDITS_ALLOWED_CMDLETS allowlist. This keeps one source of
-    // truth for what makes a statement safe in acceptEdits mode — any future
-    // hardening of checkPermissionMode automatically applies here.
+    // 检查每个子命令的 acceptEdits 模式（与 BashTool 对等）。
+    // 委托给对单语句 AST 的 checkPermissionMode，以便其所有守卫都应用：
+    // 表达式管道源（非 CommandAst 元素）、安全标志（子表达式、脚本块、赋值、splatting 等）、
+    // 以及 ACCEPT_EDITS_ALLOWED_CMDLETS 允许列表。这为 acceptEdits 模式下语句的安全定义保持了单一事实来源 —
+    // checkPermissionMode 的任何未来加固都会自动应用于此。
     //
-    // Pass parsed.variables (not []) so splatting from any statement in the
-    // compound command is visible. Conservative: if we can't tell which statement
-    // a splatted variable affects, assume it affects all of them.
+    // 传递 parsed.variables（而非 []），以便复合命令中任何语句的 splatting 都可见。
+    // 保守：如果我们无法判断 splatted 变量影响哪个语句，则假设它影响所有语句。
     //
-    // SECURITY: Skip this auto-allow path when the compound contains a
-    // cwd-changing command (Set-Location/Push-Location/Pop-Location). The
-    // synthetic single-statement AST strips compound context, so
-    // checkPermissionMode cannot see the cd in other statements. Without this
-    // gate, `Set-Location ./.claude; Set-Content ./settings.json '...'` would
-    // pass: Set-Content is checked in isolation, matches ACCEPT_EDITS_ALLOWED_CMDLETS,
-    // and auto-allows — but PowerShell runs it from the changed cwd, writing to
-    // .claude/settings.json (a Claude config file the path validator didn't check).
-    // This matches BashTool's compoundCommandHasCd guard.
+    // 安全性：当复合命令包含改变 cwd 的命令（Set-Location/Push-Location/Pop-Location）时跳过此自动允许路径。
+    // 合成的单语句 AST 剥离了复合上下文，因此 checkPermissionMode 看不到其他语句中的 cd。
+    // 没有此门禁，`Set-Location ./.claude; Set-Content ./settings.json '...'` 会通过：
+    // Set-Content 被独立检查，匹配 ACCEPT_EDITS_ALLOWED_CMDLETS 并自动允许 —
+    // 但 PowerShell 从更改后的 cwd 运行它，写入 .claude/settings.json（路径验证器未检查的 Claude 配置文件）。
+    // 这与 BashTool 的 compoundCommandHasCd 守卫一致。
     if (statement !== null && !hasCdSubCommand && !hasSymlinkCreate) {
       const subModeResult = checkPermissionMode(
         { command: subCmd },
@@ -1569,27 +1469,22 @@ export async function powershellToolHasPermission(
       }
     }
 
-    // Not allowlisted, no mode auto-allow, and no explicit rule — needs approval
+    // 不在允许列表中，无模式自动允许，且无显式规则 — 需要批准
     if (statement !== null) {
       statementsSeenInLoop.add(statement)
     }
     subCommandsNeedingApproval.push(subCmd)
   }
 
-  // SECURITY: fail-closed gate (second half). The step-5 loop above only
-  // iterates sub-commands that getSubCommandsForPermissionCheck surfaced
-  // AND survived the safe-output filter. Statements that produce zero
-  // CommandAst sub-commands (bare $env:SECRET) or whose only sub-commands
-  // were filtered as safe-output ($env:X | Out-String) never enter the loop.
-  // Without this, they silently auto-allow on empty subCommandsNeedingApproval.
+  // 安全性：故障关闭门禁（第二部分）。上面的步骤 5 循环仅迭代
+  // getSubCommandsForPermissionCheck 呈现且通过安全输出过滤器的子命令。
+  // 产生零个 CommandAst 子命令（裸 $env:SECRET）或仅有的子命令被过滤为安全输出（$env:X | Out-String）的语句
+  // 永远不会进入循环。没有此门禁，它们会在空的 subCommandsNeedingApproval 上默默自动允许。
   //
-  // Only push statements NOT tracked above: if the loop PUSHED any
-  // sub-command from a statement, the user will see a prompt. Pushing the
-  // statement text too creates a duplicate suggestion where accepting the
-  // sub-command rule does not prevent re-prompting.
-  // If all sub-commands `continue`d (allow-ruled / allowlisted / mode-allowed)
-  // the statement is NOT tracked and the gate re-checks it below — this is
-  // the fail-closed property.
+  // 仅推送上面未跟踪的语句：如果循环从某个语句推送了任何子命令，
+  // 用户将看到提示。同时推送语句文本会导致重复建议，即接受子命令规则并不能防止重新提示。
+  // 如果所有子命令都 `continue`（允许规则命中 / 允许列表 / 模式允许），
+  // 则该语句未被跟踪，下面的门禁会重新检查它 — 这是故障关闭属性。
   for (const stmt of parsed.statements) {
     if (!isProvablySafeStatement(stmt) && !statementsSeenInLoop.has(stmt)) {
       subCommandsNeedingApproval.push(stmt.text)
@@ -1597,21 +1492,18 @@ export async function powershellToolHasPermission(
   }
 
   if (subCommandsNeedingApproval.length === 0) {
-    // SECURITY: empty-list auto-allow is only safe when there's nothing
-    // unverifiable. If the pipeline has script blocks, every safe-output
-    // cmdlet was filtered at :1032, but the block content wasn't verified —
-    // non-command AST nodes (AssignmentStatementAst etc.) are invisible to
-    // getAllCommands. `Where-Object {$true} | Sort-Object {$env:PATH='evil'}`
-    // would auto-allow here. hasAssignments is top-level-only (parser.ts:1385)
-    // so it doesn't catch nested assignments either. Prompt instead.
+    // 安全性：仅当没有不可验证的内容时，空列表自动允许才是安全的。
+    // 如果管道有脚本块，每个安全输出 cmdlet 在 :1032 处被过滤掉，但块内容未被验证 —
+    // 非命令 AST 节点（AssignmentStatementAst 等）对 getAllCommands 不可见。
+    // `Where-Object {$true} | Sort-Object {$env:PATH='evil'}` 会在此处自动允许。
+    // hasAssignments 是仅顶层的（parser.ts:1385），因此它也不能捕获嵌套赋值。改为提示。
     if (deriveSecurityFlags(parsed).hasScriptBlocks) {
       return {
         behavior: 'ask',
         message: createPermissionRequestMessage(POWERSHELL_TOOL_NAME),
         decisionReason: {
           type: 'other',
-          reason:
-            'Pipeline consists of output-formatting cmdlets with script blocks — block content cannot be verified',
+          reason: '管道由输出格式化 cmdlet 与脚本块组成 — 块内容无法验证',
         },
       }
     }
@@ -1620,15 +1512,15 @@ export async function powershellToolHasPermission(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'All pipeline commands are individually allowed',
+        reason: '所有管道命令均已单独允许',
       },
     }
   }
 
-  // 6. Some sub-commands need approval — build suggestions
+  // 6. 一些子命令需要批准 — 构建建议
   const decisionReason = {
     type: 'other' as const,
-    reason: 'This command requires approval',
+    reason: '此命令需要批准',
   }
 
   const pendingSuggestions: PermissionUpdate[] = []

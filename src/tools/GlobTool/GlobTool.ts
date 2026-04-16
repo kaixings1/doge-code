@@ -25,12 +25,12 @@ import {
 
 const inputSchema = lazySchema(() =>
   z.strictObject({
-    pattern: z.string().describe('The glob pattern to match files against'),
+    pattern: z.string().describe('要匹配文件的 glob 模式'),
     path: z
       .string()
       .optional()
       .describe(
-        'The directory to search in. If not specified, the current working directory will be used. IMPORTANT: Omit this field to use the default directory. DO NOT enter "undefined" or "null" - simply omit it for the default behavior. Must be a valid directory path if provided.',
+        '要搜索的目录。如果未指定，将使用当前工作目录。重要提示：省略此字段以使用默认目录。请勿输入 "undefined" 或 "null" - 只需省略它即可获得默认行为。如果提供，必须是一个有效的目录路径。',
       ),
   }),
 )
@@ -40,14 +40,14 @@ const outputSchema = lazySchema(() =>
   z.object({
     durationMs: z
       .number()
-      .describe('Time taken to execute the search in milliseconds'),
-    numFiles: z.number().describe('Total number of files found'),
+      .describe('执行搜索所用的时间（毫秒）'),
+    numFiles: z.number().describe('找到的文件总数'),
     filenames: z
       .array(z.string())
-      .describe('Array of file paths that match the pattern'),
+      .describe('匹配模式的文件路径数组'),
     truncated: z
       .boolean()
-      .describe('Whether results were truncated (limited to 100 files)'),
+      .describe('结果是否被截断（限制为 100 个文件）'),
   }),
 )
 type OutputSchema = ReturnType<typeof outputSchema>
@@ -92,12 +92,12 @@ export const GlobTool = buildTool({
     return rulePattern => matchWildcardPattern(rulePattern, pattern)
   },
   async validateInput({ path }): Promise<ValidationResult> {
-    // If path is provided, validate that it exists and is a directory
+    // 如果提供了 path，验证其是否存在且为目录
     if (path) {
       const fs = getFsImplementation()
       const absolutePath = expandPath(path)
 
-      // SECURITY: Skip filesystem operations for UNC paths to prevent NTLM credential leaks.
+      // 安全性：对于 UNC 路径跳过文件系统操作，以防止 NTLM 凭据泄漏。
       if (absolutePath.startsWith('\\\\') || absolutePath.startsWith('//')) {
         return { result: true }
       }
@@ -146,8 +146,7 @@ export const GlobTool = buildTool({
   renderToolUseMessage,
   renderToolUseErrorMessage,
   renderToolResultMessage,
-  // Reuses Grep's render (UI.tsx:65) — shows filenames.join. durationMs/
-  // numFiles are "Found 3 files in 12ms" chrome (under-count, fine).
+  // 复用了 Grep 的渲染（UI.tsx:65）— 显示 filenames 拼接。durationMs/numFiles 是类似 "12 毫秒内找到 3 个文件" 的外壳（少统计了，可以接受）。
   extractSearchText({ filenames }) {
     return filenames.join('\n')
   },
@@ -162,7 +161,7 @@ export const GlobTool = buildTool({
       abortController.signal,
       appState.toolPermissionContext,
     )
-    // Relativize paths under cwd to save tokens (same as GrepTool)
+    // 将 cwd 下的路径相对化以节省 tokens（与 GrepTool 相同）
     const filenames = files.map(toRelativePath)
     const output: Output = {
       filenames,

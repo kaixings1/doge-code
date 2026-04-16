@@ -6,9 +6,9 @@ type Priority = 'low' | 'medium' | 'high' | 'immediate';
 type BaseNotification = {
   key: string;
   /**
-   * Keys of notifications that this notification invalidates.
-   * If a notification is invalidated, it will be removed from the queue
-   * and, if currently displayed, cleared immediately.
+   * 此通知无效化的通知键。
+   * 如果被无效化，通知将从队列中移除，
+   * 并且如果当前显示，立即清除。
    */
   invalidates?: string[];
   priority: Priority;
@@ -42,7 +42,7 @@ export function useNotifications(): {
   const store = useAppStateStore();
   const setAppState = useSetAppState();
 
-  // Process queue when current notification finishes or queue changes
+  // 当前通知完成或队列改变时处理队列
   const processQueue = useCallback(() => {
     setAppState(prev => {
       const next = getNext(prev.notifications.queue);
@@ -52,7 +52,7 @@ export function useNotifications(): {
       currentTimeoutId = setTimeout((setAppState, nextKey, processQueue) => {
         currentTimeoutId = null;
         setAppState(prev => {
-          // Compare by key instead of reference to handle re-created notifications
+          // 通过键而不是引用比较以处理重新创建的通知
           if (prev.notifications.current?.key !== nextKey) {
             return prev;
           }
@@ -76,19 +76,19 @@ export function useNotifications(): {
     });
   }, [setAppState]);
   const addNotification = useCallback<AddNotificationFn>((notif: Notification) => {
-    // Handle immediate priority notifications
+    // 处理立即优先级的通知
     if (notif.priority === 'immediate') {
-      // Clear any existing timeout since we're showing a new immediate notification
+      // 清除任何现有的超时，因为我们正在显示新的立即通知
       if (currentTimeoutId) {
         clearTimeout(currentTimeoutId);
         currentTimeoutId = null;
       }
 
-      // Set up timeout for the immediate notification
+      // 设置立即通知的超时
       currentTimeoutId = setTimeout((setAppState, notif, processQueue) => {
         currentTimeoutId = null;
         setAppState(prev => {
-          // Compare by key instead of reference to handle re-created notifications
+          // 通过键而不是引用比较以处理重新创建的通知
           if (prev.notifications.current?.key !== notif.key) {
             return prev;
           }
@@ -103,27 +103,27 @@ export function useNotifications(): {
         processQueue();
       }, notif.timeoutMs ?? DEFAULT_TIMEOUT_MS, setAppState, notif, processQueue);
 
-      // Show the immediate notification right away
+      // 立即显示立即通知
       setAppState(prev => ({
         ...prev,
         notifications: {
           current: notif,
           queue:
-          // Only re-queue the current notification if it's not immediate
+          // 仅在当前通知不是立即时才重新入队
           [...(prev.notifications.current ? [prev.notifications.current] : []), ...prev.notifications.queue].filter(_ => _.priority !== 'immediate' && !notif.invalidates?.includes(_.key))
         }
       }));
-      return; // IMPORTANT: Exit addNotification for immediate notifications
+      return; // 重要：立即通知退出 addNotification
     }
 
-    // Handle non-immediate notifications
+    // 处理非立即通知
     setAppState(prev => {
-      // Check if we can fold into an existing notification with the same key
+      // 检查是否可以折叠到具有相同键的现有通知中
       if (notif.fold) {
-        // Fold into current notification if keys match
+        // 如果键匹配则折叠到当前通知
         if (prev.notifications.current?.key === notif.key) {
           const folded = notif.fold(prev.notifications.current, notif);
-          // Reset timeout for the folded notification
+          // 重置折叠通知的超时
           if (currentTimeoutId) {
             clearTimeout(currentTimeoutId);
             currentTimeoutId = null;
@@ -153,7 +153,7 @@ export function useNotifications(): {
           };
         }
 
-        // Fold into queued notification if keys match
+        // 如果键匹配则折叠到入队通知
         const queueIdx = prev.notifications.queue.findIndex(_ => _.key === notif.key);
         if (queueIdx !== -1) {
           const folded = notif.fold(prev.notifications.queue[queueIdx]!, notif);
@@ -169,7 +169,7 @@ export function useNotifications(): {
         }
       }
 
-      // Only add to queue if not already present (prevent duplicates)
+      // 仅在没有重复时才添加到队列（防止重复）
       const queuedKeys = new Set(prev.notifications.queue.map(_ => _.key));
       const shouldAdd = !queuedKeys.has(notif.key) && prev.notifications.current?.key !== notif.key;
       if (!shouldAdd) return prev;
@@ -187,7 +187,7 @@ export function useNotifications(): {
       };
     });
 
-    // Process queue after adding the notification
+    // 添加通知后处理队列
     processQueue();
   }, [setAppState, processQueue]);
   const removeNotification = useCallback<RemoveNotificationFn>((key: string) => {
@@ -212,11 +212,11 @@ export function useNotifications(): {
     processQueue();
   }, [setAppState, processQueue]);
 
-  // Process queue on mount if there are notifications in the initial state.
-  // Imperative read (not useAppState) — a subscription in a mount-only
-  // effect would be vestigial and make every caller re-render on queue changes.
+  // 如果初始状态中有通知，则在挂载时处理队列。
+  // 命令式读取（不使用 useAppState）— 仅在挂载时的订阅是多余的，
+  // 会导致每个调用者在队列改变时重新渲染。
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // biome-ignore lint/correctness/useExhaustiveDependencies: mount-only effect, store is a stable context ref
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 仅在挂载时的效果，store 是稳定的上下文引用
   useEffect(() => {
     if (store.getState().notifications.queue.length > 0) {
       processQueue();
