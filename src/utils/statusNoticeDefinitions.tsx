@@ -13,21 +13,21 @@ import { getAgentDescriptionsTotalTokens, AGENT_DESCRIPTIONS_THRESHOLD } from '.
 import { isSupportedJetBrainsTerminal, toIDEDisplayName, getTerminalIdeType } from './ide.js';
 import { isJetBrainsPluginInstalledCachedSync } from './jetbrains.js';
 
-// Types
-export type StatusNoticeType = 'warning' | 'info';
+// 类型定义
+export type StatusNoticeType = 'warning' | 'info'; // 通知类型：警告或信息
 export type StatusNoticeContext = {
-  config: ReturnType<typeof getGlobalConfig>;
-  agentDefinitions?: AgentDefinitionsResult;
-  memoryFiles: MemoryFileInfo[];
+  config: ReturnType<typeof getGlobalConfig>; // 全局配置
+  agentDefinitions?: AgentDefinitionsResult; // 智能体定义（可选）
+  memoryFiles: MemoryFileInfo[]; // 内存文件列表
 };
 export type StatusNoticeDefinition = {
-  id: string;
-  type: StatusNoticeType;
-  isActive: (context: StatusNoticeContext) => boolean;
-  render: (context: StatusNoticeContext) => React.ReactNode;
+  id: string; // 通知 ID
+  type: StatusNoticeType; // 通知类型
+  isActive: (context: StatusNoticeContext) => boolean; // 检查是否激活
+  render: (context: StatusNoticeContext) => React.ReactNode; // 渲染内容
 };
 
-// Individual notice definitions
+// 单个通知定义
 const largeMemoryFilesNotice: StatusNoticeDefinition = {
   id: 'large-memory-files',
   type: 'warning',
@@ -188,10 +188,10 @@ const jetbrainsPluginNotice: StatusNoticeDefinition = {
   }
 };
 
-// All notice definitions
+// 所有通知定义
 export const statusNoticeDefinitions: StatusNoticeDefinition[] = [largeMemoryFilesNotice, largeAgentDescriptionsNotice, claudeAiSubscriberExternalTokenNotice, apiKeyConflictNotice, bothAuthMethodsNotice, jetbrainsPluginNotice];
 
-// Helper functions for external use
+// 供外部使用的辅助函数
 export function getActiveNotices(context: StatusNoticeContext): StatusNoticeDefinition[] {
-  return statusNoticeDefinitions.filter(notice => notice.isActive(context));
+  return statusNoticeDefinitions.filter(notice => notice.isActive(context)); // 返回所有激活的通知
 }

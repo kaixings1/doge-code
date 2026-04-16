@@ -44,8 +44,8 @@ class BootstrapBoundary extends React.Component<{
 }
 
 /**
- * Top-level wrapper for interactive sessions.
- * Provides FPS metrics, stats context, and app state to the component tree.
+ * 交互式会话的顶层包装器。
+ * 为组件树提供 FPS 指标、stats 上下文和应用程序状态。
  */
 export function App(t0) {
   const $ = _c(12);

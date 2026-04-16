@@ -2,11 +2,11 @@ import { c as _c } from "react/compiler-runtime";
 import React, { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
 import { saveCurrentProjectConfig } from '../utils/config.js';
 export type StatsStore = {
-  increment(name: string, value?: number): void;
-  set(name: string, value: number): void;
-  observe(name: string, value: number): void;
-  add(name: string, value: string): void;
-  getAll(): Record<string, number>;
+  increment(name: string, value?: number): void; // 递增计数器
+  set(name: string, value: number): void; // 设置值
+  observe(name: string, value: number): void; // 观察（记录）值
+  add(name: string, value: string): void; // 添加集合元素
+  getAll(): Record<string, number>; // 获取所有统计数据
 };
 function percentile(sorted: number[], p: number): number {
   const index = p / 100 * (sorted.length - 1);

@@ -23,13 +23,13 @@ export const inputSchema = lazySchema(() =>
     query: z
       .string()
       .describe(
-        'Query to find deferred tools. Use "select:<tool_name>" for direct selection, or keywords to search.',
+        '用于查找延迟加载工具的查询条件。使用 "select:<工具名称>" 可直接选择，或使用关键词进行搜索。',
       ),
     max_results: z
       .number()
       .optional()
       .default(5)
-      .describe('Maximum number of results to return (default: 5)'),
+      .describe('返回结果的最大数量（默认值：5）'),
   }),
 )
 type InputSchema = ReturnType<typeof inputSchema>
@@ -446,12 +446,12 @@ export const ToolSearchTool = buildTool({
     toolUseID: string,
   ): ToolResultBlockParam {
     if (content.matches.length === 0) {
-      let text = '未找到匹配的延迟工具'
+      let text = '未找到匹配的延迟加载工具'
       if (
         content.pending_mcp_servers &&
         content.pending_mcp_servers.length > 0
       ) {
-        text += `. Some MCP servers are still connecting: ${content.pending_mcp_servers.join(', ')}. Their tools will become available shortly — try searching again.`
+        text += `。部分 MCP 服务器仍在连接中：${content.pending_mcp_servers.join('、')}。它们的工具即将可用——请稍后重试搜索。`
       }
       return {
         type: 'tool_result',

@@ -21,8 +21,8 @@ const IfConditionSchema = lazySchema(() =>
     .string()
     .optional()
     .describe(
-      'Permission rule syntax to filter when this hook runs (e.g., "Bash(git *)"). ' +
-        'Only runs if the tool call matches the pattern. Avoids spawning hooks for non-matching commands.',
+      '权限规则语法，用于过滤钩子运行时机（例如："Bash(git *)"）。' +
+        '仅当工具调用匹配模式时才执行。避免为非匹配命令启动钩子。',
     ),
 )
 
@@ -37,17 +37,17 @@ function buildHookSchemas() {
       .enum(SHELL_TYPES)
       .optional()
       .describe(
-        "Shell interpreter. 'bash' uses your $SHELL (bash/zsh/sh); 'powershell' uses pwsh. Defaults to bash.",
+        "Shell 解释器。'bash'使用你的 $SHELL (bash/zsh/sh); 'powershell'使用 pwsh。默认为 bash。",
       ),
     timeout: z
       .number()
       .positive()
       .optional()
-      .describe('Timeout in seconds for this specific command'),
+      .describe('此命令的超时时间（秒）'),
     statusMessage: z
       .string()
       .optional()
-      .describe('Custom status message to display in spinner while hook runs'),
+      .describe('钩子运行时的自定义状态消息'),
     once: z
       .boolean()
       .optional()
@@ -60,7 +60,7 @@ function buildHookSchemas() {
       .boolean()
       .optional()
       .describe(
-        'If true, hook runs in background and wakes the model on exit code 2 (blocking error). Implies async.',
+        '如果为 true，钩子在后台运行并在退出码 2（阻塞错误）时唤醒模型。隐含异步执行。',
       ),
   })
 
@@ -69,25 +69,25 @@ function buildHookSchemas() {
     prompt: z
       .string()
       .describe(
-        'Prompt to evaluate with LLM. Use $ARGUMENTS placeholder for hook input JSON.',
+        '使用 LLM 评估的提示词。在钩子输入 JSON 中使用 $ARGUMENTS 占位符。',
       ),
     if: IfConditionSchema(),
     timeout: z
       .number()
       .positive()
       .optional()
-      .describe('Timeout in seconds for this specific prompt evaluation'),
+      .describe('此特定提示词评估的超时时间（秒）'),
     // @[MODEL LAUNCH]: Update the example model ID in the .describe() strings below (prompt + agent hooks).
     model: z
       .string()
       .optional()
       .describe(
-        'Model to use for this prompt hook (e.g., "claude-sonnet-4-6"). If not specified, uses the default small fast model.',
+        '此提示词钩子使用的模型（如 "claude-sonnet-4-6"）。如果不指定，使用默认的小型快速模型。',
       ),
     statusMessage: z
       .string()
       .optional()
-      .describe('Custom status message to display in spinner while hook runs'),
+      .describe('钩子运行时在旋转加载器中显示的自定义状态消息'),
     once: z
       .boolean()
       .optional()
@@ -113,12 +113,12 @@ function buildHookSchemas() {
       .array(z.string())
       .optional()
       .describe(
-        'Explicit list of environment variable names that may be interpolated in header values. Only variables listed here will be resolved; all other $VAR references are left as empty strings. Required for env var interpolation to work.',
+        '可在头部值中插值的明文环境变量名称列表。只有列在此处的变量才会被解析；其他所有 $VAR 引用都将保留为空字符串。这是环境变量插值工作所必需的。',
       ),
     statusMessage: z
       .string()
       .optional()
-      .describe('Custom status message to display in spinner while hook runs'),
+      .describe('钩子运行时在旋转加载器中显示的自定义状态消息'),
     once: z
       .boolean()
       .optional()

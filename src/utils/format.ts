@@ -1,9 +1,9 @@
-// Pure display formatters — leaf-safe (no Ink). Width-aware truncation lives in ./truncate.ts.
+// 纯显示格式化器 — 叶子安全（不使用 Ink）。宽度感知的截断位于 ./truncate.ts。
 
 import { getRelativeTimeFormat, getTimeZone } from './intl.js'
 
 /**
- * Formats a byte count to a human-readable string (KB, MB, GB).
+ * 将字节数格式化为人类可读的字符串（KB、MB、GB）。
  * @example formatFileSize(1536) → "1.5KB"
  */
 export function formatFileSize(sizeInBytes: number): string {
@@ -23,9 +23,9 @@ export function formatFileSize(sizeInBytes: number): string {
 }
 
 /**
- * Formats milliseconds as seconds with 1 decimal place (e.g. `1234` → `"1.2s"`).
- * Unlike formatDuration, always keeps the decimal — use for sub-minute timings
- * where the fractional second is meaningful (TTFT, hook durations, etc.).
+ * 将毫秒格式化为带 1 位小数的秒（例如 `1234` → `"1.2s"`）。
+ * 与 formatDuration 不同，始终保留小数 — 用于小于分钟的计时，
+ * 其中分数秒有意义（TTFT、钩子持续时间等）。
  */
 export function formatSecondsShort(ms: number): string {
   return `${(ms / 1000).toFixed(1)}s`
@@ -94,7 +94,7 @@ export function formatDuration(
   return `${seconds}s`
 }
 
-// `new Intl.NumberFormat` is expensive, so cache formatters for reuse
+// `new Intl.NumberFormat` 很昂贵，因此缓存格式化器以便重用
 let numberFormatterForConsistentDecimals: Intl.NumberFormat | null = null
 let numberFormatterForInconsistentDecimals: Intl.NumberFormat | null = null
 const getNumberFormatter = (
@@ -122,16 +122,16 @@ const getNumberFormatter = (
 }
 
 export function formatNumber(number: number): string {
-  // Only use minimumFractionDigits for numbers that will be shown in compact notation
+  // 仅对将以紧凑格式显示的数字使用 minimumFractionDigits
   const shouldUseConsistentDecimals = number >= 1000
 
   return getNumberFormatter(shouldUseConsistentDecimals)
-    .format(number) // eg. "1321" => "1.3K", "900" => "900"
-    .toLowerCase() // eg. "1.3K" => "1.3k", "1.0K" => "1.0k"
+    .format(number) // 例如："1321" => "1.3K", "900" => "900"
+    .toLowerCase() // 例如："1.3K" => "1.3k", "1.0K" => "1.0k"
 }
 
 export function formatTokens(count: number): string {
-  return formatNumber(count).replace('.0', '')
+  return formatNumber(count).replace('.0', '') // 移除小数点后的 0
 }
 
 type RelativeTimeStyle = 'long' | 'short' | 'narrow'
@@ -198,17 +198,17 @@ export function formatRelativeTimeAgo(
 }
 
 /**
- * Formats log metadata for display (time, size or message count, branch, tag, PR)
+ * 格式化日志元数据用于显示（时间、大小或消息数、分支、标签、PR）
  */
 export function formatLogMetadata(log: {
-  modified: Date
-  messageCount: number
-  fileSize?: number
-  gitBranch?: string
-  tag?: string
-  agentSetting?: string
-  prNumber?: number
-  prRepository?: string
+  modified: Date // 修改时间
+  messageCount: number // 消息数
+  fileSize?: number // 文件大小（可选）
+  gitBranch?: string // Git 分支
+  tag?: string // 标签
+  agentSetting?: string // 智能体设置
+  prNumber?: number // PR 编号（可选）
+  prRepository?: string // PR 仓库（可选）
 }): string {
   const sizeOrCount =
     log.fileSize !== undefined
@@ -297,12 +297,12 @@ export function formatResetText(
   return `${formatResetTime(Math.floor(dt.getTime() / 1000), showTimezone, showTime)}`
 }
 
-// Back-compat: truncate helpers moved to ./truncate.ts (needs ink/stringWidth)
+// 向后兼容：截断辅助函数已移至 ./truncate.ts（需要 ink/stringWidth）
 export {
-  truncate,
-  truncatePathMiddle,
-  truncateStartToWidth,
-  truncateToWidth,
-  truncateToWidthNoEllipsis,
-  wrapText,
+  truncate, // 截断文本
+  truncatePathMiddle, // 在路径中间截断
+  truncateStartToWidth, // 从开头截断到指定宽度
+  truncateToWidth, // 截断到指定宽度
+  truncateToWidthNoEllipsis, // 截断到指定宽度但不添加省略号
+  wrapText, // 换行文本
 } from './truncate.js'

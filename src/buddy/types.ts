@@ -7,10 +7,10 @@ export const RARITIES = [
 ] as const
 export type Rarity = (typeof RARITIES)[number]
 
-// One species name collides with a model-codename canary in excluded-strings.txt.
-// The check greps build output (not source), so runtime-constructing the value keeps
-// the literal out of the bundle while the check stays armed for the actual codename.
-// All species encoded uniformly; `as` casts are type-position only (erased pre-bundle).
+// 一个物种名称与 excluded-strings.txt 中的模型代号金丝雀冲突。
+// 检查会 grep 构建输出（而非源代码），因此运行时构造该值可以将其保留在 bundle 之外，
+// 同时检查仍会对实际代号保持武装状态。
+// 所有物种采用统一编码；`as` 转换仅是类型位置（在 bundle 之前擦除）。
 const c = String.fromCharCode
 // biome-ignore format: keep the species list compact
 
@@ -97,31 +97,31 @@ export const STAT_NAMES = [
 ] as const
 export type StatName = (typeof STAT_NAMES)[number]
 
-// Deterministic parts — derived from hash(userId)
+// 确定性部分 — 从 hash(userId) 派生
 export type CompanionBones = {
-  rarity: Rarity
-  species: Species
-  eye: Eye
-  hat: Hat
-  shiny: boolean
-  stats: Record<StatName, number>
+  rarity: Rarity // 稀有度
+  species: Species // 物种
+  eye: Eye // 眼睛
+  hat: Hat // 帽子
+  shiny: boolean // 闪光
+  stats: Record<StatName, number> // 统计数据
 }
 
-// Model-generated soul — stored in config after first hatch
+// 模型生成的灵魂 — 在第一次孵化后存储在配置中
 export type CompanionSoul = {
-  name: string
-  personality: string
-  seed?: string
+  name: string // 名字
+  personality: string // 性格
+  seed?: string // 种子
 }
 
 export type Companion = CompanionBones &
   CompanionSoul & {
-    hatchedAt: number
+    hatchedAt: number // 孵化时间
   }
 
-// What actually persists in config. Bones are regenerated from hash(userId)
-// on every read so species renames don't break stored companions and users
-// can't edit their way to a legendary.
+// 实际持久化到配置的内容。骨骼从 hash(userId) 重新生成
+// 每次读取时，这样物种重命名不会破坏存储的伙伴，用户
+// 也无法通过编辑变成传说级。
 export type StoredCompanion = CompanionSoul & { hatchedAt: number }
 
 export const RARITY_WEIGHTS = {

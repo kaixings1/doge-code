@@ -1,20 +1,20 @@
 /**
- * Command semantics configuration for interpreting exit codes in PowerShell.
+ * 命令语义配置模块，用于解释 PowerShell 中外部程序的退出码。
  *
- * PowerShell-native cmdlets do NOT need exit-code semantics:
- *   - Select-String (grep equivalent) exits 0 on no-match (returns $null)
- *   - Compare-Object (diff equivalent) exits 0 regardless
- *   - Test-Path exits 0 regardless (returns bool via pipeline)
- * Native cmdlets signal failure via terminating errors ($?), not exit codes.
+ * PowerShell 原生的 cmdlet 不需要退出码语义：
+ *   - Select-String（等效于 grep）无匹配时退出码为 0（返回 $null）
+ *   - Compare-Object（等效于 diff）无论是否有差异均退出 0
+ *   - Test-Path 无论路径是否存在均退出 0（通过管道返回布尔值）
+ * 原生 cmdlet 通过终止性错误（$?）而非退出码来指示失败。
  *
- * However, EXTERNAL executables invoked from PowerShell DO set $LASTEXITCODE,
- * and many use non-zero codes to convey information rather than failure:
- *   - grep.exe / rg.exe (Git for Windows, scoop, etc.): 1 = no match
- *   - findstr.exe (Windows native): 1 = no match
- *   - robocopy.exe (Windows native): 0-7 = success, 8+ = error (notorious!)
+ * 然而，在 PowerShell 中调用的外部可执行文件会设置 $LASTEXITCODE，
+ * 且许多工具使用非零退出码来传递信息而非表示失败：
+ *   - grep.exe / rg.exe（Git for Windows、scoop 等）：1 表示无匹配
+ *   - findstr.exe（Windows 原生）：1 表示无匹配
+ *   - robocopy.exe（Windows 原生）：0-7 表示成功，8+ 表示错误（臭名昭著！）
  *
- * Without this module, PowerShellTool throws ShellError on any non-zero exit,
- * so `robocopy` reporting "files copied successfully" (exit 1) shows as an error.
+ * 若无此模块，PowerShellTool 会在任何非零退出时抛出 ShellError，
+ * 导致 `robocopy` 报告“文件复制成功”（退出码 1）时却显示为错误。
  */
 
 export type CommandSemantic = (
@@ -27,96 +27,95 @@ export type CommandSemantic = (
 }
 
 /**
- * Default semantic: treat only 0 as success, everything else as error
+ * 默认语义：仅将 0 视为成功，其他一切视为错误
  */
 const DEFAULT_SEMANTIC: CommandSemantic = (exitCode, _stdout, _stderr) => ({
   isError: exitCode !== 0,
   message:
-    exitCode !== 0 ? `Command failed with exit code ${exitCode}` : undefined,
+    exitCode !== 0 ? `命令失败，退出码为 ${exitCode}` : undefined,
 })
 
 /**
- * grep / ripgrep: 0 = matches found, 1 = no matches, 2+ = error
+ * grep / ripgrep：0 = 找到匹配，1 = 无匹配，2+ = 错误
  */
 const GREP_SEMANTIC: CommandSemantic = (exitCode, _stdout, _stderr) => ({
   isError: exitCode >= 2,
-  message: exitCode === 1 ? 'No matches found' : undefined,
+  message: exitCode === 1 ? '未找到匹配项' : undefined,
 })
 
 /**
- * Command-specific semantics for external executables.
- * Keys are lowercase command names WITHOUT .exe suffix.
+ * 针对特定外部可执行文件的命令语义。
+ * 键为不含 .exe 后缀的小写命令名称。
  *
- * Deliberately omitted:
- *   - 'diff': Ambiguous. Windows PowerShell 5.1 aliases `diff` → Compare-Object
- *     (exit 0 on differ), but PS Core / Git for Windows may resolve to diff.exe
- *     (exit 1 on differ). Cannot reliably interpret.
- *   - 'fc': Ambiguous. PowerShell aliases `fc` → Format-Custom (a native cmdlet),
- *     but `fc.exe` is the Windows file compare utility (exit 1 = files differ).
- *     Same aliasing problem as `diff`.
- *   - 'find': Ambiguous. Windows find.exe (text search) vs Unix find.exe
- *     (file search via Git for Windows) have different semantics.
- *   - 'test', '[': Not PowerShell constructs.
- *   - 'select-string', 'compare-object', 'test-path': Native cmdlets exit 0.
+ * 刻意排除：
+ *   - 'diff'：存在歧义。Windows PowerShell 5.1 将 `diff` 别名为 Compare-Object
+ *     （有差异时退出 0），但 PS Core / Git for Windows 可能解析为 diff.exe
+ *     （有差异时退出 1）。无法可靠解释。
+ *   - 'fc'：存在歧义。PowerShell 将 `fc` 别名为 Format-Custom（原生 cmdlet），
+ *     但 `fc.exe` 是 Windows 文件比较实用工具（退出 1 表示文件不同）。
+ *     与 `diff` 存在相同的别名问题。
+ *   - 'find'：存在歧义。Windows 的 find.exe（文本搜索）与 Unix 的 find.exe
+ *     （通过 Git for Windows 提供的文件搜索）具有不同的语义。
+ *   - 'test'、'['：非 PowerShell 构造。
+ *   - 'select-string'、'compare-object'、'test-path'：原生 cmdlet 均退出 0。
  */
 const COMMAND_SEMANTICS: Map<string, CommandSemantic> = new Map([
-  // External grep/ripgrep (Git for Windows, scoop, choco)
+  // 外部 grep/ripgrep（Git for Windows、scoop、choco）
   ['grep', GREP_SEMANTIC],
   ['rg', GREP_SEMANTIC],
 
-  // findstr.exe: Windows native text search
-  // 0 = match found, 1 = no match, 2 = error
+  // findstr.exe：Windows 原生文本搜索
+  // 0 = 找到匹配，1 = 无匹配，2 = 错误
   ['findstr', GREP_SEMANTIC],
 
-  // robocopy.exe: Windows native robust file copy
-  // Exit codes are a BITFIELD — 0-7 are success, 8+ indicates at least one failure:
-  //   0 = no files copied, no mismatch, no failures (already in sync)
-  //   1 = files copied successfully
-  //   2 = extra files/dirs detected (no copy)
-  //   4 = mismatched files/dirs detected
-  //   8 = some files/dirs could not be copied (copy errors)
-  //  16 = serious error (robocopy did not copy any files)
-  // This is the single most common "CI failed but nothing's wrong" Windows gotcha.
+  // robocopy.exe：Windows 原生稳定文件复制
+  // 退出码是一个位字段——0-7 表示成功，8+ 表示至少存在一项失败：
+  //   0 = 无文件复制、无不匹配、无失败（已同步）
+  //   1 = 文件复制成功
+  //   2 = 检测到额外文件/目录（未复制）
+  //   4 = 检测到不匹配的文件/目录
+  //   8 = 部分文件/目录无法复制（复制错误）
+  //  16 = 严重错误（robocopy 未复制任何文件）
+  // 这是 Windows 上最常见的“CI 失败但实际无事发生”的陷阱。
   [
     'robocopy',
     (exitCode, _stdout, _stderr) => ({
       isError: exitCode >= 8,
       message:
         exitCode === 0
-          ? 'No files copied (already in sync)'
+          ? '未复制任何文件（已处于同步状态）'
           : exitCode >= 1 && exitCode < 8
             ? exitCode & 1
-              ? 'Files copied successfully'
-              : 'Robocopy completed (no errors)'
+              ? '文件复制成功'
+              : 'Robocopy 已完成（无错误）'
             : undefined,
     }),
   ],
 ])
 
 /**
- * Extract the command name from a single pipeline segment.
- * Strips leading `&` / `.` call operators and `.exe` suffix, lowercases.
+ * 从单个管道段落中提取命令名称。
+ * 剥离前导的 `&` / `.` 调用运算符及 `.exe` 后缀，并转为小写。
  */
 function extractBaseCommand(segment: string): string {
-  // Strip PowerShell call operators: & "cmd", . "cmd"
-  // (& and . at segment start followed by whitespace invoke the next token)
+  // 剥离 PowerShell 调用运算符：& "cmd"、. "cmd"
+  // （段落开头的 & 和 . 后跟空白会调用下一个 token）
   const stripped = segment.trim().replace(/^[&.]\s+/, '')
   const firstToken = stripped.split(/\s+/)[0] || ''
-  // Strip surrounding quotes if command was invoked as & "grep.exe"
+  // 若命令是以 & "grep.exe" 形式调用，则剥离外围引号
   const unquoted = firstToken.replace(/^["']|["']$/g, '')
-  // Strip path: C:\bin\grep.exe → grep.exe, .\rg.exe → rg.exe
+  // 剥离路径：C:\bin\grep.exe → grep.exe，.\rg.exe → rg.exe
   const basename = unquoted.split(/[\\/]/).pop() || unquoted
-  // Strip .exe suffix (Windows is case-insensitive)
+  // 剥离 .exe 后缀（Windows 不区分大小写）
   return basename.toLowerCase().replace(/\.exe$/, '')
 }
 
 /**
- * Extract the primary command from a PowerShell command line.
- * Takes the LAST pipeline segment since that determines the exit code.
+ * 从 PowerShell 命令行中提取主命令。
+ * 取最后一个管道段落，因为它是决定退出码的命令。
  *
- * Heuristic split on `;` and `|` — may get it wrong for quoted strings or
- * complex constructs. Do NOT depend on this for security; it's only used
- * for exit-code interpretation (false negatives just fall back to default).
+ * 基于 `;` 和 `|` 的启发式分割——对于带引号的字符串或复杂构造可能出错。
+ * 切勿依赖此方法进行安全相关操作；它仅用于退出码解释（误报仅会回退到默认语义）。
  */
 function heuristicallyExtractBaseCommand(command: string): string {
   const segments = command.split(/[;|]/).filter(s => s.trim())
@@ -125,7 +124,7 @@ function heuristicallyExtractBaseCommand(command: string): string {
 }
 
 /**
- * Interpret command result based on semantic rules
+ * 根据语义规则解释命令结果
  */
 export function interpretCommandResult(
   command: string,

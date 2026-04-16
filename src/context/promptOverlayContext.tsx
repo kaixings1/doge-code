@@ -1,23 +1,19 @@
 import { c as _c } from "react/compiler-runtime";
 /**
  * Portal for content that floats above the prompt so it escapes
- * FullscreenLayout's bottom-slot `overflowY:hidden` clip.
+ * FullscreenLayout 底部插槽的 `overflowY:hidden` 裁剪。
  *
- * The clip is load-bearing (CC-668: tall pastes squash the ScrollBox
- * without it), but floating overlays use `position:absolute
- * bottom="100%"` to float above the prompt — and Ink's clip stack
- * intersects ALL descendants, so they were clipped to ~1 row.
+ * 这个裁剪是负载性的 (CC-668: 长粘贴会挤压 ScrollBox)，但浮动覆盖层使用
+ * `position:absolute bottom="100%"` 浮动到提示符上方 — 而 Ink 的裁剪堆栈
+ * 与所有后代相交，因此它们被裁剪到约 1 行。
  *
- * Two channels:
- * - `useSetPromptOverlay` — slash-command suggestion data (structured,
- *   written by PromptInputFooter)
- * - `useSetPromptOverlayDialog` — arbitrary dialog node (e.g.
- *   AutoModeOptInDialog, written by PromptInput)
+ * 两个通道：
+ * - `useSetPromptOverlay` — 斜杠命令建议数据（结构化，由 PromptInputFooter 写入）
+ * - `useSetPromptOverlayDialog` — 任意对话框节点（例如 AutoModeOptInDialog，由 PromptInput 写入）
  *
- * FullscreenLayout reads both and renders them outside the clipped slot.
+ * FullscreenLayout 读取两者并在裁剪插槽外渲染它们。
  *
- * Split into data/setter context pairs so writers never re-render on
- * their own writes — the setter contexts are stable.
+ * 拆分为数据/设置器上下文对，这样写入者永远不会因自己的写入而重新渲染 — 设置器上下文是稳定的。
  */
 import React, { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
 import type { SuggestionItem } from '../components/PromptInput/PromptInputFooterSuggestions.js';
@@ -66,8 +62,8 @@ export function usePromptOverlayDialog() {
 }
 
 /**
- * Register suggestion data for the floating overlay. Clears on unmount.
- * No-op outside the provider (non-fullscreen renders inline instead).
+ * 为浮动覆盖层注册建议数据。卸载时清除。
+ * 在非全屏环境下无效（改为内联渲染）。
  */
 export function useSetPromptOverlay(data) {
   const $ = _c(4);
@@ -95,8 +91,8 @@ export function useSetPromptOverlay(data) {
 }
 
 /**
- * Register a dialog node to float above the prompt. Clears on unmount.
- * No-op outside the provider (non-fullscreen renders inline instead).
+ * 注册一个对话框节点，使其浮动到提示符上方。卸载时清除。
+ * 在非全屏环境下无效（改为内联渲染）。
  */
 export function useSetPromptOverlayDialog(node) {
   const $ = _c(4);

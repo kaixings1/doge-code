@@ -2,11 +2,11 @@ import { c as _c } from "react/compiler-runtime";
 import React, { createContext, useContext, useState, useSyncExternalStore } from 'react';
 import { createStore, type Store } from '../state/store.js';
 export type VoiceState = {
-  voiceState: 'idle' | 'recording' | 'processing';
-  voiceError: string | null;
-  voiceInterimTranscript: string;
-  voiceAudioLevels: number[];
-  voiceWarmingUp: boolean;
+  voiceState: 'idle' | 'recording' | 'processing'; // 语音状态：空闲/录音中/处理中
+  voiceError: string | null; // 语音错误信息
+  voiceInterimTranscript: string; // 临时转录文本
+  voiceAudioLevels: number[]; // 音频电平
+  voiceWarmingUp: boolean; // 是否正在预热
 };
 const DEFAULT_STATE: VoiceState = {
   voiceState: 'idle',
@@ -49,8 +49,7 @@ function useVoiceStore() {
 }
 
 /**
- * Subscribe to a slice of voice state. Only re-renders when the selected
- * value changes (compared via Object.is).
+ * 订阅语音状态的一部分。仅在选中的值改变时重新渲染（通过 Object.is 比较）。
  */
 export function useVoiceState(selector) {
   const $ = _c(3);
@@ -69,18 +68,15 @@ export function useVoiceState(selector) {
 }
 
 /**
- * Get the voice state setter. Stable reference — never causes re-renders.
- * store.setState is synchronous: callers can read getVoiceState() immediately
- * after to observe the new value (VoiceKeybindingHandler relies on this).
+ * 获取语音状态设置器。稳定引用 — 永远不会导致重新渲染。
+ * store.setState 是同步的：调用者可以在之后立即读取 getVoiceState() 来观察新值（VoiceKeybindingHandler 依赖于此）。
  */
 export function useSetVoiceState() {
   return useVoiceStore().setState;
 }
 
 /**
- * Get a synchronous reader for fresh state inside callbacks. Unlike
- * useVoiceState (which subscribes), this doesn't cause re-renders — use
- * inside event handlers that need to read state set earlier in the same tick.
+ * 获取回调中新鲜状态的同步读取器。与 useVoiceState（订阅）不同，这不会导致重新渲染 — 在需要读取同一 tick 中之前设置的状态的内部事件处理器中使用。
  */
 export function useGetVoiceState() {
   return useVoiceStore().getState;
