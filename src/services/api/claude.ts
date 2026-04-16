@@ -1,3 +1,4 @@
+import { appendTokenText } from '../../utils/lastTokenText.js';
 import type {
   BetaContentBlock,
   BetaContentBlockParam,
@@ -1017,9 +1018,9 @@ async function* queryModel(
   StreamEvent | AssistantMessage | SystemAPIErrorMessage,
   void
 > {
-  // Check cheap conditions first — the off-switch await blocks on GrowthBook
-  // init (~10ms). For non-Opus models (haiku, sonnet) this skips the await
-  // entirely. Subscribers don't hit this path at all.
+  // 先检查低成本条件 — off-switch 的 await 会阻塞在 GrowthBook
+  // 初始化（约 10ms）。对于非 Opus 模型（haiku、sonnet），这完全跳过 await。
+  // 订阅者根本不会进入此路径。
   if (
     !isClaudeAISubscriber() &&
     isNonCustomOpusModel(options.model) &&
@@ -1040,10 +1041,10 @@ async function* queryModel(
     return
   }
 
-  // Derive previous request ID from the last assistant message in this query chain.
-  // This is scoped per message array (main thread, subagent, teammate each have their own),
-  // so concurrent agents don't clobber each other's request chain tracking.
-  // Also naturally handles rollback/undo since removed messages won't be in the array.
+  // 从此查询链中的最后一条 assistant 消息派生之前的请求 ID。
+  // 这是按消息数组作用域的（主线程、子代理、teammate 各有自己的），
+  // 所以并发代理不会互相干扰请求链追踪。
+  // 由于被移除的消息不会在数组中，因此也自然地处理了回滚/撤销。
   const previousRequestId = getPreviousRequestIdFromMessages(messages)
 
   const resolvedModel =
@@ -1062,9 +1063,9 @@ async function* queryModel(
     options.querySource === 'verification_agent'
   const betas = getMergedBetas(options.model, { isAgenticQuery })
 
-  // Always send the advisor beta header when advisor is enabled, so
-  // non-agentic queries (compact, side_question, extract_memories, etc.)
-  // can parse advisor server_tool_use blocks already in the conversation history.
+  // 当 advisor 启用时，始终发送 advisor beta 头，以便
+  // 非代理查询（compact、side_question、extract_memories 等）
+  // 可以解析已在对话历史中的 advisor server_tool_use 块。
   if (isAdvisorEnabled()) {
     betas.push(ADVISOR_BETA_HEADER)
   }
@@ -1092,23 +1093,23 @@ async function* queryModel(
       )
       if (!modelSupportsAdvisor(options.model)) {
         logForDebugging(
-          `[AdvisorTool] Skipping advisor - base model ${options.model} does not support advisor`,
+          `[AdvisorTool] 跳过 advisor - 基础模型 ${options.model} 不支持 advisor`,
         )
       } else if (!isValidAdvisorModel(normalizedAdvisorModel)) {
         logForDebugging(
-          `[AdvisorTool] Skipping advisor - ${normalizedAdvisorModel} is not a valid advisor model`,
+          `[AdvisorTool] 跳过 advisor - ${normalizedAdvisorModel} 不是有效的 advisor 模型`,
         )
       } else {
         advisorModel = normalizedAdvisorModel
         logForDebugging(
-          `[AdvisorTool] Server-side tool enabled with ${advisorModel} as the advisor model`,
+          `[AdvisorTool] 服务器端工具已启用，使用 ${advisorModel} 作为 advisor 模型`,
         )
       }
     }
   }
 
-  // Check if tool search is enabled (checks mode, model support, and threshold for auto mode)
-  // This is async because it may need to calculate MCP tool description sizes for TstAuto mode
+  // 检查工具搜索是否启用（检查模式、模型支持和自动模式的阈值）
+  // 这是异步的，因为它可能需要计算 MCP 工具描述大小（TstAuto 模式）
   let useToolSearch = await isToolSearchEnabled(
     options.model,
     tools,
@@ -1117,7 +1118,7 @@ async function* queryModel(
     'query',
   )
 
-  // Precompute once — isDeferredTool does 2 GrowthBook lookups per call
+  // 预计算一次 — isDeferredTool 每次调用会进行 2 次 GrowthBook 查找
   const deferredToolNames = new Set<string>()
   if (useToolSearch) {
     for (const t of tools) {
@@ -1125,36 +1126,36 @@ async function* queryModel(
     }
   }
 
-  // Even if tool search mode is enabled, skip if there are no deferred tools
-  // AND no MCP servers are still connecting. When servers are pending, keep
-  // ToolSearch available so the model can discover tools after they connect.
+  // 即使启用了工具搜索模式，如果没有延迟工具
+  // 且没有 MCP 服务器仍在连接，也跳过。当服务器正在连接时，保持
+  // ToolSearch 可用，以便模型可以在它们连接后发现工具。
   if (
     useToolSearch &&
     deferredToolNames.size === 0 &&
     !options.hasPendingMcpServers
   ) {
     logForDebugging(
-      'Tool search disabled: no deferred tools available to search',
+      '工具搜索已禁用：没有可用的延迟工具可供搜索',
     )
     useToolSearch = false
   }
 
-  // Filter out ToolSearchTool if tool search is not enabled for this model
-  // ToolSearchTool returns tool_reference blocks which unsupported models can't handle
+  // 如果此模型未启用工具搜索，则过滤掉 ToolSearchTool
+  // ToolSearchTool 返回 tool_reference 块，不支持的模型无法处理
   let filteredTools: Tools
 
   if (useToolSearch) {
-    // Dynamic tool loading: Only include deferred tools that have been discovered
-    // via tool_reference blocks in the message history. This eliminates the need
-    // to predeclare all deferred tools upfront and removes limits on tool quantity.
+    // 动态工具加载：仅包含已通过消息历史中的
+    // tool_reference 块发现的延迟工具。这消除了预先声明所有延迟工具的需要，
+    // 并移除了工具数量的限制。
     const discoveredToolNames = extractDiscoveredToolNames(messages)
 
     filteredTools = tools.filter(tool => {
-      // Always include non-deferred tools
+      // 始终包含非延迟工具
       if (!deferredToolNames.has(tool.name)) return true
-      // Always include ToolSearchTool (so it can discover more tools)
+      // 始终包含 ToolSearchTool（以便它可以发现更多工具）
       if (toolMatchesName(tool, TOOL_SEARCH_TOOL_NAME)) return true
-      // Only include deferred tools that have been discovered
+      // 仅包含已发现的延迟工具
       return discoveredToolNames.has(tool.name)
     })
   } else {
@@ -1163,9 +1164,9 @@ async function* queryModel(
     )
   }
 
-  // Add tool search beta header if enabled - required for defer_loading to be accepted
-  // Header differs by provider: 1P/Foundry use advanced-tool-use, Vertex/Bedrock use tool-search-tool
-  // For Bedrock, this header must go in extraBodyParams, not the betas array
+  // 如果启用了工具搜索，添加工具搜索 beta 头 - defer_loading 被接受所必需
+  // 头因提供商而异：1P/Foundry 使用 advanced-tool-use，Vertex/Bedrock 使用 tool-search-tool
+  // 对于 Bedrock，此头必须放在 extraBodyParams 中，而不是 betas 数组
   const toolSearchHeader = useToolSearch ? getToolSearchBetaHeader() : null
   if (toolSearchHeader && getAPIProvider() !== 'bedrock') {
     if (!betas.includes(toolSearchHeader)) {
@@ -1173,10 +1174,10 @@ async function* queryModel(
     }
   }
 
-  // Determine if cached microcompact is enabled for this model.
-  // Computed once here (in async context) and captured by paramsFromContext.
-  // The beta header is also captured here to avoid a top-level import of the
-  // ant-only CACHE_EDITING_BETA_HEADER constant.
+  // 确定此模型是否启用了缓存 microcompact。
+  // 在此处计算一次（在异步上下文中）并由 paramsFromContext 捕获。
+  // beta 头也在此处捕获，以避免顶层导入
+  // 仅限 ant 的 CACHE_EDITING_BETA_HEADER 常量。
   let cachedMCEnabled = false
   let cacheEditingBetaHeader = ''
   if (feature('CACHED_MICROCOMPACT')) {
@@ -1199,13 +1200,13 @@ async function* queryModel(
   const useGlobalCacheFeature = shouldUseGlobalCacheScope()
   const willDefer = (t: Tool) =>
     useToolSearch && (deferredToolNames.has(t.name) || shouldDeferLspTool(t))
-  // MCP tools are per-user → dynamic tool section → can't globally cache.
-  // Only gate when an MCP tool will actually render (not defer_loading).
+  // MCP 工具是每用户的 → 动态工具部分 → 无法全局缓存。
+  // 仅当 MCP 工具实际渲染时进行门控（而非 defer_loading）。
   const needsToolBasedCacheMarker =
     useGlobalCacheFeature &&
     filteredTools.some(t => t.isMcp === true && !willDefer(t))
 
-  // Ensure prompt_caching_scope beta header is present when global cache is enabled.
+  // 确保启用了全局缓存时存在 prompt_caching_scope beta 头。
   if (
     useGlobalCacheFeature &&
     !betas.includes(PROMPT_CACHING_SCOPE_BETA_HEADER)
@@ -1213,17 +1214,17 @@ async function* queryModel(
     betas.push(PROMPT_CACHING_SCOPE_BETA_HEADER)
   }
 
-  // Determine global cache strategy for logging
+  // 确定用于日志记录的全局缓存策略
   const globalCacheStrategy: GlobalCacheStrategy = useGlobalCacheFeature
     ? needsToolBasedCacheMarker
       ? 'none'
       : 'system_prompt'
     : 'none'
 
-  // Build tool schemas, adding defer_loading for MCP tools when tool search is enabled
-  // Note: We pass the full `tools` list (not filteredTools) to toolToAPISchema so that
-  // ToolSearchTool's prompt can list ALL available MCP tools. The filtering only affects
-  // which tools are actually sent to the API, not what the model sees in tool descriptions.
+  // 构建工具 schema，当启用工具搜索时为 MCP 工具添加 defer_loading
+  // 注意：我们将完整的 `tools` 列表（而非 filteredTools）传递给 toolToAPISchema，以便
+  // ToolSearchTool 的 prompt 可以列出所有可用的 MCP 工具。过滤仅影响
+  // 实际发送到 API 的工具，而不影响模型在工具描述中看到的内容。
   const toolSchemas = await Promise.all(
     filteredTools.map(tool =>
       toolToAPISchema(tool, {
@@ -1248,8 +1249,8 @@ async function* queryModel(
 
   queryCheckpoint('query_tool_schema_build_end')
 
-  // Normalize messages before building system prompt (needed for fingerprinting)
-  // Instrumentation: Track message count before normalization
+  // 在构建系统提示之前规范化消息（指纹识别需要）
+  // 仪表：追踪规范化前的消息数量
   logEvent('tengu_api_before_normalize', {
     preNormalizedMessageCount: messages.length,
   })
@@ -1258,28 +1259,26 @@ async function* queryModel(
   let messagesForAPI = normalizeMessagesForAPI(messages, filteredTools)
   queryCheckpoint('query_message_normalization_end')
 
-  // Model-specific post-processing: strip tool-search-specific fields if the
-  // selected model doesn't support tool search.
+  // 模型特定的后处理：如果选择的模型不支持工具搜索，则移除工具搜索特定字段。
   //
-  // Why is this needed in addition to normalizeMessagesForAPI?
-  // - normalizeMessagesForAPI uses isToolSearchEnabledNoModelCheck() because it's
-  //   called from ~20 places (analytics, feedback, sharing, etc.), many of which
-  //   don't have model context. Adding model to its signature would be a large refactor.
-  // - This post-processing uses the model-aware isToolSearchEnabled() check
-  // - This handles mid-conversation model switching (e.g., Sonnet → Haiku) where
-  //   stale tool-search fields from the previous model would cause 400 errors
+  // 为什么除了 normalizeMessagesForAPI 之外还需要这个？
+  // - normalizeMessagesForAPI 使用 isToolSearchEnabledNoModelCheck()，因为它被
+  //   约 20 个地方调用（分析、反馈、分享等），其中许多没有模型上下文。在其签名中添加模型将是一个大型重构。
+  // - 此后处理使用感知模型的 isToolSearchEnabled() 检查
+  // - 这处理了对话中模型切换的情况（例如，Sonnet → Haiku），其中
+  //   来自前一个模型的过时工具搜索字段会导致 400 错误
   //
-  // Note: For assistant messages, normalizeMessagesForAPI already normalized the
-  // tool inputs, so stripCallerFieldFromAssistantMessage only needs to remove the
-  // 'caller' field (not re-normalize inputs).
+  // 注意：对于 assistant 消息，normalizeMessagesForAPI 已经规范化了
+  // 工具输入，所以 stripCallerFieldFromAssistantMessage 只需要移除
+  // 'caller' 字段（无需重新规范化输入）。
   if (!useToolSearch) {
     messagesForAPI = messagesForAPI.map(msg => {
       switch (msg.type) {
         case 'user':
-          // Strip tool_reference blocks from tool_result content
+          // 从 tool_result 内容中移除 tool_reference 块
           return stripToolReferenceBlocksFromUserMessage(msg)
         case 'assistant':
-          // Strip 'caller' field from tool_use blocks
+          // 从 tool_use 块中移除 'caller' 字段
           return stripCallerFieldFromAssistantMessage(msg)
         default:
           return msg
@@ -1287,38 +1286,37 @@ async function* queryModel(
     })
   }
 
-  // Repair tool_use/tool_result pairing mismatches that can occur when resuming
-  // remote/teleport sessions. Inserts synthetic error tool_results for orphaned
-  // tool_uses and strips orphaned tool_results referencing non-existent tool_uses.
+  // 修复恢复远程/teleport 会话时可能出现的 tool_use/tool_result 配对不匹配。
+  // 为孤立的 tool_uses 插入合成错误 tool_results，并移除引用不存在的 tool_uses 的孤立 tool_results。
   messagesForAPI = ensureToolResultPairing(messagesForAPI)
 
-  // Strip advisor blocks — the API rejects them without the beta header.
+  // 移除 advisor 块 — API 会在没有 beta 头的情况下拒绝它们。
   if (!betas.includes(ADVISOR_BETA_HEADER)) {
     messagesForAPI = stripAdvisorBlocks(messagesForAPI)
   }
 
-  // Strip excess media items before making the API call.
-  // The API rejects requests with >100 media items but returns a confusing error.
-  // Rather than erroring (which is hard to recover from in Cowork/CCD), we
-  // silently drop the oldest media items to stay within the limit.
+  // 在发出 API 调用之前移除多余的媒体项。
+  // API 会拒绝包含 >100 个媒体项的请求，但返回一个令人困惑的错误。
+  // 与其报错（这在 Cowork/CCD 中难以恢复），不如
+  // 静默地丢弃最旧的媒体项以保持在限制内。
   messagesForAPI = stripExcessMediaItems(
     messagesForAPI,
     API_MAX_MEDIA_PER_REQUEST,
   )
 
-  // Instrumentation: Track message count after normalization
+  // 仪表：追踪规范化后的消息数量
   logEvent('tengu_api_after_normalize', {
     postNormalizedMessageCount: messagesForAPI.length,
   })
 
-  // Compute fingerprint from first user message for attribution.
-  // Must run BEFORE injecting synthetic messages (e.g. deferred tool names)
-  // so the fingerprint reflects the actual user input.
+  // 从第一条用户消息计算指纹以进行归属。
+  // 必须在注入合成消息（例如延迟工具名称）之前运行，
+  // 以便指纹反映实际的用户输入。
   const fingerprint = computeFingerprintFromMessages(messagesForAPI)
 
-  // When the delta attachment is enabled, deferred tools are announced
-  // via persisted deferred_tools_delta attachments instead of this
-  // ephemeral prepend (which busts cache whenever the pool changes).
+  // 当 delta 附件启用时，延迟工具通过持久化的
+  // deferred_tools_delta 附件宣布，而不是此临时前置
+  // （每当工具池变化时会破坏缓存）。
   if (useToolSearch && !isDeferredToolsDeltaEnabled()) {
     const deferredToolList = tools
       .filter(t => deferredToolNames.has(t.name))
@@ -1336,17 +1334,17 @@ async function* queryModel(
     }
   }
 
-  // Chrome tool-search instructions: when the delta attachment is enabled,
-  // these are carried as a client-side block in mcp_instructions_delta
-  // (attachments.ts) instead of here. This per-request sys-prompt append
-  // busts the prompt cache when chrome connects late.
+  // Chrome 工具搜索说明：当 delta 附件启用时，
+  // 这些作为客户端块在 mcp_instructions_delta
+  // (attachments.ts) 中携带，而不是在这里。这种每次请求的系统提示附加
+  // 会在 chrome 延迟连接时破坏提示缓存。
   const hasChromeTools = filteredTools.some(t =>
     isToolFromMcpServer(t.name, CLAUDE_IN_CHROME_MCP_SERVER_NAME),
   )
   const injectChromeHere =
     useToolSearch && hasChromeTools && !isMcpInstructionsDeltaEnabled()
 
-  // filter(Boolean) works by converting each element to a boolean - empty strings become false and are filtered out.
+  // filter(Boolean) 通过将每个元素转换为布尔值来工作 - 空字符串变为 false 并被过滤掉。
   systemPrompt = asSystemPrompt(
     [
       getAttributionHeader(fingerprint),
@@ -1360,7 +1358,7 @@ async function* queryModel(
     ].filter(Boolean),
   )
 
-  // Prepend system prompt block for easy API identification
+  // 前置系统提示块以便于 API 识别
   logAPIPrefix(systemPrompt)
 
   const enablePromptCaching =
@@ -1371,14 +1369,14 @@ async function* queryModel(
   })
   const useBetas = betas.length > 0
 
-  // Build minimal context for detailed tracing (when beta tracing is enabled)
-  // Note: The actual new_context message extraction is done in sessionTracing.ts using
-  // hash-based tracking per querySource (agent) from the messagesForAPI array
+  // 构建最小上下文以进行详细追踪（当启用 beta 追踪时）
+  // 注意：实际的 new_context 消息提取在 sessionTracing.ts 中完成，使用
+  // 基于 hash 的追踪，按 querySource（代理）从 messagesForAPI 数组
   const extraToolSchemas = [...(options.extraToolSchemas ?? [])]
   if (advisorModel) {
-    // Server tools must be in the tools array by API contract. Appended after
-    // toolSchemas (which carries the cache_control marker) so toggling /advisor
-    // only churns the small suffix, not the cached prefix.
+    // 根据 API 约定，服务器工具必须在工具数组中。附加在
+    // toolSchemas 之后（携带 cache_control 标记），因此切换 /advisor
+    // 只会改变小的后缀，而不是缓存的前缀。
     extraToolSchemas.push({
       type: 'advisor_20260301',
       name: 'advisor',
@@ -1394,12 +1392,12 @@ async function* queryModel(
     isFastModeSupportedByModel(options.model) &&
     !!options.fastMode
 
-  // Sticky-on latches for dynamic beta headers. Each header, once first
-  // sent, keeps being sent for the rest of the session so mid-session
-  // toggles don't change the server-side cache key and bust ~50-70K tokens.
-  // Latches are cleared on /clear and /compact via clearBetaHeaderLatches().
-  // Per-call gates (isAgenticQuery, querySource===repl_main_thread) stay
-  // per-call so non-agentic queries keep their own stable header set.
+  // 动态 beta 头的粘性锁存。每个头一旦首次
+  // 发送，就会在会话剩余时间内持续发送，因此会话中
+  // 的切换不会改变服务器端缓存键并破坏约 50-70K 令牌。
+  // 锁存在 /clear 和 /compact 时通过 clearBetaHeaderLatches() 清除。
+  // 每次调用的门（isAgenticQuery, querySource===repl_main_thread）保持
+  // 每次调用，以便非代理查询保持自己稳定的头集合。
 
   let afkHeaderLatched = getAfkModeHeaderLatched() === true
   if (feature('TRANSCRIPT_CLASSIFIER')) {
@@ -1433,8 +1431,8 @@ async function* queryModel(
     }
   }
 
-  // Only latch from agentic queries so a classifier call doesn't flip the
-  // main thread's context_management mid-turn.
+  // 仅从代理查询锁存，因此分类器调用不会在回合中翻转
+  // 主线程的 context_management。
   let thinkingClearLatched = getThinkingClearLatched() === true
   if (!thinkingClearLatched && isAgenticQuery) {
     const lastCompletion = getLastApiCompletionTimestamp()
@@ -1450,16 +1448,16 @@ async function* queryModel(
   const effort = resolveAppliedEffort(options.model, options.effortValue)
 
   if (feature('PROMPT_CACHE_BREAK_DETECTION')) {
-    // Exclude defer_loading tools from the hash -- the API strips them from the
-    // prompt, so they never affect the actual cache key. Including them creates
-    // false-positive "tool schemas changed" breaks when tools are discovered or
-    // MCP servers reconnect.
+    // 从 hash 中排除 defer_loading 工具 -- API 会从
+    // 提示中移除它们，所以它们永远不会影响实际的缓存键。包含它们会创建
+    // 误报的"工具 schema 已更改"中断，当工具被发现或
+    // MCP 服务器重新连接时。
     const toolsForCacheDetection = allTools.filter(
       t => !('defer_loading' in t && t.defer_loading),
     )
-    // Capture everything that could affect the server-side cache key.
-    // Pass latched header values (not live state) so break detection
-    // reflects what we actually send, not what the user toggled.
+    // 捕获所有可能影响服务器端缓存键的内容。
+    // 传递锁存的头值（而非实时状态），因此中断检测
+    // 反映我们实际发送的内容，而非用户切换的内容。
     recordPromptState({
       system,
       toolSchemas: toolsForCacheDetection,
@@ -1485,8 +1483,8 @@ async function* queryModel(
       }
     : undefined
 
-  // Capture the span so we can pass it to endLLMRequestSpan later
-  // This ensures responses are matched to the correct request when multiple requests run in parallel
+  // 捕获 span 以便稍后传递给 endLLMRequestSpan
+  // 这确保当多个请求并行运行时，响应与正确的请求匹配
   const llmSpan = startLLMRequestSpan(
     options.model,
     newContext,
@@ -2166,6 +2164,7 @@ async function* queryModel(
                     throw new Error('Content block is not a text block')
                   }
                   contentBlock.text += delta.text
+				  appendTokenText(delta.text); 
                   break
                 case 'signature_delta':
                   if (
