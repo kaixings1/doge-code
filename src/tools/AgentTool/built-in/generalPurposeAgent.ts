@@ -25,7 +25,7 @@ ${SHARED_GUIDELINES}`
 export const GENERAL_PURPOSE_AGENT: BuiltInAgentDefinition = {
   agentType: 'general-purpose',
   whenToUse:
-    'General-purpose agent for researching complex questions, searching for code, and executing multi-step tasks. When you are searching for a keyword or file and are not confident that you will find the right match in the first few tries use this agent to perform the search for you.',
+    '通用型智能体，用于研究复杂问题、搜索代码以及执行多步骤任务。当您搜索某个关键词或文件，且对在前几次尝试中即找到正确匹配没有把握时，可使用此智能体为您执行搜索。',
   tools: ['*'],
   source: 'built-in',
   baseDir: 'built-in',

@@ -1,6 +1,6 @@
 /**
- * Companion display card — shown by /buddy (no args).
- * Mirrors official vc8 component: bordered box with sprite, stats, last reaction.
+ * 伙伴显示卡片 — 由 /buddy（无参数）显示。
+ * 镜像官方 vc8 组件：带精灵、统计数据和最后反应的边框框。
  */
 import React from 'react';
 import { Box, Text } from '../ink.js';

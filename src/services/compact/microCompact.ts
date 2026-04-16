@@ -157,9 +157,9 @@ function calculateToolResultTokens(block: ToolResultBlockParam): number {
 }
 
 /**
- * Estimate token count for messages by extracting text content
- * Used for rough token estimation when we don't have accurate API counts
- * Pads estimate by 4/3 to be conservative since we're approximating
+ * 估算消息的 token 数量，通过提取文本内容
+ * 在没有准确的 API 计数时使用粗略的 token 估算
+ * 用 4/3 填充估算值以保守估计，因为我们在近似
  */
 export function estimateMessageTokens(messages: Message[]): number {
   let totalTokens = 0
