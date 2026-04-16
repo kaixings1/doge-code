@@ -10,56 +10,56 @@ import {
 } from './WebSocketTransport.js'
 
 const BATCH_FLUSH_INTERVAL_MS = 100
-// Per-attempt POST timeout. Bounds how long a single stuck POST can block
-// the serialized queue. Without this, a hung connection stalls all writes.
+// 单次 POST 尝试的超时时间。限制单个卡住的 POST 阻塞序列化队列的时间。
+// 如果没有这个限制，挂起的连接会阻塞所有后续写入。
 const POST_TIMEOUT_MS = 15_000
-// Grace period for queued writes on close(). Covers a healthy POST (~100ms)
-// plus headroom; best-effort, not a delivery guarantee under degraded network.
-// Void-ed (nothing awaits it) so this is a last resort — replBridge teardown
-// now closes AFTER archive so archive latency is the primary drain window.
-// NOTE: gracefulShutdown's cleanup budget is 2s (not the 5s outer failsafe);
-// 3s here exceeds it, but the process lives ~2s longer for hooks+analytics.
+// close() 时队列中等待写入的宽限期。涵盖正常的 POST (~100ms)
+// 加上余量；尽力而为，在网络降级情况下不保证交付。
+// 已设为 void（没有任何东西等待它）所以这是最后手段 —— replBridge  teardown
+// 现在在归档之后关闭，所以归档延迟是主要的排空窗口。
+// 注意：gracefulShutdown 的清理预算是 2s（而不是外部 5s 的故障保险）；
+// 这里的 3s 超过了它，但进程会多存活 ~2s 用于钩子和分析。
 const CLOSE_GRACE_MS = 3000
 
 // ============================================================================
 // 混合传输：WebSocket 用于读取，HTTP POST 用于写入
 // ============================================================================
 /**
- * Hybrid transport: WebSocket for reads, HTTP POST for writes.
+ * 混合传输：WebSocket 用于读取，HTTP POST 用于写入。
  *
- * Write flow:
+ * 写入流程：
  *
  *   write(stream_event) ─┐
- *                        │ (100ms timer)
+ *                        │ (100ms 定时器)
  *                        │
  *                        ▼
  *   write(other) ────► uploader.enqueue()  (SerialBatchEventUploader)
  *                        ▲    │
- *   writeBatch() ────────┘    │ serial, batched, retries indefinitely,
- *                             │ backpressure at maxQueueSize
+ *   writeBatch() ────────┘    │ 序列化、批量、无限重试、
+ *                             │ 在 maxQueueSize 处背压
  *                             ▼
- *                        postOnce()  (single HTTP POST, throws on retryable)
+ *                        postOnce()  (单次 HTTP POST，在可重试失败时抛出)
  *
- * stream_event messages accumulate in streamEventBuffer for up to 100ms
- * before enqueue (reduces POST count for high-volume content deltas). A
- * non-stream write flushes any buffered stream_events first to preserve order.
+ * stream_event 消息在入队前会在 streamEventBuffer 中累积最多 100ms
+ * （减少高容量内容增量的 POST 次数）。非流式写入会先刷新任何缓冲的 stream_events
+ * 以保持顺序。
  *
- * Serialization + retry + backpressure are delegated to SerialBatchEventUploader
- * (same primitive CCR uses). At most one POST in-flight; events arriving during
- * a POST batch into the next one. On failure, the uploader re-queues and retries
- * with exponential backoff + jitter. If the queue fills past maxQueueSize,
- * enqueue() blocks — giving awaiting callers backpressure.
+ * 序列化 + 重试 + 背压委托给 SerialBatchEventUploader
+ * （与 CCR 使用的相同原语）。最多只有一个 POST 在进行中；
+ * 在 POST 期间到达的事件会批量进入下一个批次。失败时，上传器重新入队并使用
+ * 指数退避 + 抖动重试。如果队列填充超过 maxQueueSize，
+ * enqueue() 会阻塞 —— 给等待的调用者施加背压。
  *
- * Why serialize? Bridge mode fires writes via `void transport.write()`
- * (fire-and-forget). Without this, concurrent POSTs → concurrent Firestore
- * writes to the same document → collisions → retry storms → pages oncall.
+ * 为什么要序列化？桥接模式通过 `void transport.write()` 触发写入
+ * （fire-and-forget）。没有这个机制，并发 POST → 并发 Firestore
+ * 写入同一文档 → 冲突 → 重试风暴 → 唤醒值班人员。
  */
 export class HybridTransport extends WebSocketTransport {
   private postUrl: string
   private uploader: SerialBatchEventUploader<StdoutMessage>
 
-  // stream_event delay buffer — accumulates content deltas for up to
-  // BATCH_FLUSH_INTERVAL_MS before enqueueing (reduces POST count)
+  // stream_event 延迟缓冲区 —— 在入队前累积内容增量最多
+  // BATCH_FLUSH_INTERVAL_MS 毫秒（减少 POST 次数）
   private streamEventBuffer: StdoutMessage[] = []
   private streamEventTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -77,21 +77,21 @@ export class HybridTransport extends WebSocketTransport {
     const { maxConsecutiveFailures, onBatchDropped } = options ?? {}
     this.postUrl = convertWsUrlToPostUrl(url)
     this.uploader = new SerialBatchEventUploader<StdoutMessage>({
-      // Large cap — session-ingress accepts arbitrary batch sizes. Events
-      // naturally batch during in-flight POSTs; this just bounds the payload.
+      // 较大的上限 —— session-ingress 接受任意批量大小。事件
+      // 在进行中的 POST 期间自然批量处理；这只是限制载荷大小。
       maxBatchSize: 500,
-      // Bridge callers use `void transport.write()` — backpressure doesn't
-      // apply (they don't await). A batch >maxQueueSize deadlocks (see
-      // SerialBatchEventUploader backpressure check). So set it high enough
-      // to be a memory bound only. Wire real backpressure in a follow-up
-      // once callers await.
+      // 桥接调用者使用 `void transport.write()` —— 背压
+      // 不适用（他们不等待）。批量 >maxQueueSize 会死锁（参见
+      // SerialBatchEventUploader 背压检查）。所以将它设置得足够高，
+      // 仅作为内存限制。在后续版本中实现真正的背压，
+      // 一旦调用者等待。
       maxQueueSize: 100_000,
       baseDelayMs: 500,
       maxDelayMs: 8000,
       jitterMs: 1000,
-      // Optional cap so a persistently-failing server can't pin the drain
-      // loop for the lifetime of the process. Undefined = indefinite retry.
-      // replBridge sets this; the 1P transportUtils path does not.
+      // 可选的上限，以便持续失败的服务器不会在进程生命周期内
+      // 一直占用排空循环。Undefined = 无限重试。
+      // replBridge 设置这个；1P transportUtils 路径不设置。
       maxConsecutiveFailures,
       onBatchDropped: (batchSize, failures) => {
         logForDiagnosticsNoPII(
@@ -111,16 +111,16 @@ export class HybridTransport extends WebSocketTransport {
   }
 
   /**
-   * Enqueue a message and wait for the queue to drain. Returning flush()
-   * preserves the contract that `await write()` resolves after the event is
-   * POSTed (relied on by tests and replBridge's initial flush). Fire-and-forget
-   * callers (`void transport.write()`) are unaffected — they don't await,
-   * so the later resolution doesn't add latency.
+   * 入队消息并等待队列排空。返回 flush()
+   * 保留了 `await write()` 在事件被
+   * POST 后解析的约定（测试和 replBridge 的初始刷新依赖于此）。
+   * Fire-and-forget 调用者（`void transport.write()`）不受影响 —— 他们不等待，
+   * 所以后面的解析不会增加延迟。
    */
   override async write(message: StdoutMessage): Promise<void> {
     if (message.type === 'stream_event') {
-      // Delay: accumulate stream_events briefly before enqueueing.
-      // Promise resolves immediately — callers don't await stream_events.
+      // 延迟：入队前短暂累积 stream_events。
+      // Promise 立即解析 —— 调用者不等待 stream_events。
       this.streamEventBuffer.push(message)
       if (!this.streamEventTimer) {
         this.streamEventTimer = setTimeout(
@@ -130,7 +130,7 @@ export class HybridTransport extends WebSocketTransport {
       }
       return
     }
-    // Immediate: flush any buffered stream_events (ordering), then this event.
+    // 立即：刷新任何缓冲的 stream_events（保持顺序），然后处理此事件。
     await this.uploader.enqueue([...this.takeStreamEvents(), message])
     return this.uploader.flush()
   }
@@ -140,21 +140,21 @@ export class HybridTransport extends WebSocketTransport {
     return this.uploader.flush()
   }
 
-  /** Snapshot before/after writeBatch() to detect silent drops. */
+  /** 在 writeBatch() 之前/之后快照，以检测静默丢弃。 */
   get droppedBatchCount(): number {
     return this.uploader.droppedBatchCount
   }
 
   /**
-   * Block until all pending events are POSTed. Used by bridge's initial
-   * history flush so onStateChange('connected') fires after persistence.
+   * 阻塞直到所有待处理事件都被 POST。由桥接的初始
+   * 历史刷新使用，以便 onStateChange('connected') 在持久化后触发。
    */
   flush(): Promise<void> {
     void this.uploader.enqueue(this.takeStreamEvents())
     return this.uploader.flush()
   }
 
-  /** Take ownership of buffered stream_events and clear the delay timer. */
+  /** 获取缓冲的 stream_events 的所有权并清除延迟定时器。 */
   private takeStreamEvents(): StdoutMessage[] {
     if (this.streamEventTimer) {
       clearTimeout(this.streamEventTimer)
@@ -165,7 +165,7 @@ export class HybridTransport extends WebSocketTransport {
     return buffered
   }
 
-  /** Delay timer fired — enqueue accumulated stream_events. */
+  /** 延迟定时器触发 —— 入队累积的 stream_events。 */
   private flushStreamEvents(): void {
     this.streamEventTimer = null
     void this.uploader.enqueue(this.takeStreamEvents())
@@ -177,17 +177,17 @@ export class HybridTransport extends WebSocketTransport {
       this.streamEventTimer = null
     }
     this.streamEventBuffer = []
-    // Grace period for queued writes — fallback. replBridge teardown now
-    // awaits archive between write and close (see CLOSE_GRACE_MS), so
-    // archive latency is the primary drain window and this is a last
-    // resort. Keep close() sync (returns immediately) but defer
-    // uploader.close() so any remaining queue gets a chance to finish.
+    // 队列中等待写入的宽限期 —— 后备方案。replBridge  teardown 现在
+    // 在写入和关闭之间等待归档（参见 CLOSE_GRACE_MS），所以
+    // 归档延迟是主要的排空窗口，这是最后手段。
+    // 保持 close() 同步（立即返回）但延迟
+    // uploader.close() 以便剩余队列有机会完成。
     const uploader = this.uploader
     let graceTimer: ReturnType<typeof setTimeout> | undefined
     void Promise.race([
       uploader.flush(),
       new Promise<void>(r => {
-         
+
         graceTimer = setTimeout(r, CLOSE_GRACE_MS)
       }),
     ]).finally(() => {
@@ -198,14 +198,14 @@ export class HybridTransport extends WebSocketTransport {
   }
 
   /**
-   * Single-attempt POST. Throws on retryable failures (429, 5xx, network)
-   * so SerialBatchEventUploader re-queues and retries. Returns on success
-   * and on permanent failures (4xx non-429, no token) so the uploader moves on.
+   * 单次尝试 POST。在可重试失败时抛出（429、5xx、网络错误）
+   * 以便 SerialBatchEventUploader 重新入队并重试。成功时返回，
+   * 永久失败时（4xx 非 429、无令牌）也返回，以便上传器继续。
    */
   private async postOnce(events: StdoutMessage[]): Promise<void> {
     const sessionToken = getSessionIngressAuthToken()
     if (!sessionToken) {
-      logForDebugging('HybridTransport: No session token available for POST')
+      logForDebugging('HybridTransport: 没有可用于 POST 的会话令牌')
       logForDiagnosticsNoPII('warn', 'cli_hybrid_post_no_token')
       return
     }
@@ -238,7 +238,7 @@ export class HybridTransport extends WebSocketTransport {
       return
     }
 
-    // 4xx (except 429) are permanent — drop, don't retry.
+    // 4xx（除了 429）是永久性的 —— 丢弃，不重试。
     if (
       response.status >= 400 &&
       response.status < 500 &&
@@ -253,7 +253,7 @@ export class HybridTransport extends WebSocketTransport {
       return
     }
 
-    // 429 / 5xx — retryable. Throw so uploader re-queues and backs off.
+    // 429 / 5xx —— 可重试。抛出以便上传器重新入队并退避。
     logForDebugging(
       `HybridTransport: POST 返回 ${response.status} (可重试)`,
     )
@@ -265,14 +265,14 @@ export class HybridTransport extends WebSocketTransport {
 }
 
 /**
- * Convert a WebSocket URL to the HTTP POST endpoint URL.
- * From: wss://api.example.com/v2/session_ingress/ws/<session_id>
- * To: https://api.example.com/v2/session_ingress/session/<session_id>/events
+ * 将 WebSocket URL 转换为 HTTP POST 端点 URL。
+ * 从：wss://api.example.com/v2/session_ingress/ws/<session_id>
+ * 到：https://api.example.com/v2/session_ingress/session/<session_id>/events
  */
 function convertWsUrlToPostUrl(wsUrl: URL): string {
   const protocol = wsUrl.protocol === 'wss:' ? 'https:' : 'http:'
 
-  // Replace /ws/ with /session/ and append /events
+  // 将 /ws/ 替换为 /session/ 并追加 /events
   let pathname = wsUrl.pathname
   pathname = pathname.replace('/ws/', '/session/')
   if (!pathname.endsWith('/events')) {

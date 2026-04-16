@@ -253,7 +253,7 @@ function CopyPicker(t0) {
   const handleKeyDown = t6;
   let t7;
   if ($[19] === Symbol.for("react.memo_cache_sentinel")) {
-    t7 = <Text dimColor={true}>Select content to copy:</Text>;
+    t7 = <Text dimColor={true}>选择要复制的内容：</Text>;
     $[19] = t7;
   } else {
     t7 = $[19];

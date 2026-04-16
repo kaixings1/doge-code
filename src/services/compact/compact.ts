@@ -223,7 +223,7 @@ export function stripReinjectedAttachments(messages: Message[]): Message[] {
 }
 
 export const ERROR_MESSAGE_NOT_ENOUGH_MESSAGES =
-  '没有足够的消息可供压缩。'
+  '消息数量不足，无法进行压缩。'
 const MAX_PTL_RETRIES = 3
 const PTL_RETRY_MARKER = '[earlier conversation truncated for compaction retry]'
 

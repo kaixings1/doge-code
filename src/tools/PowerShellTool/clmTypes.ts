@@ -1,29 +1,26 @@
 /**
- * PowerShell Constrained Language Mode allowed types.
+ * PowerShell 约束语言模式允许的类型。
  *
- * Microsoft's CLM restricts .NET type usage to this allowlist when PS runs
- * under AppLocker/WDAC system lockdown. Any type NOT in this set is considered
- * unsafe for untrusted code execution.
+ * 当 PowerShell 在 AppLocker/WDAC 系统锁定下运行时，Microsoft 的 CLM 将 .NET 类型的使用限制在此允许列表中。
+ * 任何不在此集合中的类型都被视为对不受信任的代码执行不安全。
  *
- * We invert this: type literals not in this set → ask. One canonical check
- * replaces enumerating individual dangerous types (named pipes, reflection,
- * process spawning, P/Invoke marshaling, etc.). Microsoft maintains the list.
+ * 我们将其反转：不在此集合中的类型字面量 → 询问。一个规范化的检查取代了枚举单个危险类型
+ * （命名管道、反射、进程生成、P/Invoke 封送等）。Microsoft 维护该列表。
  *
- * Source: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_language_modes
+ * 来源：https://learn.microsoft.com/zh-cn/powershell/module/microsoft.powershell.core/about/about_language_modes
  *
- * Normalization: entries stored lowercase, short AND full names where both
- * exist (PS resolves type accelerators like [int] → System.Int32 at runtime;
- * we match against what the AST emits, which is the literal text).
+ * 规范化：条目以小写形式存储，同时存储短名称和完整名称（如果两者都存在）
+ * （PowerShell 在运行时将类型加速器如 [int] 解析为 System.Int32；我们根据 AST 输出的字面文本进行匹配）。
  */
 export const CLM_ALLOWED_TYPES: ReadonlySet<string> = new Set(
   [
-    // Type accelerators (short names as they appear in AST TypeName.Name)
-    // SECURITY: 'adsi' and 'adsisearcher' REMOVED. Both are Active Directory
-    // Service Interface types that perform NETWORK BINDS when cast:
-    //   [adsi]'LDAP://evil.com/...' → connects to LDAP server
-    //   [adsisearcher]'(objectClass=user)' → binds to AD and queries
-    // Microsoft's CLM allows these because it's for Windows admins in trusted
-    // domains; we block them since the target isn't validated.
+    // 类型加速器（AST TypeName.Name 中出现的短名称）
+    // 安全性：'adsi' 和 'adsisearcher' 已移除。两者都是 Active Directory 服务接口类型，
+    // 在类型转换时会执行网络绑定：
+    //   [adsi]'LDAP://evil.com/...' → 连接到 LDAP 服务器
+    //   [adsisearcher]'(objectClass=user)' → 绑定到 AD 并执行查询
+    // Microsoft 的 CLM 允许这些类型，因为它是为可信域中的 Windows 管理员设计的；
+    // 我们阻止它们，因为目标未经验证。
     'alias',
     'allowemptycollection',
     'allowemptystring',
@@ -38,7 +35,7 @@ export const CLM_ALLOWED_TYPES: ReadonlySet<string> = new Set(
     'cimclass',
     'cimconverter',
     'ciminstance',
-    // 'cimsession' REMOVED — see wmi/adsi comment below
+    // 'cimsession' 已移除 — 请参阅下方关于 wmi/adsi 的注释
     'cimtype',
     'cmdletbinding',
     'cultureinfo',
@@ -109,17 +106,16 @@ export const CLM_ALLOWED_TYPES: ReadonlySet<string> = new Set(
     'version',
     'void',
     'wildcardpattern',
-    // SECURITY: 'wmi', 'wmiclass', 'wmisearcher', 'cimsession' REMOVED.
-    // WMI type casts perform WMI queries which can target remote computers
-    // (network request) and access dangerous classes like Win32_Process.
-    // cimsession creates a CIM session (network connection to remote host).
-    //   [wmi]'\\evil-host\root\cimv2:Win32_Process.Handle="1"' → remote WMI
-    //   [wmisearcher]'SELECT * FROM Win32_Process' → runs WQL query
-    // Same rationale as adsi/adsisearcher removal above.
+    // 安全性：'wmi'、'wmiclass'、'wmisearcher'、'cimsession' 已移除。
+    // WMI 类型转换会执行 WMI 查询，可能以远程计算机为目标（网络请求）并访问危险类，如 Win32_Process。
+    // cimsession 会创建 CIM 会话（与远程主机的网络连接）。
+    //   [wmi]'\\evil-host\root\cimv2:Win32_Process.Handle="1"' → 远程 WMI
+    //   [wmisearcher]'SELECT * FROM Win32_Process' → 运行 WQL 查询
+    // 与上述移除 adsi/adsisearcher 的理由相同。
     'x500distinguishedname',
     'x509certificate',
     'xml',
-    // Full names for accelerators that resolve to System.* (AST may emit either)
+    // 解析为 System.* 的加速器的完整名称（AST 可能输出其中任何一种）
     'system.array',
     'system.boolean',
     'system.byte',
@@ -153,7 +149,7 @@ export const CLM_ALLOWED_TYPES: ReadonlySet<string> = new Set(
     'system.security.cryptography.x509certificates.x509certificate',
     'system.security.cryptography.x509certificates.x500distinguishedname',
     'system.xml.xmldocument',
-    // System.Management.Automation.* — FQ equivalents of PS-specific accelerators
+    // System.Management.Automation.* — PS 特定加速器的完全限定等价物
     'system.management.automation.pscredential',
     'system.management.automation.pscustomobject',
     'system.management.automation.pslistmodifier',
@@ -164,37 +160,36 @@ export const CLM_ALLOWED_TYPES: ReadonlySet<string> = new Set(
     'system.management.automation.switchparameter',
     'system.management.automation.wildcardpattern',
     'system.management.automation.language.nullstring',
-    // Microsoft.Management.Infrastructure.* — FQ equivalents of CIM accelerators
-    // SECURITY: cimsession FQ REMOVED — same network-bind hazard as short name
-    // (creates a CIM session to a remote host).
+    // Microsoft.Management.Infrastructure.* — CIM 加速器的完全限定等价物
+    // 安全性：cimsession 的完全限定名已移除 — 与短名称相同的网络绑定风险
+    // （创建到远程主机的 CIM 会话）。
     'microsoft.management.infrastructure.cimclass',
     'microsoft.management.infrastructure.cimconverter',
     'microsoft.management.infrastructure.ciminstance',
     'microsoft.management.infrastructure.cimtype',
-    // FQ equivalents of remaining short-name accelerators
-    // SECURITY: DirectoryEntry/DirectorySearcher/ManagementObject/
-    // ManagementClass/ManagementObjectSearcher FQ REMOVED — same network-bind
-    // hazard as short names adsi/adsisearcher/wmi/wmiclass/wmisearcher
-    // (LDAP bind, remote WMI). See short-name removal comments above.
+    // 其余短名称加速器的完全限定等价物
+    // 安全性：DirectoryEntry/DirectorySearcher/ManagementObject/
+    // ManagementClass/ManagementObjectSearcher 的完全限定名已移除 — 与短名称 adsi/adsisearcher/wmi/wmiclass/wmisearcher
+    // 相同的网络绑定风险（LDAP 绑定、远程 WMI）。请参阅上方短名称移除的注释。
     'system.collections.specialized.ordereddictionary',
     'system.security.accesscontrol.objectsecurity',
-    // Arrays of allowed types are allowed (e.g. [string[]])
-    // normalizeTypeName strips [] before lookup, so store the base name
+    // 允许类型的数组也是允许的（例如 [string[]]）
+    // normalizeTypeName 在查找前会剥离 []，因此存储基础名称
     'object',
     'system.object',
-    // ModuleSpecification — full qualified name
+    // ModuleSpecification — 完全限定名称
     'microsoft.powershell.commands.modulespecification',
   ].map(t => t.toLowerCase()),
 )
 
 /**
- * Normalize a type name from AST TypeName.FullName or TypeName.Name.
- * Handles array suffix ([]) and generic brackets.
+ * 规范化来自 AST TypeName.FullName 或 TypeName.Name 的类型名称。
+ * 处理数组后缀（[]）和泛型括号。
  */
 export function normalizeTypeName(name: string): string {
-  // Strip array suffix: "String[]" → "string" (arrays of allowed types are allowed)
-  // Strip generic args: "List[int]" → "list" (conservative — the generic wrapper
-  // might be unsafe even if the type arg is safe, so we check the outer type)
+  // 剥离数组后缀："String[]" → "string"（允许类型的数组是允许的）
+  // 剥离泛型参数："List[int]" → "list"（保守做法 — 即使类型参数安全，泛型包装器可能仍不安全，
+  // 因此我们检查外部类型）
   return name
     .toLowerCase()
     .replace(/\[\]$/, '')
@@ -203,8 +198,8 @@ export function normalizeTypeName(name: string): string {
 }
 
 /**
- * True if typeName (from AST) is in Microsoft's CLM allowlist.
- * Types NOT in this set trigger ask — they access system APIs CLM blocks.
+ * 如果 typeName（来自 AST）在 Microsoft 的 CLM 允许列表中，则返回 true。
+ * 不在此集合中的类型会触发询问 — 它们会访问 CLM 阻止的系统 API。
  */
 export function isClmAllowedType(typeName: string): boolean {
   return CLM_ALLOWED_TYPES.has(normalizeTypeName(typeName))

@@ -4,7 +4,7 @@ import { Box } from '../ink.js';
 type QueuedMessageContextValue = {
   isQueued: boolean;
   isFirst: boolean;
-  /** Width reduction for container padding (e.g., 4 for paddingX={2}) */
+  /** 容器内边距的宽度减少（例如，paddingX={2} 时为 4） */
   paddingWidth: number;
 };
 const QueuedMessageContext = React.createContext<QueuedMessageContextValue | undefined>(undefined);
