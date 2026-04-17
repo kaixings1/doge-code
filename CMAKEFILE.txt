@@ -1,0 +1,19 @@
+# CMake 项目初始化文件
+# 用于在 git worktree 中创建 C++ 项目结构
+
+cmake_minimum_required(VERSION 3.5)
+
+# 设置目标架构（可选）
+find_package(CMake REQUIRED)
+
+# 添加 CMakeLists.txt 到构建目录
+add_library(${PROJECT_NAME} SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+
+# 创建编译输出目录
+set(CMAKE_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+
+# 设置目标版本（可选）
+target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG=ON)
+
+# 添加 CMakeLists.txt 到构建目录
+add_library(${PROJECT_NAME}/main SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)

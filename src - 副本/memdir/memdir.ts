@@ -1,0 +1,507 @@
+import { feature } from 'bun:bundle'
+import { join } from 'path'
+import { getFsImplementation } from '../utils/fsOperations.js'
+import { getAutoMemPath, isAutoMemoryEnabled } from './paths.js'
+
+ 
+const teamMemPaths = feature('TEAMMEM')
+  ? (require('./teamMemPaths.js') as typeof import('./teamMemPaths.js'))
+  : null
+
+import { getKairosActive, getOriginalCwd } from '../bootstrap/state.js'
+import { getFeatureValue_CACHED_MAY_BE_STALE } from '../services/analytics/growthbook.js'
+ 
+import {
+  type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+  logEvent,
+} from '../services/analytics/index.js'
+import { GREP_TOOL_NAME } from '../tools/GrepTool/prompt.js'
+import { isReplModeEnabled } from '../tools/REPLTool/constants.js'
+import { logForDebugging } from '../utils/debug.js'
+import { hasEmbeddedSearchTools } from '../utils/embeddedTools.js'
+import { isEnvTruthy } from '../utils/envUtils.js'
+import { formatFileSize } from '../utils/format.js'
+import { getProjectDir } from '../utils/sessionStorage.js'
+import { getInitialSettings } from '../utils/settings/settings.js'
+import {
+  MEMORY_FRONTMATTER_EXAMPLE,
+  TRUSTING_RECALL_SECTION,
+  TYPES_SECTION_INDIVIDUAL,
+  WHAT_NOT_TO_SAVE_SECTION,
+  WHEN_TO_ACCESS_SECTION,
+} from './memoryTypes.js'
+
+export const ENTRYPOINT_NAME = 'MEMORY.md'
+export const MAX_ENTRYPOINT_LINES = 200
+// ~125 chars/line at 200 lines. At p97 today; catches long-line indexes that
+// slip past the line cap (p100 observed: 197KB under 200 lines).
+export const MAX_ENTRYPOINT_BYTES = 25_000
+const AUTO_MEM_DISPLAY_NAME = 'auto memory'
+
+export type EntrypointTruncation = {
+  content: string
+  lineCount: number
+  byteCount: number
+  wasLineTruncated: boolean
+  wasByteTruncated: boolean
+}
+
+/**
+ * Truncate MEMORY.md content to the line AND byte caps, appending a warning
+ * that names which cap fired. Line-truncates first (natural boundary), then
+ * byte-truncates at the last newline before the cap so we don't cut mid-line.
+ *
+ * Shared by buildMemoryPrompt and claudemd getMemoryFiles (previously
+ * duplicated the line-only logic).
+ */
+export function truncateEntrypointContent(raw: string): EntrypointTruncation {
+  const trimmed = raw.trim()
+  const contentLines = trimmed.split('\n')
+  const lineCount = contentLines.length
+  const byteCount = trimmed.length
+
+  const wasLineTruncated = lineCount > MAX_ENTRYPOINT_LINES
+  // Check original byte count — long lines are the failure mode the byte cap
+  // targets, so post-line-truncation size would understate the warning.
+  const wasByteTruncated = byteCount > MAX_ENTRYPOINT_BYTES
+
+  if (!wasLineTruncated && !wasByteTruncated) {
+    return {
+      content: trimmed,
+      lineCount,
+      byteCount,
+      wasLineTruncated,
+      wasByteTruncated,
+    }
+  }
+
+  let truncated = wasLineTruncated
+    ? contentLines.slice(0, MAX_ENTRYPOINT_LINES).join('\n')
+    : trimmed
+
+  if (truncated.length > MAX_ENTRYPOINT_BYTES) {
+    const cutAt = truncated.lastIndexOf('\n', MAX_ENTRYPOINT_BYTES)
+    truncated = truncated.slice(0, cutAt > 0 ? cutAt : MAX_ENTRYPOINT_BYTES)
+  }
+
+  const reason =
+    wasByteTruncated && !wasLineTruncated
+      ? `${formatFileSize(byteCount)} (limit: ${formatFileSize(MAX_ENTRYPOINT_BYTES)}) — index entries are too long`
+      : wasLineTruncated && !wasByteTruncated
+        ? `${lineCount} lines (limit: ${MAX_ENTRYPOINT_LINES})`
+        : `${lineCount} lines and ${formatFileSize(byteCount)}`
+
+  return {
+    content:
+      truncated +
+      `\n\n> WARNING: ${ENTRYPOINT_NAME} is ${reason}. Only part of it was loaded. Keep index entries to one line under ~200 chars; move detail into topic files.`,
+    lineCount,
+    byteCount,
+    wasLineTruncated,
+    wasByteTruncated,
+  }
+}
+
+ 
+const teamMemPrompts = feature('TEAMMEM')
+  ? (require('./teamMemPrompts.js') as typeof import('./teamMemPrompts.js'))
+  : null
+ 
+
+/**
+ * Shared guidance text appended to each memory directory prompt line.
+ * Shipped because Claude was burning turns on `ls`/`mkdir -p` before writing.
+ * Harness guarantees the directory exists via ensureMemoryDirExists().
+ */
+export const DIR_EXISTS_GUIDANCE =
+  'This directory already exists — write to it directly with the Write tool (do not run mkdir or check for its existence).'
+export const DIRS_EXIST_GUIDANCE =
+  'Both directories already exist — write to them directly with the Write tool (do not run mkdir or check for their existence).'
+
+/**
+ * Ensure a memory directory exists. Idempotent — called from loadMemoryPrompt
+ * (once per session via systemPromptSection cache) so the model can always
+ * write without checking existence first. FsOperations.mkdir is recursive
+ * by default and already swallows EEXIST, so the full parent chain
+ * (~/.claude/projects/<slug>/memory/) is created in one call with no
+ * try/catch needed for the happy path.
+ */
+export async function ensureMemoryDirExists(memoryDir: string): Promise<void> {
+  const fs = getFsImplementation()
+  try {
+    await fs.mkdir(memoryDir)
+  } catch (e) {
+    // fs.mkdir already handles EEXIST internally. Anything reaching here is
+    // a real problem (EACCES/EPERM/EROFS) — log so --debug shows why. Prompt
+    // building continues either way; the model's Write will surface the
+    // real perm error (and FileWriteTool does its own mkdir of the parent).
+    const code =
+      e instanceof Error && 'code' in e && typeof e.code === 'string'
+        ? e.code
+        : undefined
+    logForDebugging(
+      `ensureMemoryDirExists failed for ${memoryDir}: ${code ?? String(e)}`,
+      { level: 'debug' },
+    )
+  }
+}
+
+/**
+ * Log memory directory file/subdir counts asynchronously.
+ * Fire-and-forget — doesn't block prompt building.
+ */
+function logMemoryDirCounts(
+  memoryDir: string,
+  baseMetadata: Record<
+    string,
+    | number
+    | boolean
+    | AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
+  >,
+): void {
+  const fs = getFsImplementation()
+  void fs.readdir(memoryDir).then(
+    dirents => {
+      let fileCount = 0
+      let subdirCount = 0
+      for (const d of dirents) {
+        if (d.isFile()) {
+          fileCount++
+        } else if (d.isDirectory()) {
+          subdirCount++
+        }
+      }
+      logEvent('tengu_memdir_loaded', {
+        ...baseMetadata,
+        total_file_count: fileCount,
+        total_subdir_count: subdirCount,
+      })
+    },
+    () => {
+      // Directory unreadable — log without counts
+      logEvent('tengu_memdir_loaded', baseMetadata)
+    },
+  )
+}
+
+/**
+ * Build the typed-memory behavioral instructions (without MEMORY.md content).
+ * Constrains memories to a closed four-type taxonomy (user / feedback / project /
+ * reference) — content that is derivable from the current project state (code
+ * patterns, architecture, git history) is explicitly excluded.
+ *
+ * Individual-only variant: no `## Memory scope` section, no <scope> tags
+ * in type blocks, and team/private qualifiers stripped from examples.
+ *
+ * Used by both buildMemoryPrompt (agent memory, includes content) and
+ * loadMemoryPrompt (system prompt, content injected via user context instead).
+ */
+export function buildMemoryLines(
+  displayName: string,
+  memoryDir: string,
+  extraGuidelines?: string[],
+  skipIndex = false,
+): string[] {
+  const howToSave = skipIndex
+    ? [
+        '## 如何保存记忆',
+        '',
+        '将每个记忆写入自己的文件（例如 `user_role.md`、`feedback_testing.md`），使用以下 frontmatter 格式:',
+        '',
+        ...MEMORY_FRONTMATTER_EXAMPLE,
+        '',
+        '- 保持记忆文件中的 name、description 和 type 字段与内容同步',
+        '- 按主题语义组织记忆，而不是按时间顺序',
+        '- 更新或删除错误或过时的记忆',
+        '- 不要写重复的记忆。在写入新记忆之前，先检查是否有可以更新的现有记忆。',
+      ]
+    : [
+        '## 如何保存记忆',
+        '',
+        '保存记忆分为两步:',
+        '',
+        '**第一步** — 使用以下 frontmatter 格式将记忆写入自己的文件（例如 `user_role.md`、`feedback_testing.md`）:',
+        '',
+        ...MEMORY_FRONTMATTER_EXAMPLE,
+        '',
+        `**第二步** — 在 \`${ENTRYPOINT_NAME}\` 中添加指向该文件的指针。\`${ENTRYPOINT_NAME}\` 是索引，不是记忆本身——每个条目应为一行，约 150 个字符以内：\`- [标题](file.md) — 一行简介\`。它没有 frontmatter。切勿将记忆内容直接写入 \`${ENTRYPOINT_NAME}\`。`,
+        '',
+        `- \`${ENTRYPOINT_NAME}\` 始终加载到你的对话上下文中——超过 ${MAX_ENTRYPOINT_LINES} 行的内容将被截断，因此请保持索引简洁`,
+        '- 保持记忆文件中的 name、description 和 type 字段与内容同步',
+        '- 按主题语义组织记忆，而不是按时间顺序',
+        '- 更新或删除错误或过时的记忆',
+        '- 不要写重复的记忆。在写入新记忆之前，先检查是否有可以更新的现有记忆。',
+      ]
+
+  const lines: string[] = [
+    `# ${displayName}`,
+    '',
+    `你在 \`${memoryDir}\` 有一个基于文件的持久记忆系统。${DIR_EXISTS_GUIDANCE}`,
+    '',
+    '你应该随着时间的推移建立这个记忆系统，以便未来的对话能够全面了解用户是谁、他们希望如何与你协作、要避免或重复哪些行为，以及你为用户所做工作的背景信息。',
+    '',
+    '如果用户明确要求你记住某些内容，请立即将其保存为最合适的类型。如果他们要求你忘记某些内容，请找到并删除相关条目。',
+    '',
+    ...TYPES_SECTION_INDIVIDUAL,
+    ...WHAT_NOT_TO_SAVE_SECTION,
+    '',
+    ...howToSave,
+    '',
+    ...WHEN_TO_ACCESS_SECTION,
+    '',
+    ...TRUSTING_RECALL_SECTION,
+    '',
+    '## 记忆与其他形式的持久化机制',
+    '记忆是你在协助用户时可用的多种持久化机制之一。区别通常在于，记忆可以在未来对话中召回，不应仅用于保存仅在当前对话范围内有用的信息。',
+    '- 何时使用或更新计划而不是记忆：如果你即将开始一项重要的实现任务，并希望与用户在方法上达成一致，你应该使用计划而不是将此信息保存到记忆中。同样，如果你已经在对话中有一个计划并且改变了方法，请通过更新计划来持久化此更改，而不是保存记忆。',
+    '- 何时使用或更新任务而不是记忆：当需要将当前对话中的工作分解为离散的步骤或跟踪进度时，请使用任务而不是保存到记忆。任务非常适合持久化当前对话中需要完成的工作的相关信息，但记忆应保留对未来对话有用的信息。',
+    '',
+    ...(extraGuidelines ?? []),
+    '',
+  ]
+
+  lines.push(...buildSearchingPastContextSection(memoryDir))
+
+  return lines
+}
+
+/**
+ * Build the typed-memory prompt with MEMORY.md content included.
+ * Used by agent memory (which has no getClaudeMds() equivalent).
+ */
+export function buildMemoryPrompt(params: {
+  displayName: string
+  memoryDir: string
+  extraGuidelines?: string[]
+}): string {
+  const { displayName, memoryDir, extraGuidelines } = params
+  const fs = getFsImplementation()
+  const entrypoint = memoryDir + ENTRYPOINT_NAME
+
+  // Directory creation is the caller's responsibility (loadMemoryPrompt /
+  // loadAgentMemoryPrompt). Builders only read, they don't mkdir.
+
+  // Read existing memory entrypoint (sync: prompt building is synchronous)
+  let entrypointContent = ''
+  try {
+    // eslint-disable-next-line custom-rules/no-sync-fs
+    entrypointContent = fs.readFileSync(entrypoint, { encoding: 'utf-8' })
+  } catch {
+    // No memory file yet
+  }
+
+  const lines = buildMemoryLines(displayName, memoryDir, extraGuidelines)
+
+  if (entrypointContent.trim()) {
+    const t = truncateEntrypointContent(entrypointContent)
+    const memoryType = displayName === AUTO_MEM_DISPLAY_NAME ? 'auto' : 'agent'
+    logMemoryDirCounts(memoryDir, {
+      content_length: t.byteCount,
+      line_count: t.lineCount,
+      was_truncated: t.wasLineTruncated,
+      was_byte_truncated: t.wasByteTruncated,
+      memory_type:
+        memoryType as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+    })
+    lines.push(`## ${ENTRYPOINT_NAME}`, '', t.content)
+  } else {
+    lines.push(
+      `## ${ENTRYPOINT_NAME}`,
+      '',
+      `Your ${ENTRYPOINT_NAME} is currently empty. When you save new memories, they will appear here.`,
+    )
+  }
+
+  return lines.join('\n')
+}
+
+/**
+ * Assistant-mode daily-log prompt. Gated behind feature('KAIROS').
+ *
+ * Assistant sessions are effectively perpetual, so the agent writes memories
+ * append-only to a date-named log file rather than maintaining MEMORY.md as
+ * a live index. A separate nightly /dream skill distills logs into topic
+ * files + MEMORY.md. MEMORY.md is still loaded into context (via claudemd.ts)
+ * as the distilled index — this prompt only changes where NEW memories go.
+ */
+function buildAssistantDailyLogPrompt(skipIndex = false): string {
+  const memoryDir = getAutoMemPath()
+  // Describe the path as a pattern rather than inlining today's literal path:
+  // this prompt is cached by systemPromptSection('memory', ...) and NOT
+  // invalidated on date change. The model derives the current date from the
+  // date_change attachment (appended at the tail on midnight rollover) rather
+  // than the user-context message — the latter is intentionally left stale to
+  // preserve the prompt cache prefix across midnight.
+  const logPathPattern = join(memoryDir, 'logs', 'YYYY', 'MM', 'YYYY-MM-DD.md')
+
+  const lines: string[] = [
+    '# 自动记忆',
+    '',
+    `你在以下位置有一个基于文件的持久记忆系统：\`${memoryDir}\``,
+    '',
+    '此会话是长期的。在工作时，通过将内容**追加**到今日的日志文件来记录任何值得记住的内容：',
+    '',
+    `\`${logPathPattern}\``,
+    '',
+    '将 `YYYY-MM-DD` 替换为今天的日期（来自你上下文中的 `currentDate`）。当会话跨越午夜时，开始追加到新日期的文件。',
+    '',
+    '将每个条目写为带时间戳的简短要点。首次写入时如果文件（和父目录）不存在则创建它们。不要重写或重新组织日志——它是只追加的。单独的夜间进程会将这些日志提炼到 `MEMORY.md` 和主题文件中。',
+    '',
+    '## 记录什么内容',
+    '- 用户的更正和偏好设置（"使用 bun，而不是 npm"；"不要总结差异"）',
+    '- 关于用户、其角色或目标的事实',
+    '- 无法从代码中推导出的项目上下文（截止日期、事件、决策及其理由）',
+    '- 外部系统的指针（仪表板、Linear 项目、Slack 频道）',
+    '- 用户明确要求你记住的任何内容',
+    '',
+    ...WHAT_NOT_TO_SAVE_SECTION,
+    '',
+    ...(skipIndex
+      ? []
+      : [
+          `## ${ENTRYPOINT_NAME}`,
+          `\`${ENTRYPOINT_NAME}\` 是精炼的索引（每晚从你的日志中维护），并会自动加载到你的上下文中。阅读它以了解情况，但不要直接编辑它——改为将新信息记录在今天的日志中。`,
+          '',
+        ]),
+    ...buildSearchingPastContextSection(memoryDir),
+  ]
+
+  return lines.join('\n')
+}
+
+/**
+ * Build the "Searching past context" section if the feature gate is enabled.
+ */
+export function buildSearchingPastContextSection(autoMemDir: string): string[] {
+  if (!getFeatureValue_CACHED_MAY_BE_STALE('tengu_coral_fern', false)) {
+    return []
+  }
+  const projectDir = getProjectDir(getOriginalCwd())
+  // Ant-native builds alias grep to embedded ugrep and remove the dedicated
+  // Grep tool, so give the model a real shell invocation there.
+  // In REPL mode, both Grep and Bash are hidden from direct use — the model
+  // calls them from inside REPL scripts, so the grep shell form is what it
+  // will write in the script anyway.
+  const embedded = hasEmbeddedSearchTools() || isReplModeEnabled()
+  const memSearch = embedded
+    ? `grep -rn "<search term>" ${autoMemDir} --include="*.md"`
+    : `${GREP_TOOL_NAME} with pattern="<search term>" path="${autoMemDir}" glob="*.md"`
+  const transcriptSearch = embedded
+    ? `grep -rn "<search term>" ${projectDir}/ --include="*.jsonl"`
+    : `${GREP_TOOL_NAME} with pattern="<search term>" path="${projectDir}/" glob="*.jsonl"`
+  return [
+    '## 搜索过去的上下文',
+    '',
+    '在寻找过去上下文时:',
+    '1. 搜索记忆目录中的主题文件:',
+    '```',
+    memSearch,
+    '```',
+    '2. 会话转录日志（最后手段——文件较大，速度较慢）:',
+    '```',
+    transcriptSearch,
+    '```',
+    '使用精确的搜索词（错误消息、文件路径、函数名），而不是宽泛的关键字。',
+    '',
+  ]
+}
+
+/**
+ * Load the unified memory prompt for inclusion in the system prompt.
+ * Dispatches based on which memory systems are enabled:
+ *   - auto + team: combined prompt (both directories)
+ *   - auto only: memory lines (single directory)
+ * Team memory requires auto memory (enforced by isTeamMemoryEnabled), so
+ * there is no team-only branch.
+ *
+ * Returns null when auto memory is disabled.
+ */
+export async function loadMemoryPrompt(): Promise<string | null> {
+  const autoEnabled = isAutoMemoryEnabled()
+
+  const skipIndex = getFeatureValue_CACHED_MAY_BE_STALE(
+    'tengu_moth_copse',
+    false,
+  )
+
+  // KAIROS daily-log mode takes precedence over TEAMMEM: the append-only
+  // log paradigm does not compose with team sync (which expects a shared
+  // MEMORY.md that both sides read + write). Gating on `autoEnabled` here
+  // means the !autoEnabled case falls through to the tengu_memdir_disabled
+  // telemetry block below, matching the non-KAIROS path.
+  if (feature('KAIROS') && autoEnabled && getKairosActive()) {
+    logMemoryDirCounts(getAutoMemPath(), {
+      memory_type:
+        'auto' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+    })
+    return buildAssistantDailyLogPrompt(skipIndex)
+  }
+
+  // Cowork injects memory-policy text via env var; thread into all builders.
+  const coworkExtraGuidelines =
+    process.env.CLAUDE_COWORK_MEMORY_EXTRA_GUIDELINES
+  const extraGuidelines =
+    coworkExtraGuidelines && coworkExtraGuidelines.trim().length > 0
+      ? [coworkExtraGuidelines]
+      : undefined
+
+  if (feature('TEAMMEM')) {
+    if (teamMemPaths!.isTeamMemoryEnabled()) {
+      const autoDir = getAutoMemPath()
+      const teamDir = teamMemPaths!.getTeamMemPath()
+      // Harness guarantees these directories exist so the model can write
+      // without checking. The prompt text reflects this ("already exists").
+      // Only creating teamDir is sufficient: getTeamMemPath() is defined as
+      // join(getAutoMemPath(), 'team'), so recursive mkdir of the team dir
+      // creates the auto dir as a side effect. If the team dir ever moves
+      // out from under the auto dir, add a second ensureMemoryDirExists call
+      // for autoDir here.
+      await ensureMemoryDirExists(teamDir)
+      logMemoryDirCounts(autoDir, {
+        memory_type:
+          'auto' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+      })
+      logMemoryDirCounts(teamDir, {
+        memory_type:
+          'team' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+      })
+      return teamMemPrompts!.buildCombinedMemoryPrompt(
+        extraGuidelines,
+        skipIndex,
+      )
+    }
+  }
+
+  if (autoEnabled) {
+    const autoDir = getAutoMemPath()
+    // Harness guarantees the directory exists so the model can write without
+    // checking. The prompt text reflects this ("already exists").
+    await ensureMemoryDirExists(autoDir)
+    logMemoryDirCounts(autoDir, {
+      memory_type:
+        'auto' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+    })
+    return buildMemoryLines(
+      'auto memory',
+      autoDir,
+      extraGuidelines,
+      skipIndex,
+    ).join('\n')
+  }
+
+  logEvent('tengu_memdir_disabled', {
+    disabled_by_env_var: isEnvTruthy(
+      process.env.CLAUDE_CODE_DISABLE_AUTO_MEMORY,
+    ),
+    disabled_by_setting:
+      !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_AUTO_MEMORY) &&
+      getInitialSettings().autoMemoryEnabled === false,
+  })
+  // Gate on the GB flag directly, not isTeamMemoryEnabled() — that function
+  // checks isAutoMemoryEnabled() first, which is definitionally false in this
+  // branch. We want "was this user in the team-memory cohort at all."
+  if (getFeatureValue_CACHED_MAY_BE_STALE('tengu_herring_clock', false)) {
+    logEvent('tengu_team_memdir_disabled', {})
+  }
+  return null
+}
