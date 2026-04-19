@@ -23,16 +23,19 @@ import {
   type ModelShortName,
 } from './model/model.js'
 
-// @see https://platform.claude.com/docs/en/about-claude/pricing
+/**
+ * 模型各项计费单价（美元）。
+ * @see https://platform.claude.com/docs/en/about-claude/pricing
+ */
 export type ModelCosts = {
-  inputTokens: number
-  outputTokens: number
-  promptCacheWriteTokens: number
-  promptCacheReadTokens: number
-  webSearchRequests: number
+  inputTokens: number                // 输入 token 单价（每百万 token）
+  outputTokens: number               // 输出 token 单价（每百万 token）
+  promptCacheWriteTokens: number     // 提示缓存写入单价（每百万 token）
+  promptCacheReadTokens: number      // 提示缓存读取单价（每百万 token）
+  webSearchRequests: number          // 每次网络搜索请求单价
 }
 
-// Standard pricing tier for Sonnet models: $3 input / $15 output per Mtok
+/** 标准 Sonnet 计费层级：输入 $3 / 输出 $15 每百万 token */
 export const COST_TIER_3_15 = {
   inputTokens: 3,
   outputTokens: 15,
@@ -41,7 +44,7 @@ export const COST_TIER_3_15 = {
   webSearchRequests: 0.01,
 } as const satisfies ModelCosts
 
-// Pricing tier for Opus 4/4.1: $15 input / $75 output per Mtok
+/** Opus 4 / 4.1 计费层级：输入 $15 / 输出 $75 每百万 token */
 export const COST_TIER_15_75 = {
   inputTokens: 15,
   outputTokens: 75,
@@ -50,7 +53,7 @@ export const COST_TIER_15_75 = {
   webSearchRequests: 0.01,
 } as const satisfies ModelCosts
 
-// Pricing tier for Opus 4.5: $5 input / $25 output per Mtok
+/** Opus 4.5 计费层级：输入 $5 / 输出 $25 每百万 token */
 export const COST_TIER_5_25 = {
   inputTokens: 5,
   outputTokens: 25,
@@ -59,7 +62,7 @@ export const COST_TIER_5_25 = {
   webSearchRequests: 0.01,
 } as const satisfies ModelCosts
 
-// Fast mode pricing for Opus 4.6: $30 input / $150 output per Mtok
+/** Opus 4.6 快速模式计费层级：输入 $30 / 输出 $150 每百万 token */
 export const COST_TIER_30_150 = {
   inputTokens: 30,
   outputTokens: 150,
@@ -68,7 +71,7 @@ export const COST_TIER_30_150 = {
   webSearchRequests: 0.01,
 } as const satisfies ModelCosts
 
-// Pricing for Haiku 3.5: $0.80 input / $4 output per Mtok
+/** Haiku 3.5 计费层级：输入 $0.80 / 输出 $4 每百万 token */
 export const COST_HAIKU_35 = {
   inputTokens: 0.8,
   outputTokens: 4,
@@ -77,7 +80,7 @@ export const COST_HAIKU_35 = {
   webSearchRequests: 0.01,
 } as const satisfies ModelCosts
 
-// Pricing for Haiku 4.5: $1 input / $5 output per Mtok
+/** Haiku 4.5 计费层级：输入 $1 / 输出 $5 每百万 token */
 export const COST_HAIKU_45 = {
   inputTokens: 1,
   outputTokens: 5,
@@ -86,10 +89,12 @@ export const COST_HAIKU_45 = {
   webSearchRequests: 0.01,
 } as const satisfies ModelCosts
 
+/** 未知模型回退默认计费（采用 Opus 4.5 的 $5/$25 层级） */
 const DEFAULT_UNKNOWN_MODEL_COST = COST_TIER_5_25
 
 /**
- * Get the cost tier for Opus 4.6 based on fast mode.
+ * 获取 Opus 4.6 在当前模式下的计费单价。
+ * 若快速模式启用且请求标记为快速速度，则返回高倍率定价；否则返回标准定价。
  */
 export function getOpus46CostTier(fastMode: boolean): ModelCosts {
   if (isFastModeEnabled() && fastMode) {
@@ -98,9 +103,12 @@ export function getOpus46CostTier(fastMode: boolean): ModelCosts {
   return COST_TIER_5_25
 }
 
-// @[MODEL LAUNCH]: Add a pricing entry for the new model below.
-// Costs from https://platform.claude.com/docs/en/about-claude/pricing
-// Web search cost: $10 per 1000 requests = $0.01 per request
+/**
+ * 模型短名到计费单价的映射表。
+ * 网络搜索费用：每千次请求 $10 = 每次 $0.01。
+ * // @[MODEL LAUNCH]: 新增模型时请在下方添加对应的定价条目。
+ * // 定价数据来源：https://platform.claude.com/docs/en/about-claude/pricing
+ */
 export const MODEL_COSTS: Record<ModelShortName, ModelCosts> = {
   [firstPartyNameToCanonical(CLAUDE_3_5_HAIKU_CONFIG.firstParty)]:
     COST_HAIKU_35,
@@ -126,7 +134,7 @@ export const MODEL_COSTS: Record<ModelShortName, ModelCosts> = {
 }
 
 /**
- * Calculates the USD cost based on token usage and model cost configuration
+ * 根据 token 用量与模型计费配置计算美元成本。
  */
 function tokensToUSDCost(modelCosts: ModelCosts, usage: Usage): number {
   return (
@@ -141,10 +149,14 @@ function tokensToUSDCost(modelCosts: ModelCosts, usage: Usage): number {
   )
 }
 
+/**
+ * 获取指定模型在给定使用情况下的计费单价。
+ * 若模型未知，则记录事件并回退至默认主循环模型的计费，或使用默认未知模型计费。
+ */
 export function getModelCosts(model: string, usage: Usage): ModelCosts {
   const shortName = getCanonicalName(model)
 
-  // Check if this is an Opus 4.6 model with fast mode active.
+  // 检查是否为启用了快速模式的 Opus 4.6 模型
   if (
     shortName === firstPartyNameToCanonical(CLAUDE_OPUS_4_6_CONFIG.firstParty)
   ) {
@@ -163,6 +175,9 @@ export function getModelCosts(model: string, usage: Usage): ModelCosts {
   return costs
 }
 
+/**
+ * 记录未知模型计费事件，并标记存在未知模型成本。
+ */
 function trackUnknownModelCost(model: string, shortName: ModelShortName): void {
   logEvent('tengu_unknown_model_cost', {
     model: model as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -172,16 +187,18 @@ function trackUnknownModelCost(model: string, shortName: ModelShortName): void {
   setHasUnknownModelCost()
 }
 
-// Calculate the cost of a query in US dollars.
-// If the model's costs are not found, use the default model's costs.
+/**
+ * 计算单次查询的美元成本。
+ * 若未找到模型对应的计费信息，则使用默认模型的计费。
+ */
 export function calculateUSDCost(resolvedModel: string, usage: Usage): number {
   const modelCosts = getModelCosts(resolvedModel, usage)
   return tokensToUSDCost(modelCosts, usage)
 }
 
 /**
- * Calculate cost from raw token counts without requiring a full BetaUsage object.
- * Useful for side queries (e.g. classifier) that track token counts independently.
+ * 根据原始 token 数量计算成本，无需完整的 BetaUsage 对象。
+ * 适用于侧查询（如分类器）独立追踪 token 消耗的场景。
  */
 export function calculateCostFromTokens(
   model: string,
@@ -201,9 +218,11 @@ export function calculateCostFromTokens(
   return calculateUSDCost(model, usage)
 }
 
+/**
+ * 格式化单价显示：整数无小数位，非整数保留两位小数。
+ * 例如 3 → "$3"，0.8 → "$0.80"，22.5 → "$22.50"。
+ */
 function formatPrice(price: number): string {
-  // Format price: integers without decimals, others with 2 decimal places
-  // e.g., 3 -> "$3", 0.8 -> "$0.80", 22.5 -> "$22.50"
   if (Number.isInteger(price)) {
     return `$${price}`
   }
@@ -211,17 +230,17 @@ function formatPrice(price: number): string {
 }
 
 /**
- * Format model costs as a pricing string for display
- * e.g., "$3/$15 per Mtok"
+ * 将模型计费格式化为显示用字符串。
+ * 例如 "$3/$15 per Mtok"。
  */
 export function formatModelPricing(costs: ModelCosts): string {
   return `${formatPrice(costs.inputTokens)}/${formatPrice(costs.outputTokens)} per Mtok`
 }
 
 /**
- * Get formatted pricing string for a model
- * Accepts either a short name or full model name
- * Returns undefined if model is not found
+ * 获取指定模型的格式化定价字符串。
+ * 参数可为模型短名或完整名称。
+ * 若模型未找到则返回 undefined。
  */
 export function getModelPricingString(model: string): string | undefined {
   const shortName = getCanonicalName(model)
