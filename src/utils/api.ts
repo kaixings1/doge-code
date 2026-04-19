@@ -65,7 +65,7 @@ import { getToolSchemaCache } from './toolSchemaCache.js'
 import { windowsPathToPosixPath } from './windowsPaths.js'
 import { zodToJsonSchema } from './zodToJsonSchema.js'
 
-// Extended BetaTool type with strict mode and defer_loading support
+// 扩展的 BetaTool 类型，支持严格模式和延迟加载
 type BetaToolWithExtras = BetaTool & {
   strict?: boolean
   defer_loading?: boolean
@@ -83,15 +83,15 @@ export type SystemPromptBlock = {
   cacheScope: CacheScope | null
 }
 
-// Fields to filter from tool schemas when swarms are not enabled
+// 当群组功能未启用时，需要从工具 schema 中过滤的字段
 const SWARM_FIELDS_BY_TOOL: Record<string, string[]> = {
   [EXIT_PLAN_MODE_V2_TOOL_NAME]: ['launchSwarm', 'teammateCount'],
   [AGENT_TOOL_NAME]: ['name', 'team_name', 'mode'],
 }
 
 /**
- * Filter swarm-related fields from a tool's input schema.
- * Called at runtime when isAgentSwarmsEnabled() returns false.
+ * 过滤工具输入 schema 中的群组相关字段。
+ * 在 isAgentSwarmsEnabled() 返回 false 时调用。
  */
 function filterSwarmFieldsFromSchema(
   toolName: string,
@@ -102,7 +102,7 @@ function filterSwarmFieldsFromSchema(
     return schema
   }
 
-  // Clone the schema to avoid mutating the original
+  // 克隆 schema 以避免修改原始对象
   const filtered = { ...schema }
   const props = filtered.properties
   if (props && typeof props === 'object') {
@@ -124,7 +124,7 @@ export async function toolToAPISchema(
     agents: AgentDefinition[]
     allowedAgentTypes?: string[]
     model?: string
-    /** When true, mark this tool with defer_loading for tool search */
+    /** 当为 true 时，为该工具标记 defer_loading 以支持工具搜索 */
     deferLoading?: boolean
     cacheControl?: {
       type: 'ephemeral'
@@ -133,17 +133,13 @@ export async function toolToAPISchema(
     }
   },
 ): Promise<BetaToolUnion> {
-  // Session-stable base schema: name, description, input_schema, strict,
-  // eager_input_streaming. These are computed once per session and cached to
-  // prevent mid-session GrowthBook flips (tengu_tool_pear, tengu_fgts) or
-  // tool.prompt() drift from churning the serialized tool array bytes.
-  // See toolSchemaCache.ts for rationale.
+  // 会话稳定的基础 schema：名称、描述、输入 schema、严格模式、eager_input_streaming。
+  // 这些信息每会话计算一次并缓存，以防止会话中 GrowthBook 开关翻转或 tool.prompt() 变化
+  // 导致序列化的工具数组字节变动。详见 toolSchemaCache.ts。
   //
-  // Cache key includes inputJSONSchema when present. StructuredOutput instances
-  // share the name 'StructuredOutput' but carry different schemas per workflow
-  // call — name-only keying returned a stale schema (5.4% → 51% err rate, see
-  // PR#25424). MCP tools also set inputJSONSchema but each has a stable schema,
-  // so including it preserves their GB-flip cache stability.
+  // 当存在 inputJSONSchema 时，缓存键会包含它。StructuredOutput 实例共享名称 'StructuredOutput'，
+  // 但每次工作流调用都携带不同的 schema —— 仅按名称缓存会返回过时的 schema。
+  // MCP 工具也会设置 inputJSONSchema，但每个都有稳定的 schema，因此包含它不会影响缓存稳定性。
   const cacheKey =
     'inputJSONSchema' in tool && tool.inputJSONSchema
       ? `${tool.name}:${jsonStringify(tool.inputJSONSchema)}`
@@ -153,15 +149,14 @@ export async function toolToAPISchema(
   if (!base) {
     const strictToolsEnabled =
       checkStatsigFeatureGate_CACHED_MAY_BE_STALE('tengu_tool_pear')
-    // Use tool's JSON schema directly if provided, otherwise convert Zod schema
+    // 如果工具直接提供了 JSON schema 则使用，否则转换 Zod schema
     let input_schema = (
       'inputJSONSchema' in tool && tool.inputJSONSchema
         ? tool.inputJSONSchema
         : zodToJsonSchema(tool.inputSchema)
     ) as Anthropic.Tool.InputSchema
 
-    // Filter out swarm-related fields when swarms are not enabled
-    // This ensures external non-EAP users don't see swarm features in the schema
+    // 当群组功能未启用时，过滤掉群组相关字段
     if (!isAgentSwarmsEnabled()) {
       input_schema = filterSwarmFieldsFromSchema(tool.name, input_schema)
     }
@@ -177,11 +172,10 @@ export async function toolToAPISchema(
       input_schema,
     }
 
-    // Only add strict if:
-    // 1. Feature flag is enabled
-    // 2. Tool has strict: true
-    // 3. Model is provided and supports it (not all models support it right now)
-    //    (if model is not provided, assume we can't use strict tools)
+    // 仅当以下条件满足时才添加 strict：
+    // 1. 功能标志启用
+    // 2. 工具设置了 strict: true
+    // 3. 提供了模型且支持结构化输出
     if (
       strictToolsEnabled &&
       tool.strict === true &&
@@ -191,11 +185,10 @@ export async function toolToAPISchema(
       base.strict = true
     }
 
-    // Enable fine-grained tool streaming via per-tool API field.
-    // Without FGTS, the API buffers entire tool input parameters before sending
-    // input_json_delta events, causing multi-minute hangs on large tool inputs.
-    // Gated to direct api.anthropic.com: proxies (LiteLLM etc.) and Bedrock/Vertex
-    // with Claude 4.5 reject this field with 400. See GH#32742, PR #21729.
+    // 通过每个工具的 API 字段启用细粒度工具流式传输。
+    // 如果不启用，API 会在发送 input_json_delta 事件之前缓冲整个工具输入参数，
+    // 导致大型工具输入上出现数分钟的卡顿。仅对直接 api.anthropic.com 开放，
+    // 代理（LiteLLM 等）和 Bedrock/Vertex 配合 Claude 4.5 会以 400 拒绝此字段。
     if (
       getAPIProvider() === 'firstParty' &&
       isFirstPartyAnthropicBaseUrl() &&
@@ -208,10 +201,7 @@ export async function toolToAPISchema(
     cache.set(cacheKey, base)
   }
 
-  // Per-request overlay: defer_loading and cache_control vary by call
-  // (tool search defers different tools per turn; cache markers move).
-  // Explicit field copy avoids mutating the cached base and sidesteps
-  // BetaTool.cache_control's `| null` clashing with our narrower type.
+  // 每次请求的叠加：defer_loading 和 cache_control 因调用而异
   const schema: BetaToolWithExtras = {
     name: base.name,
     description: base.description,
@@ -220,7 +210,7 @@ export async function toolToAPISchema(
     ...(base.eager_input_streaming && { eager_input_streaming: true }),
   }
 
-  // Add defer_loading if requested (for tool search feature)
+  // 如果请求了延迟加载，则添加标记
   if (options.deferLoading) {
     schema.defer_loading = true
   }
@@ -229,17 +219,9 @@ export async function toolToAPISchema(
     schema.cache_control = options.cacheControl
   }
 
-  // CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS is the kill switch for beta API
-  // shapes. Proxy gateways (ANTHROPIC_BASE_URL → LiteLLM → Bedrock) reject
-  // fields like defer_loading with "Extra inputs are not permitted". The gates
-  // above each field are scattered and not all provider-aware, so this strips
-  // everything not in the base-tool allowlist at the one choke point all tool
-  // schemas pass through — including fields added in the future.
-  // cache_control is allowlisted: the base {type: 'ephemeral'} shape is
-  // standard prompt caching (Bedrock/Vertex supported); the beta sub-fields
-  // (scope, ttl) are already gated upstream by shouldIncludeFirstPartyOnlyBetas
-  // which independently respects this kill switch.
-  // github.com/anthropics/claude-code/issues/20031
+  // CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS 是 beta API 形态的紧急开关。
+  // 代理网关（ANTHROPIC_BASE_URL → LiteLLM → Bedrock）会拒绝像 defer_loading 这样的字段。
+  // 此处的白名单会剥离所有不在基础工具允许列表中的字段，包括未来添加的字段。
   if (isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS)) {
     const allowed = new Set([
       'name',
@@ -259,9 +241,7 @@ export async function toolToAPISchema(
     }
   }
 
-  // Note: We cast to BetaTool but the extra fields are still present at runtime
-  // and will be serialized in the API request, even though they're not in the SDK's
-  // BetaTool type definition. This is intentional for beta features.
+  // 注意：我们转换为 BetaTool，但额外的字段在运行时仍然存在，并将在 API 请求中序列化。
   return schema as BetaTool
 }
 
@@ -270,13 +250,12 @@ function logStripOnce(stripped: string[]): void {
   if (loggedStrip) return
   loggedStrip = true
   logForDebugging(
-    `[betas] Stripped from tool schemas: [${stripped.join(', ')}] (CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1)`,
+    `[betas] 已从工具 schema 中剥离字段：[${stripped.join(', ')}] (CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1)`,
   )
 }
 
 /**
- * Log stats about first block for analyzing prefix matching config
- * (see https://console.statsig.com/4aF3Ewatb6xPVpCwxb5nA3/dynamic_configs/claude_cli_system_prompt_prefixes)
+ * 记录第一个块的信息，用于分析前缀匹配配置
  */
 export function logAPIPrefix(systemPrompt: SystemPrompt): void {
   const [firstSyspromptBlock] = splitSysPromptPrefix(systemPrompt)
@@ -294,29 +273,28 @@ export function logAPIPrefix(systemPrompt: SystemPrompt): void {
 }
 
 /**
- * Split system prompt blocks by content type for API matching and cache control.
- * See https://console.statsig.com/4aF3Ewatb6xPVpCwxb5nA3/dynamic_configs/claude_cli_system_prompt_prefixes
+ * 按内容类型分割系统提示块，用于 API 匹配和缓存控制。
  *
- * Behavior depends on feature flags and options:
+ * 行为取决于功能标志和选项：
  *
- * 1. MCP tools present (skipGlobalCacheForSystemPrompt=true):
- *    Returns up to 3 blocks with org-level caching (no global cache on system prompt):
- *    - Attribution header (cacheScope=null)
- *    - System prompt prefix (cacheScope='org')
- *    - Everything else concatenated (cacheScope='org')
+ * 1. 存在 MCP 工具（skipGlobalCacheForSystemPrompt=true）：
+ *    返回最多 3 个块，使用组织级缓存：
+ *    - 归属头（cacheScope=null）
+ *    - 系统提示前缀（cacheScope='org'）
+ *    - 其余内容拼接（cacheScope='org'）
  *
- * 2. Global cache mode with boundary marker (1P only, boundary found):
- *    Returns up to 4 blocks:
- *    - Attribution header (cacheScope=null)
- *    - System prompt prefix (cacheScope=null)
- *    - Static content before boundary (cacheScope='global')
- *    - Dynamic content after boundary (cacheScope=null)
+ * 2. 全局缓存模式且存在边界标记（仅限第一方）：
+ *    返回最多 4 个块：
+ *    - 归属头（cacheScope=null）
+ *    - 系统提示前缀（cacheScope=null）
+ *    - 边界前的静态内容（cacheScope='global'）
+ *    - 边界后的动态内容（cacheScope=null）
  *
- * 3. Default mode (3P providers, or boundary missing):
- *    Returns up to 3 blocks with org-level caching:
- *    - Attribution header (cacheScope=null)
- *    - System prompt prefix (cacheScope='org')
- *    - Everything else concatenated (cacheScope='org')
+ * 3. 默认模式（第三方提供商，或缺少边界标记）：
+ *    返回最多 3 个块，使用组织级缓存：
+ *    - 归属头（cacheScope=null）
+ *    - 系统提示前缀（cacheScope='org'）
+ *    - 其余内容拼接（cacheScope='org'）
  */
 export function splitSysPromptPrefix(
   systemPrompt: SystemPrompt,
@@ -328,14 +306,14 @@ export function splitSysPromptPrefix(
       promptBlockCount: systemPrompt.length,
     })
 
-    // Filter out boundary marker, return blocks without global scope
+    // 过滤掉边界标记，返回不带全局作用域的块
     let attributionHeader: string | undefined
     let systemPromptPrefix: string | undefined
     const rest: string[] = []
 
     for (const prompt of systemPrompt) {
       if (!prompt) continue
-      if (prompt === SYSTEM_PROMPT_DYNAMIC_BOUNDARY) continue // Skip boundary
+      if (prompt === SYSTEM_PROMPT_DYNAMIC_BOUNDARY) continue // 跳过边界
       if (prompt.startsWith('x-anthropic-billing-header')) {
         attributionHeader = prompt
       } else if (CLI_SYSPROMPT_PREFIXES.has(prompt)) {
@@ -460,13 +438,13 @@ export function prependUserContext(
 
   return [
     createUserMessage({
-      content: `<system-reminder>\nAs you answer the user's questions, you can use the following context:\n${Object.entries(
+      content: `<system-reminder>\n在回答用户问题时，你可以使用以下上下文：\n${Object.entries(
         context,
       )
         .map(([key, value]) => `# ${key}\n${value}`)
         .join('\n')}
 
-      IMPORTANT: this context may or may not be relevant to your tasks. You should not respond to this context unless it is highly relevant to your task.\n</system-reminder>\n`,
+      重要提示：此上下文可能与你的任务相关，也可能不相关。除非与你的任务高度相关，否则你不应回应此上下文。\n</system-reminder>\n`,
       isMeta: true,
     }),
     ...messages,
@@ -474,13 +452,13 @@ export function prependUserContext(
 }
 
 /**
- * Log metrics about context and system prompt size
+ * 记录关于上下文和系统提示大小的指标
  */
 export async function logContextMetrics(
   mcpConfigs: Record<string, ScopedMcpServerConfig>,
   toolPermissionContext: ToolPermissionContext,
 ): Promise<void> {
-  // Early return if logging is disabled
+  // 如果日志记录被禁用，则提前返回
   if (isAnalyticsDisabled()) {
     return
   }
@@ -491,14 +469,14 @@ export async function logContextMetrics(
       getUserContext(),
       getSystemContext(),
     ])
-  // Extract individual context sizes and calculate total
+  // 提取各个上下文大小并计算总数
   const gitStatusSize = systemContext.gitStatus?.length ?? 0
   const claudeMdSize = userContext.claudeMd?.length ?? 0
 
-  // Calculate total context size
+  // 计算总上下文大小
   const totalContextSize = gitStatusSize + claudeMdSize
 
-  // Get file count using ripgrep (rounded to nearest power of 10 for privacy)
+  // 使用 ripgrep 获取文件计数（为隐私考虑四舍五入到最接近的 10 的幂）
   const currentDir = getCwd()
   const ignorePatternsByRoot = getFileReadIgnorePatterns(toolPermissionContext)
   const normalizedIgnorePatterns = normalizePatternsToPath(
@@ -511,7 +489,7 @@ export async function logContextMetrics(
     normalizedIgnorePatterns,
   )
 
-  // Calculate tool metrics
+  // 计算工具指标
   let mcpToolsCount = 0
   let mcpServersCount = 0
   let mcpToolsTokens = 0
@@ -522,7 +500,7 @@ export async function logContextMetrics(
   mcpToolsCount = mcpTools.length
   nonMcpToolsCount = nonMcpTools.length
 
-  // Extract unique server names from MCP tool names (format: mcp__servername__toolname)
+  // 从 MCP 工具名称中提取唯一的服务器名称（格式：mcp__servername__toolname）
   const serverNames = new Set<string>()
   for (const tool of mcpTools) {
     const parts = tool.name.split('__')
@@ -532,8 +510,7 @@ export async function logContextMetrics(
   }
   mcpServersCount = serverNames.size
 
-  // Estimate tool tokens locally for analytics (avoids N API calls per session)
-  // Use inputJSONSchema (plain JSON Schema) when available, otherwise convert Zod schema
+  // 本地估算工具 token 用于分析（避免每次会话多次 API 调用）
   for (const tool of mcpTools) {
     const schema =
       'inputJSONSchema' in tool && tool.inputJSONSchema
@@ -562,7 +539,7 @@ export async function logContextMetrics(
   })
 }
 
-// TODO: Generalize this to all tools
+// TODO: 将此逻辑推广到所有工具
 export function normalizeToolInput<T extends Tool>(
   tool: T,
   input: z.infer<T['inputSchema']>,
@@ -570,16 +547,15 @@ export function normalizeToolInput<T extends Tool>(
 ): z.infer<T['inputSchema']> {
   switch (tool.name) {
     case EXIT_PLAN_MODE_V2_TOOL_NAME: {
-      // Always inject plan content and file path for ExitPlanModeV2 so hooks/SDK get the plan.
-      // The V2 tool reads plan from file instead of input, but hooks/SDK
+      // 始终为 ExitPlanModeV2 注入计划内容和文件路径，以便 hooks/SDK 获取计划。
       const plan = getPlan(agentId)
       const planFilePath = getPlanFilePath(agentId)
-      // Persist file snapshot for CCR sessions so the plan survives pod recycling
+      // 为 CCR 会话持久化文件快照，确保计划在 pod 回收后仍存在
       void persistFileSnapshotIfRemote()
       return plan !== null ? { ...input, plan, planFilePath } : input
     }
     case BashTool.name: {
-      // Validated upstream, won't throw
+      // 上游已验证，不会抛出异常
       const parsed = BashTool.inputSchema.parse(input)
       const { command, timeout, description } = parsed
       const cwd = getCwd()
@@ -591,22 +567,19 @@ export function normalizeToolInput<T extends Tool>(
         )
       }
 
-      // Replace \\; with \; (commonly needed for find -exec commands)
+      // 将 \\; 替换为 \;（find -exec 命令常需要）
       normalizedCommand = normalizedCommand.replace(/\\\\;/g, '\\;')
 
-      // Logging for commands that are only echoing a string. This is to help us understand how often  Claude talks via bash
+      // 记录仅回显字符串的命令，以了解 Claude 通过 bash 进行交流的频率
       if (/^echo\s+["']?[^|&;><]*["']?$/i.test(normalizedCommand.trim())) {
         logEvent('tengu_bash_tool_simple_echo', {})
       }
 
-      // Check for run_in_background (may not exist in schema if CLAUDE_CODE_DISABLE_BACKGROUND_TASKS is set)
+      // 检查 run_in_background（如果设置了 CLAUDE_CODE_DISABLE_BACKGROUND_TASKS，则可能不存在）
       const run_in_background =
         'run_in_background' in parsed ? parsed.run_in_background : undefined
 
-      // SAFETY: Cast is safe because input was validated by .parse() above.
-      // TypeScript can't narrow the generic T based on switch(tool.name), so it
-      // doesn't know the return type matches T['inputSchema']. This is a fundamental
-      // TS limitation with generics, not bypassable without major refactoring.
+      // 安全：由于输入已通过 .parse() 验证，此转换是安全的。
       return {
         command: normalizedCommand,
         description,
@@ -620,10 +593,10 @@ export function normalizeToolInput<T extends Tool>(
       } as z.infer<T['inputSchema']>
     }
     case FileEditTool.name: {
-      // Validated upstream, won't throw
+      // 上游已验证，不会抛出异常
       const parsedInput = FileEditTool.inputSchema.parse(input)
 
-      // This is a workaround for tokens claude can't see
+      // 这是一个针对 Claude 无法看到的 token 的变通方案
       const { file_path, edits } = normalizeFileEditInput({
         file_path: parsedInput.file_path,
         edits: [
@@ -635,7 +608,7 @@ export function normalizeToolInput<T extends Tool>(
         ],
       })
 
-      // SAFETY: See comment in BashTool case above
+      // 安全：参见 BashTool 分支中的注释
       return {
         replace_all: edits[0]!.replace_all,
         file_path,
@@ -644,13 +617,13 @@ export function normalizeToolInput<T extends Tool>(
       } as z.infer<T['inputSchema']>
     }
     case FileWriteTool.name: {
-      // Validated upstream, won't throw
+      // 上游已验证，不会抛出异常
       const parsedInput = FileWriteTool.inputSchema.parse(input)
 
-      // Markdown uses two trailing spaces as a hard line break — don't strip.
+      // Markdown 使用两个尾随空格作为硬换行 —— 不应去除。
       const isMarkdown = /\.(md|mdx)$/i.test(parsedInput.file_path)
 
-      // SAFETY: See comment in BashTool case above
+      // 安全：参见 BashTool 分支中的注释
       return {
         file_path: parsedInput.file_path,
         content: isMarkdown
@@ -659,7 +632,7 @@ export function normalizeToolInput<T extends Tool>(
       } as z.infer<T['inputSchema']>
     }
     case TASK_OUTPUT_TOOL_NAME: {
-      // Normalize legacy parameter names from AgentOutputTool/BashOutputTool
+      // 规范化来自 AgentOutputTool/BashOutputTool 的旧参数名称
       const legacyInput = input as Record<string, unknown>
       const taskId =
         legacyInput.task_id ?? legacyInput.agentId ?? legacyInput.bash_id
@@ -668,7 +641,7 @@ export function normalizeToolInput<T extends Tool>(
         (typeof legacyInput.wait_up_to === 'number'
           ? legacyInput.wait_up_to * 1000
           : undefined)
-      // SAFETY: See comment in BashTool case above
+      // 安全：参见 BashTool 分支中的注释
       return {
         task_id: taskId ?? '',
         block: legacyInput.block ?? true,
@@ -680,15 +653,14 @@ export function normalizeToolInput<T extends Tool>(
   }
 }
 
-// Strips fields that were added by normalizeToolInput before sending to API
-// (e.g., plan field from ExitPlanModeV2 which has an empty input schema)
+// 在发送到 API 之前，剥离由 normalizeToolInput 添加的字段
 export function normalizeToolInputForAPI<T extends Tool>(
   tool: T,
   input: z.infer<T['inputSchema']>,
 ): z.infer<T['inputSchema']> {
   switch (tool.name) {
     case EXIT_PLAN_MODE_V2_TOOL_NAME: {
-      // Strip injected fields before sending to API (schema expects empty object)
+      // 在发送到 API 之前剥离注入的字段（schema 期望空对象）
       if (
         input &&
         typeof input === 'object' &&
@@ -700,11 +672,7 @@ export function normalizeToolInputForAPI<T extends Tool>(
       return input
     }
     case FileEditTool.name: {
-      // Strip synthetic old_string/new_string/replace_all from OLD sessions
-      // that were resumed from transcripts written before PR #20357, where
-      // normalizeToolInput used to synthesize these. Needed so old --resume'd
-      // transcripts don't send whole-file copies to the API. New sessions
-      // don't need this (synthesis moved to emission time).
+      // 剥离从 PR #20357 之前写入的旧会话转录中恢复的合成字段
       if (input && typeof input === 'object' && 'edits' in input) {
         const { old_string, new_string, replace_all, ...rest } =
           input as Record<string, unknown>

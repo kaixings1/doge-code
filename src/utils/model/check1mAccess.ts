@@ -4,26 +4,25 @@ import { getGlobalConfig } from '../config.js'
 import { is1mContextDisabled } from '../context.js'
 
 /**
- * Check if extra usage is enabled based on the cached disabled reason.
- * Extra usage is considered enabled if there's no disabled reason,
- * or if the disabled reason indicates it's provisioned but temporarily unavailable.
+ * 根据缓存的禁用原因检查额外用量是否已启用。
+ * 如果没有禁用原因，或者禁用原因表明已配置但暂时不可用，则认为额外用量已启用。
  */
 function isExtraUsageEnabled(): boolean {
   const reason = getGlobalConfig().cachedExtraUsageDisabledReason
-  // undefined = no cache yet, treat as not enabled (conservative)
+  // undefined = 尚无缓存，视为未启用（保守策略）
   if (reason === undefined) {
     return false
   }
-  // null = no disabled reason from API, extra usage is enabled
+  // null = API 未返回禁用原因，额外用量已启用
   if (reason === null) {
     return true
   }
-  // Check which disabled reasons still mean "provisioned"
+  // 检查哪些禁用原因仍意味着“已配置”
   switch (reason as OverageDisabledReason) {
-    // Provisioned but credits depleted — still counts as enabled
+    // 已配置但余额耗尽 — 仍算作已启用
     case 'out_of_credits':
       return true
-    // Not provisioned or actively disabled
+    // 未配置或主动禁用
     case 'overage_not_provisioned':
     case 'org_level_disabled':
     case 'org_level_disabled_until':
@@ -42,18 +41,18 @@ function isExtraUsageEnabled(): boolean {
   }
 }
 
-// @[MODEL LAUNCH]: Add check if the new model supports 1M context
+// @[MODEL LAUNCH]: 检查新模型是否支持 1M 上下文
 export function checkOpus1mAccess(): boolean {
   if (is1mContextDisabled()) {
     return false
   }
 
   if (isClaudeAISubscriber()) {
-    // Subscribers have access if extra usage is enabled for their account
+    // 订阅用户如果账户已启用额外用量，则具有访问权限
     return isExtraUsageEnabled()
   }
 
-  // Non-subscribers (API/PAYG) have access
+  // 非订阅用户（API/PAYG）具有访问权限
   return true
 }
 
@@ -63,10 +62,10 @@ export function checkSonnet1mAccess(): boolean {
   }
 
   if (isClaudeAISubscriber()) {
-    // Subscribers have access if extra usage is enabled for their account
+    // 订阅用户如果账户已启用额外用量，则具有访问权限
     return isExtraUsageEnabled()
   }
 
-  // Non-subscribers (API/PAYG) have access
+  // 非订阅用户（API/PAYG）具有访问权限
   return true
 }
