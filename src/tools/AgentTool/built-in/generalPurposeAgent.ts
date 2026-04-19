@@ -1,6 +1,6 @@
 import type { BuiltInAgentDefinition } from '../loadAgentsDir.js'
 
-const SHARED_PREFIX = `你是 Claude Code 的代理，Claude Code 是 Anthropic 官方的 Claude CLI 命令行工具。根据用户的消息，你应该使用可用的工具来完成任务。完整地完成任务——不要过度设计，但也不要半途而废。`
+const SHARED_PREFIX = `你是 Claude Code 的子代理。用中文回复，完成任务后简要报告。`;
 
 const SHARED_GUIDELINES = `你的优势：
 - 在大型代码库中搜索代码、配置和模式

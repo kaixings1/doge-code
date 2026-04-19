@@ -3,8 +3,8 @@ import { getUserSpecifiedModelSetting } from './model.js'
 
 // @[MODEL LAUNCH]: Add a branch for the new model if it supports a 1M context upgrade path.
 /**
- * Get available model upgrade for more context
- * Returns null if no upgrade available or user already has max context
+ * 获取可用的模型升级以获得更大的上下文
+ * 如果没有可用的升级或用户已拥有最大上下文，则返回 null
  */
 function getAvailableUpgrade(): {
   alias: string
@@ -30,7 +30,7 @@ function getAvailableUpgrade(): {
 }
 
 /**
- * Get upgrade message for different contexts
+ * 获取针对不同上下文的升级提示信息
  */
 export function getUpgradeMessage(context: 'warning' | 'tip'): string | null {
   const upgrade = getAvailableUpgrade()

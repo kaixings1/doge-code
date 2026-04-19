@@ -1,11 +1,12 @@
 import type { ModelName } from './model.js'
 import type { APIProvider } from './providers.js'
 
+/** 模型配置：各 API 提供方对应的模型名称映射 */
 export type ModelConfig = Record<APIProvider, ModelName>
 
-// @[MODEL LAUNCH]: Add a new CLAUDE_*_CONFIG constant here. Double check the correct model strings
-// here since the pattern may change.
+// @[MODEL LAUNCH]: 在此处新增 CLAUDE_*_CONFIG 常量。注意确认模型字符串是否正确，命名模式可能会变化。
 
+/** Claude 3.7 Sonnet 配置 */
 export const CLAUDE_3_7_SONNET_CONFIG = {
   firstParty: 'claude-3-7-sonnet-20250219',
   bedrock: 'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
@@ -13,6 +14,7 @@ export const CLAUDE_3_7_SONNET_CONFIG = {
   foundry: 'claude-3-7-sonnet',
 } as const satisfies ModelConfig
 
+/** Claude 3.5 Sonnet v2 配置 */
 export const CLAUDE_3_5_V2_SONNET_CONFIG = {
   firstParty: 'claude-3-5-sonnet-20241022',
   bedrock: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
@@ -20,6 +22,7 @@ export const CLAUDE_3_5_V2_SONNET_CONFIG = {
   foundry: 'claude-3-5-sonnet',
 } as const satisfies ModelConfig
 
+/** Claude 3.5 Haiku 配置 */
 export const CLAUDE_3_5_HAIKU_CONFIG = {
   firstParty: 'claude-3-5-haiku-20241022',
   bedrock: 'us.anthropic.claude-3-5-haiku-20241022-v1:0',
@@ -27,6 +30,7 @@ export const CLAUDE_3_5_HAIKU_CONFIG = {
   foundry: 'claude-3-5-haiku',
 } as const satisfies ModelConfig
 
+/** Claude Haiku 4.5 配置 */
 export const CLAUDE_HAIKU_4_5_CONFIG = {
   firstParty: 'claude-haiku-4-5-20251001',
   bedrock: 'us.anthropic.claude-haiku-4-5-20251001-v1:0',
@@ -34,6 +38,7 @@ export const CLAUDE_HAIKU_4_5_CONFIG = {
   foundry: 'claude-haiku-4-5',
 } as const satisfies ModelConfig
 
+/** Claude Sonnet 4 配置 */
 export const CLAUDE_SONNET_4_CONFIG = {
   firstParty: 'claude-sonnet-4-20250514',
   bedrock: 'us.anthropic.claude-sonnet-4-20250514-v1:0',
@@ -41,6 +46,7 @@ export const CLAUDE_SONNET_4_CONFIG = {
   foundry: 'claude-sonnet-4',
 } as const satisfies ModelConfig
 
+/** Claude Sonnet 4.5 配置 */
 export const CLAUDE_SONNET_4_5_CONFIG = {
   firstParty: 'claude-sonnet-4-5-20250929',
   bedrock: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0',
@@ -48,6 +54,7 @@ export const CLAUDE_SONNET_4_5_CONFIG = {
   foundry: 'claude-sonnet-4-5',
 } as const satisfies ModelConfig
 
+/** Claude Opus 4 配置 */
 export const CLAUDE_OPUS_4_CONFIG = {
   firstParty: 'claude-opus-4-20250514',
   bedrock: 'us.anthropic.claude-opus-4-20250514-v1:0',
@@ -55,6 +62,7 @@ export const CLAUDE_OPUS_4_CONFIG = {
   foundry: 'claude-opus-4',
 } as const satisfies ModelConfig
 
+/** Claude Opus 4.1 配置 */
 export const CLAUDE_OPUS_4_1_CONFIG = {
   firstParty: 'claude-opus-4-1-20250805',
   bedrock: 'us.anthropic.claude-opus-4-1-20250805-v1:0',
@@ -62,6 +70,7 @@ export const CLAUDE_OPUS_4_1_CONFIG = {
   foundry: 'claude-opus-4-1',
 } as const satisfies ModelConfig
 
+/** Claude Opus 4.5 配置 */
 export const CLAUDE_OPUS_4_5_CONFIG = {
   firstParty: 'claude-opus-4-5-20251101',
   bedrock: 'us.anthropic.claude-opus-4-5-20251101-v1:0',
@@ -69,6 +78,7 @@ export const CLAUDE_OPUS_4_5_CONFIG = {
   foundry: 'claude-opus-4-5',
 } as const satisfies ModelConfig
 
+/** Claude Opus 4.6 配置 */
 export const CLAUDE_OPUS_4_6_CONFIG = {
   firstParty: 'claude-opus-4-6',
   bedrock: 'us.anthropic.claude-opus-4-6-v1',
@@ -76,6 +86,7 @@ export const CLAUDE_OPUS_4_6_CONFIG = {
   foundry: 'claude-opus-4-6',
 } as const satisfies ModelConfig
 
+/** Claude Sonnet 4.6 配置 */
 export const CLAUDE_SONNET_4_6_CONFIG = {
   firstParty: 'claude-sonnet-4-6',
   bedrock: 'us.anthropic.claude-sonnet-4-6',
@@ -83,7 +94,8 @@ export const CLAUDE_SONNET_4_6_CONFIG = {
   foundry: 'claude-sonnet-4-6',
 } as const satisfies ModelConfig
 
-// @[MODEL LAUNCH]: Register the new config here.
+// @[MODEL LAUNCH]: 在此处注册新增的配置对象。
+/** 所有模型配置的汇总映射，键为内部模型短键，值为对应配置 */
 export const ALL_MODEL_CONFIGS = {
   haiku35: CLAUDE_3_5_HAIKU_CONFIG,
   haiku45: CLAUDE_HAIKU_4_5_CONFIG,
@@ -98,18 +110,19 @@ export const ALL_MODEL_CONFIGS = {
   opus46: CLAUDE_OPUS_4_6_CONFIG,
 } as const satisfies Record<string, ModelConfig>
 
+/** 模型键类型，为 ALL_MODEL_CONFIGS 的键的联合类型 */
 export type ModelKey = keyof typeof ALL_MODEL_CONFIGS
 
-/** Union of all canonical first-party model IDs, e.g. 'claude-opus-4-6' | 'claude-sonnet-4-5-20250929' | … */
+/** 标准第一方模型 ID 的联合类型，例如 'claude-opus-4-6' | 'claude-sonnet-4-5-20250929' | … */
 export type CanonicalModelId =
   (typeof ALL_MODEL_CONFIGS)[ModelKey]['firstParty']
 
-/** Runtime list of canonical model IDs — used by comprehensiveness tests. */
+/** 运行时标准模型 ID 列表 —— 供完整性测试使用。 */
 export const CANONICAL_MODEL_IDS = Object.values(ALL_MODEL_CONFIGS).map(
   c => c.firstParty,
 ) as [CanonicalModelId, ...CanonicalModelId[]]
 
-/** Map canonical ID → internal short key. Used to apply settings-based modelOverrides. */
+/** 标准 ID → 内部短键映射表，用于应用来自设置文件的 modelOverrides。 */
 export const CANONICAL_ID_TO_KEY: Record<CanonicalModelId, ModelKey> =
   Object.fromEntries(
     (Object.entries(ALL_MODEL_CONFIGS) as [ModelKey, ModelConfig][]).map(

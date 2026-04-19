@@ -325,27 +325,14 @@ export function getSimplePrompt(): string {
   ]
   const backgroundNote = getBackgroundUsageNote()
 
-  const instructionItems: Array<string | string[]> = [
-    '如果您的命令将创建新目录或文件，请首先使用此工具运行 `ls` 以验证父目录存在且位置正确。',
-    '在命令中，始终用双引号将包含空格的路径括起来（例如，cd "path with spaces/file.txt"）',
-    '尝试在整个会话中保持当前工作目录不变，方法是使用绝对路径并避免使用 `cd`。如果用户明确请求，您可以使用 `cd`。',
-    `您可以指定一个可选的超时时间（以毫秒为单位），最大为 ${getMaxTimeoutMs()}ms（约 ${getMaxTimeoutMs() / 60000} 分钟）。默认情况下，您的命令将在 ${getDefaultTimeoutMs()}ms（约 ${getDefaultTimeoutMs() / 60000} 分钟）后超时。`,
-    ...(backgroundNote !== null ? [backgroundNote] : []),
-    '当发出多个命令时：',
-    multipleCommandsSubitems,
-    '对于 git 命令：',
-    gitSubitems,
-    '避免不必要的 `sleep` 命令：',
-    sleepSubitems,
-    ...(embedded
-      ? [
-          // bfs（`find` 的后端）在 -regex 中使用 Oniguruma，它会选择第一个匹配的替代项（最左优先），
-          // 不同于 GNU find 的 POSIX 最左最长原则。当较短的替代项是较长替代项的前缀时，这会静默丢弃匹配项。
-          "当使用带有交替项的 `find -regex` 时，请将最长的替代项放在前面。示例：使用 `'.*\\.\\(tsx\\|ts\\)'` 而非 `'.*\\.\\(ts\\|tsx\\)'`——后一种形式会静默跳过 `.tsx` 文件。",
-        ]
-      : []),
-  ]
-
+	const instructionItems: Array<string | string[]> = [
+	  '命令中路径含空格时请用双引号括起',
+	  '尽量使用绝对路径，避免频繁 cd',
+	  `默认超时 ${getDefaultTimeoutMs() / 60000} 分钟，最大可设 ${getMaxTimeoutMs() / 60000} 分钟`,
+	  ...(backgroundNote ? [backgroundNote] : []),
+	  '多条独立命令请在同一消息中并行调用，有依赖则用 && 串联',
+	  '避免不必要的 sleep，用 run_in_background 代替',
+	];
   return [
     '执行给定的 bash 命令并返回其输出。',
     '',

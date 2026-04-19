@@ -1,4 +1,4 @@
-// biome-ignore-all assist/source/organizeImports: ANT-ONLY import markers must not be reordered
+// biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
 import { getInitialMainLoopModel } from '../../bootstrap/state.js'
 import {
   isClaudeAISubscriber,
@@ -33,7 +33,7 @@ import {
 import { has1mContext } from '../context.js'
 import { getGlobalConfig } from '../config.js'
 
-// @[MODEL LAUNCH]: Update all the available and default model option strings below.
+// @[MODEL LAUNCH]: 更新下方所有可用和默认的模型选项字符串。
 
 export type ModelOption = {
   value: ModelSetting
@@ -55,7 +55,7 @@ export function getDefaultOptionForUser(fastMode = false): ModelOption {
     }
   }
 
-  // Subscribers
+  // 订阅用户
   if (isClaudeAISubscriber()) {
     return {
       value: null,
@@ -64,7 +64,7 @@ export function getDefaultOptionForUser(fastMode = false): ModelOption {
     }
   }
 
-  // PAYG
+  // 即用即付用户（PAYG）
   const is3P = getAPIProvider() !== 'firstParty'
   return {
     value: null,
@@ -85,7 +85,7 @@ function getAntModels(): Array<{
 function getCustomSonnetOption(): ModelOption | undefined {
   const is3P = getAPIProvider() !== 'firstParty'
   const customSonnetModel = process.env.ANTHROPIC_DEFAULT_SONNET_MODEL
-  // When a 3P user has a custom sonnet model string, show it directly
+  // 当第三方用户拥有自定义 Sonnet 模型字符串时，直接显示它
   if (is3P && customSonnetModel) {
     const is1m = has1mContext(customSonnetModel)
     return {
@@ -100,8 +100,8 @@ function getCustomSonnetOption(): ModelOption | undefined {
   }
 }
 
-// @[MODEL LAUNCH]: Update or add model option functions (getSonnetXXOption, getOpusXXOption, etc.)
-// with the new model's label and description. These appear in the /model picker.
+// @[MODEL LAUNCH]: 使用新模型的标签和描述更新或添加模型选项函数（如 getSonnetXXOption、getOpusXXOption 等）。
+// 这些将出现在 /model 选择器中。
 function getSonnet46Option(): ModelOption {
   const is3P = getAPIProvider() !== 'firstParty'
   return {
@@ -116,7 +116,7 @@ function getSonnet46Option(): ModelOption {
 function getCustomOpusOption(): ModelOption | undefined {
   const is3P = getAPIProvider() !== 'firstParty'
   const customOpusModel = process.env.ANTHROPIC_DEFAULT_OPUS_MODEL
-  // When a 3P user has a custom opus model string, show it directly
+  // 当第三方用户拥有自定义 Opus 模型字符串时，直接显示它
   if (is3P && customOpusModel) {
     const is1m = has1mContext(customOpusModel)
     return {
@@ -174,7 +174,7 @@ export function getOpus46_1MOption(fastMode = false): ModelOption {
 function getCustomHaikuOption(): ModelOption | undefined {
   const is3P = getAPIProvider() !== 'firstParty'
   const customHaikuModel = process.env.ANTHROPIC_DEFAULT_HAIKU_MODEL
-  // When a 3P user has a custom haiku model string, show it directly
+  // 当第三方用户拥有自定义 Haiku 模型字符串时，直接显示它
   if (is3P && customHaikuModel) {
     return {
       value: 'haiku',
@@ -210,7 +210,7 @@ function getHaiku35Option(): ModelOption {
 }
 
 function getHaikuOption(): ModelOption {
-  // Return correct Haiku option based on provider
+  // 根据提供商返回正确的 Haiku 选项
   const haikuModel = getDefaultHaikuModel()
   return haikuModel === getModelStrings().haiku45
     ? getHaiku45Option()
@@ -250,8 +250,7 @@ function getMergedOpus1MOption(fastMode = false): ModelOption {
     value: is3P ? getModelStrings().opus46 + '[1m]' : 'opus[1m]',
     label: 'Opus（1M 上下文）',
     description: `Opus 4.6（1M 上下文）· 最适合复杂工作${!is3P && fastMode ? getOpus46PricingSuffix(fastMode) : ''}`,
-    descriptionForModel:
-      'Opus 4.6（1M 上下文）- 最适合复杂工作',
+    descriptionForModel: 'Opus 4.6（1M 上下文）- 最适合复杂工作',
   }
 }
 
@@ -275,8 +274,8 @@ function getOpusPlanOption(): ModelOption {
   }
 }
 
-// @[MODEL LAUNCH]: Update the model picker lists below to include/reorder options for the new model.
-// Each user tier (ant, Max/Team Premium, Pro/Team Standard/Enterprise, PAYG 1P, PAYG 3P) has its own list.
+// @[MODEL LAUNCH]: 更新下方模型选择器列表，为新模型添加或调整选项顺序。
+// 每种用户等级（ant、Max/Team Premium、Pro/Team Standard/Enterprise、PAYG 1P、PAYG 3P）都有各自的列表。
 function getModelOptionsBase(fastMode = false): ModelOption[] {
   const customConfiguredModel =
     getGlobalConfig().customApiEndpoint?.model?.trim() ||
@@ -299,7 +298,7 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
     ]
   }
   if (process.env.USER_TYPE === 'ant') {
-    // Build options from antModels config
+    // 从 antModels 配置构建选项
     const antModelOptions: ModelOption[] = getAntModels().map(m => ({
       value: m.alias,
       label: m.label,
@@ -318,7 +317,7 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
 
   if (isClaudeAISubscriber()) {
     if (isMaxSubscriber() || isTeamPremiumSubscriber()) {
-      // Max and Team Premium users: Opus is default, show Sonnet as alternative
+      // Max 和 Team Premium 用户：默认使用 Opus，将 Sonnet 作为备选展示
       const premiumOptions = [getDefaultOptionForUser(fastMode)]
       if (!isOpus1mMergeEnabled() && checkOpus1mAccess()) {
         premiumOptions.push(getMaxOpus46_1MOption(fastMode))
@@ -333,7 +332,7 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
       return premiumOptions
     }
 
-    // Pro/Team Standard/Enterprise users: Sonnet is default, show Opus as alternative
+    // Pro/Team Standard/Enterprise 用户：默认使用 Sonnet，将 Opus 作为备选展示
     const standardOptions = [getDefaultOptionForUser(fastMode)]
     if (checkSonnet1mAccess()) {
       standardOptions.push(getMaxSonnet46_1MOption())
@@ -352,7 +351,7 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
     return standardOptions
   }
 
-  // PAYG 1P API: Default (Sonnet) + Sonnet 1M + Opus 4.6 + Opus 1M + Haiku
+  // PAYG 1P API：默认（Sonnet）+ Sonnet 1M + Opus 4.6 + Opus 1M + Haiku
   if (getAPIProvider() === 'firstParty') {
     const payg1POptions = [getDefaultOptionForUser(fastMode)]
     if (checkSonnet1mAccess()) {
@@ -370,14 +369,14 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
     return payg1POptions
   }
 
-  // PAYG 3P: Default (Sonnet 4.5) + Sonnet (3P custom) or Sonnet 4.6/1M + Opus (3P custom) or Opus 4.1/Opus 4.6/Opus1M + Haiku + Opus 4.1
+  // PAYG 3P：默认（Sonnet 4.5）+ Sonnet（3P 自定义）或 Sonnet 4.6/1M + Opus（3P 自定义）或 Opus 4.1/Opus 4.6/Opus1M + Haiku + Opus 4.1
   const payg3pOptions = [getDefaultOptionForUser(fastMode)]
 
   const customSonnet = getCustomSonnetOption()
   if (customSonnet !== undefined) {
     payg3pOptions.push(customSonnet)
   } else {
-    // Add Sonnet 4.6 since Sonnet 4.5 is the default
+    // 由于 Sonnet 4.5 是默认值，这里添加 Sonnet 4.6
     payg3pOptions.push(getSonnet46Option())
     if (checkSonnet1mAccess()) {
       payg3pOptions.push(getSonnet46_1MOption())
@@ -388,8 +387,8 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
   if (customOpus !== undefined) {
     payg3pOptions.push(customOpus)
   } else {
-    // Add Opus 4.1, Opus 4.6 and Opus 4.6 1M
-    payg3pOptions.push(getOpus41Option()) // This is the default opus
+    // 添加 Opus 4.1、Opus 4.6 和 Opus 4.6 1M
+    payg3pOptions.push(getOpus41Option()) // 这是默认的 opus
     payg3pOptions.push(getOpus46Option(fastMode))
     if (checkOpus1mAccess()) {
       payg3pOptions.push(getOpus46_1MOption(fastMode))
@@ -404,19 +403,18 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
   return payg3pOptions
 }
 
-// @[MODEL LAUNCH]: Add the new model ID to the appropriate family pattern below
-// so the "newer version available" hint works correctly.
+// @[MODEL LAUNCH]: 在下方对应的模型族模式中添加新模型 ID，
+// 以便“有更新版本可用”提示正常工作。
 /**
- * Map a full model name to its family alias and the marketing name of the
- * version the alias currently resolves to. Used to detect when a user has
- * a specific older version pinned and a newer one is available.
+ * 将完整的模型名称映射到其族别名以及该别名当前解析到的版本的营销名称。
+ * 用于检测用户是否固定使用了较旧的特定版本，以及是否有较新版本可用。
  */
 function getModelFamilyInfo(
   model: string,
 ): { alias: string; currentVersionName: string } | null {
   const canonical = getCanonicalName(model)
 
-  // Sonnet family
+  // Sonnet 族
   if (
     canonical.includes('claude-sonnet-4-6') ||
     canonical.includes('claude-sonnet-4-5') ||
@@ -430,7 +428,7 @@ function getModelFamilyInfo(
     }
   }
 
-  // Opus family
+  // Opus 族
   if (canonical.includes('claude-opus-4')) {
     const currentName = getMarketingNameForModel(getDefaultOpusModel())
     if (currentName) {
@@ -438,7 +436,7 @@ function getModelFamilyInfo(
     }
   }
 
-  // Haiku family
+  // Haiku 族
   if (
     canonical.includes('claude-haiku') ||
     canonical.includes('claude-3-5-haiku')
@@ -453,9 +451,9 @@ function getModelFamilyInfo(
 }
 
 /**
- * Returns a ModelOption for a known Anthropic model with a human-readable
- * label, and an upgrade hint if a newer version is available via the alias.
- * Returns null if the model is not recognized.
+ * 为已知的 Anthropic 模型返回一个带有易读标签的 ModelOption，
+ * 如果通过别名有更新版本可用，则附上升级提示。
+ * 如果模型无法识别，则返回 null。
  */
 function getKnownModelOption(model: string): ModelOption | null {
   const marketingName = getMarketingNameForModel(model)
@@ -470,7 +468,7 @@ function getKnownModelOption(model: string): ModelOption | null {
     }
   }
 
-  // Check if the alias currently resolves to a different (newer) version
+  // 检查该别名当前是否解析到其他（较新的）版本
   if (marketingName !== familyInfo.currentVersionName) {
     return {
       value: model,
@@ -479,7 +477,7 @@ function getKnownModelOption(model: string): ModelOption | null {
     }
   }
 
-  // Same version as the alias — just show the friendly name
+  // 与别名版本相同 —— 仅显示友好名称
   return {
     value: model,
     label: marketingName,
@@ -490,7 +488,7 @@ function getKnownModelOption(model: string): ModelOption | null {
 export function getModelOptions(fastMode = false): ModelOption[] {
   const options = getModelOptionsBase(fastMode)
 
-  // Add the custom model from the ANTHROPIC_CUSTOM_MODEL_OPTION env var
+  // 添加来自 ANTHROPIC_CUSTOM_MODEL_OPTION 环境变量的自定义模型
   const envCustomModel = process.env.ANTHROPIC_CUSTOM_MODEL_OPTION
   if (
     envCustomModel &&
@@ -505,15 +503,14 @@ export function getModelOptions(fastMode = false): ModelOption[] {
     })
   }
 
-  // Append additional model options fetched during bootstrap
+  // 追加在引导过程中获取的其他模型选项
   for (const opt of getGlobalConfig().additionalModelOptionsCache ?? []) {
     if (!options.some(existing => existing.value === opt.value)) {
       options.push(opt)
     }
   }
 
-  // Add custom model from either the current model value or the initial one
-  // if it is not already in the options.
+  // 如果当前模型值或初始值不在选项中，则将其作为自定义模型添加
   let customModel: ModelSetting = null
   const currentMainLoopModel = getUserSpecifiedModelSetting()
   const initialMainLoopModel = getInitialMainLoopModel()
@@ -537,8 +534,7 @@ export function getModelOptions(fastMode = false): ModelOption[] {
       getMergedOpus1MOption(fastMode),
     ])
   } else {
-    // Try to show a human-readable label for known Anthropic models, with an
-    // upgrade hint if the alias now resolves to a newer version.
+    // 尝试为已知 Anthropic 模型显示易读标签，如果别名解析到更新版本则附上升级提示
     const knownOption = getKnownModelOption(customModel)
     if (knownOption) {
       options.push(knownOption)
@@ -554,13 +550,13 @@ export function getModelOptions(fastMode = false): ModelOption[] {
 }
 
 /**
- * Filter model options by the availableModels allowlist.
- * Always preserves the "Default" option (value: null).
+ * 根据 availableModels 允许列表过滤模型选项。
+ * 始终保留“默认”选项（value: null）。
  */
 function filterModelOptionsByAllowlist(options: ModelOption[]): ModelOption[] {
   const settings = getSettings_DEPRECATED() || {}
   if (!settings.availableModels) {
-    return options // No restrictions
+    return options // 无限制
   }
   return options.filter(
     opt =>

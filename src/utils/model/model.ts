@@ -1,9 +1,8 @@
-// biome-ignore-all assist/source/organizeImports: ANT-ONLY import markers must not be reordered
+// biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
 /**
- * Ensure that any model codenames introduced here are also added to
- * scripts/excluded-strings.txt to avoid leaking them. Wrap any codename string
- * literals with process.env.USER_TYPE === 'ant' for Bun to remove the codenames
- * during dead code elimination
+ * 确保此处引入的任何模型代号也被添加到 scripts/excluded-strings.txt 中以避免泄露。
+ * 任何包含代号的字符串字面量需用 process.env.USER_TYPE === 'ant' 包裹，
+ * 以便 Bun 在死代码消除时移除这些代号。
  */
 import { getMainLoopModelOverride } from '../../bootstrap/state.js'
 import {
@@ -47,16 +46,15 @@ export function isNonCustomOpusModel(model: ModelName): boolean {
 }
 
 /**
- * Helper to get the model from /model (including via /config), the --model flag, environment variable,
- * or the saved settings. The returned value can be a model alias if that's what the user specified.
- * Undefined if the user didn't configure anything, in which case we fall back to
- * the default (null).
+ * 辅助函数，用于从 /model（包括通过 /config）、--model 标志、环境变量或保存的设置中获取模型。
+ * 返回值可以是模型别名（如果用户指定的是别名）。
+ * 如果用户未进行任何配置，则返回 undefined，此时回退到默认值（null）。
  *
- * Priority order within this function:
- * 1. Model override during session (from /model command) - highest priority
- * 2. Model override at startup (from --model flag)
- * 3. ANTHROPIC_MODEL environment variable
- * 4. Settings (from user's saved settings)
+ * 此函数内部的优先级顺序：
+ * 1. 会话期间的模型覆盖（来自 /model 命令）—— 最高优先级
+ * 2. 启动时的模型覆盖（来自 --model 标志）
+ * 3. ANTHROPIC_MODEL 环境变量
+ * 4. 设置（来自用户保存的设置）
  */
 export function getUserSpecifiedModelSetting(): ModelSetting | undefined {
   let specifiedModel: ModelSetting | undefined
@@ -69,7 +67,7 @@ export function getUserSpecifiedModelSetting(): ModelSetting | undefined {
     specifiedModel = process.env.ANTHROPIC_MODEL || settings.model || undefined
   }
 
-  // Ignore the user-specified model if it's not in the availableModels allowlist.
+  // 如果用户指定的模型不在 availableModels 允许列表中，则忽略。
   if (specifiedModel && !isModelAllowed(specifiedModel)) {
     return undefined
   }
@@ -78,16 +76,16 @@ export function getUserSpecifiedModelSetting(): ModelSetting | undefined {
 }
 
 /**
- * Get the main loop model to use for the current session.
+ * 获取当前会话要使用的主循环模型。
  *
- * Model Selection Priority Order:
- * 1. Model override during session (from /model command) - highest priority
- * 2. Model override at startup (from --model flag)
- * 3. ANTHROPIC_MODEL environment variable
- * 4. Settings (from user's saved settings)
- * 5. Built-in default
+ * 模型选择优先级顺序：
+ * 1. 会话期间的模型覆盖（来自 /model 命令）—— 最高优先级
+ * 2. 启动时的模型覆盖（来自 --model 标志）
+ * 3. ANTHROPIC_MODEL 环境变量
+ * 4. 设置（来自用户保存的设置）
+ * 5. 内置默认值
  *
- * @returns The resolved model name to use
+ * @returns 要使用的已解析模型名称
  */
 export function getMainLoopModel(): ModelName {
   const model = getUserSpecifiedModelSetting()
@@ -101,46 +99,45 @@ export function getBestModel(): ModelName {
   return getDefaultOpusModel()
 }
 
-// @[MODEL LAUNCH]: Update the default Opus model (3P providers may lag so keep defaults unchanged).
+// @[MODEL LAUNCH]: 更新默认的 Opus 模型（第三方提供商可能有延迟，因此保持默认值不变）。
 export function getDefaultOpusModel(): ModelName {
   if (process.env.ANTHROPIC_DEFAULT_OPUS_MODEL) {
     return process.env.ANTHROPIC_DEFAULT_OPUS_MODEL
   }
-  // 3P providers (Bedrock, Vertex, Foundry) — kept as a separate branch
-  // even when values match, since 3P availability lags firstParty and
-  // these will diverge again at the next model launch.
+  // 第三方提供商（Bedrock、Vertex、Foundry）—— 即便值与第一方相同也作为独立分支保留，
+  // 因为第三方可用性滞后于第一方，且在下一次模型发布时这些值将再次产生差异。
   if (getAPIProvider() !== 'firstParty') {
     return getModelStrings().opus46
   }
   return getModelStrings().opus46
 }
 
-// @[MODEL LAUNCH]: Update the default Sonnet model (3P providers may lag so keep defaults unchanged).
+// @[MODEL LAUNCH]: 更新默认的 Sonnet 模型（第三方提供商可能有延迟，因此保持默认值不变）。
 export function getDefaultSonnetModel(): ModelName {
   if (process.env.ANTHROPIC_DEFAULT_SONNET_MODEL) {
     return process.env.ANTHROPIC_DEFAULT_SONNET_MODEL
   }
-  // Default to Sonnet 4.5 for 3P since they may not have 4.6 yet
+  // 第三方默认使用 Sonnet 4.5，因为他们可能还没有 4.6
   if (getAPIProvider() !== 'firstParty') {
     return getModelStrings().sonnet45
   }
   return getModelStrings().sonnet46
 }
 
-// @[MODEL LAUNCH]: Update the default Haiku model (3P providers may lag so keep defaults unchanged).
+// @[MODEL LAUNCH]: 更新默认的 Haiku 模型（第三方提供商可能有延迟，因此保持默认值不变）。
 export function getDefaultHaikuModel(): ModelName {
   if (process.env.ANTHROPIC_DEFAULT_HAIKU_MODEL) {
     return process.env.ANTHROPIC_DEFAULT_HAIKU_MODEL
   }
 
-  // Haiku 4.5 is available on all platforms (first-party, Foundry, Bedrock, Vertex)
+  // Haiku 4.5 在所有平台上可用（第一方、Foundry、Bedrock、Vertex）
   return getModelStrings().haiku45
 }
 
 /**
- * Get the model to use for runtime, depending on the runtime context.
- * @param params Subset of the runtime context to determine the model to use.
- * @returns The model to use
+ * 根据运行时上下文获取要使用的模型。
+ * @param params 用于确定要使用的模型的运行时上下文子集。
+ * @returns 要使用的模型
  */
 export function getRuntimeMainLoopModel(params: {
   permissionMode: PermissionMode
@@ -149,7 +146,7 @@ export function getRuntimeMainLoopModel(params: {
 }): ModelName {
   const { permissionMode, mainLoopModel, exceeds200kTokens = false } = params
 
-  // opusplan uses Opus in plan mode without [1m] suffix.
+  // opusplan 在计划模式下使用 Opus，且不带 [1m] 后缀。
   if (
     getUserSpecifiedModelSetting() === 'opusplan' &&
     permissionMode === 'plan' &&
@@ -158,7 +155,7 @@ export function getRuntimeMainLoopModel(params: {
     return getDefaultOpusModel()
   }
 
-  // sonnetplan by default
+  // sonnetplan 默认
   if (getUserSpecifiedModelSetting() === 'haiku' && permissionMode === 'plan') {
     return getDefaultSonnetModel()
   }
@@ -167,16 +164,16 @@ export function getRuntimeMainLoopModel(params: {
 }
 
 /**
- * Get the default main loop model setting.
+ * 获取默认的主循环模型设置。
  *
- * This handles the built-in default:
- * - Opus for Max and Team Premium users
- * - Sonnet 4.6 for all other users (including Team Standard, Pro, Enterprise)
+ * 这处理内置默认值：
+ * - Max 和 Team Premium 用户默认使用 Opus
+ * - 所有其他用户（包括 Team Standard、Pro、Enterprise）默认使用 Sonnet 4.6
  *
- * @returns The default model setting to use
+ * @returns 要使用的默认模型设置
  */
 export function getDefaultMainLoopModelSetting(): ModelName | ModelAlias {
-  // Ants default to defaultModel from flag config, or Opus 1M if not configured
+  // Ants 默认使用来自标志配置的 defaultModel，若未配置则使用 Opus 1M
   if (process.env.USER_TYPE === 'ant') {
     return (
       getAntModelOverrideConfig()?.defaultModel ??
@@ -184,40 +181,40 @@ export function getDefaultMainLoopModelSetting(): ModelName | ModelAlias {
     )
   }
 
-  // Max users get Opus as default
+  // Max 用户默认使用 Opus
   if (isMaxSubscriber()) {
     return getDefaultOpusModel() + (isOpus1mMergeEnabled() ? '[1m]' : '')
   }
 
-  // Team Premium gets Opus (same as Max)
+  // Team Premium 默认使用 Opus（与 Max 相同）
   if (isTeamPremiumSubscriber()) {
     return getDefaultOpusModel() + (isOpus1mMergeEnabled() ? '[1m]' : '')
   }
 
-  // PAYG (1P and 3P), Enterprise, Team Standard, and Pro get Sonnet as default
-  // Note that PAYG (3P) may default to an older Sonnet model
+  // PAYG（第一方和第三方）、Enterprise、Team Standard 和 Pro 默认使用 Sonnet
+  // 注意 PAYG（第三方）可能默认使用较旧的 Sonnet 模型
   return getDefaultSonnetModel()
 }
 
 /**
- * Synchronous operation to get the default main loop model to use
- * (bypassing any user-specified values).
+ * 同步操作，获取要使用的默认主循环模型
+ * （绕过任何用户指定的值）。
  */
 export function getDefaultMainLoopModel(): ModelName {
   return parseUserSpecifiedModel(getDefaultMainLoopModelSetting())
 }
 
-// @[MODEL LAUNCH]: Add a canonical name mapping for the new model below.
+// @[MODEL LAUNCH]: 在下方为新模型添加规范名称映射。
 /**
- * Pure string-match that strips date/provider suffixes from a first-party model
- * name. Input must already be a 1P-format ID (e.g. 'claude-3-7-sonnet-20250219',
- * 'us.anthropic.claude-opus-4-6-v1:0'). Does not touch settings, so safe at
- * module top-level (see MODEL_COSTS in modelCost.ts).
+ * 纯字符串匹配，用于剥离第一方模型名称中的日期/提供商后缀。
+ * 输入必须是第一方格式的 ID（例如 'claude-3-7-sonnet-20250219'、
+ * 'us.anthropic.claude-opus-4-6-v1:0'）。不涉及设置，因此在模块顶层是安全的
+ * （参见 modelCost.ts 中的 MODEL_COSTS）。
  */
 export function firstPartyNameToCanonical(name: ModelName): ModelShortName {
   name = name.toLowerCase()
-  // Special cases for Claude 4+ models to differentiate versions
-  // Order matters: check more specific versions first (4-5 before 4)
+  // 针对 Claude 4+ 模型的特殊处理，以区分版本
+  // 顺序很重要：先检查更具体的版本（4-5 在 4 之前）
   if (name.includes('claude-opus-4-6')) {
     return 'claude-opus-4-6'
   }
@@ -242,7 +239,7 @@ export function firstPartyNameToCanonical(name: ModelName): ModelShortName {
   if (name.includes('claude-haiku-4-5')) {
     return 'claude-haiku-4-5'
   }
-  // Claude 3.x models use a different naming scheme (claude-3-{family})
+  // Claude 3.x 模型使用不同的命名方案（claude-3-{family}）
   if (name.includes('claude-3-7-sonnet')) {
     return 'claude-3-7-sonnet'
   }
@@ -265,41 +262,41 @@ export function firstPartyNameToCanonical(name: ModelName): ModelShortName {
   if (match && match[1]) {
     return match[1]
   }
-  // Fall back to the original name if no pattern matches
+  // 如果没有匹配的模式，则回退到原始名称
   return name
 }
 
 /**
- * Maps a full model string to a shorter canonical version that's unified across 1P and 3P providers.
- * For example, 'claude-3-5-haiku-20241022' and 'us.anthropic.claude-3-5-haiku-20241022-v1:0'
- * would both be mapped to 'claude-3-5-haiku'.
- * @param fullModelName The full model name (e.g., 'claude-3-5-haiku-20241022')
- * @returns The short name (e.g., 'claude-3-5-haiku') if found, or the original name if no mapping exists
+ * 将完整的模型字符串映射为跨第一方和第三方提供商统一的简短规范版本。
+ * 例如，'claude-3-5-haiku-20241022' 和 'us.anthropic.claude-3-5-haiku-20241022-v1:0'
+ * 都会被映射为 'claude-3-5-haiku'。
+ * @param fullModelName 完整的模型名称（例如 'claude-3-5-haiku-20241022'）
+ * @returns 短名称（例如 'claude-3-5-haiku'），如果不存在映射，则返回原始名称
  */
 export function getCanonicalName(fullModelName: ModelName): ModelShortName {
-  // Resolve overridden model IDs (e.g. Bedrock ARNs) back to canonical names.
-  // resolved is always a 1P-format ID, so firstPartyNameToCanonical can handle it.
+  // 将覆盖的模型 ID（例如 Bedrock ARN）解析回规范名称。
+  // resolved 始终是第一方格式的 ID，因此 firstPartyNameToCanonical 可以处理它。
   return firstPartyNameToCanonical(resolveOverriddenModel(fullModelName))
 }
 
-// @[MODEL LAUNCH]: Update the default model description strings shown to users.
+// @[MODEL LAUNCH]: 更新向用户显示的默认模型描述字符串。
 export function getClaudeAiUserDefaultModelDescription(
   fastMode = false,
 ): string {
   if (isMaxSubscriber() || isTeamPremiumSubscriber()) {
     if (isOpus1mMergeEnabled()) {
-      return `Opus 4.6 with 1M context · Most capable for complex work${fastMode ? getOpus46PricingSuffix(true) : ''}`
+      return `Opus 4.6（1M 上下文）· 最适合复杂工作${fastMode ? getOpus46PricingSuffix(true) : ''}`
     }
-    return `Opus 4.6 · Most capable for complex work${fastMode ? getOpus46PricingSuffix(true) : ''}`
+    return `Opus 4.6 · 最适合复杂工作${fastMode ? getOpus46PricingSuffix(true) : ''}`
   }
-  return 'Sonnet 4.6 · Best for everyday tasks'
+  return 'Sonnet 4.6 · 最适合日常任务'
 }
 
 export function renderDefaultModelSetting(
   setting: ModelName | ModelAlias,
 ): string {
   if (setting === 'opusplan') {
-    return 'Opus 4.6 in plan mode, else Sonnet 4.6'
+    return '计划模式下使用 Opus 4.6，否则使用 Sonnet 4.6'
   }
   return renderModelName(parseUserSpecifiedModel(setting))
 }
@@ -319,12 +316,9 @@ export function isOpus1mMergeEnabled(): boolean {
   ) {
     return false
   }
-  // Fail closed when a subscriber's subscription type is unknown. The VS Code
-  // config-loading subprocess can have OAuth tokens with valid scopes but no
-  // subscriptionType field (stale or partial refresh). Without this guard,
-  // isProSubscriber() returns false for such users and the merge leaks
-  // opus[1m] into the model dropdown — the API then rejects it with a
-  // misleading "rate limit reached" error.
+  // 当订阅用户的订阅类型未知时，采用“关闭”策略。VS Code 配置加载子进程可能拥有有效作用域的 OAuth 令牌，
+  // 但没有 subscriptionType 字段（陈旧或部分刷新）。如果没有此保护，isProSubscriber() 会对此类用户返回 false，
+  // 导致合并将 opus[1m] 泄漏到模型下拉菜单中 —— 然后 API 会以误导性的“达到频率限制”错误拒绝它。
   if (isClaudeAISubscriber() && getSubscriptionType() === null) {
     return false
   }
@@ -341,17 +335,16 @@ export function renderModelSetting(setting: ModelName | ModelAlias): string {
   return renderModelName(setting)
 }
 
-// @[MODEL LAUNCH]: Add display name cases for the new model (base + [1m] variant if applicable).
+// @[MODEL LAUNCH]: 为新模型（包括基础版本及适用的 [1m] 变体）添加显示名称分支。
 /**
- * Returns a human-readable display name for known public models, or null
- * if the model is not recognized as a public model.
+ * 返回已知公开模型的易读显示名称，如果模型未被识别为公开模型，则返回 null。
  */
 export function getPublicModelDisplayName(model: ModelName): string | null {
   switch (model) {
     case getModelStrings().opus46:
       return 'Opus 4.6'
     case getModelStrings().opus46 + '[1m]':
-      return 'Opus 4.6 (1M context)'
+      return 'Opus 4.6（1M 上下文）'
     case getModelStrings().opus45:
       return 'Opus 4.5'
     case getModelStrings().opus41:
@@ -359,17 +352,17 @@ export function getPublicModelDisplayName(model: ModelName): string | null {
     case getModelStrings().opus40:
       return 'Opus 4'
     case getModelStrings().sonnet46 + '[1m]':
-      return 'Sonnet 4.6 (1M context)'
+      return 'Sonnet 4.6（1M 上下文）'
     case getModelStrings().sonnet46:
       return 'Sonnet 4.6'
     case getModelStrings().sonnet45 + '[1m]':
-      return 'Sonnet 4.5 (1M context)'
+      return 'Sonnet 4.5（1M 上下文）'
     case getModelStrings().sonnet45:
       return 'Sonnet 4.5'
     case getModelStrings().sonnet40:
       return 'Sonnet 4'
     case getModelStrings().sonnet40 + '[1m]':
-      return 'Sonnet 4 (1M context)'
+      return 'Sonnet 4（1M 上下文）'
     case getModelStrings().sonnet37:
       return 'Sonnet 3.7'
     case getModelStrings().sonnet35:
@@ -384,8 +377,8 @@ export function getPublicModelDisplayName(model: ModelName): string | null {
 }
 
 function maskModelCodename(baseName: string): string {
-  // Mask only the first dash-separated segment (the codename), preserve the rest
-  // e.g. capybara-v2-fast → cap*****-v2-fast
+  // 仅遮蔽第一个由连字符分隔的部分（代号），保留其余部分
+  // 例如 capybara-v2-fast → cap*****-v2-fast
   const [codename = '', ...rest] = baseName.split('-')
   const masked =
     codename.slice(0, 3) + '*'.repeat(Math.max(0, codename.length - 3))
@@ -415,12 +408,12 @@ export function renderModelName(model: ModelName): string {
 }
 
 /**
- * Returns a safe author name for public display (e.g., in git commit trailers).
- * Returns "Claude {ModelName}" for publicly known models, or "Claude ({model})"
- * for unknown/internal models so the exact model name is preserved.
+ * 返回一个用于公开显示的安全作者名（例如用于 git 提交尾注）。
+ * 对于公开已知的模型，返回 "Claude {ModelName}"；对于未知/内部模型，返回 "Claude ({model})"，
+ * 以便保留确切的模型名称。
  *
- * @param model The full model name
- * @returns "Claude {ModelName}" for public models, or "Claude ({model})" for non-public models
+ * @param model 完整的模型名称
+ * @returns 对于公开模型返回 "Claude {ModelName}"，对于非公开模型返回 "Claude ({model})"
  */
 export function getPublicModelName(model: ModelName): string {
   const publicName = getPublicModelDisplayName(model)
@@ -431,16 +424,14 @@ export function getPublicModelName(model: ModelName): string {
 }
 
 /**
- * Returns a full model name for use in this session, possibly after resolving
- * a model alias.
+ * 返回本会话中要使用的完整模型名称，可能是在解析模型别名之后的结果。
  *
- * This function intentionally does not support version numbers to align with
- * the model switcher.
+ * 此函数有意不支持版本号，以与模型切换器保持一致。
  *
- * Supports [1m] suffix on any model alias (e.g., haiku[1m], sonnet[1m]) to enable
- * 1M context window without requiring each variant to be in MODEL_ALIASES.
+ * 支持在任何模型别名上添加 [1m] 后缀（例如 haiku[1m]、sonnet[1m]），
+ * 以便启用 1M 上下文窗口，而无需在 MODEL_ALIASES 中添加每个变体。
  *
- * @param modelInput The model alias or name provided by the user.
+ * @param modelInput 用户提供的模型别名或名称。
  */
 export function parseUserSpecifiedModel(
   modelInput: ModelName | ModelAlias,
@@ -456,7 +447,7 @@ export function parseUserSpecifiedModel(
   if (isModelAlias(modelString)) {
     switch (modelString) {
       case 'opusplan':
-        return getDefaultSonnetModel() + (has1mTag ? '[1m]' : '') // Sonnet is default, Opus in plan mode
+        return getDefaultSonnetModel() + (has1mTag ? '[1m]' : '') // 默认 Sonnet，计划模式使用 Opus
       case 'sonnet':
         return getDefaultSonnetModel() + (has1mTag ? '[1m]' : '')
       case 'haiku':
@@ -469,11 +460,9 @@ export function parseUserSpecifiedModel(
     }
   }
 
-  // Opus 4/4.1 are no longer available on the first-party API (same as
-  // Claude.ai) — silently remap to the current Opus default. The 'opus'
-  // alias already resolves to 4.6, so the only users on these explicit
-  // strings pinned them in settings/env/--model/SDK before 4.5 launched.
-  // 3P providers may not yet have 4.6 capacity, so pass through unchanged.
+  // Opus 4/4.1 在第一方 API 中已不可用（与 Claude.ai 相同）—— 静默重新映射到当前的 Opus 默认值。
+  // 'opus' 别名已经解析到 4.6，因此唯一使用这些显式字符串的用户是在 4.5 发布之前固定在设置/环境变量/--model/SDK 中的。
+  // 第三方提供商可能还没有 4.6 容量，因此保持不变传递。
   if (
     getAPIProvider() === 'firstParty' &&
     isLegacyOpusFirstParty(modelString) &&
@@ -492,13 +481,12 @@ export function parseUserSpecifiedModel(
       return antModel.model + suffix
     }
 
-    // Fall through to the alias string if we cannot load the config. The API calls
-    // will fail with this string, but we should hear about it through feedback and
-    // can tell the user to restart/wait for flag cache refresh to get the latest values.
+    // 如果无法加载配置，则回退到别名字符串。API 调用会因该字符串而失败，
+    // 但我们应该通过反馈渠道获悉，并告知用户重启或等待标志缓存刷新以获取最新值。
   }
 
-  // Preserve original case for custom model names (e.g., Azure Foundry deployment IDs)
-  // Only strip [1m] suffix if present, maintaining case of the base model
+  // 对于自定义模型名称（例如 Azure Foundry 部署 ID），保留原始大小写
+  // 如果存在 [1m] 后缀，则仅剥离后缀，基础模型的大小写保持不变
   if (has1mTag) {
     return modelInputTrimmed.replace(/\[1m\]$/i, '').trim() + '[1m]'
   }
@@ -506,19 +494,16 @@ export function parseUserSpecifiedModel(
 }
 
 /**
- * Resolves a skill's `model:` frontmatter against the current model, carrying
- * the `[1m]` suffix over when the target family supports it.
+ * 根据当前模型解析技能的 `model:` 前置元数据，当目标族系支持时携带 `[1m]` 后缀。
  *
- * A skill author writing `model: opus` means "use opus-class reasoning" — not
- * "downgrade to 200K". If the user is on opus[1m] at 230K tokens and invokes a
- * skill with `model: opus`, passing the bare alias through drops the effective
- * context window from 1M to 200K, which trips autocompact at 23% apparent usage
- * and surfaces "Context limit reached" even though nothing overflowed.
+ * 技能作者编写 `model: opus` 意为“使用 opus 级别的推理”——而不是“降级到 200K”。
+ * 如果用户正在以 230K token 使用 opus[1m]，并调用了带有 `model: opus` 的技能，
+ * 那么直接传递裸别名会丢失有效的上下文窗口，从 1M 降至 200K，
+ * 导致在显式使用率为 23% 时触发自动压缩，并显示“达到上下文限制”，即使并未溢出。
  *
- * We only carry [1m] when the target actually supports it (sonnet/opus). A skill
- * with `model: haiku` on a 1M session still downgrades — haiku has no 1M variant,
- * so the autocompact that follows is correct. Skills that already specify [1m]
- * are left untouched.
+ * 我们仅在目标确实支持 [1m] 时才携带它（sonnet/opus）。
+ * 在 1M 会话中，带有 `model: haiku` 的技能仍然会降级 —— haiku 没有 1M 变体，
+ * 因此随后的自动压缩是正确的。已经指定 [1m] 的技能保持不变。
  */
 export function resolveSkillModelOverride(
   skillModel: string,
@@ -527,8 +512,8 @@ export function resolveSkillModelOverride(
   if (has1mContext(skillModel) || !has1mContext(currentModel)) {
     return skillModel
   }
-  // modelSupports1M matches on canonical IDs ('claude-opus-4-6', 'claude-sonnet-4');
-  // a bare 'opus' alias falls through getCanonicalName unmatched. Resolve first.
+  // modelSupports1M 基于规范 ID（'claude-opus-4-6'、'claude-sonnet-4'）进行匹配；
+  // 一个裸 'opus' 别名在通过 getCanonicalName 时未被匹配。首先进行解析。
   if (modelSupports1M(parseUserSpecifiedModel(skillModel))) {
     return skillModel + '[1m]'
   }
@@ -547,7 +532,7 @@ function isLegacyOpusFirstParty(model: string): boolean {
 }
 
 /**
- * Opt-out for the legacy Opus 4.0/4.1 → current Opus remap.
+ * 用于选择退出旧版 Opus 4.0/4.1 → 当前 Opus 重新映射的开关。
  */
 export function isLegacyModelRemapEnabled(): boolean {
   return !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP)
@@ -556,20 +541,20 @@ export function isLegacyModelRemapEnabled(): boolean {
 export function modelDisplayString(model: ModelSetting): string {
   if (model === null) {
     if (process.env.USER_TYPE === 'ant') {
-      return `Default for Ants (${renderDefaultModelSetting(getDefaultMainLoopModelSetting())})`
+      return `Ants 的默认值（${renderDefaultModelSetting(getDefaultMainLoopModelSetting())}）`
     } else if (isClaudeAISubscriber()) {
-      return `Default (${getClaudeAiUserDefaultModelDescription()})`
+      return `默认（${getClaudeAiUserDefaultModelDescription()}）`
     }
-    return `Default (${getDefaultMainLoopModel()})`
+    return `默认（${getDefaultMainLoopModel()}）`
   }
   const resolvedModel = parseUserSpecifiedModel(model)
   return model === resolvedModel ? resolvedModel : `${model} (${resolvedModel})`
 }
 
-// @[MODEL LAUNCH]: Add a marketing name mapping for the new model below.
+// @[MODEL LAUNCH]: 在下方为新模型添加营销名称映射。
 export function getMarketingNameForModel(modelId: string): string | undefined {
   if (getAPIProvider() === 'foundry') {
-    // deployment ID is user-defined in Foundry, so it may have no relation to the actual model
+    // Foundry 中的部署 ID 是用户定义的，因此可能与实际模型无关
     return undefined
   }
 
@@ -577,7 +562,7 @@ export function getMarketingNameForModel(modelId: string): string | undefined {
   const canonical = getCanonicalName(modelId)
 
   if (canonical.includes('claude-opus-4-6')) {
-    return has1m ? 'Opus 4.6 (with 1M context)' : 'Opus 4.6'
+    return has1m ? 'Opus 4.6（1M 上下文）' : 'Opus 4.6'
   }
   if (canonical.includes('claude-opus-4-5')) {
     return 'Opus 4.5'
@@ -589,13 +574,13 @@ export function getMarketingNameForModel(modelId: string): string | undefined {
     return 'Opus 4'
   }
   if (canonical.includes('claude-sonnet-4-6')) {
-    return has1m ? 'Sonnet 4.6 (with 1M context)' : 'Sonnet 4.6'
+    return has1m ? 'Sonnet 4.6（1M 上下文）' : 'Sonnet 4.6'
   }
   if (canonical.includes('claude-sonnet-4-5')) {
-    return has1m ? 'Sonnet 4.5 (with 1M context)' : 'Sonnet 4.5'
+    return has1m ? 'Sonnet 4.5（1M 上下文）' : 'Sonnet 4.5'
   }
   if (canonical.includes('claude-sonnet-4')) {
-    return has1m ? 'Sonnet 4 (with 1M context)' : 'Sonnet 4'
+    return has1m ? 'Sonnet 4（1M 上下文）' : 'Sonnet 4'
   }
   if (canonical.includes('claude-3-7-sonnet')) {
     return 'Claude 3.7 Sonnet'
