@@ -1,4 +1,4 @@
-// biome-ignore-all assist/source/organizeImports: ANT-ONLY import markers must not be reordered
+// biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
 import { MODEL_ALIASES } from './aliases.js'
 import { isModelAllowed } from './modelAllowlist.js'
 import { getAPIProvider } from './providers.js'
@@ -12,11 +12,11 @@ import {
 import { getModelStrings } from './modelStrings.js'
 import { getGlobalConfig } from '../config.js'
 
-// Cache valid models to avoid repeated API calls
+// 缓存有效模型以避免重复的 API 调用
 const validModelCache = new Map<string, boolean>()
 
 /**
- * Validates a model by attempting an actual API call.
+ * 通过尝试实际的 API 调用来验证模型。
  */
 export async function validateModel(
   model: string,
@@ -24,45 +24,44 @@ export async function validateModel(
   const normalizedModel = model.trim()
   const customBaseURL = getGlobalConfig().customApiEndpoint?.baseURL
 
-  // Empty model is invalid
+  // 空模型无效
   if (!normalizedModel) {
-    return { valid: false, error: 'Model name cannot be empty' }
+    return { valid: false, error: '模型名称不能为空' }
   }
 
-  // Check against availableModels allowlist before any API call
+  // 在进行任何 API 调用之前，先检查 availableModels 允许列表
   if (!isModelAllowed(normalizedModel)) {
     return {
       valid: false,
-      error: `Model '${normalizedModel}' is not in the list of available models`,
+      error: `模型“${normalizedModel}”不在可用模型列表中`,
     }
   }
 
-  // Check if it's a known alias (these are always valid)
+  // 检查是否为已知别名（这些始终有效）
   const lowerModel = normalizedModel.toLowerCase()
   if ((MODEL_ALIASES as readonly string[]).includes(lowerModel)) {
     return { valid: true }
   }
 
-  // Check if it matches ANTHROPIC_CUSTOM_MODEL_OPTION (pre-validated by the user)
+  // 检查是否匹配 ANTHROPIC_CUSTOM_MODEL_OPTION（用户已预先验证）
   if (normalizedModel === process.env.ANTHROPIC_CUSTOM_MODEL_OPTION) {
     return { valid: true }
   }
 
-  // For custom Anthropic-compatible gateways, allow arbitrary model strings.
-  // Many OpenAI-compatible/relay providers expose non-Claude identifiers such as
-  // gpt-5.4 while still speaking the Anthropic wire format.
+  // 对于自定义的与 Anthropic 兼容的网关，允许任意模型字符串。
+  // 许多 OpenAI 兼容/中继提供商在仍遵循 Anthropic 线格式的同时，暴露了非 Claude 标识符，
+  // 例如 gpt-5.4。
   if (customBaseURL && customBaseURL.trim() !== '') {
     validModelCache.set(normalizedModel, true)
     return { valid: true }
   }
 
-  // Check cache first
+  // 先检查缓存
   if (validModelCache.has(normalizedModel)) {
     return { valid: true }
   }
 
-
-  // Try to make an actual API call with minimal parameters
+  // 尝试以最小参数进行实际的 API 调用
   try {
     await sideQuery({
       model: normalizedModel,
@@ -83,7 +82,7 @@ export async function validateModel(
       ],
     })
 
-    // If we got here, the model is valid
+    // 如果成功执行到这里，模型有效
     validModelCache.set(normalizedModel, true)
     return { valid: true }
   } catch (error) {
@@ -95,33 +94,33 @@ function handleValidationError(
   error: unknown,
   modelName: string,
 ): { valid: boolean; error: string } {
-  // NotFoundError (404) means the model doesn't exist
+  // NotFoundError（404）意味着模型不存在
   if (error instanceof NotFoundError) {
     const fallback = get3PFallbackSuggestion(modelName)
-    const suggestion = fallback ? `. Try '${fallback}' instead` : ''
+    const suggestion = fallback ? `。请尝试改用“${fallback}”` : ''
     return {
       valid: false,
-      error: `Model '${modelName}' not found${suggestion}`,
+      error: `模型“${modelName}”未找到${suggestion}`,
     }
   }
 
-  // For other API errors, provide context-specific messages
+  // 对于其他 API 错误，提供上下文相关的消息
   if (error instanceof APIError) {
     if (error instanceof AuthenticationError) {
       return {
         valid: false,
-        error: 'Authentication failed. Please check your API credentials.',
+        error: '认证失败。请检查你的 API 凭据。',
       }
     }
 
     if (error instanceof APIConnectionError) {
       return {
         valid: false,
-        error: 'Network error. Please check your internet connection.',
+        error: '网络错误。请检查你的网络连接。',
       }
     }
 
-    // Check error body for model-specific errors
+    // 检查错误体中是否包含模型特定的错误
     const errorBody = error.error as unknown
     if (
       errorBody &&
@@ -132,24 +131,24 @@ function handleValidationError(
       typeof errorBody.message === 'string' &&
       errorBody.message.includes('model:')
     ) {
-      return { valid: false, error: `Model '${modelName}' not found` }
+      return { valid: false, error: `模型“${modelName}”未找到` }
     }
 
-    // Generic API error
-    return { valid: false, error: `API error: ${error.message}` }
+    // 通用 API 错误
+    return { valid: false, error: `API 错误：${error.message}` }
   }
 
-  // For unknown errors, be safe and reject
+  // 对于未知错误，采取安全策略并拒绝
   const errorMessage = error instanceof Error ? error.message : String(error)
   return {
     valid: false,
-    error: `Unable to validate model: ${errorMessage}`,
+    error: `无法验证模型：${errorMessage}`,
   }
 }
 
-// @[MODEL LAUNCH]: Add a fallback suggestion chain for the new model → previous version
+// @[MODEL LAUNCH]: 为新模型 → 上一版本添加后备建议链
 /**
- * Suggest a fallback model for 3P users when the selected model is unavailable.
+ * 当所选模型不可用时，为第三方用户建议一个后备模型。
  */
 function get3PFallbackSuggestion(model: string): string | undefined {
   if (getAPIProvider() === 'firstParty') {
