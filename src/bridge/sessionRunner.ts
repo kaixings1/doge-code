@@ -68,23 +68,23 @@ type SessionSpawnerDeps = {
 
 /** Map tool names to human-readable verbs for the status display. */
 const TOOL_VERBS: Record<string, string> = {
-  Read: 'Reading',
-  Write: 'Writing',
-  Edit: 'Editing',
-  MultiEdit: 'Editing',
-  Bash: 'Running',
-  Glob: 'Searching',
-  Grep: 'Searching',
+  Read: '读取中',
+  Write: '写入中',
+  Edit: '编辑中',
+  MultiEdit: '编辑中',
+  Bash: '运行中',
+  Glob: '搜索中',
+  Grep: '检索中',
   WebFetch: 'Fetching',
-  WebSearch: 'Searching',
+  WebSearch: '检索中',
   Task: 'Running task',
-  FileReadTool: 'Reading',
-  FileWriteTool: 'Writing',
-  FileEditTool: 'Editing',
-  GlobTool: 'Searching',
-  GrepTool: 'Searching',
-  BashTool: 'Running',
-  NotebookEditTool: 'Editing notebook',
+  FileReadTool: '读取中',
+  FileWriteTool: '写入中',
+  FileEditTool: '编辑中',
+  GlobTool: '检索中',
+  GrepTool: '检索中',
+  BashTool: '运行中',
+  NotebookEditTool: '编辑中 notebook',
   LSP: 'LSP',
 }
 
@@ -176,7 +176,7 @@ function extractActivities(
         )
       } else if (subtype) {
         const errors = msg.errors as string[] | undefined
-        const errorSummary = errors?.[0] ?? `Error: ${subtype}`
+        const errorSummary = errors?.[0] ?? `error: ${subtype}`
         activities.push({
           type: 'error',
           summary: errorSummary,
