@@ -41,8 +41,7 @@ export const call: LocalCommandCall = async (args, context) => {
   const { abortController } = context
   let { messages } = context
 
-  // REPL keeps snipped messages for UI scrollback — project so the compact
-  // model doesn't summarize content that was intentionally removed.
+  // REPL 保留被剪切的消息用于 UI 回滚——投影这些消息，以便压缩模型不会总结被有意移除的内容。
   messages = getMessagesAfterCompactBoundary(messages)
 
   if (messages.length === 0) {
@@ -52,8 +51,8 @@ export const call: LocalCommandCall = async (args, context) => {
   const customInstructions = args.trim()
 
   try {
-    // Try session memory compaction first if no custom instructions
-    // (session memory compaction doesn't support custom instructions)
+    // 如果没有自定义指令，首先尝试会话记忆压缩
+    // （会话记忆压缩不支持自定义指令）
     if (!customInstructions) {
       const sessionMemoryResult = await trySessionMemoryCompaction(
         messages,
@@ -62,8 +61,8 @@ export const call: LocalCommandCall = async (args, context) => {
       if (sessionMemoryResult) {
         getUserContext.cache.clear?.()
         runPostCompactCleanup()
-        // Reset cache read baseline so the post-compact drop isn't flagged
-        // as a break. compactConversation does this internally; SM-compact doesn't.
+        // 重置缓存读取基线，以便压缩后的下降不被标记为中断。
+        // compactConversation 内部会执行此操作；SM-compact 不会。
         if (feature('PROMPT_CACHE_BREAK_DETECTION')) {
           notifyCompaction(
             context.options.querySource ?? 'compact',
@@ -71,7 +70,7 @@ export const call: LocalCommandCall = async (args, context) => {
           )
         }
         markPostCompaction()
-        // Suppress warning immediately after successful compaction
+        // 成功压缩后立即抑制警告
         suppressCompactWarning()
 
         return {
@@ -82,8 +81,8 @@ export const call: LocalCommandCall = async (args, context) => {
       }
     }
 
-    // Reactive-only mode: route /compact through the reactive path.
-    // Checked after session-memory (that path is cheap and orthogonal).
+    // 仅响应式模式：将 /compact 路由至响应式路径。
+    // 在会话记忆之后检查（该路径开销小且正交）。
     if (reactiveCompact?.isReactiveOnlyMode()) {
       return await compactViaReactive(
         messages,
@@ -93,8 +92,8 @@ export const call: LocalCommandCall = async (args, context) => {
       )
     }
 
-    // Fall back to traditional compaction
-    // Run microcompact first to reduce tokens before summarization
+    // 回退到传统压缩
+    // 在总结之前先运行微型压缩以减少 token
     const microcompactResult = await microcompactMessages(messages, context)
     const messagesForCompact = microcompactResult.messages
 
@@ -107,11 +106,11 @@ export const call: LocalCommandCall = async (args, context) => {
       false,
     )
 
-    // Reset lastSummarizedMessageId since legacy compaction replaces all messages
-    // and the old message UUID will no longer exist in the new messages array
+    // 由于传统压缩会替换所有消息，旧的消息 UUID 将不再存在于新消息数组中，
+    // 因此重置 lastSummarizedMessageId
     setLastSummarizedMessageId(undefined)
 
-    // Suppress the "Context left until auto-compact" warning after successful compaction
+    // 成功压缩后抑制“距自动压缩剩余上下文”警告
     suppressCompactWarning()
 
     getUserContext.cache.clear?.()
@@ -153,9 +152,9 @@ async function compactViaReactive(
   context.setSDKStatus?.('compacting')
 
   try {
-    // Hooks and cache-param build are independent — run concurrently.
-    // getCacheSharingParams walks all tools to build the system prompt;
-    // pre-compact hooks spawn subprocesses. Neither depends on the other.
+    // 钩子和缓存参数构建是独立的——并发运行。
+    // getCacheSharingParams 遍历所有工具来构建系统提示；
+    // pre-compact 钩子生成子进程。两者互不依赖。
     const [hookResult, cacheSafeParams] = await Promise.all([
       executePreCompactHooks(
         { trigger: 'manual', customInstructions: customInstructions || null },
@@ -179,9 +178,10 @@ async function compactViaReactive(
     )
 
     if (!outcome.ok) {
-      // The outer catch in `call` translates these: aborted → "Compaction
-      // canceled." (via abortController.signal.aborted check), NOT_ENOUGH →
-      // re-thrown as-is, everything else → "Error during compaction: …".
+      // `call` 中的外层 catch 会翻译这些：
+      // aborted → "压缩已取消。"（通过 abortController.signal.aborted 检查）
+      // NOT_ENOUGH → 原样重新抛出
+      // 其他 → "压缩过程中出错: …"
       switch (outcome.reason) {
         case 'too_few_groups':
           throw new Error(ERROR_MESSAGE_NOT_ENOUGH_MESSAGES)
@@ -194,18 +194,17 @@ async function compactViaReactive(
       }
     }
 
-    // Mirrors the post-success cleanup in tryReactiveCompact, minus
-    // resetMicrocompactState — processSlashCommand calls that for all
-    // type:'compact' results.
+    // 镜像 tryReactiveCompact 中成功后的清理，但去掉 resetMicrocompactState——
+    // processSlashCommand 会为所有 type:'compact' 结果调用它。
     setLastSummarizedMessageId(undefined)
     runPostCompactCleanup()
     suppressCompactWarning()
     getUserContext.cache.clear?.()
 
-    // reactiveCompactOnPromptTooLong runs PostCompact hooks but not PreCompact
-    // — both callers (here and tryReactiveCompact) run PreCompact outside so
-    // they can merge its userDisplayMessage with PostCompact's here. This
-    // caller additionally runs it concurrently with getCacheSharingParams.
+    // reactiveCompactOnPromptTooLong 运行 PostCompact 钩子但不运行 PreCompact 钩子
+    // —— 两个调用方（此处和 tryReactiveCompact）都在外部运行 PreCompact 钩子，
+    // 以便它们能在此处将 PreCompact 的 userDisplayMessage 与 PostCompact 的合并。
+    // 此调用方额外将其与 getCacheSharingParams 并发运行。
     const combinedMessage =
       [hookResult.userDisplayMessage, outcome.result.userDisplayMessage]
         .filter(Boolean)
@@ -244,7 +243,7 @@ function buildDisplayText(
     ...(userDisplayMessage ? [userDisplayMessage] : []),
     ...(upgradeMessage ? [upgradeMessage] : []),
   ]
-  return chalk.dim('Compacted ' + dimmed.join('\n'))
+  return chalk.dim('已压缩 ' + dimmed.join('\n'))
 }
 
 async function getCacheSharingParams(

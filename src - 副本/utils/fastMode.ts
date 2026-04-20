@@ -80,7 +80,7 @@ export function getFastModeUnavailableReason(): string | null {
   )
   // Statsig reason has priority over other reasons.
   if (statigReason !== null) {
-    logForDebugging(`Fast mode unavailable: ${statigReason}`)
+    logForDebugging(`快速模式不可用: ${statigReason}`)
     return statigReason
   }
 
@@ -104,7 +104,7 @@ export function getFastModeUnavailableReason(): string | null {
     const flagFastMode = getSettingsForSource('flagSettings')?.fastMode
     if (!flagFastMode) {
       const reason = '快速模式在 Agent SDK 中不可用'
-      logForDebugging(`Fast mode unavailable: ${reason}`)
+      logForDebugging(`快速模式不可用: ${reason}`)
       return reason
     }
   }
@@ -112,7 +112,7 @@ export function getFastModeUnavailableReason(): string | null {
   // Only available for 1P (not Bedrock/Vertex/Foundry)
   if (getAPIProvider() !== 'firstParty') {
     const reason = '快速模式在 Bedrock、Vertex 或 Foundry 上不可用'
-    logForDebugging(`Fast mode unavailable: ${reason}`)
+    logForDebugging(`快速模式不可用: ${reason}`)
     return reason
   }
 
@@ -132,7 +132,7 @@ export function getFastModeUnavailableReason(): string | null {
     const authType: AuthType =
       getClaudeAIOAuthTokens() !== null ? 'oauth' : 'api-key'
     const reason = getDisabledReasonMessage(orgStatus.reason, authType)
-    logForDebugging(`Fast mode unavailable: ${reason}`)
+    logForDebugging(`快速模式不可用: ${reason}`)
     return reason
   }
 

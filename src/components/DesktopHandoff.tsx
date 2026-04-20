@@ -77,7 +77,7 @@ export function DesktopHandoff(t0) {
           return;
         }
         if (installStatus.status === "version-too-old") {
-          setDownloadMessage(`Claude Desktop 需要更新（当前版本 v${installStatus.version}，需要 v1.1.2396+）。`);
+          setDownloadMessage("Claude Desktop 需要更新（当前版本 v${installStatus.version}，需要 v1.1.2396+）。");
           setState("prompt-download");
           return;
         }

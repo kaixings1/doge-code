@@ -1,6 +1,6 @@
 /**
- * MCP subcommand handlers — extracted from main.tsx for lazy loading.
- * These are dynamically imported only when the corresponding `claude mcp *` command runs.
+ * MCP 子命令处理函数 — 从 main.tsx 提取以实现懒加载。
+ * 仅在对应的 `claude mcp *` 命令执行时才会动态导入这些模块。
  */
 
 import { stat } from 'fs/promises';
@@ -23,22 +23,23 @@ import { gracefulShutdown } from '../../utils/gracefulShutdown.js';
 import { safeParseJSON } from '../../utils/json.js';
 import { getPlatform } from '../../utils/platform.js';
 import { cliError, cliOk } from '../exit.js';
+
 async function checkMcpServerHealth(name: string, server: ScopedMcpServerConfig): Promise<string> {
   try {
     const result = await connectToServer(name, server);
     if (result.type === 'connected') {
-      return '✓ Connected';
+      return '✓ 连接成功';
     } else if (result.type === 'needs-auth') {
       return '! 需要认证';
     } else {
-      return '✗ Failed to connect';
+      return '✗ 连接失败';
     }
   } catch (_error) {
-    return '✗ Connection error';
+    return '✗ 连接错误';
   }
 }
 
-// mcp serve (lines 4512–4532)
+// mcp serve (原行号 4512–4532)
 export async function mcpServeHandler({
   debug,
   verbose
@@ -70,11 +71,11 @@ export async function mcpServeHandler({
   }
 }
 
-// mcp remove (lines 4545–4635)
+// mcp remove (原行号 4545–4635)
 export async function mcpRemoveHandler(name: string, options: {
   scope?: string;
 }): Promise<void> {
-  // Look up config before removing so we can clean up secure storage
+  // 在移除前先查找配置，以便清理安全存储
   const serverBeforeRemoval = getMcpConfigByName(name);
   const cleanupSecureStorage = () => {
     if (serverBeforeRemoval && (serverBeforeRemoval.type === 'sse' || serverBeforeRemoval.type === 'http')) {
@@ -95,17 +96,17 @@ export async function mcpRemoveHandler(name: string, options: {
       cliOk(`文件已修改：${describeMcpConfigFilePath(scope)}`);
     }
 
-    // If no scope specified, check where the server exists
+    // 如果未指定作用域，则检查服务器存在于何处
     const projectConfig = getCurrentProjectConfig();
     const globalConfig = getGlobalConfig();
 
-    // Check if server exists in project scope (.mcp.json)
+    // 检查服务器是否存在于项目作用域（.mcp.json）
     const {
       servers: projectServers
     } = getMcpConfigsByScope('project');
     const mcpJsonExists = !!projectServers[name];
 
-    // Count how many scopes contain this server
+    // 统计包含该服务器的作用域数量
     const scopes: Array<Exclude<ConfigScope, 'dynamic'>> = [];
     if (projectConfig.mcpServers?.[name]) scopes.push('local');
     if (mcpJsonExists) scopes.push('project');
@@ -113,7 +114,7 @@ export async function mcpRemoveHandler(name: string, options: {
     if (scopes.length === 0) {
       cliError(`找不到名称为 "${name}" 的 MCP 服务器`);
     } else if (scopes.length === 1) {
-      // Server exists in only one scope, remove it
+      // 服务器仅存在于一个作用域，直接移除
       const scope = scopes[0]!;
       logEvent('tengu_mcp_delete', {
         name: name as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -124,12 +125,12 @@ export async function mcpRemoveHandler(name: string, options: {
       process.stdout.write(`已从 ${scope} 配置中移除 MCP 服务器 "${name}"\n`);
       cliOk(`文件已修改：${describeMcpConfigFilePath(scope)}`);
     } else {
-      // Server exists in multiple scopes
-      process.stderr.write(`MCP server "${name}" exists in multiple scopes:\n`);
+      // 服务器存在于多个作用域中
+      process.stderr.write(`MCP 服务器 "${name}" 存在于多个作用域中：\n`);
       scopes.forEach(scope => {
         process.stderr.write(`  - ${getScopeLabel(scope)} (${describeMcpConfigFilePath(scope)})\n`);
       });
-      process.stderr.write('\nTo remove from a specific scope, use:\n');
+      process.stderr.write('\n如需从特定作用域移除，请使用：\n');
       scopes.forEach(scope => {
         process.stderr.write(`  claude mcp remove "${name}" -s ${scope}\n`);
       });
@@ -140,20 +141,20 @@ export async function mcpRemoveHandler(name: string, options: {
   }
 }
 
-// mcp list (lines 4641–4688)
+// mcp list (原行号 4641–4688)
 export async function mcpListHandler(): Promise<void> {
   logEvent('tengu_mcp_list', {});
   const {
     servers: configs
   } = await getAllMcpConfigs();
   if (Object.keys(configs).length === 0) {
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log('未配置 MCP 服务器。使用 `claude mcp add` 添加服务器。');
   } else {
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log('正在检查 MCP 服务器状态...\n');
 
-    // Check servers concurrently
+    // 并发检查服务器状态
     const entries = Object.entries(configs);
     const results = await pMap(entries, async ([name, server]) => ({
       name,
@@ -167,29 +168,29 @@ export async function mcpListHandler(): Promise<void> {
       server,
       status
     } of results) {
-      // Intentionally excluding sse-ide servers here since they're internal
+      // 此处有意排除 sse-ide 服务器，因其为内部使用
       if (server.type === 'sse') {
-        // biome-ignore lint/suspicious/noConsole:: intentional console output
+        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
         console.log(`${name}: ${server.url} (SSE) - ${status}`);
       } else if (server.type === 'http') {
-        // biome-ignore lint/suspicious/noConsole:: intentional console output
+        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
         console.log(`${name}: ${server.url} (HTTP) - ${status}`);
       } else if (server.type === 'claudeai-proxy') {
-        // biome-ignore lint/suspicious/noConsole:: intentional console output
+        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
         console.log(`${name}: ${server.url} - ${status}`);
       } else if (!server.type || server.type === 'stdio') {
         const args = Array.isArray(server.args) ? server.args : [];
-        // biome-ignore lint/suspicious/noConsole:: intentional console output
+        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
         console.log(`${name}: ${server.command} ${args.join(' ')} - ${status}`);
       }
     }
   }
-  // Use gracefulShutdown to properly clean up MCP server connections
-  // (process.exit bypasses cleanup handlers, leaving child processes orphaned)
+  // 使用 gracefulShutdown 以正确清理 MCP 服务器连接
+  // (process.exit 会绕过清理处理程序，导致子进程成为孤儿进程)
   await gracefulShutdown(0);
 }
 
-// mcp get (lines 4694–4786)
+// mcp get (原行号 4694–4786)
 export async function mcpGetHandler(name: string): Promise<void> {
   logEvent('tengu_mcp_get', {
     name: name as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
@@ -199,27 +200,27 @@ export async function mcpGetHandler(name: string): Promise<void> {
     cliError(`未找到名称为 ${name} 的 MCP 服务器`);
   }
 
-  // biome-ignore lint/suspicious/noConsole:: intentional console output
+  // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
   console.log(`${name}:`);
-  // biome-ignore lint/suspicious/noConsole:: intentional console output
-  console.log(`  范围：${getScopeLabel(server.scope)}`);
+  // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
+  console.log(`  作用域：${getScopeLabel(server.scope)}`);
 
-  // Check server health
+  // 检查服务器健康状况
   const status = await checkMcpServerHealth(name, server);
-  // biome-ignore lint/suspicious/noConsole:: intentional console output
+  // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
   console.log(`  状态：${status}`);
 
-  // Intentionally excluding sse-ide servers here since they're internal
+  // 此处有意排除 sse-ide 服务器，因其为内部使用
   if (server.type === 'sse') {
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log(`  类型：sse`);
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log(`  URL: ${server.url}`);
     if (server.headers) {
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log('  请求头：');
       for (const [key, value] of Object.entries(server.headers)) {
-        // biome-ignore lint/suspicious/noConsole:: intentional console output
+        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
         console.log(`    ${key}: ${value}`);
       }
     }
@@ -231,19 +232,19 @@ export async function mcpGetHandler(name: string): Promise<void> {
         if (clientConfig?.clientSecret) parts.push('已配置 client_secret');
       }
       if (server.oauth.callbackPort) parts.push(`已配置 callback_port ${server.oauth.callbackPort}`);
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`  OAuth: ${parts.join(', ')}`);
     }
   } else if (server.type === 'http') {
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log(`  类型：http`);
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log(`  URL: ${server.url}`);
     if (server.headers) {
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log('  请求头：');
       for (const [key, value] of Object.entries(server.headers)) {
-        // biome-ignore lint/suspicious/noConsole:: intentional console output
+        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
         console.log(`    ${key}: ${value}`);
       }
     }
@@ -255,34 +256,34 @@ export async function mcpGetHandler(name: string): Promise<void> {
         if (clientConfig?.clientSecret) parts.push('已配置 client_secret');
       }
       if (server.oauth.callbackPort) parts.push(`已配置 callback_port ${server.oauth.callbackPort}`);
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`  OAuth: ${parts.join(', ')}`);
     }
   } else if (server.type === 'stdio') {
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log(`  类型：stdio`);
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log(`  命令：${server.command}`);
     const args = Array.isArray(server.args) ? server.args : [];
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log(`  参数：${args.join(' ')}`);
     if (server.env) {
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log('  环境变量：');
       for (const [key, value] of Object.entries(server.env)) {
-        // biome-ignore lint/suspicious/noConsole:: intentional console output
+        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
         console.log(`    ${key}=${value}`);
       }
     }
   }
-  // biome-ignore lint/suspicious/noConsole:: intentional console output
+  // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
   console.log(`\n要移除此服务器，请运行：claude mcp remove "${name}" -s ${server.scope}`);
-  // Use gracefulShutdown to properly clean up MCP server connections
-  // (process.exit bypasses cleanup handlers, leaving child processes orphaned)
+  // 使用 gracefulShutdown 以正确清理 MCP 服务器连接
+  // (process.exit 会绕过清理处理程序，导致子进程成为孤儿进程)
   await gracefulShutdown(0);
 }
 
-// mcp add-json (lines 4801–4870)
+// mcp add-json (原行号 4801–4870)
 export async function mcpAddJsonHandler(name: string, json: string, options: {
   scope?: string;
   clientSecret?: true;
@@ -291,7 +292,7 @@ export async function mcpAddJsonHandler(name: string, json: string, options: {
     const scope = ensureConfigScope(options.scope);
     const parsedJson = safeParseJSON(json);
 
-    // Read secret before writing config so cancellation doesn't leave partial state
+    // 在写入配置前读取 secret，以便取消操作不会留下部分状态
     const needsSecret = options.clientSecret && parsedJson && typeof parsedJson === 'object' && 'type' in parsedJson && (parsedJson.type === 'sse' || parsedJson.type === 'http') && 'url' in parsedJson && typeof parsedJson.url === 'string' && 'oauth' in parsedJson && parsedJson.oauth && typeof parsedJson.oauth === 'object' && 'clientId' in parsedJson.oauth;
     const clientSecret = needsSecret ? await readClientSecret() : undefined;
     await addMcpConfig(name, parsedJson, scope);
@@ -313,7 +314,7 @@ export async function mcpAddJsonHandler(name: string, json: string, options: {
   }
 }
 
-// mcp add-from-claude-desktop (lines 4881–4927)
+// mcp add-from-claude-desktop (原行号 4881–4927)
 export async function mcpAddFromDesktopHandler(options: {
   scope?: string;
 }): Promise<void> {
@@ -330,7 +331,7 @@ export async function mcpAddFromDesktopHandler(options: {
     } = await import('../../utils/claudeDesktop.js');
     const servers = await readClaudeDesktopMcpServers();
     if (Object.keys(servers).length === 0) {
-      cliOk('No MCP servers found in Claude Desktop configuration or configuration file does not exist.');
+      cliOk('未在 Claude Desktop 配置中找到 MCP 服务器，或配置文件不存在。');
     }
     const {
       unmount
@@ -348,7 +349,7 @@ export async function mcpAddFromDesktopHandler(options: {
   }
 }
 
-// mcp reset-project-choices (lines 4935–4952)
+// mcp reset-project-choices (原行号 4935–4952)
 export async function mcpResetChoicesHandler(): Promise<void> {
   logEvent('tengu_mcp_reset_mcpjson_choices', {});
   saveCurrentProjectConfig(current => ({
@@ -357,5 +358,5 @@ export async function mcpResetChoicesHandler(): Promise<void> {
     disabledMcpjsonServers: [],
     enableAllProjectMcpServers: false
   }));
-  cliOk('All project-scoped (.mcp.json) server approvals and rejections have been reset.\n' + 'You will be prompted for approval next time you start Claude Code.');
+  cliOk('所有项目作用域（.mcp.json）的服务器批准与拒绝状态均已重置。\n' + '下次启动 Claude Code 时，您将再次收到授权提示。');
 }

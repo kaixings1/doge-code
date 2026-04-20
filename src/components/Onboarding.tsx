@@ -81,10 +81,10 @@ export function Onboarding({
           </OrderedList.Item>
           <OrderedList.Item>
             <Text>
-              Due to prompt injection risks, only use it with code you trust
+              由于prompt注入风险, 仅在与您信任的代码一起使用时使用
             </Text>
             <Text dimColor wrap="wrap">
-              For more details see:
+              有关更多详细信息，请参阅：
               <Newline />
               <Link url="https://code.claude.com/docs/en/security" />
             </Text>
@@ -146,10 +146,10 @@ export function Onboarding({
     steps.push({
       id: 'terminal-setup',
       component: <Box flexDirection="column" gap={1} paddingLeft={1}>
-          <Text bold>要使用 Claude Code 的终端设置吗？</Text>
+          <Text bold>要使用 Claude Code 的终端settings吗？</Text>
           <Box flexDirection="column" width={70} gap={1}>
             <Text>
-              For the optimal coding experience, enable the recommended settings
+              为了获得最佳编码体验, enable the recommended settings
               <Newline />
               for your terminal:{' '}
               {env.terminal === 'Apple_Terminal' ? 'Option+Enter for newlines and visual bell' : 'Shift+Enter for newlines'}
