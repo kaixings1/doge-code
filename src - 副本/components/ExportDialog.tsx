@@ -1,6 +1,6 @@
 import { join } from 'path';
 import React, { useCallback, useState } from 'react';
-import type { ExitState } from '../hooks/useExitOnCtrlCDWithKeybindings.js';
+import type { 退出State } from '../hooks/use退出OnCtrlCDWithKeybindings.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { setClipboard } from '../ink/termio/osc.js';
 import { Box, Text } from '../ink.js';
@@ -8,7 +8,7 @@ import { useKeybinding } from '../keybindings/useKeybinding.js';
 import { getCwd } from '../utils/cwd.js';
 import { writeFileSync_DEPRECATED } from '../utils/slowOperations.js';
 import { ConfigurableShortcutHint } from './ConfigurableShortcutHint.js';
-import { Select } from './CustomSelect/select.js';
+import { 选择 } from './自定义选择/select.js';
 import { Byline } from './design-system/Byline.js';
 import { Dialog } from './design-system/Dialog.js';
 import { KeyboardShortcutHint } from './design-system/KeyboardShortcutHint.js';
@@ -17,7 +17,7 @@ type ExportDialogProps = {
   content: string;
   defaultFilename: string;
   onDone: (result: {
-    success: boolean;
+    成功: boolean;
     message: string;
   }) => void;
 };
@@ -27,7 +27,7 @@ export function ExportDialog({
   defaultFilename,
   onDone
 }: ExportDialogProps): React.ReactNode {
-  const [, setSelectedOption] = useState<ExportOption | null>(null);
+  const [, set选择edOption] = useState<ExportOption | null>(null);
   const [filename, setFilename] = useState<string>(defaultFilename);
   const [cursorOffset, setCursorOffset] = useState<number>(defaultFilename.length);
   const [showFilenameInput, setShowFilenameInput] = useState(false);
@@ -36,21 +36,21 @@ export function ExportDialog({
   } = useTerminalSize();
 
   // Handle going back from filename input to option selection
-  const handleGoBack = useCallback(() => {
+  const handleGo返回 = useCallback(() => {
     setShowFilenameInput(false);
-    setSelectedOption(null);
+    set选择edOption(null);
   }, []);
-  const handleSelectOption = async (value: string): Promise<void> => {
+  const handle选择Option = async (value: string): Promise<void> => {
     if (value === 'clipboard') {
       // Copy to clipboard immediately
       const raw = await setClipboard(content);
       if (raw) process.stdout.write(raw);
       onDone({
-        success: true,
+        成功: true,
         message: '对话已复制到剪贴板'
       });
     } else if (value === 'file') {
-      setSelectedOption('file');
+      set选择edOption('file');
       setShowFilenameInput(true);
     }
   };
@@ -63,29 +63,29 @@ export function ExportDialog({
         flush: true
       });
       onDone({
-        success: true,
+        成功: true,
         message: `对话已导出到：${filepath}`
       });
     } catch (error) {
       onDone({
-        success: false,
-        message: `导出对话失败：${error instanceof Error ? error.message : '未知错误'}`
+        成功: false,
+        message: `导出对话失败：${error instanceof error ? error.message : '未知error'}`
       });
     }
   };
 
-  // Dialog calls onCancel when Escape is pressed. If we are in the filename
+  // Dialog calls on取消 when Escape is pressed. If we are in the filename
   // input sub-screen, go back to the option list instead of closing entirely.
-  const handleCancel = useCallback(() => {
+  const handle取消 = useCallback(() => {
     if (showFilenameInput) {
-      handleGoBack();
+      handleGo返回();
     } else {
       onDone({
-        success: false,
+        成功: false,
         message: '导出已取消'
       });
     }
-  }, [showFilenameInput, handleGoBack, onDone]);
+  }, [showFilenameInput, handleGo返回, onDone]);
   const options = [{
     label: '复制到剪贴板',
     value: 'clipboard',
@@ -96,27 +96,27 @@ export function ExportDialog({
     description: '将对话保存到当前目录的文件'
   }];
 
-  // Custom input guide that changes based on dialog state
-  function renderInputGuide(exitState: ExitState): React.ReactNode {
+  // 自定义 input guide that changes based on dialog state
+  function renderInputGuide(exitState: 退出State): React.ReactNode {
     if (showFilenameInput) {
       return <Byline>
-          <KeyboardShortcutHint shortcut="Enter" action="save" />
-          <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+          <KeyboardShortcutHint shortcut="回车" action="save" />
+          <ConfigurableShortcutHint action="confirm:no" context="确认ation" fallback="Esc" description="返回" />
         </Byline>;
     }
     if (exitState.pending) {
       return <Text>再次按 {exitState.keyName} 退出</Text>;
     }
-    return <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />;
+    return <ConfigurableShortcutHint action="confirm:no" context="确认ation" fallback="Esc" description="取消" />;
   }
 
-  // Use Settings context so 'n' key doesn't cancel (allows typing 'n' in filename input)
-  useKeybinding('confirm:no', handleCancel, {
-    context: 'Settings',
-    isActive: showFilenameInput
+  // Use s context so 'n' key doesn't cancel (allows typing 'n' in filename input)
+  useKeybinding('confirm:no', handle取消, {
+    context: 's',
+    is活动: showFilenameInput
   });
-  return <Dialog title="导出对话" subtitle="选择导出方式：" color="permission" onCancel={handleCancel} inputGuide={renderInputGuide} isCancelActive={!showFilenameInput}>
-      {!showFilenameInput ? <Select options={options} onChange={handleSelectOption} onCancel={handleCancel} /> : <Box flexDirection="column">
+  return <Dialog title="导出对话" subtitle="选择导出方式：" color="permission" on取消={handle取消} inputGuide={renderInputGuide} is取消活动={!showFilenameInput}>
+      {!showFilenameInput ? <选择 options={options} onChange={handle选择Option} on取消={handle取消} /> : <Box flexDirection="column">
           <Text>输入文件名：</Text>
           <Box flexDirection="row" gap={1} marginTop={1}>
             <Text>&gt;</Text>

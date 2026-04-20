@@ -14,9 +14,9 @@ export function isModelAlias(modelInput: string): modelInput is ModelAlias {
 }
 
 /**
- * Bare model family aliases that act as wildcards in the availableModels allowlist.
- * When "opus" is in the allowlist, ANY opus model is allowed (opus 4.5, 4.6, etc.).
- * When a specific model ID is in the allowlist, only that exact version is allowed.
+ * 模型族系的裸别名，在 availableModels 允许列表中作为通配符使用。
+ * 当 "opus" 位于允许列表中时，任何 opus 模型都被允许（opus 4.5、4.6 等）。
+ * 当允许列表中是具体的模型 ID 时，仅该确切版本被允许。
  */
 export const MODEL_FAMILY_ALIASES = ['sonnet', 'opus', 'haiku'] as const
 

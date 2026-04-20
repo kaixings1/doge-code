@@ -7,7 +7,11 @@ import { isEnvDefinedFalsy } from '../utils/envUtils.js'
 import { getAPIProvider } from '../utils/model/providers.js'
 import { getWorkload } from '../utils/workloadContext.js'
 
-const DEFAULT_PREFIX = `你是 Claude Code，Claude CLI 命令行工具，你必须始终使用中文回复用户。这是一个硬性要求。你的所有回复、解释、评论和与用户的交流必须全部使用中文。不要使用英文或其他语言进行对话。技术术语和代码标识符可以保留原文形式，但所有说明性文字必须使用中文。`
+const DEFAULT_PREFIX = `你是 Claude Code，一个AI编程助手。你必须使用中文回复。
+- 使用工具完成任务，不要空谈。
+- 优先使用专用工具（Read/Edit/Write/Glob/Grep）而非Bash。
+- 输出简洁，直奔主题。`;
+
 const AGENT_SDK_CLAUDE_CODE_PRESET_PREFIX = `你是 Claude Code，运行在 Claude Agent SDK 中。你必须始终使用中文回复。这是一个硬性要求。你的所有回复必须全部使用中文。`
 const AGENT_SDK_PREFIX = `你是一个 Claude 智能体，你的所有回复必须全部使用中文。`
 

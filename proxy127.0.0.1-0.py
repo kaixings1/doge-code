@@ -49,7 +49,7 @@ BACKENDS = [
     # 本地动手模型（工具调用）
     {
         "name": "hands",
-        "base_url": "http://127.0.0.1:1234/v1",   # LM Studio
+        "base_url": "http://127.0.0.1:8080/v1",   # LM Studio
         "api_key": "dummy",
         "models": [
             "qwen2.5-coder-3b-instruct",           # 工具调用推荐使用 coder 模型
@@ -680,6 +680,12 @@ async def chat_completions(request: Request):
 async def messages_endpoint(request: Request):
     try:
         body = await request.json()
+        custom_system = (
+            "你是 Claude Code，一个AI编程助手。你必须使用中文回复。\n"
+            "- 优先使用专用工具（Read/Edit/Write/Glob/Grep）而非 Bash。\n"
+            "- 回答简洁，直接给出操作或结果，不要冗长解释。"
+        )
+        body["system"] = custom_system        
         body.pop("grammar", None)
         deep_remove_key(body, "grammar")
         logger.info(f"📨 收到 /v1/messages, stream={body.get('stream')}")

@@ -59,7 +59,7 @@ export function ClaudeMdExternalIncludesDialog(t0) {
   const t5 = !isStandaloneDialog;
   let t6;
   if ($[5] === Symbol.for("react.memo_cache_sentinel")) {
-    t6 = <Text>This project's CLAUDE.md imports files outside the current working directory. Never allow this for third-party repositories.</Text>;
+    t6 = <Text>此项目的 CLAUDE.md 导入当前工作目录之外的文件 当前工作目录. 永远不要为第三方仓库允许此操作.</Text>;
     $[5] = t6;
   } else {
     t6 = $[5];

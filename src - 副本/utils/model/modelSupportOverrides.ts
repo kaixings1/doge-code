@@ -24,8 +24,7 @@ const TIERS = [
 ] as const
 
 /**
- * Check whether a 3p model capability override is set for a model that matches one of
- * the pinned ANTHROPIC_DEFAULT_*_MODEL env vars.
+ * 检查是否对匹配 ANTHROPIC_DEFAULT_*_MODEL 固定环境变量的模型设置了第三方模型能力覆盖。
  */
 export const get3PModelCapabilityOverride = memoize(
   (model: string, capability: ModelCapabilityOverride): boolean | undefined => {

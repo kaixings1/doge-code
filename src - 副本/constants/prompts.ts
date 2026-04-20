@@ -145,7 +145,7 @@ function getLanguageSection(
   // 始终默认使用中文，加强指令语气，用纯中文写
   const lang = languagePreference && languagePreference.trim() ? languagePreference : '中文'
   return `# 语言要求
-重要：你必须始终使用${lang}回复用户。这是一个硬性要求。你的所有回复、解释、评论、总结和与用户的交流必须全部使用${lang}。不要使用英文或其他语言进行对话。技术术语、代码标识符和文件路径可以保留原文形式，但所有说明性文字和对话必须使用${lang}。如果你开始用英文回复，请立即切换到${lang}。`
+重要：你必须始终使用${lang}回复，所有回复、解释、评论、总结和与用户的交流必须全部使用${lang}。不要使用英文或其他语言进行对话。技术术语、代码标识符和文件路径可以保留原文形式，但所有说明性文字和对话必须使用${lang}。如果你开始用英文回复，请立即切换到${lang}。`
 }
 
 function getOutputStyleSection(
@@ -740,7 +740,7 @@ export function getUnameSR(): string {
   return `${osType()} ${osRelease()}`
 }
 
-export const DEFAULT_AGENT_PROMPT = `你是 Claude Code（Anthropic 的 Claude 官方 CLI）的一个代理。根据用户的消息，你应该使用可用的工具来完成任务。完全完成任务 — 不要镀金，但也不要半途而废。当你完成任务时，回复一份简洁的报告，涵盖所做的事情和任何关键发现 — 调用者会将其转达给用户，因此只需要基本内容。`
+export const DEFAULT_AGENT_PROMPT = `你是 Claude Code 的一个代理。用中文完成任务并简要报告。`;
 
 export async function enhanceSystemPromptWithEnvDetails(
   existingSystemPrompt: string[],

@@ -4,15 +4,18 @@ import { BASH_TOOL_NAME } from '../BashTool/toolName.js'
 export const GREP_TOOL_NAME = 'Grep'
 
 export function getDescription(): string {
-  return `A powerful search tool built on ripgrep
+  return `基于 ripgrep 构建的高性能搜索工具
 
-  Usage:
-  - ALWAYS use ${GREP_TOOL_NAME} for search tasks. NEVER invoke \`grep\` or \`rg\` as a ${BASH_TOOL_NAME} command. The ${GREP_TOOL_NAME} tool has been optimized for correct permissions and access.
-  - Supports full regex syntax (e.g., "log.*Error", "function\\s+\\w+")
-  - Filter files with glob parameter (e.g., "*.js", "**/*.tsx") or type parameter (e.g., "js", "py", "rust")
-  - Output modes: "content" shows matching lines, "files_with_matches" shows only file paths (default), "count" shows match counts
-  - Use ${AGENT_TOOL_NAME} tool for open-ended searches requiring multiple rounds
-  - Pattern syntax: Uses ripgrep (not grep) - literal braces need escaping (use \`interface\\{\\}\` to find \`interface{}\` in Go code)
-  - Multiline matching: By default patterns match within single lines only. For cross-line patterns like \`struct \\{[\\s\\S]*?field\`, use \`multiline: true\`
+用法：
+- 搜索任务必须使用 ${GREP_TOOL_NAME}，禁止将 \`grep\` 或 \`rg\` 作为 ${BASH_TOOL_NAME} 命令执行。${GREP_TOOL_NAME} 已针对权限与访问进行优化。
+- 支持完整正则语法（例："log.*Error"、"function\\s+\\w+"）
+- 文件筛选：glob 参数（例："*.js"、"**/*.tsx"）或 type 参数（例："js"、"py"、"rust"）
+- 输出模式：
+  - \`"content"\`：显示匹配行
+  - \`"files_with_matches"\`：仅显示文件路径（默认）
+  - \`"count"\`：显示匹配计数
+- 需多轮探索的开放式搜索请使用 ${AGENT_TOOL_NAME}
+- 模式语法遵循 ripgrep（非 grep），字面量花括号需转义（如搜索 Go 代码中的 \`interface{}\` 应写为 \`interface\\{\\}\`）
+- 默认仅匹配单行内内容。若需跨行匹配（例：\`struct \\{[\\s\\S]*?field\`），请启用 \`multiline: true\`
 `
 }

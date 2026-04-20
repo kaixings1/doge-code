@@ -1,545 +1,410 @@
-import pygame
-import sys
-import random
+"""
+坦克大战 - Python Pygame 实现
+约 380 行，功能完整：
+- 玩家坦克（WASD移动，空格射击）
+- 敌方坦克（简单AI，随机移动/射击）
+- 可破坏砖墙
+- 不可破坏钢墙（围绕基地）
+- 基地（被击中则游戏结束）
+- 碰撞检测（坦克之间、坦克与墙、子弹与墙）
+- 生命值、胜负判定
+"""
 
-# 初始化 Pygame
+import pygame
+import random
+import sys
+
+# 初始化
 pygame.init()
 
 # 常量
-SCREEN_WIDTH = 512
-SCREEN_HEIGHT = 512
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
 FPS = 60
-TILE_SIZE = 32
-MAP_SIZE = 16
 
 # 颜色
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-RED = (255, 0, 0)
 GREEN = (0, 255, 0)
+RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
-GRAY = (128, 128, 128)
 BROWN = (139, 69, 19)
-STEEL_COLOR = (192, 192, 192)
-WATER = (0, 100, 255)
-EGG = (255, 215, 0)
-
-# 地图元素类型
-EMPTY = 0
-BRICK = 1
-STEEL = 2
-GRASS = 3
-WATER = 4
-EGG_TILE = 5
-
-# 道具类型
-ITEM_NONE = 0
-ITEM_TIMER = 1
-ITEM_BOMB = 2
-ITEM_SHIELD = 3
-ITEM_TANK = 4
-ITEM_MULTI = 5
-ITEM_STEEL = 6
-ITEM_CLOCK = 7
-ITEM_SHOVEL = 8
-ITEM_TANK_ICON = 9
+GRAY = (128, 128, 128)
+DARK_GRAY = (64, 64, 64)
 
 # 方向
-UP = 0
-RIGHT = 1
-DOWN = 2
-LEFT = 3
+UP, DOWN, LEFT, RIGHT = 0, 1, 2, 3
 
-# 经典 16x16 地图布局 (简化版)
-FIXED_MAP = [
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0],
-    [0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0],
-    [0,0,1,0,0,1,0,2,2,0,0,1,0,0,0,0],
-    [0,0,1,0,0,1,0,2,2,0,0,1,0,0,0,0],
-    [0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0],
-    [0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0],
-    [0,0,1,0,0,1,0,2,2,0,0,1,0,0,0,0],
-    [0,0,1,0,0,1,0,2,2,0,0,1,0,0,0,0],
-    [0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0],
-    [0,0,0,0,0,0,5,5,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,5,5,0,0,0,0,0,0,0,0],
-]
+# 游戏状态
+STATE_PLAYING, STATE_GAME_OVER, STATE_VICTORY = 0, 1, 2
 
-class Tank:
-    def __init__(self, x, y, color, is_player=False, direction=UP):
-        self.rect = pygame.Rect(x, y, TILE_SIZE * 2, TILE_SIZE * 2)
-        self.color = color
-        self.is_player = is_player
-        self.direction = direction
-        self.speed = 2
-        self.cooldown = 0
-        self.shield_timer = 0
-        self.multi_shot = False
-        self.hp = 1  # 🔧 修复：补充血量属性
-        self.is_stopped = False
+# 设置窗口
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("坦克大战")
+clock = pygame.time.Clock()
+font = pygame.font.Font(None, 36)
 
-    def move(self, dx, dy, game_map):
-        if self.is_stopped: return
-        
-        new_x = self.rect.x + dx * self.speed
-        new_y = self.rect.y + dy * self.speed
-        
-        # 边界检查
-        if new_x < 0 or new_x + self.rect.width > SCREEN_WIDTH:
-            new_x = self.rect.x
-        if new_y < 0 or new_y + self.rect.height > SCREEN_HEIGHT:
-            new_y = self.rect.y
-            
-        # 地图碰撞
-        if not self.check_map_collision(new_x, new_y, game_map):
-            return
-            
-        self.rect.x = new_x
-        self.rect.y = new_y
-        
-        # 更新方向 (优先记录最后移动的方向)
-        if dx != 0: self.direction = RIGHT if dx > 0 else LEFT
-        elif dy != 0: self.direction = DOWN if dy > 0 else UP
-
-    def check_map_collision(self, x, y, game_map):
-        points = [
-            (x, y),
-            (x + self.rect.width - 1, y),
-            (x, y + self.rect.height - 1),
-            (x + self.rect.width - 1, y + self.rect.height - 1)
-        ]
-        for px, py in points:
-            col = px // TILE_SIZE
-            row = py // TILE_SIZE
-            if 0 <= row < MAP_SIZE and 0 <= col < MAP_SIZE:
-                tile = game_map[row][col]
-                if tile in [BRICK, STEEL, WATER, EGG_TILE]:
-                    return False
-        return True
+class Wall:
+    """墙壁类，支持砖墙（可破坏）和钢墙（不可破坏）"""
+    def __init__(self, x, y, destructible=True):
+        self.rect = pygame.Rect(x, y, 40, 40)
+        self.destructible = destructible
+        self.active = True
+        self.color = BROWN if destructible else GRAY
 
     def draw(self, surface):
-        if self.shield_timer > 0:
-            pygame.draw.rect(surface, BLUE, self.rect, 3)
-            
-        pygame.draw.rect(surface, self.color, self.rect)
-        
-        # 绘制炮管
-        cx, cy = self.rect.center
-        barrel_len = 20
-        barrel_w = 4
-        
-        if self.direction == UP:
-            pygame.draw.rect(surface, BLACK, (cx - barrel_w//2, cy - barrel_len, barrel_w, barrel_len))
-        elif self.direction == DOWN:
-            pygame.draw.rect(surface, BLACK, (cx - barrel_w//2, cy, barrel_w, barrel_len))
-        elif self.direction == LEFT:
-            pygame.draw.rect(surface, BLACK, (cx - barrel_len, cy - barrel_w//2, barrel_len, barrel_w))
-        elif self.direction == RIGHT:
-            pygame.draw.rect(surface, BLACK, (cx, cy - barrel_w//2, barrel_len, barrel_w))
-
-    def shoot(self):
-        if self.cooldown > 0 or self.is_stopped:
-            return None
-        self.cooldown = 30
-        if self.multi_shot:
-            bullets = []
-            for d in [self.direction, (self.direction + 1) % 4, (self.direction + 3) % 4]:
-                bullets.append(Bullet(self.rect.centerx, self.rect.centery, d, self.is_player))
-            return bullets
-        return [Bullet(self.rect.centerx, self.rect.centery, self.direction, self.is_player)]
-
-    def update(self, dt):
-        if self.cooldown > 0: self.cooldown -= 1
-        if self.shield_timer > 0: self.shield_timer -= 1
-        if self.is_stopped: return
+        if self.active:
+            pygame.draw.rect(surface, self.color, self.rect)
+            if not self.destructible:
+                # 钢墙加个边框效果
+                pygame.draw.rect(surface, DARK_GRAY, self.rect, 2)
 
 class Bullet:
-    def __init__(self, x, y, direction, is_player_bullet):
-        self.rect = pygame.Rect(x - 4, y - 4, 8, 8)
+    """子弹类"""
+    def __init__(self, tank, direction):
+        self.speed = 8
         self.direction = direction
-        self.speed = 6
-        self.is_player_bullet = is_player_bullet
+        self.radius = 4
+        self.life = 120  # 帧数后消失
+        # 从坦克中心发射
+        center_x = tank.x + tank.width // 2
+        center_y = tank.y + tank.height // 2
+        if direction == UP:
+            self.x, self.y = center_x - self.radius, tank.y
+        elif direction == DOWN:
+            self.x, self.y = center_x - self.radius, tank.y + tank.height
+        elif direction == LEFT:
+            self.x, self.y = tank.x, center_y - self.radius
+        else:  # RIGHT
+            self.x, self.y = tank.x + tank.width, center_y - self.radius
+        self.rect = pygame.Rect(self.x, self.y, self.radius*2, self.radius*2)
+
+    def update(self):
+        if self.direction == UP:
+            self.rect.y -= self.speed
+        elif self.direction == DOWN:
+            self.rect.y += self.speed
+        elif self.direction == LEFT:
+            self.rect.x -= self.speed
+        else:
+            self.rect.x += self.speed
+        self.life -= 1
+
+    def draw(self, surface):
+        pygame.draw.circle(surface, YELLOW, self.rect.center, self.radius)
+
+class Tank:
+    """坦克基类"""
+    def __init__(self, x, y, color, speed):
+        self.x = x
+        self.y = y
+        self.width = 40
+        self.height = 40
+        self.color = color
+        self.speed = speed
+        self.direction = UP
+        self.bullets = []
+        self.cooldown = 0
+        self.cooldown_max = 20
         self.alive = True
 
-    def update(self, game_map, tanks, items):
-        if not self.alive: return None
-        
-        dx, dy = 0, 0
-        if self.direction == UP: dy = -self.speed
-        elif self.direction == DOWN: dy = self.speed
-        elif self.direction == LEFT: dx = -self.speed
-        elif self.direction == RIGHT: dx = self.speed
-        
-        new_x = self.rect.x + dx
-        new_y = self.rect.y + dy
-        
-        if new_x < 0 or new_x > SCREEN_WIDTH or new_y < 0 or new_y > SCREEN_HEIGHT:
-            self.alive = False
-            return None
-            
-        col = new_x // TILE_SIZE
-        row = new_y // TILE_SIZE
-        
-        # 地图碰撞处理
-        if 0 <= row < MAP_SIZE and 0 <= col < MAP_SIZE:
-            tile = game_map[row][col]
-            if tile == BRICK:
-                game_map[row][col] = EMPTY
-                self.alive = False
-                return None
-            elif tile in [STEEL, EGG_TILE]:
-                self.alive = False
-                return None
-                
-        self.rect.x = new_x
-        self.rect.y = new_y
-        
-        # 坦克碰撞处理
-        for tank in tanks:
-            if self.rect.colliderect(tank.rect):
-                self.alive = False
-                if self.is_player_bullet and not tank.is_player:
-                    tank.hp -= 1
-                elif not self.is_player_bullet and tank.is_player:
-                    if tank.shield_timer <= 0:
-                        tank.hp -= 1
-                break  # 🔧 修复：击中一个坦克后停止检测其他坦克
-                
-        # 道具碰撞处理
-        for item in items[:]:
-            if self.rect.colliderect(item.rect):
-                self.alive = False
-                return item.activate()  # 🔧 修复：返回道具类型供上层处理
-                
-        return None
+    def get_rect(self):
+        return pygame.Rect(self.x, self.y, self.width, self.height)
 
-    def draw(self, surface):
-        pygame.draw.rect(surface, YELLOW, self.rect)
+    def move(self, dx, dy, walls, tanks):
+        if not self.alive:
+            return
+        new_x = self.x + dx
+        new_y = self.y + dy
+        temp_rect = pygame.Rect(new_x, new_y, self.width, self.height)
 
-class Map:
-    def __init__(self):
-        self.grid = [row[:] for row in FIXED_MAP]
-        self.egg_rect = pygame.Rect(7 * TILE_SIZE, 14 * TILE_SIZE, TILE_SIZE * 2, TILE_SIZE * 2)
-        
-    def draw(self, surface):
-        for r in range(MAP_SIZE):
-            for c in range(MAP_SIZE):
-                x, y = c * TILE_SIZE, r * TILE_SIZE
-                tile = self.grid[r][c]
-                
-                if tile == BRICK:
-                    pygame.draw.rect(surface, BROWN, (x, y, TILE_SIZE, TILE_SIZE))
-                    pygame.draw.rect(surface, BLACK, (x, y, TILE_SIZE, TILE_SIZE), 1)
-                elif tile == STEEL:
-                    pygame.draw.rect(surface, STEEL_COLOR, (x, y, TILE_SIZE, TILE_SIZE))
-                    pygame.draw.rect(surface, WHITE, (x, y, TILE_SIZE, TILE_SIZE), 1)
-                elif tile == GRASS:
-                    pygame.draw.rect(surface, GREEN, (x, y, TILE_SIZE, TILE_SIZE))
-                elif tile == WATER:
-                    pygame.draw.rect(surface, WATER, (x, y, TILE_SIZE, TILE_SIZE))
-                elif tile == EGG_TILE:
-                    pygame.draw.rect(surface, EGG, (x, y, TILE_SIZE, TILE_SIZE))
-                    pygame.draw.circle(surface, BLACK, (x + TILE_SIZE//2, y + TILE_SIZE//2), 5)
-        
-        # 绘制鸡蛋
-        pygame.draw.rect(surface, BLACK, self.egg_rect)
-        pygame.draw.rect(surface, EGG, self.egg_rect.inflate(-4, -4))
-        pygame.draw.circle(surface, BLACK, (self.egg_rect.centerx, self.egg_rect.centery), 8)
+        # 边界
+        if temp_rect.left < 0 or temp_rect.right > SCREEN_WIDTH or temp_rect.top < 0 or temp_rect.bottom > SCREEN_HEIGHT:
+            return
 
-class Item:
-    def __init__(self, x, y, type):
-        self.rect = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
-        self.type = type
-        self.timer = 300
-        
-    def draw(self, surface):
-        color = WHITE
-        text = "?"
-        if self.type == ITEM_TIMER: color = BLUE; text = "1"
-        elif self.type == ITEM_BOMB: color = RED; text = "2"
-        elif self.type == ITEM_SHIELD: color = GREEN; text = "3"
-        elif self.type == ITEM_TANK: color = YELLOW; text = "4"
-        elif self.type == ITEM_MULTI: color = WHITE; text = "5"
-        elif self.type == ITEM_STEEL: color = STEEL_COLOR; text = "6"
-        elif self.type == ITEM_CLOCK: color = GRAY; text = "7"
-        elif self.type == ITEM_SHOVEL: color = BROWN; text = "8"
-        elif self.type == ITEM_TANK_ICON: color = GREEN; text = "T"
-        
-        pygame.draw.rect(surface, color, self.rect)
-        pygame.draw.rect(surface, BLACK, self.rect, 2)
-        font = pygame.font.SysFont(None, 24)
-        txt = font.render(text, True, BLACK)
-        surface.blit(txt, self.rect.topleft)
-        
-    def activate(self):
-        return self.type
-
-class Game:
-    def __init__(self):
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        pygame.display.set_caption("Battle City - 坦克大战")
-        self.clock = pygame.time.Clock()
-        self.font = pygame.font.SysFont(None, 36)
-        self.small_font = pygame.font.SysFont(None, 24)
-        
-        self.state = "MENU"
-        self.map = Map()
-        self.tanks = []
-        self.bullets = []
-        self.items = []
-        self.enemies = []
-        self.score = 0
-        self.player_names = ["Player 1", "Player 2"]
-        self.input_name_index = 0
-        self.current_name = ""
-        self.max_players = 1
-        
-        self.spawn_timer = 0
-        self.enemy_spawn_rate = 180
-        self.keys = {}
-        
-    def run(self):
-        running = True
-        while running:
-            dt = self.clock.tick(FPS)
-            
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                elif event.type == pygame.KEYDOWN:
-                    if self.state == "MENU":
-                        self.handle_menu_input(event.key)
-                    elif self.state == "PLAYING":
-                        self.keys[event.key] = True
-                        if event.key == pygame.K_r:
-                            self.restart_game()
-                    elif self.state == "GAMEOVER":
-                        if event.key == pygame.K_r:
-                            self.state = "MENU"
-                            
-            if self.state == "MENU":
-                self.draw_menu()
-            elif self.state == "PLAYING":
-                self.update(dt)
-                self.draw()
-            elif self.state == "GAMEOVER":
-                self.draw()
-                self.draw_game_over()
-                
-            pygame.display.flip()
-            
-        pygame.quit()
-        sys.exit()
-        
-    def handle_menu_input(self, key):
-        if key == pygame.K_1:
-            self.max_players = 1
-            self.input_name_index = 0
-            self.current_name = ""
-            self.player_names = ["Player 1"]
-        elif key == pygame.K_2:
-            self.max_players = 2
-            self.input_name_index = 0
-            self.current_name = ""
-            self.player_names = ["Player 1", "Player 2"]
-        elif key == pygame.K_BACKSPACE:
-            if self.current_name:
-                self.current_name = self.current_name[:-1]
-        elif key == pygame.K_RETURN:
-            if self.current_name:
-                self.player_names[self.input_name_index] = self.current_name
-                self.current_name = ""
-                self.input_name_index += 1
-                if self.input_name_index >= self.max_players:
-                    self.start_game()
-        else:
-            if 32 <= key <= 126:
-                if len(self.current_name) < 10:
-                    self.current_name += chr(key)
-                    
-    def start_game(self):
-        self.state = "PLAYING"
-        self.map = Map()
-        self.tanks = []
-        self.bullets = []
-        self.items = []
-        self.enemies = []
-        self.score = 0
-        self.spawn_timer = 0
-        
-        p1 = Tank(5 * TILE_SIZE, 14 * TILE_SIZE, GREEN, True)
-        self.tanks.append(p1)
-        
-        if self.max_players == 2:
-            p2 = Tank(7 * TILE_SIZE, 14 * TILE_SIZE, BLUE, True)
-            self.tanks.append(p2)
-            
-        # 🔧 修复：为测试添加一个初始道具
-        self.items.append(Item(3 * TILE_SIZE, 3 * TILE_SIZE, ITEM_SHIELD))
-
-    def restart_game(self):
-        self.state = "MENU"
-        self.current_name = ""
-        self.input_name_index = 0
-        self.player_names = ["Player 1", "Player 2"]
-        self.keys = {}  # 🔧 修复：清空按键状态防止残留
-        
-    def apply_item_effect(self, item_type):
-        """🔧 修复：处理道具拾取效果"""
-        for tank in self.tanks + self.enemies:
-            if item_type == ITEM_TIMER: tank.shield_timer = 600
-            elif item_type == ITEM_SHIELD: tank.shield_timer = 600
-            elif item_type == ITEM_MULTI: tank.multi_shot = True
-            # 其他道具可根据需求扩展
-
-    def update(self, dt):
-        if self.state != "PLAYING": return
-        
-        self.spawn_timer += 1
-        if self.spawn_timer >= self.enemy_spawn_rate and len(self.enemies) < 4:
-            self.spawn_timer = 0
-            spawn_x = [2, 7, 12][random.randint(0, 2)] * TILE_SIZE
-            self.enemies.append(Tank(spawn_x, 0, RED, False))
-            
-        for tank in self.tanks:
-            tank.update(dt)
-            if tank.is_player:
-                dx, dy = 0, 0
-                if self.keys.get(pygame.K_w) or self.keys.get(pygame.K_UP): dy = -1
-                if self.keys.get(pygame.K_s) or self.keys.get(pygame.K_DOWN): dy = 1
-                if self.keys.get(pygame.K_a) or self.keys.get(pygame.K_LEFT): dx = -1
-                if self.keys.get(pygame.K_d) or self.keys.get(pygame.K_RIGHT): dx = 1
-                
-                # 🔧 修复：玩家2按键冲突处理 (原代码逻辑过于死板)
-                if tank == self.tanks[0]:
-                    tank.move(dx, dy, self.map.grid)
-                    if self.keys.get(pygame.K_SPACE):
-                        bullets = tank.shoot()
-                        if bullets: self.bullets.extend(bullets)
-                elif len(self.tanks) > 1 and tank == self.tanks[1]:
-                    # 简化为 WASD + IJKL 或方向键独立处理，此处保持原逻辑但优化了按键读取
-                    p2_dx, p2_dy = 0, 0
-                    if self.keys.get(pygame.K_UP): p2_dy = -1
-                    elif self.keys.get(pygame.K_DOWN): p2_dy = 1
-                    elif self.keys.get(pygame.K_LEFT): p2_dx = -1
-                    elif self.keys.get(pygame.K_RIGHT): p2_dx = 1
-                    tank.move(p2_dx, p2_dy, self.map.grid)
-                    if self.keys.get(pygame.K_KP0) or self.keys.get(pygame.K_RETURN):
-                        bullets = tank.shoot()
-                        if bullets: self.bullets.extend(bullets)
-                        
-        for enemy in self.enemies:
-            enemy.update(dt)
-            if random.random() < 0.02:
-                enemy.direction = random.choice([UP, DOWN, LEFT, RIGHT])
-            edx, edy = 0, 0
-            if enemy.direction == UP: edy = -1
-            elif enemy.direction == DOWN: edy = 1
-            elif enemy.direction == LEFT: edx = -1
-            elif enemy.direction == RIGHT: edx = 1
-            enemy.move(edx, edy, self.map.grid)
-            if random.random() < 0.01:
-                bullets = enemy.shoot()
-                if bullets: self.bullets.extend(bullets)
-                
-        # 🔧 修复：安全清理子弹并处理道具/死亡逻辑
-        for bullet in self.bullets[:]:
-            result = bullet.update(self.map.grid, self.tanks + self.enemies, self.items)
-            if result is not None:
-                self.apply_item_effect(result)
-                
-        # 清理死亡坦克
-        self.tanks = [t for t in self.tanks if t.hp > 0]
-        self.enemies = [e for e in self.enemies if e.hp > 0]
-        
-        # 🔧 修复：玩家死亡判定
-        for tank in self.tanks:
-            if tank.is_player and tank.hp <= 0:
-                self.state = "GAMEOVER"
+        # 墙壁碰撞
+        for wall in walls:
+            if wall.active and temp_rect.colliderect(wall.rect):
                 return
-                
-        self.bullets = [b for b in self.bullets if b.alive]
-        
-        # 道具计时与清理
-        for item in self.items[:]:
-            item.timer -= 1
-            if item.timer <= 0:
-                self.items.remove(item)
-                
-        # 鸡蛋被毁判定
-        egg_center = (7 * TILE_SIZE + TILE_SIZE//2, 14 * TILE_SIZE + TILE_SIZE//2)
-        col, row = egg_center[0] // TILE_SIZE, egg_center[1] // TILE_SIZE
-        if self.map.grid[row][col] == EMPTY:
-            self.state = "GAMEOVER"
-            
-    def draw(self):
-        self.screen.fill(BLACK)
-        
-        # 🔧 修复：正确绘制顺序 (背景 -> 草地 -> 坦克 -> 道具 -> 障碍物 -> 鸡蛋 -> 子弹 -> UI)
-        self.map.draw(self.screen)
-        
-        for tank in self.tanks + self.enemies:
-            tank.draw(self.screen)
-            
-        for item in self.items:
-            item.draw(self.screen)
-            
+
+        # 坦克碰撞（排除自己）
+        for tank in tanks:
+            if tank != self and tank.alive and temp_rect.colliderect(tank.get_rect()):
+                return
+
+        self.x, self.y = new_x, new_y
+
+    def shoot(self):
+        if self.cooldown <= 0 and self.alive:
+            self.bullets.append(Bullet(self, self.direction))
+            self.cooldown = self.cooldown_max
+
+    def update_bullets(self, walls, enemy_tanks, player, base):
+        """更新子弹状态，处理碰撞"""
+        if self.cooldown > 0:
+            self.cooldown -= 1
+
+        for bullet in self.bullets[:]:
+            bullet.update()
+
+            # 墙壁碰撞
+            hit_wall = False
+            for wall in walls:
+                if wall.active and bullet.rect.colliderect(wall.rect):
+                    if wall.destructible:
+                        wall.active = False
+                    hit_wall = True
+                    break
+            if hit_wall:
+                self.bullets.remove(bullet)
+                continue
+
+            # 边界
+            if bullet.rect.right < 0 or bullet.rect.left > SCREEN_WIDTH or bullet.rect.bottom < 0 or bullet.rect.top > SCREEN_HEIGHT:
+                self.bullets.remove(bullet)
+                continue
+
+            # 子弹生命周期
+            if bullet.life <= 0:
+                self.bullets.remove(bullet)
+                continue
+
+            # 碰撞检测：玩家子弹打敌人，敌人子弹打玩家或基地
+            if isinstance(self, PlayerTank):
+                for enemy in enemy_tanks:
+                    if enemy.alive and bullet.rect.colliderect(enemy.get_rect()):
+                        enemy.alive = False
+                        self.bullets.remove(bullet)
+                        break
+            elif isinstance(self, EnemyTank):
+                if player.alive and bullet.rect.colliderect(player.get_rect()):
+                    player.alive = False
+                    self.bullets.remove(bullet)
+                    continue
+                if base.alive and bullet.rect.colliderect(base.rect):
+                    base.alive = False
+                    self.bullets.remove(bullet)
+                    continue
+
+    def draw(self, surface):
+        if not self.alive:
+            return
+        # 坦克主体
+        pygame.draw.rect(surface, self.color, self.get_rect())
+        pygame.draw.rect(surface, BLACK, self.get_rect(), 2)
+        # 炮管
+        cx, cy = self.x + self.width//2, self.y + self.height//2
+        if self.direction == UP:
+            ex, ey = cx, cy - 20
+        elif self.direction == DOWN:
+            ex, ey = cx, cy + 20
+        elif self.direction == LEFT:
+            ex, ey = cx - 20, cy
+        else:
+            ex, ey = cx + 20, cy
+        pygame.draw.line(surface, BLACK, (cx, cy), (ex, ey), 5)
+        # 子弹
         for bullet in self.bullets:
-            bullet.draw(self.screen)
-            
-        # UI
-        score_text = self.font.render(f"Score: {self.score}", True, WHITE)
-        self.screen.blit(score_text, (10, 10))
-        
-        player_text = self.font.render(f"Players: {self.max_players}", True, WHITE)
-        self.screen.blit(player_text, (10, 50))
-        
-        names_text = self.small_font.render(f"P1: {self.player_names[0]}  P2: {self.player_names[1]}", True, WHITE)
-        self.screen.blit(names_text, (10, SCREEN_HEIGHT - 30))
-        
-    def draw_menu(self):
-        self.screen.fill(BLACK)
-        title = self.font.render("BATTLE CITY", True, WHITE)
-        rect = title.get_rect(center=(SCREEN_WIDTH//2, 100))
-        self.screen.blit(title, rect)
-        
-        name_text = self.font.render(self.player_names[0] + "_", True, WHITE)
-        rect = name_text.get_rect(center=(SCREEN_WIDTH//2, 200))
-        self.screen.blit(name_text, rect)
-        
-        if self.max_players == 2:
-            name2_text = self.font.render(self.player_names[1] + "_", True, WHITE)
-            rect = name2_text.get_rect(center=(SCREEN_WIDTH//2, 250))
-            self.screen.blit(name2_text, rect)
-            
-        prompt = self.small_font.render("Press Enter to Start", True, GREEN)
-        rect = prompt.get_rect(center=(SCREEN_WIDTH//2, 350))
-        self.screen.blit(prompt, rect)
-        
-        mode_text = self.small_font.render("Press 1 for Single, 2 for Double", True, YELLOW)
-        rect = mode_text.get_rect(center=(SCREEN_WIDTH//2, 400))
-        self.screen.blit(mode_text, rect)
-        
-    def draw_game_over(self):
-        overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-        overlay.set_alpha(128)
-        overlay.fill(BLACK)
-        self.screen.blit(overlay, (0, 0))
-        
-        text = self.font.render("GAME OVER", True, RED)
-        rect = text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
-        self.screen.blit(text, rect)
-        
-        restart = self.small_font.render("Press R to Restart", True, WHITE)
-        rect = restart.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 50))
-        self.screen.blit(restart, rect)
+            bullet.draw(surface)
+
+class PlayerTank(Tank):
+    def __init__(self, x, y):
+        super().__init__(x, y, GREEN, 4)
+        self.lives = 3
+        self.respawn_timer = 0
+
+    def handle_input(self, keys, walls, all_tanks):
+        if not self.alive:
+            return
+        dx = dy = 0
+        if keys[pygame.K_w] or keys[pygame.K_UP]:
+            self.direction = UP
+            dy = -self.speed
+        elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
+            self.direction = DOWN
+            dy = self.speed
+        elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
+            self.direction = LEFT
+            dx = -self.speed
+        elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+            self.direction = RIGHT
+            dx = self.speed
+
+        if dx != 0 or dy != 0:
+            self.move(dx, dy, walls, all_tanks)
+
+        if keys[pygame.K_SPACE]:
+            self.shoot()
+
+class EnemyTank(Tank):
+    def __init__(self, x, y):
+        super().__init__(x, y, RED, 2)
+        self.ai_timer = 0
+        self.change_dir_time = random.randint(40, 100)
+        self.shoot_prob = 0.015
+
+    def ai_update(self, walls, all_tanks, player):
+        if not self.alive:
+            return
+
+        self.ai_timer += 1
+        if self.ai_timer >= self.change_dir_time:
+            self.ai_timer = 0
+            self.change_dir_time = random.randint(40, 100)
+            self.direction = random.choice([UP, DOWN, LEFT, RIGHT])
+
+        dx = dy = 0
+        if self.direction == UP:
+            dy = -self.speed
+        elif self.direction == DOWN:
+            dy = self.speed
+        elif self.direction == LEFT:
+            dx = -self.speed
+        else:
+            dx = self.speed
+
+        if dx != 0 or dy != 0:
+            self.move(dx, dy, walls, all_tanks)
+
+        if random.random() < self.shoot_prob:
+            self.shoot()
+
+class Base:
+    """玩家基地（老鹰）"""
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, 40, 40)
+        self.alive = True
+
+    def draw(self, surface):
+        if self.alive:
+            pygame.draw.rect(surface, BLUE, self.rect)
+            # 画个老鹰标志（简化为星形）
+            cx, cy = self.rect.center
+            pygame.draw.circle(surface, YELLOW, (cx, cy), 12)
+            pygame.draw.polygon(surface, BLACK, [(cx, cy-8), (cx-3, cy-2), (cx-8, cy-2), (cx-4, cy+3), (cx-6, cy+8), (cx, cy+5), (cx+6, cy+8), (cx+4, cy+3), (cx+8, cy-2), (cx+3, cy-2)])
+
+def create_walls():
+    """创建砖墙和钢墙（基地周围）"""
+    walls = []
+    # 外围砖墙
+    for i in range(20):
+        walls.append(Wall(i*40, 0))           # 上边
+        walls.append(Wall(i*40, 560))         # 下边
+    for i in range(1, 14):
+        walls.append(Wall(0, i*40))           # 左边
+        walls.append(Wall(760, i*40))         # 右边
+
+    # 内部障碍砖墙
+    for x in [200, 240, 280, 320, 440, 480, 520, 560]:
+        walls.append(Wall(x, 200))
+    for y in [120, 160, 200]:
+        walls.append(Wall(360, y))
+
+    # 基地周围的钢墙（不可破坏）
+    base_x, base_y = 360, 520
+    steel_positions = [(base_x-40, base_y), (base_x+40, base_y),
+                       (base_x-40, base_y-40), (base_x, base_y-40), (base_x+40, base_y-40)]
+    for pos in steel_positions:
+        walls.append(Wall(pos[0], pos[1], destructible=False))
+
+    return walls
+
+def draw_ui(player, state):
+    """绘制生命值和游戏状态"""
+    lives_text = font.render(f"Lives: {player.lives}", True, WHITE)
+    screen.blit(lives_text, (10, 10))
+
+    if state == STATE_GAME_OVER:
+        text = font.render("GAME OVER - Press R to Restart", True, RED)
+        screen.blit(text, (SCREEN_WIDTH//2 - 200, SCREEN_HEIGHT//2))
+    elif state == STATE_VICTORY:
+        text = font.render("VICTORY! - Press R to Restart", True, GREEN)
+        screen.blit(text, (SCREEN_WIDTH//2 - 180, SCREEN_HEIGHT//2))
+
+def reset_game():
+    """重置游戏状态"""
+    walls = create_walls()
+    player = PlayerTank(360, 480)
+    enemies = [
+        EnemyTank(100, 80),
+        EnemyTank(300, 80),
+        EnemyTank(500, 80),
+        EnemyTank(200, 160),
+        EnemyTank(600, 160)
+    ]
+    base = Base(360, 520)
+    return walls, player, enemies, base, STATE_PLAYING
+
+def main():
+    walls, player, enemies, base, game_state = reset_game()
+    all_tanks = [player] + enemies
+
+    running = True
+    while running:
+        clock.tick(FPS)
+
+        # 事件处理
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r and game_state != STATE_PLAYING:
+                    walls, player, enemies, base, game_state = reset_game()
+                    all_tanks = [player] + enemies
+
+        if game_state == STATE_PLAYING:
+            # 玩家输入
+            keys = pygame.key.get_pressed()
+            player.handle_input(keys, walls, all_tanks)
+
+            # 敌人AI
+            for enemy in enemies:
+                enemy.ai_update(walls, all_tanks, player)
+
+            # 更新子弹
+            player.update_bullets(walls, enemies, player, base)
+            for enemy in enemies:
+                enemy.update_bullets(walls, enemies, player, base)
+
+            # 移除死亡敌人
+            enemies = [e for e in enemies if e.alive]
+            all_tanks = [player] + enemies
+
+            # 检查玩家死亡与重生
+            if not player.alive and player.lives > 0:
+                player.lives -= 1
+                if player.lives > 0:
+                    # 重生
+                    player.alive = True
+                    player.x, player.y = 360, 480
+                    player.bullets.clear()
+                    player.cooldown = 0
+                else:
+                    game_state = STATE_GAME_OVER
+
+            # 检查基地是否被摧毁
+            if not base.alive:
+                game_state = STATE_GAME_OVER
+
+            # 检查胜利（敌人全灭）
+            if len(enemies) == 0:
+                game_state = STATE_VICTORY
+
+        # 绘制
+        screen.fill(BLACK)
+        for wall in walls:
+            wall.draw(screen)
+        base.draw(screen)
+        player.draw(screen)
+        for enemy in enemies:
+            enemy.draw(screen)
+        draw_ui(player, game_state)
+
+        pygame.display.flip()
+
+    pygame.quit()
+    sys.exit()
 
 if __name__ == "__main__":
-    game = Game()
-    game.run()
+    main()

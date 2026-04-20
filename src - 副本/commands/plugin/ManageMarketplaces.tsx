@@ -584,7 +584,7 @@ export function ManageMarketplaces({
               </Box>}
           <Box marginTop={1}>
             <Text>
-              按 <Text bold>y</Text> 确认或按 <Text bold>n</Text> 取消
+              按 <Text bold>Y</Text> 确认或按 <Text bold>N</Text> 取消
             </Text>
           </Box>
         </Box>

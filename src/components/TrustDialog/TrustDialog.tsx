@@ -205,7 +205,7 @@ export function TrustDialog(t0) {
   let t18;
   if ($[20] === Symbol.for("react.memo_cache_sentinel")) {
     t16 = <Text bold={true}>{getFsImplementation().cwd()}</Text>;
-    t17 = <Text>Quick safety check: Is this a project you created or one you trust? (Like your own code, a well-known open source project, or work from your team). If not, take a moment to review what{"'"}s in this folder first.</Text>;
+    t17 = <Text>快速安全checking：这是您创建的还是您信任的项目吗？? (像您自己的代码、知名的开放源代码项目，或您团队的工作). If not, take a moment to review what{"'"}s in this folder first.</Text>;
     t18 = <Text>Claude Code{"'"}ll be able to read, edit, and execute files here.</Text>;
     $[20] = t16;
     $[21] = t17;
@@ -217,7 +217,7 @@ export function TrustDialog(t0) {
   }
   let t19;
   if ($[23] === Symbol.for("react.memo_cache_sentinel")) {
-    t19 = <Text dimColor={true}><Link url="https://code.claude.com/docs/en/security">Security guide</Link></Text>;
+    t19 = <Text dimColor={true}><Link url="https://code.claude.com/docs/en/security">安全指南</Link></Text>;
     $[23] = t19;
   } else {
     t19 = $[23];
