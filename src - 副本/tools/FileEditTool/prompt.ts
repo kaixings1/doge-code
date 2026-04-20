@@ -2,7 +2,7 @@ import { isCompactLinePrefixEnabled } from '../../utils/file.js'
 import { FILE_READ_TOOL_NAME } from '../FileReadTool/prompt.js'
 
 function getPreReadInstruction(): string {
-  return `\n- You must use your \`${FILE_READ_TOOL_NAME}\` tool at least once in the conversation before editing. This tool will error if you attempt an edit without reading the file. `
+  return `\n- 编辑前必须至少调用一次 \`${FILE_READ_TOOL_NAME}\` 工具读取文件，否则编辑操作将报错。`
 }
 
 export function getEditToolDescription(): string {
@@ -11,19 +11,21 @@ export function getEditToolDescription(): string {
 
 function getDefaultEditDescription(): string {
   const prefixFormat = isCompactLinePrefixEnabled()
-    ? 'line number + tab'
-    : 'spaces + line number + arrow'
+    ? '行号 + Tab'
+    : '空格 + 行号 + 箭头'
   const minimalUniquenessHint =
     process.env.USER_TYPE === 'ant'
-      ? `\n- Use the smallest old_string that's clearly unique — usually 2-4 adjacent lines is sufficient. Avoid including 10+ lines of context when less uniquely identifies the target.`
+      ? `\n- 使用能唯一标识目标的最短 \`old_string\`，通常 2-4 行相邻代码即可，无需提供 10 行以上的冗余上下文。`
       : ''
-  return `Performs exact string replacements in files.
+  return `对文件执行精确的字符串替换。
 
 必须提供以下参数：
-1. \`file_path\` 必须是绝对路径；否则将抛出错误。
-2. \`old_string\` 必须是确切的字面文本要替换（包括所有空格、缩进、换行符和周围的代码等）。
-3. \`new_string\` 必须是确切的字面文本替换 \`old_string\`（也包括所有空格、缩进、换行符和周围的代码等）。确保最终代码正确且符合习惯。
-4. 永远不要转义 \`old_string\` 或 \`new_string\`，这会破坏确切的字面文本要求。
-**重要**：如果上述任何一项未满足，该工具将失败。对于 \`old_string\`：必须唯一标识要更改的单个实例。包括至少3行前后文。
-**全部替换**：设置 \`replace_all\` 为 true 当你想替换所有匹配 \`old_string\` 的实例。`;
+1. \`file_path\`：文件的绝对路径。
+2. \`old_string\`：待替换的精确文本（包含所有空格、缩进、换行及周围代码）。
+3. \`new_string\`：用于替换的精确文本（同样包含所有空格、缩进、换行及周围代码）。请确保替换后代码正确且风格一致。
+4. 切勿对 \`old_string\` 或 \`new_string\` 进行转义，否则将破坏精确匹配要求。
+
+**重要**：任一条件未满足工具将执行失败。
+- \`old_string\` 必须能唯一标识单处修改目标，建议包含至少 3 行上下文。
+- **全部替换**：若需替换文件中所有匹配项，请设置 \`replace_all: true\`。`
 }

@@ -50,7 +50,7 @@ export function BypassPermissionsModeDialog(t0) {
   const handleEscape = _temp2;
   let t3;
   if ($[3] === Symbol.for("react.memo_cache_sentinel")) {
-    t3 = <Box flexDirection="column" gap={1}><Text>In Bypass Permissions mode, Claude Code will not ask for your approval before running potentially dangerous commands.<Newline />This mode should only be used in a sandboxed container/VM that has restricted internet access and can easily be restored if damaged.</Text><Text>By proceeding, you accept all responsibility for actions taken while running in Bypass Permissions mode.</Text><Link url="https://code.claude.com/docs/en/security" /></Box>;
+    t3 = <Box flexDirection="column" gap={1}><Text>在绕过权限模式下, Claude Code 不会在运行前征求您的批准 潜在危险命令.<Newline />此模式只能用于 沙盒容器/VM 具有受限网络访问权限 且易于恢复.</Text><Text>通过继续操作，您接受采取的所有行动的全部责任 在绕过权限模式下运行时.</Text><Link url="https://code.claude.com/docs/en/security" /></Box>;
     $[3] = t3;
   } else {
     t3 = $[3];

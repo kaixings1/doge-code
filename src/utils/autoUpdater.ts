@@ -480,7 +480,7 @@ export async function installGlobalPackage(
       })
       // biome-ignore lint/suspicious/noConsole:: intentional console output
       console.error(`
-Error: Windows NPM detected in WSL
+error：在 WSL 环境中检测到 Windows NPM
 
 You're running Claude Code in WSL but using the Windows NPM installation from /mnt/c/.
 This configuration is not supported for updates.

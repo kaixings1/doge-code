@@ -1,8 +1,8 @@
 /**
- * Plugin and marketplace subcommand handlers — extracted from main.tsx for lazy loading.
- * These are dynamically imported only when `claude plugin *` or `claude plugin marketplace *` runs.
+ * 插件与市场子命令处理函数 — 从 main.tsx 提取以实现懒加载。
+ * 仅在执行 `claude plugin *` 或 `claude plugin marketplace *` 命令时动态导入。
  */
-/* eslint-disable custom-rules/no-process-exit -- CLI subcommand handlers intentionally exit */
+/* eslint-disable custom-rules/no-process-exit -- CLI 子命令处理函数有意执行退出 */
 import figures from 'figures'
 import { basename, dirname } from 'path'
 import { setUseCoworkPlugins } from '../../bootstrap/state.js'
@@ -59,11 +59,11 @@ import { jsonStringify } from '../../utils/slowOperations.js'
 import { plural } from '../../utils/stringUtils.js'
 import { cliError, cliOk } from '../exit.js'
 
-// Re-export for main.tsx to reference in option definitions
+// 重新导出供 main.tsx 在选项定义中引用
 export { VALID_INSTALLABLE_SCOPES, VALID_UPDATE_SCOPES }
 
 /**
- * Helper function to handle marketplace command errors consistently.
+ * 辅助函数，用于统一处理市场命令错误。
  */
 export function handleMarketplaceError(error: unknown, action: string): never {
   logError(error)
@@ -72,27 +72,27 @@ export function handleMarketplaceError(error: unknown, action: string): never {
 
 function printValidationResult(result: ValidationResult): void {
   if (result.errors.length > 0) {
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log(
       `${figures.cross} 发现 ${result.errors.length} ${plural(result.errors.length, '个错误')}：\n`,
     )
     result.errors.forEach(error => {
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`  ${figures.pointer} ${error.path}: ${error.message}`)
     })
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log('')
   }
   if (result.warnings.length > 0) {
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log(
       `${figures.warning} 发现 ${result.warnings.length} ${plural(result.warnings.length, '个警告')}：\n`,
     )
     result.warnings.forEach(warning => {
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`  ${figures.pointer} ${warning.path}: ${warning.message}`)
     })
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log('')
   }
 }
@@ -106,7 +106,7 @@ export async function pluginValidateHandler(
   try {
     const result = await validateManifest(manifestPath)
 
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log(`正在验证 ${result.fileType} 清单：${result.filePath}\n`)
     printValidationResult(result)
 
@@ -119,7 +119,7 @@ export async function pluginValidateHandler(
       if (basename(manifestDir) === '.claude-plugin') {
         contentResults = await validatePluginContents(dirname(manifestDir))
         for (const r of contentResults) {
-          // biome-ignore lint/suspicious/noConsole:: intentional console output
+          // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
           console.log(`正在验证 ${r.fileType}：${r.filePath}\n`)
           printValidationResult(r)
         }
@@ -138,13 +138,13 @@ export async function pluginValidateHandler(
           : `${figures.tick} 验证通过`,
       )
     } else {
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`${figures.cross} 验证失败`)
       process.exit(1)
     }
   } catch (error) {
     logError(error)
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.error(
       `${figures.cross} 验证过程中发生意外错误：${errorMessage(error)}`,
     )
@@ -152,7 +152,7 @@ export async function pluginValidateHandler(
   }
 }
 
-// plugin list (lines 5217–5416)
+// plugin list (原行号 5217–5416)
 export async function pluginListHandler(options: {
   json?: boolean
   available?: boolean
@@ -169,11 +169,10 @@ export async function pluginListHandler(options: {
 
   const pluginIds = Object.keys(installedData.plugins)
 
-  // Load all plugins once. The JSON and human paths both need:
-  //  - loadErrors (to show load failures per plugin)
-  //  - inline plugins (session-only via --plugin-dir, source='name@inline')
-  //    which are NOT in installedData.plugins (V2 bookkeeping) — they must
-  //    be surfaced separately or `plugin list` silently ignores --plugin-dir.
+  // 一次性加载所有插件。JSON 和人类可读路径均需要：
+  //  - loadErrors（用于展示每个插件的加载失败信息）
+  //  - 内联插件（仅会话有效，通过 --plugin-dir 指定，source='name@inline'）
+  //    这些插件不在 installedData.plugins（V2 记账）中——必须单独呈现，否则 `plugin list` 会静默忽略 --plugin-dir。
   const {
     enabled: loadedEnabled,
     disabled: loadedDisabled,
@@ -183,16 +182,15 @@ export async function pluginListHandler(options: {
   const inlinePlugins = allLoadedPlugins.filter(p =>
     p.source.endsWith('@inline'),
   )
-  // Path-level inline failures (dir doesn't exist, parse error before
-  // manifest is read) use source='inline[N]'. Plugin-level errors after
-  // manifest read use source='name@inline'. Collect both for the session
-  // section — these are otherwise invisible since they have no pluginId.
+  // 路径级别的内联失败（目录不存在、读取清单前的解析错误）使用 source='inline[N]'。
+  // 读取清单后的插件级错误使用 source='name@inline'。将两者都收集到会话部分——
+  // 否则这些错误将不可见，因为它们没有 pluginId。
   const inlineLoadErrors = loadErrors.filter(
     e => e.source.endsWith('@inline') || e.source.startsWith('inline['),
   )
 
   if (options.json) {
-    // Create a map of plugin source to loaded plugin for quick lookup
+    // 创建插件 source 到已加载插件的映射以便快速查找
     const loadedPluginMap = new Map(allLoadedPlugins.map(p => [p.source, p]))
 
     const plugins: Array<{
@@ -212,7 +210,7 @@ export async function pluginListHandler(options: {
       const installations = installedData.plugins[pluginId]
       if (!installations || installations.length === 0) continue
 
-      // Find loading errors for this plugin
+      // 查找此插件的加载错误
       const pluginName = parsePluginIdentifier(pluginId).name
       const pluginErrors = loadErrors
         .filter(
@@ -222,12 +220,12 @@ export async function pluginListHandler(options: {
         .map(getPluginErrorMessage)
 
       for (const installation of installations) {
-        // Try to find the loaded plugin to get MCP servers
+        // 尝试找到已加载的插件以获取 MCP 服务器信息
         const loadedPlugin = loadedPluginMap.get(pluginId)
         let mcpServers: Record<string, unknown> | undefined
 
         if (loadedPlugin) {
-          // Load MCP servers if not already cached
+          // 加载 MCP 服务器（如果尚未缓存）
           const servers =
             loadedPlugin.mcpServers ||
             (await loadPluginMcpServers(loadedPlugin))
@@ -251,14 +249,12 @@ export async function pluginListHandler(options: {
       }
     }
 
-    // Session-only plugins: scope='session', no install metadata.
-    // Filter from inlineLoadErrors (not loadErrors) so an installed plugin
-    // with the same manifest name doesn't cross-contaminate via e.plugin.
-    // The e.plugin fallback catches the dirName≠manifestName case:
-    // createPluginFromPath tags errors with `${dirName}@inline` but
-    // plugin.source is reassigned to `${manifest.name}@inline` afterward
-    // (pluginLoader.ts loadInlinePlugins), so e.source !== p.source when
-    // a dev checkout dir like ~/code/my-fork/ has manifest name 'cool-plugin'.
+    // 仅会话有效的插件：scope='session'，无安装元数据。
+    // 从 inlineLoadErrors（而非 loadErrors）筛选，避免已安装的同名插件通过 e.plugin 交叉污染。
+    // e.plugin 回退用于处理 dirName≠manifestName 的情况：
+    // createPluginFromPath 用 `${dirName}@inline` 标记错误，但随后 plugin.source 被重新赋值为 `${manifest.name}@inline`
+    // （见 pluginLoader.ts 中的 loadInlinePlugins），因此当开发检出的目录如 ~/code/my-fork/ 的清单名为 'cool-plugin' 时，
+    // e.source 与 p.source 不匹配。
     for (const p of inlinePlugins) {
       const servers = p.mcpServers || (await loadPluginMcpServers(p))
       const pErrors = inlineLoadErrors
@@ -277,9 +273,8 @@ export async function pluginListHandler(options: {
         errors: pErrors.length > 0 ? pErrors : undefined,
       })
     }
-    // Path-level inline failures (--plugin-dir /nonexistent): no LoadedPlugin
-    // exists so the loop above can't surface them. Mirror the human-path
-    // handling so JSON consumers see the failure instead of silent omission.
+    // 路径级别的内联失败（--plugin-dir /nonexistent）：不存在 LoadedPlugin 对象，因此上述循环无法呈现。
+    // 与人类可读路径的处理方式一致，确保 JSON 消费方能看见失败信息，而非静默忽略。
     for (const e of inlineLoadErrors.filter(e =>
       e.source.startsWith('inline['),
     )) {
@@ -293,7 +288,7 @@ export async function pluginListHandler(options: {
       })
     }
 
-    // If --available is set, also load available plugins from marketplaces
+    // 如果设置了 --available，则同时加载市场中可用的插件
     if (options.available) {
       const available: Array<{
         pluginId: string
@@ -320,7 +315,7 @@ export async function pluginListHandler(options: {
           if (marketplace) {
             for (const entry of marketplace.plugins) {
               const pluginId = createPluginId(entry.name, marketplaceName)
-              // Only include plugins that are not already installed
+              // 仅包含尚未安装的插件
               if (!isPluginInstalled(pluginId)) {
                 available.push({
                   pluginId,
@@ -336,7 +331,7 @@ export async function pluginListHandler(options: {
           }
         }
       } catch {
-        // Silently ignore marketplace loading errors
+        // 静默忽略市场加载错误
       }
 
       cliOk(jsonStringify({ installed: plugins, available }, null, 2))
@@ -346,9 +341,8 @@ export async function pluginListHandler(options: {
   }
 
   if (pluginIds.length === 0 && inlinePlugins.length === 0) {
-    // inlineLoadErrors can exist with zero inline plugins (e.g. --plugin-dir
-    // points at a nonexistent path). Don't early-exit over them — fall
-    // through to the session section so the failure is visible.
+    // 即使没有内联插件，也可能存在 inlineLoadErrors（例如 --plugin-dir 指向不存在的路径）。
+    // 不要提前退出——继续进入会话部分，以便显示失败信息。
     if (inlineLoadErrors.length === 0) {
       cliOk(
         '未安装任何插件。使用 `claude plugin install` 安装插件。',
@@ -357,7 +351,7 @@ export async function pluginListHandler(options: {
   }
 
   if (pluginIds.length > 0) {
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log('已安装的插件：\n')
   }
 
@@ -382,29 +376,28 @@ export async function pluginListHandler(options: {
       const version = installation.version || '未知'
       const scope = installation.scope
 
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`  ${figures.pointer} ${pluginId}`)
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`    版本：${version}`)
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
-      console.log(`    范围：${scope}`)
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
+      console.log(`    作用域：${scope}`)
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`    状态：${status}`)
       for (const error of pluginErrors) {
-        // biome-ignore lint/suspicious/noConsole:: intentional console output
+        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
         console.log(`    错误：${getPluginErrorMessage(error)}`)
       }
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log('')
     }
   }
 
   if (inlinePlugins.length > 0 || inlineLoadErrors.length > 0) {
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log('仅本次会话有效的插件（--plugin-dir）：\n')
     for (const p of inlinePlugins) {
-      // Same dirName≠manifestName fallback as the JSON path above — error
-      // sources use the dir basename but p.source uses the manifest name.
+      // 与上述 JSON 路径相同的 dirName≠manifestName 回退处理——错误来源使用目录基名，但 p.source 使用清单名称。
       const pErrors = inlineLoadErrors.filter(
         e => e.source === p.source || ('plugin' in e && e.plugin === p.name),
       )
@@ -412,27 +405,26 @@ export async function pluginListHandler(options: {
         pErrors.length > 0
           ? `${figures.cross} 加载时有错误`
           : `${figures.tick} 已加载`
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`  ${figures.pointer} ${p.source}`)
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`    版本：${p.manifest.version ?? '未知'}`)
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`    路径：${p.path}`)
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`    状态：${status}`)
       for (const e of pErrors) {
-        // biome-ignore lint/suspicious/noConsole:: intentional console output
+        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
         console.log(`    错误：${getPluginErrorMessage(e)}`)
       }
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log('')
     }
-    // Path-level failures: no LoadedPlugin object exists. Show them so
-    // `--plugin-dir /typo` doesn't just silently produce nothing.
+    // 路径级别失败：没有 LoadedPlugin 对象存在。显示它们，避免 `--plugin-dir /typo` 静默无输出。
     for (const e of inlineLoadErrors.filter(e =>
       e.source.startsWith('inline['),
     )) {
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(
         `  ${figures.pointer} ${e.source}: ${figures.cross} ${getPluginErrorMessage(e)}\n`,
       )
@@ -442,7 +434,7 @@ export async function pluginListHandler(options: {
   cliOk()
 }
 
-// marketplace add (lines 5433–5487)
+// marketplace add (原行号 5433–5487)
 export async function marketplaceAddHandler(
   source: string,
   options: { cowork?: boolean; sparse?: string[]; scope?: string },
@@ -453,7 +445,7 @@ export async function marketplaceAddHandler(
 
     if (!parsed) {
       cliError(
-        `${figures.cross} Invalid marketplace source format. Try: owner/repo, https://..., or ./path`,
+        `${figures.cross} 无效的市场源格式。请使用：owner/repo、https://... 或 ./path`,
       )
     }
 
@@ -461,7 +453,7 @@ export async function marketplaceAddHandler(
       cliError(`${figures.cross} ${parsed.error}`)
     }
 
-    // Validate scope
+    // 验证作用域
     const scope = options.scope ?? 'user'
     if (scope !== 'user' && scope !== 'project' && scope !== 'local') {
       cliError(
@@ -483,21 +475,21 @@ export async function marketplaceAddHandler(
         }
       } else {
         cliError(
-          `${figures.cross} --sparse is only supported for github and git marketplace sources (got: ${marketplaceSource.source})`,
+          `${figures.cross} --sparse 仅支持 github 和 git 市场源（得到：${marketplaceSource.source}）`,
         )
       }
     }
 
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.log('正在添加市场...')
 
     const { name, alreadyMaterialized, resolvedSource } =
       await addMarketplaceSource(marketplaceSource, message => {
-        // biome-ignore lint/suspicious/noConsole:: intentional console output
+        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
         console.log(message)
       })
 
-    // Write intent to settings at the requested scope
+    // 将意图写入指定作用域的设置文件
     saveMarketplaceToSettings(name, { source: resolvedSource }, settingSource)
 
     clearAllCaches()
@@ -514,7 +506,7 @@ export async function marketplaceAddHandler(
 
     cliOk(
       alreadyMaterialized
-        ? `${figures.tick} 市场 '${name}' 已在磁盘 — 已在 ${scope} 设置中声明`
+        ? `${figures.tick} 市场 '${name}' 已存在于磁盘 — 已在 ${scope} 设置中声明`
         : `${figures.tick} 成功添加市场：${name}（已在 ${scope} 设置中声明）`,
     )
   } catch (error) {
@@ -522,7 +514,7 @@ export async function marketplaceAddHandler(
   }
 }
 
-// marketplace list (lines 5497–5565)
+// marketplace list (原行号 5497–5565)
 export async function marketplaceListHandler(options: {
   json?: boolean
   cowork?: boolean
@@ -554,33 +546,33 @@ export async function marketplaceListHandler(options: {
       cliOk('未配置市场')
     }
 
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
-    console.log('已配置的市场市场：\n')
+    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
+    console.log('已配置的市场：\n')
     names.forEach(name => {
       const marketplace = config[name]
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`  ${figures.pointer} ${name}`)
 
       if (marketplace?.source) {
         const src = marketplace.source
         if (src.source === 'github') {
-          // biome-ignore lint/suspicious/noConsole:: intentional console output
+          // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
           console.log(`    来源：GitHub (${src.repo})`)
         } else if (src.source === 'git') {
-          // biome-ignore lint/suspicious/noConsole:: intentional console output
+          // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
           console.log(`    来源：Git (${src.url})`)
         } else if (src.source === 'url') {
-          // biome-ignore lint/suspicious/noConsole:: intentional console output
+          // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
           console.log(`    来源：URL (${src.url})`)
         } else if (src.source === 'directory') {
-          // biome-ignore lint/suspicious/noConsole:: intentional console output
+          // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
           console.log(`    来源：目录 (${src.path})`)
         } else if (src.source === 'file') {
-          // biome-ignore lint/suspicious/noConsole:: intentional console output
+          // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
           console.log(`    来源：文件 (${src.path})`)
         }
       }
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log('')
     })
 
@@ -590,7 +582,7 @@ export async function marketplaceListHandler(options: {
   }
 }
 
-// marketplace remove (lines 5576–5598)
+// marketplace remove (原行号 5576–5598)
 export async function marketplaceRemoveHandler(
   name: string,
   options: { cowork?: boolean },
@@ -611,7 +603,7 @@ export async function marketplaceRemoveHandler(
   }
 }
 
-// marketplace update (lines 5609–5672)
+// marketplace update (原行号 5609–5672)
 export async function marketplaceUpdateHandler(
   name: string | undefined,
   options: { cowork?: boolean },
@@ -619,11 +611,11 @@ export async function marketplaceUpdateHandler(
   if (options.cowork) setUseCoworkPlugins(true)
   try {
     if (name) {
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`正在更新市场：${name}...`)
 
       await refreshMarketplace(name, message => {
-        // biome-ignore lint/suspicious/noConsole:: intentional console output
+        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
         console.log(message)
       })
 
@@ -643,7 +635,7 @@ export async function marketplaceUpdateHandler(
         cliOk('未配置市场')
       }
 
-      // biome-ignore lint/suspicious/noConsole:: intentional console output
+      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
       console.log(`正在更新 ${marketplaceNames.length} 个市场...`)
 
       await refreshAllMarketplaces()
@@ -663,7 +655,7 @@ export async function marketplaceUpdateHandler(
   }
 }
 
-// plugin install (lines 5690–5721)
+// plugin install (原行号 5690–5721)
 export async function pluginInstallHandler(
   plugin: string,
   options: { scope?: string; cowork?: boolean },
@@ -671,7 +663,7 @@ export async function pluginInstallHandler(
   if (options.cowork) setUseCoworkPlugins(true)
   const scope = options.scope || 'user'
   if (options.cowork && scope !== 'user') {
-    cliError('--cowork can only be used with user scope')
+    cliError('--cowork 只能用于 user 作用域')
   }
   if (
     !VALID_INSTALLABLE_SCOPES.includes(
@@ -679,13 +671,12 @@ export async function pluginInstallHandler(
     )
   ) {
     cliError(
-      `Invalid scope: ${scope}. Must be one of: ${VALID_INSTALLABLE_SCOPES.join(', ')}.`,
+      `无效的作用域：${scope}。必须为以下之一：${VALID_INSTALLABLE_SCOPES.join(', ')}。`,
     )
   }
-  // _PROTO_* routes to PII-tagged plugin_name/marketplace_name BQ columns.
-  // Unredacted plugin arg was previously logged to general-access
-  // additional_metadata for all users — dropped in favor of the privileged
-  // column route. marketplace may be undefined (fires before resolution).
+  // _PROTO_* 路由到带 PII 标记的 plugin_name/marketplace_name 列（用于 BigQuery）。
+  // 未脱敏的 plugin 参数之前会记录到所有用户可访问的 additional_metadata 中——
+  // 现已改为通过特权列路由。marketplace 可能在解析前为 undefined。
   const { name, marketplace } = parsePluginIdentifier(plugin)
   logEvent('tengu_plugin_install_command', {
     _PROTO_plugin_name: name as AnalyticsMetadata_I_VERIFIED_THIS_IS_PII_TAGGED,
@@ -699,7 +690,7 @@ export async function pluginInstallHandler(
   await installPlugin(plugin, scope as 'user' | 'project' | 'local')
 }
 
-// plugin uninstall (lines 5738–5769)
+// plugin uninstall (原行号 5738–5769)
 export async function pluginUninstallHandler(
   plugin: string,
   options: { scope?: string; cowork?: boolean; keepData?: boolean },
@@ -707,7 +698,7 @@ export async function pluginUninstallHandler(
   if (options.cowork) setUseCoworkPlugins(true)
   const scope = options.scope || 'user'
   if (options.cowork && scope !== 'user') {
-    cliError('--cowork can only be used with user scope')
+    cliError('--cowork 只能用于 user 作用域')
   }
   if (
     !VALID_INSTALLABLE_SCOPES.includes(
@@ -715,7 +706,7 @@ export async function pluginUninstallHandler(
     )
   ) {
     cliError(
-      `Invalid scope: ${scope}. Must be one of: ${VALID_INSTALLABLE_SCOPES.join(', ')}.`,
+      `无效的作用域：${scope}。必须为以下之一：${VALID_INSTALLABLE_SCOPES.join(', ')}。`,
     )
   }
   const { name, marketplace } = parsePluginIdentifier(plugin)
@@ -735,7 +726,7 @@ export async function pluginUninstallHandler(
   )
 }
 
-// plugin enable (lines 5783–5818)
+// plugin enable (原行号 5783–5818)
 export async function pluginEnableHandler(
   plugin: string,
   options: { scope?: string; cowork?: boolean },
@@ -749,16 +740,16 @@ export async function pluginEnableHandler(
       )
     ) {
       cliError(
-        `Invalid scope "${options.scope}". Valid scopes: ${VALID_INSTALLABLE_SCOPES.join(', ')}`,
+        `无效的作用域 "${options.scope}"。有效作用域：${VALID_INSTALLABLE_SCOPES.join(', ')}`,
       )
     }
     scope = options.scope as (typeof VALID_INSTALLABLE_SCOPES)[number]
   }
   if (options.cowork && scope !== undefined && scope !== 'user') {
-    cliError('--cowork can only be used with user scope')
+    cliError('--cowork 只能用于 user 作用域')
   }
 
-  // --cowork always operates at user scope
+  // --cowork 始终作用于 user 作用域
   if (options.cowork && scope === undefined) {
     scope = 'user'
   }
@@ -777,7 +768,7 @@ export async function pluginEnableHandler(
   await enablePlugin(plugin, scope)
 }
 
-// plugin disable (lines 5833–5902)
+// plugin disable (原行号 5833–5902)
 export async function pluginDisableHandler(
   plugin: string | undefined,
   options: { scope?: string; cowork?: boolean; all?: boolean },
@@ -797,8 +788,8 @@ export async function pluginDisableHandler(
       cliError('无法同时使用 --scope 和 --all')
     }
 
-    // No _PROTO_plugin_name here — --all disables all plugins.
-    // Distinguishable from the specific-plugin branch by plugin_name IS NULL.
+    // 此处没有 _PROTO_plugin_name —— --all 会禁用所有插件。
+    // 可通过 plugin_name IS NULL 与指定插件的分支区分。
     logEvent('tengu_plugin_disable_command', {})
 
     await disableAllPlugins()
@@ -813,16 +804,16 @@ export async function pluginDisableHandler(
       )
     ) {
       cliError(
-        `Invalid scope "${options.scope}". Valid scopes: ${VALID_INSTALLABLE_SCOPES.join(', ')}`,
+        `无效的作用域 "${options.scope}"。有效作用域：${VALID_INSTALLABLE_SCOPES.join(', ')}`,
       )
     }
     scope = options.scope as (typeof VALID_INSTALLABLE_SCOPES)[number]
   }
   if (options.cowork && scope !== undefined && scope !== 'user') {
-    cliError('--cowork can only be used with user scope')
+    cliError('--cowork 只能用于 user 作用域')
   }
 
-  // --cowork always operates at user scope
+  // --cowork 始终作用于 user 作用域
   if (options.cowork && scope === undefined) {
     scope = 'user'
   }
@@ -841,7 +832,7 @@ export async function pluginDisableHandler(
   await disablePlugin(plugin!, scope)
 }
 
-// plugin update (lines 5918–5948)
+// plugin update (原行号 5918–5948)
 export async function pluginUpdateHandler(
   plugin: string,
   options: { scope?: string; cowork?: boolean },
@@ -864,13 +855,13 @@ export async function pluginUpdateHandler(
       )
     ) {
       cliError(
-        `Invalid scope "${options.scope}". Valid scopes: ${VALID_UPDATE_SCOPES.join(', ')}`,
+        `无效的作用域 "${options.scope}"。有效作用域：${VALID_UPDATE_SCOPES.join(', ')}`,
       )
     }
     scope = options.scope as (typeof VALID_UPDATE_SCOPES)[number]
   }
   if (options.cowork && scope !== 'user') {
-    cliError('--cowork can only be used with user scope')
+    cliError('--cowork 只能用于 user 作用域')
   }
 
   await updatePluginCli(plugin, scope)

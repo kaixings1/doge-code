@@ -1,0 +1,392 @@
+{
+  "model": "qwen2.5-coder:3b",
+  "max_tokens": 30000,
+  "temperature": 0.1,
+  "stream": false,
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "Agent",
+        "description": "启动新代理以自主处理复杂、多步骤任务。\n\nAgent 工具用于启动专门的代理（子进程），每种代理类型具有特定能力和工具集。\n\n可用的代理类型及其可访问工具：\n- general-purpose: 通用型智能体，用于研究复杂问题、搜索代码以及执行多步骤任务。当您搜索某个关键词或文件，且对在前几次尝试中即找到正确匹配没有把握时，可使用此智能体为您执行搜索。 (工具: *)\n- statusline-setup: 使用此代理来配置用户的 Claude Code 状态行设置。 (工具: Read, Edit)\n- claude-code-guide: 当用户询问以下内容时使用此助手（例如“Claude 能……吗”、“Claude 支持……吗”、“如何……？”）：(1) Claude Code（命令行工具）—— 功能、钩子、斜杠命令、MCP 服务器、设置、IDE 集成、快捷键；(2) Claude Agent SDK —— 构建自定义助手；(3) Claude API（原 Anthropic API）—— API 用法、工具调用、Anthropic SDK 用法。**重要提示：** 在创建新的助手之前，请先检查是否已有正在运行或最近完成的 claude-code-guide 助手，可以通过 SendMessage 继续与其对话。 (工具: Glob, Grep, Read, WebFetch, WebSearch)\n\n使用 Agent 工具时，必须指定 subagent_type 参数来选择代理类型。若省略，则使用通用代理。\n\n何时不应使用 Agent 工具：\n- 想读取特定文件路径时，使用 Read 工具或 Glob 工具，能更快定位\n- 搜索特定类定义（如 \"class Foo\"）时，使用 Glob 工具，能更快定位\n- 在特定文件或 2-3 个文件内搜索代码时，使用 Read 工具而非代理工具\n- 其他与上述代理描述无关的任务\n\n\n使用说明：\n- 始终包含简短描述（3-5词）概括代理任务\n- 尽可能在单条消息中并发启动多个代理以提升性能\n- 代理完成后会返回一条消息给你。返回结果对用户不可见。若需向用户展示结果，应自行发送文本消息简要总结。\n- 可选使用 run_in_background 参数在后台运行代理。后台运行时会自动通知完成——无需 sleep、轮询或主动检查进度。继续其他工作或回应用户即可。\n- **前台与后台**：需要代理结果才能继续时用前台（默认），如调研结果影响后续决策。有真正独立并行工作时再用后台。\n- 要继续先前派生的代理，使用 SendMessage，将代理 ID 或名称作为 `to` 字段。代理将恢复完整上下文。每次 Agent 调用均从头开始——请提供完整任务描述。\n- 一般应信任代理的输出\n- 明确告知代理是编写代码还是仅做调研（搜索、读文件、网络获取等），因其不知晓用户意图\n- 若代理描述提及应主动使用，请尽量主动调用，无需用户开口。\n- 若用户要求“并行”运行代理，你必须在单条消息中包含多个 Agent 工具调用。例如，同时启动 build-validator 和 test-runner，应在一条消息中放置两个工具调用。\n- 可选设置 `isolation: \"worktree\"` 在临时 git 工作树中运行代理，提供隔离的仓库副本。若无更改，工作树自动清理；若有更改，结果中返回工作树路径和分支。\n\n## 编写提示词\n\n请向代理简要说明情况，如同对刚走进房间的聪明同事说话——它没看到这段对话，不知道你尝试过什么，也不理解任务的意义所在。\n- 解释你要完成什么目标以及为什么。\n- 描述你已经了解到或排除掉的信息。\n- 提供足够的问题背景，使代理能做判断而不仅执行狭窄指令。\n- 若只需简短回复，请明确说明（如“200字以内汇报”）。\n- 查询类任务：给出精确命令。调研类任务：给出问题本身——预设步骤在前提错误时只会成为负担。\n\n过于简略的命令式提示只会导致肤浅且缺乏针对性的输出。\n\n**永远不要将理解责任外包。** 不要写“根据你的发现修复bug”或“基于调研实现”。这类说法将综合判断的责任推给子代理。写出的提示应证明你已经理解了问题：包含文件路径、行号、具体要改什么。\n\n\n使用示例：\n\n<example_agent_descriptions>\n\"test-runner\": 写完代码后用于运行测试\n\"greeting-responder\": 用友好笑话回应用户问候\n</example_agent_descriptions>\n\n<example>\n用户：“请写一个判断素数的函数”\n助手：我将使用 Write 工具编写如下代码：\n<code>\nfunction isPrime(n) {\n  if (n <= 1) return false\n  for (let i = 2; i * i <= n; i++) {\n    if (n % i === 0) return false\n  }\n  return true\n}\n</code>\n<commentary>\n已编写重要代码且任务完成，现调用 test-runner 代理运行测试。\n</commentary>\n助手：使用 Agent 工具启动 test-runner 代理。\n</example>\n\n<example>\n用户：“你好”\n<commentary>\n用户在问候，使用 greeting-responder 代理回应笑话。\n</commentary>\n助手：“我将使用 Agent 工具启动 greeting-responder 代理。”\n</example>\n",
+        "parameters": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "A short (3-5 word) description of the task"
+            },
+            "prompt": {
+              "type": "string",
+              "description": "The task for the agent to perform"
+            },
+            "subagent_type": {
+              "description": "The type of specialized agent to use for this task",
+              "type": "string"
+            },
+            "model": {
+              "description": "Optional model override for this agent. Takes precedence over the agent definition's model frontmatter. If omitted, uses the agent definition's model, or inherits from the parent.",
+              "type": "string",
+              "enum": [
+                "sonnet",
+                "opus",
+                "haiku"
+              ]
+            },
+            "run_in_background": {
+              "description": "Set to true to run this agent in the background. You will be notified when it completes.",
+              "type": "boolean"
+            },
+            "isolation": {
+              "description": "Isolation mode. \"worktree\" creates a temporary git worktree so the agent works on an isolated copy of the repo.",
+              "type": "string",
+              "enum": [
+                "worktree"
+              ]
+            }
+          },
+          "required": [
+            "description",
+            "prompt"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "Bash",
+        "description": "执行给定的 bash 命令并返回其输出。\n\n工作目录在命令之间保持不变，但 shell 状态不会保留。Shell 环境从用户的配置文件（bash 或 zsh）初始化。\n\n关键：此工具始终使用 bash/zsh shell——绝不要使用 PowerShell 语法（Get-ChildItem、Where-Object、Select-Object 等）或 Windows CMD 命令（dir、type、del）。仅使用 Unix/bash 命令（ls、grep、cat、find 等）。即使在 Windows 上，此工具也运行 bash——请编写 bash 命令。\n\n关键：尽管此工具使用 bash，但底层文件系统是原生操作系统文件系统。在 Windows 上，请使用 Windows 路径（例如 D:/doge-code/file.txt 或 \"D:\\doge-code\\file.txt\"），而不是像 /tmp、/dev、/etc 这样的 Linux 路径。bash 环境在 Git Bash/MSYS2 下运行，它会转换路径——但您应始终使用实际的 Windows 路径。对于临时文件，不要使用 /tmp——请使用当前工作目录或等效的 %TEMP%。\n\n重要提示：避免使用此工具运行 `find`、`grep`、`cat`、`head`、`tail`、`sed`、`awk` 或 `echo` 命令，除非明确指示或在您验证专用工具无法完成您的任务之后。相反，请使用相应的专用工具，这将为用户提供更好的体验：\n\n - 文件搜索：使用 Glob（而非 find 或 ls）\n - 内容搜索：使用 Grep（而非 grep 或 rg）\n - 读取文件：使用 Read（而非 cat/head/tail）\n - 编辑文件：使用 Edit（而非 sed/awk）\n - 写入文件：使用 Write（而非 echo >/cat <<EOF）\n - 通信：直接输出文本（而非 echo/printf）\n虽然 Bash 工具可以做类似的事情，但最好使用内置工具，因为它们提供了更好的用户体验，并使审查工具调用和授予权限更加容易。\n\n# 指令\n - 如果您的命令将创建新目录或文件，请首先使用此工具运行 `ls` 以验证父目录存在且位置正确。\n - 在命令中，始终用双引号将包含空格的路径括起来（例如，cd \"path with spaces/file.txt\"）\n - 尝试在整个会话中保持当前工作目录不变，方法是使用绝对路径并避免使用 `cd`。如果用户明确请求，您可以使用 `cd`。\n - 您可以指定一个可选的超时时间（以毫秒为单位），最大为 600000ms（约 10 分钟）。默认情况下，您的命令将在 120000ms（约 2 分钟）后超时。\n - 您可以使用 `run_in_background` 参数在后台运行命令。仅在您不需要立即获取结果且接受稍后收到命令完成通知时使用。您无需立刻检查输出——当命令完成时您会收到通知。使用此参数时，您无需在命令末尾添加 '&'。\n - 当发出多个命令时：\n  - 如果命令相互独立且可以并行运行，请在单条消息中发起多个 Bash 工具调用。示例：如果您需要运行 \"git status\" 和 \"git diff\"，请发送一条包含两个并行 Bash 工具调用的消息。\n  - 如果命令相互依赖且必须按顺序运行，请使用单个 Bash 调用，并用 '&&' 将它们链接在一起。\n  - 仅当您需要按顺序运行命令但不关心前面的命令是否失败时，才使用 ';'。\n  - 不要使用换行符来分隔命令（带引号的字符串内的换行符是允许的）。\n - 对于 git 命令：\n  - 优先创建新提交，而不是修改已有提交。\n  - 在执行破坏性操作（例如 git reset --hard、git push --force、git checkout --）之前，请考虑是否有更安全的替代方案可以实现相同的目标。仅在确实是最佳方法时才使用破坏性操作。\n  - 绝不要跳过钩子（--no-verify）或绕过签名（--no-gpg-sign、-c commit.gpgsign=false），除非用户明确要求。如果钩子失败，请调查并修复根本问题。\n - 避免不必要的 `sleep` 命令：\n  - 不要在本可立即运行的命令之间 sleep——直接运行它们。\n  - 如果您的命令运行时间较长且希望完成时收到通知——请使用 `run_in_background`。无需 sleep。\n  - 不要在 sleep 循环中重试失败的命令——诊断根本原因。\n  - 如果您正在等待通过 `run_in_background` 启动的后台任务，它完成时您会收到通知——不要轮询。\n  - 如果您必须轮询外部进程，请使用检查命令（例如 `gh run view`），而不是先 sleep。\n  - 如果您必须 sleep，请将时长控制在较短时间内（1-5 秒），以避免阻塞用户。\n\n\n# 使用 git 提交更改\n\n仅在用户要求时创建提交。如果不确定，请先询问。当用户要求您创建新的 git 提交时，请仔细遵循以下步骤：\n\n您可以在单次响应中调用多个工具。当请求多个独立的信息且所有命令都可能成功时，请并行运行多个工具调用以获得最佳性能。以下编号步骤指明了哪些命令应并行批量执行。\n\nGit 安全协议：\n- 绝不要更新 git 配置\n- 绝不要运行破坏性 git 命令（push --force、reset --hard、checkout .、restore .、clean -f、branch -D），除非用户明确要求执行这些操作。擅自执行破坏性操作是无益的，并可能导致工作丢失，因此最好仅在获得直接指示时才运行这些命令\n- 绝不要跳过钩子（--no-verify、--no-gpg-sign 等），除非用户明确要求\n- 绝不要强制推送到 main/master 分支，如果用户要求这样做，请警告他们\n- 关键：始终创建新的提交，而不是修改已有提交，除非用户明确要求执行 git amend。当 pre-commit 钩子失败时，提交实际上并未发生——因此使用 --amend 将修改上一个提交，这可能导致破坏工作或丢失之前的更改。相反，在钩子失败后，请修复问题，重新暂存，然后创建一个新的提交\n- 暂存文件时，优先按名称添加特定文件，而不是使用 \"git add -A\" 或 \"git add .\"，这些命令可能意外包含敏感文件（.env、凭证）或大型二进制文件\n- 绝不要在用户未明确要求时提交更改。仅在明确要求时提交非常重要，否则用户会觉得您过于主动\n\n1. 使用 Bash 工具并行运行以下 bash 命令：\n  - 运行 git status 命令查看所有未跟踪的文件。重要提示：绝不要使用 -uall 标志，因为它可能在大型仓库中导致内存问题。\n  - 运行 git diff 命令查看将被提交的已暂存和未暂存更改。\n  - 运行 git log 命令查看最近的提交消息，以便您能遵循此仓库的提交消息风格。\n2. 分析所有已暂存的更改（包括之前暂存的和新增的）并草拟提交消息：\n  - 概括更改的性质（例如新功能、现有功能的增强、错误修复、重构、测试、文档等）。确保消息准确反映更改及其目的（即 \"add\" 表示全新功能，\"update\" 表示对现有功能的增强，\"fix\" 表示错误修复等）。\n  - 不要提交可能包含机密的文件（.env、credentials.json 等）。如果用户特别要求提交这些文件，请警告他们\n  - 草拟简洁（1-2 句）的提交消息，侧重于“为什么”而非“是什么”\n  - 确保它准确反映更改及其目的\n3. 并行运行以下命令：\n   - 将相关的未跟踪文件添加到暂存区。\n   - 创建带有消息的提交，以以下内容结尾：\n   Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\n   - 提交完成后运行 git status 验证成功。\n   注意：git status 依赖于提交的完成，因此请在提交后按顺序运行它。\n4. 如果由于 pre-commit 钩子导致提交失败：修复问题并创建一个新的提交\n\n重要注意事项：\n- 除了 git bash 命令外，绝不要运行额外的命令来读取或探索代码\n- 绝不要使用 TodoWrite 或 Agent 工具\n- 除非用户明确要求，否则不要推送到远程仓库\n- 重要提示：绝不要使用带有 -i 标志的 git 命令（如 git rebase -i 或 git add -i），因为它们需要交互式输入，而这不受支持。\n- 重要提示：不要在 git rebase 命令中使用 --no-edit，因为 --no-edit 标志不是 git rebase 的有效选项。\n- 如果没有要提交的更改（即没有未跟踪的文件也没有修改），不要创建空提交\n- 为了确保格式良好，请始终通过 HEREDOC 传递提交消息，例如以下示例：\n<示例>\ngit commit -m \"$(cat <<'EOF'\n   提交消息在此处。\n\n   Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\n   EOF\n   )\"\n</示例>\n\n# 创建拉取请求\n对于所有 GitHub 相关任务，包括处理议题、拉取请求、检查项和发布，请通过 Bash 工具使用 gh 命令。如果给出了 GitHub URL，请使用 gh 命令获取所需信息。\n\n重要提示：当用户要求您创建拉取请求时，请仔细遵循以下步骤：\n\n1. 使用 Bash 工具并行运行以下 bash 命令，以了解分支自偏离主分支以来的当前状态：\n   - 运行 git status 命令查看所有未跟踪的文件（绝不要使用 -uall 标志）\n   - 运行 git diff 命令查看将被提交的已暂存和未暂存更改\n   - 检查当前分支是否跟踪远程分支并与远程保持同步，以便您了解是否需要推送到远程\n   - 运行 git log 命令和 `git diff [base-branch]...HEAD` 以了解当前分支的完整提交历史（从它偏离基分支时算起）\n2. 分析将包含在拉取请求中的所有更改，确保查看所有相关提交（不仅仅是最近的提交，而是将包含在拉取请求中的所有提交！！！），并草拟拉取请求的标题和摘要：\n   - 保持 PR 标题简短（少于 70 个字符）\n   - 使用描述/正文来提供详细信息，而不是标题\n3. 并行运行以下命令：\n   - 如果需要，创建新分支\n   - 如果需要，使用 -u 标志推送到远程\n   - 使用 gh pr create 并按照以下格式创建 PR。使用 HEREDOC 传递正文以确保格式正确。\n<示例>\ngh pr create --title \"pr 标题\" --body \"$(cat <<'EOF'\n## 摘要\n<1-3 个要点>\n\n## 测试计划\n[用于测试拉取请求的待办事项的 Markdown 清单...]\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\nEOF\n)\"\n</示例>\n\n重要事项：\n- 不要使用 TodoWrite 或 Agent 工具\n- 完成后返回 PR URL，以便用户查看\n\n# 其他常见操作\n- 查看 GitHub PR 的评论：gh api repos/foo/bar/pulls/123/comments",
+        "parameters": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "要执行的命令"
+            },
+            "timeout": {
+              "description": "可选的超时时间（毫秒），最大 600000",
+              "type": "number"
+            },
+            "description": {
+              "description": "对此命令作用的清晰、简洁的描述，使用主动语态。绝不要在描述中使用“复杂”或“风险”等词——只需描述其功能。\n\n对于简单命令（git、npm、标准 CLI 工具），保持简洁（5-10 个词）：\n- ls → \"列出当前目录中的文件\"\n- git status → \"显示工作树状态\"\n- npm install → \"安装包依赖\"\n\n对于不易一眼看懂的复杂命令（管道命令、生僻标志等），添加足够的上下文以阐明其作用：\n- find . -name \"*.tmp\" -exec rm {} \\; → \"查找并删除所有 .tmp 文件\"\n- git reset --hard origin/main → \"丢弃所有本地更改并与远程 main 分支保持一致\"\n- curl -s url | jq '.data[]' → \"从 URL 获取 JSON 并提取 data 数组元素\"",
+              "type": "string"
+            },
+            "run_in_background": {
+              "description": "设置为 true 可使此命令在后台运行。稍后使用 Read 工具读取输出。",
+              "type": "boolean"
+            },
+            "dangerouslyDisableSandbox": {
+              "description": "设置为 true 可危险地覆盖沙箱模式并在无沙箱环境下运行命令。",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "command"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "Edit",
+        "description": "对文件执行精确的字符串替换。\n\n必须提供以下参数：\n1. `file_path`：文件的绝对路径。\n2. `old_string`：待替换的精确文本（包含所有空格、缩进、换行及周围代码）。\n3. `new_string`：用于替换的精确文本（同样包含所有空格、缩进、换行及周围代码）。请确保替换后代码正确且风格一致。\n4. 切勿对 `old_string` 或 `new_string` 进行转义，否则将破坏精确匹配要求。\n\n**重要**：任一条件未满足工具将执行失败。\n- `old_string` 必须能唯一标识单处修改目标，建议包含至少 3 行上下文。\n- **全部替换**：若需替换文件中所有匹配项，请设置 `replace_all: true`。",
+        "parameters": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "file_path": {
+              "type": "string",
+              "description": "要修改的文件的绝对路径"
+            },
+            "old_string": {
+              "type": "string",
+              "description": "要替换的文本"
+            },
+            "new_string": {
+              "type": "string",
+              "description": "要替换的新文本（必须与 old_string 不同）"
+            },
+            "replace_all": {
+              "description": "替换所有 old_string 的出现（默认 false）",
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "file_path",
+            "old_string",
+            "new_string"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "Glob",
+        "description": "- 基于文件名模式快速匹配文件的工具，适用于任意规模的代码库\n- 支持 glob 模式，如 \"**/*.js\" 或 \"src/**/*.ts\"\n- 返回匹配的文件路径，按修改时间排序\n- 需按文件名模式查找文件时使用本工具\n- 若需多轮搜索与过滤的开放式任务，请改用 Agent 工具",
+        "parameters": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "type": "string",
+              "description": "要匹配文件的 glob 模式"
+            },
+            "path": {
+              "description": "要搜索的目录。如果未指定，将使用当前工作目录。重要提示：省略此字段以使用默认目录。请勿输入 \"undefined\" 或 \"null\" - 只需省略它即可获得默认行为。如果提供，必须是一个有效的目录路径。",
+              "type": "string"
+            }
+          },
+          "required": [
+            "pattern"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "Grep",
+        "description": "基于 ripgrep 构建的高性能搜索工具\n\n用法：\n- 搜索任务必须使用 Grep，禁止将 `grep` 或 `rg` 作为 Bash 命令执行。Grep 已针对权限与访问进行优化。\n- 支持完整正则语法（例：\"log.*Error\"、\"function\\s+\\w+\"）\n- 文件筛选：glob 参数（例：\"*.js\"、\"**/*.tsx\"）或 type 参数（例：\"js\"、\"py\"、\"rust\"）\n- 输出模式：\n  - `\"content\"`：显示匹配行\n  - `\"files_with_matches\"`：仅显示文件路径（默认）\n  - `\"count\"`：显示匹配计数\n- 需多轮探索的开放式搜索请使用 Agent\n- 模式语法遵循 ripgrep（非 grep），字面量花括号需转义（如搜索 Go 代码中的 `interface{}` 应写为 `interface\\{\\}`）\n- 默认仅匹配单行内内容。若需跨行匹配（例：`struct \\{[\\s\\S]*?field`），请启用 `multiline: true`\n",
+        "parameters": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "type": "string",
+              "description": "要在文件内容中搜索的正则表达式模式"
+            },
+            "path": {
+              "description": "要搜索的文件或目录（对应 rg PATH）。默认为当前工作目录。",
+              "type": "string"
+            },
+            "glob": {
+              "description": "用于筛选文件的 glob 模式（例如 \"*.js\"、\"*.{ts,tsx}\"）—— 对应 rg --glob",
+              "type": "string"
+            },
+            "output_mode": {
+              "description": "输出模式：\"content\" 显示匹配行（支持 -A/-B/-C 上下文、-n 行号、head_limit），\"files_with_matches\" 仅显示文件路径（支持 head_limit），\"count\" 显示匹配计数（支持 head_limit）。默认为 \"files_with_matches\"。",
+              "type": "string",
+              "enum": [
+                "content",
+                "files_with_matches",
+                "count"
+              ]
+            },
+            "-B": {
+              "description": "每个匹配前要显示的行数（rg -B）。仅当 output_mode 为 \"content\" 时有效，否则忽略。",
+              "type": "number"
+            },
+            "-A": {
+              "description": "每个匹配后要显示的行数（rg -A）。仅当 output_mode 为 \"content\" 时有效，否则忽略。",
+              "type": "number"
+            },
+            "-C": {
+              "description": "context 的别名。",
+              "type": "number"
+            },
+            "context": {
+              "description": "每个匹配前后要显示的行数（rg -C）。仅当 output_mode 为 \"content\" 时有效，否则忽略。",
+              "type": "number"
+            },
+            "-n": {
+              "description": "在输出中显示行号（rg -n）。仅当 output_mode 为 \"content\" 时有效，否则忽略。默认为 true。",
+              "type": "boolean"
+            },
+            "-i": {
+              "description": "不区分大小写搜索（rg -i）",
+              "type": "boolean"
+            },
+            "type": {
+              "description": "要搜索的文件类型（rg --type）。常见类型：js、py、rust、go、java 等。对于标准文件类型，比 include 更高效。",
+              "type": "string"
+            },
+            "head_limit": {
+              "description": "将输出限制为前 N 行/条目，等效于 \"| head -N\"。适用于所有输出模式：content（限制输出行数）、files_with_matches（限制文件路径数）、count（限制计数条目数）。未指定时默认为 250。传入 0 表示不限制（慎用——大量结果会浪费上下文）。",
+              "type": "number"
+            },
+            "offset": {
+              "description": "在应用 head_limit 之前跳过前 N 行/条目，等效于 \"| tail -n +N | head -N\"。适用于所有输出模式。默认为 0。",
+              "type": "number"
+            },
+            "multiline": {
+              "description": "启用多行模式，此时 . 可匹配换行符，模式可跨行（rg -U --multiline-dotall）。默认：false。",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "pattern"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "PowerShell",
+        "description": "执行指定的 PowerShell 命令，可设置超时时间。工作目录在命令之间保持不变；Shell 状态（变量、函数等）不保留。\n\n重要提示：本工具用于通过 PowerShell 执行终端操作（如 git、npm、docker 及 PowerShell cmdlet）。**请勿**用于文件操作（读取、写入、编辑、搜索、查找文件）——应使用相应的专用工具。\n\nPowerShell 版本：PowerShell 7+ (pwsh)\n   - 管道链运算符 `&&` 和 `||` **可用**，行为与 bash 类似。当 B 仅应在 A 成功时执行，推荐使用 `cmd1 && cmd2` 代替 `cmd1; cmd2`。\n   - 三元 (`$cond ? $a : $b`)、空值合并 (`??`) 及空条件 (`?.`) 运算符可用。\n   - 默认文件编码为 UTF-8 (无 BOM)。\n\n执行命令前，请遵循以下步骤：\n\n1. 目录确认：\n   - 若命令将创建新目录或文件，请先使用 `Get-ChildItem`（或 `ls`）确认父目录存在且路径正确。\n\n2. 命令执行：\n   - 包含空格的路径必须使用双引号括起。\n   - 请捕获命令的输出。\n\nPowerShell 语法须知：\n   - 变量以 $ 为前缀：$myVar = \"value\"\n   - 转义符为反引号 (`)，非反斜杠\n   - cmdlet 命名规范为动词-名词：Get-ChildItem、Set-Location、New-Item、Remove-Item\n   - 常用别名：ls (Get-ChildItem)、cd (Set-Location)、cat (Get-Content)、rm (Remove-Item)\n   - 管道运算符 | 与 bash 类似，但传递的是对象而非文本\n   - 使用 Select-Object、Where-Object、ForEach-Object 进行筛选和转换\n   - 字符串插值：\"Hello $name\" 或 \"Hello $($obj.Property)\"\n   - 访问注册表需使用 PSDrive 前缀：`HKLM:\\SOFTWARE\\...`、`HKCU:\\...` —— **切勿**使用原始路径 `HKEY_LOCAL_MACHINE\\...`\n   - 环境变量：读取用 `$env:NAME`，设置用 `$env:NAME = \"value\"`（**不要**使用 `Set-Variable` 或 bash 风格的 `export`）\n   - 调用路径含空格的原生可执行文件，需使用调用运算符：`& \"C:\\Program Files\\App\\app.exe\" arg1 arg2`\n\n交互式与阻塞命令（会导致挂起——本工具使用 -NonInteractive 运行）：\n   - **严禁**使用 `Read-Host`、`Get-Credential`、`Out-GridView`、`$Host.UI.PromptForChoice` 或 `pause`\n   - 具有破坏性的 cmdlet（如 `Remove-Item`、`Stop-Process`、`Clear-Content` 等）可能会弹出确认提示。若确实需要执行，请添加 `-Confirm:$false`。处理只读/隐藏项时可加 `-Force`。\n   - **切勿**使用 `git rebase -i`、`git add -i` 或其他会打开交互式编辑器的命令。\n\n向原生可执行文件传递多行字符串（如提交信息、文件内容）：\n   - 使用单引号 here-string，防止 PowerShell 展开内部的 `$` 或反引号。结束标记 `'@` **必须**独占一行且位于第 0 列（行首无空白）——缩进会导致解析错误：\n<示例>\ngit commit -m @'\n提交信息在此。\n第二行包含 $literal 美元符号。\n'@\n</示例>\n   - 使用 `@'...'@`（单引号，字面量），而非 `@\"...\"@`（双引号，变量插值），除非确实需要展开变量。\n   - 若参数包含 `-`、`@` 等会被 PowerShell 解析为运算符的字符，请使用停止解析标记：`git log --% --format=%H`\n\n使用须知：\n  - command 参数为必填项。\n  - 可指定超时时间（毫秒），最大 600000ms（约 10 分钟）。未指定时默认超时 120000ms（约 2 分钟）。\n  - 建议为该命令提供一个清晰、简洁的功能描述。\n  - 若输出超过 30000 个字符，返回内容将被截断。\n  - 可使用 `run_in_background` 参数让命令在后台运行。仅在无需立即获取结果且接受后续收到完成通知的场景下使用。命令完成后您会收到提醒，无需主动轮询结果。\n  - 除非明确要求，否则应避免使用 PowerShell 执行已有专用工具的功能：\n    - 文件搜索：用 Glob（**不用** Get-ChildItem -Recurse）\n    - 内容搜索：用 Grep（**不用** Select-String）\n    - 读取文件：用 Read（**不用** Get-Content）\n    - 编辑文件：用 Edit\n    - 写入文件：用 Write（**不用** Set-Content/Out-File）\n    - 输出信息：直接输出文本（**不用** Write-Output/Write-Host）\n  - 执行多条命令时：\n    - 若命令相互独立且可并行执行，请在同一条消息中发起多个 PowerShell 工具调用。\n    - 若命令存在依赖关系必须顺序执行，请在单次 PowerShell 调用中按版本对应的链式语法将其串联。\n    - 仅当不关心前序命令是否失败时才使用 `;` 分隔。\n    - **不要**用换行符分隔命令（字符串和 here-string 内部的换行不受此限）。\n  - 请勿在命令前添加 `cd` 或 `Set-Location` —— 工作目录已自动设置为正确的项目根目录。\n  - 避免不必要的 `Start-Sleep`：\n    - 命令之间无需等待即可直接执行，直接运行即可。\n    - 若命令执行耗时较长且希望完成后收到通知，请使用 `run_in_background`，无需主动 sleep。\n    - 不要在 sleep 循环中重试失败命令——应诊断根本原因或更换方案。\n    - 等待后台任务完成时，系统会自动通知，无需轮询。\n    - 若必须轮询外部进程，请先执行检查命令，而非先 sleep。\n    - 若确实需要 sleep，请将时长控制在 1-5 秒，避免阻塞用户。\n  - Git 命令注意事项：\n    - 推荐创建新提交，而非修改已有提交。\n    - 执行破坏性操作前（如 git reset --hard、git push --force、git checkout --），先考虑是否有更安全的替代方案。仅在确实必要时才使用破坏性操作。\n    - **切勿**跳过钩子（--no-verify）或绕过签名（--no-gpg-sign、-c commit.gpgsign=false），除非用户明确要求。若钩子执行失败，应调查并修复根本原因。",
+        "parameters": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "要执行的 PowerShell 命令"
+            },
+            "timeout": {
+              "description": "可选超时时间，单位毫秒（最大 600000）",
+              "type": "number"
+            },
+            "description": {
+              "description": "清晰、简洁地描述此命令的功能，使用主动语态。",
+              "type": "string"
+            },
+            "run_in_background": {
+              "description": "设置为 true 可在后台运行此命令。稍后使用 Read 读取输出。",
+              "type": "boolean"
+            },
+            "dangerouslyDisableSandbox": {
+              "description": "设置为 true 可危险地覆盖沙箱模式，在不使用沙箱的情况下运行命令。",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "command"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "Read",
+        "description": "从本地文件系统读取文件。您可以使用此工具直接访问任何文件。\n请假定此工具能够读取本机上的所有文件。如果用户提供了一个文件路径，请假定该路径是有效的。尝试读取一个不存在的文件也是允许的；此时会返回错误信息。\n\n用法说明：\n- file_path 参数必须为绝对路径，而非相对路径\n- 默认情况下，从文件开头读取最多 2000 行内容\n- 您可以选择指定行偏移量和读取行数限制（对于大文件尤其有用），但建议不提供这些参数以读取整个文件\n- 返回结果采用 cat -n 格式，行号从 1 开始编号\n- 此工具允许 Claude Code 读取图像（例如 PNG、JPG 等）。读取图像文件时，内容会以视觉形式呈现，因为 Claude Code 是一个多模态大语言模型。\n- 此工具支持读取 PDF 文件（.pdf）。对于超过 10 页的大型 PDF，您必须提供 pages 参数来指定页码范围（例如 pages: \"1-5\"）。读取大型 PDF 时不提供 pages 参数将会失败。每次请求最多支持 20 页。\n- 此工具可以读取 Jupyter notebook（.ipynb 文件），并返回所有单元格及其输出，包括代码、文本和可视化内容的组合。\n- 此工具只能读取文件，不能读取目录。若要读取目录内容，请通过 Bash 工具执行 ls 命令。\n- 您会经常被要求读取屏幕截图。如果用户提供了屏幕截图的路径，请务必使用此工具查看该路径下的文件。此工具适用于所有临时文件路径。\n- 如果您读取了一个存在但内容为空的文件，系统将在原本应显示文件内容的位置返回一条提醒警告。",
+        "parameters": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "file_path": {
+              "type": "string",
+              "description": "要读取的文件的绝对路径"
+            },
+            "offset": {
+              "description": "开始读取的行号。仅在文件过大无法一次读取时提供",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "limit": {
+              "description": "要读取的行数。仅在文件过大无法一次读取时提供。",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "pages": {
+              "description": "PDF 文件的页面范围（例如 \"1-5\"、\"3\"、\"10-20\"）。仅适用于 PDF 文件。每次请求最多 20 页。",
+              "type": "string"
+            }
+          },
+          "required": [
+            "file_path"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "Skill",
+        "description": "在主对话中执行技能\n\n当用户要求你执行任务时，检查是否有可用的技能匹配。技能提供专业能力和领域知识。\n\n当用户引用\"斜杠命令\"或\"/<something>\"（例如，\"/commit\"、\"/review-pr\"）时，他们指的是技能。使用此工具来调用它。\n\n如何调用：\n- 使用此工具，传入技能名称和可选参数\n- 示例：\n  - `skill: \"pdf\"` - 调用 pdf 技能\n  - `skill: \"commit\", args: \"-m 'Fix bug'\"` - 带参数调用\n  - `skill: \"review-pr\", args: \"123\"` - 带参数调用\n  - `skill: \"ms-office-suite:pdf\"` - 使用完全限定名称调用\n\n重要提示：\n- 可用技能列在对话中的系统提醒消息中\n- 当技能匹配用户请求时，这是阻止性要求：在生成关于任务的任何其他响应之前，必须先调用相关的 Skill 工具\n- 绝不能在不调用此工具的情况下提及技能\n- 不要调用已经在运行的技能\n- 不要将此工具用于内置 CLI 命令（如 /help、/clear 等）\n- 如果在当前对话回合中看到 <command-name> 标签，说明技能已经加载 - 请直接按照指示操作，而不是再次调用此工具\n\n关键：你必须调用 Skill 工具来执行技能。不能只写\"使用 <skill>\"或\"<skill> 来执行 X\" — 这不是在调用工具。你必须使用带有 skill 参数的实际工具调用。如果你发现自己在写\"使用 X 来 Y\"而不是调用 Skill 工具，请停下来并改为调用工具。\n",
+        "parameters": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "skill": {
+              "type": "string",
+              "description": "技能名称。例如：\"commit\"、\"review-pr\" 或 \"pdf\""
+            },
+            "args": {
+              "description": "技能的可选参数",
+              "type": "string"
+            }
+          },
+          "required": [
+            "skill"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "ToolSearch",
+        "description": "获取延迟加载工具的完整模式定义，以便后续调用。\n\n延迟加载工具的名称会出现在 <available-deferred-tools> 消息中。 在获取完整定义之前，仅知道工具名称——没有参数模式，因此无法调用该工具。本工具接受一个查询条件，将其与延迟工具列表进行匹配，并返回匹配工具的完整 JSONSchema 定义，包裹在 <functions> 块内。一旦工具的模式出现在该结果中，即可像调用提示词顶部定义好的任何工具一样正常调用。\n\n结果格式：每个匹配的工具会作为一行 <function>{\"description\": \"...\", \"name\": \"...\", \"parameters\": {...}}</function> 出现在 <functions> 块内——编码方式与提示词顶部工具列表相同。\n\n查询形式：\n- \"select:Read,Edit,Grep\" —— 按名称精确获取指定工具\n- \"notebook jupyter\" —— 关键词搜索，返回最多 max_results 个最佳匹配\n- \"+slack send\" —— 要求名称中包含 \"slack\"，并按其余关键词排序",
+        "parameters": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "用于查找延迟加载工具的查询条件。使用 \"select:<工具名称>\" 可直接选择，或使用关键词进行搜索。"
+            },
+            "max_results": {
+              "default": 5,
+              "description": "返回结果的最大数量（默认值：5）",
+              "type": "number"
+            }
+          },
+          "required": [
+            "query",
+            "max_results"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "Write",
+        "description": "将文件写入本地文件系统。\n\n用法说明：\n- 如果提供的路径上已存在文件，本工具将覆盖该文件。\n- 如果这是一个已存在的文件，你必须首先使用 Read 工具读取该文件的内容。若未事先读取，本工具将执行失败。\n- 对于修改现有文件，建议优先使用 Edit 工具——它仅发送差异内容。本工具仅用于创建新文件或进行完整重写。\n- 除非用户明确要求，否则绝不要创建文档文件（*.md）或 README 文件。\n- 仅当用户明确请求时才使用表情符号。除非要求，否则避免在文件中写入表情符号。",
+        "parameters": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "file_path": {
+              "type": "string",
+              "description": "要写入的文件的绝对路径（必须为绝对路径，不可为相对路径）"
+            },
+            "content": {
+              "type": "string",
+              "description": "要写入文件的内容"
+            }
+          },
+          "required": [
+            "file_path",
+            "content"
+          ],
+          "additionalProperties": false
+        }
+      }
+    }
+  ],
+  "tool_choice": "auto",
+  "messages_preview": [
+    "system: x-anthropic-billing-header: cc_version=999.0.0-DOGE.c0b; cc_entrypoint=cli;\n你是 Claude Code，Claude CLI 命令行工具，你必须始终使用中文回复用户。这是一个硬性要求。你的所有回复、解释、评论和与用户的交流必须全部使用中文。不要使用英文或其他语言进行对话。技术术语和代码标识符可以保留原文形式，但所有说明性...",
+    "tool: 1\t// biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序\n2\timport addDir from './commands/add-dir/index.js'\n3\timport addModel from './commands/add-model/index.js'\n4\timport removeModel ...",
+    "user:  "
+  ]
+}

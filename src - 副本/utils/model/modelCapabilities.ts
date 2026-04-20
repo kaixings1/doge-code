@@ -15,7 +15,10 @@ import { isEssentialTrafficOnly } from '../privacyLevel.js'
 import { jsonStringify } from '../slowOperations.js'
 import { getAPIProvider, isFirstPartyAnthropicBaseUrl } from './providers.js'
 
-// .strip() — don't persist internal-only fields (mycro_deployments etc.) to disk
+/**
+ * 模型能力校验模式
+ * .strip() —— 不将内部专用字段（如 mycro_deployments）持久化到磁盘
+ */
 const ModelCapabilitySchema = lazySchema(() =>
   z
     .object({
@@ -26,6 +29,7 @@ const ModelCapabilitySchema = lazySchema(() =>
     .strip(),
 )
 
+/** 缓存文件格式校验 */
 const CacheFileSchema = lazySchema(() =>
   z.object({
     models: z.array(ModelCapabilitySchema()),
@@ -33,35 +37,45 @@ const CacheFileSchema = lazySchema(() =>
   }),
 )
 
+/** 模型能力类型定义 */
 export type ModelCapability = z.infer<ReturnType<typeof ModelCapabilitySchema>>
 
+/** 获取缓存目录路径 */
 function getCacheDir(): string {
   return join(getClaudeConfigHomeDir(), 'cache')
 }
 
+/** 获取缓存文件完整路径 */
 function getCachePath(): string {
   return join(getCacheDir(), 'model-capabilities.json')
 }
 
+/** 判断当前环境是否允许拉取并缓存模型能力信息 */
 function isModelCapabilitiesEligible(): boolean {
-  if (process.env.USER_TYPE !== 'ant') return false
-  if (getAPIProvider() !== 'firstParty') return false
-  if (!isFirstPartyAnthropicBaseUrl()) return false
+  if (process.env.USER_TYPE !== 'ant') return false        // 仅内部员工
+  if (getAPIProvider() !== 'firstParty') return false      // 仅第一方 API
+  if (!isFirstPartyAnthropicBaseUrl()) return false        // 仅官方 API 地址
   return true
 }
 
-// Longest-id-first so substring match prefers most specific; secondary key for stable isEqual
+/**
+ * 按 ID 长度降序排序，以便在模糊匹配时优先使用更具体的模型 ID。
+ * 次要排序键为 ID 字符串，保证 isEqual 比较时结果稳定。
+ */
 function sortForMatching(models: ModelCapability[]): ModelCapability[] {
   return [...models].sort(
     (a, b) => b.id.length - a.id.length || a.id.localeCompare(b.id),
   )
 }
 
-// Keyed on cache path so tests that set CLAUDE_CONFIG_DIR get a fresh read
+/**
+ * 从磁盘加载模型能力缓存。
+ * 使用 memoize 并基于缓存文件路径作为缓存键，使测试中修改 CLAUDE_CONFIG_DIR 时能重新读取。
+ */
 const loadCache = memoize(
   (path: string): ModelCapability[] | null => {
     try {
-      // eslint-disable-next-line custom-rules/no-sync-fs -- memoized; called from sync getContextWindowForModel
+      // eslint-disable-next-line custom-rules/no-sync-fs -- 已 memoized，从同步 getContextWindowForModel 调用
       const raw = readFileSync(path, 'utf-8')
       const parsed = CacheFileSchema().safeParse(safeParseJSON(raw, false))
       return parsed.success ? parsed.data.models : null
@@ -72,6 +86,10 @@ const loadCache = memoize(
   path => path,
 )
 
+/**
+ * 根据模型名称获取其能力信息（最大输入/输出 token 数）。
+ * 优先精确匹配，其次按 ID 长度降序进行子串匹配。
+ */
 export function getModelCapability(model: string): ModelCapability | undefined {
   if (!isModelCapabilitiesEligible()) return undefined
   const cached = loadCache(getCachePath())
@@ -82,6 +100,10 @@ export function getModelCapability(model: string): ModelCapability | undefined {
   return cached.find(c => m.includes(c.id.toLowerCase()))
 }
 
+/**
+ * 从第一方 API 拉取最新模型列表并更新磁盘缓存。
+ * 仅当环境符合条件且非仅必要流量模式时执行。
+ */
 export async function refreshModelCapabilities(): Promise<void> {
   if (!isModelCapabilitiesEligible()) return
   if (isEssentialTrafficOnly()) return
@@ -98,8 +120,9 @@ export async function refreshModelCapabilities(): Promise<void> {
 
     const path = getCachePath()
     const models = sortForMatching(parsed)
+    // 若内存缓存与待写入内容一致，跳过磁盘写入
     if (isEqual(loadCache(path), models)) {
-      logForDebugging('[modelCapabilities] cache unchanged, skipping write')
+      logForDebugging('[modelCapabilities] 缓存未变化，跳过写入')
       return
     }
 
@@ -108,11 +131,12 @@ export async function refreshModelCapabilities(): Promise<void> {
       encoding: 'utf-8',
       mode: 0o600,
     })
+    // 删除旧缓存条目，下次调用时将重新读取磁盘
     loadCache.cache.delete(path)
-    logForDebugging(`[modelCapabilities] cached ${models.length} models`)
+    logForDebugging(`[modelCapabilities] 已缓存 ${models.length} 个模型`)
   } catch (error) {
     logForDebugging(
-      `[modelCapabilities] fetch failed: ${error instanceof Error ? error.message : 'unknown'}`,
+      `[modelCapabilities] 拉取失败: ${error instanceof Error ? error.message : '未知错误'}`,
     )
   }
 }

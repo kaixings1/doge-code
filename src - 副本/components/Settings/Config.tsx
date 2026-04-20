@@ -215,7 +215,7 @@ export function Config({
       mainLoopModelForSession: null
     }));
     setChanges(prev_0 => {
-      const valStr = modelDisplayString(value) + (isBilledAsExtraUsage(value, false, isOpus1mMergeEnabled()) ? ' · Billed as extra usage' : '');
+      const valStr = modelDisplayString(value) + (isBilledAsExtraUsage(value, false, isOpus1mMergeEnabled()) ? ' · 按额外用量计费' : '');
       if ('model' in prev_0) {
         const {
           model,
@@ -412,7 +412,7 @@ export function Config({
   // Fast mode toggle (ant-only, eliminated from external builds)
   ...(isFastModeEnabled() && isFastModeAvailable() ? [{
     id: 'fastMode',
-    label: `Fast mode (${FAST_MODE_MODEL_DISPLAY} only)`,
+    label: `快速模式（仅 ${FAST_MODE_MODEL_DISPLAY}）`,
     value: !!isFastMode,
     type: 'boolean' as const,
     onChange(enabled_0: boolean) {
@@ -430,7 +430,7 @@ export function Config({
         setChanges(prev_8 => ({
           ...prev_8,
           model: getFastModeModel(),
-          'Fast mode': 'ON'
+          '快速模式': '开启'
         }));
       } else {
         setAppState(prev_9 => ({
@@ -439,7 +439,7 @@ export function Config({
         }));
         setChanges(prev_10 => ({
           ...prev_10,
-          'Fast mode': 'OFF'
+          '快速模式': '关闭'
         }));
       }
     }
@@ -636,12 +636,12 @@ export function Config({
       });
       setChanges(prev_16 => ({
         ...prev_16,
-        'Use auto mode during plan': useAutoModeDuringPlan
+        '计划期间使用自动模式': useAutoModeDuringPlan
       }));
     }
   }] : []), {
     id: 'respectGitignore',
-    label: '在文件选择器中尊重 .gitignore',
+    label: '在文件选择器中遵循 .gitignore',
     value: globalConfig.respectGitignore,
     type: 'boolean' as const,
     onChange(respectGitignore: boolean) {
@@ -703,7 +703,7 @@ export function Config({
   autoUpdaterDisabledReason ? {
     id: 'autoUpdatesChannel',
     label: '自动更新通道',
-    value: 'disabled',
+    value: '已禁用',
     type: 'managedEnum' as const,
     onChange() {}
   } : {
@@ -820,10 +820,10 @@ export function Config({
       setUserMsgOptIn(nextBrief);
       setChanges(prev_19 => ({
         ...prev_19,
-        'Default view': selected
+        '默认显示': selected
       }));
       logEvent('tengu_default_view_setting_changed', {
-        value: (defaultView ?? 'unset') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
+        value: (defaultView ?? '未设置') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
       });
     }
   }] : []), {
@@ -960,7 +960,7 @@ export function Config({
   // Teammate mode (only shown when agent swarms are enabled)
   ...(isAgentSwarmsEnabled() ? (() => {
     const cliOverride = getCliTeammateModeOverride();
-    const label = cliOverride ? `Teammate mode [overridden: ${cliOverride}]` : 'Teammate mode';
+    const label = cliOverride ? `队友模式 [已覆盖：${cliOverride}]` : '队友模式';
     return [{
       id: 'teammateMode',
       label,
@@ -1058,7 +1058,7 @@ export function Config({
   }] : []), ...(process.env.DOGE_API_KEY && !isRunningOnHomespace() ? [{
     id: 'apiKey',
     label: <Text>
-                Use custom API key:{' '}
+                使用自定义 API 密钥：{' '}
                 <Text bold>
                   {normalizeApiKeyForConfig(process.env.DOGE_API_KEY)}
                 </Text>
@@ -1164,7 +1164,7 @@ export function Config({
         key: key as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         value: value_2 as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
       });
-      return `Set ${key} to ${chalk.bold(value_2)}`;
+      return `将 ${key} 设置为 ${chalk.bold(value_2)}`;
     });
     // Check for API key changes
     // On homespace, DOGE_API_KEY is preserved in process.env for child
@@ -1173,68 +1173,68 @@ export function Config({
     const initialUsingCustomKey = Boolean(effectiveApiKey && initialConfig.current.customApiKeyResponses?.approved?.includes(normalizeApiKeyForConfig(effectiveApiKey)));
     const currentUsingCustomKey = Boolean(effectiveApiKey && globalConfig.customApiKeyResponses?.approved?.includes(normalizeApiKeyForConfig(effectiveApiKey)));
     if (initialUsingCustomKey !== currentUsingCustomKey) {
-      formattedChanges.push(`${currentUsingCustomKey ? 'Enabled' : 'Disabled'} custom API key`);
+      formattedChanges.push(`${currentUsingCustomKey ? '已启用' : '已禁用'}自定义 API 密钥`);
       logEvent('tengu_config_changed', {
         key: 'env.DOGE_API_KEY' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         value: currentUsingCustomKey as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
       });
     }
     if (globalConfig.theme !== initialConfig.current.theme) {
-      formattedChanges.push(`Set theme to ${chalk.bold(globalConfig.theme)}`);
+      formattedChanges.push(`将主题设置为 ${chalk.bold(globalConfig.theme)}`);
     }
     if (globalConfig.preferredNotifChannel !== initialConfig.current.preferredNotifChannel) {
-      formattedChanges.push(`Set notifications to ${chalk.bold(globalConfig.preferredNotifChannel)}`);
+      formattedChanges.push(`将通知设置为 ${chalk.bold(globalConfig.preferredNotifChannel)}`);
     }
     if (currentOutputStyle !== initialOutputStyle.current) {
-      formattedChanges.push(`Set output style to ${chalk.bold(currentOutputStyle)}`);
+      formattedChanges.push(`将输出样式设置为 ${chalk.bold(currentOutputStyle)}`);
     }
     if (currentLanguage !== initialLanguage.current) {
-      formattedChanges.push(`Set response language to ${chalk.bold(currentLanguage ?? 'Default (English)')}`);
+      formattedChanges.push(`将响应语言设置为 ${chalk.bold(currentLanguage ?? '默认（英语）')}`);
     }
     if (globalConfig.editorMode !== initialConfig.current.editorMode) {
-      formattedChanges.push(`Set editor mode to ${chalk.bold(globalConfig.editorMode || 'emacs')}`);
+      formattedChanges.push(`将编辑器模式设置为 ${chalk.bold(globalConfig.editorMode || 'emacs')}`);
     }
     if (globalConfig.diffTool !== initialConfig.current.diffTool) {
-      formattedChanges.push(`Set diff tool to ${chalk.bold(globalConfig.diffTool)}`);
+      formattedChanges.push(`将差异工具设置为 ${chalk.bold(globalConfig.diffTool)}`);
     }
     if (globalConfig.autoConnectIde !== initialConfig.current.autoConnectIde) {
-      formattedChanges.push(`${globalConfig.autoConnectIde ? 'Enabled' : 'Disabled'} auto-connect to IDE`);
+      formattedChanges.push(`${globalConfig.autoConnectIde ? '已启用' : '已禁用'}自动连接到 IDE`);
     }
     if (globalConfig.autoInstallIdeExtension !== initialConfig.current.autoInstallIdeExtension) {
-      formattedChanges.push(`${globalConfig.autoInstallIdeExtension ? 'Enabled' : 'Disabled'} auto-install IDE extension`);
+      formattedChanges.push(`${globalConfig.autoInstallIdeExtension ? '已启用' : '已禁用'}自动安装 IDE 扩展`);
     }
     if (globalConfig.autoCompactEnabled !== initialConfig.current.autoCompactEnabled) {
-      formattedChanges.push(`${globalConfig.autoCompactEnabled ? 'Enabled' : 'Disabled'} auto-compact`);
+      formattedChanges.push(`${globalConfig.autoCompactEnabled ? '已启用' : '已禁用'}自动压缩`);
     }
     if (globalConfig.respectGitignore !== initialConfig.current.respectGitignore) {
-      formattedChanges.push(`${globalConfig.respectGitignore ? 'Enabled' : 'Disabled'} respect .gitignore in file picker`);
+      formattedChanges.push(`${globalConfig.respectGitignore ? '已启用' : '已禁用'}在文件选择器中遵循 .gitignore`);
     }
     if (globalConfig.copyFullResponse !== initialConfig.current.copyFullResponse) {
-      formattedChanges.push(`${globalConfig.copyFullResponse ? 'Enabled' : 'Disabled'} always copy full response`);
+      formattedChanges.push(`${globalConfig.copyFullResponse ? '已启用' : '已禁用'}始终复制完整响应`);
     }
     if (globalConfig.copyOnSelect !== initialConfig.current.copyOnSelect) {
-      formattedChanges.push(`${globalConfig.copyOnSelect ? 'Enabled' : 'Disabled'} copy on select`);
+      formattedChanges.push(`${globalConfig.copyOnSelect ? '已启用' : '已禁用'}选中时复制`);
     }
     if (globalConfig.terminalProgressBarEnabled !== initialConfig.current.terminalProgressBarEnabled) {
-      formattedChanges.push(`${globalConfig.terminalProgressBarEnabled ? 'Enabled' : 'Disabled'} terminal progress bar`);
+      formattedChanges.push(`${globalConfig.terminalProgressBarEnabled ? '已启用' : '已禁用'}终端进度条`);
     }
     if (globalConfig.showStatusInTerminalTab !== initialConfig.current.showStatusInTerminalTab) {
-      formattedChanges.push(`${globalConfig.showStatusInTerminalTab ? 'Enabled' : 'Disabled'} terminal tab status`);
+      formattedChanges.push(`${globalConfig.showStatusInTerminalTab ? '已启用' : '已禁用'}终端标签页状态显示`);
     }
     if (globalConfig.showTurnDuration !== initialConfig.current.showTurnDuration) {
-      formattedChanges.push(`${globalConfig.showTurnDuration ? 'Enabled' : 'Disabled'} turn duration`);
+      formattedChanges.push(`${globalConfig.showTurnDuration ? '已启用' : '已禁用'}轮换时长显示`);
     }
     if (globalConfig.remoteControlAtStartup !== initialConfig.current.remoteControlAtStartup) {
-      const remoteLabel = globalConfig.remoteControlAtStartup === undefined ? 'Reset Remote Control to default' : `${globalConfig.remoteControlAtStartup ? 'Enabled' : 'Disabled'} Remote Control for all sessions`;
+      const remoteLabel = globalConfig.remoteControlAtStartup === undefined ? '将远程控制重置为默认值' : `${globalConfig.remoteControlAtStartup ? '已启用' : '已禁用'}所有会话的远程控制`;
       formattedChanges.push(remoteLabel);
     }
     if (settingsData?.autoUpdatesChannel !== initialSettingsData.current?.autoUpdatesChannel) {
-      formattedChanges.push(`Set auto-update channel to ${chalk.bold(settingsData?.autoUpdatesChannel ?? 'latest')}`);
+      formattedChanges.push(`将自动更新通道设置为 ${chalk.bold(settingsData?.autoUpdatesChannel ?? 'latest')}`);
     }
     if (formattedChanges.length > 0) {
       onClose(formattedChanges.join('\n'));
     } else {
-      onClose('Config dialog dismissed', {
+      onClose('配置对话框已关闭', {
         display: 'system'
       });
     }
@@ -1324,7 +1324,7 @@ export function Config({
     if (isDirty.current) {
       revertChanges();
     }
-    onClose('Config dialog dismissed', {
+    onClose('配置对话框已关闭', {
       display: 'system'
     });
   }, [showSubmenu, revertChanges, onClose]);
@@ -1528,7 +1528,7 @@ export function Config({
           <Box>
             <Text dimColor italic>
               <Byline>
-                <KeyboardShortcutHint shortcut="Enter" action="select" />
+                <KeyboardShortcutHint shortcut="Enter" action="选择" />
                 <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
               </Byline>
             </Text>
@@ -1545,7 +1545,7 @@ export function Config({
       }} showFastModeNotice={isFastModeEnabled() ? isFastMode && isFastModeSupportedByModel(mainLoopModel) && isFastModeAvailable() : false} />
           <Text dimColor>
             <Byline>
-              <KeyboardShortcutHint shortcut="Enter" action="confirm" />
+              <KeyboardShortcutHint shortcut="Enter" action="确认" />
               <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
             </Byline>
           </Text>
@@ -1581,7 +1581,7 @@ export function Config({
       }} />
           <Text dimColor>
             <Byline>
-              <KeyboardShortcutHint shortcut="Enter" action="confirm" />
+              <KeyboardShortcutHint shortcut="Enter" action="确认" />
               <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
             </Byline>
           </Text>
@@ -1592,7 +1592,7 @@ export function Config({
       }} externalIncludes={getExternalClaudeMdIncludes(memoryFiles)} />
           <Text dimColor>
             <Byline>
-              <KeyboardShortcutHint shortcut="Enter" action="confirm" />
+              <KeyboardShortcutHint shortcut="Enter" action="确认" />
               <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="禁用外部包含" />
             </Byline>
           </Text>
@@ -1618,7 +1618,7 @@ export function Config({
       }} />
           <Text dimColor>
             <Byline>
-              <KeyboardShortcutHint shortcut="Enter" action="confirm" />
+              <KeyboardShortcutHint shortcut="Enter" action="确认" />
               <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
             </Byline>
           </Text>
@@ -1643,7 +1643,7 @@ export function Config({
       }} />
           <Text dimColor>
             <Byline>
-              <KeyboardShortcutHint shortcut="Enter" action="confirm" />
+              <KeyboardShortcutHint shortcut="Enter" action="确认" />
               <ConfigurableShortcutHint action="confirm:no" context="Settings" fallback="Esc" description="取消" />
             </Byline>
           </Text>
@@ -1721,7 +1721,7 @@ export function Config({
           <SearchBox query={searchQuery} isFocused={isSearchMode && !headerFocused} isTerminalFocused={isTerminalFocused} cursorOffset={searchCursorOffset} placeholder="搜索设置…" />
           <Box flexDirection="column">
             {filteredSettingsItems.length === 0 ? <Text dimColor italic>
-                没有设置匹配 &quot;{searchQuery}&quot;
+                没有设置匹配 “{searchQuery}”
               </Text> : <>
                 {scrollOffset > 0 && <Text dimColor>
                     {figures.arrowUp} 上方还有 {scrollOffset} 项
@@ -1744,9 +1744,7 @@ export function Config({
                                 </Text>
                                 {showThinkingWarning && setting_2.id === 'thinkingEnabled' && <Text color="warning">
                                       {' '}
-                                      Changing thinking mode mid-conversation
-                                      will increase latency and may reduce
-                                      quality.
+                                      在对话中途更改思考模式会增加延迟并可能降低回答质量。
                                     </Text>}
                               </> : setting_2.id === 'theme' ? <Text color={isSelected ? 'suggestion' : undefined}>
                                 {THEME_LABELS[setting_2.value.toString()] ?? setting_2.value.toString()}
@@ -1759,9 +1757,9 @@ export function Config({
                                   已禁用
                                 </Text>
                                 <Text dimColor>
-                                  (
+                                  （
                                   {formatAutoUpdaterDisabledReason(autoUpdaterDisabledReason)}
-                                  )
+                                  ）
                                 </Text>
                               </Box> : <Text color={isSelected ? 'suggestion' : undefined}>
                                 {setting_2.value.toString()}
@@ -1772,8 +1770,8 @@ export function Config({
           })}
                 {scrollOffset + maxVisible < filteredSettingsItems.length && <Text dimColor>
                     {figures.arrowDown}{' '}
-                    {filteredSettingsItems.length - scrollOffset - maxVisible}{' '}
-                    更多下方
+                    下方还有 {filteredSettingsItems.length - scrollOffset - maxVisible}{' '}
+                    项
                   </Text>}
               </>}
           </Box>
@@ -1805,17 +1803,17 @@ function teammateModelDisplayString(value: string | null | undefined): string {
   if (value === undefined) {
     return modelDisplayString(getHardcodedTeammateModelFallback());
   }
-  if (value === null) return "Default (leader's model)";
+  if (value === null) return "默认（跟随领导者模型）";
   return modelDisplayString(value);
 }
 const THEME_LABELS: Record<string, string> = {
-  auto: 'Auto (match terminal)',
-  dark: 'Dark mode',
-  light: 'Light mode',
-  'dark-daltonized': 'Dark mode (colorblind-friendly)',
-  'light-daltonized': 'Light mode (colorblind-friendly)',
-  'dark-ansi': 'Dark mode (ANSI colors only)',
-  'light-ansi': 'Light mode (ANSI colors only)'
+  auto: '自动（匹配终端）',
+  dark: '深色模式',
+  light: '浅色模式',
+  'dark-daltonized': '深色模式（色盲友好）',
+  'light-daltonized': '浅色模式（色盲友好）',
+  'dark-ansi': '深色模式（仅 ANSI 颜色）',
+  'light-ansi': '浅色模式（仅 ANSI 颜色）'
 };
 function NotifChannelLabel(t0) {
   const $ = _c(4);
