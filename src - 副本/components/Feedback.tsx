@@ -30,7 +30,7 @@ import { Dialog } from './design-system/Dialog.js';
 import { KeyboardShortcutHint } from './design-system/KeyboardShortcutHint.js';
 import TextInput from './TextInput.js';
 
-// This value was determined experimentally by testing the URL length limit
+// 此值通过测试 URL 长度限制实验得出
 const GITHUB_URL_LIMIT = 7250;
 const GITHUB_ISSUES_REPO_URL = "external" === 'ant' ? 'https://github.com/anthropics/claude-cli-internal/issues' : 'https://github.com/anthropics/claude-code/issues';
 type Props = {
@@ -52,7 +52,7 @@ type Props = {
 };
 type Step = 'userInput' | 'consent' | 'submitting' | 'done';
 type FeedbackData = {
-  // latestAssistantMessageId is the message ID from the latest main model call
+  // latestAssistantMessageId 是最近一次主模型调用返回的消息 ID
   latestAssistantMessageId: string | null;
   message_count: number;
   datetime: string;
@@ -67,59 +67,59 @@ type FeedbackData = {
   rawTranscriptJsonl?: string;
 };
 
-// Utility function to redact sensitive information from strings
+// 用于脱敏字符串中敏感信息的工具函数
 export function redactSensitiveInfo(text: string): string {
   let redacted = text;
 
-  // Anthropic API keys (sk-ant...) with or without quotes
-  // First handle the case with quotes
-  redacted = redacted.replace(/"(sk-ant[^\s"']{24,})"/g, '"[REDACTED_API_KEY]"');
-  // Then handle the cases without quotes - more general pattern
+  // Anthropic API 密钥 (sk-ant...)，含引号或不含引号
+  // 首先处理带引号的情况
+  redacted = redacted.replace(/"(sk-ant[^\s"']{24,})"/g, '"[已脱敏_API密钥]"');
+  // 然后处理不带引号的情况 - 更通用的模式
   redacted = redacted.replace(
   // eslint-disable-next-line custom-rules/no-lookbehind-regex -- .replace(re, string) on /bug path: no-match returns same string (Object.is)
-  /(?<![A-Za-z0-9"'])(sk-ant-?[A-Za-z0-9_-]{10,})(?![A-Za-z0-9"'])/g, '[REDACTED_API_KEY]');
+  /(?<![A-Za-z0-9"'])(sk-ant-?[A-Za-z0-9_-]{10,})(?![A-Za-z0-9"'])/g, '[已脱敏_API密钥]');
 
-  // AWS keys - AWSXXXX format - add the pattern we need for the test
-  redacted = redacted.replace(/AWS key: "(AWS[A-Z0-9]{20,})"/g, 'AWS key: "[REDACTED_AWS_KEY]"');
+  // AWS 密钥 - AWSXXXX 格式 - 添加测试所需的模式
+  redacted = redacted.replace(/AWS key: "(AWS[A-Z0-9]{20,})"/g, 'AWS key: "[已脱敏_AWS密钥]"');
 
-  // AWS AKIAXXX keys
-  redacted = redacted.replace(/(AKIA[A-Z0-9]{16})/g, '[REDACTED_AWS_KEY]');
+  // AWS AKIAXXX 密钥
+  redacted = redacted.replace(/(AKIA[A-Z0-9]{16})/g, '[已脱敏_AWS密钥]');
 
-  // Google Cloud keys
+  // Google Cloud 密钥
   redacted = redacted.replace(
-  // eslint-disable-next-line custom-rules/no-lookbehind-regex -- same as above
-  /(?<![A-Za-z0-9])(AIza[A-Za-z0-9_-]{35})(?![A-Za-z0-9])/g, '[REDACTED_GCP_KEY]');
+  // eslint-disable-next-line custom-rules/no-lookbehind-regex -- 同上
+  /(?<![A-Za-z0-9])(AIza[A-Za-z0-9_-]{35})(?![A-Za-z0-9])/g, '[已脱敏_GCP密钥]');
 
-  // Vertex AI service account keys
+  // Vertex AI 服务账号密钥
   redacted = redacted.replace(
-  // eslint-disable-next-line custom-rules/no-lookbehind-regex -- same as above
-  /(?<![A-Za-z0-9])([a-z0-9-]+@[a-z0-9-]+\.iam\.gserviceaccount\.com)(?![A-Za-z0-9])/g, '[REDACTED_GCP_SERVICE_ACCOUNT]');
+  // eslint-disable-next-line custom-rules/no-lookbehind-regex -- 同上
+  /(?<![A-Za-z0-9])([a-z0-9-]+@[a-z0-9-]+\.iam\.gserviceaccount\.com)(?![A-Za-z0-9])/g, '[已脱敏_GCP服务账号]');
 
-  // Generic API keys in headers
-  redacted = redacted.replace(/(["']?x-api-key["']?\s*[:=]\s*["']?)[^"',\s)}\]]+/gi, '$1[REDACTED_API_KEY]');
+  // 请求头中的通用 API 密钥
+  redacted = redacted.replace(/(["']?x-api-key["']?\s*[:=]\s*["']?)[^"',\s)}\]]+/gi, '$1[已脱敏_API密钥]');
 
-  // Authorization headers and Bearer tokens
-  redacted = redacted.replace(/(["']?authorization["']?\s*[:=]\s*["']?(bearer\s+)?)[^"',\s)}\]]+/gi, '$1[REDACTED_TOKEN]');
+  // Authorization 请求头及 Bearer 令牌
+  redacted = redacted.replace(/(["']?authorization["']?\s*[:=]\s*["']?(bearer\s+)?)[^"',\s)}\]]+/gi, '$1[已脱敏_令牌]');
 
-  // AWS environment variables
-  redacted = redacted.replace(/(AWS[_-][A-Za-z0-9_]+\s*[=:]\s*)["']?[^"',\s)}\]]+["']?/gi, '$1[REDACTED_AWS_VALUE]');
+  // AWS 环境变量
+  redacted = redacted.replace(/(AWS[_-][A-Za-z0-9_]+\s*[=:]\s*)["']?[^"',\s)}\]]+["']?/gi, '$1[已脱敏_AWS值]');
 
-  // GCP environment variables
-  redacted = redacted.replace(/(GOOGLE[_-][A-Za-z0-9_]+\s*[=:]\s*)["']?[^"',\s)}\]]+["']?/gi, '$1[REDACTED_GCP_VALUE]');
+  // GCP 环境变量
+  redacted = redacted.replace(/(GOOGLE[_-][A-Za-z0-9_]+\s*[=:]\s*)["']?[^"',\s)}\]]+["']?/gi, '$1[已脱敏_GCP值]');
 
-  // Environment variables with keys
-  redacted = redacted.replace(/((API[-_]?KEY|TOKEN|SECRET|PASSWORD)\s*[=:]\s*)["']?[^"',\s)}\]]+["']?/gi, '$1[REDACTED]');
+  // 带有密钥的环境变量
+  redacted = redacted.replace(/((API[-_]?KEY|TOKEN|SECRET|PASSWORD)\s*[=:]\s*)["']?[^"',\s)}\]]+["']?/gi, '$1[已脱敏]');
   return redacted;
 }
 
-// Get sanitized error logs with sensitive information redacted
+// 获取已脱敏的错误日志，移除敏感信息
 function getSanitizedErrorLogs(): Array<{
   error?: string;
   timestamp?: string;
 }> {
-  // Sanitize error logs to remove any API keys
+  // 对错误日志进行脱敏以移除任何 API 密钥
   return getInMemoryErrors().map(errorInfo => {
-    // Create a copy of the error info to avoid modifying the original
+    // 复制一份错误信息以避免修改原始对象
     const errorCopy = {
       ...errorInfo
     } as {
@@ -127,7 +127,7 @@ function getSanitizedErrorLogs(): Array<{
       timestamp?: string;
     };
 
-    // Sanitize error if present and is a string
+    // 如果存在错误信息且为字符串，则进行脱敏
     if (errorCopy && typeof errorCopy.error === 'string') {
       errorCopy.error = redactSensitiveInfo(errorCopy.error);
     }
@@ -141,7 +141,7 @@ async function loadRawTranscriptJsonl(): Promise<string | null> {
       size
     } = await stat(transcriptPath);
     if (size > MAX_TRANSCRIPT_READ_BYTES) {
-      logForDebugging(`Skipping raw transcript read: file too large (${size} bytes)`, {
+      logForDebugging(`跳过读取原始转录记录：文件过大 (${size} 字节)`, {
         level: 'warn'
       });
       return null;
@@ -191,10 +191,10 @@ export function Feedback({
     setError(null);
     setFeedbackId(null);
 
-    // Get sanitized errors for the report
+    // 获取用于报告的已脱敏错误信息
     const sanitizedErrors = getSanitizedErrorLogs();
 
-    // Extract last assistant message ID from messages array
+    // 从消息数组中提取最后一条助手消息的 ID
     const lastAssistantMessage = getLastAssistantMessage(messages);
     const lastAssistantMessageId = lastAssistantMessage?.requestId ?? null;
     const [diskTranscripts, rawTranscriptJsonl] = await Promise.all([loadAllSubagentTranscriptsFromDisk(), loadRawTranscriptJsonl()]);
@@ -231,7 +231,7 @@ export function Feedback({
           feedback_id: result.feedbackId as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
           last_assistant_message_id: lastAssistantMessageId as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
         });
-        // 1P-only: freeform text approved for BQ. Join on feedback_id.
+        // 仅用于第一方分析：自由文本已获批用于 BigQuery。通过 feedback_id 进行关联。
         logEventTo1P('tengu_bug_report_description', {
           feedback_id: result.feedbackId as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
           description: redactSensitiveInfo(description) as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
@@ -244,14 +244,14 @@ export function Feedback({
       } else {
         setError('无法提交反馈。请稍后重试。');
       }
-      // Stay on userInput step so user can retry with their content preserved
+      // 保留在 userInput 步骤，以便用户在保留已输入内容的情况下重试
       setStep('userInput');
     }
   }, [description, envInfo.isGit, messages]);
 
-  // Handle cancel - this will be called by Dialog's automatic Esc handling
+  // 处理取消操作 - 将由 Dialog 的自动 Esc 处理调用
   const handleCancel = useCallback(() => {
-    // Don't cancel when done - let other keys close the dialog
+    // 完成时不允许取消 - 让其他按键关闭对话框
     if (step === 'done') {
       if (error) {
         onDone('提交反馈 / 错误报告时出错', {
@@ -269,17 +269,17 @@ export function Feedback({
     });
   }, [step, error, onDone]);
 
-  // During text input, use Settings context where only Escape (not 'n') triggers confirm:no.
-  // This allows typing 'n' in the text field while still supporting Escape to cancel.
+  // 在文本输入期间，使用 Settings 上下文，只有 Escape（而非 'n'）会触发 confirm:no。
+  // 这样可以在文本框中输入 'n' 的同时仍支持按 Escape 取消。
   useKeybinding('confirm:no', handleCancel, {
     context: 'Settings',
     isActive: step === 'userInput'
   });
   useInput((input, key) => {
-    // Allow any key press to close the dialog when done or when there's an error
+    // 当步骤完成或发生错误时，允许任意按键关闭对话框
     if (step === 'done') {
       if (key.return && title) {
-        // Open GitHub issue URL when Enter is pressed
+        // 按下 Enter 时打开 GitHub Issue 创建页面
         const issueUrl = createGitHubIssueUrl(feedbackId ?? '', title, description, getSanitizedErrorLogs());
         void openBrowser(issueUrl);
       }
@@ -295,8 +295,8 @@ export function Feedback({
       return;
     }
 
-    // When in userInput step with error, allow user to edit and retry
-    // (don't close on any keypress - they can still press Esc to cancel)
+    // 当处于 userInput 步骤且存在错误时，允许用户编辑并重试
+    // （不因任意按键关闭 - 用户仍可按 Esc 取消）
     if (error && step !== 'userInput') {
       onDone('提交反馈 / 错误报告时出错', {
         display: 'system'
@@ -308,17 +308,17 @@ export function Feedback({
     }
   });
   return <Dialog title="提交反馈 / 错误报告" onCancel={handleCancel} isCancelActive={step !== 'userInput'} inputGuide={exitState => exitState.pending ? <Text>按 {exitState.keyName} 再次退出</Text> : step === 'userInput' ? <Byline>
-            <KeyboardShortcutHint shortcut="Enter" action="continue" />
+            <KeyboardShortcutHint shortcut="Enter" action="继续" />
             <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
           </Byline> : step === 'consent' ? <Byline>
-            <KeyboardShortcutHint shortcut="Enter" action="submit" />
+            <KeyboardShortcutHint shortcut="Enter" action="提交" />
             <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
           </Byline> : null}>
       {step === 'userInput' && <Box flexDirection="column" gap={1}>
           <Text>请在下方描述问题：</Text>
           <TextInput value={description} onChange={value => {
         setDescription(value);
-        // Clear error when user starts editing to allow retry
+        // 当用户开始编辑时清除错误以允许重试
         if (error) {
           setError(null);
         }
@@ -393,29 +393,29 @@ export function createGitHubIssueUrl(feedbackId: string, title: string, descript
 }>): string {
   const sanitizedTitle = redactSensitiveInfo(title);
   const sanitizedDescription = redactSensitiveInfo(description);
-  const bodyPrefix = `**Bug Description**\n${sanitizedDescription}\n\n` + `**Environment Info**\n` + `- Platform: ${env.platform}\n` + `- Terminal: ${env.terminal}\n` + `- Version: ${MACRO.VERSION || 'unknown'}\n` + `- Feedback ID: ${feedbackId}\n` + `\n**Errors**\n\`\`\`json\n`;
+  const bodyPrefix = `**Bug 描述**\n${sanitizedDescription}\n\n` + `**环境信息**\n` + `- 平台: ${env.platform}\n` + `- 终端: ${env.terminal}\n` + `- 版本: ${MACRO.VERSION || 'unknown'}\n` + `- 反馈 ID: ${feedbackId}\n` + `\n**错误**\n\`\`\`json\n`;
   const errorSuffix = `\n\`\`\`\n`;
   const errorsJson = jsonStringify(errors);
   const baseUrl = `${GITHUB_ISSUES_REPO_URL}/new?title=${encodeURIComponent(sanitizedTitle)}&labels=user-reported,bug&body=`;
-  const truncationNote = `\n**Note:** Content was truncated.\n`;
+  const truncationNote = `\n**注意:** 内容已被截断。\n`;
   const encodedPrefix = encodeURIComponent(bodyPrefix);
   const encodedSuffix = encodeURIComponent(errorSuffix);
   const encodedNote = encodeURIComponent(truncationNote);
   const encodedErrors = encodeURIComponent(errorsJson);
 
-  // Calculate space available for errors
+  // 计算错误信息可用的剩余空间
   const spaceForErrors = GITHUB_URL_LIMIT - baseUrl.length - encodedPrefix.length - encodedSuffix.length - encodedNote.length;
 
-  // If description alone exceeds limit, truncate everything
+  // 如果仅描述就已超出限制，则截断所有内容
   if (spaceForErrors <= 0) {
     const ellipsis = encodeURIComponent('…');
-    const buffer = 50; // Extra safety margin
+    const buffer = 50; // 额外的安全余量
     const maxEncodedLength = GITHUB_URL_LIMIT - baseUrl.length - ellipsis.length - encodedNote.length - buffer;
     const fullBody = bodyPrefix + errorsJson + errorSuffix;
     let encodedFullBody = encodeURIComponent(fullBody);
     if (encodedFullBody.length > maxEncodedLength) {
       encodedFullBody = encodedFullBody.slice(0, maxEncodedLength);
-      // Don't cut in middle of %XX sequence
+      // 避免在 %XX 序列中间截断
       const lastPercent = encodedFullBody.lastIndexOf('%');
       if (lastPercent >= encodedFullBody.length - 2) {
         encodedFullBody = encodedFullBody.slice(0, lastPercent);
@@ -424,17 +424,17 @@ export function createGitHubIssueUrl(feedbackId: string, title: string, descript
     return baseUrl + encodedFullBody + ellipsis + encodedNote;
   }
 
-  // If errors fit, no truncation needed
+  // 如果错误信息完全容纳得下，无需截断
   if (encodedErrors.length <= spaceForErrors) {
     return baseUrl + encodedPrefix + encodedErrors + encodedSuffix;
   }
 
-  // Truncate errors to fit (prioritize keeping description)
-  // Slice encoded errors directly, then trim to avoid cutting %XX sequences
+  // 截断错误信息以适应空间（优先保留描述）
+  // 直接截取已编码的错误信息，然后修剪以避免在 %XX 序列中间切断
   const ellipsis = encodeURIComponent('…');
-  const buffer = 50; // Extra safety margin
+  const buffer = 50; // 额外的安全余量
   let truncatedEncodedErrors = encodedErrors.slice(0, spaceForErrors - ellipsis.length - buffer);
-  // If we cut in middle of %XX, back up to before the %
+  // 如果截断位置处于 % 编码序列中间，则回退到 % 之前
   const lastPercent = truncatedEncodedErrors.lastIndexOf('%');
   if (lastPercent >= truncatedEncodedErrors.length - 2) {
     truncatedEncodedErrors = truncatedEncodedErrors.slice(0, lastPercent);
@@ -444,7 +444,7 @@ export function createGitHubIssueUrl(feedbackId: string, title: string, descript
 async function generateTitle(description: string, abortSignal: AbortSignal): Promise<string> {
   try {
     const response = await queryHaiku({
-      systemPrompt: asSystemPrompt(['Generate a concise, technical issue title (max 80 chars) for a public GitHub issue based on this bug report for Claude Code.', 'Claude Code is an agentic coding CLI based on the Anthropic API.', 'The title should:', '- Include the type of issue [Bug] or [Feature Request] as the first thing in the title', '- Be concise, specific and descriptive of the actual problem', '- Use technical terminology appropriate for a software issue', '- For error messages, extract the key error (e.g., "缺少 Tool Result Block" rather than the full message)', '- Be direct and clear for developers to understand the problem', '- If you cannot determine a clear issue, use "Bug Report: [brief description]"', '- Any LLM API errors are from the Anthropic API, not from any other model provider', 'Your response will be directly used as the title of the Github issue, and as such should not contain any other commentary or explaination', 'Examples of good titles include: "[Bug] Auto-Compact triggers to soon", "[Bug] Anthropic API Error: Missing Tool Result Block", "[Bug] Error: Invalid Model Name for Opus"']),
+      systemPrompt: asSystemPrompt(['根据此 Claude Code 的错误报告，生成一个简洁的技术性 Issue 标题（最多 80 字符），用于公开的 GitHub Issue。', 'Claude Code 是一个基于 Anthropic API 的智能编码 CLI 工具。', '标题应满足：', '- 以 [Bug] 或 [Feature Request] 开头作为标题的第一个部分', '- 简洁、具体且能描述实际问题', '- 使用适合软件问题的技术术语', '- 对于错误信息，提取关键错误（例如“缺少 Tool Result Block”而非完整信息）', '- 直接明了，便于开发者理解问题', '- 如果无法确定明确的问题，请使用“Bug Report: [简要描述]”', '- 任何 LLM API 错误均来自 Anthropic API，而非其他模型提供商', '您的回答将直接用作 GitHub Issue 的标题，因此不应包含任何其他评论或解释', '好的标题示例：“[Bug] Auto-Compact 触发过早”、“[Bug] Anthropic API 错误：缺少 Tool Result Block”、“[Bug] 错误：Opus 模型名称无效”']),
       userPrompt: description,
       signal: abortSignal,
       options: {
@@ -458,36 +458,36 @@ async function generateTitle(description: string, abortSignal: AbortSignal): Pro
     });
     const title = response.message.content[0]?.type === 'text' ? response.message.content[0].text : 'Bug Report';
 
-    // Check if the title contains an API error message
+    // 检查标题是否包含 API 错误消息
     if (startsWithApiErrorPrefix(title)) {
       return createFallbackTitle(description);
     }
     return title;
   } catch (error) {
-    // If there's any error in title generation, use a fallback title
+    // 标题生成过程中发生任何错误，均使用后备标题
     logError(error);
     return createFallbackTitle(description);
   }
 }
 function createFallbackTitle(description: string): string {
-  // Create a safe fallback title based on the bug description
+  // 基于错误描述创建一个安全的后备标题
 
-  // Try to extract a meaningful title from the first line
+  // 尝试从第一行提取有意义的标题
   const firstLine = description.split('\n')[0] || '';
 
-  // If the first line is very short, use it directly
+  // 如果第一行很短，直接使用
   if (firstLine.length <= 60 && firstLine.length > 5) {
     return firstLine;
   }
 
-  // For longer descriptions, create a truncated version
-  // Truncate at word boundaries when possible
+  // 对于较长的描述，创建截断版本
+  // 尽可能在单词边界处截断
   let truncated = firstLine.slice(0, 60);
   if (firstLine.length > 60) {
-    // Find the last space before the 60 char limit
+    // 在 60 字符限制内寻找最后一个空格
     const lastSpace = truncated.lastIndexOf(' ');
     if (lastSpace > 30) {
-      // Only trim at word if we're not cutting too much
+      // 仅当不会过度缩短时才在单词边界处修剪
       truncated = truncated.slice(0, lastSpace);
     }
     truncated += '...';
@@ -495,19 +495,19 @@ function createFallbackTitle(description: string): string {
   return truncated.length < 10 ? 'Bug Report' : truncated;
 }
 
-// Helper function to sanitize and log errors without exposing API keys
+// 辅助函数：对错误进行脱敏并记录，避免暴露 API 密钥
 function sanitizeAndLogError(err: unknown): void {
   if (err instanceof Error) {
-    // Create a copy with potentially sensitive info redacted
+    // 创建一份副本，并对可能敏感的信息进行脱敏
     const safeError = new Error(redactSensitiveInfo(err.message));
 
-    // Also redact the stack trace if present
+    // 如果存在堆栈跟踪，也进行脱敏
     if (err.stack) {
       safeError.stack = redactSensitiveInfo(err.stack);
     }
     logError(safeError);
   } else {
-    // For non-Error objects, convert to string and redact sensitive info
+    // 对于非 Error 对象，转换为字符串并脱敏
     const errorString = redactSensitiveInfo(String(err));
     logError(new Error(errorString));
   }
@@ -523,8 +523,8 @@ async function submitFeedback(data: FeedbackData, signal?: AbortSignal): Promise
     };
   }
   try {
-    // Ensure OAuth token is fresh before getting auth headers
-    // This prevents 401 errors from stale cached tokens
+    // 在获取认证头之前确保 OAuth 令牌是新鲜的
+    // 这可以防止因缓存令牌过期导致的 401 错误
     await checkAndRefreshOAuthTokenIfNeeded();
     const authResult = getAuthHeaders();
     if (authResult.error) {
@@ -542,7 +542,7 @@ async function submitFeedback(data: FeedbackData, signal?: AbortSignal): Promise
     }, {
       headers,
       timeout: 30000,
-      // 30 second timeout to prevent hanging
+      // 30 秒超时以防止挂起
       signal
     });
     if (response.status === 200) {
@@ -553,17 +553,17 @@ async function submitFeedback(data: FeedbackData, signal?: AbortSignal): Promise
           feedbackId: result.feedback_id
         };
       }
-      sanitizeAndLogError(new Error('Failed to submit feedback: request did not return feedback_id'));
+      sanitizeAndLogError(new Error('提交反馈失败：请求未返回 feedback_id'));
       return {
         success: false
       };
     }
-    sanitizeAndLogError(new Error('Failed to submit feedback:' + response.status));
+    sanitizeAndLogError(new Error('提交反馈失败：' + response.status));
     return {
       success: false
     };
   } catch (err) {
-    // Handle cancellation/abort - don't log as error
+    // 处理取消/中止 - 不作为错误记录
     if (axios.isCancel(err)) {
       return {
         success: false
@@ -579,7 +579,7 @@ async function submitFeedback(data: FeedbackData, signal?: AbortSignal): Promise
         };
       }
     }
-    // Use our safe error logging function to avoid leaking API keys
+    // 使用安全的错误记录函数以避免泄露 API 密钥
     sanitizeAndLogError(err);
     return {
       success: false

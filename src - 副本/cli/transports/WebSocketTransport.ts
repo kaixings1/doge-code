@@ -25,7 +25,7 @@ const DEFAULT_MAX_RECONNECT_DELAY = 30000
 /** 重新连接尝试的时间预算，超过后放弃（10 分钟）。 */
 const DEFAULT_RECONNECT_GIVE_UP_MS = 600_000
 const DEFAULT_PING_INTERVAL = 10000
-const DEFAULT_KEEPALIVE_INTERVAL = 300_000 // 5 分钟
+const DEFAULT_KEEPALIVE_INTERVAL = 1000_000 // 5 分钟
 
 /**
  * 检测系统睡眠/唤醒的阈值。如果连续两次

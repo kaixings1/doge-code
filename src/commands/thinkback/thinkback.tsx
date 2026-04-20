@@ -83,7 +83,7 @@ export async function playAnimation(skillDir: string): Promise<{
     logError(e);
     return {
       success: false,
-      message: `Could not access animation data: ${toError(e).message}`
+      message: `不能访问动画数据: ${toError(e).message}`
     };
   }
   try {
@@ -98,7 +98,7 @@ export async function playAnimation(skillDir: string): Promise<{
     logError(e);
     return {
       success: false,
-      message: `Could not access player script: ${toError(e).message}`
+      message: `不能访问玩家脚本: ${toError(e).message}`
     };
   }
 
@@ -210,10 +210,10 @@ function ThinkbackInstaller({
           const result = await installSelectedPlugins([pluginId]);
           if (result.failed.length > 0) {
             const errorMsg = result.failed.map(f => `${f.name}: ${f.error}`).join(', ');
-            throw new Error(`Failed to install plugin: ${errorMsg}`);
+            throw new Error(`安装插件失败: ${errorMsg}`);
           }
           clearAllCaches();
-          logForDebugging(`Plugin ${pluginId} installed`);
+          logForDebugging(`插件 ${pluginId} 已安装`);
         } else {
           // Plugin is installed, check if it's enabled
           const {
@@ -228,7 +228,7 @@ function ThinkbackInstaller({
             logForDebugging(`Enabling plugin ${pluginId}`);
             const enableResult = await enablePluginOp(pluginId);
             if (!enableResult.success) {
-              throw new Error(`Failed to enable plugin: ${enableResult.message}`);
+              throw new Error(`允许插件失败: ${enableResult.message}`);
             }
             clearAllCaches();
             logForDebugging(`Plugin ${pluginId} enabled`);
@@ -252,7 +252,7 @@ function ThinkbackInstaller({
   }, [onReady, onError]);
   if (state.phase === 'error') {
     return <Box flexDirection="column">
-        <Text color="error">Error: {state.message}</Text>
+        <Text color="error">错误: {state.message}</Text>
       </Box>;
   }
   if (state.phase === 'ready') {
@@ -488,7 +488,7 @@ function ThinkbackFlow(t0) {
   if (installError) {
     let t8;
     if ($[14] !== installError) {
-      t8 = <Text color="error">Error: {installError}</Text>;
+      t8 = <Text color="error">错误: {installError}</Text>;
       $[14] = installError;
       $[15] = t8;
     } else {

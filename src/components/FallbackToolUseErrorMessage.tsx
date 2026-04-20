@@ -39,7 +39,7 @@ export function FallbackToolUseErrorMessage(t0) {
       if (!verbose && trimmed.includes("InputValidationError: ")) {
         error = "工具参数无效";
       } else {
-        if (trimmed.startsWith("Error: ") || trimmed.startsWith("Cancelled: ")) {
+        if (trimmed.startsWith("错误: ") || trimmed.startsWith("取消: ")) {
           error = trimmed;
         } else {
           error = `错误：${trimmed}`;

@@ -63,7 +63,7 @@ const getRunningRemoteHosts: () => Promise<string[]> =
         const { stdout, code } = await execFileNoThrow(
           'coder',
           ['list', '-o', 'json'],
-          { timeout: 30000 },
+          { timeout: 60000 },
         )
         if (code !== 0) return []
         try {
@@ -89,7 +89,7 @@ const getRemoteHostSessionCount: (hs: string) => Promise<number> =
             `${homespace}.coder`,
             'find /root/.claude/projects -name "*.jsonl" 2>/dev/null | wc -l',
           ],
-          { timeout: 30000 },
+          { timeout: 60000 },
         )
         if (code !== 0) return 0
         return parseInt(stdout.trim(), 10) || 0
@@ -112,7 +112,7 @@ const collectFromRemoteHost: (
           const scpResult = await execFileNoThrow(
             'scp',
             ['-rq', `${homespace}.coder:/root/.claude/projects/`, tempDir],
-            { timeout: 300000 },
+            { timeout: 600000 },
           )
           if (scpResult.code !== 0) {
             // SCP failed
@@ -854,7 +854,7 @@ function formatTranscriptForFacets(log: LogOption): string {
       if (Array.isArray(content)) {
         for (const block of content) {
           if (block.type === 'text' && 'text' in block) {
-            lines.push(`[Assistant]: ${(block.text as string).slice(0, 300)}`)
+            lines.push(`[Assistant]: ${(block.text as string).slice(0, 600)}`)
           } else if (block.type === 'tool_use' && 'name' in block) {
             lines.push(`[Tool: ${block.name}]`)
           }
@@ -908,7 +908,7 @@ async function formatTranscriptWithSummarization(
   const fullTranscript = formatTranscriptForFacets(log)
 
   // If under 30k chars, use as-is
-  if (fullTranscript.length <= 30000) {
+  if (fullTranscript.length <= 60000) {
     return fullTranscript
   }
 
@@ -1878,8 +1878,8 @@ function generateResponseTimeHistogram(times: number[]): string {
     else if (t < 30) buckets['10-30s'] = (buckets['10-30s'] ?? 0) + 1
     else if (t < 60) buckets['30s-1m'] = (buckets['30s-1m'] ?? 0) + 1
     else if (t < 120) buckets['1-2m'] = (buckets['1-2m'] ?? 0) + 1
-    else if (t < 300) buckets['2-5m'] = (buckets['2-5m'] ?? 0) + 1
-    else if (t < 900) buckets['5-15m'] = (buckets['5-15m'] ?? 0) + 1
+    else if (t < 600) buckets['2-6m'] = (buckets['2-6m'] ?? 0) + 1
+    else if (t < 900) buckets['6-15m'] = (buckets['6-15m'] ?? 0) + 1
     else buckets['>15m'] = (buckets['>15m'] ?? 0) + 1
   }
 
