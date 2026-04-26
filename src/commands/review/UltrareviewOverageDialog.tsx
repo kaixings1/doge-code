@@ -67,14 +67,14 @@ export function UltrareviewOverageDialog(t0) {
   const options = t4;
   let t5;
   if ($[7] === Symbol.for("react.memo_cache_sentinel")) {
-    t5 = <Text>Your free ultrareviews for this organization are used. Further reviews bill as Extra Usage (pay-per-use).</Text>;
+    t5 = <Text>您所在组织的免费超额审查次数已用完。后续审查将作为额外用量计费（按量付费）。</Text>;
     $[7] = t5;
   } else {
     t5 = $[7];
   }
   let t6;
   if ($[8] !== handleCancel || $[9] !== handleSelect || $[10] !== isLaunching) {
-    t6 = <Box flexDirection="column" gap={1}>{t5}{isLaunching ? <Text color="background">Launching…</Text> : <Select options={options} onChange={handleSelect} onCancel={handleCancel} />}</Box>;
+    t6 = <Box flexDirection="column" gap={1}>{t5}{isLaunching ? <Text color="background">启动运行中…</Text> : <Select options={options} onChange={handleSelect} onCancel={handleCancel} />}</Box>;
     $[8] = handleCancel;
     $[9] = handleSelect;
     $[10] = isLaunching;

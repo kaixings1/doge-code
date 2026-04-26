@@ -1,0 +1,105 @@
+{
+  "activePreset": "Ollama (11434)",
+  "presets": {
+    "Local Anthropic (8080)": {
+      "provider": "anthropic",
+      "baseURL": "http://127.0.0.1:8080",
+      "apiKey": "DOGE_FAKE_KEY",
+      "model": "claude-3-haiku",
+      "savedModels": [
+        "claude-3-haiku",
+        "qwen3.5:0.8b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-7-Flash"
+      ]
+    },
+    "Llama Anthropic (1234)": {
+      "provider": "anthropic",
+      "baseURL": "http://127.0.0.1:1234",
+      "apiKey": "DOGE_FAKE_KEY",
+      "model": "claude-3-haiku",
+      "savedModels": [
+        "claude-3-haiku"
+      ]
+    },
+    "custom": {
+      "provider": "openai",
+      "baseURL": "http://127.0.0.1:8081",
+      "apiKey": "DOGE_FAKE_KEY",
+      "model": "claude-3-haiku",
+      "savedModels": [
+        "claude-3-haiku",
+        "qwen3.5:0.8b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-7-Flash"
+      ]
+    },
+    "Ollama (11434)": {
+      "provider": "openai",
+      "baseURL": "http://127.0.0.1:11434/v1/chat/completions",
+      "apiKey": "DOGE_FAKE_KEY",
+      "model": "qwen3.5:0.8b",
+      "savedModels": [
+        "claude-3-haiku",
+        "qwen3.5:0.8b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-7-Flash"
+      ]
+    },
+    "Llama Server (1234)": {
+      "provider": "openai",
+      "baseURL": "http://127.0.0.1:1234/v1/chat/completions",
+      "apiKey": "DOGE_FAKE_KEY",
+      "model": "claude-3-haiku",
+      "savedModels": [
+        "claude-3-haiku",
+        "qwen3.5:0.8b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-7-Flash"
+      ]
+    },
+    "ModelScope (魔塔)": {
+      "provider": "openai",
+      "baseURL": "https://api-inference.modelscope.cn/v1/chat/completions",
+      "apiKey": "ms-e0186609-9d27-4542-a733-4cf18b89c9dd",
+      "model": "Qwen/Qwen3.5-397B-A17B",
+      "savedModels": [
+        "claude-3-haiku",
+        "qwen3.5:0.8b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-7-Flash"
+      ]
+    },
+    "NVIDIA NIM": {
+      "provider": "openai",
+      "baseURL": "https://integrate.api.nvidia.com/v1/chat/completions",
+      "apiKey": "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",
+      "model": "meta/llama-3.1-8b-instruct",
+      "savedModels": [
+        "claude-3-haiku",
+        "qwen3.5:0.8b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-7-Flash"
+      ]
+    },
+    "智谱 (BigModel)": {
+      "provider": "anthropic",
+      "baseURL": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+      "apiKey": "c8926ece36e34b518c28766b44ed718a.afnycznebRuAU2yw",
+      "model": "glm-4-7-Flash",
+      "savedModels": [
+        "claude-3-haiku",
+        "qwen3.5:0.8b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-7-Flash"
+      ]
+    }
+  }
+}

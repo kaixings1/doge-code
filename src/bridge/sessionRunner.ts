@@ -17,24 +17,22 @@ const MAX_ACTIVITIES = 10
 const MAX_STDERR_LINES = 10
 
 /**
- * Sanitize a session ID for use in file names.
- * Strips any characters that could cause path traversal (e.g. `../`, `/`)
- * or other filesystem issues, replacing them with underscores.
+ * 对会话 ID 进行安全处理以便用于文件名。
+ * 将任何可能导致路径遍历（如 `../`、`/`）或其他文件系统问题的字符替换为下划线。
  */
 export function safeFilenameId(id: string): string {
   return id.replace(/[^a-zA-Z0-9_-]/g, '_')
 }
 
 /**
- * A control_request emitted by the child CLI when it needs permission to
- * execute a **specific** tool invocation (not a general capability check).
- * The bridge forwards this to the server so the user can approve/deny.
+ * 子进程 CLI 在需要权限执行**特定**工具调用（而非一般能力检查）时发出的控制请求。
+ * 桥接层将此请求转发至服务端，以便用户批准/拒绝。
  */
 export type PermissionRequest = {
   type: 'control_request'
   request_id: string
   request: {
-    /** Per-invocation permission check — "may I run this tool with these inputs?" */
+    /** 单次调用的权限检查 —— “我能否使用这些输入运行此工具？” */
     subtype: 'can_use_tool'
     tool_name: string
     input: Record<string, unknown>
@@ -45,11 +43,9 @@ export type PermissionRequest = {
 type SessionSpawnerDeps = {
   execPath: string
   /**
-   * Arguments that must precede the CLI flags when spawning. Empty for
-   * compiled binaries (where execPath is the claude binary itself); contains
-   * the script path (process.argv[1]) for npm installs where execPath is the
-   * node runtime. Without this, node sees --sdk-url as a node option and
-   * exits with "bad option: --sdk-url" (see anthropics/claude-code#28334).
+   * 生成进程时必须在 CLI 标志之前传递的参数。对于编译后的二进制文件（execPath 即为 claude 可执行文件本身），
+   * 此数组为空；对于通过 npm 安装的场景（execPath 为 node 运行时），此处包含脚本路径（process.argv[1]）。
+   * 缺少此参数会导致 node 将 --sdk-url 视为 node 选项并因“bad option: --sdk-url”退出（见 anthropics/claude-code#28334）。
    */
   scriptArgs: string[]
   env: NodeJS.ProcessEnv
@@ -66,7 +62,7 @@ type SessionSpawnerDeps = {
   ) => void
 }
 
-/** Map tool names to human-readable verbs for the status display. */
+/** 将工具名称映射到人类可读的动词，用于状态显示。 */
 const TOOL_VERBS: Record<string, string> = {
   Read: '读取中',
   Write: '写入中',
@@ -75,16 +71,16 @@ const TOOL_VERBS: Record<string, string> = {
   Bash: '运行中',
   Glob: '搜索中',
   Grep: '检索中',
-  WebFetch: 'Fetching',
+  WebFetch: '抓取中',
   WebSearch: '检索中',
-  Task: 'Running task',
+  Task: '任务执行中',
   FileReadTool: '读取中',
   FileWriteTool: '写入中',
   FileEditTool: '编辑中',
   GlobTool: '检索中',
   GrepTool: '检索中',
   BashTool: '运行中',
-  NotebookEditTool: '编辑中 notebook',
+  NotebookEditTool: '编辑笔记本中',
   LSP: 'LSP',
 }
 
@@ -145,7 +141,7 @@ function extractActivities(
             timestamp: now,
           })
           onDebug(
-            `[bridge:activity] sessionId=${sessionId} tool_use name=${name} ${inputPreview(input)}`,
+            `[bridge:activity] sessionId=${sessionId} 工具调用 name=${name} ${inputPreview(input)}`,
           )
         } else if (b.type === 'text') {
           const text = (b.text as string) ?? ''
@@ -156,7 +152,7 @@ function extractActivities(
               timestamp: now,
             })
             onDebug(
-              `[bridge:activity] sessionId=${sessionId} text "${text.slice(0, 100)}"`,
+              `[bridge:activity] sessionId=${sessionId} 文本 "${text.slice(0, 100)}"`,
             )
           }
         }
@@ -172,22 +168,22 @@ function extractActivities(
           timestamp: now,
         })
         onDebug(
-          `[bridge:activity] sessionId=${sessionId} result subtype=success`,
+          `[bridge:activity] sessionId=${sessionId} 结果 subtype=success`,
         )
       } else if (subtype) {
         const errors = msg.errors as string[] | undefined
-        const errorSummary = errors?.[0] ?? `error: ${subtype}`
+        const errorSummary = errors?.[0] ?? `错误: ${subtype}`
         activities.push({
           type: 'error',
           summary: errorSummary,
           timestamp: now,
         })
         onDebug(
-          `[bridge:activity] sessionId=${sessionId} result subtype=${subtype} error="${errorSummary}"`,
+          `[bridge:activity] sessionId=${sessionId} 结果 subtype=${subtype} 错误="${errorSummary}"`,
         )
       } else {
         onDebug(
-          `[bridge:activity] sessionId=${sessionId} result subtype=undefined`,
+          `[bridge:activity] sessionId=${sessionId} 结果 subtype=undefined`,
         )
       }
       break
@@ -200,15 +196,13 @@ function extractActivities(
 }
 
 /**
- * Extract plain text from a replayed SDKUserMessage NDJSON line. Returns the
- * trimmed text if this looks like a real human-authored message, otherwise
- * undefined so the caller keeps waiting for the first real message.
+ * 从重放的 SDKUserMessage NDJSON 行中提取纯文本。如果该消息看起来是真实的人类撰写内容，
+ * 则返回修剪后的文本；否则返回 undefined，以便调用方继续等待第一条真实消息。
  */
 function extractUserMessageText(
   msg: Record<string, unknown>,
 ): string | undefined {
-  // Skip tool-result user messages (wrapped subagent results) and synthetic
-  // caveat messages — neither is human-authored.
+  // 跳过工具结果类用户消息（包装的子代理结果）以及合成的注意事项消息 —— 均非人类撰写。
   if (msg.parent_tool_use_id != null || msg.isSynthetic || msg.isReplay)
     return undefined
 
@@ -233,7 +227,7 @@ function extractUserMessageText(
   return text ? text : undefined
 }
 
-/** Build a short preview of tool input for debug logging. */
+/** 构建工具输入预览的简短字符串，用于调试日志。 */
 function inputPreview(input: Record<string, unknown>): string {
   const parts: string[] = []
   for (const [key, val] of Object.entries(input)) {
@@ -248,10 +242,10 @@ function inputPreview(input: Record<string, unknown>): string {
 export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
   return {
     spawn(opts: SessionSpawnOpts, dir: string): SessionHandle {
-      // Debug file resolution:
-      // 1. If deps.debugFile is provided, use it with session ID suffix for uniqueness
-      // 2. If verbose or ant build, auto-generate a temp file path
-      // 3. Otherwise, no debug file
+      // 调试文件解析：
+      // 1. 若提供了 deps.debugFile，则在其后追加会话 ID 后缀以确保唯一性
+      // 2. 若 verbose 或 ant 构建，则自动生成临时文件路径
+      // 3. 否则，不生成调试文件
       const safeId = safeFilenameId(opts.sessionId)
       let debugFile: string | undefined
       if (deps.debugFile) {
@@ -265,8 +259,8 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
         debugFile = join(tmpdir(), 'claude', `bridge-session-${safeId}.log`)
       }
 
-      // Transcript file: write raw NDJSON lines for post-hoc analysis.
-      // Placed alongside the debug file when one is configured.
+      // 转录文件：写入原始 NDJSON 行以供事后分析。
+      // 若配置了调试文件，则将其放置于调试文件旁。
       let transcriptStream: WriteStream | null = null
       let transcriptPath: string | undefined
       if (deps.debugFile) {
@@ -277,11 +271,11 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
         transcriptStream = createWriteStream(transcriptPath, { flags: 'a' })
         transcriptStream.on('error', err => {
           deps.onDebug(
-            `[bridge:session] Transcript write error: ${err.message}`,
+            `[bridge:session] 转录文件写入错误: ${err.message}`,
           )
           transcriptStream = null
         })
-        deps.onDebug(`[bridge:session] Transcript log: ${transcriptPath}`)
+        deps.onDebug(`[bridge:session] 转录日志: ${transcriptPath}`)
       }
 
       const args = [
@@ -305,17 +299,16 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
 
       const env: NodeJS.ProcessEnv = {
         ...deps.env,
-        // Strip the bridge's OAuth token so the child CC process uses
-        // the session access token for inference instead.
+        // 移除桥接层自身的 OAuth 令牌，以便子进程使用会话访问令牌进行推理。
         CLAUDE_CODE_OAUTH_TOKEN: undefined,
         CLAUDE_CODE_ENVIRONMENT_KIND: 'bridge',
         ...(deps.sandbox && { CLAUDE_CODE_FORCE_SANDBOX: '1' }),
         CLAUDE_CODE_SESSION_ACCESS_TOKEN: opts.accessToken,
-        // v1: HybridTransport (WS reads + POST writes) to Session-Ingress.
-        // Harmless in v2 mode — transportUtils checks CLAUDE_CODE_USE_CCR_V2 first.
+        // v1: HybridTransport（WebSocket 读取 + POST 写入）至 Session-Ingress。
+        // 在 v2 模式下无害 —— transportUtils 会先检查 CLAUDE_CODE_USE_CCR_V2。
         CLAUDE_CODE_POST_FOR_SESSION_INGRESS_V2: '1',
-        // v2: SSETransport + CCRClient to CCR's /v1/code/sessions/* endpoints.
-        // Same env vars environment-manager sets in the container path.
+        // v2: SSETransport + CCRClient 至 CCR 的 /v1/code/sessions/* 端点。
+        // 与容器路径中 environment-manager 设置的环境变量相同。
         ...(opts.useCcrV2 && {
           CLAUDE_CODE_USE_CCR_V2: '1',
           CLAUDE_CODE_WORKER_EPOCH: String(opts.workerEpoch),
@@ -323,15 +316,14 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
       }
 
       deps.onDebug(
-        `[bridge:session] Spawning sessionId=${opts.sessionId} sdkUrl=${opts.sdkUrl} accessToken=${opts.accessToken ? 'present' : 'MISSING'}`,
+        `[bridge:session] 正在生成会话 sessionId=${opts.sessionId} sdkUrl=${opts.sdkUrl} accessToken=${opts.accessToken ? '存在' : '缺失'}`,
       )
-      deps.onDebug(`[bridge:session] Child args: ${args.join(' ')}`)
+      deps.onDebug(`[bridge:session] 子进程参数: ${args.join(' ')}`)
       if (debugFile) {
-        deps.onDebug(`[bridge:session] Debug log: ${debugFile}`)
+        deps.onDebug(`[bridge:session] 调试日志: ${debugFile}`)
       }
 
-      // Pipe all three streams: stdin for control, stdout for NDJSON parsing,
-      // stderr for error capture and diagnostics.
+      // 同时管道三个流：stdin 用于控制，stdout 用于 NDJSON 解析，stderr 用于错误捕获和诊断。
       const child: ChildProcess = spawn(deps.execPath, args, {
         cwd: dir,
         stdio: ['pipe', 'pipe', 'pipe'],
@@ -349,15 +341,15 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
       let sigkillSent = false
       let firstUserMessageSeen = false
 
-      // Buffer stderr for error diagnostics
+      // 缓冲 stderr 用于错误诊断
       if (child.stderr) {
         const stderrRl = createInterface({ input: child.stderr })
         stderrRl.on('line', line => {
-          // Forward stderr to bridge's stderr in verbose mode
+          // 在 verbose 模式下将 stderr 转发至桥接层的 stderr
           if (deps.verbose) {
             process.stderr.write(line + '\n')
           }
-          // Ring buffer of last N lines
+          // 环形缓冲区，保留最后 N 行
           if (lastStderr.length >= MAX_STDERR_LINES) {
             lastStderr.shift()
           }
@@ -365,21 +357,21 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
         })
       }
 
-      // Parse NDJSON from child stdout
+      // 从子进程 stdout 解析 NDJSON
       if (child.stdout) {
         const rl = createInterface({ input: child.stdout })
         rl.on('line', line => {
-          // Write raw NDJSON to transcript file
+          // 将原始 NDJSON 写入转录文件
           if (transcriptStream) {
             transcriptStream.write(line + '\n')
           }
 
-          // Log all messages flowing from the child CLI to the bridge
+          // 记录从子进程 CLI 流向桥接层的所有消息
           deps.onDebug(
             `[bridge:ws] sessionId=${opts.sessionId} <<< ${debugTruncate(line)}`,
           )
 
-          // In verbose mode, forward raw output to stderr
+          // 在 verbose 模式下，将原始输出转发至 stderr
           if (deps.verbose) {
             process.stderr.write(line + '\n')
           }
@@ -390,7 +382,7 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
             deps.onDebug,
           )
           for (const activity of extracted) {
-            // Maintain ring buffer
+            // 维护环形缓冲区
             if (activities.length >= MAX_ACTIVITIES) {
               activities.shift()
             }
@@ -400,16 +392,15 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
             deps.onActivity?.(opts.sessionId, activity)
           }
 
-          // Detect control_request and replayed user messages.
-          // extractActivities parses the same line but swallows parse errors
-          // and skips 'user' type — re-parse here is cheap (NDJSON lines are
-          // small) and keeps each path self-contained.
+          // 检测控制请求及重放的用户消息。
+          // extractActivities 会解析同一行，但会吞掉解析错误并跳过 'user' 类型 —— 此处重新解析开销很小（NDJSON 行很短），
+          // 且使每条路径自包含。
           {
             let parsed: unknown
             try {
               parsed = jsonParse(line)
             } catch {
-              // Non-JSON line, skip detection
+              // 非 JSON 行，跳过检测
             }
             if (parsed && typeof parsed === 'object') {
               const msg = parsed as Record<string, unknown>
@@ -428,7 +419,7 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
                     opts.accessToken,
                   )
                 }
-                // interrupt is turn-level; the child handles it internally (print.ts)
+                // interrupt 是轮次级别的；子进程内部处理（print.ts）
               } else if (
                 msg.type === 'user' &&
                 !firstUserMessageSeen &&
@@ -447,7 +438,7 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
 
       const done = new Promise<SessionDoneStatus>(resolve => {
         child.on('close', (code, signal) => {
-          // Close transcript stream on exit
+          // 退出时关闭转录流
           if (transcriptStream) {
             transcriptStream.end()
             transcriptStream = null
@@ -455,17 +446,17 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
 
           if (signal === 'SIGTERM' || signal === 'SIGINT') {
             deps.onDebug(
-              `[bridge:session] sessionId=${opts.sessionId} interrupted signal=${signal} pid=${child.pid}`,
+              `[bridge:session] sessionId=${opts.sessionId} 被中断 signal=${signal} pid=${child.pid}`,
             )
             resolve('interrupted')
           } else if (code === 0) {
             deps.onDebug(
-              `[bridge:session] sessionId=${opts.sessionId} completed exit_code=0 pid=${child.pid}`,
+              `[bridge:session] sessionId=${opts.sessionId} 完成 exit_code=0 pid=${child.pid}`,
             )
             resolve('completed')
           } else {
             deps.onDebug(
-              `[bridge:session] sessionId=${opts.sessionId} failed exit_code=${code} pid=${child.pid}`,
+              `[bridge:session] sessionId=${opts.sessionId} 失败 exit_code=${code} pid=${child.pid}`,
             )
             resolve('failed')
           }
@@ -473,7 +464,7 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
 
         child.on('error', err => {
           deps.onDebug(
-            `[bridge:session] sessionId=${opts.sessionId} spawn error: ${err.message}`,
+            `[bridge:session] sessionId=${opts.sessionId} 生成错误: ${err.message}`,
           )
           resolve('failed')
         })
@@ -491,9 +482,9 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
         kill(): void {
           if (!child.killed) {
             deps.onDebug(
-              `[bridge:session] Sending SIGTERM to sessionId=${opts.sessionId} pid=${child.pid}`,
+              `[bridge:session] 向 sessionId=${opts.sessionId} 发送 SIGTERM pid=${child.pid}`,
             )
-            // On Windows, child.kill('SIGTERM') throws; use default signal.
+            // 在 Windows 上，child.kill('SIGTERM') 会抛出异常；使用默认信号。
             if (process.platform === 'win32') {
               child.kill()
             } else {
@@ -502,12 +493,12 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
           }
         },
         forceKill(): void {
-          // Use separate flag because child.killed is set when kill() is called,
-          // not when the process exits. We need to send SIGKILL even after SIGTERM.
+          // 使用独立的标志，因为 child.killed 在调用 kill() 时即被设置，而非进程退出时。
+          // 即使在 SIGTERM 之后，仍需发送 SIGKILL。
           if (!sigkillSent && child.pid) {
             sigkillSent = true
             deps.onDebug(
-              `[bridge:session] Sending SIGKILL to sessionId=${opts.sessionId} pid=${child.pid}`,
+              `[bridge:session] 向 sessionId=${opts.sessionId} 发送 SIGKILL pid=${child.pid}`,
             )
             if (process.platform === 'win32') {
               child.kill()
@@ -526,10 +517,8 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
         },
         updateAccessToken(token: string): void {
           handle.accessToken = token
-          // Send the fresh token to the child process via stdin. The child's
-          // StructuredIO handles update_environment_variables messages by
-          // setting process.env directly, so getSessionIngressAuthToken()
-          // picks up the new token on the next refreshHeaders call.
+          // 通过 stdin 将新令牌发送至子进程。子进程的 StructuredIO 处理 update_environment_variables 消息，
+          // 直接设置 process.env，因此在下一次 refreshHeaders 调用时 getSessionIngressAuthToken() 会获取到新令牌。
           handle.writeStdin(
             jsonStringify({
               type: 'update_environment_variables',
@@ -537,7 +526,7 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
             }) + '\n',
           )
           deps.onDebug(
-            `[bridge:session] Sent token refresh via stdin for sessionId=${opts.sessionId}`,
+            `[bridge:session] 已通过 stdin 为 sessionId=${opts.sessionId} 发送令牌刷新`,
           )
         },
       }

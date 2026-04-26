@@ -1,4 +1,4 @@
-/* eslint-disable custom-rules/no-process-exit -- CLI subcommand handler intentionally exits */
+/* eslint-disable custom-rules/no-process-exit -- CLI 子命令处理程序意图退出 */
 
 import {
   clearAuthRelatedCaches,
@@ -42,7 +42,7 @@ import {
   buildAccountProperties,
   buildAPIProviderProperties,
 } from '../../utils/status.js'
-
+import { writeCustomApiStorage } from '../../utils/customApiStorage.js';
 /**
  * Shared post-token-acquisition logic. Saves tokens, fetches profile/roles,
  * and sets up the local auth state.
@@ -320,6 +320,14 @@ export async function authStatus(opts: {
 
 export async function authLogout(): Promise<void> {
   try {
+	  // 在 logout 函数体顶部添加
+	const currentConfig = {
+	  provider: (process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER as 'openai' | 'anthropic') || 'openai',
+	  baseURL: process.env.ANTHROPIC_BASE_URL || '',
+	  apiKey: process.env.DOGE_API_KEY || '',
+	  model: process.env.ANTHROPIC_MODEL || '',
+	};
+	writeCustomApiStorage(currentConfig, undefined);  // 第二个参数不传，它会自动使用当前激活的预设名
     await performLogout({ clearOnboarding: false })
   } catch {
     process.stderr.write('登出失败。\n')

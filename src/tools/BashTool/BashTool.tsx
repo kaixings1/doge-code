@@ -78,6 +78,88 @@ const BASH_SEMANTIC_NEUTRAL_COMMANDS = new Set(['echo', 'printf', 'true', 'false
 // 成功时通常不产生标准输出的命令
 const BASH_SILENT_COMMANDS = new Set(['mv', 'cp', 'rm', 'mkdir', 'rmdir', 'chmod', 'chown', 'chgrp', 'touch', 'ln', 'cd', 'export', 'unset', 'wait']);
 
+// 在文件顶部（例如 const EOL = '\n'; 之后）添加以下函数
+
+/**
+ * 将常见的 Windows cmd 命令转换为 bash 兼容命令
+ * 解决模型在 Git Bash 环境下错误生成 Windows 风格命令的问题
+ * 
+ * 支持的转换：
+ * - dir [路径] [/s] [/b] [/w]  → ls [选项] [路径]
+ * - copy 源 目标               → cp 源 目标
+ * - del/erase 文件            → rm 文件
+ * - move 源 目标               → mv 源 目标
+ * - type 文件                 → cat 文件
+ * - findstr 模式 文件          → grep 模式 文件
+ * - fc 文件1 文件2             → diff 文件1 文件2
+ * 
+ * 注意：保留重定向、管道、后台符号等，只替换第一个命令单词及其参数风格。
+ */
+/**
+ * 将常见的 Windows cmd 命令转换为 bash 兼容命令
+ * 支持：dir, copy, del, type, move, findstr, fc, cls, cd.. 等
+ */
+function normalizeWindowsCommand(cmd: string): string {
+    let trimmed = cmd.trim();
+    if (!trimmed) return cmd;
+
+    // ------ 1. 处理 dir 命令（支持 /s, /b, /w, /d 及其组合）------
+    // 匹配 dir [路径] [选项...]
+    // 选项可能包含 /s, /b, /w, /d, /p 等，顺序任意。
+    const dirMatch = trimmed.match(/^\bdir\b(?:\s+(?:([^\/\s][^\s|&;]*)?)\s*)?((?:\/(?:[sbwd]|a-d|a-d-s|a-d-s-h))+\b)?/i);
+    if (dirMatch) {
+        let path = dirMatch[1] || '.';
+        let options = dirMatch[2] || '';
+        const hasRecursive = /\/s/i.test(options);
+        const hasBare = /\/b/i.test(options);
+        // 构建 ls 参数
+        let lsArgs = '';
+        if (hasRecursive) lsArgs += ' -R';
+        if (hasBare) {
+            // /b 表示 bare format (just names) -> ls -1 (每行一个)
+            lsArgs += ' -1';
+        } else {
+            // 默认类似 dir 的列式输出
+            lsArgs += ' -C';
+        }
+        // 如果还有 /w (宽格式) -> ls -C (默认已是宽格式)
+        // 如果还有 /d (按列排序) -> ls -C 也近似
+        // 简单处理：统一使用 ls -C -R 或 ls -1 -R
+        return `ls ${lsArgs.trim()} ${path}`.trim();
+    }
+
+    // ------ 2. 命令名映射表 ------
+    const commandMap: { [key: string]: string } = {
+        'copy': 'cp',
+        'del': 'rm',
+        'erase': 'rm',
+        'move': 'mv',
+        'type': 'cat',
+        'findstr': 'grep',
+        'fc': 'diff',
+        'cls': 'clear',
+        'cd..': 'cd ..',
+        'cd\\': 'cd /',
+    };
+
+    // 提取第一个单词（命令名）
+    const firstWordMatch = trimmed.match(/^(\w+)(?:\s|$)/);
+    if (firstWordMatch) {
+        const firstWord = firstWordMatch[1].toLowerCase();
+        if (commandMap[firstWord]) {
+            const newCmd = commandMap[firstWord];
+            // 替换命令名，保持其余部分
+            let rest = trimmed.slice(firstWord.length).trimStart();
+            // 特殊处理：del 和 erase 通常不需要确认，rm 直接删除
+            return `${newCmd} ${rest}`;
+        }
+    }
+
+    // 处理环境变量 %VAR% -> $VAR
+    trimmed = trimmed.replace(/%([^%]+)%/g, '$$$1');
+    return trimmed;
+}
+
 /**
  * 检查 Bash 命令是否为搜索或读取操作。
  * 用于决定命令是否应在 UI 中折叠显示。
@@ -833,12 +915,19 @@ async function* runShellCommand({
   taskId?: string;
   timeoutMs?: number;
 }, ExecResult, void> {
-  const {
+  let {
     command,
     description,
     timeout,
     run_in_background
   } = input;
+  // 规范化 Windows 命令
+  const originalCommand = command;
+  command = normalizeWindowsCommand(command);
+  if (originalCommand !== command) {
+    console.debug(`[BashTool] 命令归一化: "${originalCommand}" → "${command}"`);
+  }
+
   const timeoutMs = timeout || getDefaultTimeoutMs();
   let fullOutput = '';
   let lastProgressOutput = '';
@@ -847,7 +936,7 @@ async function* runShellCommand({
   let backgroundShellId: string | undefined = undefined;
   let assistantAutoBackgrounded = false;
 
-  // 进度信号：由共享轮询器的 onProgress 回调解析，唤醒生成器以产生进度更新。
+  // 进度信号
   let resolveProgress: (() => void) | null = null;
   function createProgressSignal(): Promise<null> {
     return new Promise<null>(resolve => {
@@ -855,8 +944,10 @@ async function* runShellCommand({
     });
   }
 
+  // 提前声明 foregroundTaskId，确保 startBackgrounding 中可访问
+  let foregroundTaskId: string | undefined = undefined;
+
   // 确定是否应启用自动后台
-  // 仅对允许自动后台的命令启用，且后台任务未被禁用时
   const shouldAutoBackground = !isBackgroundTasksDisabled && isAutobackgroundingAllowed(command);
   const shellCommand = await exec(command, abortController.signal, 'bash', {
     timeout: timeoutMs,
@@ -865,7 +956,6 @@ async function* runShellCommand({
       fullOutput = allLines;
       lastTotalLines = totalLines;
       lastTotalBytes = isIncomplete ? totalBytes : 0;
-      // 唤醒生成器，使其产生新的进度数据
       const resolve = resolveProgress;
       if (resolve) {
         resolveProgress = null;
@@ -976,7 +1066,7 @@ async function* runShellCommand({
 
   // 等待初始阈值后再显示进度
   const startTime = Date.now();
-  let foregroundTaskId: string | undefined = undefined;
+  //let foregroundTaskId: string | undefined = undefined;
   {
     const initialResult = await Promise.race([resultPromise, new Promise<null>(resolve => {
       const t = setTimeout((r: (v: null) => void) => r(null), PROGRESS_THRESHOLD_MS, resolve);

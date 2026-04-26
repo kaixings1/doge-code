@@ -4,7 +4,7 @@ const sanitizeForDisplay = (text: string): string => {
     .replace(/[\r\n\t\v\f]/g, ' ')   // 各种空白字符转空格
     .replace(/\x1b\[[0-9;]*m/g, '') // 移除 ANSI 转义序列
     .replace(/[^\x20-\x7E\u4e00-\u9fa5]/g, '') // 保留 ASCII 可打印字符和中文
-    .slice(-20);                    // 取最后 20 字符
+    .slice(-50);                    // 取最后 50 字符
 };
 
 let tokenBuffer = '';

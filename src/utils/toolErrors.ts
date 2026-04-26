@@ -18,13 +18,13 @@ export function formatError(error: unknown): string {
   const halfLength = 5000
   const start = fullMessage.slice(0, halfLength)
   const end = fullMessage.slice(-halfLength)
-  return `${start}\n\n... [${fullMessage.length - 10000} characters truncated] ...\n\n${end}`
+  return `${start}\n\n... [${fullMessage.length - 10000} 字符串被截断] ...\n\n${end}`
 }
 
 export function getErrorParts(error: Error): string[] {
   if (error instanceof ShellError) {
     return [
-      `Exit code ${error.code}`,
+      `退出代码 ${error.code}`,
       error.interrupted ? INTERRUPT_MESSAGE_FOR_TOOL_USE : '',
       error.stderr,
       error.stdout,
