@@ -1,29 +1,29 @@
-// External stub for ExitPlanModeTool prompt - excludes Ant-only allowedPrompts section
+// ExitPlanModeTool 提示的外部存根 - 排除了仅 Ant 可用的 allowedPrompts 部分
 
-// Hardcoded to avoid relative import issues in stub
+// 硬编码以避免存根中的相对导入问题
 const ASK_USER_QUESTION_TOOL_NAME = 'AskUserQuestion'
 
-export const EXIT_PLAN_MODE_V2_TOOL_PROMPT = `Use this tool when you are in plan mode and have finished writing your plan to the plan file and are ready for user approval.
+export const EXIT_PLAN_MODE_V2_TOOL_PROMPT = `当您处于计划模式并已完成计划文件的编写、准备好等待用户批准时，请使用此工具。
 
-## How This Tool Works
-- You should have already written your plan to the plan file specified in the plan mode system message
-- This tool does NOT take the plan content as a parameter - it will read the plan from the file you wrote
-- This tool simply signals that you're done planning and ready for the user to review and approve
-- The user will see the contents of your plan file when they review it
+## 此工具的工作方式
+- 您应该已经将计划写入计划模式系统消息中指定的计划文件
+- 此工具不会将计划内容作为参数——它将从您写入的文件中读取计划
+- 此工具仅表示您已完成规划，并已准备好供用户审阅和批准
+- 用户审阅计划时将会看到计划文件的内容
 
-## When to Use This Tool
-IMPORTANT: Only use this tool when the task requires planning the implementation steps of a task that requires writing code. For research tasks where you're gathering information, searching files, reading files or in general trying to understand the codebase - do NOT use this tool.
+## 何时使用此工具
+重要提示：仅当任务需要规划实现步骤且需要编写代码时才使用此工具。对于收集信息、搜索文件、读取文件或一般性的理解代码库等研究性任务，请勿使用此工具。
 
-## Before Using This Tool
-Ensure your plan is complete and unambiguous:
-- If you have unresolved questions about requirements or approach, use ${ASK_USER_QUESTION_TOOL_NAME} first (in earlier phases)
-- Once your plan is finalized, use THIS tool to request approval
+## 使用此工具之前
+确保您的计划完整且无歧义：
+- 如果您对需求或方案仍有未解决的问题，请首先使用 ${ASK_USER_QUESTION_TOOL_NAME}（在早期阶段）
+- 一旦计划最终确定，使用此工具请求批准
 
-**Important:** Do NOT use ${ASK_USER_QUESTION_TOOL_NAME} to ask "Is this plan okay?" or "Should I proceed?" - that's exactly what THIS tool does. ExitPlanMode inherently requests user approval of your plan.
+**重要提示：** 请勿使用 ${ASK_USER_QUESTION_TOOL_NAME} 询问“这个计划可以吗？”或“我应该继续吗？”——这正是此工具的作用。ExitPlanMode 本身即表示请求用户批准您的计划。
 
-## Examples
+## 示例
 
-1. Initial task: "Search for and understand the implementation of vim mode in the codebase" - Do not use the exit plan mode tool because you are not planning the implementation steps of a task.
-2. Initial task: "Help me implement yank mode for vim" - Use the exit plan mode tool after you have finished planning the implementation steps of the task.
-3. Initial task: "Add a new feature to handle user authentication" - If unsure about auth method (OAuth, JWT, etc.), use ${ASK_USER_QUESTION_TOOL_NAME} first, then use exit plan mode tool after clarifying the approach.
+1. 初始任务：“搜索并理解代码库中 vim 模式的实现” —— 不要使用退出计划模式工具，因为您并非在规划任务的实现步骤。
+2. 初始任务：“帮我为 vim 实现 yank 模式” —— 在完成任务的实现步骤规划后，使用退出计划模式工具。
+3. 初始任务：“添加处理用户认证的新功能” —— 如果不确定认证方法（OAuth、JWT 等），请首先使用 ${ASK_USER_QUESTION_TOOL_NAME}，然后在澄清方案后使用退出计划模式工具。
 `

@@ -168,14 +168,13 @@ export async function generateAgent(
     (block): block is ContentBlock & { type: 'text' } => block.type === 'text',
   )
   const responseText = textBlocks.map(block => block.text).join('\n')
-
   let parsed: GeneratedAgent
   try {
     parsed = jsonParse(responseText.trim())
   } catch {
     const jsonMatch = responseText.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
-      throw new Error('响应中未找到 JSON 对象')
+      throw new Error('响应中未找到 JSON 对象，确认已经登录到服务器。')
     }
     parsed = jsonParse(jsonMatch[0])
   }

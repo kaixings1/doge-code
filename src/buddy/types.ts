@@ -89,11 +89,11 @@ export const HATS = [
 export type Hat = (typeof HATS)[number]
 
 export const STAT_NAMES = [
-  'DEBUGGING',
-  'PATIENCE',
-  'CHAOS',
-  'WISDOM',
-  'SNARK',
+  '调试',
+  '耐心',
+  '混沌',
+  '智慧',
+  '毒舌',
 ] as const
 export type StatName = (typeof STAT_NAMES)[number]
 
@@ -147,3 +147,34 @@ export const RARITY_COLORS = {
   epic: 'autoAccept',
   legendary: 'warning',
 } as const satisfies Record<Rarity, keyof import('../utils/theme.js').Theme>
+
+// 稀有度中文名称
+export const RARITY_NAMES_CN: Record<Rarity, string> = {
+  common: '普通',
+  uncommon: '优秀',
+  rare: '稀有',
+  epic: '史诗',
+  legendary: '传说',
+}
+
+// 物种中文名称
+export const SPECIES_NAMES_CN: Record<Species, string> = {
+  duck: '鸭子',
+  goose: '鹅',
+  blob: '史莱姆',
+  cat: '猫',
+  dragon: '龙',
+  octopus: '章鱼',
+  owl: '猫头鹰',
+  penguin: '企鹅',
+  turtle: '乌龟',
+  snail: '蜗牛',
+  ghost: '幽灵',
+  axolotl: '六角恐龙',
+  capybara: '水豚',
+  cactus: '仙人掌',
+  robot: '机器人',
+  rabbit: '兔子',
+  mushroom: '蘑菇',
+  chonk: '胖墩',
+}

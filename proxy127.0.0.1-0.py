@@ -5,7 +5,7 @@
 提供 OpenAI 和 Anthropic 格式接口，自动 fallback，支持流式与工具调用
 包含请求计数与 Token 统计，启动时可选择清零
 新增：数据包监控日志（中文），智谱后端集成
-"""
+"""  
 
 import os
 import json
@@ -18,7 +18,10 @@ import httpx
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse, JSONResponse
 import uuid
-
+# 流式（同样根据 has_tool_history 调整 tool_choice）
+import re
+from collections import defaultdict
+import hashlib
 # ================== 全局配置 ==================
 VERBOSE_LOG = True          # 是否打印详细日志
 PACKET_LOG = True           # 是否打印原始数据包（请求/响应内容）
@@ -26,6 +29,9 @@ DEFAULT_TIMEOUT = 480.0     # 总请求超时（秒）
 MODEL_SWITCH_DELAY = 2 #0 #3      # 切换模型前的等待秒数（避免速率限制）
 COUNTER_FILE = "usage_stats.json"  # 统计文件
 
+ 
+
+request_cache = defaultdict(lambda: {"response": None, "timestamp": 0})
 # ================== 后端配置 ==================
 # 每个后端包含：
 #   name: 标识名称
@@ -41,19 +47,19 @@ BACKENDS = [
         "base_url": "http://127.0.0.1:8081/v1",   # llama-server
         "api_key": "dummy",
         "models": [
-            "qwen2.5-coder:3b",           # 小模型，速度快
-            "qwen2.5-coder-3b-instruct",            # 长上下文模型
+            "qwen2.5-coder-3b-instruct",           # 小模型，速度快
+            #"qwen2.5-coder-3b-instruct",            # 长上下文模型
         ],
         "match_prefix": ["brain/"]        # 可通过 "brain/模型名" 显式调用
     },
     # 本地动手模型（工具调用）
     {
         "name": "hands",
-        "base_url": "http://127.0.0.1:8080/v1",   # LM Studio
+        "base_url": "http://127.0.0.1:1234/v1",   # LM Studio
         "api_key": "dummy",
         "models": [
             "qwen2.5-coder-3b-instruct",           # 工具调用推荐使用 coder 模型
-            "qwen2.5-coder:3b",
+            #"qwen2.5-coder:3b",
         ],
         "match_prefix": ["hands/"]        # 可通过 "hands/模型名" 显式调用
     },
@@ -133,13 +139,13 @@ BACKENDS = [
 # 模型名替换映射：当请求的模型在后端不存在时，映射到指定模型
 MODEL_FALLBACK_MAP = {
     #"claude-haiku-4-5-20251001": "qwen2.5-coder-3b-instruct",
-    "claude-haiku-4-5-20251001": "Qwen/Qwen3.5-397B-A17B",
+    "claude-haiku-4-5-20251001": "qwen2.5-coder-3b-instruct",
     #"qwen2.5-coder-3b-instruct": "Qwen/Qwen3.5-397B-A17B",
-    "qwen2.5-coder-3b-instruct": "Qwen/Qwen3.5-397B-A17B"
+    #"qwen2.5-coder-3b-instruct": "qwen2.5-coder-3b-instruct"
 }
 
 # 默认后端（当无法匹配时使用）
-DEFAULT_BACKEND = "brain"
+DEFAULT_BACKEND = "hands"
 
 # ================== 统计计数器 ==================
 counter_lock = asyncio.Lock()
@@ -150,6 +156,60 @@ stats = {
     "completion_tokens": 0,
     "total_requests": 0
 }
+def extract_user_text(content):
+    """
+    从 Anthropic 格式的 content（可能是字符串或列表）中提取用户真实输入的文本。
+    移除所有 XML 标签和系统自动添加的标记块。
+    """
+    if isinstance(content, str):
+        raw = content
+    elif isinstance(content, list):
+        texts = []
+        for block in content:
+            if isinstance(block, dict) and block.get("type") == "text":
+                texts.append(block.get("text", ""))
+        raw = " ".join(texts)
+    else:
+        return ""
+    # 移除所有 XML 标签（包括 <available-deferred-tools>、<system-reminder> 等）
+    cleaned = re.sub(r'<[^>]+>', '', raw)
+    # 移除常见的特殊标记（如 (无内容) 等）
+    cleaned = re.sub(r'\(无内容\)', '', cleaned)
+    # 移除多余空白
+    cleaned = cleaned.strip()
+    return cleaned
+# 简单的缓存字典：key = 消息内容的哈希, value = (响应JSON, 过期时间)
+_request_cache = {}
+CACHE_SECONDS = 2  # 2秒内相同的请求直接复用
+
+def get_user_message_hash(body):
+    """从 body 中提取用户消息的纯文本，计算哈希"""
+    messages = body.get("messages", [])
+    if not messages:
+        return ""
+    # 提取所有 role == 'user' 的消息文本
+    texts = []
+    for msg in messages:
+        if msg.get("role") != "user":
+            continue
+        content = msg.get("content")
+        if isinstance(content, str):
+            texts.append(content)
+        elif isinstance(content, list):
+            for block in content:
+                if block.get("type") == "text":
+                    texts.append(block.get("text", ""))
+    # 简单拼接后计算哈希
+    combined = " ".join(texts)
+    # 移除 XML 标签和多余空白
+    import re
+    combined = re.sub(r'<[^>]+>', '', combined).strip()
+    return hashlib.md5(combined.encode()).hexdigest()
+async def validate_glob_path(path: str) -> str:
+    """确保 Glob 的 path 是目录，若是文件则返回其父目录"""
+    if os.path.isfile(path):
+        return os.path.dirname(path)
+    return path
 def deep_remove_key(obj, key_to_remove):
     """递归删除字典或列表中指定键的所有出现"""
     if isinstance(obj, dict):
@@ -182,22 +242,80 @@ def intercept_classifier(request_body: dict) -> bool:
     if "haiku" in request_body.get("model", "").lower():
         return True
     return False
-
+def get_final_answer_from_context(messages: List[Dict], model_generated_text: str) -> str:
+    """优先使用工具返回结果构建回答，若不可用则从模型文本提取"""
+     # 优先使用模型生成的文本（如果长度足够）
+    if model_generated_text and len(model_generated_text) > 20:
+        return model_generated_text   
+    # 尝试从工具结果构建
+    for msg in reversed(messages):
+        if msg.get("role") == "tool":
+            content = msg.get("content", "")
+            if isinstance(content, str):
+                files = re.findall(r'([\w\\/-]+\.\w+)', content)
+                if files:
+                    # 去重并排序
+                    unique_files = sorted(set(os.path.basename(f) for f in files))
+                    return "src/cli 包含以下文件：\n" + "\n".join(f"- {f}" for f in unique_files)
+            break
+    # 降级：从模型文本提取
+    return extract_final_answer(model_generated_text)
+# ---------- 增强版文本清理 ----------
 def clean_response_text(text: str) -> str:
-    """移除模型返回中的特殊标记，如 <|im_end|>"""
-    if text is None:
+    """移除模型返回中的特殊控制标记，并智能截断冗余推理，仅保留最终答案"""
+    if not text:
         return ""
     if not isinstance(text, str):
         return text
-    
-    text = text.replace("\x00", "")
-    text = text.replace("<|im_end|>", "")
-    text = text.strip()
-    TOKENS_TO_REMOVE = ["<|im_end|>" , "<|im_start|>","<|endoftext|>"]     # 
-    for token in TOKENS_TO_REMOVE:
-        text = text.replace(token, "")
-     
-    return text
+
+    # 1. 移除常见 ChatML 标记
+    text = text.replace("<|im_end|>", "").replace("<|im_start|>", "").replace("<|endoftext|>", "")
+
+    # 2. 移除 <think> 标签及其内容（包括跨行）
+    text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
+    text = text.replace("</think>", "").replace("<think>", "")
+
+    # 3. 移除工具调用 XML 残留
+    text = re.sub(r':\d*}}', '', text)
+
+    # 4. 移除不可见控制字符
+    text = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', text)
+
+    # 5. **关键**：如果文本包含典型的推理短语，则尝试提取有效信息
+    inference_markers = [
+        r'我已运行了',
+        r'我需要检查',
+        r'现在需要为用户提供结果',
+        r'注意：所有文件路径',
+        r'根据指令',
+        r'我已经执行了\w+',
+        r'我(?:将|已经|需要).*?(?:工具|结果|文件)',
+    ]
+    for marker in inference_markers:
+        if re.search(marker, text, re.IGNORECASE):
+            # 尝试提取连续的文件名列表（如 "exit.ts, ndjsonSafeStringify.ts"）
+            file_list_match = re.search(r'((?:[-\w]+\.\w{2,4}[\s，,、]*)+)', text)
+            if file_list_match:
+                files = file_list_match.group(1).strip()
+                # 清理多余空白和分隔符
+                files = re.sub(r'[\s，,、]+', ', ', files)
+                return f"src/cli 包含以下文件：{files}"
+            else:
+                # 没有找到有效信息，丢弃整段推理
+                return ""
+
+    # 6. 合并多余空白
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
+# ---------- 流式事件辅助函数 ----------
+def create_text_block_start(index: int) -> str:
+    return f"event: content_block_start\ndata: {json.dumps({'type': 'content_block_start', 'index': index, 'content_block': {'type': 'text', 'text': ''}})}\n\n"
+
+def create_text_block_delta(index: int, text: str) -> str:
+    return f"event: content_block_delta\ndata: {json.dumps({'type': 'content_block_delta', 'index': index, 'delta': {'type': 'text_delta', 'text': text}})}\n\n"
+
+def create_text_block_stop(index: int) -> str:
+    return f"event: content_block_stop\ndata: {json.dumps({'type': 'content_block_stop', 'index': index})}\n\n"
 
 def load_stats():
     if os.path.exists(COUNTER_FILE):
@@ -343,9 +461,6 @@ async def request_with_retry(method: str, url: str, headers: dict, json_data: di
         body_str = json.dumps(json_data, ensure_ascii=False)
         logger.info(f"📦 请求体: {truncate_text(body_str, 2000)}")
         log_packet("request", json_data)
-        if "11434" in url or "8081" in url or "1234" in url:
-            safe_data.pop("frequency_penalty", None)
-            safe_data.pop("presence_penalty", None)
     else:
         safe_data = None
     headers_safe = {k: mask_api_key(v) if k.lower() == "authorization" else v for k, v in headers.items()}
@@ -480,7 +595,7 @@ async def chat_completions(request: Request):
         logger.error(f"❌ 无效JSON: {e}")
         return JSONResponse({"error": f"Invalid JSON: {str(e)}"}, status_code=400)
 
-    requested_model = body.get("model", "")
+    requested_model = "qwen2.5-coder-3b-instruct"#body.get("model", "")
     backend, actual_model = get_backend_for_model(requested_model)
     models_to_try = build_models_to_try(backend, actual_model)
     logger.info(f"🎯 后端: {backend['name']}, 待尝试模型列表: {models_to_try}")
@@ -498,8 +613,8 @@ async def chat_completions(request: Request):
         last_exception = None
         for idx, model_name in enumerate(models_to_try):
             body["model"] = model_name
-            #body.setdefault("frequency_penalty", 0.5)
-            #body.setdefault("presence_penalty", 0.2)
+            body.setdefault("frequency_penalty", 0.5)
+            body.setdefault("presence_penalty", 0.2)
             logger.info(f"🚀 尝试非流式模型 {model_name} ({idx+1}/{len(models_to_try)})")
             try:
                 resp = await request_with_retry(
@@ -522,10 +637,12 @@ async def chat_completions(request: Request):
                     for line in content_text.split('\n'):
                         if line.startswith('data: '):
                             chunk_str = line[6:]
+                            print(f"[OpenAI非流式 CHUNK] {data_str[:500]}")  # 打印前500字符
                             if chunk_str == '[DONE]':
                                 continue
                             try:
                                 chunk = json.loads(chunk_str)
+                                print(f"[RAW CHUNK] {chunk_str[:500]}")  # 打印前500字符
                             except:
                                 continue
                             if "usage" in chunk:
@@ -594,8 +711,8 @@ async def chat_completions(request: Request):
         for idx, model_name in enumerate(models_to_try):
             body["model"] = model_name
             # 添加重复惩罚
-            #body.setdefault("frequency_penalty", 0.5)
-            #body.setdefault("presence_penalty", 0.2)
+            body.setdefault("frequency_penalty", 0.5)
+            body.setdefault("presence_penalty", 0.2)
             logger.info(f"🌊 尝试流式模型 {model_name} ({idx+1}/{len(models_to_try)})")
             try:
                 await asyncio.sleep(MODEL_SWITCH_DELAY)
@@ -623,6 +740,7 @@ async def chat_completions(request: Request):
                         if not line.startswith("data: "):
                             continue
                         data_str = line[6:]
+                        print(f"[OpenAI流式生成器 CHUNK] {data_str[:500]}")  # 打印前500字符
                         if data_str == "[DONE]":
                             yield b"data: [DONE]\n\n"
                             break
@@ -675,15 +793,97 @@ async def chat_completions(request: Request):
     )
     #return StreamingResponse(stream_generator(), media_type="text/event-stream")
 
+
+def extract_final_answer(text: str) -> str:
+    """从模型累积的推理文本中提取最终答案（文件列表或简洁回答）"""
+    if not text:
+        return ""
+    
+    # 移除常见的推理开头（可根据日志继续扩充）
+    inference_patterns = [
+        r'我需要(?:根据|检查|确认).*?。',
+        r'我已经(?:使用|运行).*?。',
+        r'现在(?:应该|需要|可以).*?。',
+        r'根据指令.*?。',
+        r'注意：.*?。',
+    ]
+    for pat in inference_patterns:
+        text = re.sub(pat, '', text, flags=re.IGNORECASE)
+    
+    # 提取文件列表（例如连续的 "文件名.扩展名" 或带有路径的）
+    file_matches = re.findall(r'[\w\\/-]+\.\w+', text)
+    if file_matches:
+        # 去重并保持顺序
+        seen = set()
+        unique_files = []
+        for f in file_matches:
+            base = os.path.basename(f)
+            if base not in seen:
+                seen.add(base)
+                unique_files.append(base)
+        if unique_files:
+            return "src/cli 包含以下文件：\n" + "\n".join(f"- {f}" for f in unique_files)
+    
+    # 如果没有文件列表，检查是否包含其他有效回答（长度足够且不含推理关键词）
+    cleaned = re.sub(r'\s+', ' ', text).strip()
+    if len(cleaned) > 10 and not any(kw in cleaned for kw in ['我需要', '我已经', '现在', '根据指令']):
+        return cleaned
+    
+    return ""
+def build_answer_from_tool_results(messages: List[Dict]) -> str:
+    """从对话历史中提取最后一个工具结果，生成文件列表回答"""
+    for msg in reversed(messages):
+        if msg.get("role") == "tool":
+            content = msg.get("content", "")
+            if isinstance(content, str):
+                # 尝试提取文件路径
+                lines = content.splitlines()
+                files = []
+                for line in lines:
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        # 提取类似 "src\cli\exit.ts" 的路径
+                        match = re.search(r'([\w\\/-]+\.\w+)', line)
+                        if match:
+                            files.append(match.group(1))
+                if files:
+                    return "src/cli 包含以下文件：\n" + "\n".join(f"- {os.path.basename(f)}" for f in files)
+            break
+    return ""
 # ================== Anthropic 兼容端点 ==================
 @app.post("/v1/messages")
 async def messages_endpoint(request: Request):
+    # 1. 获取请求体
+    body = await request.json()
+    
+    # 2. 如果没有 tools 字段，直接返回模拟响应（不调用模型）
+    if not body.get("tools"):
+        logger.info("⏭️ 忽略无 tools 的探测请求，返回模拟响应")
+        fake_response = {
+            "id": f"msg_{uuid.uuid4().hex[:24]}",
+            "type": "message",
+            "role": "assistant",
+            "content": [{"type": "text", "text": ""}],   # 空内容，客户端会忽略
+            "model": body.get("model", "qwen2.5-coder-3b-instruct"),
+            "stop_reason": "end_turn",
+            "stop_sequence": None,
+            "usage": {"input_tokens": 0, "output_tokens": 0}
+        }
+        return JSONResponse(content=fake_response)
+    
+    # 3. 以下是原有处理逻辑（只处理有 tools 的请求）
     try:
-        body = await request.json()
         custom_system = (
             "你是 Claude Code，一个AI编程助手。你必须使用中文回复。\n"
-            "- 优先使用专用工具（Read/Edit/Write/Glob/Grep）而非 Bash。\n"
-            "- 回答简洁，直接给出操作或结果，不要冗长解释。"
+            f"当前工作目录是：{os.getcwd()}。所有相对路径都必须基于此目录，不要自行拼接或猜测路径。\n"
+            "- 调用 Glob 或 Grep 时，path 参数请直接使用如 'src/cli'这样的相对路径，不要在前面添加额外目录。严禁传入具体文件路径（如 'src/cli/exit.ts'）\n"
+            "- 当用户要求“汉化”或“国际化”时，指的是将代码中硬编码的英文字符串（如错误消息、UI文本）替换为中文。你应搜索包含英文单词的代码行（例如 '[A-Za-z]{3,}'），而非搜索中文。\n"
+            "- 工具path参数仅用相对路径，严禁传入具体文件。\n"
+            "【绝对强制】你必须只基于已经通过 Read 工具读取到的文件内容回答。\n"
+            "如果你不确定某个变量、函数或属性是否存在，必须回答‘我不知道’或‘未在代码中找到’，绝对禁止编造。\n"
+            "- 【强制】当任务涉及分析已有文件内容时，必须先调用Read读取每个文件，禁止跳过。\n"
+            "- 【强制】输出最终答案前，不得有任何思考过程、自我对话或重复指令。答案需直接、简洁。\n"
+            "- 【绝对强制】调用 Glob 或 Grep 时，参数顺序必须是：先 `pattern`，后 `path`。`path` 必须是目录路径，例如 `path: 'src/cli'`。严禁传入文件路径。"
         )
         body["system"] = custom_system        
         body.pop("grammar", None)
@@ -699,18 +899,36 @@ async def messages_endpoint(request: Request):
                 logger.info(f"📥 系统提示: {truncate_text(str(system), 3000)}")
     except Exception as e:
         logger.error(f"❌ 无效JSON: {e}")
-        return JSONResponse({"type": "error", "error": {"message": f"Invalid JSON: {str(e)}"}}, status_code=400)
-
+        return #JSONResponse({"type": "error", "error": {"message": f"Invalid JSON: {str(e)}"}}, status_code=400)
     messages_list = body.get("messages", [])
     system = body.get("system", "")
+    stream = body.get("stream", False)
     #stream = False  # 强制非流式，稳定兼容 Claude Code
     stream = True  # 强制流式，稳定兼容 Claude Code
     max_tokens = min(body.get("max_tokens", 120000), 120000)
     temperature = body.get("temperature", 0.70)
     anthropic_tools = body.get("tools", [])
     tool_choice = body.get("tool_choice")
+    
+    user_text = extract_user_text(body.get("messages", [{}])[0].get("content", ""))
+    req_hash = hashlib.md5(user_text.encode()).hexdigest()
+    now = time.time()
 
-
+        
+    if len(messages_list) == 1 and  anthropic_tools :
+        first_msg = messages_list[0]
+        raw_content = first_msg.get("content")
+        user_content = raw_content if isinstance(raw_content, str) else ""
+        if user_content.strip() in ["你好！", "你好", "hi", "hello"]:            
+            return JSONResponse({
+                "id": f"msg_{uuid.uuid4().hex[:24]}",
+                "type": "message",
+                "role": "assistant",
+                "content": [{"type": "text", "text": "你好！有什么可以帮你的？"}],
+                "model": body.get("model", ""),
+                "stop_reason": "end_turn",
+                "usage": {"input_tokens": 0, "output_tokens": 0}
+            })
     # ================== 核心转换（完整恢复） ==================
     openai_messages = []
 
@@ -728,7 +946,12 @@ async def messages_endpoint(request: Request):
     for msg in messages_list:
         role = msg.get("role")
         content = msg.get("content")
-
+        # 如果是 assistant 且内容为典型推理，直接跳过该消息
+        if role == "assistant" and isinstance(content, str):
+            stripped = content.strip()
+            if re.match(r'^(我需要|首先|现在|让我|根据)', stripped):
+                logger.info(f"🧹 跳过推理消息: {stripped[:50]}...")
+                continue  # 不将这条消息加入上下文
         # 字符串 content
         if isinstance(content, str):
             openai_messages.append({"role": role, "content": content})
@@ -787,18 +1010,18 @@ async def messages_endpoint(request: Request):
 
         # fallback
         openai_messages.append({"role": role, "content": str(content)})
-
         # ---------- 动态模型选择 ----------
-    if tools_in_request:
-        if has_tool_history:
-            body["model"] = "qwen2.5-coder:3b" #"brain/Qwen/Qwen3.5-397B-A17B"
-            logger.info("🔧 工具结果已返回，切换至 modelscope 大模型进行回答")
-        else:
-            body["model"] =  "hands/qwen2.5-coder-3b-instruct" #"hands/qwen2.5-coder-3b-instruct"
-            logger.info("🔧 检测到 tools 字段（第一轮），路由至 hands 后端 (LM Studio :1234)")
-    else:
-        body["model"] = "brain/qwen2.5-coder:3b"  #"Qwen/Qwen3.5-397B-A17B"
-        logger.info("💬 未检测到 tools 字段，自动路由至默认后端")
+    #if tools_in_request:
+    #    if has_tool_history:
+    #        body["model"] = "qwen2.5-coder:3b" #"brain/Qwen/Qwen3.5-397B-A17B"
+    #        logger.info("🔧 工具结果已返回，切换至 modelscope 大模型进行回答")
+     #   else:
+     #       body["model"] =  "hands/qwen2.5-coder-3b-instruct" #"hands/qwen2.5-coder-3b-instruct"
+     #       logger.info("🔧 检测到 tools 字段（第一轮），路由至 hands 后端 (LM Studio :1234)")
+   # else:
+        #body["model"] = "brain/qwen2.5-coder:3b"  #"Qwen/Qwen3.5-397B-A17B"
+    body["model"] = "hands/qwen2.5-coder-3b-instruct" #"brain/Qwen/Qwen3.5-397B-A17B"
+    
     # --------------------------------------------------------------------
 
     requested_model = body.get("model", "")
@@ -871,18 +1094,15 @@ async def messages_endpoint(request: Request):
         if not cut:
             break
 
-    # 确保对话以 user 消息结尾，且内容不为空（LM Studio 模板强制要求）
     if not openai_messages:
         openai_messages.append({"role": "user", "content": "Continue."})
     elif openai_messages[-1]["role"] != "user":
-        # 如果最后一条不是 user，就追加一条
         openai_messages.append({"role": "user", "content": "Continue."})
     else:
-        # 如果最后一条是 user，但内容为空或仅空白，赋予默认内容
         last_content = openai_messages[-1].get("content", "")
         if not last_content or not last_content.strip():
             openai_messages[-1]["content"] = "Continue."
-        logger.warning("⚠️ 如果最后一条是 user，但内容为空或仅空白，赋予默认内容")
+            logger.warning("⚠️ 如果最后一条是 user，但内容为空或仅空白，赋予默认内容")
 
     # 转换 tools
     openai_tools = []
@@ -928,9 +1148,9 @@ async def messages_endpoint(request: Request):
                 "messages": openai_messages,
                 "max_tokens": max_tokens,
                 "temperature": payload_temperature,
-                "stream": False,
-                #"frequency_penalty": 0.5,   # 新增：抑制重复 n-gram
-                #"presence_penalty": 0.2,    # 新增：鼓励话题多样性
+                "stream": True,
+                "frequency_penalty": 0.5,   # 新增：抑制重复 n-gram
+                "presence_penalty": 0.2,    # 新增：鼓励话题多样性
             }
             payload.pop("grammar", None)
             if openai_tools:
@@ -959,21 +1179,30 @@ async def messages_endpoint(request: Request):
                     error_msg = data["error"].get("message", str(data["error"]))
                     logger.error(f"❌ 后端返回错误(200内): {error_msg}")
                     raise Exception(f"Backend error: {error_msg}")
-                if "choices" in data:
-                    for choice in data["choices"]:
-                        if "message" in choice and "content" in choice["message"]:
-                            choice["message"]["content"] = clean_response_text(choice["message"]["content"])
 
                 choice = data["choices"][0]
                 message = choice.get("message", {})
                 content_blocks = []
-                if not message.get("content") and "reasoning_content" in message:
-                    logger.warning("⚠️ 模型仅返回 reasoning_content，将其作为内容返回")
-                    message["content"] = message["reasoning_content"]
-                if text_content := message.get("content"):
-                    cleaned_text = clean_response_text(text_content)
-                    content_blocks.append({"type": "text", "text": cleaned_text})
-                if tool_calls := message.get("tool_calls"):
+                
+                # ---- 获取最终文本 ----
+                final_text = message.get("content")
+                if not final_text:
+                    reasoning = message.get("reasoning_content")
+                    if reasoning:
+                        logger.warning("⚠️ 模型仅返回 reasoning_content，将其作为内容回答")
+                        final_text = reasoning
+
+                if final_text:
+                    if has_tool_history:
+                        answer = get_final_answer_from_context(openai_messages, final_text)
+                        content_blocks.append({"type": "text", "text": answer or "✅ 工具已执行，结果如上。"})
+                    else:
+                        cleaned = clean_response_text(final_text)
+                        content_blocks.append({"type": "text", "text": cleaned})
+
+                # ---- 工具调用 ----
+                tool_calls = message.get("tool_calls")
+                if tool_calls:
                     for tc in tool_calls:
                         try:
                             args = json.loads(tc["function"]["arguments"])
@@ -985,6 +1214,9 @@ async def messages_endpoint(request: Request):
                             "name": tc["function"]["name"],
                             "input": args
                         })
+
+                if not content_blocks:
+                    content_blocks.append({"type": "text", "text": "✅ 工具已执行。"})
 
                 claude_response = {
                     "id": f"msg_{uuid.uuid4().hex[:24]}",  # 需导入 uuid
@@ -1010,7 +1242,6 @@ async def messages_endpoint(request: Request):
                 if "__verbose" in data:
                     del data["__verbose"]
                 return JSONResponse(content=claude_response)
-
             except Exception as e:
                 logger.warning(f"⚠️ 模型 {model_name} 失败: {e}")
                 last_exception = e
@@ -1019,18 +1250,20 @@ async def messages_endpoint(request: Request):
 
         await update_stats(success=False)
         return JSONResponse({"type": "error", "error": {"message": f"所有模型均失败: {last_exception}"}}, status_code=500)
-
-    # 流式（同样根据 has_tool_history 调整 tool_choice）
+        # ---------- 流式生成器 ----------
     async def anthropic_stream_generator():
         last_error = None
-        nonlocal_openai_tool_choice = openai_tool_choice  # 避免闭包变量问题
+        full_response_text = ""          # 累积工具调用后的完整回答文本
+        is_final_answer_phase = has_tool_history  # 当前是否处于最终回答阶段
+        # 工具选择策略
+        final_tool_choice = openai_tool_choice
         if openai_tools and not tool_choice:
             if not has_tool_history:
-                nonlocal_openai_tool_choice = "required"
+                final_tool_choice = "required"
                 logger.info("🔧 第一轮工具调用，强制 tool_choice=required")
             else:
-                nonlocal_openai_tool_choice = "auto"  
-        logger.info("📤 发送事件: message_start")   # 示例
+                final_tool_choice = "auto"
+
         for idx, model_name in enumerate(models_to_try):
             payload = {
                 "model": model_name,
@@ -1038,13 +1271,13 @@ async def messages_endpoint(request: Request):
                 "max_tokens": max_tokens,
                 "temperature": temperature,
                 "stream": True,
-                #"frequency_penalty": 0.5,   # 新增
-                #"presence_penalty": 0.2,    # 新增
+                "frequency_penalty": 0.5,
+                "presence_penalty": 0.2,
             }
             payload.pop("grammar", None)
             if openai_tools:
                 payload["tools"] = openai_tools
-                payload["tool_choice"] = nonlocal_openai_tool_choice
+                payload["tool_choice"] = final_tool_choice
 
             logger.info(f"🌊 尝试流式模型 {model_name} ({idx+1}/{len(models_to_try)})")
             try:
@@ -1065,58 +1298,69 @@ async def messages_endpoint(request: Request):
                         yield f"event: error\ndata: {json.dumps({'error': {'message': error_msg}})}\n\n"
                         return
 
-                    message_started = False
-                    tool_call_buffers: Dict[int, Dict[str, Any]] = {}
-                    text_block_started = False
+                    # 立即发送 message_start
+                    message_id = f"msg_{int(time.time()*1000)}_{idx}"
+                    yield f"event: message_start\ndata: {json.dumps({'type': 'message_start', 'message': {'id': message_id, 'type': 'message', 'role': 'assistant', 'content': [], 'model': model_name, 'stop_reason': None, 'stop_sequence': None, 'usage': {'input_tokens': 0, 'output_tokens': 0}}})}\n\n"
+
+                    content_block_index = 0
+                    openai_idx_to_block_idx = {}
+                    active_text_block_idx = None
+                    tool_buffers = {}
                     usage_info = None
                     finish_reason = None
-                    collected_content = ""  # 用于补发一次性内容
+                    text_emitted = False   # 是否已经发送过文本块
 
                     async for line in resp.aiter_lines():
                         if not line.startswith("data: "):
                             continue
                         data_str = line[6:]
                         if data_str == "[DONE]":
-                            # 补发可能遗漏的文本块结束事件
-                            if text_block_started:
-                                yield f"event: content_block_stop\ndata: {json.dumps({'type': 'content_block_stop', 'index': 0})}\n\n"
-                                text_block_started = False
+                            # 如果整个过程中没有发送任何文本，补发一个确认消息
+                            # 如果整个流式过程中没有发送任何文本，且处于工具调用后阶段，则直接从工具结果构建回答
+                            if not text_emitted and is_final_answer_phase:
+                                final_answer = get_final_answer_from_context(openai_messages, "")
+                                if final_answer:
+                                    answer_idx = content_block_index
+                                    content_block_index += 1
+                                    yield create_text_block_start(answer_idx)
+                                    yield create_text_block_delta(answer_idx, final_answer)
+                                    yield create_text_block_stop(answer_idx)
+                                    active_text_block_idx = answer_idx
+                                    text_emitted = True
+                                else:
+                                    # 补发一个极简确认
+                                    placeholder_idx = content_block_index
+                                    content_block_index += 1
+                                    yield create_text_block_start(placeholder_idx)
+                                    yield create_text_block_delta(placeholder_idx, "✅ 完成")
+                                    yield create_text_block_stop(placeholder_idx)
 
-                            # 结束所有工具调用块
-                            for idx_tool in list(tool_call_buffers.keys()):
-                                yield f"event: content_block_stop\ndata: {json.dumps({'type': 'content_block_stop', 'index': idx_tool})}\n\n"
-                            tool_call_buffers.clear()
+                            # 关闭可能还开着的文本块
+                            if active_text_block_idx is not None:
+                                yield create_text_block_stop(active_text_block_idx)
+                            # 关闭所有工具调用块
+                            for openai_idx, block_idx in openai_idx_to_block_idx.items():
+                                yield f"event: content_block_stop\ndata: {json.dumps({'type': 'content_block_stop', 'index': block_idx})}\n\n"
 
-                            # 如果从未发送过 message_start（极端情况），补发
-                            if not message_started:
-                                message_id = f"msg_{int(time.time()*1000)}_{idx}"
-                                yield f"event: message_start\ndata: {json.dumps({'type': 'message_start', 'message': {'id': message_id, 'type': 'message', 'role': 'assistant', 'content': [], 'model': model_name, 'stop_reason': None, 'stop_sequence': None, 'usage': {'input_tokens': 0, 'output_tokens': 0}}})}\n\n"
-                                message_started = True
-                            # 映射 OpenAI finish_reason 到 Anthropic stop_reason
-                            mapped_stop_reason = "end_turn"
+                            # 确保 usage_info 有效
+                            if not usage_info:
+                                usage_info = {"input_tokens": 0, "output_tokens": 0}
+                            else:
+                                usage_info.setdefault("input_tokens", 0)
+                                usage_info.setdefault("output_tokens", 0)
+
+                            mapped_stop = "end_turn"
                             if finish_reason == "tool_calls":
-                                mapped_stop_reason = "tool_use"
+                                mapped_stop = "tool_use"
                             elif finish_reason == "stop":
-                                mapped_stop_reason = "end_turn"
+                                mapped_stop = "end_turn"
                             elif finish_reason == "length":
-                                mapped_stop_reason = "max_tokens"
-                            # 其他未知情况保持 "end_turn"
+                                mapped_stop = "max_tokens"
 
                             delta_payload = {
                                 "type": "message_delta",
-                                "delta": {
-                                    "stop_reason": mapped_stop_reason,
-                                    "stop_sequence": None
-                                },
-                                "usage": usage_info if usage_info else {"input_tokens": 0, "output_tokens": 0}
-                            }
-                            delta_payload = {
-                                "type": "message_delta",
-                                "delta": {
-                                    "stop_reason": finish_reason or "end_turn",
-                                    "stop_sequence": None
-                                },
-                                "usage": usage_info if usage_info else {"input_tokens": 0, "output_tokens": 0}
+                                "delta": {"stop_reason": mapped_stop, "stop_sequence": None},
+                                "usage": usage_info
                             }
                             yield f"event: message_delta\ndata: {json.dumps(delta_payload)}\n\n"
                             yield f"event: message_stop\ndata: {json.dumps({'type': 'message_stop'})}\n\n"
@@ -1139,57 +1383,51 @@ async def messages_endpoint(request: Request):
 
                             delta = choices[0].get("delta", {}) if choices else {}
 
-                            # 首次有效 delta 时发送 message_start
-                            if not message_started:
-                                message_started = True
-                                message_id = f"msg_{int(time.time()*1000)}_{idx}"
-                                message_start_payload = {
-                                    "type": "message_start",
-                                    "message": {
-                                        "id": message_id,
-                                        "type": "message",
-                                        "role": "assistant",
-                                        "content": [],
-                                        "model": model_name,
-                                        "stop_reason": None,
-                                        "stop_sequence": None,
-                                        "usage": {"input_tokens": 0, "output_tokens": 0}
-                                    }
-                                }
-                                yield f"event: message_start\ndata: {json.dumps(message_start_payload)}\n\n"
-
-                            # 处理文本内容
-                            if "content" in delta and delta["content"]:
-                                cleaned_delta = clean_response_text(delta["content"])
-                                collected_content += cleaned_delta
-                                if not text_block_started:
-                                    text_block_started = True
-                                    yield f"event: content_block_start\ndata: {json.dumps({'type': 'content_block_start', 'index': 0, 'content_block': {'type': 'text', 'text': ''}})}\n\n"
-                                yield f"event: content_block_delta\ndata: {json.dumps({'type': 'content_block_delta', 'index': 0, 'delta': {'type': 'text_delta', 'text': cleaned_delta}})}\n\n"
-
-                            # 处理工具调用
+                            # ---- 处理标准工具调用 ----
                             if "tool_calls" in delta:
                                 for tc_delta in delta["tool_calls"]:
-                                    idx_tool = tc_delta.get("index", 0)
-                                    if idx_tool not in tool_call_buffers:
-                                        tc_id = tc_delta.get("id", f"call_{idx_tool}")
+                                    openai_idx = tc_delta.get("index", 0)
+                                    if openai_idx not in openai_idx_to_block_idx:
+                                        block_idx = content_block_index
+                                        content_block_index += 1
+                                        openai_idx_to_block_idx[openai_idx] = block_idx
+                                        tc_id = tc_delta.get("id", f"call_{uuid.uuid4().hex[:8]}")
                                         tc_name = tc_delta.get("function", {}).get("name", "")
-                                        tool_call_buffers[idx_tool] = {"id": tc_id, "name": tc_name, "arguments": ""}
-                                        yield f"event: content_block_start\ndata: {json.dumps({'type': 'content_block_start', 'index': idx_tool, 'content_block': {'type': 'tool_use', 'id': tc_id, 'name': tc_name, 'input': {}}})}\n\n"
+                                        tool_buffers[openai_idx] = {"id": tc_id, "name": tc_name, "arguments": ""}
+                                        yield f"event: content_block_start\ndata: {json.dumps({'type': 'content_block_start', 'index': block_idx, 'content_block': {'type': 'tool_use', 'id': tc_id, 'name': tc_name, 'input': {}}})}\n\n"
+                                    else:
+                                        block_idx = openai_idx_to_block_idx[openai_idx]
+
                                     if "function" in tc_delta and "arguments" in tc_delta["function"]:
                                         args_delta = tc_delta["function"]["arguments"]
-                                        tool_call_buffers[idx_tool]["arguments"] += args_delta
-                                        yield f"event: content_block_delta\ndata: {json.dumps({'type': 'content_block_delta', 'index': idx_tool, 'delta': {'type': 'input_json_delta', 'partial_json': args_delta}})}\n\n"
+                                        tool_buffers[openai_idx]["arguments"] += args_delta
+                                        yield f"event: content_block_delta\ndata: {json.dumps({'type': 'content_block_delta', 'index': block_idx, 'delta': {'type': 'input_json_delta', 'partial_json': args_delta}})}\n\n"
+
+                            # ---- 处理文本内容（包括 reasoning_content） ----
+                            text_content = delta.get("content") or delta.get("reasoning_content")
+                            if text_content:
+                                cleaned = clean_response_text(text_content)  # 仅做基础清理（移除标记）
+                                if cleaned:
+                                    if is_final_answer_phase:
+                                        # 工具调用后的回答阶段：只累积，不流式发送
+                                        #full_response_text += cleaned
+                                        pass
+                                    else:
+                                        # 正常对话阶段：流式发送
+                                        if active_text_block_idx is None:
+                                            active_text_block_idx = content_block_index
+                                            content_block_index += 1
+                                            yield create_text_block_start(active_text_block_idx)
+                                        yield create_text_block_delta(active_text_block_idx, cleaned)
+                                        text_emitted = True
 
                         except json.JSONDecodeError:
                             logger.warning(f"⚠️ 无法解析块: {data_str}")
                             continue
+
+                    # 流式循环结束
                     if usage_info:
-                        await update_stats(
-                            success=True,
-                            prompt_tokens=usage_info.get('input_tokens', 0),
-                            completion_tokens=usage_info.get('output_tokens', 0)
-                        )
+                        await update_stats(success=True, prompt_tokens=usage_info['input_tokens'], completion_tokens=usage_info['output_tokens'])
                     else:
                         await update_stats(success=True)
                     logger.info(f"✅ 流式完成，模型: {model_name}")
@@ -1199,6 +1437,8 @@ async def messages_endpoint(request: Request):
                 logger.error(f"💥 模型 {model_name} 异常: {e}")
                 last_error = str(e)
                 continue
+
+        # 所有模型失败
         await update_stats(success=False)
         yield f"event: error\ndata: {json.dumps({'error': {'message': f'所有模型均失败: {last_error}'}})}\n\n"
         yield f"event: message_stop\ndata: {json.dumps({'type': 'message_stop'})}\n\n"
@@ -1211,7 +1451,7 @@ async def messages_endpoint(request: Request):
             "Connection": "keep-alive",
         }
     )
-    #return StreamingResponse(anthropic_stream_generator(), media_type="text/event-stream")
+
 
 # ================== 启动服务 ==================
 if __name__ == "__main__":

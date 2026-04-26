@@ -77,7 +77,7 @@ export const SyntheticOutputTool = buildTool({
     if (keys.length <= 3) {
       return keys.map(k => `${k}: ${jsonStringify(input[k])}`).join(', ')
     }
-    return `${keys.length} fields: ${keys.slice(0, 3).join(', ')}…`
+    return `${keys.length} 失败: ${keys.slice(0, 3).join(', ')}…`
   },
   renderToolUseRejectedMessage() {
     return '结构化输出被拒绝'
@@ -145,15 +145,15 @@ function buildSyntheticOutputTool(
             const errors = validateSchema.errors
               ?.map(e => `${e.instancePath || 'root'}: ${e.message}`)
               .join(', ')
-            throw new TelemetrySafeError_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS(
-              `Output does not match required schema: ${errors}`,
-              `StructuredOutput schema mismatch: ${(errors ?? '').slice(0, 150)}`,
-            )
+				throw new TelemetrySafeError_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS(
+				  `输出与所需模式不匹配：${errors}`,
+				  `结构化输出模式不匹配：${(errors ?? '').slice(0, 150)}`,
+				)
           }
-          return {
-            data: 'Structured output provided successfully',
-            structured_output: input,
-          }
+		return {
+		  data: '已成功提供结构化输出',
+		  structured_output: input,
+		}
         },
       },
     }
