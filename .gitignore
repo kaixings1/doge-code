@@ -31,6 +31,18 @@ config.json
 eng.txt
 eng1.txt
 eng2.txt
+.doge
+api.json
+.qwen
+.remember
+node_modules
+doge.exe
+debug.txt
+install.bat
+game.py
+mota.py
+nvidia.py
+package.json
 
 
 
@@ -55,7 +67,7 @@ run.bat
 search.bat
 start-llama.bat
 start-llama-auto qwen7.bat
-
+doge.exe
 
 
 src/.vs/
