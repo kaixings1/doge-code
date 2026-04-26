@@ -77,10 +77,6 @@ type OpenAIStreamChunk = {
   }
 }
 
-function joinBaseUrl(baseURL: string, path: string): string {
-  return `${baseURL.replace(/\/$/, '')}${path}`
-}
-
 function contentToText(content: BetaMessageParam['content']): string {
   if (typeof content === 'string') return content
   return content
@@ -218,12 +214,14 @@ export function convertAnthropicRequestToOpenAI(input: {
 }
 
 export async function createOpenAICompatStream(
-  config: OpenAICompatConfig,
-  request: OpenAIChatRequest,
-  signal?: AbortSignal,
+  config: { apiKey: string; baseURL: string; headers?: Record<string, string>; fetch?: typeof fetch },
+  request: any,
+  signal: AbortSignal,
 ): Promise<ReadableStreamDefaultReader<Uint8Array>> {
+  const url = config.baseURL;
+  console.error('[DEBUG] 请求 URL:', url);
   const response = await (config.fetch ?? globalThis.fetch)(
-    joinBaseUrl(config.baseURL, '/v1/chat/completions'),
+    url,
     {
       method: 'POST',
       signal,
@@ -234,7 +232,7 @@ export async function createOpenAICompatStream(
       },
       body: JSON.stringify({ ...request, stream: true }),
     },
-  )
+  ); 
 
   if (!response.ok || !response.body) {
     let responseText = ''
@@ -298,7 +296,7 @@ export async function* createAnthropicStreamFromOpenAI(input: {
         const chunk = JSON.parse(data) as OpenAIStreamChunk
         if (!chunk || typeof chunk !== 'object') {
           throw new Error(
-            `[openaiCompat] invalid stream chunk: ${String(data).slice(0, 500)}`,
+            `[openaiCompat] 无效的数据流块: ${String(data).slice(0, 500)}`,
           )
         }
         const choice = chunk.choices?.[0]

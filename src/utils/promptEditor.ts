@@ -32,7 +32,7 @@ export function editFileInEditor(filePath: string): EditorResult {
   const fs = getFsImplementation()
   const inkInstance = instances.get(process.stdout)
   if (!inkInstance) {
-    throw new Error('Ink instance not found - cannot pause rendering')
+    throw new Error('Ink 实例未发现 - 不能暂停渲染。')
   }
 
   const editor = getExternalEditor()
@@ -85,7 +85,7 @@ export function editFileInEditor(filePath: string): EditorResult {
         const editorName = toIDEDisplayName(editor)
         return {
           content: null,
-          error: `${editorName} exited with code ${status}`,
+          error: `${editorName} 退出，代码: ${status}`,
         }
       }
     }
