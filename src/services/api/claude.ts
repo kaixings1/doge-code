@@ -1722,9 +1722,45 @@ async function* queryModel(
   let research: unknown = undefined
   let isFastModeRequest = isFastMode // 保持独立状态，因为回退时可能变化
   let isAdvisorInProgress = false
+const latestConfig = readCustomApiStorage();
+if (latestConfig.baseURL) {
+	process.env.ANTHROPIC_BASE_URL = latestConfig.baseURL;
+	process.env.DOGE_API_KEY = latestConfig.apiKey || '';
+	process.env.ANTHROPIC_MODEL = latestConfig.model || '';
+	process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = latestConfig.provider || 'openai';
+}
 
   try {
     queryCheckpoint('query_client_creation_start')
+	
+		const baseURL = process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com';
+		const compatProvider = process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER || 'openai';
+
+		// 构建请求地址（不写回环境变量，防止重启后路径叠加）
+		const requestUrl = new URL(
+		  compatProvider === 'anthropic' ? '/v1/messages' : '/',
+		  baseURL.replace(/\/+$/, '')
+		).toString();
+
+		// 原有的调试输出可以删除，或保留一行观察
+		logForDebugging(`[request] ${requestUrl} (provider=${compatProvider})`, { level: 'debug' });
+
+
+	// 防止在无端点配置时发出真实请求
+if (process.env.ANTHROPIC_BASE_URL === 'http://0.0.0.0:1' || !process.env.DOGE_API_KEY) {
+  return (async function* () {
+    yield {
+      type: 'assistant',
+      message: {
+        model: options.model,
+        content: [{ type: 'text', text: '请先使用 /login 配置 API 端点。' }],
+        stop_reason: 'end_turn',
+        usage: { input_tokens: 0, output_tokens: 0 }
+      }
+    }
+  })() as any;
+}
+
     const generator = withRetry(
       () =>
         getAnthropicClient({
@@ -1733,13 +1769,17 @@ async function* queryModel(
           fetchOverride: options.fetchOverride,
           source: options.querySource,
         }),
-      async (anthropic, attempt, context) => {
+async (anthropic, attempt, context) => {
         attemptNumber = attempt
         isFastModeRequest = context.fastMode ?? false
         start = Date.now()
         attemptStartTimes.push(start)
-        // 客户端已由 withRetry 的 getClient() 调用创建。这在每次尝试时触发一次；重试时客户端通常被缓存（withRetry 仅在认证错误后再次调用 getClient()），因此 client_creation_start 的增量在第一次尝试时有意义。
-        queryCheckpoint('query_client_creation_end')
+
+        // 👇 添加这三行，别的不要动
+        const cbp = process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER || 'openai';
+        const rawBase = process.env.ANTHROPIC_BASE_URL || '';
+        if (cbp !== 'openai') anthropic.baseURL = rawBase.replace(/\/+$/, '');
+        // 👆
 
         const params = paramsFromContext(context)
         captureAPIRequest(params, options.querySource) // 为错误报告捕获
@@ -1758,11 +1798,31 @@ async function* queryModel(
           getAPIProvider() === 'firstParty' && isFirstPartyAnthropicBaseUrl()
             ? randomUUID()
             : undefined
-
+		
         // 使用原始流而非 BetaMessageStream 以避免 O(n²) 的部分 JSON 解析
         // BetaMessageStream 在每个 input_json_delta 上调用 partialParse()，我们不需要，因为我们会自己累积工具输入。
         // biome-ignore lint/plugin: 主对话循环单独处理归属
-        const compatProvider = readCustomApiStorage().provider ?? 'openai'  // 默认使用 openai 格式以支持流式输出
+        //const compatProvider = readCustomApiStorage().provider ?? 'openai'  // 默认使用 openai 格式以支持流式输出
+		
+		const apiStorage = readCustomApiStorage()
+		//const compatProvider = apiStorage.baseURL ? (apiStorage.provider || 'openai') : getAPIProvider()
+		
+		// 强制使用 OpenAI 兼容流，只要存储或环境中设置了自定义端点
+		//const apiStorage = readCustomApiStorage();
+		//const hasCustomEndpoint = !!(apiStorage.baseURL || process.env.ANTHROPIC_BASE_URL);
+		//const stored = readCustomApiStorage();
+		//const hasURL = stored.baseURL || process.env.ANTHROPIC_BASE_URL;
+		//const compatProvider = process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER || 'openai';
+		
+
+		/*if (hasURL) {
+		  process.stderr.write(`\n[FIX] compatProvider=openai, baseURL=${process.env.ANTHROPIC_BASE_URL}, apiKey=${process.env.DOGE_API_KEY ? '***' : 'missing'}, model=${process.env.ANTHROPIC_MODEL || 'missing'}\n\n`);
+		} else {
+		  process.stderr.write(`\n[FIX] No custom endpoint configured, using default provider: ${getAPIProvider()}\n\n`);
+		}*/
+		const originalBaseURL = process.env.ANTHROPIC_BASE_URL;
+		process.env.ANTHROPIC_BASE_URL = requestUrl;
+
         if (compatProvider === 'openai') {
           const openAIRequest = convertAnthropicRequestToOpenAI({
             model: params.model,
@@ -1781,7 +1841,7 @@ async function* queryModel(
           const reader = await createOpenAICompatStream(
             {
               apiKey: process.env.DOGE_API_KEY || '',
-              baseURL: process.env.ANTHROPIC_BASE_URL || '',
+              baseURL: baseURL,  //process.env.ANTHROPIC_BASE_URL || '',
               headers: clientRequestId
                 ? { [CLIENT_REQUEST_ID_HEADER]: clientRequestId }
                 : undefined,
@@ -1985,11 +2045,15 @@ async function* queryModel(
           }
           case 'content_block_start':
             switch (part.content_block.type) {
+
               case 'tool_use':
                 contentBlocks[part.index] = {
                   ...part.content_block,
                   input: '',
                 }
+				if (part.content_block.type === 'tool_use') {
+					appendTokenText(`<tool_use name="${part.content_block.name}">`);
+				}
                 break
               case 'server_tool_use':
                 contentBlocks[part.index] = {
@@ -2087,6 +2151,7 @@ async function* queryModel(
                     })
                     throw new Error('内容块不是 input_json 块')
                   }
+				   appendTokenText(delta.partial_json); 
                   if (typeof contentBlock.input !== 'string') {
                     logEvent('tengu_streaming_error', {
                       error_type:
@@ -2147,6 +2212,7 @@ async function* queryModel(
                     throw new Error('内容块不是思考块')
                   }
                   contentBlock.thinking += delta.thinking
+				  appendTokenText(delta.thinking); 
                   break
               }
             }

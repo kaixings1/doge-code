@@ -4,53 +4,53 @@ export const DESCRIPTION = '在任务列表中创建新任务'
 
 export function getPrompt(): string {
   const teammateContext = isAgentSwarmsEnabled()
-    ? ' and potentially assigned to teammates'
+    ? '并可能分配给队友'
     : ''
 
   const teammateTips = isAgentSwarmsEnabled()
-    ? `- Include enough detail in the description for another agent to understand and complete the task
-- New tasks are created with status 'pending' and no owner - use TaskUpdate with the \`owner\` parameter to assign them
+    ? `- 在描述中提供足够详细的信息，以便其他代理能够理解并完成任务
+- 新任务创建时的状态为 'pending' 且没有负责人 - 使用 TaskUpdate 配合 \`owner\` 参数来分配任务
 `
     : ''
 
-  return `Use this tool to create a structured task list for your current coding session. This helps you track progress, organize complex tasks, and demonstrate thoroughness to the user.
-It also helps the user understand the progress of the task and overall progress of their requests.
+  return `使用此工具为当前编码会话创建一个结构化的任务列表。这有助于您跟踪进度、组织复杂任务，并向用户展现周密的处理能力。
+同时也能帮助用户了解任务进展及其请求的整体完成情况。
 
-## When to Use This Tool
+## 何时使用此工具
 
-Use this tool proactively in these scenarios:
+在以下场景中主动使用此工具：
 
-- Complex multi-step tasks - When a task requires 3 or more distinct steps or actions
-- Non-trivial and complex tasks - Tasks that require careful planning or multiple operations${teammateContext}
-- Plan mode - When using plan mode, create a task list to track the work
-- User explicitly requests todo list - When the user directly asks you to use the todo list
-- User provides multiple tasks - When users provide a list of things to be done (numbered or comma-separated)
-- After receiving new instructions - Immediately capture user requirements as tasks
-- When you start working on a task - Mark it as in_progress BEFORE beginning work
-- After completing a task - Mark it as completed and add any new follow-up tasks discovered during implementation
+- 复杂的多步骤任务 - 当任务需要 3 个或更多不同的步骤或操作时
+- 非平凡且复杂的任务 - 需要仔细规划或多个操作的任务${teammateContext}
+- 计划模式 - 使用计划模式时，创建任务列表以跟踪工作
+- 用户明确要求待办列表 - 当用户直接要求您使用待办列表时
+- 用户提供了多个任务 - 当用户以编号或逗号分隔的形式提供了待办事项列表时
+- 收到新指令后 - 立即将用户需求记录为任务
+- 开始处理某个任务时 - 在开始工作**之前**将其标记为 in_progress
+- 完成任务后 - 将其标记为已完成，并添加在实施过程中发现的任何新的后续任务
 
-## When NOT to Use This Tool
+## 何时不应使用此工具
 
-Skip using this tool when:
-- There is only a single, straightforward task
-- The task is trivial and tracking it provides no organizational benefit
-- The task can be completed in less than 3 trivial steps
-- The task is purely conversational or informational
+以下情况请跳过使用此工具：
+- 仅有一个简单直接的任务
+- 任务微不足道，跟踪它不会带来组织上的好处
+- 任务可以在少于 3 个简单步骤内完成
+- 任务是纯粹的对话性或信息性任务
 
-NOTE that you should not use this tool if there is only one trivial task to do. In this case you are better off just doing the task directly.
+请注意，如果只有一个微不足道的任务要做，则不应使用此工具。这种情况直接完成任务更好。
 
-## Task Fields
+## 任务字段
 
-- **subject**: A brief, actionable title in imperative form (e.g., "Fix authentication bug in login flow")
-- **description**: What needs to be done
-- **activeForm** (optional): Present continuous form shown in the spinner when the task is in_progress (e.g., "Fixing authentication bug"). If omitted, the spinner shows the subject instead.
+- **subject**：一个简短、可操作的标题，使用祈使语气（例如："修复登录流程中的认证错误"）
+- **description**：需要完成的具体内容
+- **activeForm**（可选）：当任务处于 in_progress 状态时，在加载动画中显示的现在进行时描述（例如："正在修复认证错误"）。如果省略，加载动画将显示 subject。
 
-All tasks are created with status \`pending\`.
+所有任务创建时的状态均为 \`pending\`。
 
-## Tips
+## 提示
 
-- Create tasks with clear, specific subjects that describe the outcome
-- After creating tasks, use TaskUpdate to set up dependencies (blocks/blockedBy) if needed
-${teammateTips}- Check TaskList first to avoid creating duplicate tasks
+- 创建任务时使用清晰、具体的主题来描述预期结果
+- 创建任务后，如有需要，可使用 TaskUpdate 设置依赖关系（blocks/blockedBy）
+${teammateTips}- 首先查看 TaskList 以避免创建重复任务
 `
 }
