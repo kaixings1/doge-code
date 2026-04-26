@@ -202,7 +202,7 @@ export function handleIngressMessage(
     }
   } catch (err) {
     logForDebugging(
-      `[bridge:repl] Failed to parse ingress message: ${errorMessage(err)}`,
+      `[bridge:repl] 解析入站消息失败：${errorMessage(err)}`,
     )
   }
 }

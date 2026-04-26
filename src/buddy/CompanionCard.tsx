@@ -6,7 +6,7 @@ import React from 'react';
 import { Box, Text } from '../ink.js';
 import { useInput } from '../ink.js';
 import { renderSprite } from './sprites.js';
-import { RARITY_COLORS, RARITY_STARS, STAT_NAMES, type Companion } from './types.js';
+import { RARITY_COLORS, RARITY_STARS, RARITY_NAMES_CN, SPECIES_NAMES_CN, STAT_NAMES, type Companion } from './types.js';
 
 const CARD_WIDTH = 40;
 const CARD_PADDING_X = 2;
@@ -56,15 +56,15 @@ export function CompanionCard({
       {/* Header: rarity + species */}
       <Box justifyContent="space-between">
         <Text bold color={color}>
-          {stars} {companion.rarity.toUpperCase()}
+          {stars} {RARITY_NAMES_CN[companion.rarity]}
         </Text>
-        <Text color={color}>{companion.species.toUpperCase()}</Text>
+        <Text color={color}>{SPECIES_NAMES_CN[companion.species]}</Text>
       </Box>
 
       {/* Shiny indicator */}
       {companion.shiny && (
         <Text color="warning" bold>
-          {'\u2728'} SHINY {'\u2728'}
+          {'\u2728'} ✨闪亮✨ {'\u2728'}
         </Text>
       )}
 
@@ -97,7 +97,7 @@ export function CompanionCard({
       {/* Last reaction */}
       {lastReaction && (
         <Box flexDirection="column" marginTop={1}>
-          <Text dimColor>last said</Text>
+          <Text dimColor>最后说</Text>
           <Box borderStyle="round" borderColor="inactive" paddingX={1}>
             <Text dimColor italic>
               {lastReaction}

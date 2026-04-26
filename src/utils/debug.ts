@@ -206,6 +206,10 @@ export function logForDebugging(
     level: 'debug',
   },
 ): void {
+	if (typeof level !== 'string') {
+  level = 'INFO';  // 或 'LOG'，根据你的日志级别定义
+}
+ 
   if (LEVEL_ORDER[level] < LEVEL_ORDER[getMinDebugLogLevel()]) {
     return
   }

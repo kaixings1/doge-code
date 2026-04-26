@@ -19,7 +19,7 @@ import { useStalledAnimation } from './useStalledAnimation.js';
 import { interpolateColor, toRGBColor } from './utils.js';
 
 const SEP_WIDTH = stringWidth(' · ');
-const THINKING_BARE_WIDTH = stringWidth('思考');
+const THINKING_BARE_WIDTH = stringWidth('思考...');
 const SHOW_TOKENS_AFTER_MS = 30_000;
 
 // 思考微光常量

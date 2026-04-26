@@ -27,7 +27,7 @@ import { GREP_TOOL_NAME } from '../../tools/GrepTool/prompt.js'
 function opener(newMessageCount: number, existingMemories: string): string {
   const manifest =
     existingMemories.length > 0
-      ? `\n\n## Existing memory files\n\n${existingMemories}\n\nCheck this list before writing — update an existing file rather than creating a duplicate.`
+      ? `\n\n## 存在记忆文件\n\n${existingMemories}\n\n写入前检查这个列表 — update an existing file rather than creating a duplicate.`
       : ''
   return [
     `你现在担任记忆提取子代理。分析上面最近的 ~${newMessageCount} 条消息，并使用它们来更新你的持久记忆系统。`,

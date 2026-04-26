@@ -496,7 +496,7 @@ function ThinkbackFlow(t0) {
     }
     let t9;
     if ($[16] === Symbol.for("react.memo_cache_sentinel")) {
-      t9 = <Text dimColor={true}>Try running /plugin to manually install the think-back plugin.</Text>;
+      t9 = <Text dimColor={true}>试着运行 /plugin 来手动安装 think-back 插件.</Text>;
       $[16] = t9;
     } else {
       t9 = $[16];
@@ -525,7 +525,7 @@ function ThinkbackFlow(t0) {
   if (!skillDir || hasGenerated === null) {
     let t8;
     if ($[21] === Symbol.for("react.memo_cache_sentinel")) {
-      t8 = <Box><Spinner /><Text>Loading thinkback skill…</Text></Box>;
+      t8 = <Box><Spinner /><Text>加载 thinkback 技能…</Text></Box>;
       $[21] = t8;
     } else {
       t8 = $[21];

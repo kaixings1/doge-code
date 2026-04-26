@@ -1,113 +1,112 @@
 export function getPrompt(): string {
   return `
-# TeamCreate
+# 团队创建
 
-## When to Use
+## 何时使用
 
-Use this tool proactively whenever:
-- The user explicitly asks to use a team, swarm, or group of agents
-- The user mentions wanting agents to work together, coordinate, or collaborate
-- A task is complex enough that it would benefit from parallel work by multiple agents (e.g., building a full-stack feature with frontend and backend work, refactoring a codebase while keeping tests passing, implementing a multi-step project with research, planning, and coding phases)
+在以下情况下主动使用此工具：
+- 用户明确要求使用团队、集群或一组智能体
+- 用户提到希望智能体协同工作、协调或协作
+- 任务足够复杂，以至于多智能体并行工作会带来好处（例如，构建一个包含前端和后端的全栈功能、在保持测试通过的同时重构代码库、实施一个包含研究、规划和编码阶段的多步骤项目）
 
-When in doubt about whether a task warrants a team, prefer spawning a team.
+当不确定任务是否需要团队时，建议优先创建团队。
 
-## Choosing Agent Types for Teammates
+## 为队友选择智能体类型
 
-When spawning teammates via the Agent tool, choose the \`subagent_type\` based on what tools the agent needs for its task. Each agent type has a different set of available tools — match the agent to the work:
+通过 Agent 工具生成队友时，请根据任务所需的工具来选择 \`subagent_type\`。每种智能体类型具有不同的可用工具集——请将智能体与工作内容匹配：
 
-- **Read-only agents** (e.g., Explore, Plan) cannot edit or write files. Only assign them research, search, or planning tasks. Never assign them implementation work.
-- **Full-capability agents** (e.g., general-purpose) have access to all tools including file editing, writing, and bash. Use these for tasks that require making changes.
-- **Custom agents** defined in \`.claude/agents/\` may have their own tool restrictions. Check their descriptions to understand what they can and cannot do.
+- **只读智能体**（如 Explore、Plan）无法编辑或写入文件。仅分配给它们研究、搜索或规划任务。切勿分配给它们实现工作。
+- **全功能智能体**（如通用类型）可以访问所有工具，包括文件编辑、写入和 Bash。用于需要更改文件的任务。
+- **自定义智能体**（定义在 \`.claude/agents/\` 中）可能有自己的工具限制。查看其描述以了解其能做什么和不能做什么。
 
-Always review the agent type descriptions and their available tools listed in the Agent tool prompt before selecting a \`subagent_type\` for a teammate.
+在为队友选择 \`subagent_type\` 之前，请务必阅读 Agent 工具提示中列出的智能体类型描述及其可用工具。
 
-Create a new team to coordinate multiple agents working on a project. Teams have a 1:1 correspondence with task lists (Team = TaskList).
+创建一个新团队以协调项目中的多个智能体。团队与任务列表具有一一对应关系（团队 = 任务列表）。
 
 \`\`\`
 {
   "team_name": "my-project",
-  "description": "Working on feature X"
+  "description": "正在开发功能 X"
 }
 \`\`\`
 
-This creates:
-- A team file at \`~/.claude/teams/{team-name}/config.json\`
-- A corresponding task list directory at \`~/.claude/tasks/{team-name}/\`
+这将创建：
+- 位于 \`~/.claude/teams/{团队名称}/config.json\` 的团队配置文件
+- 位于 \`~/.claude/tasks/{团队名称}/\` 的相应任务列表目录
 
-## Team Workflow
+## 团队工作流程
 
-1. **Create a team** with TeamCreate - this creates both the team and its task list
-2. **Create tasks** using the Task tools (TaskCreate, TaskList, etc.) - they automatically use the team's task list
-3. **Spawn teammates** using the Agent tool with \`team_name\` and \`name\` parameters to create teammates that join the team
-4. **Assign tasks** using TaskUpdate with \`owner\` to give tasks to idle teammates
-5. **Teammates work on assigned tasks** and mark them completed via TaskUpdate
-6. **Teammates go idle between turns** - after each turn, teammates automatically go idle and send a notification. IMPORTANT: Be patient with idle teammates! Don't comment on their idleness until it actually impacts your work.
-7. **Shutdown your team** - when the task is completed, gracefully shut down your teammates via SendMessage with \`message: {type: "shutdown_request"}\`.
+1. 使用 TeamCreate **创建团队** —— 这将同时创建团队及其任务列表
+2. 使用任务工具（TaskCreate、TaskList 等）**创建任务** —— 它们会自动使用团队的任务列表
+3. 使用 Agent 工具并传入 \`team_name\` 和 \`name\` 参数来**生成队友**，使其加入团队
+4. 使用 TaskUpdate 并指定 \`owner\` 来**分配任务**给空闲的队友
+5. **队友处理分配的任务**，并通过 TaskUpdate 将其标记为完成
+6. **队友在轮次之间变为空闲** —— 每轮之后，队友会自动进入空闲状态并发送通知。重要提示：请对空闲队友保持耐心！只有在空闲确实影响您的工作时才对其空闲状态发表评论。
+7. **关闭团队** —— 当任务完成后，通过 SendMessage 发送 \`message: {type: "shutdown_request"}\` 来优雅地终止队友。
 
-## Task Ownership
+## 任务所有权
 
-Tasks are assigned using TaskUpdate with the \`owner\` parameter. Any agent can set or change task ownership via TaskUpdate.
+通过 TaskUpdate 的 \`owner\` 参数分配任务。任何智能体都可以通过 TaskUpdate 设置或更改任务所有权。
 
-## Automatic Message Delivery
+## 自动消息投递
 
-**IMPORTANT**: Messages from teammates are automatically delivered to you. You do NOT need to manually check your inbox.
+**重要提示**：来自队友的消息会自动投递给您。您无需手动检查收件箱。
 
-When you spawn teammates:
-- They will send you messages when they complete tasks or need help
-- These messages appear automatically as new conversation turns (like user messages)
-- If you're busy (mid-turn), messages are queued and delivered when your turn ends
-- The UI shows a brief notification with the sender's name when messages are waiting
+当您生成队友时：
+- 他们会在完成任务或需要帮助时向您发送消息
+- 这些消息会自动作为新的对话轮次出现（类似于用户消息）
+- 如果您正忙（在轮次中），消息会排队并在您的轮次结束时投递
+- 当有消息等待时，界面会显示带有发送者名称的简短通知
 
-Messages will be delivered automatically.
+消息将自动投递。
 
-When reporting on teammate messages, you do NOT need to quote the original message—it's already rendered to the user.
+在报告队友消息时，您无需引用原始消息——它已经呈现给用户。
 
-## Teammate Idle State
+## 队友空闲状态
 
-Teammates go idle after every turn—this is completely normal and expected. A teammate going idle immediately after sending you a message does NOT mean they are done or unavailable. Idle simply means they are waiting for input.
+队友在每轮之后都会变为空闲——这完全正常且符合预期。队友在向您发送消息后立即变为空闲，并不意味着他们已完成任务或不可用。空闲仅表示他们正在等待输入。
 
-- **Idle teammates can receive messages.** Sending a message to an idle teammate wakes them up and they will process it normally.
-- **Idle notifications are automatic.** The system sends an idle notification whenever a teammate's turn ends. You do not need to react to idle notifications unless you want to assign new work or send a follow-up message.
-- **Do not treat idle as an error.** A teammate sending a message and then going idle is the normal flow—they sent their message and are now waiting for a response.
-- **Peer DM visibility.** When a teammate sends a DM to another teammate, a brief summary is included in their idle notification. This gives you visibility into peer collaboration without the full message content. You do not need to respond to these summaries — they are informational.
+- **空闲队友可以接收消息。** 向空闲队友发送消息会唤醒他们，他们会正常处理。
+- **空闲通知是自动的。** 每当队友的轮次结束时，系统会发送空闲通知。您无需对空闲通知做出反应，除非您想分配新工作或发送后续消息。
+- **不要将空闲视为错误。** 队友发送消息然后变为空闲是正常流程——他们发送了消息，现在正在等待回复。
+- **对等私信可见性。** 当队友向另一个队友发送私信时，其空闲通知中会包含简要摘要。这使您能在不看到完整消息内容的情况下了解对等协作情况。您无需对这些摘要做出回应——它们仅作信息参考。
 
-## Discovering Team Members
+## 发现团队成员
 
-Teammates can read the team config file to discover other team members:
-- **Team config location**: \`~/.claude/teams/{team-name}/config.json\`
+队友可以读取团队配置文件以发现其他团队成员：
+- **团队配置文件位置**：\`~/.claude/teams/{团队名称}/config.json\`
 
-The config file contains a \`members\` array with each teammate's:
-- \`name\`: Human-readable name (**always use this** for messaging and task assignment)
-- \`agentId\`: Unique identifier (for reference only - do not use for communication)
-- \`agentType\`: Role/type of the agent
+配置文件包含一个 \`members\` 数组，其中包含每位队友的：
+- \`name\`：人类可读的名称（**始终使用此名称**进行消息发送和任务分配）
+- \`agentId\`：唯一标识符（仅用于引用——不要用于通信）
+- \`agentType\`：智能体的角色/类型
 
-**IMPORTANT**: Always refer to teammates by their NAME (e.g., "team-lead", "researcher", "tester"). Names are used for:
-- \`to\` when sending messages
-- Identifying task owners
+**重要提示**：始终使用队友的 NAME（例如 "team-lead"、"researcher"、"tester"）来称呼他们。名称用于：
+- 发送消息时的 \`to\` 字段
+- 识别任务所有者
 
-Example of reading team config:
+读取团队配置的示例：
 \`\`\`
-Use the Read tool to read ~/.claude/teams/{team-name}/config.json
+使用 Read 工具读取 ~/.claude/teams/{团队名称}/config.json
 \`\`\`
 
-## Task List Coordination
+## 任务列表协调
 
-Teams share a task list that all teammates can access at \`~/.claude/tasks/{team-name}/\`.
+团队共享一个任务列表，所有队友均可访问：\`~/.claude/tasks/{团队名称}/\`。
 
-Teammates should:
-1. Check TaskList periodically, **especially after completing each task**, to find available work or see newly unblocked tasks
-2. Claim unassigned, unblocked tasks with TaskUpdate (set \`owner\` to your name). **Prefer tasks in ID order** (lowest ID first) when multiple tasks are available, as earlier tasks often set up context for later ones
-3. Create new tasks with \`TaskCreate\` when identifying additional work
-4. Mark tasks as completed with \`TaskUpdate\` when done, then check TaskList for next work
-5. Coordinate with other teammates by reading the task list status
-6. If all available tasks are blocked, notify the team lead or help resolve blocking tasks
+队友应：
+1. 定期检查 TaskList，**尤其是在完成每个任务之后**，以查找可用工作或新解除阻塞的任务
+2. 使用 TaskUpdate（将 \`owner\` 设置为您自己的名称）认领未分配且未被阻塞的任务。当有多个任务可用时，**优先选择 ID 最小的任务**，因为较早的任务通常会为后续任务建立上下文
+3. 在发现额外工作时，使用 \`TaskCreate\` 创建新任务
+4. 完成后使用 \`TaskUpdate\` 将任务标记为完成，然后再次检查 TaskList 以寻找下一项工作
+5. 通过阅读任务列表状态与其他队友协调
+6. 如果所有可用任务均被阻塞，请通知团队领导或协助解决阻塞任务
 
-**IMPORTANT notes for communication with your team**:
-- Do not use terminal tools to view your team's activity; always send a message to your teammates (and remember, refer to them by name).
-- Your team cannot hear you if you do not use the SendMessage tool. Always send a message to your teammates if you are responding to them.
-- Do NOT send structured JSON status messages like \`{"type":"idle",...}\` or \`{"type":"task_completed",...}\`. Just communicate in plain text when you need to message teammates.
-- Use TaskUpdate to mark tasks completed.
-- If you are an agent in the team, the system will automatically send idle notifications to the team lead when you stop.
-
+**与团队沟通的重要提示**：
+- 不要使用终端工具查看团队活动；始终通过发送消息与队友沟通（记住使用名称称呼他们）。
+- 如果您不使用 SendMessage 工具，您的团队将无法听到您的声音。回复队友时，务必向他们发送消息。
+- 不要发送结构化的 JSON 状态消息，例如 \`{"type":"idle",...}\` 或 \`{"type":"task_completed",...}\`。与队友沟通时只需使用纯文本。
+- 使用 TaskUpdate 将任务标记为完成。
+- 如果您是团队中的智能体，系统将在您停止时自动向团队领导发送空闲通知。
 `.trim()
 }

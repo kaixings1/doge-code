@@ -1,0 +1,107 @@
+{
+  "activePreset": "本地 Anthropic (8080)",
+  "presets": {
+    "Ollama (11434)": {
+      "provider": "saved:Ollama (11434)",
+      "baseURL": "http://127.0.0.1:11434/v1/chat/completions",
+      "apiKey": "DOGE_FAKE_KEY",
+      "model": "qwen2.5-coder:7b",
+      "savedModels": [
+        "qwen3.5:0.8b",
+        "qwen3.5",
+        "qwen9b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-Flash",
+        "gemma3:1b",
+        "qwen2.5-coder:7b"
+      ]
+    },
+    "Llama Server (1234)": {
+      "provider": "saved:Llama Server (1234)",
+      "baseURL": "http://127.0.0.1:1234/v1/chat/completions",
+      "apiKey": "DOGE_FAKE_KEY",
+      "model": "qwen/qwen3-coder-next",
+      "savedModels": [
+        "qwen3.5:0.8b",
+        "qwen3.5",
+        "qwen9b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-Flash",
+        "gemma3:1b",
+        "qwen2.5-coder:7b",
+        "qwen/qwen3-coder-next"
+      ]
+    },
+    "ModelScope (魔塔)": {
+      "provider": "saved:ModelScope (魔塔)",
+      "baseURL": "https://api-inference.modelscope.cn/v1/chat/completions",
+      "apiKey": "ms-e0186609-9d27-4542-a733-4cf18b89c9dd",
+      "model": "Qwen/Qwen3.5-397B-A17B",
+      "savedModels": [
+        "qwen3.5:0.8b",
+        "qwen3.5",
+        "qwen9b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-Flash",
+        "gemma3:1b",
+        "qwen2.5-coder:7b",
+        "qwen/qwen3-coder-next"
+      ]
+    },
+    "NVIDIA NIM": {
+      "provider": "saved:NVIDIA NIM",
+      "baseURL": "https://integrate.api.nvidia.com/v1/chat/completions",
+      "apiKey": "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",
+      "model": "meta/llama-3.1-8b-instruct",
+      "savedModels": [
+        "qwen3.5:0.8b",
+        "qwen3.5",
+        "qwen9b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-Flash",
+        "gemma3:1b",
+        "qwen2.5-coder:7b",
+        "qwen/qwen3-coder-next"
+      ]
+    },
+    "智谱 (BigModel)": {
+      "provider": "saved:智谱 (BigModel)",
+      "baseURL": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+      "apiKey": "c8926ece36e34b518c28766b44ed718a.afnycznebRuAU2yw",
+      "model": "glm-4-Flash",
+      "savedModels": [
+        "qwen3.5:0.8b",
+        "qwen3.5",
+        "qwen9b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-Flash",
+        "gemma3:1b",
+        "qwen2.5-coder:7b",
+        "qwen/qwen3-coder-next"
+      ]
+    },
+    "本地 Anthropic (8080)": {
+      "provider": "anthropic",
+      "baseURL": "http://127.0.0.1:8080/v1/messages",
+      "apiKey": "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",
+      "model": "claude-3-haiku",
+      "savedModels": [
+        "qwen3.5:0.8b",
+        "qwen3.5",
+        "qwen9b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-Flash",
+        "gemma3:1b",
+        "qwen2.5-coder:7b",
+        "qwen/qwen3-coder-next",
+        "claude-3-haiku"
+      ]
+    }
+  }
+}
