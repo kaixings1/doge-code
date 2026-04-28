@@ -4,14 +4,16 @@
     "Local Anthropic (8080)": {
       "provider": "anthropic",
       "baseURL": "http://127.0.0.1:8080",
-      "apiKey": "DOGE_FAKE_KEY",
+      "apiKey": "ms-e0186609-9d27-4542-a733-4cf18b89c9dd",
       "model": "claude-3-haiku",
       "savedModels": [
         "claude-3-haiku",
         "qwen3.5:0.8b",
         "Qwen/Qwen3.5-397B-A17B",
         "meta/llama-3.1-8b-instruct",
-        "glm-4-7-Flash"
+        "glm-4-7-Flash",
+        "deepseek-v4-flash",
+        "deepseek-chat"
       ]
     },
     "Llama Anthropic (1234)": {

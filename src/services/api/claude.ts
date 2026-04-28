@@ -1837,7 +1837,7 @@ async (anthropic, attempt, context) => {
               `[claude.ts] openai 兼容请求没有消息；source=${options.querySource} model=${params.model}`,
             )
           }
-          const retryNonce = attempt > 1 ? Date.now().toString() + "." + attempt.toString() + "." + Math.random().toString(36).slice(2, 8) : void 0
+          const retryNonce = Date.now().toString() + "." + attempt.toString() + "." + Math.random().toString(36).slice(2, 8)
           const reader = await createOpenAICompatStream(
             {
               apiKey: process.env.DOGE_API_KEY || '',
