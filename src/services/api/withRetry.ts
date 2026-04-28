@@ -459,14 +459,19 @@ export async function* withRetry<T>(
           PERSISTENT_RESET_CAP_MS,
         )
       } else {
-        // 对 limit_burst_rate 类型的 429 使用更激进的初始退避，
-        // 这种错误通常需要秒级冷却而非亚秒级。
+        // 对 limit_burst_rate 类型的 429：初始退避 6 秒，增速更平缓（1.5x 而非 2x）
+        // 这种错误通常需要 5-10 秒冷却，且经验表明 7 秒左右 API 已恢复。
         const isBurstLimit =
           error instanceof APIError &&
           error.status === 429 &&
           error.message?.includes('limit_burst_rate')
-        const burstBaseDelay = isBurstLimit ? 3000 : BASE_DELAY_MS
-        delayMs = getRetryDelay(attempt, retryAfter, 32000, burstBaseDelay)
+        if (isBurstLimit) {
+          const base6 = 6000
+          delayMs = Math.min(base6 * Math.pow(1.5, attempt - 1), 32000)
+          delayMs += Math.random() * 0.2 * delayMs  // 20% jitter
+        } else {
+          delayMs = getRetryDelay(attempt, retryAfter, 32000, BASE_DELAY_MS)
+        }
       }
 
       // In persistent mode the for-loop `attempt` is clamped at maxRetries+1;

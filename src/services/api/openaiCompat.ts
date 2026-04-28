@@ -251,7 +251,7 @@ export async function createOpenAICompatStream(
       responseText = ''
     }
     // 抛出 APIError 以支持 withRetry 的自动重试逻辑
-    const errMsg = `OpenAI 兼容请求失败，状态码 ${response.status}${responseText ? `: ${responseText}` : ''}`
+    const errMsg = `OpenAI 兼容请求失败，状态码 ${response.status}${responseText ? `: ${responseText}` : ''}（端点：${config.baseURL}，模型：${request.model ?? '未知'}）`
     const { APIError } = await import('@anthropic-ai/sdk')
     throw new APIError(response.status, void 0, errMsg, response.headers)
   }

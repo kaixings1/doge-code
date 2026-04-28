@@ -1207,6 +1207,25 @@ export function REPL({
   const showStatusInTerminalTab = tabStatusGateEnabled && (getGlobalConfig().showStatusInTerminalTab ?? false);
   useTabStatus(titleDisabled || !showStatusInTerminalTab ? null : sessionStatus);
 
+  // 多窗口声音提醒：状态变化时播放提示音
+  // - busy -> idle: 对话完成提醒
+  // - 变为 waiting: 需要用户干预提醒
+  const { playInterventionSound, playTaskCompleteSound } = require('../utils/soundNotification.js');
+  const prevSessionStatusRef = useRef(sessionStatus);
+  useEffect(() => {
+    const prev = prevSessionStatusRef.current;
+    if (prev === sessionStatus) return;
+    prevSessionStatusRef.current = sessionStatus;
+
+    if (sessionStatus === 'waiting') {
+      // 需要用户干预：工具审批、输入等
+      playInterventionSound();
+    } else if (sessionStatus === 'idle' && prev === 'busy') {
+      // 对话完成
+      playTaskCompleteSound();
+    }
+  }, [sessionStatus]);
+
   // Register the leader's setToolUseConfirmQueue for in-process teammates
   useEffect(() => {
     registerLeaderToolUseConfirmQueue(setToolUseConfirmQueue);
