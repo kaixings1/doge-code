@@ -143,8 +143,7 @@ useEffect(() => {
   }, []);*/
   const safeOauthStatus = oauthStatus ?? { state: 'provider_select' as const };
 
-  const existingConfig = useMemo(() => readCustomApiStorage(), []);
-  const persistedCustomApiEndpoint = useMemo(() => ({ ...existingConfig }), [existingConfig]);
+  const persistedCustomApiEndpoint = useMemo(() => readCustomApiStorage() ?? {}, []);
 
  // useEffect(() => {
   //  const oldConfig = path.join(os.homedir(), '.doge', '.claude.json');
@@ -325,8 +324,16 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
 
     const nextValue = value.trim();
     setCustomModel(nextValue);
-    persistCustomEndpoint();
-    setOAuthStatus({ state: 'success' });
+    setOAuthStatus({ state: "success" });
+    // 直接持久化，不依赖 state（用 nextValue 确保正确）
+    process.env.ANTHROPIC_MODEL = nextValue;
+    const curConfig = readCustomApiStorage();
+    const updatedSaved = nextValue
+      ? [...new Set([...(curConfig.savedModels ?? []), nextValue])]
+      : (curConfig.savedModels ?? []);
+    writeCustomApiStorage(
+      { ...curConfig, model: nextValue, savedModels: updatedSaved }
+    );
     void sendNotification({
       message: safeOauthStatus.provider === 'openai' ? 'OpenAI-compatible endpoint saved' : 'Anthropic-compatible endpoint saved',
       notificationType: 'auth_success'
@@ -552,13 +559,14 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
     savedPresets,
     setCurrentPresetName,
   } = t0;
-
+  
   switch (oauthStatus.state) {
     case "provider_select": {
+      const activePresetName2 = (() => { try { const p = JSON.parse(fs.readFileSync(path.join(process.cwd(), '.doge', 'api.json'), 'utf-8')); return p.activePreset; } catch { return null; } })();
       const savedOptions = savedPresets.map(({ name, config }) => ({
         label: (
           <Text>
-            🔄 {name} · <Text dimColor>{config.baseURL}</Text> ({config.model || '无默认模型'})
+            {name === activePresetName2 ? <Text color="green">▶ </Text> : null}{name} · <Text dimColor>{config.baseURL}</Text> ({config.model || '无默认模型'})
           </Text>
         ),
         value: `saved:${name}`,
@@ -613,8 +621,14 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
 					setCustomModel(config.model ?? '');
 					setCompatibleApiProvider((config.provider as any) || 'openai');
 					setCurrentPresetName(presetName);
-					// 4. 直接标记登录成功，返回主界面
-					setOAuthStatus({ state: 'success' });
+					// 4. 如果有多个已保存模型，跳到模型选择步骤；否则直接登录成功
+						const savedM = config.savedModels ?? [];
+						const hasMultipleModels = savedM.filter((m) => typeof m === "string" && m.trim()).length > 0;
+						if (hasMultipleModels) {
+							setOAuthStatus({ state: "custom_config", provider: (config.provider || "openai"), step: "model" });
+						} else {
+							setOAuthStatus({ state: "success" });
+						}
 				}
                 if (typeof value === 'string' && value.startsWith('preset:')) {
                   const idx = parseInt(value.split(':')[1], 10);
@@ -645,42 +659,73 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
     }
 
     case "custom_config": {
-      const isOpenAIProvider = oauthStatus.provider === 'openai';
+      const isOpenAIProvider = (oauthStatus as any).provider === 'openai';
+      const currentStep = (oauthStatus as any).step;
 
-      if (oauthStatus.step === 'model') {
-        const savedModels = persistedCustomApiEndpoint.savedModels ?? []
-        const hasSaved = savedModels.some((m: unknown) => typeof m === 'string' && m.trim())
-        if (hasSaved && customModel.length === 0) {
-          const modelOpts = savedModels
-            .filter((m: unknown) => typeof m === 'string' && m.trim())
-            .map((m: string) => ({ label: <Text>{m}</Text>, value: m }))
+      if (currentStep === 'model') {
+        const savedModels = savedPresets.flatMap(p => { const m = p.config?.savedModels; return Array.isArray(m) ? m : []; })
+        const hasSaved = savedModels.some((m) => typeof m === 'string' && m.trim())
+        if (hasSaved) {
+          const currentModel = customModel || readCustomApiStorage().model || '';
+          // 去重（大小写不敏感），保留首次出现的写法
+          const seen = new Map<string, string>();
+          const uniqueModels = savedModels.filter((m: string) => {
+            if (typeof m !== 'string' || !m.trim()) return false;
+            const key = m.trim().toLowerCase();
+            if (seen.has(key)) return false;
+            seen.set(key, m.trim());
+            return true;
+          });
+          const modelOpts = uniqueModels
+            .map((m: string) => ({ label: <Text>{m === currentModel ? <Text color="green">✓ </Text> : null}{m}</Text>, value: m }))
           modelOpts.push({
-            label: <Text dimColor>手动输入其他模型名称...</Text>,
+            label: <Text bold={true}>· 手动输入模型名称</Text>,
             value: '__manual__',
           })
           return (
             <Box flexDirection="column" gap={1} marginTop={1}>
               <Text bold={true}>选择模型</Text>
-              <Text dimColor>从已保存的模型中选择，或手动输入其他模型名称：</Text>
-              <Box>
-                <Select
-                  options={modelOpts}
-                  onChange={value => {
-                    if (value === '__manual__') {
-                      setCustomModel('')
-                      setCursorOffset(0)
-                      setOAuthStatus({ state: 'custom_config', provider: oauthStatus.provider, step: 'model' })
-                    } else {
-                      setCustomModel(value)
-                      setCursorOffset(0)
-                      handleSubmitCustomConfig(value)
-                    }
-                  }}
-                />
-              </Box>
+              <Text dimColor>已保存的模型：</Text>
+              <Select
+                options={modelOpts}
+                visibleOptionCount={9}
+                onChange={value => {
+                  setCustomModel(value === '__manual__' ? '' : value)
+                  setCursorOffset(0)
+                  setOAuthStatus({ state: 'custom_config', provider: (oauthStatus as any).provider, step: 'model_input' })
+                }}
+              />
             </Box>
           )
         }
+      }
+
+      if (currentStep === 'model_input') {
+        const INPUT_COLUMNS = Math.max(30, textInputColumns - 4)
+        return (
+          <Box flexDirection="column" gap={1} marginTop={1}>
+            <Text bold={true}>输入模型名称</Text>
+            <Text dimColor>{customModel ? '当前选择：' + customModel + '，可直接按 Enter 确认或修改后按 Enter：' : '输入模型名称后按 Enter 保存并使用：'}</Text>
+            <Box flexDirection="row">
+              <TextInput
+                value={customModel}
+                onChange={setCustomModel}
+                onSubmit={v => {
+                  if (v.trim()) {
+                    setCursorOffset(0)
+                    handleSubmitCustomConfig(v.trim())
+                  }
+                }}
+                cursorOffset={cursorOffset}
+                onChangeCursorOffset={setCursorOffset}
+                columns={INPUT_COLUMNS}
+                focus={true}
+                showCursor={true}
+                placeholder={'输入模型名称后按 Enter'}
+              />
+            </Box>
+          </Box>
+        )
       }
 
       const label = oauthStatus.step === 'baseURL'
