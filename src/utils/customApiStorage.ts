@@ -149,7 +149,7 @@ export function writeCustomApiStorage(
 
   // 2. 只有在 provider 未提供或非法时才推断，绝不覆盖已明确的值
   if (!next.provider || (next.provider !== 'openai' && next.provider !== 'anthropic')) {
-    if (next.baseURL?.includes('/v1/chat/completions')) {
+    if (next.baseURL?.includes('/chat/completions')) {
 		
       next.provider = 'openai';   // 默认 openai（包括无 baseURL 的情况）
     } else {
@@ -157,11 +157,9 @@ export function writeCustomApiStorage(
       next.provider = 'anthropic';
     }
   }
-  else
-	  next.provider = 'anthropic';
   // 如果已经明确为 'openai' 或 'anthropic'，跳过上述改写
 
-  const name = (presetName && presetName.trim()) || 'default';
+  const name = (presetName && presetName.trim()) || 'default';  // 关键保底
   const project = readProjectStorage();
   project.presets[name] = next;
   project.activePreset = name;

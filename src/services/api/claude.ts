@@ -1820,8 +1820,7 @@ async (anthropic, attempt, context) => {
 		} else {
 		  process.stderr.write(`\n[FIX] No custom endpoint configured, using default provider: ${getAPIProvider()}\n\n`);
 		}*/
-		const originalBaseURL = process.env.ANTHROPIC_BASE_URL;
-		process.env.ANTHROPIC_BASE_URL = requestUrl;
+			/* 不再覆盖 ANTHROPIC_BASE_URL，避免 SDK 二次追加 /v1/messages */
 
         if (compatProvider === 'openai') {
           const openAIRequest = convertAnthropicRequestToOpenAI({
@@ -1838,17 +1837,19 @@ async (anthropic, attempt, context) => {
               `[claude.ts] openai 兼容请求没有消息；source=${options.querySource} model=${params.model}`,
             )
           }
+          const retryNonce = attempt > 1 ? Date.now().toString() + "." + attempt.toString() + "." + Math.random().toString(36).slice(2, 8) : void 0
           const reader = await createOpenAICompatStream(
             {
               apiKey: process.env.DOGE_API_KEY || '',
               baseURL: baseURL,  //process.env.ANTHROPIC_BASE_URL || '',
               headers: clientRequestId
                 ? { [CLIENT_REQUEST_ID_HEADER]: clientRequestId }
-                : undefined,
+                : void 0,
               fetch: globalThis.fetch,
             },
             openAIRequest,
             signal,
+            retryNonce,
           )
           queryCheckpoint('query_response_headers_received')
           return createAnthropicStreamFromOpenAI({

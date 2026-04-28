@@ -15,6 +15,7 @@ import { refreshRemoteManagedSettings } from '../../services/remoteManagedSettin
 import type { LocalJSXCommandOnDone } from '../../types/command.js';
 import { stripSignatureBlocks } from '../../utils/messages.js';
 import { checkAndDisableAutoModeIfNeeded, checkAndDisableBypassPermissionsIfNeeded, resetAutoModeGateCheck, resetBypassPermissionsCheck } from '../../utils/permissions/bypassPermissionsKillswitch.js';
+import { readCustomApiStorage } from '../../utils/customApiStorage.js';
 import { resetUserCache } from '../../utils/user.js';
 export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXCommandContext): Promise<React.ReactNode> {
   return <Login onDone={async success => {
@@ -48,9 +49,15 @@ export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXComma
         resetAutoModeGateCheck();
         void checkAndDisableAutoModeIfNeeded(appState.toolPermissionContext, context.setAppState, appState.fastMode);
       }
+      // 从 customApiStorage 读取最新模型并更新 AppState，
+      // 确保 ConsoleOAuthFlow 切换预设后 useMainLoopModel() 读到新模型。
+      const { model: customModel } = readCustomApiStorage()
+      const envModel = process.env.ANTHROPIC_MODEL
+      const newModel = customModel || envModel
       // Increment authVersion to trigger re-fetching of auth-dependent data in hooks (e.g., MCP servers)
       context.setAppState(prev => ({
         ...prev,
+        mainLoopModel: newModel || prev.mainLoopModel,
         authVersion: prev.authVersion + 1
       }));
     }

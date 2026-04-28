@@ -83,13 +83,13 @@ const PRESET_ENDPOINTS: PresetEndpoint[] = [
   { label: 'Local Proxy (8080)', provider: 'openai', baseURL: 'http://127.0.0.1:8080/v1/chat/completions', defaultModel: '', apiKeyRequired: false },
   { label: 'Local Anthropic (8080)', provider: 'anthropic', baseURL: 'http://127.0.0.1:8080/', defaultModel: 'claude-3-haiku', apiKeyRequired: false },
   { label: 'Ollama (11434)', provider: 'openai', baseURL: 'http://127.0.0.1:11434/v1/chat/completions', defaultModel: 'qwen3.5:0.8b', apiKeyRequired: false },
-  { label: 'Llama Server (1234)', provider: 'openai', baseURL: 'http://127.0.0.1:1234/v1/chat/completions', defaultModel: 'claude-3-haiku ', apiKeyRequired: false },
-  { label: 'Llama Anthropic (1234)', provider: 'anthropic', baseURL: 'http://127.0.0.1:1234/', defaultModel: 'claude-3-haiku ', apiKeyRequired: false },
+  { label: 'LMStudio Server (1234)', provider: 'openai', baseURL: 'http://127.0.0.1:1234/v1/chat/completions', defaultModel: 'claude-3-haiku ', apiKeyRequired: false },
+  { label: 'LMStudio Anthropic (1234)', provider: 'anthropic', baseURL: 'http://127.0.0.1:1234/', defaultModel: 'claude-3-haiku ', apiKeyRequired: false },
   { label: 'CC Switch (15721)', provider: 'openai', baseURL: 'http://127.0.0.1:15721/v1/chat/completions', defaultModel: 'qwen9b', apiKeyRequired: false },
   { label: 'ModelScope (魔塔)', provider: 'openai', baseURL: 'https://api-inference.modelscope.cn/v1/chat/completions', defaultModel: 'Qwen/Qwen3.5-397B-A17B', apiKeyRequired: true },
-  { label: 'NVIDIA NIM', provider: 'openai', baseURL: 'https://integrate.api.nvidia.com/v1/chat/completions', defaultModel: 'meta/llama-3.1-8b-instruct', apiKeyRequired: true },
+  { label: 'NVIDIA NIM', provider: 'openai', baseURL: 'https://integrate.api.nvidia.com/v1/chat/completions', defaultModel: 'deepseek-ai/deepseek-v4-pro', apiKeyRequired: true },
   { label: '智谱 (BigModel)', provider: 'openai', baseURL: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', defaultModel: 'glm-4-7-Flash', apiKeyRequired: true },
-  { label: 'DeepSeek (api)', provider: 'openai', baseURL: 'https://api.deepseek.com/v1/chat/completions', defaultModel: 'deepseek-chat', apiKeyRequired: true },
+  { label: 'DeepSeek (api)', provider: 'openai', baseURL: 'https://api.deepseek.com/chat/completions', defaultModel: 'deepseek-chat', apiKeyRequired: true },
   { label: '火山引擎 (Ark)', provider: 'openai', baseURL: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', defaultModel: 'ep-202...', apiKeyRequired: true },
 ];
  
@@ -324,14 +324,6 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
     }
 
     const nextValue = value.trim();
-    if (!nextValue) {
-      setOAuthStatus({
-        state: 'error',
-        message: '模型不能为空',
-        toRetry: { state: 'custom_config', provider: safeOauthStatus.provider, step: 'model' }
-      });
-      return;
-    }
     setCustomModel(nextValue);
     persistCustomEndpoint();
     setOAuthStatus({ state: 'success' });
@@ -654,11 +646,48 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
 
     case "custom_config": {
       const isOpenAIProvider = oauthStatus.provider === 'openai';
+
+      if (oauthStatus.step === 'model') {
+        const savedModels = persistedCustomApiEndpoint.savedModels ?? []
+        const hasSaved = savedModels.some((m: unknown) => typeof m === 'string' && m.trim())
+        if (hasSaved && customModel.length === 0) {
+          const modelOpts = savedModels
+            .filter((m: unknown) => typeof m === 'string' && m.trim())
+            .map((m: string) => ({ label: <Text>{m}</Text>, value: m }))
+          modelOpts.push({
+            label: <Text dimColor>手动输入其他模型名称...</Text>,
+            value: '__manual__',
+          })
+          return (
+            <Box flexDirection="column" gap={1} marginTop={1}>
+              <Text bold={true}>选择模型</Text>
+              <Text dimColor>从已保存的模型中选择，或手动输入其他模型名称：</Text>
+              <Box>
+                <Select
+                  options={modelOpts}
+                  onChange={value => {
+                    if (value === '__manual__') {
+                      setCustomModel('')
+                      setCursorOffset(0)
+                      setOAuthStatus({ state: 'custom_config', provider: oauthStatus.provider, step: 'model' })
+                    } else {
+                      setCustomModel(value)
+                      setCursorOffset(0)
+                      handleSubmitCustomConfig(value)
+                    }
+                  }}
+                />
+              </Box>
+            </Box>
+          )
+        }
+      }
+
       const label = oauthStatus.step === 'baseURL'
         ? (isOpenAIProvider ? '请输入完整的 OpenAI Chat Completions 端点 URL（含路径）：' : '请输入完整的 Anthropic Messages 端点 URL（含路径）：')
         : oauthStatus.step === 'apiKey'
           ? (isOpenAIProvider ? '请输入 OpenAI API Key：' : '请输入 Anthropic API Key：')
-          : '请输入默认模型名称：';
+          : '请输入模型名称（留空则使用服务端默认）：';
       const value = oauthStatus.step === 'baseURL' ? customBaseURL : oauthStatus.step === 'apiKey' ? customApiKey : customModel;
       const onChange = oauthStatus.step === 'baseURL' ? setCustomBaseURL : oauthStatus.step === 'apiKey' ? setCustomApiKey : setCustomModel;
       const placeholder = oauthStatus.step === 'baseURL'
@@ -666,13 +695,11 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
         : oauthStatus.step === 'apiKey'
           ? 'sk-...'
           : (isOpenAIProvider ? 'gpt-4o-mini' : 'claude-3-5-sonnet-latest');
-      const mask = oauthStatus.step === 'apiKey' ? '*' : undefined;
+      const mask = oauthStatus.step === 'apiKey' ? '*' : void 0;
 
       const hint = oauthStatus.step === 'baseURL' && customBaseURL.length > 0
         ? <Text dimColor>已自动填入端点: {customBaseURL}，可按需修改</Text>
-        : oauthStatus.step === 'model' && customModel.length > 0
-          ? <Text dimColor>默认模型: {customModel}，可按需修改</Text>
-          : null;
+        : null;
 
       return (
         <Box flexDirection="column" gap={1} marginTop={1}>

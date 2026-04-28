@@ -2830,6 +2830,7 @@ export function REPL({
       systemContext,
       canUseTool,
       toolUseContext,
+	  includePartialMessages: true,
       querySource: getQuerySourceForREPL()
     })) {
       onQueryEvent(event);

@@ -49,7 +49,7 @@ import { extractConnectionErrorDetails } from './errorUtils.js'
 
 const abortError = () => new APIUserAbortError()
 
-const DEFAULT_MAX_RETRIES = 10
+const DEFAULT_MAX_RETRIES = 20
 const FLOOR_OUTPUT_TOKENS = 3000
 const MAX_529_RETRIES = 3
 export const BASE_DELAY_MS = 500
@@ -459,7 +459,14 @@ export async function* withRetry<T>(
           PERSISTENT_RESET_CAP_MS,
         )
       } else {
-        delayMs = getRetryDelay(attempt, retryAfter)
+        // 对 limit_burst_rate 类型的 429 使用更激进的初始退避，
+        // 这种错误通常需要秒级冷却而非亚秒级。
+        const isBurstLimit =
+          error instanceof APIError &&
+          error.status === 429 &&
+          error.message?.includes('limit_burst_rate')
+        const burstBaseDelay = isBurstLimit ? 3000 : BASE_DELAY_MS
+        delayMs = getRetryDelay(attempt, retryAfter, 32000, burstBaseDelay)
       }
 
       // In persistent mode the for-loop `attempt` is clamped at maxRetries+1;
@@ -531,6 +538,7 @@ export function getRetryDelay(
   attempt: number,
   retryAfterHeader?: string | null,
   maxDelayMs = 32000,
+  baseDelayMs = BASE_DELAY_MS,
 ): number {
   if (retryAfterHeader) {
     const seconds = parseInt(retryAfterHeader, 10)
@@ -540,7 +548,7 @@ export function getRetryDelay(
   }
 
   const baseDelay = Math.min(
-    BASE_DELAY_MS * Math.pow(2, attempt - 1),
+    baseDelayMs * Math.pow(2, attempt - 1),
     maxDelayMs,
   )
   const jitter = Math.random() * 0.25 * baseDelay
@@ -762,10 +770,9 @@ function shouldRetry(error: APIError): boolean {
   // Retry on lock timeouts.
   if (error.status === 409) return true
 
-  // Retry on rate limits, but not for ClaudeAI Subscription users
-  // Enterprise users can retry because they typically use PAYG instead of rate limits
+  // Retry on rate limits for all users
   if (error.status === 429) {
-    return !isClaudeAISubscriber() || isEnterpriseSubscriber()
+    return true
   }
 
   // Clear API key cache on 401 and allow retry.

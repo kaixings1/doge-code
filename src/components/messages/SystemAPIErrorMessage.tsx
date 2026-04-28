@@ -24,7 +24,9 @@ export function SystemAPIErrorMessage(t0) {
     retryInMs,
     maxRetries
   } = t1;
-  const hidden = true && retryAttempt < 4;
+  // 首次重试（retryAttempt=1）不显示，快速静默重试；
+  // 后续重试显示倒计时，让用户知道系统在自动重试
+  const hidden = retryAttempt < 2;
   const [countdownMs, setCountdownMs] = useState(0);
   const done = countdownMs >= retryInMs;
   let t2;

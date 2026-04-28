@@ -1,4 +1,12 @@
 import memoize from 'lodash-es/memoize.js'
+import {
+  getDefaultOpusModel,
+  getDefaultSonnetModel,
+  getSmallFastModel,
+  isNonCustomOpusModel,
+} from './model/model.js'
+export { getSmallFastModel } from './model/model.js'
+
 import { homedir } from 'os'
 import { join } from 'path'
 

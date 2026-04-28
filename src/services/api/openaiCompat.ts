@@ -217,9 +217,18 @@ export async function createOpenAICompatStream(
   config: { apiKey: string; baseURL: string; headers?: Record<string, string>; fetch?: typeof fetch },
   request: any,
   signal: AbortSignal,
+  retryNonce?: string,
 ): Promise<ReadableStreamDefaultReader<Uint8Array>> {
   const url = config.baseURL;
   console.error('[DEBUG] 请求 URL:', url);
+
+  // 对 limit_burst_rate 429 的重试，在请求体中注入随机 nonce
+  // 使每次重试的请求体不同，避免服务器持续按同一 burst 窗口拒绝。
+  let bodyExtra: Record<string, unknown> = {}
+  if (retryNonce) {
+    bodyExtra = { 'x_retry_nonce': retryNonce }
+  }
+
   const response = await (config.fetch ?? globalThis.fetch)(
     url,
     {
@@ -230,9 +239,9 @@ export async function createOpenAICompatStream(
         authorization: `Bearer ${config.apiKey}`,
         ...config.headers,
       },
-      body: JSON.stringify({ ...request, stream: true }),
+      body: JSON.stringify({ ...request, stream: true, ...bodyExtra }),
     },
-  ); 
+  );
 
   if (!response.ok || !response.body) {
     let responseText = ''
@@ -241,9 +250,10 @@ export async function createOpenAICompatStream(
     } catch {
       responseText = ''
     }
-    throw new Error(
-      `OpenAI 兼容请求失败，状态码 ${response.status}${responseText ? `: ${responseText}` : ''}`,
-    )
+    // 抛出 APIError 以支持 withRetry 的自动重试逻辑
+    const errMsg = `OpenAI 兼容请求失败，状态码 ${response.status}${responseText ? `: ${responseText}` : ''}`
+    const { APIError } = await import('@anthropic-ai/sdk')
+    throw new APIError(response.status, void 0, errMsg, response.headers)
   }
 
   return response.body.getReader()

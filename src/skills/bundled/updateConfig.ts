@@ -43,6 +43,7 @@ Settings load in order: user → project → local (later overrides earlier).
 - Exact match: \`"Bash(npm run test)"\`
 - Prefix wildcard: \`"Bash(git:*)"\` - matches \`git status\`, \`git commit\`, etc.
 - Tool only: \`"Read"\` - allows all Read operations
+- **括号必须成对闭合**：\`"Bash(npm:*)"\`（正确），\`"Bash(npm:*"\`（错误——缺少反括号）
 
 ### Environment Variables
 \`\`\`json

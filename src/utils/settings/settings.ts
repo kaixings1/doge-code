@@ -23,6 +23,7 @@ import { logError } from '../log.js'
 import { getPlatform } from '../platform.js'
 import { clone, jsonStringify } from '../slowOperations.js'
 import { profileCheckpoint } from '../startupProfiler.js'
+import { filterInvalidPermissionRules, type ValidationError } from './validation.js'
 import {
   type EditableSettingSource,
   getEnabledSettingSources,
@@ -493,6 +494,15 @@ export function updateSettingsForSource(
         return undefined
       },
     )
+
+    // 清理 permissions 中格式错误的规则（如括号不匹配），然后保存清理后的结果。
+    // 这样启动时和保存时都能自动修复损坏的配置，无需用户手动编辑。
+    const permWarnings = filterInvalidPermissionRules(updatedSettings, filePath)
+    if (permWarnings.length > 0) {
+      logForDebugging(
+        `Permissions 保存时清理了 ${permWarnings.length} 条无效规则:\n${permWarnings.map((w: ValidationError) => `  - ${w.path}: "${String(w.invalidValue)}" (${w.message})`).join('\n')}`,
+      )
+    }
 
     // Mark this as an internal write before writing the file
     markInternalWrite(filePath)

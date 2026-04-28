@@ -107,6 +107,7 @@
     "tree-kill": "*",
     "turndown": "^7.2.4",
     "type-fest": "*",
+    "typescript": "^6.0.3",
     "undici": "*",
     "url-handler-napi": "file:./shims/url-handler-napi",
     "usehooks-ts": "*",
