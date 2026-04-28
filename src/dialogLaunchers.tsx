@@ -48,7 +48,7 @@ export async function launchInvalidSettingsDialog(root: Root, props: {
   const {
     InvalidSettingsDialog
   } = await import('./components/InvalidSettingsDialog.js');
-  return showSetupDialog(root, done => <InvalidSettingsDialog settingsErrors={props.settingsErrors} onContinue={done} onExit={props.onExit} />);
+  return showSetupDialog(root, done => <InvalidSettingsDialog settingsErrors={props.settingsErrors} onContinue={done} onExit={props.onExit} onRepairAndContinue={done} />);
 }
 
 /**

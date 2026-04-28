@@ -1,5 +1,5 @@
 {
-  "activePreset": "Ollama (11434)",
+  "activePreset": "custom",
   "presets": {
     "Local Anthropic (8080)": {
       "provider": "anthropic",
@@ -25,15 +25,17 @@
     },
     "custom": {
       "provider": "openai",
-      "baseURL": "http://127.0.0.1:8081",
-      "apiKey": "DOGE_FAKE_KEY",
-      "model": "claude-3-haiku",
+      "baseURL": "https://api.deepseek.com/chat/completions",
+      "apiKey": "sk-75637e30ecff4dedae65e378e4f52b02",
+      "model": "deepseek-chat",
       "savedModels": [
         "claude-3-haiku",
         "qwen3.5:0.8b",
         "Qwen/Qwen3.5-397B-A17B",
         "meta/llama-3.1-8b-instruct",
-        "glm-4-7-Flash"
+        "glm-4-7-Flash",
+        "deepseek-v4-flash",
+        "deepseek-chat"
       ]
     },
     "Ollama (11434)": {
@@ -72,7 +74,9 @@
         "qwen3.5:0.8b",
         "Qwen/Qwen3.5-397B-A17B",
         "meta/llama-3.1-8b-instruct",
-        "glm-4-7-Flash"
+        "glm-4-7-Flash",
+        "deepseek-v4-flash",
+        "deepseek-chat"
       ]
     },
     "NVIDIA NIM": {
@@ -85,7 +89,9 @@
         "qwen3.5:0.8b",
         "Qwen/Qwen3.5-397B-A17B",
         "meta/llama-3.1-8b-instruct",
-        "glm-4-7-Flash"
+        "glm-4-7-Flash",
+        "deepseek-v4-flash",
+        "deepseek-chat"
       ]
     },
     "智谱 (BigModel)": {
@@ -99,6 +105,33 @@
         "Qwen/Qwen3.5-397B-A17B",
         "meta/llama-3.1-8b-instruct",
         "glm-4-7-Flash"
+      ]
+    },
+    "Local Proxy (8080)": {
+      "provider": "anthropic",
+      "baseURL": "http://127.0.0.1:8080/v1/chat/completions",
+      "apiKey": "DOGE_FAKE_KEY",
+      "model": "claude-3-haiku",
+      "savedModels": [
+        "claude-3-haiku",
+        "qwen3.5:0.8b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-7-Flash"
+      ]
+    },
+    "DeepSeek (api)": {
+      "provider": "openai",
+      "baseURL": "https://api.deepseek.com/chat/completions",
+      "apiKey": "sk-75637e30ecff4dedae65e378e4f52b02",
+      "model": "deepseek-v4-flash",
+      "savedModels": [
+        "claude-3-haiku",
+        "qwen3.5:0.8b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-7-Flash",
+        "deepseek-v4-flash"
       ]
     }
   }

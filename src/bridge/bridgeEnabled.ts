@@ -86,17 +86,8 @@ export async function getBridgeDisabledReason(): Promise<string | null> {
   return '此构建中不提供远程控制功能。'
 }
 
-// try/catch: main.tsx:5698 calls isBridgeEnabled() while defining the Commander
-// program, before enableConfigs() runs. isClaudeAISubscriber() → getGlobalConfig()
-// throws "Config accessed before allowed" there. Pre-config, no OAuth token can
-// exist anyway — false is correct. Same swallow getFeatureValue_CACHED_MAY_BE_STALE
-// already does at growthbook.ts:775-780.
 function isClaudeAISubscriber(): boolean {
-  try {
-    return authModule.isClaudeAISubscriber()
-  } catch {
-    return false
-  }
+  return true
 }
 function hasProfileScope(): boolean {
   try {

@@ -2683,6 +2683,15 @@ async function getSkillListingAttachments(
       ? uniqBy([...localCommands, ...mcpSkills], 'name')
       : localCommands
 
+  // 兼容非 Anthropic 模型（如 DeepSeek）：过滤掉元技能（superpowers 系列），
+  // 这些技能描述中包含"1% 可能性也要检查技能"等指令，
+  // 会导致兼容模型错误地反复触发 SkillTool 调用，形成死循环。
+  const dangerousSkillPrefixes = ['superpowers:', 'superpowers-lab:']
+  allCommands = allCommands.filter(cmd => {
+    if (cmd.type !== 'prompt' || !cmd.name) return true
+    return !dangerousSkillPrefixes.some(prefix => cmd.name.startsWith(prefix))
+  })
+
   // When skill search is active, filter to bundled + MCP instead of full
   // suppression. Resolves the turn-0 gap: main thread gets turn-0 discovery
   // via getTurnZeroSkillDiscovery (blocking), but subagents use the async
