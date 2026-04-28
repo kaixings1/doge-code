@@ -1,5 +1,5 @@
 import { logForDebugging } from './debug.js'
-
+import { getSmallFastModel, getAWSRegion, getVertexRegionForModel } from '../../utils/envUtils.js';
 /** AWS short-term credentials format. */
 export type AwsCredentials = {
   AccessKeyId: string

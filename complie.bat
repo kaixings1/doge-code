@@ -4,6 +4,4 @@ if %errorlevel% neq 0 (
 echo Build failed
 exit /b %errorlevel%
 )
- 
-dir /b /t
-xcopy .\doge.exe F:\bin\ /Y
+ xcopy .\doge.exe F:\bin\ /Y
