@@ -5,10 +5,12 @@ import type { ValidationError } from '../utils/settings/validation.js';
 import { Select } from './CustomSelect/index.js';
 import { Dialog } from './design-system/Dialog.js';
 import { ValidationErrorsList } from './ValidationErrorsList.js';
+import { repairSettingsFile } from '../utils/settings/repairSettings.js';
 type Props = {
   settingsErrors: ValidationError[];
   onContinue: () => void;
   onExit: () => void;
+  onRepairAndContinue?: () => void;
 };
 
 /**
@@ -16,26 +18,35 @@ type Props = {
  * User must choose to continue (skipping invalid files) or exit to fix them.
  */
 export function InvalidSettingsDialog(t0) {
-  const $ = _c(13);
+  const $ = _c(16);
   const {
     settingsErrors,
     onContinue,
-    onExit
+    onExit,
+    onRepairAndContinue
   } = t0;
   let t1;
-  if ($[0] !== onContinue || $[1] !== onExit) {
+  if ($[0] !== onContinue || $[1] !== onExit || $[2] !== onRepairAndContinue) {
     t1 = function handleSelect(value) {
       if (value === "exit") {
         onExit();
+      } else if (value === "repair") {
+        if (onRepairAndContinue) {
+          repairSettingsFile();
+          onRepairAndContinue();
+        } else {
+          onContinue();
+        }
       } else {
         onContinue();
       }
     };
     $[0] = onContinue;
     $[1] = onExit;
-    $[2] = t1;
+    $[2] = onRepairAndContinue;
+    $[3] = t1;
   } else {
-    t1 = $[2];
+    t1 = $[3];
   }
   const handleSelect = t1;
   let t2;
@@ -58,6 +69,9 @@ export function InvalidSettingsDialog(t0) {
     t4 = [{
       label: "退出并手动修复",
       value: "exit"
+    }, {
+      label: "删除错误行，继续使用",
+      value: "repair"
     }, {
       label: "继续使用但不应用这些设置",
       value: "continue"
