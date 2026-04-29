@@ -26,6 +26,7 @@ import { getRuntimeMainLoopModel, type ModelName, renderModelName } from '../uti
 import { getCurrentSessionTitle } from '../utils/sessionStorage.js';
 import { doesMostRecentAssistantMessageExceed200k, getCurrentUsage } from '../utils/tokens.js';
 import { getCurrentWorktreeSession } from '../utils/worktree.js';
+import { readCustomApiStorage } from '../utils/customApiStorage.js';
 import { isVimModeEnabled } from './PromptInput/utils.js';
 export function statusLineShouldDisplay(settings: ReadonlySettings): boolean {
   // Assistant mode: statusline fields (model, permission mode, cwd) reflect the
@@ -62,6 +63,20 @@ function buildStatusLineCommandInput(permissionMode: PermissionMode, exceeds200k
       }
     })
   };
+  // DOGE: 读取当前 API 配置
+  const dogeConfig = readCustomApiStorage();
+
+  // 构造将被传递到 status-line.js 的 preset_tokens
+  const dogePresetTokens = dogeConfig.tokens ? {
+    sent: dogeConfig.tokens.sent,
+    received: dogeConfig.tokens.received,
+    current: dogeConfig.tokens.current,
+    sessionTotal: dogeConfig.tokens.sessionTotal,
+    currentSessionTotal: dogeConfig.tokens.currentSessionTotal,
+    jsonSentBytes: dogeConfig.tokens.jsonSentBytes,
+    jsonReceivedBytes: dogeConfig.tokens.jsonReceivedBytes,
+  } : undefined;
+
   return {
     ...createBaseHookInput(),
     ...(sessionName && {
@@ -122,7 +137,12 @@ function buildStatusLineCommandInput(permissionMode: PermissionMode, exceeds200k
         original_cwd: worktreeSession.originalCwd,
         original_branch: worktreeSession.originalBranch
       }
-    })
+    }),
+    // DOGE: 传递 API 配置和 token 统计到状态栏
+    base_url: dogeConfig.baseURL || '',
+    api_key: dogeConfig.apiKey || '',
+    api_model: dogeConfig.model || '',
+    preset_tokens: dogePresetTokens,
   };
 }
 type Props = {
