@@ -30,6 +30,7 @@ import {
   convertAnthropicRequestToOpenAI,
   createAnthropicStreamFromOpenAI,
   createOpenAICompatStream,
+  getLastResponseBytes,
 } from './openaiCompat.js'
 import {
   getAttributionHeader,
@@ -151,6 +152,7 @@ import {
 import type { QuerySource } from '../../constants/querySource.js'
 import type { Notification } from '../../context/notifications.js'
 import { addToTotalSessionCost } from '../../cost-tracker.js'
+import { addPresetTokens } from '../../utils/customApiStorage.js'
 import { getFeatureValue_CACHED_MAY_BE_STALE } from '../../services/analytics/growthbook.js'
 import type { AgentId } from '../../types/ids.js'
 import {
@@ -1714,6 +1716,8 @@ async function* queryModel(
   const contentBlocks: (BetaContentBlock | ConnectorTextBlock)[] = []
   let usage: NonNullableUsage = EMPTY_USAGE
   let costUSD = 0
+  let jsonSentBytes = 0  // DOGE: 当前请求的 JSON 请求体字节数
+  let jsonReceivedBytes = 0  // DOGE: 当前响应收到的 JSON 字节数
   let stopReason: BetaStopReason | null = null
   let didFallBackToNonStreaming = false
   let fallbackMessage: AssistantMessage | undefined
@@ -1832,6 +1836,8 @@ async (anthropic, attempt, context) => {
             temperature: params.temperature,
             max_tokens: params.max_tokens,
           })
+          // DOGE: 计算 JSON 请求体字节数
+          jsonSentBytes = new TextEncoder().encode(JSON.stringify({ ...openAIRequest, stream: true })).length
           if (!openAIRequest.messages || openAIRequest.messages.length === 0) {
             throw new Error(
               `[claude.ts] openai 兼容请求没有消息；source=${options.querySource} model=${params.model}`,
@@ -1858,6 +1864,9 @@ async (anthropic, attempt, context) => {
           }) as unknown as Stream<BetaRawMessageStreamEvent>
         }
 
+        // DOGE: 计算 Anthropic SDK 请求的 JSON 请求体字节数
+        jsonSentBytes = new TextEncoder().encode(JSON.stringify({ ...params, stream: true })).length
+
         const result = await anthropic.beta.messages
           .create(
             { ...params, stream: true },
@@ -1872,6 +1881,15 @@ async (anthropic, attempt, context) => {
         queryCheckpoint('query_response_headers_received')
         streamRequestId = result.request_id
         streamResponse = result.response
+        // DOGE: 捕获 JSON 响应体字节数（使用 Content-Length 或估算）
+        const cl = streamResponse.headers.get('content-length')
+        if (cl) {
+          jsonReceivedBytes = parseInt(cl, 10)
+        } else {
+          // 没有 Content-Length 时，通过实际读取流计算（作为后备）
+          // 注意：这会消耗原始 body，但 SDK 的流式解析已经处理 body
+          // 因此我们无法在不破坏流的情况下重新读取
+        }
         return result.data
       },
       {
@@ -2302,6 +2320,13 @@ async (anthropic, attempt, context) => {
               usage,
               options.model,
             )
+
+            // DOGE: 持久化 token 累计到 api.json（跨会话）
+            // 获取 OpenAI 兼容路径的 JSON 响应字节数（如果可用）
+            if (jsonReceivedBytes === 0) {
+              try { jsonReceivedBytes = getLastResponseBytes() } catch {}
+            }
+            addPresetTokens(usage.input_tokens, usage.output_tokens, jsonSentBytes, jsonReceivedBytes)
 
             const refusalMessage = getErrorMessageIfRefusal(
               part.delta.stop_reason,
@@ -2840,6 +2865,11 @@ async (anthropic, attempt, context) => {
           fallbackUsage,
           options.model,
         )
+        // DOGE: 持久化 token 累计到 api.json（非流式回退路径）
+        if (jsonReceivedBytes === 0) {
+          try { jsonReceivedBytes = getLastResponseBytes() } catch {}
+        }
+        addPresetTokens(fallbackUsage.input_tokens, fallbackUsage.output_tokens, jsonSentBytes, jsonReceivedBytes)
       } else {
         usage = EMPTY_USAGE
         stopReason = fallbackMessage.message.stop_reason
