@@ -4,12 +4,27 @@ import * as os from 'os'
 import { loadConfigFromEnv } from './providerEnv.ts'
 
 import { logForDebugging } from './debug.js'
+
+/** Token 统计数据类型 */
+export type PresetTokenData = {
+  sent: number      // 累计发送（输入）token 数（来自 API usage）
+  received: number  // 累计接收（输出）token 数（来自 API usage）
+  current: number   // 当前进程累计 token 数（会话内累计）
+  sessionTotal: number  // 会话总 token 数
+  currentSessionTotal: number  // 兼容旧字段名
+  /** JSON 请求体字节数（发送端统计，含 overhead） */
+  jsonSentBytes?: number
+  /** JSON 响应体字节数（接收端统计） */
+  jsonReceivedBytes?: number
+}
+
 export type CustomApiStorageData = {
   provider?: 'anthropic' | 'openai'
   baseURL?: string
   apiKey?: string
   model?: string
   savedModels?: string[]
+  tokens?: PresetTokenData
 }
 
 type ProjectStorage = {
@@ -207,4 +222,55 @@ export function listSavedPresets(): { name: string; config: CustomApiStorageData
 export function clearCustomApiStorage(): void {
   const p = getProjectConfigPath()
   try { if (fs.existsSync(p)) fs.unlinkSync(p) } catch {}
+}
+/**
+ * 为当前活跃预设累加 token 计数，并持久化到 api.json。
+ * 每次 API 请求完成后调用，确保跨会话 token 累计准确。
+ */
+export function addPresetTokens(
+  newSent: number,
+  newReceived: number,
+  jsonSentBytes?: number,
+  jsonReceivedBytes?: number,
+): void {
+  try {
+    const p = getProjectConfigPath()
+    if (!fs.existsSync(p)) return
+
+    const raw = fs.readFileSync(p, 'utf-8')
+    const data = JSON.parse(raw)
+    if (!data || typeof data !== 'object') return
+
+    const project = data as ProjectStorage
+    const activeName = typeof project.activePreset === 'string' && project.activePreset.trim()
+      ? project.activePreset.trim()
+      : undefined
+
+    if (!activeName || !project.presets || !project.presets[activeName]) return
+
+    const preset = project.presets[activeName]
+    const t = preset.tokens || {
+      sent: 0,
+      received: 0,
+      current: 0,
+      sessionTotal: 0,
+      currentSessionTotal: 0,
+      jsonSentBytes: 0,
+      jsonReceivedBytes: 0,
+    }
+    t.sent = (t.sent || 0) + newSent
+    t.received = (t.received || 0) + newReceived
+    t.currentSessionTotal = (t.currentSessionTotal || 0) + newSent + newReceived
+    if (typeof jsonSentBytes === 'number') {
+      t.jsonSentBytes = (t.jsonSentBytes || 0) + jsonSentBytes
+    }
+    if (typeof jsonReceivedBytes === 'number') {
+      t.jsonReceivedBytes = (t.jsonReceivedBytes || 0) + jsonReceivedBytes
+    }
+    preset.tokens = t
+
+    fs.writeFileSync(p, JSON.stringify(data, null, 2), 'utf-8')
+  } catch (e) {
+    logForDebugging('[addPresetTokens] Failed: ' + e, { level: 'error' })
+  }
 }

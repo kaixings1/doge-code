@@ -1,5 +1,5 @@
 {
-  "activePreset": "custom",
+  "activePreset": "default",
   "presets": {
     "Local Anthropic (8080)": {
       "provider": "anthropic",
@@ -14,7 +14,13 @@
         "glm-4-7-Flash",
         "deepseek-v4-flash",
         "deepseek-chat"
-      ]
+      ],
+      "tokens": {
+        "sent": 0,
+        "received": 0,
+        "current": 0,
+        "sessionTotal": 0
+      }
     },
     "Llama Anthropic (1234)": {
       "provider": "anthropic",
@@ -23,9 +29,15 @@
       "model": "claude-3-haiku",
       "savedModels": [
         "claude-3-haiku"
-      ]
+      ],
+      "tokens": {
+        "sent": 0,
+        "received": 0,
+        "current": 0,
+        "sessionTotal": 0
+      }
     },
-    "custom": {
+    "deepseek": {
       "provider": "openai",
       "baseURL": "https://api.deepseek.com/chat/completions",
       "apiKey": "sk-75637e30ecff4dedae65e378e4f52b02",
@@ -38,7 +50,13 @@
         "glm-4-7-Flash",
         "deepseek-v4-flash",
         "deepseek-chat"
-      ]
+      ],
+      "tokens": {
+        "sent": 0,
+        "received": 0,
+        "current": 0,
+        "sessionTotal": 0
+      }
     },
     "Ollama (11434)": {
       "provider": "openai",
@@ -51,7 +69,13 @@
         "Qwen/Qwen3.5-397B-A17B",
         "meta/llama-3.1-8b-instruct",
         "glm-4-7-Flash"
-      ]
+      ],
+      "tokens": {
+        "sent": 0,
+        "received": 0,
+        "current": 0,
+        "sessionTotal": 0
+      }
     },
     "Llama Server (1234)": {
       "provider": "openai",
@@ -64,7 +88,13 @@
         "Qwen/Qwen3.5-397B-A17B",
         "meta/llama-3.1-8b-instruct",
         "glm-4-7-Flash"
-      ]
+      ],
+      "tokens": {
+        "sent": 0,
+        "received": 0,
+        "current": 0,
+        "sessionTotal": 0
+      }
     },
     "ModelScope (魔塔)": {
       "provider": "openai",
@@ -79,7 +109,13 @@
         "glm-4-7-Flash",
         "deepseek-v4-flash",
         "deepseek-chat"
-      ]
+      ],
+      "tokens": {
+        "sent": 0,
+        "received": 0,
+        "current": 0,
+        "sessionTotal": 0
+      }
     },
     "NVIDIA NIM": {
       "provider": "openai",
@@ -94,7 +130,13 @@
         "glm-4-7-Flash",
         "deepseek-v4-flash",
         "deepseek-chat"
-      ]
+      ],
+      "tokens": {
+        "sent": 0,
+        "received": 0,
+        "current": 0,
+        "sessionTotal": 0
+      }
     },
     "智谱 (BigModel)": {
       "provider": "anthropic",
@@ -107,11 +149,17 @@
         "Qwen/Qwen3.5-397B-A17B",
         "meta/llama-3.1-8b-instruct",
         "glm-4-7-Flash"
-      ]
+      ],
+      "tokens": {
+        "sent": 0,
+        "received": 0,
+        "current": 0,
+        "sessionTotal": 0
+      }
     },
     "Local Proxy (8080)": {
       "provider": "anthropic",
-      "baseURL": "http://127.0.0.1:8080/v1/chat/completions",
+      "baseURL": "http://127.0.0.1:8080",
       "apiKey": "DOGE_FAKE_KEY",
       "model": "claude-3-haiku",
       "savedModels": [
@@ -120,7 +168,13 @@
         "Qwen/Qwen3.5-397B-A17B",
         "meta/llama-3.1-8b-instruct",
         "glm-4-7-Flash"
-      ]
+      ],
+      "tokens": {
+        "sent": 0,
+        "received": 0,
+        "current": 0,
+        "sessionTotal": 0
+      }
     },
     "DeepSeek (api)": {
       "provider": "openai",
@@ -134,7 +188,37 @@
         "meta/llama-3.1-8b-instruct",
         "glm-4-7-Flash",
         "deepseek-v4-flash"
-      ]
+      ],
+      "tokens": {
+        "sent": 0,
+        "received": 0,
+        "current": 0,
+        "sessionTotal": 0
+      }
+    },
+    "default": {
+      "provider": "openai",
+      "baseURL": "https://api.deepseek.com/chat/completions",
+      "apiKey": "sk-75637e30ecff4dedae65e378e4f52b02",
+      "model": "deepseek-chat",
+      "savedModels": [
+        "claude-3-haiku",
+        "qwen3.5:0.8b",
+        "Qwen/Qwen3.5-397B-A17B",
+        "meta/llama-3.1-8b-instruct",
+        "glm-4-7-Flash",
+        "deepseek-v4-flash",
+        "deepseek-chat"
+      ],
+      "tokens": {
+        "sent": 0,
+        "received": 59253,
+        "current": 0,
+        "sessionTotal": 0,
+        "currentSessionTotal": 59253,
+        "jsonSentBytes": 23951713,
+        "jsonReceivedBytes": 4946918
+      }
     }
   }
 }
