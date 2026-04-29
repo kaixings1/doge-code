@@ -285,12 +285,17 @@ export async function* createAnthropicStreamFromOpenAI(input: {
   let nextContentIndex = 0
   let promptTokens = 0
   let completionTokens = 0
+  let responseBytes = 0  // DOGE: 累计 JSON 响应体字节数
   let emittedAnyContent = false
   const toolCallState = new Map<number, { id: string; name: string; arguments: string }>()
 
   while (true) {
     const { done, value } = await input.reader.read()
     if (done) break
+    // DOGE: 累计 JSON 响应体字节数
+    if (value && value.byteLength) {
+      responseBytes += value.byteLength
+    }
     buffer += decoder.decode(value, { stream: true })
     const parsed = parseSSEChunk(buffer)
     buffer = parsed.remainder
@@ -437,6 +442,8 @@ export async function* createAnthropicStreamFromOpenAI(input: {
             } as BetaRawMessageStreamEvent
           }
 
+          // DOGE: 在 message_delta 时更新 JSON 响应字节数
+          _lastResponseBytes = responseBytes
           yield {
             type: 'message_delta',
             delta: {
@@ -452,6 +459,8 @@ export async function* createAnthropicStreamFromOpenAI(input: {
             type: 'message_stop',
           } as BetaRawMessageStreamEvent
 
+          // DOGE: 保存 JSON 响应字节数
+          _lastResponseBytes = responseBytes
           return {
             id: chunk.id ?? 'openai-compat',
             type: 'message',
@@ -470,9 +479,17 @@ export async function* createAnthropicStreamFromOpenAI(input: {
     }
   }
 
+  // DOGE: 保存 JSON 响应字节数
+  _lastResponseBytes = responseBytes
   throw new Error(
     `[openaiCompat] stream ended unexpectedly before message_stop for model=${input.model}`,
   )
+}
+
+// DOGE: 用于传递 OpenAI 兼容路径的 JSON 响应字节数
+let _lastResponseBytes = 0
+export function getLastResponseBytes(): number {
+  return _lastResponseBytes
 }
 
 export function mapOpenAIUsageToAnthropic(usage?: {
