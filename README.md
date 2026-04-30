@@ -26,6 +26,8 @@
 6、作者实际使用，并不断改进种，有使用问题及空闲时间，可参数本项目。
 7、技能等开源内容，官方升级后，本系统也将升级，吸收官方可采纳的优秀功能。
 8、由于可以直接使用链接，因此不再依赖ccswitch造成无谓的时间浪费和CPU算力消耗。
+9、伙伴系统也移植到了系统，满级，满属性，稀有。
+
 
 如果用 ACG 比喻，大概属于：
 
@@ -69,19 +71,13 @@
 
 ## 和原始还原仓库的关系
 
-这个仓库**不是**上游官方源码仓库，也**不是** pristine 状态的 Claude Code。
+这个仓库**不是**上游官方源码Claude Code。
 
 它有两层历史：
 
 1. 第一层：还原后的源码树
-2. 第二层：基于该源码树继续进行的 Fork 改造
-
-因此你会看到两类差异同时存在：
-
-- 来自恢复过程的 shim、fallback、兼容层
-- 来自 Doge Code 的主动魔改
-
-这两类改动都是真实存在的，不建议把当前代码误判成“官方上游源码镜像”。
+2. 第二层：基于该源码树继续进行的 Fork 魔改
+3、本项目：跟踪并吸纳官方闭源有用功能。
 
 ## 自动同步上游
 
@@ -92,18 +88,6 @@
 - 上游仓库：`https://github.com/HELPMEEADICE/doge-code.git`   截至今日已28天未更新，也就是从未更新。
 - 上游分支：`main`
 - 本仓库目标分支：`main`
-
-同步方式：
-
-- GitHub Actions 工作流：[`sync-upstream.yml`](.github/workflows/sync-upstream.yml)
-- 执行脚本：[`scripts/sync-upstream.sh`](scripts/sync-upstream.sh)
-- 触发频率：每 30 分钟一次，也可手动触发
-
-行为说明：
-
-- 同步任务会 `fetch` 上游 `main`
-- 然后把 `upstream/main` 合并进当前 Fork 的 [`main`](README.md)
-- 合并成功后把结果推回当前仓库
 
 如果你希望调整仓库或分支，可在 GitHub 仓库 Variables 里设置：
 
@@ -136,10 +120,7 @@
 - 发布版本号会基于源码里的版本号，再拼接当前提交短 SHA
 - 同一提交只会发布一次，已存在的版本会自动跳过
 
-默认发布参数：
-
-- npm 包名：`@zyycn/claudex`
-- CLI 命令名：`claudex`
+ 
 
 可在 GitHub 仓库 Variables 里覆盖：
 
@@ -159,6 +140,9 @@
 install.bat     
 complie.bat 
 ```
+启动命令：d.bat  内有环境变量，自行设置。
+如果编译有问题，可自行下载依赖包，或者留言。
+
 
 ## 当前状态
 
@@ -192,9 +176,9 @@ bun install
 
 ## 快速安装（推荐开发者直接源码使用）
 
-如果你是直接拉这个仓库源码来用，最快的方式是用 [`bun link`](README.md) 把它注册成全局命令。
+如果你是直接拉这个仓库源码来用，最快的方式是用 安装依赖，编译成exe，复制或者设置PATH成为全局命令。
 
-### 方式一：源码目录内直接注册
+### 方式：源码目录内直接注册
 
 在仓库根目录执行：
 
@@ -214,23 +198,6 @@ bun link
 doge
 ```
 
-### 方式二：在其他项目中引用 link 包
-
-如果你要在别的工程里依赖它，可以使用：
-
-```bash
-bun link @doge-code/cli
-```
-
-或者在 [`package.json`](package.json) 中写：
-
-```json
-{
-  "dependencies": {
-    "@doge-code/cli": "link:@doge-code/cli"
-  }
-}
-```
 
 ## 使用 Git 直接源码级更新
 
@@ -259,11 +226,21 @@ bun link
 
 ```bash
 git clone <your-fork-or-repo-url>
-cd claude-code-rev
+cd doge-code
 bun install
 bun link
 doge
 ```
+或者  git clone <your-fork-or-repo-url>
+cd doge-code
+install.bat
+complie.bat
+d.bat
+
+启动后设置环境变量，仔细利用大模型对代码进行改造。
+也可复制doge到环境变量指向的任意位置后，使用doge 运行。
+
+
 
 后续更新：
 
