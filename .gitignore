@@ -72,15 +72,14 @@ doge.exe
 
 src/.vs/
 
-.doge
-.DS_Store
+.doge/
+.DS_Store/
 node_modules/
 dist/
 build/
 coverage/
 .cache/
 .turbo/
-
 .claude/
 .idea/
 .vscode/
