@@ -43,10 +43,11 @@ game.py
 mota.py
 nvidia.py
 package.json
+src.rar
 
 
 
- 
+latest/
 test-prompt-patterns.js
 tsconfig.json
 usage_stats.json
@@ -86,3 +87,6 @@ coverage/
 .qwen/
 .github/
 py/
+*.bun-build
+.bun-build/
+.*.bun-build

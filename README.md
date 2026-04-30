@@ -17,6 +17,15 @@
 
 可以把它理解为：
   缝合怪+汉化版。
+主要记录：
+1、破除限制：官方对订阅用户有很多特权，通讯交流时无延迟，MPC支持，对兼容方式和非官方订阅都有很多限制，破除。
+2、汉化：很多文件都通过2026年4月份放开试用的QWen Coder进行汉化，保证基本汉化质量，对于后续汉化不彻底的地方试用DeepSeek官方网页进行汉化。
+3、定制：代码对状态栏进行了扩展，token进出已进行严密监控。
+4、模型切换：自由切换不同厂家大模型的baseURL及APIKEY以及模型等，按照项目文件夹进行记录，低级项目试用普通本地部署，关键步骤试用云端。
+5、可编译为可执行程序，方便切换到其他平台。
+6、作者实际使用，并不断改进种，有使用问题及空闲时间，可参数本项目。
+7、技能等开源内容，官方升级后，本系统也将升级，吸收官方可采纳的优秀功能。
+8、由于可以直接使用链接，因此不再依赖ccswitch造成无谓的时间浪费和CPU算力消耗。
 
 如果用 ACG 比喻，大概属于：
 
@@ -28,11 +37,11 @@
 这个仓库当前强调的是以下方向：
 
 - 支持自定义 Anthropic 兼容接口地址
-- 正在加入 OpenAI Chat Completions ↔ Anthropic Messages 转接能力
+- 已经加入多入口的 OpenAI Chat Completions ↔ Anthropic Messages 转接能力
 - 支持自定义 API Key
 - 支持自定义模型与模型列表管理
-- 尽量把自定义接入数据收口到 [`~/.doge`](README.md) 路径体系
-- 在保留 CLI/TUI 主体结构的前提下，降低对官方登录流的绑定
+- 尽量把自定义接入数据记录到项目下[`./.doge`](README.md) 路径体系
+- 在保留 CLI/TUI 主体结构的前提下，无视登录流的绑定
 
 换句话说，它现在更像一个“可自托管 / 可代理 / 可转接”的 [`Claude Code`](README.md) 变体。
 
@@ -44,12 +53,7 @@
 
 - 配置目录：[`~/.doge`](README.md)
 - 全局配置文件：[`~/.doge/.claude.json`](README.md)
-
-这样做的目的，是避免以下问题：
-
-- 原版 [`Claude Code`](README.md) 的登录态污染 [`Doge Code`](README.md)
-- 原版保存的 endpoint / token / model 配置影响 Doge 的代理转接逻辑
-- 两边共用 [`.claude.json`](README.md) 或 [`.claude/`](README.md) 导致奇怪的网络、认证、模型或 UI 异常
+部分配置依旧使用官方的配置。
 
 如果用户以前装过原版 [`Claude Code`](README.md)，再运行 [`Doge Code`](README.md) 时出现“明明没这么配却读到了旧配置”的现象，通常就是历史数据混用导致的。
 
@@ -59,29 +63,9 @@
 - [`Doge Code`](README.md) 使用 [`.doge`](README.md) 目录
 - 如需手动指定，也可以通过 [`CLAUDE_CONFIG_DIR`](README.md) 为 [`Doge Code`](README.md) 指向独立目录
 
-一句话总结：
-
-> 原版走原版的窝，狗子住狗子的窝，别把缓存、认证和配置炖成一锅。
-
 ## OpenAI 兼容接口说明
 
 [`Doge Code`](README.md) 正在加入一个“中间转接层”模式，用来让内部仍按 Anthropic Messages 结构工作的主逻辑，转发到 OpenAI Chat Completions 接口。
-
-目标行为是：
-
-- 内部程序仍按 Anthropic Messages 模式组织请求
-- 当选择 OpenAI API 格式时，由中间层把 Messages 请求改写成 Chat Completions 请求
-- 远端返回 Chat Completions 流后，再由中间层回转成内部可消费的 Messages 风格流事件
-
-这意味着它不是简单改一个 Base URL，而是协议级别的输入输出流转接。
-
-当前状态：
-
-- API 格式选择界面与配置持久化已加入
-- OpenAI 兼容转接模块正在迭代中
-- 目前仍属于开发中功能，可能出现流式事件不完整、消息映射异常、部分工具调用兼容不足等情况
-
-如果你只是想稳定使用，建议优先走 Anthropic 兼容接口模式；如果你在测试 OpenAI 格式，请把它视为实验功能。
 
 ## 和原始还原仓库的关系
 
@@ -105,7 +89,7 @@
 
 默认目标：
 
-- 上游仓库：`https://github.com/HELPMEEADICE/doge-code.git`
+- 上游仓库：`https://github.com/HELPMEEADICE/doge-code.git`   截至今日已28天未更新，也就是从未更新。
 - 上游分支：`main`
 - 本仓库目标分支：`main`
 
@@ -171,9 +155,9 @@
 
 安装与使用：
 
-```bash
-npm install -g @zyycn/claudex
-claudex
+```windows cmd 中执行
+install.bat     
+complie.bat 
 ```
 
 ## 当前状态
@@ -187,26 +171,11 @@ claudex
 - OpenAI API 格式转接功能仍在开发中，当前并非完全稳定
 
 ## 为什么会有这个仓库
+1、上游停止更新
+2、基本没有中文编程沟通环境，中文严谨、单token携带的信息密度更高，可以在日常使用中节约更多token。
+3、Claude Code对华政策令人不齿。
+4、后续可能的情况下，脱离官方SDK支持。
 
-因为 source map 并不能召唤完整原仓库，最多只能说“把灵魂碎片召回来一部分”。
-
-常见缺口包括：
-
-- 类型专用文件缺失
-- 构建产物和中间文件缺失
-- 私有包包装层无法恢复
-- 原生绑定无法恢复
-- 动态导入资源不完整
-
-因此这个仓库的目标从一开始就不是考古式供奉，而是：
-
-- 先恢复到可运行
-- 再恢复到可维护
-- 最后在能跑的基础上，按需求继续 Fork
-
-简而言之：
-
-> 先让它活，再让它能打，再让它变成狗。
 
 ## 运行方式
 
@@ -239,7 +208,7 @@ bun link
 - 全局包名是 [`@doge-code/cli`](package.json:2)
 - 命令名是 [`doge`](package.json:24)
 
-此后可直接运行：
+此后可直接运行，加入PATH环境变量后，配合每个项目的记录文件可以做到随意自由使用。
 
 ```bash
 doge
@@ -274,6 +243,7 @@ git pull
 bun install
 bun link
 ```
+由于对linux支持度降低，未做测试，请见谅。
 
 含义分别是：
 
@@ -334,7 +304,6 @@ bun run version
 
 ## 说明与免责声明
 
-- 本仓库是 [`Claude Code`](README.md) 的 Fork：[`Doge Code`](README.md)
+- 本仓库是 [`Claude Code`](README.md) 的 Fork：[`Doge Code`]的再次分叉。(README.md)
 - 它包含恢复期代码与后续 Fork 改动，不代表官方立场
-- 如果某些行为看起来“很像官方，但又不完全像”，那通常不是你看错了，而是这确实是恢复版 + 魔改版的叠加态
-- 如果某些文案偶尔带一点 ACG 味，那是彩蛋，不是类型系统坏掉了（至少不全是）
+- 如果某些行为看起来“很像官方，但又不完全像”，那通常不是你看错了，而是这确实是恢复版 + 魔改版的叠加态 
