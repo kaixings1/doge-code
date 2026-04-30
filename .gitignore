@@ -10,7 +10,6 @@ doge.bat
 *.tmp
 *.bak
 
-d.bat
 qwen-coder.bat
 run.bat
 search.bat
