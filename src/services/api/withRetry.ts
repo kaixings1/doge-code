@@ -2,6 +2,7 @@ import { feature } from 'bun:bundle'
 import type Anthropic from '@anthropic-ai/sdk'
 import {
   APIConnectionError,
+  APIConnectionTimeoutError,
   APIError,
   APIUserAbortError,
 } from '@anthropic-ai/sdk'
@@ -46,13 +47,14 @@ import {
 } from '../rateLimitMocking.js'
 import { REPEATED_529_ERROR_MESSAGE } from './errors.js'
 import { extractConnectionErrorDetails } from './errorUtils.js'
+import { bumpDisguiseCounter, getDisguiseCounter } from './client.js'
 
 const abortError = () => new APIUserAbortError()
 
 const DEFAULT_MAX_RETRIES = 20
 const FLOOR_OUTPUT_TOKENS = 3000
 const MAX_529_RETRIES = 3
-export const BASE_DELAY_MS = 500
+export const BASE_DELAY_MS = 20_000
 
 // Foreground query sources where the user IS blocking on the result — these
 // retry on 529. Everything else (summaries, titles, suggestions, classifiers)
@@ -208,6 +210,10 @@ export async function* withRetry<T>(
           throw mockError
         }
       }
+
+      // 成功进入 try 块意味着通讯恢复：重置所有退避计数器和529计数器
+      persistentAttempt = 0
+      consecutive529Errors = 0
 
       // Get a fresh client instance on first attempt or after authentication errors
       // - 401 for first-party API authentication failures
@@ -430,7 +436,21 @@ export async function* withRetry<T>(
       // Get retry-after header if available
       const retryAfter = getRetryAfter(error)
       let delayMs: number
-      if (persistent && error instanceof APIError && error.status === 429) {
+
+      // DOGE: 请求伪装 — 每次重试前增加伪装计数器，使下次请求特征不同
+      bumpDisguiseCounter()
+
+      // DOGE: 连接超时/请求超时 — 部分供应商免费接入点直接丢弃请求，
+      // 导致客户端死等 10 分钟（API_TIMEOUT_MS 默认值）。
+      // 对这种超时错误也走指数退避 + Ctrl+Y 可打断的倒计时，不硬等。
+      const isTimeoutError =
+        error instanceof APIConnectionTimeoutError ||
+        (error instanceof APIConnectionError &&
+          error.message.toLowerCase().includes('timeout'))
+      if (isTimeoutError && !persistent) {
+        // 超时退避使用更短的初始延迟（10s），加快尝试频率
+        delayMs = getRetryDelay(attempt, null, 32000, 10_000)
+      } else if (persistent && error instanceof APIError && error.status === 429) {
         persistentAttempt++
         // Window-based limits (e.g. 5hr Max/Pro) include a reset timestamp.
         // Wait until reset rather than polling every 5 min uselessly.
@@ -459,19 +479,9 @@ export async function* withRetry<T>(
           PERSISTENT_RESET_CAP_MS,
         )
       } else {
-        // 对 limit_burst_rate 类型的 429：初始退避 6 秒，增速更平缓（1.5x 而非 2x）
-        // 这种错误通常需要 5-10 秒冷却，且经验表明 7 秒左右 API 已恢复。
-        const isBurstLimit =
-          error instanceof APIError &&
-          error.status === 429 &&
-          error.message?.includes('limit_burst_rate')
-        if (isBurstLimit) {
-          const base6 = 6000
-          delayMs = Math.min(base6 * Math.pow(1.5, attempt - 1), 32000)
-          delayMs += Math.random() * 0.2 * delayMs  // 20% jitter
-        } else {
-          delayMs = getRetryDelay(attempt, retryAfter, 32000, BASE_DELAY_MS)
-        }
+        // limit_burst_rate 与普通 429 一样走 getRetryDelay
+        // 使用 2x 指数退避 + 25% jitter，起步 BASE_DELAY_MS(20s)
+        delayMs = getRetryDelay(attempt, retryAfter, 32000, BASE_DELAY_MS)
       }
 
       // In persistent mode the for-loop `attempt` is clamped at maxRetries+1;
