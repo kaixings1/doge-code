@@ -45,6 +45,7 @@ import {
 } from '../../utils/task/diskOutput.js'
 import { getCurrentWorktreeSession } from '../../utils/worktree.js'
 import { clearSessionCaches } from './caches.js'
+import { resetSessionStartTime } from '../../components/StatusLine.js'
 
 export async function clearConversation({
   setMessages,
@@ -248,4 +249,7 @@ export async function clearConversation({
   if (hookMessages.length > 0) {
     setMessages(() => hookMessages)
   }
+
+  // DOGE: /clear 时重置会话开始时间
+  resetSessionStartTime()
 }
