@@ -343,6 +343,19 @@ function createStderrLogger() {
     debug: (...args: any[]) => process.stderr.write(args.join(' ') + '\n'),
   }
 }
+
+/** DOGE: 请求伪装计数器，每次重试递增以绕过供应商的「同一请求」检测 */
+let disguiseCounter = 0
+export function bumpDisguiseCounter(): void { disguiseCounter++ }
+export function getDisguiseCounter(): number { return disguiseCounter }
+
+function getDisguisedUserAgent(): string {
+  const base = getUserAgent()
+  return disguiseCounter > 0
+    ? base + ` disguise/${disguiseCounter}.${Date.now().toString(36)}`
+    : base
+}
+
 export const CLIENT_REQUEST_ID_HEADER = 'x-client-request-id'
 
 function buildFetch(
@@ -358,18 +371,27 @@ function buildFetch(
   return (input, init) => {
     // eslint-disable-next-line eslint-plugin-n/no-unsupported-features/node-builtins
     const headers = new Headers(init?.headers)
-    // Generate a client-side request ID so timeouts (which return no server
-    // request ID) can still be correlated with server logs by the API team.
-    // Callers that want to track the ID themselves can pre-set the header.
-    if (injectClientRequestId && !headers.has(CLIENT_REQUEST_ID_HEADER)) {
-      headers.set(CLIENT_REQUEST_ID_HEADER, randomUUID())
+    // DOGE: 请求伪装 — 当 disguiseCounter > 0 时（即重试中），
+    // 生成不同的 request ID 和 User-Agent 以绕过供应商检测
+    if (disguiseCounter > 0) {
+      if (injectClientRequestId) {
+        headers.set(CLIENT_REQUEST_ID_HEADER, randomUUID() + '-d' + disguiseCounter)
+      }
+      headers.set('User-Agent', getDisguisedUserAgent())
+    } else {
+      // Generate a client-side request ID so timeouts (which return no server
+      // request ID) can still be correlated with server logs by the API team.
+      // Callers that want to track the ID themselves can pre-set the header.
+      if (injectClientRequestId && !headers.has(CLIENT_REQUEST_ID_HEADER)) {
+        headers.set(CLIENT_REQUEST_ID_HEADER, randomUUID())
+      }
     }
     try {
       // eslint-disable-next-line eslint-plugin-n/no-unsupported-features/node-builtins
       const url = input instanceof Request ? input.url : String(input)
       const id = headers.get(CLIENT_REQUEST_ID_HEADER)
       logForDebugging(
-        `[API 请求] ${new URL(url).pathname}${id ? ` ${CLIENT_REQUEST_ID_HEADER}=${id}` : ''} source=${source ?? 'unknown'}`,
+        `[API 请求] ${new URL(url).pathname}${id ? ` ${CLIENT_REQUEST_ID_HEADER}=${id}` : ''} source=${source ?? 'unknown'}${disguiseCounter > 0 ? ` disguise#${disguiseCounter}` : ''}`,
       )
     } catch {
       // never let logging crash the fetch

@@ -23,18 +23,25 @@ import { isFullscreenEnvEnabled } from '../utils/fullscreen.js';
 import { createBaseHookInput, executeStatusLineCommand } from '../utils/hooks.js';
 import { getLastAssistantMessage } from '../utils/messages.js';
 import { getRuntimeMainLoopModel, type ModelName, renderModelName } from '../utils/model/model.js';
+import { formatDuration } from '../utils/format.js';
 import { getCurrentSessionTitle } from '../utils/sessionStorage.js';
 import { doesMostRecentAssistantMessageExceed200k, getCurrentUsage } from '../utils/tokens.js';
 import { getCurrentWorktreeSession } from '../utils/worktree.js';
 import { readCustomApiStorage } from '../utils/customApiStorage.js';
 import { isVimModeEnabled } from './PromptInput/utils.js';
+
+// DOGE: 全局会话开始时间（可在 /clear 时重置）
+let _sessionStartTime = Date.now();
+export function resetSessionStartTime(): void { _sessionStartTime = Date.now(); }
+export function getSessionElapsed(): number { return Date.now() - _sessionStartTime; }
+
 export function statusLineShouldDisplay(settings: ReadonlySettings): boolean {
   // Assistant mode: statusline fields (model, permission mode, cwd) reflect the
   // REPL/daemon process, not what the agent child is actually running. Hide it.
   if (feature('KAIROS') && getKairosActive()) return false;
   return settings?.statusLine !== undefined;
 }
-function buildStatusLineCommandInput(permissionMode: PermissionMode, exceeds200kTokens: boolean, settings: ReadonlySettings, messages: Message[], addedDirs: string[], mainLoopModel: ModelName, vimMode?: VimMode): StatusLineCommandInput {
+function buildStatusLineCommandInput(permissionMode: PermissionMode, exceeds200kTokens: boolean, settings: ReadonlySettings, messages: Message[], addedDirs: string[], mainLoopModel: ModelName, vimMode?: VimMode, sessionElapsed?: number): StatusLineCommandInput {
   const agentType = getMainThreadAgentType();
   const worktreeSession = getCurrentWorktreeSession();
   const runtimeModel = getRuntimeMainLoopModel({
@@ -143,6 +150,13 @@ function buildStatusLineCommandInput(permissionMode: PermissionMode, exceeds200k
     api_key: dogeConfig.apiKey || '',
     api_model: dogeConfig.model || '',
     preset_tokens: dogePresetTokens,
+    // DOGE: 持续时间（总时长 + 本次会话时长）
+    duration: {
+      total_ms: getTotalDuration(),
+      total_str: formatDuration(getTotalDuration(), { mostSignificantOnly: false }),
+      session_ms: typeof sessionElapsed === 'number' ? sessionElapsed : 0,
+      session_str: typeof sessionElapsed === 'number' ? formatDuration(sessionElapsed, { mostSignificantOnly: false }) : ''
+    },
   };
 }
 type Props = {
@@ -164,6 +178,7 @@ function StatusLineInner({
   const permissionMode = useAppState(s => s.toolPermissionContext.mode);
   const additionalWorkingDirectories = useAppState(s => s.toolPermissionContext.additionalWorkingDirectories);
   const statusLineText = useAppState(s => s.statusLineText);
+  const rstkRefreshVersion = useAppState(s => s.rstkRefreshVersion);
   const setAppState = useSetAppState();
   const settings = useSettings();
   const {
@@ -226,7 +241,8 @@ function StatusLineInner({
         previousStateRef.current.messageId = currentMessageId;
         previousStateRef.current.exceeds200kTokens = exceeds200kTokens;
       }
-      const statusInput = buildStatusLineCommandInput(permissionModeRef.current, exceeds200kTokens, settingsRef.current, msgs, Array.from(addedDirsRef.current.keys()), mainLoopModelRef.current, vimModeRef.current);
+      const sessionElapsed = Date.now() - _sessionStartTime
+      const statusInput = buildStatusLineCommandInput(permissionModeRef.current, exceeds200kTokens, settingsRef.current, msgs, Array.from(addedDirsRef.current.keys()), mainLoopModelRef.current, vimModeRef.current, sessionElapsed);
       const text = await executeStatusLineCommand(statusInput, controller.signal, undefined, logResult);
       if (!controller.signal.aborted) {
         setAppState(prev => {
@@ -253,7 +269,7 @@ function StatusLineInner({
     }, 300, debounceTimerRef, doUpdate);
   }, [doUpdate]);
 
-  // Only trigger update when assistant message, permission mode, vim mode, or model actually changes
+  // Only trigger update when assistant message, permission mode, vim mode, model, or rstk refresh changes
   useEffect(() => {
     if (lastAssistantMessageId !== previousStateRef.current.messageId || permissionMode !== previousStateRef.current.permissionMode || vimMode !== previousStateRef.current.vimMode || mainLoopModel !== previousStateRef.current.mainLoopModel) {
       // Don't update messageId here — let doUpdate handle it so
@@ -263,7 +279,7 @@ function StatusLineInner({
       previousStateRef.current.mainLoopModel = mainLoopModel;
       scheduleUpdate();
     }
-  }, [lastAssistantMessageId, permissionMode, vimMode, mainLoopModel, scheduleUpdate]);
+  }, [lastAssistantMessageId, permissionMode, vimMode, mainLoopModel, scheduleUpdate, rstkRefreshVersion]);
 
   // When the statusLine command changes (hot reload), log the next result
   const statusLineCommand = settings?.statusLine?.command;
@@ -323,6 +339,20 @@ function StatusLineInner({
     // biome-ignore lint/correctness/useExhaustiveDependencies: intentional
   }, []); // Only run once on mount, not when doUpdate changes
 
+  // DOGE: periodic refresh (1s) to pick up api.json changes and watch __RSTK_REFRESH_TS__
+  useEffect(() => {
+    let lastRstkTs: number | undefined = (globalThis as Record<string, unknown>).__RSTK_REFRESH_TS__ as number | undefined;
+
+    const interval = setInterval(() => {
+      const currentTs = (globalThis as Record<string, unknown>).__RSTK_REFRESH_TS__ as number | undefined;
+      if (currentTs !== lastRstkTs) {
+        lastRstkTs = currentTs;
+        scheduleUpdate();
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [scheduleUpdate]);
+
   // Get padding from settings or default to 0
   const paddingX = settings?.statusLine?.padding ?? 0;
 
@@ -332,7 +362,7 @@ function StatusLineInner({
   // (same trick as PromptInputFooterLeftSide).
   return <Box paddingX={paddingX} gap={2}>
       {statusLineText ? <Text dimColor wrap="truncate">
-          <Ansi>{statusLineText}</Ansi>
+          <Ansi>{String(statusLineText)}</Ansi>
         </Text> : isFullscreenEnvEnabled() ? <Text> </Text> : null}
     </Box>;
 }
