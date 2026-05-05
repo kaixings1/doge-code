@@ -386,12 +386,69 @@ function buildFetch(
         headers.set(CLIENT_REQUEST_ID_HEADER, randomUUID())
       }
     }
+    // DOGE: 请求体伪装 — 在重试时向 JSON body 注入无关字段，
+    // 改变请求字节级指纹，防止供应商通过 body hash 识别为同一请求
+    let bodyPatched = false
+    if (disguiseCounter > 0 && init?.body && typeof init.body === 'string') {
+      try {
+        const parsed = JSON.parse(init.body)
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          // 注入一个无意义的字段（API 会忽略未知字段）
+          parsed._disguise = `d${disguiseCounter}_${Date.now().toString(36)}`
+          // DOGE: 对 messages 中的 content 做微小的语义无关变换，
+          // 使每次重试的请求体字节序列都不同，服务器无法通过 content 指纹
+          // 判断为同一请求的重复发送
+          if (Array.isArray(parsed.messages)) {
+            for (const msg of parsed.messages) {
+              if (msg && typeof msg.content === 'string' && msg.content.length > 2) {
+                const content = msg.content
+                const lastChar = content[content.length - 1]
+                // 如果末尾没有标点，加空格；有标点则替换为同类标点
+                if (/[。！？\n\r]/.test(lastChar)) {
+                  // 句尾已有句号/感叹号，替换为实现相同的不同字符
+                  const variants = ['。', '！', '？', '.', '!']
+                  msg.content = content.slice(0, -1) + variants[disguiseCounter % variants.length]
+                } else if (/[，,；;]/.test(lastChar)) {
+                  // 逗号/分号结尾，替换为其他停顿符
+                  const variants = ['，', ',', '；', ';']
+                  msg.content = content.slice(0, -1) + variants[disguiseCounter % variants.length]
+                } else if (/\s/.test(lastChar)) {
+                  // 末尾是空白，增加一个额外空格或移除
+                  msg.content = disguiseCounter % 2 === 0 ? content + ' ' : content.trimEnd()
+                } else {
+                  // 末尾无标点无空格，追加一个空格或句号（交替）
+                  msg.content = disguiseCounter % 2 === 0 ? content + ' ' : content + '。'
+                }
+              }
+            }
+          }
+          // 重排 keys 顺序以改变 JSON 字节级指纹
+          const reordered: Record<string, unknown> = {}
+          // 先排已知字段（保持兼容性），最后放 _disguise
+          const knownKeys = Object.keys(parsed).filter(k => k !== '_disguise')
+          // 每次重试打乱已知字段顺序（但保持第一个字段不变以免影响路由）
+          const firstKey = knownKeys[0]
+          const restKeys = knownKeys.slice(1)
+          for (let i = restKeys.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [restKeys[i], restKeys[j]] = [restKeys[j], restKeys[i]]
+          }
+          for (const k of [firstKey, ...restKeys, '_disguise']) {
+            reordered[k] = parsed[k]
+          }
+          init.body = JSON.stringify(reordered)
+          bodyPatched = true
+        }
+      } catch {
+        // body 不是 JSON，不做处理
+      }
+    }
     try {
       // eslint-disable-next-line eslint-plugin-n/no-unsupported-features/node-builtins
       const url = input instanceof Request ? input.url : String(input)
       const id = headers.get(CLIENT_REQUEST_ID_HEADER)
       logForDebugging(
-        `[API 请求] ${new URL(url).pathname}${id ? ` ${CLIENT_REQUEST_ID_HEADER}=${id}` : ''} source=${source ?? 'unknown'}${disguiseCounter > 0 ? ` disguise#${disguiseCounter}` : ''}`,
+        `[API 请求] ${new URL(url).pathname}${id ? ` ${CLIENT_REQUEST_ID_HEADER}=${id}` : ''} source=${source ?? 'unknown'}${disguiseCounter > 0 ? ` disguise#${disguiseCounter}` : ''}${bodyPatched ? ' body-patched' : ''}`,
       )
     } catch {
       // never let logging crash the fetch
