@@ -238,24 +238,6 @@ function ChordInterceptor(t0) {
       if ((key.wheelUp || key.wheelDown) && pendingChordRef.current === null) {
         return;
       }
-      // DOGE: Ctrl+Y 强制拦截 — 即使 keybinding 系统尚未就绪也阻止事件
-      // 传播到 Ink 底层处理器，防止被解释为退出/终止信号
-      if (key.ctrl && input === 'y') {
-        if (event && typeof event.stopImmediatePropagation === 'function') {
-          event.stopImmediatePropagation();
-        }
-        const registry_yy = handlerRegistryRef.current;
-        if (registry_yy) {
-          const handlers_yy = registry_yy.get('app:retryNow');
-          if (handlers_yy && handlers_yy.size > 0) {
-            for (const reg_yy of handlers_yy) {
-              try { reg_yy.handler(); } catch (_) {}
-              break;
-            }
-          }
-        }
-        return;
-      }
       const registry = handlerRegistryRef.current;
       const handlerContexts = new Set();
       if (registry) {
@@ -278,19 +260,17 @@ function ChordInterceptor(t0) {
         case "match":
           {
             setPendingChord(null);
-            // DOGE: 无论是否找到 handler，都 stopPropagation 防止事件
-            // 继续传播到其他 useInput 处理器导致意外退出（如 Ctrl+Y）
-            if (event && typeof event.stopImmediatePropagation === 'function') {
-              event.stopImmediatePropagation();
-            }
-            const contextsSet = new Set(contexts);
-            if (registry) {
-              const handlers_0 = registry.get(result.action);
-              if (handlers_0 && handlers_0.size > 0) {
-                for (const registration_0 of handlers_0) {
-                  if (contextsSet.has(registration_0.context)) {
-                    try { registration_0.handler(); } catch (_) {}
-                    break;
+            if (wasInChord) {
+              const contextsSet = new Set(contexts);
+              if (registry) {
+                const handlers_0 = registry.get(result.action);
+                if (handlers_0 && handlers_0.size > 0) {
+                  for (const registration_0 of handlers_0) {
+                    if (contextsSet.has(registration_0.context)) {
+                      registration_0.handler();
+                      event.stopImmediatePropagation();
+                      break;
+                    }
                   }
                 }
               }
