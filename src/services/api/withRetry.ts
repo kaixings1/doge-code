@@ -65,6 +65,25 @@ export function triggerRetryNow(): void {
   }
 }
 
+/**
+ * DOGE: 创建 Ctrl+Y 可中断的 sleep
+ * 与普通 sleep 不同，此版本被 abort 时不抛异常，
+ * 而是静默 resolve，让重试循环立即进入下一次尝试。
+ */
+async function retrySleep(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise(resolve => {
+    if (signal?.aborted) {
+      resolve()
+      return
+    }
+    const timer = setTimeout(resolve, ms)
+    signal?.addEventListener('abort', () => {
+      clearTimeout(timer)
+      resolve()
+    }, { once: true })
+  })
+}
+
 
 const DEFAULT_MAX_RETRIES = 20
 const FLOOR_OUTPUT_TOKENS = 3000
@@ -321,7 +340,7 @@ export async function* withRetry<T>(
         if (retryAfterMs !== null && retryAfterMs < SHORT_RETRY_THRESHOLD_MS) {
           // Short retry-after: wait and retry with fast mode still active
           // to preserve prompt cache (same model name on retry).
-          await sleep(retryAfterMs, retryNow.signal, { abortError })
+          await retrySleep(retryAfterMs, retryNow.signal)
           continue
         }
         // Long or unknown retry-after: enter cooldown (switches to standard
@@ -550,7 +569,7 @@ export async function* withRetry<T>(
             )
           }
           const chunk = Math.min(remaining, HEARTBEAT_INTERVAL_MS)
-          await sleep(chunk, retryNow.signal, { abortError })
+          await retrySleep(chunk, retryNow.signal)
           remaining -= chunk
         }
         // Clamp so the for-loop never terminates. Backoff uses the separate
@@ -560,7 +579,7 @@ export async function* withRetry<T>(
         if (error instanceof APIError) {
           yield createSystemAPIErrorMessage(error, delayMs, attempt, maxRetries)
         }
-        await sleep(delayMs, retryNow.signal, { abortError })
+        await retrySleep(delayMs, retryNow.signal)
       }
     }
   }
