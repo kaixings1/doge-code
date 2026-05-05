@@ -4612,7 +4612,9 @@ export async function executeStatusLineCommand(
 
   // DOGE: 默认使用内置 status-line.js（无需用户配置 ~/.claude/settings.json）
   if (!statusLine || statusLine.type !== 'command') {
-    statusLine = { type: 'command' as const, command: 'node "./status-line.js"' as const }
+    // 使用 import.meta.url 定位 status-line.js 的绝对路径（与 hooks.ts 同目录）
+    const statusLinePath = new URL('status-line.js', import.meta.url).pathname
+    statusLine = { type: 'command' as const, command: `node "${statusLinePath}"` as const }
   }
 
   // Use provided signal or create a default one
