@@ -250,8 +250,10 @@ export function GlobalKeybindingHandlers({
     try {
       const { triggerRetryNow } = require('../services/api/withRetry.js');
       triggerRetryNow();
+      // 标记一下 Ctrl+Y 已触发，防止事件继续传播
+      return true;
     } catch (_) {
-      // 静默失败，不干扰用户
+      return true;
     }
   }, []);
   useKeybinding('app:retryNow', handleRetryNow, {
