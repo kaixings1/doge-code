@@ -247,8 +247,12 @@ export function GlobalKeybindingHandlers({
 
   // DOGE: Ctrl+Y --- 立即重试（中断 API 重试倒计时）
   const handleRetryNow = useCallback(() => {
-    const { triggerRetryNow } = require('../services/api/withRetry.js');
-    triggerRetryNow();
+    try {
+      const { triggerRetryNow } = require('../services/api/withRetry.js');
+      triggerRetryNow();
+    } catch (_) {
+      // 静默失败，不干扰用户
+    }
   }, []);
   useKeybinding('app:retryNow', handleRetryNow, {
     context: 'Global'
