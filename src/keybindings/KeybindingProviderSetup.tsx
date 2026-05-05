@@ -260,16 +260,18 @@ function ChordInterceptor(t0) {
         case "match":
           {
             setPendingChord(null);
-            // DOGE: 无论是否 chord 都 stopPropagation，防止 Ctrl+Y 等按键
-            // 事件继续传播到其他 useInput 处理器导致意外退出
+            // DOGE: 无论是否找到 handler，都 stopPropagation 防止事件
+            // 继续传播到其他 useInput 处理器导致意外退出（如 Ctrl+Y）
+            if (event && typeof event.stopImmediatePropagation === 'function') {
+              event.stopImmediatePropagation();
+            }
             const contextsSet = new Set(contexts);
             if (registry) {
               const handlers_0 = registry.get(result.action);
               if (handlers_0 && handlers_0.size > 0) {
                 for (const registration_0 of handlers_0) {
                   if (contextsSet.has(registration_0.context)) {
-                    registration_0.handler();
-                    event.stopImmediatePropagation();
+                    try { registration_0.handler(); } catch (_) {}
                     break;
                   }
                 }
