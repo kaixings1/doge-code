@@ -244,5 +244,15 @@ export function GlobalKeybindingHandlers({
     // fire on one Esc (child registers first, fires first, bubbles).
     isActive: isInTranscript && !searchBarOpen
   });
+
+  // DOGE: Ctrl+Y --- 立即重试（中断 API 重试倒计时）
+  const handleRetryNow = useCallback(() => {
+    const { triggerRetryNow } = require('../services/api/withRetry.js');
+    triggerRetryNow();
+  }, []);
+  useKeybinding('app:retryNow', handleRetryNow, {
+    context: 'Global'
+  });
+
   return null;
 }

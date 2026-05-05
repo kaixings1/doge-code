@@ -51,6 +51,21 @@ import { bumpDisguiseCounter, getDisguiseCounter } from './client.js'
 
 const abortError = () => new APIUserAbortError()
 
+/** DOGE: 全局立即重试信号 --- Ctrl+Y 中断 sleep() */
+let _retryNowController: AbortController | null = null
+
+export function getRetryNowSignal(): AbortSignal | undefined {
+  return _retryNowController?.signal;
+}
+
+/** 由 Ctrl+Y 键盘处理器调用，中断重试等待 */
+export function triggerRetryNow(): void {
+  if (_retryNowController && !_retryNowController.signal.aborted) {
+    _retryNowController.abort();
+  }
+}
+
+
 const DEFAULT_MAX_RETRIES = 20
 const FLOOR_OUTPUT_TOKENS = 3000
 const MAX_529_RETRIES = 3
@@ -179,6 +194,12 @@ export async function* withRetry<T>(
   options: RetryOptions,
 ): AsyncGenerator<SystemAPIErrorMessage, T> {
   const maxRetries = getMaxRetries(options)
+  // DOGE: 创建立即重试 signal，用于 Ctrl+Y 中断 sleep()
+  let retryNow = new AbortController()
+  _retryNowController = retryNow
+  // 用户取消时也清理 retryNow controller
+  const onCancel = () => { if (!retryNow.signal.aborted) retryNow.abort() }
+  options.signal?.addEventListener('abort', onCancel, { once: true })
   const retryContext: RetryContext = {
     model: options.model,
     thinkingConfig: options.thinkingConfig,
@@ -191,6 +212,15 @@ export async function* withRetry<T>(
   for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
     if (options.signal?.aborted) {
       throw new APIUserAbortError()
+    }
+
+    // DOGE: 如果 retryNow 已被 Ctrl+Y abort，创建新的 controller
+    // 使得后续的重试 sleep 可以再次被 Ctrl+Y 中断
+    if (retryNow.signal.aborted) {
+      const newRetryNow = new AbortController()
+      _retryNowController = newRetryNow
+      // @ts-ignore - 替换 const 变量引用（仅在同一重试循环内有效）
+      retryNow = newRetryNow
     }
 
     // Capture whether fast mode is active before this attempt
@@ -291,7 +321,7 @@ export async function* withRetry<T>(
         if (retryAfterMs !== null && retryAfterMs < SHORT_RETRY_THRESHOLD_MS) {
           // Short retry-after: wait and retry with fast mode still active
           // to preserve prompt cache (same model name on retry).
-          await sleep(retryAfterMs, options.signal, { abortError })
+          await sleep(retryAfterMs, retryNow.signal, { abortError })
           continue
         }
         // Long or unknown retry-after: enter cooldown (switches to standard
@@ -520,7 +550,7 @@ export async function* withRetry<T>(
             )
           }
           const chunk = Math.min(remaining, HEARTBEAT_INTERVAL_MS)
-          await sleep(chunk, options.signal, { abortError })
+          await sleep(chunk, retryNow.signal, { abortError })
           remaining -= chunk
         }
         // Clamp so the for-loop never terminates. Backoff uses the separate
@@ -530,12 +560,13 @@ export async function* withRetry<T>(
         if (error instanceof APIError) {
           yield createSystemAPIErrorMessage(error, delayMs, attempt, maxRetries)
         }
-        await sleep(delayMs, options.signal, { abortError })
+        await sleep(delayMs, retryNow.signal, { abortError })
       }
     }
   }
 
   throw new CannotRetryError(lastError, retryContext)
+
 }
 
 function getRetryAfter(error: unknown): string | null {
@@ -736,6 +767,13 @@ function shouldRetry(error: APIError): boolean {
     isEnvTruthy(process.env.CLAUDE_CODE_REMOTE) &&
     (error.status === 401 || error.status === 403)
   ) {
+    return true
+  }
+
+  // DOGE: invalid_api_key 错误（401 且消息含 x-api-key）也忽略
+  // x-should-retry:false，配合伪装可绕过供应商的请求指纹检测。
+  // 服务器认为重试同一密钥无效，但我们的伪装让每次请求都不同。
+  if (error.status === 401 && error.message?.toLowerCase().includes('x-api-key')) {
     return true
   }
 
