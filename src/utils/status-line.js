@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// status-line.js - 美观的状态栏：模型、API、Token、流量、费用一览
+// status-line.js - 美观的状态栏：目录、模型、API、Token、流量、费用一览
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
@@ -8,15 +8,23 @@ const rawInput = readFileSync(0, 'utf-8');
 try { writeFileSync(join(homedir(), '.doge', 'status-line-debug.log'), rawInput + '\n---\n', { flag: 'a' }); } catch {}
 
 const input = JSON.parse(rawInput);
-const { model, version, context_window, cost, base_url, preset_tokens, api_key, duration } = input;
+const { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration } = input;
 
 const segments = [];
 
-// ── 模型与版本 ─────────────
+// ── 当前目录（缩写） ─────────
+if (workspace && workspace.current_dir) {
+  let dir = workspace.current_dir;
+  // 取最后一段（目录名或文件名）
+  const parts = dir.replace(/\\/g, '/').split('/').filter(Boolean);
+  const last = parts[parts.length - 1] || '';
+  // 过长时截断加省略号
+  segments.push('\u{1F4C1} ' + (last.length > 12 ? last.slice(0, 10) + '\u2026' : last));
+}
+
+// ── 模型 ─────────────
 const modelName = model ? (model.display_name || model.id) : '';
-if (version && modelName) {
-  segments.push('\u{1F916} v' + version + ' \u00B7 ' + modelName);
-} else if (modelName) {
+if (modelName) {
   segments.push('\u{1F916} ' + modelName);
 }
 
@@ -57,9 +65,8 @@ if (totalSent === 0 && totalReceived === 0 && context_window) {
   totalReceived = typeof context_window.total_output_tokens === 'number' ? context_window.total_output_tokens : 0;
 }
 
-// Token 行：▴ 输入 ▾ 输出（始终显示，rstk 清零后为 0）
-const sentLabel = totalSent > 0 ? '\u25B4' : '\u25B4'; // ▴
-const recvLabel = totalReceived > 0 ? '\u25BE' : '\u25BE'; // ▾
+const sentLabel = totalSent > 0 ? '\u25B4' : '\u25B4';
+const recvLabel = totalReceived > 0 ? '\u25BE' : '\u25BE';
 segments.push(sentLabel + ' ' + fmtNum(totalSent) + '  ' + recvLabel + ' ' + fmtNum(totalReceived));
 
 // ── JSON 流量 ──────────────
@@ -71,10 +78,9 @@ if (cost && typeof cost.total_cost_usd === 'number' && isFinite(cost.total_cost_
   segments.push('\u{1F4B0} \u00A5' + cny);
 }
 
-// ── 持续时间 ──────────────
-if (duration) {
-  if (duration.total_str) segments.push('\u23F1 ' + duration.total_str);
-  if (duration.session_str) segments.push('\u{1F552} ' + duration.session_str);
+// ── 总时长 ──────────────
+if (duration && duration.total_str) {
+  segments.push('\u23F1 ' + duration.total_str);
 }
 
 console.log(segments.join('  '));
