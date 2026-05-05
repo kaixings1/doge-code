@@ -4603,15 +4603,16 @@ export async function executeStatusLineCommand(
 
   // When disableAllHooks is set in non-managed settings, only managed statusLine runs
   // (non-managed settings cannot disable managed commands, but non-managed commands are disabled)
-  let statusLine
+  let statusLine = null
   if (shouldAllowManagedHooksOnly()) {
     statusLine = getSettingsForSource('policySettings')?.statusLine
   } else {
     statusLine = getSettings_DEPRECATED()?.statusLine
   }
 
+  // DOGE: 默认使用内置 status-line.js（无需用户配置 ~/.claude/settings.json）
   if (!statusLine || statusLine.type !== 'command') {
-    return undefined
+    statusLine = { type: 'command' as const, command: 'node "./status-line.js"' as const }
   }
 
   // Use provided signal or create a default one
