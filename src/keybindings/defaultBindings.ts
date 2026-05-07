@@ -46,6 +46,8 @@ export const DEFAULT_BINDINGS: KeybindingBlock[] = [
         ? { 'Ctrl+shift+b': 'app:toggleBrief' as const }
         : {}),
       'Ctrl+shift+o': 'app:toggleTeammatePreview',
+      // Ctrl+Y: 在 API 重试倒计时期间立即重试，等价于 yank (粘贴) 的替代键
+      'Ctrl+y': 'app:retryNow',
       'Ctrl+r': 'history:search',
       // File navigation. cmd+ bindings only fire on kitty-protocol terminals;
       // Ctrl+shift is the portable fallback.

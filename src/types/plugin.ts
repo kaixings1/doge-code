@@ -342,7 +342,7 @@ export function getPluginErrorMessage(error: PluginError): string {
       }
       return `Plugin "${error.plugin}" LSP server "${error.serverName}" crashed with exit code ${error.exitCode ?? 'unknown'}`
     case 'lsp-request-timeout':
-      return `Plugin "${error.plugin}" LSP server "${error.serverName}" timed out on ${error.method} request after ${error.timeoutMs}ms`
+      return `插件 "${error.plugin}" 的 LSP 服务器 "${error.serverName}" 在 ${error.method} 请求中超时（${error.timeoutMs}ms）`
     case 'lsp-request-failed':
       return `Plugin "${error.plugin}" LSP server "${error.serverName}" ${error.method} request failed: ${error.error}`
     case 'marketplace-blocked-by-policy':

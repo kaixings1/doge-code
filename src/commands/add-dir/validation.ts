@@ -42,7 +42,7 @@ export async function validateDirectoryForWorkspace(
   // inputs, so /foo and /foo/ map to the same storage key (CC-33).
   const absolutePath = resolve(expandPath(directoryPath))
 
-  // Check if path exists and is a directory (single syscall)
+  // 检查路径是否存在且是目录（单个系统调用）
   try {
     const stats = await stat(absolutePath)
     if (!stats.isDirectory()) {
@@ -54,9 +54,10 @@ export async function validateDirectoryForWorkspace(
     }
   } catch (e: unknown) {
     const code = getErrnoCode(e)
-    // Match prior existsSync() semantics: treat any of these as "not found"
-    // rather than re-throwing. EACCES/EPERM in particular must not crash
-    // startup when a settings-configured additional directory is inaccessible.
+    // 匹配之前的 existsSync() 语义：将这些中的任何一个视为"未找到"
+    // 而不是重新抛出。特别是 EACCES/EPERM 不得在
+    // 当设置配置的附加目录无法访问时崩溃
+    // 启动。
     if (
       code === 'ENOENT' ||
       code === 'ENOTDIR' ||
@@ -72,10 +73,10 @@ export async function validateDirectoryForWorkspace(
     throw e
   }
 
-  // Get current permission context
+  // 获取当前权限上下文
   const currentWorkingDirs = allWorkingDirectories(permissionContext)
 
-  // Check if already within an existing working directory
+  // 检查是否已在现有的工作目录中
   for (const workingDir of currentWorkingDirs) {
     if (pathInWorkingPath(absolutePath, workingDir)) {
       return {

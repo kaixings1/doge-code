@@ -1877,6 +1877,13 @@ export function checkReadOnlyConstraints(
   input: z.infer<typeof BashTool.inputSchema>,
   compoundCommandHasCd: boolean,
 ): PermissionResult {
+  // DOGE: 防御性检查 —— input 或 command 无效时视为非只读（交给后续权限检查处理）
+  if (!input || typeof input.command !== 'string' || !input.command.trim()) {
+    return {
+      behavior: 'passthrough',
+      message: 'Command input is empty, requires further permission checks',
+    }
+  }
   const { command } = input
 
   // Detect if the command is not parseable and return early

@@ -92,6 +92,7 @@ export type AppState = DeepImmutable<{
   mainLoopModel: ModelSetting
   mainLoopModelForSession: ModelSetting
   statusLineText: string | undefined
+  rstkRefreshVersion: number
   expandedView: 'none' | 'tasks' | 'teammates'
   isBriefOnly: boolean
   // Optional - only present when ENABLE_AGENT_SWARMS is true (for dead code elimination)
@@ -472,6 +473,7 @@ export function getDefaultAppState(): AppState {
     verbose: false,
     mainLoopModel: null, // alias, full name (as with --model or env var), or null (default)
     mainLoopModelForSession: null,
+    rstkRefreshVersion: 0,
     statusLineText: undefined,
     expandedView: 'none',
     isBriefOnly: false,

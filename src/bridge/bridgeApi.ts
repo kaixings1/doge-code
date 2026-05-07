@@ -119,7 +119,7 @@ export function createBridgeApiClient(deps: BridgeApiDeps): BridgeApiClient {
       return response
     }
 
-    // Attempt token refresh — matches the pattern in withRetry.ts
+    // 尝试刷新 token——与 withRetry.ts 中的模式匹配
     debug(`[bridge:api] ${context}: 401 received, attempting token refresh`)
     const refreshed = await deps.onAuth401(accessToken)
     if (refreshed) {
@@ -134,7 +134,7 @@ export function createBridgeApiClient(deps: BridgeApiDeps): BridgeApiClient {
       debug(`[bridge:api] ${context}: Token refresh failed`)
     }
 
-    // Refresh failed — return 401 for handleErrorStatus to throw
+    // 刷新失败——返回 401 供 handleErrorStatus 抛出
     return response
   }
 
@@ -158,20 +158,18 @@ export function createBridgeApiClient(deps: BridgeApiDeps): BridgeApiClient {
               directory: config.dir,
               branch: config.branch,
               git_repo_url: config.gitRepoUrl,
-              // Advertise session capacity so claude.ai/code can show
-              // "2/4 sessions" badges and only block the picker when
-              // actually at capacity. Backends that don't yet accept
-              // this field will silently ignore it.
+              // 通告会话容量，以便 claude.ai/code 可以显示
+              // "2/4 sessions"徽章，仅在实际上达到容量时阻止选择器。尚不接受
+              // 此字段的后端将静默忽略它。
               max_sessions: config.maxSessions,
-              // worker_type lets claude.ai filter environments by origin
-              // (e.g. assistant picker only shows assistant-mode workers).
-              // Desktop cowork app sends "cowork"; we send a distinct value.
+              // worker_type 让 claude.ai 按来源过滤环境
+              //（例如，助手选择器仅显示助手模式的工作区）。
+              // 桌面 cowork 应用发送 "cowork"；我们发送不同的值。
               metadata: { worker_type: config.workerType },
-              // Idempotent re-registration: if we have a backend-issued
-              // environment_id from a prior session (--session-id resume),
-              // send it back so the backend reattaches instead of creating
-              // a new env. The backend may still hand back a fresh ID if
-              // the old one expired — callers must compare the response.
+              // 幂等重新注册：如果我们有来自先前会话 (--session-id resume) 的后端发出的
+              // environment_id，将其发回以便后端重新附加而不是创建
+              // 新环境。后端仍然可能返回一个新的 ID，如果
+              // 旧的 ID 已过期——调用方必须比较响应。
               ...(config.reuseEnvironmentId && {
                 environment_id: config.reuseEnvironmentId,
               }),
@@ -204,8 +202,8 @@ export function createBridgeApiClient(deps: BridgeApiDeps): BridgeApiClient {
     ): Promise<WorkResponse | null> {
       validateBridgeId(environmentId, 'environmentId')
 
-      // Save and reset so errors break the "consecutive empty" streak.
-      // Restored below when the response is truly empty.
+      // 保存并重置，以便错误打破"连续为空"的连胜纪录。
+      // 在下面当响应确实为空时恢复。
       const prevEmptyPolls = consecutiveEmptyPolls
       consecutiveEmptyPolls = 0
 
@@ -225,7 +223,7 @@ export function createBridgeApiClient(deps: BridgeApiDeps): BridgeApiClient {
 
       handleErrorStatus(response.status, response.data, 'Poll')
 
-      // Empty body or null = no work available
+      // 空体或 null = 没有可用工作
       if (!response.data) {
         consecutiveEmptyPolls = prevEmptyPolls + 1
         if (

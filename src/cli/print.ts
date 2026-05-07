@@ -532,7 +532,7 @@ export async function runHeadless(
 
   // 主动激活现已在 main.tsx 中的 getTools() 之前处理，
   // 以便 SleepTool 通过 isEnabled() 过滤。此回退覆盖了
-  // CLAUDE_CODE_PROACTIVE 已设置但 main.tsx 的检查未触发的情况
+  // CLAUDE_CODE_PROACTIVE 已设置但 main.tsx 的检查未触发的情况（例如，环境变量在 argv 解析后由 SDK 传输注入）
   //（例如，环境变量在 argv 解析后由 SDK 传输注入）。
   if (
     (feature('PROACTIVE') || feature('KAIROS')) &&
@@ -837,6 +837,10 @@ export async function runHeadless(
   // 对于 stream-json（SDK/CCR）和默认文本输出，仅读取最后一条消息以获取退出代码/最终结果。
   // 避免在整个会话期间在内存中累积每条消息。
   const needsFullArray = options.outputFormat === 'json' && options.verbose
+  // DOGE: 标记是否已经通过 stream_event 实时输出过文本（默认模式下避免 result 重复输出）
+  let hasTypedText = false
+  // DOGE: stream-json/json 格式不适用打字效果
+  const isDefaultOutput = options.outputFormat !== 'stream-json' && options.outputFormat !== 'json'
   const messages: SDKMessage[] = []
   let lastMessage: SDKMessage | undefined
   // 精简模式：当使用 stream-json 且 CLAUDE_CODE_STREAMLINED_OUTPUT=true 时转换消息
@@ -888,12 +892,33 @@ export async function runHeadless(
           message.subtype === 'task_progress' ||
           message.subtype === 'post_turn_summary')
       ) &&
-      message.type !== 'stream_event' &&
       message.type !== 'keep_alive' &&
       message.type !== 'streamlined_text' &&
       message.type !== 'streamlined_tool_use_summary' &&
       message.type !== 'prompt_suggestion'
     ) {
+      // DOGE: 实时输出 stream_event 中的 text/thinking 增量（打字效果，仅默认输出模式）
+      if (isDefaultOutput && message.type === 'stream_event') {
+        const ev = (message as Record<string, unknown>).event as Record<string, unknown> | null
+        if (ev && ev.type === 'content_block_delta') {
+          const delta = ev.delta as Record<string, unknown> | null
+          if (delta) {
+            if (delta.type === 'text_delta') {
+              const text = delta.text
+              if (typeof text === 'string' && text.length > 0) {
+                hasTypedText = true
+                writeToStdout(text)
+              }
+            } else if (delta.type === 'thinking_delta') {
+              const thinking = delta.thinking
+              if (typeof thinking === 'string' && thinking.length > 0) {
+                hasTypedText = true
+                writeToStdout(thinking)
+              }
+            }
+          }
+        }
+      }
       if (needsFullArray) {
         messages.push(message)
       }
@@ -921,6 +946,8 @@ export async function runHeadless(
       }
       switch (lastMessage.subtype) {
         case 'success':
+          // DOGE: 如果已经通过 stream_event 实时输出过文本，跳过 result 的重复输出
+          if (hasTypedText) break
           writeToStdout(
             lastMessage.result.endsWith('\n')
               ? lastMessage.result

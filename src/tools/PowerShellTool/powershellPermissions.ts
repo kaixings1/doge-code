@@ -377,6 +377,13 @@ export function powershellToolCheckExactMatchPermission(
   input: PowerShellInput,
   toolPermissionContext: ToolPermissionContext,
 ): PermissionResult {
+  // DOGE: 防御性检查 —— input 或 command 无效时放行
+  if (!input || typeof input.command !== 'string' || !input.command.trim()) {
+    return {
+      behavior: 'passthrough',
+      message: 'Command input is empty, skipping exact match permission check',
+    }
+  }
   const trimmedCommand = input.command.trim()
   const { matchingDenyRules, matchingAskRules, matchingAllowRules } =
     matchingRulesForInput(input, toolPermissionContext, 'exact')
@@ -427,6 +434,13 @@ export function powershellToolCheckPermission(
   input: PowerShellInput,
   toolPermissionContext: ToolPermissionContext,
 ): PermissionResult {
+  // DOGE: 防御性检查 —— input 或 command 无效时放行
+  if (!input || typeof input.command !== 'string' || !input.command.trim()) {
+    return {
+      behavior: 'allow',
+      message: 'Command input is empty, skipping permission check',
+    }
+  }
   const command = input.command.trim()
 
   // 1. 首先检查精确匹配
@@ -629,6 +643,13 @@ export async function powershellToolHasPermission(
   input: PowerShellInput,
   context: ToolUseContext,
 ): Promise<PermissionResult> {
+  // DOGE: 防御性检查 —— input 或 input.command 无效时直接放行（防止 REPL 崩溃）
+  if (!input || typeof input.command !== 'string') {
+    return {
+      behavior: 'allow',
+      message: 'Command input is empty, skipping permission checks',
+    }
+  }
   const toolPermissionContext = context.getAppState().toolPermissionContext
   const command = input.command.trim()
 

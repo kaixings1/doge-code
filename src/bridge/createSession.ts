@@ -15,8 +15,8 @@ type GitOutcome = {
   git_info: { type: 'github'; repo: string; branches: string[] }
 }
 
-// Events must be wrapped in { type: 'event', data: <sdk_message> } for the
-// POST /v1/sessions endpoint (discriminated union format).
+// 事件必须包装成 { type: 'event', data: <sdk_message> } 用于
+// POST /v1/sessions 端点（区分联合格式）。
 type SessionEvent = {
   type: 'event'
   data: SDKMessage
@@ -74,7 +74,7 @@ export async function createBridgeSession({
     return null
   }
 
-  // Build git source and outcome context
+  // 构建 git 源和结果上下文
   let gitSource: GitSource | null = null
   let gitOutcome: GitOutcome | null = null
 
@@ -98,7 +98,7 @@ export async function createBridgeSession({
         },
       }
     } else {
-      // Fallback: try parseGitHubRepository for owner/repo format
+      // 回退：尝试 parseGitHubRepository 获取 owner/repo 格式
       const ownerRepo = parseGitHubRepository(gitRepoUrl)
       if (ownerRepo) {
         const [owner, name] = ownerRepo.split('/')
@@ -354,9 +354,9 @@ export async function updateBridgeSessionTitle(
     'x-organization-uuid': orgUUID,
   }
 
-  // Compat gateway only accepts session_* (compat/convert.go:27). v2 callers
-  // pass raw cse_*; retag here so all callers can pass whatever they hold.
-  // Idempotent for v1's session_* and bridgeMain's pre-converted compatSessionId.
+  // 兼容网关仅接受 session_*（compat/convert.go:27）。v2 调用者
+  // 传递原始的 cse_*；在此重新标记以便所有调用者可以传递它们持有的任何内容。
+  // 对于 v1 的 session_* 和 bridgeMain 的预转换 compatSessionId 是幂等的。
   const compatId = toCompatSessionId(sessionId)
   const url = `${opts?.baseUrl ?? getOauthConfig().BASE_API_URL}/v1/sessions/${compatId}`
   logForDebugging(`[bridge] Updating session title: ${compatId} → ${title}`)

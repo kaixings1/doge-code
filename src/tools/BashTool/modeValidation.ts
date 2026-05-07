@@ -73,6 +73,13 @@ export function checkPermissionMode(
   input: z.infer<typeof BashTool.inputSchema>,
   toolPermissionContext: ToolPermissionContext,
 ): PermissionResult {
+  // DOGE: 防御性检查 —— input 或 command 无效时放行
+  if (!input || typeof input.command !== 'string' || !input.command.trim()) {
+    return {
+      behavior: 'passthrough',
+      message: 'Command input is empty, no mode-specific handling',
+    }
+  }
   // Skip if in bypass mode (handled elsewhere)
   if (toolPermissionContext.mode === 'bypassPermissions') {
     return {

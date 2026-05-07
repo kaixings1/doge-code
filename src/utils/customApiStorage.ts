@@ -258,14 +258,14 @@ export function addPresetTokens(
       jsonSentBytes: 0,
       jsonReceivedBytes: 0,
     }
-    t.sent = (t.sent || 0) + newSent
-    t.received = (t.received || 0) + newReceived
-    t.currentSessionTotal = (t.currentSessionTotal || 0) + newSent + newReceived
+    t.sent = Math.round((t.sent || 0) + newSent)
+    t.received = Math.round((t.received || 0) + newReceived)
+    t.currentSessionTotal = Math.round((t.currentSessionTotal || 0) + newSent + newReceived)
     if (typeof jsonSentBytes === 'number') {
-      t.jsonSentBytes = (t.jsonSentBytes || 0) + jsonSentBytes
+      t.jsonSentBytes = Math.round((t.jsonSentBytes || 0) + jsonSentBytes)
     }
     if (typeof jsonReceivedBytes === 'number') {
-      t.jsonReceivedBytes = (t.jsonReceivedBytes || 0) + jsonReceivedBytes
+      t.jsonReceivedBytes = Math.round((t.jsonReceivedBytes || 0) + jsonReceivedBytes)
     }
     preset.tokens = t
 

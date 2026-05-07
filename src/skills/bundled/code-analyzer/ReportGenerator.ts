@@ -266,7 +266,7 @@ export class CodeAnalyzer {
 
   private getJSDocComment(node: ts.Node): JSDoc | null {
     // Search for preceding JSDoc comments
-    const checker = /* typeChecker */;
+    const checker: any = null;
     const sourceFile = node.getSourceFile();
 
     if (!sourceFile) return null;

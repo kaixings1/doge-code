@@ -264,22 +264,35 @@ export async function getAnthropicClient({
   const effectiveBaseURL = process.env.ANTHROPIC_BASE_URL || readCustomApiStorage().baseURL || ''
   const isLocalEndpoint = /127\.0\.0\.1|localhost/i.test(effectiveBaseURL)
 
+
+  // DOGE: 诊断日志
+  const diagApiKey = apiKey || getAnthropicApiKey()
+  const diagAuthToken = getClaudeAIOAuthTokens()?.accessToken
+  const diagIsSub = isClaudeAISubscriber()
+  const hasCustomEndpoint = !!(effectiveBaseURL && !effectiveBaseURL.includes('api.anthropic.com'))
+  logForDebugging(`[DOGE:auth] isSub=${diagIsSub} isLocal=${isLocalEndpoint} customEndpoint=${hasCustomEndpoint} hasApiKey=${!!diagApiKey} hasAuthToken=${!!diagAuthToken} baseURL=${effectiveBaseURL}`, { level: 'debug' })
+
+  // DOGE: 判断是否使用自定义端点（非 Anthropic 官方 API）
+  // 自定义端点包括：本地模型、公司代理、第三方 API 等
+  // 对这些端点，绝对不给 OAuth authToken，只用 apiKey
+  const useCustomAuth = isLocalEndpoint || hasCustomEndpoint
+
   const clientConfig: ConstructorParameters<typeof Anthropic>[0] = {
-    apiKey: isClaudeAISubscriber()
-      ? isLocalEndpoint
-        ? 'sk-ant-local-dev-placeholder'
-        : null
-      : apiKey || getAnthropicApiKey(),
-    authToken: isClaudeAISubscriber()
-      ? getClaudeAIOAuthTokens()?.accessToken
-      : undefined,
-    // Set baseURL from OAuth config when using staging OAuth
+    // DOGE: 自定义端点 → 只用 apiKey，不给 OAuth authToken
+    // 否则 SDK 同时发 x-api-key + Authorization: Bearer，自定义端点不认识后者
+    apiKey: useCustomAuth
+      ? diagApiKey || 'sk-ant-local-dev-placeholder'
+      : isClaudeAISubscriber()
+        ? null
+        : diagApiKey,
+    authToken: isClaudeAISubscriber() && !useCustomAuth
+      ? diagAuthToken
+      : void 0,
     ...(process.env.USER_TYPE === 'ant' &&
     isEnvTruthy(process.env.USE_STAGING_OAUTH)
       ? { baseURL: getOauthConfig().BASE_API_URL }
       : {}),
     ...ARGS,
-    ...(isDebugToStdErr() && { logger: createStderrLogger() }),
   }
 
   if (customApiProvider === 'openai') {

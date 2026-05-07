@@ -83,10 +83,10 @@ const coordinatorModeModule = feature('COORDINATOR_MODE') ? require('./coordinat
 const assistantModule = feature('KAIROS') ? require('./assistant/index.js') as typeof import('./assistant/index.js') : null;
 const kairosGate = feature('KAIROS') ? require('./assistant/gate.js') as typeof import('./assistant/gate.js') : null;
 import { relative, resolve } from 'path';
-import { isAnalyticsDisabled } from 'src/services/analytics/config.js';
-import { getFeatureValue_CACHED_MAY_BE_STALE } from 'src/services/analytics/growthbook.js';
-import { type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS, logEvent } from 'src/services/analytics/index.js';
-import { initializeAnalyticsGates } from 'src/services/analytics/sink.js';
+import { isAnalyticsDisabled } from './services/analytics/config.js';
+import { getFeatureValue_CACHED_MAY_BE_STALE } from './services/analytics/growthbook.js';
+import { type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS, logEvent } from './services/analytics/index.js';
+import { initializeAnalyticsGates } from './services/analytics/sink.js';
 import { getOriginalCwd, setAdditionalDirectoriesForClaudeMd, setIsRemoteMode, setMainLoopModelOverride, setMainThreadAgentType, setTeleportedSessionInfo } from './bootstrap/state.js';
 import { filterCommandsForRemoteMode, getCommands } from './commands.js';
 import type { StatsStore } from './context/stats.js';
@@ -141,33 +141,33 @@ import { generateTempFilePath } from './utils/tempfile.js';
 import { validateUuid } from './utils/uuid.js';
 // Plugin startup checks are now handled non-blockingly in REPL.tsx
 
-import { registerMcpAddCommand } from 'src/commands/mcp/addCommand.js';
-import { registerMcpXaaIdpCommand } from 'src/commands/mcp/xaaIdpCommand.js';
-import { logPermissionContextForAnts } from 'src/services/internalLogging.js';
-import { fetchClaudeAIMcpConfigsIfEligible } from 'src/services/mcp/claudeai.js';
-import { clearServerCache } from 'src/services/mcp/client.js';
-import { areMcpConfigsAllowedWithEnterpriseMcpConfig, dedupClaudeAiMcpServers, doesEnterpriseMcpConfigExist, filterMcpServersByPolicy, getClaudeCodeMcpConfigs, getMcpServerSignature, parseMcpConfig, parseMcpConfigFromFilePath } from 'src/services/mcp/config.js';
-import { excludeCommandsByServer, excludeResourcesByServer } from 'src/services/mcp/utils.js';
-import { isXaaEnabled } from 'src/services/mcp/xaaIdpLogin.js';
-import { getRelevantTips } from 'src/services/tips/tipRegistry.js';
-import { logContextMetrics } from 'src/utils/api.js';
-import { CLAUDE_IN_CHROME_MCP_SERVER_NAME, isClaudeInChromeMCPServer } from 'src/utils/claudeInChrome/common.js';
-import { registerCleanup } from 'src/utils/cleanupRegistry.js';
-import { eagerParseCliFlag } from 'src/utils/cliArgs.js';
-import { createEmptyAttributionState } from 'src/utils/commitAttribution.js';
-import { countConcurrentSessions, registerSession, updateSessionName } from 'src/utils/concurrentSessions.js';
-import { getCwd } from 'src/utils/cwd.js';
-import { logForDebugging, setHasFormattedOutput } from 'src/utils/debug.js';
-import { errorMessage, getErrnoCode, isENOENT, TeleportOperationError, toError } from 'src/utils/errors.js';
-import { getFsImplementation, safeResolvePath } from 'src/utils/fsOperations.js';
-import { gracefulShutdown, gracefulShutdownSync } from 'src/utils/gracefulShutdown.js';
-import { setAllHookEventsEnabled } from 'src/utils/hooks/hookEvents.js';
-import { refreshModelCapabilities } from 'src/utils/model/modelCapabilities.js';
-import { peekForStdinData, writeToStderr } from 'src/utils/process.js';
-import { setCwd } from 'src/utils/Shell.js';
-import { type ProcessedResume, processResumedConversation } from 'src/utils/sessionRestore.js';
-import { parseSettingSourcesFlag } from 'src/utils/settings/constants.js';
-import { plural } from 'src/utils/stringUtils.js';
+import { registerMcpAddCommand } from './commands/mcp/addCommand.js';
+import { registerMcpXaaIdpCommand } from './commands/mcp/xaaIdpCommand.js';
+import { logPermissionContextForAnts } from './services/internalLogging.js';
+import { fetchClaudeAIMcpConfigsIfEligible } from './services/mcp/claudeai.js';
+import { clearServerCache } from './services/mcp/client.js';
+import { areMcpConfigsAllowedWithEnterpriseMcpConfig, dedupClaudeAiMcpServers, doesEnterpriseMcpConfigExist, filterMcpServersByPolicy, getClaudeCodeMcpConfigs, getMcpServerSignature, parseMcpConfig, parseMcpConfigFromFilePath } from './services/mcp/config.js';
+import { excludeCommandsByServer, excludeResourcesByServer } from './services/mcp/utils.js';
+import { isXaaEnabled } from './services/mcp/xaaIdpLogin.js';
+import { getRelevantTips } from './services/tips/tipRegistry.js';
+import { logContextMetrics } from './utils/api.js';
+import { CLAUDE_IN_CHROME_MCP_SERVER_NAME, isClaudeInChromeMCPServer } from './utils/claudeInChrome/common.js';
+import { registerCleanup } from './utils/cleanupRegistry.js';
+import { eagerParseCliFlag } from './utils/cliArgs.js';
+import { createEmptyAttributionState } from './utils/commitAttribution.js';
+import { countConcurrentSessions, registerSession, updateSessionName } from './utils/concurrentSessions.js';
+import { getCwd } from './utils/cwd.js';
+import { logForDebugging, setHasFormattedOutput } from './utils/debug.js';
+import { errorMessage, getErrnoCode, isENOENT, TeleportOperationError, toError } from './utils/errors.js';
+import { getFsImplementation, safeResolvePath } from './utils/fsOperations.js';
+import { gracefulShutdown, gracefulShutdownSync } from './utils/gracefulShutdown.js';
+import { setAllHookEventsEnabled } from './utils/hooks/hookEvents.js';
+import { refreshModelCapabilities } from './utils/model/modelCapabilities.js';
+import { peekForStdinData, writeToStderr } from './utils/process.js';
+import { setCwd } from './utils/Shell.js';
+import { type ProcessedResume, processResumedConversation } from './utils/sessionRestore.js';
+import { parseSettingSourcesFlag } from './utils/settings/constants.js';
+import { plural } from './utils/stringUtils.js';
 import { type ChannelEntry, getInitialMainLoopModel, getIsNonInteractiveSession, getSdkBetas, getSessionId, getUserMsgOptIn, setAllowedChannels, setAllowedSettingSources, setChromeFlagOverride, setClientType, setCwdState, setDirectConnectServerUrl, setFlagSettingsPath, setInitialMainLoopModel, setInlinePlugins, setIsInteractive, setKairosActive, setOriginalCwd, setQuestionPreviewFormat, setSdkBetas, setSessionBypassPermissionsMode, setSessionPersistenceDisabled, setSessionSource, setUserMsgOptIn, switchSession } from './bootstrap/state.js';
 
 /* eslint-disable @typescript-eslint/no-require-imports */
@@ -1394,7 +1394,7 @@ async function run(): Promise<CommanderCommand> {
           const {
             isComputerUseMCPServer,
             COMPUTER_USE_MCP_SERVER_NAME
-          } = await import('src/utils/computerUse/common.js');
+          } = await import('./utils/computerUse/common.js');
           if (nonSdkConfigNames.some(isComputerUseMCPServer)) {
             reservedNameError = `无效的 MCP 配置: "${COMPUTER_USE_MCP_SERVER_NAME}" 是保留的 MCP 名称。`;
           }
@@ -1504,11 +1504,11 @@ async function run(): Promise<CommanderCommand> {
       try {
         const {
           getChicagoEnabled
-        } = await import('src/utils/computerUse/gates.js');
+        } = await import('./utils/computerUse/gates.js');
         if (getChicagoEnabled()) {
           const {
             setupComputerUseMCP
-          } = await import('src/utils/computerUse/setup.js');
+          } = await import('./utils/computerUse/setup.js');
           const {
             mcpConfig,
             allowedTools: cuTools
@@ -2545,7 +2545,7 @@ profileCheckpoint('after_connectMcp_claudeai');
       profileCheckpoint('before_print_import');
       const {
         runHeadless
-      } = await import('src/cli/print.js');
+      } = await import('./cli/print.js');
       profileCheckpoint('after_print_import');
       void runHeadless(inputPrompt, () => headlessStore.getState(), headlessStore.setState, commandsHeadless, tools, sdkMcpConfigs, agentDefinitions.activeAgents, {
         continue: options.continue,
@@ -4069,7 +4069,7 @@ program.command('doctor').description('检查 Claude Code 自动更新程序的�
 program.command('update').alias('upgrade').description('检查更新并在可用时安装').action(async () => {
   const {
 	update
-  } = await import('src/cli/update.js');
+  } = await import('./cli/update.js');
   await update();
 });
 
@@ -4078,7 +4078,7 @@ if ("external" === 'ant') {
   program.command('up').description('[仅 ANT] 使用最近 CLAUDE.md 的 "# claude up" 部分初始化或升级本地开发环境').action(async () => {
 	const {
 	  up
-	} = await import('src/cli/up.js');
+	} = await import('./cli/up.js');
 	await up();
   });
 }
@@ -4093,7 +4093,7 @@ if ("external" === 'ant') {
   }) => {
 	const {
 	  rollback
-	} = await import('src/cli/rollback.js');
+	} = await import('./cli/rollback.js');
 	await rollback(target, options);
   });
 }

@@ -1,140 +1,120 @@
-import { c as _c } from "react/compiler-runtime";
 import * as React from 'react';
 import { Box, Text } from '../../ink.js';
-import { env } from '../../utils/env.js';
 
-export type ClawdPose = 'default' | 'arms-up' | 'look-left' | 'look-right';
+export type ClawdPose = 'default' | 'blink' | 'heart' | 'angry' | 'sleep' | 'arms-up';
 
 type Props = {
   pose?: ClawdPose;
 };
 
-// 科幻机器人图形（7行 x 21列）
 const GRAPHICS: Record<ClawdPose, string[]> = {
   default: [
-    "        ▄▄▄▄▄        ",
-    "      ▄█▀▀▀▀▀█▄      ",
-    "     ██◉     ◉██     ",
-    "     █  ▄▄▄▄▄  █     ",
-    "     █  ███   ██     ",
-    "      ▀█▄   ▄█▀      ",
-    "        ▀▀▀▀▀        ",
+    "    ▴▃▃▃▃▃▃▃▴     ",
+    "  ╭───────────╮  ",
+    " ╱  ◕    ◕   ╲ ",
+    "│      ω      │",
+    "│    ‿    ‿   │",
+    "│   ███████   │",
+    " ╲             ╱ ",
+    "  ╰───────────╯  ",
   ],
-  'look-left': [
-    "        ▄▄▄▄▄        ",
-    "      ▄█▀▀▀▀▀█▄      ",
-    "     ██◀      ◉██     ",
-    "     █  ▄▄▄▄▄  █     ",
-    "     █  ███   ██     ",
-    "      ▀█▄   ▄█▀      ",
-    "        ▀▀▀▀▀        ",
+  blink: [
+    "    ▴▃▃▃▃▃▃▃▴     ",
+    "  ╭───────────╮  ",
+    " ╱  ◕    -    ╲ ",
+    "│      ω      │",
+    "│    ‿    ‿   │",
+    "│   ███████   │",
+    " ╲             ╱ ",
+    "  ╰───────────╯  ",
   ],
-  'look-right': [
-    "        ▄▄▄▄▄        ",
-    "      ▄█▀▀▀▀▀█▄      ",
-    "     ██◉      ▶██     ",
-    "     █  ▄▄▄▄▄  █     ",
-    "     █  ███   ██     ",
-    "      ▀█▄   ▄█▀      ",
-    "        ▀▀▀▀▀        ",
+  heart: [
+    "    ▴▃▃▃▃▃▃▃▴     ",
+    "  ╭───────────╮  ",
+    " ╱  ♥    ♥    ╲ ",
+    "│      ω      │",
+    "│    ‿    ‿   │",
+    "│   ███████   │",
+    " ╲             ╱ ",
+    "  ╰───────────╯  ",
+  ],
+  angry: [
+    "    ▴▃▃▃▃▃▃▃▴     ",
+    "  ╭───────────╮  ",
+    " ╱  ◉    ◉    ╲ ",
+    "│      εε     │",
+    "│    ‿    ‿   │",
+    "│   ███████   │",
+    " ╲             ╱ ",
+    "  ╰───────────╯  ",
+  ],
+  sleep: [
+    "    ▴▃▃▃▃▃▃▃▴     ",
+    "  ╭───────────╮  ",
+    " ╱  -    -    ╲ ",
+    "│      ω      │",
+    "│   zz   zz   │",
+    "│   ███████   │",
+    " ╲             ╱ ",
+    "  ╰───────────╯  ",
   ],
   'arms-up': [
-    "        ▄▄▄▄▄        ",
-    "      ▄█▲▲▲▲▲█▄      ",
-    "     ██◉     ◉██     ",
-    "     █  ▄▄▄▄▄  █     ",
-    "     █  ███   ██     ",
-    "      ▀█▄   ▄█▀      ",
-    "        ▀▀▀▀▀        ",
+    "    ▴▃▃▃▃▃▃▃▴     ",
+    "  ╭───────────╮  ",
+    " ╱  ◕    ◕    ╲ ",
+    "│      ω      │",
+    "│    ‿    ‿   │",
+    "│   ███████   │",
+    " ╲    ✨       ╱ ",
+    "  ╰──────────╯   ",
   ],
 };
 
-// 渐变颜色（粉红 → 淡蓝）
-const START = { r: 255, g: 105, b: 180 };
-const END   = { r: 135, g: 206, b: 235 };
+// 统一宽度，防止换行抖动
+const maxLen = Math.max(...Object.values(GRAPHICS).flat().map(l => l.length));
+(Object.keys(GRAPHICS) as ClawdPose[]).forEach(pose => {
+  GRAPHICS[pose] = GRAPHICS[pose].map(line => line.padEnd(maxLen, ' '));
+});
 
-function lerp(start: typeof START, end: typeof END, t: number): string {
-  const r = Math.round(start.r + (end.r - start.r) * t);
-  const g = Math.round(start.g + (end.g - start.g) * t);
-  const b = Math.round(start.b + (end.b - start.b) * t);
-  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+// 糖果色渐变
+function hslToHex(h: number, s: number, l: number): string {
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, '0');
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+function getCharColor(ch: string, row: number, totalRows: number): string | undefined {
+  if ("◕◉♥✨-".includes(ch)) return "#ffffff";
+  if ("╭╮╰╯╱╲│─▴▃".includes(ch)) {
+    const t = row / (totalRows - 1);
+    return hslToHex(340 - t * 30, 0.45, 0.65 + t * 0.15);
+  }
+  if ("ω‿zε".includes(ch)) {
+    return row < totalRows / 2 ? "#ffaacc" : "#ff88bb";
+  }
+  const hue = 340 + (row / totalRows) * 50;
+  return hslToHex(hue, 0.55, 0.7);
 }
 
 function renderLine(line: string, rowIdx: number, totalRows: number): React.ReactNode {
-  const chars = line.split('');
-  const width = chars.length;
-  const nodes: React.ReactNode[] = [];
-  for (let col = 0; col < width; col++) {
-    const ch = chars[col];
-    if (ch === ' ') {
-      nodes.push(' ');
-      continue;
-    }
-    const t = (rowIdx / (totalRows - 1) + col / (width - 1)) / 2;
-    const color = lerp(START, END, t);
-    nodes.push(<Text key={col} color={color}>{ch}</Text>);
-  }
-  return nodes;
+  return line.split("").map((ch, col) => {
+    if (ch === " ") return " ";
+    return <Text key={col} color={getCharColor(ch, rowIdx, totalRows)}>{ch}</Text>;
+  });
 }
 
-export function Clawd(props: Props) {
-  const $ = _c(12);
-  const pose = props.pose ?? 'default';
-
-  if (env.terminal === "Apple_Terminal") {
-    let appleNode;
-    if ($[0] !== pose) {
-      const lines = GRAPHICS[pose].map((line, i) => (
-        <Text key={i} color="clawd_body">{line}</Text>
-      ));
-      appleNode = (
-        <Box flexDirection="column" alignItems="center">
-          {lines}
-        </Box>
-      );
-      $[0] = pose;
-      $[1] = appleNode;
-    } else {
-      appleNode = $[1];
-    }
-    return appleNode;
-  }
-
-  let graphicNode;
-  if ($[2] !== pose) {
-    const rows = GRAPHICS[pose].map((line, idx) => (
-      <Text key={idx}>{renderLine(line, idx, GRAPHICS[pose].length)}</Text>
-    ));
-    graphicNode = (
-      <Box flexDirection="column" alignItems="center">
-        {rows}
-      </Box>
-    );
-    $[2] = pose;
-    $[3] = graphicNode;
-  } else {
-    graphicNode = $[3];
-  }
-  return graphicNode;
-}
-
-// Apple Terminal 专用组件（保持兼容）
-function AppleTerminalClawd({ pose }: { pose: ClawdPose }) {
-  const $ = _c(2);
-  let node;
-  if ($[0] !== pose) {
-    const lines = GRAPHICS[pose].map((line, i) => (
-      <Text key={i} color="clawd_body">{line}</Text>
-    ));
-    node = (
-      <Box flexDirection="column" alignItems="center">
-        {lines}
-      </Box>
-    );
-    $[0] = pose;
-    $[1] = node;
-  } else {
-    node = $[1];
-  }
-  return node;
+// 纯静态组件（不再有自动动画）
+export function Clawd({ pose = 'default' }: Props) {
+  const rows = GRAPHICS[pose];
+  return (
+    <Box flexDirection="column" alignItems="center">
+      {rows.map((line, idx) => (
+        <Text key={idx}>{renderLine(line, idx, rows.length)}</Text>
+      ))}
+    </Box>
+  );
 }

@@ -51,7 +51,7 @@ export class RemoteIO extends StructuredIO {
     this.inputStream = inputStream
     this.url = new URL(streamUrl)
 
-    // Prepare headers with session token if available
+    // 准备带会话头的头部，如果可用
     const headers: Record<string, string> = {}
     const sessionToken = getSessionIngressAuthToken()
     if (sessionToken) {
@@ -62,15 +62,15 @@ export class RemoteIO extends StructuredIO {
       })
     }
 
-    // Add environment runner version if available (set by Environment Manager)
+    // 添加环境运行程序版本（如果可用，由环境管理器设置）
     const erVersion = process.env.CLAUDE_CODE_ENVIRONMENT_RUNNER_VERSION
     if (erVersion) {
       headers['x-environment-runner-version'] = erVersion
     }
 
-    // Provide a callback that re-reads the session token dynamically.
-    // When the parent process refreshes the token (via token file or env var),
-    // the transport can pick it up on reconnection.
+    // 提供一个回调来动态重新读取会话令牌。
+    // 当父进程刷新令牌时（通过令牌文件或环境变量），
+    // 传输可以在重新连接时获取它。
     const refreshHeaders = (): Record<string, string> => {
       const h: Record<string, string> = {}
       const freshToken = getSessionIngressAuthToken()
@@ -84,7 +84,7 @@ export class RemoteIO extends StructuredIO {
       return h
     }
 
-    // Get appropriate transport based on URL protocol
+    // 根据 URL 协议获取适当的传输
     this.transport = getTransportForUrl(
       this.url,
       headers,
@@ -92,7 +92,7 @@ export class RemoteIO extends StructuredIO {
       refreshHeaders,
     )
 
-    // Set up data callback
+    // 设置数据回调
     this.isBridge = process.env.CLAUDE_CODE_ENVIRONMENT_KIND === 'bridge'
     this.isDebug = isDebugMode()
     this.transport.setOnData((data: string) => {
@@ -102,22 +102,22 @@ export class RemoteIO extends StructuredIO {
       }
     })
 
-    // Set up close callback to handle connection failures
+    // 设置关闭回调以处理连接失败
     this.transport.setOnClose(() => {
-      // End the input stream to trigger graceful shutdown
+      // 结束输入流以触发优雅关闭
       this.inputStream.end()
     })
 
-    // Initialize CCR v2 client (heartbeats, epoch, state reporting, event writes).
-    // The CCRClient constructor wires the SSE received-ack handler
-    // synchronously, so new CCRClient() MUST run before transport.connect() —
-    // otherwise early SSE frames hit an unwired onEventCallback and their
-    // 'received' delivery acks are silently dropped.
+    // 初始化 CCR v2 客户端（心跳、纪元、状态报告、事件写入）。
+    // CCRClient 构造函数同步连接 SSE received-ack 处理程序
+    //，因此新的 CCRClient() 必须在 transport.connect() 之前运行 —
+    // 否则早期的 SSE 帧会命中未连接的 onEventCallback，它们的
+    // 'received' 交付确认会被静默丢弃。
     if (isEnvTruthy(process.env.CLAUDE_CODE_USE_CCR_V2)) {
-      // CCR v2 is SSE+POST by definition. getTransportForUrl returns
-      // SSETransport under the same env var, but the two checks live in
-      // different files — assert the invariant so a future decoupling
-      // fails loudly here instead of confusingly inside CCRClient.
+      // CCR v2 按定义是 SSE+POST。getTransportForUrl 返回
+      // SSETransport 在相同的环境变量下，但这两个检查位于
+      // 不同的文件 — 断言不变式以便未来的解耦
+      // 在这里大声失败，而不是在 CCRClient 中令人困惑地失败。
       if (!(this.transport instanceof SSETransport)) {
         throw new Error(
           'CCR v2 需要 SSETransport; 检查 getTransportForUrl',
@@ -137,16 +137,16 @@ export class RemoteIO extends StructuredIO {
       })
       registerCleanup(async () => this.ccrClient?.close())
 
-      // Register internal event writer for transcript persistence.
-      // When set, sessionStorage writes transcript messages as CCR v2
-      // internal events instead of v1 Session Ingress.
+      // 注册内部事件写入器用于转录持久化。
+      // 设置时，sessionStorage 将转录消息写为 CCR v2
+      // 内部事件而不是 v1 会话入口。
       setInternalEventWriter((eventType, payload, options) =>
         this.ccrClient!.writeInternalEvent(eventType, payload, options),
       )
 
-      // Register internal event readers for session resume.
-      // When set, hydrateFromCCRv2InternalEvents() can fetch foreground
-      // and subagent internal events to reconstruct conversation state.
+      // 注册内部事件读取器用于会话恢复。
+      // 设置时，hydrateFromCCRv2InternalEvents() 可以获取前台
+      // 和子代理内部事件以重建对话状态。
       setInternalEventReader(
         () => this.ccrClient!.readInternalEvents(),
         () => this.ccrClient!.readSubagentInternalEvents(),
@@ -167,20 +167,20 @@ export class RemoteIO extends StructuredIO {
       })
     }
 
-    // Start connection only after all callbacks are wired (setOnData above,
-    // setOnEvent inside new CCRClient() when CCR v2 is enabled).
+    // 仅在所有回调都连接后才开始连接（上面的 setOnData，
+    // CCR v2 启用时在 new CCRClient() 内部的 setOnEvent）。
     void this.transport.connect()
 
-    // Push a silent keep_alive frame on a fixed interval so upstream
-    // proxies and the session-ingress layer don't GC an otherwise-idle
-    // remote control session. The keep_alive type is filtered before
-    // reaching any client UI (Query.ts drops it; structuredIO.ts drops it;
-    // web/iOS/Android never see it in their message loop). Interval comes
-    // from GrowthBook (tengu_bridge_poll_interval_config
-    // session_keepalive_interval_v2_ms, default 120s); 0 = disabled.
-    // Bridge-only: fixes Envoy idle timeout on bridge-topology sessions
-    // (#21931). byoc workers ran without this before #21931 and do not
-    // need it — different network path.
+    // 在固定间隔推送静默 keep_alive 帧，以便上游
+    // 代理和会话入口层不会 GC 一个空闲的
+    // 远程会控制会话。keep_alive 类型在到达任何客户端 UI 之前被过滤
+    //（Query.ts 丢弃它；structuredIO.ts 丢弃它；
+    // web/iOS/Android 在消息循环中永远看不到它）。间隔来自
+    // GrowthBook（tengu_bridge_poll_interval_config
+    // session_keepalive_interval_v2_ms，默认 120 秒）；0 = 禁用。
+    // 仅桥接器：修复 bridge-topology 会话的 Envoy 空闲超时
+    //（#21931）。byoc worker 在#21931 之前运行而没有这个，不需要
+    // 它 — 不同的网络路径。
     const keepAliveIntervalMs =
       getPollIntervalConfig().session_keepalive_interval_v2_ms
     if (this.isBridge && keepAliveIntervalMs > 0) {
@@ -195,13 +195,13 @@ export class RemoteIO extends StructuredIO {
       this.keepAliveTimer.unref?.()
     }
 
-    // Register for graceful shutdown cleanup
+    // 注册优雅关闭清理
     registerCleanup(async () => this.close())
 
-    // If initial prompt is provided, send it through the input stream
+    // 如果提供初始提示，通过输入流发送
     if (initialPrompt) {
-      // Convert the initial prompt to the input stream format.
-      // Chunks from stdin may already contain trailing newlines, so strip
+      // 将初始提示转换为输入流格式。
+      // stdin 的块可能已经包含尾部换行符，因此 strip
       // them before appending our own to avoid double-newline issues that
       // cause structuredIO to parse empty lines. String() handles both
       // string chunks and Buffer objects from process.stdin.

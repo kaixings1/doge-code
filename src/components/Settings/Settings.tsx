@@ -112,7 +112,9 @@ export function Settings(t0) {
     t8 = $[18];
   }
   const tabs = t8;
-  const t9 = defaultTab !== "Config" && defaultTab !== "Gates";
+  // DOGE: 始终允许键盘切换标签页（只要不是 Config/Gates 内置焦点冲突场景）
+  // 之前设为 false 导致 headerFocused=false，Tabs 的 ← → 快捷键不生效
+  const t9 = true;
   const t10 = tabsHidden || insideModal ? undefined : contentHeight;
   let t11;
   if ($[19] !== selectedTab || $[20] !== t10 || $[21] !== t9 || $[22] !== tabs || $[23] !== tabsHidden) {
