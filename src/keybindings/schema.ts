@@ -73,6 +73,8 @@ export const KEYBINDING_ACTIONS = [
   'app:redraw',
   'app:globalSearch',
   'app:quickOpen',
+  // DOGE: API 重试立即重试
+  'app:retryNow',
   // History navigation
   'history:search',
   'history:previous',

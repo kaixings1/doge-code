@@ -439,6 +439,23 @@ export function useTextInput({
       return
     }
 
+    // DOGE: Ctrl+Y — 如果 API 重试倒计时正在运行，触发立即重试
+    // 优先级高于文本输入中的 yank（粘贴）功能
+    if (isYankKey(key, filteredInput)) {
+      try {
+        const { getRetryNowSignal, triggerRetryNow } = require('../services/api/withRetry.js');
+        const sig = getRetryNowSignal();
+        if (sig && !sig.aborted) {
+          // 有活跃的重试倒计时，触发立即重试并跳过 yank
+          triggerRetryNow();
+          resetYankState();
+          return;
+        }
+      } catch (_) {
+        // require 失败时静默降级到正常 yank 行为
+      }
+    }
+
     // Fix Issue #1853: Filter DEL characters that interfere with backspace in SSH/tmux
     // In SSH/tmux environments, backspace generates both key events and raw DEL chars
     if (!key.backspace && !key.delete && input.includes('\x7f')) {

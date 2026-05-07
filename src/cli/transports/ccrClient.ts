@@ -39,7 +39,7 @@ const DEFAULT_HEARTBEAT_INTERVAL_MS = 20_000
  * 快照 per flush — 每个发出的事件都是自包含的，所以中途连接的客户 
  * 看到的是完整的文本，而不是片段 
  */
-const STREAM_EVENT_FLUSH_INTERVAL_MS = 100
+const STREAM_EVENT_FLUSH_INTERVAL_MS = +process.env.STREAM_FLUSH_MS || 16
 
 /** Hoisted axios validateStatus callback to avoid per-request closure allocation. */
 function alwaysValidStatus(): boolean {
@@ -143,9 +143,6 @@ export function accumulateStreamEvents(
   state: StreamAccumulatorState,
 ): EventPayload[] {
   const out: EventPayload[] = []
-  // chunks[] → snapshot already in `out` this flush. Keyed by the chunks
-  // array reference (stable per {messageId, index}) so subsequent deltas
-  // rewrite the same entry instead of emitting one event per delta.
   const touched = new Map<string[], CoalescedStreamEvent>()
   for (const msg of buffer) {
     switch (msg.event.type) {
@@ -159,22 +156,28 @@ export function accumulateStreamEvents(
         break
       }
       case 'content_block_delta': {
-        if (msg.event.delta.type !== 'text_delta') {
+        // ✅ 修改点1：同时允许 text_delta 和 thinking_delta 通过
+        if (
+          msg.event.delta.type !== 'text_delta' &&
+          msg.event.delta.type !== 'thinking_delta'
+        ) {
           out.push(msg)
           break
         }
         const messageId = state.scopeToMessage.get(scopeKey(msg))
         const blocks = messageId ? state.byMessage.get(messageId) : undefined
         if (!blocks) {
-          // Delta without a preceding message_start (reconnect mid-stream,
-          // or message_start was in a prior buffer that got dropped). Pass
-          // through raw — can't produce a full-so-far snapshot without the
-          // prior chunks anyway.
           out.push(msg)
           break
         }
         const chunks = (blocks[msg.event.index] ??= [])
-        chunks.push(msg.event.delta.text)
+        // ✅ 修改点2：从 delta 中提取正确的文本字段
+        // 对于 thinking_delta，提取 thinking 字段；对于 text_delta，提取 text 字段
+        const text =
+          msg.event.delta.type === 'thinking_delta'
+            ? (msg.event.delta as any).thinking
+            : (msg.event.delta as any).text
+        chunks.push(text)
         const existing = touched.get(chunks)
         if (existing) {
           existing.event.delta.text = chunks.join('')
@@ -188,7 +191,7 @@ export function accumulateStreamEvents(
           event: {
             type: 'content_block_delta',
             index: msg.event.index,
-            delta: { type: 'text_delta', text: chunks.join('') },
+            delta: { type: 'text_delta', text: chunks.join('') }, // 统一转换为 text_delta
           },
         }
         touched.set(chunks, snapshot)
@@ -201,7 +204,6 @@ export function accumulateStreamEvents(
   }
   return out
 }
-
 /**
  * Clear accumulator entries for a completed assistant message. Called from
  * writeEvent when the SDKAssistantMessage arrives — the reliable end-of-stream

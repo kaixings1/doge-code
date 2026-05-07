@@ -96,8 +96,8 @@ function buildRequiresActionDetails(
   toolUseID: string,
   requestId: string,
 ): RequiresActionDetails {
-  // Per-tool summary methods may throw on malformed input; permission
-  // handling must not break because of a bad description.
+  // 每个工具的摘要方法可能在输入格式错误时抛出异常；权限
+  // 处理不会因坏的描述而破坏。
   let description: string
   try {
     description =
@@ -127,17 +127,17 @@ type PendingRequest<T> = {
  * Provides a structured way to read and write SDK messages from stdio,
  * capturing the SDK protocol.
  */
-// Maximum number of resolved tool_use IDs to track. Once exceeded, the oldest
-// entry is evicted. This bounds memory in very long sessions while keeping
-// enough history to catch duplicate control_response deliveries.
+// 要跟踪的已解析 tool_use ID 的最大数量。超过后，删除最旧的
+// 条目。这将限制非常长会话中的内存，同时保留
+// 足够的历史来捕获重复的控制响应传递。
 const MAX_RESOLVED_TOOL_USE_IDS = 1000
 
 export class StructuredIO {
   readonly structuredInput: AsyncGenerator<StdinMessage | SDKMessage>
   private readonly pendingRequests = new Map<string, PendingRequest<unknown>>()
 
-  // CCR external_metadata read back on worker start; null when the
-  // transport doesn't restore. Assigned by RemoteIO.
+  // CCR external_metadata 在 worker 启动时读回；当传输
+  // 不恢复时为 null。由 RemoteIO 分配。
   restoredWorkerState: Promise<SessionExternalMetadata | null> =
     Promise.resolve(null)
 
@@ -146,12 +146,12 @@ export class StructuredIO {
     response: SDKControlResponse,
   ) => Promise<void>
 
-  // Tracks tool_use IDs that have been resolved through the normal permission
-  // flow (or aborted by a hook). When a duplicate control_response arrives
-  // after the original was already handled, this Set prevents the orphan
-  // handler from re-processing it — which would push duplicate assistant
-  // messages into mutableMessages and cause a 400 "tool_use ids must be unique"
-  // error from the API.
+  // 跟踪已通过正常权限解析的 tool_use IDs
+  // 流程（或被钩子中止）。当重复的控制响应到达后
+  // 原始请求已被处理，此 Set 防止孤儿
+  // 处理器重新处理它 — 这会将重复的助手
+  // 消息推送到 mutableMessages 并导致 400 "tool_use ids must be unique"
+  // API 错误。
   private readonly resolvedToolUseIds = new Set<string>()
   private prependedLines: string[] = []
   private onControlRequestSent?: (request: SDKControlRequest) => void
@@ -177,7 +177,7 @@ export class StructuredIO {
     if (request.request.subtype === 'can_use_tool') {
       this.resolvedToolUseIds.add(request.request.tool_use_id)
       if (this.resolvedToolUseIds.size > MAX_RESOLVED_TOOL_USE_IDS) {
-        // Evict the oldest entry (Sets iterate in insertion order)
+        // 驱逐最旧的条目（Sets 按插入顺序迭代）
         const first = this.resolvedToolUseIds.values().next().value
         if (first !== undefined) {
           this.resolvedToolUseIds.delete(first)
@@ -215,10 +215,10 @@ export class StructuredIO {
   private async *read() {
     let content = ''
 
-    // Called once before for-await (an empty this.input otherwise skips the
-    // loop body entirely), then again per block. prependedLines re-check is
-    // inside the while so a prepend pushed between two messages in the SAME
-    // block still lands first.
+    // 在 for-await 之前调用一次（如果 this.input 为空则跳过
+    // 循环体），然后每块再次调用。prependedLines 重新检查
+    // 在 while 内部，因此在同一块中的两个消息之间推送的 prepend
+    // 仍然首先着陆。
     const splitAndProcess = async function* (this: StructuredIO) {
       for (;;) {
         if (this.prependedLines.length > 0) {
@@ -288,7 +288,7 @@ export class StructuredIO {
     if (!request) return
     this.trackResolvedToolUseId(request.request)
     this.pendingRequests.delete(requestId)
-    // Cancel the SDK consumer's canUseTool callback — the bridge won.
+    // 取消 SDK 消费者的 canUseTool 回调 — 桥接器获胜。
     void this.write({
       type: 'control_cancel_request',
       request_id: requestId,
@@ -334,7 +334,7 @@ export class StructuredIO {
   private async processLine(
     line: string,
   ): Promise<StdinMessage | SDKMessage | undefined> {
-    // Skip empty lines (e.g. from double newlines in piped stdin)
+    // 跳过空行（例如来自管道 stdin 中的双换行符）
     if (!line) {
       return undefined
     }
@@ -343,14 +343,14 @@ export class StructuredIO {
         | StdinMessage
         | SDKMessage
       if (message.type === 'keep_alive') {
-        // Silently ignore keep-alive messages
+        // 静默忽略 keep-alive 消息
         return undefined
       }
       if (message.type === 'update_environment_variables') {
-        // Apply environment variable updates directly to process.env.
-        // Used by bridge session runner for auth token refresh
-        // (CLAUDE_CODE_SESSION_ACCESS_TOKEN) which must be readable
-        // by the REPL process itself, not just child Bash commands.
+        // 直接将环境变量更新应用到 process.env。
+        // 用于桥接会话运行程序刷新认证令牌
+        //（CLAUDE_CODE_SESSION_ACCESS_TOKEN），该令牌必须可读
+        // 由 REPL 进程本身，而不仅仅是子 Bash 命令。
         const keys = Object.keys(message.variables)
         for (const [key, value] of Object.entries(message.variables)) {
           process.env[key] = value
@@ -361,10 +361,9 @@ export class StructuredIO {
         return undefined
       }
       if (message.type === 'control_response') {
-        // Close lifecycle for every control_response, including duplicates
-        // and orphans — orphans don't yield to print.ts's main loop, so this
-        // is the only path that sees them. uuid is server-injected into the
-        // payload.
+        // 为每个 control_response 关闭生命周期，包括重复项
+        // 和孤儿 — 孤儿不会让出 print.ts 的主循环，因此这是
+        // 看到它们的唯一路径。uuid 是服务器注入到负载中的。
         const uuid =
           'uuid' in message && typeof message.uuid === 'string'
             ? message.uuid
@@ -374,11 +373,11 @@ export class StructuredIO {
         }
         const request = this.pendingRequests.get(message.response.request_id)
         if (!request) {
-          // Check if this tool_use was already resolved through the normal
-          // permission flow. Duplicate control_response deliveries (e.g. from
-          // WebSocket reconnects) arrive after the original was handled, and
-          // re-processing them would push duplicate assistant messages into
-          // the conversation, causing API 400 errors.
+          // 检查此 tool_use 是否已通过正常
+          // 权限流解析。重复的控制响应传递（例如来自
+          // WebSocket 重新连接）在原始请求被处理后到达，并且
+          // 重新处理它们会将重复的助手消息推入
+          // 对话中，导致 API 400 错误。
           const responsePayload =
             message.response.subtype === 'success'
               ? message.response.response
@@ -396,11 +395,11 @@ export class StructuredIO {
           if (this.unexpectedResponseCallback) {
             await this.unexpectedResponseCallback(message)
           }
-          return undefined // Ignore responses for requests we don't know about
+          return undefined // 忽略我们不知道的请求的响应
         }
         this.trackResolvedToolUseId(request.request)
         this.pendingRequests.delete(message.response.request_id)
-        // Notify the bridge when the SDK consumer resolves a can_use_tool
+        // 通知桥接器当 SDK 消费者解析 can_use_tool
         // request, so it can cancel the stale permission prompt on claude.ai.
         if (
           request.request.request.subtype === 'can_use_tool' &&
@@ -423,7 +422,7 @@ export class StructuredIO {
         } else {
           request.resolve({})
         }
-        // Propagate control responses when replay is enabled
+        // 重放启用时传播控制响应
         if (this.replayUserMessages) {
           return message
         }
@@ -493,12 +492,12 @@ export class StructuredIO {
         type: 'control_cancel_request',
         request_id: requestId,
       })
-      // Immediately reject the outstanding promise, without
-      // waiting for the host to acknowledge the cancellation.
+      // 立即拒绝未完成的承诺，不
+      // 等待主机确认取消。
       const request = this.pendingRequests.get(requestId)
       if (request) {
-        // Track the tool_use ID as resolved before rejecting, so that a
-        // late response from the host is ignored by the orphan handler.
+        // 在拒绝之前将 tool_use ID 跟踪为已解析，这样
+        // 来自主机的延迟响应会被孤儿处理器忽略。
         this.trackResolvedToolUseId(request.request)
         request.reject(new AbortError())
       }
@@ -551,7 +550,7 @@ export class StructuredIO {
           assistantMessage,
           toolUseID,
         ))
-      // If the tool is allowed or denied, return the result
+      // 如果工具允许或拒绝，返回结果
       if (
         mainPermissionResult.behavior === 'allow' ||
         mainPermissionResult.behavior === 'deny'
@@ -559,22 +558,22 @@ export class StructuredIO {
         return mainPermissionResult
       }
 
-      // Run PermissionRequest hooks in parallel with the SDK permission
-      // prompt.  In the terminal CLI, hooks race against the interactive
-      // prompt so that e.g. a hook with --delay 20 doesn't block the UI.
-      // We need the same behavior here: the SDK host (VS Code, etc.) shows
-      // its permission dialog immediately while hooks run in the background.
-      // Whichever resolves first wins; the loser is cancelled/ignored.
+      // 运行 PermissionRequest 钩子与 SDK 权限并行
+      // 提示。在终端 CLI 中，钩子与交互
+      // 提示，因此例如带有 --delay 20 的钩子不会阻塞 UI。
+      // 我们需要相同的行为：SDK 主机（VS Code 等）显示
+      // 其权限对话框立即运行，而钩子在后台运行。
+      // 无论哪个先解析获胜；失败者被取消/忽略。
 
-      // AbortController used to cancel the SDK request if a hook decides first
+      // AbortController 用于如果钩子决定首先取消 SDK 请求
       const hookAbortController = new AbortController()
       const parentSignal = toolUseContext.abortController.signal
-      // Forward parent abort to our local controller
+      // 将父中止转发到我们的本地控制器
       const onParentAbort = () => hookAbortController.abort()
       parentSignal.addEventListener('abort', onParentAbort, { once: true })
 
       try {
-        // Start the hook evaluation (runs in background)
+        // 开始钩子评估（在后台运行）
         const hookPromise = executePermissionRequestHooksForSDK(
           tool.name,
           toolUseID,
@@ -583,7 +582,7 @@ export class StructuredIO {
           mainPermissionResult.suggestions,
         ).then(decision => ({ source: 'hook' as const, decision }))
 
-        // Start the SDK permission prompt immediately (don't wait for hooks)
+        // 立即开始 SDK 权限提示（不等待钩子）
         const requestId = randomUUID()
         onPermissionPrompt?.(
           buildRequiresActionDetails(tool, input, toolUseID, requestId),
@@ -606,20 +605,20 @@ export class StructuredIO {
           requestId,
         ).then(result => ({ source: 'sdk' as const, result }))
 
-        // Race: hook completion vs SDK prompt response.
-        // The hook promise always resolves (never rejects), returning
-        // undefined if no hook made a decision.
+        // 竞赛：钩子完成与 SDK 提示响应。
+        // 钩子承诺总是解析（从不拒绝），返回
+        // 如果没有钩子做出决定，则为 undefined。
         const winner = await Promise.race([hookPromise, sdkPromise])
 
         if (winner.source === 'hook') {
           if (winner.decision) {
-            // Hook decided — abort the pending SDK request.
-            // Suppress the expected AbortError rejection from sdkPromise.
+            // 钩子决定 — 中止待处理的 SDK 请求。
+            // 抑制来自 sdkPromise 的预期 AbortError 拒绝。
             sdkPromise.catch(() => {})
             hookAbortController.abort()
             return winner.decision
           }
-          // Hook passed through (no decision) — wait for the SDK prompt
+          // 钩子通过（无决定）— 等待 SDK 提示
           const sdkResult = await sdkPromise
           return permissionPromptToolResultToPermissionDecision(
             sdkResult.result,
@@ -629,8 +628,8 @@ export class StructuredIO {
           )
         }
 
-        // SDK prompt responded first — use its result (hook still running
-        // in background but its result will be ignored)
+        // SDK 提示首先响应 — 使用其结果（钩子仍在运行
+        // 在后台但其结果将被忽略）
         return permissionPromptToolResultToPermissionDecision(
           winner.result,
           tool,
@@ -650,7 +649,7 @@ export class StructuredIO {
         )
       } finally {
         // Only transition back to 'running' if no other permission prompts
-        // are pending (concurrent tool execution can have multiple in-flight).
+        // 挂起（并发工具执行可能有多个未完成的。
         if (this.getPendingPermissionRequests().length === 0) {
           notifySessionStateChanged('running')
         }
@@ -747,7 +746,7 @@ export class StructuredIO {
         )
         return result.behavior === 'allow'
       } catch {
-        // If the request fails (stream closed, abort, etc.), deny the connection
+        // 如果请求失败（流关闭，中止等），拒绝连接
         return false
       }
     }
@@ -795,7 +794,7 @@ async function executePermissionRequestHooksForSDK(
   const appState = toolUseContext.getAppState()
   const permissionMode = appState.toolPermissionContext.mode
 
-  // Iterate directly over the generator instead of using `all`
+  // 直接迭代生成器，而不使用 `all`
   const hookGenerator = executePermissionRequestHooks(
     toolName,
     toolUseID,
@@ -816,7 +815,7 @@ async function executePermissionRequestHooksForSDK(
       if (decision.behavior === 'allow') {
         const finalInput = decision.updatedInput || input
 
-        // Apply permission updates if provided by hook ("always allow")
+        // 如果钩子提供权限更新（"始终允许"），则应用它们
         const permissionUpdates = decision.updatedPermissions ?? []
         if (permissionUpdates.length > 0) {
           persistPermissionUpdates(permissionUpdates)
@@ -825,7 +824,7 @@ async function executePermissionRequestHooksForSDK(
             currentAppState.toolPermissionContext,
             permissionUpdates,
           )
-          // Update permission context via setAppState
+          // 通过 setAppState 更新权限上下文
           toolUseContext.setAppState(prev => {
             if (prev.toolPermissionContext === updatedContext) return prev
             return { ...prev, toolPermissionContext: updatedContext }
@@ -842,7 +841,7 @@ async function executePermissionRequestHooksForSDK(
           },
         }
       } else {
-        // Hook denied the permission
+        // 钩子拒绝了权限
         return {
           behavior: 'deny',
           message:

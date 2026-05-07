@@ -784,6 +784,10 @@ function filterRulesByContentsMatchingInput(
     skipCompoundCheck = false,
   }: { stripAllEnvVars?: boolean; skipCompoundCheck?: boolean } = {},
 ): PermissionRule[] {
+  // DOGE: 防御性检查 —— input 或 command 无效时返回空结果
+  if (!input || typeof input.command !== 'string' || !input.command.trim()) {
+    return []
+  }
   const command = input.command.trim()
 
   // Strip output redirections for permission matching
@@ -992,6 +996,13 @@ export const bashToolCheckExactMatchPermission = (
   input: z.infer<typeof BashTool.inputSchema>,
   toolPermissionContext: ToolPermissionContext,
 ): PermissionResult => {
+  // DOGE: 防御性检查
+  if (!input || typeof input.command !== 'string' || !input.command.trim()) {
+    return {
+      behavior: 'passthrough',
+      message: 'Command input is empty, skipping exact match permission check',
+    }
+  }
   const command = input.command.trim()
   const { matchingDenyRules, matchingAskRules, matchingAllowRules } =
     matchingRulesForInput(input, toolPermissionContext, 'exact')
@@ -1053,6 +1064,13 @@ export const bashToolCheckPermission = (
   compoundCommandHasCd?: boolean,
   astCommand?: SimpleCommand,
 ): PermissionResult => {
+  // DOGE: 防御性检查
+  if (!input || typeof input.command !== 'string' || !input.command.trim()) {
+    return {
+      behavior: 'allow',
+      message: 'Command input is empty, skipping permission check',
+    }
+  }
   const command = input.command.trim()
 
   // 1. Check exact match first
@@ -1665,6 +1683,18 @@ export async function bashToolHasPermission(
   context: ToolUseContext,
   getCommandSubcommandPrefixFn = getCommandSubcommandPrefix,
 ): Promise<PermissionResult> {
+  // DOGE: 防御性检查 —— input 或 input.command 无效时直接放行（防止 REPL 崩溃）
+  if (!input || typeof input.command !== 'string') {
+    logForDebugging(
+      'bashToolHasPermission: input 或 input.command 为空，跳过权限检查',
+      { level: 'warn' },
+    )
+    return {
+      behavior: 'allow',
+      message: 'Command input is empty, skipping permission checks',
+    }
+  }
+
   let appState = context.getAppState()
 
   // 0. AST-based security parse. This replaces both tryParseShellCommand
