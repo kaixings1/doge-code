@@ -279,6 +279,8 @@ export const PowerShellTool = buildTool({
     return getPrompt();
   },
   isConcurrencySafe(input: PowerShellToolInput): boolean {
+    // DOGE: 防御性检查 —— input 无效时视为不安全并返回 false
+    if (!input) return false
     return this.isReadOnly?.(input) ?? false;
   },
   isSearchOrReadCommand(input: Partial<PowerShellToolInput>): {
@@ -294,6 +296,8 @@ export const PowerShellTool = buildTool({
     return isSearchOrReadPowerShellCommand(input.command);
   },
   isReadOnly(input: PowerShellToolInput): boolean {
+    // DOGE: 防御性检查 —— input 或 command 无效时返回 false
+    if (!input || typeof input.command !== 'string') return false
     // 在声明只读之前检查同步安全启发式规则。
     // 完整的 AST 解析是异步的，此处不可用，因此我们使用
     // 基于正则表达式的检测来识别子表达式、splatting、成员
@@ -309,6 +313,8 @@ export const PowerShellTool = buildTool({
     return isReadOnlyCommand(input.command);
   },
   toAutoClassifierInput(input) {
+    // DOGE: 防御性检查 —— input 或 command 无效时返回空字符串
+    if (!input || typeof input.command !== 'string') return ''
     return input.command;
   },
   get inputSchema(): InputSchema {
@@ -344,6 +350,10 @@ export const PowerShellTool = buildTool({
     return true;
   },
   async validateInput(input: PowerShellToolInput): Promise<ValidationResult> {
+    // DOGE: 防御性检查 —— input 或 command 无效时直接返回成功（放行）
+    if (!input || typeof input.command !== 'string') {
+      return { result: true }
+    }
     // 纵深防御：也在 call() 中保护直接调用者。
     if (isWindowsSandboxPolicyViolation()) {
       return {
@@ -431,6 +441,17 @@ export const PowerShellTool = buildTool({
   async call(input: PowerShellToolInput, toolUseContext: Parameters<Tool['call']>[1], _canUseTool?: CanUseToolFn, _parentMessage?: AssistantMessage, onProgress?: ToolCallProgress<PowerShellProgress>): Promise<{
     data: Out;
   }> {
+    // DOGE: 防御性检查 —— input 或 command 无效时直接返回失败
+    if (!input || typeof input.command !== 'string') {
+      return {
+        type: 'tool_result' as const,
+        data: {
+          type: 'text' as const,
+          text: 'Error: PowerShell command input is empty or invalid. Please provide a valid command.',
+        },
+        isError: true,
+      } as unknown as { data: Out }
+    }
     // 关键守卫：promptShellExecution.ts 和 processBashCommand.tsx
     // 直接调用 PowerShellTool.call()，绕过了 validateInput。这是
     // 覆盖所有调用者的检查。策略原理请参见 isWindowsSandboxPolicyViolation 注释。

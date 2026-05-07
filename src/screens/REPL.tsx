@@ -4343,7 +4343,17 @@ export function REPL({
   // Transcript escape hatches. Bare letters in modal context (no prompt
   // competing for input) — same class as g/G/j/k in ScrollKeybindingHandler.
   useInput((input, key, event) => {
-    if (key.ctrl || key.meta) return;
+    if (key.ctrl || key.meta) {
+      // Ctrl+E: toggle show all / fold messages in transcript mode.
+      // This is a safety net in case the keybinding system's
+      // transcript:toggleShowAll fails to fire (e.g., ChordInterceptor
+      // or context mismatch swallows the event).
+      if (key.ctrl && input === 'e') {
+        setShowAllInTranscript(prev => !prev);
+        event.stopImmediatePropagation();
+      }
+      return;
+    }
     if (input === 'q') {
       // less: q quits the pager. ctrl+o toggles; q is the lineage exit.
       handleExitTranscript();
@@ -4408,6 +4418,20 @@ export function REPL({
   // guards itself inline).
   {
     isActive: screen === 'transcript' && virtualScrollActive && !searchOpen
+  });
+
+  // Ctrl+E handling for dump mode (non-virtual-scroll transcript).
+  // In dump mode GlobalKeybindingHandlers should handle it via
+  // transcript:toggleShowAll, but ChordInterceptor may swallow the
+  // event before useKeybinding can process it. This direct handler
+  // ensures Ctrl+E always toggles showAllInTranscript in transcript mode.
+  useInput((input, key, event) => {
+    if (key.ctrl && input === 'e') {
+      setShowAllInTranscript(prev => !prev);
+      event.stopImmediatePropagation();
+    }
+  }, {
+    isActive: screen === 'transcript' && !virtualScrollActive
   });
 
   // Fresh `less` per transcript entry. Prevents stale highlights matching

@@ -75,8 +75,8 @@ export function isSDKControlRequest(
  * everything else (tool_result, progress, etc.) is internal REPL chatter.
  */
 export function isEligibleBridgeMessage(m: Message): boolean {
-  // Virtual messages (REPL inner calls) are display-only — bridge/SDK
-  // consumers see the REPL tool_use/result which summarizes the work.
+  // 虚拟消息 (REPL 内部调用) 仅用于显示——bridge/SDK
+  // 消费者看到 REPL tool_use/result 汇总工作。
   if ((m.type === 'user' || m.type === 'assistant') && m.isVirtual) {
     return false
   }
@@ -147,8 +147,8 @@ export function handleIngressMessage(
       return
     }
 
-    // control_request from the server (initialize, set_model, can_use_tool).
-    // Must respond promptly or the server kills the WS (~10-14s timeout).
+    // 来自服务器的 control_request（initialize、set_model、can_use_tool）。
+    // 必须快速响应，否则服务器会关闭 WS（约 10-14 秒超时）。
     if (isSDKControlRequest(parsed)) {
       logForDebugging(
         `[bridge:repl] Inbound control_request subtype=${parsed.request.subtype}`,
@@ -159,7 +159,7 @@ export function handleIngressMessage(
 
     if (!isSDKMessage(parsed)) return
 
-    // Check for UUID to detect echoes of our own messages
+    // 检查 UUID 以检测我们自己的消息的回声
     const uuid =
       'uuid' in parsed && typeof parsed.uuid === 'string'
         ? parsed.uuid
@@ -172,11 +172,9 @@ export function handleIngressMessage(
       return
     }
 
-    // Defensive dedup: drop inbound prompts we've already forwarded. The
-    // SSE seq-num carryover (lastTransportSequenceNum) is the primary fix
-    // for history-replay; this catches edge cases where that negotiation
-    // fails (server ignores from_sequence_num, transport died before
-    // receiving any frames, etc).
+    // 防御性去重：丢弃我们已经转发过的入站提示。SSE 序列号延续（lastTransportSequenceNum）
+    // 是修复历史重播的主要方法；这会捕获那些谈判失败的边缘情况
+    //（服务器忽略 from_sequence_num，传输在接收任何帧之前就已死亡等）。
     if (uuid && recentInboundUUIDs.has(uuid)) {
       logForDebugging(
         `[bridge:repl] Ignoring re-delivered inbound: type=${parsed.type} uuid=${uuid}`,
@@ -193,7 +191,7 @@ export function handleIngressMessage(
       logEvent('tengu_bridge_message_received', {
         is_repl: true,
       })
-      // Fire-and-forget — handler may be async (attachment resolution).
+      // 火后即忘——处理器可能是异步的（附件解析）。
       void onInboundMessage?.(parsed)
     } else {
       logForDebugging(
@@ -262,9 +260,9 @@ export function handleServerControlRequest(
 
   let response: SDKControlResponse
 
-  // Outbound-only: reply error for mutable requests so claude.ai doesn't show
-  // false success. initialize must still succeed (server kills the connection
-  // if it doesn't — see comment above).
+  // 仅出站：为可修改的请求回复错误，以便 claude.ai 不会显示
+  // 虚假的成功。initialize 仍然必须成功（如果失败，服务器会终止连接
+  // 如果失败——见上面的注释）。
   if (outboundOnly && request.request.subtype !== 'initialize') {
     response = {
       type: 'control_response',
@@ -284,8 +282,8 @@ export function handleServerControlRequest(
 
   switch (request.request.subtype) {
     case 'initialize':
-      // Respond with minimal capabilities — the REPL handles
-      // commands, models, and account info itself.
+      // 用最小功能响应——REPL 自己处理
+      // 命令、模型和账户信息。
       response = {
         type: 'control_response',
         response: {
@@ -326,13 +324,13 @@ export function handleServerControlRequest(
       break
 
     case 'set_permission_mode': {
-      // The callback returns a policy verdict so we can send an error
-      // control_response without importing isAutoModeGateEnabled /
-      // isBypassPermissionsModeDisabled here (bootstrap-isolation). If no
-      // callback is registered (daemon context, which doesn't wire this —
-      // see daemonBridge.ts), return an error verdict rather than a silent
-      // false-success: the mode is never actually applied in that context,
-      // so success would lie to the client.
+      // 回调返回政策裁决，这样我们可以在不导入 isAutoModeGateEnabled/
+      // isBypassPermissionsModeDisabled 的情况下发送错误
+      // control_response（bootstrap-isolation）。如果没有注册
+      // 回调（守护进程上下文，没有连接这个——
+      // 参见 daemonBridge.ts），返回错误裁决而不是静默
+      // 假成功：该上下文中永远不会实际应用该模式，
+      // 因此成功会欺骗客户端。
       const verdict = onSetPermissionMode?.(request.request.mode) ?? {
         ok: false,
         error:
@@ -371,8 +369,8 @@ export function handleServerControlRequest(
       break
 
     default:
-      // Unknown subtype — respond with error so the server doesn't
-      // hang waiting for a reply that never comes.
+      // 未知子类型——用错误响应，以便服务器不会
+      // 挂起等待永远不会到来的回复。
       response = {
         type: 'control_response',
         response: {
@@ -439,7 +437,7 @@ export class BoundedUUIDSet {
 
   add(uuid: string): void {
     if (this.set.has(uuid)) return
-    // Evict the entry at the current write position (if occupied)
+    // 驱逐当前写入位置的条目（如果被占用）
     const evicted = this.ring[this.writeIdx]
     if (evicted !== undefined) {
       this.set.delete(evicted)

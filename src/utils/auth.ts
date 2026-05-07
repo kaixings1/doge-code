@@ -693,7 +693,7 @@ export function refreshAwsAuth(awsAuthRefresh: string): Promise<boolean> {
         const timedOut = signal === 'SIGTERM'
         const message = timedOut
           ? chalk.red(
-              'AWS auth refresh timed out after 3 minutes. Run your auth command manually in a separate terminal.',
+              'AWS 认证刷新超时（3 分钟后）。请在另一个终端中手动运行认证命令。',
             )
           : chalk.red(
               'Error running awsAuthRefresh (in settings or ~/.claude.json):',
@@ -865,7 +865,7 @@ export async function checkGcpCredentialsValid(): Promise<boolean> {
       await client.getAccessToken()
     })()
     const timeout = sleep(GCP_CREDENTIALS_CHECK_TIMEOUT_MS).then(() => {
-      throw new GcpCredentialsTimeoutError('GCP credentials check timed out')
+      throw new GcpCredentialsTimeoutError('GCP 凭证检查超时')
     })
     await Promise.race([probe, timeout])
     return true
@@ -967,7 +967,7 @@ export function refreshGcpAuth(gcpAuthRefresh: string): Promise<boolean> {
         const timedOut = signal === 'SIGTERM'
         const message = timedOut
           ? chalk.red(
-              'GCP auth refresh timed out after 3 minutes. Run your auth command manually in a separate terminal.',
+              'GCP 认证刷新超时（3 分钟后）。请在另一个终端中手动运行认证命令。',
             )
           : chalk.red(
               'Error running gcpAuthRefresh (in settings or ~/.claude.json):',

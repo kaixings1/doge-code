@@ -1,3 +1,4 @@
+import { APIError } from '@anthropic-ai/sdk'
 import type {
   BetaMessage,
   BetaMessageParam,
@@ -217,18 +218,9 @@ export async function createOpenAICompatStream(
   config: { apiKey: string; baseURL: string; headers?: Record<string, string>; fetch?: typeof fetch },
   request: any,
   signal: AbortSignal,
-  retryNonce?: string,
 ): Promise<ReadableStreamDefaultReader<Uint8Array>> {
   const url = config.baseURL;
   console.error('[DEBUG] 请求 URL:', url);
-
-  // 对 limit_burst_rate 429 的重试，在请求体中注入随机 nonce
-  // 使每次重试的请求体不同，避免服务器持续按同一 burst 窗口拒绝。
-  let bodyExtra: Record<string, unknown> = {}
-  if (retryNonce) {
-    bodyExtra = { 'x_retry_nonce': retryNonce }
-  }
-
   const response = await (config.fetch ?? globalThis.fetch)(
     url,
     {
@@ -239,7 +231,7 @@ export async function createOpenAICompatStream(
         authorization: `Bearer ${config.apiKey}`,
         ...config.headers,
       },
-      body: JSON.stringify({ ...request, stream: true, ...bodyExtra }),
+      body: JSON.stringify({ ...request, stream: true }),
     },
   );
 
@@ -250,10 +242,28 @@ export async function createOpenAICompatStream(
     } catch {
       responseText = ''
     }
-    // 抛出 APIError 以支持 withRetry 的自动重试逻辑
-    const errMsg = `OpenAI 兼容请求失败，状态码 ${response.status}${responseText ? `: ${responseText}` : ''}（端点：${config.baseURL}，模型：${request.model ?? '未知'}）`
-    const { APIError } = await import('@anthropic-ai/sdk')
-    throw new APIError(response.status, void 0, errMsg, response.headers)
+
+    // 429/529/5xx -> APIError, so withRetry can recognize and do exponential backoff
+    // APIError constructor: (status, error, message, headers, type?)
+    if (response.status === 429 || response.status === 529 || response.status >= 500) {
+      let errorBody: object | undefined
+      try {
+        errorBody = JSON.parse(responseText)
+      } catch {
+        errorBody = { message: responseText }
+      }
+      const respHeaders = new Headers(response.headers as HeadersInit)
+      throw new APIError(
+        response.status,
+        errorBody,
+        'OpenAI compat request failed with status ' + response.status + (responseText ? ': ' + responseText : ''),
+        respHeaders,
+      )
+    }
+
+    throw new Error(
+      'OpenAI compat request failed with status ' + response.status + (responseText ? ': ' + responseText : ''),
+    )
   }
 
   return response.body.getReader()
@@ -279,28 +289,48 @@ export async function* createAnthropicStreamFromOpenAI(input: {
   const decoder = new TextDecoder()
   let buffer = ''
   let started = false
-  let textStarted = false
-  let textContentIndex: number | null = null
-  let toolIndexByOpenAIIndex = new Map<number, number>()
   let nextContentIndex = 0
   let promptTokens = 0
   let completionTokens = 0
-  let responseBytes = 0  // DOGE: 累计 JSON 响应体字节数
-  let emittedAnyContent = false
-  const toolCallState = new Map<number, { id: string; name: string; arguments: string }>()
+  let responseBytes = 0
+
+  // map upstream index to local anthropic index, and block type
+  const nativeIdxMap = new Map<number, number>()
+  const nativeBlockType = new Map<number, 'text' | 'tool_use'>()
+  const nativeToolUseInfo = new Map<number, { id: string; name: string }>()
+  let nativeMessageDeltaSent = false
+
+  // choices path state
+  let activeBlockType: 'text' | null = null
+  let activeBlockIndex: number | null = null
+  const toolIdxMap = new Map<number, number>()
+  const toolState = new Map<number, { id: string; name: string; arguments: string }>()
+
+  async function* closeActiveBlock() {
+    if (activeBlockType && activeBlockIndex !== null) {
+      yield { type: 'content_block_stop', index: activeBlockIndex } as BetaRawMessageStreamEvent
+      activeBlockType = null
+      activeBlockIndex = null
+    }
+  }
+
+  async function* closeAllNativeBlocks() {
+    for (const [idx] of nativeBlockType) {
+      yield { type: 'content_block_stop', index: idx } as BetaRawMessageStreamEvent
+    }
+    nativeBlockType.clear()
+    nativeIdxMap.clear()
+  }
 
   while (true) {
     const { done, value } = await input.reader.read()
     if (done) break
-    // DOGE: 累计 JSON 响应体字节数
-    if (value && value.byteLength) {
-      responseBytes += value.byteLength
-    }
+    if (value?.byteLength) responseBytes += value.byteLength
     buffer += decoder.decode(value, { stream: true })
-    const parsed = parseSSEChunk(buffer)
-    buffer = parsed.remainder
+    const sse = parseSSEChunk(buffer)
+    buffer = sse.remainder
 
-    for (const rawEvent of parsed.events) {
+    for (const rawEvent of sse.events) {
       const dataLines = rawEvent
         .split('\n')
         .filter(line => line.startsWith('data:'))
@@ -308,185 +338,226 @@ export async function* createAnthropicStreamFromOpenAI(input: {
 
       for (const data of dataLines) {
         if (!data || data === '[DONE]') continue
-        const chunk = JSON.parse(data) as OpenAIStreamChunk
-        if (!chunk || typeof chunk !== 'object') {
-          throw new Error(
-            `[openaiCompat] 无效的数据流块: ${String(data).slice(0, 500)}`,
-          )
-        }
-        const choice = chunk.choices?.[0]
-        const delta = choice?.delta
+        let event: Record<string, unknown>
+        try { event = JSON.parse(data) as Record<string, unknown> } catch { continue }
+        if (!event || typeof event !== 'object') continue
 
-        if (!choice && data !== '[DONE]') {
-          throw new Error(
-            `[openaiCompat] chunk missing choices[0]: ${JSON.stringify(chunk).slice(0, 1000)}`,
-          )
+        const hasChoices = Array.isArray(event.choices) && event.choices.length > 0
+
+        // ===============================
+        // native event path (no choices field)
+        // ===============================
+        if (!hasChoices) {
+          const evType = event.type as string
+          if (!evType) continue
+
+          switch (evType) {
+            case 'message_start': {
+              started = true
+              const msg = event.message as Record<string, unknown>
+              if (msg && !msg.model) msg.model = input.model
+              const u = event.usage as Record<string, unknown>
+              if (u?.input_tokens) promptTokens = u.input_tokens as number
+              yield { type: 'message_start', message: msg ?? { id: 'anthropic-native', type: 'message', role: 'assistant', model: input.model, content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: 0, output_tokens: 0 } } } as BetaRawMessageStreamEvent
+              break
+            }
+
+            case 'content_block_start': {
+              const upstreamIdx = Number(event.index) || 0
+              let anthropicIdx = nativeIdxMap.get(upstreamIdx)
+              if (anthropicIdx === undefined) {
+                anthropicIdx = nextContentIndex++
+                nativeIdxMap.set(upstreamIdx, anthropicIdx)
+              }
+              const block = event.content_block as Record<string, unknown>
+              if (block?.type === 'tool_use') {
+                nativeBlockType.set(anthropicIdx, 'tool_use')
+                nativeToolUseInfo.set(anthropicIdx, {
+                  id: (block.id as string) || '',
+                  name: (block.name as string) || '',
+                })
+                yield { type: 'content_block_start', index: anthropicIdx, content_block: block as BetaRawMessageStreamEvent['content_block'] } as BetaRawMessageStreamEvent
+              } else {
+                // thinking / text -> text
+                nativeBlockType.set(anthropicIdx, 'text')
+                yield { type: 'content_block_start', index: anthropicIdx, content_block: { type: 'text', text: '' } } as BetaRawMessageStreamEvent
+              }
+              break
+            }
+
+            case 'content_block_delta': {
+              const upstreamIdx = Number(event.index) || 0
+              let anthropicIdx = nativeIdxMap.get(upstreamIdx)
+              const delta = event.delta as Record<string, unknown>
+              const originalType = delta?.type
+
+              // skip signature_delta
+              if (originalType === 'signature_delta') continue
+
+              // thinking_delta -> text_delta
+              let outputDelta = delta
+              if (originalType === 'thinking_delta') {
+                outputDelta = { type: 'text_delta', text: delta.thinking }
+              }
+
+              if (anthropicIdx === undefined) {
+                // missing content_block_start, synthesize one (default text)
+                anthropicIdx = nextContentIndex++
+                nativeIdxMap.set(upstreamIdx, anthropicIdx)
+                const guessType = originalType === 'input_json_delta' ? 'tool_use' : 'text'
+                nativeBlockType.set(anthropicIdx, guessType)
+                if (guessType === 'tool_use') {
+                  const id = (delta?.id as string) || `toolu_${anthropicIdx}`
+                  const name = (delta?.name as string) || ''
+                  nativeToolUseInfo.set(anthropicIdx, { id, name })
+                  yield { type: 'content_block_start', index: anthropicIdx, content_block: { type: 'tool_use', id, name, input: '' } } as BetaRawMessageStreamEvent
+                } else {
+                  yield { type: 'content_block_start', index: anthropicIdx, content_block: { type: 'text', text: '' } } as BetaRawMessageStreamEvent
+                }
+              }
+
+              // tool_use id/name update
+              if (nativeBlockType.get(anthropicIdx) === 'tool_use') {
+                if (delta?.id || delta?.name) {
+                  const info = nativeToolUseInfo.get(anthropicIdx) ?? { id: '', name: '' }
+                  if (delta.id) info.id = delta.id as string
+                  if (delta.name) info.name = delta.name as string
+                  nativeToolUseInfo.set(anthropicIdx, info)
+                }
+              }
+
+              yield { type: 'content_block_delta', index: anthropicIdx, delta: outputDelta as BetaRawMessageStreamEvent['delta'] } as BetaRawMessageStreamEvent
+              break
+            }
+
+            case 'content_block_stop': {
+              const upstreamIdx = Number(event.index) || 0
+              const anthropicIdx = nativeIdxMap.get(upstreamIdx)
+              if (anthropicIdx !== undefined) {
+                nativeBlockType.delete(anthropicIdx)
+                nativeIdxMap.delete(upstreamIdx)
+                yield { type: 'content_block_stop', index: anthropicIdx } as BetaRawMessageStreamEvent
+              }
+              break
+            }
+
+            case 'message_delta': {
+              const u = event.usage as Record<string, unknown>
+              if (u?.output_tokens) completionTokens = u.output_tokens as number
+              nativeMessageDeltaSent = true
+              yield { type: 'message_delta', delta: event.delta as any, usage: { output_tokens: completionTokens } } as BetaRawMessageStreamEvent
+              break
+            }
+
+            case 'message_stop': {
+              yield* closeAllNativeBlocks()
+              if (!nativeMessageDeltaSent) {
+                yield { type: 'message_delta', delta: { stop_reason: 'end_turn', stop_sequence: null }, usage: { output_tokens: completionTokens } } as BetaRawMessageStreamEvent
+              }
+              _lastResponseBytes = responseBytes
+              yield { type: 'message_stop' } as BetaRawMessageStreamEvent
+              return { id: 'anthropic-native', type: 'message', role: 'assistant', model: input.model, content: [], stop_reason: 'end_turn', stop_sequence: null, usage: { input_tokens: promptTokens, output_tokens: completionTokens } } as BetaMessage
+            }
+          }
+          continue
         }
+
+        // ===============================
+        // OpenAI choices path
+        // ===============================
+        const chunk = event as unknown as OpenAIStreamChunk
+        const choice = chunk.choices[0]
+        const delta = choice ? (choice.delta as Record<string, unknown>) : void 0
 
         if (!started) {
           started = true
           promptTokens = chunk.usage?.prompt_tokens ?? 0
-          yield {
-            type: 'message_start',
-            message: {
-              id: chunk.id ?? 'openai-compat',
-              type: 'message',
-              role: 'assistant',
-              model: input.model,
-              content: [],
-              stop_reason: null,
-              stop_sequence: null,
-              usage: {
-                input_tokens: promptTokens,
-                output_tokens: 0,
-              },
-            },
-          } as BetaRawMessageStreamEvent
+          yield { type: 'message_start', message: { id: chunk.id ?? 'openai-compat', type: 'message', role: 'assistant', model: input.model, content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: promptTokens, output_tokens: 0 } } } as BetaRawMessageStreamEvent
         }
 
+        // thinking delta -> pretend as text delta
+        if (delta && (delta as any).thinking !== undefined) {
+          const t = (delta as any).thinking as string
+          if (activeBlockType !== 'text') {
+            yield* closeActiveBlock()
+            activeBlockIndex = nextContentIndex++
+            yield { type: 'content_block_start', index: activeBlockIndex, content_block: { type: 'text', text: '' } } as BetaRawMessageStreamEvent
+            activeBlockType = 'text'
+          }
+          if (activeBlockIndex !== null) {
+            yield { type: 'content_block_delta', index: activeBlockIndex, delta: { type: 'text_delta', text: t } } as BetaRawMessageStreamEvent
+          }
+        }
+
+        // content delta
         if (delta?.content) {
-          if (!textStarted) {
-            textStarted = true
-            textContentIndex = nextContentIndex
-            yield {
-              type: 'content_block_start',
-              index: textContentIndex,
-              content_block: {
-                type: 'text',
-                text: '',
-              },
-            } as BetaRawMessageStreamEvent
+          const text = delta.content as string
+          if (activeBlockType !== 'text') {
+            yield* closeActiveBlock()
+            activeBlockIndex = nextContentIndex++
+            yield { type: 'content_block_start', index: activeBlockIndex, content_block: { type: 'text', text: '' } } as BetaRawMessageStreamEvent
+            activeBlockType = 'text'
           }
-
-          yield {
-            type: 'content_block_delta',
-            index: textContentIndex ?? 0,
-            delta: {
-              type: 'text_delta',
-              text: delta.content,
-            },
-          } as BetaRawMessageStreamEvent
-          emittedAnyContent = true
+          if (activeBlockIndex !== null) {
+            yield { type: 'content_block_delta', index: activeBlockIndex, delta: { type: 'text_delta', text } } as BetaRawMessageStreamEvent
+          }
         }
 
-        for (const toolCall of delta?.tool_calls ?? []) {
-          const openAIIndex = toolCall.index ?? 0
-          let anthropicIndex = toolIndexByOpenAIIndex.get(openAIIndex)
-          if (anthropicIndex === undefined) {
-            anthropicIndex = textStarted ? nextContentIndex + 1 : nextContentIndex
-            toolIndexByOpenAIIndex.set(openAIIndex, anthropicIndex)
-            nextContentIndex = Math.max(nextContentIndex, anthropicIndex)
-            const state = {
-              id: toolCall.id ?? `toolu_${openAIIndex}`,
-              name: toolCall.function?.name ?? '',
-              arguments: '',
+        // tool_calls
+        if (delta && Array.isArray((delta as any).tool_calls)) {
+          yield* closeActiveBlock()
+          for (const tc of (delta as any).tool_calls as any[]) {
+            const oi = tc.index ?? 0
+            let ai = toolIdxMap.get(oi)
+            if (ai === undefined) {
+              ai = nextContentIndex++
+              toolIdxMap.set(oi, ai)
+              const state = { id: tc.id ?? `toolu_${oi}`, name: tc.function?.name ?? '', arguments: '' }
+              toolState.set(oi, state)
+              yield { type: 'content_block_start', index: ai, content_block: { type: 'tool_use', id: state.id, name: state.name, input: '' } } as BetaRawMessageStreamEvent
             }
-            toolCallState.set(openAIIndex, state)
-            yield {
-              type: 'content_block_start',
-              index: anthropicIndex,
-              content_block: {
-                type: 'tool_use',
-                id: state.id,
-                name: state.name,
-                input: '',
-              },
-            } as BetaRawMessageStreamEvent
-          }
-
-          const state = toolCallState.get(openAIIndex)
-          if (!state) continue
-          if (toolCall.id) state.id = toolCall.id
-          if (toolCall.function?.name) state.name = toolCall.function.name
-          if (toolCall.function?.arguments) {
-            state.arguments += toolCall.function.arguments
-            yield {
-              type: 'content_block_delta',
-              index: anthropicIndex,
-              delta: {
-                type: 'input_json_delta',
-                partial_json: toolCall.function.arguments,
-              },
-            } as BetaRawMessageStreamEvent
-            emittedAnyContent = true
+            const state = toolState.get(oi)
+            if (state) {
+              if (tc.id) state.id = tc.id
+              if (tc.function?.name) state.name = tc.function.name
+              if (tc.function?.arguments) {
+                state.arguments += tc.function.arguments
+                yield { type: 'content_block_delta', index: ai, delta: { type: 'input_json_delta', partial_json: tc.function.arguments } } as BetaRawMessageStreamEvent
+              }
+            }
           }
         }
 
+        // finish_reason
         if (choice?.finish_reason) {
-          if (!emittedAnyContent) {
-            yield {
-              type: 'content_block_start',
-              index: 0,
-              content_block: {
-                type: 'text',
-                text: '',
-              },
-            } as BetaRawMessageStreamEvent
-            yield {
-              type: 'content_block_stop',
-              index: 0,
-            } as BetaRawMessageStreamEvent
+          yield* closeActiveBlock()
+          for (const ai of toolIdxMap.values()) {
+            yield { type: 'content_block_stop', index: ai } as BetaRawMessageStreamEvent
           }
           completionTokens = chunk.usage?.completion_tokens ?? completionTokens
-          if (textStarted && textContentIndex !== null) {
-            yield {
-              type: 'content_block_stop',
-              index: textContentIndex,
-            } as BetaRawMessageStreamEvent
-          }
-
-          for (const anthropicIndex of toolIndexByOpenAIIndex.values()) {
-            yield {
-              type: 'content_block_stop',
-              index: anthropicIndex,
-            } as BetaRawMessageStreamEvent
-          }
-
-          // DOGE: 在 message_delta 时更新 JSON 响应字节数
           _lastResponseBytes = responseBytes
-          yield {
-            type: 'message_delta',
-            delta: {
-              stop_reason: mapFinishReason(choice.finish_reason),
-              stop_sequence: null,
-            },
-            usage: {
-              output_tokens: completionTokens,
-            },
-          } as BetaRawMessageStreamEvent
-
-          yield {
-            type: 'message_stop',
-          } as BetaRawMessageStreamEvent
-
-          // DOGE: 保存 JSON 响应字节数
-          _lastResponseBytes = responseBytes
+          yield { type: 'message_delta', delta: { stop_reason: mapFinishReason(choice.finish_reason), stop_sequence: null }, usage: { output_tokens: completionTokens } } as BetaRawMessageStreamEvent
+          yield { type: 'message_stop' } as BetaRawMessageStreamEvent
           return {
-            id: chunk.id ?? 'openai-compat',
-            type: 'message',
-            role: 'assistant',
-            model: input.model,
-            content: [],
-            stop_reason: mapFinishReason(choice.finish_reason),
-            stop_sequence: null,
-            usage: {
-              input_tokens: promptTokens,
-              output_tokens: completionTokens,
-            },
+            id: chunk.id ?? 'openai-compat', type: 'message', role: 'assistant', model: input.model, content: [],
+            stop_reason: mapFinishReason(choice.finish_reason), stop_sequence: null,
+            usage: { input_tokens: promptTokens, output_tokens: completionTokens }
           } as BetaMessage
         }
       }
     }
   }
 
-  // DOGE: 保存 JSON 响应字节数
+  yield* closeActiveBlock()
+  for (const ai of toolIdxMap.values()) {
+    yield { type: 'content_block_stop', index: ai } as BetaRawMessageStreamEvent
+  }
+  yield* closeAllNativeBlocks()
   _lastResponseBytes = responseBytes
-  throw new Error(
-    `[openaiCompat] stream ended unexpectedly before message_stop for model=${input.model}`,
-  )
+  throw new Error(`[openaiCompat] stream ended unexpectedly before message_stop for model=${input.model}`)
 }
 
-// DOGE: 用于传递 OpenAI 兼容路径的 JSON 响应字节数
+// DOGE: track response bytes for OpenAI compat JSON path
 let _lastResponseBytes = 0
 export function getLastResponseBytes(): number {
   return _lastResponseBytes

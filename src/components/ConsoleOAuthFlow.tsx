@@ -80,7 +80,7 @@ type PresetEndpoint = {
 };
 
 const PRESET_ENDPOINTS: PresetEndpoint[] = [
-  { label: 'Local Proxy (8080)', provider: 'openai', baseURL: 'http://127.0.0.1:8080/v1/chat/completions', defaultModel: '', apiKeyRequired: false },
+  { label: 'Local Proxy (8080)', provider: 'openai', baseURL: 'http://127.0.0.1:8080/v1/chat/completions', defaultModel: 'claude-3-haiku', apiKeyRequired: false },
   { label: 'Local Anthropic (8080)', provider: 'anthropic', baseURL: 'http://127.0.0.1:8080/', defaultModel: 'claude-3-haiku', apiKeyRequired: false },
   { label: 'Ollama (11434)', provider: 'openai', baseURL: 'http://127.0.0.1:11434/v1/chat/completions', defaultModel: 'qwen3.5:0.8b', apiKeyRequired: false },
   { label: 'LMStudio Server (1234)', provider: 'openai', baseURL: 'http://127.0.0.1:1234/v1/chat/completions', defaultModel: 'claude-3-haiku ', apiKeyRequired: false },
@@ -88,9 +88,12 @@ const PRESET_ENDPOINTS: PresetEndpoint[] = [
   { label: 'CC Switch (15721)', provider: 'openai', baseURL: 'http://127.0.0.1:15721/v1/chat/completions', defaultModel: 'qwen9b', apiKeyRequired: false },
   { label: 'ModelScope (魔塔)', provider: 'openai', baseURL: 'https://api-inference.modelscope.cn/v1/chat/completions', defaultModel: 'Qwen/Qwen3.5-397B-A17B', apiKeyRequired: true },
   { label: 'NVIDIA NIM', provider: 'openai', baseURL: 'https://integrate.api.nvidia.com/v1/chat/completions', defaultModel: 'deepseek-ai/deepseek-v4-pro', apiKeyRequired: true },
-  { label: '智谱 (BigModel)', provider: 'openai', baseURL: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', defaultModel: 'glm-4-7-Flash', apiKeyRequired: true },
-  { label: 'DeepSeek (api)', provider: 'openai', baseURL: 'https://api.deepseek.com/chat/completions', defaultModel: 'deepseek-chat', apiKeyRequired: true },
+  { label: '智谱 (BigModel)', provider: 'openai', baseURL: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', defaultModel: 'GLM-4.7-Flash', apiKeyRequired: true },
+  { label: 'DeepSeek (API)', provider: 'openai', baseURL: 'https://api.deepseek.com/chat/completions', defaultModel: 'deepseek-chat', apiKeyRequired: true },
+  { label: 'DeepSeek Anthropic', provider: 'anthropic', baseURL: 'https://api.deepseek.com/Anthropic', defaultModel: 'deepseek-chat', apiKeyRequired: true },
   { label: '火山引擎 (Ark)', provider: 'openai', baseURL: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', defaultModel: 'ep-202...', apiKeyRequired: true },
+  { label: 'ZenMux', provider: 'openai', baseURL: 'https://zenmux.ai/api/v1/chat/completions', defaultModel: 'deepseek/deepseek-v4-flash-free', apiKeyRequired: true },
+  { label: 'OpenRouter', provider: 'openai', baseURL: 'https://openrouter.ai/api/v1/chat/completions', defaultModel: 'tencent/hy3-preview:free', apiKeyRequired: true },
 ];
  
 //let hasAutoLoggedIn = false;
@@ -184,6 +187,8 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
   const [isCustomInputPasting, setIsCustomInputPasting] = useState(false);
   const textInputColumns = useTerminalSize().columns - PASTE_HERE_MSG.length - 1;
   const [currentPresetName, setCurrentPresetName] = useState<string>('');
+  // DOGE: 记录从列表选中的旧模型名（编辑时替换用）
+  const editingModelRef = useRef<string>('');
   const savedPresets = useMemo(() => listSavedPresets(), []);
 
   const startCompatibleApiConfig = useCallback((provider: CompatibleApiProvider) => {
@@ -208,6 +213,7 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
 
   useKeybinding('confirm:yes', () => {
     logEvent('tengu_oauth_success', { loginWithClaudeAi });
+    persistCustomEndpoint();
     onDone();
   }, {
     context: 'Confirmation',
@@ -324,21 +330,39 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
 
     const nextValue = value.trim();
     setCustomModel(nextValue);
-    setOAuthStatus({ state: "success" });
+    // DOGE: 直接持久化并关闭，不经过 success 状态（避免 Enter 需要再按一次）
+    try { persistCustomEndpoint(); } catch (e) { console.error("[DOGE] persistCustomEndpoint error:", e); }
+    try { onDone(); } catch (e) { console.error("[DOGE] onDone error:", e); }
+    return;
     // 直接持久化，不依赖 state（用 nextValue 确保正确）
+    process.env.ANTHROPIC_BASE_URL = customBaseURL;
+    process.env.DOGE_API_KEY = customApiKey;
     process.env.ANTHROPIC_MODEL = nextValue;
     const curConfig = readCustomApiStorage();
+    // DOGE: 编辑模型时替换旧名称，手动新增时两者都保留
+    // 如果从列表选中了模型（editingModelRef.current 有值）且新旧不同，移除旧名称
+    const editedModel = editingModelRef.current || '';
     const updatedSaved = nextValue
-      ? [...new Set([...(curConfig.savedModels ?? []), nextValue])]
+      ? [...new Set([
+          nextValue,
+          ...(curConfig.savedModels ?? []).filter(m =>
+            typeof m === 'string' && !(
+              editedModel &&
+              m.trim().toLowerCase() === editedModel.toLowerCase()
+            )
+          )
+        ])]
       : (curConfig.savedModels ?? []);
+    // 用完后清空，避免影响下次操作
+    editingModelRef.current = '';
     writeCustomApiStorage(
-      { ...curConfig, model: nextValue, savedModels: updatedSaved }
+      { ...curConfig, baseURL: customBaseURL, apiKey: customApiKey, model: nextValue, savedModels: updatedSaved, provider: compatibleApiProvider }
     );
     void sendNotification({
       message: safeOauthStatus.provider === 'openai' ? 'OpenAI-compatible endpoint saved' : 'Anthropic-compatible endpoint saved',
       notificationType: 'auth_success'
     }, terminal);
-  }, [safeOauthStatus, persistCustomEndpoint, terminal]);
+  }, [safeOauthStatus, persistCustomEndpoint, terminal, customBaseURL, customApiKey, compatibleApiProvider]);
 
   async function handleSubmitCode(value: string, url: string) {
     try {
@@ -663,20 +687,37 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
       const currentStep = (oauthStatus as any).step;
 
       if (currentStep === 'model') {
+        // 从 PRESET_ENDPOINTS 中查找当前 baseURL 对应的默认模型
+        const currentBaseURL = customBaseURL || readCustomApiStorage().baseURL || '';
+        const matchedPreset = PRESET_ENDPOINTS.find(p =>
+          p.baseURL === currentBaseURL || currentBaseURL.startsWith(p.baseURL.replace(/\/+$/, ''))
+        );
+        const presetDefaultModel = matchedPreset?.defaultModel?.trim() || '';
+
         const savedModels = savedPresets.flatMap(p => { const m = p.config?.savedModels; return Array.isArray(m) ? m : []; })
-        const hasSaved = savedModels.some((m) => typeof m === 'string' && m.trim())
+        // 合并已保存模型和预设默认模型（去重，大小写不敏感）
+        const allModelCandidates = [...savedModels];
+        if (presetDefaultModel && !allModelCandidates.some((m: string) => m.trim().toLowerCase() === presetDefaultModel.toLowerCase())) {
+          allModelCandidates.push(presetDefaultModel);
+        }
+        const hasSaved = allModelCandidates.some((m) => typeof m === 'string' && m.trim())
         if (hasSaved) {
           const currentModel = customModel || readCustomApiStorage().model || '';
           // 去重（大小写不敏感），保留首次出现的写法
           const seen = new Map<string, string>();
-          const uniqueModels = savedModels.filter((m: string) => {
+          const uniqueModels = allModelCandidates.filter((m: string) => {
             if (typeof m !== 'string' || !m.trim()) return false;
             const key = m.trim().toLowerCase();
             if (seen.has(key)) return false;
             seen.set(key, m.trim());
             return true;
           });
-          const modelOpts = uniqueModels
+          // DOGE: 当前模型排第一位，其余按原顺序
+          const sortedModels = [
+            currentModel,
+            ...uniqueModels.filter((m: string) => m.toLowerCase() !== currentModel.toLowerCase())
+          ];
+          const modelOpts = sortedModels
             .map((m: string) => ({ label: <Text>{m === currentModel ? <Text color="green">✓ </Text> : null}{m}</Text>, value: m }))
           modelOpts.push({
             label: <Text bold={true}>· 手动输入模型名称</Text>,
@@ -690,6 +731,8 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
                 options={modelOpts}
                 visibleOptionCount={9}
                 onChange={value => {
+                  // DOGE: 从列表选中模型时记录旧模型名（用于编辑替换）
+                  editingModelRef.current = value === '__manual__' ? '' : value;
                   setCustomModel(value === '__manual__' ? '' : value)
                   setCursorOffset(0)
                   setOAuthStatus({ state: 'custom_config', provider: (oauthStatus as any).provider, step: 'model_input' })
@@ -711,10 +754,8 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
                 value={customModel}
                 onChange={setCustomModel}
                 onSubmit={v => {
-                  if (v.trim()) {
-                    setCursorOffset(0)
-                    handleSubmitCustomConfig(v.trim())
-                  }
+                  setCursorOffset(0)
+                  handleSubmitCustomConfig(v.trim())
                 }}
                 cursorOffset={cursorOffset}
                 onChangeCursorOffset={setCursorOffset}

@@ -12,7 +12,7 @@ import {
   type StatName,
 } from './types.js'
 
-// Mulberry32 — tiny seeded PRNG, good enough for picking ducks
+// Mulberry32 —— 小型种子伪随机数生成器，用于选择鸭子足够
 function mulberry32(seed: number): () => number {
   let a = seed >>> 0
   return function () {
@@ -58,12 +58,12 @@ const RARITY_FLOOR: Record<Rarity, number> = {
   legendary: 50,
 }
 
-// One peak stat, one dump stat, rest scattered. Rarity bumps the floor.
+// 一个峰值属性，一个低谷属性，其余散布。稀有度提升基础值。
 function rollStats(
   rng: () => number,
   rarity: Rarity,
 ): Record<StatName, number> {
-  // All stats maxed at 100
+  // 所有属性最大值设为 100
   const stats = {} as Record<StatName, number>
   for (const name of STAT_NAMES) {
     stats[name] = 100
@@ -91,7 +91,7 @@ function rollFrom(rng: () => number): Roll {
   return { bones, inspirationSeed: Math.floor(rng() * 1e9) }
 }
 
-// Called from three hot paths (500ms sprite tick, per-keystroke PromptInput,
+// 从三个热路径调用（500ms 精灵帧、每次按键的 PromptInput,
 // per-turn observer) with the same userId → cache the deterministic result.
 let rollCache: { key: string; value: Roll } | undefined
 export function roll(userId: string): Roll {
@@ -115,13 +115,13 @@ export function companionUserId(): string {
   return config.oauthAccount?.accountUuid ?? config.userID ?? 'anon'
 }
 
-// Regenerate bones from seed or userId, merge with stored soul.
+// 从种子或 userId 重新生成骨骼，与存储的灵魂合并。
 export function getCompanion(): Companion | undefined {
   const stored = getGlobalConfig().companion
   if (!stored) return undefined
   const seed = stored.seed ?? companionUserId()
   const { bones } = rollWithSeed(seed)
-  // Force legendary with crown + max stats
+  // 强制传说级别，带王冠 + 满属性
   bones.rarity = 'legendary'
   bones.hat = 'crown'
   for (const key in bones.stats) {

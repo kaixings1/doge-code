@@ -48,7 +48,7 @@ declare global {
   }
 }
 
-// Ensure dataLayer exists
+// 确保 dataLayer 存在
 window.dataLayer = window.dataLayer || [];
 
 const currentScript = document.currentScript;
@@ -80,7 +80,7 @@ function setAntiFlicker() {
     }
     document.documentElement.classList.add("gb-anti-flicker");
 
-    // Fallback if GrowthBook fails to load in specified time or 3.5 seconds.
+    // 如果 GrowthBook 在指定时间内或 3.5 秒内加载失败，则使用此回退方案。
     antiFlickerTimeout = window.setTimeout(unsetAntiFlicker, timeoutMs);
   } catch (e) {
     console.error(e);
@@ -100,7 +100,7 @@ if (windowContext.antiFlicker || dataContext.antiFlicker) {
   setAntiFlicker();
 }
 
-// Create sticky bucket service
+// 创建粘性桶服务
 let stickyBucketService: StickyBucketService | undefined = undefined;
 if (
   windowContext.useStickyBucketService === "cookie" ||
@@ -160,7 +160,7 @@ if (tracking !== "none") {
   }
 }
 
-// Create GrowthBook instance
+// 创建 GrowthBook 实例
 const gb = new GrowthBook({
   enableDevMode: true,
   ...dataContext,
@@ -170,8 +170,8 @@ const gb = new GrowthBook({
   stickyBucketService,
 });
 
-// Set the renderer to fire a custom DOM event
-// This will let us attach multiple listeners
+// 设置 renderer 以触发自定义 DOM 事件
+// 这将允许我们附加多个监听器
 gb.setRenderer(() => {
   document.dispatchEvent(new CustomEvent("growthbookdata"));
 });
@@ -202,7 +202,7 @@ const fireCallback = (cb: (gb: GrowthBook) => void) => {
   }
 };
 
-// Process any queued callbacks
+// 处理任何排队回调
 if (window.growthbook_queue) {
   if (Array.isArray(window.growthbook_queue)) {
     window.growthbook_queue.forEach((cb) => {
@@ -210,12 +210,12 @@ if (window.growthbook_queue) {
     });
   }
 }
-// Replace the queue with a function that immediately calls the callback
+// 用立即调用回调函数的函数替换队列
 window.growthbook_queue = {
   push: (cb: (gb: GrowthBook) => void) => {
     fireCallback(cb);
   },
 };
 
-// Store a reference in window to enable more advanced use cases
+// 在 window 中存储一个引用以启用更多高级用例
 export default gb;

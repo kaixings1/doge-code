@@ -103,7 +103,7 @@ export class SerialBatchEventUploader<T> {
     const items = Array.isArray(events) ? events : [events]
     if (items.length === 0) return
 
-    // Backpressure: wait until there's space
+    // 背压：等待直到有空间
     while (
       this.pending.length + items.length > this.config.maxQueueSize &&
       !this.closed
@@ -178,9 +178,9 @@ export class SerialBatchEventUploader<T> {
             this.releaseBackpressure()
             continue
           }
-          // Re-queue the failed batch at the front. Use concat (single
-          // allocation) instead of unshift(...batch) which shifts every
-          // pending item batch.length times. Only hit on failure path.
+          // 将失败的批次重新排队到前面。使用 concat（单次
+          // 分配）而不是 unshift(...batch)，后者会移动每个
+          // pending 项目 batch.length 次。只在失败路径上触发。
           this.pending = batch.concat(this.pending)
           const retryAfterMs =
             err instanceof RetryableError ? err.retryAfterMs : undefined
@@ -188,12 +188,12 @@ export class SerialBatchEventUploader<T> {
           continue
         }
 
-        // Release backpressure waiters if space opened up
+        // 如果空间打开，释放背压等待者
         this.releaseBackpressure()
       }
     } finally {
       this.draining = false
-      // Notify flush waiters if queue is empty
+      // 如果队列为空，通知 flush 等待者
       if (this.pending.length === 0) {
         for (const resolve of this.flushResolvers) resolve()
         this.flushResolvers = []
@@ -235,10 +235,10 @@ export class SerialBatchEventUploader<T> {
   private retryDelay(failures: number, retryAfterMs?: number): number {
     const jitter = Math.random() * this.config.jitterMs
     if (retryAfterMs !== undefined) {
-      // Jitter on top of the server's hint prevents thundering herd when
-      // many sessions share a rate limit and all receive the same
-      // Retry-After. Clamp first, then spread — same shape as the
-      // exponential path (effective ceiling is maxDelayMs + jitterMs).
+      // 在服务器的提示之上添加抖动，防止当
+      // 多个会话共享速率限制并收到相同的
+      // Retry-After 时出现雷击。先钳制，然后扩展 — 与
+      // 指数路径的形状相同（有效天花板是 maxDelayMs + jitterMs）。
       const clamped = Math.max(
         this.config.baseDelayMs,
         Math.min(retryAfterMs, this.config.maxDelayMs),

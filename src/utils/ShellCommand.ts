@@ -322,7 +322,7 @@ class ShellCommandImpl implements ShellCommand {
       )
     } else if (code === SIGTERM) {
       result.stderr = prependStderr(
-        `Command timed out after ${formatDuration(this.#timeout)}`,
+        `命令超时（已执行 ${formatDuration(this.#timeout)}）`,
         result.stderr,
       )
     }

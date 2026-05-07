@@ -104,31 +104,199 @@ function normalizeWindowsCommand(cmd: string): string {
     if (!trimmed) return cmd;
 
     // ------ 1. 处理 dir 命令（支持 /s, /b, /w, /d 及其组合）------
-    // 匹配 dir [路径] [选项...]
-    // 选项可能包含 /s, /b, /w, /d, /p 等，顺序任意。
-    const dirMatch = trimmed.match(/^\bdir\b(?:\s+(?:([^\/\s][^\s|&;]*)?)\s*)?((?:\/(?:[sbwd]|a-d|a-d-s|a-d-s-h))+\b)?/i);
-    if (dirMatch) {
-        let path = dirMatch[1] || '.';
-        let options = dirMatch[2] || '';
-        const hasRecursive = /\/s/i.test(options);
-        const hasBare = /\/b/i.test(options);
-        // 构建 ls 参数
+    // 使用 tokenizer 健壮地解析 dir 参数，正确处理引号路径
+    if (/^dir\b/i.test(trimmed)) {
+        const rest = trimmed.slice(3).trim();
+        if (!rest) return 'ls -C .'; // 无参数 dir → ls -C .
+
+        const dirTokens = tokenizeCommand(rest);
+        let path = '.';
+        let hasRecursive = false;
+        let hasBare = false;
+        let pathFound = false;
+        const pathParts: string[] = [];
+
+        for (const token of dirTokens) {
+            // /s → -R (递归子目录)
+            if (/^\/s$/i.test(token)) { hasRecursive = true; continue; }
+            // /b → -1 (bare format, 每行一个)
+            if (/^\/b$/i.test(token)) { hasBare = true; continue; }
+            // /w、/d → 宽格式/列排序, ls -C 默认已覆盖
+            if (/^\/[wd]$/i.test(token)) { continue; }
+            // /p → 分页 (无 bash 对应，忽略)
+            if (/^\/p$/i.test(token)) { continue; }
+            // /a、/a-d、/a-d-s 等属性过滤 (grep 无法完美对应，忽略)
+            if (/^\/a/i.test(token)) { continue; }
+            // 其他 /X 标志 → 忽略
+            if (/^\/[a-z]/i.test(token)) { continue; }
+
+            // 非标志 token → 路径
+            pathFound = true;
+            // 去除可能存在的引号，保留原始路径字符
+            const cleanPath = token.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
+            pathParts.push(cleanPath);
+        }
+
+        if (pathFound && pathParts.length > 0) {
+            path = pathParts.join(' ');
+        }
+
         let lsArgs = '';
         if (hasRecursive) lsArgs += ' -R';
-        if (hasBare) {
-            // /b 表示 bare format (just names) -> ls -1 (每行一个)
-            lsArgs += ' -1';
-        } else {
-            // 默认类似 dir 的列式输出
-            lsArgs += ' -C';
-        }
-        // 如果还有 /w (宽格式) -> ls -C (默认已是宽格式)
-        // 如果还有 /d (按列排序) -> ls -C 也近似
-        // 简单处理：统一使用 ls -C -R 或 ls -1 -R
+        lsArgs += hasBare ? ' -1' : ' -C';
         return `ls ${lsArgs.trim()} ${path}`.trim();
     }
 
-    // ------ 2. 命令名映射表 ------
+    // ------ 2. 处理 findstr /C:"pattern" /C:"pattern2" file （findstr 模式搜索）------
+    // findstr 的 /C: 参数是字面量搜索模式（区别于正则搜索），需要转换为 grep -F（固定字符串模式）
+    // 同时需要处理 /I（忽略大小写）、/R（正则）、/S（递归）、/V（反向匹配）、/M（仅文件名）、/N（行号）等
+    const findstrMatch = trimmed.match(/^findstr\s+(.*)$/i);
+    if (findstrMatch) {
+        let rest = findstrMatch[1];
+        let grepArgs = '';
+        let patterns: string[] = [];
+        let files: string[] = [];
+        let isExplicitPattern = false; // 是否使用了 /C:（字面量字符串搜索）
+
+        // 解析 findstr 参数
+        // token 级别解析以正确处理引号
+        const tokens = tokenizeCommand(rest);
+        for (let i = 0; i < tokens.length; i++) {
+            const token = tokens[i];
+            const lowerToken = token.toLowerCase();
+
+            // /I → -i（忽略大小写）
+            if (/^\/I$/i.test(token)) {
+                grepArgs += ' -i';
+                continue;
+            }
+            // /S → -r（递归搜索子目录）
+            if (/^\/S$/i.test(token)) {
+                grepArgs += ' -r';
+                continue;
+            }
+            // /B → 匹配行首（grep 默认行为，无需特殊标志）
+            if (/^\/B$/i.test(token)) {
+                continue;
+            }
+            // /E → 匹配行尾（grep 默认行为，无需特殊标志）
+            if (/^\/E$/i.test(token)) {
+                continue;
+            }
+            // /X → 整行匹配（grep -x）
+            if (/^\/X$/i.test(token)) {
+                grepArgs += ' -x';
+                continue;
+            }
+            // /V → -v（反向匹配）
+            if (/^\/V$/i.test(token)) {
+                grepArgs += ' -v';
+                continue;
+            }
+            // /N → -n（显示行号）
+            if (/^\/N$/i.test(token)) {
+                grepArgs += ' -n';
+                continue;
+            }
+            // /M → -l（仅显示文件名）
+            if (/^\/M$/i.test(token)) {
+                grepArgs += ' -l';
+                continue;
+            }
+            // /O → 打印偏移量（grep -b）
+            if (/^\/O$/i.test(token)) {
+                grepArgs += ' -b';
+                continue;
+            }
+            // /P → 跳过非打印字符（grep -I 忽略二进制）
+            if (/^\/P$/i.test(token)) {
+                grepArgs += ' -I';
+                continue;
+            }
+            // /C:"pattern" → 固定字符串模式（findstr 中 /C 指定字面量搜索模式）
+            // findstr 默认使用正则，但 /C: 标志使后续内容变为字面量
+            // 需要转换为 grep -F（固定字符串）或 grep -E（扩展正则）取决于上下文
+            if (/^\/C:/i.test(token)) {
+                const pattern = token.slice(3); // 去掉 "/C:"
+                // 处理可能带引号的模式 "/C:"已去掉前缀，模式可能为 "pattern" 或 pattern
+                const cleanPattern = pattern.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
+                patterns.push(cleanPattern);
+                isExplicitPattern = true;
+                continue;
+            }
+            // /G:file → 从文件读取模式（grep -f file）
+            if (/^\/G:/i.test(token)) {
+                const patternFile = token.slice(3).replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
+                grepArgs += ` -f "${patternFile}"`;
+                isExplicitPattern = true;
+                continue;
+            }
+            // /D:dir → findstr 的 /D 参数指定搜索目录，grep 不支持这个精确参数。
+            // 如果文件路径中包含了目录，我们通过路径前置处理
+            // 忽略 /D:，因为 grep -r 已覆盖递归行为
+            if (/^\/D:/i.test(token)) {
+                // /D:dir 指定搜索目录，但 /S 已保证递归，忽略此参数
+                continue;
+            }
+            // /A:attr → findstr 的 /A 用于颜色属性，grep 无对应，忽略
+            if (/^\/A:/i.test(token)) {
+                continue;
+            }
+            // /R → 使用正则搜索模式（findstr 默认已是正则，但在 /C 语境下可能切换）
+            // findstr 中 /R 和 /L 用于在 /C 上下文切换模式，默认就是正则，所以 /R 无操作
+            if (/^\/R$/i.test(token)) {
+                continue;
+            }
+            // /L → 字面量模式匹配（findstr 中 /L 使模式被视为字面量而非正则）
+            // 对应 grep -F
+            if (/^\/L$/i.test(token)) {
+                grepArgs += ' -F';
+                continue;
+            }
+
+            // 非 findstr 参数（文件路径等）
+            // 注意：findstr 的位置参数是文件，模式必须通过 /C: 指定
+            files.push(token);
+        }
+
+        // 构建 grep 命令
+        // 如果没有显式的 /C: 模式参数，但有不带 / 前缀的 token，则第一个非标志参数可能是模式
+        // （findstr 也接受裸模式参数，不一定要 /C:）
+        if (!isExplicitPattern && files.length > 0) {
+            // 第一个文件参数可能是模式
+            const firstFile = files.shift()!;
+            // 检查是否以 / 开头（可能是未识别的 findstr 标志）
+            if (!firstFile.startsWith('/')) {
+                patterns.push(firstFile);
+            } else {
+                // 是未识别的标志，放回前面
+                files.unshift(firstFile);
+            }
+        }
+
+        // 如果仍未识别出模式，则全部作为文件
+        if (patterns.length === 0) {
+            // 无模式 —— 抛出一个合理的 grep 命令避免崩溃
+            return `grep ${grepArgs.trim()} "${files.join('" "')}"`.trim();
+        }
+
+        // 为每个模式使用 -e 参数（避免模式以 - 开头时被误认为 grep 标志）
+        const patternArgs = patterns.map(p => `-e "${p}"`).join(' ');
+        const fileArgs = files.map(f => `"${f}"`).join(' ');
+
+        // 默认使用 -F（固定字符串）来匹配 findstr 的默认行为（字面量搜索为主）
+        // 除非用户显式指定了 /R
+        if (!grepArgs.includes(' -E ') && !grepArgs.includes(' -F ') && !grepArgs.includes(' -G ')) {
+            // findstr 默认是正则，但模型用 /C: 的时候通常想要字面量匹配
+            // findstr 接受 . 和 * 作为通配符，类似 grep 基本正则
+            // 不加 -F 也不加 -E，使用 grep 默认基本正则（BRE），更接近 findstr 语义
+        }
+
+        const finalGrepArgs = grepArgs.trim();
+        return `grep${finalGrepArgs ? ' ' + finalGrepArgs : ''} ${patternArgs} ${fileArgs}`.trim();
+    }
+
+    // ------ 3. 命令名映射表 ------
     const commandMap: { [key: string]: string } = {
         'copy': 'cp',
         'del': 'rm',
@@ -158,6 +326,50 @@ function normalizeWindowsCommand(cmd: string): string {
     // 处理环境变量 %VAR% -> $VAR
     trimmed = trimmed.replace(/%([^%]+)%/g, '$$$1');
     return trimmed;
+}
+
+/**
+ * 简易命令 token 解析器，用于 findstr 等 Windows 命令的参数解析。
+ * 正确处理引号边界：当引号出现在一个标志后面时（如 /C:"pattern"），
+ * 将引号段合并到前一个 token 而非拆分，避免 /C: 和 "pattern" 被分割成两个 token。
+ */
+function tokenizeCommand(cmd: string): string[] {
+    const tokens: string[] = [];
+    let current = '';
+    let inQuote = false;
+    let quoteChar = '';
+
+    for (let i = 0; i < cmd.length; i++) {
+        const ch = cmd[i];
+        if (inQuote) {
+            if (ch === quoteChar) {
+                current += ch;
+                tokens.push(current);
+                current = '';
+                inQuote = false;
+            } else {
+                current += ch;
+            }
+        } else if (ch === '"' || ch === "'") {
+            inQuote = true;
+            quoteChar = ch;
+            // 将引号附加到当前内容后（如 /C: → /C:"），
+            // 而不是先提交当前内容再开始新的引号 token。
+            // 这使得 /C:"pattern" 作为一个完整 token，而不是 /C: 和 "pattern" 两个。
+            current += ch;
+        } else if (ch === ' ' || ch === '\t') {
+            if (current) {
+                tokens.push(current);
+                current = '';
+            }
+        } else {
+            current += ch;
+        }
+    }
+    if (current) {
+        tokens.push(current);
+    }
+    return tokens;
 }
 
 /**
@@ -507,14 +719,20 @@ export const BashTool = buildTool({
     return getSimplePrompt();
   },
   isConcurrencySafe(input) {
+    // DOGE: isReadOnly 内部已有防御性检查，但这里额外保护 input 为 null 的情况
+    if (!input) return false
     return this.isReadOnly?.(input) ?? false;
   },
   isReadOnly(input) {
+    // DOGE: 防御性检查
+    if (!input || typeof input.command !== 'string') return false
     const compoundCommandHasCd = commandHasAnyCd(input.command);
     const result = checkReadOnlyConstraints(input, compoundCommandHasCd);
     return result.behavior === 'allow';
   },
   toAutoClassifierInput(input) {
+    // DOGE: 防御性检查
+    if (!input || typeof input.command !== 'string') return ''
     return input.command;
   },
   async preparePermissionMatcher({
@@ -693,6 +911,19 @@ export const BashTool = buildTool({
     };
   },
   async call(input: BashToolInput, toolUseContext, _canUseTool?: CanUseToolFn, parentMessage?: AssistantMessage, onProgress?: ToolCallProgress<BashProgress>) {
+    // DOGE: 防御性检查 —— input 或 command 无效时直接返回失败而不是崩溃
+    if (!input || typeof input.command !== 'string') {
+      return {
+        type: 'tool_result' as const,
+        content: [
+          {
+            type: 'text' as const,
+            text: 'Error: Bash command input is empty or invalid. Please provide a valid command.',
+          },
+        ],
+        isError: true,
+      }
+    }
     // 处理模拟的 sed 编辑 —— 直接应用而不是运行 sed
     // 这确保用户预览的内容就是实际写入的内容
     if (input._simulatedSedEdit) {

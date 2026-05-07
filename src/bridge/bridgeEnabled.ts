@@ -14,21 +14,19 @@ import { isEnvTruthy } from '../utils/envUtils.js'
 import { lt } from '../utils/semver.js'
 
 /**
- * Runtime check for bridge mode entitlement.
+ * 运行时检查桥模式权限。
  *
- * Remote Control requires a claude.ai subscription (the bridge auths to CCR
- * with the claude.ai OAuth token). isClaudeAISubscriber() excludes
- * Bedrock/Vertex/Foundry, apiKeyHelper/gateway deployments, env-var API keys,
- * 和控制台 API 登录时 — 这些都没有 CCR 需要的 OAuth 令牌。
- * See github.com/deshaw/anthropic-issues/issues/24.
+ * 远程控件需要 claude.ai 订阅（桥使用 claude.ai OAuth 令牌向 CCR 进行身份验证）。isClaudeAISubscriber() 排除
+ * Bedrock/Vertex/Foundry，apiKeyHelper/gateway 部署，环境变量 API 密钥，
+ * 和控制台 API 登录时——这些都没有 CCR 需要的 OAuth 令牌。
+ * 参见 github.com/deshaw/anthropic-issues/issues/24。
  *
- * The `feature('BRIDGE_MODE')` guard ensures the GrowthBook string literal
- * is only referenced when bridge mode is enabled at build time.
+ * `feature('BRIDGE_MODE')` 防护确保 GrowthBook 字符串字面量仅在构建时启用桥模式时被引用。
  */
 export function isBridgeEnabled(): boolean {
   // 肯定三元模式 — 参见 docs/feature-gating.md。
-  // Negative pattern (if (!feature(...)) return) does not eliminate
-  // inline string literals from external builds.
+  // 否定模式 (if (!feature(...)) return) 不会从外部构建中消除
+  // 内联字符串字面量。
   return feature('BRIDGE_MODE')
     ? isClaudeAISubscriber() &&
         getFeatureValue_CACHED_MAY_BE_STALE('tengu_ccr_bridge', false)
@@ -149,9 +147,9 @@ export function isCseShimEnabled(): boolean {
  * loaded yet, the default '0.0.0' means the check passes — a safe fallback.
  */
 export function checkBridgeMinVersion(): string | null {
-  // Positive pattern — see docs/feature-gating.md.
-  // Negative pattern (if (!feature(...)) return) does not eliminate
-  // inline string literals from external builds.
+  // 肯定模式——参见 docs/feature-gating.md。
+  // 否定模式 (if (!feature(...)) return) 不会从外部构建中消除
+  // 内联字符串字面量。
   if (feature('BRIDGE_MODE')) {
     const config = getDynamicConfig_CACHED_MAY_BE_STALE<{
       minVersion: string

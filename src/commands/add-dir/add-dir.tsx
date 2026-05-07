@@ -66,7 +66,7 @@ export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXComma
   const directoryPath = (args ?? '').trim();
   const appState = context.getAppState();
 
-  // Helper to handle adding a directory (shared by both with-path and no-path cases)
+  // 处理添加目录的辅助函数（与-path 和无-path 情况共享）
   const handleAddDirectory = async (path: string, remember = false) => {
     const destination: PermissionUpdateDestination = remember ? 'localSettings' : 'session';
     const permissionUpdate = {
@@ -75,7 +75,7 @@ export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXComma
       destination
     };
 
-    // Apply to session context
+    // 应用于会话上下文
     const latestAppState = context.getAppState();
     const updatedContext = applyPermissionUpdate(latestAppState.toolPermissionContext, permissionUpdate);
     context.setAppState(prev => ({
@@ -83,9 +83,9 @@ export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXComma
       toolPermissionContext: updatedContext
     }));
 
-    // Update sandbox config so Bash commands can access the new directory.
-    // Bootstrap state is the source of truth for session-only dirs; persisted
-    // dirs are picked up via the settings subscription, but we refresh
+    // 更新沙箱配置以便 Bash 命令可以访问新目录。
+    // 引导状态是仅会话目录的真实来源；持久化
+    // 目录通过设置订阅获取，但我们刷新
     // eagerly here to avoid a race when the user acts immediately.
     const currentDirs = getAdditionalDirectoriesForClaudeMd();
     if (!currentDirs.includes(path)) {
@@ -107,7 +107,7 @@ export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXComma
     onDone(messageWithHint);
   };
 
-  // When no path is provided, show AddWorkspaceDirectory input form directly
+  // 当未提供路径时，直接显示 AddWorkspaceDirectory 输入表单
   // and return to REPL after confirmation
   if (!directoryPath) {
     return <AddWorkspaceDirectory permissionContext={appState.toolPermissionContext} onAddDirectory={handleAddDirectory} onCancel={() => {

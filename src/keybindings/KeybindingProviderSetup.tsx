@@ -260,7 +260,9 @@ function ChordInterceptor(t0) {
         case "match":
           {
             setPendingChord(null);
-            if (wasInChord) {
+            // DOGE: 和弦时执行 handler 并拦截事件；
+            // 单键只在 app:retryNow 时执行 handler 并拦截
+            if (wasInChord || result.action === "app:retryNow") {
               const contextsSet = new Set(contexts);
               if (registry) {
                 const handlers_0 = registry.get(result.action);
