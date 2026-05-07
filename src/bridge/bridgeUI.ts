@@ -46,44 +46,44 @@ export function createBridgeLogger(options: {
   const write = options.write ?? ((s: string) => process.stdout.write(s))
   const verbose = options.verbose
 
-  // Track how many status lines are currently displayed at the bottom
+  // 跟踪当前在底部显示的状态行数
   let statusLineCount = 0
 
-  // Status state machine
+  // 状态机
   let currentState: StatusState = 'idle'
   let currentStateText = '就绪'
   let repoName = ''
   let branch = ''
   let debugLogPath = ''
 
-  // Connect URL (built in printBanner with correct base for staging/prod)
+  // 连接 URL（在 printBanner 中构建，带 staging/prod 的正确 base）
   let connectUrl = ''
   let cachedIngressUrl = ''
   let cachedEnvironmentId = ''
   let activeSessionUrl: string | null = null
 
-  // QR code lines for the current URL
+  // 当前 URL 的二维码行
   let qrLines: string[] = []
   let qrVisible = false
 
-  // Tool activity for the second status line
+  // 第二个状态行的工具活动
   let lastToolSummary: string | null = null
   let lastToolTime = 0
 
-  // Session count indicator (shown when multi-session mode is enabled)
+  // 会话计数指示器（启用多会话模式时显示）
   let sessionActive = 0
   let sessionMax = 1
-  // Spawn mode shown in the session-count line + gates the `w` hint
+  // session-count 行中显示的启动模式 + 控制 `w` 提示
   let spawnModeDisplay: 'same-dir' | 'worktree' | null = null
   let spawnMode: SpawnMode = 'single-session'
 
-  // Per-session display info for the multi-session bullet list (keyed by compat sessionId)
+  // 多会话项目符号列表的每会话显示信息（键为 compat sessionId）
   const sessionDisplayInfo = new Map<
     string,
     { title?: string; url: string; activity?: SessionActivity }
   >()
 
-  // Connecting spinner state
+  // 连接旋转器状态
   let connectingTimer: ReturnType<typeof setInterval> | null = null
   let connectingTick = 0
 
@@ -96,18 +96,18 @@ export function createBridgeLogger(options: {
     // eslint-disable-next-line custom-rules/prefer-use-terminal-size
     const cols = process.stdout.columns || 80 // non-React CLI context
     let count = 0
-    // Split on newlines to get logical lines
+    // 按换行符分割以获取逻辑行
     for (const logical of text.split('\n')) {
       if (logical.length === 0) {
-        // Empty segment between consecutive \n — counts as 1 row
+        // 连续 \n 之间的空段 — 计为 1 行
         count++
         continue
       }
       const width = stringWidth(logical)
       count += Math.max(1, Math.ceil(width / cols))
     }
-    // The trailing \n in "line\n" produces an empty last element — don't count it
-    // because the cursor sits at the start of the next line, not a new visual row.
+    // "line\n" 中的尾部 \n 会产生空最后一个元素 — 不计入
+    // 因为光标位于下一行的开头，而不是新的视觉行。
     if (text.endsWith('\n')) {
       count--
     }
@@ -124,7 +124,7 @@ export function createBridgeLogger(options: {
   function clearStatusLines(): void {
     if (statusLineCount <= 0) return
     logForDebugging(`[bridge:ui] clearStatusLines count=${statusLineCount}`)
-    // Move cursor up to the start of the status block, then erase everything below
+    // 将光标移到状态块开头，然后删除下方所有内容
     write(`\x1b[${statusLineCount}A`) // cursor up N lines
     write('\x1b[J') // erase from cursor to end of screen
     statusLineCount = 0
@@ -187,9 +187,9 @@ export function createBridgeLogger(options: {
   /** Render and write the current status lines based on state. */
   function renderStatusLine(): void {
     if (currentState === 'reconnecting' || currentState === 'failed') {
-      // These states are handled separately (updateReconnectingStatus /
-      // updateFailedStatus). Return before clearing so callers like toggleQr
-      // and setSpawnModeDisplay don't blank the display during these states.
+      // 这些状态单独处理（updateReconnectingStatus /
+      // updateFailedStatus）。在清除之前返回，这样像 toggleQr
+      // 和 setSpawnModeDisplay 这样的调用者不会在这些状态下清空显示。
       return
     }
 
@@ -197,26 +197,26 @@ export function createBridgeLogger(options: {
 
     const isIdle = currentState === 'idle'
 
-    // QR code above the status line
+    // 状态线上方的二维码
     if (qrVisible) {
       for (const line of qrLines) {
         writeStatus(`${chalk.dim(line)}\n`)
       }
     }
 
-    // Determine indicator and colors based on state
+    // 根据状态确定指示器和颜色
     const indicator = BRIDGE_READY_INDICATOR
     const indicatorColor = isIdle ? chalk.green : chalk.cyan
     const baseColor = isIdle ? chalk.green : chalk.cyan
     const stateText = baseColor(currentStateText)
 
-    // Build the suffix with repo and branch
+    // 用 repo 和 branch 构建后缀
     let suffix = ''
     if (repoName) {
       suffix += chalk.dim(' \u00b7 ') + chalk.dim(repoName)
     }
-    // In worktree mode each session gets its own branch, so showing the
-    // bridge's branch would be misleading.
+    // 在 worktree 模式下每个会话都有自己的分支，因此显示
+    // 桥的分支会误导。
     if (branch && spawnMode !== 'worktree') {
       suffix += chalk.dim(' \u00b7 ') + chalk.dim(branch)
     }
@@ -228,7 +228,7 @@ export function createBridgeLogger(options: {
     }
     writeStatus(`${indicatorColor(indicator)} ${stateText}${suffix}\n`)
 
-    // Session count and per-session list (multi-session mode only)
+    // 会话计数和每会话列表（仅多会话模式）
     if (sessionMax > 1) {
       const modeHint =
         spawnMode === 'worktree'
@@ -252,7 +252,7 @@ export function createBridgeLogger(options: {
       }
     }
 
-    // Mode line for spawn modes with a single slot (or true single-session mode)
+    // 单槽启动模式的模式行（或真正的单会话模式）
     if (sessionMax === 1) {
       const modeText =
         spawnMode === 'single-session'
@@ -263,7 +263,7 @@ export function createBridgeLogger(options: {
       writeStatus(`    ${chalk.dim(modeText)}\n`)
     }
 
-    // Tool activity line for single-session mode
+    // 单会话模式的工具活动行
     if (
       sessionMax === 1 &&
       !isIdle &&
@@ -273,7 +273,7 @@ export function createBridgeLogger(options: {
       writeStatus(`  ${chalk.dim(truncatePrompt(lastToolSummary, 60))}\n`)
     }
 
-    // Blank line separator before footer
+    // 页脚前的空行分隔符
     const url = activeSessionUrl ?? connectUrl
     if (url) {
       writeStatus('\n')
@@ -315,7 +315,7 @@ export function createBridgeLogger(options: {
       }
       write('\n')
 
-      // Start connecting spinner — first updateIdleStatus() will stop it
+      // 启动连接旋转器 — 首先 updateIdleStatus() 会停止它
       startConnecting()
     },
 
@@ -391,8 +391,8 @@ export function createBridgeLogger(options: {
       currentStateText = '已连接'
       lastToolSummary = null
       lastToolTime = 0
-      // Multi-session: keep footer/QR on the environment connect URL so users
-      // can spawn more sessions. Per-session links are in the bullet list.
+      // 多会话：保持页脚/QR 在环境连接 URL 上，这样用户
+      // 可以启动更多会话。每个会话链接在项目符号列表中。
       if (sessionMax <= 1) {
         activeSessionUrl = buildBridgeSessionUrl(
           sessionId,
@@ -409,7 +409,7 @@ export function createBridgeLogger(options: {
       clearStatusLines()
       currentState = 'reconnecting'
 
-      // QR code above the status line
+      // 状态线上方的二维码
       if (qrVisible) {
         for (const line of qrLines) {
           writeStatus(`${chalk.dim(line)}\n`)
@@ -453,7 +453,7 @@ export function createBridgeLogger(options: {
       activity: SessionActivity,
       _trail: string[],
     ): void {
-      // Cache tool activity for the second status line
+      // 缓存第二个状态行的工具活动
       if (activity.type === 'tool_start') {
         lastToolSummary = activity.summary
         lastToolTime = Date.now()
@@ -477,17 +477,17 @@ export function createBridgeLogger(options: {
       sessionActive = active
       sessionMax = max
       spawnMode = mode
-      // Don't re-render here — the status ticker calls renderStatusLine
-      // on its own cadence, and the next tick will pick up the new values.
+      // 不要在这里重新渲染 — 状态轮播调用 renderStatusLine
+      // 在它的自己的节奏上，下一次滴答将获取新值。
     },
 
     setSpawnModeDisplay(mode: 'same-dir' | 'worktree' | null): void {
       if (spawnModeDisplay === mode) return
       spawnModeDisplay = mode
-      // Also sync the #21118-added spawnMode so the next render shows correct
-      // mode hint + branch visibility. Don't render here — matches
-      // updateSessionCount: called before printBanner (initial setup) and
-      // again from the `w` handler (which follows with refreshDisplay).
+      // 还要同步 #21118 添加的 spawnMode，以便下一次渲染显示正确
+      // 模式提示 + 分支可见性。不要在此处渲染 — 匹配
+      // updateSessionCount：在 printBanner 之前调用（初始设置）并
+      // 从 `w` 处理程序再次调用（随后进行 refreshDisplay）。
       if (mode) spawnMode = mode
     },
 
@@ -505,11 +505,11 @@ export function createBridgeLogger(options: {
       const info = sessionDisplayInfo.get(sessionId)
       if (!info) return
       info.title = title
-      // Guard against reconnecting/failed — renderStatusLine clears then returns
-      // early for those states, which would erase the spinner/error.
+      // 防止 reconnecting/failed — renderStatusLine 清除然后返回
+      // 针对这些状态，这将擦除旋转器/错误。
       if (currentState === 'reconnecting' || currentState === 'failed') return
       if (sessionMax === 1) {
-        // Single-session: show title in the main status line too.
+        // 单会话：在主状态行中也显示标题。
         currentState = 'titled'
         currentStateText = truncatePrompt(title, 40)
       }
@@ -521,8 +521,8 @@ export function createBridgeLogger(options: {
     },
 
     refreshDisplay(): void {
-      // Skip during reconnecting/failed — renderStatusLine clears then returns
-      // early for those states, which would erase the spinner/error.
+      // 在 reconnecting/failed 期间跳过 — renderStatusLine 清除然后返回
+      // 针对这些状态提前，这将擦除旋转器/错误。
       if (currentState === 'reconnecting' || currentState === 'failed') return
       renderStatusLine()
     },

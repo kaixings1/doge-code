@@ -22,7 +22,7 @@ if (activeConfig?.baseURL && !activeConfig.baseURL.startsWith('http://0.0.0.0'))
   } else {
     process.env.ANTHROPIC_BASE_URL = rawBase;
   }
-  process.env.DOGE_API_KEY = activeConfig.apiKey ?? '';
+  if (activeConfig.apiKey) process.env.DOGE_API_KEY = activeConfig.apiKey; else delete process.env.DOGE_API_KEY;
   process.env.ANTHROPIC_MODEL = activeConfig.model || '';
   process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = activeConfig.provider || 'openai';
 } else {

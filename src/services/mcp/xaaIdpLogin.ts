@@ -386,7 +386,7 @@ function waitForCallback(
     })
     server.unref()
     timeoutId = setTimeout(
-      rej => rej(new Error('XAA IdP: login timed out')),
+      rej => rej(new Error('XAA IdP: 登录超时')),
       IDP_LOGIN_TIMEOUT_MS,
       rejectOnce,
     )

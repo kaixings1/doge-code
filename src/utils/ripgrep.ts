@@ -446,7 +446,7 @@ export async function ripGrep(
       if (isTimeout && lines.length === 0) {
         reject(
           new RipgrepTimeoutError(
-            `Ripgrep search timed out after ${getPlatform() === 'wsl' ? 60 : 20} seconds. The search may have matched files but did not complete in time. Try searching a more specific path or pattern.`,
+            `Ripgrep 搜索超时（${getPlatform() === 'wsl' ? 60 : 20} 秒）。搜索可能匹配了文件但未能在限定时间内完成。请尝试搜索更具体的路径或模式。`,
             lines,
           ),
         )

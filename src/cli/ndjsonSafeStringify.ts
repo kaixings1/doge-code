@@ -1,18 +1,18 @@
 import { jsonStringify } from '../utils/slowOperations.js'
 
-// JSON.stringify emits U+2028/U+2029 raw (valid per ECMA-404). When the
-// output is a single NDJSON line, any receiver that uses JavaScript
-// line-terminator semantics (ECMA-262 §11.3 — \n \r U+2028 U+2029) to
-// split the stream will cut the JSON mid-string. ProcessTransport now
-// silently skips non-JSON lines rather than crashing (gh-28405), but
-// the truncated fragment is still lost — the message is silently dropped.
+// JSON.stringify 发出 U+2028/U+2029 原始值（符合 ECMA-404）。当
+// 输出是单个 NDJSON 行时，任何使用 JavaScript
+// 行终止符语义（ECMA-262 §11.3 — \n \r U+2028 U+2029）的接收者
+// 会将流分割，将 JSON 从中切断。ProcessTransport 现在
+// 静默跳过非 JSON 行而不是崩溃（gh-28405），但
+// 截断的部分仍然丢失 — 消息被静默丢弃。
 //
-// The \uXXXX form is equivalent JSON (parses to the same string) but
-// can never be mistaken for a line terminator by ANY receiver. This is
-// what ES2019's "Subsume JSON" proposal and Node's util.inspect do.
+// \uXXXX 形式是等价的 JSON（解析为相同的字符串）但
+// 永远不会被任何接收者误认为是行终止符。这是
+// ES2019 的"Subsume JSON"提议和 Node 的 util.inspect 所做的。
 //
-// Single regex with alternation: the callback's one dispatch per match
-// is cheaper than two full-string scans.
+// 使用交替的单个正则表达式：回调的每个匹配的一次调度
+// 比两次全字符串扫描更便宜。
 const JS_LINE_TERMINATORS = /\u2028|\u2029/g
 
 function escapeJsLineTerminators(json: string): string {

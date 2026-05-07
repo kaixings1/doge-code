@@ -1,6 +1,8 @@
 /* eslint-disable custom-rules/no-top-level-side-effects */
 
 import { appendFileSync } from 'fs'
+import { join } from 'path'
+import { homedir } from 'os'
 import createReconciler from 'react-reconciler'
 import { getYogaCounters } from '../native-ts/yoga-layout/index.js'
 import { isEnvTruthy } from '../utils/envUtils.js'
@@ -361,11 +363,24 @@ const reconciler = createReconciler<
     text: string,
     _root: DOMElement,
     hostContext: HostContext,
+    internalHandle?: unknown,
   ): TextNode {
     if (!hostContext.isInsideText) {
-      throw new Error(
-        `Text string "${text}" must be rendered inside <Text> component`,
-      )
+      const msg = `Text string "${text}" must be rendered inside <Text> component`
+      const err = new Error(msg)
+      try {
+        // Write diagnostic info to debug log via appendFileSync
+        const chain = getOwnerChain(internalHandle)
+        const chainStr = chain.length > 0 ? '\nComponent chain: ' + chain.join(' → ') : ''
+        const stackLines = (err.stack || '').split('\n').slice(0, 6).join('\n')
+        appendFileSync(
+          join(homedir(), '.doge', 'DOGE_DEBUG.log'),
+          `[${new Date().toISOString()}] Text="${text}" stack=${stackLines}${chainStr}\n`,
+        )
+      } catch {
+        // silently ignore
+      }
+      throw err
     }
 
     return createTextNode(text)
