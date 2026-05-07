@@ -1,7 +1,12 @@
-import { env } from '../utils/env.js'
+// Note: DO NOT import env.ts here - it creates a circular dependency:
+// env.ts -> envUtils.ts -> model/model.ts -> figures.ts -> env.ts
+// Use process.platform directly instead.
 
 // The former is better vertically aligned, but isn't usually supported on Windows/Linux
-export const BLACK_CIRCLE = env.platform === 'darwin' ? '⏺' : '●'
+const platform: 'win32' | 'darwin' | 'linux' = (['win32', 'darwin'].includes(process.platform)
+  ? process.platform
+  : 'linux') as 'win32' | 'darwin' | 'linux'
+export const BLACK_CIRCLE = platform === 'darwin' ? '⏺' : '●'
 export const BULLET_OPERATOR = '∙'
 export const TEARDROP_ASTERISK = '✻'
 export const UP_ARROW = '\u2191' // ↑ - used for opus 1m merge notice

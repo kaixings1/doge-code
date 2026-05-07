@@ -661,7 +661,7 @@ function enhanceGitPullErrorMessages(result: {
     const timeoutSec = Math.round(getPluginGitTimeoutMs() / 1000)
     return {
       ...result,
-      stderr: `Git pull timed out after ${timeoutSec}s. Try increasing the timeout via CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS environment variable.\n\nOriginal error: ${result.stderr}`,
+      stderr: `Git pull 超时（${timeoutSec} 秒后）。可通过 CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS 环境变量增加超时时间。\n\n原始错误：${result.stderr}`,
     }
   }
 
@@ -910,7 +910,7 @@ export async function gitClone(
   if (result.error?.includes('timed out')) {
     return {
       ...result,
-      stderr: `Git clone timed out after ${Math.round(timeoutMs / 1000)}s. The repository may be too large for the current timeout. Set CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS to increase it (e.g., 300000 for 5 minutes).\n\nOriginal error: ${result.stderr}`,
+      stderr: `Git clone 超时（${Math.round(timeoutMs / 1000)} 秒后）。仓库可能过大，可通过 CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS 增加超时时间（例如 300000 表示 5 分钟）。\n\n原始错误：${result.stderr}`,
     }
   }
 
@@ -1299,7 +1299,7 @@ async function cacheMarketplaceFromUrl(
       }
       if (error.code === 'ETIMEDOUT') {
         throw new Error(
-          `Request timed out while downloading marketplace from ${redactedUrl}. The server may be slow or unreachable.\n\nTechnical details: ${error.message}`,
+          `从 ${redactedUrl} 下载时请求超时。服务器可能较慢或不可达。\n\n技术细节：${error.message}`,
         )
       }
       if (error.response) {

@@ -84,12 +84,12 @@ export function computeShimmerSegments(
   const shimmerStart = glimmerIndex - 1
   const shimmerEnd = glimmerIndex + 1
 
-  // When shimmer is offscreen, return all text as "before"
+  // 当闪烁区域在屏幕外时，返回全部文本为 "before"
   if (shimmerStart >= messageWidth || shimmerEnd < 0) {
     return { before: text, shimmer: '', after: '' }
   }
 
-  // Split into at most 3 segments by visual column position
+  // 按视觉列位置分割为最多 3 段
   const clampedStart = Math.max(0, shimmerStart)
   let colPos = 0
   let before = ''

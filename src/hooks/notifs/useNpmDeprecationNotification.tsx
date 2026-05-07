@@ -3,7 +3,7 @@ import { getCliCommandName } from '../../utils/cliCommandName.js';
 import { getCurrentInstallationType } from '../../utils/doctorDiagnostic.js';
 import { isEnvTruthy } from '../../utils/envUtils.js';
 import { useStartupNotification } from './useStartupNotification.js';
-const NPM_DEPRECATION_MESSAGE = 'Claude Code 已从 npm 切换到原生安装程序。运行 `claude install` 或查看 https://docs.anthropic.com/en/docs/claude-code/getting-started 了解更多选项。';
+const NPM_DEPRECATION_MESSAGE = '查看 https://github.com/kaixings1/doge-code 了解更多。';
 export function useNpmDeprecationNotification() {
   useStartupNotification(_temp);
 }

@@ -1729,7 +1729,7 @@ async function* queryModel(
 const latestConfig = readCustomApiStorage();
 if (latestConfig.baseURL) {
 	process.env.ANTHROPIC_BASE_URL = latestConfig.baseURL;
-	process.env.DOGE_API_KEY = latestConfig.apiKey || '';
+	if (latestConfig.apiKey) process.env.DOGE_API_KEY = latestConfig.apiKey; else delete process.env.DOGE_API_KEY;
 	process.env.ANTHROPIC_MODEL = latestConfig.model || '';
 	process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = latestConfig.provider || 'openai';
 }
@@ -2100,13 +2100,14 @@ async (anthropic, attempt, context) => {
                 }
                 break
               case 'thinking':
-                contentBlocks[part.index] = {
+              contentBlocks[part.index] = {
                   ...part.content_block,
                   // 同样麻烦
                   thinking: '',
                   // 初始化 signature 字段，确保即使 signature_delta 从未到达也存在
                   signature: '',
                 }
+				  
                 break
               default:
                 // 更麻烦的是，SDK 在处理过程中会修改文本块的内容。
@@ -2217,6 +2218,7 @@ async (anthropic, attempt, context) => {
                     throw new Error('内容块不是思考块')
                   }
                   contentBlock.signature = delta.signature
+				  appendTokenText(delta.thinking); 
                   break
                 case 'thinking_delta':
                   if (contentBlock.type !== 'thinking') {
@@ -2326,7 +2328,14 @@ async (anthropic, attempt, context) => {
             if (jsonReceivedBytes === 0) {
               try { jsonReceivedBytes = getLastResponseBytes() } catch {}
             }
-            addPresetTokens(usage.input_tokens, usage.output_tokens, jsonSentBytes, jsonReceivedBytes)
+            // 对于 OpenAI 兼容 API（中转站），input_tokens 可能为 0，
+            // 此时从 jsonSentBytes 粗略估算输入 token 数
+            let effectiveInputTokens = usage.input_tokens;
+            if (effectiveInputTokens === 0 && jsonSentBytes > 0) {
+              // 保守估算：JSON 请求体中文本约占 60%，每字符约 0.25 token
+              effectiveInputTokens = Math.round(jsonSentBytes * 0.6 * 0.25);
+            }
+            addPresetTokens(effectiveInputTokens, usage.output_tokens, jsonSentBytes, jsonReceivedBytes)
 
             const refusalMessage = getErrorMessageIfRefusal(
               part.delta.stop_reason,
@@ -2364,7 +2373,18 @@ async (anthropic, attempt, context) => {
           case 'message_stop':
             break
         }
-
+/*if (part.type === 'content_block_start' && part.content_block.type === 'text') {
+  // 对于本应被渲染的块（即使是由 thinking 转换来的），确保它存在于 contentBlocks 数组中
+  if (!contentBlocks[part.index]) {
+    contentBlocks[part.index] = { type: 'text', text: '' };
+  }
+} else if (part.type === 'content_block_delta' && part.delta.type === 'text_delta') {
+  // 实时更新对应块的文本内容（此语句会触发生命周期，让 UI 组件感知变化）
+  contentBlocks[part.index] = { 
+    ...contentBlocks[part.index], 
+    text: (contentBlocks[part.index]?.text || '') + part.delta.text 
+  };
+}*/
         yield {
           type: 'stream_event',
           event: part,

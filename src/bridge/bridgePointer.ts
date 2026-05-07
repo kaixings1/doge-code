@@ -129,15 +129,15 @@ export async function readBridgePointer(
 export async function readBridgePointerAcrossWorktrees(
   dir: string,
 ): Promise<{ pointer: BridgePointer & { ageMs: number }; dir: string } | null> {
-  // Fast path: current dir. Covers standalone bridge (always matches) and
-  // REPL bridge when no worktree mutation happened.
+  // 快速路径：当前目录。覆盖独立桥接器（总是匹配）和
+  // 在没有工作树变更时的 REPL 桥接器。
   const here = await readBridgePointer(dir)
   if (here) {
     return { pointer: here, dir }
   }
 
-  // Fanout: scan worktree siblings. getWorktreePathsPortable has a 5s
-  // timeout and returns [] on any error (not a git repo, git not installed).
+  // 扇出：扫描工作树兄弟目录。getWorktreePathsPortable 有 5 秒
+  // 超时，在任何错误时返回 []（不是 git 仓库，git 未安装）。
   const worktrees = await getWorktreePathsPortable(dir)
   if (worktrees.length <= 1) return null
   if (worktrees.length > MAX_WORKTREE_FANOUT) {
@@ -147,15 +147,14 @@ export async function readBridgePointerAcrossWorktrees(
     return null
   }
 
-  // Dedupe against `dir` so we don't re-stat it. sanitizePath normalizes
-  // case/separators so worktree-list output matches our fast-path key even
-  // on Windows where git may emit C:/ vs stored c:/.
+  // 与 `dir` 去重，这样我们不需要再次 stat 它。sanitizePath 标准化
+  // 大小写/分隔符，使得工作树列表输出与我们的快速路径键匹配，即使在
+  // Windows 上 git 可能输出 C:/vs 存储的 c:/。
   const dirKey = sanitizePath(dir)
   const candidates = worktrees.filter(wt => sanitizePath(wt) !== dirKey)
 
-  // Parallel stat+read. Each readBridgePointer is a stat() that ENOENTs
-  // for worktrees with no pointer (cheap) plus a ~100-byte read for the
-  // rare ones that have one. Promise.all → latency ≈ slowest single stat.
+  // 并行 stat+ 读取。每个 readBridgePointer 是一个 stat()，对于没有指针的
+  // 工作树返回 ENOENT（便宜），对于有指针的稀有情况则进行约 100 字节的读取。Promise.all → 延迟≈最慢的单个 stat。
   const results = await Promise.all(
     candidates.map(async wt => {
       const p = await readBridgePointer(wt)
@@ -163,8 +162,8 @@ export async function readBridgePointerAcrossWorktrees(
     }),
   )
 
-  // Pick freshest (lowest ageMs). The pointer stores environmentId so
-  // resume reconnects to the right env regardless of which worktree
+  // 选择最新的（最低 ageMs）。指针存储 environmentId，因此
+  // 恢复时无论从哪个工作树调用 --continue，都会连接到正确的环境。
   // --continue was invoked from.
   let freshest: {
     pointer: BridgePointer & { ageMs: number }
