@@ -1,92 +1,54 @@
-doge.bat
+# Doge Code Configuration
+.doge/
+.claude/
+.qwen/
+.remember/
 
+# Build Artifacts
+dist/
+build/
+*.exe
+*.bun-build/
+.bun-build/
+.*.bun-build
 
-*.env
-
-
+# IDE & Editor
+.idea/
+.vscode/
+src/.vs/
 *.swp
 *.swo
+
+# Node.js
+node_modules/
 *.log
 *.tmp
 *.bak
 
-qwen-coder.bat
-run.bat
-search.bat
-start-llama.bat
-start-llama-auto qwen7.bat
-start-llama-auto.bat
-start-llama-direct.bat
-start-llama-server.bat
-start-ollama.bat
-mota.py
-nvidia.py
-proxy.py
-d.bat
+# Lock Files
+bun.lock
+package-lock.json
+
+# Python & Other Scripts (legacy)
+*.py
+*.bat
+
+# Temporary Files
+*.env
 debug.log
 debug.txt
-ccproxy-mota.py
 config.json
 eng.txt
 eng1.txt
 eng2.txt
-.doge
 api.json
-.qwen
-.remember
-node_modules
-doge.exe
-debug.txt
-install.bat
-game.py
-mota.py
-nvidia.py
-package.json
+usage_stats.json
+test-prompt-patterns.js
+auto-translate-from-bottom.cjs
+
+# Source Archives
 src.rar
 
-
-
+# OS Files
+.DS_Store
 latest/
-test-prompt-patterns.js
-tsconfig.json
-usage_stats.json
-auto-translate-from-bottom.cjs
-bun.lock
-ccproxy-mota.py
-config.json
-d.bat
-eng.txt
-mota.py
-nvidia.py
-proxy.py
-proxy127.0.0.1.py
-qwen-coder.bat
-README.md
-REPOST.md
-run.bat
-search.bat
-start-llama.bat
-start-llama-auto qwen7.bat
-doge.exe
-
-
-src/.vs/
-src-ext/
-
-.doge/
-.DS_Store/
-node_modules/
-dist/
-build/
-coverage/
-.cache/
-.turbo/
-.claude/
-.idea/
-.vscode/
-.qwen/
-.github/
-py/
-*.bun-build
-.bun-build/
-.*.bun-build
