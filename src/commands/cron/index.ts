@@ -1,10 +1,10 @@
 import type { Command } from '../../commands.js'
 
-const cron: Command = {
+const cron = {
+  type: 'local',
   name: 'cron',
   description: '命令描述',
-  type: 'local',
   load: () => import('./cron.js'),
-}
+} satisfies Command
 
 export default cron

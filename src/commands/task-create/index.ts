@@ -1,10 +1,10 @@
 import type { Command } from '../../commands.js'
 
-const taskCreate: Command = {
+const taskCreate = {
+  type: 'local',
   name: 'task-create',
   description: '命令描述',
-  type: 'local',
   load: () => import('./taskCreate.js'),
-}
+} satisfies Command
 
 export default taskCreate

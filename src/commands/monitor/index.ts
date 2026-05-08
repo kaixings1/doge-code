@@ -1,10 +1,10 @@
 import type { Command } from '../../commands.js'
 
-const monitor: Command = {
+const monitor = {
+  type: 'local',
   name: 'monitor',
   description: '命令描述',
-  type: 'local',
   load: () => import('./monitor.js'),
-}
+} satisfies Command
 
 export default monitor

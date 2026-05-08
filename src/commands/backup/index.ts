@@ -1,10 +1,10 @@
 import type { Command } from '../../commands.js'
 
-const backup: Command = {
+const backup = {
+  type: 'local',
   name: 'backup',
   description: '命令描述',
-  type: 'local',
   load: () => import('./backup.js'),
-}
+} satisfies Command
 
 export default backup
