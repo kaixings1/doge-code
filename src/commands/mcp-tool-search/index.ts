@@ -1,10 +1,10 @@
 import type { Command } from '../../commands.js'
 
-const mcpToolSearch: Command = {
+const mcpToolsearch = {
+  type: 'local',
   name: 'mcp-tool-search',
   description: '命令描述',
-  type: 'local',
-  load: () => import('./mcpToolSearch.js'),
-}
+  load: () => import('./mcpToolsearch.js'),
+} satisfies Command
 
-export default mcpToolSearch
+export default mcpToolsearch

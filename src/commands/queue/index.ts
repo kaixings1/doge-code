@@ -1,10 +1,10 @@
 import type { Command } from '../../commands.js'
 
-const queue: Command = {
+const queue = {
+  type: 'local',
   name: 'queue',
   description: '命令描述',
-  type: 'local',
   load: () => import('./queue.js'),
-}
+} satisfies Command
 
 export default queue
