@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const mcp tool searchCommand: Command = {
+const mcpToolSearch: Command = {
   name: 'mcp-tool-search',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const mcp tool searchCommand: Command = {
   },
 }
 
-export default mcp tool searchCommand
+export default mcpToolSearch

@@ -1,4 +1,4 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
 const tui = {
   type: 'local-jsx',

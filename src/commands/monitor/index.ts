@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const monitorCommand: Command = {
+const monitor: Command = {
   name: 'monitor',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const monitorCommand: Command = {
   },
 }
 
-export default monitorCommand
+export default monitor

@@ -1,16 +1,16 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const plan modeCommand: Command = {
+const planMode: Command = {
   name: 'plan-mode',
-  description: '命令描述',
+  description: '计划模式管理',
   type: 'prompt',
   source: 'builtin',
   async getPromptForCommand(args, context) {
     return {
-      command: '/plan-mode\n\nplan-mode 命令的功能描述。',
-      description: 'plan-mode 命令描述',
+      command: '/plan-mode\n\n切换到计划模式，先制定计划再执行。',
+      description: '计划模式管理',
     }
   },
 }
 
-export default plan modeCommand
+export default planMode

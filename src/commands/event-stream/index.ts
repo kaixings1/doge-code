@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const event streamCommand: Command = {
+const eventStream: Command = {
   name: 'event-stream',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const event streamCommand: Command = {
   },
 }
 
-export default event streamCommand
+export default eventStream
