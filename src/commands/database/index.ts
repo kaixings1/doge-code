@@ -1,10 +1,10 @@
 import type { Command } from '../../commands.js'
 
-const database: Command = {
+const database = {
+  type: 'local',
   name: 'database',
   description: '命令描述',
-  type: 'local',
   load: () => import('./database.js'),
-}
+} satisfies Command
 
 export default database
