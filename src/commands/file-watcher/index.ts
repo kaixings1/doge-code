@@ -1,10 +1,10 @@
 import type { Command } from '../../commands.js'
 
-const fileWatcher: Command = {
+const fileWatcher = {
+  type: 'local',
   name: 'file-watcher',
   description: '命令描述',
-  type: 'local',
   load: () => import('./fileWatcher.js'),
-}
+} satisfies Command
 
 export default fileWatcher
