@@ -47,6 +47,39 @@ import skills from './commands/skills/index.js'
 import status from './commands/status/index.js'
 import tasks from './commands/tasks/index.js'
 import teleport from './commands/teleport/index.js'
+import gettingStarted from './commands/getting-started/index.js'
+import changelog from './commands/changelog/index.js'
+import copyPage from './commands/copy-page/index.js'
+import documentationIndex from './commands/documentation-index/index.js'
+import tui from './commands/tui/index.js'
+import powerup from './commands/powerup/index.js'
+import teamOnboarding from './commands/team-onboarding/index.js'
+import projectPurge from './commands/project-purge/index.js'
+import insights from './commands/insights/index.js'
+import team from './commands/team/index.js'
+
+// 导入新增的21个命令
+import lessPermissionPrompts from './commands/less-permission-prompts/index.js'
+import contextCollapse from './commands/context-collapse/index.js'
+import taskCreate from './commands/task-create/index.js'
+import planMode from './commands/plan-mode/index.js'
+import compare from './commands/compare/index.js'
+import graphQL from './commands/graphql/index.js'
+import http from './commands/http/index.js'
+import database from './commands/database/index.js'
+import shell from './commands/shell/index.js'
+import fileWatcher from './commands/file-watcher/index.js'
+import schedule from './commands/schedule/index.js'
+import cron from './commands/cron/index.js'
+import websocket from './commands/websocket/index.js'
+import eventStream from './commands/event-stream/index.js'
+import queue from './commands/queue/index.js'
+import cache from './commands/cache/index.js'
+import logger from './commands/logger/index.js'
+import metrics from './commands/metrics/index.js'
+import monitor from './commands/monitor/index.js'
+import backup from './commands/backup/index.js'
+import mcpToolSearch from './commands/mcp-tool-search/index.js'
 
 const agentsPlatform =
   process.env.USER_TYPE === 'ant'
@@ -280,6 +313,16 @@ const COMMANDS = memoize((): Command[] => [
   exit,
   fast,
   files,
+  gettingStarted,
+  changelog,
+  copyPage,
+  documentationIndex,
+  tui,
+  powerup,
+  teamOnboarding,
+  projectPurge,
+  insights,
+  team,
   heapDump,
   help,
   ide,
@@ -345,6 +388,28 @@ const COMMANDS = memoize((): Command[] => [
   tasks,
   ...(workflowsCmd ? [workflowsCmd] : []),
   ...(torch ? [torch] : []),
+  // 新增的21个命令
+  lessPermissionPrompts,
+  contextCollapse,
+  taskCreate,
+  planMode,
+  compare,
+  graphQL,
+  http,
+  database,
+  shell,
+  fileWatcher,
+  schedule,
+  cron,
+  websocket,
+  eventStream,
+  queue,
+  cache,
+  logger,
+  metrics,
+  monitor,
+  backup,
+  mcpToolSearch,
   ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO
     ? INTERNAL_ONLY_COMMANDS
     : []),
