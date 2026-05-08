@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const loggerCommand: Command = {
+const logger: Command = {
   name: 'logger',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const loggerCommand: Command = {
   },
 }
 
-export default loggerCommand
+export default logger

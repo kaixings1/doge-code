@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const backupCommand: Command = {
+const backup: Command = {
   name: 'backup',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const backupCommand: Command = {
   },
 }
 
-export default backupCommand
+export default backup

@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const websocketCommand: Command = {
+const websocket: Command = {
   name: 'websocket',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const websocketCommand: Command = {
   },
 }
 
-export default websocketCommand
+export default websocket

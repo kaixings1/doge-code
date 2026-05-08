@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const cronCommand: Command = {
+const cron: Command = {
   name: 'cron',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const cronCommand: Command = {
   },
 }
 
-export default cronCommand
+export default cron
