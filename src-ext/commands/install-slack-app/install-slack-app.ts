@@ -1,0 +1,30 @@
+import type { LocalCommandResult } from '../../commands.js'
+import { logEvent } from '../../services/analytics/index.js'
+import { openBrowser } from '../../utils/browser.js'
+import { saveGlobalConfig } from '../../utils/config.js'
+
+const SLACK_APP_URL = 'https://slack.com/marketplace/A08SF47R6P4-claude'
+
+export async function call(): Promise<LocalCommandResult> {
+  logEvent('tengu_install_slack_app_clicked', {})
+
+  // Track that user has clicked to install
+  saveGlobalConfig(current => ({
+    ...current,
+    slackAppInstallCount: (current.slackAppInstallCount ?? 0) + 1,
+  }))
+
+  const success = await openBrowser(SLACK_APP_URL)
+
+  if (success) {
+    return {
+      type: 'text',
+      value: '正在浏览器中打开 Slack 应用安装页面…',
+    }
+  } else {
+    return {
+      type: 'text',
+      value: `无法打开浏览器。请访问: ${SLACK_APP_URL}`,
+    }
+  }
+}

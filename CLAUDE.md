@@ -119,3 +119,49 @@ bun run version
 - 全面中文本地化
 - 支持自定义 Anthropic 兼容端点
 - 配置隔离于 `.doge/` 目录
+
+## 新增功能 (src-ext)
+
+### 核心工具
+| 工具 | 说明 |
+|------|------|
+| `/ultrareview` | 云端并行多智能体代码审查 |
+| `/less-permission-prompts` | 扫描会话，生成权限白名单 |
+| `/effort` | 设置模型效能等级 (low/medium/high/max) |
+| `/theme` | 创建、切换、管理命名主题 |
+| `/advisor` | 实验性智能顾问分析 |
+| `/vim-visual-mode` | Vim 可视模式支持 (v/V) |
+| `/terminal-panel` | 终端面板管理 |
+| `/context-collapse` | 上下文折叠减少token消耗 |
+| `/workflow` | 执行工作流脚本 |
+| `/snip` | 截断历史减少上下文 |
+| `/task-create` | 创建新任务 |
+| `/plan-mode` | 计划模式管理 |
+| `/branch` | Git 分支管理 |
+| `/compare` | 文件比较工具 |
+| `/graphql` | GraphQL 查询工具 |
+| `/http` | HTTP 请求工具 |
+| `/database` | 数据库操作 |
+| `/shell` | 高级 shell 命令执行 |
+| `/file-watcher` | 文件变更监听 |
+| `/schedule` | 定时任务调度 |
+| `/cron` | Cron 作业管理 |
+| `/websocket` | WebSocket 客户端 |
+| `/event-stream` | 事件流处理 |
+| `/queue` | 任务队列管理 |
+| `/cache` | 缓存操作 |
+| `/logger` | 日志记录工具 |
+| `/metrics` | 指标收集 |
+| `/monitor` | 系统监控 |
+| `/backup` | 备份管理 |
+| `/mcp-tool-search` | MCP 工具搜索 |
+
+### 功能特性
+- **Opus 4.7 xhigh 效能等级** - 中间等级，平衡速度与智能
+- **Auto 模式** - Max 订阅用户可用
+- **Vim 可视模式** - 支持 `v` 和 `V` 模式
+- **/usage 合并** - `/cost` 和 `/stats` 合并为 `/usage`
+- **WebFetch 工具** - 抓取网页内容
+- **Terminal Panel** - 全屏滚动优化
+- **Workflow Scripts** - 并行工作流执行
+- **81个工具** - 覆盖开发、监控、数据库、网络等场景

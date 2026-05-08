@@ -71,6 +71,7 @@ doge.exe
 
 
 src/.vs/
+src-ext/
 
 .doge/
 .DS_Store/
