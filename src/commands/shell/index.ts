@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const shellCommand: Command = {
+const shell: Command = {
   name: 'shell',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const shellCommand: Command = {
   },
 }
 
-export default shellCommand
+export default shell

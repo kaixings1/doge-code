@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const metricsCommand: Command = {
+const metrics: Command = {
   name: 'metrics',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const metricsCommand: Command = {
   },
 }
 
-export default metricsCommand
+export default metrics

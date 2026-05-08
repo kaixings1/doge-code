@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const queueCommand: Command = {
+const queue: Command = {
   name: 'queue',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const queueCommand: Command = {
   },
 }
 
-export default queueCommand
+export default queue

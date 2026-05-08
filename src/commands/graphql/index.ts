@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const graphqlCommand: Command = {
+const graphql: Command = {
   name: 'graphql',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const graphqlCommand: Command = {
   },
 }
 
-export default graphqlCommand
+export default graphql
