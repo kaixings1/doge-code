@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const scheduleCommand: Command = {
+const schedule: Command = {
   name: 'schedule',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const scheduleCommand: Command = {
   },
 }
 
-export default scheduleCommand
+export default schedule
