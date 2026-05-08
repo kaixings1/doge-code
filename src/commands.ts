@@ -53,6 +53,29 @@ const agentsPlatform =
     ? require('./commands/agents-platform/index.js').default
     : null
 
+// 导入新增的21个命令
+import lessPermissionPrompts from './commands/less-permission-prompts/index.js'
+import contextCollapse from './commands/context-collapse/index.js'
+import taskCreate from './commands/task-create/index.js'
+import planMode from './commands/plan-mode/index.js'
+import compare from './commands/compare/index.js'
+import graphQL from './commands/graphql/index.js'
+import http from './commands/http/index.js'
+import database from './commands/database/index.js'
+import shell from './commands/shell/index.js'
+import fileWatcher from './commands/file-watcher/index.js'
+import schedule from './commands/schedule/index.js'
+import cron from './commands/cron/index.js'
+import websocket from './commands/websocket/index.js'
+import eventStream from './commands/event-stream/index.js'
+import queue from './commands/queue/index.js'
+import cache from './commands/cache/index.js'
+import logger from './commands/logger/index.js'
+import metrics from './commands/metrics/index.js'
+import monitor from './commands/monitor/index.js'
+import backup from './commands/backup/index.js'
+import mcpToolSearch from './commands/mcp-tool-search/index.js'
+
 import securityReview from './commands/security-review.js'
 import bughunter from './commands/bughunter/index.js'
 import terminalSetup from './commands/terminalSetup/index.js'
@@ -345,6 +368,28 @@ const COMMANDS = memoize((): Command[] => [
   tasks,
   ...(workflowsCmd ? [workflowsCmd] : []),
   ...(torch ? [torch] : []),
+  // 新增的21个命令
+  lessPermissionPrompts,
+  contextCollapse,
+  taskCreate,
+  planMode,
+  compare,
+  graphQL,
+  http,
+  database,
+  shell,
+  fileWatcher,
+  schedule,
+  cron,
+  websocket,
+  eventStream,
+  queue,
+  cache,
+  logger,
+  metrics,
+  monitor,
+  backup,
+  mcpToolSearch,
   ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO
     ? INTERNAL_ONLY_COMMANDS
     : []),
