@@ -1,10 +1,10 @@
 import type { Command } from '../../commands.js'
 
-const compare: Command = {
+const compare = {
+  type: 'local',
   name: 'compare',
   description: '命令描述',
-  type: 'local',
   load: () => import('./compare.js'),
-}
+} satisfies Command
 
 export default compare

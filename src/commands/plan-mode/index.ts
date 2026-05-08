@@ -1,10 +1,10 @@
 import type { Command } from '../../commands.js'
 
-const planMode: Command = {
+const planMode = {
+  type: 'local',
   name: 'plan-mode',
   description: '命令描述',
-  type: 'local',
   load: () => import('./planMode.js'),
-}
+} satisfies Command
 
 export default planMode
