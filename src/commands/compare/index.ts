@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const compareCommand: Command = {
+const compare: Command = {
   name: 'compare',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const compareCommand: Command = {
   },
 }
 
-export default compareCommand
+export default compare

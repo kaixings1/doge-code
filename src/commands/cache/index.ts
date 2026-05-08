@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const cacheCommand: Command = {
+const cache: Command = {
   name: 'cache',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const cacheCommand: Command = {
   },
 }
 
-export default cacheCommand
+export default cache

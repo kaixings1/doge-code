@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const context collapseCommand: Command = {
+const contextCollapse: Command = {
   name: 'context-collapse',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const context collapseCommand: Command = {
   },
 }
 
-export default context collapseCommand
+export default contextCollapse

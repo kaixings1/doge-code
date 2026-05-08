@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const databaseCommand: Command = {
+const database: Command = {
   name: 'database',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const databaseCommand: Command = {
   },
 }
 
-export default databaseCommand
+export default database

@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const httpCommand: Command = {
+const http: Command = {
   name: 'http',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const httpCommand: Command = {
   },
 }
 
-export default httpCommand
+export default http

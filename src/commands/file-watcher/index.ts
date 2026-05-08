@@ -1,6 +1,6 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const file watcherCommand: Command = {
+const fileWatcher: Command = {
   name: 'file-watcher',
   description: '命令描述',
   type: 'prompt',
@@ -13,4 +13,4 @@ const file watcherCommand: Command = {
   },
 }
 
-export default file watcherCommand
+export default fileWatcher

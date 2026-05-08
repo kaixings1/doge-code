@@ -1,16 +1,16 @@
-import type { Command } from '../types/command.js'
+import type { Command } from '../../commands.js'
 
-const task createCommand: Command = {
+const taskCreate: Command = {
   name: 'task-create',
-  description: '命令描述',
+  description: '创建新任务',
   type: 'prompt',
   source: 'builtin',
   async getPromptForCommand(args, context) {
     return {
-      command: '/task-create\n\ntask-create 命令的功能描述。',
-      description: 'task-create 命令描述',
+      command: '/task-create\n\n创建一个新的后台任务来处理耗时操作。',
+      description: '创建新任务',
     }
   },
 }
 
-export default task createCommand
+export default taskCreate
