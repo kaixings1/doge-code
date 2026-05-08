@@ -21,12 +21,18 @@ bun run dev
 # 或
 bun run ./src/bootstrap-entry.ts
 
-# 查看版本
-bun run version
-
 # 构建（编译为exe）
-# Windows: complie.bat, install.bat
-# 或手动: bun build
+bun run build
+# 或 Windows: complie.bat, install.bat
+
+# 类型检查
+bun run tsc --noEmit
+
+# 运行单个测试（如有）
+bun test <test-name>
+
+# 链接本地包（用于全局测试）
+bun link
 ```
 
 ## 常用命令
@@ -61,9 +67,16 @@ bun run version
 
 ### 关键文件
 - `src/core.ts` - 核心应用逻辑
-- `src/commands.ts` - 命令定义
+- `src/commands.ts` - 命令定义（所有斜杠命令集中注册）
 - `src/main.tsx` - 主UI渲染
 - `src/components/ConsoleOAuthFlow.tsx` - OAuth登录流程
+- `src/types/command.ts` - 命令类型定义
+
+### 命令系统
+- 所有斜杠命令在 `src/commands.ts` 中集中注册
+- 命令类型：`local-jsx`（React UI）、`local`（文本）、`prompt`（技能）
+- 新增命令需在 `src/commands.ts` 导入并添加到 COMMANDS 数组
+- 命令文件结构：`src/commands/<name>/index.ts`（元数据） + 对应 `.tsx`/`.js`（实现）
 
 ### OAuth 登录
 `ConsoleOAuthFlow.tsx` 处理登录，支持：
@@ -82,9 +95,14 @@ bun run version
 
 ## 构建与部署
 
-- **npm 包**: `@doge-code/cli`
+- **包名称**: `@doge-code/cli`
 - **二进制名称**: `doge`
 - 使用 Bun 链接: `bun link`
+
+### 构建配置
+- `bun.build()` 配置在 `bunfig.toml` 或 `package.json`
+- 输出: `dist/` 目录
+- 目标: 跨平台可执行文件
 
 ## 架构详情
 
@@ -102,6 +120,12 @@ bun run version
 - `src/bridge/` - API 翻译层
 - 在 OpenAI Chat Completions 和 Anthropic Messages 格式间转换
 - 支持自定义 baseURL 和 API Key
+- `src/bridge/bridgeEnabled.ts` - 桥接模式开关
+
+### 插件系统
+- `src/plugins/` - 插件管理
+- `src/commands/mcp/` - MCP 命令
+- 插件通过 `load` 函数异步加载命令
 
 ## 环境要求
 
