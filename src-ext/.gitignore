@@ -1,0 +1,13 @@
+node_modules
+*.log
+*.tmp
+*.bak
+*.exe
+*.rar
+dist
+build
+coverage
+.cache
+.turbo
+.doge
+.DS_Store
