@@ -97,7 +97,6 @@ function spriteColWidth(nameWidth: number): number {
 }
 
 export function companionReservedColumns(terminalColumns: number, speaking: boolean): number {
-  if (false) return 0;
   const companion = getCompanion();
   if (!companion || getGlobalConfig().companionMuted) return 0;
   if (terminalColumns < MIN_COLS_FOR_FULL_SPRITE) return 0;
@@ -141,7 +140,6 @@ export function CompanionSprite(): React.ReactNode {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- tick intentionally captured
   }, [reaction, setAppState]);
 
-  if (false) return null;
   const companion = getCompanion();
   if (!companion || getGlobalConfig().companionMuted) return null;
 
@@ -239,7 +237,7 @@ export function CompanionFloatingBubble() {
     return () => clearInterval(timer);
   }, [reaction]);
 
-  if (!true || !reaction) {
+  if (!reaction) {
     return null;
   }
 

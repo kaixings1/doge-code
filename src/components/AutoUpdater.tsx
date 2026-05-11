@@ -188,7 +188,7 @@ export function AutoUpdater({
             ✓ 更新已安装 · 重启以应用
           </Text>}
       {(autoUpdaterResult?.status === 'install_failed' || autoUpdaterResult?.status === 'no_permissions') && <Text color="error" wrap="truncate">
-          ✗ 自动更新失败 &middot; 请尝试 <Text bold>claude doctor</Text> 或...'}
+          ✗ 自动更新失败 · 请尝试 <Text bold>claude doctor</Text> 或...
           <Text bold>
             {hasLocalInstall ? `cd ~/.claude/local && npm update ${MACRO.PACKAGE_URL}` : `npm i -g ${MACRO.PACKAGE_URL}`}
           </Text>
