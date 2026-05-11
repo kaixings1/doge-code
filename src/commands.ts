@@ -47,11 +47,16 @@ import skills from './commands/skills/index.js'
 import status from './commands/status/index.js'
 import tasks from './commands/tasks/index.js'
 import teleport from './commands/teleport/index.js'
-
-const agentsPlatform =
-  process.env.USER_TYPE === 'ant'
-    ? require('./commands/agents-platform/index.js').default
-    : null
+import gettingStarted from './commands/getting-started/index.js'
+import changelog from './commands/changelog/index.js'
+import copyPage from './commands/copy-page/index.js'
+import documentationIndex from './commands/documentation-index/index.js'
+import tui from './commands/tui/index.js'
+import powerup from './commands/powerup/index.js'
+import teamOnboarding from './commands/team-onboarding/index.js'
+import projectPurge from './commands/project-purge/index.js'
+import insights from './commands/insights/index.js'
+import team from './commands/team/index.js'
 
 // 导入新增的21个命令
 import lessPermissionPrompts from './commands/less-permission-prompts/index.js'
@@ -75,6 +80,10 @@ import metrics from './commands/metrics/index.js'
 import monitor from './commands/monitor/index.js'
 import backup from './commands/backup/index.js'
 import mcpToolSearch from './commands/mcp-tool-search/index.js'
+const agentsPlatform =
+  process.env.USER_TYPE === 'ant'
+    ? require('./commands/agents-platform/index.js').default
+    : null
 
 import securityReview from './commands/security-review.js'
 import bughunter from './commands/bughunter/index.js'
@@ -175,6 +184,7 @@ import chrome from './commands/chrome/index.js'
 import stickers from './commands/stickers/index.js'
 import advisor from './commands/advisor.js'
 import tui from './commands/tui/index.js'
+
 import { logError } from './utils/log.js'
 import { toError } from './utils/errors.js'
 import { logForDebugging } from './utils/debug.js'
@@ -304,6 +314,16 @@ const COMMANDS = memoize((): Command[] => [
   exit,
   fast,
   files,
+  gettingStarted,
+  changelog,
+  copyPage,
+  documentationIndex,
+  tui,
+  powerup,
+  teamOnboarding,
+  projectPurge,
+  insights,
+  team,
   heapDump,
   help,
   ide,
@@ -369,8 +389,6 @@ const COMMANDS = memoize((): Command[] => [
   tasks,
   ...(workflowsCmd ? [workflowsCmd] : []),
   ...(torch ? [torch] : []),
-  // 新增的21个命令
-  tui,
   lessPermissionPrompts,
   contextCollapse,
   taskCreate,

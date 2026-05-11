@@ -130,7 +130,7 @@ export function AgentEditor({
     }
   }, [menuItems, selectedMenuIndex]);
   useKeybinding('confirm:no', handleEscape, {
-    context: 'Confirmation'
+    context: '确认'
   });
   const renderMenu = (): React.ReactNode => <Box flexDirection="column" tabIndex={0} autoFocus onKeyDown={handleMenuKeyDown}>
       <Text dimColor>来源: {getAgentSourceDisplayName(agent.source)}</Text>

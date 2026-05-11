@@ -7,6 +7,7 @@ import { setClipboard } from '../ink/termio/osc.js';
 import { useTerminalNotification } from '../ink/useTerminalNotification.js';
 import { Box, Link, Text } from '../ink.js';
 import { useKeybinding } from '../keybindings/useKeybinding.js';
+import { useRegisterOverlay } from '../context/overlayContext.js';
 import { getSSLErrorHint } from '../services/api/errorUtils.js';
 import { sendNotification } from '../services/notifier.js';
 import { OAuthService } from '../services/oauth/index.js';
@@ -47,7 +48,7 @@ type OAuthStatus = {
 } | {
   state: 'custom_config';
   provider: CompatibleApiProvider;
-  step: 'baseURL' | 'apiKey' | 'model' | 'model_input';
+  step: 'baseURL' | 'apiKey' | 'model';
 } | {
   state: 'platform_setup';
 } | {
@@ -187,10 +188,6 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
   const [isCustomInputPasting, setIsCustomInputPasting] = useState(false);
   const textInputColumns = useTerminalSize().columns - PASTE_HERE_MSG.length - 1;
   const [currentPresetName, setCurrentPresetName] = useState<string>('');
-  // DOGE: 记录从列表选中的旧模型名（编辑时替换用）
-  const editingModelRef = useRef<string>('');
-  // DOGE: 同步追踪 model_input 的输入值，避免 getDerivedStateFromProps 竞争导致 onSubmit 拿到空值
-  const modelInputRef = useRef<string>('');
   const savedPresets = useMemo(() => listSavedPresets(), []);
 
   const startCompatibleApiConfig = useCallback((provider: CompatibleApiProvider) => {
@@ -215,7 +212,6 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
 
   useKeybinding('confirm:yes', () => {
     logEvent('tengu_oauth_success', { loginWithClaudeAi });
-    persistCustomEndpoint();
     onDone();
   }, {
     context: 'Confirmation',
@@ -250,10 +246,10 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
     }
   }, [pastedCode, safeOauthStatus, showPastePrompt, urlCopied]);
 
-  const persistCustomEndpoint = useCallback((overrides?: { model?: string }) => {
+  const persistCustomEndpoint = useCallback(() => {
     const nextBaseURL = customBaseURL.trim();
     const nextApiKey = customApiKey.trim();
-    const nextModel = (overrides?.model ?? customModel).trim();
+    const nextModel = customModel.trim();
     const normalizedKey = nextApiKey ? normalizeApiKeyForConfig(nextApiKey) : null;
     const nextSavedModels = nextModel
       ? [...new Set([...(persistedCustomApiEndpoint.savedModels ?? []), nextModel])]
@@ -269,7 +265,6 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
     process.env.DOGE_API_KEY = nextApiKey;
     process.env.ANTHROPIC_MODEL = nextModel;
     process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = compatibleApiProvider;
-    console.error('[DOGE persist] model=' + nextModel + ' baseURL=' + nextBaseURL);
 
     saveGlobalConfig(current => ({
       ...current,
@@ -302,22 +297,14 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
     process.env.ANTHROPIC_BASE_URL = nextBaseURL;
     process.env.DOGE_API_KEY = nextApiKey;
     process.env.ANTHROPIC_MODEL = nextModel;
-    console.error('[DOGE persist env] ANTHROPIC_MODEL=' + process.env.ANTHROPIC_MODEL + ' ANTHROPIC_BASE_URL=' + process.env.ANTHROPIC_BASE_URL);
   }, [compatibleApiProvider, customApiKey, customBaseURL, customModel, persistedCustomApiEndpoint.savedModels, currentPresetName]);
 
   const handleSubmitCustomConfig = useCallback((value: string) => {
-    console.error('[DOGE handleSubmitCustomConfig] called value=' + value + ' state=' + safeOauthStatus.state + ' step=' + (safeOauthStatus as any).step);
     if (safeOauthStatus.state !== 'custom_config') return;
 
-    if ((safeOauthStatus as any).step === 'model_input') {
-      // model_input 步骤由 TextInput 直接处理，不应该走到这里
-      console.error('[DOGE handleSubmitCustomConfig] model_input step - should not reach here!');
-      return;
-    }
 
     if (safeOauthStatus.step === 'baseURL') {
       const nextValue = value.trim();
-      console.error('[DOGE handleSubmitCustomConfig] baseURL step, nextValue=' + nextValue);
       if (!nextValue) {
         setOAuthStatus({
           state: 'error',
@@ -334,40 +321,23 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
 
     if (safeOauthStatus.step === 'apiKey') {
       const nextValue = value.trim();
-      console.error('[DOGE handleSubmitCustomConfig] apiKey step, nextValue=' + nextValue);
       setCustomApiKey(nextValue);
       setCursorOffset(0);
       setOAuthStatus({ state: 'custom_config', provider: safeOauthStatus.provider, step: 'model' });
       return;
     }
 
-    console.error('[DOGE handleSubmitCustomConfig] model step, nextValue=' + value.trim());
     const nextValue = value.trim();
     setCustomModel(nextValue);
-    try { persistCustomEndpoint({ model: nextValue }); } catch (e) { console.error("[DOGE] persistCustomEndpoint error:", e); }
-    Promise.resolve().then(() => { try { onDone(); } catch (e) { console.error("[DOGE] onDone error:", e); } })
-    return;
+    setOAuthStatus({ state: "success" });
     // 直接持久化，不依赖 state（用 nextValue 确保正确）
     process.env.ANTHROPIC_BASE_URL = customBaseURL;
     process.env.DOGE_API_KEY = customApiKey;
     process.env.ANTHROPIC_MODEL = nextValue;
     const curConfig = readCustomApiStorage();
-    // DOGE: 编辑模型时替换旧名称，手动新增时两者都保留
-    // 如果从列表选中了模型（editingModelRef.current 有值）且新旧不同，移除旧名称
-    const editedModel = editingModelRef.current || '';
     const updatedSaved = nextValue
-      ? [...new Set([
-          nextValue,
-          ...(curConfig.savedModels ?? []).filter(m =>
-            typeof m === 'string' && !(
-              editedModel &&
-              m.trim().toLowerCase() === editedModel.toLowerCase()
-            )
-          )
-        ])]
+      ? [...new Set([...(curConfig.savedModels ?? []), nextValue])]
       : (curConfig.savedModels ?? []);
-    // 用完后清空，避免影响下次操作
-    editingModelRef.current = '';
     writeCustomApiStorage(
       { ...curConfig, baseURL: customBaseURL, apiKey: customApiKey, model: nextValue, savedModels: updatedSaved, provider: compatibleApiProvider }
     );
@@ -375,7 +345,7 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
       message: safeOauthStatus.provider === 'openai' ? 'OpenAI-compatible endpoint saved' : 'Anthropic-compatible endpoint saved',
       notificationType: 'auth_success'
     }, terminal);
-  }, [safeOauthStatus, persistCustomEndpoint, terminal, customBaseURL, customApiKey, compatibleApiProvider, onDone]);
+  }, [safeOauthStatus, persistCustomEndpoint, terminal, customBaseURL, customApiKey, compatibleApiProvider]);
 
   async function handleSubmitCode(value: string, url: string) {
     try {
@@ -529,8 +499,6 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
           setCompatibleApiProvider={setCompatibleApiProvider}
           savedPresets={savedPresets}
           setCurrentPresetName={setCurrentPresetName}
-          persistCustomEndpoint={persistCustomEndpoint}
-          onDone={onDone}
         />
       </Box>
     </Box>
@@ -540,8 +508,6 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
 type OAuthStatusMessageProps = {
   savedPresets: { name: string; config: any }[];
   setCurrentPresetName: (name: string) => void;
-  persistCustomEndpoint: (overrides?: { model?: string }) => void;
-  onDone: () => void;
   oauthStatus: OAuthStatus;
   mode: 'login' | 'setup-token';
   startingMessage: string | undefined;
@@ -599,8 +565,6 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
     setCompatibleApiProvider,
     savedPresets,
     setCurrentPresetName,
-    persistCustomEndpoint,
-    onDone,
   } = t0;
   
   switch (oauthStatus.state) {
@@ -672,11 +636,12 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
 						} else {
 							setOAuthStatus({ state: "success" });
 						}
+					return;
 				}
                 if (typeof value === 'string' && value.startsWith('preset:')) {
                   const idx = parseInt(value.split(':')[1], 10);
                   const preset = PRESET_ENDPOINTS[idx];
-                  console.error('[DOGE provider_select] selecting preset:', preset?.label, preset?.baseURL, 'apiKeyRequired:', preset?.apiKeyRequired);
+                  logForDebugging('[OAuthFlow] selected preset endpoint:', preset.label, preset.baseURL);
 
                   if (!preset) return;
 
@@ -685,12 +650,10 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
                   setCompatibleApiProvider(preset.provider);
                   setCurrentPresetName(preset.label);
 
-                  const nextStep = preset.apiKeyRequired ? 'apiKey' : 'model';
-                  console.error('[DOGE provider_select] setting step to', nextStep);
                   setOAuthStatus({
                     state: 'custom_config',
                     provider: preset.provider,
-                    step: nextStep,
+                    step: 'apiKey',
                   });
                 } else {
                   setCurrentPresetName('');
@@ -704,31 +667,24 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
     }
 
     case "custom_config": {
-      console.error('[DOGE custom_config] rendering, step=' + (oauthStatus as any).step + ' provider=' + (oauthStatus as any).provider);
       const isOpenAIProvider = (oauthStatus as any).provider === 'openai';
       const currentStep = (oauthStatus as any).step;
 
       if (currentStep === 'model') {
-        // DOGE DEBUG: 记录 model 步骤的关键变量
-        console.error('[DOGE MODEL STEP] customBaseURL=' + customBaseURL + ' customModel=' + customModel + ' provider=' + (oauthStatus as any).provider);
-        console.error('[DOGE MODEL STEP] savedPresets=' + JSON.stringify(savedPresets.map((p: any) => p.name)));
         // 从 PRESET_ENDPOINTS 中查找当前 baseURL 对应的默认模型
         const currentBaseURL = customBaseURL || readCustomApiStorage().baseURL || '';
         const matchedPreset = PRESET_ENDPOINTS.find(p =>
           p.baseURL === currentBaseURL || currentBaseURL.startsWith(p.baseURL.replace(/\/+$/, ''))
         );
         const presetDefaultModel = matchedPreset?.defaultModel?.trim() || '';
-        console.error('[DOGE MODEL STEP] currentBaseURL=' + currentBaseURL + ' matchedPreset=' + (matchedPreset?.label || 'none') + ' presetDefaultModel=' + presetDefaultModel);
 
         const savedModels = savedPresets.flatMap(p => { const m = p.config?.savedModels; return Array.isArray(m) ? m : []; })
-        console.error('[DOGE MODEL STEP] savedModels=' + JSON.stringify(savedModels));
         // 合并已保存模型和预设默认模型（去重，大小写不敏感）
         const allModelCandidates = [...savedModels];
         if (presetDefaultModel && !allModelCandidates.some((m: string) => m.trim().toLowerCase() === presetDefaultModel.toLowerCase())) {
           allModelCandidates.push(presetDefaultModel);
         }
         const hasSaved = allModelCandidates.some((m) => typeof m === 'string' && m.trim())
-        console.error('[DOGE MODEL STEP] allModelCandidates=' + JSON.stringify(allModelCandidates) + ' hasSaved=' + hasSaved);
         if (hasSaved) {
           const currentModel = customModel || readCustomApiStorage().model || '';
           // 去重（大小写不敏感），保留首次出现的写法
@@ -740,12 +696,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
             seen.set(key, m.trim());
             return true;
           });
-          // DOGE: 当前模型排第一位，其余按原顺序
-          const sortedModels = [
-            currentModel,
-            ...uniqueModels.filter((m: string) => m.toLowerCase() !== currentModel.toLowerCase())
-          ];
-          const modelOpts = sortedModels
+          const modelOpts = uniqueModels
             .map((m: string) => ({ label: <Text>{m === currentModel ? <Text color="green">✓ </Text> : null}{m}</Text>, value: m }))
           modelOpts.push({
             label: <Text bold={true}>· 手动输入模型名称</Text>,
@@ -759,22 +710,9 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
                 options={modelOpts}
                 visibleOptionCount={9}
                 onChange={value => {
-                  if (value === '__manual__') {
-                    editingModelRef.current = '';
-                    modelInputRef.current = '';
-                    setCustomModel('');
+                  setCustomModel(value === '__manual__' ? '' : value)
                     setCursorOffset(0)
                     setOAuthStatus({ state: 'custom_config', provider: (oauthStatus as any).provider, step: 'model_input' })
-                  } else {
-                    editingModelRef.current = value;
-                    modelInputRef.current = value;
-                    setCustomModel(value);
-                    setCursorOffset(0)
-                    // 先持久化模型配置
-                    try { persistCustomEndpoint({ model: value }); } catch (e) { console.error("[DOGE] persistCustomEndpoint error:", e); }
-                    // 同步调用 onDone 关闭对话框
-                    try { onDone(); } catch (e) { console.error("[DOGE] onDone error:", e); }
-                  }
                 }}
               />
             </Box>
@@ -791,21 +729,11 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
             <Box flexDirection="row">
               <TextInput
                 value={customModel}
-                onChange={v => {
-                  modelInputRef.current = v;
-                  setCustomModel(v);
-                }}
+                onChange={setCustomModel}
                 onSubmit={v => {
+                  if (v.trim()) {
                   setCursorOffset(0)
-                  // 优先使用 ref 中的最新值（TextInput onSubmit 的 v 可能因 React 批处理而滞后）
-                  const latestValue = modelInputRef.current || v;
-                  const modelName = latestValue.trim();
-                  if (modelName) {
-                    setCustomModel(modelName);
-                    try { persistCustomEndpoint({ model: modelName }); } catch (e) { console.error("[DOGE] persistCustomEndpoint error:", e); }
-                    try { onDone(); } catch (e) { console.error("[DOGE] onDone error:", e); }
-                  } else {
-                    setOAuthStatus({ state: 'custom_config', provider: (oauthStatus as any).provider, step: 'model' })
+                    handleSubmitCustomConfig(v.trim())
                   }
                 }}
                 cursorOffset={cursorOffset}

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"sendMessage\\\\|send_message\\\\|postMessage\\\\|\\\\.post\\(\" d:/doge-code/src/cli/handlers/*.ts)",
+      "Bash(grep -n \"429\\\\|retry\\\\|Retry\\\\|rateLimit\" d:/doge-code/src/services/api/*.ts)",
+      "Bash(ls d:/doge-code/*.json)",
+      "Bash(ls d:/doge-code/.doge*)",
+      "Bash(xxd D:/doge-code/src/services/api/openaiCompat.ts)",
+      "PowerShell(Get-Content D:\\\\doge-code\\\\src\\\\services\\\\api\\\\openaiCompat.ts -Encoding UTF8 -TotalCount 250 | Select-Object -Index \\(238..248\\))",
+      "Bash(xargs grep:*)",
+      "Bash(node:*)",
+      "Bash(npx tsc:*)",
+      "Bash(tsc --noEmit)",
+      "Bash(node -e \":*)"
+    ]
+  }
+}

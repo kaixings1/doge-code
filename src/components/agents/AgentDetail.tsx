@@ -47,7 +47,7 @@ export function AgentDetail(t0) {
   let t3;
   if ($[4] === Symbol.for("react.memo_cache_sentinel")) {
     t3 = {
-      context: "Confirmation"
+      context: "确认"
     };
     $[4] = t3;
   } else {

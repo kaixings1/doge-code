@@ -40,7 +40,7 @@ export function ConfirmStep(t0) {
   let t1;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = {
-      context: "Confirmation"
+      context: "确认"
     };
     $[0] = t1;
   } else {

@@ -1,0 +1,65 @@
+{
+  "mcpServers": {
+ 
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "你的GitHub令牌" }
+    },
+    "claude-kit": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@chris1807/claude-kit"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp"
+      ]
+    },
+    "teams": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic/mcp-teams-server"
+      ],
+      "env": {
+        "TEAMS_TENANT_ID": "${TEAMS_TENANT_ID}",
+        "TEAMS_CLIENT_ID": "${TEAMS_CLIENT_ID}",
+        "TEAMS_CLIENT_SECRET": "${TEAMS_CLIENT_SECRET}"
+      }
+    },
+    "stripe": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@stripe/mcp"
+      ],
+      "env": {
+        "STRIPE_SECRET_KEY": "${STRIPE_SECRET_KEY}"
+      }
+    },
+    "azure": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure/mcp@latest",
+        "server",
+        "start"
+      ]
+    },
+    "azure-devops": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure-devops/mcp",
+        "richgolden"
+      ],
+      "env": {
+        "AZURE_DEVOPS_PAT": "${AZURE_DEVOPS_PAT}"
+      }
+    }
+  }
+}
