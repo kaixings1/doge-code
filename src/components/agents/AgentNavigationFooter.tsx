@@ -21,5 +21,5 @@ export function AgentNavigationFooter(t0) {
   } else {
     t3 = $[1];
   }
-  return t3;
+  return <Box width={60}>{t3}</Box>;
 }

@@ -36,9 +36,6 @@ const cronTools = feature('AGENT_TRIGGERS')
 const RemoteTriggerTool = feature('AGENT_TRIGGERS_REMOTE')
   ? require('./tools/RemoteTriggerTool/RemoteTriggerTool.js').RemoteTriggerTool
   : null
-const MonitorTool = feature('MONITOR_TOOL')
-  ? require('./tools/MonitorTool/MonitorTool.js').MonitorTool
-  : null
 const SendUserFileTool = feature('KAIROS')
   ? require('./tools/SendUserFileTool/SendUserFileTool.js').SendUserFileTool
   : null
@@ -53,7 +50,37 @@ const SubscribePRTool = feature('KAIROS_GITHUB_WEBHOOKS')
 /* eslint-enable custom-rules/no-process-env-top-level */
 import { TaskOutputTool } from './tools/TaskOutputTool/TaskOutputTool.js'
 import { WebSearchTool } from './tools/WebSearchTool/WebSearchTool.js'
+import { UltrareviewTool } from './tools/UltrareviewTool/UltrareviewTool.js'
+import { LessPermissionPromptsTool } from './tools/LessPermissionPromptsTool/LessPermissionPromptsTool.js'
+import { EffortTool } from './tools/EffortTool/EffortTool.js'
+import { ThemeTool } from './tools/ThemeTool/ThemeTool.js'
 import { TodoWriteTool } from './tools/TodoWriteTool/TodoWriteTool.js'
+import { AdvisorTool } from './tools/AdvisorTool/AdvisorTool.js'
+import { VimVisualModeTool } from './tools/VimVisualModeTool/VimVisualModeTool.js'
+import { TerminalPanelTool } from './tools/TerminalPanelTool/TerminalPanelTool.js'
+import { ContextCollapseTool } from './tools/ContextCollapseTool/ContextCollapseTool.js'
+import { WorkflowTool } from './tools/WorkflowTool/WorkflowTool.js'
+import { SnipTool } from './tools/SnipTool/SnipTool.js'
+import { TaskCreateTool } from './tools/TaskCreateTool/TaskCreateTool.js'
+import { PlanModeTool } from './tools/PlanModeTool/PlanModeTool.js'
+import { BranchTool } from './tools/BranchTool/BranchTool.js'
+import { CompareTool } from './tools/CompareTool/CompareTool.js'
+import { GraphqlTool } from './tools/GraphqlTool/GraphqlTool.js'
+import { HttpTool } from './tools/HttpTool/HttpTool.js'
+import { DatabaseTool } from './tools/DatabaseTool/DatabaseTool.js'
+import { ShellTool } from './tools/ShellTool/ShellTool.js'
+import { FileWatcherTool } from './tools/FileWatcherTool/FileWatcherTool.js'
+import { ScheduleTool } from './tools/ScheduleTool/ScheduleTool.js'
+import { CronTool } from './tools/CronTool/CronTool.js'
+import { WebSocketTool } from './tools/WebSocketTool/WebSocketTool.js'
+import { EventStreamTool } from './tools/EventStreamTool/EventStreamTool.js'
+import { QueueTool } from './tools/QueueTool/QueueTool.js'
+import { CacheTool } from './tools/CacheTool/CacheTool.js'
+import { LoggerTool } from './tools/LoggerTool/LoggerTool.js'
+import { MetricsTool } from './tools/MetricsTool/MetricsTool.js'
+import { MonitorTool } from './tools/MonitorTool/MonitorTool.js'
+import { BackupTool } from './tools/BackupTool/BackupTool.js'
+import { McpToolSearchTool } from './tools/McpToolSearchTool/McpToolSearchTool.js'
 import { ExitPlanModeV2Tool } from './tools/ExitPlanModeTool/ExitPlanModeV2Tool.js'
 import { TestingPermissionTool } from './tools/testing/TestingPermissionTool.js'
 import { GrepTool } from './tools/GrepTool/GrepTool.js'
@@ -69,7 +96,7 @@ const getTeamDeleteTool = () =>
 const getSendMessageTool = () =>
   require('./tools/SendMessageTool/SendMessageTool.js')
     .SendMessageTool as typeof import('./tools/SendMessageTool/SendMessageTool.js').SendMessageTool
- 
+/* eslint-enable @typescript-eslint/no-require-imports */
 import { AskUserQuestionTool } from './tools/AskUserQuestionTool/AskUserQuestionTool.js'
 import { LSPTool } from './tools/LSPTool/LSPTool.js'
 import { ListMcpResourcesTool } from './tools/ListMcpResourcesTool/ListMcpResourcesTool.js'
@@ -93,7 +120,7 @@ const VerifyPlanExecutionTool =
     ? require('./tools/VerifyPlanExecutionTool/VerifyPlanExecutionTool.js')
         .VerifyPlanExecutionTool
     : null
-/* eslint-enable custom-rules/no-process-env-top-level */
+/* eslint-enable custom-rules/no-process-env-top-level, @typescript-eslint/no-require-imports */
 import { SYNTHETIC_OUTPUT_TOOL_NAME } from './tools/SyntheticOutputTool/SyntheticOutputTool.js'
 export {
   ALL_AGENT_DISALLOWED_TOOLS,
@@ -132,7 +159,7 @@ const WorkflowTool = feature('WORKFLOW_SCRIPTS')
       return require('./tools/WorkflowTool/WorkflowTool.js').WorkflowTool
     })()
   : null
-/* eslint-enable custom-rules/no-process-env-top-level */
+/* eslint-enable custom-rules/no-process-env-top-level, @typescript-eslint/no-require-imports */
 import type { ToolPermissionContext } from './Tool.js'
 import { getDenyRuleForTool } from './utils/permissions/permissions.js'
 import { hasEmbeddedSearchTools } from './utils/embeddedTools.js'
@@ -146,14 +173,14 @@ import {
   isReplModeEnabled,
 } from './tools/REPLTool/constants.js'
 export { REPL_ONLY_TOOLS }
- 
+/* eslint-disable @typescript-eslint/no-require-imports */
 const getPowerShellTool = () => {
   if (!isPowerShellToolEnabled()) return null
   return (
     require('./tools/PowerShellTool/PowerShellTool.js') as typeof import('./tools/PowerShellTool/PowerShellTool.js')
   ).PowerShellTool
 }
- 
+/* eslint-enable @typescript-eslint/no-require-imports */
 
 /**
  * 可与 --tools 标志一起使用的预定义工具预设
@@ -233,7 +260,7 @@ export function getAllBaseTools(): Tools {
     ...(SleepTool ? [SleepTool] : []),
     ...cronTools,
     ...(RemoteTriggerTool ? [RemoteTriggerTool] : []),
-    ...(MonitorTool ? [MonitorTool] : []),
+    MonitorTool,
     BriefTool,
     ...(SendUserFileTool ? [SendUserFileTool] : []),
     ...(PushNotificationTool ? [PushNotificationTool] : []),
@@ -246,6 +273,36 @@ export function getAllBaseTools(): Tools {
     // 当工具搜索可能启用时，包含 ToolSearchTool（乐观检查）
     // 延迟工具的实际决定在请求时于 claude.ts 中发生
     ...(isToolSearchEnabledOptimistic() ? [ToolSearchTool] : []),
+    UltrareviewTool,
+    LessPermissionPromptsTool,
+    EffortTool,
+    ThemeTool,
+    AdvisorTool,
+    VimVisualModeTool,
+    TerminalPanelTool,
+    ContextCollapseTool,
+    WorkflowTool,
+    SnipTool,
+    TaskCreateTool,
+    PlanModeTool,
+    BranchTool,
+    CompareTool,
+    GraphqlTool,
+    HttpTool,
+    DatabaseTool,
+    ShellTool,
+    FileWatcherTool,
+    ScheduleTool,
+    CronTool,
+    WebSocketTool,
+    EventStreamTool,
+    QueueTool,
+    CacheTool,
+    LoggerTool,
+    MetricsTool,
+    MonitorTool,
+    BackupTool,
+    McpToolSearchTool,
   ]
 }
 
