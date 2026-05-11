@@ -432,7 +432,7 @@ export function ToolSelector(t0) {
   let t11;
   if ($[48] === Symbol.for("react.memo_cache_sentinel")) {
     t11 = {
-      context: "Confirmation"
+      context: "确认"
     };
     $[48] = t11;
   } else {

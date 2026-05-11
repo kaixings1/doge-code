@@ -3,8 +3,8 @@ import type { Command } from '../../commands.js'
 const tui = {
   type: 'local-jsx',
   name: 'tui',
-  description: 'TUI 模式（开发中）',
-  load: () => import('./tui.js'),
+  description: '切换到闪烁免模式 (flicker-free) 的全屏终端界面',
+  load: () => import('./tui.tsx'),
 } satisfies Command
 
 export default tui

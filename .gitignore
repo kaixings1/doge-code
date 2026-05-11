@@ -3,6 +3,7 @@
 .claude/
 .qwen/
 .remember/
+src-zh/
 
 # Build Artifacts
 dist/
@@ -52,3 +53,12 @@ src.rar
 # OS Files
 .DS_Store
 latest/
+# =========================
+# Claude Code
+# =========================
+.claude/*
+!.claude/agents/
+!.claude/hooks/
+!.claude/commands/
+!.claude/settings.json
+.claude/settings.local.json
