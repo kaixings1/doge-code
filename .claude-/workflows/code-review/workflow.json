@@ -1,0 +1,31 @@
+{
+  "name": "code-review",
+  "description": "并行代码审查工作流 - 使用多智能体审查",
+  "steps": [
+    {
+      "name": "analyze",
+      "description": "分析代码变更",
+      "prompt": "分析最近的提交，识别需要审查的关键文件。"
+    },
+    {
+      "name": "review-security",
+      "description": "安全审查",
+      "prompt": "检查代码中的潜在安全漏洞，包括SQL注入、XSS、权限问题等。"
+    },
+    {
+      "name": "review-performance",
+      "description": "性能审查",
+      "prompt": "分析代码性能，识别潜在的性能瓶颈和优化机会。"
+    },
+    {
+      "name": "review-quality",
+      "description": "代码质量审查",
+      "prompt": "检查代码质量，包括可读性、维护性、测试覆盖等。"
+    },
+    {
+      "name": "summary",
+      "description": "生成审查摘要",
+      "prompt": "综合所有审查结果，生成最终的代码审查报告。"
+    }
+  ]
+}

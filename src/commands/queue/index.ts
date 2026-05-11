@@ -3,7 +3,7 @@ import type { Command } from '../../commands.js'
 const queue = {
   type: 'local',
   name: 'queue',
-  description: '命令描述',
+  description: '管理消息队列',
   load: () => import('./queue.js'),
 } satisfies Command
 
