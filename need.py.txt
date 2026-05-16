@@ -1,0 +1,69 @@
+import os
+import re
+import sys
+
+sys.stdout.reconfigure(encoding='utf-8')
+
+files = []
+for root, dirs, fnames in os.walk('.'):
+    # 跳过无关目录
+    dirs[:] = [d for d in dirs if d not in ('node_modules', '.git', '.claude')]
+    for f in fnames:
+        if f.endswith('.ts') or f.endswith('.tsx'):
+            files.append(os.path.join(root, f))
+
+results = []
+for fpath in files:
+    try:
+        with open(fpath, 'r', encoding='utf-8', errors='ignore') as fh:
+            content = fh.read()
+        lines = content.split('\n')
+        en_count = 0
+        cn_count = 0
+        for line in lines:
+            stripped = line.strip()
+            # 英文注释：以 // 开头，紧接空白后跟英文字母
+            if re.match(r'^//\s*[A-Za-z]', stripped):
+                en_count += 1
+            # 中文注释：包含中文字符且以 // 开头
+            if re.search(r'[\u4e00-\u9fff]', stripped) and stripped.startswith('//'):
+                cn_count += 1
+        results.append((en_count, cn_count, fpath))
+    except Exception:
+        pass
+
+# 部分翻译的文件：有中文注释的
+partial = [r for r in results if r[1] > 0]
+# 按英文占比降序排列（占比越高说明未翻译的英文注释越多）
+partial.sort(key=lambda x: x[0] / (x[0] + x[1]) if (x[0] + x[1]) > 0 else 1, reverse=True)
+
+print('Partially translated files (sorted by EN ratio, highest first = most work remaining):')
+# 使用单引号避免转义问题，列宽经计算确保对齐
+print(f"{'File':<64} {'EN':>6} {'CN':>6} {'EN%':>6}")
+print('-' * 84)
+for en, cn, f in partial:
+    total = en + cn
+    ratio = en * 100 // total if total > 0 else 0
+    # 路径截断：保留前 61 个字符，过长的用 "..." 前缀显示后 58 个字符
+    if len(f) > 64:
+        display = '...' + f[-61:]
+    else:
+        display = f
+    print(f"{display:<64} {en:>6} {cn:>6} {ratio:>5}%")
+
+print()
+print('Summary:')
+print(f'  Total TS/TSX files: {len(results)}')
+en_files = [r for r in results if r[0] > 0]
+print(f'  Files with EN comments: {len(en_files)}')
+cn_files = [r for r in results if r[1] > 0]
+print(f'  Files with CN comments (any): {len(cn_files)}')
+zero_cn = [r for r in results if r[0] > 0 and r[1] == 0]
+print(f'  Files with EN-only (fully untranslated): {len(zero_cn)}')
+total_en = sum(r[0] for r in results)
+total_cn = sum(r[1] for r in results)
+total = total_en + total_cn
+rate = total_cn * 100 // total if total > 0 else 0
+print(f'  Total EN comment lines: {total_en}')
+print(f'  Total CN comment lines: {total_cn}')
+print(f'  Overall translation rate: {rate}%')
