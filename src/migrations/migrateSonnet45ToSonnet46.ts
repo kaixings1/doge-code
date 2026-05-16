@@ -15,16 +15,16 @@ import {
 } from '../utils/settings/settings.js'
 
 /**
- * Migrate Pro/Max/Team Premium first-party users off explicit Sonnet 4.5
- * model strings to the 'sonnet' alias (which now resolves to Sonnet 4.6).
+ * 将 Pro/Max/Team Premium 第一方用户从显式的 Sonnet 4.5 模型字符串
+ * 迁移到 'sonnet' 别名（现在解析为 Sonnet 4.6）。
  *
- * Users may have been pinned to explicit Sonnet 4.5 strings by:
- * - The earlier migrateSonnet1mToSonnet45 migration (sonnet[1m] → explicit 4.5[1m])
- * - Manually selecting it via /model
+ * 用户可能因以下原因被固定到显式的 Sonnet 4.5 字符串：
+ * - 之前的 migrateSonnet1mToSonnet45 迁移（sonnet[1m] → 显式 4.5[1m]）
+ * - 通过 /model 手动选择
  *
- * Reads userSettings specifically (not merged) so we only migrate what /model
- * wrote — project/local pins are left alone.
- * Idempotent: only writes if userSettings.model matches a Sonnet 4.5 string.
+ * 专门从 userSettings 读取（非合并），因此仅迁移 /model 写入的内容——
+ * 项目/本地固定设置保持不变。
+ * 幂等：仅在 userSettings.model 匹配 Sonnet 4.5 字符串时写入。
  */
 export function migrateSonnet45ToSonnet46(): void {
   if (getAPIProvider() !== 'firstParty') {
@@ -50,7 +50,7 @@ export function migrateSonnet45ToSonnet46(): void {
     model: has1m ? 'sonnet[1m]' : 'sonnet',
   })
 
-  // Skip notification for brand-new users — they never experienced the old default
+  // 跳过全新用户的通知——他们从未体验过旧的默认值
   const config = getGlobalConfig()
   if (config.numStartups > 1) {
     saveGlobalConfig(current => ({

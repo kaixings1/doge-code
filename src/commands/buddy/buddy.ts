@@ -15,7 +15,7 @@ import type {
   LocalJSXCommandOnDone,
 } from '../../types/command.js'
 
-// Species → default name fragments for hatch (no API needed)
+// 物种 → 孵化时的默认名称片段（无需 API）
 const SPECIES_NAMES: Record<string, string> = {
   duck: 'Waddles',
   goose: 'Goosberry',
@@ -97,11 +97,11 @@ export async function call(
       return null
     }
 
-    // Auto-unmute on pet + trigger heart animation
+    // 抚摸时自动取消静音 + 触发爱心动画
     saveGlobalConfig(cfg => ({ ...cfg, companionMuted: false }))
     setState?.(prev => ({ ...prev, companionPetAt: Date.now() }))
 
-    // Trigger a post-pet reaction
+    // 触发抚摸后的反应
     triggerCompanionReaction(context.messages ?? [], reaction =>
       setState?.(prev =>
         prev.companionReaction === reaction
@@ -117,13 +117,13 @@ export async function call(
   // ── /buddy (no args) — show existing or hatch ──
   const companion = getCompanion()
 
-  // Auto-unmute when viewing
+  // 查看时自动取消静音
   if (companion && getGlobalConfig().companionMuted) {
     saveGlobalConfig(cfg => ({ ...cfg, companionMuted: false }))
   }
 
   if (companion) {
-    // Return JSX card — matches official vc8 component
+    // 返回 JSX 卡片 — 匹配官方 vc8 组件
     const lastReaction = context.getAppState?.()?.companionReaction
     return React.createElement(CompanionCard, {
       companion,
@@ -133,13 +133,13 @@ export async function call(
   }
 
   // ── No companion → hatch ──
-  // Force legendary with crown
+  // 强制传说品质并佩戴皇冠
   const seed = generateSeed()
   const r = rollWithSeed(seed)
-  // Override to legendary
+  // 覆盖为传说品质
   r.bones.rarity = 'legendary'
   r.bones.hat = 'crown'
-  // Max all stats
+  // 所有属性最大化
   for (const key in r.bones.stats) {
     r.bones.stats[key] = 100
   }

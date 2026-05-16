@@ -23,13 +23,12 @@ type SessionEvent = {
 }
 
 /**
- * Create a session on a bridge environment via POST /v1/sessions.
+ * 通过 POST /v1/sessions 在桥接器环境上创建会话。
  *
- * Used by both `claude remote-control` (empty session so the user has somewhere to
- * type immediately) and `/remote-control` (session pre-populated with conversation
- * history).
+ * 被 `claude remote-control`（空会话，让用户可以立即输入）
+ * 和 `/remote-control`（预填充了对话历史的会话）两者使用。
  *
- * Returns the session ID on success, or null if creation fails (non-fatal).
+ * 成功时返回会话 ID，如果创建失败则返回 null（非致命）。
  */
 export async function createBridgeSession({
   environmentId,
@@ -180,12 +179,11 @@ export async function createBridgeSession({
 }
 
 /**
- * Fetch a bridge session via GET /v1/sessions/{id}.
+ * 通过 GET /v1/sessions/{id} 获取桥接器会话。
  *
- * Returns the session's environment_id (for `--session-id` resume) and title.
- * Uses the same org-scoped headers as create/archive — the environments-level
- * client in bridgeApi.ts uses a different beta header and no org UUID, which
- * makes the Sessions API return 404.
+ * 返回会话的 environment_id（用于 `--session-id` 恢复）和 title。
+ * 使用与 create/archive 相同的组织级别标头 — bridgeApi.ts 中的环境级别
+ * 客户端使用不同的 beta 标头且没有组织 UUID，这会导致 Sessions API 返回 404。
  */
 export async function getBridgeSession(
   sessionId: string,
@@ -244,21 +242,20 @@ export async function getBridgeSession(
 }
 
 /**
- * Archive a bridge session via POST /v1/sessions/{id}/archive.
+ * 通过 POST /v1/sessions/{id}/archive 归档桥接器会话。
  *
- * The CCR server never auto-archives sessions — archival is always an
- * explicit client action. Both `claude remote-control` (standalone bridge) and the
- * always-on `/remote-control` REPL bridge call this during shutdown to archive any
- * sessions that are still alive.
+ * CCR 服务器从不自动归档会话 — 归档始终是
+ * 显式的客户端操作。`claude remote-control`（独立桥接器）和
+ * 常驻的 `/remote-control` REPL 桥接器都在关闭期间调用此函数以归档
+ * 仍然活跃的会话。
  *
- * The archive endpoint accepts sessions in any status (running, idle,
- * requires_action, pending) and returns 409 if already archived, making
- * it safe to call even if the server-side runner already archived the
- * session.
+ * 归档端点接受任何状态的会话（running、idle、
+ * requires_action、pending），如果已归档则返回 409，因此
+ * 即使服务端运行程序已归档了该会话，调用也是安全的。
  *
- * Callers must handle errors — this function has no try/catch; 5xx,
- * timeouts, and network errors throw. Archival is best-effort during
- * cleanup; call sites wrap with .catch().
+ * 调用者必须处理错误 — 此函数没有 try/catch；5xx、
+ * 超时和网络错误会抛出。归档在清理期间是尽力而为的；
+ * 调用点使用 .catch() 包装。
  */
 export async function archiveBridgeSession(
   sessionId: string,
@@ -317,12 +314,12 @@ export async function archiveBridgeSession(
 }
 
 /**
- * Update the title of a bridge session via PATCH /v1/sessions/{id}.
+ * 通过 PATCH /v1/sessions/{id} 更新桥接器会话的标题。
  *
- * Called when the user renames a session via /rename while a bridge
- * connection is active, so the title stays in sync on claude.ai/code.
+ * 当用户在桥接器连接活动时通过 /rename 重命名会话时调用，
+ * 以便标题在 claude.ai/code 上保持同步。
  *
- * Errors are swallowed — title sync is best-effort.
+ * 错误被吞掉 — 标题同步是尽力而为的。
  */
 export async function updateBridgeSessionTitle(
   sessionId: string,

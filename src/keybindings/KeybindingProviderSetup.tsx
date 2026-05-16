@@ -1,17 +1,16 @@
 import { c as _c } from "react/compiler-runtime";
 /**
- * Setup utilities for integrating KeybindingProvider into the app.
+ * 将 KeybindingProvider 集成到应用中的设置工具。
  *
- * This file provides the bindings and a composed provider that can be
- * added to the app's component tree. It loads both default bindings and
- * user-defined bindings from ~/.claude/keybindings.json, with hot-reload
- * support when the file changes.
+ * 此文件提供绑定和一个组合式 provider，可添加到应用的组件树中。
+ * 它加载默认绑定和用户定义的绑定（来自 ~/.claude/keybindings.json），
+ * 并支持文件变更时的热重载。
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNotifications } from '../context/notifications.js';
 import type { InputEvent } from '../ink/events/input-event.js';
-// ChordInterceptor intentionally uses useInput to intercept all keystrokes before
-// other handlers process them - this is required for chord sequence support
+// ChordInterceptor 有意使用 useInput 在其他处理函数之前拦截所有按键 -
+// 这是和弦序列支持所必需的
 // eslint-disable-next-line custom-rules/prefer-use-keybindings
 import { type Key, useInput } from '../ink.js';
 import { count } from '../utils/array.js';
@@ -24,8 +23,8 @@ import type { KeybindingContextName, ParsedBinding, ParsedKeystroke } from './ty
 import type { KeybindingWarning } from './validate.js';
 
 /**
- * Timeout for chord sequences in milliseconds.
- * If the user doesn't complete the chord within this time, it's cancelled.
+ * 和弦序列的超时时间（毫秒）。
+ * 如果用户在此时间内未完成和弦，则取消。
  */
 const CHORD_TIMEOUT_MS = 1000;
 type Props = {
@@ -33,9 +32,9 @@ type Props = {
 };
 
 /**
- * Keybinding provider with default + user bindings and hot-reload support.
+ * 按键绑定 provider，支持默认 + 用户绑定和热重载。
  *
- * Usage: Wrap your app with this provider to enable keybinding support.
+ * 用法：用此 provider 包裹应用以启用按键绑定支持。
  *
  * ```tsx
  * <AppStateProvider>
@@ -45,16 +44,16 @@ type Props = {
  * </AppStateProvider>
  * ```
  *
- * Features:
- * - Loads default bindings from code
- * - Merges with user bindings from ~/.claude/keybindings.json
- * - Watches for file changes and reloads automatically (hot-reload)
- * - User bindings override defaults (later entries win)
- * - Chord support with automatic timeout
+ * 功能：
+ * - 从代码加载默认绑定
+ * - 与 ~/.claude/keybindings.json 中的用户绑定合并
+ * - 监视文件变更并自动重新加载（热重载）
+ * - 用户绑定覆盖默认绑定（后定义的条目胜出）
+ * - 支持和弦及自动超时
  */
 /**
- * Display keybinding warnings to the user via notifications.
- * Shows a brief message pointing to /doctor for details.
+ * 通过通知向用户显示按键绑定警告。
+ * 显示一条简短消息，指向 /doctor 以查看详情。
  */
 function useKeybindingWarnings(warnings, isReload) {
   const $ = _c(9);
@@ -119,7 +118,7 @@ function _temp(w) {
 export function KeybindingSetup({
   children
 }: Props): React.ReactNode {
-  // Load bindings synchronously for initial render
+  // 同步加载绑定以便初始渲染
   const [{
     bindings,
     warnings
@@ -129,29 +128,29 @@ export function KeybindingSetup({
     return result;
   });
 
-  // Track if this is a reload (not initial load)
+  // 跟踪是否为重新加载（非初始加载）
   const [isReload, setIsReload] = useState(false);
 
-  // Display warnings via notifications
+  // 通过通知显示警告
   useKeybindingWarnings(warnings, isReload);
 
-  // Chord state management - use ref for immediate access, state for re-renders
-  // The ref is used by resolve() to get the current value without waiting for re-render
-  // The state is used to trigger re-renders when needed (e.g., for UI updates)
+  // 和弦状态管理 - ref 用于即时访问，state 用于重新渲染
+  // ref 被 resolve() 用于获取当前值而无需等待重新渲染
+  // state 用于在需要时触发重新渲染（例如 UI 更新）
   const pendingChordRef = useRef<ParsedKeystroke[] | null>(null);
   const [pendingChord, setPendingChordState] = useState<ParsedKeystroke[] | null>(null);
   const chordTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Handler registry for action callbacks (used by ChordInterceptor to invoke handlers)
+  // 动作回调的处理函数注册表（ChordInterceptor 用它调用处理函数）
   const handlerRegistryRef = useRef(new Map<string, Set<{
     action: string;
     context: KeybindingContextName;
     handler: () => void;
   }>>());
 
-  // Active context tracking for keybinding priority resolution
-  // Using a ref instead of state for synchronous updates - input handlers need
-  // to see the current value immediately, not after a React render cycle.
+  // 活动上下文跟踪，用于按键绑定优先级解析
+  // 使用 ref 而非 state 以进行同步更新 - 输入处理函数需要
+  // 立即看到当前值，而非在 React 渲染周期之后。
   const activeContextsRef = useRef<Set<KeybindingContextName>>(new Set());
   const registerActiveContext = useCallback((context: KeybindingContextName) => {
     activeContextsRef.current.add(context);
@@ -160,7 +159,7 @@ export function KeybindingSetup({
     activeContextsRef.current.delete(context_0);
   }, []);
 
-  // Clear chord timeout when component unmounts or chord changes
+  // 在组件卸载或和弦变化时清除和弦超时
   const clearChordTimeout = useCallback(() => {
     if (chordTimeoutRef.current) {
       clearTimeout(chordTimeoutRef.current);
@@ -168,11 +167,11 @@ export function KeybindingSetup({
     }
   }, []);
 
-  // Wrapper for setPendingChord that manages timeout and syncs ref+state
+  // setPendingChord 的包装函数，管理超时并同步 ref+state
   const setPendingChord = useCallback((pending: ParsedKeystroke[] | null) => {
     clearChordTimeout();
     if (pending !== null) {
-      // Set timeout to cancel chord if not completed
+      // 设置超时，在未完成时取消和弦
       chordTimeoutRef.current = setTimeout((pendingChordRef_0, setPendingChordState_0) => {
         logForDebugging('[keybindings] Chord timeout - cancelling');
         pendingChordRef_0.current = null;
@@ -180,19 +179,19 @@ export function KeybindingSetup({
       }, CHORD_TIMEOUT_MS, pendingChordRef, setPendingChordState);
     }
 
-    // Update ref immediately for synchronous access in resolve()
+    // 立即更新 ref 以便在 resolve() 中同步访问
     pendingChordRef.current = pending;
-    // Update state to trigger re-renders for UI updates
+    // 更新 state 以触发 UI 的重新渲染
     setPendingChordState(pending);
   }, [clearChordTimeout]);
   useEffect(() => {
-    // Initialize file watcher (idempotent - only runs once)
+    // 初始化文件监视器（幂等 - 仅运行一次）
     void initializeKeybindingWatcher();
 
-    // Subscribe to changes
+    // 订阅变更
     const unsubscribe = subscribeToKeybindingChanges(result_0 => {
-      // Any callback invocation is a reload since initial load happens
-      // synchronously in useState, not via this subscription
+      // 任何回调调用都是重新加载，因为初始加载是
+      // 在 useState 中同步完成的，而非通过此订阅
       setIsReload(true);
       setLoadResult(result_0);
       logForDebugging(`[keybindings] Reloaded: ${result_0.bindings.length} bindings, ${result_0.warnings.length} warnings`);
@@ -209,14 +208,14 @@ export function KeybindingSetup({
 }
 
 /**
- * Global chord interceptor that registers useInput FIRST (before children).
+ * 全局和弦拦截器，优先（在子组件之前）注册 useInput。
  *
- * This component intercepts keystrokes that are part of chord sequences and
- * stops propagation before other handlers (like PromptInput) can see them.
+ * 此组件拦截属于和弦序列的按键，并在其他处理函数
+ * （如 PromptInput）看到它们之前停止传播。
  *
- * Without this, the second key of a chord (e.g., 'r' in "ctrl+c r") would be
- * captured by PromptInput and added to the input field before the keybinding
- * system could recognize it as completing a chord.
+ * 没有此拦截器，和弦的第二个键（例如 "ctrl+c r" 中的 'r'）将被
+ * PromptInput 捕获并添加到输入字段中，而按键绑定系统无法识别
+ * 它正在完成一个和弦。
  */
 type HandlerRegistration = {
   action: string;

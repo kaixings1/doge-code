@@ -68,19 +68,19 @@ export function clearSessionCaches(
   // Clear last emitted date so it's re-detected on next turn
   setLastEmittedDate(null)
 
-  // Run post-compaction cleanup (clears system prompt sections, microcompact tracking,
-  // classifier approvals, speculative checks, and — for main-thread compacts — memory
-  // files cache with load_reason 'compact').
+  // 运行压缩后清理（清除系统提示区域、微压缩跟踪、
+  // 分类器审批、推测检查，以及 — 针对主线程压缩 — 带 load_reason 'compact'
+  // 的内存文件缓存）。
   runPostCompactCleanup()
-  // Reset sent skill names so the skill listing is re-sent after /clear.
-  // runPostCompactCleanup intentionally does NOT reset this (post-compact
-  // re-injection costs ~4K tokens), but /clear wipes messages entirely so
-  // the model needs the full listing again.
+  // 重置已发送的技能名称，以便 /clear 后重新发送技能列表。
+  // runPostCompactCleanup 故意不重置此项（压缩后重新注入
+  // 花费约 4K tokens），但 /clear 会完全清除消息，所以
+  // 模型需要再次获取完整列表。
   resetSentSkillNames()
-  // Override the memory cache reset with 'session_start': clearSessionCaches is called
-  // from /clear and --resume/--continue, which are NOT compaction events. Without this,
-  // the InstructionsLoaded hook would fire with load_reason 'compact' instead of
-  // 'session_start' on the next getMemoryFiles() call.
+  // 用 'session_start' 覆盖内存缓存重置：clearSessionCaches 由
+  // /clear 和 --resume/--continue 调用，它们不是压缩事件。如果不这样做，
+  // 下一次调用 getMemoryFiles() 时会触发带有 load_reason 'compact'
+  // 而非 'session_start' 的 InstructionsLoaded 钩子。
   resetGetMemoryFilesCache('session_start')
 
   // Clear stored image paths cache

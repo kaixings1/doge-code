@@ -5,23 +5,23 @@ import { useOptionalKeybindingContext } from './KeybindingContext.js'
 import type { KeybindingContextName } from './types.js'
 
 type Options = {
-  /** Which context this binding belongs to (default: 'Global') */
+  /** 此绑定属于哪个上下文（默认：'Global'） */
   context?: KeybindingContextName
-  /** Only handle when active (like useInput's isActive) */
+  /** 仅当活动时处理（类似 useInput 的 isActive） */
   isActive?: boolean
 }
 
 /**
- * Ink-native hook for handling a keybinding.
+ * Ink 原生的按键绑定处理 hook。
  *
- * The handler stays in the component (React way).
- * The binding (keystroke → action) comes from config.
+ * 处理函数保留在组件中（React 方式）。
+ * 绑定（按键 → 动作）来自配置。
  *
- * Supports chord sequences (e.g., "ctrl+k ctrl+s"). When a chord is started,
- * the hook will manage the pending state automatically.
+ * 支持和弦序列（例如 "ctrl+k ctrl+s"）。当和弦开始时，
+ * hook 会自动管理待定状态。
  *
- * Uses stopImmediatePropagation() to prevent other handlers from firing
- * once this binding is handled.
+ * 使用 stopImmediatePropagation() 防止其他处理函数在此绑定
+ * 被处理后触发。
  *
  * @example
  * ```tsx
@@ -38,7 +38,7 @@ export function useKeybinding(
   const { context = 'Global', isActive = true } = options
   const keybindingContext = useOptionalKeybindingContext()
 
-  // Register handler with the context for ChordInterceptor to invoke
+  // 向上下文注册处理函数，供 ChordInterceptor 调用
   useEffect(() => {
     if (!keybindingContext || !isActive) return
     return keybindingContext.registerHandler({ action, context, handler })
@@ -46,24 +46,24 @@ export function useKeybinding(
 
   const handleInput = useCallback(
     (input: string, key: Key, event: InputEvent) => {
-      // If no keybinding context available, skip resolution
+      // 如果没有按键绑定上下文可用，跳过解析
       if (!keybindingContext) return
 
-      // Build context list: registered active contexts + this context + Global
-      // More specific contexts (registered ones) take precedence over Global
+      // 构建上下文列表：已注册的活动上下文 + 当前上下文 + Global
+      // 更具体的上下文（已注册的）优先于 Global
       const contextsToCheck: KeybindingContextName[] = [
         ...keybindingContext.activeContexts,
         context,
         'Global',
       ]
-      // Deduplicate while preserving order (first occurrence wins for priority)
+      // 去重同时保持顺序（优先使用首次出现项）
       const uniqueContexts = [...new Set(contextsToCheck)]
 
       const result = keybindingContext.resolve(input, key, uniqueContexts)
 
       switch (result.type) {
         case 'match':
-          // Chord completed (if any) - clear pending state
+          // 和弦已完成 - 清除待定状态
           keybindingContext.setPendingChord(null)
           if (result.action === action) {
             if (handler() !== false) {
@@ -72,21 +72,21 @@ export function useKeybinding(
           }
           break
         case 'chord_started':
-          // User started a chord sequence - update pending state
+          // 用户开始了一个和弦序列 - 更新待定状态
           keybindingContext.setPendingChord(result.pending)
           event.stopImmediatePropagation()
           break
         case 'chord_cancelled':
-          // Chord was cancelled (escape or invalid key)
+          // 和弦已被取消（escape 或无效按键）
           keybindingContext.setPendingChord(null)
           break
         case 'unbound':
-          // Explicitly unbound - clear any pending chord
+          // 显式解绑 - 清除所有待定和弦
           keybindingContext.setPendingChord(null)
           event.stopImmediatePropagation()
           break
         case 'none':
-          // No match - let other handlers try
+          // 无匹配 - 让其他处理函数尝试
           break
       }
     },
@@ -97,10 +97,9 @@ export function useKeybinding(
 }
 
 /**
- * Handle multiple keybindings in one hook (reduces useInput calls).
+ * 在一个 hook 中处理多个按键绑定（减少 useInput 调用）。
  *
- * Supports chord sequences. When a chord is started, the hook will
- * manage the pending state automatically.
+ * 支持和弦序列。当和弦开始时，hook 会自动管理待定状态。
  *
  * @example
  * ```tsx
@@ -111,20 +110,20 @@ export function useKeybinding(
  * ```
  */
 export function useKeybindings(
-  // Handler returning `false` means "not consumed" — the event propagates
-  // to later useInput/useKeybindings handlers. Useful for fall-through:
-  // e.g. ScrollKeybindingHandler's scroll:line* returns false when the
-  // ScrollBox content fits (scroll is a no-op), letting a child component's
-  // handler take the wheel event for list navigation instead. Promise<void>
-  // is allowed for fire-and-forget async handlers (the `!== false` check
-  // only skips propagation for a sync `false`, not a pending Promise).
+  // handler 返回 `false` 表示"未消费"——事件会继续传播
+  // 给后面的 useInput/useKeybindings 处理函数。适用于穿透：
+  // 例如 ScrollKeybindingHandler 的 scroll:line* 在 ScrollBox
+  // 内容适合时返回 false（滚动是无操作的），让子组件的处理函数
+  // 取而代之接管滚轮事件进行列表导航。Promise<void>
+  // 允许用于即发即弃的异步处理函数（`!== false` 检查
+  // 只对同步的 `false` 跳过传播，而非待定的 Promise）。
   handlers: Record<string, () => void | false | Promise<void>>,
   options: Options = {},
 ): void {
   const { context = 'Global', isActive = true } = options
   const keybindingContext = useOptionalKeybindingContext()
 
-  // Register all handlers with the context for ChordInterceptor to invoke
+  // 向上下文注册所有处理函数，供 ChordInterceptor 调用
   useEffect(() => {
     if (!keybindingContext || !isActive) return
 
@@ -144,24 +143,24 @@ export function useKeybindings(
 
   const handleInput = useCallback(
     (input: string, key: Key, event: InputEvent) => {
-      // If no keybinding context available, skip resolution
+      // 如果没有按键绑定上下文可用，跳过解析
       if (!keybindingContext) return
 
-      // Build context list: registered active contexts + this context + Global
-      // More specific contexts (registered ones) take precedence over Global
+      // 构建上下文列表：已注册的活动上下文 + 当前上下文 + Global
+      // 更具体的上下文（已注册的）优先于 Global
       const contextsToCheck: KeybindingContextName[] = [
         ...keybindingContext.activeContexts,
         context,
         'Global',
       ]
-      // Deduplicate while preserving order (first occurrence wins for priority)
+      // 去重同时保持顺序（优先使用首次出现项）
       const uniqueContexts = [...new Set(contextsToCheck)]
 
       const result = keybindingContext.resolve(input, key, uniqueContexts)
 
       switch (result.type) {
         case 'match':
-          // Chord completed (if any) - clear pending state
+          // 和弦已完成 - 清除待定状态
           keybindingContext.setPendingChord(null)
           if (result.action in handlers) {
             const handler = handlers[result.action]
@@ -171,21 +170,21 @@ export function useKeybindings(
           }
           break
         case 'chord_started':
-          // User started a chord sequence - update pending state
+          // 用户开始了一个和弦序列 - 更新待定状态
           keybindingContext.setPendingChord(result.pending)
           event.stopImmediatePropagation()
           break
         case 'chord_cancelled':
-          // Chord was cancelled (escape or invalid key)
+          // 和弦已被取消（escape 或无效按键）
           keybindingContext.setPendingChord(null)
           break
         case 'unbound':
-          // Explicitly unbound - clear any pending chord
+          // 显式解绑 - 清除所有待定和弦
           keybindingContext.setPendingChord(null)
           event.stopImmediatePropagation()
           break
         case 'none':
-          // No match - let other handlers try
+          // 无匹配 - 让其他处理函数尝试
           break
       }
     },

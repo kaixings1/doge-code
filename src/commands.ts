@@ -231,7 +231,7 @@ const usageReport: Command = {
   source: 'builtin',
   async getPromptForCommand(args, context) {
     const real = (await import('./commands/insights.js')).default
-    if (real.type !== 'prompt') throw new Error('unreachable')
+    if (real.type !== 'prompt') throw new Error('不可达代码')
     return real.getPromptForCommand(args, context)
   },
 }

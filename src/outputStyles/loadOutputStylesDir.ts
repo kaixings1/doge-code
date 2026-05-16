@@ -11,17 +11,17 @@ import {
 import { clearPluginOutputStyleCache } from '../utils/plugins/loadPluginOutputStyles.js'
 
 /**
- * Loads markdown files from .claude/output-styles directories throughout the project
- * and from ~/.claude/output-styles directory and converts them to output styles.
+ * 从项目中的 .claude/output-styles 目录以及 ~/.claude/output-styles 目录
+ * 加载 markdown 文件并将其转换为输出样式。
  *
- * Each filename becomes a style name, and the file content becomes the style prompt.
- * The frontmatter provides name and description.
+ * 每个文件名成为一个样式名称，文件内容成为样式提示词。
+ * frontmatter 提供名称和描述。
  *
- * Structure:
- * - Project .claude/output-styles/*.md -> project styles
- * - User ~/.claude/output-styles/*.md -> user styles (overridden by project styles)
+ * 结构：
+ * - 项目 .claude/output-styles/*.md -> 项目样式
+ * - 用户 ~/.claude/output-styles/*.md -> 用户样式（可被项目样式覆盖）
  *
- * @param cwd Current working directory for project directory traversal
+ * @param cwd 用于项目目录遍历的当前工作目录
  */
 export const getOutputStyleDirStyles = memoize(
   async (cwd: string): Promise<OutputStyleConfig[]> => {
@@ -37,7 +37,7 @@ export const getOutputStyleDirStyles = memoize(
             const fileName = basename(filePath)
             const styleName = fileName.replace(/\.md$/, '')
 
-            // Get style configuration from frontmatter
+            // 从 frontmatter 获取样式配置
             const name = (frontmatter['name'] || styleName) as string
             const description =
               coerceDescriptionToString(
@@ -49,7 +49,7 @@ export const getOutputStyleDirStyles = memoize(
                 `自定义 ${styleName} 输出样式`,
               )
 
-            // Parse keep-coding-instructions flag (supports both boolean and string values)
+            // 解析 keep-coding-instructions 标志（支持布尔值和字符串值）
             const keepCodingInstructionsRaw =
               frontmatter['keep-coding-instructions']
             const keepCodingInstructions =

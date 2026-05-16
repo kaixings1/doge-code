@@ -19,15 +19,13 @@ import { fromSDKCompactMetadata } from '../utils/messages/mappers.js'
 import { createUserMessage } from '../utils/messages.js'
 
 /**
- * Converts SDKMessage from CCR to REPL Message types.
+ * 将 CCR 的 SDKMessage 转换为 REPL Message 类型。
  *
- * The CCR backend sends SDK-format messages via WebSocket. The REPL expects
- * internal Message types for rendering. This adapter bridges the two.
+ * CCR 后端通过 WebSocket 发送 SDK 格式的消息。REPL 期望内部 Message 类型进行渲染。
+ * 此适配器桥接两者。
  */
 
-/**
- * Convert an SDKAssistantMessage to an AssistantMessage
- */
+/** 将 SDKAssistantMessage 转换为 AssistantMessage */
 function convertAssistantMessage(msg: SDKAssistantMessage): AssistantMessage {
   return {
     type: 'assistant',
@@ -39,9 +37,7 @@ function convertAssistantMessage(msg: SDKAssistantMessage): AssistantMessage {
   }
 }
 
-/**
- * Convert an SDKPartialAssistantMessage (streaming) to a StreamEvent
- */
+/** 将 SDKPartialAssistantMessage（流式）转换为 StreamEvent */
 function convertStreamEvent(msg: SDKPartialAssistantMessage): StreamEvent {
   return {
     type: 'stream_event',
@@ -49,9 +45,7 @@ function convertStreamEvent(msg: SDKPartialAssistantMessage): StreamEvent {
   }
 }
 
-/**
- * Convert an SDKResultMessage to a SystemMessage
- */
+/** 将 SDKResultMessage 转换为 SystemMessage */
 function convertResultMessage(msg: SDKResultMessage): SystemMessage {
   const isError = msg.subtype !== 'success'
   const content = isError
@@ -68,9 +62,7 @@ function convertResultMessage(msg: SDKResultMessage): SystemMessage {
   }
 }
 
-/**
- * Convert an SDKSystemMessage (init) to a SystemMessage
- */
+/** 将 SDKSystemMessage（初始化）转换为 SystemMessage */
 function convertInitMessage(msg: SDKSystemMessage): SystemMessage {
   return {
     type: 'system',
@@ -82,9 +74,7 @@ function convertInitMessage(msg: SDKSystemMessage): SystemMessage {
   }
 }
 
-/**
- * Convert an SDKStatusMessage to a SystemMessage
- */
+/** 将 SDKStatusMessage 转换为 SystemMessage */
 function convertStatusMessage(msg: SDKStatusMessage): SystemMessage | null {
   if (!msg.status) {
     return null
@@ -104,9 +94,9 @@ function convertStatusMessage(msg: SDKStatusMessage): SystemMessage | null {
 }
 
 /**
- * Convert an SDKToolProgressMessage to a SystemMessage.
- * We use a system message instead of ProgressMessage since the Progress type
- * is a complex union that requires tool-specific data we don't have from CCR.
+ * 将 SDKToolProgressMessage 转换为 SystemMessage。
+ * 使用系统消息而非 ProgressMessage，因为 Progress 类型是复杂的联合类型，
+ * 需要 CCR 中我们没有的工具特定数据。
  */
 function convertToolProgressMessage(
   msg: SDKToolProgressMessage,
@@ -122,9 +112,7 @@ function convertToolProgressMessage(
   }
 }
 
-/**
- * Convert an SDKCompactBoundaryMessage to a SystemMessage
- */
+/** 将 SDKCompactBoundaryMessage 转换为 SystemMessage */
 function convertCompactBoundaryMessage(
   msg: SDKCompactBoundaryMessage,
 ): SystemMessage {
@@ -139,32 +127,28 @@ function convertCompactBoundaryMessage(
   }
 }
 
-/**
- * Result of converting an SDKMessage
- */
+/** SDKMessage 转换结果 */
 export type ConvertedMessage =
   | { type: 'message'; message: Message }
   | { type: 'stream_event'; event: StreamEvent }
   | { type: 'ignored' }
 
 type ConvertOptions = {
-  /** Convert user messages containing tool_result content blocks into UserMessages.
-   * Used by direct connect mode where tool results come from the remote server
-   * and need to be rendered locally. CCR mode ignores user messages since they
-   * are handled differently. */
+  /**
+   * 将包含 tool_result 内容块的用户消息转换为 UserMessages。
+   * 直接连接模式中使用，因为工具结果来自远程服务器，需要在本地渲染。
+   * CCR 模式会忽略用户消息，因为它们被不同地处理。
+   */
   convertToolResults?: boolean
   /**
-   * Convert user text messages into UserMessages for display. Used when
-   * converting historical events where user-typed messages need to be shown.
-   * In live WS mode these are already added locally by the REPL so they're
-   * ignored by default.
+   * 将用户文本消息转换为 UserMessages 以供显示。
+   * 在转换历史事件时使用，因为用户输入的消息需要被显示。
+   * 在实时 WS 模式中，这些消息已由 REPL 在本地添加，因此默认忽略。
    */
   convertUserTextMessages?: boolean
 }
 
-/**
- * Convert an SDKMessage to REPL message format
- */
+/** 将 SDKMessage 转换为 REPL 消息格式 */
 export function convertSDKMessage(
   msg: SDKMessage,
   opts?: ConvertOptions,
@@ -175,11 +159,10 @@ export function convertSDKMessage(
 
     case 'user': {
       const content = msg.message?.content
-      // Tool result messages from the remote server need to be converted so
-      // they render and collapse like local tool results. Detect via content
-      // shape (tool_result blocks) — parent_tool_use_id is NOT reliable: the
-      // agent-side normalizeMessage() hardcodes it to null for top-level
-      // tool results, so it can't distinguish tool results from prompt echoes.
+      // 来自远程服务器的工具结果消息需要转换，以便它们像本地工具结果一样渲染和折叠。
+      // 通过内容形状（tool_result 块）来检测 —— parent_tool_use_id 不可靠：
+      // agent 端的 normalizeMessage() 将其硬编码为 null，
+      // 因此无法区分工具结果和提示回显。
       const isToolResult =
         Array.isArray(content) && content.some(b => b.type === 'tool_result')
       if (opts?.convertToolResults && isToolResult) {
@@ -193,9 +176,8 @@ export function convertSDKMessage(
           }),
         }
       }
-      // When converting historical events, user-typed messages need to be
-      // rendered (they weren't added locally by the REPL). Skip tool_results
-      // here — already handled above.
+      // 转换历史事件时，用户输入的消息需要被渲染（它们不是由 REPL 在本地添加的）。
+      // 此处跳过 tool_result —— 已在上文处理。
       if (opts?.convertUserTextMessages && !isToolResult) {
         if (typeof content === 'string' || Array.isArray(content)) {
           return {
@@ -209,8 +191,8 @@ export function convertSDKMessage(
           }
         }
       }
-      // User-typed messages (string content) are already added locally by REPL.
-      // In CCR mode, all user messages are ignored (tool results handled differently).
+      // 用户输入的消息（字符串内容）已由 REPL 在本地添加。
+      // 在 CCR 模式下，所有用户消息都被忽略（工具结果被不同地处理）。
       return { type: 'ignored' }
     }
 
@@ -218,8 +200,8 @@ export function convertSDKMessage(
       return { type: 'stream_event', event: convertStreamEvent(msg) }
 
     case 'result':
-      // Only show result messages for errors. Success results are noise
-      // in multi-turn sessions (isLoading=false is sufficient signal).
+      // 仅显示错误的结果消息。成功的结果在多轮会话中是噪音
+      // （isLoading=false 已提供足够的信号）。
       if (msg.subtype !== 'success') {
         return { type: 'message', message: convertResultMessage(msg) }
       }
@@ -235,13 +217,14 @@ export function convertSDKMessage(
           ? { type: 'message', message: statusMsg }
           : { type: 'ignored' }
       }
+      // 紧凑边界消息
       if (msg.subtype === 'compact_boundary') {
         return {
           type: 'message',
           message: convertCompactBoundaryMessage(msg),
         }
       }
-      // hook_response and other subtypes
+      // hook_response 和其他子类型
       logForDebugging(
         `[sdkMessageAdapter] Ignoring system message subtype: ${msg.subtype}`,
       )
@@ -251,24 +234,23 @@ export function convertSDKMessage(
       return { type: 'message', message: convertToolProgressMessage(msg) }
 
     case 'auth_status':
-      // Auth status is handled separately, not converted to a display message
+      // 认证状态单独处理，不转换为显示消息
       logForDebugging('[sdkMessageAdapter] Ignoring auth_status message')
       return { type: 'ignored' }
 
     case 'tool_use_summary':
-      // Tool use summaries are SDK-only events, not displayed in REPL
+      // Tool use 摘要是 SDK 专用事件，不在 REPL 中显示
       logForDebugging('[sdkMessageAdapter] Ignoring tool_use_summary message')
       return { type: 'ignored' }
 
     case 'rate_limit_event':
-      // Rate limit events are SDK-only events, not displayed in REPL
-      logForDebugging('[sdkMessageAdapter] Ignoring rate_limit_event message')
+      // 速率限制事件是 SDK 专用事件，不在 REPL 中显示
+      logForDebugging('[sdkMessageAdapter] 忽略 rate_limit_event 消息')
       return { type: 'ignored' }
 
     default: {
-      // Gracefully ignore unknown message types. The backend may send new
-      // types before the client is updated; logging helps with debugging
-      // without crashing or losing the session.
+      // 优雅地忽略未知消息类型。后端可能在客户端更新之前发送新类型；
+      // 记录日志有助于调试，不会崩溃或丢失会话。
       logForDebugging(
         `[sdkMessageAdapter] Unknown message type: ${(msg as { type: string }).type}`,
       )
@@ -277,23 +259,17 @@ export function convertSDKMessage(
   }
 }
 
-/**
- * Check if an SDKMessage indicates the session has ended
- */
+/** 检查 SDKMessage 是否表示会话已结束 */
 export function isSessionEndMessage(msg: SDKMessage): boolean {
   return msg.type === 'result'
 }
 
-/**
- * Check if an SDKResultMessage indicates success
- */
+/** 检查 SDKResultMessage 是否表示成功 */
 export function isSuccessResult(msg: SDKResultMessage): boolean {
   return msg.subtype === 'success'
 }
 
-/**
- * Extract the result text from a successful SDKResultMessage
- */
+/** 从成功的 SDKResultMessage 中提取结果文本 */
 export function getResultText(msg: SDKResultMessage): string | null {
   if (msg.subtype === 'success') {
     return msg.result

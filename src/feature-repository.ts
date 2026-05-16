@@ -411,7 +411,7 @@ async function fetchFeatures(
     promise = fetcher
       .then((res) => {
         if (!res.ok) {
-          throw new Error(`HTTP error: ${res.status}`);
+          throw new Error(`HTTP 错误: ${res.status}`);
         }
         if (res.headers.get("x-sse-support") === "enabled") {
           supportsSSE.add(key);
@@ -571,7 +571,7 @@ export function startStreaming(
 ) {
   if (options.streaming) {
     if (!instance.getClientKey()) {
-      throw new Error("Must specify clientKey to enable streaming");
+      throw new Error("必须指定 clientKey 才能启用流式传输");
     }
     if (options.payload) {
       startAutoRefresh(instance, true);

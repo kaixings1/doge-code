@@ -73,16 +73,16 @@ export async function getAnthropicClient({
     ...(remoteSessionId
       ? { 'x-claude-remote-session-id': remoteSessionId }
       : {}),
-    // SDK consumers can identify their app/library for backend analytics
+    // SDK 消费者可标识其应用/库以便后端分析
     ...(clientApp ? { 'x-client-app': clientApp } : {}),
   }
 
-  // Log API client configuration for HFI debugging
+  // 记录 API 客户端配置，用于 HFI 调试
   logForDebugging(
     `[API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: ${!!process.env.ANTHROPIC_CUSTOM_HEADERS}, has Authorization header: ${!!customHeaders['Authorization']}`,
   )
 
-  // Add additional protection header if enabled via env var
+  // 如果环境变量启用，则添加额外的保护头
   const additionalProtectionEnabled = isEnvTruthy(
     process.env.CLAUDE_CODE_ADDITIONAL_PROTECTION,
   )
@@ -114,7 +114,7 @@ export async function getAnthropicClient({
   }
   if (isEnvTruthy(process.env.CLAUDE_CODE_USE_BEDROCK)) {
     const { AnthropicBedrock } = await import('@anthropic-ai/bedrock-sdk')
-    // Use region override for small fast model if specified
+    // 如果指定了小快速模型，使用区域覆盖
     const awsRegion =
       model === getSmallFastModel() &&
       process.env.ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION
@@ -130,16 +130,16 @@ export async function getAnthropicClient({
       ...(isDebugToStdErr() && { logger: createStderrLogger() }),
     }
 
-    // Add API key authentication if available
+    // 添加 API 密钥认证（如果可用）
     if (process.env.AWS_BEARER_TOKEN_BEDROCK) {
       bedrockArgs.skipAuth = true
-      // Add the Bearer token for Bedrock API key authentication
+      // 为 Bedrock API 密钥认证添加 Bearer 令牌
       bedrockArgs.defaultHeaders = {
         ...bedrockArgs.defaultHeaders,
         Authorization: `Bearer ${process.env.AWS_BEARER_TOKEN_BEDROCK}`,
       }
     } else if (!isEnvTruthy(process.env.CLAUDE_CODE_SKIP_BEDROCK_AUTH)) {
-      // Refresh auth and get credentials with cache clearing
+      // 刷新认证并获取凭据（清除缓存）
       const cachedCredentials = await refreshAndGetAwsCredentials()
       if (cachedCredentials) {
         bedrockArgs.awsAccessKey = cachedCredentials.accessKeyId
@@ -147,20 +147,20 @@ export async function getAnthropicClient({
         bedrockArgs.awsSessionToken = cachedCredentials.sessionToken
       }
     }
-    // we have always been lying about the return type - this doesn't support batching or models
+    // 返回类型一直是伪装——此 SDK 不支持批处理或模型
     return new AnthropicBedrock(bedrockArgs) as unknown as Anthropic
   }
   if (isEnvTruthy(process.env.CLAUDE_CODE_USE_FOUNDRY)) {
     const { AnthropicFoundry } = await import('@anthropic-ai/foundry-sdk')
-    // Determine Azure AD token provider based on configuration
-    // SDK reads ANTHROPIC_FOUNDRY_API_KEY by default
+    // 根据配置确定 Azure AD 令牌提供者
+    // SDK 默认读取 ANTHROPIC_FOUNDRY_API_KEY
     let azureADTokenProvider: (() => Promise<string>) | undefined
     if (!process.env.ANTHROPIC_FOUNDRY_API_KEY) {
       if (isEnvTruthy(process.env.CLAUDE_CODE_SKIP_FOUNDRY_AUTH)) {
-        // Mock token provider for testing/proxy scenarios (similar to Vertex mock GoogleAuth)
+        // 模拟令牌提供者，用于测试/代理场景（类似于 Vertex 的模拟 GoogleAuth）
         azureADTokenProvider = () => Promise.resolve('')
       } else {
-        // Use real Azure AD authentication with DefaultAzureCredential
+        // 使用真实的 Azure AD 认证（DefaultAzureCredential）
         const {
           DefaultAzureCredential: AzureCredential,
           getBearerTokenProvider,
@@ -177,12 +177,12 @@ export async function getAnthropicClient({
       ...(azureADTokenProvider && { azureADTokenProvider }),
       ...(isDebugToStdErr() && { logger: createStderrLogger() }),
     }
-    // we have always been lying about the return type - this doesn't support batching or models
+    // 返回类型一直是伪装——此 SDK 不支持批处理或模型
     return new AnthropicFoundry(foundryArgs) as unknown as Anthropic
   }
   if (isEnvTruthy(process.env.CLAUDE_CODE_USE_VERTEX)) {
-    // Refresh GCP credentials if gcpAuthRefresh is configured and credentials are expired
-    // This is similar to how we handle AWS credential refresh for Bedrock
+    // 如果配置了 gcpAuthRefresh 且凭据已过期，刷新 GCP 凭据
+    // 这类似于我们处理 Bedrock 的 AWS 凭据刷新的方式
     if (!isEnvTruthy(process.env.CLAUDE_CODE_SKIP_VERTEX_AUTH)) {
       await refreshGcpCredentialsIfNeeded()
     }
@@ -192,57 +192,57 @@ export async function getAnthropicClient({
       loadGoogleAuthLibrary(),
     ])
 
-    // In Vertex AI, project-id can be set by env var.
-    // google-auth-library reads GOOGLE_APPLICATION_CREDENTIALS and project
-    // env vars directly — no need to pass projectId in most cases.
-    // However, caching needs careful handling of:
-    // - Credential refresh/expiration
-    // - Environment variable changes (GOOGLE_APPLICATION_CREDENTIALS, project vars)
-    // - Cross-request auth state management
-    // See: https://github.com/googleapis/google-auth-library-nodejs/issues/390 for caching challenges
+    // Vertex AI 中，project-id 可通过环境变量设置。
+    // google-auth-library 直接读取 GOOGLE_APPLICATION_CREDENTIALS 和 project
+    // 环境变量——大多数情况下无需传递 projectId。
+    // 不过，缓存需要谨慎处理：
+    // - 凭据刷新/过期
+    // - 环境变量变更（GOOGLE_APPLICATION_CREDENTIALS、project 变量）
+    // - 跨请求认证状态管理
+    // 参见：https://github.com/googleapis/google-auth-library-nodejs/issues/390 了解缓存挑战
 
-    // Prevent metadata server timeout by providing projectId as fallback
-    // google-auth-library checks project ID in this order:
-    // 1. Environment variables (GCLOUD_PROJECT, GOOGLE_CLOUD_PROJECT, etc.)
-    // 2. Credential files (service account JSON, ADC file)
-    // 3. gcloud config
-    // 4. GCE metadata server (causes 12s timeout outside GCP)
+    // 通过提供 projectId 作为后备，防止元数据服务器超时
+    // google-auth-library 按以下顺序检查 project ID：
+    // 1. 环境变量（GCLOUD_PROJECT、GOOGLE_CLOUD_PROJECT 等）
+    // 2. 凭据文件（服务账号 JSON、ADC 文件）
+    // 3. gcloud 配置
+    // 4. GCE 元数据服务器（在 GCP 外会导致 12 秒超时）
     //
-    // We only set projectId if user hasn't configured other discovery methods
-    // to avoid interfering with their existing auth setup
+    // 仅在用户未配置其他发现方法时设置 projectId，
+    // 以免干扰其已有的认证设置
 
-    // Check project environment variables in same order as google-auth-library
-    // See: https://github.com/googleapis/google-auth-library-nodejs/blob/main/src/auth/googleauth.ts
+    // 以与 google-auth-library 相同的顺序检查项目环境变量
+    // 参见：https://github.com/googleapis/google-auth-library-nodejs/blob/main/src/auth/googleauth.ts
     const hasProjectEnvVar =
       process.env['GCLOUD_PROJECT'] ||
       process.env['GOOGLE_CLOUD_PROJECT'] ||
       process.env['gcloud_project'] ||
       process.env['google_cloud_project']
 
-    // Check for credential file paths (service account or ADC)
-    // Note: We're checking both standard and lowercase variants to be safe,
-    // though we should verify what google-auth-library actually checks
+    // 检查凭据文件路径（服务账号或 ADC）
+    // 注意：为安全起见，同时检查标准和小写变体，
+    // 不过应验证 google-auth-library 实际检查的内容
     const hasKeyFile =
       process.env['GOOGLE_APPLICATION_CREDENTIALS'] ||
       process.env['google_application_credentials']
 
     const googleAuth = isEnvTruthy(process.env.CLAUDE_CODE_SKIP_VERTEX_AUTH)
       ? ({
-          // Mock GoogleAuth for testing/proxy scenarios
+          // 模拟 GoogleAuth，用于测试/代理场景
           getClient: () => ({
             getRequestHeaders: () => ({}),
           }),
         } as VertexGoogleAuth)
       : new GoogleAuth({
           scopes: ['https://www.googleapis.com/auth/cloud-platform'],
-          // Only use ANTHROPIC_VERTEX_PROJECT_ID as last resort fallback
-          // This prevents the 12-second metadata server timeout when:
-          // - No project env vars are set AND
-          // - No credential keyfile is specified AND
-          // - ADC file exists but lacks project_id field
+          // 仅将 ANTHROPIC_VERTEX_PROJECT_ID 作为最后的后备
+          // 这可以防止以下情况导致的 12 秒元数据服务器超时：
+          // - 未设置项目环境变量 且
+          // - 未指定凭据密钥文件 且
+          // - ADC 文件存在但缺少 project_id 字段
           //
-          // Risk: If auth project != API target project, this could cause billing/audit issues
-          // Mitigation: Users can set GOOGLE_CLOUD_PROJECT to override
+          // 风险：如果认证项目 != API 目标项目，可能导致计费/审计问题
+          // 缓解措施：用户可以设置 GOOGLE_CLOUD_PROJECT 来覆盖
           ...(hasProjectEnvVar || hasKeyFile
             ? {}
             : {
@@ -256,11 +256,11 @@ export async function getAnthropicClient({
       googleAuth,
       ...(isDebugToStdErr() && { logger: createStderrLogger() }),
     }
-    // we have always been lying about the return type - this doesn't support batching or models
+    // 返回类型一直是伪装——此 SDK 不支持批处理或模型
     return new AnthropicVertex(vertexArgs) as unknown as Anthropic
   }
 
-  // Determine authentication method based on available tokens
+  // 根据可用的令牌确定认证方法
   const effectiveBaseURL = process.env.ANTHROPIC_BASE_URL || readCustomApiStorage().baseURL || ''
   const isLocalEndpoint = /127\.0\.0\.1|localhost/i.test(effectiveBaseURL)
 
@@ -328,14 +328,14 @@ function getCustomHeaders(): Record<string, string> {
 
   if (!customHeadersEnv) return customHeaders
 
-  // Split by newlines to support multiple headers
+  // 按换行符分割以支持多个头字段
   const headerStrings = customHeadersEnv.split(/\n|\r\n/)
 
   for (const headerString of headerStrings) {
     if (!headerString.trim()) continue
 
-    // Parse header in format "Name: Value" (curl style). Split on first `:`
-    // then trim — avoids regex backtracking on malformed long header lines.
+    // 解析 "Name: Value" 格式的头字段（curl 风格）。在第一个 `:` 处分割
+    // 然后修剪——避免对格式错误的长头行进行正则回溯。
     const colonIdx = headerString.indexOf(':')
     if (colonIdx === -1) continue
     const name = headerString.slice(0, colonIdx).trim()
@@ -377,8 +377,8 @@ function buildFetch(
 ): ClientOptions['fetch'] {
   // eslint-disable-next-line eslint-plugin-n/no-unsupported-features/node-builtins
   const inner = fetchOverride ?? globalThis.fetch
-  // Only send to the first-party API — Bedrock/Vertex/Foundry don't log it
-  // and unknown headers risk rejection by strict proxies (inc-4029 class).
+  // 仅发送给第一方 API — Bedrock/Vertex/Foundry 不记录它
+  // 未知头字段可能被严格代理拒绝（inc-4029 类问题）。
   const injectClientRequestId =
     getAPIProvider() === 'firstParty' && isFirstPartyAnthropicBaseUrl()
   return (input, init) => {
@@ -392,9 +392,9 @@ function buildFetch(
       }
       headers.set('User-Agent', getDisguisedUserAgent())
     } else {
-      // Generate a client-side request ID so timeouts (which return no server
-      // request ID) can still be correlated with server logs by the API team.
-      // Callers that want to track the ID themselves can pre-set the header.
+      // 生成客户端请求 ID，以便超时（不返回服务端请求 ID）
+      // 仍可由 API 团队与服务端日志关联。
+      // 希望自行跟踪 ID 的调用者可以预先设置该头字段。
       if (injectClientRequestId && !headers.has(CLIENT_REQUEST_ID_HEADER)) {
         headers.set(CLIENT_REQUEST_ID_HEADER, randomUUID())
       }
@@ -464,7 +464,7 @@ function buildFetch(
         `[API 请求] ${new URL(url).pathname}${id ? ` ${CLIENT_REQUEST_ID_HEADER}=${id}` : ''} source=${source ?? 'unknown'}${disguiseCounter > 0 ? ` disguise#${disguiseCounter}` : ''}${bodyPatched ? ' body-patched' : ''}`,
       )
     } catch {
-      // never let logging crash the fetch
+      // 绝不让日志导致 fetch 崩溃
     }
     return inner(input, { ...init, headers })
   }

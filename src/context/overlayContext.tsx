@@ -16,7 +16,7 @@ import { useContext, useEffect, useLayoutEffect } from 'react';
 import instances from '../ink/instances.js';
 import { AppStoreContext, useAppState } from '../state/AppState.js';
 
-// Non-modal overlays that shouldn't disable TextInput focus
+// 不应禁用 TextInput 焦点的非模态覆盖层
 const NON_MODAL_OVERLAYS = new Set(['autocomplete']);
 
 /**

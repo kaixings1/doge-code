@@ -20,14 +20,14 @@ export type ChordResolveResult =
   | { type: 'chord_cancelled' }
 
 /**
- * Resolve a key input to an action.
- * Pure function - no state, no side effects, just matching logic.
+ * 将按键输入解析为操作。
+ * 纯函数 - 无状态、无副作用、仅匹配逻辑。
  *
- * @param input - The character input from Ink
- * @param key - The Key object from Ink with modifier flags
- * @param activeContexts - Array of currently active contexts (e.g., ['Chat', 'Global'])
- * @param bindings - All parsed bindings to search through
- * @returns The resolution result
+ * @param input - 来自 Ink 的字符输入
+ * @param key - 来自 Ink 的 Key 对象，含修饰符标志
+ * @param activeContexts - 当前活跃的上下文数组（例如 ['Chat', 'Global']）
+ * @param bindings - 要搜索的所有已解析绑定
+ * @returns 解析结果
  */
 export function resolveKey(
   input: string,
@@ -35,12 +35,12 @@ export function resolveKey(
   activeContexts: KeybindingContextName[],
   bindings: ParsedBinding[],
 ): ResolveResult {
-  // Find matching bindings (last one wins for user overrides)
+  // 查找匹配的绑定（最后一个生效，用于用户覆盖）
   let match: ParsedBinding | undefined
   const ctxSet = new Set(activeContexts)
 
   for (const binding of bindings) {
-    // Phase 1: Only single-keystroke bindings
+    // 阶段 1：仅单次按键绑定
     if (binding.chord.length !== 1) continue
     if (!ctxSet.has(binding.context)) continue
 
@@ -61,15 +61,15 @@ export function resolveKey(
 }
 
 /**
- * Get display text for an action from bindings (e.g., "ctrl+t" for "app:toggleTodos").
- * Searches in reverse order so user overrides take precedence.
+ * 从绑定中获取操作的显示文本（例如 "ctrl+t" 对应 "app:toggleTodos"）。
+ * 按反向顺序搜索，以便用户覆盖优先。
  */
 export function getBindingDisplayText(
   action: string,
   context: KeybindingContextName,
   bindings: ParsedBinding[],
 ): string | undefined {
-  // Find the last binding for this action in this context
+  // 在此上下文中查找此操作的最后一个绑定
   const binding = bindings.findLast(
     b => b.action === action && b.context === context,
   )
@@ -83,9 +83,9 @@ function buildKeystroke(input: string, key: Key): ParsedKeystroke | null {
   const keyName = getKeyName(input, key)
   if (!keyName) return null
 
-  // QUIRK: Ink sets key.meta=true when escape is pressed (see input-event.ts).
-  // This is legacy terminal behavior - we should NOT record this as a modifier
-  // for the escape key itself, otherwise chord matching will fail.
+  // 怪癖：Ink 在按下 escape 时设置 key.meta=true（参见 input-event.ts）。
+  // 这是传统终端行为——我们不应将其记录为 escape 键本身的修饰符，
+  // 否则和弦匹配将失败。
   const effectiveMeta = key.escape ? false : key.meta
 
   return {
@@ -99,10 +99,10 @@ function buildKeystroke(input: string, key: Key): ParsedKeystroke | null {
 }
 
 /**
- * Compare two ParsedKeystrokes for equality. Collapses alt/meta into
- * one logical modifier — legacy terminals can't distinguish them (see
- * match.ts modifiersMatch), so "alt+k" and "meta+k" are the same key.
- * Super (cmd/win) is distinct — only arrives via kitty keyboard protocol.
+ * 比较两个 ParsedKeystroke 是否相等。将 alt/meta 合并为
+ * 一个逻辑修饰符——传统终端无法区分它们（参见
+ * match.ts modifiersMatch），因此 "alt+k" 和 "meta+k" 是同一个键。
+ * Super（cmd/win）是不同的——仅通过 kitty 键盘协议到达。
  */
 export function keystrokesEqual(
   a: ParsedKeystroke,
@@ -118,7 +118,7 @@ export function keystrokesEqual(
 }
 
 /**
- * Check if a chord prefix matches the beginning of a binding's chord.
+ * 检查和弦前缀是否匹配绑定和弦的开头。
  */
 function chordPrefixMatches(
   prefix: ParsedKeystroke[],
@@ -135,7 +135,7 @@ function chordPrefixMatches(
 }
 
 /**
- * Check if a full chord matches a binding's chord.
+ * 检查完整和弦是否匹配绑定的和弦。
  */
 function chordExactlyMatches(
   chord: ParsedKeystroke[],
@@ -152,16 +152,16 @@ function chordExactlyMatches(
 }
 
 /**
- * Resolve a key with chord state support.
+ * 使用和弦状态支持解析按键。
  *
- * This function handles multi-keystroke chord bindings like "ctrl+k ctrl+s".
+ * 此函数处理多按键和弦绑定，如 "ctrl+k ctrl+s"。
  *
- * @param input - The character input from Ink
- * @param key - The Key object from Ink with modifier flags
- * @param activeContexts - Array of currently active contexts
- * @param bindings - All parsed bindings
- * @param pending - Current chord state (null if not in a chord)
- * @returns Resolution result with chord state
+ * @param input - 来自 Ink 的字符输入
+ * @param key - 来自 Ink 的 Key 对象，含修饰符标志
+ * @param activeContexts - 当前活跃的上下文数组
+ * @param bindings - 所有已解析的绑定
+ * @param pending - 当前和弦状态（不在和弦中时为 null）
+ * @returns 带和弦状态的解析结果
  */
 export function resolveKeyWithChordState(
   input: string,
@@ -170,12 +170,12 @@ export function resolveKeyWithChordState(
   bindings: ParsedBinding[],
   pending: ParsedKeystroke[] | null,
 ): ChordResolveResult {
-  // Cancel chord on escape
+  // 按下 escape 时取消和弦
   if (key.escape && pending !== null) {
     return { type: 'chord_cancelled' }
   }
 
-  // Build current keystroke
+  // 构建当前按键
   const currentKeystroke = buildKeystroke(input, key)
   if (!currentKeystroke) {
     if (pending !== null) {
@@ -184,19 +184,19 @@ export function resolveKeyWithChordState(
     return { type: 'none' }
   }
 
-  // Build the full chord sequence to test
+  // 构建要测试的完整和弦序列
   const testChord = pending
     ? [...pending, currentKeystroke]
     : [currentKeystroke]
 
-  // Filter bindings by active contexts (Set lookup: O(n) instead of O(n·m))
+  // 按活跃上下文过滤绑定（Set 查找：O(n) 而非 O(n·m)）
   const ctxSet = new Set(activeContexts)
   const contextBindings = bindings.filter(b => ctxSet.has(b.context))
 
-  // Check if this could be a prefix for longer chords. Group by chord
-  // string so a later null-override shadows the default it unbinds —
-  // otherwise null-unbinding `ctrl+x ctrl+k` still makes `ctrl+x` enter
-  // chord-wait and the single-key binding on the prefix never fires.
+  // 检查这是否可能成为更长和弦的前缀。按和弦字符串分组，
+  // 以便后面的空覆盖遮蔽它所解绑的默认值——
+  // 否则空解绑 `ctrl+x ctrl+k` 仍会使 `ctrl+x` 进入和弦等待，
+  // 且前缀上的单键绑定永远不会触发。
   const chordWinners = new Map<string, string | null>()
   for (const binding of contextBindings) {
     if (
@@ -214,13 +214,13 @@ export function resolveKeyWithChordState(
     }
   }
 
-  // If this keystroke could start a longer chord, prefer that
-  // (even if there's an exact single-key match)
+  // 如果此按键可以开始一个更长的和弦，优先选择
+  //（即使存在精确的单键匹配）
   if (hasLongerChords) {
     return { type: 'chord_started', pending: testChord }
   }
 
-  // Check for exact matches (last one wins)
+  // 检查精确匹配（最后一个生效）
   let exactMatch: ParsedBinding | undefined
   for (const binding of contextBindings) {
     if (chordExactlyMatches(testChord, binding)) {
@@ -235,7 +235,7 @@ export function resolveKeyWithChordState(
     return { type: 'match', action: exactMatch.action }
   }
 
-  // No match and no potential longer chords
+  // 无匹配且无潜在更长和弦
   if (pending !== null) {
     return { type: 'chord_cancelled' }
   }

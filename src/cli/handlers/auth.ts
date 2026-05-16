@@ -44,8 +44,8 @@ import {
 } from '../../utils/status.js'
 import { writeCustomApiStorage } from '../../utils/customApiStorage.js';
 /**
- * Shared post-token-acquisition logic. Saves tokens, fetches profile/roles,
- * and sets up the local auth state.
+ * 获取令牌后的共享处理逻辑。保存令牌、获取 profile/角色，
+ * 并设置本地认证状态。
  */
 export async function installOAuthTokens(tokens: OAuthTokens): Promise<void> {
   // 保存新凭证前清除旧状态

@@ -1,16 +1,15 @@
 /**
- * REPL-specific wrapper around initBridgeCore. Owns the parts that read
- * bootstrap state — gates, cwd, session ID, git context, OAuth, title
- * derivation — then delegates to the bootstrap-free core.
+ * initBridgeCore 的 REPL 专用包装器。负责读取引导状态的部分 —
+ * 门控、cwd、会话 ID、git 上下文、OAuth、标题推导 — 然后委托给无引导的核心。
  *
- * Split out of replBridge.ts because the sessionStorage import
- * (getCurrentSessionTitle) transitively pulls in src/commands.ts → the
- * entire slash command + React component tree (~1300 modules). Keeping
- * initBridgeCore in a file that doesn't touch sessionStorage lets
- * daemonBridge.ts import the core without bloating the Agent SDK bundle.
+ * 从 replBridge.ts 中拆分出来，因为 sessionStorage 导入
+ * （getCurrentSessionTitle）会传递性地引入 src/commands.ts → 整个
+ * 斜杠命令 + React 组件树（约 1300 个模块）。将 initBridgeCore 放在
+ * 不触及 sessionStorage 的文件中，可以让 daemonBridge.ts 导入核心
+ * 而不会膨胀 Agent SDK 包。
  *
- * Called via dynamic import by useReplBridge (auto-start) and print.ts
- * (SDK -p mode via query.enableRemoteControl).
+ * 由 useReplBridge（自动启动）和 print.ts（SDK -p 模式通过
+ * query.enableRemoteControl）通过动态导入调用。
  */
 
 import { feature } from 'bun:bundle'
@@ -83,25 +82,25 @@ export type InitBridgeOptions = {
   ) => { ok: true } | { ok: false; error: string }
   onStateChange?: (state: BridgeState, detail?: string) => void
   initialMessages?: Message[]
-  // Explicit session name from `/remote-control <name>`. When set, overrides
-  // the title derived from the conversation or /rename.
+  // 来自 `/remote-control <name>` 的显式会话名称。设置后，会覆盖
+  // 从对话或 /rename 推导出的标题。
   initialName?: string
-  // Fresh view of the full conversation at call time. Used by onUserMessage's
-  // count-3 derivation to call generateSessionTitle over the full conversation.
-  // Optional — print.ts's SDK enableRemoteControl path has no REPL message
-  // array; count-3 falls back to the single message text when absent.
+  // 调用时完整对话的新鲜视图。由 onUserMessage 的 count-3 推导使用，
+  // 以在整个对话上调用 generateSessionTitle。
+  // 可选 — print.ts 的 SDK enableRemoteControl 路径没有 REPL 消息数组；
+  // 当不存在时，count-3 回退到单条消息文本。
   getMessages?: () => Message[]
-  // UUIDs already flushed in a prior bridge session. Messages with these
-  // UUIDs are excluded from the initial flush to avoid poisoning the
-  // server (duplicate UUIDs across sessions cause the WS to be killed).
-  // Mutated in place — newly flushed UUIDs are added after each flush.
+  // 已在先前桥接器会话中刷新的 UUID。具有这些 UUID 的消息
+  // 在初始刷新中被排除，以避免污染服务器
+  //（跨会话的重复 UUID 会导致 WebSocket 被终止）。
+  // 原地修改 — 新刷新的 UUID 在每次刷新后被添加。
   previouslyFlushedUUIDs?: Set<string>
   /** See BridgeCoreParams.perpetual. */
   perpetual?: boolean
   /**
-   * When true, the bridge only forwards events outbound (no SSE inbound
-   * stream). Used by CCR mirror mode — local sessions visible on claude.ai
-   * without enabling inbound control.
+   * 当为 true 时，桥接器仅转发出站事件（无 SSE 入站流）。
+   * 由 CCR 镜像模式使用 — 本地会话在 claude.ai 上可见，
+   * 而无需启用入站控制。
    */
   outboundOnly?: boolean
   tags?: string[]
@@ -127,8 +126,8 @@ export async function initReplBridge(
     tags,
   } = options ?? {}
 
-  // Wire the cse_ shim kill switch so toCompatSessionId respects the
-  // GrowthBook gate. Daemon/SDK paths skip this — shim defaults to active.
+  // 连接 cse_ shim 终止开关，使 toCompatSessionId 遵守
+  // GrowthBook 门控。守护进程/SDK 路径跳过此设置 — shim 默认为激活状态。
   setCseShimGate(isCseShimEnabled)
 
   // 1. Runtime gate
@@ -137,20 +136,20 @@ export async function initReplBridge(
     return null
   }
 
-  // 1b. Minimum version check — deferred to after the v1/v2 branch below,
-  // since each implementation has its own floor (tengu_bridge_min_version
-  // for v1, tengu_bridge_repl_v2_config.min_version for v2).
+  // 1b. 最低版本检查 — 推迟到下面的 v1/v2 分支之后，
+  // 因为每个实现有自己的最低要求（v1 为 tengu_bridge_min_version，
+  // v2 为 tengu_bridge_repl_v2_config.min_version）。
 
-  // 2. Check OAuth — must be signed in with claude.ai. Runs before the
-  // policy check so console-auth users get the actionable "/login" hint
-  // instead of a misleading policy error from a stale/wrong-org cache.
+  // 2. 检查 OAuth — 必须使用 claude.ai 登录。在策略检查之前运行，
+  // 以便控制台认证用户获得可操作的"/login"提示，
+  // 而不是来自过期/错误组织缓存的误导性策略错误。
   if (!getBridgeAccessToken()) {
     logBridgeSkip('no_oauth', '[bridge:repl] Skipping: no OAuth tokens')
     onStateChange?.('failed', '/login')
     return null
   }
 
-  // 3. Check organization policy — remote control may be disabled
+  // 3. 检查组织策略 — 远程控制可能被禁用
   await waitForPolicyLimitsToLoad()
   if (!isPolicyAllowed('allow_remote_control')) {
     logBridgeSkip(
@@ -161,19 +160,17 @@ export async function initReplBridge(
     return null
   }
 
-  // When CLAUDE_BRIDGE_OAUTH_TOKEN is set (ant-only local dev), the bridge
-  // uses that token directly via getBridgeAccessToken() — keychain state is
-  // irrelevant. Skip 2b/2c to preserve that decoupling: an expired keychain
-  // token shouldn't block a bridge connection that doesn't use it.
+  // 当设置了 CLAUDE_BRIDGE_OAUTH_TOKEN（蚂蚁内部本地开发）时，桥接器
+  // 通过 getBridgeAccessToken() 直接使用该令牌 — 钥匙串状态无关紧要。
+  // 跳过 2b/2c 以保持解耦：过期的钥匙串令牌不应阻止不使用它的桥接器连接。
   if (!getBridgeTokenOverride()) {
-    // 2a. Cross-process backoff. If N prior processes already saw this exact
-    // dead token (matched by expiresAt), skip silently — no event, no refresh
-    // attempt. The count threshold tolerates transient refresh failures (auth
-    // server 5xx, lockfile errors per auth.ts:1437/1444/1485): each process
-    // independently retries until 3 consecutive failures prove the token dead.
-    // Mirrors useReplBridge's MAX_CONSECUTIVE_INIT_FAILURES for in-process.
-    // The expiresAt key is content-addressed: /login → new token → new expiresAt
-    // → this stops matching without any explicit clear.
+    // 2a. 跨进程退避。如果 N 个先前进程已经看到这个确切的
+    // 死亡令牌（通过 expiresAt 匹配），静默跳过 — 无事件、无刷新尝试。
+    // 计数阈值容忍瞬态刷新失败（认证服务器 5xx、auth.ts:1437/1444/1485 的锁文件错误）：
+    // 每个进程独立重试，直到 3 次连续失败证明令牌已死亡。
+    // 镜像 useReplBridge 的进程内 MAX_CONSECUTIVE_INIT_FAILURES。
+    // expiresAt 键是内容寻址的：/login → 新令牌 → 新 expiresAt
+    // → 这会在无需任何显式清除的情况下停止匹配。
     const cfg = getGlobalConfig()
     if (
       cfg.bridgeOauthDeadExpiresAt != null &&
@@ -186,35 +183,34 @@ export async function initReplBridge(
       return null
     }
 
-    // 2b. Proactively refresh if expired. Mirrors bridgeMain.ts:2096 — the REPL
-    // bridge fires at useEffect mount BEFORE any v1/messages call, making this
-    // usually the first OAuth request of the session. Without this, ~9% of
-    // registrations hit the server with a >8h-expired token → 401 → withOAuthRetry
-    // recovers, but the server logs a 401 we can avoid. VPN egress IPs observed
-    // at 30:1 401:200 when many unrelated users cluster at the 8h TTL boundary.
+    // 2b. 如果过期则主动刷新。镜像 bridgeMain.ts:2096 — REPL 桥接器
+    // 在 useEffect 挂载时触发，在任何 v1/messages 调用之前，使其通常
+    // 成为会话的第一个 OAuth 请求。没有这个，约 9% 的注册会使用
+    // 已过期（>8h）的令牌访问服务器 → 401 → withOAuthRetry 可以恢复，
+    // 但服务器会记录一个我们可以避免的 401。观察到 VPN 出口 IP 在
+    // 许多不相关用户聚集在 8 小时 TTL 边界时，401:200 比例达到 30:1。
     //
-    // Fresh-token cost: one memoized read + one Date.now() comparison (~µs).
-    // checkAndRefreshOAuthTokenIfNeeded clears its own cache in every path that
-    // touches the keychain (refresh success, lockfile race, throw), so no
-    // explicit clearOAuthTokenCache() here — that would force a blocking
-    // keychain spawn on the 91%+ fresh-token path.
+    // 新鲜令牌成本：一次记忆化读取 + 一次 Date.now() 比较（~微秒）。
+    // checkAndRefreshOAuthTokenIfNeeded 在每条触及钥匙串的路径中
+    //（刷新成功、锁文件竞争、抛出异常）清除自己的缓存，因此这里
+    // 没有显式的 clearOAuthTokenCache() — 那会在 91%+ 的新鲜令牌路径上
+    // 强制阻塞钥匙串生成。
     await checkAndRefreshOAuthTokenIfNeeded()
 
-    // 2c. Skip if token is still expired post-refresh-attempt. Env-var / FD
-    // tokens (auth.ts:894-917) have expiresAt=null → never trip this. But a
-    // keychain token whose refresh token is dead (password change, org left,
-    // token GC'd) has expiresAt<now AND refresh just failed — the client would
-    // otherwise loop 401 forever: withOAuthRetry → handleOAuth401Error →
-    // refresh fails again → retry with same stale token → 401 again.
-    // Datadog 2026-03-08: single IPs generating 2,879 such 401s/day. Skip the
-    // guaranteed-fail API call; useReplBridge surfaces the failure.
+    // 2c. 如果令牌在刷新尝试后仍然过期则跳过。环境变量 / FD
+    // 令牌（auth.ts:894-917）的 expiresAt=null → 永远不会触发此检查。
+    // 但是刷新令牌已失效（密码更改、离开组织、令牌被 GC）的钥匙串令牌
+    // 具有 expiresAt<now 且刷新刚失败 — 否则客户端会永远 401 循环：
+    // withOAuthRetry → handleOAuth401Error → 再次刷新失败 →
+    // 使用相同的过时令牌重试 → 再次 401。
+    // Datadog 2026-03-08：单个 IP 每天产生 2,879 次这样的 401。跳过
+    // 保证失败的 API 调用；useReplBridge 会呈现失败信息。
     //
-    // Intentionally NOT using isOAuthTokenExpired here — that has a 5-minute
-    // proactive-refresh buffer, which is the right heuristic for "should
-    // refresh soon" but wrong for "provably unusable". A token with 3min left
-    // + transient refresh endpoint blip (5xx/timeout/wifi-reconnect) would
-    // falsely trip a buffered check; the still-valid token would connect fine.
-    // Check actual expiry instead: past-expiry AND refresh-failed → truly dead.
+    // 有意不使用 isOAuthTokenExpired — 该函数有 5 分钟的主动刷新缓冲，
+    // 这对于"应该尽快刷新"是正确的启发式，但对于"可证明不可用"是错误的。
+    // 一个还有 3 分钟有效期的令牌 + 瞬态刷新端点故障（5xx/超时/wifi 重连）会
+    // 错误触发缓冲检查；仍然有效的令牌本可以正常连接。
+    // 改为检查实际过期时间：已过期且刷新失败 → 真正死亡。
     const tokens = getClaudeAIOAuthTokens()
     if (tokens && tokens.expiresAt !== null && tokens.expiresAt <= Date.now()) {
       logBridgeSkip(
@@ -222,11 +218,11 @@ export async function initReplBridge(
         '[bridge:repl] Skipping: OAuth token expired and refresh failed (re-login required)',
       )
       onStateChange?.('failed', '/login')
-      // Persist for the next process. Increments failCount when re-discovering
-      // the same dead token (matched by expiresAt); resets to 1 for a different
-      // token. Once count reaches 3, step 2a's early-return fires and this path
-      // is never reached again — writes are capped at 3 per dead token.
-      // Local const captures the narrowed type (closure loses !==null narrowing).
+      // 为下一个进程持久化。当重新发现相同的死亡令牌时
+      //（通过 expiresAt 匹配），递增 failCount；对于不同的令牌重置为 1。
+      // 一旦计数达到 3，步骤 2a 的提前返回触发，此路径不再到达 —
+      // 每个死亡令牌的写入上限为 3 次。
+      // 局部 const 捕获收窄后的类型（闭包会丢失 !==null 收窄）。
       const deadExpiresAt = tokens.expiresAt
       saveGlobalConfig(c => ({
         ...c,
@@ -240,21 +236,20 @@ export async function initReplBridge(
     }
   }
 
-  // 4. Compute baseUrl — needed by both v1 (env-based) and v2 (env-less)
-  // paths. Hoisted above the v2 gate so both can use it.
+  // 4. 计算 baseUrl — v1（基于环境）和 v2（无环境）路径都需要。
+  // 提升到 v2 门控之上，以便两者都可以使用它。
   const baseUrl = getBridgeBaseUrl()
 
-  // 5. Derive session title. Precedence: explicit initialName → /rename
-  // (session storage) → last meaningful user message → generated slug.
-  // Cosmetic only (claude.ai session list); the model never sees it.
-  // Two flags: `hasExplicitTitle` (initialName or /rename — never auto-
-  // overwrite) vs. `hasTitle` (any title, including auto-derived — blocks
-  // the count-1 re-derivation but not count-3). The onUserMessage callback
-  // (wired to both v1 and v2 below) derives from the 1st prompt and again
-  // from the 3rd so mobile/web show a title that reflects more context.
-  // The slug fallback (e.g. "remote-control-graceful-unicorn") makes
-  // auto-started sessions distinguishable in the claude.ai list before the
-  // first prompt.
+  // 5. 推导会话标题。优先级：显式 initialName → /rename
+  //（会话存储）→ 最后有意义的用户消息 → 生成的短词。
+  // 仅用于展示（claude.ai 会话列表）；模型永远不会看到它。
+  // 两个标志：`hasExplicitTitle`（initialName 或 /rename — 永不自动
+  // 覆盖）与 `hasTitle`（任何标题，包括自动推导的 — 阻止
+  // count-1 重新推导但不阻止 count-3）。onUserMessage 回调
+  //（同时连接到下面的 v1 和 v2）从第 1 条提示推导，再从第 3 条推导，
+  // 以便移动端/网页端显示反映更多上下文的标题。
+  // 短词回退（例如 "remote-control-graceful-unicorn"）使
+  // 自动启动的会话在第一个提示之前就能在 claude.ai 列表中区分开来。
   let title = `remote-control-${generateShortWordSlug()}`
   let hasTitle = false
   let hasExplicitTitle = false
@@ -272,11 +267,10 @@ export async function initReplBridge(
       hasTitle = true
       hasExplicitTitle = true
     } else if (initialMessages && initialMessages.length > 0) {
-      // Find the last user message that has meaningful content. Skip meta
-      // (nudges), tool results, compact summaries ("This session is being
-      // continued…"), non-human origins (task notifications, channel pushes),
-      // and synthetic interrupts ([Request interrupted by user]) — none are
-      // human-authored. Same filter as extractTitleText + isSyntheticMessage.
+      // 找到最后一条有有意义内容的用户消息。跳过元信息
+      //（nudges）、工具结果、紧凑摘要（"此会话正在继续…"）、非人类来源
+      //（任务通知、频道推送）和合成中断（[请求被用户中断]）—
+      // 这些都不是人类编写的。与 extractTitleText + isSyntheticMessage 相同的过滤器。
       for (let i = initialMessages.length - 1; i >= 0; i--) {
         const msg = initialMessages[i]!
         if (
@@ -299,15 +293,15 @@ export async function initReplBridge(
     }
   }
 
-  // Shared by both v1 and v2 — fires on every title-worthy user message until
-  // it returns true. At count 1: deriveTitle placeholder immediately, then
-  // generateSessionTitle (Haiku, sentence-case) fire-and-forget upgrade. At
-  // count 3: re-generate over the full conversation. Skips entirely if the
-  // title is explicit (/remote-control <name> or /rename) — re-checks
-  // sessionStorage at call time so /rename between messages isn't clobbered.
-  // Skips count 1 if initialMessages already derived (that title is fresh);
-  // still refreshes at count 3. v2 passes cse_*; updateBridgeSessionTitle
-  // retags internally.
+  // v1 和 v2 共享 — 在每条值得生成标题的用户消息上触发，直到
+  // 返回 true。在计数 1：立即 deriveTitle 占位符，然后
+  // generateSessionTitle（Haiku，句子大小写）即发即弃升级。在
+  // 计数 3：在整个对话上重新生成。如果标题是显式的则完全跳过
+  //（/remote-control <name> 或 /rename）— 在调用时重新检查
+  // sessionStorage，以避免消息之间的 /rename 被覆盖。
+  // 如果 initialMessages 已经推导过则跳过计数 1（该标题是新鲜的）；
+  // 在计数 3 时仍会刷新。v2 传递 cse_*；updateBridgeSessionTitle
+  // 内部重新标记。
   let userMessageCount = 0
   let lastBridgeSessionId: string | undefined
   let genSeq = 0
@@ -326,10 +320,10 @@ export async function initReplBridge(
       getAccessToken: getBridgeAccessToken,
     }).catch(() => {})
   }
-  // Fire-and-forget Haiku generation with post-await guards. Re-checks /rename
-  // (sessionStorage), v1 env-lost (lastBridgeSessionId), and same-session
-  // out-of-order resolution (genSeq — count-1's Haiku resolving after count-3
-  // would clobber the richer title). generateSessionTitle never rejects.
+  // 即发即弃的 Haiku 生成，带有 await 后守卫。重新检查 /rename
+  //（sessionStorage）、v1 env-lost（lastBridgeSessionId）和同会话
+  // 乱序解析（genSeq — count-1 的 Haiku 在 count-3 之后解析
+  // 会覆盖更丰富的标题）。generateSessionTitle 从不拒绝。
   const generateAndPatch = (input: string, bridgeSessionId: string): void => {
     const gen = ++genSeq
     const atCount = userMessageCount
@@ -350,10 +344,10 @@ export async function initReplBridge(
     if (hasExplicitTitle || getCurrentSessionTitle(getSessionId())) {
       return true
     }
-    // v1 env-lost re-creates the session with a new ID. Reset the count so
-    // the new session gets its own count-3 derivation; hasTitle stays true
-    // (new session was created via getCurrentTitle(), which reads the count-1
-    // title from this closure), so count-1 of the fresh cycle correctly skips.
+    // v1 env-lost 使用新 ID 重新创建会话。重置计数以便
+    // 新会话获得自己的 count-3 推导；hasTitle 保持为 true
+    //（新会话通过 getCurrentTitle() 创建，它从此闭包中读取 count-1
+    // 标题），因此新周期的 count-1 正确跳过。
     if (
       lastBridgeSessionId !== undefined &&
       lastBridgeSessionId !== bridgeSessionId
@@ -373,7 +367,7 @@ export async function initReplBridge(
         : text
       generateAndPatch(input, bridgeSessionId)
     }
-    // Also re-latches if v1 env-lost resets the transport's done flag past 3.
+    // 如果 v1 env-lost 将传输的 done 标志重置超过 3，也重新锁定。
     return userMessageCount >= 3
   }
 
@@ -383,10 +377,10 @@ export async function initReplBridge(
     5 * 60 * 1000,
   )
 
-  // Fetch orgUUID before the v1/v2 branch — both paths need it. v1 for
-  // environment registration; v2 for archive (which lives at the compat
-  // /v1/sessions/{id}/archive, not /v1/code/sessions). Without it, v2
-  // archive 404s and sessions stay alive in CCR after /exit.
+  // 在 v1/v2 分支之前获取 orgUUID — 两条路径都需要它。v1 用于
+  // 环境注册；v2 用于归档（位于兼容的
+  // /v1/sessions/{id}/archive，而非 /v1/code/sessions）。没有它，v2
+  // 归档会返回 404，且会话在 /exit 后仍在 CCR 中存活。
   const orgUUID = await getOrganizationUUID()
   if (!orgUUID) {
     logBridgeSkip('no_org_uuid', '[bridge:repl] Skipping: no org UUID')
@@ -394,19 +388,19 @@ export async function initReplBridge(
     return null
   }
 
-  // ── GrowthBook gate: env-less bridge ──────────────────────────────────
-  // When enabled, skips the Environments API layer entirely (no register/
-  // poll/ack/heartbeat) and connects directly via POST /bridge → worker_jwt.
-  // See server PR #292605 (renamed in #293280). REPL-only — daemon/print stay
-  // on env-based.
+  // ── GrowthBook 门控：无环境（env-less）桥接器 ──────────────────────────────────
+  // 启用时，完全跳过环境 API 层（无 register/
+  // poll/ack/heartbeat），直接通过 POST /bridge → worker_jwt 连接。
+  // 详见服务器 PR #292605（在 #293280 中重命名）。仅限 REPL — 守护进程/print 路径
+  // 继续使用基于环境的方案。
   //
-  // NAMING: "env-less" is distinct from "CCR v2" (the /worker/* transport).
-  // The env-based path below can ALSO use CCR v2 via CLAUDE_CODE_USE_CCR_V2.
-  // tengu_bridge_repl_v2 gates env-less (no poll loop), not transport version.
+  // 命名说明："无环境"不同于"CCR v2"（/worker/* 传输层）。
+  // 下面的基于环境路径也可以通过 CLAUDE_CODE_USE_CCR_V2 使用 CCR v2。
+  // tengu_bridge_repl_v2 门控的是无环境（无轮询循环），而非传输版本。
   //
-  // perpetual (assistant-mode session continuity via bridge-pointer.json) is
-  // env-coupled and not yet implemented here — fall back to env-based when set
-  // so KAIROS users don't silently lose cross-restart continuity.
+  // perpetual（通过 bridge-pointer.json 的助手模式会话连续性）是
+  // 与环境耦合的，此处尚未实现 — 当设置时回退到基于环境的方案，
+  // 以便 KAIROS 用户不会静默丢失跨重启的连续性。
   if (isEnvLessBridgeEnabled() && !perpetual) {
     const versionError = await checkEnvLessBridgeMinVersion()
     if (versionError) {
@@ -431,13 +425,13 @@ export async function initReplBridge(
       toSDKMessages,
       initialHistoryCap,
       initialMessages,
-      // v2 always creates a fresh server session (new cse_* id), so
-      // previouslyFlushedUUIDs is not passed — there's no cross-session
-      // UUID collision risk, and the ref persists across enable→disable→
-      // re-enable cycles which would cause the new session to receive zero
-      // history (all UUIDs already in the set from the prior enable).
-      // v1 handles this by calling previouslyFlushedUUIDs.clear() on fresh
-      // session creation (replBridge.ts:768); v2 skips the param entirely.
+      // v2 总是创建新的服务器会话（新的 cse_*  id），因此
+      // 不传递 previouslyFlushedUUIDs — 不存在跨会话
+      // UUID 冲突风险，且引用在 enable→disable→
+      // 重新启用周期中持续存在，这会导致新会话接收零条
+      // 历史记录（所有 UUID 都已在先前启用的集合中）。
+      // v1 通过在新会话创建时调用 previouslyFlushedUUIDs.clear()
+      // 来处理此问题（replBridge.ts:768）；v2 完全跳过该参数。
       onInboundMessage,
       onUserMessage,
       onPermissionResponse,
@@ -451,7 +445,7 @@ export async function initReplBridge(
     })
   }
 
-  // ── v1 path: env-based (register/poll/ack/heartbeat) ──────────────────
+  // ── v1 路径：基于环境（register/poll/ack/heartbeat）──────────────────
 
   const versionError = checkBridgeMinVersion()
   if (versionError) {
@@ -460,8 +454,8 @@ export async function initReplBridge(
     return null
   }
 
-  // Gather git context — this is the bootstrap-read boundary.
-  // Everything from here down is passed explicitly to bridgeCore.
+  // 收集 git 上下文 — 这是引导读取的边界。
+  // 从这里开始的所有内容都显式传递给 bridgeCore。
   const branch = await getBranch()
   const gitRepoUrl = await getRemoteUrl()
   const sessionIngressUrl =
@@ -470,9 +464,9 @@ export async function initReplBridge(
       ? process.env.CLAUDE_BRIDGE_SESSION_INGRESS_URL
       : baseUrl
 
-  // Assistant-mode sessions advertise a distinct worker_type so the web UI
-  // can filter them into a dedicated picker. KAIROS guard keeps the
-  // assistant module out of external builds entirely.
+  // 助手模式（assistant-mode）会话通告不同的 worker_type，以便网页 UI
+  // 可以将它们筛选到专用的选择器中。KAIROS 守卫将
+  // 助手模块完全排除在外部构建之外。
   let workerType: BridgeWorkerType = 'claude_code'
   if (feature('KAIROS')) {
      
@@ -484,9 +478,9 @@ export async function initReplBridge(
     }
   }
 
-  // 6. Delegate. BridgeCoreHandle is a structural superset of
-  // ReplBridgeHandle (adds writeSdkMessages which REPL callers don't use),
-  // so no adapter needed — just the narrower type on the way out.
+  // 6. 委派。BridgeCoreHandle 是 ReplBridgeHandle 的结构超集
+  //（增加了 REPL 调用者不使用的 writeSdkMessages），
+  // 因此不需要适配器 — 只需在返回时使用更窄的类型。
   return initBridgeCore({
     dir: getOriginalCwd(),
     machineName: hostname(),
@@ -508,23 +502,23 @@ export async function initReplBridge(
       archiveBridgeSession(sessionId, {
         baseUrl,
         getAccessToken: getBridgeAccessToken,
-        // gracefulShutdown.ts:407 races runCleanupFunctions against 2s.
-        // Teardown also does stopWork (parallel) + deregister (sequential),
-        // so archive can't have the full budget. 1.5s matches v2's
-        // teardown_archive_timeout_ms default.
+        // gracefulShutdown.ts:407 将 runCleanupFunctions 与 2s 超时竞速。
+        // 拆除还会执行 stopWork（并行）+ deregister（顺序），
+        // 因此归档不能占用全部预算。1.5s 与 v2 的
+        // teardown_archive_timeout_ms 默认值一致。
         timeoutMs: 1500,
       }).catch((err: unknown) => {
-        // archiveBridgeSession has no try/catch — 5xx/timeout/network throw
-        // straight through. Previously swallowed silently, making archive
-        // failures BQ-invisible and undiagnosable from debug logs.
+        // archiveBridgeSession 没有 try/catch — 5xx/超时/网络错误会
+        // 直接抛出。以前被静默吞掉，使得归档失败
+        // 在 BQ 中不可见且无法从调试日志诊断。
         logForDebugging(
           `[bridge:repl] archiveBridgeSession threw: ${errorMessage(err)}`,
           { level: 'error' },
         )
       }),
-    // getCurrentTitle is read on reconnect-after-env-lost to re-title the new
-    // session. /rename writes to session storage; onUserMessage mutates
-    // `title` directly — both paths are picked up here.
+    // getCurrentTitle 在环境丢失后重新连接时被读取，以重新命名新的
+    // 会话。/rename 写入会话存储；onUserMessage 直接改变
+    // `title` — 两条路径都会在这里被捕获。
     getCurrentTitle: () => getCurrentSessionTitle(getSessionId()) ?? title,
     onUserMessage,
     toSDKMessages,
@@ -547,20 +541,20 @@ export async function initReplBridge(
 const TITLE_MAX_LEN = 50
 
 /**
- * Quick placeholder title: strip display tags, take the first sentence,
- * collapse whitespace, truncate to 50 chars. Returns undefined if the result
- * is empty (e.g. message was only <local-command-stdout>). Replaced by
- * generateSessionTitle once Haiku resolves (~1-15s).
+ * 快速占位标题：去除显示标签，取第一句，
+ * 折叠空白，截断至 50 个字符。如果结果为空
+ *（例如消息只有 <local-command-stdout>），返回 undefined。
+ * 一旦 Haiku 解析完成（约 1-15s），会被 generateSessionTitle 替换。
  */
 function deriveTitle(raw: string): string | undefined {
-  // Strip <ide_opened_file>, <session-start-hook>, etc. — these appear in
-  // user messages when IDE/hooks inject context. stripDisplayTagsAllowEmpty
-  // returns '' (not the original) so pure-tag messages are skipped.
+  // 去除 <ide_opened_file>、<session-start-hook> 等 — 这些出现在
+  // IDE/钩子注入上下文的用户消息中。stripDisplayTagsAllowEmpty
+  // 返回 ''（而非原始文本），因此纯标签消息会被跳过。
   const clean = stripDisplayTagsAllowEmpty(raw)
-  // First sentence is usually the intent; rest is often context/detail.
-  // Capture group instead of lookbehind — keeps YARR JIT happy.
+  // 第一句通常是意图；其余部分通常是上下文/细节。
+  // 使用捕获组而非后顾断言 — 保持 YARR JIT 愉快。
   const firstSentence = /^(.*?[.!?])\s/.exec(clean)?.[1] ?? clean
-  // Collapse newlines/tabs — titles are single-line in the claude.ai list.
+  // 折叠换行/制表符 — 标题在 claude.ai 列表中是单行的。
   const flat = firstSentence.replace(/\s+/g, ' ').trim()
   if (!flat) return undefined
   return flat.length > TITLE_MAX_LEN

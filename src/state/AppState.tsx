@@ -9,7 +9,7 @@ import { applySettingsChange } from '../utils/settings/applySettingsChange.js';
 import type { SettingSource } from '../utils/settings/constants.js';
 import { createStore } from './store.js';
 
-// DCE: voice context is ant-only. External builds get a passthrough.
+// DCE：语音上下文仅限 ant 内部。外部构建使用透传。
  
 const VoiceProvider: (props: {
   children: React.ReactNode;
@@ -20,9 +20,8 @@ const VoiceProvider: (props: {
  
 import { type AppState, type AppStateStore, getDefaultAppState } from './AppStateStore.js';
 
-// TODO: Remove these re-exports once all callers import directly from
-// ./AppStateStore.js. Kept for back-compat during migration so .ts callers
-// can incrementally move off the .tsx import and stop pulling React.
+// TODO：当所有调用者都直接从 ./AppStateStore.js 导入后，移除这些重导出。
+// 迁移期间为向后兼容而保留，以便 .ts 调用者可以增量地脱离 .tsx 导入并停止拉取 React。
 export { type AppState, type AppStateStore, type CompletionBoundary, getDefaultAppState, IDLE_SPECULATION_STATE, type SpeculationResult, type SpeculationState } from './AppStateStore.js';
 export const AppStoreContext = React.createContext<AppStateStore | null>(null);
 type Props = {
@@ -43,7 +42,7 @@ export function AppStateProvider(t0) {
   } = t0;
   const hasAppStateContext = useContext(HasAppStateContext);
   if (hasAppStateContext) {
-    throw new Error("AppStateProvider can not be nested within another AppStateProvider");
+    throw new Error("AppStateProvider 不能嵌套在另一个 AppStateProvider 内部");
   }
   let t1;
   if ($[0] !== initialState || $[1] !== onChangeAppState) {
@@ -118,25 +117,24 @@ function useAppStore(): AppStateStore {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const store = useContext(AppStoreContext);
   if (!store) {
-    throw new ReferenceError('useAppState/useSetAppState cannot be called outside of an <AppStateProvider />');
+    throw new ReferenceError('useAppState/useSetAppState 不能在 <AppStateProvider /> 外部调用');
   }
   return store;
 }
 
 /**
- * Subscribe to a slice of AppState. Only re-renders when the selected value
- * changes (compared via Object.is).
+ * 订阅 AppState 的某个切片。仅当所选值发生变化时重新渲染（通过 Object.is 比较）。
  *
- * For multiple independent fields, call the hook multiple times:
+ * 对于多个独立字段，多次调用此钩子：
  * ```
  * const verbose = useAppState(s => s.verbose)
  * const model = useAppState(s => s.mainLoopModel)
  * ```
  *
- * Do NOT return new objects from the selector -- Object.is will always see
- * them as changed. Instead, select an existing sub-object reference:
+ * 不要从选择器返回新对象——Object.is 总会认为它们已更改。
+ * 相反，选择现有的子对象引用：
  * ```
- * const { text, promptId } = useAppState(s => s.promptSuggestion) // good
+ * const { text, promptId } = useAppState(s => s.promptSuggestion) // 好
  * ```
  */
 export function useAppState(selector) {
@@ -148,7 +146,7 @@ export function useAppState(selector) {
       const state = store.getState();
       const selected = selector(state);
       if (false && state === selected) {
-        throw new Error(`Your selector in \`useAppState(${selector.toString()})\` returned the original state, which is not allowed. You must instead return a property for optimised rendering.`);
+        throw new Error(`你的选择器 \`useAppState(${selector.toString()})\` 返回了原始状态，这是不允许的。你必须返回一个属性以实现优化渲染。`);
       }
       return selected;
     };
@@ -163,16 +161,15 @@ export function useAppState(selector) {
 }
 
 /**
- * Get the setAppState updater without subscribing to any state.
- * Returns a stable reference that never changes -- components using only
- * this hook will never re-render from state changes.
+ * 获取 setAppState 更新器而不订阅任何状态。
+ * 返回一个永不改变的稳定引用——仅使用此钩子的组件永远不会因状态变化而重新渲染。
  */
 export function useSetAppState() {
   return useAppStore().setState;
 }
 
 /**
- * Get the store directly (for passing getState/setState to non-React code).
+ * 直接获取 store（用于将 getState/setState 传递给非 React 代码）。
  */
 export function useAppStateStore() {
   return useAppStore();
@@ -180,8 +177,8 @@ export function useAppStateStore() {
 const NOOP_SUBSCRIBE = () => () => {};
 
 /**
- * Safe version of useAppState that returns undefined if called outside of AppStateProvider.
- * Useful for components that may be rendered in contexts where AppStateProvider isn't available.
+ * useAppState 的安全版本，如果在 AppStateProvider 外部调用则返回 undefined。
+ * 对于可能在 AppStateProvider 不可用的上下文中渲染的组件很有用。
  */
 export function useAppStateMaybeOutsideOfProvider(selector) {
   const $ = _c(3);

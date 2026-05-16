@@ -35,7 +35,7 @@ function applyDevtoolsState(
   devtoolsState: DevtoolsState,
   gb: GrowthBook | UserScopedGrowthBook,
 ) {
-  // Only enable in dev mode
+  // 仅在开发模式下启用
   if (!gb.inDevMode()) {
     return;
   }
@@ -60,11 +60,11 @@ function applyDevtoolsState(
 
 export function devtoolsPlugin(devtoolsState?: DevtoolsState): Plugin {
   return (gb: GrowthBook | UserScopedGrowthBook | GrowthBookClient) => {
-    // Only works for user-scoped GrowthBook instances
+    // 仅适用于用户范围的 GrowthBook 实例
     if ("createScopedInstance" in gb) {
       throw new Error(
-        "devtoolsPlugin can only be set on a user-scoped instance",
-      );
+            "devtoolsPlugin 只能设置在用户范围的实例上",
+          );
     }
     if (devtoolsState) {
       applyDevtoolsState(devtoolsState, gb);
@@ -73,10 +73,10 @@ export function devtoolsPlugin(devtoolsState?: DevtoolsState): Plugin {
 }
 
 /**
- * For NextJS environments.
- * When using server components, use the `searchParams` and `requestCookies` fields.
- *  - Note: In NextJS 15+, you should await these values before passing them to the plugin
- * When using middleware / api routes, provide the `request` field instead.
+ * 适用于 NextJS 环境。
+ * 使用服务器组件时，使用 `searchParams` 和 `requestCookies` 字段。
+ *  - 注意：在 NextJS 15+ 中，你应先 await 这些值再传递给插件
+ * 使用中间件/API 路由时，请提供 `request` 字段。
  */
 export function devtoolsNextjsPlugin({
   searchParams,
@@ -120,7 +120,7 @@ export function devtoolsNextjsPlugin({
       try {
         state = JSON.parse(payload);
       } catch (e) {
-        console.error("cannot parse devtools payload", e);
+        console.error("无法解析 devtools 载荷", e);
       }
     }
 
@@ -129,7 +129,7 @@ export function devtoolsNextjsPlugin({
 }
 
 /**
- * Intended to be used with cookieParser() middleware from npm: 'cookie-parser'.
+ * 旨在与 npm 的 'cookie-parser' 包中的 cookieParser() 中间件配合使用。
  */
 export function devtoolsExpressPlugin({
   request,
@@ -153,7 +153,7 @@ export function devtoolsExpressPlugin({
       try {
         state = JSON.parse(payload);
       } catch (e) {
-        console.error("cannot parse devtools payload", e);
+        console.error("无法解析 devtools 载荷", e);
       }
     }
 
@@ -174,11 +174,11 @@ export type LogEvent = {
   sdkInfo?: SdkInfo;
 };
 /**
- * Helper method to get debug script contents for DevTools
- * @param gb - GrowthBook instance. DevMode must be enabled to view log events.
- * @param {string} [source] - Label these events for ease of reading in DevTools
+ * 获取 DevTools 调试脚本内容的辅助方法
+ * @param gb - GrowthBook 实例。必须启用 DevMode 才能查看日志事件。
+ * @param {string} [source] - 为这些事件添加标签以便在 DevTools 中阅读
  * @example
- * A React logger component (implement yourself):
+ * 一个 React 日志记录器组件（自行实现）：
  ```
   return (
     <script dangerouslySetInnerHTML={{
@@ -203,12 +203,12 @@ export function getDebugEvent(
   source?: string,
 ): LogEvent | null {
   if (!("logs" in gb)) return null;
-  // Only enable in dev mode
+  // 仅在开发模式下启用
   if (!gb.inDevMode()) {
     return null;
   }
   if (gb instanceof GrowthBook) {
-    // GrowthBook SDK
+    // GrowthBook SDK 信息（软件开发工具包）
     const [apiHost, clientKey] = gb.getApiInfo();
     return {
       logs: gb.logs,
@@ -222,7 +222,7 @@ export function getDebugEvent(
       },
     };
   } else if (gb instanceof UserScopedGrowthBook) {
-    // UserScopedGrowthBook SDK
+    // UserScopedGrowthBook 的 SDK 信息
     const userContext = gb.getUserContext();
     const [apiHost, clientKey] = gb.getApiInfo();
     return {

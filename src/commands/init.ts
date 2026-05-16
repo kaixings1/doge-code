@@ -22,7 +22,7 @@ Usage notes:
 \`\`\`
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+此文件为 Claude Code (claude.ai/code) 在处理此代码库时提供指导。
 \`\`\``
 
 const NEW_INIT_PROMPT = `Set up a minimal CLAUDE.md (and optionally skills and hooks) for this repo. CLAUDE.md is loaded into every Claude Code session, so it must be concise — only include what Claude would get wrong without it.
@@ -88,7 +88,7 @@ If the user chose personal CLAUDE.local.md or both: ask about them, not the code
     • **/verify 技能**（按需）— \`make lint && make typecheck && make test\`
     • **CLAUDE.md 说明**（指南）— "在标记完成之前运行 lint/typecheck/test"
 
-  - Option labels stay short ("Looks good", "Drop the hook", "Drop the skill") — the tool auto-adds an "Other" free-text option, so don't add your own catch-all.
+  - 选项标签保持简短（"看起来不错"、"放弃钩子"、"放弃技能"）— 工具会自动添加一个 "其他" 自由文本选项，因此不要自行添加万能选项。
 
 **Build the preference queue** from the accepted proposal. Each entry: {type: hook|skill|note, description, target file, any Phase-2-sourced details like the actual test/format command}. Phases 4-7 consume this queue.
 
@@ -118,14 +118,14 @@ If the user chose personal CLAUDE.local.md or both: ask about them, not the code
 
 要具体："在 TypeScript 中使用 2 空格缩进"比"正确格式化代码"更好。
 
-不要重复自己，也不要编造"Common Development Tasks"或"Tips for Development"等部分 — 仅包含你在读取的文件中明确发现的信息。
+不要重复自己，也不要编造"通用开发任务"或"开发技巧"等部分 — 仅包含你在读取的文件中明确发现的信息。
 
 用以下内容作为文件前缀：
 
 \`\`\`
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+此文件为 Claude Code (claude.ai/code) 在处理此代码库时提供指导。
 \`\`\`
 
 如果 CLAUDE.md 已经存在：阅读它，提出具体的更改作为差异，并解释为什么每个更改会改进它。不要静默覆盖。

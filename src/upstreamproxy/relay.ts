@@ -1,19 +1,19 @@
 /* eslint-disable eslint-plugin-n/no-unsupported-features/node-builtins */
 /**
- * CONNECT-over-WebSocket relay for CCR upstreamproxy.
+ * 用于 CCR upstreamproxy 的 CONNECT-over-WebSocket 中继。
  *
- * Listens on localhost TCP, accepts HTTP CONNECT from curl/gh/kubectl/etc,
- * and tunnels bytes over WebSocket to the CCR upstreamproxy endpoint.
- * The CCR server-side terminates the tunnel, MITMs TLS, injects org-configured
- * credentials (e.g. DD-API-KEY), and forwards to the real upstream.
+ * 监听 localhost TCP，接受来自 curl/gh/kubectl 等的 HTTP CONNECT 请求，
+ * 并通过 WebSocket 将字节隧道传输到 CCR upstreamproxy 端点。
+ * CCR 服务器端终止隧道，进行 TLS 中间人攻击，注入组织配置的
+ * 凭据（例如 DD-API-KEY），并转发到真正的上游。
  *
- * WHY WebSocket and not raw CONNECT: CCR ingress is GKE L7 with path-prefix
- * routing; there's no connect_matcher in cdk-constructs. The session-ingress
- * tunnel (sessions/tunnel/v1alpha/tunnel.proto) already uses this pattern.
+ * 为什么使用 WebSocket 而非原始 CONNECT：CCR 入口是带有路径前缀
+ * 路由的 GKE L7；cdk-constructs 中没有 connect_matcher。会话入口
+ * 隧道（sessions/tunnel/v1alpha/tunnel.proto）已经使用了此模式。
  *
- * Protocol: bytes are wrapped in UpstreamProxyChunk protobuf messages
- * (`message UpstreamProxyChunk { bytes data = 1; }`) for compatibility with
- * gateway.NewWebSocketStreamAdapter on the server side.
+ * 协议：字节被包装在 UpstreamProxyChunk protobuf 消息中
+ * （`message UpstreamProxyChunk { bytes data = 1; }`），以便与
+ * 服务器端的 gateway.NewWebSocketStreamAdapter 兼容。
  */
 
 import { createServer, type Socket as NodeSocket } from 'node:net'
@@ -21,19 +21,17 @@ import { logForDebugging } from '../utils/debug.js'
 import { getWebSocketTLSOptions } from '../utils/mtls.js'
 import { getWebSocketProxyAgent, getWebSocketProxyUrl } from '../utils/proxy.js'
 
-// The CCR container runs behind an egress gateway — direct outbound is
-// blocked, so the WS upgrade must go through the same HTTP CONNECT proxy
-// everything else uses. undici's globalThis.WebSocket does not consult
-// the global dispatcher for the upgrade, so under Node we use the ws package
-// with an explicit agent (same pattern as SessionsWebSocket). Bun's native
-// WebSocket takes a proxy URL directly. Preloaded in startNodeRelay so
-// openTunnel stays synchronous and the CONNECT state machine doesn't race.
+// CCR 容器运行在出口网关之后 — 直接出站被阻止，
+// 因此 WS 升级必须经过所有其他流量使用的同一 HTTP CONNECT 代理。
+// undici 的 globalThis.WebSocket 在升级时不查询全局 dispatcher，
+// 因此在 Node 下我们使用 ws 包并显式指定代理（与 SessionsWebSocket 相同模式）。
+// Bun 的原生 WebSocket 直接接受代理 URL。在 startNodeRelay 中预加载，
+// 以便 openTunnel 保持同步且 CONNECT 状态机不会发生竞态。
 type WSCtor = typeof import('ws').default
 let nodeWSCtor: WSCtor | undefined
 
-// Intersection of the surface openTunnel touches. Both undici's
-// globalThis.WebSocket and the ws package satisfy this via property-style
-// onX handlers.
+// openTunnel 触及的表面交集。undici 的 globalThis.WebSocket 和 ws 包
+// 都通过属性风格的 onX 处理器满足此接口。
 type WebSocketLike = Pick<
   WebSocket,
   | 'onopen'
@@ -46,26 +44,26 @@ type WebSocketLike = Pick<
   | 'binaryType'
 >
 
-// Envoy per-request buffer cap. Week-1 Datadog payloads won't hit this, but
-// design for it so git-push doesn't need a relay rewrite.
+// Envoy 的每请求缓冲区上限。第一周的 Datadog 负载不会达到此值，
+// 但按此设计以便 git-push 不需要重写中继。
 const MAX_CHUNK_BYTES = 512 * 1024
 
-// Sidecar idle timeout is 50s; ping well inside that.
+// Sidecar 空闲超时是 50 秒；在此范围内进行 ping。
 const PING_INTERVAL_MS = 30_000
 
 /**
- * Encode an UpstreamProxyChunk protobuf message by hand.
+ * 手动编码 UpstreamProxyChunk protobuf 消息。
  *
- * For `message UpstreamProxyChunk { bytes data = 1; }` the wire format is:
+ * 对于 `message UpstreamProxyChunk { bytes data = 1; }`，线格式为：
  *   tag = (field_number << 3) | wire_type = (1 << 3) | 2 = 0x0a
- *   followed by varint length, followed by the bytes.
+ *   后跟 varint 长度，后跟字节。
  *
- * protobufjs would be the general answer; for a single-field bytes message
- * the hand encoding is 10 lines and avoids a runtime dep in the hot path.
+ * protobufjs 是通用方案；但对于单字段 bytes 消息，
+ * 手动编码只需 10 行且避免了热路径中的运行时依赖。
  */
 export function encodeChunk(data: Uint8Array): Uint8Array {
   const len = data.length
-  // varint encoding of length — most chunks fit in 1–3 length bytes
+  // 长度的 varint 编码 — 大多数块只需 1-3 个长度字节
   const varint: number[] = []
   let n = len
   while (n > 0x7f) {
@@ -81,8 +79,8 @@ export function encodeChunk(data: Uint8Array): Uint8Array {
 }
 
 /**
- * Decode an UpstreamProxyChunk. Returns the data field, or null if malformed.
- * Tolerates the server sending a zero-length chunk (keepalive semantics).
+ * 解码 UpstreamProxyChunk。返回 data 字段，如果格式错误则返回 null。
+ * 能够容忍服务器发送零长度块（保持存活语义）。
  */
 export function decodeChunk(buf: Uint8Array): Uint8Array | null {
   if (buf.length === 0) return new Uint8Array(0)
@@ -111,26 +109,26 @@ type ConnState = {
   ws?: WebSocketLike
   connectBuf: Buffer
   pinger?: ReturnType<typeof setInterval>
-  // Bytes that arrived after the CONNECT header but before ws.onopen fired.
-  // TCP can coalesce CONNECT + ClientHello into one packet, and the socket's
-  // data callback can fire again while the WS handshake is still in flight.
-  // Both cases would silently drop bytes without this buffer.
+  // 在 CONNECT 头部之后但在 ws.onopen 触发之前到达的字节。
+  // TCP 可以将 CONNECT + ClientHello 合并为一个数据包，并且套接字的
+  // 数据回调可能在 WS 握手仍在进行时再次触发。
+  // 若没有此缓冲区，这两种情况都会静默丢弃字节。
   pending: Buffer[]
   wsOpen: boolean
-  // Set once the server's 200 Connection Established has been forwarded and
-  // the tunnel is carrying TLS. After that, writing a plaintext 502 would
-  // corrupt the client's TLS stream — just close instead.
+  // 一旦服务器的 200 Connection Established 被转发且
+  // 隧道正在传输 TLS 后设置。之后，写入明文 502 会
+  // 破坏客户端的 TLS 流 —— 只需关闭即可。
   established: boolean
-  // WS onerror is always followed by onclose; without a guard the second
-  // handler would sock.end() an already-ended socket. First caller wins.
+  // WS onerror 总是后跟 onclose；若没有保护，第二个
+  // 处理器会对已结束的套接字调用 sock.end()。先调用者获胜。
   closed: boolean
 }
 
 /**
- * Minimal socket abstraction so the CONNECT parser and WS tunnel plumbing
- * are runtime-agnostic. Implementations handle write backpressure internally:
- * Bun's sock.write() does partial writes and needs explicit tail-queueing;
- * Node's net.Socket buffers unconditionally and never drops bytes.
+ * 最小化的套接字抽象，使 CONNECT 解析器和 WS 隧道管道
+ * 不依赖于运行时。实现在内部处理写入背压：
+ * Bun 的 sock.write() 执行部分写入并需要显式尾部排队；
+ * Node 的 net.Socket 无条件缓冲且从不丢弃字节。
  */
 type ClientSocket = {
   write: (data: Uint8Array | string) => void
@@ -148,9 +146,9 @@ function newConnState(): ConnState {
 }
 
 /**
- * Start the relay. Returns the ephemeral port it bound and a stop function.
- * Uses Bun.listen when available, otherwise Node's net.createServer — the CCR
- * container runs the CLI under Node, not Bun.
+ * 启动中继。返回其绑定的临时端口和停止函数。
+ * 可用时使用 Bun.listen，否则使用 Node 的 net.createServer —— CCR
+ * 容器在 Node 下运行 CLI，而非 Bun。
  */
 export async function startUpstreamProxyRelay(opts: {
   wsUrl: string
@@ -159,9 +157,9 @@ export async function startUpstreamProxyRelay(opts: {
 }): Promise<UpstreamProxyRelay> {
   const authHeader =
     'Basic ' + Buffer.from(`${opts.sessionId}:${opts.token}`).toString('base64')
-  // WS upgrade itself is auth-gated (proto authn: PRIVATE_API) — the gateway
-  // wants the session-ingress JWT on the upgrade request, separate from the
-  // Proxy-Authorization that rides inside the tunneled CONNECT.
+  // WS 升级本身需要认证（proto authn: PRIVATE_API）—— 网关
+  // 需要在升级请求上提供 session-ingress JWT，与
+  // 隧道化 CONNECT 内部的 Proxy-Authorization 分开。
   const wsAuthHeader = `Bearer ${opts.token}`
 
   const relay =
@@ -178,11 +176,11 @@ function startBunRelay(
   authHeader: string,
   wsAuthHeader: string,
 ): UpstreamProxyRelay {
-  // Bun TCP sockets don't auto-buffer partial writes: sock.write() returns
-  // the byte count actually handed to the kernel, and the remainder is
-  // silently dropped. When the kernel buffer fills, we queue the tail and
-  // let the drain handler flush it. Per-socket because the adapter closure
-  // outlives individual handler calls.
+  // Bun TCP 套接字不会自动缓冲部分写入：sock.write() 返回
+  // 实际交给内核的字节数，其余部分会被
+  // 静默丢弃。当内核缓冲区填满时，我们将尾部排队并
+  // 让 drain 处理器刷新它。每个套接字都有，因为适配器闭包
+  // 的生命周期长于单个处理器调用。
   type BunState = ConnState & { writeBuf: Uint8Array[] }
 
   // eslint-disable-next-line custom-rules/require-bun-typeof-guard -- caller dispatches on typeof Bun
@@ -240,8 +238,8 @@ function startBunRelay(
   }
 }
 
-// Exported so tests can exercise the Node path directly — the test runner is
-// Bun, so the runtime dispatch in startUpstreamProxyRelay always picks Bun.
+// 导出以便测试可以直接练习 Node 路径 —— 测试运行器是
+// Bun，因此 startUpstreamProxyRelay 中的运行时分发总是选择 Bun。
 export async function startNodeRelay(
   wsUrl: string,
   authHeader: string,
@@ -253,9 +251,9 @@ export async function startNodeRelay(
   const server = createServer(sock => {
     const st = newConnState()
     states.set(sock, st)
-    // Node's sock.write() buffers internally — a false return signals
-    // backpressure but the bytes are already queued, so no tail-tracking
-    // needed for correctness. Week-1 payloads won't stress the buffer.
+    // Node 的 sock.write() 在内部缓冲 —— 返回 false 表示背压
+    // 但字节已经排队，因此不需要尾部跟踪
+    // 以保证正确性。第一周的负载不会给缓冲区带来压力。
     const adapter: ClientSocket = {
       write: payload => {
         sock.write(typeof payload === 'string' ? payload : Buffer.from(payload))
@@ -289,8 +287,8 @@ export async function startNodeRelay(
 }
 
 /**
- * Shared per-connection data handler. Phase 1 accumulates the CONNECT request;
- * phase 2 forwards client bytes over the WS tunnel.
+ * 共享的每连接数据处理器。阶段 1 累积 CONNECT 请求；
+ * 阶段 2 通过 WS 隧道转发客户端字节。
  */
 function handleData(
   sock: ClientSocket,
@@ -300,14 +298,14 @@ function handleData(
   authHeader: string,
   wsAuthHeader: string,
 ): void {
-  // Phase 1: accumulate until we've seen the full CONNECT request
-  // (terminated by CRLF CRLF). curl/gh send this in one packet, but
-  // don't assume that.
+  // 阶段 1：累积直到看到完整的 CONNECT 请求
+  // （由 CRLF CRLF 终止）。curl/gh 在一个数据包中发送此，但
+  // 不要假设如此。
   if (!st.ws) {
     st.connectBuf = Buffer.concat([st.connectBuf, data])
     const headerEnd = st.connectBuf.indexOf('\r\n\r\n')
     if (headerEnd === -1) {
-      // Guard against a client that never sends CRLFCRLF.
+      // 防止客户端从不发送 CRLFCRLF。
       if (st.connectBuf.length > 8192) {
         sock.write('HTTP/1.1 400 Bad Request\r\n\r\n')
         sock.end()
@@ -322,8 +320,8 @@ function handleData(
       sock.end()
       return
     }
-    // Stash any bytes that arrived after the CONNECT header so
-    // openTunnel can flush them once the WS is open.
+    // 存储在 CONNECT 头部之后到达的字节，以便
+    // openTunnel 在 WS 打开后可以刷新它们。
     const trailing = st.connectBuf.subarray(headerEnd + 4)
     if (trailing.length > 0) {
       st.pending.push(Buffer.from(trailing))
@@ -332,8 +330,8 @@ function handleData(
     openTunnel(sock, st, firstLine, wsUrl, authHeader, wsAuthHeader)
     return
   }
-  // Phase 2: WS exists. If it isn't OPEN yet, buffer; ws.onopen will
-  // flush. Once open, pump client bytes to WS in chunks.
+  // 阶段 2：WS 存在。如果尚未打开，则缓冲；ws.onopen 将
+  // 刷新。一旦打开，就分块将客户端字节泵送到 WS。
   if (!st.wsOpen) {
     st.pending.push(Buffer.from(data))
     return
@@ -349,10 +347,10 @@ function openTunnel(
   authHeader: string,
   wsAuthHeader: string,
 ): void {
-  // core/websocket/stream.go picks JSON vs binary-proto from the upgrade
-  // request's Content-Type header (defaults to JSON). Without application/proto
-  // the server protojson.Unmarshals our hand-encoded binary chunks and fails
-  // silently with EOF.
+  // core/websocket/stream.go 从升级请求的 Content-Type 头部
+  // 选择 JSON 或 binary-proto（默认为 JSON）。若没有 application/proto，
+  // 服务器 protojson.Unmarshals 我们手动编码的二进制块并
+  // 静默失败（EOF）。
   const headers = {
     'Content-Type': 'application/proto',
     Authorization: wsAuthHeader,
@@ -376,22 +374,22 @@ function openTunnel(
   st.ws = ws
 
   ws.onopen = () => {
-    // First chunk carries the CONNECT line plus Proxy-Authorization so the
-    // server can auth the tunnel and know the target host:port. Server
-    // responds with its own "HTTP/1.1 200" over the tunnel; we just pipe it.
+    // 第一个块携带 CONNECT 行和 Proxy-Authorization，以便
+    // 服务器可以认证隧道并知道目标主机：端口。服务器
+    // 通过隧道响应自己的 "HTTP/1.1 200"；我们只需管道传输它。
     const head =
       `${connectLine}\r\n` + `Proxy-Authorization: ${authHeader}\r\n` + `\r\n`
     ws.send(encodeChunk(Buffer.from(head, 'utf8')))
-    // Flush anything that arrived while the WS handshake was in flight —
-    // trailing bytes from the CONNECT packet and any data() callbacks that
-    // fired before onopen.
+    // 刷新 WS 握手进行时到达的任何内容 ——
+    // CONNECT 数据包的尾随字节和在 onopen 之前触发的
+    // 任何 data() 回调。
     st.wsOpen = true
     for (const buf of st.pending) {
       forwardToWs(ws, buf)
     }
     st.pending = []
-    // Not all WS implementations expose ping(); empty chunk works as an
-    // application-level keepalive the server can ignore.
+    // 并非所有 WS 实现都暴露 ping()；空块可作为
+    // 服务器可以忽略的应用程序级保持存活。
     st.pinger = setInterval(sendKeepalive, PING_INTERVAL_MS, ws)
   }
 
@@ -448,7 +446,7 @@ function cleanupConn(st: ConnState | undefined): void {
     try {
       st.ws.close()
     } catch {
-      // already closing
+      // 已在关闭中
     }
   }
   st.ws = undefined

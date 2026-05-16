@@ -40,7 +40,7 @@ export function getAgentColor(agentType: string): keyof Theme | undefined {
 
   const agentColorMap = getAgentColorMap()
 
-  // Check if color already assigned
+  // 检查是否已分配颜色
   const existingColor = agentColorMap.get(agentType)
   if (existingColor && AGENT_COLORS.includes(existingColor)) {
     return AGENT_COLOR_TO_THEME_COLOR[existingColor]

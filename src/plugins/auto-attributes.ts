@@ -38,9 +38,9 @@ function getURLAttributes(url: URL | Location | undefined) {
 }
 
 export function autoAttributesPlugin(settings: AutoAttributeSettings = {}) {
-  // Browser only
+  // 仅浏览器环境
   if (typeof window === "undefined") {
-    throw new Error("autoAttributesPlugin only works in the browser");
+    throw new Error("autoAttributesPlugin 仅限浏览器环境使用");
   }
 
   const COOKIE_NAME = settings.uuidCookieName || "gbuuid";
@@ -50,19 +50,19 @@ export function autoAttributesPlugin(settings: AutoAttributeSettings = {}) {
     setCookie(COOKIE_NAME, uuid);
   }
   function getUUID() {
-    // Already stored in memory, return
+    // 已存储在内存中，直接返回
     if (uuid) return uuid;
 
-    // If cookie is already set, return
+    // 如果 cookie 已设置，直接返回
     uuid = getCookie(COOKIE_NAME);
     if (uuid) return uuid;
 
-    // Generate a new UUID
+    // 生成新的 UUID
     uuid = genUUID(window.crypto);
     return uuid;
   }
 
-  // Listen for a custom event to persist the UUID cookie
+  // 监听自定义事件以持久化 UUID cookie
   document.addEventListener("growthbookpersist", () => {
     persistUUID();
   });
@@ -72,7 +72,7 @@ export function autoAttributesPlugin(settings: AutoAttributeSettings = {}) {
 
     const _uuid = getUUID();
 
-    // If a uuid is provided, default persist to false, otherwise default to true
+    // 如果提供了 uuid，默认不持久化，否则默认持久化
     if (settings.uuidAutoPersist ?? !settings.uuid) {
       persistUUID();
     }
@@ -90,17 +90,17 @@ export function autoAttributesPlugin(settings: AutoAttributeSettings = {}) {
   }
 
   return (gb: GrowthBook | UserScopedGrowthBook | GrowthBookClient) => {
-    // Only works for instances with user attributes
+    // 仅适用于具有用户属性的实例
     if ("createScopedInstance" in gb) {
       return;
     }
 
-    // Set initial attributes
+    // 设置初始属性
     const attributes = getAutoAttributes(settings);
     attributes.url && gb.setURL(attributes.url);
     gb.updateAttributes(attributes);
 
-    // Poll for URL changes and update GrowthBook
+    // 轮询 URL 变化并更新 GrowthBook
     let currentUrl = attributes.url;
     const intervalTimer = setInterval(() => {
       if (location.href !== currentUrl) {
@@ -110,7 +110,7 @@ export function autoAttributesPlugin(settings: AutoAttributeSettings = {}) {
       }
     }, 500);
 
-    // Listen for a custom event to update URL and attributes
+    // 监听自定义事件以更新 URL 和属性
     const refreshListener = () => {
       if (location.href !== currentUrl) {
         currentUrl = location.href;
@@ -131,7 +131,7 @@ export function autoAttributesPlugin(settings: AutoAttributeSettings = {}) {
 
 function setCookie(name: string, value: string) {
   const d = new Date();
-  const COOKIE_DAYS = 400; // 400 days is the max cookie duration for chrome
+  const COOKIE_DAYS = 400; // 400 天是 Chrome 的最大 cookie 有效期
   d.setTime(d.getTime() + 24 * 60 * 60 * 1000 * COOKIE_DAYS);
   document.cookie = name + "=" + value + ";path=/;expires=" + d.toUTCString();
 }
@@ -142,7 +142,7 @@ function getCookie(name: string): string {
   return parts.length === 2 ? parts[1].split(";")[0] : "";
 }
 
-// Use the browsers crypto.randomUUID if set to generate a UUID
+// 使用浏览器的 crypto.randomUUID（如果可用）生成 UUID
 function genUUID(crypto?: Crypto) {
   if (crypto && crypto.randomUUID) return crypto.randomUUID();
   return ("" + 1e7 + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) => {
@@ -158,7 +158,7 @@ function genUUID(crypto?: Crypto) {
 }
 
 function getUtmAttributes(url: URL | Location | undefined) {
-  // Store utm- params in sessionStorage for future page loads
+  // 将 utm 参数存储在 sessionStorage 中以供后续页面加载使用
   let utms: Record<string, string> = {};
   try {
     const existing = sessionStorage.getItem("utm_params");
@@ -166,17 +166,17 @@ function getUtmAttributes(url: URL | Location | undefined) {
       utms = JSON.parse(existing);
     }
   } catch (e) {
-    // Do nothing if sessionStorage is disabled (e.g. incognito window)
+    // 如果 sessionStorage 被禁用（如无痕窗口），不执行任何操作
   }
 
-  // Add utm params from querystring
+  // 从查询字符串中添加 utm 参数
   if (url && url.search) {
     const params = new URLSearchParams(url.search);
     let hasChanges = false;
     ["source", "medium", "campaign", "term", "content"].forEach((k) => {
-      // Querystring is in snake_case
+      // 查询字符串使用蛇形命名法（snake_case）
       const param = `utm_${k}`;
-      // Attribute keys are camelCase
+      // 属性键使用驼峰命名法（camelCase）
       const attr = `utm` + k[0].toUpperCase() + k.slice(1);
 
       if (params.has(param)) {
@@ -185,12 +185,12 @@ function getUtmAttributes(url: URL | Location | undefined) {
       }
     });
 
-    // Write back to sessionStorage
+    // 写回 sessionStorage
     if (hasChanges) {
       try {
         sessionStorage.setItem("utm_params", JSON.stringify(utms));
       } catch (e) {
-        // Do nothing if sessionStorage is disabled (e.g. incognito window)
+        // 如果 sessionStorage 被禁用（如无痕窗口），不执行任何操作
       }
     }
   }
@@ -209,19 +209,19 @@ function getDataLayerVariables() {
 
   const obj: Record<string, unknown> = {};
   window.dataLayer.forEach((item: unknown) => {
-    // Skip empty and non-object entries
+    // 跳过空条目和非对象条目
     if (!item || typeof item !== "object" || "length" in item) return;
 
-    // Skip events
+    // 跳过事件条目
     if ("event" in item) return;
 
     Object.keys(item).forEach((k) => {
-      // Filter out known properties that aren't useful
+      // 过滤掉无用的已知属性
       if (typeof k !== "string" || k.match(/^(gtm)/)) return;
 
       const val = (item as Record<string, unknown>)[k];
 
-      // Only add primitive variable values
+      // 仅添加原始类型的变量值
       const valueType = typeof val;
       if (["string", "number", "boolean"].includes(valueType)) {
         obj[k] = val;

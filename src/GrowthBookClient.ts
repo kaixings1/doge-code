@@ -53,7 +53,7 @@ export class GrowthBookClient<
   public ready: boolean;
   public version: string;
 
-  // Properties and methods that start with "_" are mangled by Terser (saves ~150 bytes)
+  // 以下划线 "_" 开头的属性和方法会被 Terser 压缩（节省约 150 字节）
   private _options: ClientOptions;
 
   private _features: FeatureDefinitions;
@@ -64,8 +64,8 @@ export class GrowthBookClient<
 
   constructor(options?: ClientOptions) {
     options = options || {};
-    // These properties are all initialized in the constructor instead of above
-    // This saves ~80 bytes in the final output
+    // 这些属性都在构造函数中初始化，而不是在上面初始化
+    // 这在最终输出中可节省约 80 字节
     this.version = SDK_VERSION;
     this._options = options;
     this.debug = !!options.debug;
@@ -102,7 +102,7 @@ export class GrowthBookClient<
     const payload = options.payload;
 
     if (payload.encryptedExperiments || payload.encryptedFeatures) {
-      throw new Error("initSync does not support encrypted payloads");
+      throw new Error("initSync 不支持加密负载");
     }
 
     this._payload = payload;
@@ -189,9 +189,9 @@ export class GrowthBookClient<
     streaming?: boolean;
   }) {
     if (!this._options.clientKey) {
-      throw new Error("Missing clientKey");
+      throw new Error("缺少 clientKey");
     }
-    // Trigger refresh in feature repository
+    // 在特性仓库中触发刷新
     return refreshFeatures({
       instance: this,
       timeout,
@@ -220,7 +220,7 @@ export class GrowthBookClient<
       clearAutoRefresh();
     }
 
-    // Release references to save memory
+    // 释放引用以节省内存
     this._features = {};
     this._experiments = [];
     this._decryptedPayload = undefined;

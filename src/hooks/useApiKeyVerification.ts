@@ -26,13 +26,13 @@ export function useApiKeyVerification(): ApiKeyVerificationResult {
     if (!isAnthropicAuthEnabled() || isClaudeAISubscriber()) {
       return 'valid'
     }
-    // Use skipRetrievingKeyFromApiKeyHelper to avoid executing apiKeyHelper
-    // before trust dialog is shown (security: prevents RCE via settings.json)
+    // 使用 skipRetrievingKeyFromApiKeyHelper 避免在信任对话框显示前
+    // 执行 apiKeyHelper（安全：防止通过 settings.json 实现 RCE）
     const { key, source } = getAnthropicApiKeyWithSource({
       skipRetrievingKeyFromApiKeyHelper: true,
     })
-    // If apiKeyHelper is configured, we have a key source even though we
-    // haven't executed it yet - return 'loading' to indicate we'll verify later
+    // 如果配置了 apiKeyHelper，即使尚未执行，我们也有密钥来源
+    // ——返回 'loading' 表示稍后验证
     if (key || source === 'apiKeyHelper') {
       return 'loading'
     }
@@ -45,8 +45,8 @@ export function useApiKeyVerification(): ApiKeyVerificationResult {
       setStatus('valid')
       return
     }
-    // Warm the apiKeyHelper cache (no-op if not configured), then read from
-    // all sources. getAnthropicApiKeyWithSource() reads the now-warm cache.
+    // 预热 apiKeyHelper 缓存（未配置则为空操作），然后从所有来源读取。
+    // getAnthropicApiKeyWithSource() 读取已预热的缓存。
     await getApiKeyFromApiKeyHelper(getIsNonInteractiveSession())
     const { key: apiKey, source } = getAnthropicApiKeyWithSource()
     if (!apiKey) {
@@ -66,9 +66,9 @@ export function useApiKeyVerification(): ApiKeyVerificationResult {
       setStatus(newStatus)
       return
     } catch (error) {
-      // This happens when there an error response from the API but it's not an invalid API key error
-      // In this case, we still mark the API key as invalid - but we also log the error so we can
-      // display it to the user to be more helpful
+      // 当 API 返回错误响应但并非无效 API 密钥错误时触发
+      // 这种情况下，我们仍将 API 密钥标记为无效——但同时记录错误
+      // 以便向用户显示更有帮助的信息
       setError(error as Error)
       const newStatus = 'error'
       setStatus(newStatus)

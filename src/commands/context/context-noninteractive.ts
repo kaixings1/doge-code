@@ -238,25 +238,25 @@ function formatContextAsMarkdownTable(data: ContextData): string {
       let sourceDisplay: string
       switch (agent.source) {
         case 'projectSettings':
-          sourceDisplay = 'Project'
+          sourceDisplay = '项目'
           break
         case 'userSettings':
-          sourceDisplay = 'User'
+          sourceDisplay = '用户'
           break
         case 'localSettings':
-          sourceDisplay = 'Local'
+          sourceDisplay = '本地'
           break
         case 'flagSettings':
-          sourceDisplay = 'Flag'
+          sourceDisplay = '标志'
           break
         case 'policySettings':
-          sourceDisplay = 'Policy'
+          sourceDisplay = '策略'
           break
         case 'plugin':
-          sourceDisplay = 'Plugin'
+          sourceDisplay = '插件'
           break
         case 'built-in':
-          sourceDisplay = 'Built-in'
+          sourceDisplay = '内置'
           break
         default:
           sourceDisplay = String(agent.source)

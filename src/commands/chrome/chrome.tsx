@@ -167,7 +167,7 @@ function ClaudeInChromeMenu(t0) {
     } else {
       t8 = $[15];
     }
-    const t9 = `Enabled by default: ${enabledByDefault ? "Yes" : "No"}`;
+    const t9 = `默认启用：${enabledByDefault ? "是" : "否"}`;
     let t10;
     if ($[16] !== t9) {
       t10 = {
@@ -197,7 +197,7 @@ function ClaudeInChromeMenu(t0) {
   }
   let t6;
   if ($[20] === Symbol.for("react.memo_cache_sentinel")) {
-    t6 = <Text>Claude in Chrome works with the Chrome extension to let you control your browser directly from Claude Code. Navigate websites, fill forms, capture screenshots, record GIFs, and debug with console logs and network requests.</Text>;
+    t6 = <Text>Claude in Chrome 与 Chrome 扩展配合使用，可让你直接从 Claude Code 控制浏览器。浏览网站、填写表单、截屏、录制 GIF，以及通过控制台日志和网络请求进行调试。</Text>;
     $[20] = t6;
   } else {
     t6 = $[20];
@@ -212,7 +212,7 @@ function ClaudeInChromeMenu(t0) {
   }
   let t8;
   if ($[23] !== isClaudeAISubscriber) {
-    t8 = true && !isClaudeAISubscriber && <Text color="error">Claude in Chrome requires a claude.ai subscription.</Text>;
+    t8 = true && !isClaudeAISubscriber && <Text color="error">Claude in Chrome 需要 claude.ai 订阅。</Text>;
     $[23] = isClaudeAISubscriber;
     $[24] = t8;
   } else {
@@ -220,7 +220,7 @@ function ClaudeInChromeMenu(t0) {
   }
   let t9;
   if ($[25] !== handleAction || $[26] !== isConnected || $[27] !== isDisabled || $[28] !== isExtensionInstalled || $[29] !== options || $[30] !== selectKey || $[31] !== showInstallHint) {
-    t9 = !isDisabled && <>{!isHomespace && <Box flexDirection="column"><Text>Status:{" "}{isConnected ? <Text color="success">Enabled</Text> : <Text color="inactive">Disabled</Text>}</Text><Text>Extension:{" "}{isExtensionInstalled ? <Text color="success">Installed</Text> : <Text color="warning">Not detected</Text>}</Text></Box>}<Select key={selectKey} options={options} onChange={handleAction} hideIndexes={true} />{showInstallHint && <Text color="warning">Once installed, select {"\"Reconnect extension\""} to connect.</Text>}<Text><Text dimColor={true}>Usage: </Text><Text>claude --chrome</Text><Text dimColor={true}> or </Text><Text>claude --no-chrome</Text></Text><Text dimColor={true}>Site-level permissions are inherited from the Chrome extension. Manage permissions in the Chrome extension settings to control which sites Claude can browse, click, and type on.</Text></>;
+    t9 = !isDisabled && <>{!isHomespace && <Box flexDirection="column"><Text>状态：{" "}{isConnected ? <Text color="success">已启用</Text> : <Text color="inactive">未启用</Text>}</Text><Text>扩展：{" "}{isExtensionInstalled ? <Text color="success">已安装</Text> : <Text color="warning">未检测到</Text>}</Text></Box>}<Select key={selectKey} options={options} onChange={handleAction} hideIndexes={true} />{showInstallHint && <Text color="warning">安装后，选择{"\"重新连接扩展\""}以连接。</Text>}<Text><Text dimColor={true}>用法：</Text><Text>claude --chrome</Text><Text dimColor={true}> 或 </Text><Text>claude --no-chrome</Text></Text><Text dimColor={true}>站点级权限继承自 Chrome 扩展。在 Chrome 扩展设置中管理权限，以控制 Claude 可以浏览、点击和输入的网站。</Text></>;
     $[25] = handleAction;
     $[26] = isConnected;
     $[27] = isDisabled;
@@ -234,7 +234,7 @@ function ClaudeInChromeMenu(t0) {
   }
   let t10;
   if ($[33] === Symbol.for("react.memo_cache_sentinel")) {
-    t10 = <Text dimColor={true}>Learn more: https://code.claude.com/docs/en/chrome</Text>;
+    t10 = <Text dimColor={true}>了解更多：https://code.claude.com/docs/zh-cn/chrome</Text>;
     $[33] = t10;
   } else {
     t10 = $[33];

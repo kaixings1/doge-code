@@ -1,13 +1,13 @@
 /**
- * Zod schema for keybindings.json configuration.
- * Used for validation and JSON schema generation.
+ * keybindings.json 配置的 Zod 模式。
+ * 用于验证和 JSON 模式生成。
  */
 
 import { z } from 'zod/v4'
 import { lazySchema } from '../utils/lazySchema.js'
 
 /**
- * Valid context names where keybindings can be applied.
+ * 按键绑定可以应用的有效上下文名称。
  */
 export const KEYBINDING_CONTEXTS = [
   'Global',
@@ -21,7 +21,7 @@ export const KEYBINDING_CONTEXTS = [
   'ThemePicker',
   'Settings',
   'Tabs',
-  // New contexts for keybindings migration
+  // 按键绑定迁移的新上下文
   'Attachments',
   'Footer',
   'MessageSelector',
@@ -32,7 +32,7 @@ export const KEYBINDING_CONTEXTS = [
 ] as const
 
 /**
- * Human-readable descriptions for each keybinding context.
+ * 每个按键绑定上下文的人类可读描述。
  */
 export const KEYBINDING_CONTEXT_DESCRIPTIONS: Record<
   (typeof KEYBINDING_CONTEXTS)[number],
@@ -59,10 +59,10 @@ export const KEYBINDING_CONTEXT_DESCRIPTIONS: Record<
 }
 
 /**
- * All valid keybinding action identifiers.
+ * 所有有效的按键绑定操作标识符。
  */
 export const KEYBINDING_ACTIONS = [
-  // App-level actions (Global context)
+  // 应用级操作（全局上下文）
   'app:interrupt',
   'app:exit',
   'app:toggleTodos',
@@ -75,11 +75,11 @@ export const KEYBINDING_ACTIONS = [
   'app:quickOpen',
   // DOGE: API 重试立即重试
   'app:retryNow',
-  // History navigation
+  // 历史导航
   'history:search',
   'history:previous',
   'history:next',
-  // Chat input actions
+  // 聊天输入操作
   'chat:cancel',
   'chat:killAgents',
   'chat:cycleMode',
@@ -93,12 +93,12 @@ export const KEYBINDING_ACTIONS = [
   'chat:stash',
   'chat:imagePaste',
   'chat:messageActions',
-  // Autocomplete menu actions
+  // 自动完成菜单操作
   'autocomplete:accept',
   'autocomplete:dismiss',
   'autocomplete:previous',
   'autocomplete:next',
-  // Confirmation dialog actions
+  // 确认对话框操作
   'confirm:yes',
   'confirm:no',
   'confirm:previous',
@@ -108,29 +108,29 @@ export const KEYBINDING_ACTIONS = [
   'confirm:cycleMode',
   'confirm:toggle',
   'confirm:toggleExplanation',
-  // Tabs navigation actions
+  // 标签页导航操作
   'tabs:next',
   'tabs:previous',
-  // Transcript viewer actions
+  // 对话记录查看器操作
   'transcript:toggleShowAll',
   'transcript:exit',
-  // History search actions
+  // 历史搜索操作
   'historySearch:next',
   'historySearch:accept',
   'historySearch:cancel',
   'historySearch:execute',
-  // Task/agent actions
+  // 任务/代理操作
   'task:background',
-  // Theme picker actions
+  // 主题选择器操作
   'theme:toggleSyntaxHighlighting',
-  // Help menu actions
+  // 帮助菜单操作
   'help:dismiss',
-  // Attachment navigation (select dialog image attachments)
+  // 附件导航（选择对话框中的图像附件）
   'attachments:next',
   'attachments:previous',
   'attachments:remove',
   'attachments:exit',
-  // Footer indicator actions
+  // 页脚指示器操作
   'footer:up',
   'footer:down',
   'footer:next',
@@ -138,13 +138,13 @@ export const KEYBINDING_ACTIONS = [
   'footer:openSelected',
   'footer:clearSelection',
   'footer:close',
-  // Message selector (rewind) actions
+  // 消息选择器（回退）操作
   'messageSelector:up',
   'messageSelector:down',
   'messageSelector:top',
   'messageSelector:bottom',
   'messageSelector:select',
-  // Diff dialog actions
+  // 差异对话框操作
   'diff:dismiss',
   'diff:previousSource',
   'diff:nextSource',
@@ -152,29 +152,29 @@ export const KEYBINDING_ACTIONS = [
   'diff:viewDetails',
   'diff:previousFile',
   'diff:nextFile',
-  // Model picker actions (ant-only)
+  // 模型选择器操作（仅 ant 员工）
   'modelPicker:decreaseEffort',
   'modelPicker:increaseEffort',
-  // Select component actions (distinct from confirm: to avoid collisions)
+  // 选择组件操作（与 confirm: 区分以避免冲突）
   'select:next',
   'select:previous',
   'select:accept',
   'select:cancel',
-  // Plugin dialog actions
+  // 插件对话框操作
   'plugin:toggle',
   'plugin:install',
-  // Permission dialog actions
+  // 权限对话框操作
   'permission:toggleDebug',
-  // Settings config panel actions
+  // 设置配置面板操作
   'settings:search',
   'settings:retry',
   'settings:close',
-  // Voice actions
+  // 语音操作
   'voice:pushToTalk',
 ] as const
 
 /**
- * Schema for a single keybinding block.
+ * 单个按键绑定块的模式。
  */
 export const KeybindingBlockSchema = lazySchema(() =>
   z
@@ -182,13 +182,13 @@ export const KeybindingBlockSchema = lazySchema(() =>
       context: z
         .enum(KEYBINDING_CONTEXTS)
         .describe(
-          'UI context where these bindings apply. Global bindings work everywhere.',
+          '这些绑定适用的 UI 上下文。全局绑定在任何地方都生效。',
         ),
       bindings: z
         .record(
           z
             .string()
-            .describe('Keystroke pattern (e.g., "ctrl+k", "shift+tab")'),
+            .describe('按键模式（例如 "ctrl+k"、"shift+tab"）'),
           z
             .union([
               z.enum(KEYBINDING_ACTIONS),
@@ -196,22 +196,22 @@ export const KeybindingBlockSchema = lazySchema(() =>
                 .string()
                 .regex(/^command:[a-zA-Z0-9:\-_]+$/)
                 .describe(
-                  'Command binding (e.g., "command:help", "command:compact"). Executes the slash command as if typed.',
+                  '命令绑定（例如 "command:help"、"command:compact"）。执行斜杠命令就像在输入框中输入一样。',
                 ),
-              z.null().describe('Set to null to unbind a default shortcut'),
+              z.null().describe('设置为 null 可解绑默认快捷键'),
             ])
             .describe(
-              'Action to trigger, command to invoke, or null to unbind',
+              '要触发的操作、要调用的命令，或设置为 null 以解绑',
             ),
         )
-        .describe('Map of keystroke patterns to actions'),
+        .describe('按键模式到操作的映射'),
     })
-    .describe('A block of keybindings for a specific context'),
+    .describe('特定上下文下的按键绑定块'),
 )
 
 /**
- * Schema for the entire keybindings.json file.
- * Uses object wrapper format with optional $schema and $docs metadata.
+ * 整个 keybindings.json 文件的模式。
+ * 使用对象包装格式，包含可选的 $schema 和 $docs 元数据。
  */
 export const KeybindingsSchema = lazySchema(() =>
   z
@@ -219,19 +219,19 @@ export const KeybindingsSchema = lazySchema(() =>
       $schema: z
         .string()
         .optional()
-        .describe('JSON Schema URL for editor validation'),
-      $docs: z.string().optional().describe('Documentation URL'),
+        .describe('用于编辑器验证的 JSON Schema URL'),
+      $docs: z.string().optional().describe('文档 URL'),
       bindings: z
         .array(KeybindingBlockSchema())
-        .describe('Array of keybinding blocks by context'),
+        .describe('按上下文排列的按键绑定块数组'),
     })
     .describe(
-      'Claude Code keybindings configuration. Customize keyboard shortcuts by context.',
+      'Claude Code 按键绑定配置。按上下文自定义键盘快捷键。',
     ),
 )
 
 /**
- * TypeScript types derived from the schema.
+ * 从模式派生的 TypeScript 类型。
  */
 export type KeybindingsSchemaType = z.infer<
   ReturnType<typeof KeybindingsSchema>

@@ -23,8 +23,8 @@ export function isHookEvent(value: string): value is HookEvent {
   return HOOK_EVENTS.includes(value as HookEvent)
 }
 
-// Prompt elicitation protocol types. The `prompt` key acts as discriminator
-// (mirroring the {async:true} pattern), with the id as its value.
+// 提示提取协议类型。`prompt` 键作为鉴别器
+// （镜像 {async:true} 模式），其值为 id。
 export const promptRequestSchema = lazySchema(() =>
   z.object({
     prompt: z.string(), // request id
@@ -41,25 +41,27 @@ export const promptRequestSchema = lazySchema(() =>
 
 export type PromptRequest = z.infer<ReturnType<typeof promptRequestSchema>>
 
+/** 提示响应 */
 export type PromptResponse = {
-  prompt_response: string // request id
+  prompt_response: string // 请求 ID
   selected: string
 }
 
-// Sync hook response schema
+// 同步钩子响应架构
+/** 同步钩子响应架构 */
 export const syncHookResponseSchema = lazySchema(() =>
   z.object({
     continue: z
       .boolean()
-      .describe('Whether Claude should continue after hook (default: true)')
+      .describe('钩子执行后 Claude 是否继续（默认：true）')
       .optional(),
     suppressOutput: z
       .boolean()
-      .describe('Hide stdout from transcript (default: false)')
+      .describe('隐藏记录中的 stdout（默认：false）')
       .optional(),
     stopReason: z
       .string()
-      .describe('Message shown when continue is false')
+      .describe('continue 为 false 时显示的消息')
       .optional(),
     decision: z.enum(['approve', 'block']).optional(),
     reason: z.string().describe('决策的解释').optional(),
@@ -102,7 +104,7 @@ export const syncHookResponseSchema = lazySchema(() =>
           additionalContext: z.string().optional(), // 工具使用后的额外上下文信息
           updatedMCPToolOutput: z
             .unknown()
-            .describe('更新MCP工具的输出')
+            .describe('更新 MCP 工具的输出')
             .optional(),
         }),
         z.object({
@@ -158,7 +160,7 @@ export const syncHookResponseSchema = lazySchema(() =>
         }),
         z.object({
           hookEventName: z.literal('WorktreeCreate'),
-          worktreePath: z.string() // 工作树创建路径,
+          worktreePath: z.string() // 工作树创建路径
         }),
       ])
       .optional(),
@@ -199,7 +201,7 @@ type _assertSDKTypesMatch = Assert<
   IsEqual<SchemaHookJSONOutput, HookJSONOutput>
 >
 
-/** Context passed to callback hooks for state access */
+/** 传递给回调钩子的状态访问上下文 */
 export type HookCallbackContext = {
   getAppState: () => AppState
   updateAttributionState: (
@@ -207,30 +209,32 @@ export type HookCallbackContext = {
   ) => void
 }
 
-/** Hook that is a callback. */
+/** 回调类型的钩子 */
 export type HookCallback = {
   type: 'callback'
   callback: (
     input: HookInput,
     toolUseID: string | null,
     abort: AbortSignal | undefined,
-    /** Hook index for SessionStart hooks to compute CLAUDE_ENV_FILE path */
+    /** SessionStart 钩子的索引，用于计算 CLAUDE_ENV_FILE 路径 */
     hookIndex?: number,
-    /** Optional context for accessing app state */
+    /** 可选的应用状态访问上下文 */
     context?: HookCallbackContext,
   ) => Promise<HookJSONOutput>
-  /** Timeout in seconds for this hook */
+  /** 钩子超时时间（秒） */
   timeout?: number
-  /** Internal hooks (e.g. session file access analytics) are excluded from tengu_run_hook metrics */
+  /** 内部钩子（如会话文件访问分析）不计入 tengu_run_hook 指标 */
   internal?: boolean
 }
 
+/** 钩子回调匹配器 */
 export type HookCallbackMatcher = {
   matcher?: string
   hooks: HookCallback[]
   pluginName?: string
 }
 
+/** 钩子进度信息 */
 export type HookProgress = {
   type: 'hook_progress'
   hookEvent: HookEvent
@@ -240,11 +244,13 @@ export type HookProgress = {
   statusMessage?: string
 }
 
+/** 钩子阻塞错误 */
 export type HookBlockingError = {
   blockingError: string
   command: string
 }
 
+/** 权限请求结果 */
 export type PermissionRequestResult =
   | {
       behavior: 'allow'
@@ -257,6 +263,7 @@ export type PermissionRequestResult =
       interrupt?: boolean
     }
 
+/** 钩子结果类型 */
 export type HookResult = {
   message?: Message
   systemMessage?: Message
@@ -274,6 +281,7 @@ export type HookResult = {
   retry?: boolean
 }
 
+/** 聚合的钩子结果 */
 export type AggregatedHookResult = {
   message?: Message
   blockingErrors?: HookBlockingError[]

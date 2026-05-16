@@ -55,9 +55,9 @@ import { Stream } from '../utils/stream.js'
 import { ndjsonSafeStringify } from './ndjsonSafeStringify.js'
 
 /**
- * Synthetic tool name used when forwarding sandbox network permission
- * requests via the can_use_tool control_request protocol. SDK hosts
- * see this as a normal tool permission prompt.
+ * 用于通过 can_use_tool control_request 协议转发沙箱网络权限
+ * 请求的合成工具名称。SDK 主机将此视为
+ * 普通的工具权限提示。
  */
 export const SANDBOX_NETWORK_ACCESS_TOOL_NAME = 'SandboxNetworkAccess'
 
@@ -124,8 +124,8 @@ type PendingRequest<T> = {
 }
 
 /**
- * Provides a structured way to read and write SDK messages from stdio,
- * capturing the SDK protocol.
+ * 提供一种结构化方式来从 stdio 读写 SDK 消息，
+ * 实现 SDK 协议。
  */
 // 要跟踪的已解析 tool_use ID 的最大数量。超过后，删除最旧的
 // 条目。这将限制非常长会话中的内存，同时保留
@@ -157,8 +157,8 @@ export class StructuredIO {
   private onControlRequestSent?: (request: SDKControlRequest) => void
   private onControlRequestResolved?: (requestId: string) => void
 
-  // sendRequest() and print.ts both enqueue here; the drain loop is the
-  // only writer. Prevents control_request from overtaking queued stream_events.
+  // sendRequest() 和 print.ts 都入队到此；drain 循环是唯一的
+  // 写入者。防止 control_request 超越排队的 stream_events。
   readonly outbound = new Stream<StdoutMessage>()
 
   constructor(
@@ -170,8 +170,8 @@ export class StructuredIO {
   }
 
   /**
-   * Records a tool_use ID as resolved so that late/duplicate control_response
-   * messages for the same tool are ignored by the orphan handler.
+   * 将 tool_use ID 记录为已解析，以便同一工具的迟到/重复
+   * control_response 消息被孤儿处理器忽略。
    */
   private trackResolvedToolUseId(request: SDKControlRequest): void {
     if (request.request.subtype === 'can_use_tool') {
@@ -186,20 +186,20 @@ export class StructuredIO {
     }
   }
 
-  /** Flush pending internal events. No-op for non-remote IO. Overridden by RemoteIO. */
+  /** 刷新待处理的内部事件。非远程 IO 时无操作。由 RemoteIO 覆盖。 */
   flushInternalEvents(): Promise<void> {
     return Promise.resolve()
   }
 
-  /** Internal-event queue depth. Overridden by RemoteIO; zero otherwise. */
+  /** 内部事件队列深度。由 RemoteIO 覆盖；否则为零。 */
   get internalEventsPending(): number {
     return 0
   }
 
   /**
-   * Queue a user turn to be yielded before the next message from this.input.
-   * Works before iteration starts and mid-stream — read() re-checks
-   * prependedLines between each yielded message.
+   * 将用户回合排入队列，以便在下一条来自 this.input 的消息之前生成。
+   * 在迭代开始前和流中间均有效 — read() 在每条生成的消息之间
+   * 重新检查 prependedLines。
    */
   prependUserMessage(content: string): void {
     this.prependedLines.push(
@@ -274,12 +274,12 @@ export class StructuredIO {
   }
 
   /**
-   * Inject a control_response message to resolve a pending permission request.
-   * Used by the bridge to feed permission responses from claude.ai into the
-   * SDK permission flow.
+   * 注入 control_response 消息以解析待处理的权限请求。
+   * 由桥接器用于将来自 claude.ai 的权限响应反馈到
+   * SDK 权限流中。
    *
-   * Also sends a control_cancel_request to the SDK consumer so its canUseTool
-   * callback is aborted via the signal — otherwise the callback hangs.
+   * 还向 SDK 消费者发送 control_cancel_request，以便其 canUseTool
+   * 回调通过信号中止 — 否则回调会挂起。
    */
   injectControlResponse(response: SDKControlResponse): void {
     const requestId = response.response?.request_id
@@ -310,9 +310,9 @@ export class StructuredIO {
   }
 
   /**
-   * Register a callback invoked whenever a can_use_tool control_request
-   * is written to stdout. Used by the bridge to forward permission
-   * requests to claude.ai.
+   * 注册一个回调，每当 can_use_tool control_request
+   * 写入 stdout 时调用。由桥接器用于将权限请求转发到
+   * claude.ai。
    */
   setOnControlRequestSent(
     callback: ((request: SDKControlRequest) => void) | undefined,
@@ -321,9 +321,9 @@ export class StructuredIO {
   }
 
   /**
-   * Register a callback invoked when a can_use_tool control_response arrives
-   * from the SDK consumer (via stdin). Used by the bridge to cancel the
-   * stale permission prompt on claude.ai when the SDK consumer wins the race.
+   * 注册一个回调，当来自 SDK 消费者（通过 stdin）的 can_use_tool
+   * control_response 到达时调用。由桥接器用于在 SDK 消费者赢得竞争时
+   * 取消 claude.ai 上过期的权限提示。
    */
   setOnControlRequestResolved(
     callback: ((requestId: string) => void) | undefined,
@@ -400,7 +400,7 @@ export class StructuredIO {
         this.trackResolvedToolUseId(request.request)
         this.pendingRequests.delete(message.response.request_id)
         // 通知桥接器当 SDK 消费者解析 can_use_tool
-        // request, so it can cancel the stale permission prompt on claude.ai.
+        // 请求，以便可以取消 claude.ai 上过期的权限提示。
         if (
           request.request.request.subtype === 'can_use_tool' &&
           this.onControlRequestResolved
@@ -456,7 +456,7 @@ export class StructuredIO {
       return message
     } catch (error) {
       // biome-ignore lint/suspicious/noConsole:: intentional console output
-      console.error(`Error parsing streaming input line: ${line}: ${error}`)
+      console.error(`解析流式输入行时出错: ${line}: ${error}`)
       // eslint-disable-next-line custom-rules/no-process-exit
       process.exit(1)
     }
@@ -648,8 +648,8 @@ export class StructuredIO {
           toolUseContext,
         )
       } finally {
-        // Only transition back to 'running' if no other permission prompts
-        // 挂起（并发工具执行可能有多个未完成的。
+        // 仅在没有其他权限提示挂起时才转换回 'running'
+        //（并发工具执行可能有多个未完成的）。
         if (this.getPendingPermissionRequests().length === 0) {
           notifySessionStateChanged('running')
         }
@@ -681,7 +681,7 @@ export class StructuredIO {
           return result
         } catch (error) {
           // biome-ignore lint/suspicious/noConsole:: intentional console output
-          console.error(`Error in hook callback ${callbackId}:`, error)
+          console.error(`钩子回调 ${callbackId} 出错:`, error)
           return {}
         }
       },
@@ -689,7 +689,7 @@ export class StructuredIO {
   }
 
   /**
-   * Sends an elicitation request to the SDK consumer and returns the response.
+   * 向 SDK 消费者发送 elicitation 请求并返回响应。
    */
   async handleElicitation(
     serverName: string,
@@ -721,12 +721,12 @@ export class StructuredIO {
   }
 
   /**
-   * Creates a SandboxAskCallback that forwards sandbox network permission
-   * requests to the SDK host as can_use_tool control_requests.
+   * 创建 SandboxAskCallback，将沙箱网络权限请求作为
+   * can_use_tool control_requests 转发到 SDK 主机。
    *
-   * This piggybacks on the existing can_use_tool protocol with a synthetic
-   * tool name so that SDK hosts (VS Code, CCR, etc.) can prompt the user
-   * for network access without requiring a new protocol subtype.
+   * 它利用现有的 can_use_tool 协议和一个合成工具名称，
+   * 以便 SDK 主机（VS Code、CCR 等）无需新的协议子类型
+   * 即可提示用户进行网络访问。
    */
   createSandboxAskCallback(): (hostPattern: {
     host: string
@@ -753,7 +753,7 @@ export class StructuredIO {
   }
 
   /**
-   * Sends an MCP message to an SDK server and waits for the response
+   * 向 SDK 服务器发送 MCP 消息并等待响应
    */
   async sendMcpMessage(
     serverName: string,
@@ -781,8 +781,8 @@ function exitWithMessage(message: string): never {
 }
 
 /**
- * Execute PermissionRequest hooks and return a decision if one is made.
- * Returns undefined if no hook made a decision.
+ * 执行 PermissionRequest 钩子，如果做出决定则返回。
+ * 如果没有钩子做出决定，则返回 undefined。
  */
 async function executePermissionRequestHooksForSDK(
   toolName: string,

@@ -1,15 +1,23 @@
 import { getBudgetContinuationMessage } from '../utils/tokenBudget.js'
 
+// 完成阈值（90%）
 const COMPLETION_THRESHOLD = 0.9
+// 收益递减阈值
 const DIMINISHING_THRESHOLD = 500
 
+/** 预算追踪器 */
 export type BudgetTracker = {
+  /** 连续续传次数 */
   continuationCount: number
+  /** 上次增量 Token 数 */
   lastDeltaTokens: number
+  /** 上次全局回合 Token 数 */
   lastGlobalTurnTokens: number
+  /** 开始时间戳 */
   startedAt: number
 }
 
+/** 创建预算追踪器 */
 export function createBudgetTracker(): BudgetTracker {
   return {
     continuationCount: 0,
@@ -19,17 +27,25 @@ export function createBudgetTracker(): BudgetTracker {
   }
 }
 
+/** 继续决策 */
 type ContinueDecision = {
   action: 'continue'
+  /** 提示消息 */
   nudgeMessage: string
+  /** 连续续传次数 */
   continuationCount: number
+  /** 已用百分比 */
   pct: number
+  /** 当前回合 Token 数 */
   turnTokens: number
+  /** 预算上限 */
   budget: number
 }
 
+/** 停止决策 */
 type StopDecision = {
   action: 'stop'
+  /** 完成事件数据 */
   completionEvent: {
     continuationCount: number
     pct: number
@@ -40,6 +56,7 @@ type StopDecision = {
   } | null
 }
 
+/** Token 预算决策结果 */
 export type TokenBudgetDecision = ContinueDecision | StopDecision
 
 export function checkTokenBudget(

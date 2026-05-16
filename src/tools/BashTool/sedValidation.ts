@@ -4,20 +4,20 @@ import { tryParseShellCommand } from '../../utils/bash/shellQuote.js'
 import type { PermissionResult } from '../../utils/permissions/PermissionResult.js'
 
 /**
- * Helper: Validate flags against an allowlist
- * Handles both single flags and combined flags (e.g., -nE)
- * @param flags Array of flags to validate
- * @param allowedFlags Array of allowed single-character and long flags
- * @returns true if all flags are valid, false otherwise
+ * 辅助函数：根据允许列表验证标志
+ * 处理单个标志和组合标志（例如 -nE）
+ * @param flags 要验证的标志数组
+ * @param allowedFlags 允许的单字符和长标志数组
+ * @returns 所有标志都有效则返回 true，否则返回 false
  */
 function validateFlagsAgainstAllowlist(
   flags: string[],
   allowedFlags: string[],
 ): boolean {
   for (const flag of flags) {
-    // Handle combined flags like -nE or -Er
+    // 处理组合标志，如 -nE 或 -Er
     if (flag.startsWith('-') && !flag.startsWith('--') && flag.length > 2) {
-      // Check each character in combined flag
+      // 检查组合标志中的每个字符
       for (let i = 1; i < flag.length; i++) {
         const singleFlag = '-' + flag[i]
         if (!allowedFlags.includes(singleFlag)) {
@@ -25,7 +25,7 @@ function validateFlagsAgainstAllowlist(
         }
       }
     } else {
-      // Single flag or long flag
+      // 单个标志或长标志
       if (!allowedFlags.includes(flag)) {
         return false
       }
@@ -35,11 +35,11 @@ function validateFlagsAgainstAllowlist(
 }
 
 /**
- * Pattern 1: Check if this is a line printing command with -n flag
- * Allows: sed -n 'N' | sed -n 'N,M' with optional -E, -r, -z flags
- * Allows semicolon-separated print commands like: sed -n '1p;2p;3p'
- * File arguments are ALLOWED for this pattern
- * @internal Exported for testing
+ * 模式 1：检查是否为带 -n 标志的行打印命令
+ * 允许：sed -n 'N' | sed -n 'N,M'，可附带 -E、-r、-z 标志
+ * 允许分号分隔的打印命令，如：sed -n '1p;2p;3p'
+ * 此模式允许文件参数
+ * @internal 为测试导出
  */
 export function isLinePrintingCommand(
   command: string,
@@ -53,7 +53,7 @@ export function isLinePrintingCommand(
   if (!parseResult.success) return false
   const parsed = parseResult.tokens
 
-  // Extract all flags
+  // 提取所有标志
   const flags: string[] = []
   for (const arg of parsed) {
     if (typeof arg === 'string' && arg.startsWith('-') && arg !== '--') {
@@ -61,7 +61,7 @@ export function isLinePrintingCommand(
     }
   }
 
-  // Validate flags - only allow -n, -E, -r, -z and their long forms
+  // 验证标志——仅允许 -n、-E、-r、-z 及其长格式
   const allowedFlags = [
     '-n',
     '--quiet',
@@ -78,32 +78,32 @@ export function isLinePrintingCommand(
     return false
   }
 
-  // Check if -n flag is present (required for Pattern 1)
+  // 检查是否存在 -n 标志（模式 1 必需）
   let hasNFlag = false
   for (const flag of flags) {
     if (flag === '-n' || flag === '--quiet' || flag === '--silent') {
       hasNFlag = true
       break
     }
-    // Check in combined flags
+    // 在组合标志中检查
     if (flag.startsWith('-') && !flag.startsWith('--') && flag.includes('n')) {
       hasNFlag = true
       break
     }
   }
 
-  // Must have -n flag for Pattern 1
+  // 模式 1 必须含有 -n 标志
   if (!hasNFlag) {
     return false
   }
 
-  // Must have at least one expression
+  // 必须至少有一个表达式
   if (expressions.length === 0) {
     return false
   }
 
-  // All expressions must be print commands (strict allowlist)
-  // Allow semicolon-separated commands
+  // 所有表达式必须为打印命令（严格允许列表）
+  // 允许分号分隔的命令
   for (const expr of expressions) {
     const commands = expr.split(';')
     for (const cmd of commands) {
@@ -117,27 +117,27 @@ export function isLinePrintingCommand(
 }
 
 /**
- * Helper: Check if a single command is a valid print command
- * STRICT ALLOWLIST - only these exact forms are allowed:
- * - p (print all)
- * - Np (print line N, where N is digits)
- * - N,Mp (print lines N through M)
- * Anything else (including w, W, e, E commands) is rejected.
- * @internal Exported for testing
+ * 辅助函数：检查单个命令是否为有效的打印命令
+ * 严格允许列表——仅允许以下精确形式：
+ * - p（打印全部）
+ * - Np（打印第 N 行，N 为数字）
+ * - N,Mp（打印第 N 到 M 行）
+ * 其他任何内容（包括 w、W、e、E 命令）均被拒绝。
+ * @internal 为测试导出
  */
 export function isPrintCommand(cmd: string): boolean {
   if (!cmd) return false
-  // Single strict regex that only matches allowed print commands
-  // ^(?:\d+|\d+,\d+)?p$ matches: p, 1p, 123p, 1,5p, 10,200p
+  // 单个严格正则表达式，仅匹配允许的打印命令
+  // ^(?:\d+|\d+,\d+)?p$ 匹配：p、1p、123p、1,5p、10,200p
   return /^(?:\d+|\d+,\d+)?p$/.test(cmd)
 }
 
 /**
- * Pattern 2: Check if this is a substitution command
- * Allows: sed 's/pattern/replacement/flags' where flags are only: g, p, i, I, m, M, 1-9
- * When allowFileWrites is true, allows -i flag and file arguments for in-place editing
- * When allowFileWrites is false (default), requires stdout-only (no file arguments, no -i flag)
- * @internal Exported for testing
+ * 模式 2：检查是否为替换命令
+ * 允许：sed 's/pattern/replacement/flags'，其中 flags 仅限：g、p、i、I、m、M、1-9
+ * 当 allowFileWrites 为 true 时，允许 -i 标志和文件参数进行原地编辑
+ * 当 allowFileWrites 为 false（默认）时，仅限 stdout 输出（无文件参数，无 -i 标志）
+ * @internal 为测试导出
  */
 function isSubstitutionCommand(
   command: string,
@@ -147,7 +147,7 @@ function isSubstitutionCommand(
 ): boolean {
   const allowFileWrites = options?.allowFileWrites ?? false
 
-  // When not allowing file writes, must NOT have file arguments
+  // 不允许文件写入时，不能有文件参数
   if (!allowFileWrites && hasFileArguments) {
     return false
   }
@@ -160,7 +160,7 @@ function isSubstitutionCommand(
   if (!parseResult.success) return false
   const parsed = parseResult.tokens
 
-  // Extract all flags
+  // 提取所有标志
   const flags: string[] = []
   for (const arg of parsed) {
     if (typeof arg === 'string' && arg.startsWith('-') && arg !== '--') {
@@ -168,11 +168,11 @@ function isSubstitutionCommand(
     }
   }
 
-  // Validate flags based on mode
-  // Base allowed flags for both modes
+  // 根据模式验证标志
+  // 两种模式共用的基础允许标志
   const allowedFlags = ['-E', '--regexp-extended', '-r', '--posix']
 
-  // When allowing file writes, also permit -i and --in-place
+  // 允许文件写入时，同时允许 -i 和 --in-place
   if (allowFileWrites) {
     allowedFlags.push('-i', '--in-place')
   }
@@ -181,21 +181,21 @@ function isSubstitutionCommand(
     return false
   }
 
-  // Must have exactly one expression
+  // 必须恰好有一个表达式
   if (expressions.length !== 1) {
     return false
   }
 
   const expr = expressions[0]!.trim()
 
-  // STRICT ALLOWLIST: Must be exactly a substitution command starting with 's'
-  // This rejects standalone commands like 'e', 'w file', etc.
+  // 严格允许列表：必须是一个以 's' 开头的替换命令
+  // 这会拒绝像 'e'、'w file' 等独立命令
   if (!expr.startsWith('s')) {
     return false
   }
 
-  // Parse substitution: s/pattern/replacement/flags
-  // Only allow / as delimiter (strict)
+  // 解析替换命令：s/pattern/replacement/flags
+  // 仅允许 / 作为分隔符（严格）
   const substitutionMatch = expr.match(/^s\/(.*?)$/)
   if (!substitutionMatch) {
     return false
@@ -203,13 +203,13 @@ function isSubstitutionCommand(
 
   const rest = substitutionMatch[1]!
 
-  // Find the positions of / delimiters
+  // 查找 / 分隔符的位置
   let delimiterCount = 0
   let lastDelimiterPos = -1
   let i = 0
   while (i < rest.length) {
     if (rest[i] === '\\') {
-      // Skip escaped character
+      // 跳过转义字符
       i += 2
       continue
     }
@@ -220,15 +220,15 @@ function isSubstitutionCommand(
     i++
   }
 
-  // Must have found exactly 2 delimiters (pattern and replacement)
+  // 必须恰好找到 2 个分隔符（模式和替换）
   if (delimiterCount !== 2) {
     return false
   }
 
-  // Extract flags (everything after the last delimiter)
+  // 提取标志（最后一个分隔符之后的所有内容）
   const exprFlags = rest.slice(lastDelimiterPos + 1)
 
-  // Validate flags: only allow g, p, i, I, m, M, and optionally ONE digit 1-9
+  // 验证标志：仅允许 g、p、i、I、m、M 和可选的一个数字 1-9
   const allowedFlagChars = /^[gpimIM]*[1-9]?[gpimIM]*$/
   if (!allowedFlagChars.test(exprFlags)) {
     return false
@@ -238,11 +238,11 @@ function isSubstitutionCommand(
 }
 
 /**
- * Checks if a sed command is allowed by the allowlist.
- * The allowlist patterns themselves are strict enough to reject dangerous operations.
- * @param command The sed command to check
- * @param options.allowFileWrites When true, allows -i flag and file arguments for substitution commands
- * @returns true if the command is allowed (matches allowlist and passes denylist check), false otherwise
+ * 检查 sed 命令是否被允许列表允许。
+ * 允许列表模式本身足够严格，可以拒绝危险操作。
+ * @param command 要检查的 sed 命令
+ * @param options.allowFileWrites 为 true 时，允许替换命令使用 -i 标志和文件参数
+ * @returns 命令被允许（匹配允许列表并通过拒绝列表检查）返回 true，否则返回 false
  */
 export function sedCommandIsAllowedByAllowlist(
   command: string,
@@ -250,30 +250,30 @@ export function sedCommandIsAllowedByAllowlist(
 ): boolean {
   const allowFileWrites = options?.allowFileWrites ?? false
 
-  // Extract sed expressions (content inside quotes where actual sed commands live)
+  // 提取 sed 表达式（引号内的内容，即实际的 sed 命令所在位置）
   let expressions: string[]
   try {
     expressions = extractSedExpressions(command)
   } catch (_error) {
-    // If parsing failed, treat as not allowed
+    // 如果解析失败，视为不允许
     return false
   }
 
-  // Check if sed command has file arguments
+  // 检查 sed 命令是否有文件参数
   const hasFileArguments = hasFileArgs(command)
 
-  // Check if command matches allowlist patterns
+  // 检查命令是否匹配允许列表模式
   let isPattern1 = false
   let isPattern2 = false
 
   if (allowFileWrites) {
-    // When allowing file writes, only check substitution commands (Pattern 2 variant)
-    // Pattern 1 (line printing) doesn't need file writes
+    // 允许文件写入时，仅检查替换命令（模式 2 变体）
+    // 模式 1（行打印）不需要文件写入
     isPattern2 = isSubstitutionCommand(command, expressions, hasFileArguments, {
       allowFileWrites: true,
     })
   } else {
-    // Standard read-only mode: check both patterns
+    // 标准只读模式：检查两种模式
     isPattern1 = isLinePrintingCommand(command, expressions)
     isPattern2 = isSubstitutionCommand(command, expressions, hasFileArguments)
   }
@@ -282,15 +282,15 @@ export function sedCommandIsAllowedByAllowlist(
     return false
   }
 
-  // Pattern 2 does not allow semicolons (command separators)
-  // Pattern 1 allows semicolons for separating print commands
+  // 模式 2 不允许分号（命令分隔符）
+  // 模式 1 允许分号分隔打印命令
   for (const expr of expressions) {
     if (isPattern2 && expr.includes(';')) {
       return false
     }
   }
 
-  // Defense-in-depth: Even if allowlist matches, check denylist
+  // 深度防御：即使匹配允许列表，也要检查拒绝列表
   for (const expr of expressions) {
     if (containsDangerousOperations(expr)) {
       return false
@@ -301,8 +301,8 @@ export function sedCommandIsAllowedByAllowlist(
 }
 
 /**
- * Check if a sed command has file arguments (not just stdin)
- * @internal Exported for testing
+ * 检查 sed 命令是否有文件参数（不仅仅是 stdin）
+ * @internal 为测试导出
  */
 export function hasFileArgs(command: string): boolean {
   const sedMatch = command.match(/^\s*sed\s+/)
@@ -320,10 +320,10 @@ export function hasFileArgs(command: string): boolean {
     for (let i = 0; i < parsed.length; i++) {
       const arg = parsed[i]
 
-      // Handle both string arguments and glob patterns (like *.log)
+      // 处理字符串参数和 glob 模式（如 *.log）
       if (typeof arg !== 'string' && typeof arg !== 'object') continue
 
-      // If it's a glob pattern, it counts as a file argument
+      // 如果是 glob 模式，则视为文件参数
       if (
         typeof arg === 'object' &&
         arg !== null &&
@@ -333,40 +333,40 @@ export function hasFileArgs(command: string): boolean {
         return true
       }
 
-      // Skip non-string arguments that aren't glob patterns
+      // 跳过非 glob 模式且非字符串的参数
       if (typeof arg !== 'string') continue
 
-      // Handle -e flag followed by expression
+      // 处理 -e 标志后跟表达式的情况
       if ((arg === '-e' || arg === '--expression') && i + 1 < parsed.length) {
         hasEFlag = true
-        i++ // Skip the next argument since it's the expression
+        i++ // 跳过下一个参数，因为它是表达式
         continue
       }
 
-      // Handle --expression=value format
+      // 处理 --expression=value 格式
       if (arg.startsWith('--expression=')) {
         hasEFlag = true
         continue
       }
 
-      // Handle -e=value format (non-standard but defense in depth)
+      // 处理 -e=value 格式（非标准但作为深度防御）
       if (arg.startsWith('-e=')) {
         hasEFlag = true
         continue
       }
 
-      // Skip other flags
+      // 跳过其他标志
       if (arg.startsWith('-')) continue
 
       argCount++
 
-      // If we used -e flags, ALL non-flag arguments are file arguments
+      // 如果使用了 -e 标志，所有非标志参数都是文件参数
       if (hasEFlag) {
         return true
       }
 
-      // If we didn't use -e flags, the first non-flag argument is the sed expression,
-      // so we need more than 1 non-flag argument to have file arguments
+      // 如果未使用 -e 标志，第一个非标志参数是 sed 表达式，
+      // 因此需要多于 1 个非标志参数才有文件参数
       if (argCount > 1) {
         return true
       }
@@ -374,35 +374,35 @@ export function hasFileArgs(command: string): boolean {
 
     return false
   } catch (_error) {
-    return true // Assume dangerous if parsing fails
+    return true // 解析失败时视为危险
   }
 }
 
 /**
- * Extract sed expressions from command, ignoring flags and filenames
- * @param command Full sed command
- * @returns Array of sed expressions to check for dangerous operations
- * @throws Error if parsing fails
- * @internal Exported for testing
+ * 从命令中提取 sed 表达式，忽略标志和文件名
+ * @param command 完整的 sed 命令
+ * @returns 要检查危险操作的 sed 表达式数组
+ * @throws 解析失败时抛出错误
+ * @internal 为测试导出
  */
 export function extractSedExpressions(command: string): string[] {
   const expressions: string[] = []
 
-  // Calculate withoutSed by trimming off the first N characters (removing 'sed ')
+  // 通过截取前 N 个字符计算 withoutSed（移除 'sed '）
   const sedMatch = command.match(/^\s*sed\s+/)
   if (!sedMatch) return expressions
 
   const withoutSed = command.slice(sedMatch[0].length)
 
-  // Reject dangerous flag combinations like -ew, -eW, -ee, -we (combined -e/-w with dangerous commands)
+  // 拒绝危险的标志组合，如 -ew、-eW、-ee、-we（-e/-w 与危险命令的组合）
   if (/-e[wWe]/.test(withoutSed) || /-w[eE]/.test(withoutSed)) {
     throw new Error('检测到危险的标志组合')
   }
 
-  // Use shell-quote to parse the arguments properly
+  // 使用 shell-quote 正确解析参数
   const parseResult = tryParseShellCommand(withoutSed)
   if (!parseResult.success) {
-    // Malformed shell syntax - throw error to be caught by caller
+    // Shell 语法格式错误——抛出错误由调用者捕获
     throw new Error(`Shell 语法格式错误：${parseResult.error}`)
   }
   const parsed = parseResult.tokens
@@ -413,52 +413,52 @@ export function extractSedExpressions(command: string): string[] {
     for (let i = 0; i < parsed.length; i++) {
       const arg = parsed[i]
 
-      // Skip non-string arguments (like control operators)
+      // 跳过非字符串参数（如控制运算符）
       if (typeof arg !== 'string') continue
 
-      // Handle -e flag followed by expression
+      // 处理 -e 标志后跟表达式的情况
       if ((arg === '-e' || arg === '--expression') && i + 1 < parsed.length) {
         foundEFlag = true
         const nextArg = parsed[i + 1]
         if (typeof nextArg === 'string') {
           expressions.push(nextArg)
-          i++ // Skip the next argument since we consumed it
+          i++ // 跳过下一个参数，因为已消费
         }
         continue
       }
 
-      // Handle --expression=value format
+      // 处理 --expression=value 格式
       if (arg.startsWith('--expression=')) {
         foundEFlag = true
         expressions.push(arg.slice('--expression='.length))
         continue
       }
 
-      // Handle -e=value format (non-standard but defense in depth)
+      // 处理 -e=value 格式（非标准但作为深度防御）
       if (arg.startsWith('-e=')) {
         foundEFlag = true
         expressions.push(arg.slice('-e='.length))
         continue
       }
 
-      // Skip other flags
+      // 跳过其他标志
       if (arg.startsWith('-')) continue
 
-      // If we haven't found any -e flags, the first non-flag argument is the sed expression
+      // 如果未找到任何 -e 标志，第一个非标志参数就是 sed 表达式
       if (!foundEFlag && !foundExpression) {
         expressions.push(arg)
         foundExpression = true
         continue
       }
 
-      // If we've already found -e flags or a standalone expression,
-      // remaining non-flag arguments are filenames
+      // 如果已找到 -e 标志或独立表达式，
+      // 剩余的非标志参数都是文件名
       break
     }
   } catch (error) {
-    // If shell-quote parsing fails, treat the sed command as unsafe
+    // 如果 shell-quote 解析失败，将该 sed 命令视为不安全
     throw new Error(
-      `Failed to parse sed command: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      `分析 sed 命令失败: ${error instanceof Error ? error.message : 'Unknown error'}`,
     )
   }
 
@@ -466,160 +466,160 @@ export function extractSedExpressions(command: string): string[] {
 }
 
 /**
- * Check if a sed expression contains dangerous operations (denylist)
- * @param expression Single sed expression (without quotes)
- * @returns true if dangerous, false if safe
+ * 检查 sed 表达式是否包含危险操作（拒绝列表）
+ * @param expression 单个 sed 表达式（不含引号）
+ * @returns 危险返回 true，安全返回 false
  */
 function containsDangerousOperations(expression: string): boolean {
   const cmd = expression.trim()
   if (!cmd) return false
 
-  // CONSERVATIVE REJECTIONS: Broadly reject patterns that could be dangerous
-  // When in doubt, treat as unsafe
+  // 保守拒绝：广泛拒绝可能危险的模式
+  // 有疑问时，视为不安全
 
-  // Reject non-ASCII characters (Unicode homoglyphs, combining chars, etc.)
-  // Examples: ｗ (fullwidth), ᴡ (small capital), w̃ (combining tilde)
-  // Check for characters outside ASCII range (0x01-0x7F, excluding null byte)
+  // 拒绝非 ASCII 字符（Unicode 同形字、组合字符等）
+  // 示例：ｗ（全角）、ᴡ（小型大写）、w̃（组合波浪号）
+  // 检查 ASCII 范围（0x01-0x7F，排除空字节）之外的字符
    
   if (/[^\x01-\x7F]/.test(cmd)) {
     return true
   }
 
-  // Reject curly braces (blocks) - too complex to parse
+  // 拒绝花括号（块）——过于复杂难以解析
   if (cmd.includes('{') || cmd.includes('}')) {
     return true
   }
 
-  // Reject newlines - multi-line commands are too complex
+  // 拒绝换行符——多行命令过于复杂
   if (cmd.includes('\n')) {
     return true
   }
 
-  // Reject comments (# not immediately after s command)
-  // Comments look like: #comment or start with #
-  // Delimiter looks like: s#pattern#replacement#
+  // 拒绝注释（# 不在 s 命令之后紧邻的情况）
+  // 注释形式如：#comment 或以 # 开头
+  // 分隔符形式如：s#pattern#replacement#
   const hashIndex = cmd.indexOf('#')
   if (hashIndex !== -1 && !(hashIndex > 0 && cmd[hashIndex - 1] === 's')) {
     return true
   }
 
-  // Reject negation operator
-  // Negation can appear: at start (!/pattern/), after address (/pattern/!, 1,10!, $!)
-  // Delimiter looks like: s!pattern!replacement! (has 's' before it)
+  // 拒绝否定运算符
+  // 否定可出现：开头（!/pattern/）、地址后（/pattern/!、1,10!、$!）
+  // 分隔符形式如：s!pattern!replacement!（前面有 's'）
   if (/^!/.test(cmd) || /[/\d$]!/.test(cmd)) {
     return true
   }
 
-  // Reject tilde in GNU step address format (digit~digit, ,~digit, or $~digit)
-  // Allow whitespace around tilde
+  // 拒绝 GNU 步进地址格式中的波浪号（digit~digit、,~digit 或 $~digit）
+  // 允许波浪号周围有空白
   if (/\d\s*~\s*\d|,\s*~\s*\d|\$\s*~\s*\d/.test(cmd)) {
     return true
   }
 
-  // Reject comma at start (bare comma is shorthand for 1,$ address range)
+  // 拒绝开头逗号（裸逗号是 1,$ 地址范围的简写）
   if (/^,/.test(cmd)) {
     return true
   }
 
-  // Reject comma followed by +/- (GNU offset addresses)
+  // 拒绝逗号后跟 +/-（GNU 偏移地址）
   if (/,\s*[+-]/.test(cmd)) {
     return true
   }
 
-  // Reject backslash tricks:
-  // 1. s\ (substitution with backslash delimiter)
-  // 2. \X where X could be an alternate delimiter (|, #, %, etc.) - not regex escapes
+  // 拒绝反斜杠技巧：
+  // 1. s\（使用反斜杠作为分隔符的替换命令）
+  // 2. \X，其中 X 可能是替代分隔符（|、#、% 等）——不是正则转义
   if (/s\\/.test(cmd) || /\\[|#%@]/.test(cmd)) {
     return true
   }
 
-  // Reject escaped slashes followed by w/W (patterns like /\/path\/to\/file/w)
+  // 拒绝转义斜杠后跟 w/W（如 /\/path\/to\/file/w 之类的模式）
   if (/\\\/.*[wW]/.test(cmd)) {
     return true
   }
 
-  // Reject malformed/suspicious patterns we don't understand
-  // If there's a slash followed by non-slash chars, then whitespace, then dangerous commands
-  // Examples: /pattern w file, /pattern e cmd, /foo X;w file
+  // 拒绝无法理解的格式错误/可疑模式
+  // 如果斜杠后跟非斜杠字符，然后是空白，然后是危险命令
+  // 示例：/pattern w file、/pattern e cmd、/foo X;w file
   if (/\/[^/]*\s+[wWeE]/.test(cmd)) {
     return true
   }
 
-  // Reject malformed substitution commands that don't follow normal pattern
-  // Examples: s/foobareoutput.txt (missing delimiters), s/foo/bar//w (extra delimiter)
+  // 拒绝不符合正常模式的格式错误替换命令
+  // 示例：s/foobareoutput.txt（缺少分隔符）、s/foo/bar//w（多余分隔符）
   if (/^s\//.test(cmd) && !/^s\/[^/]*\/[^/]*\/[^/]*$/.test(cmd)) {
     return true
   }
 
-  // PARANOID: Reject any command starting with 's' that ends with dangerous chars (w, W, e, E)
-  // and doesn't match our known safe substitution pattern. This catches malformed s commands
-  // with non-slash delimiters that might be trying to use dangerous flags.
+  // 偏执检查：拒绝任何以 's' 开头、以危险字符（w、W、e、E）结尾
+  // 且不匹配已知安全替换模式的命令。这可以捕获使用非斜杠分隔符
+  // 但可能试图使用危险标志的格式错误 s 命令。
   if (/^s./.test(cmd) && /[wWeE]$/.test(cmd)) {
-    // Check if it's a properly formed substitution (any delimiter, not just /)
+    // 检查是否为格式正确的替换命令（任何分隔符，不限于 /）
     const properSubst = /^s([^\\\n]).*?\1.*?\1[^wWeE]*$/.test(cmd)
     if (!properSubst) {
       return true
     }
   }
 
-  // Check for dangerous write commands
-  // Patterns: [address]w filename, [address]W filename, /pattern/w filename, /pattern/W filename
-  // Simplified to avoid exponential backtracking (CodeQL issue)
-  // Check for w/W in contexts where it would be a command (with optional whitespace)
+  // 检查危险的写入命令
+  // 模式：[address]w filename、[address]W filename、/pattern/w filename、/pattern/W filename
+  // 已简化以避免指数级回溯（CodeQL 问题）
+  // 检查 w/W 出现在上下文中的命令位置（带可选空白）
   if (
-    /^[wW]\s*\S+/.test(cmd) || // At start: w file
-    /^\d+\s*[wW]\s*\S+/.test(cmd) || // After line number: 1w file or 1 w file
-    /^\$\s*[wW]\s*\S+/.test(cmd) || // After $: $w file or $ w file
-    /^\/[^/]*\/[IMim]*\s*[wW]\s*\S+/.test(cmd) || // After pattern: /pattern/w file
-    /^\d+,\d+\s*[wW]\s*\S+/.test(cmd) || // After range: 1,10w file
-    /^\d+,\$\s*[wW]\s*\S+/.test(cmd) || // After range: 1,$w file
-    /^\/[^/]*\/[IMim]*,\/[^/]*\/[IMim]*\s*[wW]\s*\S+/.test(cmd) // After pattern range: /s/,/e/w file
+    /^[wW]\s*\S+/.test(cmd) || // 开头：w file
+    /^\d+\s*[wW]\s*\S+/.test(cmd) || // 行号后：1w file 或 1 w file
+    /^\$\s*[wW]\s*\S+/.test(cmd) || // $ 后：$w file 或 $ w file
+    /^\/[^/]*\/[IMim]*\s*[wW]\s*\S+/.test(cmd) || // 模式后：/pattern/w file
+    /^\d+,\d+\s*[wW]\s*\S+/.test(cmd) || // 范围后：1,10w file
+    /^\d+,\$\s*[wW]\s*\S+/.test(cmd) || // 范围后：1,$w file
+    /^\/[^/]*\/[IMim]*,\/[^/]*\/[IMim]*\s*[wW]\s*\S+/.test(cmd) // 模式范围后：/s/,/e/w file
   ) {
     return true
   }
 
-  // Check for dangerous execute commands
-  // Patterns: [address]e [command], /pattern/e [command], or commands starting with e
-  // Simplified to avoid exponential backtracking (CodeQL issue)
-  // Check for e in contexts where it would be a command (with optional whitespace)
+  // 检查危险的执行命令
+  // 模式：[address]e [command]、/pattern/e [command] 或以 e 开头的命令
+  // 已简化以避免指数级回溯（CodeQL 问题）
+  // 检查 e 出现在上下文中的命令位置（带可选空白）
   if (
-    /^e/.test(cmd) || // At start: e cmd
-    /^\d+\s*e/.test(cmd) || // After line number: 1e or 1 e
-    /^\$\s*e/.test(cmd) || // After $: $e or $ e
-    /^\/[^/]*\/[IMim]*\s*e/.test(cmd) || // After pattern: /pattern/e
-    /^\d+,\d+\s*e/.test(cmd) || // After range: 1,10e
-    /^\d+,\$\s*e/.test(cmd) || // After range: 1,$e
-    /^\/[^/]*\/[IMim]*,\/[^/]*\/[IMim]*\s*e/.test(cmd) // After pattern range: /s/,/e/e
+    /^e/.test(cmd) || // 开头：e cmd
+    /^\d+\s*e/.test(cmd) || // 行号后：1e 或 1 e
+    /^\$\s*e/.test(cmd) || // $ 后：$e 或 $ e
+    /^\/[^/]*\/[IMim]*\s*e/.test(cmd) || // 模式后：/pattern/e
+    /^\d+,\d+\s*e/.test(cmd) || // 范围后：1,10e
+    /^\d+,\$\s*e/.test(cmd) || // 范围后：1,$e
+    /^\/[^/]*\/[IMim]*,\/[^/]*\/[IMim]*\s*e/.test(cmd) // 模式范围后：/s/,/e/e
   ) {
     return true
   }
 
-  // Check for substitution commands with dangerous flags
-  // Pattern: s<delim>pattern<delim>replacement<delim>flags where flags contain w or e
-  // Per POSIX, sed allows any character except backslash and newline as delimiter
+  // 检查带有危险标志的替换命令
+  // 模式：s<delim>pattern<delim>replacement<delim>flags，其中 flags 包含 w 或 e
+  // 根据 POSIX，sed 允许除反斜杠和换行符之外的任何字符作为分隔符
   const substitutionMatch = cmd.match(/s([^\\\n]).*?\1.*?\1(.*?)$/)
   if (substitutionMatch) {
     const flags = substitutionMatch[2] || ''
 
-    // Check for write flag: s/old/new/w filename or s/old/new/gw filename
+    // 检查写入标志：s/old/new/w filename 或 s/old/new/gw filename
     if (flags.includes('w') || flags.includes('W')) {
       return true
     }
 
-    // Check for execute flag: s/old/new/e or s/old/new/ge
+    // 检查执行标志：s/old/new/e 或 s/old/new/ge
     if (flags.includes('e') || flags.includes('E')) {
       return true
     }
   }
 
-  // Check for y (transliterate) command followed by dangerous operations
-  // Pattern: y<delim>source<delim>dest<delim> followed by anything
-  // The y command uses same delimiter syntax as s command
-  // PARANOID: Reject any y command that has w/W/e/E anywhere after the delimiters
+  // 检查 y（音译）命令后跟危险操作的情况
+  // 模式：y<delim>source<delim>dest<delim> 后跟任何内容
+  // y 命令使用与 s 命令相同的分隔符语法
+  // 偏执检查：拒绝任何在分隔符后出现 w/W/e/E 的 y 命令
   const yCommandMatch = cmd.match(/y([^\\\n])/)
   if (yCommandMatch) {
-    // If we see a y command, check if there's any w, W, e, or E in the entire command
-    // This is paranoid but safe - y commands are rare and w/e after y is suspicious
+    // 如果看到 y 命令，检查整个命令中是否有 w、W、e 或 E
+    // 这是偏执但安全的——y 命令很少见，y 后的 w/e 很可疑
     if (/[wWeE]/.test(cmd)) {
       return true
     }
@@ -629,17 +629,17 @@ function containsDangerousOperations(expression: string): boolean {
 }
 
 /**
- * Cross-cutting validation step for sed commands.
+ * sed 命令的横切验证步骤。
  *
- * This is a constraint check that blocks dangerous sed operations regardless of mode.
- * It returns 'passthrough' for non-sed commands or safe sed commands,
- * and 'ask' for dangerous sed operations (w/W/e/E commands).
+ * 这是一个约束检查，无论何种模式都阻止危险的 sed 操作。
+ * 非 sed 命令或安全 sed 命令返回 'passthrough'，
+ * 危险 sed 操作（w/W/e/E 命令）返回 'ask'。
  *
- * @param input - Object containing the command string
- * @param toolPermissionContext - Context containing mode and permissions
+ * @param input - 包含命令字符串的对象
+ * @param toolPermissionContext - 包含模式和权限的上下文
  * @returns
- * - 'ask' if any sed command contains dangerous operations
- * - 'passthrough' if no sed commands or all are safe
+ * - 如果任何 sed 命令包含危险操作则返回 'ask'
+ * - 如果没有 sed 命令或全部安全则返回 'passthrough'
  */
 export function checkSedConstraints(
   input: { command: string },
@@ -648,14 +648,14 @@ export function checkSedConstraints(
   const commands = splitCommand_DEPRECATED(input.command)
 
   for (const cmd of commands) {
-    // Skip non-sed commands
+    // 跳过非 sed 命令
     const trimmed = cmd.trim()
     const baseCmd = trimmed.split(/\s+/)[0]
     if (baseCmd !== 'sed') {
       continue
     }
 
-    // In acceptEdits mode, allow file writes (-i flag) but still block dangerous operations
+    // 在 acceptEdits 模式下，允许文件写入（-i 标志），但仍阻止危险操作
     const allowFileWrites = toolPermissionContext.mode === 'acceptEdits'
 
     const isAllowed = sedCommandIsAllowedByAllowlist(trimmed, {
@@ -676,9 +676,9 @@ export function checkSedConstraints(
     }
   }
 
-  // No dangerous sed commands found (or no sed commands at all)
+  // 未发现危险的 sed 命令（或根本没有 sed 命令）
   return {
     behavior: 'passthrough',
-    message: 'No dangerous sed operations detected',
+    message: '未发现危险的 sed 命令',
   }
 }

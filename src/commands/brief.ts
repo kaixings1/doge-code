@@ -16,9 +16,8 @@ import type {
 } from '../types/command.js'
 import { lazySchema } from '../utils/lazySchema.js'
 
-// Zod guards against fat-fingered GB pushes (same pattern as pollConfig.ts /
-// cronScheduler.ts). A malformed config falls back to DEFAULT_BRIEF_CONFIG
-// entirely rather than being partially trusted.
+// Zod 防护 malformed GB pushes（与 pollConfig.ts / cronScheduler.ts 相同模式）。
+// malformed 配置会完全回退到 DEFAULT_BRIEF_CONFIG，而非被部分信任。
 const briefConfigSchema = lazySchema(() =>
   z.object({
     enable_slash_command: z.boolean(),
@@ -30,11 +29,11 @@ const DEFAULT_BRIEF_CONFIG: BriefConfig = {
   enable_slash_command: false,
 }
 
-// No TTL — this gate controls slash-command *visibility*, not a kill switch.
-// CACHED_MAY_BE_STALE still has one background-update flip (first call kicks
-// off fetch; second call sees fresh value), but no additional flips after that.
-// The tool-availability gate (tengu_kairos_brief in isBriefEnabled) keeps its
-// 5-min TTL because that one IS a kill switch.
+// 无 TTL — 此门控控制的是斜杠命令的*可见性*，而非 kill switch。
+// CACHED_MAY_BE_STALE 仍有一次后台更新切换（首次调用触发请求；
+// 第二次调用看到新值），但之后不再额外切换。
+// 工具可用性门控（isBriefEnabled 中的 tengu_kairos_brief）保持其
+// 5 分钟 TTL，因为那是真正的 kill switch。
 function getBriefConfig(): BriefConfig {
   const raw = getFeatureValue_CACHED_MAY_BE_STALE<unknown>(
     'tengu_kairos_brief_config',

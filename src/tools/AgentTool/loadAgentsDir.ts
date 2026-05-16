@@ -53,23 +53,23 @@ import {
 } from './agentMemorySnapshot.js'
 import { getBuiltInAgents } from './builtInAgents.js'
 
-// Type for MCP server specification in agent definitions
-// Can be either a reference to an existing server by name, or an inline definition as { [name]: config }
+// 代理定义中 MCP 服务器规格的类型
+// 可以是按名称引用现有服务器，也可以是内联定义 { [name]: config }
 export type AgentMcpServerSpec =
-  | string // Reference to existing server by name (e.g., "slack")
-  | { [name: string]: McpServerConfig } // Inline definition as { name: config }
+  | string // 按名称引用现有服务器（如 "slack"）
+  | { [name: string]: McpServerConfig } // 内联定义为 { name: config }
 
-// Zod schema for agent MCP server specs
+// 代理 MCP 服务器规格的 Zod schema
 const AgentMcpServerSpecSchema = lazySchema(() =>
   z.union([
-    z.string(), // Reference by name
-    z.record(z.string(), McpServerConfigSchema()), // Inline as { name: config }
+    z.string(), // 按名称引用
+    z.record(z.string(), McpServerConfigSchema()), // 内联为 { name: config }
   ]),
 )
 
-// Zod schemas for JSON agent validation
-// Note: HooksSchema is lazy so the circular chain AppState -> loadAgentsDir -> settings/types
-// is broken at module load time
+// 用于 JSON 代理验证的 Zod schemas
+// 注意：HooksSchema 是懒加载的，因此 AppState -> loadAgentsDir -> settings/types 的循环链
+// 在模块加载时被打破
 const AgentJsonSchema = lazySchema(() =>
   z.object({
     description: z.string().min(1, 'Description cannot be empty'),
@@ -102,37 +102,37 @@ const AgentsJsonSchema = lazySchema(() =>
   z.record(z.string(), AgentJsonSchema()),
 )
 
-// Base type with common fields for all agents
+// 所有代理的通用字段基础类型
 export type BaseAgentDefinition = {
   agentType: string
   whenToUse: string
   tools?: string[]
   disallowedTools?: string[]
-  skills?: string[] // Skill names to preload (parsed from comma-separated frontmatter)
-  mcpServers?: AgentMcpServerSpec[] // MCP servers specific to this agent
-  hooks?: HooksSettings // Session-scoped hooks registered when agent starts
+  skills?: string[] // 要预加载的技能名称（从逗号分隔的 frontmatter 解析）
+  mcpServers?: AgentMcpServerSpec[] // 此代理特定的 MCP 服务器
+  hooks?: HooksSettings // 代理启动时注册的会话级钩子
   color?: AgentColorName
   model?: string
   effort?: EffortValue
   permissionMode?: PermissionMode
-  maxTurns?: number // Maximum number of agentic turns before stopping
-  filename?: string // Original filename without .md extension (for user/project/managed agents)
+  maxTurns?: number // 停止前的最大代理轮次
+  filename?: string // 原始文件名（不含 .md 扩展名，用于用户/项目/受管代理）
   baseDir?: string
-  criticalSystemReminder_EXPERIMENTAL?: string // Short message re-injected at every user turn
-  requiredMcpServers?: string[] // MCP server name patterns that must be configured for agent to be available
-  background?: boolean // Always run as background task when spawned
-  initialPrompt?: string // Prepended to the first user turn (slash commands work)
-  memory?: AgentMemoryScope // Persistent memory scope
-  isolation?: 'worktree' | 'remote' // Run in an isolated git worktree, or remotely in CCR (ant-only)
+  criticalSystemReminder_EXPERIMENTAL?: string // 每轮用户交互时重新注入的短消息
+  requiredMcpServers?: string[] // 代理可用前必须配置的 MCP 服务器名称模式
+  background?: boolean // 生成时始终作为后台任务运行
+  initialPrompt?: string // 预置到首轮用户交互（斜杠命令可用）
+  memory?: AgentMemoryScope // 持久记忆作用域
+  isolation?: 'worktree' | 'remote' // 在隔离的 git 工作树中运行，或在 CCR 中远程运行（仅限内部）
   pendingSnapshotUpdate?: { snapshotTimestamp: string }
-  /** Omit CLAUDE.md hierarchy from the agent's userContext. Read-only agents
-   * (Explore, Plan) don't need commit/PR/lint guidelines — the main agent has
-   * full CLAUDE.md and interprets their output. Saves ~5-15 Gtok/week across
-   * 34M+ Explore spawns. Kill-switch: tengu_slim_subagent_claudemd. */
+  /** 从代理的 userContext 中省略 CLAUDE.md 层级。只读代理
+   *（Explore、Plan）不需要提交/PR/lint 指南——主代理持有
+   *完整的 CLAUDE.md 并解释它们的输出。每周在 3400 万+ Explore 生成中
+   *节省约 5-15 Gtoken。终止开关：tengu_slim_subagent_claudemd。 */
   omitClaudeMd?: boolean
 }
 
-// Built-in agents - dynamic prompts only, no static systemPrompt field
+// 内置代理——仅动态提示词，无静态 systemPrompt 字段
 export type BuiltInAgentDefinition = BaseAgentDefinition & {
   source: 'built-in'
   baseDir: 'built-in'
@@ -142,7 +142,7 @@ export type BuiltInAgentDefinition = BaseAgentDefinition & {
   }) => string
 }
 
-// Custom agents from user/project/policy settings - prompt stored via closure
+// 来自用户/项目/策略设置的自定义代理——提示词通过闭包存储
 export type CustomAgentDefinition = BaseAgentDefinition & {
   getSystemPrompt: () => string
   source: SettingSource
@@ -150,7 +150,7 @@ export type CustomAgentDefinition = BaseAgentDefinition & {
   baseDir?: string
 }
 
-// Plugin agents - similar to custom but with plugin metadata, prompt stored via closure
+// 插件代理——类似于自定义代理，但带有插件元数据，提示词通过闭包存储
 export type PluginAgentDefinition = BaseAgentDefinition & {
   getSystemPrompt: () => string
   source: 'plugin'
@@ -158,13 +158,13 @@ export type PluginAgentDefinition = BaseAgentDefinition & {
   plugin: string
 }
 
-// Union type for all agent types
+// 所有代理类型的联合类型
 export type AgentDefinition =
   | BuiltInAgentDefinition
   | CustomAgentDefinition
   | PluginAgentDefinition
 
-// Type guards for runtime type checking
+// 运行时类型检查的类型守卫
 export function isBuiltInAgent(
   agent: AgentDefinition,
 ): agent is BuiltInAgentDefinition {
@@ -221,10 +221,10 @@ export function getActiveAgentsFromList(
 }
 
 /**
- * Checks if an agent's required MCP servers are available.
- * Returns true if no requirements or all requirements are met.
- * @param agent The agent to check
- * @param availableServers List of available MCP server names (e.g., from mcp.clients)
+ * 检查代理所需的 MCP 服务器是否可用。
+ * 如果没有要求或所有要求均已满足则返回 true。
+ * @param agent 要检查的代理
+ * @param availableServers 可用 MCP 服务器名称列表（例如来自 mcp.clients）
  */
 export function hasRequiredMcpServers(
   agent: AgentDefinition,
@@ -233,7 +233,7 @@ export function hasRequiredMcpServers(
   if (!agent.requiredMcpServers || agent.requiredMcpServers.length === 0) {
     return true
   }
-  // Each required pattern must match at least one available server (case-insensitive)
+  // 每个必需的模式必须至少匹配一个可用服务器（不区分大小写）
   return agent.requiredMcpServers.every(pattern =>
     availableServers.some(server =>
       server.toLowerCase().includes(pattern.toLowerCase()),
@@ -242,10 +242,10 @@ export function hasRequiredMcpServers(
 }
 
 /**
- * Filters agents based on MCP server requirements.
- * Only returns agents whose required MCP servers are available.
- * @param agents List of agents to filter
- * @param availableServers List of available MCP server names
+ * 根据 MCP 服务器要求过滤代理。
+ * 仅返回所需 MCP 服务器可用的代理。
+ * @param agents 要过滤的代理列表
+ * @param availableServers 可用 MCP 服务器名称列表
  */
 export function filterAgentsByMcpRequirements(
   agents: AgentDefinition[],
@@ -255,9 +255,9 @@ export function filterAgentsByMcpRequirements(
 }
 
 /**
- * Check for and initialize agent memory from project snapshots.
- * For agents with memory enabled, copies snapshot to local if no local memory exists.
- * For agents with newer snapshots, logs a debug message (user prompt TODO).
+ * 检查并从项目快照初始化代理记忆。
+ * 对于启用了记忆的代理，如果本地记忆不存在则将快照复制到本地。
+ * 对于有更新快照的代理，记录调试消息（用户提示 TODO）。
  */
 async function initializeAgentMemorySnapshots(
   agents: CustomAgentDefinition[],
@@ -295,7 +295,7 @@ async function initializeAgentMemorySnapshots(
 
 export const getAgentDefinitionsWithOverrides = memoize(
   async (cwd: string): Promise<AgentDefinitionsResult> => {
-    // Simple mode: skip custom agents, only return built-ins
+    // 简单模式：跳过自定义代理，仅返回内置代理
     if (isEnvTruthy(process.env.CLAUDE_CODE_SIMPLE)) {
       const builtInAgents = getBuiltInAgents()
       return {
@@ -318,9 +318,8 @@ export const getAgentDefinitionsWithOverrides = memoize(
             source,
           )
           if (!agent) {
-            // Skip non-agent markdown files silently (e.g., reference docs
-            // co-located with agent definitions). Only report errors for files
-            // that look like agent attempts (have a 'name' field in frontmatter).
+            // 静默跳过非代理 markdown 文件（例如与代理定义同目录的参考文档）。
+            // 仅对看起来像代理尝试的文件（frontmatter 中有 'name' 字段）报告错误。
             if (!frontmatter['name']) {
               return null
             }
@@ -341,9 +340,9 @@ export const getAgentDefinitionsWithOverrides = memoize(
         })
         .filter(agent => agent !== null)
 
-      // Kick off plugin agent loading concurrently with memory snapshot init —
-      // loadPluginAgents is memoized and takes no args, so it's independent.
-      // Join both so neither becomes a floating promise if the other throws.
+      // 与记忆快照初始化同时启动插件代理加载——
+      // loadPluginAgents 已记忆化且无参数，因此它是独立的。
+      // 同时等待两者，以免任何一个在另一个抛出时成为浮动 promise。
       let pluginAgentsPromise = loadPluginAgents()
       if (feature('AGENT_MEMORY_SNAPSHOT') && isAutoMemoryEnabled()) {
         const [pluginAgents_] = await Promise.all([
@@ -364,7 +363,7 @@ export const getAgentDefinitionsWithOverrides = memoize(
 
       const activeAgents = getActiveAgentsFromList(allAgentsList)
 
-      // Initialize colors for all active agents
+      // 为所有活跃代理初始化颜色
       for (const agent of activeAgents) {
         if (agent.color) {
           setAgentColor(agent.agentType, agent.color)
@@ -381,7 +380,7 @@ export const getAgentDefinitionsWithOverrides = memoize(
         error instanceof Error ? error.message : String(error)
       logForDebugging(`Error loading agent definitions: ${errorMessage}`)
       logError(error)
-      // Even on error, return the built-in agents
+      // 即使出错，也要返回内置代理
       const builtInAgents = getBuiltInAgents()
       return {
         activeAgents: builtInAgents,
@@ -398,7 +397,7 @@ export function clearAgentDefinitionsCache(): void {
 }
 
 /**
- * Helper to determine the specific parsing error for an agent file
+ * 辅助函数，用于确定代理文件的具体解析错误
  */
 function getParseError(frontmatter: Record<string, unknown>): string {
   const agentType = frontmatter['name']
@@ -416,10 +415,10 @@ function getParseError(frontmatter: Record<string, unknown>): string {
 }
 
 /**
- * Parse hooks from frontmatter using the HooksSchema
- * @param frontmatter The frontmatter object containing potential hooks
- * @param agentType The agent type for logging purposes
- * @returns Parsed hooks settings or undefined if invalid/missing
+ * 使用 HooksSchema 从 frontmatter 解析钩子
+ * @param frontmatter 包含潜在钩子的 frontmatter 对象
+ * @param agentType 用于日志记录的代理类型
+ * @returns 解析后的钩子设置，如果无效或缺失则返回 undefined
  */
 function parseHooksFromFrontmatter(
   frontmatter: Record<string, unknown>,
@@ -440,7 +439,7 @@ function parseHooksFromFrontmatter(
 }
 
 /**
- * Parses agent definition from JSON data
+ * 从 JSON 数据解析代理定义
  */
 export function parseAgentFromJson(
   name: string,
@@ -452,7 +451,7 @@ export function parseAgentFromJson(
 
     let tools = parseAgentToolsFromFrontmatter(parsed.tools)
 
-    // If memory is enabled, inject Write/Edit/Read tools for memory access
+    // 如果启用了记忆，注入 Write/Edit/Read 工具以供记忆访问
     if (isAutoMemoryEnabled() && parsed.memory && tools !== undefined) {
       const toolSet = new Set(tools)
       for (const tool of [
@@ -516,7 +515,7 @@ export function parseAgentFromJson(
 }
 
 /**
- * Parses multiple agents from a JSON object
+ * 从 JSON 对象解析多个代理
  */
 export function parseAgentsFromJson(
   agentsJson: unknown,
@@ -536,7 +535,7 @@ export function parseAgentsFromJson(
 }
 
 /**
- * Parses agent definition from markdown file data
+ * 从 markdown 文件数据解析代理定义
  */
 export function parseAgentFromMarkdown(
   filePath: string,
@@ -549,8 +548,8 @@ export function parseAgentFromMarkdown(
     const agentType = frontmatter['name']
     let whenToUse = frontmatter['description'] as string
 
-    // Validate required fields — silently skip files without any agent
-    // frontmatter (they're likely co-located reference documentation)
+    // 验证必填字段——静默跳过没有任何代理 frontmatter 的文件
+    //（它们很可能是同目录的参考文档）
     if (!agentType || typeof agentType !== 'string') {
       return null
     }
@@ -561,7 +560,7 @@ export function parseAgentFromMarkdown(
       return null
     }
 
-    // Unescape newlines in whenToUse that were escaped for YAML parsing
+    // 反转义 whenToUse 中为了 YAML 解析而转义的换行符
     whenToUse = whenToUse.replace(/\\n/g, '\n')
 
     const color = frontmatter['color'] as AgentColorName | undefined
@@ -572,7 +571,7 @@ export function parseAgentFromMarkdown(
       model = trimmed.toLowerCase() === 'inherit' ? 'inherit' : trimmed
     }
 
-    // Parse background flag
+    // 解析 background 标志
     const backgroundRaw = frontmatter['background']
 
     if (
@@ -590,7 +589,7 @@ export function parseAgentFromMarkdown(
     const background =
       backgroundRaw === 'true' || backgroundRaw === true ? true : undefined
 
-    // Parse memory scope
+    // 解析记忆作用域
     const VALID_MEMORY_SCOPES: AgentMemoryScope[] = ['user', 'project', 'local']
     const memoryRaw = frontmatter['memory'] as string | undefined
     let memory: AgentMemoryScope | undefined
@@ -604,7 +603,7 @@ export function parseAgentFromMarkdown(
       }
     }
 
-    // Parse isolation mode. 'remote' is ant-only; external builds reject it at parse time.
+    // 解析隔离模式。'remote' 仅限内部使用；外部版本在解析时拒绝它。
     type IsolationMode = 'worktree' | 'remote'
     const VALID_ISOLATION_MODES: readonly IsolationMode[] =
       process.env.USER_TYPE === 'ant' ? ['worktree', 'remote'] : ['worktree']
@@ -620,7 +619,7 @@ export function parseAgentFromMarkdown(
       }
     }
 
-    // Parse effort from frontmatter (supports string levels and integers)
+    // 从 frontmatter 解析 effort（支持字符串级别和整数）
     const effortRaw = frontmatter['effort']
     const parsedEffort =
       effortRaw !== undefined ? parseEffortValue(effortRaw) : undefined
@@ -631,7 +630,7 @@ export function parseAgentFromMarkdown(
       )
     }
 
-    // Parse permissionMode from frontmatter
+    // 从 frontmatter 解析 permissionMode
     const permissionModeRaw = frontmatter['permissionMode'] as
       | string
       | undefined
@@ -644,7 +643,7 @@ export function parseAgentFromMarkdown(
       logForDebugging(errorMsg)
     }
 
-    // Parse maxTurns from frontmatter
+    // 从 frontmatter 解析 maxTurns
     const maxTurnsRaw = frontmatter['maxTurns']
     const maxTurns = parsePositiveIntFromFrontmatter(maxTurnsRaw)
     if (maxTurnsRaw !== undefined && maxTurns === undefined) {
@@ -653,13 +652,13 @@ export function parseAgentFromMarkdown(
       )
     }
 
-    // Extract filename without extension
+    // 提取文件名（不含扩展名）
     const filename = basename(filePath, '.md')
 
-    // Parse tools from frontmatter
+    // 从 frontmatter 解析工具列表
     let tools = parseAgentToolsFromFrontmatter(frontmatter['tools'])
 
-    // If memory is enabled, inject Write/Edit/Read tools for memory access
+    // 如果启用了记忆，注入 Write/Edit/Read 工具以供记忆访问
     if (isAutoMemoryEnabled() && memory && tools !== undefined) {
       const toolSet = new Set(tools)
       for (const tool of [
@@ -673,14 +672,14 @@ export function parseAgentFromMarkdown(
       }
     }
 
-    // Parse disallowedTools from frontmatter
+    // 从 frontmatter 解析 disallowedTools
     const disallowedToolsRaw = frontmatter['disallowedTools']
     const disallowedTools =
       disallowedToolsRaw !== undefined
         ? parseAgentToolsFromFrontmatter(disallowedToolsRaw)
         : undefined
 
-    // Parse skills from frontmatter
+    // 从 frontmatter 解析技能列表
     const skills = parseSlashCommandToolsFromFrontmatter(frontmatter['skills'])
 
     const initialPromptRaw = frontmatter['initialPrompt']
@@ -689,7 +688,7 @@ export function parseAgentFromMarkdown(
         ? initialPromptRaw
         : undefined
 
-    // Parse mcpServers from frontmatter using same Zod validation as JSON agents
+    // 使用与 JSON 代理相同的 Zod 验证从 frontmatter 解析 mcpServers
     const mcpServersRaw = frontmatter['mcpServers']
     let mcpServers: AgentMcpServerSpec[] | undefined
     if (Array.isArray(mcpServersRaw)) {
@@ -707,7 +706,7 @@ export function parseAgentFromMarkdown(
         .filter((item): item is AgentMcpServerSpec => item !== null)
     }
 
-    // Parse hooks from frontmatter
+    // 从 frontmatter 解析钩子
     const hooks = parseHooksFromFrontmatter(frontmatter, agentType)
 
     const systemPrompt = content.trim()
