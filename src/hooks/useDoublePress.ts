@@ -1,5 +1,4 @@
-// Creates a function that calls one function on the first call and another
-// function on the second call within a certain timeout
+// 创建一个函数，在第一次调用时调用一个函数，在超时内的第二次调用时调用另一个函数
 
 import { useCallback, useEffect, useRef } from 'react'
 
@@ -20,7 +19,7 @@ export function useDoublePress(
     }
   }, [])
 
-  // Cleanup timeout on unmount
+  // 卸载时清理超时
   useEffect(() => {
     return () => {
       clearTimeoutSafe()
@@ -35,16 +34,16 @@ export function useDoublePress(
       timeoutRef.current !== undefined
 
     if (isDoublePress) {
-      // Double press detected
+      // 检测到双击
       clearTimeoutSafe()
       setPending(false)
       onDoublePress()
     } else {
-      // First press
+      // 第一次按下
       onFirstPress?.()
       setPending(true)
 
-      // Clear any existing timeout and set new one
+      // 清理任何现有超时并设置新超时
       clearTimeoutSafe()
       timeoutRef.current = setTimeout(
         (setPending, timeoutRef) => {

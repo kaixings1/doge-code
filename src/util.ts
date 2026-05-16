@@ -191,12 +191,12 @@ export function getBucketRanges(
   // Make sure coverage is within bounds
   if (coverage < 0) {
     if (process.env.NODE_ENV !== "production") {
-      console.error("Experiment.coverage must be greater than or equal to 0");
+      console.error("Experiment.coverage 必须大于或等于 0");
     }
     coverage = 0;
   } else if (coverage > 1) {
     if (process.env.NODE_ENV !== "production") {
-      console.error("Experiment.coverage must be less than or equal to 1");
+      console.error("Experiment.coverage 必须小于或等于 1");
     }
     coverage = 1;
   }
@@ -207,7 +207,7 @@ export function getBucketRanges(
   if (weights.length !== numVariations) {
     if (process.env.NODE_ENV !== "production") {
       console.error(
-        "Experiment.weights array must be the same length as Experiment.variations",
+        "Experiment.weights 数组长度必须与 Experiment.variations 相同",
       );
     }
     weights = equal;
@@ -217,7 +217,7 @@ export function getBucketRanges(
   const totalWeight = weights.reduce((w, sum) => sum + w, 0);
   if (totalWeight < 0.99 || totalWeight > 1.01) {
     if (process.env.NODE_ENV !== "production") {
-      console.error("Experiment.weights must add up to 1");
+      console.error("Experiment.weights 必须加起来等于 1");
     }
     weights = equal;
   }
@@ -281,7 +281,7 @@ export async function decrypt(
     (globalThis.crypto && globalThis.crypto.subtle) ||
     polyfills.SubtleCrypto;
   if (!subtle) {
-    throw new Error("No SubtleCrypto implementation found");
+    throw new Error("未找到 SubtleCrypto 实现");
   }
   try {
     const key = await subtle.importKey(
@@ -300,7 +300,7 @@ export async function decrypt(
 
     return new TextDecoder().decode(plainTextBuffer);
   } catch (e) {
-    throw new Error("Failed to decrypt");
+    throw new Error("解密失败");
   }
 }
 
@@ -355,7 +355,7 @@ export function mergeQueryStrings(oldUrl: string, newUrl: string): string {
     currUrl = new URL(oldUrl);
     redirectUrl = new URL(newUrl);
   } catch (e) {
-    console.error(`Unable to merge query strings: ${e}`);
+    console.error(`无法合并查询字符串: ${e}`);
     return newUrl;
   }
 

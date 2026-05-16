@@ -273,7 +273,7 @@ function evalOperatorCondition(
     case "$type":
       return getType(actual) === expected;
     default:
-      console.error("Unknown operator: " + operator);
+      console.error("未知操作符: " + operator);
       return false;
   }
 }

@@ -13,11 +13,11 @@ export type Argument = {
   name?: string
   description?: string
   isDangerous?: boolean
-  isVariadic?: boolean // repeats infinitely e.g. echo hello world
+  isVariadic?: boolean // 无限重复，例如 echo hello world
   isOptional?: boolean
-  isCommand?: boolean // wrapper commands e.g. timeout, sudo
-  isModule?: string | boolean // for python -m and similar module args
-  isScript?: boolean // script files e.g. node script.js
+  isCommand?: boolean // 包装命令，例如 timeout, sudo
+  isModule?: string | boolean // 用于 python -m 及类似的模块参数
+  isScript?: boolean // 脚本文件，例如 node script.js
 }
 
 export type Option = {

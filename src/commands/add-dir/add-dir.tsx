@@ -85,8 +85,8 @@ export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXComma
 
     // 更新沙箱配置以便 Bash 命令可以访问新目录。
     // 引导状态是仅会话目录的真实来源；持久化
-    // 目录通过设置订阅获取，但我们刷新
-    // eagerly here to avoid a race when the user acts immediately.
+    // 目录通过设置订阅获取，但我们立即刷新
+    // 以避免用户立即操作时出现竞争条件。
     const currentDirs = getAdditionalDirectoriesForClaudeMd();
     if (!currentDirs.includes(path)) {
       setAdditionalDirectoriesForClaudeMd([...currentDirs, path]);
@@ -108,7 +108,7 @@ export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXComma
   };
 
   // 当未提供路径时，直接显示 AddWorkspaceDirectory 输入表单
-  // and return to REPL after confirmation
+  // 并在确认后返回 REPL
   if (!directoryPath) {
     return <AddWorkspaceDirectory permissionContext={appState.toolPermissionContext} onAddDirectory={handleAddDirectory} onCancel={() => {
       onDone('未添加工作目录。');

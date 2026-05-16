@@ -107,7 +107,7 @@ export function renderToolResultMessage(content: Out, progressMessagesForMessage
       {stdout === '' && stderr.trim() === '' ? <MessageResponse height={1}>
           <Text dimColor>
             {backgroundTaskId ? <>
-                Running in the background{' '}
+                在后台运行{' '}
                 <KeyboardShortcutHint shortcut="↓" action="manage" parens />
               </> : interrupted ? '已中断' : returnCodeInterpretation || '（无输出）'}
           </Text>

@@ -1,14 +1,14 @@
 /**
- * Vim Motion Functions
+ * Vim 移动函数
  *
- * Pure functions for resolving vim motions to cursor positions.
+ * 用于解析 vim 移动命令到光标位置的纯函数。
  */
 
 import type { Cursor } from '../utils/Cursor.js'
 
 /**
- * Resolve a motion to a target cursor position.
- * Does not modify anything - pure calculation.
+ * 解析移动命令到目标光标位置。
+ * 不修改任何内容 —— 纯计算。
  */
 export function resolveMotion(
   key: string,
@@ -25,7 +25,7 @@ export function resolveMotion(
 }
 
 /**
- * Apply a single motion step.
+ * 应用单个移动步骤。
  */
 function applySingleMotion(key: string, cursor: Cursor): Cursor {
   switch (key) {
@@ -67,15 +67,15 @@ function applySingleMotion(key: string, cursor: Cursor): Cursor {
 }
 
 /**
- * Check if a motion is inclusive (includes character at destination).
+ * 检查移动命令是否是包含式的（包含目标位置的字符）。
  */
 export function isInclusiveMotion(key: string): boolean {
   return 'eE$'.includes(key)
 }
 
 /**
- * Check if a motion is linewise (operates on full lines when used with operators).
- * Note: gj/gk are characterwise exclusive per `:help gj`, not linewise.
+ * 检查移动命令是否是行式的（与操作符连用时操作整行）。
+ * 注意：gj/gk 是字符式的（不包括行式），参见 `:help gj`。
  */
 export function isLinewiseMotion(key: string): boolean {
   return 'jkG'.includes(key) || key === 'gg'

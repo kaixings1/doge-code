@@ -1,4 +1,4 @@
-// biome-ignore-all assist/source/organizeImports: ANT-ONLY import markers must not be reordered
+// biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
 import {
   logEvent,
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -86,11 +86,11 @@ import { getProjectRoot } from '../bootstrap/state.js'
 import { formatCommandsWithinBudget } from '../tools/SkillTool/prompt.js'
 import { getContextWindowForModel } from './context.js'
 import type { DiscoverySignal } from '../services/skillSearch/signals.js'
-// Conditional require for DCE. All skill-search string literals that would
-// otherwise leak into external builds live inside these modules. The only
-// surfaces in THIS file are: the maybe() call (gated via spread below) and
-// the skill_listing suppression check (uses the same skillSearchModules null
-// check). The type-only DiscoverySignal import above is erased at compile time.
+// 条件性 require 用于 DCE。所有 skill-search 字符串字面量
+// 否则会泄露到外部构建中的字符串位于这些模块中。唯一
+// 在此文件中的表现是：maybe() 调用（通过下方的 spread 门控）和
+// skill_listing 抑制检查（使用相同的 skillSearchModules null
+// 检查）。上面的类型限定 DiscoverySignal 导入在编译时被擦除。
  
 const skillSearchModules = feature('EXPERIMENTAL_SKILL_SEARCH')
   ? {
@@ -206,7 +206,7 @@ const BRIEF_TOOL_NAME: string | null =
 const sessionTranscriptModule = feature('KAIROS')
   ? (require('../services/sessionTranscript/sessionTranscript.js') as typeof import('../services/sessionTranscript/sessionTranscript.js'))
   : null
- 
+
 import { hasUltrathinkKeyword, isUltrathinkEnabled } from './thinking.js'
 import {
   tokenCountFromLastAPIResponse,
@@ -267,24 +267,19 @@ export const AUTO_MODE_ATTACHMENT_CONFIG = {
 } as const
 
 const MAX_MEMORY_LINES = 200
-// Line cap alone doesn't bound size (200 × 500-char lines = 100KB).  The
-// surfacer injects up to 5 files per turn via <system-reminder>, bypassing
-// the per-message tool-result budget, so a tight per-file byte cap keeps
-// aggregate injection bounded (5 × 4KB = 20KB/turn).  Enforced via
-// readFileInRange's truncateOnByteLimit option.  Truncation means the
-// most-relevant memory still surfaces: the frontmatter + opening context
-// is usually what matters.
+// 行数上限本身无法限制大小（200 × 500字符的行 = 100KB）。
+// 注入器每回合通过 <system-reminder> 最多注入 5 个文件，绕过了每条消息的工具结果预算，
+// 因此严格的每文件字节上限可以将总注入量控制在合理范围内（5 × 4KB = 20KB/回合）。
+// 通过 readFileInRange 的 truncateOnByteLimit 选项强制执行。截断意味着
+// 最相关的内容仍然会显示：通常是 frontmatter + 开头上下文。
 const MAX_MEMORY_BYTES = 4096
 
 export const RELEVANT_MEMORIES_CONFIG = {
-  // Per-turn cap (5 × 4KB = 20KB) bounds a single injection, but over a
-  // long session the selector keeps surfacing distinct files — ~26K tokens/
-  // session observed in prod.  Cap the cumulative bytes: once hit, stop
-  // prefetching entirely.  Budget is ~3 full injections; after that the
-  // most-relevant memories are already in context.  Scanning messages
-  // (rather than tracking in toolUseContext) means compact naturally
-  // resets the counter — old attachments are gone from context, so
-  // re-surfacing is valid.
+  // 每回合上限（5 × 4KB = 20KB）限制单次注入，但长时间会话中选择器会不断显示不同文件
+  // — 生产环境中约 26K tokens/会话。限制累积字节数：达到上限后完全停止预取。
+  // 预算约为 3 次完整注入；超过这个量后最相关的内容已经在上下文中了。
+  // 扫描消息（而非在 toolUseContext 中跟踪）意味着 compact 会自然重置计数器
+  // — 旧的附件从上下文中移除后，重新显示是有效的。
   MAX_SESSION_BYTES: 60 * 1024,
 } as const
 
@@ -292,22 +287,24 @@ export const VERIFY_PLAN_REMINDER_CONFIG = {
   TURNS_BETWEEN_REMINDERS: 10,
 } as const
 
+// 文件附件类型定义
+
 export type FileAttachment = {
   type: 'file'
   filename: string
   content: FileReadToolOutput
   /**
-   * Whether the file was truncated due to size limits
+   * 文件是否因大小限制而被截断
    */
   truncated?: boolean
-  /** Path relative to CWD at creation time, for stable display */
+  /** 创建时相对于 CWD 的路径，用于稳定显示 */
   displayPath: string
 }
 
 export type CompactFileReferenceAttachment = {
   type: 'compact_file_reference'
   filename: string
-  /** Path relative to CWD at creation time, for stable display */
+  /** 创建时相对于 CWD 的路径，用于稳定显示 */
   displayPath: string
 }
 
@@ -316,7 +313,7 @@ export type PDFReferenceAttachment = {
   filename: string
   pageCount: number
   fileSize: number
-  /** Path relative to CWD at creation time, for stable display */
+  /** 创建时相对于 CWD 的路径，用于稳定显示 */
   displayPath: string
 }
 
@@ -325,18 +322,20 @@ export type AlreadyReadFileAttachment = {
   filename: string
   content: FileReadToolOutput
   /**
-   * Whether the file was truncated due to size limits
+   * 文件是否因大小限制而被截断
    */
   truncated?: boolean
-  /** Path relative to CWD at creation time, for stable display */
+  /** 创建时相对于 CWD 的路径，用于稳定显示 */
   displayPath: string
 }
 
+// 智能体提及附件
 export type AgentMentionAttachment = {
   type: 'agent_mention'
   agentType: string
 }
 
+// 异步钩子响应附件
 export type AsyncHookResponseAttachment = {
   type: 'async_hook_response'
   processId: string
@@ -349,6 +348,7 @@ export type AsyncHookResponseAttachment = {
   exitCode?: number
 }
 
+// 钩子附件联合类型
 export type HookAttachment =
   | HookCancelledAttachment
   | {
@@ -378,6 +378,7 @@ export type HookAttachment =
   | HookSystemMessageAttachment
   | HookPermissionDecisionAttachment
 
+// 钩子权限决策附件
 export type HookPermissionDecisionAttachment = {
   type: 'hook_permission_decision'
   decision: 'allow' | 'deny'
@@ -385,6 +386,7 @@ export type HookPermissionDecisionAttachment = {
   hookEvent: HookEvent
 }
 
+// 钩子系统消息附件
 export type HookSystemMessageAttachment = {
   type: 'hook_system_message'
   content: string
@@ -393,6 +395,7 @@ export type HookSystemMessageAttachment = {
   hookEvent: HookEvent
 }
 
+// 钩子取消附件
 export type HookCancelledAttachment = {
   type: 'hook_cancelled'
   hookName: string
@@ -402,6 +405,7 @@ export type HookCancelledAttachment = {
   durationMs?: number
 }
 
+// 钩子错误附件（执行期间）
 export type HookErrorDuringExecutionAttachment = {
   type: 'hook_error_during_execution'
   content: string
@@ -412,6 +416,7 @@ export type HookErrorDuringExecutionAttachment = {
   durationMs?: number
 }
 
+// 钩子成功附件
 export type HookSuccessAttachment = {
   type: 'hook_success'
   content: string
@@ -425,6 +430,7 @@ export type HookSuccessAttachment = {
   durationMs?: number
 }
 
+// 钩子非阻塞错误附件
 export type HookNonBlockingErrorAttachment = {
   type: 'hook_non_blocking_error'
   hookName: string
@@ -462,7 +468,7 @@ export type Attachment =
       type: 'directory'
       path: string
       content: string
-      /** Path relative to CWD at creation time, for stable display */
+      /** 创建时相对于 CWD 的路径，用于稳定显示 */
       displayPath: string
     }
   | {
@@ -472,7 +478,7 @@ export type Attachment =
       lineEnd: number
       filename: string
       content: string
-      /** Path relative to CWD at creation time, for stable display */
+      /** 创建时相对于 CWD 的路径，用于稳定显示 */
       displayPath: string
     }
   | {
@@ -493,7 +499,7 @@ export type Attachment =
       type: 'nested_memory'
       path: string
       content: MemoryFileInfo
-      /** Path relative to CWD at creation time, for stable display */
+      /** 创建时相对于 CWD 的路径，用于稳定显示 */
       displayPath: string
     }
   | {
@@ -525,7 +531,7 @@ export type Attachment =
       type: 'dynamic_skill'
       skillDir: string
       skillNames: string[]
-      /** Path relative to CWD at creation time, for stable display */
+      /** 创建时相对于 CWD 的路径，用于稳定显示 */
       displayPath: string
     }
   | {
@@ -545,11 +551,11 @@ export type Attachment =
       prompt: string | Array<ContentBlockParam>
       source_uuid?: UUID
       imagePasteIds?: number[]
-      /** Original queue mode — 'prompt' for user messages, 'task-notification' for system events */
+      /** 原始队列模式——'prompt' 表示用户消息，'task-notification' 表示系统事件 */
       commandMode?: string
-      /** Provenance carried from QueuedCommand so mid-turn drains preserve it */
+      /** 从 QueuedCommand 携带的来源信息，确保轮中排空时保持一致 */
       origin?: MessageOrigin
-      /** Carried from QueuedCommand.isMeta — distinguishes human-typed from system-injected */
+      /** 从 QueuedCommand.isMeta 携带，区分人工输入与系统注入 */
       isMeta?: boolean
     }
   | {
@@ -693,9 +699,9 @@ export type Attachment =
       addedTypes: string[]
       addedLines: string[]
       removedTypes: string[]
-      /** True when this is the first announcement in the conversation */
+      /** 如果这是对话中的首次公告，则为 true */
       isInitial: boolean
-      /** Whether to include the "launch multiple agents concurrently" note (non-pro subscriptions) */
+      /** 是否包含"并发启动多个智能体"的说明（非专业订阅） */
       showConcurrencyNote: boolean
     }
   | {
@@ -737,8 +743,8 @@ export type TeamContextAttachment = {
 }
 
 /**
- * This is janky
- * TODO: Generate attachments when we create messages
+ * 这个函数比较杂乱
+ * TODO: 在创建消息时生成附件，而不是在这里
  */
 export async function getAttachments(
   input: string | null,
@@ -753,16 +759,15 @@ export async function getAttachments(
     isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_ATTACHMENTS) ||
     isEnvTruthy(process.env.CLAUDE_CODE_SIMPLE)
   ) {
-    // query.ts:removeFromQueue dequeues these unconditionally after
-    // getAttachmentMessages runs — returning [] here silently drops them.
-    // Coworker runs with --bare and depends on task-notification for
-    // mid-tool-call notifications from Local*Task/Remote*Task.
+    // query.ts:removeFromQueue 在 getAttachmentMessages 运行后会无条件地取消排队
+    // 因此在这里返回 [] 会静默丢弃它们。
+    // Coworker 使用 --bare 运行，依赖 task-notification 获取
+    // 来自 Local*Task/Remote*Task 的中途工具调用通知。
     return getQueuedCommandAttachments(queuedCommands)
   }
 
-  // This will slow down submissions
-  // TODO: Compute attachments as the user types, not here (though we use this
-  // function for slash command prompts too)
+  // 这会降低提交速度
+  // TODO: 在用户输入时计算附件，而不是在这里（尽管我们也会对斜杠命令提示使用此函数）
   const abortController = createAbortController()
   // 增加超时时间到 5 秒（原 1 秒），避免大文件读取、PDF 处理、技能发现等操作超时
   const timeoutId = setTimeout(ac => ac.abort(), 5000, abortController)
@@ -770,7 +775,7 @@ export async function getAttachments(
 
   const isMainThread = !toolUseContext.agentId
 
-  // Attachments which are added in response to on user input
+  // 响应用户输入的附件
   const userInputAttachments = input
     ? [
         maybe('at_mentioned_files', () =>
@@ -787,18 +792,18 @@ export async function getAttachments(
             ),
           ),
         ),
-        // Skill discovery on turn 0 (user input as signal). Inter-turn
-        // discovery runs via startSkillDiscoveryPrefetch in query.ts,
-        // gated on write-pivot detection — see skillSearch/prefetch.ts.
-        // feature() here lets DCE drop the 'skill_discovery' string (and the
-        // function it calls) from external builds.
+        // 技能发现在第 0 回合（用户输入作为信号）。回合间
+        // discovery 通过 query.ts 中的 startSkillDiscoveryPrefetch 运行，
+        // 受写时拐点检测控制 — 详见 skillSearch/prefetch.ts。
+        // feature() 可以让 DCE 删除 "skill_discovery" 字符串（以及
+        // 它调用的函数）从外部构建中删除。
         //
-        // skipSkillDiscovery gates out the SKILL.md-expansion path
-        // (getMessagesForPromptSlashCommand). When a skill is invoked, its
-        // SKILL.md content is passed as `input` here to extract @-mentions —
-        // but that content is NOT user intent and must not trigger discovery.
-        // Without this gate, a 110KB SKILL.md fires ~3.3s of chunked AKI
-        // queries on every skill invocation (session 13a9afae).
+        // skipSkillDiscovery 控制 SKILL.md 展开路径
+        // （getMessagesForPromptSlashCommand）。当技能被调用时，其
+        // SKILL.md 内容会作为 `input` 传递到这里以提取 @提及 —
+        // 但该内容不是用户意图，不应触发发现。
+        // 如果没有此门控，一个 110KB 的 SKILL.md 会触发约 3.3 秒的分块 AKI
+        // 查询在每次技能调用时（session 13a9afae）。
         ...(feature('EXPERIMENTAL_SKILL_SEARCH') &&
         skillSearchModules &&
         !options?.skipSkillDiscovery
@@ -815,18 +820,18 @@ export async function getAttachments(
       ]
     : []
 
-  // Process user input attachments first (includes @mentioned files)
-  // This ensures files are added to nestedMemoryAttachmentTriggers before nested_memory processes them
+  // 首先处理用户输入附件（包括 @提及 的文件）
+  // 这确保文件在 nested_memory 处理之前被添加到 nestedMemoryAttachmentTriggers
   const userAttachmentResults = await Promise.all(userInputAttachments)
 
-  // Thread-safe attachments available in sub-agents
-  // NOTE: These must be created AFTER userInputAttachments completes to ensure
-  // nestedMemoryAttachmentTriggers is populated before getNestedMemoryAttachments runs
+  // 子代理可用的线程安全附件
+  // 注意：这些必须在 userInputAttachments 完成后创建
+  // 以确保 nestedMemoryAttachmentTriggers 在 getNestedMemoryAttachments 运行前已填充
   const allThreadAttachments = [
-    // queuedCommands is already agent-scoped by the drain gate in query.ts —
-    // main thread gets agentId===undefined, subagents get their own agentId.
-    // Must run for all threads or subagent notifications drain into the void
-    // (removed from queue by removeFromQueue but never attached).
+    // queuedCommands 已由 query.ts 中的排空门控按代理范围划分 —
+    // 主线程获得 agentId===undefined，子代理获得各自的 agentId.
+    // 必须对所有线程运行，否则子代理通知将丢失
+    // (已由 removeFromQueue 从队列中移除但从未附加).
     maybe('queued_commands', () => getQueuedCommandAttachments(queuedCommands)),
     maybe('date_change', () =>
       Promise.resolve(getDateChangeAttachments(messages)),
@@ -871,14 +876,13 @@ export async function getAttachments(
       : []),
     maybe('changed_files', () => getChangedFiles(context)),
     maybe('nested_memory', () => getNestedMemoryAttachments(context)),
-    // relevant_memories moved to async prefetch (startRelevantMemoryPrefetch)
+    // relevant_memories 已移至异步预取（startRelevantMemoryPrefetch）
     maybe('dynamic_skill', () => getDynamicSkillAttachments(context)),
     maybe('skill_listing', () => getSkillListingAttachments(context)),
-    // Inter-turn skill discovery now runs via startSkillDiscoveryPrefetch
-    // (query.ts, concurrent with the main turn). The blocking call that
-    // previously lived here was the assistant_turn signal — 97% of those
-    // Haiku calls found nothing in prod. Prefetch + await-at-collection
-    // replaces it; see src/services/skillSearch/prefetch.ts.
+    // 回合间 技能发现现在通过 startSkillDiscoveryPrefetch 运行
+    // (query.ts, 与主回合并发)。原来在这里的阻塞调用是
+    // assistant_turn 信号——97% 的 Haiku 调用在生产中找不到任何内容。
+    // 预取 + 等待收集取代了它；详见 src/services/skillSearch/prefetch.ts
     maybe('plan_mode', () => getPlanModeAttachments(messages, toolUseContext)),
     maybe('plan_mode_exit', () => getPlanModeExitAttachment(toolUseContext)),
     ...(feature('TRANSCRIPT_CLASSIFIER')
@@ -898,10 +902,10 @@ export async function getAttachments(
     ),
     ...(isAgentSwarmsEnabled()
       ? [
-          // Skip teammate mailbox for the session_memory forked agent.
-          // It shares AppState.teamContext with the leader, so isTeamLead resolves
-          // true and it reads+marks-as-read the leader's DMs as ephemeral attachments,
-          // silently stealing messages that should be delivered as permanent turns.
+          // 跳过 session_memory 派生代理的队友邮箱。
+          // 它与领导者共享 AppState.teamContext，因此 isTeamLead 解析为
+          // true，并将领导者的 DMs 读取+标记为已读，作为临时附件，
+          // 静默窃取本应作为永久回合传递的消息。
           ...(querySource === 'session_memory'
             ? []
             : [
@@ -941,7 +945,7 @@ export async function getAttachments(
       : []),
   ]
 
-  // Attachments which are semantically only for the main conversation or don't have concurrency-safe implementations
+  // 仅语义上适用于主要对话或不具有并发安全实现的附件
   const mainThreadAttachments = isMainThread
     ? [
         maybe('ide_selection', async () =>
@@ -987,7 +991,7 @@ export async function getAttachments(
       ]
     : []
 
-  // Process thread and main thread attachments in parallel (no dependencies between them)
+  // 并行处理线程和主线程附件（它们之间没有依赖关系）
   const [threadAttachmentResults, mainThreadAttachmentResults] =
     await Promise.all([
       Promise.all(allThreadAttachments),
@@ -995,7 +999,7 @@ export async function getAttachments(
     ])
 
   clearTimeout(timeoutId)
-  // Defensive: a getter leaking [undefined] crashes .map(a => a.type) below.
+  // 防御性措施：返回 [undefined] 的 getter 会导致下面的 .map(a => a.type) 崩溃。
   return [
     ...userAttachmentResults.flat(),
     ...threadAttachmentResults.flat(),
@@ -1008,9 +1012,9 @@ async function maybe<A>(label: string, f: () => Promise<A[]>): Promise<A[]> {
   try {
     const result = await f()
     const duration = Date.now() - startTime
-    // Log only 5% of events to reduce volume
+    // 仅记录 5% 的事件以减少数据量
     if (Math.random() < 0.05) {
-      // jsonStringify(undefined) returns undefined, so .length would throw
+      // jsonStringify(undefined) 返回 undefined，因此 .length 会抛出异常
       const attachmentSizeBytes = result
         .filter(a => a !== undefined && a !== null)
         .reduce((total, attachment) => {
@@ -1026,7 +1030,7 @@ async function maybe<A>(label: string, f: () => Promise<A[]>): Promise<A[]> {
     return result
   } catch (e) {
     const duration = Date.now() - startTime
-    // Log only 5% of events to reduce volume
+    // 仅记录 5% 的事件以减少数据量
     if (Math.random() < 0.05) {
       logEvent('tengu_attachment_compute_duration', {
         label,
@@ -1035,7 +1039,7 @@ async function maybe<A>(label: string, f: () => Promise<A[]>): Promise<A[]> {
       } as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS)
     }
     logError(e)
-    // For Ant users, log the full error to help with debugging
+    // 对于 Ant 用户，记录完整错误以帮助调试
     logAntError(`Attachment error in ${label}`, e)
 
     return []
@@ -1050,11 +1054,11 @@ export async function getQueuedCommandAttachments(
   if (!queuedCommands) {
     return []
   }
-  // Include both 'prompt' and 'task-notification' commands as attachments.
-  // During proactive agentic loops, task-notification commands would otherwise
-  // stay in the queue permanently (useQueueProcessor can't run while a query
-  // is active), causing hasPendingNotifications() to return true and Sleep to
-  // wake immediately with 0ms duration in an infinite loop.
+  // 将 prompt 和 task-notification 命令都作为附件包含。
+  // 在主动 agentic 循环期间，task-notification 命令否则
+  // 会永久留在队列中（useQueueProcessor 在查询运行时无法执行
+  // 处于活动状态），导致 hasPendingNotifications() 返回 true，Sleep 将
+  // 立即以 0ms 持续时间唤醒，进入无限循环。
   const filtered = queuedCommands.filter(_ =>
     INLINE_NOTIFICATION_MODES.has(_.mode),
   )
@@ -1063,7 +1067,7 @@ export async function getQueuedCommandAttachments(
       const imageBlocks = await buildImageContentBlocks(_.pastedContents)
       let prompt: string | Array<ContentBlockParam> = _.value
       if (imageBlocks.length > 0) {
-        // Build content block array with text + images so the model sees them
+        // 构建包含文本+图像的内容块数组，以便模型看到它们
         const textValue =
           typeof _.value === 'string'
             ? _.value
@@ -1136,11 +1140,11 @@ function getPlanModeAttachmentTurnCount(messages: Message[]): {
   let turnsSinceLastAttachment = 0
   let foundPlanModeAttachment = false
 
-  // Iterate backwards to find most recent plan_mode attachment.
-  // Count HUMAN turns (non-meta, non-tool-result user messages), not assistant
-  // messages — the tool loop in query.ts calls getAttachmentMessages on every
-  // tool round, so counting assistant messages would fire the reminder every
-  // 5 tool calls instead of every 5 human turns.
+  // 向后迭代以查找最近的 plan_mode 附件。
+  // 统计人类回合数（非元消息、非工具结果的用户消息），不统计助手
+  // 消息 — query.ts 中的工具循环在每次工具调用时都会调用 getAttachmentMessages，
+  // 工具回合，因此统计助手消息会导致提醒每
+  // 5 次工具调用触发一次，而不是每 5 次人类回合触发一次。
   for (let i = messages.length - 1; i >= 0; i--) {
     const message = messages[i]
 
@@ -1169,12 +1173,12 @@ function getPlanModeAttachmentTurnCount(messages: Message[]): {
  */
 function countPlanModeAttachmentsSinceLastExit(messages: Message[]): number {
   let count = 0
-  // Iterate backwards - if we hit a plan_mode_exit, stop counting
+  // 向后迭代 — 如果遇到 plan_mode_exit，停止计数
   for (let i = messages.length - 1; i >= 0; i--) {
     const message = messages[i]
     if (message?.type === 'attachment') {
       if (message.attachment.type === 'plan_mode_exit') {
-        break // Stop counting at the last exit
+        break // 在最后一次退出时停止计数
       }
       if (message.attachment.type === 'plan_mode') {
         count++
@@ -1194,12 +1198,12 @@ async function getPlanModeAttachments(
     return []
   }
 
-  // Check if we should attach based on turn count (except for first turn)
+  // 检查是否应根据回合数附加（除第一回合外）
   if (messages && messages.length > 0) {
     const { turnCount, foundPlanModeAttachment } =
       getPlanModeAttachmentTurnCount(messages)
-    // Only throttle if we've already sent a plan_mode attachment before
-    // On first turn in plan mode, always attach
+    // 仅在之前已发送过 plan_mode 附件时进行节流
+    // 在计划模式的第一回合，始终附加
     if (
       foundPlanModeAttachment &&
       turnCount < PLAN_MODE_ATTACHMENT_CONFIG.TURNS_BETWEEN_ATTACHMENTS
@@ -1213,14 +1217,14 @@ async function getPlanModeAttachments(
 
   const attachments: Attachment[] = []
 
-  // Check for re-entry: flag is set AND plan file exists
+  // 检查是否重新进入：标志已设置且计划文件存在
   if (hasExitedPlanModeInSession() && existingPlan !== null) {
     attachments.push({ type: 'plan_mode_reentry', planFilePath })
-    setHasExitedPlanMode(false) // Clear flag - one-time guidance
+    setHasExitedPlanMode(false) // 清除标志 — 一次性指导
   }
 
-  // Determine if this should be a full or sparse reminder
-  // Full reminder on 1st, 6th, 11th... (every Nth attachment)
+  // 确定应该是完整还是稀疏提醒
+  // 完整提醒在第 1、6、11...次附件（每第 N 次附件）
   const attachmentCount =
     countPlanModeAttachmentsSinceLastExit(messages ?? []) + 1
   const reminderType: 'full' | 'sparse' =
@@ -1230,7 +1234,7 @@ async function getPlanModeAttachments(
       ? 'full'
       : 'sparse'
 
-  // Always add the main plan_mode attachment
+  // 始终添加主 plan_mode 附件
   attachments.push({
     type: 'plan_mode',
     reminderType,
@@ -1249,7 +1253,7 @@ async function getPlanModeAttachments(
 async function getPlanModeExitAttachment(
   toolUseContext: ToolUseContext,
 ): Promise<Attachment[]> {
-  // Only trigger if the flag is set (we just exited plan mode)
+  // 仅在标志已设置时触发（我们刚刚退出计划模式）
   if (!needsPlanModeExitAttachment()) {
     return []
   }
@@ -1260,16 +1264,15 @@ async function getPlanModeExitAttachment(
     return []
   }
 
-  // Clear the flag - this is a one-time notification
+  // 清除标志 — 这是一次性通知
   setNeedsPlanModeExitAttachment(false)
 
   const planFilePath = getPlanFilePath(toolUseContext.agentId)
   const planExists = getPlan(toolUseContext.agentId) !== null
 
-  // Note: skill discovery does NOT fire on plan exit. By the time the plan is
-  // written, it's too late — the model should have had relevant skills WHILE
-  // planning. The user_message signal already fires on the request that
-  // triggers planning ("plan how to deploy this"), which is the right moment.
+  // 注意：技能发现在计划退出时不会触发。因为到计划写入时已经太晚了——
+  // 模型在计划期间就应该有相关技能。user_message 信号已经在触发计划的请求时触发
+  // （"plan how to deploy this"），这是正确的时机。
   return [{ type: 'plan_mode_exit', planFilePath, planExists }]
 }
 
@@ -1280,12 +1283,11 @@ function getAutoModeAttachmentTurnCount(messages: Message[]): {
   let turnsSinceLastAttachment = 0
   let foundAutoModeAttachment = false
 
-  // Iterate backwards to find most recent auto_mode attachment.
-  // Count HUMAN turns (non-meta, non-tool-result user messages), not assistant
-  // messages — the tool loop in query.ts calls getAttachmentMessages on every
-  // tool round, so a single human turn with 100 tool calls would fire ~20
-  // reminders if we counted assistant messages. Auto mode's target use case is
-  // long agentic sessions, where this accumulated 60-105× per session.
+  // 向后迭代查找最近的 auto_mode 附件
+  // 统计人类回合数（非元消息、非工具结果的用户消息），不统计助手消息
+  // query.ts 中的工具循环在每次工具调用时都会调用 getAttachmentMessages，
+  // 如果统计助手消息，单个人类回合的 100 次工具调用会触发约 20 次提醒。
+  // 自动模式的目标场景是长时间的智能体会话，累积 60-105×/会话。
   for (let i = messages.length - 1; i >= 0; i--) {
     const message = messages[i]
 
@@ -1305,7 +1307,7 @@ function getAutoModeAttachmentTurnCount(messages: Message[]): {
       message?.type === 'attachment' &&
       message.attachment.type === 'auto_mode_exit'
     ) {
-      // Exit resets the throttle — treat as if no prior attachment exists
+      // 退出重置节流 — 视为不存在之前的附件
       break
     }
   }
@@ -1314,8 +1316,8 @@ function getAutoModeAttachmentTurnCount(messages: Message[]): {
 }
 
 /**
- * Count auto_mode attachments since the last auto_mode_exit (or from start if no exit).
- * This ensures the full/sparse cycle resets when re-entering auto mode.
+ * 统计自上次 auto_mode_exit 以来的 auto_mode 附件数（没有退出则从头开始）。
+ * 确保在重新进入自动模式时完整/稀疏周期重置。
  */
 function countAutoModeAttachmentsSinceLastExit(messages: Message[]): number {
   let count = 0
@@ -1347,12 +1349,12 @@ async function getAutoModeAttachments(
     return []
   }
 
-  // Check if we should attach based on turn count (except for first turn)
+  // 检查是否应根据回合数附加（除第一回合外）
   if (messages && messages.length > 0) {
     const { turnCount, foundAutoModeAttachment } =
       getAutoModeAttachmentTurnCount(messages)
-    // Only throttle if we've already sent an auto_mode attachment before
-    // On first turn in auto mode, always attach
+    // 仅在之前已发送过 auto_mode 附件时进行节流
+    // 在自动模式的第一回合，始终附加
     if (
       foundAutoModeAttachment &&
       turnCount < AUTO_MODE_ATTACHMENT_CONFIG.TURNS_BETWEEN_ATTACHMENTS
@@ -1361,7 +1363,7 @@ async function getAutoModeAttachments(
     }
   }
 
-  // Determine if this should be a full or sparse reminder
+  // 确定应该是完整还是稀疏提醒
   const attachmentCount =
     countAutoModeAttachmentsSinceLastExit(messages ?? []) + 1
   const reminderType: 'full' | 'sparse' =
@@ -1375,8 +1377,8 @@ async function getAutoModeAttachments(
 }
 
 /**
- * Returns an auto_mode_exit attachment if we just exited auto mode.
- * This is a one-time notification to tell the model it's no longer in auto mode.
+ * 如果刚退出自动模式，返回 auto_mode_exit 附件。
+ * 这是一次性通知，告知模型它不再处于自动模式。
  */
 async function getAutoModeExitAttachment(
   toolUseContext: ToolUseContext,
@@ -1386,8 +1388,8 @@ async function getAutoModeExitAttachment(
   }
 
   const appState = toolUseContext.getAppState()
-  // Suppress when auto is still active — covers both mode==='auto' and
-  // plan-with-auto-active (where mode==='plan' but classifier runs).
+  // 当自动模式仍然活跃时抑制 — 覆盖 mode==='auto' 和
+  // plan-with-auto-active（mode==='plan' 但分类器运行）两种情况。
   if (
     appState.toolPermissionContext.mode === 'auto' ||
     (autoModeStateModule?.isAutoModeActive() ?? false)
@@ -1401,17 +1403,17 @@ async function getAutoModeExitAttachment(
 }
 
 /**
- * Detects when the local date has changed since the last turn (user coding
- * past midnight) and emits an attachment to notify the model.
+ * 检测自上一轮以来本地日期是否已变更（用户编码跨过午夜），
+ * 并发出附件以通知模型。
  *
- * The date_change attachment is appended at the tail of the conversation,
- * so the model learns the new date without mutating the cached prefix.
- * messages[0] (from getUserContext → prependUserContext) intentionally
- * keeps the stale date — clearing that cache would regenerate the prefix
- * and turn the entire conversation into cache_creation on the next turn
- * (~920K effective tokens per midnight crossing per overnight session).
+ * date_change 附件附加在对话的尾部，
+ * 因此模型能获知新日期，同时无需变更缓存的前缀。
+ * messages[0]（来自 getUserContext → prependUserContext）有意
+ * 保留旧日期——清除该缓存会重新生成前缀，
+ * 并在下一轮将整个对话变为 cache_creation
+ * （每次跨午夜每夜会话约 920K 有效 tokens）。
  *
- * Exported for testing — regression guard for the cache-clear removal.
+ * 导出用于测试——防止清除缓存的回归问题。
  */
 export function getDateChangeAttachments(
   messages: Message[] | undefined,
@@ -1420,7 +1422,7 @@ export function getDateChangeAttachments(
   const lastDate = getLastEmittedDate()
 
   if (lastDate === null) {
-    // First turn — just record, no attachment needed
+    // 第一回合 — 仅记录，不需要附件
     setLastEmittedDate(currentDate)
     return []
   }
@@ -1431,10 +1433,10 @@ export function getDateChangeAttachments(
 
   setLastEmittedDate(currentDate)
 
-  // Assistant mode: flush yesterday's transcript to the per-day file so
-  // the /dream skill (1–5am local) finds it even if no compaction fires
-  // today. Fire-and-forget; writeSessionTranscriptSegment buckets by
-  // message timestamp so a multi-day gap flushes each day correctly.
+  // 助手模式：将昨天的记录刷新到每日文件中，以便
+  // /dream 技能（当地时间 1-5 点）即使没有压缩也能找到它
+  // 今天。发送即忘；writeSessionTranscriptSegment 按
+  // 消息时间戳分桶，这样多天的间隔也能正确刷新每一天。
   if (feature('KAIROS')) {
     if (getKairosActive() && messages !== undefined) {
       sessionTranscriptModule?.flushOnDateChange(messages, currentDate)
@@ -1452,7 +1454,7 @@ function getUltrathinkEffortAttachment(input: string | null): Attachment[] {
   return [{ type: 'ultrathink_effort', level: 'high' }]
 }
 
-// Exported for compact.ts — the gate must be identical at both call sites.
+// 导出给 compact.ts — 两个调用点的门控必须一致。
 export function getDeferredToolsDeltaAttachment(
   tools: Tools,
   model: string,
@@ -1460,13 +1462,13 @@ export function getDeferredToolsDeltaAttachment(
   scanContext?: DeferredToolsDeltaScanContext,
 ): Attachment[] {
   if (!isDeferredToolsDeltaEnabled()) return []
-  // These three checks mirror the sync parts of isToolSearchEnabled —
-  // the attachment text says "available via ToolSearch", so ToolSearch
-  // has to actually be in the request. The async auto-threshold check
-  // is not replicated (would double-fire tengu_tool_search_mode_decision);
-  // in tst-auto below-threshold the attachment can fire while ToolSearch
-  // is filtered out, but that's a narrow case and the tools announced
-  // are directly callable anyway.
+  // 这三个检查镜像了 isToolSearchEnabled 的同步部分 —
+  // 附件文本写着“可通过 ToolSearch 获取”，因此 ToolSearch
+  // 必须实际存在于请求中。异步自动阈值检查
+  // 没有被复制（否则会重复触发 tengu_tool_search_mode_decision）；
+  // 在 tst-auto 低于阈值时，即使 ToolSearch 被过滤，附件仍可能触发
+  // 被过滤掉，但这是一个窄场景且已宣布的工具
+  // 无论如何都是可直接调用的。
   if (!isToolSearchEnabledOptimistic()) return []
   if (!modelSupportsToolReference(model)) return []
   if (!isToolSearchToolAvailable(tools)) return []
@@ -1476,17 +1478,16 @@ export function getDeferredToolsDeltaAttachment(
 }
 
 /**
- * Diff the current filtered agent pool against what's already been announced
- * in this conversation (reconstructed from prior agent_listing_delta
- * attachments). Returns [] if nothing changed or the gate is off.
+ * 对比当前过滤后的代理池与对话中已公告过的内容
+ * （从之前的 agent_listing_delta 附件重建得出）。
+ * 如果无变化或门控关闭则返回 []。
  *
- * The agent list was embedded in AgentTool's description, causing ~10.2% of
- * fleet cache_creation: MCP async connect, /reload-plugins, or
- * permission-mode change → description changes → full tool-schema cache bust.
- * Moving the list here keeps the tool description static.
+ * 代理列表曾嵌入在 AgentTool 的描述中，导致约 10.2% 的
+ * fleet cache_creation：MCP 异步连接、/reload-plugins 或
+ * 权限模式变更 → 描述变更 → 完整工具模式缓存失效。
+ * 将列表移到这里可使工具描述保持静态。
  *
- * Exported for compact.ts — re-announces the full set after compaction eats
- * prior deltas.
+ * 为 compact.ts 导出——压缩消耗之前的增量后重新公告完整集合。
  */
 export function getAgentListingDeltaAttachment(
   toolUseContext: ToolUseContext,
@@ -1494,7 +1495,7 @@ export function getAgentListingDeltaAttachment(
 ): Attachment[] {
   if (!shouldInjectAgentListInMessages()) return []
 
-  // Skip if AgentTool isn't in the pool — the listing would be unactionable.
+  // 如果 AgentTool 不在池中则跳过 — 列表将无法操作。
   if (
     !toolUseContext.options.tools.some(t => toolMatchesName(t, AGENT_TOOL_NAME))
   ) {
@@ -1504,8 +1505,8 @@ export function getAgentListingDeltaAttachment(
   const { activeAgents, allowedAgentTypes } =
     toolUseContext.options.agentDefinitions
 
-  // Mirror AgentTool.prompt()'s filtering: MCP requirements → deny rules →
-  // allowedAgentTypes restriction. Keep this in sync with AgentTool.tsx.
+  // 镜像 AgentTool.prompt() 的过滤：MCP 需求 → 拒绝规则 →
+  // allowedAgentTypes 限制。与 AgentTool.tsx 保持同步。
   const mcpServers = new Set<string>()
   for (const tool of toolUseContext.options.tools) {
     const info = mcpInfoFromString(tool.name)
@@ -1521,7 +1522,7 @@ export function getAgentListingDeltaAttachment(
     filtered = filtered.filter(a => allowedAgentTypes.includes(a.agentType))
   }
 
-  // Reconstruct announced set from prior deltas in the transcript.
+  // 从记录中的先前增量重建已宣布的集合。
   const announced = new Set<string>()
   for (const msg of messages ?? []) {
     if (msg.type !== 'attachment') continue
@@ -1539,7 +1540,7 @@ export function getAgentListingDeltaAttachment(
 
   if (added.length === 0 && removed.length === 0) return []
 
-  // Sort for deterministic output — agent load order is nondeterministic
+  // 按确定性顺序排序 — 智能体加载顺序是不确定的
   // (plugin load races, MCP async connect).
   added.sort((a, b) => a.agentType.localeCompare(b.agentType))
   removed.sort()
@@ -1556,7 +1557,7 @@ export function getAgentListingDeltaAttachment(
   ]
 }
 
-// Exported for compact.ts / reactiveCompact.ts — single source of truth for the gate.
+// 导出给 compact.ts / reactiveCompact.ts — 门控的唯一真实来源。
 export function getMcpInstructionsDeltaAttachment(
   mcpClients: MCPServerConnection[],
   tools: Tools,
@@ -1565,9 +1566,9 @@ export function getMcpInstructionsDeltaAttachment(
 ): Attachment[] {
   if (!isMcpInstructionsDeltaEnabled()) return []
 
-  // The chrome ToolSearch hint is client-authored and ToolSearch-conditional;
-  // actual server `instructions` are unconditional. Decide the chrome part
-  // here, pass it into the pure diff as a synthesized entry.
+  // Chrome ToolSearch 提示是客户端编写的且有条件的；
+  // 实际服务器的 `instructions` 是无条件的。在这里决定 Chrome 部分
+  // 并将其作为合成条目传入纯 diff 中。
   const clientSide: ClientSideInstruction[] = []
   if (
     isToolSearchEnabledOptimistic() &&
@@ -1599,7 +1600,7 @@ function getOutputStyleAttachment(): Attachment[] {
   const settings = getSettings_DEPRECATED()
   const outputStyle = settings?.outputStyle || 'default'
 
-  // Only show for non-default styles
+  // 仅对非默认样式显示
   if (outputStyle === 'default') {
     return []
   }
@@ -1645,25 +1646,25 @@ async function getSelectedLinesFromIDE(
 }
 
 /**
- * Computes the directories to process for nested memory file loading.
- * Returns two lists:
- * - nestedDirs: Directories between CWD and targetPath (processed for CLAUDE.md + all rules)
- * - cwdLevelDirs: Directories from root to CWD (processed for conditional rules only)
+ * 计算嵌套记忆文件加载所需处理的目录。
+ * 返回两个列表：
+ * - nestedDirs：CWD 与 targetPath 之间的目录（处理 CLAUDE.md + 所有规则）
+ * - cwdLevelDirs：根目录到 CWD 的目录（仅处理条件规则）
  *
- * @param targetPath The target file path
- * @param originalCwd The original current working directory
- * @returns Object with nestedDirs and cwdLevelDirs arrays, both ordered from parent to child
+ * @param targetPath 目标文件路径
+ * @param originalCwd 原始当前工作目录
+ * @returns 包含 nestedDirs 和 cwdLevelDirs 数组的对象，均按从父到子的顺序排列
  */
 export function getDirectoriesToProcess(
   targetPath: string,
   originalCwd: string,
 ): { nestedDirs: string[]; cwdLevelDirs: string[] } {
-  // Build list of directories from original CWD to targetPath's directory
+  // 构建从原始 CWD 到 targetPath 目录的目录列表
   const targetDir = dirname(resolve(targetPath))
   const nestedDirs: string[] = []
   let currentDir = targetDir
 
-  // Walk up from target directory to original CWD
+  // 从目标目录向上走到原始 CWD
   while (currentDir !== originalCwd && currentDir !== parse(currentDir).root) {
     if (currentDir.startsWith(originalCwd)) {
       nestedDirs.push(currentDir)
@@ -1671,10 +1672,10 @@ export function getDirectoriesToProcess(
     currentDir = dirname(currentDir)
   }
 
-  // Reverse to get order from CWD down to target
+  // 反转以获取从 CWD 到目标的顺序
   nestedDirs.reverse()
 
-  // Build list of directories from root to CWD (for conditional rules only)
+  // 构建从根目录到 CWD 的目录列表（仅条件规则）
   const cwdLevelDirs: string[] = []
   currentDir = originalCwd
 
@@ -1683,18 +1684,18 @@ export function getDirectoriesToProcess(
     currentDir = dirname(currentDir)
   }
 
-  // Reverse to get order from root to CWD
+  // 反转以获取从根目录到 CWD 的顺序
   cwdLevelDirs.reverse()
 
   return { nestedDirs, cwdLevelDirs }
 }
 
 /**
- * Converts memory files to attachments, filtering out already-loaded files.
+ * 将记忆文件转换为附件，过滤掉已加载的文件。
  *
- * @param memoryFiles The memory files to convert
- * @param toolUseContext The tool use context (for tracking loaded files)
- * @returns Array of nested memory attachments
+ * @param memoryFiles 要转换的记忆文件
+ * @param toolUseContext 工具使用上下文（用于跟踪已加载的文件）
+ * @returns 嵌套记忆附件数组
  */
 function isInstructionsMemoryType(
   type: MemoryFileInfo['type'],
@@ -1707,7 +1708,7 @@ function isInstructionsMemoryType(
   )
 }
 
-/** Exported for testing — regression guard for LRU-eviction re-injection. */
+/** 导出用于测试——防止 LRU 淘汰后重新注入的回归保护。 */
 export function memoryFilesToAttachments(
   memoryFiles: MemoryFileInfo[],
   toolUseContext: ToolUseContext,
@@ -1717,9 +1718,9 @@ export function memoryFilesToAttachments(
   const shouldFireHook = hasInstructionsLoadedHook()
 
   for (const memoryFile of memoryFiles) {
-    // Dedup: loadedNestedMemoryPaths is a non-evicting Set; readFileState
-    // is a 100-entry LRU that drops entries in busy sessions, so relying
-    // on it alone re-injects the same CLAUDE.md on every eviction cycle.
+    // 去重：loadedNestedMemoryPaths 是非驱逐 Set；readFileState
+    // 是一个 100 条目的 LRU，在繁忙会话中会丢弃条目，因此依赖
+    // 仅靠它会在每次驱逐周期中重新注入相同的 CLAUDE.md。
     if (toolUseContext.loadedNestedMemoryPaths?.has(memoryFile.path)) {
       continue
     }
@@ -1732,14 +1733,14 @@ export function memoryFilesToAttachments(
       })
       toolUseContext.loadedNestedMemoryPaths?.add(memoryFile.path)
 
-      // Mark as loaded in readFileState — this provides cross-function and
-      // cross-turn dedup via the .has() check above.
+      // 在 readFileState 中标记为已加载 — 这提供了跨函数和
+      // 通过上面的 .has() 检查进行跨回合去重。
       //
-      // When the injected content doesn't match disk (stripped HTML comments,
-      // stripped frontmatter, truncated MEMORY.md), cache the RAW disk bytes
-      // with `isPartialView: true`. Edit/Write see the flag and require a real
-      // Read first; getChangedFiles sees real content + undefined offset/limit
-      // so mid-session change detection still works.
+      // 当注入内容与磁盘不匹配时（剥离的 HTML 注释，
+      // 剥离的 frontmatter，被截断的 MEMORY.md），缓存原始磁盘字节
+      // 并设置 `isPartialView: true`。编辑/写入操作会检查该标志并要求执行真正的
+      // Read 操作；getChangedFiles 会看到真实内容 + 未定义的偏移/限制
+      // 因此会话中的更改检测仍然有效。
       toolUseContext.readFileState.set(memoryFile.path, {
         content: memoryFile.contentDiffersFromDisk
           ? (memoryFile.rawContent ?? memoryFile.content)
@@ -1751,7 +1752,7 @@ export function memoryFilesToAttachments(
       })
 
 
-      // Fire InstructionsLoaded hook for audit/observability (fire-and-forget)
+      // 触发 InstructionsLoaded 钩子以进行审计/可观测性（发送即忘）
       if (shouldFireHook && isInstructionsMemoryType(memoryFile.type)) {
         const loadReason = memoryFile.globs
           ? 'path_glob_match'
@@ -1776,19 +1777,18 @@ export function memoryFilesToAttachments(
 }
 
 /**
- * Loads nested memory files for a given file path and returns them as attachments.
- * This function performs directory traversal to find CLAUDE.md files and conditional rules
- * that apply to the target file path.
+ * 加载指定文件路径的嵌套记忆文件，并以附件形式返回。
+ * 此函数执行目录遍历，查找适用于目标文件路径的 CLAUDE.md 文件和条件规则。
  *
- * Processing order (must be preserved):
- * 1. Managed/User conditional rules matching targetPath
- * 2. Nested directories (CWD → target): CLAUDE.md + unconditional + conditional rules
- * 3. CWD-level directories (root → CWD): conditional rules only
+ * 处理顺序（必须保持）：
+ * 1. 匹配 targetPath 的托管/用户条件规则
+ * 2. 嵌套目录（CWD → 目标）：CLAUDE.md + 无条件规则 + 条件规则
+ * 3. CWD 级目录（根 → CWD）：仅条件规则
  *
- * @param filePath The file path to get nested memory files for
- * @param toolUseContext The tool use context
- * @param appState The app state containing tool permission context
- * @returns Array of nested memory attachments
+ * @param filePath 要获取嵌套记忆文件的文件路径
+ * @param toolUseContext 工具使用上下文
+ * @param appState 包含工具权限上下文的应用状态
+ * @returns 嵌套记忆附件数组
  */
 async function getNestedMemoryAttachmentsForFile(
   filePath: string,
@@ -1798,7 +1798,7 @@ async function getNestedMemoryAttachmentsForFile(
   const attachments: Attachment[] = []
 
   try {
-    // Early return if path is not in allowed working path
+    // 如果路径不在允许的工作路径中，提前返回
     if (!pathInAllowedWorkingPath(filePath, appState.toolPermissionContext)) {
       return attachments
     }
@@ -1806,7 +1806,7 @@ async function getNestedMemoryAttachmentsForFile(
     const processedPaths = new Set<string>()
     const originalCwd = getOriginalCwd()
 
-    // Phase 1: Process Managed and User conditional rules
+    // 阶段 1：处理托管和用户条件规则
     const managedUserRules = await getManagedAndUserConditionalRules(
       filePath,
       processedPaths,
@@ -1815,7 +1815,7 @@ async function getNestedMemoryAttachmentsForFile(
       ...memoryFilesToAttachments(managedUserRules, toolUseContext, filePath),
     )
 
-    // Phase 2: Get directories to process
+    // 阶段 2：获取要处理的目录
     const { nestedDirs, cwdLevelDirs } = getDirectoriesToProcess(
       filePath,
       originalCwd,
@@ -1826,8 +1826,8 @@ async function getNestedMemoryAttachmentsForFile(
       false,
     )
 
-    // Phase 3: Process nested directories (CWD → target)
-    // Each directory gets: CLAUDE.md + unconditional rules + conditional rules
+    // 阶段 3：处理嵌套目录（CWD → 目标）
+    // 每个目录获得：CLAUDE.md + 无条件规则 + 条件规则
     for (const dir of nestedDirs) {
       const memoryFiles = (
         await getMemoryFilesForNestedDirectory(dir, filePath, processedPaths)
@@ -1839,8 +1839,8 @@ async function getNestedMemoryAttachmentsForFile(
       )
     }
 
-    // Phase 4: Process CWD-level directories (root → CWD)
-    // Only conditional rules (unconditional rules are already loaded eagerly)
+    // 阶段 4：处理 CWD 级目录（根目录 → CWD）
+    // 仅条件规则（无条件规则已预先加载）
     for (const dir of cwdLevelDirs) {
       const conditionalRules = (
         await getConditionalRulesForCwdLevelDirectory(
@@ -1875,14 +1875,14 @@ async function getOpenedFileFromIDE(
     return []
   }
 
-  // Get nested memory files
+  // 获取嵌套记忆文件
   const nestedMemoryAttachments = await getNestedMemoryAttachmentsForFile(
     ideSelection.filePath,
     toolUseContext,
     appState,
   )
 
-  // Return nested memory attachments followed by the opened file attachment
+  // 返回嵌套记忆附件，后跟已打开的文件附件
   return [
     ...nestedMemoryAttachments,
     {
@@ -1912,7 +1912,7 @@ async function processAtMentionedFiles(
           return null
         }
 
-        // Check if it's a directory
+        // 检查是否是目录
         try {
           const stats = await stat(absoluteFilename)
           if (stats.isDirectory()) {
@@ -1942,7 +1942,7 @@ async function processAtMentionedFiles(
             }
           }
         } catch {
-          // If stat fails, continue with file logic
+          // 如果 stat 失败，继续文件逻辑
         }
 
         return await generateFileAttachment(
@@ -2006,21 +2006,21 @@ async function processMcpResourceAttachments(
     resourceMentions.map(async mention => {
       try {
         const [serverName, ...uriParts] = mention.split(':')
-        const uri = uriParts.join(':') // Rejoin in case URI contains colons
+        const uri = uriParts.join(':') // 如果 URI 包含冒号，则重新连接
 
         if (!serverName || !uri) {
           logEvent('tengu_at_mention_mcp_resource_error', {})
           return null
         }
 
-        // Find the MCP client
+        // 查找 MCP 客户端
         const client = mcpClients.find(c => c.name === serverName)
         if (!client || client.type !== 'connected') {
           logEvent('tengu_at_mention_mcp_resource_error', {})
           return null
         }
 
-        // Find the resource in available resources to get its metadata
+        // 在可用资源中查找资源以获取其元数据
         const serverResources =
           toolUseContext.options.mcpResources?.[serverName] || []
         const resourceInfo = serverResources.find(r => r.uri === uri)
@@ -2073,14 +2073,14 @@ export async function getChangedFiles(
       const fileState = toolUseContext.readFileState.get(filePath)
       if (!fileState) return null
 
-      // TODO: Implement offset/limit support for changed files
+      // TODO：为已更改的文件实现偏移/限制支持
       if (fileState.offset !== undefined || fileState.limit !== undefined) {
         return null
       }
 
       const normalizedPath = expandPath(filePath)
 
-      // Check if file has a deny rule configured
+      // 检查文件是否配置了拒绝规则
       if (isFileReadDenied(normalizedPath, appState.toolPermissionContext)) {
         return null
       }
@@ -2093,7 +2093,7 @@ export async function getChangedFiles(
 
         const fileInput = { file_path: normalizedPath }
 
-        // Validate file path is valid
+        // 验证文件路径是否有效
         const isValid = await FileReadTool.validateInput(
           fileInput,
           toolUseContext,
@@ -2103,14 +2103,14 @@ export async function getChangedFiles(
         }
 
         const result = await FileReadTool.call(fileInput, toolUseContext)
-        // Extract only the changed section
+        // 仅提取更改的部分
         if (result.data.type === 'text') {
           const snippet = getSnippetForTwoFileDiff(
             fileState.content,
             result.data.file.content,
           )
 
-          // File was touched but not modified
+          // 文件被触及但未修改
           if (snippet === '') {
             return null
           }
@@ -2122,7 +2122,7 @@ export async function getChangedFiles(
           }
         }
 
-        // For non-text files (images), apply the same token limit logic as FileReadTool
+        // 对于非文本文件（图像），应用与 FileReadTool 相同的令牌限制逻辑
         if (result.data.type === 'image') {
           try {
             const data = await readImageWithTokenBudget(normalizedPath)
@@ -2140,17 +2140,17 @@ export async function getChangedFiles(
           }
         }
 
-        // notebook / pdf / parts — no diff representation; explicitly
-        // null so the map callback has no implicit-undefined path.
+        // notebook / pdf / parts — 没有 diff 表示形式；显式
+        // 返回 null，使 map 回调没有隐式的 undefined 路径。
         return null
       } catch (err) {
-        // Evict ONLY on ENOENT (file truly deleted). Transient stat
-        // failures — atomic-save races (editor writes tmp→rename and
-        // stat hits the gap), EACCES churn, network-FS hiccups — must
-        // NOT evict, or the next Edit fails code-6 even though the
-        // file still exists and the model just read it. VS Code
-        // auto-save/format-on-save hits this race especially often.
-        // See regression analysis on PR #18525.
+        // 仅在 ENOENT 时驱逐（文件确实被删除）。瞬态 stat
+        // 失败 — 原子保存竞争（编辑器写入 tmp→rename 并且
+        // stat 命中间隙），EACCES 争用，网络文件系统故障 — 必须
+        // 不驱逐，否则下一个 Edit 会失败 code-6 即使
+        // 文件仍然存在且模型刚刚读取了它。VS Code
+        // 自动保存/格式化保存经常命中此竞争。
+        // 详见 PR #18525 的回归分析。
         if (isENOENT(err)) {
           toolUseContext.readFileState.delete(filePath)
         }
@@ -2162,14 +2162,14 @@ export async function getChangedFiles(
 }
 
 /**
- * Processes paths that need nested memory attachments and checks for nested CLAUDE.md files
- * Uses nestedMemoryAttachmentTriggers field from ToolUseContext
+ * 处理需要嵌套内存附件的路径并检查嵌套的 CLAUDE.md 文件。
+ * 使用 ToolUseContext 中的 nestedMemoryAttachmentTriggers 字段。
  */
 async function getNestedMemoryAttachments(
   toolUseContext: ToolUseContext,
 ): Promise<Attachment[]> {
-  // Check triggers first — getAppState() waits for a React render cycle,
-  // and the common case is an empty trigger set.
+  // 先检查触发器 — getAppState() 等待 React 渲染周期，
+  // 而常见情况是空触发器集。
   if (
     !toolUseContext.nestedMemoryAttachmentTriggers ||
     toolUseContext.nestedMemoryAttachmentTriggers.size === 0
@@ -2202,8 +2202,8 @@ async function getRelevantMemoryAttachments(
   signal: AbortSignal,
   alreadySurfaced: ReadonlySet<string>,
 ): Promise<Attachment[]> {
-  // If an agent is @-mentioned, search only its memory dir (isolation).
-  // Otherwise search the auto-memory dir.
+  // 如果 @-提到了某个智能体，仅搜索其内存目录（隔离）。
+  // 否则搜索自动内存目录。
   const memoryDirs = extractAgentMentions(input).flatMap(mention => {
     const agentType = mention.replace('agent-', '')
     const agentDef = agents.find(def => def.agentType === agentType)
@@ -2224,11 +2224,10 @@ async function getRelevantMemoryAttachments(
       ).catch(() => []),
     ),
   )
-  // alreadySurfaced is filtered inside the selector so Sonnet spends its
-  // 5-slot budget on fresh candidates; readFileState catches files the
-  // model read via FileReadTool. The redundant alreadySurfaced check here
-  // is a belt-and-suspenders guard (multi-dir results may re-introduce a
-  // path the selector filtered in a different dir).
+  // alreadySurfaced 在选择器内部被过滤，因此 Sonnet 将其
+  // 5-slot 预算用于新鲜候选项；readFileState 捕获模型通过 FileReadTool
+  // 读取过的文件。这里多余的 alreadySurfaced 检查是双重保障
+  //（多目录结果可能重新引入选择器在另一个目录中过滤掉的路径）。
   const selected = allResults
     .flat()
     .filter(m => !readFileState.has(m.path) && !alreadySurfaced.has(m.path))
@@ -2243,11 +2242,11 @@ async function getRelevantMemoryAttachments(
 }
 
 /**
- * Scan messages for past relevant_memories attachments.  Returns both the
- * set of surfaced paths (for selector de-dup) and cumulative byte count
- * (for session-total throttle).  Scanning messages rather than tracking
- * in toolUseContext means compact naturally resets both — old attachments
- * are gone from the compacted transcript, so re-surfacing is valid again.
+ * 扫描消息中过去的 relevant_memories 附件。返回
+ * 已浮现路径的集合（用于选择器去重）和累计字节数
+ *（用于会话总限流）。通过扫描消息而非在 toolUseContext 中
+ * 跟踪意味着 compact 会自然重置两者——旧附件从压缩后的
+ * 转录中消失，因此重新浮出是有效的。
  */
 export function collectSurfacedMemories(messages: ReadonlyArray<Message>): {
   paths: Set<string>
@@ -2267,15 +2266,13 @@ export function collectSurfacedMemories(messages: ReadonlyArray<Message>): {
 }
 
 /**
- * Reads a set of relevance-ranked memory files for injection as
- * <system-reminder> attachments. Enforces both MAX_MEMORY_LINES and
- * MAX_MEMORY_BYTES via readFileInRange's truncateOnByteLimit option.
- * Truncation surfaces partial
- * content with a note rather than dropping the file — findRelevantMemories
- * already picked this as most-relevant, so the frontmatter + opening context
- * is worth surfacing even if later lines are cut.
+ * 读取一组按相关性排序的记忆文件，以 <system-reminder> 附件形式注入。
+ * 通过 readFileInRange 的 truncateOnByteLimit 选项同时强制执行
+ * MAX_MEMORY_LINES 和 MAX_MEMORY_BYTES 限制。截断时会在附注中
+ * 显示部分内容而非丢弃文件——findRelevantMemories 已将其选为最相关，
+ * 因此即使后续行被截断，前文和开头上下文也值得浮出。
  *
- * Exported for direct testing without mocking the ranker + GB gates.
+ * 导出用于直接测试，无需模拟排序器和 GB 门控。
  */
 export async function readMemoriesForSurfacing(
   selected: ReadonlyArray<{ path: string; mtimeMs: number }>,
@@ -2322,8 +2319,8 @@ export async function readMemoriesForSurfacing(
 }
 
 /**
- * Header string for a relevant-memory block.  Exported so messages.ts
- * can fall back for resumed sessions where the stored header is missing.
+ * 相关记忆块的头部字符串。导出以便 messages.ts
+ * 在恢复的会话中存储的头部丢失时可回退使用。
  */
 export function memoryHeader(path: string, mtimeMs: number): string {
   const staleness = memoryFreshnessText(mtimeMs)
@@ -2333,16 +2330,15 @@ export function memoryHeader(path: string, mtimeMs: number): string {
 }
 
 /**
- * A memory relevance-selector prefetch handle. The promise is started once
- * per user turn and runs while the main model streams and tools execute.
- * At the collect point (post-tools), the caller reads settledAt to
- * consume-if-ready or skip-and-retry-next-iteration — the prefetch never
- * blocks the turn.
+ * 记忆相关性选择器的预取句柄。promise 在每个用户轮次启动一次，
+ * 在主模型流式输出和执行工具时异步运行。在收集点（工具执行后），
+ * 调用者读取 settledAt 来判断是消费（如果已就绪）还是跳过并重试下一轮
+ * ——预取从不阻塞轮次。
  *
- * Disposable: query.ts binds with `using`, so [Symbol.dispose] fires on all
- * generator exit paths (return, throw, .return() closure) — aborting the
- * in-flight request and emitting terminal telemetry without instrumenting
- * each of the ~13 return sites inside the while loop.
+ * 一次性（Disposable）：query.ts 使用 `using` 绑定，因此 [Symbol.dispose]
+ * 会在所有生成器退出路径（return、throw、.return() 闭包）上触发——
+ * 中止正在进行的请求并发出终结遥测，无需在 while 循环内
+ * 约 13 个返回点分别进行检测。
  */
 export type MemoryPrefetch = {
   promise: Promise<Attachment[]>
@@ -2354,10 +2350,10 @@ export type MemoryPrefetch = {
 }
 
 /**
- * Starts the relevant memory search as an async prefetch.
- * Extracts the last real user prompt from messages (skipping isMeta system
- * injections) and kicks off a non-blocking search. Returns a Disposable
- * handle with settlement tracking. Bound with `using` in query.ts.
+ * 启动相关记忆搜索作为异步预取。
+ * 从消息中提取最后一个真实用户提示（跳过 isMeta 系统注入），
+ * 并启动非阻塞搜索。返回带有完成跟踪的一次性句柄。
+ * 在 query.ts 中使用 `using` 绑定。
  */
 export function startRelevantMemoryPrefetch(
   messages: ReadonlyArray<Message>,
@@ -2376,7 +2372,7 @@ export function startRelevantMemoryPrefetch(
   }
 
   const input = getUserMessageText(lastUserMessage)
-  // Single-word prompts lack enough context for meaningful term extraction
+  // 单个单词的提示缺乏足够的上下文进行有意义的术语提取
   if (!input || !/\s/.test(input.trim())) {
     return undefined
   }
@@ -2386,8 +2382,8 @@ export function startRelevantMemoryPrefetch(
     return undefined
   }
 
-  // Chained to the turn-level abort so user Escape cancels the sideQuery
-  // immediately, not just on [Symbol.dispose] when queryLoop exits.
+  // 链接到轮次级中止，以便用户按 Escape 立即取消 sideQuery，
+  // 而不仅仅是在 queryLoop 退出时通过 [Symbol.dispose] 取消。
   const controller = createChildAbortController(toolUseContext.abortController)
   const firedAt = Date.now()
   const promise = getRelevantMemoryAttachments(
@@ -2440,28 +2436,27 @@ function isToolResultBlock(b: unknown): b is ToolResultBlock {
 }
 
 /**
- * Check whether a user message's content contains tool_result blocks.
- * This is more reliable than checking `toolUseResult === undefined` because
- * sub-agent tool result messages explicitly set `toolUseResult` to `undefined`
- * when `preserveToolUseResults` is false (the default for Explore agents).
+ * 检查用户消息的内容是否包含 tool_result 块。
+ * 这比检查 `toolUseResult === undefined` 更可靠，因为
+ * 子代理工具结果消息在 `preserveToolUseResults` 为 false
+ *（Explore 代理的默认值）时会显式将 `toolUseResult` 设置为 `undefined`。
  */
 function hasToolResultContent(content: unknown): boolean {
   return Array.isArray(content) && content.some(isToolResultBlock)
 }
 
 /**
- * Tools that succeeded (and never errored) since the previous real turn
- * boundary.  The memory selector uses this to suppress docs about tools
- * that are working — surfacing reference material for a tool the model
- * is already calling successfully is noise.
+ * 自上一个真实轮次边界以来成功（且从未出错）的工具。
+ * 记忆选择器使用此信息来抑制关于正在工作的工具的文档
+ * ——为模型已成功调用的工具浮现参考资料是噪音。
  *
- * Any error → tool excluded (model is struggling, docs stay available).
- * No result yet → also excluded (outcome unknown).
+ * 任何错误 → 工具排除（模型遇到困难，文档保持可用）。
+ * 尚无结果 → 也排除（结果未知）。
  *
- * tool_use lives in assistant content; tool_result in user content
- * (toolUseResult set, isMeta undefined).  Both are within the scan window.
- * Backward scan sees results before uses so we collect both by id and
- * resolve after.
+ * tool_use 位于助手内容中；tool_result 位于用户内容中
+ *（toolUseResult 已设置，isMeta 为 undefined）。两者都在扫描窗口内。
+ * 向后扫描先看到结果后看到使用，因此我们按 ID 收集两者
+ * 然后解析。
  */
 export function collectRecentSuccessfulTools(
   messages: ReadonlyArray<Message>,
@@ -2505,18 +2500,15 @@ export function collectRecentSuccessfulTools(
 
 
 /**
- * Filters prefetched memory attachments to exclude memories the model already
- * has in context via FileRead/Write/Edit tool calls (any iteration this turn)
- * or a previous turn's memory surfacing — both tracked in the cumulative
- * readFileState. Survivors are then marked in readFileState so subsequent
- * turns won't re-surface them.
+ * 过滤预取的记忆附件，排除模型已通过 FileRead/Write/Edit 工具调用
+ *（本轮任何迭代）或上一轮记忆浮出已在上下文中的记忆——
+ * 两者都在累计的 readFileState 中跟踪。幸存者随后在 readFileState
+ * 中标记，以便后续轮次不会重新浮出它们。
  *
- * The mark-after-filter ordering is load-bearing: readMemoriesForSurfacing
- * used to write to readFileState during the prefetch, which meant the filter
- * saw every prefetch-selected path as "already in context" and dropped them
- * all (self-referential filter). Deferring the write to here, after the
- * filter runs, breaks that cycle while still deduping against tool calls
- * from any iteration.
+ * 先过滤后标记的顺序至关重要：readMemoriesForSurfacing 曾经在预取期间
+ * 写入 readFileState，这意味着过滤器将所有预选取路径视为已在上下文中
+ * 并全部丢弃（自引用过滤器）。将写入推迟到此处的过滤之后，
+ * 打破了该循环，同时仍能对任何迭代的工具调用进行去重。
  */
 export function filterDuplicateMemoryAttachments(
   attachments: Attachment[],
@@ -2542,8 +2534,8 @@ export function filterDuplicateMemoryAttachments(
 }
 
 /**
- * Processes skill directories that were discovered during file operations.
- * Uses dynamicSkillDirTriggers field from ToolUseContext
+ * 处理文件操作期间发现的技能目录。
+ * 使用 ToolUseContext 中的 dynamicSkillDirTriggers 字段
  */
 async function getDynamicSkillAttachments(
   toolUseContext: ToolUseContext,
@@ -2554,7 +2546,7 @@ async function getDynamicSkillAttachments(
     toolUseContext.dynamicSkillDirTriggers &&
     toolUseContext.dynamicSkillDirTriggers.size > 0
   ) {
-    // Parallelize: readdir all skill dirs concurrently
+    // 并行处理：并发读取所有技能目录
     const perDirResults = await Promise.all(
       Array.from(toolUseContext.dynamicSkillDirTriggers).map(async skillDir => {
         try {
@@ -2562,14 +2554,14 @@ async function getDynamicSkillAttachments(
           const candidates = entries
             .filter(e => e.isDirectory() || e.isSymbolicLink())
             .map(e => e.name)
-          // Parallelize: stat all SKILL.md candidates concurrently
+          // 并行处理：并发 stat 所有 SKILL.md 候选
           const checked = await Promise.all(
             candidates.map(async name => {
               try {
                 await stat(resolve(skillDir, name, 'SKILL.md'))
                 return name
               } catch {
-                return null // SKILL.md doesn't exist, skip this entry
+                return null // SKILL.md 不存在，跳过此条目
               }
             }),
           )
@@ -2578,7 +2570,7 @@ async function getDynamicSkillAttachments(
             skillNames: checked.filter((n): n is string => n !== null),
           }
         } catch {
-          // Ignore errors reading skill directories (e.g., directory doesn't exist)
+          // 忽略读取技能目录时的错误（例如目录不存在）
           return { skillDir, skillNames: [] }
         }
       }),
@@ -2601,53 +2593,50 @@ async function getDynamicSkillAttachments(
   return attachments
 }
 
-// Track which skills have been sent to avoid re-sending. Keyed by agentId
-// (empty string = main thread) so subagents get their own turn-0 listing —
-// without per-agent scoping, the main thread populating this Set would cause
-// every subagent's filterToBundledAndMcp result to dedup to empty.
+// 跟踪已发送的技能以避免重复发送。以 agentId 为键
+//（空字符串 = 主线程），以便子代理获得自己的第 0 轮列表——
+// 如果没有按代理作用域隔离，主线程填充此 Set 会导致
+// 每个子代理的 filterToBundledAndMcp 结果去重后为空。
 const sentSkillNames = new Map<string, Set<string>>()
 
-// Called when the skill set genuinely changes (plugin reload, skill file
-// change on disk) so new skills get announced. NOT called on compact —
-// post-compact re-injection costs ~4K tokens/event for marginal benefit.
+// 当技能集真正发生变化时调用（插件重新加载、磁盘上技能文件
+// 变更），以便新技能被宣布。不在 compact 时调用——
+// compact 后重新注入每事件约花费 4K token，收益甚微。
 export function resetSentSkillNames(): void {
   sentSkillNames.clear()
   suppressNext = false
 }
 
 /**
- * Suppress the next skill-listing injection. Called by conversationRecovery
- * on --resume when a skill_listing attachment already exists in the
- * transcript.
+ * 抑制下一次技能列表注入。由 conversationRecovery 在 --resume 时调用，
+ * 当转录中已存在 skill_listing 附件时使用。
  *
- * `sentSkillNames` is module-scope — process-local. Each `claude -p` spawn
- * starts with an empty Map, so without this every resume re-injects the
- * full ~600-token listing even though it's already in the conversation from
- * the prior process. Shows up on every --resume; particularly loud for
- * daemons that respawn frequently.
+ * `sentSkillNames` 是模块作用域——进程本地。每个 `claude -p` 启动
+ * 时 Map 为空，因此没有此机制时，每次 resume 都会重新注入
+ * 完整的约 600 token 列表，即使它已经存在于之前进程的对话中。
+ * 每次 --resume 都会出现；对于频繁重启的守护进程尤其明显。
  *
- * Trade-off: skills added between sessions won't be announced until the
- * next non-resume session. Acceptable — skill_listing was never meant to
- * cover cross-process deltas, and the agent can still call them (they're
- * in the Skill tool's runtime registry regardless).
+ * 权衡：会话之间新增的技能在下一次非 resume 会话之前不会
+ * 被宣布。可以接受——skill_listing 本就不打算覆盖跨进程变更，
+ * 而且代理仍然可以调用它们（无论如何它们都在 Skill 工具的运行时注册表中）。
  */
 export function suppressNextSkillListing(): void {
   suppressNext = true
 }
 let suppressNext = false
 
-// When skill-search is enabled and the filtered (bundled + MCP) listing exceeds
-// this count, fall back to bundled-only. Protects MCP-heavy users (100+ servers)
-// from truncation while keeping the turn-0 guarantee for typical setups.
+// 当技能搜索启用且过滤后的（内置 + MCP）列表超过此数量时，
+// 回退到仅内置技能。保护 MCP 重载用户（100+ 服务器）
+// 免于截断，同时为典型配置保持第 0 轮保证。
 const FILTERED_LISTING_MAX = 30
 
 /**
- * Filter skills to bundled (Anthropic-curated) + MCP (user-connected) only.
- * Used when skill-search is enabled to resolve the turn-0 gap for subagents:
- * these sources are small, intent-signaled, and won't hit the truncation budget.
- * User/project/plugin skills (the long tail — 200+) go through discovery instead.
+ * 将技能过滤为仅内置（Anthropic 策划）+ MCP（用户连接）的。
+ * 当技能搜索启用时用于解决子 agent 的 turn-0 缺口：
+ * 这些来源很小、意图明确，不会触及截断预算。
+ * 用户/项目/插件技能（长尾——200+）则通过发现机制处理。
  *
- * Falls back to bundled-only if bundled+mcp exceeds FILTERED_LISTING_MAX.
+ * 如果内置+MCP 超过 FILTERED_LISTING_MAX，则回退到仅内置。
  */
 export function filterToBundledAndMcp(commands: Command[]): Command[] {
   const filtered = commands.filter(
@@ -2666,7 +2655,7 @@ async function getSkillListingAttachments(
     return []
   }
 
-  // Skip skill listing for agents that don't have the Skill tool — they can't use skills directly.
+  // 跳过没有 Skill 工具的 agent 的技能列表——它们不能直接使用技能。
   if (
     !toolUseContext.options.tools.some(t => toolMatchesName(t, SKILL_TOOL_NAME))
   ) {
@@ -2692,13 +2681,12 @@ async function getSkillListingAttachments(
     return !dangerousSkillPrefixes.some(prefix => cmd.name.startsWith(prefix))
   })
 
-  // When skill search is active, filter to bundled + MCP instead of full
-  // suppression. Resolves the turn-0 gap: main thread gets turn-0 discovery
-  // via getTurnZeroSkillDiscovery (blocking), but subagents use the async
-  // subagent_spawn signal (collected post-tools, visible turn 1). Bundled +
-  // MCP are small and intent-signaled; user/project/plugin skills go through
-  // discovery. feature() first for DCE — the property-access string leaks
-  // otherwise even with ?. on null.
+  // 当技能搜索激活时，过滤为仅内置 + MCP，而不是完全抑制。
+  // 解决了 turn-0 缺口：主线程通过 getTurnZeroSkillDiscovery（阻塞式）
+  // 获得 turn-0 发现，但子 agent 使用异步 subagent_spawn 信号
+  // （在工具之后收集，turn 1 可见）。内置 + MCP 很小且意图明确；
+  // 用户/项目/插件技能通过发现机制处理。先调用 feature() 以支持
+  // DCE——否则即使使用 ?. 在 null 上，属性访问字符串也会泄漏。
   if (
     feature('EXPERIMENTAL_SKILL_SEARCH') &&
     skillSearchModules?.featureCheck.isSkillSearchEnabled()
@@ -2713,9 +2701,9 @@ async function getSkillListingAttachments(
     sentSkillNames.set(agentKey, sent)
   }
 
-  // Resume path: prior process already injected a listing; it's in the
-  // transcript. Mark everything current as sent so only post-resume deltas
-  // (skills loaded later via /reload-plugins etc) get announced.
+  // 恢复路径：先前进程已注入了列表；它已在对话记录中。
+  // 将所有当前标记为已发送，这样只有恢复后的增量
+  // （稍后通过 /reload-plugins 等加载的技能）才会被宣布。
   if (suppressNext) {
     suppressNext = false
     for (const cmd of allCommands) {
@@ -2724,17 +2712,17 @@ async function getSkillListingAttachments(
     return []
   }
 
-  // Find skills we haven't sent yet
+  // 查找尚未发送的技能
   const newSkills = allCommands.filter(cmd => !sent.has(cmd.name))
 
   if (newSkills.length === 0) {
     return []
   }
 
-  // If no skills have been sent yet, this is the initial batch
+  // 如果还没有发送过任何技能，这是初始批次
   const isInitial = sent.size === 0
 
-  // Mark as sent
+  // 标记为已发送
   for (const cmd of newSkills) {
     sent.add(cmd.name)
   }
@@ -2743,7 +2731,7 @@ async function getSkillListingAttachments(
     `Sending ${newSkills.length} skills via attachment (${isInitial ? 'initial' : 'dynamic'}, ${sent.size} total sent)`,
   )
 
-  // Format within budget using existing logic
+  // 使用现有逻辑在预算内格式化
   const contextWindowTokens = getContextWindowForModel(
     toolUseContext.options.mainLoopModel,
     getSdkBetas(),
@@ -2760,65 +2748,65 @@ async function getSkillListingAttachments(
   ]
 }
 
-// getSkillDiscoveryAttachment moved to skillSearch/prefetch.ts as
-// getTurnZeroSkillDiscovery — keeps the 'skill_discovery' string literal inside
-// a feature-gated module so it doesn't leak into external builds.
+// getSkillDiscoveryAttachment 已移至 skillSearch/prefetch.ts 作为
+// getTurnZeroSkillDiscovery — 将 'skill_discovery' 字符串字面量保留在
+// 功能门控模块内，避免泄漏到外部构建中。
 
 export function extractAtMentionedFiles(content: string): string[] {
-  // Extract filenames mentioned with @ symbol, including line range syntax: @file.txt#L10-20
-  // Also supports quoted paths for files with spaces: @"my/file with spaces.txt"
-  // Example: "foo bar @baz moo" would extract "baz"
-  // Example: 'check @"my file.txt" please' would extract "my file.txt"
+  // 提取使用 @ 符号提及的文件名，包括行范围语法：@file.txt#L10-20
+  // 也支持含空格文件的引用路径：@"my/file with spaces.txt"
+  // 示例："foo bar @baz moo" 会提取出 "baz"
+  // 示例：'check @"my file.txt" please' 会提取出 "my file.txt"
 
-  // Two patterns: quoted paths and regular paths
+  // 两种模式：引用路径和普通路径
   const quotedAtMentionRegex = /(^|\s)@"([^"]+)"/g
   const regularAtMentionRegex = /(^|\s)@([^\s]+)\b/g
 
   const quotedMatches: string[] = []
   const regularMatches: string[] = []
 
-  // Extract quoted mentions first (skip agent mentions like @"code-reviewer (agent)")
+  // 先提取引用格式的提及（跳过 agent 提及，如 @"code-reviewer (agent)"）
   let match
   while ((match = quotedAtMentionRegex.exec(content)) !== null) {
     if (match[2] && !match[2].endsWith(' (agent)')) {
-      quotedMatches.push(match[2]) // The content inside quotes
+      quotedMatches.push(match[2]) // 引号内的内容
     }
   }
 
-  // Extract regular mentions
+  // 提取普通格式的提及
   const regularMatchArray = content.match(regularAtMentionRegex) || []
   regularMatchArray.forEach(match => {
     const filename = match.slice(match.indexOf('@') + 1)
-    // Don't include if it starts with a quote (already handled as quoted)
+    // 如果以引号开头则不包含（已作为引用格式处理）
     if (!filename.startsWith('"')) {
       regularMatches.push(filename)
     }
   })
 
-  // Combine and deduplicate
+  // 合并并去重
   return uniq([...quotedMatches, ...regularMatches])
 }
 
 export function extractMcpResourceMentions(content: string): string[] {
-  // Extract MCP resources mentioned with @ symbol in format @server:uri
-  // Example: "@server1:resource/path" would extract "server1:resource/path"
+  // 提取使用 @ 符号提及的 MCP 资源，格式为 @server:uri
+  // 示例："@server1:resource/path" 会提取出 "server1:resource/path"
   const atMentionRegex = /(^|\s)@([^\s]+:[^\s]+)\b/g
   const matches = content.match(atMentionRegex) || []
 
-  // Remove the prefix (everything before @) from each match
+  // 从每个匹配项中移除前缀（@ 之前的所有内容）
   return uniq(matches.map(match => match.slice(match.indexOf('@') + 1)))
 }
 
 export function extractAgentMentions(content: string): string[] {
-  // Extract agent mentions in two formats:
-  // 1. @agent-<agent-type> (legacy/manual typing)
-  //    Example: "@agent-code-elegance-refiner" → "agent-code-elegance-refiner"
-  // 2. @"<agent-type> (agent)" (from autocomplete selection)
-  //    Example: '@"code-reviewer (agent)"' → "code-reviewer"
-  // Supports colons, dots, and at-signs for plugin-scoped agents like "@agent-asana:project-status-updater"
+  // 提取两种格式的 agent 提及：
+  // 1. @agent-<agent-type>（传统/手动输入）
+  //    示例："@agent-code-elegance-refiner" → "agent-code-elegance-refiner"
+  // 2. @"<agent-type> (agent)"（来自自动补全选择）
+  //    示例：'@"code-reviewer (agent)"' → "code-reviewer"
+  // 支持插件作用域 agent 的冒号、点和 @ 符号，如 "@agent-asana:project-status-updater"
   const results: string[] = []
 
-  // Match quoted format: @"<type> (agent)"
+  // 匹配引用格式：@"<type> (agent)"
   const quotedAgentRegex = /(^|\s)@"([\w:.@-]+) \(agent\)"/g
   let match
   while ((match = quotedAgentRegex.exec(content)) !== null) {
@@ -2827,7 +2815,7 @@ export function extractAgentMentions(content: string): string[] {
     }
   }
 
-  // Match unquoted format: @agent-<type>
+  // 匹配无引号格式：@agent-<type>
   const unquotedAgentRegex = /(^|\s)@(agent-[\w:.@-]+)/g
   const unquotedMatches = content.match(unquotedAgentRegex) || []
   for (const m of unquotedMatches) {
@@ -2846,8 +2834,8 @@ interface AtMentionedFileLines {
 export function parseAtMentionedFileLines(
   mention: string,
 ): AtMentionedFileLines {
-  // Parse mentions like "file.txt#L10-20", "file.txt#heading", or just "file.txt"
-  // Supports line ranges (#L10, #L10-20) and strips non-line-range fragments (#heading)
+  // 解析如 "file.txt#L10-20"、"file.txt#heading" 或仅 "file.txt" 的提及
+  // 支持行范围（#L10, #L10-20）并剥离非行范围的片段（#heading）
   const match = mention.match(/^([^#]+)(?:#L(\d+)(?:-(\d+))?)?(?:#[^#]*)?$/)
 
   if (!match) {
@@ -2864,14 +2852,14 @@ export function parseAtMentionedFileLines(
 async function getDiagnosticAttachments(
   toolUseContext: ToolUseContext,
 ): Promise<Attachment[]> {
-  // Diagnostics are only useful if the agent has the Bash tool to act on them
+  // 诊断仅在 agent 拥有 Bash 工具来执行操作时才有用
   if (
     !toolUseContext.options.tools.some(t => toolMatchesName(t, BASH_TOOL_NAME))
   ) {
     return []
   }
 
-  // Get new diagnostics from the tracker (IDE diagnostics via MCP)
+  // 从跟踪器获取新的诊断（通过 MCP 获取 IDE 诊断）
   const newDiagnostics = await diagnosticTracker.getNewDiagnostics()
   if (newDiagnostics.length === 0) {
     return []
@@ -2887,13 +2875,13 @@ async function getDiagnosticAttachments(
 }
 
 /**
- * Get LSP diagnostic attachments from passive LSP servers.
- * Follows the AsyncHookRegistry pattern for consistent async attachment delivery.
+ * 从被动 LSP 服务器获取 LSP 诊断附件。
+ * 遵循 AsyncHookRegistry 模式以实现一致的异步附件传递。
  */
 async function getLSPDiagnosticAttachments(
   toolUseContext: ToolUseContext,
 ): Promise<Attachment[]> {
-  // LSP diagnostics are only useful if the agent has the Bash tool to act on them
+  // LSP 诊断仅在 agent 拥有 Bash 工具来执行操作时才有用
   if (
     !toolUseContext.options.tools.some(t => toolMatchesName(t, BASH_TOOL_NAME))
   ) {
@@ -2913,15 +2901,15 @@ async function getLSPDiagnosticAttachments(
       `LSP Diagnostics: Found ${diagnosticSets.length} pending diagnostic set(s)`,
     )
 
-    // Convert each diagnostic set to an attachment
+    // 将每组诊断转换为附件
     const attachments: Attachment[] = diagnosticSets.map(({ files }) => ({
       type: 'diagnostics' as const,
       files,
       isNew: true,
     }))
 
-    // Clear delivered diagnostics from registry to prevent memory leak
-    // Follows same pattern as removeDeliveredAsyncHooks
+    // 从注册表中清除已传递的诊断以防止内存泄漏
+    // 遵循与 removeDeliveredAsyncHooks 相同的模式
     if (diagnosticSets.length > 0) {
       clearAllLSPDiagnostics()
       logForDebugging(
@@ -2939,7 +2927,7 @@ async function getLSPDiagnosticAttachments(
     logError(
       new Error(`Failed to get LSP diagnostic attachments: ${err.message}`),
     )
-    // Return empty array to allow other attachments to proceed
+    // 返回空数组以允许其他附件继续处理
     return []
   }
 }
@@ -2953,7 +2941,7 @@ export async function* getAttachmentMessages(
   querySource?: QuerySource,
   options?: { skipSkillDiscovery?: boolean },
 ): AsyncGenerator<AttachmentMessage, void> {
-  // TODO: Compute this upstream
+  // TODO: 在上游计算此值
   const attachments = await getAttachments(
     input,
     toolUseContext,
@@ -2980,18 +2968,18 @@ export async function* getAttachmentMessages(
 }
 
 /**
- * Generates a file attachment by reading a file with proper validation and truncation.
- * This is the core file reading logic shared between @-mentioned files and post-compact restoration.
+ * 通过带有验证和截断的文件读取生成文件附件。
+ * 这是 @-提及文件和后压缩恢复之间共享的核心文件读取逻辑。
  *
- * @param filename The absolute path to the file to read
- * @param toolUseContext The tool use context for calling FileReadTool
- * @param options Optional configuration for file reading
- * @returns A new_file attachment or null if the file couldn't be read
+ * @param filename 要读取的文件的绝对路径
+ * @param toolUseContext 用于调用 FileReadTool 的工具使用上下文
+ * @param options 文件读取的可选配置
+ * @returns 新文件附件，如果文件无法读取则返回 null
  */
 /**
- * Check if a PDF file should be represented as a lightweight reference
- * instead of being inlined. Returns a PDFReferenceAttachment for large PDFs
- * (more than PDF_AT_MENTION_INLINE_THRESHOLD pages), or null otherwise.
+ * 检查 PDF 文件是否应表示为轻量级引用而非内联嵌入。
+ * 对大 PDF（超过 PDF_AT_MENTION_INLINE_THRESHOLD 页）返回
+ * PDFReferenceAttachment，否则返回 null。
  */
 export async function tryGetPDFReference(
   filename: string,
@@ -3005,7 +2993,7 @@ export async function tryGetPDFReference(
       getFsImplementation().stat(filename),
       getPDFPageCount(filename),
     ])
-    // Use page count if available, otherwise fall back to size heuristic (~100KB per page)
+    // 如果可用，使用页数，否则回退到大小启发式（每页约 100KB）
     const effectivePageCount = pageCount ?? Math.ceil(stats.size / (100 * 1024))
     if (effectivePageCount > PDF_AT_MENTION_INLINE_THRESHOLD) {
       logEvent('tengu_pdf_reference_attachment', {
@@ -3022,7 +3010,7 @@ export async function tryGetPDFReference(
       }
     }
   } catch {
-    // If we can't stat the file, return null to proceed with normal reading
+    // 如果无法 stat 文件，返回 null 以继续正常读取
   }
   return null
 }
@@ -3046,13 +3034,13 @@ export async function generateFileAttachment(
 > {
   const { offset, limit } = options ?? {}
 
-  // Check if file has a deny rule configured
+  // 检查文件是否配置了拒绝规则
   const appState = toolUseContext.getAppState()
   if (isFileReadDenied(filename, appState.toolPermissionContext)) {
     return null
   }
 
-  // Check file size before attempting to read (skip for PDFs — they have their own size/page handling below)
+  // 尝试读取前检查文件大小（PDF 跳过——它们在下面有自己的大小/页面处理）
   if (
     mode === 'at-mention' &&
     !isFileWithinReadSizeLimit(
@@ -3070,12 +3058,12 @@ export async function generateFileAttachment(
         } as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS)
         return null
       } catch {
-        // If we can't stat the file, proceed with normal reading (will fail later if file doesn't exist)
+        // 如果无法 stat 文件，继续正常读取（如果文件不存在，稍后会失败）
       }
     }
   }
 
-  // For large PDFs on @ mention, return a lightweight reference instead of inlining
+  // 对于 @ 提及的大 PDF，返回轻量级引用而不是内联嵌入
   if (mode === 'at-mention') {
     const pdfRef = await tryGetPDFReference(filename)
     if (pdfRef) {
@@ -3083,28 +3071,28 @@ export async function generateFileAttachment(
     }
   }
 
-  // Check if file is already in context with latest version
+  // 检查文件是否已以最新版本存在于上下文中
   const existingFileState = toolUseContext.readFileState.get(filename)
   if (existingFileState && mode === 'at-mention') {
     try {
-      // Check if the file has been modified since we last read it
+      // 检查文件自上次读取后是否已被修改
       const mtimeMs = await getFileModificationTimeAsync(filename)
 
-      // Handle timestamp format inconsistency:
-      // - FileReadTool stores Date.now() (current time when read)
-      // - FileEdit/WriteTools store mtimeMs (file modification time)
+      // 处理时间戳格式不一致：
+      // - FileReadTool 存储 Date.now()（读取时的当前时间）
+      // - FileEdit/WriteTools 存储 mtimeMs（文件修改时间）
       //
-      // If timestamp > mtimeMs, it was stored by FileReadTool using Date.now()
-      // In this case, we should not use the optimization since we can't reliably
-      // compare modification times. Only use optimization when timestamp <= mtimeMs,
-      // indicating it was stored by FileEdit/WriteTool with actual mtimeMs.
+      // 如果 timestamp > mtimeMs，则是由 FileReadTool 使用 Date.now() 存储的
+      // 在这种情况下，不应使用优化，因为无法可靠地比较修改时间。
+      // 仅在 timestamp <= mtimeMs 时使用优化，表明是由
+      // FileEdit/WriteTool 使用实际的 mtimeMs 存储的。
 
       if (
         existingFileState.timestamp <= mtimeMs &&
         mtimeMs === existingFileState.timestamp
       ) {
-        // File hasn't been modified, return already_read_file attachment
-        // This tells the system the file is already in context and doesn't need to be sent to API
+        // 文件未被修改，返回 already_read_file 附件
+        // 这告诉系统文件已在上下文中，不需要发送到 API
         logEvent(successEventName, {})
         return {
           type: 'already_read_file',
@@ -3124,7 +3112,7 @@ export async function generateFileAttachment(
         }
       }
     } catch {
-      // If we can't stat the file, proceed with normal reading
+      // 如果无法 stat 文件，继续正常读取
     }
   }
 
@@ -3149,14 +3137,14 @@ export async function generateFileAttachment(
         }
       }
 
-      // Check deny rules before reading truncated file
+      // 在读取截断文件前检查拒绝规则
       const appState = toolUseContext.getAppState()
       if (isFileReadDenied(filename, appState.toolPermissionContext)) {
         return null
       }
 
       try {
-        // Read only the first MAX_LINES_TO_READ lines for files that are too large
+        // 对于过大的文件，仅读取前 MAX_LINES_TO_READ 行
         const truncatedInput = {
           file_path: filename,
           offset: offset ?? 1,
@@ -3178,7 +3166,7 @@ export async function generateFileAttachment(
       }
     }
 
-    // Validate file path is valid
+    // 验证文件路径是否有效
     const isValid = await FileReadTool.validateInput(fileInput, toolUseContext)
     if (!isValid.result) {
       return null
@@ -3228,18 +3216,18 @@ function getTodoReminderTurnCounts(messages: Message[]): {
   let assistantTurnsSinceWrite = 0
   let assistantTurnsSinceReminder = 0
 
-  // Iterate backwards to find most recent events
+  // 向后迭代以查找最近的事件
   for (let i = messages.length - 1; i >= 0; i--) {
     const message = messages[i]
 
     if (message?.type === 'assistant') {
       if (isThinkingMessage(message)) {
-        // Skip thinking messages
+        // 跳过思考消息
         continue
       }
 
-      // Check for TodoWrite usage BEFORE incrementing counter
-      // (we don't want to count the TodoWrite message itself as "1 turn since write")
+      // 在递增计数器之前检查 TodoWrite 的使用
+      // （我们不希望将 TodoWrite 消息本身计为"写后已过 1 轮"）
       if (
         lastTodoWriteIndex === -1 &&
         'message' in message &&
@@ -3251,7 +3239,7 @@ function getTodoReminderTurnCounts(messages: Message[]): {
         lastTodoWriteIndex = i
       }
 
-      // Count assistant turns before finding events
+      // 在找到事件之前计算 assistant 轮数
       if (lastTodoWriteIndex === -1) assistantTurnsSinceWrite++
       if (lastReminderIndex === -1) assistantTurnsSinceReminder++
     } else if (
@@ -3277,7 +3265,7 @@ async function getTodoReminderAttachments(
   messages: Message[] | undefined,
   toolUseContext: ToolUseContext,
 ): Promise<Attachment[]> {
-  // Skip if TodoWrite tool is not available
+  // 如果 TodoWrite 工具不可用则跳过
   if (
     !toolUseContext.options.tools.some(t =>
       toolMatchesName(t, TODO_WRITE_TOOL_NAME),
@@ -3286,11 +3274,10 @@ async function getTodoReminderAttachments(
     return []
   }
 
-  // When SendUserMessage is in the toolkit, it's the primary communication
-  // channel and the model is always told to use it (#20467). TodoWrite
-  // becomes a side channel — nudging the model about it conflicts with the
-  // brief workflow. The tool itself stays available; this only gates the
-  // "you haven't used it in a while" nag.
+  // 当 SendUserMessage 在工具包中时，它是主要的通信通道，
+  // 模型总是被告知使用它（#20467）。TodoWrite 变成了一个侧通道——
+  // 提醒模型关于它的问题会与简洁工作流程冲突。
+  // 工具本身仍然可用；这仅仅限制了"你有一段时间没用了"的提示。
   if (
     BRIEF_TOOL_NAME &&
     toolUseContext.options.tools.some(t => toolMatchesName(t, BRIEF_TOOL_NAME))
@@ -3298,7 +3285,7 @@ async function getTodoReminderAttachments(
     return []
   }
 
-  // Skip if no messages provided
+  // 如果没有提供消息则跳过
   if (!messages || messages.length === 0) {
     return []
   }
@@ -3306,7 +3293,7 @@ async function getTodoReminderAttachments(
   const { turnsSinceLastTodoWrite, turnsSinceLastReminder } =
     getTodoReminderTurnCounts(messages)
 
-  // Check if we should show a reminder
+  // 检查是否应显示提醒
   if (
     turnsSinceLastTodoWrite >= TODO_REMINDER_CONFIG.TURNS_SINCE_WRITE &&
     turnsSinceLastReminder >= TODO_REMINDER_CONFIG.TURNS_BETWEEN_REMINDERS
@@ -3335,17 +3322,17 @@ function getTaskReminderTurnCounts(messages: Message[]): {
   let assistantTurnsSinceTaskManagement = 0
   let assistantTurnsSinceReminder = 0
 
-  // Iterate backwards to find most recent events
+  // 向后迭代以查找最近的事件
   for (let i = messages.length - 1; i >= 0; i--) {
     const message = messages[i]
 
     if (message?.type === 'assistant') {
       if (isThinkingMessage(message)) {
-        // Skip thinking messages
+        // 跳过思考消息
         continue
       }
 
-      // Check for TaskCreate or TaskUpdate usage BEFORE incrementing counter
+      // 在递增计数器之前检查 TaskCreate 或 TaskUpdate 的使用
       if (
         lastTaskManagementIndex === -1 &&
         'message' in message &&
@@ -3360,7 +3347,7 @@ function getTaskReminderTurnCounts(messages: Message[]): {
         lastTaskManagementIndex = i
       }
 
-      // Count assistant turns before finding events
+      // 在找到事件之前计算 assistant 轮数
       if (lastTaskManagementIndex === -1) assistantTurnsSinceTaskManagement++
       if (lastReminderIndex === -1) assistantTurnsSinceReminder++
     } else if (
@@ -3390,15 +3377,15 @@ async function getTaskReminderAttachments(
     return []
   }
 
-  // Skip for ant users
+  // 跳过 ant 内部用户
   if (process.env.USER_TYPE === 'ant') {
     return []
   }
 
-  // When SendUserMessage is in the toolkit, it's the primary communication
-  // channel and the model is always told to use it (#20467). TaskUpdate
-  // becomes a side channel — nudging the model about it conflicts with the
-  // brief workflow. The tool itself stays available; this only gates the nag.
+  // 当 SendUserMessage 在工具包中时，它是主要的通信通道，
+  // 模型总是被告知使用它（#20467）。TaskUpdate 变成了一个侧通道——
+  // 提醒模型关于它的问题会与简洁工作流程冲突。
+  // 工具本身仍然可用；这仅仅限制了提示。
   if (
     BRIEF_TOOL_NAME &&
     toolUseContext.options.tools.some(t => toolMatchesName(t, BRIEF_TOOL_NAME))
@@ -3406,7 +3393,7 @@ async function getTaskReminderAttachments(
     return []
   }
 
-  // Skip if TaskUpdate tool is not available
+  // 如果 TaskUpdate 工具不可用则跳过
   if (
     !toolUseContext.options.tools.some(t =>
       toolMatchesName(t, TASK_UPDATE_TOOL_NAME),
@@ -3415,7 +3402,7 @@ async function getTaskReminderAttachments(
     return []
   }
 
-  // Skip if no messages provided
+  // 如果没有提供消息则跳过
   if (!messages || messages.length === 0) {
     return []
   }
@@ -3423,7 +3410,7 @@ async function getTaskReminderAttachments(
   const { turnsSinceLastTaskManagement, turnsSinceLastReminder } =
     getTaskReminderTurnCounts(messages)
 
-  // Check if we should show a reminder
+  // 检查是否应显示提醒
   if (
     turnsSinceLastTaskManagement >= TODO_REMINDER_CONFIG.TURNS_SINCE_WRITE &&
     turnsSinceLastReminder >= TODO_REMINDER_CONFIG.TURNS_BETWEEN_REMINDERS
@@ -3459,7 +3446,7 @@ async function getUnifiedTaskAttachments(
     evictedTaskIds,
   )
 
-  // Convert TaskAttachment to Attachment format
+  // 将 TaskAttachment 转换为 Attachment 格式
   return attachments.map(taskAttachment => ({
     type: 'task_status' as const,
     taskId: taskAttachment.taskId,
@@ -3511,7 +3498,7 @@ async function getAsyncHookResponseAttachments(): Promise<Attachment[]> {
     },
   )
 
-  // Remove delivered hooks from registry to prevent re-processing
+  // 从注册表中移除已传递的钩子以防止重复处理
   if (responses.length > 0) {
     const processIds = responses.map(r => r.processId)
     removeDeliveredAsyncHooks(processIds)
@@ -3528,16 +3515,16 @@ async function getAsyncHookResponseAttachments(): Promise<Attachment[]> {
 }
 
 /**
- * Get teammate mailbox attachments for agent swarm communication
- * Teammates are independent Claude Code sessions running in parallel (swarms),
- * not parent-child subagent relationships.
+ * 获取队友邮箱附件，用于 agent 群体通信。
+ * 队友是并行运行的独立 Claude Code 会话（群体），
+ * 而不是父子子 agent 关系。
  *
- * This function checks two sources for messages:
- * 1. File-based mailbox (for messages that arrived between polls)
- * 2. AppState.inbox (for messages queued mid-turn by useInboxPoller)
+ * 此函数检查两个消息来源：
+ * 1. 基于文件的邮箱（轮询间隔期间到达的消息）
+ * 2. AppState.inbox（轮询中在回合中间排队的消息）
  *
- * Messages from AppState.inbox are delivered mid-turn as attachments,
- * allowing teammates to receive messages without waiting for the turn to end.
+ * 来自 AppState.inbox 的消息在回合中间作为附件传递，
+ * 使队友无需等待回合结束即可接收消息。
  */
 async function getTeammateMailboxAttachments(
   toolUseContext: ToolUseContext,
@@ -3549,28 +3536,28 @@ async function getTeammateMailboxAttachments(
     return []
   }
 
-  // Get AppState early to check for team lead status
+  // 提前获取 AppState 以检查团队领导状态
   const appState = toolUseContext.getAppState()
 
-  // Use agent name from helper (checks AsyncLocalStorage, then dynamicTeamContext)
+  // 使用辅助函数获取 agent 名称（检查 AsyncLocalStorage，然后 dynamicTeamContext）
   const envAgentName = getAgentName()
 
-  // Get team name (checks AsyncLocalStorage, dynamicTeamContext, then AppState)
+  // 获取团队名称（检查 AsyncLocalStorage、dynamicTeamContext，然后 AppState）
   const teamName = getTeamName(appState.teamContext)
 
-  // Check if we're the team lead (uses shared logic from swarm utils)
+  // 检查我们是否是团队领导（使用 swarm 工具中的共享逻辑）
   const teamLeadStatus = isTeamLead(appState.teamContext)
 
-  // Check if viewing a teammate's transcript (for in-process teammates)
+  // 检查是否在查看队友的对话记录（适用于进程内队友）
   const viewedTeammate = getViewedTeammateTask(appState)
 
-  // Resolve agent name based on who we're VIEWING:
-  // - If viewing a teammate, use THEIR name (to read from their mailbox)
-  // - Otherwise use env var if set, or leader's name if we're the team lead
+  // 根据正在查看的对象解析 agent 名称：
+  // - 如果正在查看队友，使用他们的名称（以读取其邮箱）
+  // - 否则使用环境变量（如果设置），或团队领导名称（如果我们是团队领导）
   let agentName = viewedTeammate?.identity.agentName ?? envAgentName
   if (!agentName && teamLeadStatus && appState.teamContext) {
     const leadAgentId = appState.teamContext.leadAgentId
-    // Look up the lead's name from agents map (not the UUID)
+    // 从 agent 映射中查找领导名称（非 UUID）
     agentName = appState.teamContext.teammates[leadAgentId]?.name || 'team-lead'
   }
 
@@ -3578,7 +3565,7 @@ async function getTeammateMailboxAttachments(
     `[SwarmMailbox] getTeammateMailboxAttachments called: envAgentName=${envAgentName}, isTeamLead=${teamLeadStatus}, resolved agentName=${agentName}, teamName=${teamName}`,
   )
 
-  // Only check inbox if running as an agent in a swarm or team lead
+  // 仅在作为群体中的 agent 或团队领导运行时检查收件箱
   if (!agentName) {
     logForDebugging(
       `[SwarmMailbox] Not checking inbox - not in a swarm or team lead`,
@@ -3590,13 +3577,13 @@ async function getTeammateMailboxAttachments(
     `[SwarmMailbox] Checking inbox for agent="${agentName}" team="${teamName || 'default'}"`,
   )
 
-  // Check mailbox for unread messages (routes to in-process or file-based)
-  // Filter out structured protocol messages (permission requests/responses, shutdown
-  // messages, etc.) — these must be left unread for useInboxPoller to route to their
-  // proper handlers (workerPermissions queue, sandbox queue, etc.). Without filtering,
-  // attachment generation races with InboxPoller: whichever reads first marks all
-  // messages as read, and if attachments wins, protocol messages get bundled as raw
-  // LLM context text instead of being routed to their UI handlers.
+  // 检查邮箱中是否有未读消息（路由到进程内或基于文件的）
+  // 过滤掉结构化协议消息（权限请求/响应、关闭
+  // 消息等）——这些必须保持未读状态，供 useInboxPoller 路由到其
+  // 适当的处理器（workerPermissions 队列、sandbox 队列等）。如果不进行过滤，
+  // 附件生成会与 InboxPoller 竞争：谁先读取谁就将所有消息标记为
+  // 已读，如果附件胜出，协议消息会被作为原始 LLM 上下文文本打包，
+  // 而不是路由到它们的 UI 处理器。
   const allUnreadMessages = await readUnreadMessages(agentName, teamName)
   const unreadMessages = allUnreadMessages.filter(
     m => !isStructuredProtocolMessage(m.text),
@@ -3605,29 +3592,29 @@ async function getTeammateMailboxAttachments(
     `[MailboxBridge] Found ${allUnreadMessages.length} unread message(s) for "${agentName}" (${allUnreadMessages.length - unreadMessages.length} structured protocol messages filtered out)`,
   )
 
-  // Also check AppState.inbox for pending messages (queued mid-turn by useInboxPoller)
-  // IMPORTANT: appState.inbox contains messages FROM teammates TO the leader.
-  // Only show these when viewing the leader's transcript (not a teammate's).
-  // When viewing a teammate, their messages come from the file-based mailbox above.
-  // In-process teammates share AppState with the leader — appState.inbox contains
-  // the LEADER's queued messages, not the teammate's. Skip it to prevent leakage
-  // (including self-echo from broadcasts). Teammates receive messages exclusively
-  // through their file-based mailbox + waitForNextPromptOrShutdown.
-  // Note: viewedTeammate was already computed above for agentName resolution
+  // 同时检查 AppState.inbox 中是否有待处理消息（由 useInboxPoller 在回合中排队）
+  // 重要：appState.inbox 包含从队友发送给领导的消息。
+  // 仅在查看领导对话记录时显示这些消息（而非队友的）。
+  // 查看队友时，他们的消息来自上面基于文件的邮箱。
+  // 进程内队友与领导共享 AppState — appState.inbox 包含
+  // 领导的排队消息，而非队友的。跳过它以防止泄漏
+  // （包括广播的自回显）。队友通过基于文件的邮箱 +
+  // waitForNextPromptOrShutdown 专门接收消息。
+  // 注意：viewedTeammate 已在上面为 agentName 解析计算过
   const pendingInboxMessages =
     viewedTeammate || isInProcessTeammate()
-      ? [] // Viewing teammate or running as in-process teammate - don't show leader's inbox
+      ? [] // 查看同组成员或作为进程内同组成员运行——不显示负责人的收件箱
       : appState.inbox.messages.filter(m => m.status === 'pending')
   logForDebugging(
     `[SwarmMailbox] Found ${pendingInboxMessages.length} pending message(s) in AppState.inbox`,
   )
 
-  // Combine both sources of messages WITH DEDUPLICATION
-  // The same message could exist in both file mailbox and AppState.inbox due to race conditions:
-  // 1. getTeammateMailboxAttachments reads file -> finds message M
-  // 2. InboxPoller reads same file -> queues M in AppState.inbox
-  // 3. getTeammateMailboxAttachments reads AppState -> finds M again
-  // We deduplicate using from+timestamp+text prefix as the key
+  // 合并两个消息来源并去重
+  // 由于竞态条件，同一条消息可能同时存在于文件邮箱和 AppState.inbox 中：
+  // 1. getTeammateMailboxAttachments 读取文件 -> 找到消息 M
+  // 2. InboxPoller 读取同一文件 -> 将 M 排入 AppState.inbox
+  // 3. getTeammateMailboxAttachments 读取 AppState -> 再次找到 M
+  // 我们使用 from+timestamp+text 前缀作为键进行去重
   const seen = new Set<string>()
   let allMessages: Array<{
     from: string
@@ -3651,8 +3638,8 @@ async function getTeammateMailboxAttachments(
     }
   }
 
-  // Collapse multiple idle notifications per agent — keep only the latest.
-  // Single pass to parse, then filter without re-parsing.
+  // 折叠每个 agent 的多条空闲通知——只保留最新的。
+  // 单次解析，然后过滤而不重新解析。
   const idleAgentByIndex = new Map<number, string>()
   const latestIdleByAgent = new Map<string, number>()
   for (let i = 0; i < allMessages.length; i++) {
@@ -3683,8 +3670,8 @@ async function getTeammateMailboxAttachments(
     `[SwarmMailbox] Returning ${allMessages.length} message(s) as attachment for "${agentName}" (${unreadMessages.length} from file, ${pendingInboxMessages.length} from AppState, after dedup)`,
   )
 
-  // Build the attachment BEFORE marking messages as processed
-  // This prevents message loss if any operation below fails
+  // 在标记消息为已处理之前构建附件
+  // 这可以防止以下任何操作失败时消息丢失
   const attachment: Attachment[] = [
     {
       type: 'teammate_mailbox',
@@ -3692,8 +3679,8 @@ async function getTeammateMailboxAttachments(
     },
   ]
 
-  // Mark only non-structured mailbox messages as read after attachment is built.
-  // Structured protocol messages stay unread for useInboxPoller to handle.
+  // 构建附件后，仅将非结构化邮箱消息标记为已读。
+  // 结构化协议消息保持未读状态，由 useInboxPoller 处理。
   if (unreadMessages.length > 0) {
     await markMessagesAsReadByPredicate(
       agentName,
@@ -3705,9 +3692,9 @@ async function getTeammateMailboxAttachments(
     )
   }
 
-  // Process shutdown_approved messages - remove teammates from team file
-  // This mirrors what useInboxPoller does in interactive mode (lines 546-606)
-  // In -p mode, useInboxPoller doesn't run, so we must handle this here
+  // 处理 shutdown_approved 消息 - 从团队文件中移除队友
+  // 这镜像了 useInboxPoller 在交互模式中的处理（第 546-606 行）
+  // 在 -p 模式下，useInboxPoller 不运行，因此我们必须在此处处理
   if (teamLeadStatus && teamName) {
     for (const m of allMessages) {
       const shutdownApproval = isShutdownApproved(m.text)
@@ -3717,7 +3704,7 @@ async function getTeammateMailboxAttachments(
           `[SwarmMailbox] Processing shutdown_approved from ${teammateToRemove}`,
         )
 
-        // Find the teammate ID by name
+        // 按名称查找队友 ID
         const teammateId = appState.teamContext?.teammates
           ? Object.entries(appState.teamContext.teammates).find(
               ([, t]) => t.name === teammateToRemove,
@@ -3725,7 +3712,7 @@ async function getTeammateMailboxAttachments(
           : undefined
 
         if (teammateId) {
-          // Remove from team file
+          // 从团队文件中移除
           removeTeammateFromTeamFile(teamName, {
             agentId: teammateId,
             name: teammateToRemove,
@@ -3734,7 +3721,7 @@ async function getTeammateMailboxAttachments(
             `[SwarmMailbox] Removed ${teammateToRemove} from team file`,
           )
 
-          // Unassign tasks owned by this teammate
+          // 取消分配该队友拥有的任务
           await unassignTeammateTasks(
             teamName,
             teammateId,
@@ -3742,7 +3729,7 @@ async function getTeammateMailboxAttachments(
             'shutdown',
           )
 
-          // Remove from teamContext in AppState
+          // 从 AppState 的 teamContext 中移除
           toolUseContext.setAppState(prev => {
             if (!prev.teamContext?.teammates) return prev
             if (!(teammateId in prev.teamContext.teammates)) return prev
@@ -3761,8 +3748,8 @@ async function getTeammateMailboxAttachments(
     }
   }
 
-  // Mark AppState inbox messages as processed LAST, after attachment is built
-  // This ensures messages aren't lost if earlier operations fail
+  // 在附件构建之后，最后将 AppState 收件箱消息标记为已处理
+  // 这确保如果前面的操作失败，消息不会丢失
   if (pendingInboxMessages.length > 0) {
     const pendingIds = new Set(pendingInboxMessages.map(m => m.id))
     toolUseContext.setAppState(prev => ({
@@ -3779,20 +3766,20 @@ async function getTeammateMailboxAttachments(
 }
 
 /**
- * Get team context attachment for teammates in a swarm.
- * Only injected on the first turn to provide team coordination instructions.
+ * 获取群体中队友的团队上下文附件。
+ * 仅在首轮注入以提供团队协调指令。
  */
 function getTeamContextAttachment(messages: Message[]): Attachment[] {
   const teamName = getTeamName()
   const agentId = getAgentId()
   const agentName = getAgentName()
 
-  // Only inject for teammates (not team lead or non-team sessions)
+  // 仅对队友注入（非团队领导或非团队会话）
   if (!teamName || !agentId) {
     return []
   }
 
-  // Only inject on first turn - check if there are no assistant messages yet
+  // 仅在首轮注入——检查是否还没有 assistant 消息
   const hasAssistantMessage = messages.some(m => m.type === 'assistant')
   if (hasAssistantMessage) {
     return []
@@ -3872,12 +3859,12 @@ function getMaxBudgetUsdAttachment(maxBudgetUsd?: number): Attachment[] {
 }
 
 /**
- * Count human turns since plan mode exit (plan_mode_exit attachment).
- * Returns 0 if no plan_mode_exit attachment found.
+ * 统计自计划模式退出（plan_mode_exit 附件）以来的人工轮数。
+ * 如果未找到 plan_mode_exit 附件，则返回 0。
  *
- * tool_result messages are type:'user' without isMeta, so filter by
- * toolUseResult to avoid counting them — otherwise the 10-turn reminder
- * interval fires every ~10 tool calls instead of ~10 human turns.
+ * tool_result 消息的类型为 'user' 且没有 isMeta，因此通过 toolUseResult
+ * 过滤以避免计数它们——否则 10 轮提醒间隔会在每约 10 次工具调用时
+ * 触发，而不是每约 10 个人工轮数。
  */
 export function getVerifyPlanReminderTurnCount(messages: Message[]): number {
   let turnCount = 0
@@ -3886,7 +3873,7 @@ export function getVerifyPlanReminderTurnCount(messages: Message[]): number {
     if (message && isHumanTurn(message)) {
       turnCount++
     }
-    // Stop counting at plan_mode_exit attachment (marks when implementation started)
+    // 在 plan_mode_exit 附件处停止计数（标记实现开始的时间）
     if (
       message?.type === 'attachment' &&
       message.attachment.type === 'plan_mode_exit'
@@ -3894,12 +3881,12 @@ export function getVerifyPlanReminderTurnCount(messages: Message[]): number {
       return turnCount
     }
   }
-  // No plan_mode_exit found
+  // 未找到 plan_mode_exit
   return 0
 }
 
 /**
- * Get verify plan reminder attachment if the model hasn't called VerifyPlanExecution yet.
+ * 如果模型尚未调用 VerifyPlanExecution，获取验证计划提醒附件。
  */
 async function getVerifyPlanReminderAttachment(
   messages: Message[] | undefined,
@@ -3915,7 +3902,7 @@ async function getVerifyPlanReminderAttachment(
   const appState = toolUseContext.getAppState()
   const pending = appState.pendingPlanVerification
 
-  // Only remind if plan exists and verification not started or completed
+  // 仅在计划存在且验证未开始或未完成时提醒
   if (
     !pending ||
     pending.verificationStarted ||
@@ -3924,7 +3911,7 @@ async function getVerifyPlanReminderAttachment(
     return []
   }
 
-  // Only remind every N turns
+  // 仅每 N 轮提醒一次
   if (messages && messages.length > 0) {
     const turnCount = getVerifyPlanReminderTurnCount(messages)
     if (
@@ -3965,10 +3952,9 @@ export function getCompactionReminderAttachment(
 }
 
 /**
- * Context-efficiency nudge. Injected after every N tokens of growth without
- * a snip. Pacing is handled entirely by shouldNudgeForSnips — the 10k
- * interval resets on prior nudges, snip markers, snip boundaries, and
- * compact boundaries.
+ * 上下文效率提示。在没有 snip 的情况下每增长 N 个 token 后注入。
+ * 节奏完全由 shouldNudgeForSnips 控制——10k 间隔在之前的提示、
+ * snip 标记、snip 边界和压缩边界处重置。
  */
 export function getContextEfficiencyAttachment(
   messages: Message[],
@@ -3976,8 +3962,8 @@ export function getContextEfficiencyAttachment(
   if (!feature('HISTORY_SNIP')) {
     return []
   }
-  // Gate must match SnipTool.isEnabled() — don't nudge toward a tool that
-  // isn't in the tool list. Lazy require keeps this file snip-string-free.
+  // 门控必须与 SnipTool.isEnabled() 匹配——不要提示指向不在工具列表中的
+  // 工具。懒加载的 require 使此文件保持无 snip 字符串。
   const { isSnipRuntimeEnabled, shouldNudgeForSnips } =
      
     require('../services/compact/snipCompact.js') as typeof import('../services/compact/snipCompact.js')

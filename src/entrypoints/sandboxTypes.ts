@@ -1,15 +1,15 @@
 /**
- * Sandbox types for the Claude Code Agent SDK
+ * 适用于 Claude Code Agent SDK 的沙箱类型。
  *
- * This file is the single source of truth for sandbox configuration types.
- * Both the SDK and the settings validation import from here.
+ * 此文件是沙箱配置类型的唯一真实来源。
+ * SDK 和设置验证都从此文件导入。
  */
 
 import { z } from 'zod/v4'
 import { lazySchema } from '../utils/lazySchema.js'
 
 /**
- * Network configuration schema for sandbox.
+ * 沙箱的网络配置模式。
  */
 export const SandboxNetworkConfigSchema = lazySchema(() =>
   z
@@ -19,20 +19,20 @@ export const SandboxNetworkConfigSchema = lazySchema(() =>
         .boolean()
         .optional()
         .describe(
-          'When true (and set in managed settings), only allowedDomains and WebFetch(domain:...) allow rules from managed settings are respected. ' +
-            'User, project, local, and flag settings domains are ignored. Denied domains are still respected from all sources.',
+          '当为 true（且在托管设置中设置）时，仅允许来自托管设置的 allowedDomains 和 WebFetch(domain:...) 规则。' +
+            '用户、项目、本地和标志设置的域将被忽略。拒绝的域仍从所有来源中生效。',
         ),
       allowUnixSockets: z
         .array(z.string())
         .optional()
         .describe(
-          'macOS only: Unix socket paths to allow. Ignored on Linux (seccomp cannot filter by path).',
+          '仅 macOS：允许的 Unix socket 路径。在 Linux 上忽略（seccomp 无法按路径过滤）。',
         ),
       allowAllUnixSockets: z
         .boolean()
         .optional()
         .describe(
-          'If true, allow all Unix sockets (disables blocking on both platforms).',
+          '如果为 true，允许所有 Unix socket（在两个平台上均禁用阻止）。',
         ),
       allowLocalBinding: z.boolean().optional(),
       httpProxyPort: z.number().optional(),
@@ -42,7 +42,7 @@ export const SandboxNetworkConfigSchema = lazySchema(() =>
 )
 
 /**
- * Filesystem configuration schema for sandbox.
+ * 沙箱的文件系统配置模式。
  */
 export const SandboxFilesystemConfigSchema = lazySchema(() =>
   z
@@ -79,14 +79,14 @@ export const SandboxFilesystemConfigSchema = lazySchema(() =>
         .boolean()
         .optional()
         .describe(
-          'When true (set in managed settings), only allowRead paths from policySettings are used.',
+          '当为 true（在托管设置中设置）时，仅使用来自 policySettings 的 allowRead 路径。',
         ),
     })
     .optional(),
 )
 
 /**
- * Sandbox settings schema.
+ * 沙箱设置模式。
  */
 export const SandboxSettingsSchema = lazySchema(() =>
   z
@@ -100,14 +100,14 @@ export const SandboxSettingsSchema = lazySchema(() =>
             '当为 false（默认值）时，会显示警告并以非沙箱方式运行命令。' +
             '适用于需要沙箱作为硬性门槛的托管设置部署。',
         ),
-      // Note: enabledPlatforms is an undocumented setting read via .passthrough()
-      // It restricts sandboxing to specific platforms (e.g., ["macos"]).
+      // 注意：enabledPlatforms 是一个未记录的设置，通过 .passthrough() 读取
+      // 它将沙箱限制在特定平台上（例如 ["macos"]）。
       //
-      // Added to unblock NVIDIA enterprise rollout: they want to enable
-      // autoAllowBashIfSandboxed but only on macOS initially, since Linux/WSL
-      // sandbox support is newer and less battle-tested. This allows them to
-      // set enabledPlatforms: ["macos"] to disable sandbox (and auto-allow)
-      // on other platforms until they're ready to expand.
+      // 添加此设置是为了解除 NVIDIA 企业版部署的阻塞：他们希望启用
+      // autoAllowBashIfSandboxed，但最初仅在 macOS 上启用，因为 Linux/WSL
+      // 的沙箱支持较新且经过的测试较少。这允许他们
+      // 设置 enabledPlatforms: ["macos"] 在其他平台上禁用沙箱（并自动允许），
+      // 直到他们准备好扩大支持范围。
       autoAllowBashIfSandboxed: z.boolean().optional(),
       allowUnsandboxedCommands: z
         .boolean()
@@ -136,12 +136,12 @@ export const SandboxSettingsSchema = lazySchema(() =>
           args: z.array(z.string()).optional(),
         })
         .optional()
-        .describe('Custom ripgrep configuration for bundled ripgrep support'),
+        .describe('捆绑的 ripgrep 支持的自定义 ripgrep 配置'),
     })
     .passthrough(),
 )
 
-// Inferred types from schemas
+// 从模式推断的类型
 export type SandboxSettings = z.infer<ReturnType<typeof SandboxSettingsSchema>>
 export type SandboxNetworkConfig = NonNullable<
   z.infer<ReturnType<typeof SandboxNetworkConfigSchema>>

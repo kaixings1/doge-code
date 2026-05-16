@@ -19,16 +19,15 @@ import { isMainSessionTask } from '../LocalMainSessionTask.js';
 import { type BashTaskKind, isLocalShellTask, type LocalShellTaskState } from './guards.js';
 import { killTask } from './killShellTasks.js';
 
-/** Prefix that identifies a LocalShellTask summary to the UI collapse transform. */
+/** 用于标识 LocalShellTask 摘要的前缀，供 UI 折叠转换使用。 */
 export const BACKGROUND_BASH_SUMMARY_PREFIX = 'Background command ';
 const STALL_CHECK_INTERVAL_MS = 3_000;  // 每 3 秒检查一次（原 5 秒）
 const STALL_THRESHOLD_MS = 20_000;      // 20 秒无输出后开始检测（原 45 秒）
 const STALL_TAIL_BYTES = 2048;          // 读取更多尾部内容（原 1024）
 
-// Last-line patterns that suggest a command is blocked waiting for keyboard
-// input. Used to gate the stall notification — we stay silent on commands that
-// are merely slow (git log -S, long builds) and only notify when the tail
-// looks like an interactive prompt the model can act on. See CC-1175.
+// 尾行模式，用于判断命令是否在等待键盘输入而阻塞。
+// 用于控制停滞通知的触发——对于仅执行缓慢的命令（如 git log -S、长时间构建）保持静默，
+// 仅在尾部内容看起来像是模型可以操作的交互提示时才通知。参见 CC-1175。
 const PROMPT_PATTERNS = [
   // Standard y/n formats（带括号的格式，最明确）
   /\(y\/n\)/i,          // (Y/n), (y/N)
@@ -82,8 +81,8 @@ export function looksLikePrompt(tail: string): boolean {
   return PROMPT_PATTERNS.some(p => p.test(lastLine));
 }
 
-// Output-side analog of peekForStdinData (utils/process.ts): fire a one-shot
-// notification if output stops growing and the tail looks like a prompt.
+// 类似 peekForStdinData（utils/process.ts）的输出端：当输出停止增长且尾部内容看起来像提示时，
+// 触发一次性通知。
 function startStallWatchdog(taskId: string, description: string, kind: BashTaskKind | undefined, toolUseId?: string, agentId?: AgentId): () => void {
   if (kind === 'monitor') return () => {};
   const outputPath = getTaskOutputPath(taskId);
@@ -103,21 +102,17 @@ function startStallWatchdog(taskId: string, description: string, kind: BashTaskK
       }) => {
         if (cancelled) return;
         if (!looksLikePrompt(content)) {
-          // Not a prompt — keep watching. Reset so the next check is
-          // 45s out instead of re-reading the tail on every tick.
+          // 不是提示——继续监控。重置时间，使下次检查间隔 45 秒，而不是每个 tick 都重新读取尾部。
           lastGrowth = Date.now();
           return;
         }
-        // Latch before the async-boundary-visible side effects so an
-        // overlapping tick's callback sees cancelled=true and bails.
+        // 在异步边界可见的副作用之前锁定，使重叠 tick 的回调看到 cancelled=true 后退出。
         cancelled = true;
         clearInterval(timer);
         const toolUseIdLine = toolUseId ? `\n<${TOOL_USE_ID_TAG}>${toolUseId}</${TOOL_USE_ID_TAG}>` : '';
         const summary = `${BACKGROUND_BASH_SUMMARY_PREFIX}"${description}" appears to be waiting for interactive input`;
-        // No <status> tag — print.ts treats <status> as a terminal
-        // signal and an unknown value falls through to 'completed',
-        // falsely closing the task for SDK consumers. Statusless
-        // notifications are skipped by the SDK emitter (progress ping).
+        // 不加 <status> 标签——print.ts 将 <status> 视为终止信号，未知值会落入 'completed' 状态，
+        // 错误地关闭 SDK 消费者的任务。无状态通知会被 SDK 发射器跳过（作为进度 ping）。
         const message = `<${TASK_NOTIFICATION_TAG}>
 <${TASK_ID_TAG}>${taskId}</${TASK_ID_TAG}>${toolUseIdLine}
 <${OUTPUT_FILE_TAG}>${outputPath}</${OUTPUT_FILE_TAG}>
@@ -134,7 +129,7 @@ The command is likely blocked on an interactive prompt. Kill this task and re-ru
           agentId
         });
       }, () => {});
-    }, () => {} // File may not exist yet
+    }, () => {} // 文件可能尚不存在
     );
   }, STALL_CHECK_INTERVAL_MS);
   timer.unref();
@@ -144,9 +139,9 @@ The command is likely blocked on an interactive prompt. Kill this task and re-ru
   };
 }
 function enqueueShellNotification(taskId: string, description: string, status: 'completed' | 'failed' | 'killed', exitCode: number | undefined, setAppState: SetAppState, toolUseId?: string, kind: BashTaskKind = 'bash', agentId?: AgentId): void {
-  // Atomically check and set notified flag to prevent duplicate notifications.
-  // If the task was already marked as notified (e.g., by TaskStopTool), skip
-  // enqueueing to avoid sending redundant messages to the model.
+  // 原子化检查并设置 notified 标志，防止重复通知。
+  // 如果任务已被标记为已通知（例如由 TaskStopTool 标记），则跳过入队，
+  // 避免向模型发送冗余消息。
   let shouldEnqueue = false;
   updateTaskState(taskId, setAppState, task => {
     if (task.notified) {
@@ -162,16 +157,13 @@ function enqueueShellNotification(taskId: string, description: string, status: '
     return;
   }
 
-  // Abort any active speculation — background task state changed, so speculated
-  // results may reference stale task output. The prompt suggestion text is
-  // preserved; only the pre-computed response is discarded.
+  // 中止任何活跃的推测——后台任务状态已更改，推测结果可能引用了过时的任务输出。
+  // 提示建议文本会保留；仅丢弃预计算的响应。
   abortSpeculation(setAppState);
   let summary: string;
   if (feature('MONITOR_TOOL') && kind === 'monitor') {
-    // Monitor is streaming-only (post-#22764) — the script exiting means
-    // the stream ended, not "condition met". Distinct from the bash prefix
-    // so Monitor completions don't fold into the "N background commands
-    // completed" collapse.
+    // Monitor 仅为流式（post-#22764）——脚本退出意味着流结束，而非"条件满足"。
+    // 与 bash 前缀区分开，使 Monitor 完成不会折叠到"N 个后台命令已完成"的折叠区域中。
     switch (status) {
       case 'completed':
         summary = `Monitor "${description}" stream ended`;
@@ -233,7 +225,7 @@ export async function spawnShellTask(input: LocalShellSpawnInput & {
     setAppState
   } = context;
 
-  // TaskOutput owns the data — use its taskId so disk writes are consistent
+  // TaskOutput 拥有数据——使用其 taskId 以确保磁盘写入一致性
   const {
     taskOutput
   } = shellCommand;
@@ -256,8 +248,8 @@ export async function spawnShellTask(input: LocalShellSpawnInput & {
   };
   registerTask(taskState, setAppState);
 
-  // Data flows through TaskOutput automatically — no stream listeners needed.
-  // Just transition to backgrounded state so the process keeps running.
+  // 数据通过 TaskOutput 自动流动——无需流监听器。
+  // 只需转换为后台状态，使进程继续运行。
   shellCommand.background(taskId);
   const cancelStallWatchdog = startStallWatchdog(taskId, description, kind, toolUseId, agentId);
   void shellCommand.result.then(async result => {
@@ -293,9 +285,9 @@ export async function spawnShellTask(input: LocalShellSpawnInput & {
 }
 
 /**
- * Register a foreground task that could be backgrounded later.
- * Called when a bash command has been running long enough to show the BackgroundHint.
- * @returns taskId for the registered task
+ * 注册一个可在后续转为后台运行的前台任务。
+ * 当 bash 命令运行时间足够长以显示 BackgroundHint 时调用。
+ * @returns 已注册任务的 taskId
  */
 export function registerForeground(input: LocalShellSpawnInput & {
   shellCommand: ShellCommand;
@@ -320,7 +312,7 @@ export function registerForeground(input: LocalShellSpawnInput & {
     unregisterCleanup,
     lastReportedTotalLines: 0,
     isBackgrounded: false,
-    // Not yet backgrounded - running in foreground
+    // 尚未后台化——在前台运行中
     agentId
   };
   registerTask(taskState, setAppState);
@@ -328,11 +320,11 @@ export function registerForeground(input: LocalShellSpawnInput & {
 }
 
 /**
- * Background a specific foreground task.
- * @returns true if backgrounded successfully, false otherwise
+ * 将指定的前台任务转为后台运行。
+ * @returns 成功后台化返回 true，否则返回 false
  */
 function backgroundTask(taskId: string, getAppState: () => AppState, setAppState: SetAppState): boolean {
-  // Step 1: Get the task and shell command from current state
+  // 步骤 1：从当前状态获取任务和 shell 命令
   const state = getAppState();
   const task = state.tasks[taskId];
   if (!isLocalShellTask(task) || task.isBackgrounded || !task.shellCommand) {
@@ -346,7 +338,7 @@ function backgroundTask(taskId: string, getAppState: () => AppState, setAppState
     agentId
   } = task;
 
-  // Transition to backgrounded — TaskOutput continues receiving data automatically
+  // 转换为后台状态——TaskOutput 继续自动接收数据
   if (!shellCommand.background(taskId)) {
     return false;
   }
@@ -368,7 +360,7 @@ function backgroundTask(taskId: string, getAppState: () => AppState, setAppState
   });
   const cancelStallWatchdog = startStallWatchdog(taskId, description, kind, toolUseId, agentId);
 
-  // Set up result handler
+  // 设置结果处理器
   void shellCommand.result.then(async result => {
     cancelStallWatchdog();
     await flushAndCleanup(shellCommand);
@@ -380,7 +372,7 @@ function backgroundTask(taskId: string, getAppState: () => AppState, setAppState
         return t;
       }
 
-      // Capture cleanup function to call outside of updater
+      // 捕获清理函数，在更新器外部调用
       cleanupFn = t.unregisterCleanup;
       return {
         ...t,
@@ -395,7 +387,7 @@ function backgroundTask(taskId: string, getAppState: () => AppState, setAppState
       };
     });
 
-    // Call cleanup outside of the state updater (avoid side effects in updater)
+    // 在状态更新器外部调用清理（避免在更新器中产生副作用）
     cleanupFn?.();
     if (wasKilled) {
       enqueueShellNotification(taskId, description, 'killed', result.code, setAppState, toolUseId, kind, agentId);
@@ -409,19 +401,19 @@ function backgroundTask(taskId: string, getAppState: () => AppState, setAppState
 }
 
 /**
- * Background ALL foreground tasks (bash commands and agents).
- * Called when user presses Ctrl+B to background all running tasks.
+ * 将所有前台任务（bash 命令和代理）转为后台运行。
+ * 当用户按下 Ctrl+B 将所有运行中的任务后台化时调用。
  */
 /**
- * Check if there are any foreground tasks (bash or agent) that can be backgrounded.
- * Used to determine whether Ctrl+B should background existing tasks vs. background the session.
+ * 检查是否存在可后台化的前台任务（bash 或代理）。
+ * 用于判断 Ctrl+B 是应将现有任务后台化还是将整个会话后台化。
  */
 export function hasForegroundTasks(state: AppState): boolean {
   return Object.values(state.tasks).some(task => {
     if (isLocalShellTask(task) && !task.isBackgrounded && task.shellCommand) {
       return true;
     }
-    // Exclude main session tasks - they display in the main view, not as foreground tasks
+    // 排除主会话任务——它们显示在主视图中，而非作为前台任务
     if (isLocalAgentTask(task) && !task.isBackgrounded && !isMainSessionTask(task)) {
       return true;
     }
@@ -431,7 +423,7 @@ export function hasForegroundTasks(state: AppState): boolean {
 export function backgroundAll(getAppState: () => AppState, setAppState: SetAppState): void {
   const state = getAppState();
 
-  // Background all foreground bash tasks
+  // 将所有前台 bash 任务转为后台
   const foregroundBashTaskIds = Object.keys(state.tasks).filter(id => {
     const task = state.tasks[id];
     return isLocalShellTask(task) && !task.isBackgrounded && task.shellCommand;
@@ -440,7 +432,7 @@ export function backgroundAll(getAppState: () => AppState, setAppState: SetAppSt
     backgroundTask(taskId, getAppState, setAppState);
   }
 
-  // Background all foreground agent tasks
+  // 将所有前台代理任务转为后台
   const foregroundAgentTaskIds = Object.keys(state.tasks).filter(id => {
     const task = state.tasks[id];
     return isLocalAgentTask(task) && !task.isBackgrounded;
@@ -451,12 +443,11 @@ export function backgroundAll(getAppState: () => AppState, setAppState: SetAppSt
 }
 
 /**
- * Background an already-registered foreground task in-place.
- * Unlike spawn(), this does NOT re-register the task — it flips isBackgrounded
- * on the existing registration and sets up a completion handler.
- * Used when the auto-background timer fires after registerForeground() has
- * already registered the task (avoiding duplicate task_started SDK events
- * and leaked cleanup callbacks).
+ * 在原地将已注册的前台任务转为后台运行。
+ * 与 spawn() 不同，此方法不会重新注册任务——它翻转现有注册的 isBackgrounded 标志
+ * 并设置完成处理器。
+ * 用于在 registerForeground() 已注册任务后自动后台定时器触发时
+ * （避免重复的 task_started SDK 事件和泄漏的清理回调）。
  */
 export function backgroundExistingForegroundTask(taskId: string, shellCommand: ShellCommand, description: string, setAppState: SetAppState, toolUseId?: string): boolean {
   if (!shellCommand.background(taskId)) {
@@ -482,7 +473,7 @@ export function backgroundExistingForegroundTask(taskId: string, shellCommand: S
   });
   const cancelStallWatchdog = startStallWatchdog(taskId, description, undefined, toolUseId, agentId);
 
-  // Set up result handler (mirrors backgroundTask's handler)
+  // 设置结果处理器（与 backgroundTask 的处理器镜像）
   void shellCommand.result.then(async result => {
     cancelStallWatchdog();
     await flushAndCleanup(shellCommand);
@@ -515,9 +506,9 @@ export function backgroundExistingForegroundTask(taskId: string, shellCommand: S
 }
 
 /**
- * Mark a task as notified to suppress a pending enqueueShellNotification.
- * Used when backgrounding raced with completion — the tool result already
- * carries the full output, so the <task_notification> would be redundant.
+ * 将任务标记为已通知，以抑制待处理的 enqueueShellNotification。
+ * 用于后台化与完成时机竞争的场景——工具结果已包含完整输出，
+ * 因此 <task_notification> 将是冗余的。
  */
 export function markTaskNotified(taskId: string, setAppState: SetAppState): void {
   updateTaskState(taskId, setAppState, t => t.notified ? t : {
@@ -527,18 +518,18 @@ export function markTaskNotified(taskId: string, setAppState: SetAppState): void
 }
 
 /**
- * Unregister a foreground task when the command completes without being backgrounded.
+ * 当命令在前台完成（未转为后台）时注销前台任务。
  */
 export function unregisterForeground(taskId: string, setAppState: SetAppState): void {
   let cleanupFn: (() => void) | undefined;
   setAppState(prev => {
     const task = prev.tasks[taskId];
-    // Only remove if it's a foreground task (not backgrounded)
+    // 仅当是前台任务（未后台化）时才移除
     if (!isLocalShellTask(task) || task.isBackgrounded) {
       return prev;
     }
 
-    // Capture cleanup function to call outside of updater
+    // 捕获清理函数，在更新器外部调用
     cleanupFn = task.unregisterCleanup;
     const {
       [taskId]: removed,
@@ -550,7 +541,7 @@ export function unregisterForeground(taskId: string, setAppState: SetAppState): 
     };
   });
 
-  // Call cleanup outside of the state updater (avoid side effects in updater)
+  // 在状态更新器外部调用清理（避免在更新器中产生副作用）
   cleanupFn?.();
 }
 async function flushAndCleanup(shellCommand: ShellCommand): Promise<void> {

@@ -6,15 +6,15 @@ import {
   updateSettingsForSource,
 } from '../utils/settings/settings.js'
 /**
- * Migration: Move user-set autoUpdates preference to settings.json env var
- * Only migrates if user explicitly disabled auto-updates (not for protection)
- * This preserves user intent while allowing native installations to auto-update
+ * 迁移：将用户设置的 autoUpdates 首选项移至 settings.json 环境变量
+ * 仅在用户明确禁用自动更新时迁移（非保护性禁用）
+ * 这保留了用户意图，同时允许原生安装自动更新
  */
 export function migrateAutoUpdatesToSettings(): void {
   const globalConfig = getGlobalConfig()
 
-  // Only migrate if autoUpdates was explicitly set to false by user preference
-  // (not automatically for native protection)
+  // 仅当用户首选项明确将 autoUpdates 设置为 false 时才迁移
+  //（非原生安装保护性自动禁用）
   if (
     globalConfig.autoUpdates !== false ||
     globalConfig.autoUpdatesProtectedForNative === true
@@ -25,8 +25,8 @@ export function migrateAutoUpdatesToSettings(): void {
   try {
     const userSettings = getSettingsForSource('userSettings') || {}
 
-    // Always set DISABLE_AUTOUPDATER to preserve user intent
-    // We need to overwrite even if it exists, to ensure the migration is complete
+    // 始终设置 DISABLE_AUTOUPDATER 以保留用户意图
+    // 即使已存在也需要覆盖，以确保迁移完成
     updateSettingsForSource('userSettings', {
       ...userSettings,
       env: {
@@ -40,10 +40,10 @@ export function migrateAutoUpdatesToSettings(): void {
       already_had_env_var: !!userSettings.env?.DISABLE_AUTOUPDATER,
     })
 
-    // explicitly set, so this takes effect immediately
+    // 明确设置，以便立即生效
     process.env.DISABLE_AUTOUPDATER = '1'
 
-    // Remove autoUpdates from global config after successful migration
+    // 迁移成功后从全局配置中移除 autoUpdates
     saveGlobalConfig(current => {
       const {
         autoUpdates: _,

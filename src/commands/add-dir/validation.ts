@@ -38,8 +38,8 @@ export async function validateDirectoryForWorkspace(
     }
   }
 
-  // resolve() strips the trailing slash expandPath can leave on absolute
-  // inputs, so /foo and /foo/ map to the same storage key (CC-33).
+  // resolve() 会去除 expandPath 在绝对路径上可能留下的尾部斜杠
+  // 输入，因此 /foo 和 /foo/ 会映射到相同的存储键 (CC-33)。
   const absolutePath = resolve(expandPath(directoryPath))
 
   // 检查路径是否存在且是目录（单个系统调用）

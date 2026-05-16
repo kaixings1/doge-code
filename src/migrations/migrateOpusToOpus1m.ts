@@ -10,16 +10,16 @@ import {
 } from '../utils/settings/settings.js'
 
 /**
- * Migrate users with 'opus' pinned in their settings to 'opus[1m]' when they
- * are eligible for the merged Opus 1M experience (Max/Team Premium on 1P).
+ * 将设置中固定为 'opus' 的用户迁移到 'opus[1m]'，前提是他们符合
+ * 合并后的 Opus 1M 体验条件（第一方 Max/Team Premium 用户）。
  *
- * CLI invocations with --model opus are unaffected: that flag is a runtime
- * override and does not touch userSettings, so it continues to use plain Opus.
+ * 使用 --model opus 的 CLI 调用不受影响：该标志是运行时覆盖，
+ * 不会修改 userSettings，因此仍使用普通 Opus。
  *
- * Pro subscribers are skipped — they retain separate Opus and Opus 1M options.
- * 3P users are skipped — their model strings are full model IDs, not aliases.
+ * Pro 订阅者被跳过——他们保留独立的 Opus 和 Opus 1M 选项。
+ * 第三方用户被跳过——他们的模型字符串是完整模型 ID，而非别名。
  *
- * Idempotent: only writes if userSettings.model is exactly 'opus'.
+ * 幂等：仅在 userSettings.model 恰好为 'opus' 时写入。
  */
 export function migrateOpusToOpus1m(): void {
   if (!isOpus1mMergeEnabled()) {

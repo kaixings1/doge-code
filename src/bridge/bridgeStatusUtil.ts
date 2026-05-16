@@ -113,10 +113,10 @@ export function computeShimmerSegments(
 /** Computed bridge status label and color from connection state. */
 export type BridgeStatusInfo = {
   label:
-    | 'Remote Control failed'
-    | 'Remote Control 重新连接中'
-    | 'Remote Control active'
-    | 'Remote Control connecting\u2026'
+    | '远程控制失败'
+    | '远程控制重新连接中'
+    | '远程控制活跃'
+    | '远程控制连接中…'
   color: 'error' | 'warning' | 'success'
 }
 
@@ -142,7 +142,7 @@ export function getBridgeStatus({
 
 /** Footer text shown when bridge is idle (Ready state). */
 export function buildIdleFooterText(url: string): string {
-  return `Code everywhere with the Claude app or ${url}`
+  return `在 Claude 应用中或通过 ${url} 随处编码`
 }
 
 /** Footer text shown when a session is active (Connected state). */

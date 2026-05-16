@@ -1,8 +1,8 @@
-// Stub for external builds — the real hook is internal only.
-//
-// Self-contained: no relative imports. Typecheck sees this file at
-// scripts/external-stubs/src/moreright/ before overlay, where ../types/
-// would resolve to scripts/external-stubs/src/types/ (doesn't exist).
+// 外部构建的桩代码——真正的 hook 仅在内部使用。
+// 分隔符
+// 自包含：无相对导入。类型检查器在 overlay 之前看到此文件位于
+// scripts/external-stubs/src/moreright/ 下，而 ../types/
+// 会解析到 scripts/external-stubs/src/types/（不存在）。
 
  
 type M = any;

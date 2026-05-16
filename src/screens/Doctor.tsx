@@ -80,7 +80,7 @@ function DistTagsDisplay(t0) {
   }
   let t2;
   if ($[3] !== distTags.latest) {
-    t2 = <Text>└ Latest version: {distTags.latest}</Text>;
+    t2 = <Text>└ 最新版本: {distTags.latest}</Text>;
     $[3] = distTags.latest;
     $[4] = t2;
   } else {
@@ -256,7 +256,7 @@ export function Doctor(t0) {
   if (!diagnostic) {
     let t10;
     if ($[16] === Symbol.for("react.memo_cache_sentinel")) {
-      t10 = <Pane><Text dimColor={true}>Checking installation status…</Text></Pane>;
+      t10 = <Pane><Text dimColor={true}>正在检查安装状态…</Text></Pane>;
       $[16] = t10;
     } else {
       t10 = $[16];
@@ -265,14 +265,14 @@ export function Doctor(t0) {
   }
   let t10;
   if ($[17] === Symbol.for("react.memo_cache_sentinel")) {
-    t10 = <Text bold={true}>Diagnostics</Text>;
+    t10 = <Text bold={true}>诊断</Text>;
     $[17] = t10;
   } else {
     t10 = $[17];
   }
   let t11;
   if ($[18] !== diagnostic.installationType || $[19] !== diagnostic.version) {
-    t11 = <Text>└ Currently running: {diagnostic.installationType} ({diagnostic.version})</Text>;
+    t11 = <Text>└ 当前运行: {diagnostic.installationType} ({diagnostic.version})</Text>;
     $[18] = diagnostic.installationType;
     $[19] = diagnostic.version;
     $[20] = t11;
@@ -281,7 +281,7 @@ export function Doctor(t0) {
   }
   let t12;
   if ($[21] !== diagnostic.packageManager) {
-    t12 = diagnostic.packageManager && <Text>└ Package manager: {diagnostic.packageManager}</Text>;
+    t12 = diagnostic.packageManager && <Text>└ 包管理器: {diagnostic.packageManager}</Text>;
     $[21] = diagnostic.packageManager;
     $[22] = t12;
   } else {
@@ -315,7 +315,7 @@ export function Doctor(t0) {
   const t17 = diagnostic.ripgrepStatus.mode === "embedded" ? "内置" : diagnostic.ripgrepStatus.mode === "builtin" ? "供应商" : diagnostic.ripgrepStatus.systemPath || "系统";
   let t18;
   if ($[29] !== t16 || $[30] !== t17) {
-    t18 = <Text>└ Search: {t16} ({t17})</Text>;
+    t18 = <Text>└ 搜索: {t16} ({t17})</Text>;
     $[29] = t16;
     $[30] = t17;
     $[31] = t18;
@@ -373,7 +373,7 @@ export function Doctor(t0) {
   }
   let t24;
   if ($[51] === Symbol.for("react.memo_cache_sentinel")) {
-    t24 = <Text bold={true}>Updates</Text>;
+    t24 = <Text bold={true}>更新</Text>;
     $[51] = t24;
   } else {
     t24 = $[51];
@@ -525,7 +525,7 @@ function _temp11(validation, i_1) {
   return <Text key={i_1}>└ {validation.name}:{" "}<Text color={validation.status === "capped" ? "warning" : "error"}>{validation.message}</Text></Text>;
 }
 function _temp10(warning, i_0) {
-  return <Box key={i_0} flexDirection="column"><Text color="warning">Warning: {warning.issue}</Text><Text>Fix: {warning.fix}</Text></Box>;
+  return <Box key={i_0} flexDirection="column"><Text color="warning">警告：{warning.issue}</Text><Text>修复：{warning.fix}</Text></Box>;
 }
 function _temp1(install, i) {
   return <Text key={i}>└ {install.type} at {install.path}</Text>;

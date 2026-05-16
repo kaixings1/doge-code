@@ -1,13 +1,13 @@
 import { quote } from './shellQuote.js'
 
 /**
- * Detects if a command contains a heredoc pattern
- * Matches patterns like: <<EOF, <<'EOF', <<"EOF", <<-EOF, <<-'EOF', <<\EOF, etc.
+ * 检测命令是否包含 heredoc 模式
+ * 匹配模式如：<<EOF, <<'EOF', <<"EOF", <<-EOF, <<-'EOF', <<\EOF 等
  */
 function containsHeredoc(command: string): boolean {
-  // Match heredoc patterns: << followed by optional -, then optional quotes or backslash, then word
-  // Matches: <<EOF, <<'EOF', <<"EOF", <<-EOF, <<-'EOF', <<\EOF
-  // Check for bit-shift operators first and exclude them
+  // 匹配 heredoc 模式：<< 后跟可选的 -，然后是可选的引号或反斜杠，然后是单词
+  // 匹配：<<EOF, <<'EOF', <<"EOF", <<-EOF, <<-'EOF', <<\EOF
+  // 首先检查位移操作符并排除它们
   if (
     /\d\s*<<\s*\d/.test(command) ||
     /\[\[\s*\d+\s*<<\s*\d+\s*\]\]/.test(command) ||
@@ -16,19 +16,19 @@ function containsHeredoc(command: string): boolean {
     return false
   }
 
-  // Now check for heredoc patterns
+  // 现在检查 heredoc 模式
   const heredocRegex = /<<-?\s*(?:(['"]?)(\w+)\1|\\(\w+))/
   return heredocRegex.test(command)
 }
 
 /**
- * Detects if a command contains multiline strings in quotes
+ * 检测命令是否包含引号内的多行字符串
  */
 function containsMultilineString(command: string): boolean {
-  // Check for strings with actual newlines in them
-  // Handle escaped quotes by using a more sophisticated pattern
-  // Match single quotes: '...\n...' where content can include escaped quotes \'
-  // Match double quotes: "...\n..." where content can include escaped quotes \"
+  // 检查包含实际换行符的字符串
+  // 使用更复杂的模式处理转义引号
+  // 匹配单引号：'...\n...' 其中内容可包含转义引号 \'
+  // 匹配双引号："...\n..." 其中内容可包含转义引号 \"
   const singleQuoteMultiline = /'(?:[^'\\]|\\.)*\n(?:[^'\\]|\\.)*'/
   const doubleQuoteMultiline = /"(?:[^"\\]|\\.)*\n(?:[^"\\]|\\.)*"/
 
@@ -38,34 +38,34 @@ function containsMultilineString(command: string): boolean {
 }
 
 /**
- * Quotes a shell command appropriately, preserving heredocs and multiline strings
- * @param command The command to quote
- * @param addStdinRedirect Whether to add < /dev/null
- * @returns The properly quoted command
+ * 适当地引用 shell 命令，保留 heredoc 和多行字符串
+ * @param command 要引用的命令
+ * @param addStdinRedirect 是否添加 < /dev/null
+ * @returns 正确引用的命令
  */
 export function quoteShellCommand(
   command: string,
   addStdinRedirect: boolean = true,
 ): string {
-  // If command contains heredoc or multiline strings, handle specially
-  // The shell-quote library incorrectly escapes ! to \! in these cases
+  // 如果命令包含 heredoc 或多行字符串，特殊处理
+  // shell-quote 库在这些情况下错误地将 ! 转义为 \!
   if (containsHeredoc(command) || containsMultilineString(command)) {
-    // For heredocs and multiline strings, we need to quote for eval
-    // but avoid shell-quote's aggressive escaping
-    // We'll use single quotes and escape only single quotes in the command
+    // 对于 heredoc 和多行字符串，我们需要为 eval 引用
+    // 但避免 shell-quote 的激进转义
+    // 我们将使用单引号并仅转义命令中的单引号
     const escaped = command.replace(/'/g, "'\"'\"'")
     const quoted = `'${escaped}'`
 
-    // Don't add stdin redirect for heredocs as they provide their own input
+    // 不为 heredoc 添加 stdin 重定向，因为它们提供自己的输入
     if (containsHeredoc(command)) {
       return quoted
     }
 
-    // For multiline strings without heredocs, add stdin redirect if needed
+    // 对于没有 heredoc 的多行字符串，根据需要添加 stdin 重定向
     return addStdinRedirect ? `${quoted} < /dev/null` : quoted
   }
 
-  // For regular commands, use shell-quote
+  // 对于常规命令，使用 shell-quote
   if (addStdinRedirect) {
     return quote([command, '<', '/dev/null'])
   }

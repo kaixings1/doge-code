@@ -15,35 +15,35 @@ type BridgeApiDeps = {
   runnerVersion: string
   onDebug?: (msg: string) => void
   /**
-   * Called on 401 to attempt OAuth token refresh. Returns true if refreshed,
-   * in which case the request is retried once. Injected because
-   * handleOAuth401Error from utils/auth.ts transitively pulls in config.ts →
+   * 收到 401 时调用以尝试刷新 OAuth 令牌。返回 true 表示已刷新，
+   * 此时会重试一次请求。注入是因为
+   * utils/auth.ts 中的 handleOAuth401Error 会传递引入 config.ts →
    * file.ts → permissions/filesystem.ts → sessionStorage.ts → commands.ts
-   * (~1300 modules). Daemon callers using env-var tokens omit this — their
-   * tokens don't refresh, so 401 goes straight to BridgeFatalError.
+   *（约 1300 个模块）。使用环境变量令牌的守护进程调用者省略此参数 —
+   * 他们的令牌不会刷新，因此 401 直接进入 BridgeFatalError。
    */
   onAuth401?: (staleAccessToken: string) => Promise<boolean>
   /**
-   * Returns the trusted device token to send as X-Trusted-Device-Token on
-   * bridge API calls. Bridge sessions have SecurityTier=ELEVATED on the
-   * server (CCR v2); when the server's enforcement flag is on,
-   * ConnectBridgeWorker requires a trusted device at JWT-issuance.
-   * Optional — when absent or returning undefined, the header is omitted
-   * and the server falls through to its flag-off/no-op path. The CLI-side
-   * gate is tengu_sessions_elevated_auth_enforcement (see trustedDevice.ts).
+   * 返回要在桥接器 API 调用上作为 X-Trusted-Device-Token 发送的受信任设备令牌。
+   * 桥接器会话在服务器上具有 SecurityTier=ELEVATED（CCR v2）；
+   * 当服务器的强制执行标志开启时，
+   * ConnectBridgeWorker 在 JWT 签发时需要受信任设备。
+   * 可选 — 当不存在或返回 undefined 时，省略该标头
+   * 并且服务器回退到其 flag-off/no-op 路径。CLI 端
+   * 的门控是 tengu_sessions_elevated_auth_enforcement（参见 trustedDevice.ts）。
    */
   getTrustedDeviceToken?: () => string | undefined
 }
 
 const BETA_HEADER = 'environments-2025-11-01'
 
-/** Allowlist pattern for server-provided IDs used in URL path segments. */
+/** 服务器提供的 ID 在白名单中的模式，用于 URL 路径段。 */
 const SAFE_ID_PATTERN = /^[a-zA-Z0-9_-]+$/
 
 /**
- * Validate that a server-provided ID is safe to interpolate into a URL path.
- * Prevents path traversal (e.g. `../../admin`) and injection via IDs that
- * contain slashes, dots, or other special characters.
+ * 验证服务器提供的 ID 是否可以安全地插入到 URL 路径中。
+ * 防止路径遍历（例如 `../../admin`）以及包含斜杠、
+ * 点或其他特殊字符的 ID 注入。
  */
 export function validateBridgeId(id: string, label: string): string {
   if (!id || !SAFE_ID_PATTERN.test(id)) {
@@ -52,7 +52,7 @@ export function validateBridgeId(id: string, label: string): string {
   return id
 }
 
-/** Fatal bridge errors that should not be retried (e.g. auth failures). */
+/** 不应重试的致命桥接器错误（例如认证失败）。 */
 export class BridgeFatalError extends Error {
   readonly status: number
   /** 服务器提供的错误类型，例如 "environment_expired"。 */
@@ -97,11 +97,11 @@ export function createBridgeApiClient(deps: BridgeApiDeps): BridgeApiClient {
   }
 
   /**
-   * Execute an OAuth-authenticated request with a single retry on 401.
-   * On 401, attempts token refresh via handleOAuth401Error (same pattern as
-   * withRetry.ts for v1/messages). If refresh succeeds, retries the request
-   * once with the new token. If refresh fails or the retry also returns 401,
-   * the 401 response is returned for handleErrorStatus to throw BridgeFatalError.
+   * 执行 OAuth 认证的请求，在 401 时重试一次。
+   * 收到 401 时，通过 handleOAuth401Error 尝试令牌刷新（与
+   * withRetry.ts 中 v1/messages 的模式相同）。如果刷新成功，使用新令牌
+   * 重试一次请求。如果刷新失败或重试也返回 401，
+   * 则返回 401 响应以供 handleErrorStatus 抛出 BridgeFatalError。
    */
   async function withOAuthRetry<T>(
     fn: (accessToken: string) => Promise<{ status: number; data: T }>,
@@ -339,7 +339,7 @@ export function createBridgeApiClient(deps: BridgeApiDeps): BridgeApiClient {
         'ArchiveSession',
       )
 
-      // 409 = already archived (idempotent, not an error)
+      // 409 = 已归档（幂等操作，不是错误）
       if (response.status === 409) {
         debug(
           `[bridge:api] POST /v1/sessions/${sessionId}/archive -> 409 (already archived)`,
@@ -477,14 +477,14 @@ function handleErrorStatus(
     case 404:
       throw new BridgeFatalError(
         detail ??
-          `${context}: Not found (404). Remote Control may not be available for this organization.`,
+          `${context}：未找到 (404)。远程控制可能不适用于此组织。`,
         404,
         errorType,
       )
     case 410:
       throw new BridgeFatalError(
         detail ??
-          'Remote Control session has expired. Please restart with `claude remote-control` or /remote-control.',
+          '远程控制会话已过期。请使用 `claude remote-control` 或 /remote-control 重新启动。',
         410,
         errorType ?? 'environment_expired',
       )
@@ -497,7 +497,7 @@ function handleErrorStatus(
   }
 }
 
-/** Check whether an error type string indicates a session/environment expiry. */
+/** 检查错误类型字符串是否表示会话/环境已过期。 */
 export function isExpiredErrorType(errorType: string | undefined): boolean {
   if (!errorType) {
     return false
@@ -506,10 +506,10 @@ export function isExpiredErrorType(errorType: string | undefined): boolean {
 }
 
 /**
- * Check whether a BridgeFatalError is a suppressible 403 permission error.
- * These are 403 errors for scopes like 'external_poll_sessions' or operations
- * like StopWork that fail because the user's role lacks 'environments:manage'.
- * They don't affect core functionality and shouldn't be shown to users.
+ * 检查 BridgeFatalError 是否是可抑制的 403 权限错误。
+ * 这些是针对 'external_poll_sessions' 等范围或 StopWork 等操作的 403 错误，
+ * 因用户的角色缺少 'environments:manage' 而失败。
+ * 它们不影响核心功能，不应向用户显示。
  */
 export function isSuppressible403(err: BridgeFatalError): boolean {
   if (err.status !== 403) {

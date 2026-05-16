@@ -54,13 +54,11 @@ export function getNativeCSIuTerminalDisplayName(): string | null {
 /**
  * Format a file path as a clickable hyperlink.
  *
- * Paths containing spaces (e.g., "Application Support") are not clickable
- * in most terminals - they get split at the space. OSC 8 hyperlinks solve
- * this by embedding a file:// URL that the terminal can open on click,
- * while displaying the clean path to the user.
+ * 路径中包含空格的（如 "Application Support"）在大多数终端中无法点击
+ * ——它们会在空格处被分割。OSC 8 超链接通过嵌入 file:// URL 解决了这个问题，
+ * 通过嵌入 file:// URL 让终端在点击时打开，同时向用户显示整洁的路径。
  *
- * Unlike createHyperlink(), this doesn't apply any color styling so the
- * path inherits the parent's styling (e.g., chalk.dim).
+ * 与 createHyperlink() 不同，这不会应用任何颜色样式，因此路径会继承父元素的样式（例如 chalk.dim）。
  */
 function formatPathLink(filePath: string): string {
   if (!supportsHyperlinks()) {

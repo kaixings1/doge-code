@@ -1,7 +1,7 @@
 /**
- * Memory-directory scanning primitives. Split out of findRelevantMemories.ts
- * so extractMemories can import the scan without pulling in sideQuery and
- * the API-client chain (which closed a cycle through memdir.ts — #25372).
+ * 记忆目录扫描原语。从 findRelevantMemories.ts 中拆分出来，
+ * 以便 extractMemories 可以导入扫描函数而无需引入 sideQuery 和
+ * API 客户端链（这曾通过 memdir.ts 形成循环 — #25372）。
  */
 
 import { readdir } from 'fs/promises'
@@ -22,15 +22,15 @@ const MAX_MEMORY_FILES = 200
 const FRONTMATTER_MAX_LINES = 30
 
 /**
- * Scan a memory directory for .md files, read their frontmatter, and return
- * a header list sorted newest-first (capped at MAX_MEMORY_FILES). Shared by
- * findRelevantMemories (query-time recall) and extractMemories (pre-injects
- * the listing so the extraction agent doesn't spend a turn on `ls`).
+ * 扫描记忆目录中的 .md 文件，读取它们的前置元数据，并返回
+ * 按最新优先排序的头部列表（上限为 MAX_MEMORY_FILES）。
+ * 由 findRelevantMemories（查询时召回）和 extractMemories（预注入
+ * 列表，使提取代理无需花费一轮在 `ls` 上）共享。
  *
- * Single-pass: readFileInRange stats internally and returns mtimeMs, so we
- * read-then-sort rather than stat-sort-read. For the common case (N ≤ 200)
- * this halves syscalls vs a separate stat round; for large N we read a few
- * extra small files but still avoid the double-stat on the surviving 200.
+ * 单遍扫描：readFileInRange 内部进行 stat 并返回 mtimeMs，因此我们
+ * 采用"先读后排序"而非"先 stat 再排序再读"。对于常见情况（N ≤ 200），
+ * 与分开的 stat 轮次相比，这减少了一半的系统调用；对于大 N，我们
+ * 会多读几个小文件，但仍避免了在最终的 200 个文件上进行双重 stat。
  */
 export async function scanMemoryFiles(
   memoryDir: string,
@@ -77,9 +77,9 @@ export async function scanMemoryFiles(
 }
 
 /**
- * Format memory headers as a text manifest: one line per file with
- * [type] filename (timestamp): description. Used by both the recall
- * selector prompt and the extraction-agent prompt.
+ * 将记忆头部格式化为文本清单：每行一个文件，格式为
+ * [type] filename (timestamp): description。由召回选择器提示词
+ * 和提取代理提示词共同使用。
  */
 export function formatMemoryManifest(memories: MemoryHeader[]): string {
   return memories

@@ -12,16 +12,15 @@ import type { AgentDefinition } from './loadAgentsDir.js'
 
 export function areExplorePlanAgentsEnabled(): boolean {
   if (feature('BUILTIN_EXPLORE_PLAN_AGENTS')) {
-    // 3P default: true — Bedrock/Vertex keep agents enabled (matches pre-experiment
-    // external behavior). A/B test treatment sets false to measure impact of removal.
+    // 第三方默认值: true — Bedrock/Vertex 保持代理启用（匹配实验前的外部行为）。A/B 测试实验组设为 false 以衡量移除的影响。
     return getFeatureValue_CACHED_MAY_BE_STALE('tengu_amber_stoat', true)
   }
   return false
 }
 
 export function getBuiltInAgents(): AgentDefinition[] {
-  // Allow disabling all built-in agents via env var (useful for SDK users who want a blank slate)
-  // Only applies in noninteractive mode (SDK/API usage)
+  // 允许通过环境变量禁用所有内置代理（适用于希望白手起家的 SDK 用户）
+  // 仅在非交互模式下生效（SDK/API 使用场景）
   if (
     isEnvTruthy(process.env.CLAUDE_AGENT_SDK_DISABLE_BUILTIN_AGENTS) &&
     getIsNonInteractiveSession()
@@ -29,9 +28,8 @@ export function getBuiltInAgents(): AgentDefinition[] {
     return []
   }
 
-  // Use lazy require inside the function body to avoid circular dependency
-  // issues at module init time. The coordinatorMode module depends on tools
-  // which depend on AgentTool which imports this file.
+  // 在函数体内使用懒加载 require 以避免模块初始化时的循环依赖问题。
+  // coordinatorMode 模块依赖 tools，tools 依赖 AgentTool，AgentTool 又导入此文件。
   if (feature('COORDINATOR_MODE')) {
     if (isEnvTruthy(process.env.CLAUDE_CODE_COORDINATOR_MODE)) {
        
@@ -51,7 +49,7 @@ export function getBuiltInAgents(): AgentDefinition[] {
     agents.push(EXPLORE_AGENT, PLAN_AGENT)
   }
 
-  // Include Code Guide agent for non-SDK entrypoints
+  // 为非 SDK 入口点包含 Code Guide 代理
   const isNonSdkEntrypoint =
     process.env.CLAUDE_CODE_ENTRYPOINT !== 'sdk-ts' &&
     process.env.CLAUDE_CODE_ENTRYPOINT !== 'sdk-py' &&

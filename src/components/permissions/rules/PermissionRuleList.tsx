@@ -388,9 +388,9 @@ function PermissionRulesTab(t0) {
     let t8;
     if ($[10] === Symbol.for("react.memo_cache_sentinel")) {
       t8 = {
-        allow: "Claude Code won't ask before using allowed tools.",
-        ask: "Claude Code will always ask for confirmation before using these tools.",
-        deny: "Claude Code will always reject requests to use denied tools."
+        allow: "Claude Code 在使用允许的工具前不会询问。",
+        ask: "Claude Code 在使用这些工具前将始终请求确认。",
+        deny: "Claude Code 将始终拒绝使用被拒绝工具的请求。"
       };
       $[10] = t8;
     } else {

@@ -1,7 +1,7 @@
 /**
- * Vim Text Object Finding
+ * Vim 文本对象查找
  *
- * Functions for finding text object boundaries (iw, aw, i", a(, etc.)
+ * 用于查找文本对象边界的函数（iw、aw、i"、a( 等）
  */
 
 import {
@@ -14,7 +14,7 @@ import { getGraphemeSegmenter } from '../utils/intl.js'
 export type TextObjectRange = { start: number; end: number } | null
 
 /**
- * Delimiter pairs for text objects.
+ * 文本对象的分隔符对。
  */
 const PAIRS: Record<string, [string, string]> = {
   '(': ['(', ')'],
@@ -33,7 +33,7 @@ const PAIRS: Record<string, [string, string]> = {
 }
 
 /**
- * Find a text object at the given position.
+ * 查找给定位置的文本对象。
  */
 export function findTextObject(
   text: string,
@@ -57,19 +57,22 @@ export function findTextObject(
   return null
 }
 
+/**
+ * 查找单词对象。
+ */
 function findWordObject(
   text: string,
   offset: number,
   isInner: boolean,
   isWordChar: (ch: string) => boolean,
 ): TextObjectRange {
-  // Pre-segment into graphemes for grapheme-safe iteration
+  // 预先分割为字素，以便安全迭代
   const graphemes: Array<{ segment: string; index: number }> = []
   for (const { segment, index } of getGraphemeSegmenter().segment(text)) {
     graphemes.push({ segment, index })
   }
 
-  // Find which grapheme index the offset falls in
+  // 查找偏移量落在哪个字素索引处
   let graphemeIdx = graphemes.length - 1
   for (let i = 0; i < graphemes.length; i++) {
     const g = graphemes[i]!
@@ -104,7 +107,7 @@ function findWordObject(
   }
 
   if (!isInner) {
-    // Include surrounding whitespace
+    // 包含周围空白字符
     if (endIdx < graphemes.length && isWs(endIdx)) {
       while (endIdx < graphemes.length && isWs(endIdx)) endIdx++
     } else if (startIdx > 0 && isWs(startIdx - 1)) {
@@ -115,6 +118,9 @@ function findWordObject(
   return { start: offsetAt(startIdx), end: offsetAt(endIdx) }
 }
 
+/**
+ * 查找引号对象。
+ */
 function findQuoteObject(
   text: string,
   offset: number,
@@ -132,7 +138,7 @@ function findQuoteObject(
     if (line[i] === quote) positions.push(i)
   }
 
-  // Pair quotes correctly: 0-1, 2-3, 4-5, etc.
+  // 正确配对引号：0-1, 2-3, 4-5 等
   for (let i = 0; i < positions.length - 1; i += 2) {
     const qs = positions[i]!
     const qe = positions[i + 1]!
@@ -146,6 +152,9 @@ function findQuoteObject(
   return null
 }
 
+/**
+ * 查找括号对象。
+ */
 function findBracketObject(
   text: string,
   offset: number,

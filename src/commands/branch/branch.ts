@@ -98,10 +98,9 @@ async function createFork(customTitle?: string): Promise<{
   // 原始会话的 content-replacement 条目。这些记录哪些
   // tool_result 块被每个消息预算替换为预览。
   // 如果分支 JSONL 中没有它们，`claude -r {forkId}` 将重建状态
-  // 使用空的 replacements Map 话 'previously-replaced results 被分类
+  // 使用空的 replacements Map 时 'previously-replaced results 被分类
   // 为 FROZEN 并作为完整内容发送（提示缓存未命中 + 永久超出限制）。
-  // sessionId must be rewritten since loadTranscriptFile keys lookup by the
-  // session's messages' sessionId.
+  // sessionId 必须重写，因为 loadTranscriptFile 根据 session 的消息 sessionId 查找键。
   const contentReplacementRecords = entries
     .filter(
       (entry): entry is ContentReplacementEntry =>
@@ -147,7 +146,7 @@ async function createFork(customTitle?: string): Promise<{
 
   // 追加 content-replacement 条目（如果有），使用分支的 sessionId。
   // 写为单个条目（与 insertContentReplacement 相同形状）以便
-  // loadTranscriptFile's content-replacement branch picks it up.
+  // loadTranscriptFile 的 content-replacement 分支可以处理。
   if (contentReplacementRecords.length > 0) {
     const forkedReplacementEntry: ContentReplacementEntry = {
       type: 'content-replacement',
@@ -194,7 +193,7 @@ async function getUniqueForkName(baseName: string): Promise<string> {
   const existingForks = await searchSessionsByCustomTitle(`${baseName} (分支`)
 
   // 提取现有的分支数字以找到下一个可用的
-  const usedNumbers = new Set<number>([1]) // Consider " (Branch)" as number 1
+  const usedNumbers = new Set<number>([1]) // 将 " (分支)" 视为数字 1
   const forkNumberPattern = new RegExp(
     `^${escapeRegExp(baseName)} \\(Branch(?: (\\d+))?\\)$`,
   )
@@ -205,7 +204,7 @@ async function getUniqueForkName(baseName: string): Promise<string> {
       if (match[1]) {
         usedNumbers.add(parseInt(match[1], 10))
       } else {
-        usedNumbers.add(1) // " (Branch)" without number is treated as 1
+        usedNumbers.add(1) // " (分支)" 不带数字时视为编号 1
       }
     }
   }

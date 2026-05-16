@@ -227,7 +227,7 @@ export type ServerControlRequestHandlers = {
 }
 
 const OUTBOUND_ONLY_ERROR =
-  'This session is outbound-only. Enable Remote Control locally to allow inbound control.'
+  '此会话仅出站。请在本地启用远程控制以允许入站控制。'
 
 /**
  * Respond to inbound control_request messages from the server. The server

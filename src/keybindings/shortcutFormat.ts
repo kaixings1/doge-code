@@ -6,16 +6,15 @@ import { loadKeybindingsSync } from './loadUserBindings.js'
 import { getBindingDisplayText } from './resolver.js'
 import type { KeybindingContextName } from './types.js'
 
-// TODO(keybindings-migration): Remove fallback parameter after migration is
-// complete and we've confirmed no 'keybinding_fallback_used' events are being
-// logged. The fallback exists as a safety net during migration - if bindings
-// fail to load or an action isn't found, we fall back to hardcoded values.
-// Once stable, callers should be able to trust that getBindingDisplayText
-// always returns a value for known actions, and we can remove this defensive
-// pattern.
+// TODO(keybindings-migration): 迁移完成后移除 fallback 参数，
+// 并确认没有记录 'keybinding_fallback_used' 事件。
+// fallback 在迁移期间作为安全网存在——如果绑定加载失败
+// 或找不到操作，我们回退到硬编码值。
+// 一旦稳定，调用者应该能够信任 getBindingDisplayText
+// 总是为已知操作返回值，我们可以移除这种防御性模式。
 
-// Track which action+context pairs have already logged a fallback event
-// to avoid duplicate events from repeated calls in non-React contexts.
+// 跟踪哪些 action+context 对已记录回退事件，
+// 以避免在非 React 上下文中重复调用时产生重复事件。
 const LOGGED_FALLBACKS = new Set<string>()
 
 /**

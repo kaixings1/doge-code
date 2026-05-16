@@ -198,7 +198,7 @@ const fireCallback = (cb: (gb: GrowthBook) => void) => {
   try {
     cb && cb(gb);
   } catch (e) {
-    console.error("Uncaught growthbook_queue error", e);
+    console.error("未捕获的 growthbook_queue 错误", e);
   }
 };
 

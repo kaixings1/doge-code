@@ -6,15 +6,15 @@ import { getCommandSpec } from './registry.js'
 const NUMERIC = /^\d+$/
 const ENV_VAR = /^[A-Za-z_][A-Za-z0-9_]*=/
 
-// Wrapper commands with complex option handling that can't be expressed in specs
+// 具有复杂选项处理的包装命令，无法在 specs 中表达
 const WRAPPER_COMMANDS = new Set([
-  'nice', // command position varies based on options
+  'nice', // 命令位置根据选项而变化
 ])
 
 const toArray = <T>(val: T | T[]): T[] => (Array.isArray(val) ? val : [val])
 
-// Check if args[0] matches a known subcommand (disambiguates wrapper commands
-// that also have subcommands, e.g. the git spec has isCommand args for aliases).
+// 检查 args[0] 是否匹配已知的子命令（消除同时拥有子命令的包装命令歧义，
+// 例如 git spec 为别名设置了 isCommand 参数）。
 function isKnownSubcommand(
   arg: string,
   spec: { subcommands?: { name: string | string[] }[] } | null,
@@ -44,15 +44,15 @@ export async function getCommandPrefixStatic(
   const [cmd, ...args] = cmdArgs
   if (!cmd) return { commandPrefix: null }
 
-  // Check if this is a wrapper command by looking at its spec
+  // 通过查看 spec 检查是否为包装命令
   const spec = await getCommandSpec(cmd)
-  // Check if this is a wrapper command
+  // 检查是否为包装命令
   let isWrapper =
     WRAPPER_COMMANDS.has(cmd) ||
     (spec?.args && toArray(spec.args).some(arg => arg?.isCommand))
 
-  // Special case: if the command has subcommands and the first arg matches a subcommand,
-  // treat it as a regular command, not a wrapper
+  // 特殊情况：如果命令有子命令且第一个参数匹配子命令，
+  // 将其视为常规命令而非包装命令
   if (isWrapper && args[0] && isKnownSubcommand(args[0], spec)) {
     isWrapper = false
   }
@@ -121,16 +121,14 @@ async function handleWrapper(
 }
 
 /**
- * Computes prefixes for a compound command (with && / || / ;).
- * For single commands, returns a single-element array with the prefix.
+ * 计算复合命令的前缀（含 && / || / ;）。
+ * 对于单个命令，返回包含前缀的单元素数组。
  *
- * For compound commands, computes per-subcommand prefixes and collapses
- * them: subcommands sharing a root (first word) are collapsed via
- * word-aligned longest common prefix.
+ * 对于复合命令，计算每个子命令的前缀并合并：
+ * 共享根（第一个单词）的子命令通过单词对齐的最长公共前缀合并。
  *
- * @param excludeSubcommand — optional filter; return true for subcommands
- *   that should be excluded from the prefix suggestion (e.g. read-only
- *   commands that are already auto-allowed).
+ * @param excludeSubcommand — 可选过滤器；对应从前缀建议中排除的
+ *   子命令返回 true（例如已经自动允许的只读命令）。
  */
 export async function getCompoundCommandPrefixesStatic(
   command: string,
@@ -154,7 +152,7 @@ export async function getCompoundCommandPrefixesStatic(
 
   if (prefixes.length === 0) return []
 
-  // Group prefixes by their first word (root command)
+  // 按第一个单词（根命令）对前缀分组
   const groups = new Map<string, string[]>()
   for (const prefix of prefixes) {
     const root = prefix.split(' ')[0]!
@@ -166,7 +164,7 @@ export async function getCompoundCommandPrefixesStatic(
     }
   }
 
-  // Collapse each group via word-aligned LCP
+  // 通过单词对齐的 LCP 合并每组
   const collapsed: string[] = []
   for (const [, group] of groups) {
     collapsed.push(longestCommonPrefix(group))

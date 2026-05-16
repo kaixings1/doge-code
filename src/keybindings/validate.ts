@@ -11,7 +11,7 @@ import type {
 } from './types.js'
 
 /**
- * Types of validation issues that can occur with keybindings.
+ * 可能出现的按键绑定验证问题类型。
  */
 export type KeybindingWarningType =
   | 'parse_error'
@@ -21,7 +21,7 @@ export type KeybindingWarningType =
   | 'invalid_action'
 
 /**
- * A warning or error about a keybinding configuration issue.
+ * 关于按键绑定配置问题的警告或错误。
  */
 export type KeybindingWarning = {
   type: KeybindingWarningType
@@ -34,7 +34,7 @@ export type KeybindingWarning = {
 }
 
 /**
- * Type guard to check if an object is a valid KeybindingBlock.
+ * 类型守卫，检查对象是否为有效的 KeybindingBlock。
  */
 function isKeybindingBlock(obj: unknown): obj is KeybindingBlock {
   if (typeof obj !== 'object' || obj === null) return false
@@ -47,15 +47,15 @@ function isKeybindingBlock(obj: unknown): obj is KeybindingBlock {
 }
 
 /**
- * Type guard to check if an array contains only valid KeybindingBlocks.
+ * 类型守卫，检查数组是否只包含有效的 KeybindingBlocks。
  */
 function isKeybindingBlockArray(arr: unknown): arr is KeybindingBlock[] {
   return Array.isArray(arr) && arr.every(isKeybindingBlock)
 }
 
 /**
- * Valid context names for keybindings.
- * Must match KeybindingContextName in types.ts
+ * 按键绑定的有效上下文名称。
+ * 必须与 types.ts 中的 KeybindingContextName 匹配
  */
 const VALID_CONTEXTS: KeybindingContextName[] = [
   'Global',
@@ -79,14 +79,14 @@ const VALID_CONTEXTS: KeybindingContextName[] = [
 ]
 
 /**
- * Type guard to check if a string is a valid context name.
+ * 类型守卫，检查字符串是否为有效的上下文名称。
  */
 function isValidContext(value: string): value is KeybindingContextName {
   return (VALID_CONTEXTS as readonly string[]).includes(value)
 }
 
 /**
- * Validate a single keystroke string and return any parse errors.
+ * 验证单个按键字符串并返回任何解析错误。
  */
 function validateKeystroke(keystroke: string): KeybindingWarning | null {
   const parts = keystroke.toLowerCase().split('+')
@@ -104,7 +104,7 @@ function validateKeystroke(keystroke: string): KeybindingWarning | null {
     }
   }
 
-  // Try to parse and see if it fails
+  // 尝试解析并检查是否失败
   const parsed = parseKeystroke(keystroke)
   if (
     !parsed.key &&
@@ -125,7 +125,7 @@ function validateKeystroke(keystroke: string): KeybindingWarning | null {
 }
 
 /**
- * Validate a keybinding block from user config.
+ * 验证来自用户配置的按键绑定块。
  */
 function validateBlock(
   block: unknown,
@@ -144,7 +144,7 @@ function validateBlock(
 
   const b = block as Record<string, unknown>
 
-  // Validate context - extract to narrowed variable for type safety
+  // 验证上下文——提取到缩小类型变量以确保类型安全
   const rawContext = b.context
   let contextName: string | undefined
   if (typeof rawContext !== 'string') {
@@ -165,7 +165,7 @@ function validateBlock(
     contextName = rawContext
   }
 
-  // Validate bindings
+  // 验证绑定
   if (typeof b.bindings !== 'object' || b.bindings === null) {
     warnings.push({
       type: 'parse_error',
@@ -177,14 +177,14 @@ function validateBlock(
 
   const bindings = b.bindings as Record<string, unknown>
   for (const [key, action] of Object.entries(bindings)) {
-    // Validate key syntax
+    // 验证按键语法
     const keyError = validateKeystroke(key)
     if (keyError) {
       keyError.context = contextName
       warnings.push(keyError)
     }
 
-    // Validate action
+    // 验证操作
     if (action !== null && typeof action !== 'string') {
       warnings.push({
         type: 'invalid_action',
@@ -194,7 +194,7 @@ function validateBlock(
         context: contextName,
       })
     } else if (typeof action === 'string' && action.startsWith('command:')) {
-      // Validate command binding format
+      // 验证命令绑定格式
       if (!/^command:[a-zA-Z0-9:\-_]+$/.test(action)) {
         warnings.push({
           type: 'invalid_action',
@@ -205,7 +205,7 @@ function validateBlock(
           action,
         })
       }
-      // Command bindings must be in Chat context
+      // 命令绑定必须在 Chat 上下文中
       if (contextName && contextName !== 'Chat') {
         warnings.push({
           type: 'invalid_action',
@@ -218,9 +218,9 @@ function validateBlock(
         })
       }
     } else if (action === 'voice:pushToTalk') {
-      // Hold detection needs OS auto-repeat. Bare letters print into the
-      // input during warmup and the activation strip is best-effort —
-      // space (default) or a modifier combo like meta+k avoid that.
+      // 按住检测需要操作系统自动重复。裸字母在预热期间会
+      // 输入到输入框中，激活条带是尽力而为的——
+      // 空格键（默认）或 meta+k 这样的修饰组合键可以避免这个问题。
       const ks = parseChord(key)[0]
       if (
         ks &&
@@ -247,21 +247,21 @@ function validateBlock(
 }
 
 /**
- * Detect duplicate keys within the same bindings block in a JSON string.
- * JSON.parse silently uses the last value for duplicate keys,
- * so we need to check the raw string to warn users.
+ * 检测 JSON 字符串中同一绑定块内的重复键。
+ * JSON.parse 静默使用重复键的最后一个值，
+ * 因此我们需要检查原始字符串以警告用户。
  *
- * Only warns about duplicates within the same context's bindings object.
- * Duplicates across different contexts are allowed (e.g., "enter" in Chat
- * and "enter" in Confirmation).
+ * 仅警告同一上下文的 bindings 对象内的重复键。
+ * 不同上下文间的重复键是允许的（例如 Chat 中的 "enter"
+ * 和 Confirmation 中的 "enter"）。
  */
 export function checkDuplicateKeysInJson(
   jsonString: string,
 ): KeybindingWarning[] {
   const warnings: KeybindingWarning[] = []
 
-  // Find each "bindings" block and check for duplicates within it
-  // Pattern: "bindings" : { ... }
+  // 查找每个 "bindings" 块并检查其中的重复项
+  // 模式："bindings" : { ... }
   const bindingsBlockPattern =
     /"bindings"\s*:\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g
 
@@ -270,14 +270,14 @@ export function checkDuplicateKeysInJson(
     const blockContent = blockMatch[1]
     if (!blockContent) continue
 
-    // Find the context for this block by looking backwards
+    // 通过回退查找找到此块的上下文
     const textBeforeBlock = jsonString.slice(0, blockMatch.index)
     const contextMatch = textBeforeBlock.match(
       /"context"\s*:\s*"([^"]+)"[^{]*$/,
     )
     const context = contextMatch?.[1] ?? 'unknown'
 
-    // Find all keys within this bindings block
+    // 在此绑定块内查找所有键
     const keyPattern = /"([^"]+)"\s*:/g
     const keysByName = new Map<string, number>()
 
@@ -290,7 +290,7 @@ export function checkDuplicateKeysInJson(
       keysByName.set(key, count)
 
       if (count === 2) {
-        // Only warn on the second occurrence
+        // 仅在第二次出现时警告
         warnings.push({
           type: 'duplicate',
           severity: 'warning',
@@ -307,7 +307,7 @@ export function checkDuplicateKeysInJson(
 }
 
 /**
- * Validate user keybinding config and return all warnings.
+ * 验证用户按键绑定配置并返回所有警告。
  */
 export function validateUserConfig(userBlocks: unknown): KeybindingWarning[] {
   const warnings: KeybindingWarning[] = []
@@ -330,8 +330,8 @@ export function validateUserConfig(userBlocks: unknown): KeybindingWarning[] {
 }
 
 /**
- * Check for duplicate bindings within the same context.
- * Only checks user bindings (not default + user merged).
+ * 检查同一上下文中的重复绑定。
+ * 仅检查用户绑定（不是默认 + 用户合并）。
  */
 export function checkDuplicates(
   blocks: KeybindingBlock[],
@@ -368,7 +368,7 @@ export function checkDuplicates(
 }
 
 /**
- * Check for reserved shortcuts that may not work.
+ * 检查可能无法使用的保留快捷键。
  */
 export function checkReservedShortcuts(
   bindings: ParsedBinding[],
@@ -380,7 +380,7 @@ export function checkReservedShortcuts(
     const keyDisplay = chordToString(binding.chord)
     const normalizedKey = normalizeKeyForComparison(keyDisplay)
 
-    // Check against reserved shortcuts
+    // 对照保留快捷键进行检查
     for (const res of reserved) {
       if (normalizeKeyForComparison(res.key) === normalizedKey) {
         warnings.push({
@@ -399,8 +399,8 @@ export function checkReservedShortcuts(
 }
 
 /**
- * Parse user blocks into bindings for validation.
- * This is separate from the main parser to avoid importing it.
+ * 将用户块解析为绑定以进行验证。
+ * 这与主解析器分开以避免导入它。
  */
 function getUserBindingsForValidation(
   userBlocks: KeybindingBlock[],
@@ -420,7 +420,7 @@ function getUserBindingsForValidation(
 }
 
 /**
- * Run all validations and return combined warnings.
+ * 运行所有验证并返回合并的警告。
  */
 export function validateBindings(
   userBlocks: unknown,
@@ -428,19 +428,19 @@ export function validateBindings(
 ): KeybindingWarning[] {
   const warnings: KeybindingWarning[] = []
 
-  // Validate user config structure
+  // 验证用户配置结构
   warnings.push(...validateUserConfig(userBlocks))
 
-  // Check for duplicates in user config
+  // 检查用户配置中的重复项
   if (isKeybindingBlockArray(userBlocks)) {
     warnings.push(...checkDuplicates(userBlocks))
 
-    // Check for reserved/conflicting shortcuts - only check USER bindings
+    // 检查保留/冲突的快捷键——仅检查用户绑定
     const userBindings = getUserBindingsForValidation(userBlocks)
     warnings.push(...checkReservedShortcuts(userBindings))
   }
 
-  // Deduplicate warnings (same key+context+type)
+  // 去重警告（相同的键+上下文+类型）
   const seen = new Set<string>()
   return warnings.filter(w => {
     const key = `${w.type}:${w.key}:${w.context}`
@@ -451,7 +451,7 @@ export function validateBindings(
 }
 
 /**
- * Format a warning for display to the user.
+ * 格式化警告以供用户查看。
  */
 export function formatWarning(warning: KeybindingWarning): string {
   const icon = warning.severity === 'error' ? '✗' : '⚠'
@@ -465,7 +465,7 @@ export function formatWarning(warning: KeybindingWarning): string {
 }
 
 /**
- * Format multiple warnings for display.
+ * 格式化多个警告以供显示。
  */
 export function formatWarnings(warnings: KeybindingWarning[]): string {
   if (warnings.length === 0) return ''

@@ -1,10 +1,10 @@
 /**
- * Thin HTTP wrappers for the CCR v2 code-session API.
+ * CCR v2 code-session API 的轻量 HTTP 封装。
  *
- * Separate file from remoteBridgeCore.ts so the SDK /bridge subpath can
- * export createCodeSession + fetchRemoteCredentials without bundling the
- * heavy CLI tree (analytics, transport, etc.). Callers supply explicit
- * accessToken + baseUrl — no implicit auth or config reads.
+ * 与 remoteBridgeCore.ts 分离，以便 SDK /bridge 子路径可以导出
+ * createCodeSession + fetchRemoteCredentials，而无需打包
+ * 沉重的 CLI 树（analytics、transport 等）。调用者显式提供
+ * accessToken + baseUrl — 无隐式认证或配置读取。
  */
 
 import axios from 'axios'
@@ -35,9 +35,9 @@ export async function createCodeSession(
   try {
     response = await axios.post(
       url,
-      // bridge: {} is the positive signal for the oneof runner — omitting it
-      // (or sending environment_id: "") now 400s. BridgeRunner is an empty
-      // message today; it's a placeholder for future bridge-specific options.
+      // bridge: {} 是 oneof runner 的正面信号 — 省略它
+      // （或发送 environment_id: ""）现在会返回 400。BridgeRunner 目前是一个空
+      // 消息；它是未来桥接器特定选项的占位符。
       { title, bridge: {}, ...(tags?.length ? { tags } : {}) },
       {
         headers: oauthHeaders(accessToken),
@@ -80,8 +80,8 @@ export async function createCodeSession(
 }
 
 /**
- * Credentials from POST /bridge. JWT is opaque — do not decode.
- * Each /bridge call bumps worker_epoch server-side (it IS the register).
+ * 来自 POST /bridge 的凭据。JWT 是不透明的 — 请勿解码。
+ * 每次 /bridge 调用都会增加服务端的 worker_epoch（它本身就是注册）。
  */
 export type RemoteCredentials = {
   worker_jwt: string
@@ -145,8 +145,8 @@ export async function fetchRemoteCredentials(
     )
     return null
   }
-  // protojson serializes int64 as a string to avoid JS precision loss;
-  // Go may also return a number depending on encoder settings.
+  // protojson 将 int64 序列化为 string 以避免 JS 精度损失；
+  // Go 也可能根据编码器设置返回 number。
   const rawEpoch = data.worker_epoch
   const epoch = typeof rawEpoch === 'string' ? Number(rawEpoch) : rawEpoch
   if (

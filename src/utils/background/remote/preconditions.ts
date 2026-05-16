@@ -16,9 +16,9 @@ import { getOAuthHeaders } from '../../teleport/api.js'
 import { fetchEnvironments } from '../../teleport/environments.js'
 
 /**
- * Checks if user needs to log in with Claude.ai
- * Extracted from getTeleportErrors() in TeleportError.tsx
- * @returns true if login is required, false otherwise
+ * 检查用户是否需要登录 Claude.ai
+ * 从 TeleportError.tsx 的 getTeleportErrors() 中提取
+ * @returns 需要登录返回 true，否则返回 false
  */
 export async function checkNeedsClaudeAiLogin(): Promise<boolean> {
   if (!isClaudeAISubscriber()) {
@@ -28,10 +28,10 @@ export async function checkNeedsClaudeAiLogin(): Promise<boolean> {
 }
 
 /**
- * Checks if git working directory is clean (no uncommitted changes)
- * Ignores untracked files since they won't be lost during branch switching
- * Extracted from getTeleportErrors() in TeleportError.tsx
- * @returns true if git is clean, false otherwise
+ * 检查 Git 工作目录是否干净（没有未提交的更改）
+ * 忽略未跟踪的文件，因为它们在切换分支时不会丢失
+ * 从 TeleportError.tsx 的 getTeleportErrors() 中提取
+ * @returns Git 干净返回 true，否则返回 false
  */
 export async function checkIsGitClean(): Promise<boolean> {
   const isClean = await getIsClean({ ignoreUntracked: true })
@@ -39,8 +39,8 @@ export async function checkIsGitClean(): Promise<boolean> {
 }
 
 /**
- * Checks if user has access to at least one remote environment
- * @returns true if user has remote environments, false otherwise
+ * 检查用户是否有权访问至少一个远程环境
+ * @returns 有远程环境返回 true，否则返回 false
  */
 export async function checkHasRemoteEnvironment(): Promise<boolean> {
   try {
@@ -53,16 +53,16 @@ export async function checkHasRemoteEnvironment(): Promise<boolean> {
 }
 
 /**
- * Checks if current directory is inside a git repository (has .git/).
- * Distinct from checkHasGitRemote — a local-only repo passes this but not that.
+ * 检查当前目录是否在 Git 仓库内（是否有 .git/）。
+ * 与 checkHasGitRemote 不同 —— 仅本地的仓库会通过此项检查但不通过远程检查。
  */
 export function checkIsInGitRepo(): boolean {
   return findGitRoot(getCwd()) !== null
 }
 
 /**
- * Checks if current repository has a GitHub remote configured.
- * Returns false for local-only repos (git init with no `origin`).
+ * 检查当前仓库是否配置了 GitHub 远端。
+ * 对于仅本地仓库（git init 时未设置 `origin`）返回 false。
  */
 export async function checkHasGitRemote(): Promise<boolean> {
   const repository = await detectCurrentRepository()
@@ -70,10 +70,10 @@ export async function checkHasGitRemote(): Promise<boolean> {
 }
 
 /**
- * Checks if GitHub app is installed on a specific repository
- * @param owner The repository owner (e.g., "anthropics")
- * @param repo The repository name (e.g., "claude-cli-internal")
- * @returns true if GitHub app is installed, false otherwise
+ * 检查 GitHub App 是否安装在特定仓库上
+ * @param owner 仓库所有者（例如 "anthropics"）
+ * @param repo 仓库名称（例如 "claude-cli-internal"）
+ * @returns 已安装 GitHub App 返回 true，否则返回 false
  */
 export async function checkGithubAppInstalled(
   owner: string,
@@ -141,7 +141,7 @@ export async function checkGithubAppInstalled(
     )
     return false
   } catch (error) {
-    // 4XX errors typically mean app is not installed or repo not accessible
+    // 4XX 错误通常意味着应用未安装或仓库不可访问
     if (axios.isAxiosError(error)) {
       const status = error.response?.status
       if (status && status >= 400 && status < 500) {
@@ -158,8 +158,8 @@ export async function checkGithubAppInstalled(
 }
 
 /**
- * Checks if the user has synced their GitHub credentials via /web-setup
- * @returns true if GitHub token is synced, false otherwise
+ * 检查用户是否通过 /web-setup 同步了 GitHub 凭据
+ * @returns GitHub Token 已同步返回 true，否则返回 false
  */
 export async function checkGithubTokenSynced(): Promise<boolean> {
   try {
@@ -213,10 +213,10 @@ export async function checkGithubTokenSynced(): Promise<boolean> {
 type RepoAccessMethod = 'github-app' | 'token-sync' | 'none'
 
 /**
- * Tiered check for whether a GitHub repo is accessible for remote operations.
- * 1. GitHub App installed on the repo
- * 2. GitHub token synced via /web-setup
- * 3. Neither — caller should prompt user to set up access
+ * 分层检查 GitHub 仓库是否可进行远程操作。
+ * 1. GitHub App 已安装在仓库上
+ * 2. GitHub Token 已通过 /web-setup 同步
+ * 3. 都不满足 —— 调用方需要提示用户设置访问权限
  */
 export async function checkRepoForRemoteAccess(
   owner: string,

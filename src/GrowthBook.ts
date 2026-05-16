@@ -67,14 +67,14 @@ export class GrowthBook<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   AppFeatures extends Record<string, any> = Record<string, any>,
 > {
-  // context is technically private, but some tools depend on it so we can't mangle the name
+  // context 在技术上是私有的，但某些工具依赖它，因此我们不能修改其名称
   private context: Options;
   public debug: boolean;
   public ready: boolean;
   public version: string;
   public logs: Array<LogUnion>;
 
-  // Properties and methods that start with "_" are mangled by Terser (saves ~150 bytes)
+  // 以下划线 "_" 开头的属性和方法会被 Terser 压缩（节省约 150 字节）
   private _options: Options;
   private _renderer: null | RenderFunction;
   private _redirectedUrl: string;
@@ -111,8 +111,8 @@ export class GrowthBook<
 
   constructor(options?: Options) {
     options = options || {};
-    // These properties are all initialized in the constructor instead of above
-    // This saves ~80 bytes in the final output
+    // 这些属性都在构造函数中初始化，而不是在上面初始化
+    // 这在最终输出中可节省约 80 字节
     this.version = SDK_VERSION;
     this._options = this.context = options;
     this._renderer = options.renderer || null;
@@ -140,10 +140,10 @@ export class GrowthBook<
 
     if (options.remoteEval) {
       if (options.decryptionKey) {
-        throw new Error("Encryption is not available for remoteEval");
+        throw new Error("远程评估不支持加密");
       }
       if (!options.clientKey) {
-        throw new Error("Missing clientKey");
+        throw new Error("缺少 clientKey");
       }
       let isGbHost = false;
       try {
@@ -151,14 +151,14 @@ export class GrowthBook<
           /growthbook\.io$/i,
         );
       } catch (e) {
-        // ignore invalid URLs
+        // 忽略无效的 URL
       }
       if (isGbHost) {
-        throw new Error("Cannot use remoteEval on GrowthBook Cloud");
+        throw new Error("无法在 GrowthBook Cloud 上使用远程评估");
       }
     } else {
       if (options.cacheKeyAttributes) {
-        throw new Error("cacheKeyAttributes are only used for remoteEval");
+        throw new Error("cacheKeyAttributes 仅用于远程评估");
       }
     }
 
@@ -189,7 +189,7 @@ export class GrowthBook<
       this._updateAllAutoExperiments();
     }
 
-    // Hydrate sticky bucket service
+    // 初始化粘性桶服务
     if (
       this._options.stickyBucketService &&
       this._options.stickyBucketAssignmentDocs
@@ -198,13 +198,13 @@ export class GrowthBook<
         const doc = this._options.stickyBucketAssignmentDocs[key];
         if (doc) {
           this._options.stickyBucketService.saveAssignments(doc).catch(() => {
-            // Ignore hydration errors
+            // 忽略初始化错误
           });
         }
       }
     }
 
-    // Legacy - passing in features/experiments into the constructor instead of using init
+    // 旧版方式 - 直接在构造函数中传入 features/experiments，而不是使用 init 方法
     if (this.ready) {
       this.refreshStickyBuckets(this.getPayload());
     }
@@ -235,7 +235,7 @@ export class GrowthBook<
     const payload = options.payload;
 
     if (payload.encryptedExperiments || payload.encryptedFeatures) {
-      throw new Error("initSync does not support encrypted payloads");
+      throw new Error("initSync 不支持加密负载");
     }
 
     if (
@@ -355,9 +355,9 @@ export class GrowthBook<
     streaming?: boolean;
   }) {
     if (!this._options.clientKey) {
-      throw new Error("Missing clientKey");
+      throw new Error("缺少 clientKey");
     }
-    // Trigger refresh in feature repository
+    // 在特性仓库中触发刷新
     return refreshFeatures({
       instance: this,
       timeout,
@@ -546,8 +546,8 @@ export class GrowthBook<
     options = options || {};
     this._destroyed = true;
 
-    // Custom callbacks
-    // Do this first in case it needs access to the below data that is cleared
+    // 自定义回调函数
+    // 首先执行此操作，以防它需要访问下面将要清除的数据
     this._destroyCallbacks.forEach((cb) => {
       try {
         cb();
@@ -556,7 +556,7 @@ export class GrowthBook<
       }
     });
 
-    // Release references to save memory
+    // 释放引用以节省内存
     this._subscriptions.clear();
     this._assigned.clear();
     this._trackedExperiments.clear();
@@ -576,7 +576,7 @@ export class GrowthBook<
       delete window._growthbook;
     }
 
-    // Undo any active auto experiments
+    // 撤销所有活跃的自动实验
     this._activeAutoExperiments.forEach((exp) => {
       exp.undo();
     });
@@ -676,7 +676,7 @@ export class GrowthBook<
   private _runAutoExperiment(experiment: AutoExperiment, forceRerun?: boolean) {
     const existing = this._activeAutoExperiments.get(experiment);
 
-    // If this is a manual experiment and it's not already running, skip
+    // 如果是手动实验且尚未运行，则跳过
     if (
       experiment.manual &&
       !this._triggeredExpKeys.has(experiment.key) &&
@@ -684,8 +684,8 @@ export class GrowthBook<
     )
       return null;
 
-    // Check if this particular experiment is blocked by options settings
-    // For example, if all visualEditor experiments are disabled
+    // 检查此特定实验是否被选项设置阻止
+    // 例如，如果所有可视化编辑器实验都被禁用
     const isBlocked = this._isAutoExperimentBlockedByContext(experiment);
     if (isBlocked) {
       process.env.NODE_ENV !== "production" &&
@@ -694,7 +694,7 @@ export class GrowthBook<
 
     let result: Result<AutoExperimentVariation> | undefined;
     let trackingCall: Promise<void> | undefined;
-    // Run the experiment (if blocked exclude)
+    // 运行实验（如果被阻止则排除）
     if (isBlocked) {
       result = getExperimentResult(
         this._getEvalContext(),
@@ -712,10 +712,10 @@ export class GrowthBook<
       this._onExperimentEval(experiment, result);
     }
 
-    // A hash to quickly tell if the assigned value changed
+    // 一个哈希值，用于快速判断分配的值是否已更改
     const valueHash = JSON.stringify(result.value);
 
-    // If the changes are already active, no need to re-apply them
+    // 如果更改已经处于活动状态，则无需重新应用
     if (
       !forceRerun &&
       result.inExperiment &&
@@ -725,10 +725,10 @@ export class GrowthBook<
       return result;
     }
 
-    // Undo any existing changes
+    // 撤销任何现有更改
     if (existing) this._undoActiveAutoExperiment(experiment);
 
-    // Apply new changes
+    // 应用新更改
     if (result.inExperiment) {
       const changeType = getAutoExperimentChangeType(experiment);
 
@@ -754,7 +754,7 @@ export class GrowthBook<
         const { navigate, delay } = this._getNavigateFunction();
         if (navigate) {
           if (isBrowser) {
-            // Wait for the possibly-async tracking callback, bound by min and max delays
+            // 等待可能异步的跟踪回调，受最小和最大延迟限制
             Promise.all([
               ...(trackingCall
                 ? [
@@ -814,7 +814,7 @@ export class GrowthBook<
 
     const experiments = this._options.experiments || [];
 
-    // Stop any experiments that are no longer defined
+    // 停止任何不再定义的实验
     const keys = new Set(experiments);
     this._activeAutoExperiments.forEach((v, k) => {
       if (!keys.has(k)) {
@@ -823,11 +823,11 @@ export class GrowthBook<
       }
     });
 
-    // Re-run all new/updated experiments
+    // 重新运行所有新实验或已更新的实验
     for (const exp of experiments) {
       const result = this._runAutoExperiment(exp, forceRerun);
 
-      // Once you're in a redirect experiment, break out of the loop and don't run any further experiments
+      // 一旦进入重定向实验，就跳出循环，不再运行任何后续实验
       if (
         result &&
         result.inExperiment &&
@@ -852,8 +852,8 @@ export class GrowthBook<
     // eslint-disable-next-line
     prev?: { experiment: Experiment<any>; result: Result<any> },
   ) {
-    // If assigned variation has changed, fire subscriptions
-    // TODO: what if the experiment definition has changed?
+    // 如果分配的变体已更改，则触发订阅
+    // 待办事项：如果实验定义已更改怎么办？
     if (
       !prev ||
       prev.result.inExperiment !== result.inExperiment ||
@@ -1018,21 +1018,21 @@ export class GrowthBook<
     } else if (changeType === "redirect") {
       if (this._options.disableUrlRedirectExperiments) return true;
 
-      // Validate URLs
+      // 验证 URL
       try {
         const current = new URL(this._getContextUrl());
         for (const v of experiment.variations) {
           if (!v || !v.urlRedirect) continue;
           const url = new URL(v.urlRedirect);
 
-          // If we're blocking cross origin redirects, block if the protocol or host is different
+          // 如果我们阻止跨源重定向，则当协议或主机不同时进行阻止
           if (this._options.disableCrossOriginUrlRedirectExperiments) {
             if (url.protocol !== current.protocol) return true;
             if (url.host !== current.host) return true;
           }
         }
       } catch (e) {
-        // Problem parsing one of the URLs
+        // 解析其中一个 URL 时出现问题
         this.log("Error parsing current or redirect URL", {
           id: experiment.key,
           error: e,
@@ -1040,7 +1040,7 @@ export class GrowthBook<
         return true;
       }
     } else {
-      // Block any unknown changeTypes
+      // 阻止任何未知的 changeTypes
       return true;
     }
 
@@ -1142,7 +1142,7 @@ export class GrowthBook<
 }
 
 export async function prefetchPayload(options: PrefetchOptions) {
-  // Create a temporary instance, just to fetch the payload
+  // 创建一个临时实例，仅用于获取有效负载
   const instance = new GrowthBook(options);
 
   await refreshFeatures({
