@@ -1,6 +1,6 @@
 /**
- * Conversation clearing utility.
- * This module has heavier dependencies and should be lazy-loaded when possible.
+ * 对话清除工具。
+ * 此模块依赖较重，应尽可能懒加载。
  */
 import { feature } from 'bun:bundle'
 import { randomUUID, type UUID } from 'crypto'
@@ -64,8 +64,7 @@ export async function clearConversation({
   setAppState?: (f: (prev: AppState) => AppState) => void
   setConversationId?: (id: UUID) => void
 }): Promise<void> {
-  // Execute SessionEnd hooks before clearing (bounded by
-  // CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS, default 1.5s)
+  // 在清除前执行 SessionEnd 钩子（受 CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS 限制，默认 1.5 秒）
   const sessionEndTimeoutMs = getSessionEndHookTimeoutMs()
   await executeSessionEndHooks('clear', {
     getAppState,
@@ -74,7 +73,7 @@ export async function clearConversation({
     timeoutMs: sessionEndTimeoutMs,
   })
 
-  // Signal to inference that this conversation's cache can be evicted.
+  // 向推理引擎发出信号：此对话的缓存可被驱逐。
   const lastRequestId = getLastMainRequestId()
   if (lastRequestId) {
     logEvent('tengu_cache_eviction_hint', {
@@ -85,12 +84,11 @@ export async function clearConversation({
     })
   }
 
-  // Compute preserved tasks up front so their per-agent state survives the
-  // cache wipe below. A task is preserved unless it explicitly has
-  // isBackgrounded === false. Main-session tasks (Ctrl+B) are preserved —
-  // they write to an isolated per-task transcript and run under an agent
-  // context, so they're safe across session ID regeneration. See
-  // LocalMainSessionTask.ts startBackgroundSession.
+  // 预先计算要保留的任务，以便其每个 agent 的状态能在下面的缓存清除中幸存。
+  // 除非任务显式设置了 isBackgrounded === false，否则会被保留。
+  // 主会话任务（Ctrl+B）会被保留——它们写入隔离的按任务转录文件，
+  // 并在 agent 上下文中运行，因此在会话 ID 重新生成后仍然安全。
+  // 参见 LocalMainSessionTask.ts startBackgroundSession。
   const preservedAgentIds = new Set<string>()
   const preservedLocalAgents: LocalAgentTaskState[] = []
   const shouldKillTask = (task: AppState['tasks'][string]): boolean =>
@@ -109,7 +107,7 @@ export async function clearConversation({
 
   setMessages(() => [])
 
-  // Clear context-blocked flag so proactive ticks resume after /clear
+  // 清除上下文阻塞标志，以便 /clear 后主动 tick 恢复
   if (feature('PROACTIVE') || feature('KAIROS')) {
      
     const { setContextBlocked } = require('../../proactive/index.js')
@@ -117,14 +115,13 @@ export async function clearConversation({
     setContextBlocked(false)
   }
 
-  // Force logo re-render by updating conversationId
+  // 通过更新 conversationId 强制重新渲染 logo
   if (setConversationId) {
     setConversationId(randomUUID())
   }
 
-  // Clear all session-related caches. Per-agent state for preserved background
-  // tasks (invoked skills, pending permission callbacks, dump state, cache-break
-  // tracking) is retained so those agents keep functioning.
+  // 清除所有与会话相关的缓存。保留的后台任务（已调用的技能、待处理的权限回调、
+  // dump 状态、缓存破坏跟踪）的每个 agent 状态会被保留，以便这些 agent 继续运行。
   clearSessionCaches(preservedAgentIds)
 
   setCwd(getOriginalCwd())
@@ -132,18 +129,18 @@ export async function clearConversation({
   discoveredSkillNames?.clear()
   loadedNestedMemoryPaths?.clear()
 
-  // Clean out necessary items from App State
+  // 从 App State 中清理必要的项
   if (setAppState) {
     setAppState(prev => {
-      // Partition tasks using the same predicate computed above:
-      // kill+remove foreground tasks, preserve everything else.
+      // 使用上面计算的相同谓词对任务进行分区：
+      // 杀死并移除前台任务，保留其他所有任务。
       const nextTasks: AppState['tasks'] = {}
       for (const [taskId, task] of Object.entries(prev.tasks)) {
         if (!shouldKillTask(task)) {
           nextTasks[taskId] = task
           continue
         }
-        // Foreground task: kill it and drop from state
+        // 前台任务：杀死并从状态中移除
         try {
           if (task.status === 'running') {
             if (isLocalShellTask(task)) {
@@ -170,17 +167,17 @@ export async function clearConversation({
         ...prev,
         tasks: nextTasks,
         attribution: createEmptyAttributionState(),
-        // Clear standalone agent context (name/color set by /rename, /color)
-        // so the new session doesn't display the old session's identity badge
+        // 清除独立 agent 上下文（由 /rename、/color 设置的名称/颜色）
+        // 以便新会话不显示旧会话的身份标识
         standaloneAgentContext: undefined,
         fileHistory: {
           snapshots: [],
           trackedFiles: new Set(),
           snapshotSequence: 0,
         },
-        // Reset MCP state to default to trigger re-initialization.
-        // Preserve pluginReconnectKey so /clear doesn't cause a no-op
-        // (it's only bumped by /reload-plugins).
+        // 将 MCP 状态重置为默认值以触发重新初始化。
+        // 保留 pluginReconnectKey，这样 /clear 不会导致空操作
+        // （它只由 /reload-plugins 更新）。
         mcp: {
           clients: [],
           tools: [],
@@ -192,30 +189,28 @@ export async function clearConversation({
     })
   }
 
-  // Clear plan slug cache so a new plan file is used after /clear
+  // 清除 plan slug 缓存，以便 /clear 后使用新的 plan 文件
   clearAllPlanSlugs()
 
-  // Clear cached session metadata (title, tag, agent name/color)
-  // so the new session doesn't inherit the previous session's identity
+  // 清除缓存的会话元数据（标题、标签、agent 名称/颜色）
+  // 以便新会话不继承前一个会话的身份
   clearSessionMetadata()
 
-  // Generate new session ID to provide fresh state
-  // Set the old session as parent for analytics lineage tracking
+  // 生成新的会话 ID 以提供全新状态
+  // 将旧会话设置为父会话，用于分析血缘追踪
   regenerateSessionId({ setCurrentAsParent: true })
-  // Update the environment variable so subprocesses use the new session ID
+  // 更新环境变量，使子进程使用新的会话 ID
   if (process.env.USER_TYPE === 'ant' && process.env.CLAUDE_CODE_SESSION_ID) {
     process.env.CLAUDE_CODE_SESSION_ID = getSessionId()
   }
   await resetSessionFilePointer()
 
-  // Preserved local_agent tasks had their TaskOutput symlink baked against the
-  // old session ID at spawn time, but post-clear transcript writes land under
-  // the new session directory (appendEntry re-reads getSessionId()). Re-point
-  // the symlinks so TaskOutput reads the live file instead of a frozen pre-clear
-  // snapshot. Only re-point running tasks — finished tasks will never write
-  // again, so re-pointing would replace a valid symlink with a dangling one.
-  // Main-session tasks use the same per-agent path (they write via
-  // recordSidechainTranscript to getAgentTranscriptPath), so no special case.
+  // 被保留的 local_agent 任务在生成时其 TaskOutput 符号链接指向的是旧的会话 ID，
+  // 但清除后的转录写入会落到新的会话目录下（appendEntry 会重新读取 getSessionId()）。
+  // 重新指向符号链接，使 TaskOutput 读取实时的文件，而不是清除前的冻结快照。
+  // 只重新指向正在运行的任务——已完成的任务不会再写入，
+  // 因此重新指向会用无效的悬空链接替换有效的符号链接。
+  // 主会话任务使用相同的按 agent 路径（它们通过 recordSidechainTranscript 写入 getAgentTranscriptPath），因此没有特殊情况。
   for (const task of preservedLocalAgents) {
     if (task.status !== 'running') continue
     void initTaskOutputAsSymlink(
@@ -224,10 +219,10 @@ export async function clearConversation({
     )
   }
 
-  // Re-persist mode and worktree state after the clear so future --resume
-  // knows what the new post-clear session was in. clearSessionMetadata
-  // wiped both from the cache, but the process is still in the same mode
-  // and (if applicable) the same worktree directory.
+  // 清除后重新持久化 mode 和 worktree 状态，以便未来的 --resume
+  // 知道新清除后的会话处于什么状态。clearSessionMetadata
+  // 从缓存中清除了这两者，但进程仍然处于相同的 mode
+  // 和（如果适用）相同的 worktree 目录中。
   if (feature('COORDINATOR_MODE')) {
      
     const { saveMode } = require('../../utils/sessionStorage.js')
@@ -242,10 +237,10 @@ export async function clearConversation({
     saveWorktreeState(worktreeSession)
   }
 
-  // Execute SessionStart hooks after clearing
+  // 清除后执行 SessionStart 钩子
   const hookMessages = await processSessionStartHooks('clear')
 
-  // Update messages with hook results
+  // 使用钩子结果更新消息
   if (hookMessages.length > 0) {
     setMessages(() => hookMessages)
   }
