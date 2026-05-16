@@ -12,7 +12,7 @@ import type { BuiltInAgentDefinition } from '../loadAgentsDir.js'
 import { EXPLORE_AGENT } from './exploreAgent.js'
 
 function getPlanV2SystemPrompt(): string {
-  // Ant 原生构建将 find/grep 别名为嵌入式 bfs/ugrep，并移除了专用的 Glob/Grep 工具，
+  // 内部原生构建将 find/grep 别名为嵌入式 bfs/ugrep，并移除了专用的 Glob/Grep 工具，
   // 因此指向 find/grep 即可。
   const searchToolsHint = hasEmbeddedSearchTools()
     ? `\`find\`、\`grep\` 和 ${FILE_READ_TOOL_NAME}`

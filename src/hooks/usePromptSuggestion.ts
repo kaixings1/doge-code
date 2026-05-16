@@ -40,12 +40,12 @@ export function usePromptSuggestion({
 
   const isValidSuggestion = suggestionText && shownAt > 0
 
-  // Track engagement depth for telemetry
+  // 记录参与深度，用于遥测分析
   const firstKeystrokeAt = useRef<number>(0)
   const wasFocusedWhenShown = useRef<boolean>(true)
   const prevShownAt = useRef<number>(0)
 
-  // Capture focus state when a new suggestion appears (shownAt changes)
+  // 当新建议出现时（shownAt 变化），捕获焦点状态
   if (shownAt > 0 && shownAt !== prevShownAt.current) {
     prevShownAt.current = shownAt
     wasFocusedWhenShown.current = isTerminalFocused
@@ -54,7 +54,7 @@ export function usePromptSuggestion({
     prevShownAt.current = 0
   }
 
-  // Record first keystroke while suggestion is visible
+  // 在建议可见时记录首次按键
   if (
     inputValue.length > 0 &&
     firstKeystrokeAt.current === 0 &&
@@ -90,10 +90,10 @@ export function usePromptSuggestion({
   }, [isValidSuggestion, setAppState])
 
   const markShown = useCallback(() => {
-    // Check shownAt inside setAppState callback to avoid depending on it
-    // (depending on shownAt causes infinite loop when this callback is called)
+    // 在 setAppState 回调内检查 shownAt，避免依赖它
+    // （依赖 shownAt 会在此回调被调用时导致无限循环）
     setAppState(prev => {
-      // Only mark shown if not already shown and suggestion exists
+      // 仅在尚未标记且建议存在时标记为已显示
       if (prev.promptSuggestion.shownAt !== 0 || !prev.promptSuggestion.text) {
         return prev
       }
@@ -111,8 +111,8 @@ export function usePromptSuggestion({
     (finalInput: string, opts?: { skipReset: boolean }) => {
       if (!isValidSuggestion) return
 
-      // Determine if accepted: either Tab was pressed (acceptedAt set) OR
-      // final input matches suggestion (empty Enter case)
+      // 判断是否被接受：要么按了 Tab（acceptedAt 已设置），要么
+      // 最终输入与建议匹配（空 Enter 的情况）
       const tabWasPressed = acceptedAt > shownAt
       const wasAccepted = tabWasPressed || finalInput === suggestionText
       const timeMs = wasAccepted ? acceptedAt || Date.now() : Date.now()

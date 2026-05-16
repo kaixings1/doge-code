@@ -6,9 +6,9 @@ import {
 } from '../utils/messageQueueManager.js'
 
 /**
- * React hook to subscribe to the unified command queue.
- * Returns a frozen array that only changes reference on mutation.
- * Components re-render only when the queue changes.
+ * React hook，用于订阅统一的命令队列。
+ * 返回一个冻结数组，仅在变更时改变引用。
+ * 组件仅在队列变化时重新渲染。
  */
 export function useCommandQueue(): readonly QueuedCommand[] {
   return useSyncExternalStore(subscribeToCommandQueue, getCommandQueueSnapshot)

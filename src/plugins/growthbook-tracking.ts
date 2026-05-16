@@ -147,7 +147,7 @@ async function track({
       credentials: "omit",
     });
   } catch (e) {
-    console.error("Failed to track event", e);
+    console.error("跟踪事件失败", e);
   }
 }
 
@@ -160,7 +160,7 @@ export function growthbookTrackingPlugin({
   dedupeKeyAttributes = [],
   eventFilter,
 }: {
-  // TODO: add option to allow filtering out certain attributes that contain PII
+  // TODO: 添加选项以允许过滤掉包含个人身份信息（PII）的某些属性
   queueFlushInterval?: number;
   ingestorHost?: string;
   enable?: boolean;
@@ -172,10 +172,10 @@ export function growthbookTrackingPlugin({
   return (gb: GrowthBook | UserScopedGrowthBook | GrowthBookClient) => {
     const clientKey = gb.getClientKey();
     if (!clientKey) {
-      throw new Error("clientKey must be specified to use event logging");
+      throw new Error("使用事件日志功能必须指定 clientKey");
     }
 
-    // LRU cache for events to avoid duplicates
+    // 用于避免重复事件的 LRU 缓存
     const eventCache = new Set<string>();
 
     if ("setEventLogger" in gb) {
@@ -198,17 +198,17 @@ export function growthbookTrackingPlugin({
           url: userContext.url || "",
         };
 
-        // Skip logging if the event is being filtered
+        // 如果事件被过滤，跳过记录
         if (eventFilter && !eventFilter(data)) {
           return;
         }
 
-        // De-dupe Feature Evaluated and Experiment Viewed events
+        // 对 Feature Evaluated 和 Experiment Viewed 事件进行去重
         if (
           eventName === EVENT_FEATURE_EVALUATED ||
           eventName === EVENT_EXPERIMENT_VIEWED
         ) {
-          // Build the key for de-duping
+          // 构建去重用的键
           const dedupeKeyData: Record<string, unknown> = {
             eventName,
             properties,
@@ -218,7 +218,7 @@ export function growthbookTrackingPlugin({
           }
 
           const k = JSON.stringify(dedupeKeyData);
-          // Duplicate event fired recently, move to end of LRU cache and skip
+          // 最近已触发过重复事件，移动到 LRU 缓存末尾并跳过
           if (eventCache.has(k)) {
             eventCache.delete(k);
             eventCache.add(k);
@@ -226,7 +226,7 @@ export function growthbookTrackingPlugin({
           }
           eventCache.add(k);
 
-          // If the cache is too big, remove the oldest item
+          // 如果缓存太大，移除最旧的条目
           if (eventCache.size > dedupeCacheSize) {
             const oldest = eventCache.values().next().value;
             oldest && eventCache.delete(oldest);
@@ -237,17 +237,17 @@ export function growthbookTrackingPlugin({
 
         debug &&
           console.log(
-            "Logging event to GrowthBook",
-            JSON.parse(JSON.stringify(payload)),
-          );
+              "正在将事件记录到 GrowthBook",
+              JSON.parse(JSON.stringify(payload)),
+            );
         if (!enable) return;
 
         _q.push(payload);
 
-        // Only one in-progress promise at a time
+        // 一次只能有一个进行中的 promise
         if (!promise) {
           promise = new Promise((resolve, reject) => {
-            // Flush the queue after a delay
+            // 延迟后刷新队列
             timer = setTimeout(() => {
               flush().then(resolve).catch(reject);
               promise = null;
@@ -257,7 +257,7 @@ export function growthbookTrackingPlugin({
         await promise;
       });
 
-      // Flush the queue on page unload
+      // 在页面卸载时刷新队列
       if (typeof document !== "undefined" && document.visibilityState) {
         document.addEventListener("visibilitychange", () => {
           if (document.visibilityState === "hidden") {
@@ -266,22 +266,22 @@ export function growthbookTrackingPlugin({
         });
       }
 
-      // Flush the queue when the growthbook instance is destroyed
+      // 当 growthbook 实例被销毁时刷新队列
       "onDestroy" in gb &&
         gb.onDestroy(() => {
           flush().catch(console.error);
         });
     }
 
-    // Listen on window.gbEvents.push if in a browser
-    // This makes it easier to integrate with Segment, GTM, etc.
+    // 如果在浏览器中，监听 window.gbEvents.push
+    // 这使得与 Segment、GTM 等集成的更简单
     if (typeof window !== "undefined" && !("createScopedInstance" in gb)) {
       const prevEvents = Array.isArray(window.gbEvents) ? window.gbEvents : [];
       window.gbEvents = {
         push: (event: GlobalTrackedEvent | string) => {
           if ("isDestroyed" in gb && gb.isDestroyed()) {
-            // If trying to log and the instance has been destroyed, switch back to just an array
-            // This will let the next GrowthBook instance pick it up
+            // 如果尝试记录日志时实例已被销毁，切换回普通数组
+            // 这将让下一个 GrowthBook 实例能够拾取这些事件
             window.gbEvents = [event];
             return;
           }

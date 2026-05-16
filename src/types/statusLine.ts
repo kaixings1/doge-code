@@ -1,5 +1,7 @@
+/** 状态栏项目 */
 export type StatusLineItem = Record<string, unknown>
 
+/** 状态栏命令输入 */
 export type StatusLineCommandInput = {
   [key: string]: unknown
 }

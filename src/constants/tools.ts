@@ -1,4 +1,4 @@
-// biome-ignore-all assist/source/organizeImports: ANT-ONLY import markers must not be reordered
+// biome-ignore-all assist/source/organizeImports：仅限 ANT 的导入标记不得重新排序
 import { feature } from 'bun:bundle'
 import { TASK_OUTPUT_TOOL_NAME } from '../tools/TaskOutputTool/constants.js'
 import { EXIT_PLAN_MODE_V2_TOOL_NAME } from '../tools/ExitPlanModeTool/constants.js'
@@ -37,11 +37,11 @@ export const ALL_AGENT_DISALLOWED_TOOLS = new Set([
   TASK_OUTPUT_TOOL_NAME,
   EXIT_PLAN_MODE_V2_TOOL_NAME,
   ENTER_PLAN_MODE_TOOL_NAME,
-  // Allow Agent tool for agents when user is ant (enables nested agents)
+  // 当用户为 ant 时，允许代理使用 Agent 工具（启用嵌套代理）
   ...(process.env.USER_TYPE === 'ant' ? [] : [AGENT_TOOL_NAME]),
   ASK_USER_QUESTION_TOOL_NAME,
   TASK_STOP_TOOL_NAME,
-  // Prevent recursive workflow execution inside subagents.
+  // 防止子代理中递归执行工作流。
   ...(feature('WORKFLOW_SCRIPTS') ? [WORKFLOW_TOOL_NAME] : []),
 ])
 
@@ -50,7 +50,7 @@ export const CUSTOM_AGENT_DISALLOWED_TOOLS = new Set([
 ])
 
 /*
- * Async Agent Tool Availability Status (Source of Truth)
+ * 异步代理工具可用性状态（真实数据来源）
  */
 export const ASYNC_AGENT_ALLOWED_TOOLS = new Set([
   FILE_READ_TOOL_NAME,
@@ -70,9 +70,9 @@ export const ASYNC_AGENT_ALLOWED_TOOLS = new Set([
   EXIT_WORKTREE_TOOL_NAME,
 ])
 /**
- * Tools allowed only for in-process teammates (not general async agents).
- * These are injected by inProcessRunner.ts and allowed through filterToolsForAgent
- * via isInProcessTeammate() check.
+ * 仅允许进程内队友使用的工具（非通用异步代理）。
+ * 这些工具由 inProcessRunner.ts 注入，并通过 isInProcessTeammate()
+ * 检查在 filterToolsForAgent 中放行。
  */
 export const IN_PROCESS_TEAMMATE_ALLOWED_TOOLS = new Set([
   TASK_CREATE_TOOL_NAME,
@@ -80,29 +80,29 @@ export const IN_PROCESS_TEAMMATE_ALLOWED_TOOLS = new Set([
   TASK_LIST_TOOL_NAME,
   TASK_UPDATE_TOOL_NAME,
   SEND_MESSAGE_TOOL_NAME,
-  // Teammate-created crons are tagged with the creating agentId and routed to
-  // that teammate's pendingUserMessages queue (see useScheduledTasks.ts).
+  // 队友创建的定时任务使用创建者的 agentId 标记，并路由到
+  // 该队友的 pendingUserMessages 队列（参见 useScheduledTasks.ts）。
   ...(feature('AGENT_TRIGGERS')
     ? [CRON_CREATE_TOOL_NAME, CRON_DELETE_TOOL_NAME, CRON_LIST_TOOL_NAME]
     : []),
 ])
 
 /*
- * BLOCKED FOR ASYNC AGENTS:
- * - AgentTool: Blocked to prevent recursion
- * - TaskOutputTool: Blocked to prevent recursion
- * - ExitPlanModeTool: Plan mode is a main thread abstraction.
- * - TaskStopTool: Requires access to main thread task state.
- * - TungstenTool: Uses singleton virtual terminal abstraction that conflicts between agents.
+ * 异步代理被阻止的工具：
+ * - AgentTool：阻止以防止递归
+ * - TaskOutputTool：阻止以防止递归
+ * - ExitPlanModeTool：计划模式是主线程抽象。
+ * - TaskStopTool：需要访问主线程任务状态。
+ * - TungstenTool：使用在代理之间冲突的单例虚拟终端抽象。
  *
- * ENABLE LATER (NEED WORK):
- * - MCPTool: TBD
- * - ListMcpResourcesTool: TBD
- * - ReadMcpResourceTool: TBD
+ * 稍后启用（需要工作）：
+ * - MCPTool：待定
+ * - ListMcpResourcesTool：待定
+ * - ReadMcpResourceTool：待定
  */
 
 /**
- * Tools allowed in coordinator mode - only output and agent management tools for the coordinator
+ * 协调器模式下允许的工具——仅限协调器的输出和代理管理工具
  */
 export const COORDINATOR_MODE_ALLOWED_TOOLS = new Set([
   AGENT_TOOL_NAME,

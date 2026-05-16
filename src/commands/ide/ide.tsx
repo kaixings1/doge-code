@@ -33,7 +33,7 @@ function IDEScreen(t0) {
   } = t0;
   let t1;
   if ($[0] !== selectedIDE?.port) {
-    t1 = selectedIDE?.port?.toString() ?? "None";
+    t1 = selectedIDE?.port?.toString() ?? "无";
     $[0] = selectedIDE?.port;
     $[1] = t1;
   } else {
@@ -45,10 +45,10 @@ function IDEScreen(t0) {
   let t2;
   if ($[2] !== availableIDEs || $[3] !== onSelect) {
     t2 = value => {
-      if (value !== "None" && shouldShowAutoConnectDialog()) {
+      if (value !== "无" && shouldShowAutoConnectDialog()) {
         setShowAutoConnectDialog(true);
       } else {
-        if (value === "None" && shouldShowDisableAutoConnectDialog()) {
+        if (value === "无" && shouldShowDisableAutoConnectDialog()) {
           setShowDisableAutoConnectDialog(true);
         } else {
           onSelect(availableIDEs.find(ide => ide.port === parseInt(value)));
@@ -91,7 +91,7 @@ function IDEScreen(t0) {
     }
     t4 = availableIDEs.map(t5).concat([{
       label: "无",
-      value: "None",
+      value: "无",
       description: undefined
     }]);
     $[7] = availableIDEs;

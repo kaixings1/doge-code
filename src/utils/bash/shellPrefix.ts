@@ -16,7 +16,7 @@ export function formatShellPrefixCommand(
   prefix: string,
   command: string,
 ): string {
-  // Split on the last space before a dash to separate executable from arguments
+  // 在短横线前的最后一个空格处分割，分离可执行文件和参数
   const spaceBeforeDash = prefix.lastIndexOf(' -')
   if (spaceBeforeDash > 0) {
     const execPath = prefix.substring(0, spaceBeforeDash)

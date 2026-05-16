@@ -70,7 +70,7 @@ type OAuthStatus = {
   toRetry?: OAuthStatus;
 };
 
-const PASTE_HERE_MSG = 'Paste code here if prompted > ';
+const PASTE_HERE_MSG = '如果提示，请在此处粘贴代码 > ';
 
 type PresetEndpoint = {
   label: string;
@@ -108,9 +108,9 @@ export function ConsoleOAuthFlow({
   const forceLoginMethod = forceLoginMethodProp ?? settings.forceLoginMethod;
   const orgUUID = settings.forceLoginOrgUUID;
   const forcedMethodMessage = forceLoginMethod === 'claudeai'
-    ? 'Login method pre-selected: Subscription Plan (Claude Pro/Max)'
+    ? '登录方式已预选择：订阅方案（Claude Pro/Max）'
     : forceLoginMethod === 'console'
-      ? 'Login method pre-selected: API Usage Billing (Anthropic Console)'
+      ? '登录方式已预选择：API 使用量计费（Anthropic Console）'
       : null;
 
   const [oauthStatus, setOAuthStatus] = useState<OAuthStatus>(() => {
@@ -342,7 +342,7 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
       { ...curConfig, baseURL: customBaseURL, apiKey: customApiKey, model: nextValue, savedModels: updatedSaved, provider: compatibleApiProvider }
     );
     void sendNotification({
-      message: safeOauthStatus.provider === 'openai' ? 'OpenAI-compatible endpoint saved' : 'Anthropic-compatible endpoint saved',
+      message: safeOauthStatus.provider === 'openai' ? 'OpenAI 兼容端点已保存' : 'Anthropic 兼容端点已保存',
       notificationType: 'auth_success'
     }, terminal);
   }, [safeOauthStatus, persistCustomEndpoint, terminal, customBaseURL, customApiKey, compatibleApiProvider]);

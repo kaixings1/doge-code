@@ -276,7 +276,7 @@ export function DiffDialog(t0) {
   let t19;
   bb0: {
     if (diffData.loading) {
-      t19 = "Loading diff\u2026";
+      t19 = "正在加载差异\u2026";
       break bb0;
     }
     if (currentTurn) {

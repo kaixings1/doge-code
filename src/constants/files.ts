@@ -1,9 +1,9 @@
 /**
- * Binary file extensions to skip for text-based operations.
- * These files can't be meaningfully compared as text and are often large.
+ * 文本操作中应跳过的二进制文件扩展名。
+ * 这些文件无法被有意义地作为文本进行比较，且通常体积较大。
  */
 export const BINARY_EXTENSIONS = new Set([
-  // Images
+  // 图片
   '.png',
   '.jpg',
   '.jpeg',
@@ -13,7 +13,7 @@ export const BINARY_EXTENSIONS = new Set([
   '.webp',
   '.tiff',
   '.tif',
-  // Videos
+  // 视频
   '.mp4',
   '.mov',
   '.avi',
@@ -24,7 +24,7 @@ export const BINARY_EXTENSIONS = new Set([
   '.m4v',
   '.mpeg',
   '.mpg',
-  // Audio
+  // 音频
   '.mp3',
   '.wav',
   '.ogg',
@@ -34,7 +34,7 @@ export const BINARY_EXTENSIONS = new Set([
   '.wma',
   '.aiff',
   '.opus',
-  // Archives
+  // 归档文件
   '.zip',
   '.tar',
   '.gz',
@@ -45,7 +45,7 @@ export const BINARY_EXTENSIONS = new Set([
   '.z',
   '.tgz',
   '.iso',
-  // Executables/binaries
+  // 可执行文件/二进制
   '.exe',
   '.dll',
   '.so',
@@ -59,7 +59,7 @@ export const BINARY_EXTENSIONS = new Set([
   '.msi',
   '.deb',
   '.rpm',
-  // Documents (PDF is here; FileReadTool excludes it at the call site)
+  // 文档（PDF 在此；FileReadTool 在调用处排除它）
   '.pdf',
   '.doc',
   '.docx',
@@ -70,13 +70,13 @@ export const BINARY_EXTENSIONS = new Set([
   '.odt',
   '.ods',
   '.odp',
-  // Fonts
+  // 字体
   '.ttf',
   '.otf',
   '.woff',
   '.woff2',
   '.eot',
-  // Bytecode / VM artifacts
+  // 字节码 / VM 产物
   '.pyc',
   '.pyo',
   '.class',
@@ -86,13 +86,13 @@ export const BINARY_EXTENSIONS = new Set([
   '.node',
   '.wasm',
   '.rlib',
-  // Database files
+  // 数据库文件
   '.sqlite',
   '.sqlite3',
   '.db',
   '.mdb',
   '.idx',
-  // Design / 3D
+  // 设计 / 3D
   '.psd',
   '.ai',
   '.eps',
@@ -105,14 +105,14 @@ export const BINARY_EXTENSIONS = new Set([
   // Flash
   '.swf',
   '.fla',
-  // Lock/profiling data
+  // 锁定/性能分析数据
   '.lockb',
   '.dat',
   '.data',
 ])
 
 /**
- * Check if a file path has a binary extension.
+ * 检查文件路径是否具有二进制扩展名。
  */
 export function hasBinaryExtension(filePath: string): boolean {
   const ext = filePath.slice(filePath.lastIndexOf('.')).toLowerCase()
@@ -120,37 +120,36 @@ export function hasBinaryExtension(filePath: string): boolean {
 }
 
 /**
- * Number of bytes to read for binary content detection.
+ * 用于二进制内容检测的读取字节数。
  */
 const BINARY_CHECK_SIZE = 8192
 
 /**
- * Check if a buffer contains binary content by looking for null bytes
- * or a high proportion of non-printable characters.
+ * 通过查找空字节或高比例不可打印字符来检查缓冲区是否包含二进制内容。
  */
 export function isBinaryContent(buffer: Buffer): boolean {
-  // Check first BINARY_CHECK_SIZE bytes (or full buffer if smaller)
+  // 检查前 BINARY_CHECK_SIZE 个字节（如果缓冲区较小则检查全部）
   const checkSize = Math.min(buffer.length, BINARY_CHECK_SIZE)
 
   let nonPrintable = 0
   for (let i = 0; i < checkSize; i++) {
     const byte = buffer[i]!
-    // Null byte is a strong indicator of binary
+    // 空字节是二进制的强指标
     if (byte === 0) {
       return true
     }
-    // Count non-printable, non-whitespace bytes
-    // Printable ASCII is 32-126, plus common whitespace (9, 10, 13)
+    // 统计不可打印、非空白字节
+    // 可打印 ASCII 为 32-126，加上常见空白字符（9、10、13）
     if (
       byte < 32 &&
-      byte !== 9 && // tab
-      byte !== 10 && // newline
-      byte !== 13 // carriage return
+      byte !== 9 && // 制表符
+      byte !== 10 && // 换行符
+      byte !== 13 // 回车符
     ) {
       nonPrintable++
     }
   }
 
-  // If more than 10% non-printable, likely binary
+  // 如果超过 10% 不可打印，则很可能是二进制
   return nonPrintable / checkSize > 0.1
 }

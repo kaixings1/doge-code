@@ -1,8 +1,8 @@
 import { getPlatform } from '../utils/platform.js'
 
 /**
- * Shortcuts that are typically intercepted by the OS, terminal, or shell
- * and will likely never reach the application.
+ * 通常被操作系统、终端或 shell 拦截且很可能
+ * 永远不会到达应用程序的快捷键。
  */
 export type ReservedShortcut = {
   key: string
@@ -11,7 +11,7 @@ export type ReservedShortcut = {
 }
 
 /**
- * Shortcuts that cannot be rebound - they are hardcoded in Claude Code.
+ * 无法重新绑定的快捷键——它们在 Claude Code 中是硬编码的。
  */
 export const NON_REBINDABLE: ReservedShortcut[] = [
   {
@@ -33,12 +33,12 @@ export const NON_REBINDABLE: ReservedShortcut[] = [
 ]
 
 /**
- * Terminal control shortcuts that are intercepted by the terminal/OS.
- * These will likely never reach the application.
+ * 被终端/OS 拦截的终端控制快捷键。
+ * 这些很可能永远不会到达应用程序。
  *
- * Note: ctrl+s (XOFF) and ctrl+q (XON) are NOT included here because:
- * - Most modern terminals disable flow control by default
- * - We use ctrl+s for the stash feature
+ * 注意：ctrl+s（XOFF）和 ctrl+q（XON）未包含在此处，因为：
+ * - 大多数现代终端默认禁用流控制
+ * - 我们使用 ctrl+s 作为 stash 功能
  */
 export const TERMINAL_RESERVED: ReservedShortcut[] = [
   {
@@ -54,12 +54,12 @@ export const TERMINAL_RESERVED: ReservedShortcut[] = [
 ]
 
 /**
- * macOS-specific shortcuts that the OS intercepts.
+ * macOS 特有的被操作系统拦截的快捷键。
  */
 export const MACOS_RESERVED: ReservedShortcut[] = [
-  { key: 'cmd+c', reason: 'macOS system copy', severity: 'error' },
-  { key: 'cmd+v', reason: 'macOS system paste', severity: 'error' },
-  { key: 'cmd+x', reason: 'macOS system cut', severity: 'error' },
+  { key: 'cmd+c', reason: 'macOS 系统复制', severity: 'error' },
+  { key: 'cmd+v', reason: 'macOS 系统粘贴', severity: 'error' },
+  { key: 'cmd+x', reason: 'macOS 系统剪切', severity: 'error' },
   { key: 'cmd+q', reason: 'macOS 退出应用程序', severity: 'error' },
   { key: 'cmd+w', reason: 'macOS 关闭窗口/标签', severity: 'error' },
   { key: 'cmd+tab', reason: 'macOS 应用程序切换器', severity: 'error' },
@@ -67,12 +67,12 @@ export const MACOS_RESERVED: ReservedShortcut[] = [
 ]
 
 /**
- * Get all reserved shortcuts for the current platform.
- * Includes non-rebindable shortcuts and terminal-reserved shortcuts.
+ * 获取当前平台所有被保留的快捷键。
+ * 包括不可重新绑定的快捷键和终端保留的快捷键。
  */
 export function getReservedShortcuts(): ReservedShortcut[] {
   const platform = getPlatform()
-  // Non-rebindable shortcuts first (highest priority)
+  // 不可重新绑定的快捷键优先（最高优先级）
   const reserved = [...NON_REBINDABLE, ...TERMINAL_RESERVED]
 
   if (platform === 'macos') {
@@ -83,10 +83,10 @@ export function getReservedShortcuts(): ReservedShortcut[] {
 }
 
 /**
- * Normalize a key string for comparison (lowercase, sorted modifiers).
- * Chords (space-separated steps like "ctrl+x ctrl+b") are normalized
- * per-step — splitting on '+' first would mangle "x ctrl" into a mainKey
- * overwritten by the next step, collapsing the chord into its last key.
+ * 标准化按键字符串以进行比较（小写、排序修饰键）。
+ * 和弦（空格分隔的步骤，如 "ctrl+x ctrl+b"）按步骤
+ * 标准化——先按 '+' 拆分会将 "x ctrl" 变为被下一步覆盖的
+ * mainKey，从而将和弦折叠为其最后一个键。
  */
 export function normalizeKeyForComparison(key: string): string {
   return key.trim().split(/\s+/).map(normalizeStep).join(' ')
@@ -112,7 +112,7 @@ function normalizeStep(step: string): string {
         'shift',
       ].includes(lower)
     ) {
-      // Normalize modifier names
+      // 标准化修饰键名称
       if (lower === 'control') modifiers.push('ctrl')
       else if (lower === 'option' || lower === 'opt') modifiers.push('alt')
       else if (lower === 'command' || lower === 'cmd') modifiers.push('cmd')
