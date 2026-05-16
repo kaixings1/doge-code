@@ -8,7 +8,7 @@ import { logForDebugging } from '../debug.js'
 import { getShellType } from '../localInstaller.js'
 import * as Shell from '../Shell.js'
 
-// Constants
+// 常量
 const MAX_SHELL_COMPLETIONS = 15
 const SHELL_COMPLETION_TIMEOUT_MS = 1000
 const COMMAND_OPERATORS = ['|', '||', '&&', ';'] as const
@@ -21,7 +21,7 @@ type InputContext = {
 }
 
 /**
- * Check if a parsed token is a command operator (|, ||, &&, ;)
+ * 检查解析后的令牌是否为命令操作符（|, ||, &&, ;）
  */
 function isCommandOperator(token: ParseEntry): boolean {
   return (
@@ -33,7 +33,7 @@ function isCommandOperator(token: ParseEntry): boolean {
 }
 
 /**
- * Determine completion type based solely on prefix characteristics
+ * 仅根据前缀特征确定补全类型
  */
 function getCompletionTypeFromPrefix(prefix: string): ShellCompletionType {
   if (prefix.startsWith('$')) {
@@ -50,7 +50,7 @@ function getCompletionTypeFromPrefix(prefix: string): ShellCompletionType {
 }
 
 /**
- * Find the last string token and its index in parsed tokens
+ * 查找解析后令牌中最后一个字符串令牌及其索引
  */
 function findLastStringToken(
   tokens: ParseEntry[],
@@ -60,8 +60,8 @@ function findLastStringToken(
 }
 
 /**
- * Check if we're in a context that expects a new command
- * (at start of input or after a command operator)
+ * 检查当前是否处于期望新命令的上下文
+ * （在输入开头或命令操作符之后）
  */
 function isNewCommandContext(
   tokens: ParseEntry[],
@@ -75,21 +75,21 @@ function isNewCommandContext(
 }
 
 /**
- * Parse input to extract completion context
+ * 解析输入以提取补全上下文
  */
 function parseInputContext(input: string, cursorOffset: number): InputContext {
   const beforeCursor = input.slice(0, cursorOffset)
 
-  // Check if it's a variable prefix, before expanding with shell-quote
+  // 检查是否为变量前缀，在使用 shell-quote 展开之前
   const varMatch = beforeCursor.match(/\$[a-zA-Z_][a-zA-Z0-9_]*$/)
   if (varMatch) {
     return { prefix: varMatch[0], completionType: 'variable' }
   }
 
-  // Parse with shell-quote
+  // 使用 shell-quote 解析
   const parseResult = tryParseShellCommand(beforeCursor)
   if (!parseResult.success) {
-    // Fallback to simple parsing
+    // 回退到简单解析
     const tokens = beforeCursor.split(/\s+/)
     const prefix = tokens[tokens.length - 1] || ''
     const isFirstToken = tokens.length === 1 && !beforeCursor.includes(' ')
@@ -99,87 +99,87 @@ function parseInputContext(input: string, cursorOffset: number): InputContext {
     return { prefix, completionType }
   }
 
-  // Extract current token
+  // 提取当前令牌
   const lastToken = findLastStringToken(parseResult.tokens)
   if (!lastToken) {
-    // No string token found - check if after operator
+    // 未找到字符串令牌 — 检查是否在操作符之后
     const lastParsedToken = parseResult.tokens[parseResult.tokens.length - 1]
     const completionType =
       lastParsedToken && isCommandOperator(lastParsedToken)
         ? 'command'
-        : 'command' // Default to command at start
+        : 'command' // 默认为命令（开头）
     return { prefix: '', completionType }
   }
 
-  // If there's a trailing space, the user is starting a new argument
+  // 如果有尾部空格，用户正在开始一个新参数
   if (beforeCursor.endsWith(' ')) {
-    // After first token (command) with space = file argument expected
+    // 第一个令牌（命令）后有空格 = 期望文件参数
     return { prefix: '', completionType: 'file' }
   }
 
-  // Determine completion type from context
+  // 根据上下文确定补全类型
   const baseType = getCompletionTypeFromPrefix(lastToken.token)
 
-  // If it's clearly a file or variable based on prefix, use that type
+  // 如果基于前缀明显是文件或变量，使用该类型
   if (baseType === 'variable' || baseType === 'file') {
     return { prefix: lastToken.token, completionType: baseType }
   }
 
-  // For command-like tokens, check context: are we starting a new command?
+  // 对于类命令令牌，检查上下文：是否正在开始一个新命令？
   const completionType = isNewCommandContext(
     parseResult.tokens,
     lastToken.index,
   )
     ? 'command'
-    : 'file' // Not after operator = file argument
+    : 'file' // 不在操作符后 = 文件参数
 
   return { prefix: lastToken.token, completionType }
 }
 
 /**
- * Generate bash completion command using compgen
+ * 使用 compgen 生成 bash 补全命令
  */
 function getBashCompletionCommand(
   prefix: string,
   completionType: ShellCompletionType,
 ): string {
   if (completionType === 'variable') {
-    // Variable completion - remove $ prefix
+    // 变量补全 — 移除 $ 前缀
     const varName = prefix.slice(1)
     return `compgen -v ${quote([varName])} 2>/dev/null`
   } else if (completionType === 'file') {
-    // File completion with trailing slash for directories and trailing space for files
-    // Use 'while read' to prevent command injection from filenames containing newlines
+    // 文件补全，目录后加斜杠，文件后加空格
+    // 使用 'while read' 防止包含换行符的文件名导致命令注入
     return `compgen -f ${quote([prefix])} 2>/dev/null | head -${MAX_SHELL_COMPLETIONS} | while IFS= read -r f; do [ -d "$f" ] && echo "$f/" || echo "$f "; done`
   } else {
-    // Command completion
+    // 命令补全
     return `compgen -c ${quote([prefix])} 2>/dev/null`
   }
 }
 
 /**
- * Generate zsh completion command using native zsh commands
+ * 使用原生 zsh 命令生成 zsh 补全命令
  */
 function getZshCompletionCommand(
   prefix: string,
   completionType: ShellCompletionType,
 ): string {
   if (completionType === 'variable') {
-    // Variable completion - use zsh pattern matching for safe filtering
+    // 变量补全 — 使用 zsh 模式匹配进行安全过滤
     const varName = prefix.slice(1)
     return `print -rl -- \${(k)parameters[(I)${quote([varName])}*]} 2>/dev/null`
   } else if (completionType === 'file') {
-    // File completion with trailing slash for directories and trailing space for files
-    // Note: zsh glob expansion is safe from command injection (unlike bash for-in loops)
+    // 文件补全，目录后加斜杠，文件后加空格
+    // 注意：zsh 通配符展开是安全的，不会导致命令注入（不同于 bash for-in 循环）
     return `for f in ${quote([prefix])}*(N[1,${MAX_SHELL_COMPLETIONS}]); do [[ -d "$f" ]] && echo "$f/" || echo "$f "; done`
   } else {
-    // Command completion - use zsh pattern matching for safe filtering
+    // 命令补全 — 使用 zsh 模式匹配进行安全过滤
     return `print -rl -- \${(k)commands[(I)${quote([prefix])}*]} 2>/dev/null`
   }
 }
 
 /**
- * Get completions for the given shell type
+ * 获取给定 shell 类型的补全
  */
 async function getCompletionsForShell(
   shellType: 'bash' | 'zsh',
@@ -194,7 +194,7 @@ async function getCompletionsForShell(
   } else if (shellType === 'zsh') {
     command = getZshCompletionCommand(prefix, completionType)
   } else {
-    // Unsupported shell type
+    // 不支持的 shell 类型
     return []
   }
 
@@ -215,8 +215,8 @@ async function getCompletionsForShell(
 }
 
 /**
- * Get shell completions for the given input
- * Supports bash and zsh shells (matches Shell.ts execution support)
+ * 获取给定输入的 shell 补全
+ * 支持 bash 和 zsh shell（匹配 Shell.ts 的执行支持）
  */
 export async function getShellCompletions(
   input: string,
@@ -225,7 +225,7 @@ export async function getShellCompletions(
 ): Promise<SuggestionItem[]> {
   const shellType = getShellType()
 
-  // Only support bash/zsh (matches Shell.ts execution support)
+  // 仅支持 bash/zsh（匹配 Shell.ts 的执行支持）
   if (shellType !== 'bash' && shellType !== 'zsh') {
     return []
   }
@@ -244,7 +244,7 @@ export async function getShellCompletions(
       abortSignal,
     )
 
-    // Add inputSnapshot to all suggestions so we can detect when input changes
+    // 为所有建议添加 inputSnapshot 以便检测输入何时变化
     return completions.map(suggestion => ({
       ...suggestion,
       metadata: {
@@ -254,6 +254,6 @@ export async function getShellCompletions(
     }))
   } catch (error) {
     logForDebugging(`Shell completion failed: ${error}`)
-    return [] // Silent fail
+    return [] // 静默失败
   }
 }

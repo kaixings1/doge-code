@@ -22,10 +22,10 @@ function escapeJsLineTerminators(json: string): string {
 }
 
 /**
- * JSON.stringify for one-message-per-line transports. Escapes U+2028
- * LINE SEPARATOR and U+2029 PARAGRAPH SEPARATOR so the serialized output
- * cannot be broken by a line-splitting receiver. Output is still valid
- * JSON and parses to the same value.
+ * 用于每行一个消息的传输层的 JSON.stringify。转义 U+2028
+ * 行分隔符和 U+2029 段落分隔符，使序列化输出
+ * 不会被按行分割的接收者破坏。输出仍然是有效的
+ * JSON，并解析为相同的值。
  */
 export function ndjsonSafeStringify(value: unknown): string {
   return escapeJsLineTerminators(jsonStringify(value))

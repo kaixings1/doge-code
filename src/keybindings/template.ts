@@ -1,6 +1,6 @@
 /**
- * Keybindings template generator.
- * Generates a well-documented template file for ~/.claude/keybindings.json
+ * 按键绑定模板生成器。
+ * 为 ~/.claude/keybindings.json 生成带有完整文档的模板文件。
  */
 
 import { jsonStringify } from '../utils/slowOperations.js'
@@ -12,8 +12,8 @@ import {
 import type { KeybindingBlock } from './types.js'
 
 /**
- * Filter out reserved shortcuts that cannot be rebound.
- * These would cause /doctor to warn, so we exclude them from the template.
+ * 过滤掉无法重新绑定的保留快捷键。
+ * 这些会导致 /doctor 发出警告，因此我们从模板中排除它们。
  */
 function filterReservedShortcuts(blocks: KeybindingBlock[]): KeybindingBlock[] {
   const reservedKeys = new Set(
@@ -34,14 +34,14 @@ function filterReservedShortcuts(blocks: KeybindingBlock[]): KeybindingBlock[] {
 }
 
 /**
- * Generate a template keybindings.json file content.
- * Creates a fully valid JSON file with all default bindings that users can customize.
+ * 生成 keybindings.json 模板文件内容。
+ * 创建一个完全有效的 JSON 文件，包含用户可自定义的所有默认绑定。
  */
 export function generateKeybindingsTemplate(): string {
-  // Filter out reserved shortcuts that cannot be rebound
+  // 过滤掉无法重新绑定的保留快捷键
   const bindings = filterReservedShortcuts(DEFAULT_BINDINGS)
 
-  // Format as object wrapper with bindings array
+  // 格式化为包含 bindings 数组的对象包装
   const config = {
     $schema: 'https://www.schemastore.org/claude-code-keybindings.json',
     $docs: 'https://code.claude.com/docs/en/keybindings',

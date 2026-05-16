@@ -95,91 +95,90 @@ export type AppState = DeepImmutable<{
   rstkRefreshVersion: number
   expandedView: 'none' | 'tasks' | 'teammates'
   isBriefOnly: boolean
-  // Optional - only present when ENABLE_AGENT_SWARMS is true (for dead code elimination)
+  // 可选——仅在 ENABLE_AGENT_SWARMS 为 true 时存在（用于死代码消除）
   showTeammateMessagePreview?: boolean
   selectedIPAgentIndex: number
-  // CoordinatorTaskPanel selection: -1 = pill, 0 = main, 1..N = agent rows.
-  // AppState (not local) so the panel can read it directly without prop-drilling
-  // through PromptInput → PromptInputFooter.
+  // CoordinatorTaskPanel 选择：-1 = 药丸，0 = 主窗口，1..N = 代理行。
+  // 位于 AppState（非局部）中，以便面板可以直接读取，无需通过
+  // PromptInput → PromptInputFooter 进行属性穿透。
   coordinatorTaskIndex: number
   viewSelectionMode: 'none' | 'selecting-agent' | 'viewing-agent'
-  // Which footer pill is focused (arrow-key navigation below the prompt).
-  // Lives in AppState so pill components rendered outside PromptInput
-  // (CompanionSprite in REPL.tsx) can read their own focused state.
+  // 哪个底部药丸被聚焦（提示下方的箭头键导航）。
+  // 位于 AppState 中，以便在 PromptInput 外部渲染的药丸组件
+  // （REPL.tsx 中的 CompanionSprite）可以读取各自的聚焦状态。
   footerSelection: FooterItem | null
   toolPermissionContext: ToolPermissionContext
   spinnerTip?: string
-  // Agent name from --agent CLI flag or settings (for logo display)
+  // 来自 --agent CLI 标志或设置的代理名称（用于徽标显示）
   agent: string | undefined
-  // Assistant mode fully enabled (settings + GrowthBook gate + trust).
-  // Single source of truth - computed once in main.tsx before option
-  // mutation, consumers read this instead of re-calling isAssistantMode().
+  // 助手模式完全启用（设置 + GrowthBook 门控 + 信任）。
+  // 唯一真实来源——在 main.tsx 中于选项变更前计算一次，
+  // 消费者读取此值而非重新调用 isAssistantMode()。
   kairosEnabled: boolean
-  // Remote session URL for --remote mode (shown in footer indicator)
+  // --remote 模式的远程会话 URL（显示在底部指示器中）
   remoteSessionUrl: string | undefined
-  // Remote session WS state (`claude assistant` viewer). 'connected' means the
-  // live event stream is open; 'reconnecting' = transient WS drop, backoff
-  // in progress; 'disconnected' = permanent close or reconnects exhausted.
+  // 远程会话 WS 状态（`claude assistant` 查看器）。'connected' 表示
+  // 实时事件流已打开；'reconnecting' = 临时 WS 断开，退避
+  // 进行中；'disconnected' = 永久关闭或重连耗尽。
   remoteConnectionStatus:
     | 'connecting'
     | 'connected'
     | 'reconnecting'
     | 'disconnected'
-  // `claude assistant`: count of background tasks (Agent calls, teammates,
-  // workflows) running inside the REMOTE daemon child. Event-sourced from
-  // system/task_started and system/task_notification on the WS. The local
-  // AppState.tasks is always empty in viewer mode — the tasks live in a
-  // different process.
+  // `claude assistant`：在 REMOTE 守护进程子进程中运行的后台任务
+  //（Agent 调用、队友、工作流）数量。通过 WS 上的
+  // system/task_started 和 system/task_notification 事件驱动。在查看器
+  // 模式下，本地 AppState.tasks 始终为空——任务存在于不同的进程中。
   remoteBackgroundTaskCount: number
-  // Always-on bridge: desired state (controlled by /config or footer toggle)
+  // 常开桥接：期望状态（由 /config 或底部切换控制）
   replBridgeEnabled: boolean
-  // Always-on bridge: true when activated via /remote-control command, false when config-driven
+  // 常开桥接：通过 /remote-control 命令激活时为 true，配置驱动时为 false
   replBridgeExplicit: boolean
-  // Outbound-only mode: forward events to CCR but reject inbound prompts/control
+  // 仅出站模式：将事件转发到 CCR 但拒绝入站提示/控制
   replBridgeOutboundOnly: boolean
-  // Always-on bridge: env registered + session created (= "Ready")
+  // 常开桥接：环境已注册 + 会话已创建（= "就绪"）
   replBridgeConnected: boolean
-  // Always-on bridge: ingress WebSocket is open (= "Connected" - user on claude.ai)
+  // 常开桥接：入站 WebSocket 已打开（= "已连接" - 用户在 claude.ai 上）
   replBridgeSessionActive: boolean
-  // Always-on bridge: poll loop is in error backoff (= "Reconnecting")
+  // 常开桥接：轮询循环处于错误退避中（= "重新连接"）
   replBridgeReconnecting: boolean
-  // Always-on bridge: connect URL for Ready state (?bridge=envId)
+  // 常开桥接：就绪状态的连接 URL（?bridge=envId）
   replBridgeConnectUrl: string | undefined
-  // Always-on bridge: session URL on claude.ai (set when connected)
+  // 常开桥接：claude.ai 上的会话 URL（连接时设置）
   replBridgeSessionUrl: string | undefined
-  // Always-on bridge: IDs for debugging (shown in dialog when --verbose)
+  // 常开桥接：调试用 ID（--verbose 时显示在对话框中）
   replBridgeEnvironmentId: string | undefined
   replBridgeSessionId: string | undefined
-  // Always-on bridge: error message when connection fails (shown in BridgeDialog)
+  // 常开桥接：连接失败时的错误消息（显示在 BridgeDialog 中）
   replBridgeError: string | undefined
-  // Always-on bridge: session name set via `/remote-control <name>` (used as session title)
+  // 常开桥接：通过 `/remote-control <name>` 设置的会话名称（用作会话标题）
   replBridgeInitialName: string | undefined
-  // Always-on bridge: first-time remote dialog pending (set by /remote-control command)
+  // 常开桥接：首次远程对话框待处理（由 /remote-control 命令设置）
   showRemoteCallout: boolean
 }> & {
-  // Unified task state - excluded from DeepImmutable because TaskState contains function types
+  // 统一任务状态——从 DeepImmutable 排除，因为 TaskState 包含函数类型
   tasks: { [taskId: string]: TaskState }
-  // Name → AgentId registry populated by Agent tool when `name` is provided.
-  // Latest-wins on collision. Used by SendMessage to route by name.
+  // 名称 → AgentId 注册表，由 Agent 工具在提供 `name` 时填充。
+  // 冲突时后者获胜。由 SendMessage 用于按名称路由。
   agentNameRegistry: Map<string, AgentId>
-  // Task ID that has been foregrounded - its messages are shown in main view
+  // 已被置于前端的任务 ID——其消息显示在主视图中
   foregroundedTaskId?: string
-  // Task ID of in-process teammate whose transcript is being viewed (undefined = leader's view)
+  // 正在查看转录的进程内队友的任务 ID（undefined = 领导者视图）
   viewingAgentTaskId?: string
-  // Latest companion reaction from the friend observer (src/buddy/observer.ts)
+  // 来自好友观察者的最新同伴反应（src/buddy/observer.ts）
   companionReaction?: string
-  // Timestamp of last /buddy pet — CompanionSprite renders hearts while recent
+  // 上次 /buddy 抚摸的时间戳——CompanionSprite 在近期时显示爱心
   companionPetAt?: number
-  // TODO (ashwin): see if we can use utility-types DeepReadonly for this
+  // TODO (ashwin)：看看是否可以使用 utility-types 的 DeepReadonly 来实现
   mcp: {
     clients: MCPServerConnection[]
     tools: Tool[]
     commands: Command[]
     resources: Record<string, ServerResource[]>
     /**
-     * Incremented by /reload-plugins to trigger MCP effects to re-run
-     * and pick up newly-enabled plugin MCP servers. Effects read this
-     * as a dependency; the value itself is not consumed.
+     * 由 /reload-plugins 递增，以触发 MCP 效果重新运行
+     * 并拾取新启用的插件 MCP 服务器。效果将此作为
+     * 依赖项读取；值本身不被消费。
      */
     pluginReconnectKey: number
   }
@@ -188,12 +187,12 @@ export type AppState = DeepImmutable<{
     disabled: LoadedPlugin[]
     commands: Command[]
     /**
-     * Plugin system errors collected during loading and initialization.
-     * See {@link PluginError} type documentation for complete details on error
-     * structure, context fields, and display format.
+     * 在加载和初始化过程中收集的插件系统错误。
+     * 有关错误结构、上下文字段和显示格式的完整详细信息，
+     * 请参阅 {@link PluginError} 类型文档。
      */
     errors: PluginError[]
-    // Installation status for background plugin/marketplace installation
+    // 后台插件/市场安装的安装状态
     installationStatus: {
       marketplaces: Array<{
         name: string
@@ -208,10 +207,10 @@ export type AppState = DeepImmutable<{
       }>
     }
     /**
-     * Set to true when plugin state on disk has changed (background reconcile,
-     * /plugin menu install, external settings edit) and active components are
-     * stale. In interactive mode, user runs /reload-plugins to consume. In
-     * headless mode, refreshPluginState() auto-consumes via refreshActivePlugins().
+     * 当磁盘上的插件状态发生变化（后台协调、/plugin 菜单安装、
+     * 外部设置编辑）且活动组件已过时时设置为 true。
+     * 在交互模式下，用户运行 /reload-plugins 来消费。
+     * 在无头模式下，refreshPluginState() 通过 refreshActivePlugins() 自动消费。
      */
     needsRefresh: boolean
   }
@@ -240,38 +239,37 @@ export type AppState = DeepImmutable<{
     command: string // The command string to display (e.g., "Enter", "echo hello")
     timestamp: number // When the command was sent
   }
-  // Sticky tmux panel visibility — mirrors globalConfig.tungstenPanelVisible for reactivity.
+  // 粘性 tmux 面板可见性——为反应性镜像 globalConfig.tungstenPanelVisible。
   tungstenPanelVisible?: boolean
-  // Transient auto-hide at turn end — separate from tungstenPanelVisible so the
-  // pill stays in the footer (user can reopen) but the panel content doesn't take
-  // screen space when idle. Cleared on next Tmux tool use or user toggle. NOT persisted.
+  // 回合结束时的临时自动隐藏——与 tungstenPanelVisible 分开，以便
+  // 药丸保留在底部（用户可以重新打开），但空闲时面板内容不占用
+  // 屏幕空间。在下次 Tmux 工具使用或用户切换时清除。不持久化。
   tungstenPanelAutoHidden?: boolean
-  // WebBrowser tool (codename bagel): pill visible in footer
+  // WebBrowser 工具（代号 bagel）：底部显示药丸
   bagelActive?: boolean
-  // WebBrowser tool: current page URL shown in pill label
+  // WebBrowser 工具：药丸标签中显示的当前页面 URL
   bagelUrl?: string
-  // WebBrowser tool: sticky panel visibility toggle
+  // WebBrowser 工具：粘性面板可见性切换
   bagelPanelVisible?: boolean
-  // chicago MCP session state. Types inlined (not imported from
-  // @ant/computer-use-mcp/types) so external typecheck passes without the
-  // ant-scoped dep resolved. Shapes match `AppGrant`/`CuGrantFlags`
-  // structurally — wrapper.tsx assigns via structural compatibility. Only
-  // populated when feature('CHICAGO_MCP') is active.
+  // chicago MCP 会话状态。类型内联（不从 @ant/computer-use-mcp/types 导入），
+  // 因此无需解析 ant 作用域的依赖即可通过外部类型检查。
+  // 形状在结构上与 `AppGrant`/`CuGrantFlags` 匹配——
+  // wrapper.tsx 通过结构兼容性赋值。仅在 feature('CHICAGO_MCP') 激活时填充。
   computerUseMcpState?: {
-    // Session-scoped app allowlist. NOT persisted across resume.
+    // 会话作用域的应用程序允许列表。不在恢复时持久化。
     allowedApps?: readonly {
       bundleId: string
       displayName: string
       grantedAt: number
     }[]
-    // Clipboard/system-key grant flags (orthogonal to allowlist).
+    // 剪贴板/系统键授权标志（与允许列表正交）。
     grantFlags?: {
       clipboardRead: boolean
       clipboardWrite: boolean
       systemKeyCombos: boolean
     }
-    // Dims-only (NOT the blob) for scaleCoord after compaction. The full
-    // `ScreenshotResult` including base64 is process-local in wrapper.tsx.
+    // 仅尺寸（非 blob），用于压缩后的 scaleCoord。完整的
+    // `ScreenshotResult`（含 base64）位于进程本地的 wrapper.tsx 中。
     lastScreenshotDims?: {
       width: number
       height: number
@@ -281,24 +279,23 @@ export type AppState = DeepImmutable<{
       originX?: number
       originY?: number
     }
-    // Accumulated by onAppsHidden, cleared + unhidden at turn end.
+    // 由 onAppsHidden 累积，回合结束时清除并取消隐藏。
     hiddenDuringTurn?: ReadonlySet<string>
-    // Which display CU targets. Written back by the package's
-    // `autoTargetDisplay` resolver via `onResolvedDisplayUpdated`. Persisted
-    // across resume so clicks stay on the display the model last saw.
+    // CU 目标显示器。由包的 autoTargetDisplay 解析器通过
+    // onResolvedDisplayUpdated 写回。在恢复过程中持久化，
+    // 以便点击停留在模型上次看到的显示器上。
     selectedDisplayId?: number
-    // True when the model explicitly picked a display via `switch_display`.
-    // Makes `handleScreenshot` skip the resolver chase chain and honor
-    // `selectedDisplayId` directly. Cleared on resolver writeback (pinned
-    // display unplugged → Swift fell back to main) and on
-    // `switch_display("auto")`.
+    // 当模型通过 switch_display 明确选择显示器时为 true。
+    // 使 handleScreenshot 跳过解析器追踪链，直接使用
+    // selectedDisplayId。在解析器写回（固定显示器断开 → Swift 回退到主屏）
+    // 和 switch_display("auto") 时清除。
     displayPinnedByModel?: boolean
-    // Sorted comma-joined bundle-ID set the display was last auto-resolved
-    // for. `handleScreenshot` only re-resolves when the allowed set has
-    // changed since — keeps the resolver from yanking on every screenshot.
+    // 上次自动解析显示器时的排序后逗号连接 bundle-ID 集合。
+    // handleScreenshot 仅在允许集合发生变化时重新解析 —
+    // 避免解析器在每次截屏时都重新计算。
     displayResolvedForApps?: string
   }
-  // REPL tool VM context - persists across REPL calls for state sharing
+  // REPL 工具 VM 上下文 - 跨 REPL 调用持久化以共享状态
   replContext?: {
     vmContext: import('vm').Context
     registeredTools: Map<
@@ -325,12 +322,12 @@ export type AppState = DeepImmutable<{
     teamName: string
     teamFilePath: string
     leadAgentId: string
-    // Self-identity for swarm members (separate processes in tmux panes)
-    // Note: This is different from toolUseContext.agentId which is for in-process subagents
-    selfAgentId?: string // Swarm member's own ID (same as leadAgentId for leaders)
-    selfAgentName?: string // Swarm member's name ('team-lead' for leaders)
-    isLeader?: boolean // True if this swarm member is the team leader
-    selfAgentColor?: string // Assigned color for UI (used by dynamically joined sessions)
+    // 群体成员（tmux 面板中的独立进程）的自我标识
+    // 注意：这与 toolUseContext.agentId 不同，后者用于进程内子代理
+    selfAgentId?: string // 群体成员自身的 ID（领导者与 leadAgentId 相同）
+    selfAgentName?: string // 群体成员名称（领导者为 'team-lead'）
+    isLeader?: boolean // 该群体成员是否为团队领导者
+    selfAgentColor?: string // UI 分配的颜色（用于动态加入的会话）
     teammates: {
       [teammateId: string]: {
         name: string
@@ -344,7 +341,7 @@ export type AppState = DeepImmutable<{
       }
     }
   }
-  // Standalone agent context for non-swarm sessions with custom name/color
+  // 非群体会话的独立代理上下文，支持自定义名称/颜色
   standaloneAgentContext?: {
     name: string
     color?: AgentColorName
@@ -360,7 +357,7 @@ export type AppState = DeepImmutable<{
       summary?: string
     }>
   }
-  // Worker sandbox permission requests (leader side) - for network access approval
+  // Worker 沙箱权限请求（领导者侧）- 用于网络访问审批
   workerSandboxPermissions: {
     queue: Array<{
       requestId: string
@@ -372,13 +369,13 @@ export type AppState = DeepImmutable<{
     }>
     selectedIndex: number
   }
-  // Pending permission request on worker side (shown while waiting for leader approval)
+  // Worker 侧待处理的权限请求（等待领导者审批时显示）
   pendingWorkerRequest: {
     toolName: string
     toolUseId: string
     description: string
   } | null
-  // Pending sandbox permission request on worker side
+  // Worker 侧待处理的沙箱权限请求
   pendingSandboxRequest: {
     requestId: string
     host: string
@@ -398,65 +395,63 @@ export type AppState = DeepImmutable<{
       updates: { section: string; change: string; reason: string }[]
     } | null
   }
-  // Auth version - incremented on login/logout to trigger re-fetching of auth-dependent data
+  // 认证版本 - 登录/登出时递增，触发重新获取依赖认证的数据
   authVersion: number
-  // Initial message to process (from CLI args or plan mode exit)
-  // When set, REPL will process the message and trigger a query
+  // 待处理的初始消息（来自 CLI 参数或计划模式退出）
+  // 设置后，REPL 将处理该消息并触发查询
   initialMessage: {
     message: UserMessage
     clearContext?: boolean
     mode?: PermissionMode
-    // Session-scoped permission rules from plan mode (e.g., "run tests", "install dependencies")
+    // 来自计划模式的会话作用域权限规则（例如 "run tests"、"install dependencies"）
     allowedPrompts?: AllowedPrompt[]
   } | null
-  // Pending plan verification state (set when exiting plan mode)
-  // Used by VerifyPlanExecution tool to trigger background verification
+  // 待处理的计划验证状态（退出计划模式时设置）
+  // 由 VerifyPlanExecution 工具用于触发后台验证
   pendingPlanVerification?: {
     plan: string
     verificationStarted: boolean
     verificationCompleted: boolean
   }
-  // Denial tracking for classifier modes (YOLO, headless, etc.) - falls back to prompting when limits exceeded
+  // 分类器模式的拒绝追踪（YOLO、无头等）- 超出限制时回退到提示
   denialTracking?: DenialTrackingState
-  // Active overlays (Select dialogs, etc.) for Escape key coordination
+  // 活动覆盖层（选择对话框等），用于 Escape 键协调
   activeOverlays: ReadonlySet<string>
-  // Fast mode
+  // 快速模式
   fastMode?: boolean
-  // Advisor model for server-side advisor tool (undefined = disabled).
+  // 服务端 advisor 工具使用的顾问模型（undefined = 禁用）。
   advisorModel?: string
-  // Effort value
+  // 精力值
   effortValue?: EffortValue
-  // Set synchronously in launchUltraplan before the detached flow starts.
-  // Prevents duplicate launches during the ~5s window before
-  // ultraplanSessionUrl is set by teleportToRemote. Cleared by launchDetached
-  // once the URL is set or on failure.
+  // 在分离流程启动前同步设置于 launchUltraplan 中。
+  // 防止在 teleportToRemote 设置 ultraplanSessionUrl 之前的 ~5s 窗口内重复启动。
+  // 由 launchDetached 在 URL 设置完成或失败时清除。
   ultraplanLaunching?: boolean
-  // Active ultraplan CCR session URL. Set while the RemoteAgentTask runs;
-  // truthy disables the keyword trigger + rainbow. Cleared when the poll
-  // reaches terminal state.
+  // 活动的 ultraplan CCR 会话 URL。在 RemoteAgentTask 运行时设置；
+  // 非空值禁用关键词触发 + 彩虹效果。轮询达到终态时清除。
   ultraplanSessionUrl?: string
-  // Approved ultraplan awaiting user choice (implement here vs fresh session).
-  // Set by RemoteAgentTask poll on approval; cleared by UltraplanChoiceDialog.
+  // 已获批的 ultraplan 等待用户选择（在此处实现 vs 新会话）。
+  // 由 RemoteAgentTask 轮询在审批时设置；由 UltraplanChoiceDialog 清除。
   ultraplanPendingChoice?: { plan: string; sessionId: string; taskId: string }
-  // Pre-launch permission dialog. Set by /ultraplan (slash or keyword);
-  // cleared by UltraplanLaunchDialog on choice.
+  // 启动前权限对话框。由 /ultraplan（斜杠命令或关键词）设置；
+  // 由 UltraplanLaunchDialog 在选择时清除。
   ultraplanLaunchPending?: { blurb: string }
-  // Remote-harness side: set via set_permission_mode control_request,
-  // pushed to CCR external_metadata.is_ultraplan_mode by onChangeAppState.
+  // Remote-harness 侧：通过 set_permission_mode control_request 设置，
+  // 由 onChangeAppState 推送到 CCR external_metadata.is_ultraplan_mode。
   isUltraplanMode?: boolean
-  // Always-on bridge: permission callbacks for bidirectional permission checks
+  // 常开桥接：用于双向权限检查的权限回调
   replBridgePermissionCallbacks?: BridgePermissionCallbacks
-  // Channel permission callbacks — permission prompts over Telegram/iMessage/etc.
-  // Races against local UI + bridge + hooks + classifier via claim() in
-  // interactiveHandler.ts. Constructed once in useManageMCPConnections.
+  // 渠道权限回调 — 通过 Telegram/iMessage 等发出的权限提示。
+  // 通过 interactiveHandler.ts 中的 claim() 与本地 UI + 桥接 + 钩子 + 分类器竞争。
+  // 在 useManageMCPConnections 中构造一次。
   channelPermissionCallbacks?: ChannelPermissionCallbacks
 }
 
 export type AppStateStore = Store<AppState>
 
 export function getDefaultAppState(): AppState {
-  // Determine initial permission mode for teammates spawned with plan_mode_required
-  // Use lazy require to avoid circular dependency with teammate.ts
+  // 确定使用 plan_mode_required 生成的队友的初始权限模式
+  // 使用延迟 require 避免与 teammate.ts 的循环依赖
    
   const teammateUtils =
     require('../utils/teammate.js') as typeof import('../utils/teammate.js')
@@ -471,7 +466,7 @@ export function getDefaultAppState(): AppState {
     tasks: {},
     agentNameRegistry: new Map(),
     verbose: false,
-    mainLoopModel: null, // alias, full name (as with --model or env var), or null (default)
+    mainLoopModel: null, // 别名、全名（来自 --model 或环境变量），或 null（默认值）
     mainLoopModelForSession: null,
     rstkRefreshVersion: 0,
     statusLineText: undefined,

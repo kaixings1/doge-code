@@ -1,15 +1,15 @@
 /**
- * Vim Mode State Machine Types
+ * Vim 模式状态机类型
  *
- * This file defines the complete state machine for vim input handling.
- * The types ARE the documentation - reading them tells you how the system works.
+ * 本文件定义了 vim 输入处理的完整状态机。
+ * 类型即文档 —— 阅读它们即可了解系统如何工作。
  *
- * State Diagram:
+ * 状态图：
  * ```
  *                              VimState
  *   ┌──────────────────────────────┬──────────────────────────────────────┐
- *   │  INSERT                      │  NORMAL                              │
- *   │  (tracks insertedText)       │  (CommandState machine)              │
+ *   │  INSERT（插入模式）           │  NORMAL（普通模式）                   │
+ *   │  (追踪 insertedText)         │  (CommandState 状态机)               │
  *   │                              │                                      │
  *   │                              │  idle ──┬─[d/c/y]──► operator        │
  *   │                              │         ├─[1-9]────► count           │
@@ -27,7 +27,7 @@
  */
 
 // ============================================================================
-// Core Types
+// 核心类型
 // ============================================================================
 
 export type Operator = 'delete' | 'change' | 'yank'
@@ -37,24 +37,24 @@ export type FindType = 'f' | 'F' | 't' | 'T'
 export type TextObjScope = 'inner' | 'around'
 
 // ============================================================================
-// State Machine Types
+// 状态机类型
 // ============================================================================
 
 /**
- * Complete vim state. Mode determines what data is tracked.
+ * 完整的 vim 状态。模式决定跟踪什么数据。
  *
- * INSERT mode: Track text being typed (for dot-repeat)
- * NORMAL mode: Track command being parsed (state machine)
+ * 插入模式：跟踪正在输入的文本（用于点重复）
+ * 普通模式：跟踪正在解析的命令（状态机）
  */
 export type VimState =
   | { mode: 'INSERT'; insertedText: string }
   | { mode: 'NORMAL'; command: CommandState }
 
 /**
- * Command state machine for NORMAL mode.
+ * 普通模式的命令状态机。
  *
- * Each state knows exactly what input it's waiting for.
- * TypeScript ensures exhaustive handling in switches.
+ * 每个状态都知道它确切等待的输入。
+ * TypeScript 确保在 switch 中穷尽处理。
  */
 export type CommandState =
   | { type: 'idle' }
@@ -75,8 +75,8 @@ export type CommandState =
   | { type: 'indent'; dir: '>' | '<'; count: number }
 
 /**
- * Persistent state that survives across commands.
- * This is the "memory" of vim - what gets recalled for repeats and pastes.
+ * 持久化状态，在命令之间保持不变。
+ * 这是 vim 的"记忆"——用于重复和粘贴的内容。
  */
 export type PersistentState = {
   lastChange: RecordedChange | null
@@ -86,8 +86,8 @@ export type PersistentState = {
 }
 
 /**
- * Recorded change for dot-repeat.
- * Captures everything needed to replay a command.
+ * 用于点重复的已记录更改。
+ * 捕获重放命令所需的一切内容。
  */
 export type RecordedChange =
   | { type: 'insert'; text: string }
@@ -119,7 +119,7 @@ export type RecordedChange =
   | { type: 'join'; count: number }
 
 // ============================================================================
-// Key Groups - Named constants, no magic strings
+// 按键组 - 命名常量，无魔法字符串
 // ============================================================================
 
 export const OPERATORS = {
@@ -182,7 +182,7 @@ export const TEXT_OBJ_TYPES = new Set([
 export const MAX_VIM_COUNT = 10000
 
 // ============================================================================
-// State Factories
+// 状态工厂
 // ============================================================================
 
 export function createInitialVimState(): VimState {

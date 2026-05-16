@@ -11,9 +11,7 @@ import {
   checkNeedsClaudeAiLogin,
 } from './preconditions.js'
 
-/**
- * Background remote session type for managing teleport sessions
- */
+/** 后台远程会话类型，用于管理 teleport 会话 */
 export type BackgroundRemoteSession = {
   id: string
   command: string
@@ -25,9 +23,7 @@ export type BackgroundRemoteSession = {
   log: SDKMessage[]
 }
 
-/**
- * Precondition failures for background remote sessions
- */
+/** 后台远程会话的先决条件失败类型 */
 export type BackgroundRemoteSessionPrecondition =
   | { type: 'not_logged_in' }
   | { type: 'no_remote_environment' }
@@ -37,10 +33,10 @@ export type BackgroundRemoteSessionPrecondition =
   | { type: 'policy_blocked' }
 
 /**
- * Checks eligibility for creating a background remote session
- * Returns an array of failed preconditions (empty array means all checks passed)
+ * 检查是否满足创建后台远程会话的条件
+ * 返回失败的先决条件数组（空数组表示所有检查通过）
  *
- * @returns Array of failed preconditions
+ * @returns 失败的先决条件数组
  */
 export async function checkBackgroundRemoteSessionEligibility({
   skipBundle = false,
@@ -49,7 +45,7 @@ export async function checkBackgroundRemoteSessionEligibility({
 } = {}): Promise<BackgroundRemoteSessionPrecondition[]> {
   const errors: BackgroundRemoteSessionPrecondition[] = []
 
-  // Check policy first - if blocked, no need to check other preconditions
+  // 首先检查策略 —— 如果被阻止，则无需检查其他先决条件
   if (!isPolicyAllowed('allow_remote_sessions')) {
     errors.push({ type: 'policy_blocked' })
     return errors
@@ -69,9 +65,9 @@ export async function checkBackgroundRemoteSessionEligibility({
     errors.push({ type: 'no_remote_environment' })
   }
 
-  // When bundle seeding is on, in-git-repo is enough — CCR can seed from
-  // a local bundle. No GitHub remote or app needed. Same gate as
-  // teleport.tsx bundleSeedGateOn.
+  // 当 Bundle 种子功能开启时，在 Git 仓库中就足够了 —— CCR 可以从
+  // 本地 bundle 进行种子注入。无需 GitHub 远端或 App。
+  // 与 teleport.tsx 的 bundleSeedGateOn 使用相同的门控。
   const bundleSeedGateOn =
     !skipBundle &&
     (isEnvTruthy(process.env.CCR_FORCE_BUNDLE) ||

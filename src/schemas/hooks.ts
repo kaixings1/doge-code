@@ -1,11 +1,10 @@
 /**
- * Hook Zod schemas extracted to break import cycles.
+ * 为打破导入循环而提取的 Hook Zod 模式定义。
  *
- * This file contains hook-related schema definitions that were originally
- * in src/utils/settings/types.ts. By extracting them here, we break the
- * circular dependency between settings/types.ts and plugins/schemas.ts.
+ * 该文件包含原本位于 src/utils/settings/types.ts 中的钩子相关模式定义。
+ * 提取到此处以打破 settings/types.ts 和 plugins/schemas.ts 之间的循环依赖。
  *
- * Both files now import from this shared location instead of each other.
+ * 两个文件现在都从此共享位置导入，而不是相互导入。
  */
 
 import { HOOK_EVENTS, type HookEvent } from '../entrypoints/agentSdkTypes.js'
@@ -13,21 +12,20 @@ import { z } from 'zod/v4'
 import { lazySchema } from '../utils/lazySchema.js'
 import { SHELL_TYPES } from '../utils/shell/shellProvider.js'
 
-// Shared schema for the `if` condition field.
-// Uses permission rule syntax (e.g., "Bash(git *)", "Read(*.ts)") to filter hooks
-// before spawning. Evaluated against the hook input's tool_name and tool_input.
+// `if` 条件字段的共享模式。
+// 使用权限规则语法（例如 "Bash(git *)"、"Read(*.ts)"）在生成前过滤钩子。
+// 根据钩子输入的 tool_name 和 tool_input 进行评估。
 const IfConditionSchema = lazySchema(() =>
   z
     .string()
     .optional()
     .describe(
-      '权限规则语法，用于过滤钩子运行时机（例如："Bash(git *)"）。' +
+      '权限规则语法，用于过滤钩子运行时（例如 "Bash(git *)"）。' +
         '仅当工具调用匹配模式时才执行。避免为非匹配命令启动钩子。',
     ),
 )
 
-// Internal factory for individual hook schemas (shared between exported
-// discriminated union members and the HookCommandSchema factory)
+// 单个钩子模式的内部工厂（供导出的区分联合成员和 HookCommandSchema 工厂共享）
 function buildHookSchemas() {
   const BashCommandHookSchema = z.object({
     type: z.literal('command').describe('Shell 命令钩子类型'),
@@ -37,7 +35,7 @@ function buildHookSchemas() {
       .enum(SHELL_TYPES)
       .optional()
       .describe(
-        "Shell 解释器。'bash'使用你的 $SHELL (bash/zsh/sh); 'powershell'使用 pwsh。默认为 bash。",
+        "Shell 解释器。'bash' 使用你的 $SHELL (bash/zsh/sh)；'powershell' 使用 pwsh。默认为 bash。",
       ),
     timeout: z
       .number()
@@ -51,7 +49,7 @@ function buildHookSchemas() {
     once: z
       .boolean()
       .optional()
-      .describe('如果为 true，钩子运行一次后在执行后移除'),
+      .describe('如果为 true，钩子运行一次后执行后移除'),
     async: z
       .boolean()
       .optional()
@@ -77,12 +75,12 @@ function buildHookSchemas() {
       .positive()
       .optional()
       .describe('此特定提示词评估的超时时间（秒）'),
-    // @[MODEL LAUNCH]: Update the example model ID in the .describe() strings below (prompt + agent hooks).
+    // @[MODEL LAUNCH]：更新下方 .describe() 字符串中的示例模型 ID（提示词 + 代理钩子）。
     model: z
       .string()
       .optional()
       .describe(
-        '此提示词钩子使用的模型（如 "claude-sonnet-4-6"）。如果不指定，使用默认的小型快速模型。',
+        '此提示词钩子使用的模型（如 "claude-sonnet-4-6"）。如果不指定，则使用默认的轻量快速模型。',
       ),
     statusMessage: z
       .string()
@@ -91,7 +89,7 @@ function buildHookSchemas() {
     once: z
       .boolean()
       .optional()
-      .describe('如果为 true，钩子运行一次后在执行后移除'),
+      .describe('如果为 true，钩子运行一次后执行后移除'),
   })
 
   const HttpHookSchema = z.object({
@@ -102,12 +100,12 @@ function buildHookSchemas() {
       .number()
       .positive()
       .optional()
-      .describe('Timeout in seconds for this specific request'),
+      .describe('此特定请求的超时时间（秒）'),
     headers: z
       .record(z.string(), z.string())
       .optional()
       .describe(
-        'Additional headers to include in the request. Values may reference environment variables using $VAR_NAME or ${VAR_NAME} syntax (e.g., "Authorization": "Bearer $MY_TOKEN"). Only variables listed in allowedEnvVars will be interpolated.',
+        '请求中包含的额外头部。值可以使用 $VAR_NAME 或 ${VAR_NAME} 语法引用环境变量（例如 "Authorization": "Bearer $MY_TOKEN"）。只有 allowedEnvVars 中列出的变量才会被插值。',
       ),
     allowedEnvVars: z
       .array(z.string())
@@ -122,44 +120,42 @@ function buildHookSchemas() {
     once: z
       .boolean()
       .optional()
-      .describe('如果为 true，钩子运行一次后在执行后移除'),
+      .describe('如果为 true，钩子运行一次后执行后移除'),
   })
 
   const AgentHookSchema = z.object({
     type: z.literal('agent').describe('智能体验证钩子类型'),
-    // DO NOT add .transform() here. This schema is used by parseSettingsFile,
-    // and updateSettingsForSource round-trips the parsed result through
-    // JSON.stringify — a transformed function value is silently dropped,
-    // deleting the user's prompt from settings.json (gh-24920, CC-79). The
-    // transform (from #10594) wrapped the string in `(_msgs) => prompt`
-    // for a programmatic-construction use case in ExitPlanModeV2Tool that
-    // has since been refactored into VerifyPlanExecutionTool, which no
-    // longer constructs AgentHook objects at all.
+    // 不要在此处添加 .transform()。该模式由 parseSettingsFile 使用，
+    // 并且 updateSettingsForSource 会通过 JSON.stringify 往返处理解析结果——
+    // 转换后的函数值会被静默丢弃，从而从 settings.json 中删除用户的提示词
+    // （gh-24920, CC-79）。Transform（来自 #10594）将字符串包装为
+    // `(_msgs) => prompt`，用于 ExitPlanModeV2Tool 中的编程构造场景，
+    // 该场景此后已重构到 VerifyPlanExecutionTool 中，不再构造 AgentHook 对象。
     prompt: z
       .string()
       .describe(
-        'Prompt describing what to verify (e.g. "Verify that unit tests ran and passed."). Use $ARGUMENTS placeholder for hook input JSON.',
+        '描述待验证内容的提示词（例如 "验证单元测试是否已运行并通过"）。使用 $ARGUMENTS 占位符表示钩子输入 JSON。',
       ),
     if: IfConditionSchema(),
     timeout: z
       .number()
       .positive()
       .optional()
-      .describe('Timeout in seconds for agent execution (default 60)'),
+      .describe('代理执行的超时时间（秒，默认 60）'),
     model: z
       .string()
       .optional()
       .describe(
-        'Model to use for this agent hook (e.g., "claude-sonnet-4-6"). If not specified, uses Haiku.',
+        '此代理钩子使用的模型（例如 "claude-sonnet-4-6"）。如果不指定，则使用 Haiku。',
       ),
     statusMessage: z
       .string()
       .optional()
-      .describe('Custom status message to display in spinner while hook runs'),
+      .describe('钩子运行时在旋转加载器中显示的自定义状态消息'),
     once: z
       .boolean()
       .optional()
-      .describe('If true, hook runs once and is removed after execution'),
+      .describe('如果为 true，钩子运行一次后即移除'),
   })
 
   return {
@@ -170,9 +166,7 @@ function buildHookSchemas() {
   }
 }
 
-/**
- * Schema for hook command (excludes function hooks - they can't be persisted)
- */
+/** 钩子命令的模式（不包括函数钩子——它们无法被持久化） */
 export const HookCommandSchema = lazySchema(() => {
   const {
     BashCommandHookSchema,
@@ -188,15 +182,13 @@ export const HookCommandSchema = lazySchema(() => {
   ])
 })
 
-/**
- * Schema for matcher configuration with multiple hooks
- */
+/** 多钩子匹配器配置的模式 */
 export const HookMatcherSchema = lazySchema(() =>
   z.object({
     matcher: z
       .string()
       .optional()
-      .describe('要匹配的字符串模式（例如工具名 "Write"）'), // String (e.g. Write) to match values related to the hook event, e.g. tool names
+      .describe('要匹配的字符串模式（例如工具名 "Write"）'),
     hooks: z
       .array(HookCommandSchema())
       .describe('匹配器匹配时要执行的钩子列表'),
@@ -204,15 +196,15 @@ export const HookMatcherSchema = lazySchema(() =>
 )
 
 /**
- * Schema for hooks configuration
- * The key is the hook event. The value is an array of matcher configurations.
- * Uses partialRecord since not all hook events need to be defined.
+ * 钩子配置的模式
+ * 键是钩子事件，值是匹配器配置数组。
+ * 使用 partialRecord 是因为并非所有钩子事件都需要定义。
  */
 export const HooksSchema = lazySchema(() =>
   z.partialRecord(z.enum(HOOK_EVENTS), z.array(HookMatcherSchema())),
 )
 
-// Inferred types from schemas
+// 从模式推断的类型
 export type HookCommand = z.infer<ReturnType<typeof HookCommandSchema>>
 export type BashCommandHook = Extract<HookCommand, { type: 'command' }>
 export type PromptHook = Extract<HookCommand, { type: 'prompt' }>

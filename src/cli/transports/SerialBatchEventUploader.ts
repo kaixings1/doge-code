@@ -1,27 +1,26 @@
 import { jsonStringify } from '../../utils/slowOperations.js'
 
 /**
- * Serial ordered event uploader with batching, retry, and backpressure.
+ * 串行有序事件上传器，支持批处理、重试和背压。
  *
- * - enqueue() adds events to a pending buffer
- * - At most 1 POST in-flight at a time
- * - Drains up to maxBatchSize items per POST
- * - New events accumulate while in-flight
- * - On failure: exponential backoff (clamped), retries indefinitely
- *   until success or close() — unless maxConsecutiveFailures is set,
- *   in which case the failing batch is dropped and drain advances
- * - flush() blocks until pending is empty and kicks drain if needed
- * - Backpressure: enqueue() blocks when maxQueueSize is reached
+ * - enqueue() 将事件添加到待处理缓冲区
+ * - 同一时间最多 1 个 POST 在飞行中
+ * - 每次 POST 最多清空 maxBatchSize 个项目
+ * - 飞行中时新事件会持续累积
+ * - 失败时：指数退避（钳制），无限重试直到成功或 close()
+ *   — 除非设置了 maxConsecutiveFailures，此时失败的批次被丢弃，
+ *   清空继续前进
+ * - flush() 阻塞直到待处理队列为空，并在需要时触发清空
+ * - 背压：当达到 maxQueueSize 时 enqueue() 阻塞
  */
 
 /**
- * Throw from config.send() to make the uploader wait a server-supplied
- * duration before retrying (e.g. 429 with Retry-After). When retryAfterMs
- * is set, it overrides exponential backoff for that attempt — clamped to
- * [baseDelayMs, maxDelayMs] and jittered so a misbehaving server can
- * neither hot-loop nor stall the client, and many sessions sharing a rate
- * limit don't all pounce at the same instant. Without retryAfterMs, behaves
- * like any other thrown error (exponential backoff).
+ * 从 config.send() 抛出，使上传器在重试前等待服务器提供的时长
+ *（例如携带 Retry-After 的 429）。设置 retryAfterMs 后，
+ * 它会覆盖该次尝试的指数退避 — 钳制在 [baseDelayMs, maxDelayMs]
+ * 并添加抖动，使得行为不当的服务器既不能热循环也不能阻塞客户端，
+ * 且共享速率限制的多个会话不会同时涌出。没有 retryAfterMs 时，
+ * 行为与任何其他抛出的错误相同（指数退避）。
  */
 export class RetryableError extends Error {
   constructor(
@@ -33,31 +32,31 @@ export class RetryableError extends Error {
 }
 
 type SerialBatchEventUploaderConfig<T> = {
-  /** Max items per POST (1 = no batching) */
+  /** 每次 POST 的最大项目数（1 = 无批处理） */
   maxBatchSize: number
   /**
-   * Max serialized bytes per POST. First item always goes in regardless of
-   * size; subsequent items only if cumulative JSON bytes stay under this.
-   * Undefined = no byte limit (count-only batching).
+   * 每次 POST 的最大序列化字节数。第一个项目始终进入，无论大小；
+   * 后续项目仅在累积 JSON 字节数不超过此值时进入。
+   * Undefined = 无字节限制（仅计数批处理）。
    */
   maxBatchBytes?: number
-  /** Max pending items before enqueue() blocks */
+  /** enqueue() 阻塞前的最大待处理项目数 */
   maxQueueSize: number
-  /** The actual HTTP call — caller controls payload format */
+  /** 实际的 HTTP 调用 — 调用者控制负载格式 */
   send: (batch: T[]) => Promise<void>
-  /** Base delay for exponential backoff (ms) */
+  /** 指数退避的基础延迟（毫秒） */
   baseDelayMs: number
-  /** Max delay cap (ms) */
+  /** 最大延迟上限（毫秒） */
   maxDelayMs: number
-  /** Random jitter range added to retry delay (ms) */
+  /** 添加到重试延迟的随机抖动范围（毫秒） */
   jitterMs: number
   /**
-   * After this many consecutive send() failures, drop the failing batch
-   * and move on to the next pending item with a fresh failure budget.
-   * Undefined = retry indefinitely (default).
+   * 连续 send() 失败这么多次后，丢弃失败的批次并
+   * 以新的失败预算继续处理下一个待处理项目。
+   * Undefined = 无限重试（默认）。
    */
   maxConsecutiveFailures?: number
-  /** Called when a batch is dropped for hitting maxConsecutiveFailures. */
+  /** 当批次因达到 maxConsecutiveFailures 被丢弃时调用。 */
   onBatchDropped?: (batchSize: number, failures: number) => void
 }
 
@@ -77,26 +76,25 @@ export class SerialBatchEventUploader<T> {
   }
 
   /**
-   * Monotonic count of batches dropped via maxConsecutiveFailures. Callers
-   * can snapshot before flush() and compare after to detect silent drops
-   * (flush() resolves normally even when batches were dropped).
+   * 通过 maxConsecutiveFailures 丢弃的批次的单调递增计数。调用者
+   * 可以在 flush() 之前快照并在之后比较以检测静默丢弃
+   *（即使批次被丢弃，flush() 也会正常解析）。
    */
   get droppedBatchCount(): number {
     return this.droppedBatches
   }
 
   /**
-   * Pending queue depth. After close(), returns the count at close time —
-   * close() clears the queue but shutdown diagnostics may read this after.
+   * 待处理队列深度。close() 后返回关闭时的计数 —
+   * close() 会清空队列，但关闭诊断可能在此之后读取此值。
    */
   get pendingCount(): number {
     return this.closed ? this.pendingAtClose : this.pending.length
   }
 
   /**
-   * Add events to the pending buffer. Returns immediately if space is
-   * available. Blocks (awaits) if the buffer is full — caller pauses
-   * until drain frees space.
+   * 将事件添加到待处理缓冲区。如果有空间则立即返回。
+   * 如果缓冲区已满则阻塞（等待）— 调用者暂停直到清空释放空间。
    */
   async enqueue(events: T | T[]): Promise<void> {
     if (this.closed) return
@@ -119,8 +117,8 @@ export class SerialBatchEventUploader<T> {
   }
 
   /**
-   * Block until all pending events have been sent.
-   * Used at turn boundaries and graceful shutdown.
+   * 阻塞直到所有待处理事件已发送。
+   * 用于轮次边界和优雅关闭。
    */
   flush(): Promise<void> {
     if (this.pending.length === 0 && !this.draining) {
@@ -133,8 +131,8 @@ export class SerialBatchEventUploader<T> {
   }
 
   /**
-   * Drop pending events and stop processing.
-   * Resolves any blocked enqueue() and flush() callers.
+   * 丢弃待处理事件并停止处理。
+   * 解析所有被阻塞的 enqueue() 和 flush() 调用者。
    */
   close(): void {
     if (this.closed) return
@@ -150,8 +148,8 @@ export class SerialBatchEventUploader<T> {
   }
 
   /**
-   * Drain loop. At most one instance runs at a time (guarded by this.draining).
-   * Sends batches serially. On failure, backs off and retries indefinitely.
+   * 清空循环。同一时间最多运行一个实例（由 this.draining 保护）。
+   * 串行发送批次。失败时退避并无限重试。
    */
   private async drain(): Promise<void> {
     if (this.draining || this.closed) return
@@ -202,13 +200,13 @@ export class SerialBatchEventUploader<T> {
   }
 
   /**
-   * Pull the next batch from pending. Respects both maxBatchSize and
-   * maxBatchBytes. The first item is always taken; subsequent items only
-   * if adding them keeps the cumulative JSON size under maxBatchBytes.
+   * 从待处理队列中取出下一个批次。同时遵循 maxBatchSize 和
+   * maxBatchBytes。第一个项目始终被取出；后续项目仅在
+   * 添加它们后累积 JSON 大小不超过 maxBatchBytes 时取出。
    *
-   * Un-serializable items (BigInt, circular refs, throwing toJSON) are
-   * dropped in place — they can never be sent and leaving them at
-   * pending[0] would poison the queue and hang flush() forever.
+   * 不可序列化的项目（BigInt、循环引用、抛出 toJSON）被
+   * 原地丢弃 — 它们永远无法发送，留在 pending[0] 会污染队列
+   * 并导致 flush() 永远挂起。
    */
   private takeBatch(): T[] {
     const { maxBatchSize, maxBatchBytes } = this.config

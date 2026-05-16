@@ -19,17 +19,15 @@ const MAX_RECONNECT_ATTEMPTS = 5
 const PING_INTERVAL_MS = 30000
 
 /**
- * Maximum retries for 4001 (session not found). During compaction the
- * server may briefly consider the session stale; a short retry window
- * lets the client recover without giving up permanently.
+ * 4001（会话未找到）的最大重试次数。压缩期间服务器可能会短暂地
+ * 将会话视为过期；短暂的重试窗口让客户端能够恢复而不永久放弃。
  */
 const MAX_SESSION_NOT_FOUND_RETRIES = 3
 
 /**
- * WebSocket close codes that indicate a permanent server-side rejection.
- * The client stops reconnecting immediately.
- * Note: 4001 (session not found) is handled separately with limited
- * retries since it can be transient during compaction.
+ * 表示服务器永久拒绝的 WebSocket 关闭码。
+ * 客户端会立即停止重连。
+ * 注意：4001（会话未找到）单独处理，因为压缩期间它可能是暂时性的。
  */
 const PERMANENT_CLOSE_CODES = new Set([
   4003, // unauthorized
@@ -47,10 +45,9 @@ function isSessionsMessage(value: unknown): value is SessionsMessage {
   if (typeof value !== 'object' || value === null || !('type' in value)) {
     return false
   }
-  // Accept any message with a string `type` field. Downstream handlers
-  // (sdkMessageAdapter, RemoteSessionManager) decide what to do with
-  // unknown types. A hardcoded allowlist here would silently drop new
-  // message types the backend starts sending before the client is updated.
+  // 接受任何具有字符串 `type` 字段的消息。下游处理器
+  // (sdkMessageAdapter、RemoteSessionManager) 决定如何处理未知类型。
+  // 如果在这里硬编码白名单，会在后端发送新消息类型而客户端尚未更新时静默丢弃。
   return typeof value.type === 'string'
 }
 
@@ -72,12 +69,12 @@ type WebSocketLike = {
 }
 
 /**
- * WebSocket client for connecting to CCR sessions via /v1/sessions/ws/{id}/subscribe
+ * 通过 /v1/sessions/ws/{id}/subscribe 连接到 CCR 会话的 WebSocket 客户端
  *
- * Protocol:
- * 1. Connect to wss://api.anthropic.com/v1/sessions/ws/{sessionId}/subscribe?organization_uuid=...
- * 2. Send auth message: { type: 'auth', credential: { type: 'oauth', token: '...' } }
- * 3. Receive SDKMessage stream from the session
+ * 协议：
+ * 1. 连接到 wss://api.anthropic.com/v1/sessions/ws/{sessionId}/subscribe?organization_uuid=...
+ * 2. 发送认证消息：{ type: 'auth', credential: { type: 'oauth', token: '...' } }
+ * 3. 接收会话的 SDKMessage 流
  */
 export class SessionsWebSocket {
   private ws: WebSocketLike | null = null
@@ -94,9 +91,7 @@ export class SessionsWebSocket {
     private readonly callbacks: SessionsWebSocketCallbacks,
   ) {}
 
-  /**
-   * Connect to the sessions WebSocket endpoint
-   */
+  /** 连接到会话 WebSocket 端点 */
   async connect(): Promise<void> {
     if (this.state === 'connecting') {
       logForDebugging('[SessionsWebSocket] Already connecting')
@@ -174,7 +169,7 @@ export class SessionsWebSocket {
         logForDebugging(
           '[SessionsWebSocket] 连接已打开，通过 headers 完成认证',
         )
-        // Auth is handled via headers, so we're immediately connected
+        // 认证通过 headers 处理，因此立即连接成功
         this.state = 'connected'
         this.reconnectAttempts = 0
         this.sessionNotFoundRetries = 0
@@ -204,9 +199,7 @@ export class SessionsWebSocket {
     }
   }
 
-  /**
-   * Handle incoming WebSocket message
-   */
+  /** 处理传入的 WebSocket 消息 */
   private handleMessage(data: string): void {
     try {
       const message: unknown = jsonParse(data)
@@ -228,9 +221,7 @@ export class SessionsWebSocket {
     }
   }
 
-  /**
-   * Handle WebSocket close
-   */
+  /** 处理 WebSocket 关闭 */
   private handleClose(closeCode: number): void {
     this.stopPingInterval()
 
@@ -243,7 +234,7 @@ export class SessionsWebSocket {
     const previousState = this.state
     this.state = 'closed'
 
-    // Permanent codes: stop reconnecting — server has definitively ended the session
+    // 永久关闭码：停止重连 —— 服务器已明确终止会话
     if (PERMANENT_CLOSE_CODES.has(closeCode)) {
       logForDebugging(
         `[SessionsWebSocket] 永久关闭码 ${closeCode}，不再重连`,
@@ -252,9 +243,8 @@ export class SessionsWebSocket {
       return
     }
 
-    // 4001 (session not found) can be transient during compaction: the
-    // server may briefly consider the session stale while the CLI worker
-    // is busy with the compaction API call and not emitting events.
+    // 4001（会话未找到）在压缩期间可能是暂时的：
+    // CLI 工作进程忙于压缩 API 调用且未发出事件时，服务器可能会短暂认为会话过期。
     if (closeCode === 4001) {
       this.sessionNotFoundRetries++
       if (this.sessionNotFoundRetries > MAX_SESSION_NOT_FOUND_RETRIES) {
@@ -271,7 +261,7 @@ export class SessionsWebSocket {
       return
     }
 
-    // Attempt reconnection if we were connected
+    // 如果之前已连接，则尝试重连
     if (
       previousState === 'connected' &&
       this.reconnectAttempts < MAX_RECONNECT_ATTEMPTS
@@ -312,9 +302,7 @@ export class SessionsWebSocket {
     }, PING_INTERVAL_MS)
   }
 
-  /**
-   * Stop ping interval
-   */
+  /** 停止 ping 间隔 */
   private stopPingInterval(): void {
     if (this.pingInterval) {
       clearInterval(this.pingInterval)
@@ -322,9 +310,7 @@ export class SessionsWebSocket {
     }
   }
 
-  /**
-   * Send a control response back to the session
-   */
+  /** 向会话发送控制响应 */
   sendControlResponse(response: SDKControlResponse): void {
     if (!this.ws || this.state !== 'connected') {
       logError(new Error('[SessionsWebSocket] 无法发送：未连接'))
@@ -335,9 +321,7 @@ export class SessionsWebSocket {
     this.ws.send(jsonStringify(response))
   }
 
-  /**
-   * Send a control request to the session (e.g., interrupt)
-   */
+  /** 向会话发送控制请求（例如中断） */
   sendControlRequest(request: SDKControlRequestInner): void {
     if (!this.ws || this.state !== 'connected') {
       logError(new Error('[SessionsWebSocket] 无法发送：未连接'))
@@ -356,16 +340,12 @@ export class SessionsWebSocket {
     this.ws.send(jsonStringify(controlRequest))
   }
 
-  /**
-   * Check if connected
-   */
+  /** 检查是否已连接 */
   isConnected(): boolean {
     return this.state === 'connected'
   }
 
-  /**
-   * Close the WebSocket connection
-   */
+  /** 关闭 WebSocket 连接 */
   close(): void {
     logForDebugging('[SessionsWebSocket] Closing connection')
     this.state = 'closed'
@@ -387,8 +367,8 @@ export class SessionsWebSocket {
   }
 
   /**
-   * Force reconnect - closes existing connection and establishes a new one.
-   * Useful when the subscription becomes stale (e.g., after container shutdown).
+   * 强制重连 —— 关闭现有连接并建立新连接。
+   * 在订阅变旧时很有用（例如容器关闭后）。
    */
   reconnect(): void {
     logForDebugging('[SessionsWebSocket] Force reconnecting')

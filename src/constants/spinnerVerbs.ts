@@ -12,7 +12,7 @@ export function getSpinnerVerbs(): string[] {
   return [...SPINNER_VERBS, ...config.verbs]
 }
 
-// Spinner verbs for loading messages
+// 加载消息的加载动词
 export const SPINNER_VERBS = [
   '正在完成编译，还差最后一个警告没忽略', // 完成中
   '指针跳来跳去，不知道指向哪块内存', // 行动中

@@ -1,9 +1,9 @@
 import { c as _c } from "react/compiler-runtime";
 /**
- * Miscellaneous subcommand handlers — extracted from main.tsx for lazy loading.
- * setup-token, doctor, install
+ * 杂项子命令处理函数 — 从 main.tsx 提取以实现懒加载。
+ * setup-token、doctor、install
  */
-/* eslint-disable custom-rules/no-process-exit -- CLI subcommand handlers intentionally exit */
+/* eslint-disable custom-rules/no-process-exit -- CLI 子命令处理程序意图退出 */
 
 import { cwd } from 'process';
 import React from 'react';
@@ -33,8 +33,7 @@ export async function setupTokenHandler(root: Root): Promise<void> {
 				  警告：您已通过环境变量或 API 密钥助手配置了身份验证。
 				</Text>
                 <Text color="warning">
-                  The setup-token command will create a new OAuth token which
-                  you can use instead.
+                  setup-token 命令将创建一个新的 OAuth 令牌，您可以改用该令牌。
                 </Text>
               </Box>}
             <ConsoleOAuthFlow onDone={() => {
@@ -48,7 +47,7 @@ export async function setupTokenHandler(root: Root): Promise<void> {
   process.exit(0);
 }
 
-// DoctorWithPlugins wrapper + doctor handler
+// DoctorWithPlugins 包装器 + doctor 处理函数
 const DoctorLazy = React.lazy(() => import('../../screens/Doctor.js').then(m => ({
   default: m.Doctor
 })));
@@ -85,7 +84,7 @@ export async function doctorHandler(root: Root): Promise<void> {
   process.exit(0);
 }
 
-// install handler
+// install 处理函数
 export async function installHandler(target: string | undefined, options: {
   force?: boolean;
 }): Promise<void> {

@@ -14,9 +14,9 @@ export function thirdPartyTrackingPlugin({
   additionalCallback?: TrackingCallback;
   trackers?: Trackers[];
 } = {}) {
-  // Browser only
+  // 仅浏览器环境
   if (typeof window === "undefined") {
-    throw new Error("thirdPartyTrackingPlugin only works in the browser");
+    throw new Error("thirdPartyTrackingPlugin 仅限浏览器环境使用");
   }
 
   return (gb: GrowthBook | UserScopedGrowthBook | GrowthBookClient) => {
@@ -28,7 +28,7 @@ export function thirdPartyTrackingPlugin({
         promises.push(Promise.resolve(additionalCallback(e, r)));
       }
 
-      // GA4 - gtag
+      // GA4（Google Analytics 4）- gtag 跟踪
       if (trackers.includes("gtag") && window.gtag) {
         let gtagResolve;
         const gtagPromise = new Promise((resolve) => {
@@ -41,7 +41,7 @@ export function thirdPartyTrackingPlugin({
         });
       }
 
-      // GTM - dataLayer
+      // GTM（Google Tag Manager）- dataLayer 跟踪
       if (trackers.includes("gtm") && window.dataLayer) {
         let datalayerResolve;
         const datalayerPromise = new Promise((resolve) => {
@@ -55,7 +55,7 @@ export function thirdPartyTrackingPlugin({
         });
       }
 
-      // Segment - analytics.js
+      // Segment（客户数据平台）- analytics.js 跟踪
       if (
         trackers.includes("segment") &&
         window.analytics &&

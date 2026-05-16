@@ -14,10 +14,10 @@ type BaseNotification = {
   priority: Priority;
   timeoutMs?: number;
   /**
-   * Combine notifications with the same key, like Array.reduce().
-   * Called as fold(accumulator, incoming) when a notification with a matching
-   * key already exists in the queue or is currently displayed.
-   * Returns the merged notification (should carry fold forward for future merges).
+   * 将具有相同键的通知合并，类似于 Array.reduce()。
+   * 当队列中或当前显示的通知已存在匹配键的通知时，
+   * 以 fold(accumulator, incoming) 方式调用。
+   * 返回合并后的通知（应将 fold 传递下去以便未来合并）。
    */
   fold?: (accumulator: Notification, incoming: Notification) => Notification;
 };
@@ -33,7 +33,7 @@ type RemoveNotificationFn = (key: string) => void;
 export type Notification = TextNotification | JSXNotification;
 const DEFAULT_TIMEOUT_MS = 8000;
 
-// Track current timeout to clear it when immediate notifications arrive
+// 跟踪当前超时，以便在收到立即通知时清除
 let currentTimeoutId: NodeJS.Timeout | null = null;
 export function useNotifications(): {
   addNotification: AddNotificationFn;
@@ -213,7 +213,7 @@ export function useNotifications(): {
   }, [setAppState, processQueue]);
 
   // 如果初始状态中有通知，则在挂载时处理队列。
-  // 命令式读取（不使用 useAppState）— 仅在挂载时的订阅是多余的，
+  // 命令式读取（不使用 useAppState）— 仅在挂载时订阅是多余的，
   // 会导致每个调用者在队列改变时重新渲染。
   // eslint-disable-next-line react-hooks/exhaustive-deps
   // biome-ignore lint/correctness/useExhaustiveDependencies: 仅在挂载时的效果，store 是稳定的上下文引用

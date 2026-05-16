@@ -1,13 +1,13 @@
 export const PRODUCT_URL = 'https://claude.com/claude-code'
 
-// Claude Code Remote session URLs
+// Claude Code 远程会话 URL
 export const CLAUDE_AI_BASE_URL = 'https://claude.ai'
 export const CLAUDE_AI_STAGING_BASE_URL = 'https://claude-ai.staging.ant.dev'
 export const CLAUDE_AI_LOCAL_BASE_URL = 'http://localhost:4000'
 
 /**
- * Determine if we're in a staging environment for remote sessions.
- * Checks session ID format and ingress URL.
+ * 判断是否处于远程会话的预发布环境。
+ * 检查会话 ID 格式和入口 URL。
  */
 export function isRemoteSessionStaging(
   sessionId?: string,
@@ -20,8 +20,8 @@ export function isRemoteSessionStaging(
 }
 
 /**
- * Determine if we're in a local-dev environment for remote sessions.
- * Checks session ID format (e.g. `session_local_...`) and ingress URL.
+ * 判断是否处于远程会话的本地开发环境。
+ * 检查会话 ID 格式（例如 `session_local_...`）和入口 URL。
  */
 export function isRemoteSessionLocal(
   sessionId?: string,
@@ -34,7 +34,7 @@ export function isRemoteSessionLocal(
 }
 
 /**
- * Get the base URL for Claude AI based on environment.
+ * 根据环境获取 Claude AI 的基础 URL。
  */
 export function getClaudeAiBaseUrl(
   sessionId?: string,
@@ -50,17 +50,17 @@ export function getClaudeAiBaseUrl(
 }
 
 /**
- * Get the full session URL for a remote session.
+ * 获取远程会话的完整会话 URL。
  *
- * The cse_→session_ translation is a temporary shim gated by
- * tengu_bridge_repl_v2_cse_shim_enabled (see isCseShimEnabled). Worker
- * endpoints (/v1/code/sessions/{id}/worker/*) want `cse_*` but the claude.ai
- * frontend currently routes on `session_*` (compat/convert.go:27 validates
- * TagSession). Same UUID body, different tag prefix. Once the server tags by
- * environment_kind and the frontend accepts `cse_*` directly, flip the gate
- * off. No-op for IDs already in `session_*` form. See toCompatSessionId in
- * src/bridge/sessionIdCompat.ts for the canonical helper (lazy-required here
- * to keep constants/ leaf-of-DAG at module-load time).
+ * cse_→session_ 转换是一个临时垫片，由
+ * tengu_bridge_repl_v2_cse_shim_enabled 控制（见 isCseShimEnabled）。Worker
+ * 端点（/v1/code/sessions/{id}/worker/*）需要 `cse_*`，但 claude.ai
+ * 前端当前使用 `session_*` 进行路由（compat/convert.go:27 验证
+ * TagSession）。相同的 UUID 主体，不同的标签前缀。一旦服务器按
+ * environment_kind 进行标记且前端直接接受 `cse_*`，则关闭此垫片。
+ * 对已经是 `session_*` 形式的 ID 无效。参见 src/bridge/sessionIdCompat.ts
+ * 中的 toCompatSessionId 以获取规范辅助函数（此处延迟加载
+ * 以保持 constants/ 在模块加载时为 DAG 叶子节点）。
  */
 export function getRemoteSessionUrl(
   sessionId: string,

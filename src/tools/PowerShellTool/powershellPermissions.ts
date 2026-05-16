@@ -1,6 +1,7 @@
 /**
  * PowerShell 特定的权限检查，改编自 bashPermissions.ts
  * 以实现不区分大小写的 cmdlet 匹配。
+ * 此模块实现了完整的 PowerShell 命令权限检查流程，包括安全验证、规则匹配和多层级决策。
  */
 
 import { resolve } from 'path'
@@ -381,7 +382,7 @@ export function powershellToolCheckExactMatchPermission(
   if (!input || typeof input.command !== 'string' || !input.command.trim()) {
     return {
       behavior: 'passthrough',
-      message: 'Command input is empty, skipping exact match permission check',
+      message: '命令输入为空，跳过精确匹配权限检查',
     }
   }
   const trimmedCommand = input.command.trim()
@@ -438,7 +439,7 @@ export function powershellToolCheckPermission(
   if (!input || typeof input.command !== 'string' || !input.command.trim()) {
     return {
       behavior: 'allow',
-      message: 'Command input is empty, skipping permission check',
+      message: '命令输入为空，跳过权限检查',
     }
   }
   const command = input.command.trim()
@@ -647,7 +648,7 @@ export async function powershellToolHasPermission(
   if (!input || typeof input.command !== 'string') {
     return {
       behavior: 'allow',
-      message: 'Command input is empty, skipping permission checks',
+      message: '命令输入为空，跳过权限检查',
     }
   }
   const toolPermissionContext = context.getAppState().toolPermissionContext
