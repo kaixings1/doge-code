@@ -1,11 +1,11 @@
 /**
- * Branded types for session and agent IDs.
- * These prevent accidentally mixing up session IDs and agent IDs at compile time.
+ * 会话 ID 和代理 ID 的品牌类型。
+ * 防止在编译时意外混淆会话 ID 和代理 ID。
  */
 
 /**
- * A session ID uniquely identifies a Claude Code session.
- * Returned by getSessionId().
+ * 会话 ID，唯一标识一个 Claude Code 会话。
+ * 由 getSessionId() 返回。
  */
 export type 会话ID = string & { readonly __brand: 'SessionId' }
 
@@ -17,16 +17,16 @@ export type 会话ID = string & { readonly __brand: 'SessionId' }
 export type 代理ID = string & { readonly __brand: 'AgentId' }
 
 /**
- * Cast a raw string to SessionId.
- * Use sparingly - prefer getSessionId() when possible.
+ * 将原始字符串转换为 SessionId。
+ * 谨慎使用 — 尽可能使用 getSessionId()。
  */
 export function asSessionId(id: string): SessionId {
   return id as SessionId
 }
 
 /**
- * Cast a raw string to AgentId.
- * Use sparingly - prefer createAgentId() when possible.
+ * 将原始字符串转换为 AgentId。
+ * 谨慎使用 — 尽可能使用 createAgentId()。
  */
 export function asAgentId(id: string): AgentId {
   return id as AgentId
@@ -35,9 +35,9 @@ export function asAgentId(id: string): AgentId {
 const AGENT_ID_PATTERN = /^a(?:.+-)?[0-9a-f]{16}$/
 
 /**
- * Validate and brand a string as AgentId.
- * Matches the format produced by createAgentId(): `a` + optional `<label>-` + 16 hex chars.
- * Returns null if the string doesn't match (e.g. teammate names, team-addressing).
+ * 验证并将字符串标记为 AgentId。
+ * 匹配 createAgentId() 生成的格式：`a` + 可选的 `<label>-` + 16 位十六进制字符。
+ * 若字符串不匹配则返回 null（例如队友名称、团队地址）。
  */
 export function toAgentId(s: string): AgentId | null {
   return AGENT_ID_PATTERN.test(s) ? (s as AgentId) : null

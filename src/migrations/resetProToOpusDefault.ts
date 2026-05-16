@@ -13,7 +13,7 @@ export function resetProToOpusDefault(): void {
 
   const apiProvider = getAPIProvider()
 
-  // Pro users on firstParty get auto-migrated to Opus 4.5 default
+  // firstParty 上的 Pro 用户会自动迁移到 Opus 4.5 默认值
   if (apiProvider !== 'firstParty' || !isProSubscriber()) {
     saveGlobalConfig(current => ({
       ...current,
@@ -25,7 +25,7 @@ export function resetProToOpusDefault(): void {
 
   const settings = getSettings_DEPRECATED()
 
-  // Only show notification if user was on default (no custom model setting)
+  // 仅在用户使用默认值（无自定义模型设置）时显示通知
   if (settings?.model === undefined) {
     const opusProMigrationTimestamp = Date.now()
     saveGlobalConfig(current => ({
@@ -38,7 +38,7 @@ export function resetProToOpusDefault(): void {
       had_custom_model: false,
     })
   } else {
-    // User has a custom model setting, just mark migration complete
+    // 用户设置了自定义模型，仅标记迁移完成
     saveGlobalConfig(current => ({
       ...current,
       opusProMigrationComplete: true,

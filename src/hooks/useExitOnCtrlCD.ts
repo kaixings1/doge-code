@@ -19,28 +19,28 @@ type UseKeybindingsHook = (
 ) => void
 
 /**
- * Handle ctrl+c and ctrl+d for exiting the application.
+ * 处理用于退出应用的 ctrl+c 和 ctrl+d。
  *
- * Uses a time-based double-press mechanism:
- * - First press: Shows "Press X again to exit" message
- * - Second press within timeout: Exits the application
+ * 使用基于时间的双击机制：
+ * - 第一次按下：显示"再按 X 键退出"消息
+ * - 超时内第二次按下：退出应用
  *
- * Note: We use time-based double-press rather than the chord system because
- * we want the first ctrl+c to also trigger interrupt (handled elsewhere).
- * The chord system would prevent the first press from firing any action.
+ * 注意：我们使用基于时间的双击而非和弦系统，因为
+ * 我们希望第一次 ctrl+c 也能触发中断（在其他地方处理）。
+ * 和弦系统会阻止第一次按下触发任何操作。
  *
- * These keys are hardcoded and cannot be rebound via keybindings.json.
+ * 这些按键是硬编码的，不能通过 keybindings.json 重新绑定。
  *
- * @param useKeybindingsHook - The useKeybindings hook to use for registering handlers
- *                            (dependency injection to avoid import cycles)
- * @param onInterrupt - Optional callback for features to handle interrupt (ctrl+c).
- *                      Return true if handled, false to fall through to double-press exit.
- * @param onExit - Optional custom exit handler
- * @param isActive - Whether the keybinding is active (default true). Set false
- *                   while an embedded TextInput is focused — TextInput's own
- *                   ctrl+c/d handlers will manage cancel/exit, and Dialog's
- *                   handler would otherwise double-fire (child useInput runs
- *                   before parent useKeybindings, so both see every keypress).
+ * @param useKeybindingsHook - 用于注册处理器的 useKeybindings hook
+ *                            （依赖注入以避免导入循环）
+ * @param onInterrupt - 处理中断（ctrl+c）的可选回调。
+ *                     返回 true 表示已处理，false 则回退到双击退出。
+ * @param onExit - 可选的自定义退出处理器
+ * @param isActive - 按键绑定是否激活（默认为 true）。当嵌入的 TextInput
+ *                   获得焦点时设为 false——TextInput 自己的 ctrl+c/d
+ *                   处理器会管理取消/退出，Dialog 的处理器会
+ *                   双重触发（子 useInput 在父 useKeybindings 之前运行，
+ *                   因此两者都会看到每次按键）。
  */
 export function useExitOnCtrlCD(
   useKeybindingsHook: UseKeybindingsHook,
@@ -56,27 +56,27 @@ export function useExitOnCtrlCD(
 
   const exitFn = useMemo(() => onExit ?? exit, [onExit, exit])
 
-  // Double-press handler for ctrl+c
+  // 双击处理器，用于 ctrl+c
   const handleCtrlCDoublePress = useDoublePress(
     pending => setExitState({ pending, keyName: 'Ctrl-C' }),
     exitFn,
   )
 
-  // Double-press handler for ctrl+d
+  // 双击处理器，用于 ctrl+d
   const handleCtrlDDoublePress = useDoublePress(
     pending => setExitState({ pending, keyName: 'Ctrl-D' }),
     exitFn,
   )
 
-  // Handler for app:interrupt (ctrl+c by default)
-  // Let features handle interrupt first via callback
+  // 处理 app:interrupt（默认为 ctrl+c）
+  // 先让功能处理中断，通过回调判断
   const handleInterrupt = useCallback(() => {
-    if (onInterrupt?.()) return // Feature handled it
+    if (onInterrupt?.()) return // 功能已处理
     handleCtrlCDoublePress()
   }, [handleCtrlCDoublePress, onInterrupt])
 
-  // Handler for app:exit (ctrl+d by default)
-  // This also uses double-press to confirm exit
+  // 处理 app:exit（默认为 ctrl+d）
+  // 同样使用双击确认退出
   const handleExit = useCallback(() => {
     handleCtrlDDoublePress()
   }, [handleCtrlDDoublePress])

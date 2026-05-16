@@ -299,13 +299,13 @@ export function ResumeConversation({
   if (loading) {
     return <Box>
         <Spinner />
-        <Text> Loading conversations…</Text>
+        <Text> 正在加载对话…</Text>
       </Box>;
   }
   if (resuming) {
     return <Box>
         <Spinner />
-        <Text> Resuming conversation…</Text>
+        <Text> 正在恢复对话…</Text>
       </Box>;
   }
   if (filteredLogs.length === 0) {

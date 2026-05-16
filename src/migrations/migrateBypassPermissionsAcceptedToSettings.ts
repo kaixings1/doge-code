@@ -7,9 +7,9 @@ import {
 } from '../utils/settings/settings.js'
 
 /**
- * Migration: Move bypassPermissionsModeAccepted from global config to settings.json
- * as skipDangerousModePermissionPrompt. This is a better home since settings.json
- * is the user-configurable settings file.
+ * 迁移：将 bypassPermissionsModeAccepted 从全局配置移至 settings.json
+ * 作为 skipDangerousModePermissionPrompt。settings.json 是用户可配置的设置文件，
+ * 因此这是更合适的位置。
  */
 export function migrateBypassPermissionsAcceptedToSettings(): void {
   const globalConfig = getGlobalConfig()

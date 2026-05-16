@@ -87,7 +87,7 @@ function AskUserQuestionResultMessage(t0) {
   } = t0;
   let t1;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-    t1 = <Box flexDirection="row"><Text color={getModeColor("default")}>{BLACK_CIRCLE} </Text><Text>User answered Claude's questions:</Text></Box>;
+    t1 = <Box flexDirection="row"><Text color={getModeColor("default")}>{BLACK_CIRCLE} </Text><Text>用户已回答 Claude 的问题：</Text></Box>;
     $[0] = t1;
   } else {
     t1 = $[0];
@@ -238,7 +238,7 @@ export const AskUserQuestionTool: Tool<InputSchema, Output> = buildTool({
     }).join(', ');
     return {
       type: 'tool_result',
-      content: `User has answered your questions: ${answersText}. You can now continue with the user's answers in mind.`,
+      content: `用户已回答您的问题：${answersText}。您现在可以带着用户的答案继续了。`,
       tool_use_id: toolUseID
     };
   }

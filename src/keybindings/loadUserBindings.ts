@@ -1,12 +1,12 @@
 /**
- * User keybinding configuration loader with hot-reload support.
+ * 支持热重载的用户按键绑定配置加载器。
  *
- * Loads keybindings from ~/.claude/keybindings.json and watches
- * for changes to reload them automatically.
+ * 从 ~/.claude/keybindings.json 加载按键绑定并监视
+ * 文件变化以自动重新加载。
  *
- * NOTE: User keybinding customization is currently only available for
- * Anthropic employees (USER_TYPE === 'ant'). External users always
- * use the default bindings.
+ * 注意：用户按键绑定自定义目前仅适用于
+ * Anthropic 员工（USER_TYPE === 'ant'）。外部用户始终
+ * 使用默认绑定。
  */
 
 import chokidar, { type FSWatcher } from 'chokidar'
@@ -31,12 +31,12 @@ import {
 } from './validate.js'
 
 /**
- * Check if keybinding customization is enabled.
+ * 检查按键绑定自定义是否已启用。
  *
- * Returns true if the tengu_keybinding_customization_release GrowthBook gate is enabled.
+ * 如果 tengu_keybinding_customization_release GrowthBook 开关已启用则返回 true。
  *
- * This function is exported so other parts of the codebase (e.g., /doctor)
- * can check the same condition consistently.
+ * 此函数已导出以便代码库的其他部分（例如 /doctor）
+ * 可以一致地检查相同条件。
  */
 export function isKeybindingCustomizationEnabled(): boolean {
   return getFeatureValue_CACHED_MAY_BE_STALE(
@@ -46,17 +46,17 @@ export function isKeybindingCustomizationEnabled(): boolean {
 }
 
 /**
- * Time in milliseconds to wait for file writes to stabilize.
+ * 等待文件写入稳定的时间（毫秒）。
  */
 const FILE_STABILITY_THRESHOLD_MS = 500
 
 /**
- * Polling interval for checking file stability.
+ * 检查文件稳定性的轮询间隔。
  */
 const FILE_STABILITY_POLL_INTERVAL_MS = 200
 
 /**
- * Result of loading keybindings, including any validation warnings.
+ * 加载按键绑定的结果，包括任何验证警告。
  */
 export type KeybindingsLoadResult = {
   bindings: ParsedBinding[]
@@ -71,14 +71,14 @@ let cachedWarnings: KeybindingWarning[] = []
 const keybindingsChanged = createSignal<[result: KeybindingsLoadResult]>()
 
 /**
- * Tracks the date (YYYY-MM-DD) when we last logged a custom keybindings load event.
- * Used to ensure we fire the event at most once per day.
+ * 跟踪上次记录自定义按键绑定加载事件的日期（YYYY-MM-DD）。
+ * 用于确保每天最多触发一次事件。
  */
 let lastCustomBindingsLogDate: string | null = null
 
 /**
- * Log a telemetry event when custom keybindings are loaded, at most once per day.
- * This lets us estimate the percentage of users who customize their keybindings.
+ * 在加载自定义按键绑定时记录遥测事件，每天最多一次。
+ * 这让我们可以估算自定义按键绑定的用户百分比。
  */
 function logCustomBindingsLoadedOncePerDay(userBindingCount: number): void {
   const today = new Date().toISOString().slice(0, 10)
@@ -90,7 +90,7 @@ function logCustomBindingsLoadedOncePerDay(userBindingCount: number): void {
 }
 
 /**
- * Type guard to check if an object is a valid KeybindingBlock.
+ * 类型守卫，检查对象是否为有效的 KeybindingBlock。
  */
 function isKeybindingBlock(obj: unknown): obj is KeybindingBlock {
   if (typeof obj !== 'object' || obj === null) return false
@@ -103,37 +103,37 @@ function isKeybindingBlock(obj: unknown): obj is KeybindingBlock {
 }
 
 /**
- * Type guard to check if an array contains only valid KeybindingBlocks.
+ * 类型守卫，检查数组是否只包含有效的 KeybindingBlocks。
  */
 function isKeybindingBlockArray(arr: unknown): arr is KeybindingBlock[] {
   return Array.isArray(arr) && arr.every(isKeybindingBlock)
 }
 
 /**
- * Get the path to the user keybindings file.
+ * 获取用户按键绑定文件的路径。
  */
 export function getKeybindingsPath(): string {
   return join(getClaudeConfigHomeDir(), 'keybindings.json')
 }
 
 /**
- * Parse default bindings (cached for performance).
+ * 解析默认绑定（为性能缓存）。
  */
 function getDefaultParsedBindings(): ParsedBinding[] {
   return parseBindings(DEFAULT_BINDINGS)
 }
 
 /**
- * Load and parse keybindings from user config file.
- * Returns merged default + user bindings along with validation warnings.
+ * 从用户配置文件加载并解析按键绑定。
+ * 返回合并后的默认 + 用户绑定以及验证警告。
  *
- * For external users, always returns default bindings only.
- * User customization is currently gated to Anthropic employees.
+ * 对于外部用户，始终仅返回默认绑定。
+ * 用户自定义目前仅限于 Anthropic 员工使用。
  */
 export async function loadKeybindings(): Promise<KeybindingsLoadResult> {
   const defaultBindings = getDefaultParsedBindings()
 
-  // Skip user config loading for external users
+  // 对外部用户跳过用户配置加载
   if (!isKeybindingCustomizationEnabled()) {
     return { bindings: defaultBindings, warnings: [] }
   }
@@ -144,12 +144,12 @@ export async function loadKeybindings(): Promise<KeybindingsLoadResult> {
     const content = await readFile(userPath, 'utf-8')
     const parsed: unknown = jsonParse(content)
 
-    // Extract bindings array from object wrapper format: { "bindings": [...] }
+    // 从对象包装格式中提取绑定数组：{ "bindings": [...] }
     let userBlocks: unknown
     if (typeof parsed === 'object' && parsed !== null && 'bindings' in parsed) {
       userBlocks = (parsed as { bindings: unknown }).bindings
     } else {
-      // Invalid format - missing bindings property
+      // 无效格式 - 缺少 bindings 属性
       const errorMessage = 'keybindings.json 必须有 "bindings" 数组'
       const suggestion = 'Use format: { "bindings": [ ... ] }'
       logForDebugging(`[keybindings] Invalid keybindings.json: ${errorMessage}`)
@@ -166,7 +166,7 @@ export async function loadKeybindings(): Promise<KeybindingsLoadResult> {
       }
     }
 
-    // Validate structure - bindings must be an array of valid keybinding blocks
+    // 验证结构 - bindings 必须是有效按键绑定块的数组
     if (!isKeybindingBlockArray(userBlocks)) {
       const errorMessage = !Array.isArray(userBlocks)
         ? '"bindings" must be an array'
@@ -193,13 +193,13 @@ export async function loadKeybindings(): Promise<KeybindingsLoadResult> {
       `[keybindings] Loaded ${userParsed.length} user bindings from ${userPath}`,
     )
 
-    // User bindings come after defaults, so they override
+    // 用户绑定在默认之后，因此它们会覆盖
     const mergedBindings = [...defaultBindings, ...userParsed]
 
     logCustomBindingsLoadedOncePerDay(userParsed.length)
 
-    // Run validation on user config
-    // First check for duplicate keys in raw JSON (JSON.parse silently drops earlier values)
+    // 对用户配置运行验证
+    // 首先检查原始 JSON 中的重复键（JSON.parse 静默丢弃先前的值）
     const duplicateKeyWarnings = checkDuplicateKeysInJson(content)
     const warnings = [
       ...duplicateKeyWarnings,
@@ -214,12 +214,12 @@ export async function loadKeybindings(): Promise<KeybindingsLoadResult> {
 
     return { bindings: mergedBindings, warnings }
   } catch (error) {
-    // File doesn't exist - use defaults (user can run /keybindings to create)
+    // 文件不存在 - 使用默认值（用户可以运行 /keybindings 创建）
     if (isENOENT(error)) {
       return { bindings: defaultBindings, warnings: [] }
     }
 
-    // Other error - log and return defaults with warning
+    // 其他错误 - 记录日志并返回带警告的默认值
     logForDebugging(
       `[keybindings] Error loading ${userPath}: ${errorMessage(error)}`,
     )
@@ -237,8 +237,8 @@ export async function loadKeybindings(): Promise<KeybindingsLoadResult> {
 }
 
 /**
- * Load keybindings synchronously (for initial render).
- * Uses cached value if available.
+ * 同步加载按键绑定（用于初始渲染）。
+ * 使用缓存值（如果可用）。
  */
 export function loadKeybindingsSync(): ParsedBinding[] {
   if (cachedBindings) {
@@ -250,11 +250,11 @@ export function loadKeybindingsSync(): ParsedBinding[] {
 }
 
 /**
- * Load keybindings synchronously with validation warnings.
- * Uses cached values if available.
+ * 同步加载按键绑定并附带验证警告。
+ * 使用缓存值（如果可用）。
  *
- * For external users, always returns default bindings only.
- * User customization is currently gated to Anthropic employees.
+ * 对于外部用户，始终仅返回默认绑定。
+ * 用户自定义目前仅限于 Anthropic 员工使用。
  */
 export function loadKeybindingsSyncWithWarnings(): KeybindingsLoadResult {
   if (cachedBindings) {
@@ -263,7 +263,7 @@ export function loadKeybindingsSyncWithWarnings(): KeybindingsLoadResult {
 
   const defaultBindings = getDefaultParsedBindings()
 
-  // Skip user config loading for external users
+  // 对外部用户跳过用户配置加载
   if (!isKeybindingCustomizationEnabled()) {
     cachedBindings = defaultBindings
     cachedWarnings = []
@@ -273,16 +273,16 @@ export function loadKeybindingsSyncWithWarnings(): KeybindingsLoadResult {
   const userPath = getKeybindingsPath()
 
   try {
-    // sync IO: called from sync context (React useState initializer)
+    // 同步 IO：从同步上下文调用（React useState 初始化器）
     const content = readFileSync(userPath, 'utf-8')
     const parsed: unknown = jsonParse(content)
 
-    // Extract bindings array from object wrapper format: { "bindings": [...] }
+    // 从对象包装格式中提取绑定数组：{ "bindings": [...] }
     let userBlocks: unknown
     if (typeof parsed === 'object' && parsed !== null && 'bindings' in parsed) {
       userBlocks = (parsed as { bindings: unknown }).bindings
     } else {
-      // Invalid format - missing bindings property
+      // 无效格式 - 缺少 bindings 属性
       cachedBindings = defaultBindings
       cachedWarnings = [
         {
@@ -295,7 +295,7 @@ export function loadKeybindingsSyncWithWarnings(): KeybindingsLoadResult {
       return { bindings: cachedBindings, warnings: cachedWarnings }
     }
 
-    // Validate structure - bindings must be an array of valid keybinding blocks
+    // 验证结构 - bindings 必须是有效按键绑定块的数组
     if (!isKeybindingBlockArray(userBlocks)) {
       const errorMessage = !Array.isArray(userBlocks)
         ? '"bindings" must be an array'
@@ -323,7 +323,7 @@ export function loadKeybindingsSyncWithWarnings(): KeybindingsLoadResult {
 
     logCustomBindingsLoadedOncePerDay(userParsed.length)
 
-    // Run validation - check for duplicate keys in raw JSON first
+    // 运行验证 - 首先检查原始 JSON 中的重复键
     const duplicateKeyWarnings = checkDuplicateKeysInJson(content)
     cachedWarnings = [
       ...duplicateKeyWarnings,
@@ -337,7 +337,7 @@ export function loadKeybindingsSyncWithWarnings(): KeybindingsLoadResult {
 
     return { bindings: cachedBindings, warnings: cachedWarnings }
   } catch {
-    // File doesn't exist or error - use defaults (user can run /keybindings to create)
+    // 文件不存在或错误 - 使用默认值（用户可以运行 /keybindings 创建）
     cachedBindings = defaultBindings
     cachedWarnings = []
     return { bindings: cachedBindings, warnings: cachedWarnings }
@@ -345,15 +345,15 @@ export function loadKeybindingsSyncWithWarnings(): KeybindingsLoadResult {
 }
 
 /**
- * Initialize file watching for keybindings.json.
- * Call this once when the app starts.
+ * 初始化 keybindings.json 的文件监视。
+ * 在应用启动时调用一次。
  *
- * For external users, this is a no-op since user customization is disabled.
+ * 对于外部用户，此操作为空操作，因为用户自定义已禁用。
  */
 export async function initializeKeybindingWatcher(): Promise<void> {
   if (initialized || disposed) return
 
-  // Skip file watching for external users
+  // 对外部用户跳过文件监视
   if (!isKeybindingCustomizationEnabled()) {
     logForDebugging(
       '[keybindings] Skipping file watcher - user customization disabled',
@@ -364,7 +364,7 @@ export async function initializeKeybindingWatcher(): Promise<void> {
   const userPath = getKeybindingsPath()
   const watchDir = dirname(userPath)
 
-  // Only watch if parent directory exists
+  // 仅当父目录存在时才监视
   try {
     const stats = await stat(watchDir)
     if (!stats.isDirectory()) {
@@ -378,7 +378,7 @@ export async function initializeKeybindingWatcher(): Promise<void> {
     return
   }
 
-  // Set initialized only after we've confirmed we can watch
+  // 仅在确认可以监视后才设置初始化标志
   initialized = true
 
   logForDebugging(`[keybindings] Watching for changes to ${userPath}`)
@@ -399,12 +399,12 @@ export async function initializeKeybindingWatcher(): Promise<void> {
   watcher.on('change', handleChange)
   watcher.on('unlink', handleDelete)
 
-  // Register cleanup
+  // 注册清理函数
   registerCleanup(async () => disposeKeybindingWatcher())
 }
 
 /**
- * Clean up the file watcher.
+ * 清理文件监视器。
  */
 export function disposeKeybindingWatcher(): void {
   disposed = true
@@ -416,8 +416,8 @@ export function disposeKeybindingWatcher(): void {
 }
 
 /**
- * Subscribe to keybinding changes.
- * The listener receives the new parsed bindings when the file changes.
+ * 订阅按键绑定变化。
+ * 当文件变化时，监听器接收新的已解析绑定。
  */
 export const subscribeToKeybindingChanges = keybindingsChanged.subscribe
 
@@ -429,7 +429,7 @@ async function handleChange(path: string): Promise<void> {
     cachedBindings = result.bindings
     cachedWarnings = result.warnings
 
-    // Notify all listeners with the full result
+    // 使用完整结果通知所有监听器
     keybindingsChanged.emit(result)
   } catch (error) {
     logForDebugging(`[keybindings] Error reloading: ${errorMessage(error)}`)
@@ -439,7 +439,7 @@ async function handleChange(path: string): Promise<void> {
 function handleDelete(path: string): void {
   logForDebugging(`[keybindings] Detected deletion of ${path}`)
 
-  // Reset to defaults when file is deleted
+  // 文件被删除时重置为默认值
   const defaultBindings = getDefaultParsedBindings()
   cachedBindings = defaultBindings
   cachedWarnings = []
@@ -448,15 +448,15 @@ function handleDelete(path: string): void {
 }
 
 /**
- * Get the cached keybinding warnings.
- * Returns empty array if no warnings or bindings haven't been loaded yet.
+ * 获取缓存的按键绑定警告。
+ * 如果没有警告或绑定尚未加载，则返回空数组。
  */
 export function getCachedKeybindingWarnings(): KeybindingWarning[] {
   return cachedWarnings
 }
 
 /**
- * Reset internal state for testing.
+ * 重置内部状态用于测试。
  */
 export function resetKeybindingLoaderForTesting(): void {
   initialized = false

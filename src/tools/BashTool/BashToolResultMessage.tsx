@@ -100,7 +100,7 @@ export default function BashToolResultMessage(t0) {
       if (isImage) {
         let t8;
         if ($[11] === Symbol.for("react.memo_cache_sentinel")) {
-          t8 = <MessageResponse height={1}><Text dimColor={true}>[Image data detected and sent to Claude]</Text></MessageResponse>;
+          t8 = <MessageResponse height={1}><Text dimColor={true}>[检测到图像数据并已发送给 Claude]</Text></MessageResponse>;
           $[11] = t8;
         } else {
           t8 = $[11];
@@ -153,7 +153,7 @@ export default function BashToolResultMessage(t0) {
   }
   let t9;
   if ($[17] !== backgroundTaskId || $[18] !== cwdResetWarning || $[19] !== noOutputExpected || $[20] !== returnCodeInterpretation || $[21] !== stderr || $[22] !== stdout) {
-    t9 = stdout === "" && stderr.trim() === "" && !cwdResetWarning ? <MessageResponse height={1}><Text dimColor={true}>{backgroundTaskId ? <>Running in the background{" "}<KeyboardShortcutHint shortcut={"\u2193"} action="manage" parens={true} /></> : returnCodeInterpretation || (noOutputExpected ? "Done" : "(No output)")}</Text></MessageResponse> : null;
+    t9 = stdout === "" && stderr.trim() === "" && !cwdResetWarning ? <MessageResponse height={1}><Text dimColor={true}>{backgroundTaskId ? <>在后台运行{" "}<KeyboardShortcutHint shortcut={"\u2193"} action="manage" parens={true} /></> : returnCodeInterpretation || (noOutputExpected ? "完成" : "(无输出)")}</Text></MessageResponse> : null;
     $[17] = backgroundTaskId;
     $[18] = cwdResetWarning;
     $[19] = noOutputExpected;

@@ -697,7 +697,7 @@ function loadSettingsFromDisk(): SettingsWithErrors {
           } else {
             // Remote exists but is invalid — surface errors even as we fall through
             policyErrors.push(
-              ...formatZodError(result.error, 'remote managed settings'),
+              ...formatZodError(result.error, '远程托管设置'),
             )
           }
         }

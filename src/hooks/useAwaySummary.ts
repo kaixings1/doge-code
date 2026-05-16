@@ -23,11 +23,11 @@ function hasSummarySinceLastUserTurn(messages: readonly Message[]): boolean {
 }
 
 /**
- * Appends a "while you were away" summary message after the terminal has been
- * blurred for 5 minutes. Fires only when (a) 5min since blur, (b) no turn in
- * progress, and (c) no existing away_summary since the last user message.
+ * 在终端失焦 5 分钟后追加一条"你离开时"的摘要消息。
+ * 仅在满足以下条件时触发：(a) 失焦已 5 分钟，(b) 无进行中的对话轮次，
+ * (c) 自上次用户消息后没有现有的 away_summary。
  *
- * Focus state 'unknown' (terminal doesn't support DECSET 1004) is a no-op.
+ * 焦点状态为 'unknown'（终端不支持 DECSET 1004）时无操作。
  */
 export function useAwaySummary(
   messages: readonly Message[],
@@ -99,11 +99,11 @@ export function useAwaySummary(
         abortInFlight()
         pendingRef.current = false
       }
-      // 'unknown' → no-op
+      // 'unknown' → 无操作
     }
 
     const unsubscribe = subscribeTerminalFocus(onFocusChange)
-    // Handle the case where we're already blurred when the effect mounts
+    // 处理 effect 挂载时终端已经失焦的情况
     onFocusChange()
     generateRef.current = generate
 
@@ -115,7 +115,7 @@ export function useAwaySummary(
     }
   }, [gbEnabled, setMessages])
 
-  // Timer fired mid-turn → fire when turn ends (if still blurred)
+  // 在轮次中间触发的定时器 → 轮次结束时触发（如果仍然失焦）
   useEffect(() => {
     if (isLoading) return
     if (!pendingRef.current) return

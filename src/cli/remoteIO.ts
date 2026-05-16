@@ -29,8 +29,8 @@ import type { Transport } from './transports/Transport.js'
 import { getTransportForUrl } from './transports/transportUtils.js'
 
 /**
- * Bidirectional streaming for SDK mode with session tracking
- * Supports WebSocket transport
+ * 支持会话跟踪的 SDK 模式双向流
+ * 支持 WebSocket 传输
  */
 export class RemoteIO extends StructuredIO {
   private url: URL
@@ -201,10 +201,10 @@ export class RemoteIO extends StructuredIO {
     // 如果提供初始提示，通过输入流发送
     if (initialPrompt) {
       // 将初始提示转换为输入流格式。
-      // stdin 的块可能已经包含尾部换行符，因此 strip
-      // them before appending our own to avoid double-newline issues that
-      // cause structuredIO to parse empty lines. String() handles both
-      // string chunks and Buffer objects from process.stdin.
+      // stdin 的数据块可能已经包含尾部换行符，因此在追加我们自己的
+      // 换行符之前将其去除，以避免出现双换行符导致 structuredIO
+      // 解析出空行的问题。String() 可以同时处理来自 process.stdin 的
+      // 字符串块和 Buffer 对象。
       const stream = this.inputStream
       void (async () => {
         for await (const chunk of initialPrompt) {
@@ -223,10 +223,10 @@ export class RemoteIO extends StructuredIO {
   }
 
   /**
-   * Send output to the transport.
-   * In bridge mode, control_request messages are always echoed to stdout so the
-   * bridge parent can detect permission requests. Other messages are echoed only
-   * in debug mode.
+   * 将输出发送到传输层。
+   * 在桥接模式下，control_request 消息始终回显到 stdout，
+   * 以便桥接父进程可以检测权限请求。
+   * 其他消息仅在调试模式下回显。
    */
   async write(message: StdoutMessage): Promise<void> {
     if (this.ccrClient) {
@@ -242,7 +242,7 @@ export class RemoteIO extends StructuredIO {
   }
 
   /**
-   * Clean up connections gracefully
+   * 优雅地清理连接
    */
   close(): void {
     if (this.keepAliveTimer) {

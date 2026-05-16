@@ -1,6 +1,6 @@
 import { c as _c } from "react/compiler-runtime";
 /**
- * Portal for content that floats above the prompt so it escapes
+ * 用于浮动到提示符上方的内容的门户，以逃脱
  * FullscreenLayout 底部插槽的 `overflowY:hidden` 裁剪。
  *
  * 这个裁剪是负载性的 (CC-668: 长粘贴会挤压 ScrollBox)，但浮动覆盖层使用

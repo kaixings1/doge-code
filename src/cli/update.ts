@@ -155,9 +155,9 @@ export async function update() {
         writeToStdout('Claude 已是最新！\n')
       }
     } else {
-      // pacman, deb, and rpm don't get specific commands because they each have
-      // multiple frontends (pacman: yay/paru/makepkg, deb: apt/apt-get/aptitude/nala,
-      // rpm: dnf/yum/zypper)
+      // pacman、deb 和 rpm 不给出具体命令，因为它们各自有
+      // 多个前端（pacman: yay/paru/makepkg，deb: apt/apt-get/aptitude/nala，
+      // rpm: dnf/yum/zypper）
       writeToStdout('Claude 由包管理器管理。\n')
       writeToStdout('请使用您的包管理器进行更新。\n')
     }

@@ -28,7 +28,7 @@ jobs:
       pull-requests: read
       issues: read
       id-token: write
-      actions: read # Required for Claude to read CI results on PRs
+      actions: read # Claude 读取 PR 上的 CI 结果所需
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -41,16 +41,16 @@ jobs:
         with:
           anthropic_api_key: \${{ secrets.DOGE_API_KEY }}
 
-          # This is an optional setting that allows Claude to read CI results on PRs
+          # 可选设置，允许 Claude 读取 PR 上的 CI 结果
           additional_permissions: |
             actions: read
 
-          # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
+          # 可选：给 Claude 自定义提示。如果未指定，Claude 将执行标记了它的评论中指定的指令。
           # prompt: 'Update the pull request description to include a summary of changes.'
 
-          # Optional: Add claude_args to customize behavior and configuration
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
+          # 可选：添加 claude_args 以自定义行为和配置
+          # 参见 https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
+          # 或 https://code.claude.com/docs/en/cli-reference 查看可用选项
           # claude_args: '--allowed-tools Bash(gh pr:*)'
 
 `
@@ -102,7 +102,7 @@ export const CODE_REVIEW_PLUGIN_WORKFLOW_CONTENT = `name: Claude Code Review
 on:
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
-    # Optional: Only run on specific file changes
+    # 可选：仅在特定文件变更时运行
     # paths:
     #   - "src/**/*.ts"
     #   - "src/**/*.tsx"
@@ -111,7 +111,7 @@ on:
 
 jobs:
   claude-review:
-    # Optional: Filter by PR author
+    # 可选：按 PR 作者过滤
     # if: |
     #   github.event.pull_request.user.login == 'external-contributor' ||
     #   github.event.pull_request.user.login == 'new-developer' ||
@@ -138,7 +138,7 @@ jobs:
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
           plugins: 'code-review@claude-code-plugins'
           prompt: '/code-review:code-review \${{ github.repository }}/pull/\${{ github.event.pull_request.number }}'
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
+          # 参见 https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
+          # 或 https://code.claude.com/docs/en/cli-reference 查看可用选项
 
 `
