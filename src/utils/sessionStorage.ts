@@ -1,9 +1,9 @@
 import { feature } from 'bun:bundle'
 import type { UUID } from 'crypto'
 import type { Dirent } from 'fs'
-// Sync fs primitives for readFileTailSync — separate from fs/promises
-// imports above. Named (not wildcard) per CLAUDE.md style; no collisions
-// with the async-suffixed names.
+// 同步文件系统原语，用于 readFileTailSync —— 与 fs/promises 导入分开
+// 以上导入。按 CLAUDE.md 风格使用命名导入（而非通配符），避免冲突
+// 与异步版本的名称。
 import { closeSync, fstatSync, openSync, readSync } from 'fs'
 import {
   appendFile as fsAppendFile,
@@ -94,10 +94,11 @@ import { jsonParse, jsonStringify } from './slowOperations.js'
 import type { ContentReplacementRecord } from './toolResultStorage.js'
 import { validateUuid } from './uuid.js'
 
-// Cache MACRO.VERSION at module level to work around bun --define bug in async contexts
-// See: https://github.com/oven-sh/bun/issues/26168
+// 在模块级别缓存 MACRO.VERSION，以解决 bun --define 在异步上下文中的 bug
+// 参见：https://github.com/oven-sh/bun/issues/26168
 const VERSION = typeof MACRO !== 'undefined' ? MACRO.VERSION : 'unknown'
 
+// 会话记录类型：用户消息、助手消息、附件消息、系统消息的数组
 type Transcript = (
   | UserMessage
   | AssistantMessage
@@ -112,29 +113,27 @@ type Transcript = (
 // saved under one path invisible when loaded via the other.
 
 /**
- * Pre-compiled regex to skip non-meaningful messages when extracting first prompt.
- * Matches anything starting with a lowercase XML-like tag (IDE context, hook
- * output, task notifications, channel messages, etc.) or a synthetic interrupt
- * marker. Kept in sync with sessionStoragePortable.ts — generic pattern avoids
- * an ever-growing allowlist that falls behind as new notification types ship.
+ * 预编译正则表达式，用于提取首个提示时跳过无意义的系统消息
+ * 匹配以小写 XML 标签开头的内容（IDE 上下文、hook 输出、任务通知、频道消息等）
+ * 或合成中断标记。与 sessionStoragePortable.ts 保持同步 —— 使用通用模式避免
+ * 随着新通知类型不断增加而需要维护的允许列表。
  */
-// 50MB — prevents OOM in the tombstone slow path which reads + rewrites the
-// entire session file. Session files can grow to multiple GB (inc-3930).
+// 50MB —— 防止墓碑慢路径中出现内存溢出（OOM），该路径会读取并重写整个会话文件
+// 会话文件可能增长到多个 GB（inc-3930）
 const MAX_TOMBSTONE_REWRITE_BYTES = 50 * 1024 * 1024
 
 const SKIP_FIRST_PROMPT_PATTERN =
   /^(?:\s*<[a-z][\w-]*[\s>]|\[Request interrupted by user[^\]]*\])/
 
 /**
- * Type guard to check if an entry is a transcript message.
- * Transcript messages include user, assistant, attachment, and system messages.
- * IMPORTANT: This is the single source of truth for what constitutes a transcript message.
- * loadTranscriptFile() uses this to determine which messages to load into the chain.
+ * 类型守卫：检查条目是否为会话记录消息
+ * 会话记录消息包括用户、助手、附件和系统消息
+ * 重要：这是判断什么构成会话记录消息的唯一标准
+ * loadTranscriptFile() 使用此函数确定要加载到链中的消息
  *
- * Progress messages are NOT transcript messages. They are ephemeral UI state
- * and must not be persisted to the JSONL or participate in the parentUuid
- * chain. Including them caused chain forks that orphaned real conversation
- * messages on resume (see #14373, #23537).
+ * 进度消息不是会话记录消息。它们是临时 UI 状态
+ * 不应持久化到 JSONL 或参与 parentUuid 链。
+ * 包含它们会导致链分叉，在恢复时使真实对话消息孤立（参见 #14373、#23537）
  */
 export function isTranscriptMessage(entry: Entry): entry is TranscriptMessage {
   return (
@@ -146,10 +145,9 @@ export function isTranscriptMessage(entry: Entry): entry is TranscriptMessage {
 }
 
 /**
- * Entries that participate in the parentUuid chain. Used on the write path
- * (insertMessageChain, useLogMessages) to skip progress when assigning
- * parentUuid. Old transcripts with progress already in the chain are handled
- * by the progressBridge rewrite in loadTranscriptFile.
+ * 参与 parentUuid 链的条目。在写入路径上使用
+ * （insertMessageChain、useLogMessages）在分配 parentUuid 时跳过进度消息
+ * 旧会话中已包含进度的链由 loadTranscriptFile 中的 progressBridge 重写处理
  */
 export function isChainParticipant(m: Pick<Message, 'type'>): boolean {
   return m.type !== 'progress'
@@ -162,9 +160,9 @@ type LegacyProgressEntry = {
 }
 
 /**
- * Progress entries in transcripts written before PR #24099. They are not
- * in the Entry type union anymore but still exist on disk with uuid and
- * parentUuid fields. loadTranscriptFile bridges the chain across them.
+ * PR #24099 之前写入的会话中的进度条目
+ * 它们不再属于 Entry 类型联合，但仍以 uuid 和 parentUuid 字段存在于磁盘上
+ * loadTranscriptFile 会桥接这些条目
  */
 function isLegacyProgressEntry(entry: unknown): entry is LegacyProgressEntry {
   return (
@@ -178,10 +176,10 @@ function isLegacyProgressEntry(entry: unknown): entry is LegacyProgressEntry {
 }
 
 /**
- * High-frequency tool progress ticks (1/sec for Sleep, per-chunk for Bash).
- * These are UI-only: not sent to the API, not rendered after the tool
- * completes. Used by REPL.tsx to replace-in-place instead of appending, and
- * by loadTranscriptFile to skip legacy entries from old transcripts.
+ * 高频工具进度心跳（Sleep 为 1/秒，Bash 为每块）
+ * 这些仅用于 UI：不发送到 API，工具完成后不渲染
+ * REPL.tsx 使用它们进行原地替换而非追加
+ * loadTranscriptFile 使用它们跳过旧会话中的遗留条目
  */
 const EPHEMERAL_PROGRESS_TYPES = new Set([
   'bash_progress',
@@ -205,18 +203,17 @@ export function getTranscriptPath(): string {
 }
 
 export function getTranscriptPathForSession(sessionId: string): string {
-  // When asking for the CURRENT session's transcript, honor sessionProjectDir
-  // the same way getTranscriptPath() does. Without this, hooks get a
-  // transcript_path computed from originalCwd while the actual file was
-  // written to sessionProjectDir (set by switchActiveSession on resume/branch)
-  // — different directories, so the hook sees MISSING (gh-30217). CC-34
-  // made sessionId + sessionProjectDir atomic precisely to prevent this
-  // kind of drift; this function just wasn't updated to read both.
+  // 当请求当前会话的会话记录时，遵循 sessionProjectDir
+  // 与 getTranscriptPath() 保持一致。如果没有这个，hooks 会得到一个
+  // 基于 originalCwd 计算的 transcript_path，而实际文件写入到了
+  // sessionProjectDir（由 resume/branch 时的 switchActiveSession 设置）
+  // —— 不同的目录，所以 hook 会看到 MISSING（gh-30217）。CC-34
+  // 明确将 sessionId + sessionProjectDir 设为原子值以防止这种偏差；
+  // 此函数只是未更新为同时读取两者。
   //
-  // For OTHER session IDs we can only guess via originalCwd — we don't
-  // track a sessionId→projectDir map. Callers wanting a specific other
-  // session's path should pass fullPath explicitly (most save* functions
-  // already accept this).
+  // 对于其他会话 ID，我们只能通过 originalCwd 猜测 —— 我们没有
+  // 维护 sessionId→projectDir 的映射。想要获取特定会话的调用者
+  // 应显式传递完整路径（大多数 save* 函数已经接受此参数）。
   if (sessionId === getSessionId()) {
     return getTranscriptPath()
   }
@@ -224,13 +221,13 @@ export function getTranscriptPathForSession(sessionId: string): string {
   return join(projectDir, `${sessionId}.jsonl`)
 }
 
-// 50 MB — session JSONL can grow to multiple GB (inc-3930). Callers that
-// read the raw transcript must bail out above this threshold to avoid OOM.
+// 50MB —— 会话 JSONL 可能增长到多个 GB（inc-3930）。读取原始会话记录的调用方
+// 必须在此阈值之上退出，以避免内存溢出（OOM）
 export const MAX_TRANSCRIPT_READ_BYTES = 50 * 1024 * 1024
 
-// In-memory map of agentId → subdirectory for grouping related subagent
-// transcripts (e.g. workflow runs write to subagents/workflows/<runId>/).
-// Populated before the agent runs; consulted by getAgentTranscriptPath.
+// 内存映射：agentId → 子目录，用于分组相关子代理
+// 会话记录（例如工作流运行写入到 subagents/workflows/<runId>/）
+// 在代理运行前填充；由 getAgentTranscriptPath 查询
 const agentTranscriptSubdirs = new Map<string, string>()
 
 export function setAgentTranscriptSubdir(
@@ -318,13 +315,11 @@ export type AgentMetadata = {
 }
 
 /**
- * Persist the agentType used to launch a subagent. Read by resume to
- * route correctly when subagent_type is omitted — without this, resuming
- * a fork silently degrades to general-purpose (4KB system prompt, no
- * inherited history). Sidecar file avoids JSONL schema changes.
+ * 持久化用于启动子代理的 agentType。恢复时读取以在未指定 subagent_type 时
+ * 正确路由 —— 没有这个，恢复分叉会静默降级为通用代理（4KB 系统提示，无
+ * 继承历史）。侧车文件避免了 JSONL 模式变更。
  *
- * Also stores the worktreePath when the agent was spawned with worktree
- * isolation, enabling resume to restore the correct cwd.
+ * 还存储使用工作树隔离启动代理时的 worktreePath，使恢复能还原正确的 cwd
  */
 export async function writeAgentMetadata(
   agentId: AgentId,
@@ -364,8 +359,8 @@ export type RemoteAgentMetadata = {
 }
 
 function getRemoteAgentsDir(): string {
-  // Same sessionProjectDir fallback as getAgentTranscriptPath — the project
-  // dir (containing the .jsonl), not the session dir, so sessionId is joined.
+  // 与 getAgentTranscriptPath 相同的 sessionProjectDir 回退策略 —— 项目
+  // 目录（包含 .jsonl 文件），而非会话目录，因此要拼接 sessionId
   const projectDir = getSessionProjectDir() ?? getProjectDir(getOriginalCwd())
   return join(projectDir, getSessionId(), 'remote-agents')
 }
@@ -375,10 +370,10 @@ function getRemoteAgentMetadataPath(taskId: string): string {
 }
 
 /**
- * Persist metadata for a remote-agent task so it can be restored on session
- * resume. Per-task sidecar file (sibling dir to subagents/) survives
- * hydrateSessionFromRemote's .jsonl wipe; status is always fetched fresh
- * from CCR on restore — only identity is persisted locally.
+ * 持久化远程代理任务的元数据，以便在会话恢复时还原
+ * 每个任务的侧车文件（与 subagents/ 同级的目录）在 hydrateSessionFromRemote
+ * 的 .jsonl 清除操作中得以保留；状态总是在恢复时从 CCR 实时获取
+ * —— 仅本地持久化身份信息
  */
 export async function writeRemoteAgentMetadata(
   taskId: string,
@@ -413,8 +408,8 @@ export async function deleteRemoteAgentMetadata(taskId: string): Promise<void> {
 }
 
 /**
- * Scan the remote-agents/ directory for all persisted metadata files.
- * Used by restoreRemoteAgentTasks to reconnect to still-running CCR sessions.
+ * 扫描 remote-agents/ 目录中所有持久化的元数据文件
+ * 由 restoreRemoteAgentTasks 使用，以重新连接到仍在运行的 CCR 会话
  */
 export async function listRemoteAgentMetadata(): Promise<
   RemoteAgentMetadata[]
@@ -513,17 +508,16 @@ function getProject(): Project {
 }
 
 /**
- * Reset the Project singleton's flush state for testing.
- * This ensures tests don't interfere with each other via shared counter state.
+ * 重置 Project 单例的刷新状态（用于测试）
+ * 确保测试之间不会通过共享计数器状态相互干扰
  */
 export function resetProjectFlushStateForTesting(): void {
   project?._resetFlushState()
 }
 
 /**
- * Reset the entire Project singleton for testing.
- * This ensures tests with different CLAUDE_CONFIG_DIR values
- * don't share stale sessionFile paths.
+ * 重置整个 Project 单例（用于测试）
+ * 确保使用不同 CLAUDE_CONFIG_DIR 值的测试不会共享过期的 sessionFile 路径
  */
 export function resetProjectForTesting(): void {
   project = null
@@ -540,9 +534,9 @@ type InternalEventWriter = (
 ) => Promise<void>
 
 /**
- * Register a CCR v2 internal event writer for transcript persistence.
- * When set, transcript messages are written as internal worker events
- * instead of going through v1 Session Ingress.
+ * 注册用于会话记录持久化的 CCR v2 内部事件写入器
+ * 设置后，会话记录消息将作为内部工作器事件写入
+ * 而不是通过 v1 会话入口（Session Ingress）
  */
 export function setInternalEventWriter(writer: InternalEventWriter): void {
   getProject().setInternalEventWriter(writer)
@@ -553,9 +547,9 @@ type InternalEventReader = () => Promise<
 >
 
 /**
- * Register a CCR v2 internal event reader for session resume.
- * When set, hydrateFromCCRv2InternalEvents() can fetch foreground and
- * subagent internal events to reconstruct conversation state on reconnection.
+ * 注册用于会话恢复的 CCR v2 内部事件读取器
+ * 设置后，hydrateFromCCRv2InternalEvents() 可以获取前台和
+ * 子代理的内部事件，以在重新连接时重建对话状态
  */
 export function setInternalEventReader(
   reader: InternalEventReader,
@@ -566,8 +560,8 @@ export function setInternalEventReader(
 }
 
 /**
- * Set the remote ingress URL on the current Project for testing.
- * This simulates what hydrateRemoteSession does in production.
+ * 为当前 Project 设置远程入口 URL（用于测试）
+ * 这模拟了生产环境中 hydrateRemoteSession 的行为
  */
 export function setRemoteIngressUrlForTesting(url: string): void {
   getProject().setRemoteIngressUrl(url)
@@ -615,7 +609,7 @@ class Project {
 
   constructor() {}
 
-  /** @internal Reset flush/queue state for testing. */
+  /** @internal 重置刷新/队列状态（用于测试） */
   _resetFlushState(): void {
     this.pendingWriteCount = 0
     this.flushResolvers = []
@@ -632,7 +626,7 @@ class Project {
   private decrementPendingWrites(): void {
     this.pendingWriteCount--
     if (this.pendingWriteCount === 0) {
-      // Resolve all waiting flush promises
+      // 解决所有等待刷新的 Promise
       for (const resolve of this.flushResolvers) {
         resolve()
       }
@@ -681,8 +675,8 @@ class Project {
     try {
       await fsAppendFile(filePath, data, { mode: 0o600 })
     } catch {
-      // Directory may not exist — some NFS-like filesystems return
-      // unexpected error codes, so don't discriminate on code.
+      // 目录可能不存在 —— 某些类 NFS 文件系统会返回意外的错误码
+      // 因此不区分具体的错误代码
       await mkdir(dirname(filePath), { recursive: true, mode: 0o700 })
       await fsAppendFile(filePath, data, { mode: 0o600 })
     }
@@ -702,7 +696,7 @@ class Project {
         const line = jsonStringify(entry) + '\n'
 
         if (content.length + line.length >= this.MAX_CHUNK_BYTES) {
-          // Flush chunk and resolve its entries before starting a new one
+          // 刷新块并在开始新块前解决其条目
           await this.appendToFile(filePath, content)
           for (const r of resolvers) {
             r()
@@ -723,7 +717,7 @@ class Project {
       }
     }
 
-    // Clean up empty queues
+    // 清理空队列
     for (const [filePath, queue] of this.writeQueues) {
       if (queue.length === 0) {
         this.writeQueues.delete(filePath)
@@ -737,32 +731,26 @@ class Project {
   }
 
   /**
-   * Re-append cached session metadata to the end of the transcript file.
-   * This ensures metadata stays within the tail window that readLiteMetadata
-   * reads during progressive loading.
+   * 将缓存的会话元数据重新追加到会话记录文件末尾
+   * 这确保元数据保留在 readLiteMetadata 渐进加载时读取的尾部窗口内
    *
-   * Called from two contexts with different file-ordering implications:
-   * - During compaction (compact.ts, reactiveCompact.ts): writes metadata
-   *   just before the boundary marker is emitted - these entries end up
-   *   before the boundary and are recovered by scanPreBoundaryMetadata.
-   * - On session exit (cleanup handler): writes metadata at EOF after all
-   *   boundaries - this is what enables loadTranscriptFile's pre-compact
-   *   skip to find metadata without a forward scan.
+   * 从两个不同上下文调用，具有不同的文件排序影响：
+   * - 压缩期间（compact.ts、reactiveCompact.ts）：在边界标记发出前写入元数据
+   *   —— 这些条目位于边界之前，由 scanPreBoundaryMetadata 恢复
+   * - 会话退出时（清理处理器）：在所有边界之后将元数据写入 EOF
+   *   —— 这使得 loadTranscriptFile 的预压缩跳过无需前向扫描即可找到元数据
    *
-   * External-writer safety for SDK-mutable fields (custom-title, tag):
-   * before re-appending, refresh the cache from the tail scan window. If an
-   * external process (SDK renameSession/tagSession) wrote a fresher value,
-   * our stale cache absorbs it and the re-append below persists it — not
-   * the stale CLI value. If no entry is in the tail (evicted, or never
-   * written by the SDK), the cache is the only source of truth and is
-   * re-appended as-is.
+   * SDK 可变字段（custom-title、tag）的外部写入器安全性：
+   * 重新追加前，从尾部扫描窗口刷新缓存。如果外部进程
+   * （SDK renameSession/tagSession）写入了更新的值，我们的过期缓存会吸收它
+   * 并且下面的重新追加会持久化它 —— 而不是过期的 CLI 值。
+   * 如果尾部没有条目（已被逐出或 SDK 从未写入），则缓存是唯一的事实来源
+   * 并会按原样重新追加。
    *
-   * Re-append is unconditional (even when the value is already in the
-   * tail): during compaction, a title 40KB from EOF is inside the current
-   * tail window but will fall out once the post-compaction session grows.
-   * Skipping the re-append would defeat the purpose of this call. Fields
-   * the SDK cannot touch (last-prompt, agent-*, mode, pr-link) have no
-   * external-writer concern — their caches are authoritative.
+   * 重新追加是无条件的（即使值已在尾部）：压缩期间，距离 EOF 40KB 的标题
+   * 位于当前尾部窗口内，但压缩后的会话增长后会移出。跳过重新追加会破坏此调用的目的。
+   * SDK 无法触及的字段（last-prompt、agent-*、mode、pr-link）没有外部写入器问题
+   * —— 它们的缓存是权威的
    */
   reAppendSessionMetadata(skipTitleRefresh = false): void {
     if (!this.sessionFile) return
@@ -885,19 +873,19 @@ class Project {
   }
 
   async flush(): Promise<void> {
-    // Cancel pending timer
+    // 取消挂起的定时器
     if (this.flushTimer) {
       clearTimeout(this.flushTimer)
       this.flushTimer = null
     }
-    // Wait for any in-flight drain to finish
+    // 等待任何正在进行的 drain 完成
     if (this.activeDrain) {
       await this.activeDrain
     }
-    // Drain anything remaining in the queues
+    // 清空队列中剩余的内容
     await this.drainWriteQueue()
 
-    // Wait for non-queue tracked operations (e.g. removeMessageByUuid)
+    // 等待非队列跟踪的操作（例如 removeMessageByUuid）
     if (this.pendingWriteCount === 0) {
       return
     }
@@ -907,12 +895,12 @@ class Project {
   }
 
   /**
-   * Remove a message from the transcript by UUID.
-   * Used for tombstoning orphaned messages from failed streaming attempts.
+   * 通过 UUID 从会话记录中移除消息
+   * 用于标记失败的流式传输尝试中的孤立消息为墓碑
    *
-   * The target is almost always the most recently appended entry, so we
-   * read only the tail, locate the line, and splice it out with a
-   * positional write + truncate instead of rewriting the whole file.
+   * 目标几乎总是最近追加的条目，因此我们只读取尾部
+   * 定位到该行，并通过位置写入 + 截断来移除
+   * 而不是重写整个文件
    */
   async removeMessageByUuid(targetUuid: UUID): Promise<void> {
     return this.trackWrite(async () => {
@@ -997,11 +985,11 @@ class Project {
   }
 
   /**
-   * True when test env / cleanupPeriodDays=0 / --no-session-persistence /
-   * CLAUDE_CODE_SKIP_PROMPT_HISTORY should suppress all transcript writes.
-   * Shared guard for appendEntry and materializeSessionFile so both skip
-   * consistently. The env var is set by tmuxSocket.ts so Tungsten-spawned
-   * test sessions don't pollute the user's --resume list.
+   * 当测试环境 / cleanupPeriodDays=0 / --no-session-persistence /
+   * CLAUDE_CODE_SKIP_PROMPT_HISTORY 时应抑制所有会话记录写入
+   * appendEntry 和 materializeSessionFile 共享此守卫，确保两者一致跳过
+   * 此环境变量由 tmuxSocket.ts 设置，使 Tungsten 生成的测试会话
+   * 不会污染用户的 --resume 列表
    */
   private shouldSkipPersistence(): boolean {
     const allowTestPersistence = isEnvTruthy(
@@ -1016,8 +1004,8 @@ class Project {
   }
 
   /**
-   * Create the session file, write cached startup metadata, and flush
-   * buffered entries. Called on the first user/assistant message.
+   * 创建会话文件，写入缓存的启动元数据，并刷新缓冲的条目
+   * 在第一条用户/助手消息时调用
    */
   private async materializeSessionFile(): Promise<void> {
     // Guard here too — reAppendSessionMetadata writes via appendEntryToFile
@@ -1545,33 +1533,29 @@ export async function recordContentReplacement(
 }
 
 /**
- * Reset the session file pointer after switchSession/regenerateSessionId.
- * The new file is created lazily on the first user/assistant message.
+ * 在 switchSession/regenerateSessionId 后重置会话文件指针
+ * 新文件在首次用户/助手消息时延迟创建
  */
 export async function resetSessionFilePointer() {
   getProject().resetSessionFile()
 }
 
 /**
- * Adopt the existing session file after --continue/--resume (non-fork).
- * Call after switchSession + resetSessionFilePointer + restoreSessionMetadata:
- * getTranscriptPath() now derives the resumed file's path from the switched
- * sessionId, and the cache holds the final metadata (--name title, resumed
- * mode/tag/agent).
+ * 在 --continue/--resume（非分叉）后采用现有的会话文件
+ * 在 switchSession + resetSessionFilePointer + restoreSessionMetadata 之后调用：
+ * getTranscriptPath() 现在从切换后的 sessionId 派生恢复文件的路径
+ * 并且缓存持有最终的元数据（--name 标题、恢复的模式/标签/代理）
  *
- * Setting sessionFile here — instead of waiting for materializeSessionFile
- * on the first user message — lets the exit cleanup handler's
- * reAppendSessionMetadata run (it bails when sessionFile is null). Without
- * this, `-c -n foo` + quit-before-message drops the title on the floor:
- * the in-memory cache is correct but never written. The resumed file
- * already exists on disk (we loaded from it), so this can't create an
- * orphan the way a fresh --name session would.
+ * 在这里设置 sessionFile —— 而不是等待第一条用户消息的 materializeSessionFile
+ * —— 让退出清理处理器的 reAppendSessionMetadata 能够运行
+ * （当 sessionFile 为 null 时它会退出）。没有这个，`-c -n foo` + 退出前无消息
+ * 会导致标题丢失：内存缓存正确但从未写入。恢复的文件已经存在于磁盘上
+ * （我们从它加载），因此这不会像全新的 --name 会窗那样创建孤立文件。
  *
- * skipTitleRefresh: restoreSessionMetadata populated the cache from the
- * same disk read microseconds ago, so refreshing from the tail here is a
- * no-op — unless --name was used, in which case it would clobber the fresh
- * CLI title with the stale disk value. After this write, disk == cache and
- * later calls (compaction, exit cleanup) absorb SDK writes normally.
+ * skipTitleRefresh：restoreSessionMetadata 从同一磁盘读取中填充了缓存
+ * 因此从这里刷新尾部是空操作 —— 除非使用了 --name，否则它会用过期的磁盘值
+ * 覆盖新鲜的 CLI 标题。此写入后，磁盘 == 缓存，后续调用（压缩、退出清理）
+ * 会正常吸收 SDK 写入
  */
 export function adoptResumedSessionFile(): void {
   const project = getProject()
@@ -1580,9 +1564,9 @@ export function adoptResumedSessionFile(): void {
 }
 
 /**
- * Append a context-collapse commit entry to the transcript. One entry per
- * commit, in commit order. On resume these are collected into an ordered
- * array and handed to restoreFromEntries() which rebuilds the commit log.
+ * 将上下文折叠提交条目追加到会话记录。每个提交一个条目，按提交顺序
+ * 恢复时这些条目被收集到有序数组中，并交给 restoreFromEntries()
+ * 来重建提交日志
  */
 export async function recordContextCollapseCommit(commit: {
   collapseId: string
@@ -1602,9 +1586,9 @@ export async function recordContextCollapseCommit(commit: {
 }
 
 /**
- * Snapshot the staged queue + spawn state. Written after each ctx-agent
- * spawn resolves (when staged contents may have changed). Last-wins on
- * restore — the loader keeps only the most recent snapshot entry.
+ * 快照暂存队列 + 生成状态。在每个上下文代理生成解决后写入
+ * （暂存内容可能已更改）。恢复时最后写入获胜 —— 加载器只保留
+ * 最近的快照条目
  */
 export async function recordContextCollapseSnapshot(snapshot: {
   staged: Array<{
@@ -1668,12 +1652,10 @@ export async function hydrateRemoteSession(
 }
 
 /**
- * Hydrate session state from CCR v2 internal events.
- * Fetches foreground and subagent events via the registered readers,
- * extracts transcript entries from payloads, and writes them to the
- * local transcript files (main + per-agent).
- * The server handles compaction filtering — it returns events starting
- * from the latest compaction boundary.
+ * 从 CCR v2 内部事件恢复会话状态
+ * 通过已注册的读取器获取前台和子代理事件，从负载中提取会话记录条目
+ * 并将它们写入本地会话记录文件（主文件 + 每个代理）
+ * 服务器处理压缩过滤 —— 它从最新的压缩边界开始返回事件
  */
 export async function hydrateFromCCRv2InternalEvents(
   sessionId: string,
@@ -1867,20 +1849,19 @@ export function removeExtraFields(
 }
 
 /**
- * Splice the preserved segment back into the chain after compaction.
+ * 在压缩后将保留的段重新拼接到链中
  *
- * Preserved messages exist in the JSONL with their ORIGINAL pre-compact
- * parentUuids (recordTranscript dedup-skipped them — can't rewrite).
- * The internal chain (keep[i+1]→keep[i]) is intact; only endpoints need
- * patching: head→anchor, and anchor's other children→tail. Anchor is the
- * last summary for suffix-preserving, boundary itself for prefix-preserving.
+ * 保留的消息以它们原始的预压缩 parentUuids 存在于 JSONL 中
+ * （recordTranscript 因去重而跳过了它们 —— 无法重写）。
+ * 内部链（keep[i+1]→keep[i]）保持完整；只需要修补端点：
+ * head→anchor，以及 anchor 的其他子节点→tail。
+ * 对于后缀保留，anchor 是最后一个摘要；对于前缀保留，anchor 是边界本身
  *
- * Only the LAST seg-boundary is relinked — earlier segs were summarized
- * into it. Everything physically before the absolute-last boundary (except
- * preservedUuids) is deleted, which handles all multi-boundary shapes
- * without special-casing.
+ * 只重新链接最后一个 seg-boundary —— 早期的 segs 已被汇总到其中。
+ * 物理上位于绝对最后一个边界之前的所有内容（除了 preservedUuids）
+ * 都被删除，这处理了所有多边界形状而无需特殊处理。
  *
- * Mutates the Map in place.
+ * 原地修改 Map
  */
 function applyPreservedSegmentRelinks(
   messages: Map<UUID, TranscriptMessage>,
@@ -2085,9 +2066,9 @@ function applySnipRemovals(messages: Map<UUID, TranscriptMessage>): void {
 }
 
 /**
- * O(n) single-pass: find the message with the latest timestamp matching a predicate.
- * Replaces the `[...values].filter(pred).sort((a,b) => Date(b)-Date(a))[0]` pattern
- * which is O(n log n) + 2n Date allocations.
+ * O(n) 单次遍历：查找与谓词匹配的具有最新时间戳的消息
+ * 替代了 `[...values].filter(pred).sort((a,b) => Date(b)-Date(a))[0]` 模式
+ * 后者是 O(n log n) + 2n 次 Date 分配
  */
 function findLatestMessage<T extends { timestamp: string }>(
   messages: Iterable<T>,
@@ -2107,10 +2088,10 @@ function findLatestMessage<T extends { timestamp: string }>(
 }
 
 /**
- * Builds a conversation chain from a leaf message to root
- * @param messages Map of all messages
- * @param leafMessage The leaf message to start from
- * @returns Array of messages from root to leaf
+ * 从叶子消息构建到根的对话链
+ * @param messages 所有消息的 Map
+ * @param leafMessage 起始的叶子消息
+ * @returns 从根到叶子的消息数组
  */
 export function buildConversationChain(
   messages: Map<UUID, TranscriptMessage>,
@@ -2140,26 +2121,24 @@ export function buildConversationChain(
 }
 
 /**
- * Post-pass for buildConversationChain: recover sibling assistant blocks and
- * tool_results that the single-parent walk orphaned.
+ * buildConversationChain 的后处理：恢复单父遍历孤立的兄弟助手块和
+ * tool_results
  *
- * Streaming (claude.ts:~2024) emits one AssistantMessage per content_block_stop
- * — N parallel tool_uses → N messages, distinct uuid, same message.id. Each
- * tool_result's sourceToolAssistantUUID points to its own one-block assistant,
- * so insertMessageChain's override (line ~894) writes each TR's parentUuid to a
- * DIFFERENT assistant. The topology is a DAG; the walk above is a linked-list
- * traversal and keeps only one branch.
+ * 流式传输（claude.ts:~2024）每个 content_block_stop 发出一个 AssistantMessage
+ * —— N 个并行 tool_uses → N 个消息，不同的 uuid，相同的 message.id
+ * 每个 tool_result 的 sourceToolAssistantUUID 指向其自己的单块助手
+ * 因此 insertMessageChain 的覆盖（行 ~894）将每个 TR 的 parentUuid 写入
+ * 不同的助手。拓扑是有向无环图；上面的遍历是链表遍历，只保留一个分支
  *
- * Two loss modes observed in production (both fixed here):
- *   1. Sibling assistant orphaned: walk goes prev→asstA→TR_A→next, drops asstB
- *      (same message.id, chained off asstA) and TR_B.
- *   2. Progress-fork (legacy, pre-#23537): each tool_use asst had a progress
- *      child (continued the write chain) AND a TR child. Walk followed
- *      progress; TRs were dropped. No longer written (progress removed from
- *      transcript persistence), but old transcripts still have this shape.
+ * 生产环境中观察到的两种丢失模式（都在这里修复）：
+ *   1. 兄弟助手被孤立：遍历路径为 prev→asstA→TR_A→next，丢弃 asstB
+ *      （相同的 message.id，从 asstA 链接）和 TR_B
+ *   2. 进度分叉（遗留，预 #23537）：每个 tool_use 助手都有一个进度
+ *      子节点（继续写入链）和一个 TR 子节点。遍历跟随进度；TR 被丢弃
+ *      不再写入（进度已从会话记录持久化中移除），但旧会话仍有这种形状
  *
- * Read-side fix: the write topology is already on disk for old transcripts;
- * this recovery pass handles them.
+ * 读取端修复：写入拓扑已经存在于旧会话的磁盘上；
+ * 此恢复过程处理它们
  */
 function recoverOrphanedParallelToolResults(
   messages: Map<UUID, TranscriptMessage>,
@@ -2252,20 +2231,18 @@ function recoverOrphanedParallelToolResults(
 }
 
 /**
- * Find the latest turn_duration checkpoint in the reconstructed chain and
- * compare its recorded messageCount against the chain's position at that
- * point. Emits tengu_resume_consistency_delta for BigQuery monitoring of
- * write→load round-trip drift — the class of bugs where snip/compact/
- * parallel-TR operations mutate in-memory but the parentUuid walk on disk
- * reconstructs a different set (adamr-20260320-165831: 397K displayed →
- * 1.65M actual on resume).
+ * 在重建的链中查找最新的 turn_duration 检查点，并将其记录的 messageCount
+ * 与该点的链位置进行比较。为 BigQuery 监控发出 tengu_resume_consistency_delta
+ * 以检测写入→加载往返漂移 —— 这类 bug 中，snip/compact/并行-TR 操作
+ * 修改了内存，但磁盘上的 parentUuid 遍历重建了不同的集合
+ * （adamr-20260320-165831：恢复时显示 397K → 实际 1.65M）
  *
- * delta > 0: resume loaded MORE than in-session (the usual failure mode)
- * delta < 0: resume loaded FEWER (chain truncation — #22453 class)
- * delta = 0: round-trip consistent
+ * delta > 0：恢复加载的内容多于会话中的内容（通常的失败模式）
+ * delta < 0：恢复加载的内容更少（链截断 —— #22453 类）
+ * delta = 0：往返一致
  *
- * Called from loadConversationForResume — fires once per resume, not on
- * /share or log-listing chain rebuilds.
+ * 从 loadConversationForResume 调用 —— 每次恢复触发一次
+ * 不在 /share 或日志列表链重建时触发
  */
 export function checkResumeConsistency(chain: Message[]): void {
   for (let i = chain.length - 1; i >= 0; i--) {
@@ -2289,7 +2266,7 @@ export function checkResumeConsistency(chain: Message[]): void {
 }
 
 /**
- * Builds a filie history snapshot chain from the conversation
+ * 从对话中构建文件历史快照链
  */
 function buildFileHistorySnapshotChain(
   fileHistorySnapshots: Map<UUID, FileHistorySnapshotMessage>,
@@ -2318,10 +2295,9 @@ function buildFileHistorySnapshotChain(
 }
 
 /**
- * Builds an attribution snapshot chain from the conversation.
- * Unlike file history snapshots, attribution snapshots are returned in full
- * because they use generated UUIDs (not message UUIDs) and represent
- * cumulative state that should be restored on session resume.
+ * 从对话中构建归属快照链
+ * 与文件历史快照不同，归属快照完整返回，因为它们使用生成的 UUID
+ * （不是消息 UUID）并表示应在会话恢复时还原的累积状态
  */
 function buildAttributionSnapshotChain(
   attributionSnapshots: Map<UUID, AttributionSnapshotMessage>,
@@ -2332,10 +2308,10 @@ function buildAttributionSnapshotChain(
 }
 
 /**
- * Loads a transcript from a JSON or JSONL file and converts it to LogOption format
- * @param filePath Path to the transcript file (.json or .jsonl)
- * @returns LogOption containing the transcript messages
- * @throws Error if file doesn't exist or contains invalid data
+ * 从 JSON 或 JSONL 文件加载会话记录并转换为 LogOption 格式
+ * @param filePath 会话记录文件路径（.json 或 .jsonl）
+ * @returns 包含会话记录消息的 LogOption
+ * @throws 如果文件不存在或包含无效数据则抛出错误
  */
 export async function loadTranscriptFromFile(
   filePath: string,
@@ -2438,9 +2414,9 @@ export async function loadTranscriptFromFile(
 }
 
 /**
- * Checks if a user message has visible content (text or image, not just tool_result).
- * Tool results are displayed as part of collapsed groups, not as standalone messages.
- * Also excludes meta messages which are not shown to the user.
+ * 检查用户消息是否有可见内容（文本或图像，不仅仅是 tool_result）
+ * tool_results 作为折叠组的一部分显示，不是独立消息
+ * 也不包括对用户不可见的元消息
  */
 function hasVisibleUserContent(message: TranscriptMessage): boolean {
   if (message.type !== 'user') return false
@@ -2470,8 +2446,8 @@ function hasVisibleUserContent(message: TranscriptMessage): boolean {
 }
 
 /**
- * Checks if an assistant message has visible text content (not just tool_use blocks).
- * Tool uses are displayed as grouped/collapsed UI elements, not as standalone messages.
+ * 检查助手消息是否有可见文本内容（不仅仅是 tool_use 块）
+ * tool_uses 作为分组/折叠的 UI 元素显示，不是独立消息
  */
 function hasVisibleAssistantContent(message: TranscriptMessage): boolean {
   if (message.type !== 'assistant') return false
@@ -2489,12 +2465,12 @@ function hasVisibleAssistantContent(message: TranscriptMessage): boolean {
 }
 
 /**
- * Counts visible messages that would appear as conversation turns in the UI.
- * Excludes:
- * - System, attachment, and progress messages
- * - User messages with isMeta flag (hidden from user)
- * - User messages that only contain tool_result blocks (displayed as collapsed groups)
- * - Assistant messages that only contain tool_use blocks (displayed as collapsed groups)
+ * 计算在 UI 中显示为对话轮次的可见消息数量
+ * 排除：
+ * - 系统、附件和进度消息
+ * - 带有 isMeta 标志的用户消息（对用户隐藏）
+ * - 仅包含 tool_result 块的用户消息（作为折叠组显示）
+ * - 仅包含 tool_use 块的助手消息（作为折叠组显示）
  */
 function countVisibleMessages(transcript: TranscriptMessage[]): number {
   let count = 0
@@ -2612,9 +2588,9 @@ export async function fetchLogs(limit?: number): Promise<LogOption[]> {
 }
 
 /**
- * Append an entry to a session file. Creates the parent dir if missing.
+ * 将条目追加到会话文件。如果父目录不存在则创建
  */
-/* eslint-disable custom-rules/no-sync-fs -- sync callers (exit cleanup, materialize) */
+/* eslint-disable custom-rules/no-sync-fs —— 同步调用者（退出清理、materialize） */
 function appendEntryToFile(
   fullPath: string,
   entry: Record<string, unknown>,
@@ -2630,10 +2606,10 @@ function appendEntryToFile(
 }
 
 /**
- * Sync tail read for reAppendSessionMetadata's external-writer check.
- * fstat on the already-open fd (no extra path lookup); reads the same
- * LITE_READ_BUF_SIZE window that readLiteMetadata scans. Returns empty
- * string on any error so callers fall through to unconditional behavior.
+ * 用于 reAppendSessionMetadata 外部写入器检查的同步尾部读取
+ * 在已打开的文件描述符上执行 fstat（无需额外路径查找）；读取
+ * 与 readLiteMetadata 扫描相同的 LITE_READ_BUF_SIZE 窗口
+ * 发生任何错误时返回空字符串，使调用者进入无条件行为
  */
 function readFileTailSync(fullPath: string): string {
   let fd: number | undefined
@@ -2684,31 +2660,27 @@ export async function saveCustomTitle(
 }
 
 /**
- * Persist an AI-generated title to the JSONL as a distinct `ai-title` entry.
+ * 将 AI 生成的标题作为独立的 `ai-title` 条目持久化到 JSONL
  *
- * Writing a separate entry type (vs. reusing `custom-title`) is load-bearing:
- * - Read preference: readers prefer `customTitle` field over `aiTitle`, so
- *   a user rename always wins regardless of append order.
- * - Resume safety: `loadTranscriptFile` only populates the `customTitles`
- *   Map from `custom-title` entries, so `restoreSessionMetadata` never
- *   caches an AI title and `reAppendSessionMetadata` never re-appends one
- *   at EOF — avoiding the clobber-on-resume bug where a stale AI title
- *   overwrites a mid-session user rename.
- * - CAS semantics: VS Code's `onlyIfNoCustomTitle` check scans for the
- *   `customTitle` field only, so AI can overwrite its own previous AI
- *   title but never a user title.
- * - Metrics: `tengu_session_renamed` is not fired for AI titles.
+ * 使用单独的条目类型（而不是重用 `custom-title`）是关键的：
+ * - 读取偏好：读取器优先选择 `customTitle` 字段而非 `aiTitle`，因此
+ *   用户重命名总是获胜，无论追加顺序如何
+ * - 恢复安全：`loadTranscriptFile` 仅从 `custom-title` 条目填充
+ *   `customTitles` Map，因此 `restoreSessionMetadata` 从不缓存 AI 标题
+ *   且 `reAppendSessionMetadata` 从不在 EOF 重新追加一个 AI 标题
+ *   —— 避免了过期的 AI 标题覆盖会话中用户重命名的 bug
+ * - CAS 语义：VS Code 的 `onlyIfNoCustomTitle` 检查仅扫描 `customTitle`
+ *   字段，因此 AI 可以覆盖其自己的前一个 AI 标题，但永远不会覆盖用户标题
+ * - 指标：AI 标题不会触发 `tengu_session_renamed`
  *
- * Because the entry is never re-appended, it scrolls out of the 64KB tail
- * window once enough messages accumulate. Readers (`readLiteMetadata`,
- * `listSessionsImpl`, VS Code `fetchSessions`) fall back to scanning the
- * head buffer for `aiTitle` in that case. Both head and tail reads are
- * bounded (64KB each via `extractLastJsonStringField`), never a full scan.
+ * 因为该条目从不被重新追加，所以在积累足够多的消息后它会滚出 64KB 尾部
+ * 窗口。读取器（`readLiteMetadata`、`listSessionsImpl`、VS Code `fetchSessions`）
+ * 会回退到扫描头部缓冲区中的 `aiTitle`。头部和尾部读取都是有界的
+ * （各 64KB，通过 `extractLastJsonStringField`），从不是全量扫描
  *
- * Callers with a stale-write guard (e.g., VS Code client) should prefer
- * passing `persist: false` to the SDK control request and persisting
- * through their own rename path after the guard passes, to avoid a race
- * where the AI title lands after a mid-flight user rename.
+ * 带有过期写入保护的调用者（例如 VS Code 客户端）应该优先选择
+ * 向 SDK 控制请求传递 `persist: false`，并在保护通过后通过自己的
+ * 重命名路径持久化，以避免 AI 标题在中途用户重命名后落地的竞争条件
  */
 export function saveAiGeneratedTitle(sessionId: UUID, aiTitle: string): void {
   appendEntryToFile(getTranscriptPathForSession(sessionId), {
@@ -2719,10 +2691,9 @@ export function saveAiGeneratedTitle(sessionId: UUID, aiTitle: string): void {
 }
 
 /**
- * Append a periodic task summary for `claude ps`. Unlike ai-title this is
- * not re-appended by reAppendSessionMetadata — it's a rolling snapshot of
- * what the agent is doing *now*, so staleness is fine; ps reads the most
- * recent one from the tail.
+ * 为 `claude ps` 追加周期性的任务摘要。与 ai-title 不同，这不会被
+ * reAppendSessionMetadata 重新追加 —— 它是代理当前正在做什么的
+ * 滚动快照，因此过期是可以接受的；ps 从尾部读取最新的一个
  */
 export function saveTaskSummary(sessionId: UUID, summary: string): void {
   appendEntryToFile(getTranscriptPathForSession(sessionId), {
@@ -2745,8 +2716,8 @@ export async function saveTag(sessionId: UUID, tag: string, fullPath?: string) {
 }
 
 /**
- * Link a session to a GitHub pull request.
- * This stores the PR number, URL, and repository for tracking and navigation.
+ * 将会话链接到 GitHub 拉取请求
+ * 存储 PR 编号、URL 和仓库以进行跟踪和导航
  */
 export async function linkSessionToPR(
   sessionId: UUID,
@@ -2797,9 +2768,9 @@ export function getCurrentSessionAgentColor(): string | undefined {
 }
 
 /**
- * Restore session metadata into in-memory cache on resume.
- * Populates the cache so metadata is available for display (e.g. the
- * agent banner) and re-appended on session exit via reAppendSessionMetadata.
+ * 在恢复时将会话元数据恢复到内存缓存中
+ * 填充缓存以便元数据可用于显示（例如代理横幅）
+ * 并在会话退出时通过 reAppendSessionMetadata 重新追加
  */
 export function restoreSessionMetadata(meta: {
   customTitle?: string
@@ -2831,9 +2802,9 @@ export function restoreSessionMetadata(meta: {
 }
 
 /**
- * Clear all cached session metadata (title, tag, agent name/color).
- * Called when /clear creates a new session so stale metadata
- * from the previous session does not leak into the new one.
+ * 清除所有缓存的会话元数据（标题、标签、代理名称/颜色）
+ * 在 /clear 创建新会话时调用，以防止上一个会话的过期元数据
+ * 泄漏到新会话中
  */
 export function clearSessionMetadata(): void {
   const project = getProject()
@@ -2851,12 +2822,10 @@ export function clearSessionMetadata(): void {
 }
 
 /**
- * Re-append cached session metadata (custom title, tag) to the end of the
- * transcript file. Call this after compaction so the metadata stays within
- * the 16KB tail window that readLiteMetadata reads during progressive loading.
- * Without this, enough post-compaction messages can push the metadata entry
- * out of the window, causing `--resume` to show the auto-generated firstPrompt
- * instead of the user-set session name.
+ * 将缓存的会话元数据（自定义标题、标签）重新追加到会话记录文件末尾
+ * 在压缩后调用此方法，以确保元数据保留在 readLiteMetadata 渐进加载时
+ * 读取的 16KB 尾部窗口内。没有这个，足够多的压缩后消息可能会将元数据条目
+ * 推出窗口，导致 `--resume` 显示自动生成的 firstPrompt 而不是用户设置的会话名称
  */
 export function reAppendSessionMetadata(): void {
   getProject().reAppendSessionMetadata()
@@ -2900,37 +2869,36 @@ export async function saveAgentColor(
 }
 
 /**
- * Cache the session agent setting. Written to disk by materializeSessionFile
- * on the first user message, and re-stamped by reAppendSessionMetadata on exit.
- * Cache-only here to avoid creating metadata-only session files at startup.
+ * 缓存会话代理设置。由 materializeSessionFile 在第一条用户消息时写入磁盘
+ * 并在退出时由 reAppendSessionMetadata 重新标记。这里仅缓存以避免在启动时
+ * 创建仅包含元数据的会话文件
  */
 export function saveAgentSetting(agentSetting: string): void {
   getProject().currentSessionAgentSetting = agentSetting
 }
 
 /**
- * Cache a session title set at startup (--name). Written to disk by
- * materializeSessionFile on the first user message. Cache-only here so no
- * orphan metadata-only file is created before the session ID is finalized.
+ * 缓存启动时设置的会话标题（--name）。由 materializeSessionFile 在第一条
+ * 用户消息时写入磁盘。这里仅缓存，以避免在会话 ID 最终确定前创建孤立的
+ * 仅包含元数据的文件
  */
 export function cacheSessionTitle(customTitle: string): void {
   getProject().currentSessionTitle = customTitle
 }
 
 /**
- * Cache the session mode. Written to disk by materializeSessionFile on the
- * first user message, and re-stamped by reAppendSessionMetadata on exit.
- * Cache-only here to avoid creating metadata-only session files at startup.
+ * 缓存会话模式。由 materializeSessionFile 在第一条用户消息时写入磁盘
+ * 并在退出时由 reAppendSessionMetadata 重新标记。这里仅缓存，以避免在启动时
+ * 创建仅包含元数据的会话文件
  */
 export function saveMode(mode: 'coordinator' | 'normal'): void {
   getProject().currentSessionMode = mode
 }
 
 /**
- * Record the session's worktree state for --resume. Written to disk by
- * materializeSessionFile on the first user message and re-stamped by
- * reAppendSessionMetadata on exit. Pass null when exiting a worktree
- * so --resume knows not to cd back into it.
+ * 记录会话的工作树状态以供 --resume 使用。由 materializeSessionFile 在第一条
+ * 用户消息时写入磁盘，并在退出时由 reAppendSessionMetadata 重新标记。退出工作树时
+ * 传递 null，以便 --resume 知道不要 cd 回到工作树中
  */
 export function saveWorktreeState(
   worktreeSession: PersistedWorktreeSession | null,
@@ -2966,9 +2934,9 @@ export function saveWorktreeState(
 }
 
 /**
- * Extracts the session ID from a log.
- * For lite logs, uses the sessionId field directly.
- * For full logs, extracts from the first message.
+ * 从日志中提取会话 ID
+ * 对于精简日志，直接使用 sessionId 字段
+ * 对于完整日志，从第一条消息中提取
  */
 export function getSessionIdFromLog(log: LogOption): UUID | undefined {
   // For lite logs, use the direct sessionId field
@@ -2980,17 +2948,17 @@ export function getSessionIdFromLog(log: LogOption): UUID | undefined {
 }
 
 /**
- * Checks if a log is a lite log that needs full loading.
- * Lite logs have messages: [] and sessionId set.
+ * 检查日志是否为需要完整加载的精简日志
+ * 精简日志具有 messages: [] 且设置了 sessionId
  */
 export function isLiteLog(log: LogOption): boolean {
   return log.messages.length === 0 && log.sessionId !== undefined
 }
 
 /**
- * Loads full messages for a lite log by reading its JSONL file.
- * Returns a new LogOption with populated messages array.
- * If the log is already full or loading fails, returns the original log.
+ * 通过读取 JSONL 文件为精简日志加载完整消息
+ * 返回带有已填充消息数组的新 LogOption
+ * 如果日志已经是完整的或加载失败，则返回原始日志
  */
 export async function loadFullLog(log: LogOption): Promise<LogOption> {
   // If already full, return as-is
@@ -3102,11 +3070,11 @@ export async function loadFullLog(log: LogOption): Promise<LogOption> {
 }
 
 /**
- * Searches for sessions by custom title match.
- * Returns matches sorted by recency (newest first).
- * Uses case-insensitive matching for better UX.
- * Deduplicates by sessionId (keeps most recent per session).
- * Searches across same-repo worktrees by default.
+ * 按自定义标题匹配搜索会话
+ * 返回按最近时间排序的匹配项（最新的在前）
+ * 使用不区分大小写的匹配以获得更好的用户体验
+ * 按 sessionId 去重（每个会话保留最新的）
+ * 默认跨同一仓库的工作树搜索
  */
 export async function searchSessionsByCustomTitle(
   query: string,
@@ -3152,9 +3120,9 @@ export async function searchSessionsByCustomTitle(
 }
 
 /**
- * Metadata entry types that can appear before a compact boundary but must
- * still be loaded (they're session-scoped, not message-scoped).
- * Kept as raw JSON string markers for cheap line filtering during streaming.
+ * 可能出现在压缩边界之前但仍必须加载的元数据条目类型
+ * （它们是会话作用域的，不是消息作用域的）
+ * 保留为原始 JSON 字符串标记，以便在流式处理期间进行廉价的行过滤
  */
 const METADATA_TYPE_MARKERS = [
   '"type":"summary"',
@@ -3193,12 +3161,12 @@ function resolveMetadataBuf(
 }
 
 /**
- * Lightweight forward scan of [0, endOffset) collecting only metadata-entry lines.
- * Uses raw Buffer chunks and byte-level marker matching — no readline, no per-line
- * string conversion for the ~99% of lines that are message content.
+ * 轻量级前向扫描 [0, endOffset)，仅收集元数据条目行
+ * 使用原始 Buffer 块和字节级标记匹配 —— 无 readline，无每行字符串转换
+ * （约 99% 的行是消息内容）
  *
- * Fast path: if a chunk contains zero markers (the common case — metadata entries
- * are <50 per session), the entire chunk is skipped without line splitting.
+ * 快速路径：如果一个块包含零个标记（常见情况 —— 每个会话的元数据条目 <50）
+ * 则在不分割行的情况下跳过整个块
  */
 async function scanPreBoundaryMetadata(
   filePath: string,
@@ -3270,38 +3238,33 @@ async function scanPreBoundaryMetadata(
 }
 
 /**
- * Byte-level pre-filter that excises dead fork branches before parseJSONL.
+ * 字节级预过滤器，在 parseJSONL 之前剔除已死的分叉分支
  *
- * Every rewind/ctrl-z leaves an orphaned chain branch in the append-only
- * JSONL forever. buildConversationChain walks parentUuid from the latest leaf
- * and discards everything else, but by then parseJSONL has already paid to
- * JSON.parse all of it. Measured on fork-heavy sessions:
+ * 每次撤销/ctrl-z 都会在只追加的 JSONL 中留下一个孤立的链分支
+ * buildConversationChain 从最新的叶子遍历 parentUuid 并丢弃其他所有内容
+ * 但到那时 parseJSONL 已经付出了 JSON.parse 所有的代价。在分叉密集型的会话中测量：
  *
- *   41 MB, 99% dead: parseJSONL 56.0 ms -> 3.9 ms (-93%)
- *   151 MB, 92% dead: 47.3 ms -> 9.4 ms (-80%)
+ *   41 MB，99% 已死：parseJSONL 56.0 毫秒 -> 3.9 毫秒（-93%）
+ *   151 MB，92% 已死：47.3 毫秒 -> 9.4 毫秒（-80%）
  *
- * Sessions with few dead branches (5-7%) see a small win from the overhead of
- * the index pass roughly canceling the parse savings, so this is gated on
- * buffer size (same threshold as SKIP_PRECOMPACT_THRESHOLD).
+ * 死分支很少的会话（5-7%）由于索引遍历的开销大致抵消了解析节省
+ * 因此这受缓冲区大小的限制（与 SKIP_PRECOMPACT_THRESHOLD 相同的阈值）
  *
- * Relies on two invariants verified across 25k+ message lines in local
- * sessions (0 violations):
+ * 依赖于在本地会话的 25k+ 消息行中验证过的两个不变性（0 次违规）：
  *
- *   1. Transcript messages always serialize with parentUuid as the first key.
- *      JSON.stringify emits keys in insertion order and recordTranscript's
- *      object literal puts parentUuid first. So `{"parentUuid":` is a stable
- *      line prefix that distinguishes transcript messages from metadata.
+ *   1. 会话记录消息总是以 parentUuid 作为第一个键序列化
+ *      JSON.stringify 按插入顺序发出键，而 recordTranscript 的对象字面量
+ *      将 parentUuid 放在第一位。因此 `{"parentUuid":` 是一个稳定的行前缀
+ *      用于区分会话记录消息和元数据
  *
- *   2. Top-level uuid detection is handled by a suffix check + depth check
- *      (see inline comment in the scan loop). toolUseResult/mcpMeta serialize
- *      AFTER uuid with arbitrary server-controlled objects, and agent_progress
- *      entries serialize a nested Message in data BEFORE uuid — both can
- *      produce nested `"uuid":"<36>","timestamp":"` bytes, so suffix alone
- *      is insufficient. When multiple suffix matches exist, a brace-depth
- *      scan disambiguates.
+ *   2. 顶级 uuid 检测通过后缀检查 + 深度检查处理
+ *      （见扫描循环中的内联注释）。toolUseResult/mcpMeta 在 uuid 之后序列化
+ *      带有任意服务器控制的对象，而 agent_progress 条目在 uuid 之前序列化
+ *      一个嵌套的 Message —— 两者都会产生嵌套的 `"uuid":"<36>","timestamp":"` 字节
+ *      因此仅靠后缀是不够的。当存在多个后缀匹配时，使用花括号深度来消除歧义
  *
- * The append-only write discipline guarantees parents appear at earlier file
- * offsets than children, so walking backward from EOF always finds them.
+ * 只追加的写入规则保证父级出现在比子级更早的文件偏移量处
+ * 因此从 EOF 向后遍历总是能找到它们
  */
 
 /**
@@ -3574,8 +3537,8 @@ export async function loadTranscriptFile(
     // buffers (measured: arrayBuffers=0 after Bun.gc(true) but RSS stuck at
     // ~316 MB on the old scan+strip path vs ~155 MB here).
     //
-    // Pre-boundary metadata (agent-setting, mode, pr-link, etc.) is recovered
-    // via a cheap byte-level forward scan of [0, boundary).
+    // 预边界元数据（agent-setting、mode、pr-link 等）通过廉价的字节级前向扫描
+    // [0, boundary) 来恢复
     let buf: Buffer | null = null
     let metadataLines: string[] | null = null
     let hasPreservedSegment = false
@@ -3601,20 +3564,15 @@ export async function loadTranscriptFile(
       }
     }
     buf ??= await readFile(filePath)
-    // For large buffers (which here means readTranscriptForLoad output with
-    // attr-snaps already stripped at the fd level — the <5MB readFile path
-    // falls through the size gate below), the dominant cost is parsing dead
-    // fork branches that buildConversationChain would discard anyway. Skip
-    // when the caller needs all
-    // leaves (loadAllLogsFromSessionFile for /insights picks the branch with
-    // most user messages, not the latest), when the boundary has a
-    // preservedSegment (those messages keep their pre-compact parentUuid on
-    // disk -- applyPreservedSegmentRelinks splices them in-memory AFTER
-    // parse, so a pre-parse chain walk would drop them as orphans), and when
-    // CLAUDE_CODE_DISABLE_PRECOMPACT_SKIP is set (that kill switch means
-    // "load everything, skip nothing"; this is another skip-before-parse
-    // optimization and the scan it depends on for hasPreservedSegment did
-    // not run).
+    // 对于大型缓冲区（这里指 readTranscriptForLoad 的输出，已在文件描述符级别
+    // 剥离了 attr-snaps —— 小于 5MB 的 readFile 路径会跳过大小检查），主要成本是
+    // 解析 buildConversationChain 会丢弃的死分叉分支。当调用者需要所有叶子节点时跳过
+    // （loadAllLogsFromSessionFile 用于 /insights 会选择用户消息最多的分支，而不是最新的）
+    // 当边界有 preservedSegment 时跳过（这些消息在磁盘上保留了预压缩的 parentUuid
+    // —— applyPreservedSegmentRelinks 在解析后将其拼接到内存中，因此预解析链遍历
+    // 会将它们丢弃为孤立节点），以及当 CLAUDE_CODE_DISABLE_PRECOMPACT_SKIP 被设置时跳过
+    // （该关闭开关意味着"加载所有内容，不跳过任何内容"；这是另一个解析前跳过优化
+    // 它依赖的 hasPreservedSegment 扫描未运行）。
     if (
       !opts?.keepAllLeaves &&
       !hasPreservedSegment &&
@@ -3659,9 +3617,9 @@ export async function loadTranscriptFile(
 
     const entries = parseJSONL<Entry>(buf)
 
-    // Bridge map for legacy progress entries: progress_uuid → progress_parent_uuid.
-    // PR #24099 removed progress from isTranscriptMessage, so old transcripts with
-    // progress in the parentUuid chain would truncate at buildConversationChain
+    // 遗留进度条目的桥接映射：progress_uuid → progress_parent_uuid
+    // PR #24099 从 isTranscriptMessage 中移除了进度，因此旧会话中
+    // 包含进度在 parentUuid 链中的会在 buildConversationChain 处截断
     // when messages.get(progressUuid) returns undefined. Since transcripts are
     // append-only (parents before children), we record each progress→parent link
     // as we see it, chain-resolving through consecutive progress entries, then
@@ -3859,7 +3817,7 @@ export async function loadTranscriptFile(
 }
 
 /**
- * Loads all messages, summaries, file history snapshots, and attribution snapshots from a specific session file.
+ * 从特定会话文件加载所有消息、摘要、文件历史快照和归属快照
  */
 async function loadSessionFile(sessionId: UUID): Promise<{
   messages: Map<UUID, TranscriptMessage>
@@ -3882,8 +3840,8 @@ async function loadSessionFile(sessionId: UUID): Promise<{
 }
 
 /**
- * Gets message UUIDs for a specific session without loading all sessions.
- * Memoized to avoid re-reading the same session file multiple times.
+ * 获取特定会话的消息 UUID，而不加载所有会话
+ * 使用 memoize 避免多次读取同一会话文件
  */
 const getSessionMessages = memoize(
   async (sessionId: UUID): Promise<Set<UUID>> => {
@@ -3894,15 +3852,15 @@ const getSessionMessages = memoize(
 )
 
 /**
- * Clear the memoized session messages cache.
- * Call after compaction when old message UUIDs are no longer valid.
+ * 清除已缓存的会话消息
+ * 在压缩后旧消息 UUID 不再有效时调用
  */
 export function clearSessionMessagesCache(): void {
   getSessionMessages.cache.clear?.()
 }
 
 /**
- * Check if a message UUID exists in the session storage
+ * 检查消息 UUID 是否存在于会话存储中
  */
 export async function doesMessageExistInSession(
   sessionId: UUID,
@@ -4282,10 +4240,10 @@ export async function getAgentTranscript(agentId: AgentId): Promise<{
 }
 
 /**
- * Extract agent IDs from progress messages in the conversation.
- * Agent/skill progress messages have type 'progress' with data.type
- * 'agent_progress' or 'skill_progress' and data.agentId.
- * This captures sync agents that emit progress messages during execution.
+ * 从对话中的进度消息提取代理 ID
+ * 代理/技能进度消息的类型为 'progress'，data.type 为
+ * 'agent_progress' 或 'skill_progress'，并且包含 data.agentId
+ * 这捕获了在执行期间发出进度消息的同步代理
  */
 export function extractAgentIdsFromMessages(messages: Message[]): string[] {
   const agentIds: string[] = []
@@ -4309,10 +4267,10 @@ export function extractAgentIdsFromMessages(messages: Message[]): string[] {
 }
 
 /**
- * Extract teammate transcripts directly from AppState tasks.
- * In-process teammates store their messages in task.messages,
- * which is more reliable than loading from disk since each teammate turn
- * uses a random agentId for transcript storage.
+ * 直接从 AppState 任务中提取队友的会话记录
+ * 进程内的队友将其消息存储在 task.messages 中
+ * 这比从磁盘加载更可靠，因为每个队友回合使用随机的 agentId
+ * 来存储会话记录
  */
 export function extractTeammateTranscriptsFromTasks(tasks: {
   [taskId: string]: {
@@ -4338,7 +4296,7 @@ export function extractTeammateTranscriptsFromTasks(tasks: {
 }
 
 /**
- * Load subagent transcripts for the given agent IDs
+ * 加载给定代理 ID 的子代理会话记录
  */
 export async function loadSubagentTranscripts(
   agentIds: string[],
@@ -4367,7 +4325,7 @@ export async function loadSubagentTranscripts(
   return transcripts
 }
 
-// Globs the session's subagents dir directly — unlike AppState.tasks, this survives task eviction.
+// 直接全局匹配会话的 subagents 目录 —— 与 AppState.tasks 不同，这在任务被驱逐后仍然存在
 export async function loadAllSubagentTranscriptsFromDisk(): Promise<{
   [agentId: string]: Message[]
 }> {
@@ -4427,17 +4385,16 @@ function collectReplIds(messages: readonly Message[]): Set<string> {
 }
 
 /**
- * For external users, make REPL invisible in the persisted transcript: strip
- * REPL tool_use/tool_result pairs and promote isVirtual messages to real. On
- * --resume the model then sees a coherent native-tool-call history (assistant
- * called Bash, got result, called Read, got result) without the REPL wrapper.
- * Ant transcripts keep the wrapper so /share training data sees REPL usage.
+ * 对于外部用户，使 REPL 在持久化的会话记录中不可见：剥离
+ * REPL tool_use/tool_result 对并将 isVirtual 消息提升为真实消息
+ * 在 --resume 时，模型会看到一个连贯的本地工具调用历史（助手
+ * 调用 Bash，获取结果，调用 Read，获取结果），没有 REPL 包装器
+ * 蚂蚁的会话记录保留包装器，以便 /share 训练数据能看到 REPL 使用情况
  *
- * replIds is pre-collected from the FULL session array, not the slice being
- * transformed — recordTranscript receives incremental slices where the REPL
- * tool_use (earlier render) and its tool_result (later render, after async
- * execution) land in separate calls. A fresh per-call Set would miss the id
- * and leave an orphaned tool_result on disk.
+ * replIds 是从完整的会话数组预先收集的，而不是正在转换的切片
+ * —— recordTranscript 接收增量切片，其中 REPL tool_use（早期渲染）
+ * 和其 tool_result（后期渲染，异步执行后）落在不同的调用中
+ * 每次调用创建一个新的 Set 会错过 ID，导致磁盘上留下孤立的 tool_result
  */
 function transformMessagesForExternalTranscript(
   messages: Transcript,
@@ -4507,9 +4464,9 @@ export function cleanMessagesForLogging(
 }
 
 /**
- * Gets a log by its index
- * @param index Index in the sorted list of logs (0-based)
- * @returns Log data or null if not found
+ * 通过索引获取日志
+ * @param index 排序后日志列表中的索引（从 0 开始）
+ * @returns 日志数据，如果未找到则返回 null
  */
 export async function getLogByIndex(index: number): Promise<LogOption | null> {
   const logs = await loadMessageLogs()
@@ -4517,9 +4474,9 @@ export async function getLogByIndex(index: number): Promise<LogOption | null> {
 }
 
 /**
- * Looks up unresolved tool uses in the transcript by tool_use_id.
- * Returns the assistant message containing the tool_use, or null if not found
- * or the tool call already has a tool_result.
+ * 通过 tool_use_id 在会话记录中查找未解决的工具使用
+ * 返回包含 tool_use 的助手消息，如果未找到或工具调用
+ * 已经有 tool_result 则返回 null
  */
 export async function findUnresolvedToolUse(
   toolUseId: string,
@@ -4565,9 +4522,9 @@ export async function findUnresolvedToolUse(
 }
 
 /**
- * Gets all session JSONL files in a project directory with their stats.
- * Returns a map of sessionId → {path, mtime, ctime, size}.
- * Stats are batched via Promise.all to avoid serial syscalls in the hot loop.
+ * 获取项目目录中所有会话 JSONL 文件及其统计信息
+ * 返回 sessionId → {path, mtime, ctime, size} 的映射
+ * 通过 Promise.all 批量获取统计信息，避免在热循环中进行串行系统调用
  */
 export async function getSessionFilesWithMtime(
   projectDir: string,
@@ -4615,10 +4572,10 @@ export async function getSessionFilesWithMtime(
 }
 
 /**
- * Number of sessions to enrich on the initial load of the resume picker.
- * Each enrichment reads up to 128 KB per file (head + tail), so 50 sessions
- * means ~6.4 MB of I/O — fast on any modern filesystem while giving users
- * a much better initial view than the previous default of 10.
+ * 在恢复选择器初始加载时要丰富元数据的会话数量
+ * 每个丰富操作最多读取每个文件 128KB（头部 + 尾部），因此 50 个会话
+ * 意味着约 6.4MB 的 I/O —— 在任何现代文件系统上都很快速
+ * 同时为用户提供比之前的默认值 10 更好的初始视图
  */
 const INITIAL_ENRICH_COUNT = 50
 
@@ -4638,8 +4595,8 @@ type LiteMetadata = {
 }
 
 /**
- * Loads all logs from a single session file with full message data.
- * Builds a LogOption for each leaf message in the file.
+ * 从单个会话文件加载所有日志（包含完整消息数据）
+ * 为文件中的每个叶子消息构建一个 LogOption
  */
 export async function loadAllLogsFromSessionFile(
   sessionFile: string,
@@ -4666,7 +4623,7 @@ export async function loadAllLogsFromSessionFile(
   if (messages.size === 0) return []
 
   const leafMessages: TranscriptMessage[] = []
-  // Build parentUuid → children index once (O(n)), so trailing-message lookup is O(1) per leaf
+  // 一次性构建 parentUuid → 子节点索引（O(n)），这样每个叶子的后续消息查找是 O(1)
   const childrenByParent = new Map<UUID, TranscriptMessage[]>()
   for (const msg of messages.values()) {
     if (leafUuids.has(msg.uuid)) {
@@ -4687,10 +4644,10 @@ export async function loadAllLogsFromSessionFile(
     const chain = buildConversationChain(messages, leafMessage)
     if (chain.length === 0) continue
 
-    // Append trailing messages that are children of the leaf
+    // 追加叶子节点的子节点作为后续消息
     const trailingMessages = childrenByParent.get(leafMessage.uuid)
     if (trailingMessages) {
-      // ISO-8601 UTC timestamps are lexically sortable
+      // ISO-8601 UTC 时间戳按字典序可排序
       trailingMessages.sort((a, b) =>
         a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : 0,
       )
@@ -4740,8 +4697,8 @@ export async function loadAllLogsFromSessionFile(
 }
 
 /**
- * Gets logs by loading all session files fully, bypassing the session index.
- * Use this when you need full message data (e.g., for /insights analysis).
+ * 通过完全加载所有会话文件来获取日志，绕过会话索引
+ * 当需要完整消息数据时（例如用于 /insights 分析）使用此方法
 
  */
 async function getLogsWithoutIndex(
@@ -4751,7 +4708,7 @@ async function getLogsWithoutIndex(
   const sessionFilesMap = await getSessionFilesWithMtime(projectDir)
   if (sessionFilesMap.size === 0) return []
 
-  // If limit specified, only load N most recent files by mtime
+  // 如果指定了限制，只按修改时间加载最近的 N 个文件
   let filesToProcess: Array<{ path: string; mtime: number }>
   if (limit && sessionFilesMap.size > limit) {
     filesToProcess = [...sessionFilesMap.values()]
@@ -4775,12 +4732,12 @@ async function getLogsWithoutIndex(
 }
 
 /**
- * Reads the first and last ~64KB of a JSONL file and extracts lite metadata.
+ * 读取 JSONL 文件的前后 ~64KB 并提取精简元数据
  *
- * Head (first 64KB): isSidechain, projectPath, teamName, firstPrompt.
- * Tail (last 64KB): customTitle, tag, PR link, latest gitBranch.
+ * 头部（前 64KB）：isSidechain、projectPath、teamName、firstPrompt
+ * 尾部（后 64KB）：customTitle、tag、PR 链接、最新的 gitBranch
  *
- * Accepts a shared buffer to avoid per-file allocation overhead.
+ * 接受共享缓冲区以避免每个文件的分配开销
  */
 async function readLiteMetadata(
   filePath: string,
@@ -4790,19 +4747,18 @@ async function readLiteMetadata(
   const { head, tail } = await readHeadAndTail(filePath, fileSize, buf)
   if (!head) return { firstPrompt: '', isSidechain: false }
 
-  // Extract stable metadata from the first line via string search.
-  // Works even when the first line is truncated (>64KB message).
+  // 通过字符串搜索从第一行提取稳定的元数据
+  // 即使第一行被截断（>64KB 消息）也能正常工作
   const isSidechain =
     head.includes('"isSidechain":true') || head.includes('"isSidechain": true')
   const projectPath = extractJsonStringField(head, 'cwd')
   const teamName = extractJsonStringField(head, 'teamName')
   const agentSetting = extractJsonStringField(head, 'agentSetting')
 
-  // Prefer the last-prompt tail entry — captured by extractFirstPrompt at
-  // write time (filtered, authoritative) and shows what the user was most
-  // recently doing. Head scan is the fallback for sessions written before
-  // last-prompt entries existed. Raw string scrapes of head are last resort
-  // and catch array-format content blocks (VS Code <ide_selection> metadata).
+  // 优先使用尾部的 last-prompt 条目 —— 由 extractFirstPrompt 在写入时捕获
+  // （经过过滤，具有权威性），显示用户最近在做什么。头部扫描是会话
+  // 在 last-prompt 条目存在之前写入时的后备方案。头部原始字符串抓取
+  // 是最后的手段，用于捕获数组格式的内容块（VS Code <ide_selection> 元数据）
   const firstPrompt =
     extractLastJsonStringField(tail, 'lastPrompt') ||
     extractFirstPromptFromChunk(head) ||
@@ -4810,10 +4766,10 @@ async function readLiteMetadata(
     extractJsonStringFieldPrefix(head, 'text', 200) ||
     ''
 
-  // Extract tail metadata via string search (last occurrence wins).
-  // User titles (customTitle field, from custom-title entries) win over
-  // AI titles (aiTitle field, from ai-title entries). The distinct field
-  // names mean extractLastJsonStringField naturally disambiguates.
+  // 通过字符串搜索提取尾部元数据（最后一次出现获胜）
+  // 用户标题（customTitle 字段，来自 custom-title 条目）优先于
+  // AI 标题（aiTitle 字段，来自 ai-title 条目）。不同的字段名称意味着
+  // extractLastJsonStringField 会自然地消除歧义
   const customTitle =
     extractLastJsonStringField(tail, 'customTitle') ??
     extractLastJsonStringField(head, 'customTitle') ??
@@ -4825,7 +4781,7 @@ async function readLiteMetadata(
     extractLastJsonStringField(tail, 'gitBranch') ??
     extractJsonStringField(head, 'gitBranch')
 
-  // PR link fields — prNumber is a number not a string, so try both
+  // PR 链接字段 —— prNumber 是数字而非字符串，因此需要两种方式尝试
   const prUrl = extractLastJsonStringField(tail, 'prUrl')
   const prRepository = extractLastJsonStringField(tail, 'prRepository')
   let prNumber: number | undefined
@@ -4859,7 +4815,7 @@ async function readLiteMetadata(
 }
 
 /**
- * Scans a chunk of text for the first meaningful user prompt.
+ * 扫描文本块以查找第一个有意义的用户提示
  */
 function extractFirstPromptFromChunk(chunk: string): string {
   let start = 0
@@ -4886,10 +4842,10 @@ function extractFirstPromptFromChunk(chunk: string): string {
       if (!message) continue
 
       const content = message.content
-      // Collect all text values from the message content. For array content
-      // (common in VS Code where IDE metadata tags come before the user's
-      // actual prompt), iterate all text blocks so we don't miss the real
-      // prompt hidden behind <ide_selection>/<ide_opened_file> blocks.
+      // 收集消息内容中的所有文本值。对于数组内容
+      // （在 VS Code 中很常见，IDE 元数据标签出现在用户
+      // 实际提示之前），遍历所有文本块，以免遗漏隐藏在
+      // <ide_selection>/<ide_opened_file> 块后面的真实提示
       const texts: string[] = []
       if (typeof content === 'string') {
         texts.push(content)
@@ -4907,11 +4863,10 @@ function extractFirstPromptFromChunk(chunk: string): string {
 
         let result = text.replace(/\n/g, ' ').trim()
 
-        // Skip command messages (slash commands) but remember the first one
-        // as a fallback title. Matches skip logic in
-        // getFirstMeaningfulUserMessageTextContent, but instead of discarding
-        // command messages entirely, we format them cleanly (e.g. "/clear")
-        // so the session still appears in the resume picker.
+        // 跳过命令消息（斜杠命令），但记住第一个作为后备标题
+        // 这与 getFirstMeaningfulUserMessageTextContent 中的跳过逻辑匹配
+        // 但不是完全丢弃命令消息，而是将它们格式化（例如 "/clear"）
+        // 以便会话仍会出现在恢复选择器中
         const commandNameTag = extractTag(result, COMMAND_NAME_TAG)
         if (commandNameTag) {
           const name = commandNameTag.replace(/^\//, '')
@@ -4928,7 +4883,7 @@ function extractFirstPromptFromChunk(chunk: string): string {
             : commandNameTag
         }
 
-        // Format bash input with ! prefix before the generic XML skip
+        // 在通用 XML 跳过之前，为 bash 输入添加 ! 前缀
         const bashInput = extractTag(result, 'bash-input')
         if (bashInput) return `! ${bashInput}`
 
@@ -4949,20 +4904,19 @@ function extractFirstPromptFromChunk(chunk: string): string {
       continue
     }
   }
-  // Session started with a slash command but had no subsequent real message —
-  // use the clean command name so the session still appears in the resume picker
+  // 会话以斜杠命令开始但没有后续真实消息 ——
+  // 使用干净的命令名称，这样会话仍会出现在恢复选择器中
   if (firstCommandFallback) return firstCommandFallback
-  // Proactive sessions have only tick messages — give them a synthetic prompt
-  // so they're not filtered out by enrichLogs
+  // 主动式会话只有 tick 消息 —— 给它们一个合成提示
+  // 以便它们不会被 enrichLogs 过滤掉
   if ((feature('PROACTIVE') || feature('KAIROS')) && hasTickMessages)
     return 'Proactive session'
   return ''
 }
 
 /**
- * Like extractJsonStringField but returns the first `maxLen` characters of the
- * value even when the closing quote is missing (truncated buffer). Newline
- * escapes are replaced with spaces and the result is trimmed.
+ * 类似于 extractJsonStringField，但即使在关闭引号缺失（截断的缓冲区）时
+ * 也返回值的前 `maxLen` 个字符。换行转义符被替换为空格，结果会被修剪
  */
 function extractJsonStringFieldPrefix(
   text: string,
@@ -4995,8 +4949,8 @@ function extractJsonStringFieldPrefix(
 }
 
 /**
- * Deduplicates logs by sessionId, keeping the entry with the newest
- * modified time. Returns sorted logs with sequential value indices.
+ * 按 sessionId 对日志去重，保留修改时间最新的条目
+ * 返回带有连续 value 索引的已排序日志
  */
 function deduplicateLogsBySessionId(logs: LogOption[]): LogOption[] {
   const deduped = new Map<string, LogOption>()
@@ -5014,9 +4968,9 @@ function deduplicateLogsBySessionId(logs: LogOption[]): LogOption[] {
 }
 
 /**
- * Returns lite LogOption[] from pure filesystem metadata (stat only).
- * No file reads — instant. Call `enrichLogs` to enrich
- * visible sessions with firstPrompt, gitBranch, customTitle, etc.
+ * 从纯文件系统元数据（仅 stat）返回精简的 LogOption[]
+ * 无需文件读取 —— 即时完成。调用 `enrichLogs` 来丰富
+ * 可见会话的 firstPrompt、gitBranch、customTitle 等信息
  */
 export async function getSessionFilesLite(
   projectDir: string,
@@ -5025,7 +4979,7 @@ export async function getSessionFilesLite(
 ): Promise<LogOption[]> {
   const sessionFilesMap = await getSessionFilesWithMtime(projectDir)
 
-  // Sort by mtime descending and apply limit
+  // 按修改时间降序排序并应用限制
   let entries = [...sessionFilesMap.entries()].sort(
     (a, b) => b[1].mtime - a[1].mtime,
   )
@@ -5062,9 +5016,9 @@ export async function getSessionFilesLite(
 }
 
 /**
- * Enriches a lite log with metadata from its JSONL file.
- * Returns the enriched log, or null if the log has no meaningful content
- * (no firstPrompt, no customTitle — e.g., metadata-only session files).
+ * 用 JSONL 文件中的元数据丰富精简日志
+ * 返回丰富后的日志，如果日志没有有意义的内容则返回 null
+ * （没有 firstPrompt，没有 customTitle —— 例如仅包含元数据的会话文件）
  */
 async function enrichLog(
   log: LogOption,
@@ -5091,14 +5045,14 @@ async function enrichLog(
     projectPath: meta.projectPath ?? log.projectPath,
   }
 
-  // Provide a fallback title for sessions where we couldn't extract the first
-  // prompt (e.g., large first messages that exceed the 16KB read buffer).
-  // Previously these sessions were silently dropped, making them inaccessible
-  // via /resume after crashes or large-context sessions.
+  // 为无法提取第一个提示的会话提供后备标题
+  // （例如超过 16KB 读取缓冲区的大型第一条消息）
+  // 以前这些会话会被静默丢弃，导致在崩溃或大上下文会话后
+  // 无法通过 /resume 访问
   if (!enriched.firstPrompt && !enriched.customTitle) {
     enriched.firstPrompt = '(session)'
   }
-  // Filter: skip sidechains and agent sessions
+  // 过滤：跳过侧链和代理会话
   if (enriched.isSidechain) {
     logForDebugging(
       `Session ${log.sessionId} filtered from /resume: isSidechain=true`,
@@ -5116,9 +5070,9 @@ async function enrichLog(
 }
 
 /**
- * Enriches enough lite logs from `allLogs` (starting at `startIndex`) to
- * produce `count` valid results. Returns the valid enriched logs and the
- * index where scanning stopped (for progressive loading to continue from).
+ * 从 `allLogs` 中丰富足够的精简日志（从 `startIndex` 开始）
+ * 以生成 `count` 个有效结果。返回有效的丰富日志和
+ * 扫描停止的索引（用于继续渐进式加载）
  */
 export async function enrichLogs(
   allLogs: LogOption[],
@@ -5143,7 +5097,7 @@ export async function enrichLogs(
   const filtered = scanned - result.length
   if (filtered > 0) {
     logForDebugging(
-      `/resume: enriched ${scanned} sessions, ${filtered} filtered out, ${result.length} visible (${allLogs.length - i} remaining on disk)`,
+      `/resume: 丰富了 ${scanned} 个会话，过滤了 ${filtered} 个，${result.length} 个可见（磁盘上剩余 ${allLogs.length - i} 个）`,
     )
   }
 
