@@ -85,16 +85,15 @@ async function retrySleep(ms: number, signal?: AbortSignal): Promise<void> {
 }
 
 
-const DEFAULT_MAX_RETRIES = 20
-const FLOOR_OUTPUT_TOKENS = 3000
-const MAX_529_RETRIES = 3
-export const BASE_DELAY_MS = 20_000
+const DEFAULT_MAX_RETRIES = 20      // 默认最大重试次数
+const FLOOR_OUTPUT_TOKENS = 3000     // 最小输出 token 数
+const MAX_529_RETRIES = 3            // 最大 529 错误重试次数
+export const BASE_DELAY_MS = 20_000   // 基础延迟 20 秒
 
-// Foreground query sources where the user IS blocking on the result — these
-// retry on 529. Everything else (summaries, titles, suggestions, classifiers)
-// bails immediately: during a capacity cascade each retry is 3-10× gateway
-// amplification, and the user never sees those fail anyway. New sources
-// default to no-retry — add here only if the user is waiting on the result.
+// 用户正在等待结果的前台查询来源 —— 这些会在 529 错误时重试
+// 其他所有（摘要、标题、建议、分类器）会立即退出：在容量级联期间
+// 每次重试会产生 3-10 倍网关放大，用户根本看不到这些失败
+// 新来源默认不重试 —— 只有用户等待结果时才添加到这里
 const FOREGROUND_529_RETRY_SOURCES = new Set<QuerySource>([
   'repl_main_thread',
   'repl_main_thread:outputStyle:custom',
@@ -109,10 +108,9 @@ const FOREGROUND_529_RETRY_SOURCES = new Set<QuerySource>([
   'hook_prompt',
   'verification_agent',
   'side_question',
-  // Security classifiers — must complete for auto-mode correctness.
-  // yoloClassifier.ts uses 'auto_mode' (not 'yolo_classifier' — that's
-  // type-only). bash_classifier is ant-only; feature-gate so the string
-  // tree-shakes out of external builds (excluded-strings.txt).
+  // 安全分类器 —— 必须完成以确保自动模式正确性
+  // yoloClassifier.ts 使用 'auto_mode'（不是 'yolo_classifier' —— 那是仅类型）
+  // bash_classifier 仅限 ant；使用功能门控以便字符串在外部构建中被摇树优化掉
   'auto_mode',
   ...(feature('BASH_CLASSIFIER') ? (['bash_classifier'] as const) : []),
 ])
@@ -161,32 +159,31 @@ export interface RetryContext {
 }
 
 interface RetryOptions {
-  maxRetries?: number
-  model: string
-  fallbackModel?: string
-  thinkingConfig: ThinkingConfig
-  fastMode?: boolean
-  signal?: AbortSignal
-  querySource?: QuerySource
+  maxRetries?: number              // 最大重试次数
+  model: string                    // 模型名称
+  fallbackModel?: string           // 回退模型
+  thinkingConfig: ThinkingConfig   // 思考配置
+  fastMode?: boolean               // 快速模式
+  signal?: AbortSignal             // 中断信号
+  querySource?: QuerySource        // 查询来源
   /**
-   * Pre-seed the consecutive 529 counter. Used when this retry loop is a
-   * non-streaming fallback after a streaming 529 — the streaming 529 should
-   * count toward MAX_529_RETRIES so total 529s-before-fallback is consistent
-   * regardless of which request mode hit the overload.
+   * 预填充连续 529 错误计数器。当此重试循环是流式 529 之后的
+   * 非流式回退时使用 —— 流式 529 应计入 MAX_529_RETRIES，
+   * 以确保无论哪种请求模式触发过载，529 错误前的总数都一致。
    */
   initialConsecutive529Errors?: number
 }
 
 export class CannotRetryError extends Error {
   constructor(
-    public readonly originalError: unknown,
-    public readonly retryContext: RetryContext,
+    public readonly originalError: unknown,   // 原始错误
+    public readonly retryContext: RetryContext, // 重试上下文
   ) {
     const message = errorMessage(originalError)
     super(message)
     this.name = 'RetryError'
 
-    // Preserve the original stack trace if available
+    // 如果可用，保留原始堆栈跟踪
     if (originalError instanceof Error && originalError.stack) {
       this.stack = originalError.stack
     }
@@ -195,8 +192,8 @@ export class CannotRetryError extends Error {
 
 export class FallbackTriggeredError extends Error {
   constructor(
-    public readonly originalModel: string,
-    public readonly fallbackModel: string,
+    public readonly originalModel: string,  // 原始模型
+    public readonly fallbackModel: string,  // 回退模型
   ) {
     super(`模型已回退: ${originalModel} -> ${fallbackModel}`)
     this.name = 'FallbackTriggeredError'
@@ -220,8 +217,8 @@ export async function* withRetry<T>(
   const onCancel = () => { if (!retryNow.signal.aborted) retryNow.abort() }
   options.signal?.addEventListener('abort', onCancel, { once: true })
   const retryContext: RetryContext = {
-    model: options.model,
-    thinkingConfig: options.thinkingConfig,
+    model: options.model,              // 模型
+    thinkingConfig: options.thinkingConfig, // 思考配置
     ...(isFastModeEnabled() && { fastMode: options.fastMode }),
   }
   let client: Anthropic | null = null
@@ -242,14 +239,14 @@ export async function* withRetry<T>(
       retryNow = newRetryNow
     }
 
-    // Capture whether fast mode is active before this attempt
-    // (fallback may change the state mid-loop)
+    // 记录本次尝试前快速模式是否激活
+    // （回退可能会在循环中途改变状态）
     const wasFastModeActive = isFastModeEnabled()
       ? retryContext.fastMode && !isFastModeCooldown()
       : false
 
     try {
-      // Check for mock rate limits (used by /mock-limits command for Ant employees)
+      // 检查模拟速率限制（Ant 员工使用的 /mock-limits 命令）
       if (process.env.USER_TYPE === 'ant') {
         const mockError = checkMockRateLimitError(
           retryContext.model,
@@ -313,12 +310,11 @@ export async function* withRetry<T>(
         { level: 'error' },
       )
 
-      // Fast mode fallback: on 429/529, either wait and retry (short delays)
-      // or fall back to standard speed (long delays) to avoid cache thrashing.
-      // Skip in persistent mode: the short-retry path below loops with fast
-      // mode still active, so its `continue` never reaches the attempt clamp
-      // and the for-loop terminates. Persistent sessions want the chunked
-      // keep-alive path instead of fast-mode cache-preservation anyway.
+      // 快速模式回退：遇到 429/529 时，要么等待并重试（短延迟）
+      // 要么回退到标准速度（长延迟）以避免缓存抖动
+      // 持久模式跳过：下面的短重试路径会循环且快速模式仍保持激活
+      // 因此其 continue 永远不会到达尝试限制，for 循环会终止
+      // 持久会话需要分块的 keep-alive 路径，而不是快速模式的缓存保留
       if (
         wasFastModeActive &&
         !isPersistentRetryEnabled() &&
@@ -639,7 +635,7 @@ export function parseMaxTokensContextOverflowError(error: APIError):
     return undefined
   }
 
-  // Example format: "input length and `max_tokens` exceed context limit: 188059 + 20000 > 200000"
+  // 示例格式："input length and `max_tokens` exceed context limit: 188059 + 20000 > 200000"
   const regex =
     /input length and `max_tokens` exceed context limit: (\d+) \+ (\d+) > (\d+)/
   const match = error.message.match(regex)
@@ -667,9 +663,8 @@ export function parseMaxTokensContextOverflowError(error: APIError):
   return { inputTokens, maxTokens, contextLimit }
 }
 
-// TODO: Replace with a response header check once the API adds a dedicated
-// header for fast-mode rejection (e.g., x-fast-mode-rejected). String-matching
-// the error message is fragile and will break if the API wording changes.
+// TODO: 一旦 API 添加了专用的快速模式拒绝响应头（例如 x-fast-mode-rejected），
+// 就用响应头检查替换。字符串匹配错误信息很脆弱，如果 API 措辞改变就会失效。
 function isFastModeNotEnabledError(error: unknown): boolean {
   if (!(error instanceof APIError)) {
     return false
@@ -685,10 +680,10 @@ export function is529Error(error: unknown): boolean {
     return false
   }
 
-  // Check for 529 status code or overloaded error in message
+  // 检查 529 状态码或消息中的过载错误
   return (
     error.status === 529 ||
-    // See below: the SDK sometimes fails to properly pass the 529 status code during streaming
+    // 注意：SDK 有时在流式传输期间未能正确传递 529 状态码
     (error.message?.includes('"type":"overloaded_error"') ?? false)
   )
 }
@@ -717,8 +712,8 @@ function isBedrockAuthError(error: unknown): boolean {
 }
 
 /**
- * Clear AWS auth caches if appropriate.
- * @returns true if action was taken.
+ * 适当情况下清除 AWS 认证缓存
+ * @returns 如果执行了操作则返回 true
  */
 function handleAwsCredentialError(error: unknown): boolean {
   if (isBedrockAuthError(error)) {
@@ -728,8 +723,8 @@ function handleAwsCredentialError(error: unknown): boolean {
   return false
 }
 
-// google-auth-library throws plain Error (no typed name like AWS's
-// CredentialsProviderError). Match common SDK-level credential-failure messages.
+// google-auth-library 抛出普通 Error（没有 AWS 的 CredentialsProviderError 等类型名称）
+// 匹配常见的 SDK 级凭证失败消息。
 function isGoogleAuthLibraryCredentialError(error: unknown): boolean {
   if (!(error instanceof Error)) return false
   const msg = error.message
@@ -755,8 +750,8 @@ function isVertexAuthError(error: unknown): boolean {
 }
 
 /**
- * Clear GCP auth caches if appropriate.
- * @returns true if action was taken.
+ * 适当情况下清除 GCP 认证缓存
+ * @returns 如果执行了操作则返回 true
  */
 function handleGcpCredentialError(error: unknown): boolean {
   if (isVertexAuthError(error)) {

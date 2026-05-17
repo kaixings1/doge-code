@@ -36,38 +36,38 @@ function mapInput(input_map: Array<[string, InputHandler]>): InputMapper {
 }
 
 export type UseTextInputProps = {
-  value: string
-  onChange: (value: string) => void
-  onSubmit?: (value: string) => void
-  onExit?: () => void
-  onExitMessage?: (show: boolean, key?: string) => void
-  onHistoryUp?: () => void
-  onHistoryDown?: () => void
-  onHistoryReset?: () => void
-  onClearInput?: () => void
-  focus?: boolean
-  mask?: string
-  multiline?: boolean
-  cursorChar: string
-  highlightPastedText?: boolean
-  invert: (text: string) => string
-  themeText: (text: string) => string
-  columns: number
-  onImagePaste?: (
+  value: string                              // 输入框当前值
+  onChange: (value: string) => void          // 值变化时的回调
+  onSubmit?: (value: string) => void         // 提交时的回调
+  onExit?: () => void                        // 退出时的回调
+  onExitMessage?: (show: boolean, key?: string) => void  // 退出消息显示回调
+  onHistoryUp?: () => void                   // 历史记录上翻
+  onHistoryDown?: () => void                 // 历史记录下翻
+  onHistoryReset?: () => void                // 重置历史记录
+  onClearInput?: () => void                  // 清空输入
+  focus?: boolean                            // 是否聚焦
+  mask?: string                              // 输入掩码
+  multiline?: boolean                        // 是否多行输入
+  cursorChar: string                         // 光标字符
+  highlightPastedText?: boolean              // 是否高亮粘贴的文本
+  invert: (text: string) => string           // 文本反色函数
+  themeText: (text: string) => string        // 主题文本函数
+  columns: number                            // 列数
+  onImagePaste?: (                           // 图片粘贴回调
     base64Image: string,
     mediaType?: string,
     filename?: string,
     dimensions?: ImageDimensions,
     sourcePath?: string,
   ) => void
-  disableCursorMovementForUpDownKeys?: boolean
-  disableEscapeDoublePress?: boolean
-  maxVisibleLines?: number
-  externalOffset: number
-  onOffsetChange: (offset: number) => void
-  inputFilter?: (input: string, key: Key) => string
-  inlineGhostText?: InlineGhostText
-  dim?: (text: string) => string
+  disableCursorMovementForUpDownKeys?: boolean  // 禁用上下键的光标移动
+  disableEscapeDoublePress?: boolean            // 禁用双击 Esc
+  maxVisibleLines?: number                      // 最大可见行数
+  externalOffset: number                        // 外部偏移量
+  onOffsetChange: (offset: number) => void      // 偏移量变化回调
+  inputFilter?: (input: string, key: Key) => string  // 输入过滤器
+  inlineGhostText?: InlineGhostText             // 行内幽灵文本
+  dim?: (text: string) => string                // 文本变暗函数
 }
 
 export function useTextInput({
@@ -95,7 +95,7 @@ export function useTextInput({
   inlineGhostText,
   dim,
 }: UseTextInputProps): TextInputState {
-  // Pre-warm the modifiers module for Apple Terminal (has internal guard, safe to call multiple times)
+  // 为 Apple Terminal 预加载修饰键模块（有内部保护，可安全多次调用）
   if (env.terminal === 'Apple_Terminal') {
     prewarmModifiers()
   }
@@ -119,10 +119,10 @@ export function useTextInput({
     },
   )
 
-  // NOTE(keybindings): This escape handler is intentionally NOT migrated to the keybindings system.
-  // It's a text-level double-press escape for clearing input, not an action-level keybinding.
-  // Double-press Esc clears the input and saves to history - this is text editing behavior,
-  // not dialog dismissal, and needs the double-press safety mechanism.
+  // 注意(keybindings)：此 Esc 处理程序有意不迁移到 keybindings 系统
+  // 这是文本级别的双击 Esc 清空输入，不是操作级别的快捷键
+  // 双击 Esc 清空输入并保存到历史记录 —— 这是文本编辑行为
+  // 不是对话框关闭，需要双击安全机制
   const handleEscape = useDoublePress(
     (show: boolean) => {
       if (!originalValue || !show) {
@@ -136,12 +136,12 @@ export function useTextInput({
       })
     },
     () => {
-      // Remove the "Esc again to clear" notification immediately
+      // 立即移除"再次按 Esc 清除"通知
       removeNotification('escape-again-to-clear')
       onClearInput?.()
       if (originalValue) {
-        // Track double-escape usage for feature discovery
-        // Save to history before clearing
+        // 跟踪双击 Esc 的使用以进行功能发现
+        // 清空前保存到历史记录
         if (originalValue.trim() !== '') {
           addToHistory(originalValue)
         }
@@ -169,11 +169,11 @@ export function useTextInput({
 
   function handleCtrlD(): MaybeCursor {
     if (cursor.text === '') {
-      // When input is empty, handle double-press
+      // 输入为空时，处理双击
       handleEmptyCtrlD()
       return cursor
     }
-    // When input is not empty, delete forward like iPython
+    // 输入不为空时，像 iPython 一样向前删除
     return cursor.del()
   }
 
@@ -212,7 +212,7 @@ export function useTextInput({
       return cursor
     }
     const { text, start, length } = popResult
-    // Replace the previously yanked text with the new one
+    // 用新的文本替换之前粘贴的文本
     const before = cursor.text.slice(0, start)
     const after = cursor.text.slice(start + length)
     const newText = before + text + after
@@ -250,16 +250,16 @@ export function useTextInput({
       cursor.offset > 0 &&
       cursor.text[cursor.offset - 1] === '\\'
     ) {
-      // Track that the user has used backslash+return
+      // 记录用户使用了反斜杠+回车
       markBackslashReturnUsed()
       return cursor.backspace().insert('\n')
     }
-    // Meta+Enter or Shift+Enter inserts a newline
+    // Meta+Enter 或 Shift+Enter 插入换行符
     if (key.meta || key.shift) {
       return cursor.insert('\n')
     }
-    // Apple Terminal doesn't support custom Shift+Enter keybindings,
-    // so we use native macOS modifier detection to check if Shift is held
+    // Apple Terminal 不支持自定义 Shift+Enter 快捷键
+    // 因此使用原生 macOS 修饰键检测来检查是否按住了 Shift
     if (env.terminal === 'Apple_Terminal' && isModifierPressed('shift')) {
       return cursor.insert('\n')
     }
@@ -271,14 +271,14 @@ export function useTextInput({
       onHistoryUp?.()
       return cursor
     }
-    // Try to move by wrapped lines first
+    // 尝试先按换行移动
     const cursorUp = cursor.up()
     if (!cursorUp.equals(cursor)) {
       return cursorUp
     }
 
-    // If we can't move by wrapped lines and this is multiline input,
-    // try to move by logical lines (to handle paragraph boundaries)
+    // 如果无法按换行移动且这是多行输入
+    // 尝试按逻辑行移动（处理段落边界）
     if (multiline) {
       const cursorUpLogical = cursor.upLogicalLine()
       if (!cursorUpLogical.equals(cursor)) {
@@ -286,7 +286,7 @@ export function useTextInput({
       }
     }
 
-    // Can't move up at all - trigger history navigation
+    // 完全无法向上移动 - 触发历史记录导航
     onHistoryUp?.()
     return cursor
   }
@@ -295,14 +295,14 @@ export function useTextInput({
       onHistoryDown?.()
       return cursor
     }
-    // Try to move by wrapped lines first
+    // 尝试先按换行移动
     const cursorDown = cursor.down()
     if (!cursorDown.equals(cursor)) {
       return cursorDown
     }
 
-    // If we can't move by wrapped lines and this is multiline input,
-    // try to move by logical lines (to handle paragraph boundaries)
+    // 如果无法按换行移动且这是多行输入
+    // 尝试按逻辑行移动（处理段落边界）
     if (multiline) {
       const cursorDownLogical = cursor.downLogicalLine()
       if (!cursorDownLogical.equals(cursor)) {
@@ -310,7 +310,7 @@ export function useTextInput({
       }
     }
 
-    // Can't move down at all - trigger history navigation
+    // 完全无法向下移动 - 触发历史记录导航
     onHistoryDown?.()
     return cursor
   }
@@ -319,14 +319,13 @@ export function useTextInput({
     switch (true) {
       case key.escape:
         return () => {
-          // Skip when a keybinding context (e.g. Autocomplete) owns escape.
-          // useKeybindings can't shield us via stopImmediatePropagation —
-          // BaseTextInput's useInput registers first (child effects fire
-          // before parent effects), so this handler has already run by the
-          // time the keybinding's handler stops propagation.
+          // 当键绑定上下文（例如自动补全）拥有 Esc 时跳过
+          // useKeybindings 无法通过 stopImmediatePropagation 屏蔽我们 ——
+          // BaseTextInput 的 useInput 首先注册（子效果在父效果之前触发）
+          // 因此此处理程序在键绑定的处理程序停止传播之前已经运行
           if (disableEscapeDoublePress) return cursor
           handleEscape()
-          // Return the current cursor unchanged - handleEscape manages state internally
+          // 返回当前光标不变 —— handleEscape 内部管理状态
           return cursor
         }
       case key.leftArrow && (key.ctrl || key.meta || key.fn):
@@ -346,8 +345,8 @@ export function useTextInput({
       case key.end:
         return () => cursor.endOfLine()
       case key.pageDown:
-        // In fullscreen mode, PgUp/PgDn scroll the message viewport instead
-        // of moving the cursor — no-op here, ScrollKeybindingHandler handles it.
+        // 全屏模式下，PgUp/PgDn 滚动消息视口而不是移动光标
+        // 这里是空操作，ScrollKeybindingHandler 处理它
         if (isFullscreenEnvEnabled()) {
           return NOOP_HANDLER
         }
@@ -359,9 +358,9 @@ export function useTextInput({
         return () => cursor.startOfLine()
       case key.wheelUp:
       case key.wheelDown:
-        // Mouse wheel events only exist when fullscreen mouse tracking is on.
-        // ScrollKeybindingHandler handles them; no-op here to avoid inserting
-        // the raw SGR sequence as text.
+        // 鼠标滚轮事件仅在全屏鼠标跟踪开启时存在
+        // ScrollKeybindingHandler 处理它们；这里是空操作以避免
+        // 将原始 SGR 序列作为文本插入
         return NOOP_HANDLER
       case key.return:
         // Must come before key.meta so Option+Return inserts newline
@@ -388,15 +387,15 @@ export function useTextInput({
             case input === '\x1b[F' || input === '\x1b[4~':
               return cursor.endOfLine()
             default: {
-              // Trailing \r after text is SSH-coalesced Enter ("o\r") —
-              // strip it so the Enter isn't inserted as content. Lone \r
-              // here is Alt+Enter leaking through (META_KEY_CODE_RE doesn't
-              // match \x1b\r) — leave it for the \r→\n below. Embedded \r
-              // is multi-line paste from a terminal without bracketed
-              // paste — convert to \n. Backslash+\r is a stale VS Code
-              // Shift+Enter binding (pre-#8991 /terminal-setup wrote
-              // args.text "\\\r\n" to keybindings.json); keep the \r so
-              // it becomes \n below (anthropics/claude-code#31316).
+              // 文本后的尾随 \r 是 SSH 合并的回车 ("o\r") —
+              // 剥离它以免将回车作为内容插入。单独的 \r
+              // 是泄露的 Alt+Enter（META_KEY_CODE_RE 不匹配
+              // \x1b\r） —— 保留它以便下面的 \r→\n 转换。嵌入的 \r
+              // 是没有括号粘贴功能的终端的多行粘贴 —— 转换为 \n
+              // Backslash+\r 是过期的 VS Code Shift+Enter 绑定
+              //（pre-#8991 /terminal-setup 将 args.text "\\\r\n" 写入 keybindings.json）
+              // 保留 \r 以便它下面变成 \n（anthropics/claude-code#31316）
+              // （anthropics/claude-code#31316）
               const text = stripAnsi(input)
                 // eslint-disable-next-line custom-rules/no-lookbehind-regex -- .replace(re, str) on 1-2 char keystrokes: no-match returns same string (Object.is), regex never runs
                 .replace(/(?<=[^\\\r\n])\r$/, '')
@@ -412,7 +411,7 @@ export function useTextInput({
     }
   }
 
-  // Check if this is a kill command (Ctrl+K, Ctrl+U, Ctrl+W, or Meta+Backspace/Delete)
+  // 检查是否是 kill 命令（Ctrl+K、Ctrl+U、Ctrl+W 或 Meta+Backspace/Delete）
   function isKillKey(key: Key, input: string): boolean {
     if (key.ctrl && (input === 'k' || input === 'u' || input === 'w')) {
       return true
@@ -423,18 +422,18 @@ export function useTextInput({
     return false
   }
 
-  // Check if this is a yank command (Ctrl+Y or Alt+Y)
+  // 检查是否是 yank 命令（Ctrl+Y 或 Alt+Y）
   function isYankKey(key: Key, input: string): boolean {
     return (key.ctrl || key.meta) && input === 'y'
   }
 
   function onInput(input: string, key: Key): void {
-    // Note: Image paste shortcut (chat:imagePaste) is handled via useKeybindings in PromptInput
+    // 注意：图片粘贴快捷键（chat:imagePaste）在 PromptInput 中通过 useKeybindings 处理
 
-    // Apply filter if provided
+    // 如果提供了过滤器则应用
     const filteredInput = inputFilter ? inputFilter(input, key) : input
 
-    // If the input was filtered out, do nothing
+    // 如果输入被过滤掉，则不做任何操作
     if (filteredInput === '' && input !== '') {
       return
     }
@@ -456,13 +455,13 @@ export function useTextInput({
       }
     }
 
-    // Fix Issue #1853: Filter DEL characters that interfere with backspace in SSH/tmux
-    // In SSH/tmux environments, backspace generates both key events and raw DEL chars
+    // 修复问题 #1853：过滤在 SSH/tmux 中干扰退格的 DEL 字符
+    // 在 SSH/tmux 环境中，退格键会同时生成按键事件和原始 DEL 字符
     if (!key.backspace && !key.delete && input.includes('\x7f')) {
       const delCount = (input.match(/\x7f/g) || []).length
 
-      // Apply all DEL characters as backspace operations synchronously
-      // Try to delete tokens first, fall back to character backspace
+      // 将所有 DEL 字符作为退格操作同步应用
+      // 尝试先删除标记，回退到字符退格
       let currentCursor = cursor
       for (let i = 0; i < delCount; i++) {
         currentCursor =
@@ -481,12 +480,12 @@ export function useTextInput({
       return
     }
 
-    // Reset kill accumulation for non-kill keys
+    // 对非 kill 键重置 kill 累积
     if (!isKillKey(key, filteredInput)) {
       resetKillAccumulation()
     }
 
-    // Reset yank state for non-yank keys (breaks yank-pop chain)
+    // 对非 yank 键重置 yank 状态（破坏 yank-pop 链）
     if (!isYankKey(key, filteredInput)) {
       resetYankState()
     }
@@ -499,17 +498,16 @@ export function useTextInput({
         }
         setOffset(nextCursor.offset)
       }
-      // SSH-coalesced Enter: on slow links, "o" + Enter can arrive as one
-      // chunk "o\r". parseKeypress only matches s === '\r', so it hit the
-      // default handler above (which stripped the trailing \r). Text with
-      // exactly one trailing \r is coalesced Enter; lone \r is Alt+Enter
-      // (newline); embedded \r is multi-line paste.
+      // SSH 合并的回车：在慢速链路上，"o" + 回车可能作为一个块 "o\r" 到达
+      // parseKeypress 只匹配 s === '\r'，所以它命中了上面的默认处理程序
+      // （剥离了尾随的 \r）。恰好有一个尾随 \r 的文本是合并的回车
+      // 单独的 \r 是 Alt+Enter（换行）；嵌入的 \r 是多行粘贴
       if (
         filteredInput.length > 1 &&
         filteredInput.endsWith('\r') &&
         !filteredInput.slice(0, -1).includes('\r') &&
-        // Backslash+CR is a stale VS Code Shift+Enter binding, not
-        // coalesced Enter. See default handler above.
+        // Backslash+CR 是过期的 VS Code Shift+Enter 绑定
+        // 不是合并的回车。参见上面的默认处理程序
         filteredInput[filteredInput.length - 2] !== '\\'
       ) {
         onSubmit?.(nextCursor.text)
@@ -517,9 +515,9 @@ export function useTextInput({
     }
   }
 
-  // Prepare ghost text for rendering - validate insertPosition matches current
-  // cursor offset to prevent stale ghost text from a previous keystroke causing
-  // a one-frame jitter (ghost text state is updated via useEffect after render)
+  // 准备用于渲染的幽灵文本 —— 验证 insertPosition 是否匹配当前
+  // 光标偏移量，以防止过期的幽灵文本导致上一帧的抖动
+  // （幽灵文本状态在渲染后通过 useEffect 更新）
   const ghostTextForRender =
     inlineGhostText && dim && inlineGhostText.insertPosition === offset
       ? { text: inlineGhostText.text, dim }

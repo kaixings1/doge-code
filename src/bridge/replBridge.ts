@@ -68,19 +68,19 @@ import {
 } from './bridgeDebug.js'
 
 export type ReplBridgeHandle = {
-  bridgeSessionId: string
-  environmentId: string
-  sessionIngressUrl: string
-  writeMessages(messages: Message[]): void
-  writeSdkMessages(messages: SDKMessage[]): void
-  sendControlRequest(request: SDKControlRequest): void
-  sendControlResponse(response: SDKControlResponse): void
-  sendControlCancelRequest(requestId: string): void
-  sendResult(): void
-  teardown(): Promise<void>
+  bridgeSessionId: string          // 桥接会话 ID
+  environmentId: string            // 环境 ID
+  sessionIngressUrl: string        // 会话入口 URL
+  writeMessages(messages: Message[]): void           // 写入消息
+  writeSdkMessages(messages: SDKMessage[]): void     // 写入 SDK 消息
+  sendControlRequest(request: SDKControlRequest): void       // 发送控制请求
+  sendControlResponse(response: SDKControlResponse): void    // 发送控制响应
+  sendControlCancelRequest(requestId: string): void          // 发送控制取消请求
+  sendResult(): void                   // 发送结果
+  teardown(): Promise<void>            // 拆卸
 }
 
-export type BridgeState = 'ready' | 'connected' | 'reconnecting' | 'failed'
+export type BridgeState = 'ready' | 'connected' | 'reconnecting' | 'failed'  // 桥接状态
 
 /**
  * initBridgeCore 的显式参数输入。initReplBridge 从引导状态
