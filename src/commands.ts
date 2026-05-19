@@ -1,178 +1,178 @@
 // biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
-import addDir from './commands/add-dir/index.ts'
-import addModel from './commands/add-model/index.ts'
-import removeModel from './commands/remove-model/index.ts'
+import addDir from './commands/add-dir/index.js'
+import addModel from './commands/add-model/index.js'
+import removeModel from './commands/remove-model/index.js'
 import autofixPr from './commands/autofix-pr/index.tsx'
 import backfillSessions from './commands/backfill-sessions/index.tsx'
-import btw from './commands/btw/index.ts'
+import btw from './commands/btw/index.js'
 import goodClaude from './commands/good-claude/index.tsx'
 import issue from './commands/issue/index.tsx'
-import feedback from './commands/feedback/index.ts'
-import fuck from './commands/fuck/index.ts'
-import clear from './commands/clear/index.ts'
-import color from './commands/color/index.ts'
-import commit from './commands/commit.ts'
-import copy from './commands/copy/index.ts'
-import desktop from './commands/desktop/index.ts'
-import commitPushPr from './commands/commit-push-pr.ts'
-import compact from './commands/compact/index.ts'
-import config from './commands/config/index.ts'
-import { context, contextNonInteractive } from './commands/context/index.ts'
-import cost from './commands/cost/index.ts'
-import diff from './commands/diff/index.ts'
+import feedback from './commands/feedback/index.js'
+import fuck from './commands/fuck/index.js'
+import clear from './commands/clear/index.js'
+import color from './commands/color/index.js'
+import commit from './commands/commit.js'
+import copy from './commands/copy/index.js'
+import desktop from './commands/desktop/index.js'
+import commitPushPr from './commands/commit-push-pr.js'
+import compact from './commands/compact/index.js'
+import config from './commands/config/index.js'
+import { context, contextNonInteractive } from './commands/context/index.js'
+import cost from './commands/cost/index.js'
+import diff from './commands/diff/index.js'
 import ctx_viz from './commands/ctx_viz/index.tsx'
-import doctor from './commands/doctor/index.ts'
-import memory from './commands/memory/index.ts'
-import help from './commands/help/index.ts'
-import ide from './commands/ide/index.ts'
-import init from './commands/init.ts'
-import initVerifiers from './commands/init-verifiers.ts'
-import keybindings from './commands/keybindings/index.ts'
-import login from './commands/login/index.ts'
-import logout from './commands/logout/index.ts'
-import installGitHubApp from './commands/install-github-app/index.ts'
-import installSlackApp from './commands/install-slack-app/index.ts'
-import breakCache from './commands/break-cache/index.ts'
-import mcp from './commands/mcp/index.ts'
-import mobile from './commands/mobile/index.ts'
+import doctor from './commands/doctor/index.js'
+import memory from './commands/memory/index.js'
+import help from './commands/help/index.js'
+import ide from './commands/ide/index.js'
+import init from './commands/init.js'
+import initVerifiers from './commands/init-verifiers.js'
+import keybindings from './commands/keybindings/index.js'
+import login from './commands/login/index.js'
+import logout from './commands/logout/index.js'
+import installGitHubApp from './commands/install-github-app/index.js'
+import installSlackApp from './commands/install-slack-app/index.js'
+import breakCache from './commands/break-cache/index.js'
+import mcp from './commands/mcp/index.js'
+import mobile from './commands/mobile/index.js'
 import onboarding from './commands/onboarding/index.tsx'
-import pr_comments from './commands/pr_comments/index.ts'
-import releaseNotes from './commands/release-notes/index.ts'
-import rename from './commands/rename/index.ts'
-import resume from './commands/resume/index.ts'
-import review, { ultrareview } from './commands/review.ts'
-import session from './commands/session/index.ts'
+import pr_comments from './commands/pr_comments/index.js'
+import releaseNotes from './commands/release-notes/index.js'
+import rename from './commands/rename/index.js'
+import resume from './commands/resume/index.js'
+import review, { ultrareview } from './commands/review.js'
+import session from './commands/session/index.js'
 import share from './commands/share/index.tsx'
-import skills from './commands/skills/index.ts'
-import status from './commands/status/index.ts'
-import tasks from './commands/tasks/index.ts'
+import skills from './commands/skills/index.js'
+import status from './commands/status/index.js'
+import tasks from './commands/tasks/index.js'
 import teleport from './commands/teleport/index.tsx'
-import gettingStarted from './commands/getting-started/index.ts'
-import changelog from './commands/changelog/index.ts'
-import copyPage from './commands/copy-page/index.ts'
-import documentationIndex from './commands/documentation-index/index.ts'
-import tui from './commands/tui/index.ts'
-import powerup from './commands/powerup/index.ts'
-import teamOnboarding from './commands/team-onboarding/index.ts'
-import projectPurge from './commands/project-purge/index.ts'
-import insights from './commands/insights/index.ts'
-import team from './commands/team/index.ts'
-import game from './commands/game/index.ts'
+import gettingStarted from './commands/getting-started/index.js'
+import changelog from './commands/changelog/index.js'
+import copyPage from './commands/copy-page/index.js'
+import documentationIndex from './commands/documentation-index/index.js'
+import tui from './commands/tui/index.js'
+import powerup from './commands/powerup/index.js'
+import teamOnboarding from './commands/team-onboarding/index.js'
+import projectPurge from './commands/project-purge/index.js'
+import insights from './commands/insights/index.js'
+import team from './commands/team/index.js'
+import game from './commands/game/index.js'
 
 // 导入新增的21个命令
-import lessPermissionPrompts from './commands/less-permission-prompts/index.ts'
-import contextCollapse from './commands/context-collapse/index.ts'
-import taskCreate from './commands/task-create/index.ts'
-import planMode from './commands/plan-mode/index.ts'
-import compare from './commands/compare/index.ts'
-import graphQL from './commands/graphql/index.ts'
-import http from './commands/http/index.ts'
-import database from './commands/database/index.ts'
-import shell from './commands/shell/index.ts'
-import fileWatcher from './commands/file-watcher/index.ts'
-import schedule from './commands/schedule/index.ts'
-import cron from './commands/cron/index.ts'
-import websocket from './commands/websocket/index.ts'
-import eventStream from './commands/event-stream/index.ts'
-import queue from './commands/queue/index.ts'
-import cache from './commands/cache/index.ts'
-import logger from './commands/logger/index.ts'
-import metrics from './commands/metrics/index.ts'
-import monitor from './commands/monitor/index.ts'
-import backup from './commands/backup/index.ts'
-import mcpToolSearch from './commands/mcp-tool-search/index.ts'
+import lessPermissionPrompts from './commands/less-permission-prompts/index.js'
+import contextCollapse from './commands/context-collapse/index.js'
+import taskCreate from './commands/task-create/index.js'
+import planMode from './commands/plan-mode/index.js'
+import compare from './commands/compare/index.js'
+import graphQL from './commands/graphql/index.js'
+import http from './commands/http/index.js'
+import database from './commands/database/index.js'
+import shell from './commands/shell/index.js'
+import fileWatcher from './commands/file-watcher/index.js'
+import schedule from './commands/schedule/index.js'
+import cron from './commands/cron/index.js'
+import websocket from './commands/websocket/index.js'
+import eventStream from './commands/event-stream/index.js'
+import queue from './commands/queue/index.js'
+import cache from './commands/cache/index.js'
+import logger from './commands/logger/index.js'
+import metrics from './commands/metrics/index.js'
+import monitor from './commands/monitor/index.js'
+import backup from './commands/backup/index.js'
+import mcpToolSearch from './commands/mcp-tool-search/index.js'
 const agentsPlatform =
   process.env.USER_TYPE === 'ant'
-    ? require('./commands/agents-platform/index.ts').default
+    ? require('./commands/agents-platform/index.js').default
     : null
 
-import securityReview from './commands/security-review.ts'
+import securityReview from './commands/security-review.js'
 import bughunter from './commands/bughunter/index.tsx'
-import terminalSetup from './commands/terminalSetup/index.ts'
-import usage from './commands/usage/index.ts'
-import theme from './commands/theme/index.ts'
-import vim from './commands/vim/index.ts'
+import terminalSetup from './commands/terminalSetup/index.js'
+import usage from './commands/usage/index.js'
+import theme from './commands/theme/index.js'
+import vim from './commands/vim/index.js'
 import { feature } from 'bun:bundle'
 // 死代码消除：条件导入
 
 const proactive =
   feature('PROACTIVE') || feature('KAIROS')
-    ? require('./commands/proactive.ts').default
+    ? require('./commands/proactive.js').default
     : null
 const briefCommand =
   feature('KAIROS') || feature('KAIROS_BRIEF')
-    ? require('./commands/brief.ts').default
+    ? require('./commands/brief.js').default
     : null
 const assistantCommand = feature('KAIROS')
-  ? require('./commands/assistant/index.ts').default
+  ? require('./commands/assistant/index.js').default
     : null
 const bridge = feature('BRIDGE_MODE')
-  ? require('./commands/bridge/index.ts').default
+  ? require('./commands/bridge/index.js').default
     : null
 const remoteControlServerCommand =
   feature('DAEMON') && feature('BRIDGE_MODE')
-    ? require('./commands/remoteControlServer/index.ts').default
+    ? require('./commands/remoteControlServer/index.js').default
     : null
 const voiceCommand = feature('VOICE_MODE')
-  ? require('./commands/voice/index.ts').default
+  ? require('./commands/voice/index.js').default
     : null
 const forceSnip = feature('HISTORY_SNIP')
-  ? require('./commands/force-snip.ts').default
+  ? require('./commands/force-snip.js').default
     : null
 const workflowsCmd = feature('WORKFLOW_SCRIPTS')
   ? (
-      require('./commands/workflows/index.ts') as typeof import('./commands/workflows/index.ts')
+      require('./commands/workflows/index.js') as typeof import('./commands/workflows/index.js')
     ).default
   : null
 const webCmd = feature('CCR_REMOTE_SETUP')
   ? (
-      require('./commands/remote-setup/index.ts') as typeof import('./commands/remote-setup/index.ts')
+      require('./commands/remote-setup/index.js') as typeof import('./commands/remote-setup/index.js')
     ).default
   : null
 const clearSkillIndexCache = feature('EXPERIMENTAL_SKILL_SEARCH')
   ? (
-      require('./services/skillSearch/localSearch.ts') as typeof import('./services/skillSearch/localSearch.ts')
+      require('./services/skillSearch/localSearch.js') as typeof import('./services/skillSearch/localSearch.js')
     ).clearSkillIndexCache
   : null
 const subscribePr = feature('KAIROS_GITHUB_WEBHOOKS')
-  ? require('./commands/subscribe-pr.ts').default
+  ? require('./commands/subscribe-pr.js').default
   : null
 const ultraplan = feature('ULTRAPLAN')
-  ? require('./commands/ultraplan.ts').default
+  ? require('./commands/ultraplan.js').default
   : null
-const torch = feature('TORCH') ? require('./commands/torch.ts').default : null
+const torch = feature('TORCH') ? require('./commands/torch.js').default : null
 const peersCmd = feature('UDS_INBOX')
   ? (
-      require('./commands/peers/index.ts') as typeof import('./commands/peers/index.ts')
+      require('./commands/peers/index.js') as typeof import('./commands/peers/index.js')
     ).default
   : null
 const forkCmd = feature('FORK_SUBAGENT')
   ? (
-      require('./commands/fork/index.ts') as typeof import('./commands/fork/index.ts')
+      require('./commands/fork/index.js') as typeof import('./commands/fork/index.js')
     ).default
   : null
 const buddy = (
-      require('./commands/buddy/index.ts') as typeof import('./commands/buddy/index.ts')
+      require('./commands/buddy/index.js') as typeof import('./commands/buddy/index.js')
     ).default
 
-import thinkback from './commands/thinkback/index.ts'
-import thinkbackPlay from './commands/thinkback-play/index.ts'
-import permissions from './commands/permissions/index.ts'
-import plan from './commands/plan/index.ts'
-import fast from './commands/fast/index.ts'
-import passes from './commands/passes/index.ts'
-import privacySettings from './commands/privacy-settings/index.ts'
-import hooks from './commands/hooks/index.ts'
-import files from './commands/files/index.ts'
-import branch from './commands/branch/index.ts'
-import agents from './commands/agents/index.ts'
-import plugin from './commands/plugin/index.ts'
-import reloadPlugins from './commands/reload-plugins/index.ts'
-import rewind from './commands/rewind/index.ts'
-import heapDump from './commands/heapdump/index.ts'
+import thinkback from './commands/thinkback/index.js'
+import thinkbackPlay from './commands/thinkback-play/index.js'
+import permissions from './commands/permissions/index.js'
+import plan from './commands/plan/index.js'
+import fast from './commands/fast/index.js'
+import passes from './commands/passes/index.js'
+import privacySettings from './commands/privacy-settings/index.js'
+import hooks from './commands/hooks/index.js'
+import files from './commands/files/index.js'
+import branch from './commands/branch/index.js'
+import agents from './commands/agents/index.js'
+import plugin from './commands/plugin/index.js'
+import reloadPlugins from './commands/reload-plugins/index.js'
+import rewind from './commands/rewind/index.js'
+import heapDump from './commands/heapdump/index.js'
 import mockLimits from './commands/mock-limits/index.tsx'
-import bridgeKick from './commands/bridge-kick.ts'
-import version from './commands/version.ts'
+import bridgeKick from './commands/bridge-kick.js'
+import version from './commands/version.js'
 import summary from './commands/summary/index.tsx'
 import {
   resetLimits,
@@ -180,47 +180,47 @@ import {
 } from './commands/reset-limits/index.tsx'
 import antTrace from './commands/ant-trace/index.tsx'
 import perfIssue from './commands/perf-issue/index.tsx'
-import sandboxToggle from './commands/sandbox-toggle/index.ts'
-import chrome from './commands/chrome/index.ts'
-import stickers from './commands/stickers/index.ts'
-import advisor from './commands/advisor.ts'
+import sandboxToggle from './commands/sandbox-toggle/index.js'
+import chrome from './commands/chrome/index.js'
+import stickers from './commands/stickers/index.js'
+import advisor from './commands/advisor.js'
 
-import { logError } from './utils/log.ts'
-import { toError } from './utils/errors.ts'
-import { logForDebugging } from './utils/debug.ts'
+import { logError } from './utils/log.js'
+import { toError } from './utils/errors.js'
+import { logForDebugging } from './utils/debug.js'
 import {
   getSkillDirCommands,
   clearSkillCaches,
   getDynamicSkills,
-} from './skills/loadSkillsDir.ts'
-import { getBundledSkills } from './skills/bundledSkills.ts'
-import { getBuiltinPluginSkillCommands } from './plugins/builtinPlugins.ts'
+} from './skills/loadSkillsDir.js'
+import { getBundledSkills } from './skills/bundledSkills.js'
+import { getBuiltinPluginSkillCommands } from './plugins/builtinPlugins.js'
 import {
   getPluginCommands,
   clearPluginCommandCache,
   getPluginSkills,
   clearPluginSkillsCache,
-} from './utils/plugins/loadPluginCommands.ts'
-import memoize from 'lodash-es/memoize.ts'
-import { isUsing3PServices, isClaudeAISubscriber } from './utils/auth.ts'
-import { isFirstPartyAnthropicBaseUrl } from './utils/model/providers.ts'
+} from './utils/plugins/loadPluginCommands.js'
+import memoize from 'lodash-es/memoize.js'
+import { isUsing3PServices, isClaudeAISubscriber } from './utils/auth.js'
+import { isFirstPartyAnthropicBaseUrl } from './utils/model/providers.js'
 import env from './commands/env/index.tsx'
-import rstk from './commands/rstk/index.ts'
-import exit from './commands/exit/index.ts'
-import exportCommand from './commands/export/index.ts'
-import model from './commands/model/index.ts'
-import tag from './commands/tag/index.ts'
-import outputStyle from './commands/output-style/index.ts'
-import remoteEnv from './commands/remote-env/index.ts'
-import upgrade from './commands/upgrade/index.ts'
+import rstk from './commands/rstk/index.js'
+import exit from './commands/exit/index.js'
+import exportCommand from './commands/export/index.js'
+import model from './commands/model/index.js'
+import tag from './commands/tag/index.js'
+import outputStyle from './commands/output-style/index.js'
+import remoteEnv from './commands/remote-env/index.js'
+import upgrade from './commands/upgrade/index.js'
 import {
   extraUsage,
   extraUsageNonInteractive,
-} from './commands/extra-usage/index.ts'
-import rateLimitOptions from './commands/rate-limit-options/index.ts'
-import statusline from './commands/statusline.ts'
-import effort from './commands/effort/index.ts'
-import stats from './commands/stats/index.ts'
+} from './commands/extra-usage/index.js'
+import rateLimitOptions from './commands/rate-limit-options/index.js'
+import statusline from './commands/statusline.js'
+import effort from './commands/effort/index.js'
+import stats from './commands/stats/index.js'
 // insights.ts 有 113KB（3200 行，包含 diffLines/HTML 渲染）。懒加载垫片将重型模块推迟到 /insights 实际被调用时。
 const usageReport: Command = {
   type: 'prompt',
@@ -230,19 +230,19 @@ const usageReport: Command = {
   progressMessage: '正在分析你的会话',
   source: 'builtin',
   async getPromptForCommand(args, context) {
-    const real = (await import('./commands/insights.ts')).default
+    const real = (await import('./commands/insights.js')).default
     if (real.type !== 'prompt') throw new Error('不可达代码')
     return real.getPromptForCommand(args, context)
   },
 }
 import oauthRefresh from './commands/oauth-refresh/index.ts'
 import debugToolCall from './commands/debug-tool-call/index.tsx'
-import { getSettingSourceName } from './utils/settings/constants.ts'
+import { getSettingSourceName } from './utils/settings/constants.js'
 import {
   type Command,
   getCommandName,
   isCommandEnabled,
-} from './types/command.ts'
+} from './types/command.js'
 
 // 从集中位置重新导出类型
 export type {
@@ -253,8 +253,8 @@ export type {
   LocalJSXCommandContext,
   PromptCommand,
   ResumeEntrypoint,
-} from './types/command.ts'
-export { getCommandName, isCommandEnabled } from './types/command.ts'
+} from './types/command.js'
+export { getCommandName, isCommandEnabled } from './types/command.js'
 
 // 在外部构建中会被消除的命令
 export const INTERNAL_ONLY_COMMANDS = [
@@ -468,7 +468,7 @@ async function getSkills(cwd: string): Promise<{
 
 const getWorkflowCommands = feature('WORKFLOW_SCRIPTS')
   ? (
-      require('./tools/WorkflowTool/createWorkflowCommand.ts') as typeof import('./tools/WorkflowTool/createWorkflowCommand.ts')
+      require('./tools/WorkflowTool/createWorkflowCommand.js') as typeof import('./tools/WorkflowTool/createWorkflowCommand.js')
     ).getWorkflowCommands
   : null
 
