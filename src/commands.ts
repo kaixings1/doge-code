@@ -104,7 +104,7 @@ const briefCommand =
     ? require('./commands/brief.js').default
     : null
 const assistantCommand = feature('KAIROS')
-  ? require('./commands/assistant/index.js').default
+  ? require('./commands/assistant/index.ts').default
     : null
 const bridge = feature('BRIDGE_MODE')
   ? require('./commands/bridge/index.js').default
