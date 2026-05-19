@@ -1,15 +1,6 @@
-// 存根: commands/assistant/assistant.tsx
+// 助手模式相关组件
 import * as React from 'react'
+import { NewInstallWizard, computeDefaultInstallDir } from '../../assistant/assistant.js'
+import { AssistantSessionChooser } from '../../assistant/AssistantSessionChooser.js'
 
-export function NewInstallWizard(_props: {
-  defaultDir: string
-  onInstalled: (dir: string) => void
-  onCancel: () => void
-  onError: (message: string) => void
-}): React.ReactElement {
-  return React.createElement('ink-text', null, '新安装向导存根')
-}
-
-export async function computeDefaultInstallDir(): Promise<string> {
-  return ''
-}
+export { NewInstallWizard, computeDefaultInstallDir, AssistantSessionChooser }

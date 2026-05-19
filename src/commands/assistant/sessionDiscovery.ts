@@ -1,3 +1,1 @@
-export async function discoverAssistantSessions() {
-  return []
-}
+export { discoverAssistantSessions, getAssistantSession, deleteAssistantSession } from '../../assistant/sessionDiscovery.js'
