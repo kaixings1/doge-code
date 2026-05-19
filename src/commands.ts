@@ -2,11 +2,11 @@
 import addDir from './commands/add-dir/index.js'
 import addModel from './commands/add-model/index.js'
 import removeModel from './commands/remove-model/index.js'
-import autofixPr from './commands/autofix-pr/index.js'
-import backfillSessions from './commands/backfill-sessions/index.js'
+import autofixPr from './commands/autofix-pr/index.tsx'
+import backfillSessions from './commands/backfill-sessions/index.tsx'
 import btw from './commands/btw/index.js'
-import goodClaude from './commands/good-claude/index.js'
-import issue from './commands/issue/index.js'
+import goodClaude from './commands/good-claude/index.tsx'
+import issue from './commands/issue/index.tsx'
 import feedback from './commands/feedback/index.js'
 import fuck from './commands/fuck/index.js'
 import clear from './commands/clear/index.js'
@@ -20,7 +20,7 @@ import config from './commands/config/index.js'
 import { context, contextNonInteractive } from './commands/context/index.js'
 import cost from './commands/cost/index.js'
 import diff from './commands/diff/index.js'
-import ctx_viz from './commands/ctx_viz/index.js'
+import ctx_viz from './commands/ctx_viz/index.tsx'
 import doctor from './commands/doctor/index.js'
 import memory from './commands/memory/index.js'
 import help from './commands/help/index.js'
@@ -35,18 +35,18 @@ import installSlackApp from './commands/install-slack-app/index.js'
 import breakCache from './commands/break-cache/index.js'
 import mcp from './commands/mcp/index.js'
 import mobile from './commands/mobile/index.js'
-import onboarding from './commands/onboarding/index.js'
+import onboarding from './commands/onboarding/index.tsx'
 import pr_comments from './commands/pr_comments/index.js'
 import releaseNotes from './commands/release-notes/index.js'
 import rename from './commands/rename/index.js'
 import resume from './commands/resume/index.js'
 import review, { ultrareview } from './commands/review.js'
 import session from './commands/session/index.js'
-import share from './commands/share/index.js'
+import share from './commands/share/index.tsx'
 import skills from './commands/skills/index.js'
 import status from './commands/status/index.js'
 import tasks from './commands/tasks/index.js'
-import teleport from './commands/teleport/index.js'
+import teleport from './commands/teleport/index.tsx'
 import gettingStarted from './commands/getting-started/index.js'
 import changelog from './commands/changelog/index.js'
 import copyPage from './commands/copy-page/index.js'
@@ -57,6 +57,7 @@ import teamOnboarding from './commands/team-onboarding/index.js'
 import projectPurge from './commands/project-purge/index.js'
 import insights from './commands/insights/index.js'
 import team from './commands/team/index.js'
+import game from './commands/game/index.js'
 
 // 导入新增的21个命令
 import lessPermissionPrompts from './commands/less-permission-prompts/index.js'
@@ -86,7 +87,7 @@ const agentsPlatform =
     : null
 
 import securityReview from './commands/security-review.js'
-import bughunter from './commands/bughunter/index.js'
+import bughunter from './commands/bughunter/index.tsx'
 import terminalSetup from './commands/terminalSetup/index.js'
 import usage from './commands/usage/index.js'
 import theme from './commands/theme/index.js'
@@ -169,21 +170,20 @@ import plugin from './commands/plugin/index.js'
 import reloadPlugins from './commands/reload-plugins/index.js'
 import rewind from './commands/rewind/index.js'
 import heapDump from './commands/heapdump/index.js'
-import mockLimits from './commands/mock-limits/index.js'
+import mockLimits from './commands/mock-limits/index.tsx'
 import bridgeKick from './commands/bridge-kick.js'
 import version from './commands/version.js'
-import summary from './commands/summary/index.js'
+import summary from './commands/summary/index.tsx'
 import {
   resetLimits,
   resetLimitsNonInteractive,
-} from './commands/reset-limits/index.js'
-import antTrace from './commands/ant-trace/index.js'
-import perfIssue from './commands/perf-issue/index.js'
+} from './commands/reset-limits/index.tsx'
+import antTrace from './commands/ant-trace/index.tsx'
+import perfIssue from './commands/perf-issue/index.tsx'
 import sandboxToggle from './commands/sandbox-toggle/index.js'
 import chrome from './commands/chrome/index.js'
 import stickers from './commands/stickers/index.js'
 import advisor from './commands/advisor.js'
-import tui from './commands/tui/index.js'
 
 import { logError } from './utils/log.js'
 import { toError } from './utils/errors.js'
@@ -204,7 +204,7 @@ import {
 import memoize from 'lodash-es/memoize.js'
 import { isUsing3PServices, isClaudeAISubscriber } from './utils/auth.js'
 import { isFirstPartyAnthropicBaseUrl } from './utils/model/providers.js'
-import env from './commands/env/index.js'
+import env from './commands/env/index.tsx'
 import rstk from './commands/rstk/index.js'
 import exit from './commands/exit/index.js'
 import exportCommand from './commands/export/index.js'
@@ -235,8 +235,8 @@ const usageReport: Command = {
     return real.getPromptForCommand(args, context)
   },
 }
-import oauthRefresh from './commands/oauth-refresh/index.js'
-import debugToolCall from './commands/debug-tool-call/index.js'
+import oauthRefresh from './commands/oauth-refresh/index.ts'
+import debugToolCall from './commands/debug-tool-call/index.tsx'
 import { getSettingSourceName } from './utils/settings/constants.js'
 import {
   type Command,
@@ -324,6 +324,7 @@ const COMMANDS = memoize((): Command[] => [
   projectPurge,
   insights,
   team,
+  game,
   heapDump,
   help,
   ide,
