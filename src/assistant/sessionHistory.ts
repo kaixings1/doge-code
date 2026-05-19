@@ -27,6 +27,17 @@ export type HistoryAuthCtx = {
   headers: Record<string, string>
 }
 
+/**
+ * 助手会话信息
+ */
+export type AssistantSession = {
+  id: string
+  title: string
+  createdAt: string
+  status: 'active' | 'ended' | 'paused'
+  messageCount: number
+}
+
 /** 一次性准备认证信息、请求头和基础 URL，供多个页面复用。 */
 export async function createHistoryAuthCtx(
   sessionId: string,
@@ -84,4 +95,74 @@ export async function fetchOlderEvents(
   limit = HISTORY_PAGE_SIZE,
 ): Promise<HistoryPage | null> {
   return fetchPage(ctx, { limit, before_id: beforeId }, 'fetchOlderEvents')
+}
+
+/**
+ * 获取助手会话历史
+ * 
+ * @param sessionId - 可选的会话ID，如果提供则只获取该会话的历史
+ * @returns 会话历史
+ */
+export async function getSessionHistory(sessionId?: string): Promise<HistoryPage> {
+  try {
+    const ctx = await createHistoryAuthCtx(sessionId || 'default')
+    const page = await fetchLatestEvents(ctx, HISTORY_PAGE_SIZE)
+    
+    if (!page) {
+      return {
+        events: [],
+        firstId: null,
+        hasMore: false
+      }
+    }
+    
+    return page
+  } catch (error) {
+    console.error('获取会话历史失败:', error)
+    return {
+      events: [],
+      firstId: null,
+      hasMore: false
+    }
+  }
+}
+
+/**
+ * 获取所有助手会话列表
+ * 
+ * @returns 助手会话列表
+ */
+export async function listAssistantSessions(): Promise<AssistantSession[]> {
+  try {
+    const history = await getSessionHistory()
+    
+    // 从事件中提取唯一的会话
+    const sessionMap = new Map<string, AssistantSession>()
+    
+    history.events.forEach(event => {
+      if (event.session_id) {
+        if (!sessionMap.has(event.session_id)) {
+          sessionMap.set(event.session_id, {
+            id: event.session_id,
+            title: event.data?.title || `会话 ${event.session_id.slice(0, 8)}`,
+            createdAt: event.timestamp || new Date().toISOString(),
+            status: event.type === 'session_end' ? 'ended' : 'active',
+            messageCount: 0
+          })
+        }
+        
+        const session = sessionMap.get(event.session_id)!
+        session.messageCount++
+        
+        if (event.type === 'session_end') {
+          session.status = 'ended'
+        }
+      }
+    })
+    
+    return Array.from(sessionMap.values())
+  } catch (error) {
+    console.error('获取助手会话列表失败:', error)
+    return []
+  }
 }
