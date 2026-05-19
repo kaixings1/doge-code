@@ -35,7 +35,7 @@ export function CompanionCard({
   const stars = RARITY_STARS[companion.rarity];
   const sprite = renderSprite(companion, 0);
 
-  // Press any key to dismiss
+  // 按任意键关闭
   useInput(
     () => {
       onDone?.(undefined, { display: 'skip' });
@@ -53,7 +53,7 @@ export function CompanionCard({
       width={CARD_WIDTH}
       flexShrink={0}
     >
-      {/* Header: rarity + species */}
+      {/* 头部：稀有度 + 物种 */}
       <Box justifyContent="space-between">
         <Text bold color={color}>
           {stars} {RARITY_NAMES_CN[companion.rarity]}
@@ -61,14 +61,14 @@ export function CompanionCard({
         <Text color={color}>{SPECIES_NAMES_CN[companion.species]}</Text>
       </Box>
 
-      {/* Shiny indicator */}
+      {/* 闪亮指示器 */}
       {companion.shiny && (
         <Text color="warning" bold>
           {'\u2728'} ✨闪亮✨ {'\u2728'}
         </Text>
       )}
 
-      {/* Sprite */}
+      {/* 精灵 */}
       <Box flexDirection="column" marginY={1}>
         {sprite.map((line, i) => (
           <Text key={i} color={color}>
@@ -77,24 +77,24 @@ export function CompanionCard({
         ))}
       </Box>
 
-      {/* Name */}
+      {/* 名称 */}
       <Text bold>{companion.name}</Text>
 
-      {/* Personality */}
+      {/* 性格 */}
       <Box marginY={1}>
         <Text dimColor italic>
           &quot;{companion.personality}&quot;
         </Text>
       </Box>
 
-      {/* Stats */}
+      {/* 属性 */}
       <Box flexDirection="column">
         {STAT_NAMES.map(name => (
           <StatBar key={name} name={name} value={companion.stats[name] ?? 0} />
         ))}
       </Box>
 
-      {/* Last reaction */}
+      {/* 最后回应 */}
       {lastReaction && (
         <Box flexDirection="column" marginTop={1}>
           <Text dimColor>最后说</Text>
