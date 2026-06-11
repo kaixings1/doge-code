@@ -886,7 +886,6 @@ export function getAssistantMessageFromError(
       return createAssistantAPIErrorMessage({
         content: `自定义网关对模型 ${model} 的请求失败，返回 404。这通常意味着中继端点与 Claude Code 当前的请求格式不兼容，而非模型名称本身的问题。当前网关：${process.env.ANTHROPIC_BASE_URL}。`,
         error: 'invalid_request',
-				errorDetails: detail,        // 同时存入结构化字段
       })
     }
     const switchCmd = getIsNonInteractiveSession() ? '--model' : '/model'
@@ -905,14 +904,14 @@ export function getAssistantMessageFromError(
   // 连接错误（非超时）—— 使用 formatAPIError 提供详细消息
   if (error instanceof APIConnectionError) {
     return createAssistantAPIErrorMessage({
-      content: `${API_ERROR_MESSAGE_PREFIX}：${formatAPIError(error)}`,
+      content: `${API_ERROR_MESSAGE_PREFIX}:${formatAPIError(error)}`,
       error: 'unknown',
     })
   }
 
   if (error instanceof Error) {
     return createAssistantAPIErrorMessage({
-      content: `${API_ERROR_MESSAGE_PREFIX}：${error.message}`,
+      content: `${API_ERROR_MESSAGE_PREFIX}:${error.message}`,
       error: 'unknown',
     })
   }
@@ -930,7 +929,7 @@ function get3PModelFallbackSuggestion(model: string): string | undefined {
   if (getAPIProvider() === 'firstParty') {
     return undefined
   }
-  // @[模型发布]：为新模型添加指向上一版本的后备建议链（针对第三方）
+  // @[模型发布]:为新模型添加指向上一版本的后备建议链（针对第三方）
   const m = model.toLowerCase()
   // 如果失败的模型看起来像 Opus 4.6 变体，建议默认的 Opus（对第三方为 4.1）
   if (m.includes('opus-4-6') || m.includes('opus_4_6')) {
@@ -1181,8 +1180,8 @@ export function getErrorMessageIfRefusal(
   logEvent('tengu_refusal_api_response', {})
 
   const baseMessage = getIsNonInteractiveSession()
-    ? `${API_ERROR_MESSAGE_PREFIX}：Claude Code 无法响应此请求，该请求似乎违反了我们的使用政策（https://www.anthropic.com/legal/aup）。请尝试重新表述请求或采用其他方式。`
-    : `${API_ERROR_MESSAGE_PREFIX}：Claude Code 无法响应此请求，该请求似乎违反了我们的使用政策（https://www.anthropic.com/legal/aup）。请双击 Esc 编辑最后一条消息或开始新会话以便 Claude Code 协助其他任务。`
+    ? `${API_ERROR_MESSAGE_PREFIX}:Claude Code 无法响应此请求，该请求似乎违反了我们的使用政策（https://www.anthropic.com/legal/aup）。请尝试重新表述请求或采用其他方式。`
+    : `${API_ERROR_MESSAGE_PREFIX}:Claude Code 无法响应此请求，该请求似乎违反了我们的使用政策（https://www.anthropic.com/legal/aup）。请双击 Esc 编辑最后一条消息或开始新会话以便 Claude Code 协助其他任务。`
 
   const modelSuggestion =
     model !== 'claude-sonnet-4-20250514'
