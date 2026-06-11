@@ -263,10 +263,39 @@ export function Config({
     });
   }
 
+  const customApiProvider = getGlobalConfig().customApiEndpoint?.provider;
+  const customApiProviderDisplay = customApiProvider === 'openai'
+    ? 'OpenAI-compatible'
+    : customApiProvider === 'gemini'
+      ? 'Gemini API'
+      : customApiProvider === 'anthropic'
+        ? 'Anthropic-compatible'
+        : 'Not set';
+
   // TODO: Add MCP servers
   const settingsItems: Setting[] = [
   // Global settings
   {
+    id: 'customApiProvider',
+    label: `Compatible API provider: ${customApiProviderDisplay}`,
+    value: customApiProviderDisplay,
+    options: ['Anthropic-compatible', 'OpenAI-compatible', 'Gemini API'],
+    type: 'enum' as const,
+    onChange(value: string) {
+      const nextProvider = value === 'OpenAI-compatible' ? 'openai' : value === 'Gemini API' ? 'gemini' : value === 'Anthropic-compatible' ? 'anthropic' : undefined;
+      saveGlobalConfig(current => ({
+        ...current,
+        customApiEndpoint: {
+          ...current.customApiEndpoint,
+          provider: nextProvider,
+          openaiCompatMode: nextProvider === 'openai'
+            ? current.customApiEndpoint?.openaiCompatMode ?? 'chat_completions'
+            : undefined
+        }
+      }));
+      setGlobalConfig(getGlobalConfig());
+    }
+  }, {
     id: 'customApiBaseURL',
     label: `兼容 API Base URL：${customBaseURL || '未设置'}`,
     value: customBaseURL || '未设置',
@@ -329,7 +358,25 @@ export function Config({
       setCustomModelValue(nextValue);
       setGlobalConfig(getGlobalConfig());
     }
-  },
+  }, ...(customApiProvider === 'openai' ? [{
+    id: 'openAICompatMode',
+    label: `OpenAI compatible mode: ${openAICompatMode === 'responses' ? 'Responses' : 'Chat Completions'}`,
+    value: openAICompatMode,
+    options: ['chat_completions', 'responses'],
+    type: 'enum' as const,
+    onChange(value: string) {
+      const nextValue = value === 'responses' ? 'responses' : 'chat_completions';
+      saveGlobalConfig(current => ({
+        ...current,
+        customApiEndpoint: {
+          ...current.customApiEndpoint,
+          openaiCompatMode: nextValue
+        }
+      }));
+      setOpenAICompatMode(nextValue);
+      setGlobalConfig(getGlobalConfig());
+    }
+  }] : []),
   {
     id: 'autoCompactEnabled',
     label: '自动压缩',
@@ -1158,8 +1205,19 @@ export function Config({
       return;
     }
     // Log any changes that were made
-    // TODO: Make these proper messages
+    // Format changes with proper localized messages
     const formattedChanges: string[] = Object.entries(changes).map(([key, value_2]) => {
+      // Use proper message formatting based on setting type
+      const settingNames: Record<string, string> = {
+        model: '模型',
+        verbose: '详细输出',
+        '快速模式': '快速模式',
+        defaultView: '默认显示',
+        theme: '主题',
+        language: '语言',
+        outputStyle: '输出样式'
+      }
+      const displayName = settingNames[key] || key
       logEvent('tengu_config_changed', {
         key: key as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         value: value_2 as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS

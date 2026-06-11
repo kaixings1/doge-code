@@ -78,6 +78,7 @@ const MAX_EDIT_FILE_SIZE = 1024 * 1024 * 1024 // 1 GiB (stat bytes)
 
 export const FileEditTool = buildTool({
   name: FILE_EDIT_TOOL_NAME,
+	aliases: ['edit'],
   searchHint: '就地修改文件内容',
   maxResultSizeChars: 100_000,
   strict: true,

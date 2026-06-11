@@ -19,7 +19,7 @@ import { isInProcessTeammateTask } from '../../tasks/InProcessTeammateTask/types
 import {
   isLocalAgentTask,
   type LocalAgentTaskState,
-} from '../../tasks/LocalAgentTask/LocalAgentTask.js'
+} from '../../tasks/LocalAgentTask/LocalAgentTask.tsx'
 import { isLocalShellTask } from '../../tasks/LocalShellTask/guards.js'
 import { asAgentId } from '../../types/ids.js'
 import type { Message } from '../../types/message.js'

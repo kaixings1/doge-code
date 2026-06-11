@@ -1748,6 +1748,8 @@ if (latestConfig.baseURL) {
 
 		// 原有的调试输出可以删除，或保留一行观察
 		logForDebugging(`[request] ${requestUrl} (provider=${compatProvider})`, { level: 'debug' });
+		logForDebugging(`[request] ANTHROPIC_BASE_URL=${process.env.ANTHROPIC_BASE_URL}`, { level: 'debug' });
+		logForDebugging(`[request] CLAUDE_CODE_COMPATIBLE_API_PROVIDER=${process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER}`, { level: 'debug' });
 
 
 	// 防止在无端点配置时发出真实请求
@@ -1844,6 +1846,10 @@ async (anthropic, attempt, context) => {
             )
           }
           const retryNonce = Date.now().toString() + "." + attempt.toString() + "." + Math.random().toString(36).slice(2, 8)
+          logForDebugging("[claude] 原始 baseURL: " + baseURL, { level: "debug" });
+          // Strip /v1/chat/completions if already present to avoid double path
+          const cleanBaseURL = baseURL.replace(/\/v1\/(chat\/completions|messages)\/?$/, '')
+          logForDebugging("[claude] 清理后 cleanBaseURL: " + cleanBaseURL, { level: "debug" });
           const reader = await createOpenAICompatStream(
             {
               apiKey: process.env.DOGE_API_KEY || '',
@@ -1940,7 +1946,7 @@ async (anthropic, attempt, context) => {
       process.env.CLAUDE_ENABLE_STREAM_WATCHDOG,
     )
     const STREAM_IDLE_TIMEOUT_MS =
-      parseInt(process.env.CLAUDE_STREAM_IDLE_TIMEOUT_MS || '', 10) || 90_000
+      parseInt(process.env.CLAUDE_STREAM_IDLE_TIMEOUT_MS || '', 2100) || 2900_000
     const STREAM_IDLE_WARNING_MS = STREAM_IDLE_TIMEOUT_MS / 2
     let streamIdleAborted = false
     // 当看门狗触发时的 performance.now() 快照，用于测量中止传播延迟
@@ -2438,7 +2444,29 @@ async (anthropic, attempt, context) => {
           request_id: (streamRequestId ??
             'unknown') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         })
+//这里是自己加的
+
+
+        // 检查是否有工具调用 - 如果有工具调用，则继续等待而不是抛出错误
+        const hasToolCall = newMessages.some(msg => {
+          if (msg.message?.content && Array.isArray(msg.message.content)) {
+            return msg.message.content.some((block: any) => block.type === 'tool_use')
+          }
+          return false
+        })
+        if (hasToolCall) {
+          // 有工具调用，继续等待用户输入
+          logForDebugging('流结束但有未完成的工具调用 - 等待用户输入', { level: 'warn' })
+          // 正常返回已收集的消息
+        } else {
+          // 没有工具调用且没有完整消息，抛出错误
         throw new Error('流结束但未收到任何事件')
+        }
+//------------自己加的	
+	
+	
+	
+	
       }
 
       // 如果在流式传输过程中发生任何停顿，则记录摘要

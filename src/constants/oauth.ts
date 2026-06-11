@@ -203,7 +203,7 @@ export function getOauthConfig(): OauthConfig {
     const base = oauthBaseUrl.replace(/\/$/, '')
 
     // 允许本地开发代理（127.0.0.1:8080）
-    if (base === 'http://127.0.0.1:8080') {
+    if (base === 'http://127.0.0.1:8080'||base === 'http://127.0.0.1:3001') {
       return {
         ...config,
         BASE_API_URL: base,

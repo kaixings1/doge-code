@@ -164,35 +164,62 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
               const fields = extractInboundMessageFields(msg);
               if (!fields) return;
               const {
-                uuid
+                uuid,
+                toolUseBlocks
               } = fields;
 
-              // 动态导入，使桥接代码远离非 BRIDGE_MODE 构建。
-              const {
-                resolveAndPrepend
-              } = await import('../bridge/inboundAttachments.js');
-              let sanitized = fields.content;
-              if (feature('KAIROS_GITHUB_WEBHOOKS')) {
-                 
+              // If tool_use blocks are present, process them as tool calls// 动态导入，使桥接代码远离非 BRIDGE_MODE 构建。
+              if (toolUseBlocks && toolUseBlocks.length > 0) {
+                logForDebugging(`[bridge:repl] 注入入站用户消息（包含 ${toolUseBlocks.length} 个工具调用）${uuid ? ` uuid=${uuid}` : ''}`);
+                
+                // Create a user message with tool_use blocks
+                const userMessage = {
+                  type: 'user' as const,
+                  message: {
+                    role: 'user' as const,
+                    content: fields.content as any,
+                  },
+                  session_id: 'bridge-inbound',
+                  parent_tool_use_id: null,
+                  uuid: uuid || undefined,
+                };
+                
+                // Enqueue as a special command that will be processed by the query loop
+                enqueue({
+                  value: userMessage,
+                  mode: 'prompt' as const,
+                  uuid,
+                  skipSlashCommands: true,
+                  bridgeOrigin: true
+                });
+              } else {
+                // Dynamic import to keep bridge code out of non-BRIDGE_MODE builds.
                 const {
-                  sanitizeInboundWebhookContent
-                } = require('../bridge/webhookSanitizer.js') as typeof import('../bridge/webhookSanitizer.js');
-                 
-                sanitized = sanitizeInboundWebhookContent(fields.content);
+                  resolveAndPrepend
+                } = await import('../bridge/inboundAttachments.js');
+                let sanitized = fields.content;
+                if (feature('KAIROS_GITHUB_WEBHOOKS')) {
+                  
+                  const {
+                    sanitizeInboundWebhookContent
+                  } = require('../bridge/webhookSanitizer.js') as typeof import('../bridge/webhookSanitizer.js');
+                  
+                  sanitized = sanitizeInboundWebhookContent(fields.content);
+                }
+                const content = await resolveAndPrepend(msg, sanitized);
+                const preview = typeof content === 'string' ? content.slice(0, 80) : `[${content.length} 个内容块]`;
+                logForDebugging(`[bridge:repl] 注入入站用户消息：${preview}${uuid ? ` uuid=${uuid}` : ''}`);
+                enqueue({
+                  value: content,
+                  mode: 'prompt' as const,
+                  uuid,
+                  // skipSlashCommands 保持 true 作为纵深防御 ——
+                  // processUserInputBase 在设置了 bridgeOrigin 且解析出的命令通过 isBridgeSafeCommand 时会在内部覆盖它。
+                  // 这使退出词抑制和即时命令块对于任何直接检查 skipSlashCommands 的代码路径保持完整。
+                  skipSlashCommands: true,
+                  bridgeOrigin: true
+                });
               }
-              const content = await resolveAndPrepend(msg, sanitized);
-              const preview = typeof content === 'string' ? content.slice(0, 80) : `[${content.length} 个内容块]`;
-              logForDebugging(`[bridge:repl] 注入入站用户消息：${preview}${uuid ? ` uuid=${uuid}` : ''}`);
-              enqueue({
-                value: content,
-                mode: 'prompt' as const,
-                uuid,
-                // skipSlashCommands 保持 true 作为纵深防御 ——
-                // processUserInputBase 在设置了 bridgeOrigin 且解析出的命令通过 isBridgeSafeCommand 时会在内部覆盖它。
-                // 这使退出词抑制和即时命令块对于任何直接检查 skipSlashCommands 的代码路径保持完整。
-                skipSlashCommands: true,
-                bridgeOrigin: true
-              });
             } catch (e) {
               logForDebugging(`[bridge:repl] handleInboundMessage 失败：${e}`, {
                 level: 'error'

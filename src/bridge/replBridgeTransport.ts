@@ -280,6 +280,10 @@ export async function createV2ReplTransport(opts: {
         if (closed) break
         await ccr.writeEvent(m)
       }
+      // Ensure all enqueued events are actually sent before returning.
+      // Without this, multiple commands can race and appear as unexecuted
+      // JSON packets because HTTP POSTs are async and may not complete in order.
+      if (!closed) await ccr.flush()
     },
     close() {
       closed = true

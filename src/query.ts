@@ -199,11 +199,20 @@ export async function* query(
   | ToolUseSummaryMessage,
   Terminal
 > {
+  try {
+	    logForDebugging("QUERY START");
+	    // ... 原有代码
   const consumedCommandUuids: string[] = []
   const terminal = yield* queryLoop(params, consumedCommandUuids)
   for (const uuid of consumedCommandUuids) {
     notifyCommandLifecycle(uuid, 'completed')
   }
+    } catch (err) {
+        logForDebugging("QUERY FATAL ERROR:", err);
+        throw err;
+    }
+    logForDebugging("🔥🔥🔥 QUERY FUNCTION CALLED 🔥🔥🔥");
+    logForDebugging('[DEBUG] query() called');
   return terminal
 }
 
@@ -255,8 +264,8 @@ async function handleAbortCleanup(toolUseContext: ToolUseContext): Promise<void>
     try {
       const { cleanupComputerUseAfterTurn } = await import('./utils/computerUse/cleanup.js')
       await cleanupComputerUseAfterTurn(toolUseContext)
-    } catch {
-      // 静默失败
+    } catch (err) {
+      logError(`清理计算机使用资源失败: ${err instanceof Error ? err.message : String(err)}`)
     }
   }
 }
@@ -305,9 +314,13 @@ async function* queryLoop(
   using pendingMemoryPrefetch = startRelevantMemoryPrefetch(
     state.messages,
     state.toolUseContext,
-  )
+  );
 
   while (true) {
+    logForDebugging('[DEBUG] START');
+    logForDebugging('========================================');
+    logForDebugging('[FATAL] queryLoop is running, turnCount=' + state.turnCount);
+    logForDebugging('========================================');
     let { toolUseContext } = state
     const {
       messages,
@@ -367,7 +380,9 @@ async function* queryLoop(
             void recordContentReplacement(
               records,
               toolUseContext.agentId,
-            ).catch(logError)
+            ).catch(err => {
+              logError(`记录内容替换失败: ${err instanceof Error ? err.message : String(err)}`)
+            })
         : undefined,
       new Set(
         toolUseContext.options.tools
@@ -643,6 +658,8 @@ async function* queryLoop(
             }
             let yieldMessage: typeof message = message
             if (message.type === 'assistant') {
+            logForDebugging(`[DEBUG] 1 Received assistant message, content length=${message.message.content.length}`);
+            logForDebugging(`[DEBUG] 1 Content types: ${JSON.stringify(message.message.content.map(c => c.type))}`);
               let clonedContent: typeof message.message.content | undefined
               for (let i = 0; i < message.message.content.length; i++) {
                 const block = message.message.content[i]!
@@ -656,6 +673,7 @@ async function* queryLoop(
                     block.name,
                   )
                   if (tool?.backfillObservableInput) {
+                    try {
                     const originalInput = block.input as Record<string, unknown>
                     const inputCopy = { ...originalInput }
                     tool.backfillObservableInput(inputCopy)
@@ -665,6 +683,9 @@ async function* queryLoop(
                     if (addedFields) {
                       clonedContent ??= [...message.message.content]
                       clonedContent[i] = { ...block, input: inputCopy }
+                      }
+                    } catch (err) {
+                      logError(`工具 ${block.name} 回填输入失败: ${err instanceof Error ? err.message : String(err)}`)
                     }
                   }
                 }
@@ -704,6 +725,8 @@ async function* queryLoop(
               yield yieldMessage
             }
             if (message.type === 'assistant') {
+            logForDebugging(`[DEBUG] 2 Received assistant message, content length=${message.message.content.length}`);
+            logForDebugging(`[DEBUG]  2 Content types: ${JSON.stringify(message.message.content.map(c => c.type))}`);
               assistantMessages.push(message)
 
               const msgToolUseBlocks = message.message.content.filter(
@@ -862,10 +885,14 @@ async function* queryLoop(
 
     if (toolUseContext.abortController.signal.aborted) {
       if (streamingToolExecutor) {
+        try {
         for await (const update of streamingToolExecutor.getRemainingResults()) {
           if (update.message) {
             yield update.message
+            }
           }
+        } catch (err) {
+          logError(`获取剩余工具结果失败: ${err instanceof Error ? err.message : String(err)}`)
         }
       } else {
         yield* yieldMissingToolResultBlocks(
@@ -900,6 +927,7 @@ async function* queryLoop(
       }
     }
 
+    logForDebugging('[DEBUG] before needsFollowUp check, needsFollowUp=' + needsFollowUp + ', toolUseBlocks.length=' + toolUseBlocks.length);
     if (!needsFollowUp) {
       const lastMessage = assistantMessages.at(-1)
 
@@ -989,11 +1017,15 @@ async function* queryLoop(
         }
 
         yield lastMessage
-        void executeStopFailureHooks(lastMessage, toolUseContext)
+        void executeStopFailureHooks(lastMessage, toolUseContext).catch(err => {
+          logError(`停止失败钩子执行错误: ${err instanceof Error ? err.message : String(err)}`)
+        })
         return { reason: isWithheldMedia ? 'image_error' : 'prompt_too_long' }
       } else if (feature('CONTEXT_COLLAPSE') && isWithheld413) {
         yield lastMessage
-        void executeStopFailureHooks(lastMessage, toolUseContext)
+        void executeStopFailureHooks(lastMessage, toolUseContext).catch(err => {
+          logError(`停止失败钩子执行错误: ${err instanceof Error ? err.message : String(err)}`)
+        })
         return { reason: 'prompt_too_long' }
       }
 
@@ -1047,7 +1079,9 @@ async function* queryLoop(
       }
 
       if (lastMessage?.isApiErrorMessage) {
-        void executeStopFailureHooks(lastMessage, toolUseContext)
+        void executeStopFailureHooks(lastMessage, toolUseContext).catch(err => {
+          logError(`停止失败钩子执行错误: ${err instanceof Error ? err.message : String(err)}`)
+        })
         playTaskCompleteSound()
         return { reason: 'completed' }
       }
@@ -1243,7 +1277,10 @@ async function* queryLoop(
           }
           return null
         })
-        .catch(() => null)
+        .catch(err => {
+          logError(`生成工具摘要时出错: ${err instanceof Error ? err.message : String(err)}`)
+          return null
+        })
     }
 
     if (toolUseContext.abortController.signal.aborted) {
@@ -1345,12 +1382,16 @@ async function* queryLoop(
     }
 
     if (skillPrefetch && pendingSkillPrefetch) {
+      try {
       const skillAttachments =
         await skillPrefetch.collectSkillDiscoveryPrefetch(pendingSkillPrefetch)
       yield* yieldAndCollectAttachments(
         skillAttachments.map(createAttachmentMessage),
         toolResults,
       )
+      } catch (err) {
+        logError(`技能预取失败: ${err instanceof Error ? err.message : String(err)}`)
+      }
     }
 
     const consumedCommands = queuedCommandsSnapshot.filter(
@@ -1380,6 +1421,7 @@ async function* queryLoop(
     })
 
     if (updatedToolUseContext.options.refreshTools) {
+      try {
       const refreshedTools = updatedToolUseContext.options.refreshTools()
       if (refreshedTools !== updatedToolUseContext.options.tools) {
         updatedToolUseContext = {
@@ -1389,6 +1431,9 @@ async function* queryLoop(
             tools: refreshedTools,
           },
         }
+        }
+      } catch (err) {
+        logError(`刷新工具列表失败: ${err instanceof Error ? err.message : String(err)}`)
       }
     }
 
@@ -1411,6 +1456,7 @@ async function* queryLoop(
         !toolUseContext.agentId &&
         taskSummaryModule!.shouldGenerateTaskSummary()
       ) {
+        try {
         taskSummaryModule!.maybeGenerateTaskSummary({
           systemPrompt,
           userContext,
@@ -1422,6 +1468,9 @@ async function* queryLoop(
             ...toolResults,
           ],
         })
+        } catch (err) {
+          logError(`生成任务摘要失败: ${err instanceof Error ? err.message : String(err)}`)
+        }
       }
     }
 
