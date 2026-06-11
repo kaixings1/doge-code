@@ -48,7 +48,11 @@ type OAuthStatus = {
 } | {
   state: 'custom_config';
   provider: CompatibleApiProvider;
-  step: 'baseURL' | 'apiKey' | 'model';
+  step: 'baseURL' | 'apiKey' | 'model' | 'model_input';
+} | {
+  state: 'apikey_confirm';
+  apiKey: string;
+  savedApiKeys?: string[];
 } | {
   state: 'platform_setup';
 } | {
@@ -235,6 +239,15 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
     isActive: safeOauthStatus.state === 'error' && !!safeOauthStatus.toRetry
   });
 
+  useKeybinding('confirm:no', () => {
+    if (safeOauthStatus.state === 'apikey_confirm') {
+      setOAuthStatus({ state: 'custom_config', provider: compatibleApiProvider, step: 'apiKey' });
+    }
+  }, {
+    context: 'Confirmation',
+    isActive: safeOauthStatus.state === 'apikey_confirm'
+  });
+
   useEffect(() => {
     if (pastedCode === 'c' && safeOauthStatus.state === 'waiting_for_login' && showPastePrompt && !urlCopied) {
       void setClipboard(safeOauthStatus.url).then(raw => {
@@ -315,7 +328,13 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
       }
       setCustomBaseURL(nextValue);
       setCursorOffset(0);
-      setOAuthStatus({ state: 'custom_config', provider: safeOauthStatus.provider, step: 'apiKey' });
+
+      // BaseURL 输入完成后，总是弹出 API Key 确认窗口（组件内部会根据 BaseURL 自动筛选 Key）
+      setOAuthStatus({
+        state: 'apikey_confirm',
+        apiKey: customApiKey || '',
+        savedApiKeys: []
+      });
       return;
     }
 
@@ -323,7 +342,7 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
       const nextValue = value.trim();
       setCustomApiKey(nextValue);
       setCursorOffset(0);
-      setOAuthStatus({ state: 'custom_config', provider: safeOauthStatus.provider, step: 'model' });
+      setOAuthStatus({ state: 'apikey_confirm', apiKey: nextValue, savedApiKeys: [] });
       return;
     }
 
@@ -345,7 +364,7 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
       message: safeOauthStatus.provider === 'openai' ? 'OpenAI 兼容端点已保存' : 'Anthropic 兼容端点已保存',
       notificationType: 'auth_success'
     }, terminal);
-  }, [safeOauthStatus, persistCustomEndpoint, terminal, customBaseURL, customApiKey, compatibleApiProvider]);
+  }, [safeOauthStatus, persistCustomEndpoint, terminal, customBaseURL, customApiKey, compatibleApiProvider, savedPresets]);
 
   async function handleSubmitCode(value: string, url: string) {
     try {
@@ -499,6 +518,7 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
           setCompatibleApiProvider={setCompatibleApiProvider}
           savedPresets={savedPresets}
           setCurrentPresetName={setCurrentPresetName}
+          currentPresetName={currentPresetName}
         />
       </Box>
     </Box>
@@ -508,6 +528,8 @@ const [customApiKey, setCustomApiKey] = useState(initialApiKey);
 type OAuthStatusMessageProps = {
   savedPresets: { name: string; config: any }[];
   setCurrentPresetName: (name: string) => void;
+  currentPresetName: string;
+	terminal: ReturnType<typeof useTerminalNotification>;  // ✅ 新增
   oauthStatus: OAuthStatus;
   mode: 'login' | 'setup-token';
   startingMessage: string | undefined;
@@ -565,6 +587,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
     setCompatibleApiProvider,
     savedPresets,
     setCurrentPresetName,
+    currentPresetName,
   } = t0;
   
   switch (oauthStatus.state) {
@@ -628,14 +651,12 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
 					setCustomModel(config.model ?? '');
 					setCompatibleApiProvider((config.provider as any) || 'openai');
 					setCurrentPresetName(presetName);
-					// 4. 如果有多个已保存模型，跳到模型选择步骤；否则直接登录成功
-						const savedM = config.savedModels ?? [];
-						const hasMultipleModels = savedM.filter((m) => typeof m === "string" && m.trim()).length > 0;
-						if (hasMultipleModels) {
-							setOAuthStatus({ state: "custom_config", provider: (config.provider || "openai"), step: "model" });
-						} else {
-							setOAuthStatus({ state: "success" });
-						}
+					// 4. 进入 API Key 确认页（让用户确认或修改当前 key，组件内部会根据 BaseURL 自动筛选 Key）
+						setOAuthStatus({
+							state: 'apikey_confirm',
+							apiKey: config.apiKey || '',
+							savedApiKeys: []
+						});
 					return;
 				}
                 if (typeof value === 'string' && value.startsWith('preset:')) {
@@ -650,11 +671,25 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
                   setCompatibleApiProvider(preset.provider);
                   setCurrentPresetName(preset.label);
 
-                  setOAuthStatus({
-                    state: 'custom_config',
-                    provider: preset.provider,
-                    step: 'apiKey',
-                  });
+                  // 如果预设不需要 API Key，直接完成配置；否则跳转到 apiKey 输入
+                  if (!preset.apiKeyRequired) {
+                    setCustomApiKey('');
+                    setOAuthStatus({ state: 'success' });
+                    process.env.ANTHROPIC_BASE_URL = preset.baseURL;
+                    process.env.DOGE_API_KEY = '';
+                    process.env.ANTHROPIC_MODEL = preset.defaultModel;
+                    process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = preset.provider;
+                    void sendNotification({
+                      message: preset.provider === 'openai' ? 'OpenAI 兼容端点已保存' : 'Anthropic 兼容端点已保存',
+                      notificationType: 'auth_success'
+                    }, terminal);
+                  } else {
+                    setOAuthStatus({
+                      state: 'custom_config',
+                      provider: preset.provider,
+                      step: 'apiKey',
+                    });
+                  }
                 } else {
                   setCurrentPresetName('');
                   startCompatibleApiConfig(value as CompatibleApiProvider);
@@ -789,6 +824,77 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
             />
           </Box>
           <Text dimColor={true}>{isCustomInputPasting ? '按 Enter 保存当前项目并继续。' : '按 Enter 保存当前项目并继续。'}</Text>
+        </Box>
+      );
+    }
+
+    case "apikey_confirm": {
+      // 只筛选与当前 BaseURL 匹配的已保存 API Key（同一服务商多个 Key）
+      const currentBaseURL = customBaseURL.replace(/\/+$/, '').toLowerCase()
+      const relevantKeys = savedPresets
+        .filter(p => p.config.baseURL && p.config.baseURL.replace(/\/+$/, '').toLowerCase() === currentBaseURL)
+        .flatMap(p => {
+          const keys: string[] = []
+          if (p.config.apiKey) keys.push(p.config.apiKey)
+          if (Array.isArray(p.config.savedApiKeys)) keys.push(...p.config.savedApiKeys)
+          return keys
+        })
+        .filter((k): k is string => typeof k === 'string' && k.trim().length > 0)
+        .filter((k, idx, arr) => arr.indexOf(k) === idx) // 去重
+      const savedKeys = relevantKeys.length > 0 ? relevantKeys : ((oauthStatus as any).savedApiKeys ?? [])
+      const currentKey = oauthStatus.apiKey || ''
+
+      // 构建选项：已保存的 Key 列表，选中后直接提交进入下一步
+      const keyOptions = savedKeys.map((k: string) => ({
+        label: <Text>{k.length > 20 ? `${k.substring(0, 20)}...` : k}</Text>,
+        value: k,
+      }))
+
+      // 检查当前 key 是否在已保存列表中
+      const isKeySaved = currentKey && savedKeys.includes(currentKey)
+
+      // 提交 Key 并进入下一步
+      const submitKey = (key: string) => {
+        if (key.trim()) {
+          setCustomApiKey(key);
+          setOAuthStatus({ state: 'custom_config', provider: compatibleApiProvider, step: 'model' });
+        }
+      }
+
+      return (
+        <Box flexDirection="column" gap={1} marginTop={1}>
+          <Text bold={true}>确认 API Key</Text>
+          {savedKeys.length > 0 && (
+            <Text dimColor>已有 API Key，选择后直接使用，或在下方手动输入后按 Enter：</Text>
+          )}
+          {savedKeys.length > 0 && (
+            <Select
+              options={keyOptions}
+              onChange={(selectedKey) => {
+                // 选择已保存的 Key 后直接提交，进入模型选择
+                submitKey(selectedKey);
+              }}
+            />
+          )}
+          <Box flexDirection="row" marginTop={1}>
+            <TextInput
+              value={currentKey}
+              onChange={value => setOAuthStatus({ state: 'apikey_confirm', apiKey: value, savedApiKeys: savedKeys })}
+              onSubmit={value => submitKey(value)}
+              cursorOffset={cursorOffset}
+              onChangeCursorOffset={setCursorOffset}
+              columns={textInputColumns}
+              focus={!isKeySaved}
+              showCursor={true}
+              placeholder="sk-..."
+              mask="*"
+            />
+          </Box>
+          <Text dimColor>
+            {currentKey
+              ? `当前 API Key${isKeySaved ? '（已保存）' : ''}：${currentKey.length > 24 ? currentKey.substring(0, 24) + '...' : currentKey}，按 Enter 确认使用`
+              : '输入 API Key 后按 Enter 继续'}
+          </Text>
         </Box>
       );
     }

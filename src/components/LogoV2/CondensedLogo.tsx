@@ -9,11 +9,13 @@ import { Box, Text } from '../../ink.js';
 import { useAppState } from '../../state/AppState.js';
 import { getEffortSuffix } from '../../utils/effort.js';
 import { truncate } from '../../utils/format.js';
+import { isFullscreenEnvEnabled } from '../../utils/fullscreen.js';
 import { formatModelAndBilling, getLogoDisplayData, truncatePath } from '../../utils/logoV2Utils.js';
 import { renderModelSetting } from '../../utils/model/model.js';
 import { formatPackageUpdateNotice } from '../../utils/packageUpdateNotice.js';
 import { OffscreenFreeze } from '../OffscreenFreeze.js';
-import { Clawd } from './clawd.tsx';
+import { AnimatedClawd } from './AnimatedClawd.js';
+import { Clawd } from './Clawd.js';
 import { GuestPassesUpsell, incrementGuestPassesSeenCount, useShowGuestPassesUpsell } from './GuestPassesUpsell.js';
 import { incrementOverageCreditUpsellSeenCount, OverageCreditUpsell, useShowOverageCreditUpsell } from './OverageCreditUpsell.js';
 export function CondensedLogo() {
@@ -36,12 +38,6 @@ export function CondensedLogo() {
   const showGuestPassesUpsell = useShowGuestPassesUpsell();
   const showOverageCreditUpsell = useShowOverageCreditUpsell();
 
-  // 缓存布局尺寸，防止布局重排
-  const layoutRef = useRef<{ textWidth: number } | null>(null);
-  const textWidth = layoutRef.current?.textWidth ?? Math.max(columns - 15, 20);
-  if (!layoutRef.current) {
-    layoutRef.current = { textWidth };
-  }
 
   let t0;
   let t1;
@@ -91,7 +87,7 @@ export function CondensedLogo() {
   const truncatedCwd = truncatePath(cwd, Math.max(cwdAvailableWidth, 10));
   let t4;
   if ($[7] === Symbol.for("react.memo_cache_sentinel")) {
-    t4 = <Clawd />;
+    t4 = isFullscreenEnvEnabled() ? <AnimatedClawd /> : <Clawd />;
     $[7] = t4;
   } else {
     t4 = $[7];

@@ -24,6 +24,8 @@ export type CustomApiStorageData = {
   apiKey?: string
   model?: string
   savedModels?: string[]
+  /** 当前 BaseURL 下已保存的多个 API Key 的集合（方便在同 BaseURL 下切换） */
+  savedApiKeys?: string[]
   tokens?: PresetTokenData
 }
 
@@ -174,8 +176,28 @@ export function writeCustomApiStorage(
   }
   // 如果已经明确为 'openai' 或 'anthropic'，跳过上述改写
 
+  // 自动将 apiKey 纳入 savedApiKeys（去重）
+  if (next.apiKey) {
+    const existing = next.savedApiKeys ?? []
+    if (!existing.includes(next.apiKey)) {
+      next.savedApiKeys = [...existing, next.apiKey]
+    }
+  }
+
   const name = (presetName && presetName.trim()) || 'default';  // 关键保底
   const project = readProjectStorage();
+  // 如果该 preset 已有数据，合并 savedApiKeys（保留之前所有 key）
+  if (project.presets[name]) {
+    const oldKeys = project.presets[name].savedApiKeys ?? []
+    if (next.savedApiKeys) {
+      // 合并新旧 key 列表，去重
+      const merged = [...new Set([...oldKeys, ...next.savedApiKeys])]
+      next.savedApiKeys = merged
+    } else if (oldKeys.length > 0) {
+      // 如果新的没提供但旧的有，保留旧的
+      next.savedApiKeys = oldKeys
+    }
+  }
   project.presets[name] = next;
   project.activePreset = name;
   try {
