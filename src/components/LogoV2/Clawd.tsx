@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Box, Text } from '../../ink.js';
 
-export type ClawdPose = 'default' | 'blink' | 'heart' | 'angry' | 'sleep' | 'arms-up';
+export type ClawdPose = 'default' | 'blink' | 'heart' | 'angry' | 'sleep' | 'arms-up' | 'look-right' | 'look-left';
 
 type Props = {
   pose?: ClawdPose;
@@ -68,6 +68,26 @@ const GRAPHICS: Record<ClawdPose, string[]> = {
     " ╲    ✨       ╱ ",
     "  ╰──────────╯   ",
   ],
+  'look-right': [
+    "    ▴▃▃▃▃▃▃▃▴     ",
+    "  ╭───────────╮  ",
+    " ╱  ◕  ◕      ╲ ",
+    "│             │",
+    "│    ‿    ‿   │",
+    "│   ███████   │",
+    " ╲             ╱ ",
+    "  ╰───────────╯  ",
+  ],
+  'look-left': [
+    "    ▴▃▃▃▃▃▃▃▴     ",
+    "  ╭───────────╮  ",
+    " ╱      ◕  ◕  ╲ ",
+    "│             │",
+    "│    ‿    ‿   │",
+    "│   ███████   │",
+    " ╲             ╱ ",
+    "  ╰───────────╯  ",
+  ],
 };
 
 // 统一宽度，防止换行抖动
@@ -109,7 +129,7 @@ function renderLine(line: string, rowIdx: number, totalRows: number): React.Reac
 
 // 纯静态组件（不再有自动动画）
 export function Clawd({ pose = 'default' }: Props) {
-  const rows = GRAPHICS[pose];
+  const rows = GRAPHICS[pose] ?? GRAPHICS.default;
   return (
     <Box flexDirection="column" alignItems="center">
       {rows.map((line, idx) => (

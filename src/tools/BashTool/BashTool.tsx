@@ -308,8 +308,9 @@ function normalizeWindowsCommand(cmd: string): string {
         'cls': 'clear',
         'cd..': 'cd ..',
         'cd\\': 'cd /',
+        'ls': 'ls',
     };
-
+    // 提取第一个单词（命令名）
     // 提取第一个单词（命令名）
     const firstWordMatch = trimmed.match(/^(\w+)(?:\s|$)/);
     if (firstWordMatch) {

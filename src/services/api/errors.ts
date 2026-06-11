@@ -886,6 +886,7 @@ export function getAssistantMessageFromError(
       return createAssistantAPIErrorMessage({
         content: `自定义网关对模型 ${model} 的请求失败，返回 404。这通常意味着中继端点与 Claude Code 当前的请求格式不兼容，而非模型名称本身的问题。当前网关：${process.env.ANTHROPIC_BASE_URL}。`,
         error: 'invalid_request',
+				errorDetails: detail,        // 同时存入结构化字段
       })
     }
     const switchCmd = getIsNonInteractiveSession() ? '--model' : '/model'

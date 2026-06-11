@@ -264,6 +264,8 @@ export class SSETransport implements Transport {
     }
 
     logForDebugging(`SSETransport: 正在打开 ${sseUrl.href}`)
+    logForDebugging(`SSETransport: 连接请求头部: ${jsonStringify(headers)}`)
+    logForDebugging(`SSETransport: lastSequenceNum=${this.lastSequenceNum}`)
     logForDiagnosticsNoPII('info', 'cli_sse_connect_opening')
 
     this.abortController = new AbortController()
@@ -274,6 +276,25 @@ export class SSETransport implements Transport {
         headers,
         signal: this.abortController.signal,
       })
+
+      logForDebugging(
+        `SSETransport: HTTP 响应 status=${response.status} statusText=${response.statusText}`,
+      )
+      // Log response headers (excluding sensitive ones)
+      const safeHeaders: Record<string, string> = {}
+      for (const [key, value] of response.headers.entries()) {
+        const lowerKey = key.toLowerCase()
+        if (
+          lowerKey !== 'authorization' &&
+          lowerKey !== 'cookie' &&
+          lowerKey !== 'set-cookie'
+        ) {
+          safeHeaders[key] = value
+        }
+      }
+      logForDebugging(
+        `SSETransport: 响应头部: ${jsonStringify(safeHeaders)}`,
+      )
 
       if (!response.ok) {
         const isPermanent = PERMANENT_HTTP_CODES.has(response.status)
@@ -304,6 +325,7 @@ export class SSETransport implements Transport {
       // 成功连接
       const connectDuration = Date.now() - connectStartTime
       logForDebugging('SSETransport: 已连接')
+      logForDebugging(`SSETransport: 连接耗时 ${connectDuration}ms`)
       logForDiagnosticsNoPII('info', 'cli_sse_connect_connected', {
         duration_ms: connectDuration,
       })
@@ -318,6 +340,7 @@ export class SSETransport implements Transport {
     } catch (error) {
       if (this.abortController?.signal.aborted) {
         // 有意关闭
+        logForDebugging('SSETransport: 连接被有意中止')
         return
       }
 
@@ -338,19 +361,47 @@ export class SSETransport implements Transport {
     const reader = body.getReader()
     const decoder = new TextDecoder()
     let buffer = ''
+    let chunkCount = 0
+    let totalBytes = 0
 
     try {
+      logForDebugging('SSETransport: 开始读取 SSE 流')
       while (true) {
         const { done, value } = await reader.read()
-        if (done) break
+        if (done) {
+          logForDebugging('SSETransport: SSE 流已结束 (done=true)')
+          break
+        }
 
-        buffer += decoder.decode(value, STREAM_DECODE_OPTS)
+        chunkCount++
+        const chunkSize = value.length
+        totalBytes += chunkSize
+        const chunkText = decoder.decode(value, STREAM_DECODE_OPTS)
+        buffer += chunkText
+
+        logForDebugging(
+          `SSETransport: 收到数据块 #${chunkCount} size=${chunkSize} bytes total=${totalBytes} bufferLen=${buffer.length}`,
+        )
+        if (chunkSize > 0) {
+          logForDebugging(
+            `SSETransport: 数据块内容: ${chunkText.slice(0, 200)}${chunkText.length > 200 ? '...(truncated)' : ''}`,
+          )
+        }
+
         const { frames, remaining } = parseSSEFrames(buffer)
         buffer = remaining
+
+        logForDebugging(
+          `SSETransport: 解析出 ${frames.length} 帧，剩余缓冲区长度=${remaining.length}`,
+        )
 
         for (const frame of frames) {
           // 任何帧（包括 keepalive 注释）都证明连接是活的
           this.resetLivenessTimer()
+
+          logForDebugging(
+            `SSETransport: SSE 帧 event="${frame.event || '(none)'}" id="${frame.id || '(none)'}" data="${frame.data ? frame.data.slice(0, 200) + (frame.data.length > 200 ? '...(truncated)' : '') : '(none)'}"`,
+          )
 
           if (frame.id) {
             const seqNum = parseInt(frame.id, 10)
@@ -376,6 +427,9 @@ export class SSETransport implements Transport {
                 }
               }
               if (seqNum > this.lastSequenceNum) {
+                logForDebugging(
+                  `SSETransport: 更新 lastSequenceNum: ${this.lastSequenceNum} -> ${seqNum}`,
+                )
                 this.lastSequenceNum = seqNum
               }
             }
@@ -405,6 +459,10 @@ export class SSETransport implements Transport {
       reader.releaseLock()
     }
 
+    logForDebugging(
+      `SSETransport: 流读取循环退出，总数据块数=${chunkCount}，总字节数=${totalBytes}，最终缓冲区长度=${buffer.length}`,
+    )
+
     // 流已结束 — 除非正在关闭，否则重新连接
     if (this.state !== 'closing' && this.state !== 'closed') {
       logForDebugging('SSETransport: 流已结束，正在重新连接')
@@ -421,6 +479,10 @@ export class SSETransport implements Transport {
    * 记录诊断日志以便在遥测中注意到。
    */
   private handleSSEFrame(eventType: string, data: string): void {
+    logForDebugging(
+      `SSETransport: handleSSEFrame 进入, eventType="${eventType}", data长度=${data.length}, data前200="${data.slice(0, 200)}${data.length > 200 ? '...(truncated)' : ''}"`,
+    )
+
     if (eventType !== 'client_event') {
       logForDebugging(
         `SSETransport: 意外的 SSE 事件类型 '${eventType}'`,
@@ -440,22 +502,48 @@ export class SSETransport implements Transport {
         `SSETransport: 解析 client_event 数据失败: ${errorMessage(error)}`,
         { level: 'error' },
       )
+      logForDebugging(`SSETransport: 解析失败的原始数据: ${data.slice(0, 500)}`)
       return
     }
+
+    logForDebugging(
+      `SSETransport: 解析成功: event_id=${ev.event_id} sequence_num=${ev.sequence_num} event_type=${ev.event_type} source=${ev.source} created_at=${ev.created_at}`,
+    )
 
     const payload = ev.payload
     if (payload && typeof payload === 'object' && 'type' in payload) {
       const sessionLabel = this.sessionId ? ` session=${this.sessionId}` : ''
+      const payloadPreview = data.length > 1000
+        ? data.slice(0, 1000) + `...(共${data.length}字符)`
+        : data
       logForDebugging(
-        `SSETransport: 事件 seq=${ev.sequence_num} event_id=${ev.event_id} event_type=${ev.event_type} payload_type=${String(payload.type)}${sessionLabel}`,
+        `SSE⬇ 解析事件 seq=${ev.sequence_num} event_id=${ev.event_id} event_type=${ev.event_type} source=${ev.source} payload_type=${String(payload.type)}${sessionLabel}\n  payload=${payloadPreview}`,
       )
       logForDiagnosticsNoPII('info', 'cli_sse_message_received')
+      // ====== 调试日志：记录收到的完整 payload JSON ======
+      try {
+        logForDebugging(
+          `SSETransport: 收到完整 payload JSON: ${jsonStringify(payload)}`,
+        )
+      } catch {
+        logForDebugging(
+          `SSETransport: 收到 payload（无法序列化）`,
+        )
+      }
+      // =====================================================
       // 将解包后的负载作为换行符分隔的 JSON 传递，
       // 匹配 StructuredIO/WebSocketTransport 消费者期望的格式
-      this.onData?.(jsonStringify(payload) + '\n')
+      const jsonOutput = jsonStringify(payload) + '\n'
+      logForDebugging(
+        `SSETransport: 即将调用 onData, 输出长度=${jsonOutput.length}`,
+      )
+      this.onData?.(jsonOutput)
     } else {
       logForDebugging(
         `SSETransport: 忽略负载中无类型的 client_event: event_id=${ev.event_id}`,
+      )
+      logForDebugging(
+        `SSETransport: 负载详情: ${jsonStringify(payload)}`,
       )
     }
 
@@ -582,8 +670,11 @@ export class SSETransport implements Transport {
       'User-Agent': getClaudeCodeUserAgent(),
     }
 
+    const msgObj = message as Record<string, unknown>
+    const bodyPreview = jsonStringify(message).slice(0, 1000)
+    const sessionLabel = this.sessionId ? ` session=${this.sessionId}` : ''
     logForDebugging(
-      `SSETransport: POST body keys=${Object.keys(message as Record<string, unknown>).join(',')}`,
+      `SSE⬆ POST写入 type=${message.type} uuid=${msgObj.uuid ?? '-'}${sessionLabel}\n  body=${bodyPreview}`,
     )
 
     for (let attempt = 1; attempt <= POST_MAX_RETRIES; attempt++) {
@@ -594,7 +685,7 @@ export class SSETransport implements Transport {
         })
 
         if (response.status === 200 || response.status === 201) {
-          logForDebugging(`SSETransport: POST 成功 type=${message.type}`)
+          logForDebugging(`SSE⬆ POST成功 (${response.status}) type=${message.type} uuid=${msgObj.uuid ?? '-'}`)
           return
         }
 

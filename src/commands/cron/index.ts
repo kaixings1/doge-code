@@ -5,7 +5,7 @@ const cron = {
   name: 'cron',
   description: '管理 cron 定时任务',
   argumentHint: '<cron表达式> <命令>',
-  load: () => import('./cron.js'),
+  load: () => import('./cron.ts'),
 } satisfies Command
 
 export default cron

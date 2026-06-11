@@ -115,8 +115,8 @@ export default function createRenderer(
     resetScrollHint()
     resetScrollDrainNode()
 
-    // prevFrameContaminated: selection overlay mutated the returned screen
-    // buffer post-render (in ink.tsx), resetFramesForAltScreen() replaced it
+    // 强制禁用增量渲染：始终将 prevScreen 设为 undefined，让 renderNodeToOutput 重绘整个屏幕
+    // 这样每个渲染帧都会完整输出，实现实时刷新（流式输出）
     // with blanks, or forceRedraw() reset it to 0×0. Blit on the NEXT frame
     // would copy stale inverted cells / blanks / nothing. When clean, blit
     // restores the O(unchanged) fast path for steady-state frames (spinner

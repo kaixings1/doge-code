@@ -20,7 +20,7 @@ function PlanDisplay(t0) {
   } = t0;
   let t1;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-    t1 = <Text bold={true}>Current Plan</Text>;
+    t1 = <Text bold={true}>当前计划</Text>;
     $[0] = t1;
   } else {
     t1 = $[0];
@@ -43,7 +43,7 @@ function PlanDisplay(t0) {
   }
   let t4;
   if ($[5] !== editorName) {
-    t4 = editorName && <Box marginTop={1}><Text dimColor={true}>"/plan open"</Text><Text dimColor={true}> to edit this plan in </Text><Text bold={true} dimColor={true}>{editorName}</Text></Box>;
+    t4 = editorName && <Box marginTop={1}><Text dimColor={true}>使用 "/plan open"</Text><Text dimColor={true}> 在 </Text><Text bold={true} dimColor={true}>{editorName}</Text><Text dimColor={true}> 中编辑此计划</Text></Box>;
     $[5] = editorName;
     $[6] = t4;
   } else {

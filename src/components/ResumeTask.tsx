@@ -165,9 +165,10 @@ export function ResumeTask({
   }) => {
     const paddedTime = timeString.padEnd(maxTimeStringLength, ' ');
 
-    // TODO: include branch name when API returns it
+    // Include branch name when API returns it
+    const branchPart = session_0.branch ? ` • ${session_0.branch}` : ''
     return {
-      label: `${paddedTime}  ${title}`,
+      label: `${paddedTime}  ${title}${branchPart}`,
       value: id
     };
   });

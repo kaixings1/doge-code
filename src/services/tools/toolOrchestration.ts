@@ -7,7 +7,7 @@ import { type MessageUpdateLazy, runToolUse } from './toolExecution.js'
 
 function getMaxToolUseConcurrency(): number {
   return (
-    parseInt(process.env.CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY || '', 10) || 10
+    parseInt(process.env.CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY || '', 10) || 1
   )
 }
 
@@ -32,7 +32,7 @@ export async function* runTools(
         string,
         ((context: ToolUseContext) => ToolUseContext)[]
       > = {}
-      // Run read-only batch concurrently
+      // Run read-only batch with limited concurrency (max 1 by default)
       for await (const update of runToolsConcurrently(
         blocks,
         assistantMessages,

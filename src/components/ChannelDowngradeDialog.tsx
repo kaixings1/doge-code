@@ -43,7 +43,7 @@ export function ChannelDowngradeDialog(t0) {
   const handleCancel = t2;
   let t3;
   if ($[4] !== currentVersion) {
-    t3 = <Text>The stable channel may have an older version than what you're currently running ({currentVersion}).</Text>;
+    t3 = <Text>稳定频道可能比你当前运行的版本（{currentVersion}）更旧。</Text>;
     $[4] = currentVersion;
     $[5] = t3;
   } else {
@@ -51,7 +51,7 @@ export function ChannelDowngradeDialog(t0) {
   }
   let t4;
   if ($[6] === Symbol.for("react.memo_cache_sentinel")) {
-    t4 = <Text dimColor={true}>How would you like to handle this?</Text>;
+    t4 = <Text dimColor={true}>您希望如何处理？</Text>;
     $[6] = t4;
   } else {
     t4 = $[6];

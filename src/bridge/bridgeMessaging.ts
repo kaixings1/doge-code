@@ -138,11 +138,71 @@ export function handleIngressMessage(
   onControlRequest?: ((request: SDKControlRequest) => void) | undefined,
 ): void {
   try {
+    // ====== 调试日志：记录收到的原始入站数据 ======
+    logForDebugging(
+      `[bridge:repl] handleIngressMessage: ====== 开始处理入站消息 ======`,
+    )
+    logForDebugging(
+      `[bridge:repl] handleIngressMessage: 收到原始数据 length=${data.length}`,
+    )
+    logForDebugging(
+      `[bridge:repl] handleIngressMessage: 原始数据内容(前2000字符): ${data.slice(0, 2000)}${data.length > 2000 ? '...(truncated)' : ''}`,
+    )
+    logForDebugging(
+      `[bridge:repl] handleIngressMessage: recentPostedUUIDs size=${recentPostedUUIDs.size}, recentInboundUUIDs size=${recentInboundUUIDs.size}`,
+    )
+    // =====================================================
+
     const parsed: unknown = normalizeControlMessageKeys(jsonParse(data))
+
+    // ====== 调试日志：记录解析后的消息 ======
+    logForDebugging(
+      `[bridge:repl] handleIngressMessage: 解析完成, parsed type=${typeof parsed === 'object' && parsed !== null ? (parsed as Record<string, unknown>).type : typeof parsed}`,
+    )
+    if (typeof parsed === 'object' && parsed !== null) {
+      const pObj = parsed as Record<string, unknown>
+      const allKeys = Object.keys(pObj).join(', ')
+      logForDebugging(
+        `[bridge:repl] handleIngressMessage: 解析后对象的所有字段: [${allKeys}]`,
+      )
+      if ('type' in pObj) {
+        logForDebugging(
+          `[bridge:repl] handleIngressMessage:   -> type = "${pObj.type}"`,
+        )
+      }
+      if ('uuid' in pObj) {
+        logForDebugging(
+          `[bridge:repl] handleIngressMessage:   -> uuid = "${pObj.uuid}"`,
+        )
+      }
+      if ('session_id' in pObj) {
+        logForDebugging(
+          `[bridge:repl] handleIngressMessage:   -> session_id = "${pObj.session_id}"`,
+        )
+      }
+      if ('subtype' in pObj) {
+        logForDebugging(
+          `[bridge:repl] handleIngressMessage:   -> subtype = "${pObj.subtype}"`,
+        )
+      }
+    }
+    // =====================================================
 
     // control_response is not an SDKMessage — check before the type guard
     if (isSDKControlResponse(parsed)) {
-      logForDebugging('[bridge:repl] Ingress message type=control_response')
+      const pObj = parsed as Record<string, unknown>
+      const respObj = pObj.response as Record<string, unknown>
+            logForDebugging(`[bridge:repl] ⬇ 收到控制响应 control_response request_id=${parsed.request_id} subtype=${parsed.response.subtype} data=${JSON.stringify(parsed.response).slice(0,500)}`)
+
+      logForDebugging(
+        `[bridge:repl] handleIngressMessage: 收到 control_response, subtype=${respObj.subtype}, request_id=${respObj.request_id}`,
+      )
+      logForDebugging(
+        `[bridge:repl] handleIngressMessage:   response=${jsonStringify(pObj.response).slice(0, 1000)}`,
+      )
+      logForDiagnosticsNoPII('info', 'cli_bridge_control_response', {
+        subtype: String(respObj.subtype),
+      })
       onPermissionResponse?.(parsed)
       return
     }
@@ -150,14 +210,36 @@ export function handleIngressMessage(
     // 来自服务器的 control_request（initialize、set_model、can_use_tool）。
     // 必须快速响应，否则服务器会关闭 WS（约 10-14 秒超时）。
     if (isSDKControlRequest(parsed)) {
+      const pObj = parsed as Record<string, unknown>
+      const reqObj = pObj.request as Record<string, unknown>
       logForDebugging(
-        `[bridge:repl] Inbound control_request subtype=${parsed.request.subtype}`,
+        `[bridge:repl] ⬇ 收到控制请求 control_request subtype=${parsed.request.subtype} request_id=${parsed.request_id} data=${JSON.stringify(parsed.request).slice(0,500)}`,
       )
+      logForDebugging(
+        `[bridge:repl] handleIngressMessage:   request=${jsonStringify(pObj.request).slice(0, 1000)}`,
+      )
+      logForDiagnosticsNoPII('info', 'cli_bridge_control_request', {
+        subtype: String(reqObj.subtype),
+      })
       onControlRequest?.(parsed)
       return
     }
 
-    if (!isSDKMessage(parsed)) return
+    if (!isSDKMessage(parsed)) {
+      logForDebugging(`[bridge:repl] ⬇ 收到未知消息类型: ${JSON.stringify(parsed).slice(0,300)}`)
+      logForDebugging(
+        `[bridge:repl] handleIngressMessage: parsed 不是 SDKMessage, 丢弃`,
+        { level: 'warn' },
+      )
+      return
+    }
+
+    // ====== 调试日志：SDKMessage 详情 ======
+    const parsedObj = parsed as Record<string, unknown>
+    logForDebugging(
+      `[bridge:repl] handleIngressMessage: SDKMessage type=${parsedObj.type} uuid=${uuid || '(无)'} session_id=${(parsedObj.session_id as string) || '(无)'}`,
+    )
+    // =====================================================
 
     // 检查 UUID 以检测我们自己的消息的回声
     const uuid =
@@ -167,7 +249,7 @@ export function handleIngressMessage(
 
     if (uuid && recentPostedUUIDs.has(uuid)) {
       logForDebugging(
-        `[bridge:repl] Ignoring echo: type=${parsed.type} uuid=${uuid}`,
+        `[bridge:repl] ⬇ 忽略回声消息 type=${parsed.type} uuid=${uuid}`,
       )
       return
     }
@@ -177,13 +259,14 @@ export function handleIngressMessage(
     //（服务器忽略 from_sequence_num，传输在接收任何帧之前就已死亡等）。
     if (uuid && recentInboundUUIDs.has(uuid)) {
       logForDebugging(
-        `[bridge:repl] Ignoring re-delivered inbound: type=${parsed.type} uuid=${uuid}`,
+        `[bridge:repl] ⬇ 忽略重复入站消息 type=${parsed.type} uuid=${uuid}`,
       )
       return
     }
 
     logForDebugging(
-      `[bridge:repl] Ingress message type=${parsed.type}${uuid ? ` uuid=${uuid}` : ''}`,
+      `[bridge:repl] ⬇ 收到入站消息 type=${parsed.type}${uuid ? ` uuid=${uuid}` : ''}
+  raw_data=${data.slice(0,500)}`,
     )
 
     if (parsed.type === 'user') {
@@ -195,12 +278,12 @@ export function handleIngressMessage(
       void onInboundMessage?.(parsed)
     } else {
       logForDebugging(
-        `[bridge:repl] Ignoring non-user inbound message: type=${parsed.type}`,
+        `[bridge:repl] ⬇ 忽略非用户入站消息 type=${parsed.type}`,
       )
     }
   } catch (err) {
     logForDebugging(
-      `[bridge:repl] 解析入站消息失败：${errorMessage(err)}`,
+      `[bridge:repl] ⬇ 解析入站消息失败：${errorMessage(err)}`,
     )
   }
 }
@@ -384,7 +467,7 @@ export function handleServerControlRequest(
   const event = { ...response, session_id: sessionId }
   void transport.write(event)
   logForDebugging(
-    `[bridge:repl] Sent control_response for ${request.request.subtype} request_id=${request.request_id} result=${response.response.subtype}`,
+    `[bridge:repl] ⬆ 发送控制响应 control_response subtype=${request.request.subtype} request_id=${request.request_id} result=${response.response.subtype}`,
   )
 }
 

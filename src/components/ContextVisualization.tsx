@@ -9,7 +9,7 @@ import { formatTokens } from '../utils/format.js';
 import { getSourceDisplayName, type SettingSource } from '../utils/settings/constants.js';
 import { plural } from '../utils/stringUtils.js';
 import { ContextSuggestions } from './ContextSuggestions.js';
-const RESERVED_CATEGORY_NAME = 'Autocompact buffer';
+const RESERVED_CATEGORY_NAME = '自动压缩缓冲';
 
 /**
  * One-liner for the legend header showing what context-collapse has done.
@@ -151,7 +151,7 @@ export function ContextVisualization(t0) {
     t6 = "column";
     t7 = 1;
     if ($[21] === Symbol.for("react.memo_cache_sentinel")) {
-      t8 = <Text bold={true}>Context Usage</Text>;
+      t8 = <Text bold={true}>上下文使用情况</Text>;
       $[21] = t8;
     } else {
       t8 = $[21];

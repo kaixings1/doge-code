@@ -560,6 +560,12 @@ export class CCRClient {
     const authHeaders = this.getAuthHeaders()
     if (Object.keys(authHeaders).length === 0) return { ok: false }
 
+    // 详细的发送日志
+    const bodyStr = JSON.stringify(body)
+    const bodyPreview = bodyStr.length > 500 ? bodyStr.slice(0, 500) + `...(共${bodyStr.length}字符)` : bodyStr
+    logForDebugging(
+      `CCR⬆ HTTP ${method.toUpperCase()} ${path} label=${label} epoch=${this.workerEpoch} bodyLen=${bodyStr.length}\n  body=${bodyPreview}`,
+    )
     try {
       const response = await this.http[method](
         `${this.sessionBaseUrl}${path}`,
@@ -574,6 +580,11 @@ export class CCRClient {
           validateStatus: alwaysValidStatus,
           timeout,
         },
+      )
+      const respBody = JSON.stringify(response.data ?? '')
+      const respPreview = respBody.length > 500 ? respBody.slice(0, 500) + `...(共${respBody.length}字符)` : respBody
+      logForDebugging(
+        `CCR⬇ HTTP响应 ${response.status} ${label} bodyLen=${respBody.length}\n  body=${respPreview}`,
       )
 
       if (response.status >= 200 && response.status < 300) {
@@ -608,7 +619,7 @@ export class CCRClient {
           this.onEpochMismatch()
         }
       }
-      logForDebugging(`CCRClient: ${label} 返回 ${response.status}`, {
+      logForDebugging(`CCR⬇ ${label} 返回 ${response.status}`, {
         level: 'warn',
       })
       logForDiagnosticsNoPII('warn', 'cli_worker_request_failed', {
@@ -625,7 +636,7 @@ export class CCRClient {
       }
       return { ok: false }
     } catch (error) {
-      logForDebugging(`CCRClient: ${label} 失败: ${errorMessage(error)}`, {
+      logForDebugging(`CCR⬇ ${label} 请求异常: ${errorMessage(error)}`, {
         level: 'warn',
       })
       logForDiagnosticsNoPII('warn', 'cli_worker_request_error', {
@@ -742,6 +753,10 @@ export class CCRClient {
     if (message.type === 'assistant') {
       clearStreamAccumulatorForMessage(this.streamTextAccumulator, message)
     }
+    const msg = message as Record<string, unknown>
+    logForDebugging(
+      `CCR⬆ 入队事件 type=${message.type} uuid=${msg.uuid ?? '-'}`,
+    )
     await this.eventUploader.enqueue(this.toClientEvent(message))
   }
 
@@ -773,6 +788,14 @@ export class CCRClient {
     const payloads = accumulateStreamEvents(
       buffered,
       this.streamTextAccumulator,
+    )
+    const deltaTypes = buffered.map(
+      m => (m.event.type === 'content_block_delta'
+        ? `${(m.event.delta as Record<string,unknown>).type}`
+        : m.event.type)
+    ).join(',')
+    logForDebugging(
+      `CCR⬆ 刷新stream缓冲区 count=${buffered.length} → 合并后${payloads.length}事件 eventTypes=[${deltaTypes}]`,
     )
     await this.eventUploader.enqueue(
       payloads.map(payload => ({ payload, ephemeral: true })),

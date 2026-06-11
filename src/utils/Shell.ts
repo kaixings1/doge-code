@@ -1,4 +1,4 @@
-import { execFileSync, spawn } from 'child_process'
+import { execFileSync, spawn,ChildProcess  } from 'child_process'
 import { constants as fsConstants, readFileSync, unlinkSync } from 'fs'
 import { type FileHandle, mkdir, open, realpath } from 'fs/promises'
 import memoize from 'lodash-es/memoize.js'
@@ -45,6 +45,52 @@ const DEFAULT_TIMEOUT = 30 * 60 * 1000 // 30 minutes
 
 export type ShellConfig = {
   provider: ShellProvider
+}
+export interface StreamingCommand {
+  onStdout: (callback: (chunk: string) => void) => void;
+  onStderr: (callback: (chunk: string) => void) => void;
+  onClose: (callback: (code: number | null) => void) => void;
+  kill: () => void;
+}
+/**
+ * 创建一个流式命令执行器
+ * @param command 要执行的命令
+ * @param shell 使用的 shell (bash/powershell/cmd)
+ * @param options 环境变量等
+ */
+export function createStreamingCommand(
+  command: string,
+  shell: 'bash' | 'powershell' | 'cmd' = 'bash',
+  options?: { env?: Record<string, string> }
+): StreamingCommand {
+  const child: ChildProcess = spawn(command, {
+    shell: shell,
+    env: { ...process.env, ...options?.env },
+    stdio: ['ignore', 'pipe', 'pipe'],
+    // 避免缓冲问题
+  });
+  const callbacks = {
+    stdout: [] as Array<(chunk: string) => void>,
+    stderr: [] as Array<(chunk: string) => void>,
+    close: [] as Array<(code: number | null) => void>,
+  };
+  child.stdout?.on('data', (data: Buffer) => {
+    const text = data.toString();
+    callbacks.stdout.forEach(cb => cb(text));
+  });
+  child.stderr?.on('data', (data: Buffer) => {
+    const text = data.toString();
+    callbacks.stderr.forEach(cb => cb(text));
+  });
+  child.on('close', (code) => {
+    callbacks.close.forEach(cb => cb(code));
+  });
+  return {
+    onStdout: (cb) => callbacks.stdout.push(cb),
+    onStderr: (cb) => callbacks.stderr.push(cb),
+    onClose: (cb) => callbacks.close.push(cb),
+    kill: () => child.kill(),
+  };
 }
 
 function isExecutable(shellPath: string): boolean {

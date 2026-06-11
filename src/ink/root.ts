@@ -78,6 +78,24 @@ export const renderSync = (
   options?: NodeJS.WriteStream | RenderOptions,
 ): Instance => {
   const opts = getOptions(options)
+  const stdout = opts.stdout || process.stdout
+  const stdin = opts.stdin || process.stdin
+  const stderr = opts.stderr || process.stderr
+  // Fix: Ensure proper TTY detection in non-TTY environments
+  if (stdout.isTTY !== true && process.env.TERM && process.env.TERM !== 'dumb') {
+    try {
+      Object.defineProperty(stdout, 'isTTY', {
+        value: true,
+        writable: false,
+        configurable: true
+      })
+    } catch (e) {
+      // Ignore read-only property errors
+    }
+  }
+  // Ensure default columns and rows
+  if (!stdout.columns) stdout.columns = 80
+  if (!stdout.rows) stdout.rows = 24
   const inkOptions: InkOptions = {
     stdout: process.stdout,
     stdin: process.stdin,
@@ -136,6 +154,21 @@ export async function createRoot({
 }: RenderOptions = {}): Promise<Root> {
   // See wrappedRender — preserve microtask boundary from the old WASM await.
   await Promise.resolve()
+  // Fix: Ensure proper TTY detection in non-TTY environments
+  if (stdout.isTTY !== true && process.env.TERM && process.env.TERM !== 'dumb') {
+    try {
+      Object.defineProperty(stdout, 'isTTY', {
+        value: true,
+        writable: false,
+        configurable: true
+      })
+    } catch (e) {
+      // Ignore read-only property errors
+    }
+  }
+  // Ensure default columns and rows
+  if (!stdout.columns) stdout.columns = 80
+  if (!stdout.rows) stdout.rows = 24
   const instance = new Ink({
     stdout,
     stdin,

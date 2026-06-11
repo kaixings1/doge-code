@@ -14,8 +14,8 @@ import { formatModelAndBilling, getLogoDisplayData, truncatePath } from '../../u
 import { renderModelSetting } from '../../utils/model/model.js';
 import { formatPackageUpdateNotice } from '../../utils/packageUpdateNotice.js';
 import { OffscreenFreeze } from '../OffscreenFreeze.js';
-import { AnimatedClawd } from './AnimatedClawd.js';
-import { Clawd } from './Clawd.js';
+import { AnimatedClawd } from './AnimatedClawd.tsx';
+import { Clawd } from './clawd.tsx';
 import { GuestPassesUpsell, incrementGuestPassesSeenCount, useShowGuestPassesUpsell } from './GuestPassesUpsell.js';
 import { incrementOverageCreditUpsellSeenCount, OverageCreditUpsell, useShowOverageCreditUpsell } from './OverageCreditUpsell.js';
 export function CondensedLogo() {

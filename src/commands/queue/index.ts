@@ -4,7 +4,7 @@ const queue = {
   type: 'local',
   name: 'queue',
   description: '管理消息队列',
-  load: () => import('./queue.js'),
+  load: () => import('./queue.ts'),
 } satisfies Command
 
 export default queue

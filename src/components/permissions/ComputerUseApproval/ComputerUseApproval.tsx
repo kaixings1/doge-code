@@ -132,19 +132,19 @@ function ComputerUseTccPanel(t0) {
     t1 = $[7];
   }
   const onChange = t1;
-  const t2 = tccState.accessibility ? `${figures.tick} granted` : `${figures.cross} not granted`;
+  const t2 = tccState.accessibility ? `${figures.tick} 已授权` : `${figures.cross} 未授权`;
   let t3;
   if ($[8] !== t2) {
-    t3 = <Text>Accessibility:{" "}{t2}</Text>;
+    t3 = <Text>辅助功能：{" "}{t2}</Text>;
     $[8] = t2;
     $[9] = t3;
   } else {
     t3 = $[9];
   }
-  const t4 = tccState.screenRecording ? `${figures.tick} granted` : `${figures.cross} not granted`;
+  const t4 = tccState.screenRecording ? `${figures.tick} 已授权` : `${figures.cross} 未授权`;
   let t5;
   if ($[10] !== t4) {
-    t5 = <Text>Screen Recording:{" "}{t4}</Text>;
+    t5 = <Text>屏幕录制：{" "}{t4}</Text>;
     $[10] = t4;
     $[11] = t5;
   } else {
@@ -161,7 +161,7 @@ function ComputerUseTccPanel(t0) {
   }
   let t7;
   if ($[15] === Symbol.for("react.memo_cache_sentinel")) {
-    t7 = <Text dimColor={true}>Grant the missing permissions in System Settings, then select "Try again". macOS may require you to restart Claude Code after granting Screen Recording.</Text>;
+    t7 = <Text dimColor={true}>请在系统设置中授予缺失的权限，然后选择"重试"。macOS 可能要求您在授予屏幕录制权限后重启 Claude Code。</Text>;
     $[15] = t7;
   } else {
     t7 = $[15];

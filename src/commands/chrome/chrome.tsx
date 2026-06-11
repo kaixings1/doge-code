@@ -117,7 +117,7 @@ function ClaudeInChromeMenu(t0) {
   let options;
   if ($[6] !== enabledByDefault || $[7] !== isExtensionInstalled) {
     options = [];
-    const requiresExtensionSuffix = isExtensionInstalled ? "" : " (requires extension)";
+    const requiresExtensionSuffix = isExtensionInstalled ? "" : " （需要安装扩展）";
     if (!isExtensionInstalled && !isHomespace) {
       let t5;
       if ($[9] === Symbol.for("react.memo_cache_sentinel")) {
@@ -133,7 +133,7 @@ function ClaudeInChromeMenu(t0) {
     }
     let t5;
     if ($[10] === Symbol.for("react.memo_cache_sentinel")) {
-      t5 = <Text>Manage permissions</Text>;
+      t5 = <Text>管理权限</Text>;
       $[10] = t5;
     } else {
       t5 = $[10];
@@ -151,7 +151,7 @@ function ClaudeInChromeMenu(t0) {
     }
     let t7;
     if ($[13] === Symbol.for("react.memo_cache_sentinel")) {
-      t7 = <Text>Reconnect extension</Text>;
+      t7 = <Text>重新连接扩展</Text>;
       $[13] = t7;
     } else {
       t7 = $[13];
