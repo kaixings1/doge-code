@@ -3,6 +3,7 @@ import type { StdoutMessage } from '../../entrypoints/sdk/controlTypes.js'
 import { logForDebugging } from '../../utils/debug.js'
 import { logForDiagnosticsNoPII } from '../../utils/diagLogs.js'
 import { getSessionIngressAuthToken } from '../../utils/sessionIngressAuth.js'
+import { jsonStringify } from '../../utils/slowOperations.js'
 import { SerialBatchEventUploader } from './SerialBatchEventUploader.js'
 import {
   WebSocketTransport,
@@ -210,6 +211,12 @@ export class HybridTransport extends WebSocketTransport {
       return
     }
 
+    const types = events.map(e => e.type).join(',')
+    const uuids = events.map(e => (e as Record<string,unknown>).uuid ?? '-').join(',')
+    const bodyPreview = jsonStringify({ events }).slice(0, 500)
+    logForDebugging(
+      `HYBRID⬆ POST批量发送 count=${events.length} types=[${types}] uuids=[${uuids}]\n  body=${bodyPreview}`,
+    )
     const headers: Record<string, string> = {
       Authorization: `Bearer ${sessionToken}`,
       'Content-Type': 'application/json',
@@ -228,13 +235,13 @@ export class HybridTransport extends WebSocketTransport {
       )
     } catch (error) {
       const axiosError = error as AxiosError
-      logForDebugging(`HybridTransport: POST 错误: ${axiosError.message}`)
+      logForDebugging(`HYBRID⬆ POST错误: ${axiosError.message}`)
       logForDiagnosticsNoPII('warn', 'cli_hybrid_post_network_error')
       throw error
     }
 
     if (response.status >= 200 && response.status < 300) {
-      logForDebugging(`HybridTransport: POST 成功 count=${events.length}`)
+      logForDebugging(`HYBRID⬆ POST成功 count=${events.length} status=${response.status}`)
       return
     }
 

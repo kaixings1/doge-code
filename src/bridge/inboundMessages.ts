@@ -2,6 +2,7 @@ import type {
   Base64ImageSource,
   ContentBlockParam,
   ImageBlockParam,
+  ToolUseBlock,
 } from '@anthropic-ai/sdk/resources/messages.mjs'
 import type { UUID } from 'crypto'
 import type { SDKMessage } from '../entrypoints/agentSdkTypes.js'
@@ -21,7 +22,11 @@ import { detectImageFormatFromBase64 } from '../utils/imageResizer.js'
 export function extractInboundMessageFields(
   msg: SDKMessage,
 ):
-  | { content: string | Array<ContentBlockParam>; uuid: UUID | undefined }
+  | {
+      content: string | Array<ContentBlockParam>;
+      uuid: UUID | undefined;
+      toolUseBlocks?: ToolUseBlock[];
+    }
   | undefined {
   if (msg.type !== 'user') return undefined
   const content = msg.message?.content
@@ -33,9 +38,23 @@ export function extractInboundMessageFields(
       ? (msg.uuid as UUID)
       : undefined
 
+  const normalizedContent = Array.isArray(content) ? normalizeImageBlocks(content) : content
+
+  // Extract tool_use blocks if present
+  let toolUseBlocks: ToolUseBlock[] | undefined
+  if (Array.isArray(normalizedContent)) {
+    const toolBlocks = normalizedContent.filter(
+      (block): block is ToolUseBlock => block.type === 'tool_use'
+    )
+    if (toolBlocks.length > 0) {
+      toolUseBlocks = toolBlocks
+    }
+  }
+
   return {
-    content: Array.isArray(content) ? normalizeImageBlocks(content) : content,
+    content: normalizedContent,
     uuid,
+    toolUseBlocks,
   }
 }
 
