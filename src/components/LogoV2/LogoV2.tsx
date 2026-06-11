@@ -9,7 +9,7 @@ import { getLayoutMode, calculateLayoutDimensions, calculateOptimalLeftWidth, fo
 import { truncate } from '../../utils/format.js';
 import { getDisplayPath } from '../../utils/file.js';
 import { formatPackageUpdateNotice } from '../../utils/packageUpdateNotice.js';
-import { Clawd } from './Clawd.js';
+import { Clawd } from './clawd.tsx';
 import { calculateFeedWidth } from './Feed.js';
 import { FeedColumn } from './FeedColumn.js';
 import { createRecentActivityFeed, createWhatsNewFeed, createProjectOnboardingFeed, createGuestPassesFeed } from './feedConfigs.js';

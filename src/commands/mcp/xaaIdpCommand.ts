@@ -159,12 +159,13 @@ export function registerMcpXaaIdpCommand(mcp: Command): void {
       '--force',
       '忽略任何缓存的 id_token 并重新登录（在 IdP 端撤销后有用）',
     )
-    // TODO(paulc): read the JWT from stdin instead of argv to keep it out of
-    // shell history. Fine for conformance (docker exec uses argv directly,
-    // no shell parser), but a real user would want `echo $TOKEN | ... --stdin`.
     .option(
       '--id-token <jwt>',
       'Write this pre-obtained id_token directly to cache, skipping the OIDC browser login',
+    )
+    .option(
+      '--stdin',
+      'Read JWT from stdin instead of --id-token flag (for security)',
     )
     .action(async options => {
       const idp = getXaaIdpSettings()
@@ -174,11 +175,22 @@ export function registerMcpXaaIdpCommand(mcp: Command): void {
         )
       }
 
+      // Read JWT from stdin if --stdin flag is set
+      let idToken = options.idToken
+      if (options.stdin) {
+        // Read from stdin for better security (keeps token out of shell history)
+        const chunks: Buffer[] = []
+        for await (const chunk of process.stdin) {
+          chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
+        }
+        idToken = Buffer.concat(chunks).toString('utf8').trim()
+      }
+
       // Direct-inject path: skip cache check, skip OIDC. Writing IS the
       // operation. Issuer comes from settings (single source of truth), not
       // a separate flag — one less thing to desync.
-      if (options.idToken) {
-        const expiresAt = saveIdpIdTokenFromJwt(idp.issuer, options.idToken)
+      if (idToken) {
+        const expiresAt = saveIdpIdTokenFromJwt(idp.issuer, idToken)
         return cliOk(
           `id_token 已缓存到 ${idp.issuer}（过期时间 ${new Date(expiresAt).toISOString()}）`,
         )

@@ -300,6 +300,9 @@ export async function getAnthropicClient({
       __openaiCompat?: boolean
     }).__openaiCompat = true
   }
+	const rawBase = process.env.ANTHROPIC_BASE_URL || '';
+	const cleanedBase = rawBase.replace(/\/+$/, '').replace(/\/v1\/(chat\/completions|messages)\/?$/, '');
+	process.env.ANTHROPIC_BASE_URL_CLEANED = cleanedBase; // 保存
 
   return new Anthropic(clientConfig)
 }
