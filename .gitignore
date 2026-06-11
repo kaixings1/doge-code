@@ -33,6 +33,7 @@ package-lock.json
 # Python & Other Scripts (legacy)
 *.py
 *.bat
+*.ps1
 
 # Temporary Files
 *.env
