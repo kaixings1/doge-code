@@ -1,6 +1,6 @@
 import { c as _c } from "react/compiler-runtime";
 import * as React from 'react';
-import { type ReactNode, useEffect } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
 import { useMainLoopModel } from '../../hooks/useMainLoopModel.js';
 import { usePackageUpdateNotice } from '../../hooks/usePackageUpdateNotice.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
@@ -35,6 +35,14 @@ export function CondensedLogo() {
   const agentName = agent ?? agentNameFromSettings;
   const showGuestPassesUpsell = useShowGuestPassesUpsell();
   const showOverageCreditUpsell = useShowOverageCreditUpsell();
+
+  // 缓存布局尺寸，防止布局重排
+  const layoutRef = useRef<{ textWidth: number } | null>(null);
+  const textWidth = layoutRef.current?.textWidth ?? Math.max(columns - 15, 20);
+  if (!layoutRef.current) {
+    layoutRef.current = { textWidth };
+  }
+
   let t0;
   let t1;
   if ($[0] !== showGuestPassesUpsell) {
