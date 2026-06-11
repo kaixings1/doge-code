@@ -18,7 +18,7 @@ import { getGlobalConfig, saveGlobalConfig } from '../../utils/config.js';
 import { resolveThemeSetting } from '../../utils/systemTheme.js';
 import { getInitialSettings } from '../../utils/settings/settings.js';
 import { isDebugMode, isDebugToStdErr, getDebugLogPath } from '../../utils/debug.js';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getSteps, shouldShowProjectOnboarding, incrementProjectOnboardingSeenCount } from '../../projectOnboardingState.js';
 import { CondensedLogo } from './CondensedLogo.js';
 import { OffscreenFreeze } from '../OffscreenFreeze.js';
@@ -334,18 +334,34 @@ export function LogoV2() {
     }
     return <><OffscreenFreeze><Box flexDirection="column" borderStyle="round" borderColor="claude" borderText={t11} paddingX={1} paddingY={1} alignItems="center" width={columns}><Text bold={true}>{welcomeMessage}</Text>{t12}{compactUpdateNotice && <Text color="warning">{compactUpdateNotice}</Text>}{t13}<Text dimColor={true}>{billingType}{process.env.ANTHROPIC_BASE_URL ? ` · ${process.env.ANTHROPIC_BASE_URL}` : ''}</Text><Text dimColor={true}>{agentName ? `@${agentName} · ${truncatedCwd}` : truncatedCwd}</Text></Box></OffscreenFreeze>{t14}{t15}{t16}{t17}{t18}{t19}</>;
   }
-  const welcomeMessage_0 = formatWelcomeMessage(username);
-  const modelLine = !process.env.IS_DEMO && config.oauthAccount?.organizationName ? `${modelDisplayName} · ${billingType} · ${config.oauthAccount.organizationName}` : `${modelDisplayName} · ${billingType}${process.env.ANTHROPIC_BASE_URL ? ` · ${process.env.ANTHROPIC_BASE_URL}` : ''}`;
+
+  // 缓存布局尺寸，防止因状态变化导致布局重排
+  const layoutCacheRef = useRef<{
+    welcomeMessage_0: string;
+    modelLine: string;
+    cwdLine: string;
+    leftWidth: number;
+    rightWidth: number;
+    rightColumnWidth: number;
+  } | null>(null);
+
+  const welcomeMessage_0 = layoutCacheRef.current?.welcomeMessage_0 ?? formatWelcomeMessage(username);
+  const modelLine = layoutCacheRef.current?.modelLine ?? (!process.env.IS_DEMO && config.oauthAccount?.organizationName ? `${modelDisplayName} · ${billingType} · ${config.oauthAccount.organizationName}` : `${modelDisplayName} · ${billingType}${process.env.ANTHROPIC_BASE_URL ? ` · ${process.env.ANTHROPIC_BASE_URL}` : ''}`);
   const cwdAvailableWidth_0 = agentName ? LEFT_PANEL_MAX_WIDTH - 1 - stringWidth(agentName) - 3 : LEFT_PANEL_MAX_WIDTH;
   const truncatedCwd_0 = truncatePath(cwd, Math.max(cwdAvailableWidth_0, 10));
-  const cwdLine = agentName ? `@${agentName} · ${truncatedCwd_0}` : truncatedCwd_0;
+  const cwdLine = layoutCacheRef.current?.cwdLine ?? (agentName ? `@${agentName} · ${truncatedCwd_0}` : truncatedCwd_0);
   const optimalLeftWidth = calculateOptimalLeftWidth(welcomeMessage_0, cwdLine, modelLine);
   const {
     leftWidth,
     rightWidth
-  } = calculateLayoutDimensions(columns, layoutMode, optimalLeftWidth);
+  } = layoutCacheRef.current?.leftWidth ? { leftWidth: layoutCacheRef.current.leftWidth, rightWidth: layoutCacheRef.current.rightWidth } : calculateLayoutDimensions(columns, layoutMode, optimalLeftWidth);
   const rightFeeds = showOnboarding ? [createProjectOnboardingFeed(getSteps()), createRecentActivityFeed(activities)] : showGuestPassesUpsell ? [createRecentActivityFeed(activities), createGuestPassesFeed()] : showOverageCreditUpsell ? [createRecentActivityFeed(activities), createOverageCreditFeed()] : [createRecentActivityFeed(activities), createWhatsNewFeed(changelog)];
-  const rightColumnWidth = layoutMode === "horizontal" ? Math.min(Math.max(...rightFeeds.map(calculateFeedWidth)), rightWidth) : rightWidth;
+  const rightColumnWidth = layoutCacheRef.current?.rightColumnWidth ?? (layoutMode === "horizontal" ? Math.min(Math.max(...rightFeeds.map(calculateFeedWidth)), rightWidth) : rightWidth);
+
+  // 首次渲染后缓存布局尺寸
+  if (!layoutCacheRef.current) {
+    layoutCacheRef.current = { welcomeMessage_0, modelLine, cwdLine, leftWidth, rightWidth, rightColumnWidth };
+  }
   const fullUpdateNotice = packageUpdateInfo ? formatPackageUpdateNotice(packageUpdateInfo, Math.max(rightColumnWidth - stringWidth('✦ '), 12)) : null;
   const T0 = OffscreenFreeze;
   const T1 = Box;
