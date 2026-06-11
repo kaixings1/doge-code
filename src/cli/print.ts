@@ -38,7 +38,7 @@ import {
   isBuiltInAgent,
   parseAgentsFromJson,
 } from 'src/tools/AgentTool/loadAgentsDir.js'
-import type { Message, NormalizedUserMessage } from 'src/types/message.js'
+import type { Message, NormalizedUserMessage, AssistantMessage } from 'src/types/message.js'
 import type { QueuedCommand } from 'src/types/textInputTypes.js'
 import {
   dequeue,
@@ -193,7 +193,8 @@ import { installOAuthTokens } from 'src/cli/handlers/auth.js'
 import { getAPIProvider } from 'src/utils/model/providers.js'
 import type { HookCallbackMatcher } from 'src/types/hooks.js'
 import { AwsAuthStatusManager } from 'src/utils/awsAuthStatusManager.js'
-import type { HookEvent } from 'src/entrypoints/agentSdkTypes.js'
+import type { HookEvent, SDKMessage } from 'src/entrypoints/agentSdkTypes.js'
+import { needsToolCallProcessing, extractToolCallsFromResponse, MessageHandler, SimpleServerProtocol } from 'src/commands/clear/tool-protocol-handler.js'
 import {
   registerHookCallbacks,
   setInitJsonSchema,
@@ -3798,13 +3799,34 @@ function runHeadlessStreaming(
                   onInboundMessage(msg) {
                     const fields = extractInboundMessageFields(msg)
                     if (!fields) return
-                    const { content, uuid } = fields
-                    enqueue({
-                      value: content,
-                      mode: 'prompt' as const,
-                      uuid,
-                      skipSlashCommands: true,
-                    })
+                    const { content, uuid, toolUseBlocks } = fields
+                    if (toolUseBlocks && toolUseBlocks.length > 0) {
+                      // If tool_use blocks are present, create a user message with them
+                      // so they can be processed as tool calls
+                      const userMessage = {
+                        type: 'user' as const,
+                        message: {
+                          role: 'user' as const,
+                          content: content as any,
+                        },
+                        session_id: 'bridge-inbound',
+                        parent_tool_use_id: null,
+                        uuid: uuid || undefined,
+                      }
+                      enqueue({
+                        value: userMessage,
+                        mode: 'prompt' as const,
+                        uuid,
+                        skipSlashCommands: true,
+                      })
+                    } else {
+                      enqueue({
+                        value: content,
+                        mode: 'prompt' as const,
+                        uuid,
+                        skipSlashCommands: true,
+                      })
+                    }
                     void run()
                   },
                   onPermissionResponse(response) {

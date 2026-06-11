@@ -155,6 +155,10 @@ export class WebSocketTransport implements Transport {
       )
     }
 
+    logForDebugging(
+      `WebSocketTransport: 连接请求头部: ${jsonStringify(headers)}`,
+    )
+
     if (typeof Bun !== 'undefined') {
       // Bun 的 WebSocket 支持 headers/proxy 选项，但 DOM 类型定义不支持
       // eslint-disable-next-line eslint-plugin-n/no-unsupported-features/node-builtins
@@ -198,11 +202,17 @@ export class WebSocketTransport implements Transport {
   // 镜像 src/utils/mcpWebSocketTransport.ts 中的模式。
 
   private onBunOpen = () => {
+    logForDebugging('WebSocketTransport: Bun WS 触发 open 事件')
     this.handleOpenEvent()
     // Bun 的 WebSocket 不暴露升级响应头，
     // 所以重播所有缓冲的消息。服务器按 UUID 去重。
     if (this.lastSentId) {
+      logForDebugging(
+        `WebSocketTransport: lastSentId=${this.lastSentId}, 开始重播缓冲消息`,
+      )
       this.replayBufferedMessages('')
+    } else {
+      logForDebugging('WebSocketTransport: 无 lastSentId, 不需要重播缓冲消息')
     }
   }
 
@@ -210,11 +220,38 @@ export class WebSocketTransport implements Transport {
     const message =
       typeof event.data === 'string' ? event.data : String(event.data)
     this.lastActivityTime = Date.now()
+    const sessionLabel = this.sessionId ? ` session=${this.sessionId}` : ''
+    logForDebugging(
+      `WS⬇ 收到数据 length=${message.length}${sessionLabel} preview=${message.slice(0, 500).replace(/\n/g, '↵')}`,
+    )
     logForDiagnosticsNoPII('info', 'cli_websocket_message_received', {
       length: message.length,
     })
+    // ====== 调试日志：记录收到的原始 WebSocket 消息 ======
+    logForDebugging(
+      `WebSocketTransport: 收到消息 length=${message.length} data=${message.slice(0, 500)}${message.length > 500 ? '...(truncated)' : ''}`,
+    )
+    // 尝试解析为 JSON 以便更好地调试
+    try {
+      const parsed = JSON.parse(message)
+      logForDebugging(
+        `WebSocketTransport: 消息解析为 JSON, type=${parsed.type || '(无type字段)'}`,
+      )
+    } catch {
+      logForDebugging(
+        `WebSocketTransport: 消息不是有效 JSON`,
+      )
+    }
+    // =====================================================
     if (this.onData) {
+      logForDebugging(
+        `WebSocketTransport: 调用 onData 回调, 消息长度=${message.length}`,
+      )
       this.onData(message)
+    } else {
+      logForDebugging(
+        `WebSocketTransport: onData 回调未设置, 消息被丢弃`,
+      )
     }
   }
 
@@ -230,8 +267,8 @@ export class WebSocketTransport implements Transport {
   private onBunClose = (event: CloseEvent) => {
     const isClean = event.code === 1000 || event.code === 1001
     logForDebugging(
-      `WebSocketTransport: Closed: ${event.code}`,
-      isClean ? undefined : { level: 'error' },
+      `WebSocketTransport: Closed: code=${event.code} reason="${event.reason}" wasClean=${event.wasClean}`,
+      isClean ? { level: "debug" } : { level: "error" },
     )
     logForDiagnosticsNoPII('error', 'cli_websocket_connect_closed')
     this.handleConnectionError(event.code)
@@ -240,6 +277,7 @@ export class WebSocketTransport implements Transport {
   // --- Node（ws 包）事件处理程序 ---
 
   private onNodeOpen = () => {
+    logForDebugging('WebSocketTransport: Node WS 触发 open 事件')
     // 在 handleOpenEvent() 调用 onConnectCallback 之前捕获 ws —— 如果
     // 回调同步关闭传输，this.ws 会变为 null。
     // 旧的内联闭包代码通过闭包捕获隐式提供此安全性。
@@ -253,25 +291,60 @@ export class WebSocketTransport implements Transport {
     const upgradeResponse = nws.upgradeReq
     if (upgradeResponse?.headers?.['x-last-request-id']) {
       const serverLastId = upgradeResponse.headers['x-last-request-id']
+      logForDebugging(
+        `WebSocketTransport: 服务器升级响应 x-last-request-id=${serverLastId}`,
+      )
       this.replayBufferedMessages(serverLastId)
+    } else {
+      logForDebugging(
+        'WebSocketTransport: 服务器升级响应中无 x-last-request-id 头部',
+      )
     }
   }
 
   private onNodeMessage = (data: Buffer) => {
     const message = data.toString()
     this.lastActivityTime = Date.now()
+    const sessionLabel = this.sessionId ? ` session=${this.sessionId}` : ''
+    logForDebugging(
+      `WS⬇ 收到数据 length=${message.length}${sessionLabel} preview=${message.slice(0, 500).replace(/\n/g, '↵')}`,
+    )
     logForDiagnosticsNoPII('info', 'cli_websocket_message_received', {
       length: message.length,
     })
+    // ====== 调试日志：记录收到的原始 WebSocket 消息 ======
+    logForDebugging(
+      `WebSocketTransport: 收到消息 length=${message.length} data=${message.slice(0, 500)}${message.length > 500 ? '...(truncated)' : ''}`,
+    )
+    // 尝试解析为 JSON 以便更好地调试
+    try {
+      const parsed = JSON.parse(message)
+      logForDebugging(
+        `WebSocketTransport: 消息解析为 JSON, type=${parsed.type || '(无type字段)'}`,
+      )
+    } catch {
+      logForDebugging(
+        `WebSocketTransport: 消息不是有效 JSON`,
+      )
+    }
+    // =====================================================
     if (this.onData) {
+      logForDebugging(
+        `WebSocketTransport: 调用 onData 回调, 消息长度=${message.length}`,
+      )
       this.onData(message)
+    } else {
+      logForDebugging(
+        `WebSocketTransport: onData 回调未设置, 消息被丢弃`,
+      )
     }
   }
 
   private onNodeError = (err: Error) => {
-    logForDebugging(`WebSocketTransport: Error: ${err.message}`, {
-      level: 'error',
-    })
+    logForDebugging(
+      `WebSocketTransport: Error: ${err.message}\n${err.stack || '(无堆栈)'}`,
+      { level: 'error' },
+    )
     logForDiagnosticsNoPII('error', 'cli_websocket_connect_error')
     // close 事件在 error 后触发 —— 让它调用 handleConnectionError
   }
@@ -280,7 +353,7 @@ export class WebSocketTransport implements Transport {
     const isClean = code === 1000 || code === 1001
     logForDebugging(
       `WebSocketTransport: Closed: ${code}`,
-      isClean ? undefined : { level: 'error' },
+      isClean ? { level: "debug" } : { level: "error" },
     )
     logForDiagnosticsNoPII('error', 'cli_websocket_connect_closed')
     this.handleConnectionError(code)
@@ -329,19 +402,36 @@ export class WebSocketTransport implements Transport {
 
   protected sendLine(line: string): boolean {
     if (!this.ws || this.state !== 'connected') {
-      logForDebugging('WebSocketTransport: Not connected')
+      logForDebugging(
+        `WebSocketTransport: WS 未连接，跳过发送 (state=${this.state}, ws=${this.ws ? 'exists' : 'null'})`,
+      )
       logForDiagnosticsNoPII('info', 'cli_websocket_send_not_connected')
       return false
     }
 
     try {
+      const sessionLabel = this.sessionId ? ` session=${this.sessionId}` : ''
+      logForDebugging(
+        `WebSocketTransport: Sending line length=${line.length} data=${line.slice(0, 500)}${line.length > 500 ? '...(truncated)' : ''}`,
+      )
+      // 尝试解析发送的消息以调试
+      try {
+        const parsed = JSON.parse(line)
+        logForDebugging(
+          `WebSocketTransport: 发送消息 type=${parsed.type || '(无type字段)'}`,
+        )
+      } catch {
+        logForDebugging('WebSocketTransport: 发送消息不是有效 JSON')
+      }
       this.ws.send(line)
       this.lastActivityTime = Date.now()
+      logForDebugging('WebSocketTransport: 消息发送成功')
       return true
     } catch (error) {
-      logForDebugging(`WebSocketTransport: Failed to send: ${error}`, {
-        level: 'error',
-      })
+      logForDebugging(
+        `WebSocketTransport: Failed to send: ${error}\n${error instanceof Error ? error.stack || '(无堆栈)' : '(非Error)'}`,
+        { level: 'error' },
+      )
       logForDiagnosticsNoPII('error', 'cli_websocket_send_error')
       // 不要在这里将 this.ws 设为 null —— 让 doDisconnect()（通过 handleConnectionError）
       // 处理清理，以便在 WS 释放前移除监听器。
@@ -357,6 +447,9 @@ export class WebSocketTransport implements Transport {
    * 镜像 src/utils/mcpWebSocketTransport.ts 中的模式。
    */
   private removeWsListeners(ws: WebSocketLike): void {
+    logForDebugging(
+      `WebSocketTransport: 移除 WebSocket 监听器 (${this.isBunWs ? 'Bun' : 'Node'})`,
+    )
     if (this.isBunWs) {
       const nws = ws as unknown as globalThis.WebSocket
       nws.removeEventListener('open', this.onBunOpen)
@@ -374,6 +467,7 @@ export class WebSocketTransport implements Transport {
       nws.off('close', this.onNodeClose)
       nws.off('pong', this.onPong)
     }
+    logForDebugging('WebSocketTransport: WebSocket 监听器已移除')
   }
 
   protected doDisconnect(): void {
@@ -396,9 +490,15 @@ export class WebSocketTransport implements Transport {
   private handleConnectionError(closeCode?: number): void {
     logForDebugging(
       `WebSocketTransport: Disconnected from ${this.url.href}` +
-        (closeCode != null ? ` (code ${closeCode})` : ''),
+        (closeCode != null ? ` (code ${closeCode})` : '') +
+        `, state=${this.state}, reconnectAttempts=${this.reconnectAttempts}, lastActivity=${this.lastActivityTime > 0 ? Date.now() - this.lastActivityTime + 'ms ago' : 'never'}`,
+      { level: 'error' },
     )
-    logForDiagnosticsNoPII('info', 'cli_websocket_disconnected')
+    logForDiagnosticsNoPII('info', 'cli_websocket_disconnected', {
+      closeCode: closeCode ?? -1,
+      state: this.state,
+      reconnectAttempts: this.reconnectAttempts,
+    })
     if (this.isBridge) {
       // 每次关闭时触发 —— 包括重连风暴期间的中间关闭
       //（这些永远不会暴露给 onCloseCallback 调用者）。
@@ -425,14 +525,24 @@ export class WebSocketTransport implements Transport {
     // 生成新会话入口令牌后）。
     let headersRefreshed = false
     if (closeCode === 4003 && this.refreshHeaders) {
+      logForDebugging(
+        `WebSocketTransport: 收到 4003 (未授权)，尝试刷新认证头部`,
+      )
       const freshHeaders = this.refreshHeaders()
+      logForDebugging(
+        `WebSocketTransport: 刷新后的头部: ${JSON.stringify(freshHeaders).slice(0, 200)}`,
+      )
       if (freshHeaders.Authorization !== this.headers.Authorization) {
         Object.assign(this.headers, freshHeaders)
         headersRefreshed = true
         logForDebugging(
-          'WebSocketTransport: 4003 received but headers refreshed, scheduling reconnect',
+          'WebSocketTransport: 4003 认证头部已刷新，准备重连',
         )
         logForDiagnosticsNoPII('info', 'cli_websocket_4003_token_refreshed')
+      } else {
+        logForDebugging(
+          'WebSocketTransport: 4003 刷新后认证头部未变化，不重连',
+        )
       }
     }
 
@@ -442,8 +552,11 @@ export class WebSocketTransport implements Transport {
       !headersRefreshed
     ) {
       logForDebugging(
-        `WebSocketTransport: Permanent close code ${closeCode}, not reconnecting`,
+        `WebSocketTransport: 永久关闭码 ${closeCode}，不重连`,
         { level: 'error' },
+      )
+      logForDebugging(
+        `WebSocketTransport: PERMANENT_CLOSE_CODES=${JSON.stringify([...PERMANENT_CLOSE_CODES])}, headersRefreshed=${headersRefreshed}`,
       )
       logForDiagnosticsNoPII('error', 'cli_websocket_permanent_close', {
         closeCode,
@@ -456,6 +569,9 @@ export class WebSocketTransport implements Transport {
     // 当 autoReconnect 禁用时，直接进入关闭状态。
     // 调用者（例如 REPL 桥轮询循环）处理恢复。
     if (!this.autoReconnect) {
+      logForDebugging(
+        'WebSocketTransport: autoReconnect=false，直接进入关闭状态',
+      )
       this.state = 'closed'
       this.onCloseCallback?.(closeCode)
       return
@@ -499,12 +615,22 @@ export class WebSocketTransport implements Transport {
       // 如果已被上面的 4003 路径刷新则跳过。
       if (!headersRefreshed && this.refreshHeaders) {
         const freshHeaders = this.refreshHeaders()
+        logForDebugging(
+          `WebSocketTransport: 重连前刷新头部: ${JSON.stringify(freshHeaders).slice(0, 200)}`,
+        )
         Object.assign(this.headers, freshHeaders)
-        logForDebugging('WebSocketTransport: Refreshed headers for reconnect')
+        logForDebugging('WebSocketTransport: Headers refreshed for reconnect')
+      } else if (headersRefreshed) {
+        logForDebugging(
+          'WebSocketTransport: 头部已在 4003 路径中刷新，跳过',
+        )
       }
 
       this.state = 'reconnecting'
       this.reconnectAttempts++
+      logForDebugging(
+        `WebSocketTransport: 重连状态更新: attempts=${this.reconnectAttempts}, state=reconnecting`,
+      )
 
       const baseDelay = Math.min(
         DEFAULT_BASE_RECONNECT_DELAY * Math.pow(2, this.reconnectAttempts - 1),
@@ -536,7 +662,7 @@ export class WebSocketTransport implements Transport {
       }, delay)
     } else {
       logForDebugging(
-        `WebSocketTransport: Reconnection time budget exhausted after ${Math.round(elapsed / 1000)}s for ${this.url.href}`,
+        `WebSocketTransport: 重连时间预算耗尽 after ${Math.round(elapsed / 1000)}s for ${this.url.href}, totalAttempts=${this.reconnectAttempts}`,
         { level: 'error' },
       )
       logForDiagnosticsNoPII('error', 'cli_websocket_reconnect_exhausted', {
@@ -544,19 +670,30 @@ export class WebSocketTransport implements Transport {
         elapsedMs: elapsed,
       })
       this.state = 'closed'
+      logForDebugging(
+        `WebSocketTransport: 状态已设置为 closed, 即将调用 onCloseCallback`,
+      )
 
       // 通知关闭回调
       if (this.onCloseCallback) {
+        logForDebugging(
+          `WebSocketTransport: 调用 onCloseCallback with code=${closeCode}`,
+        )
         this.onCloseCallback(closeCode)
+      } else {
+        logForDebugging('WebSocketTransport: onCloseCallback 未设置')
       }
     }
   }
 
   close(): void {
+    logForDebugging('WebSocketTransport: close() called')
+
     // 清除任何待处理的重连定时器
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer)
       this.reconnectTimer = null
+      logForDebugging('WebSocketTransport: 重连定时器已清除')
     }
 
     // 清除 ping 和 keepalive 间隔
@@ -565,20 +702,34 @@ export class WebSocketTransport implements Transport {
 
     // 注销会话活动回调
     unregisterSessionActivityCallback()
+    logForDebugging('WebSocketTransport: 会话活动回调已注销')
 
     this.state = 'closing'
+    logForDebugging('WebSocketTransport: 状态已设置为 closing')
     this.doDisconnect()
   }
 
   private replayBufferedMessages(lastId: string): void {
     const messages = this.messageBuffer.toArray()
-    if (messages.length === 0) return
+    logForDebugging(
+      `WebSocketTransport: replayBufferedMessages 开始, lastId=${lastId || '(无)'}, 缓冲区大小=${messages.length}`,
+    )
+    if (messages.length === 0) {
+      logForDebugging('WebSocketTransport: 缓冲区为空，无需重播')
+      return
+    }
 
     // 根据服务器最后接收的消息找到开始重播的位置
     let startIndex = 0
     if (lastId) {
+      logForDebugging(
+        `WebSocketTransport: 查找 lastId=${lastId} 在缓冲区中的位置`,
+      )
       const lastConfirmedIndex = messages.findIndex(
         message => 'uuid' in message && message.uuid === lastId,
+      )
+      logForDebugging(
+        `WebSocketTransport: lastConfirmedIndex=${lastConfirmedIndex}`,
       )
       if (lastConfirmedIndex >= 0) {
         // 服务器已确认到 lastConfirmedIndex 的消息 —— 驱逐它们
@@ -589,9 +740,10 @@ export class WebSocketTransport implements Transport {
         this.messageBuffer.addAll(remaining)
         if (remaining.length === 0) {
           this.lastSentId = null
+          logForDebugging('WebSocketTransport: 所有消息已确认，清空 lastSentId')
         }
         logForDebugging(
-          `WebSocketTransport: Evicted ${startIndex} confirmed messages, ${remaining.length} remaining`,
+          `WebSocketTransport: 已驱逐 ${startIndex} 条已确认消息，剩余 ${remaining.length} 条`,
         )
         logForDiagnosticsNoPII(
           'info',
@@ -601,31 +753,50 @@ export class WebSocketTransport implements Transport {
             remaining: remaining.length,
           },
         )
+      } else {
+        logForDebugging(
+          `WebSocketTransport: 未在缓冲区中找到 lastId=${lastId}，将重播全部消息`,
+        )
       }
+    } else {
+      logForDebugging(
+        'WebSocketTransport: 无 lastId，将重播全部缓冲消息',
+      )
     }
 
     const messagesToReplay = messages.slice(startIndex)
     if (messagesToReplay.length === 0) {
-      logForDebugging('WebSocketTransport: No new messages to replay')
+      logForDebugging('WebSocketTransport: 无新消息需要重播')
       logForDiagnosticsNoPII('info', 'cli_websocket_no_messages_to_replay')
       return
     }
 
     logForDebugging(
-      `WebSocketTransport: Replaying ${messagesToReplay.length} buffered messages`,
+      `WebSocketTransport: 将重播 ${messagesToReplay.length} 条缓冲消息`,
     )
     logForDiagnosticsNoPII('info', 'cli_websocket_messages_to_replay', {
       count: messagesToReplay.length,
     })
 
-    for (const message of messagesToReplay) {
+    for (let i = 0; i < messagesToReplay.length; i++) {
+      const message = messagesToReplay[i]
       const line = jsonStringify(message) + '\n'
+      logForDebugging(
+        `WebSocketTransport: 重播消息 [${i + 1}/${messagesToReplay.length}] type=${message.type} uuid=${('uuid' in message ? message.uuid : 'none')}`,
+      )
       const success = this.sendLine(line)
       if (!success) {
+        logForDebugging(
+          `WebSocketTransport: 重播消息发送失败 [${i + 1}/${messagesToReplay.length}]`,
+          { level: 'error' },
+        )
         this.handleConnectionError()
         break
       }
     }
+    logForDebugging(
+      `WebSocketTransport: 消息重播完成`,
+    )
     // 重播后不要清除缓冲区 —— 消息保持缓冲直到
     // 服务器在下次重连确认接收。这可以防止
     // 连接在重播后但服务器处理消息前断开导致的消息丢失。
@@ -656,14 +827,25 @@ export class WebSocketTransport implements Transport {
   }
 
   async write(message: StdoutMessage): Promise<void> {
+    logForDebugging(
+      `WebSocketTransport: write() called, message type=${message.type}, uuid=${('uuid' in message ? message.uuid : 'none')}`,
+    )
+
     if ('uuid' in message && typeof message.uuid === 'string') {
       this.messageBuffer.add(message)
       this.lastSentId = message.uuid
+      logForDebugging(
+        `WebSocketTransport: Message buffered, lastSentId=${this.lastSentId}, bufferSize=${this.messageBuffer.size()}`,
+      )
     }
 
     const line = jsonStringify(message) + '\n'
 
     if (this.state !== 'connected') {
+      // 消息已缓冲，待连接后重播（如果有 UUID）
+      logForDebugging(
+        `WebSocketTransport: 消息因状态非 connected 而缓冲 (state=${this.state})`,
+      )
       // 消息已缓冲，待连接后重播（如果有 UUID）
       return
     }
@@ -672,7 +854,7 @@ export class WebSocketTransport implements Transport {
     const detailLabel = this.getControlMessageDetailLabel(message)
 
     logForDebugging(
-      `WebSocketTransport: Sending message type=${message.type}${sessionLabel}${detailLabel}`,
+      `WebSocketTransport: Sending message type=${message.type}${sessionLabel}${detailLabel}, line length=${line.length}`,
     )
 
     this.sendLine(line)
@@ -698,14 +880,24 @@ export class WebSocketTransport implements Transport {
 
     this.pongReceived = true
     let lastTickTime = Date.now()
+    let tickCount = 0
+
+    logForDebugging(
+      `WebSocketTransport: 启动 ping 间隔 (interval=${DEFAULT_PING_INTERVAL}ms)`,
+    )
 
     // 定期发送 ping 以检测死连接。
     // 如果上一次 ping 没有收到 pong，将连接视为死连接。
     this.pingInterval = setInterval(() => {
+      tickCount++
       if (this.state === 'connected' && this.ws) {
         const now = Date.now()
         const gap = now - lastTickTime
         lastTickTime = now
+
+        logForDebugging(
+          `WebSocketTransport: ping tick #${tickCount} gap=${gap}ms pongReceived=${this.pongReceived}`,
+        )
 
         // 进程挂起检测。如果 tick 之间的挂钟时间间隔
         // 大大超过 10s 间隔，进程被挂起了
@@ -721,12 +913,13 @@ export class WebSocketTransport implements Transport {
         // 它，服务器按 UUID 去重。
         if (gap > SLEEP_DETECTION_THRESHOLD_MS) {
           logForDebugging(
-            `WebSocketTransport: ${Math.round(gap / 1000)}s tick gap detected — process was suspended, forcing reconnect`,
+            `WebSocketTransport: ${Math.round(gap / 1000)}s tick gap detected (${tickCount} ticks) — process was suspended, forcing reconnect`,
+            { level: 'error' },
           )
           logForDiagnosticsNoPII(
             'info',
             'cli_websocket_sleep_detected_on_ping',
-            { gapMs: gap },
+            { gapMs: gap, tickCount },
           )
           this.handleConnectionError()
           return
@@ -734,7 +927,7 @@ export class WebSocketTransport implements Transport {
 
         if (!this.pongReceived) {
           logForDebugging(
-            'WebSocketTransport: 未收到 pong，连接似乎已死',
+            `WebSocketTransport: tick #${tickCount} 未收到 pong，连接似乎已死`,
             { level: 'error' },
           )
           logForDiagnosticsNoPII('error', 'cli_websocket_pong_timeout')
@@ -744,13 +937,21 @@ export class WebSocketTransport implements Transport {
 
         this.pongReceived = false
         try {
+          logForDebugging(
+            `WebSocketTransport: 发送 ping (tick #${tickCount})`,
+          )
           this.ws.ping?.()
         } catch (error) {
-          logForDebugging(`WebSocketTransport: Ping 失败: ${error}`, {
-            level: 'error',
-          })
+          logForDebugging(
+            `WebSocketTransport: Ping 失败: ${error} (tick #${tickCount})`,
+            { level: 'error' },
+          )
           logForDiagnosticsNoPII('error', 'cli_websocket_ping_failed')
         }
+      } else {
+        logForDebugging(
+          `WebSocketTransport: ping tick #${tickCount} 跳过 (state=${this.state}, ws=${this.ws ? 'exists' : 'null'})`,
+        )
       }
     }, DEFAULT_PING_INTERVAL)
   }
@@ -759,7 +960,13 @@ export class WebSocketTransport implements Transport {
     if (this.pingInterval) {
       clearInterval(this.pingInterval)
       this.pingInterval = null
+      logForDebugging('WebSocketTransport: ping 间隔已停止')
     }
+  }
+
+  private onPong = () => {
+    this.pongReceived = true
+    logForDebugging('WebSocketTransport: 收到 pong 响应')
   }
 
   private startKeepaliveInterval(): void {
@@ -767,12 +974,22 @@ export class WebSocketTransport implements Transport {
 
     // 在 CCR 会话中，会话活动心跳处理保持活动
     if (isEnvTruthy(process.env.CLAUDE_CODE_REMOTE)) {
+      logForDebugging(
+        'WebSocketTransport: CLAUDE_CODE_REMOTE 已设置，跳过 keepalive 间隔',
+      )
       return
     }
+
+    logForDebugging(
+      `WebSocketTransport: 启动 keepalive 间隔 (interval=${DEFAULT_KEEPALIVE_INTERVAL}ms)`,
+    )
 
     this.keepAliveInterval = setInterval(() => {
       if (this.state === 'connected' && this.ws) {
         try {
+          logForDebugging(
+            'WebSocketTransport: 发送定期 keep_alive 数据帧',
+          )
           this.ws.send(KEEP_ALIVE_FRAME)
           this.lastActivityTime = Date.now()
           logForDebugging(
@@ -785,6 +1002,10 @@ export class WebSocketTransport implements Transport {
           )
           logForDiagnosticsNoPII('error', 'cli_websocket_keepalive_failed')
         }
+      } else {
+        logForDebugging(
+          `WebSocketTransport: keepalive tick 跳过 (state=${this.state}, ws=${this.ws ? 'exists' : 'null'})`,
+        )
       }
     }, DEFAULT_KEEPALIVE_INTERVAL)
   }
@@ -793,6 +1014,7 @@ export class WebSocketTransport implements Transport {
     if (this.keepAliveInterval) {
       clearInterval(this.keepAliveInterval)
       this.keepAliveInterval = null
+      logForDebugging('WebSocketTransport: keepalive 间隔已停止')
     }
   }
 }

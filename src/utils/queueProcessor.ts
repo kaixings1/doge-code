@@ -70,6 +70,19 @@ export function processQueueIfReady({
   if (isSlashCommand(next) || next.mode === 'bash') {
     const cmd = dequeue(isMainThread)!
     void executeInput([cmd])
+  // Process ALL consecutive slash/bash commands in the queue to ensure
+  // multiple commands (e.g., from server/bridge) are executed sequentially.
+    // After processing one, check if there are more slash/bash commands
+    // and continue processing them by triggering a re-check.
+    // This ensures multiple commands from server/bridge are executed sequentially.
+    const remaining = peek(isMainThread)
+    if (remaining && (isSlashCommand(remaining) || remaining.mode === 'bash')) {
+      // Use setTimeout to allow the current execution to complete before
+      // processing the next command, preventing potential race conditions.
+      setTimeout(() => {
+        recheckCommandQueue()
+      }, 0)
+    }
     return { processed: true }
   }
 

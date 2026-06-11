@@ -6,7 +6,97 @@ import {
   fsyncSync,
   openSync,
 } from 'fs'
-// biome-ignore lint: This file IS the cloneDeep wrapper - it must import the original
+// biome-ignore lint: This file IS the cloneDeep wrapper - it must import the original 
+
+/**
+ * 为 OpenAI function calling 生成的工具定义。
+ * OpenAI 的函数调用需要特定的工具定义格式，包括:
+ * - name: 工具名称
+ * - description: 工具描述
+ * - parameters: 参数定义 (可选)
+ *
+ * 此工具兼容 OpenAI Python 和 Node.js 函数调用。
+ */
+export function createOpenAIToolDefinition(
+  name: string,
+  description?: string,
+  parameters?: Record<string, unknown>,
+): ToolDefinition {
+  const toolDef: ToolDefinition = {
+    name,
+    description: description || 'No description available',
+    parameters: {
+      type: 'object',
+      properties: parameters || {},
+    },
+  }
+
+  // 可选：添加参数定义
+  if (typeof parameters === 'object' && parameters !== null) {
+    for (const [prop, propValue] of Object.entries(parameters.properties || {})) {
+      toolDef.parameters.properties[prop] = {
+        type: typeof propValue === 'string' ? 'text' : propValue,
+        description: typeof propValue === 'string' ? propValue : 'No description available',
+      }
+    }
+  }
+
+  toolDef.parameters.required = [] // 未设置 required 表示可选参数
+  return toolDef
+}
+
+export function generateOpenAIFunctionCallingPayload(
+  data: Record<string, unknown>,
+): string {
+  using _ = slowLogging`generateOpenAIFunctionCallingPayload(${data})`
+
+  // OpenAI 函数调用兼容的 payload 结构
+  const payload: Record<string, unknown> = {
+    arguments: {},
+    tools: [],
+  }
+
+  // 为每个可调用属性添加工具
+  for (const [key, value] of Object.entries(data)) {
+    const toolDefinition: ToolDefinition = {
+      name: key,
+      description: typeof value === 'string' ? value : 'No description available',
+      parameters: {
+        type: 'object',
+        properties: {},
+      },
+    }
+
+    // 可选：添加参数定义
+    if (typeof value === 'object' && value !== null) {
+      for (const [prop, propValue] of Object.entries(value.properties || {})) {
+        toolDefinition.parameters.properties[prop] = {
+          type: typeof propValue === 'string' ? 'text' : propValue,
+          description: typeof propValue === 'string' ? propValue : 'No description available',
+        }
+      }
+    }
+
+    toolDefinition.parameters.required = [] // 未设置 required 表示可选参数
+
+    payload.tools.push(toolDefinition)
+  }
+
+  // 将 payload 转换为 JSON 字符串（使用 OpenAI 的 jsonStringify 工具）
+  const jsonString = jsonStringify(payload)
+
+  // 添加 OpenAI 特定的 function_calling 字段
+  const finalPayload = {
+    ...payload,
+    function_calling: {
+      arguments: payload.arguments,
+      tools: payload.tools,
+    },
+  }
+
+  return jsonStringify(finalPayload)
+} 
+
 import lodashCloneDeep from 'lodash-es/cloneDeep.js'
 import { addSlowOperation } from '../bootstrap/state.js'
 import { logForDebugging } from './debug.js'
@@ -234,6 +324,68 @@ export function clone<T>(value: T, options?: StructuredSerializeOptions): T {
 export function cloneDeep<T>(value: T): T {
   using _ = slowLogging`cloneDeep(${value})`
   return lodashCloneDeep(value)
+}
+
+/**
+ * 为 OpenAI function calling 生成的 JSON 数据包。
+ *
+ * OpenAI 的 function calling 需要特定的工具定义格式，包括:
+ * - "name": 工具名称
+ * - "description": 工具描述
+ * - "parameters": 参数定义 (可选)
+ *
+ * 此工具兼容 OpenAI Python 和 Node.js 函数调用。
+ */
+export function generateOpenAIFunctionCallingPayload(
+  data: Record<string, unknown>
+): string {
+  using _ = slowLogging`generateOpenAIFunctionCallingPayload(${data})`
+
+  // OpenAI 函数调用兼容的 payload 结构
+  const payload: Record<string, unknown> = {
+    arguments: {},
+    tools: [],
+  }
+
+  // 为每个可调用属性添加工具
+  for (const [key, value] of Object.entries(data)) {
+    const toolDefinition: ToolDefinition = {
+      name: key,
+      description: typeof value === 'string' ? value : 'No description available',
+      parameters: {
+        type: 'object',
+        properties: {},
+      },
+    }
+
+    // 可选：添加参数定义
+    if (typeof value === 'object' && value !== null) {
+      for (const [prop, propValue] of Object.entries(value.properties || {})) {
+        toolDefinition.parameters.properties[prop] = {
+          type: typeof propValue === 'string' ? 'text' : propValue,
+          description: typeof propValue === 'string' ? propValue : 'No description available',
+        }
+      }
+    }
+
+    toolDefinition.parameters.required = [] // 未设置 required 表示可选参数
+
+    payload.tools.push(toolDefinition)
+  }
+
+  // 将 payload 转换为 JSON 字符串（使用 OpenAI 的 jsonStringify 工具）
+  const jsonString = jsonStringify(payload)
+
+  // 添加 OpenAI 特定的 function_calling 字段
+  const finalPayload = {
+    ...payload,
+    function_calling: {
+      arguments: payload.arguments,
+      tools: payload.tools,
+    },
+  }
+
+  return jsonStringify(finalPayload)
 }
 
 /**
