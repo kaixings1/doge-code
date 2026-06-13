@@ -26,8 +26,8 @@ const JUMP_WAVE: readonly Frame[] = [
 
 // 点击动画：左右看
 const LOOK_AROUND: readonly Frame[] = [
-  ...hold('look-right', 0, 5),
-  ...hold('look-left', 0, 5),
+  ...hold('blink', 0, 5),
+  ...hold('sleep', 0, 5),
   ...hold('default', 0, 1),
 ];
 
@@ -36,9 +36,9 @@ const CLICK_ANIMATIONS: readonly (readonly Frame[])[] = [JUMP_WAVE, LOOK_AROUND]
 // 空闲动画：自动左右看 + 偶尔举手（像打招呼）
 const IDLE_LOOP: readonly Frame[] = [
   ...hold('default', 0, 30),    // 正常站立 1.8 秒
-  ...hold('look-left', 0, 10),  // 向左看 0.6 秒
+  ...hold('blink', 0, 10),      // 眨眼 0.6 秒
   ...hold('default', 0, 20),    // 恢复 1.2 秒
-  ...hold('look-right', 0, 10), // 向右看 0.6 秒
+  ...hold('heart', 0, 10),      // 爱心眼 0.6 秒
   ...hold('default', 0, 20),
   ...hold('arms-up', 0, 5),     // 举一下手（打招呼）0.3 秒
   ...hold('default', 0, 25),
@@ -51,6 +51,7 @@ const CLAWD_HEIGHT = 7; // 与 Clawd 组件图形高度一致
 export function AnimatedClawd() {
   const $ = _c(8);
   const { pose, bounceOffset, onClick } = useClawdAnimation();
+  console.log('[AnimatedClawd] Rendering with pose=', pose);
 
   let t0;
   if ($[0] !== pose) {
@@ -94,15 +95,24 @@ function useClawdAnimation() {
   const clickLockRef = useRef(false);
 
   const onClick = () => {
-    if (reducedMotion || clickLockRef.current) return;
+    console.log('[AnimatedClawd] onClick called, reducedMotion=', reducedMotion, 'clickLock=', clickLockRef.current);
+    if (reducedMotion || clickLockRef.current) {
+      console.log('[AnimatedClawd] onClick blocked');
+      return;
+    }
     clickLockRef.current = true;
     const anim = CLICK_ANIMATIONS[Math.floor(Math.random() * CLICK_ANIMATIONS.length)]!;
     sequenceRef.current = anim;
     setFrameIndex(0);
+    console.log('[AnimatedClawd] Click animation started');
   };
 
   useEffect(() => {
-    if (reducedMotion) return;
+    console.log('[AnimatedClawd] useEffect running, frameIndex=', frameIndex, 'reducedMotion=', reducedMotion);
+    if (reducedMotion) {
+      console.log('[AnimatedClawd] reducedMotion enabled, skipping animation');
+      return;
+    }
     if (frameIndex >= sequenceRef.current.length) {
       // 动画结束，恢复 idle 循环
       sequenceRef.current = IDLE_LOOP;
@@ -115,6 +125,7 @@ function useClawdAnimation() {
   }, [frameIndex, reducedMotion]);
 
   const currentFrame = sequenceRef.current[frameIndex] ?? { pose: 'default', offset: 0 };
+  console.log('[useClawdAnimation] Returning pose=', currentFrame.pose, 'frameIndex=', frameIndex, 'sequenceLength=', sequenceRef.current.length);
   return {
     pose: currentFrame.pose,
     bounceOffset: currentFrame.offset,
