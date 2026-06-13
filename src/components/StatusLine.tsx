@@ -28,6 +28,8 @@ import { getCurrentSessionTitle } from '../utils/sessionStorage.js';
 import { doesMostRecentAssistantMessageExceed200k, getCurrentUsage } from '../utils/tokens.js';
 import { getCurrentWorktreeSession } from '../utils/worktree.js';
 import { readCustomApiStorage } from '../utils/customApiStorage.js';
+import { buildEnvProperty } from '../utils/status.js';
+import { buildEnvProperty } from '../utils/status.js';
 import { isVimModeEnabled } from './PromptInput/utils.js';
 
 // DOGE: 全局会话开始时间（可在 /clear 时重置）
@@ -157,6 +159,8 @@ function buildStatusLineCommandInput(permissionMode: PermissionMode, exceeds200k
       session_ms: typeof sessionElapsed === 'number' ? sessionElapsed : 0,
       session_str: typeof sessionElapsed === 'number' ? formatDuration(sessionElapsed, { mostSignificantOnly: false }) : ''
     },
+    // DOGE: 环境变量 DOGE_API_JSON 显示
+    doge_api_json: process.env.DOGE_API_JSON || '',
   };
 }
 type Props = {
@@ -360,11 +364,18 @@ function StatusLineInner({
   // flexShrink:0 so a 0→1 row change when the command finishes steals
   // a row from ScrollBox and shifts content. Reserve the row while loading
   // (same trick as PromptInputFooterLeftSide).
-  return <Box paddingX={paddingX} gap={2}>
-      {statusLineText ? <Text dimColor wrap="truncate">
-          <Ansi>{String(statusLineText)}</Ansi>
-        </Text> : isFullscreenEnvEnabled() ? <Text> </Text> : null}
-    </Box>;
+	const displayText = `${String(statusLineText)} [API JSON: ${process.env.DOGE_API_JSON ?? ''}]`;
+	return (
+		<Box paddingX={paddingX} gap={2}>
+			{statusLineText ? (
+				<Text dimColor wrap="truncate">
+					<Ansi>{displayText}</Ansi>
+				</Text>
+			) : isFullscreenEnvEnabled() ? (
+				<Text> </Text>
+			) : null}
+		</Box>
+	);
 }
 
 // Parent (PromptInputFooter) re-renders on every setMessages, but StatusLine's

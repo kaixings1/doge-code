@@ -35,6 +35,7 @@ export function buildSandboxProperties(): Property[] {
     value: isSandboxed ? '已启用' : '已禁用'
   }];
 }
+
 export function buildIDEProperties(mcpClients: MCPServerConnection[], ideInstallationStatus: IDEExtensionInstallationStatus | null = null, theme: ThemeName): Property[] {
   const ideClient = mcpClients?.find(client => client.name === 'ide');
   if (ideInstallationStatus) {
