@@ -9,7 +9,8 @@ import { getLayoutMode, calculateLayoutDimensions, calculateOptimalLeftWidth, fo
 import { truncate } from '../../utils/format.js';
 import { getDisplayPath } from '../../utils/file.js';
 import { formatPackageUpdateNotice } from '../../utils/packageUpdateNotice.js';
-import { Clawd } from './clawd.tsx';
+import { Clawd } from './Clawd.js';
+import { AnimatedClawd } from './AnimatedClawd.js';
 import { calculateFeedWidth } from './Feed.js';
 import { FeedColumn } from './FeedColumn.js';
 import { createRecentActivityFeed, createWhatsNewFeed, createProjectOnboardingFeed, createGuestPassesFeed } from './feedConfigs.js';
@@ -285,7 +286,7 @@ export function LogoV2() {
     }
     let t12;
     if ($[34] === Symbol.for("react.memo_cache_sentinel")) {
-      t12 = <Box marginY={1}><Clawd /></Box>;
+      t12 = <Box marginY={1}><AnimatedClawd /></Box>;
       $[34] = t12;
     } else {
       t12 = $[34];
@@ -395,7 +396,7 @@ export function LogoV2() {
   }
   let t19;
   if ($[48] === Symbol.for("react.memo_cache_sentinel")) {
-    t19 = <Clawd />;
+    t19 = <AnimatedClawd />;
     $[48] = t19;
   } else {
     t19 = $[48];

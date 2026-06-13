@@ -44,7 +44,40 @@ function getGlobalConfigPath(): string {
 }
 
 function getProjectConfigPath(): string {
+  // 优先使用环境变量 DOGE_API_JSON 指定自定义配置路径
+  // 可用于实现进程间配置隔离：每个进程使用不同的 api.json
+  const envPath = process.env.DOGE_API_JSON
+  if (envPath && typeof envPath === 'string' && envPath.trim()) {
+    return path.resolve(envPath.trim())
+  }
   return path.join(process.cwd(), '.doge', 'api.json')
+}
+
+// 记录上次读取的项目配置文件修改时间（用于跨进程变化检测）
+let lastProjectMtime: number | null = null
+
+/**
+ * 检查项目配置文件是否被其他进程修改
+ * 返回 true 表示文件已被修改过，需要重新读取
+ */
+export function checkProjectConfigChanged(): boolean {
+  try {
+    const p = getProjectConfigPath()
+    if (!fs.existsSync(p)) return false
+    const stat = fs.statSync(p)
+    const currentMtime = stat.mtimeMs
+    if (lastProjectMtime !== null && currentMtime !== lastProjectMtime) {
+      lastProjectMtime = currentMtime
+      return true
+    }
+    // 首次调用时初始化 mtime
+    if (lastProjectMtime === null) {
+      lastProjectMtime = currentMtime
+    }
+    return false
+  } catch {
+    return false
+  }
 }
 
 // ---------- 内部读写 ----------
@@ -71,6 +104,11 @@ function readProjectStorage(): ProjectStorage {
     if (!fs.existsSync(p)) return { presets: {} }
     const raw = fs.readFileSync(p, 'utf-8')
     const data = JSON.parse(raw)
+    // 更新修改时间，用于跨进程检测
+    try {
+      const stat = fs.statSync(p)
+      lastProjectMtime = stat.mtimeMs
+    } catch {}
     if (data && typeof data === 'object') {
       const value = data as Record<string, unknown>
       // 老格式升级
@@ -99,6 +137,11 @@ function writeProjectStorage(project: ProjectStorage): void {
     fs.mkdirSync(dir, { recursive: true })
   }
   fs.writeFileSync(p, JSON.stringify(project, null, 2), 'utf-8')
+  // 更新 mtime 避免自己写完后立刻检测到变化
+  try {
+    const stat = fs.statSync(p)
+    lastProjectMtime = stat.mtimeMs
+  } catch {}
 }
 
 function readOldConfig(value: Record<string, unknown>): CustomApiStorageData {
@@ -160,8 +203,15 @@ export function writeCustomApiStorage(
   presetName?: string,
 ): void {
   // 1. 清理 baseURL 后缀
+  // 根据 provider 类型决定清理策略：
+  // - openai: 保存完整 URL（包括 /v1/chat/completions），不要清理
+  // - anthropic: 仅清理 /v1/messages，因为 SDK 会自动拼接此路径
   if (next.baseURL) {
-    next.baseURL = next.baseURL.replace(/\/v1\/messages\/?$/, '').replace(/\/+$/, '');
+    if (next.provider !== 'openai') {
+      // 仅对 Anthropic 兼容节点清理 /v1/messages
+      next.baseURL = next.baseURL.replace(/\/v1\/messages\/?$/, '').replace(/\/+$/, '');
+    }
+    // OpenAI 兼容节点保持完整 URL 不变
   }
 
   // 2. 只有在 provider 未提供或非法时才推断，绝不覆盖已明确的值
@@ -220,10 +270,14 @@ export function switchActivePreset(presetName: string): boolean {
     logForDebugging('[switchActivePreset] set active to: ' + presetName + ' config: ' + JSON.stringify(config), { level: 'debug' })
 
     // 同步环境变量（这是关键，只有这里做了，界面才能立刻变）
+    // 注意：这里需要覆盖之前的 dummy 值，因为它们是在启动时设置的
     process.env.ANTHROPIC_BASE_URL = config.baseURL || ''
     process.env.DOGE_API_KEY = config.apiKey || ''
     process.env.ANTHROPIC_MODEL = config.model || ''
     process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = config.provider || 'openai'
+
+    // 通过设置标志通知 queryModel 刷新缓存
+    ;(process as any)._dogeConfigChanged = true
 
     return true
   }
