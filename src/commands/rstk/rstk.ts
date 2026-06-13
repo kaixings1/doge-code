@@ -10,7 +10,14 @@ import { resetCostState } from '../../bootstrap/state.js'
  * 2. 重置 STATE.modelUsage（实时 token 计数）
  */
 export const call: LocalCommandCall = async () => {
-  const projectConfigPath = path.join(process.cwd(), '.doge', 'api.json')
+  // 优先使用环境变量 DOGE_API_JSON（进程隔离用），兜底默认路径
+  const projectConfigPath = (() => {
+    const envPath = process.env.DOGE_API_JSON;
+    if (envPath && typeof envPath === 'string' && envPath.trim()) {
+      return path.resolve(envPath.trim());
+    }
+    return path.join(process.cwd(), '.doge', 'api.json');
+  })()
   let diskResetDone = false
   let memoryResetDone = false
 

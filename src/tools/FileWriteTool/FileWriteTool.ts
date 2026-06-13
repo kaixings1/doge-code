@@ -86,6 +86,7 @@ export type Output = z.infer<OutputSchema>
 export type FileWriteToolInput = InputSchema
 
 export const FileWriteTool = buildTool({
+	aliases: ['write'],
   name: FILE_WRITE_TOOL_NAME,
   searchHint: '创建或覆盖文件',
   maxResultSizeChars: 100_000,

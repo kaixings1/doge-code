@@ -4,7 +4,14 @@ import * as path from 'path'
 
 ensureBootstrapMacro();
 
-const apiJsonPath = path.join(process.cwd(), '.doge', 'api.json');
+// 优先使用环境变量 DOGE_API_JSON 指定自定义配置路径（进程隔离用）
+const apiJsonPath = (() => {
+  const envPath = process.env.DOGE_API_JSON;
+  if (envPath && typeof envPath === 'string' && envPath.trim()) {
+    return path.resolve(envPath.trim());
+  }
+  return path.join(process.cwd(), '.doge', 'api.json');
+})();
 let activeConfig = null;
 if (fs.existsSync(apiJsonPath)) {
   const data = JSON.parse(fs.readFileSync(apiJsonPath, 'utf-8'));

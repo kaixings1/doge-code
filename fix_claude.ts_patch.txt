@@ -1,0 +1,54 @@
+--- a/src/services/api/claude.ts
++++ b/src/services/api/claude.ts
+@@ -1725,35 +1725,18 @@ async function* queryModel(
+   let responseHeaders: globalThis.Headers | undefined = undefined
+   let research: unknown = undefined
+   let isFastModeRequest = isFastMode // 保持独立状态，因为回退时可能变化
+   let isAdvisorInProgress = false
+-
+-  try {
+-    queryCheckpoint('query_client_creation_start')
+-		
+-		const baseURL = process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com';
+-		const compatProvider = process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER || 'openai';
+-
+-		// 构建请求地址（不写回环境变量，防止重启后路径叠加）
+-		const requestUrl = new URL(
+-		  compatProvider === 'anthropic' ? '/v1/messages' : '/',
+-		  baseURL.replace(/\/+$/, '')
+-		).toString();
+-
+-		// 原有的调试输出可以删除，或保留一行观察
+-		logForDebugging(`[request] ${requestUrl} (provider=${compatProvider})`, { level: 'debug' });
+-		logForDebugging(`[request] ANTHROPIC_BASE_URL=${process.env.ANTHROPIC_BASE_URL}`, { level: 'debug' });
+-		logForDebugging(`[request] CLAUDE_CODE_COMPATIBLE_API_PROVIDER=${process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER}`, { level: 'debug' });
+-
+-
+-		// 防止在无端点配置时发出真实请求
+-	if (process.env.ANTHROPIC_BASE_URL === 'http://0.0.0.0:1' || !process.env.DOGE_API_KEY) {
+-	  return (async function* () {
+-	    yield {
+-	      type: 'assistant',
+-	      message: {
+-	        model: options.model,
+-	        content: [{ type: 'text', text: '请先使用 /login 配置 API 端点。' }],
+-	        stop_reason: 'end_turn',
+-	        usage: { input_tokens: 0, output_tokens: 0 }
+-	      }
+-	    }
+-	  })() as any;
+-	}
+-
+     const generator = withRetry(
+       () =>
+         getAnthropicClient({
+           maxRetries: 0, // 禁用自动重试，转而采用手动实现
+           model: options.model,
+           fetchOverride: options.fetchOverride,
+           source: options.querySource,
+         }),
+-	async (anthropic, attempt, context) => {
++      async (anthropic, attempt, context) => {
+         attemptNumber = attempt
+         isFastModeRequest = context.fastMode ?? false
+         start = Date.now()

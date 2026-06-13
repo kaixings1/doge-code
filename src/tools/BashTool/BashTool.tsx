@@ -273,6 +273,24 @@ function normalizeWindowsCommand(cmd: string): string {
                 files.unshift(firstFile);
             }
         }
+				if (/^cd\s+\/d\b/i.test(trimmed)) {
+						// 提取路径部分: cd /d C:\folder 或 cd /d "C:\folder with space"
+						const afterCd = trimmed.replace(/^cd\s+\/d\s+/i, '').trim();
+						// 去除可能的引号
+						let rawPath = afterCd.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
+						// 转换 Windows 路径为 Git Bash 格式: C:\folder → /c/folder
+						// 注意: 处理盘符和反斜杠
+						let convertedPath = rawPath.replace(/^([a-zA-Z]):\\/, '/$1/').replace(/\\/g, '/');
+						// 如果转换后没有盘符，保持原样但确保使用正斜杠
+						if (!convertedPath.includes('/') && convertedPath.includes('\\')) {
+								convertedPath = convertedPath.replace(/\\/g, '/');
+						}
+						// 处理空格: 用引号包裹
+						if (convertedPath.includes(' ')) {
+								convertedPath = `"${convertedPath}"`;
+						}
+						return `cd ${convertedPath}`;
+				}
 
         // 如果仍未识别出模式，则全部作为文件
         if (patterns.length === 0) {
@@ -707,6 +725,7 @@ async function applySedEdit(simulatedEdit: {
 }
 export const BashTool = buildTool({
   name: BASH_TOOL_NAME,
+	aliases: ['bash'],
   searchHint: '执行 Shell 命令',
   // 30K 字符 —— 工具结果持久化阈值
   maxResultSizeChars: 30_000,

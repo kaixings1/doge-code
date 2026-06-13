@@ -274,6 +274,16 @@ export function Config({
 
   // TODO: Add MCP servers
   const settingsItems: Setting[] = [
+  ...(feature('MCP_UI') ? [{
+    id: 'mcpServers',
+    label: 'MCP 服务器',
+    value: '配置 MCP 服务器...',
+    type: 'managedEnum' as const,
+    onChange() {
+      // Opens the MCP settings panel
+      console.log('Opening MCP settings...')
+    }
+  }] : []),
   // Global settings
   {
     id: 'customApiProvider',

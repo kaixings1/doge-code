@@ -25,7 +25,7 @@ import {
   getAPIProvider,
   isFirstPartyAnthropicBaseUrl,
 } from '../../utils/model/providers.js'
-import { readCustomApiStorage } from '../../utils/customApiStorage.js'
+import { readCustomApiStorage, checkProjectConfigChanged } from '../../utils/customApiStorage.js'
 import {
   convertAnthropicRequestToOpenAI,
   createAnthropicStreamFromOpenAI,
@@ -998,6 +998,28 @@ async function* queryModel(
   StreamEvent | AssistantMessage | SystemAPIErrorMessage,
   void
 > {
+  // 进程隔离：读取配置并缓存到环境变量
+  // - 启动时从文件读取
+  // - 用户切换预设时刷新（通过 _dogeConfigChanged 标志）
+  // 这样避免不同进程间因为共享配置文件导致的相互干扰
+  // 检查是否已有有效的自定义端点（非 dummy）
+  // - 启动时从文件读取
+  // - 用户切换预设时刷新（通过 _dogeConfigChanged 标志）
+  // - 定期检测 api.json 文件修改时间，感知其他进程的变更
+  if ((queryModel as any)._cachedConfig === void 0 || (process as any)._dogeConfigChanged || checkProjectConfigChanged()) {
+    ;(queryModel as any)._cachedConfig = readCustomApiStorage()
+    ;(process as any)._dogeConfigChanged = false
+  }
+  const cachedConfig = (queryModel as any)._cachedConfig
+
+  // 应用到环境变量（如果尚未设置或是默认的 dummy 值）
+  if (cachedConfig?.baseURL && (!process.env.ANTHROPIC_BASE_URL || process.env.ANTHROPIC_BASE_URL === 'http://0.0.0.0:1')) {
+    process.env.ANTHROPIC_BASE_URL = cachedConfig.baseURL
+    if (cachedConfig.apiKey) process.env.DOGE_API_KEY = cachedConfig.apiKey
+    process.env.ANTHROPIC_MODEL = cachedConfig.model || ''
+    process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = cachedConfig.provider || 'openai'
+  }
+
   // 首先检查低成本条件——off-switch 的 await 会阻塞在 GrowthBook 初始化（约 10ms）。
   // 对于非 Opus 模型（haiku、sonnet），这会完全跳过 await。
   // 订阅者根本不会进入此路径。
@@ -1726,13 +1748,6 @@ async function* queryModel(
   let research: unknown = undefined
   let isFastModeRequest = isFastMode // 保持独立状态，因为回退时可能变化
   let isAdvisorInProgress = false
-const latestConfig = readCustomApiStorage();
-if (latestConfig.baseURL) {
-	process.env.ANTHROPIC_BASE_URL = latestConfig.baseURL;
-	if (latestConfig.apiKey) process.env.DOGE_API_KEY = latestConfig.apiKey; else delete process.env.DOGE_API_KEY;
-	process.env.ANTHROPIC_MODEL = latestConfig.model || '';
-	process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = latestConfig.provider || 'openai';
-}
 
   try {
     queryCheckpoint('query_client_creation_start')
@@ -1810,7 +1825,6 @@ async (anthropic, attempt, context) => {
         // biome-ignore lint/plugin: 主对话循环单独处理归属
         //const compatProvider = readCustomApiStorage().provider ?? 'openai'  // 默认使用 openai 格式以支持流式输出
 		
-		const apiStorage = readCustomApiStorage()
 		//const compatProvider = apiStorage.baseURL ? (apiStorage.provider || 'openai') : getAPIProvider()
 		
 		// 强制使用 OpenAI 兼容流，只要存储或环境中设置了自定义端点
@@ -2011,7 +2025,7 @@ async (anthropic, attempt, context) => {
       for await (const part of stream) {
         if (!part) {
           throw new Error(
-            `[claude.ts] 流 yield 了 undefined 部分；compatProvider=${readCustomApiStorage().provider ?? 'anthropic'} model=${options.model}`,
+            `[claude.ts] 流 yield 了 undefined 部分；compatProvider=${cachedConfig?.provider ?? 'anthropic'} model=${options.model}`,
           )
         }
         resetStreamIdleTimer()

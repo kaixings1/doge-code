@@ -5434,8 +5434,17 @@ export function ensureToolResultPairing(
       )
     }
 
-    console.log(
-      `[工具结果：配对已修复] 触发时机：消息从 ${messages.length} 条变为 ${result.length} 条。消息结构：${messageTypes.join('; ')}`,
+    logEvent('tengu_tool_result_pairing_repaired', {
+      messageCount: messages.length,
+      repairedMessageCount: result.length,
+      messageTypes: messageTypes.join(
+        '; ',
+      ) as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+    })
+    logError(
+      new Error(
+        `ensureToolResultPairing: 已修复缺失的 tool_result 块（${messages.length} -> ${result.length} 条消息）。消息结构：${messageTypes.join('; ')}`,
+      ),
     )
   } else {
     console.log(`[工具结果：无需修复] 触发时机：所有消息配对正常`)

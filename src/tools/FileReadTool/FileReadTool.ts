@@ -334,6 +334,7 @@ export type Output = z.infer<OutputSchema>
 
 export const FileReadTool = buildTool({
   name: FILE_READ_TOOL_NAME,
+	aliases: ['read'],
   searchHint: '读取文件、图片、PDF、笔记本',
   // 输出大小受 maxTokens 限制（validateContentTokens）。将内容持久化到文件，
   // 然后让模型通过 Read 回读是循环做法 — 永远不要持久化。

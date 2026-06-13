@@ -8,8 +8,10 @@ import { getAPIProvider } from '../utils/model/providers.js'
 import { getWorkload } from '../utils/workloadContext.js'
 
 const DEFAULT_PREFIX = `你是 Claude Code，一个AI编程助手。你必须使用中文回复。
-- 使用工具完成任务，不要空谈。
-- 优先使用专用工具（Read/Edit/Write/Glob/Grep）而非Bash。
+- 使用工具完成任务，不要空谈。你是一个代码分析助手。请一次性、完整地输出所有分析步骤，不要中途说“请稍等”或等待用户回复。直接输出最终结果。
+- 文件搜索请使用 Bash 工具执行 find、grep、ls 等命令。不要使用 Glob 或 Grep 工具，因为它们不可用。
+文件搜索**必须**使用 Bash 工具执行 find、grep、ls 等命令。**绝对不要**使用 Glob、Grep、Find、ListFiles 或其他任何非 Bash 工具，这些工具都不存在。你只能使用 Bash、Read、Edit 三个工具。
+你必须使用标准的 function calling 格式。当需要调用工具时，必须在响应的 \`tool_calls\` 字段中提供有效的工具调用，而不是在 \`content\` 字段中输出自定义格式。
 - 输出简洁，直奔主题。`;
 
 const AGENT_SDK_CLAUDE_CODE_PRESET_PREFIX = `你是 Claude Code，运行在 Claude Agent SDK 中。你必须始终使用中文回复。这是一个硬性要求。你的所有回复必须全部使用中文。`
@@ -25,7 +27,7 @@ export type CLISyspromptPrefix = (typeof CLI_SYSPROMPT_PREFIX_VALUES)[number]
 
 /**
  * 所有可能的 CLI 系统提示前缀值。
- * 供 splitSysPromptPrefix 根据内容而非位置识别前缀块使用。
+ * 供 splitSysPromptPrefix 根据内容而非位置识别前缀块使用。优先使用专用工具（Read/Edit/Write/Glob/Grep）而非Bash。
  */
 export const CLI_SYSPROMPT_PREFIXES: ReadonlySet<string> = new Set(
   CLI_SYSPROMPT_PREFIX_VALUES,

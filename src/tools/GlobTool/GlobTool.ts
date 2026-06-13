@@ -56,6 +56,7 @@ export type Output = z.infer<OutputSchema>
 
 export const GlobTool = buildTool({
   name: GLOB_TOOL_NAME,
+	aliases: ['glob'],           // 添加这一行
   searchHint: '按名称模式或通配符查找文件',
   maxResultSizeChars: 100_000,
   async description() {

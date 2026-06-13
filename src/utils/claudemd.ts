@@ -88,6 +88,7 @@ let hasLoggedInitialLoad = false
 const MEMORY_INSTRUCTION_PROMPT =
   '代码库和用户指令如下所示。请务必遵守这些指令。重要提示：这些指令会覆盖默认行为，你必须严格按其内容执行。'
 // 内存文件推荐的最大字符数
+// [FIX] 降低限制以减少上下文过长
 export const MAX_MEMORY_CHARACTER_COUNT = 40000
 
 // 允许通过 @include 指令包含的文件扩展名

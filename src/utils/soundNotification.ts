@@ -10,6 +10,12 @@ import { isEnvTruthy } from './envUtils.js'
 // 是否启用声音提醒（默认启用以支持多窗口场景）
 const SOUND_NOTIFICATION_ENABLED = process.env.SOUND_ON_TASK_COMPLETE !== 'false'
 
+// 是否启用自动继续模式（任务完成时自动注入继续消息）
+const AUTO_CONTINUE_ENABLED = process.env.AUTO_CONTINUE_ON_COMPLETE === 'true'
+/** 检查是否启用了自动继续模式 */
+export function isAutoContinueEnabled(): boolean {
+  return AUTO_CONTINUE_ENABLED
+}
 let _beepSupported: boolean | null = null
 
 /**

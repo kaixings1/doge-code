@@ -102,7 +102,7 @@ import { handleStopHooks } from './query/stopHooks.js'
 import { buildQueryConfig } from './query/config.js'
 import { productionDeps, type QueryDeps } from './query/deps.js'
 import { handleEmptyContentResponse } from './query/emptyContentHandler.js'
-import { playTaskCompleteSound } from './utils/soundNotification.js'
+import { playTaskCompleteSound, isAutoContinueEnabled } from './utils/soundNotification.js'
 import type { Terminal, Continue } from './query/transitions.js'
 import { feature } from 'bun:bundle'
 import {
@@ -112,7 +112,15 @@ import {
 } from './bootstrap/state.js'
 import { createBudgetTracker, checkTokenBudget } from './query/tokenBudget.js'
 import { count } from './utils/array.js'
-
+import {
+  shouldTruncate,
+  truncateMessages,
+  getTruncateConfig,
+} from './services/compact/truncateContext.js'
+import {
+  checkTruncateFrequency,
+  recordTruncateEvent,
+} from './utils/truncateRecovery.js'
  
 const snipModule = feature('HISTORY_SNIP')
   ? (require('./services/compact/snipCompact.js') as typeof import('./services/compact/snipCompact.js'))
@@ -392,6 +400,7 @@ async function* queryLoop(
     )
 
     let snipTokensFreed = 0
+    // [新] 先执行 snip 精简
     if (feature('HISTORY_SNIP')) {
       queryCheckpoint('query_snip_start')
       const snipResult = snipModule!.snipCompactIfNeeded(messagesForQuery)
@@ -633,8 +642,10 @@ async function* queryLoop(
             },
           })) {
             if (streamingFallbackOccured) {
+              logForDebugging('[DEBUG] assistantMessages count=' + assistantMessages.length);
               for (const msg of assistantMessages) {
-                yield { type: 'tombstone' as const, message: msg }
+                logForDebugging('[DEBUG] msg content types=' + msg.message.content.map(c => c.type).join(','));
+                yield { type: 'tombstone' as const, message: msg };
               }
               logEvent('tengu_orphaned_messages_tombstoned', {
                 orphanedMessageCount: assistantMessages.length,
@@ -733,8 +744,13 @@ async function* queryLoop(
                 content => content.type === 'tool_use',
               ) as ToolUseBlock[]
               if (msgToolUseBlocks.length > 0) {
-                toolUseBlocks.push(...msgToolUseBlocks)
-                needsFollowUp = true
+                logForDebugging('[DEBUG] found tool blocks, count=' + msgToolUseBlocks.length);
+                toolUseBlocks.push(...msgToolUseBlocks);
+                needsFollowUp = true;
+              } else {
+                logForDebugging('[DEBUG] no tool blocks found in message');
+                logForDebugging(`[DEBUG] content blocks: ${JSON.stringify(message.message.content.map(c => c.type))}`);
+                logForDebugging(`[DEBUG] tool_calls exists? ${!!(message as any).tool_calls}`);
               }
 
               if (

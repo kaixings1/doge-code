@@ -691,7 +691,25 @@ export async function* createAnthropicStreamFromOpenAI(input: {
       }
     }
   }
-
+  // ================================================================
+  // 非流式响应兜底：当服务端返回完整 JSON（非 SSE 流式格式）时，
+  // 从 buffer 中解析并合成为 Anthropic 流事件。
+  // 这解决了非流式服务器（如 open-claw-zero-token）的兼容问题。
+  // ================================================================
+  if (!started && buffer.trim()) {
+    const maybeParsed = tryParseNonStreamingResponse(buffer.trim(), input.model)
+    if (maybeParsed) {
+      started = true
+      promptTokens = maybeParsed.promptTokens
+      completionTokens = maybeParsed.completionTokens
+      for (const ev of maybeParsed.events) {
+        yield ev
+      }
+      _lastResponseBytes = responseBytes
+      yield { type: 'message_stop' } as BetaRawMessageStreamEvent
+      return maybeParsed.resultMessage as BetaMessage
+    }
+  }
   // 流意外结束时的清理
   logForDebugging(`[openaiCompat] 流意外结束 - started=${started}, promptTokens=${promptTokens}, completionTokens=${completionTokens}, responseBytes=${responseBytes}, buffer=${buffer.slice(0, 200)}`, { level: 'debug' })
   logForDebugging(`[openaiCompat] nativeIdxMap size=${nativeIdxMap.size}, nativeBlockType size=${nativeBlockType.size}`, { level: 'debug' })

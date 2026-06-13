@@ -1,0 +1,19 @@
+# 请在 doge-code 目录下执行以下命令进行修复：
+
+# 1. 删除第1729-1768行（环境变量写入和检查）
+sed -i '1729,1768d' src/services/api/claude.ts
+
+# 2. 在 withRetry 回调内添加配置读取（在约第1786行，找到 const apiStorage 这一行后修改）
+# 将：
+#     const apiStorage = readCustomApiStorage()
+# 修改为：
+#     const apiStorage = readCustomApiStorage()
+#     const requestBaseURL = apiStorage.baseURL || process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com'
+
+# 3. 修改 API key 获取方式（在 createOpenAICompatStream 调用处）
+# 将：
+#     apiKey: process.env.DOGE_API_KEY || ''
+# 修改为：
+#     apiKey: apiStorage.apiKey || process.env.DOGE_API_KEY || ''
+
+# 或者使用补丁文件修复：

@@ -2360,7 +2360,7 @@ function runHeadlessStreaming(
             // 循环返回以排空任何新入队的命令
           }
         }
-      } while (waitingForAgents)
+      } while (waitingForAgents || peek(isMainThread) !== undefined)
 
       if (heldBackResult) {
         output.enqueue(heldBackResult)
@@ -3795,38 +3795,60 @@ function runHeadlessStreaming(
                 const { initReplBridge } = await import(
                   'src/bridge/initReplBridge.js'
                 )
+                // 创建统一的协议处理器来处理工具调用
+                const bridgeProtocol = new SimpleServerProtocol()
+                const bridgeMessageHandler = new MessageHandler(bridgeProtocol)
+                
+                // 自定义协议实现，将结果发送回服务器
+                class BridgeServerProtocol extends SimpleServerProtocol {
+                  async send(message: string): Promise<void> {
+                    // 将工具结果作为助手消息发送回服务器
+                    const resultMessage: AssistantMessage = {
+                      type: 'assistant',
+                      uuid: randomUUID(),
+                      timestamp: new Date().toISOString(),
+                        message: {
+                        content: message
+                      }
+                    }
+                    
+                    // 发送到服务器
+                    if (bridgeHandle) {
+                      bridgeHandle.writeMessages([resultMessage])
+                      }
+                    // 也添加到本地显示
+                      enqueue({
+                      value: message,
+                        mode: 'prompt' as const,
+                      uuid: resultMessage.uuid,
+                        skipSlashCommands: true,
+                      })
+                  }
+                }
+                const customProtocol = new BridgeServerProtocol()
+                const customMessageHandler = new MessageHandler(customProtocol)
                 const handle = await initReplBridge({
                   onInboundMessage(msg) {
                     const fields = extractInboundMessageFields(msg)
                     if (!fields) return
-                    const { content, uuid, toolUseBlocks } = fields
-                    if (toolUseBlocks && toolUseBlocks.length > 0) {
-                      // If tool_use blocks are present, create a user message with them
-                      // so they can be processed as tool calls
-                      const userMessage = {
-                        type: 'user' as const,
-                        message: {
-                          role: 'user' as const,
-                          content: content as any,
-                        },
-                        session_id: 'bridge-inbound',
-                        parent_tool_use_id: null,
-                        uuid: uuid || undefined,
-                      }
-                      enqueue({
-                        value: userMessage,
-                        mode: 'prompt' as const,
-                        uuid,
-                        skipSlashCommands: true,
-                      })
-                    } else {
+                    const { content, uuid } = fields
+                    // 检查消息是否包含工具调用（服务器返回的命令）
+                    const contentStr = typeof content === 'string' ? content : JSON.stringify(content)
+                    if (needsToolCallProcessing(contentStr)) {
+                      logForDebugging(`[bridge:sdk] 检测到工具调用，使用流式协议处理器处理...`)
+                      // 使用统一的流式协议处理器处理消息
+                      // 这将自动处理工具调用、并发控制和会话管理
+                      void customMessageHandler.handleMessage(contentStr)
+                        .catch(error => {
+                          logForDebugging(`[bridge:sdk] 流式协议处理失败: ${error}`)
+                        })
+                    }
                       enqueue({
                         value: content,
                         mode: 'prompt' as const,
                         uuid,
                         skipSlashCommands: true,
                       })
-                    }
                     void run()
                   },
                   onPermissionResponse(response) {
