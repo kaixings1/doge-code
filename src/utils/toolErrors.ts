@@ -1,10 +1,18 @@
 import type { ZodError } from 'zod/v4'
 import { AbortError, ShellError } from './errors.js'
 import { INTERRUPT_MESSAGE_FOR_TOOL_USE } from './messages.js'
+import { MaxFileReadTokenExceededError } from '../tools/FileReadTool/FileReadTool.js'
+import { FileTooLargeError } from './readFileInRange.js'
 
 export function formatError(error: unknown): string {
   if (error instanceof AbortError) {
     return error.message || INTERRUPT_MESSAGE_FOR_TOOL_USE
+  }
+  if (error instanceof MaxFileReadTokenExceededError) {
+    return `文件内容（${error.tokenCount} tokens）超过了允许的最大 tokens 数（${error.maxTokens} tokens）。请使用 offset 和 limit 参数读取文件的特定部分，或搜索特定内容。`
+  }
+  if (error instanceof FileTooLargeError) {
+    return `文件大小（${error.sizeInBytes} 字节）超过了允许的最大大小（${error.maxSizeBytes} 字节）。请使用 offset 和 limit 参数读取文件的特定部分，或搜索特定内容。`
   }
   if (!(error instanceof Error)) {
     return String(error)
