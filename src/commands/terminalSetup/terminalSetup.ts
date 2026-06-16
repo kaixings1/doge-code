@@ -161,17 +161,17 @@ No configuration needed. Just use Shift+Enter to add newlines.`;
     // For Linux and other platforms, we don't show native terminal options
     // since they're not currently supported
 
-    const message = `Terminal setup cannot be run from ${terminalName}.
+    const message = `无法在 ${terminalName} 中运行终端设置。
 
-This command configures a convenient Shift+Enter shortcut for multi-line prompts.
-${chalk.dim('Note: You can already use backslash (\\\\) + return to add newlines.')}
+此命令会配置一个便捷的 Shift+Enter 快捷键，用于多行提示。
+${chalk.dim('注意：您已经可以使用反斜杠（\\）来添加换行符')}
 
-To set up the shortcut (optional):
-1. Exit tmux/screen temporarily
-2. Run /terminal-setup directly in one of these terminals:
+设置快捷方式（可选）：
+1. 临时退出 tmux/screen
+2. 在以下终端中直接运行 /terminal-setup：
 ${platformTerminals}   • IDE: VSCode, Cursor, Windsurf, Zed
-   • Other: Alacritty
-3. Return to tmux/screen - settings will persist
+   • 其他: Alacritty
+3. 返回 tmux/screen - 设置将保持有效
 
 ${chalk.dim('注意：iTerm2、WezTerm、Ghostty、Kitty 和 Warp 原生支持 Shift+Enter。')}`;
     onDone(message);
@@ -239,7 +239,7 @@ async function installBindingsForVSCodeTerminal(editor: 'VSCode' | 'Cursor' | 'W
     // Check if keybinding already exists
     const existingBinding = keybindings.find(binding => binding.key === 'shift+enter' && binding.command === 'workbench.action.terminal.sendSequence' && binding.when === 'terminalFocus');
     if (existingBinding) {
-      return `${color('warning', theme)(`Found existing ${editor} terminal Shift+Enter key binding. Remove it to continue.`)}${EOL}${chalk.dim(`See ${formatPathLink(keybindingsPath)}`)}${EOL}`;
+      return `${color('warning', theme)(`找到现有的 ${editor} 终端 Shift+Enter 键绑定。请移除后继续。`)}${EOL}${chalk.dim(`参见 ${formatPathLink(keybindingsPath)}`)}${EOL}`;
     }
 
     // Create the new keybinding
@@ -422,7 +422,7 @@ chars = "\\u001B\\r"`;
     if (configExists) {
       // Check if keybinding already exists (look for Shift+Return binding)
       if (configContent.includes('mods = "Shift"') && configContent.includes('key = "Return"')) {
-        return `${color('warning', theme)('Found existing Alacritty Shift+Enter key binding. Remove it to continue.')}${EOL}${chalk.dim(`See ${formatPathLink(configPath)}`)}${EOL}`;
+        return `${color('warning', theme)('找到现有的 Alacritty Shift+Enter 键绑定。请移除后继续。')}${EOL}${chalk.dim(`参见 ${formatPathLink(configPath)}`)}${EOL}`;
       }
 
       // Create backup
@@ -431,7 +431,7 @@ chars = "\\u001B\\r"`;
       try {
         await copyFile(configPath, backupPath);
       } catch {
-        return `${color('warning', theme)('Error backing up existing Alacritty config. Bailing out.')}${EOL}${chalk.dim(`See ${formatPathLink(configPath)}`)}${EOL}${chalk.dim(`Backup path: ${formatPathLink(backupPath)}`)}${EOL}`;
+        return `${color('warning', theme)('备份现有的 Alacritty 配置失败。正在退出。')}${EOL}${chalk.dim(`参见 ${formatPathLink(configPath)}`)}${EOL}${chalk.dim(`备份路径：${formatPathLink(backupPath)}`)}${EOL}`;
       }
     } else {
       // Ensure config directory exists (idempotent with recursive)
@@ -481,7 +481,7 @@ async function installBindingsForZed(theme: ThemeName): Promise<string> {
     if (fileExists) {
       // Check if keybinding already exists
       if (keymapContent.includes('shift-enter')) {
-        return `${color('warning', theme)('Found existing Zed Shift+Enter key binding. Remove it to continue.')}${EOL}${chalk.dim(`See ${formatPathLink(keymapPath)}`)}${EOL}`;
+        return `${color('warning', theme)('找到现有的 Zed Shift+Enter 键绑定。请移除后继续。')}${EOL}${chalk.dim(`参见 ${formatPathLink(keymapPath)}`)}${EOL}`;
       }
 
       // Create backup
@@ -490,7 +490,7 @@ async function installBindingsForZed(theme: ThemeName): Promise<string> {
       try {
         await copyFile(keymapPath, backupPath);
       } catch {
-        return `${color('warning', theme)('Error backing up existing Zed keymap. Bailing out.')}${EOL}${chalk.dim(`See ${formatPathLink(keymapPath)}`)}${EOL}${chalk.dim(`Backup path: ${formatPathLink(backupPath)}`)}${EOL}`;
+        return `${color('warning', theme)('备份现有的 Zed 键映射失败。正在退出。')}${EOL}${chalk.dim(`参见 ${formatPathLink(keymapPath)}`)}${EOL}${chalk.dim(`备份路径：${formatPathLink(backupPath)}`)}${EOL}`;
       }
     }
 

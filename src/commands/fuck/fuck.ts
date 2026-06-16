@@ -47,6 +47,6 @@ export const call: LocalCommandCall = async (_args, context) => {
 
   return {
     type: 'text',
-    value: 'Claude Code local data wiped: auth, custom API config, and session history removed.',
+    value: 'Claude Code 本地数据已清除：身份验证、自定义 API 配置和会话历史记录。',
   }
 }

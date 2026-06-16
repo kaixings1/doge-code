@@ -182,7 +182,7 @@ export const ExitWorktreeTool: Tool<InputSchema, Output> = buildTool({
       return {
         result: false,
         message:
-          'No-op: there is no active EnterWorktree session to exit. This tool only operates on worktrees created by EnterWorktree in the current session — it will not touch worktrees created manually or in a previous session. No filesystem changes were made.',
+          '无操作：当前没有活动的 EnterWorktree 会话可退出。此工具仅对当前会话中由 EnterWorktree 创建的工作树起作用——不会触碰手动创建或先前会话的工作树。未进行任何文件系统更改。',
         errorCode: 1,
       }
     }

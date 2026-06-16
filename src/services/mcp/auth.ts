@@ -2367,7 +2367,7 @@ export async function readClientSecret(): Promise<string> {
 
   if (!process.stdin.isTTY) {
     throw new Error(
-      'No TTY available to prompt for client secret. Set MCP_CLIENT_SECRET env var instead.',
+      '没有可用的 TTY 进行提示输入客户端密钥。请设置 MCP_CLIENT_SECRET 环境变量。',
     )
   }
 
