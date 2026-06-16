@@ -1,9 +1,8 @@
 /**
- * Hook event system for broadcasting hook execution events.
+ * 钩子事件系统，用于广播钩子执行事件。
  *
- * This module provides a generic event system that is separate from the
- * main message stream. Handlers can register to receive events and decide
- * what to do with them (e.g., convert to SDK messages, log, etc.).
+ * 此模块提供一个独立于主消息流的通用事件系统。
+ * 处理器可以注册接收事件并决定如何处理它们（例如，转换为 SDK 消息、记录日志等）。
  */
 
 import { HOOK_EVENTS } from '../../entrypoints/sdk/coreTypes.js'
@@ -11,9 +10,8 @@ import { HOOK_EVENTS } from '../../entrypoints/sdk/coreTypes.js'
 import { logForDebugging } from '../debug.js'
 
 /**
- * Hook events that are always emitted regardless of the includeHookEvents
- * option. These are low-noise lifecycle events that were in the original
- * allowlist and are backwards-compatible.
+ * 无论 includeHookEvents 选项如何，总是会发出的钩子事件。
+ * 这些是低噪声的生命周期事件，属于原始允许列表且向后兼容。
  */
 const ALWAYS_EMITTED_HOOK_EVENTS = ['SessionStart', 'Setup'] as const
 
@@ -160,7 +158,7 @@ export function emitHookResponse(data: {
   exitCode?: number
   outcome: 'success' | 'error' | 'cancelled'
 }): void {
-  // Always log full hook output to debug log for verbose mode debugging
+  // 始终将完整钩子输出记录到调试日志，供详细模式调试使用
   const outputToLog = data.stdout || data.stderr || data.output
   if (outputToLog) {
     logForDebugging(
