@@ -118,7 +118,7 @@ export async function checkOverageGate(): Promise<OverageGate> {
  * queried with this content, so it can narrate the launch to the user).
  *
  * Returns ContentBlockParam[] with user-facing error messages on recoverable
- * failures (missing merge-base, empty diff, bundle too large), or null on
+ * failures (缺少合并基准, 暂无差异, 捆绑包过大), or null on
  * other failures so the caller falls through to the local-review prompt.
  * Reason is captured in analytics.
  *
@@ -245,7 +245,7 @@ export async function launchRemoteReview(
       return [
         {
           type: 'text',
-          text: `Could not find merge-base with ${baseBranch}. Make sure you're in a git repo with a ${baseBranch} branch.`,
+          text: `无法找到与 ${baseBranch} 的合并基准。请确保您位于一个拥有 ${baseBranch} 分支的 Git 仓库中。`,
         },
       ]
     }
@@ -262,7 +262,7 @@ export async function launchRemoteReview(
       return [
         {
           type: 'text',
-          text: `No changes against the ${baseBranch} fork point. Make some commits or stage files first.`,
+          text: `与 ${baseBranch} 分支点相比没有变更。请先进行一些提交或暂存文件。`,
         },
       ]
     }
@@ -283,7 +283,7 @@ export async function launchRemoteReview(
       return [
         {
           type: 'text',
-          text: 'Repo is too large. Push a PR and use `/ultrareview <PR#>` instead.',
+          text: '仓库过大。请推送一个 PR 并使用 `/ultrareview <PR#>` 代替。',
         },
       ]
     }

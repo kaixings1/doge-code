@@ -210,7 +210,7 @@ export function deserializeMessagesWithInterruptDetection(
     if (internalState.kind === 'interrupted_turn') {
       const [continuationMessage] = normalizeMessages([
         createUserMessage({
-          content: 'Continue from where you left off.',
+          content: '从上次中断的地方继续。',
           isMeta: true,
         }),
       ])

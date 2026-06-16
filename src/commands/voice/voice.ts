@@ -117,7 +117,7 @@ export const call: LocalCommandCall = async () => {
     return {
       type: 'text' as const,
       value:
-        'Failed to update settings. Check your settings file for syntax errors.',
+        '更新设置失败。请检查您的设置文件是否有语法错误。',
     }
   }
   settingsChangeDetector.notifyChange('userSettings')

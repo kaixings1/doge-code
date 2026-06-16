@@ -223,7 +223,7 @@ export const NotebookEditTool = buildTool({
       return {
         result: false,
         message:
-          'File has not been read yet. Read it first before writing to it.',
+          '文件尚未读取。请在写入前先读取文件。',
         errorCode: 9,
       }
     }
@@ -231,7 +231,7 @@ export const NotebookEditTool = buildTool({
       return {
         result: false,
         message:
-          'File has been modified since read, either by the user or by a linter. Read it again before attempting to write it.',
+          '文件自上次读取以来已被修改（可能是用户或 linter 修改）。请在写入前重新读取文件。',
         errorCode: 10,
       }
     }
