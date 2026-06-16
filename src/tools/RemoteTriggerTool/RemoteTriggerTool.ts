@@ -80,7 +80,7 @@ export const RemoteTriggerTool = buildTool({
     const accessToken = getClaudeAIOAuthTokens()?.accessToken
     if (!accessToken) {
       throw new Error(
-        'Not authenticated with a claude.ai account. Run /login and try again.',
+        '未通过 claude.ai 账户进行身份验证。请运行 /login 后重试。',
       )
     }
     const orgUUID = await getOrganizationUUID()

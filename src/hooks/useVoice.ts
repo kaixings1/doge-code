@@ -496,7 +496,7 @@ export function useVoice({
             // WS never connected → audio never reached backend. Not a silent
             // drop; a connection failure (slow OAuth refresh, network, etc).
             onErrorRef.current?.(
-              'Voice connection failed. Check your network and try again.',
+              '语音连接失败。请检查您的网络并重试。',
             )
           } else if (!hadAudioSignal) {
             // Distinguish silent mic (capture issue) from speech not recognized.
@@ -633,7 +633,7 @@ export function useVoice({
   async function startRecordingSession(): Promise<void> {
     if (!voiceModule) {
       onErrorRef.current?.(
-        'Voice module not loaded yet. Try again in a moment.',
+        '语音模块尚未加载。请稍后再试。',
       )
       return
     }

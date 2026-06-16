@@ -14,7 +14,9 @@
     "bun": ">=1.3.5",
     "node": ">=24.0.0"
   },
-  "scripts": {
+  "scripts": { 
+    "prebuild": "bun run scripts/embed-status-line.ts",
+    "build": "bun build ./src/entrypoints/cli.tsx --compile --outfile ./doge",
     "dev": "bun run ./src/bootstrap-entry.ts",
     "start": "bun run ./src/bootstrap-entry.ts",
     "version": "bun run ./src/bootstrap-entry.ts --version",
