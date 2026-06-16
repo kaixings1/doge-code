@@ -13,7 +13,7 @@ type ActivityManagerOptions = {
 export class ActivityManager {
   private activeOperations = new Set<string>()
 
-  private lastUserActivityTime: number = 0 // Start with 0 to indicate no activity yet
+  private lastUserActivityTime: number = 0 // 从开始 0 表示尚无活动
   private lastCLIRecordedTime: number
 
   private isCLIActive: boolean = false
@@ -58,7 +58,7 @@ export class ActivityManager {
    * Called when user interacts with the CLI (typing, commands, etc.)
    */
   recordUserActivity(): void {
-    // Don't record user time if CLI is active (CLI takes precedence)
+    // 不记录用户时间如果 CLI 活跃（CLI 优先）
     if (!this.isCLIActive && this.lastUserActivityTime !== 0) {
       const now = this.getNow()
       const timeSinceLastActivity = (now - this.lastUserActivityTime) / 1000
@@ -68,7 +68,7 @@ export class ActivityManager {
         if (activeTimeCounter) {
           const timeoutSeconds = this.USER_ACTIVITY_TIMEOUT_MS / 1000
 
-          // Only record time if within the timeout window
+          // 仅在超时窗口内记录时间
           if (timeSinceLastActivity < timeoutSeconds) {
             activeTimeCounter.add(timeSinceLastActivity, { type: 'user' })
           }
@@ -76,7 +76,7 @@ export class ActivityManager {
       }
     }
 
-    // Update the last user activity timestamp
+    // 更新最后用户活动时间戳
     this.lastUserActivityTime = this.getNow()
   }
 
@@ -84,9 +84,9 @@ export class ActivityManager {
    * Starts tracking CLI activity (tool execution, AI response, etc.)
    */
   startCLIActivity(operationId: string): void {
-    // If operation already exists, it likely means the previous one didn't clean up
-    // properly (e.g., component crashed/unmounted without calling end). Force cleanup
-    // to avoid overestimating time - better to underestimate than overestimate.
+    // 如果操作已存在，可能意味着之前的未正确清理
+    //（例如，组件崩溃/卸载未调用结束）。强制清理
+    //以避免高估时间 — 最好低估而非高估。
     if (this.activeOperations.has(operationId)) {
       this.endCLIActivity(operationId)
     }
@@ -107,8 +107,8 @@ export class ActivityManager {
     this.activeOperations.delete(operationId)
 
     if (this.activeOperations.size === 0) {
-      // Last operation ended - CLI becoming inactive
-      // Record the CLI time before switching to inactive
+      // 上次操作已结束 - CLI 变为非活跃
+      // 在切换到非活跃状态前记录 CLI 时间
       const now = this.getNow()
       const timeSinceLastRecord = (now - this.lastCLIRecordedTime) / 1000
 
@@ -160,5 +160,5 @@ export class ActivityManager {
   }
 }
 
-// Export singleton instance
+// 导出单例实例
 export const activityManager = ActivityManager.getInstance()

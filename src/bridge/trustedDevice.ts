@@ -36,14 +36,14 @@ function isGateEnabled(): boolean {
   return getFeatureValue_CACHED_MAY_BE_STALE(TRUSTED_DEVICE_GATE, false)
 }
 
-// Memoized — secureStorage.read() spawns a macOS `security` subprocess (~40ms).
-// bridgeApi.ts calls this from getHeaders() on every poll/heartbeat/ack.
-// Cache cleared after enrollment (below) and on logout (clearAuthRelatedCaches).
+// 已备忘 — secureStorage.read() 会生成 macOS `security` 子进程（~40ms）。
+// bridgeApi.ts 在每次轮询/心跳/确认时从 getHeaders() 调用此函数。
+// 缓存在注册后（下方）和登出时（clearAuthRelatedCaches）被清除。
 //
-// Only the storage read is memoized — the GrowthBook gate is checked live so
-// that a gate flip after GrowthBook refresh takes effect without a restart.
+// 仅存储读取被备忘 — GrowthBook 门控是实时检查的，因此
+// 在 GrowthBook 刷新后门控翻转会在无需重启的情况下生效。
 const readStoredToken = memoize((): string | undefined => {
-  // Env var takes precedence for testing/canary.
+  // 环境变量优先用于测试/金丝雀。
   const envToken = process.env.CLAUDE_TRUSTED_DEVICE_TOKEN
   if (envToken) {
     return envToken
