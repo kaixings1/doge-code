@@ -262,7 +262,7 @@ export async function checkRecordingAvailability(): Promise<RecordingAvailabilit
     return {
       available: false,
       reason:
-        'Voice mode requires microphone access, but no audio device is available in this environment.\n\nTo use voice mode, run Claude Code locally instead.',
+        '语音模式需要麦克风访问权限，但在此环境中没有可用的音频设备。\n\n要使用语音模式，请在本地运行 Claude Code。',
     }
   }
 
@@ -277,7 +277,7 @@ export async function checkRecordingAvailability(): Promise<RecordingAvailabilit
     return {
       available: false,
       reason:
-        'Voice recording requires the native audio module, which could not be loaded.',
+        '语音录制需要本机音频模块，但无法加载。',
     }
   }
 
