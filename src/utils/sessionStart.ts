@@ -94,14 +94,14 @@ export async function processSessionStartHooks(
         errorMessage.includes('ENOTFOUND')
       ) {
         userGuidance =
-          'This appears to be a network issue. Check your internet connection and try again.'
+          '这似乎是网络问题。请检查您的网络连接并重试。'
       } else if (
         errorMessage.includes('Permission denied') ||
         errorMessage.includes('EACCES') ||
         errorMessage.includes('EPERM')
       ) {
         userGuidance =
-          'This appears to be a permissions issue. Check file permissions on ~/.claude/plugins/'
+          '这似乎是权限问题。请检查 ~/.claude/plugins/ 的文件权限。'
       } else if (
         errorMessage.includes('Invalid') ||
         errorMessage.includes('parse') ||
@@ -109,10 +109,10 @@ export async function processSessionStartHooks(
         errorMessage.includes('schema')
       ) {
         userGuidance =
-          'This appears to be a configuration issue. Check your plugin settings in .claude/settings.json'
+          '这似乎是配置问题。请检查 .claude/settings.json 中的插件设置。'
       } else {
         userGuidance =
-          'Please fix the plugin configuration or remove problematic plugins from your settings.'
+          '请修复插件配置，或从设置中删除有问题的插件。'
       }
 
       logForDebugging(

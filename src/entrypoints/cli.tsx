@@ -1,4 +1,6 @@
 import { feature } from 'bun:bundle';
+import '../generated/macro.js';
+import '../generated/status-line-embedded.js';
 
 // Bugfix for corepack auto-pinning，它会将 yarnpkg 添加到用户的 package.json 中
 // eslint-disable-next-line custom-rules/no-top-level-side-effects
