@@ -71,24 +71,24 @@ export function createChildAbortController(
 ): AbortController {
   const child = createAbortController(maxListeners)
 
-  // Fast path: parent already aborted, no listener setup needed
+  // 快速路径：父级已中止，无需设置监听器
   if (parent.signal.aborted) {
     child.abort(parent.signal.reason)
     return child
   }
 
-  // WeakRef prevents the parent from keeping an abandoned child alive.
-  // If all strong references to child are dropped without aborting it,
-  // the child can still be GC'd — the parent only holds a dead WeakRef.
+  // WeakRef 防止父级保持已遗弃的子级。
+  // 如果所有指向子级的强引用都在未中止的情况下被移除，
+  // 子级仍可被 GC 回收 — 父级只持有一个死 WeakRef。
   const weakChild = new WeakRef(child)
   const weakParent = new WeakRef(parent)
   const handler = propagateAbort.bind(weakParent, weakChild)
 
   parent.signal.addEventListener('abort', handler, { once: true })
 
-  // Auto-cleanup: remove parent listener when child is aborted (from any source).
-  // Both parent and handler are weakly held — if either has been GC'd or the
-  // parent already aborted ({once: true}), the cleanup is a harmless no-op.
+  // 自动清理：当子级被中止时移除父级监听器（来自任何来源）。
+  // 父级和处理器都弱引用 — 如果其中之一已被 GC 回收或
+  // 父级已中止（{once: true}），则清理是无害的空操作。
   child.signal.addEventListener(
     'abort',
     removeAbortHandler.bind(weakParent, new WeakRef(handler)),
