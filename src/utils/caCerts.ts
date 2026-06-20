@@ -26,17 +26,18 @@ import { getFsImplementation } from './fsOperations.js'
  * so `proxy.ts`/`mtls.ts` don't transitively pull in the command registry.
  */
 export const getCACertificates = memoize((): string[] | undefined => {
-  const useSystemCA =
-    hasNodeOption('--use-system-ca') || hasNodeOption('--use-openssl-ca')
+  const certStoreMode = process.env.CLAUDE_CODE_CERT_STORE
+  const useSystemCA = (certStoreMode !== 'bundled') &&
+    (hasNodeOption('--use-system-ca') || hasNodeOption('--use-openssl-ca'))
 
   const extraCertsPath = process.env.NODE_EXTRA_CA_CERTS
 
   logForDebugging(
-    `CA certs: useSystemCA=${useSystemCA}, extraCertsPath=${extraCertsPath}`,
+    `CA certs: useSystemCA=${useSystemCA}, extraCertsPath=${extraCertsPath}, certStore=${certStoreMode}`,
   )
 
   // If neither is set, return undefined (use runtime defaults, no override)
-  if (!useSystemCA && !extraCertsPath) {
+  if (!useSystemCA && !extraCertsPath && certStoreMode !== 'bundled') {
     return undefined
   }
 
