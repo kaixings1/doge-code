@@ -4,18 +4,18 @@
 
 ## 项目概述
 
-**Doge Code** 是 Claude Code 的中文定制版，具有：
-- 完整中文本地化
-- 自定义 API 端点支持（OpenAI/Anthropic 兼容）
-- OpenAI ↔ Anthropic Messages 格式转接层
-- 自定义模型与模型列表管理
-- 配置隔离于 `.doge/` 目录
+**Doge Code** — Claude Code 的中文定制版（Fork），特点：
+- 完整中文本地化（提示词/UI/错误信息）
+- 自定义 API 端点支持（OpenAI ↔ Anthropic 格式转接）
+- 多 API 预设管理（`.doge/api.json`，按项目隔离）
+- OpenAI Chat Completions ↔ Anthropic Messages 转接层（`src/bridge/`）
+- bun 编译为独立 exe（`doge.exe`）
+- 伙伴系统、声音提醒、Token 监控等增强
 
 - **运行环境**: Bun 1.3.5+ / Node.js 24+
 - **包管理器**: Bun
-- **类型**: TypeScript + React + Ink
-- **包名**: `@doge-code/cli`
-- **二进制**: `doge`
+- **语言**: TypeScript + React (Ink) + JSX
+- **二进制入口**: `doge`
 
 ## 开发命令
 
@@ -23,158 +23,144 @@
 # 安装依赖
 bun install
 
-# 类型检查
-bun run tsc --noEmit
+# 类型检查（耗时较长，仅检查特定文件时用 tsc 带参数）
+bun run tsc --noEmit --skipLibCheck
 
-# 运行开发模式
+# 开发模式启动（直接运行源码）
 bun run dev
-bun run start
 
-# 链接本地包（全局使用）
+# 编译为独立可执行文件
+bun run build
+
+# 全局链接（注册 doge 命令）
 bun link
 
-# 查看帮助
-bun run dev -- --help
+# 启动（d.bat 内设环境变量）
+d.bat
 ```
 
-## 构建命令
+```powershell
+# Windows 上编译
+complie.bat
 
-```bash
-# 准备 npm 发布包
-bun run prepare-release-package
-
-# 编译（通过 bun 构建）
-bun build ./src/bootstrap-entry.ts --outdir ./dist
+# 安装依赖
+install.bat
 ```
-
-## 常用斜杠命令
-
-**会话管理**: `/clear /backup /resume /rename /share /history`
-
-**模型控制**: `/model /effort /bridge`
-
-**任务**: `/plan /task-create /ultrareview /agents`
-
-**系统**: `/doctor /metrics /monitor /stats /insights /logger`
-
-**工具**: `/mcp /mcp-tool-search /plugins /skills`
-
-**环境**: `/env /remote-env /oauth-refresh /settings`
-
-**调试**: `/ant-trace /sandbox-toggle /debug-tool-call`
 
 ## 核心架构
 
-### 入口点
-
-- **主入口**: `src/bootstrap-entry.ts` - 加载 `.doge/api.json` 配置，设置环境变量，导入 CLI
-- **开发入口**: `src/dev-entry.ts` - 开发模式入口
-- **CLI 渲染入口**: `src/entrypoints/cli.tsx` - CLI/TUI 渲染入口
-- **核心逻辑**: `src/core.ts` - 应用核心处理
-- **Ink UI 主渲染**: `src/main.tsx`
-
-### 目录结构
+### 启动流程
 
 ```
-src/
-├── bootstrap-entry.ts          # 启动入口，加载 API 配置
-├── dev-entry.ts                # 开发入口
-├── entrypoints/cli.tsx         # CLI 渲染入口
-├── commands.ts                 # 命令注册中心（lodash memoize 缓存）
-├── core.ts                     # 核心应用逻辑
-├── main.tsx                    # Ink UI 主渲染
-├── QueryEngine.ts              # 核心查询处理
-├── Tool.ts                     # 工具生命周期
-├── tools.ts                    # 工具定义导出
-├── bridge/                     # API 格式转换层
-│   ├── bridgeMain.ts           # 桥接核心逻辑
-│   ├── bridgeApi.ts            # 桥接适配器
-│   ├── bridgeMessaging.ts      # 桥接消息处理（WebSocket/SSE）
-│   └── replBridgeTransport.ts  # 桥接传输层
-├── coordinator/                # 任务协调和会话管理
-├── tasks/                      # 任务编排
-├── jobs/                       # 后台任务执行
-├── state/                      # 应用状态持久化
-├── tools/                      # 工具定义
-├── skills/                     # 技能加载和管理
-│   ├── bundledSkills.ts        # 内置技能
-│   └── loadSkillsDir.ts        # 从磁盘加载技能
-├── plugins/                    # 插件系统
-├── context.ts                  # 跨模块共享状态
-├── services/                   # 服务层（API、分析、认证等）
-├── cli/                        # CLI 组件（传输、打印等）
-├── ink/                        # Ink UI 组件
-├── screens/                    # 屏幕组件
-└── types/                      # 类型定义
+bootstrap-entry.ts  →  加载 .doge/api.json 预设  →  设置环境变量
+    ↓
+entrypoints/cli.tsx  →  解析 CLI 参数  →  启动 Ink TUI
+    ↓
+main.tsx  →  init()  →  QueryEngine 主循环
 ```
-
-### 命令系统架构
-
-**命令注册流程**：
-1. `src/commands.ts` 集中导入所有命令，使用 `memoize` 缓存
-2. 每个命令文件结构：
-   - `src/commands/<name>/index.ts` - 导出命令元数据
-   - `src/commands/<name>/<impl>.tsx` 或 `.ts` - 实现（React UI 或纯文本）
-3. 命令类型：
-   - `local-jsx`: React Ink 组件（渲染 UI）
-   - `local`: 纯文本输出
-   - `prompt`: 技能/工作流（展开为模型提示）
-
-**命令加载**：
-- `getCommands(cwd)` - 懒加载所有命令（技能、插件、工作流）
-- `meetsAvailabilityRequirement(cmd)` - 根据认证/提供商要求过滤命令
-- `isCommandEnabled(cmd)` - 根据功能开关判断命令是否启用
-- `INTERNAL_ONLY_COMMANDS` - 仅限内部使用的命令列表
-- `REMOTE_SAFE_COMMANDS` - 远程模式可用命令集合
-- `BRIDGE_SAFE_COMMANDS` - 桥接模式可用命令集合
-
-### Bridge 层（API 翻译）
-
-`src/bridge/` 实现 OpenAI Chat Completions ↔ Anthropic Messages 格式转换：
-
-- **桥接模式**: 内部仍使用 Anthropic Messages 结构，转发到 OpenAI 兼容端点
-- **配置**: `.doge/api.json` 中设置 `provider` 和 `baseURL`
-
-**环境变量**：
-- `ANTHROPIC_BASE_URL` - API 端点地址
-- `DOGE_API_KEY` - API 密钥（非官方变量）
-- `ANTHROPIC_MODEL` - 默认模型名称
-- `CLAUDE_CODE_COMPATIBLE_API_PROVIDER` - 提供商类型："openai"/"anthropic"
 
 **关键文件**：
-- `bridgeMessaging.ts` - WebSocket/SSE 消息处理，UUID 去重，控制请求响应
-- `bridgeMain.ts` - 转接核心逻辑
-- `bridgeApi.ts` - API 适配器实现
-- 特性开关: `feature('BRIDGE_MODE')` - Bun 编译时特性
+- `src/bootstrap-entry.ts` — 入口：读取 API 配置（`ANTHROPIC_BASE_URL`、`DOGE_API_KEY`、`ANTHROPIC_MODEL`、`CLAUDE_CODE_COMPATIBLE_API_PROVIDER`），然后导入 CLI
+- `src/entrypoints/cli.tsx` — CLI 参数解析 + TUI 渲染入口
+- `src/main.tsx` — 应用主循环，初始化 GrowthBook/遥测/策略限制等
+- `src/core.ts` — GrowthBook 特性标记（A/B 测试引擎），非核心逻辑
+- `src/context.ts` — 全局上下文（Git 状态/系统上下文/用户上下文），`getSystemContext()` / `getUserContext()`
 
-### 状态管理架构
+### 命令系统 (`src/commands/` + `src/commands.ts`)
 
-- **全局上下文**: `src/context.ts` - 跨模块共享状态
-- **协调器**: `src/coordinator/` - 任务编排和会话生命周期
-- **状态存储**: `src/state/` - 应用状态持久化
-- **启动状态**: `src/bootstrap/state.ts` - 启动状态管理
+- **注册中心**: `src/commands.ts` — 所有命令通过 lodash `memoize` 懒加载，返回 `getCommands(cwd)` 数组
+- **命令结构**: 每个命令目录包含 `index.ts`（元数据导出）+ 实现文件
+- **命令类型**:
+  - `local-jsx`: React Ink 组件（渲染 UI，如 `/help`）
+  - `local`: 纯文本输出
+  - `prompt`: 技能/工作流（展开为模型提示）
+- **条件加载**: `feature('BRIDGE_MODE')`、`process.env.USER_TYPE === 'ant'` 等编译时/运行时门控
 
-### 工具系统
+**常用斜杠命令**：
 
-- **工具定义**: `src/tools/` - 工具注册和调用
-- **工具管理器**: `src/Tool.ts` - 工具生命周期
-- **工具列表**: `src/tools.ts` - 导出所有可用工具
+| 分类 | 命令 |
+|------|------|
+| 会话 | `/clear /backup /resume /rename /rewind /compact` |
+| 模型 | `/model /effort /login /bridge` |
+| 任务 | `/plan /task-create /ultrareview /agents /buddy` |
+| 工具 | `/mcp /mcp-tool-search /plugins /skills` |
+| 系统 | `/doctor /metrics /monitor /stats /cost /logger` |
+| 调试 | `/ant-trace /sandbox-toggle /debug-tool-call` |
 
-### 技能系统
+### 工具系统 (`src/tools/` + `src/tools.ts`)
 
-- **技能加载**: `src/skills/loadSkillsDir.ts` - 从磁盘加载技能
-- **内置技能**: `src/skills/bundledSkills.ts` - 内置技能定义
-- **插件技能**: `src/plugins/builtinPlugins.ts` - 内置插件技能
-- **插件加载**: `src/utils/plugins/loadPluginCommands.ts` - 插件命令加载
+- **工具注册**: `src/tools.ts` 集中导入所有工具，通过 `getTools()` 返回 `Tool[]`
+- **工具生命周期**: `src/Tool.ts` — 定义 `Tool` 接口和 `toolMatchesName()` 匹配逻辑
+- **核心工具**: `BashTool`、`FileEditTool`、`FileReadTool`、`FileWriteTool`、`GlobTool`、`GrepTool`
+- **子代理工具**: `AgentTool`、`TaskCreateTool`、`TaskGetTool`、`TaskListTool`、`TaskStopTool`
+- **Web 工具**: `WebFetchTool`、`WebSearchTool`、`WebBrowserTool`
+- **条件工具**: 通过 `feature()` 门控有条件注册（`PROACTIVE`、`KAIROS`、`BRIDGE_MODE` 等）
+- **工具执行上下文**: `ToolUseContext` 对象携带会话状态、权限、文件系统引用等
+
+### Bridge 层 (`src/bridge/`)
+
+OpenAI Chat Completions ↔ Anthropic Messages 格式转换层：
+
+- `bridgeMain.ts` — 核心逻辑：会话创建/轮询/心跳/重连
+- `bridgeApi.ts` — API 客户端适配器
+- `bridgeMessaging.ts` — WebSocket/SSE 消息处理，UUID 去重
+- `bridgeUI.ts` — 桥接状态 UI
+- `types.ts` — Bridge 类型定义
+
+**环境变量**：
+- `ANTHROPIC_BASE_URL` / `DOGE_API_KEY` / `ANTHROPIC_MODEL` / `CLAUDE_CODE_COMPATIBLE_API_PROVIDER`
+- `CLAUDE_CONFIG_DIR` — 全局配置目录
+- `CLAUDE_CODE_VERIFY_PLAN` — 计划验证模式
+
+### 查询引擎 (`src/query.ts` + `src/QueryEngine.ts`)
+
+- `query()` — 主循环函数，处理消息 → 工具调用 → 结果 → 继续的循环
+- `QueryEngine.ts` — 子代理查询执行引擎，处理 SDK 消息格式和权限管理
+- `src/query/config.ts` — 不可变 QueryConfig（会话 ID + 运行时门控）
+- `src/query/transitions.ts` — 状态转换逻辑
+- `src/query/tokenBudget.ts` — Token 预算管理
+- `src/query/stopHooks.ts` — 停止钩子
+
+### 协调器与任务系统
+
+- `src/coordinator/coordinatorMode.ts` — 协调模式（子代理编排）
+- `src/coordinator/workerAgent.ts` — Worker Agent 实现
+- `src/tasks/` — 各类任务实现：
+  - `LocalAgentTask/` — 本地 Agent
+  - `LocalMainSessionTask.ts` — 主会话任务
+  - `DreamTask/` — 梦境（后台思考）任务
+  - `RemoteAgentTask/` — 远程 Agent
+
+### 状态管理
+
+- `src/state/AppState.ts` — 应用状态定义
+- `src/state/store.ts` — 状态存储
+- `src/bootstrap/state.ts` — 启动时全局状态（会话 ID、项目根目录、成本统计等）
+
+### 插件系统 (`src/utils/plugins/`)
+
+- `pluginLoader.ts` — 插件加载核心
+- `loadPluginCommands.ts` — 插件命令加载
+- `marketplaceManager.ts` — 市场管理
+- `plugins/` 目录存放社区插件
+
+### 技能系统 (`src/skills/`)
+
+- `bundledSkills.ts` — 内置技能定义
+- `loadSkillsDir.ts` — 从磁盘加载技能
+- `mcpSkills.ts` / `mcpSkillBuilders.ts` — MCP 技能构建
+
+### API 服务 (`src/services/api/`)
+
+- `openaiCompat.ts` — OpenAI 兼容适配层
+- `claude.ts` — Anthropic API 调用
+- `client.ts` — HTTP 客户端
+- `errors.ts` / `errorUtils.ts` — 错误处理
+- `withRetry.ts` — 重试逻辑
 
 ## 配置体系
 
-### 配置目录
-
-- **项目配置**: `.doge/api.json` - 当前激活的预设存储在此
-- **全局配置**: `~/.doge/.claude.json` - 继承官方配置结构
-
-### API 预设 (`.doge/api.json`)
+### API 预设配置 (`.doge/api.json`)
 
 ```json
 {
@@ -191,10 +177,76 @@ src/
 }
 ```
 
-## 说明
+- 项目配置: `.doge/api.json`
+- 全局配置: `~/.doge/.claude.json`
+- 自定义路径: 环境变量 `DOGE_API_JSON`
 
-- 本项目是 Claude Code 的 fork：Doge Code，非官方仓库
-- 全面中文本地化，中文提示词更高效
+## 特性标记系统
+
+使用 Bun 编译时特性标记 (`feature()`)，在 `bun:bundle` 中实现死代码消除：
+
+- `BRIDGE_MODE` — 桥接模式
+- `PROACTIVE` / `KAIROS` — 主动/高级功能
+- `AGENT_TRIGGERS` — 定时任务
+- `VOICE_MODE` — 语音模式
+- `ULTRAPLAN` — 高级计划
+- `WORKFLOW_SCRIPTS` — 工作流脚本
+- `CONTEXT_COLLAPSE` — 上下文折叠
+- `FORK_SUBAGENT` — Fork 子代理
+
+## 目录架构
+
+```
+src/
+├── bootstrap-entry.ts       # 启动入口（加载 API 配置 → 设置环境变量 → 导入 CLI）
+├── main.tsx                 # 主逻辑入口（初始化所有服务）
+├── context.ts               # 全局上下文（Git 状态/系统/用户上下文）
+├── commands.ts              # 命令注册中心（memoize 懒加载）
+├── query.ts                 # 主查询循环
+├── QueryEngine.ts           # 子代理查询引擎
+├── Tool.ts                  # 工具接口 + 生命周期
+├── tools.ts                 # 工具定义导出
+├── commands/                # 斜杠命令（每个命令一个目录）
+│   ├── login/ / model/ / clear/ / plan/ / agents/ / mcp/ / skills/ ...
+│   └── init.ts / commit.ts / version.ts ...
+├── tools/                   # 工具实现（每个工具一个目录）
+│   ├── BashTool/ FileEditTool/ FileReadTool/ FileWriteTool/
+│   ├── GlobTool/ GrepTool/ WebFetchTool/ WebSearchTool/
+│   ├── AgentTool/ TaskCreateTool/ ...
+│   └── MCPTool/ McpToolSearchTool/ ...
+├── bridge/                  # OpenAI ↔ Anthropic 格式转接层
+│   ├── bridgeMain.ts        # 核心逻辑
+│   ├── bridgeApi.ts         # API 适配器
+│   ├── bridgeMessaging.ts   # 消息处理
+│   └── replBridgeTransport.ts
+├── coordinator/             # 任务协调（coordinatorMode.ts / workerAgent.ts）
+├── tasks/                   # 任务实现（LocalAgentTask / DreamTask / RemoteAgentTask）
+├── state/                   # 应用状态持久化（AppState.ts / store.ts）
+├── bootstrap/state.ts       # 启动时全局状态
+├── cli/                     # CLI 组件（传输/打印/处理）
+├── ink/                     # Ink TUI 框架（自维护版本）
+├── screens/                 # 屏幕组件（Doctor / REPL / ResumeConversation）
+├── services/                # 服务层
+│   ├── api/                 # API 客户端（openaiCompat.ts / claude.ts）
+│   ├── mcp/                 # MCP 服务
+│   └── analytics/           # 遥测/分析
+├── utils/                   # 工具函数（400+ 文件）
+│   ├── git/                 # Git 工具
+│   ├── plugins/             # 插件系统（loader / marketplace）
+│   ├── settings/            # 设置管理
+│   ├── mcp/                 # MCP 工具
+│   └── memory/              # 记忆工具
+├── types/                   # 类型定义
+├── constants/               # 常量（prompts / errors / keys / xml ...）
+├── hooks/                   # Ink React hooks
+└── plugins/                 # 内置插件目录
+```
+
+## 重要说明
+
+- 本项目是 Claude Code 的 Fork（Doge Code），非官方仓库
+- 全面中文本地化；中文提示词更高效
 - 支持自定义 Anthropic/OpenAI 兼容端点
-- 配置隔离于 `.doge/` 目录
-- 详见 README.md
+- 配置隔离于 `.doge/` 目录，不与官方 `.claude/` 混用
+- `bun:build` 的 `feature()` 标记实现死代码消除——条件导入会被编译时移除
+- `src/` 下大量使用 `.js` 扩展名（ESM 模块规范），实际代码为 TypeScript
