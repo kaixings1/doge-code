@@ -98,6 +98,7 @@ const getSendMessageTool = () =>
     .SendMessageTool as typeof import('./tools/SendMessageTool/SendMessageTool.js').SendMessageTool
 /* eslint-enable @typescript-eslint/no-require-imports */
 import { AskUserQuestionTool } from './tools/AskUserQuestionTool/AskUserQuestionTool.js'
+import { MultiFileEditTool } from './tools/MultiFileEditTool/MultiFileEditTool.js'
 import { LSPTool } from './tools/LSPTool/LSPTool.js'
 import { ListMcpResourcesTool } from './tools/ListMcpResourcesTool/ListMcpResourcesTool.js'
 import { ReadMcpResourceTool } from './tools/ReadMcpResourceTool/ReadMcpResourceTool.js'
@@ -303,6 +304,7 @@ export function getAllBaseTools(): Tools {
     MonitorTool,
     BackupTool,
     McpToolSearchTool,
+    MultiFileEditTool,
   ]
 }
 
