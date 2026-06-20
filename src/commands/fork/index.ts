@@ -5,8 +5,8 @@ const fork = {
   type: 'local',
   name: 'fork',
   description: 'Fork subagent (stub)',
-  isEnabled: () => false,
-  isHidden: true,
+  isEnabled: () => true,
+  
   supportsNonInteractive: false,
   load: () => Promise.resolve({ call: async (_args: string, _context: any) => undefined as any }),
 } satisfies Command
