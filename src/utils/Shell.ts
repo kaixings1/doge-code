@@ -145,7 +145,19 @@ export async function findSuitableShell(): Promise<string> {
   const [zshPath, bashPath] = await Promise.all([which('zsh'), which('bash')])
 
   // Populate shell paths from which results and fallback locations
-  const shellPaths = ['/bin', '/usr/bin', '/usr/local/bin', '/opt/homebrew/bin']
+  const shellPaths = [
+    '/bin',
+    '/usr/bin',
+    '/usr/local/bin',
+    '/opt/homebrew/bin',
+    // Windows 下 Git Bash / MSYS2 的常见安装路径
+    'C:/Program Files/Git/bin',
+    'C:/Program Files (x86)/Git/bin',
+    'C:/msys64/usr/bin',
+    'C:/tools/msys64/usr/bin',
+    'C:/Program Files/Git/usr/bin',
+    'C:/Program Files (x86)/Git/usr/bin',
+  ]
 
   // Order shells based on user preference
   const shellOrder = preferBash ? ['bash', 'zsh'] : ['zsh', 'bash']

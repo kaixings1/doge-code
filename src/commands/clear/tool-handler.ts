@@ -152,7 +152,7 @@ async function handleClearTool(parameters: any): Promise<any> {
  * 处理 bash 工具 — 真正执行系统命令
  */
 async function handleBashTool(parameters: any): Promise<any> {
-  const { command, description, timeout = 30000 } = parameters
+  const { command, description, timeout = 30000, run_in_background = false } = parameters
 
   if (!command) {
     throw new Error('bash 工具需要 command 参数')
@@ -164,7 +164,7 @@ async function handleBashTool(parameters: any): Promise<any> {
       command,
       abortController.signal,
       'bash' as const,
-      { timeout },
+      { timeout, shouldAutoBackground: run_in_background },
     )
 
     const execResult = await shellCommand.result
