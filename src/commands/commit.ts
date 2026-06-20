@@ -43,12 +43,18 @@ function getPromptContent(): string {
    - 确保消息准确反映更改及其目的（即 "add" 表示全新的功能，"update" 表示对现有功能的增强，"fix" 表示错误修复等）
    - 起草简洁（1-2 句话）的提交消息，重点关注"为什么"而不是"是什么"
 
-2. 提交前运行编译/类型检查：
-   - 检测项目类型并运行相应的检查命令：
-     * TypeScript 项目优先使用 \`bun run tsc --noEmit --skipLibCheck 2>&1\`
-     * 其他项目使用 \`npx tsc --noEmit 2>&1\` 或 \`npm run build\`
-   - 如果检查失败，先修复所有错误，然后再继续提交。
-   - 避免提交破坏性代码。
+2. 提交前运行编译/语法检查（**必须执行，不可跳过**）：
+   - 检测项目类型并运行对应的检查命令：
+     * **C/C++ 项目**（CMakeLists.txt/Makefile）：\`cmake --build build 2>&1\` 或 \`make 2>&1\` 或 \`g++ -fsyntax-only *.cpp 2>&1\`
+     * **Rust 项目**（Cargo.toml）：\`cargo check 2>&1\`
+     * **Go 项目**（go.mod）：\`go vet ./... 2>&1\`
+     * **Python 项目**：\`python -m py_compile <修改的文件>\`
+     * **TypeScript 项目**（tsconfig.json）：\`bun run tsc --noEmit --skipLibCheck 2>&1\`
+     * **Java/Kotlin**（pom.xml/build.gradle）：\`mvn compile -q 2>&1\` 或 \`./gradlew compileJava 2>&1\`
+     * **Node 项目**（package.json）：\`bun run build 2>&1\` 或 \`npm run build 2>&1\`
+     * **其他语言**：运行对应的编译命令
+   - 必须确认检查通过（exit code 0）后才继续。
+   - 如果检查失败：修复所有错误，重新运行直到通过。
 
 3. 暂存相关文件并使用 HEREDOC 语法创建提交：
 \`\`\`
