@@ -35,28 +35,48 @@ function getPromptContent(): string {
 
 ## 你的任务
 
-基于上述更改，创建单个 git 提交：
+基于上述更改，创建单个 git 提交。必须按顺序执行以下**标准操作流程（修改 → 检查 → 编译 → 运行 → 提交）**：
+
+### 第 1 步：确认修改已完成
+- 确保所有需要的代码修改已经写入磁盘
+- 如有需要，补充修改不完整的地方
+
+### 第 2 步：语法检查
+- 运行项目对应的语法/静态检查工具：
+  * **C/C++**：\`cppcheck --enable=warning,performance . 2>&1\` 或 \`clang-tidy *.cpp -- 2>&1\`
+  * **Rust**：\`cargo check 2>&1\`
+  * **Go**：\`go vet ./... 2>&1\`
+  * **Python**：\`python -m py_compile \$(git diff --name-only -- '*.py') 2>&1\`
+  * **TypeScript**：\`bun run tsc --noEmit --skipLibCheck 2>&1\`
+  * **Java**：\`mvn checkstyle:check -q 2>&1\` 或 \`./gradlew check 2>&1\`
+  * **其他**：运行对应的 lint 工具
+- 失败则修复，直到通过
+
+### 第 3 步：编译/构建
+- 运行项目对应的编译命令：
+  * **C/C++**：\`cmake --build build 2>&1\` 或 \`make 2>&1\` 或 \`g++ -Wall -o /dev/null -fsyntax-only *.cpp 2>&1\`
+  * **Rust**：\`cargo build 2>&1\`
+  * **Go**：\`go build ./... 2>&1\`
+  * **TypeScript/Node**：\`bun run build 2>&1\` 或 \`npm run build 2>&1\`
+  * **Java**：\`mvn compile -q 2>&1\` 或 \`./gradlew compileJava 2>&1\`
+  * **其他**：运行对应的编译命令
+- 失败则修复，直到通过
+
+### 第 4 步：运行测试
+- 运行项目对应的测试命令：\`bun run test 2>&1\`、\`npm test 2>&1\`、\`cargo test 2>&1\`、\`go test ./...\`、\`pytest 2>&1\` 等
+- 如果测试耗时超过 30 秒或需要特殊环境，可跳过此步
+- 如果项目没有测试框架，跳过此步
+
+### 第 5 步：提交代码
+- 上述 2-4 步全部通过后，执行 git 提交流程：
 
 1. 分析所有已暂存的更改并起草提交消息：
    - 查看最近上面的提交，以遵循此仓库的提交消息风格
    - 总结更改的性质（新功能、增强、错误修复、重构、测试、文档等）
-   - 确保消息准确反映更改及其目的（即 "add" 表示全新的功能，"update" 表示对现有功能的增强，"fix" 表示错误修复等）
+   - 确保消息准确反映更改及其目的
    - 起草简洁（1-2 句话）的提交消息，重点关注"为什么"而不是"是什么"
 
-2. 提交前运行编译/语法检查（**必须执行，不可跳过**）：
-   - 检测项目类型并运行对应的检查命令：
-     * **C/C++ 项目**（CMakeLists.txt/Makefile）：\`cmake --build build 2>&1\` 或 \`make 2>&1\` 或 \`g++ -fsyntax-only *.cpp 2>&1\`
-     * **Rust 项目**（Cargo.toml）：\`cargo check 2>&1\`
-     * **Go 项目**（go.mod）：\`go vet ./... 2>&1\`
-     * **Python 项目**：\`python -m py_compile <修改的文件>\`
-     * **TypeScript 项目**（tsconfig.json）：\`bun run tsc --noEmit --skipLibCheck 2>&1\`
-     * **Java/Kotlin**（pom.xml/build.gradle）：\`mvn compile -q 2>&1\` 或 \`./gradlew compileJava 2>&1\`
-     * **Node 项目**（package.json）：\`bun run build 2>&1\` 或 \`npm run build 2>&1\`
-     * **其他语言**：运行对应的编译命令
-   - 必须确认检查通过（exit code 0）后才继续。
-   - 如果检查失败：修复所有错误，重新运行直到通过。
-
-3. 暂存相关文件并使用 HEREDOC 语法创建提交：
+2. 暂存相关文件并使用 HEREDOC 语法创建提交：
 \`\`\`
 git commit -m "$(cat <<'EOF'
 提交消息在这里。${commitAttribution ? `\n\n${commitAttribution}` : ''}
