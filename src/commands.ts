@@ -14,6 +14,7 @@ import color from './commands/color/index.js'
 import commit from './commands/commit.js'
 import copy from './commands/copy/index.js'
 import desktop from './commands/desktop/index.js'
+import diagnose from './commands/diagnose.js'
 import commitPushPr from './commands/commit-push-pr.js'
 import compact from './commands/compact/index.js'
 import config from './commands/config/index.js'
@@ -77,6 +78,7 @@ import fileWatcher from './commands/file-watcher/index.js'
 import schedule from './commands/schedule/index.js'
 import cron from './commands/cron/index.js'
 import websocket from './commands/websocket/index.js'
+import workspace from './commands/workspace.js'
 import eventStream from './commands/event-stream/index.js'
 import queue from './commands/queue/index.js'
 import cache from './commands/cache/index.js'
@@ -408,6 +410,7 @@ const COMMANDS = memoize((): Command[] => [
   focus,
   schedule,
   cron,
+  workspace,
   websocket,
   eventStream,
   queue,
