@@ -261,7 +261,7 @@ import { jsonStringify, jsonParse } from './slowOperations.js'
 import { isEnvTruthy } from './envUtils.js'
 import { errorMessage, getErrnoCode } from './errors.js'
 
-const TOOL_HOOK_EXECUTION_TIMEOUT_MS = 10 * 60 * 1000
+const TOOL_HOOK_EXECUTION_TIMEOUT_MS = 10 * 1000
 
 /**
  * SessionEnd 钩子在关闭/清除期间运行，需要比 TOOL_HOOK_EXECUTION_TIMEOUT_MS 更严格的限制。
