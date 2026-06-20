@@ -1,0 +1,117 @@
+name: Auto Fix CI Failures
+
+# ⚠️ SECURITY NOTE
+#
+# This workflow checks out the PR branch and runs build/test commands
+# (npm, bun, etc.) against it with elevated permissions (contents:write,
+# id-token:write). This means code from the PR branch executes in a
+# trusted context with access to secrets and the ability to push to the
+# repository.
+#
+# Only use this workflow in repositories where everyone with write access
+# is fully trusted with these permissions. Do not use this in repositories
+# that accept contributions from untrusted or semi-trusted collaborators.
+#
+# The pull_requests[0] check below limits this to same-repo PRs (fork PRs
+# are excluded), but anyone who can push a branch to this repository can
+# control what code runs here.
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+  issues: write
+  id-token: write # Required for OIDC token exchange
+
+jobs:
+  auto-fix:
+    if: |
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.pull_requests[0] &&
+      !startsWith(github.event.workflow_run.head_branch, 'claude-auto-fix-ci-')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup git identity
+        run: |
+          git config --global user.email "claude[bot]@users.noreply.github.com"
+          git config --global user.name "claude[bot]"
+
+      - name: Create fix branch
+        id: branch
+        env:
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          SAFE_BRANCH=$(printf '%s' "$HEAD_BRANCH" | tr -cd 'a-zA-Z0-9/_.-')
+          BRANCH_NAME="claude-auto-fix-ci-${SAFE_BRANCH}-${RUN_ID}"
+          git checkout -b "$BRANCH_NAME"
+          echo "branch_name=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Get CI failure details
+        id: failure_details
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const run = await github.rest.actions.getWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: ${{ github.event.workflow_run.id }}
+            });
+
+            const jobs = await github.rest.actions.listJobsForWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: ${{ github.event.workflow_run.id }}
+            });
+
+            const failedJobs = jobs.data.jobs.filter(job => job.conclusion === 'failure');
+
+            let errorLogs = [];
+            for (const job of failedJobs) {
+              const logs = await github.rest.actions.downloadJobLogsForWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                job_id: job.id
+              });
+              errorLogs.push({
+                jobName: job.name,
+                logs: logs.data
+              });
+            }
+
+            return {
+              runUrl: run.data.html_url,
+              failedJobs: failedJobs.map(j => j.name),
+              errorLogs: errorLogs
+            };
+
+      - name: Fix CI failures with Claude
+        id: claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            /fix-ci 
+            Failed CI Run: ${{ fromJSON(steps.failure_details.outputs.result).runUrl }}
+            Failed Jobs: ${{ join(fromJSON(steps.failure_details.outputs.result).failedJobs, ', ') }}
+            PR Number: ${{ github.event.workflow_run.pull_requests[0].number }}
+            Branch Name: ${{ steps.branch.outputs.branch_name }}
+            Base Branch: ${{ github.event.workflow_run.head_branch }}
+            Repository: ${{ github.repository }}
+
+            Error logs:
+            ${{ toJSON(fromJSON(steps.failure_details.outputs.result).errorLogs) }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: "--allowedTools 'Edit,MultiEdit,Write,Read,Glob,Grep,LS,Bash(git:*),Bash(bun:*),Bash(npm:*),Bash(npx:*),Bash(gh:*)'"

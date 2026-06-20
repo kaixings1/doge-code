@@ -1,0 +1,35 @@
+# Orchestrates all CI workflows - runs on PRs, pushes to main, and manual dispatch
+# Individual test workflows are called as reusable workflows
+name: CI All
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # Lets the test workflows mint the GitHub OIDC token they exchange for a
+  # Claude API access token (workload identity federation). See docs/setup.md.
+  id-token: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  test-base-action:
+    uses: ./.github/workflows/test-base-action.yml
+
+  test-custom-executables:
+    uses: ./.github/workflows/test-custom-executables.yml
+
+  test-mcp-servers:
+    uses: ./.github/workflows/test-mcp-servers.yml
+
+  test-settings:
+    uses: ./.github/workflows/test-settings.yml
+
+  test-structured-output:
+    uses: ./.github/workflows/test-structured-output.yml
