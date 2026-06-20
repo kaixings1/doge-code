@@ -99,13 +99,19 @@ Git 安全协议：
   - 不要提交可能包含机密的文件（.env、credentials.json 等）。如果用户特别要求提交这些文件，请警告他们
   - 草拟简洁（1-2 句）的提交消息，侧重于“为什么”而非“是什么”
   - 确保它准确反映更改及其目的
-3. 编译/语法检查（防止提交破坏性代码）：
-   - 检测项目类型并运行相应的编译/类型检查命令：
-     * TypeScript 项目：\`bun run tsc --noEmit --skipLibCheck 2>&1\` 或 \`npx tsc --noEmit 2>&1\`
-     * JavaScript/Node 项目：\`bun run build\` 或 \`npm run build\`（如果 package.json 中有 build 脚本）
-     * 其他语言项目：运行对应的编译/语法检查命令
-   - 如果检查失败：修复错误，然后重新运行检查，直到通过。
-   - 仅对大型项目（500+ 文件）：如果 tsc 耗时过长（超过 30 秒），可以跳过全量检查，改为仅检查修改过的文件。
+3. 编译/语法检查（**必须执行，不可跳过**，防止提交破坏性代码）：
+   - 检测项目类型并运行对应的编译/语法检查命令：
+     * **C/C++ 项目**：检测到 CMakeLists.txt 则运行 \`cmake --build build 2>&1\`；检测到 Makefile 则运行 \`make 2>&1\`；否则运行 \`g++ -std=c++17 -fsyntax-only *.cpp 2>&1\` 或 \`clang++ -fsyntax-only *.cpp 2>&1\`
+     * **Rust 项目**（Cargo.toml）：\`cargo check 2>&1\`
+     * **Go 项目**（go.mod）：\`go vet ./... 2>&1\`
+     * **Python 项目**（setup.py/pyproject.toml）：\`python -m py_compile 修改的文件\` 或 \`pip install -e . 2>&1\`
+     * **TypeScript 项目**（tsconfig.json）：\`bun run tsc --noEmit --skipLibCheck 2>&1\` 或 \`npx tsc --noEmit 2>&1\`
+     * **JavaScript/Node 项目**（package.json）：\`bun run build 2>&1\` 或 \`npm run build 2>&1\`（有 build 脚本时执行）
+     * **Java/Kotlin 项目**（pom.xml/build.gradle）：\`mvn compile -q 2>&1\` 或 \`./gradlew compileJava 2>&1\`
+     * **其他语言项目**：运行对应的编译/语法检查命令
+   - 务必确认检查命令成功（exit code 0）后才继续提交。
+   - 如果检查失败：先修复所有错误，然后重新运行检查，直到通过为止。
+   - 仅对大型项目（500+ 文件）：如果 tsc 等全量检查耗时过长（超过 30 秒），可以跳过全量检查，改为仅检查修改过的文件。
 
 4. 并行运行以下命令：
    - 将相关的未跟踪文件添加到暂存区。
