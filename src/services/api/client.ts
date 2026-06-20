@@ -130,6 +130,15 @@ export async function getAnthropicClient({
       ...(isDebugToStdErr() && { logger: createStderrLogger() }),
     }
 
+    // Bedrock 服务层级: 通过 ANTHROPIC_BEDROCK_SERVICE_TIER 环境变量选择
+    // 可选值: default | flex | priority，作为 X-Amzn-Bedrock-Service-Tier 标头发送
+    if (process.env.ANTHROPIC_BEDROCK_SERVICE_TIER) {
+      bedrockArgs.defaultHeaders = {
+        ...bedrockArgs.defaultHeaders,
+        'X-Amzn-Bedrock-Service-Tier': process.env.ANTHROPIC_BEDROCK_SERVICE_TIER,
+      }
+    }
+
     // 添加 API 密钥认证（如果可用）
     if (process.env.AWS_BEARER_TOKEN_BEDROCK) {
       bedrockArgs.skipAuth = true
