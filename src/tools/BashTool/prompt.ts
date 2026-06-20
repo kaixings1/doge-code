@@ -75,7 +75,13 @@ ${skillsSection}重要提示：绝不要跳过钩子（--no-verify、--no-gpg-si
   // 对于外部用户，包含完整的嵌入式指令
   const { commit: commitAttribution, pr: prAttribution } = getAttributionTexts()
 
-  return `# 使用 git 提交更改
+  return `## 推荐使用技能
+
+提交代码的最佳方式是使用 \`/commit\` 技能，它会自动执行标准操作流程。
+
+如果无法使用技能，请严格遵循以下手动流程：
+
+# 使用 git 提交更改
 
 仅在用户要求时创建提交。如果不确定，请先询问。当用户要求您创建新的 git 提交时，请严格遵循以下标准操作流程：
 
