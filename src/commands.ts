@@ -271,22 +271,17 @@ export const INTERNAL_ONLY_COMMANDS = [
   backfillSessions,
   breakCache,
   bughunter,
-  commitPushPr,
-  ctx_viz,
   goodClaude,
   issue,
   initVerifiers,
   ...(forceSnip ? [forceSnip] : []),
   mockLimits,
   bridgeKick,
-  version,
   ...(ultraplan ? [ultraplan] : []),
   ...(subscribePr ? [subscribePr] : []),
   resetLimits,
   resetLimitsNonInteractive,
   onboarding,
-  share,
-  summary,
   teleport,
   antTrace,
   perfIssue,
@@ -308,6 +303,7 @@ const COMMANDS = memoize((): Command[] => [
   branch,
   btw,
   commit,
+  commitPushPr,
   chrome,
   clear,
   color,
@@ -317,6 +313,7 @@ const COMMANDS = memoize((): Command[] => [
   desktop,
   context,
   contextNonInteractive,
+  ctx_viz,
   cost,
   diff,
   doctor,
@@ -359,6 +356,7 @@ const COMMANDS = memoize((): Command[] => [
   stats,
   status,
   statusline,
+  summary,
   stickers,
   tag,
   theme,
@@ -376,6 +374,7 @@ const COMMANDS = memoize((): Command[] => [
   rateLimitOptions,
   usage,
   usageReport,
+  version,
   vim,
   ...(webCmd ? [webCmd] : []),
   ...(forkCmd ? [forkCmd] : []),
@@ -409,6 +408,7 @@ const COMMANDS = memoize((): Command[] => [
   http,
   database,
   shell,
+  share,
   fileWatcher,
   focus,
   schedule,
@@ -705,7 +705,8 @@ export const REMOTE_SAFE_COMMANDS: Set<Command> = new Set([
   feedback, // 发送反馈
   plan, // 计划模式切换
   keybindings, // 快捷键管理
-  statusline, // 状态行切换
+  statusline,
+  summary, // 状态行切换
   stickers, // 贴纸
   mobile, // 移动端二维码
 ])
