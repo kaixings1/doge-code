@@ -43,7 +43,14 @@ function getPromptContent(): string {
    - 确保消息准确反映更改及其目的（即 "add" 表示全新的功能，"update" 表示对现有功能的增强，"fix" 表示错误修复等）
    - 起草简洁（1-2 句话）的提交消息，重点关注"为什么"而不是"是什么"
 
-2. 暂存相关文件并使用 HEREDOC 语法创建提交：
+2. 提交前运行编译/类型检查：
+   - 检测项目类型并运行相应的检查命令：
+     * TypeScript 项目优先使用 \`bun run tsc --noEmit --skipLibCheck 2>&1\`
+     * 其他项目使用 \`npx tsc --noEmit 2>&1\` 或 \`npm run build\`
+   - 如果检查失败，先修复所有错误，然后再继续提交。
+   - 避免提交破坏性代码。
+
+3. 暂存相关文件并使用 HEREDOC 语法创建提交：
 \`\`\`
 git commit -m "$(cat <<'EOF'
 提交消息在这里。${commitAttribution ? `\n\n${commitAttribution}` : ''}
