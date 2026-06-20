@@ -348,9 +348,10 @@ export function LogoV2() {
 
   const welcomeMessage_0 = layoutCacheRef.current?.welcomeMessage_0 ?? formatWelcomeMessage(username);
   const modelLine = layoutCacheRef.current?.modelLine ?? (!process.env.IS_DEMO && config.oauthAccount?.organizationName ? `${modelDisplayName} · ${billingType} · ${config.oauthAccount.organizationName}` : `${modelDisplayName} · ${billingType}${process.env.ANTHROPIC_BASE_URL ? ` · ${process.env.ANTHROPIC_BASE_URL}` : ''}`);
+  const hideCwd = process.env.CLAUDE_CODE_HIDE_CWD ? true : false
   const cwdAvailableWidth_0 = agentName ? LEFT_PANEL_MAX_WIDTH - 1 - stringWidth(agentName) - 3 : LEFT_PANEL_MAX_WIDTH;
   const truncatedCwd_0 = truncatePath(cwd, Math.max(cwdAvailableWidth_0, 10));
-  const cwdLine = layoutCacheRef.current?.cwdLine ?? (agentName ? `@${agentName} · ${truncatedCwd_0}` : truncatedCwd_0);
+  const cwdLine = layoutCacheRef.current?.cwdLine ?? (hideCwd ? '' : (agentName ? `@${agentName} · ${truncatedCwd_0}` : truncatedCwd_0));
   const optimalLeftWidth = calculateOptimalLeftWidth(welcomeMessage_0, cwdLine, modelLine);
   const {
     leftWidth,

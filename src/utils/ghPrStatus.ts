@@ -95,9 +95,23 @@ export async function fetchPrStatus(): Promise<PrStatus | null> {
       return null
     }
 
+    // prUrlTemplate 配置: 允许自定义 PR 链接 URL 模板
+    // 模板中使用 {number} 占位符替换为 PR 编号
+    // 例如: "https://my-codereview.company.com/pr/{number}"
+    let prUrl = data.url
+    try {
+      const { getGlobalConfig } = await import('./config.js')
+      const config = getGlobalConfig()
+      if (config.prUrlTemplate) {
+        prUrl = config.prUrlTemplate.replace('{number}', String(data.number))
+      }
+    } catch {
+      // 配置加载失败时使用原始 URL
+    }
+
     return {
       number: data.number,
-      url: data.url,
+      url: prUrl,
       reviewState: deriveReviewState(data.isDraft, data.reviewDecision),
     }
   } catch {

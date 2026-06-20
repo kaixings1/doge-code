@@ -69,6 +69,7 @@ import graphQL from './commands/graphql/index.js'
 import http from './commands/http/index.js'
 import database from './commands/database/index.js'
 import shell from './commands/shell/index.js'
+import focus from './commands/focus/index.js'
 import fileWatcher from './commands/file-watcher/index.js'
 import schedule from './commands/schedule/index.js'
 import cron from './commands/cron/index.js'
@@ -401,6 +402,7 @@ const COMMANDS = memoize((): Command[] => [
   database,
   shell,
   fileWatcher,
+  focus,
   schedule,
   cron,
   websocket,

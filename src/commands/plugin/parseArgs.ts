@@ -4,10 +4,11 @@ export type ParsedCommand =
   | { type: 'help' }
   | { type: 'install'; marketplace?: string; plugin?: string }
   | { type: 'manage' }
-  | { type: 'uninstall'; plugin?: string }
+  | { type: 'uninstall'; plugin?: string; prune?: boolean }
   | { type: 'enable'; plugin?: string }
   | { type: 'disable'; plugin?: string }
   | { type: 'validate'; path?: string }
+  | { type: 'prune' }
   | {
       type: 'marketplace'
       action?: 'add' | 'remove' | 'update' | 'list'
@@ -61,8 +62,13 @@ export function parsePluginArgs(args?: string): ParsedCommand {
     case 'manage':
       return { type: 'manage' }
 
-    case 'uninstall':
-      return { type: 'uninstall', plugin: parts[1] }
+    case 'uninstall': {
+      const pruneFlag = parts.includes('--prune')
+      return { type: 'uninstall', plugin: parts[1], prune: pruneFlag }
+    }
+
+    case 'prune':
+      return { type: 'prune' }
 
     case 'enable':
       return { type: 'enable', plugin: parts[1] }

@@ -117,7 +117,8 @@ export function CondensedLogo() {
   } else {
     t7 = $[14];
   }
-  const t8 = agentName ? `@${agentName} · ${truncatedCwd}` : truncatedCwd;
+  const hideCwd = process.env.CLAUDE_CODE_HIDE_CWD ? true : false
+  const t8 = hideCwd ? '' : (agentName ? `@${agentName} · ${truncatedCwd}` : truncatedCwd);
   let t9;
   if ($[15] !== t8) {
     t9 = <Text dimColor={true}>{t8}</Text>;

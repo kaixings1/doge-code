@@ -383,6 +383,12 @@ export function getCacheControl({
  * 白名单被缓存在 STATE 中以保持会话稳定性 — 防止 GrowthBook 磁盘缓存在请求中途更新时混合使用不同的 TTL。
  */
 function should1hCacheTTL(querySource?: QuerySource): boolean {
+  // 通用环境变量 ENABLE_PROMPT_CACHING_1H — 适用于所有提供商
+  // 用户自行管理计费/缓存成本
+  if (isEnvTruthy(process.env.ENABLE_PROMPT_CACHING_1H)) {
+    return true
+  }
+
   // 第三方 Bedrock 用户在通过环境变量选择加入时获得 1h TTL — 他们自行管理计费
   // 无需 GrowthBook 门控，因为第三方用户未配置 GrowthBook
   if (

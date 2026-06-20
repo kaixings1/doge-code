@@ -259,6 +259,9 @@ export type GlobalConfig = {
   shiftEnterKeyBindingInstalled?: boolean // 是否已安装 Shift+Enter 快捷键绑定（适用于 iTerm2 或 VSCode）
   optionAsMetaKeyInstalled?: boolean // 是否已安装 Option 作为 Meta 键（适用于 Terminal.app）
 
+  // 全屏自动滚动
+  autoScrollEnabled?: boolean // 全屏模式下是否自动滚动到最新内容（默认 true）
+
   // IDE 配置
   autoConnectIde?: boolean // 启动时是否自动连接 IDE（当仅有一个有效的 IDE 时）
   autoInstallIdeExtension?: boolean // 从 IDE 内运行时是否自动安装 IDE 扩展
@@ -621,6 +624,7 @@ function createDefaultGlobalConfig(): GlobalConfig {
     todoFeatureEnabled: true,
     showExpandedTodos: false,
     messageIdleNotifThresholdMs: 60000,
+    autoScrollEnabled: true,
     autoConnectIde: false,
     autoInstallIdeExtension: true,
     fileCheckpointingEnabled: true,

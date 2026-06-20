@@ -12,7 +12,7 @@ import { useKeybinding, useKeybindings } from '../../keybindings/useKeybinding.j
 import { useAppState, useSetAppState } from '../../state/AppState.js';
 import type { PluginError } from '../../types/plugin.js';
 import { errorMessage } from '../../utils/errors.js';
-import { clearAllCaches } from '../../utils/plugins/cacheUtils.js';
+import { clearAllCaches, cleanupOrphanedPluginVersionsInBackground } from '../../utils/plugins/cacheUtils.js';
 import { loadMarketplacesWithGracefulDegradation } from '../../utils/plugins/marketplaceHelpers.js';
 import { loadKnownMarketplacesConfig, removeMarketplaceSource } from '../../utils/plugins/marketplaceManager.js';
 import { getPluginEditableScopes } from '../../utils/plugins/pluginStartupCheck.js';
@@ -712,6 +712,10 @@ function getInitialViewState(parsedCommand: ParsedCommand): ViewState {
       return {
         type: 'marketplace-menu'
       };
+    case 'prune':
+      return {
+        type: 'prune'
+      };
     case 'menu':
     default:
       // Default to discover view showing all plugins
@@ -916,12 +920,26 @@ export function PluginSettings(t0) {
   if (viewState.type === "help") {
     let t16;
     if ($[28] === Symbol.for("react.memo_cache_sentinel")) {
-      t16 = <Box flexDirection="column"><Text bold={true}>插件命令用法:</Text><Text> </Text><Text dimColor={true}>安装:</Text><Text> /plugin install - 浏览并安装插件</Text><Text>{" "}{"/plugin install <marketplace> - 从特定市场安装"}</Text><Text>{" /plugin install <plugin> - 安装特定插件"}</Text><Text>{" "}{"/plugin install <plugin>@<market> - 从市场安装插件"}</Text><Text> </Text><Text dimColor={true}>管理:</Text><Text> /plugin manage - 管理已安装插件</Text><Text>{" /plugin enable <plugin> - 启用插件"}</Text><Text>{" /plugin disable <plugin> - 禁用插件"}</Text><Text>{" /plugin uninstall <plugin> - 卸载插件"}</Text><Text> </Text><Text dimColor={true}>市场:</Text><Text> /plugin marketplace - 市场管理菜单</Text><Text> /plugin marketplace add - 添加市场</Text><Text>{" "}{"/plugin marketplace add <path/url> - 直接添加市场"}</Text><Text> /plugin marketplace update - 更新市场</Text><Text>{" "}{"/plugin marketplace update <name> - 更新特定市场"}</Text><Text> /plugin marketplace remove - 移除市场</Text><Text>{" "}{"/plugin marketplace remove <name> - 移除特定市场"}</Text><Text> /plugin marketplace list - 列出所有市场</Text><Text> </Text><Text dimColor={true}>验证:</Text><Text>{" "}{"/plugin validate <path> - 验证清单文件或目录"}</Text><Text> </Text><Text dimColor={true}>其他:</Text><Text> /plugin - 主插件菜单</Text><Text> /plugin help - 显示此帮助</Text><Text> /plugins - /plugin 的别名</Text></Box>;
+      t16 = <Box flexDirection="column"><Text bold={true}>插件命令用法:</Text><Text> </Text><Text dimColor={true}>安装:</Text><Text> /plugin install - 浏览并安装插件</Text><Text>{" "}{"/plugin install <marketplace> - 从特定市场安装"}</Text><Text>{" /plugin install <plugin> - 安装特定插件"}</Text><Text>{" "}{"/plugin install <plugin>@<market> - 从市场安装插件"}</Text><Text> </Text><Text dimColor={true}>管理:</Text><Text> /plugin manage - 管理已安装插件</Text><Text>{" /plugin enable <plugin> - 启用插件"}</Text><Text>{" /plugin disable <plugin> - 禁用插件"}</Text><Text>{" /plugin uninstall <plugin> - 卸载插件"}</Text><Text> </Text><Text dimColor={true}>市场:</Text><Text> /plugin marketplace - 市场管理菜单</Text><Text> /plugin marketplace add - 添加市场</Text><Text>{" "}{"/plugin marketplace add <path/url> - 直接添加市场"}</Text><Text> /plugin marketplace update - 更新市场</Text><Text>{" "}{"/plugin marketplace update <name> - 更新特定市场"}</Text><Text> /plugin marketplace remove - 移除市场</Text><Text>{" "}{"/plugin marketplace remove <name> - 移除特定市场"}</Text><Text> /plugin marketplace list - 列出所有市场</Text><Text> </Text><Text dimColor={true}>验证:</Text><Text>{" "}{"/plugin validate <path> - 验证清单文件或目录"}</Text><Text> </Text><Text dimColor={true}>其他:</Text><Text> /plugin - 主插件菜单</Text><Text> /plugin help - 显示此帮助</Text><Text> /plugins - /plugin 的别名</Text><Text>{" "}{"/plugin prune - 清理孤立插件缓存"}</Text></Box>;
       $[28] = t16;
     } else {
       t16 = $[28];
     }
     return t16;
+  }
+  if (viewState.type === "prune") {
+    // 异步执行清理，完成后通知用户
+    const doPrune = async () => {
+      try {
+        await cleanupOrphanedPluginVersionsInBackground()
+        // 强制清理所有孤立版本（不等待 7 天）
+        onComplete('孤立插件缓存已清理完成')
+      } catch (err) {
+        onComplete('清理失败: ' + errorMessage(err))
+      }
+    }
+    doPrune()
+    return null
   }
   if (viewState.type === "validate") {
     let t16;

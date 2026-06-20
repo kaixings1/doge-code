@@ -221,6 +221,26 @@ export const FileWriteTool = buildTool({
     const fullFilePath = expandPath(file_path)
     const dir = dirname(fullFilePath)
 
+    // DOGE: Perforce 模式 — 当 CLAUDE_CODE_PERFORCE_MODE 启用时，
+    // 对只读文件给出 p4 edit 提示，而非静默覆盖
+    if (process.env.CLAUDE_CODE_PERFORCE_MODE) {
+      try {
+        const { accessSync, constants } = await import('fs')
+        accessSync(fullFilePath, constants.W_OK)
+      } catch {
+        // 文件不存在或无写入权限
+        const { statSync } = await import('fs')
+        let fileExists = false
+        try { statSync(fullFilePath); fileExists = true } catch {}
+        if (fileExists) {
+          throw new Error(
+            `文件是只读的。请先运行 \`p4 edit "${fullFilePath}"\` 以获取写权限。` +
+            `\n(由 CLAUDE_CODE_PERFORCE_MODE 环境变量触发)`
+          )
+        }
+      }
+    }
+
     // 从该文件路径发现技能（触发即忘，非阻塞）
     const cwd = getCwd()
     const newSkillDirs = await discoverSkillDirsForPaths([fullFilePath], cwd)
