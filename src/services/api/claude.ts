@@ -1018,12 +1018,29 @@ async function* queryModel(
   }
   const cachedConfig = (queryModel as any)._cachedConfig
 
-  // 应用到环境变量（如果尚未设置或是默认的 dummy 值）
-  if (cachedConfig?.baseURL && (!process.env.ANTHROPIC_BASE_URL || process.env.ANTHROPIC_BASE_URL === 'http://0.0.0.0:1')) {
-    process.env.ANTHROPIC_BASE_URL = cachedConfig.baseURL
-    if (cachedConfig.apiKey) process.env.DOGE_API_KEY = cachedConfig.apiKey
-    process.env.ANTHROPIC_MODEL = cachedConfig.model || ''
-    process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = cachedConfig.provider || 'openai'
+  // 将缓存配置同步到环境变量，确保 API 客户端每次请求都使用最新配置。
+  // 覆盖时机：配置不为空，且与当前环境变量存在实质差异。
+  //
+  // 覆盖条件分两层：
+  // 1. 环境变量为 dummy 值（http://0.0.0.0:1）：首次设置，无条件写入
+  // 2. 环境变量已有值但和文件配置不同：用户通过 /login 切换了预设或新建了配置，
+  //    此时必须覆盖才能让本次请求使用新 baseURL / API key / 模型
+  if (cachedConfig?.baseURL) {
+    const curBaseURL = process.env.ANTHROPIC_BASE_URL || ''
+    const curApiKey = process.env.DOGE_API_KEY || ''
+    const curModel = process.env.ANTHROPIC_MODEL || ''
+    const curProvider = process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER || ''
+    const isDummy = curBaseURL === 'http://0.0.0.0:1'
+    const baseChanged = cachedConfig.baseURL !== curBaseURL
+    const keyChanged = cachedConfig.apiKey && cachedConfig.apiKey !== curApiKey
+    const modelChanged = cachedConfig.model && cachedConfig.model !== curModel
+    const providerChanged = cachedConfig.provider && cachedConfig.provider !== curProvider
+    if (isDummy || baseChanged || keyChanged || modelChanged || providerChanged) {
+      process.env.ANTHROPIC_BASE_URL = cachedConfig.baseURL
+      if (cachedConfig.apiKey) process.env.DOGE_API_KEY = cachedConfig.apiKey
+      if (cachedConfig.model) process.env.ANTHROPIC_MODEL = cachedConfig.model
+      if (cachedConfig.provider) process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = cachedConfig.provider
+    }
   }
 
   // 首先检查低成本条件——off-switch 的 await 会阻塞在 GrowthBook 初始化（约 10ms）。

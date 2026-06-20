@@ -256,6 +256,14 @@ export function writeCustomApiStorage(
   } catch (e) {
     logForDebugging('[Storage] Failed to write: ' + e, { level: 'error' });
   }
+
+  // 同步环境变量，确保下一次 queryModel() 能立即读到新配置
+  process.env.ANTHROPIC_BASE_URL = next.baseURL || ''
+  process.env.DOGE_API_KEY = next.apiKey || ''
+  process.env.ANTHROPIC_MODEL = next.model || ''
+  process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = next.provider || 'openai'
+  // 通知 queryModel 刷新缓存
+  ;(process as any)._dogeConfigChanged = true
 }
 /**
  * 切换激活预设，并立即同步环境变量。
