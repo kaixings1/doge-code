@@ -193,9 +193,20 @@ export function SpinnerAnimationRow({
       : undefined;
 
   // === 思考文本 ===
+  // 渐进式思考提示: 根据经过时间展示不同的进度文本
   let thinkingText: string | null = null;
   if (thinkingStatus === 'thinking') {
-    thinkingText = `思考中${effortSuffix}`;
+    const thinkingElapsedMs = time - THINKING_DELAY_MS;
+    if (thinkingElapsedMs > 15000) {
+      // 超过 15 秒: "快思考完了"
+      thinkingText = `快思考完了${effortSuffix}`;
+    } else if (thinkingElapsedMs > 8000) {
+      // 8-15 秒: "还在思考"
+      thinkingText = `还在思考${effortSuffix}`;
+    } else {
+      // 0-8 秒: "思考中"
+      thinkingText = `思考中${effortSuffix}`;
+    }
   } else if (typeof thinkingStatus === 'number') {
     thinkingText = `思考了 ${Math.max(1, Math.round(thinkingStatus / 1000))}秒`;
   }

@@ -10,6 +10,7 @@ import instances from '../ink/instances.js';
 import { Box, Text } from '../ink.js';
 import type { Message } from '../types/message.js';
 import { openBrowser, openPath } from '../utils/browser.js';
+import { getGlobalConfig } from '../utils/config.js';
 import { isFullscreenEnvEnabled } from '../utils/fullscreen.js';
 import { plural } from '../utils/stringUtils.js';
 import { isNullRenderingAttachment } from './messages/nullRenderingAttachments.js';
@@ -290,6 +291,7 @@ export function FullscreenLayout(t0) {
     rows: terminalRows,
     columns
   } = useTerminalSize();
+  const autoScrollEnabled = getGlobalConfig().autoScrollEnabled ?? true;
   const [stickyPrompt, setStickyPrompt] = useState(null);
   let t4;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
@@ -358,7 +360,7 @@ export function FullscreenLayout(t0) {
     }
     let t11;
     if ($[11] !== overlay || $[12] !== scrollRef || $[13] !== t10 || $[14] !== t9) {
-      t11 = <ScrollBox ref={scrollRef} flexGrow={1} flexDirection="column" paddingTop={t9} stickyScroll={true}>{t10}{overlay}</ScrollBox>;
+      t11 = <ScrollBox ref={scrollRef} flexGrow={1} flexDirection="column" paddingTop={t9} stickyScroll={autoScrollEnabled}>{t10}{overlay}</ScrollBox>;
       $[11] = overlay;
       $[12] = scrollRef;
       $[13] = t10;
