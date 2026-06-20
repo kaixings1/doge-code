@@ -3,7 +3,8 @@ import { isBridgeEnabled } from '../../bridge/bridgeEnabled.js'
 import type { Command } from '../../commands.js'
 
 function isEnabled(): boolean {
-  if (!feature('BRIDGE_MODE')) {
+  // feature(BRIDGE_MODE) removed for Doge Code
+  if (false) {
     return false
   }
   return isBridgeEnabled()

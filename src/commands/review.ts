@@ -257,7 +257,7 @@ const LANGUAGE_CHECK_ICONS: Record<string, string> = {
   'PHP': '🐘', 'Swift': '🍎', 'SQL': '🗄️', 'Shell': '🐚',
 }
 
-function generateReviewReport(
+async function generateReviewReport(
   prDetails: Awaited<ReturnType<typeof getPrDetails>>,
   diff: string,
 ): string {
