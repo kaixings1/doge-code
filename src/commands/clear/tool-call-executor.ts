@@ -483,13 +483,20 @@ async function executeBashTool(parameters: any): Promise<any> {
       env: { LANG: 'en_US.UTF-8', LC_ALL: 'en_US.UTF-8' },
     });
 
-    // 超时处理
+    let timedOut = false;
+
+    // 超时处理：先清理 timer 再 kill 子进程，避免 onClose 中 clearTimeout 无效
     const timer = setTimeout(() => {
-      child.kill();
-      reject(new Error(`命令超时 (${timeout}ms)`));
+      timedOut = true;
+      child.kill('SIGTERM');
+      // 给子进程 3 秒善后，然后强制 SIGKILL
+      setTimeout(() => {
+        child.kill('SIGKILL');
+      }, 3000);
     }, timeout);
 
     child.onStdout((chunk) => {
+      if (timedOut) return; // 超时后不再处理输出
       fullOutput += chunk;
       // 发射进度事件给 UI
       progressEmitter.emitProgress(id || 'unknown', {
@@ -500,6 +507,7 @@ async function executeBashTool(parameters: any): Promise<any> {
     });
 
     child.onStderr((chunk) => {
+      if (timedOut) return;
       stderrOutput += chunk;
       // 也可以将 stderr 包含进进度显示
       fullOutput += chunk;
@@ -512,6 +520,10 @@ async function executeBashTool(parameters: any): Promise<any> {
 
     child.onClose((code) => {
       clearTimeout(timer);
+      if (timedOut) {
+        reject(new Error(`命令超时 (${timeout}ms)`));
+        return;
+      }
       const finalResult = {
         action: 'bash',
         command,

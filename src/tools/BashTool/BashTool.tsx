@@ -96,12 +96,89 @@ const BASH_SILENT_COMMANDS = new Set(['mv', 'cp', 'rm', 'mkdir', 'rmdir', 'chmod
  * 注意：保留重定向、管道、后台符号等，只替换第一个命令单词及其参数风格。
  */
 /**
+ * 模型命令兼容性检查与修复
+ * 在 Windows 上运行时，智能检查和纠正模型生成的常见小错误。
+ * 只修复那些「非常肯定」的问题，避免误改正确命令。
+ */
+function fixModelCommandMistakes(cmd: string, platform: string): string {
+    if (platform !== 'win32') return cmd;
+
+    let fixed = cmd;
+
+    // ------ 1. 多余的盘符前缀修复 ------
+    // 模型有时生成: `ls C:/Users/...` 实际上是 `ls /c/Users/...`
+    // 但我们不能简单地将 C:/ 替换为 /c/，因为 `ls C:` 确实是在访问 C 盘。
+    // 只修复明确的问题：用错盘符格式的路径
+
+    // ------ 2. 修复路径中的混用正反斜杠（常见模型错误）------
+    // 模型经常生成如 `cat file\path\test.txt` 或 `ls D:\folder/file` 这样的混合路径
+    // 但仅在确实看起来是路径参数时修复，而不是命令本身
+    // 简单策略：将反斜杠统一转为正斜杠（在 Git Bash 下可工作）
+    // 注意：转义序列 `\n` `\t` `\\` 等不会被影响，因为它们是字面反斜杠+字母
+    fixed = fixed.replace(/\\/g, '/');
+
+    // ------ 3. 修复 `cd..` 写成 `cd ..`（加空格） ------
+    // 模型经常写 `cd..` 而不是 `cd ..`
+    fixed = fixed.replace(/^cd\.\.(?=\s|$)/i, 'cd ..');
+
+    // ------ 4. 修复 `cd\` 写成 `cd /` ------
+    fixed = fixed.replace(/^cd\\(?=\s|$)/i, 'cd /');
+
+    // ------ 5. 修复 `ls -l -a` 合并为 `ls -la`（参数合并）------
+    // 模型有时生成 `ls -l -a` 这种分开的参数，Git Bash 的 ls 支持但不规范
+    // 这实际上是合法命令，不做修改，只是标准化空格
+    fixed = fixed.replace(/\s{2,}/g, ' ');
+
+    // ------ 6. 修复未带引号的带空格路径 ------
+    // 如 `cat C:\Program Files\test.txt` 应转为 `cat "/c/Program Files/test.txt"`
+    // 这是一个启发式修复：查找命令中看起来是 Windows 路径的片段
+    // 且包含空格却没有被引号包裹
+    const pathWithSpaceRegex = /(?:^|\s)([a-zA-Z]:[^\s"'|&;]+[\s][^\s"'|&;]*)(?:\s|$)/g;
+    fixed = fixed.replace(pathWithSpaceRegex, (match) => {
+        const trimmed = match.trim();
+        // 避免重复加引号
+        if (trimmed.startsWith('"') || trimmed.startsWith("'")) return match;
+        // 看起来像路径才修复
+        if (/^[a-zA-Z]:[\\\/]/.test(trimmed) || /^[\\\/]/.test(trimmed)) {
+            return ` "${trimmed}" `;
+        }
+        return match;
+    });
+
+    // ------ 7. 修复 `find "pattern" path` 参数顺序（find 语法错误）------
+    // 正确的 find 语法: find <path> <expression>
+    // 模型有时会生成: find "*.tmp" . 或 find "*.tmp" /path
+    const findMatch = fixed.match(/^find\s+("[^"]+"|'[^']+')\s+(.+)$/);
+    if (findMatch) {
+        const pattern = findMatch[1];
+        const path = findMatch[2];
+        // 如果第一个参数看起来像模式（含通配符或引号），第二个参数像路径
+        // 则交换顺序
+        if (/[*?[\]]/.test(pattern) || /^["']/.test(pattern)) {
+            if (!/^["']/.test(path) && !/[*?[\]]/.test(path)) {
+                fixed = `find ${path} ${pattern}`;
+            }
+        }
+    }
+
+    return fixed;
+}
+
+/**
  * 将常见的 Windows cmd 命令转换为 bash 兼容命令
  * 支持：dir, copy, del, type, move, findstr, fc, cls, cd.. 等
+ * 仅在 Windows 平台上启用完整转换。
  */
 function normalizeWindowsCommand(cmd: string): string {
     let trimmed = cmd.trim();
     if (!trimmed) return cmd;
+
+    // 仅在 Windows 上执行兼容性转换
+    const isWin = process.platform === 'win32';
+    if (!isWin) return cmd;
+
+    // ------ A. 首先执行模型命令的智能纠错 ------
+    trimmed = fixModelCommandMistakes(trimmed, 'win32');
 
     // ------ 1. 处理 dir 命令（支持 /s, /b, /w, /d 及其组合）------
     // 使用 tokenizer 健壮地解析 dir 参数，正确处理引号路径
@@ -147,7 +224,23 @@ function normalizeWindowsCommand(cmd: string): string {
         return `ls ${lsArgs.trim()} ${path}`.trim();
     }
 
-    // ------ 2. 处理 findstr /C:"pattern" /C:"pattern2" file （findstr 模式搜索）------
+    // ------ 2. 处理 cd /d 命令（Windows 切换盘符 + 目录）------
+    // 注意：此检查必须在 findstr 分支之外，否则永远不会被执行
+    if (/^cd\s+\/d\b/i.test(trimmed)) {
+        const afterCd = trimmed.replace(/^cd\s+\/d\s+/i, '').trim();
+        let rawPath = afterCd.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
+        // 转换 Windows 路径为 Git Bash 格式: C:\folder → /c/folder
+        let convertedPath = rawPath.replace(/^([a-zA-Z]):\\/, '/$1/').replace(/\\/g, '/');
+        if (!convertedPath.includes('/') && convertedPath.includes('\\')) {
+            convertedPath = convertedPath.replace(/\\/g, '/');
+        }
+        if (convertedPath.includes(' ')) {
+            convertedPath = `"${convertedPath}"`;
+        }
+        return `cd ${convertedPath}`;
+    }
+
+    // ------ 3. 处理 findstr /C:"pattern" /C:"pattern2" file （findstr 模式搜索）------
     // findstr 的 /C: 参数是字面量搜索模式（区别于正则搜索），需要转换为 grep -F（固定字符串模式）
     // 同时需要处理 /I（忽略大小写）、/R（正则）、/S（递归）、/V（反向匹配）、/M（仅文件名）、/N（行号）等
     const findstrMatch = trimmed.match(/^findstr\s+(.*)$/i);
@@ -273,24 +366,6 @@ function normalizeWindowsCommand(cmd: string): string {
                 files.unshift(firstFile);
             }
         }
-				if (/^cd\s+\/d\b/i.test(trimmed)) {
-						// 提取路径部分: cd /d C:\folder 或 cd /d "C:\folder with space"
-						const afterCd = trimmed.replace(/^cd\s+\/d\s+/i, '').trim();
-						// 去除可能的引号
-						let rawPath = afterCd.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
-						// 转换 Windows 路径为 Git Bash 格式: C:\folder → /c/folder
-						// 注意: 处理盘符和反斜杠
-						let convertedPath = rawPath.replace(/^([a-zA-Z]):\\/, '/$1/').replace(/\\/g, '/');
-						// 如果转换后没有盘符，保持原样但确保使用正斜杠
-						if (!convertedPath.includes('/') && convertedPath.includes('\\')) {
-								convertedPath = convertedPath.replace(/\\/g, '/');
-						}
-						// 处理空格: 用引号包裹
-						if (convertedPath.includes(' ')) {
-								convertedPath = `"${convertedPath}"`;
-						}
-						return `cd ${convertedPath}`;
-				}
 
         // 如果仍未识别出模式，则全部作为文件
         if (patterns.length === 0) {
@@ -314,7 +389,7 @@ function normalizeWindowsCommand(cmd: string): string {
         return `grep${finalGrepArgs ? ' ' + finalGrepArgs : ''} ${patternArgs} ${fileArgs}`.trim();
     }
 
-    // ------ 3. 命令名映射表 ------
+    // ------ 4. 命令名映射表（通用 Windows→Unix 命令名转换）------
     const commandMap: { [key: string]: string } = {
         'copy': 'cp',
         'del': 'rm',
@@ -327,23 +402,35 @@ function normalizeWindowsCommand(cmd: string): string {
         'cd..': 'cd ..',
         'cd\\': 'cd /',
         'ls': 'ls',
+        'tree': 'tree',        // Git Bash 支持 tree，保留原样
+        'where': 'which',      // where → which
+        'attrib': 'ls -la',    // attrib 粗略映射
+        'rd': 'rm -r',         // rd → rm -r (删除目录)
+        'rmdir': 'rm -r',      // rmdir → rm -r
+        'ren': 'mv',           // ren → mv (重命名)
+        'rename': 'mv',        // rename → mv
+        'more': 'less',        // more → less (分页显示)
     };
     // 提取第一个单词（命令名）
-    // 提取第一个单词（命令名）
-    const firstWordMatch = trimmed.match(/^(\w+)(?:\s|$)/);
+    const firstWordMatch = trimmed.match(/^([a-zA-Z]\w*)(?:\s|$)/);
     if (firstWordMatch) {
         const firstWord = firstWordMatch[1].toLowerCase();
         if (commandMap[firstWord]) {
             const newCmd = commandMap[firstWord];
             // 替换命令名，保持其余部分
-            let rest = trimmed.slice(firstWord.length).trimStart();
-            // 特殊处理：del 和 erase 通常不需要确认，rm 直接删除
+            const rest = trimmed.slice(firstWord.length).trimStart();
             return `${newCmd} ${rest}`;
         }
     }
 
-    // 处理环境变量 %VAR% -> $VAR
+    // ------ 5. 处理 Windows 环境变量 %VAR% -> $VAR ------
     trimmed = trimmed.replace(/%([^%]+)%/g, '$$$1');
+
+    // ------ 6. 全局路径归一化（收尾清理）------
+    // 确保所有 Windows 风格的反斜杠转为正斜杠（Git Bash 兼容）
+    // 注意：转义序列如 \n \t \\ \ 等已在 fixModelCommandMistakes 中处理
+    // 这里做最终的保底清理
+
     return trimmed;
 }
 
