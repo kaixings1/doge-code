@@ -12,7 +12,7 @@
  * import from MCP-specific code.
  */
 
-import memoize from 'lodash-es/memoize.js'
+import memoize from '../utils/vendor/lodash.js'
 import type { LoadedPlugin } from '../../types/plugin.js'
 import { logForDebugging } from '../debug.js'
 import { logError } from '../log.js'
