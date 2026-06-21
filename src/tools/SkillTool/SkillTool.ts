@@ -399,6 +399,12 @@ export const SkillTool: Tool<InputSchema, Output, Progress> = buildTool({
     // 检查命令是否存在
     const foundCommand = findCommand(normalizedCommandName, commands)
     if (!foundCommand) {
+      // DEBUG: 检查 commit
+      if (normalizedCommandName === 'commit' || normalizedCommandName === 'comm') {
+        const names = commands.map(c => c.name).join(', ');
+        logForDebugging(`[DEBUG-SKILL] commit 未找到, commands.length=${commands.length}`);
+        logForDebugging(`[DEBUG-SKILL] 命令列表: ${names}`);
+      }
       return {
         result: false,
         message: `未知技能：${normalizedCommandName}`,
