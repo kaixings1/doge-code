@@ -7,7 +7,7 @@ import { parseTokenBudget } from '../utils/tokenBudget.js';
 import { count } from '../utils/array.js';
 import { dirname, join } from 'path';
 import { tmpdir } from 'os';
-import figures from 'figures';
+import figures from '../utils/vendor/figures.js';
 // eslint-disable-next-line custom-rules/prefer-use-keybindings -- / n N Esc [ v 在对话记录模态上下文中是裸字母，与 ScrollKeybindingHandler 中的 g/G/j/k 同类
 import { useInput } from '../ink.js';
 import { useSearchInput } from '../hooks/useSearchInput.js';

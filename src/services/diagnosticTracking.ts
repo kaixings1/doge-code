@@ -1,4 +1,4 @@
-import figures from 'figures'
+import figures from '../utils/vendor/figures.js'
 import { logError } from '../utils/log.js'
 import { callIdeRpc } from '../services/mcp/client.js'
 import type { MCPServerConnection } from '../services/mcp/types.js'
