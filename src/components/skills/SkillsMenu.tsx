@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import capitalize from 'lodash-es/capitalize.js';
+import capitalize from '../utils/vendor/lodash.js';
 import * as React from 'react';
 import { useMemo } from 'react';
 import { type Command, type CommandBase, type CommandResultDisplay, getCommandName, type PromptCommand } from '../../commands.js';

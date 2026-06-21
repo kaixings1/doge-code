@@ -4,7 +4,7 @@ import { Box, Text, type TextProps } from '../../ink.js';
 import { feature } from 'bun:bundle';
 import * as React from 'react';
 import { useState } from 'react';
-import sample from 'lodash-es/sample.js';
+import sample from '../utils/vendor/lodash.js';
 import { BLACK_CIRCLE, REFERENCE_MARK, TEARDROP_ASTERISK } from '../../constants/figures.js';
 import figures from '../../utils/vendor/figures.js';
 import { basename } from 'path';
