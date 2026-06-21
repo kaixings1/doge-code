@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import stripAnsi from 'strip-ansi';
+import stripAnsi from '../utils/vendor/stripAnsi.js';
 import { Messages } from '../components/Messages.js';
 import { KeybindingProvider } from '../keybindings/KeybindingContext.js';
 import { loadKeybindingsSyncWithWarnings } from '../keybindings/loadUserBindings.js';

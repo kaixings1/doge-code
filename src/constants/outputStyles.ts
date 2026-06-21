@@ -1,4 +1,4 @@
-import figures from 'figures'
+import figures from '../utils/vendor/figures.js'
 import memoize from 'lodash-es/memoize.js'
 import { getOutputStyleDirStyles } from '../outputStyles/loadOutputStylesDir.js'
 import type { OutputStyle } from '../utils/config.js'

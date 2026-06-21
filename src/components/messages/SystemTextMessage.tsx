@@ -6,7 +6,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import sample from 'lodash-es/sample.js';
 import { BLACK_CIRCLE, REFERENCE_MARK, TEARDROP_ASTERISK } from '../../constants/figures.js';
-import figures from 'figures';
+import figures from '../../utils/vendor/figures.js';
 import { basename } from 'path';
 import { MessageResponse } from '../MessageResponse.js';
 import { FilePathLink } from '../FilePathLink.js';
