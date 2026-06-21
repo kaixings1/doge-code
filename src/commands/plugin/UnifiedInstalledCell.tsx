@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import figures from 'figures';
+import figures from '../../utils/vendor/figures.js';
 import * as React from 'react';
 import { Box, color, Text, useTheme } from '../../ink.js';
 import { plural } from '../../utils/stringUtils.js';

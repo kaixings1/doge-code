@@ -1,6 +1,6 @@
 import { c as _c } from "react/compiler-runtime";
 import chalk from 'chalk';
-import figures from 'figures';
+import figures from '../../utils/vendor/figures.js';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAppState, useSetAppState } from '../../../state/AppState.js';

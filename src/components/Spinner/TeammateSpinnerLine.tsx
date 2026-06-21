@@ -1,4 +1,4 @@
-import figures from 'figures';
+import figures from '../../utils/vendor/figures.js';
 import sample from 'lodash-es/sample.js';
 import * as React from 'react';
 import { useRef, useState } from 'react';

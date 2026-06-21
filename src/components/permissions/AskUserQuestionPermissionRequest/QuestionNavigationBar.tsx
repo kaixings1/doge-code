@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import figures from 'figures';
+import figures from '../../utils/vendor/figures.js';
 import React, { useMemo } from 'react';
 import { useTerminalSize } from '../../../hooks/useTerminalSize.js';
 import { stringWidth } from '../../../ink/stringWidth.js';

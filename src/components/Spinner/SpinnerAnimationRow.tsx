@@ -1,7 +1,7 @@
 import { getTokenPreview } from '../../utils/lastTokenText.js';
 
 import { c as _c } from "react/compiler-runtime";
-import figures from 'figures';
+import figures from '../../utils/vendor/figures.js';
 import * as React from 'react';
 import { useMemo, useRef } from 'react';
 import { stringWidth } from '../../ink/stringWidth.js';
