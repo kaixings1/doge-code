@@ -329,6 +329,18 @@ export async function processSlashCommand(inputString: string, precedingInputBlo
   } = parsed;
   const sanitizedCommandName = isMcp ? 'mcp' : !builtInCommandNames().has(commandName) ? 'custom' : commandName;
 
+  // DEBUG: 检查 commit 命令为什么找不到
+  if (commandName === 'commit' || commandName === 'comm') {
+    const cmds = context.options.commands;
+    const found = cmds?.find(c => c.name === commandName);
+    logForDebugging(`[DEBUG-SLASH] commandName=${commandName}, commands.length=${cmds?.length}, found=${!!found}`);
+    if (!found) {
+      const names = cmds?.map(c => c.name).join(', ') || 'EMPTY';
+      logForDebugging(`[DEBUG-SLASH] 可用命令: ${names}`);
+      logForDebugging(`[DEBUG-SLASH] builtInCommandNames.has: ${builtInCommandNames().has(commandName)}`);
+    }
+  }
+
   // Check if it's a real command before processing
   if (!hasCommand(commandName, context.options.commands)) {
     // Check if this looks like a command name vs a file path or other input
@@ -606,10 +618,15 @@ async function getMessagesForSlashCommand(commandName: string, args: string, set
                 submitNextInput: options?.submitNextInput
               });
             };
-            void command.load().then(mod => mod.call(onDone, {
-              ...context,
-              canUseTool
-            }, args)).then(jsx => {
+            void command.load().then(mod => {
+              if (typeof mod.call !== 'function') {
+                logForDebugging(`[DEBUG:MOD] command=${command.name}, type=${command.type}, mod keys=${Object.keys(mod)}, typeof mod.call=${typeof mod.call}, mod=${JSON.stringify(mod).slice(0,200)}`);
+              }
+              return mod.call(onDone, {
+                ...context,
+                canUseTool
+              }, args);
+            }).then(jsx => {
               if (jsx == null) return;
               if (context.options.isNonInteractiveSession) {
                 void resolve({
