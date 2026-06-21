@@ -40,7 +40,9 @@ function generateBranchName(feature: string): string {
   if (!safeFeature) {
     return `${username}/update-${Date.now()}`
   }
-  return `${username}/${safeFeature}`
+  // 限制总长度（git 分支名约 250 字节，此处粗略限制）
+  const branch = `${username}/${safeFeature}`
+  return branch.substring(0, 250)
 }
 
 /**
@@ -56,6 +58,10 @@ async function getCurrentBranch(): Promise<string | null> {
 }
 
 async function getDefaultBranch(): Promise<string> {
+  // 确保远程信息已获取
+  await execFileNoThrow(gitExe(), ['fetch', 'origin', '--prune'], {
+    preserveOutputOnError: false,
+  })
   const { stdout, code } = await execFileNoThrow(
     gitExe(),
     ['remote', 'show', 'origin', '--', 'HEAD'],
@@ -75,6 +81,26 @@ async function getDefaultBranch(): Promise<string> {
     if (checkCode === 0) return candidate
   }
   return 'main'
+}
+
+async function ensureGhCli(): Promise<void> {
+  const { code } = await execFileNoThrow('gh', ['--version'], {
+    preserveOutputOnError: false,
+  })
+  if (code !== 0) {
+    throw new Error('GitHub CLI (`gh`) 未安装或无法运行。请从 https://cli.github.com/ 安装并完成 gh auth login。')
+  }
+}
+
+async function ensureGitOrigin(): Promise<void> {
+  const { stdout, code } = await execFileNoThrow(
+    gitExe(),
+    ['remote', 'get-url', 'origin'],
+    { preserveOutputOnError: false }
+  )
+  if (code !== 0 || !stdout.trim()) {
+    throw new Error('未配置远程仓库 `origin`，请先运行 git remote add origin <url>')
+  }
 }
 
 async function getExistingPr(branch: string): Promise<{ exists: boolean; number?: number }> {
@@ -109,80 +135,35 @@ async function getRecentCommits(branch: string, defaultBranch: string): Promise<
   return stdout.trim().split('\n')
 }
 
-// ==================== 本地命令实现（增强版） ====================
+/**
+ * 统一的 PR 正文模板（本地与 AI 模式共用）
+ * @param params.commits 提交列表
+ * @param params.diffStats git diff --stat 输出
+ * @param params.attribution 归属文本
+ * @param params.includeChangelog 是否包含更新日志部分
+ */
+function buildPrBody({
+  commits,
+  diffStats,
+  attribution,
+  includeChangelog = true,
+}: {
+  commits: string[]
+  diffStats: string
+  attribution?: string
+  includeChangelog?: boolean
+}): string {
+  const changelogSection = includeChangelog
+    ? `
 
-function parseArgs(args: string): {
-  message: string
-  feature: string
-  noPush: boolean
-  noPr: boolean
-  force: boolean
-  draft: boolean
-  reviewer: string | null
-} {
-  const result = {
-    message: '',
-    feature: '',
-    noPush: false,
-    noPr: false,
-    force: false,
-    draft: false,
-    reviewer: null as string | null,
-  }
-
-  if (args.includes('--no-push')) result.noPush = true
-  if (args.includes('--no-pr')) result.noPr = true
-  if (args.includes('--force')) result.force = true
-  if (args.includes('--draft')) result.draft = true
-
-  const reviewerMatch = args.match(/--reviewer\s+(\S+)/)
-  if (reviewerMatch) result.reviewer = reviewerMatch[1]
-
-  const mFlagMatch = args.match(/-m\s+["']([^"']+)["']/)
-  if (mFlagMatch) {
-    result.message = mFlagMatch[1]
-    const remaining = args.replace(/-m\s+["'][^"']+["']/, '').trim()
-    result.feature = remaining
-      .split(/\s+/)
-      .filter(f => f && !f.startsWith('-'))
-      .join('-')
-  } else {
-    result.feature = args
-      .replace(/--no-push|--no-pr|--force|--draft|--reviewer\s+\S+/g, '')
-      .trim()
-      .replace(/\s+/g, '-')
-  }
-  return result
-}
-
-async function generateRichPrBody(
-  commits: string[],
-  defaultBranch: string,
-  targetBranch: string,
-  appStateGetter: () => any
-): Promise<string> {
-  const { commit: commitAttribution, pr: defaultPrAttribution } = getAttributionTexts()
-  const effectivePrAttribution = await getEnhancedPRAttribution(appStateGetter)
-
-  let changelogSection = `
 ## 更新日志
 <!-- CHANGELOG:START -->
 [如果此 PR 包含面向用户的更改，请在此处添加更新日志条目。否则，删除此部分。]
 <!-- CHANGELOG:END -->`
-  if (process.env.USER_TYPE === 'ant' && isUndercover()) {
-    changelogSection = ''
-  }
-
-  // 尝试获取 diff 摘要（简单版本，可扩展）
-  const { stdout: diffStats } = await execFileNoThrow(
-    gitExe(),
-    ['diff', '--stat', `${defaultBranch}...${targetBranch}`],
-    { preserveOutputOnError: false }
-  )
-  const diffStatsText = diffStats.trim() || '无变更统计'
+    : ''
 
   return `## 摘要
-${commits.map(c => `- ${c.split('\n')[0]}`).join('\n')}
+${commits.map((c) => `- ${c.split('\n')[0]}`).join('\n')}
 
 ## 测试计划
 - [ ] 运行现有测试
@@ -193,30 +174,137 @@ ${commits.join('\n\n')}
 
 ## 文件变更统计
 \`\`\`
-${diffStatsText}
+${diffStats || '无变更统计'}
 \`\`\`
 ${changelogSection}
-${effectivePrAttribution ? `\n${effectivePrAttribution}` : defaultPrAttribution ? `\n${defaultPrAttribution}` : ''}`
+${attribution ? `\n${attribution}` : ''}`
+}
+
+// ==================== 本地命令实现 ====================
+
+interface LocalArgs {
+  message: string
+  feature: string
+  title: string | null
+  baseBranch: string | null
+  noPush: boolean
+  noPr: boolean
+  force: boolean
+  draft: boolean
+  reviewer: string | null
+  labels: string[]
+  milestone: string | null
+}
+
+function parseArgs(args: string): LocalArgs {
+  const result: LocalArgs = {
+    message: '',
+    feature: '',
+    title: null,
+    baseBranch: null,
+    noPush: false,
+    noPr: false,
+    force: false,
+    draft: false,
+    reviewer: null,
+    labels: [],
+    milestone: null,
+  }
+
+  // 简单标志
+  if (args.includes('--no-push')) result.noPush = true
+  if (args.includes('--no-pr')) result.noPr = true
+  if (args.includes('--force')) result.force = true
+  if (args.includes('--draft')) result.draft = true
+
+  // 带值参数（支持双引号和单引号）
+  const extractValue = (flag: string): string | null => {
+    const regex = new RegExp(`${flag}\\s+(["'])(.+?)\\1`)
+    const match = args.match(regex)
+    if (match) return match[2]
+    // 尝试无引号
+    const regexSimple = new RegExp(`${flag}\\s+(\\S+)`)
+    const matchSimple = args.match(regexSimple)
+    return matchSimple ? matchSimple[1] : null
+  }
+
+  result.reviewer = extractValue('--reviewer')
+  result.title = extractValue('--title')
+  result.baseBranch = extractValue('--base')
+  result.milestone = extractValue('--milestone')
+
+  // --label 可以多次指定，用数组
+  const labelRegex = /--label\s+(["'])(.+?)\1/gi
+  let labelMatch
+  while ((labelMatch = labelRegex.exec(args)) !== null) {
+    result.labels.push(labelMatch[2])
+  }
+  // 无引号的 --label
+  const labelSimpleRegex = /--label\s+(\S+)/gi
+  while ((labelMatch = labelSimpleRegex.exec(args)) !== null) {
+    // 避免重复添加已捕获的引号形式（简单处理：如果已存在则跳过）
+    if (!result.labels.includes(labelMatch[1])) {
+      result.labels.push(labelMatch[1])
+    }
+  }
+
+  // 提取 -m 消息
+  const mFlagMatch = args.match(/-m\s+["']([^"']+)["']/)
+  if (mFlagMatch) {
+    result.message = mFlagMatch[1]
+    // 移除消息部分，剩余作为 feature 描述
+    const remaining = args.replace(/-m\s+["'][^"']+["']/, '').trim()
+    result.feature = remaining
+      .split(/\s+/)
+      .filter((f) => f && !f.startsWith('-'))
+      .join('-')
+  } else {
+    // 移除所有已知标志及值，剩余作为 feature
+    const cleanArgs = args
+      .replace(/--no-push|--no-pr|--force|--draft/g, '')
+      .replace(/--reviewer\s+(["'])(.+?)\1/g, '')
+      .replace(/--reviewer\s+\S+/g, '')
+      .replace(/--title\s+(["'])(.+?)\1/g, '')
+      .replace(/--title\s+\S+/g, '')
+      .replace(/--base\s+(["'])(.+?)\1/g, '')
+      .replace(/--base\s+\S+/g, '')
+      .replace(/--milestone\s+(["'])(.+?)\1/g, '')
+      .replace(/--milestone\s+\S+/g, '')
+      .replace(/--label\s+(["'])(.+?)\1/g, '')
+      .replace(/--label\s+\S+/g, '')
+      .trim()
+    result.feature = cleanArgs.replace(/\s+/g, '-')
+  }
+  return result
 }
 
 const localCall: LocalCommandCall = async (args, context) => {
   const cwd = getCwd()
-  const defaultBranch = await getDefaultBranch()
-  const currentBranch = await getCurrentBranch()
-  const { message, feature, noPush, noPr, force, draft, reviewer } = parseArgs(args)
-
-  // 检查是否在默认分支上
-  if (currentBranch === defaultBranch && !force) {
-    return {
-      type: 'text',
-      value: `当前在 ${defaultBranch} 分支上。\n建议先创建功能分支。使用 --force 强制在当前分支操作。`,
-    }
-  }
 
   try {
+    // 0. 环境前置检查
+    await ensureGitOrigin()
+    if (!args.includes('--no-pr')) {
+      await ensureGhCli()
+    }
+
+    const defaultBranch = await getDefaultBranch()
+    const currentBranch = await getCurrentBranch()
+    const parsed = parseArgs(args)
+
+    const baseBranch = parsed.baseBranch || defaultBranch
+
+    if (currentBranch === baseBranch && !parsed.force) {
+      return {
+        type: 'text',
+        value: `当前在 ${baseBranch} 分支上。\n建议先创建功能分支。使用 --force 强制在当前分支操作。`,
+      }
+    }
+
+    // 1. 分支管理
     let targetBranch = currentBranch
-    if (currentBranch === defaultBranch) {
-      targetBranch = generateBranchName(feature || 'feature')
+    if (currentBranch === baseBranch) {
+      targetBranch = generateBranchName(parsed.feature || 'feature')
       context.updateProgress?.(`创建分支: ${targetBranch}`)
       const { code: checkoutCode, stderr: checkoutStderr } = await execFileNoThrow(
         gitExe(),
@@ -228,7 +316,7 @@ const localCall: LocalCommandCall = async (args, context) => {
       }
     }
 
-    // 暂存并提交更改
+    // 2. 提交
     const { stdout: statusStdout } = await execFileNoThrow(
       gitExe(),
       ['status', '--porcelain'],
@@ -245,7 +333,8 @@ const localCall: LocalCommandCall = async (args, context) => {
         return { type: 'text', value: `暂存更改失败：\n${addStderr || '未知错误'}` }
       }
 
-      const commitMessage = message || `更新: ${new Date().toISOString().slice(0, 19).replace('T', ' ')}`
+      const commitMessage =
+        parsed.message || `更新: ${new Date().toISOString().slice(0, 19).replace('T', ' ')}`
       context.updateProgress?.('创建提交...')
       const { code: commitCode, stderr: commitStderr } = await execFileNoThrow(
         gitExe(),
@@ -258,7 +347,7 @@ const localCall: LocalCommandCall = async (args, context) => {
     } else {
       const { stdout: commitCount } = await execFileNoThrow(
         gitExe(),
-        ['rev-list', '--count', `${defaultBranch}..${targetBranch}`],
+        ['rev-list', '--count', `${baseBranch}..${targetBranch}`],
         { preserveOutputOnError: false }
       )
       if (parseInt(commitCount.trim(), 10) === 0) {
@@ -266,50 +355,81 @@ const localCall: LocalCommandCall = async (args, context) => {
       }
     }
 
-    // 推送
+    // 3. 推送
     let pushOutput = ''
-    if (!noPush) {
+    if (!parsed.noPush) {
       context.updateProgress?.('推送到远程...')
-      const { code: pushCode, stdout: pushStdout, stderr: pushStderr } = await execFileNoThrow(
+      // 尝试普通推送
+      let { code: pushCode, stdout: pushStdout, stderr: pushStderr } = await execFileNoThrow(
         gitExe(),
         ['push', '-u', 'origin', targetBranch],
         { preserveOutputOnError: false }
       )
       if (pushCode !== 0) {
+        // 推送冲突处理建议
+        const conflictHint = pushStderr?.includes('non-fast-forward')
+          ? '\n\n远程分支有新的提交，请先运行 `git pull --rebase origin ' + targetBranch + '` 解决冲突后重新推送。'
+          : ''
         return {
           type: 'text',
-          value: `推送失败：\n${pushStderr || pushStdout || '未知错误'}\n\n尝试手动推送：git push -u origin ${targetBranch}`,
+          value: `推送失败：\n${pushStderr || pushStdout || '未知错误'}${conflictHint}\n\n手动推送：git push -u origin ${targetBranch}`,
         }
       }
       pushOutput = '✓ 已推送到远程\n'
     }
 
-    // PR 创建或更新
+    // 4. PR 管理
     let prOutput = ''
-    if (!noPr) {
+    if (!parsed.noPr) {
       context.updateProgress?.('检查现有 PR...')
       const existingPr = await getExistingPr(targetBranch)
-      const commits = await getRecentCommits(targetBranch, defaultBranch)
-      const prBody = await generateRichPrBody(commits, defaultBranch, targetBranch, context.getAppState)
-      const title = commits[0]?.split('\n')[0].substring(0, 70) || '更新代码'
+      const commits = await getRecentCommits(targetBranch, baseBranch)
+      const { stdout: diffStats } = await execFileNoThrow(
+        gitExe(),
+        ['diff', '--stat', `${baseBranch}...${targetBranch}`],
+        { preserveOutputOnError: false }
+      )
+      const { commit: commitAttribution, pr: defaultPrAttribution } = getAttributionTexts()
+      const effectivePrAttribution = await getEnhancedPRAttribution(context.getAppState)
+      const includeChangelog = !(process.env.USER_TYPE === 'ant' && isUndercover())
+
+      const prBody = buildPrBody({
+        commits,
+        diffStats: diffStats.trim(),
+        attribution: effectivePrAttribution || defaultPrAttribution,
+        includeChangelog,
+      })
+
+      const title = parsed.title || commits[0]?.split('\n')[0].substring(0, 70) || '更新代码'
 
       const ghArgsBase = ['pr', existingPr.exists ? 'edit' : 'create']
       if (existingPr.exists && existingPr.number) {
         ghArgsBase.push(existingPr.number.toString())
       }
+
       if (!existingPr.exists) {
-        ghArgsBase.push('--title', title, '--body', prBody, '--base', defaultBranch)
-        if (draft) ghArgsBase.push('--draft')
-        if (reviewer) ghArgsBase.push('--reviewer', reviewer)
-        else if (process.env.USER_TYPE !== 'ant' || !isUndercover()) {
+        ghArgsBase.push('--title', title, '--body', prBody, '--base', baseBranch)
+        if (parsed.draft) ghArgsBase.push('--draft')
+        if (parsed.reviewer) {
+          ghArgsBase.push('--reviewer', parsed.reviewer)
+        } else if (process.env.USER_TYPE !== 'ant' || !isUndercover()) {
           ghArgsBase.push('--reviewer', 'anthropics/claude-code')
         }
       } else {
         ghArgsBase.push('--title', title, '--body', prBody)
-        if (reviewer) ghArgsBase.push('--add-reviewer', reviewer)
-        else if (process.env.USER_TYPE !== 'ant' || !isUndercover()) {
+        if (parsed.reviewer) {
+          ghArgsBase.push('--add-reviewer', parsed.reviewer)
+        } else if (process.env.USER_TYPE !== 'ant' || !isUndercover()) {
           ghArgsBase.push('--add-reviewer', 'anthropics/claude-code')
         }
+      }
+
+      // 标签（仅创建时支持，编辑时需单独处理，此处简化）
+      if (!existingPr.exists && parsed.labels.length > 0) {
+        parsed.labels.forEach((label) => ghArgsBase.push('--label', label))
+      }
+      if (!existingPr.exists && parsed.milestone) {
+        ghArgsBase.push('--milestone', parsed.milestone)
       }
 
       const { code: ghCode, stdout: ghStdout, stderr: ghStderr } = await execFileNoThrow(
@@ -317,14 +437,17 @@ const localCall: LocalCommandCall = async (args, context) => {
         ghArgsBase,
         { preserveOutputOnError: false }
       )
+
       if (ghCode === 0) {
         if (existingPr.exists) {
           prOutput = `✓ 已更新 PR #${existingPr.number}\n  ${await getPrUrl(existingPr.number)}`
         } else {
           const prUrl = ghStdout.trim()
           prOutput = `✓ 已创建 PR\n  ${prUrl}`
-          // Slack 发布提示（仅当非 undercover 且检测到 CLAUDE.md 包含相关指令）
-          if ((process.env.USER_TYPE !== 'ant' || !isUndercover()) && existsSync(join(cwd, 'CLAUDE.md'))) {
+          if (
+            (process.env.USER_TYPE !== 'ant' || !isUndercover()) &&
+            existsSync(join(cwd, 'CLAUDE.md'))
+          ) {
             const claudeMd = readFileSync(join(cwd, 'CLAUDE.md'), 'utf-8')
             if (/slack|发布.*channel|send.*slack/i.test(claudeMd)) {
               prOutput += `\n\n💡 检测到 CLAUDE.md 中可能要求发布到 Slack。可使用 \`/mcp__slack__send_message\` 工具将 PR 链接发送到相关频道。`
@@ -332,7 +455,14 @@ const localCall: LocalCommandCall = async (args, context) => {
           }
         }
       } else {
-        prOutput = `⚠ ${existingPr.exists ? '更新' : '创建'} PR 失败：${ghStderr || ghStdout || '未知错误'}\n`
+        // 增强错误信息
+        let errorHint = ''
+        if (ghStderr?.includes('401')) {
+          errorHint = '\n认证失败，请运行 `gh auth login` 重新登录。'
+        } else if (ghStderr?.includes('base branch')) {
+          errorHint = '\n目标分支不存在或权限不足，请确认 --base 参数。'
+        }
+        prOutput = `⚠ ${existingPr.exists ? '更新' : '创建'} PR 失败：${ghStderr || ghStdout || '未知错误'}${errorHint}\n`
       }
     }
 
@@ -358,7 +488,8 @@ const localCommand: Command = {
   type: 'local',
   name: 'commit-push-pr',
   description: '提交、推送并创建拉取请求（直接执行）',
-  argumentHint: '[-m <消息>] [功能描述] [--no-push] [--no-pr] [--force] [--draft] [--reviewer <用户名>]',
+  argumentHint:
+    '[-m <消息>] [功能描述] [--no-push] [--no-pr] [--force] [--draft] [--reviewer <用户名>] [--title <标题>] [--base <分支>] [--label <标签>] [--milestone <里程碑>]',
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: localCall }),
 }
@@ -381,31 +512,59 @@ const ALLOWED_TOOLS = [
   'mcp__claude_ai_Slack__slack_send_message',
 ]
 
-function getPromptContent(defaultBranch: string, prAttribution?: string): string {
-  const { commit: commitAttribution, pr: defaultPrAttribution } = getAttributionTexts()
-  const effectivePrAttribution = prAttribution ?? defaultPrAttribution
-  const safeUser = process.env.SAFEUSER || ''
-  const username = process.env.USER || ''
-
-  let prefix = ''
-  let reviewerArg = ' 和 `--reviewer anthropics/claude-code`'
-  let addReviewerArg = '（并添加 `--add-reviewer anthropics/claude-code`）'
-  let changelogSection = `
+/**
+ * 获取 AI 模式的 PR 正文模板（用于嵌入 prompt）
+ * 与本地模板保持一致，但以 heredoc 形式指导 AI
+ */
+function getAIPrBodyTemplate(
+  effectivePrAttribution: string | undefined,
+  includeChangelog: boolean
+): string {
+  // 使用与 buildPrBody 相同的结构，但用占位符填充
+  const changelogSection = includeChangelog
+    ? `
 
 ## 更新日志
 <!-- CHANGELOG:START -->
 [如果此 PR 包含面向用户的更改，请在此处添加更新日志条目。否则，删除此部分。]
 <!-- CHANGELOG:END -->`
+    : ''
+
+  // 返回模板文本，指示 AI 填充内容
+  return `## 摘要
+<1-3 个要点>
+
+## 测试计划
+[用于测试拉取请求的待办事项要点列表...]${changelogSection}${effectivePrAttribution ? `\n\n${effectivePrAttribution}` : ''}`
+}
+
+function getPromptContent(
+  defaultBranch: string,
+  prAttribution?: string
+): string {
+  const { commit: commitAttribution, pr: defaultPrAttribution } = getAttributionTexts()
+  const effectivePrAttribution = prAttribution ?? defaultPrAttribution
+  const safeUser = process.env.SAFEUSER || ''
+  const username = process.env.USER || ''
+
+  // 根据 undercover 调整
+  let prefix = ''
+  let reviewerArg = ' 和 `--reviewer anthropics/claude-code`'
+  let addReviewerArg = '（并添加 `--add-reviewer anthropics/claude-code`）'
   let slackStep = `
 
 5. 创建/更新 PR 后，检查用户的 CLAUDE.md 是否提及发布到 Slack 频道。如果是，使用 ToolSearch 搜索 "slack send message" 工具。如果 ToolSearch 找到 Slack 工具，询问用户是否希望你将 PR 链接发布到相关 Slack 频道。仅在用户确认后后才发布。如果 ToolSearch 返回无结果或错误，请静默跳过此步骤——不要提及失败，不要尝试解决方法，也不要尝试其他方法。`
+  let changelogIncluded = true
+
   if (process.env.USER_TYPE === 'ant' && isUndercover()) {
     prefix = getUndercoverInstructions() + '\n'
     reviewerArg = ''
     addReviewerArg = ''
-    changelogSection = ''
     slackStep = ''
+    changelogIncluded = false
   }
+
+  const prBodyTemplate = getAIPrBodyTemplate(effectivePrAttribution, changelogIncluded)
 
   return `${prefix}## Context
 
@@ -444,11 +603,7 @@ EOF
    - 重要提示：PR 标题要简短（不超过 70 个字符）。使用正文添加详细信息。
 \`\`\`
 gh pr create --title "简短且具有描述性的标题" --body "$(cat <<'EOF'
-## 摘要
-<1-3 个要点>
-
-## 测试计划
-[用于测试拉取请求的待办事项要点列表...]${changelogSection}${effectivePrAttribution ? `\n\n${effectivePrAttribution}` : ''}
+${prBodyTemplate}
 EOF
 )"
 \`\`\`
@@ -464,6 +619,7 @@ const promptCommand: Command = {
   description: '提交、推送并创建拉取请求（AI 生成内容）',
   allowedTools: ALLOWED_TOOLS,
   get contentLength() {
+    // 使用一个代表性的默认分支估算长度，实际 prompt 会运行时生成
     return getPromptContent('main').length
   },
   progressMessage: '正在创建提交和 PR（AI 模式）',
@@ -503,7 +659,5 @@ const promptCommand: Command = {
 }
 
 // ==================== 导出 ====================
-// 默认导出本地命令（保持向后兼容）
 export default localCommand
-// 同时导出 prompt 命令供需要时使用
 export { promptCommand as commitPushPrPrompt }

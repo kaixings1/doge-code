@@ -6,7 +6,6 @@ const workflows: Command = {
   name: 'workflows',
   description: 'Workflow scripts (stub)',
   isEnabled: () => true,
-  
   supportsNonInteractive: false,
   load: () => Promise.resolve({ call: async () => {} }) as any,
 }
