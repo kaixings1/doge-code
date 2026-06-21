@@ -511,6 +511,9 @@ class ReplRuntimeBoundary extends React.Component<{
     logForDebugging(`[REPL:boundary] ${message}`, {
       level: 'error'
     });
+    logForDebugging(`[REPL:boundary:full] error=${error?.message}, stack=${error?.stack}`, {
+      level: 'error'
+    });
     logError(error);
   }
   override render(): React.ReactNode {

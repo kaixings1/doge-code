@@ -65,10 +65,6 @@
       "command": "php",
       "args": ["artisan", "boost:mcp"]
     },
-    "serena": {
-      "command": "uvx",
-      "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"]
-    },
     "terraform": {
       "command": "docker",
       "args": ["run", "-i", "--rm", "-e", "TFE_TOKEN=${TFE_TOKEN}", "hashicorp/terraform-mcp-server:0.4.0"]

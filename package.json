@@ -73,6 +73,7 @@
     "chokidar": "*",
     "cli-boxes": "*",
     "code-excerpt": "*",
+    "audio-capture-napi": "file:./shims/audio-capture-napi",
     "color-diff-napi": "file:./shims/color-diff-napi",
     "commander": "^14.0.3",
     "diff": "*",

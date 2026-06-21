@@ -35,7 +35,7 @@ export class MemoryToolHandler {
     if (!inputPath.startsWith("/memories")) {
       throw new Error("路径必须以 /memories 开头");
     }
-    const relative = inputPath.slice("/memories".length).replace(/^/+/, "");
+    const relative = inputPath.slice("/memories".length).replace(/^\/+/, "");
     const fullPath = path.resolve(
       relative ? path.join(this.memoryRoot, relative) : this.memoryRoot
     );
@@ -70,9 +70,7 @@ export class MemoryToolHandler {
       const stat = fs.statSync(fullPath);
       if (stat.isDirectory()) {
         const items = fs.readdirSync(fullPath).filter(i => !i.startsWith("."));
-        return { success: "目录: " + inputPath + "
-" + items.map(i => "- " + i).join("
-") };
+        return { success: "目录: " + inputPath + "\n" + items.map(i => "- " + i).join("\n") };
       }
       const content = fs.readFileSync(fullPath, "utf-8");
       return { success: content };
@@ -115,14 +113,10 @@ export class MemoryToolHandler {
     if (!inputPath || params.insert_line === undefined) return { error: "缺少参数" };
     try {
       const fullPath = this.validatePath(inputPath);
-      const lines = fs.readFileSync(fullPath, "utf-8").split("
-");
+      const lines = fs.readFileSync(fullPath, "utf-8").split("\n");
       if (params.insert_line < 0 || params.insert_line > lines.length) return { error: "行号无效" };
-      lines.splice(params.insert_line, 0, (params.insert_text || "").replace(/
-$/, ""));
-      fs.writeFileSync(fullPath, lines.join("
-") + "
-", "utf-8");
+      lines.splice(params.insert_line, 0, (params.insert_text || "").replace(/\n$/, ""));
+      fs.writeFileSync(fullPath, lines.join("\n") + "\n", "utf-8");
       return { success: "已插入" };
     } catch (e: any) {
       return { error: "插入失败: " + e.message };
