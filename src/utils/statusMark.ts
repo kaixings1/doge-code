@@ -3,7 +3,7 @@
  * 为已完成的任务添加视觉标记（✓/✗）和颜色
  */
 
-import figures from 'figures'
+import figures from '../utils/vendor/figures.js'
 
 /**
  * 获取状态标记符号

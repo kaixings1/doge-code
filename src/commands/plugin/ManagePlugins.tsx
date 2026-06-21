@@ -1,4 +1,4 @@
-import figures from 'figures';
+import figures from '../../utils/vendor/figures.js';
 import type { Dirent } from 'fs';
 import * as fs from 'fs/promises';
 import * as path from 'path';

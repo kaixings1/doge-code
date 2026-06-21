@@ -1,4 +1,4 @@
-import figures from 'figures';
+import figures from '../../utils/vendor/figures.js';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTerminalSize } from '../../../hooks/useTerminalSize.js';
 import type { KeyboardEvent } from '../../../ink/events/keyboard-event.js';
