@@ -150,10 +150,11 @@ export async function toolToAPISchema(
     const strictToolsEnabled =
       checkStatsigFeatureGate_CACHED_MAY_BE_STALE('tengu_tool_pear')
     // 如果工具直接提供了 JSON schema 则使用，否则转换 Zod schema
+    // 【增强】防御 inputSchema 缺失的情况，提供默认空对象
     let input_schema = (
       'inputJSONSchema' in tool && tool.inputJSONSchema
         ? tool.inputJSONSchema
-        : zodToJsonSchema(tool.inputSchema)
+        : (tool.inputSchema ? zodToJsonSchema(tool.inputSchema) : { type: 'object', properties: {} })
     ) as Anthropic.Tool.InputSchema
 
     // 当群组功能未启用时，过滤掉群组相关字段
@@ -443,15 +444,12 @@ export function prependUserContext(
       )
         .map(([key, value]) => `# ${key}\n${value}`)
         .join('\n')}
-- 使用工具完成任务，不要空谈。\n- 优先使用专用工具（Read/Edit/Write/Glob/Grep）而非Bash。\n- 输出简洁，直奔主题。返回内容的要求是:可以在本地计算机直接执行的命令。\n\n
-      重要提示：如果有需要执行的命令，则直接将windows下相应的命令反馈回来，由本地计算机执行，你不得进行其他询问及任何模拟结果的输出。\n</system-reminder>\n`,
-      isMeta: true,//此上下文可能与你的任务相关，也可能不相关。除非与你的任务高度相关，否则你不应回应此上下文。\
+- 使用工具完成任务，不要空谈。\n- 优先使用专用工具（Read/Edit/Write/Glob/Grep）而非Bash。\n- 输出简洁，直奔主题。返回内容的要求是:可以在本地计算机直接执行的命令。\n      重要提示：如果有需要执行的命令，则直接将windows下相应的命令反馈回来，由本地计算机执行，你不得进行其他询问及任何模拟结果的输出。此上下文可能与你的任务相关，也可能不相关。除非与你的任务高度相关，否则你不应回应此上下文。\n</system-reminder>\n`,
+      isMeta: true,// 
     }),
     ...messages,
   ]
 }
-      //重要提示：此上下文可能与你的任务相关，也可能不相关。除非与你的任务高度相关，否则你不应回应此上下文。\n</system-reminder>\n`,
-     // isMeta: true,
 /**
  * 记录关于上下文和系统提示大小的指标
  */
@@ -513,17 +511,18 @@ export async function logContextMetrics(
 
   // 本地估算工具 token 用于分析（避免每次会话多次 API 调用）
   for (const tool of mcpTools) {
+    // 【增强】确保 schema 存在
     const schema =
       'inputJSONSchema' in tool && tool.inputJSONSchema
         ? tool.inputJSONSchema
-        : zodToJsonSchema(tool.inputSchema)
+        : (tool.inputSchema ? zodToJsonSchema(tool.inputSchema) : { type: 'object', properties: {} })
     mcpToolsTokens += roughTokenCountEstimation(jsonStringify(schema))
   }
   for (const tool of nonMcpTools) {
     const schema =
       'inputJSONSchema' in tool && tool.inputJSONSchema
         ? tool.inputJSONSchema
-        : zodToJsonSchema(tool.inputSchema)
+        : (tool.inputSchema ? zodToJsonSchema(tool.inputSchema) : { type: 'object', properties: {} })
     nonMcpToolsTokens += roughTokenCountEstimation(jsonStringify(schema))
   }
 

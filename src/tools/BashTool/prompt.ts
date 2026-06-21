@@ -72,9 +72,20 @@ ${skillsSection}重要提示：绝不要跳过钩子（--no-verify、--no-gpg-si
 - 查看 GitHub PR 的评论：gh api repos/foo/bar/pulls/123/comments`
   }
 
-  // 对于外部用户，包含完整的嵌入式指令
-  const { commit: commitAttribution, pr: prAttribution } = getAttributionTexts()
+  // 对于外部用户，包含完整的嵌入式指令（合并第一个程序的“推荐使用技能”和标准操作流程，同时保留第二个程序的详细提交步骤）
+  let commitAttribution = ''
+  let prAttribution = ''
+  try {
+    const texts = getAttributionTexts()
+    commitAttribution = texts.commit ?? ''
+    prAttribution = texts.pr ?? ''
+  } catch {
+    // 防御性 fallback：某些编译后的二进制中 getAttributionTexts 的依赖链可能不可用
+    commitAttribution = ''
+    prAttribution = ''
+  }
 
+  // 合并后的完整指令内容
   return `## 推荐使用技能
 
 提交代码的最佳方式是使用 \`/commit\` 技能，它会自动执行标准操作流程。
@@ -95,7 +106,7 @@ ${skillsSection}重要提示：绝不要跳过钩子（--no-verify、--no-gpg-si
 
 ### 第 2 步：语法检查（lint/静态分析）
 - 在提交前必须运行语法/静态检查工具：
-  * **C/C++**（`.c`/`.cpp`/`.h`）：\`cppcheck --enable=warning,style,performance,portability . 2>&1\` 或 \`clang-tidy *.cpp -- 2>&1\`
+  * **C/C++**（\`.c\`/\`.cpp\`/\`.h\`）：\`cppcheck --enable=warning,style,performance,portability . 2>&1\` 或 \`clang-tidy *.cpp -- 2>&1\`
   * **Rust**（Cargo.toml）：\`cargo check 2>&1\`
   * **Go**（go.mod）：\`go vet ./... 2>&1\`
   * **Python**：\`python -m py_compile \$(git diff --name-only -- '*.py') 2>&1\` 或 \`ruff check . 2>&1\`
@@ -128,24 +139,25 @@ ${skillsSection}重要提示：绝不要跳过钩子（--no-verify、--no-gpg-si
 ### 第 5 步：提交代码
 - 确认上述步骤 1-4 全部通过后，执行 git 提交流程：
 
+您可以在单次响应中调用多个工具。当请求多个独立的信息且所有命令都可能成功时，请并行运行多个工具调用以获得最佳性能。以下编号步骤指明了哪些命令应并行批量执行。
+
 Git 安全协议：
 - 绝不要更新 git 配置
 - 绝不要运行破坏性 git 命令（push --force、reset --hard、checkout .、restore .、clean -f、branch -D），除非用户明确要求执行这些操作。擅自执行破坏性操作是无益的，并可能导致工作丢失，因此最好仅在获得直接指示时才运行这些命令
 - 绝不要跳过钩子（--no-verify、--no-gpg-sign 等），除非用户明确要求
 - 绝不要强制推送到 main/master 分支，如果用户要求这样做，请警告他们
 - 关键：始终创建新的提交，而不是修改已有提交，除非用户明确要求执行 git amend。当 pre-commit 钩子失败时，提交实际上并未发生——因此使用 --amend 将修改上一个提交，这可能导致破坏工作或丢失之前的更改。相反，在钩子失败后，请修复问题，重新暂存，然后创建一个新的提交
-- 暂存文件时，优先按名称添加特定文件，而不是使用 “git add -A” 或 “git add .”，这些命令可能意外包含敏感文件（.env、凭证）或大型二进制文件
+- 暂存文件时，优先按名称添加特定文件，而不是使用 "git add -A" 或 "git add ."，这些命令可能意外包含敏感文件（.env、凭证）或大型二进制文件
 - 绝不要在用户未明确要求时提交更改。仅在明确要求时提交非常重要，否则用户会觉得您过于主动
 
-提交步骤：
 1. 使用 ${BASH_TOOL_NAME} 工具并行运行以下 bash 命令：
   - 运行 git status 命令查看所有未跟踪的文件。重要提示：绝不要使用 -uall 标志，因为它可能在大型仓库中导致内存问题。
   - 运行 git diff 命令查看将被提交的已暂存和未暂存更改。
   - 运行 git log 命令查看最近的提交消息，以便您能遵循此仓库的提交消息风格。
 2. 分析所有已暂存的更改（包括之前暂存的和新增的）并草拟提交消息：
-  - 概括更改的性质（例如新功能、现有功能的增强、错误修复、重构、测试、文档等）。确保消息准确反映更改及其目的（即 “add” 表示全新功能，”update” 表示对现有功能的增强，”fix” 表示错误修复等）。
+  - 概括更改的性质（例如新功能、现有功能的增强、错误修复、重构、测试、文档等）。确保消息准确反映更改及其目的（即 "add" 表示全新功能，"update" 表示对现有功能的增强，"fix" 表示错误修复等）。
   - 不要提交可能包含机密的文件（.env、credentials.json 等）。如果用户特别要求提交这些文件，请警告他们
-  - 草拟简洁（1-2 句）的提交消息，侧重于”为什么”而非”是什么”
+  - 草拟简洁（1-2 句）的提交消息，侧重于"为什么"而非"是什么"
   - 确保它准确反映更改及其目的
 3. 并行运行以下命令：
    - 将相关的未跟踪文件添加到暂存区。
@@ -154,21 +166,20 @@ Git 安全协议：
    注意：git status 依赖于提交的完成，因此请在提交后按顺序运行它。
 4. 如果由于 pre-commit 钩子导致提交失败：修复问题并创建一个新的提交
 
-### 流程示例
-
-完整流程的一次调用示例（适合在单次响应中执行）：
-1. 用 ${FileEditTool.name} 或 ${FileWriteTool.name} 修改代码
-2. 运行 \`bun run tsc --noEmit --skipLibCheck 2>&1\` 语法检查
-3. 运行 \`bun run build 2>&1\` 编译
-4. 运行 \`bun run test 2>&1\` 测试
-5. 执行 git 提交：\`git add -A && git commit -m “...”\`
-
 重要注意事项：
 - 除了 git bash 命令外，绝不要运行额外的命令来读取或探索代码
 - 绝不要使用 ${TodoWriteTool.name} 或 ${AGENT_TOOL_NAME} 工具
 - 除非用户明确要求，否则不要推送到远程仓库
 - 重要提示：绝不要使用带有 -i 标志的 git 命令（如 git rebase -i 或 git add -i），因为它们需要交互式输入，而这不受支持。
 - 重要提示：不要在 git rebase 命令中使用 --no-edit，因为 --no-edit 标志不是 git rebase 的有效选项。
+- 如果没有要提交的更改（即没有未跟踪的文件也没有修改），不要创建空提交
+- 为了确保格式良好，请始终通过 HEREDOC 传递提交消息，例如以下示例：
+<示例>
+git commit -m "$(cat <<'EOF'
+   提交消息在此处。${commitAttribution ? `\n\n   ${commitAttribution}` : ''}
+   EOF
+   )"
+</示例>
 
 # 创建拉取请求
 对于所有 GitHub 相关任务，包括处理议题、拉取请求、检查项和发布，请通过 Bash 工具使用 gh 命令。如果给出了 GitHub URL，请使用 gh 命令获取所需信息。
@@ -374,14 +385,14 @@ export function getSimplePrompt(): string {
   ]
   const backgroundNote = getBackgroundUsageNote()
 
-	const instructionItems: Array<string | string[]> = [
-	  '命令中路径含空格时请用双引号括起',
-	  '尽量使用绝对路径，避免频繁 cd',
-	  `默认超时 ${getDefaultTimeoutMs() / 60000} 分钟，最大可设 ${getMaxTimeoutMs() / 60000} 分钟`,
-	  ...(backgroundNote ? [backgroundNote] : []),
-	  '多条独立命令请在同一消息中并行调用，有依赖则用 && 串联',
-	  '避免不必要的 sleep，用 run_in_background 代替',
-	];
+  const instructionItems: Array<string | string[]> = [
+    '命令中路径含空格时请用双引号括起',
+    '尽量使用绝对路径，避免频繁 cd',
+    `默认超时 ${getDefaultTimeoutMs() / 60000} 分钟，最大可设 ${getMaxTimeoutMs() / 60000} 分钟`,
+    ...(backgroundNote ? [backgroundNote] : []),
+    '多条独立命令请在同一消息中并行调用，有依赖则用 && 串联',
+    '避免不必要的 sleep，用 run_in_background 代替',
+  ]
   return [
     '执行给定的 bash 命令并返回其输出。',
     '',

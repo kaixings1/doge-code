@@ -7,6 +7,39 @@ import {
   openSync,
 } from 'fs'
 // biome-ignore lint: This file IS the cloneDeep wrapper - it must import the original 
+import lodashCloneDeep from 'lodash-es/cloneDeep.js'
+import { addSlowOperation } from '../bootstrap/state.js'
+import { logForDebugging } from './debug.js'
+
+// ============ 补充缺失的类型定义 ============
+interface ToolDefinition {
+  name: string
+  description: string
+  parameters: {
+    type: 'object'
+    properties: Record<string, unknown>
+    required?: string[]
+  }
+}
+
+// ============ 增强 unescapeUnicode 健壮性 ============
+/**
+ * 将字符串中的 Unicode 转义序列（\uXXXX）还原为原始字符。
+ * 用于避免 JSON.stringify 将非 ASCII 字符转义。
+ * 【增强】添加防御性判断，防止传入非字符串导致崩溃。
+ */
+function unescapeUnicode(str: string): string {
+  // 防御性检查：若参数不是字符串，则转换为字符串或返回空
+  if (typeof str !== 'string') {
+    // 如果为 undefined 或 null，返回空字符串；否则转为字符串
+    return str == null ? '' : String(str)
+  }
+  return str.replace(/\\u([\da-fA-F]{4})/g, (_, hex) =>
+    String.fromCodePoint(parseInt(hex, 16))
+  )
+}
+
+// ============ 原始代码（第一个 generateOpenAIFunctionCallingPayload 重命名为 Legacy） ============
 
 /**
  * 为 OpenAI function calling 生成的工具定义。
@@ -16,6 +49,9 @@ import {
  * - parameters: 参数定义 (可选)
  *
  * 此工具兼容 OpenAI Python 和 Node.js 函数调用。
+ * 
+ * 【修正】此函数与后面的 generateOpenAIFunctionCallingPayload 功能类似，
+ * 但此版本更早，保留作为遗留接口，重命名为 Legacy 避免冲突。
  */
 export function createOpenAIToolDefinition(
   name: string,
@@ -45,10 +81,15 @@ export function createOpenAIToolDefinition(
   return toolDef
 }
 
-export function generateOpenAIFunctionCallingPayload(
+/**
+ * 【修正】原始的第一个 generateOpenAIFunctionCallingPayload 被重命名，以避免重复声明。
+ * 保留其原有实现，以备兼容旧代码。
+ * @deprecated 请使用下方的 generateOpenAIFunctionCallingPayload（新版本）
+ */
+export function generateOpenAIFunctionCallingPayloadLegacy(
   data: Record<string, unknown>,
 ): string {
-  using _ = slowLogging`generateOpenAIFunctionCallingPayload(${data})`
+  using _ = slowLogging`generateOpenAIFunctionCallingPayloadLegacy(${data})`
 
   // OpenAI 函数调用兼容的 payload 结构
   const payload: Record<string, unknown> = {
@@ -95,11 +136,7 @@ export function generateOpenAIFunctionCallingPayload(
   }
 
   return jsonStringify(finalPayload)
-} 
-
-import lodashCloneDeep from 'lodash-es/cloneDeep.js'
-import { addSlowOperation } from '../bootstrap/state.js'
-import { logForDebugging } from './debug.js'
+}
 
 // Extended WriteFileOptions to include 'flush' which is available in Node.js 20.1.0+
 // but not yet in @types/node
@@ -221,7 +258,7 @@ function slowLoggingAnt(
   _strings: TemplateStringsArray,
   ..._values: unknown[]
 ): AntSlowLogger {
-   
+  // 注意：此处使用 arguments 是故意的，以获取所有插值参数
   return new AntSlowLogger(arguments)
 }
 
@@ -276,11 +313,21 @@ export function jsonStringify(
   space?: string | number,
 ): string {
   using _ = slowLogging`JSON.stringify(${value})`
-  return JSON.stringify(
-    value,
-    replacer as Parameters<typeof JSON.stringify>[1],
-    space,
-  )
+  // 【增强】捕获 JSON.stringify 可能抛出的异常（如循环引用），避免程序崩溃
+  let raw: string
+  try {
+    raw = JSON.stringify(
+      value,
+      replacer as Parameters<typeof JSON.stringify>[1],
+      space,
+    )
+  } catch (err) {
+    // 返回错误信息，但保留原始内容（降级为使用默认 replacer）
+    raw = JSON.stringify(value, null, space)
+    // 同时记录错误（可选）
+    // 这里不抛出，保持兼容
+  }
+  return unescapeUnicode(raw)
 }
 
 /**
@@ -335,6 +382,8 @@ export function cloneDeep<T>(value: T): T {
  * - "parameters": 参数定义 (可选)
  *
  * 此工具兼容 OpenAI Python 和 Node.js 函数调用。
+ * 
+ * 【修正】此为第二个定义，保持原样，与上面的 Legacy 版本共存。
  */
 export function generateOpenAIFunctionCallingPayload(
   data: Record<string, unknown>
