@@ -1,6 +1,6 @@
 import { feature } from 'bun:bundle';
 import type { UUID } from 'crypto';
-import figures from 'figures';
+import figures from '../../utils/vendor/figures.js';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useNotifications } from '../../../context/notifications.js';
 import { type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS, logEvent } from '../../../services/analytics/index.js';
