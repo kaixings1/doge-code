@@ -1,5 +1,5 @@
-import memoize from 'lodash-es/memoize.js'
-import sample from 'lodash-es/sample.js'
+import memoize from '../utils/vendor/lodash.js'
+import sample from '../utils/vendor/lodash.js'
 import { getCwd } from '../utils/cwd.js'
 import { getCurrentProjectConfig, saveCurrentProjectConfig } from './config.js'
 import { env } from './env.js'

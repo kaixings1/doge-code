@@ -13,8 +13,8 @@ import type {
   ToolUseBlockParam,
 } from '@anthropic-ai/sdk/resources/index.mjs'
 import { randomUUID, type UUID } from 'crypto'
-import isObject from 'lodash-es/isObject.js'
-import last from 'lodash-es/last.js'
+import isObject from '../utils/vendor/lodash.js'
+import last from '../utils/vendor/lodash.js'
 import {
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
   logEvent,

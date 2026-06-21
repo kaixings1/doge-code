@@ -1,4 +1,4 @@
-import capitalize from 'lodash-es/capitalize.js'
+import capitalize from '../utils/vendor/lodash.js'
 import type { SettingSource } from '../../utils/settings/constants.js'
 import { getSettingSourceName } from '../../utils/settings/constants.js'
 
