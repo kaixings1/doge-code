@@ -17,7 +17,7 @@ import type {
 import { accumulateUsage, updateUsage } from './services/api/claude.js'
 import type { NonNullableUsage } from './services/api/logging.js'
 import { EMPTY_USAGE } from './services/api/logging.js'
-import stripAnsi from 'strip-ansi'
+import stripAnsi from '../utils/vendor/stripAnsi.js'
 import type { Command } from './commands.js'
 import { getSlashCommandToolSkills } from './commands.js'
 import {
