@@ -1,6 +1,6 @@
 import { feature } from 'bun:bundle'
 import type { ToolResultBlockParam } from '@anthropic-ai/sdk/resources/index.mjs'
-import uniqBy from 'lodash-es/uniqBy.js'
+import uniqBy from '../utils/vendor/lodash.js'
 import { dirname } from 'path'
 import { getProjectRoot } from '../../bootstrap/state.js'
 import {

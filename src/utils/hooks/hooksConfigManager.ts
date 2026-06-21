@@ -1,4 +1,4 @@
-import memoize from 'lodash-es/memoize.js'
+import memoize from '../utils/vendor/lodash.js'
 import type { HookEvent } from '../../entrypoints/agentSdkTypes.js'
 import { getRegisteredHooks } from '../../bootstrap/state.js'
 import type { AppState } from '../../state/AppState.js'

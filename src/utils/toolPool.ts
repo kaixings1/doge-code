@@ -1,6 +1,6 @@
 import { feature } from 'bun:bundle'
-import partition from 'lodash-es/partition.js'
-import uniqBy from 'lodash-es/uniqBy.js'
+import partition from '../utils/vendor/lodash.js'
+import uniqBy from '../utils/vendor/lodash.js'
 import { COORDINATOR_MODE_ALLOWED_TOOLS } from '../constants/tools.js'
 import { isMcpTool } from '../services/mcp/utils.js'
 import type { Tool, ToolPermissionContext, Tools } from '../Tool.js'

@@ -1,5 +1,5 @@
 import { feature } from 'bun:bundle'
-import memoize from 'lodash-es/memoize.js'
+import memoize from './utils/vendor/lodash.js'
 import {
   getAdditionalDirectoriesForClaudeMd,
   setCachedClaudeMdContent,

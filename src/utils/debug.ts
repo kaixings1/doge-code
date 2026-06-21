@@ -1,5 +1,5 @@
 import { appendFile, mkdir, symlink, unlink } from 'fs/promises'
-import memoize from 'lodash-es/memoize.js'
+import memoize from '../utils/vendor/lodash.js'
 import { dirname, join } from 'path'
 import { getSessionId } from '../bootstrap/state.js'
 

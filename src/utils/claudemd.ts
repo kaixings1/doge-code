@@ -26,7 +26,7 @@
 
 import { feature } from 'bun:bundle'
 import ignore from 'ignore'
-import memoize from 'lodash-es/memoize.js'
+import memoize from '../utils/vendor/lodash.js'
 import { Lexer } from 'marked'
 import {
   basename,
