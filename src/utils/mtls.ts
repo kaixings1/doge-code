@@ -1,6 +1,6 @@
 import type * as https from 'https'
 import { Agent as HttpsAgent } from 'https'
-import memoize from 'lodash-es/memoize.js'
+import memoize from '../utils/vendor/lodash.js'
 import type * as tls from 'tls'
 import type * as undici from 'undici'
 import { getCACertificates } from './caCerts.js'

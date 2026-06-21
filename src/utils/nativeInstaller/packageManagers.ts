@@ -3,7 +3,7 @@
  */
 
 import { readFile } from 'fs/promises'
-import memoize from 'lodash-es/memoize.js'
+import memoize from '../utils/vendor/lodash.js'
 import { logForDebugging } from '../debug.js'
 import { execFileNoThrow } from '../execFileNoThrow.js'
 import { getPlatform } from '../platform.js'
