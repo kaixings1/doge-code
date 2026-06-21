@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 import { writeSync } from 'fs'
-import memoize from 'lodash-es/memoize.js'
+import memoize from '../utils/vendor/lodash.js'
 import { onExit } from 'signal-exit'
 import type { ExitReason } from '../entrypoints/agentSdkTypes.js'
 import {

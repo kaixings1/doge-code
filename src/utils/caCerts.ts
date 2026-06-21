@@ -1,4 +1,4 @@
-import memoize from 'lodash-es/memoize.js'
+import memoize from '../utils/vendor/lodash.js'
 import { logForDebugging } from './debug.js'
 import { hasNodeOption } from './envUtils.js'
 import { getFsImplementation } from './fsOperations.js'
