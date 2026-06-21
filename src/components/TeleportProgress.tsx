@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import figures from 'figures';
+import figures from '../utils/vendor/figures.js';
 import * as React from 'react';
 import { useState } from 'react';
 import type { Root } from '../ink.js';

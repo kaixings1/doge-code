@@ -11,7 +11,7 @@ import { type AppState, useAppState, useAppStateStore, useSetAppState } from '..
 import type { FooterItem } from '../../state/AppStateStore.js';
 import { getCwd } from '../../utils/cwd.js';
 import { isQueuedCommandEditable, popAllEditable } from '../../utils/messageQueueManager.js';
-import stripAnsi from 'strip-ansi';
+import stripAnsi from '../utils/vendor/stripAnsi.js';
 import { companionReservedColumns } from '../../buddy/CompanionSprite.js';
 import { findBuddyTriggerPositions, useBuddyNotification } from '../../buddy/useBuddyNotification.js';
 import { FastModePicker } from '../../commands/fast/fast.js';

@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import figures from 'figures';
+import figures from '../../utils/vendor/figures.js';
 import React from 'react';
 import { Text } from '../../ink.js';
 type Status = 'success' | 'error' | 'warning' | 'info' | 'pending' | 'loading';
