@@ -1,6 +1,6 @@
 import { c as _c } from "react/compiler-runtime";
 import { randomUUID } from 'crypto';
-import figures from 'figures';
+import figures from '../../utils/vendor/figures.js';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useInterval } from 'usehooks-ts';

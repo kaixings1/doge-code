@@ -6,7 +6,7 @@
  *
  * For the core operations (without CLI side effects), see pluginOperations.ts
  */
-import figures from 'figures'
+import figures from '../utils/vendor/figures.js'
 import { errorMessage } from '../../utils/errors.js'
 import { gracefulShutdown } from '../../utils/gracefulShutdown.js'
 import { logError } from '../../utils/log.js'

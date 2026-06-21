@@ -1,4 +1,4 @@
-import figures from 'figures';
+import figures from '../utils/vendor/figures.js';
 import React, { useEffect, useState } from 'react';
 import { Box, Text } from '../ink.js';
 import { logForDebugging } from '../utils/debug.js';

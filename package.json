@@ -94,7 +94,7 @@
     "lru-cache": "*",
     "marked": "^18.0.5",
     "modifiers-napi": "file:./shims/modifiers-napi",
-    "p-map": "*",
+    "p-map": "^5.6.0",
     "picomatch": "^4.0.4",
     "proper-lockfile": "*",
     "qrcode": "*",
