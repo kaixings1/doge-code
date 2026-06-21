@@ -1,6 +1,6 @@
 import { isInputModeCharacter } from '../components/PromptInput/inputModes.js'
 import { useNotifications } from '../context/notifications.js'
-import stripAnsi from 'strip-ansi'
+import stripAnsi from '../utils/vendor/stripAnsi.js'
 import { markBackslashReturnUsed } from '../commands/terminalSetup/terminalSetup.js'
 import { addToHistory } from '../history.js'
 import type { Key } from '../ink.js'
