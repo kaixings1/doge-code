@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import sample from 'lodash-es/sample.js';
+import sample from '../utils/vendor/lodash.js';
 import React from 'react';
 import { gracefulShutdown } from '../utils/gracefulShutdown.js';
 import { WorktreeExitDialog } from './WorktreeExitDialog.js';
