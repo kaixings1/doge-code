@@ -14,6 +14,7 @@ import { setClipboard } from '../../ink/termio/osc.js';
 import { Box, Text } from '../../ink.js';
 import type { LocalJSXCommandCall } from '../../types/command.js';
 import type { LogOption } from '../../types/logs.js';
+import { suspendAnsiOutput, resumeAnsiOutput } from '../../bridge/bridgeUI.js';
 import { agenticSessionSearch } from '../../utils/agenticSessionSearch.js';
 import { checkCrossProjectResume } from '../../utils/crossProjectResume.js';
 import { getWorktreePaths } from '../../utils/getWorktreePaths.js';
@@ -149,13 +150,18 @@ function ResumeCommand({
       if (crossProjectCheck.isSameRepoWorktree) {
         // Same repo worktree - can resume directly
         setResuming(true);
-        void onResume(sessionId, fullLog, 'slash_command_picker');
+        suspendAnsiOutput();
+        void onResume(sessionId, fullLog, 'slash_command_picker').finally(resumeAnsiOutput);
         return;
       }
 
       // Different project - show command instead of resuming
       const raw = await setClipboard(crossProjectCheck.command);
-      if (raw) process.stdout.write(raw);
+      if (raw) {
+        suspendAnsiOutput();
+        process.stdout.write(raw);
+        resumeAnsiOutput();
+      }
 
       // Format the output message
       const message = ['', '此对话来自不同的目录。', '', '要恢复，请运行:', `  ${crossProjectCheck.command}`, '', '(命令已复制到剪贴板)', ''].join('\n');
@@ -167,7 +173,8 @@ function ResumeCommand({
 
     // Same directory - proceed with resume
     setResuming(true);
-    void onResume(sessionId, fullLog, 'slash_command_picker');
+    suspendAnsiOutput();
+    void onResume(sessionId, fullLog, 'slash_command_picker').finally(resumeAnsiOutput);
   }
   function handleCancel() {
     onDone('恢复已取消', {
