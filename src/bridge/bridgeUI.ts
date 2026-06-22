@@ -27,6 +27,32 @@ import type {
   SpawnMode,
 } from './types.js'
 
+/**
+ * 当 `ansiOutputLock > 0` 时，clearStatusLines 不会向 stdout 写入
+ * ANSI 控制序列（仅重置内部状态计数）。用于防止在 Ink React
+ * 组件树切换期间（如 /resume 选择会话、ModelPicker 选择模型时）
+ * ANSI 转义序列泄漏到终端。
+ *
+ * 调用方通过 suspendAnsiOutput/resumeAnsiOutput 函数对来管理锁。
+ * 支持嵌套调用（内部计数器机制）。
+ */
+let ansiOutputLock = 0
+
+/**
+ * 挂起 bridgeUI 的 ANSI 控制序列输出。嵌套安全。
+ * 调用 resumeAnsiOutput 恢复到之前的状态。
+ */
+export function suspendAnsiOutput(): void {
+  ansiOutputLock++
+}
+
+/**
+ * 恢复 bridgeUI 的 ANSI 控制序列输出。必须与 suspendAnsiOutput 成对调用。
+ */
+export function resumeAnsiOutput(): void {
+  if (ansiOutputLock > 0) ansiOutputLock--
+}
+
 const QR_OPTIONS = {
   type: 'utf8' as const,
   errorCorrectionLevel: 'L' as const,
@@ -124,6 +150,13 @@ export function createBridgeLogger(options: {
   function clearStatusLines(): void {
     if (statusLineCount <= 0) return
     logForDebugging(`[bridge:ui] clearStatusLines count=${statusLineCount}`)
+    // 当 ANSI 输出被挂起时（Ink 组件树切换期间），仅重置内部状态计数，
+    // 避免控制序列泄漏到终端导致乱码。下次恢复时正确的状态行数
+    // 会被 renderStatusLine 重新建立。
+    if (ansiOutputLock > 0) {
+      statusLineCount = 0
+      return
+    }
     // 将光标移到状态块开头，然后删除下方所有内容
     write(`\x1b[${statusLineCount}A`) // cursor up N lines
     write('\x1b[J') // erase from cursor to end of screen
