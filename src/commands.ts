@@ -103,24 +103,34 @@ import { feature } from 'bun:bundle'
 // 死代码消除：条件导入
 
 const proactive =
-    require('./commands/proactive.js').default
+  feature('PROACTIVE') || feature('KAIROS')
+    ? require('./commands/proactive.js').default
+    : null
 const briefCommand =
-    require('./commands/brief.js').default
+  feature('KAIROS') || feature('KAIROS_BRIEF')
+    ? require('./commands/brief.js').default
+    : null
 const assistantCommand = feature('KAIROS')
   ? require('./commands/assistant/index.js').default
     : null
-const bridge = require('./commands/bridge/index.js').default
+const bridge = feature('BRIDGE_MODE')
+  ? require('./commands/bridge/index.js').default
+    : null
 const remoteControlServerCommand =
   feature('DAEMON') && feature('BRIDGE_MODE')
     ? require('./commands/remoteControlServer/index.js').default
     : null
-const voiceCommand = require('./commands/voice/index.js').default
+const voiceCommand = feature('VOICE_MODE')
+  ? require('./commands/voice/index.js').default
+    : null
 const forceSnip = feature('HISTORY_SNIP')
   ? require('./commands/force-snip.js').default
     : null
-const workflowsCmd = (
+const workflowsCmd = feature('WORKFLOW_SCRIPTS')
+  ? (
       require('./commands/workflows/index.js') as typeof import('./commands/workflows/index.js')
     ).default
+  : null
 const webCmd = feature('CCR_REMOTE_SETUP')
   ? (
       require('./commands/remote-setup/index.js') as typeof import('./commands/remote-setup/index.js')
@@ -137,13 +147,17 @@ const subscribePr = feature('KAIROS_GITHUB_WEBHOOKS')
 const ultraplan = feature('ULTRAPLAN')
   ? require('./commands/ultraplan.js').default
   : null
-const torch = require('./commands/torch.js').default
-const peersCmd = (
+const torch = feature('TORCH') ? require('./commands/torch.js').default : null
+const peersCmd = feature('UDS_INBOX')
+  ? (
       require('./commands/peers/index.js') as typeof import('./commands/peers/index.js')
     ).default
-const forkCmd = (
+  : null
+const forkCmd = feature('FORK_SUBAGENT')
+  ? (
       require('./commands/fork/index.js') as typeof import('./commands/fork/index.js')
     ).default
+  : null
 const buddy = (
       require('./commands/buddy/index.js') as typeof import('./commands/buddy/index.js')
     ).default
@@ -197,7 +211,7 @@ import {
   getPluginSkills,
   clearPluginSkillsCache,
 } from './utils/plugins/loadPluginCommands.js'
-import memoize from './utils/vendor/lodash.js'
+import { memoize } from './vendor/lodash.js'
 import { isUsing3PServices, isClaudeAISubscriber } from './utils/auth.js'
 import { isFirstPartyAnthropicBaseUrl } from './utils/model/providers.js'
 import env from './commands/env/index.js'
