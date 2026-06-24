@@ -1,6 +1,6 @@
 import { realpath } from 'fs/promises'
 import ignore from 'ignore'
-import memoize from '../utils/vendor/lodash.js'
+import { memoize } from '../vendor/lodash.js'
 import {
   basename,
   dirname,
