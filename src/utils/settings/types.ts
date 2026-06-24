@@ -1044,7 +1044,15 @@ export const SettingsSchema = lazySchema(() =>
           '在安装前显示的插件信任警告中附加的自定义消息。' +
             '仅从策略设置（managed-settings.json / MDM）中读取。' +
             '对企业管理员有用，可以添加组织特定的上下文' +
-            '（例如“我们内部市场的所有插件都经过审查和批准。”）。',
+            '（例如”我们内部市场的所有插件都经过审查和批准。”）。',
+        ),
+      respondToBashCommands: z
+        .boolean()
+        .optional()
+        .describe(
+          '设置为 true 时，! bash 命令会触发 Claude 自动响应输出。' +
+            '设置为 false 保持之前的仅上下文行为。' +
+            '默认：false（仅上下文模式）。',
         ),
     })
     .passthrough(),
