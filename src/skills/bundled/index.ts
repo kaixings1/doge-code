@@ -2,6 +2,11 @@ import { feature } from 'bun:bundle'
 import { isEnvTruthy } from '../../utils/envUtils.js'
 import { shouldAutoEnableClaudeInChrome } from '../../utils/claudeInChrome/setup.js'
 import { registerBatchSkill } from './batch.js'
+import { registerHandoffSkill } from './handoff.js'
+import { registerDiagnosingBugsSkill } from './diagnosingBugs.js'
+import { registerResolvingMergeConflictsSkill } from './resolvingMergeConflicts.js'
+import { registerGitGuardrailsSkill } from './gitGuardrails.js'
+import { registerTddSkill } from './tdd.js'
 import { registerClaudeInChromeSkill } from './claudeInChrome.js'
 import { registerDebugSkill } from './debug.js'
 import { registerKeybindingsSkill } from './keybindings.js'
@@ -37,6 +42,11 @@ export function initBundledSkills(): void {
   registerRememberSkill()
   registerSimplifySkill()
   registerBatchSkill()
+  registerHandoffSkill()
+  registerDiagnosingBugsSkill()
+  registerResolvingMergeConflictsSkill()
+  registerGitGuardrailsSkill()
+  registerTddSkill()
   registerStuckSkill()
   if (feature('KAIROS') || feature('KAIROS_DREAM')) {
      
