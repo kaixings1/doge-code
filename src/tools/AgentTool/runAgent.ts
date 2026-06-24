@@ -81,6 +81,7 @@ import type { ContentReplacementState } from '../../utils/toolResultStorage.js'
 import { createAgentId } from '../../utils/uuid.js'
 import { resolveAgentTools } from './agentToolUtils.js'
 import { type AgentDefinition, isBuiltInAgent } from './loadAgentsDir.js'
+import { MAX_AGENT_DEPTH } from './constants.js'
 
 /**
  * 初始化代理专用的 MCP 服务器
@@ -320,7 +321,31 @@ export async function* runAgent({
    * stream_event 增量。用于在超过 60 秒没有 assistant 消息的长单块流
    *（例如思考过程）期间检测活跃性。 */
   onQueryProgress?: () => void
+  /** 当前 agent 嵌套深度。从 0 开始计数（根 agent 为 0，直接子 agent 为 1...）。
+   * 当 depth >= MAX_AGENT_DEPTH 时，agent 将无法 spawn 更深层的子 agent。 */
+  depth?: number
 }): AsyncGenerator<Message, void> {
+  // 深度检查：超过最大嵌套深度时直接返回错误消息
+  const currentDepth = (arguments[0]?.depth ?? 0)
+  if (currentDepth >= MAX_AGENT_DEPTH) {
+    yield {
+      type: 'assistant' as const,
+      message: {
+        role: 'assistant' as const,
+        content: [
+          {
+            type: 'text' as const,
+            text: `已达到最大 agent 嵌套深度 (${MAX_AGENT_DEPTH})，无法创建子 agent。请在当前上下文中直接完成任务。`,
+          },
+        ],
+      },
+    }
+    return
+  }
+
+  // 将当前 depth 注入 toolUseContext.options，供子 agent 调用时继承
+  ;(toolUseContext.options as Record<string, unknown>).agentDepth = currentDepth
+
   // 追踪子代理使用情况以进行功能发现
 
   const appState = toolUseContext.getAppState()

@@ -192,6 +192,8 @@ export async function resumeAgentBackground({
     worktreePath: resumedWorktreePath,
     description: meta?.description,
     contentReplacementState: resumedReplacementState,
+    // depth: 从 toolUseContext.options.agentDepth 继承（父 agent 已在 runAgent 中设置）
+    depth: (toolUseContext.options as Record<string, unknown>).agentDepth as number ?? 0,
   }
 
   // 跳过名称注册表写入——原始条目从初始生成时已持久化
