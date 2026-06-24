@@ -286,6 +286,12 @@ async function main(): Promise<void> {
     process.env.CLAUDE_CODE_SIMPLE = '1';
   }
 
+  // --safe-mode：尽早设置，禁用所有自定义项
+  if (args.includes('--safe-mode')) {
+    process.env.CLAUDE_CODE_SIMPLE = '1';
+    process.env.CLAUDE_CODE_SAFE_MODE = '1';
+  }
+
   // 未检测到特殊标志，加载并运行完整 CLI
   const {
     startCapturingEarlyInput

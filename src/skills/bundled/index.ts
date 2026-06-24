@@ -1,4 +1,5 @@
 import { feature } from 'bun:bundle'
+import { isEnvTruthy } from '../../utils/envUtils.js'
 import { shouldAutoEnableClaudeInChrome } from '../../utils/claudeInChrome/setup.js'
 import { registerBatchSkill } from './batch.js'
 import { registerClaudeInChromeSkill } from './claudeInChrome.js'
@@ -22,6 +23,11 @@ import { registerVerifySkill } from './verify.js'
  * 3. Import and call that function here
  */
 export function initBundledSkills(): void {
+  // CLAUDE_CODE_DISABLE_BUNDLED_SKILLS: 跳过所有内置技能注册
+  if (isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_BUNDLED_SKILLS)) {
+    return
+  }
+
   registerUpdateConfigSkill()
   registerKeybindingsSkill()
   registerVerifySkill()
