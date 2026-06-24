@@ -861,6 +861,10 @@ function shouldRetry(error: APIError): boolean {
 }
 
 export function getDefaultMaxRetries(): number {
+  // CLAUDE_CODE_RETRY_WATCHDOG: 用于无人值守会话的无限重试模式
+  if (isEnvTruthy(process.env.CLAUDE_CODE_RETRY_WATCHDOG)) {
+    return Number.POSITIVE_INFINITY
+  }
   if (process.env.CLAUDE_CODE_MAX_RETRIES) {
     const parsed = parseInt(process.env.CLAUDE_CODE_MAX_RETRIES, 10)
     return Math.min(parsed, 15)  // 上限 15（v2.1.186 变更）
