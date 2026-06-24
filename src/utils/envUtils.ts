@@ -1,4 +1,4 @@
-import memoize from '../utils/vendor/lodash.js'
+import { memoize } from '../vendor/lodash.js'
 import {
   getDefaultOpusModel,
   getDefaultSonnetModel,
@@ -69,6 +69,19 @@ export function isBareMode(): boolean {
   return (
     isEnvTruthy(process.env.CLAUDE_CODE_SIMPLE) ||
     process.argv.includes('--bare')
+  )
+}
+
+/**
+ * --safe-mode / CLAUDE_CODE_SAFE_MODE — disable all customizations
+ * (CLAUDE.md, plugins, skills, hooks, MCP servers) for troubleshooting.
+ * Sets CLAUDE_CODE_SIMPLE which already skips hooks, LSP, plugin sync, etc.
+ * Additional safe-mode-specific gates check CLAUDE_CODE_SAFE_MODE directly.
+ */
+export function isSafeMode(): boolean {
+  return (
+    isEnvTruthy(process.env.CLAUDE_CODE_SAFE_MODE) ||
+    process.argv.includes('--safe-mode')
   )
 }
 
