@@ -87,29 +87,6 @@ export const OPENCLAW_PRESETS: PresetEndpoint[] = [
   { label: 'FAL AI', provider: 'openai', baseURL: 'https://fal.run/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Tool', docs: 'FAL_KEY' },
   { label: 'ElevenLabs', provider: 'openai', baseURL: 'https://api.elevenlabs.io/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Tool', docs: 'ELEVENLABS_API_KEY' },
   { label: 'Deepgram', provider: 'openai', baseURL: 'https://api.deepgram.com/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Tool', docs: 'DEEPGRAM_API_KEY' },
-
-  // --- 消息平台（非 LLM API，仅配置参考） ---
-  { label: 'Discord Bot', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'DISCORD_BOT_TOKEN' },
-  { label: 'Telegram Bot', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'TELEGRAM_BOT_TOKEN' },
-  { label: 'Slack Bot', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'SLACK_BOT_TOKEN' },
-  { label: 'WhatsApp', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'WHATSAPP_API_KEY' },
-  { label: 'Signal', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'SIGNAL_API_KEY' },
-  { label: 'Line', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'LINE_API_KEY' },
-  { label: 'Feishu (Lark)', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'FEISHU_API_KEY' },
-  { label: 'IRC', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'IRC_SERVER' },
-  { label: 'Matrix', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'MATRIX_API_KEY' },
-  { label: 'Mattermost', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'MATTERMOST_API_KEY' },
-  { label: 'Teams (Microsoft)', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'TEAMS_API_KEY' },
-  { label: 'iMessage', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'IMESSAGE_API_KEY' },
-  { label: 'Nostr', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'NOSTR_API_KEY' },
-  { label: 'Twitch', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'TWITCH_API_KEY' },
-  { label: 'Google Chat', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'GOOGLECHAT_API_KEY' },
-  { label: 'BlueBubbles', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'BLUEBUBBLES_API_KEY' },
-  { label: 'Synology Chat', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'SYNOLOGY_CHAT_API_KEY' },
-  { label: 'Nextcloud Talk', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'NEXTCLOUD_TALK_API_KEY' },
-  { label: 'Zalo', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'ZALO_API_KEY' },
-  { label: 'Xiaomi', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'XIAOMI_API_KEY' },
-  { label: 'Tlon', provider: 'openai', baseURL: '', defaultModel: '', apiKeyRequired: true, group: 'Messaging', docs: 'TLON_API_KEY' },
 ];
 
 export const ALL_PRESETS: PresetEndpoint[] = [...LOCAL_PRESETS, ...OPENCLAW_PRESETS];
