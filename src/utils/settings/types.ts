@@ -336,6 +336,13 @@ export const SettingsSchema = lazySchema(() =>
               '用于拉取请求描述的署名文本。' +
                 '空字符串隐藏署名。',
             ),
+          sessionUrl: z
+            .union([z.literal(true), z.literal(false)])
+            .optional()
+            .describe(
+              '是否在提交和 PR 中省略 claude.ai 会话链接。' +
+                '设置为 false 可隐藏会话 URL。',
+            ),
         })
         .optional()
         .describe(
