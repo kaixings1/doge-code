@@ -48,6 +48,7 @@ export const OPENCLAW_PRESETS: PresetEndpoint[] = [
   { label: 'OpenAI', provider: 'openai', baseURL: 'https://api.openai.com/v1/chat/completions', defaultModel: 'gpt-4o', apiKeyRequired: true, group: 'US AI', docs: 'OPENAI_API_KEY' },
   { label: 'Groq', provider: 'openai', baseURL: 'https://api.groq.com/openai/v1/chat/completions', defaultModel: 'llama-3.3-70b-versatile', apiKeyRequired: true, group: 'US AI', docs: 'GROQ_API_KEY' },
   { label: 'Mistral AI', provider: 'openai', baseURL: 'https://api.mistral.ai/v1/chat/completions', defaultModel: 'mistral-large-latest', apiKeyRequired: true, group: 'European AI', docs: 'MISTRAL_API_KEY' },
+  { label: 'Codestral', provider: 'openai', baseURL: 'https://codestral.mistral.ai/v1/chat/completions', defaultModel: 'codestral-latest', apiKeyRequired: true, group: 'European AI', docs: 'CODESTRAL_API_KEY' },
   { label: 'Together AI', provider: 'openai', baseURL: 'https://api.together.xyz/v1/chat/completions', defaultModel: 'mistralai/Mixtral-8x22B-Instruct-v0.1', apiKeyRequired: true, group: 'US AI', docs: 'TOGETHER_API_KEY' },
   { label: 'Perplexity', provider: 'openai', baseURL: 'https://api.perplexity.ai/chat/completions', defaultModel: 'sonar-pro', apiKeyRequired: true, group: 'Search AI', docs: 'PERPLEXITY_API_KEY' },
   { label: 'xAI Grok', provider: 'openai', baseURL: 'https://api.x.ai/v1/chat/completions', defaultModel: 'grok-beta', apiKeyRequired: true, group: 'US AI', docs: 'XAI_API_KEY' },
@@ -58,11 +59,14 @@ export const OPENCLAW_PRESETS: PresetEndpoint[] = [
   { label: 'Chutes AI', provider: 'openai', baseURL: 'https://llm.chutes.ai/v1/chat/completions', defaultModel: 'chutes-default', apiKeyRequired: true, group: 'US AI', docs: 'CHUTES_API_KEY' },
   { label: 'Synthetic', provider: 'openai', baseURL: 'https://api.synthetic.new/v1/chat/completions', defaultModel: 'synthetic-default', apiKeyRequired: true, group: 'US AI', docs: 'SYNTHETIC_API_KEY' },
   { label: 'Venice AI', provider: 'openai', baseURL: 'https://api.venice.ai/v1/chat/completions', defaultModel: 'venice-default', apiKeyRequired: true, group: 'US AI', docs: 'VENICE_API_KEY' },
+  { label: 'Fireworks AI', provider: 'openai', baseURL: 'https://api.fireworks.ai/inference/v1/chat/completions', defaultModel: 'accounts/fireworks/models/llama-v3p3-70b-instruct', apiKeyRequired: true, group: 'US AI', docs: 'FIREWORKS_API_KEY' },
+  { label: 'Cerebras', provider: 'openai', baseURL: 'https://api.cerebras.ai/v1/chat/completions', defaultModel: 'cerebras-llama-3.3-70b', apiKeyRequired: true, group: 'US AI', docs: 'CEREBRAS_API_KEY' },
 
   // --- Gateway ---
   { label: 'Vercel AI Gateway', provider: 'openai', baseURL: 'https://ai-gateway.vercel.sh/v1/chat/completions', defaultModel: 'gateway-default', apiKeyRequired: true, group: 'Gateway', docs: 'VERCEL_AI_GATEWAY_API_KEY' },
   { label: 'Cloudflare AI', provider: 'openai', baseURL: 'https://api.cloudflare.com/client/v4/ai/chat/completions', defaultModel: '@cf/meta/llama-3.1-70b', apiKeyRequired: true, group: 'Gateway', docs: 'CLOUDFLARE_API_KEY' },
   { label: 'LiteLLM (Local)', provider: 'openai', baseURL: 'http://localhost:4000/v1/chat/completions', defaultModel: 'gpt-4o', apiKeyRequired: false, group: 'Gateway' },
+  { label: 'Wafer', provider: 'anthropic', baseURL: 'https://pass.wafer.ai/v1/', defaultModel: 'claude-sonnet-4-6', apiKeyRequired: true, group: 'Gateway', docs: 'WAFER_API_KEY' },
   { label: 'OpenCode Zen', provider: 'openai', baseURL: 'https://api.opencode.ai/v1/chat/completions', defaultModel: 'opencode-zen', apiKeyRequired: true, group: 'Gateway', docs: 'OPENCODE_API_KEY' },
   { label: 'OpenCode Go', provider: 'openai', baseURL: 'https://api.opencode.ai/v1/chat/completions', defaultModel: 'opencode-go', apiKeyRequired: true, group: 'Gateway', docs: 'OPENCODE_API_KEY' },
   { label: 'AskOnce', provider: 'openai', baseURL: 'http://localhost:3456/v1/chat/completions', defaultModel: 'gpt-4o', apiKeyRequired: false, group: 'Tool' },
