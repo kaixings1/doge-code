@@ -250,3 +250,38 @@ src/
 - 配置隔离于 `.doge/` 目录，不与官方 `.claude/` 混用
 - `bun:build` 的 `feature()` 标记实现死代码消除——条件导入会被编译时移除
 - `src/` 下大量使用 `.js` 扩展名（ESM 模块规范），实际代码为 TypeScript
+
+## ⚠️ Bash Tool 执行限制（Windows Git Bash / MSYS2）
+
+此项目的 Bash Tool 在 Windows 下通过 MSYS2（Git Bash）执行命令。MSYS2 会自动将命令行参数中的**反斜杠 `\` 转换为正斜杠 `/`**，以下写法均会出错：
+
+```bash
+# ❌ 错误——反斜杠被转成 /
+python3 -c "print('hello\nworld')"
+node -e "console.log(\"test\")"
+echo '\n\t\x41'
+```
+
+### ✅ 正确写法
+
+```bash
+# ✅ Python 换行：用 chr(10) 代替 \n
+python3 -c "print('hello' + chr(10) + 'world')"
+
+# ✅ Node.js 换行：用 String.fromCharCode(10) 代替 \n
+node -e "console.log('hello' + String.fromCharCode(10) + 'world')"
+
+# ✅ 写文件再执行：先写 .cjs 文件再运行
+node -e "require('fs').writeFileSync('x.cjs',['a','b'].join(String.fromCharCode(10)))"
+node x.cjs
+
+# ✅ heredoc 不要有行首缩进
+cat << 'EOF'
+line1
+line2
+EOF
+
+# ✅ 多行参数直接用多行 echo
+echo line1
+echo line2
+```
