@@ -50,6 +50,7 @@ const SubscribePRTool = feature('KAIROS_GITHUB_WEBHOOKS')
 /* eslint-enable custom-rules/no-process-env-top-level */
 import { TaskOutputTool } from './tools/TaskOutputTool/TaskOutputTool.js'
 import { WebSearchTool } from './tools/WebSearchTool/WebSearchTool.js'
+import { MultiSearchTool } from './tools/MultiSearchTool/MultiSearchTool.js'
 import { UltrareviewTool } from './tools/UltrareviewTool/UltrareviewTool.js'
 import { LessPermissionPromptsTool } from './tools/LessPermissionPromptsTool/LessPermissionPromptsTool.js'
 import { EffortTool } from './tools/EffortTool/EffortTool.js'
@@ -111,7 +112,7 @@ import { TaskCreateTool } from './tools/TaskCreateTool/TaskCreateTool.js'
 import { TaskGetTool } from './tools/TaskGetTool/TaskGetTool.js'
 import { TaskUpdateTool } from './tools/TaskUpdateTool/TaskUpdateTool.js'
 import { TaskListTool } from './tools/TaskListTool/TaskListTool.js'
-import uniqBy from './utils/vendor/lodash.js'
+import { uniqBy } from './vendor/lodash.js'
 import { isToolSearchEnabledOptimistic } from './utils/toolSearch.js'
 import { isTodoV2Enabled } from './utils/tasks.js'
 // 死代码消除：CLAUDE_CODE_VERIFY_PLAN 的条件导入
@@ -234,6 +235,7 @@ export function getAllBaseTools(): Tools {
     WebFetchTool,
     TodoWriteTool,
     WebSearchTool,
+    MultiSearchTool,
     TaskStopTool,
     AskUserQuestionTool,
     SkillTool,
