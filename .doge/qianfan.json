@@ -1,0 +1,11 @@
+{
+  "activePreset": "qianfan",
+  "presets": {
+    "qianfan": {
+      "provider": "openai",
+      "baseURL": "https://qianfan.baidubce.com/v2",
+      "apiKey": "YOUR_API_KEY_HERE",
+      "model": "ernie-4.0"
+    }
+  }
+}

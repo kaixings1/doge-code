@@ -1,0 +1,11 @@
+{
+  "activePreset": "sglang",
+  "presets": {
+    "sglang": {
+      "provider": "openai",
+      "baseURL": "http://localhost:30000/v1",
+      "apiKey": "YOUR_API_KEY_HERE",
+      "model": "default"
+    }
+  }
+}

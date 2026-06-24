@@ -1,0 +1,11 @@
+{
+  "activePreset": "openrouter",
+  "presets": {
+    "openrouter": {
+      "provider": "openai",
+      "baseURL": "https://openrouter.ai/api/v1",
+      "apiKey": "YOUR_API_KEY_HERE",
+      "model": "anthropic/claude-3.5-sonnet"
+    }
+  }
+}

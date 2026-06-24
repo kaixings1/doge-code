@@ -1,0 +1,11 @@
+{
+  "activePreset": "groq",
+  "presets": {
+    "groq": {
+      "provider": "openai",
+      "baseURL": "https://api.groq.com/openai/v1",
+      "apiKey": "YOUR_API_KEY_HERE",
+      "model": "llama-3.3-70b-versatile"
+    }
+  }
+}
