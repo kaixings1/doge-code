@@ -2,7 +2,7 @@
  * Shared utilities for displaying task status across different task types.
  */
 
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import type { TaskStatus } from '../../Task.js';
 import type { InProcessTeammateTaskState } from '../../tasks/InProcessTeammateTask/types.js';
 import { isPanelAgentTask } from '../../tasks/LocalAgentTask/LocalAgentTask.js';

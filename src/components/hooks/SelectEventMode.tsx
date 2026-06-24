@@ -8,7 +8,7 @@ import { c as _c } from "react/compiler-runtime";
  * edit settings.json directly or ask Claude.
  */
 
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import * as React from 'react';
 import type { HookEvent } from '../../entrypoints/agentSdkTypes.js';
 import type { HookEventMetadata } from '../../utils/hooks/hooksConfigManager.js';

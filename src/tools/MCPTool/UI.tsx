@@ -1,6 +1,6 @@
 import { c as _c } from "react/compiler-runtime";
 import { feature } from 'bun:bundle';
-import figures from '../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import * as React from 'react';
 import type { z } from 'zod/v4';
 import { ProgressBar } from '../../components/design-system/ProgressBar.js';

@@ -1,7 +1,7 @@
 import { feature } from 'bun:bundle'
 import { randomBytes } from 'crypto'
 import ignore from 'ignore'
-import memoize from '../utils/vendor/lodash.js'
+import {memoize }from '../../vendor/lodash.js'
 import { homedir, tmpdir } from 'os'
 import { join, normalize, posix, sep } from 'path'
 import { hasAutoMemPathOverride, isAutoMemPath } from '../../memdir/paths.js'

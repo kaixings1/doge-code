@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import figures from '../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import React from 'react';
 import { Markdown } from '../../components/Markdown.js';
 import { BLACK_CIRCLE } from '../../constants/figures.js';

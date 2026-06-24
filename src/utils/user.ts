@@ -1,5 +1,5 @@
 import { execa } from 'execa'
-import memoize from '../utils/vendor/lodash.js'
+import { memoize } from '../vendor/lodash.js'
 import { getSessionId } from '../bootstrap/state.js'
 import {
   getOauthAccountInfo,

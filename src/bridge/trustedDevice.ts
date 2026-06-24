@@ -1,5 +1,5 @@
 import axios from 'axios'
-import memoize from '../utils/vendor/lodash.js'
+import { memoize } from '../vendor/lodash.js'
 import { hostname } from 'os'
 import { getOauthConfig } from '../constants/oauth.js'
 import {

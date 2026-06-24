@@ -1,4 +1,4 @@
-import memoize from '../utils/vendor/lodash.js'
+import { memoize } from '../../vendor/lodash.js'
 import { refreshAndGetAwsCredentials } from '../auth.js'
 import { getAWSRegion, isEnvTruthy } from '../envUtils.js'
 import { logError } from '../log.js'
