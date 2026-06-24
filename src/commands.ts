@@ -88,6 +88,7 @@ import metrics from './commands/metrics/index.js'
 import monitor from './commands/monitor/index.js'
 import backup from './commands/backup/index.js'
 import mcpToolSearch from './commands/mcp-tool-search/index.js'
+import promptDiff from './commands/prompt-diff/index.js'
 const agentsPlatform =
   process.env.USER_TYPE === 'ant'
     ? require('./commands/agents-platform/index.js').default
@@ -424,6 +425,7 @@ const COMMANDS = memoize((): Command[] => [
   monitor,
   backup,
   mcpToolSearch,
+  promptDiff,
   ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO
     ? INTERNAL_ONLY_COMMANDS
     : []),

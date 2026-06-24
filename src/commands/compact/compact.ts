@@ -48,7 +48,61 @@ export const call: LocalCommandCall = async (args, context) => {
     throw new Error('没有可压缩的消息')
   }
 
-  const customInstructions = args.trim()
+  const rawArgs = (args || '').trim()
+
+  // /compact on_error: 只扫描消息中的错误信息
+  if (rawArgs === 'on_error') {
+    const errorIndices: number[] = []
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const msg = messages[i]
+      if (msg.type === 'assistant') {
+        const content = msg.message.content
+        if (Array.isArray(content)) {
+          for (const block of content) {
+            if (block.type === 'tool_use' && block.name === 'Bash') {
+              const input = block.input as Record<string, unknown>
+              if (input.error != null) {
+                errorIndices.push(i)
+                break
+              }
+              if (input.exit_code === 1 || input.exit_code === 2) {
+                errorIndices.push(i)
+                break
+              }
+            }
+          }
+        }
+      }
+      if (errorIndices.length >= 3) break
+    }
+
+    const customDirective = errorIndices.length > 0
+      ? '扫描对话，聚焦最近的错误和失败。压缩非关键内容，保留最后 ' + errorIndices.length + ' 条错误消息的上下文。'
+      : '扫描对话中的错误。如果没有明显错误，执行标准压缩。'
+    // 直接使用 compactConversation 执行 on_error 压缩
+    const microcompactResult = await microcompactMessages(messages, context)
+    const messagesForCompact = microcompactResult.messages
+    const result = await compactConversation(
+      messagesForCompact,
+      context,
+      await getCacheSharingParams(context, messagesForCompact),
+      false,
+      customDirective,
+      false,
+    )
+    const clearVal = null as never
+    setLastSummarizedMessageId(clearVal)
+    suppressCompactWarning()
+    getUserContext.cache.clear?.()
+    runPostCompactCleanup()
+    return {
+      type: 'compact',
+      compactionResult: result,
+      displayText: buildDisplayText(context, result.userDisplayMessage),
+    }
+  }
+
+  const customInstructions = rawArgs
 
   try {
     // 如果没有自定义指令，首先尝试会话记忆压缩

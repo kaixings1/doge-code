@@ -23,6 +23,7 @@ function getPromptContent(): string {
 - 当前 git diff（已暂存和未暂存的更改）: !\`git diff HEAD\`
 - 当前分支: !\`git branch --show-current\`
 - 最近的提交: !\`git log --oneline -10\`
+- 提交模板: !\`cat .gitmessage 2>/dev/null || echo ''\`
 
 ## Git 安全协议
 
