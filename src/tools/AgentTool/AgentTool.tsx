@@ -629,7 +629,9 @@ export const AgentTool = buildTool({
         useExactTools: true
       }),
       worktreePath: worktreeInfo?.worktreePath,
-      description
+      description,
+      // 子 agent depth = 父 agent depth + 1，若没有父 agent 则为 0
+      depth: ((toolUseContext.options as Record<string, unknown>).agentDepth as number ?? 0) + 1
     };
 
     // Helper to wrap execution with a cwd override: explicit cwd arg (KAIROS)
