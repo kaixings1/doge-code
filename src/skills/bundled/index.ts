@@ -15,6 +15,12 @@ import { registerGrillWithDocsSkill } from './grillWithDocs.js'
 import { registerPrototypeSkill } from './prototype.js'
 import { registerImproveCodebaseArchitectureSkill } from './improveCodebaseArchitecture.js'
 import { registerSetupPreCommitSkill } from './setupPreCommit.js'
+import { registerTeachSkill } from './teach.js'
+import { registerToPrdSkill } from './toPrd.js'
+import { registerToIssuesSkill } from './toIssues.js'
+import { registerTriageSkill } from './triage.js'
+import { registerScaffoldExercisesSkill } from './scaffoldExercises.js'
+import { registerWritingGreatSkillsSkill } from './writingGreatSkills.js'
 import { registerClaudeInChromeSkill } from './claudeInChrome.js'
 import { registerDebugSkill } from './debug.js'
 import { registerKeybindingsSkill } from './keybindings.js'
@@ -63,6 +69,12 @@ export function initBundledSkills(): void {
   registerPrototypeSkill()
   registerImproveCodebaseArchitectureSkill()
   registerSetupPreCommitSkill()
+  registerTeachSkill()
+  registerToPrdSkill()
+  registerToIssuesSkill()
+  registerTriageSkill()
+  registerScaffoldExercisesSkill()
+  registerWritingGreatSkillsSkill()
   registerStuckSkill()
   if (feature('KAIROS') || feature('KAIROS_DREAM')) {
      
