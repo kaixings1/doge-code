@@ -1,5 +1,5 @@
 import { feature } from 'bun:bundle';
-import figures from '../utils/vendor/figures.js';
+import figures from '../vendor/figures.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { stringWidth } from '../ink/stringWidth.js';

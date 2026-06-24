@@ -1,7 +1,7 @@
 import { feature } from 'bun:bundle'
 import type { BetaMessageStreamParams } from '@anthropic-ai/sdk/resources/beta/messages/messages.mjs'
 import { readdir, readFile, stat } from 'fs/promises'
-import memoize from '../utils/vendor/lodash.js'
+import { memoize } from '../vendor/lodash.js'
 import { join } from 'path'
 import type { QuerySource } from '../constants/querySource.js'
 import {

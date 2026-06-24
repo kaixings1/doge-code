@@ -1,6 +1,6 @@
 import { feature } from 'bun:bundle'
 import type { UUID } from 'crypto'
-import uniqBy from '../utils/vendor/lodash.js'
+import {uniqBy} from '../../vendor/lodash.js'
 
  
 const sessionTranscriptModule = feature('KAIROS')

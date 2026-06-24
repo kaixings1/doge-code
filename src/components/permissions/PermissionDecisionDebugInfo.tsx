@@ -1,7 +1,7 @@
 import { c as _c } from "react/compiler-runtime";
 import { feature } from 'bun:bundle';
 import chalk from 'chalk';
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import React, { useMemo } from 'react';
 import { Ansi, Box, color, Text, useTheme } from '../../ink.js';
 import { useAppState } from '../../state/AppState.js';

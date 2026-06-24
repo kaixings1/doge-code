@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import figures from '../utils/vendor/figures.js';
+import figures from '../vendor/figures.js';
 import type { RefObject } from 'react';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { Box, Text } from '../ink.js';

@@ -1,6 +1,6 @@
 import { c as _c } from "react/compiler-runtime";
 import { feature } from 'bun:bundle';
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../../vendor/figures.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Text, useTheme } from '../../../ink.js';
 import { useKeybinding } from '../../../keybindings/useKeybinding.js';

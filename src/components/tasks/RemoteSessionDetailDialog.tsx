@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import React, { useMemo, useState } from 'react';
 import type { SDKMessage } from '../../entrypoints/agentSdkTypes.js';
 import type { ToolUseContext } from '../../Tool.js';

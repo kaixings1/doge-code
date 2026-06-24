@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto'
 import { copyFile, writeFile } from 'fs/promises'
-import memoize from '../utils/vendor/lodash.js'
+import { memoize } from '../vendor/lodash.js'
 import { join, resolve, sep } from 'path'
 import type { AgentId, SessionId } from '../types/ids.js'
 import type { LogOption } from '../types/logs.js'

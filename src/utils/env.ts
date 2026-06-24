@@ -1,4 +1,4 @@
-import memoize from '../utils/vendor/lodash.js'
+import { memoize } from '../vendor/lodash.js'
 import { homedir } from 'os'
 import { join } from 'path'
 import { fileSuffixForOauthConfig } from '../constants/oauth.js'

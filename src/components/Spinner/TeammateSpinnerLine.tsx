@@ -1,5 +1,5 @@
-import figures from '../../utils/vendor/figures.js';
-import sample from '../utils/vendor/lodash.js';
+import figures from '../../vendor/figures.js';
+import {sample} from '../../vendor/lodash.js';
 import * as React from 'react';
 import { useRef, useState } from 'react';
 import { getSpinnerVerbs } from '../../constants/spinnerVerbs.js';

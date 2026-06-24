@@ -1,4 +1,4 @@
-import noop from '../utils/vendor/lodash.js'
+import { noop } from '../vendor/lodash.js'
 import type { ReactElement } from 'react'
 import { LegacyRoot } from 'react-reconciler/constants.js'
 import { logForDebugging } from '../utils/debug.js'

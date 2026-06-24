@@ -6,7 +6,7 @@ import type { KeyboardEvent } from '../../ink/events/keyboard-event.js';
 import * as React from 'react';
 import { useState, useCallback } from 'react';
 import { useKeybinding, useKeybindings } from '../../keybindings/useKeybinding.js';
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import { type GlobalConfig, saveGlobalConfig, getCurrentProjectConfig, type OutputStyle } from '../../utils/config.js';
 import { normalizeApiKeyForConfig } from '../../utils/authPortable.js';
 import { getGlobalConfig, getAutoUpdaterDisabledReason, formatAutoUpdaterDisabledReason, getRemoteControlAtStartup } from '../../utils/config.js';

@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import React, { useCallback, useMemo, useState } from 'react';
 import { mcpInfoFromString } from '../../services/mcp/mcpStringUtils.js';
 import { isMcpTool } from '../../services/mcp/utils.js';

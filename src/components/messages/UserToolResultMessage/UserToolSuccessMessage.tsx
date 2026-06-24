@@ -1,5 +1,5 @@
 import { feature } from 'bun:bundle';
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../../vendor/figures.js';
 import * as React from 'react';
 import { SentryErrorBoundary } from '../../../components/SentryErrorBoundary.js';
 import { Box, Text, useTheme } from '../../../ink.js';

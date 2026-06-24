@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import figures from '../utils/vendor/figures.js';
+import figures from '../vendor/figures.js';
 import { join } from 'path';
 import React, { Suspense, use, useCallback, useEffect, useMemo, useState } from 'react';
 import { KeybindingWarnings } from '../components/KeybindingWarnings.js';

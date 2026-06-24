@@ -1,4 +1,4 @@
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import React, { useState } from 'react';
 import type { CommandResultDisplay } from '../../commands.js';
 import { useExitOnCtrlCDWithKeybindings } from '../../hooks/useExitOnCtrlCDWithKeybindings.js';

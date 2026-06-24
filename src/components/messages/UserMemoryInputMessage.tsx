@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import sample from '../utils/vendor/lodash.js';
+import { sample } from '../../vendor/lodash.js';
 import * as React from 'react';
 import { useMemo } from 'react';
 import { Box, Text } from '../../ink.js';

@@ -1,4 +1,4 @@
-import memoize from '../utils/vendor/lodash.js'
+import { memoize }from '../../vendor/lodash.js'
 import { basename } from 'path'
 import { isAutoMemoryEnabled } from '../../memdir/paths.js'
 import type { AgentColorName } from '../../tools/AgentTool/agentColorManager.js'

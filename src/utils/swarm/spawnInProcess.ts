@@ -13,7 +13,7 @@
  * 4. Returning spawn result for backend
  */
 
-import sample from '../utils/vendor/lodash.js'
+import {sample} from '../../vendor/lodash.js'
 import { getSessionId } from '../../bootstrap/state.js'
 import { getSpinnerVerbs } from '../../constants/spinnerVerbs.js'
 import { TURN_COMPLETION_VERBS } from '../../constants/turnCompletionVerbs.js'

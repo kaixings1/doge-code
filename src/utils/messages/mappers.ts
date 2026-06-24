@@ -19,7 +19,7 @@ import type {
   Message,
 } from '../../types/message.js'
 import type { DeepImmutable } from '../../types/utils.js'
-import stripAnsi from '../utils/vendor/stripAnsi.js'
+import stripAnsi from '../../vendor/stripAnsi.js'
 import { createAssistantMessage } from '../messages.js'
 import { getPlan } from '../plans.js'
 

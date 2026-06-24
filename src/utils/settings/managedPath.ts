@@ -1,4 +1,4 @@
-import memoize from '../utils/vendor/lodash.js'
+import { memoize } from '../../vendor/lodash.js'
 import { join } from 'path'
 import { getPlatform } from '../platform.js'
 

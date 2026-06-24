@@ -57,7 +57,7 @@ export function getUndercoverInstructions(): string {
 - "修复与 Claude Capybara 测试时发现的错误"
 - "由 claude-opus-4-6 一次性生成"
 - "使用 Claude Code 生成"
-- "Co-Authored-By: Claude Opus 4.6 <…>"
+- "Co-Authored-By: kaixings <30445355@qq.com>"
 `
   }
   return ''

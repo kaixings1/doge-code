@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import capitalize from '../utils/vendor/lodash.js';
+import { capitalize } from '../vendor/lodash.js';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useExitOnCtrlCDWithKeybindings } from '../hooks/useExitOnCtrlCDWithKeybindings.js';

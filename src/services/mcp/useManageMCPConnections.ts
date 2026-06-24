@@ -35,8 +35,8 @@ import {
   ResourceListChangedNotificationSchema,
   ToolListChangedNotificationSchema,
 } from '@modelcontextprotocol/sdk/types.js'
-import omit from '../utils/vendor/lodash.js'
-import reject from '../utils/vendor/lodash.js'
+import {omit }from '../../vendor/lodash.js'
+import {reject }from '../../vendor/lodash.js'
 import {
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
   logEvent,

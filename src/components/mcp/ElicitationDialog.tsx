@@ -1,6 +1,6 @@
 import { c as _c } from "react/compiler-runtime";
 import type { ElicitRequestFormParams, ElicitRequestURLParams, ElicitResult, PrimitiveSchemaDefinition } from '@modelcontextprotocol/sdk/types.js';
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRegisterOverlay } from '../../context/overlayContext.js';
 import { useNotifyAfterTimeout } from '../../hooks/useNotifyAfterTimeout.js';

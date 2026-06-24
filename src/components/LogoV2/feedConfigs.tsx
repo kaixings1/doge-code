@@ -1,4 +1,4 @@
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import { homedir } from 'os';
 import * as React from 'react';
 import { Box, Text } from '../../ink.js';

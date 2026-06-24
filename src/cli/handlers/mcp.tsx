@@ -4,7 +4,7 @@
  */
 
 import { stat } from 'fs/promises';
-import pMap from '../utils/vendor/pMap.js';
+import pMap from '../../vendor/pMap.js';
 import { cwd } from 'process';
 import React from 'react';
 import { MCPServerDesktopImportDialog } from '../../components/MCPServerDesktopImportDialog.js';

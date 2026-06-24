@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import partition from '../utils/vendor/lodash.js';
+import { partition } from '../vendor/lodash.js';
 import React, { useCallback } from 'react';
 import { logEvent } from '../services/analytics/index.js';
 import { Box, Text } from '../ink.js';

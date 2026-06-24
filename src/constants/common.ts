@@ -1,4 +1,4 @@
-import memoize from '../utils/vendor/lodash.js'
+import { memoize } from '../vendor/lodash.js'
 
 // 确保获取本地日期的 ISO 格式
 export function getLocalISODate(): string {

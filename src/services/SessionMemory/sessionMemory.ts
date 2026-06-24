@@ -5,7 +5,7 @@
  */
 
 import { writeFile } from 'fs/promises'
-import memoize from '../utils/vendor/lodash.js'
+import {memoize} from '../../vendor/lodash.js'
 import { getIsRemoteMode } from '../../bootstrap/state.js'
 import { getSystemPrompt } from '../../constants/prompts.js'
 import { getSystemContext, getUserContext } from '../../context.js'

@@ -5,7 +5,7 @@ import { c as _c } from "react/compiler-runtime";
  * and success/failure notification JSX so new sources stay small.
  */
 
-import figures from '../utils/vendor/figures.js';
+import figures from '../vendor/figures.js';
 import * as React from 'react';
 import { getIsRemoteMode } from '../bootstrap/state.js';
 import type { useNotifications } from '../context/notifications.js';

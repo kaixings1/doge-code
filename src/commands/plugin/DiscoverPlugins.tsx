@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ConfigurableShortcutHint } from '../../components/ConfigurableShortcutHint.js';

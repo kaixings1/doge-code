@@ -1,5 +1,5 @@
 import { feature } from 'bun:bundle'
-import mergeWith from '../utils/vendor/lodash.js'
+import { mergeWith } from '../../vendor/lodash.js'
 import { dirname, join, resolve } from 'path'
 import { z } from 'zod/v4'
 import {

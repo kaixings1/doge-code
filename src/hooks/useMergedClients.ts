@@ -1,4 +1,4 @@
-import uniqBy from '../utils/vendor/lodash.js'
+import { uniqBy } from '../vendor/lodash.js'
 import { useMemo } from 'react'
 import type { MCPServerConnection } from '../services/mcp/types.js'
 

@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import * as React from 'react';
 import type { SettingSource } from '../../utils/settings/constants.js';
 import type { KeyboardEvent } from '../../ink/events/keyboard-event.js';

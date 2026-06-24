@@ -1,7 +1,7 @@
 import { feature } from 'bun:bundle'
 import { statSync } from 'fs'
 import { lstat, readdir, readFile, realpath, stat } from 'fs/promises'
-import memoize from '../utils/vendor/lodash.js'
+import { memoize } from '../vendor/lodash.js'
 import { homedir } from 'os'
 import { dirname, join, resolve, sep } from 'path'
 import {
