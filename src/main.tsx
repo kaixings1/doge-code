@@ -25,9 +25,9 @@ import { feature } from 'bun:bundle';
 import { Command as CommanderCommand, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import chalk from 'chalk';
 import { readFileSync } from 'fs';
-import mapValues from './utils/vendor/lodash.js';
-import pickBy from './utils/vendor/lodash.js';
-import uniqBy from './utils/vendor/lodash.js';
+import { mapValues } from './vendor/lodash.js';
+import { pickBy } from './vendor/lodash.js';
+import { uniqBy } from './vendor/lodash.js';
 import React from 'react';
 import { getOauthConfig } from './constants/oauth.js';
 import { getRemoteSessionUrl } from './constants/product.js';
@@ -914,7 +914,7 @@ async function run(): Promise<CommanderCommand> {
   });
   program.name('doge').description(`Doge Code - 默认启动交互式会话，使用 -p/--print 进行非交互式输出`).argument('[prompt]', '您的提示', String)
   // 子命令通过 commander 的 copyInheritedSettings 继承 helpOption —— 在此处设置一次即可覆盖 mcp、plugin、auth 及所有其他子命令。
-  .helpOption('-h, --help', '显示命令帮助').option('-d, --debug [filter]', '启用调试模式，可选类别过滤（例如 "api,hooks" 或 "!1p,!file"）', (_value: string | true) => {
+  .helpOption('-h, --help', '显示命令帮助').addOption(new Option('--bg, --background', '后台模式：在后台启动会话（适用于长时间运行的任务）')).option('-d, --debug [filter]', '启用调试模式，可选类别过滤（例如 "api,hooks" 或 "!1p,!file"）', (_value: string | true) => {
     // 如果提供了值，它将是过滤字符串
     // 如果标志存在但未提供值，则值为 true
     // 实际过滤在 debug.ts 中通过解析 process.argv 处理
@@ -935,7 +935,7 @@ async function run(): Promise<CommanderCommand> {
   }).hideHelp()).option('--replay-user-messages', '将来自 stdin 的用户消息重新回显到 stdout 以进行确认（仅适用于 --input-format=stream-json 和 --output-format=stream-json）', () => true).addOption(new Option('--enable-auth-status', '在 SDK 模式下启用认证状态消息').default(false).hideHelp()).option('--allowedTools, --allowed-tools <tools...>', '逗号或空格分隔的允许工具名称列表（例如 "Bash(git:*) Edit")').option('--tools <tools...>', '从内置工具集中指定可用工具列表。使用 "" 禁用所有工具，"default" 使用所有工具，或指定工具名称（例如 "Bash,Edit,Read"）。').option('--disallowedTools, --disallowed-tools <tools...>', '逗号或空格分隔的禁止工具名称列表（例如 "Bash(git:*) Edit")').option('--mcp-config <configs...>', '从 JSON 文件或字符串加载 MCP 服务器（空格分隔）').addOption(new Option('--permission-prompt-tool <tool>', '用于权限提示的 MCP 工具（仅适用于 --print）').argParser(String).hideHelp()).addOption(new Option('--system-prompt <prompt>', '用于会话的系统提示').argParser(String)).addOption(new Option('--system-prompt-file <file>', '从文件读取系统提示').argParser(String).hideHelp()).addOption(new Option('--append-system-prompt <prompt>', '向默认系统提示追加内容').argParser(String)).addOption(new Option('--append-system-prompt-file <file>', '从文件读取系统提示并追加到默认系统提示').argParser(String).hideHelp()).addOption(new Option('--permission-mode <mode>', '用于会话的权限模式').argParser(String).choices(PERMISSION_MODES)).option('-c, --continue', '继续当前目录中最近的对话', () => true).option('-r, --resume [value]', '通过会话 ID 恢复对话，或通过可选搜索词打开交互式选择器', value => value || true).option('--fork-session', '恢复时创建新的会话 ID，而不是重用原始 ID（与 --resume 或 --continue 一起使用）', () => true).addOption(new Option('--prefill <text>', '用文本预填充提示输入框而不提交').hideHelp()).addOption(new Option('--deep-link-origin', '表示此会话是从深度链接启动的').hideHelp()).addOption(new Option('--deep-link-repo <slug>', '深度链接 ?repo= 参数解析为当前工作目录的仓库标识符').hideHelp()).addOption(new Option('--deep-link-last-fetch <ms>', 'FETCH_HEAD 的修改时间（毫秒级时间戳），由深度链接跳板预计算').argParser(v => {
     const n = Number(v);
     return Number.isFinite(n) ? n : undefined;
-  }).hideHelp()).option('--from-pr [value]', '通过 PR 编号或 URL 恢复链接到 PR 的会话，或通过可选搜索词打开交互式选择器', value => value || true).option('--no-session-persistence', '禁用会话持久化 - 会话将不会保存到磁盘且无法恢复（仅适用于 --print）').addOption(new Option('--resume-session-at <message id>', '恢复时仅包含直到并包括指定 assistant 消息 ID 的消息（与 --resume 一起用于打印模式）').argParser(String).hideHelp()).addOption(new Option('--rewind-files <user-message-id>', '将文件恢复到指定用户消息时的状态并退出（需要 --resume）').hideHelp())
+  }).hideHelp()).option('--from-pr [value]', '通过 PR 编号或 URL 恢复链接到 PR 的会话，或通过可选搜索词打开交互式选择器', value => value || true).option('--no-session-persistence', '禁用会话持久化 - 会话将不会保存到磁盘且无法恢复（仅适用于 --print）').addOption(new Option('--resume-session-at <message id>', '恢复时仅包含直到并包括指定 assistant 消息 ID 的消息（与 --resume 一起用于打印模式）').argParser(String).hideHelp()).addOption(new Option('--rewind-files <user-message-id>', '将文件恢复到指定用户消息时的状态并退出（需要 --resume）').hideHelp()).addOption(new Option('--safe-mode', '安全模式：以所有自定义项（CLAUDE.md、插件、技能、钩子、MCP 服务器）禁用状态启动，用于故障排除').hideHelp())
   // @[MODEL LAUNCH]: 更新 --model 帮助文本中的示例模型 ID。
   .option('--model <model>', `用于当前会话的模型。提供最新模型的别名（例如 'sonnet' 或 'opus'）或模型的完整名称（例如 'claude-sonnet-4-6'）。`).addOption(new Option('--effort <level>', `当前会话的投入级别（low、medium、high、max）`).argParser((rawValue: string) => {
     const value = rawValue.toLowerCase();
@@ -958,6 +958,12 @@ async function run(): Promise<CommanderCommand> {
       bare?: boolean;
     }).bare) {
       process.env.CLAUDE_CODE_SIMPLE = '1';
+    }
+
+    // --safe-mode: 禁用所有自定义项（CLAUDE.md、插件、技能、钩子、MCP 服务器）
+    if ((options as { safeMode?: boolean }).safeMode) {
+      process.env.CLAUDE_CODE_SIMPLE = '1';
+      process.env.CLAUDE_CODE_SAFE_MODE = '1';
     }
 
     // 忽略 "code" 作为提示 - 将其视为无提示

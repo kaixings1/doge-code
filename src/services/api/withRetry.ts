@@ -85,7 +85,7 @@ async function retrySleep(ms: number, signal?: AbortSignal): Promise<void> {
 }
 
 
-const DEFAULT_MAX_RETRIES = 20      // 默认最大重试次数
+const DEFAULT_MAX_RETRIES = 15      // 默认最大重试次数（上限 15，v2.1.186 变更）
 const FLOOR_OUTPUT_TOKENS = 3000     // 最小输出 token 数
 const MAX_529_RETRIES = 3            // 最大 529 错误重试次数
 export const BASE_DELAY_MS = 20_000   // 基础延迟 20 秒
@@ -862,7 +862,8 @@ function shouldRetry(error: APIError): boolean {
 
 export function getDefaultMaxRetries(): number {
   if (process.env.CLAUDE_CODE_MAX_RETRIES) {
-    return parseInt(process.env.CLAUDE_CODE_MAX_RETRIES, 10)
+    const parsed = parseInt(process.env.CLAUDE_CODE_MAX_RETRIES, 10)
+    return Math.min(parsed, 15)  // 上限 15（v2.1.186 变更）
   }
   return DEFAULT_MAX_RETRIES
 }
