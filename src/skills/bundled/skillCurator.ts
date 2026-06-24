@@ -17,7 +17,8 @@ import { readFile, writeFile, rename, mkdir } from 'fs/promises'
 import { join, dirname } from 'path'
 import { getClaudeConfigHomeDir } from '../../utils/envUtils.js'
 import { logForDebugging } from '../../utils/debug.js'
-import { getBundledSkills, type Command } from '../../types/command.js'
+import { type Command } from '../../types/command.js'
+import { getBundledSkills } from '../bundledSkills.js'
 import {
   getUsageReport,
   type UsageRecord,
