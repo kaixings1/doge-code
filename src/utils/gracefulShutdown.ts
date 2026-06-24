@@ -44,6 +44,7 @@ import { isEnvTruthy } from './envUtils.js'
 import { getCurrentSessionTitle, sessionIdExists } from './sessionStorage.js'
 import { sleep } from './sleep.js'
 import { profileReport } from './startupProfiler.js'
+import { closeSentry } from './sentry.js'
 
 /**
  * Clean up terminal modes synchronously before process exit.
@@ -509,6 +510,13 @@ export async function gracefulShutdown(
     ])
   } catch {
     // Ignore analytics shutdown errors
+  }
+
+  // Flush Sentry events — capped at 2s. Must flush before forceExit.
+  try {
+    await Promise.race([closeSentry(2000), sleep(2000)])
+  } catch {
+    // Ignore Sentry shutdown errors
   }
 
   if (options?.finalMessage) {

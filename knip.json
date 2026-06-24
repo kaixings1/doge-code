@@ -1,0 +1,2 @@
+{ "$schema": "https://unpkg.com/knip@6/schema.json", "entry": ["src/entrypoints/cli.tsx"], "project": ["src/**/*.{ts,tsx}"], "ignore": ["src/types/**", "src/**/*.d.ts", "src/generated/**"], "ignoreDependencies": [ "@ant/*", "react-compiler-runtime", "@anthropic-ai/mcpb", "@anthropic-ai/sandbox-runtime", "@sentry/node", "@sentry/types" ], "ignoreBinaries": ["bun"]
+}

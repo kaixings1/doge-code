@@ -48,6 +48,7 @@ import { configureGlobalAgents } from '../utils/proxy.js'
 import { isBetaTracingEnabled } from '../utils/telemetry/betaSessionTracing.js'
 import { getTelemetryAttributes } from '../utils/telemetryAttributes.js'
 import { setShellIfWindows } from '../utils/windowsPaths.js'
+import { initSentry } from '../utils/sentry.js'
 
 // initialize1PEventLogging 动态导入以延迟 OpenTelemetry sdk-logs/resources
 
@@ -77,6 +78,10 @@ export const init = memoize(async (): Promise<void> => {
     // 在任何 TLS 连接之前。Bun 在启动时通过 BoringSSL 缓存 TLS 证书存储，
     // 因此这必须在第一次 TLS 握手之前完成。
     applyExtraCACertsFromConfig()
+
+    // 初始化 Sentry（如果配置了 SENTRY_DSN）— 必须在 proxy/CA 配置之后，
+    // 这样 Sentry 的网络请求会使用正确的代理和 CA 证书。
+    initSentry()
 
     logForDiagnosticsNoPII('info', 'init_safe_env_vars_applied', {
       duration_ms: Date.now() - envVarsStart,
