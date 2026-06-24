@@ -323,7 +323,54 @@ export function getDefaultEffortForModel(
     return 'medium'
   }
 
-  // Fallback to undefined, which means we don't set an effort level. This
-  // should resolve to high effort level in the API.
-  return undefined
+ // Fallback to default: auto-reasoning picks effort based on message content.
+ // If resolveAutoEffort returns void, the API receives no effort param (= high).
+ return undefined
 }
+
+/**
+ * Heuristically select an effort level based on the user's last message.
+ *
+ * Rules (aligned with CodeWhale's auto_reasoning.rs):
+ * - Debug/error/fix/crash keywords -> 'high' (needs deeper analysis)
+ * - Search/lookup/find/list keywords -> 'low' (simple retrieval)
+ * - Otherwise -> None (use model default -> API defaults)
+ */
+export function resolveAutoEffort(
+ message: string,
+): 'low' | 'high' | void {
+ const lower = message.toLowerCase()
+
+ const HIGH_EFFORT_KEYWORDS = [
+ 'debug',
+ 'error',
+ 'fix',
+ 'crash',
+ 'bug',
+ '崩溃',
+ '错误',
+ '报错',
+ '调试',
+ ]
+
+ const LOW_EFFORT_KEYWORDS = [
+ 'search',
+ 'lookup',
+ 'find',
+ 'list',
+ '搜索',
+ '查找',
+ '查询',
+ ]
+
+ if (HIGH_EFFORT_KEYWORDS.some((kw) => lower.includes(kw))) {
+ return 'high'
+ }
+
+ if (LOW_EFFORT_KEYWORDS.some((kw) => lower.includes(kw))) {
+ return 'low'
+ }
+
+ return void 0
+}
+
