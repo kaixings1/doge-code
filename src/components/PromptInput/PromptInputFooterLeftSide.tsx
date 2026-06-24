@@ -8,7 +8,7 @@ const coordinatorModule = feature('COORDINATOR_MODE')
  
 import { Box, Text, Link } from '../../ink.js';
 import * as React from 'react';
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import {
   useEffect,
   useMemo,

@@ -1,6 +1,6 @@
 import { feature } from 'bun:bundle';
 import { spawnSync } from 'child_process';
-import sample from '../utils/vendor/lodash.js';
+import { sample } from '../../vendor/lodash.js';
 import * as React from 'react';
 import { ExitFlow } from '../../components/ExitFlow.js';
 import type { LocalJSXCommandOnDone } from '../../types/command.js';

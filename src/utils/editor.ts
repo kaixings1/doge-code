@@ -4,7 +4,7 @@ import {
   spawn,
   spawnSync,
 } from 'child_process'
-import memoize from '../utils/vendor/lodash.js'
+import { memoize } from '../vendor/lodash.js'
 import { basename } from 'path'
 import instances from '../ink/instances.js'
 import { logForDebugging } from './debug.js'

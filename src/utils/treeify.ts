@@ -1,4 +1,4 @@
-import figures from '../utils/vendor/figures.js'
+import figures from '../vendor/figures.js'
 import { color } from '../components/design-system/color.js'
 import type { Theme, ThemeName } from './theme.js'
 

@@ -3,7 +3,7 @@
  * 仅在执行 `claude plugin *` 或 `claude plugin marketplace *` 命令时动态导入。
  */
 /* eslint-disable custom-rules/no-process-exit -- CLI 子命令处理函数有意执行退出 */
-import figures from '../utils/vendor/figures.js'
+import figures from '../../vendor/figures.js'
 import { basename, dirname } from 'path'
 import { setUseCoworkPlugins } from '../../bootstrap/state.js'
 import {

@@ -1,5 +1,5 @@
 import type { ToolUseBlock } from '@anthropic-ai/sdk/resources/index.mjs'
-import last from '../utils/vendor/lodash.js'
+import { last } from '../vendor/lodash.js'
 import {
   getSessionId,
   isSessionPersistenceDisabled,
