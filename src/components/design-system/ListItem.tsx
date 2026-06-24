@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import figures from '../../utils/vendor/figures.js';
+import figures from '../../vendor/figures.js';
 import type { ReactNode } from 'react';
 import React from 'react';
 import { useDeclaredCursor } from '../../ink/hooks/use-declared-cursor.js';

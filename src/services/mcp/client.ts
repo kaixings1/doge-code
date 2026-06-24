@@ -36,10 +36,10 @@ import {
   type PromptMessage,
   type ResourceLink,
 } from '@modelcontextprotocol/sdk/types.js'
-import mapValues from '../utils/vendor/lodash.js'
-import memoize from '../utils/vendor/lodash.js'
-import zipObject from '../utils/vendor/lodash.js'
-import pMap from '../utils/vendor/pMap.js'
+import { mapValues } from '../../vendor/lodash.js'
+import { memoize } from '../../vendor/lodash.js'
+import { zipObject } from '../../vendor/lodash.js'
+import pMap from '../../vendor/pMap.js'
 import { getOriginalCwd, getSessionId } from '../../bootstrap/state.js'
 import type { Command } from '../../commands.js'
 import { getOauthConfig } from '../../constants/oauth.js'

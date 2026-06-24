@@ -7,7 +7,7 @@ import {
   openSync,
 } from 'fs'
 // biome-ignore lint: This file IS the cloneDeep wrapper - it must import the original 
-import lodashCloneDeep from '../utils/vendor/lodash.js'
+import { cloneDeep as lodashCloneDeep } from '../vendor/lodash.js'
 import { addSlowOperation } from '../bootstrap/state.js'
 import { logForDebugging } from './debug.js'
 

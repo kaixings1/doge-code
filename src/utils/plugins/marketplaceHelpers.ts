@@ -1,4 +1,4 @@
-import isEqual from '../utils/vendor/lodash.js'
+import {isEqual } from '../../vendor/lodash.js'
 import { toError } from '../errors.js'
 import { logError } from '../log.js'
 import { getSettingsForSource } from '../settings/settings.js'

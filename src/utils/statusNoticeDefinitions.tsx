@@ -2,7 +2,7 @@
 import { Box, Text } from '../ink.js';
 import * as React from 'react';
 import { getLargeMemoryFiles, MAX_MEMORY_CHARACTER_COUNT, type MemoryFileInfo } from './claudemd.js';
-import figures from '../utils/vendor/figures.js';
+import figures from '../vendor/figures.js';
 import { getCwd } from './cwd.js';
 import { relative } from 'path';
 import { formatNumber } from './format.js';

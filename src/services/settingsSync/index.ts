@@ -12,7 +12,7 @@
 import { feature } from 'bun:bundle'
 import axios from 'axios'
 import { mkdir, readFile, stat, writeFile } from 'fs/promises'
-import pickBy from '../utils/vendor/lodash.js'
+import {pickBy} from '../../vendor/lodash.js'
 import { dirname } from 'path'
 import { getIsInteractive } from '../../bootstrap/state.js'
 import {

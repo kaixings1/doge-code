@@ -1,4 +1,4 @@
-import figures from '../utils/vendor/figures.js'
+import figures from '../../vendor/figures.js'
 import type { Command } from '../../commands.js'
 import { SandboxManager } from '../../utils/sandbox/sandbox-adapter.js'
 
