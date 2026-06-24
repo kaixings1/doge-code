@@ -21,6 +21,14 @@ import { registerToIssuesSkill } from './toIssues.js'
 import { registerTriageSkill } from './triage.js'
 import { registerScaffoldExercisesSkill } from './scaffoldExercises.js'
 import { registerWritingGreatSkillsSkill } from './writingGreatSkills.js'
+import { registerWritingBeatsSkill } from './writingBeats.js'
+import { registerWritingFragmentsSkill } from './writingFragments.js'
+import { registerWritingShapeSkill } from './writingShape.js'
+import { registerEditArticleSkill } from './editArticle.js'
+import { registerObsidianVaultSkill } from './obsidianVault.js'
+import { registerAskMattSkill } from './askMatt.js'
+import { registerGrillMeSkill } from './grillMe.js'
+import { registerMigrateToShoehornSkill } from './migrateToShoehorn.js'
 import { registerClaudeInChromeSkill } from './claudeInChrome.js'
 import { registerDebugSkill } from './debug.js'
 import { registerKeybindingsSkill } from './keybindings.js'
@@ -75,6 +83,14 @@ export function initBundledSkills(): void {
   registerTriageSkill()
   registerScaffoldExercisesSkill()
   registerWritingGreatSkillsSkill()
+  registerWritingBeatsSkill()
+  registerWritingFragmentsSkill()
+  registerWritingShapeSkill()
+  registerEditArticleSkill()
+  registerObsidianVaultSkill()
+  registerAskMattSkill()
+  registerGrillMeSkill()
+  registerMigrateToShoehornSkill()
   registerStuckSkill()
   if (feature('KAIROS') || feature('KAIROS_DREAM')) {
      
