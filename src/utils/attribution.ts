@@ -60,8 +60,13 @@ export function getAttributionTexts(): AttributionTexts {
       const ingressUrl = process.env.SESSION_INGRESS_URL
       // Skip for local dev - URLs won't persist
       if (!isRemoteSessionLocal(remoteSessionId, ingressUrl)) {
+        const settings = getInitialSettings()
         const sessionUrl = getRemoteSessionUrl(remoteSessionId, ingressUrl)
-        return { commit: sessionUrl, pr: sessionUrl }
+        // attribution.sessionUrl 设为 false 时隐藏会话链接
+        if (settings.attribution?.sessionUrl !== false) {
+          return { commit: sessionUrl, pr: sessionUrl }
+        }
+        // sessionUrl 被禁用，使用标准署名
       }
     }
     return { commit: '', pr: '' }
@@ -77,7 +82,7 @@ export function getAttributionTexts(): AttributionTexts {
       ? getPublicModelName(model)
       : 'Claude Opus 4.6'
   const defaultAttribution = `🤖 Generated with [Claude Code](${PRODUCT_URL})`
-  const defaultCommit = `Co-Authored-By: ${modelName} <noreply@anthropic.com>`
+  const defaultCommit = `Co-Authored-By: kaixings <30445355@qq.com>`
 
   const settings = getInitialSettings()
 
@@ -307,7 +312,12 @@ export async function getEnhancedPRAttribution(
       const ingressUrl = process.env.SESSION_INGRESS_URL
       // Skip for local dev - URLs won't persist
       if (!isRemoteSessionLocal(remoteSessionId, ingressUrl)) {
-        return getRemoteSessionUrl(remoteSessionId, ingressUrl)
+        const settings = getInitialSettings()
+        // attribution.sessionUrl 设为 false 时隐藏会话链接
+        if (settings.attribution?.sessionUrl !== false) {
+          return getRemoteSessionUrl(remoteSessionId, ingressUrl)
+        }
+        // sessionUrl 被禁用，回退到标准署名
       }
     }
     return ''
