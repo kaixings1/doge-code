@@ -24,6 +24,7 @@ import { join, dirname } from 'path'
 import { existsSync } from 'fs'
 import { getClaudeConfigHomeDir } from '../../utils/envUtils.js'
 import { logForDebugging } from '../../utils/debug.js'
+import { registerBundledSkill } from '../bundledSkills.js'
 
 const MAX_FILE_SIZE = 32_000  // characters, not tokens
 
@@ -159,8 +160,6 @@ export async function removeMemory(
 /**
  * Register the add/replace/remove interactive skill
  */
-import { registerBundledSkill } from '../bundledSkills.js'
-
 export function registerMemoryManagerSkill(): void {
   registerBundledSkill({
     name: 'memory-manage',

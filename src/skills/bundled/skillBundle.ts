@@ -6,15 +6,14 @@
  * A skill bundle groups several skills into a single compound command.
  * Invoking /<bundle-name> loads all referenced skills at once.
  *
- * Bundles are YAML files stored in DOGE_HOME/skills/bundles/
+ * Bundles are JSON files stored in DOGE_HOME/skills/bundles/
  *
- * Example bundle file (backend-dev.yaml):
- *   name: backend-dev
- *   description: Backend feature work
- *   skills:
- *     - tdd
- *     - codebase-design
- *     - implement
+ * Example bundle file (backend-dev.json):
+ *   {
+ *     "name": "backend-dev",
+ *     "description": "Backend feature work",
+ *     "skills": ["tdd", "codebase-design", "implement"]
+ *   }
  *
  * The bundle wins if it shares a name with a skill (user explicitly wants
  * the bundle).
@@ -25,6 +24,7 @@ import { join, dirname, basename, extname } from 'path'
 import { existsSync } from 'fs'
 import { getClaudeConfigHomeDir } from '../../utils/envUtils.js'
 import { logForDebugging } from '../../utils/debug.js'
+import { registerBundledSkill } from '../bundledSkills.js'
 
 export type SkillBundle = {
   name: string
@@ -138,8 +138,6 @@ export async function buildBundleMessage(
 /**
  * Register the /skill-bundle command
  */
-import { registerBundledSkill } from '../bundledSkills.js'
-
 export function registerSkillBundleCommand(): void {
   registerBundledSkill({
     name: 'skill-bundle',
