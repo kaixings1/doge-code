@@ -1,0 +1,11 @@
+{
+  "activePreset": "ollama",
+  "presets": {
+    "ollama": {
+      "provider": "openai",
+      "baseURL": "http://localhost:11434/v1",
+      "apiKey": "YOUR_API_KEY_HERE",
+      "model": "qwen2.5:7b"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "activePreset": "openai",
+  "presets": {
+    "openai": {
+      "provider": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "YOUR_API_KEY_HERE",
+      "model": "gpt-4o"
+    }
+  }
+}

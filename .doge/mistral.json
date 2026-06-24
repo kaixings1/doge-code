@@ -1,0 +1,11 @@
+{
+  "activePreset": "mistral",
+  "presets": {
+    "mistral": {
+      "provider": "openai",
+      "baseURL": "https://api.mistral.ai/v1",
+      "apiKey": "YOUR_API_KEY_HERE",
+      "model": "mistral-large-latest"
+    }
+  }
+}

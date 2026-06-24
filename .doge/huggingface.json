@@ -1,0 +1,11 @@
+{
+  "activePreset": "huggingface",
+  "presets": {
+    "huggingface": {
+      "provider": "openai",
+      "baseURL": "https://router.huggingface.co/v1",
+      "apiKey": "YOUR_API_KEY_HERE",
+      "model": "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    }
+  }
+}

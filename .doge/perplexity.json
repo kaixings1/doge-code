@@ -1,0 +1,11 @@
+{
+  "activePreset": "perplexity",
+  "presets": {
+    "perplexity": {
+      "provider": "openai",
+      "baseURL": "https://api.perplexity.ai",
+      "apiKey": "YOUR_API_KEY_HERE",
+      "model": "sonar-pro"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "activePreset": "kimi",
+  "presets": {
+    "kimi": {
+      "provider": "openai",
+      "baseURL": "https://api.moonshot.cn/v1",
+      "apiKey": "YOUR_API_KEY_HERE",
+      "model": "moonshot-v1-8k"
+    }
+  }
+}
