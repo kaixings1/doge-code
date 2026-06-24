@@ -32,6 +32,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { logForDebugging } from '../utils/debug.js';
+import { type PresetEndpoint, ALL_PRESETS, type CompatibleApiProvider } from '../constants/presets.js';
 
 type Props = {
   onDone(): void;
@@ -61,114 +62,7 @@ type OAuthStatus =
 
 const PASTE_HERE_MSG = '如果提示，请在此处粘贴代码 > ';
 
-type PresetEndpoint = {
-  label: string;
-  provider: CompatibleApiProvider;
-  baseURL: string;
-  defaultModel: string;
-  apiKeyRequired: boolean;
-};
-
-const PRESET_ENDPOINTS: PresetEndpoint[] = [
-  {
-    label: 'Local Proxy (8080)',
-    provider: 'openai',
-    baseURL: 'http://127.0.0.1:8080/v1/chat/completions',
-    defaultModel: 'claude-3-haiku',
-    apiKeyRequired: false,
-  },
-  {
-    label: 'Local Anthropic (8080)',
-    provider: 'anthropic',
-    baseURL: 'http://127.0.0.1:8080/',
-    defaultModel: 'claude-3-haiku',
-    apiKeyRequired: false,
-  },
-  {
-    label: 'Ollama (11434)',
-    provider: 'openai',
-    baseURL: 'http://127.0.0.1:11434/v1/chat/completions',
-    defaultModel: 'qwen3.5:0.8b',
-    apiKeyRequired: false,
-  },
-  {
-    label: 'LMStudio Server (1234)',
-    provider: 'openai',
-    baseURL: 'http://127.0.0.1:1234/v1/chat/completions',
-    defaultModel: 'claude-3-haiku ',
-    apiKeyRequired: false,
-  },
-  {
-    label: 'LMStudio Anthropic (1234)',
-    provider: 'anthropic',
-    baseURL: 'http://127.0.0.1:1234/',
-    defaultModel: 'claude-3-haiku ',
-    apiKeyRequired: false,
-  },
-  {
-    label: 'CC Switch (15721)',
-    provider: 'openai',
-    baseURL: 'http://127.0.0.1:15721/v1/chat/completions',
-    defaultModel: 'qwen9b',
-    apiKeyRequired: false,
-  },
-  {
-    label: 'ModelScope (魔塔)',
-    provider: 'openai',
-    baseURL: 'https://api-inference.modelscope.cn/v1/chat/completions',
-    defaultModel: 'Qwen/Qwen3.5-397B-A17B',
-    apiKeyRequired: true,
-  },
-  {
-    label: 'NVIDIA NIM',
-    provider: 'openai',
-    baseURL: 'https://integrate.api.nvidia.com/v1/chat/completions',
-    defaultModel: 'deepseek-ai/deepseek-v4-pro',
-    apiKeyRequired: true,
-  },
-  {
-    label: '智谱 (BigModel)',
-    provider: 'openai',
-    baseURL: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
-    defaultModel: 'GLM-4.7-Flash',
-    apiKeyRequired: true,
-  },
-  {
-    label: 'DeepSeek (API)',
-    provider: 'openai',
-    baseURL: 'https://api.deepseek.com/chat/completions',
-    defaultModel: 'deepseek-chat',
-    apiKeyRequired: true,
-  },
-  {
-    label: 'DeepSeek Anthropic',
-    provider: 'anthropic',
-    baseURL: 'https://api.deepseek.com/Anthropic',
-    defaultModel: 'deepseek-chat',
-    apiKeyRequired: true,
-  },
-  {
-    label: '火山引擎 (Ark)',
-    provider: 'openai',
-    baseURL: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
-    defaultModel: 'ep-202...',
-    apiKeyRequired: true,
-  },
-  {
-    label: 'ZenMux',
-    provider: 'openai',
-    baseURL: 'https://zenmux.ai/api/v1/chat/completions',
-    defaultModel: 'deepseek/deepseek-v4-flash-free',
-    apiKeyRequired: true,
-  },
-  {
-    label: 'OpenRouter',
-    provider: 'openai',
-    baseURL: 'https://openrouter.ai/api/v1/chat/completions',
-    defaultModel: 'tencent/hy3-preview:free',
-    apiKeyRequired: true,
-  },
-];
+const PRESET_ENDPOINTS = ALL_PRESETS;
 
 export function ConsoleOAuthFlow({
   onDone,
