@@ -7,6 +7,11 @@ import { registerDiagnosingBugsSkill } from './diagnosingBugs.js'
 import { registerResolvingMergeConflictsSkill } from './resolvingMergeConflicts.js'
 import { registerGitGuardrailsSkill } from './gitGuardrails.js'
 import { registerTddSkill } from './tdd.js'
+import { registerImplementSkill } from './implement.js'
+import { registerCodebaseDesignSkill } from './codebaseDesign.js'
+import { registerDomainModelingSkill } from './domainModeling.js'
+import { registerGrillingSkill } from './grilling.js'
+import { registerGrillWithDocsSkill } from './grillWithDocs.js'
 import { registerClaudeInChromeSkill } from './claudeInChrome.js'
 import { registerDebugSkill } from './debug.js'
 import { registerKeybindingsSkill } from './keybindings.js'
@@ -47,6 +52,11 @@ export function initBundledSkills(): void {
   registerResolvingMergeConflictsSkill()
   registerGitGuardrailsSkill()
   registerTddSkill()
+  registerImplementSkill()
+  registerCodebaseDesignSkill()
+  registerDomainModelingSkill()
+  registerGrillingSkill()
+  registerGrillWithDocsSkill()
   registerStuckSkill()
   if (feature('KAIROS') || feature('KAIROS_DREAM')) {
      
