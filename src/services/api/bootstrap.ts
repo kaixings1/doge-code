@@ -1,5 +1,5 @@
 import axios from 'axios'
-import isEqual from '../utils/vendor/lodash.js'
+import { isEqual } from '../../vendor/lodash.js'
 import {
   getAnthropicApiKey,
   getClaudeAIOAuthTokens,

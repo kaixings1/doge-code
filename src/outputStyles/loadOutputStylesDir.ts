@@ -1,4 +1,4 @@
-import memoize from '../utils/vendor/lodash.js'
+import { memoize } from '../vendor/lodash.js'
 import { basename } from 'path'
 import type { OutputStyleConfig } from '../constants/outputStyles.js'
 import { logForDebugging } from '../utils/debug.js'

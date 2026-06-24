@@ -7,7 +7,7 @@ import { c as _c } from "react/compiler-runtime";
  * always; a timestamp shows until passed. Enter to view/steer, x to dismiss.
  */
 
-import figures from '../../utils/vendor/figures.js';
+import figures from '../vendor/figures.js';
 import * as React from 'react';
 import { BLACK_CIRCLE, PAUSE_ICON, PLAY_ICON } from '../constants/figures.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';

@@ -1,5 +1,5 @@
 import { GrowthBook } from '@growthbook/growthbook'
-import { isEqual, memoize } from '../utils/vendor/lodash.js'
+import { isEqual, memoize } from '../../vendor/lodash.js'
 import {
   getIsNonInteractiveSession,
   getSessionTrustAccepted,

@@ -1,7 +1,7 @@
 import { feature } from 'bun:bundle'
 import type { ContentBlockParam } from '@anthropic-ai/sdk/resources/messages.mjs'
 import { randomUUID } from 'crypto'
-import last from './utils/vendor/lodash.js'
+import { last } from './vendor/lodash.js'
 import {
   getSessionId,
   isSessionPersistenceDisabled,
@@ -17,7 +17,7 @@ import type {
 import { accumulateUsage, updateUsage } from './services/api/claude.js'
 import type { NonNullableUsage } from './services/api/logging.js'
 import { EMPTY_USAGE } from './services/api/logging.js'
-import stripAnsi from '../utils/vendor/stripAnsi.js'
+import stripAnsi from './vendor/stripAnsi.js'
 import type { Command } from './commands.js'
 import { getSlashCommandToolSkills } from './commands.js'
 import {

@@ -1,4 +1,4 @@
-import reject from '../utils/vendor/lodash.js'
+import { reject } from '../../vendor/lodash.js'
 import { z } from 'zod/v4'
 import { performMCPOAuthFlow } from '../../services/mcp/auth.js'
 import {
