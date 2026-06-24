@@ -7,6 +7,7 @@ import type { Command } from '../types/command.js'
 import { logForDebugging } from '../utils/debug.js'
 import { getBundledSkillsRoot } from '../utils/permissions/filesystem.js'
 import type { HooksSettings } from '../utils/settings/types.js'
+import { recordSkillInvocation } from './bundled/skillUsage.js'
 
 /**
  * Definition for a bundled skill that ships with the CLI.
@@ -72,6 +73,15 @@ export function registerBundledSkill(definition: BundledSkillDefinition): void {
     }
   }
 
+  // Wrap getPromptForCommand to record skill usage
+  const innerGetPrompt = getPromptForCommand
+  const name = definition.name
+  const wrappedGetPrompt: typeof getPromptForCommand = async (args, ctx) => {
+    // Record skill invocation (best-effort, never blocks)
+    recordSkillInvocation(name, 'bundled')
+    return innerGetPrompt(args, ctx)
+  }
+
   const command: Command = {
     type: 'prompt',
     name: definition.name,
@@ -94,7 +104,7 @@ export function registerBundledSkill(definition: BundledSkillDefinition): void {
     isEnabled: definition.isEnabled,
     isHidden: !(definition.userInvocable ?? true),
     progressMessage: '运行中',
-    getPromptForCommand,
+    getPromptForCommand: wrappedGetPrompt,
   }
   bundledSkills.push(command)
 }
