@@ -29,6 +29,7 @@ import { registerObsidianVaultSkill } from './obsidianVault.js'
 import { registerAskMattSkill } from './askMatt.js'
 import { registerGrillMeSkill } from './grillMe.js'
 import { registerMigrateToShoehornSkill } from './migrateToShoehorn.js'
+import { registerCuratorReviewSkill } from './curatorReview.js'
 import { registerClaudeInChromeSkill } from './claudeInChrome.js'
 import { registerDebugSkill } from './debug.js'
 import { registerKeybindingsSkill } from './keybindings.js'
@@ -91,6 +92,7 @@ export function initBundledSkills(): void {
   registerAskMattSkill()
   registerGrillMeSkill()
   registerMigrateToShoehornSkill()
+  registerCuratorReviewSkill()
   registerStuckSkill()
   if (feature('KAIROS') || feature('KAIROS_DREAM')) {
      
