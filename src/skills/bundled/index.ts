@@ -30,6 +30,8 @@ import { registerAskMattSkill } from './askMatt.js'
 import { registerGrillMeSkill } from './grillMe.js'
 import { registerMigrateToShoehornSkill } from './migrateToShoehorn.js'
 import { registerCuratorReviewSkill } from './curatorReview.js'
+import { registerMemoryManagerSkill } from './memoryManager.js'
+import { registerSkillBundleCommand } from './skillBundle.js'
 import { registerClaudeInChromeSkill } from './claudeInChrome.js'
 import { registerDebugSkill } from './debug.js'
 import { registerKeybindingsSkill } from './keybindings.js'
@@ -93,6 +95,8 @@ export function initBundledSkills(): void {
   registerGrillMeSkill()
   registerMigrateToShoehornSkill()
   registerCuratorReviewSkill()
+  registerMemoryManagerSkill()
+  registerSkillBundleCommand()
   registerStuckSkill()
   if (feature('KAIROS') || feature('KAIROS_DREAM')) {
      
