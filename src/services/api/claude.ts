@@ -75,7 +75,7 @@ import {
   getModelMaxOutputTokens,
   getSonnet1mExpTreatmentEnabled,
 } from '../../utils/context.js'
-import { resolveAppliedEffort } from '../../utils/effort.js'
+import { resolveAppliedEffort, resolveAutoEffort } from '../../utils/effort.js'
 import { isEnvTruthy } from '../../utils/envUtils.js'
 import { errorMessage } from '../../utils/errors.js'
 import { computeFingerprintFromMessages } from '../../utils/fingerprint.js'
@@ -1468,7 +1468,17 @@ async function* queryModel(
     }
   }
 
-  const effort = resolveAppliedEffort(options.model, options.effortValue)
+  let effort = resolveAppliedEffort(options.model, options.effortValue)
+
+  // Auto reasoning: when effort is not explicitly set (model default),
+  // heuristically pick a level based on the last user message content.
+  // Inspired by CodeWhale's auto_reasoning.rs.
+  if (effort === void 0) {
+    const lastMsg = getLastUserMessageText(messages)
+    if (lastMsg) {
+      effort = resolveAutoEffort(lastMsg)
+    }
+  }
 
   if (feature('PROMPT_CACHE_BREAK_DETECTION')) {
     // 从 hash 中排除 defer_loading 工具 -- API 会从
@@ -3498,6 +3508,32 @@ export function adjustParamsForNonStreaming<
 function isMaxTokensCapEnabled(): boolean {
   // 第三方默认：false（未在 Bedrock/Vertex 上验证）
   return getFeatureValue_CACHED_MAY_BE_STALE('tengu_otk_slot_v1', false)
+}
+
+/**
+ * Extract the text of the last user message from the messages array,
+ * ignoring tool_result messages. Returns void if no user message found.
+ * Used by auto-reasoning to heuristically pick effort level.
+ */
+function getLastUserMessageText(
+  messages: Message[],
+): string | void {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const msg = messages[i]
+    if (msg.type === 'user') {
+      const content = msg.message.content
+      if (typeof content === 'string') return content
+      if (Array.isArray(content)) {
+        const textBlocks = content
+          .filter((b: Record<string, unknown>) => b.type === 'text' && typeof b.text === 'string')
+          .map((b: Record<string, unknown>) => b.text as string)
+        if (textBlocks.length > 0) return textBlocks.join('\n')
+      }
+    }
+    // Stop at the first assistant message (don't go further back)
+    if (msg.type === 'assistant') break
+  }
+  return void 0
 }
 
 export function getMaxOutputTokensForModel(model: string): number {
