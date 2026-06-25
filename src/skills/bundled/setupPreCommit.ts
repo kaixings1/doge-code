@@ -5,7 +5,7 @@ const PROMPT = '# Setup Pre-Commit Hooks\n\nSet up Husky pre-commit hooks with l
 export function registerSetupPreCommitSkill(): void {
   registerBundledSkill({
     name: 'setup-pre-commit',
-    description: 'Set up Husky pre-commit hooks with lint-staged, Prettier, typecheck, and tests.',
+    description: '使用 Husky + lint-staged + Prettier + typecheck + tests 设置 pre-commit hooks。',
     whenToUse: 'When user wants to add pre-commit hooks, set up Husky, or configure lint-staged.',
     userInvocable: true,
     getPromptForCommand() {

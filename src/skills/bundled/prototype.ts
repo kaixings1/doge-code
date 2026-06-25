@@ -5,7 +5,7 @@ const PROMPT = '# Prototype\n\nBuild a throwaway prototype to flesh out a design
 export function registerPrototypeSkill(): void {
   registerBundledSkill({
     name: 'prototype',
-    description: 'Build a throwaway prototype to flesh out a design — terminal app for logic questions, UI variants for design questions.',
+    description: '构建可丢弃的原型来验证设计 — 逻辑问题用终端应用，设计问题用 UI 变体。',
     whenToUse: 'When you need to explore a design decision through runnable code before committing to implementation.',
     userInvocable: true,
     disableModelInvocation: true,

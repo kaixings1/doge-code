@@ -1,0 +1,13 @@
+{
+  "id": "exa",
+  "name": "exa",
+  "envVars": [
+    "EXA_API_KEY"
+  ],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "EXA_API_KEY": "<YOUR_EXA_API_KEY>"
+  }
+}

@@ -606,7 +606,7 @@ export function AgentsMenu(t0) {
         }
         let t16;
         if ($[117] !== modeState.agent.source) {
-          t16 = <Box marginTop={1}><Text dimColor={true}>Source: {modeState.agent.source}</Text></Box>;
+          t16 = <Box marginTop={1}><Text dimColor={true}>来源: {modeState.agent.source}</Text></Box>;
           $[117] = modeState.agent.source;
           $[118] = t16;
         } else {
@@ -699,7 +699,7 @@ export function AgentsMenu(t0) {
         }
         const freshAgent = t13;
         const agentToEdit = freshAgent || modeState.agent;
-        const t14 = `Edit agent: ${agentToEdit.agentType}`;
+        const t14 = `编辑智能体: ${agentToEdit.agentType}`;
         let t15;
         if ($[140] !== modeState.previousMode) {
           t15 = () => setModeState(modeState.previousMode);

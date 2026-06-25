@@ -5,8 +5,8 @@ const PROMPT = 'Run a grilling session to sharpen the plan or design interview. 
 export function registerGrillWithDocsSkill(): void {
   registerBundledSkill({
     name: 'grill-with-docs',
-    description: 'A relentless interview to sharpen a plan or design, creating ADRs and glossary as you go.',
-    whenToUse: 'When user wants to stress-test a plan AND has a codebase to document decisions in.',
+    description: ' relentless 追问以完善计划或设计，同时创建 ADR 和术语表。',
+    whenToUse: '当用户想要验证计划可行性并拥有代码库来记录决策时。',
     userInvocable: true,
     disableModelInvocation: true,
     getPromptForCommand() {

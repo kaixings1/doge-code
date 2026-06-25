@@ -1,0 +1,19 @@
+{
+  "id": "xiaomi",
+  "name": "xiaomi",
+  "envVars": [
+    "XIAOMI_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "Xiaomi API key",
+      "method": "api-key",
+      "cliFlag": "--xiaomi-api-key"
+    }
+  ],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "XIAOMI_API_KEY": "<YOUR_XIAOMI_API_KEY>"
+  }
+}

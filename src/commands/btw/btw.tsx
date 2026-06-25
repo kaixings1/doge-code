@@ -159,7 +159,7 @@ function BtwSideQuestion(t0) {
   }
   let t9;
   if ($[17] !== error || $[18] !== response) {
-    t9 = (response || error) && <Box marginTop={1}><Text dimColor={true}>{UP_ARROW}/{DOWN_ARROW} to scroll · Space, Enter, or Escape to dismiss</Text></Box>;
+    t9 = (response || error) && <Box marginTop={1}><Text dimColor={true}>{UP_ARROW}/{DOWN_ARROW} 滚动 · 空格/回车/ESC 关闭</Text></Box>;
     $[17] = error;
     $[18] = response;
     $[19] = t9;

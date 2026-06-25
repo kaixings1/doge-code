@@ -1,0 +1,41 @@
+{
+  "id": "zai",
+  "name": "zai",
+  "envVars": [
+    "ZAI_API_KEY",
+    "Z_AI_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "Z.AI API key",
+      "method": "api-key",
+      "cliFlag": "--zai-api-key"
+    },
+    {
+      "label": "Coding-Plan-Global",
+      "method": "coding-global",
+      "cliFlag": "--zai-api-key"
+    },
+    {
+      "label": "Coding-Plan-CN",
+      "method": "coding-cn",
+      "cliFlag": "--zai-api-key"
+    },
+    {
+      "label": "Global",
+      "method": "global",
+      "cliFlag": "--zai-api-key"
+    },
+    {
+      "label": "CN",
+      "method": "cn",
+      "cliFlag": "--zai-api-key"
+    }
+  ],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "ZAI_API_KEY": "<YOUR_ZAI_API_KEY>",
+    "Z_AI_API_KEY": "<YOUR_Z_AI_API_KEY>"
+  }
+}

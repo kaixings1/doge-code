@@ -1,0 +1,13 @@
+{
+  "id": "firecrawl",
+  "name": "firecrawl",
+  "envVars": [
+    "FIRECRAWL_API_KEY"
+  ],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "FIRECRAWL_API_KEY": "<YOUR_FIRECRAWL_API_KEY>"
+  }
+}

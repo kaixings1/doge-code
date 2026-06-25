@@ -60,7 +60,7 @@ function SetupNotes(t0) {
   }
   let t1;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-    t1 = <Box><Text color="warning"><StatusIcon status="warning" withSpace={true} />Setup notes:</Text></Box>;
+    t1 = <Box><Text color="warning"><StatusIcon status="warning" withSpace={true} />设置说明：</Text></Box>;
     $[0] = t1;
   } else {
     t1 = $[0];
@@ -221,15 +221,15 @@ function Install({
     }
   }, [state, onDone]);
   return <Box flexDirection="column" marginTop={1}>
-      {state.type === 'checking' && <Text color="claude">Checking installation status...</Text>}
+      {state.type === 'checking' && <Text color="claude">正在检查安装状态...</Text>}
 
-      {state.type === 'cleaning-npm' && <Text color="warning">Cleaning up old npm installations...</Text>}
+      {state.type === 'cleaning-npm' && <Text color="warning">正在清理旧的 npm 安装...</Text>}
 
       {state.type === 'installing' && <Text color="claude">
-          Installing Claude Code native build {state.version}...
+          正在安装 Claude Code 原生构建 {state.version}...
         </Text>}
 
-      {state.type === 'setting-up' && <Text color="claude">Setting up launcher and shell integration...</Text>}
+      {state.type === 'setting-up' && <Text color="claude">正在设置启动器和 Shell 集成...</Text>}
 
       {state.type === 'set-up' && <SetupNotes messages={state.messages} />}
 
