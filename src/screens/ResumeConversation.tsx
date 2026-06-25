@@ -352,14 +352,14 @@ function CrossProjectMessage(t0) {
   React.useEffect(_temp3, t1);
   let t2;
   if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
-    t2 = <Text>This conversation is from a different directory.</Text>;
+    t2 = <Text>该对话来自不同的目录。</Text>;
     $[1] = t2;
   } else {
     t2 = $[1];
   }
   let t3;
   if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
-    t3 = <Text>To resume, run:</Text>;
+    t3 = <Text>要恢复，请运行：</Text>;
     $[2] = t3;
   } else {
     t3 = $[2];
@@ -374,7 +374,7 @@ function CrossProjectMessage(t0) {
   }
   let t5;
   if ($[5] === Symbol.for("react.memo_cache_sentinel")) {
-    t5 = <Text dimColor={true}>(Command copied to clipboard)</Text>;
+    t5 = <Text dimColor={true}>(命令已复制到剪贴板)</Text>;
     $[5] = t5;
   } else {
     t5 = $[5];

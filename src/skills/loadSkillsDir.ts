@@ -343,7 +343,7 @@ export function createSkillCommand({
     skillRoot: baseDir,
     async getPromptForCommand(args, toolUseContext) {
       let finalContent = baseDir
-        ? `Base directory for this skill: ${baseDir}\n\n${markdownContent}`
+        ? `此技能的基目录：${baseDir}\n\n${markdownContent}`
         : markdownContent
 
       finalContent = substituteArguments(

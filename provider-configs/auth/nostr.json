@@ -1,0 +1,9 @@
+{
+  "id": "nostr",
+  "name": "nostr",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

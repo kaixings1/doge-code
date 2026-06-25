@@ -107,7 +107,7 @@ export class HybridTransport extends WebSocketTransport {
       },
       send: batch => this.postOnce(batch),
     })
-    logForDebugging(`HybridTransport: POST URL = ${this.postUrl}`)
+    logForDebugging(`混合传输: POST 地址 = ${this.postUrl}`)
     logForDiagnosticsNoPII('info', 'cli_hybrid_transport_initialized')
   }
 
@@ -215,7 +215,7 @@ export class HybridTransport extends WebSocketTransport {
     const uuids = events.map(e => (e as Record<string,unknown>).uuid ?? '-').join(',')
     const bodyPreview = jsonStringify({ events }).slice(0, 500)
     logForDebugging(
-      `HYBRID⬆ POST批量发送 count=${events.length} types=[${types}] uuids=[${uuids}]\n  body=${bodyPreview}`,
+      `混合⬆ POST批量发送 count=${events.length} types=[${types}] uuids=[${uuids}]\n  body=${bodyPreview}`,
     )
     const headers: Record<string, string> = {
       Authorization: `Bearer ${sessionToken}`,
@@ -235,13 +235,13 @@ export class HybridTransport extends WebSocketTransport {
       )
     } catch (error) {
       const axiosError = error as AxiosError
-      logForDebugging(`HYBRID⬆ POST错误: ${axiosError.message}`)
+      logForDebugging(`混合⬆ POST错误: ${axiosError.message}`)
       logForDiagnosticsNoPII('warn', 'cli_hybrid_post_network_error')
       throw error
     }
 
     if (response.status >= 200 && response.status < 300) {
-      logForDebugging(`HYBRID⬆ POST成功 count=${events.length} status=${response.status}`)
+      logForDebugging(`混合⬆ POST成功 count=${events.length} status=${response.status}`)
       return
     }
 

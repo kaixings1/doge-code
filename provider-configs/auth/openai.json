@@ -1,0 +1,23 @@
+{
+  "id": "openai",
+  "name": "openai",
+  "envVars": [
+    "OPENAI_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "OpenAI Codex (ChatGPT OAuth)",
+      "method": "oauth"
+    },
+    {
+      "label": "OpenAI API key",
+      "method": "api-key",
+      "cliFlag": "--openai-api-key"
+    }
+  ],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "OPENAI_API_KEY": "<YOUR_OPENAI_API_KEY>"
+  }
+}

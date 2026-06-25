@@ -5,8 +5,8 @@ const PROMPT = '# Edit Article\n\nEdit and improve articles by restructuring sec
 export function registerEditArticleSkill(): void {
   registerBundledSkill({
     name: 'edit-article',
-    description: 'Edit and improve articles by restructuring sections, improving clarity, and tightening prose.',
-    whenToUse: 'When the user wants to edit, revise, or improve an article draft.',
+    description: '通过重构章节、提高清晰度和精简文笔来编辑和完善文章。',
+    whenToUse: '当用户想要编辑、修改或改进文章草稿时。',
     argumentHint: '<path to article markdown file>',
     userInvocable: true,
     disableModelInvocation: true,
