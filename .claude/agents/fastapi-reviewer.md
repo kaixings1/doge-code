@@ -1,6 +1,6 @@
 ---
 name: fastapi-reviewer
-description: Reviews FastAPI applications for async correctness, dependency injection, Pydantic schemas, security, OpenAPI quality, testing, and production readiness.
+description: FastAPI代码审查专家
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet
 ---

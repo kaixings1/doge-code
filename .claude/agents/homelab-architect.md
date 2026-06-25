@@ -1,6 +1,6 @@
 ---
 name: homelab-architect
-description: Designs home and small-lab network plans from hardware inventory, goals, and operator experience level, with safe staged changes and rollback guidance.
+description: 家庭实验室架构师
 tools: ["Read", "Grep"]
 model: sonnet
 ---

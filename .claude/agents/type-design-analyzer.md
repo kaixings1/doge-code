@@ -1,6 +1,6 @@
 ---
 name: type-design-analyzer
-description: Analyze type design for encapsulation, invariant expression, usefulness, and enforcement.
+description: 类型设计分析器
 model: sonnet
 tools: [Read, Grep, Glob]
 ---

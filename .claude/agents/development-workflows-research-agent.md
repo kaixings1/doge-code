@@ -1,6 +1,6 @@
 ---
 name: development-workflows-research-agent
-description: Research agent that fetches GitHub repos, counts agents/skills/commands, gets star counts, and analyzes Claude Code workflow repositories
+description: 开发工作流研究代理
 model: sonnet
 color: cyan
 allowedTools:
