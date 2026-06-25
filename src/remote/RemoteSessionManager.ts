@@ -237,7 +237,7 @@ export class RemoteSessionManager {
     if (!pendingRequest) {
       logError(
         new Error(
-          `[RemoteSessionManager] No pending permission request with ID: ${requestId}`,
+          `[RemoteSessionManager] 没有待处理的权限请求，ID: ${requestId}`,
         ),
       )
       return

@@ -5,8 +5,8 @@ const PROMPT = 'Interview me relentlessly about every aspect of this plan until 
 export function registerGrillingSkill(): void {
   registerBundledSkill({
     name: 'grilling',
-    description: 'Interview the user relentlessly about a plan or design until shared understanding is reached.',
-    whenToUse: 'When user wants to stress-test a plan before building, or uses any grill trigger phrases.',
+    description: ' relentless 追问用户关于计划或设计的每一个细节，直到双方对方案达成共识。',
+    whenToUse: '当用户想要在构建前验证计划的可行性，或使用任何 grill 触发词时。',
     userInvocable: true,
     getPromptForCommand() {
       return [{ type: 'text', text: PROMPT }]

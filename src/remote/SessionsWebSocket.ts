@@ -215,7 +215,7 @@ export class SessionsWebSocket {
     } catch (error) {
       logError(
         new Error(
-          `[SessionsWebSocket] Failed to parse message: ${errorMessage(error)}`,
+          `[SessionsWebSocket] 解析消息失败: ${errorMessage(error)}`,
         ),
       )
     }

@@ -1,0 +1,9 @@
+{
+  "id": "groq",
+  "name": "groq",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

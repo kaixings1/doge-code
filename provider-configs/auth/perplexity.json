@@ -1,0 +1,15 @@
+{
+  "id": "perplexity",
+  "name": "perplexity",
+  "envVars": [
+    "PERPLEXITY_API_KEY",
+    "OPENROUTER_API_KEY"
+  ],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "PERPLEXITY_API_KEY": "<YOUR_PERPLEXITY_API_KEY>",
+    "OPENROUTER_API_KEY": "<YOUR_OPENROUTER_API_KEY>"
+  }
+}

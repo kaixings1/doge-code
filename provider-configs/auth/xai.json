@@ -1,0 +1,19 @@
+{
+  "id": "xai",
+  "name": "xai",
+  "envVars": [
+    "XAI_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "xAI API key",
+      "method": "api-key",
+      "cliFlag": "--xai-api-key"
+    }
+  ],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "XAI_API_KEY": "<YOUR_XAI_API_KEY>"
+  }
+}

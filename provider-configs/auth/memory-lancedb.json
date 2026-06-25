@@ -1,0 +1,9 @@
+{
+  "id": "memory-lancedb",
+  "name": "memory-lancedb",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

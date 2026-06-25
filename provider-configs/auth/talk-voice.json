@@ -1,0 +1,9 @@
+{
+  "id": "talk-voice",
+  "name": "talk-voice",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "Manage Talk voice selection (list/set).",
+  "dogeEnvExample": {}
+}

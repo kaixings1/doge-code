@@ -64,8 +64,8 @@ function timeAgo(iso: string): string {
 export function registerCuratorReviewSkill(): void {
   registerBundledSkill({
     name: 'curator-review',
-    description: 'Review skill usage and manage lifecycle (pin/unpin skills, trigger curator pass).',
-    whenToUse: 'When you want to see which skills are actively used, pin important skills, or trigger a curator lifecycle pass.',
+    description: '查看技能使用情况并管理生命周期（固定/取消固定技能，触发策展人审查）。',
+    whenToUse: '当你想要查看哪些技能正在被使用、固定重要技能，或触发策展人生命周期审查时。',
     argumentHint: '[run|pin <name>|unpin <name>]',
     userInvocable: true,
     disableModelInvocation: true,
