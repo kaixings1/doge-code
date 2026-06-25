@@ -1,6 +1,6 @@
 ---
 name: add-language-rules
-description: Workflow command scaffold for add-language-rules in everything-claude-code.
+description: 添加语言规则
 allowed_tools: ["Bash", "Read", "Write", "Grep", "Glob"]
 ---
 

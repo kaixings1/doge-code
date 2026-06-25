@@ -1,6 +1,6 @@
 ---
 name: go-reviewer
-description: Expert Go code reviewer specializing in idiomatic Go, concurrency patterns, error handling, and performance. Use for all Go code changes. MUST BE USED for Go projects.
+description: Go代码审查专家
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet
 ---

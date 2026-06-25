@@ -1,6 +1,6 @@
 ---
 name: network-config-reviewer
-description: Reviews router and switch configurations for security, correctness, stale references, risky change-window commands, and missing operational guardrails.
+description: 网络配置审查者
 tools: ["Read", "Grep"]
 model: sonnet
 ---

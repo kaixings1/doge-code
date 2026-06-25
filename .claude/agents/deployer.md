@@ -1,6 +1,6 @@
 ---
 name: deployer
-description: Commits, pushes, and deploys to Azure. Use after code changes are ready to ship.
+description: 部署专家
 tools:
   - Bash
   - Read

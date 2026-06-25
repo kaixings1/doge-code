@@ -1,6 +1,6 @@
 ---
 name: feature-development
-description: Workflow command scaffold for feature-development in everything-claude-code.
+description: 功能开发工作流
 allowed_tools: ["Bash", "Read", "Write", "Grep", "Glob"]
 ---
 

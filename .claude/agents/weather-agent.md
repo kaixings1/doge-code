@@ -1,6 +1,6 @@
 ---
 name: weather-agent
-description: Use this agent PROACTIVELY when you need to fetch weather data for Dubai, UAE. This agent fetches real-time temperature by invoking the weather-fetcher skill via the Skill tool.
+description: 天气代理
 allowedTools:
   - "Read"
   - "Skill"

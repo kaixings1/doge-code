@@ -1,6 +1,6 @@
 ---
 name: translate-reviewer
-description: 检查 C++ 代码中中文注释翻译质量...
+description: 翻译审查者
 autoDelegate: true          # ← 加上这一行
 tools:
   - read

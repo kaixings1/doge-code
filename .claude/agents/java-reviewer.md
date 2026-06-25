@@ -1,6 +1,6 @@
 ---
 name: java-reviewer
-description: Expert Java code reviewer for Spring Boot and Quarkus projects. Automatically detects the framework and applies the appropriate review rules. Covers layered architecture, JPA/Panache, MongoDB, security, and concurrency. MUST BE USED for all Java code changes.
+description: Java代码审查专家
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet
 ---
