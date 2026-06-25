@@ -1,0 +1,19 @@
+{
+  "id": "openrouter",
+  "name": "openrouter",
+  "envVars": [
+    "OPENROUTER_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "OpenRouter API key",
+      "method": "api-key",
+      "cliFlag": "--openrouter-api-key"
+    }
+  ],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "OPENROUTER_API_KEY": "<YOUR_OPENROUTER_API_KEY>"
+  }
+}

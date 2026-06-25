@@ -347,7 +347,7 @@ export class CCRClient {
           'put',
           '/worker',
           { worker_epoch: this.workerEpoch, ...body },
-          'PUT worker',
+          '写入worker',
         ).then(r => r.ok),
       baseDelayMs: 500,
       maxDelayMs: 30_000,
@@ -368,7 +368,7 @@ export class CCRClient {
           'post',
           '/worker/events',
           { worker_epoch: this.workerEpoch, events: batch },
-          'client events',
+          '客户端事件',
         )
         if (!result.ok) {
           throw new RetryableError(
@@ -391,7 +391,7 @@ export class CCRClient {
           'post',
           '/worker/internal-events',
           { worker_epoch: this.workerEpoch, events: batch },
-          'internal events',
+          '内部事件',
         )
         if (!result.ok) {
           throw new RetryableError(
@@ -422,7 +422,7 @@ export class CCRClient {
               status: d.status,
             })),
           },
-          'delivery batch',
+          '投递批次',
         )
         if (!result.ok) {
           throw new RetryableError('投递 POST 失败', result.retryAfterMs)
@@ -483,7 +483,7 @@ export class CCRClient {
           task_summary: null,
         },
       },
-      'PUT worker (初始化)',
+      '写入worker (初始化)',
     )
     if (!result.ok) {
       // 409 → onEpochMismatch 可能抛出，但 request() 捕获它并返回
@@ -718,7 +718,7 @@ export class CCRClient {
         'post',
         '/worker/heartbeat',
         { session_id: this.sessionId, worker_epoch: this.workerEpoch },
-        'Heartbeat',
+        '心跳',
         { timeout: 5_000 },
       )
       if (result.ok) {

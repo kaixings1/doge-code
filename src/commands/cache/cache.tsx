@@ -6,7 +6,7 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
   const operation = parts[0]?.toLowerCase() || 'status'
   const cacheType = parts[1]?.toLowerCase() || 'all'
 
-  onDone('正在处理缓存操作: ' + operation + '...')
+  onDone('正在处理缓存操作：' + operation + '...')
   // 模拟缓存数据
   const mockCaches = {
     session: {

@@ -175,7 +175,7 @@ export function AutoUpdater({
   }
   return <Box flexDirection="row" gap={1}>
       {verbose && <Text dimColor wrap="truncate">
-          globalVersion: {versions.global} &middot; latestVersion:{' '}
+          globalVersion: {versions.global} · latestVersion:{' '}
           {versions.latest}
         </Text>}
       {isUpdating ? <>

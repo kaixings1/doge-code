@@ -1,0 +1,18 @@
+{
+  "id": "ollama",
+  "name": "ollama",
+  "envVars": [
+    "OLLAMA_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "Ollama",
+      "method": "local"
+    }
+  ],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "OLLAMA_API_KEY": "<YOUR_OLLAMA_API_KEY>"
+  }
+}

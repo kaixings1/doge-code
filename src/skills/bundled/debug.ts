@@ -14,7 +14,7 @@ export function registerDebugSkill(): void {
     name: 'debug',
     description:
       process.env.USER_TYPE === 'ant'
-        ? 'Debug your current Claude Code session by reading the session debug log. Includes all event logging'
+        ? '调试当前 Claude Code 会话，通过读取会话调试日志（含所有事件日志）来排查问题'
         : '为此会话启用调试日志记录并帮助诊断问题',
     allowedTools: ['Read', 'Grep', 'Glob'],
     argumentHint: '[issue description]',

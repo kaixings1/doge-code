@@ -1,0 +1,29 @@
+{
+  "id": "anthropic",
+  "name": "anthropic",
+  "envVars": [
+    "ANTHROPIC_OAUTH_TOKEN",
+    "ANTHROPIC_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "Anthropic Claude CLI",
+      "method": "cli"
+    },
+    {
+      "label": "Anthropic token (paste setup-token)",
+      "method": "setup-token"
+    },
+    {
+      "label": "Anthropic API key",
+      "method": "api-key",
+      "cliFlag": "--anthropic-api-key"
+    }
+  ],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "ANTHROPIC_OAUTH_TOKEN": "<YOUR_ANTHROPIC_OAUTH_TOKEN>",
+    "ANTHROPIC_API_KEY": "<YOUR_ANTHROPIC_API_KEY>"
+  }
+}

@@ -5,8 +5,8 @@ const PROMPT = 'Run a /grilling session — interview the user relentlessly abou
 export function registerGrillMeSkill(): void {
   registerBundledSkill({
     name: 'grill-me',
-    description: 'A relentless interview to sharpen a plan or design — stateless variant of grilling, no CONTEXT.md or ADRs created.',
-    whenToUse: 'When you want to stress-test a plan but have no codebase, or do not want to persist anything to CONTEXT.md/ADRs.',
+    description: ' relentless 追问以完善计划或设计 — 无状态变体，不创建 CONTEXT.md 或 ADR。',
+    whenToUse: '当你想验证计划可行性但无需代码库，或不想持久化任何内容到 CONTEXT.md/ADR 时。',
     userInvocable: true,
     disableModelInvocation: true,
     getPromptForCommand() {

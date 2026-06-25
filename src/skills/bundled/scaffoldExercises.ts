@@ -5,7 +5,7 @@ const PROMPT = '# Scaffold Exercises\n\nCreate exercise directory structures wit
 export function registerScaffoldExercisesSkill(): void {
   registerBundledSkill({
     name: 'scaffold-exercises',
-    description: 'Create exercise directory structures with sections, problems, solutions, and explainers that pass validation.',
+    description: '创建包含章节、问题、解答和解释器的练习目录结构，通过验证。',
     whenToUse: 'When setting up a new course section, creating exercise stubs, or scaffolding a learning curriculum.',
     userInvocable: true,
     getPromptForCommand() {

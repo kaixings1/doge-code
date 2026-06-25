@@ -5,7 +5,7 @@ const PROMPT = '# Improve Codebase Architecture\n\nSurface architectural frictio
 export function registerImproveCodebaseArchitectureSkill(): void {
   registerBundledSkill({
     name: 'improve-codebase-architecture',
-    description: 'Scan codebase for deepening opportunities, present visual HTML report, then grill through candidates.',
+    description: '扫描代码库以发现深化机会，展示可视化 HTML 报告，然后盘问候选方案。',
     whenToUse: 'When you want to improve codebase testability, AI-navigability, or find architectural friction points.',
     userInvocable: true,
     disableModelInvocation: true,

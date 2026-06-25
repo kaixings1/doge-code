@@ -1,0 +1,9 @@
+{
+  "id": "acpx",
+  "name": "acpx",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "ACP runtime backend powered by acpx with configurable command path and version policy.",
+  "dogeEnvExample": {}
+}

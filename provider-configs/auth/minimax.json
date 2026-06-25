@@ -1,0 +1,35 @@
+{
+  "id": "minimax",
+  "name": "minimax",
+  "envVars": [
+    "MINIMAX_API_KEY",
+    "MINIMAX_OAUTH_TOKEN",
+    "MINIMAX_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "MiniMax OAuth (Global)",
+      "method": "oauth"
+    },
+    {
+      "label": "MiniMax API key (Global)",
+      "method": "api-global",
+      "cliFlag": "--minimax-api-key"
+    },
+    {
+      "label": "MiniMax OAuth (CN)",
+      "method": "oauth-cn"
+    },
+    {
+      "label": "MiniMax API key (CN)",
+      "method": "api-cn",
+      "cliFlag": "--minimax-api-key"
+    }
+  ],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "MINIMAX_API_KEY": "<YOUR_MINIMAX_API_KEY>",
+    "MINIMAX_OAUTH_TOKEN": "<YOUR_MINIMAX_OAUTH_TOKEN>"
+  }
+}

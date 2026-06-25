@@ -132,7 +132,7 @@ function SuggestedRules(t0) {
       } else {
         t2 = $[8];
       }
-      t3 = "Suggested rules:";
+      t3 = "推荐规则：";
       t4 = " ";
       T0 = Ansi;
       t1 = rules.map(_temp).join(", ");
@@ -431,7 +431,7 @@ export function PermissionDecisionDebugInfo(t0) {
   }
   let t8;
   if ($[17] !== unreachableRules) {
-    t8 = unreachableRules.length > 0 && <Box flexDirection="column" marginTop={1}><Text color="warning">{figures.warning} Unreachable Rules ({unreachableRules.length})</Text>{unreachableRules.map(_temp5)}</Box>;
+    t8 = unreachableRules.length > 0 && <Box flexDirection="column" marginTop={1}><Text color="warning">{figures.warning} 无法访问的规则 ({unreachableRules.length})</Text>{unreachableRules.map(_temp5)}</Box>;
     $[17] = unreachableRules;
     $[18] = t8;
   } else {
@@ -452,7 +452,7 @@ export function PermissionDecisionDebugInfo(t0) {
   return t9;
 }
 function _temp5(u_1, i) {
-  return <Box key={i} flexDirection="column" marginLeft={2}><Text color="warning">{permissionRuleValueToString(u_1.rule.ruleValue)}</Text><Text dimColor={true}>{"  "}{u_1.reason}</Text><Text dimColor={true}>{"  "}Fix: {u_1.fix}</Text></Box>;
+  return <Box key={i} flexDirection="column" marginLeft={2}><Text color="warning">{permissionRuleValueToString(u_1.rule.ruleValue)}</Text><Text dimColor={true}>{"  "}{u_1.reason}</Text><Text dimColor={true}>{"  "}修复：{u_1.fix}</Text></Box>;
 }
 function _temp4(s) {
   return s.toolPermissionContext;

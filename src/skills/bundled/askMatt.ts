@@ -5,8 +5,8 @@ const PROMPT = '# Ask Matt — Skill Router\n\nYou don\'t remember every skill, 
 export function registerAskMattSkill(): void {
   registerBundledSkill({
     name: 'ask-matt',
-    description: 'Ask which skill fits your situation. A router over all available skills in this system.',
-    whenToUse: 'When you are unsure which skill to use for your current task.',
+    description: '根据你当前的情况询问该使用哪个技能。这是系统中所有可用技能的路由器。',
+    whenToUse: '当你对当前任务该使用哪个技能不确定时。',
     userInvocable: true,
     disableModelInvocation: true,
     getPromptForCommand() {

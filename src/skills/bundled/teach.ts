@@ -5,7 +5,7 @@ const PROMPT = '# Teach\n\nThe user has asked you to teach them something. This 
 export function registerTeachSkill(): void {
   registerBundledSkill({
     name: 'teach',
-    description: 'Teach the user a new skill or concept within this workspace, with structured lessons and learning records.',
+    description: '在工作区内教授用户新技能或概念，包含结构化课程和学习记录。',
     whenToUse: 'When user wants to learn a new topic over multiple sessions, with structured lesson plans and progress tracking.',
     argumentHint: '<What would you like to learn about?>',
     userInvocable: true,

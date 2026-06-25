@@ -1,0 +1,9 @@
+{
+  "id": "synology-chat",
+  "name": "synology-chat",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

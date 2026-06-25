@@ -1,0 +1,21 @@
+{
+  "id": "opencode-go",
+  "name": "opencode-go",
+  "envVars": [
+    "OPENCODE_API_KEY",
+    "OPENCODE_ZEN_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "OpenCode Go catalog",
+      "method": "api-key",
+      "cliFlag": "--opencode-go-api-key"
+    }
+  ],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "OPENCODE_API_KEY": "<YOUR_OPENCODE_API_KEY>",
+    "OPENCODE_ZEN_API_KEY": "<YOUR_OPENCODE_ZEN_API_KEY>"
+  }
+}

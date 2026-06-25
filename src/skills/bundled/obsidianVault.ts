@@ -5,7 +5,7 @@ const PROMPT = '# Obsidian Vault\n\nSearch, create, and manage notes in the Obsi
 export function registerObsidianVaultSkill(): void {
   registerBundledSkill({
     name: 'obsidian-vault',
-    description: 'Search, create, and manage notes in an Obsidian vault with wikilinks and index notes.',
+    description: '在 Obsidian 知识库中搜索、创建和管理笔记，支持 wikilinks 和索引笔记。',
     whenToUse: 'When the user wants to find, create, or organize notes in Obsidian.',
     userInvocable: true,
     getPromptForCommand() {

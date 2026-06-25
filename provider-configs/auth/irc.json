@@ -1,0 +1,9 @@
+{
+  "id": "irc",
+  "name": "irc",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

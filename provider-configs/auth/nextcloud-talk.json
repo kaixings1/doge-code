@@ -1,0 +1,9 @@
+{
+  "id": "nextcloud-talk",
+  "name": "nextcloud-talk",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

@@ -5,7 +5,7 @@ const PROMPT = '## Domain Modeling\n\nBuild and sharpen the project\'s domain mo
 export function registerDomainModelingSkill(): void {
   registerBundledSkill({
     name: 'domain-modeling',
-    description: 'Build and sharpen a project domain model — track ubiquitous language, record ADRs, maintain CONTEXT.md.',
+    description: '构建和完善项目领域模型 — 跟踪通用语言、记录架构决策记录（ADR）、维护 CONTEXT.md。',
     whenToUse: 'When pinning down domain terminology, building a glossary, or recording architectural decisions.',
     userInvocable: true,
     getPromptForCommand() {

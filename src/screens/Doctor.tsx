@@ -289,7 +289,7 @@ export function Doctor(t0) {
   }
   let t13;
   if ($[23] !== diagnostic.installationPath) {
-    t13 = <Text>└ Path: {diagnostic.installationPath}</Text>;
+    t13 = <Text>└ 路径: {diagnostic.installationPath}</Text>;
     $[23] = diagnostic.installationPath;
     $[24] = t13;
   } else {
@@ -297,7 +297,7 @@ export function Doctor(t0) {
   }
   let t14;
   if ($[25] !== diagnostic.invokedBinary) {
-    t14 = <Text>└ Invoked: {diagnostic.invokedBinary}</Text>;
+    t14 = <Text>└ 调用: {diagnostic.invokedBinary}</Text>;
     $[25] = diagnostic.invokedBinary;
     $[26] = t14;
   } else {
@@ -305,7 +305,7 @@ export function Doctor(t0) {
   }
   let t15;
   if ($[27] !== diagnostic.configInstallMethod) {
-    t15 = <Text>└ Config install method: {diagnostic.configInstallMethod}</Text>;
+    t15 = <Text>└ 配置安装方式: {diagnostic.configInstallMethod}</Text>;
     $[27] = diagnostic.configInstallMethod;
     $[28] = t15;
   } else {
@@ -397,7 +397,7 @@ export function Doctor(t0) {
   }
   let t28;
   if ($[56] === Symbol.for("react.memo_cache_sentinel")) {
-    t28 = <Text>└ Auto-update channel: {autoUpdatesChannel}</Text>;
+    t28 = <Text>└ 自动更新频道: {autoUpdatesChannel}</Text>;
     $[56] = t28;
   } else {
     t28 = $[56];

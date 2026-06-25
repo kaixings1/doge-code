@@ -84,7 +84,7 @@ export function FuzzyPicker<T>({
   onCancel,
   emptyMessage = '无结果',
   matchLabel,
-  selectAction = 'select',
+  selectAction = '选择',
   extraHints
 }: Props<T>): React.ReactNode {
   const isTerminalFocused = useTerminalFocus();

@@ -1,0 +1,9 @@
+{
+  "id": "microsoft",
+  "name": "microsoft",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

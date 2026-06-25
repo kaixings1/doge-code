@@ -1,0 +1,9 @@
+{
+  "id": "duckduckgo",
+  "name": "duckduckgo",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

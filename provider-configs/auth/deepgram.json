@@ -1,0 +1,9 @@
+{
+  "id": "deepgram",
+  "name": "deepgram",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

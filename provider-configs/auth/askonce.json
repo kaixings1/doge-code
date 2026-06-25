@@ -1,0 +1,9 @@
+{
+  "id": "askonce",
+  "name": "askonce",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "一次提问，获取所有大模型答案 - Query multiple AI models simultaneously with a single question",
+  "dogeEnvExample": {}
+}

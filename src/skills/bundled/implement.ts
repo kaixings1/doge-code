@@ -5,8 +5,8 @@ const PROMPT = 'Based on the PRD or Issues, implement the specified work.\n\nRul
 export function registerImplementSkill(): void {
   registerBundledSkill({
     name: 'implement',
-    description: 'Implement code based on PRD or Issues.',
-    whenToUse: 'User wants to start coding from PRD/Issues.',
+    description: '根据 PRD 或 Issues 实现代码。',
+    whenToUse: '用户想要从 PRD/Issues 开始编码。',
     argumentHint: '<PRD ref or Issue numbers>',
     userInvocable: true,
     disableModelInvocation: true,

@@ -1,0 +1,20 @@
+{
+  "id": "byteplus",
+  "name": "byteplus",
+  "envVars": [
+    "BYTEPLUS_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "BytePlus API key",
+      "method": "api-key",
+      "cliFlag": "--byteplus-api-key"
+    }
+  ],
+  "baseUrl": "ark.ap-southeast.bytepluses.com",
+  "description": "",
+  "dogeEnvExample": {
+    "BYTEPLUS_API_KEY": "<YOUR_BYTEPLUS_API_KEY>",
+    "ANTHROPIC_BASE_URL": "ark.ap-southeast.bytepluses.com"
+  }
+}

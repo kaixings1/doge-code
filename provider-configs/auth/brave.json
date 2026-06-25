@@ -1,0 +1,13 @@
+{
+  "id": "brave",
+  "name": "brave",
+  "envVars": [
+    "BRAVE_API_KEY"
+  ],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "BRAVE_API_KEY": "<YOUR_BRAVE_API_KEY>"
+  }
+}

@@ -627,7 +627,7 @@ export function ConsoleOAuthFlow({
       {safeOauthStatus.state === 'waiting_for_login' && showPastePrompt && (
         <Box flexDirection="column" key="urlToCopy" gap={1} paddingBottom={1}>
           <Box paddingX={1}>
-            <Text dimColor>Browser didn&apos;t open? Use the url below to sign in </Text>
+            <Text dimColor>浏览器未打开？使用下方 URL 登录</Text>
             {urlCopied ? (
               <Text color="success">(已复制!)</Text>
             ) : (
@@ -643,7 +643,7 @@ export function ConsoleOAuthFlow({
       )}
       {mode === 'setup-token' && safeOauthStatus.state === 'success' && safeOauthStatus.token && (
         <Box key="tokenOutput" flexDirection="column" gap={1} paddingTop={1}>
-          <Text color="success">✓ 长期身份验证令牌创建成功!</Text>
+          <Text color="success">✓ 长期身份验证令牌创建成功！</Text>
           <Box flexDirection="column" gap={1}>
             <Text>你的 OAuth 令牌（有效期 1 年）：</Text>
             <Text color="warning">{safeOauthStatus.token}</Text>

@@ -1,0 +1,9 @@
+{
+  "id": "msteams",
+  "name": "msteams",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

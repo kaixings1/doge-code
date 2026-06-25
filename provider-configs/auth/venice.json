@@ -1,0 +1,20 @@
+{
+  "id": "venice",
+  "name": "venice",
+  "envVars": [
+    "VENICE_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "Venice AI API key",
+      "method": "api-key",
+      "cliFlag": "--venice-api-key"
+    }
+  ],
+  "baseUrl": "api.venice.ai",
+  "description": "",
+  "dogeEnvExample": {
+    "VENICE_API_KEY": "<YOUR_VENICE_API_KEY>",
+    "ANTHROPIC_BASE_URL": "api.venice.ai"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "memory-core",
+  "name": "memory-core",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

@@ -1,0 +1,14 @@
+{
+  "id": "copilot-proxy",
+  "name": "copilot-proxy",
+  "envVars": [],
+  "authMethods": [
+    {
+      "label": "Copilot Proxy",
+      "method": "local"
+    }
+  ],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

@@ -1,0 +1,23 @@
+{
+  "id": "kimi",
+  "name": "kimi-coding",
+  "envVars": [
+    "KIMI_API_KEY",
+    "KIMICODE_API_KEY",
+    "KIMI_API_KEY",
+    "KIMICODE_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "Kimi Code API key (subscription)",
+      "method": "api-key",
+      "cliFlag": "--kimi-code-api-key"
+    }
+  ],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {
+    "KIMI_API_KEY": "<YOUR_KIMI_API_KEY>",
+    "KIMICODE_API_KEY": "<YOUR_KIMICODE_API_KEY>"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "browser",
+  "name": "browser",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

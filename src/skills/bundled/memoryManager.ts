@@ -163,7 +163,7 @@ export async function removeMemory(
 export function registerMemoryManagerSkill(): void {
   registerBundledSkill({
     name: 'memory-manage',
-    description: 'Manage persistent memory (MEMORY.md for project knowledge, USER.md for user preferences). Supports add, replace, remove entries.',
+    description: '管理持久化记忆（MEMORY.md 用于项目知识，USER.md 用于用户偏好）。支持添加、替换、删除条目。',
     whenToUse: 'When you want to save project knowledge or user preferences between sessions. Use for facts that would otherwise need rediscovery.',
     argumentHint: '<add|replace|remove> <store: agent|user> <content>',
     userInvocable: true,

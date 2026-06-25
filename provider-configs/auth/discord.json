@@ -1,0 +1,9 @@
+{
+  "id": "discord",
+  "name": "discord",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "",
+  "dogeEnvExample": {}
+}

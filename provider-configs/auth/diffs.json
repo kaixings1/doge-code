@@ -1,0 +1,9 @@
+{
+  "id": "diffs",
+  "name": "diffs",
+  "envVars": [],
+  "authMethods": [],
+  "baseUrl": "",
+  "description": "Read-only diff viewer and file renderer for agents.",
+  "dogeEnvExample": {}
+}

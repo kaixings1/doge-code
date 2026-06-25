@@ -5,7 +5,7 @@ const PROMPT = 'Design deep modules: a lot of behaviour behind a small interface
 export function registerCodebaseDesignSkill(): void {
   registerBundledSkill({
     name: 'codebase-design',
-    description: 'Deep module design vocabulary — design small interfaces with deep implementations for maximum leverage and locality.',
+    description: '深度模块设计词汇表 — 设计小接口、深实现的模块，以获得最大的杠杆效应和局部性。',
     whenToUse: 'When designing or improving a module interface, deciding where a seam goes, or making code more testable.',
     userInvocable: true,
     getPromptForCommand() {

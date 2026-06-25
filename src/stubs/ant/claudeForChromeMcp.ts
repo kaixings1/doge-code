@@ -29,7 +29,7 @@ export function createClaudeForChromeMcpServer(
   return {
     async connect() {
       throw new Error(
-        'Claude in Chrome is unavailable in this source scaffold because @ant/claude-for-chrome-mcp is not published to the public npm registry.',
+        'Claude for Chrome 在此构建中不可用，因为 @ant/claude-for-chrome-mcp 未发布到公共 npm 注册表。',
       )
     },
   }

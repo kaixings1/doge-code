@@ -1,0 +1,20 @@
+{
+  "id": "synthetic",
+  "name": "synthetic",
+  "envVars": [
+    "SYNTHETIC_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "Synthetic API key",
+      "method": "api-key",
+      "cliFlag": "--synthetic-api-key"
+    }
+  ],
+  "baseUrl": "api.synthetic.new",
+  "description": "",
+  "dogeEnvExample": {
+    "SYNTHETIC_API_KEY": "<YOUR_SYNTHETIC_API_KEY>",
+    "ANTHROPIC_BASE_URL": "api.synthetic.new"
+  }
+}
