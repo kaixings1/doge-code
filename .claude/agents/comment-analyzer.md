@@ -1,6 +1,6 @@
 ---
 name: comment-analyzer
-description: Analyze code comments for accuracy, completeness, maintainability, and comment rot risk.
+description: 评论分析器
 model: sonnet
 tools: [Read, Grep, Glob]
 ---

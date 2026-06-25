@@ -1,6 +1,6 @@
 ---
 name: code-architect
-description: Designs feature architectures by analyzing existing codebase patterns and conventions, then providing implementation blueprints with concrete files, interfaces, data flow, and build order.
+description: 代码架构师，分析和改进代码库结构
 model: sonnet
 tools: [Read, Grep, Glob, Bash]
 ---
