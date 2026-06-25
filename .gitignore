@@ -1,6 +1,5 @@
 # Doge Code Configuration
 .doge/
-.claude/
 .qwen/
 .remember/
 src-zh/
@@ -61,7 +60,7 @@ latest/
 !.claude/agents/
 !.claude/hooks/
 !.claude/commands/
+!.claude/skills/
 !.claude/settings.json
-.claude/settings.local.json
 # Cookbooks (large files)
 cookbooks/

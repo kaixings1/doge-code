@@ -1,65 +1,65 @@
-Commit, push, and deploy the current changes. Usage: `/deploy [message]`
+提交、推送并部署当前更改。用法：`/deploy [提交信息]`
 
-`$ARGUMENTS` is an optional commit message. If not provided, auto-generate one from the changes.
+`$ARGUMENTS` 是可选的提交信息。如果未提供，根据更改自动生成。
 
-## Step 1: Pre-flight Checks
+## 第 1 步：前置检查
 
-1. Run `dotnet build` on any modified .NET projects
-2. If frontend files changed, run `npx tsc --noEmit` in the relevant client directory
-3. If either fails, STOP and report the errors — do not deploy broken code
+1. 在任何修改过的 .NET 项目上运行 `dotnet build`
+2. 如果前端文件有变更，在相关客户端目录中运行 `npx tsc --noEmit`
+3. 如果任一检查失败，**停止**并报告错误 —— 不要部署有问题的代码
 
-## Step 2: Review Changes
+## 第 2 步：审查变更
 
 ```bash
 git status --short
 git diff --stat
 ```
 
-Present the changes:
+呈现变更：
 
 ```
-## Changes to Deploy
+## 待部署的更改
 
-| Status | File |
-|--------|------|
+| 状态 | 文件 |
+|------|------|
 | M | src/API/Controllers/PaymentController.cs |
 | M | src/Application/Payments/ExportHandler.cs |
 | A | src/Domain/Payments/ExportResult.cs |
 
-{count} files changed. Deploy? (yes/no)
+{count} 个文件变更。是否部署？（是/否）
 ```
 
-Wait for confirmation.
+等待确认。
 
-## Step 3: Commit
+## 第 3 步：提交
 
-1. Stage only the relevant files (never use `git add -A`)
-2. Never stage `.env`, `appsettings.*.json` with real secrets, or `node_modules`
-3. Commit with the provided message or auto-generated one
-4. Always end with: `Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>`
-5. Use HEREDOC format for the commit message
+1. 仅暂存相关文件（绝不要使用 `git add -A`）
+2. 绝不要暂存 `.env`、包含真实密钥的 `appsettings.*.json` 或 `node_modules`
+3. 使用提供的信息或自动生成的信息提交
+4. 始终以 `Co-Authored-By: kaixings <30445355@qq.com>` 结尾
+5. 使用 HEREDOC 格式编写提交信息
 
-## Step 4: Push
+## 第 4 步：推送
 
 ```bash
 git push -u origin HEAD
 ```
 
-Push only the current branch. Do NOT cross-push to other branches.
+仅推送当前分支。不要交叉推送到其他分支。
 
-## Step 5: Pipeline (Conditional)
+## 第 5 步：流水线（条件性）
 
-Check if the current branch is an environment branch (a branch that a CD pipeline watches):
+检查当前分支是否是环境分支（CD 流水线监视的分支）：
 
-- **On an environment branch**: Trigger the appropriate CD pipeline via Azure DevOps MCP. Monitor the build and report status.
-- **On a feature/work branch**: Do NOT trigger. Report that the pipeline will trigger on PR merge.
+- **在环境分支上**：通过 Azure DevOps MCP 触发相应的 CD 流水线。监控构建并报告状态。
+- **在功能/工作分支上**：不触发。报告流水线将在 PR 合并时触发。
 
-## Step 6: Report
+## 第 6 步：报告
 
 ```
-Deployed successfully.
+部署成功。
 
-Branch: {branch}
-Commit: {hash} - {message}
-Pipeline: {triggered | will trigger on PR merge}
+分支：{branch}
+提交：{hash} - {message}
+流水线：{已触发 | 将在 PR 合并时触发}
 ```

@@ -1,32 +1,32 @@
-Review PR #$ARGUMENTS in the current project. Automatically:
+审查当前项目中的 PR #$ARGUMENTS。自动：
 
-1. **Read the full diff** — understand every change in the PR
-2. **Read the linked work item** and verify all acceptance criteria are met
-3. **Review for:**
-   - Clean Architecture boundaries (Domain has no infrastructure dependencies)
-   - Tenant/organizationId enforcement on all database queries
-   - Missing unit or integration tests for new code
-   - `any` types in TypeScript (should be properly typed)
-   - Security issues (OWASP Top 10, hardcoded secrets, SQL/NoSQL injection)
-   - Error handling (are exceptions caught appropriately?)
-   - Naming conventions and code style consistency
-   - Breaking changes or backwards compatibility issues
-4. **Post inline comments** on all findings directly on the PR
-5. **Post a PR-level summary comment** with:
-   - Overall assessment (ready to merge / needs changes)
-   - Count of issues by severity (critical / warning / suggestion)
-   - Acceptance criteria checklist (met / not met / not applicable)
-   - Test coverage assessment
+1. **读取完整 diff** —— 理解 PR 中的每一个变更
+2. **读取关联的工作项** 并验证所有验收标准已满足
+3. **审查以下内容：**
+   - 整洁架构边界（领域层没有基础设施依赖）
+   - 所有数据库查询强制执行租户/organizationId
+   - 新代码缺少单元或集成测试
+   - TypeScript 中的 `any` 类型（应正确使用类型）
+   - 安全问题（OWASP Top 10、硬编码密钥、SQL/NoSQL 注入）
+   - 错误处理（异常是否被恰当地捕获？）
+   - 命名规范和代码风格一致性
+   - 破坏性变更或向后兼容性问题
+4. **在所有发现点上直接发布内联评论**
+5. **发布 PR 级别的总结评论**，包含：
+   - 总体评估（准备合并 / 需要修改）
+   - 按严重程度分类的问题数（严重 / 警告 / 建议）
+   - 验收标准清单（已满足 / 未满足 / 不适用）
+   - 测试覆盖评估
 
-Then ask me:
+然后问我：
 ```
-Review complete. Summary:
-- X critical issues
-- Y warnings
-- Z suggestions
-- Acceptance criteria: A/B met
+审查完成。总结：
+- X 个严重问题
+- Y 个警告
+- Z 个建议
+- 验收标准：A/B 已满足
 
-Approve, Request Changes, or skip the vote?
+批准、请求修改还是跳过投票？
 ```
 
-Wait for my response before submitting any vote on the PR.
+等待我回复后再在 PR 上提交任何投票。
