@@ -62,5 +62,6 @@ latest/
 !.claude/commands/
 !.claude/skills/
 !.claude/settings.json
+!.claude/.gitignore
 # Cookbooks (large files)
 cookbooks/
