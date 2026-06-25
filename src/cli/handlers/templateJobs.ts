@@ -11,6 +11,13 @@ type TemplateJob = {
 // 模拟模板作业数据存储
 const templateJobs = new Map<string, TemplateJob>()
 
+const STATUS_LABELS: Record<string, string> = {
+  pending: '待处理',
+  running: '运行中',
+  completed: '已完成',
+  failed: '失败',
+}
+
 export async function templatesMain(args: string[]): Promise<void> {
   const subcommand = args[0]
 
@@ -44,7 +51,7 @@ export async function templatesMain(args: string[]): Promise<void> {
       console.log('模板作业列表:')
       for (const job of templateJobs.values()) {
         // biome-ignore lint/suspicious/noConsole: intentional console output
-        console.log(`  ${job.id} - ${job.name} (${job.status})`)
+        console.log(`  ${job.id} - ${job.name} (${STATUS_LABELS[job.status]})`)
       }
       break
     }

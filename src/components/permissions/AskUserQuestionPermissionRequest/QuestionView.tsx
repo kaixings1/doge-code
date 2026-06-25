@@ -303,7 +303,7 @@ export function QuestionView(t0) {
         const textInput = values.includes("__other__") ? questionStates[questionText]?.textInputValue : undefined;
         const finalValues = values.filter(_temp4).concat(textInput ? [textInput] : []);
         onAnswer(questionText, finalValues, undefined, false);
-      }} onFocus={handleFocus} onCancel={onCancel} submitButtonText={currentQuestionIndex === questions.length - 1 ? "Submit" : "Next"} onSubmit={onSubmit} onDownFromLastItem={handleDownFromLastItem} isDisabled={isFooterFocused} onOpenEditor={handleOpenEditor} onImagePaste={onImagePaste} pastedContents={pastedContents} onRemoveImage={onRemoveImage} /> : <Select key={question.question} options={options} defaultValue={questionStates[question.question]?.selectedValue as string | undefined} onChange={value_1 => {
+      }} onFocus={handleFocus} onCancel={onCancel} submitButtonText={currentQuestionIndex === questions.length - 1 ? "提交" : "下一步"} onSubmit={onSubmit} onDownFromLastItem={handleDownFromLastItem} isDisabled={isFooterFocused} onOpenEditor={handleOpenEditor} onImagePaste={onImagePaste} pastedContents={pastedContents} onRemoveImage={onRemoveImage} /> : <Select key={question.question} options={options} defaultValue={questionStates[question.question]?.selectedValue as string | undefined} onChange={value_1 => {
         onUpdateQuestionState(questionText, {
           selectedValue: value_1
         }, false);
@@ -351,7 +351,7 @@ export function QuestionView(t0) {
   const t16 = options.length + 1;
   let t17;
   if ($[80] !== t15 || $[81] !== t16) {
-    t17 = <Text color={t15}>{t16}. Chat about this</Text>;
+    t17 = <Text color={t15}>{t16}. 与此对话</Text>;
     $[80] = t15;
     $[81] = t16;
     $[82] = t17;
@@ -369,7 +369,7 @@ export function QuestionView(t0) {
   }
   let t19;
   if ($[86] !== footerIndex || $[87] !== isFooterFocused || $[88] !== isInPlanMode || $[89] !== options.length) {
-    t19 = isInPlanMode && <Box flexDirection="row" gap={1}>{isFooterFocused && footerIndex === 1 ? <Text color="suggestion">{figures.pointer}</Text> : <Text> </Text>}<Text color={isFooterFocused && footerIndex === 1 ? "suggestion" : undefined}>{options.length + 2}. Skip interview and plan immediately</Text></Box>;
+    t19 = isInPlanMode && <Box flexDirection="row" gap={1}>{isFooterFocused && footerIndex === 1 ? <Text color="suggestion">{figures.pointer}</Text> : <Text> </Text>}<Text color={isFooterFocused && footerIndex === 1 ? "suggestion" : undefined}>{options.length + 2}. 跳过访谈，立即规划</Text></Box>;
     $[86] = footerIndex;
     $[87] = isFooterFocused;
     $[88] = isInPlanMode;

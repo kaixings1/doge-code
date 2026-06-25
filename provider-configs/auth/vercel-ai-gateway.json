@@ -1,0 +1,20 @@
+{
+  "id": "vercel-ai-gateway",
+  "name": "vercel-ai-gateway",
+  "envVars": [
+    "AI_GATEWAY_API_KEY"
+  ],
+  "authMethods": [
+    {
+      "label": "Vercel AI Gateway API key",
+      "method": "api-key",
+      "cliFlag": "--ai-gateway-api-key"
+    }
+  ],
+  "baseUrl": "ai-gateway.vercel.sh\";\ne",
+  "description": "",
+  "dogeEnvExample": {
+    "AI_GATEWAY_API_KEY": "<YOUR_AI_GATEWAY_API_KEY>",
+    "ANTHROPIC_BASE_URL": "ai-gateway.vercel.sh\";\ne"
+  }
+}

@@ -382,7 +382,7 @@ function StopHookSummaryMessage(t0) {
   }
   let t13;
   if ($[34] !== hookErrors || $[35] !== message.hookLabel) {
-    t13 = hookErrors.length > 0 && hookErrors.map((err, idx_1) => <Text key={idx_1}><Text dimColor={true}>⎿  </Text>{message.hookLabel ?? "Stop"} hook error: {err}</Text>);
+    t13 = hookErrors.length > 0 && hookErrors.map((err, idx_1) => <Text key={idx_1}><Text dimColor={true}>⎿  </Text>{message.hookLabel ?? "中止"} 钩子错误：{err}</Text>);
     $[34] = hookErrors;
     $[35] = message.hookLabel;
     $[36] = t13;
@@ -587,7 +587,7 @@ function TurnDurationMessage(t0) {
   return t10;
 }
 function _temp4() {
-  return sample(TURN_COMPLETION_VERBS) ?? "Worked";
+  return sample(TURN_COMPLETION_VERBS) ?? "完成";
 }
 function MemorySavedMessage(t0) {
   const $ = _c(16);
@@ -629,7 +629,7 @@ function MemorySavedMessage(t0) {
   } else {
     t6 = $[5];
   }
-  const t7 = message.verb ?? "Saved";
+  const t7 = message.verb ?? "已保存";
   const t8 = parts.join(" \xB7 ");
   let t9;
   if ($[6] !== t7 || $[7] !== t8) {
@@ -780,7 +780,7 @@ function BridgeStatusMessage(t0) {
   }
   let t3;
   if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
-    t3 = <Text><ThemedText color="suggestion">/remote-control</ThemedText> is active. Code in CLI or at</Text>;
+    t3 = <Text><ThemedText color="suggestion">/remote-control</ThemedText> 已激活。可在 CLI 中运行代码，或访问</Text>;
     $[1] = t3;
   } else {
     t3 = $[1];

@@ -30,9 +30,8 @@ export type BundledSkillDefinition = {
   /**
    * Additional reference files to extract to disk on first invocation.
    * Keys are relative paths (forward slashes, no `..`), values are content.
-   * When set, the skill prompt is prefixed with a "Base directory for this
-   * skill: <dir>" line so the model can Read/Grep these files on demand —
-   * same contract as disk-based skills.
+   * 当设置此选项时，技能提示词会以"此技能的基目录：<dir>"作为前缀，
+   * 以便模型可以按需 Read/Grep 这些文件 — 与基于磁盘的技能保持相同的约定。
    */
   files?: Record<string, string>
   getPromptForCommand: (
@@ -219,7 +218,7 @@ function prependBaseDir(
   blocks: ContentBlockParam[],
   baseDir: string,
 ): ContentBlockParam[] {
-  const prefix = `Base directory for this skill: ${baseDir}\n\n`
+  const prefix = `此技能的基目录：${baseDir}\n\n`
   if (blocks.length > 0 && blocks[0]!.type === 'text') {
     return [
       { type: 'text', text: prefix + blocks[0]!.text },

@@ -5,6 +5,8 @@ import type { LocalCommandCall, LocalCommandResult } from '../../types/command.j
 
 const DEFAULT_DIR = 'src'
 const PROGRESS_FILE = '.batch-progress.json'
+const LOG_FILE = '.batch-han-log.txt'
+const PID_FILE = '.batch-han-pid.txt'
 const MAX_BATCH_TOKENS = 80000
 const CONCURRENCY = 2
 const RETRY_LIMIT = 2
@@ -72,7 +74,12 @@ function saveHistory(history: Record<string, number>, progressFile: string): voi
   fs.writeFileSync(progressFile, JSON.stringify(history, null, 2))
 }
 
-function runDogeAsync(prompt: string, targetDir: string): Promise<void> {
+function appendLog(logFile: string, message: string): void {
+  const timestamp = new Date().toISOString().replace('T', ' ').slice(0, 19)
+  fs.appendFileSync(logFile, `[${timestamp}] ${message}\n`)
+}
+
+function runDogeAsync(prompt: string, targetDir: string, logFile: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const dogeCmd = process.platform === 'win32' ? 'doge.cmd' : 'doge'
     const args = [
@@ -87,7 +94,15 @@ function runDogeAsync(prompt: string, targetDir: string): Promise<void> {
     })
     let stderr = ''
     proc.stderr.on('data', (data: Buffer) => {
-      stderr += data.toString()
+      const text = data.toString()
+      stderr += text
+      appendLog(logFile, '[doge:stderr] ' + text.trimEnd())
+    })
+    proc.stdout.on('data', (data: Buffer) => {
+      const text = data.toString()
+      if (text.trim()) {
+        appendLog(logFile, '[doge:stdout] ' + text.trimEnd())
+      }
     })
     proc.on('close', (code: number | null) => {
       if (code === 0) {
@@ -102,6 +117,7 @@ function runDogeAsync(prompt: string, targetDir: string): Promise<void> {
 
 function createBatches(
   fileInfos: Array<{ path: string; content: string; mtime: number; tokenCount: number }>,
+  logFile: string,
 ): Array<Array<{ path: string; content: string; mtime: number; tokenCount: number }>> {
   const batches: Array<Array<{ path: string; content: string; mtime: number; tokenCount: number }>> = []
   let currentBatch: typeof fileInfos = []
@@ -114,7 +130,7 @@ function createBatches(
         currentBatch = []
         currentTokens = 0
       }
-      console.warn('Warning: file too large (' + info.tokenCount + ' tokens): ' + path.basename(info.path) + ', processing solo')
+      appendLog(logFile, '⚠️ 文件过大（' + info.tokenCount + ' tokens）: ' + path.basename(info.path) + '，单独处理')
       batches.push([info])
       continue
     }
@@ -130,8 +146,47 @@ function createBatches(
   return batches
 }
 
+function isRunning(pidFile: string): boolean {
+  try {
+    const pid = fs.readFileSync(pidFile, 'utf-8').trim()
+    if (!pid) return false
+    try {
+      process.kill(parseInt(pid, 10), 0)
+      return true
+    } catch {
+      return false
+    }
+  } catch {
+    return false
+  }
+}
+
 export const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult> => {
   const parts = args.trim().split(/\s+/).filter(Boolean)
+
+  // 状态查询模式
+  if (parts.length === 1 && (parts[0] === '--status' || parts[0] === '-s')) {
+    const absTargetDir = path.resolve(DEFAULT_DIR)
+    const logFile = path.join(absTargetDir, LOG_FILE)
+    const pidFile = path.join(absTargetDir, PID_FILE)
+    const running = isRunning(pidFile)
+    let log: string
+    try {
+      log = fs.readFileSync(logFile, 'utf-8')
+      const lines = log.trim().split('\n')
+      const tail = lines.slice(-20).join('\n')
+      return {
+        type: 'text',
+        value: (running ? '🟢 正在运行中\n' : '🔴 未在运行\n')
+          + '--- 最近日志（末 20 行） ---\n'
+          + tail
+          + '\n---\n查看完整日志: type ' + logFile + '\n清空日志: del ' + logFile,
+      }
+    } catch {
+      return { type: 'text', value: (running ? '🟢 正在运行中' : '🔴 未在运行') + '（无日志）' }
+    }
+  }
+
   let targetDir = DEFAULT_DIR
   let concurrency = CONCURRENCY
 
@@ -147,91 +202,132 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
 
   const absTargetDir = path.resolve(targetDir)
   const progressFile = path.join(absTargetDir, PROGRESS_FILE)
+  const logFile = path.join(absTargetDir, LOG_FILE)
+  const pidFile = path.join(absTargetDir, PID_FILE)
 
   if (!fs.existsSync(absTargetDir)) {
-    return { type: 'text', value: 'Error: directory not found: ' + absTargetDir }
+    return { type: 'text', value: '错误：未找到目录：' + absTargetDir }
   }
 
-  const outputLines: string[] = []
-  outputLines.push('Scanning directory: ' + absTargetDir)
-
-  const allFiles = getAllTsFilesWithInfo(absTargetDir)
-  if (allFiles.length === 0) {
-    return { type: 'text', value: 'No .ts/.tsx files found in ' + absTargetDir }
+  // 检查是否已有实例在运行
+  if (isRunning(pidFile)) {
+    return { type: 'text', value: '⚠️ 已有 batch-han 实例在运行（PID: ' + fs.readFileSync(pidFile, 'utf-8').trim() + '）\n使用 /batch-han --status 查看进度\n等待完成后重试，或手动删除 ' + pidFile }
   }
-  outputLines.push('Found ' + allFiles.length + ' files total')
 
-  const history = loadHistory(progressFile)
-  const pending = allFiles.filter(f => !history[f.path] || history[f.path] !== f.mtime)
-  if (pending.length === 0) {
-    return { type: 'text', value: 'All files are up to date. Total: ' + allFiles.length }
-  }
-  outputLines.push('Pending: ' + pending.length + ' new/modified files')
+  // 写入 PID
+  fs.writeFileSync(pidFile, String(process.pid))
+  // 初始化日志文件
+  fs.writeFileSync(logFile, '')
 
-  const batches = createBatches(pending)
-  outputLines.push('Split into ' + batches.length + ' batches (concurrency: ' + concurrency + ')')
+  appendLog(logFile, '🚀 batch-han 启动，PID=' + process.pid + '，目标目录=' + absTargetDir + '，并发数=' + concurrency)
 
-  const errors: number[] = []
-  const queue = [...batches.entries()]
+  // 立即返回提示信息，后台执行
+  const summaryMessage = '✅ batch-han 已启动，正在后台处理 ' + absTargetDir + ' 目录...\n'
+    + '  并发数：' + concurrency + '\n'
+    + '  查看实时进度：/batch-han --status\n'
+    + '  查看完整日志：type ' + logFile
 
-  async function processBatch(
-    batch: typeof pending,
-    index: number,
-  ): Promise<boolean> {
-    const totalTokens = batch.reduce((sum, f) => sum + f.tokenCount, 0)
-    outputLines.push('Batch ' + (index + 1) + ' (' + batch.length + ' files, ~' + totalTokens + ' tokens)')
+  // 异步执行不阻塞返回
+  executeBatchHan(absTargetDir, progressFile, logFile, pidFile, concurrency)
+    .catch(err => appendLog(logFile, '❌ 执行失败: ' + (err instanceof Error ? err.message : String(err))))
 
-    const filePaths = batch.map(f => f.path).join('\n')
-    const dogePrompt = 'Please strictly follow the task below to modify the following TypeScript files. No feedback needed, directly modify and overwrite.\n\nTasks:\n1. Localize: convert all English comments and UI strings to Simplified Chinese\n2. Syntax upgrade: use ES2024 features (?., ??, const/let etc.)\n3. Type hardening: replace implicit any with concrete types, ban any\n4. Keep logic unchanged\n\nFiles to modify:\n' + filePaths
+  return { type: 'text', value: summaryMessage }
+}
 
-    for (let attempt = 1; attempt <= RETRY_LIMIT + 1; attempt++) {
-      try {
-        await runDogeAsync(dogePrompt, absTargetDir)
-        for (const file of batch) {
-          try {
-            const stat = fs.statSync(file.path)
-            history[file.path] = stat.mtimeMs
-          } catch {
-            // file might have been deleted
+async function executeBatchHan(
+  absTargetDir: string,
+  progressFile: string,
+  logFile: string,
+  pidFile: string,
+  concurrency: number,
+): Promise<void> {
+  try {
+    appendLog(logFile, '正在扫描目录：' + absTargetDir)
+    const allFiles = getAllTsFilesWithInfo(absTargetDir)
+    if (allFiles.length === 0) {
+      appendLog(logFile, '⚠️ 未找到 .ts/.tsx 文件')
+      return
+    }
+    appendLog(logFile, '共找到 ' + allFiles.length + ' 个文件')
+
+    const history = loadHistory(progressFile)
+    const pending = allFiles.filter(f => !history[f.path] || history[f.path] !== f.mtime)
+    if (pending.length === 0) {
+      appendLog(logFile, '✅ 所有文件已是最新。共 ' + allFiles.length + ' 个文件')
+      return
+    }
+    appendLog(logFile, '待处理：' + pending.length + ' 个新增/修改文件')
+
+    const batches = createBatches(pending, logFile)
+    appendLog(logFile, '分为 ' + batches.length + ' 批（并发数：' + concurrency + '）')
+
+    const errors: number[] = []
+    const queue = [...batches.entries()]
+
+    async function processBatch(
+      batch: typeof pending,
+      index: number,
+    ): Promise<boolean> {
+      const totalTokens = batch.reduce((sum, f) => sum + f.tokenCount, 0)
+      appendLog(logFile, '▶️ 第 ' + (index + 1) + ' 批开始（' + batch.length + ' 个文件，约 ' + totalTokens + ' tokens）')
+
+      const filePaths = batch.map(f => f.path).join('\n')
+      const dogePrompt = 'Please strictly follow the task below to modify the following TypeScript files. No feedback needed, directly modify and overwrite.\n\nTasks:\n1. Localize: convert all English comments and UI strings to Simplified Chinese\n2. Syntax upgrade: use ES2024 features (?., ??, const/let etc.)\n3. Type hardening: replace implicit any with concrete types, ban any\n4. Keep logic unchanged\n\nFiles to modify:\n' + filePaths
+
+      for (let attempt = 1; attempt <= RETRY_LIMIT + 1; attempt++) {
+        try {
+          await runDogeAsync(dogePrompt, absTargetDir, logFile)
+          for (const file of batch) {
+            try {
+              const stat = fs.statSync(file.path)
+              history[file.path] = stat.mtimeMs
+            } catch {
+              // file might have been deleted
+            }
+          }
+          saveHistory(history, progressFile)
+          appendLog(logFile, '✅ 第 ' + (index + 1) + ' 批完成')
+          return true
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err)
+          appendLog(logFile, '❌ 第 ' + attempt + ' 次尝试失败：' + msg)
+          if (attempt <= RETRY_LIMIT) {
+            appendLog(logFile, '⏳ 等待 5 秒后重试...')
+            await new Promise(r => setTimeout(r, 5000))
+          } else {
+            appendLog(logFile, '💀 第 ' + (index + 1) + ' 批永久失败')
+            return false
           }
         }
-        saveHistory(history, progressFile)
-        outputLines.push('Batch ' + (index + 1) + ' done')
-        return true
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err)
-        outputLines.push('  Attempt ' + attempt + ' failed: ' + msg)
-        if (attempt <= RETRY_LIMIT) {
-          outputLines.push('  Waiting 5s before retry...')
-          await new Promise(r => setTimeout(r, 5000))
-        } else {
-          outputLines.push('  Batch ' + (index + 1) + ' failed permanently')
-          return false
-        }
+      }
+      return false
+    }
+
+    async function worker() {
+      while (queue.length > 0) {
+        const item = queue.shift()
+        if (!item) break
+        const [index, batch] = item
+        const ok = await processBatch(batch, index)
+        if (!ok) errors.push(index + 1)
+        await new Promise(r => setTimeout(r, 2000))
       }
     }
-    return false
-  }
 
-  async function worker() {
-    while (queue.length > 0) {
-      const item = queue.shift()
-      if (!item) break
-      const [index, batch] = item
-      const ok = await processBatch(batch, index)
-      if (!ok) errors.push(index + 1)
-      await new Promise(r => setTimeout(r, 2000))
+    const workers = Array(concurrency).fill(null).map(() => worker())
+    await Promise.all(workers)
+
+    if (errors.length > 0) {
+      appendLog(logFile, '⚠️ 完成，但 ' + errors.length + ' 批失败：' + errors.join(', '))
+    } else {
+      appendLog(logFile, '🎉 全部完成！')
+    }
+  } finally {
+    // 清理 PID 文件
+    try {
+      fs.unlinkSync(pidFile)
+    } catch {
+      // ignore
     }
   }
-
-  const workers = Array(concurrency).fill(null).map(() => worker())
-  await Promise.all(workers)
-
-  if (errors.length > 0) {
-    outputLines.push('Warning: ' + errors.length + ' batches failed: ' + errors.join(', '))
-  } else {
-    outputLines.push('All done!')
-  }
-
-  return { type: 'text', value: outputLines.join('\n') }
 }

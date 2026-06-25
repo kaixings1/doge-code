@@ -53,7 +53,7 @@ export function migrateAutoUpdatesToSettings(): void {
       return updatedConfig
     })
   } catch (error) {
-    logError(new Error(`Failed to migrate auto-updates: ${error}`))
+    logError(new Error(`迁移自动更新失败: ${error}`))
     logEvent('tengu_migrate_autoupdates_error', {
       has_error: true,
     })

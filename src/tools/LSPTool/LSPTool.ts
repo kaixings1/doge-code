@@ -237,7 +237,7 @@ export const LSPTool = buildTool({
     if (!manager) {
       // Log this system-level failure for tracking
       logError(
-        new Error('LSP server manager not initialized when tool was called'),
+        new Error('调用工具时 LSP 服务器管理器未初始化'),
       )
 
       const output: Output = {

@@ -49,7 +49,7 @@ function convertStreamEvent(msg: SDKPartialAssistantMessage): StreamEvent {
 function convertResultMessage(msg: SDKResultMessage): SystemMessage {
   const isError = msg.subtype !== 'success'
   const content = isError
-    ? msg.errors?.join(', ') || 'Unknown error'
+    ? msg.errors?.join(', ') || '未知错误'
     : '会话已成功完成'
 
   return {
@@ -104,7 +104,7 @@ function convertToolProgressMessage(
   return {
     type: 'system',
     subtype: 'informational',
-    content: `Tool ${msg.tool_name} running for ${msg.elapsed_time_seconds}s…`,
+    content: `工具 ${msg.tool_name} 已运行 ${msg.elapsed_time_seconds} 秒…`,
     level: 'info',
     uuid: msg.uuid,
     timestamp: new Date().toISOString(),
@@ -252,7 +252,7 @@ export function convertSDKMessage(
       // 优雅地忽略未知消息类型。后端可能在客户端更新之前发送新类型；
       // 记录日志有助于调试，不会崩溃或丢失会话。
       logForDebugging(
-        `[sdkMessageAdapter] Unknown message type: ${(msg as { type: string }).type}`,
+        `[sdkMessageAdapter] 未知消息类型: ${(msg as { type: string }).type}`,
       )
       return { type: 'ignored' }
     }

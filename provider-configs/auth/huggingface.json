@@ -1,0 +1,22 @@
+{
+  "id": "huggingface",
+  "name": "huggingface",
+  "envVars": [
+    "HUGGINGFACE_HUB_TOKEN",
+    "HF_TOKEN"
+  ],
+  "authMethods": [
+    {
+      "label": "Hugging Face API key",
+      "method": "api-key",
+      "cliFlag": "--huggingface-api-key"
+    }
+  ],
+  "baseUrl": "router.huggingface.co",
+  "description": "",
+  "dogeEnvExample": {
+    "HUGGINGFACE_HUB_TOKEN": "<YOUR_HUGGINGFACE_HUB_TOKEN>",
+    "HF_TOKEN": "<YOUR_HF_TOKEN>",
+    "ANTHROPIC_BASE_URL": "router.huggingface.co"
+  }
+}

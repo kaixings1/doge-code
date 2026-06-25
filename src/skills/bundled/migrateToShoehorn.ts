@@ -5,7 +5,7 @@ const PROMPT = '# Migrate to Shoehorn\n\nMigrate test files from `as` type asser
 export function registerMigrateToShoehornSkill(): void {
   registerBundledSkill({
     name: 'migrate-to-shoehorn',
-    description: 'Migrate test files from `as` type assertions to @total-typescript/shoehorn for type-safe partial test data.',
+    description: '将测试文件从 `as` 类型断言迁移到 @total-typescript/shoehorn，以实现类型安全的局部测试数据。',
     whenToUse: 'When user wants to replace `as` assertions in tests, improve type safety in test files, or needs partial test data patterns.',
     userInvocable: true,
     getPromptForCommand() {

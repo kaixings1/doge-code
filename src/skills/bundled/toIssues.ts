@@ -5,8 +5,8 @@ const PROMPT = '# To Issues\n\nBreak a plan, spec, or PRD into independently-gra
 export function registerToIssuesSkill(): void {
   registerBundledSkill({
     name: 'to-issues',
-    description: 'Break a plan, spec, or PRD into independently-grabbable issues using vertical tracer-bullet slices.',
-    whenToUse: 'After writing a PRD or discussing a feature, to create a concrete implementation plan with dependencies.',
+    description: '将计划、规范或 PRD 分解为可独立领取的 Issues，使用垂直追踪弹片方法。',
+    whenToUse: '在编写 PRD 或讨论功能后，创建带有依赖关系的具体实现计划。',
     userInvocable: true,
     disableModelInvocation: true,
     getPromptForCommand() {
