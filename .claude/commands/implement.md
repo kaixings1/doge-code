@@ -1,170 +1,169 @@
-Implement work item AB#$ARGUMENTS. Follow this workflow:
+实现工作项 AB#$ARGUMENTS。遵循以下工作流：
 
-## Step 1: Read the Work Item
+## 第 1 步：读取工作项
 
-Read the work item from Azure DevOps via MCP. Extract:
-- **System.WorkItemType** — determines branch prefix
-- **System.Title** — determines branch suffix
-- **Acceptance criteria / description** — needed for implementation
+通过 MCP 从 Azure DevOps 读取工作项。提取：
+- **System.WorkItemType** —— 决定分支前缀
+- **System.Title** —— 决定分支后缀
+- **验收标准 / 描述** —— 实现所需
 
-Handle `$ARGUMENTS` as either `1234` or `AB#1234` — strip the `AB#` prefix when calling the MCP API.
+处理 `$ARGUMENTS`，接受 `1234` 或 `AB#1234` 格式 —— 调用 MCP API 时去掉 `AB#` 前缀。
 
-### Embedded Images
+### 嵌入图片
 
-The description and acceptance criteria fields may contain embedded images (screenshots, mockups, diagrams). These are typically `<img>` tags with `src` URLs pointing to Azure DevOps attachments. **Download and view every embedded image** using WebFetch — they often contain critical visual requirements (UI layouts, expected behavior, error states) that are not described in the text.
+描述和验收标准字段可能包含嵌入图片（截图、原型图、图表）。这些通常是带有指向 Azure DevOps 附件的 `src` URL 的 `<img>` 标签。**使用 WebFetch 下载并查看每张嵌入图片** —— 它们通常包含文本中未描述的关键视觉需求（UI 布局、预期行为、错误状态）。
 
-### Comments
+### 评论
 
-Read the work item comments via `wit_list_work_item_comments`. Comments often contain clarifications, scope changes, or additional requirements added after the work item was created. Incorporate any relevant information from comments into your understanding of the work item.
+通过 `wit_list_work_item_comments` 读取工作项评论。评论通常包含创建工作项后添加的澄清、范围变更或额外需求。将评论中的相关信息整合到你对该工作项的理解中。
 
-## Step 2: Summarize and Confirm
+## 第 2 步：总结与确认
 
-Present a summary of the work item to the user:
-
-```
-## AB#{id}: {title}
-
-**Type:** {work item type}
-**State:** {state}
-**Assigned To:** {assigned to}
-
-### Description
-{description summary}
-
-### Acceptance Criteria
-{acceptance criteria — numbered list}
-
-Does this look correct? Do you have any additional context or requirements?
-```
-
-**Wait for the user to respond.** Do NOT proceed until the user confirms or provides additional context. If they add context, incorporate it into the plan.
-
-## Step 3: Explore & Plan
-
-1. **Explore** the codebase to map relevant files
-2. **Plan** the implementation approach
-
-Present the plan to the user:
+向用户呈现工作项摘要：
 
 ```
-## Implementation Plan for AB#{id}
+## AB#{id}：{title}
 
-### Approach
-{brief description of how you will implement this}
+**类型：** {工作项类型}
+**状态：** {状态}
+**分配给：** {分配给}
 
-### Files to Create
-- `path/to/new/file.cs` — {purpose}
-- `path/to/new/file.tsx` — {purpose}
+### 描述
+{描述摘要}
 
-### Files to Modify
-- `path/to/existing/file.cs` — {what changes and why}
-- `path/to/existing/file.tsx` — {what changes and why}
+### 验收标准
+{验收标准 —— 编号列表}
 
-### Files to Delete (if any)
-- `path/to/old/file.cs` — {why it's being removed}
-
-### Agents
-- **backend**: {what it will do}
-- **frontend**: {what it will do}
-
-### Risks / Considerations
-- {any potential issues or trade-offs}
-
-Approve this plan? (yes / no / suggest changes)
+以上信息是否正确？你还有其他上下文或需求吗？
 ```
 
-**Wait for the user to approve the plan.** Do NOT start implementation until the user approves. If they suggest changes, revise the plan and present it again.
+**等待用户回复。** 在用户确认或提供额外上下文之前不要继续。如果他们补充了内容，将其纳入计划。
 
-## Step 4: Create Feature Branch
+## 第 3 步：探索与规划
 
-Only create the branch after the plan is approved.
+1. **探索** 代码库，梳理相关文件
+2. **规划** 实现方案
 
-Capture the current branch as the PR target — do NOT hardcode any branch name:
+向用户呈现计划：
+
+```
+## AB#{id} 的实现计划
+
+### 方案
+{简要描述你将如何实现}
+
+### 需要创建的文件
+- `path/to/new/file.cs` —— {用途}
+- `path/to/new/file.tsx` —— {用途}
+
+### 需要修改的文件
+- `path/to/existing/file.cs` —— {修改内容及原因}
+- `path/to/existing/file.tsx` —— {修改内容及原因}
+
+### 需要删除的文件（如有）
+- `path/to/old/file.cs` —— {删除原因}
+
+### 代理
+- **后端**：{将执行的操作}
+- **前端**：{将执行的操作}
+
+### 风险 / 注意事项
+- {任何潜在问题或权衡}
+
+批准此计划？（是 / 否 / 建议修改）
+```
+
+**等待用户批准计划。** 在用户批准之前不要开始实现。如果用户提出修改建议，修订计划并重新呈现。
+
+## 第 4 步：创建功能分支
+
+仅在计划批准后创建分支。
+
+将当前分支记录为 PR 目标 —— 不要硬编码任何分支名：
 
 ```bash
 BASE_BRANCH=$(git symbolic-ref --short HEAD)
 ```
 
-Determine the branch prefix from the work item type:
+根据工作项类型确定分支前缀：
 
-| Work Item Type | Branch Prefix |
+| 工作项类型 | 分支前缀 |
 |---|---|
-| Feature | `feature/` |
-| User Story | `story/` |
-| Bug | `bugfix/` |
-| Hot Fix | `hotfix/` |
-| (anything else) | `work/` |
+| Feature（功能） | `feature/` |
+| User Story（用户故事） | `story/` |
+| Bug（缺陷） | `bugfix/` |
+| Hot Fix（热修复） | `hotfix/` |
+| （其他） | `work/` |
 
-Construct the branch name as `{prefix}AB#{id}-{sanitized-title}`:
-- Sanitize the title: lowercase, replace non-alphanumeric characters (except hyphens) with hyphens, collapse consecutive hyphens, truncate to 50 characters, trim leading/trailing hyphens
-- Example: Feature AB#1234 "Add Payment History Export" → `feature/AB#1234-add-payment-history-export`
+构建分支名 `{prefix}AB#{id}-{清理后的标题}`：
+- 清理标题：转小写，将非字母数字字符（连字符除外）替换为连字符，合并连续连字符，截断至 50 个字符，去掉首尾连字符
+- 示例：Feature AB#1234 "Add Payment History Export" → `feature/AB#1234-add-payment-history-export`
 
-Create and switch to the branch:
+创建并切换到分支：
 ```bash
 git checkout -b <branch-name>
 ```
 
-If the branch already exists, switch to it with `git checkout <branch-name>` instead of failing.
+如果分支已存在，用 `git checkout <branch-name>` 切换过去，而不是报错。
 
-Remember the `BASE_BRANCH` — you will need it for the PR step.
+记住 `BASE_BRANCH` —— PR 步骤中需要用到。
 
-## Step 5: Implement
+## 第 5 步：实现
 
-1. **Implement** using backend and/or frontend agents according to the approved plan
-2. **Generate mockup** if there are UI changes
+1. 根据批准的计划，使用后端和/或前端代理 **实现**
+2. 如果有 UI 变更，**生成原型图**
 
-## Step 6: Build Validation
+## 第 6 步：构建验证
 
-Run a build check **before** any other quality checks. Use the `build-validator` agent to verify that all projects compile successfully.
+在任何其他质量检查**之前**运行构建检查。使用 `build-validator` 代理验证所有项目编译成功。
 
-- If the build fails, **fix the errors immediately** and re-run until the build passes
-- Do NOT proceed to review, tests, or lint until the build is clean
+- 如果构建失败，**立即修复错误**并重新运行，直到构建通过
+- 在构建干净之前，**不要**进行审查、测试或 lint
 
-## Step 7: Quality Checks
+## 第 7 步：质量检查
 
-1. **Review** code for quality, security, and Clean Architecture compliance
-2. **Run tests** — unit, integration, and build validation
-3. **Run lint** — ESLint and dotnet format
+1. **审查** 代码质量、安全性和整洁架构合规性
+2. **运行测试** —— 单元测试、集成测试和构建验证
+3. **运行 lint** —— ESLint 和 dotnet format
 
-## Step 8: UAT Gate
+## 第 8 步：UAT 门禁
 
-### If Hot Fix:
-Skip manual UAT. Present an abbreviated confirmation:
-
-```
-Hot Fix ready. All automated checks passed.
-
-Create PR? (yes/no)
-```
-
-Wait for confirmation before proceeding.
-
-### If Feature, User Story, Bug, or other:
-Generate a UAT checklist from the acceptance criteria and present:
+### 热修复：
+跳过手动 UAT。呈现简化的确认信息：
 
 ```
-Automated checks passed and the UAT checklist is ready.
+热修复已就绪。所有自动化检查通过。
 
-## UAT Checklist
-[generated checklist here]
-
-Please manually test the feature using the checklist above.
-
-Did manual testing pass?
-- If YES → reply "testing passed" and I will create the PR
-- If NO  → describe what failed or what behaved unexpectedly
-           and I will investigate and fix before asking you again
+创建 PR？（是/否）
 ```
 
-Wait for the user's response before proceeding. Do NOT create a PR until confirmed.
+等待确认后再继续。
 
-## Step 9: Push, Create PR, and Update Work Item
+### 功能、用户故事、缺陷或其他：
+根据验收标准生成 UAT 清单并呈现：
 
-1. Push the branch: `git push -u origin HEAD`
-2. Create a PR via Azure DevOps MCP:
-   - **sourceRefName**: `refs/heads/{branch-name}`
-   - **targetRefName**: `refs/heads/{BASE_BRANCH}` (the branch captured in Step 4)
-   - **title**: `AB#{id}: {work item title}`
-   - **labels**: `["hotfix"]` if the work item type is Hot Fix
-3. Link the PR to the work item via `wit_link_work_item_to_pull_request`
-4. Update the work item status in Azure DevOps
+```
+自动化检查已通过，UAT 清单已就绪。
+
+## UAT 清单
+[在此生成清单]
+
+请使用以上清单手动测试功能。
+
+手动测试通过了吗？
+- 如果通过 → 回复"testing passed"，我将创建 PR
+- 如果未通过 → 描述失败或异常行为，我将调查修复后再次询问
+```
+
+等待用户回复后再继续。确认前不要创建 PR。
+
+## 第 9 步：推送、创建 PR 和更新工作项
+
+1. 推送分支：`git push -u origin HEAD`
+2. 通过 Azure DevOps MCP 创建 PR：
+   - **sourceRefName**：`refs/heads/{branch-name}`
+   - **targetRefName**：`refs/heads/{BASE_BRANCH}`（第 4 步记录的分支）
+   - **title**：`AB#{id}：{工作项标题}`
+   - **labels**：如果是热修复类型则为 `["hotfix"]`
+3. 通过 `wit_link_work_item_to_pull_request` 将 PR 链接到工作项
+4. 更新 Azure DevOps 中的工作项状态

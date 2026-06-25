@@ -1,49 +1,49 @@
-Fetch a work item, summarize it, and explain it in plain language. Usage: `/explain <work-item-id>`
+获取工作项，总结并用通俗语言解释。用法：`/explain <工作项ID>`
 
-Parse `$ARGUMENTS` to extract the work item ID. Accept formats like `AB#1234`, `#1234`, or just `1234`.
+解析 `$ARGUMENTS` 提取工作项 ID。接受 `AB#1234`、`#1234` 或纯 `1234` 格式。
 
-## Step 1: Fetch the Work Item
+## 第 1 步：获取工作项
 
-Read the work item from Azure DevOps using the project from the current repo's CLAUDE.md configuration. Expand with `relations` to include child items and links.
+使用当前仓库 CLAUDE.md 配置中的项目，从 Azure DevOps 读取工作项。使用 `relations` 展开以包含子项和链接。
 
-If the work item is not found, report the error and stop.
+如果找不到工作项，报告错误并停止。
 
-## Step 2: Gather Context
+## 第 2 步：收集上下文
 
-Collect these fields from the work item:
-- Title, type, state, assigned to
-- Description
-- Acceptance criteria
-- Tags
-- Child work items (if any — fetch their titles and states)
-- Parent work item (if any — fetch its title)
-- Linked PRs (if any)
+从工作项中收集以下字段：
+- 标题、类型、状态、分配给
+- 描述
+- 验收标准
+- 标签
+- 子工作项（如有 —— 获取其标题和状态）
+- 父工作项（如有 —— 获取其标题）
+- 关联的 PR（如有）
 
-## Step 3: Present the Explanation
+## 第 3 步：呈现解释
 
-Output the following sections:
+输出以下部分：
 
-### Summary
-A 1–2 sentence plain-language summary of what this work item is about. Avoid jargon — explain it as if to someone unfamiliar with the codebase.
+### 摘要
+用 1-2 句通俗语言概括此工作项的内容。避免术语 —— 就像对不熟悉代码库的人解释一样。
 
-### What needs to happen
-A bullet list translating the acceptance criteria and description into concrete actions. If acceptance criteria are vague, interpret them based on the description and title. If there are child work items, use them to inform this list.
+### 需要做什么
+将验收标准和描述转化为具体行动的列表。如果验收标准模糊，则根据描述和标题进行推断。如果有子工作项，用它们来丰富列表。
 
-### Why it matters
-A short explanation of the business or user value — why this work item exists. Infer this from the description, parent work item context, and tags.
+### 为什么重要
+简要解释商业或用户价值 —— 为什么存在这个工作项。从描述、父工作项上下文和标签中推断。
 
-### Current Status
-- **State:** {state}
-- **Assigned To:** {assignedTo or "Unassigned"}
-- **Parent:** {parent title or "None"}
-- **Child Items:** {count completed}/{count total} complete
-- **PRs:** {list of linked PR numbers and their status, or "None yet"}
+### 当前状态
+- **状态：** {state}
+- **分配给：** {assignedTo 或 "未分配"}
+- **父项：** {父项标题 或 "无"}
+- **子项：** {已完成数}/{总数} 已完成
+- **PR：** {关联的 PR 列表及状态，或 "暂无"}
 
-### Scope & Risks
-Flag anything that looks ambiguous, missing, or potentially risky:
-- Vague acceptance criteria that may need clarification
-- No acceptance criteria at all
-- Large scope (many child items or broad description)
-- Dependencies on other work items
+### 范围与风险
+标记任何看起来模糊、缺失或有风险的内容：
+- 可能需要澄清的模糊验收标准
+- 完全没有验收标准
+- 范围过大（子项过多或描述过宽）
+- 依赖其他工作项
 
-If nothing stands out, say "No concerns — scope looks clear."
+如果没有异常，说"无问题 —— 范围清晰。"

@@ -1,1 +1,1 @@
-Let's commit the changes. Run tests, typechecks, and format checks. Then commit, push, and create a pull request.
+我们来提交更改。运行测试、类型检查和格式检查。然后提交、推送并创建拉取请求。
