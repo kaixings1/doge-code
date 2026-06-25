@@ -1,0 +1,65 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Development planning files (meta: I used this skill to build this skill!)
+task_plan.md
+findings.md
+progress.md
+research_notes.md
+notes.md
+
+# But keep example and template files
+!examples/*.md
+!examples/**/*.md
+!**/templates/*.md
+
+# ClawHub publish/upload folders (managed separately)
+clawdhub-publish/
+clawhub-upload/
+clawhub-changelog.txt
+skill-submission-targets.txt
+
+# Claude session files
+.claude/sessions/
+
+# Keep the skill folder clean
+*.log
+*.tmp
+WIKI_HOME_PAGE.md
+DISCUSSION_2_CONTENT.md
+
+# Python bytecode (regenerated locally by pytest and script runs)
+__pycache__/
+*.pyc
+
+# Parallel planning runtime state (slug-mode plans, active-plan pointer, attestations)
+.planning/
+.plan-attestation
+
+# Git Bash crash dumps (Windows only, generated on unexpected shutdown)
+bash.exe.stackdump
+*.stackdump
+
+# plan-it HTML artifact
+plan.html
+
+# Personal Claude Code config (do not ship per-developer settings)
+CLAUDE.md
+
+# Node.js modules pulled into IDE adapters
+node_modules/
+
+# Deferred personal dev/strategy notes (never published)
+.dev-notes/
+
+
+# v3 large banner exceeds GitHub's 100MB hard limit and stays local permanently
+media/v3-banner-large.png
