@@ -1,6 +1,6 @@
 ---
 name: silent-failure-hunter
-description: Review code for silent failures, swallowed errors, bad fallbacks, and missing error propagation.
+description: 静默失败猎手
 model: sonnet
 tools: [Read, Grep, Glob, Bash]
 ---

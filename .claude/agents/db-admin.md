@@ -1,6 +1,6 @@
 ---
 name: db-admin
-description: Queries and manages MongoDB data for Glasswing and Monarch. Use for data inspection, verification, and fixes.
+description: 数据库管理员
 tools:
   - Bash
   - Read

@@ -1,6 +1,6 @@
 ---
 name: code-explorer
-description: Deeply analyzes existing codebase features by tracing execution paths, mapping architecture layers, and documenting dependencies to inform new development.
+description: 代码探索者，导航和理解大型代码库
 model: sonnet
 tools: [Read, Grep, Glob]
 ---

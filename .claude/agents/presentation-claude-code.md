@@ -1,6 +1,6 @@
 ---
 name: presentation-claude-code
-description: PROACTIVELY use this agent whenever the user wants to update, modify, rearrange, or fix the CLAUDE-CODE-BEST-PRACTICE presentation (`presentation/claude-code-best-practice/index.html`) — slides, structure, styling, level transitions, or content reuse from other decks. This is the canonical reusable Claude Code best-practices deck. Do NOT use this agent for the vibe-coding presentation (use `presentation-vibe-coding`) or the GDG Kolachi claude-gemini presentation (use `presentation-claude-gemini`).
+description: Claude Code演示文稿
 allowedTools:
   - "Bash(*)"
   - "Read"

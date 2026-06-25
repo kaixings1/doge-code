@@ -1,6 +1,6 @@
 ---
 name: devops-tracker
-description: Manages Azure DevOps work items — creates epics, features, user stories, and tasks. Updates status and tracks progress.
+description: DevOps跟踪器
 tools:
   - Read
   - Grep
