@@ -1,0 +1,2 @@
+=== REMEMBER ===
+History in .remember/: now.md (buffer), today-*.md (daily), recent.md (7d), archive.md (old), core-memories.md (key moments). Search on user request.
