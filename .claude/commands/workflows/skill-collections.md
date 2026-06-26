@@ -1,5 +1,5 @@
 ---
-description: Update the SKILL COLLECTIONS table by researching all 5 skill-collection repos in parallel
+description: 通过并行研究所有 5 个技能集合仓库来更新技能集合表
 ---
 
 # Workflow — Skill Collections
