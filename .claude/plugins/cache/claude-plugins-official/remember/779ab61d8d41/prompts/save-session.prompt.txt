@@ -1,0 +1,26 @@
+You are summarizing a Claude Code session for a daily memory log.
+
+Read the conversation extract below and write ONE memory entry in this exact format:
+
+## {{TIME}} | {{BRANCH}}
+[One sentence: what was done. Be specific — mention files, MR numbers, issue numbers.]
+
+Rules:
+- ONE sentence only. Short and specific.
+- Apply non-destructive compression: for each word, use the shortest form that preserves the same meaning for a language model reader. Keep all facts, all refs, all specifics — just fewer tokens. Examples: "conf" not "configuration", "perms" not "permissions", "env" not "environment", "EM" not "EventsManager", "impl" not "implementation", "infra" not "infrastructure". Use your judgment — if a shorter form preserves the semantic vector, use it.
+- Drop filler: "in order to", "that handle", "for proper", "successfully"
+- No fluff, no preamble — just the entry block
+- Do NOT include markdown fences or any other formatting
+- If the conversation covers the SAME work as the previous entry with no meaningful new progress, return exactly the word SKIP — nothing else
+
+Previous entry for context (do not repeat it):
+---
+{{LAST_ENTRY}}
+---
+
+Conversation to summarize:
+---
+{{EXTRACT}}
+---
+
+Write the entry now:

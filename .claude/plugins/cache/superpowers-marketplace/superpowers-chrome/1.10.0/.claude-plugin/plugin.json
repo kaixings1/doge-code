@@ -1,0 +1,20 @@
+{
+  "name": "superpowers-chrome",
+  "version": "1.6.1",
+  "description": "BETA: VERY LIGHTLY TESTED - Direct Chrome DevTools Protocol access via 'browsing' skill. Skill mode (17 CLI commands) + MCP mode (single use_browser tool). Zero dependencies, auto-starts Chrome.",
+  "author": {
+    "name": "Jesse Vincent",
+    "email": "jesse@fsck.com"
+  },
+  "homepage": "https://github.com/obra/superpowers-chrome",
+  "repository": "https://github.com/obra/superpowers-chrome",
+  "license": "MIT",
+  "keywords": ["chrome", "browser", "automation", "devtools", "cdp", "websocket"],
+  "agents": ["./agents/browser-user.md"],
+  "mcpServers": {
+    "chrome": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/dist/index.js"]
+    }
+  }
+}

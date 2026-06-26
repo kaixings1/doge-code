@@ -1,0 +1,19 @@
+{
+  "superpowers-marketplace": {
+    "source": {
+      "source": "github",
+      "repo": "obra/superpowers-marketplace"
+    },
+    "installLocation": "C:\\Users\\Administrator\\.doge\\plugins\\marketplaces\\superpowers-marketplace",
+    "lastUpdated": "2026-04-14T07:12:31.298Z",
+    "autoUpdate": true
+  },
+  "claude-plugins-official": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    },
+    "installLocation": "C:\\Users\\Administrator\\.doge\\plugins\\marketplaces\\claude-plugins-official",
+    "lastUpdated": "2026-04-14T06:04:02.723Z"
+  }
+}
