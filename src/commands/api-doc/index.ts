@@ -1,0 +1,57 @@
+import type { Command } from '../../commands.js'
+import type { LocalJSXCommandCall } from '../../types/command.js'
+import fs from 'fs'
+import path from 'path'
+
+export const call: LocalJSXCommandCall = async (args) => {
+  const p = args.trim().split(/\s+/)
+  const c = p[0] || ''
+  if (!c) return { type: 'text', value: '/api-doc gen <file.ts> | 从代码生成 API 文档\n/api-doc scan <dir> | 扫描目录中的 API\n/api-doc openapi <file> | 解析 OpenAPI 规范' }
+
+  let r = ''
+  if (c === 'gen') {
+    const file = p[1]
+    if (!file || !fs.existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    const content = fs.readFileSync(file, 'utf-8')
+    const lines = content.split('\n')
+    const apis: string[] = []
+    let currentComment = ''
+    for (const line of lines) {
+      if (line.trim().startsWith('/**')) currentComment = ''
+      else if (line.trim().startsWith('*')) currentComment += line.trim().replace(/^\s*\*\s?/, ' ') + '\n'
+      else if (line.includes('function') || line.includes('=>') || line.includes('export')) {
+        const match = line.match(/export\s+(async\s+)?function\s+(\w+)|(\w+)\s*[:=]\s*(async\s+)?\(/)
+        if (match) {
+          const name = match[2] || match[3] || 'anonymous'
+          apis.push('## ' + name + '\n' + (currentComment.trim() || '*No description*') + '\n```\n' + line.trim() + '\n```\n')
+        }
+        currentComment = ''
+      }
+    }
+    r = '# API Doc: ' + path.basename(file) + '\n\n' + (apis.join('\n') || '(no APIs found)')
+  } else if (c === 'scan') {
+    const dir = p[1] || '.'
+    if (!fs.existsSync(dir)) return { type: 'text', value: 'Dir not found: ' + dir }
+    const results: string[] = []
+    function walk(d: string) {
+      try {
+        for (const item of fs.readdirSync(d, { withFileTypes: true })) {
+          const full = path.join(d, item.name)
+          if (item.isFile() && /\.(ts|tsx|js|jsx)$/i.test(item.name)) {
+            const content = fs.readFileSync(full, 'utf-8')
+            const exports = content.match(/export\s+(async\s+)?(function|const|class|interface|type)\s+(\w+)/g)
+            if (exports) results.push(full + ': ' + exports.length + ' exports')
+          }
+        }
+      } catch {}
+    }
+    walk(dir)
+    r = results.join('\n') || '(no files found)'
+  } else {
+    r = 'Unknown: ' + c
+  }
+  return { type: 'text', value: r || '(no output)' }
+}
+
+const cmd = { type: 'local-jsx' as const, name: 'api-doc', description: 'API 文档生成器：gen/scan', argumentHint: '<gen|scan> <file|dir>', isEnabled: true, load: () => import('./index.js') } satisfies Command
+export default cmd
