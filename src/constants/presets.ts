@@ -113,6 +113,12 @@ export const OPENCLAW_PRESETS: PresetEndpoint[] = [
   { label: 'Wafer', provider: 'anthropic', baseURL: 'https://pass.wafer.ai/v1/', defaultModel: 'claude-sonnet-4-6', apiKeyRequired: true, group: 'Gateway', docs: 'WAFER_API_KEY' },
   { label: 'OpenCode Zen', provider: 'openai', baseURL: 'https://api.opencode.ai/v1/chat/completions', defaultModel: 'opencode-zen', apiKeyRequired: true, group: 'Gateway', docs: 'OPENCODE_API_KEY' },
   { label: 'OpenCode Go', provider: 'openai', baseURL: 'https://api.opencode.ai/v1/chat/completions', defaultModel: 'opencode-go', apiKeyRequired: true, group: 'Gateway', docs: 'OPENCODE_API_KEY' },
+
+  // --- MCP Server API (社区热门) ---
+  { label: 'MCP Fetch', provider: 'openai', baseURL: 'https://mcp-server-fetch.vercel.app/v1/chat/completions', defaultModel: '', apiKeyRequired: false, group: 'MCP' },
+  { label: 'Upstash Context7', provider: 'openai', baseURL: 'https://api.upstash.com/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'MCP', docs: 'UPSTASH_API_KEY' },
+
+  // --- Messaging / 通讯 ---
   { label: 'AskOnce', provider: 'openai', baseURL: 'http://localhost:3456/v1/chat/completions', defaultModel: 'gpt-4o', apiKeyRequired: false, group: 'Tool' },
 
   // --- Local ---
