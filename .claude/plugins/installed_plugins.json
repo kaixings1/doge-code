@@ -1,0 +1,283 @@
+{
+  "version": 2,
+  "plugins": {
+    "superpowers-lab@superpowers-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\superpowers-marketplace\\superpowers-lab\\0.4.0",
+        "version": "0.4.0",
+        "installedAt": "2026-04-11T11:23:55.834Z",
+        "lastUpdated": "2026-04-11T11:23:55.834Z",
+        "gitCommitSha": "59389b1506e2d476980ee05c7c98c2f5e211fcb1"
+      }
+    ],
+    "elements-of-style@superpowers-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\superpowers-marketplace\\elements-of-style\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-11T11:25:16.165Z",
+        "lastUpdated": "2026-04-11T11:25:16.165Z",
+        "gitCommitSha": "6099c505c2a8eb066f3777f83a97d9d828f7954c"
+      }
+    ],
+    "superpowers-chrome@superpowers-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\superpowers-marketplace\\superpowers-chrome\\1.11.0",
+        "version": "1.11.0",
+        "installedAt": "2026-04-11T11:25:43.035Z",
+        "lastUpdated": "2026-04-14T03:33:53.286Z",
+        "gitCommitSha": "6c46b70e0c028ff0ed03b38f98d8ea48c15e1388"
+      }
+    ],
+    "superpowers-developing-for-claude-code@superpowers-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\superpowers-marketplace\\superpowers-developing-for-claude-code\\0.3.1",
+        "version": "0.3.1",
+        "installedAt": "2026-04-11T11:26:24.201Z",
+        "lastUpdated": "2026-04-11T11:26:24.201Z",
+        "gitCommitSha": "74afe935da49efe782907e837a27ce618498099a"
+      }
+    ],
+    "double-shot-latte@superpowers-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\superpowers-marketplace\\double-shot-latte\\1.2.0",
+        "version": "1.2.0",
+        "installedAt": "2026-04-11T11:26:41.277Z",
+        "lastUpdated": "2026-04-11T11:26:41.277Z",
+        "gitCommitSha": "dfe756798327554783e77758d9d50d44b4308bbf"
+      }
+    ],
+    "episodic-memory@superpowers-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\superpowers-marketplace\\episodic-memory\\1.0.15",
+        "version": "1.0.15",
+        "installedAt": "2026-04-11T11:27:47.174Z",
+        "lastUpdated": "2026-04-11T11:27:47.174Z",
+        "gitCommitSha": "c656adc64ef1576c58fd2f6ddb44c29c920b784b"
+      }
+    ],
+    "superpowers-dev@superpowers-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\superpowers-marketplace\\superpowers-dev\\5.0.6",
+        "version": "5.0.6",
+        "installedAt": "2026-04-11T11:28:15.664Z",
+        "lastUpdated": "2026-04-11T11:28:15.664Z",
+        "gitCommitSha": "8b9a5da90b83d3eb34a02f85cd3a5db5beac2db5"
+      }
+    ],
+    "private-journal-mcp@superpowers-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\superpowers-marketplace\\private-journal-mcp\\1.2.0",
+        "version": "1.2.0",
+        "installedAt": "2026-04-11T11:32:40.395Z",
+        "lastUpdated": "2026-04-11T11:32:40.395Z",
+        "gitCommitSha": "568118a99e05fbed17bcca612167902bb1b7a2a9"
+      }
+    ],
+    "github@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\github\\3ffb4b4ca81f",
+        "version": "3ffb4b4ca81f",
+        "installedAt": "2026-04-11T18:03:11.138Z",
+        "lastUpdated": "2026-04-14T03:33:44.190Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "frontend-design@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\frontend-design\\3ffb4b4ca81f",
+        "version": "3ffb4b4ca81f",
+        "installedAt": "2026-04-11T18:03:23.418Z",
+        "lastUpdated": "2026-04-14T03:33:44.245Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "superpowers@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\superpowers\\5.0.7",
+        "version": "5.0.7",
+        "installedAt": "2026-04-11T18:03:41.248Z",
+        "lastUpdated": "2026-04-11T18:03:41.248Z",
+        "gitCommitSha": "917e5f53b16b115b70a3a355ed5f4993b9f8b73d"
+      }
+    ],
+    "mcp-server-dev@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\mcp-server-dev\\3ffb4b4ca81f",
+        "version": "3ffb4b4ca81f",
+        "installedAt": "2026-04-11T18:04:14.818Z",
+        "lastUpdated": "2026-04-14T03:33:44.205Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "context7@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\context7\\3ffb4b4ca81f",
+        "version": "3ffb4b4ca81f",
+        "installedAt": "2026-04-11T18:04:24.563Z",
+        "lastUpdated": "2026-04-14T03:33:44.282Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "code-review@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\code-review\\3ffb4b4ca81f",
+        "version": "3ffb4b4ca81f",
+        "installedAt": "2026-04-11T18:04:32.305Z",
+        "lastUpdated": "2026-04-14T03:33:44.217Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "code-simplifier@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\code-simplifier\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-11T18:04:39.618Z",
+        "lastUpdated": "2026-04-11T18:04:39.618Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "feature-dev@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\feature-dev\\3ffb4b4ca81f",
+        "version": "3ffb4b4ca81f",
+        "installedAt": "2026-04-11T18:04:49.228Z",
+        "lastUpdated": "2026-04-14T03:33:44.258Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "playwright@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\playwright\\3ffb4b4ca81f",
+        "version": "3ffb4b4ca81f",
+        "installedAt": "2026-04-11T18:04:56.447Z",
+        "lastUpdated": "2026-04-14T03:33:44.270Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "skill-creator@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\skill-creator\\3ffb4b4ca81f",
+        "version": "3ffb4b4ca81f",
+        "installedAt": "2026-04-11T18:05:03.905Z",
+        "lastUpdated": "2026-04-14T03:33:44.295Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "ralph-loop@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\ralph-loop\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-11T18:05:49.281Z",
+        "lastUpdated": "2026-04-11T18:05:49.281Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "claude-md-management@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\claude-md-management\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-11T18:06:35.618Z",
+        "lastUpdated": "2026-04-11T18:06:35.618Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "pr-review-toolkit@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\pr-review-toolkit\\3ffb4b4ca81f",
+        "version": "3ffb4b4ca81f",
+        "installedAt": "2026-04-11T18:08:02.122Z",
+        "lastUpdated": "2026-04-14T03:33:44.232Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "claude-code-setup@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\claude-code-setup\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-11T18:09:03.928Z",
+        "lastUpdated": "2026-04-11T18:09:03.928Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "ai-plugins@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\ai-plugins\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-11T18:11:20.652Z",
+        "lastUpdated": "2026-04-11T18:11:20.652Z",
+        "gitCommitSha": "a0f1d5632b6f9e6c26eaa9806f5d8d454ca5b06f"
+      }
+    ],
+    "claude-session-driver@superpowers-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\superpowers-marketplace\\claude-session-driver\\1.0.1",
+        "version": "1.0.1",
+        "installedAt": "2026-04-11T18:13:11.066Z",
+        "lastUpdated": "2026-04-12T08:05:56.108Z",
+        "gitCommitSha": "c60d2bda21ff0786e3044506b13d2d307676c1ef"
+      }
+    ],
+    "superpowers@superpowers-marketplace": [
+      {
+        "scope": "project",
+        "projectPath": "D:\\doge-code",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\superpowers-marketplace\\superpowers\\5.0.7",
+        "version": "5.0.7",
+        "installedAt": "2026-04-12T03:58:03.181Z",
+        "lastUpdated": "2026-04-12T08:05:56.108Z",
+        "gitCommitSha": "917e5f53b16b115b70a3a355ed5f4993b9f8b73d"
+      },
+      {
+        "scope": "local",
+        "projectPath": "D:\\super",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\superpowers-marketplace\\superpowers\\5.0.7",
+        "version": "5.0.7",
+        "installedAt": "2026-04-12T03:58:04.053Z",
+        "lastUpdated": "2026-04-12T03:58:04.053Z",
+        "gitCommitSha": "917e5f53b16b115b70a3a355ed5f4993b9f8b73d"
+      },
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\superpowers-marketplace\\superpowers\\5.0.7",
+        "version": "5.0.7",
+        "installedAt": "2026-04-12T04:47:07.999Z",
+        "lastUpdated": "2026-04-12T04:47:07.999Z",
+        "gitCommitSha": "917e5f53b16b115b70a3a355ed5f4993b9f8b73d"
+      }
+    ],
+    "remember@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Administrator\\.doge\\plugins\\cache\\claude-plugins-official\\remember\\0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-04-13T07:20:32.355Z",
+        "lastUpdated": "2026-04-13T07:20:32.355Z",
+        "gitCommitSha": "779ab61d8d412230eeec1840b8ca104bebea4358"
+      }
+    ]
+  }
+}
