@@ -1,6 +1,6 @@
 ---
 name: workflow-claude-skills-agent
-description: Research agent that fetches Claude Code docs, reads the local skills report, and analyzes drift
+description: workflow claude skills 代理 - Research agent that fetches Claude Code docs, reads the loca...
 model: opus
 color: magenta
 allowedTools:

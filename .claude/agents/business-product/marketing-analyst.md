@@ -1,6 +1,6 @@
 ---
 name: marketing-analyst
-description: Implements campaign analysis, attribution modeling, ROI tracking, and marketing data infrastructure for data-driven growth decisions
+description: marketing 分析师 - Implements campaign analysis, attribution modeling, ROI trac...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

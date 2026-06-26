@@ -1,6 +1,6 @@
 ---
 name: react-specialist
-description: React 19 development with hooks, state management, concurrent features, and component architecture
+description: react 专家 - React 19 development with hooks, state management, concurren...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: api-design-patterns
-description: REST API design with resource naming, pagination, versioning, and OpenAPI spec generation
+description: api 设计 patterns - REST API design with resource naming, pagination, versioning...
 ---
 
 # API Design Patterns

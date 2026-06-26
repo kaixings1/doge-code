@@ -1,6 +1,6 @@
 ---
 name: data-researcher
-description: Performs data analysis, pattern recognition, statistical interpretation, and evidence-based insight extraction
+description: data researcher - data researcher - Performs data analysis, pattern recognitio...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: ml-engineer
-description: Machine learning pipeline development with training, evaluation, feature engineering, and model deployment
+description: ml 工程师 - Machine learning pipeline development with training, evaluat...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: backend-developer
-description: Node.js backend development with Express, Fastify, middleware patterns, and API performance optimization
+description: 后端 开发者 - Node.js backend development with Express, Fastify, middlewar...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: benchmarking-specialist
-description: Designs performance benchmarks, load tests, comparative evaluations, and reproducible measurement methodologies for software systems
+description: benchmarking 专家 - Designs performance benchmarks, load tests, comparative eval...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

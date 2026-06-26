@@ -1,6 +1,6 @@
 ---
 name: technology-scout
-description: Evaluates emerging technologies, conducts build-vs-buy analysis, assesses vendor solutions, and produces technology adoption recommendations
+description: technology scout - technology scout - Evaluates emerging technologies, conducts...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

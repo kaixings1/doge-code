@@ -1,6 +1,6 @@
 ---
 name: golang-developer
-description: Go concurrency patterns, interfaces, error handling, testing, and module management
+description: golang 开发者 - Go concurrency patterns, interfaces, error handling, testing...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

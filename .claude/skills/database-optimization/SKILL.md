@@ -1,6 +1,6 @@
 ---
 name: database-optimization
-description: Query optimization, indexing strategies, and database performance tuning for PostgreSQL and MySQL
+description: 数据库 optimization - Query optimization, indexing strategies, and database perfor...
 ---
 
 # Database Optimization

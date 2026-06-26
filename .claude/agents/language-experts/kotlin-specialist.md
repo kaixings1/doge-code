@@ -1,6 +1,6 @@
 ---
 name: kotlin-specialist
-description: Kotlin development with coroutines, Ktor, Kotlin Multiplatform, and idiomatic patterns
+description: kotlin 专家 - Kotlin development with coroutines, Ktor, Kotlin Multiplatfo...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

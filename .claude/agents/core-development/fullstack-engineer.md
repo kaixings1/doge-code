@@ -1,6 +1,6 @@
 ---
 name: fullstack-engineer
-description: End-to-end feature development across frontend, backend, and database layers
+description: 全栈 工程师 - End-to-end feature development across frontend, backend, and...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

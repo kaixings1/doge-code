@@ -1,6 +1,6 @@
 ---
 name: iot-engineer
-description: Designs IoT systems with MQTT messaging, edge computing, device management, and telemetry pipelines
+description: iot 工程师 - Designs IoT systems with MQTT messaging, edge computing, dev...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

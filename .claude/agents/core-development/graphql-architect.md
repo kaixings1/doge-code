@@ -1,6 +1,6 @@
 ---
 name: graphql-architect
-description: GraphQL schema design, resolver implementation, federation, and performance optimization with DataLoader
+description: graphql 架构师 - GraphQL schema design, resolver implementation, federation, ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: nim-developer
-description: Nim metaprogramming, GC strategies, C/C++ interop, and cross-compilation
+description: nim 开发者 - Nim metaprogramming, GC strategies, C/C++ interop, and cross...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

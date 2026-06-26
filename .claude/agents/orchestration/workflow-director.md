@@ -1,6 +1,6 @@
 ---
 name: workflow-director
-description: End-to-end workflow orchestration, checkpoint management, and error recovery
+description: workflow director - workflow director - End-to-end workflow orchestration, check...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

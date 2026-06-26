@@ -1,6 +1,6 @@
 ---
 name: microservices-architect
-description: Distributed systems design with event-driven architecture, saga patterns, service mesh, and observability
+description: microservices 架构师 - Distributed systems design with event-driven architecture, s...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

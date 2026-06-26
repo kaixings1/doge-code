@@ -1,6 +1,6 @@
 ---
 name: context-manager
-description: Context window optimization, progressive loading, and strategic compaction
+description: context 经理 - Context window optimization, progressive loading, and strate...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: flutter-expert
-description: Flutter 3+ cross-platform development with Dart, state management, navigation, and platform channels
+description: flutter expert - flutter expert - Flutter 3+ cross-platform development with ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: react-patterns
-description: React 19 patterns including Server Components, Actions, Suspense, hooks, and component composition
+description: react patterns - React 19 patterns including Server Components, Actions, Susp...
 ---
 
 # React Patterns

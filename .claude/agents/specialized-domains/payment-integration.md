@@ -1,6 +1,6 @@
 ---
 name: payment-integration
-description: Integrates payment processors like Stripe with proper error handling, webhook verification, and PCI compliance
+description: payment 集成 - Integrates payment processors like Stripe with proper error ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

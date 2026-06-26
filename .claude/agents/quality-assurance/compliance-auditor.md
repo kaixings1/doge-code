@@ -1,6 +1,6 @@
 ---
 name: compliance-auditor
-description: SOC 2, GDPR, HIPAA compliance checking, audit evidence collection, and policy enforcement
+description: compliance auditor - compliance auditor - SOC 2, GDPR, HIPAA compliance checking,...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

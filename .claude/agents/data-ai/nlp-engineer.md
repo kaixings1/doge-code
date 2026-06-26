@@ -1,6 +1,6 @@
 ---
 name: nlp-engineer
-description: NLP pipeline development with text processing, embeddings, classification, NER, and transformer fine-tuning
+description: nlp 工程师 - NLP pipeline development with text processing, embeddings, c...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

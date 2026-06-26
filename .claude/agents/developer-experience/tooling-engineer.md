@@ -1,6 +1,6 @@
 ---
 name: tooling-engineer
-description: Configures and builds developer tooling including linters, formatters, type checkers, and custom code analysis tools
+description: tooling 工程师 - Configures and builds developer tooling including linters, f...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: haskell-developer
-description: Pure functional programming, monads, type classes, GHC extensions, and Haskell ecosystem
+description: haskell 开发者 - Pure functional programming, monads, type classes, GHC exten...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

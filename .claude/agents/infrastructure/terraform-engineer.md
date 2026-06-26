@@ -1,6 +1,6 @@
 ---
 name: terraform-engineer
-description: Infrastructure as Code with Terraform, module design, state management, and multi-cloud provisioning
+description: terraform 工程师 - Infrastructure as Code with Terraform, module design, state ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

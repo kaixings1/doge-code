@@ -1,6 +1,6 @@
 ---
 name: monorepo-tooling
-description: Manages monorepo infrastructure with changesets, workspace dependencies, version management, and selective CI pipelines
+description: monorepo tooling - monorepo tooling - Manages monorepo infrastructure with chan...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

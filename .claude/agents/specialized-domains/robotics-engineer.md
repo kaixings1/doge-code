@@ -1,6 +1,6 @@
 ---
 name: robotics-engineer
-description: Develops robotics systems with ROS2, sensor fusion, motion planning, SLAM, and real-time control loops
+description: robotics 工程师 - Develops robotics systems with ROS2, sensor fusion, motion p...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

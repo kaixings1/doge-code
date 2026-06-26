@@ -1,6 +1,6 @@
 ---
 name: platform-engineer
-description: Internal developer platforms, service mesh, observability, and SLO/SLI management
+description: platform 工程师 - Internal developer platforms, service mesh, observability, a...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

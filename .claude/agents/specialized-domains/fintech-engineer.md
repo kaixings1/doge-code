@@ -1,6 +1,6 @@
 ---
 name: fintech-engineer
-description: Builds financial systems with precise arithmetic, regulatory compliance, audit trails, and transaction integrity
+description: fintech 工程师 - Builds financial systems with precise arithmetic, regulatory...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

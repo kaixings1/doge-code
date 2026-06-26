@@ -1,6 +1,6 @@
 ---
 name: scrum-master
-description: Facilitates Scrum ceremonies, tracks team velocity, removes impediments, and drives continuous improvement
+description: scrum master - scrum master - Facilitates Scrum ceremonies, tracks team vel...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

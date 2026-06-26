@@ -1,6 +1,6 @@
 ---
 name: mcp-development
-description: MCP server development including tool design, resource endpoints, prompt templates, and transport configuration
+description: mcp development - MCP server development including tool design, resource endpo...
 ---
 
 # MCP Development

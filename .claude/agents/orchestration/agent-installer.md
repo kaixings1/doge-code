@@ -1,6 +1,6 @@
 ---
 name: agent-installer
-description: Install and configure agent collections, resolve dependencies, and validate environments
+description: 代理 installer - Install and configure agent collections, resolve dependencie...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

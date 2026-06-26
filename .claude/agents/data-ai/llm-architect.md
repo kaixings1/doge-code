@@ -1,6 +1,6 @@
 ---
 name: llm-architect
-description: LLM system design with fine-tuning, model selection, inference optimization, and evaluation frameworks
+description: llm 架构师 - LLM system design with fine-tuning, model selection, inferen...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: typescript-advanced
-description: Advanced TypeScript patterns including generics, conditional types, mapped types, template literals, and type guards
+description: typescript advanced - Advanced TypeScript patterns including generics, conditional...
 ---
 
 # TypeScript Advanced

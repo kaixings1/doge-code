@@ -1,6 +1,6 @@
 ---
 name: ai-engineer
-description: AI application development with model API integration, RAG pipelines, agent frameworks, and embedding strategies
+description: ai 工程师 - AI application development with model API integration, RAG p...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

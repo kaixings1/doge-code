@@ -1,6 +1,6 @@
 ---
 name: incident-responder
-description: Incident triage, runbook execution, communication protocols, and recovery procedures
+description: incident responder - incident responder - Incident triage, runbook execution, com...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

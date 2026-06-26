@@ -1,6 +1,6 @@
 ---
 name: mobile-developer
-description: React Native and Flutter cross-platform specialist with native bridge patterns
+description: 移动端 开发者 - React Native and Flutter cross-platform specialist with nati...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

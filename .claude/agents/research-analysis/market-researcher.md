@@ -1,6 +1,6 @@
 ---
 name: market-researcher
-description: Conducts market sizing, TAM/SAM/SOM analysis, competitive intelligence, survey design, and customer segment identification
+description: market researcher - market researcher - Conducts market sizing, TAM/SAM/SOM anal...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

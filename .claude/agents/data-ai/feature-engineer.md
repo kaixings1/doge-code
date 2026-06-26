@@ -1,6 +1,6 @@
 ---
 name: feature-engineer
-description: Designs feature stores, feature pipelines, and encoding strategies that ensure consistent feature computation across training and serving
+description: feature 工程师 - Designs feature stores, feature pipelines, and encoding stra...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: cloud-architect
-description: AWS/GCP/Azure multi-cloud patterns, IaC, cost optimization, and well-architected framework
+description: cloud 架构师 - AWS/GCP/Azure multi-cloud patterns, IaC, cost optimization, ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: security-researcher
-description: Conducts CVE analysis, vulnerability research, threat modeling, attack surface assessment, and security advisory evaluation
+description: 安全 researcher - Conducts CVE analysis, vulnerability research, threat modeli...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

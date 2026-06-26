@@ -1,6 +1,6 @@
 ---
 name: aws-cloud-patterns
-description: AWS cloud patterns for Lambda, ECS, S3, DynamoDB, and Infrastructure as Code with CDK/Terraform
+description: aws cloud patterns - AWS cloud patterns for Lambda, ECS, S3, DynamoDB, and Infras...
 ---
 
 # AWS Cloud Patterns

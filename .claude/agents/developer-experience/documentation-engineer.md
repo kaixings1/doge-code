@@ -1,6 +1,6 @@
 ---
 name: documentation-engineer
-description: Creates technical documentation including API references, guides, tutorials, and architecture decision records
+description: documentation 工程师 - Creates technical documentation including API references, gu...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

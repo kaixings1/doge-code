@@ -1,6 +1,6 @@
 ---
 name: content-strategist
-description: Plans content strategy with SEO-driven writing, editorial calendars, topic clustering, and content performance measurement
+description: content 策略师 - Plans content strategy with SEO-driven writing, editorial ca...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

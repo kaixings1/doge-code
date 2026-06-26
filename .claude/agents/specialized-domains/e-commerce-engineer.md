@@ -1,6 +1,6 @@
 ---
 name: e-commerce-engineer
-description: Builds e-commerce systems including product catalogs, shopping carts, inventory management, and order processing
+description: e commerce 工程师 - Builds e-commerce systems including product catalogs, shoppi...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

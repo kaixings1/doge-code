@@ -1,6 +1,6 @@
 ---
 name: vue-specialist
-description: Vue 3 development with Composition API, Pinia state management, Nuxt 3, and VueUse composables
+description: vue 专家 - Vue 3 development with Composition API, Pinia state manageme...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

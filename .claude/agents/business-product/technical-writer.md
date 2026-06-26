@@ -1,6 +1,6 @@
 ---
 name: technical-writer
-description: Produces polished technical documentation with consistent style, clear structure, and audience-appropriate language
+description: technical writer - technical writer - Produces polished technical documentation...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

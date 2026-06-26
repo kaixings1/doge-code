@@ -1,6 +1,6 @@
 ---
 name: java-architect
-description: Spring Boot 3+ application architecture with JPA, security, microservices, and reactive programming
+description: java 架构师 - Spring Boot 3+ application architecture with JPA, security, ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: build-engineer
-description: Designs and optimizes build systems, bundlers, and compilation pipelines for fast and reliable artifact production
+description: 构建 工程师 - Designs and optimizes build systems, bundlers, and compilati...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: frontend-architect
-description: React/Next.js specialist with performance optimization, SSR/SSG, and accessibility
+description: 前端 架构师 - React/Next.js specialist with performance optimization, SSR/...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

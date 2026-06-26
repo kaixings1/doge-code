@@ -1,6 +1,6 @@
 ---
 name: game-developer
-description: Designs game systems, logic, and architecture patterns for Unity, Godot, and custom game engines
+description: game 开发者 - Designs game systems, logic, and architecture patterns for U...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

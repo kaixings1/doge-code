@@ -1,6 +1,6 @@
 ---
 name: deployment-engineer
-description: Blue-green deployments, canary releases, rolling updates, and feature flag management
+description: deployment 工程师 - Blue-green deployments, canary releases, rolling updates, an...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

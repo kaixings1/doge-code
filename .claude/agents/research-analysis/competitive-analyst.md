@@ -1,6 +1,6 @@
 ---
 name: competitive-analyst
-description: Performs competitive analysis including feature comparison, market positioning, and strategic differentiation assessment
+description: competitive 分析师 - Performs competitive analysis including feature comparison, ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

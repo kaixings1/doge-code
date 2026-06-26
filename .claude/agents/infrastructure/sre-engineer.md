@@ -1,6 +1,6 @@
 ---
 name: sre-engineer
-description: SLOs, error budgets, incident response, postmortems, and production reliability
+description: sre 工程师 - SLOs, error budgets, incident response, postmortems, and pro...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

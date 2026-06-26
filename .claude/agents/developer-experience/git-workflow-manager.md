@@ -1,6 +1,6 @@
 ---
 name: git-workflow-manager
-description: Designs Git branching strategies, CI integration patterns, and repository workflow automation
+description: git workflow 经理 - Designs Git branching strategies, CI integration patterns, a...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

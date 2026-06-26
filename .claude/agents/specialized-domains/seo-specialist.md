@@ -1,6 +1,6 @@
 ---
 name: seo-specialist
-description: Optimizes web applications for search engine visibility with structured data, meta tags, and technical SEO implementation
+description: seo 专家 - Optimizes web applications for search engine visibility with...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

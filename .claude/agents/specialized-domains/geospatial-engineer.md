@@ -1,6 +1,6 @@
 ---
 name: geospatial-engineer
-description: Builds GIS applications with PostGIS, spatial queries, mapping APIs, tile servers, and geospatial data processing pipelines
+description: geospatial 工程师 - Builds GIS applications with PostGIS, spatial queries, mappi...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

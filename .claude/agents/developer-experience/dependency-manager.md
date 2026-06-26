@@ -1,6 +1,6 @@
 ---
 name: dependency-manager
-description: Audits, updates, and manages project dependencies with attention to security, compatibility, and lockfile integrity
+description: dependency 经理 - Audits, updates, and manages project dependencies with atten...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

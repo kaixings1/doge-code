@@ -1,6 +1,6 @@
 ---
 name: monorepo-architect
-description: Turborepo/Nx workspace strategies, dependency graphs, and monorepo build optimization
+description: monorepo 架构师 - Turborepo/Nx workspace strategies, dependency graphs, and mo...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

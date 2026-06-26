@@ -1,6 +1,6 @@
 ---
 name: customer-success
-description: Builds customer support infrastructure with ticket triage, knowledge base systems, workflow automation, and customer health scoring
+description: customer success - customer success - Builds customer support infrastructure wi...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

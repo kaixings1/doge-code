@@ -1,6 +1,6 @@
 ---
 name: mcp-developer
-description: Develops MCP servers and tools following the Model Context Protocol specification for AI agent integration
+description: mcp 开发者 - Develops MCP servers and tools following the Model Context P...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

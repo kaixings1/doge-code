@@ -1,6 +1,6 @@
 ---
 name: event-driven-architect
-description: Event sourcing, CQRS, message queues, and distributed event-driven system design
+description: event driven 架构师 - Event sourcing, CQRS, message queues, and distributed event-...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

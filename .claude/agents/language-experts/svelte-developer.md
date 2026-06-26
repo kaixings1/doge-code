@@ -1,6 +1,6 @@
 ---
 name: svelte-developer
-description: SvelteKit development with runes, server-side rendering, form actions, and fine-grained reactivity
+description: svelte 开发者 - SvelteKit development with runes, server-side rendering, for...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

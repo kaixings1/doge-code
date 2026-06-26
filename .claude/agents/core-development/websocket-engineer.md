@@ -1,6 +1,6 @@
 ---
 name: websocket-engineer
-description: Real-time communication with WebSockets, Socket.io, scaling strategies, and reconnection handling
+description: websocket 工程师 - Real-time communication with WebSockets, Socket.io, scaling ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---
