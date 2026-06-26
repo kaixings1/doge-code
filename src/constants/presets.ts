@@ -94,6 +94,17 @@ export const OPENCLAW_PRESETS: PresetEndpoint[] = [
   { label: 'FAL AI', provider: 'openai', baseURL: 'https://fal.run/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Tool', docs: 'FAL_KEY' },
   { label: 'ElevenLabs', provider: 'openai', baseURL: 'https://api.elevenlabs.io/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Tool', docs: 'ELEVENLABS_API_KEY' },
   { label: 'Deepgram', provider: 'openai', baseURL: 'https://api.deepgram.com/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Tool', docs: 'DEEPGRAM_API_KEY' },
+
+  // --- 爬虫/搜索/AI 工具 (2025-2026 流行) ---
+  { label: 'Serper (Google Search)', provider: 'openai', baseURL: 'https://google.serper.dev/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Crawler', docs: 'SERPER_API_KEY' },
+  { label: 'Jina Reader', provider: 'openai', baseURL: 'https://r.jina.ai/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Crawler', docs: 'JINA_API_KEY' },
+  { label: 'Jina Search', provider: 'openai', baseURL: 'https://s.jina.ai/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Crawler', docs: 'JINA_API_KEY' },
+  { label: 'Spider.cloud', provider: 'openai', baseURL: 'https://api.spider.cloud/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Crawler', docs: 'SPIDER_API_KEY' },
+  { label: 'ScrapingBee', provider: 'openai', baseURL: 'https://api.scrapingbee.com/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Crawler', docs: 'SCRAPINGBEE_API_KEY' },
+  { label: 'ScraperAPI', provider: 'openai', baseURL: 'https://api.scraperapi.com/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Crawler', docs: 'SCRAPERAPI_API_KEY' },
+  { label: 'BrightData', provider: 'openai', baseURL: 'https://api.brightdata.com/v1/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Crawler', docs: 'BRIGHTDATA_API_KEY' },
+  { label: 'Apify', provider: 'openai', baseURL: 'https://api.apify.com/v2/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Crawler', docs: 'APIFY_API_KEY' },
+  { label: 'Diffbot', provider: 'openai', baseURL: 'https://api.diffbot.com/v3/chat/completions', defaultModel: '', apiKeyRequired: true, group: 'Crawler', docs: 'DIFFBOT_API_KEY' },
 ];
 
 export const ALL_PRESETS: PresetEndpoint[] = [...LOCAL_PRESETS, ...OPENCLAW_PRESETS];
