@@ -864,7 +864,9 @@ async function run(): Promise<CommanderCommand> {
     // 必须在 init() 之前解析，init() 会触发首次设置读取（applySafeConfigEnvironmentVariables → getSettingsForSource('policySettings') → isRemoteManagedSettingsEligible → 否则同步钥匙串读取约 65ms）。
     await Promise.all([ensureMdmSettingsLoaded(), ensureKeychainPrefetchCompleted()]);
     profileCheckpoint('preAction_after_mdm');
+    require('fs').writeFileSync('d:/init_debug.log', `BEFORE init() at ${Date.now()}\n`, { flag: 'a' });
     await init();
+    require('fs').writeFileSync('d:/init_debug.log', `AFTER init() at ${Date.now()}\n`, { flag: 'a' });
     profileCheckpoint('preAction_after_init');
 
     // Windows 上的 process.title 直接设置控制台标题；在 POSIX 上，终端 shell 集成可能会将进程名镜像到选项卡。
@@ -1770,11 +1772,13 @@ async function run(): Promise<CommanderCommand> {
 
     // 重要：setup() 必须在任何其他依赖于工作目录或工作树设置的代码之前调用
     profileCheckpoint('action_before_setup');
+    require('fs').writeFileSync('d:/init_debug.log', `BEFORE setup() import at ${Date.now()}\n`, { flag: 'a' });
     logForDebugging('[STARTUP] 正在运行 setup()...');
     const setupStart = Date.now();
     const {
       setup
     } = await import('./setup.js');
+    require('fs').writeFileSync('d:/init_debug.log', `AFTER setup() import at ${Date.now()}\n`, { flag: 'a' });
     const messagingSocketPath = feature('UDS_INBOX') ? (options as {
       messagingSocketPath?: string;
     }).messagingSocketPath : undefined;

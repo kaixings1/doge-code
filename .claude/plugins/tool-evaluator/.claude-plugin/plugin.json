@@ -1,6 +1,0 @@
-{
-  "name": "tool-evaluator",
-  "version": "1.0.0",
-  "description": "Evaluate and compare developer tools with structured scoring criteria",
-  "commands": ["commands/evaluate.md", "commands/compare-tools.md"]
-}
