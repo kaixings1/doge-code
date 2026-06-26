@@ -219,6 +219,7 @@ import env from './commands/env/index.js'
 import rstk from './commands/rstk/index.js'
 import exit from './commands/exit/index.js'
 import exportCommand from './commands/export/index.js'
+import stock from './commands/stock/index.js'
 import model from './commands/model/index.js'
 import tag from './commands/tag/index.js'
 import outputStyle from './commands/output-style/index.js'
@@ -394,6 +395,7 @@ const COMMANDS = memoize((): Command[] => [
   privacySettings,
   hooks,
   exportCommand,
+  stock,
   sandboxToggle,
   ...(!isUsing3PServices() ? [logout, login()] : []),
   passes,
