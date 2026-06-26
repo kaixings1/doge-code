@@ -1,6 +1,6 @@
 ---
 name: accessibility-wcag
-description: accessibility wcag - Web accessibility patterns for WCAG 2.2 compliance including...
+description: Web accessibility patterns for WCAG 2.2 compliance including ARIA, keyboard navigation, screen readers, and testing
 ---
 
 # Accessibility & WCAG
