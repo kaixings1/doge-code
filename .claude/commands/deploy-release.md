@@ -1,3 +1,7 @@
+---
+description: 将发布部署到下一个环境
+---
+
 Deploy release to the next environment. Usage: `/deploy-release <release-number> [environment]`
 
 Parse `$ARGUMENTS` to extract:

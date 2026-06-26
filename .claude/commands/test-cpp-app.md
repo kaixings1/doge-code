@@ -1,3 +1,7 @@
+---
+description: 运行 macOS 测试并分析失败原因
+---
+
 # /test-macos-app
 
 运行最小有意义的 macOS 测试范围，然后按类别解释失败。

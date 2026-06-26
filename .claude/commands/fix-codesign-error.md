@@ -1,3 +1,7 @@
+---
+description: 诊断并修复 macOS 代码签名错误
+---
+
 # /fix-codesign-error
 
 检查 macOS 签名或授权失败，并解释最小修复路径。

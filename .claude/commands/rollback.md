@@ -1,3 +1,7 @@
+---
+description: 回滚环境中的部署
+---
+
 Roll back a deployment in an environment. Usage: `/rollback <work-item-ids-or-commit> <environment>`
 
 Parse `$ARGUMENTS` to extract:

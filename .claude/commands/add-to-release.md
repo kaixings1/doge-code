@@ -1,3 +1,7 @@
+---
+description: 将工作项添加到现有发布
+---
+
 Add work items to an existing release. Usage: `/add-to-release <release-number> <work-item-ids>`
 
 Parse `$ARGUMENTS` to extract:

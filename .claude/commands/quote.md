@@ -1,3 +1,7 @@
+---
+description: 获取工作项并显示为格式化的引用块
+---
+
 Fetch a work item and display it as a formatted quote block. Usage: `/quote <work-item-id>`
 
 Parse `$ARGUMENTS` to extract the work item ID. Accept formats like `AB#1234`, `#1234`, or just `1234`.

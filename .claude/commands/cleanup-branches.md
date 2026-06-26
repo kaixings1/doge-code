@@ -1,3 +1,7 @@
+---
+description: 清理已合并的分支
+---
+
 Clean up merged branches. Usage: `/cleanup-branches [--dry-run]`
 
 If `$ARGUMENTS` contains "dry-run" or "--dry-run", only list branches that would be deleted — do not delete them.
