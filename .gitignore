@@ -65,3 +65,5 @@ latest/
 !.claude/.gitignore
 # Cookbooks (large files)
 cookbooks/
+.git-old-backup/
+node_modules/
