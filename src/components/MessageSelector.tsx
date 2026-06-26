@@ -149,7 +149,7 @@ export function MessageSelector({
     } catch (error_0) {
       logError(error_0 as Error);
       setIsRestoring(false);
-      setError(`Failed to restore the conversation:\n${error_0}`);
+      setError(`恢复对话失败:\n${error_0}`);
     }
   }
   async function handleSelect(message_0: UserMessage) {
@@ -204,7 +204,7 @@ export function MessageSelector({
         setIsRestoring(false);
         setRestoringOption(null);
         setMessageToRestore(undefined);
-        setError(`Failed to summarize:\n${error_1}`);
+        setError(`汇总失败:\n${error_1}`);
       }
       return;
     }
@@ -234,11 +234,11 @@ export function MessageSelector({
 
     // Handle errors
     if (conversationError && codeError) {
-      setError(`Failed to restore the conversation and code:\n${conversationError}\n${codeError}`);
+      setError(`恢复对话和代码失败:\n${conversationError}\n${codeError}`);
     } else if (conversationError) {
-      setError(`Failed to restore the conversation:\n${conversationError}`);
+      setError(`恢复对话失败:\n${conversationError}`);
     } else if (codeError) {
-      setError(`Failed to restore the code:\n${codeError}`);
+      setError(`恢复代码失败:\n${codeError}`);
     } else {
       // Success - close the selector
       onClose();
