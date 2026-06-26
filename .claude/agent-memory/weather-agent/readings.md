@@ -1,6 +1,6 @@
 ---
 name: Temperature Readings History
-description: Historical record of Dubai temperature readings
+description: 迪拜温度读数的历史记录
 type: project
 ---
 
