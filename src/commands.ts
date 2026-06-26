@@ -219,6 +219,16 @@ import env from './commands/env/index.js'
 import rstk from './commands/rstk/index.js'
 import exit from './commands/exit/index.js'
 import exportCommand from './commands/export/index.js'
+import dockerCmd from './commands/docker/index.js'
+import k8sCmd from './commands/k8s/index.js'
+import pdfCmd from './commands/pdf/index.js'
+import excelCmd from './commands/excel/index.js'
+import diagramCmd from './commands/diagram/index.js'
+import imageCmd from './commands/image/index.js'
+import apiDocCmd from './commands/api-doc/index.js'
+import deployCmd from './commands/deploy/index.js'
+import redisCmd from './commands/redis/index.js'
+import nginxCmd from './commands/nginx/index.js'
 import rag from './commands/rag/index.js'
 import stock from './commands/stock/index.js'
 import model from './commands/model/index.js'
@@ -396,6 +406,16 @@ const COMMANDS = memoize((): Command[] => [
   privacySettings,
   hooks,
   exportCommand,
+  dockerCmd,
+  k8sCmd,
+  pdfCmd,
+  excelCmd,
+  diagramCmd,
+  imageCmd,
+  apiDocCmd,
+  deployCmd,
+  redisCmd,
+  nginxCmd,
   rag,
   stock,
   sandboxToggle,
