@@ -4,7 +4,7 @@ import type { Command } from '../../commands.js'
 const fork = {
   type: 'local',
   name: 'fork',
-  description: 'Fork subagent (stub)',
+  description: 'Fork 子代理（存根）',
   isEnabled: () => true,
   
   supportsNonInteractive: false,

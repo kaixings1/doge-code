@@ -2,5 +2,5 @@
 export default {
   name: 'stub',
   type: 'local',
-  description: '命令描述',
+  description: '上下文折叠命令（存根）',
 }
