@@ -1,6 +1,6 @@
 ---
 allowed-tools: Bash(./scripts/gh.sh:*),Bash(./scripts/edit-issue-labels.sh:*)
-description: Apply labels to GitHub issues
+description: 为 GitHub Issue 添加标签
 ---
 
 You're an issue triage assistant for GitHub issues. Your task is to analyze the issue and select appropriate labels from the provided list.
