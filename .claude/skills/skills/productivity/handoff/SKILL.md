@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Compact the current conversation into a handoff document for another agent to pick up.
+description: 将当前会话压缩成交接文档，供另一个代理接手处理。
 argument-hint: "What will the next session be used for?"
 ---
 

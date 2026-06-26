@@ -1,6 +1,6 @@
 ---
 name: "gh-fix-ci"
-description: "Use when a user asks to debug or fix failing GitHub PR checks that run in GitHub Actions. Use the GitHub app from this plugin for PR metadata and patch context, and use `gh` for Actions check and log inspection before implementing any approved fix."
+description: "当用户要求调试或修复 GitHub Actions 中运行的 GitHub PR 检查失败时使用。使用此插件的 GitHub 应用获取 PR 元数据和补丁上下文，在实施任何批准的修复前使用 `gh` 进行 Actions 检查和日志检查。"
 ---
 
 

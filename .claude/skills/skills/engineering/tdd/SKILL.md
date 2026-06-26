@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests, or asks for test-first development.
+description: 红-绿-重构循环的测试驱动开发。当用户想要使用 TDD 构建功能或修复 Bug、提到"红绿重构"、需要集成测试或要求测试优先开发时使用。
 ---
 
 # Test-Driven Development
