@@ -7,6 +7,7 @@ src-zh/
 # Build Artifacts
 dist/
 build/
+doge-bundled.js
 *.exe
 *.bun-build/
 .bun-build/
@@ -48,6 +49,9 @@ test-prompt-patterns.js
 auto-translate-from-bottom.cjs
 
 # Source Archives
+*.rar
+*.zip
+*.7z
 src.rar
 
 # OS Files
@@ -65,5 +69,13 @@ latest/
 !.claude/.gitignore
 # Cookbooks (large files)
 cookbooks/
+
+# Large binaries & archives
+*.dat
+*.dll
+*.so
+*.dylib
+*.pdb
+
+# Git backup
 .git-old-backup/
-node_modules/
