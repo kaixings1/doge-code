@@ -385,7 +385,7 @@ export function useTypeahead({
   // 一次性计算所有命令的最大列宽（非过滤结果）
   // 防止过滤时布局偏移
   const allCommandsMaxWidth = useMemo(() => {
-    const visibleCommands = commands.filter(cmd => !cmd.isHidden);
+    const visibleCommands = commands.filter(cmd => cmd && !cmd.isHidden && cmd.name != null);
     if (visibleCommands.length === 0) return undefined;
     const maxLen = Math.max(...visibleCommands.map(cmd => getCommandName(cmd).length));
     return maxLen + 6; // +1 用于 "/" 前缀，+5 用于内边距

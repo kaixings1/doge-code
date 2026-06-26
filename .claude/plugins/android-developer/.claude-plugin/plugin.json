@@ -1,6 +1,0 @@
-{
-  "name": "android-developer",
-  "version": "1.0.0",
-  "description": "Android and Kotlin development with Jetpack Compose",
-  "commands": ["commands/create-activity.md", "commands/add-viewmodel.md"]
-}

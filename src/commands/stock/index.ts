@@ -7,7 +7,7 @@ export const call: LocalJSXCommandCall = async (args) => {
   const code = parts[0] || ''
   const type = parts[1] || 'price'
   if (!code) {
-    return { type: 'text', value: 'Usage: /stock <code> [price|finance|overview]' }
+    return { type: 'text', value: '用法: /stock <code> [price|finance|overview]' }
   }
   const secid = code.startsWith('6') ? '1.' + code : '0.' + code
   try {
@@ -17,14 +17,14 @@ export const call: LocalJSXCommandCall = async (args) => {
     else result = await queryApi.companyOverview(code)
     return { type: 'text', value: result }
   } catch (err) {
-    return { type: 'text', value: 'Error: ' + err.message }
+    return { type: 'text', value: '错误: ' + err.message }
   }
 }
 
 const stockCommand = {
   type: 'local-jsx' as const,
   name: 'stock',
-  description: 'Stock quote and financial data',
+  description: '股票行情和财务数据',
   argumentHint: '<code> [price|finance|overview]',
   isEnabled: () => true,
   load: () => import('./index.js'),

@@ -7,7 +7,7 @@ export const call: LocalJSXCommandCall = async (args) => {
   const subcmd = parts[0] || ''
 
   if (!subcmd) {
-    return { type: 'text', value: 'Usage: /rag help' }
+    return { type: 'text', value: '用法: /rag help' }
   }
 
   try {
@@ -17,27 +17,27 @@ export const call: LocalJSXCommandCall = async (args) => {
       result = await ragApi.indexFolder(folder)
     } else if (subcmd === 'query') {
       const q = parts.slice(1).join(' ')
-      if (!q) return { type: 'text', value: 'Usage: /rag query <text>' }
+      if (!q) return { type: 'text', value: '用法: /rag query <text>' }
       result = await ragApi.query(q)
     } else if (subcmd === 'list') {
       result = await ragApi.listIndexed()
     } else if (subcmd === 'clear') {
       result = await ragApi.clearIndex()
     } else {
-      result = 'Usage: /rag <add|query|list|clear> [args]'
+      result = '用法: /rag <add|query|list|clear> [args]'
     }
     return { type: 'text', value: result }
   } catch (err) {
-    return { type: 'text', value: 'Error: ' + err.message }
+    return { type: 'text', value: '错误: ' + err.message }
   }
 }
 
 const ragCommand = {
   type: 'local-jsx' as const,
   name: 'rag',
-  description: 'RAG local knowledge base - index folders and search',
+  description: 'RAG 本地知识库 - 索引文件夹和搜索',
   argumentHint: '<add|query|list|clear> [args]',
-  isEnabled: true,
+  isEnabled: () => true,
   load: () => import('./index.js'),
 } satisfies Command
 

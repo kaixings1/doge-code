@@ -294,8 +294,7 @@ export function getProjectDirsUpToHome(
  * @param cwd Current working directory for project directory traversal
  * @returns Array of parsed markdown files with metadata
  */
-export const loadMarkdownFilesForSubdir = memoize(
-  async function (
+export const loadMarkdownFilesForSubdir = async function (
     subdir: ClaudeConfigDirectory,
     cwd: string,
   ): Promise<MarkdownFile[]> {
@@ -346,29 +345,32 @@ export const loadMarkdownFilesForSubdir = memoize(
       // Conditionally load user files
       isSettingSourceEnabled('userSettings') &&
       !(subdir === 'agents' && isRestrictedToPluginOnly('agents'))
-        ? loadMarkdownFiles(userDir).then(_ =>
-            _.map(file => ({
+        ? loadMarkdownFiles(userDir).then(_ => {
+            logForDebugging(`[DEBUG] loadMarkdownFiles(${userDir}) returned ${_.length} files`)
+            return _.map(file => ({
               ...file,
               baseDir: userDir,
               source: 'userSettings' as const,
-            })),
-          )
-        : Promise.resolve([]),
+            }))
+          })
+        : (logForDebugging(`[DEBUG] userSettings skipped, subdir=${subdir}`), Promise.resolve([])),
       // Conditionally load project files from all directories up to home
       isSettingSourceEnabled('projectSettings') &&
       !(subdir === 'agents' && isRestrictedToPluginOnly('agents'))
         ? Promise.all(
-            projectDirs.map(projectDir =>
-              loadMarkdownFiles(projectDir).then(_ =>
-                _.map(file => ({
+            projectDirs.map(projectDir => {
+              logForDebugging(`[DEBUG] loading project dir: ${projectDir}`)
+              return loadMarkdownFiles(projectDir).then(_ => {
+                logForDebugging(`[DEBUG] loadMarkdownFiles(${projectDir}) returned ${_.length} files`)
+                return _.map(file => ({
                   ...file,
                   baseDir: projectDir,
                   source: 'projectSettings' as const,
-                })),
-              ),
-            ),
+                }))
+              })
+            }),
           )
-        : Promise.resolve([]),
+        : (logForDebugging(`[DEBUG] projectSettings skipped, subdir=${subdir}`), Promise.resolve([])),
     ])
 
     // Flatten nested project files array
@@ -424,10 +426,7 @@ export const loadMarkdownFilesForSubdir = memoize(
     })
 
     return deduplicatedFiles
-  },
-  // Custom resolver creates cache key from both subdir and cwd parameters
-  (subdir: ClaudeConfigDirectory, cwd: string) => `${subdir}:${cwd}`,
-)
+  }
 
 /**
  * Native implementation to find markdown files using Node.js fs APIs

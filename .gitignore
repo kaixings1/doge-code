@@ -79,3 +79,5 @@ cookbooks/
 
 # Git backup
 .git-old-backup/
+# Temp scripts
+.tmp-*.py

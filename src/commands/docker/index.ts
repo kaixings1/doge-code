@@ -4,7 +4,7 @@ import { execSync } from 'child_process'
 
 function run(cmd: string): string {
   try { return execSync(cmd, { encoding: 'utf-8', timeout: 30000 }).trim() }
-  catch (e: any) { return 'Error: ' + e.message }
+  catch (e: any) { return '错误: ' + e.message }
 }
 
 export const call: LocalJSXCommandCall = async (args) => {
@@ -19,9 +19,9 @@ export const call: LocalJSXCommandCall = async (args) => {
   else if (c === 'build') { r = run('docker build -t app . 2>&1') }
   else if (c === 'images') { r = run('docker images') }
   else if (c === 'exec') { r = run('docker exec ' + p[1] + ' ' + p.slice(2).join(' ')) }
-  else { r = 'Unknown: ' + c }
-  return { type: 'text', value: r || '(no output)' }
+  else { r = '未知: ' + c }
+  return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'docker', description: 'Docker 容器管理：ps/logs/start/stop/build/images/exec', argumentHint: '<ps|logs|start|stop|build|images|exec>', isEnabled: true, load: () => import('./index.js') } satisfies Command
+const cmd = { type: 'local-jsx' as const, name: 'docker', description: 'Docker 容器管理：ps/logs/start/stop/build/images/exec', argumentHint: '<ps|logs|start|stop|build|images|exec>', isEnabled: () => true, load: () => import('./index.js') } satisfies Command
 export default cmd

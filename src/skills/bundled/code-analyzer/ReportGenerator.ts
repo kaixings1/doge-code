@@ -60,7 +60,7 @@ export class CodeAnalyzer {
           const content = fs.readFileSync(filePath, 'utf8');
           fileMap.set(filePath, content);
         } catch (error) {
-          console.error(`Error reading ${filePath}:`, error);
+          console.error(`读取文件失败 ${filePath}:`, error);
         }
       }
     } else if (this.config.files) {
@@ -71,7 +71,7 @@ export class CodeAnalyzer {
           const content = fs.readFileSync(absolutePath, 'utf8');
           fileMap.set(absolutePath, content);
         } catch (error) {
-          console.error(`Error reading ${filePath}:`, error);
+          console.error(`读取文件失败 ${filePath}:`, error);
         }
       }
     }

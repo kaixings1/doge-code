@@ -250,7 +250,7 @@ export function MCPRemoteServerMenu({
       onCancel();
     } catch (err_0) {
       const action = wasEnabled ? 'disable' : 'enable';
-      onComplete?.(`Failed to ${action} MCP server '${server.name}': ${errorMessage(err_0)}`);
+      onComplete?.(`${action === 'disable' ? '禁用' : '启用'} MCP 服务器 '${server.name}' 失败: ${errorMessage(err_0)}`);
     }
   }, [server.client.type, server.config.type, server.name, toggleMcpServer, onCancel, onComplete]);
   const handleAuthenticate = React.useCallback(async () => {

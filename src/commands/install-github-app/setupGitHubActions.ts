@@ -168,7 +168,7 @@ export async function setupGitHubActions(
         ...context,
       })
       throw new Error(
-        `Failed to get default branch: ${defaultBranchResult.stderr}`,
+        `获取默认分支失败: ${defaultBranchResult.stderr}`,
       )
     }
     const defaultBranch = defaultBranchResult.stdout.trim()
@@ -277,7 +277,7 @@ export async function setupGitHubActions(
           '· For manual setup → Visit: https://github.com/anthropics/claude-code-action'
 
         throw new Error(
-          `Failed to set API key secret: ${setSecretResult.stderr || 'Unknown error'}${helpText}`,
+          `设置 API 密钥失败: ${setSecretResult.stderr || '未知错误'}${helpText}`,
         )
       }
     }
@@ -309,7 +309,7 @@ export async function setupGitHubActions(
     if (
       !error ||
       !(error instanceof Error) ||
-      !error.message.includes('Failed to')
+      !error.message.includes('Failed')
     ) {
       logEvent('tengu_setup_github_actions_failed', {
         reason:

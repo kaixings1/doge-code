@@ -486,6 +486,19 @@ async function getSkills(cwd: string): Promise<{
     logForDebugging(
       `getSkills 返回：${skillDirCommands.length} 个技能目录命令，${pluginSkills.length} 个插件技能，${bundledSkills.length} 个内置技能，${builtinPluginSkills.length} 个内置插件技能`,
     )
+    // DEBUG: 打印所有技能名称
+    console.error(`[DEBUG] 技能名称列表 (${skillDirCommands.length}): ${skillDirCommands.map(c => c.name).sort().join(', ')}`)
+    console.error(`[DEBUG] plan-cpp-win 是否存在: ${skillDirCommands.some(c => c.name === 'plan-cpp-win')}`)
+    // DEBUG: 打印所有技能名称
+    const allSkillNames = skillDirCommands.map(c => c.name).sort()
+    logForDebugging(`=== [DEBUG] 技能名称列表 (${allSkillNames.length}): ${allSkillNames.join(', ')}`)
+    // DEBUG: 查找 plan-cpp-win
+    const planCppWin = skillDirCommands.find(c => c.name === 'plan-cpp-win')
+    logForDebugging(`=== [DEBUG] plan-cpp-win 是否在技能列表中: ${!!planCppWin}`)
+    if (!planCppWin) {
+      const planLike = skillDirCommands.filter(c => c.name.startsWith('plan')).map(c => c.name)
+      logForDebugging(`=== [DEBUG] plan 开头的技能: ${planLike.join(', ')}`)
+    }
     return {
       skillDirCommands,
       pluginSkills,

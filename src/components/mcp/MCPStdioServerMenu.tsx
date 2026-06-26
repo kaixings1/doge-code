@@ -49,7 +49,7 @@ export function MCPStdioServerMenu({
       onCancel();
     } catch (err) {
       const action = wasEnabled ? 'disable' : 'enable';
-      onComplete(`Failed to ${action} MCP server '${server.name}': ${errorMessage(err)}`);
+      onComplete(`${action === 'disable' ? '禁用' : '启用'} MCP 服务器 '${server.name}' 失败: ${errorMessage(err)}`);
     }
   }, [server.client.type, server.name, toggleMcpServer, onCancel, onComplete]);
   const capitalizedServerName = capitalize(String(server.name));

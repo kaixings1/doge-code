@@ -12,16 +12,16 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
   const logLevels = ['DEBUG', 'INFO', 'WARN', 'ERROR']
   const logSources = ['app', 'database', 'network', 'auth', 'cache', 'api']
   const logMessages = [
-    'Application started successfully',
-    'Database connection established',
-    'User authentication successful',
-    'Cache miss for key: user_profile_123',
-    'API request processed in 45ms',
-    'Memory usage above threshold',
-    'Failed to connect to external service',
-    'Scheduled task completed',
-    'Configuration file loaded',
-    'Request timeout after 30 seconds'
+    '应用启动成功',
+    '数据库连接已建立',
+    '用户认证成功',
+    '缓存未命中: user_profile_123',
+    'API 请求在 45ms 内处理完成',
+    '内存使用超过阈值',
+    '连接外部服务失败',
+    '计划任务已完成',
+    '配置文件已加载',
+    '请求超时 (30 秒)'
   ]
 
   const mockLogs = []

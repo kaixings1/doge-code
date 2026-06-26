@@ -1,6 +1,0 @@
-{
-  "name": "visual-regression",
-  "version": "1.0.0",
-  "description": "Visual regression testing with screenshot comparison",
-  "commands": ["commands/capture-baseline.md", "commands/compare.md"]
-}

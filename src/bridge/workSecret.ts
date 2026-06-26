@@ -13,7 +13,7 @@ export function decodeWorkSecret(secret: string): WorkSecret {
     parsed.version !== 1
   ) {
     throw new Error(
-      `Unsupported work secret version: ${parsed && typeof parsed === 'object' && 'version' in parsed ? parsed.version : 'unknown'}`,
+      `不支持的工作密钥版本: ${parsed && typeof parsed === 'object' && 'version' in parsed ? parsed.version : '未知'}`,
     )
   }
   const obj = parsed as Record<string, unknown>

@@ -161,6 +161,26 @@ function fixModelCommandMistakes(cmd: string, platform: string): string {
         }
     }
 
+    // ------ 8. 修复 `if 条件;` 后换行导致缺少 `then` 的语法错误 ------
+    // 模型在生成多行 bash 脚本（特别是传给 python/echo 的字符串）时，
+    // 经常写出：
+    //   if [ -d "$d/.git" ];
+    //   then
+    // 这样的格式。在 Git Bash 中，`;` 结束了 if 条件语句，
+    // 下一行的 `then` 变成了一个独立命令，导致语法错误。
+    //
+    // 正确的格式：
+    //   方案 A: if [ -d "$d/.git" ]; then     （同一行用 ; then 连接）
+    //   方案 B: if [ -d "$d/.git" ]            （无分号，then 在下一行由 Bash 识别）
+    //          then
+    //
+    // 修复策略：匹配 `if` / `elif` 条件后紧跟 `;` + 换行 + 空白 + `then`，
+    // 移除分号（方案 B），让 Bash 自然地将下一行的 then 视为 if 块的一部分。
+    fixed = fixed.replace(
+      /\b(if|elif)\s+(.*?)\s*;\s*\n\s*then\b/g,
+      (_match, keyword, condition) => `${keyword} ${condition}\nthen`
+    );
+
     return fixed;
 }
 

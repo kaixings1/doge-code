@@ -59,11 +59,13 @@ export const init = memoize(async (): Promise<void> => {
   const initStartTime = Date.now()
   logForDiagnosticsNoPII('info', 'init_started')
   profileCheckpoint('init_function_start')
+  require('fs').writeFileSync('d:/init_debug.log', `init_started at ${Date.now()}\n`, { flag: 'a' });
 
   // 验证配置是否有效并启用配置系统
   try {
     const configsStart = Date.now()
     enableConfigs()
+    require('fs').writeFileSync('d:/init_debug.log', `enableConfigs done at ${Date.now()}\n`, { flag: 'a' });
     logForDiagnosticsNoPII('info', 'init_configs_enabled', {
       duration_ms: Date.now() - configsStart,
     })
@@ -83,6 +85,7 @@ export const init = memoize(async (): Promise<void> => {
     // 这样 Sentry 的网络请求会使用正确的代理和 CA 证书。
     initSentry()
 
+    require('fs').writeFileSync('d:/init_debug.log', `applySafeConfigEnvironmentVariables done at ${Date.now()}\n`, { flag: 'a' });
     logForDiagnosticsNoPII('info', 'init_safe_env_vars_applied', {
       duration_ms: Date.now() - envVarsStart,
     })
@@ -136,8 +139,10 @@ export const init = memoize(async (): Promise<void> => {
 
     // 配置全局 mTLS 设置
     const mtlsStart = Date.now()
+    require('fs').writeFileSync('d:/init_debug.log', `configureGlobalMTLS starting at ${Date.now()}\n`, { flag: 'a' });
     logForDebugging('[init] configureGlobalMTLS starting')
     configureGlobalMTLS()
+    require('fs').writeFileSync('d:/init_debug.log', `configureGlobalMTLS done at ${Date.now()}\n`, { flag: 'a' });
     logForDiagnosticsNoPII('info', 'init_mtls_configured', {
       duration_ms: Date.now() - mtlsStart,
     })
@@ -146,7 +151,9 @@ export const init = memoize(async (): Promise<void> => {
     // 配置全局 HTTP 代理器（proxy 和/或 mTLS）
     const proxyStart = Date.now()
     logForDebugging('[init] configureGlobalAgents starting')
+    require('fs').writeFileSync('d:/init_debug.log', `configureGlobalAgents starting at ${Date.now()}\n`, { flag: 'a' });
     configureGlobalAgents()
+    require('fs').writeFileSync('d:/init_debug.log', `configureGlobalAgents done at ${Date.now()}\n`, { flag: 'a' });
     logForDiagnosticsNoPII('info', 'init_proxy_configured', {
       duration_ms: Date.now() - proxyStart,
     })
@@ -211,6 +218,7 @@ export const init = memoize(async (): Promise<void> => {
       duration_ms: Date.now() - initStartTime,
     })
     profileCheckpoint('init_function_end')
+    require('fs').writeFileSync('d:/init_debug.log', `init() COMPLETED at ${Date.now()}\n`, { flag: 'a' });
   } catch (error) {
     if (error instanceof ConfigParseError) {
       // 当无法安全渲染时跳过交互式 Ink 对话框。

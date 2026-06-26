@@ -5,7 +5,7 @@ import fs from 'fs'
 
 function run(cmd: string): string {
   try { return execSync(cmd, { encoding: 'utf-8', timeout: 10000 }).trim() }
-  catch (e: any) { return 'Error: ' + e.message }
+  catch (e: any) { return '错误: ' + e.message }
 }
 
 export const call: LocalJSXCommandCall = async (args) => {
@@ -26,16 +26,16 @@ export const call: LocalJSXCommandCall = async (args) => {
         try { r += d + ':\n' + fs.readdirSync(d).join('\n') + '\n\n' } catch {}
       }
     }
-    r = r || '(no sites directory found)'
+    r = r || '(未找到站点目录)'
   }
-  else if (c === 'logs') { r = run('tail -50 /var/log/nginx/error.log 2>/dev/null || echo "log not found"') }
+  else if (c === 'logs') { r = run('tail -50 /var/log/nginx/error.log 2>/dev/null || echo "未找到日志文件"') }
   else if (c === 'config') {
     const file = p[1] || '/etc/nginx/nginx.conf'
-    r = fs.existsSync(file) ? fs.readFileSync(file, 'utf-8') : 'File not found: ' + file
+    r = fs.existsSync(file) ? fs.readFileSync(file, 'utf-8') : '文件不存在: ' + file
   }
-  else { r = 'Unknown: ' + c }
-  return { type: 'text', value: r || '(no output)' }
+  else { r = '未知: ' + c }
+  return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'nginx', description: 'Nginx 管理：status/start/stop/reload/test/sites/logs/config', argumentHint: '<status|start|stop|reload|test|sites|logs|config> [args]', isEnabled: true, load: () => import('./index.js') } satisfies Command
+const cmd = { type: 'local-jsx' as const, name: 'nginx', description: 'Nginx 管理：status/start/stop/reload/test/sites/logs/config', argumentHint: '<status|start|stop|reload|test|sites|logs|config> [args]', isEnabled: () => true, load: () => import('./index.js') } satisfies Command
 export default cmd

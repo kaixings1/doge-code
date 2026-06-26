@@ -1071,6 +1071,7 @@ export async function getClaudeCodeMcpConfigs(
   servers: Record<string, ScopedMcpServerConfig>
   errors: PluginError[]
 }> {
+  require('fs').writeFileSync('d:/init_debug.log', `getClaudeCodeMcpConfigs ENTER at ${Date.now()}\n`, { flag: 'a' });
   const { servers: enterpriseServers } = getMcpConfigsByScope('enterprise')
 
   // 如果企业 MCP 配置存在，则不使用其他配置；它对所有 MCP 服务器拥有独占控制权
@@ -1108,7 +1109,9 @@ export async function getClaudeCodeMcpConfigs(
   // 加载插件 MCP 服务器
   const pluginMcpServers: Record<string, ScopedMcpServerConfig> = {}
 
+  require('fs').writeFileSync('d:/init_debug.log', `BEFORE loadAllPluginsCacheOnly at ${Date.now()}\n`, { flag: 'a' });
   const pluginResult = await loadAllPluginsCacheOnly()
+  require('fs').writeFileSync('d:/init_debug.log', `AFTER loadAllPluginsCacheOnly at ${Date.now()}\n`, { flag: 'a' });
 
   // 收集服务器加载期间特定于 MCP 的错误
   const mcpErrors: PluginError[] = []

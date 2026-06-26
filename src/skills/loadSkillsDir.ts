@@ -1,3 +1,4 @@
+import * as skillDebugFs from 'fs'
 import { realpath } from 'fs/promises'
 import ignore from 'ignore'
 import { memoize } from '../vendor/lodash.js'
@@ -410,10 +411,13 @@ async function loadSkillsFromSkillsDir(
 ): Promise<SkillWithPath[]> {
   const fs = getFsImplementation()
 
+  skillDebugFs.writeFileSync('d:/skill_debug.log', `  loadSkillsFromSkillsDir basePath=${basePath} source=${source}\n`, { flag: 'a' })
   let entries
   try {
     entries = await fs.readdir(basePath)
+    skillDebugFs.writeFileSync('d:/skill_debug.log', `  readdir success, entries=${entries.length}\n`, { flag: 'a' })
   } catch (e: unknown) {
+    skillDebugFs.writeFileSync('d:/skill_debug.log', `  readdir error: ${e}\n`, { flag: 'a' })
     if (!isFsInaccessible(e)) logError(e)
     return []
   }
@@ -567,7 +571,9 @@ async function loadSkillsFromCommandsDir(
   cwd: string,
 ): Promise<SkillWithPath[]> {
   try {
+    skillDebugFs.writeFileSync('d:/skill_debug.log', `loadSkillsFromCommandsDir cwd=${cwd}\n`, { flag: 'a' })
     const markdownFiles = await loadMarkdownFilesForSubdir('commands', cwd)
+    skillDebugFs.writeFileSync('d:/skill_debug.log', `loadMarkdownFilesForSubdir returned ${markdownFiles.length} files: ${markdownFiles.map(f => f.filePath).join(', ')}\n`, { flag: 'a' })
     const processedFiles = transformSkillFiles(markdownFiles)
 
     const skills: SkillWithPath[] = []
@@ -635,8 +641,7 @@ async function loadSkillsFromCommandsDir(
  *
  * @param cwd Current working directory for project directory traversal
  */
-export const getSkillDirCommands = memoize(
-  async (cwd: string): Promise<Command[]> => {
+export const getSkillDirCommands = async (cwd: string): Promise<Command[]> => {
     const userSkillsDir = join(getClaudeConfigHomeDir(), 'skills')
     const managedSkillsDir = join(getManagedFilePath(), '.claude', 'skills')
     const projectSkillsDirs = getProjectDirsUpToHome('skills', cwd)
@@ -650,6 +655,8 @@ export const getSkillDirCommands = memoize(
     const skillsLocked = isRestrictedToPluginOnly('skills')
     const projectSettingsEnabled =
       isSettingSourceEnabled('projectSettings') && !skillsLocked
+
+    skillDebugFs.writeFileSync('d:/skill_debug.log', `getSkillDirCommands cwd=${cwd}\nmanagedSkillsDir=${managedSkillsDir}\nuserSkillsDir=${userSkillsDir}\nprojectSkillsDirs=[${projectSkillsDirs.join(', ')}]\nprojectSettingsEnabled=${projectSettingsEnabled}\nadditionalDirs=${additionalDirs.join(', ')}\nisBareMode=${isBareMode()} skillsLocked=${skillsLocked}\n`, { flag: 'a' })
 
     // --bare: skip auto-discovery (managed/user/project dir walks + legacy
     // commands-dir). Load ONLY explicit --add-dir paths. Bundled skills
@@ -800,8 +807,7 @@ export const getSkillDirCommands = memoize(
     )
 
     return unconditionalSkills
-  },
-)
+}
 
 export function clearSkillCaches() {
   getSkillDirCommands.cache?.clear?.()

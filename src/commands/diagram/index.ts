@@ -17,16 +17,16 @@ export const call: LocalJSXCommandCall = async (args) => {
       state: 'stateDiagram-v2\n[*] --> Still\nStill --> Moving\nMoving --> Still\nMoving --> [*]',
       gantt: 'gantt\ntitle Project Plan\nsection Phase 1\nTask 1 :a1, 2024-01-01, 30d',
     }
-    r = templates[type] || 'Unknown type: ' + type
+    r = templates[type] || '未知类型: ' + type
   } else if (c === 'mermaid') {
     const file = p[1]
-    if (!file || !fs.existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    if (!file || !fs.existsSync(file)) return { type: 'text', value: '文件不存在: ' + (file || '') }
     r = fs.readFileSync(file, 'utf-8')
   } else {
-    r = 'Unknown: ' + c
+    r = '未知: ' + c
   }
-  return { type: 'text', value: r || '(no output)' }
+  return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'diagram', description: 'Mermaid 图表模板生成：template/mermaid', argumentHint: '<template|mermaid> [type|file]', isEnabled: true, load: () => import('./index.js') } satisfies Command
+const cmd = { type: 'local-jsx' as const, name: 'diagram', description: 'Mermaid 图表模板生成：template/mermaid', argumentHint: '<template|mermaid> [type|file]', isEnabled: () => true, load: () => import('./index.js') } satisfies Command
 export default cmd

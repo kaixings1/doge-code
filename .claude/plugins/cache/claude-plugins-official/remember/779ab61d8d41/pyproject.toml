@@ -1,3 +1,0 @@
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-addopts = "--cov=pipeline --cov-report=term-missing --cov-fail-under=80"
