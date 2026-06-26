@@ -1,6 +1,6 @@
 ---
 name: scala-developer
-description: Functional programming in Scala, Akka actors, Play Framework, and Cats Effect
+description: scala 开发者 - Functional programming in Scala, Akka actors, Play Framework...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

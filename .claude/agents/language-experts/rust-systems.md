@@ -1,6 +1,6 @@
 ---
 name: rust-systems
-description: Rust ownership, lifetimes, async runtime, FFI, unsafe patterns, and performance tuning
+description: rust systems - rust systems - Rust ownership, lifetimes, async runtime, FFI...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

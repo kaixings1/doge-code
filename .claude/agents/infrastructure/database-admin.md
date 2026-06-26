@@ -1,6 +1,6 @@
 ---
 name: database-admin
-description: PostgreSQL, MySQL, MongoDB optimization, migrations, replication, and backup strategies
+description: 数据库 admin - PostgreSQL, MySQL, MongoDB optimization, migrations, replica...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

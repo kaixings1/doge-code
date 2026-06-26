@@ -1,6 +1,6 @@
 ---
 name: manage-skills
-description: Discover, list, create, edit, toggle, copy, move, and delete AI agent skills across 11 tools (Cursor, Claude, Agents, Windsurf, Copilot, Codex, Cline, Aider, Continue, Roo Code, Augment)
+description: manage skills - Discover, list, create, edit, toggle, copy, move, and delete...
 ---
 
 # Manage AI Agent Skills

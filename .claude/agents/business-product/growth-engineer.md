@@ -1,6 +1,6 @@
 ---
 name: growth-engineer
-description: Implements A/B testing frameworks, analytics instrumentation, funnel optimization, and data-driven growth experiments
+description: growth 工程师 - Implements A/B testing frameworks, analytics instrumentation...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

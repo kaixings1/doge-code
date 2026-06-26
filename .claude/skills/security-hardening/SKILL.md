@@ -1,6 +1,6 @@
 ---
 name: security-hardening
-description: Application security covering input validation, auth, headers, secrets management, and dependency auditing
+description: 安全 hardening - Application security covering input validation, auth, header...
 ---
 
 # Security Hardening

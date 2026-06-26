@@ -1,6 +1,6 @@
 ---
 name: firecrawl-cli-installation
-description: |
+description: firecrawl cli installation - |
   Install the official Firecrawl CLI and handle authentication.
   Package: https://www.npmjs.com/package/firecrawl-cli
   Source: https://github.com/firecrawl/cli

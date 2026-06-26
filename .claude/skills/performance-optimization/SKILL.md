@@ -1,6 +1,6 @@
 ---
 name: performance-optimization
-description: Web performance optimization including bundle analysis, lazy loading, caching strategies, and Core Web Vitals
+description: 性能 optimization - Web performance optimization including bundle analysis, lazy...
 ---
 
 # Performance Optimization

@@ -1,6 +1,6 @@
 ---
 name: search-specialist
-description: Performs advanced search, information retrieval, source evaluation, and knowledge synthesis across diverse sources
+description: search 专家 - Performs advanced search, information retrieval, source eval...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

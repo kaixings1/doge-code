@@ -1,6 +1,6 @@
 ---
 name: security-auditor
-description: OWASP Top 10, dependency scanning, secrets detection, and penetration testing guidance
+description: 安全 auditor - OWASP Top 10, dependency scanning, secrets detection, and pe...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: rails-expert
-description: Ruby on Rails 7+ development with Hotwire, ActiveRecord patterns, Turbo, and Stimulus
+description: rails expert - rails expert - Ruby on Rails 7+ development with Hotwire, Ac...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

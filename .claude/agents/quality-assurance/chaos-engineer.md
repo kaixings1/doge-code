@@ -1,6 +1,6 @@
 ---
 name: chaos-engineer
-description: Chaos testing, fault injection, resilience validation, and failure mode analysis
+description: chaos 工程师 - Chaos testing, fault injection, resilience validation, and f...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

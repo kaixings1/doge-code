@@ -1,6 +1,6 @@
 ---
 name: embedded-systems
-description: Develops firmware and embedded software in C and Rust with RTOS integration and hardware abstraction
+description: embedded systems - embedded systems - Develops firmware and embedded software i...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: test-architect
-description: Testing strategy with unit/integration/e2e, TDD, property-based testing, and mutation testing
+description: test 架构师 - Testing strategy with unit/integration/e2e, TDD, property-ba...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: workflow-claude-commands-agent
-description: Research agent that fetches Claude Code docs, reads the local commands report, and analyzes drift
+description: workflow claude commands 代理 - Research agent that fetches Claude Code docs, reads the loca...
 model: opus
 color: green
 allowedTools:

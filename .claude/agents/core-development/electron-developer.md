@@ -1,6 +1,6 @@
 ---
 name: electron-developer
-description: Electron desktop applications, IPC communication, native OS integration, and auto-updates
+description: electron 开发者 - Electron desktop applications, IPC communication, native OS ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

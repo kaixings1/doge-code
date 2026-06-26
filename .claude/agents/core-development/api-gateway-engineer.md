@@ -1,6 +1,6 @@
 ---
 name: api-gateway-engineer
-description: API gateway patterns, rate limiting, authentication proxies, and request routing
+description: api gateway 工程师 - API gateway patterns, rate limiting, authentication proxies,...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

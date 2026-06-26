@@ -1,6 +1,6 @@
 ---
 name: computer-vision-engineer
-description: Builds image classification, object detection, and segmentation pipelines using OpenCV, PyTorch, and production-grade inference optimization
+description: computer vision 工程师 - Builds image classification, object detection, and segmentat...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---
