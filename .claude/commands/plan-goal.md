@@ -1,5 +1,5 @@
 ---
-description: "Bridge Claude Code's /goal to the active plan. Derives a goal condition from task_plan.md and invokes /goal so Claude keeps working until the plan is complete. Available since v2.38.0."
+description: "将 Claude Code 的 /goal 桥接到当前计划。从 task_plan.md 推导目标条件并调用 /goal，使 Claude 持续工作直到计划完成。v2.38.0 起可用。"
 disable-model-invocation: true
 allowed-tools: "Read Bash"
 ---

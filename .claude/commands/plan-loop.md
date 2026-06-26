@@ -1,5 +1,5 @@
 ---
-description: "Run a planning-aware cadence with Claude Code's /loop. Default tick checks plan status, runs check-complete, nudges progress.md update if stalled. Available since v2.38.0."
+description: "以规划感知的节奏运行 Claude Code 的 /loop。默认周期检查计划状态、运行 check-complete、在停滞时推动 progress.md 更新。v2.38.0 起可用。"
 disable-model-invocation: true
 allowed-tools: "Read Bash"
 ---

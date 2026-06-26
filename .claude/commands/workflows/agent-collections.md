@@ -1,5 +1,5 @@
 ---
-description: Update the AGENT COLLECTIONS table by researching all agent-collection repos in parallel
+description: 通过并行研究所有代理集合仓库来更新代理集合表
 ---
 
 # Workflow — Agent Collections

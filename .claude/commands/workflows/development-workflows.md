@@ -1,5 +1,5 @@
 ---
-description: Update the DEVELOPMENT WORKFLOWS table by researching all 11 workflow repos in parallel
+description: 通过并行研究所有 11 个工作流仓库来更新开发工作流表
 ---
 
 # Workflow — Development Workflows

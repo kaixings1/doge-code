@@ -1,5 +1,5 @@
 ---
-description: Track Claude Code subagents report changes and find what needs updating
+description: 跟踪 Claude Code 子代理报告变化，发现需要更新的内容
 argument-hint: [number of versions to check, default 10]
 ---
 

@@ -1,5 +1,5 @@
 ---
-description: Fetch Dubai weather and create an SVG weather card
+description: 获取迪拜天气并创建 SVG 天气卡片
 model: haiku
 allowed-tools:
   - AskUserQuestion
@@ -32,7 +32,7 @@ Use the AskUserQuestion tool to ask the user whether they want the temperature i
 Use the Agent tool to invoke the weather agent:
 
 - subagent_type: weather-agent
-- description: Fetch Dubai weather data
+- description: 获取迪拜天气数据
 - prompt: Fetch the current temperature for Dubai, UAE in [unit requested by user]. Return the numeric temperature value and unit. The agent has a preloaded skill (weather-fetcher) that provides the detailed instructions.
 - model: haiku
 

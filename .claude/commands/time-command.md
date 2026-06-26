@@ -1,5 +1,5 @@
 ---
-description: Display the current time in Pakistan Standard Time (PKT, UTC+5)
+description: 显示巴基斯坦标准时间（PKT, UTC+5）的当前时间
 ---
 
 # Time Command

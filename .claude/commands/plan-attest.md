@@ -1,5 +1,5 @@
 ---
-description: "Lock the current task_plan.md content with a SHA-256 attestation. Hooks then refuse to inject plan content if the file diverges from the attested hash, blocking silent tampering. Use --show to print the stored hash, --clear to remove the attestation. Available since v2.37.0."
+description: "使用 SHA-256 验证锁定当前 task_plan.md 内容。如果文件与验证哈希不一致，钩子将拒绝注入计划内容，阻止静默篡改。使用 --show 打印存储的哈希，--clear 移除验证。v2.37.0 起可用。"
 disable-model-invocation: true
 allowed-tools: "Bash"
 ---

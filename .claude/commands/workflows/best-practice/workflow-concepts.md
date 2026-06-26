@@ -1,5 +1,5 @@
 ---
-description: Update the README CONCEPTS section with the latest Claude Code features and concepts
+description: 使用最新的 Claude Code 功能和概念更新 README 概念部分
 argument-hint: [number of changelog versions to check, default 10]
 ---
 
