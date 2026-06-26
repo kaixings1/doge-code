@@ -1,5 +1,5 @@
 ---
-description: Track Claude Code settings report changes and find what needs updating
+description: 跟踪 Claude Code 设置报告变化，发现需要更新的内容
 argument-hint: [number of versions to check, default 10]
 ---
 

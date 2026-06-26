@@ -1,6 +1,6 @@
 ---
 allowed-tools: Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)
-description: Review a pull request
+description: 审查拉取请求（Pull Request）
 ---
 
 Perform a comprehensive code review using subagents for key areas:
