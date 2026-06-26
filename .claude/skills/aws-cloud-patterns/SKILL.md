@@ -1,6 +1,6 @@
 ---
 name: aws-cloud-patterns
-description: aws cloud patterns - AWS cloud patterns for Lambda, ECS, S3, DynamoDB, and Infras...
+description: placeholder
 ---
 
 # AWS Cloud Patterns
