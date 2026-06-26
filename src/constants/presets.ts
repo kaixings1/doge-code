@@ -43,6 +43,9 @@ export const OPENCLAW_PRESETS: PresetEndpoint[] = [
   { label: 'ModelStudio', provider: 'openai', baseURL: 'https://coding-intl.dashscope.aliyuncs.com/v1/chat/completions', defaultModel: 'Qwen3.5-27B', apiKeyRequired: true, group: 'Chinese AI', docs: 'MODELSTUDIO_API_KEY' },
   { label: 'MiniMax', provider: 'openai', baseURL: 'https://api.minimax.chat/v1/chat/completions', defaultModel: 'MiniMax-Text-01', apiKeyRequired: true, group: 'Chinese AI', docs: 'MINIMAX_API_KEY' },
   { label: 'Z.AI', provider: 'openai', baseURL: 'https://api.z.ai/v1/chat/completions', defaultModel: 'zai-default', apiKeyRequired: true, group: 'Chinese AI', docs: 'ZAI_API_KEY' },
+  { label: 'SiliconFlow (硅基流动)', provider: 'openai', baseURL: 'https://api.siliconflow.cn/v1/chat/completions', defaultModel: 'deepseek-ai/DeepSeek-V3', apiKeyRequired: true, group: 'Chinese AI', docs: 'SILICONFLOW_API_KEY' },
+  { label: 'StepFun (阶跃星辰)', provider: 'openai', baseURL: 'https://api.stepfun.com/v1/chat/completions', defaultModel: 'step-2-16k', apiKeyRequired: true, group: 'Chinese AI', docs: 'STEPFUN_API_KEY' },
+  { label: 'Yi (零一万物)', provider: 'openai', baseURL: 'https://api.lingyiwanwu.com/v1/chat/completions', defaultModel: 'yi-lightning', apiKeyRequired: true, group: 'Chinese AI', docs: 'YI_API_KEY' },
 
   // --- US AI ---
   { label: 'OpenAI', provider: 'openai', baseURL: 'https://api.openai.com/v1/chat/completions', defaultModel: 'gpt-4o', apiKeyRequired: true, group: 'US AI', docs: 'OPENAI_API_KEY' },
