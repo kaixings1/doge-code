@@ -1,3 +1,7 @@
+---
+description: 将特定工作项挑选到目标环境
+---
+
 Cherry-pick specific work items to an environment. Usage: `/cherry-pick <work-item-ids> <environment>`
 
 Parse `$ARGUMENTS` to extract:

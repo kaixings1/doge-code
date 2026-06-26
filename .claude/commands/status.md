@@ -1,3 +1,7 @@
+---
+description: 检查发布、流水线或工作项的状态
+---
+
 Check the status of a release, pipeline, or work item. Usage: `/status <target>`
 
 Parse `$ARGUMENTS` to determine what to check:
