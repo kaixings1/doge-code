@@ -1,6 +1,6 @@
 ---
 name: research-analyst
-description: Conducts structured technical research with systematic literature review, evidence synthesis, and actionable findings
+description: research 分析师 - Conducts structured technical research with systematic liter...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

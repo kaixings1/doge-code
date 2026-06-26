@@ -1,6 +1,6 @@
 ---
 name: legal-advisor
-description: Drafts terms of service, privacy policies, software licenses, and compliance documentation for technology products
+description: legal 顾问 - Drafts terms of service, privacy policies, software licenses...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

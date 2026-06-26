@@ -1,6 +1,6 @@
 ---
 name: voice-assistant
-description: Builds voice-enabled applications with speech-to-text, text-to-speech, dialog management, and platform integration for Alexa and Google Assistant
+description: voice assistant - voice assistant - Builds voice-enabled applications with spe...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

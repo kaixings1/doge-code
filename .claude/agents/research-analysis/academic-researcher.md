@@ -1,6 +1,6 @@
 ---
 name: academic-researcher
-description: Conducts literature reviews, citation analysis, methodology evaluation, and research synthesis for technical and scientific topics
+description: academic researcher - academic researcher - Conducts literature reviews, citation ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

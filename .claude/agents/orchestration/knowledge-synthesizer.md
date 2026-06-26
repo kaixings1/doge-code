@@ -1,6 +1,6 @@
 ---
 name: knowledge-synthesizer
-description: Compress and synthesize information across sources, build knowledge graphs, and extract insights
+description: knowledge synthesizer - knowledge synthesizer - Compress and synthesize information ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

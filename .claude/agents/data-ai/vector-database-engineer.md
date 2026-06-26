@@ -1,6 +1,6 @@
 ---
 name: vector-database-engineer
-description: Designs embedding pipelines and vector search systems using FAISS, Pinecone, Qdrant, and Weaviate for semantic retrieval at scale
+description: vector 数据库 工程师 - Designs embedding pipelines and vector search systems using ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

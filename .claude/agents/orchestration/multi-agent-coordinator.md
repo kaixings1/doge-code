@@ -1,6 +1,6 @@
 ---
 name: multi-agent-coordinator
-description: Coordinate parallel agent execution, manage dependencies, and merge outputs from multiple agents
+description: multi 代理 协调者 - Coordinate parallel agent execution, manage dependencies, an...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

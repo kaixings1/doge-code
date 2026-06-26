@@ -1,6 +1,6 @@
 ---
 name: sales-engineer
-description: Creates technical demos, proof-of-concept implementations, integration guides, and competitive technical analysis for sales engagements
+description: sales 工程师 - Creates technical demos, proof-of-concept implementations, i...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

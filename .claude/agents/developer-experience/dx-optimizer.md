@@ -1,6 +1,6 @@
 ---
 name: dx-optimizer
-description: Improves developer experience through tooling ergonomics, workflow friction reduction, and environment standardization
+description: dx optimizer - dx optimizer - Improves developer experience through tooling...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

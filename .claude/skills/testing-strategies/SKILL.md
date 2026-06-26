@@ -1,6 +1,6 @@
 ---
 name: testing-strategies
-description: Testing strategies including contract testing, snapshot testing, mutation testing, property-based testing, and test organization
+description: 测试 strategies - Testing strategies including contract testing, snapshot test...
 ---
 
 # Testing Strategies

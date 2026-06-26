@@ -1,6 +1,6 @@
 ---
 name: autoresearch-agent
-description: Automated ML experiment optimization using tree search — designs experiments, generates code, evaluates results, and iterates
+description: autoresearch 代理 - Automated ML experiment optimization using tree search — des...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

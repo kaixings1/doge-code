@@ -1,6 +1,6 @@
 ---
 name: cli-developer
-description: Builds robust CLI tools using Commander.js, yargs, clap, and other frameworks with polished user interfaces
+description: cli 开发者 - Builds robust CLI tools using Commander.js, yargs, clap, and...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

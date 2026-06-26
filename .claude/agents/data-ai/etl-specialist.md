@@ -1,6 +1,6 @@
 ---
 name: etl-specialist
-description: Builds robust data pipelines with schema evolution, data quality checks, incremental loading, and fault-tolerant processing
+description: etl 专家 - Builds robust data pipelines with schema evolution, data qua...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

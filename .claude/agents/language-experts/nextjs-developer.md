@@ -1,6 +1,6 @@
 ---
 name: nextjs-developer
-description: Next.js 14+ App Router development with React Server Components, ISR, middleware, and edge runtime
+description: nextjs 开发者 - Next.js 14+ App Router development with React Server Compone...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

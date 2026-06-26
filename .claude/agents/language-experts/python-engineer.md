@@ -1,6 +1,6 @@
 ---
 name: python-engineer
-description: Python 3.12+ with typing, async/await, dataclasses, pydantic, and packaging
+description: python 工程师 - Python 3.12+ with typing, async/await, dataclasses, pydantic...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

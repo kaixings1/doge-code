@@ -1,6 +1,6 @@
 ---
 name: trend-analyst
-description: Analyzes technology trends, adoption curves, and ecosystem shifts to inform strategic technical decisions
+description: trend 分析师 - Analyzes technology trends, adoption curves, and ecosystem s...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---
