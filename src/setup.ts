@@ -65,6 +65,7 @@ export async function setup(
   worktreePRNumber?: number,
   messagingSocketPath?: string,
 ): Promise<void> {
+  require('fs').writeFileSync('d:/init_debug.log', `setup() ENTER at ${Date.now()}\n`, { flag: 'a' });
   logForDiagnosticsNoPII('info', 'setup_started')
 
   // Check for Node.js version < 18

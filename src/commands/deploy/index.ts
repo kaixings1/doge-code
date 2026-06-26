@@ -11,22 +11,22 @@ export const call: LocalJSXCommandCall = async (args) => {
   if (c === 'ssh') {
     const host = p[1]
     const cmd = p.slice(2).join(' ')
-    if (!host || !cmd) return { type: 'text', value: 'Usage: /deploy ssh <host> <command>' }
+    if (!host || !cmd) return { type: 'text', value: '用法: /deploy ssh <host> <command>' }
     try { r = execSync('ssh ' + host + ' ' + cmd, { encoding: 'utf-8', timeout: 30000 }).trim() }
-    catch (e: any) { r = 'Error: ' + e.message }
+    catch (e: any) { r = '错误: ' + e.message }
   } else if (c === 'scp') {
-    if (!p[1] || !p[2]) return { type: 'text', value: 'Usage: /deploy scp <src> <host>:<dest>' }
+    if (!p[1] || !p[2]) return { type: 'text', value: '用法: /deploy scp <src> <host>:<dest>' }
     try { r = execSync('scp ' + p[1] + ' ' + p[2], { encoding: 'utf-8', timeout: 60000 }).trim() }
-    catch (e: any) { r = 'Error: ' + e.message }
+    catch (e: any) { r = '错误: ' + e.message }
   } else if (c === 'pm2') {
     const sub = p[1] || 'list'
     try { r = execSync('pm2 ' + sub + ' ' + p.slice(2).join(' '), { encoding: 'utf-8', timeout: 15000 }).trim() }
-    catch (e: any) { r = 'Error: ' + e.message }
+    catch (e: any) { r = '错误: ' + e.message }
   } else {
-    r = 'Unknown: ' + c
+    r = '未知: ' + c
   }
-  return { type: 'text', value: r || '(no output)' }
+  return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'deploy', description: '部署工具：ssh/scp/pm2 管理', argumentHint: '<ssh|scp|pm2> [args]', isEnabled: true, load: () => import('./index.js') } satisfies Command
+const cmd = { type: 'local-jsx' as const, name: 'deploy', description: '部署工具：ssh/scp/pm2 管理', argumentHint: '<ssh|scp|pm2> [args]', isEnabled: () => true, load: () => import('./index.js') } satisfies Command
 export default cmd

@@ -623,7 +623,7 @@ export async function* runAgent({
       const skill = getCommand(resolvedName, allSkills)
       if (skill.type !== 'prompt') {
         logForDebugging(
-          `[Agent: ${agentDefinition.agentType}] Warning: Skill '${skillName}' is not a prompt-based skill`,
+          `[Agent: ${agentDefinition.agentType}] 警告: 技能 '${skillName}' 不是基于提示词(prompt)的技能`,
           { level: 'warn' },
         )
         continue
