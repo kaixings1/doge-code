@@ -4,7 +4,7 @@ import { execSync } from 'child_process'
 
 function run(cmd: string): string {
   try { return execSync(cmd, { encoding: 'utf-8', timeout: 30000 }).trim() }
-  catch (e: any) { return 'Error: ' + e.message }
+  catch (e: any) { return '错误: ' + e.message }
 }
 
 export const call: LocalJSXCommandCall = async (args) => {
@@ -18,9 +18,9 @@ export const call: LocalJSXCommandCall = async (args) => {
   else if (c === 'get') { r = run('kubectl get ' + (p[1] || 'pods')) }
   else if (c === 'describe') { r = run('kubectl describe ' + (p[1] || 'pod') + ' ' + (p[2] || '')) }
   else if (c === 'logs') { r = run('kubectl logs --tail=50 ' + (p[1] || '')) }
-  else { r = 'Unknown: ' + c }
-  return { type: 'text', value: r || '(no output)' }
+  else { r = '未知: ' + c }
+  return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'k8s', description: 'Kubernetes 集群管理：pods/deploy/svc/get/describe/logs', argumentHint: '<pods|deploy|svc|get|describe|logs>', isEnabled: true, load: () => import('./index.js') } satisfies Command
+const cmd = { type: 'local-jsx' as const, name: 'k8s', description: 'Kubernetes 集群管理：pods/deploy/svc/get/describe/logs', argumentHint: '<pods|deploy|svc|get|describe|logs>', isEnabled: () => true, load: () => import('./index.js') } satisfies Command
 export default cmd

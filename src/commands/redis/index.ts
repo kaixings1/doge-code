@@ -4,7 +4,7 @@ import { execSync } from 'child_process'
 
 function run(cmd: string): string {
   try { return execSync(cmd, { encoding: 'utf-8', timeout: 10000 }).trim() }
-  catch (e: any) { return 'Error: ' + e.message }
+  catch (e: any) { return '错误: ' + e.message }
 }
 
 export const call: LocalJSXCommandCall = async (args) => {
@@ -21,9 +21,9 @@ export const call: LocalJSXCommandCall = async (args) => {
   else if (c === 'ping') { r = run(redisCmd + ' PING') }
   else if (c === 'info') { r = run(redisCmd + ' INFO') }
   else if (c === 'flush') { r = run(redisCmd + ' FLUSHDB') }
-  else { r = 'Unknown: ' + c }
-  return { type: 'text', value: r || '(no output)' }
+  else { r = '未知: ' + c }
+  return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'redis', description: 'Redis 缓存操作：get/set/del/keys/ping/info/flush', argumentHint: '<get|set|del|keys|ping|info|flush> [args]', isEnabled: true, load: () => import('./index.js') } satisfies Command
+const cmd = { type: 'local-jsx' as const, name: 'redis', description: 'Redis 缓存操作：get/set/del/keys/ping/info/flush', argumentHint: '<get|set|del|keys|ping|info|flush> [args]', isEnabled: () => true, load: () => import('./index.js') } satisfies Command
 export default cmd

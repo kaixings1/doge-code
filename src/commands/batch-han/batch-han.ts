@@ -272,7 +272,7 @@ async function executeBatchHan(
       appendLog(logFile, '▶️ 第 ' + (index + 1) + ' 批开始（' + batch.length + ' 个文件，约 ' + totalTokens + ' tokens）')
 
       const filePaths = batch.map(f => f.path).join('\n')
-      const dogePrompt = 'Please strictly follow the task below to modify the following TypeScript files. No feedback needed, directly modify and overwrite.\n\nTasks:\n1. Localize: convert all English comments and UI strings to Simplified Chinese\n2. Syntax upgrade: use ES2024 features (?., ??, const/let etc.)\n3. Type hardening: replace implicit any with concrete types, ban any\n4. Keep logic unchanged\n\nFiles to modify:\n' + filePaths
+      const dogePrompt = '请严格按照以下任务修改以下 TypeScript 文件。无需反馈，直接修改并覆盖。\n\n任务:\n1. 本地化: 将所有英文注释和 UI 字符串转换为简体中文\n2. 语法升级: 使用 ES2024 特性 (?., ??, const/let 等)\n3. 类型强化: 用具体类型替换隐式 any，禁止使用 any\n4. 保持逻辑不变\n\n需要修改的文件:\n' + filePaths
 
       for (let attempt = 1; attempt <= RETRY_LIMIT + 1; attempt++) {
         try {

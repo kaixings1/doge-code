@@ -1,7 +1,0 @@
-{
-  "name": "code-guardian",
-  "version": "1.0.0",
-  "description": "Automated code review, security scanning, and quality enforcement",
-  "commands": ["commands/review.md", "commands/security-scan.md"],
-  "agents": ["agents/reviewer.md"]
-}

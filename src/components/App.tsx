@@ -37,7 +37,7 @@ class BootstrapBoundary extends React.Component<{
       return this.props.children;
     }
     return <Box flexDirection="column" paddingX={1}>
-      <Text color="red">Failed to initialize restored app bootstrap.</Text>
+      <Text color="red">初始化恢复的应用引导失败。</Text>
       <Text dimColor>{this.state.error.message || String(this.state.error)}</Text>
     </Box>;
   }

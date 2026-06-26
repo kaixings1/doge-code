@@ -129,7 +129,7 @@ export function formatGoToDefinitionResult(
   cwd?: string,
 ): string {
   if (!result) {
-    return 'No definition found. This may occur if the cursor is not on a symbol, or if the definition is in an external library not indexed by the LSP server.'
+    return '未找到定义。这可能是因为光标不在符号上，或定义位于 LSP 服务器未索引的外部库中。'
   }
 
   if (Array.isArray(result)) {
@@ -138,11 +138,11 @@ export function formatGoToDefinitionResult(
       isLocationLink(item) ? locationLinkToLocation(item) : item,
     )
 
-    // Log and filter out any locations with undefined uris
+    // 过滤掉undefined uris
     const invalidLocations = locations.filter(loc => !loc || !loc.uri)
     if (invalidLocations.length > 0) {
       logForDebugging(
-        `formatGoToDefinitionResult: Filtering out ${invalidLocations.length} invalid location(s) - this should have been caught earlier`,
+        `formatGoToDefinitionResult: 过滤掉 ${invalidLocations.length} 个无效位置 - 本应更早捕获此问题`,
         { level: 'warn' },
       )
     }
@@ -150,22 +150,22 @@ export function formatGoToDefinitionResult(
     const validLocations = locations.filter(loc => loc && loc.uri)
 
     if (validLocations.length === 0) {
-      return 'No definition found. This may occur if the cursor is not on a symbol, or if the definition is in an external library not indexed by the LSP server.'
+      return '未找到定义。这可能是因为光标不在符号上，或定义位于 LSP 服务器未索引的外部库中。'
     }
     if (validLocations.length === 1) {
-      return `Defined in ${formatLocation(validLocations[0]!, cwd)}`
+      return `定义位置: ${formatLocation(validLocations[0]!, cwd)}`
     }
     const locationList = validLocations
       .map(loc => `  ${formatLocation(loc, cwd)}`)
       .join('\n')
-    return `Found ${validLocations.length} definitions:\n${locationList}`
+    return `找到 ${validLocations.length} 个定义:\n${locationList}`
   }
 
-  // Single result - convert LocationLink if needed
+  // 单个结果 - 如有必要转换 LocationLink
   const location = isLocationLink(result)
     ? locationLinkToLocation(result)
     : result
-  return `Defined in ${formatLocation(location, cwd)}`
+  return `定义位置: ${formatLocation(location, cwd)}`
 }
 
 /**
@@ -176,10 +176,10 @@ export function formatFindReferencesResult(
   cwd?: string,
 ): string {
   if (!result || result.length === 0) {
-    return 'No references found. This may occur if the symbol has no usages, or if the LSP server has not fully indexed the workspace.'
+    return '未找到引用。这可能是因为符号没有被使用，或 LSP 服务器尚未完全索引工作区。'
   }
 
-  // Log and filter out any locations with undefined uris
+  // 过滤掉undefined uris
   const invalidLocations = result.filter(loc => !loc || !loc.uri)
   if (invalidLocations.length > 0) {
     logForDebugging(
@@ -191,18 +191,18 @@ export function formatFindReferencesResult(
   const validLocations = result.filter(loc => loc && loc.uri)
 
   if (validLocations.length === 0) {
-    return 'No references found. This may occur if the symbol has no usages, or if the LSP server has not fully indexed the workspace.'
+    return '未找到引用。这可能是因为符号没有被使用，或 LSP 服务器尚未完全索引工作区。'
   }
 
   if (validLocations.length === 1) {
-    return `Found 1 reference:\n  ${formatLocation(validLocations[0]!, cwd)}`
+    return `找到 1 个引用:\n  ${formatLocation(validLocations[0]!, cwd)}`
   }
 
   // Group references by file
   const byFile = groupByFile(validLocations, cwd)
 
   const lines: string[] = [
-    `Found ${validLocations.length} references across ${byFile.size} files:`,
+    `在 ${byFile.size} 个文件中找到 ${validLocations.length} 个引用:`,
   ]
 
   for (const [filePath, locations] of byFile) {
@@ -210,7 +210,7 @@ export function formatFindReferencesResult(
     for (const loc of locations) {
       const line = loc.range.start.line + 1
       const character = loc.range.start.character + 1
-      lines.push(`  Line ${line}:${character}`)
+      lines.push(`  行 ${line}:${character}`)
     }
   }
 
@@ -252,7 +252,7 @@ function extractMarkupText(
  */
 export function formatHoverResult(result: Hover | null, _cwd?: string): string {
   if (!result) {
-    return 'No hover information available. This may occur if the cursor is not on a symbol, or if the LSP server has not fully indexed the file.'
+    return '无悬停信息。这可能是因为光标不在符号上，或 LSP 服务器尚未完全索引文件。'
   }
 
   const content = extractMarkupText(result.contents)
@@ -260,7 +260,7 @@ export function formatHoverResult(result: Hover | null, _cwd?: string): string {
   if (result.range) {
     const line = result.range.start.line + 1
     const character = result.range.start.character + 1
-    return `Hover info at ${line}:${character}:\n\n${content}`
+    return `悬停信息 (${line}:${character}):\n\n${content}`
   }
 
   return content
