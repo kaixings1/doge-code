@@ -1,3 +1,7 @@
+---
+description: 将代码从一个环境升级到下一个环境
+---
+
 Promote all code from one environment to the next. Usage: `/promote [source] [target]`
 
 Parse `$ARGUMENTS` to extract:

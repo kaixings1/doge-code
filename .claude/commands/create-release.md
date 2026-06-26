@@ -1,3 +1,7 @@
+---
+description: 创建新发布版本
+---
+
 Create a new release. Follow this workflow:
 
 ## Step 1: Determine Release Number
