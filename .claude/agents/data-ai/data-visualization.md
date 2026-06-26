@@ -1,6 +1,6 @@
 ---
 name: data-visualization
-description: Creates interactive dashboards and data visualizations using D3.js, Chart.js, Matplotlib, and Plotly with accessibility and performance optimization
+description: data visualization - data visualization - Creates interactive dashboards and data...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

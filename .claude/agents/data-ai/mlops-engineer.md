@@ -1,6 +1,6 @@
 ---
 name: mlops-engineer
-description: ML model lifecycle management with serving infrastructure, monitoring, A/B testing, and CI/CD for models
+description: mlops 工程师 - ML model lifecycle management with serving infrastructure, m...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

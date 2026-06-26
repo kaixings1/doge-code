@@ -1,6 +1,6 @@
 ---
 name: legacy-modernizer
-description: Plans and executes legacy codebase migrations with incremental strategies and risk mitigation
+description: legacy modernizer - legacy modernizer - Plans and executes legacy codebase migra...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

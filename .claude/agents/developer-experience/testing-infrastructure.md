@@ -1,6 +1,6 @@
 ---
 name: testing-infrastructure
-description: Designs test runners, CI test splitting, flaky test management, and test infrastructure that scales across large engineering organizations
+description: 测试 基础设施 - Designs test runners, CI test splitting, flaky test manageme...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

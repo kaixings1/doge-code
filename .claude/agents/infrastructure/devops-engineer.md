@@ -1,6 +1,6 @@
 ---
 name: devops-engineer
-description: CI/CD pipelines, Docker, Kubernetes, monitoring, and GitOps workflows
+description: DevOps 工程师 - CI/CD pipelines, Docker, Kubernetes, monitoring, and GitOps ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

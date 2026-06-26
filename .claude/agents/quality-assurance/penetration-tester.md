@@ -1,6 +1,6 @@
 ---
 name: penetration-tester
-description: Authorized security testing, OWASP Top 10 assessment, vulnerability reporting, and remediation guidance
+description: penetration tester - penetration tester - Authorized security testing, OWASP Top ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

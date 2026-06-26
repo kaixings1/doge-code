@@ -1,6 +1,6 @@
 ---
 name: qa-automation
-description: Test automation frameworks, CI integration, test data management, and reporting
+description: qa 自动化 - Test automation frameworks, CI integration, test data manage...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

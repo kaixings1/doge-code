@@ -1,6 +1,6 @@
 ---
 name: tdd-mastery
-description: Test-driven development workflow with Red-Green-Refactor cycle across languages
+description: tdd mastery - Test-driven development workflow with Red-Green-Refactor cyc...
 ---
 
 # TDD Mastery

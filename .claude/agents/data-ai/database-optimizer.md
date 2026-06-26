@@ -1,6 +1,6 @@
 ---
 name: database-optimizer
-description: Database performance optimization with query tuning, indexing strategies, partitioning, and capacity planning
+description: 数据库 optimizer - Database performance optimization with query tuning, indexin...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

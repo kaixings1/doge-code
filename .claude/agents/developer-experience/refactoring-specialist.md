@@ -1,6 +1,6 @@
 ---
 name: refactoring-specialist
-description: Performs systematic code refactoring including dead code removal, abstraction extraction, and structural improvements
+description: refactoring 专家 - Performs systematic code refactoring including dead code rem...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

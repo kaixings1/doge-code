@@ -1,6 +1,6 @@
 ---
 name: error-coordinator
-description: Handle errors across multi-agent workflows, implement recovery strategies, and prevent cascading failures
+description: 错误 协调者 - Handle errors across multi-agent workflows, implement recove...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

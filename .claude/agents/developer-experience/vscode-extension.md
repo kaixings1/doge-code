@@ -1,6 +1,6 @@
 ---
 name: vscode-extension
-description: Develops VS Code extensions with Language Server Protocol integration, custom editors, webview panels, and marketplace publishing
+description: vscode extension - vscode extension - Develops VS Code extensions with Language...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

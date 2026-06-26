@@ -1,6 +1,6 @@
 ---
 name: data-scientist
-description: Statistical analysis, data visualization, hypothesis testing, and exploratory data analysis with Python
+description: data 科学家 - Statistical analysis, data visualization, hypothesis testing...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---
