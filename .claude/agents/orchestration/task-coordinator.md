@@ -1,6 +1,6 @@
 ---
 name: task-coordinator
-description: Multi-agent task distribution, dependency management, and parallel execution
+description: task 协调者 - Multi-agent task distribution, dependency management, and pa...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

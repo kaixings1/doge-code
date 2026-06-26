@@ -1,6 +1,6 @@
 ---
 name: ui-designer
-description: UI/UX implementation, design systems, Figma-to-code translation, and component libraries
+description: ui designer - ui designer - UI/UX implementation, design systems, Figma-to...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

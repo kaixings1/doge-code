@@ -1,6 +1,6 @@
 ---
 name: csharp-developer
-description: C# and .NET 8+ development with ASP.NET Core, Entity Framework Core, minimal APIs, and async patterns
+description: csharp 开发者 - C# and .NET 8+ development with ASP.NET Core, Entity Framewo...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

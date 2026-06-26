@@ -1,6 +1,6 @@
 ---
 name: project-manager
-description: Manages sprint planning, task tracking, timeline estimation, and Agile ceremony facilitation
+description: project 经理 - Manages sprint planning, task tracking, timeline estimation,...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: angular-architect
-description: Angular 17+ development with signals, standalone components, RxJS patterns, and NgRx state management
+description: angular 架构师 - Angular 17+ development with signals, standalone components,...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

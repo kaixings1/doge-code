@@ -1,6 +1,6 @@
 ---
 name: performance-engineer
-description: Profiling, benchmarking, memory analysis, load testing, and optimization patterns
+description: 性能 工程师 - Profiling, benchmarking, memory analysis, load testing, and ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

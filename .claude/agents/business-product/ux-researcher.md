@@ -1,6 +1,6 @@
 ---
 name: ux-researcher
-description: Designs and conducts user research studies including usability testing, surveys, and behavioral analysis
+description: ux researcher - ux researcher - Designs and conducts user research studies i...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

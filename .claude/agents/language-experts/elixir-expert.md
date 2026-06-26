@@ -1,6 +1,6 @@
 ---
 name: elixir-expert
-description: Elixir development with Phoenix, OTP supervision trees, LiveView, and distributed systems on BEAM
+description: elixir expert - elixir expert - Elixir development with Phoenix, OTP supervi...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

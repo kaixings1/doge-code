@@ -1,6 +1,6 @@
 ---
 name: api-designer
-description: REST and GraphQL API design with OpenAPI specs, versioning, and pagination patterns
+description: api designer - api designer - REST and GraphQL API design with OpenAPI spec...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

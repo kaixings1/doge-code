@@ -1,6 +1,6 @@
 ---
 name: education-tech
-description: Builds learning management systems with SCORM/xAPI compliance, adaptive learning engines, assessment tools, and learner analytics
+description: education tech - education tech - Builds learning management systems with SCO...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: django-patterns
-description: Django architecture patterns including DRF, ORM optimization, signals, middleware, and project structure
+description: django patterns - Django architecture patterns including DRF, ORM optimization...
 ---
 
 # Django Patterns

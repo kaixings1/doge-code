@@ -1,6 +1,6 @@
 ---
 name: performance-monitor
-description: Monitor agent execution, track token usage, measure response quality, and optimize workflows
+description: 性能 monitor - Monitor agent execution, track token usage, measure response...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

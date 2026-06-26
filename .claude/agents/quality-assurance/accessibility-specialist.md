@@ -1,6 +1,6 @@
 ---
 name: accessibility-specialist
-description: WCAG 2.2 compliance, screen reader testing, keyboard navigation, and ARIA patterns
+description: accessibility 专家 - WCAG 2.2 compliance, screen reader testing, keyboard navigat...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

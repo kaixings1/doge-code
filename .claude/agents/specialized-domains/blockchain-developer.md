@@ -1,6 +1,6 @@
 ---
 name: blockchain-developer
-description: Develops smart contracts and Web3 applications with Solidity, Hardhat, and blockchain integration patterns
+description: blockchain 开发者 - Develops smart contracts and Web3 applications with Solidity...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

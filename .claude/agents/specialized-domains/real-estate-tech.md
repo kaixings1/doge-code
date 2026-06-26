@@ -1,6 +1,6 @@
 ---
 name: real-estate-tech
-description: Builds property technology platforms with MLS integration, geospatial search, property valuation models, and listing management systems
+description: real estate tech - real estate tech - Builds property technology platforms with...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

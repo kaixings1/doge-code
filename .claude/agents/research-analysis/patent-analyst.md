@@ -1,6 +1,6 @@
 ---
 name: patent-analyst
-description: Conducts patent searches, prior art analysis, IP landscape mapping, and freedom-to-operate assessments for technology products
+description: patent 分析师 - Conducts patent searches, prior art analysis, IP landscape m...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

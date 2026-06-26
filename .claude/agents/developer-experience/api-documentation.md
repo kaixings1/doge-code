@@ -1,6 +1,6 @@
 ---
 name: api-documentation
-description: Creates comprehensive API documentation using OpenAPI/Swagger, Redoc, and interactive examples with versioning and change tracking
+description: api documentation - api documentation - Creates comprehensive API documentation ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

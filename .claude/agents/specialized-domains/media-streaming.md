@@ -1,6 +1,6 @@
 ---
 name: media-streaming
-description: Builds video streaming platforms with HLS/DASH delivery, transcoding pipelines, CDN optimization, and adaptive bitrate streaming
+description: media streaming - media streaming - Builds video streaming platforms with HLS/...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

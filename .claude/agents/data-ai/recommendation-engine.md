@@ -1,6 +1,6 @@
 ---
 name: recommendation-engine
-description: Designs recommendation systems using collaborative filtering, content-based methods, and hybrid approaches with real-time personalization
+description: recommendation engine - recommendation engine - Designs recommendation systems using...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

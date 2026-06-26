@@ -1,6 +1,6 @@
 ---
 name: zig-developer
-description: Zig systems programming, comptime metaprogramming, allocator strategies, and C interop
+description: zig 开发者 - Zig systems programming, comptime metaprogramming, allocator...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---
