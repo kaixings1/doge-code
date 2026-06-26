@@ -1,6 +1,6 @@
 ---
 name: continuous-learning
-description: continuous learning - Auto-extract patterns from coding sessions, track correction...
+description: Auto-extract patterns from coding sessions, track corrections, and build reusable knowledge with confidence scoring
 ---
 
 # Continuous Learning
