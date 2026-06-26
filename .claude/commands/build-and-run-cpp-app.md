@@ -1,3 +1,7 @@
+---
+description: 创建或更新 macOS 构建/运行脚本并执行
+---
+
 # /build-and-run-cpp-app
 
 创建或更新项目本地 macOS `build_and_run.sh` 脚本，连接 Codex 应用 Run 按钮，然后使用该脚本作为默认构建/运行入口点。

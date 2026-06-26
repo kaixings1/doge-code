@@ -1,3 +1,7 @@
+---
+description: 检查 GitHub 问题并确定类型、优先级和后续操作
+---
+
 # /triage-issue
 
 检查 GitHub 问题，并确定其类型、优先级和后续操作。
