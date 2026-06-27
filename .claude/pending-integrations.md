@@ -15,7 +15,7 @@
 4. `jnMetaCode/superpowers-zh` (6k★) — superpowers 中文增强版
 5. `Orchestra-Research/AI-Research-SKILLs` (10k★) — AI 研究技能
 
-## 🔵 新任务：zai-org/Open-AutoGLM
+## ✅ 已完成：zai-org/Open-AutoGLM
 - **Stars**: 25,618 ★
 - **描述**: 智谱清言开源的 Phone Agent 模型与框架
 - **仓库**: https://github.com/zai-org/Open-AutoGLM
