@@ -1,74 +1,80 @@
 ---
 name: github
-description: GitHub工作流技能
+description: "Use the `gh` CLI for issues, pull requests, Actions runs, and GitHub API queries."
+risk: safe
+source: "Dimillian/Skills (MIT)"
+date_added: "2026-03-25"
 ---
 
-# GitHub
+# GitHub Skill
 
-## Overview
+Use the `gh` CLI to interact with GitHub. Always specify `--repo owner/repo` when not in a git directory, or use URLs directly.
 
-Use this skill as the umbrella entrypoint for general GitHub work in this plugin. It should decide whether the task stays in repo and PR triage or should be handed off to a more specific review, CI, or publish workflow.
+## When to Use
+- When the user asks about GitHub issues, pull requests, workflow runs, or CI failures.
+- When you need `gh issue`, `gh pr`, `gh run`, or `gh api` from the command line.
 
-This plugin is intentionally hybrid:
+## Pull Requests
 
-- Prefer the GitHub app from this plugin for repository, issue, pull request, comment, label, reaction, and PR creation workflows.
-- Use local `git` and `gh` only when the connector does not cover the job well, especially for current-branch PR discovery, branch creation, commit and push, `gh auth status`, and GitHub Actions log inspection.
-- Keep connector state and local checkout context aligned. If the request is about the current branch, resolve the local repo and branch before acting.
+Check CI status on a PR:
+```bash
+gh pr checks 55 --repo owner/repo
+```
 
-Once the intent is clear, route to the specialist skill immediately and do not keep broad GitHub triage in scope longer than needed.
+List recent workflow runs:
+```bash
+gh run list --repo owner/repo --limit 10
+```
 
-## Connector-First Responsibilities
+View a run and see which steps failed:
+```bash
+gh run view <run-id> --repo owner/repo
+```
 
-Handle these directly in this skill when the request does not need a narrower specialist workflow:
+View logs for failed steps only:
+```bash
+gh run view <run-id> --repo owner/repo --log-failed
+```
 
-- repository orientation once the repo, PR, issue, or local checkout is identified
-- recent PR or issue triage
-- PR metadata summaries
-- PR patch inspection
-- PR comments, labels, and reactions
-- issue lookup and summarization
-- PR creation after a branch is already pushed
+### Debugging a CI Failure
 
-Prefer the GitHub app from this plugin for those flows because it provides structured PR, issue, and review-adjacent data without depending on a local checkout. If the repository is not already identifiable from the user request or local git context, ask for the repo instead of pretending there is a repo-search flow that may not exist.
+Follow this sequence to investigate a failing CI run:
 
-## Routing Rules
+1. **Check PR status** — identify which checks are failing:
+   ```bash
+   gh pr checks 55 --repo owner/repo
+   ```
+2. **List recent runs** — find the relevant run ID:
+   ```bash
+   gh run list --repo owner/repo --limit 10
+   ```
+3. **View the failed run** — see which jobs and steps failed:
+   ```bash
+   gh run view <run-id> --repo owner/repo
+   ```
+4. **Fetch failure logs** — get the detailed output for failed steps:
+   ```bash
+   gh run view <run-id> --repo owner/repo --log-failed
+   ```
 
-1. Resolve the operating context first:
-   - If the user provides a repository, PR number, issue number, or URL, use that.
-   - If the request is about "this branch" or "the current PR", resolve local git context and use `gh` only as needed to discover the branch PR.
-   - If the repository is still ambiguous after local inspection, ask for the repo identifier.
-2. Classify the request before taking action:
-   - `repo or PR triage`: summarize PRs, issues, patches, comments, labels, reactions, or repository state
-   - `review follow-up`: unresolved review threads, requested changes, or inline review feedback
-   - `CI debugging`: failing checks, Actions logs, or CI root-cause analysis
-   - `publish changes`: create or switch branches, stage changes, commit, push, and open a draft PR
-3. Route to the specialist skill as soon as the category is clear:
-   - Review comments and requested changes: `../gh-address-comments/SKILL.md`
-   - Failing GitHub Actions checks: `../gh-fix-ci/SKILL.md`
-   - Commit, push, and open PR: `../yeet/SKILL.md`
-4. Keep the hybrid model consistent after routing:
-   - connector first for PR and issue data
-   - local `git` and `gh` only for the specific gaps the connector does not cover
+## API for Advanced Queries
 
-## Default Workflow
+The `gh api` command is useful for accessing data not available through other subcommands.
 
-1. Resolve repository and item scope.
-2. Gather structured PR or issue context through the GitHub app from this plugin.
-3. Decide whether the task stays in connector-backed triage or needs a specialist skill.
-4. Route immediately when the work becomes review follow-up, CI debugging, or publish workflow.
-5. End with a clear summary of what was inspected, what changed, and what remains.
+Get PR with specific fields:
+```bash
+gh api repos/owner/repo/pulls/55 --jq '.title, .state, .user.login'
+```
 
-## Output Expectations
+## JSON Output
 
-- For triage requests, return a concise summary of the repository, PR, or issue state and the next likely action.
-- For mixed requests, tell the user which specialist path you are taking and why.
-- For connector-backed write actions, restate the exact PR, issue, label, or reaction target before applying the change.
-- Never imply that GitHub Actions logs are available through the connector alone. That remains a `gh` workflow.
+Most commands support `--json` for structured output.  You can use `--jq` to filter:
 
-## Examples
+```bash
+gh issue list --repo owner/repo --json number,title --jq '.[] | "\(.number): \(.title)"'
+```
 
-- "Use GitHub to summarize the open PRs in this repo and tell me what needs attention."
-- "Help with this PR."
-- "Review the latest comments on PR 482 and tell me what is actionable."
-- "Debug the failing checks on this branch."
-- "Commit these changes, push them, and open a draft PR."
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

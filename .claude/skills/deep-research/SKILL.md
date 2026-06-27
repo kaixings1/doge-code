@@ -1,154 +1,120 @@
 ---
 name: deep-research
-description: 使用 firecrawl 和 exa 进行多源深度研究。搜索网络、综合发现、输出带引用的报告。当用户需要对任何主题进行彻底研究时使用。
+description: "Run autonomous research tasks that plan, search, read, and synthesize information into comprehensive reports."
+risk: safe
+source: "https://github.com/sanjay3290/ai-skills/tree/main/skills/deep-research"
+date_added: "2026-02-27"
 ---
 
-# 深度研究
+# Gemini Deep Research Skill
 
-使用 firecrawl 和 exa MCP 工具，从多个网络来源生成详尽、有引用的研究报告。
+Run autonomous research tasks that plan, search, read, and synthesize information into comprehensive reports.
 
-## 何时激活
+## When to Use This Skill
 
-- 用户要求深入研究任何主题
-- 竞品分析、技术评估或市场规模估算
-- 对公司、投资者或技术的尽职调查
-- 任何需要综合多个来源信息的问题
-- 用户说"研究一下"、"深度分析"、"调查"或"目前是什么情况"
+Use this skill when:
+- Performing market analysis
+- Conducting competitive landscaping
+- Creating literature reviews
+- Doing technical research
+- Performing due diligence
+- Need detailed, cited research reports
 
-## MCP 要求
+## Requirements
 
-至少需要以下之一：
-- **firecrawl** — `firecrawl_search`、`firecrawl_scrape`、`firecrawl_crawl`
-- **exa** — `web_search_exa`、`web_search_advanced_exa`、`crawling_exa`
+- Python 3.8+
+- httpx: `pip install -r requirements.txt`
+- GEMINI_API_KEY environment variable
 
-两者配合使用效果最佳。在 `~/.claude.json` 或 `~/.codex/config.toml` 中配置。
+## Setup
 
-## 工作流程
+1. Get a Gemini API key from [Google AI Studio](https://aistudio.google.com/)
+2. Set the environment variable:
+   ```bash
+   export GEMINI_API_KEY=your-api-key-here
+   ```
+   Or create a `.env` file in the skill directory.
 
-### 第一步：理解目标
+## Usage
 
-先问 1-2 个快速澄清问题：
-- "你的目标是什么——学习、做决策、还是写东西？"
-- "有什么特定的角度或深度要求？"
-
-如果用户说"直接研究就行"——就用合理默认值跳过提问。
-
-### 第二步：规划研究
-
-将主题拆解为 3-5 个研究子问题。示例：
-- 主题："AI 对医疗保健的影响"
-  - 目前 AI 在医疗保健中有哪些主要应用？
-  - 有哪些临床效果被测量过？
-  - 存在哪些监管挑战？
-  - 哪些公司正在引领这个领域？
-  - 市场规模和增长轨迹如何？
-
-### 第三步：执行多源搜索
-
-对每个子问题，使用可用的 MCP 工具进行搜索：
-
-**使用 firecrawl：**
-```
-firecrawl_search(query: "<子问题关键词>", limit: 8)
+### Start a research task
+```bash
+python3 scripts/research.py --query "Research the history of Kubernetes"
 ```
 
-**使用 exa：**
-```
-web_search_exa(query: "<子问题关键词>", numResults: 8)
-web_search_advanced_exa(query: "<关键词>", numResults: 5, startPublishedDate: "2025-01-01")
-```
-
-**搜索策略：**
-- 每个子问题使用 2-3 种不同的关键词变体
-- 混合通用搜索和新闻搜索
-- 目标收集 15-30 个不同的来源
-- 优先级：学术、官方、知名新闻 > 博客 > 论坛
-
-### 第四步：深度阅读关键来源
-
-对于最有价值的 URL，获取完整内容：
-
-**使用 firecrawl：**
-```
-firecrawl_scrape(url: "<url>")
+### With structured output format
+```bash
+python3 scripts/research.py --query "Compare Python web frameworks" \
+  --format "1. Executive Summary\n2. Comparison Table\n3. Recommendations"
 ```
 
-**使用 exa：**
-```
-crawling_exa(url: "<url>", tokensNum: 5000)
-```
-
-完整阅读 3-5 个关键来源以获得深度，不要只依赖搜索摘要。
-
-### 第五步：综合并撰写报告
-
-报告结构：
-
-```markdown
-# [主题]：研究报告
-*生成时间：[日期] | 来源数：[N] | 可信度：[高/中/低]*
-
-## 执行摘要
-[3-5 句话概述关键发现]
-
-## 1. [第一个主要主题]
-[带引用的发现]
-- 关键点 ([来源名称](url))
-- 支持数据 ([来源名称](url))
-
-## 2. [第二个主要主题]
-...
-
-## 3. [第三个主要主题]
-...
-
-## 关键结论
-- [可操作的洞察 1]
-- [可操作的洞察 2]
-- [可操作的洞察 3]
-
-## 来源
-1. [标题](url) — [一句话摘要]
-2. ...
-
-## 研究方法
-搜索了 [N] 个查询，覆盖网络和新闻。分析了 [M] 个来源。
-调查的子问题：[列表]
+### Stream progress in real-time
+```bash
+python3 scripts/research.py --query "Analyze EV battery market" --stream
 ```
 
-### 第六步：交付
-
-- **简短主题**：直接在对话中输出完整报告
-- **长报告**：输执行摘要 + 关键结论，将完整报告保存到文件
-
-## 子代理并行研究
-
-对于宽泛的主题，使用 Claude Code 的 Task 工具并行执行：
-
-```
-启动 3 个研究代理并行工作：
-1. 代理 1：研究子问题 1-2
-2. 代理 2：研究子问题 3-4
-3. 代理 3：研究子问题 5 + 跨领域主题
+### Start without waiting
+```bash
+python3 scripts/research.py --query "Research topic" --no-wait
 ```
 
-每个代理独立搜索、阅读来源并返回发现。主会话汇总成最终报告。
-
-## 质量标准
-
-1. **每个结论都需要来源。** 不允许无源断言。
-2. **交叉验证。** 如果只有单一来源，标记为未验证。
-3. **时效性重要。** 优先使用最近 12 个月内的来源。
-4. **承认空白。** 如果某个子问题没找到好信息，就如实说明。
-5. **禁止幻觉。** 不知道就说"未找到足够数据"。
-6. **区分事实与推断。** 明确标注估算、预测和观点。
-
-## 示例
-
+### Check status of running research
+```bash
+python3 scripts/research.py --status <interaction_id>
 ```
-"研究核聚变能源的现状"
-"深入分析 2026 年 Rust 与 Go 在后端服务中的对比"
-"研究 SaaS 创业的最佳策略"
-"美国房地产市场现在是什么情况？"
-"调查 AI 代码编辑器的竞争格局"
+
+### Wait for completion
+```bash
+python3 scripts/research.py --wait <interaction_id>
 ```
+
+### Continue from previous research
+```bash
+python3 scripts/research.py --query "Elaborate on point 2" --continue <interaction_id>
+```
+
+### List recent research
+```bash
+python3 scripts/research.py --list
+```
+
+## Output Formats
+
+- **Default**: Human-readable markdown report
+- **JSON** (`--json`): Structured data for programmatic use
+- **Raw** (`--raw`): Unprocessed API response
+
+## Cost & Time
+
+| Metric | Value |
+|--------|-------|
+| Time | 2-10 minutes per task |
+| Cost | $2-5 per task (varies by complexity) |
+| Token usage | ~250k-900k input, ~60k-80k output |
+
+## Best Use Cases
+
+- Market analysis and competitive landscaping
+- Technical literature reviews
+- Due diligence research
+- Historical research and timelines
+- Comparative analysis (frameworks, products, technologies)
+
+## Workflow
+
+1. User requests research → Run `--query "..."`
+2. Inform user of estimated time (2-10 minutes)
+3. Monitor with `--stream` or poll with `--status`
+4. Return formatted results
+5. Use `--continue` for follow-up questions
+
+## Exit Codes
+
+- **0**: Success
+- **1**: Error (API error, config issue, timeout)
+- **130**: Cancelled by user (Ctrl+C)
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
