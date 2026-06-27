@@ -1,313 +1,153 @@
 ---
-name: plugin-audit
-description: |
-  Comprehensive audit pipeline for skills, plugins, agents, and commands. Validates structure,
-  quality, security, marketplace compliance, cross-platform compatibility, and ecosystem integration.
-  Runs all built-in validation tools, invokes domain-appropriate agents for code review,
-  and produces a pass/fail gate report. Usage: /plugin-audit <skill-path>
-argument-hint: "<skill-path>"
+description: Run the full 8-phase plugin audit pipeline on a skill directory.
 ---
 
-# /plugin-audit
+Run the comprehensive plugin audit pipeline on the skill at `$ARGUMENTS`. If no argument provided, ask the user for the skill path.
 
-Full audit pipeline for any skill, plugin, agent, or command in this repository. Runs 8 validation phases, auto-fixes what it can, and only stops for user input on critical decisions (breaking changes, new dependencies).
-
-## Usage
-
-```bash
-/plugin-audit product-team/code-to-prd
-/plugin-audit engineering/agenthub
-/plugin-audit engineering-team/playwright-pro
-```
-
-## What It Does
-
-Execute all 8 phases sequentially. Stop on critical failures. Auto-fix non-critical issues. Report results at the end.
-
----
+Execute all 8 phases sequentially. Auto-fix non-critical issues. Only prompt the user for critical decisions (external dependencies, security findings, breaking changes).
 
 ## Phase 1: Discovery
 
-Identify what the skill contains and classify it.
-
-1. Verify `{skill_path}` exists and contains `SKILL.md`
-2. Read `SKILL.md` frontmatter — extract `name`, `description`, `Category`, `Tier`
-3. Detect skill type:
-   - Has `scripts/` → has Python tools
-   - Has `references/` → has reference docs
-   - Has `assets/` → has templates/samples
-   - Has `expected_outputs/` → has test fixtures
-   - Has `agents/` → has embedded agents
-   - Has `skills/` → has sub-skills (compound skill)
-   - Has `.claude-plugin/plugin.json` → is a standalone plugin
-   - Has `settings.json` → has command registrations
-4. Detect domain from path: `engineering/`, `product-team/`, `marketing-skill/`, etc.
-5. Check for associated command: search `commands/` for a `.md` file matching the skill name
-
-Display discovery summary before proceeding:
-```
-Auditing: code-to-prd
-  Domain: product-team
-  Type: STANDARD skill with standalone plugin
-  Scripts: 2 | References: 2 | Assets: 1 | Expected outputs: 3
-  Command: /code-to-prd (found)
-  Plugin: .claude-plugin/plugin.json (found)
-```
-
----
+1. Verify `$ARGUMENTS` exists and contains `SKILL.md`. If not, error and stop.
+2. Read `SKILL.md` frontmatter — extract `name`, `description`, `Category`, `Tier`.
+3. Detect components:
+   - `scripts/*.py` → Python tools (count them)
+   - `references/*.md` → reference docs (count them)
+   - `assets/` → templates/samples
+   - `expected_outputs/` → test fixtures
+   - `agents/*.md` → embedded agents
+   - `skills/*/SKILL.md` → sub-skills (compound skill)
+   - `.claude-plugin/plugin.json` → standalone plugin
+   - `settings.json` → command registrations
+4. Detect domain from path (`engineering/`, `product-team/`, `marketing-skill/`, etc.)
+5. Search `commands/` for a `.md` file matching the skill name.
+6. Display discovery summary.
 
 ## Phase 2: Structure Validation
 
-Run the skill-tester validator.
-
+Run:
 ```bash
-python3 engineering/skills/skill-tester/scripts/skill_validator.py {skill_path} --tier {detected_tier} --json
+python3 engineering/skill-tester/scripts/skill_validator.py $ARGUMENTS --json
 ```
 
-Parse the JSON output. Extract:
-- Overall score and compliance level
-- Failed checks (list each)
-- Errors and warnings
-
-**Gate rule:** Score must be ≥ 75 (GOOD). If below 75:
-- Read the errors list
-- Auto-fix what's possible:
-  - Missing frontmatter fields → add them from SKILL.md content
-  - Missing sections → add stub headings
-  - Missing directories → create empty ones with a note
-- Re-run after fixes. If still below 75, report as FAIL and continue to collect remaining results.
-
----
+Parse JSON. If score < 75:
+- Auto-fix missing frontmatter fields, missing section headings, missing directories.
+- Re-run. If still < 75, mark as FAIL but continue collecting results.
 
 ## Phase 3: Quality Scoring
 
-Run the quality scorer.
-
+Run:
 ```bash
-python3 engineering/skills/skill-tester/scripts/quality_scorer.py {skill_path} --detailed --json
+python3 engineering/skill-tester/scripts/quality_scorer.py $ARGUMENTS --detailed --json
 ```
 
-Parse the JSON output. Extract:
-- Overall score and letter grade
-- Per-dimension scores (Documentation, Code Quality, Completeness, Usability)
-- Improvement roadmap items
-
-**Gate rule:** Score must be ≥ 60 (C). If below 60, report the improvement roadmap items as action items.
-
----
+Parse JSON. If score < 60, report improvement roadmap items.
 
 ## Phase 4: Script Testing
 
-If the skill has `scripts/` with `.py` files, run the script tester.
-
+If `$ARGUMENTS/scripts/` contains `.py` files, run:
 ```bash
-python3 engineering/skills/skill-tester/scripts/script_tester.py {skill_path} --json --verbose
+python3 engineering/skill-tester/scripts/script_tester.py $ARGUMENTS --json --verbose
 ```
 
-Parse the JSON output. For each script, extract:
-- Pass/Partial/Fail status
-- Individual test results
-
-**Gate rule:** All scripts must PASS. Any FAIL is a blocker. PARTIAL triggers a warning.
-
-**Auto-fix:** If a script fails the `--help` test, check if it has `argparse` — if not, this is a real issue. If it fails the stdlib-only test, flag the import and **ask the user** whether the dependency is acceptable (this is a critical decision).
-
----
+All scripts must PASS. If any script uses external imports, **ask the user** whether the dependency is acceptable.
 
 ## Phase 5: Security Audit
 
-Run the skill security auditor.
-
+Run:
 ```bash
-python3 engineering/skills/skill-security-auditor/scripts/skill_security_auditor.py {skill_path} --strict --json
+python3 engineering/skill-security-auditor/scripts/skill_security_auditor.py $ARGUMENTS --strict --json
 ```
 
-Parse the JSON output. Extract:
-- Verdict (PASS/WARN/FAIL)
-- Critical findings (must be zero)
-- High findings (must be zero in strict mode)
-- Info findings (advisory only)
-
-**Gate rule:** Zero CRITICAL findings. Zero HIGH findings. Any CRITICAL or HIGH is a blocker — report the exact file, line, pattern, and recommended fix.
-
-**Do NOT auto-fix security issues.** Report them and let the user decide.
-
----
+Zero CRITICAL or HIGH findings required. **Do NOT auto-fix security issues** — report them to the user with file, line, pattern, and recommended fix.
 
 ## Phase 6: Marketplace & Plugin Compliance
 
-### 6a. plugin.json Validation
+### 6a. plugin.json
+If `$ARGUMENTS/.claude-plugin/plugin.json` exists:
+- Must be valid JSON
+- Only allowed fields: `name`, `description`, `version`, `author`, `homepage`, `repository`, `license`, `skills`
+- Version must be `2.1.2`
+- Auto-fix version mismatches and remove extra fields.
 
-If `{skill_path}/.claude-plugin/plugin.json` exists:
+### 6b. settings.json
+If `$ARGUMENTS/settings.json` exists:
+- Must be valid JSON
+- Version must match repo version
+- Each command in `commands` field must have a matching `commands/*.md` file
 
-1. Parse as JSON — must be valid
-2. Verify only allowed fields: `name`, `description`, `version`, `author`, `homepage`, `repository`, `license`, `skills`
-3. Version must match repo version (`2.1.2`)
-4. `skills` must be `"./"`
-5. `name` must match the skill directory name
-
-**Auto-fix:** If version is wrong, update it. If extra fields exist, remove them.
-
-### 6b. settings.json Validation
-
-If `{skill_path}/settings.json` exists:
-
-1. Parse as JSON — must be valid
-2. Version must match repo version
-3. If `commands` field exists, verify each command has a matching file in `commands/`
-
-### 6c. Marketplace Entry
-
-Check if the skill has an entry in `.claude-plugin/marketplace.json`:
-
-1. Search the `plugins` array for an entry with `source` matching `./` + skill path
-2. If found: verify `version`, `name`, and that `source` path exists
-3. If not found: check if the skill's domain bundle (e.g., `product-skills`) would include it via its `source` path
+### 6c. Marketplace entry
+Check `.claude-plugin/marketplace.json` for an entry with `source` matching `./$ARGUMENTS`. Verify version and name match.
 
 ### 6d. Domain plugin.json
-
-Check the parent domain's `.claude-plugin/plugin.json`:
-- Verify the skill count in the description matches reality
-- Verify version matches repo version
-
-**Auto-fix:** Update stale counts. Fix version mismatches.
-
----
+Check the parent domain's `.claude-plugin/plugin.json` — verify skill count in description matches actual count. Auto-fix stale counts.
 
 ## Phase 7: Ecosystem Integration
 
-### 7a. Cross-Platform Sync
-
-Verify the skill appears in platform indexes:
-
-```bash
-grep -l "{skill_name}" .codex/skills-index.json .gemini/skills-index.json
-```
-
-If missing from either index:
+### 7a. Cross-platform sync
+Verify skill appears in `.codex/skills-index.json` and `.gemini/skills-index.json`. If missing:
 ```bash
 python3 scripts/sync-codex-skills.py --verbose
 python3 scripts/sync-gemini-skills.py --verbose
 ```
 
-### 7b. Command Integration
+### 7b. Command integration
+If the skill has associated commands, verify:
+- Command `.md` has valid frontmatter
+- Command references the correct skill
+- Command is in `mkdocs.yml` nav
+Auto-fix missing nav entries.
 
-If the skill has associated commands (from settings.json `commands` field or matching name in `commands/`):
-- Verify the command `.md` file has valid YAML frontmatter (`name`, `description`)
-- Verify the command references the correct skill path
-- Verify the command is in `mkdocs.yml` nav
+### 7c. Agent integration
+Check for embedded agents in `$ARGUMENTS/agents/`. Search `agents/` for cs-* agents that reference this skill. Verify references resolve.
 
-**Auto-fix:** Add missing mkdocs.yml nav entries.
+### 7d. Cross-skill dependencies
+Read SKILL.md for references to other skills (`../` paths, "Related Skills" sections). Verify each referenced skill exists.
 
-### 7c. Agent Integration
+## Phase 8: Domain Code Review
 
-If the skill has embedded agents (`{skill_path}/agents/*.md`):
-- Verify each agent has valid YAML frontmatter
-- Verify agent references resolve (relative paths to skills)
+Based on the domain, apply the appropriate agent's review criteria:
 
-Search `agents/` for any cs-* agent that references this skill:
-```bash
-grep -rl "{skill_name}\|{skill_path}" agents/
-```
+| Domain | Agent | Focus |
+|--------|-------|-------|
+| `engineering/` or `engineering-team/` | cs-senior-engineer | Architecture, code quality, CI/CD |
+| `product-team/` | cs-product-manager | PRD quality, user stories, RICE |
+| `marketing-skill/` | cs-content-creator | Content quality, SEO, brand voice |
+| `ra-qm-team/` | cs-quality-regulatory | Compliance, audit trail, regulatory |
+| `business-growth/` | cs-growth-strategist | Growth metrics, revenue impact |
+| `finance/` | cs-financial-analyst | Model accuracy, metric definitions |
+| Other | cs-senior-engineer | General code review |
 
-If found, verify the agent's skill references are correct.
-
-### 7d. Cross-Skill Dependencies
-
-Read the SKILL.md for references to other skills (look for `../` paths, skill names in "Related Skills" sections):
-- Verify each referenced skill exists
-- Verify the referenced skill's SKILL.md exists
-
----
-
-## Phase 8: Domain-Appropriate Code Review
-
-Based on the skill's domain, invoke the appropriate agent's review perspective:
-
-| Domain | Agent | Review Focus |
-|--------|-------|-------------|
-| `engineering/` or `engineering-team/` | cs-senior-engineer | Architecture, code quality, CI/CD integration |
-| `product-team/` | cs-product-manager | PRD quality, user story coverage, RICE alignment |
-| `marketing-skill/` | cs-content-creator | Content quality, SEO optimization, brand voice |
-| `ra-qm-team/` | cs-quality-regulatory | Compliance checklist, audit trail, regulatory alignment |
-| `business-growth/` | cs-growth-strategist | Growth metrics, revenue impact, customer success |
-| `finance/` | cs-financial-analyst | Financial model accuracy, metric definitions |
-| Other | cs-senior-engineer | General code and architecture review |
-
-**How to invoke:** Read the agent's `.md` file to understand its review criteria. Apply those criteria to review the skill's SKILL.md, scripts, and references. This is NOT spawning a subagent — it's using the agent's documented perspective to structure your review.
-
-Review checklist (apply domain-appropriate lens):
-- [ ] SKILL.md workflows are actionable and complete
-- [ ] Scripts solve the stated problem correctly
-- [ ] References contain accurate domain knowledge
-- [ ] Templates/assets are production-ready
-- [ ] No broken internal links
-- [ ] Attribution present where required
-
----
+Read the agent's `.md` file for review criteria. Apply those criteria to the skill's SKILL.md, scripts, and references. Check:
+- Workflows are actionable and complete
+- Scripts solve the stated problem
+- References contain accurate domain knowledge
+- No broken internal links
+- Attribution present where required
 
 ## Final Report
 
-Present results as a structured table:
+Present all results in a structured summary:
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
 ║  PLUGIN AUDIT REPORT: {skill_name}                         ║
 ╠══════════════════════════════════════════════════════════════╣
-║                                                              ║
-║  Phase 1 — Discovery          ✅ {type}, {domain}            ║
+║  Phase 1 — Discovery          ✅ {type}, {domain}           ║
 ║  Phase 2 — Structure          ✅ {score}/100 ({level})       ║
 ║  Phase 3 — Quality            ✅ {score}/100 ({grade})       ║
 ║  Phase 4 — Scripts            ✅ {n}/{n} PASS                ║
 ║  Phase 5 — Security           ✅ PASS (0 critical, 0 high)   ║
 ║  Phase 6 — Marketplace        ✅ plugin.json valid            ║
-║  Phase 7 — Ecosystem          ✅ Codex + Gemini synced        ║
-║  Phase 8 — Code Review        ✅ {domain} review passed       ║
+║  Phase 7 — Ecosystem          ✅ synced                       ║
+║  Phase 8 — Code Review        ✅ passed                       ║
 ║                                                              ║
-║  VERDICT: ✅ PASS — Ready for merge/publish                  ║
-║                                                              ║
-║  Auto-fixes applied: {n}                                     ║
-║  Warnings: {n}                                               ║
-║  Action items: {n}                                           ║
-║                                                              ║
+║  VERDICT: ✅ PASS                                            ║
+║  Auto-fixes: {n} | Warnings: {n} | Action items: {n}        ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
-### Verdict Logic
-
-| Condition | Verdict |
-|-----------|---------|
-| All phases pass | **PASS** — Ready for merge/publish |
-| Only warnings (no blockers) | **PASS WITH WARNINGS** — Review warnings before merge |
-| Any phase has a blocker | **FAIL** — List blockers with fix instructions |
-
-### Blockers (any of these = FAIL)
-
-- Structure score < 75
-- Quality score < 60 (after noting roadmap)
-- Any script FAIL
-- Any CRITICAL or HIGH security finding
-- plugin.json invalid or has disallowed fields
-- Version mismatch with repo
-
-### Non-Blockers (warnings only)
-
-- Quality score between 60-75
-- Script PARTIAL results
-- Missing from one platform index (auto-fixed)
-- Missing mkdocs.yml nav entry (auto-fixed)
-- Security INFO findings
-
----
-
-## Skill References
-
-| Tool | Path |
-|------|------|
-| Skill Validator | `engineering/skills/skill-tester/scripts/skill_validator.py` |
-| Quality Scorer | `engineering/skills/skill-tester/scripts/quality_scorer.py` |
-| Script Tester | `engineering/skills/skill-tester/scripts/script_tester.py` |
-| Security Auditor | `engineering/skills/skill-security-auditor/scripts/skill_security_auditor.py` |
-| Quality Standards | `standards/quality/quality-standards.md` |
-| Security Standards | `standards/security/security-standards.md` |
-| Git Standards | `standards/git/git-workflow-standards.md` |
+**Verdict rules:**
+- All phases pass → **PASS**
+- Only warnings → **PASS WITH WARNINGS**
+- Any blocker (structure <75, quality <60, script FAIL, security CRITICAL/HIGH, invalid plugin.json) → **FAIL**

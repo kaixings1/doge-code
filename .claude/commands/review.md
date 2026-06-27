@@ -1,36 +1,33 @@
 ---
-description: 审查当前项目中的拉取请求
+description: Run the local review gate before pushing.
 ---
 
-审查当前项目中的 PR #$ARGUMENTS。自动：
+Perform a complete review pass:
 
-1. **读取完整 diff** —— 理解 PR 中的每一个变更
-2. **读取关联的工作项** 并验证所有验收标准已满足
-3. **审查以下内容：**
-   - 整洁架构边界（领域层没有基础设施依赖）
-   - 所有数据库查询强制执行租户/organizationId
-   - 新代码缺少单元或集成测试
-   - TypeScript 中的 `any` 类型（应正确使用类型）
-   - 安全问题（OWASP Top 10、硬编码密钥、SQL/NoSQL 注入）
-   - 错误处理（异常是否被恰当地捕获？）
-   - 命名规范和代码风格一致性
-   - 破坏性变更或向后兼容性问题
-4. **在所有发现点上直接发布内联评论**
-5. **发布 PR 级别的总结评论**，包含：
-   - 总体评估（准备合并 / 需要修改）
-   - 按严重程度分类的问题数（严重 / 警告 / 建议）
-   - 验收标准清单（已满足 / 未满足 / 不适用）
-   - 测试覆盖评估
-
-然后问我：
-```
-审查完成。总结：
-- X 个严重问题
-- Y 个警告
-- Z 个建议
-- 验收标准：A/B 已满足
-
-批准、请求修改还是跳过投票？
-```
-
-等待我回复后再在 PR 上提交任何投票。
+1. Save work in progress and ensure the working tree is clean except for intentional changes.
+2. Install tooling (only first run):
+   ```bash
+   pip install --upgrade pip
+   pip install yamllint==1.35.1 check-jsonschema==0.28.4 safety==3.2.4
+   npm install --global markdown-link-check@3.12.2
+   ```
+3. Lint GitHub workflows:
+   ```bash
+   yamllint -d '{extends: default, rules: {line-length: {max: 160}}}' .github/workflows
+   check-jsonschema --schema github-workflow --base-dir . .github/workflows/*.yml
+   ```
+4. Python syntax check:
+   ```bash
+   python -m compileall marketing-skill product-team c-level-advisor engineering-team ra-qm-team
+   ```
+5. Markdown sanity check:
+   ```bash
+   markdown-link-check README.md
+   ```
+6. Optional dependency audit (if `requirements*.txt` present):
+   ```bash
+   for f in $(find . -name "requirements*.txt" 2>/dev/null); do
+       safety check --full-report --file "$f"
+   done
+   ```
+7. Summarize results in the commit template's Testing section. Fix any failures before continuing.
