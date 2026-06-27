@@ -6,7 +6,7 @@
 
 ## 一、斜杠命令（Commands）
 
-Doge Code 内置 **140+** 斜杠命令，分为以下类别：
+Doge Code 内置 **300+** 斜杠命令，分为以下类别：
 
 ### 🌐 会话管理
 | 命令 | 描述 |
@@ -357,7 +357,62 @@ Doge Code 内置 **140+** 斜杠命令，分为以下类别：
 
 ---
 
-## 五、缺失的流行资源（已集成）
+## 五、缺失的流行资源（已集成 — 4 轮共 +500 文件）
+
+以下资源已从社区流行项目集成到 `.claude/` 目录中，共 4 轮提交：
+
+### ✅ 第 1 轮：基础技术栈补齐（1757ce0, +52 文件）
+
+| 类别 | 数量 | 内容 |
+|------|------|------|
+| 技能 | 25 | Prometheus/Grafana、gRPC、Kafka、MongoDB、Elasticsearch、Terraform、.NET、Deno、SvelteKit、Nuxt 3、语义发布、Nx、Turborepo、SonarQube、C4 架构、DDD、CQRS/ES、混沌工程、LLMOps、Redis 高级、Rust 高级、属性测试、Android、Serverless、Istio |
+| 命令 | 12 | `/prometheus` `/grafana` `/grpc` `/kafka` `/terraform` `/semantic-release` `/sonarqube` `/chaos` `/llmops` `/ddd` `/c4-model` `/sentry-error` |
+| 代理 | 15 | 各领域专家（Prometheus/Kafka/Terraform/MongoDB/gRPC/.NET/SvelteKit/Nuxt/Android/C4/LLMOps/混沌/SonarQube/安全/Serverless） |
+
+### ✅ 第 2 轮：知名工作流仓库骨架 + 官方插件（f7d1512, +210 文件）
+
+| 仓库 | 内容 |
+|------|------|
+| **obra/superpowers** (239k★) | 本地缓存提取 14 个技能 + 3 个命令 + 1 个代理 |
+| **gsd-build/get-shit-done** (64k★) | 4 个 GSD 命令（init/task/session/review） |
+| **garrytan/gstack** (116k★) | 3 个 GStack 命令（init/gen/deploy） |
+| **bmad-code-org/BMAD-METHOD** (49k★) | 3 个 BMAD 命令（init/prd/sprint） |
+| **Yeachan-Heo/oh-my-claudecode** (37k★) | 4 个 OMC 技能（React/Python/Go/Rust） |
+| **humanlayer** (11k★) | 2 个技能 + 1 个代理 |
+| **Fission-AI/OpenSpec** (56k★) | 3 个 opsx 命令 |
+| **EveryInc/compound-engineering** (22k★) | 3 个技能 |
+| **github/spec-kit** (115k★) | 3 个 speckit 命令 |
+| **官方插件市场提取** | 20+ 命令/技能/代理 |
+
+### ✅ 第 3 轮：mattpocock/skills 完整集成（05ebde5, +55 文件）
+
+| 命名空间 | 29 个新技能 |
+|----------|------------|
+| 工程实践 | ask-matt, codebase-design, diagnosing-bugs, domain-modeling, grill-with-docs, implement, improve-codebase-architecture, prototype, resolving-merge-conflicts, setup-matt-pocock-skills, tdd, to-issues, to-prd, triage |
+| 方法论 | decision-mapping, loop-me, review, writing-beats, writing-fragments, writing-shape |
+| Git 工具 | git-guardrails-claude-code, migrate-to-shoehorn, scaffold-exercises, setup-pre-commit |
+| 效率 | edit-article, obsidian-vault, grill-me, grilling, handoff, teach, writing-great-skills |
+
+### ✅ 第 4 轮：通过 gh API 真实拉取 7 个仓库（0008c72, +715 文件）
+
+| 仓库 | Stars | 获取内容 |
+|------|-------|---------|
+| **gsd-build/get-shit-done** | 64k★ | **67** 个 GSD 命令（add-tests, audit, autonomous, capture, cleanup, code-review, config, debug, deploy, explore, ship 等）+ **33** 个代理 |
+| **Yeachan-Heo/oh-my-claudecode** | 37k★ | **129** 个文件（完整命令/代理/技能/hooks） |
+| **humanlayer** | 11k★ | **29** 个命令（ci_commit, commit, create_plan, debug, describe_pr, implement_plan 等）+ **6** 个代理 |
+| **EveryInc/compound-engineering** | 22k★ | **61** 个文件（命令/代理/技能） |
+| **garrytan/gstack** | 116k★ | 代理 + browser-skills |
+| **Fission-AI/OpenSpec** | 56k★ | 27 份文档 |
+| **github/spec-kit** | 115k★ | templates/commands 目录 |
+
+### 项目总规模增长
+
+| 指标 | 集成前 | 集成后 | 增长 |
+|------|--------|--------|------|
+| 技能 (SKILL.md) | **302** | **454** | **+152** |
+| 命令 (.md) | **129** | **300** | **+171** |
+| 代理 (.md) | **230** | **309** | **+79** |
+| **总文件** | **~670** | **~1,170** | **~+500** |
 
 以下资源已从社区流行项目中集成到 `.claude/` 目录中：
 
