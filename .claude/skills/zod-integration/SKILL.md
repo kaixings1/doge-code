@@ -1,0 +1,1 @@
+---/nname: zod-integration/ndescription: Zod 运行时验证 — Schema 定义、类型推导、错误处理、管道转换/n---/n/n# zod-integration/n/n## 概述/nZod 运行时验证 — Schema 定义、类型推导、错误处理、管道转换。来自 Matt Pocock 的 TypeScript 技能合集。/n/n## 使用场景/n- TypeScript 类型系统深度使用时/n- 需要在类型层面做精确控制时/n/n## 核心内容/n1. 类型定义和模式/n2. 实用示例和练习题/n3. 常见陷阱和最佳实践/n
