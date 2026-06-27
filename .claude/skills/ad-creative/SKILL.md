@@ -1,18 +1,26 @@
 ---
 name: ad-creative
-description: "When the user wants to generate, iterate, or scale ad creative — headlines, descriptions, primary text, or full ad variations — for any paid advertising platform. Also use when the user mentions 'ad copy variations,' 'ad creative,' 'generate headlines,' 'RSA headlines,' 'bulk ad copy,' 'ad iterations,' 'creative testing,' 'ad performance optimization,' 'write me some ads,' 'Facebook ad copy,' 'Google ad headlines,' 'LinkedIn ad text,' or 'I need more ad variations.' Use this whenever someone needs to produce ad copy at scale or iterate on existing ads. For campaign strategy and targeting, see ads. For landing page copy, see copywriting."
+description: "Create, iterate, and scale paid ad creative for Google Ads, Meta, LinkedIn, TikTok, and similar platforms. Use when generating headlines, descriptions, primary text, or large sets of ad variations for testing and performance optimization."
+risk: unknown
+source: "https://github.com/coreyhaines31/marketingskills"
+date_added: "2026-03-21"
 metadata:
-  version: 2.0.0
+  version: 1.1.0
 ---
 
 # Ad Creative
 
 You are an expert performance creative strategist. Your goal is to generate high-performing ad creative at scale — headlines, descriptions, and primary text that drive clicks and conversions — and iterate based on real performance data.
 
+## When to Use
+- Use when generating or iterating paid ad copy at scale.
+- Use for headlines, descriptions, primary text, and structured ad variation sets.
+- Use when performance data should inform the next round of creative.
+
 ## Before Starting
 
 **Check for product marketing context first:**
-If `.agents/product-marketing.md` exists (or `.claude/product-marketing.md`, or the legacy `product-marketing-context.md` filename, in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
+If `.agents/product-marketing-context.md` exists (or `.claude/product-marketing-context.md` in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
 
 Gather this context (ask if not provided):
 
@@ -330,14 +338,14 @@ For large-scale creative production (Anthropic's growth team generates 100+ vari
 
 ## Tool Integrations
 
-For pulling performance data and managing campaigns, see the [tools registry](../../tools/REGISTRY.md).
+For pulling performance data and managing campaigns, use the relevant ads platform tools available in this environment.
 
 | Platform | Pull Performance Data | Manage Campaigns | Guide |
 |----------|:---------------------:|:----------------:|-------|
-| **Google Ads** | `google-ads campaigns list`, `google-ads reports get` | `google-ads campaigns create` | [google-ads.md](../../tools/integrations/google-ads.md) |
-| **Meta Ads** | `meta-ads insights get` | `meta-ads campaigns list` | [meta-ads.md](../../tools/integrations/meta-ads.md) |
-| **LinkedIn Ads** | `linkedin-ads analytics get` | `linkedin-ads campaigns list` | [linkedin-ads.md](../../tools/integrations/linkedin-ads.md) |
-| **TikTok Ads** | `tiktok-ads reports get` | `tiktok-ads campaigns list` | [tiktok-ads.md](../../tools/integrations/tiktok-ads.md) |
+| **Google Ads** | `google-ads campaigns list`, `google-ads reports get` | `google-ads campaigns create` | Use available Google Ads integrations |
+| **Meta Ads** | `meta-ads insights get` | `meta-ads campaigns list` | Use available Meta Ads integrations |
+| **LinkedIn Ads** | `linkedin-ads analytics get` | `linkedin-ads campaigns list` | Use available LinkedIn Ads integrations |
+| **TikTok Ads** | `tiktok-ads reports get` | `tiktok-ads campaigns list` | Use available TikTok Ads integrations |
 
 ### Workflow: Pull Data, Analyze, Generate
 
@@ -355,8 +363,13 @@ node tools/clis/google-ads.js reports get --type ad_performance --date-range las
 
 ## Related Skills
 
-- **ads**: For campaign strategy, targeting, budgets, and optimization
+- **paid-ads**: For campaign strategy, targeting, budgets, and optimization
 - **copywriting**: For landing page copy (where ad traffic lands)
-- **ab-testing**: For structuring creative tests with statistical rigor
+- **ab-test-setup**: For structuring creative tests with statistical rigor
 - **marketing-psychology**: For psychological principles behind high-performing creative
 - **copy-editing**: For polishing ad copy before launch
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

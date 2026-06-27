@@ -1,43 +1,28 @@
 ---
 name: fal-image-edit
-description: |
-  AI-powered image editing with style transfer, background removal, object removal, and inpainting via fal.ai hosted models.
-triggers:
-  - "fal image edit"
-  - "inpaint"
-  - "style transfer"
-  - "background removal"
-  - "object removal"
-od:
-  mode: image
-  category: image-generation
-  upstream: "https://github.com/fal-ai-community/skills"
+description: "AI-powered image editing with style transfer and object removal"
+risk: safe
+source: "https://github.com/fal-ai-community/skills/blob/main/skills/claude.ai/fal-image-edit/SKILL.md"
+date_added: "2026-02-27"
 ---
 
-# fal-image-edit
+# Fal Image Edit
 
-> Curated from the fal.ai community team.
+## Overview
 
-## What it does
+AI-powered image editing with style transfer and object removal
 
-AI-powered image editing with style transfer, background removal, object removal, and inpainting via fal.ai hosted models.
+## When to Use This Skill
 
-## Source
+Use this skill when you need to work with ai-powered image editing with style transfer and object removal.
 
-- Upstream: https://github.com/fal-ai-community/skills
-- Category: `image-generation`
+## Instructions
 
-## How to use
+This skill provides guidance and patterns for ai-powered image editing with style transfer and object removal.
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+For more information, see the [source repository](https://github.com/fal-ai-community/skills/blob/main/skills/claude.ai/fal-image-edit/SKILL.md).
 
-```bash
-# Inspect the upstream README for exact paths
-open https://github.com/fal-ai-community/skills
-```
-
-Then ask the agent to invoke this skill by name (`fal-image-edit`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
