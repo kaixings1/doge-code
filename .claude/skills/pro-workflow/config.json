@@ -1,0 +1,47 @@
+{
+  "database": {
+    "path": "~/.pro-workflow/data.db",
+    "auto_init": true
+  },
+  "search": {
+    "default_limit": 10,
+    "highlight_matches": true
+  },
+  "self_correction": {
+    "enabled": true,
+    "auto_update_claude_md": false,
+    "require_approval": true,
+    "learned_file": "~/.claude/LEARNED.md"
+  },
+  "plan_mode": {
+    "threshold_files": 3,
+    "threshold_tool_calls": 10,
+    "require_explicit_approval": true
+  },
+  "quality_gates": {
+    "run_lint": true,
+    "run_typecheck": true,
+    "run_tests": true,
+    "lint_command": "npm run lint",
+    "typecheck_command": "npm run typecheck",
+    "test_command": "npm test -- --related"
+  },
+  "wrap_up": {
+    "check_uncommitted": true,
+    "verify_tests": true,
+    "update_claude_md": true,
+    "create_summary": true
+  },
+  "parallel_sessions": {
+    "suggest_worktrees": true,
+    "worktree_prefix": "../",
+    "native_worktree": true
+  },
+  "model_preferences": {
+    "quick_fixes": "haiku",
+    "features": "sonnet",
+    "refactors": "opus",
+    "architecture": "opus",
+    "debugging": "opus"
+  }
+}
