@@ -1,6 +1,6 @@
 ---
 name: microservices-design
-description: microservices 设计 - Microservices design patterns including service mesh, event-...
+description: 微服务设计 — 包括服务网格、事件驱动架构、API网关、CQRS和Saga模式。
 ---
 
 # Microservices Design

@@ -1,6 +1,6 @@
 ---
 name: frontend-excellence
-description: 前端 excellence - Modern frontend patterns for React Server Components, perfor...
+description: 前端卓越 — React服务器组件、性能优化、可访问性和现代CSS的前端模式。
 ---
 
 # Frontend Excellence

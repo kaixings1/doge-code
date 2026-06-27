@@ -1,6 +1,6 @@
 ---
 name: idea-refine
-description: idea refine - Refines raw ideas into sharp, actionable concepts through st...
+description: 创意精炼 — 通过结构化质疑将原始创意打磨为清晰可执行的概念。
 ---
 
 # Idea Refine

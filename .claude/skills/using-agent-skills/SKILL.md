@@ -1,6 +1,6 @@
 ---
 name: using-agent-skills
-description: using 代理 skills - Discovers and invokes agent skills. Use when starting a sess...
+description: 使用代理技能 — 发现并调用代理技能。在开始会话或需要专门代理时使用。
 ---
 
 # Using Agent Skills

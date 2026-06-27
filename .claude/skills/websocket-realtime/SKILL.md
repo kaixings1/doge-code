@@ -1,6 +1,6 @@
 ---
 name: websocket-realtime
-description: websocket realtime - Real-time communication patterns with WebSocket, Socket.io, ...
+description: WebSocket实时通信 — 使用WebSocket、Socket.io和SSE的实时通信模式。
 ---
 
 # WebSocket & Real-Time

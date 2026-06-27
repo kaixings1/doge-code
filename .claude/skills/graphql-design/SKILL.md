@@ -1,6 +1,6 @@
 ---
 name: graphql-design
-description: graphql 设计 - GraphQL schema design, resolver patterns, subscriptions, Dat...
+description: GraphQL设计 — Schema设计、解析器模式、订阅、数据加载器和联邦网关。
 ---
 
 # GraphQL Design
