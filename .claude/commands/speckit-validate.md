@@ -1,0 +1,1 @@
+# SpecKit 验证/n/n验证实现是否符合规范：运行验收测试、检查边界条件。/n/n## 用法/nspeckit-validate <spec-file> [implementation-dir]/n
