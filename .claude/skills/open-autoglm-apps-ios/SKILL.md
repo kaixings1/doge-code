@@ -1,0 +1,1 @@
+---/nname: open-autoglm-apps-ios/ndescription: Open-AutoGLM iOS 应用 Bundle ID 配置/n---/n/n# Open-AutoGLM iOS Apps/n/niOS 应用 Bundle ID 与操作映射。/n/n[Open-AutoGLM](https://github.com/zai-org/Open-AutoGLM)

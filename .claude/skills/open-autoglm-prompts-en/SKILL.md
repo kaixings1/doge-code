@@ -1,0 +1,1 @@
+---/nname: open-autoglm-prompts-en/ndescription: Open-AutoGLM Phone Automation Prompts (English)/n---/n/n# Open-AutoGLM Prompts (English)/n/nPhone automation prompts for controlling Android/iOS devices via AI./n/n[Open-AutoGLM](https://github.com/zai-org/Open-AutoGLM)

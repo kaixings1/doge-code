@@ -1,0 +1,1 @@
+---/nname: open-autoglm-apps/ndescription: Open-AutoGLM Android 应用配置与操作映射/n---/n/n# Open-AutoGLM Apps Configuration/n/nAndroid 应用包名与操作映射表。/n/n## 示例应用/n- 微信: com.tencent.mm/n- 支付宝: com.eg.android.AlipayGphone/n- 淘宝: com.taobao.taobao/n/n[Open-AutoGLM](https://github.com/zai-org/Open-AutoGLM)
