@@ -364,7 +364,7 @@ function ComputerUseAppListPanel(t0) {
   }
   let t15;
   if ($[28] !== requestedFlagKeys) {
-    t15 = requestedFlagKeys.length > 0 ? <Box flexDirection="column"><Text dimColor={true}>Also requested:</Text>{requestedFlagKeys.map(_temp4)}</Box> : null;
+    t15 = requestedFlagKeys.length > 0 ? <Box flexDirection="column"><Text dimColor={true}>同时请求：</Text>{requestedFlagKeys.map(_temp4)}</Box> : null;
     $[28] = requestedFlagKeys;
     $[29] = t15;
   } else {
