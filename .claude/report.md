@@ -576,3 +576,19 @@ QueryEngine.ts (1254 行)    # 子代理查询执行引擎
 | `WORKFLOW_SCRIPTS` | 工作流脚本 |
 | `CONTEXT_COLLAPSE` | 上下文折叠 |
 | `FORK_SUBAGENT` | Fork 子代理 |
+
+---
+
+## 附：免费 Token / 反代资源报告
+
+> 📋 详见项目根目录 [`免费token.md`](../免费token.md)
+
+该报告通过 **GitHub API 实时搜索**（11 组关键词，1,500+ 项目）整理，包含：
+- **官方免费 API Token 来源** — 12 家平台（DeepSeek/智谱/Anthropic/OpenAI 等）
+- **GitHub TOP 30 反代项目排行** — 含 Stars、分类、核心功能描述
+- **自建反代方案 TOP 9** — One API（35k★）/ LiteLLM（51k★）/ CCX / claude-code-proxy 等
+- **Doge Code 7 种配置方案** — DeepSeek / One API / CCX / LiteLLM / 免费 API 等
+- **Cloudflare Workers 可直接部署的反代代码**
+- **社区活跃讨论渠道** — Hostloc / V2EX / 52破解 / B站 / 抖音 等
+
+> ⚠️ 免费 Token 和反代地址时效性极高，请以 `免费token.md` 中的实时数据为准，定期更新。
