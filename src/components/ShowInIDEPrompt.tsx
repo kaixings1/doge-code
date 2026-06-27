@@ -41,7 +41,7 @@ export function ShowInIDEPrompt(t0) {
   } = t0;
   let t1;
   if ($[0] !== ideName) {
-    t1 = <Text bold={true} color="permission">Opened changes in {ideName} ⧉</Text>;
+    t1 = <Text bold={true} color="permission">已在 {ideName} 中打开更改 ⧉</Text>;
     $[0] = ideName;
     $[1] = t1;
   } else {

@@ -82,7 +82,7 @@ export function MCPAgentServerMenu({
   const capitalizedServerName = capitalize(String(agentServer.name));
   if (isAuthenticating) {
     return <Box flexDirection="column" gap={1} padding={1}>
-        <Text color="claude">Authenticating with {agentServer.name}…</Text>
+        <Text color="claude">正在认证 {agentServer.name}…</Text>
         <Box>
           <Spinner />
           <Text> 浏览器窗口将打开进行认证</Text>
@@ -162,7 +162,7 @@ export function MCPAgentServerMenu({
       </Box>
 
       {error && <Box>
-          <Text color="error">Error: {error}</Text>
+          <Text color="error">错误：{error}</Text>
         </Box>}
 
       <Box>

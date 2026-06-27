@@ -195,6 +195,7 @@ import stickers from './commands/stickers/index.js'
 import advisor from './commands/advisor.js'
 import tui from './commands/tui/index.js'
 import batchHan from './commands/batch-han/index.js'
+import updateApiKey from './commands/updateapikey/index.js'
 
 import { logError } from './utils/log.js'
 import { toError } from './utils/errors.js'
@@ -380,6 +381,7 @@ const COMMANDS = memoize((): Command[] => [
   rewind,
   rstk,
   batchHan,
+  updateApiKey,
   securityReview,
   terminalSetup,
   upgrade,
