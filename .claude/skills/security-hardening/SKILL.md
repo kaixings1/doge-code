@@ -1,6 +1,6 @@
 ---
 name: security-hardening
-description: 安全 hardening - Application security covering input validation, auth, header...
+description: 安全加固 — 涵盖输入验证、认证、标头安全、CSRF和SQL注入防护。
 ---
 
 # Security Hardening

@@ -1010,6 +1010,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
           {savedOptions.length > 0 && <Text dimColor>已保存的端点（一键切换，无需重新输入 Key）：</Text>}
           <Box>
             <Select
+              visibleOptionCount={20}
               options={allOptions}
               onChange={(value) => {
                 if (typeof value === 'string' && value.startsWith('saved:')) {
@@ -1137,6 +1138,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
               <Text bold>管理模型</Text>
               <Text>当前模型：{modelNameDisplay}</Text>
               <Select
+                visibleOptionCount={20}
                 options={[
                   { label: <Text color="success">使用该模型</Text>, value: 'use' },
                   { label: <Text>修改模型名称</Text>, value: 'rename' },
@@ -1179,7 +1181,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
             <Text dimColor>已保存的模型，按 Enter 进入编辑/删除；或选择手动输入新模型。</Text>
             <Select
               options={modelOptions}
-              visibleOptionCount={9}
+              visibleOptionCount={20}
               onChange={(value) => {
                 if (value === '__manual__') {
                   setCustomModel('');
@@ -1354,6 +1356,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
             选择已有 Key 后按 Enter 进入编辑确认页面，或选择手动输入新 Key，或选择跳过（不使用 Key）。
           </Text>
           <Select
+            visibleOptionCount={20}
             options={selectOptions}
             onChange={(selected) => {
               const val = typeof selected === 'string' ? selected : (selected as any)?.value;
@@ -1450,6 +1453,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
         t7 = (
           <Box>
             <Select
+              visibleOptionCount={20}
               options={t6}
               onChange={(value_0) => {
                 if (value_0 === 'platform') {

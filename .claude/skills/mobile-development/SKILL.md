@@ -1,6 +1,6 @@
 ---
 name: mobile-development
-description: 移动端 development - Mobile development patterns for React Native and Flutter inc...
+description: 移动端开发 — React Native和Flutter的移动开发模式，包括导航和状态管理。
 ---
 
 # Mobile Development

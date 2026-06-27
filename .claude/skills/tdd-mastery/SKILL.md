@@ -1,6 +1,6 @@
 ---
 name: tdd-mastery
-description: tdd mastery - Test-driven development workflow with Red-Green-Refactor cyc...
+description: TDD精通 — 红-绿-重构循环、参数化测试、BDD和覆盖率驱动的测试开发。
 ---
 
 # TDD Mastery

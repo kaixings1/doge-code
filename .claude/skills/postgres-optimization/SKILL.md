@@ -1,6 +1,6 @@
 ---
 name: postgres-optimization
-description: postgres optimization - PostgreSQL optimization including indexes, query plans, part...
+description: PostgreSQL优化 — 包括索引、查询计划、分区、连接池和性能调优。
 ---
 
 # PostgreSQL Optimization

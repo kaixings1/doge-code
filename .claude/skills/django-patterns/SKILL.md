@@ -1,6 +1,6 @@
 ---
 name: django-patterns
-description: django patterns - Django architecture patterns including DRF, ORM optimization...
+description: Django模式 — 包括DRF、ORM优化、信号、中间件、Celery集成的Django架构模式。
 ---
 
 # Django Patterns

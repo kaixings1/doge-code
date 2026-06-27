@@ -1,0 +1,386 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "tool == \"Edit\" || tool == \"Write\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/quality-gate.js\""
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/read-before-write.js\""
+          }
+        ],
+        "description": "Track edits for quality gate checks and read-before-write enforcement"
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/reread-tracker.js\""
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/read-before-write.js\""
+          }
+        ],
+        "description": "Track file reads to detect unnecessary re-reads and enable read-before-write enforcement"
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/tool-call-budget.js\""
+          }
+        ],
+        "description": "Track tool call count against budget thresholds"
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/git-blast-radius.js\""
+          },
+          {
+            "type": "command",
+            "if": "Bash(git commit*)",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/pre-commit-check.js\""
+          },
+          {
+            "type": "command",
+            "if": "Bash(git commit*)",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/commit-validate.js\""
+          },
+          {
+            "type": "command",
+            "if": "Bash(git push*)",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/pre-push-check.js\""
+          }
+        ],
+        "description": "Git operation guards: quality gates before commit, LLM commit validation, wrap-up before push"
+      },
+      {
+        "matcher": "tool == \"Edit\" || tool == \"Write\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/secret-scan.js\""
+          }
+        ],
+        "description": "Deterministic regex-based secret detection on file writes and edits"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\\\.(ts|tsx|js|jsx|py|go|rs)$\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/post-edit-check.js\""
+          }
+        ],
+        "description": "Check for common issues after code edits"
+      },
+      {
+        "matcher": "tool == \"Bash\" && tool_input.command matches \"(npm test|pnpm test|yarn test|pytest|go test|cargo test)\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/test-failure-check.js\""
+          }
+        ],
+        "description": "Suggest learning from test failures"
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/session-check.js\""
+          }
+        ],
+        "description": "Context-aware wrap-up reminders using last_assistant_message"
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/learn-capture.js\""
+          }
+        ],
+        "description": "Auto-capture [LEARN] blocks from responses into database"
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/session-start.js\""
+          }
+        ],
+        "description": "Load LEARNED patterns and previous session context"
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/session-end.js\""
+          }
+        ],
+        "description": "Prompt for learnings and update LEARNED.md"
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/prompt-submit.js\""
+          }
+        ],
+        "description": "Track prompts and detect correction patterns"
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/drift-detector.js\""
+          }
+        ],
+        "description": "Detect task drift and remind about original intent"
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/pre-compact.js\""
+          }
+        ],
+        "description": "Save context state before compaction"
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/post-compact.js\""
+          }
+        ],
+        "description": "Re-inject critical context summary after compaction"
+      }
+    ],
+    "ConfigChange": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/config-watcher.js\""
+          }
+        ],
+        "description": "Detect when quality gates or hooks are modified mid-session"
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/notification-handler.js\""
+          }
+        ],
+        "description": "Log permission requests"
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/subagent-start.js\""
+          }
+        ],
+        "description": "Log subagent lifecycle for observability"
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/subagent-stop.js\""
+          }
+        ],
+        "description": "Log subagent completion and capture results"
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/task-completed.js\""
+          }
+        ],
+        "description": "Quality gate check when tasks are marked complete"
+      }
+    ],
+    "TaskCreated": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/task-created.js\""
+          }
+        ],
+        "description": "Validate task descriptions for tracking quality"
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/permission-request.js\""
+          }
+        ],
+        "description": "Flag dangerous operations in permission requests"
+      }
+    ],
+    "PermissionDenied": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/permission-denied.js\""
+          }
+        ],
+        "description": "Track permission denial patterns for optimization"
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/tool-failure.js\""
+          }
+        ],
+        "description": "Track tool failures and suggest debugging learnings"
+      }
+    ],
+    "TeammateIdle": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/teammate-idle.js\""
+          }
+        ],
+        "description": "Detect idle teammates in agent teams"
+      }
+    ],
+    "StopFailure": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/stop-failure.js\""
+          }
+        ],
+        "description": "Log API errors and suggest retry strategies"
+      }
+    ],
+    "FileChanged": [
+      {
+        "matcher": ".env|.envrc|package.json|tsconfig.json|Cargo.toml|go.mod|pyproject.toml",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/file-changed.js\""
+          }
+        ],
+        "description": "Watch for important config and dependency file changes"
+      }
+    ],
+    "Setup": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/setup-hook.js\""
+          }
+        ],
+        "description": "Auto-detect project type and suggest configuration on init"
+      }
+    ],
+    "WorktreeCreate": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/worktree-create.js\""
+          }
+        ],
+        "description": "Log worktree creation for parallel session tracking"
+      }
+    ],
+    "WorktreeRemove": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/worktree-remove.js\""
+          }
+        ],
+        "description": "Cleanup worktree tracking on removal"
+      }
+    ],
+    "CwdChanged": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/cwd-changed.js\""
+          }
+        ],
+        "description": "Detect project type and inject env vars on directory change"
+      }
+    ]
+  }
+}

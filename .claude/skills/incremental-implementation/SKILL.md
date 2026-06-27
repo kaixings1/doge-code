@@ -1,6 +1,6 @@
 ---
 name: incremental-implementation
-description: incremental implementation - Delivers changes incrementally. Use when implementing any fe...
+description: 增量实现 — 分步交付更改。在实现任何功能时使用。
 ---
 
 # Incremental Implementation

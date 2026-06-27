@@ -1,6 +1,6 @@
 ---
 name: context-engineering
-description: context engineering - Optimizes agent context setup. Use when starting a new sessi...
+description: 上下文工程 — 优化智能体上下文设置。在开始新会话或任务时使用。
 ---
 
 # Context Engineering

@@ -1,6 +1,6 @@
 ---
 name: continuous-learning
-description: Auto-extract patterns from coding sessions, track corrections, and build reusable knowledge with confidence scoring
+description: 从编码会话中自动提取模式、跟踪修正，并使用置信度评分构建可复用的知识库。
 ---
 
 # Continuous Learning

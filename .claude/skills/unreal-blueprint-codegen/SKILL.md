@@ -1,6 +1,6 @@
 ---
 name: unreal-blueprint-codegen
-description: Programmatically generate Unreal Engine 5.x Blueprint and Widget Blueprint .uasset files from C++. Use when building a content generator for Fab/Marketplace samples, Quick-Start kits, tutorial assets, or editor utilities that mass-produce Blueprints, Widget Blueprints with UMG animations, or domain assets (dialogue, quest, ability data). Covers UBlueprint creation with full event-graph authoring (UK2Node_*, FBlueprintEditorUtils), UWidgetBlueprint hierarchies, UWidgetAnimation with MovieScene tracks and keyframes, two-pass compile, and the K2Node spawn idiom. Triggers on "create a Blueprint generator", "generate WBP from C++", "programmatically author event graph", "build dialogue/quest assets from code", "editor utility to generate marketplace samples", or any task involving FKismetEditorUtilities::CreateBlueprint, UWidgetBlueprintFactory, FBlueprintEditorUtils::AddMemberVariable, or UMovieScene2DTransformTrack.
+description: 从C++以编程方式生成Unreal Engine 5.x蓝图和Widget蓝图文件。用于构建市场示例或批量生成蓝图的编辑器工具。
 ---
 
 # Unreal Engine Blueprint Code Generation (UE 5.4–5.7)
