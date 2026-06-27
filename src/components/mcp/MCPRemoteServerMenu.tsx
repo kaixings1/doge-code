@@ -344,7 +344,7 @@ export function MCPRemoteServerMenu({
     // the URL fallback block below still renders.
     const authCopy = server.config.type !== 'claudeai-proxy' && server.config.oauth?.xaa ? ' 正在通过您的身份提供商认证' : ' 浏览器窗口将打开进行认证';
     return <Box flexDirection="column" gap={1} padding={1}>
-        <Text color="claude">Authenticating with {server.name}…</Text>
+        <Text color="claude">正在认证 {server.name}…</Text>
         <Box>
           <Spinner />
           <Text>{authCopy}</Text>
@@ -410,20 +410,20 @@ export function MCPRemoteServerMenu({
   }
   if (isClaudeAIClearingAuth) {
     return <Box flexDirection="column" gap={1} padding={1}>
-        <Text color="claude">Clear authentication for {server.name}</Text>
+        <Text color="claude">清除 {server.name} 的认证</Text>
         {claudeAIClearAuthBrowserOpened ? <>
             <Text>
-              Find the MCP server in the browser and click
-              &quot;Disconnect&quot;.
+              请在浏览器中找到 MCP 服务器并点击
+              &quot;断开连接&quot;。
             </Text>
             {claudeAIClearAuthUrl && <Box flexDirection="column">
                 <Box>
                   <Text dimColor>
-                    If your browser didn&apos;t open automatically, copy this
-                    URL manually{' '}
+                    如果浏览器未自动打开，请手动复制此
+                    URL{' '}
                   </Text>
-                  {urlCopied ? <Text color="success">(Copied!)</Text> : <Text dimColor>
-                      <KeyboardShortcutHint shortcut="c" action="copy" parens />
+                  {urlCopied ? <Text color="success">(已复制！)</Text> : <Text dimColor>
+                      <KeyboardShortcutHint shortcut="c" action="复制" parens />
                     </Text>}
                 </Box>
                 <Link url={claudeAIClearAuthUrl} />
@@ -575,7 +575,7 @@ export function MCPRemoteServerMenu({
         </Box>
 
         {error && <Box marginTop={1}>
-            <Text color="error">Error: {error}</Text>
+            <Text color="error">错误：{error}</Text>
           </Box>}
 
         {menuOptions.length > 0 && <Box marginTop={1}>

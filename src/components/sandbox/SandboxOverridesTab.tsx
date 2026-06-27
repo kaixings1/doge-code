@@ -22,7 +22,7 @@ export function SandboxOverridesTab(t0) {
   if (!isEnabled) {
     let t1;
     if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-      t1 = <Box flexDirection="column" paddingY={1}><Text color="subtle">Sandbox is not enabled. Enable sandbox to configure override settings.</Text></Box>;
+      t1 = <Box flexDirection="column" paddingY={1}><Text color="subtle">沙箱未启用。启用沙箱以配置覆盖设置。</Text></Box>;
       $[0] = t1;
     } else {
       t1 = $[0];

@@ -440,7 +440,7 @@ function StagePipeline(t0) {
   const inSetup = !completed && !hasProgress;
   let t2;
   if ($[2] !== inSetup) {
-    t2 = inSetup ? <Text color="background">Setup</Text> : <Text dimColor={true}>Setup</Text>;
+    t2 = inSetup ? <Text color="background">设置中</Text> : <Text dimColor={true}>设置中</Text>;
     $[2] = inSetup;
     $[3] = t2;
   } else {
@@ -893,11 +893,11 @@ export function RemoteSessionDetailDialog({
 
         {/* Teleport error message */}
         {teleportError && <Box marginTop={1}>
-            <Text color="error">Teleport failed: {teleportError}</Text>
+            <Text color="error">传送失败：{teleportError}</Text>
           </Box>}
 
         {/* Teleporting status */}
-        {isTeleporting && <Text color="background">Teleporting to session…</Text>}
+        {isTeleporting && <Text color="background">正在传送到会话…</Text>}
       </Dialog>
     </Box>;
 }

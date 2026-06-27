@@ -28,14 +28,14 @@ function GracePeriodContentBody() {
   const $ = _c(9);
   let t0;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-    t0 = <Text>An update to our Consumer Terms and Privacy Policy will take effect on{" "}<Text bold={true}>October 8, 2025</Text>. You can accept the updated terms today.</Text>;
+    t0 = <Text>我们的消费者条款和隐私政策更新将于{" "}<Text bold={true}>October 8, 2025</Text> 生效。您今天即可接受更新后的条款。</Text>;
     $[0] = t0;
   } else {
     t0 = $[0];
   }
   let t1;
   if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
-    t1 = <Text>What's changing?</Text>;
+    t1 = <Text>发生了什么变化？</Text>;
     $[1] = t1;
   } else {
     t1 = $[1];
@@ -44,7 +44,7 @@ function GracePeriodContentBody() {
   let t3;
   if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
     t2 = <Text>· </Text>;
-    t3 = <Text bold={true}>You can help improve Claude </Text>;
+    t3 = <Text bold={true}>您可以帮助改进 Claude </Text>;
     $[2] = t2;
     $[3] = t3;
   } else {
@@ -53,7 +53,7 @@ function GracePeriodContentBody() {
   }
   let t4;
   if ($[4] === Symbol.for("react.memo_cache_sentinel")) {
-    t4 = <Box paddingLeft={1}><Text>{t2}{t3}<Text>— Allow the use of your chats and coding sessions to train and improve Anthropic AI models. Change anytime in your Privacy Settings (<Link url="https://claude.ai/settings/data-privacy-controls" />).</Text></Text></Box>;
+    t4 = <Box paddingLeft={1}><Text>{t2}{t3}<Text>— 允许使用您的聊天和编程会话数据来训练和改进 Anthropic AI 模型。您可随时在隐私设置中更改此选项（<Link url="https://claude.ai/settings/data-privacy-controls" />）。</Text></Text></Box>;
     $[4] = t4;
   } else {
     t4 = $[4];
@@ -92,21 +92,21 @@ function PostGracePeriodContentBody() {
   const $ = _c(7);
   let t0;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-    t0 = <Text>We've updated our Consumer Terms and Privacy Policy.</Text>;
+    t0 = <Text>我们已更新消费者条款和隐私政策。</Text>;
     $[0] = t0;
   } else {
     t0 = $[0];
   }
   let t1;
   if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
-    t1 = <Text>What's changing?</Text>;
+    t1 = <Text>发生了什么变化？</Text>;
     $[1] = t1;
   } else {
     t1 = $[1];
   }
   let t2;
   if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
-    t2 = <Box flexDirection="column"><Text bold={true}>Help improve Claude</Text><Text>Allow the use of your chats and coding sessions to train and improve Anthropic AI models. You can change this anytime in Privacy Settings</Text><Link url="https://claude.ai/settings/data-privacy-controls" /></Box>;
+    t2 = <Box flexDirection="column"><Text bold={true}>帮助改进 Claude</Text><Text>允许使用您的聊天和编程会话数据来训练和改进 Anthropic AI 模型。您可随时在隐私设置中更改此选项。</Text><Link url="https://claude.ai/settings/data-privacy-controls" /></Box>;
     $[2] = t2;
   } else {
     t2 = $[2];
@@ -134,7 +134,7 @@ function PostGracePeriodContentBody() {
   }
   let t6;
   if ($[6] === Symbol.for("react.memo_cache_sentinel")) {
-    t6 = <>{t0}{t3}<Text>Learn more ({t4}) or read the updated Consumer Terms ({t5}) and Privacy Policy (<Link url="https://anthropic.com/legal/privacy" />)</Text></>;
+    t6 = <>{t0}{t3}<Text>了解更多 ({t4}) 或阅读更新的消费者条款 ({t5}) 和隐私政策 (<Link url="https://anthropic.com/legal/privacy" />)</Text></>;
     $[6] = t6;
   } else {
     t6 = $[6];

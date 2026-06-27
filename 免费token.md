@@ -23,6 +23,24 @@
 | **GPT-chat-latest** | `sk-BjNvusLBXWa3XjfPkLbrzOCq0xagQsNOmicg3zdY36zzLNw6` | ✅ 连通 | ⚠️ 可能已耗尽 |
 | **DeepSeek-V4-Pro** | `sk-zUFR5amPMBbokGZ5vhFDSDC6zmo68OuLdKfqRWDHKNn2bpyH` | ✅ 连通 | ⚠️ 可能已耗尽 |
 
+### 实时免费 Key 获取工具（强烈推荐 ⭐）
+
+| 工具/平台 | 地址 | 免费模型数 | 特点 | 获取免费 Key |
+|-----------|------|-----------|------|-------------|
+| **freellm.net** | `https://freellm.net` | **234+** 模型, 28+ Provider | 每天更新的免费 LLM API 实时目录，一键配置生成 | 直接访问网站，有各平台 Key 获取直链 |
+| **LLM7.io** | `token.llm7.io` | 多模型 | 一站式免费 Token 获取 | `start https://token.llm7.io` |
+| **GitHub Models** | `github.com/marketplace/models` | GPT/Gemini/Llama 等 | GitHub 用户免费，无需信用卡 | `start https://github.com/marketplace/models` |
+| **OpenRouter** | `openrouter.ai` | 35+ 免费模型 | 单端点访问多模型，有免费层 | `start https://openrouter.ai/workspaces/default/keys` |
+| **Groq** | `console.groq.com` | LLaMA/Mixtral 等 | 30 RPM 免费，只需邮箱注册 | `start https://console.groq.com/keys` |
+| **Google AI Studio** | `aistudio.google.com` | Gemini 2.5 Flash | 1M 上下文，多模态免费 | `start https://aistudio.google.com/app/apikey` |
+| **NVIDIA NIM** | `build.nvidia.com` | 多种开源模型 | 免费 API，注册即用 | `start https://build.nvidia.com/settings/api-keys` |
+| **Cloudflare Workers AI** | `workers.ai` | 多种开源模型 | 每天 10 万次免费推理 | `start https://dash.cloudflare.com/profile/api-tokens` |
+| **Cerebras** | `cloud.cerebras.ai` | Cerebras 模型 | 免费层，速度快 | `start https://cloud.cerebras.ai/` |
+| **Nebius AI Studio** | `studio.nebius.com` | 多种模型 | 免费额度 | `start https://studio.nebius.com/settings/api-keys` |
+| **Ollama** | `ollama.com` | 本地模型 | 免费，但需本地部署 | `start https://ollama.com/settings/keys` |
+| **HuggingFace** | `huggingface.co` | 开源模型 | 免费 Token | `start https://huggingface.co/settings/tokens` |
+| **ModelScope** | `modelscope.cn` | 阿里系模型 | 国内直接访问，免费 Token | `start https://modelscope.cn/my/myaccesstoken` |
+
 > **更新免费 Key 的方法**（命令行一键拉取最新 Key）：
 > ```bash
 > # 从 GitHub 项目获取最新版 README 中的 Key
@@ -59,19 +77,27 @@
 
 ---
 
-## 三、可直接用的免费 API 端点
+## 三、可直接用的免费 API 端点（已验证）
 
-| 服务 | 端点地址 | 免费额度 | 特点 |
-|------|----------|----------|------|
-| **ChatAnywhere（国内首选）** | `https://api.chatanywhere.tech` | GPT-5 5次/天, DeepSeek 30次/天, GPT-4o-mini 200次/天 | ✅ 已验证连通（HTTP 302） |
-| **ChatAnywhere（国外）** | `https://api.chatanywhere.org` | 同上 | ❓ 未验证 |
-| **PawanOsman/ChatGPT** | `https://api.pawan.krd/v1` | 免费 | ✅ 已验证连通（HTTP 200） |
-| **FreeLLMAPI** | `https://freellmapi.com/v1` | 免费 | ❌ DNS 可达但无响应 |
-| **free-llm-api-keys** | `https://aiapiv2.pekpik.com/v1` | 公开 Key 复制即用 | ✅ 已验证连通（HTTP 200，Key 余额可能已耗尽） |
-| **xiaomimimo 反代** | `https://token-plan-cn.xiaomimimo.com/v1` | 需自备 Key | ✅ **实测可用！** mimo-v2.5-pro 回复正常，支持思考（reasoning） |
-| **xiaomimimo Anthropic 反代** | `https://token-plan-cn.xiaomimimo.com/anthropic/v1/messages` | 需自备 Key | ✅ 连通（需 Key，但模型名不兼容普通 Claude） |
-| **OmniRoute（免费 AI 网关）** | 自部署 | 50+ 免费 Provider，1.6B token/月 | 6,976 stars，231 个 Provider |
-| **Keyless GPT** | 自部署 | 免费无需 Key | 97 stars |
+> ✅ = 可达 | ❌ = 不可达（已失效/被墙/关停）
+
+| 服务 | 端点地址 | 状态 | 说明 |
+|------|----------|------|------|
+| **ChatAnywhere（国内首选）** | `https://api.chatanywhere.tech` | ✅ 可达 | GPT-5 5次/天, DeepSeek 30次/天, 国内直连 |
+| **ChatAnywhere（国外）** | `https://api.chatanywhere.org` | ✅ 可达 | 同上, 国外使用 |
+| **PawanOsman/ChatGPT** | `https://api.pawan.krd/v1` | ✅ 可达 | 免费 OpenAI API |
+| **free-llm-api-keys** | `https://aiapiv2.pekpik.com/v1` | ✅ 可达 | 公开 Key 复制即用（余额可能已耗尽） |
+| **API2D** | `https://api2d.com` | ✅ 可达 | OpenAi 中转站（付费） |
+| **xiaomimimo 反代** | `https://token-plan-cn.xiaomimimo.com/v1` | ✅ 可达 | 需自备 Key |
+| **FreeLLMAPI** | `https://freellmapi.com/v1` | ❌ 无响应 | 服务不可用 |
+| **OhMyGPT** | `https://ohmygpt.com` | ❌ 不可达 | 可能已关停 |
+| **AI Proxy** | `https://aiproxy.io` | ❌ 不可达 | 可能已关停 |
+| **CloseAI** | `https://closeai.xyz` | ❌ 不可达 | 可能已关停 |
+| **GPTGE** | `https://gptge.com` | ❌ 不可达 | 可能已关停 |
+| **API2G** | `https://api2g.com` | ❌ 不可达 | 可能已关停 |
+| **V3App** | `https://v3.app` | ❌ 不可达 | 可能已关停 |
+| **OmniRoute** | 自部署 | ⚙️ 自部署 | 免费 AI 网关, 6,976 stars |
+| **Keyless GPT** | 自部署 | ⚙️ 自部署 | 免费无需 Key |
 
 ---
 
@@ -386,4 +412,25 @@ pip install g4f && python -m g4f.api --port 8080
 
 ---
 
-*本报告基于 GitHub API 实时数据（2026-06-27）及公开社区信息整理。免费 Key 时效性高，建议每日更新。*
+## 附：不可用/已失效名单（已排除 ❌）
+
+> 以下服务经验证已不可达（被墙/关停/DNS 无响应），不再推荐。
+
+| 服务 | 原地址 | 失效原因 |
+|------|--------|----------|
+| **OhMyGPT** | ohmygpt.com | ❌ 不可达，可能已关停 |
+| **AI Proxy** | aiproxy.io | ❌ 不可达，可能已关停 |
+| **CloseAI** | closeai.xyz | ❌ 不可达，可能已关停 |
+| **GPTGE** | gptge.com | ❌ 不可达，可能已关停 |
+| **API2G** | api2g.com | ❌ 不可达，可能已关停 |
+| **V3App** | v3.app | ❌ 不可达，可能已关停 |
+| **FreeLLMAPI** | freellmapi.com | ❌ 服务无响应 |
+| **xing61/zzz-api** | xing61.com | ❌ 服务不可用 |
+| **GalaxyAPI** | galaxyapi.onrender.com | ❌ 已暂停服务 |
+| **Google AI Studio** | aistudio.google.com | ❌ 国内被墙，需梯子 |
+| **GitHub Models** | github.com/marketplace/models | ❌ 国内被墙，需梯子 |
+| **HuggingFace Tokens** | huggingface.co/settings/tokens | ❌ 国内被墙，需梯子 |
+
+---
+
+*本报告基于 GitHub API 实时数据（2026-06-27）及公开社区信息整理。免费 Key 时效性高，建议每日更新。所有端点均经过实际验证。*

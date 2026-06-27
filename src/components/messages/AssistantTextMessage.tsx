@@ -100,7 +100,7 @@ export function AssistantTextMessage(t0) {
       {
         let t2;
         if ($[5] === Symbol.for("react.memo_cache_sentinel")) {
-          t2 = <MessageResponse height={1}><Text color="error">Credit balance too low · Add funds: https://platform.claude.com/settings/billing</Text></MessageResponse>;
+          t2 = <MessageResponse height={1}><Text color="error">信用余额不足 · 充值: https://platform.claude.com/settings/billing</Text></MessageResponse>;
           $[5] = t2;
         } else {
           t2 = $[5];
@@ -168,7 +168,7 @@ export function AssistantTextMessage(t0) {
       {
         let t2;
         if ($[12] === Symbol.for("react.memo_cache_sentinel")) {
-          t2 = <Text color="error">We are experiencing high demand for Opus 4.</Text>;
+          t2 = <Text color="error">Opus 4 目前需求极高，暂时无法使用。</Text>;
           $[12] = t2;
         } else {
           t2 = $[12];

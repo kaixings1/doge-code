@@ -139,7 +139,7 @@ export function ThemePicker(t0) {
   const themeOptions = t10;
   let t11;
   if ($[8] !== showIntroText) {
-    t11 = showIntroText ? <Text>Let's get started.</Text> : <Text bold={true} color="permission">Theme</Text>;
+    t11 = showIntroText ? <Text>让我们开始吧。</Text> : <Text bold={true} color="permission">主题</Text>;
     $[8] = showIntroText;
     $[9] = t11;
   } else {
@@ -249,7 +249,7 @@ export function ThemePicker(t0) {
   } else {
     t21 = $[36];
   }
-  const t22 = colorModuleUnavailableReason === "env" ? `Syntax highlighting disabled (via CLAUDE_CODE_SYNTAX_HIGHLIGHT=${process.env.CLAUDE_CODE_SYNTAX_HIGHLIGHT})` : syntaxHighlightingDisabled ? `Syntax highlighting disabled (${syntaxToggleShortcut} to enable)` : syntaxTheme ? `Syntax theme: ${syntaxTheme.theme}${syntaxTheme.source ? ` (from ${syntaxTheme.source})` : ""} (${syntaxToggleShortcut} to disable)` : `Syntax highlighting enabled (${syntaxToggleShortcut} to disable)`;
+  const t22 = colorModuleUnavailableReason === "env" ? `语法高亮已禁用（通过 CLAUDE_CODE_SYNTAX_HIGHLIGHT=${process.env.CLAUDE_CODE_SYNTAX_HIGHLIGHT}）` : syntaxHighlightingDisabled ? `语法高亮已禁用（${syntaxToggleShortcut} 启用）` : syntaxTheme ? `语法主题：${syntaxTheme.theme}${syntaxTheme.source ? `（来自 ${syntaxTheme.source}）` : ""}（${syntaxToggleShortcut} 禁用）` : `语法高亮已启用（${syntaxToggleShortcut} 禁用）`;
   let t23;
   if ($[37] !== t22) {
     t23 = <Text dimColor={true}>{" "}{t22}</Text>;
