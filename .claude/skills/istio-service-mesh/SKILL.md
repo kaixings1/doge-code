@@ -1,0 +1,1 @@
+---/nname: istio-service-mesh/ndescription: Istio 服务网格 — 流量管理、安全策略、可观测性、Envoy 代理、mTLS、金丝雀发布/n---/n/n# istio-service-mesh/n/n## 概述/nIstio 服务网格 — 流量管理、安全策略、可观测性、Envoy 代理、mTLS、金丝雀发布。/n/n## 使用场景/n- 使用 istio-service-mesh 相关技术时/n- 架构决策和技术选型需要参考最佳实践时/n/n## 核心原则/n1. 遵循最佳实践/n2. 注重可维护性/n3. 安全性优先/n4. 性能意识/n

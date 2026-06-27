@@ -1,0 +1,1 @@
+---/nname: nuxt-framework/ndescription: Nuxt 3 全栈框架 — 自动导入、文件路由、SSR/SSG/ISR、Nitro 引擎、模块生态/n---/n/n# nuxt-framework/n/n## 概述/nNuxt 3 全栈框架 — 自动导入、文件路由、SSR/SSG/ISR、Nitro 引擎、模块生态。/n/n## 使用场景/n- 使用 nuxt-framework 相关技术时/n- 架构决策和技术选型需要参考最佳实践时/n/n## 核心原则/n1. 遵循最佳实践/n2. 注重可维护性/n3. 安全性优先/n4. 性能意识/n
