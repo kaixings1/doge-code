@@ -1,43 +1,28 @@
 ---
 name: fal-generate
-description: |
-  Generate images and videos using fal.ai AI models. Production-grade catalogue covering Flux, SDXL, ideogram, and other community-hosted endpoints.
-triggers:
-  - "fal generate"
-  - "fal.ai image"
-  - "flux image"
-  - "sdxl"
-  - "ideogram"
-od:
-  mode: image
-  category: image-generation
-  upstream: "https://github.com/fal-ai-community/skills"
+description: "Generate images and videos using fal.ai AI models"
+risk: safe
+source: "https://github.com/fal-ai-community/skills/blob/main/skills/claude.ai/fal-generate/SKILL.md"
+date_added: "2026-02-27"
 ---
 
-# fal-generate
+# Fal Generate
 
-> Curated from the fal.ai community team.
+## Overview
 
-## What it does
+Generate images and videos using fal.ai AI models
 
-Generate images and videos using fal.ai AI models. Production-grade catalogue covering Flux, SDXL, ideogram, and other community-hosted endpoints.
+## When to Use This Skill
 
-## Source
+Use this skill when you need to work with generate images and videos using fal.ai ai models.
 
-- Upstream: https://github.com/fal-ai-community/skills
-- Category: `image-generation`
+## Instructions
 
-## How to use
+This skill provides guidance and patterns for generate images and videos using fal.ai ai models.
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+For more information, see the [source repository](https://github.com/fal-ai-community/skills/blob/main/skills/claude.ai/fal-generate/SKILL.md).
 
-```bash
-# Inspect the upstream README for exact paths
-open https://github.com/fal-ai-community/skills
-```
-
-Then ask the agent to invoke this skill by name (`fal-generate`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -1,18 +1,26 @@
 ---
 name: cold-email
-description: Write B2B cold emails and follow-up sequences that get replies. Use when the user wants to write cold outreach emails, prospecting emails, cold email campaigns, sales development emails, or SDR emails. Also use when the user mentions "cold outreach," "prospecting email," "outbound email," "email to leads," "reach out to prospects," "sales email," "follow-up email sequence," "nobody's replying to my emails," or "how do I write a cold email." Covers subject lines, opening lines, body copy, CTAs, personalization, and multi-touch follow-up sequences. For warm/lifecycle email sequences, see emails. For sales collateral beyond emails, see sales-enablement.
+description: "Write B2B cold emails and follow-up sequences that earn replies. Use when creating outbound prospecting emails, SDR outreach, personalized opening lines, subject lines, CTAs, and multi-touch follow-up sequences."
+risk: unknown
+source: "https://github.com/coreyhaines31/marketingskills"
+date_added: "2026-03-21"
 metadata:
-  version: 2.0.0
+  version: 1.1.0
 ---
 
 # Cold Email Writing
 
 You are an expert cold email writer. Your goal is to write emails that sound like they came from a sharp, thoughtful human — not a sales machine following a template.
 
+## When to Use
+- Use when writing outbound prospecting emails or cold follow-up sequences.
+- Use when the task is getting replies from people with no existing relationship.
+- Use when the user wants sharper subject lines, openings, CTAs, or personalization.
+
 ## Before Writing
 
 **Check for product marketing context first:**
-If `.agents/product-marketing.md` exists (or `.claude/product-marketing.md`, or the legacy `product-marketing-context.md` filename, in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
+If `.agents/product-marketing-context.md` exists (or `.claude/product-marketing-context.md` in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
 
 Understand the situation (ask if not provided):
 
@@ -151,9 +159,13 @@ Use this data to inform your writing — not as a checklist to satisfy.
 
 ## Related Skills
 
-- **prospecting**: For building and qualifying the prospect list that this skill writes outreach against — the natural upstream step before cold-email
 - **copywriting**: For landing pages and web copy
-- **emails**: For lifecycle/nurture email sequences (not cold outreach)
-- **social**: For LinkedIn and social posts
-- **product-marketing**: For establishing foundational positioning
+- **email-sequence**: For lifecycle/nurture email sequences (not cold outreach)
+- **social-content**: For LinkedIn and social posts
+- **product-marketing-context**: For establishing foundational positioning
 - **revops**: For lead scoring, routing, and pipeline management
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
