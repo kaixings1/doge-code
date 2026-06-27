@@ -1,6 +1,6 @@
 ---
 name: deprecation-and-migration
-description: deprecation and 迁移 - Manages deprecation and migration. Use when removing old sys...
+description: 弃用与迁移 — 管理弃用和迁移。在移除旧系统或升级依赖时使用。
 ---
 
 # Deprecation and Migration

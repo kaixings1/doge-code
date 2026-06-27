@@ -1,6 +1,6 @@
 ---
 name: kubernetes-operations
-description: kubernetes operations - Kubernetes operations including manifests, Helm charts, oper...
+description: Kubernetes运维 — 包括清单、Helm图表、Operator模式、网络策略和存储。
 ---
 
 # Kubernetes Operations

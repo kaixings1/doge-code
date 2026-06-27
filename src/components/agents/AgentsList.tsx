@@ -62,7 +62,7 @@ export function AgentsList(t0) {
       const dimmed = isBuiltIn || isOverridden;
       const textColor = !isBuiltIn && isSelected ? "suggestion" : undefined;
       const resolvedModel = resolveAgentModelDisplay(agent_0);
-      return <Box key={`${agent_0.agentType}-${agent_0.source}`}><Text dimColor={dimmed && !isSelected} color={textColor}>{isBuiltIn ? "" : isSelected ? `${figures.pointer} ` : "  "}</Text><Text dimColor={dimmed && !isSelected} color={textColor}>{agent_0.agentType}</Text>{resolvedModel && <Text dimColor={true} color={textColor}>{" \xB7 "}{resolvedModel}</Text>}{agent_0.memory && <Text dimColor={true} color={textColor}>{" \xB7 "}{agent_0.memory} 记忆</Text>}{overriddenBy && <Text dimColor={!isSelected} color={isSelected ? "warning" : undefined}>{" "}{figures.warning} 被 {getOverrideSourceLabel(overriddenBy)} 覆盖</Text>}</Box>;
+      return <Box key={`${agent_0.agentType}-${agent_0.source}`}><Text dimColor={dimmed && !isSelected} color={textColor}>{isBuiltIn ? "" : isSelected ? `${figures.pointer} ` : "  "}</Text><Text dimColor={dimmed && !isSelected} color={textColor}>{agent_0.agentType}{(() => { const d = (agent_0.whenToUse || "").trim(); const sd = d.length > 80 ? d.slice(0, 77) + "..." : d; return sd ? <Text dimColor={true}> {sd}</Text> : null; })()}</Text>{overriddenBy && <Text dimColor={!isSelected} color={isSelected ? "warning" : undefined}>{" "}{figures.warning} 被 {getOverrideSourceLabel(overriddenBy)} 覆盖</Text>}</Box>;
     };
     $[4] = isCreateNewSelected;
     $[5] = selectedAgent?.agentType;

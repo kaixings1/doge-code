@@ -1,6 +1,6 @@
 ---
 name: database-optimization
-description: 数据库 optimization - Query optimization, indexing strategies, and database perfor...
+description: 数据库优化 — 查询优化、索引策略和数据库性能调优。
 ---
 
 # Database Optimization
