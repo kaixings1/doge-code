@@ -158,7 +158,7 @@ export function DiffDetailView(t0) {
     }
     let t4;
     if ($[22] === Symbol.for("react.memo_cache_sentinel")) {
-      t4 = <Box flexDirection="column"><Text dimColor={true} italic={true}>Binary file - cannot display diff</Text></Box>;
+      t4 = <Box flexDirection="column"><Text dimColor={true} italic={true}>二进制文件 - 无法显示差异</Text></Box>;
       $[22] = t4;
     } else {
       t4 = $[22];
@@ -191,7 +191,7 @@ export function DiffDetailView(t0) {
     }
     let t4;
     if ($[28] === Symbol.for("react.memo_cache_sentinel")) {
-      t4 = <Box flexDirection="column"><Text dimColor={true} italic={true}>Large file - diff exceeds 1 MB limit</Text></Box>;
+      t4 = <Box flexDirection="column"><Text dimColor={true} italic={true}>文件过大 - 差异超过 1 MB 限制</Text></Box>;
       $[28] = t4;
     } else {
       t4 = $[28];

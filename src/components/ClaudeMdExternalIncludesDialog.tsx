@@ -66,7 +66,7 @@ export function ClaudeMdExternalIncludesDialog(t0) {
   }
   let t7;
   if ($[6] !== externalIncludes) {
-    t7 = externalIncludes && externalIncludes.length > 0 && <Box flexDirection="column"><Text dimColor={true}>External imports:</Text>{externalIncludes.map(_temp4)}</Box>;
+    t7 = externalIncludes && externalIncludes.length > 0 && <Box flexDirection="column"><Text dimColor={true}>外部导入：</Text>{externalIncludes.map(_temp4)}</Box>;
     $[6] = externalIncludes;
     $[7] = t7;
   } else {
