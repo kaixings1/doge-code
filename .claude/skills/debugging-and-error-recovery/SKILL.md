@@ -1,6 +1,6 @@
 ---
 name: debugging-and-error-recovery
-description: debugging and 错误 recovery - Guides systematic root-cause debugging. Use when tests fail,...
+description: 调试与错误恢复 — 指导系统性的根本原因调试。在测试失败或出现错误时使用。
 ---
 
 # Debugging and Error Recovery

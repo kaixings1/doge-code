@@ -1,6 +1,6 @@
 ---
 name: interview-me
-description: interview me - Extracts what the user actually wants instead of what they t...
+description: 反问面试 — 通过反问提取用户真正想要的内容。
 ---
 
 # Interview Me

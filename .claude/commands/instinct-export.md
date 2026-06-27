@@ -1,6 +1,6 @@
 ---
 name: instinct-export
-description: Export instincts from project/global scope to a file
+description: 将直觉（Instincts）从项目/全局作用域导出到文件
 command: /instinct-export
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: prompt-engineering
-description: prompt engineering - Prompt engineering patterns including structured prompts, ch...
+description: 提示工程 — 包括结构化提示、链式思考、少样本示例和角色提示的提示工程模式。
 ---
 
 # Prompt Engineering
