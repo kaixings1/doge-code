@@ -1,12 +1,33 @@
 # Doge Code 系统能力全景报告
 
-> 生成于 2026-06-27 · 涵盖所有技能、斜杠命令、代理工作流
+> 最后更新：2026-06-27（实时扫描统计）
+
+---
+
+## 〇、项目总览
+
+| 指标 | 数量 | 说明 |
+|------|------|------|
+| **源码 TS/TSX 文件** | 2,310 | `src/` 下所有 TypeScript 文件 |
+| **源码总行数** | 36,806 | TypeScript + TSX 代码行 |
+| **核心入口行数** | 9,875 | main.tsx(4399) + query.ts(1503) + QueryEngine.ts(1254) + core.ts(1236) + commands.ts(852) + tools.ts(442) + context.ts(189) |
+| **Bridge 模块** | 33 文件 | OpenAI ↔ Anthropic 双向转接层 |
+| **React Hooks** | 106 个 | `src/hooks/` 下全部 hooks |
+| **TUI 组件** | 146 个 | `src/components/` 下 Ink 组件 |
+| **内置斜杠命令** | 168 个 | `src/commands/` 注册的命令（含目录+文件） |
+| **内置工具** | 80 个 | `src/tools/` 注册的 Tool 实现 |
+| **API 预设** | 80+ 个 | `presets.ts` 156 行，覆盖 14 个分组 |
+| **插件** | 36 个 | `plugins/` 目录（含 README） |
+| **外部技能文件** | 5,970 | `.claude/` 及子目录下技能 `.md` |
+| **外部代理文件** | 1,133 | `.claude/` 及子目录下代理 `.md` |
+| **外部命令文件** | 1,074 | `.claude/` 及子目录下命令 `.md` |
+| **本地化语言** | zh-CN | 完整中文本地化 |
 
 ---
 
 ## 一、斜杠命令（Commands）
 
-Doge Code 内置 **300+** 斜杠命令，分为以下类别：
+Doge Code 内置 **168** 个斜杠命令（src/commands/ 注册），另集成 **1,074** 个外部命令文件。分为以下类别：
 
 ### 🌐 会话管理
 | 命令 | 描述 |
@@ -214,6 +235,8 @@ Doge Code 内置 **300+** 斜杠命令，分为以下类别：
 
 ## 二、技能（Skills）
 
+共 **5,970** 个技能文件，覆盖以下主要领域：
+
 ### C++ 全栈
 | 技能 | 用途 |
 |------|------|
@@ -300,6 +323,8 @@ Doge Code 内置 **300+** 斜杠命令，分为以下类别：
 ---
 
 ## 三、代理（Agents）
+
+共 **1,133** 个代理文件，覆盖以下角色：
 
 | 分类 | 代理 | 作用 |
 |------|------|------|
@@ -407,16 +432,19 @@ Doge Code 内置 **300+** 斜杠命令，分为以下类别：
 
 ### 项目总规模增长
 
-| 指标 | 集成前 | 集成后 | 增长 |
-|------|--------|--------|------|
-| 技能 (SKILL.md) | **302** | **454** | **+152** |
-| 命令 (.md) | **129** | **300** | **+171** |
-| 代理 (.md) | **230** | **309** | **+79** |
-| **总文件** | **~670** | **~1,170** | **~+500** |
+| 指标 | 集成前 | 集成后（2026-06-27 实测） | 增长 |
+|------|--------|--------------------------|------|
+| 技能 (.md) | **302** | **5,970** | **+5,668** |
+| 代理 (.md) | **230** | **1,133** | **+903** |
+| 命令 (.md) | **129** | **1,074** | **+945** |
+| 插件 | — | **36** | +36 |
+| **总外部资源文件** | **~670** | **~8,177** | **~+7,500** |
 
-以下资源已从社区流行项目中集成到 `.claude/` 目录中：
+---
 
-### ✅ 新增技能（25 个）
+## 附：社区集成历史记录
+
+### ✅ 第 1 轮新增技能（25 个）
 | 分类 | 技能 | 描述 |
 |------|------|------|
 | 可观测性 | prometheus-grafana | Prometheus 监控 + Grafana 可视化 |
@@ -482,13 +510,10 @@ Doge Code 内置 **300+** 斜杠命令，分为以下类别：
 
 ---
 
-## 六、仍缺失的流行资源（下一批待集成）
-
-以下为社区流行的资源，尚未集成（推荐下一轮进行）：
+## 六、仍可补充的领域（建议下一批）
 
 | 领域 | 缺失项目 | 优先级 |
 |------|---------|--------|
-| 工作流仓库 | `mattpocock/skills` `garrytan/gstack` `gsd-build/get-shit-done` `bmad-code-org/BMAD-METHOD` `Yeachan-Heo/oh-my-claudecode` `humanlayer/humanlayer` `EveryInc/compound-engineering-plugin` `Fission-AI/OpenSpec` `github/spec-kit` | 🔴 高 |
 | 消息系统 | RabbitMQ, NATS, Apache Thrift | 🟡 中 |
 | 数据库 | Cassandra, Neo4j, ScyllaDB, CockroachDB, TimescaleDB | 🟡 中 |
 | 语言框架 | Kotlin Multiplatform, .NET MAUI/Blazor, Solid.js, Remix, Qwik | 🟡 中 |
@@ -499,46 +524,33 @@ Doge Code 内置 **300+** 斜杠命令，分为以下类别：
 | 架构 | Event Storming, Hexagonal Architecture (详细版) | 🟢 低 |
 | 测试 | Visual Regression (Percy/Chromatic), Playwright 高级 | 🟢 低 |
 
+> 注：上一轮报告中列出的高优先级工作流仓库（mattpocock/skills、garrytan/gstack、gsd-build/get-shit-done、oh-my-claudecode、humanlayer、compound-engineering、OpenSpec、spec-kit 等）已**全部集成完毕**。
+
 ---
 
-## 七、架构概览
+## 七、API 预设分组概览
 
-基于社区高频生态扫描（302 技能 / 129 命令 / 230 代理 / 130 插件 均已覆盖的基线之上），以下为建议新增的资源方向：
+`presets.ts` 内置 **80+ 个 API 预设**，分 14 个组：
 
-### 高优先级（知名工作流仓库）
+| 分组 | 数量 | 代表 |
+|------|------|------|
+| Chinese AI | 18 | DeepSeek、Kimi、智谱、百度千帆、火山引擎、阿里百炼、MiniMax、硅基流动、阶跃星辰、零一万物 |
+| Gateway (国内中转) | 31 | Aihubmix、TheRouter、Pateway、OpenRouter、CCSub 等 |
+| US AI | 12 | OpenAI、Groq、xAI、Google Gemini、GitHub Copilot、Fireworks、Cerebras 等 |
+| European AI | 2 | Mistral、Codestral |
+| Search AI | 1 | Perplexity |
+| GPU Cloud | 1 | NVIDIA NIM |
+| Community | 1 | HuggingFace |
+| Local | 7 | vLLM、SGLang、Ollama、LMStudio、LiteLLM 等 |
+| Cloud | 3 | AWS Bedrock、Azure OpenAI、Microsoft Foundry |
+| Tool | 7 | Firecrawl、Exa、Tavily、Brave、FAL、ElevenLabs、Deepgram |
+| Crawler | 9 | Serper、Jina、Spider、ScrapingBee、ScraperAPI、BrightData、Apify、Diffbot |
+| MCP | 2 | MCP Fetch、Upstash Context7 |
+| Messaging | 1 | AskOnce |
 
-| 仓库 | Stars | 资源类型 | 缺失内容 |
-|------|-------|---------|---------|
-| `mattpocock/skills` | ~4k | 技能合集 | TypeScript 深度技能系列 |
-| `garrytan/gstack` | ~3k | 工作流 | 全栈开发工作流 |
-| `gsd-build/get-shit-done` | ~2k | 工作流 | 专注执行工作流 |
-| `bmad-code-org/BMAD-METHOD` | ~2k | 方法论 | PRD-史诗-故事-实施管线 |
-| `Yeachan-Heo/oh-my-claudecode` | ~1k | 技能合集 | 多语言技能包 |
-| `humanlayer/humanlayer` | ~1k | 工作流 | 人工审批网关 |
-| `EveryInc/compound-engineering-plugin` | ~1k | 插件 | 复合工程工作流 |
-| `Fission-AI/OpenSpec` | ~1k | 工作流 | Agentic Spec 驱动开发 |
-| `github/spec-kit` | ~1k | 命令集 | 规范编写命令包 |
+---
 
-### 高优先级（技术栈补全）
-
-| 领域 | 缺失项目 | 建议类型 | 原因 |
-|------|---------|---------|------|
-| 可观测性 | Prometheus, Grafana, OpenTelemetry, Sentry, ELK, Loki, Tempo | 技能+命令 | 生产环境标配 |
-| 消息系统 | gRPC, Kafka, RabbitMQ, NATS | 技能+代理 | 云原生通信核心 |
-| 云原生 | Terraform, Pulumi, Serverless, EKS, Istio, Crossplane | 技能+命令 | IaC 主导工具 |
-| 数据库 | MongoDB, Elasticsearch, Cassandra, Neo4j | 技能+命令 | NoSQL 四巨头 |
-| 语言运行时 | Deno, Kotlin Multiplatform, .NET MAUI, SvelteKit, Nuxt 3, Solid.js | 技能+代理 | 主流框架 |
-| 开发工具链 | semantic-release, NX, Turborepo, Changesets, Husky, Renovate | 命令 | 日常开发必备 |
-| 代码质量 | SonarQube, SonarCloud | 技能+命令 | 持续质量保障 |
-| 架构设计 | C4 Model, Event Storming, DDD, CQRS, Event Sourcing | 技能 | 架构文档标准 |
-| 测试 | Chaos Mesh, Visual Regression(Percy/Chromatic), Playwright 高级 | 技能+命令 | 高级测试自动化 |
-
-### 集成优先级建议
-
-1. **第一阶段**：8 个缺失的高星工作流仓库（获取完整的 `.claude/` 目录结构）
-2. **第二阶段**：可观测性 + 消息系统技能（Prometheus/gRPC/Kafka 等）
-3. **第三阶段**：云原生 IaC / 数据库技能
-4. **第四阶段**：语言框架 + 开发工具链
+## 八、架构概览
 
 ---
 
@@ -559,10 +571,10 @@ QueryEngine.ts (1254 行)    # 子代理查询执行引擎
 ### 关键注册文件
 | 文件 | 行数 | 职责 |
 |------|------|------|
-| `src/commands.ts` | 823 | 命令注册中心（140+ 斜杠命令），memoize 懒加载 |
-| `src/tools.ts` | 442 | 工具注册中心（84 个工具），每目录独立实现 |
-| `src/core.ts` | 1236 | 核心逻辑 |
-| `src/context.ts` | 220 | 全局上下文聚合（Git 状态/系统上下文/用户上下文） |
+| `src/commands.ts` | 852 | 命令注册中心（168 个斜杠命令），memoize 懒加载 |
+| `src/tools.ts` | 442 | 工具注册中心（80 个工具），每目录独立实现 |
+| `src/core.ts` | 1,236 | 核心逻辑 |
+| `src/context.ts` | 189 | 全局上下文聚合（Git 状态/系统上下文/用户上下文） |
 | `src/Tool.ts` | ~700 | 工具接口定义 + 生命周期 |
 
 ### 特性标记系统（编译时死代码消除）
@@ -579,16 +591,24 @@ QueryEngine.ts (1254 行)    # 子代理查询执行引擎
 
 ---
 
-## 附：免费 Token / 反代资源报告
+## 附：合法 API 额度来源
 
-> 📋 详见项目根目录 [`免费token.md`](../免费token.md)
+Doge Code 内置 80+ API 预设，以下为有免费额度的合法渠道：
 
-该报告通过 **GitHub API 实时搜索**（11 组关键词，1,500+ 项目）整理，包含：
-- **官方免费 API Token 来源** — 12 家平台（DeepSeek/智谱/Anthropic/OpenAI 等）
-- **GitHub TOP 30 反代项目排行** — 含 Stars、分类、核心功能描述
-- **自建反代方案 TOP 9** — One API（35k★）/ LiteLLM（51k★）/ CCX / claude-code-proxy 等
-- **Doge Code 7 种配置方案** — DeepSeek / One API / CCX / LiteLLM / 免费 API 等
-- **Cloudflare Workers 可直接部署的反代代码**
-- **社区活跃讨论渠道** — Hostloc / V2EX / 52破解 / B站 / 抖音 等
+| 平台 | 免费方式 | 预设标签 |
+|------|---------|---------|
+| Google Gemini | Free tier | `Google Gemini` |
+| Groq | 免费 Llama/Mixtral | `Groq` |
+| DeepSeek | 新用户赠送 | `DeepSeek API` |
+| 智谱 GLM | 新用户赠送 | `Zhipu (BigModel)` |
+| 阿里百炼 | 新用户活动 | `DashScope` |
+| 硅基流动 | 免费模型 | `SiliconFlow` |
+| OpenRouter | 部分模型免费 | `OpenRouter` |
+| HuggingFace | 免费推理 | `HuggingFace` |
+| NVIDIA NIM | 免费额度 | `NVIDIA NIM` |
+| Cloudflare AI | Workers 免费层 | `Cloudflare AI` |
+| 本地 Ollama | 完全免费 | `Ollama (11434)` |
+| 本地 vLLM | 完全免费 | `vLLM (Local)` |
+| 本地 LMStudio | 完全免费 | `LMStudio Server (1234)` |
 
-> ⚠️ 免费 Token 和反代地址时效性极高，请以 `免费token.md` 中的实时数据为准，定期更新。
+> 配置方式：运行 `/model` 命令切换预设，或编辑 `.doge/api.json` 手动配置。
