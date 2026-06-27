@@ -1,0 +1,1 @@
+---/nname: testing-property/ndescription: 属性基测试 — QuickCheck/Hypothesis/fscheck、不变式、生成器、收缩、状态测试/n---/n/n# testing-property/n/n## 概述/n属性基测试 — QuickCheck/Hypothesis/fscheck、不变式、生成器、收缩、状态测试。/n/n## 使用场景/n- 使用 testing-property 相关技术时/n- 架构决策和技术选型需要参考最佳实践时/n/n## 核心原则/n1. 遵循最佳实践/n2. 注重可维护性/n3. 安全性优先/n4. 性能意识/n

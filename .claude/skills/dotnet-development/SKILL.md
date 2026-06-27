@@ -1,0 +1,1 @@
+---/nname: dotnet-development/ndescription: .NET 开发 — ASP.NET Core、Entity Framework、依赖注入、中间件、Blazor、gRPC、MAUI/n---/n/n# dotnet-development/n/n## 概述/n.NET 开发 — ASP.NET Core、Entity Framework、依赖注入、中间件、Blazor、gRPC、MAUI。/n/n## 使用场景/n- 使用 dotnet-development 相关技术时/n- 架构决策和技术选型需要参考最佳实践时/n/n## 核心原则/n1. 遵循最佳实践/n2. 注重可维护性/n3. 安全性优先/n4. 性能意识/n

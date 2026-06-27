@@ -1,0 +1,1 @@
+---/nname: prometheus-grafana/ndescription: Prometheus 监控 + Grafana 可视化 — 指标采集、告警规则、仪表盘设计、PromQL 查询/n---/n/n# prometheus-grafana/n/n## 概述/nPrometheus 监控 + Grafana 可视化 — 指标采集、告警规则、仪表盘设计、PromQL 查询。/n/n## 使用场景/n- 使用 prometheus-grafana 相关技术时/n- 架构决策和技术选型需要参考最佳实践时/n/n## 核心原则/n1. 遵循最佳实践/n2. 注重可维护性/n3. 安全性优先/n4. 性能意识/n

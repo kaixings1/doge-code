@@ -1,0 +1,1 @@
+---/nname: sonarqube-quality/ndescription: SonarQube/SonarCloud 代码质量 — 静态分析、质量门禁、技术债务、规则定制/n---/n/n# sonarqube-quality/n/n## 概述/nSonarQube/SonarCloud 代码质量 — 静态分析、质量门禁、技术债务、规则定制。/n/n## 使用场景/n- 使用 sonarqube-quality 相关技术时/n- 架构决策和技术选型需要参考最佳实践时/n/n## 核心原则/n1. 遵循最佳实践/n2. 注重可维护性/n3. 安全性优先/n4. 性能意识/n

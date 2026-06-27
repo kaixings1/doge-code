@@ -1,0 +1,1 @@
+---/nname: c4-architecture/ndescription: C4 架构模型 — 上下文/容器/组件/代码图、Structurizr DSL、架构文档化/n---/n/n# c4-architecture/n/n## 概述/nC4 架构模型 — 上下文/容器/组件/代码图、Structurizr DSL、架构文档化。/n/n## 使用场景/n- 使用 c4-architecture 相关技术时/n- 架构决策和技术选型需要参考最佳实践时/n/n## 核心原则/n1. 遵循最佳实践/n2. 注重可维护性/n3. 安全性优先/n4. 性能意识/n

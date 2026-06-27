@@ -1,0 +1,1 @@
+---/nname: turborepo/ndescription: Turborepo 单体仓库 — 缓存任务、并行执行、远程缓存、依赖图、管道配置/n---/n/n# turborepo/n/n## 概述/nTurborepo 单体仓库 — 缓存任务、并行执行、远程缓存、依赖图、管道配置。/n/n## 使用场景/n- 使用 turborepo 相关技术时/n- 架构决策和技术选型需要参考最佳实践时/n/n## 核心原则/n1. 遵循最佳实践/n2. 注重可维护性/n3. 安全性优先/n4. 性能意识/n

@@ -1,0 +1,1 @@
+# DDD 领域分析/n/n领域驱动设计辅助工具：识别限界上下文、聚合、实体和领域事件。/n/n## 子命令/n- analyze — 分析领域/n- context-map — 绘制上下文地图/n- events — 识别领域事件/n- aggregate — 设计聚合/n
