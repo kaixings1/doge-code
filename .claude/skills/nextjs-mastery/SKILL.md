@@ -1,6 +1,6 @@
 ---
 name: nextjs-mastery
-description: nextjs mastery - Next.js 14+ App Router patterns including RSC, ISR, middlewa...
+description: Next.js精通 — App Router模式，包括RSC、ISR、中间件、服务端操作和流式渲染。
 ---
 
 # Next.js Mastery

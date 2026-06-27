@@ -1,6 +1,6 @@
 ---
 name: code-simplification
-description: 代码 simplification - Simplifies code for clarity. Use when refactoring code for c...
+description: 代码简化 — 简化代码以提高可读性。在重构代码时使用。
 ---
 
 # Code Simplification

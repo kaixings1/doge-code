@@ -1,6 +1,6 @@
 ---
 name: typescript-advanced
-description: typescript advanced - Advanced TypeScript patterns including generics, conditional...
+description: TypeScript高级 — 包括泛型、条件类型、映射类型、模板字面量类型和装饰器。
 ---
 
 # TypeScript Advanced

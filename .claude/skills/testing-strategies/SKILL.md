@@ -1,6 +1,6 @@
 ---
 name: testing-strategies
-description: 测试 strategies - Testing strategies including contract testing, snapshot test...
+description: 测试策略 — 包括契约测试、快照测试、混沌工程和端到端测试。
 ---
 
 # Testing Strategies

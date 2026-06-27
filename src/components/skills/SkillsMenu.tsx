@@ -2,7 +2,9 @@ import { c as _c } from "react/compiler-runtime";
 import { capitalize } from '../../vendor/lodash.js';
 import * as React from 'react';
 import { useMemo } from 'react';
+import figures from '../../vendor/figures.js';
 import { type Command, type CommandBase, type CommandResultDisplay, getCommandName, type PromptCommand } from '../../commands.js';
+import type { KeyboardEvent } from '../../ink/events/keyboard-event.js';
 import { Box, Text } from '../../ink.js';
 import { estimateSkillFrontmatterTokens, getSkillsPath } from '../../skills/loadSkillsDir.js';
 import { getDisplayPath } from '../../utils/file.js';
@@ -18,6 +20,8 @@ type SkillSource = SettingSource | 'plugin' | 'mcp';
 type Props = {
   onExit: (result?: string, options?: {
     display?: CommandResultDisplay;
+    nextInput?: string;
+    submitNextInput?: boolean;
   }) => void;
   commands: Command[];
 };
@@ -45,14 +49,15 @@ function getSourceSubtitle(source: SkillSource, skills: SkillCommand[]): string 
   return hasCommandsSkills ? `${skillsPath}, ${getDisplayPath(getSkillsPath(source, 'commands'))}` : skillsPath;
 }
 export function SkillsMenu(t0) {
-  const $ = _c(35);
+  const $ = _c(46);
   const {
     onExit,
     commands
   } = t0;
+  const [selectedSkill, setSelectedSkill] = React.useState(null);
   let t1;
   if ($[0] !== commands) {
-    t1 = commands.filter(_temp);
+    t1 = commands.filter(_temp).sort(_temp2);
     $[0] = commands;
     $[1] = t1;
   } else {
@@ -99,31 +104,68 @@ export function SkillsMenu(t0) {
   }
   const handleCancel = t2;
   if (skills.length === 0) {
-    let t3;
+    let t6;
     if ($[6] === Symbol.for("react.memo_cache_sentinel")) {
-      t3 = <Text dimColor={true}>在 .claude/skills/ 或 ~/.claude/skills/ 中创建技能</Text>;
-      $[6] = t3;
+      t6 = <Text dimColor={true}>在 .claude/skills/ 或 ~/.claude/skills/ 中创建技能</Text>;
+      $[6] = t6;
     } else {
-      t3 = $[6];
+      t6 = $[6];
     }
-    let t4;
+    let t7;
     if ($[7] === Symbol.for("react.memo_cache_sentinel")) {
-      t4 = <Text dimColor={true} italic={true}><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="关闭" /></Text>;
-      $[7] = t4;
+      t7 = <Text dimColor={true} italic={true}><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="关闭" /></Text>;
+      $[7] = t7;
     } else {
-      t4 = $[7];
+      t7 = $[7];
     }
-    let t5;
+    let t8;
     if ($[8] !== handleCancel) {
-      t5 = <Dialog title="技能" subtitle="未找到技能" onCancel={handleCancel} hideInputGuide={true}>{t3}{t4}</Dialog>;
+      t8 = <Dialog title="技能" subtitle="未找到技能" onCancel={handleCancel} hideInputGuide={true}>{t6}{t7}</Dialog>;
       $[8] = handleCancel;
-      $[9] = t5;
+      $[9] = t8;
     } else {
-      t5 = $[9];
+      t8 = $[9];
     }
-    return t5;
+    return t8;
   }
-  const renderSkill = _temp3;
+  let u9;
+  if ($[10] !== selectedSkill && skills.length > 0) {
+    u9 = () => {
+      if (!selectedSkill) setSelectedSkill(skills[0]);
+    };
+    $[10] = selectedSkill;
+    $[11] = u9;
+  } else { u9 = $[11]; }
+  React.useEffect(u9, [skills, selectedSkill]);
+  let u12;
+  if ($[12] !== onExit || $[13] !== selectedSkill || $[14] !== skills) {
+    u12 = e => {
+      if (e.key === "return") {
+        e.preventDefault();
+        if (selectedSkill) {
+          const cmdName = getCommandName(selectedSkill);
+          onExit(void 0, { nextInput: "/" + cmdName, submitNextInput: true });
+        }
+        return;
+      }
+      if (e.key !== "up" && e.key !== "down") return;
+      e.preventDefault();
+      const total = skills.length;
+      if (total === 0) return;
+      let currentPos = skills.indexOf(selectedSkill);
+      if (currentPos < 0) currentPos = 0;
+      const newPos = e.key === "up"
+        ? (currentPos === 0 ? total - 1 : currentPos - 1)
+        : (currentPos === total - 1 ? 0 : currentPos + 1);
+      setSelectedSkill(skills[newPos]);
+    };
+    $[12] = onExit;
+    $[13] = selectedSkill;
+    $[14] = skills;
+    $[15] = u12;
+  } else { u12 = $[15]; }
+  const handleKeyDown = u12;
+  const renderSkill = renderSkillFnFactory(selectedSkill);
   let t3;
   if ($[10] !== skillsBySource) {
     t3 = source_0 => {
@@ -193,7 +235,7 @@ export function SkillsMenu(t0) {
   }
   let t12;
   if ($[24] !== t10 || $[25] !== t11 || $[26] !== t7 || $[27] !== t8 || $[28] !== t9) {
-    t12 = <Box flexDirection="column" gap={1}>{t7}{t8}{t9}{t10}{t11}</Box>;
+    t12 = <Box flexDirection="column" gap={1} tabIndex={0} autoFocus={true} onKeyDown={handleKeyDown}>{t7}{t8}{t9}{t10}{t11}</Box>;
     $[24] = t10;
     $[25] = t11;
     $[26] = t7;
@@ -222,11 +264,19 @@ export function SkillsMenu(t0) {
   }
   return t14;
 }
-function _temp3(skill_0) {
-  const estimatedTokens = estimateSkillFrontmatterTokens(skill_0);
-  const tokenDisplay = `~${formatTokens(estimatedTokens)}`;
-  const pluginName = skill_0.source === "plugin" ? skill_0.pluginInfo?.pluginManifest.name : undefined;
-  return <Box key={`${skill_0.name}-${skill_0.source}`}><Text>{getCommandName(skill_0)}</Text><Text dimColor={true}>{pluginName ? ` · ${pluginName}` : ""} · {tokenDisplay} description tokens</Text></Box>;
+function renderSkillFnFactory(selectedSkill) {
+  return function renderSkillFn(skill) {
+    const isSelected = selectedSkill === skill;
+    const pluginName = skill.source === "plugin" ? skill.pluginInfo?.pluginManifest.name : undefined;
+    const desc = (skill.description || "").trim();
+    const shortDesc = desc.length > 80 ? desc.slice(0, 77) + "..." : desc;
+    return <Box key={`${skill.name}-${skill.source}`}>
+      <Text color={isSelected ? "suggestion" : undefined}>{isSelected ? `${figures.pointer} ` : "  "}</Text>
+      <Text color={isSelected ? "suggestion" : undefined}>{getCommandName(skill)}</Text>
+      {pluginName ? <Text dimColor={true}> \xB7 {pluginName}</Text> : null}
+      {shortDesc ? <Text dimColor={true}>  {shortDesc}</Text> : null}
+    </Box>;
+  };
 }
 function _temp2(a, b) {
   return getCommandName(a).localeCompare(getCommandName(b));

@@ -1,6 +1,6 @@
 ---
 name: docker-best-practices
-description: docker best practices - Docker best practices including multi-stage builds, compose ...
+description: Docker最佳实践 — 包括多阶段构建、Compose优化、层缓存和安全扫描。
 ---
 
 # Docker Best Practices

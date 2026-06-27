@@ -1,6 +1,6 @@
 ---
 name: code-review-and-quality
-description: 代码 review and 质量 - Conducts multi-axis code review. Use before merging any chan...
+description: 代码审查与质量 — 执行多轴代码审查。在合并任何更改前使用。
 ---
 
 # Code Review and Quality

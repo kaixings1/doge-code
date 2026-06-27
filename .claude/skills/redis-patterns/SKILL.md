@@ -1,6 +1,6 @@
 ---
 name: redis-patterns
-description: redis patterns - Redis patterns including caching strategies, pub/sub, stream...
+description: Redis模式 — 包括缓存策略、发布/订阅、流、排序集、集群和持久化。
 ---
 
 # Redis Patterns

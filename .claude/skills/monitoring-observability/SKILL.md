@@ -1,6 +1,6 @@
 ---
 name: monitoring-observability
-description: 监控 observability - Monitoring and observability with OpenTelemetry, Prometheus,...
+description: 监控与可观测性 — 使用OpenTelemetry、Prometheus、Grafana和日志聚合。
 ---
 
 # Monitoring & Observability

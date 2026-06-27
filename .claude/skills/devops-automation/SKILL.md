@@ -1,6 +1,6 @@
 ---
 name: devops-automation
-description: DevOps 自动化 - CI/CD pipeline design with GitHub Actions, Docker, Kubernete...
+description: DevOps自动化 — 使用GitHub Actions、Docker、Kubernetes和Terraform进行CI/CD管道设计。
 ---
 
 # DevOps Automation

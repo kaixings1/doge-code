@@ -1,6 +1,6 @@
 ---
 name: observability-and-instrumentation
-description: observability and instrumentation - Instruments code so production behavior is visible and diagn...
+description: 可观测性与仪器化 — 为代码添加仪器化，使生产行为可见且易于诊断。
 ---
 
 # Observability and Instrumentation

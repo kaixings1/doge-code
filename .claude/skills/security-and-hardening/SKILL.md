@@ -1,6 +1,6 @@
 ---
 name: security-and-hardening
-description: 安全 and hardening - Hardens code against vulnerabilities. Use when handling user...
+description: 安全与加固 — 加固代码以抵御漏洞。在处理用户输入或敏感数据时使用。
 ---
 
 # Security and Hardening

@@ -1,6 +1,6 @@
 ---
 name: react-patterns
-description: react patterns - React 19 patterns including Server Components, Actions, Susp...
+description: React模式 — React 19模式，包括服务器组件、Actions、Suspense和hooks。
 ---
 
 # React Patterns

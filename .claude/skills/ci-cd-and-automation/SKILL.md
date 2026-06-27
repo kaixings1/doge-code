@@ -1,6 +1,6 @@
 ---
 name: ci-cd-and-automation
-description: ci cd and 自动化 - Automates CI/CD pipeline setup. Use when setting up or modif...
+description: CI/CD与自动化 — 自动化CI/CD管道设置。在设置或修改构建部署管道时使用。
 ---
 
 # CI/CD and Automation

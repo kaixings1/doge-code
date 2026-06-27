@@ -1,6 +1,6 @@
 ---
 name: api-design-patterns
-description: api 设计 patterns - REST API design with resource naming, pagination, versioning...
+description: API设计模式 — REST API设计，包括资源命名、分页、版本控制、错误处理和认证。
 ---
 
 # API Design Patterns

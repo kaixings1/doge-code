@@ -1,6 +1,6 @@
 ---
 name: browser-testing-with-devtools
-description: browser 测试 with devtools - Tests in real browsers via Chrome DevTools MCP. Use when bui...
+description: 浏览器测试 — 通过Chrome DevTools MCP在真实浏览器中执行测试。在构建或调试Web UI时使用。
 ---
 
 # Browser Testing with DevTools

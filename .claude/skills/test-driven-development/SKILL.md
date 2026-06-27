@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: test driven development - Drives development with tests. Use when implementing any log...
+description: 测试驱动开发 — 用测试驱动开发。在实现任何业务逻辑时使用。
 ---
 
 # Test-Driven Development

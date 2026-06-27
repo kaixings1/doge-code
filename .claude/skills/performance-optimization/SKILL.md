@@ -1,6 +1,6 @@
 ---
 name: performance-optimization
-description: 性能 optimization - Web performance optimization including bundle analysis, lazy...
+description: 性能优化 — 打包分析、懒加载、缓存策略、Core Web Vitals和CDN配置。
 ---
 
 # Performance Optimization

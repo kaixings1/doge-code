@@ -1,6 +1,6 @@
 ---
 name: shipping-and-launch
-description: shipping and launch - Prepares production launches. Use when preparing to deploy t...
+description: 发布与上线 — 准备生产发布。在部署到生产环境时使用。
 ---
 
 # Shipping and Launch

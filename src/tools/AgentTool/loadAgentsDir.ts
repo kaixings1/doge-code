@@ -295,15 +295,6 @@ async function initializeAgentMemorySnapshots(
 
 export const getAgentDefinitionsWithOverrides = memoize(
   async (cwd: string): Promise<AgentDefinitionsResult> => {
-    // 简单模式：跳过自定义代理，仅返回内置代理
-    if (isEnvTruthy(process.env.CLAUDE_CODE_SIMPLE)) {
-      const builtInAgents = getBuiltInAgents()
-      return {
-        activeAgents: builtInAgents,
-        allAgents: builtInAgents,
-      }
-    }
-
     try {
       const markdownFiles = await loadMarkdownFilesForSubdir('agents', cwd)
 

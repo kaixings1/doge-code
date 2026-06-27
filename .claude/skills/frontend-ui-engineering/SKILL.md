@@ -1,6 +1,6 @@
 ---
 name: frontend-ui-engineering
-description: 前端 ui engineering - Builds production-quality UIs. Use when building or modifyin...
+description: 前端UI工程 — 构建生产质量的UI。在构建或修改UI组件时使用。
 ---
 
 # Frontend UI Engineering

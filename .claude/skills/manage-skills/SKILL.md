@@ -1,6 +1,6 @@
 ---
 name: manage-skills
-description: manage skills - Discover, list, create, edit, toggle, copy, move, and delete...
+description: 管理技能 — 发现、列出、创建、编辑、切换、复制、移动和删除技能。
 ---
 
 # Manage AI Agent Skills

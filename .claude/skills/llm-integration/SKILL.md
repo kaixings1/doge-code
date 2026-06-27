@@ -1,6 +1,6 @@
 ---
 name: llm-integration
-description: llm 集成 - LLM integration patterns including API usage, streaming, fun...
+description: LLM集成 — 包括API使用、流式传输、函数调用、嵌入和向量数据库的集成模式。
 ---
 
 # LLM Integration

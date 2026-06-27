@@ -1,6 +1,6 @@
 ---
 name: api-and-interface-design
-description: api and interface 设计 - Guides stable API and interface design. Use when designing A...
+description: API与接口设计 — 指导稳定的API和接口设计。在设计API或接口时使用。
 ---
 
 # API and Interface Design

@@ -1,6 +1,6 @@
 ---
 name: deep-dive
-description: deep dive - Claude-native deep research using DAG-based query planning, ...
+description: 深度探究 — 基于DAG查询规划的Claude原生深度研究，结合网络搜索和代码分析。
 user-invocable: true
 argument: The research question or topic to investigate deeply
 ---

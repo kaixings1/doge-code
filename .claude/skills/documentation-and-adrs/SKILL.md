@@ -1,6 +1,6 @@
 ---
 name: documentation-and-adrs
-description: documentation and adrs - Records decisions and documentation. Use when making archite...
+description: 文档与ADR — 记录决策和文档。在做出架构决策时使用。
 ---
 
 # Documentation and ADRs

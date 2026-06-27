@@ -1,6 +1,6 @@
 ---
 name: springboot-patterns
-description: springboot patterns - Spring Boot patterns including JPA repositories, REST contro...
+description: Spring Boot模式 — 包括JPA仓库、REST控制器、异常处理和测试。
 ---
 
 # Spring Boot Patterns

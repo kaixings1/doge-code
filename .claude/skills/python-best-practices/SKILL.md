@@ -1,6 +1,6 @@
 ---
 name: python-best-practices
-description: python best practices - Pythonic code with modern type hints, dataclasses, async pat...
+description: Python最佳实践 — 使用类型提示、数据类、异步模式、装饰器和PEP 8标准。
 ---
 
 # Python Best Practices
