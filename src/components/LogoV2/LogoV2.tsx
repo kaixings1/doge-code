@@ -316,7 +316,7 @@ export function LogoV2() {
     }
     let t17;
     if ($[40] !== showSandboxStatus) {
-      t17 = showSandboxStatus && <Box marginTop={1} flexDirection="column"><Text color="warning">Your bash commands will be sandboxed. Disable with /sandbox.</Text></Box>;
+      t17 = showSandboxStatus && <Box marginTop={1} flexDirection="column"><Text color="warning">您的 bash 命令将在沙箱中运行。输入 /sandbox 禁用。</Text></Box>;
       $[40] = showSandboxStatus;
       $[41] = t17;
     } else {
@@ -508,7 +508,7 @@ export function LogoV2() {
   }
   let t36;
   if ($[84] !== showSandboxStatus) {
-    t36 = showSandboxStatus && <Box paddingLeft={2} flexDirection="column"><Text color="warning">Your bash commands will be sandboxed. Disable with /sandbox.</Text></Box>;
+    t36 = showSandboxStatus && <Box paddingLeft={2} flexDirection="column"><Text color="warning">您的 bash 命令将在沙箱中运行。输入 /sandbox 禁用。</Text></Box>;
     $[84] = showSandboxStatus;
     $[85] = t36;
   } else {
