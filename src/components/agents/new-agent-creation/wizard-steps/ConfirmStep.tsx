@@ -110,7 +110,7 @@ export function ConfirmStep(t0) {
     const getToolsDisplay = _temp;
     let t22;
     if ($[32] !== agent.memory) {
-      t22 = isAutoMemoryEnabled() ? <Text><Text bold={true}>Memory</Text>: {getMemoryScopeDisplay(agent.memory)}</Text> : null;
+      t22 = isAutoMemoryEnabled() ? <Text><Text bold={true}>记忆</Text>: {getMemoryScopeDisplay(agent.memory)}</Text> : null;
       $[32] = agent.memory;
       $[33] = t22;
     } else {
