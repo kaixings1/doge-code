@@ -155,7 +155,7 @@ function FeedbackSurveyThanks(t0) {
   const feedbackCommand = false ? "/issue" : "/feedback";
   let t4;
   if ($[8] === Symbol.for("react.memo_cache_sentinel")) {
-    t4 = <Text color="success">Thanks for the feedback!</Text>;
+    t4 = <Text color="success">感谢您的反馈！</Text>;
     $[8] = t4;
   } else {
     t4 = $[8];

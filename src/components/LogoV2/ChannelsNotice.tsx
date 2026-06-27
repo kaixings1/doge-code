@@ -127,7 +127,7 @@ export function ChannelsNotice() {
   }
   let t1;
   if ($[22] !== list) {
-    t1 = <Text color="error">Listening for channel messages from: {list}</Text>;
+    t1 = <Text color="error">正在监听来自以下频道的消息：{list}</Text>;
     $[22] = list;
     $[23] = t1;
   } else {

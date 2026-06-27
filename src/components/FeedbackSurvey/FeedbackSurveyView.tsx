@@ -69,28 +69,28 @@ export function FeedbackSurveyView(t0) {
   }
   let t6;
   if ($[9] === Symbol.for("react.memo_cache_sentinel")) {
-    t6 = <Box width={10}><Text><Text color="ansi:cyan">1</Text>: Bad</Text></Box>;
+    t6 = <Box width={10}><Text><Text color="ansi:cyan">1</Text>: 差</Text></Box>;
     $[9] = t6;
   } else {
     t6 = $[9];
   }
   let t7;
   if ($[10] === Symbol.for("react.memo_cache_sentinel")) {
-    t7 = <Box width={10}><Text><Text color="ansi:cyan">2</Text>: Fine</Text></Box>;
+    t7 = <Box width={10}><Text><Text color="ansi:cyan">2</Text>: 一般</Text></Box>;
     $[10] = t7;
   } else {
     t7 = $[10];
   }
   let t8;
   if ($[11] === Symbol.for("react.memo_cache_sentinel")) {
-    t8 = <Box width={10}><Text><Text color="ansi:cyan">3</Text>: Good</Text></Box>;
+    t8 = <Box width={10}><Text><Text color="ansi:cyan">3</Text>: 好</Text></Box>;
     $[11] = t8;
   } else {
     t8 = $[11];
   }
   let t9;
   if ($[12] === Symbol.for("react.memo_cache_sentinel")) {
-    t9 = <Box marginLeft={2}>{t6}{t7}{t8}<Box><Text><Text color="ansi:cyan">0</Text>: Dismiss</Text></Box></Box>;
+    t9 = <Box marginLeft={2}>{t6}{t7}{t8}<Box><Text><Text color="ansi:cyan">0</Text>: 跳过</Text></Box></Box>;
     $[12] = t9;
   } else {
     t9 = $[12];
