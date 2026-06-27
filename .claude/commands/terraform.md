@@ -1,0 +1,1 @@
+# Terraform IaC/n/nTerraform 基础设施管理：资源规划、部署、状态管理、模块管理。/n/n## 子命令/n- init — 初始化工作目录/n- plan — 预览变更/n- apply — 应用变更/n- destroy — 销毁资源/n- state — 管理状态/n
