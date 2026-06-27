@@ -76,6 +76,139 @@ description: Doge Code 系统能力全景指南，涵盖所有技能、命令、
 | debugging-and-error-recovery | 系统诊断Bug/错误恢复 |
 | deprecation-and-migration | 废弃/迁移/升级/重命名 |
 
+### 前端/UI/UX 扩展（mattpocock skills）
+| 技能 | 何时使用 |
+|------|--------|
+| ask-matt | 向 Matt Pocock 提问 TypeScript 最佳实践 |
+| codebase-design | 代码库设计决策：深度分析/二次设计 |
+| diagnosing-bugs | 系统化调试：复现/根因分析/修复验证 |
+| domain-modeling | 领域建模：ADR 格式/上下文格式 |
+| grill-with-docs | 文档驱动的代码审查 |
+| implement | 从规范/设计文档实现功能 |
+| improve-codebase-architecture | 代码库架构改进：分析/计划/执行 |
+| prototype | 快速原型开发：逻辑/UI 分层 |
+| resolving-merge-conflicts | 解决合并冲突的最佳实践 |
+| tdd | 测试驱动开发：测试/实现/重构 |
+| to-issues | 将设计问题转化为可追踪的 issues |
+| to-prd | 将讨论转化为产品需求文档 |
+| triage | 问题分类分流：AI 辅助优先级排序 |
+
+### 方法论/效率（mattpocock skills）
+| 技能 | 何时使用 |
+|------|--------|
+| decision-mapping | 决策映射：系统化分析复杂决策 |
+| loop-me | 持续工作循环模式 |
+| review | 代码/文档审查流程 |
+| writing-beats | 文章节拍规划 |
+| writing-fragments | 碎片信息管理 |
+| writing-shape | 文章形状定义 |
+| edit-article | 文章编辑和润色 |
+| obsidian-vault | Obsidian 知识库管理 |
+| grill-me | 快速问答模式 |
+| grilling | 深度追问分析 |
+| handoff | 工作交接/上下文传递 |
+| teach | 教学技能：学习记录/资源整理 |
+| writing-great-skills | 编写高质量的 SKILL.md |
+
+### Git/工具链
+| 技能 | 何时使用 |
+|------|--------|
+| git-guardrails-claude-code | Git 安全护栏：防止危险操作 |
+| migrate-to-shoehorn | 迁移到 Shoehorn 工具 |
+| scaffold-exercises | 搭建编程练习框架 |
+| setup-pre-commit | 配置 pre-commit 钩子 |
+| setup-matt-pocock-skills | 安装 mattpocock 技能集 |
+| semantic-release | 语义化版本发布自动化 |
+| nx-monorepo | Nx 单体仓库管理 |
+| turborepo | Turborepo 缓存构建 |
+
+### 云原生/可观测性（新增）
+| 技能 | 何时使用 |
+|------|--------|
+| prometheus-grafana | Prometheus 监控 + Grafana 可视化 |
+| elasticsearch-search | Elasticsearch 搜索与分析引擎 |
+| grpc-development | gRPC 服务开发与 Protobuf 设计 |
+| kafka-streaming | Apache Kafka 流处理 |
+| terraform-iac | Terraform 基础设施即代码 |
+| istio-service-mesh | Istio 服务网格管理 |
+| serverless-arch | Serverless 架构设计 |
+| chaos-engineering | 混沌工程：故障注入/韧性测试 |
+| mongodb-patterns | MongoDB 数据建模与索引 |
+| redis-advanced | Redis 高级模式：分布式锁/限流/布隆过滤器 |
+
+### 语言/框架（新增）
+| 技能 | 何时使用 |
+|------|--------|
+| dotnet-development | .NET 全栈：ASP.NET Core/EF/Blazor/MAUI |
+| deno-runtime | Deno 运行时：安全权限/TypeScript 原生 |
+| sveltekit-framework | SvelteKit 全栈框架 |
+| nuxt-framework | Nuxt 3 全栈框架 |
+| android-development | Android Jetpack Compose 开发 |
+| rust-advanced | Rust 高级编程：Pin/FFI/过程宏 |
+| testing-property | 属性基测试：QuickCheck/Hypothesis |
+| llmops | LLMOps：提示词管理/评估/成本追踪 |
+
+### C4/DDD/CQRS（新增）
+| 技能 | 何时使用 |
+|------|--------|
+| c4-architecture | C4 架构模型：Structurizr DSL |
+| ddd-patterns | 领域驱动设计：聚合/限界上下文 |
+| cqrs-es | CQRS + 事件溯源 |
+| sonarqube-quality | SonarQube 代码质量管理 |
+
+### HumanLayer（人工审批）
+| 技能 | 何时使用 |
+|------|--------|
+| humanlayer-approval | 人工审批网关：AI 操作确认/超时/审批链 |
+| humanlayer-feedback | 人工反馈循环：收集/上下文传递/迭代 |
+
+### Compound Engineering（复合工程）
+| 技能 | 何时使用 |
+|------|--------|
+| compound-plan | 复合工程规划：任务拆分/依赖分析 |
+| compound-review | 复合工程审查：并行审查/冲突检测 |
+| compound-metrics | 复合工程度量：吞吐量/周期时间 |
+
+### Superpowers 工作流
+| 技能 | 何时使用 |
+|------|--------|
+| brainstorming | 头脑风暴：创意生成/结构化思考 |
+| dispatching-parallel-agents | 并行分发子代理执行任务 |
+| executing-plans | 执行计划：跟踪/调整/完成 |
+| finishing-a-development-branch | 完成开发分支：清理/合并/提 PR |
+| requesting-code-review | 请求代码审查 |
+| receiving-code-review | 接收和处理代码审查反馈 |
+| subagent-driven-development | 子代理驱动的开发模式 |
+| systematic-debugging | 系统化调试：分层/根因/条件等待 |
+| test-driven-development | TDD 测试驱动开发实践 |
+| using-git-worktrees | Git Worktree 并行开发 |
+| using-superpowers | Superpowers 框架使用指南 |
+| verification-before-completion | 完成前验证：检查清单/自动校验 |
+| writing-plans | 编写开发计划 |
+| writing-skills | 编写自定义技能 |
+
+### Oh-My-ClaudeCode
+| 技能 | 何时使用 |
+|------|--------|
+| omc-react | React 高效开发模式 |
+| omc-python | Python 高效开发模式 |
+| omc-golang | Go 高效开发模式 |
+| omc-rust | Rust 高效开发模式 |
+
+### TypeScript 深度（mattpocock 类型系统）
+| 技能 | 何时使用 |
+|------|--------|
+| type-utilities | TypeScript 类型工具：条件/映射/递归类型 |
+| generics-advanced | 泛型进阶：约束/推导/高阶泛型 |
+| branded-types | 品牌类型：名义类型模拟 |
+| type-testing | 类型测试：Expect/类型体操验证 |
+| template-literals | 模板字面量类型：字符串解析/路由类型 |
+| discriminated-unions | 可辨识联合：判别式/穷举检查 |
+| infer-usage | infer 模式：参数提取/递归推导 |
+| zod-integration | Zod 运行时验证：Schema/类型推导 |
+| function-overloads | 函数重载：重载签名/条件返回类型 |
+| declare-modules | 声明模块：.d.ts/模块增强 |
+
 ### 工作流/方法论
 
 | 技能 | 何时使用 |
@@ -95,7 +228,7 @@ description: Doge Code 系统能力全景指南，涵盖所有技能、命令、
 
 ## 二、命令（Commands）
 
-Doge Code 内置 **140+** 斜杠命令，按功能分类如下：
+Doge Code 内置 **300+** 斜杠命令，按功能分类如下：
 
 ### 会话管理
 | 命令 | 描述 |
@@ -248,61 +381,319 @@ Doge Code 内置 **140+** 斜杠命令，按功能分类如下：
 | `/memory` | 编辑记忆文件 |
 | `/version` | 显示版本号 |
 
-### 工作流命令（来自 .claude/commands/）
+### 来自 GSD（get-shit-done, 64k★）— 67 个命令
 | 命令 | 场景 |
 |------|------|
-| `/code-review` | 代码审查工作流 |
-| `/design-review` | 设计审查工作流 |
-| `/security-review` | 安全审查工作流 |
-| `/instinct-export` | 直觉导出 |
+| `/gsd/add-tests` | 添加测试覆盖 |
+| `/gsd/ai-integration-phase` | AI 集成阶段管理 |
+| `/gsd/audit-fix` | 审计问题修复 |
+| `/gsd/audit-milestone` | 里程碑审计 |
+| `/gsd/audit-uat` | UAT 验收审计 |
+| `/gsd/autonomous` | 自主执行模式 |
+| `/gsd/capture` | 捕获上下文/需求 |
+| `/gsd/cleanup` | 清理临时文件/分支 |
+| `/gsd/code-review` | 代码审查流程 |
+| `/gsd/complete-milestone` | 完成里程碑 |
+| `/gsd/config` | GSD 配置管理 |
+| `/gsd/debug` | 调试辅助 |
+| `/gsd/discuss-phase` | 讨论阶段管理 |
+| `/gsd/docs-update` | 文档更新 |
+| `/gsd/eval-review` | 评估审查 |
+| `/gsd/execute-phase` | 执行阶段 |
+| `/gsd/explore` | 探索/调研 |
+| `/gsd/extract-learnings` | 提取经验教训 |
+| `/gsd/fast` | 快速执行模式 |
+| `/gsd/forensics` | 问题溯源分析 |
+| `/gsd/graphify` | 图可视化 |
+| `/gsd/health` | 项目健康检查 |
+| `/gsd/help` | GSD 帮助 |
+| `/gsd/import` | 导入外部上下文 |
+| `/gsd/inbox` | 收件箱管理 |
+| `/gsd/ingest-docs` | 文档导入消化 |
+| `/gsd/manager` | GSD 管理器 |
+| `/gsd/map-codebase` | 代码库映射 |
+| `/gsd/milestone-summary` | 里程碑总结 |
+| `/gsd/mvp-phase` | MVP 阶段管理 |
+| `/gsd/new-milestone` | 创建新里程碑 |
+| `/gsd/new-project` | 创建新项目 |
+| `/gsd/ns-context` | 命名空间上下文 |
+| `/gsd/ns-ideate` | 命名空间创意 |
+| `/gsd/ns-manage` | 命名空间管理 |
+| `/gsd/ns-project` | 命名空间项目 |
+| `/gsd/ns-review` | 命名空间审查 |
+| `/gsd/ns-workflow` | 命名空间工作流 |
+| `/gsd/pause-work` | 暂停工作 |
+| `/gsd/phase` | 阶段管理 |
+| `/gsd/plan-phase` | 计划阶段 |
+| `/gsd/plan-review-convergence` | 计划审查收敛 |
+| `/gsd/pr-branch` | PR 分支管理 |
+| `/gsd/profile-user` | 用户画像 |
+| `/gsd/progress` | 进度追踪 |
+| `/gsd/quick` | 快速启动 |
+| `/gsd/resume-work` | 恢复工作 |
+| `/gsd/review-backlog` | 审查积压任务 |
+| `/gsd/review` | 审查 |
+| `/gsd/secure-phase` | 安全阶段 |
+| `/gsd/settings` | GSD 设置 |
+| `/gsd/ship` | 发布上线 |
+| `/gsd/sketch` | 草图/快速设计 |
+| `/gsd/spec-phase` | 规格阶段 |
+| `/gsd/spike` | 技术调研 |
+| `/gsd/stats` | 统计数据 |
+| `/gsd/surface` | 表面分析 |
+| `/gsd/thread` | 线程管理 |
+| `/gsd/ui-phase` | UI 阶段 |
+| `/gsd/ui-review` | UI 审查 |
+| `/gsd/ultraplan-phase` | 高级计划阶段 |
+| `/gsd/undo` | 撤销 |
+| `/gsd/update` | 更新 |
+| `/gsd/validate-phase` | 验证阶段 |
+| `/gsd/verify-work` | 验证工作 |
+| `/gsd/workspace` | 工作区管理 |
+| `/gsd/workstreams` | 工作流管理 |
+
+### 来自 HumanLayer（29 个命令）
+| 命令 | 场景 |
+|------|------|
+| `/hl/ci_commit` | CI 提交 |
+| `/hl/ci_describe_pr` | CI 描述 PR |
+| `/hl/commit` | 人工确认提交 |
+| `/hl/create_handoff` | 创建交接文档 |
+| `/hl/create_plan` | 创建计划 |
+| `/hl/create_worktree` | 创建 worktree |
+| `/hl/debug` | 调试会话 |
+| `/hl/describe_pr` | 描述 PR |
+| `/hl/founder_mode` | 创始人模式 |
+| `/hl/implement_plan` | 实施计划 |
+| `/hl/iterate_plan` | 迭代计划 |
+| `/hl/linear` | 线性执行 |
+| `/hl/local_review` | 本地审查 |
+| `/hl/oneshot` | 一次性执行 |
+| `/hl/oneshot_plan` | 一次性计划 |
+| `/hl/ralph_impl` | Ralph 实施 |
+| `/hl/ralph_plan` | Ralph 计划 |
+| `/hl/ralph_research` | Ralph 研究 |
+| `/hl/research_codebase` | 代码库研究 |
+| `/hl/resume_handoff` | 恢复交接 |
+| `/hl/validate_plan` | 验证计划 |
+
+### 来自 Oh-My-ClaudeCode
+| 命令 | 场景 |
+|------|------|
+| `/omc/*` | 129 个文件（命令/代理/技能/hooks）|
+
+### 来自其它流行命令
+| 命令 | 场景 |
+|------|------|
+| `/prometheus` | Prometheus 监控运维 |
+| `/grafana` | Grafana 仪表盘管理 |
+| `/grpc` | gRPC 开发命令 |
+| `/kafka` | Kafka 集群管理 |
+| `/terraform` | Terraform IaC 管理 |
+| `/semantic-release` | 语义化版本发布 |
+| `/sonarqube` | SonarQube 质量扫描 |
+| `/chaos` | 混沌工程实验 |
+| `/llmops` | LLMOps 运维 |
+| `/ddd` | DDD 领域分析 |
+| `/c4-model` | C4 架构模型 |
+| `/sentry-error` | Sentry 错误追踪 |
+| `/bmad-init` | BMAD 项目初始化 |
+| `/bmad-prd` | BMAD PRD 管理 |
+| `/bmad-sprint` | BMAD Sprint 管理 |
+| `/gstack-init` | GStack 项目初始化 |
+| `/gstack-gen` | GStack 代码生成 |
+| `/gstack-deploy` | GStack 部署 |
+| `/opsx-propose` | OpenSpec 规格提案 |
+| `/opsx-review` | OpenSpec 规格审查 |
+| `/opsx-approve` | OpenSpec 规格批准 |
+| `/speckit-plan` | SpecKit 规划 |
+| `/speckit-validate` | SpecKit 验证 |
+| `/speckit-review` | SpecKit 审查 |
+| `/gsd-init` | GSD 初始化 |
+| `/gsd-task` | GSD 任务管理 |
+| `/gsd-session` | GSD 专注会话 |
+| `/gsd-review` | GSD 回顾 |
+| `/brainstorm` | Superpowers 头脑风暴 |
+| `/write-plan` | Superpowers 编写计划 |
+| `/execute-plan` | Superpowers 执行计划 |
 
 ## 三、代理（Agents）
 
-| 分类 | 代理 | 作用 |
+Doge Code 内置 **309** 个代理，以下为主要分类：
+
+### 语言审查代理（已有 + 新增）
+| 分类 | 代理 | 来源 |
 |------|------|------|
-| 审查 | typescript-reviewer | TypeScript代码审查 |
-| 审查 | react-reviewer | React代码审查 |
-| 审查 | vue-reviewer | Vue代码审查 |
-| 审查 | flutter-reviewer | Flutter代码审查 |
-| 审查 | cpp-reviewer | C++代码审查 |
-| 审查 | java-reviewer | Java代码审查 |
-| 审查 | python-reviewer | Python代码审查 |
-| 审查 | rust-reviewer | Rust代码审查 |
-| 审查 | go-reviewer | Go代码审查 |
-| 审查 | security-reviewer | 安全审查 |
-| 构建 | cpp-build-resolver | C++构建/编译问题解决 |
-| 构建 | rust-build-resolver | Rust构建问题解决 |
-| 构建 | go-build-resolver | Go构建问题解决 |
-| 架构 | architect | 软件架构决策 |
-| 架构 | code-architect | 代码架构分析改进 |
-| 架构 | project-scaffold-wizard | 从零搭建项目骨架 |
-| 架构 | website-developer | 全栈网站开发 |
-| 管理 | chief-of-staff | 幕僚长：项目状态团队协调 |
-| 管理 | planner | 规划代理 |
-| 工具 | weather-agent | 天气获取 |
-| 工具 | time-agent | 时间显示 |
-| 工具 | security-auditor | 安全审计 |
-| 工具 | test-engineer | 测试工程师 |
-| 工具 | web-performance-auditor | Web性能审计 |
+| 审查 | typescript-reviewer, react-reviewer, vue-reviewer, flutter-reviewer | 已有 |
+| 审查 | cpp-reviewer, java-reviewer, python-reviewer, rust-reviewer | 已有 |
+| 审查 | go-reviewer, security-reviewer, csharp-reviewer | 已有 |
+| 审查 | swift-reviewer, kotlin-reviewer, php-reviewer, database-reviewer | 已有 |
+| 审查 | angular-architect, svelte-developer, elixir-expert, zig-developer | 已有 |
+| 审查 | fastapi-reviewer, django-reviewer, healthcare-reviewer | 已有 |
+| 审查 | code-reviewer, code-quality-reviewer, mle-reviewer | 新增 |
+| 审查 | gsd-code-reviewer | GSD |
+
+### 构建/调试代理
+| 代理 | 来源 |
+|------|------|
+| cpp-build-resolver, rust-build-resolver, go-build-resolver | 已有 |
+| dart-build-resolver, java-build-resolver, kotlin-build-resolver | 已有 |
+| swift-build-resolver, react-build-resolver, pytorch-build-resolver | 已有 |
+| harmonyos-app-resolver | 已有 |
+| gsd-debugger, gsd-debug-session-manager, gsd-code-fixer | GSD |
+| gsd-domain-researcher, gsd-ai-researcher | GSD |
+
+### 云原生/DevOps 代理（新增）
+| 代理 | 角色 |
+|------|------|
+| prometheus-engineer | Prometheus 监控专家 |
+| kafka-engineer | Kafka 流处理专家 |
+| terraform-engineer | Terraform IaC 专家 |
+| istio-engineer | Istio 服务网格专家 |
+| serverless-developer | Serverless 开发者 |
+| chaos-engineer | 混沌工程专家 |
+| sonarqube-admin | SonarQube 质量管理员 |
+
+### 数据库/后端代理（新增）
+| 代理 | 角色 |
+|------|------|
+| mongodb-dba | MongoDB 数据库专家 |
+| grpc-developer | gRPC 服务开发专家 |
+| dotnet-architect | .NET 架构师 |
+| security-architect | 安全架构师 |
+
+### 前端/移动端代理（新增）
+| 代理 | 角色 |
+|------|------|
+| sveltekit-developer | SvelteKit 全栈开发者 |
+| nuxt-developer | Nuxt 3 全栈开发者 |
+| android-developer | Android 开发专家 |
+
+### 工作流代理（GSD, 33 个）
+| 代理 | 角色 |
+|------|------|
+| gsd-advisor-researcher | 顾问研究员 |
+| gsd-ai-researcher | AI 研究员 |
+| gsd-assumptions-analyzer | 假设分析 |
+| gsd-codebase-mapper | 代码库映射 |
+| gsd-code-reviewer | 代码审查 |
+| gsd-debug-session-manager | 调试会话管理 |
+| gsd-debugger | 调试器 |
+| gsd-doc-classifier | 文档分类器 |
+| gsd-doc-synthesizer | 文档综合 |
+| gsd-doc-verifier | 文档验证 |
+| gsd-doc-writer | 文档编写 |
+| gsd-eval-auditor | 评估审计 |
+| gsd-eval-planner | 评估规划 |
+| gsd-executor | 执行器 |
+| gsd-explorer | 探索者 |
+| gsd-feature-writer | 特性编写 |
+| gsd-forensics-expert | 取证专家 |
+| gsd-implementer | 实施者 |
+| gsd-legal-researcher | 法律研究员 |
+| gsd-metrician | 度量师 |
+| gsd-milestone-planner | 里程碑规划 |
+| gsd-mvp-scoper | MVP 范围界定 |
+| gsd-observer | 观察者 |
+| gsd-planner | 规划师 |
+| gsd-process-auditor | 流程审计 |
+| gsd-productivity-analyst | 效率分析师 |
+| gsd-project-inspector | 项目检查 |
+| gsd-resource-allocator | 资源分配 |
+| gsd-scribe | 记录员 |
+| gsd-security-analyst | 安全分析师 |
+| gsd-spec-planner | 规格规划 |
+| gsd-ux-designer | UX 设计师 |
+| gsd-validator | 验证师 |
+
+### HumanLayer 代理（6 个）
+| 代理 | 角色 |
+|------|------|
+| codebase-analyzer | 代码库分析 |
+| codebase-locator | 代码库定位 |
+| codebase-pattern-finder | 代码模式查找 |
+| thoughts-analyzer | 思路分析 |
+| thoughts-locator | 思路定位 |
+| web-search-researcher | 网络搜索研究 |
+
+### 其他新代理
+| 代理 | 来源/角色 |
+|------|----------|
+| gsd-master | GSD 执行大师 |
+| gstack-architect | GStack 全栈架构师 |
+| spec-driver | Spec 驱动开发者 |
+| bmad-planner | BMAD 规划师 |
+| compound-engineer | 复合工程工程师 |
+| opsx-spec-writer | OpenSpec 规范编写者 |
+| humanlayer-gate | HumanLayer 审批网关 |
+| llmops-engineer | LLMOps 工程师 |
+| c4-architect | C4 架构师 |
+| agent-creator | 代理创建器（来自官方插件） |
+| plugin-validator | 插件验证器 |
+| skill-reviewer | 技能审查 |
+| agent-sdk-verifier-py | Agent SDK 验证（Python） |
+| agent-sdk-verifier-ts | Agent SDK 验证（TypeScript） |
+
+### 已有代理（补充）
+| 代理 | 来源 |
+|------|------|
+| architect, code-architect, project-scaffold-wizard, website-developer | 已有 |
+| chief-of-staff, planner | 已有 |
+| weather-agent, time-agent, security-auditor | 已有 |
+| test-engineer, web-performance-auditor | 已有 |
+| loop-operator, docs-lookup, doc-updater, presentation-* | 已有 |
+| network-architect, network-config-reviewer, network-troubleshooter | 已有 |
+| homelab-architect, db-admin, devops-tracker, deployer | 已有 |
+| marketing-agent, seo-specialist, opensource-* | 已有 |
+| gan-evaluator, gan-generator, gan-planner | 已有 |
+| spec-miner, ts-string-han, type-design-analyzer | 已有 |
+| auto-translate-handle, translate-reviewer, comment-analyzer | 已有 |
+| conversation-analyzer, code-explorer, code-simplifier | 已有 |
+| e2e-runner, pr-test-analyzer, refactor-cleaner | 已有 |
+| tdd-guide, test-coverage-reviewer, performance-optimizer | 已有 |
+| performance-reviewer, silent-failure-hunter, harness-optimizer | 已有 |
+| 各领域 agents（infrastructure/language-experts/specialized-domains 等） | 已有 |
 
 ## 四、使用场景速查
 
 | 场景 | 推荐使用的工具组合 |
 |------|------------------|
+| 🔥 **我要用 GSD 工作流** | `/gsd/new-project` → `/gsd/spec-phase` → `/gsd/plan-phase` → `/gsd/execute-phase` → `/gsd/code-review` → `/gsd/ship` + gsd 系列代理 |
+| 🔥 **我要用 GSD 开发新功能** | `/gsd/capture` 捕获需求 → `/gsd/map-codebase` 映射代码库 → `/gsd/sketch` 快速设计 → `/gsd/implement` 实施 → `/gsd/test` 测试 → `/gsd/ship` 发布 |
+| 🔥 **我要用 HumanLayer 审批流** | `/hl/create_plan` → `/hl/validate_plan` → `/hl/implement_plan` → `/hl/commit` 人工审批 + thoughts-analyzer/locator 代理 |
+| 🔥 **我要用 OpenSpec 规范驱动开发** | `/opsx-propose` 提出规格 → `/opsx-review` 审查规格 → `/opsx-approve` 批准 → implement → speckit-validate |
+| 🔥 **我要用 SpecKit 开发** | `/speckit-plan` → `/speckit-validate` → `/speckit-review` |
+| 🔥 **我要用 BMAD 方法开发** | `/bmad-init` 初始化项目 → `/bmad-prd` 写 PRD → `/bmad-sprint` 管理冲刺 + bmad-planner 代理 |
+| 🔥 **我要用 Superpowers 工作流** | `/brainstorm` 头脑风暴 → `/write-plan` 写计划 → `/execute-plan` 执行计划 + subagent-driven-development 技能 |
+| 🔥 **我要做 TypeScript 深度类型编程** | type-utilities + generics-advanced + branded-types + template-literals + infer-usage + zod-integration（mattpocock 合集） |
+| 🔥 **我要用 oh-my-claudecode 高效开发** | omc-react / omc-python / omc-golang / omc-rust 技能包 |
+| 🔥 **我要管理 Prometheus 监控** | `/prometheus` 查询/告警 + prometheus-engineer 代理 + prometheus-grafana 技能 |
+| 🔥 **我要管理 Kafka 消息流** | `/kafka` 主题/消费组管理 + kafka-engineer 代理 + kafka-streaming 技能 |
+| 🔥 **我要管理 gRPC 服务** | `/grpc` proto 编译/服务调用 + grpc-developer 代理 + grpc-development 技能 |
+| 🔥 **我要做混沌工程实验** | `/chaos` 故障注入/实验设计 + chaos-engineer 代理 + chaos-engineering 技能 |
+| 🔥 **我要优化 Redis 性能** | redis-advanced 技能（分布式锁/限流/布隆过滤器） |
+| 🔥 **我要做 LLM 运维** | `/llmops` 评估/追踪/成本 + llmops-engineer 代理 |
+| 🔥 **我要做 DDD/C4 架构设计** | `/ddd` 领域分析 + `/c4-model` 架构图生成 + ddd-patterns + c4-architecture 技能 |
+| 🔥 **我要写高质量技能** | writing-great-skills + writing-skills（superpowers）+ writing-plans |
+| 🔥 **我要系统化调试** | systematic-debugging 技能（条件等待/深度防御/根因追踪） |
+| 🔥 **我要并行开发** | using-git-worktrees + dispatching-parallel-agents + subagent-driven-development |
+| 🔥 **我要代码审查** | requesting-code-review + receiving-code-review + code-review-and-quality + `/gsd/code-review` |
+| 🔥 **我要架构改进** | improve-codebase-architecture + codebase-design + domain-modeling |
+| 🔥 **我要做决策映射** | decision-mapping + triage（mattpocock）+ `/gsd/triage` |
 | 我要开发一个新的 C++ 项目 | cpp-pro + cpp-build + /plan + cpp-reviewer 代理 |
 | 我要审查一段代码 | 对应的语言reviewer代理 + code-review-and-quality 技能 + /review + /compare |
 | 我要部署上线 | /deploy + shipping-and-launch 技能 + /docker + /k8s + /nginx |
-| 我要监控系统状态 | /metrics + /monitor + /cost + /stats + monitoring-observability 技能 |
-| 我要优化数据库性能 | database-optimization + postgres-optimization + redis-patterns + /database |
-| 我要确保系统安全 | security-hardening + authentication-patterns + security-reviewer 代理 + /security-review |
-| 我要创建 CI/CD | ci-cd-pipelines + devops-automation + /deploy + /schedule + /cron |
+| 我要监控系统状态 | /metrics + /monitor + /cost + /stats + monitoring-observability 技能 + prometheus-grafana |
+| 我要优化数据库性能 | database-optimization + postgres-optimization + redis-patterns + /database + mongodb-patterns |
+| 我要确保系统安全 | security-hardening + authentication-patterns + security-reviewer + /security-review |
+| 我要创建 CI/CD | ci-cd-pipelines + devops-automation + /deploy + /schedule + /cron + semantic-release |
 | 我要学习新框架 | 对应的语言最佳实践技能 + 对应reviewer代理 + /getting-started + /powerup |
-| 我要设计 API | api-and-interface-design + api-design-patterns + graphql-design + /api-doc + /http |
+| 我要设计 API | api-and-interface-design + api-design-patterns + graphql-design + /api-doc + /http + grpc-development |
 | 我的 UE5 项目需要帮助 | unreal-best-practices + unreal-gas + unreal-claude |
 | 我要批量处理任务 | /task-create + /tasks + /plan + /schedule + /cron |
-| 我要调试错误 | /diagnose + /doctor + debugging-and-error-recovery 技能 + cpp-debug + /logger |
-| 我要管理容器/集群 | /docker + /k8s + /nginx + /redis + docker-best-practices |
-| 我要进行 API 开发 | /http + /graphql + /websocket + /database + api-and-interface-design |
+| 我要调试错误 | /diagnose + /doctor + debugging-and-error-recovery + cpp-debug + /logger + gsd-debugger |
+| 我要管理容器/集群 | /docker + /k8s + /nginx + /redis + docker-best-practices + istio-service-mesh |
+| 我要进行 API 开发 | /http + /graphql + /websocket + /database + api-and-interface-design + grpc-development |
 | 我要重构代码 | /refactor + /compare + /test-gen + code-simplification 技能 + /diagnose |
 | 我要管理会话 | /resume + /backup + /compact + /context + /summary + /tag + /branch |
 | 我要查看分析数据 | /insights + /stats + /cost + /usage + /metrics + /monitor |
@@ -310,7 +701,7 @@ Doge Code 内置 **140+** 斜杠命令，按功能分类如下：
 | 我要设置模型/API | /model + /effort + /config + /add-model + /login + /bridge |
 | 我是团队管理员 | /team + /team-onboarding + /project-purge + /privacy-settings + /permissions |
 | 我要进行代码提交 | /commit + /diff + /review + /commit-push-pr |
-| 我要使用 Git 工作流 | /branch + /diff + /commit + /review + /commit-push-pr + git-advanced 技能 |
+| 我要使用 Git 工作流 | /branch + /diff + /commit + /review + /commit-push-pr + git-advanced + using-git-worktrees |
 | 我要文件/数据处理 | /pdf + /excel + /image + /diagram + /rag + /stock |
 | 我要做国际化 | /batch-han + /i18n-extract + /memory |
-| 我要做安全审计 | /security-review + /permissions + security-auditor 代理 + security-hardening 技能 |
+| 我要做安全审计 | /security-review + /permissions + security-auditor + security-hardening |
