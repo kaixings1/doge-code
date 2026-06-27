@@ -95,22 +95,166 @@ description: Doge Code 系统能力全景指南，涵盖所有技能、命令、
 
 ## 二、命令（Commands）
 
-| 命令 | 场景 | 执行内容 |
-|------|------|--------|
-| /plan-zh | 复杂任务 | 创建task_plan.md/findings.md/progress.md规划文件 |
-| /plan-cpp-win | C++项目 | Windows C++项目骨架生成，600+决策项选择 |
-| /plan-loop | 自动执行 | 自动tick检查计划状态并推进 |
-| /plan-goal | 持续工作 | 桥接/goal直到计划完成 |
-| /plan-attest | 安全锁定 | SHA-256验证锁定计划文件防篡改 |
-| /plan-status | 进度查看 | 查看当前计划执行状态 |
-| /commit-and-pr | 代码提交 | 运行测试+类型检查+格式化后提交PR |
-| /review | PR审查 | 自动审查PR并输出审查意见 |
-| /deploy | 部署上线 | 构建验证后部署到目标环境 |
-| /feature-development | 功能开发 | 需求→设计→编码→测试→PR→部署全流程 |
-| /database-migration | 数据库迁移 | 迁移文件生成→审查→部署→回滚预案 |
-| /triage | 问题分类 | 状态机驱动Bug/改进分类分流 |
-| /writing-beats | 写作 | 文章节拍规划/碎片管理/形状定义 |
-| /workspace | 环境切换 | 保存恢复工作上下文 |
+Doge Code 内置 **140+** 斜杠命令，按功能分类如下：
+
+### 会话管理
+| 命令 | 描述 |
+|------|------|
+| `/clear` | 清除对话历史并释放上下文 |
+| `/backup` | 备份当前会话数据到本地文件 |
+| `/resume` | 恢复之前的对话 |
+| `/rename` | 重命名当前对话 |
+| `/rewind` | 将代码和/或对话恢复到先前的状态 |
+| `/compact` | 紧凑对话上下文 |
+| `/context` | 以彩色网格可视化当前上下文使用情况 |
+| `/context-collapse` | 折叠/展开对话上下文中的非关键部分 |
+| `/session` | 显示远程会话 URL 和二维码 |
+| `/focus` | 切换焦点模式 |
+| `/summary` | 总结当前会话 |
+| `/tag` | 为当前会话切换可搜索标签 |
+| `/branch` | 在当前位置创建对话分支 |
+| `/diff` | 查看未提交的更改和差异 |
+| `/files` | 列出当前上下文中的所有文件 |
+| `/copy` | 复制内容 |
+| `/copy-page` | 将当前页面复制为 Markdown |
+| `/export` | 将对话导出到文件或剪贴板 |
+| `/share` | 分享会话到团队 |
+| `/color` | 设置会话提示栏颜色 |
+| `/theme` | 更改主题 |
+| `/workspace` | 保存/恢复工作上下文 |
+
+### 模型/API 配置
+| 命令 | 描述 |
+|------|------|
+| `/model` | 切换 AI 模型 |
+| `/effort` | 设置努力级别 |
+| `/add-model` | 添加自定义模型 |
+| `/remove-model` | 移除自定义模型 |
+| `/login` / `/logout` | 登录/退出账户 |
+| `/bridge` | 连接远程控制会话 |
+| `/remote-env` | 配置默认远程环境 |
+| `/config` | 打开配置面板 |
+| `/permissions` | 管理工具权限规则 |
+| `/privacy-settings` | 查看和更新隐私设置 |
+| `/upgrade` | 升级到 Max |
+
+### 分析/统计/监控
+| 命令 | 描述 |
+|------|------|
+| `/insights` | 生成会话模式分析报告 |
+| `/stats` | 使用统计和活动 |
+| `/cost` | 会话总成本和持续时间 |
+| `/usage` | 计划用量限制 |
+| `/metrics` | 系统性能指标 |
+| `/monitor` | 实时监控界面 |
+| `/logger` | 查看和配置日志级别 |
+| `/cache` | 缓存操作 |
+| `/doctor` | 诊断安装和设置 |
+| `/rstk` | 重置 token 统计数据 |
+
+### 代码审查/质量
+| 命令 | 描述 |
+|------|------|
+| `/review` | 审查拉取请求 |
+| `/ultrareview` | 深度 bug 查找和验证 |
+| `/security-review` | 安全审查待提交更改 |
+| `/diagnose` | 诊断编译/测试错误 |
+| `/refactor` | 智能代码重构 |
+| `/test-gen` | 自动生成测试用例 |
+| `/compare` | 比较文件/分支/会话差异 |
+| `/deps-viz` | 分析依赖关系生成依赖图 |
+| `/init-verifiers` | 创建验证器技能 |
+
+### Git 操作
+| 命令 | 描述 |
+|------|------|
+| `/commit` | 创建 git 提交 |
+| `/commit-push-pr` | 提交、推送并创建 PR |
+| `/branch` | 创建对话分支 |
+
+### 内置工具命令
+| 命令 | 描述 |
+|------|------|
+| `/docker` | Docker 容器管理 |
+| `/k8s` | Kubernetes 集群管理 |
+| `/nginx` | Nginx 管理 |
+| `/redis` | Redis 缓存操作 |
+| `/pdf` | PDF 文件读取 |
+| `/excel` | Excel 读取与转换 |
+| `/diagram` | Mermaid 图表生成 |
+| `/image` | 图片信息管理 |
+| `/api-doc` | API 文档生成 |
+| `/deploy` | SSH/SCP/PM2 部署 |
+| `/rag` | RAG 本地知识库 |
+| `/stock` | 股票行情 |
+| `/database` | 数据库操作 |
+| `/graphql` | GraphQL 查询 |
+| `/http` | HTTP 请求 |
+| `/shell` | Shell 执行 |
+| `/websocket` | WebSocket 通信 |
+| `/event-stream` | SSE 事件流 |
+| `/queue` | 消息队列管理 |
+| `/schedule` | 定时调度 |
+| `/cron` | Cron 任务 |
+| `/file-watcher` | 文件变化监听 |
+
+### 插件/MCP/技能
+| 命令 | 描述 |
+|------|------|
+| `/mcp` | 管理 MCP 服务器 |
+| `/mcp-tool-search` | 搜索 MCP 工具 |
+| `/plugin` | 管理插件 |
+| `/reload-plugins` | 激活待处理的插件更改 |
+| `/skills` | 列出可用技能 |
+| `/add-dir` | 添加工作目录 |
+| `/hooks` | 查看工具事件挂钩 |
+
+### 任务/代理/工作流
+| 命令 | 描述 |
+|------|------|
+| `/tasks` | 管理后台任务 |
+| `/task-create` | 创建子任务 |
+| `/plan` | 计划模式 |
+| `/plan-mode` | 切换计划模式 |
+| `/agents` | 管理代理配置 |
+| `/advisor` | 配置 advisor 模型 |
+| `/proactive` | 自动重复执行任务 |
+| `/buddy` | 编程伙伴 |
+
+### 开发/编辑器
+| 命令 | 描述 |
+|------|------|
+| `/help` | 显示帮助 |
+| `/init` | 初始化项目 |
+| `/ide` | 管理 IDE 集成 |
+| `/keybindings` | 按键绑定配置 |
+| `/vim` | 切换 Vim 模式 |
+| `/tui` | 全屏终端界面 |
+| `/powerup` | 学习新功能 |
+| `/getting-started` | 快速入门指南 |
+| `/changelog` | 查看更新日志 |
+| `/desktop` | 在 Claude Desktop 继续 |
+| `/mobile` | 下载移动应用 |
+
+### 系统/管理
+| 命令 | 描述 |
+|------|------|
+| `/exit` | 退出 REPL |
+| `/fuck` | 清除所有配置和会话 |
+| `/feedback` | 提交反馈 |
+| `/btw` | 快速侧面问题 |
+| `/batch-han` | 批量汉化 TS 文件 |
+| `/i18n-extract` | 国际化提取 |
+| `/memory` | 编辑记忆文件 |
+| `/version` | 显示版本号 |
+
+### 工作流命令（来自 .claude/commands/）
+| 命令 | 场景 |
+|------|------|
+| `/code-review` | 代码审查工作流 |
+| `/design-review` | 设计审查工作流 |
+| `/security-review` | 安全审查工作流 |
+| `/instinct-export` | 直觉导出 |
 
 ## 三、代理（Agents）
 
@@ -145,15 +289,28 @@ description: Doge Code 系统能力全景指南，涵盖所有技能、命令、
 
 | 场景 | 推荐使用的工具组合 |
 |------|------------------|
-| 我要开发一个新的 C++ 项目 | cpp-pro + cpp-build + /plan-cpp-win + cpp-reviewer 代理 |
-| 我要审查一段代码 | 对应的语言reviewer代理 + code-review-and-quality 技能 |
-| 我要部署上线 | /deploy + shipping-and-launch 技能 + deployer 代理 |
-| 我需要做深度研究 | deep-research 技能 + deep-dive 技能 |
-| 我要优化数据库性能 | database-optimization + postgres-optimization + redis-patterns |
-| 我要确保系统安全 | security-hardening + authentication-patterns + security-reviewer 代理 |
-| 我要创建 CI/CD | ci-cd-pipelines + devops-automation + /deploy-release |
-| 我要学习新框架 | 对应的语言最佳实践技能 + 对应reviewer代理 |
-| 我要写技术文章 | article-writing + writing-beats/fragments/shape |
-| 我要设计 API | api-and-interface-design + api-design-patterns + graphql-design |
+| 我要开发一个新的 C++ 项目 | cpp-pro + cpp-build + /plan + cpp-reviewer 代理 |
+| 我要审查一段代码 | 对应的语言reviewer代理 + code-review-and-quality 技能 + /review + /compare |
+| 我要部署上线 | /deploy + shipping-and-launch 技能 + /docker + /k8s + /nginx |
+| 我要监控系统状态 | /metrics + /monitor + /cost + /stats + monitoring-observability 技能 |
+| 我要优化数据库性能 | database-optimization + postgres-optimization + redis-patterns + /database |
+| 我要确保系统安全 | security-hardening + authentication-patterns + security-reviewer 代理 + /security-review |
+| 我要创建 CI/CD | ci-cd-pipelines + devops-automation + /deploy + /schedule + /cron |
+| 我要学习新框架 | 对应的语言最佳实践技能 + 对应reviewer代理 + /getting-started + /powerup |
+| 我要设计 API | api-and-interface-design + api-design-patterns + graphql-design + /api-doc + /http |
 | 我的 UE5 项目需要帮助 | unreal-best-practices + unreal-gas + unreal-claude |
-| 我要批量处理任务 | /task-create + batch 技能 + /plan-zh + /plan-loop |
+| 我要批量处理任务 | /task-create + /tasks + /plan + /schedule + /cron |
+| 我要调试错误 | /diagnose + /doctor + debugging-and-error-recovery 技能 + cpp-debug + /logger |
+| 我要管理容器/集群 | /docker + /k8s + /nginx + /redis + docker-best-practices |
+| 我要进行 API 开发 | /http + /graphql + /websocket + /database + api-and-interface-design |
+| 我要重构代码 | /refactor + /compare + /test-gen + code-simplification 技能 + /diagnose |
+| 我要管理会话 | /resume + /backup + /compact + /context + /summary + /tag + /branch |
+| 我要查看分析数据 | /insights + /stats + /cost + /usage + /metrics + /monitor |
+| 我要管理 MCP 插件 | /mcp + /mcp-tool-search + /plugin + /reload-plugins + mcp-development 技能 |
+| 我要设置模型/API | /model + /effort + /config + /add-model + /login + /bridge |
+| 我是团队管理员 | /team + /team-onboarding + /project-purge + /privacy-settings + /permissions |
+| 我要进行代码提交 | /commit + /diff + /review + /commit-push-pr |
+| 我要使用 Git 工作流 | /branch + /diff + /commit + /review + /commit-push-pr + git-advanced 技能 |
+| 我要文件/数据处理 | /pdf + /excel + /image + /diagram + /rag + /stock |
+| 我要做国际化 | /batch-han + /i18n-extract + /memory |
+| 我要做安全审计 | /security-review + /permissions + security-auditor 代理 + security-hardening 技能 |
