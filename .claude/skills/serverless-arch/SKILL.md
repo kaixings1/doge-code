@@ -1,0 +1,1 @@
+---/nname: serverless-arch/ndescription: Serverless 架构 — AWS Lambda/Fargate、函数编排、冷启动优化、BFF、成本模型/n---/n/n# serverless-arch/n/n## 概述/nServerless 架构 — AWS Lambda/Fargate、函数编排、冷启动优化、BFF、成本模型。/n/n## 使用场景/n- 使用 serverless-arch 相关技术时/n- 架构决策和技术选型需要参考最佳实践时/n/n## 核心原则/n1. 遵循最佳实践/n2. 注重可维护性/n3. 安全性优先/n4. 性能意识/n

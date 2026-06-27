@@ -1,0 +1,1 @@
+---/nname: semantic-release/ndescription: 语义化版本发布 — conventional commits、自动版本号、CHANGELOG 生成、npm/GitHub 发布/n---/n/n# semantic-release/n/n## 概述/n语义化版本发布 — conventional commits、自动版本号、CHANGELOG 生成、npm/GitHub 发布。/n/n## 使用场景/n- 使用 semantic-release 相关技术时/n- 架构决策和技术选型需要参考最佳实践时/n/n## 核心原则/n1. 遵循最佳实践/n2. 注重可维护性/n3. 安全性优先/n4. 性能意识/n

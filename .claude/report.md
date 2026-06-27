@@ -357,7 +357,137 @@ Doge Code 内置 **140+** 斜杠命令，分为以下类别：
 
 ---
 
-## 五、架构概览
+## 五、缺失的流行资源（已集成）
+
+以下资源已从社区流行项目中集成到 `.claude/` 目录中：
+
+### ✅ 新增技能（25 个）
+| 分类 | 技能 | 描述 |
+|------|------|------|
+| 可观测性 | prometheus-grafana | Prometheus 监控 + Grafana 可视化 |
+| 可观测性 | elasticsearch-search | Elasticsearch 搜索与分析 |
+| 消息系统 | grpc-development | gRPC 开发 — Protobuf/流式 RPC/拦截器 |
+| 消息系统 | kafka-streaming | Apache Kafka 流处理 |
+| 数据库 | mongodb-patterns | MongoDB 数据建模与索引 |
+| 云原生 | terraform-iac | Terraform 基础设施即代码 |
+| 云原生 | istio-service-mesh | Istio 服务网格 |
+| 云原生 | serverless-arch | Serverless 架构 |
+| 语言框架 | dotnet-development | .NET 全栈开发 |
+| 语言框架 | deno-runtime | Deno 运行时 |
+| 语言框架 | sveltekit-framework | SvelteKit 全栈框架 |
+| 语言框架 | nuxt-framework | Nuxt 3 全栈框架 |
+| 语言框架 | android-development | Android Jetpack Compose 开发 |
+| 语言高级 | rust-advanced | Rust 高级编程 |
+| 语言高级 | redis-advanced | Redis 高级模式 |
+| 工具链 | semantic-release | 语义化版本发布 |
+| 工具链 | nx-monorepo | Nx 单体仓库 |
+| 工具链 | turborepo | Turborepo 单体仓库 |
+| 工具链 | sonarqube-quality | SonarQube 代码质量 |
+| 架构 | c4-architecture | C4 架构模型 |
+| 架构 | ddd-patterns | 领域驱动设计 |
+| 架构 | cqrs-es | CQRS + 事件溯源 |
+| 测试 | chaos-engineering | 混沌工程 |
+| 测试 | testing-property | 属性基测试 |
+| AI/ML | llmops | LLMOps 运维管理 |
+
+### ✅ 新增命令（12 个）
+| 命令 | 描述 |
+|------|------|
+| `/prometheus` | Prometheus 监控运维 — 查询/告警/目标管理 |
+| `/grafana` | Grafana 仪表盘管理 — 创建/导出/导入 |
+| `/grpc` | gRPC 开发 — proto 编译/服务调用 |
+| `/kafka` | Kafka 管理 — 主题/消费者组/消息 |
+| `/terraform` | Terraform IaC — plan/apply/state |
+| `/semantic-release` | 语义化版本发布 — 自动发布/日志 |
+| `/sonarqube` | SonarQube 质量扫描 — 报告/门禁/问题 |
+| `/chaos` | 混沌工程实验 — 故障注入/实验设计 |
+| `/llmops` | LLMOps 运维 — 评估/追踪/成本 |
+| `/ddd` | DDD 领域分析 — 上下文地图/聚合 |
+| `/c4-model` | C4 架构模型生成 — Structurizr DSL |
+| `/sentry-error` | Sentry 错误追踪 — 错误/性能/发布 |
+
+### ✅ 新增代理（15 个）
+| 代理 | 角色 |
+|------|------|
+| prometheus-engineer | Prometheus 监控专家 |
+| kafka-engineer | Kafka 流处理专家 |
+| terraform-engineer | Terraform IaC 专家 |
+| mongodb-dba | MongoDB 数据库专家 |
+| grpc-developer | gRPC 开发专家 |
+| dotnet-architect | .NET 架构师 |
+| sveltekit-developer | SvelteKit 全栈开发者 |
+| nuxt-developer | Nuxt 3 全栈开发者 |
+| android-developer | Android 开发专家 |
+| c4-architect | C4 架构师 |
+| llmops-engineer | LLMOps 工程师 |
+| chaos-engineer | 混沌工程专家 |
+| sonarqube-admin | SonarQube 质量管理员 |
+| security-architect | 安全架构师 |
+| serverless-developer | Serverless 开发者 |
+
+---
+
+## 六、仍缺失的流行资源（下一批待集成）
+
+以下为社区流行的资源，尚未集成（推荐下一轮进行）：
+
+| 领域 | 缺失项目 | 优先级 |
+|------|---------|--------|
+| 工作流仓库 | `mattpocock/skills` `garrytan/gstack` `gsd-build/get-shit-done` `bmad-code-org/BMAD-METHOD` `Yeachan-Heo/oh-my-claudecode` `humanlayer/humanlayer` `EveryInc/compound-engineering-plugin` `Fission-AI/OpenSpec` `github/spec-kit` | 🔴 高 |
+| 消息系统 | RabbitMQ, NATS, Apache Thrift | 🟡 中 |
+| 数据库 | Cassandra, Neo4j, ScyllaDB, CockroachDB, TimescaleDB | 🟡 中 |
+| 语言框架 | Kotlin Multiplatform, .NET MAUI/Blazor, Solid.js, Remix, Qwik | 🟡 中 |
+| 开发工具链 | Husky, lint-staged, Renovate/Dependabot, Changesets, pnpm workspace | 🟡 中 |
+| 监控告警 | Datadog, New Relic, OpenTelemetry (高级), Loki, Tempo | 🟡 中 |
+| 云原生 | Pulumi, Crossplane, AWS VPC/IAM/Route53/EKS/Fargate/CDK | 🟡 中 |
+| 代码质量 | ESLint 共享配置集 (antfu/standard/airbnb) | 🟢 低 |
+| 架构 | Event Storming, Hexagonal Architecture (详细版) | 🟢 低 |
+| 测试 | Visual Regression (Percy/Chromatic), Playwright 高级 | 🟢 低 |
+
+---
+
+## 七、架构概览
+
+基于社区高频生态扫描（302 技能 / 129 命令 / 230 代理 / 130 插件 均已覆盖的基线之上），以下为建议新增的资源方向：
+
+### 高优先级（知名工作流仓库）
+
+| 仓库 | Stars | 资源类型 | 缺失内容 |
+|------|-------|---------|---------|
+| `mattpocock/skills` | ~4k | 技能合集 | TypeScript 深度技能系列 |
+| `garrytan/gstack` | ~3k | 工作流 | 全栈开发工作流 |
+| `gsd-build/get-shit-done` | ~2k | 工作流 | 专注执行工作流 |
+| `bmad-code-org/BMAD-METHOD` | ~2k | 方法论 | PRD-史诗-故事-实施管线 |
+| `Yeachan-Heo/oh-my-claudecode` | ~1k | 技能合集 | 多语言技能包 |
+| `humanlayer/humanlayer` | ~1k | 工作流 | 人工审批网关 |
+| `EveryInc/compound-engineering-plugin` | ~1k | 插件 | 复合工程工作流 |
+| `Fission-AI/OpenSpec` | ~1k | 工作流 | Agentic Spec 驱动开发 |
+| `github/spec-kit` | ~1k | 命令集 | 规范编写命令包 |
+
+### 高优先级（技术栈补全）
+
+| 领域 | 缺失项目 | 建议类型 | 原因 |
+|------|---------|---------|------|
+| 可观测性 | Prometheus, Grafana, OpenTelemetry, Sentry, ELK, Loki, Tempo | 技能+命令 | 生产环境标配 |
+| 消息系统 | gRPC, Kafka, RabbitMQ, NATS | 技能+代理 | 云原生通信核心 |
+| 云原生 | Terraform, Pulumi, Serverless, EKS, Istio, Crossplane | 技能+命令 | IaC 主导工具 |
+| 数据库 | MongoDB, Elasticsearch, Cassandra, Neo4j | 技能+命令 | NoSQL 四巨头 |
+| 语言运行时 | Deno, Kotlin Multiplatform, .NET MAUI, SvelteKit, Nuxt 3, Solid.js | 技能+代理 | 主流框架 |
+| 开发工具链 | semantic-release, NX, Turborepo, Changesets, Husky, Renovate | 命令 | 日常开发必备 |
+| 代码质量 | SonarQube, SonarCloud | 技能+命令 | 持续质量保障 |
+| 架构设计 | C4 Model, Event Storming, DDD, CQRS, Event Sourcing | 技能 | 架构文档标准 |
+| 测试 | Chaos Mesh, Visual Regression(Percy/Chromatic), Playwright 高级 | 技能+命令 | 高级测试自动化 |
+
+### 集成优先级建议
+
+1. **第一阶段**：8 个缺失的高星工作流仓库（获取完整的 `.claude/` 目录结构）
+2. **第二阶段**：可观测性 + 消息系统技能（Prometheus/gRPC/Kafka 等）
+3. **第三阶段**：云原生 IaC / 数据库技能
+4. **第四阶段**：语言框架 + 开发工具链
+
+---
+
+## 六、架构概览
 
 ```
 bootstrap-entry.ts          # 读取 .doge/api.json → 设置环境变量 → 导入 CLI 入口

@@ -1,0 +1,1 @@
+# 语义化版本发布/n/n基于 conventional commits 的自动化版本发布：分析提交、生成版本号、发布到 npm/GitHub。/n/n## 子命令/n- dry-run — 预览本次发布/n- publish — 执行发布/n- changelog — 查看生成日志/n- rollback — 回滚发布/n

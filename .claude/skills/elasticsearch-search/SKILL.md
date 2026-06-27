@@ -1,0 +1,1 @@
+---/nname: elasticsearch-search/ndescription: Elasticsearch 搜索与分析 — 倒排索引、查询 DSL、聚合分析、分片优化、集群运维/n---/n/n# elasticsearch-search/n/n## 概述/nElasticsearch 搜索与分析 — 倒排索引、查询 DSL、聚合分析、分片优化、集群运维。/n/n## 使用场景/n- 使用 elasticsearch-search 相关技术时/n- 架构决策和技术选型需要参考最佳实践时/n/n## 核心原则/n1. 遵循最佳实践/n2. 注重可维护性/n3. 安全性优先/n4. 性能意识/n
