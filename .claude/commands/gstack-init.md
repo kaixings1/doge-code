@@ -1,0 +1,1 @@
+# GStack 初始化/n/n初始化全栈项目：设置前端/后端/数据库模板。/n/n## 用法/ngstack-init <project-name> --stack <stack-type>/n/n## 栈类型/n- next — Next.js + Prisma/n- remix — Remix + Drizzle/n- astro — Astro + SQLite/n- t3 — T3 Stack (tRPC + Prisma + Next)/n

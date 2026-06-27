@@ -1,0 +1,1 @@
+# SpecKit 审查/n/n审查规范和实现的偏差：差异分析、合规报告。/n/n## 用法/nspeckit-review <spec-file> [implementation-dir]/n

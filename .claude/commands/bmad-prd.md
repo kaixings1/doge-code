@@ -1,0 +1,1 @@
+# BMAD PRD 管理/n/n编写和管理产品需求文档（PRD）。/n/n## 子命令/n- create — 创建 PRD/n- review — 审查 PRD/n- approve — 批准 PRD/n- version — 查看版本历史/n
