@@ -1,6 +1,6 @@
 ---
 name: planning-and-task-breakdown
-description: 规划 and task breakdown - Breaks work into ordered tasks. Use when you have a spec or ...
+description: 规划与任务分解 — 将工作分解为有序任务。在有了规范或需求时使用。
 ---
 
 # Planning and Task Breakdown

@@ -1,6 +1,6 @@
 ---
 name: claude-memory-kit
-description: "Persistent memory system for Claude Code. Two-layer architecture (hot cache + knowledge wiki), safety hooks, /close-day end-of-day synthesis. Zero external dependencies."
+description: Claude Code的持久化内存系统。双层架构（热缓存+知识库），安全钩子，/close-day日终合成。零外部依赖。
 author: awrshift
 version: 3.2.0
 tags: [memory, context-management, productivity, agent-memory]

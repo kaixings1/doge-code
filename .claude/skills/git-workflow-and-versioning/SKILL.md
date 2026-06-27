@@ -1,6 +1,6 @@
 ---
 name: git-workflow-and-versioning
-description: git workflow and versioning - Structures git workflow practices. Use when making any code ...
+description: Git工作流与版本控制 — 规范Git工作流实践。在提交代码更改时使用。
 ---
 
 # Git Workflow and Versioning

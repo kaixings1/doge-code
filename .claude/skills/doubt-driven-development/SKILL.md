@@ -1,6 +1,6 @@
 ---
 name: doubt-driven-development
-description: doubt driven development - Subjects every non-trivial decision to a fresh-context adver...
+description: 疑问驱动开发 — 对每个非平凡决策进行全新上下文对抗性质疑。
 ---
 
 # Doubt-Driven Development

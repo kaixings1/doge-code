@@ -1,6 +1,6 @@
 ---
 name: rust-systems
-description: rust systems - Rust systems programming patterns including ownership, trait...
+description: Rust系统编程 — 包括所有权、trait、生命周期、异步、FFI和宏的Rust编程模式。
 ---
 
 # Rust Systems

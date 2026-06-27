@@ -1,6 +1,6 @@
 ---
 name: agentkit-seo
-description: agentkit seo - Route broad or ambiguous AgentKit SEO work to the right modu...
+description: AgentKit SEO — 将宽泛或模糊的AgentKit SEO工作引导到正确的模块。
 user-invocable: true
 argument: The specific SEO optimization task or platform to focus on (e.g., GitHub, LinkedIn, CV, etc.)
 ---

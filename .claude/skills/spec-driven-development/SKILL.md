@@ -1,6 +1,6 @@
 ---
 name: spec-driven-development
-description: spec driven development - Creates specs before coding. Use when starting a new project...
+description: 规范驱动开发 — 在编码前创建规范。在开始新项目或大型功能时使用。
 ---
 
 # Spec-Driven Development
