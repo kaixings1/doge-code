@@ -1,0 +1,1 @@
+# BMAD 初始化/n/n初始化 BMAD 工作流：创建 PRD、史诗、故事、任务层级。/n/n## 用法/nbmad-init <project-name>/n/n## 产出/n- PRD 文档/n- 史诗 (Epics) 列表/n- 用户故事 (Stories)/n- 子任务 (Tasks)/n

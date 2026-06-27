@@ -1,0 +1,1 @@
+# OpenSpec 提出/n/n提出一个功能规格提案，基于 AI 分析生成结构化规范。/n/n## 用法/nopsx-propose <feature-description>/n/n## 产出/n- 功能规格文档/n- 验收标准/n- 技术影响分析/n
