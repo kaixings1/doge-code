@@ -1,0 +1,1 @@
+# Kafka 管理/n/nApache Kafka 集群管理：主题管理、消费者组监控、消息生产和消费。/n/n## 子命令/n- topics — 管理主题/n- groups — 查看消费者组/n- produce — 生产消息/n- consume — 消费消息/n- offsets — 管理偏移量/n
