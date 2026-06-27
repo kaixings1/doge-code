@@ -1,0 +1,1 @@
+# OpenSpec 审查/n/n审查已有的规格提案，提供改进意见和风险分析。/n/n## 用法/nopsx-review <spec-file>/n/n## 审查维度/n- 完整性检查/n- 一致性检查/n- 可行性评估/n- 风险分析/n

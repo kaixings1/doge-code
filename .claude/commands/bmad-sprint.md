@@ -1,0 +1,1 @@
+# BMAD Sprint 管理/n/n管理冲刺周期：规划 Sprint、分配任务、追踪进度。/n/n## 子命令/n- plan — 规划 Sprint/n- start — 开始 Sprint/n- close — 结束 Sprint/n- report — 生成 Sprint 报告/n

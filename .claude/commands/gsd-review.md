@@ -1,0 +1,1 @@
+# GSD 回顾/n/n执行项目回顾：检查进度、调整计划、记录经验教训。/n/n## 子命令/n- daily — 每日回顾/n- weekly — 每周回顾/n- retrospective — 迭代回顾/n

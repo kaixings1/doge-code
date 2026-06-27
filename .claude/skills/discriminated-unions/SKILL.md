@@ -1,0 +1,1 @@
+---/nname: discriminated-unions/ndescription: TypeScript 可辨识联合 — 判别式模式、穷举检查、切换模式、异步状态建模/n---/n/n# discriminated-unions/n/n## 概述/nTypeScript 可辨识联合 — 判别式模式、穷举检查、切换模式、异步状态建模。来自 Matt Pocock 的 TypeScript 技能合集。/n/n## 使用场景/n- TypeScript 类型系统深度使用时/n- 需要在类型层面做精确控制时/n/n## 核心内容/n1. 类型定义和模式/n2. 实用示例和练习题/n3. 常见陷阱和最佳实践/n

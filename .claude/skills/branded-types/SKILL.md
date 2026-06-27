@@ -1,0 +1,1 @@
+---/nname: branded-types/ndescription: TypeScript 品牌类型 — 名义类型模拟、类型标记、字符串品牌、数字品牌、交集品牌/n---/n/n# branded-types/n/n## 概述/nTypeScript 品牌类型 — 名义类型模拟、类型标记、字符串品牌、数字品牌、交集品牌。来自 Matt Pocock 的 TypeScript 技能合集。/n/n## 使用场景/n- TypeScript 类型系统深度使用时/n- 需要在类型层面做精确控制时/n/n## 核心内容/n1. 类型定义和模式/n2. 实用示例和练习题/n3. 常见陷阱和最佳实践/n

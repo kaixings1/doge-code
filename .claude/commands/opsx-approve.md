@@ -1,0 +1,1 @@
+# OpenSpec 批准/n/n批准规格提案，锁定设计并将其转换为开发任务。/n/n## 用法/nopsx-approve <spec-file> [--version <version>]/n

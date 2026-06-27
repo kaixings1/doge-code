@@ -1,0 +1,1 @@
+# GSD 专注会话/n/n开始一个计时专注会话：番茄钟、进度追踪、休息提醒。/n/n## 用法/ngsd-session <duration-minutes>/n/n## 选项/n- --focus — 专注模式（禁用通知）/n- --break — 休息间隔/n- --log — 记录会话日志/n

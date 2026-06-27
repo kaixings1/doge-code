@@ -1,0 +1,1 @@
+# GSD 初始化/n/n初始化 GSD 工作流：创建项目结构、设置任务追踪、定义目标。/n/n## 用法/ngsd-init <project-name> [options]/n/n## 选项/n- --goal — 设置项目目标/n- --deadline — 设置截止日期/n- --milestones — 定义里程碑/n

@@ -1,0 +1,1 @@
+---/nname: generics-advanced/ndescription: TypeScript 泛型进阶 — 泛型约束、泛型推导、高阶泛型、this 类型、类型工厂/n---/n/n# generics-advanced/n/n## 概述/nTypeScript 泛型进阶 — 泛型约束、泛型推导、高阶泛型、this 类型、类型工厂。来自 Matt Pocock 的 TypeScript 技能合集。/n/n## 使用场景/n- TypeScript 类型系统深度使用时/n- 需要在类型层面做精确控制时/n/n## 核心内容/n1. 类型定义和模式/n2. 实用示例和练习题/n3. 常见陷阱和最佳实践/n
