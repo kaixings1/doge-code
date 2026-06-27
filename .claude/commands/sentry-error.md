@@ -1,0 +1,1 @@
+# Sentry 错误追踪/n/nSentry 错误监控：查看错误、性能追踪、发布追踪、用户反馈。/n/n## 子命令/n- issues — 查看错误列表/n- performance — 性能追踪/n- releases — 发布追踪/n- feedback — 用户反馈/n
