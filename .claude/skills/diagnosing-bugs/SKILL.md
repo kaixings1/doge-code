@@ -1,9 +1,33 @@
 ---
 name: diagnosing-bugs
 description: Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.
+category: "development"
+risk: "safe"
+source: "community"
+source_repo: "mattpocock/skills"
+source_type: "community"
+date_added: "2026-06-19"
+author: "Matt Pocock"
+license: "MIT"
+license_source: "https://github.com/mattpocock/skills/blob/main/LICENSE"
+tags:
+  - engineering
+  - workflow
+  - coding-agents
+tools:
+  - claude-code
+  - codex-cli
+  - cursor
 ---
 
 # Diagnosing Bugs
+
+## When to Use
+
+Use when this workflow matches the user request: Use this skill for its documented workflow.
+
+
+_Source: [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)._
 
 A discipline for hard bugs. Skip phases only when explicitly justified.
 
@@ -132,3 +156,10 @@ Required before declaring done:
 - [ ] The hypothesis that turned out correct is stated in the commit / PR message — so the next debugger learns
 
 **Then ask: what would have prevented this bug?** If the answer involves architectural change (no good test seam, tangled callers, hidden coupling) hand off to the `/improve-codebase-architecture` skill with the specifics. Make the recommendation **after** the fix is in, not before — you have more information now than when you started.
+
+
+## Limitations
+
+- Requires the upstream tool, account, API key, or local setup when the workflow names one.
+- Does not authorize destructive, production, paid, or external-message actions without explicit user approval.
+- Validate generated artifacts or recommendations against the user's real sources before treating them as final.

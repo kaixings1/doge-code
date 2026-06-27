@@ -1,11 +1,19 @@
 ---
 name: manage-skills
-description: 管理技能 — 发现、列出、创建、编辑、切换、复制、移动和删除技能。
+description: Discover, list, create, edit, toggle, copy, move, and delete AI agent skills across 11 tools (Cursor, Claude, Agents, Windsurf, Copilot, Codex, Cline, Aider, Continue, Roo Code, Augment)
+risk: critical
+source: community
+source_repo: umutbozdag/agent-skills-manager
+source_type: community
 ---
 
 # Manage AI Agent Skills
 
 You can manage skills and rules for all major AI coding tools directly from the terminal. This skill teaches you the directory layout, file format, and operations for each tool.
+
+## When to Use
+
+Use this skill when the user wants to inspect, create, edit, enable, disable, copy, move, or delete local AI-agent skills or rule files across supported coding tools.
 
 ## Supported Tools & Paths
 
@@ -185,3 +193,8 @@ find ~/.agents/skills ~/.cursor/skills ~/.claude/skills -name "*.disabled" 2>/de
 - Project-scoped skills override global skills of the same name.
 - For single-file tools (Copilot, Codex, Aider, Augment), editing means replacing the entire file content.
 - When creating skills, use kebab-case for directory names (e.g., `my-new-skill`).
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
