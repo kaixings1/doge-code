@@ -1,6 +1,5 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { spawn } from 'child_process'
 import type { LocalCommandCall, LocalCommandResult } from '../../types/command.js'
 
 const DEFAULT_DIR = 'src'
@@ -79,40 +78,54 @@ function appendLog(logFile: string, message: string): void {
   fs.appendFileSync(logFile, `[${timestamp}] ${message}\n`)
 }
 
-function runDogeAsync(prompt: string, targetDir: string, logFile: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const dogeCmd = process.platform === 'win32' ? 'doge.cmd' : 'doge'
-    const args = [
-      '--print',
-      '--dangerously-skip-permissions',
-      '--add-dir', targetDir,
-      prompt,
-    ]
-    const proc = spawn(dogeCmd, args, {
-      shell: true,
-      stdio: ['inherit', 'pipe', 'pipe'],
-    })
-    let stderr = ''
-    proc.stderr.on('data', (data: Buffer) => {
-      const text = data.toString()
-      stderr += text
-      appendLog(logFile, '[doge:stderr] ' + text.trimEnd())
-    })
-    proc.stdout.on('data', (data: Buffer) => {
-      const text = data.toString()
-      if (text.trim()) {
-        appendLog(logFile, '[doge:stdout] ' + text.trimEnd())
-      }
-    })
-    proc.on('close', (code: number | null) => {
-      if (code === 0) {
-        resolve()
-      } else {
-        reject(new Error('doge exit code ' + code + ', error: ' + stderr))
-      }
-    })
-    proc.on('error', (err: Error) => reject(err))
-  })
+// 专门针对 UI 字符串的翻译（仅在引号中的字符串替换）
+const UI_TRANSLATIONS: Record<string, string> = {
+  'Excluded Commands': '排除的命令',
+  'Filesystem': '文件系统',
+  'Network': '网络',
+  'Unix Sockets': 'Unix 套接字',
+  'seatbelt built-in': 'seatbelt 内置',
+  'Your bash commands will be sandboxed': '您的 bash 命令将在沙箱中执行',
+  'Learn more': '了解更多',
+  'Also requested': '也已请求',
+  'Hooks Restricted by Policy': '受策略限制的钩子',
+  'Binary file': '二进制文件',
+  'Large file diff': '大文件差异',
+  'External imports': '外部导入',
+}
+
+function localizeStrings(content: string): string {
+  let result = content
+  for (const [english, chinese] of Object.entries(UI_TRANSLATIONS)) {
+    // 更精确的替换：只在引号中的字符串替换
+    const escapedEn = english.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    // 双引号中的字符串
+    result = result.replace(new RegExp(`"${escapedEn}"`, 'g'), `"${chinese}"`)
+    // 单引号中的字符串
+    result = result.replace(new RegExp(`'${escapedEn}'`, 'g'), `'${chinese}'`)
+    // 模板字符串中的
+    result = result.replace(new RegExp('`' + escapedEn + '`', 'g'), '`' + chinese + '`')
+  }
+  return result
+}
+
+function processFile(filePath: string, logFile: string): boolean {
+  try {
+    let content = fs.readFileSync(filePath, 'utf-8')
+    if (content.length > 0 && content.charCodeAt(0) === 0xFEFF) {
+      content = content.slice(1)
+    }
+    const newContent = localizeStrings(content)
+    if (newContent !== content) {
+      fs.writeFileSync(filePath, newContent)
+      appendLog(logFile, '✓ 已翻译: ' + path.basename(filePath))
+      return true
+    }
+    return false
+  } catch (err) {
+    appendLog(logFile, '✗ 失败: ' + path.basename(filePath) + ' - ' + (err instanceof Error ? err.message : String(err)))
+    return false
+  }
 }
 
 function createBatches(
@@ -221,17 +234,15 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
 
   appendLog(logFile, '🚀 batch-han 启动，PID=' + process.pid + '，目标目录=' + absTargetDir + '，并发数=' + concurrency)
 
-  // 立即返回提示信息，后台执行
-  const summaryMessage = '✅ batch-han 已启动，正在后台处理 ' + absTargetDir + ' 目录...\n'
-    + '  并发数：' + concurrency + '\n'
-    + '  查看实时进度：/batch-han --status\n'
-    + '  查看完整日志：type ' + logFile
-
-  // 异步执行不阻塞返回
-  executeBatchHan(absTargetDir, progressFile, logFile, pidFile, concurrency)
-    .catch(err => appendLog(logFile, '❌ 执行失败: ' + (err instanceof Error ? err.message : String(err))))
-
-  return { type: 'text', value: summaryMessage }
+  // 同步执行（异步在 bun compiled exe 中不稳定）
+  try {
+    await executeBatchHan(absTargetDir, progressFile, logFile, pidFile, concurrency)
+    return { type: 'text', value: '✅ batch-han 完成！查看日志: type ' + logFile }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    appendLog(logFile, '❌ 执行失败: ' + msg)
+    return { type: 'text', value: '❌ batch-han 失败: ' + msg + '\n查看日志: type ' + logFile }
+  }
 }
 
 async function executeBatchHan(
@@ -258,70 +269,26 @@ async function executeBatchHan(
     }
     appendLog(logFile, '待处理：' + pending.length + ' 个新增/修改文件')
 
-    const batches = createBatches(pending, logFile)
-    appendLog(logFile, '分为 ' + batches.length + ' 批（并发数：' + concurrency + '）')
-
-    const errors: number[] = []
-    const queue = [...batches.entries()]
-
-    async function processBatch(
-      batch: typeof pending,
-      index: number,
-    ): Promise<boolean> {
-      const totalTokens = batch.reduce((sum, f) => sum + f.tokenCount, 0)
-      appendLog(logFile, '▶️ 第 ' + (index + 1) + ' 批开始（' + batch.length + ' 个文件，约 ' + totalTokens + ' tokens）')
-
-      const filePaths = batch.map(f => f.path).join('\n')
-      const dogePrompt = '请严格按照以下任务修改以下 TypeScript 文件。无需反馈，直接修改并覆盖。\n\n任务:\n1. 本地化: 将所有英文注释和 UI 字符串转换为简体中文\n2. 语法升级: 使用 ES2024 特性 (?., ??, const/let 等)\n3. 类型强化: 用具体类型替换隐式 any，禁止使用 any\n4. 保持逻辑不变\n\n需要修改的文件:\n' + filePaths
-
-      for (let attempt = 1; attempt <= RETRY_LIMIT + 1; attempt++) {
-        try {
-          await runDogeAsync(dogePrompt, absTargetDir, logFile)
-          for (const file of batch) {
-            try {
-              const stat = fs.statSync(file.path)
-              history[file.path] = stat.mtimeMs
-            } catch {
-              // file might have been deleted
-            }
-          }
-          saveHistory(history, progressFile)
-          appendLog(logFile, '✅ 第 ' + (index + 1) + ' 批完成')
-          return true
-        } catch (err) {
-          const msg = err instanceof Error ? err.message : String(err)
-          appendLog(logFile, '❌ 第 ' + attempt + ' 次尝试失败：' + msg)
-          if (attempt <= RETRY_LIMIT) {
-            appendLog(logFile, '⏳ 等待 5 秒后重试...')
-            await new Promise(r => setTimeout(r, 5000))
-          } else {
-            appendLog(logFile, '💀 第 ' + (index + 1) + ' 批永久失败')
-            return false
-          }
-        }
+    // 顺序处理每个文件（更稳定）
+    let processedCount = 0
+    for (const file of pending) {
+      processFile(file.path, logFile)
+      processedCount++
+      // 更新历史记录
+      try {
+        const stat = fs.statSync(file.path)
+        history[file.path] = stat.mtimeMs
+      } catch {
+        // file might have been deleted
       }
-      return false
-    }
-
-    async function worker() {
-      while (queue.length > 0) {
-        const item = queue.shift()
-        if (!item) break
-        const [index, batch] = item
-        const ok = await processBatch(batch, index)
-        if (!ok) errors.push(index + 1)
-        await new Promise(r => setTimeout(r, 2000))
+      // 批量保存历史记录
+      if (processedCount % 50 === 0) {
+        saveHistory(history, progressFile)
       }
     }
+    saveHistory(history, progressFile)
 
-    const workers = Array(concurrency).fill(null).map(() => worker())
-    await Promise.all(workers)
-
-    if (errors.length > 0) {
-      appendLog(logFile, '⚠️ 完成，但 ' + errors.length + ' 批失败：' + errors.join(', '))
-    } else {
-      appendLog(logFile, '🎉 全部完成！')
-    }
+    appendLog(logFile, '🎉 全部完成！处理了 ' + processedCount + ' 个文件')
   } finally {
     // 清理 PID 文件
     try {
