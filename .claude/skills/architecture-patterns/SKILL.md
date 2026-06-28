@@ -1,6 +1,6 @@
 ---
 name: architecture-patterns
-description: "Master proven backend architecture patterns including Clean Architecture, Hexagonal Architecture, and Domain-Driven Design to build maintainable, testable, and scalable systems."
+description: "现代架构模式知识库：微服务与单体架构、事件驱动架构、CQRS、事件溯源、SAGA、 strangler fig、BFF、API 网关等。包含权衡分析。"
 risk: none
 source: community
 date_added: "2026-02-27"

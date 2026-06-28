@@ -1,6 +1,6 @@
 ---
 name: analytics-product
-description: "Analytics de produto — PostHog, Mixpanel, eventos, funnels, cohorts, retencao, north star metric, OKRs e dashboards de produto."
+description: "产品分析 — PostHog、Mixpanel、事件、漏斗、群组、留存率、北极星指标、OKR 和产品仪表板。"
 risk: none
 source: community
 date_added: '2026-03-06'

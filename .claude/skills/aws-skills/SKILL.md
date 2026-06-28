@@ -1,6 +1,6 @@
 ---
 name: aws-skills
-description: "AWS development with infrastructure automation and cloud architecture patterns"
+description: "AWS 服务和架构的综合技能：计算、存储、数据库、网络、安全和无服务器。"
 risk: safe
 source: "https://github.com/zxkane/aws-skills"
 date_added: "2026-02-27"

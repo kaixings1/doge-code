@@ -1,6 +1,6 @@
 ---
 name: git-pushing
-description: "Stage all changes, create a conventional commit, and push to the remote branch. Use when explicitly asks to push changes (\"push this\", \"commit and push\"), mentions saving work to remote (\"save to github\", \"push to remote\"), or completes a feature and wants to share it."
+description: "暂存所有更改、创建约定式提交并推送到远程分支。当明确要求推送更改（"推送这个"、"提交并推送"）、提到将工作保存到远程（"保存到 GitHub"、"推送到远程"）或完成功能并想分享时使用。"
 risk: critical
 source: community
 date_added: "2026-02-27"

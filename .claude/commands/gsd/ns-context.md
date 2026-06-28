@@ -1,6 +1,6 @@
 ---
 name: gsd-context
-description: "codebase intelligence | map graphify docs learnings"
+代码库智能 | 映射 图谱化 文档 经验。
 argument-hint: ""
 allowed-tools:
   - Read

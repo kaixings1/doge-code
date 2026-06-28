@@ -1,6 +1,6 @@
 ---
 name: faq-page
-description: |
+description:  |
   A Frequently Asked Questions (FAQ) page with collapsible accordion sections,
   search functionality, and category filtering. Use when the brief asks for
   "FAQ", "help center", "questions", or "support page".

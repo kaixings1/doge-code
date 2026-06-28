@@ -1,6 +1,6 @@
 ---
 name: nerdzao-elite
-description: "Senior Elite Software Engineer (15+) and Senior Product Designer. Full workflow with planning, architecture, TDD, clean code, and pixel-perfect UX validation."
+description: "高级精英软件工程师 (15+) 和高级产品设计师。包含规划、架构、TDD、整洁代码和像素级完美 UX 验证的完整工作流。"
 risk: safe
 source: community
 date_added: "2026-02-27"

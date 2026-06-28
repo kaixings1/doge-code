@@ -1,5 +1,5 @@
 ---
-name: Filament 优化专家
+name:  Filament 优化专家
 description: 专精于重构和优化 Filament PHP 后台管理界面的专家，专注高影响力的结构性改造，而非表面调整，打造极致可用性与效率。
 emoji: 🧵
 color: indigo

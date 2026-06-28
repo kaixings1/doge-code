@@ -1,5 +1,5 @@
 ---
-name: agent-installer
+name:  agent-installer
 description: 代理 installer - Install and configure agent collections, resolve dependencie...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

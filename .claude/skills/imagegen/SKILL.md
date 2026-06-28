@@ -1,6 +1,6 @@
 ---
 name: imagegen
-description: |
+description:  |
   Generate and edit images using OpenAI's Image API for project assets — UI mockups, icons, illustrations, social cards, and visual references.
 triggers:
   - "generate image"

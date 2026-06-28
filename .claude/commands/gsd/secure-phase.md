@@ -1,6 +1,6 @@
 ---
 name: gsd:secure-phase
-description: Retroactively verify threat mitigations for a completed phase
+对已完成阶段的事后威胁缓解措施进行验证。
 argument-hint: "[phase number]"
 allowed-tools:
   - Read

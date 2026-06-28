@@ -1,6 +1,6 @@
 ---
 name: context-management-context-save
-description: "Use when working with context management context save"
+description: "适用于working with context management context save的情况。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

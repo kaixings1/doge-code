@@ -1,6 +1,6 @@
 ---
 name: conductor-implement
-description: "Execute tasks from a track's implementation plan following TDD workflow"
+description: "按照 TDD 工作流从轨道的实施计划执行任务"
 risk: critical
 source: community
 date_added: "2026-02-27"

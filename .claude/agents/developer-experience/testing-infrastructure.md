@@ -1,5 +1,5 @@
 ---
-name: testing-infrastructure
+name:  testing-infrastructure
 description: 测试 基础设施 - Designs test runners, CI test splitting, flaky test manageme...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

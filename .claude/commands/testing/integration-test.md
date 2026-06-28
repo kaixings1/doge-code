@@ -1,4 +1,4 @@
-Generate integration tests for a module, testing real interactions between components.
+为模块生成集成测试，测试组件之间的真实交互。
 
 ## Steps
 

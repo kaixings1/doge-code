@@ -1,6 +1,6 @@
 ---
 name: akf-trust-metadata
-description: "The AI native file format. EXIF for AI — stamps every file with trust scores, source provenance, and compliance metadata. Embeds into 20+ formats (DOCX, PDF, images, code). EU AI Act, SOX, HIPAA auditing."
+description: "AI 原生文件格式。AI 的 EXIF — 为每个文件打上信任评分、来源溯源和合规性元数据。嵌入 20+ 种格式（DOCX、PDF、图片、代码）。符合 EU AI Act、SOX、HIPAA 审计要求。"
 risk: safe
 source: community
 date_added: "2026-03-27"

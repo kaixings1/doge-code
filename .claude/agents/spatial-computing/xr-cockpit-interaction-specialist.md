@@ -1,5 +1,5 @@
 ---
-name: XR 座舱交互专家
+name:  XR 座舱交互专家
 description: 专注设计和开发 XR 环境中沉浸式座舱控制系统
 emoji: 🛩️
 color: orange

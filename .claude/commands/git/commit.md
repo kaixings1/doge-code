@@ -1,4 +1,4 @@
-Analyze the currently staged changes (`git diff --cached`) and generate a conventional commit message.
+分析当前暂存的更改（`git diff --cached`）并生成符合规范的提交信息。
 
 ## Steps
 

@@ -1,6 +1,6 @@
 ---
 name: apify-ultimate-scraper
-description: "AI-driven data extraction from 55+ Actors across all major platforms. This skill automatically selects the best Actor for your task."
+description: "使用 Apify 的 Web Scraper 和 Puppeteer Actor 从网站提取数据。处理 JavaScript 渲染、分页和动态内容。"
 risk: unknown
 source: community
 ---

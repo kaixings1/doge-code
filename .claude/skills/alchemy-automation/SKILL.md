@@ -1,6 +1,6 @@
 ---
-name: alchemy-automation
-description: "Automate Alchemy tasks via Rube MCP (Composio). Always search tools first for current schemas."
+name: alchemy-自动化
+description: "通过 Rube MCP (Composio) 自动化 Alchemy 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---

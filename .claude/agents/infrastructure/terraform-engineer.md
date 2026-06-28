@@ -1,5 +1,5 @@
 ---
-name: terraform-engineer
+name:  terraform-engineer
 description: terraform 工程师 - Infrastructure as Code with Terraform, module design, state ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

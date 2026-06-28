@@ -1,6 +1,6 @@
 ---
 name: avalonia-viewmodels-zafiro
-description: "Optimal ViewModel and Wizard creation patterns for Avalonia using Zafiro and ReactiveUI."
+description: "使用 Zafiro 主题在 Avalonia 中实现 MVVM：ViewModel 设计、命令、数据绑定和依赖注入。"
 risk: none
 source: community
 date_added: "2026-02-27"

@@ -1,5 +1,5 @@
 ---
-name: growth-engineer
+name:  growth-engineer
 description: growth 工程师 - Implements A/B testing frameworks, analytics instrumentation...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

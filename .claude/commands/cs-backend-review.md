@@ -1,5 +1,5 @@
 ---
-description: Backend engineering review — walks the 7 Matt Pocock forcing questions (read/write ratio + QPS, tenancy, sync vs async, data sensitivity, pattern, RPO/RTO, SLO), picks the language + pattern profile, forks into specialists (api-design-reviewer, database-designer, migration-architect, slo-architect). Invokes the cs-backend-engineer agent with context fork.
+description: 后端工程评审 — 走过 Matt Pocock 7 个强制问题（读写比+QPS、租户、同步/异步、数据敏感性、模式、RPO/RTO、SLO），选择语言+模式配置，fork 出专项代理（api-design-reviewer、database-designer、migration-architect、slo-architect）。调用 cs-backend-engineer agent 并附带上下文 fork。
 argument-hint: "<problem or service to review>"
 ---
 

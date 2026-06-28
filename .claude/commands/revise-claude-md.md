@@ -1,5 +1,5 @@
 ---
-description: Update CLAUDE.md with learnings from this session
+description: 用本次会话的经验教训更新 CLAUDE.md
 allowed-tools: Read, Edit, Glob
 ---
 

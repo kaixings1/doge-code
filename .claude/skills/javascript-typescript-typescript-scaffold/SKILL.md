@@ -1,6 +1,6 @@
 ---
 name: javascript-typescript-typescript-scaffold
-description: "You are a TypeScript project architecture expert specializing in scaffolding production-ready Node.js and frontend applications. Generate complete project structures with modern tooling (pnpm, Vite, N"
+description: "您是专门搭建生产就绪 Node.js 和前端应用的 TypeScript 项目架构专家。使用现代工具（pnpm、Vite、ESLint、Prettier）生成完整项目结构。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

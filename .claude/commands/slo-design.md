@@ -1,5 +1,5 @@
 ---
-description: Interactive wizard to design an SLO with SLI, target, error budget, and burn-rate alerts
+description: 交互式向导 — 设计 SLO（SLI、目标、错误预算、burn-rate 告警）
 ---
 
 # /slo-design

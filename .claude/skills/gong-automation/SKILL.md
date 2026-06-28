@@ -1,6 +1,6 @@
 ---
-name: Gong Automation
-description: "Automate Gong conversation intelligence -- retrieve call recordings, transcripts, detailed analytics, speaker stats, and workspace data -- using natural language through the Composio MCP integration."
+name: gong-自动化
+description: "自动化 Gong 对话智能——通过自然语言检索通话录音、文字稿、详细分析、说话人统计和工作区数据。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 category: conversation-intelligence
 requires:
   mcp:

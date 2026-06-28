@@ -1,6 +1,6 @@
 ---
 name: agents-v2-py
-description: "Build container-based Foundry Agents with Azure AI Projects SDK (ImageBasedHostedAgentDefinition). Use when creating hosted agents with custom container images in Azure AI Foundry."
+description: "使用 Azure AI Projects SDK 构建基于容器的 Foundry 代理。适用于在 Azure AI Foundry 中创建带有自定义容器镜像的托管代理。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

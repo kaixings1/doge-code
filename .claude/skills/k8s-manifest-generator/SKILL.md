@@ -1,6 +1,6 @@
 ---
 name: k8s-manifest-generator
-description: "Step-by-step guidance for creating production-ready Kubernetes manifests including Deployments, Services, ConfigMaps, Secrets, and PersistentVolumeClaims."
+description: "创建生产就绪 Kubernetes 清单的分步指导，包括 Deployment、Service、ConfigMap、Secret 和 PersistentVolumeClaim。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

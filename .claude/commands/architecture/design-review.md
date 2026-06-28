@@ -1,4 +1,4 @@
-Conduct a structured design review of a module, feature, or system component.
+执行设计评审：检查模块/特性/PR，识别设计问题、安全风险和性能瓶颈，输出评审报告。
 
 ## Steps
 

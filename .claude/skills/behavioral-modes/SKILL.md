@@ -1,6 +1,6 @@
 ---
 name: behavioral-modes
-description: "AI operational modes (brainstorm, implement, debug, review, teach, ship, orchestrate). Use to adapt behavior based on task type."
+description: "Claude Code 行为模式框架。定义 mode 以约束工具使用、tokens 和输出格式。包含预设模式和自定义模式。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

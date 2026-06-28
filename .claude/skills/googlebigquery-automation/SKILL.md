@@ -1,6 +1,6 @@
 ---
 name: googlebigquery-automation
-description: "Automate Google BigQuery tasks via Rube MCP (Composio): run SQL queries, explore datasets and metadata, execute MBQL queries via Metabase integration. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 Google BigQuery 任务：run SQL queries, explore datasets and metadata, execute MBQL queries via Metabase integration. Always search tools first for current schemas."
 requires:
   mcp: [rube]
 ---

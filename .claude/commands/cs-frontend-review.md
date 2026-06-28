@@ -1,5 +1,5 @@
 ---
-description: Frontend engineering review — walks the 7 Matt Pocock forcing questions (device, LCP target, rendering, bundle budget, SEO vs auth, design system, WCAG), picks the framework + rendering profile, forks into specialists (a11y-audit, performance-profiler, epic-design). Invokes the cs-frontend-engineer agent with context fork.
+description: 前端工程评审 — 走过 Matt Pocock 7 个强制问题（设备、LCP 目标、渲染、Bundle 预算、SEO vs 认证、设计系统、WCAG），选择框架+渲染配置，fork 出专项代理（a11y-audit、performance-profiler、epic-design）。调用 cs-frontend-engineer agent 并附带上下文 fork。
 argument-hint: "<problem or surface to review>"
 ---
 

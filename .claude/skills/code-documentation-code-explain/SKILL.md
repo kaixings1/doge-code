@@ -1,6 +1,6 @@
 ---
 name: code-documentation-code-explain
-description: "You are a code education expert specializing in explaining complex code through clear narratives, visual diagrams, and step-by-step breakdowns. Transform difficult concepts into understandable explanations for developers at all levels."
+description: "您是专门通过结构化解释、视觉辅助和实际示例解释复杂代码的代码教育专家。"
 risk: safe
 source: community
 date_added: "2026-02-27"

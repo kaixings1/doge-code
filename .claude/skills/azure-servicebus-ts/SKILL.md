@@ -1,6 +1,6 @@
 ---
 name: azure-servicebus-ts
-description: "Enterprise messaging with queues, topics, and subscriptions."
+description: "指导 TypeScript 开发者使用 Azure Service Bus 客户端库实现消息队列和发布/订阅。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

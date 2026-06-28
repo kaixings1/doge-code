@@ -1,6 +1,6 @@
 ---
-name: bench-automation
-description: "Automate Bench tasks via Rube MCP (Composio). Always search tools first for current schemas."
+name: bench-自动化
+description: "通过 Rube MCP (Composio) 自动化 Bench 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---

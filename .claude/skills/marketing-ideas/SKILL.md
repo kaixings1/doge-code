@@ -1,6 +1,6 @@
 ---
 name: marketing-ideas
-description: "Provide proven marketing strategies and growth ideas for SaaS and software products, prioritized using a marketing feasibility scoring system."
+description: "为 SaaS 和软件产品提供经过验证的营销策略和增长创意，使用营销可行性评分系统进行优先级排序。"
 risk: safe
 source: community
 date_added: "2026-02-27"

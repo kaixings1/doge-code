@@ -1,5 +1,5 @@
 ---
-name: network-config-reviewer
+name:  审查员
 description: 网络配置审查者
 tools: ["Read", "Grep"]
 model: sonnet

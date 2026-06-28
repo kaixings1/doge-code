@@ -1,6 +1,6 @@
 ---
 name: multi-advisor
-description: "Conselho de especialistas — consulta multiplos agentes do ecossistema em paralelo para analise multi-perspectiva de qualquer topico. Ativa personas, especialistas e agentes tecnicos simultaneamente, cada um pela sua otica unica, e consolida em sintese decisoria final."
+description: "专家委员会——并行咨询生态系统中的多个代理以对任何主题进行多视角分析。同时激活人物角色、专家和技术代理，各从其独特视角，并综合为最终决策摘要。"
 risk: none
 source: community
 date_added: '2026-03-06'

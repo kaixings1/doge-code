@@ -1,6 +1,6 @@
 ---
 name: blueprint
-description: "Turn a one-line objective into a step-by-step construction plan any coding agent can execute cold. Each step has a self-contained context brief — a fresh agent in a new session can pick up any step without reading prior steps."
+description: "Claude Code 通用命令蓝图——模板化命令定义、参数解析和工具编排框架。"
 category: planning
 risk: safe
 source: community

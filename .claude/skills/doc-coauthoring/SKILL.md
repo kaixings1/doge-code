@@ -1,6 +1,6 @@
 ---
 name: doc-coauthoring
-description: "This skill provides a structured workflow for guiding users through collaborative document creation. Act as an active guide, walking users through three stages: Context Gathering, Refinement & Structure, and Reader Testing."
+description: "此技能提供引导用户完成协作文档创建的结构化工作流。作为主动引导，带领用户经历三个阶段：上下文收集、优化与结构、以及读者测试。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

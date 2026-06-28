@@ -1,5 +1,5 @@
 ---
-name: legal-advisor
+name:  legal-advisor
 description: legal 顾问 - Drafts terms of service, privacy policies, software licenses...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

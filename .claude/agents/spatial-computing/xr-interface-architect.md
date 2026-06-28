@@ -1,5 +1,5 @@
 ---
-name: XR 界面架构师
+name:  XR 界面架构师
 description: 空间交互设计师和沉浸式 AR/VR/XR 环境的界面策略专家
 emoji: 🕹️
 color: neon-green

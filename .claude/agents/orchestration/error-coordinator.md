@@ -1,5 +1,5 @@
 ---
-name: error-coordinator
+name:  error-coordinator
 description: 错误 协调者 - Handle errors across multi-agent workflows, implement recove...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

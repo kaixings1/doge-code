@@ -1,5 +1,5 @@
 ---
-name: robotics-engineer
+name:  robotics-engineer
 description: robotics 工程师 - Develops robotics systems with ROS2, sensor fusion, motion p...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -1,6 +1,6 @@
 ---
 name: gha-security-review
-description: "Find exploitable vulnerabilities in GitHub Actions workflows. Every finding MUST include a concrete exploitation scenario — if you can't build the attack, don't report it."
+description: "在 GitHub Actions 工作流中发现可被利用的漏洞。每个发现必须包含具体的利用场景——如果您无法构建攻击，请不要报告它。"
 risk: safe
 source: community
 date_added: 2026-03-16

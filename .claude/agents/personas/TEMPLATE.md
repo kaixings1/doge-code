@@ -1,6 +1,6 @@
 ---
-name: Agent Name
-description: One paragraph describing what this agent does, who it's for, and when to activate it.
+name:  Agent Name
+description:   One paragraph describing what this agent does, who it's for, and when to activate it.（待汉化）
 color: blue
 emoji: 🎯
 vibe: One catchy sentence that captures this agent's personality.

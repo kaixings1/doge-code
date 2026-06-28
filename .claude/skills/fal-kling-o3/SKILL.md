@@ -1,6 +1,6 @@
 ---
 name: fal-kling-o3
-description: |
+description:  |
   Generate images and videos with Kling O3 — Kling's most powerful model family — via fal.ai.
 triggers:
   - "fal kling"

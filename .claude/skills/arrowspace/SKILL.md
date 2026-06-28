@@ -1,6 +1,6 @@
 ---
 name: arrowspace
-description: "Spectral vector search using graph Laplacian eigenstructure. Use when cosine/L2 similarity misses latent structure in your embeddings."
+description: "ArrowSpace 是一个用于 Python AI 代理的强大工具包 — 使用任何 LLM 进行网络搜索、知识获取和多源检索。"
 category: data
 risk: safe
 source: community

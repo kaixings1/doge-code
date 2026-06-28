@@ -1,5 +1,5 @@
 ---
-name: context-manager
+name:  context-manager
 description: context 经理 - Context window optimization, progressive loading, and strate...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

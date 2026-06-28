@@ -3,9 +3,9 @@ name: video-hyperframes
 zh_name: "Hyperframes 视频脚本"
 en_name: "Hyperframes Video"
 emoji: "🎞️"
-description: "Hyperframes / Remotion-compatible continuous frame animation with autoplay support."
+description: "Hyperframes / Remotion 兼容的连续帧动画，支持自动播放。"
 zh_description: "Hyperframes / Remotion 兼容的连续帧动画, 可自动播放"
-en_description: "Hyperframes / Remotion-compatible continuous frame animation with autoplay support."
+en_description: "Hyperframes / Remotion 兼容的连续帧动画，支持自动播放。"
 category: video
 scenario: video
 aspect_hint: "1920×1080 (16:9)"

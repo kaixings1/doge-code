@@ -1,6 +1,6 @@
 ---
-name: bitbucket-automation
-description: "Automate Bitbucket repositories, pull requests, branches, issues, and workspace management via Rube MCP (Composio). Always search tools first for current schemas."
+name: bitbucket-自动化
+description: "通过 Rube MCP (Composio) 自动化 Bitbucket 操作：仓库、拉取请求、分支、问题和工作区管理。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 risk: critical
 source: community
 date_added: "2026-02-27"

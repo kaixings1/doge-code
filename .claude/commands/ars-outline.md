@@ -1,5 +1,5 @@
 ---
-description: ARS academic-paper `outline-only` mode — detailed outline + evidence map
+description: ARS 学术论文 `outline-only` 模式 — 详细大纲 + 证据地图
 model: sonnet
 ---
 

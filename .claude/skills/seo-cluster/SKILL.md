@@ -1,6 +1,6 @@
 ---
 name: seo-cluster
-description: >
+description:  >
   SERP-based semantic topic clustering for content architecture planning. Groups
   keywords by actual Google SERP overlap (not text similarity), designs hub-and-spoke
   content clusters with internal link matrices, and generates interactive

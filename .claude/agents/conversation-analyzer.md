@@ -1,5 +1,5 @@
 ---
-name: conversation-analyzer
+name:  conversation-analyzer
 description: 对话分析器
 model: sonnet
 tools: [Read, Grep]

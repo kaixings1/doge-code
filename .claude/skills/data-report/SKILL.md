@@ -3,9 +3,9 @@ name: data-report
 zh_name: "数据可视化报告"
 en_name: "Data Visualization Report"
 emoji: "📊"
-description: "Turns CSV, Excel, or JSON data into a polished visual report page."
+description: "将 CSV、Excel 或 JSON 数据转化为精美的可视化报告页面。"
 zh_description: "把 CSV/Excel/JSON 数据转成漂亮的可视化报告页"
-en_description: "Turns CSV, Excel, or JSON data into a polished visual report page."
+en_description: "将 CSV、Excel 或 JSON 数据转化为精美的可视化报告页面。"
 category: data
 scenario: finance
 aspect_hint: "桌面长页面"

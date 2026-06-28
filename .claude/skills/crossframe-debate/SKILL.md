@@ -1,6 +1,6 @@
 ---
 name: crossframe-debate
-description: "Use when CrossFrame Suite routes explicit Chinese proposition testing, debate analysis, hidden-premise review, rebuttal design, or withdrawal condition checks."
+description: "适用于crossframe suite routes explicit chinese proposition testing, debate analysis, hidden-premise review, rebuttal design, or withdrawal condition checks.的情况。"
 category: content
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: performance-optimizer
+name:  performance-optimizer
 description: 性能优化专家
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

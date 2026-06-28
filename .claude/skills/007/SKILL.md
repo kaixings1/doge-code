@@ -1,6 +1,6 @@
 ---
-name: '007'
-description: Security audit, hardening, threat modeling (STRIDE/PASTA), Red/Blue Team, OWASP checks, code review, incident response, and infrastructure security for any project.
+name: 安全审计007
+description: 安全审计、加固、威胁建模（STRIDE/PASTA）、红蓝对抗、OWASP 检查、代码审查、事件响应和任何项目的基础设施安全。
 risk: critical
 source: community
 date_added: '2026-03-06'

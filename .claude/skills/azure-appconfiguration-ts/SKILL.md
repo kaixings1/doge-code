@@ -1,6 +1,6 @@
 ---
 name: azure-appconfiguration-ts
-description: "Centralized configuration management with feature flags and dynamic refresh."
+description: "指导 TypeScript 开发者使用 Azure App Configuration 客户端库管理应用设置和功能标志。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

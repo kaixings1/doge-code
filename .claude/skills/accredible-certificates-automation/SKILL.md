@@ -1,6 +1,6 @@
 ---
-name: accredible-certificates-automation
-description: "Automate Accredible Certificates tasks via Rube MCP (Composio). Always search tools first for current schemas."
+name: accredible-certificates-自动化
+description: "通过 Rube MCP (Composio) 自动化 Accredible Certificates 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---

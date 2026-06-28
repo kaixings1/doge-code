@@ -1,5 +1,5 @@
 ---
-name: ts-string-han
+name:  ts-string-han
 description: TypeScript字符串汉化工具
 model: qwen9b
 memory: project

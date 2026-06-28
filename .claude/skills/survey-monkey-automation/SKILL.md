@@ -1,6 +1,6 @@
 ---
 name: SurveyMonkey Automation
-description: "Automate SurveyMonkey survey creation, response collection, collector management, and survey discovery through natural language commands"
+description: "通过自然语言命令自动执行 SurveyMonkey 调查创建、响应收集、收集器管理和调查发现"
 requires:
   mcp:
     - rube

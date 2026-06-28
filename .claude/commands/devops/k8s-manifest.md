@@ -1,4 +1,4 @@
-Generate Kubernetes manifests for deploying the current application.
+为当前应用生成 Kubernetes 清单文件以支持部署。
 
 ## Steps
 

@@ -1,6 +1,6 @@
 ---
 name: architect-review
-description: "Master software architect specializing in modern architecture"
+description: "架构审查：评估设计是否清晰、范围是否合理、约束是否明确，并检查技术选型和取舍是否有据可依。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

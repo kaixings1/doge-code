@@ -1,6 +1,6 @@
 ---
 name: claude-d3js-skill
-description: "This skill provides guidance for creating sophisticated, interactive data visualisations using d3.js."
+description: "此技能为使用 d3.js 创建复杂的交互式数据可视化提供指导。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

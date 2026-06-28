@@ -1,6 +1,6 @@
 ---
 name: context-optimization
-description: "Context optimization extends the effective capacity of limited context windows through strategic compression, masking, caching, and partitioning. The goal is not to magically increase context windows but to make better use of available capacity."
+description: "上下文优化通过策略性压缩、掩码、缓存和分区来扩展有限上下文窗口的有效容量。目标不是神奇地增加上下文窗口，而是更好地利用可用容量。"
 risk: unknown
 source: community
 ---

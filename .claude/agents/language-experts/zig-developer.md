@@ -1,5 +1,5 @@
 ---
-name: zig-developer
+name:  zig-developer
 description: zig 开发者 - Zig systems programming, comptime metaprogramming, allocator...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

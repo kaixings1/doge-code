@@ -1,5 +1,5 @@
 ---
-name: healthcare-engineer
+name:  healthcare-engineer
 description: healthcare 工程师 - Builds HIPAA-compliant healthcare systems with HL7 FHIR inte...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

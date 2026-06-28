@@ -1,6 +1,6 @@
 ---
-name: code-reviewer
-description: Senior code reviewer that evaluates changes across five dimensions — correctness, readability, architecture, security, and performance. Use for thorough code review before merge.
+name:  审查员
+description:   代码审查
 ---
 
 # Senior Code Reviewer

@@ -1,6 +1,6 @@
 ---
 name: documentation
-description: "Documentation generation workflow covering API docs, architecture docs, README files, code comments, and technical writing."
+description: "文档生成工作流，涵盖 API 文档、架构文档、README 文件、代码注释和技术写作。"
 category: workflow-bundle
 risk: safe
 source: personal

@@ -1,6 +1,6 @@
 ---
 name: github-issue-creator
-description: "Turn error logs, screenshots, voice notes, and rough bug reports into crisp, developer-ready GitHub issues with repro steps, impact, and evidence."
+description: "将错误日志、截图、语音笔记和粗糙的 bug 报告转化为清晰的、开发者就绪的 GitHub Issue，包含复现步骤、影响和证据。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

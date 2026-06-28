@@ -1,6 +1,6 @@
 ---
-name: Excel Automation
-description: "Excel Automation: create workbooks, manage worksheets, read/write cell data, and format spreadsheets via Microsoft Excel and Google Sheets integration"
+name: excel-自动化
+description: "自动化 Excel 操作：创建工作簿、管理工作表、读写单元格数据、格式化电子表格。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---

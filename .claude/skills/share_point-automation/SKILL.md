@@ -1,6 +1,6 @@
 ---
 name: share_point-automation
-description: "Automate SharePoint tasks via Rube MCP (Composio): document libraries, sites, lists, and content management. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 SharePoint 任务：document libraries, sites, lists, and content management. Always search tools first for current schemas."
 requires:
   mcp: [rube]
 ---

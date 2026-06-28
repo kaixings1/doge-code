@@ -1,6 +1,6 @@
 ---
 name: database-cloud-optimization-cost-optimize
-description: "You are a cloud cost optimization expert specializing in reducing infrastructure expenses while maintaining performance and reliability. Analyze cloud spending, identify savings opportunities, and implement cost-effective architectures across AWS, Azure, and GCP."
+description: "您是专门在保持性能和可靠性的同时降低基础设施开支的云成本优化专家。分析云支出、识别节约机会、在 AWS、Azure 和 GCP 上实施经济高效的架构。"
 risk: safe
 source: community
 date_added: "2026-02-27"

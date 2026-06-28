@@ -1,5 +1,5 @@
 ---
-description: Guided feature development with codebase understanding and architecture focus
+description: 在理解代码库和架构关注下的引导式功能开发
 argument-hint: Optional feature description
 ---
 

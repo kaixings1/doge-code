@@ -1,6 +1,6 @@
 ---
 name: unreal-gas
-description: >
+description:  >
   Expert guide for Unreal Engine 5.x Gameplay Ability System (GAS) C++ development.
   Covers AbilitySystemComponent, GameplayAbilities, GameplayEffects, Attributes/AttributeSets,
   GameplayTags, GameplayCues, AbilityTasks, prediction/replication, and common patterns.

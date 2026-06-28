@@ -1,6 +1,6 @@
 ---
 name: helium-mcp
-description: "Connect to Helium's MCP server for news research, media bias analysis, balanced perspectives, stock/options data, and semantic meme search across 3.2M+ articles and 5,000+ sources"
+description: "连接到 Helium 的 MCP 服务器进行新闻研究、媒体偏见分析、平衡视角、股票/期权数据和跨 3.2M+ 文章和 5,000+ 来源的语义模因搜索"
 risk: safe
 source: "https://heliumtrades.com/mcp-page/"
 source_repo: connerlambden/helium-mcp

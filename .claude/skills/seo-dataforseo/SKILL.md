@@ -1,6 +1,6 @@
 ---
 name: seo-dataforseo
-description: >
+description:  >
   Live SEO data via DataForSEO MCP server. SERP analysis (Google, Bing, Yahoo,
   YouTube, Google Images), keyword research (volume, difficulty, intent, trends),
   backlink profiles, on-page analysis (Lighthouse, content parsing), competitor

@@ -1,6 +1,6 @@
 ---
 name: error-debugging-multi-agent-review
-description: "Use when working with error debugging multi agent review"
+description: "适用于working with error debugging multi agent review的情况。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

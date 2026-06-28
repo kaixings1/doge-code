@@ -3,9 +3,9 @@ name: frame-liquid-bg-hero
 zh_name: "流体背景 Hero 帧"
 en_name: "Liquid Background Hero"
 emoji: "🌊"
-description: "WebGL-style fluid displacement background with a quote overlay, suited to video intros, landing heroes, or posters."
+description: "WebGL 风格流体位移背景搭配引用覆盖，适用于视频介绍、登陆页英雄区或海报。"
 zh_description: "WebGL 风流体置换背景 + 顶部叠加金句, 适合视频片头 / landing hero / 海报"
-en_description: "WebGL-style fluid displacement background with a quote overlay, suited to video intros, landing heroes, or posters."
+en_description: "WebGL 风格流体位移背景搭配引用覆盖，适用于视频介绍、登陆页英雄区或海报。"
 category: poster
 scenario: video
 aspect_hint: "1920×1080 (16:9) 或 1080×1920 (9:16)"

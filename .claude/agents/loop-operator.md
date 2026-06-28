@@ -1,5 +1,5 @@
 ---
-name: loop-operator
+name:  loop-operator
 description: 循环操作员
 tools: ["Read", "Grep", "Glob", "Bash", "Edit"]
 model: sonnet

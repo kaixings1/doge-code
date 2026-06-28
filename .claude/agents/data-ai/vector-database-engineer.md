@@ -1,5 +1,5 @@
 ---
-name: vector-database-engineer
+name:  vector-database-engineer
 description: vector 数据库 工程师 - Designs embedding pipelines and vector search systems using ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

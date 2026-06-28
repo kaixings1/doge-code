@@ -1,6 +1,6 @@
 ---
 name: incident-runbook-templates
-description: "Production-ready templates for incident response runbooks covering detection, triage, mitigation, resolution, and communication."
+description: "事件响应 runbook 的生产就绪模板，涵盖检测、分类、缓解、解决和沟通。"
 risk: critical
 source: community
 date_added: "2026-02-27"

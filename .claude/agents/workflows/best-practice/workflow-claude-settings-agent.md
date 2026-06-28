@@ -1,5 +1,5 @@
 ---
-name: workflow-claude-settings-agent
+name:  workflow-claude-settings-agent
 description: workflow claude settings 代理 - Research agent that fetches Claude Code docs, reads the loca...
 model: opus
 color: yellow
