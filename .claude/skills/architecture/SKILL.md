@@ -1,6 +1,6 @@
 ---
 name: architecture
-description: "Architectural decision-making framework. Requirements analysis, trade-off evaluation, ADR documentation. Use when making architecture decisions or analyzing system design."
+description: "涵盖微服务、事件驱动、分层和六边形架构的软件架构设计指南。包含权衡分析和决策框架。"
 risk: safe
 source: community
 date_added: "2026-02-27"

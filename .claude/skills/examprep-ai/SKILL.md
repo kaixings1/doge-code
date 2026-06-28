@@ -1,6 +1,6 @@
 ---
 name: examprep-ai
-description: "Exam preparation assistant that converts syllabi, past papers, or notes into a ranked High Score Roadmap. Covers theory, numericals, MCQs, coding, and lab prep, ordered Easy → Medium → Hard. Use for last-minute revision, important topics, and question prediction."
+description: "将 syllabus、历年试卷或笔记转化为排名高分路线图的考试准备助手。涵盖理论、计算题、选择题、编程和实验准备，按易→中→难排序。适用于考前复习、重点和押题。"
 risk: safe
 source: community
 date_added: "2026-06-05"

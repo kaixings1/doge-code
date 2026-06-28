@@ -1,5 +1,5 @@
 ---
-name: type-design-analyzer
+name:  type-design-analyzer
 description: 类型设计分析器
 model: sonnet
 tools: [Read, Grep, Glob]

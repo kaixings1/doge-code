@@ -1,5 +1,5 @@
 ---
-description: Create detailed implementation plans through interactive research and iteration
+description: 通过交互式研究和迭代创建详细的实施计划
 model: opus
 ---
 

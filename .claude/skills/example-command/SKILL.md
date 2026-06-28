@@ -1,6 +1,6 @@
 ---
 name: example-command
-description: An example user-invoked skill that demonstrates frontmatter options and the skills/<name>/SKILL.md layout
+description:  An example user-invoked skill that demonstrates frontmatter options and the skills/<name>/SKILL.md layout
 argument-hint: <required-arg> [optional-arg]
 allowed-tools: [Read, Glob, Grep, Bash]
 ---

@@ -1,6 +1,6 @@
 ---
-name: api-designer
-description: api designer - api designer - REST and GraphQL API design with OpenAPI spec...
+name:  设计师
+description:   设计师
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

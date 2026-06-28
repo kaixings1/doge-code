@@ -1,6 +1,6 @@
 ---
 name: aws-cloud-patterns
-description: placeholder
+description:  placeholder
 ---
 
 # AWS Cloud Patterns

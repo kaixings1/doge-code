@@ -1,6 +1,6 @@
 ---
 name: bazel-build-optimization
-description: "Optimize Bazel builds for large-scale monorepos. Use when configuring Bazel, implementing remote execution, or optimizing build performance for enterprise codebases."
+description: "优化大规模单体仓库的 Bazel 构建。适用于配置 Bazel、实现远程执行或优化企业代码库的构建性能。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

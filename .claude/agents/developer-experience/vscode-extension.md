@@ -1,6 +1,6 @@
 ---
-name: vscode-extension
-description: vscode extension - vscode extension - Develops VS Code extensions with Language...
+name:  vscode-extension
+description:   vscode extension - vscode extension - Develops VS Code extensions with Language...（待汉化）
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

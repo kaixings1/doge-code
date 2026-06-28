@@ -1,6 +1,6 @@
 ---
 name: context-agent
-description: Agente de contexto para continuidade entre sessoes. Salva resumos, decisoes, tarefas pendentes e carrega briefing automatico na sessao seguinte.
+description:  Agente de contexto para continuidade entre sessoes. Salva resumos, decisoes, tarefas pendentes e carrega briefing automatico na sessao seguinte.
 risk: safe
 source: community
 date_added: '2026-03-06'

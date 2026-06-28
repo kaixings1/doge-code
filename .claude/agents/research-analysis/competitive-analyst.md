@@ -1,5 +1,5 @@
 ---
-name: competitive-analyst
+name:  需求分析师
 description: competitive 分析师 - Performs competitive analysis including feature comparison, ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

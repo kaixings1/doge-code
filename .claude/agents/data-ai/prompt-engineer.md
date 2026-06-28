@@ -1,5 +1,5 @@
 ---
-name: prompt-engineer
+name:  prompt-engineer
 description: prompt 工程师 - Prompt optimization with chain-of-thought, structured output...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

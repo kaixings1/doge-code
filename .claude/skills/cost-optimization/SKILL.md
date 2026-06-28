@@ -1,6 +1,6 @@
 ---
 name: cost-optimization
-description: "Strategies and patterns for optimizing cloud costs across AWS, Azure, and GCP."
+description: "优化 AWS、Azure 和 GCP 云成本的策略和模式。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

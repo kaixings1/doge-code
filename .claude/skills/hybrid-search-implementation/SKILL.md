@@ -1,6 +1,6 @@
 ---
 name: hybrid-search-implementation
-description: "Combine vector and keyword search for improved retrieval. Use when implementing RAG systems, building search engines, or when neither approach alone provides sufficient recall."
+description: "结合向量和关键词搜索以改进检索。适用于实现 RAG 系统、构建搜索引擎或任一方法单独无法提供足够召回率时。"
 risk: safe
 source: community
 date_added: "2026-02-27"

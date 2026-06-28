@@ -1,6 +1,6 @@
 ---
-name: compliance-auditor
-description: compliance auditor - compliance auditor - SOC 2, GDPR, HIPAA compliance checking,...
+name:  compliance-auditor
+description:   合规
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

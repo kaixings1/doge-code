@@ -1,6 +1,6 @@
 ---
 name: deepinit
-description: Deep codebase initialization with hierarchical AGENTS.md documentation
+description:  Deep codebase initialization with hierarchical AGENTS.md documentation
 level: 4
 ---
 

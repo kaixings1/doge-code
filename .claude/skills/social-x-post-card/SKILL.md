@@ -3,9 +3,9 @@ name: social-x-post-card
 zh_name: "X (Twitter) 帖子卡"
 en_name: "X / Twitter Post Card"
 emoji: "𝕏"
-description: "Realistic X post card with engagement metrics (likes, reposts, views), suited to video overlays or shareable image cards."
+description: "逼真的 X 帖子卡片，带有互动指标（点赞、转发、浏览），适用于视频覆盖或可分享的图片卡片。"
 zh_description: "拟真 X 推文卡片 + 互动数据 (likes/reposts/views), 适配视频叠加或图卡分享"
-en_description: "Realistic X post card with engagement metrics (likes, reposts, views), suited to video overlays or shareable image cards."
+en_description: "逼真的 X 帖子卡片，带有互动指标（点赞、转发、浏览），适用于视频覆盖或可分享的图片卡片。"
 category: card
 scenario: marketing
 aspect_hint: "1280×720 或 1080×1080"

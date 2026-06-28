@@ -1,5 +1,5 @@
 ---
-name: kotlin-reviewer
+name:  审查员
 description: Kotlin代码审查专家
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet

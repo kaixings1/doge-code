@@ -1,6 +1,6 @@
 ---
-name: technical-writer
-description: technical writer - technical writer - Produces polished technical documentation...
+name:  文档撰写
+description:   文档
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,5 +1,5 @@
 ---
-description: Research highest priority Linear ticket needing investigation
+description: 研究需要调查的最高优先级 Linear 工单
 ---
 
 ## PART I - IF A LINEAR TICKET IS MENTIONED

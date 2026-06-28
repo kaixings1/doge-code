@@ -1,6 +1,6 @@
 ---
-name: technology-scout
-description: technology scout - technology scout - Evaluates emerging technologies, conducts...
+name:  technology-scout
+description:   technology scout - technology scout - Evaluates emerging technologies, conducts...（待汉化）
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

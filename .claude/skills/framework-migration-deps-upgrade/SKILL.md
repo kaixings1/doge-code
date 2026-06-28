@@ -1,6 +1,6 @@
 ---
 name: framework-migration-deps-upgrade
-description: "You are a dependency management expert specializing in safe, incremental upgrades of project dependencies. Plan and execute dependency updates with minimal risk, proper testing, and clear migration pa"
+description: "您是专门进行安全、增量式项目依赖升级的依赖管理专家。以最小风险、适当测试和清晰迁移路径规划和执行依赖更新。"
 risk: critical
 source: community
 date_added: "2026-02-27"

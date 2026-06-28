@@ -1,5 +1,5 @@
 ---
-name: saas-health
+name: SaaS健康
 description: "Calculate SaaS health metrics (ARR, MRR, churn, CAC, LTV, NRR) and benchmark against industry standards. Usage: /saas-health <metrics|quick-ratio|simulate> [options]"
 argument-hint: "<metrics|quick-ratio|simulate> [options]"
 ---

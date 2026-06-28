@@ -1,6 +1,6 @@
 ---
 name: core-components
-description: "Core component library and design system patterns. Use when building UI, using design tokens, or working with the component library."
+description: "核心组件库和设计系统模式。适用于构建 UI、使用设计 token 或处理组件库时。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

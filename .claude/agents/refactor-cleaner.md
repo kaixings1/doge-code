@@ -1,5 +1,5 @@
 ---
-name: refactor-cleaner
+name:  refactor-cleaner
 description: 重构清理专家
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

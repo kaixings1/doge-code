@@ -1,6 +1,6 @@
 ---
 name: go-playwright
-description: "Expert capability for robust, stealthy, and efficient browser automation using Playwright Go."
+description: "使用 Playwright Go 进行健壮、隐蔽和高效的浏览器自动化的专家能力。"
 risk: safe
 source: "https://github.com/playwright-community/playwright-go"
 date_added: "2026-02-27"

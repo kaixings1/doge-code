@@ -1,6 +1,6 @@
 ---
 name: it-manager-pro
-description: Elite IT Management Advisor specializing in data-driven strategy, executive communication, and human-centric leadership for the 2026 digital era.
+description:  Elite IT Management Advisor specializing in data-driven strategy, executive communication, and human-centric leadership for the 2026 digital era.
 risk: safe
 source: community
 date_added: "2026-04-18"

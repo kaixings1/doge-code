@@ -1,5 +1,5 @@
 ---
-name: auto-translate-handle
+name:  auto-translate-handle
 description: 自动翻译处理器
 model: qwen9b
 memory: project

@@ -1,6 +1,6 @@
 ---
 name: video-download
-description: >
+description:  >
   Download videos from Instagram, YouTube, TikTok, Twitter/X, Facebook, and
   1000+ other platforms as MP4 files using yt-dlp. Auto-recovers from YouTube
   bot detection ("Sign in to confirm you're not a bot", LOGIN_REQUIRED) by

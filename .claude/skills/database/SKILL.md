@@ -1,6 +1,6 @@
 ---
 name: database
-description: "Database development and operations workflow covering SQL, NoSQL, database design, migrations, optimization, and data engineering."
+description: "数据库开发和运维工作流，涵盖 SQL、NoSQL、数据库设计、迁移、优化和数据工程。"
 category: workflow-bundle
 risk: safe
 source: personal

@@ -1,5 +1,5 @@
 ---
-name: geospatial-engineer
+name:  geospatial-engineer
 description: geospatial 工程师 - Builds GIS applications with PostGIS, spatial queries, mappi...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -1,5 +1,5 @@
 ---
-name: dependency-manager
+name:  dependency-manager
 description: dependency 经理 - Audits, updates, and manages project dependencies with atten...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

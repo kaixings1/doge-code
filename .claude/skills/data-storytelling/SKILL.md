@@ -1,6 +1,6 @@
 ---
 name: data-storytelling
-description: "Transform raw data into compelling narratives that drive decisions and inspire action."
+description: "数据讲故事——将数据分析转化为引人入胜的叙述。选择正确的可视化方式、构建论证和设计仪表板。适用于向利益相关者呈现数据。"
 risk: safe
 source: community
 date_added: "2026-02-27"

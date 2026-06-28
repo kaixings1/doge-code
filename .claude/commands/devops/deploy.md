@@ -1,4 +1,4 @@
-Deploy the application to a target environment with pre/post checks.
+将应用部署到目标环境并执行前置/后置检查。
 
 ## Steps
 

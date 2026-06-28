@@ -1,6 +1,6 @@
 ---
 name: fal-upscale
-description: "Upscale and enhance image and video resolution using AI"
+description: "使用 AI 放大和增强图像和视频分辨率"
 risk: safe
 source: "https://github.com/fal-ai-community/skills/blob/main/skills/claude.ai/fal-upscale/SKILL.md"
 date_added: "2026-02-27"

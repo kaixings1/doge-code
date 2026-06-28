@@ -1,4 +1,4 @@
-Find and remove dead code from the codebase.
+查找并删除代码库中的死代码。
 
 ## Steps
 

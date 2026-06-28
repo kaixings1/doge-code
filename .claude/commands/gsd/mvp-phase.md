@@ -1,6 +1,6 @@
 ---
 name: gsd:mvp-phase
-description: Plan a phase as a vertical MVP slice — user story, SPIDR splitting, then plan-phase
+将阶段规划为垂直 MVP 切片 - 用户故事、SPIDR 拆分，然后进行 plan-phase。
 argument-hint: "<phase-number>"
 allowed-tools:
   - Read

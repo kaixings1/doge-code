@@ -1,5 +1,5 @@
 ---
-name: development-workflows-research-agent
+name:  development-workflows-research-agent
 description: 开发工作流研究代理
 model: sonnet
 color: cyan

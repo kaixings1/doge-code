@@ -1,6 +1,6 @@
 ---
 name: gsd:phase
-description: CRUD for phases in ROADMAP.md — add, insert, remove, or edit phases
+对 ROADMAP.md 中的阶段进行增删改查 - 添加、插入、移除或编辑阶段。
 argument-hint: "[--insert | --remove | --edit] <phase-name-or-number>"
 allowed-tools:
   - Read

@@ -1,6 +1,6 @@
 ---
 name: auditing-entra-id-with-aadinternals
-description: Run Microsoft Entra ID tenant reconnaissance, token acquisition and manipulation, and federation backdoor testing with the AADInternals PowerShell toolkit to validate identity-attack resilience.
+description:  Run Microsoft Entra ID tenant reconnaissance, token acquisition and manipulation, and federation backdoor testing with the AADInternals PowerShell toolkit to validate identity-attack resilience.
 domain: cybersecurity
 subdomain: identity-access-management
 tags:

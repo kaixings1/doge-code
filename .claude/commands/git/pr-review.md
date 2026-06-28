@@ -1,4 +1,4 @@
-Review a pull request by number: fetch the diff, analyze changes, and post review comments.
+按编号审查拉取请求：获取差异、分析更改并发布评审意见。
 
 ## Steps
 

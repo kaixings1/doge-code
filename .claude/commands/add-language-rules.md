@@ -1,5 +1,5 @@
 ---
-name: add-language-rules
+name: 添加语言规则
 description: 添加语言规则
 allowed_tools: ["Bash", "Read", "Write", "Grep", "Glob"]
 ---

@@ -1,6 +1,6 @@
 ---
 name: browser-automation
-description: Browser automation powers web testing, scraping, and AI agent
+description:  Browser automation powers web testing, scraping, and AI agent
   interactions. The difference between a flaky script and a reliable system
   comes down to understanding selectors, waiting strategies, and anti-detection
   patterns.

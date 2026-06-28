@@ -1,6 +1,6 @@
 ---
 name: azure-ai-voicelive-py
-description: "Build real-time voice AI applications with bidirectional WebSocket communication."
+description: "使用 Azure AI Voice Live 技能创建 Python 实时语音应用：语音转文本、文本转语音和 LLM 驱动的对话代理。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

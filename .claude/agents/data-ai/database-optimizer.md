@@ -1,5 +1,5 @@
 ---
-name: database-optimizer
+name:  database-optimizer
 description: 数据库 optimizer - Database performance optimization with query tuning, indexin...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

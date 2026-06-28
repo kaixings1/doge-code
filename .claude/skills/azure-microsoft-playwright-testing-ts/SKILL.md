@@ -1,6 +1,6 @@
 ---
 name: azure-microsoft-playwright-testing-ts
-description: "Run Playwright tests at scale with cloud-hosted browsers and integrated Azure portal reporting."
+description: "指导 TypeScript 开发者使用 Microsoft Playwright Testing 在云端运行 Playwright 测试。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

@@ -1,5 +1,5 @@
 ---
-description: Document codebase as-is with thoughts directory for historical context
+description: 按现状记录代码库（含 thoughts 目录历史上下文）
 model: opus
 ---
 

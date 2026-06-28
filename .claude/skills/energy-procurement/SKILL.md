@@ -1,6 +1,6 @@
 ---
 name: energy-procurement
-description: Codified expertise for electricity and gas procurement, tariff optimisation, demand charge management, renewable PPA evaluation, and multi-facility energy cost management.
+description:  Codified expertise for electricity and gas procurement, tariff optimisation, demand charge management, renewable PPA evaluation, and multi-facility energy cost management.
 risk: safe
 source: https://github.com/ai-evos/agent-skills
 date_added: '2026-02-27'

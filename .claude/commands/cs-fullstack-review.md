@@ -1,5 +1,5 @@
 ---
-description: Fullstack engineering review — walks the 7 Matt Pocock forcing questions, picks the profile, forks into POWERFUL specialists (api-design-reviewer, database-designer, slo-architect). Invokes the cs-fullstack-engineer agent with context fork.
+description: 全栈工程评审 — 走过 Matt Pocock 7 个强制问题，选择配置，fork 出专项代理（api-design-reviewer、database-designer、slo-architect）。调用 cs-fullstack-engineer agent 并附带上下文 fork。
 argument-hint: "<problem or codebase to review>"
 ---
 

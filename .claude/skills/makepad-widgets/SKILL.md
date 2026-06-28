@@ -1,6 +1,6 @@
 ---
 name: makepad-widgets
-description: "Version: makepad-widgets (dev branch) | Last Updated: 2026-01-19 > > Check for updates: https://crates.io/crates/makepad-widgets"
+description: "版本：makepad-widgets（开发分支）| 最后更新：2026-01-19 > > 检查更新：https://crates.io/crates/makepad-widgets"
 risk: safe
 source: community
 ---

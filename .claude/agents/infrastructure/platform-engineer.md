@@ -1,5 +1,5 @@
 ---
-name: platform-engineer
+name:  platform-engineer
 description: platform 工程师 - Internal developer platforms, service mesh, observability, a...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

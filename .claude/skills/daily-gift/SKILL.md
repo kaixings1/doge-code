@@ -1,6 +1,6 @@
 ---
 name: daily-gift
-description: "Relationship-aware daily gift engine with five-stage creative pipeline — editorial judgment, synthesis, concept generation, visual strategy, and rendering in H5, image, or video"
+description: "关系感知的每日礼物引擎，包含五阶段创意流水线——编辑判断、综合、概念生成、视觉策略和在 H5、图片或视频中渲染"
 category: productivity
 risk: unknown
 source: community

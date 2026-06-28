@@ -1,6 +1,6 @@
 ---
 name: azure-ai-document-intelligence-ts
-description: "Extract text, tables, and structured data from documents using prebuilt and custom models."
+description: "指导 TypeScript 开发者使用 Azure AI Document Intelligence 客户端库从文档中提取文本、键值对和表格。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

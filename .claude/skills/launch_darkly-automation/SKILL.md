@@ -1,6 +1,6 @@
 ---
 name: launch_darkly-automation
-description: "Automate LaunchDarkly tasks via Rube MCP (Composio): feature flags, environments, segments, and rollout management. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 LaunchDarkly 任务：feature flags, environments, segments, and rollout management. Always search tools first for current schemas."
 requires:
   mcp: [rube]
 ---

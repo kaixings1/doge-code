@@ -1,6 +1,6 @@
 ---
 name: llm-ops
-description: "LLM Operations -- RAG, embeddings, vector databases, fine-tuning, prompt engineering avancado, custos de LLM, evals de qualidade e arquiteturas de IA para producao."
+description: "LLM 运维——RAG、嵌入、向量数据库、微调、高级提示工程、LLM 成本、质量评估和生产 AI 架构。"
 risk: safe
 source: community
 date_added: '2026-03-06'

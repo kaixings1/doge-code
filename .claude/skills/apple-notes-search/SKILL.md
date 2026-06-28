@@ -1,6 +1,6 @@
 ---
 name: apple-notes-search
-description: "Semantic + keyword search and connection-discovery across the user's own Apple Notes via the apple-notes MCP server. Use when the user wants to find, recall, or synthesize something from their notes, or surface non-obvious bridges/related notes. macOS, on-device."
+description: "构建和查询 Apple Notes SQLite 数据库的索引，用于快速语义搜索。首次运行需要初始设置。"
 risk: critical
 source: community
 source_repo: connerkward/mcp-apple-notes

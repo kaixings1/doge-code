@@ -1,5 +1,5 @@
 ---
-name: presentation-claude-gemini
+name:  presentation-claude-gemini
 description: Claude+Gemini对比演示
 allowedTools:
   - "Bash(*)"

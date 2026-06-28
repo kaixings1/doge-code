@@ -3,9 +3,9 @@ name: frame-data-chart-nyt
 zh_name: "NYT 风数据图表帧"
 en_name: "NYT-Style Data Chart Frame"
 emoji: "📈"
-description: "NYT-newsroom typography, staggered reveal animation, and editorial-grade charts (line, bar, or range band)."
+description: "纽约时报新闻编辑室排版、交错渐显动画和编辑级图表（折线图、柱状图或范围带图）。"
 zh_description: "NYT-newsroom 排版 + 错峰揭示动画 + 编辑级图表 (折线/柱/范围带)"
-en_description: "NYT-newsroom typography, staggered reveal animation, and editorial-grade charts (line, bar, or range band)."
+en_description: "纽约时报新闻编辑室排版、交错渐显动画和编辑级图表（折线图、柱状图或范围带图）。"
 category: video
 scenario: video
 aspect_hint: "1920×1080 (16:9)"

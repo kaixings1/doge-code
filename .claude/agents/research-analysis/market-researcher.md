@@ -1,6 +1,6 @@
 ---
-name: market-researcher
-description: market researcher - market researcher - Conducts market sizing, TAM/SAM/SOM anal...
+name:  研究员
+description:   研究
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

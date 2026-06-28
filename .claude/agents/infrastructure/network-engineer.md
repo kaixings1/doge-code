@@ -1,5 +1,5 @@
 ---
-name: network-engineer
+name:  network-engineer
 description: network 工程师 - DNS management, load balancer configuration, CDN setup, and ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

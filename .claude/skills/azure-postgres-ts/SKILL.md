@@ -1,6 +1,6 @@
 ---
 name: azure-postgres-ts
-description: Connect to Azure Database for PostgreSQL Flexible Server from Node.js/TypeScript using the pg (node-postgres) package.
+description:  Connect to Azure Database for PostgreSQL Flexible Server from Node.js/TypeScript using the pg (node-postgres) package.
 risk: unknown
 source: community
 date_added: '2026-02-27'

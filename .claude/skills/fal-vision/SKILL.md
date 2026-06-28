@@ -1,6 +1,6 @@
 ---
 name: fal-vision
-description: |
+description:  |
   Analyze images — segment objects, detect, run OCR, describe, and answer visual questions via fal.ai vision models.
 triggers:
   - "fal vision"

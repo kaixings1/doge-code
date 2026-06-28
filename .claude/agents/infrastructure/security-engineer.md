@@ -1,5 +1,5 @@
 ---
-name: security-engineer
+name:  security-engineer
 description: 安全 工程师 - Infrastructure security, IAM policies, mTLS, secrets managem...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

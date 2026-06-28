@@ -1,6 +1,6 @@
 ---
 name: antigravity-workflows
-description: "Orchestrate multiple Antigravity skills through guided workflows for SaaS MVP delivery, security audits, AI agent builds, and browser QA."
+description: "通过引导式工作流编排多个 Antigravity 技能，用于 SaaS MVP 交付、安全审计、AI 代理构建和浏览器 QA。"
 risk: none
 source: self
 date_added: "2026-02-27"

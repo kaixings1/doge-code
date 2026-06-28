@@ -1,6 +1,6 @@
 ---
 name: debug-buttercup
-description: "All pods run in namespace crs. Use when pods in the crs namespace are in CrashLoopBackOff, OOMKilled, or restarting, multiple services restart simultaneously (cascade failure), or redis is unresponsive or showing AOF warnings."
+description: "所有 pod 运行在 crs 命名空间中。当 crs 命名空间中的 pod 处于 CrashLoopBackOff、OOMKilled 或重启状态，多个服务同时重启（级联故障），或 redis 无响应或显示 AOF 警告时使用。"
 risk: unknown
 source: community
 ---

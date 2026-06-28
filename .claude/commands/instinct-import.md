@@ -1,5 +1,5 @@
 ---
-name: instinct-import
+name: 导入直觉
 description: 从文件或 URL 导入直觉（Instincts）到项目/全局作用域
 command: true
 ---

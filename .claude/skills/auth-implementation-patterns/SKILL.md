@@ -1,6 +1,6 @@
 ---
 name: auth-implementation-patterns
-description: "Build secure, scalable authentication and authorization systems using industry-standard patterns and modern best practices."
+description: "全面身份认证实现指南：OAuth 2.0、OpenID Connect、JWT、Session、SSO、MFA、Passkeys、RBAC、ABAC。包含常见陷阱和攻击缓解策略。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

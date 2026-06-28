@@ -1,6 +1,6 @@
 ---
 name: postgrid-automation
-description: "Automate Postgrid tasks via Rube MCP (Composio). Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 Postgrid 任务。使用前始终先搜索工具以获取当前 schema。""
 requires:
   mcp: [rube]
 ---

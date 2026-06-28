@@ -1,5 +1,5 @@
 ---
-description: Cleans up all git branches marked as [gone] (branches that have been deleted on the remote but still exist locally), including removing associated worktrees.
+description: 清理所有标记为 [gone] 的 Git 本地分支（远程已删除但本地仍存在），包括关联的 worktree
 ---
 
 ## Your Task

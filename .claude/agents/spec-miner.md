@@ -1,5 +1,5 @@
 ---
-name: spec-miner
+name:  spec-miner
 description: 需求规格挖掘者
 model: opus
 tools: ["Read", "Grep", "Glob", "Bash", "Write"]

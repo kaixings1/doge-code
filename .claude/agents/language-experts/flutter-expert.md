@@ -1,6 +1,6 @@
 ---
-name: flutter-expert
-description: flutter expert - flutter expert - Flutter 3+ cross-platform development with ...
+name:  flutter-expert
+description:   专家
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,5 +1,5 @@
 ---
-name: clojure-developer
+name:  clojure-developer
 description: clojure 开发者 - REPL-driven development, persistent data structures, Ring/Co...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

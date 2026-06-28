@@ -1,5 +1,5 @@
 ---
-description: Create hooks to prevent unwanted behaviors from conversation analysis or explicit instructions
+description: 创建 hooks 防止对话分析/指令引起的不期望行为
 argument-hint: Optional specific behavior to address
 allowed-tools: ["Read", "Write", "AskUserQuestion", "Task", "Grep", "TodoWrite", "Skill"]
 ---
@@ -91,7 +91,7 @@ For each confirmed behavior, create a `.claude/hookify.{rule-name}.local.md` fil
 **File format:**
 ```markdown
 ---
-name: {rule-name}
+name: Hookify
 enabled: true
 event: {bash|file|stop|prompt|all}
 pattern: {regex pattern}

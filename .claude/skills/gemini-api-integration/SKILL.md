@@ -1,6 +1,6 @@
 ---
 name: gemini-api-integration
-description: "Use when integrating Google Gemini API into projects. Covers model selection, multimodal inputs, streaming, function calling, and production best practices."
+description: "适用于integrating google gemini api into projects. covers model selection, multimodal inputs, streaming, function calling, and production best practices.的情况。"
 risk: safe
 source: community
 date_added: "2026-03-04"

@@ -1,6 +1,6 @@
 ---
 name: conductor-revert
-description: "Git-aware undo by logical work unit (track, phase, or task)"
+description: "按逻辑工作单元（轨道、阶段或任务）进行 Git 感知的撤销"
 risk: critical
 source: community
 date_added: "2026-02-27"

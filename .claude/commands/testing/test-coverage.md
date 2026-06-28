@@ -1,4 +1,4 @@
-Analyze test coverage gaps and generate tests for uncovered code paths.
+分析测试覆盖率缺口，为未覆盖的代码路径生成测试用例。
 
 ## Steps
 

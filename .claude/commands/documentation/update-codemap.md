@@ -1,4 +1,4 @@
-Update the project codemap to reflect the current state of the codebase.
+更新项目代码地图以反映代码库的当前状态。
 
 ## Steps
 

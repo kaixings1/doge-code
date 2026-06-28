@@ -1,4 +1,4 @@
-End the current session with a structured summary and memory update.
+以结构化总结和记忆更新结束当前会话。
 
 ## Steps
 

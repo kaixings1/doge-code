@@ -1,6 +1,6 @@
 ---
 name: unreal-best-practices
-description: >
+description:  >
   Comprehensive best practices guide for modern Unreal Engine 5.x development.
   Covers Epic's strategic direction toward modern systems (GAS, Enhanced Input, StateTree,
   MetaSounds, Niagara, PCG, CommonUI, World Partition, Game Feature Plugins, Gameplay Tags),

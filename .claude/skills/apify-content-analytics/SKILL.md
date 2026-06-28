@@ -1,90 +1,90 @@
 ---
 name: apify-content-analytics
-description: Track engagement metrics, measure campaign ROI, and analyze content performance across Instagram, Facebook, YouTube, and TikTok.
+description: 跟踪参与指标, measure campaign ROI, and analyze content performance across Instagram, Facebook, YouTube, and TikTok.
 risk: unknown
 source: community
 ---
 
-# Content Analytics
+# 内容分析
 
-Track and analyze content performance using Apify Actors to extract engagement metrics from multiple platforms.
+使用 Apify Actors 从多个平台提取参与指标来跟踪和分析内容表现。
 
-## When to Use
-- You need engagement, growth, or ROI metrics for posts, reels, videos, ads, or hashtags.
-- The task is to use Apify Actors to collect cross-platform content performance data.
-- You need exported analytics results and a concise interpretation of what content is performing best.
+## 使用场景
+- 您需要帖子、reels、视频、广告或话题标签的参与、增长或 ROI 指标。
+- 任务是使用 Apify Actors 收集跨平台内容表现数据。
+- 您需要导出的分析结果和对表现最佳内容的简要解读。
 
-## Prerequisites
+## 前提条件
 (No need to check it upfront)
 
-- `.env` file with `APIFY_TOKEN`
-- Node.js 20.6+ (for native `--env-file` support)
-- `mcpc` CLI tool: `npm install -g @apify/mcpc`
+- 包含 `APIFY_TOKEN` 的 `.env` 文件
+- Node.js 20.6+（支持原生 `--env-file`）
+- `mcpc` CLI 工具：`npm install -g @apify/mcpc`
 
-## Workflow
+## 工作流程
 
-Copy this checklist and track progress:
+复制此检查列表以跟踪进度：
 
 ```
 Task Progress:
-- [ ] Step 1: Identify content analytics type (select Actor)
-- [ ] Step 2: Fetch Actor schema via mcpc
-- [ ] Step 3: Ask user preferences (format, filename)
-- [ ] Step 4: Run the analytics script
-- [ ] Step 5: Summarize findings
+- [ ] 步骤 1：确定内容分析类型（选择 Actor）
+- [ ] 步骤 2：通过 mcpc 获取 Actor 模式
+- [ ] 步骤 3：询问用户偏好（格式、文件名）
+- [ ] 步骤 4：运行分析脚本
+- [ ] 步骤 5：总结发现
 ```
 
-### Step 1: Identify Content Analytics Type
+### 步骤 1：确定内容分析类型
 
-Select the appropriate Actor based on analytics needs:
+根据分析需求选择合适的 Actor：
 
-| User Need | Actor ID | Best For |
-|-----------|----------|----------|
-| Post engagement metrics | `apify/instagram-post-scraper` | Post performance |
-| Reel performance | `apify/instagram-reel-scraper` | Reel analytics |
-| Follower growth tracking | `apify/instagram-followers-count-scraper` | Growth metrics |
-| Comment engagement | `apify/instagram-comment-scraper` | Comment analysis |
-| Hashtag performance | `apify/instagram-hashtag-scraper` | Branded hashtags |
-| Mention tracking | `apify/instagram-tagged-scraper` | Tag tracking |
-| Comprehensive metrics | `apify/instagram-scraper` | Full data |
-| API-based analytics | `apify/instagram-api-scraper` | API access |
-| Facebook post performance | `apify/facebook-posts-scraper` | Post metrics |
-| Reaction analysis | `apify/facebook-likes-scraper` | Engagement types |
-| Facebook Reels metrics | `apify/facebook-reels-scraper` | Reels performance |
-| Ad performance tracking | `apify/facebook-ads-scraper` | Ad analytics |
-| Facebook comment analysis | `apify/facebook-comments-scraper` | Comment engagement |
-| Page performance audit | `apify/facebook-pages-scraper` | Page metrics |
-| YouTube video metrics | `streamers/youtube-scraper` | Video performance |
-| YouTube Shorts analytics | `streamers/youtube-shorts-scraper` | Shorts performance |
-| TikTok content metrics | `clockworks/tiktok-scraper` | TikTok analytics |
+\| 用户需求 | Actor ID | 最适用场景 \|
+\|---------|----------|----------|
+| 帖子参与指标 | `apify/instagram-post-scraper` | 帖子表现 |
+| Reel 表现 | `apify/instagram-reel-scraper` | Reel 分析 |
+| 关注者增长跟踪 | `apify/instagram-followers-count-scraper` | 增长指标 |
+| 评论参与 | `apify/instagram-comment-scraper` | 评论分析 |
+| 话题标签表现 | `apify/instagram-hashtag-scraper` | 品牌话题标签 |
+| 提及跟踪 | `apify/instagram-tagged-scraper` | 标签跟踪 |
+| 综合指标 | `apify/instagram-scraper` | 完整数据 |
+| API 分析 | `apify/instagram-api-scraper` | API 访问 |
+| Facebook 帖子表现 | `apify/facebook-posts-scraper` | 帖子指标 |
+| 反应分析 | `apify/facebook-likes-scraper` | 参与类型 |
+| Facebook Reels 指标 | `apify/facebook-reels-scraper` | Reels 表现 |
+| 广告表现跟踪 | `apify/facebook-ads-scraper` | 广告分析 |
+| Facebook 评论分析 | `apify/facebook-comments-scraper` | 评论参与 |
+| 页面表现审计 | `apify/facebook-pages-scraper` | 页面指标 |
+| YouTube 视频指标 | `streamers/youtube-scraper` | 视频表现 |
+| YouTube Shorts 分析 | `streamers/youtube-shorts-scraper` | Shorts 表现 |
+| TikTok 内容指标 | `clockworks/tiktok-scraper` | TikTok 分析 |
 
-### Step 2: Fetch Actor Schema
+### 步骤 2：获取 Actor 模式
 
-Fetch the Actor's input schema and details dynamically using mcpc:
+使用 mcpc 动态获取 Actor 的输入模式和详细信息：
 
 ```bash
 export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call fetch-actor-details actor:="ACTOR_ID" | jq -r ".content"
 ```
 
-Replace `ACTOR_ID` with the selected Actor (e.g., `apify/instagram-post-scraper`).
+将 `ACTOR_ID` 替换为选定的 Actor（例如 `apify/instagram-post-scraper`）。
 
-This returns:
-- Actor description and README
-- Required and optional input parameters
-- Output fields (if available)
+返回内容包括：
+- Actor 描述和 README
+- 必需和可选的输入参数
+- 输出字段（如果可用）
 
-### Step 3: Ask User Preferences
+### 步骤 3：询问用户偏好
 
-Before running, ask:
-1. **Output format**:
-   - **Quick answer** - Display top few results in chat (no file saved)
-   - **CSV** - Full export with all fields
-   - **JSON** - Full export in JSON format
-2. **Number of results**: Based on character of use case
+运行前，请询问：
+1. **输出格式**：
+   - **快速回复** - 在聊天中显示前几个结果（不保存文件）
+   - **CSV** - 完整导出所有字段
+   - **JSON** - 完整导出 JSON 格式
+2. **结果数量**：根据使用场景确定
 
-### Step 4: Run the Script
+### 步骤 4：运行脚本
 
-**Quick answer (display in chat, no file):**
+**快速回复（在聊天中显示，不保存文件）：**
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -109,23 +109,23 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --format json
 ```
 
-### Step 5: Summarize Findings
+### 步骤 5：总结发现
 
-After completion, report:
-- Number of content pieces analyzed
-- File location and name
-- Key performance insights
-- Suggested next steps (deeper analysis, content optimization)
+完成后，报告：
+- 分析的内容数量
+- 文件位置和名称
+- 关键表现洞察
+- 建议的后续步骤（深入分析、内容优化）
 
-## Error Handling
+## 错误处理
 
-`APIFY_TOKEN not found` - Ask user to create `.env` with `APIFY_TOKEN=your_token`
-`mcpc not found` - Ask user to install `npm install -g @apify/mcpc`
-`Actor not found` - Check Actor ID spelling
-`Run FAILED` - Ask user to check Apify console link in error output
-`Timeout` - Reduce input size or increase `--timeout`
+`APIFY_TOKEN not found` - 请用户创建 `.env` 文件并添加 `APIFY_TOKEN=your_token`
+`mcpc not found` - 请用户安装 `npm install -g @apify/mcpc`
+`Actor not found` - 检查 Actor ID 拼写
+`Run FAILED` - 请用户检查错误输出中的 Apify 控制台链接
+`Timeout` - 减小输入大小或增加 `--timeout`
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅在任务明显匹配上述范围时使用此技能
+- 不要将输出视为特定环境验证、测试或专家评审的替代品
+- 如果缺少必需的输入、权限、安全边界或成功标准，请停止并寻求澄清。

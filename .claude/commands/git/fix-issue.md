@@ -1,4 +1,4 @@
-Fix a GitHub issue by number: read the issue, create a branch, implement the fix, and open a PR.
+按编号修复 GitHub issue：读取 issue、创建分支、实现修复并提交 PR。
 
 ## Steps
 

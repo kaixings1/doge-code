@@ -1,6 +1,6 @@
 ---
 name: deployment-validation-config-validate
-description: "You are a configuration management expert specializing in validating, testing, and ensuring the correctness of application configurations. Create comprehensive validation schemas, implement configurat"
+description: "您是专门验证、测试和确保应用配置正确性的配置管理专家。创建全面验证 schema，实施配置测试和验证 pipeline。"
 risk: critical
 source: community
 date_added: "2026-02-27"
