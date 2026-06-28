@@ -1,6 +1,6 @@
 ---
 name: mmx-cli
-description: "Use mmx to generate text, images, video, speech, and music via the MiniMax AI platform. Use when the user wants to create media content, chat with MiniMax models, perform web search, or manage MiniMax API resources from the terminal."
+description: "使用 mmx 通过 MiniMax AI 平台生成文本、图像、视频、语音和音乐。当用户想要创建媒体内容、与 MiniMax 模型聊天、执行网络搜索或从终端管理 MiniMax API 资源时使用。"
 risk: safe
 source: "https://github.com/MiniMax-AI/cli"
 date_added: "2026-04-14"

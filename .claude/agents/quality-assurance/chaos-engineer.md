@@ -1,5 +1,5 @@
 ---
-name: chaos-engineer
+name:  chaos-engineer
 description: chaos 工程师 - Chaos testing, fault injection, resilience validation, and f...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

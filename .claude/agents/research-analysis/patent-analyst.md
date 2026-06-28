@@ -1,5 +1,5 @@
 ---
-name: patent-analyst
+name:  需求分析师
 description: patent 分析师 - Conducts patent searches, prior art analysis, IP landscape m...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

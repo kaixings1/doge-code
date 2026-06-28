@@ -1,6 +1,6 @@
 ---
 name: blog-writing-guide
-description: "This skill enforces Sentry's blog writing standards across every post — whether you're helping an engineer write their first blog post or a marketer draft a product announcement."
+description: "博客写作指南——SEO、读者参与、内容结构和编辑标准。"
 risk: unknown
 source: community
 date_added: '2026-03-06'

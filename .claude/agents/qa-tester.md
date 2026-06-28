@@ -1,6 +1,6 @@
 ---
-name: qa-tester
-description: Interactive CLI testing specialist using tmux for session management
+name:  测试员
+description:   专家
 model: sonnet
 level: 3
 ---

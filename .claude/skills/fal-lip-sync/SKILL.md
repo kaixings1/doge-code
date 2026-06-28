@@ -1,6 +1,6 @@
 ---
 name: fal-lip-sync
-description: |
+description:  |
   Create talking head videos and lip sync audio to video via fal.ai. Useful for explainer avatars, multilingual dubbing previews, and social cuts.
 triggers:
   - "lip sync"

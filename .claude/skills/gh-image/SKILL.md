@@ -1,6 +1,6 @@
 ---
 name: gh-image
-description: "Upload local images to GitHub and get canonical user-attachments embed URLs; use when asked to attach a screenshot to a PR, issue, or comment, or to embed before/after images in a README."
+description: "将本地图像上传到 GitHub 并获取规范的 user-attachments 嵌入 URL；当被要求将截图附加到 PR、Issue 或评论，或想在 README 中嵌入前后对比图时使用。"
 category: developer-tools
 risk: safe
 source: community

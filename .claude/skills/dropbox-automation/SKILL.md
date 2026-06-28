@@ -1,6 +1,6 @@
 ---
-name: dropbox-automation
-description: "Automate Dropbox file management, sharing, search, uploads, downloads, and folder operations via Rube MCP (Composio). Always search tools first for current schemas."
+name: dropbox-自动化
+description: "通过 Rube MCP (Composio) 自动化 Dropbox 操作：文件管理、共享、搜索、上传、下载和文件夹操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 risk: critical
 source: community
 date_added: "2026-02-27"

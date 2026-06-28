@@ -1,6 +1,6 @@
 ---
 name: api-documentation-generator
-description: "Generate comprehensive, developer-friendly API documentation from code, including endpoints, parameters, examples, and best practices"
+description: "从代码生成全面、开发者友好的 API 文档，包含端点、参数、示例和最佳实践。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

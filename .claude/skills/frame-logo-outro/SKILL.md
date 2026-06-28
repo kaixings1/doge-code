@@ -3,9 +3,9 @@ name: frame-logo-outro
 zh_name: "品牌 Logo 收尾帧"
 en_name: "Logo Outro Frame"
 emoji: "🎬"
-description: "Segmented logo assembly, glow bloom, and tagline reveal for video outros or brand closing frames."
+description: "分段标志组装、光芒绽放和标语揭示，用于视频结尾或品牌关闭帧。"
 zh_description: "Logo 分块组装入场 + glow bloom + tagline 揭示, 适合视频片尾 / 品牌闭幕"
-en_description: "Segmented logo assembly, glow bloom, and tagline reveal for video outros or brand closing frames."
+en_description: "分段标志组装、光芒绽放和标语揭示，用于视频结尾或品牌关闭帧。"
 category: video
 scenario: video
 aspect_hint: "1920×1080 (16:9)"

@@ -1,6 +1,6 @@
 ---
 name: screenshot
-description: |
+description:  |
   Capture desktop, app windows, or pixel regions across OS platforms. Useful for marketing screenshots, design reviews, and bug reports.
 triggers:
   - "screenshot"

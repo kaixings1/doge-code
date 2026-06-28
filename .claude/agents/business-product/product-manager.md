@@ -1,5 +1,5 @@
 ---
-name: product-manager
+name:  product-manager
 description: product 经理 - Creates PRDs, user stories, acceptance criteria, and priorit...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -1,4 +1,4 @@
-Generate Content Security Policy headers for a web application.
+为 Web 应用生成内容安全策略（CSP）响应头。
 
 ## Steps
 

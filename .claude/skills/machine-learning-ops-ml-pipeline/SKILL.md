@@ -1,6 +1,6 @@
 ---
 name: machine-learning-ops-ml-pipeline
-description: "Design and implement a complete ML pipeline for: $ARGUMENTS"
+description: "设计和实现完整的 ML 流水线，用于：$ARGUMENTS"
 risk: unknown
 source: community
 date_added: "2026-02-27"

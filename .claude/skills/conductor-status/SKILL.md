@@ -1,6 +1,6 @@
 ---
 name: conductor-status
-description: "Display project status, active tracks, and next actions"
+description: "显示项目状态、活动轨道和下一步行动"
 risk: unknown
 source: community
 date_added: "2026-02-27"

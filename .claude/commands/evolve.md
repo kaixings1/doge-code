@@ -1,5 +1,5 @@
 ---
-name: evolve
+name: 进化
 description: 分析直觉（Instincts）并建议或生成进化的结构
 command: true
 ---

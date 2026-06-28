@@ -1,6 +1,6 @@
 ---
 name: zoho_books-automation
-description: "Automate Zoho Books tasks via Rube MCP (Composio): invoices, expenses, contacts, payments, and accounting. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 Zoho Books 任务：invoices, expenses, contacts, payments, and accounting. Always search tools first for current schemas."
 requires:
   mcp: [rube]
 ---

@@ -1,6 +1,6 @@
 ---
 name: debugging-strategies
-description: "Transform debugging from frustrating guesswork into systematic problem-solving with proven strategies, powerful tools, and methodical approaches."
+description: "将调试从令人沮丧的猜测转变为系统化的问题解决，使用经过验证的策略、强大的工具和方法论方法。"
 risk: safe
 source: community
 date_added: "2026-02-27"

@@ -1,6 +1,6 @@
 ---
 name: azure-messaging-webpubsub-java
-description: "Build real-time web applications with Azure Web PubSub SDK for Java. Use when implementing WebSocket-based messaging, live updates, chat applications, or server-to-client push notifications."
+description: "指导 Java 开发者使用 Azure Web PubSub 客户端库实现实时消息传递。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

@@ -3,9 +3,9 @@ name: frame-light-leak-cinema
 zh_name: "胶片漏光电影帧"
 en_name: "Light-Leak Cinematic Frame"
 emoji: "🎞️"
-description: "Film light leaks, grain, 16:9 letterbox, and large serif type for cinematic openings or chapter cards."
+description: "胶片光泄漏、颗粒感、16:9 宽银幕和大号衬线字体，用于电影开场或章节卡片。"
 zh_description: "胶片漏光 + 颗粒噪点 + 16:9 letterbox + 衬线大字, 电影感开场 / 章节卡"
-en_description: "Film light leaks, grain, 16:9 letterbox, and large serif type for cinematic openings or chapter cards."
+en_description: "胶片光泄漏、颗粒感、16:9 宽银幕和大号衬线字体，用于电影开场或章节卡片。"
 category: video
 scenario: video
 aspect_hint: "2.39:1 letterbox (1920×800) 或 16:9 (1920×1080)"

@@ -1,4 +1,4 @@
-Generate an optimized Dockerfile for the current project.
+为当前项目生成优化后的 Dockerfile。
 
 ## Steps
 

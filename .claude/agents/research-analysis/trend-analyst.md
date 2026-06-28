@@ -1,5 +1,5 @@
 ---
-name: trend-analyst
+name:  需求分析师
 description: trend 分析师 - Analyzes technology trends, adoption curves, and ecosystem s...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

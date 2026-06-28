@@ -1,4 +1,9 @@
-Plan and execute a framework or library migration incrementally.
+---
+name: 架构迁移
+description: 增量规划并执行框架或库迁移。
+---
+
+增量规划并执行框架或库迁移。
 
 ## Steps
 

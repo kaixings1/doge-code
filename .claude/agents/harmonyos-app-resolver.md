@@ -1,5 +1,5 @@
 ---
-name: harmonyos-app-resolver
+name:  harmonyos-app-resolver
 description: 鸿蒙应用解决专家
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

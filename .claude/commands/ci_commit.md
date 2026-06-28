@@ -1,5 +1,5 @@
 ---
-description: Create git commits for session changes with clear, atomic messages
+description: 为本次会话变更创建 Git 提交，消息清晰且原子化
 ---
 
 # Commit Changes

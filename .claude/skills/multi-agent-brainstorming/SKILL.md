@@ -1,6 +1,6 @@
 ---
 name: multi-agent-brainstorming
-description: "Simulate a structured peer-review process using multiple specialized agents to validate designs, surface hidden assumptions, and identify failure modes before implementation."
+description: "使用多个专门代理模拟结构化同行评审过程，验证设计、揭示隐藏假设和在实施前识别故障模式。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

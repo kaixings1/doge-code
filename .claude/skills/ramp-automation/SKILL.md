@@ -1,6 +1,6 @@
 ---
 name: Ramp Automation
-description: "Ramp Automation: manage corporate card transactions, reimbursements, users, and expense tracking via the Ramp platform"
+description: "Ramp 自动化：通过 Ramp 平台管理公司卡交易、报销、用户和费用跟踪"
 requires:
   mcp: [rube]
 ---

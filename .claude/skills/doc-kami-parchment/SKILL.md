@@ -3,9 +3,9 @@ name: doc-kami-parchment
 zh_name: "Kami 羊皮纸文档"
 en_name: "Kami Parchment Document"
 emoji: "📜"
-description: "Warm parchment canvas (#f5f4ed), monochrome ink-blue accent (#1B365D), one serif family, and editorial-grade typography."
+description: "温暖羊皮纸画布 (#f5f4ed)，单色墨水蓝强调色 (#1B365D)，一套衬线字体，编辑级排版。"
 zh_description: "暖羊皮纸底 (#f5f4ed) + 墨蓝单色 accent (#1B365D) + 单一衬线字体, 编辑级排印"
-en_description: "Warm parchment canvas (#f5f4ed), monochrome ink-blue accent (#1B365D), one serif family, and editorial-grade typography."
+en_description: "温暖羊皮纸画布 (#f5f4ed)，单色墨水蓝强调色 (#1B365D)，一套衬线字体，编辑级排版。"
 category: doc
 scenario: personal
 aspect_hint: "A4 / Letter 长页"

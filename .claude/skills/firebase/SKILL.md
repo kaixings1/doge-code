@@ -1,6 +1,6 @@
 ---
 name: firebase
-description: Firebase gives you a complete backend in minutes - auth, database,
+description:  Firebase gives you a complete backend in minutes - auth, database,
   storage, functions, hosting. But the ease of setup hides real complexity.
   Security rules are your last line of defense, and they're often wrong.
 risk: unknown

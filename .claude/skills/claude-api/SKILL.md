@@ -1,6 +1,6 @@
 ---
 name: claude-api
-description: "Build apps with the Claude API or Anthropic SDK. TRIGGER when: code imports `anthropic`/`@anthropic-ai/sdk`/`claude_agent_sdk`, or user asks to use Claude API, Anthropic SDKs, or Agent SDK. DO NOT TRIGGER when: code imports `openai`/other AI SDK, general programming, or ML/data-science tasks."
+description: "使用 Claude API 或 Anthropic SDK 构建应用。当代码导入 anthropic/@anthropic-ai/sdk/claude_agent_sdk 或用户要求使用 Claude API、Anthropic SDK 或 Agent SDK 时触发。"
 risk: unknown
 source: "https://github.com/anthropics/skills"
 date_added: "2026-03-21"

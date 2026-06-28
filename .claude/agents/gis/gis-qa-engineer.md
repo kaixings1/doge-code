@@ -1,5 +1,5 @@
 ---
-name: GIS 质检工程师
+name:  GIS 质检工程师
 description: 质量保证专家，负责校验地理空间数据的完整性——拓扑检查、元数据审计、CRS 一致性、精度评估与合规验证。
 color: purple
 emoji: ✅

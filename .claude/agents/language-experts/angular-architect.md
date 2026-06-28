@@ -1,5 +1,5 @@
 ---
-name: angular-architect
+name:  架构师
 description: angular 架构师 - Angular 17+ development with signals, standalone components,...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -1,5 +1,5 @@
 ---
-name: tc
+name: 技术变更追踪
 description: "Track technical changes with structured records, a state machine, and session handoff. Usage: /tc <init|create|update|status|resume|close|export|dashboard> [args]"
 ---
 

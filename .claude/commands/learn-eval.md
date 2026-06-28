@@ -30,7 +30,7 @@ description: 从会话中提取可复用的模式（Patterns），在保存前�
 
 ```markdown
 ---
-name: pattern-name
+name: 学习评估
 description: "130 字符以内"
 user-invocable: false
 origin: auto-extracted

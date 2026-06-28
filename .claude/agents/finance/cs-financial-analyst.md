@@ -1,6 +1,6 @@
 ---
-name: cs-financial-analyst
-description: Financial Analyst agent for DCF valuation, financial modeling, budgeting, forecasting, and SaaS metrics (ARR, MRR, churn, CAC, LTV, NRR). Orchestrates finance skills. Spawn when users need financial analysis, valuation models, budget planning, ratio analysis, SaaS health checks, or unit economics projections.
+name:  需求分析师
+description:   分析师
 skills: finance
 domain: finance
 model: opus

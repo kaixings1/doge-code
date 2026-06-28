@@ -1,6 +1,6 @@
 ---
 name: figma-implement-design
-description: |
+description:  |
   Translate Figma designs into production-ready code with 1:1 visual fidelity. Useful for handing off Figma frames straight to a frontend agent.
 triggers:
   - "figma to code"

@@ -1,77 +1,77 @@
 ---
 name: wiki-mode
-description: "Methodology modes for the Compound Vault. Lets the vault declare an organizational style (LYT / PARA / Zettelkasten / Generic) that wiki-ingest, save, and autoresearch consult before filing new pages. Reads `.vault-meta/mode.json`; defaults to `generic` (v1.6/v1.7 behavior) when absent. Per the May 2026 compass artifact, methodology support was priority gap 5 — no other Claude+Obsidian competitor ships it as a first-class skill. Triggers on: set vault mode, switch to PARA, use LYT, what's my vault mode, zettelkasten setup, wiki mode, methodology mode, change mode, configure mode."
+description: "知识库方法模式。让知识库声明一种组织风格（LYT / PARA / 卡片盒笔记法 / 通用模式），wiki-ingest、save 和 autoresearch 在归档新内容前会参考此模式。读取 `.vault-meta/mode.json`；当文件不存在时默认为 `generic` 模式（保持 v1.6/v1.7 行为）。根据 2026 年 5 月指南文档，方法论支持曾是等级 5 的优先差距——没有其他 Claude+Obsidian 竞争对手将其作为一级技能提供。触发词：set vault mode, switch to PARA, use LYT, what's my vault mode, zettelkasten setup, wiki mode, methodology mode, change mode, configure mode。"
 allowed-tools: Read, Write, Bash
 ---
 
-# wiki-mode: Methodology Modes for the Compound Vault
+# wiki-mode：知识库组织方法模式
 
-The v1.6 + v1.7 vault structure was opinion-free — `wiki/sources/`, `wiki/entities/`, `wiki/concepts/`, and so on. That works for power-users with their own organizational instincts. It does NOT serve the large segment of Obsidian users who want a named methodology to follow.
+v1.6 + v1.7 版本的知识库结构是无偏见的——`wiki/sources/`、`wiki/entities/`、`wiki/concepts/` 等等。这对有自己的组织直觉的高级用户有效。但它**无法服务**那些希望遵循一种命名方法论的大量 Obsidian 用户。
 
-**v1.8 ships `wiki-mode` to close that gap.** A vault declares a mode (LYT, PARA, Zettelkasten, or Generic) in `.vault-meta/mode.json`; the other skills consult it before deciding where to file new pages. Mode = `generic` is the default and preserves v1.6/v1.7 behavior exactly.
+**v1.8 引入 `wiki-mode` 来填补这一空白。** 知识库通过在 `.vault-meta/mode.json` 中声明一种模式（LYT、PARA、卡片盒笔记法或通用模式）；当需要决定新页面存入何处时，其他技能会在做决定前查阅它。`generic` 模式是默认值，完全保持 v1.6/v1.7 的行为。
 
-**Per May 2026 compass artifact**: This was priority gap 5 of the 5 identified. Ideaverse Pro 2.0 ($200 paid vault) ships LYT as an opinionated structure; no Claude+Obsidian competitor ships PARA / Zettelkasten / mode-aware routing as a first-class skill. v1.8 takes us from TIE → LEAD on the audit §9 methodology-support axis (5 of 7 axes #1).
-
----
-
-## The four modes
-
-### LYT (Linking Your Thinking — Nick Milo)
-
-**Philosophy:** notes link, folders don't. The organizational primitive is the **MOC** (Map of Content) — a hub note that links into a cluster of atomic notes. You never browse folders; you navigate by following links.
-
-**Filing convention:**
-- `wiki/mocs/<topic>-moc.md` — the MOC for a topic cluster
-- `wiki/notes/<atomic-note>.md` — flat list of atomic notes, named by their idea, all linked from at least one MOC
-
-**When to use:** mid-to-large knowledge bases (>100 notes), users who think in terms of conceptual clusters, knowledge graphs.
-
-### PARA (Tiago Forte)
-
-**Philosophy:** organize by **actionability**, not topic. Active work in Projects, ongoing responsibilities in Areas, reference material in Resources, completed/inactive in Archives.
-
-**Filing convention:**
-- `wiki/projects/<project-name>/<note>.md` — active projects with a deadline/outcome
-- `wiki/areas/<area-name>/<note>.md` — ongoing responsibilities (no deadline)
-- `wiki/resources/<topic>/<note>.md` — reference material, organized by topic
-- `wiki/archives/<year>/<note>.md` — completed projects, sunsetted areas
-
-**When to use:** workflow-heavy users, knowledge workers managing many projects, GTD-adjacent practitioners.
-
-### Zettelkasten (Niklas Luhmann's slip-box)
-
-**Philosophy:** atomic notes, unique IDs, dense bidirectional linking. No folders. Every note answers exactly one idea. Notes find each other by ID references.
-
-**Filing convention:**
-- `wiki/<YYYYMMDDHHMMSSffffff>-<slug>.md` — flat, timestamped IDs (20 digits = date + microseconds, collision-resistant)
-- Every note has `id:`, `parent_id:` (optional), `child_ids:` (optional) in frontmatter
-- No subdirectories; the wiki/ root is the whole vault
-
-**When to use:** academics, researchers, long-term thinkers building permanent knowledge artifacts. Highest discipline; smallest filing surface.
-
-### Generic (default — v1.7 behavior)
-
-**Filing convention:** preserves the v1.6/v1.7 default — `wiki/sources/`, `wiki/entities/`, `wiki/concepts/`, `wiki/<domain>/`. No opinion imposed.
-
-**When to use:** when you don't want to commit to a methodology, or you're migrating from v1.7 and want zero behavior change.
+**根据 2026 年 5 月指南文档**：这是已识别的 5 个优先差距中等级 5 的。Ideaverse Pro 2.0（200美元付费知识库）部署 LYT 作为偏好化结构；没有竞争对手的 Claude+Obsidian 产品将 PARA / 卡片盒笔记法 / 模式感知路由作为一级技能。v1.8 使我们在审计 §9 方法论支持轴上从平局变为领先（7 个轴中的 5 个为第 1）。
 
 ---
 
-## How to set the mode
+## 四种模式
+
+### LYT（联结思考法 — Nick Milo）
+
+**理念：** 笔记之间相互联结，而不是依赖文件夹。基本组织单元是 **MOC**（内容地图）——一个中心笔记，链接到一组原子笔记。你从不浏览文件夹；你通过跟随链接来导航。
+
+**归档约定：**
+- `wiki/mocs/<主题>-moc.md` — 某个主题集群的 MOC
+- `wiki/notes/<原子笔记>.md` — 原子笔记的扁平列表，按想法命名，全部从至少一个 MOC 链接
+
+**使用时机：** 中大型知识库（>100 条笔记），以概念集群方式思考的用户，知识图谱。
+
+### PARA（Tiago Forte）
+
+**理念：** 按**可操作性**组织，而非按主题。活跃工作在项目（Projects）中，持续中的责任在领域（Areas）中，参考资料在资源（Resources）中，已完成/非活跃的在归档（Archives）中。
+
+**归档约定：**
+- `wiki/projects/<项目名>/<笔记>.md` — 有截止日期/成果的活跃项目
+- `wiki/areas/<领域名>/<笔记>.md` — 持续中的责任（无截止日期）
+- `wiki/resources/<主题>/<笔记>.md` — 参考资料，按主题组织
+- `wiki/archives/<年份>/<笔记>.md` — 已完成项目，已终止领域
+
+**使用时机：** 重度工作流用户，管理多个项目的知识工作者，GTD 实践者。
+
+### Zettelkasten（Niklas Luhmann 的卡片盒笔记法）
+
+**理念：** 原子化笔记、唯一 ID、密集的双向链接。无文件夹。每条笔记只回答一个想法。笔记通过 ID 引用彼此找到。
+
+**归档约定：**
+- `wiki/<YYYYMMDDHHMMSSffffff>-<slug>.md` — 扁平的时间戳 ID（20 位 = 日期 + 微秒，可防冲突）
+- 每条笔记在 frontmatter 中包含 `id:`、`parent_id:`（可选）、`child_ids:`（可选）
+- 无子目录；wiki/ 根目录就是整个知识库
+
+**使用时机：** 学者、研究员、长期思考者构建永久知识资产。纪律性要求最高；归档面最小。
+
+### Generic（通用模式，默认 — v1.7 行为）
+
+**归档约定：** 保留 v1.6/v1.7 的默认行为——`wiki/sources/`、`wiki/entities/`、`wiki/concepts/`、`wiki/<领域>/`。不施加任何偏好。
+
+**使用时机：** 当你不想承诺一种方法论时，或者你正从 v1.7 迁移且希望零行为改变时。
+
+---
+
+## 如何设置模式
 
 ```bash
 bash bin/setup-mode.sh
 ```
 
-Interactive prompt: pick one of the 4 modes. Writes `.vault-meta/mode.json`. Optionally seeds template folders (LYT `mocs/`, PARA `projects/areas/resources/archives/`).
+交互式提示：从 4 种模式中选择一种。写入 `.vault-meta/mode.json`。可选择性地初始化模板文件夹（LYT 的 `mocs/`，PARA 的 `projects/areas/resources/archives/`）。
 
-To check the current mode programmatically:
+以编程方式检查当前模式：
 
 ```bash
 cat .vault-meta/mode.json | python3 -c 'import json,sys; print(json.load(sys.stdin)["mode"])'
 ```
 
-To switch modes later: re-run `setup-mode.sh`. Existing files are NOT auto-migrated; the new mode only affects newly-filed pages from that point. Migration is a manual operation (see [migration section](#migration-between-modes) below).
+稍后切换模式：重新运行 `setup-mode.sh`。现有文件不会自动迁移；新模式只影响从该点开始归档的新页面。迁移是手动操作（参见下方[迁移部分](#migration-between-modes)）。
 
 ---
 

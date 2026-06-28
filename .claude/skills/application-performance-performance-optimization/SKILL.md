@@ -1,6 +1,6 @@
 ---
 name: application-performance-performance-optimization
-description: "Optimize end-to-end application performance with profiling, observability, and backend/frontend tuning. Use when coordinating performance optimization across the stack."
+description: "您是通过分析、监控和优化技术专门提高应用性能的应用性能优化专家。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

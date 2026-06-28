@@ -1,6 +1,6 @@
 ---
 name: imagen
-description: "AI image generation skill powered by Google Gemini, enabling seamless visual content creation for UI placeholders, documentation, and design assets."
+description: "由 Google Gemini 提供支持的 AI 图像生成技能，实现 UI 占位符、文档和设计资产的无缝视觉内容创建。"
 risk: safe
 source: "https://github.com/sanjay3290/ai-skills/tree/main/skills/imagen"
 date_added: "2026-02-27"

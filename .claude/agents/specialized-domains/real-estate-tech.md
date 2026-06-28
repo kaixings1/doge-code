@@ -1,6 +1,6 @@
 ---
-name: real-estate-tech
-description: real estate tech - real estate tech - Builds property technology platforms with...
+name:  real-estate-tech
+description:   构建
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

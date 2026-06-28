@@ -1,6 +1,6 @@
 ---
 name: threejs
-description: |
+description:  |
   Three.js skills for creating 3D elements and interactive experiences in the browser — scenes, materials, controls, and post-processing.
 triggers:
   - "threejs"

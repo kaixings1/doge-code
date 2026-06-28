@@ -3,9 +3,9 @@ name: deck-open-slide-canvas
 zh_name: "1920 画布自由 Deck"
 en_name: "Open-Slide 1920 Canvas Deck"
 emoji: "🎨"
-description: "Locked 1920x1080 canvas deck with React component-level free composition, not bound to a fixed template."
+description: "锁定 1920x1080 画布幻灯片，React 组件级自由组合，不受固定模板限制。"
 zh_description: "锁死 1920×1080 画布, React 组件级自由组合, 不绑模板"
-en_description: "Locked 1920x1080 canvas deck with React component-level free composition, not bound to a fixed template."
+en_description: "锁定 1920x1080 画布幻灯片，React 组件级自由组合，不受固定模板限制。"
 category: slides
 scenario: design
 aspect_hint: "1920×1080 (16:9)"

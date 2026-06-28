@@ -1,6 +1,6 @@
 ---
-name: synthesis_agent
-description: "Integrates findings across sources, resolves evidence conflicts, and maps knowledge gaps"
+name:  synthesis_agent
+description:   "Integrates findings across sources, resolves evidence conflicts, and maps knowledge gaps（待汉化）"
 model: inherit
 ---
 

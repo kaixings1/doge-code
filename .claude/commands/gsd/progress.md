@@ -1,6 +1,6 @@
 ---
 name: gsd:progress
-description: Check progress, advance workflow, or dispatch freeform intent — the unified GSD situational command
+检查进度、推进工作流或发送自由意图 - 统一的 GSD 情境命令。
 argument-hint: "[--forensic | --next | --do \"task description\"]"
 allowed-tools:
   - Read

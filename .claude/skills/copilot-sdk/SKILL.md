@@ -1,6 +1,6 @@
 ---
 name: copilot-sdk
-description: "Build applications that programmatically interact with GitHub Copilot. The SDK wraps the Copilot CLI via JSON-RPC, providing session management, custom tools, hooks, MCP server integration, and streaming across Node.js, Python, Go, and .NET."
+description: "构建以编程方式与 GitHub Copilot 交互的应用。SDK 通过 JSON-RPC 封装 Copilot CLI，提供会话管理、自定义工具、hooks、MCP 服务器集成和流式传输，支持 Node.js、Python、Go 和 .NET。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

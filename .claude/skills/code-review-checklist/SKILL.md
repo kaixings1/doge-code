@@ -1,6 +1,6 @@
 ---
 name: code-review-checklist
-description: "Comprehensive checklist for conducting thorough code reviews covering functionality, security, performance, and maintainability"
+description: "进行全面代码审查的综合清单，涵盖功能正确性、安全性、性能、可维护性和代码风格。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

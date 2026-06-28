@@ -1,6 +1,6 @@
 ---
 name: emilkowalski-motion
-description: |
+description:  |
   Motion-design follow-up skill inspired by Emil Kowalski's animation guidance. Use after an interface exists to add tasteful micro-interactions, state transitions, and page motion with product-grade restraint.
 triggers:
   - "emil kowalski"

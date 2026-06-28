@@ -1,6 +1,6 @@
 ---
 name: embedding-strategies
-description: "Guide to selecting and optimizing embedding models for vector search applications."
+description: "为向量搜索应用选择和优化嵌入模型的指南。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

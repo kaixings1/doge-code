@@ -1,6 +1,6 @@
 ---
-name: competitive-matrix
-description: "Build competitive analysis matrices with scoring and gap analysis. Usage: /competitive-matrix <analyze> [options]"
+name: 竞品对比矩阵
+description: "构建竞品对比矩阵，含加权评分与差距分析。用法: /competitive-matrix <analyze> [options]"
 argument-hint: "<analyze> [options]"
 ---
 

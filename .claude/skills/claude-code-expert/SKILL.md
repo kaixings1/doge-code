@@ -1,6 +1,6 @@
 ---
 name: claude-code-expert
-description: "Especialista profundo em Claude Code - CLI da Anthropic. Maximiza produtividade com atalhos, hooks, MCPs, configuracoes avancadas, workflows, CLAUDE.md, memoria, sub-agentes, permissoes e integracao com ecossistemas."
+description: "Anthropic CLI——Claude Code 的深度专家。通过快捷键、hooks、MCP、高级配置、工作流、CLAUDE.md、记忆、子代理、权限和生态系统集成最大化生产力。"
 risk: none
 source: community
 date_added: '2026-03-06'

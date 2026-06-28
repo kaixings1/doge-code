@@ -1,4 +1,4 @@
-Save a session checkpoint capturing current progress, decisions, and next steps.
+保存会话检查点，记录当前进度、决策和后续步骤。
 
 ## Steps
 

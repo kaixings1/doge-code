@@ -1,5 +1,5 @@
 ---
-name: Reddit 社区运营
+name:  Reddit 社区运营
 description: Reddit 营销专家，适合出海营销场景。深谙 Reddit 社区文化，通过真实参与、价值输出和长期关系建设来塑造品牌口碑。
 emoji: 🤖
 color: "#FF4500"

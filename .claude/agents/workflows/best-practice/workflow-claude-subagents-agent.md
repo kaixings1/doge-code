@@ -1,5 +1,5 @@
 ---
-name: workflow-claude-subagents-agent
+name:  workflow-claude-subagents-agent
 description: workflow claude subagents 代理 - Research agent that fetches Claude Code docs, reads the loca...
 model: opus
 color: blue

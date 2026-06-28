@@ -1,6 +1,6 @@
 ---
-name: knowledge-synthesizer
-description: knowledge synthesizer - knowledge synthesizer - Compress and synthesize information ...
+name:  knowledge-synthesizer
+description:   knowledge synthesizer - knowledge synthesizer - Compress and synthesize information ...（待汉化）
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

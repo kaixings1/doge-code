@@ -1,6 +1,6 @@
 ---
 name: wiki-cli
-description: "Default vault-mutation transport for claude-obsidian v1.7+. Wraps the Obsidian CLI (Obsidian 1.12+) as the preferred way to read, write, search, and modify vault notes from Claude — no MCP server, no REST API plugin, no TLS workarounds. Falls back to direct filesystem Read/Write/Edit when the CLI is unavailable. Triggers on: wiki-cli, obsidian cli, obsidian read, obsidian write, obsidian search, daily note, obsidian create, obsidian append, vault transport, which transport, transport detection, obsidian command line."
+description: "claude-obsidian v1.7+ 的默认 vault 变更传输方式。封装 Obsidian CLI (Obsidian 1.12+) 作为从 Claude 读取、写入、搜索和修改 vault 笔记的首选方式——无需 MCP 服务器、REST API 插件或 TLS 变通方案。当 CLI 不可用时回退到直接文件系统 Read/Write/Edit。"
 allowed-tools: Read Bash
 ---
 

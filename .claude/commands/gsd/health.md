@@ -1,6 +1,6 @@
 ---
 name: gsd:health
-description: Diagnose planning directory health and optionally repair issues
+诊断规划目录健康状况并选择性地修复问题。
 argument-hint: "[--repair] [--context]"
 allowed-tools:
   - Read

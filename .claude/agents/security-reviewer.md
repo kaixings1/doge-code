@@ -1,5 +1,5 @@
 ---
-name: security-reviewer
+name:  审查员
 description: 安全审查专家
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

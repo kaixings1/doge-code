@@ -1,6 +1,6 @@
 ---
 name: conductor-new-track
-description: "Create a new track with specification and phased implementation plan"
+description: "创建新轨道，包含规范和分阶段实施计划"
 risk: unknown
 source: community
 date_added: "2026-02-27"

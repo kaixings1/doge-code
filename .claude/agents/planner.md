@@ -1,5 +1,5 @@
 ---
-name: planner
+name:  规划师
 description: 规划代理
 tools: ["Read", "Grep", "Glob"]
 model: opus

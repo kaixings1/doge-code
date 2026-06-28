@@ -1,6 +1,6 @@
 ---
-name: monorepo-tooling
-description: monorepo tooling - monorepo tooling - Manages monorepo infrastructure with chan...
+name:  monorepo-tooling
+description:   monorepo tooling - monorepo tooling - Manages monorepo infrastructure with chan...（待汉化）
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

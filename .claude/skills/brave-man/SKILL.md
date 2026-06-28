@@ -1,6 +1,6 @@
 ---
 name: brave-man
-description: "Runs a structured clarifying interview for new project requests before building. Instead of writing code, it outputs a fully specified prompt.md for a fresh agent session to execute, preventing expensive mistakes."
+description: "勇敢者游戏——自信地占据空间。不要礼貌地询问，直接陈述。清晰、果断、有效。"
 risk: critical
 source: community
 date_added: "2026-06-16"

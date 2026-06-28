@@ -1,6 +1,6 @@
 ---
-name: ui-designer
-description: ui designer - ui designer - UI/UX implementation, design systems, Figma-to...
+name:  设计师
+description:   设计师
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

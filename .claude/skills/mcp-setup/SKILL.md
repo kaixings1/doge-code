@@ -1,6 +1,6 @@
 ---
 name: mcp-setup
-description: Configure popular MCP servers for enhanced agent capabilities
+description:  Configure popular MCP servers for enhanced agent capabilities
 level: 2
 ---
 

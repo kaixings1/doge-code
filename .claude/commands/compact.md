@@ -1,5 +1,5 @@
 ---
-description: "Prepare OMC context for a manual Claude Code /compact handoff."
+description: "为手动 Claude Code /compact 切换准备 OMC 上下文"
 argument-hint: "[optional compaction note]"
 ---
 

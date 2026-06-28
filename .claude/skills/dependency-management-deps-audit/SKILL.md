@@ -1,6 +1,6 @@
 ---
 name: dependency-management-deps-audit
-description: "You are a dependency security expert specializing in vulnerability scanning, license compliance, and supply chain security. Analyze project dependencies for known vulnerabilities, licensing issues, outdated packages, and provide actionable remediation strategies."
+description: "您是专门进行漏洞扫描、许可证合规和供应链安全的依赖安全专家。分析项目依赖中的已知漏洞、许可问题、过时包并提供可操作修复策略。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

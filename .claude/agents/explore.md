@@ -1,6 +1,6 @@
 ---
-name: explore
-description: Codebase search specialist for finding files and code patterns
+name:  explore
+description:   专家
 model: haiku
 level: 3
 disallowedTools: Write, Edit

@@ -1,7 +1,7 @@
 ---
-name: wpds
-description: |
-  WordPress Design System. Apply WordPress's official design tokens, typography, and component patterns to themes and sites.
+name: WordPress设计系统
+description:  |
+  WordPress 设计系统。应用 WordPress 官方设计标记、排版和组件模式到主题和网站。
 triggers:
   - "wpds"
   - "wordpress design"
@@ -13,30 +13,26 @@ od:
   upstream: "https://github.com/WordPress/skills"
 ---
 
-# wpds
+# WordPress 设计系统
 
-> Curated from the WordPress development team.
+> 来自 WordPress 开发团队精选。
 
-## What it does
+## 功能说明
 
-WordPress Design System. Apply WordPress's official design tokens, typography, and component patterns to themes and sites.
+WordPress 设计系统。应用 WordPress 官方设计标记、排版和组件模式到主题和网站。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/WordPress/skills
-- Category: `design-systems`
+- 上游：https://github.com/WordPress/skills
+- 分类：`design-systems`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+该目录条目在 Open Design 中宣传此技能，使代理在规划期间发现它。要运行完整的上游工作流及其原始资源、脚本和引用，请将上游 bundle 安装到你的活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 检查上游 README 以了解确切的路径
 open https://github.com/WordPress/skills
 ```
 
-Then ask the agent to invoke this skill by name (`wpds`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后要求代理按名称（`wpds`）或使用此技能 frontmatter 中列出的触发短语之一来调用此技能。

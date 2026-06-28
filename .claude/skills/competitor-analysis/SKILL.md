@@ -1,6 +1,6 @@
 ---
 name: competitor-analysis
-description: "Research competitors with Browserbase discovery, enrichment lanes, screenshots, matrices, and HTML reports."
+description: "使用 Browserbase 发现、丰富渠道、截图和 AI 驱动洞察研究竞争对手。"
 license: MIT
 compatibility: Requires the browse CLI (npm install -g browse) and BROWSERBASE_API_KEY env var
 allowed-tools: Bash Agent AskUserQuestion

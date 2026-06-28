@@ -1,5 +1,5 @@
 ---
-name: graphql-architect
+name:  架构师
 description: graphql 架构师 - GraphQL schema design, resolver implementation, federation, ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

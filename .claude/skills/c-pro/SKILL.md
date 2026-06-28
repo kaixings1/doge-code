@@ -1,6 +1,6 @@
 ---
 name: c-pro
-description: "Write efficient C code with proper memory management, pointer"
+description: "编写高效的 C 代码，具有正确的内存管理、指针算术和底层优化技巧。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

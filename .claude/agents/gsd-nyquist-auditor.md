@@ -1,6 +1,6 @@
 ---
-name: gsd-nyquist-auditor
-description: Fills Nyquist validation gaps by generating tests and verifying coverage for phase requirements
+name:  gsd-nyquist-auditor
+description:   测试
 tools:
   - Read
   - Write

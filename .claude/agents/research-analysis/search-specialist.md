@@ -1,5 +1,5 @@
 ---
-name: search-specialist
+name:  search-specialist
 description: search 专家 - Performs advanced search, information retrieval, source eval...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

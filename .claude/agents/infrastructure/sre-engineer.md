@@ -1,5 +1,5 @@
 ---
-name: sre-engineer
+name:  sre-engineer
 description: sre 工程师 - SLOs, error budgets, incident response, postmortems, and pro...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

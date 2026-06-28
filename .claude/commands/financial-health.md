@@ -1,6 +1,6 @@
 ---
-name: financial-health
-description: "Run financial ratio analysis, DCF valuation, budget variance analysis, and rolling forecasts. Usage: /financial-health <ratios|dcf|budget|forecast> <data.json>"
+name: 财务健康
+description: "运行财务比率分析、DCF 估值、预算差异分析和滚动预测。用法: /financial-health <ratios|dcf|budget|forecast> <data.json>"
 argument-hint: "<ratios|dcf|budget|forecast> <data.json>"
 ---
 

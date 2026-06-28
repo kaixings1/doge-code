@@ -1,6 +1,6 @@
 ---
 name: github
-description: "Use the `gh` CLI for issues, pull requests, Actions runs, and GitHub API queries."
+description: "使用 `gh` CLI 处理 Issues、Pull Requests、Actions 运行和 GitHub API 查询。"
 risk: safe
 source: "Dimillian/Skills (MIT)"
 date_added: "2026-03-25"

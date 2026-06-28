@@ -1,5 +1,5 @@
 ---
-name: architect
+name:  架构师
 description: 软件架构专家，负责系统设计、可扩展性和技术决策
 tools: ["Read", "Grep", "Glob"]
 model: opus

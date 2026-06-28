@@ -1,6 +1,6 @@
 ---
 name: fix-review
-description: "Verify fix commits address audit findings without new bugs"
+description: "验证修复提交是否解决了审计发现且未引入新 bug"
 risk: safe
 source: "https://github.com/trailofbits/skills/tree/main/plugins/fix-review"
 date_added: "2026-02-27"

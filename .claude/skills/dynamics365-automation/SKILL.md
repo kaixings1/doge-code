@@ -1,6 +1,6 @@
 ---
-name: Dynamics 365 Automation
-description: "Dynamics 365 Automation: manage CRM contacts, accounts, leads, opportunities, sales orders, invoices, and cases via the Dynamics CRM Web API"
+name: dynamics365-自动化
+description: "自动化 Dynamics 365 操作：通过 Dynamics CRM Web API 管理 CRM 联系人、账户、线索、机会、销售订单、发票和案例。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---

@@ -1,5 +1,5 @@
 ---
-name: comment-analyzer
+name:  comment-analyzer
 description: 评论分析器
 model: sonnet
 tools: [Read, Grep, Glob]

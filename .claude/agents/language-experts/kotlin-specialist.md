@@ -1,5 +1,5 @@
 ---
-name: kotlin-specialist
+name:  kotlin-specialist
 description: kotlin 专家 - Kotlin development with coroutines, Ktor, Kotlin Multiplatfo...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

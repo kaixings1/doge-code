@@ -1,6 +1,6 @@
 ---
-name: Clockify Automation
-description: "Automate time tracking workflows in Clockify -- create and manage time entries, workspaces, and users through natural language commands."
+name: clockify-自动化
+description: "自动化 Clockify 时间追踪工作流程——通过自然语言命令创建和管理时间条目、工作区和用户。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp:
     - rube

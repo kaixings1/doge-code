@@ -1,6 +1,6 @@
 ---
-name: capsule_crm-automation
-description: "Automate Capsule CRM tasks via Rube MCP (Composio): contacts, opportunities, cases, tasks, and pipeline management. Always search tools first for current schemas."
+name: capsule_crm-自动化
+description: "通过 Rube MCP (Composio) 自动化 Capsule CRM 操作：联系人、商机、案例、任务和管道管理。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---

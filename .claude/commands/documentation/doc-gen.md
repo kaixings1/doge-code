@@ -1,4 +1,4 @@
-Generate documentation from the codebase for the specified scope.
+根据代码库为指定范围生成文档。
 
 ## Steps
 

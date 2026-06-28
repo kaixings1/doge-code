@@ -1,8 +1,6 @@
 ---
 name: analyzing-threat-actor-ttps-with-mitre-attack
-description: MITRE ATT&CK is a globally-accessible knowledge base of adversary tactics,
-  techniques, and procedures (TTPs) based on real-world observations. This skill covers
-  systematically mapping threat actor beh
+description:  MITRE ATT&CK 是一个基于真实世界观察的全球可访问的对手战术、技术和程序 (TTP) 知识库。此技能涵盖系统化映射威胁行为者行为、理解检测覆盖率和构建基于威胁的防御。
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:

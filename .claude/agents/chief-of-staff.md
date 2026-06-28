@@ -1,5 +1,5 @@
 ---
-name: chief-of-staff
+name:  办公室主任
 description: 幕僚长，管理项目状态和团队协调
 tools: ["Read", "Grep", "Glob", "Bash", "Edit", "Write"]
 model: opus

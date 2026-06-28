@@ -1,6 +1,6 @@
 ---
 name: internal-comms
-description: "Write internal communications such as status reports, leadership updates, 3P updates, newsletters, FAQs, incident reports, and project updates using repeatable internal formats."
+description: "编写内部沟通文档，如状态报告、领导层更新、第三方更新、通讯、FAQ、事件报告和项目更新，使用可重复的内部格式。"
 risk: unknown
 source: "https://github.com/anthropics/skills"
 date_added: "2026-03-21"

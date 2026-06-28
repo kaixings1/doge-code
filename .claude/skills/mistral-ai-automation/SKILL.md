@@ -1,6 +1,6 @@
 ---
 name: Mistral AI Automation
-description: "Automate Mistral AI operations -- manage files and libraries, upload documents for fine-tuning, batch processing, and OCR, track fine-tuning jobs, and build RAG pipelines via the Composio MCP integration."
+description: "通过 Composio MCP 集成自动执行 Mistral AI 操作——管理文件和库、上传文档以进行微调、批处理和 OCR、跟踪微调作业和构建 RAG 流水线。"
 requires:
   mcp:
     - rube

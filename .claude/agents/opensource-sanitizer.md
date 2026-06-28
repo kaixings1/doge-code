@@ -1,5 +1,5 @@
 ---
-name: opensource-sanitizer
+name:  opensource-sanitizer
 description: 开源清理工具
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet

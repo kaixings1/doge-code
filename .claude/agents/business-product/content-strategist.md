@@ -1,5 +1,5 @@
 ---
-name: content-strategist
+name:  content-strategist
 description: content 策略师 - Plans content strategy with SEO-driven writing, editorial ca...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

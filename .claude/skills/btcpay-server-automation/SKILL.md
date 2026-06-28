@@ -1,6 +1,6 @@
 ---
-name: btcpay-server-automation
-description: "Automate Btcpay Server tasks via Rube MCP (Composio). Always search tools first for current schemas."
+name: btcpay-server-自动化
+description: "通过 Rube MCP (Composio) 自动化 BTCPay Server 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---

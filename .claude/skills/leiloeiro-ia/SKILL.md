@@ -1,6 +1,6 @@
 ---
 name: leiloeiro-ia
-description: Especialista em leiloes judiciais e extrajudiciais de imoveis. Analise juridica, pericial e de mercado integrada. Orquestra os 5 modulos especializados.
+description:  Especialista em leiloes judiciais e extrajudiciais de imoveis. Analise juridica, pericial e de mercado integrada. Orquestra os 5 modulos especializados.
 risk: safe
 source: community
 date_added: '2026-03-06'

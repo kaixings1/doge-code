@@ -1,5 +1,5 @@
 ---
-description: Enable or disable hookify rules interactively
+description: 交互式启禁用 hookify 规则
 allowed-tools: ["Glob", "Read", "Edit", "AskUserQuestion", "Skill"]
 ---
 

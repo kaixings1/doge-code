@@ -1,6 +1,6 @@
 ---
 name: Productboard Automation
-description: "Automate product management workflows in Productboard -- manage features, notes, objectives, components, and releases through natural language commands."
+description: "通过自然语言命令自动执行 Productboard 中的产品管理工作流——管理功能、笔记、目标、组件和发布。"
 requires:
   mcp:
     - rube

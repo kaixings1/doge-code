@@ -1,6 +1,6 @@
 ---
 name: similarweb_digitalrank_api-automation
-description: "Automate SimilarWeb tasks via Rube MCP (Composio): website traffic, rankings, and digital market intelligence. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 SimilarWeb 任务：website traffic, rankings, and digital market intelligence. Always search tools first for current schemas."
 requires:
   mcp: [rube]
 ---

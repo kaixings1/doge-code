@@ -1,6 +1,6 @@
 ---
-name: education-tech
-description: education tech - education tech - Builds learning management systems with SCO...
+name:  education-tech
+description:   构建
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

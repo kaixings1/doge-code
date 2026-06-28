@@ -1,6 +1,6 @@
 ---
 name: gsd:audit-uat
-description: Cross-phase audit of all outstanding UAT and verification items
+对所有未完成的 UAT 和验证项进行跨阶段审计。
 allowed-tools:
   - Read
   - Glob

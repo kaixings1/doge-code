@@ -1,5 +1,5 @@
 ---
-name: projects
+name: 项目列表
 description: 列出已知项目及其直觉（instinct）统计数据
 command: true
 ---

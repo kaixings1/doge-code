@@ -1,5 +1,5 @@
 ---
-description: Research ticket and launch planning session
+description: 研究工单并启动规划会话
 ---
 
 1. use SlashCommand() to call /ralph_research with the given ticket number

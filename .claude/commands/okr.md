@@ -1,6 +1,6 @@
 ---
-name: okr
-description: "Generate OKR cascades from company strategy to team objectives. Usage: /okr generate <strategy>"
+name: OKR
+description: "从公司战略到团队目标生成 OKR 级联。用法: /okr generate <strategy>"
 ---
 
 # /okr

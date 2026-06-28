@@ -1,5 +1,5 @@
 ---
-description: An example slash command that demonstrates command frontmatter options (legacy format)
+description: 一个演示命令 frontmatter 选项的斜杠命令示例（旧格式）
 argument-hint: <required-arg> [optional-arg]
 allowed-tools: [Read, Glob, Grep, Bash]
 ---

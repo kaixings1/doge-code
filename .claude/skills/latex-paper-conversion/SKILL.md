@@ -1,6 +1,6 @@
 ---
 name: latex-paper-conversion
-description: "This skill should be used when the user asks to convert an academic paper in LaTeX from one format (e.g., Springer, IPOL) to another format (e.g., MDPI, IEEE, Nature). It automates extraction, injection, fixing formatting, and compiling."
+description: "当用户要求将 LaTeX 格式的学术论文从一种格式（如 Springer、IPOL）转换为另一种格式（如 MDPI、IEEE、Nature）时使用此技能。它自动化提取、注入、修复格式和编译。"
 risk: safe
 source: community
 date_added: "2026-03-14"

@@ -1,4 +1,4 @@
-Generate an onboarding guide for new developers joining the project.
+为加入项目的新开发人员生成入职指南。
 
 ## Steps
 

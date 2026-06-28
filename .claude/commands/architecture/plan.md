@@ -1,4 +1,4 @@
-Create a structured implementation plan for the requested feature or change.
+为请求的功能或变更制定结构化实施计划。
 
 ## Steps
 

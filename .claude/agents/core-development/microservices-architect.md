@@ -1,5 +1,5 @@
 ---
-name: microservices-architect
+name:  架构师
 description: microservices 架构师 - Distributed systems design with event-driven architecture, s...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

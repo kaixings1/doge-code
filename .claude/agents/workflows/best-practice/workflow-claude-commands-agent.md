@@ -1,5 +1,5 @@
 ---
-name: workflow-claude-commands-agent
+name:  workflow-claude-commands-agent
 description: workflow claude commands 代理 - Research agent that fetches Claude Code docs, reads the loca...
 model: opus
 color: green
