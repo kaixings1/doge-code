@@ -1,5 +1,5 @@
 ---
-name: test-architect
+name:  架构师
 description: test 架构师 - Testing strategy with unit/integration/e2e, TDD, property-ba...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -1,6 +1,6 @@
 ---
 name: antigravity-skill-orchestrator
-description: "A meta-skill that understands task requirements, dynamically selects appropriate skills, tracks successful skill combinations using agent-memory-mcp, and prevents skill overuse for simple tasks."
+description: "理解任务需求、动态选择适当技能、使用 agent-memory-mcp 跟踪成功的技能组合、并防止简单任务过度使用技能的元技能。"
 category: meta
 risk: safe
 source: community

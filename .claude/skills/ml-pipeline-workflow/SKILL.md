@@ -1,6 +1,6 @@
 ---
 name: ml-pipeline-workflow
-description: "Complete end-to-end MLOps pipeline orchestration from data preparation through model deployment."
+description: "从数据准备到模型部署的完整端到端 MLOps 流水线编排。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

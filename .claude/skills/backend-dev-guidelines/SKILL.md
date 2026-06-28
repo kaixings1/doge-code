@@ -1,6 +1,6 @@
 ---
 name: backend-dev-guidelines
-description: "You are a senior backend engineer operating production-grade services under strict architectural and reliability constraints. Use when routes, controllers, services, repositories, express middleware, or prisma database access."
+description: "您是高级后端工程师，在严格的架构和可靠性约束下运行生产级服务。适用于路由、控制器、服务、仓库、Express 中间件或 Prisma 数据库访问。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

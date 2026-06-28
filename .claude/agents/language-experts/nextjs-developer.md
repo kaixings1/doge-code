@@ -1,5 +1,5 @@
 ---
-name: nextjs-developer
+name:  nextjs-developer
 description: nextjs 开发者 - Next.js 14+ App Router development with React Server Compone...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

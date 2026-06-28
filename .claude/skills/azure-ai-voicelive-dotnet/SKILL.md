@@ -1,6 +1,6 @@
 ---
 name: azure-ai-voicelive-dotnet
-description: Azure AI Voice Live SDK for .NET. Build real-time voice AI applications with bidirectional WebSocket communication.
+description:  Azure AI Voice Live SDK for .NET. Build real-time voice AI applications with bidirectional WebSocket communication.
 risk: unknown
 source: community
 date_added: '2026-02-27'

@@ -1,6 +1,6 @@
 ---
 name: auditing-mcp-servers-for-tool-poisoning
-description: Scan Model Context Protocol servers and tool metadata for poisoning, SSRF, and unauthenticated exposure.
+description:  Scan Model Context Protocol servers and tool metadata for poisoning, SSRF, and unauthenticated exposure.
 domain: cybersecurity
 subdomain: ai-security
 tags:

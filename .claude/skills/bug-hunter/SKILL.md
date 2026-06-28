@@ -1,6 +1,6 @@
 ---
 name: bug-hunter
-description: "Systematically finds and fixes bugs using proven debugging techniques. Traces from symptoms to root cause, implements fixes, and prevents regression."
+description: "使用经过验证的调试技术系统性地发现和修复 bug。从症状追踪到根因，实现修复并防止回归。"
 category: development
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: user-story
+name: 用户故事
 description: "Generate user stories with acceptance criteria and sprint planning. Usage: /user-story <generate|sprint> [options]"
 argument-hint: "<generate|sprint> [options]"
 ---

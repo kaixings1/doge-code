@@ -1,6 +1,6 @@
 ---
 name: conductor-validator
-description: 'Validates Conductor project artifacts for completeness,
+description:  'Validates Conductor project artifacts for completeness,
 
   consistency, and correctness. Use after setup, when diagnosing issues, or
 

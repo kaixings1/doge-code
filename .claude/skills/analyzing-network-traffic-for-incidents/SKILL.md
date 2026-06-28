@@ -1,9 +1,6 @@
 ---
 name: analyzing-network-traffic-for-incidents
-description: 'Analyzes network traffic captures and flow data to identify adversary activity during security incidents, including
-  command-and-control communications, lateral movement, data exfiltration, and exploitation attempts. Uses Wireshark, Zeek,
-  and NetFlow analysis techniques. Activates for requests involving network traffic analysis, packet capture investigation,
-  PCAP analysis, network forensics, C2 traffic detection, or exfiltration detection.
+description:  分析安全事件期间的网络流量捕获和流数据，识别命令与控制通信、横向移动、数据外泄和漏洞利用尝试。使用 Wireshark、Zeek 和 NetFlow 分析技术。适用于网络流量分析、数据包捕获调查、PCAP 分析、网络取证、C2 流量检测或外泄检测。
 
   '
 domain: cybersecurity

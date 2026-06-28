@@ -1,6 +1,6 @@
 ---
 name: expo-deployment
-description: "Deploy Expo apps to production"
+description: "将 Expo 应用部署到生产环境"
 risk: safe
 source: "https://github.com/expo/skills/tree/main/plugins/expo-deployment"
 date_added: "2026-02-27"

@@ -1,6 +1,6 @@
 ---
 name: context-fundamentals
-description: "Context is the complete state available to a language model at inference time. It includes everything the model can attend to when generating responses: system instructions, tool definitions, retrieved documents, message history, and tool outputs."
+description: "上下文是语言模型在推理时可用的完整状态。它包括模型生成响应时能关注的一切：系统指令、工具定义、检索到的文档、消息历史和执行输出。"
 risk: unknown
 source: community
 ---

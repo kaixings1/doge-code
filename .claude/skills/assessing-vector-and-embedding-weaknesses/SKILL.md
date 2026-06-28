@@ -1,6 +1,6 @@
 ---
 name: assessing-vector-and-embedding-weaknesses
-description: Test vector stores for embedding inversion, cross-tenant leakage, and poisoning.
+description:  Test vector stores for embedding inversion, cross-tenant leakage, and poisoning.
 domain: cybersecurity
 subdomain: ai-security
 tags:

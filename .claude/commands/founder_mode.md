@@ -1,5 +1,5 @@
 ---
-description: Create Linear ticket and PR for experimental features after implementation
+description: 为实验功能创建 Linear 工单和 PR
 ---
 
 you're working on an experimental feature that didn't get the proper ticketing and pr stuff set up.

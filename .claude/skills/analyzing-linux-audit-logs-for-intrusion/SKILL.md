@@ -1,10 +1,6 @@
 ---
 name: analyzing-linux-audit-logs-for-intrusion
-description: 'Uses the Linux Audit framework (auditd) with ausearch and aureport utilities
-  to detect intrusion attempts, unauthorized access, privilege escalation, and suspicious
-  system activity. Covers audit rule configuration, log querying, timeline reconstruction,
-  and integration with SIEM platforms. Activates for requests involving auditd analysis,
-  Linux audit log investigation, ausearch queries, aureport summaries, or host-based
+description:  使用 Linux Audit 框架（auditd）配合 ausearch 和 aureport 工具分析审计日志，检测入侵尝试、未授权访问、权限提升和可疑系统活动。涵盖审计规则配置、日志查询、时间线重建和 SIEM 平台集成。适用于 auditd 分析、Linux 审计日志调查、ausearch 查询、aureport 总结或基于主机的入侵检测。
   intrusion detection on Linux.
 
   '

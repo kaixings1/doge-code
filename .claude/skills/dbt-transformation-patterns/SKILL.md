@@ -1,6 +1,6 @@
 ---
 name: dbt-transformation-patterns
-description: "Production-ready patterns for dbt (data build tool) including model organization, testing strategies, documentation, and incremental processing."
+description: "dbt（数据构建工具）的生产就绪模式，包括模型组织、测试策略、文档和增量处理。"
 risk: none
 source: community
 date_added: "2026-02-27"

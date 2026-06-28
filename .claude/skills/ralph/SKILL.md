@@ -1,6 +1,6 @@
 ---
 name: ralph
-description: Self-referential loop until task completion with configurable verification reviewer
+description:  Self-referential loop until task completion with configurable verification reviewer
 argument-hint: "[--no-deslop] [--critic=architect|critic|codex] <task description>"
 level: 4
 ---

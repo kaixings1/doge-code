@@ -1,6 +1,6 @@
 ---
 name: linux-troubleshooting
-description: "Linux system troubleshooting workflow for diagnosing and resolving system issues, performance problems, and service failures."
+description: "用于诊断和解决系统问题、性能问题和服务故障的 Linux 系统故障排除工作流。"
 category: granular-workflow-bundle
 risk: safe
 source: personal

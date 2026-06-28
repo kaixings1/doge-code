@@ -1,6 +1,6 @@
 ---
 name: code-review-excellence
-description: "Transform code reviews from gatekeeping to knowledge sharing through constructive feedback, systematic analysis, and collaborative improvement."
+description: "通过建设性的知识共享将代码审查从把关转变为知识共享。适用于领导或参与代码审查。"
 risk: safe
 source: community
 date_added: "2026-02-27"

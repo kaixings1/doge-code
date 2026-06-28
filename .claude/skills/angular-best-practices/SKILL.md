@@ -1,6 +1,6 @@
 ---
 name: angular-best-practices
-description: "Angular performance optimization and best practices guide. Use when writing, reviewing, or refactoring Angular code for optimal performance, bundle size, and rendering efficiency."
+description: "Angular 性能优化和最佳实践指南。适用于编写、审查或重构 Angular 代码以达到最佳性能、包体积和渲染效率。"
 risk: safe
 source: self
 date_added: "2026-02-27"

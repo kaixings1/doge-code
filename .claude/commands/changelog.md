@@ -1,6 +1,6 @@
 ---
-name: changelog
-description: "Generate changelogs from git history and validate conventional commits. Usage: /changelog <generate|lint> [options]"
+name: 变更日志
+description: "从 Git 历史生成变更日志并校验 Conventional Commits。用法: /changelog <generate|lint> [options]"
 argument-hint: "<generate|lint> [options]"
 ---
 

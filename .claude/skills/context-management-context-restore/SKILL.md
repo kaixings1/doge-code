@@ -1,6 +1,6 @@
 ---
 name: context-management-context-restore
-description: "Use when working with context management context restore"
+description: "适用于working with context management context restore的情况。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

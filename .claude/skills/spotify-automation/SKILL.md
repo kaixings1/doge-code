@@ -1,6 +1,6 @@
 ---
 name: Spotify Automation
-description: "Automate Spotify workflows including playlist management, music search, playback control, and user profile access via Composio"
+description: "通过 Composio 自动执行 Spotify 工作流，包括播放列表管理、音乐搜索、播放控制和用户资料访问"
 requires:
   mcp:
     - rube

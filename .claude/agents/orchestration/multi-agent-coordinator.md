@@ -1,5 +1,5 @@
 ---
-name: multi-agent-coordinator
+name:  multi-agent-coordinator
 description: multi 代理 协调者 - Coordinate parallel agent execution, manage dependencies, an...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

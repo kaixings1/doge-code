@@ -1,6 +1,6 @@
 ---
 name: wiki-ingest
-description: "Ingest sources into the Obsidian wiki vault. Reads a source, extracts entities and concepts, creates or updates wiki pages, cross-references, and logs the operation. Supports files, URLs, and batch mode. Triggers on: ingest, process this source, add this to the wiki, read and file this, batch ingest, ingest all of these, ingest this url."
+description: "将源文件导入 Obsidian wiki vault。读取源，提取实体和概念，创建或更新 wiki 页面，交叉引用并记录操作。支持文件、URL 和批处理模式。"
 ---
 
 # wiki-ingest: Source Ingestion

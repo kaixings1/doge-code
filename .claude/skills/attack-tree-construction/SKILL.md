@@ -1,6 +1,6 @@
 ---
 name: attack-tree-construction
-description: "Build comprehensive attack trees to visualize threat paths. Use when mapping attack scenarios, identifying defense gaps, or communicating security risks to stakeholders."
+description: "创建攻击树以系统化地对安全威胁进行建模。捕获攻击目标、子目标和利用路径。"
 risk: offensive
 source: community
 date_added: "2026-02-27"

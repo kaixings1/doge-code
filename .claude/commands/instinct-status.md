@@ -1,5 +1,5 @@
 ---
-name: instinct-status
+name: 直觉状态
 description: 显示已学习的直觉（项目 + 全局）及其置信度
 command: true
 ---

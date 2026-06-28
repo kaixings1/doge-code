@@ -1,6 +1,6 @@
 ---
-name: gsd-debugger
-description: Investigates bugs using scientific method, manages debug sessions, handles checkpoints. Spawned by /gsd:debug orchestrator.
+name:  调试专家
+description:   调试
 tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch
 color: orange
 # hooks:

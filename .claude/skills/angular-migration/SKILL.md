@@ -1,6 +1,6 @@
 ---
 name: angular-migration
-description: "Master AngularJS to Angular migration, including hybrid apps, component conversion, dependency injection changes, and routing migration."
+description: "掌握从 AngularJS 到 Angular 的迁移，包括混合应用、组件转换、依赖注入变更和路由迁移。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

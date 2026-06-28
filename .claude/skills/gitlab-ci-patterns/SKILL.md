@@ -1,6 +1,6 @@
 ---
 name: gitlab-ci-patterns
-description: "Comprehensive GitLab CI/CD pipeline patterns for automated testing, building, and deployment."
+description: "用于自动化测试、构建和部署的全面 GitLab CI/CD 流水线模式。"
 risk: critical
 source: community
 date_added: "2026-02-27"

@@ -1,6 +1,6 @@
 ---
 name: microsoft_clarity-automation
-description: "Automate Microsoft Clarity tasks via Rube MCP (Composio): session recordings, heatmaps, and user behavior analytics. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 Microsoft Clarity 任务：session recordings, heatmaps, and user behavior analytics. Always search tools first for current schemas."
 requires:
   mcp: [rube]
 ---

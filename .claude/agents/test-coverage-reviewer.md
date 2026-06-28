@@ -1,5 +1,5 @@
 ---
-name: test-coverage-reviewer
+name:  审查员
 description: 测试覆盖率审查者
 tools: Glob, Grep, Read, WebFetch, TodoWrite, WebSearch, BashOutput, KillBash
 model: inherit

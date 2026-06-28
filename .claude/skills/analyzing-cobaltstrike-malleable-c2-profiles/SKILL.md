@@ -1,8 +1,7 @@
 ---
 name: analyzing-cobaltstrike-malleable-c2-profiles
-description: Parse and analyze Cobalt Strike Malleable C2 profiles using dissect.cobaltstrike
-  and pyMalleableC2 to extract C2 indicators, detect evasion techniques, and generate
-  network detection signatures.
+description:  使用 dissect.cobaltstrike 和 pyMalleableC2 解析和分析
+  Cobalt Strike Malleable C2 配置文件，提取 C2 指标、检测规避技术并生成网络检测签名。
 domain: cybersecurity
 subdomain: malware-analysis
 tags:

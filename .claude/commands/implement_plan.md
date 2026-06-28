@@ -1,5 +1,5 @@
 ---
-description: Implement technical plans from thoughts/shared/plans with verification
+description: 根据 thoughts/shared/plans 实施技术计划并验证
 ---
 
 # Implement Plan

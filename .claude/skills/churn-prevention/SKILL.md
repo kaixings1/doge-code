@@ -1,6 +1,6 @@
 ---
 name: churn-prevention
-description: "Reduce voluntary and involuntary churn with cancel flows, save offers, dunning, win-back tactics, and retention strategy. Use when users are cancelling, failed payments are rising, or subscription retention needs improvement."
+description: "通过取消流程、挽留优惠、催款、赢回策略和留存策略减少自愿和非自愿流失。适用于用户正在取消、付款失败上升或订阅留存需要改进时。"
 risk: unknown
 source: "https://github.com/coreyhaines31/marketingskills"
 date_added: "2026-03-21"

@@ -1,6 +1,6 @@
 ---
 name: azure-eventhub-ts
-description: "High-throughput event streaming and real-time data ingestion."
+description: "指导 TypeScript 开发者使用 Azure Event Hubs 客户端库处理大规模事件流。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

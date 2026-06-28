@@ -1,6 +1,6 @@
 ---
 name: appdeploy
-description: "Deploy web apps with backend APIs, database, and file storage. Use when the user asks to deploy or publish a website or web app and wants a public URL. Uses HTTP API via curl."
+description: "使用 Docker、docker-compose 和 CI/CD 部署现代全栈应用的分步指南。"
 risk: safe
 source: "AppDeploy (MIT)"
 date_added: "2026-02-27"

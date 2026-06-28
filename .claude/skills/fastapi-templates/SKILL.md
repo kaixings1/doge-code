@@ -1,6 +1,6 @@
 ---
 name: fastapi-templates
-description: "Create production-ready FastAPI projects with async patterns, dependency injection, and comprehensive error handling. Use when building new FastAPI applications or setting up backend API projects."
+description: "使用异步模式、依赖注入和全面错误处理创建生产就绪的 FastAPI 项目。适用于构建新的 FastAPI 应用或设置后端 API 项目。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

@@ -1,6 +1,6 @@
 ---
 name: aws-cost-cleanup
-description: "Automated cleanup of unused AWS resources to reduce costs"
+description: "识别并移除未使用的 AWS 资源以削减成本：未连接的 EBS 卷、未关联的弹性 IP、旧快照和空闲负载均衡器。需要 AWS 审计权限。"
 risk: safe
 source: community
 date_added: "2026-02-27"

@@ -1,6 +1,6 @@
 ---
 name: wiki-fold
-description: "Rollup of wiki log entries into meta-pages. Reads the last 2^k entries from wiki/log.md, writes a structurally-idempotent fold page to wiki/folds/ that links back to children. Extractive summarization (no invention). Dry-run by default, stdout-only; commit mode writes and accepts that the PostToolUse hook auto-commits. Triggers on: fold the log, run a fold, run wiki-fold, log rollup, roll up log entries."
+description: "将 wiki 日志条目汇总到元页面。从 wiki/log.md 读取最后 2^k 条条目，将结构幂等的折叠页面写入 wiki/folds/，链接回子页面。提取式总结（不发明）。默认为 dry-run 模式，仅 stdout；commit 模式写入并接受 PostToolUse hook 自动提交。"
 ---
 
 # wiki-fold: Extractive Log Rollup

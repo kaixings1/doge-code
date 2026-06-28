@@ -1,8 +1,6 @@
 ---
 name: analyzing-persistence-mechanisms-in-linux
-description: Detect and analyze Linux persistence mechanisms including crontab entries,
-  systemd service units, LD_PRELOAD hijacking, bashrc modifications, and authorized_keys
-  backdoors using auditd and file integrity monitoring
+description:  检测和分析 Linux 持久性机制，包括 crontab 条目、systemd 服务单元、LD_PRELOAD 劫持、bashrc 修改和使用 auditd 及文件完整性监控的 authorized_keys 后门。
 domain: cybersecurity
 subdomain: threat-hunting
 tags:

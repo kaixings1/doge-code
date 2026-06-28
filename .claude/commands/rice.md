@@ -1,5 +1,5 @@
 ---
-name: rice
+name: RICE优先级
 description: "RICE feature prioritization with scoring and capacity planning. Usage: /rice prioritize <features.csv> [options]"
 ---
 

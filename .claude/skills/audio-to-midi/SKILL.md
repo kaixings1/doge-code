@@ -1,6 +1,6 @@
 ---
 name: audio-to-midi
-description: placeholder
+description:  placeholder
   Convert MP3/WAV/FLAC audio files to MIDI (.mid) and MusicXML (.musicxml) with full music analysis.
   Two engines: Basic Pitch (general-purpose polyphonic) and Piano Model (high-accuracy piano, 96.7% F1).
   Optional Demucs stem separation. Use --engine piano for piano/keyboard music for best results.

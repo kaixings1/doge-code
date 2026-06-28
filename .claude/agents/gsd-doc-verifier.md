@@ -1,6 +1,6 @@
 ---
-name: gsd-doc-verifier
-description: Verifies factual claims in generated docs against the live codebase. Returns structured JSON per doc.
+name:  gsd-doc-verifier
+description:   Verifies factual claims in generated docs against the live codebase. Returns structured JSON per doc.（待汉化）
 tools: Read, Write, Bash, Grep, Glob
 color: orange
 # hooks:

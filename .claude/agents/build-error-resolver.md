@@ -1,5 +1,5 @@
 ---
-name: build-error-resolver
+name:  build-error-resolver
 description: 构建错误解决专家
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

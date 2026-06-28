@@ -1,6 +1,6 @@
 ---
 name: Wave Accounting Automation
-description: "Wave Accounting toolkit is not currently available as a native integration. No Wave-specific tools were found in the Composio platform. This skill is a placeholder pending future integration."
+description: "Wave Accounting 工具包目前不可用为本机集成。在 Composio 平台中未找到特定于 Wave 的工具。此技能是等待未来集成的占位符。"
 category: accounting
 requires:
   mcp:

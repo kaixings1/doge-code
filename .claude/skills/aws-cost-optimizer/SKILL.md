@@ -1,6 +1,6 @@
 ---
 name: aws-cost-optimizer
-description: "Comprehensive AWS cost analysis and optimization recommendations using AWS CLI and Cost Explorer"
+description: "通过正确调整实例大小、使用预留实例和 Spot 实例以及实施自动扩缩策略来优化 AWS 成本。"
 risk: safe
 source: community
 date_added: "2026-02-27"

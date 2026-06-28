@@ -1,6 +1,6 @@
 ---
 name: indexing-issue-auditor
-description: "High-level technical SEO and site architecture auditor. Invoke to scan local or live environments for indexing, crawl budget, and structural errors."
+description: "高层技术 SEO 和网站架构审计器。调用以扫描本地或在线环境的索引、爬取预算和结构错误。"
 category: growth
 risk: safe
 source: self

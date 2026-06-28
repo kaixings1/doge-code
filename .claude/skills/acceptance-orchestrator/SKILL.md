@@ -1,6 +1,6 @@
 ---
 name: acceptance-orchestrator
-description: Use when a coding task should be driven end-to-end from issue intake through implementation, review, deployment, and acceptance verification with minimal human re-intervention.
+description: 当编码任务需要从 issue 接收到实现、审查、部署和验收验证的全流程端到端自动化时使用，最小化人工干预。
 risk: safe
 source: community
 date_added: "2026-03-12"

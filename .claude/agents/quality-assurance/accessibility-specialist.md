@@ -1,5 +1,5 @@
 ---
-name: accessibility-specialist
+name:  accessibility-specialist
 description: accessibility 专家 - WCAG 2.2 compliance, screen reader testing, keyboard navigat...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

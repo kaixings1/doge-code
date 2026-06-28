@@ -1,5 +1,5 @@
 ---
-name: etl-specialist
+name:  etl-specialist
 description: etl 专家 - Builds robust data pipelines with schema evolution, data qua...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

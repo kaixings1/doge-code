@@ -1,5 +1,5 @@
 ---
-description: Create implementation plans with thorough research (no thoughts directory)
+description: 通过充分研究创建实施计划（无 thoughts 目录）
 model: opus
 ---
 

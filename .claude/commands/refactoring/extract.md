@@ -1,4 +1,4 @@
-Extract a function, component, or module from existing code into its own unit.
+将函数、组件或模块从现有代码中提取为独立的单元。
 
 ## Steps
 

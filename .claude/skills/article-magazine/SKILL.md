@@ -3,9 +3,9 @@ name: article-magazine
 zh_name: "杂志文章"
 en_name: "Magazine Article"
 emoji: "📖"
-description: "Huashu / huashu-md-html-inspired magazine article layout for turning Markdown or notes into a polished long-form HTML essay."
+description: "为杂志创建文章：对给定主题的研究笔记进行结构化并撰写文章。"
 zh_description: "Huashu / huashu-md-html 风格杂志文章版式, 将 Markdown 或笔记转成精排长文 HTML。"
-en_description: "Huashu / huashu-md-html-inspired magazine article layout for turning Markdown or notes into a polished long-form HTML essay."
+en_description: "为杂志创建文章：对给定主题的研究笔记进行结构化并撰写文章。"
 category: article
 scenario: marketing
 aspect_hint: "A4 / 长页面"

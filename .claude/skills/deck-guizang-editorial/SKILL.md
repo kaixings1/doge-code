@@ -3,9 +3,9 @@ name: deck-guizang-editorial
 zh_name: "归藏编辑墨水 Deck"
 en_name: "Guizang Editorial E-Ink Deck"
 emoji: "🖋️"
-description: "Editorial magazine meets e-ink: 10 layouts and 5 palettes (Ink, Indigo Porcelain, Forest Ink, Kraft Paper, Dune)."
+description: "编辑杂志遇见电子墨水：10 种布局和 5 种调色板（墨水、靛蓝瓷器、森林墨水、牛皮纸、沙丘）。"
 zh_description: "电子杂志 × 电子墨水; 10 个版面 + 5 套调色板 (墨水/靛蓝瓷/森林墨/牛皮纸/沙丘)"
-en_description: "Editorial magazine meets e-ink: 10 layouts and 5 palettes (Ink, Indigo Porcelain, Forest Ink, Kraft Paper, Dune)."
+en_description: "编辑杂志遇见电子墨水：10 种布局和 5 种调色板（墨水、靛蓝瓷器、森林墨水、牛皮纸、沙丘）。"
 category: slides
 scenario: marketing
 aspect_hint: "16:9 横向翻页"

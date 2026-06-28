@@ -1,5 +1,5 @@
 ---
-description: List all configured hookify rules
+description: 列出所有已配置的 hookify 规则
 allowed-tools: ["Glob", "Read", "Skill"]
 ---
 

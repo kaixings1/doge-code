@@ -1,6 +1,6 @@
 ---
 name: gsd:undo
-description: "Safe git revert. Roll back phase or plan commits using the phase manifest with dependency checks."
+安全的 git 回滚。使用阶段清单和依赖关系来回滚阶段或计划提交。
 argument-hint: "--last N | --phase NN | --plan NN-MM"
 allowed-tools:
   - Read

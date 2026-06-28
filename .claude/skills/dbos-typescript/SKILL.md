@@ -1,6 +1,6 @@
 ---
 name: dbos-typescript
-description: "Guide for building reliable, fault-tolerant TypeScript applications with DBOS durable workflows. Use when adding DBOS to existing TypeScript code, creating workflows and steps, or using queues for concurrency control."
+description: "使用 DBOS 持久化工作流构建可靠、容错的 TypeScript 应用指南。适用于将 DBOS 添加到现有 TypeScript 代码、创建工作流和步骤或使用队列进行并发控制。"
 risk: safe
 source: "https://docs.dbos.dev/"
 date_added: "2026-02-27"

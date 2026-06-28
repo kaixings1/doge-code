@@ -1,6 +1,6 @@
 ---
 name: last30days
-description: "Research a topic from the last 30 days on Reddit + X + Web, become an expert, and write copy-paste-ready prompts for the user's target tool."
+description: "研究过去 30 天 Reddit + X + Web 上的主题，成为专家，为用户的目标工具编写可复制粘贴的提示。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

@@ -1,6 +1,6 @@
 ---
 name: frontend-mobile-development-component-scaffold
-description: "You are a React component architecture expert specializing in scaffolding production-ready, accessible, and performant components. Generate complete component implementations with TypeScript, tests, s"
+description: "您是专门搭建生产就绪、可访问和高性能组件的 React 组件架构专家。生成包含 TypeScript、测试和文档的完整组件实现。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

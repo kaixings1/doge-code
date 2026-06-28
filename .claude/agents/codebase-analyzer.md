@@ -1,6 +1,6 @@
 ---
-name: codebase-analyzer
-description: Analyzes codebase implementation details. Call the codebase-analyzer agent when you need to find detailed information about specific components. As always, the more detailed your request prompt, the better! :)
+name:  codebase-analyzer
+description:   实施
 tools: Read, Grep, Glob, LS
 model: sonnet
 ---

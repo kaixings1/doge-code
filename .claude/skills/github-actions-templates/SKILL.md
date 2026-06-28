@@ -1,6 +1,6 @@
 ---
 name: github-actions-templates
-description: "Production-ready GitHub Actions workflow patterns for testing, building, and deploying applications."
+description: "用于测试、构建和部署应用的生产就绪 GitHub Actions 工作流模式。"
 risk: critical
 source: community
 date_added: "2026-02-27"

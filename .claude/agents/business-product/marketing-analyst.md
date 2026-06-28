@@ -1,5 +1,5 @@
 ---
-name: marketing-analyst
+name:  需求分析师
 description: marketing 分析师 - Implements campaign analysis, attribution modeling, ROI trac...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -1,6 +1,6 @@
 ---
 name: crossframe-dialogue
-description: "Use when CrossFrame Suite routes explicit Chinese reader replies, editor responses, consultation-style short answers, or boundary-aware structural advice."
+description: "适用于crossframe suite routes explicit chinese reader replies, editor responses, consultation-style short answers, or boundary-aware structural advice.的情况。"
 category: content
 risk: safe
 source: community

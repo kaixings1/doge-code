@@ -1,4 +1,4 @@
-Simplify code to improve readability and maintainability.
+简化代码以提高可读性和可维护性。
 
 ## Steps
 

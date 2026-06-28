@@ -1,5 +1,5 @@
 ---
-description: Run the security scan gate before pushing.
+description: 推送前运行安全扫描关卡。
 ---
 
 1. Ensure dependencies are installed:

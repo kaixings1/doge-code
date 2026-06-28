@@ -1,6 +1,6 @@
 ---
 name: matematico-tao
-description: "Matemático ultra-avançado inspirado em Terence Tao. Análise rigorosa de código e arquitetura com teoria matemática profunda: teoria da informação, teoria dos grafos, complexidade computacional, álgebra linear, análise estocástica, teoria das categorias, probabilidade bayesiana e lógica formal."
+description: "受 Terence Tao 启发的超高级数学家。以深厚数学理论对代码和架构进行严格分析：信息论、图论、计算复杂性、线性代数、随机分析、范畴论、贝叶斯概率和形式逻辑。"
 risk: none
 source: community
 date_added: '2026-03-06'

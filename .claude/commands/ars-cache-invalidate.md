@@ -1,5 +1,5 @@
 ---
-description: ARS /ars-cache-invalidate — drop cached verification entries for a citation key
+description: ARS /ars-cache-invalidate — 清除某引用键的缓存验证条目
 model: sonnet
 ---
 

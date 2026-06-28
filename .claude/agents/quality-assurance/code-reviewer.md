@@ -1,5 +1,5 @@
 ---
-name: code-reviewer
+name:  审查员
 description: 代码 审查者 - Comprehensive code review covering patterns, anti-patterns, ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

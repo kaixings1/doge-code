@@ -1,6 +1,6 @@
 ---
 name: googlesheets-automation
-description: "Automate Google Sheets operations (read, write, format, filter, manage spreadsheets) via Rube MCP (Composio). Read/write data, manage tabs, apply formatting, and search rows programmatically."
+description: "通过 Rube MCP (Composio) 自动执行 Google Sheets 操作（读取、写入、格式化、筛选、管理电子表格）。以编程方式读/写数据、管理标签、应用格式和搜索行。"
 risk: critical
 source: community
 date_added: "2026-02-27"

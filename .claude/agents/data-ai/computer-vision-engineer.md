@@ -1,5 +1,5 @@
 ---
-name: computer-vision-engineer
+name:  computer-vision-engineer
 description: computer vision 工程师 - Builds image classification, object detection, and segmentat...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -3,9 +3,9 @@ name: social-reddit-card
 zh_name: "Reddit 帖子卡"
 en_name: "Reddit Post Card"
 emoji: "🔺"
-description: "Realistic Reddit post card with vote rail and comment count, suited to video overlays or story sharing."
+description: "逼真的 Reddit 帖子卡片，带有投票轨道和评论计数，适用于视频覆盖或故事分享。"
 zh_description: "拟真 Reddit 帖子卡 + 上下投票 + 评论数, 适合视频叠加 / 故事分享"
-en_description: "Realistic Reddit post card with vote rail and comment count, suited to video overlays or story sharing."
+en_description: "逼真的 Reddit 帖子卡片，带有投票轨道和评论计数，适用于视频覆盖或故事分享。"
 category: card
 scenario: marketing
 aspect_hint: "1280×720 或 800×600"

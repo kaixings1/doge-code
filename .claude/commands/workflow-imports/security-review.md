@@ -1,6 +1,6 @@
 ---
 allowed-tools: Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*), Bash(git remote show:*), Read, Glob, Grep, LS, Task
-description: Complete a security review of the pending changes on the current branch
+description: 对当前分支上的待提交更改进行安全审查。
 ---
 
 You are a senior security engineer conducting a focused security review of the changes on this branch.

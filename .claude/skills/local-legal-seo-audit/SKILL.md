@@ -1,6 +1,6 @@
 ---
 name: local-legal-seo-audit
-description: "Audit and improve local SEO for law firms, attorneys, forensic experts and legal/professional services sites with local presence, focusing on GBP, directories, E-E-A-T and practice/location pages."
+description: "审计和改进律师事务所、律师、法医专家和法律/专业服务网站的本地 SEO，关注 GBP、目录、E-E-A-T 和实践/位置页面。"
 risk: safe
 source: original
 date_added: "2026-02-27"

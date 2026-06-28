@@ -1,6 +1,6 @@
 ---
 name: context-driven-development
-description: "Guide for implementing and maintaining context as a managed artifact alongside code, enabling consistent AI interactions and team alignment through structured project documentation."
+description: "将上下文作为托管工件与代码一起实施和维护的指南，通过结构化项目文档实现一致的 AI 交互和团队协作。"
 risk: unknown
 source: community
 date_added: '2026-02-27'

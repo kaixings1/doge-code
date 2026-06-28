@@ -1,6 +1,6 @@
 ---
-name: "cs-webinar"
-description: "/cs:webinar — Webinar & virtual-event marketing workflow. Plan a webinar from scratch (sized backward from the business goal), rescue one whose numbers disappointed (score the funnel, fix the broken stage), or turn a past webinar into an evergreen on-demand lead engine. Covers the full funnel: registration, promotion runway, show-up, live engagement, live-to-close, and segmented follow-up. Treats a webinar as a funnel, not an event."
+name: 研讨会营销
+description: "/cs:webinar — 网络研讨会&虚拟活动营销工作流。从零规划研讨会（按业务目标倒推规模）、拯救效果不佳的活动（评分漏斗、修复瓶颈阶段）、或将过去的研讨会转化为 evergreen 点播线索引擎。涵盖完整漏斗：注册、推广预热、出席、现场互动、直播成交、细分跟进。将研讨会视为漏斗而非活动。"
 ---
 
 # /cs:webinar — Webinar & Virtual Event Marketing

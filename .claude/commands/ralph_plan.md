@@ -1,5 +1,5 @@
 ---
-description: Create implementation plan for highest priority Linear ticket ready for spec
+description: 为就绪规格的最高优先级 Linear 工单创建实施计划
 ---
 
 ## PART I - IF A TICKET IS MENTIONED
