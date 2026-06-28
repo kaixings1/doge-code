@@ -1,6 +1,6 @@
 ---
-name: dx-optimizer
-description: dx optimizer - dx optimizer - Improves developer experience through tooling...
+name:  dx-optimizer
+description:   开发工程师
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

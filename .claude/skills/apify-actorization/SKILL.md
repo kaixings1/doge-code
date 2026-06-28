@@ -1,6 +1,6 @@
 ---
 name: apify-actorization
-description: "Actorization converts existing software into reusable serverless applications compatible with the Apify platform. Actors are programs packaged as Docker images that accept well-defined JSON input, perform an action, and optionally produce structured JSON output."
+description: "专门为 Apify 平台构建网络爬虫和自动化 Actor 的技能。使用 Crawlee 和 Puppeteer 处理 JavaScript 渲染页面、分页和数据提取。"
 risk: unknown
 source: community
 ---

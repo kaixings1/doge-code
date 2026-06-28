@@ -1,6 +1,6 @@
 ---
-name: persona
-description: "Generate data-driven user personas for UX research and product design. Usage: /persona generate [options]"
+name: 用户画像
+description: "为 UX 研究和产品设计生成数据驱动的用户画像。用法: /persona generate [options]"
 ---
 
 # /persona

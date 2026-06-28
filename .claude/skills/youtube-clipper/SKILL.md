@@ -1,7 +1,7 @@
 ---
 name: youtube-clipper
 description: |
-  YouTube clip generation and editing with automated workflows — pull source video, slice highlights, add captions, and export.
+  基于自动化工作流生成和剪辑 YouTube 视频片段：拉取源视频、选取高光片段、添加字幕并导出。
 triggers:
   - "youtube clip"
   - "video clip"

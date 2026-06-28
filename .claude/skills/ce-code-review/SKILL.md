@@ -1,6 +1,6 @@
 ---
 name: ce-code-review
-description: "Structured code review for bugs, regressions, tests, and standards. Use before PRs or when asked for review; interactive mode can fix locally, while mode:agent reports only for pipeline callers."
+description: "针对 bug、回归、测试和标准的结构化代码审查。适用于 PR 之前或被要求审查时；交互模式可在本地修复，而 agent 模式仅为流水线调用者报告。"
 argument-hint: "[mode:agent] [blank to review current branch, or provide PR link]"
 ---
 

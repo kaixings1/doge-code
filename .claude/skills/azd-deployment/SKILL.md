@@ -1,6 +1,6 @@
 ---
 name: azd-deployment
-description: "Deploy containerized frontend + backend applications to Azure Container Apps with remote builds, managed identity, and idempotent infrastructure."
+description: "使用 Azure Developer CLI 将应用部署到 Azure。包括 azd 初始化、配置和 CI/CD 设置。"
 risk: critical
 source: community
 date_added: "2026-02-27"

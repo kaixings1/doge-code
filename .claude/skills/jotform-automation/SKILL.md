@@ -1,6 +1,6 @@
 ---
 name: Jotform Automation
-description: "Automate Jotform form listing, user management, activity history, folder organization, and plan inspection through natural language commands"
+description: "通过自然语言命令自动执行 Jotform 表单列表、用户管理、活动历史、文件夹组织和计划检查"
 requires:
   mcp:
     - rube

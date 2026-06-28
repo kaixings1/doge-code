@@ -1,6 +1,6 @@
 ---
-name: critic
-description: Work plan and code review expert — thorough, structured, multi-perspective (Opus)
+name:  批判性评审
+description:   代码审查
 model: opus
 level: 3
 disallowedTools: Write, Edit

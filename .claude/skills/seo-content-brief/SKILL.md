@@ -1,6 +1,6 @@
 ---
 name: seo-content-brief
-description: >
+description:  >
   Generate competitive SEO content briefs with per-section word counts,
   competitor scoring, keyword density guidance, and page-type templates.
   Supports both new page briefs and improve-existing-page briefs.

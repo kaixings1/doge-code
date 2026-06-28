@@ -1,6 +1,6 @@
 ---
 name: frontend-dev
-description: |
+description:  |
   Full-stack frontend with cinematic animations, AI-generated media via MiniMax API, and generative art. Useful for hero pages and showcase sites.
 triggers:
   - "frontend dev"

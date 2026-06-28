@@ -1,6 +1,6 @@
 ---
 name: azure-ai-contentsafety-ts
-description: "Analyze text and images for harmful content with customizable blocklists."
+description: "指导 TypeScript 开发者使用 Azure AI Content Safety 客户端库检测有害内容。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

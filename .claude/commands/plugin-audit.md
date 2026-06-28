@@ -1,5 +1,5 @@
 ---
-description: Run the full 8-phase plugin audit pipeline on a skill directory.
+description: 在技能目录上运行完整 8 阶段插件审计流程。
 ---
 
 Run the comprehensive plugin audit pipeline on the skill at `$ARGUMENTS`. If no argument provided, ask the user for the skill path.

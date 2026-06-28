@@ -1,6 +1,6 @@
 ---
-name: analyst
-description: Pre-planning consultant for requirements analysis (Opus)
+name:  需求分析师
+description:   顾问
 model: opus
 level: 3
 disallowedTools: Write, Edit

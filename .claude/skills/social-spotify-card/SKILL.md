@@ -3,9 +3,9 @@ name: social-spotify-card
 zh_name: "Spotify 正在播放卡"
 en_name: "Spotify Now-Playing Card"
 emoji: "🎵"
-description: "Spotify Now Playing-style card with album art, progress bar, and playback controls, suited to video overlays or personal homepages."
+description: "Spotify 正在播放风格卡片，带有专辑封面、进度条和播放控制，适用于视频覆盖或个人主页。"
 zh_description: "Spotify Now Playing 风格卡: 专辑封面 + 进度条 + 播放控制, 适配视频叠加 / 个人主页"
-en_description: "Spotify Now Playing-style card with album art, progress bar, and playback controls, suited to video overlays or personal homepages."
+en_description: "Spotify 正在播放风格卡片，带有专辑封面、进度条和播放控制，适用于视频覆盖或个人主页。"
 category: card
 scenario: personal
 aspect_hint: "1280×720 或 600×200"

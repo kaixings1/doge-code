@@ -1,6 +1,6 @@
 ---
 name: game-development
-description: "Game development orchestrator. Routes to platform-specific skills based on project needs."
+description: "游戏开发编排器。根据项目需求路由到特定平台技能。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

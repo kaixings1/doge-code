@@ -1,6 +1,6 @@
 ---
 name: agent-manager-skill
-description: "Manage multiple local CLI agents via tmux sessions (start/stop/monitor/assign) with cron-friendly scheduling."
+description: "通过 tmux 会话管理多个本地 CLI 代理（启动/停止/监控/分配），支持 cron 友好的调度。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

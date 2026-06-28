@@ -1,5 +1,6 @@
 ---
 name: ai-dev-jobs-mcp
+description: "搜索 489 家公司超过 8400 个 AI/ML 职位，查看职位详情和雇主信息，匹配岗位，并查看薪资和市场规模数据。"
 description: "Search 8,400+ AI and ML jobs across 489 companies, inspect listings and employers, match roles, and view salary and market stats via AI Dev Jobs MCP"
 category: mcp
 risk: safe

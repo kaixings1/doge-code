@@ -1,4 +1,4 @@
-Generate a CI pipeline configuration for GitHub Actions.
+为 GitHub Actions 生成 CI 流水线配置。
 
 ## Steps
 

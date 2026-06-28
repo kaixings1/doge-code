@@ -1,6 +1,6 @@
 ---
 name: fal-restore
-description: |
+description:  |
   Restore and fix image quality — deblur, denoise, fix faces, and restore old documents using fal.ai's hosted restoration models.
 triggers:
   - "fal restore"

@@ -1,9 +1,8 @@
 ---
 name: analyzing-indicators-of-compromise
-description: 'Analyzes indicators of compromise (IOCs) including IP addresses, domains,
-  file hashes, URLs, and email artifacts to determine maliciousness confidence, campaign
-  attribution, and blocking priority. Use when triaging IOCs from phishing emails,
-  security alerts, or external threat feeds; enriching raw IOCs with multi-source
+description:  分析入侵指标 (IOC)，包括 IP 地址、域名、文件哈希、URL 和电子邮件
+  工件，以确定恶意置信度、活动归因和阻止优先级。适用于对钓鱼邮件、安全告警或
+  外部威胁源的 IOC 进行分类，以及用多源情报丰富原始 IOC。
   intelligence; or making block/monitor/whitelist decisions. Activates for requests
   involving VirusTotal, AbuseIPDB, MalwareBazaar, MISP, or IOC enrichment pipelines.
 

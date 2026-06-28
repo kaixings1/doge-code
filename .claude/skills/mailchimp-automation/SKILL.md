@@ -1,6 +1,6 @@
 ---
 name: mailchimp-automation
-description: "Automate Mailchimp email marketing including campaigns, audiences, subscribers, segments, and analytics via Rube MCP (Composio). Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 Mailchimp 电子邮件营销，包括活动、受众、订阅者、细分和分析。使用前始终先搜索工具以获取当前 schema。"
 risk: critical
 source: community
 date_added: "2026-02-27"

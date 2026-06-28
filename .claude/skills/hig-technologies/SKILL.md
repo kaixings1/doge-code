@@ -1,6 +1,6 @@
 ---
 name: hig-technologies
-description: "Check for .claude/apple-design-context.md before asking questions. Use existing context and only ask for information not already covered."
+description: "在提问前检查 .claude/apple-design-context.md。使用现有上下文，仅询问尚未涵盖的信息。"
 risk: safe
 source: community
 date_added: '2026-02-27'

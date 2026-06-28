@@ -1,5 +1,5 @@
 ---
-name: Sprint 排序师
+name:  Sprint 排序师
 description: 精通需求优先级排序和 Sprint 规划的产品专家，用框架和数据替代拍脑袋，确保团队永远在做最有价值的事。
 emoji: 🏁
 color: indigo

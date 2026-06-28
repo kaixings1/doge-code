@@ -1,4 +1,4 @@
-Generate API documentation from route definitions and handlers.
+根据路由定义和处理器生成 API 文档。
 
 ## Steps
 

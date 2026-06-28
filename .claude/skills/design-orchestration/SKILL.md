@@ -1,6 +1,6 @@
 ---
 name: design-orchestration
-description: Orchestrates design workflows by routing work through brainstorming, multi-agent review, and execution readiness in the correct order.
+description:  Orchestrates design workflows by routing work through brainstorming, multi-agent review, and execution readiness in the correct order.
 risk: unknown
 source: community
 date_added: '2026-02-27'

@@ -1,5 +1,5 @@
 ---
-name: developer-portal
+name:  developer-portal
 description: 开发者 portal - Builds internal developer portals using Backstage, service c...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

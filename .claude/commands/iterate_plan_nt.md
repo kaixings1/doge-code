@@ -1,5 +1,5 @@
 ---
-description: Iterate on existing implementation plans with thorough research and updates
+description: 通过充分研究迭代现有实施计划（无 thoughts 目录）
 model: opus
 ---
 

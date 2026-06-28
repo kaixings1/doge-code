@@ -3,9 +3,9 @@ name: ppt-keynote
 zh_name: "Keynote 风格 PPT"
 en_name: "Keynote-style Slides"
 emoji: "🎬"
-description: "Apple Keynote-quality slides, one card per screen, with keyboard left/right navigation."
+description: "Apple Keynote 质量幻灯片，每屏幕一张卡片，支持键盘左右导航。"
 zh_description: "苹果 Keynote 级别幻灯片, 一屏一卡, 键盘左右切换"
-en_description: "Apple Keynote-quality slides, one card per screen, with keyboard left/right navigation."
+en_description: "Apple Keynote 质量幻灯片，每屏幕一张卡片，支持键盘左右导航。"
 category: slides
 scenario: marketing
 aspect_hint: "16:9 (1280×720)"

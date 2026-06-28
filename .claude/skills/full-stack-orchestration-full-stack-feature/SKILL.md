@@ -1,6 +1,6 @@
 ---
 name: full-stack-orchestration-full-stack-feature
-description: "Use when working with full stack orchestration full stack feature"
+description: "适用于working with full stack orchestration full stack feature的情况。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

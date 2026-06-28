@@ -1,6 +1,6 @@
 ---
 name: angular-ui-patterns
-description: "Modern Angular UI patterns for loading states, error handling, and data display. Use when building UI components, handling async data, or managing component states."
+description: "用于加载状态、错误处理和数据显示的现代 Angular UI 模式。适用于构建 UI 组件、处理异步数据或管理组件状态。"
 risk: safe
 source: self
 date_added: "2026-02-27"

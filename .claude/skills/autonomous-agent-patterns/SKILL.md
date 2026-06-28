@@ -1,6 +1,6 @@
 ---
 name: autonomous-agent-patterns
-description: "Design patterns for building autonomous coding agents, inspired by [Cline](https://github.com/cline/cline) and [OpenAI Codex](https://github.com/openai/codex)."
+description: "用于构建可靠自主代理的系统设计模式：ReAct 循环、工具使用、记忆系统和错误恢复。"
 risk: critical
 source: community
 date_added: "2026-02-27"

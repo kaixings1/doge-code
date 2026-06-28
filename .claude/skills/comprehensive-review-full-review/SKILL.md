@@ -1,6 +1,6 @@
 ---
 name: comprehensive-review-full-review
-description: "Use when working with comprehensive review full review"
+description: "适用于working with comprehensive review full review的情况。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

@@ -1,6 +1,6 @@
 ---
-name: Eventbrite Automation
-description: "Automate Eventbrite event management, attendee tracking, organization discovery, and category browsing through natural language commands"
+name: eventbrite-自动化
+description: "自动化 Eventbrite 活动管理、参与者追踪、组织发现和分类浏览。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp:
     - rube

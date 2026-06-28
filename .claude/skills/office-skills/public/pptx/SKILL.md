@@ -1,6 +1,6 @@
 ---
 name: pptx
-description: "Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for: (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts, (4) Adding comments or speaker notes, or any other presentation tasks"
+description: "演示文稿创建、编辑和分析。当 Claude 需要使用演示文稿 (.pptx 文件) 进行创建、修改、处理布局、添加批注或演讲者备注等任务时使用。"
 ---
 
 # PPTX creation, editing, and analysis

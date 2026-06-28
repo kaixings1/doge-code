@@ -1,6 +1,6 @@
 ---
-name: google-sheets-automation
-description: "Lightweight Google Sheets integration with standalone OAuth authentication. No MCP server required. Full read/write access."
+name: google-sheets-自动化
+description: "轻量级 Google Sheets 集成，使用独立 OAuth 认证。不需要 MCP 服务器。完全读写访问权限。"
 risk: critical
 source: community
 license: Apache-2.0

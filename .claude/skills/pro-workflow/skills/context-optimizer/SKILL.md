@@ -1,6 +1,6 @@
 ---
 name: context-optimizer
-description: Optimize token usage and context management. Use when sessions feel slow, context is degraded, or you're running out of budget.
+description:  Optimize token usage and context management. Use when sessions feel slow, context is degraded, or you're running out of budget.
 ---
 
 # Context Optimizer

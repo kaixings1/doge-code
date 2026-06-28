@@ -1,6 +1,6 @@
 ---
 name: plan-interrogate
-description: Stress-test a plan by walking its decision tree one question at a time. Use when the user wants to pressure-test a design before implementation.
+description:  Stress-test a plan by walking its decision tree one question at a time. Use when the user wants to pressure-test a design before implementation.
 user-invocable: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: Wire Commands, Agents, and Skills together for complex features. Use when building features that need research, planning, and implementation phases.
+description:  Wire Commands, Agents, and Skills together for complex features. Use when building features that need research, planning, and implementation phases.
 ---
 
 # Orchestrate - Multi-Phase Feature Development

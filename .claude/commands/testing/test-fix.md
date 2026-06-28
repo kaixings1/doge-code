@@ -1,4 +1,4 @@
-Diagnose and fix failing tests in the project.
+诊断并修复项目中的失败测试。
 
 ## Steps
 

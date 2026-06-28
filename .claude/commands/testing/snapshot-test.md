@@ -1,4 +1,4 @@
-Generate snapshot tests for UI components or serializable outputs.
+为 UI 组件或可序列化输出生成快照测试。
 
 ## Steps
 

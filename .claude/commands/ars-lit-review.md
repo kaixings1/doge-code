@@ -1,5 +1,5 @@
 ---
-description: ARS academic-paper `lit-review` mode — annotated bibliography in paper format
+description: ARS 学术论文 `lit-review` 模式 — 论文格式的注释参考书目
 model: sonnet
 ---
 

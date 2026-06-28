@@ -1,6 +1,6 @@
 ---
 name: hasdata-cli
-description: Command-line access to search, scraping, and structured web data.
+description:  Command-line access to search, scraping, and structured web data.
 risk: safe
 source: official
 source_type: official

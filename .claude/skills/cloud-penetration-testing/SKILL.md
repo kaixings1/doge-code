@@ -1,6 +1,6 @@
 ---
 name: cloud-penetration-testing
-description: "Conduct comprehensive security assessments of cloud infrastructure across Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP)."
+description: "对 Microsoft Azure、Amazon Web Services 和 Google Cloud Platform 的云基础设施进行全面安全评估。"
 risk: offensive
 source: community
 author: zebbern

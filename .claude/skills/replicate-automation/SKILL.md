@@ -1,6 +1,6 @@
 ---
 name: Replicate Automation
-description: "Automate Replicate AI model operations -- run predictions, upload files, inspect model schemas, list versions, and manage prediction history via the Composio MCP integration."
+description: "通过 Composio MCP 集成自动执行 Replicate AI 模型操作——运行预测、上传文件、检查模型 schema、列出版本和管理预测历史。"
 requires:
   mcp:
     - rube

@@ -1,5 +1,5 @@
 ---
-name: feature-engineer
+name:  feature-engineer
 description: feature 工程师 - Designs feature stores, feature pipelines, and encoding stra...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

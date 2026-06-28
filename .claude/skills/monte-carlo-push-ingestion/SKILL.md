@@ -1,6 +1,6 @@
 ---
 name: monte-carlo-push-ingestion
-description: "Expert guide for pushing metadata, lineage, and query logs to Monte Carlo from any data warehouse."
+description: "从任何数据仓库向 Monte Carlo 推送元数据、血统和查询日志的专家指南。"
 category: data
 risk: safe
 source: community

@@ -3,9 +3,9 @@ name: frame-flowchart-sticky
 zh_name: "便利贴流程图帧"
 en_name: "Sticky Flowchart Frame"
 emoji: "📝"
-description: "SVG curve connectors, sticky-note nodes, and cursor interaction with a whiteboard-brainstorm feel."
+description: "SVG 曲线连接器、便签节点和光标交互，具有白板头脑风暴的感觉。"
 zh_description: "SVG 曲线连接 + 便利贴节点 + 光标交互, 像白板 brainstorm"
-en_description: "SVG curve connectors, sticky-note nodes, and cursor interaction with a whiteboard-brainstorm feel."
+en_description: "SVG 曲线连接器、便签节点和光标交互，具有白板头脑风暴的感觉。"
 category: video
 scenario: operations
 aspect_hint: "1920×1080 (16:9)"

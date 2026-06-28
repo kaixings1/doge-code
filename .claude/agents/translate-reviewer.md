@@ -1,5 +1,5 @@
 ---
-name: translate-reviewer
+name:  审查员
 description: 翻译审查者
 autoDelegate: true          # ← 加上这一行
 tools:

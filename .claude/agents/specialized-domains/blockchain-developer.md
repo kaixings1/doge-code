@@ -1,5 +1,5 @@
 ---
-name: blockchain-developer
+name:  blockchain-developer
 description: blockchain 开发者 - Develops smart contracts and Web3 applications with Solidity...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

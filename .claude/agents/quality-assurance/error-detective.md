@@ -1,5 +1,5 @@
 ---
-name: error-detective
+name:  error-detective
 description: 错误 detective - Error tracking, stack trace analysis, reproduction step gene...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -1,6 +1,6 @@
 ---
 name: canvas
-description: "Visual layer of the wiki. Add images, text cards, PDFs, and wiki pages to Obsidian canvas files with auto-positioning inside zones. Integrates with /banana for image capture. Triggers on: /canvas, canvas new, canvas add image, canvas add text, canvas add pdf, canvas add note, canvas zone, canvas list, canvas from banana, add to canvas, put this on the canvas, open canvas, create canvas."
+description: "Wiki 的可视化层。将图像、文本卡片、PDF 和 Wiki 页面添加到 Obsidian Canvas 文件中，并在区域内自动定位。与 /banana 集成用于图像捕获。"
 allowed-tools: Read Write Edit Glob Grep
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: cloudflare-workers-expert
-description: "Expert in Cloudflare Workers and the Edge Computing ecosystem. Covers Wrangler, KV, D1, Durable Objects, and R2 storage."
+description: "Cloudflare Workers 和边缘计算生态系统专家。涵盖 Wrangler、KV、Durable Objects、R2、D1、Queues 和 AI Gateway。"
 risk: safe
 source: community
 date_added: "2026-02-27"

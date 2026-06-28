@@ -1,6 +1,6 @@
 ---
 name: high-end-visual-design
-description: "Use when designing expensive agency-grade interfaces with premium fonts, spatial rhythm, soft depth, and fluid microinteractions."
+description: "适用于designing expensive agency-grade interfaces with premium fonts, spatial rhythm, soft depth, and fluid microinteractions.的情况。"
 category: frontend
 risk: safe
 source: community

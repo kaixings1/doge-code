@@ -1,5 +1,5 @@
 ---
-name: harness-optimizer
+name:  harness-optimizer
 description: 测试框架优化器
 tools: ["Read", "Grep", "Glob", "Bash", "Edit"]
 model: sonnet

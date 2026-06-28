@@ -1,6 +1,6 @@
 ---
 name: jobgpt
-description: "Job search automation, auto apply, resume generation, application tracking, salary intelligence, and recruiter outreach using the JobGPT MCP server."
+description: "使用 JobGPT MCP 服务器的求职自动化、自动申请、简历生成、申请跟踪、薪酬情报和招聘人员外展。"
 risk: safe
 source: community
 date_added: "2026-03-23"

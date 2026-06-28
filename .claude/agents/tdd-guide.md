@@ -1,5 +1,5 @@
 ---
-name: tdd-guide
+name:  tdd-guide
 description: TDD向导
 tools: ["Read", "Write", "Edit", "Bash", "Grep"]
 model: sonnet

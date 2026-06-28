@@ -1,5 +1,5 @@
 ---
-description: Manage Linear tickets - create, update, comment, and follow workflow patterns
+description: 管理 Linear 工单 — 创建、更新、评论、遵循工作流模式
 ---
 
 # Linear - Ticket Management

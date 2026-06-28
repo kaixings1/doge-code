@@ -1,6 +1,6 @@
 ---
 name: gsd:verify-work
-description: Validate built features through conversational UAT
+通过对话式 UAT 验证已构建的功能。
 argument-hint: "[phase number, e.g., '4'] [--ws <name>]"
 allowed-tools:
   - Read

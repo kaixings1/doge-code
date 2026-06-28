@@ -1,6 +1,6 @@
 ---
 name: convex
-description: "Convex reactive backend expert: schema design, TypeScript functions, real-time subscriptions, auth, file storage, scheduling, and deployment."
+description: "Convex 响应式后端专家：schema 设计、TypeScript 函数、实时订阅、认证、文件存储、调度和部署。"
 risk: safe
 source: "https://docs.convex.dev"
 date_added: "2026-02-27"

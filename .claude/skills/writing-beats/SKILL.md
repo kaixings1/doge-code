@@ -1,6 +1,6 @@
 ---
 name: writing-beats
-description: Writing, exploit — assemble raw material into a journey of beats, grounding each term before a beat leans on it.
+description: 写作，利用阶段——将原始素材组织成节奏旅程，在每个节拍依赖前先夯实术语基础。
 disable-model-invocation: true
 ---
 

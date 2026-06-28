@@ -1,5 +1,5 @@
 ---
-name: build-engineer
+name:  build-engineer
 description: 构建 工程师 - Designs and optimizes build systems, bundlers, and compilati...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

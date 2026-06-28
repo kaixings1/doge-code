@@ -1,6 +1,6 @@
 ---
 name: writer-memory
-description: Agentic memory system for writers - track characters, relationships, scenes, and themes
+description: 面向写作者的智能记忆系统——追踪角色、关系、场景和主题
 argument-hint: "init|char|rel|scene|query|validate|synopsis|status|export [args]"
 level: 7
 ---

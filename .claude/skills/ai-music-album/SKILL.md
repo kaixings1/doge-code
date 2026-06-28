@@ -1,6 +1,6 @@
 ---
 name: ai-music-album
-description: |
+description:  |
   Full-lifecycle AI music album production — concept, lyric drafting, track sequencing, and export. Useful for indie album experiments and brand soundtracks.
 triggers:
   - "ai music"

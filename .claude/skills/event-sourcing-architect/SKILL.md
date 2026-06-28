@@ -1,6 +1,6 @@
 ---
 name: event-sourcing-architect
-description: "Expert in event sourcing, CQRS, and event-driven architecture patterns. Masters event store design, projection building, saga orchestration, and eventual consistency patterns. Use PROACTIVELY for event-sourced systems, audit trail requirements, or complex domain modeling with temporal queries."
+description: "事件溯源、CQRS 和事件驱动架构模式专家。掌握事件存储设计、投影构建、编排和最终一致性模式。主动用于事件溯源系统、审计追踪需求或带时序查询的复杂领域建模。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

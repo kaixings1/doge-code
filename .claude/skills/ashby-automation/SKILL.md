@@ -1,6 +1,6 @@
 ---
-name: Ashby Automation
-description: "Automate recruiting and hiring workflows in Ashby -- manage candidates, jobs, applications, interviews, and notes through natural language commands."
+name: ashby-自动化
+description: "自动化 Ashby 招聘和招聘工作流程——通过自然语言命令管理候选人、职位、申请、面试和笔记。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp:
     - rube

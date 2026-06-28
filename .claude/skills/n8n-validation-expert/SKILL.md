@@ -1,6 +1,6 @@
 ---
 name: n8n-validation-expert
-description: "Expert guide for interpreting and fixing n8n validation errors."
+description: "解释和修复 n8n 验证错误的专家指南。"
 risk: unknown
 source: community
 ---

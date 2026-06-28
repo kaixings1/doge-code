@@ -1820,7 +1820,7 @@
 | data-engineering-data-pipeline | You are a data pipeline architecture expert specializing in scalable, reliable, and cost-effective d |
 | data-quality-frameworks | Implement data quality validation with Great Expectations, dbt tests, and data contracts. Use when b |
 | data-report |  |
-| data-scientist | Expert data scientist for advanced analytics, machine learning, and statistical modeling. Handles co |
+| data-scientist | 高级数据科学家，专注于高级分析、机器学习和统计建模。处理复杂数据分析、预测建模和商业智能。 |
 | data-storytelling | Transform raw data into compelling narratives that drive decisions and inspire action. |
 | data-structure-protocol | Give agents persistent structural memory of a codebase — navigate dependencies, track public APIs, a |
 | dbos-golang | Guide for building reliable, fault-tolerant Go applications with DBOS durable workflows. Use when ad |

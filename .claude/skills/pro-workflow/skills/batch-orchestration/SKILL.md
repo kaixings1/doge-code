@@ -1,6 +1,6 @@
 ---
 name: batch-orchestration
-description: Decompose large-scale changes into independent units and spawn parallel agents in isolated worktrees. Use for migrations, refactors, codemods, and any change touching 10+ files with the same pattern.
+description:  Decompose large-scale changes into independent units and spawn parallel agents in isolated worktrees. Use for migrations, refactors, codemods, and any change touching 10+ files with the same pattern.
 ---
 
 # Batch Orchestration

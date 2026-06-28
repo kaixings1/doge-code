@@ -1,5 +1,5 @@
 ---
-name: mle-reviewer
+name:  审查员
 description: 机器学习工程审查者
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet

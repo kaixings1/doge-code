@@ -1,6 +1,6 @@
 ---
 name: LaunchDarkly Automation
-description: "Automate LaunchDarkly feature flag management -- list projects and environments, create and delete trigger workflows, and track code references via the Composio MCP integration."
+description: "通过 Composio MCP 集成自动执行 LaunchDarkly 功能标志管理——列出项目和环境、创建和删除触发器工作流以及跟踪代码引用。"
 requires:
   mcp:
     - rube

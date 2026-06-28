@@ -1,6 +1,6 @@
 ---
 name: think
-description: "Apply the 10-principle thinking loop (OBSERVE-OBSERVE-LISTEN-THINK-CONNECT-CONNECT-FEEL-ACCEPT-CREATE-GROW) to any non-trivial problem. Walks Claude through external observation, metacognition, active listening, first-principles analysis, lateral connection, system orchestration, intuition, intellectual humility, generative output, and iterative growth. Triggers on: think this through, 10-principle review, /think, OBSERVE LISTEN THINK, deep think, systematic thinking, structured reasoning, walk this through, audit my thinking, am I thinking about this right."
+description: "对任何非平凡问题应用 10 原则思考循环（观察-观察-倾听-思考-连接-连接-感受-接受-创造-成长）。引导 Claude 进行外部观察、元认知、主动倾听、第一性原理分析、横向连接、系统编排、直觉、智识谦逊、生成输出和迭代成长。"
 allowed-tools: Read, Grep, Glob, Bash
 ---
 

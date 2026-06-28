@@ -1,4 +1,4 @@
-Apply security hardening measures to the codebase.
+对代码库应用安全加固措施。
 
 ## Steps
 

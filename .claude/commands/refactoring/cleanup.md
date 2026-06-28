@@ -1,4 +1,4 @@
-Find and remove dead code, unused imports, and unreachable branches.
+查找并删除死代码、未使用的导入和不可达分支。
 
 ## Steps
 

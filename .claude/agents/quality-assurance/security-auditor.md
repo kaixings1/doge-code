@@ -1,5 +1,5 @@
 ---
-name: security-auditor
+name:  security-auditor
 description: 安全 auditor - OWASP Top 10, dependency scanning, secrets detection, and pe...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

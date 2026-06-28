@@ -3,9 +3,9 @@ name: card-xiaohongshu
 zh_name: "小红书图文卡片"
 en_name: "Xiaohongshu Card"
 emoji: "📱"
-description: "Xiaohongshu-style knowledge cards, arranged as a swipeable multi-card carousel."
+description: "小红书风格的知识卡片，排列为可滑动的多卡片轮播。"
 zh_description: "小红书风格知识卡片, 多张联排可滑动浏览"
-en_description: "Xiaohongshu-style knowledge cards, arranged as a swipeable multi-card carousel."
+en_description: "小红书风格的知识卡片，排列为可滑动的多卡片轮播。"
 category: card
 scenario: marketing
 aspect_hint: "1080×1440 (3:4)"

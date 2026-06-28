@@ -1,6 +1,6 @@
 ---
 name: google-cpp-style
-description: Google C++ Style Guide rules for writing clean, maintainable C++ code. Use when writing C++, reviewing code, discussing naming conventions, formatting, class design, or any C++ best practices. Covers headers, scoping, classes, functions, naming, comments, and formatting.
+description:  Google C++ Style Guide rules for writing clean, maintainable C++ code. Use when writing C++, reviewing code, discussing naming conventions, formatting, class design, or any C++ best practices. Covers headers, scoping, classes, functions, naming, comments, and formatting.
 ---
 
 # Google C++ Style Guide

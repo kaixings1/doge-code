@@ -1,5 +1,5 @@
 ---
-description: Run the full Kubernetes Operator audit (CRD + reconcile + capability) on the current repo
+description: 在当前仓库运行完整 Kubernetes Operator 审计（CRD+reconcile+capability）
 ---
 
 # /operator-audit

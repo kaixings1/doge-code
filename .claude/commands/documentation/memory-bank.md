@@ -1,4 +1,4 @@
-Update the project's CLAUDE.md memory bank with current session learnings.
+使用当前会话的学习内容更新项目的 CLAUDE.md 记忆库。
 
 ## Steps
 

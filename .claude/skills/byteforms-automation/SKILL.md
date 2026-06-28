@@ -1,6 +1,6 @@
 ---
-name: byteforms-automation
-description: "Automate Byteforms tasks via Rube MCP (Composio). Always search tools first for current schemas."
+name: byteforms-自动化
+description: "通过 Rube MCP (Composio) 自动化 Byteforms 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---

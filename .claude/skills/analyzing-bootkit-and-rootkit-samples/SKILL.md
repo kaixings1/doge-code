@@ -1,10 +1,9 @@
 ---
 name: analyzing-bootkit-and-rootkit-samples
-description: 'Analyzes bootkit and advanced rootkit malware that infects the Master
-  Boot Record (MBR), Volume Boot Record (VBR), or UEFI firmware to gain persistence
-  below the operating system. Covers boot sector analysis, UEFI module inspection,
-  and anti-rootkit detection techniques. Activates for requests involving bootkit
-  analysis, MBR malware investigation, UEFI persistence analysis, or pre-OS malware
+description:  分析感染主引导记录 (MBR)、卷引导记录 (VBR) 或 UEFI 固件的
+  bootkit 和高级 rootkit 恶意软件，以在操作系统层面以下获得持久性。
+  涵盖引导扇区分析、UEFI 模块检查和反 rootkit 检测技术。
+  适用于 bootkit 分析、MBR 恶意软件调查、UEFI 持久性分析或 OS 前恶意软件分析。
   detection.
 
   '

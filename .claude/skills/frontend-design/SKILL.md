@@ -1,6 +1,6 @@
 ---
 name: frontend-design
-description: "You are a frontend designer-engineer, not a layout generator."
+description: "您是前端设计师兼工程师，而非布局生成器。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

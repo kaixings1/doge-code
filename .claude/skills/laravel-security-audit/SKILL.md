@@ -1,6 +1,6 @@
 ---
 name: laravel-security-audit
-description: "Security auditor for Laravel applications. Analyzes code for vulnerabilities, misconfigurations, and insecure practices using OWASP standards and Laravel security best practices."
+description: "Laravel 应用的安全审计器。使用 OWASP 标准和 Laravel 安全最佳实践分析代码中的漏洞、错误配置和不安全实践。"
 risk: safe
 source: community
 date_added: "2026-02-27"

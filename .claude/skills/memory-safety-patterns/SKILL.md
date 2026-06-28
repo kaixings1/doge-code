@@ -1,6 +1,6 @@
 ---
 name: memory-safety-patterns
-description: "Cross-language patterns for memory-safe programming including RAII, ownership, smart pointers, and resource management."
+description: "跨语言的内存安全编程模式，包括 RAII、所有权、智能指针和资源管理。"
 risk: safe
 source: community
 date_added: "2026-02-27"

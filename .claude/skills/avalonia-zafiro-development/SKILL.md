@@ -1,6 +1,6 @@
 ---
 name: avalonia-zafiro-development
-description: "Mandatory skills, conventions, and behavioral rules for Avalonia UI development using the Zafiro toolkit."
+description: "使用 Zafiro 主题的 Avalonia UI 框架跨平台桌面开发：WPF 式 XAML、MVVM，原生支持 Windows、macOS、Linux。"
 risk: safe
 source: community
 date_added: "2026-02-27"

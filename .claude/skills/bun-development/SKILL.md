@@ -1,6 +1,6 @@
 ---
 name: bun-development
-description: "Fast, modern JavaScript/TypeScript development with the Bun runtime, inspired by [oven-sh/bun](https://github.com/oven-sh/bun)."
+description: "使用 Bun 运行时进行快速、现代的 JavaScript/TypeScript 开发。"
 risk: critical
 source: community
 date_added: "2026-02-27"

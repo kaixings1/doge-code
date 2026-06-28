@@ -1,6 +1,6 @@
 ---
 name: brand-guidelines-anthropic
-description: "To access Anthropic's official brand identity and style resources, use this skill."
+description: "Anthropic 品牌指南——标志使用、调色板、排版、语调以及品牌资产使用规则。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

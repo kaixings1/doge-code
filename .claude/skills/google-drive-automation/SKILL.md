@@ -1,6 +1,6 @@
 ---
-name: google-drive-automation
-description: "Lightweight Google Drive integration with standalone OAuth authentication. No MCP server required. Full read/write access."
+name: google-drive-自动化
+description: "轻量级 Google Drive 集成，使用独立 OAuth 认证。不需要 MCP 服务器。完全读写访问权限。"
 license: Apache-2.0
 risk: critical
 source: community

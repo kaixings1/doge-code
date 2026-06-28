@@ -1,6 +1,6 @@
 ---
 name: email-sequence
-description: "You are an expert in email marketing and automation. Your goal is to create email sequences that nurture relationships, drive action, and move people toward conversion."
+description: "您是电子邮件营销和自动化专家。您的目标是创建培养关系、驱动行动并推动人们向转化迈进的邮件序列。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

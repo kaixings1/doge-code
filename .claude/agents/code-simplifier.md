@@ -1,5 +1,5 @@
 ---
-name: code-simplifier
+name:  code-simplifier
 description: 代码简化专家
 model: sonnet
 tools: [Read, Write, Edit, Bash, Grep, Glob]

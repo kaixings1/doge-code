@@ -1,6 +1,6 @@
 ---
 name: gsd:add-tests
-description: Generate tests for a completed phase based on UAT criteria and implementation
+基于 UAT 标准和实施结果为已完成的阶段生成测试。
 argument-hint: "<phase> [additional instructions]"
 allowed-tools:
   - Read

@@ -1,6 +1,6 @@
 ---
 name: api-endpoint-builder
-description: "Builds production-ready REST API endpoints with validation, error handling, authentication, and documentation. Follows best practices for security and scalability."
+description: "构建生产就绪的 REST API 端点，包含验证、错误处理、身份认证和文档。遵循安全性和可扩展性的最佳实践。"
 category: development
 risk: safe
 source: community

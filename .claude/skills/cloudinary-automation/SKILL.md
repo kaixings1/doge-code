@@ -1,6 +1,6 @@
 ---
-name: Cloudinary Automation
-description: "Automate Cloudinary media management including folder organization, upload presets, asset lookup, transformations, and usage monitoring through natural language commands"
+name: cloudinary-自动化
+description: "自动化 Cloudinary 媒体管理，包括文件夹组织、上传预设、素材查找、变换和使用监控。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp:
     - rube

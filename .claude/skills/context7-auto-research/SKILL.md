@@ -1,6 +1,6 @@
 ---
 name: context7-auto-research
-description: "Automatically fetch latest library/framework documentation for Claude Code via Context7 API. Use when you need up-to-date documentation for libraries and frameworks or asking about React, Next.js, Prisma, or any other popular library."
+description: "通过 Context7 API 自动获取最新库/框架文档供 Claude Code 使用。适用于需要最新文档或有关于 React、Next.js、Prisma 或其他流行库的问题时。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

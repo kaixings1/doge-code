@@ -1,7 +1,7 @@
 ---
 id: 20-andruia-niche-intelligence
 name: 20-andruia-niche-intelligence
-description: "Estratega de Inteligencia de Dominio de Andru.ia. Analiza el nicho específico de un proyecto para inyectar conocimientos, regulaciones y estándares únicos del sector. Actívalo tras definir el nicho."
+description: "Andru.ia 领域情报策略师。分析项目的特定领域，注入行业独有的知识、法规和标准。在定义领域后激活。"
 category: andruia
 risk: safe
 source: personal

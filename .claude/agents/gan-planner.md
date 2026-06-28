@@ -1,5 +1,5 @@
 ---
-name: gan-planner
+name:  规划师
 description: GAN规划器
 tools: ["Read", "Write", "Grep", "Glob"]
 model: opus

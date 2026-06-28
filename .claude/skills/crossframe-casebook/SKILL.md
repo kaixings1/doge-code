@@ -1,6 +1,6 @@
 ---
 name: crossframe-casebook
-description: "Use when CrossFrame Suite routes explicit Chinese casebook work: turning materials into reusable cases, anonymized entries, mechanisms, and retrieval indexes."
+description: "当 CrossFrame Suite 路由明确的中文案例册工作时使用：将材料转化为可复用的案例、匿名条目、机制和检索索引。"
 category: content
 risk: safe
 source: community

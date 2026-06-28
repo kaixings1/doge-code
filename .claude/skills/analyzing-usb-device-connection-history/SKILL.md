@@ -1,7 +1,6 @@
 ---
 name: analyzing-usb-device-connection-history
-description: Investigate USB device connection history from Windows registry, event
-  logs, and setupapi logs to track removable media usage and potential data exfiltration.
+description:  从 Windows 注册表、事件日志和 setupapi 日志调查 USB 设备连接历史，跟踪可移动介质使用和潜在数据外泄。
 domain: cybersecurity
 subdomain: digital-forensics
 tags:

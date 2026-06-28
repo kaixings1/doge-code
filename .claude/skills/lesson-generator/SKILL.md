@@ -1,6 +1,6 @@
 ---
 name: lesson-generator
-description: Build compact, standalone multi-lesson course artifacts with lesson navigation, objectives, flashcards, quizzes, and source links.
+description:  Build compact, standalone multi-lesson course artifacts with lesson navigation, objectives, flashcards, quizzes, and source links.
 category: "education"
 risk: "safe"
 source: "official"

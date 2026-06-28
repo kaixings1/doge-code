@@ -1,5 +1,5 @@
 ---
-name: mlops-engineer
+name:  mlops-engineer
 description: mlops 工程师 - ML model lifecycle management with serving infrastructure, m...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

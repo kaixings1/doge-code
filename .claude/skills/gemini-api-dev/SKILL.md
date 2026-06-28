@@ -1,6 +1,6 @@
 ---
 name: gemini-api-dev
-description: "The Gemini API provides access to Google's most advanced AI models. Key capabilities include:"
+description: "Gemini API 提供对 Google 最先进 AI 模型的访问。关键能力包括："
 risk: unknown
 source: community
 date_added: "2026-02-27"

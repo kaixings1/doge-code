@@ -1,5 +1,5 @@
 ---
-name: typescript-specialist
+name:  typescript-specialist
 description: typescript 专家 - Advanced TypeScript patterns including generics, conditional...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

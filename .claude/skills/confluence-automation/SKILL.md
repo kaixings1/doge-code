@@ -1,6 +1,6 @@
 ---
-name: confluence-automation
-description: "Automate Confluence page creation, content search, space management, labels, and hierarchy navigation via Rube MCP (Composio). Always search tools first for current schemas."
+name: confluence-自动化
+description: "通过 Rube MCP (Composio) 自动化 Confluence 操作：页面创建、内容搜索、空间管理、标签和层次结构导航。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 risk: critical
 source: community
 date_added: "2026-02-27"

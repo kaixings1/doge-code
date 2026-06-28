@@ -1,6 +1,6 @@
 ---
 name: linux-privilege-escalation
-description: "Execute systematic privilege escalation assessments on Linux systems to identify and exploit misconfigurations, vulnerable services, and security weaknesses that allow elevation from low-privilege user access to root-level control."
+description: "在 Linux 系统上执行系统化权限提升评估，以识别和利用允许从低权限用户访问提升到 root 级控制的错误配置、脆弱服务和安全弱点。"
 risk: offensive
 source: community
 author: zebbern

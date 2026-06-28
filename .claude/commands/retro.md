@@ -1,6 +1,6 @@
 ---
-name: retro
-description: "Analyze sprint retrospectives for patterns and action item tracking. Usage: /retro analyze <retro_data.json>"
+name: 迭代回顾
+description: "分析迭代回顾中的模式与行动事项追踪。用法: /retro analyze <retro_data.json>"
 ---
 
 # /retro

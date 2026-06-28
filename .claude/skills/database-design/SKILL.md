@@ -1,6 +1,6 @@
 ---
 name: database-design
-description: "Database design principles and decision-making. Schema design, indexing strategy, ORM selection, serverless databases."
+description: "使用 Erd 工具进行数据库设计和建模的数据库架构师资源。生成模式、关联和注释。"
 risk: safe
 source: community
 date_added: "2026-02-27"

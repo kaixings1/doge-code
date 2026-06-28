@@ -1,6 +1,6 @@
 ---
-name: incident-responder
-description: incident responder - incident responder - Incident triage, runbook execution, com...
+name:  incident-responder
+description:   incident responder - incident responder - Incident triage, runbook execution, com...（待汉化）
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: azure-ai-translation-ts
-description: "Text and document translation with REST-style clients."
+description: "指导 TypeScript 开发者使用 Azure AI Translation 客户端库翻译文本。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

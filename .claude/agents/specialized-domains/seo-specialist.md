@@ -1,5 +1,5 @@
 ---
-name: seo-specialist
+name:  seo-specialist
 description: seo 专家 - Optimizes web applications for search engine visibility with...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

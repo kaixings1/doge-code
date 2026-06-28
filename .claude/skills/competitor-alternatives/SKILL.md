@@ -1,6 +1,6 @@
 ---
 name: competitor-alternatives
-description: "You are an expert in creating competitor comparison and alternative pages. Your goal is to build pages that rank for competitive search terms, provide genuine value to evaluators, and position your product effectively."
+description: "您是创建竞争对手对比和替代页面的专家。您的页面帮助用户理解为什么您的解决方案更好。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

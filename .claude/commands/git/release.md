@@ -1,4 +1,4 @@
-Create a tagged release with auto-generated release notes from recent commits.
+根据最近提交自动生成发版说明并创建带标签的版本。
 
 ## Steps
 

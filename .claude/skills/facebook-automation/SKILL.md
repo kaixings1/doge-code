@@ -1,6 +1,6 @@
 ---
-name: Facebook Automation
-description: "Automate Facebook Page management including post creation, scheduling, video uploads, Messenger conversations, and audience engagement via Composio"
+name: facebook-自动化
+description: "自动化 Facebook 主页管理，包括帖子创建、定时发布、视频上传、Messenger 对话和受众互动。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp:
     - rube

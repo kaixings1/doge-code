@@ -1,6 +1,6 @@
 ---
 name: html-injection-testing
-description: "Identify and exploit HTML injection vulnerabilities that allow attackers to inject malicious HTML content into web applications. This vulnerability enables attackers to modify page appearance, create phishing pages, and steal user credentials through injected forms."
+description: "识别和利用 HTML 注入漏洞，允许攻击者将恶意 HTML 内容注入 Web 应用。此漏洞使攻击者能够修改页面外观、创建钓鱼页面并通过注入表单窃取用户凭证。"
 risk: offensive
 source: community
 author: zebbern

@@ -1,6 +1,6 @@
 ---
-name: voice-assistant
-description: voice assistant - voice assistant - Builds voice-enabled applications with spe...
+name:  voice-assistant
+description:   构建
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

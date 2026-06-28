@@ -1,6 +1,6 @@
 ---
 name: replay-learnings
-description: Surface past learnings relevant to the current task before starting work. Searches correction history, recalls past mistakes, and applies prior patterns. Use when starting a task, saying "what do I know about", "previous mistakes", "lessons learned", or "remind me about".
+description:  Surface past learnings relevant to the current task before starting work. Searches correction history, recalls past mistakes, and applies prior patterns. Use when starting a task, saying "what do I know about", "previous mistakes", "lessons learned", or "remind me about".
 ---
 
 # Replay Learnings

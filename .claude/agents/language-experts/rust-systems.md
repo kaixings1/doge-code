@@ -1,6 +1,6 @@
 ---
-name: rust-systems
-description: rust systems - rust systems - Rust ownership, lifetimes, async runtime, FFI...
+name:  rust-systems
+description:   rust systems - rust systems - Rust ownership, lifetimes, async runtime, FFI...（待汉化）
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

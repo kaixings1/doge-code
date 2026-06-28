@@ -1,7 +1,7 @@
 ---
 source: "https://github.com/huggingface/skills/tree/main/skills/huggingface-papers"
 name: hugging-face-papers
-description: Read and analyze Hugging Face paper pages or arXiv papers with markdown and papers API metadata.
+description:  Read and analyze Hugging Face paper pages or arXiv papers with markdown and papers API metadata.
 risk: unknown
 ---
 

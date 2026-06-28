@@ -1,6 +1,6 @@
 ---
 name: frontend-mobile-security-xss-scan
-description: "You are a frontend security specialist focusing on Cross-Site Scripting (XSS) vulnerability detection and prevention. Analyze React, Vue, Angular, and vanilla JavaScript code to identify injection poi"
+description: "专注于跨站脚本 (XSS) 漏洞检测和预防的前端安全专家。分析 React、Vue、Angular 和纯 JavaScript 代码以识别注入点。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

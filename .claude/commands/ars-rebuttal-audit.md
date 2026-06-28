@@ -1,5 +1,5 @@
 ---
-description: ARS academic-paper `rebuttal-audit` mode — QA an existing rebuttal draft against reviewer comments
+description: ARS 学术论文 `rebuttal-audit` 模式 — 对照审稿意见对现有 rebuttal 草稿做质量检查
 model: sonnet
 ---
 

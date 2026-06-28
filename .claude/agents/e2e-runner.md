@@ -1,5 +1,5 @@
 ---
-name: e2e-runner
+name:  端到端测试
 description: 端到端测试运行器
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

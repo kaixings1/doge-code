@@ -1,5 +1,5 @@
 ---
-description: Guided end-to-end plugin creation workflow with component design, implementation, and validation
+description: 引导式端到端插件创建工作流 — 组件设计、实现与验证
 argument-hint: Optional plugin description
 allowed-tools:
   [

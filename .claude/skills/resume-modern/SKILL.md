@@ -3,9 +3,9 @@ name: resume-modern
 zh_name: "极简简历"
 en_name: "Modern Resume"
 emoji: "📄"
-description: "Modern minimal resume, single A4 page, ready for print or PDF export."
+description: "现代简约简历，单页 A4，准备好打印或导出为 PDF。"
 zh_description: "现代极简简历, A4 单页, 适合打印或导出 PDF"
-en_description: "Modern minimal resume, single A4 page, ready for print or PDF export."
+en_description: "现代简约简历，单页 A4，准备好打印或导出为 PDF。"
 category: resume
 scenario: personal
 aspect_hint: "A4 (210×297mm)"

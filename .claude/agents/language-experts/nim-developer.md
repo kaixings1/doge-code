@@ -1,5 +1,5 @@
 ---
-name: nim-developer
+name:  nim-developer
 description: nim 开发者 - Nim metaprogramming, GC strategies, C/C++ interop, and cross...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

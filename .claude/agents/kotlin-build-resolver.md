@@ -1,5 +1,5 @@
 ---
-name: kotlin-build-resolver
+name:  kotlin-build-resolver
 description: Kotlin构建解决专家
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

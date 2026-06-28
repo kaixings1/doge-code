@@ -1,6 +1,6 @@
 ---
-name: academic-researcher
-description: academic researcher - academic researcher - Conducts literature reviews, citation ...
+name:  研究员
+description:   审查
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

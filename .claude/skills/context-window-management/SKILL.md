@@ -1,6 +1,6 @@
 ---
 name: context-window-management
-description: Strategies for managing LLM context windows including
+description:  Strategies for managing LLM context windows including
   summarization, trimming, routing, and avoiding context rot
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)

@@ -1,4 +1,4 @@
-Perform a security audit of the codebase covering common vulnerability categories.
+对代码库执行安全审计，覆盖常见漏洞类别。
 
 ## Steps
 

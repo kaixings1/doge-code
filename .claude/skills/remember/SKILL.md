@@ -1,6 +1,6 @@
 ---
 name: remember
-description: Review reusable project knowledge and decide what belongs in project memory, notepad, or durable docs
+description:  Review reusable project knowledge and decide what belongs in project memory, notepad, or durable docs
 ---
 
 # Remember

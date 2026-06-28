@@ -1,4 +1,4 @@
-Perform a systematic refactoring of the specified code area.
+对指定代码区域进行系统性重构。
 
 ## Steps
 

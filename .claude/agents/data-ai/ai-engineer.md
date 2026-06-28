@@ -1,5 +1,5 @@
 ---
-name: ai-engineer
+name:  ai-engineer
 description: ai 工程师 - AI application development with model API integration, RAG p...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

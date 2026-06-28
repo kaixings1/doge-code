@@ -1,5 +1,5 @@
 ---
-name: swift-developer
+name:  swift-developer
 description: swift 开发者 - SwiftUI, iOS 17+, Combine, structured concurrency, and Apple...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

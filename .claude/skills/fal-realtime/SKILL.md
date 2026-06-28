@@ -1,6 +1,6 @@
 ---
 name: fal-realtime
-description: |
+description:  |
   Real-time and streaming AI image generation via fal.ai. Suited for moodboard exploration, draft variations, and rapid creative iteration.
 triggers:
   - "fal realtime"

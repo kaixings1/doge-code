@@ -1,4 +1,4 @@
-Scan the codebase for leaked secrets, API keys, tokens, and credentials.
+扫描代码库，查找泄露的密钥、API Key、令牌和凭证。
 
 ## Steps
 

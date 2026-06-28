@@ -1,5 +1,5 @@
 ---
-name: deployer
+name:  部署专家
 description: 部署专家
 tools:
   - Bash

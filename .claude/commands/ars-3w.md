@@ -1,5 +1,5 @@
 ---
-description: ARS deep-research `three-way-scan` mode — WHY / HOW / WHAT paper comparison
+description: ARS 深度研究 `三向扫描` 模式 — WHY / HOW / WHAT 论文对比
 model: sonnet
 ---
 

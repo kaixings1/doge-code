@@ -1,6 +1,6 @@
 ---
 name: expo-dev-client
-description: Build and distribute Expo development clients locally or via TestFlight
+description:  Build and distribute Expo development clients locally or via TestFlight
 risk: unknown
 source: community
 version: 1.0.0

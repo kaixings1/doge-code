@@ -1,6 +1,6 @@
 ---
 name: brooks-lint
-description: "AI code reviewer grounded in classic software engineering books for catching design smells, coupling issues, and architectural risks."
+description: "Claude Code 规则检查器。审计 CLAUDE.md、提交消息和工具使用的一致性。"
 category: development
 risk: safe
 source: community

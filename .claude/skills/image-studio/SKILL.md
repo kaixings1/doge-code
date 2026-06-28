@@ -1,6 +1,6 @@
 ---
 name: image-studio
-description: "Studio de geracao de imagens inteligente — roteamento automatico entre ai-studio-image (fotos humanizadas/influencer) e stability-ai (arte/ ilustracao/edicao). Detecta o tipo de imagem solicitada e escolhe o modelo ideal automaticamente."
+description: "智能图像生成工作室——在 ai-studio-image（人性化/网红照片）和 stability-ai（艺术/插画/编辑）之间自动路由。检测请求的图像类型并自动选择理想模型。"
 risk: safe
 source: community
 date_added: '2026-03-06'

@@ -1,6 +1,6 @@
 ---
 name: zoho_desk-automation
-description: "Automate Zoho Desk tasks via Rube MCP (Composio): tickets, contacts, agents, departments, and help desk operations. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 Zoho Desk 任务：tickets, contacts, agents, departments, and help desk operations. Always search tools first for current schemas."
 requires:
   mcp: [rube]
 ---

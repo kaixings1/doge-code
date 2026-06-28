@@ -1,6 +1,6 @@
 ---
 name: adhx
-description: "Fetch any X/Twitter post as clean LLM-friendly JSON. Converts x.com, twitter.com, or adhx.com links into structured data with full article content, author info, and engagement metrics. No scraping or browser required."
+description: "将任何 X/Twitter 帖子获取为干净的 LLM 友好 JSON。将 x.com、twitter.com 或 adhx.com 链接转换为结构化数据，包含完整文章内容、作者信息和互动指标。无需爬虫或浏览器。"
 risk: safe
 source: community
 date_added: "2026-03-25"

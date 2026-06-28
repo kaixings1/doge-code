@@ -1,5 +1,5 @@
 ---
-description: Set up worktree for reviewing colleague's branch
+description: 设置 worktree 以审查同事分支
 ---
 
 # Local Review

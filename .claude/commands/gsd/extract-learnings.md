@@ -1,6 +1,6 @@
 ---
 name: gsd:extract-learnings
-description: Extract decisions, lessons, patterns, and surprises from completed phase artifacts
+从已完成阶段的产物中提取决策、经验、模式和意外发现。
 argument-hint: <phase-number>
 allowed-tools:
   - Read

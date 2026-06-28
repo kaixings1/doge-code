@@ -1,6 +1,6 @@
 ---
-name: skill-reviewer
-description: |
+name:  审查员
+description:   |（待汉化）
   Use this agent when the user has created or modified a skill and needs quality review, asks to "review my skill", "check skill quality", "improve skill description", or wants to ensure skill follows best practices. Trigger proactively after skill creation. Examples:
 
   <example>

@@ -1,6 +1,6 @@
 ---
-name: scrum-master
-description: scrum master - scrum master - Facilitates Scrum ceremonies, tracks team vel...
+name:  scrum-master
+description:   scrum master - scrum master - Facilitates Scrum ceremonies, tracks team vel...（待汉化）
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

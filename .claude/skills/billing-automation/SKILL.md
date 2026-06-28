@@ -1,6 +1,6 @@
 ---
-name: billing-automation
-description: "Master automated billing systems including recurring billing, invoice generation, dunning management, proration, and tax calculation."
+name: billing-自动化
+description: "掌握自动计费系统，包括重复计费、发票生成、催款管理、按比例分摊和税务计算。"
 risk: safe
 source: community
 date_added: "2026-02-27"

@@ -1,5 +1,5 @@
 ---
-name: database-admin
+name:  database-admin
 description: 数据库 admin - PostgreSQL, MySQL, MongoDB optimization, migrations, replica...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

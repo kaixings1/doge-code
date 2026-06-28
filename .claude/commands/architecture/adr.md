@@ -1,4 +1,4 @@
-Write an Architecture Decision Record documenting a significant technical decision.
+撰写架构决策记录（ADR），记录重要的技术决策。
 
 ## Steps
 

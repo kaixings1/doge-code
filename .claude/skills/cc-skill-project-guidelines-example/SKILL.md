@@ -1,6 +1,6 @@
 ---
 name: cc-skill-project-guidelines-example
-description: "Project Guidelines Skill (Example)"
+description: "项目指南技能（示例）"
 risk: unknown
 source: community
 date_added: "2026-02-27"

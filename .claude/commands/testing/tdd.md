@@ -1,4 +1,4 @@
-Start a TDD (Test-Driven Development) cycle for the requested feature or function.
+为请求的功能或函数启动测试驱动开发（TDD）循环。
 
 ## Process
 

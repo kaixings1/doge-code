@@ -1,6 +1,6 @@
 ---
-name: executor
-description: Focused task executor for implementation work (Sonnet)
+name:  executor
+description:   实施
 model: sonnet
 level: 2
 ---

@@ -1,6 +1,6 @@
 ---
 name: multi-platform-apps-multi-platform
-description: "Build and deploy the same feature consistently across web, mobile, and desktop platforms using API-first architecture and parallel implementation strategies."
+description: "使用 API 优先架构和并行实现策略，跨 Web、移动和桌面平台一致地构建和部署相同功能。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

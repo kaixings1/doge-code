@@ -1,6 +1,6 @@
 ---
 name: compact-guard
-description: Smart context compaction with state preservation. Saves critical files, task progress, and working state before compaction, restores after. Use before manual compact or when auto-compact triggers.
+description:  Smart context compaction with state preservation. Saves critical files, task progress, and working state before compaction, restores after. Use before manual compact or when auto-compact triggers.
 ---
 
 # Compact Guard

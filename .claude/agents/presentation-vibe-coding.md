@@ -1,5 +1,5 @@
 ---
-name: presentation-vibe-coding
+name:  presentation-vibe-coding
 description: 氛围编码演示
 allowedTools:
   - "Bash(*)"

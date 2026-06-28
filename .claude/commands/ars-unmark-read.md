@@ -1,5 +1,5 @@
 ---
-description: ARS /ars-unmark-read — rescind a prior human-read mark for one or more citation keys
+description: ARS /ars-unmark-read — 撤销之前的人工阅读标记（一个或多个引用键）
 model: sonnet
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: azure-mgmt-apicenter-dotnet
-description: Azure API Center SDK for .NET. Centralized API inventory management with governance, versioning, and discovery.
+description:  Azure API Center SDK for .NET. Centralized API inventory management with governance, versioning, and discovery.
 risk: unknown
 source: community
 date_added: '2026-02-27'

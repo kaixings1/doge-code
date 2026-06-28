@@ -1,6 +1,6 @@
 ---
 name: bevy-ecs-expert
-description: "Master Bevy's Entity Component System (ECS) in Rust, covering Systems, Queries, Resources, and parallel scheduling."
+description: "Bevy ECS 专家指导——数据驱动架构、系统编排、查询、命令和 Rust 游戏引擎的性能优化。"
 risk: safe
 source: community
 date_added: "2026-02-27"

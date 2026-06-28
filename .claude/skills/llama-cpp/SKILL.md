@@ -1,6 +1,6 @@
 ---
 name: llama-cpp
-description: >
+description:  >
   Guide for llama.cpp, the C/C++ LLM inference framework by ggml-org. Covers the C API
   (llama.h), GGUF format, quantization (Q4_K_M, Q8_0, IQ4_XS), CMake builds, GPU backends
   (CUDA, Vulkan, Metal, ROCm), HTTP server with OpenAI-compatible API, embeddings, grammar

@@ -1,6 +1,6 @@
 
 ---
-description: Create worktree and launch implementation session for a plan
+description: 创建工作树（worktree）并启动实施会话执行计划
 ---
 
 2. set up worktree for implementation:

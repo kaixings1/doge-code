@@ -1,5 +1,5 @@
 ---
-name: nlp-engineer
+name:  nlp-engineer
 description: nlp 工程师 - NLP pipeline development with text processing, embeddings, c...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -1,5 +1,5 @@
 ---
-name: go-reviewer
+name:  审查员
 description: Go代码审查专家
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet

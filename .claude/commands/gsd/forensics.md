@@ -1,7 +1,7 @@
 ---
 type: prompt
 name: gsd:forensics
-description: Post-mortem investigation for failed GSD workflows — diagnoses what went wrong.
+对失败的 GSD 工作流进行事后调查，诊断问题原因。
 argument-hint: "[problem description]"
 allowed-tools:
   - Read

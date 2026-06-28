@@ -1,6 +1,6 @@
 ---
 name: writing-great-skills
-description: Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable.
+description: 编写和编辑优秀技能的参考手册——让技能可预测的词汇和原则。
 disable-model-invocation: true
 ---
 

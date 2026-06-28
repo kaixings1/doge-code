@@ -1,5 +1,5 @@
 ---
-name: code-quality-reviewer
+name:  审查员
 description: 代码质量审查者
 tools: Glob, Grep, Read, WebFetch, TodoWrite, WebSearch, BashOutput, KillBash
 model: inherit

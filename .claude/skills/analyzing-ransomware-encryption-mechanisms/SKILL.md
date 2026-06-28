@@ -1,9 +1,6 @@
 ---
 name: analyzing-ransomware-encryption-mechanisms
-description: 'Analyzes encryption algorithms, key management, and file encryption
-  routines used by ransomware families to assess decryption feasibility, identify
-  implementation weaknesses, and support recovery efforts. Covers AES, RSA, ChaCha20,
-  and hybrid encryption schemes. Activates for requests involving ransomware cryptanalysis,
+description:  分析勒索软件家族使用的加密算法、密钥管理和文件加密模式，评估解密可行性、识别实现弱点并支持恢复工作。涵盖 AES、RSA、ChaCha20 和混合加密方案。适用于勒索软件加密分析、文件恢复评估或加密弱点研究。
   encryption analysis, key recovery assessment, or ransomware decryption feasibility.
 
   '

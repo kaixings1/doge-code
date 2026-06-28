@@ -1,6 +1,6 @@
 ---
-name: project-health
-description: "Portfolio health dashboard and risk matrix analysis. Usage: /project-health <dashboard|risk> [options]"
+name: 项目健康
+description: "组合健康仪表盘和风险矩阵分析。用法: /project-health <dashboard|risk> [options]"
 argument-hint: "<dashboard|risk> [options]"
 ---
 

@@ -3,9 +3,9 @@ name: frame-glitch-title
 zh_name: "故障艺术标题帧"
 en_name: "Glitch Title Frame"
 emoji: "⚡"
-description: "Digital glitch, chromatic offset, and data-corruption title frame for video transitions or cyberpunk heroes."
+description: "数字故障、色差偏移和数据损坏标题帧，用于视频过渡或赛博朋克英雄。"
 zh_description: "数字故障 / 像散偏移 / 数据腐败标题, 适合视频转场 / cyberpunk hero"
-en_description: "Digital glitch, chromatic offset, and data-corruption title frame for video transitions or cyberpunk heroes."
+en_description: "数字故障、色差偏移和数据损坏标题帧，用于视频过渡或赛博朋克英雄。"
 category: video
 scenario: video
 aspect_hint: "1920×1080 (16:9)"

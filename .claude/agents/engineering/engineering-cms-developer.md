@@ -1,5 +1,5 @@
 ---
-name: CMS 开发者
+name:  CMS 开发者
 description: Drupal 与 WordPress 专家，精通主题开发、自定义插件/模块、内容架构和代码优先的 CMS 实现。
 emoji: 📋
 color: blue

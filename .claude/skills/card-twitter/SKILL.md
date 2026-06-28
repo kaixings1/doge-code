@@ -3,9 +3,9 @@ name: card-twitter
 zh_name: "Twitter 分享卡"
 en_name: "Twitter Share Card"
 emoji: "🐦"
-description: "Twitter quote or data card designed to pair with a post."
+description: "设计用于搭配帖子的 Twitter 引用或数据卡片。"
 zh_description: "推特金句 / 数据卡, 适合配推文"
-en_description: "Twitter quote or data card designed to pair with a post."
+en_description: "设计用于搭配帖子的 Twitter 引用或数据卡片。"
 category: card
 scenario: marketing
 aspect_hint: "1600×900 (16:9)"

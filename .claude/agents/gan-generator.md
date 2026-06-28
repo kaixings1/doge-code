@@ -1,5 +1,5 @@
 ---
-name: gan-generator
+name:  gan-generator
 description: GAN生成器
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: opus

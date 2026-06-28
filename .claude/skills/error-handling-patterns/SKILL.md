@@ -1,6 +1,6 @@
 ---
 name: error-handling-patterns
-description: "Build resilient applications with robust error handling strategies that gracefully handle failures and provide excellent debugging experiences."
+description: "构建具有强大错误处理策略的弹性应用，优雅处理故障并提供卓越的调试体验。"
 risk: safe
 source: community
 date_added: "2026-02-27"

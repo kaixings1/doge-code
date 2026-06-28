@@ -1,6 +1,6 @@
 ---
 name: infinity
-description: "Enforces a strict input boundary protocol (detect, classify, filter, verify) to ensure untrusted data never reaches business logic raw."
+description: "执行严格的输入边界协议（检测、分类、过滤、验证），确保不受信任的数据永远不会以原始形式到达业务逻辑。"
 risk: safe
 source: community
 date_added: "2026-06-23"

@@ -1,5 +1,5 @@
 ---
-name: sprint-health
+name: 迭代健康
 description: "Sprint health scoring and velocity analysis for agile teams. Usage: /sprint-health <analyze|velocity> [options]"
 argument-hint: "<analyze|velocity> [options]"
 ---

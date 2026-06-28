@@ -1,6 +1,6 @@
 ---
 name: agent-orchestration-improve-agent
-description: "Systematic improvement of existing agents through performance analysis, prompt engineering, and continuous iteration."
+description: "通过性能分析、提示工程和持续迭代来系统性地改进现有代理。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

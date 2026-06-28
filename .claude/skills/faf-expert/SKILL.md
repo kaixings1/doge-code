@@ -1,6 +1,6 @@
 ---
 name: faf-expert
-description: "Advanced .faf (Foundational AI-context Format) specialist. IANA-registered format, MCP server config, championship scoring, bi-directional sync."
+description: "高级 .faf（基础 AI 上下文格式）专家。IANA 注册格式、MCP 服务器配置、锦标赛评分、双向同步。"
 category: coding
 risk: safe
 source: community

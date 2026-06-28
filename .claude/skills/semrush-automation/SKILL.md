@@ -1,6 +1,6 @@
 ---
 name: SEMrush Automation
-description: "Automate SEO analysis with SEMrush -- research keywords, analyze domain organic rankings, audit backlinks, assess keyword difficulty, and discover related terms through the Composio SEMrush integration."
+description: "通过 Composio SEMrush 集成自动执行 SEO 分析——研究关键词、分析域名自然排名、审计反向链接、评估关键词难度和发现相关术语。"
 requires:
   mcp:
     - rube

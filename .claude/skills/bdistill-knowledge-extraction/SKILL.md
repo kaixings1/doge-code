@@ -1,6 +1,6 @@
 ---
 name: bdistill-knowledge-extraction
-description: "Extract structured domain knowledge from AI models in-session or from local open-source models via Ollama. No API key needed."
+description: "从 AI 模型中提取结构化领域知识，可在会话中或通过 Ollama 从本地开源模型中提取。无需 API 密钥。"
 category: ai-research
 risk: safe
 source: community

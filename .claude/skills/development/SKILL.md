@@ -1,6 +1,6 @@
 ---
 name: development
-description: "Comprehensive web, mobile, and backend development workflow bundling frontend, backend, full-stack, and mobile development skills for end-to-end application delivery."
+description: "综合的 Web、移动和后端开发工作流，捆绑前端、后端、全栈和移动开发技能，实现端到端应用交付。"
 category: workflow-bundle
 risk: safe
 source: personal

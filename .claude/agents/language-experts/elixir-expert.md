@@ -1,6 +1,6 @@
 ---
-name: elixir-expert
-description: elixir expert - elixir expert - Elixir development with Phoenix, OTP supervi...
+name:  elixir-expert
+description:   专家
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

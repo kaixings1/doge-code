@@ -1,5 +1,5 @@
 ---
-name: devops-tracker
+name:  devops-tracker
 description: DevOps跟踪器
 tools:
   - Read

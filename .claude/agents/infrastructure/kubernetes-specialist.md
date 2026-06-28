@@ -1,5 +1,5 @@
 ---
-name: kubernetes-specialist
+name:  kubernetes-specialist
 description: kubernetes 专家 - Kubernetes operators, CRDs, service mesh with Istio, and adv...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -1,6 +1,6 @@
 ---
 name: computer-vision-expert
-description: "SOTA Computer Vision Expert (2026). Specialized in YOLO26, Segment Anything 3 (SAM 3), Vision Language Models, and real-time spatial analysis."
+description: "SOTA 计算机视觉专家（2026）。专注于 YOLO26、Segment Anything 3 (SAM 3)、Depth Anything V2、3D Gaussian Splatting 和 Neural Radiance Fields。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

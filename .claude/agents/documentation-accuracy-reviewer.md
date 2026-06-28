@@ -1,5 +1,5 @@
 ---
-name: documentation-accuracy-reviewer
+name:  审查员
 description: 文档准确性审查者
 tools: Glob, Grep, Read, WebFetch, TodoWrite, WebSearch, BashOutput, KillBash
 model: inherit

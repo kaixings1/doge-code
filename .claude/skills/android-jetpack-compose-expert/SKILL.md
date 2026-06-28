@@ -1,6 +1,6 @@
 ---
 name: android-jetpack-compose-expert
-description: "Expert guidance for building modern Android UIs with Jetpack Compose, covering state management, navigation, performance, and Material Design 3."
+description: "使用 Jetpack Compose 构建现代 Android UI 的专家指导，涵盖状态管理、导航、性能和 Material Design 3。"
 risk: safe
 source: community
 date_added: "2026-02-27"

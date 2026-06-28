@@ -1,4 +1,4 @@
-Rename a symbol (variable, function, class, file) across the entire codebase.
+在整个代码库中重命名符号（变量、函数、类、文件）。
 
 ## Steps
 

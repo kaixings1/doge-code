@@ -1,6 +1,6 @@
 ---
 name: obsidian-markdown
-description: "Write correct Obsidian Flavored Markdown: wikilinks, embeds, callouts, properties, tags, highlights, math, and canvas syntax. Reference this when creating or editing any wiki page. Triggers on: write obsidian note, obsidian syntax, wikilink, callout, embed, obsidian markdown, wikilink format, callout syntax, embed syntax, obsidian formatting, how to write obsidian markdown."
+description: "编写正确的 Obsidian 风味 Markdown：wikilinks、嵌入、callout、属性、标签、高亮、数学和 canvas 语法。在创建或编辑任何 wiki 页面时参考此技能。触发词：写 obsidian 笔记、obsidian 语法、wikilink、callout、嵌入、obsidian markdown、wikilink 格式、callout 语法、嵌入语法、obsidian 格式化、如何写 obsidian markdown。"
 allowed-tools: Read Write Edit
 ---
 

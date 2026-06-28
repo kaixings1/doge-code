@@ -1,6 +1,6 @@
 ---
-name: scientist
-description: Data analysis and research execution specialist
+name:  scientist
+description:   专家
 model: sonnet
 level: 3
 disallowedTools: Write, Edit

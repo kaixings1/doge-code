@@ -1,6 +1,6 @@
 ---
 name: deploy-to-vercel
-description: "Deploy applications and websites to Vercel. Use when the user requests deployment actions like \"deploy my app\", \"deploy and give me the link\", \"push this live\", or \"create a preview deployment\"."
+description: "将应用和网站部署到 Vercel。当用户请求部署操作如"部署我的应用"、"部署并给我链接"、"推送到线上"或"创建预览部署"时使用。"
 risk: safe
 source: "https://github.com/vercel-labs/agent-skills"
 date_added: "2026-06-02"

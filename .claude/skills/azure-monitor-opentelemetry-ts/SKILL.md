@@ -1,6 +1,6 @@
 ---
 name: azure-monitor-opentelemetry-ts
-description: "Auto-instrument Node.js applications with distributed tracing, metrics, and logs."
+description: "指导 TypeScript 开发者使用 Azure Monitor OpenTelemetry 收集遥测数据。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

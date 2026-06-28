@@ -1,6 +1,6 @@
 ---
-name: git-master
-description: Git expert for atomic commits, rebasing, and history management with style detection
+name:  git-master
+description:   专家
 model: sonnet
 level: 3
 ---

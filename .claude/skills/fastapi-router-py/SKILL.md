@@ -1,6 +1,6 @@
 ---
 name: fastapi-router-py
-description: "Create FastAPI routers following established patterns with proper authentication, response models, and HTTP status codes."
+description: "遵循既定模式创建 FastAPI 路由器，具有适当的认证、响应模型和 HTTP 状态码。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

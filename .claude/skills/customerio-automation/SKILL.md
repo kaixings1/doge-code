@@ -1,6 +1,6 @@
 ---
-name: Customer.io Automation
-description: "Automate customer engagement workflows including broadcast triggers, message analytics, segment management, and newsletter tracking through Customer.io via Composio"
+name: customerio-自动化
+description: "自动化 Customer.io 客户互动工作流程，包括批量触发、消息分析、细分管理和新闻通讯追踪。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp:
     - rube

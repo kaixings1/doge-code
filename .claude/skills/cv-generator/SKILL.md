@@ -1,6 +1,6 @@
 ---
 name: cv-generator
-description: "Generate professional, ATS-optimized CVs for FlowCV, Canva, Google Docs, or Word. Handles multi-source merging, JD targeting, seniority adaptation, and humanized rewriting. Outputs paste-ready text with an ATS flaw report and improvement suggestions."
+description: "为 FlowCV、Canva、Google Docs 或 Word 生成专业的、ATS 优化的简历。处理多源合并、职位定向、资历适配和人性化重写。输出即粘文本及 ATS 缺陷报告和改进建议。"
 category: content
 risk: safe
 source: community

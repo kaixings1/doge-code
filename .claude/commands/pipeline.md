@@ -1,6 +1,6 @@
 ---
-name: pipeline
-description: "Detect stack and generate CI/CD pipeline configs. Usage: /pipeline <detect|generate> [options]"
+name: CI/CD管道
+description: "检测技术栈并生成 CI/CD 管道配置。用法: /pipeline <detect|generate> [options]"
 argument-hint: "<detect|generate> [options]"
 ---
 

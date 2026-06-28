@@ -1,6 +1,6 @@
 ---
 name: authentication-patterns
-description: placeholder
+description:  placeholder
 ---
 
 # Authentication Patterns

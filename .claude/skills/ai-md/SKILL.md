@@ -1,6 +1,6 @@
 ---
 name: ai-md
-description: "Convert human-written CLAUDE.md into AI-native structured-label format. Battle-tested across 4 models. Same rules, fewer tokens, higher compliance."
+description: "将人工编写的 CLAUDE.md 转换为 AI 原生结构化标签格式。经过 4 个模型验证。相同规则，更少 token，更高合规性。"
 risk: safe
 source: community
 date_added: "2026-03-11"

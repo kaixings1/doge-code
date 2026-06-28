@@ -1,5 +1,5 @@
 ---
-name: silent-failure-hunter
+name:  silent-failure-hunter
 description: 静默失败猎手
 model: sonnet
 tools: [Read, Grep, Glob, Bash]

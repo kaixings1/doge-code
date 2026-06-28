@@ -1,6 +1,6 @@
 ---
 name: pixelbin-media
-description: |
+description:  |
   Generate and edit images and videos with an 85+ API portfolio and build visually appealing website pages via Pixelbin.
 triggers:
   - "pixelbin"

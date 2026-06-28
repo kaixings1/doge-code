@@ -1,5 +1,5 @@
 ---
-name: vue-specialist
+name:  vue-specialist
 description: vue 专家 - Vue 3 development with Composition API, Pinia state manageme...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

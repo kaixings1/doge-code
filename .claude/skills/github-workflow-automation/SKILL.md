@@ -1,6 +1,6 @@
 ---
 name: github-workflow-automation
-description: "Patterns for automating GitHub workflows with AI assistance, inspired by [Gemini CLI](https://github.com/google-gemini/gemini-cli) and modern DevOps practices."
+description: "使用 AI 辅助自动化 GitHub 工作流的模式。"
 risk: critical
 source: community
 date_added: "2026-02-27"

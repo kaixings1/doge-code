@@ -1,5 +1,5 @@
 ---
-name: docs-lookup
+name:  docs-lookup
 description: 文档查找代理
 tools: ["Read", "Grep", "mcp__context7__resolve-library-id", "mcp__context7__query-docs"]
 model: sonnet

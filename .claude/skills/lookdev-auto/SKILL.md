@@ -1,6 +1,6 @@
 ---
 name: lookdev-auto
-description: "Automated visual tuning: a vision or video model rates rendered variants in a loop. Render several labeled variants into one artifact, ask the model to rate them and suggest better values, render the suggestions, ask it to pick the best, repeat until good — the model is the eye, you run the loop."
+description: "自动化视觉调优：视觉或视频模型在循环中对渲染变体进行评级。将多个标记变体渲染为一个工件，要求模型评分并建议更佳值，渲染建议，要求选择最佳，重复直到良好——模型是眼睛，您运行循环。"
 risk: safe
 source: community
 source_type: community

@@ -1,4 +1,4 @@
-Create a pull request with a structured description based on the current branch's changes.
+根据当前分支的更改创建具有结构化描述的拉取请求。
 
 ## Steps
 

@@ -1,5 +1,5 @@
 ---
-description: Create and setup a new Claude Agent SDK application
+description: 创建并设置新的 Claude Agent SDK 应用
 argument-hint: [project-name]
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: seo-local
-description: >
+description:  >
   Local SEO analysis covering Google Business Profile optimization, NAP
   consistency, citation health, review signals, local schema markup,
   location page quality, multi-location SEO, and industry-specific

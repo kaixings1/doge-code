@@ -1,5 +1,5 @@
 ---
-name: network-troubleshooter
+name:  network-troubleshooter
 description: 网络故障排查者
 tools: ["Read", "Bash", "Grep"]
 model: sonnet

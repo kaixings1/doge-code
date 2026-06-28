@@ -1,6 +1,6 @@
 ---
 name: fixing-metadata
-description: "Audit and fix HTML metadata including page titles, meta descriptions, canonical URLs, Open Graph tags, Twitter cards, favicons, JSON-LD structured data, and robots directives. Use when adding or reviewing SEO and social metadata."
+description: "审计和修复 HTML 元数据，包括页面标题、meta 描述、规范 URL、Open Graph 标签、Twitter 卡片、favicon、JSON-LD 结构化数据和 robots 指令。适用于添加或审查 SEO 和社交媒体元数据。"
 risk: safe
 source: community
 version: 1.0.1

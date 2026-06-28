@@ -1,6 +1,6 @@
 ---
 name: gsd:eval-review
-description: Audit an executed AI phase's evaluation coverage and produce an EVAL-REVIEW.md remediation plan.
+审计已执行的 AI 阶段的评估覆盖范围并生成 EVAL-REVIEW.md 修复计划。
 argument-hint: "[phase number]"
 allowed-tools:
   - Read

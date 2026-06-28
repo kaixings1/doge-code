@@ -1,4 +1,4 @@
-Set up monitoring, alerting, and observability for the application.
+为应用设置监控、告警和可观测性。
 
 ## Steps
 

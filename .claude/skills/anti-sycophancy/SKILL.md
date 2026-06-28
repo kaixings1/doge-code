@@ -1,7 +1,7 @@
 ---
 name: anti-sycophancy
 version: 2.0.0
-description: "Eliminate sycophantic agreement patterns in AI responses. Load via /skill anti-sycophancy."
+description: "消除 AI 响应中的奉承同意模式。通过 /skill anti-sycophancy 加载。"
 risk: safe
 source: community
 source_type: community

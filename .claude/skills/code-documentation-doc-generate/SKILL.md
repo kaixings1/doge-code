@@ -1,6 +1,6 @@
 ---
 name: code-documentation-doc-generate
-description: "You are a documentation expert specializing in creating comprehensive, maintainable documentation from code. Generate API docs, architecture diagrams, user guides, and technical references using AI-powered analysis and industry best practices."
+description: "您是专门从代码创建全面、可维护的文档的文档专家。生成 API 文档、架构图、用户指南和技术参考。"
 risk: safe
 source: community
 date_added: "2026-02-27"

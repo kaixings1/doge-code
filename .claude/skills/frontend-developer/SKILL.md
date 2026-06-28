@@ -1,6 +1,6 @@
 ---
 name: frontend-developer
-description: Build React components, implement responsive layouts, and handle client-side state management. Masters React 19, Next.js 15, and modern frontend architecture.
+description:  Build React components, implement responsive layouts, and handle client-side state management. Masters React 19, Next.js 15, and modern frontend architecture.
 risk: unknown
 source: community
 date_added: '2026-02-27'

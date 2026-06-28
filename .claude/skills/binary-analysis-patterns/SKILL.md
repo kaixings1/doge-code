@@ -1,6 +1,6 @@
 ---
 name: binary-analysis-patterns
-description: "Comprehensive patterns and techniques for analyzing compiled binaries, understanding assembly code, and reconstructing program logic."
+description: "使用 Ghidra、IDA Pro、Radare2 和 Binary Ninja 进行二进制分析和逆向工程的系统模式。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

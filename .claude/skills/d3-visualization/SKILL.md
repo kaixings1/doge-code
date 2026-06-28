@@ -1,6 +1,6 @@
 ---
 name: d3-visualization
-description: |
+description:  |
   Teaches the agent to produce D3 charts and interactive data visualizations. A comprehensive D3.js skill with examples across chart types and techniques giving the agent expert-level knowledge to generate complex, interactive visualizations. Useful for editorial dashboards, reports, data-rich prototypes, and explanatory graphics.
 triggers:
   - "d3"

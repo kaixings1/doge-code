@@ -1,6 +1,6 @@
 ---
-name: ux-researcher
-description: ux researcher - ux researcher - Designs and conducts user research studies i...
+name:  研究员
+description:   研究
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

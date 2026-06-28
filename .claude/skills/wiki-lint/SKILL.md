@@ -1,6 +1,6 @@
 ---
 name: wiki-lint
-description: >
+description:  >
   Health check the Obsidian wiki vault. Finds orphan pages, dead wikilinks, stale claims,
   missing cross-references, frontmatter gaps, and empty sections. Creates or updates
   Dataview dashboards. Generates canvas maps. Triggers on: "lint", "health check",

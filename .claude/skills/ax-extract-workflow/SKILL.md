@@ -1,6 +1,6 @@
 ---
 name: ax-extract-workflow
-description: "Reconstruct workflow behind a past coding-agent artifact using local ax sessions/commits/skills/tool traces. Use when asked how X was built."
+description: "使用 Apache AX 从文档和网站提取结构化数据的工作流。专注于从非结构化来源解析和提取信息。"
 category: development
 risk: safe
 source: community

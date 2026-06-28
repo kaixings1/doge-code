@@ -1,5 +1,5 @@
 ---
-name: project-manager
+name:  project-manager
 description: project 经理 - Manages sprint planning, task tracking, timeline estimation,...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

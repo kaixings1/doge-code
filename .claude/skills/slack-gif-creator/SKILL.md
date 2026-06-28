@@ -1,6 +1,6 @@
 ---
 name: slack-gif-creator
-description: |
+description:  |
   Create animated GIFs optimized for Slack with validators for size constraints and composable animation primitives.
 triggers:
   - "slack gif"

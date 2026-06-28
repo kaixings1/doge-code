@@ -1,5 +1,5 @@
 ---
-description: Generate comprehensive PR descriptions following repository templates
+description: 为设计评审生成符合仓库模板的完整 PR 描述
 ---
 
 # Generate PR Description

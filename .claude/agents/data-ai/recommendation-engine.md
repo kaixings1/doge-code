@@ -1,6 +1,6 @@
 ---
-name: recommendation-engine
-description: recommendation engine - recommendation engine - Designs recommendation systems using...
+name:  recommendation-engine
+description:   设计
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

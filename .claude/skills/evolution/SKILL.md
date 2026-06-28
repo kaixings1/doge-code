@@ -1,6 +1,6 @@
 ---
 name: evolution
-description: "This skill enables makepad-skills to self-improve continuously during development."
+description: "此技能使 makepad-skills 在开发过程中能够持续自我改进。"
 risk: critical
 source: community
 ---

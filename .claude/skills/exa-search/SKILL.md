@@ -1,6 +1,6 @@
 ---
 name: exa-search
-description: "Semantic search, similar content discovery, and structured research using Exa API. Use when you need semantic/embeddings-based search, finding similar content, or searching by category (company, people, research papers, etc.)."
+description: "使用 Exa API 进行语义搜索、相似内容发现和结构化研究。适用于需要基于语义/嵌入的搜索、查找相似内容或按类别（公司、人物、研究论文等）搜索时。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

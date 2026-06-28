@@ -1,6 +1,6 @@
 ---
 name: internal-comms-anthropic
-description: "To write internal communications, use this skill for:"
+description: "要编写内部沟通，请使用此技能："
 risk: unknown
 source: community
 date_added: "2026-02-27"

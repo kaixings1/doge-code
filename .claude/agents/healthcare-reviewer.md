@@ -1,5 +1,5 @@
 ---
-name: healthcare-reviewer
+name:  审查员
 description: 医疗代码审查专家
 tools: ["Read", "Grep", "Glob"]
 model: opus

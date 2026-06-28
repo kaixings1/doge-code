@@ -1,6 +1,6 @@
 ---
-name: Contentful Automation
-description: "Automate headless CMS operations in Contentful -- list spaces, retrieve space metadata, and update space configurations through the Composio Contentful integration."
+name: contentful-自动化
+description: "自动化 Contentful 无头 CMS 操作——列出空间、检索空间元数据、更新空间配置。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp:
     - rube

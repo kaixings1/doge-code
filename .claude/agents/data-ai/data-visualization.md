@@ -1,6 +1,6 @@
 ---
-name: data-visualization
-description: data visualization - data visualization - Creates interactive dashboards and data...
+name:  data-visualization
+description:   data visualization - data visualization - Creates interactive dashboards and data...（待汉化）
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

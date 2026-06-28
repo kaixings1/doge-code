@@ -1,6 +1,6 @@
 ---
 name: ai-agent-development
-description: "AI agent development workflow for building autonomous agents, multi-agent systems, and agent orchestration with CrewAI, LangGraph, and custom agents."
+description: "用于构建自主代理、多代理系统和代理编排的 AI 代理开发工作流，支持 CrewAI、LangGraph 和自定义代理。"
 category: granular-workflow-bundle
 risk: safe
 source: personal

@@ -1,6 +1,6 @@
 ---
 name: venice-audio-speech
-description: |
+description:  |
   Text-to-speech models, voices, formats, and streaming via Venice.ai. Useful for narration, voiceover, and conversational agent voices.
 triggers:
   - "tts"

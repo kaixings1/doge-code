@@ -1,5 +1,5 @@
 ---
-name: marketing-agent
+name:  marketing-agent
 description: 营销代理
 tools: ["Read", "Grep", "Glob", "WebSearch", "WebFetch"]
 model: sonnet

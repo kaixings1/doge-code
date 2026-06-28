@@ -1,6 +1,6 @@
 ---
 name: gsd-manage
-description: "config workspace | workstreams thread update ship inbox"
+配置 工作区 | 工作流 工作线 更新 发布 收件箱。
 argument-hint: ""
 allowed-tools:
   - Read

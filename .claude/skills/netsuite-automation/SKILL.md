@@ -1,6 +1,6 @@
 ---
 name: NetSuite Automation
-description: "NetSuite Automation: manage customers, sales orders, invoices, inventory, and records via Oracle NetSuite ERP with SuiteQL queries"
+description: "NetSuite 自动化：通过 Oracle NetSuite ERP 管理客户、销售订单、发票、库存和记录，使用 SuiteQL 查询"
 requires:
   mcp: [rube]
 ---

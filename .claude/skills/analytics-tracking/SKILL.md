@@ -1,6 +1,6 @@
 ---
 name: analytics-tracking
-description: Design, audit, and improve analytics tracking systems that produce reliable, decision-ready data.
+description:  设计、审计和改进产生可靠、可决策数据的分析追踪系统。
 risk: unknown
 source: community
 date_added: '2026-02-27'

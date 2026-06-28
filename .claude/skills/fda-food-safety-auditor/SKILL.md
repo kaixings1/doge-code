@@ -1,6 +1,6 @@
 ---
 name: fda-food-safety-auditor
-description: "Expert AI auditor for FDA Food Safety (FSMA), HACCP, and PCQI compliance. Reviews food facility records and preventive controls."
+description: "FDA 食品安全 (FSMA)、HACCP 和 PCQI 合规的 AI 审计专家。审查食品设施记录和预防控制措施。"
 risk: safe
 source: community
 ---

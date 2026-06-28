@@ -1,5 +1,5 @@
 ---
-name: event-driven-architect
+name:  架构师
 description: event driven 架构师 - Event sourcing, CQRS, message queues, and distributed event-...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -1,5 +1,5 @@
 ---
-name: ocaml-developer
+name:  ocaml-developer
 description: ocaml 开发者 - OCaml type inference, pattern matching, Dream web framework,...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

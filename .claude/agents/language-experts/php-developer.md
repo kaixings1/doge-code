@@ -1,5 +1,5 @@
 ---
-name: php-developer
+name:  php-developer
 description: php 开发者 - PHP 8.3+ and Laravel 11 development with Eloquent, queues, m...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

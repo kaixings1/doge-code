@@ -1,6 +1,6 @@
 ---
 name: linkedin-profile-optimizer
-description: "High-intent expert for LinkedIn profile checks, authority building, and SEO optimization. Invoke to audit, rewrite, and enhance profiles for top 1% positioning."
+description: "LinkedIn 档案检查、权威建设和 SEO 优化的高意向专家。调用以审计、重写和增强档案以获取前 1% 的定位。"
 category: growth
 risk: safe
 source: self

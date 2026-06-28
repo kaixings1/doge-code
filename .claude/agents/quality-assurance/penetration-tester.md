@@ -1,6 +1,6 @@
 ---
-name: penetration-tester
-description: penetration tester - penetration tester - Authorized security testing, OWASP Top ...
+name:  测试员
+description:   测试员
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

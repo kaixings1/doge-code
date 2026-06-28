@@ -1,6 +1,6 @@
 ---
 name: frontend-api-integration-patterns
-description: "Production-ready patterns for integrating frontend applications with backend APIs, including race condition handling, request cancellation, retry strategies, error normalization, and UI state management."
+description: "将前端应用与后端 API 集成的生产就绪模式，包括竞态条件处理、请求取消、重试策略、错误规范化和 UI 状态管理。"
 category: frontend
 risk: safe
 source: community

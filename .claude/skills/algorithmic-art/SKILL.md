@@ -1,6 +1,6 @@
 ---
 name: algorithmic-art
-description: "Algorithmic philosophies are computational aesthetic movements that are then expressed through code. Output .md files (philosophy), .html files (interactive viewer), and .js files (generative algorithms)."
+description: "算法哲学是通过代码表达的计算美学运动。输出 .md 文件（哲学）、.html 文件（交互式查看器）和 .js 文件（生成算法）。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

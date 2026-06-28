@@ -1,6 +1,6 @@
 ---
 name: azure-cosmos-db-py
-description: "Build production-grade Azure Cosmos DB NoSQL services following clean code, security best practices, and TDD principles."
+description: "指导 Python 开发者使用 Azure Cosmos DB 客户端库处理 NoSQL 数据。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

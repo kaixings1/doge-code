@@ -1,5 +1,5 @@
 ---
-name: java-build-resolver
+name:  java-build-resolver
 description: Java构建解决专家
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

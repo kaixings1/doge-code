@@ -1,6 +1,6 @@
 ---
 name: crossframe-suite
-description: "Use when the user explicitly invokes CrossFrame Suite for Chinese structural diagnosis workflows across relationships, organizations, public issues, philosophy, research, or essay output."
+description: "当用户明确调用 CrossFrame Suite 进行中文结构性诊断工作流时使用，涵盖关系、组织、公共议题、哲学、研究或文章输出。"
 category: workflow
 risk: safe
 source: community

@@ -1,6 +1,6 @@
 ---
 name: data-engineering-data-pipeline
-description: "You are a data pipeline architecture expert specializing in scalable, reliable, and cost-effective data pipelines for batch and streaming data processing."
+description: "您是专门设计可扩展、可靠且经济高效的数据流水线的数据管道架构专家，支持批处理和流式数据处理。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

@@ -1,7 +1,7 @@
 ---
 name: ecommerce-image-workflow
 en_name: "Ecommerce Image Workflow"
-description: |
+description:  |
   Reference-product ecommerce image workflow for generating a compact set
   of product-faithful main, feature, and lifestyle images from real product
   reference photos. V1 requires uploaded product imagery and intentionally

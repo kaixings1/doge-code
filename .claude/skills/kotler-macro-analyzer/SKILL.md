@@ -1,6 +1,6 @@
 ---
 name: kotler-macro-analyzer
-description: "Professional PESTEL/SWOT analysis agent based on Kotler's methodology for strategic market audits."
+description: "基于 Kotler 方法论的专业 PESTEL/SWOT 分析代理，用于战略市场审计。"
 category: business-strategy
 risk: safe
 source: self

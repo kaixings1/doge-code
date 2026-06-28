@@ -1,6 +1,6 @@
 ---
 name: error-debugging-error-analysis
-description: "You are an expert error analysis specialist with deep expertise in debugging distributed systems, analyzing production incidents, and implementing comprehensive observability solutions."
+description: "您是具有调试分布式系统、分析生产事件和实施全面可观察性解决方案深厚专业知识的错误分析专家。"
 risk: safe
 source: community
 date_added: "2026-02-27"

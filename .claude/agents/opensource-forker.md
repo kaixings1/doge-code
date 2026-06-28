@@ -1,5 +1,5 @@
 ---
-name: opensource-forker
+name:  opensource-forker
 description: 开源分叉工具
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

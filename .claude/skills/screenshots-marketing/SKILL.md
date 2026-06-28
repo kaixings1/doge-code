@@ -1,6 +1,6 @@
 ---
 name: screenshots-marketing
-description: |
+description:  |
   Generate marketing screenshots with Playwright. Useful for landing-page hero shots, App Store screenshots, and changelog visuals.
 triggers:
   - "marketing screenshot"

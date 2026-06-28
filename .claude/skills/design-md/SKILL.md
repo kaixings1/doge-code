@@ -1,6 +1,6 @@
 ---
 name: design-md
-description: "Analyze Stitch projects and synthesize a semantic design system into DESIGN.md files"
+description: "分析 Stitch 项目并将语义设计系统综合到 DESIGN.md 文件中"
 risk: safe
 source: "https://github.com/google-labs-code/stitch-skills/tree/main/skills/design-md"
 date_added: "2026-02-27"

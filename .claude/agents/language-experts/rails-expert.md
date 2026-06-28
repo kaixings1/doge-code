@@ -1,6 +1,6 @@
 ---
-name: rails-expert
-description: rails expert - rails expert - Ruby on Rails 7+ development with Hotwire, Ac...
+name:  rails-expert
+description:   专家
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,5 +1,5 @@
 ---
-name: mobile-developer
+name:  mobile-developer
 description: 移动端 开发者 - React Native and Flutter cross-platform specialist with nati...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -1,4 +1,4 @@
-Generate a changelog from git history since the last tag or a specified reference point.
+基于自上一个标签起（或指定参考点）的 git 历史生成更新日志。
 
 ## Steps
 

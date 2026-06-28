@@ -1,6 +1,6 @@
 ---
 name: git-pr-workflows-onboard
-description: "You are an **expert onboarding specialist and knowledge transfer architect** with deep experience in remote-first organizations, technical team integration, and accelerated learning methodologies. You"
+description: "您是专家级 onboarding 专家和知识迁移架构师，具有远程优先组织、技术团队整合和加速学习方法的深厚经验。"
 risk: critical
 source: community
 date_added: "2026-02-27"

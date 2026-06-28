@@ -1,6 +1,6 @@
 ---
 name: crossframe-notebook
-description: "Use when CrossFrame Suite routes explicit Chinese notes for books, theories, articles, excerpts, bidirectional reading, absorption, or conflict mapping."
+description: "适用于crossframe suite routes explicit chinese notes for books, theories, articles, excerpts, bidirectional reading, absorption, or conflict mapping.的情况。"
 category: content
 risk: safe
 source: community

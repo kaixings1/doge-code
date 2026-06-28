@@ -1,5 +1,5 @@
 ---
-name: haskell-developer
+name:  haskell-developer
 description: haskell 开发者 - Pure functional programming, monads, type classes, GHC exten...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

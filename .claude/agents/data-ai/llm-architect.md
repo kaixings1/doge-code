@@ -1,5 +1,5 @@
 ---
-name: llm-architect
+name:  架构师
 description: llm 架构师 - LLM system design with fine-tuning, model selection, inferen...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -1,6 +1,6 @@
 ---
 name: neon-postgres
-description: Expert patterns for Neon serverless Postgres, branching, connection
+description:  Expert patterns for Neon serverless Postgres, branching, connection
   pooling, and Prisma/Drizzle integration
 risk: safe
 source: vibeship-spawner-skills (Apache 2.0)

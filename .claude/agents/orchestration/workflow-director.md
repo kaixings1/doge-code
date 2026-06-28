@@ -1,6 +1,6 @@
 ---
-name: workflow-director
-description: workflow director - workflow director - End-to-end workflow orchestration, check...
+name:  workflow-director
+description:   workflow director - workflow director - End-to-end workflow orchestration, check...（待汉化）
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

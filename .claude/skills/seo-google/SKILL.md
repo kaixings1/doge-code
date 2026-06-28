@@ -1,6 +1,6 @@
 ---
 name: seo-google
-description: >
+description:  >
   Google SEO APIs: Search Console (Search Analytics, URL Inspection, Sitemaps),
   PageSpeed Insights v5, CrUX field data with 25-week history, Indexing API v3,
   and GA4 organic traffic. Provides real Google field data for Core Web Vitals,

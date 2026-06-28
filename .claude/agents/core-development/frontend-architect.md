@@ -1,5 +1,5 @@
 ---
-name: frontend-architect
+name:  架构师
 description: 前端 架构师 - React/Next.js specialist with performance optimization, SSR/...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

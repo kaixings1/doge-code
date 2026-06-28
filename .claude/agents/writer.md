@@ -1,6 +1,6 @@
 ---
-name: writer
-description: Technical documentation writer for README, API docs, and comments (Haiku)
+name:  文档撰写
+description:   文档
 model: haiku
 level: 2
 ---

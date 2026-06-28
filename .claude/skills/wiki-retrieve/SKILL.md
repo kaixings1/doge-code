@@ -1,6 +1,6 @@
 ---
 name: wiki-retrieve
-description: "Hybrid retrieval primitive for the Compound Vault. Replaces the v1.6 static hot→index→drill read order with contextual-prefix + BM25 + cosine-rerank, modeled on Anthropic's Sept 2024 Contextual Retrieval research (35-49-67% retrieval-failure reduction). Opt-in via `bash bin/setup-retrieve.sh`; feature-detected by wiki-query and autoresearch. Triggers on: retrieve, hybrid retrieval, BM25, rerank, contextual retrieval, search the chunks, chunk search, vault search, semantic search, what chunks match, find relevant passages."
+description: "Compound Vault 的混合检索原语。用上下文前缀 + BM25 + 余弦重排序替换 v1.6 的静态热→索引→深度读取顺序，基于 Anthropic 2024 年 9 月的上下文检索研究（检索失败率降低 35-49-67%）。通过 `bash bin/setup-retrieve.sh` 选择加入；由 wiki-query 和 autoresearch 进行特征检测。"
 allowed-tools: Read Bash
 ---
 

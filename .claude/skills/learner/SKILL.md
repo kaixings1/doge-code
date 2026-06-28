@@ -1,6 +1,6 @@
 ---
 name: learner
-description: Extract a learned skill from the current conversation
+description:  Extract a learned skill from the current conversation
 level: 7
 ---
 

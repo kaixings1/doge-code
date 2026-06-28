@@ -1,6 +1,6 @@
 ---
 name: drizzle-orm-expert
-description: "Expert in Drizzle ORM for TypeScript — schema design, relational queries, migrations, and serverless database integration. Use when building type-safe database layers with Drizzle."
+description: "Drizzle ORM for TypeScript 专家——schema 设计、关系查询、迁移和无服务器数据库集成。适用于使用 Drizzle 构建类型安全的数据库层。"
 risk: safe
 source: community
 date_added: "2026-03-04"

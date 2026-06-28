@@ -1,6 +1,6 @@
 ---
 name: design-brief
-description: |
+description:  |
   Parse a structured design brief written in I-Lang protocol format into a
   concrete design spec. Eliminates ambiguity from vague requests like
   "make it professional" by requiring explicit dimensions: palette, typography,

@@ -1,5 +1,5 @@
 ---
-description: Scan and optimize docs for SEO — meta tags, readability, keywords, broken links, sitemap.
+description: 扫描并优化文档 SEO — Meta 标签、可读性、关键词、失效链接、站点地图。
 ---
 
 Run the SEO auditor on documentation files. Target path: `$ARGUMENTS` (default: all docs/ and root README.md).

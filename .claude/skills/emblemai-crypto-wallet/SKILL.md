@@ -1,6 +1,6 @@
 ---
 name: emblemai-crypto-wallet
-description: "Crypto wallet management across 7 blockchains via EmblemAI Agent Hustle API. Balance checks, token swaps, portfolio analysis, and transaction execution for Solana, Ethereum, Base, BSC, Polygon, Hedera, and Bitcoin."
+description: "通过 EmblemAI Agent Hustle API 在 7 条区块链上管理加密钱包。Solana、Ethereum、Base、BSC、Polygon、Hedera 和 Bitcoin 的余额检查、代币交换、投资组合分析和交易执行。"
 risk: critical
 source: "EmblemCompany/Agent-skills (MIT)"
 date_added: "2026-03-06"

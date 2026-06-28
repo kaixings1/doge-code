@@ -1,6 +1,6 @@
 ---
 name: accint-solve
-description: "Route agent work through AccInt's MCP memory loop: retrieve prior outcomes, resolve frames, and close commitments with evidence."
+description: "通过 AccInt 的 MCP 记忆循环路由代理工作：检索之前的结果、解析框架、用证据关闭承诺。"
 category: ai-agents
 risk: safe
 source: community

@@ -1,6 +1,6 @@
 ---
 name: database-migration
-description: "Master database schema and data migrations across ORMs (Sequelize, TypeORM, Prisma), including rollback strategies and zero-downtime deployments."
+description: "数据库迁移策略：模式变更、数据迁移、回滚计划、零停机迁移和迁移工具。适用于更改数据库模式。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

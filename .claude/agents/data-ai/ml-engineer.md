@@ -1,5 +1,5 @@
 ---
-name: ml-engineer
+name:  ml-engineer
 description: ml 工程师 - Machine learning pipeline development with training, evaluat...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

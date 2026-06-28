@@ -1,6 +1,6 @@
 ---
 name: achieving-cmmc-level-2-compliance
-description: >-
+description:  >-
   Prepare a defense-contractor environment for CMMC Level 2 certification: scope CUI
   and FCI, implement the 110 NIST SP 800-171 Rev 2 security requirements across 14
   families, compute the SPRS score with the DoD Assessment Methodology, manage a

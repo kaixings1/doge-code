@@ -1,5 +1,5 @@
 ---
-name: data-engineer
+name:  data-engineer
 description: data 工程师 - Data pipeline engineering with ETL/ELT workflows, Spark, dat...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

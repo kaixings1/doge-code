@@ -1,5 +1,5 @@
 ---
-description: Run the local review gate before pushing.
+description: 推送前运行本地审查关卡。
 ---
 
 Perform a complete review pass:

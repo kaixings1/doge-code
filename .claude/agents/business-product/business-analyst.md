@@ -1,5 +1,5 @@
 ---
-name: business-analyst
+name:  需求分析师
 description: business 分析师 - Performs requirements analysis, process mapping, gap analysi...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

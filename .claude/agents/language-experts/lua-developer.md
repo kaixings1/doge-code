@@ -1,5 +1,5 @@
 ---
-name: lua-developer
+name:  lua-developer
 description: lua 开发者 - Game scripting with Lua, Neovim plugin development, embedded...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -1,6 +1,6 @@
 ---
 name: "landing-page-generator"
-description: "Generates high-converting Next.js/React landing pages with Tailwind CSS. Uses PAS, AIDA, and BAB frameworks for optimized copy/components (Heroes, Features, Pricing). Focuses on Core Web Vitals/SEO."
+description: "使用 Tailwind CSS 生成高转化率的 Next.js/React 着陆页。使用 PAS、AIDA 和 BAB 框架获取优化的文案/组件（Hero、Features、Pricing）。关注 Core Web Vitals/SEO。"
 category: "front-end"
 risk: "safe"
 source: "community"

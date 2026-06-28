@@ -1,6 +1,6 @@
 ---
 name: microservices-patterns
-description: "Master microservices architecture patterns including service boundaries, inter-service communication, data management, and resilience patterns for building distributed systems."
+description: "掌握微服务架构模式，包括服务边界、服务间通信、数据管理和用于构建分布式系统的弹性模式。"
 risk: none
 source: community
 date_added: "2026-02-27"

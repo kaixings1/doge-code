@@ -1,5 +1,5 @@
 ---
-name: gan-evaluator
+name:  gan-evaluator
 description: GAN评估器
 tools: ["Read", "Write", "Bash", "Grep", "Glob"]
 model: opus

@@ -1,5 +1,5 @@
 ---
-name: swift-build-resolver
+name:  swift-build-resolver
 description: Swift构建解决专家
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

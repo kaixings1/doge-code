@@ -1,5 +1,5 @@
 ---
-name: qa-automation
+name:  qa-automation
 description: qa 自动化 - Test automation frameworks, CI integration, test data manage...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

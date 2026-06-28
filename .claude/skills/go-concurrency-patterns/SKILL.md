@@ -1,6 +1,6 @@
 ---
 name: go-concurrency-patterns
-description: "Master Go concurrency with goroutines, channels, sync primitives, and context. Use when building concurrent Go applications, implementing worker pools, or debugging race conditions."
+description: "使用 goroutine、channel、同步原语和 context 掌握 Go 并发。适用于构建并发 Go 应用、实现工作池或调试竞态条件。"
 risk: safe
 source: community
 date_added: "2026-02-27"

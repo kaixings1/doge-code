@@ -1,5 +1,5 @@
 ---
-name: OrgScript 工程师
+name:  OrgScript 工程师
 description: 精通 OrgScript 语法的设计、解析与实现，擅长 AST 校验和业务逻辑定义。
 color: green
 emoji: 📜

@@ -1,6 +1,6 @@
 ---
 name: flowhunt-skill
-description: "Automation discovery audit skill. Walks through a 5-question workflow intake, then audits Gmail/Calendar/Slack/task trackers to identify automation opportunities. Use when a user wants to discover what processes in their business can be automated."
+description: "自动化发现审计技能。通过 5 问题工作流引导，然后审计 Gmail/Calendar/Slack/任务跟踪器以识别自动化机会。当用户想要发现其业务中可以自动化的流程时使用。"
 category: automation
 risk: safe
 source: community

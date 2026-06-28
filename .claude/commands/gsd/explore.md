@@ -1,6 +1,6 @@
 ---
 name: gsd:explore
-description: Socratic ideation and idea routing — think through ideas before committing to plans
+苏格拉底式构思和想法路由 - 在制定计划前深入思考。
 allowed-tools:
   - Read
   - Write

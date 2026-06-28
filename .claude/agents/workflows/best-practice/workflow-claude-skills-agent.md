@@ -1,5 +1,5 @@
 ---
-name: workflow-claude-skills-agent
+name:  workflow-claude-skills-agent
 description: workflow claude skills 代理 - Research agent that fetches Claude Code docs, reads the loca...
 model: opus
 color: magenta

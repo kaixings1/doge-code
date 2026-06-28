@@ -1,5 +1,5 @@
 ---
-name: security-researcher
+name:  研究员
 description: 安全 researcher - Conducts CVE analysis, vulnerability research, threat modeli...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

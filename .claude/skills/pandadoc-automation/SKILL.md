@@ -1,6 +1,6 @@
 ---
 name: PandaDoc Automation
-description: "Automate document workflows with PandaDoc -- create documents from files, manage contacts, organize folders, set up webhooks, create templates, and track document status through the Composio PandaDoc integration."
+description: "通过 Composio PandaDoc 集成自动执行文档工作流——从文件创建文档、管理联系人、组织文件夹、设置 webhook、创建模板和跟踪文档状态。"
 requires:
   mcp:
     - rube

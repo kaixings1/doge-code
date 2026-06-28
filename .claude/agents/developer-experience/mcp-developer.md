@@ -1,5 +1,5 @@
 ---
-name: mcp-developer
+name:  mcp-developer
 description: mcp 开发者 - Develops MCP servers and tools following the Model Context P...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

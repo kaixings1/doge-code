@@ -1,5 +1,5 @@
 ---
-name: fsharp-reviewer
+name:  审查员
 description: F#代码审查专家
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet

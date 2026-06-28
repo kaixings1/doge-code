@@ -1,5 +1,5 @@
 ---
-name: agent-evaluator
+name:  agent-evaluator
 description: 代理评估者，测试AI代理性能
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet

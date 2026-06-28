@@ -1,6 +1,6 @@
 ---
 name: atlas-contract
-description: "Goal-integrity skill. Use for backend/API/persistence, preserve/do-not-change, tests/validation, mocks, rework, multi-part requests. Emits Goal Contracts, Deviation Notices, Phase Checks, Final Audits. Skip for Q&A or trivial edits."
+description: "AlgoKit 智能合约开发 — 使用 Python 为 Algorand 区块链编写、测试和部署 TEALScript 或 PuyaPy 合约。"
 risk: critical
 source: community
 source_repo: wede-wx/atlas

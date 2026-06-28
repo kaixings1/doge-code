@@ -1,6 +1,6 @@
 ---
 name: lint-and-validate
-description: "MANDATORY: Run appropriate validation tools after EVERY code change. Do not finish a task until the code is error-free."
+description: "强制：在每次代码更改后运行适当的验证工具。在代码无错误之前不要完成任务。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

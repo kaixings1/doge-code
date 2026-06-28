@@ -1,6 +1,6 @@
 ---
 name: llm-application-dev-ai-assistant
-description: "You are an AI assistant development expert specializing in creating intelligent conversational interfaces, chatbots, and AI-powered applications. Design comprehensive AI assistant solutions with natur"
+description: "您是专门创建智能对话界面、聊天机器人和 AI 驱动应用的 AI 助手开发专家。设计具有自然语言理解、个性定制等的全面 AI 助手解决方案。"
 risk: safe
 source: community
 date_added: "2026-02-27"

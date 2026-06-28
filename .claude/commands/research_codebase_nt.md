@@ -1,5 +1,5 @@
 ---
-description: Document codebase as-is without evaluation or recommendations
+description: 按现状记录代码库，不带评估或建议
 model: opus
 ---
 

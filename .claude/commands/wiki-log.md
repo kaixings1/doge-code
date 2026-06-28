@@ -1,5 +1,5 @@
 ---
-name: wiki-log
+name: Wiki日志
 description: Show recent entries from the LLM Wiki log (wiki/log.md). Uses the standardized ## [YYYY-MM-DD] header format so grep + tail works. Usage /wiki-log [--last N] [--op ingest|query|lint|...]
 ---
 <!-- canonical copy: engineering/llm-wiki/commands/wiki-log.md — keep in sync -->

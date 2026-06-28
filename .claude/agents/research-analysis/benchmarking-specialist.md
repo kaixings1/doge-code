@@ -1,5 +1,5 @@
 ---
-name: benchmarking-specialist
+name:  benchmarking-specialist
 description: benchmarking 专家 - Designs performance benchmarks, load tests, comparative eval...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

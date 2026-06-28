@@ -1,6 +1,6 @@
 ---
-name: media-streaming
-description: media streaming - media streaming - Builds video streaming platforms with HLS/...
+name:  media-streaming
+description:   构建
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: distributed-debugging-debug-trace
-description: "You are a debugging expert specializing in setting up comprehensive debugging environments, distributed tracing, and diagnostic tools. Configure debugging workflows, implement tracing solutions, and establish troubleshooting practices for development and production environments."
+description: "您是专门设置全面调试环境、分布式追踪和诊断工具的调试专家。配置调试工作流，实现追踪解决方案，为开发和运维环境建立故障排除实践。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

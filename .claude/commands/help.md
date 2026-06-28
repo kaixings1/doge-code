@@ -1,5 +1,5 @@
 ---
-description: Get help with the hookify plugin
+description: 获取 hookify 插件的帮助
 allowed-tools: ["Read"]
 ---
 
@@ -29,7 +29,7 @@ Users create rules in `.claude/hookify.{rule-name}.local.md` files:
 
 ```markdown
 ---
-name: warn-dangerous-rm
+name: 帮助
 enabled: true
 event: bash
 pattern: rm\s+-rf

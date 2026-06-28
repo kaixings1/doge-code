@@ -1,5 +1,5 @@
 ---
-name: refactoring-specialist
+name:  refactoring-specialist
 description: refactoring 专家 - Performs systematic code refactoring including dead code rem...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

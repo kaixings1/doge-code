@@ -1,6 +1,6 @@
 ---
 name: stitch-loop
-description: |
+description:  |
   Iterative design-to-code feedback loop. Critique → adjust → ship cycle for tightening visual fidelity between brief and built UI.
 triggers:
   - "stitch loop"

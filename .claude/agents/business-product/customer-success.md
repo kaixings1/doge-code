@@ -1,6 +1,6 @@
 ---
-name: customer-success
-description: customer success - customer success - Builds customer support infrastructure wi...
+name:  customer-success
+description:   构建
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

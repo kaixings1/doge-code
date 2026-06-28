@@ -1,6 +1,6 @@
 ---
 name: ffuf-claude-skill
-description: "Web fuzzing with ffuf"
+description: "使用 ffuf 进行 Web 模糊测试"
 risk: safe
 source: "https://github.com/jthack/ffuf_claude_skill"
 date_added: "2026-02-27"

@@ -1,5 +1,5 @@
 ---
-name: react-build-resolver
+name:  react-build-resolver
 description: React构建解决专家
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

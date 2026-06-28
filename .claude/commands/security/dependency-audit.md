@@ -1,4 +1,4 @@
-Audit project dependencies for known vulnerabilities and outdated packages.
+审计项目依赖项，检查已知漏洞和过时的软件包。
 
 ## Steps
 

@@ -1,6 +1,6 @@
 ---
 name: app-builder
-description: "Main application building orchestrator. Creates full-stack applications from natural language requests. Determines project type, selects tech stack, coordinates agents."
+description: "使用 React、Node.js、PostgreSQL 和 Docker 从用户需求构建生产级全栈应用的全面指南。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

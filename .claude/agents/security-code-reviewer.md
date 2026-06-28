@@ -1,5 +1,5 @@
 ---
-name: security-code-reviewer
+name:  审查员
 description: 安全代码审查者
 tools: Glob, Grep, Read, WebFetch, TodoWrite, WebSearch, BashOutput, KillBash
 model: inherit

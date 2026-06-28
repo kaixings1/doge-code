@@ -1,5 +1,5 @@
 ---
-name: research-analyst
+name:  需求分析师
 description: research 分析师 - Conducts structured technical research with systematic liter...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

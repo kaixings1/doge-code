@@ -1,5 +1,5 @@
 ---
-description: Create detailed implementation plans with thorough research and iteration
+description: 通过充分研究和迭代创建详细实施计划
 model: opus
 ---
 

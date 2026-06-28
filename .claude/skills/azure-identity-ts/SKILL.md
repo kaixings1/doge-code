@@ -1,6 +1,6 @@
 ---
 name: azure-identity-ts
-description: "Authenticate to Azure services with various credential types."
+description: "指导 TypeScript 开发者使用 Azure Identity 客户端库进行 Microsoft Entra ID 认证。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

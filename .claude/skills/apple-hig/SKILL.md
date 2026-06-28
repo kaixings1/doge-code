@@ -1,6 +1,6 @@
 ---
 name: apple-hig
-description: |
+description:  |
   Apple Human Interface Guidelines as 14 agent skills covering platforms, foundations, components, patterns, inputs, and technologies for iOS, macOS, visionOS, watchOS, and tvOS.
 triggers:
   - "apple hig"

@@ -1,6 +1,6 @@
 ---
 name: hasdata
-description: Use HasData APIs for web scraping and structured web data extraction.
+description:  Use HasData APIs for web scraping and structured web data extraction.
 risk: safe
 source: official
 source_type: official

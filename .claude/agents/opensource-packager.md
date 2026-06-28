@@ -1,5 +1,5 @@
 ---
-name: opensource-packager
+name:  opensource-packager
 description: 开源打包工具
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

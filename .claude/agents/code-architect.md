@@ -1,5 +1,5 @@
 ---
-name: code-architect
+name:  架构师
 description: 代码架构师，分析和改进代码库结构
 model: sonnet
 tools: [Read, Grep, Glob, Bash]

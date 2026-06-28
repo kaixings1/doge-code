@@ -1,5 +1,5 @@
 ---
-name: data-scientist
+name:  data-scientist
 description: data 科学家 - Statistical analysis, data visualization, hypothesis testing...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

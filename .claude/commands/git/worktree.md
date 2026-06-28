@@ -1,4 +1,4 @@
-Set up git worktrees for parallel development on multiple branches simultaneously.
+设置 git worktree 以在多分支上并行开发。
 
 ## Steps
 

@@ -1,6 +1,6 @@
 ---
 name: seo
-description: "Comprehensive SEO analysis for any website or business type. Full site audits, single-page analysis, technical SEO (crawlability, indexability, Core Web Vitals with INP), schema markup, content quality (E-E-A-T), image optimization, sitemap analysis, and GEO for AI Overviews/ChatGPT/Perplexity. Industry detection for SaaS, e-commerce, local, publishers, agencies. Triggers on: SEO, audit, schema, Core Web Vitals, sitemap, E-E-A-T, AI Overviews, GEO, technical SEO, content quality, page speed, structured data."
+description: "任何网站或业务类型的全面 SEO 分析。完整网站审计、单页分析、技术 SEO（可爬取性、可索引性、Core Web Vitals with INP）、schema 标记、内容质量 (E-E-A-T)、图片优化、网站地图分析和面向 AI Overviews/ChatGPT/Perplexity 的 GEO。支持 SaaS、电商、本地服务、发布商、机构的行业检测。"
 user-invocable: true
 argument-hint: "[command] [url]"
 license: MIT

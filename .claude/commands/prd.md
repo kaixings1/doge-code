@@ -1,6 +1,6 @@
 ---
-name: prd
-description: "Gated PRD generation — interrogates problem, user, and metric before drafting; refuses to draft on unknowns. Usage: /prd <feature-or-problem>"
+name: PRD生成
+description: "门控式 PRD 生成 — 起草前先询问问题、用户和指标；信息不足不草拟。用法: /prd <feature-or-problem>"
 argument-hint: <feature-or-problem>
 ---
 

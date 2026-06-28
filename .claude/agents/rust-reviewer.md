@@ -1,5 +1,5 @@
 ---
-name: rust-reviewer
+name:  审查员
 description: Rust代码审查专家
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet

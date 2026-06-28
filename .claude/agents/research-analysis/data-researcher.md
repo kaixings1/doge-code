@@ -1,6 +1,6 @@
 ---
-name: data-researcher
-description: data researcher - data researcher - Performs data analysis, pattern recognitio...
+name:  研究员
+description:   研究
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

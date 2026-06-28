@@ -1,6 +1,6 @@
 ---
 name: electron-development
-description: "Master Electron desktop app development with secure IPC, contextIsolation, preload scripts, multi-process architecture, electron-builder packaging, code signing, and auto-update."
+description: "掌握使用安全 IPC、contextIsolation、预加载脚本、多进程架构、electron-builder 打包、代码签名和自动更新的 Electron 桌面应用开发。"
 risk: safe
 source: community
 date_added: "2026-03-12"

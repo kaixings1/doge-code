@@ -1,6 +1,6 @@
 ---
 name: Prismic Automation
-description: "Automate headless CMS operations in Prismic -- query documents, search content, retrieve custom types, and manage repository refs through the Composio Prismic integration."
+description: "通过 Composio Prismic 集成自动执行 Prismic 中的无头 CMS 操作——查询文档、搜索内容、检索自定义类型和管理仓库引用。"
 requires:
   mcp:
     - rube

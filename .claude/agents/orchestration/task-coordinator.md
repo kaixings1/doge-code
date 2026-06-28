@@ -1,5 +1,5 @@
 ---
-name: task-coordinator
+name:  task-coordinator
 description: task 协调者 - Multi-agent task distribution, dependency management, and pa...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

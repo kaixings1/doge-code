@@ -1,6 +1,6 @@
 ---
 name: dotnet-backend-patterns
-description: "Master C#/.NET patterns for building production-grade APIs, MCP servers, and enterprise backends with modern best practices (2024/2025)."
+description: "掌握使用最新最佳实践（2024/2025）构建生产级 API、MCP 服务器和企业后端的 C#/.NET 模式。"
 risk: safe
 source: community
 date_added: "2026-02-27"

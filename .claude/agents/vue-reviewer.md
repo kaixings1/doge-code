@@ -1,5 +1,5 @@
 ---
-name: vue-reviewer
+name:  审查员
 description: Vue代码审查专家
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet

@@ -1,5 +1,5 @@
 ---
-name: payment-integration
+name:  payment-integration
 description: payment 集成 - Integrates payment processors like Stripe with proper error ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

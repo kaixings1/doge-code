@@ -1,5 +1,5 @@
 ---
-name: django-developer
+name:  django-developer
 description: django 开发者 - Django 5+ development with Django REST Framework, ORM optimi...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

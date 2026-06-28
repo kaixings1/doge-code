@@ -1,6 +1,6 @@
 ---
 name: survey_monkey-automation
-description: "Automate SurveyMonkey tasks via Rube MCP (Composio): surveys, responses, collectors, and survey analytics. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 SurveyMonkey 任务：surveys, responses, collectors, and survey analytics. Always search tools first for current schemas."
 requires:
   mcp: [rube]
 ---

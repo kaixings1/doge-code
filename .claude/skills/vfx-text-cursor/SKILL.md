@@ -3,9 +3,9 @@ name: vfx-text-cursor
 zh_name: "VFX 文字光标"
 en_name: "VFX Text Cursor"
 emoji: "✨"
-description: "Cursor light trail, chromatic rays, and directional flares for word-by-word quote reveals in video intros."
+description: "用于视频介绍中逐字引用揭示的光标光迹、色差射线和方向性光晕。"
 zh_description: "光标拖光 + 彩色像散射线 + 定向光斑, 适合视频片头逐字揭示金句"
-en_description: "Cursor light trail, chromatic rays, and directional flares for word-by-word quote reveals in video intros."
+en_description: "用于视频介绍中逐字引用揭示的光标光迹、色差射线和方向性光晕。"
 category: video
 scenario: video
 aspect_hint: "1920×1080 (16:9)"

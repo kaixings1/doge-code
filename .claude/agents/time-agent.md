@@ -1,5 +1,5 @@
 ---
-name: time-agent-pkt
+name:  time-agent-pkt
 description: 使用此代理显示巴基斯坦标准时间（PKT, UTC+5）的当前时间（根作用域 — 迪拜时间请查看 agent-teams）
 allowedTools:
   - "Bash(*)"

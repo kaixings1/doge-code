@@ -1,6 +1,6 @@
 ---
 name: ddd-context-mapping
-description: "Map relationships between bounded contexts and define integration contracts using DDD context mapping patterns."
+description: "使用 DDD 上下文映射模式映射限界上下文之间的关系并定义集成契约。"
 risk: safe
 source: self
 tags: "[ddd, context-map, anti-corruption-layer, integration]"

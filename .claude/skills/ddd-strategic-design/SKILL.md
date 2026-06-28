@@ -1,6 +1,6 @@
 ---
 name: ddd-strategic-design
-description: "Design DDD strategic artifacts including subdomains, bounded contexts, and ubiquitous language for complex business domains."
+description: "为复杂业务领域设计 DDD 战略工件，包括子域、限界上下文和通用语言。"
 risk: safe
 source: self
 tags: "[ddd, strategic-design, bounded-context, ubiquitous-language]"

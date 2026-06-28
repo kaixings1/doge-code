@@ -1,5 +1,5 @@
 ---
-name: cpp-build-resolver
+name:  cpp-build-resolver
 description: C++构建解决专家
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

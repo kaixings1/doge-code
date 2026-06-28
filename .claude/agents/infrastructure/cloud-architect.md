@@ -1,5 +1,5 @@
 ---
-name: cloud-architect
+name:  架构师
 description: cloud 架构师 - AWS/GCP/Azure multi-cloud patterns, IaC, cost optimization, ...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

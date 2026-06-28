@@ -1,5 +1,5 @@
 ---
-description: ARS academic-paper `plan` mode — Socratic chapter-by-chapter planning
+description: ARS 学术论文 `plan` 模式 — Socratic 逐章规划
 model: sonnet
 ---
 

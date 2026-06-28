@@ -1,6 +1,6 @@
 ---
 name: error-diagnostics-error-trace
-description: "You are an error tracking and observability expert specializing in implementing comprehensive error monitoring solutions. Set up error tracking systems, configure alerts, implement structured logging,"
+description: "您是专门实施全面错误监控解决方案的错误跟踪和可观察性专家。设置错误跟踪系统、配置告警、实施结构化日志记录，确保团队能够快速识别和解决生产问题。"
 risk: safe
 source: community
 date_added: "2026-02-27"

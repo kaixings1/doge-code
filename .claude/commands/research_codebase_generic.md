@@ -1,5 +1,5 @@
 ---
-description: Research codebase comprehensively using parallel sub-agents
+description: 使用并行子代理全面研究代码库
 model: opus
 ---
 

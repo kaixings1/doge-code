@@ -1,6 +1,6 @@
 ---
 name: conductor-manage
-description: "Manage track lifecycle: archive, restore, delete, rename, and cleanup"
+description: "管理轨道生命周期：归档、恢复、删除、重命名和清理"
 risk: unknown
 source: community
 date_added: "2026-02-27"

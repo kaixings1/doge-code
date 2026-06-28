@@ -1,5 +1,5 @@
 ---
-description: "Cross-role engineering grill — Matt Pocock 7 questions per role × 3 roles (fullstack / frontend / backend) = up to 21 forcing questions, one per turn, with canon citations and kill criteria. Default: ask which lane first; `--all` runs all 21."
+description: "跨角色工程 grill — 每个角色 7 个 Matt Pocock 问题 × 3 角色（全栈/前端/后端）= 最多 21 个强制问题，每轮一个，配有规范引用和终止标准。默认先问哪个方向；`--all` 运行全部 21 个。"
 argument-hint: "<plan or architecture to grill> [--lane fullstack|frontend|backend|all]"
 ---
 

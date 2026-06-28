@@ -1,4 +1,4 @@
-Generate Mermaid diagrams from codebase analysis or description.
+基于代码库分析或描述生成 Mermaid 图表。
 
 ## Steps
 

@@ -1,6 +1,6 @@
 ---
-name: verifier
-description: Verification strategy, evidence-based completion checks, test adequacy
+name:  verifier
+description:   测试
 model: sonnet
 level: 3
 disallowedTools: Write, Edit

@@ -1,5 +1,5 @@
 ---
-name: fastapi-reviewer
+name:  审查员
 description: FastAPI代码审查专家
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet

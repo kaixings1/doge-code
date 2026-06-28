@@ -1,6 +1,6 @@
 ---
 name: kubestellar-console
-description: "Multi-cluster Kubernetes dashboard with AI-powered operations via MCP server and 10+ built-in agent skills"
+description: "通过 MCP 服务器和 10+ 内置代理技能实现 AI 驱动的多集群 Kubernetes 仪表板"
 category: devops
 risk: critical
 source: community

@@ -1,5 +1,5 @@
 ---
-description: ARS academic-paper `revision` mode — revised draft + R&R responses
+description: ARS 学术论文 `revision` 模式 — 修订稿 + R&R 回复
 model: sonnet
 ---
 

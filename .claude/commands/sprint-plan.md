@@ -1,6 +1,6 @@
 ---
-name: sprint-plan
-description: "Capacity-gated sprint planning — runs capacity math, carry-over check, and a definition-of-ready gate before committing scope. Usage: /sprint-plan <goal> [capacity]"
+name: 迭代规划
+description: "容量门控迭代规划 — 在执行容量计算、带历史检查和就绪定义门控。用法: /sprint-plan <目标> [容量]"
 argument-hint: <goal> [capacity-in-points-or-person-days]
 ---
 

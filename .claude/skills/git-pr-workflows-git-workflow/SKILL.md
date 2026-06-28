@@ -1,6 +1,6 @@
 ---
 name: git-pr-workflows-git-workflow
-description: "Orchestrate a comprehensive git workflow from code review through PR creation, leveraging specialized agents for quality assurance, testing, and deployment readiness. This workflow implements modern g"
+description: "编排从代码审查到 PR 创建的全面 git 工作流，利用专门代理进行质量保证、测试和部署就绪性。"
 risk: critical
 source: community
 date_added: "2026-02-27"

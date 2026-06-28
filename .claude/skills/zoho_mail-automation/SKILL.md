@@ -1,6 +1,6 @@
 ---
 name: zoho_mail-automation
-description: "Automate Zoho Mail tasks via Rube MCP (Composio): email sending, folders, labels, and mailbox management. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 Zoho Mail 任务：email sending, folders, labels, and mailbox management. Always search tools first for current schemas."
 requires:
   mcp: [rube]
 ---

@@ -1,9 +1,9 @@
 ---
 name: analyzing-azure-activity-logs-for-threats
-description: 'Queries Azure Monitor activity logs and sign-in logs via azure-monitor-query
-  to detect suspicious administrative operations, impossible travel, privilege escalation,
-  and resource modifications. Builds KQL queries for threat hunting in Azure environments.
-  Use when investigating suspicious Azure tenant activity or building cloud SIEM detections.
+description:  通过 azure-monitor-query 查询 Azure Monitor 活动日志和登录日志，
+  检测可疑的管理操作、不可能旅行、权限提升和资源修改。
+  为 Azure 环境中的威胁狩猎构建 KQL 查询。
+  适用于调查可疑的 Azure 租户活动或构建云 SIEM 检测时。
 
   '
 domain: cybersecurity

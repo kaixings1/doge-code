@@ -1,6 +1,6 @@
 ---
 name: git-advanced-workflows
-description: "Master advanced Git techniques to maintain clean history, collaborate effectively, and recover from any situation with confidence."
+description: "掌握高级 Git 技术以维护干净的历史、有效协作并有信心从任何情况恢复。"
 risk: critical
 source: community
 date_added: "2026-02-27"

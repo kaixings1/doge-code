@@ -1,6 +1,6 @@
 ---
 name: remotion
-description: |
+description:  |
   Programmatic video creation with React. Useful for branded explainers, social cuts, dashboards-to-video, and reproducible motion graphics.
 triggers:
   - "remotion"

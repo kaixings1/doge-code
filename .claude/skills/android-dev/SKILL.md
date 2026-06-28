@@ -1,6 +1,6 @@
 ---
 name: android-dev
-description: "Production-grade Android app development guide covering native (Kotlin/Java), cross-platform (Flutter, RN, KMM), and hybrid architectures."
+description: "生产级 Android 应用开发指南，涵盖原生（Kotlin/Java）、跨平台（Flutter、RN、KMM）和混合架构。"
 risk: safe
 source: community
 date_added: "2026-06-08"

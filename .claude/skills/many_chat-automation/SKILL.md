@@ -1,6 +1,6 @@
 ---
 name: many_chat-automation
-description: "Automate ManyChat tasks via Rube MCP (Composio): chatbot flows, subscribers, broadcasts, and messenger automation. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 ManyChat 任务：chatbot flows, subscribers, broadcasts, and messenger automation. Always search tools first for current schemas."
 requires:
   mcp: [rube]
 ---

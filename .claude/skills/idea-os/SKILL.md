@@ -1,6 +1,6 @@
 ---
 name: idea-os
-description: "Five-phase pipeline (triage → clarify → research → PRD → plan) that turns a raw idea into four linked files: clarifying questions, deep research, a PRD with non-goals and metrics, and a phased execution plan with mermaid user journey and kill criteria."
+description: "五阶段流水线（分类→明确→研究→PRD→计划），将原始想法转化为四个链接文件：澄清问题、深度研究、PRD（含非目标和指标）以及分阶段执行计划（含 mermaid 用户旅程和终止标准）。"
 category: product-management
 risk: safe
 source: community

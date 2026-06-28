@@ -1,6 +1,6 @@
 ---
 name: venice-video
-description: |
+description:  |
   Video generation and transcription workflows via the Venice.ai API.
 triggers:
   - "venice video"

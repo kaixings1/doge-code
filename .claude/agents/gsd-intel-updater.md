@@ -1,6 +1,6 @@
 ---
-name: gsd-intel-updater
-description: Analyzes codebase and writes structured intel files to .planning/intel/.
+name:  gsd-intel-updater
+description:   规划
 tools: Read, Write, Bash, Glob, Grep
 color: cyan
 # hooks:

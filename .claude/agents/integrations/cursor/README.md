@@ -34,7 +34,7 @@ Or enable a rule as always-on by editing its frontmatter:
 
 ```yaml
 ---
-description: Expert frontend developer...
+description:   开发工程师
 globs: "**/*.tsx,**/*.ts"
 alwaysApply: true
 ---

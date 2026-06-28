@@ -1,6 +1,6 @@
 ---
 name: token-efficiency
-description: Reduce token waste by 40-60% through anti-sycophancy rules, tool-call budgets, one-pass coding, task profiles, and read-before-write enforcement. Inspired by drona23/claude-token-efficient.
+description:  Reduce token waste by 40-60% through anti-sycophancy rules, tool-call budgets, one-pass coding, task profiles, and read-before-write enforcement. Inspired by drona23/claude-token-efficient.
 ---
 
 # Token Efficiency

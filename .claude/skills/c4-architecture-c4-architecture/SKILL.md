@@ -1,6 +1,6 @@
 ---
 name: c4-architecture-c4-architecture
-description: "Generate comprehensive C4 architecture documentation for an existing repository/codebase using a bottom-up analysis approach."
+description: "使用自底向上分析方法为现有仓库/代码库生成全面的 C4 架构文档。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

@@ -1,5 +1,5 @@
 ---
-name: instinct-export
+name: 导出直觉
 description: 将直觉（Instincts）从项目/全局作用域导出到文件
 command: /instinct-export
 ---

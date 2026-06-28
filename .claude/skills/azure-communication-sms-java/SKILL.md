@@ -1,6 +1,6 @@
 ---
 name: azure-communication-sms-java
-description: "Send SMS messages with Azure Communication Services SMS Java SDK. Use when implementing SMS notifications, alerts, OTP delivery, bulk messaging, or delivery reports."
+description: "指导 Java 开发者使用 Azure Communication SMS 客户端库发送短信。"
 risk: safe
 source: community
 date_added: "2026-02-27"

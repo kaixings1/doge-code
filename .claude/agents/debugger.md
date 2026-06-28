@@ -1,6 +1,6 @@
 ---
-name: debugger
-description: Root-cause analysis, regression isolation, stack trace analysis, build/compilation error resolution
+name:  调试专家
+description:   构建
 model: sonnet
 level: 3
 ---

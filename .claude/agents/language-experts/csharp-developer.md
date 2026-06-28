@@ -1,5 +1,5 @@
 ---
-name: csharp-developer
+name:  csharp-developer
 description: csharp 开发者 - C# and .NET 8+ development with ASP.NET Core, Entity Framewo...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

@@ -3,9 +3,9 @@ name: mockup-device-3d
 zh_name: "iPhone × MacBook 立体展架"
 en_name: "Device 3D Showcase"
 emoji: "📱"
-description: "Static iPhone and MacBook 3D-style showcase with real HTML embedded on screens, glass-lens refraction, and 360-degree turntable composition."
+description: "静态 iPhone 和 MacBook 3D 风格展示，屏幕上嵌入真实 HTML、玻璃透镜折射和 360 度旋转合成。"
 zh_description: "iPhone + MacBook 仿 GLTF 静态展架, 屏幕内嵌真实 HTML 内容, 玻璃镜头折射, 360° 转盘构图"
-en_description: "Static iPhone and MacBook 3D-style showcase with real HTML embedded on screens, glass-lens refraction, and 360-degree turntable composition."
+en_description: "静态 iPhone 和 MacBook 3D 风格展示，屏幕上嵌入真实 HTML、玻璃透镜折射和 360 度旋转合成。"
 category: poster
 scenario: product
 aspect_hint: "1920×1080 (16:9)"

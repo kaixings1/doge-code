@@ -1,6 +1,6 @@
 ---
-name: asana-automation
-description: "Automate Asana tasks via Rube MCP (Composio): tasks, projects, sections, teams, workspaces. Always search tools first for current schemas."
+name: asana-自动化
+description: "通过 Rube MCP (Composio) 自动化 Asana 操作：任务、项目、板块、团队、工作区。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

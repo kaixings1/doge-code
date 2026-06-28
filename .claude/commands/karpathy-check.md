@@ -1,6 +1,6 @@
 ---
-name: karpathy-check
-description: Run Karpathy's 4-principle review on staged changes or the last commit. Checks complexity, diff noise, hidden assumptions, and goal verification. Usage /karpathy-check [--last-commit]
+name: Karpathy检查
+description: 运行 Karpathy 四原则评审 — 检查暂存变更或最后提交（复杂度/diff 噪声/假设/目标验证）。用法 /karpathy-check [--last-commit]
 ---
 <!-- canonical copy: engineering/karpathy-coder/commands/karpathy-check.md — keep in sync (root copy uses repo-root-relative script paths) -->
 

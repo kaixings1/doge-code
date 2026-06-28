@@ -1,5 +1,5 @@
 ---
-name: weather-agent
+name:  weather-agent
 description: 天气代理
 allowedTools:
   - "Read"

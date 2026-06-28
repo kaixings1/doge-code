@@ -1,6 +1,6 @@
 ---
-name: a11y-audit
-description: "Scan a frontend project for WCAG 2.2 accessibility violations and fix them. Usage: /a11y-audit [path]"
+name: 无障碍审计
+description: "扫描前端项目中 WCAG 2.2 无障碍违规并修复。用法: /a11y-audit [路径]"
 argument-hint: "[path]"
 ---
 

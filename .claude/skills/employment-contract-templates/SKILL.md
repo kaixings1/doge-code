@@ -1,6 +1,6 @@
 ---
 name: employment-contract-templates
-description: "Templates and patterns for creating legally sound employment documentation including contracts, offer letters, and HR policies."
+description: "创建合法合理的雇佣文档的模板和模式，包括合同、录用函和人力资源政策。"
 risk: safe
 source: community
 date_added: "2026-02-27"

@@ -1,5 +1,5 @@
 ---
-name: database-reviewer
+name:  审查员
 description: 数据库审查专家
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

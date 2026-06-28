@@ -1,5 +1,5 @@
 ---
-description: ARS academic-paper `citation-check` mode — citation error report
+description: ARS 学术论文 `citation-check` 模式 — 引文错误报告
 model: sonnet
 ---
 

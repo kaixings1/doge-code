@@ -1,6 +1,6 @@
 ---
-name: embedded-systems
-description: embedded systems - embedded systems - Develops firmware and embedded software i...
+name:  embedded-systems
+description:   embedded systems - embedded systems - Develops firmware and embedded software i...（待汉化）
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: bilig-workpaper
-description: "Use formula-backed WorkPaper JSON and MCP tools for agent spreadsheet tasks without driving Excel or a browser UI."
+description: "比丽格审计工作底稿系统——在规划和执行阶段创建和管理审计工作底稿。"
 risk: critical
 source: community
 date_added: "2026-05-21"

@@ -1,5 +1,5 @@
 ---
-name: workflow-concepts-agent
+name:  workflow-concepts-agent
 description: workflow concepts 代理 - Research agent that fetches Claude Code docs and changelog, ...
 model: opus
 color: green

@@ -1,6 +1,6 @@
 ---
 name: gsd:ultraplan-phase
-description: "[BETA] Offload plan phase to Claude Code's ultraplan cloud; review in browser and import back."
+【测试版】将计划阶段卸载到 Claude Code 的 ultraplan 云端；在浏览器中审查并导回。
 argument-hint: "[phase-number]"
 allowed-tools:
   - Read

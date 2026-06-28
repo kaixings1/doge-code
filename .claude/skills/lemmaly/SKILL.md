@@ -1,6 +1,6 @@
 ---
 name: lemmaly
-description: "Algorithm-first discipline: state Big-O, data structure, and algorithm family BEFORE writing loops, queries, or recursion. Catches O(n^2), N+1, and brute-force defaults."
+description: "算法优先原则：在编写循环、查询或递归之前声明 Big-O、数据结构和算法家族。捕获 O(n^2)、N+1 和暴力破解默认值。"
 risk: safe
 source: community
 source_repo: morsechimwai/lemmaly

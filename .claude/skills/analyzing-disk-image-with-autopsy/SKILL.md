@@ -1,7 +1,7 @@
 ---
 name: analyzing-disk-image-with-autopsy
-description: Perform comprehensive forensic analysis of disk images using Autopsy
-  to recover files, examine artifacts, and build investigation timelines.
+description:  使用 Autopsy 对磁盘镜像执行全面取证分析，
+  恢复文件、检查工件并构建调查时间线。
 domain: cybersecurity
 subdomain: digital-forensics
 tags:

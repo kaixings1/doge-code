@@ -1,6 +1,6 @@
 ---
 name: chrome-extension-developer
-description: "Expert in building Chrome Extensions using Manifest V3. Covers background scripts, service workers, content scripts, and cross-context communication."
+description: "使用 Manifest V3 构建 Chrome 扩展的专家知识。涵盖后台脚本、Service Worker、内容脚本和跨上下文通信。"
 risk: safe
 source: community
 date_added: "2026-02-27"

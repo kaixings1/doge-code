@@ -1,5 +1,5 @@
 ---
-description: Create handoff document for transferring work to another session
+description: 创建交接文档以将工作转移到另一个会话
 ---
 
 # Create Handoff

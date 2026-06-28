@@ -61,8 +61,8 @@ See [TEMPLATE.md](template.md) for the format specification. Key elements:
 
 ```yaml
 ---
-name: Agent Name
-description: What this agent does and when to activate it.
+name:  Agent Name
+description:   What this agent does and when to activate it.（待汉化）
 color: blue          # Agent color theme
 emoji: 🎯           # Single emoji identifier
 vibe: One sentence personality capture.

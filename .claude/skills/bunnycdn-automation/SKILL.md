@@ -1,5 +1,6 @@
 ---
-name: bunnycdn-automation
+name: bunnycdn-自动化
+description: "通过 Rube MCP (Composio) 自动化 BunnyCDN 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 description: "Automate Bunnycdn tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]

@@ -1,5 +1,5 @@
 ---
-description: Interactive wizard to design and validate a chaos engineering experiment
+description: 交互式向导 — 设计与验证混沌工程实验
 ---
 
 # /chaos-experiment

@@ -1,5 +1,5 @@
 ---
-name: go-build-resolver
+name:  go-build-resolver
 description: Go构建解决专家
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

@@ -1,5 +1,5 @@
 ---
-name: db-admin
+name:  db-admin
 description: 数据库管理员
 tools:
   - Bash

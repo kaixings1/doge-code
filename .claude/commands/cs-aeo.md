@@ -1,6 +1,6 @@
 ---
-name: "cs-aeo"
-description: "/cs:aeo — Answer Engine Optimization workflow. Audit content for E-E-A-T + structure signals that drive LLM citation (ChatGPT, Perplexity, Claude, Gemini, Mistral). Optimize content in 3 modes (conservative/balanced/aggressive). Track which LLMs cite which pages via local ledger. Industry-aware thresholds (8 industries with YMYL calibration). Distinct from SEO — refuses to optimize one at expense of the other."
+name: AE0营销
+description: "/cs:aeo — 回答引擎优化工作流。审计内容的 E-E-A-T + 结构信号以驱动 LLM 引用（ChatGPT/Perplexity/Claude/Gemini/Mistral）。在 3 种模式下优化（保守/平衡/激进）。通过本地账本追踪哪些 LLM 引用了哪些页面。包含 8 个行业的行业感知阈值（含 YMYL 校准）。与 SEO 有区别。"
 ---
 
 # /cs:aeo — Answer Engine Optimization

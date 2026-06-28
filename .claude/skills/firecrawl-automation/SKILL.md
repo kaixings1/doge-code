@@ -1,6 +1,6 @@
 ---
-name: Firecrawl Automation
-description: "Automate web crawling and data extraction with Firecrawl -- scrape pages, crawl sites, extract structured data, batch scrape URLs, and map website structures through the Composio Firecrawl integration."
+name: firecrawl-自动化
+description: "自动化 Firecrawl 网络爬取和数据提取——爬取页面、爬取网站、提取结构化数据、批量爬取 URL、映射网站结构。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp:
     - rube

@@ -1,6 +1,6 @@
 ---
 name: cc-skill-continuous-learning
-description: "Development skill from everything-claude-code"
+description: "来自 everything-claude-code 的开发技能"
 risk: none
 source: community
 date_added: "2026-02-27"

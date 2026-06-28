@@ -1,6 +1,6 @@
 ---
 name: awareness-stage-mapper
-description: "One sentence - what this skill does and when to invoke it"
+description: "用一句话描述此技能的用途及何时调用"
 risk: safe
 source: community
 date_added: "2026-04-04"

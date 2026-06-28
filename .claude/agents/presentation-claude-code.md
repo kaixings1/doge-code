@@ -1,5 +1,5 @@
 ---
-name: presentation-claude-code
+name:  presentation-claude-code
 description: Claude Code演示文稿
 allowedTools:
   - "Bash(*)"

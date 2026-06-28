@@ -1,5 +1,5 @@
 ---
-name: doc-updater
+name:  文档维护
 description: 文档更新专家
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: haiku

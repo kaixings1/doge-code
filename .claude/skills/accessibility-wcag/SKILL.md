@@ -1,6 +1,6 @@
 ---
 name: accessibility-wcag
-description: placeholder
+description: 无障碍设计及 WCAG 标准实现与审计。
 ---
 
 # Accessibility & WCAG

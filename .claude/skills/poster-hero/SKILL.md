@@ -3,9 +3,9 @@ name: poster-hero
 zh_name: "营销海报"
 en_name: "Marketing Poster"
 emoji: "🖼️"
-description: "Vertical poster or Moments-style share image with strong visual impact."
+description: "具有强烈视觉冲击的纵向海报或 Moments 风格分享图片。"
 zh_description: "竖版海报 / 朋友圈分享图, 强视觉冲击"
-en_description: "Vertical poster or Moments-style share image with strong visual impact."
+en_description: "具有强烈视觉冲击的纵向海报或 Moments 风格分享图片。"
 category: poster
 scenario: marketing
 aspect_hint: "1080×1920 竖版"

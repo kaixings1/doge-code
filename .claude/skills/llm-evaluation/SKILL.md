@@ -1,6 +1,6 @@
 ---
 name: llm-evaluation
-description: "Master comprehensive evaluation strategies for LLM applications, from automated metrics to human evaluation and A/B testing."
+description: "掌握 LLM 应用的全面评估策略，从自动化指标到人工评估和 A/B 测试。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

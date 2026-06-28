@@ -1,5 +1,5 @@
 ---
-name: Prompt 工程师
+name:  Prompt 工程师
 description: 专精于为 LLM（大语言模型）打磨、测试并系统化优化 prompt 的专家——把含糊的指令变成可靠、可上生产的 AI 行为。
 color: violet
 emoji: 🧬

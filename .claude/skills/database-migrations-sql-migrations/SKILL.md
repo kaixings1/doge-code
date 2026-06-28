@@ -1,6 +1,6 @@
 ---
 name: database-migrations-sql-migrations
-description: "SQL database migrations with zero-downtime strategies for PostgreSQL, MySQL, and SQL Server. Focus on data integrity and rollback plans."
+description: "使用零停机策略为 PostgreSQL、MySQL 和 SQL Server 进行 SQL 数据库迁移。关注数据完整性和回滚计划。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

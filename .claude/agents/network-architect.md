@@ -1,5 +1,5 @@
 ---
-name: network-architect
+name:  架构师
 description: 网络架构师
 tools: ["Read", "Grep"]
 model: sonnet

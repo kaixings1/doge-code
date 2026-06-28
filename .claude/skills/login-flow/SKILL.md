@@ -1,6 +1,6 @@
 ---
 name: login-flow
-description: Mobile login and authentication flow screens
+description:  Mobile login and authentication flow screens
 od:
   mode: prototype
   platform: mobile

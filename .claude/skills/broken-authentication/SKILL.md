@@ -1,6 +1,6 @@
 ---
 name: broken-authentication
-description: "Identify and exploit authentication and session management vulnerabilities in web applications. Broken authentication consistently ranks in the OWASP Top 10 and can lead to account takeover, identity theft, and unauthorized access to sensitive systems."
+description: "识别和利用 Web 应用中的认证漏洞——会话管理、JWT 攻击、OAuth 滥用和暴力破解防御绕过。"
 risk: unknown
 source: community
 author: zebbern

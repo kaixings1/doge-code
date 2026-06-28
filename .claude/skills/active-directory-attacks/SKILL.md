@@ -1,6 +1,6 @@
 ---
 name: active-directory-attacks
-description: "Provide comprehensive techniques for attacking Microsoft Active Directory environments. Covers reconnaissance, credential harvesting, Kerberos attacks, lateral movement, privilege escalation, and domain dominance for red team operations and penetration testing."
+description: "提供攻击 Microsoft Active Directory 环境的全面技术。涵盖侦察、凭证收集、Kerberos 攻击、横向移动、权限提升和域控制，适用于红队操作和渗透测试。"
 risk: offensive
 source: community
 author: zebbern

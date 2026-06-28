@@ -1,6 +1,6 @@
 ---
 name: documentation-templates
-description: "Documentation templates and structure guidelines. README, API docs, code comments, and AI-friendly documentation."
+description: "文档模板和结构指南。README、API 文档、代码注释和 AI 友好型文档。"
 risk: safe
 source: community
 date_added: "2026-02-27"

@@ -1,5 +1,5 @@
 ---
-name: pr-test-analyzer
+name:  pr-test-analyzer
 description: PR测试分析器
 model: sonnet
 tools: [Read, Grep, Glob, Bash]

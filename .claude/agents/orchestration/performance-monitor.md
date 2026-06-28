@@ -1,5 +1,5 @@
 ---
-name: performance-monitor
+name:  performance-monitor
 description: 性能 monitor - Monitor agent execution, track token usage, measure response...
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus

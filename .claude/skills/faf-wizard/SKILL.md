@@ -1,6 +1,6 @@
 ---
 name: faf-wizard
-description: "Done-for-you .faf generator. One-click AI context for any project - new, legacy, or famous. Auto-detects stack, scores readiness, works everywhere."
+description: "一键 .faf 生成器。一键为任何项目创建 AI 上下文——新项目、遗留项目或知名项目。自动检测技术栈、评分就绪性、无处不在。"
 category: productivity
 risk: safe
 source: community

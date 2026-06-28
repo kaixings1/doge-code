@@ -1,5 +1,5 @@
 ---
-description: Run the quarterly feature-flag cleanup workflow on the current repo
+description: 在当前仓库运行季度功能开关清理工作流
 ---
 
 # /flag-cleanup

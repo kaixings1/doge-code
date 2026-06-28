@@ -1,6 +1,6 @@
 ---
 name: matplotlib
-description: "Matplotlib is Python's foundational visualization library for creating static, animated, and interactive plots."
+description: "Matplotlib 是 Python 的基础可视化库，用于创建静态、动画和交互式图表。"
 license: https://github.com/matplotlib/matplotlib/tree/main/LICENSE
 metadata:
     skill-author: K-Dense Inc.
