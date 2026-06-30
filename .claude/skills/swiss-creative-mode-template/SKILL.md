@@ -1,6 +1,6 @@
 ---
 name: swiss-creative-mode-template
-description:  |
+description: "Swiss Creative Mode Template — Swiss Creative Mode Template 相关功能和最佳实践"
   Swiss-inspired creative-mode presentation template skill with bold editorial
   typography, high-contrast geometric cards, interactive slide navigation,
   theme switching, hotspot overlays, and palette choreography in a single-file

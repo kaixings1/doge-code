@@ -1,6 +1,6 @@
 ---
 name: mobile-security-coder
-description:  Expert in secure mobile coding practices specializing in input validation, WebView security, and mobile-specific security patterns.
+description: "Mobile Security Coder — Mobile Security Coder 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

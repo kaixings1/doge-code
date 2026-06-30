@@ -1,6 +1,6 @@
 ---
 name: skill
-description:  Manage local skills - list, add, remove, search, edit, setup wizard
+description: "Skill — Skill 相关功能和最佳实践"
 argument-hint: "<command> [args]"
 level: 2
 ---

@@ -1,6 +1,6 @@
 ---
 name: aws-serverless
-description:  Specialized skill for building production-ready serverless
+description: "Aws Serverless — Aws Serverless 相关功能和最佳实践"
   applications on AWS. Covers Lambda functions, API Gateway, DynamoDB, SQS/SNS
   event-driven patterns, SAM/CDK deployment, and cold start optimization.
 risk: unknown

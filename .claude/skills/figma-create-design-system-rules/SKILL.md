@@ -1,6 +1,6 @@
 ---
 name: figma-create-design-system-rules
-description:  |
+description: "Figma Create Design System Rules — Figma Create Design System Rules 相关功能和最佳实践"
   Generate project-specific design system rules for Figma-to-code workflows. Useful for capturing tokens, naming, and lint rules in one source.
 triggers:
   - "figma rules"

@@ -1,6 +1,6 @@
 ---
 name: swiss-user-research-video-template
-description:  |
+description: "Swiss User Research Video Template — Swiss User Research Video Template 相关功能和最佳实践"
   Swiss-style user-research narrative template in warm-paper editorial aesthetics.
   Use when users ask for a premium research deck or story-first live artifact with
   minimalist typography, high-clarity layout, subtle motion, donut breakdowns,

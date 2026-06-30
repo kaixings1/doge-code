@@ -1,6 +1,6 @@
 ---
 name: ai-agents-architect
-description:  Expert in designing and building autonomous AI agents. Masters tool
+description: 设计和构建自主 AI 代理。精通工具使用、规划、记忆和上下文管理，能构建从简单工作流到复杂多代理系统。
   use, memory systems, planning strategies, and multi-agent orchestration.
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)

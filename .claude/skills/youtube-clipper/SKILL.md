@@ -1,6 +1,6 @@
 ---
 name: youtube-clipper
-description: |
+description: "Youtube Clipper — Youtube Clipper 相关功能和最佳实践"
   基于自动化工作流生成和剪辑 YouTube 视频片段：拉取源视频、选取高光片段、添加字幕并导出。
 triggers:
   - "youtube clip"

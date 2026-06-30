@@ -1,6 +1,6 @@
 ---
 name: auditing-azure-active-directory-configuration
-description:  'Auditing Microsoft Entra ID (Azure Active Directory) configuration to
+description: "Auditing Azure Active Directory Configuration — Auditing Azure Active Directory Configuration 相关功能和最佳实践"
   identify risky authentication policies, overly permissive role assignments, stale
   accounts, conditional access gaps, and guest user risks using AzureAD PowerShell,
   Microsoft Graph API, and ScoutSuite.

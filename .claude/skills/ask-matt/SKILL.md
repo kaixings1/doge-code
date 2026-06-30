@@ -1,6 +1,6 @@
 ---
 name: ask-matt
-description:  Ask which skill or flow fits your situation. A router over the user-invoked skills in this repo.
+description: "Ask Matt — Ask Matt 相关功能和最佳实践"
 disable-model-invocation: true
 category: "productivity"
 risk: "safe"

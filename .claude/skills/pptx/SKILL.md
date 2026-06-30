@@ -1,6 +1,6 @@
 ---
 name: pptx
-description:  |
+description: "Pptx — Pptx 相关功能和最佳实践"
   Read, generate, and adjust PowerPoint slides, layouts, and templates. Useful for executive decks, training material, and product reviews.
 triggers:
   - "pptx"

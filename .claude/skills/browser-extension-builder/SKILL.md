@@ -1,6 +1,6 @@
 ---
 name: browser-extension-builder
-description:  Expert in building browser extensions that solve real problems -
+description: "Browser Extension Builder — Browser Extension Builder 相关功能和最佳实践"
   Chrome, Firefox, and cross-browser extensions. Covers extension architecture,
   manifest v3, content scripts, popup UIs, monetization strategies, and Chrome
   Web Store publishing.

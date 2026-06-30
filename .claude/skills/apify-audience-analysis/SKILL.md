@@ -67,7 +67,7 @@ source: community
 export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call fetch-actor-details actor:="ACTOR_ID" | jq -r ".content"
 ```
 
-将 `ACTOR_ID` 替换为选定的 Actor (e.g., `apify/facebook-followers-following-scraper`).
+将 `ACTOR_ID` 替换为选定的 Actor（例如 `apify/facebook-followers-following-scraper`）。
 
 返回内容包括：
 - Actor 描述和 README
@@ -77,15 +77,15 @@ export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "A
 ### 步骤 3：询问用户偏好
 
 运行前，请询问：
-1. **Output format**:
-   - **Quick answer** - Display top few results in chat (no file saved)
-   - **CSV** - Full export with all fields
-   - **JSON** - Full export in JSON format
-2. **Number of results**: Based on character of use case
+1. **输出格式**：
+   - **快速回复** - 在聊天中显示前几个结果（不保存文件）
+   - **CSV** - 完整导出所有字段
+   - **JSON** - 完整导出 JSON 格式
+2. **结果数量**：根据使用场景确定
 
 ### 步骤 4：运行脚本
 
-**Quick answer (display in chat, no file):**
+**快速回复（在聊天中显示，不保存文件）：**
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -113,20 +113,20 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ### 步骤 5：总结发现
 
 完成后，报告：
-- Number of audience members/profiles analyzed
+- 分析的受众数量/个人主页数量
 - 文件位置和名称
 - 关键人口统计洞察
 - 建议的后续步骤（深入分析、细分）
 
 ## 错误处理
 
-`APIFY_TOKEN not found` - Ask user to create `.env` with `APIFY_TOKEN=your_token`
-`mcpc not found` - Ask user to install `npm install -g @apify/mcpc`
-`Actor not found` - Check Actor ID spelling
-`Run FAILED` - Ask user to check Apify console link in error output
-`Timeout` - Reduce input size or increase `--timeout`
+`APIFY_TOKEN not found` - 请用户创建 `.env` 文件并添加 `APIFY_TOKEN=your_token`
+`mcpc not found` - 请用户安装 `npm install -g @apify/mcpc`
+`Actor not found` - 检查 Actor ID 拼写
+`Run FAILED` - 请用户检查错误输出中的 Apify 控制台链接
+`Timeout` - 减小输入大小或增加 `--timeout`
 
 ## 限制
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+- 仅在任务明显匹配上述范围时使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必需的输入、权限、安全边界或成功标准，请停止并寻求澄清。

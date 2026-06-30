@@ -1,6 +1,6 @@
 ---
 name: comfyui-gateway
-description:  REST API gateway for ComfyUI servers. Workflow management, job queuing, webhooks, caching, auth, rate limiting, and image delivery (URL + base64).
+description: "Comfyui Gateway — Comfyui Gateway 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-06'

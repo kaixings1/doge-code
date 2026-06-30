@@ -1,6 +1,6 @@
 ---
 name: full-page-screenshot
-description:  |
+description: "Full Page Screenshot — Full Page Screenshot 相关功能和最佳实践"
   Capture full-page screenshots of web pages via Chrome DevTools Protocol with zero dependencies. Useful for portfolios, case studies, and audit reports.
 triggers:
   - "full page screenshot"

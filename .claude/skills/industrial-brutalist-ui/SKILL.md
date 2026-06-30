@@ -1,6 +1,6 @@
 ---
 name: industrial-brutalist-ui
-description: "适用于creating raw industrial or tactical telemetry uis with rigid grids, stark typography, crt effects, and high-density data.的情况。"
+description: "适用于创建原始的工业或战术遥测 UI，具有刚性网格、醒目标题、CRT 效果和高密度数据处理的情况。"
 category: frontend
 risk: safe
 source: community

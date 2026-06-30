@@ -1,6 +1,6 @@
 ---
 name: expo-ui-jetpack-compose
-description:  expo-ui-jetpack-compose
+description: "Expo Ui Jetpack Compose — Expo Ui Jetpack Compose 相关功能和最佳实践"
 risk: unknown
 source: community
 ---

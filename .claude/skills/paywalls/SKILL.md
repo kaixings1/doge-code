@@ -1,6 +1,6 @@
 ---
 name: paywalls
-description: When the user wants to create or optimize in-app paywalls, upgrade screens, upsell modals, or feature gates. Also use when the user mentions "paywall," "upgrade screen," "upgrade modal," "upsell," "feature gate," "convert free to paid," "freemium conversion," "trial expiration screen," "limit reached screen," "plan upgrade prompt," "in-app pricing," "free users won't upgrade," "trial to paid conversion," or "how do I get users to pay." Use this for any in-product moment where you're asking users to upgrade. Distinct from public pricing pages (see cro) — this focuses on in-product upgrade moments where the user has already experienced value. For pricing decisions, see pricing.
+description: 创建或优化应用内付费墙、升级屏幕、追加销售弹窗或功能 gates。触发词：付费墙、升级、追加销售、功能 gate、免费转付费、freemium 转化、试用过期、定价决策。
 metadata:
   version: 2.0.0
 ---

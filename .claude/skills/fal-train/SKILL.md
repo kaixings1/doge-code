@@ -1,6 +1,6 @@
 ---
 name: fal-train
-description:  |
+description: "Fal Train — Fal Train 相关功能和最佳实践"
   Train custom AI models (LoRA) on fal.ai for personalized image generation tailored to a brand, character, or style.
 triggers:
   - "fal train"

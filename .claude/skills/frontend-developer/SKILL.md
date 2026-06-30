@@ -1,6 +1,6 @@
 ---
 name: frontend-developer
-description:  Build React components, implement responsive layouts, and handle client-side state management. Masters React 19, Next.js 15, and modern frontend architecture.
+description: 构建 React 组件、实现响应式布局和处理客户端状态管理。精通 React 19、Next.js 15 和现代前端架构。
 risk: unknown
 source: community
 date_added: '2026-02-27'

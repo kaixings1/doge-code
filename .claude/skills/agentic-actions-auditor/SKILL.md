@@ -1,6 +1,6 @@
 ---
 name: agentic-actions-auditor
-description:  >
+description: "Agentic Actions Auditor — Agentic Actions Auditor 相关功能和最佳实践"
   Audits GitHub Actions workflows for security
   vulnerabilities in AI agent integrations 
   including Claude Code Action, 

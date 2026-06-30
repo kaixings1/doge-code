@@ -1,6 +1,6 @@
 ---
 name: research-decision-room
-description:  |
+description: "Research Decision Room — Research Decision Room 相关功能和最佳实践"
   Turn messy user research notes, interviews, support tickets, surveys, and product
   context into an evidence-backed decision room: a single HTML artifact with an
   evidence ledger, theme map, confidence heatmap, opportunity matrix, decision

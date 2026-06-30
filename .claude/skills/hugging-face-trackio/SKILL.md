@@ -1,7 +1,7 @@
 ---
 source: "https://github.com/huggingface/skills/tree/main/skills/huggingface-trackio"
 name: hugging-face-trackio
-description:  Track ML experiments with Trackio using Python logging, alerts, and CLI metric retrieval.
+description: "Hugging Face Trackio — Hugging Face Trackio 相关功能和最佳实践"
 risk: unknown
 ---
 

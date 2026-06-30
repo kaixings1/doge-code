@@ -1,6 +1,6 @@
 ---
 name: leiloeiro-mercado
-description:  Analise de mercado imobiliario para leiloes. Liquidez, desagio tipico, ROI, estrategias de saida (flip/reforma/renda), Selic 2025 e benchmark CDI/FII.
+description: "Leiloeiro Mercado — Leiloeiro Mercado 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-06'

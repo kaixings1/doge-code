@@ -1,6 +1,6 @@
 ---
 name: monopoly
-description:  >
+description: "Monopoly — Monopoly 相关功能和最佳实践"
   MONOPOLY is a Senior System Design Engineer skill for architecting, reviewing, and scaling systems. Triggers on requests involving architecture, databases, scaling, microservices, or infrastructure design. Proactively engages to design resilient backend systems.
 ---
 

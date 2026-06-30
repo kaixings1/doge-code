@@ -1,6 +1,6 @@
 ---
 name: ce-commit-push-pr
-description:  Commit, push, and open a PR. Use when asked to ship/open a PR, or for PR-description-only flows like writing, rewriting, or describing a PR body.
+description: "Ce Commit Push Pr — Ce Commit Push Pr 相关功能和最佳实践"
 ---
 
 # Git Commit, Push, and PR

@@ -1,6 +1,6 @@
 ---
 name: seo-content-brief
-description:  >
+description: "Seo Content Brief — Seo Content Brief 相关功能和最佳实践"
   Generate competitive SEO content briefs with per-section word counts,
   competitor scoring, keyword density guidance, and page-type templates.
   Supports both new page briefs and improve-existing-page briefs.
