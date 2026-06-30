@@ -5,6 +5,7 @@ import { useCallback, useEffect } from 'react';
 import { getOriginalCwd } from '../../../bootstrap/state.js';
 import type { CommandResultDisplay } from '../../../commands.js';
 import { Select } from '../../../components/CustomSelect/select.js';
+import { getGlobalConfig } from '../../../utils/config.js';
 import { Box, Text } from '../../../ink.js';
 import type { ToolPermissionContext } from '../../../Tool.js';
 import { useTabHeaderFocus } from '../../design-system/Tabs.js';
@@ -118,7 +119,7 @@ export function WorkspaceTab(t0) {
   } else {
     t6 = $[15];
   }
-  const t7 = Math.min(10, options.length);
+  const t7 = Math.min(getGlobalConfig()?.maxListItems ?? 10, options.length);
   let t8;
   if ($[16] !== focusHeader || $[17] !== handleCancel || $[18] !== handleDirectorySelect || $[19] !== headerFocused || $[20] !== options || $[21] !== t7) {
     t8 = <Box flexDirection="column" marginBottom={1}>{t6}<Select options={options} onChange={handleDirectorySelect} onCancel={handleCancel} visibleOptionCount={t7} onUpFromFirstItem={focusHeader} isDisabled={headerFocused} /></Box>;

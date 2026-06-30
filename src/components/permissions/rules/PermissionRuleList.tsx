@@ -8,6 +8,7 @@ import { applyPermissionUpdate, persistPermissionUpdate } from '../../../utils/p
 import type { PermissionUpdateDestination } from '../../../utils/permissions/PermissionUpdateSchema.js';
 import type { CommandResultDisplay } from '../../../commands.js';
 import { Select } from '../../../components/CustomSelect/select.js';
+import { getGlobalConfig } from '../../../utils/config.js';
 import { useExitOnCtrlCDWithKeybindings } from '../../../hooks/useExitOnCtrlCDWithKeybindings.js';
 import { useSearchInput } from '../../../hooks/useSearchInput.js';
 import type { KeyboardEvent } from '../../../ink/events/keyboard-event.js';
@@ -332,7 +333,7 @@ function RulesTabContent(props) {
   } else {
     t5 = $[14];
   }
-  const t6 = Math.min(10, options.length);
+  const t6 = Math.min(getGlobalConfig()?.maxListItems ?? 10, options.length);
   const t7 = isSearchMode || headerFocused;
   let t8;
   if ($[15] !== focusHeader || $[16] !== lastFocusedRuleKey || $[17] !== onCancel || $[18] !== onSelect || $[19] !== options || $[20] !== t6 || $[21] !== t7) {

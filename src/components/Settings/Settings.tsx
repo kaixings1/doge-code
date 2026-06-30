@@ -6,6 +6,7 @@ import { useKeybinding } from '../../keybindings/useKeybinding.js';
 import { useExitOnCtrlCDWithKeybindings } from '../../hooks/useExitOnCtrlCDWithKeybindings.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 import { useIsInsideModal, useModalOrTerminalSize } from '../../context/modalContext.js';
+import { getGlobalConfig } from '../../utils/config.js';
 import { Pane } from '../design-system/Pane.js';
 import { Tabs, Tab } from '../design-system/Tabs.js';
 import { Status, buildDiagnostics } from './Status.js';
@@ -34,7 +35,9 @@ export function Settings(t0) {
   const {
     rows
   } = useModalOrTerminalSize(useTerminalSize());
-  const contentHeight = insideModal ? rows + 1 : Math.max(15, Math.min(Math.floor(rows * 0.8), 30));
+  // DOGE: maxListItems 也控制 /config 面板的最大可见行数（默认 30）
+  const maxConfigItems = getGlobalConfig()?.maxListItems ?? 30;
+  const contentHeight = insideModal ? rows + 1 : Math.max(15, Math.min(Math.floor(rows * 0.8), maxConfigItems));
   const [diagnosticsPromise] = useState(_temp2);
   useExitOnCtrlCDWithKeybindings();
   let t1;

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { getAllOutputStyles, OUTPUT_STYLE_CONFIG, type OutputStyleConfig } from '../constants/outputStyles.js';
 import { Box, Text } from '../ink.js';
 import type { OutputStyle } from '../utils/config.js';
+import { getGlobalConfig } from '../utils/config.js';
 import { getCwd } from '../utils/cwd.js';
 import type { OptionWithDescription } from './CustomSelect/select.js';
 import { Select } from './CustomSelect/select.js';
@@ -87,7 +88,8 @@ export function OutputStylePicker(t0) {
   }
   let t8;
   if ($[6] !== handleStyleSelect || $[7] !== initialStyle || $[8] !== isLoading || $[9] !== styleOptions) {
-    t8 = <Box flexDirection="column" gap={1}>{t7}{isLoading ? <Text dimColor={true}>正在加载输出样式…</Text> : <Select options={styleOptions} onChange={handleStyleSelect} visibleOptionCount={10} defaultValue={initialStyle} />}</Box>;
+    const styleVisibleCount = Math.min(getGlobalConfig()?.maxListItems ?? 10, styleOptions.length);
+    t8 = <Box flexDirection="column" gap={1}>{t7}{isLoading ? <Text dimColor={true}>正在加载输出样式…</Text> : <Select options={styleOptions} onChange={handleStyleSelect} visibleOptionCount={styleVisibleCount} defaultValue={initialStyle} />}</Box>;
     $[6] = handleStyleSelect;
     $[7] = initialStyle;
     $[8] = isLoading;
