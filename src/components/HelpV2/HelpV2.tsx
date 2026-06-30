@@ -135,7 +135,7 @@ export function HelpV2(t0) {
   } else {
     tabs = $[15];
   }
-  const t5 = insideModal ? undefined : maxHeight;
+  /* height removed */
   let t6;
   if ($[31] !== tabs) {
     t6 = <Tabs title={false ? "/help" : `Claude Code v${MACRO.VERSION}`} color="professionalBlue" defaultTab="general">{tabs}</Tabs>;
@@ -171,13 +171,12 @@ export function HelpV2(t0) {
     t9 = $[40];
   }
   let t10;
-  if ($[41] !== t5 || $[42] !== t9) {
-    t10 = <Box flexDirection="column" height={t5}>{t9}</Box>;
-    $[41] = t5;
-    $[42] = t9;
-    $[43] = t10;
+  if ($[41] !== t9) {
+    t10 = <Box flexDirection="column" >{t9}</Box>;
+    $[41] = t9;
+    $[42] = t10;
   } else {
-    t10 = $[43];
+    t10 = $[42];
   }
   return t10;
 }

@@ -564,6 +564,9 @@ export type GlobalConfig = {
   // 预判配置（仅 ant）
   speculationEnabled?: boolean // 是否启用预判（默认：true）
 
+  // DOGE: 列表视图每次可见的最大条目数（/help /agents /skills 等）
+  maxListItems?: number // 默认 40
+
 
   // 用于服务端实验的客户端数据（在引导期间获取）。
   clientDataCache?: Record<string, unknown> | null
@@ -634,6 +637,7 @@ function createDefaultGlobalConfig(): GlobalConfig {
     cachedGrowthBookFeatures: {},
     respectGitignore: true,
     copyFullResponse: false,
+    maxListItems: 40,
   }
 }
 

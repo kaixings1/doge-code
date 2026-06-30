@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Box, Text, useInput } from '../../../ink.js';
 import { type AutoModeDenial, getAutoModeDenials } from '../../../utils/autoModeDenials.js';
 import { Select } from '../../CustomSelect/select.js';
+import { getGlobalConfig } from '../../../utils/config.js';
 import { StatusIcon } from '../../design-system/StatusIcon.js';
 import { useTabHeaderFocus } from '../../design-system/Tabs.js';
 type Props = {
@@ -181,7 +182,7 @@ export function RecentDenialsTab(t0) {
   } else {
     t11 = $[24];
   }
-  const t12 = Math.min(10, options.length);
+  const t12 = Math.min(getGlobalConfig()?.maxListItems ?? 10, options.length);
   let t13;
   if ($[25] !== focusHeader || $[26] !== headerFocused || $[27] !== options || $[28] !== t12) {
     t13 = <Box flexDirection="column">{t11}<Box marginTop={1}><Select options={options} onChange={handleSelect} onFocus={handleFocus} visibleOptionCount={t12} isDisabled={headerFocused} onUpFromFirstItem={focusHeader} /></Box></Box>;

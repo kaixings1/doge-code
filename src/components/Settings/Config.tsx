@@ -1166,7 +1166,23 @@ export function Config({
       });
       setGlobalConfig(getGlobalConfig());
     }
-  }] : [])];
+  }] : []),
+  // DOGE: 列表最大条目数配置
+  {
+    id: 'maxListItems',
+    label: `列表可见条目数：${globalConfig.maxListItems ?? 40}`,
+    value: (globalConfig.maxListItems ?? 40).toString(),
+    options: ['10', '20', '30', '40', '50', '60', '80', '100'],
+    type: 'enum' as const,
+    onChange(value: string) {
+      const num = parseInt(value, 10) || 40;
+      saveGlobalConfig(current => ({
+        ...current,
+        maxListItems: num
+      }));
+      setGlobalConfig(getGlobalConfig());
+    }
+  }];
 
   // Filter settings based on search query
   const filteredSettingsItems = React.useMemo(() => {

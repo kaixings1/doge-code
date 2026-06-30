@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { type Command, formatDescriptionWithSource } from '../../commands.js';
 import { Box, Text } from '../../ink.js';
 import { truncate } from '../../utils/format.js';
+import { getGlobalConfig } from '../../utils/config.js';
 import { Select } from '../CustomSelect/select.js';
 import { useTabHeaderFocus } from '../design-system/Tabs.js';
 type Props = {
@@ -18,7 +19,7 @@ export function Commands(t0) {
   const $ = _c(14);
   const {
     commands,
-    maxHeight,
+    maxHeight: _unusedMaxHeight,
     columns,
     title,
     onCancel,
@@ -29,7 +30,9 @@ export function Commands(t0) {
     focusHeader
   } = useTabHeaderFocus();
   const maxWidth = Math.max(1, columns - 10);
-  const visibleCount = Math.max(1, Math.floor((maxHeight - 10) / 2));
+  // DOGE: 从配置读取 maxListItems，默认 40
+  const globalConfig = getGlobalConfig();
+  const visibleCount = Math.max(1, globalConfig?.maxListItems ?? 40);
   let t1;
   if ($[0] !== commands || $[1] !== maxWidth) {
     const seen = new Set();
