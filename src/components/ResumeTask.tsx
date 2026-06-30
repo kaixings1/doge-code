@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
+import { getGlobalConfig } from '../utils/config.js';
 import { type CodeSession, fetchCodeSessionsFromSessionsAPI } from '../utils/teleport/api.js';
 // eslint-disable-next-line custom-rules/prefer-use-keybindings -- raw j/k/arrow list navigation
 import { Box, Text, useInput } from '../ink.js';
@@ -176,7 +177,8 @@ export function ResumeTask({
   // Adjust layout for embedded vs full-screen rendering
   // Overhead: padding (2) + title (1) + marginY (2) + header (1) + footer (1) = 7
   const layoutOverhead = 7;
-  const maxVisibleOptions = Math.max(1, isEmbedded ? Math.min(sessions.length, 5, rows - 6 - layoutOverhead) : Math.min(sessions.length, rows - 1 - layoutOverhead));
+  const maxListItems = getGlobalConfig()?.maxListItems ?? 5;
+  const maxVisibleOptions = Math.max(1, isEmbedded ? Math.min(sessions.length, maxListItems, rows - 6 - layoutOverhead) : Math.min(sessions.length, rows - 1 - layoutOverhead));
   const maxHeight = maxVisibleOptions + layoutOverhead;
 
   // Show scroll position in title when list needs scrolling
