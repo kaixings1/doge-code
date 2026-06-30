@@ -1,6 +1,6 @@
 ---
 name: wrap-up
-description:  End-of-session ritual that audits changes, runs quality checks, captures learnings, and produces a session summary. Use when saying "wrap up", "done for the day", "finish coding", or ending a coding session.
+description: "Pro Workflow\Skills\Wrap Up — Pro Workflow\Skills\Wrap Up 相关功能和最佳实践"
 ---
 
 # Wrap-Up Ritual

@@ -1,6 +1,6 @@
 ---
 name: deslop
-description:  Remove AI-generated code slop, unnecessary comments, and over-engineering from the current branch diff. Cleans up boilerplate, simplifies abstractions, and strips defensive code. Use when cleaning up code, simplifying, removing boilerplate, or before committing.
+description: "Pro Workflow\Skills\Deslop — Pro Workflow\Skills\Deslop 相关功能和最佳实践"
 ---
 
 # Remove AI Code Slop

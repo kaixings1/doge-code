@@ -1,6 +1,6 @@
 ---
 name: wiki-query
-description:  Query pro-workflow wikis via SQLite FTS5 BM25 retrieval. Returns top-K passages with citations. Use when answering a question that any of the user's wikis already covers, when the user says "what does the wiki say about X", "ask wiki", "search wikis", or before drafting a new wiki page (to avoid duplication).
+description: "Pro Workflow\Skills\Wiki Query — Pro Workflow\Skills\Wiki Query 相关功能和最佳实践"
 ---
 
 # Wiki Query
