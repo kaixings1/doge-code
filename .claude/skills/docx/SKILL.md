@@ -1,6 +1,6 @@
 ---
 name: docx
-description:  |
+description: "Docx — Docx 相关功能和最佳实践"
   Create, edit, and analyze Word documents with tracked changes, comments, and formatting. Useful for design briefs, copy docs, and review-ready deliverables.
 triggers:
   - "docx"

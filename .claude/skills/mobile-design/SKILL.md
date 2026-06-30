@@ -1,6 +1,6 @@
 ---
 name: mobile-design
-description: "(Mobile-First · Touch-First · Platform-Respectful)"
+description: "Mobile Design — Mobile Design 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: "2026-02-27"

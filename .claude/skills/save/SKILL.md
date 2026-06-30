@@ -1,6 +1,6 @@
 ---
 name: save
-description:  >
+description: "Save — Save 相关功能和最佳实践"
   Save the current conversation, answer, or insight into the Obsidian wiki vault as a
   structured note. Analyzes the chat, determines the right note type, creates frontmatter,
   files it in the correct wiki folder, and updates index, log, and hot cache.

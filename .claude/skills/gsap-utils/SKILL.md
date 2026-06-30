@@ -1,6 +1,6 @@
 ---
 name: gsap-utils
-description:  |
+description: "Gsap Utils — Gsap Utils 相关功能和最佳实践"
   Official GSAP skill for gsap.utils — clamp, mapRange, normalize, interpolate, random, snap, toArray, wrap, pipe. Use when the user asks about gsap.utils, clamp, mapRange, random, snap, toArray, wrap, or helper utilities in GSAP.
 triggers:
   - "gsap utils"

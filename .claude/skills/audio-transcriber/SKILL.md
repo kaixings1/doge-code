@@ -1,6 +1,6 @@
 ---
 name: audio-transcriber
-description: "使用 OpenAI 的 Whisper 模型转录音频文件为文本。适用于处理会议录音、采访和任何需要语音转文本的场景。"
+description: 音频转录为专业 Markdown：智能摘要、说话人分离和时间戳。
 category: content
 risk: safe
 source: community

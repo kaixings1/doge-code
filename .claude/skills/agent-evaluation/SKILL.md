@@ -1,6 +1,6 @@
 ---
 name: agent-evaluation
-description:  Testing and benchmarking LLM agents including behavioral testing,
+description: "Agent Evaluation — Agent Evaluation 相关功能和最佳实践"
   capability assessment, reliability metrics, and production monitoring—where
   even top agents achieve less than 50% on real-world benchmarks
 risk: safe

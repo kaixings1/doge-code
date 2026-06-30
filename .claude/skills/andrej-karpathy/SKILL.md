@@ -1,6 +1,6 @@
 ---
 name: andrej-karpathy
-description:  Behavioral guidelines to reduce common LLM coding mistakes. Use when writing, reviewing, or refactoring code to avoid overcomplication, make surgical changes, surface assumptions, and define verifiable success criteria.
+description: "Andrej Karpathy — Andrej Karpathy 相关功能和最佳实践"
 risk: safe
 source: community
 source_repo: multica-ai/andrej-karpathy-skills

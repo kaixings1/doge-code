@@ -1,6 +1,6 @@
 ---
 name: seo-competitor-pages
-description:  >
+description: "Seo Competitor Pages — Seo Competitor Pages 相关功能和最佳实践"
   Generate SEO-optimized competitor comparison and alternatives pages. Covers
   "X vs Y" layouts, "alternatives to X" pages, feature matrices, schema markup,
   and conversion optimization. Use when user says "comparison page", "vs page",

@@ -1,6 +1,6 @@
 ---
 name: deepinit
-description:  Deep codebase initialization with hierarchical AGENTS.md documentation
+description: "Deepinit — Deepinit 相关功能和最佳实践"
 level: 4
 ---
 

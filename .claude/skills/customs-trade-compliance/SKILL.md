@@ -1,6 +1,6 @@
 ---
 name: customs-trade-compliance
-description:  Codified expertise for customs documentation, tariff classification, duty optimisation, restricted party screening, and regulatory compliance across multiple jurisdictions.
+description: "Customs Trade Compliance — Customs Trade Compliance 相关功能和最佳实践"
 risk: safe
 source: https://github.com/ai-evos/agent-skills
 date_added: '2026-02-27'

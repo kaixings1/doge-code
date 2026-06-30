@@ -1,6 +1,6 @@
 ---
 name: expo-ui-swift-ui
-description:  expo-ui-swift-ui
+description: "Expo Ui Swift Ui — Expo Ui Swift Ui 相关功能和最佳实践"
 risk: unknown
 source: community
 ---

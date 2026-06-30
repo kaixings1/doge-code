@@ -1,6 +1,6 @@
 ---
 name: ci-cd-pipelines
-description:  placeholder
+description: "Ci Cd Pipelines — Ci Cd Pipelines 相关功能和最佳实践"
 ---
 
 # CI/CD Pipelines

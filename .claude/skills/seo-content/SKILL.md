@@ -1,6 +1,6 @@
 ---
 name: seo-content
-description:  >
+description: "Seo Content — Seo Content 相关功能和最佳实践"
   Content quality and E-E-A-T analysis with AI citation readiness assessment.
   Use when user says "content quality", "E-E-A-T", "content analysis",
   "readability check", "thin content", or "content audit".

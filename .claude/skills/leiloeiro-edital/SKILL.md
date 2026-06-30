@@ -1,6 +1,6 @@
 ---
 name: leiloeiro-edital
-description:  Analise e auditoria de editais de leilao judicial e extrajudicial. Riscos ocultos, clausulas perigosas, debitos, ocupante e classificacao da oportunidade.
+description: "Leiloeiro Edital — Leiloeiro Edital 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-06'

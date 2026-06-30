@@ -39,6 +39,90 @@ allowedTools: [Bash, Read, Write, Edit, Glob, Grep]
 
 ---
 
+## ⚠️ 重要约束（必须遵守）
+
+### 1. `_build_plan.md` 持久化（关键）
+**完成生成后，必须将所有问答记录保存到本项目技能目录下的 `_build_plan.md` 中。**
+
+保存路径规则：**`d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md`**
+
+这个文件的作用：
+- 下次发现问题需要修改项目时，可以把 `_build_plan.md` 发给大模型直接重建或修改
+- 避免重新回答所有 600+ 问题
+- 同一技能目录下的不同项目互不干扰
+
+`_build_plan.md` 格式：
+```markdown
+# <ProjectName> 构建计划
+生成日期: 2026-06-29
+
+## 预设选择
+- 预设: 5 (WinUI 3 现代 Windows 应用)
+
+## 问答记录
+| 问题编号 | 答案 |
+|---------|------|
+| X1 | Windows 10/11 (x64) |
+| X2 | 独立桌面应用程序 |
+| X3 | 混合模式 |
+| X4 | 全新项目 |
+| A1 | RemoteScreen |
+| ... | ... |
+
+## 生成的文件列表
+- CMakeLists.txt
+- src/main.cpp
+- src/screen/ScreenCapture.cpp
+- include/Config.h
+- ...
+
+## 项目目录
+<用户指定的目标目录>
+```
+
+### 2. 项目文件位置
+- 项目文件仍放在用户指定的目录（目标目录不变）
+- `_build_plan.md` 才放在技能隔离目录 `d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/`
+- 这样不同项目之间不会覆盖
+
+### 3. 文件写入安全
+**在 Windows Git Bash (MSYS2) 环境下，`cat << EOF` 写入多行文件时内容会被压缩到单行，导致 XML/代码文件损坏。**
+
+**禁止使用以下方式创建多行代码文件：**
+```bash
+# ❌ 禁止：cat << EOF > file ... EOF
+# ❌ 禁止：printf '%s\n' ... 
+# ❌ 禁止：python -c "..." 
+```
+
+**只允许使用以下方式创建代码文件：**
+
+**方法 A：逐行 echo >> 追加**
+```bash
+# 先创建空文件
+echo '/* 文件头注释 */' > "d:/projects/MyApp/CMakeLists.txt"
+echo '' >> "d:/projects/MyApp/CMakeLists.txt"
+echo 'cmake_minimum_required(VERSION 3.16)' >> "d:/projects/MyApp/CMakeLists.txt"
+echo 'project(MyApp VERSION 1.0.0 LANGUAGES CXX)' >> "d:/projects/MyApp/CMakeLists.txt"
+echo '' >> "d:/projects/MyApp/CMakeLists.txt"
+echo 'add_executable(${PROJECT_NAME} main.cpp)' >> "d:/projects/MyApp/CMakeLists.txt"
+```
+> 注意：包含 `$` 符号的行使用单引号包裹，避免变量展开
+
+**方法 B：先生成占位内容，再用 Edit 替换**
+```bash
+echo 'PLACEHOLDER' > "d:/projects/MyApp/test.txt"
+```
+- 然后使用 Edit 工具将 `PLACEHOLDER` 替换为目标多行内容
+- Edit 工具支持正确的多行替换
+
+**方法 C：纯 CMake 项目（推荐用于快速试错）**
+- 只用 CMakeLists.txt + main.cpp 两个文件
+- CMake 项目可以用 VS2022 直接打开 CMakeLists.txt
+- 不需要生成 vcxproj 或 sln
+
+---
+
 ## 关于目标目录的约定
 
 - **如果命令带了参数**（如 `/plan-cpp-win D:/code/myapp`），参数就是目标目录，自动 `mkdir -p` 后在该目录生成所有文件。
@@ -1510,6 +1594,42 @@ Windows C++ 项目生成 - 确认摘要
 - M1 未选择 GNUInstallDirs + AC 选择遵循 → ⚠️ 自动补全 M1 的对应选项
 
 ---
+## ⚠️ 第五步（强制）：保存构建计划到技能目录
+
+**生成所有文件后，必须执行此步骤！**
+
+在 `d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/` 下创建 `_build_plan.md`，记录本次完整问答记录。
+
+创建目录和文件的方式（使用 echo 逐行追加，避免 heredoc 问题）：
+
+```bash
+# 1. 创建项目隔离目录
+mkdir -p "d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>"
+
+# 2. 写入 _build_plan.md（逐行 echo >> 追加）
+echo '# <ProjectName> 构建计划' > "d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md"
+echo '生成日期: 2026-06-29' >> "d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md"
+echo '' >> "d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md"
+echo '## 预设选择' >> "d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md"
+echo '- 预设: N (名称)' >> "d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md"
+echo '' >> "d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md"
+echo '## 问答记录' >> "d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md"
+echo '| 编号 | 答案 |' >> "d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md"
+echo '|------|------|' >> "d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md"
+echo '| X1 | ... |' >> ...
+# 记录所有问答...
+echo '' >> "d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md"
+echo '## 项目目录' >> "d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md"
+echo '<用户指定的目标目录>' >> "d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md"
+```
+
+**重要：** 下次要修改该项目时：
+1. 执行 `/plan-cpp-win` 
+2. 告知大模型：**"请读取 `d:/doge-code/.claude/skills/plan-cpp-win/Project/<ProjectName>/_build_plan.md` 并重建对话上下文"**
+3. 大模型即可按原样恢复所有问答，直接修改生成的文件
+
+---
+
 ## 设计哲学
 
 这不是一个「写文档」的过程，而是一个「生成项目」的过程。

@@ -1,6 +1,6 @@
 ---
 name: makepad-animation
-description:  |
+description: "Makepad Animation — Makepad Animation 相关功能和最佳实践"
   CRITICAL: Use for Makepad animation system. Triggers on:
   makepad animation, makepad animator, makepad hover, makepad state,
   makepad transition, "from: { all: Forward", makepad pressed,

@@ -1,6 +1,6 @@
 ---
 name: unreal-thirdparty
-description:  >
+description: "Unreal Thirdparty — Unreal Thirdparty 相关功能和最佳实践"
   Expert guide for integrating third-party C/C++ libraries into Unreal Engine 5.x projects and plugins.
   Covers static linking, dynamic linking (DLL/SO/dylib), Build.cs configuration, ModuleType.External,
   delay loading, runtime dependency staging, wrapping patterns, cross-platform considerations

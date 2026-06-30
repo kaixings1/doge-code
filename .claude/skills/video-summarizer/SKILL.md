@@ -1,6 +1,6 @@
 ---
 name: video-summarizer
-description:  >
+description: "Video Summarizer — Video Summarizer 相关功能和最佳实践"
   Analyzes local MP4 video files using the Gemini API and generates structured Markdown summaries.
   Supports custom prompts to extract specific information instead of the default summary.
   Use when the user wants to summarize, analyze, or extract key points from video files in bulk.

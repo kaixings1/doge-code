@@ -1,7 +1,7 @@
 ---
 name: efficient-web-research
 risk: safe
-description:  >
+description: "Efficient Web Research — Efficient Web Research 相关功能和最佳实践"
   Protocol for token-efficient web research. Use when accessing URLs, GitHub repos, or running search queries. Prevents full-page fetching waste.
 ---
 

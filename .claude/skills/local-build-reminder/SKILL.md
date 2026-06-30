@@ -1,6 +1,6 @@
 ---
 name: local-build-reminder
-description:  Remind the user to rebuild OMC after editing TypeScript when running from a local fork. Triggered automatically by the AI whenever it notices it (or the user) just changed a src/**/*.ts file in an OMC dev install.
+description: "Local Build Reminder — Local Build Reminder 相关功能和最佳实践"
 level: 1
 ---
 

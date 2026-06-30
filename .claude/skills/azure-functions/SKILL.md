@@ -1,6 +1,6 @@
 ---
 name: azure-functions
-description:  Expert patterns for Azure Functions development including isolated
+description: "Azure Functions — Azure Functions 相关功能和最佳实践"
   worker model, Durable Functions orchestration, cold start optimization, and
   production patterns. Covers .NET, Python, and Node.js programming models.
 risk: none

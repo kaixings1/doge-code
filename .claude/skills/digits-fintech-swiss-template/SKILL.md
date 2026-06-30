@@ -1,6 +1,6 @@
 ---
 name: digits-fintech-swiss-template
-description:  |
+description: "Digits Fintech Swiss Template — Digits Fintech Swiss Template 相关功能和最佳实践"
   Swiss-grid fintech deck template in black / warm paper / neon-lime contrast.
   Use when users ask for premium data-story slides with strict modular layout,
   bold numeric cards, restrained motion, and keyboard/click navigation in one HTML file.

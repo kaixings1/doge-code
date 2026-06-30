@@ -1,6 +1,6 @@
 ---
 name: Confidence Check
-description: Pre-implementation confidence assessment (≥90% required). Use before starting any implementation to verify readiness with duplicate check, architecture compliance, official docs verification, OSS references, and root cause identification.
+description: "Confidence Check — Confidence Check 相关功能和最佳实践"
 ---
 
 # Confidence Check Skill

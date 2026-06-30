@@ -1,6 +1,6 @@
 ---
 name: figma-generate-design
-description:  |
+description: "Figma Generate Design — Figma Generate Design 相关功能和最佳实践"
   Build or update screens in Figma from code or description using design system components. Translate app pages into Figma using design tokens.
 triggers:
   - "figma generate design"

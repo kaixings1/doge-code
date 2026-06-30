@@ -1,6 +1,6 @@
 ---
 name: analyzing-threat-actor-ttps-with-mitre-attack
-description:  MITRE ATT&CK 是一个基于真实世界观察的全球可访问的对手战术、技术和程序 (TTP) 知识库。此技能涵盖系统化映射威胁行为者行为、理解检测覆盖率和构建基于威胁的防御。
+description: MITRE ATT&CK 威胁行为者 TTPS 系统化映射：检测覆盖率、基于威胁的防御和检测差距。
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:

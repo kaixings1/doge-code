@@ -1,6 +1,6 @@
 ---
 name: expo-tailwind-setup
-description:  Set up Tailwind CSS v4 in Expo with react-native-css and NativeWind v5 for universal styling
+description: "Expo Tailwind Setup — Expo Tailwind Setup 相关功能和最佳实践"
 risk: unknown
 source: community
 version: 1.0.0

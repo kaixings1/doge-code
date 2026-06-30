@@ -1,6 +1,6 @@
 ---
 name: azure-eventhub-dotnet
-description:  Azure Event Hubs SDK for .NET.
+description: "Azure Eventhub Dotnet — Azure Eventhub Dotnet 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

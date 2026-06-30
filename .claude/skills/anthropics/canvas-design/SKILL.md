@@ -1,6 +1,6 @@
 ---
 name: 画布设计
-description:  Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying existing artists' work to avoid copyright violations.
+description: 使用设计哲学在 PNG 和 PDF 文档中创作精美视觉艺术。用于海报、艺术品、设计或静态视觉作品创作。
 license: Complete terms in LICENSE.txt
 ---
 

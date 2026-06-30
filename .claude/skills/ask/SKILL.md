@@ -1,6 +1,6 @@
 ---
 name: ask
-description:  Process-first advisor routing for Claude, Codex, Gemini, Antigravity, Grok, or Cursor via `omc ask`, with artifact capture and no raw CLI assembly
+description: Claude Codex Gemini 三模型协调：Ask 路由决策和结果返回。
 ---
 
 # Ask

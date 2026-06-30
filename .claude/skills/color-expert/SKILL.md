@@ -1,6 +1,6 @@
 ---
 name: color-expert
-description:  |
+description: "Color Expert — Color Expert 相关功能和最佳实践"
   Color science expert skill with 286K words of reference material covering OKLCH/OKLAB, palette generation, accessibility/contrast, color naming, pigment mixing, and historical color theory.
 triggers:
   - "color theory"

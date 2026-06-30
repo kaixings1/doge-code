@@ -1,6 +1,6 @@
 ---
 name: ce-commit
-description:  Create a git commit with a clear, value-communication message. Use when the user asks to commit/save staged or unstaged changes with a repo-appropriate, value-communicating message.
+description: 创建 git 提交，信息清晰传达价值。用于保存已暂存或未暂存的更改，生成符合仓库风格的价值导向提交信息。
 ---
 
 # Git Commit

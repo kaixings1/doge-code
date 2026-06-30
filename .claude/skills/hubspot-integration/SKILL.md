@@ -1,6 +1,6 @@
 ---
 name: hubspot-integration
-description:  Expert patterns for HubSpot CRM integration including OAuth
+description: "Hubspot Integration — Hubspot Integration 相关功能和最佳实践"
   authentication, CRM objects, associations, batch operations, webhooks, and
   custom objects. Covers Node.js and Python SDKs.
 risk: unknown
