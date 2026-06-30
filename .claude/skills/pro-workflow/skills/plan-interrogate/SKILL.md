@@ -1,6 +1,6 @@
 ---
 name: plan-interrogate
-description:  Stress-test a plan by walking its decision tree one question at a time. Use when the user wants to pressure-test a design before implementation.
+description: "Pro Workflow\Skills\Plan Interrogate — Pro Workflow\Skills\Plan Interrogate 相关功能和最佳实践"
 user-invocable: true
 ---
 

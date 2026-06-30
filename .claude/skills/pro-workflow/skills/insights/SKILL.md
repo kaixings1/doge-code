@@ -1,6 +1,6 @@
 ---
 name: insights
-description:  Show session analytics, learning patterns, correction trends, heatmaps, and productivity metrics. Computes stats from project memory and session history. Use when asking for stats, statistics, progress, how am I doing, coding history, or dashboard.
+description: "Pro Workflow\Skills\Insights — Pro Workflow\Skills\Insights 相关功能和最佳实践"
 ---
 
 # Session Insights
