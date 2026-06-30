@@ -1,6 +1,6 @@
 ---
 name: thoroughness-scoring
-description: Score every decision point with a Thoroughness Rating (1-10). AI makes the marginal cost of doing things properly near-zero — pick the higher-rated option every time. Includes scope checks to distinguish contained vs unbounded work.
+description: "Pro Workflow\Skills\Thoroughness Scoring — Pro Workflow\Skills\Thoroughness Scoring 相关功能和最佳实践"
 ---
 
 # Thoroughness Scoring

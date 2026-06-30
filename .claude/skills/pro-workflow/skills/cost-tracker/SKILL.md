@@ -1,6 +1,6 @@
 ---
 name: cost-tracker
-description:  Track session costs, set budget alerts, and optimize token spend. Use to check costs mid-session or set spending limits.
+description: "Pro Workflow\Skills\Cost Tracker — Pro Workflow\Skills\Cost Tracker 相关功能和最佳实践"
 ---
 
 # Cost Tracker

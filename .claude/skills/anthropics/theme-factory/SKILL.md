@@ -1,6 +1,6 @@
 ---
 name: 主题工厂
-description:  Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.
+description: "Anthropics\Theme Factory — Anthropics\Theme Factory 相关功能和最佳实践"
 license: Complete terms in LICENSE.txt
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: llm-gate
-description:  LLM-powered quality verification using prompt hooks. Validates commit messages, code patterns, and conventions using AI before allowing operations. Use to set up intelligent guardrails.
+description: "Pro Workflow\Skills\Llm Gate — Pro Workflow\Skills\Llm Gate 相关功能和最佳实践"
 ---
 
 # LLM Gate

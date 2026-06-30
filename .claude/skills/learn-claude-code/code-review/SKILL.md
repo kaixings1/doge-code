@@ -1,6 +1,6 @@
 ---
 name: 代码审查(学习)
-description:  Perform thorough code reviews with security, performance, and maintainability analysis. Use when user asks to review code, check for bugs, or audit a codebase.
+description: "Learn Claude Code\Code Review — Learn Claude Code\Code Review 相关功能和最佳实践"
 ---
 
 # Code Review Skill

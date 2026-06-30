@@ -1,6 +1,6 @@
 ---
 name: batch-orchestration
-description:  Decompose large-scale changes into independent units and spawn parallel agents in isolated worktrees. Use for migrations, refactors, codemods, and any change touching 10+ files with the same pattern.
+description: "Pro Workflow\Skills\Batch Orchestration — Pro Workflow\Skills\Batch Orchestration 相关功能和最佳实践"
 ---
 
 # Batch Orchestration

@@ -1,6 +1,6 @@
 ---
 name: file-watcher
-description:  Configure file watching hooks to auto-react to config changes, env file updates, and dependency modifications. Use to set up reactive workflows.
+description: "Pro Workflow\Skills\File Watcher — Pro Workflow\Skills\File Watcher 相关功能和最佳实践"
 ---
 
 # File Watcher

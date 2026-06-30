@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description:  Wire Commands, Agents, and Skills together for complex features. Use when building features that need research, planning, and implementation phases.
+description: "Pro Workflow\Skills\Orchestrate — Pro Workflow\Skills\Orchestrate 相关功能和最佳实践"
 ---
 
 # Orchestrate - Multi-Phase Feature Development

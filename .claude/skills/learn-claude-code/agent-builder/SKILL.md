@@ -1,14 +1,14 @@
 ---
 name: Agent构建器
-description:  |
-  Design and build AI agents for any domain. Use when users:
-  (1) ask to "create an agent", "build an assistant", or "design an AI system"
-  (2) want to understand agent architecture, agentic patterns, or autonomous AI
-  (3) need help with capabilities, subagents, planning, or skill mechanisms
-  (4) ask about Claude Code, Cursor, or similar agent internals
-  (5) want to build agents for business, research, creative, or operational tasks
-  Keywords: agent, assistant, autonomous, workflow, tool use, multi-step, orchestration
----
+description: "Learn Claude Code\Agent Builder — Learn Claude Code\Agent Builder 相关功能和最佳实践"
+
+
+
+
+
+
+
+
 
 # Agent Builder
 

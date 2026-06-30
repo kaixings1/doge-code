@@ -1,6 +1,6 @@
 ---
 name: auto-setup
-description:  Auto-configure quality gates, hooks, and settings for a new project. Detects project type and sets up appropriate tooling. Use when onboarding a new codebase.
+description: "Pro Workflow\Skills\Auto Setup — Pro Workflow\Skills\Auto Setup 相关功能和最佳实践"
 ---
 
 # Auto Setup

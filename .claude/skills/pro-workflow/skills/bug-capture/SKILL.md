@@ -1,6 +1,6 @@
 ---
 name: bug-capture
-description:  Capture a user-reported defect as a durable GitHub issue written in the project's own domain language. Explores the codebase in parallel for context but never leaks file paths or line numbers into the issue. Use when the user reports a bug conversationally, runs a QA pass, or says "file an issue", "log this as a bug", "capture this".
+description: "Pro Workflow\Skills\Bug Capture — Pro Workflow\Skills\Bug Capture 相关功能和最佳实践"
 ---
 
 # bug-capture

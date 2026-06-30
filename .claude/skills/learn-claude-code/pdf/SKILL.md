@@ -1,6 +1,6 @@
 ---
 name: PDF处理(学习)
-description:  Process PDF files - extract text, create PDFs, merge documents. Use when user asks to read PDF, create PDF, or work with PDF files.
+description: "Learn Claude Code\Pdf — Learn Claude Code\Pdf 相关功能和最佳实践"
 ---
 
 # PDF Processing Skill
