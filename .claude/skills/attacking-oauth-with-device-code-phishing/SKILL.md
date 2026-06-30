@@ -1,6 +1,6 @@
 ---
 name: attacking-oauth-with-device-code-phishing
-description:  Run OAuth 2.0 device-code and illicit-consent phishing against Microsoft Entra ID to steal access and refresh tokens, bypass MFA, and pivot across Microsoft 365 services.
+description: 对 Microsoft Entra ID 运行 OAuth 2.0 设备码和非法同意钓鱼攻击，窃取访问令牌和刷新令牌，绕过 MFA，并横向移动 Across Microsoft 365 服务。
 domain: cybersecurity
 subdomain: identity-access-management
 tags:

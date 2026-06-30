@@ -1,6 +1,6 @@
 ---
 name: external-context
-description:  Invoke parallel document-specialist agents for external web searches and documentation lookup
+description: "External Context — External Context 相关功能和最佳实践"
 argument-hint: <search query or topic>
 level: 4
 ---

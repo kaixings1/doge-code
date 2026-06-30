@@ -1,6 +1,6 @@
 ---
 name: html-ppt-retro-quarterly-review
-description:  |
+description: "Html Ppt Retro Quarterly Review — Html Ppt Retro Quarterly Review 相关功能和最佳实践"
   Retro Quarterly Review presentation template in a bold blue + orange editorial
   language. Use when users ask for a high-impact quarterly review / roadmap deck
   with heavyweight slab headlines, clean cream paper sections, structured grids,

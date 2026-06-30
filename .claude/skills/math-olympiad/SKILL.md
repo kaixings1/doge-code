@@ -1,7 +1,6 @@
 ---
 name: math-olympiad
-description:
-   "Solve competition math problems (IMO, Putnam, USAMO, AIME) with adversarial"
+description: "Math Olympiad — Math Olympiad 相关功能和最佳实践"
   verification that catches the errors self-verification misses. Activates when
   asked to 'solve this IMO problem', 'prove this olympiad inequality', 'verify
   this competition proof', 'find a counterexample', 'is this proof correct', or

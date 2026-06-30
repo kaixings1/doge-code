@@ -1,6 +1,6 @@
 ---
 name: screenshot
-description:  |
+description: "Screenshot — Screenshot 相关功能和最佳实践"
   Capture desktop, app windows, or pixel regions across OS platforms. Useful for marketing screenshots, design reviews, and bug reports.
 triggers:
   - "screenshot"

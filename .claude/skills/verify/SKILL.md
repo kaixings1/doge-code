@@ -1,6 +1,6 @@
 ---
 name: verify
-description:  Verify that a change really works before you claim completion
+description: "Verify — Verify 相关功能和最佳实践"
 ---
 
 # Verify

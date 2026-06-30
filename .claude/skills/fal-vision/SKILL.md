@@ -1,6 +1,6 @@
 ---
 name: fal-vision
-description:  |
+description: "Fal Vision — Fal Vision 相关功能和最佳实践"
   Analyze images — segment objects, detect, run OCR, describe, and answer visual questions via fal.ai vision models.
 triggers:
   - "fal vision"

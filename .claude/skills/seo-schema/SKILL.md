@@ -1,6 +1,6 @@
 ---
 name: seo-schema
-description:  >
+description: "Seo Schema — Seo Schema 相关功能和最佳实践"
   Detect, validate, and generate Schema.org structured data. JSON-LD format
   preferred. Use when user says "schema", "structured data", "rich results",
   "JSON-LD", or "markup".

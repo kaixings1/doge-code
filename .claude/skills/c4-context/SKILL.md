@@ -1,6 +1,6 @@
 ---
 name: c4-context
-description:  Expert C4 Context-level documentation specialist. Creates high-level system context diagrams, documents personas, user journeys, system features, and external dependencies.
+description: C4 上下文级文档专家：创建高层系统上下文图，记录用户画像、用户旅程、系统特性和外部依赖。
 risk: unknown
 source: community
 date_added: '2026-02-27'

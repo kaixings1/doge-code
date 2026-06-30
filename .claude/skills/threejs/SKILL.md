@@ -1,6 +1,6 @@
 ---
 name: threejs
-description:  |
+description: "Threejs — Threejs 相关功能和最佳实践"
   Three.js skills for creating 3D elements and interactive experiences in the browser — scenes, materials, controls, and post-processing.
 triggers:
   - "threejs"

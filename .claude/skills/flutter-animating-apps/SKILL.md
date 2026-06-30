@@ -1,6 +1,6 @@
 ---
 name: flutter-animating-apps
-description:  |
+description: "Flutter Animating Apps — Flutter Animating Apps 相关功能和最佳实践"
   Implement animated effects, transitions, and motion in Flutter apps. Useful for native iOS/Android motion design.
 triggers:
   - "flutter animation"

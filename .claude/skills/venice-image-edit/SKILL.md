@@ -1,6 +1,6 @@
 ---
 name: venice-image-edit
-description:  |
+description: "Venice Image Edit — Venice Image Edit 相关功能和最佳实践"
   Image edits, upscaling, and background removal via the Venice.ai API.
 triggers:
   - "venice image edit"

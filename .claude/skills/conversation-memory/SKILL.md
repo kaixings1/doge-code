@@ -1,6 +1,6 @@
 ---
 name: conversation-memory
-description:  Persistent memory systems for LLM conversations including
+description: "Conversation Memory — Conversation Memory 相关功能和最佳实践"
   short-term, long-term, and entity-based memory
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)

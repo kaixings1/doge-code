@@ -1,6 +1,6 @@
 ---
 name: makepad-deployment
-description:  |
+description: "Makepad Deployment — Makepad Deployment 相关功能和最佳实践"
   CRITICAL: Use for Makepad packaging and deployment. Triggers on:
   deploy, package, APK, IPA, 打包, 部署,
   cargo-packager, cargo-makepad, WASM, Android, iOS,

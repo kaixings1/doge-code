@@ -1,6 +1,6 @@
 ---
 name: fp-react
-description:  Practical patterns for using fp-ts with React - hooks, state, forms, data fetching. Works with React 18/19, Next.js 14/15.
+description: "Fp React — Fp React 相关功能和最佳实践"
 risk: unknown
 source: community
 version: 2.0.0

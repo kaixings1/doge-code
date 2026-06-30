@@ -1,6 +1,6 @@
 ---
 name: comprehensive-review-pr-enhance
-description:  >
+description: "Comprehensive Review Pr Enhance — Comprehensive Review Pr Enhance 相关功能和最佳实践"
   Generate structured PR descriptions from diffs, add review checklists,
   risk assessments, and test coverage summaries. Use when the user says
   "write a PR description", "improve this PR", "summarize my changes",

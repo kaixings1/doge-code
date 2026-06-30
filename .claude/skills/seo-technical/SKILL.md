@@ -1,6 +1,6 @@
 ---
 name: seo-technical
-description:  >
+description: "Seo Technical — Seo Technical 相关功能和最佳实践"
   Technical SEO audit across 9 categories: crawlability, indexability, security,
   URL structure, mobile, Core Web Vitals, structured data, JavaScript rendering,
   and IndexNow protocol. Use when user says "technical SEO", "crawl issues",

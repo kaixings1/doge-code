@@ -1,6 +1,6 @@
 ---
 name: library-curator
-description:  |
+description: "Library Curator — Library Curator 相关功能和最佳实践"
   Search the OD Library (the global asset registry) and apply matching assets
   into the current project mid-task. Use when the user asks to reuse an image
   they captured/uploaded earlier, "pull a logo/screenshot from my library", or

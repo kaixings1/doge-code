@@ -1,6 +1,6 @@
 ---
 name: writing-shape
-description: Writing, exploit — shape raw material into an article, paragraph by paragraph.
+description: "Writing Shape — Writing Shape 相关功能和最佳实践"
 disable-model-invocation: true
 ---
 

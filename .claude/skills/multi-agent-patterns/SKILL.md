@@ -1,6 +1,6 @@
 ---
 name: multi-agent-patterns
-description:  This skill should be used when the user asks to "design multi-agent system", "implement supervisor pattern", "create swarm architecture", "coordinate multiple agents", or mentions multi-agent patterns, context isolation, agent handoffs, sub-agents, or parallel agent execution.
+description: 多代理系统设计：实现监督者模式、创建 swarm 架构、协调多个代理。触发词：多代理、上下文隔离、代理交接、子代理、并行代理执行。
 risk: unknown
 source: community
 ---

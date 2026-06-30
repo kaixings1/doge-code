@@ -1,6 +1,6 @@
 ---
 name: mailtrap-testing-with-sandbox
-description:  Capture outbound email in Mailtrap Email Sandbox for development, staging, CI, HTML inspection, spam checks, and fake inbox tests.
+description: "Mailtrap Testing With Sandbox — Mailtrap Testing With Sandbox 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: "2026-06-19"

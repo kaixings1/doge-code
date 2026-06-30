@@ -1,6 +1,6 @@
 --- 
 name: iconsax-library
-description:  Extensive icon library and AI-driven icon generation skill for premium UI/UX design.
+description: "Iconsax Library — Iconsax Library 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: "2026-03-07"

@@ -1,6 +1,6 @@
 ---
 name: django-pro
-description:  Master Django 5.x with async views, DRF, Celery, and Django Channels. Build scalable web applications with proper architecture, testing, and deployment.
+description: "Django Pro — Django Pro 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

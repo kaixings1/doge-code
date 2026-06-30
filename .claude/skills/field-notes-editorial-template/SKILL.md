@@ -1,6 +1,6 @@
 ---
 name: field-notes-editorial-template
-description:  |
+description: "Field Notes Editorial Template — Field Notes Editorial Template 相关功能和最佳实践"
   Editorial "Field Notes" report template with soft paper background, serif hero
   typography, rounded pastel insight cards, and a retention chart panel.
   Use when users ask for a premium magazine-style business report, board memo

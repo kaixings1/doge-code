@@ -1,6 +1,6 @@
 ---
 name: discord-bot-architect
-description:  Specialized skill for building production-ready Discord bots.
+description: "Discord Bot Architect — Discord Bot Architect 相关功能和最佳实践"
   Covers Discord.js (JavaScript) and Pycord (Python), gateway intents, slash
   commands, interactive components, rate limiting, and sharding.
 risk: unknown

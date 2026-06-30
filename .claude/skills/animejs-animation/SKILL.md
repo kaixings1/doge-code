@@ -1,6 +1,6 @@
 --- 
 name: animejs-animation
-description:  Advanced JavaScript animation library skill for creating complex, high-performance web animations.
+description: 高级 JavaScript 动画库：创建复杂、高性能 Web 动画和动效接口。
 risk: safe
 source: community
 date_added: "2026-03-07"

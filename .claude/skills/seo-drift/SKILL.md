@@ -1,6 +1,6 @@
 ---
 name: seo-drift
-description:  >
+description: "Seo Drift — Seo Drift 相关功能和最佳实践"
   SEO drift monitoring: capture baselines of SEO-critical elements, detect changes,
   and track regressions over time. Git for SEO — baseline, diff, and track changes
   to your on-page SEO. Use when user says "SEO drift", "baseline", "track changes",

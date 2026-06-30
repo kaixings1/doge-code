@@ -1,6 +1,6 @@
 ---
 name: hud
-description:  Configure HUD display options (layout, presets, display elements)
+description: "Hud — Hud 相关功能和最佳实践"
 argument-hint: "[setup|minimal|focused|full|status]"
 role: config-writer  # DOCUMENTATION ONLY - This skill writes to ~/.claude/ paths
 scope: ~/.claude/**  # DOCUMENTATION ONLY - Allowed write scope

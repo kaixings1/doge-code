@@ -1,6 +1,6 @@
 ---
 name: faq-page
-description:  |
+description: "Faq Page — Faq Page 相关功能和最佳实践"
   A Frequently Asked Questions (FAQ) page with collapsible accordion sections,
   search functionality, and category filtering. Use when the brief asks for
   "FAQ", "help center", "questions", or "support page".

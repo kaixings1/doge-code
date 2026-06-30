@@ -1,6 +1,6 @@
 ---
 name: fal-tryon
-description:  |
+description: "Fal Tryon — Fal Tryon 相关功能和最佳实践"
   Virtual try-on — see how clothes look on a person via fal.ai's hosted try-on models. Useful for ecommerce, lookbooks, and styling experiments.
 triggers:
   - "virtual tryon"

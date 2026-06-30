@@ -1,6 +1,6 @@
 ---
 name: nanobanana-ppt
-description:  |
+description: "Nanobanana Ppt — Nanobanana Ppt 相关功能和最佳实践"
   AI-powered PPT generation with document analysis and styled images via the NanoBanana stack. Combines image generation with structured deck output.
 triggers:
   - "nanobanana ppt"

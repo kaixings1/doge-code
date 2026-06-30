@@ -1,6 +1,6 @@
 ---
 name: langgraph
-description:  Expert in LangGraph - the production-grade framework for building
+description: LangGraph 专家：构建有状态多 actor AI 应用的生产级框架。涵盖图构建、状态管理、循环和分支、checkpointer 持久化、人在回路模式和 ReAct 代理模式。
   stateful, multi-actor AI applications. Covers graph construction, state
   management, cycles and branches, persistence with checkpointers,
   human-in-the-loop patterns, and the ReAct agent pattern.

@@ -1,6 +1,6 @@
 ---
 name: figma-generate-library
-description:  |
+description: "Figma Generate Library — Figma Generate Library 相关功能和最佳实践"
   Build or update a professional-grade design system library in Figma from a codebase. Useful for keeping the Figma source of truth in sync with shipped components.
 triggers:
   - "figma library"

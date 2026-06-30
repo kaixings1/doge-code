@@ -1,6 +1,6 @@
 ---
 name: mcp-setup
-description:  Configure popular MCP servers for enhanced agent capabilities
+description: "Mcp Setup — Mcp Setup 相关功能和最佳实践"
 level: 2
 ---
 

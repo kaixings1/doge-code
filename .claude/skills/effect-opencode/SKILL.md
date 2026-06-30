@@ -1,6 +1,6 @@
 ---
 name: effect
-description:  Work with Effect v4 / effect-smol TypeScript code in this repo
+description: "Effect Opencode — Effect Opencode 相关功能和最佳实践"
 ---
 
 # Effect

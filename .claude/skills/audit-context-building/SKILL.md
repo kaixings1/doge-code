@@ -1,6 +1,6 @@
 ---
 name: audit-context-building
-description:  Enables ultra-granular, line-by-line code analysis to build deep architectural context before vulnerability or bug finding.
+description: "Audit Context Building — Audit Context Building 相关功能和最佳实践"
 risk: unknown
 source: community
 ---

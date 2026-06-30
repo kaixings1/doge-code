@@ -4,7 +4,7 @@ name: clarity-gate
 risk: unknown
 source: community
 version: 2.1.3
-description:  >
+description: "Clarity Gate — Clarity Gate 相关功能和最佳实践"
   Pre-ingestion verification for epistemic quality in RAG systems.
   Ensures documents are properly qualified before entering knowledge bases.
   Produces CGD (Clarity-Gated Documents) and validates SOT (Source of Truth) files.

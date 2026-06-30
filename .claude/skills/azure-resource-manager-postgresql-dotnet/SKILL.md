@@ -1,6 +1,6 @@
 ---
 name: azure-resource-manager-postgresql-dotnet
-description:  Azure PostgreSQL Flexible Server SDK for .NET. Database management for PostgreSQL Flexible Server deployments.
+description: "Azure Resource Manager Postgresql Dotnet — Azure Resource Manager Postgresql Dotnet 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

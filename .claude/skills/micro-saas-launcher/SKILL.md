@@ -1,6 +1,6 @@
 ---
 name: micro-saas-launcher
-description:  Expert in launching small, focused SaaS products fast - the indie
+description: "Micro Saas Launcher — Micro Saas Launcher 相关功能和最佳实践"
   hacker approach to building profitable software. Covers idea validation, MVP
   development, pricing, launch strategies, and growing to sustainable revenue.
   Ship in weeks, not months.

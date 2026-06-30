@@ -1,6 +1,6 @@
 ---
 name: loop-me
-description:  Grill me about specs for the workflows I want to build, within this workspace.
+description: "Loop Me — Loop Me 相关功能和最佳实践"
 disable-model-invocation: true
 argument-hint: "A workflow to design, or nothing to go find one"
 ---

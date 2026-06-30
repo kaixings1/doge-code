@@ -1,6 +1,6 @@
 ---
 name: azure-identity-rust
-description:  Azure Identity SDK for Rust authentication. Use for DeveloperToolsCredential, ManagedIdentityCredential, ClientSecretCredential, and token-based authentication.
+description: "Azure Identity Rust — Azure Identity Rust 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

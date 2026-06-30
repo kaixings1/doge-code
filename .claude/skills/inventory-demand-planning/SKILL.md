@@ -1,6 +1,6 @@
 ---
 name: inventory-demand-planning
-description:  Codified expertise for demand forecasting, safety stock optimisation, replenishment planning, and promotional lift estimation at multi-location retailers.
+description: "Inventory Demand Planning — Inventory Demand Planning 相关功能和最佳实践"
 risk: safe
 source: https://github.com/ai-evos/agent-skills
 date_added: '2026-02-27'

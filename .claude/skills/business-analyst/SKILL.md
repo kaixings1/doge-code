@@ -1,6 +1,6 @@
 ---
 name: business-analyst
-description:  Master modern business analysis with AI-powered analytics, real-time dashboards, and data-driven insights. Build comprehensive KPI frameworks, predictive models, and strategic recommendations.
+description: 掌握现代商业分析，利用 AI 驱动分析、实时仪表盘和数据驱动洞察。构建全面的 KPI 框架、预测模型和战略建议。
 risk: unknown
 source: community
 date_added: '2026-02-27'

@@ -1,7 +1,7 @@
 ---
 name: favicon
 argument-hint: [path to source image]
-description:  Generate favicons from a source image
+description: "Favicon — Favicon 相关功能和最佳实践"
 allowed-tools: Bash(magick *), Bash(which *), Bash(cp *), Bash(mkdir *)
 context: fork
 risk: unknown

@@ -1,6 +1,6 @@
 ---
 name: blockrun
-description: "多层架构 Solana 代币创建——代币元数据、流动性池和去中心化合约管理。"
+description: 与 Claude Code 和 Google Antigravity 协同工作的 BlockRun 任务编排。
 risk: unknown
 source: community
 date_added: "2026-02-27"

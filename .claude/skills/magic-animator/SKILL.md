@@ -1,6 +1,6 @@
 --- 
 name: magic-animator
-description:  AI-powered animation tool for creating motion in logos, UI, icons, and social media assets.
+description: "Magic Animator — Magic Animator 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: "2026-03-07"

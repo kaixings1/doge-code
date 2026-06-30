@@ -1,6 +1,6 @@
 ---
 name: figma-use
-description:  |
+description: "Figma Use — Figma Use 相关功能和最佳实践"
   Run Figma Plugin API scripts for canvas writes, inspections, variables, and design-system work. Prerequisite for every other Figma skill in this catalogue.
 triggers:
   - "figma use"

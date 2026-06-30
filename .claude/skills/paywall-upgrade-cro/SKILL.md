@@ -1,6 +1,6 @@
 ---
 name: paywall-upgrade-cro
-description:  |
+description: "Paywall Upgrade Cro — Paywall Upgrade Cro 相关功能和最佳实践"
   Design and optimize upgrade screens, paywalls, and upsell modals. Useful for SaaS conversion design and pricing-page experiments.
 triggers:
   - "paywall"

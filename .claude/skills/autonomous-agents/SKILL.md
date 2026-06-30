@@ -1,6 +1,6 @@
 ---
 name: autonomous-agents
-description:  Autonomous agents are AI systems that can independently decompose
+description: "Autonomous Agents — Autonomous Agents 相关功能和最佳实践"
   goals, plan actions, execute tools, and self-correct without constant human
   guidance. The challenge isn't making them capable - it's making them reliable.
   Every extra decision multiplies failure probability.

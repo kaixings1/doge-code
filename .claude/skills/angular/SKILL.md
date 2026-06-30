@@ -1,6 +1,6 @@
 ---
 name: angular
-description:  Modern Angular (v20+) expert with deep knowledge of Signals, Standalone Components, Zoneless applications, SSR/Hydration, and reactive patterns.
+description: 现代 Angular (v20+) 专家：Signals、Standalone Components、Zoneless、SSR/Hydration 和响应式模式。
 risk: safe
 source: self
 date_added: '2026-02-27'

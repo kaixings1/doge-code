@@ -1,6 +1,6 @@
 ---
 name: platform-design
-description:  |
+description: "Platform Design — Platform Design 相关功能和最佳实践"
   300+ design rules from Apple HIG, Material Design 3, and WCAG 2.2 for cross-platform apps. Useful when shipping a single design across iOS, Android, and the web.
 triggers:
   - "platform design"

@@ -1,6 +1,6 @@
 ---
 name: issues
-description:  Interact with GitHub issues - create, list, and view issues.
+description: "Issues — Issues 相关功能和最佳实践"
 allowed-tools: Bash(gh *)
 risk: unknown
 source: community

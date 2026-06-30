@@ -1,6 +1,6 @@
 ---
 name: macos-screen-recorder
-description: "macOS screen recorder that captures the main display PLUS system audio via ScreenCaptureKit — no BlackHole/loopback driver, no sudo, just the standard Screen Recording permission. CLI-driven; fills the headless-screen-recording-with-system-sound gap QuickTime and `screencapture -v` can't."
+description: "Macos Screen Recorder — Macos Screen Recorder 相关功能和最佳实践"
 risk: critical
 source: community
 source_type: community

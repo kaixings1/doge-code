@@ -1,6 +1,6 @@
 ---
 name: c4-component
-description:  Expert C4 Component-level documentation specialist. Synthesizes C4 Code-level documentation into Component-level architecture, defining component boundaries, interfaces, and relationships.
+description: C4 组件级文档专家：将 C4 Code 级文档综合为组件级架构，定义组件边界、接口和关系。
 risk: unknown
 source: community
 date_added: '2026-02-27'

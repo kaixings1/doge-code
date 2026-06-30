@@ -1,6 +1,6 @@
 ---
 name: speech
-description:  |
+description: "Speech — Speech 相关功能和最佳实践"
   Generate spoken audio from text using OpenAI's API with built-in voices. Useful for narrated explainers, lecture audio, and quick voiceover tracks.
 triggers:
   - "openai speech"

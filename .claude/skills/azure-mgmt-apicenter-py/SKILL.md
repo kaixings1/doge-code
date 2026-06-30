@@ -1,6 +1,6 @@
 ---
 name: azure-mgmt-apicenter-py
-description:  Azure API Center Management SDK for Python. Use for managing API inventory, metadata, and governance across your organization.
+description: "Azure Mgmt Apicenter Py — Azure Mgmt Apicenter Py 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

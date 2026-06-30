@@ -1,6 +1,6 @@
 ---
 name: release
-description: Generic release assistant — analyzes repo release rules, caches them in .omc/RELEASE_RULE.md, then guides the release
+description: "Release — Release 相关功能和最佳实践"
 level: 3
 ---
 

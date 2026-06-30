@@ -1,6 +1,6 @@
 ---
 name: video-downloader
-description:  |
+description: "Video Downloader — Video Downloader 相关功能和最佳实践"
   Download videos from YouTube and other platforms for offline viewing, editing, or archival with support for various formats and quality options.
 triggers:
   - "download video"

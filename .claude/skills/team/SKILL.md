@@ -1,6 +1,6 @@
 ---
 name: team
-description:  N coordinated agents on shared task list using Claude Code implicit agent teams
+description: "Team — Team 相关功能和最佳实践"
 argument-hint: "[N:agent-type] [ralph] <task description>"
 aliases: []
 level: 4

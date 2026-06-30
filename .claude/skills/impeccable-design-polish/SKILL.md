@@ -1,6 +1,6 @@
 ---
 name: impeccable-design-polish
-description:  |
+description: "Impeccable Design Polish — Impeccable Design Polish 相关功能和最佳实践"
   Follow-up design polish skill inspired by Impeccable. Use after a web or HTML artifact exists to audit, critique, polish, animate, harden, and prepare the page for a live/share pass.
 triggers:
   - "impeccable"

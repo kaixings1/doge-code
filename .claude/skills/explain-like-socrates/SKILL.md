@@ -1,6 +1,6 @@
 ---
 name: explain-like-socrates
-description:  >
+description: "Explain Like Socrates — Explain Like Socrates 相关功能和最佳实践"
   Explains concepts using Socratic-style dialogue. Use when the user asks to explain, teach or help understand a concept like socrates.
 risk: safe
 source: original

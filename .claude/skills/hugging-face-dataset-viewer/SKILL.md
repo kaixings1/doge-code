@@ -1,7 +1,7 @@
 ---
 source: "https://github.com/huggingface/skills/tree/main/skills/huggingface-datasets"
 name: hugging-face-dataset-viewer
-description:  Query Hugging Face datasets through the Dataset Viewer API for splits, rows, search, filters, and parquet links.
+description: "Hugging Face Dataset Viewer — Hugging Face Dataset Viewer 相关功能和最佳实践"
 risk: unknown
 ---
 

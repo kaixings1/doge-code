@@ -1,6 +1,6 @@
 ---
 name: agent-builder
-description:  |
+description: "Agent Builder — Agent Builder 相关功能和最佳实践"
   Design and build AI agents for any domain. Use when users:
   (1) ask to "create an agent", "build an assistant", or "design an AI system"
   (2) want to understand agent architecture, agentic patterns, or autonomous AI

@@ -1,6 +1,6 @@
 ---
 name: pdf
-description:  |
+description: "Pdf — Pdf 相关功能和最佳实践"
   Extract text, create PDFs, and handle forms. Useful for press releases, branded one-pagers, and printable design deliverables.
 triggers:
   - "pdf"

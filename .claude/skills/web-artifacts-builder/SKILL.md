@@ -1,6 +1,6 @@
 ---
 name: web-artifacts-builder
-description:  |
+description: "Web Artifacts Builder — Web Artifacts Builder 相关功能和最佳实践"
   Build complex claude.ai HTML artifacts with React and Tailwind. Anthropic's reference workflow for shipping rich, embeddable artifacts.
 triggers:
   - "web artifacts"

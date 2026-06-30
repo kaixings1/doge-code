@@ -1,6 +1,6 @@
 ---
 name: agent-tool-builder
-description:  Tools are how AI agents interact with the world. A well-designed
+description: 工具是 AI 代理与外界交互的桥梁；设计良好的工具能提升代理执行力。
   tool is the difference between an agent that works and one that hallucinates,
   fails silently, or costs 10x more tokens than necessary. This skill covers
   tool design from schema to error handling.

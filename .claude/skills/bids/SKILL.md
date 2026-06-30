@@ -1,6 +1,6 @@
 ---
 name: bids
-description:  >
+description: "Bids — Bids 相关功能和最佳实践"
   Use this skill when working with Brain Imaging Data Structure (BIDS) datasets:
   organizing neuroscience and biomedical data (MRI, EEG, MEG, iEEG, PET, microscopy,
   NIRS, motion capture, EMG, MR spectroscopy, behavioral), querying BIDS layouts,

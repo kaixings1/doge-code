@@ -1,6 +1,6 @@
 ---
 name: edit-article
-description:  Edit and improve articles by restructuring sections, improving clarity, and tightening prose. Use when user wants to edit, revise, or improve an article draft.
+description: "Edit Article — Edit Article 相关功能和最佳实践"
 disable-model-invocation: true
 ---
 

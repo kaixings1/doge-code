@@ -1,6 +1,6 @@
 ---
 name: seo-sxo
-description:  >
+description: "Seo Sxo — Seo Sxo 相关功能和最佳实践"
   Search Experience Optimization: reads Google SERPs backwards to detect page-type
   mismatches, derives user stories from search intent signals, and scores pages
   from multiple persona perspectives. Identifies why well-optimized pages fail

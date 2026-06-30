@@ -1,6 +1,6 @@
 ---
 name: learner
-description:  Extract a learned skill from the current conversation
+description: "Learner — Learner 相关功能和最佳实践"
 level: 7
 ---
 

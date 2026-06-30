@@ -1,6 +1,6 @@
 ---
 name: fal-video-edit
-description:  |
+description: "Fal Video Edit — Fal Video Edit 相关功能和最佳实践"
   Edit existing videos using AI — remix style, upscale, remove background, and add audio via fal.ai's hosted video models.
 triggers:
   - "fal video edit"

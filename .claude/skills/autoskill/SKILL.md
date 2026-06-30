@@ -1,6 +1,6 @@
 ---
 name: autoskill
-description: Observe the user's screen via screenpipe, detect repeated research workflows, match them against existing scientific-agent-skills, and draft new skills (or composition recipes that chain existing ones) for the patterns not yet covered. Use when the user asks to analyze their recent work and propose skills based on what they actually do. Requires the screenpipe daemon (https://github.com/screenpipe/screenpipe) running locally on port 3030 — the skill has no other data source and will refuse to run if screenpipe is unreachable. All detection runs locally; only redacted cluster summaries reach the LLM.
+description: 通过屏幕观察用户操作，检测重复工作流并自动匹配和优化执行。
 allowed-tools: Read Write Edit Bash
 license: MIT license
 required_environment_variables: [{"name": "SCREENPIPE_TOKEN", "prompt": "Auth token for the local screenpipe daemon.", "required_for": "full functionality"}, {"name": "ANTHROPIC_API_KEY", "prompt": "For Claude API calls during skill drafting.", "required_for": "optional features"}, {"name": "FOUNDRY_API_KEY", "prompt": "Optional Foundry access for drafting.", "required_for": "optional features"}]

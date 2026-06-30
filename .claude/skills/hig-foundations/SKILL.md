@@ -1,6 +1,6 @@
 ---
 name: hig-foundations
-description:  Apple Human Interface Guidelines design foundations.
+description: "Hig Foundations — Hig Foundations 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

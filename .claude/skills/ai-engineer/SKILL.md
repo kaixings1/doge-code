@@ -1,6 +1,6 @@
 ---
 name: ai-engineer
-description:  Build production-ready LLM applications, advanced RAG systems, and intelligent agents. Implements vector search, multimodal AI, agent orchestration, and enterprise AI integrations.
+description: 构建生产级 LLM 应用、高级 RAG 系统和智能代理。实现向量搜索、多模态 AI、代理编排和企业级 AI 集成。
 risk: unknown
 source: community
 date_added: '2026-02-27'

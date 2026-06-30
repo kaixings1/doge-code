@@ -1,6 +1,6 @@
 ---
 name: web-design-guidelines
-description:  |
+description: "Web Design Guidelines — Web Design Guidelines 相关功能和最佳实践"
   Web design guidelines and standards by the Vercel engineering team. Covers layout, typography, color, motion, and accessibility for product UI.
 triggers:
   - "web design guidelines"

@@ -1,6 +1,6 @@
 ---
 name: self-improve
-description:  Autonomous evolutionary code improvement engine with tournament selection
+description: "Self Improve — Self Improve 相关功能和最佳实践"
 level: 4
 ---
 

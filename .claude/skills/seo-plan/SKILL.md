@@ -1,6 +1,6 @@
 ---
 name: seo-plan
-description:  >
+description: "Seo Plan — Seo Plan 相关功能和最佳实践"
   Strategic SEO planning for new or existing websites. Industry-specific
   templates, competitive analysis, content strategy, and implementation
   roadmap. Use when user says "SEO plan", "SEO strategy", "SEO planning",

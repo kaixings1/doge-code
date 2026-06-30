@@ -1,6 +1,6 @@
 ---
 name: c4-container
-description:  Expert C4 Container-level documentation specialist.
+description: C4 容器级文档专家。
 risk: unknown
 source: community
 date_added: '2026-02-27'

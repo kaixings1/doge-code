@@ -1,6 +1,6 @@
 ---
 name: analyze-project
-description:  Antigravity 会话的取证根因分析器。对范围偏差、返工模式、根因、热点进行分类，并自动改进提示/健康状态。
+description: Antigravity 会话的取证根因分析器：范围偏差、返工模式、热点分析和提示改进。
 risk: unknown
 source: community
 version: "1.0"

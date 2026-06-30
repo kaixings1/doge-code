@@ -1,6 +1,6 @@
 --- 
 name: antigravity-design-expert
-description:  Core UI/UX engineering skill for building highly interactive, spatial, weightless, and glassmorphism-based web interfaces using GSAP and 3D CSS.
+description: "Antigravity Design Expert — Antigravity Design Expert 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: "2026-03-07"

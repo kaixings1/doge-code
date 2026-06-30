@@ -1,6 +1,6 @@
 ---
 name: fixing-accessibility
-description:  Audit and fix HTML accessibility issues including ARIA labels, keyboard navigation, focus management, color contrast, and form errors. Use when adding interactive controls, forms, dialogs, or reviewing WCAG compliance.
+description: "Fixing Accessibility — Fixing Accessibility 相关功能和最佳实践"
 risk: unknown
 source: community
 ---

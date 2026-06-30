@@ -1,6 +1,6 @@
 ---
 name: frontend-skill
-description:  |
+description: "Frontend Skill — Frontend Skill 相关功能和最佳实践"
   Create visually strong landing pages, websites, and app UIs with restrained composition. OpenAI's production frontend playbook.
 triggers:
   - "landing page"

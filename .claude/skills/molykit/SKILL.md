@@ -1,6 +1,6 @@
 ---
 name: molykit
-description:  |
+description: "Molykit — Molykit 相关功能和最佳实践"
   CRITICAL: Use for MolyKit AI chat toolkit. Triggers on:
   BotClient, OpenAI, SSE streaming, AI chat, molykit,
   PlatformSend, spawn(), ThreadToken, cross-platform async,

@@ -1,6 +1,6 @@
 ---
 name: venice-image-generate
-description:  |
+description: "Venice Image Generate — Venice Image Generate 相关功能和最佳实践"
   Image generation endpoints and available styles via the Venice.ai API.
 triggers:
   - "venice image"

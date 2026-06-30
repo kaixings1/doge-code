@@ -1,6 +1,6 @@
 ---
 name: makepad-shaders
-description:  |
+description: "Makepad Shaders — Makepad Shaders 相关功能和最佳实践"
   CRITICAL: Use for Makepad shader system. Triggers on:
   makepad shader, makepad draw_bg, Sdf2d, makepad pixel,
   makepad glsl, makepad sdf, draw_quad, makepad gpu,

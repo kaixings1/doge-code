@@ -1,6 +1,6 @@
 ---
 name: theme-factory
-description:  |
+description: "Theme Factory — Theme Factory 相关功能和最佳实践"
   Apply professional font and color themes to artifacts including slides, docs, reports, and HTML landing pages. Ships 10 pre-set themes.
 triggers:
   - "theme factory"

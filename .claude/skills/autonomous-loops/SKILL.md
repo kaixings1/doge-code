@@ -1,6 +1,6 @@
 ---
 name: autonomous-loops
-description: "自主运行 Claude Code 循环的模式与架构 —— 从简单的顺序流水线到 RFC 驱动的多智能体 DAG 系统。"
+description: 自主运行 Claude Code 循环的模式与架构——从顺序流水线到 RFC 驱动的多智能体 DAG 系统。
 origin: ECC
 ---
 

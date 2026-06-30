@@ -1,6 +1,6 @@
 ---
 name: omc-teams
-description:  CLI-team runtime for claude, codex, gemini, antigravity, grok, or cursor workers in tmux panes when you need process-based parallel execution
+description: "Omc Teams — Omc Teams 相关功能和最佳实践"
 aliases: []
 level: 4
 ---

@@ -1,6 +1,6 @@
 ---
 name: MCP构建器(学习)
-description:  Build MCP (Model Context Protocol) servers that give Claude new capabilities. Use when user wants to create an MCP server, add tools to Claude, or integrate external services.
+description: 构建 MCP（Model Context Protocol）服务器，为 Claude 扩展新能力。用于创建 MCP 服务器、添加工具到 Claude 或集成外部服务。
 ---
 
 # MCP Server Building Skill

@@ -1,6 +1,6 @@
 ---
 name: daily
-description:  Documentation and capabilities reference for Daily
+description: "Daily — Daily 相关功能和最佳实践"
 metadata:
   mintlify-proj: daily
   version: "1.0"

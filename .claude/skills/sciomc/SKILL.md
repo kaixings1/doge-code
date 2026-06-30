@@ -1,6 +1,6 @@
 ---
 name: sciomc
-description:  Orchestrate parallel scientist agents for comprehensive analysis with AUTO mode
+description: "Sciomc — Sciomc 相关功能和最佳实践"
 argument-hint: <research goal>
 level: 4
 ---

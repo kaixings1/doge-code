@@ -1,6 +1,6 @@
 ---
 name: doc
-description:  |
+description: "Doc — Doc 相关功能和最佳实践"
   Read, create, and edit .docx documents with formatting and layout fidelity via OpenAI's document skill.
 triggers:
   - "openai doc"

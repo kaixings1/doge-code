@@ -1,7 +1,7 @@
 ---
 name: new-rails-project
 argument-hint: [project name]
-description:  Create a new Rails project
+description: 创建新的 Rails 项目。
 allowed-tools: Bash(rails *), Bash(bundle *), Bash(bin/*), Bash(npm *), Bash(yarn *)
 context: fork
 risk: unknown

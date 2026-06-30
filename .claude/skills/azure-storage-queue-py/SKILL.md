@@ -1,6 +1,6 @@
 ---
 name: azure-storage-queue-py
-description:  Azure Queue Storage SDK for Python. Use for reliable message queuing, task distribution, and asynchronous processing.
+description: "Azure Storage Queue Py — Azure Storage Queue Py 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

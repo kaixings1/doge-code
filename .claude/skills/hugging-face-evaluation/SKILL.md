@@ -1,6 +1,6 @@
 ---
 name: hugging-face-evaluation
-description:  Add and manage evaluation results in Hugging Face model cards. Supports extracting eval tables from README content, importing scores from Artificial Analysis API, and running custom model evaluations with vLLM/lighteval. Works with the model-index metadata format.
+description: "Hugging Face Evaluation — Hugging Face Evaluation 相关功能和最佳实践"
 risk: unknown
 source: community
 ---

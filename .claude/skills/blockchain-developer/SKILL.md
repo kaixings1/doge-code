@@ -1,6 +1,6 @@
 ---
 name: blockchain-developer
-description:  Build production-ready Web3 applications, smart contracts, and decentralized systems. Implements DeFi protocols, NFT platforms, DAOs, and enterprise blockchain integrations.
+description: "Blockchain Developer — Blockchain Developer 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

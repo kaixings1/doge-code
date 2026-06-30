@@ -1,6 +1,6 @@
 ---
 name: ralplan
-description:  Consensus planning entrypoint that auto-gates vague ralph/autopilot/team requests before execution
+description: "Ralplan — Ralplan 相关功能和最佳实践"
 argument-hint: "[--interactive] [--deliberate] [--architect codex] [--critic codex] <task description>"
 level: 4
 ---

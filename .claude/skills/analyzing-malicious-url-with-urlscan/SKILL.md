@@ -1,6 +1,6 @@
 ---
 name: analyzing-malicious-url-with-urlscan
-description:  URLScan.io 是一个免费的扫描和分析可疑 URL 的服务。它在隔离环境中捕获网页的截图、DOM 内容、HTTP 事务、JavaScript 行为和网络连接。此技能涵盖 URL 调查、截图分析、DOM 审查和威胁评分。
+description: 用 URLScan.io 扫描和分析可疑 URL：截屏、DOM 审查、HTTP 事务和威胁评分。
 domain: cybersecurity
 subdomain: phishing-defense
 tags:

@@ -1,6 +1,6 @@
 ---
 name: full-output-enforcement
-description:  Overrides default LLM truncation behavior. Enforces complete code generation, bans placeholder patterns, and handles token-limit splits cleanly. Apply to any task requiring exhaustive, unabridged output.
+description: "Taste Output Skill — Taste Output Skill 相关功能和最佳实践"
 ---
 
 # Full-Output Enforcement

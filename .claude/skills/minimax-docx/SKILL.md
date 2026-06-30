@@ -1,6 +1,6 @@
 ---
 name: minimax-docx
-description:  |
+description: "Minimax Docx — Minimax Docx 相关功能和最佳实践"
   Professional DOCX document creation and editing using OpenXML SDK. Useful for branded reports, polished proposals, and template-based authoring.
 triggers:
   - "minimax docx"

@@ -1,6 +1,6 @@
 ---
 name: api-design-patterns
-description: API设计模式 — REST API设计，包括资源命名、分页、版本控制、错误处理和认证。
+description: API 设计模式：认证、分页、过滤、版本控制和错误处理。
 ---
 
 # API Design Patterns

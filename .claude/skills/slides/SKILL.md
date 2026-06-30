@@ -1,6 +1,6 @@
 ---
 name: slides
-description:  |
+description: "Slides — Slides 相关功能和最佳实践"
   Create and edit .pptx presentation decks with PptxGenJS. Useful for sales decks, kickoff briefs, and design-system showcases.
 triggers:
   - "slides"

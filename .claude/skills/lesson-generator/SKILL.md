@@ -1,6 +1,6 @@
 ---
 name: lesson-generator
-description:  Build compact, standalone multi-lesson course artifacts with lesson navigation, objectives, flashcards, quizzes, and source links.
+description: 构建紧凑独立的课程产物：课程导航、学习目标、闪卡、测验和源链接。
 category: "education"
 risk: "safe"
 source: "official"

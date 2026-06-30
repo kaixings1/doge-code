@@ -1,6 +1,6 @@
 ---
 name: data-engineer
-description:  Build scalable data pipelines, modern data warehouses, and real-time streaming architectures. Implements Apache Spark, dbt, Airflow, and cloud-native data platforms.
+description: 构建可扩展数据管道、现代数据仓库和实时流式架构。实现 Apache Spark、dbt、Airflow 和云原生数据平台。
 risk: unknown
 source: community
 date_added: '2026-02-27'

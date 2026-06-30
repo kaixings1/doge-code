@@ -1,6 +1,6 @@
 ---
 name: image-enhancer
-description:  |
+description: "Image Enhancer — Image Enhancer 相关功能和最佳实践"
   Improve image and screenshot quality by enhancing resolution, sharpness, and clarity for professional presentations and documentation.
 triggers:
   - "enhance image"

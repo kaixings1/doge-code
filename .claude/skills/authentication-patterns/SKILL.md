@@ -1,6 +1,6 @@
 ---
 name: authentication-patterns
-description:  placeholder
+description: "Authentication Patterns — Authentication Patterns 相关功能和最佳实践"
 ---
 
 # Authentication Patterns

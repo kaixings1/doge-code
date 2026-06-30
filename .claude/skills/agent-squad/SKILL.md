@@ -1,6 +1,6 @@
 ---
 name: agent-squad
-description:  Main agent orchestrator that coordinates a specialized squad of agents
+description: 协调多个专业化代理的多代理编排器。
 role: Orchestrator / Agent Panel
 phase: all
 squad: agent-squad

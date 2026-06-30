@@ -1,6 +1,6 @@
 ---
 name: shadcn-ui
-description:  |
+description: "Shadcn Ui — Shadcn Ui 相关功能和最佳实践"
   Build UI components with shadcn/ui. Pairs with the Stitch design loop to ship structured, accessible components quickly.
 triggers:
   - "shadcn"

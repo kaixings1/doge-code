@@ -1,6 +1,6 @@
 ---
 name: design-review
-description:  |
+description: "Design Review — Design Review 相关功能和最佳实践"
   Designer Who Codes: visual audit then fixes with atomic commits and before/after screenshots. Useful for tightening shipped UI before launch.
 triggers:
   - "design review"

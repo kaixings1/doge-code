@@ -1,6 +1,6 @@
 ---
 name: ultraqa
-description:  QA cycling workflow - test, verify, fix, repeat until goal met
+description: "Ultraqa — Ultraqa 相关功能和最佳实践"
 argument-hint: "[--tests|--build|--lint|--typecheck|--custom <pattern>] [--interactive]"
 level: 3
 ---

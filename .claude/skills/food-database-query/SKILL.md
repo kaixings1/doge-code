@@ -1,6 +1,6 @@
 ---
 name: food-database-query
-description:  Food Database Query
+description: "Food Database Query — Food Database Query 相关功能和最佳实践"
 risk: unknown
 source: community
 ---

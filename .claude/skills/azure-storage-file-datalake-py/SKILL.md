@@ -1,6 +1,6 @@
 ---
 name: azure-storage-file-datalake-py
-description:  Azure Data Lake Storage Gen2 SDK for Python. Use for hierarchical file systems, big data analytics, and file/directory operations.
+description: "Azure Storage File Datalake Py — Azure Storage File Datalake Py 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

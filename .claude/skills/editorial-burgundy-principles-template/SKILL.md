@@ -1,6 +1,6 @@
 ---
 name: editorial-burgundy-principles-template
-description:  |
+description: "Editorial Burgundy Principles Template — Editorial Burgundy Principles Template 相关功能和最佳实践"
   Editorial studio deck template in burgundy / blush / muted-gold palette.
   Use when users ask for premium manifesto or culture slides with pill tags,
   large typographic statements, principle cards, and guided keyboard/click navigation.

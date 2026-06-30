@@ -1,7 +1,7 @@
 ---
 name: remotion
-description:  |
-  Programmatic video creation with React. Useful for branded explainers, social cuts, dashboards-to-video, and reproducible motion graphics.
+description: "Remotion — Remotion 相关功能和最佳实践"
+  使用 React 进行程序化视频创作。适用于品牌宣传视频、社交媒体剪辑、仪表盘转视频和可复现的动态图形。
 triggers:
   - "remotion"
   - "react video"

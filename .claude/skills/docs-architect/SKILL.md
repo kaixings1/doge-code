@@ -1,6 +1,6 @@
 ---
 name: docs-architect
-description:  Creates comprehensive technical documentation from existing codebases. Analyzes architecture, design patterns, and implementation details to produce long-form technical manuals and ebooks.
+description: "Docs Architect — Docs Architect 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

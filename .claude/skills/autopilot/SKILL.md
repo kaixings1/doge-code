@@ -1,6 +1,6 @@
 ---
 name: autopilot
-description:  Full autonomous execution from idea to working code
+description: "Autopilot — Autopilot 相关功能和最佳实践"
 argument-hint: "<product idea or task description>"
 level: 4
 ---

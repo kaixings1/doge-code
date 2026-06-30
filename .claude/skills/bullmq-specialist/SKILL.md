@@ -1,6 +1,6 @@
 ---
 name: bullmq-specialist
-description:  BullMQ expert for Redis-backed job queues, background processing,
+description: BullMQ 专家：Redis 支持的作业队列、后台任务处理和可靠的异步流水线。
   and reliable async execution in Node.js/TypeScript applications.
 risk: none
 source: vibeship-spawner-skills (Apache 2.0)

@@ -1,6 +1,6 @@
 ---
 name: arm-cortex-expert
-description:  Senior embedded software engineer specializing in firmware and driver development for ARM Cortex-M microcontrollers (Teensy, STM32, nRF52, SAMD).
+description: "Arm Cortex Expert — Arm Cortex Expert 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

@@ -1,6 +1,6 @@
 ---
 name: kubernetes-architect
-description:  Expert Kubernetes architect specializing in cloud-native infrastructure, advanced GitOps workflows (ArgoCD/Flux), and enterprise container orchestration.
+description: Kubernetes 架构师专家：云原生基础设施、高级 GitOps 工作流（ArgoCD/Flux）和企业级容器编排。
 risk: unknown
 source: community
 date_added: '2026-02-27'
