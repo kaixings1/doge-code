@@ -1,6 +1,6 @@
 ---
 name: auditing-foundry-smart-contract-security
-description:  >-
+description: "Auditing Foundry Smart Contract Security — Auditing Foundry Smart Contract Security 相关功能和最佳实践"
   Pre-deployment security audit of Solidity smart contracts in a Foundry project.
   Combines static analysis (Slither, Aderyn), symbolic execution (Mythril), and
   property-based testing (forge fuzz + invariant tests with handlers) to catch

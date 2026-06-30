@@ -1,6 +1,6 @@
 ---
 name: junta-leiloeiros
-description:  Coleta e consulta dados de leiloeiros oficiais de todas as 27 Juntas Comerciais do Brasil. Scraper multi-UF, banco SQLite, API FastAPI e exportacao CSV/JSON.
+description: "Junta Leiloeiros — Junta Leiloeiros 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-06'

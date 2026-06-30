@@ -1,6 +1,6 @@
 ---
 name: gif-sticker-maker
-description:  |
+description: "Gif Sticker Maker — Gif Sticker Maker 相关功能和最佳实践"
   Convert photos into animated GIF stickers in Funko Pop / Pop Mart style via the MiniMax API. Useful for personalized chat stickers and avatar packs.
 triggers:
   - "gif sticker"

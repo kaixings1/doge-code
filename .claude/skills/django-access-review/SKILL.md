@@ -1,6 +1,6 @@
 ---
 name: django-access-review
-description:  django-access-review
+description: "Django Access Review — Django Access Review 相关功能和最佳实践"
 risk: unknown
 source: community
 ---

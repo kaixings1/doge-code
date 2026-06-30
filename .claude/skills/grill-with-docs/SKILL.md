@@ -1,6 +1,6 @@
 ---
 name: grill-with-docs
-description:  A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.
+description: "Grill With Docs — Grill With Docs 相关功能和最佳实践"
 disable-model-invocation: true
 category: "productivity"
 risk: "safe"

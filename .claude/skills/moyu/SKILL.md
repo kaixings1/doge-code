@@ -1,6 +1,6 @@
 ---
 name: moyu
-description:  >
+description: "Moyu — Moyu 相关功能和最佳实践"
   Anti-over-engineering guardrail that activates when an AI coding agent expands
   scope, adds abstractions, or changes files the user did not request.
 risk: safe

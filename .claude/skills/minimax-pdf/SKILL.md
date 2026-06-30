@@ -1,6 +1,6 @@
 ---
 name: minimax-pdf
-description:  |
+description: "Minimax Pdf — Minimax Pdf 相关功能和最佳实践"
   Generate, fill, and reformat PDFs with a token-based design system and 15 cover styles. Useful for branded PDFs, e-guides, and reports.
 triggers:
   - "minimax pdf"

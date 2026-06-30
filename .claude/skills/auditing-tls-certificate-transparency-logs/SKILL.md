@@ -1,6 +1,6 @@
 ---
 name: auditing-tls-certificate-transparency-logs
-description:  'Monitors Certificate Transparency (CT) logs to detect unauthorized certificate
+description: "Auditing Tls Certificate Transparency Logs — Auditing Tls Certificate Transparency Logs 相关功能和最佳实践"
   issuance, discover subdomains via CT data, and alert on suspicious certificate activity
   for owned domains. Uses the crt.sh API and direct CT log querying based on RFC 6962
   to build continuous monitoring pipelines that catch rogue certificates, track CA

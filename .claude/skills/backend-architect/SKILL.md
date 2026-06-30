@@ -1,6 +1,6 @@
 ---
 name: backend-architect
-description:  Expert backend architect specializing in scalable API design, microservices architecture, and distributed systems.
+description: "Backend Architect — Backend Architect 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

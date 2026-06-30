@@ -1,6 +1,6 @@
 ---
 name: sora
-description:  |
+description: "Sora — Sora 相关功能和最佳实践"
   Generate, remix, and manage short video clips via OpenAI's Sora API. Useful for cinematic shots, b-roll, and rapid concept video iteration.
 triggers:
   - "sora"

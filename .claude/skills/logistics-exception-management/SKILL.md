@@ -1,6 +1,6 @@
 ---
 name: logistics-exception-management
-description:  Codified expertise for handling freight exceptions, shipment delays, damages, losses, and carrier disputes. Informed by logistics professionals with 15+ years operational experience.
+description: "Logistics Exception Management — Logistics Exception Management 相关功能和最佳实践"
 risk: safe
 source: https://github.com/ai-evos/agent-skills
 date_added: '2026-02-27'

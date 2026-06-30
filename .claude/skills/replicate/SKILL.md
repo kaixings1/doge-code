@@ -1,6 +1,6 @@
 ---
 name: replicate
-description:  |
+description: "Replicate — Replicate 相关功能和最佳实践"
   Discover, compare, and run AI models using Replicate's API. Strong fit for image, audio, and video generation pipelines that swap models frequently.
 triggers:
   - "replicate"

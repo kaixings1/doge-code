@@ -1,6 +1,6 @@
 ---
 name: WordPress设计系统
-description:  |
+description: "Wpds — Wpds 相关功能和最佳实践"
   WordPress 设计系统。应用 WordPress 官方设计标记、排版和组件模式到主题和网站。
 triggers:
   - "wpds"

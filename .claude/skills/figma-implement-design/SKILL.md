@@ -1,6 +1,6 @@
 ---
 name: figma-implement-design
-description:  |
+description: "Figma Implement Design — Figma Implement Design 相关功能和最佳实践"
   Translate Figma designs into production-ready code with 1:1 visual fidelity. Useful for handing off Figma frames straight to a frontend agent.
 triggers:
   - "figma to code"

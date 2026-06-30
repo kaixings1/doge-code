@@ -1,6 +1,6 @@
 ---
 name: fp-data-transforms
-description:  Everyday data transformations using functional patterns - arrays, objects, grouping, aggregation, and null-safe access
+description: "Fp Data Transforms — Fp Data Transforms 相关功能和最佳实践"
 risk: unknown
 source: community
 version: 1.0.0

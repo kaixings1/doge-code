@@ -1,6 +1,6 @@
 ---
 name: hig-components-search
-description:  Apple HIG guidance for navigation-related components including search fields, page controls, and path controls.
+description: "Hig Components Search — Hig Components Search 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-02-27'

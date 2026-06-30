@@ -1,6 +1,6 @@
 ---
 name: ab-testing
-description:  When the user wants to plan, design, or implement an A/B test or experiment, or build a growth experimentation program. Also use when the user mentions "A/B test," "split test," "experiment," "test this change," "variant copy," "multivariate test," "hypothesis," "should I test this," "which version is better," "test two versions," "statistical significance," "how long should I run this test," "growth experiments," "experiment velocity," "experiment backlog," "ICE score," "experimentation program," or "experiment playbook." Use this whenever someone is comparing two approaches and wants to measure which performs better, or when they want to build a systematic experimentation practice. For tracking implementation, see analytics. For page-level conversion optimization, see cro.
+description: 用于规划、设计或实施 A/B 测试、实验，或构建增长实验计划。当用户提到 A/B 测试、拆分测试、假设、统计显著性、实验排期、ICE 评分、实验手册或增长实验时激活。用于比较两种方案并衡量哪种表现更好，或建立系统化实验实践。
 metadata:
   version: 2.0.0
 ---

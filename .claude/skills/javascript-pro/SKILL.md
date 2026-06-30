@@ -1,6 +1,6 @@
 ---
 name: javascript-pro
-description:  Master modern JavaScript with ES6+, async patterns, and Node.js APIs. Handles promises, event loops, and browser/Node compatibility.
+description: "Javascript Pro — Javascript Pro 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-02-27'

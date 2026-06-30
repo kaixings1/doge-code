@@ -1,6 +1,6 @@
 ---
 name: design-consultation
-description:  |
+description: "Design Consultation — Design Consultation 相关功能和最佳实践"
   Build a complete design system from scratch with creative risks and realistic product mockups. Useful for kickoff workshops and brand-from-zero work.
 triggers:
   - "design consultation"

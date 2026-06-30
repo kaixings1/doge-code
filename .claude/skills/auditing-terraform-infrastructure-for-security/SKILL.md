@@ -1,6 +1,6 @@
 ---
 name: auditing-terraform-infrastructure-for-security
-description:  'Auditing Terraform infrastructure-as-code for security misconfigurations
+description: "Auditing Terraform Infrastructure For Security — Auditing Terraform Infrastructure For Security 相关功能和最佳实践"
   using Checkov, tfsec, Terrascan, and OPA/Rego policies to detect overly permissive
   IAM policies, public resource exposure, missing encryption, and insecure defaults
   before cloud deployment.

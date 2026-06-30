@@ -1,6 +1,6 @@
 ---
 name: high-end-visual-design
-description:  Teaches the AI to design like a high-end agency. Defines the exact fonts, spacing, shadows, card structures, and animations that make a website feel expensive. Blocks all the common defaults that make AI designs look cheap or generic.
+description: "Taste Soft Skill — Taste Soft Skill 相关功能和最佳实践"
 ---
 
 # Agent Skill: Principal UI/UX Architect & Motion Choreographer (Awwwards-Tier)

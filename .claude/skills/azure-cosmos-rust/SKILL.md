@@ -1,6 +1,6 @@
 ---
 name: azure-cosmos-rust
-description:  Azure Cosmos DB SDK for Rust (NoSQL API). Use for document CRUD, queries, containers, and globally distributed data.
+description: "Azure Cosmos Rust — Azure Cosmos Rust 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

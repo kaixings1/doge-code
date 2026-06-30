@@ -1,6 +1,6 @@
 ---
 name: dwarf-expert
-description:  Provides expertise for analyzing DWARF debug files and understanding the DWARF debug format/standard (v3-v5). Triggers when understanding DWARF information, interacting with DWARF files, answering DWARF-related questions, or working with code that parses DWARF data.
+description: "Dwarf Expert — Dwarf Expert 相关功能和最佳实践"
 allowed-tools:
   - Read
   - Bash

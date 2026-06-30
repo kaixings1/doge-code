@@ -1,6 +1,6 @@
 ---
 name: grill-me
-description:  A relentless interview to sharpen a plan or design.
+description: "Grill Me — Grill Me 相关功能和最佳实践"
 disable-model-invocation: true
 category: "productivity"
 risk: "safe"

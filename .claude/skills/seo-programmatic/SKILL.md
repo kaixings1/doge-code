@@ -1,11 +1,10 @@
 ---
 name: seo-programmatic
-description:  >
-  Programmatic SEO planning and analysis for pages generated at scale from data
-  sources. Covers template engines, URL patterns, internal linking automation,
-  thin content safeguards, and index bloat prevention. Use when user says
-  "programmatic SEO", "pages at scale", "dynamic pages", "template pages",
-  "generated pages", or "data-driven SEO".
+description: "Seo Programmatic — Seo Programmatic 相关功能和最佳实践"
+  程序化 SEO 规划与分析，适用于从数据源大规模生成的页面。
+  涵盖模板引擎、URL 模式、内链自动化、内容稀薄防护和索引膨胀预防。
+  当用户提到"程序化 SEO"、"大规模页面"、"动态页面"、"模板页面"、
+  "生成页面"或"数据驱动 SEO"时使用。
 user-invocable: true
 argument-hint: "[url or plan]"
 license: MIT

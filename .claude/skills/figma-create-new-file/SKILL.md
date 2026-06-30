@@ -1,6 +1,6 @@
 ---
 name: figma-create-new-file
-description:  |
+description: "Figma Create New File — Figma Create New File 相关功能和最佳实践"
   Create a new blank Figma Design or FigJam file. Useful as the first step in scripted design-system or workshop workflows.
 triggers:
   - "figma new file"

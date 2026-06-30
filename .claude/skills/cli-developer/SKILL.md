@@ -1,6 +1,6 @@
 ---
 name: cli-developer
-description:  Use when building CLI tools, implementing argument parsing, or adding interactive prompts. Invoke for parsing flags and subcommands, displaying progress bars and spinners, generating bash/zsh/fish completion scripts, CLI design, shell completions, and cross-platform terminal applications using commander, click, typer, or cobra.
+description: 构建 CLI 工具、实现参数解析或添加交互提示。涵盖标志和子命令解析、进度条和旋转器、bash/zsh/fish 补全脚本生成，使用 commander、click、typer 或 cobra。
 license: MIT
 metadata:
   author: https://github.com/Jeffallan

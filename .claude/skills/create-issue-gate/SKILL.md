@@ -1,6 +1,6 @@
 ---
 name: create-issue-gate
-description:  Use when starting a new implementation task and an issue must be created with strict acceptance criteria gating before execution.
+description: "Create Issue Gate — Create Issue Gate 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: "2026-03-12"

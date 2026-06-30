@@ -1,6 +1,6 @@
 ---
 name: aws-cloud-patterns
-description:  placeholder
+description: "Aws Cloud Patterns — Aws Cloud Patterns 相关功能和最佳实践"
 ---
 
 # AWS Cloud Patterns

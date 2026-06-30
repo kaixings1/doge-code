@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Use first for install/update routing — sends setup, doctor, or MCP requests to the correct OMC setup flow
+description: "Setup — Setup 相关功能和最佳实践"
 level: 2
 ---
 

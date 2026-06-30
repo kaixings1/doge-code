@@ -1,6 +1,6 @@
 ---
 name: ultrawork
-description:  Parallel execution engine for high-throughput task completion
+description: "Ultrawork — Ultrawork 相关功能和最佳实践"
 argument-hint: "<task description with parallel work items>"
 level: 4
 ---

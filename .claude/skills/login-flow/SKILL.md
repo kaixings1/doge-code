@@ -1,6 +1,6 @@
 ---
 name: login-flow
-description:  Mobile login and authentication flow screens
+description: "Login Flow — Login Flow 相关功能和最佳实践"
 od:
   mode: prototype
   platform: mobile
