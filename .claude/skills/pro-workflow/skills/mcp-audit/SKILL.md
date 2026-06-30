@@ -1,6 +1,6 @@
 ---
 name: mcp-audit
-description:  Audit connected MCP servers for token overhead, redundancy, and security. Use when sessions feel slow or before adding new MCPs.
+description: "Pro Workflow\Skills\Mcp Audit — Pro Workflow\Skills\Mcp Audit 相关功能和最佳实践"
 ---
 
 # MCP Audit

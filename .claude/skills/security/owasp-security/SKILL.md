@@ -1,6 +1,6 @@
 ---
 name: owasp-security
-description:  Use when reviewing code for security vulnerabilities, implementing authentication/authorization, handling user input, or discussing web application security. Covers OWASP Top 10:2025, ASVS 5.0, LLM Top 10 (2025), and Agentic AI security (2026).
+description: "Security\Owasp Security — Security\Owasp Security 相关功能和最佳实践"
 allowed-tools: Read Grep Glob
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: context-optimizer
-description:  Optimize token usage and context management. Use when sessions feel slow, context is degraded, or you're running out of budget.
+description: "Pro Workflow\Skills\Context Optimizer — Pro Workflow\Skills\Context Optimizer 相关功能和最佳实践"
 ---
 
 # Context Optimizer

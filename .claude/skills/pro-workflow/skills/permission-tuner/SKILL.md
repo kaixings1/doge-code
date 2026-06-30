@@ -1,6 +1,6 @@
 ---
 name: permission-tuner
-description:  Analyze permission denial patterns and generate optimized alwaysAllow and alwaysDeny rules. Use when permission prompts are slowing you down or after sessions with many denials.
+description: "Pro Workflow\Skills\Permission Tuner — Pro Workflow\Skills\Permission Tuner 相关功能和最佳实践"
 ---
 
 # Permission Tuner

@@ -1,6 +1,6 @@
 ---
 name: pro-workflow
-description:  Complete AI coding workflow system. Orchestration patterns, 18 hook events, 5 agents, cross-agent support, reference guides, and searchable learnings. Works with Claude Code, Cursor, and 32+ agents.
+description: "Pro Workflow\Skills\Pro Workflow — Pro Workflow\Skills\Pro Workflow 相关功能和最佳实践"
 ---
 
 # Pro Workflow

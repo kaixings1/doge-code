@@ -1,6 +1,6 @@
 ---
 name: context-engineering
-description: Master the four operations of context engineering — Write, Select, Compress, Isolate. Manage token budgets, compaction strategies, and context partitioning to keep AI sessions sharp and efficient.
+description: "Pro Workflow\Skills\Context Engineering — Pro Workflow\Skills\Context Engineering 相关功能和最佳实践"
 ---
 
 # Context Engineering
