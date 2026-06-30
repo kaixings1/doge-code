@@ -1,6 +1,6 @@
 ---
 name: decision-mapping
-description:  Turn a loose idea into a sequenced map of investigation tickets, then drive them to resolution one at a time.
+description: "Decision Mapping — Decision Mapping 相关功能和最佳实践"
 disable-model-invocation: true
 ---
 

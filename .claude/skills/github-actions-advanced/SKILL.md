@@ -1,6 +1,6 @@
 ---
 name: github-actions-advanced
-description:  >
+description: "Github Actions Advanced — Github Actions Advanced 相关功能和最佳实践"
   Design, debug, and harden GitHub Actions CI/CD workflows, including reusable
   workflows, matrix builds, self-hosted runners, OIDC authentication, caching,
   environments, secrets, and release automation.

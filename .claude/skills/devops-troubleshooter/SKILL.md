@@ -1,6 +1,6 @@
 ---
 name: devops-troubleshooter
-description:  Expert DevOps troubleshooter specializing in rapid incident response, advanced debugging, and modern observability.
+description: 快速事件响应、高级调试和现代可观测性的专家 DevOps 故障排查工程师。
 risk: unknown
 source: community
 date_added: '2026-02-27'

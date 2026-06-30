@@ -1,6 +1,6 @@
 ---
 name: venice-audio-music
-description:  |
+description: "Venice Audio Music — Venice Audio Music 相关功能和最佳实践"
   Music generation queueing, retrieval, and completion endpoints via Venice.ai. Suited for jingles, background loops, and prototype scoring.
 triggers:
   - "venice music"

@@ -1,6 +1,6 @@
 ---
 name: trace
-description:  Evidence-driven tracing lane that orchestrates competing tracer hypotheses in Claude built-in team mode
+description: "Trace — Trace 相关功能和最佳实践"
 argument-hint: "<observation to trace>"
 agent: tracer
 level: 2

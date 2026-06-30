@@ -1,6 +1,6 @@
 ---
 name: legacy-modernizer
-description:  Refactor legacy codebases, migrate outdated frameworks, and implement gradual modernization. Handles technical debt, dependency updates, and backward compatibility.
+description: "Legacy Modernizer — Legacy Modernizer 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-02-27'

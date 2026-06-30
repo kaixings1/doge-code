@@ -1,6 +1,6 @@
 ---
 name: pptx-generator
-description:  |
+description: "Pptx Generator — Pptx Generator 相关功能和最佳实践"
   Create and edit PowerPoint presentations from scratch with PptxGenJS — MiniMax's production-tested deck pipeline.
 triggers:
   - "pptx generator"

@@ -1,6 +1,6 @@
 ---
 name: attacking-entra-id-with-roadtools
-description:  Enumerate Entra ID with ROADrecon and acquire and exchange tokens with roadtx.
+description: "Attacking Entra Id With Roadtools — Attacking Entra Id With Roadtools 相关功能和最佳实践"
 domain: cybersecurity
 subdomain: identity-access-management
 tags:

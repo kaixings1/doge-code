@@ -1,6 +1,6 @@
 ---
 name: instagram
-description:  Integracao completa com Instagram via Graph API. Publicacao, analytics, comentarios, DMs, hashtags, agendamento, templates e gestao de contas Business/Creator.
+description: "Instagram — Instagram 相关功能和最佳实践"
 risk: critical
 source: community
 date_added: '2026-03-06'

@@ -1,6 +1,6 @@
 ---
 name: makepad-font
-description:  |
+description: "Makepad Font — Makepad Font 相关功能和最佳实践"
   CRITICAL: Use for Makepad font and text rendering. Triggers on:
   makepad font, makepad text, makepad glyph, makepad typography,
   font atlas, text layout, font family, font size, text shaping,

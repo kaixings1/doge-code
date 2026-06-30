@@ -1,6 +1,6 @@
 ---
 name: mobile-developer
-description:  Develop React Native, Flutter, or native mobile apps with modern architecture patterns. Masters cross-platform development, native integrations, offline sync, and app store optimization.
+description: "Mobile Developer — Mobile Developer 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

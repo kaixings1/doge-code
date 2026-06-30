@@ -1,6 +1,6 @@
 ---
 name: appkit-interop
-description: AppKit互操作指南，涵盖ObjC/Swift桥接
+description: AppKit 与第三方服务的互操作集成。
 ---
 
 # AppKit Interop

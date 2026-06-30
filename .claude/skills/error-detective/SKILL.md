@@ -1,6 +1,6 @@
 ---
 name: error-detective
-description:  Search logs and codebases for error patterns, stack traces, and anomalies. Correlates errors across systems and identifies root causes.
+description: "Error Detective — Error Detective 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-02-27'

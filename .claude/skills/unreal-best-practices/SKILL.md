@@ -1,18 +1,17 @@
 ---
 name: unreal-best-practices
-description:  >
-  Comprehensive best practices guide for modern Unreal Engine 5.x development.
-  Covers Epic's strategic direction toward modern systems (GAS, Enhanced Input, StateTree,
-  MetaSounds, Niagara, PCG, CommonUI, World Partition, Game Feature Plugins, Gameplay Tags),
-  the "research first" philosophy of always checking for newer UE systems before implementing,
-  C++ vs Blueprint decision making, data-driven design, asset management, project organization,
-  naming conventions, performance optimization, and debugging with Unreal Insights.
-  Use when the user asks about UE best practices, modern UE5 workflows, which system to use,
-  old vs new UE systems, recommended approaches, project setup, code organization, performance
-  tips, Blueprint vs C++ decisions, naming conventions, or when starting a new feature and
-  needing guidance on the right UE system to use. Also triggers when the user asks whether
-  there is a newer/better way to do something in Unreal Engine, or when comparing legacy
-  systems against modern replacements. Covers deprecated systems and their migration paths.
+description: "Unreal Best Practices — Unreal Best Practices 相关功能和最佳实践"
+  现代 Unreal Engine 5.x 开发的综合最佳实践指南。
+  涵盖 Epic 面向现代系统的战略方向（GAS、Enhanced Input、StateTree、
+  MetaSounds、Niagara、PCG、CommonUI、World Partition、Game Feature Plugins、Gameplay Tags），
+  "先研究"原则——在实现前始终检查是否有更新的 UE 系统，
+  C++ 与 Blueprint 决策、数据驱动设计、资产管理、项目组织、
+  命名约定、性能优化以及使用 Unreal Insights 调试。
+  当用户询问 UE 最佳实践、现代 UE5 工作流、使用哪个系统、
+  新旧 UE 系统对比、推荐方案、项目设置、代码组织、性能
+  技巧、Blueprint 与 C++ 决策、命名约定，或开始新功能并需要关于使用哪种 UE 系统的指导时使用。
+  当用户询问 Unreal Engine 中是否有更新/更好的方式来做某事，
+  或比较传统系统与现代替代方案时也会触发。涵盖已弃用系统及其迁移路径。
 ---
 
 # Unreal Engine 5.x Best Practices Guide

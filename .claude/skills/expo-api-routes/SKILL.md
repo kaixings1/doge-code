@@ -1,6 +1,6 @@
 ---
 name: expo-api-routes
-description:  Guidelines for creating API routes in Expo Router with EAS Hosting
+description: "Expo Api Routes — Expo Api Routes 相关功能和最佳实践"
 risk: unknown
 source: community
 version: 1.0.0

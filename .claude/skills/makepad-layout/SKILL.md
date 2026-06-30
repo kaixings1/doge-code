@@ -1,6 +1,6 @@
 ---
 name: makepad-layout
-description:  |
+description: "Makepad Layout — Makepad Layout 相关功能和最佳实践"
   CRITICAL: Use for Makepad layout system. Triggers on:
   makepad layout, makepad width, makepad height, makepad flex,
   makepad padding, makepad margin, makepad flow, makepad align,

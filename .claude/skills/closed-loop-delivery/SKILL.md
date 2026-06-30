@@ -1,6 +1,6 @@
 ---
 name: closed-loop-delivery
-description:  Use when a coding task must be completed against explicit acceptance criteria with minimal user re-intervention across implementation, review feedback, deployment, and runtime verification.
+description: 根据明确的验收标准完成编码任务，从实现、审查反馈、部署到运行时验证全程最小化人工干预。
 risk: safe
 source: community
 date_added: "2026-03-12"

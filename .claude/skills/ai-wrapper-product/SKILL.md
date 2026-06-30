@@ -1,6 +1,6 @@
 ---
 name: ai-wrapper-product
-description:  Expert in building products that wrap AI APIs (OpenAI, Anthropic,
+description: 构建封装 AI API (OpenAI、Anthropic、Gemini) 产品的专家。聚焦产品市场匹配、API 集成和定价策略。
   etc. ) into focused tools people will pay for. Not just "ChatGPT but
   different" - products that solve specific problems with AI.
 risk: unknown

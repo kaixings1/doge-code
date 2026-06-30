@@ -1,6 +1,6 @@
 ---
 name: seo-ecommerce
-description:  >
+description: "Seo Ecommerce — Seo Ecommerce 相关功能和最佳实践"
   E-commerce SEO analysis: Google Shopping visibility, Amazon marketplace
   intelligence, product schema validation, competitor pricing analysis, and
   marketplace keyword gaps. Combines on-page product SEO with marketplace data

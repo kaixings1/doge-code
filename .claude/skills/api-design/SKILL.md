@@ -1,6 +1,6 @@
 ---
 name: api-design
-description: RESTful API 设计指南和最佳实践
+description: API 设计最佳实践：版本控制、认证、速率限制、错误处理和可扩展端点设计。
 ---
 
 # API Design Patterns

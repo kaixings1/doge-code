@@ -1,95 +1,95 @@
 ---
 name: apify-influencer-discovery
-description:  Find and evaluate influencers for brand partnerships, verify authenticity, and track collaboration performance across Instagram, Facebook, YouTube, and TikTok.
+description: 发现并评估适合品牌合作的影响者，验证真实性，并跨越 Instagram、Facebook、YouTube 和 TikTok 跟踪合作表现。
 risk: unknown
 source: community
 ---
 
-# Influencer Discovery
+# 影响者发现
 
-Discover and analyze influencers across multiple platforms using Apify Actors.
+使用 Apify Actors 在多个平台上发现和分析影响者。
 
-## When to Use
-- You need to discover creators or influencers for outreach, partnerships, or campaign planning.
-- The task is to evaluate authenticity, engagement, niche fit, or audience signals across social platforms.
-- You need Apify-based extraction plus a shortlist or summary of suitable influencer candidates.
+## 使用场景
+- 您需要发现创作者或影响者以进行外展、合作或活动策划。
+- 任务是评估真实性、参与度、利基匹配度或社交平台的受众信号。
+- 您需要基于 Apify 的提取以及合适影响者候选的简短列表或摘要。
 
-## Prerequisites
-(No need to check it upfront)
+## 前提条件
+（无需预先检查）
 
-- `.env` file with `APIFY_TOKEN`
-- Node.js 20.6+ (for native `--env-file` support)
-- `mcpc` CLI tool: `npm install -g @apify/mcpc`
+- 包含 `APIFY_TOKEN` 的 `.env` 文件
+- Node.js 20.6+（支持原生 `--env-file`）
+- `mcpc` CLI 工具：`npm install -g @apify/mcpc`
 
-## Workflow
+## 工作流程
 
-Copy this checklist and track progress:
+复制此检查列表以跟踪进度：
 
 ```
-Task Progress:
-- [ ] Step 1: Determine discovery source (select Actor)
-- [ ] Step 2: Fetch Actor schema via mcpc
-- [ ] Step 3: Ask user preferences (format, filename)
-- [ ] Step 4: Run the discovery script
-- [ ] Step 5: Summarize results
+任务进度：
+- [ ] 步骤 1：确定发现来源（选择 Actor）
+- [ ] 步骤 2：通过 mcpc 获取 Actor 模式
+- [ ] 步骤 3：询问用户偏好（格式、文件名）
+- [ ] 步骤 4：运行发现脚本
+- [ ] 步骤 5：总结结果
 ```
 
-### Step 1: Determine Discovery Source
+### 步骤 1：确定发现来源
 
-Select the appropriate Actor based on user needs:
+根据用户需求选择合适的 Actor：
 
-| User Need | Actor ID | Best For |
-|-----------|----------|----------|
-| Influencer profiles | `apify/instagram-profile-scraper` | Profile metrics, bio, follower counts |
-| Find by hashtag | `apify/instagram-hashtag-scraper` | Discover influencers using specific hashtags |
-| Reel engagement | `apify/instagram-reel-scraper` | Analyze reel performance and engagement |
-| Discovery by niche | `apify/instagram-search-scraper` | Search for influencers by keyword/niche |
-| Brand mentions | `apify/instagram-tagged-scraper` | Track who tags brands/products |
-| Comprehensive data | `apify/instagram-scraper` | Full profile, posts, comments analysis |
-| API-based discovery | `apify/instagram-api-scraper` | Fast API-based data extraction |
-| Engagement analysis | `apify/export-instagram-comments-posts` | Export comments for sentiment analysis |
-| Facebook content | `apify/facebook-posts-scraper` | Analyze Facebook post performance |
-| Micro-influencers | `apify/facebook-groups-scraper` | Find influencers in niche groups |
-| Influential pages | `apify/facebook-search-scraper` | Search for influential pages |
-| YouTube creators | `streamers/youtube-channel-scraper` | Channel metrics and subscriber data |
-| TikTok influencers | `clockworks/tiktok-scraper` | Comprehensive TikTok data extraction |
-| TikTok (free) | `clockworks/free-tiktok-scraper` | Free TikTok data extractor |
-| Live streamers | `clockworks/tiktok-live-scraper` | Discover live streaming influencers |
+| 用户需求 | Actor ID | 最适用场景 |
+|---------|----------|----------|
+| 影响者个人主页 | `apify/instagram-profile-scraper` | 个人主页指标、简介、关注者数量 |
+| 通过话题标签发现 | `apify/instagram-hashtag-scraper` | 发现使用特定话题标签的影响者 |
+| Reel 参与 | `apify/instagram-reel-scraper` | 分析 reel 表现和参与度 |
+| 通过利基发现 | `apify/instagram-search-scraper` | 按关键词/利基搜索影响者 |
+| 品牌提及 | `apify/instagram-tagged-scraper` | 跟踪标记品牌/产品的用户 |
+| 综合数据 | `apify/instagram-scraper` | 完整个人主页、帖子、评论分析 |
+| API 方式发现 | `apify/instagram-api-scraper` | 快速基于 API 的数据提取 |
+| 参与分析 | `apify/export-instagram-comments-posts` | 导出评论进行情感分析 |
+| Facebook 内容 | `apify/facebook-posts-scraper` | 分析 Facebook 帖子表现 |
+| 微型影响者 | `apify/facebook-groups-scraper` | 在利基群组中发现影响者 |
+| 重要页面 | `apify/facebook-search-scraper` | 搜索有影响力的页面 |
+| YouTube 创作者 | `streamers/youtube-channel-scraper` | 频道指标和订阅者数据 |
+| TikTok 影响者 | `clockworks/tiktok-scraper` | 综合 TikTok 数据提取 |
+| TikTok（免费） | `clockworks/free-tiktok-scraper` | 免费 TikTok 数据提取器 |
+| 直播主播 | `clockworks/tiktok-live-scraper` | 发现直播主播影响者 |
 
-### Step 2: Fetch Actor Schema
+### 步骤 2：获取 Actor 模式
 
-Fetch the Actor's input schema and details dynamically using mcpc:
+使用 mcpc 动态获取 Actor 的输入模式和详细信息：
 
 ```bash
 export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call fetch-actor-details actor:="ACTOR_ID" | jq -r ".content"
 ```
 
-Replace `ACTOR_ID` with the selected Actor (e.g., `apify/instagram-profile-scraper`).
+将 `ACTOR_ID` 替换为选定的 Actor（例如 `apify/instagram-profile-scraper`）。
 
-This returns:
-- Actor description and README
-- Required and optional input parameters
-- Output fields (if available)
+返回内容包括：
+- Actor 描述和 README
+- 必需和可选的输入参数
+- 输出字段（如果可用）
 
-### Step 3: Ask User Preferences
+### 步骤 3：询问用户偏好
 
-Before running, ask:
-1. **Output format**:
-   - **Quick answer** - Display top few results in chat (no file saved)
-   - **CSV** - Full export with all fields
-   - **JSON** - Full export in JSON format
-2. **Number of results**: Based on character of use case
+运行前，请询问：
+1. **输出格式**：
+   - **快速回复** - 在聊天中显示前几个结果（不保存文件）
+   - **CSV** - 完整导出所有字段
+   - **JSON** - 完整导出 JSON 格式
+2. **结果数量**：根据使用场景确定
 
-### Step 4: Run the Script
+### 步骤 4：运行脚本
 
-**Quick answer (display in chat, no file):**
+**快速回复（在聊天中显示，不保存文件）：**
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
   --input 'JSON_INPUT'
 ```
 
-**CSV:**
+**CSV：**
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -98,7 +98,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --format csv
 ```
 
-**JSON:**
+**JSON：**
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -107,23 +107,23 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --format json
 ```
 
-### Step 5: Summarize Results
+### 步骤 5：总结结果
 
-After completion, report:
-- Number of influencers found
-- File location and name
-- Key metrics available (followers, engagement rate, etc.)
-- Suggested next steps (filtering, outreach, deeper analysis)
+完成后，报告：
+- 发现的影响者数量
+- 文件位置和名称
+- 可用的关键指标（关注者、参与率等）
+- 建议的后续步骤（筛选、外展、深入分析）
 
-## Error Handling
+## 错误处理
 
-`APIFY_TOKEN not found` - Ask user to create `.env` with `APIFY_TOKEN=your_token`
-`mcpc not found` - Ask user to install `npm install -g @apify/mcpc`
-`Actor not found` - Check Actor ID spelling
-`Run FAILED` - Ask user to check Apify console link in error output
-`Timeout` - Reduce input size or increase `--timeout`
+`APIFY_TOKEN not found` - 请用户创建 `.env` 文件并添加 `APIFY_TOKEN=your_token`
+`mcpc not found` - 请用户安装 `npm install -g @apify/mcpc`
+`Actor not found` - 检查 Actor ID 拼写
+`Run FAILED` - 请用户检查错误输出中的 Apify 控制台链接
+`Timeout` - 减小输入大小或增加 `--timeout`
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅在任务明显匹配上述范围时使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必需的输入、权限、安全边界或成功标准，请停止并寻求澄清。

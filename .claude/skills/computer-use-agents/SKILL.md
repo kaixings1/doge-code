@@ -1,6 +1,6 @@
 ---
 name: computer-use-agents
-description:  Build AI agents that interact with computers like humans do -
+description: "Computer Use Agents — Computer Use Agents 相关功能和最佳实践"
   viewing screens, moving cursors, clicking buttons, and typing text. Covers
   Anthropic's Computer Use, OpenAI's Operator/CUA, and open-source alternatives.
 risk: unknown

@@ -1,6 +1,6 @@
 ---
 name: ui-skills
-description:  |
+description: "Ui Skills — Ui Skills 相关功能和最佳实践"
   Opinionated, evolving constraints to guide agents when building interfaces. Useful for keeping output coherent across many small UI pieces.
 triggers:
   - "ui constraints"

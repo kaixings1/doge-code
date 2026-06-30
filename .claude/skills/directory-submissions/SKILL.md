@@ -1,6 +1,6 @@
 ---
 name: directory-submissions
-description:  When the user wants to submit their product to startup, SaaS, AI, agent, MCP, no-code, or review directories for backlinks, domain rating, and discovery. Also use when the user mentions "directory submissions," "submit to directories," "backlinks from directories," "list my product," "submit to Product Hunt," "BetaList," "TAAFT," "Futurepedia," "G2 listing," "Capterra listing," "AlternativeTo," "SaaSHub," "AI directories," "MCP registry," "agent directory," "dofollow backlinks," "launch directories," or "directory tracker." Use this whenever someone is planning the directory layer of a product launch or an ongoing backlink campaign. For the broader launch moment, see launch. For programmatic SEO pages that should live behind these backlinks, see programmatic-seo. For AI citation optimization, see ai-seo.
+description: 将产品提交到创业、SaaS、AI、代理、MCP、无代码或评论目录以获取反向链接、域名权重和曝光。触发词：目录提交、反向链接、Product Hunt、BetaList、Futurepedia、G2、Capterra、AI 目录、MCP 注册、产品发布目录策略。
 metadata:
   version: 2.0.0
 ---

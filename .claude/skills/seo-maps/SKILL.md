@@ -1,6 +1,6 @@
 ---
 name: seo-maps
-description:  >
+description: "Seo Maps — Seo Maps 相关功能和最佳实践"
   Maps intelligence for local SEO — geo-grid rank tracking, GBP profile
   auditing via API, review intelligence across Google/Tripadvisor/Trustpilot,
   cross-platform NAP verification (Google/Bing/Apple/OSM), competitor

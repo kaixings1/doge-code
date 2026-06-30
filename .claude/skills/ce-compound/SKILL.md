@@ -1,6 +1,6 @@
 ---
 name: ce-compound
-description:  Document a recently solved problem or durable project vocabulary in docs/solutions/ or CONCEPTS.md. Use when capturing a learning after work.
+description: "Ce Compound — Ce Compound 相关功能和最佳实践"
 argument-hint: "[optional: brief context] [mode:headless] "
 ---
 

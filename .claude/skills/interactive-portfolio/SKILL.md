@@ -1,6 +1,6 @@
 ---
 name: interactive-portfolio
-description:  Expert in building portfolios that actually land jobs and clients -
+description: 构建真正能获得工作和客户的作品集网站。
   not just showing work, but creating memorable experiences. Covers developer
   portfolios, designer portfolios, creative portfolios, and portfolios that
   convert visitors into opportunities.

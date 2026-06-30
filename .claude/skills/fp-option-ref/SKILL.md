@@ -1,6 +1,6 @@
 ---
 name: fp-option-ref
-description:  Quick reference for Option type. Use when user needs to handle nullable values, optional data, or wants to avoid null checks.
+description: "Fp Option Ref — Fp Option Ref 相关功能和最佳实践"
 risk: unknown
 source: community
 version: 1.0.0

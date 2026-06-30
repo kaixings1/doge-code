@@ -1,6 +1,6 @@
 ---
 name: customer-research
-description:  When the user wants to conduct, analyze, or synthesize customer research. Use when the user mentions "customer research," "ICP research," "talk to customers," "analyze transcripts," "customer interviews," "survey analysis," "support ticket analysis," "voice of customer," "VOC," "build personas," "customer personas," "jobs to be done," "JTBD," "what do customers say," "what are customers struggling with," "Reddit mining," "G2 reviews," "review mining," "digital watering holes," "community research," "forum research," "competitor reviews," "customer sentiment," or "find out why customers churn/convert/buy." Use for both analyzing existing research assets AND gathering new research from online sources. For writing copy informed by research, see copywriting. For acting on research to improve pages, see cro.
+description: 客户研究：开展、分析或综合客户研究。触发词：客户研究、ICP 研究、客户访谈、调查分析、客户反馈分析、VOC、用户画像、JTBD、Reddit 挖掘、G2 评论、社区研究、竞品评论、客户流失/转化原因。
 metadata:
   version: 2.0.0
 ---

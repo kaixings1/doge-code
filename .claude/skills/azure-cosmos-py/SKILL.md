@@ -1,6 +1,6 @@
 ---
 name: azure-cosmos-py
-description:  Azure Cosmos DB SDK for Python (NoSQL API). Use for document CRUD, queries, containers, and globally distributed data.
+description: "Azure Cosmos Py — Azure Cosmos Py 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

@@ -1,10 +1,7 @@
 ---
 name: 8-bit-orbit-video-template
-description:  |
-  Hyperframes-based video template for retro pixel deck motion design.
-  Use when users want a high-fidelity, multi-scene HTML-to-video composition
-  with advanced transitions, interactive preview controls, and ready-to-render
-  default style.
+description: "8 Bit Orbit Video Template — 8 Bit Orbit Video Template 相关功能和最佳实践"
+  基于 Hyperframes 的复古像素风格视频模板。用于需要高保真多场景 HTML 转视频、高级转场、交互式预览控制及即用渲染样式的场景。
 triggers:
   - "hyperframes video template"
   - "video template"

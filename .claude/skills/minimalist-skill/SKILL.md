@@ -1,6 +1,6 @@
 ---
 name: minimalist-ui
-description:  Clean editorial-style interfaces. Warm monochrome palette, typographic contrast, flat bento grids, muted pastels. No gradients, no heavy shadows.
+description: "Minimalist Skill — Minimalist Skill 相关功能和最佳实践"
 ---
 
 # Protocol: Premium Utilitarian Minimalism UI Architect
