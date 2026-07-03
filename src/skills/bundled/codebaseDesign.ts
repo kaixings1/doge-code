@@ -1,12 +1,12 @@
 import { registerBundledSkill } from '../bundledSkills.js'
 
-const PROMPT = 'Design deep modules: a lot of behaviour behind a small interface, placed at a clean seam, testable through that interface.\n\n## Glossary\nUse these terms exactly:\n- **Module** — anything with an interface and implementation\n- **Interface** — everything a caller must know (type, invariants, ordering, errors, config, perf)\n- **Depth** — leverage: behaviour per unit of interface\n- **Seam** — where you can alter behaviour without editing there\n- **Adapter** — concrete thing that satisfies an interface at a seam\n- **Leverage** — callers: more capability per interface learned\n- **Locality** — maintainers: change concentrates in one place\n\n## Deep vs Shallow\nDeep module = small interface + lots of implementation (good).\nShallow module = large interface + little implementation (avoid).\n\n## Principles\n1. Depth is a property of the interface, not the implementation.\n2. The deletion test: if deleting the module makes complexity vanish, it was a pass-through.\n3. The interface is the test surface.\n4. One adapter = hypothetical seam. Two adapters = real seam.\n\n## Dependency Categories\n- In-process: always deepenable\n- Local-substitutable: deepen if test stand-in exists\n- Remote but owned: Ports & Adapters pattern\n- True external: inject as port, mock in tests\n\n## Testing: replace, don\'t layer\n- Old unit tests on shallow modules become waste once tests at deepened interface exist — delete them.\n- Tests assert on observable outcomes through the interface, not internal state.'
+const PROMPT = '设计深度模块：在小接口背后有大量行为，放置在干净的接缝处，通过该接口可测试。\n\n## 术语表\n精确使用这些术语：\n- **模块** — 拥有接口和实现的任何东西\n- **接口** — 调用者必须知道的一切（类型、不变式、顺序、错误、配置、性能）\n- **深度** — 杠杆率：单位接口的行为量\n- **接缝** — 你可以在不编辑那里的情况下改变行为的地方\n- **适配器** — 在接缝处满足接口的具体事物\n- **杠杆率** — 调用者：每学习一个接口更多的能力\n- **局部性** — 维护者：变更集中在一个地方\n\n## 深度 vs 浅层\n深度模块 = 小接口 + 大量实现（好）。\n浅层模块 = 大接口 + 少实现（避免）。\n\n## 原则\n1. 深度是接口的属性，而非实现的属性。\n2. 删除测试：如果删除模块使复杂度消失，它是一个中转站。\n3. 接口就是测试表面。\n4. 一个适配器 = 虚拟接缝。两个适配器 = 真实接缝。\n\n## 依赖类别\n- 进程内：总是可深度化的\n- 本地可替换：如果测试替身存在则深度化\n- 远程但自有：Ports & Adapters 模式\n- 真正的外部：注入为端口，在测试中 mock\n\n## 测试：替换，不叠加\n- 一旦在深度化接口处存在测试，浅层模块上的旧单元测试就变成了浪费——删除它们。\n- 测试断言通过接口的可观察结果，而非内部状态。'
 
 export function registerCodebaseDesignSkill(): void {
   registerBundledSkill({
     name: 'codebase-design',
     description: '深度模块设计词汇表 — 设计小接口、深实现的模块，以获得最大的杠杆效应和局部性。',
-    whenToUse: 'When designing or improving a module interface, deciding where a seam goes, or making code more testable.',
+    whenToUse: '设计或改进模块接口、决定接缝位置，或使代码更可测试时。',
     userInvocable: true,
     getPromptForCommand() {
       return [{ type: 'text', text: PROMPT }]

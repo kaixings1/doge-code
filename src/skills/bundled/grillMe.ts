@@ -1,6 +1,6 @@
 import { registerBundledSkill } from '../bundledSkills.js'
 
-const PROMPT = 'Run a /grilling session — interview the user relentlessly about every aspect of the plan until shared understanding is reached. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.\n\nAsk questions one at a time, waiting for feedback before continuing.\n\nIf a question can be answered by exploring the codebase, explore instead.\n\nThis variant does NOT create CONTEXT.md or ADRs — it is stateless. Use /grill-with-docs when you have a codebase and want to persist decisions.'
+const PROMPT = '运行 /grilling 会话—— relentless 追问用户关于计划的每一个细节，直到达成共识。沿着设计树的每个分支走下去，逐个解决决策之间的依赖关系。对每个问题，提供你的推荐答案。\n\n一次问一个问题，在继续之前等待反馈。\n\n如果一个问题可以通过探索代码库来回答，则改为探索代码库。\n\n此变体不创建 CONTEXT.md 或 ADRs——它是无状态的。当你有代码库并希望持久化决策时使用 /grill-with-docs。'
 
 export function registerGrillMeSkill(): void {
   registerBundledSkill({

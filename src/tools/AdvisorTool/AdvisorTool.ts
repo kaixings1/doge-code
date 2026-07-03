@@ -3,20 +3,20 @@ import { z } from 'zod';
 
 export const AdvisorTool: Tool = {
   name: 'advisor',
-  description: 'AI advisor tool for code analysis and suggestions (experimental)',
+  description: 'AI 顾问工具，用于代码分析和建议（实验性）',
   callOn: 'manual',
   input: z.object({
-    query: z.string().optional().describe('Query for the advisor'),
-    focus: z.enum(['code', 'architecture', 'performance', 'security']).optional().describe('Focus area'),
+    query: z.string().optional().describe('向顾问提出的查询问题'),
+    focus: z.enum(['code', 'architecture', 'performance', 'security']).optional().describe('关注领域'),
   }),
   output: z.object({
-    advice: z.string().describe('Advisor advice'),
-    suggestions: z.array(z.string()).describe('Suggestions'),
-    confidence: z.number().describe('Confidence level (0-1)'),
+    advice: z.string().describe('顾问建议'),
+    suggestions: z.array(z.string()).describe('建议列表'),
+    confidence: z.number().describe('置信度 (0-1)'),
   }),
   exec: async ({ query, focus = 'code' }) => {
     return {
-      advice: 'Advisor analysis completed',
+      advice: '顾问分析完成',
       suggestions: [],
       confidence: 0.8,
     };

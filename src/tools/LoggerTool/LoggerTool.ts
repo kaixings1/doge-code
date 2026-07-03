@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const LoggerTool: Tool = {
   name: 'logger',
-  description: 'Logging and debugging tool',
+  description: '工具',
   callOn: 'always',
   input: z.object({
     level: z.enum(['debug', 'info', 'warn', 'error']).describe('Log level'),
