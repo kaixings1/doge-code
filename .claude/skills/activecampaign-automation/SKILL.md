@@ -201,18 +201,4 @@ Automate ActiveCampaign CRM and marketing automation operations through Composio
 ## Quick Reference
 
 | Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| Find contact | ACTIVE_CAMPAIGN_FIND_CONTACT | email, id, phone |
-| Create contact | ACTIVE_CAMPAIGN_CREATE_CONTACT | email, first_name, last_name, tags |
-| Add/remove tags | ACTIVE_CAMPAIGN_MANAGE_CONTACT_TAG | action, tags, contact_email |
-| Subscribe/unsubscribe | ACTIVE_CAMPAIGN_MANAGE_LIST_SUBSCRIPTION | action, list_id, email |
-| Add to automation | ACTIVE_CAMPAIGN_ADD_CONTACT_TO_AUTOMATION | contact_email, automation_id |
-| Create task | ACTIVE_CAMPAIGN_CREATE_CONTACT_TASK | relid, duedate, dealTasktype, title |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 22 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
