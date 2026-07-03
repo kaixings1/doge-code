@@ -1,222 +1,83 @@
 ---
-name: freshservice-automation
-description: "通过 Rube MCP (Composio) 自动执行 Freshservice ITSM 任务：create/update tickets, bulk operations, service requests, and outbound emails. Always search tools first for current schemas."
-risk: critical
-source: community
-date_added: "2026-02-27"
+name: freshservice-自动化
+description: "通过 Rube MCP (Composio) 自动化 Freshservice 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+requires:
+  mcp: [rube]
 ---
 
-# Freshservice Automation via Rube MCP
+# 通过 Rube MCP 实现 Freshservice 自动化
 
-Automate Freshservice IT Service Management operations through Composio's Freshservice toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Freshservice 工具包自动化 Freshservice 操作。
 
-## Prerequisites
+**工具包文档**：[composio.dev/toolkits/freshservice](https://composio.dev/toolkits/freshservice)
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Freshservice connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `freshservice`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Freshservice 连接，工具包为 `freshservice`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+## 设置
 
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `freshservice`
-3. If connection is not ACTIVE, follow the returned auth link to complete Freshservice authentication
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `freshservice` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-## Core Workflows
+## 工具发现
 
-### 1. List and Search Tickets
-
-**When to use**: User wants to find, list, or search for tickets
-
-**Tool sequence**:
-1. `FRESHSERVICE_LIST_TICKETS` - List tickets with optional filtering and pagination [Required]
-2. `FRESHSERVICE_GET_TICKET` - Get detailed information for a specific ticket [Optional]
-
-**Key parameters for listing**:
-- `filter`: Predefined filter ('all_tickets', 'deleted', 'spam', 'watching')
-- `updated_since`: ISO 8601 timestamp to get tickets updated after this time
-- `order_by`: Sort field ('created_at', 'updated_at', 'status', 'priority')
-- `order_type`: Sort direction ('asc' or 'desc')
-- `page`: Page number (1-indexed)
-- `per_page`: Results per page (1-100, default 30)
-- `include`: Additional fields ('requester', 'stats', 'description', 'conversations', 'assets')
-
-**Key parameters for get**:
-- `ticket_id`: Unique ticket ID or display_id
-- `include`: Additional fields to include
-
-**Pitfalls**:
-- By default, only tickets created within the past 30 days are returned
-- Use `updated_since` to retrieve older tickets
-- Each `include` value consumes additional API credits
-- `page` is 1-indexed; minimum value is 1
-- `per_page` max is 100; default is 30
-- Ticket IDs can be the internal ID or the display_id shown in the UI
-
-### 2. Create a Ticket
-
-**When to use**: User wants to log a new incident or request
-
-**Tool sequence**:
-1. `FRESHSERVICE_CREATE_TICKET` - Create a new ticket [Required]
-
-**Key parameters**:
-- `subject`: Ticket subject line (required)
-- `description`: HTML description of the ticket (required)
-- `status`: Ticket status - 2 (Open), 3 (Pending), 4 (Resolved), 5 (Closed) (required)
-- `priority`: Ticket priority - 1 (Low), 2 (Medium), 3 (High), 4 (Urgent) (required)
-- `email`: Requester's email address (provide either email or requester_id)
-- `requester_id`: User ID of the requester
-- `type`: Ticket type ('Incident' or 'Service Request')
-- `source`: Channel - 1 (Email), 2 (Portal), 3 (Phone), 4 (Chat), 5 (Twitter), 6 (Facebook)
-- `impact`: Impact level - 1 (Low), 2 (Medium), 3 (High)
-- `urgency`: Urgency level - 1 (Low), 2 (Medium), 3 (High), 4 (Critical)
-
-**Pitfalls**:
-- `subject`, `description`, `status`, and `priority` are all required
-- Either `email` or `requester_id` must be provided to identify the requester
-- Status and priority use numeric codes, not string names
-- Description supports HTML formatting
-- If email does not match an existing contact, a new contact is created
-
-### 3. Bulk Update Tickets
-
-**When to use**: User wants to update multiple tickets at once
-
-**Tool sequence**:
-1. `FRESHSERVICE_LIST_TICKETS` - Find tickets to update [Prerequisite]
-2. `FRESHSERVICE_BULK_UPDATE_TICKETS` - Update multiple tickets [Required]
-
-**Key parameters**:
-- `ids`: Array of ticket IDs to update (required)
-- `update_fields`: Dictionary of fields to update (required)
-  - Allowed keys: 'subject', 'description', 'status', 'priority', 'responder_id', 'group_id', 'type', 'tags', 'custom_fields'
-
-**Pitfalls**:
-- Bulk update performs sequential updates internally; large batches may take time
-- All specified tickets receive the same field updates
-- If one ticket update fails, others may still succeed; check response for individual results
-- Cannot selectively update different fields per ticket in a single call
-- Custom fields must use their internal field names, not display names
-
-### 4. Create Ticket via Outbound Email
-
-**When to use**: User wants to create a ticket by sending an outbound email notification
-
-**Tool sequence**:
-1. `FRESHSERVICE_CREATE_TICKET_OUTBOUND_EMAIL` - Create ticket with email notification [Required]
-
-**Key parameters**:
-- `email`: Requester's email address (required)
-- `subject`: Email subject / ticket subject (required)
-- `description`: HTML email body content
-- `status`: Ticket status (2=Open, 3=Pending, 4=Resolved, 5=Closed)
-- `priority`: Ticket priority (1=Low, 2=Medium, 3=High, 4=Urgent)
-- `cc_emails`: Array of CC email addresses
-- `email_config_id`: Email configuration ID for the sender address
-- `name`: Requester name
-
-**Pitfalls**:
-- This creates a standard ticket via the /api/v2/tickets endpoint while sending an email
-- If the email does not match an existing contact, a new contact is created with the provided name
-- `email_config_id` determines which email address the notification appears to come from
-
-### 5. Create Service Requests
-
-**When to use**: User wants to submit a service catalog request
-
-**Tool sequence**:
-1. `FRESHSERVICE_CREATE_SERVICE_REQUEST` - Create a service request for a catalog item [Required]
-
-**Key parameters**:
-- `item_display_id`: Display ID of the catalog item (required)
-- `email`: Requester's email address
-- `quantity`: Number of items to request (default: 1)
-- `custom_fields`: Custom field values for the service item form
-- `parent_ticket_id`: Display ID of a parent ticket (for child requests)
-
-**Pitfalls**:
-- `item_display_id` can be found in Admin > Service Catalog > item URL (e.g., /service_catalog/items/1)
-- Custom fields keys must match the service item form field names
-- Quantity defaults to 1 if not specified
-- Service requests follow the approval workflow defined for the catalog item
-
-## Common Patterns
-
-### Status Code Reference
-
-| Code | Status |
-|------|--------|
-| 2 | Open |
-| 3 | Pending |
-| 4 | Resolved |
-| 5 | Closed |
-
-### Priority Code Reference
-
-| Code | Priority |
-|------|----------|
-| 1 | Low |
-| 2 | Medium |
-| 3 | High |
-| 4 | Urgent |
-
-### Pagination
-
-- Use `page` (1-indexed) and `per_page` (max 100) parameters
-- Increment `page` by 1 each request
-- Continue until returned results count < `per_page`
-- Default page size is 30
-
-### Finding Tickets by Date Range
+在执行工作流之前始终发现可用工具：
 
 ```
-1. Call FRESHSERVICE_LIST_TICKETS with updated_since='2024-01-01T00:00:00Z'
-2. Optionally add order_by='updated_at' and order_type='desc'
-3. Paginate through results
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Freshservice operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-## Known Pitfalls
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
 
-**Numeric Codes**:
-- Status and priority use numeric values, not strings
-- Source channel uses numeric codes (1-6)
-- Impact and urgency use numeric codes (1-3 or 1-4)
+## 核心工作流模式
 
-**Date Filtering**:
-- Default returns only tickets from the last 30 days
-- Use `updated_since` parameter for older tickets
-- Date format is ISO 8601 (e.g., '2024-01-01T00:00:00Z')
+### 步骤 1：发现可用工具
 
-**Rate Limits**:
-- Freshservice API has per-account rate limits
-- Each `include` option consumes additional API credits
-- Implement backoff on 429 responses
+```
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Freshservice task"}]
+session: {id: "existing_session_id"}
+```
 
-**Response Parsing**:
-- Response data may be nested under `data` or `data.data`
-- Parse defensively with fallback patterns
-- Ticket IDs are numeric integers
+### 步骤 2：检查连接
+
+```
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["freshservice"]
+session_id: "your_session_id"
+```
+
+### 步骤 3：执行工具
+
+```
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
+```
+
+## 已知陷阱
+
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
 
-| Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| List tickets | FRESHSERVICE_LIST_TICKETS | filter, updated_since, page, per_page |
-| Get ticket | FRESHSERVICE_GET_TICKET | ticket_id, include |
-| Create ticket | FRESHSERVICE_CREATE_TICKET | subject, description, status, priority, email |
-| Bulk update | FRESHSERVICE_BULK_UPDATE_TICKETS | ids, update_fields |
-| Outbound email ticket | FRESHSERVICE_CREATE_TICKET_OUTBOUND_EMAIL | email, subject, description |
-| Service request | FRESHSERVICE_CREATE_SERVICE_REQUEST | item_display_id, email, quantity |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

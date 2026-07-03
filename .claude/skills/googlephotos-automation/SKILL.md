@@ -1,124 +1,83 @@
 ---
-name: googlephotos-automation
-description: "通过 Rube MCP (Composio) 自动执行 Google Photos 任务：upload media, manage albums, search photos, batch add items, create and update albums. Always search tools first for current schemas."
+name: googlephotos-自动化
+description: "通过 Rube MCP (Composio) 自动化 Googlephotos 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---
 
-# Google Photos Automation via Rube MCP
+# 通过 Rube MCP 实现 Googlephotos 自动化
 
-Upload photos, manage albums, search media items, and batch-organize content in Google Photos using Rube MCP (Composio).
+通过 Rube MCP 使用 Composio 的 Googlephotos 工具包自动化 Googlephotos 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/googlephotos](https://composio.dev/toolkits/googlephotos)
+**工具包文档**：[composio.dev/toolkits/googlephotos](https://composio.dev/toolkits/googlephotos)
 
-## Prerequisites
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `googlephotos`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Googlephotos 连接，工具包为 `googlephotos`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `googlephotos`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+## 设置
 
-## Core Workflows
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-### 1. List Albums
-Use `GOOGLEPHOTOS_LIST_ALBUMS` to retrieve all albums visible in the user's Albums tab.
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `googlephotos` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
+
+## 工具发现
+
+在执行工作流之前始终发现可用工具：
+
 ```
-Tool: GOOGLEPHOTOS_LIST_ALBUMS
-Parameters:
-  - pageSize: Number of albums per page
-  - pageToken: Pagination token
-  - excludeNonAppCreatedData: Only show albums created by this app
-```
-
-### 2. Create a New Album
-Use `GOOGLEPHOTOS_CREATE_ALBUM` to create a new album in Google Photos.
-```
-Tool: GOOGLEPHOTOS_CREATE_ALBUM
-Parameters:
-  - title (required): Album title
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Googlephotos operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-### 3. Upload Media
-Use `GOOGLEPHOTOS_UPLOAD_MEDIA` to upload an image or video file to Google Photos.
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
+
+## 核心工作流模式
+
+### 步骤 1：发现可用工具
+
 ```
-Tool: GOOGLEPHOTOS_UPLOAD_MEDIA
-Parameters:
-  - file_to_upload: Local file path to upload
-  - url: URL of file to upload (alternative to file_to_upload)
-  - file_name: Name for the uploaded file
-  - description: Description/caption for the media item
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Googlephotos task"}]
+session: {id: "existing_session_id"}
 ```
 
-### 4. Batch Upload and Create Media Items
-Use `GOOGLEPHOTOS_BATCH_CREATE_MEDIA_ITEMS` to upload multiple files and create media items in one operation.
+### 步骤 2：检查连接
+
 ```
-Tool: GOOGLEPHOTOS_BATCH_CREATE_MEDIA_ITEMS
-Parameters:
-  - files: Local file paths to upload
-  - urls: URLs of files to upload
-  - media_files: Mixed input (files and URLs)
-  - albumId: Album to add items to
-  - albumPosition: Position within the album
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["googlephotos"]
+session_id: "your_session_id"
 ```
 
-### 5. Search Media Items
-Use `GOOGLEPHOTOS_SEARCH_MEDIA_ITEMS` to search the user's photo library with filters.
-```
-Tool: GOOGLEPHOTOS_SEARCH_MEDIA_ITEMS
-Parameters:
-  - albumId: Filter by album
-  - filters: Search filters (date ranges, content categories, media types)
-  - orderBy: Sort order
-  - pageSize: Results per page
-  - pageToken: Pagination token
-```
+### 步骤 3：执行工具
 
-### 6. Add Items to an Album
-Use `GOOGLEPHOTOS_BATCH_ADD_MEDIA_ITEMS` to add existing media items to an album.
 ```
-Tool: GOOGLEPHOTOS_BATCH_ADD_MEDIA_ITEMS
-Parameters:
-  - albumId (required): Target album ID
-  - mediaItemIds (required): Array of media item IDs to add
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
 ```
 
-## Common Patterns
+## 已知陷阱
 
-- **Create album then upload**: Use `GOOGLEPHOTOS_CREATE_ALBUM` to create an album, then `GOOGLEPHOTOS_BATCH_CREATE_MEDIA_ITEMS` with the album ID to upload and organize photos in one step.
-- **List then organize**: Use `GOOGLEPHOTOS_SEARCH_MEDIA_ITEMS` or `GOOGLEPHOTOS_LIST_MEDIA_ITEMS` to find media item IDs, then `GOOGLEPHOTOS_BATCH_ADD_MEDIA_ITEMS` to add them to albums.
-- **Update album metadata**: Use `GOOGLEPHOTOS_UPDATE_ALBUM` to change an album's title or cover photo.
-- **Get album details**: Use `GOOGLEPHOTOS_GET_ALBUM` with an album ID to retrieve full album information.
-- **Add enrichments**: Use `GOOGLEPHOTOS_ADD_ENRICHMENT` to add text overlays, locations, or map enrichments to album positions.
-- **Upload from URLs**: Use the `url` parameter in `GOOGLEPHOTOS_UPLOAD_MEDIA` or `urls` in `GOOGLEPHOTOS_BATCH_CREATE_MEDIA_ITEMS` to upload images directly from web URLs.
-
-## Known Pitfalls
-
-- `GOOGLEPHOTOS_LIST_MEDIA_ITEMS` is **deprecated** -- prefer `GOOGLEPHOTOS_SEARCH_MEDIA_ITEMS` for listing and filtering media.
-- `GOOGLEPHOTOS_UPLOAD_MEDIA` supports images up to **200MB** and videos up to a larger limit. Exceeding these will fail.
-- Album IDs must be obtained from `GOOGLEPHOTOS_LIST_ALBUMS` or `GOOGLEPHOTOS_CREATE_ALBUM` responses -- they are opaque strings.
-- `GOOGLEPHOTOS_BATCH_ADD_MEDIA_ITEMS` can only add items to albums **created by the app** or albums the user owns.
-- The `filters` parameter in `GOOGLEPHOTOS_SEARCH_MEDIA_ITEMS` uses a specific Google Photos API filter structure -- consult the schema for date range and content category formats.
-- Media items created via the API may not immediately appear in the Google Photos web UI due to processing delays.
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
-| Action | Tool | Key Parameters |
-|--------|------|----------------|
-| List albums | `GOOGLEPHOTOS_LIST_ALBUMS` | `pageSize`, `pageToken` |
-| Create album | `GOOGLEPHOTOS_CREATE_ALBUM` | `title` |
-| Get album | `GOOGLEPHOTOS_GET_ALBUM` | `albumId` |
-| Update album | `GOOGLEPHOTOS_UPDATE_ALBUM` | `albumId`, `title`, `coverPhotoMediaItemId` |
-| Upload media | `GOOGLEPHOTOS_UPLOAD_MEDIA` | `file_to_upload` or `url`, `description` |
-| Batch upload | `GOOGLEPHOTOS_BATCH_CREATE_MEDIA_ITEMS` | `files` or `urls`, `albumId` |
-| Search media | `GOOGLEPHOTOS_SEARCH_MEDIA_ITEMS` | `albumId`, `filters`, `pageSize` |
-| List media items | `GOOGLEPHOTOS_LIST_MEDIA_ITEMS` | `pageSize`, `pageToken` |
-| Add items to album | `GOOGLEPHOTOS_BATCH_ADD_MEDIA_ITEMS` | `albumId`, `mediaItemIds` |
-| Add enrichment | `GOOGLEPHOTOS_ADD_ENRICHMENT` | `albumId`, `newEnrichmentItem`, `albumPosition` |
 
----
-*Powered by [Composio](https://composio.dev)*
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
