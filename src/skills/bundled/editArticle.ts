@@ -1,6 +1,6 @@
 import { registerBundledSkill } from '../bundledSkills.js'
 
-const PROMPT = '# Edit Article\n\nEdit and improve articles by restructuring sections, improving clarity, and tightening prose.\n\n## Process\n\n1. Divide the article into sections based on its headings. Think about the main points. Consider that information is a directed acyclic graph — pieces of information can depend on other pieces. Make sure section order respects these dependencies.\n\n2. Confirm the sections with the user.\n\n3. For each section:\n   - Rewrite to improve clarity, coherence, and flow\n   - Use maximum 240 characters per paragraph\n   - Tighten prose: remove redundancy, strengthen verbs, vary sentence length\n   - Check that each section builds on the previous one\n\n4. After all sections, add cross-links between related sections\n\n5. Final pass: check the article reads as a coherent whole, not disconnected sections'
+const PROMPT = '# 编辑文章\n\n通过重构章节、提高清晰度和精简文笔来编辑和完善文章。\n\n## 流程\n\n1. 根据标题将文章划分为各个章节。思考主要观点。考虑到信息是有向无环图——某些信息可能依赖于其他信息。确保章节顺序尊重这些依赖关系。\n\n2. 与用户确认章节划分。\n\n3. 对每个章节：\n   - 重写以提高清晰度、连贯性和流畅性\n   - 每段最多 240 个字符\n   - 精简文笔：消除冗余、强化动词、变化句子长度\n   - 检查每个章节是否建立在前一个章节的基础上\n\n4. 所有章节完成后，在相关章节之间添加交叉链接\n\n5. 最终通读：检查文章是否作为一个连贯的整体，而非分散的章节'
 
 export function registerEditArticleSkill(): void {
   registerBundledSkill({

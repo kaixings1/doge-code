@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const PlanModeTool: Tool = {
   name: 'plan-mode',
-  description: 'Enter or manage plan mode',
+  description: '模式',
   callOn: 'manual',
   input: z.object({
     action: z.enum(['enter', 'exit', 'status']).describe('Action to perform'),

@@ -1,30 +1,30 @@
-# Verify CLI Example
+# CLI 验证示例
 
-Use this pattern when the change affects a command, flag, formatter, or local workflow.
+当变更影响命令、标志、格式化器或本地工作流时使用此模式。
 
-## Example
+## 示例
 
-Change: update `claude doctor` output or bootstrap behavior.
+变更：更新 `claude doctor` 的输出或引导行为。
 
-Verification:
+验证：
 
-1. Run the narrowest command that hits the changed code path.
-2. Re-run with a nearby flag if the change touched parsing or help text.
-3. Check both output and exit behavior.
+1. 运行最窄的命令以命中变更的代码路径。
+2. 如果变更涉及解析或帮助文本，使用相近的标志重新运行。
+3. 同时检查输出和退出行为。
 
 ```bash
 bun run version
 bun run dev --help
 ```
 
-## What to Look For
+## 关注点
 
-- Command exits successfully.
-- Output includes the expected text, option, or command.
-- The restored entrypoint reaches the real CLI path instead of a stub.
+- 命令成功退出。
+- 输出包含预期的文本、选项或命令。
+- 恢复的入口点到达真实的 CLI 路径，而非占位符。
 
-## Good Result Summary
+## 良好的结果摘要
 
-- `Verified: bun run version printed the restored Claude Code version.`
-- `Verified: bun run dev --help showed the full CLI command tree.`
-- `Risk: interactive raw-mode flows were not exercised in a non-TTY shell.`
+- `已验证：bun run version 输出了恢复后的 Claude Code 版本号。`
+- `已验证：bun run dev --help 显示了完整的 CLI 命令树。`
+- `风险：交互式 raw-mode 流程未在非 TTY 终端中执行。`

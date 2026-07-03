@@ -1,12 +1,12 @@
 import { registerBundledSkill } from '../bundledSkills.js'
 
-const PROMPT = '# Migrate to Shoehorn\n\nMigrate test files from `as` type assertions to @total-typescript/shoehorn.\n\n## Why shoehorn?\n\nshoehorn lets you pass partial data in tests while keeping TypeScript happy. It replaces `as` assertions with type-safe alternatives.\n\n**Test code only.** Never use shoehorn in production code.\n\n## Install\n\n```\nnpm i @total-typescript/shoehorn\n```\n\n## Patterns\n\n### Large objects with few needed properties\n\nBefore: `{ ...entireObject } as Request`\nAfter: `fromPartial({ body: { id: \"123\" } })`\n\n### Intentionally wrong data\n\nBefore: `\"not-a-number\" as unknown as number`\nAfter: `fromPartial<number>(\"not-a-number\")`\n\n## Migration process\n\n1. Install @total-typescript/shoehorn\n2. For each test file, replace `as Type` assertions with `fromPartial()`\n3. Remove the `as` import if no longer needed\n4. Run typecheck and tests to verify'
+const PROMPT = '# 迁移到 Shoehorn\n\n将测试文件从 `as` 类型断言迁移到 @total-typescript/shoehorn。\n\n## 为什么用 shoehorn？\n\nshoehorn 允许你在测试中传递部分数据同时保持 TypeScript 满意。它用类型安全的替代方案替换 `as` 断言。\n\n**仅限测试代码。** 绝不在生产代码中使用 shoehorn。\n\n## 安装\n\n```\nnpm i @total-typescript/shoehorn\n```\n\n## 模式\n\n### 需要少量属性的对象\n\nBefore: `{ ...entireObject } as Request`\nAfter: `fromPartial({ body: { id: "123" } })`\n\n### 故意错误的数据\n\nBefore: `"not-a-number" as unknown as number`\nAfter: `fromPartial<number>("not-a-number")`\n\n## 迁移流程\n\n1. 安装 @total-typescript/shoehorn\n2. 对每个测试文件，将 `as Type` 断言替换为 `fromPartial()`\n3. 如果不再需要，移除 `as` 导入\n4. 运行类型检查和测试以验证'
 
 export function registerMigrateToShoehornSkill(): void {
   registerBundledSkill({
     name: 'migrate-to-shoehorn',
     description: '将测试文件从 `as` 类型断言迁移到 @total-typescript/shoehorn，以实现类型安全的局部测试数据。',
-    whenToUse: 'When user wants to replace `as` assertions in tests, improve type safety in test files, or needs partial test data patterns.',
+    whenToUse: '当用户想要在测试中替换 `as` 断言、提高测试文件的类型安全性，或需要部分测试数据模式时。',
     userInvocable: true,
     getPromptForCommand() {
       return [{ type: 'text', text: PROMPT }]

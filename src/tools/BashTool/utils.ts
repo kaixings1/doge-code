@@ -15,36 +15,35 @@ import { maybeResizeAndDownsampleImageBuffer } from '../../utils/imageResizer.js
 import { getMaxOutputLength } from '../../utils/shell/outputLimits.js'
 import { countCharInString, plural } from '../../utils/stringUtils.js'
 /**
- * Strips leading and trailing lines that contain only whitespace/newlines.
- * Unlike trim(), this preserves whitespace within content lines and only removes
- * completely empty lines from the beginning and end.
+ * 去除仅包含空白/换行的首尾行。
+ * 与 trim() 不同，此函数保留内容行内的空白，仅移除开头和结尾完全空白的行。
  */
 export function stripEmptyLines(content: string): string {
   const lines = content.split('\n')
 
-  // Find the first non-empty line
+  // 查找第一个非空行
   let startIndex = 0
   while (startIndex < lines.length && lines[startIndex]?.trim() === '') {
     startIndex++
   }
 
-  // Find the last non-empty line
+  // 查找最后一个非空行
   let endIndex = lines.length - 1
   while (endIndex >= 0 && lines[endIndex]?.trim() === '') {
     endIndex--
   }
 
-  // If all lines are empty, return empty string
+  // 如果所有行都为空，返回空字符串
   if (startIndex > endIndex) {
     return ''
   }
 
-  // Return the slice with non-empty lines
+  // 返回包含非空行的切片
   return lines.slice(startIndex, endIndex + 1).join('\n')
 }
 
 /**
- * Check if content is a base64 encoded image data URL
+ * 检查内容是否为 base64 编码的图像数据 URL
  */
 export function isImageOutput(content: string): boolean {
   return /^data:image\/[a-z0-9.+_-]+;base64,/i.test(content)
@@ -90,9 +89,8 @@ export function buildImageToolResult(
   }
 }
 
-// Cap file reads to 20 MB — any image data URI larger than this is
-// well beyond what the API accepts (5 MB base64) and would OOM if read
-// into memory.
+// 将文件读取限制在 20 MB 以内 — 任何大于此值的图像数据 URI
+// 都远超 API 接受的范围（5 MB base64），如果读入内存会导致内存溢出。
 const MAX_IMAGE_FILE_SIZE = 20 * 1024 * 1024
 
 /**
@@ -175,9 +173,9 @@ export function resetCwdIfOutsideProject(
   const shouldMaintain = shouldMaintainProjectWorkingDir()
   if (
     shouldMaintain ||
-    // Fast path: originalCwd is unconditionally in allWorkingDirectories
-    // (filesystem.ts), so when cwd hasn't moved, pathInAllowedWorkingPath is
-    // trivially true — skip its syscalls for the no-cd common case.
+    // 快速路径：originalCwd 无条件位于 allWorkingDirectories 中
+    // (filesystem.ts)，因此当 cwd 未移动时，pathInAllowedWorkingPath 显然为真
+    // — 对于无 cd 的常见情况，跳过其系统调用。
     (cwd !== originalCwd &&
       !pathInAllowedWorkingPath(cwd, toolPermissionContext))
   ) {

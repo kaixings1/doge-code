@@ -1,6 +1,6 @@
 import { registerBundledSkill } from '../bundledSkills.js'
 
-const PROMPT = 'Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.\n\nAsk the questions one at a time, waiting for feedback on each question before continuing. Asking multiple questions at once is bewildering.\n\nIf a question can be answered by exploring the codebase, explore the codebase instead.'
+const PROMPT = ' relentless 追问用户关于计划的每一个细节，直到达成共识。沿着设计树的每个分支走下去，逐个解决决策之间的依赖关系。对每个问题，提供你的推荐答案。\n\n一次问一个问题，在继续之前等待反馈。同时问多个问题会让人困惑。\n\n如果一个问题可以通过探索代码库来回答，则改为探索代码库。'
 
 export function registerGrillingSkill(): void {
   registerBundledSkill({
