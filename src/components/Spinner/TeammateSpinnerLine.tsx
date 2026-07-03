@@ -178,8 +178,9 @@ export function TeammateSpinnerLine({
     }
     if (teammate.isIdle) {
       if (allIdle) {
+        const doneTime = new Date().toLocaleString()
         return <Text dimColor>
-            {pastTenseVerb} for {displayTime}
+            {pastTenseVerb} for {displayTime} — {doneTime}
           </Text>;
       }
       return <Text dimColor>已空闲 {idleElapsedTime}</Text>;

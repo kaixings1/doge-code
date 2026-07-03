@@ -1,175 +1,83 @@
 ---
-name: helpdesk-automation
-description: "通过 Rube MCP (Composio) 自动执行 HelpDesk 任务：list tickets, manage views, use canned responses, and configure custom fields. Always search tools first for current schemas."
-risk: critical
-source: community
-date_added: "2026-02-27"
+name: helpdesk-自动化
+description: "通过 Rube MCP (Composio) 自动化 Helpdesk 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+requires:
+  mcp: [rube]
 ---
 
-# HelpDesk Automation via Rube MCP
+# 通过 Rube MCP 实现 Helpdesk 自动化
 
-Automate HelpDesk ticketing operations through Composio's HelpDesk toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Helpdesk 工具包自动化 Helpdesk 操作。
 
-## Prerequisites
+**工具包文档**：[composio.dev/toolkits/helpdesk](https://composio.dev/toolkits/helpdesk)
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active HelpDesk connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `helpdesk`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Helpdesk 连接，工具包为 `helpdesk`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+## 设置
 
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `helpdesk`
-3. If connection is not ACTIVE, follow the returned auth link to complete HelpDesk authentication
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `helpdesk` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-## Core Workflows
+## 工具发现
 
-### 1. List and Browse Tickets
-
-**When to use**: User wants to retrieve, browse, or paginate through support tickets
-
-**Tool sequence**:
-1. `HELPDESK_LIST_TICKETS` - List tickets with sorting and pagination [Required]
-
-**Key parameters**:
-- `silo`: Ticket folder - 'tickets', 'archive', 'trash', or 'spam' (default: 'tickets')
-- `sortBy`: Sort field - 'createdAt', 'updatedAt', or 'lastMessageAt' (default: 'createdAt')
-- `order`: Sort direction - 'asc' or 'desc' (default: 'desc')
-- `pageSize`: Results per page, 1-100 (default: 20)
-- `next.value`: Timestamp cursor for forward pagination
-- `next.ID`: ID cursor for forward pagination
-- `prev.value`: Timestamp cursor for backward pagination
-- `prev.ID`: ID cursor for backward pagination
-
-**Pitfalls**:
-- Pagination uses cursor-based approach with timestamp + ID pairs
-- Forward pagination requires both `next.value` and `next.ID` from previous response
-- Backward pagination requires both `prev.value` and `prev.ID`
-- `silo` determines which folder to list from; default is active tickets
-- `pageSize` max is 100; default is 20
-- Archived and trashed tickets are in separate silos
-
-### 2. Manage Ticket Views
-
-**When to use**: User wants to see saved agent views for organizing tickets
-
-**Tool sequence**:
-1. `HELPDESK_LIST_VIEWS` - List all agent views [Required]
-
-**Key parameters**: (none required)
-
-**Pitfalls**:
-- Views are predefined saved filters configured by agents in the HelpDesk UI
-- View definitions include filter criteria that can be used to understand ticket organization
-- Views cannot be created or modified via API; they are managed in the HelpDesk UI
-
-### 3. Use Canned Responses
-
-**When to use**: User wants to list available canned (template) responses for tickets
-
-**Tool sequence**:
-1. `HELPDESK_LIST_CANNED_RESPONSES` - Retrieve all predefined reply templates [Required]
-
-**Key parameters**: (none required)
-
-**Pitfalls**:
-- Canned responses are predefined templates for common replies
-- They may include placeholder variables that need to be filled in
-- Canned responses are managed through the HelpDesk UI
-- Response content may include HTML formatting
-
-### 4. Inspect Custom Fields
-
-**When to use**: User wants to view custom field definitions for the account
-
-**Tool sequence**:
-1. `HELPDESK_LIST_CUSTOM_FIELDS` - List all custom field definitions [Required]
-
-**Key parameters**: (none required)
-
-**Pitfalls**:
-- Custom fields extend the default ticket schema with organization-specific data
-- Field definitions include field type, name, and validation rules
-- Custom fields are configured in the HelpDesk admin panel
-- Field values appear on tickets when the field has been populated
-
-## Common Patterns
-
-### Ticket Browsing Pattern
+在执行工作流之前始终发现可用工具：
 
 ```
-1. Call HELPDESK_LIST_TICKETS with desired silo and sortBy
-2. Process the returned page of tickets
-3. Extract next.value and next.ID from the response
-4. Call HELPDESK_LIST_TICKETS with those cursor values for next page
-5. Continue until no more cursor values are returned
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Helpdesk operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-### Ticket Folder Navigation
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
+
+## 核心工作流模式
+
+### 步骤 1：发现可用工具
 
 ```
-Active tickets:  silo='tickets'
-Archived:        silo='archive'
-Trashed:         silo='trash'
-Spam:            silo='spam'
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Helpdesk task"}]
+session: {id: "existing_session_id"}
 ```
 
-### Cursor-Based Pagination
+### 步骤 2：检查连接
 
 ```
-Forward pagination:
-  - Use next.value (timestamp) and next.ID from response
-  - Pass as next.value and next.ID parameters in next call
-
-Backward pagination:
-  - Use prev.value (timestamp) and prev.ID from response
-  - Pass as prev.value and prev.ID parameters in next call
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["helpdesk"]
+session_id: "your_session_id"
 ```
 
-## Known Pitfalls
+### 步骤 3：执行工具
 
-**Cursor Pagination**:
-- Both timestamp and ID are required for cursor navigation
-- Cursor values are timestamps in ISO 8601 date-time format
-- Mixing forward and backward cursors in the same request is undefined behavior
+```
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
+```
 
-**Silo Filtering**:
-- Tickets are physically separated into silos (folders)
-- Moving tickets between silos is done in the HelpDesk UI
-- Each silo query is independent; there is no cross-silo search
+## 已知陷阱
 
-**Read-Only Operations**:
-- Current Composio toolkit provides list/read operations
-- Ticket creation, update, and reply operations may require additional tools
-- Check RUBE_SEARCH_TOOLS for any newly available tools
-
-**Rate Limits**:
-- HelpDesk API has per-account rate limits
-- Implement backoff on 429 responses
-- Keep page sizes reasonable to avoid timeouts
-
-**Response Parsing**:
-- Response data may be nested under `data` or `data.data`
-- Parse defensively with fallback patterns
-- Ticket IDs are strings
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
 
-| Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| List tickets | HELPDESK_LIST_TICKETS | silo, sortBy, order, pageSize |
-| List views | HELPDESK_LIST_VIEWS | (none) |
-| List canned responses | HELPDESK_LIST_CANNED_RESPONSES | (none) |
-| List custom fields | HELPDESK_LIST_CUSTOM_FIELDS | (none) |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
