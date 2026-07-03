@@ -18,6 +18,7 @@ import {
   type QueuedCommand,
 } from '../types/textInputTypes.js'
 import { createAbortController } from './abortController.js'
+import { resetDebounce, checkInputDebounce } from './inputDebouncer.js'
 import type { PastedContent } from './config.js'
 import { logForDebugging } from './debug.js'
 import type { EffortValue } from './effort.js'
@@ -173,7 +174,18 @@ export async function handlePromptSubmit(
 
   const input = params.input ?? ''
   const mode = params.mode ?? 'prompt'
-  const rawPastedContents = params.pastedContents ?? {}
+  const rawPastedContents = params.pastedContents ?? ''
+
+  // [OpenClaw 吸收 — inbound-debounce] 防抖：快速连续相同输入仅取首个
+  if (typeof input === 'string' && input.trim() !== '') {
+    const debounceResult = checkInputDebounce(input)
+    if (debounceResult.dropped) {
+      logEvent('tengu_input_debounce_dropped', {
+        dupesSkipped: debounceResult.dupesSkipped,
+      })
+      return
+    }
+  }
 
   // Images are only sent if their [Image #N] placeholder is still in the text.
   // Deleting the inline pill drops the image; orphaned entries are filtered here.
