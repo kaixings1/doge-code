@@ -1,128 +1,83 @@
 ---
-name: googlebigquery-automation
-description: "通过 Rube MCP (Composio) 自动执行 Google BigQuery 任务：run SQL queries, explore datasets and metadata, execute MBQL queries via Metabase integration. Always search tools first for current schemas."
+name: googlebigquery-自动化
+description: "通过 Rube MCP (Composio) 自动化 Googlebigquery 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---
 
-# Google BigQuery Automation via Rube MCP
+# 通过 Rube MCP 实现 Googlebigquery 自动化
 
-Run SQL queries, explore database schemas, and analyze datasets through the Metabase integration using Rube MCP (Composio).
+通过 Rube MCP 使用 Composio 的 Googlebigquery 工具包自动化 Googlebigquery 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/googlebigquery](https://composio.dev/toolkits/googlebigquery)
+**工具包文档**：[composio.dev/toolkits/googlebigquery](https://composio.dev/toolkits/googlebigquery)
 
-## Prerequisites
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `metabase`
-- A Metabase instance connected to your BigQuery data source
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Googlebigquery 连接，工具包为 `googlebigquery`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `metabase`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+## 设置
 
-> **Note**: BigQuery data is accessed through Metabase, a business intelligence tool that connects to BigQuery as a data source. The tools below execute queries and retrieve metadata through Metabase's API.
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-## Core Workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `googlebigquery` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-### 1. Run a Native SQL Query
-Use `METABASE_POST_API_DATASET` with type `native` to execute raw SQL queries against your BigQuery database.
+## 工具发现
+
+在执行工作流之前始终发现可用工具：
+
 ```
-Tool: METABASE_POST_API_DATASET
-Parameters:
-  - database (required): Metabase database ID (integer)
-  - type (required): "native" for SQL queries
-  - native (required): Object with "query" string
-    - query: Raw SQL string (e.g., "SELECT * FROM users LIMIT 10")
-    - template_tags: Parameterized query variables (optional)
-  - constraints: { "max-results": 1000 } (optional)
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Googlebigquery operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-### 2. Run a Structured MBQL Query
-Use `METABASE_POST_API_DATASET` with type `query` for Metabase Query Language queries with built-in aggregation and filtering.
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
+
+## 核心工作流模式
+
+### 步骤 1：发现可用工具
+
 ```
-Tool: METABASE_POST_API_DATASET
-Parameters:
-  - database (required): Metabase database ID
-  - type (required): "query" for MBQL
-  - query (required): Object with:
-    - source-table: Table ID (integer)
-    - aggregation: e.g., [["count"]] or [["sum", ["field", 5, null]]]
-    - breakout: Group-by fields
-    - filter: Filter conditions
-    - limit: Max rows
-    - order-by: Sort fields
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Googlebigquery task"}]
+session: {id: "existing_session_id"}
 ```
 
-### 3. Get Query Metadata
-Use `METABASE_POST_API_DATASET_QUERY_METADATA` to retrieve metadata about databases, tables, and fields available for querying.
+### 步骤 2：检查连接
+
 ```
-Tool: METABASE_POST_API_DATASET_QUERY_METADATA
-Parameters:
-  - database (required): Metabase database ID
-  - type (required): "query" or "native"
-  - query (required): Query object (e.g., {"source-table": 1})
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["googlebigquery"]
+session_id: "your_session_id"
 ```
 
-### 4. Convert Query to Native SQL
-Use `METABASE_POST_API_DATASET_NATIVE` to convert an MBQL query into its native SQL representation.
-```
-Tool: METABASE_POST_API_DATASET_NATIVE
-Parameters:
-  - database (required): Metabase database ID
-  - type (required): "native"
-  - native (required): Object with "query" and optional "template_tags"
-  - parameters: Query parameter values (optional)
-```
+### 步骤 3：执行工具
 
-### 5. List Available Databases
-Use `METABASE_GET_API_DATABASE` to discover all database connections configured in Metabase.
 ```
-Tool: METABASE_GET_API_DATABASE
-Description: Retrieves a list of all Database instances configured in Metabase.
-Note: Call RUBE_SEARCH_TOOLS to get the full schema for this tool.
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
 ```
 
-### 6. Get Database Schema Metadata
-Use `METABASE_GET_API_DATABASE_ID_METADATA` to retrieve complete table and field information for a specific database.
-```
-Tool: METABASE_GET_API_DATABASE_ID_METADATA
-Description: Retrieves complete metadata for a specific database including
-  all tables and fields.
-Note: Call RUBE_SEARCH_TOOLS to get the full schema for this tool.
-```
+## 已知陷阱
 
-## Common Patterns
-
-- **Discover then query**: Use `METABASE_GET_API_DATABASE` to find database IDs, then `METABASE_GET_API_DATABASE_ID_METADATA` to explore tables and fields, then `METABASE_POST_API_DATASET` to run queries.
-- **SQL-first approach**: Use `METABASE_POST_API_DATASET` with `type: "native"` and write standard SQL queries for maximum flexibility.
-- **Parameterized queries**: Use `template_tags` in native queries for safe parameterization (e.g., `SELECT * FROM users WHERE id = {{user_id}}`).
-- **Schema exploration**: Use `METABASE_POST_API_DATASET_QUERY_METADATA` to understand table structures before building complex queries.
-- **Get parameter values**: Use `METABASE_POST_API_DATASET_PARAMETER_VALUES` to retrieve possible values for filter dropdowns.
-
-## Known Pitfalls
-
-- The `database` parameter is a Metabase-internal **integer ID**, not the BigQuery project or dataset name. Use `METABASE_GET_API_DATABASE` to find valid database IDs first.
-- `source-table` in MBQL queries is also a Metabase-internal integer, not the BigQuery table name. Discover table IDs via metadata tools.
-- Native SQL queries use BigQuery SQL dialect (Standard SQL). Ensure your syntax is BigQuery-compatible.
-- `max-results` in constraints defaults can limit returned rows. Set explicitly for large result sets.
-- Responses from `METABASE_POST_API_DATASET` contain results nested under `data` -- parse carefully as the structure may be deeply nested.
-- Metabase field IDs used in MBQL `aggregation`, `breakout`, and `filter` arrays must be integers obtained from metadata responses.
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
-| Action | Tool | Key Parameters |
-|--------|------|----------------|
-| Run SQL query | `METABASE_POST_API_DATASET` | `database`, `type: "native"`, `native.query` |
-| Run MBQL query | `METABASE_POST_API_DATASET` | `database`, `type: "query"`, `query` |
-| Get query metadata | `METABASE_POST_API_DATASET_QUERY_METADATA` | `database`, `type`, `query` |
-| Convert to SQL | `METABASE_POST_API_DATASET_NATIVE` | `database`, `type`, `native` |
-| Get parameter values | `METABASE_POST_API_DATASET_PARAMETER_VALUES` | `parameter`, `field_ids` |
-| List databases | `METABASE_GET_API_DATABASE` | (see full schema via RUBE_SEARCH_TOOLS) |
-| Get database metadata | `METABASE_GET_API_DATABASE_ID_METADATA` | (see full schema via RUBE_SEARCH_TOOLS) |
 
----
-*Powered by [Composio](https://composio.dev)*
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -1,136 +1,83 @@
 ---
-name: googletasks-automation
-description: "通过 Rube MCP (Composio) 自动执行 Google Tasks 操作：create, list, update, delete, move, and bulk-insert tasks and task lists. Always search tools first for current schemas."
+name: googletasks-自动化
+description: "通过 Rube MCP (Composio) 自动化 Googletasks 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---
 
-# Google Tasks Automation via Rube MCP
+# 通过 Rube MCP 实现 Googletasks 自动化
 
-Create, manage, organize, and bulk-operate on Google Tasks and task lists using Rube MCP (Composio).
+通过 Rube MCP 使用 Composio 的 Googletasks 工具包自动化 Googletasks 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/googletasks](https://composio.dev/toolkits/googletasks)
+**工具包文档**：[composio.dev/toolkits/googletasks](https://composio.dev/toolkits/googletasks)
 
-## Prerequisites
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `googletasks`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Googletasks 连接，工具包为 `googletasks`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `googletasks`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+## 设置
 
-## Core Workflows
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-### 1. List All Task Lists
-Use `GOOGLETASKS_LIST_TASK_LISTS` to fetch all available task lists for the authenticated user.
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `googletasks` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
+
+## 工具发现
+
+在执行工作流之前始终发现可用工具：
+
 ```
-Tool: GOOGLETASKS_LIST_TASK_LISTS
-Parameters:
-  - maxResults: Maximum task lists to return
-  - pageToken: Pagination token for next page
-```
-
-### 2. Create a New Task
-Use `GOOGLETASKS_INSERT_TASK` to add a new task to a specific task list.
-```
-Tool: GOOGLETASKS_INSERT_TASK
-Parameters:
-  - tasklist_id (required): ID of the target task list
-  - title (required): Task title
-  - notes: Task description/notes
-  - due: Due date in RFC3339 format (e.g., "2025-01-20T00:00:00.000Z")
-  - status: "needsAction" or "completed"
-  - task_parent: Parent task ID (to create subtask)
-  - task_previous: Previous task ID (for ordering)
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Googletasks operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-### 3. List All Tasks Across Lists
-Use `GOOGLETASKS_LIST_ALL_TASKS` to fetch tasks across all task lists with optional filters.
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
+
+## 核心工作流模式
+
+### 步骤 1：发现可用工具
+
 ```
-Tool: GOOGLETASKS_LIST_ALL_TASKS
-Parameters:
-  - max_tasks_total: Maximum total tasks to return
-  - showCompleted: Include completed tasks
-  - showDeleted: Include deleted tasks
-  - showHidden: Include hidden tasks
-  - dueMin / dueMax: Filter by due date range
-  - completedMin / completedMax: Filter by completion date
-  - updatedMin: Filter by last update time
-  - showAssigned: Include assigned tasks
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Googletasks task"}]
+session: {id: "existing_session_id"}
 ```
 
-### 4. Update an Existing Task
-Use `GOOGLETASKS_UPDATE_TASK` to modify a task's title, notes, due date, or status.
+### 步骤 2：检查连接
+
 ```
-Tool: GOOGLETASKS_UPDATE_TASK
-Parameters:
-  - tasklist_id (required): Task list ID
-  - task_id (required): Task ID to update
-  - title: New title
-  - notes: Updated notes
-  - due: New due date (RFC3339)
-  - status: "needsAction" or "completed"
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["googletasks"]
+session_id: "your_session_id"
 ```
 
-### 5. Bulk Insert Tasks
-Use `GOOGLETASKS_BULK_INSERT_TASKS` to create multiple tasks at once in a single operation.
-```
-Tool: GOOGLETASKS_BULK_INSERT_TASKS
-Parameters:
-  - tasklist_id (required): Target task list ID
-  - tasks (required): Array of task objects (each with title, notes, due, status)
-  - batch_size: Number of tasks per batch request
-```
+### 步骤 3：执行工具
 
-### 6. Delete or Clear Tasks
-Use `GOOGLETASKS_DELETE_TASK` to remove a specific task, or `GOOGLETASKS_CLEAR_TASKS` to permanently remove all completed tasks from a list.
 ```
-Tool: GOOGLETASKS_DELETE_TASK
-Parameters:
-  - tasklist_id (required): Task list ID
-  - task_id (required): Task ID to delete
-
-Tool: GOOGLETASKS_CLEAR_TASKS
-Parameters:
-  - tasklist (required): Task list ID to clear completed tasks from
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
 ```
 
-## Common Patterns
+## 已知陷阱
 
-- **Get task list ID first**: Always start with `GOOGLETASKS_LIST_TASK_LISTS` to discover available task lists and their IDs before creating or listing tasks.
-- **List then update**: Use `GOOGLETASKS_LIST_ALL_TASKS` or `GOOGLETASKS_LIST_TASKS` to find task IDs, then use `GOOGLETASKS_UPDATE_TASK` to modify them.
-- **Mark complete**: Update a task with `status: "completed"` using `GOOGLETASKS_UPDATE_TASK`.
-- **Create subtasks**: Use `GOOGLETASKS_INSERT_TASK` with the `task_parent` parameter set to the parent task's ID.
-- **Reorder tasks**: Use `GOOGLETASKS_MOVE_TASK` to change a task's position within its list or reparent it.
-- **Batch creation**: Use `GOOGLETASKS_BULK_INSERT_TASKS` for creating many tasks at once (e.g., importing from another system).
-
-## Known Pitfalls
-
-- Both `tasklist_id` and `task_id` are **required** for `GOOGLETASKS_UPDATE_TASK`, `GOOGLETASKS_DELETE_TASK`, and `GOOGLETASKS_GET_TASK`. You cannot operate on a task without knowing which list it belongs to.
-- All date/time strings must be in **RFC3339 format** (e.g., `2025-01-20T00:00:00.000Z`). Other formats will be rejected.
-- `GOOGLETASKS_CLEAR_TASKS` permanently deletes all **completed** tasks from a list. This action is irreversible.
-- `GOOGLETASKS_LIST_ALL_TASKS` fetches across all lists but results may be paginated -- check for pagination tokens.
-- Task list IDs are not the same as task list names. Always resolve names to IDs using `GOOGLETASKS_LIST_TASK_LISTS`.
-- The default task list is typically named "My Tasks" but its ID is an opaque string, not "default" or "primary".
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
-| Action | Tool | Key Parameters |
-|--------|------|----------------|
-| List task lists | `GOOGLETASKS_LIST_TASK_LISTS` | `maxResults`, `pageToken` |
-| List all tasks | `GOOGLETASKS_LIST_ALL_TASKS` | `max_tasks_total`, `showCompleted`, `dueMin` |
-| List tasks in a list | `GOOGLETASKS_LIST_TASKS` | `tasklist_id`, `maxResults`, `showCompleted` |
-| Get single task | `GOOGLETASKS_GET_TASK` | `tasklist_id`, `task_id` |
-| Create task | `GOOGLETASKS_INSERT_TASK` | `tasklist_id`, `title`, `notes`, `due` |
-| Bulk create tasks | `GOOGLETASKS_BULK_INSERT_TASKS` | `tasklist_id`, `tasks` |
-| Update task | `GOOGLETASKS_UPDATE_TASK` | `tasklist_id`, `task_id`, `title`, `status` |
-| Delete task | `GOOGLETASKS_DELETE_TASK` | `tasklist_id`, `task_id` |
-| Move/reorder task | `GOOGLETASKS_MOVE_TASK` | `tasklist_id`, `task_id` |
-| Clear completed | `GOOGLETASKS_CLEAR_TASKS` | `tasklist` |
 
----
-*Powered by [Composio](https://composio.dev)*
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

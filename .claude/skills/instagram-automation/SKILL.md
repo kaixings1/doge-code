@@ -1,201 +1,83 @@
 ---
-name: instagram-automation
-description: "通过 Rube MCP (Composio) 自动执行 Instagram 任务：create posts, carousels, manage media, get insights, and publishing limits. Always search tools first for current schemas."
-risk: critical
-source: community
-date_added: "2026-02-27"
+name: instagram-自动化
+description: "通过 Rube MCP (Composio) 自动化 Instagram 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+requires:
+  mcp: [rube]
 ---
 
-# Instagram Automation via Rube MCP
+# 通过 Rube MCP 实现 Instagram 自动化
 
-Automate Instagram operations through Composio's Instagram toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Instagram 工具包自动化 Instagram 操作。
 
-## Prerequisites
+**工具包文档**：[composio.dev/toolkits/instagram](https://composio.dev/toolkits/instagram)
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Instagram connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `instagram`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
-- Instagram Business or Creator account required (personal accounts not supported)
+## 前提条件
 
-## Setup
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Instagram 连接，工具包为 `instagram`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+## 设置
 
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `instagram`
-3. If connection is not ACTIVE, follow the returned auth link to complete Instagram/Facebook OAuth
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `instagram` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-## Core Workflows
+## 工具发现
 
-### 1. Create a Single Image/Video Post
+在执行工作流之前始终发现可用工具：
 
-**When to use**: User wants to publish a single photo or video to Instagram
-
-**Tool sequence**:
-1. `INSTAGRAM_GET_USER_INFO` - Get Instagram user ID [Prerequisite]
-2. `INSTAGRAM_CREATE_MEDIA_CONTAINER` - Create a media container with the image/video URL [Required]
-3. `INSTAGRAM_GET_POST_STATUS` - Check if the media container is ready [Optional]
-4. `INSTAGRAM_CREATE_POST` or `INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH` - Publish the container [Required]
-
-**Key parameters**:
-- `image_url`: Public URL of the image to post
-- `video_url`: Public URL of the video to post
-- `caption`: Post caption text
-- `ig_user_id`: Instagram Business account user ID
-
-**Pitfalls**:
-- Media URLs must be publicly accessible; private/authenticated URLs will fail
-- Video containers may take time to process; poll GET_POST_STATUS before publishing
-- Caption supports hashtags and mentions but has a 2200 character limit
-- Publishing a container that is not yet finished processing returns an error
-
-### 2. Create a Carousel Post
-
-**When to use**: User wants to publish multiple images/videos in a single carousel post
-
-**Tool sequence**:
-1. `INSTAGRAM_CREATE_MEDIA_CONTAINER` - Create individual containers for each media item [Required, repeat per item]
-2. `INSTAGRAM_CREATE_CAROUSEL_CONTAINER` - Create the carousel container referencing all media containers [Required]
-3. `INSTAGRAM_GET_POST_STATUS` - Check carousel container readiness [Optional]
-4. `INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH` - Publish the carousel [Required]
-
-**Key parameters**:
-- `children`: Array of media container IDs for the carousel
-- `caption`: Carousel post caption
-- `ig_user_id`: Instagram Business account user ID
-
-**Pitfalls**:
-- Carousels require 2-10 media items; fewer or more will fail
-- Each child container must be created individually before the carousel container
-- All child containers must be fully processed before creating the carousel
-- Mixed media (images + videos) is supported in carousels
-
-### 3. Get Media and Insights
-
-**When to use**: User wants to view their posts or analyze post performance
-
-**Tool sequence**:
-1. `INSTAGRAM_GET_IG_USER_MEDIA` or `INSTAGRAM_GET_USER_MEDIA` - List user's media [Required]
-2. `INSTAGRAM_GET_IG_MEDIA` - Get details for a specific post [Optional]
-3. `INSTAGRAM_GET_POST_INSIGHTS` or `INSTAGRAM_GET_IG_MEDIA_INSIGHTS` - Get metrics for a post [Optional]
-4. `INSTAGRAM_GET_USER_INSIGHTS` - Get account-level insights [Optional]
-
-**Key parameters**:
-- `ig_user_id`: Instagram Business account user ID
-- `media_id`: ID of the specific media post
-- `metric`: Metrics to retrieve (e.g., impressions, reach, engagement)
-- `period`: Time period for insights (e.g., day, week, lifetime)
-
-**Pitfalls**:
-- Insights are only available for Business/Creator accounts
-- Some metrics require minimum follower counts
-- Insight data may have a delay of up to 48 hours
-- The `period` parameter must match the metric type
-
-### 4. Check Publishing Limits
-
-**When to use**: User wants to verify they can publish before attempting a post
-
-**Tool sequence**:
-1. `INSTAGRAM_GET_IG_USER_CONTENT_PUBLISHING_LIMIT` - Check remaining publishing quota [Required]
-
-**Key parameters**:
-- `ig_user_id`: Instagram Business account user ID
-
-**Pitfalls**:
-- Instagram enforces a 25 posts per 24-hour rolling window limit
-- Publishing limit resets on a rolling basis, not at midnight
-- Check limits before bulk posting operations to avoid failures
-
-### 5. Get Media Comments and Children
-
-**When to use**: User wants to view comments on a post or children of a carousel
-
-**Tool sequence**:
-1. `INSTAGRAM_GET_IG_MEDIA_COMMENTS` - List comments on a media post [Required]
-2. `INSTAGRAM_GET_IG_MEDIA_CHILDREN` - List children of a carousel post [Optional]
-
-**Key parameters**:
-- `media_id`: ID of the media post
-- `ig_media_id`: Alternative media ID parameter
-
-**Pitfalls**:
-- Comments may be paginated; follow pagination cursors for complete results
-- Carousel children are returned as individual media objects
-- Comment moderation settings on the account affect what is returned
-
-## Common Patterns
-
-### ID Resolution
-
-**Instagram User ID**:
 ```
-1. Call INSTAGRAM_GET_USER_INFO
-2. Extract ig_user_id from response
-3. Use in all subsequent API calls
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Instagram operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-**Media Container Status Check**:
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
+
+## 核心工作流模式
+
+### 步骤 1：发现可用工具
+
 ```
-1. Call INSTAGRAM_CREATE_MEDIA_CONTAINER
-2. Extract container_id from response
-3. Poll INSTAGRAM_GET_POST_STATUS with container_id
-4. Wait until status is 'FINISHED' before publishing
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Instagram task"}]
+session: {id: "existing_session_id"}
 ```
 
-### Two-Phase Publishing
+### 步骤 2：检查连接
 
-- Phase 1: Create media container(s) with content URLs
-- Phase 2: Publish the container after it finishes processing
-- Always check container status between phases for video content
-- For carousels, all children must complete Phase 1 before creating the carousel container
+```
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["instagram"]
+session_id: "your_session_id"
+```
 
-## Known Pitfalls
+### 步骤 3：执行工具
 
-**Media URLs**:
-- All image/video URLs must be publicly accessible HTTPS URLs
-- URLs behind authentication, CDN restrictions, or that require cookies will fail
-- Temporary URLs (pre-signed S3, etc.) may expire before processing completes
+```
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
+```
 
-**Rate Limits**:
-- 25 posts per 24-hour rolling window
-- API rate limits apply separately from publishing limits
-- Implement exponential backoff for 429 responses
+## 已知陷阱
 
-**Account Requirements**:
-- Only Business or Creator Instagram accounts are supported
-- Personal accounts cannot use the Instagram Graph API
-- The account must be connected to a Facebook Page
-
-**Response Parsing**:
-- Media IDs are numeric strings
-- Insights data may be nested under different response keys
-- Pagination uses cursor-based tokens
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
 
-| Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| Get user info | INSTAGRAM_GET_USER_INFO | (none) |
-| Create media container | INSTAGRAM_CREATE_MEDIA_CONTAINER | image_url/video_url, caption |
-| Create carousel | INSTAGRAM_CREATE_CAROUSEL_CONTAINER | children, caption |
-| Publish post | INSTAGRAM_CREATE_POST | ig_user_id, creation_id |
-| Publish media | INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH | ig_user_id, creation_id |
-| Check post status | INSTAGRAM_GET_POST_STATUS | ig_container_id |
-| List user media | INSTAGRAM_GET_IG_USER_MEDIA | ig_user_id |
-| Get media details | INSTAGRAM_GET_IG_MEDIA | ig_media_id |
-| Get post insights | INSTAGRAM_GET_POST_INSIGHTS | media_id, metric |
-| Get user insights | INSTAGRAM_GET_USER_INSIGHTS | ig_user_id, metric, period |
-| Get publishing limit | INSTAGRAM_GET_IG_USER_CONTENT_PUBLISHING_LIMIT | ig_user_id |
-| Get media comments | INSTAGRAM_GET_IG_MEDIA_COMMENTS | ig_media_id |
-| Get carousel children | INSTAGRAM_GET_IG_MEDIA_CHILDREN | ig_media_id |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

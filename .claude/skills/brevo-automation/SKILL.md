@@ -1,206 +1,83 @@
 ---
 name: brevo-自动化
-description: "通过 Rube MCP (Composio) 自动化 Brevo（原 Sendinblue）邮件营销操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
-risk: critical
-source: community
-date_added: "2026-02-27"
+description: "通过 Rube MCP (Composio) 自动化 Brevo 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+requires:
+  mcp: [rube]
 ---
 
-# Brevo Automation via Rube MCP
+# 通过 Rube MCP 实现 Brevo 自动化
 
-Automate Brevo (formerly Sendinblue) email marketing operations through Composio's Brevo toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Brevo 工具包自动化 Brevo 操作。
 
-## Prerequisites
+**工具包文档**：[composio.dev/toolkits/brevo](https://composio.dev/toolkits/brevo)
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Brevo connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `brevo`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Brevo 连接，工具包为 `brevo`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+## 设置
 
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `brevo`
-3. If connection is not ACTIVE, follow the returned auth link to complete Brevo authentication
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `brevo` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-## Core Workflows
+## 工具发现
 
-### 1. Manage Email Campaigns
-
-**When to use**: User wants to list, review, or update email campaigns
-
-**Tool sequence**:
-1. `BREVO_LIST_EMAIL_CAMPAIGNS` - List all campaigns with filters [Required]
-2. `BREVO_UPDATE_EMAIL_CAMPAIGN` - Update campaign content or settings [Optional]
-
-**Key parameters for listing**:
-- `type`: Campaign type ('classic' or 'trigger')
-- `status`: Campaign status ('suspended', 'archive', 'sent', 'queued', 'draft', 'inProcess', 'inReview')
-- `startDate`/`endDate`: Date range filter (YYYY-MM-DDTHH:mm:ss.SSSZ format)
-- `statistics`: Stats type to include ('globalStats', 'linksStats', 'statsByDomain')
-- `limit`: Results per page (max 100, default 50)
-- `offset`: Pagination offset
-- `sort`: Sort order ('asc' or 'desc')
-- `excludeHtmlContent`: Set `true` to reduce response size
-
-**Key parameters for update**:
-- `campaign_id`: Numeric campaign ID (required)
-- `name`: Campaign name
-- `subject`: Email subject line
-- `htmlContent`: HTML email body (mutually exclusive with `htmlUrl`)
-- `htmlUrl`: URL to HTML content
-- `sender`: Sender object with `name`, `email`, or `id`
-- `recipients`: Object with `listIds` and `exclusionListIds`
-- `scheduledAt`: Scheduled send time (YYYY-MM-DDTHH:mm:ss.SSSZ)
-
-**Pitfalls**:
-- `startDate` and `endDate` are mutually required; provide both or neither
-- Date filters only work when `status` is not passed or set to 'sent'
-- `htmlContent` and `htmlUrl` are mutually exclusive
-- Campaign `sender` email must be a verified sender in Brevo
-- A/B testing fields (`subjectA`, `subjectB`, `splitRule`, `winnerCriteria`) require `abTesting: true`
-- `scheduledAt` uses full ISO 8601 format with timezone
-
-### 2. Create and Manage Email Templates
-
-**When to use**: User wants to create, edit, list, or delete email templates
-
-**Tool sequence**:
-1. `BREVO_GET_ALL_EMAIL_TEMPLATES` - List all templates [Required]
-2. `BREVO_CREATE_OR_UPDATE_EMAIL_TEMPLATE` - Create a new template or update existing [Required]
-3. `BREVO_DELETE_EMAIL_TEMPLATE` - Delete an inactive template [Optional]
-
-**Key parameters for listing**:
-- `templateStatus`: Filter active (`true`) or inactive (`false`) templates
-- `limit`: Results per page (max 1000, default 50)
-- `offset`: Pagination offset
-- `sort`: Sort order ('asc' or 'desc')
-
-**Key parameters for create/update**:
-- `templateId`: Include to update; omit to create new
-- `templateName`: Template display name (required for creation)
-- `subject`: Email subject line (required for creation)
-- `htmlContent`: HTML template body (min 10 characters; use this or `htmlUrl`)
-- `sender`: Sender object with `name` and `email`, or `id` (required for creation)
-- `replyTo`: Reply-to email address
-- `isActive`: Activate or deactivate the template
-- `tag`: Category tag for the template
-
-**Pitfalls**:
-- When `templateId` is provided, the tool updates; when omitted, it creates
-- For creation, `templateName`, `subject`, and `sender` are required
-- `htmlContent` must be at least 10 characters
-- Template personalization uses `{{contact.ATTRIBUTE}}` syntax
-- Only inactive templates can be deleted
-- `htmlContent` and `htmlUrl` are mutually exclusive
-
-### 3. Manage Senders
-
-**When to use**: User wants to view authorized sender identities
-
-**Tool sequence**:
-1. `BREVO_GET_ALL_SENDERS` - List all verified senders [Required]
-
-**Key parameters**: (none required)
-
-**Pitfalls**:
-- Senders must be verified before they can be used in campaigns or templates
-- Sender verification is done through the Brevo web interface, not via API
-- Sender IDs can be used in `sender.id` fields for campaigns and templates
-
-### 4. Configure A/B Testing Campaigns
-
-**When to use**: User wants to set up or modify A/B test settings on a campaign
-
-**Tool sequence**:
-1. `BREVO_LIST_EMAIL_CAMPAIGNS` - Find the target campaign [Prerequisite]
-2. `BREVO_UPDATE_EMAIL_CAMPAIGN` - Configure A/B test settings [Required]
-
-**Key parameters**:
-- `campaign_id`: Campaign to configure
-- `abTesting`: Set to `true` to enable A/B testing
-- `subjectA`: Subject line for variant A
-- `subjectB`: Subject line for variant B
-- `splitRule`: Percentage split for the test (1-99)
-- `winnerCriteria`: 'open' or 'click' for determining the winner
-- `winnerDelay`: Hours to wait before selecting winner (1-168)
-
-**Pitfalls**:
-- A/B testing must be enabled (`abTesting: true`) before setting variant fields
-- `splitRule` is the percentage of contacts that receive variant A
-- `winnerDelay` defines how long to test before sending the winner to remaining contacts
-- Only works with 'classic' campaign type
-
-## Common Patterns
-
-### Campaign Lifecycle
+在执行工作流之前始终发现可用工具：
 
 ```
-1. Create campaign (status: draft)
-2. Set recipients (listIds)
-3. Configure content (htmlContent or htmlUrl)
-4. Optionally schedule (scheduledAt)
-5. Send or schedule via Brevo UI (API update can set scheduledAt)
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Brevo operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-### Pagination
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
 
-- Use `limit` (page size) and `offset` (starting index)
-- Default limit is 50; max varies by endpoint (100 for campaigns, 1000 for templates)
-- Increment `offset` by `limit` each page
-- Check `count` in response to determine total available
+## 核心工作流模式
 
-### Template Personalization
+### 步骤 1：发现可用工具
 
 ```
-- First name: {{contact.FIRSTNAME}}
-- Last name: {{contact.LASTNAME}}
-- Custom attribute: {{contact.CUSTOM_ATTRIBUTE}}
-- Mirror link: {{mirror}}
-- Unsubscribe link: {{unsubscribe}}
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Brevo task"}]
+session: {id: "existing_session_id"}
 ```
 
-## Known Pitfalls
+### 步骤 2：检查连接
 
-**Date Formats**:
-- All dates use ISO 8601 with milliseconds: YYYY-MM-DDTHH:mm:ss.SSSZ
-- Pass timezone in the date-time format for accurate results
-- `startDate` and `endDate` must be used together
+```
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["brevo"]
+session_id: "your_session_id"
+```
 
-**Sender Verification**:
-- All sender emails must be verified in Brevo before use
-- Unverified senders cause campaign creation/update failures
-- Use GET_ALL_SENDERS to check available verified senders
+### 步骤 3：执行工具
 
-**Rate Limits**:
-- Brevo API has rate limits per account plan
-- Implement backoff on 429 responses
-- Template operations have lower limits than read operations
+```
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
+```
 
-**Response Parsing**:
-- Response data may be nested under `data` or `data.data`
-- Parse defensively with fallback patterns
-- Campaign and template IDs are numeric integers
+## 已知陷阱
+
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
 
-| Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| List campaigns | BREVO_LIST_EMAIL_CAMPAIGNS | type, status, limit, offset |
-| Update campaign | BREVO_UPDATE_EMAIL_CAMPAIGN | campaign_id, subject, htmlContent |
-| List templates | BREVO_GET_ALL_EMAIL_TEMPLATES | templateStatus, limit, offset |
-| Create template | BREVO_CREATE_OR_UPDATE_EMAIL_TEMPLATE | templateName, subject, htmlContent, sender |
-| Update template | BREVO_CREATE_OR_UPDATE_EMAIL_TEMPLATE | templateId, htmlContent |
-| Delete template | BREVO_DELETE_EMAIL_TEMPLATE | templateId |
-| List senders | BREVO_GET_ALL_SENDERS | (none) |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

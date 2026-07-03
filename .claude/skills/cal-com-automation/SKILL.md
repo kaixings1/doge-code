@@ -1,212 +1,83 @@
 ---
 name: cal-com-自动化
-description: "通过 Rube MCP (Composio) 自动化 Cal.com 操作：管理预约、检查可用性、配置 webhooks 和处理团队。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
-risk: critical
-source: community
-date_added: "2026-02-27"
+description: "通过 Rube MCP (Composio) 自动化 Cal-com 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+requires:
+  mcp: [rube]
 ---
 
-# Cal.com Automation via Rube MCP
+# 通过 Rube MCP 实现 Cal-com 自动化
 
-Automate Cal.com scheduling operations through Composio's Cal toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Cal-com 工具包自动化 Cal-com 操作。
 
-## Prerequisites
+**工具包文档**：[composio.dev/toolkits/cal-com](https://composio.dev/toolkits/cal-com)
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Cal.com connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `cal`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Cal-com 连接，工具包为 `cal-com`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+## 设置
 
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `cal`
-3. If connection is not ACTIVE, follow the returned auth link to complete Cal.com authentication
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `cal-com` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-## Core Workflows
+## 工具发现
 
-### 1. Manage Bookings
-
-**When to use**: User wants to list, create, or review bookings
-
-**Tool sequence**:
-1. `CAL_FETCH_ALL_BOOKINGS` - List all bookings with filters [Required]
-2. `CAL_POST_NEW_BOOKING_REQUEST` - Create a new booking [Optional]
-
-**Key parameters for listing**:
-- `status`: Filter by booking status ('upcoming', 'recurring', 'past', 'cancelled', 'unconfirmed')
-- `afterStart`: Filter bookings after this date (ISO 8601)
-- `beforeEnd`: Filter bookings before this date (ISO 8601)
-
-**Key parameters for creation**:
-- `eventTypeId`: Event type ID for the booking
-- `start`: Booking start time (ISO 8601)
-- `end`: Booking end time (ISO 8601)
-- `name`: Attendee name
-- `email`: Attendee email
-- `timeZone`: Attendee timezone (IANA format)
-- `language`: Attendee language code
-- `metadata`: Additional metadata object
-
-**Pitfalls**:
-- Date filters use ISO 8601 format with timezone (e.g., '2024-01-15T09:00:00Z')
-- `eventTypeId` must reference a valid, active event type
-- Booking creation requires matching an available slot; check availability first
-- Time zone must be a valid IANA timezone string (e.g., 'America/New_York')
-- Status filter values are specific strings; invalid values return empty results
-
-### 2. Check Availability
-
-**When to use**: User wants to find free/busy times or available booking slots
-
-**Tool sequence**:
-1. `CAL_RETRIEVE_CALENDAR_BUSY_TIMES` - Get busy time blocks [Required]
-2. `CAL_GET_AVAILABLE_SLOTS_INFO` - Get specific available slots [Required]
-
-**Key parameters**:
-- `dateFrom`: Start date for availability check (YYYY-MM-DD)
-- `dateTo`: End date for availability check (YYYY-MM-DD)
-- `eventTypeId`: Event type to check slots for
-- `timeZone`: Timezone for the availability response
-- `loggedInUsersTz`: Timezone of the requesting user
-
-**Pitfalls**:
-- Busy times show when the user is NOT available
-- Available slots are specific to an event type's duration and configuration
-- Date range should be reasonable (not months in advance) to get accurate results
-- Timezone affects how slots are displayed; always specify explicitly
-- Availability reflects calendar integrations (Google Calendar, Outlook, etc.)
-
-### 3. Configure Webhooks
-
-**When to use**: User wants to set up or manage webhook notifications for booking events
-
-**Tool sequence**:
-1. `CAL_RETRIEVE_WEBHOOKS_LIST` - List existing webhooks [Required]
-2. `CAL_GET_WEBHOOK_BY_ID` - Get specific webhook details [Optional]
-3. `CAL_UPDATE_WEBHOOK_BY_ID` - Update webhook configuration [Optional]
-4. `CAL_DELETE_WEBHOOK_BY_ID` - Remove a webhook [Optional]
-
-**Key parameters**:
-- `id`: Webhook ID for GET/UPDATE/DELETE operations
-- `subscriberUrl`: Webhook endpoint URL
-- `eventTriggers`: Array of event types to trigger on
-- `active`: Whether the webhook is active
-- `secret`: Webhook signing secret
-
-**Pitfalls**:
-- Webhook URLs must be publicly accessible HTTPS endpoints
-- Event triggers include: 'BOOKING_CREATED', 'BOOKING_RESCHEDULED', 'BOOKING_CANCELLED', etc.
-- Inactive webhooks do not fire; toggle `active` to enable/disable
-- Webhook secrets are used for payload signature verification
-
-### 4. Manage Teams
-
-**When to use**: User wants to create, view, or manage teams and team event types
-
-**Tool sequence**:
-1. `CAL_GET_TEAMS_LIST` - List all teams [Required]
-2. `CAL_GET_TEAM_INFORMATION_BY_TEAM_ID` - Get specific team details [Optional]
-3. `CAL_CREATE_TEAM_IN_ORGANIZATION` - Create a new team [Optional]
-4. `CAL_RETRIEVE_TEAM_EVENT_TYPES` - List event types for a team [Optional]
-
-**Key parameters**:
-- `teamId`: Team identifier
-- `name`: Team name (for creation)
-- `slug`: URL-friendly team identifier
-
-**Pitfalls**:
-- Team creation may require organization-level permissions
-- Team event types are separate from personal event types
-- Team slugs must be URL-safe and unique within the organization
-
-### 5. Organization Management
-
-**When to use**: User wants to view organization details
-
-**Tool sequence**:
-1. `CAL_GET_ORGANIZATION_ID` - Get the organization ID [Required]
-
-**Key parameters**: (none required)
-
-**Pitfalls**:
-- Organization ID is needed for team creation and org-level operations
-- Not all Cal.com accounts have organizations; personal plans may return errors
-
-## Common Patterns
-
-### Booking Creation Flow
+在执行工作流之前始终发现可用工具：
 
 ```
-1. Call CAL_GET_AVAILABLE_SLOTS_INFO to find open slots
-2. Present available times to the user
-3. Call CAL_POST_NEW_BOOKING_REQUEST with selected slot
-4. Confirm booking creation response
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Cal-com operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-### ID Resolution
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
 
-**Team name -> Team ID**:
-```
-1. Call CAL_GET_TEAMS_LIST
-2. Find team by name in response
-3. Extract id field
-```
+## 核心工作流模式
 
-### Webhook Setup
+### 步骤 1：发现可用工具
 
 ```
-1. Call CAL_RETRIEVE_WEBHOOKS_LIST to check existing hooks
-2. Create or update webhook with desired triggers
-3. Verify webhook fires on test booking
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Cal-com task"}]
+session: {id: "existing_session_id"}
 ```
 
-## Known Pitfalls
+### 步骤 2：检查连接
 
-**Date/Time Formats**:
-- Booking times: ISO 8601 with timezone (e.g., '2024-01-15T09:00:00Z')
-- Availability dates: YYYY-MM-DD format
-- Always specify timezone explicitly to avoid confusion
+```
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["cal-com"]
+session_id: "your_session_id"
+```
 
-**Event Types**:
-- Event type IDs are numeric integers
-- Event types define duration, location, and booking rules
-- Disabled event types cannot accept new bookings
+### 步骤 3：执行工具
 
-**Permissions**:
-- Team operations require team membership or admin access
-- Organization operations require org-level permissions
-- Webhook management requires appropriate access level
+```
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
+```
 
-**Rate Limits**:
-- Cal.com API has rate limits per API key
-- Implement backoff on 429 responses
+## 已知陷阱
+
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
 
-| Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| List bookings | CAL_FETCH_ALL_BOOKINGS | status, afterStart, beforeEnd |
-| Create booking | CAL_POST_NEW_BOOKING_REQUEST | eventTypeId, start, end, name, email |
-| Get busy times | CAL_RETRIEVE_CALENDAR_BUSY_TIMES | dateFrom, dateTo |
-| Get available slots | CAL_GET_AVAILABLE_SLOTS_INFO | eventTypeId, dateFrom, dateTo |
-| List webhooks | CAL_RETRIEVE_WEBHOOKS_LIST | (none) |
-| Get webhook | CAL_GET_WEBHOOK_BY_ID | id |
-| Update webhook | CAL_UPDATE_WEBHOOK_BY_ID | id, subscriberUrl, eventTriggers |
-| Delete webhook | CAL_DELETE_WEBHOOK_BY_ID | id |
-| List teams | CAL_GET_TEAMS_LIST | (none) |
-| Get team | CAL_GET_TEAM_INFORMATION_BY_TEAM_ID | teamId |
-| Create team | CAL_CREATE_TEAM_IN_ORGANIZATION | name, slug |
-| Team event types | CAL_RETRIEVE_TEAM_EVENT_TYPES | teamId |
-| Get org ID | CAL_GET_ORGANIZATION_ID | (none) |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

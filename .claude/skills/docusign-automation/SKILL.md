@@ -1,217 +1,83 @@
 ---
-name: docusign-automation
-description: "通过 Rube MCP (Composio) 自动执行 DocuSign 任务：templates, envelopes, signatures, document management. Always search tools first for current schemas."
-risk: unknown
-source: community
-date_added: "2026-02-27"
+name: docusign-自动化
+description: "通过 Rube MCP (Composio) 自动化 Docusign 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+requires:
+  mcp: [rube]
 ---
 
-# DocuSign Automation via Rube MCP
+# 通过 Rube MCP 实现 Docusign 自动化
 
-Automate DocuSign e-signature workflows through Composio's DocuSign toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Docusign 工具包自动化 Docusign 操作。
 
-## Prerequisites
+**工具包文档**：[composio.dev/toolkits/docusign](https://composio.dev/toolkits/docusign)
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active DocuSign connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `docusign`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Docusign 连接，工具包为 `docusign`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+## 设置
 
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `docusign`
-3. If connection is not ACTIVE, follow the returned auth link to complete DocuSign OAuth
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `docusign` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-## Core Workflows
+## 工具发现
 
-### 1. Browse and Select Templates
-
-**When to use**: User wants to find available document templates for sending
-
-**Tool sequence**:
-1. `DOCUSIGN_LIST_ALL_TEMPLATES` - List all available templates [Required]
-2. `DOCUSIGN_GET_TEMPLATE` - Get detailed template information [Optional]
-
-**Key parameters**:
-- For listing: Optional search/filter parameters
-- For details: `templateId` (from list results)
-- Response includes template `templateId`, `name`, `description`, roles, and fields
-
-**Pitfalls**:
-- Template IDs are GUIDs (e.g., '12345678-abcd-1234-efgh-123456789012')
-- Templates define recipient roles with signing tabs; understand roles before creating envelopes
-- Large template libraries require pagination; check for continuation tokens
-- Template access depends on account permissions
-
-### 2. Create and Send Envelopes from Templates
-
-**When to use**: User wants to send documents for signature using a pre-built template
-
-**Tool sequence**:
-1. `DOCUSIGN_LIST_ALL_TEMPLATES` - Find the template to use [Prerequisite]
-2. `DOCUSIGN_GET_TEMPLATE` - Review template roles and fields [Optional]
-3. `DOCUSIGN_CREATE_ENVELOPE_FROM_TEMPLATE` - Create the envelope [Required]
-4. `DOCUSIGN_SEND_ENVELOPE` - Send the envelope for signing [Required]
-
-**Key parameters**:
-- For CREATE_ENVELOPE_FROM_TEMPLATE:
-  - `templateId`: Template to use
-  - `templateRoles`: Array of role assignments with `roleName`, `name`, `email`
-  - `status`: 'created' (draft) or 'sent' (send immediately)
-  - `emailSubject`: Custom subject line for the signing email
-  - `emailBlurb`: Custom message in the signing email
-- For SEND_ENVELOPE:
-  - `envelopeId`: Envelope ID from creation response
-
-**Pitfalls**:
-- `templateRoles` must match the role names defined in the template exactly (case-sensitive)
-- Setting `status` to 'sent' during creation sends immediately; use 'created' for drafts
-- If status is 'sent' at creation, no need to call SEND_ENVELOPE separately
-- Each role requires at minimum `roleName`, `name`, and `email`
-- `emailSubject` overrides the template's default email subject
-
-### 3. Monitor Envelope Status
-
-**When to use**: User wants to check the status of sent envelopes or track signing progress
-
-**Tool sequence**:
-1. `DOCUSIGN_GET_ENVELOPE` - Get envelope details and status [Required]
-
-**Key parameters**:
-- `envelopeId`: Envelope identifier (GUID)
-- Response includes `status`, `recipients`, `sentDateTime`, `completedDateTime`
-
-**Pitfalls**:
-- Envelope statuses: 'created', 'sent', 'delivered', 'signed', 'completed', 'declined', 'voided'
-- 'delivered' means the email was opened, not that the document was signed
-- 'completed' means all recipients have signed
-- Recipients array shows individual signing status per recipient
-- Envelope IDs are GUIDs; always resolve from creation or search results
-
-### 4. Add Templates to Existing Envelopes
-
-**When to use**: User wants to add additional documents or templates to an existing envelope
-
-**Tool sequence**:
-1. `DOCUSIGN_GET_ENVELOPE` - Verify envelope exists and is in draft state [Prerequisite]
-2. `DOCUSIGN_ADD_TEMPLATES_TO_DOCUMENT_IN_ENVELOPE` - Add template to envelope [Required]
-
-**Key parameters**:
-- `envelopeId`: Target envelope ID
-- `documentId`: Document ID within the envelope
-- `templateId`: Template to add
-
-**Pitfalls**:
-- Envelope must be in 'created' (draft) status to add templates
-- Cannot add templates to already-sent envelopes
-- Document IDs are sequential within an envelope (starting from '1')
-- Adding a template merges its fields and roles into the existing envelope
-
-### 5. Manage Envelope Lifecycle
-
-**When to use**: User wants to send, void, or manage draft envelopes
-
-**Tool sequence**:
-1. `DOCUSIGN_GET_ENVELOPE` - Check current envelope status [Prerequisite]
-2. `DOCUSIGN_SEND_ENVELOPE` - Send a draft envelope [Optional]
-
-**Key parameters**:
-- `envelopeId`: Envelope to manage
-- For sending: envelope must be in 'created' status with all required recipients
-
-**Pitfalls**:
-- Only 'created' (draft) envelopes can be sent
-- Sent envelopes cannot be unsent; they can only be voided
-- Voiding an envelope notifies all recipients
-- All required recipients must have valid email addresses before sending
-
-## Common Patterns
-
-### ID Resolution
-
-**Template name -> Template ID**:
-```
-1. Call DOCUSIGN_LIST_ALL_TEMPLATES
-2. Find template by name in results
-3. Extract templateId (GUID format)
-```
-
-**Envelope tracking**:
-```
-1. Store envelopeId from CREATE_ENVELOPE_FROM_TEMPLATE response
-2. Call DOCUSIGN_GET_ENVELOPE periodically to check status
-3. Check recipient-level status for individual signing progress
-```
-
-### Template Role Mapping
-
-When creating an envelope from a template:
-```
-1. Call DOCUSIGN_GET_TEMPLATE to see defined roles
-2. Map each role to actual recipients:
-   {
-     "roleName": "Signer 1",     // Must match template role name exactly
-     "name": "John Smith",
-     "email": "john@example.com"
-   }
-3. Include ALL required roles in templateRoles array
-```
-
-### Envelope Status Flow
+在执行工作流之前始终发现可用工具：
 
 ```
-created (draft) -> sent -> delivered -> signed -> completed
-                       \-> declined
-                       \-> voided (by sender)
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Docusign operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-## Known Pitfalls
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
 
-**Template Roles**:
-- Role names are case-sensitive; must match template definition exactly
-- All required roles must be assigned when creating an envelope
-- Missing role assignments cause envelope creation to fail
+## 核心工作流模式
 
-**Envelope Status**:
-- 'delivered' means email opened, NOT document signed
-- 'completed' is the final successful state (all parties signed)
-- Status transitions are one-way; cannot revert to previous states
+### 步骤 1：发现可用工具
 
-**GUIDs**:
-- All DocuSign IDs (templates, envelopes) are GUID format
-- Always resolve names to GUIDs via list/search endpoints
-- Do not hardcode GUIDs; they are unique per account
+```
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Docusign task"}]
+session: {id: "existing_session_id"}
+```
 
-**Rate Limits**:
-- DocuSign API has per-account rate limits
-- Bulk envelope creation should be throttled
-- Polling envelope status should use reasonable intervals (30-60 seconds)
+### 步骤 2：检查连接
 
-**Response Parsing**:
-- Response data may be nested under `data` key
-- Recipient information is nested within envelope response
-- Date fields use ISO 8601 format
-- Parse defensively with fallbacks for optional fields
+```
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["docusign"]
+session_id: "your_session_id"
+```
+
+### 步骤 3：执行工具
+
+```
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
+```
+
+## 已知陷阱
+
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
 
-| Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| List templates | DOCUSIGN_LIST_ALL_TEMPLATES | (optional filters) |
-| Get template | DOCUSIGN_GET_TEMPLATE | templateId |
-| Create envelope | DOCUSIGN_CREATE_ENVELOPE_FROM_TEMPLATE | templateId, templateRoles, status |
-| Send envelope | DOCUSIGN_SEND_ENVELOPE | envelopeId |
-| Get envelope status | DOCUSIGN_GET_ENVELOPE | envelopeId |
-| Add template to envelope | DOCUSIGN_ADD_TEMPLATES_TO_DOCUMENT_IN_ENVELOPE | envelopeId, documentId, templateId |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

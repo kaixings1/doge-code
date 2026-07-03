@@ -1,124 +1,83 @@
 ---
-name: googleads-automation
-description: "通过 Rube MCP (Composio) 自动执行 Google Ads analytics 任务：list Google Ads links, run GA4 reports, check compatibility, list properties and accounts. Always search tools first for current schemas."
+name: googleads-自动化
+description: "通过 Rube MCP (Composio) 自动化 Googleads 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---
 
-# Google Ads Automation via Rube MCP
+# 通过 Rube MCP 实现 Googleads 自动化
 
-Access Google Ads data through Google Analytics integration, run performance reports, list linked Ads accounts, and analyze campaign metrics using Rube MCP (Composio).
+通过 Rube MCP 使用 Composio 的 Googleads 工具包自动化 Googleads 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/googleads](https://composio.dev/toolkits/googleads)
+**工具包文档**：[composio.dev/toolkits/googleads](https://composio.dev/toolkits/googleads)
 
-## Prerequisites
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `google_analytics`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Googleads 连接，工具包为 `googleads`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `google_analytics`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+## 设置
 
-> **Note**: Google Ads data is accessed through the Google Analytics toolkit integration. The tools below use GA4 properties linked to Google Ads accounts.
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-## Core Workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `googleads` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-### 1. List Google Ads Links for a Property
-Use `GOOGLE_ANALYTICS_ANALYTICS_ADMIN_PROPERTIES_GOOGLE_ADS` to retrieve all Google Ads account links configured for a GA4 property.
+## 工具发现
+
+在执行工作流之前始终发现可用工具：
+
 ```
-Tool: GOOGLE_ANALYTICS_ANALYTICS_ADMIN_PROPERTIES_GOOGLE_ADS
-Parameters:
-  - parent (required): Property resource name (format: "properties/{propertyId}")
-  - pageSize: Max results (1-200, default 50)
-  - pageToken: Pagination token
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Googleads operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-### 2. Run a GA4 Performance Report
-Use `GOOGLE_ANALYTICS_RUN_REPORT` to run customized reports with dimensions, metrics, date ranges, and filters.
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
+
+## 核心工作流模式
+
+### 步骤 1：发现可用工具
+
 ```
-Tool: GOOGLE_ANALYTICS_RUN_REPORT
-Parameters:
-  - property (required): Property resource (format: "properties/{property_id}")
-  - dimensions: Array of dimension objects (e.g., [{"name": "sessionCampaignName"}, {"name": "date"}])
-  - metrics: Array of metric objects (e.g., [{"name": "sessions"}, {"name": "totalRevenue"}])
-  - dateRanges: Array with startDate and endDate (e.g., [{"startDate": "2025-01-01", "endDate": "2025-01-31"}])
-  - dimensionFilter: Filter by dimension values
-  - metricFilter: Filter by metric values (applied after aggregation)
-  - orderBys: Sort results
-  - limit: Max rows to return (1-250000)
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Googleads task"}]
+session: {id: "existing_session_id"}
 ```
 
-### 3. Check Dimension/Metric Compatibility
-Use `GOOGLE_ANALYTICS_CHECK_COMPATIBILITY` to validate dimension and metric combinations before running a report.
+### 步骤 2：检查连接
+
 ```
-Tool: GOOGLE_ANALYTICS_CHECK_COMPATIBILITY
-Description: Validates compatibility of chosen dimensions or metrics
-  before running a report.
-Note: Call RUBE_SEARCH_TOOLS to get the full schema for this tool.
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["googleads"]
+session_id: "your_session_id"
 ```
 
-### 4. List GA4 Accounts
-Use `GOOGLE_ANALYTICS_LIST_ACCOUNTS` to enumerate all accessible Google Analytics accounts.
-```
-Tool: GOOGLE_ANALYTICS_LIST_ACCOUNTS
-Parameters:
-  - pageSize: Max accounts to return
-  - pageToken: Pagination token
-  - showDeleted: Include soft-deleted accounts
-```
+### 步骤 3：执行工具
 
-### 5. List GA4 Properties Under an Account
-Use `GOOGLE_ANALYTICS_LIST_PROPERTIES` to list properties for a specific GA4 account.
 ```
-Tool: GOOGLE_ANALYTICS_LIST_PROPERTIES
-Parameters:
-  - account (required): Account resource name (format: "accounts/{account_id}")
-  - pageSize: Max properties (1-200)
-  - pageToken: Pagination token
-  - showDeleted: Include trashed properties
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
 ```
 
-### 6. Get Available Dimensions and Metrics
-Use `GOOGLE_ANALYTICS_GET_METADATA` to discover all available fields for building reports.
-```
-Tool: GOOGLE_ANALYTICS_GET_METADATA
-Description: Gets metadata for dimensions, metrics, and comparisons
-  for a GA4 property.
-Note: Call RUBE_SEARCH_TOOLS to get the full schema for this tool.
-```
+## 已知陷阱
 
-## Common Patterns
-
-- **Discover then report**: Use `GOOGLE_ANALYTICS_LIST_ACCOUNTS` to find account IDs, then `GOOGLE_ANALYTICS_LIST_PROPERTIES` to find property IDs, then `GOOGLE_ANALYTICS_RUN_REPORT` to pull data.
-- **Validate before querying**: Use `GOOGLE_ANALYTICS_CHECK_COMPATIBILITY` to validate dimension/metric combinations before running reports to avoid 400 errors.
-- **Campaign performance**: Run reports with dimensions like `sessionCampaignName`, `sessionSource`, `sessionMedium` and metrics like `sessions`, `activeUsers`, `totalRevenue`.
-- **Ads link discovery**: Use `GOOGLE_ANALYTICS_ANALYTICS_ADMIN_PROPERTIES_GOOGLE_ADS` to find which Google Ads accounts are linked to each GA4 property.
-- **Field discovery**: Use `GOOGLE_ANALYTICS_GET_METADATA` to list all available dimensions and metrics before constructing complex reports.
-
-## Known Pitfalls
-
-- **Dimension/metric compatibility**: The GA4 API has strict compatibility rules. Not all dimensions can be combined with all metrics. Demographic dimensions (e.g., `userAgeBracket`, `userGender`) are often incompatible with session-scoped dimensions/filters (e.g., `sessionCampaignName`, `sessionSource`).
-- **`dateRange` is NOT a dimension**: Do not include `dateRange` in the dimensions array. Use `date`, `dateHour`, `year`, `month`, or `week` instead.
-- **`exits` is NOT valid**: Neither `exits` as a dimension nor as a metric is valid in GA4.
-- **Property ID format**: Must be `properties/{numeric_id}` (e.g., `properties/123456789`). Do not use Google Account IDs (long OAuth IDs).
-- **Account ID format**: Must be `accounts/{numeric_id}` where the numeric ID is 6-10 digits.
-- **Filter separation**: Use `dimensionFilter` only for dimension fields and `metricFilter` only for metric fields. Mixing them will cause errors.
-- **Max 9 dimensions and 10 metrics** per report request.
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
-| Action | Tool | Key Parameters |
-|--------|------|----------------|
-| List Ads links | `GOOGLE_ANALYTICS_ANALYTICS_ADMIN_PROPERTIES_GOOGLE_ADS` | `parent` |
-| Run report | `GOOGLE_ANALYTICS_RUN_REPORT` | `property`, `dimensions`, `metrics`, `dateRanges` |
-| Check compatibility | `GOOGLE_ANALYTICS_CHECK_COMPATIBILITY` | (see full schema via RUBE_SEARCH_TOOLS) |
-| List accounts | `GOOGLE_ANALYTICS_LIST_ACCOUNTS` | `pageSize` |
-| List properties | `GOOGLE_ANALYTICS_LIST_PROPERTIES` | `account`, `pageSize` |
-| Get metadata | `GOOGLE_ANALYTICS_GET_METADATA` | (see full schema via RUBE_SEARCH_TOOLS) |
 
----
-*Powered by [Composio](https://composio.dev)*
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

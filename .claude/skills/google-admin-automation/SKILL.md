@@ -1,146 +1,83 @@
 ---
-name: google-admin-automation
-description: "通过 Rube MCP (Composio) 自动执行 Google Workspace Admin 任务：manage users, groups, memberships, suspend accounts, create users, add aliases. Always search tools first for current schemas."
+name: google-admin-自动化
+description: "通过 Rube MCP (Composio) 自动化 Google-admin 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---
 
-# Google Workspace Admin Automation via Rube MCP
+# 通过 Rube MCP 实现 Google-admin 自动化
 
-Manage Google Workspace users, groups, memberships, and organizational settings programmatically using Rube MCP (Composio).
+通过 Rube MCP 使用 Composio 的 Google-admin 工具包自动化 Google-admin 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/google_admin](https://composio.dev/toolkits/google_admin)
+**工具包文档**：[composio.dev/toolkits/google-admin](https://composio.dev/toolkits/google-admin)
 
-## Prerequisites
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `google_admin`
-- Google Workspace admin privileges for the authenticated account
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Google-admin 连接，工具包为 `google-admin`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `google_admin`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+## 设置
 
-## Core Workflows
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-### 1. List All Users
-Use `GOOGLE_ADMIN_LIST_USERS` to retrieve Google Workspace users with optional filtering and pagination.
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `google-admin` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
+
+## 工具发现
+
+在执行工作流之前始终发现可用工具：
+
 ```
-Tool: GOOGLE_ADMIN_LIST_USERS
-Parameters:
-  - customer: Customer ID or "my_customer" (default)
-  - domain: Domain to list users from
-  - query: Filter string (e.g., "orgName=Engineering", "isSuspended=false")
-  - max_results: Maximum results (1-500, default 100)
-  - order_by: Sort by "email", "givenName", or "familyName"
-  - sort_order: "ASCENDING" or "DESCENDING"
-  - page_token: Pagination token
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Google-admin operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-### 2. Create a New User
-Use `GOOGLE_ADMIN_CREATE_USER` to provision a new Google Workspace account.
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
+
+## 核心工作流模式
+
+### 步骤 1：发现可用工具
+
 ```
-Tool: GOOGLE_ADMIN_CREATE_USER
-Parameters:
-  - primary_email (required): User's email (e.g., "john.doe@company.com")
-  - given_name (required): First name
-  - family_name (required): Last name
-  - password (required): Password meeting domain requirements
-  - org_unit_path: Organizational unit (default: "/")
-  - change_password_at_next_login: Force password change (default: true)
-  - recovery_email: Recovery email address
-  - recovery_phone: Recovery phone number
-  - suspended: Whether account starts suspended (default: false)
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Google-admin task"}]
+session: {id: "existing_session_id"}
 ```
 
-### 3. List and Manage Groups
-Use `GOOGLE_ADMIN_LIST_GROUPS` to list groups, and `GOOGLE_ADMIN_CREATE_GROUP` to create new ones.
-```
-Tool: GOOGLE_ADMIN_LIST_GROUPS
-Parameters:
-  - customer: "my_customer" (default)
-  - domain: Filter by domain
-  - query: Filter (e.g., "name=Engineering*")
-  - max_results: Max results (1-200)
-  - order_by: Sort by "email"
-  - page_token: Pagination token
+### 步骤 2：检查连接
 
-Tool: GOOGLE_ADMIN_CREATE_GROUP
-Parameters:
-  - email (required): Group email address (e.g., "engineering@company.com")
-  - name (required): Display name (e.g., "Engineering Team")
-  - description: Group purpose description
+```
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["google-admin"]
+session_id: "your_session_id"
 ```
 
-### 4. Add Users to Groups
-Use `GOOGLE_ADMIN_ADD_USER_TO_GROUP` to manage group membership.
-```
-Tool: GOOGLE_ADMIN_ADD_USER_TO_GROUP
-Parameters:
-  - group_key (required): Group email or ID
-  - user_key (required): User email or ID to add
-  - role: "MEMBER" (default), "MANAGER", or "OWNER"
-```
+### 步骤 3：执行工具
 
-### 5. Suspend or Unsuspend Users
-Use `GOOGLE_ADMIN_SUSPEND_USER` to toggle user account suspension.
 ```
-Tool: GOOGLE_ADMIN_SUSPEND_USER
-Parameters:
-  - user_key (required): User's email or unique ID
-  - suspended: true to suspend, false to unsuspend (default: true)
-  - suspension_reason: Reason for suspension (optional)
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
 ```
 
-### 6. Get User or Group Details
-Use `GOOGLE_ADMIN_GET_USER` or `GOOGLE_ADMIN_GET_GROUP` to retrieve detailed information.
-```
-Tool: GOOGLE_ADMIN_GET_USER
-Parameters:
-  - user_key (required): User's email or unique ID
+## 已知陷阱
 
-Tool: GOOGLE_ADMIN_GET_GROUP
-Parameters:
-  - group_key (required): Group's email or unique ID
-```
-
-## Common Patterns
-
-- **Onboarding workflow**: Use `GOOGLE_ADMIN_CREATE_USER` to provision the account, then `GOOGLE_ADMIN_ADD_USER_TO_GROUP` to add them to relevant groups.
-- **Offboarding workflow**: Use `GOOGLE_ADMIN_SUSPEND_USER` to disable access, or `GOOGLE_ADMIN_DELETE_USER` for permanent removal.
-- **Audit group membership**: Use `GOOGLE_ADMIN_LIST_GROUPS` to find groups, then `GOOGLE_ADMIN_LIST_GROUP_MEMBERS` to review members.
-- **Bulk user management**: List users with `GOOGLE_ADMIN_LIST_USERS` and filter queries, then iterate for updates.
-- **Add email aliases**: Use `GOOGLE_ADMIN_ADD_USER_ALIAS` to add alternative email addresses for a user.
-- **Look up user details**: Use `GOOGLE_ADMIN_GET_USER` to retrieve full profile information before making changes.
-
-## Known Pitfalls
-
-- **Admin privileges required**: All tools require the authenticated user to have Google Workspace administrator privileges. Non-admin accounts will receive permission errors.
-- **Delete is permanent**: `GOOGLE_ADMIN_DELETE_USER` permanently removes a user account. This action cannot be undone.
-- **user_key accepts email or ID**: The `user_key` parameter accepts both the user's primary email address and their unique numeric user ID.
-- **Group membership replaces**: When adding to groups, the `role` parameter controls the member's role. There is no "update role" -- remove and re-add to change roles.
-- **Customer ID**: Use `"my_customer"` as the `customer` parameter for the authenticated user's organization. Specific customer IDs look like `C01abc123`.
-- **Pagination**: Both user and group list endpoints may return paginated results. Always check for `page_token` in responses for complete results.
-- **Password requirements**: `GOOGLE_ADMIN_CREATE_USER` requires a password that meets the domain's password policy. Weak passwords will be rejected.
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
-| Action | Tool | Key Parameters |
-|--------|------|----------------|
-| List users | `GOOGLE_ADMIN_LIST_USERS` | `customer`, `domain`, `query`, `max_results` |
-| Get user details | `GOOGLE_ADMIN_GET_USER` | `user_key` |
-| Create user | `GOOGLE_ADMIN_CREATE_USER` | `primary_email`, `given_name`, `family_name`, `password` |
-| Delete user | `GOOGLE_ADMIN_DELETE_USER` | `user_key` |
-| Suspend user | `GOOGLE_ADMIN_SUSPEND_USER` | `user_key`, `suspended` |
-| Add user alias | `GOOGLE_ADMIN_ADD_USER_ALIAS` | (see full schema via RUBE_SEARCH_TOOLS) |
-| List groups | `GOOGLE_ADMIN_LIST_GROUPS` | `customer`, `domain`, `query` |
-| Get group details | `GOOGLE_ADMIN_GET_GROUP` | `group_key` |
-| Create group | `GOOGLE_ADMIN_CREATE_GROUP` | `email`, `name`, `description` |
-| Add to group | `GOOGLE_ADMIN_ADD_USER_TO_GROUP` | `group_key`, `user_key`, `role` |
-| List group members | `GOOGLE_ADMIN_LIST_GROUP_MEMBERS` | (see full schema via RUBE_SEARCH_TOOLS) |
 
----
-*Powered by [Composio](https://composio.dev)*
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

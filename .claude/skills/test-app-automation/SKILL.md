@@ -1,62 +1,62 @@
 ---
-name: test-app-automation
-description: "通过 Rube MCP (Composio) 自动执行 Test App 任务。使用前始终先搜索工具以获取当前 schema。""
+name: test-app-自动化
+description: "通过 Rube MCP (Composio) 自动化 Test-app 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---
 
-# Test App Automation via Rube MCP
+# 通过 Rube MCP 实现 Test-app 自动化
 
-Automate Test App operations through Composio's Test App toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Test-app 工具包自动化 Test-app 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/test_app](https://composio.dev/toolkits/test_app)
+**工具包文档**：[composio.dev/toolkits/test-app](https://composio.dev/toolkits/test-app)
 
-## Prerequisites
+## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Test App connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `test_app`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Test-app 连接，工具包为 `test-app`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `test_app`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `test-app` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-## Tool Discovery
+## 工具发现
 
-Always discover available tools before executing workflows:
+在执行工作流之前始终发现可用工具：
 
 ```
 RUBE_SEARCH_TOOLS
-queries: [{use_case: "Test App operations", known_fields: ""}]
+queries: [{use_case: "Test-app operations", known_fields: ""}]
 session: {generate_id: true}
 ```
 
-This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
 
-## Core Workflow Pattern
+## 核心工作流模式
 
-### Step 1: Discover Available Tools
+### 步骤 1：发现可用工具
 
 ```
 RUBE_SEARCH_TOOLS
-queries: [{use_case: "your specific Test App task"}]
+queries: [{use_case: "your specific Test-app task"}]
 session: {id: "existing_session_id"}
 ```
 
-### Step 2: Check Connection
+### 步骤 2：检查连接
 
 ```
 RUBE_MANAGE_CONNECTIONS
-toolkits: ["test_app"]
+toolkits: ["test-app"]
 session_id: "your_session_id"
 ```
 
-### Step 3: Execute Tools
+### 步骤 3：执行工具
 
 ```
 RUBE_MULTI_EXECUTE_TOOL
@@ -68,24 +68,16 @@ memory: {}
 session_id: "your_session_id"
 ```
 
-## Known Pitfalls
+## 已知陷阱
 
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
 
 | Operation | Approach |
-|-----------|----------|
-|查找工具|带有测试应用特定用例的“RUBE_SEARCH_TOOLS” |
-|使用工具包“test_app”连接| “RUBE_MANAGE_connections” |
-|使用发现的工具slug执行| “RUBE_MULTI_EXECUTE_TOOL” |
-|批量操作| “RUBE_REMOTE_WORKBENCH”与“RUN_COMPOSIO_TOOL ()” |
-|完整架构| “schemaRef”工具的“RUBE_GET_TOOL_SCHEMAS” |
-
----
-*由[Composio] (https://composio.dev)提供支持*
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
