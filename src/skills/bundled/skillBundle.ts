@@ -124,7 +124,7 @@ export async function buildBundleMessage(
   }
 
   lines.push(
-    'This bundle activates the following skills. Execute each in sequence:',
+    '本 bundle 激活以下技能。按顺序执行每个技能：',
     '',
   )
 
@@ -141,8 +141,8 @@ export async function buildBundleMessage(
 export function registerSkillBundleCommand(): void {
   registerBundledSkill({
     name: 'skill-bundle',
-    description: 'Create, list, and manage skill bundles — groups of skills invoked together.',
-    whenToUse: 'When you frequently use the same set of skills together and want a single command to activate them all.',
+    description: '创建、列出和管理技能 bundle——一组一起调用的技能。',
+    whenToUse: '当你经常一起使用同一组技能，并希望用一个命令激活它们时。',
     argumentHint: '[create <name>|list|delete <name>|show <name>]',
     userInvocable: true,
     disableModelInvocation: true,
@@ -154,9 +154,9 @@ export function registerSkillBundleCommand(): void {
       if (!trimmed || action === 'list') {
         const bundles = await getBundles()
         if (bundles.size === 0) {
-          return [{ type: 'text', text: 'No skill bundles defined.\n\nCreate one with: /skill-bundle create my-bundle\nThen describe which skills to include.' }]
+          return [{ type: 'text', text: '未定义技能 bundle。\n\n使用以下命令创建一个：/skill-bundle create my-bundle\n然后描述要包含哪些技能。' }]
         }
-        const lines = ['## Skill Bundles', '']
+        const lines = ['## 技能 Bundles', '']
         for (const [name, b] of bundles) {
           lines.push('- ' + name + ': ' + b.description)
           lines.push('  Skills: ' + b.skills.join(', '))
@@ -166,36 +166,36 @@ export function registerSkillBundleCommand(): void {
 
       if (action === 'show') {
         const name = parts[1]
-        if (!name) return [{ type: 'text', text: 'Usage: /skill-bundle show <name>' }]
+        if (!name) return [{ type: 'text', text: '用法：/skill-bundle show <name>' }]
         const bundle = await getBundle(name)
-        if (!bundle) return [{ type: 'text', text: 'Bundle "' + name + '" not found.' }]
+        if (!bundle) return [{ type: 'text', text: 'Bundle "' + name + '" 未找到。' }]
         const msg = await buildBundleMessage(bundle)
         return [{ type: 'text', text: msg }]
       }
 
       if (action === 'delete') {
         const name = parts[1]
-        if (!name) return [{ type: 'text', text: 'Usage: /skill-bundle delete <name>' }]
+        if (!name) return [{ type: 'text', text: '用法：/skill-bundle delete <name>' }]
         const ok = await deleteBundle(name)
-        return [{ type: 'text', text: ok ? 'Deleted bundle "' + name + '".' : 'Bundle "' + name + '" not found.' }]
+        return [{ type: 'text', text: ok ? '已删除 bundle "' + name + '"。' : 'Bundle "' + name + '" 未找到。' }]
       }
 
       if (action === 'create') {
         const name = parts[1]
-        if (!name) return [{ type: 'text', text: 'Usage: /skill-bundle create <name>\nThen use /skill-bundle edit to add skills.' }]
+        if (!name) return [{ type: 'text', text: '用法：/skill-bundle create <name>\n然后使用 /skill-bundle edit 添加技能。' }]
         const existing = await getBundle(name)
-        if (existing) return [{ type: 'text', text: 'Bundle "' + name + '" already exists. Use /skill-bundle delete first to replace it.' }]
+        if (existing) return [{ type: 'text', text: 'Bundle "' + name + '" 已存在。首先使用 /skill-bundle delete 删除它以替换。' }]
         await saveBundle({
           name,
-          description: 'A skill bundle',
+          description: '一个技能 bundle',
           skills: [],
         })
-        return [{ type: 'text', text: 'Created bundle "' + name + '". Edit it at: ' + bundlePath(name) }]
+        return [{ type: 'text', text: '已创建 bundle "' + name + '"。在以下位置编辑它：' + bundlePath(name) }]
       }
 
       return [{
         type: 'text',
-        text: 'Usage:\n  /skill-bundle list              — list bundles\n  /skill-bundle show <name>      — show bundle\n  /skill-bundle create <name>    — create bundle\n  /skill-bundle delete <name>    — delete bundle\n\nTo edit a bundle, modify the JSON file directly at:\n' + bundlesDir(),
+        text: '用法：\n  /skill-bundle list              — 列出 bundles\n  /skill-bundle show <name>      — 显示 bundle\n  /skill-bundle create <name>    — 创建 bundle\n  /skill-bundle delete <name>    — 删除 bundle\n\n要编辑 bundle，直接在以下位置修改 JSON 文件：\n' + bundlesDir(),
       }]
     },
   })

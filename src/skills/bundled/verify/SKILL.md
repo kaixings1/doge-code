@@ -1,51 +1,51 @@
 ---
-description: Verify a code change by running the app, the relevant command, or a focused server flow and reporting concrete evidence.
+description: 通过运行应用、相关命令或聚焦的服务器流程来验证代码更改，并报告具体的执行证据。
 ---
 
-# Verify
+# 验证技能 (verify)
 
-Use this skill when a task is not finished until the change is exercised.
+当任务需要实际执行才能确认完成时使用此技能。
 
-## Goal
+## 目标
 
-Produce a short verification result grounded in execution, not inference. Prefer the narrowest check that proves the changed behavior works.
+基于实际执行结果给出简短的验证结论，而非推测。优先选择最窄范围的检查来证明变更行为有效。
 
-## Workflow
+## 工作流程
 
-1. Identify the changed surface area.
-2. Pick the smallest realistic verification path.
-3. Run the relevant command or request flow.
-4. Capture the observable result: exit status, key output, HTTP status, or changed behavior.
-5. Report what passed, what was not verified, and any remaining risk.
+1. 确定变更的影响范围。
+2. 选择最小的可行验证路径。
+3. 运行相关命令或服务请求流程。
+4. 捕获可观察的结果：退出状态、关键输出、HTTP 状态码、或行为变化。
+5. 报告哪些通过了验证、哪些未能验证，以及剩余的风险。
 
-## Rules
+## 规则
 
-- Do not claim success without running something.
-- Prefer focused checks over broad smoke tests.
-- If the repo has no formal test target, use the nearest runnable workflow.
-- If a check is blocked by environment limits, state that explicitly.
-- Include exact commands when they are useful to repeat the verification.
+- 未经实际执行不得声称验证成功。
+- 优先使用聚焦检查，而非宽泛的冒烟测试。
+- 如果仓库没有正式的测试目标，使用最近的可用工作流。
+- 如果检查因环境限制被阻止，需明确说明。
+- 当命令有助于复现验证时，需包含精确的命令。
 
-## Verification Patterns
+## 验证模式
 
-### CLI changes
+### CLI 变更
 
-- Run the exact command path affected by the edit.
-- Check help text, flags, output formatting, exit codes, and side effects.
-- For interactive flows, prefer the most scriptable subcommand first.
+- 运行受编辑影响的精确命令路径。
+- 检查帮助文本、标志、输出格式、退出码和副作用。
+- 对于交互式流程，优先选择最可脚本化的子命令。
 
-See `examples/cli.md`.
+参见 `examples/cli.md`。
 
-### Server changes
+### 服务端变更
 
-- Start only the needed service.
-- Exercise the changed route, handler, or background path.
-- Validate status code, response shape, logs, and failure handling.
+- 仅启动需要的服务。
+- 测试变更的路由、处理器或后台路径。
+- 验证状态码、响应结构、日志和故障处理。
 
-See `examples/server.md`.
+参见 `examples/server.md`。
 
-## Reporting Format
+## 报告格式
 
-- `Verified:` what you ran and what passed.
-- `Not verified:` anything you could not run.
-- `Risk:` the main remaining uncertainty, if any.
+- `已验证：` 你运行了什么以及哪些通过了。
+- `未验证：` 任何未能运行的内容。
+- `风险：` 主要的不确定性（如有）。

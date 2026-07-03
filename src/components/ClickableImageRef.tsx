@@ -13,12 +13,12 @@ type Props = {
 };
 
 /**
- * Renders an image reference like [Image #1] as a clickable link.
- * When clicked, opens the stored image file in the default viewer.
+ * 将图像引用如 [Image #1] 渲染为可点击链接。
+ * 点击时，在默认查看器中打开存储的图像文件。
  *
- * Falls back to styled text if:
- * - Terminal doesn't support hyperlinks
- * - Image file is not found in the store
+ * 在以下情况下回退为样式化文本：
+ * - 终端不支持超链接
+ * - 在存储中找不到图像文件
  */
 export function ClickableImageRef(t0) {
   const $ = _c(13);

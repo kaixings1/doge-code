@@ -16,6 +16,7 @@ import { Byline } from '../../design-system/Byline.js';
 import { Dialog } from '../../design-system/Dialog.js';
 import { KeyboardShortcutHint } from '../../design-system/KeyboardShortcutHint.js';
 import { PromptInputFooterSuggestions, type SuggestionItem } from '../../PromptInput/PromptInputFooterSuggestions.js';
+
 type Props = {
   onAddDirectory: (path: string, remember?: boolean) => void;
   onCancel: () => void;
@@ -276,17 +277,16 @@ export function AddWorkspaceDirectory(t0) {
       bb64: switch (selectionValue) {
         case "yes-session":
           {
-            onAddDirectory(directoryPath, false);
-            break bb64;
+            return onAddDirectory(directoryPath, false);
           }
         case "yes-remember":
           {
-            onAddDirectory(directoryPath, true);
-            break bb64;
+            return onAddDirectory(directoryPath, true);
           }
         case "no":
           {
             onCancel();
+            return;
           }
       }
     };
@@ -298,7 +298,7 @@ export function AddWorkspaceDirectory(t0) {
     t9 = $[18];
   }
   const handleSelect = t9;
-  const t10 = directoryPath ? undefined : _temp2;
+  const t10 = directoryPath ? null : _temp2;
   let t11;
   if ($[19] !== directoryInput || $[20] !== directoryPath || $[21] !== error || $[22] !== handleSelect || $[23] !== handleSubmit || $[24] !== selectedSuggestion || $[25] !== suggestions) {
     t11 = directoryPath ? <Box flexDirection="column" gap={1}><DirectoryDisplay path={directoryPath} /><Select options={REMEMBER_DIRECTORY_OPTIONS} onChange={handleSelect} onCancel={() => handleSelect("no")} /></Box> : <Box flexDirection="column" gap={1} marginX={2}><PermissionDescription /><DirectoryInput value={directoryInput} onChange={setDirectoryInput} onSubmit={handleSubmit} error={error} suggestions={suggestions} selectedSuggestion={selectedSuggestion} /></Box>;

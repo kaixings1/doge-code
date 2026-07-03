@@ -24,8 +24,8 @@ export async function call(args: string, context: any): Promise<string> {
 - 工作树会话: ${worktreeSession ? '是' : '否'}
 
 ### 备份状态
-✓ 会话状态已保存
-✓ 工作树状态已持久化
+✅ 会话状态已保存
+✅ 工作树状态已持久化
 
 ### 备份位置
 - 会话数据: .doge/sessions/

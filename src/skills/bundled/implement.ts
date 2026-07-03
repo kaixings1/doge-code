@@ -1,6 +1,14 @@
 import { registerBundledSkill } from '../bundledSkills.js'
 
-const PROMPT = 'Based on the PRD or Issues, implement the specified work.\n\nRules:\n1. Use TDD at pre-agreed seams.\n2. Run typecheck regularly, run full test suite at end.\n3. Use /review when done.\n4. Commit to current branch.\n\nMultiple Issues: implement one by one, commit each.'
+const PROMPT = `根据 PRD 或 Issues 实现指定的工作。
+
+规则：
+1. 在预协商的边界使用 TDD。
+2. 定期运行类型检查，在最后运行完整测试套件。
+3. 完成后使用 /review。
+4. 提交到当前分支。
+
+多个 Issues：逐一实现，每个提交一次。`
 
 export function registerImplementSkill(): void {
   registerBundledSkill({

@@ -38,6 +38,7 @@ type OpenAIChatMessage = {
   content?: string | null
   tool_call_id?: string
   tool_calls?: OpenAIToolCall[]
+  reasoning_content?: string | null
 }
 
 // 转换后的 OpenAI 请求体
@@ -209,6 +210,27 @@ export function convertAnthropicRequestToOpenAI(input: {
         .map(block => (typeof block.text === 'string' ? block.text : ''))
         .join('')
 
+      // 提取 reasoning_content：优先从内容块中找 thinking/ reasoning 类型的块，
+      // 其次从 message 的附加字段中读取（桥接层流解析时可能已在顶层保存）
+      let reasoningContent: string | null = null
+      const thinkingBlock = blocks.find(
+        b => b.type === 'thinking' || b.type === 'reasoning',
+      )
+      if (thinkingBlock && typeof thinkingBlock.thinking === 'string') {
+        reasoningContent = thinkingBlock.thinking
+      } else if (thinkingBlock && typeof thinkingBlock.reasoning === 'string') {
+        reasoningContent = thinkingBlock.reasoning
+      } else if (thinkingBlock && typeof thinkingBlock.text === 'string') {
+        reasoningContent = thinkingBlock.text
+      }
+      // 兜底：如果 message 顶层有 reasoning_content 字段（来自 OpenAI 原生消息直传）
+      if (!reasoningContent) {
+        const msg = message as unknown as Record<string, unknown>
+        if (typeof msg.reasoning_content === 'string') {
+          reasoningContent = msg.reasoning_content
+        }
+      }
+
       const toolCalls = blocks
         .filter(block => block.type === 'tool_use')
         .map(block => ({
@@ -227,8 +249,9 @@ export function convertAnthropicRequestToOpenAI(input: {
         role: 'assistant',
         content: text || null,
         ...(toolCalls.length > 0 ? { tool_calls: toolCalls } : {}),
+        ...(reasoningContent ? { reasoning_content: reasoningContent } : {}),
       })
-      logForDebugging(`[openaiCompat] 添加 assistant 消息 (text长度=${text.length}, toolCalls数量=${toolCalls.length})`, { level: 'debug' })
+      logForDebugging(`[openaiCompat] 添加 assistant 消息 (text长度=${text.length}, toolCalls数量=${toolCalls.length}, reasoning_content=${reasoningContent ? '有' : '无'})`, { level: 'debug' })
     }
   }
 

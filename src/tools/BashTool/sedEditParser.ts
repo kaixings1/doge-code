@@ -1,12 +1,12 @@
 /**
- * Parser for sed edit commands (-i flag substitutions)
- * Extracts file paths and substitution patterns to enable file-edit-style rendering
+ * sed 编辑命令解析器（-i 标志替换）
+ * 提取文件路径和替换模式，以启用文件编辑样式的渲染
  */
 
 import { randomBytes } from 'crypto'
 import { tryParseShellCommand } from '../../utils/bash/shellQuote.js'
 
-// BRE→ERE conversion placeholders (null-byte sentinels, never appear in user input)
+// BRE→ERE 转换占位符（空字节哨兵，永远不会出现在用户输入中）
 const BACKSLASH_PLACEHOLDER = '\x00BACKSLASH\x00'
 const PLUS_PLACEHOLDER = '\x00PLUS\x00'
 const QUESTION_PLACEHOLDER = '\x00QUESTION\x00'
@@ -21,21 +21,21 @@ const LPAREN_PLACEHOLDER_RE = new RegExp(LPAREN_PLACEHOLDER, 'g')
 const RPAREN_PLACEHOLDER_RE = new RegExp(RPAREN_PLACEHOLDER, 'g')
 
 export type SedEditInfo = {
-  /** The file path being edited */
+  /** 正在编辑的文件路径 */
   filePath: string
-  /** The search pattern (regex) */
+  /** 搜索模式（正则表达式） */
   pattern: string
-  /** The replacement string */
+  /** 替换字符串 */
   replacement: string
-  /** Substitution flags (g, i, etc.) */
+  /** 替换标志（g, i 等） */
   flags: string
-  /** Whether to use extended regex (-E or -r flag) */
+  /** 是否使用扩展正则表达式（-E 或 -r 标志） */
   extendedRegex: boolean
 }
 
 /**
- * Check if a command is a sed in-place edit command
- * Returns true only for simple sed -i 's/pattern/replacement/flags' file commands
+ * 检查命令是否为 sed 原地编辑命令
+ * 仅对简单的 sed -i 's/模式/替换/标志' 文件命令返回 true
  */
 export function isSedInPlaceEdit(command: string): boolean {
   const info = parseSedEditCommand(command)
@@ -43,8 +43,8 @@ export function isSedInPlaceEdit(command: string): boolean {
 }
 
 /**
- * Parse a sed edit command and extract the edit information
- * Returns null if the command is not a valid sed in-place edit
+ * 解析 sed 编辑命令并提取编辑信息
+ * 如果命令不是有效的 sed 原地编辑，则返回 null
  */
 export function parseSedEditCommand(command: string): SedEditInfo | null {
   const trimmed = command.trim()

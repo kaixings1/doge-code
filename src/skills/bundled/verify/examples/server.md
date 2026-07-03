@@ -1,32 +1,32 @@
-# Verify Server Example
+# 服务端验证示例
 
-Use this pattern when the change affects an API handler, transport, worker, or server-side integration.
+当变更影响 API 处理器、传输层、工作进程或服务端集成时使用此模式。
 
-## Example
+## 示例
 
-Change: update a request handler or startup bootstrap for a local service.
+变更：更新本地服务的请求处理器或启动引导。
 
-Verification:
+验证：
 
-1. Start only the service or subprocess needed for the changed path.
-2. Send a minimal request that reaches the edited code.
-3. Confirm status, payload shape, and any important side effect.
+1. 仅启动变更路径所需的服务或子进程。
+2. 发送一个最小请求以命中编辑过的代码。
+3. 确认状态码、载荷结构和任何重要的副作用。
 
 ```bash
-# Example pattern only; adapt to the repo's actual server entrypoint
+# 仅为示例模式；请根据仓库的实际服务端入口进行调整
 bun run dev -- --some-server-mode
 curl -i http://127.0.0.1:PORT/health
 ```
 
-## What to Look For
+## 关注点
 
-- Process starts without crashing.
-- Request returns the expected status code.
-- Response shape matches the intended contract.
-- Logs do not show obvious runtime errors on the touched path.
+- 进程正常启动，未崩溃。
+- 请求返回预期的状态码。
+- 响应结构与预期契约一致。
+- 日志中未显示被触碰路径上的明显运行时错误。
 
-## Good Result Summary
+## 良好的结果摘要
 
-- `Verified: server booted and accepted a health-check request.`
-- `Verified: the changed handler returned the expected status and payload.`
-- `Not verified: unrelated routes and production-only integrations.`
+- `已验证：服务端启动并接受了一个健康检查请求。`
+- `已验证：变更后的处理器返回了预期的状态和载荷。`
+- `未验证：无关路由和生产环境专用的集成。`

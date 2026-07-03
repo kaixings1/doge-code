@@ -55,23 +55,30 @@ export function expandPath(path: string, baseDir?: string): string {
     return normalize(actualBaseDir).normalize('NFC')
   }
 
+  // Remove surrounding quotes if present
+  let unquotedPath = trimmedPath
+  if ((unquotedPath.startsWith('"') && unquotedPath.endsWith('"')) ||
+      (unquotedPath.startsWith("'") && unquotedPath.endsWith("'"))) {
+    unquotedPath = unquotedPath.slice(1, -1).trim()
+  }
+
   // Handle home directory notation
-  if (trimmedPath === '~') {
+  if (unquotedPath === '~') {
     return homedir().normalize('NFC')
   }
 
-  if (trimmedPath.startsWith('~/')) {
-    return join(homedir(), trimmedPath.slice(2)).normalize('NFC')
+  if (unquotedPath.startsWith('~/')) {
+    return join(homedir(), unquotedPath.slice(2)).normalize('NFC')
   }
 
   // On Windows, convert POSIX-style paths (e.g., /c/Users/...) to Windows format
-  let processedPath = trimmedPath
-  if (getPlatform() === 'windows' && trimmedPath.match(/^\/[a-z]\//i)) {
+  let processedPath = unquotedPath
+  if (getPlatform() === 'windows' && unquotedPath.match(/^\/[a-z]\//i)) {
     try {
-      processedPath = posixPathToWindowsPath(trimmedPath)
+      processedPath = posixPathToWindowsPath(unquotedPath)
     } catch {
       // If conversion fails, use original path
-      processedPath = trimmedPath
+      processedPath = unquotedPath
     }
   }
 

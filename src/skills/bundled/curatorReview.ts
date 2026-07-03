@@ -5,13 +5,13 @@ import { runCuratorPass, runLifecycleTransitions, formatCuratorReport } from './
 async function buildReviewPrompt(args: string): Promise<string> {
   const trimmed = args.trim()
 
-  // /curator-review run: force a curator pass
+  // /curator-review run: 强制策展人审查
   if (trimmed === 'run') {
     const counts = await runLifecycleTransitions()
     return formatCuratorReport(counts)
   }
 
-  // /curator-review: show current status
+  // /curator-review: 显示当前状态
   const report = await getUsageReport()
 
   const active = report.filter(r => {
@@ -29,36 +29,36 @@ async function buildReviewPrompt(args: string): Promise<string> {
   const pinned = report.filter(r => r.pinned)
 
   return [
-    '## Curator Review — Skill Status',
+    '## 策展人审查 — 技能状态',
     '',
-    `Total tracked: ${report.length}`,
+    `总计追踪: ${report.length}`,
     '',
-    '### Active (' + active.length + ')',
-    ...active.map(s => '  - ' + s.name + ' (used ' + s.invocationCount + 'x, last ' + timeAgo(s.lastUsedAt) + ')'),
+    '### 活跃 (' + active.length + ')',
+    ...active.map(s => '  - ' + s.name + ' (使用 ' + s.invocationCount + 'x, 上次 ' + timeAgo(s.lastUsedAt) + ')'),
     '',
-    '### Stale (' + stale.length + ') — unused >30 days, archive candidates',
-    ...stale.map(s => '  - ' + s.name + ' (used ' + s.invocationCount + 'x, last ' + timeAgo(s.lastUsedAt) + ')'),
+    '### 陈旧 (' + stale.length + ') — 超过30天未使用，归档候选',
+    ...stale.map(s => '  - ' + s.name + ' (使用 ' + s.invocationCount + 'x, 上次 ' + timeAgo(s.lastUsedAt) + ')'),
     '',
-    '### Archival (' + archived.length + ') — unused >90 days',
-    ...archived.map(s => '  - ' + s.name + ' (used ' + s.invocationCount + 'x, last ' + timeAgo(s.lastUsedAt) + ')'),
+    '### 已归档 (' + archived.length + ') — 超过90天未使用',
+    ...archived.map(s => '  - ' + s.name + ' (使用 ' + s.invocationCount + 'x, 上次 ' + timeAgo(s.lastUsedAt) + ')'),
     '',
-    '### Pinned (' + pinned.length + ') — exempt from auto-archival',
+    '### 已固定 (' + pinned.length + ') — 免于自动归档',
     ...pinned.map(s => '  - ' + s.name),
     '',
-    '### Commands',
-    '  /curator-review run        — force a curator lifecycle pass',
-    '  /curator-review pin <name> — pin a skill (exempt from archival)',
-    '  /curator-review unpin <name> — unpin a skill',
+    '### 命令',
+    '  /curator-review run        — 强制策展人生命周期审查',
+    '  /curator-review pin <name> — 固定技能（免于归档）',
+    '  /curator-review unpin <name> — 取消固定技能',
   ].join('\n')
 }
 
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime()
   const days = Math.floor(diff / 86400_000)
-  if (days < 1) return 'today'
-  if (days < 30) return days + 'd ago'
+  if (days < 1) return '今天'
+  if (days < 30) return days + '天前'
   const months = Math.floor(days / 30)
-  return months + 'mo ago'
+  return months + '个月前'
 }
 
 export function registerCuratorReviewSkill(): void {
@@ -72,19 +72,19 @@ export function registerCuratorReviewSkill(): void {
     async getPromptForCommand(args) {
       const trimmed = args.trim()
 
-      // Handle pin/unpin commands
+      // 处理 pin/unpin 命令
       if (trimmed.startsWith('pin ')) {
         const name = trimmed.slice(4).trim()
         if (name) {
           await pinSkill(name, true)
-          return [{ type: 'text' as const, text: 'Pinned skill: ' + name }]
+          return [{ type: 'text' as const, text: '已固定技能: ' + name }]
         }
       }
       if (trimmed.startsWith('unpin ')) {
         const name = trimmed.slice(6).trim()
         if (name) {
           await pinSkill(name, false)
-          return [{ type: 'text' as const, text: 'Unpinned skill: ' + name }]
+          return [{ type: 'text' as const, text: '已取消固定技能: ' + name }]
         }
       }
 

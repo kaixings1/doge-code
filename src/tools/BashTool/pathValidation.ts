@@ -1171,9 +1171,9 @@ function astRedirectsToOutputRedirections(redirects: Redirect[]): {
 // validated (PR #21503 review comment 2907319120).
 // ───────────────────────────────────────────────────────────────────────────
 
-// SECURITY: allowlist for timeout flag VALUES (signals are TERM/KILL/9,
-// durations are 5/5s/10.5). Rejects $ ( ) ` | ; & and newlines that
-// previously matched via [^ \t]+ — `timeout -k$(id) 10 ls` must NOT strip.
+// 安全：timeout 标志值的白名单（信号为 TERM/KILL/9，
+// 持续时间为 5/5s/10.5）。拒绝 $ ( ) ` | ; & 和换行符，
+// 这些之前通过 [^ \t]+ 匹配 — `timeout -k$(id) 10 ls` 绝不能剥离。
 const TIMEOUT_FLAG_VALUE_RE = /^[A-Za-z0-9_.+-]+$/
 
 /**
@@ -1256,9 +1256,9 @@ function skipEnvFlags(a: readonly string[]): number {
 }
 
 /**
- * Argv-level counterpart to stripSafeWrappers (bashPermissions.ts). Strips
- * wrapper commands from AST-derived argv. Env vars are already separated
- * into SimpleCommand.envVars so no env-var stripping here.
+ * stripSafeWrappers (bashPermissions.ts) 的 argv 级别对应函数。
+ * 从 AST 派生的 argv 中剥离包装器命令。
+ * 环境变量已分离到 SimpleCommand.envVars 中，因此此处无需剥离环境变量。
  */
 export function stripWrappersFromArgv(argv: string[]): string[] {
   let a = argv

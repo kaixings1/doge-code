@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const McpToolSearchTool: Tool = {
   name: 'mcp-tool-search',
-  description: 'Search MCP tools across configured servers',
+  description: '工具s across configured servers',
   callOn: 'manual',
   input: z.object({
     query: z.string().describe('Search query'),

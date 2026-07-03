@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const VimVisualModeTool: Tool = {
   name: 'vim-visual-mode',
-  description: 'Enable vim visual mode (v/V) for text selection',
+  description: '模式 (v/V) for text selection',
   callOn: 'always',
   input: z.object({
     mode: z.enum(['visual', 'line']).describe('Visual mode type'),

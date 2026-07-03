@@ -1,12 +1,12 @@
 import { registerBundledSkill } from '../bundledSkills.js'
 
-const PROMPT = '# Writing Fragments\n\nGrilling session that mines the user for fragments — heterogeneous nuggets of writing (claims, vignettes, sharp sentences, half-thoughts) — and appends them to a single document as raw material for a future article.\n\n## Process\n\nRun a grilling session that produces fragments. Interview the user relentlessly about whatever they want to write about. Do not impose phases, outlines, or structure.\n\nAs fragments emerge from either side of the conversation, append them to a single markdown file. Re-read the file before each write so the user edits are preserved.\n\nCapture fragments from the very first thing the user says, including the initial prompt.\n\nOn first write, put a single H1 with a working title and nothing else — no metadata, no TOC, no date.\n\nIf the user did not pass a path, ask once where to save the document.'
+const PROMPT = '# 写作碎片\n\n采访会话从用户那里挖掘碎片——异构的写作碎片（主张、小品文、尖锐的句子、半思考）——并将它们追加到单个文档中作为未来文章的原始素材。\n\n## 流程\n\n运行一个产生碎片的采访会话。 relentless 采访用户关于他们想要写的任何内容。不强加阶段、大纲或结构。\n\n当碎片从对话的任何一边出现时，将它们追加到单个 markdown 文件中。在每次写入前重新读取文件，以保留用户编辑。\n\n从用户说的第一件事开始捕获碎片，包括初始提示。\n\n首次写入时，放置单个 H1 和一个工作标题，没有其他——无元数据、无目录、无日期。\n\n如果用户没有传递路径，问一次将文档保存在哪里。'
 
 export function registerWritingFragmentsSkill(): void {
   registerBundledSkill({
     name: 'writing-fragments',
-    description: 'Grilling session that mines the user for writing fragments — claims, vignettes, half-thoughts — appended to a document for a future article.',
-    whenToUse: 'When the user wants to develop ideas before imposing structure, or mentions fragments, ideate, or raw material for writing.',
+    description: '采访会话挖掘写作碎片——主张、小品文、半思考——追加到文档中作为未来文章的素材。',
+    whenToUse: '当用户想要在强加结构之前发展想法，或提到碎片、构思或写作原始素材时。',
     userInvocable: true,
     getPromptForCommand() {
       return [{ type: 'text', text: PROMPT }]

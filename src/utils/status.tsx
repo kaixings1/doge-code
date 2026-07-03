@@ -25,6 +25,23 @@ export type Property = {
   value: React.ReactNode | Array<string>;
 };
 export type Diagnostic = React.ReactNode;
+export function buildEnvProperty(): Property[] {
+  const envProps: Property[] = [];
+  if (process.env.NODE_ENV) {
+    envProps.push({
+      label: '运行环境',
+      value: process.env.NODE_ENV
+    });
+  }
+  if (process.env.CLAUDE_CODE_ENV) {
+    envProps.push({
+      label: 'Claude Code 环境',
+      value: process.env.CLAUDE_CODE_ENV
+    });
+  }
+  return envProps;
+}
+
 export function buildSandboxProperties(): Property[] {
   if ("external" !== 'ant') {
     return [];
