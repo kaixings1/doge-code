@@ -30,13 +30,17 @@ class CronScheduler {
   }
 
   private parseField(field: string, min: number, max: number): Set<number> {
+    // Support wildcard: *
     if (field === "*") {
-      return new Set(Array.from({length: max - min + 1}, (_, i) => i + min))
+      return new Set(Array.from({ length: max - min + 1 }, (_, i) => i + min))
     }
 
+    // Support step: */2, */5
     if (field.startsWith("*/")) {
       const step = parseInt(field.slice(2))
-      if (isNaN(step)) throw new Error("Invalid step")
+      if (isNaN(step) || step <= 0 || step > max) {
+        throw new Error(`Invalid step value: ${field}`)
+      }
       const result = new Set<number>()
       for (let i = min; i <= max; i += step) {
         result.add(i)
@@ -44,8 +48,69 @@ class CronScheduler {
       return result
     }
 
+    // Support comma-separated list: 1,3,5
+    if (field.includes(",")) {
+      const result = new Set<number>()
+      for (const part of field.split(",")) {
+        const trimmed = part.trim()
+        if (!trimmed) throw new Error(`Invalid field: ${field}`)
+        for (const n of this.parseField(trimmed, min, max)) {
+          result.add(n)
+        }
+      }
+      return result
+    }
+
+    // Support range: 1-5
+    if (field.includes("-")) {
+      const parts = field.split("-")
+      if (parts.length !== 2) throw new Error(`Invalid range: ${field}`)
+      const start = parseInt(parts[0])
+      const end = parseInt(parts[1])
+      if (isNaN(start) || isNaN(end) || start < min || end > max || start > end) {
+        throw new Error(`Invalid range: ${field}`)
+      }
+      const result = new Set<number>()
+      for (let i = start; i <= end; i++) {
+        result.add(i)
+      }
+      return result
+    }
+
+    // Support step with range: 1-10/2
+    if (field.includes("/")) {
+      const parts = field.split("/")
+      if (parts.length !== 2) throw new Error(`Invalid step: ${field}`)
+      const rangeField = parts[0]
+      const stepField = parts[1]
+      const step = parseInt(stepField)
+      if (isNaN(step) || step <= 0 || step > max) {
+        throw new Error(`Invalid step value: ${field}`)
+      }
+      // Parse range or wildcard
+      let baseSet: Set<number>
+      if (rangeField === "*" || rangeField === "") {
+        baseSet = new Set(Array.from({ length: max - min + 1 }, (_, i) => i + min))
+      } else {
+        baseSet = this.parseField(rangeField, min, max)
+      }
+      // Apply step
+      const result = new Set<number>()
+      const sorted = Array.from(baseSet).sort((a, b) => a - b)
+      if (sorted.length > 0) {
+        let offset = sorted[0] - min
+        for (let i = offset; i < sorted.length; i += step) {
+          result.add(sorted[i])
+        }
+      }
+      return result
+    }
+
+    // Single number
     const num = parseInt(field)
-    if (isNaN(num) || num < min || num > max) throw new Error("Invalid value")
+    if (isNaN(num) || num < min || num > max) {
+      throw new Error(`Invalid value: ${field} (must be between ${min} and ${max})`)
+    }
     return new Set([num])
   }
 
