@@ -489,6 +489,4 @@ test('enforces rate limits', async () => {
 - [Supabase 安全](https://supabase.com/docs/guides/auth)
 - [Web 安全学院](https://portswigger.net/web-security)
 
----
-
-**记住**：安全不是可选项。一个漏洞可能危及整个平台。如有疑问，宁可保守。
+---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 02 MINUTES 15 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -85,21 +85,4 @@ The skill uses `get_application_stats` for an aggregated overview - total counts
 ## Troubleshooting
 
 | Problem | Solution |
-|---------|----------|
-| "Missing Authorization header" | For Claude Code and other remote HTTP MCP setups, confirm the `Authorization` header is configured on the MCP server entry |
-| "Missing API key" | For the local `npx jobgpt-mcp-server` setup, ensure `JOBGPT_API_KEY` is set to your API key |
-| "Insufficient credits" | Check balance with `get_credits`. Purchase more at 6figr.com/account |
-| Auto-apply not working | Ensure a resume is uploaded and the job hunt has auto-apply enabled |
-| No job matches found | Broaden your search filters (fewer titles, more locations, wider salary range) |
-
-## Additional Resources
-
-- [JobGPT Platform](https://6figr.com/jobgpt-ai) - Sign up and manage your account
-- [MCP Server Repo](https://github.com/6figr-com/jobgpt-mcp-server) - Source code and setup guides
-- [Skills Repo](https://github.com/6figr-com/skills) - This skill's source
-- [npm Package](https://www.npmjs.com/package/jobgpt-mcp-server) - Install via npm
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 41 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -211,31 +211,4 @@ Different column types require different value formats:
 ## Quick Reference
 
 | Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| List workspaces | `MONDAY_GET_WORKSPACES` | `kind`, `state`, `limit` |
-| Create workspace | `MONDAY_CREATE_WORKSPACE` | `name`, `kind` |
-| List boards | `MONDAY_LIST_BOARDS` | `limit`, `page`, `state` |
-| Create board | `MONDAY_CREATE_BOARD` | `board_name`, `board_kind`, `workspace_id` |
-| Get board metadata | `MONDAY_BOARDS` | `board_ids`, `board_kind` |
-| List groups | `MONDAY_LIST_GROUPS` | `board_id` |
-| Create group | `MONDAY_CREATE_GROUP` | `board_id`, `group_name` |
-| List columns | `MONDAY_LIST_COLUMNS` | `board_id` |
-| Get column metadata | `MONDAY_COLUMNS` | `board_ids`, `column_types` |
-| Create column | `MONDAY_CREATE_COLUMN` | `board_id`, `column_type`, `title` |
-| Create item | `MONDAY_CREATE_ITEM` | `board_id`, `item_name`, `column_values` |
-| List board items | `MONDAY_LIST_BOARD_ITEMS` | `board_id` |
-| Paginated items | `MONDAY_ITEMS_PAGE` | `board_id`, `limit`, `query_params` |
-| Update column (simple) | `MONDAY_CHANGE_SIMPLE_COLUMN_VALUE` | `board_id`, `item_id`, `column_id`, `value` |
-| Update column (complex) | `MONDAY_UPDATE_ITEM` | `board_id`, `item_id`, `column_id`, `value` |
-| Move item to group | `MONDAY_MOVE_ITEM_TO_GROUP` | `item_id`, `group_id` |
-| List subitems | `MONDAY_LIST_SUBITEMS_BY_PARENT` | `parent_item_ids` |
-| Add comment/update | `MONDAY_CREATE_UPDATE` | `item_id`, `body` |
-| Raw GraphQL mutation | `MONDAY_CREATE_OBJECT` | `query`, `variables` |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 03 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

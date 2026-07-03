@@ -244,11 +244,4 @@ async def call_with_retry():
 7. **Document extensively**: API docs, architecture diagrams, runbooks
 8. **Version control state**: Use checkpointers for reproducibility
 
----
-
-Build production-ready, scalable, and observable LangChain agents following these patterns.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 10 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

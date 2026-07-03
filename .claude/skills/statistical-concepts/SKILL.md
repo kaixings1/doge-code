@@ -40,25 +40,4 @@ Quick reference for statistical concepts, common misconceptions, and practical g
 ### Parametric vs. Non-Parametric
 
 | Parametric | Non-Parametric | When to Switch |
-|-----------|----------------|----------------|
-| t-test | Mann-Whitney | Non-normal, ordinal data, small n |
-| ANOVA | Kruskal-Wallis | Non-normal, outliers |
-| Pearson r | Spearman ρ | Non-linear, ordinal |
-
-## Usage Examples
-
-```
-"Explain the difference between statistical and practical significance
-for my team presentation"
-```
-
-```
-"I have 20 features to test — how do I control for multiple comparisons?"
-```
-
-## Output Format
-
-- **Concept Explanation**: Clear, jargon-free description
-- **Common Misconceptions**: What people get wrong
-- **Decision Guide**: When to use what
-- **Examples**: Real-world illustrations
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 00 MINUTES 18 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

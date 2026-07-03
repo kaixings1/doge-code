@@ -183,17 +183,4 @@ fields__template=['name', 'html', 'text']
 ## Quick Reference
 
 | Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| List campaigns | KLAVIYO_GET_CAMPAIGNS | channel, filter, sort, page_cursor |
-| Get campaign details | KLAVIYO_GET_CAMPAIGN | campaign_id, include_messages, include_tags |
-| Get campaign message | KLAVIYO_GET_CAMPAIGN_MESSAGE | id, fields__campaign__message |
-| Get campaign tags | KLAVIYO_GET_CAMPAIGN_RELATIONSHIPS_TAGS | id |
-| Get send job status | KLAVIYO_GET_CAMPAIGN_SEND_JOB | id |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 23 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

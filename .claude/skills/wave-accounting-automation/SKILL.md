@@ -13,28 +13,4 @@ requires:
 
 **Toolkit docs:** [composio.dev/toolkits/wave_accounting](https://composio.dev/toolkits/wave_accounting)
 
----
-
-## Status
-
-This integration is **not yet available** with native Wave Accounting tools. When Wave Accounting tools become available in Composio, this skill file will be updated with real tool slugs, workflows, and pitfalls.
-
-For accounting and invoicing automation needs, consider these alternatives that are available today:
-- **Stripe** -- Payment processing, invoicing, and subscription management
-- **Zoho Invoice** -- Invoice creation, payment tracking, and contact management
-- **QuickBooks** -- Full accounting suite with invoicing and expense tracking
-- **FreshBooks** -- Cloud accounting with time tracking and invoicing
-
----
-
-## Setup
-
-1. Add the Composio MCP server to your client configuration:
-   ```
-   https://rube.app/mcp
-   ```
-2. Check back for Wave Accounting integration availability.
-
----
-
-*Powered by [Composio](https://composio.dev)*
+---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 42 MINUTES 10 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

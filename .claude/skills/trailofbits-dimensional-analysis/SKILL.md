@@ -59,27 +59,4 @@ Workflow orchestration for all four phases lives in `skills/dimensional-analysis
 ## Agents
 
 | Agent | Purpose |
-|-------|---------|
-| `arithmetic-scanner` | Scans repo for files with dimensional arithmetic to scope discovery |
-| `dimension-discoverer` | Discovers dimensional vocabulary from naming, interfaces, and patterns |
-| `dimension-annotator` | Adds dimensional annotations at anchor points (comments only) |
-| `dimension-propagator` | Propagates dimensional annotations through arithmetic and call chains, reporting mismatches |
-| `dimension-validator` | Validates dimensional consistency and detects bugs |
-
-## Requirements
-
-- A codebase performing numeric arithmetic with mixed units, precisions, or scaling factors
-- Most effective for DeFi protocols (Solidity, Rust/Anchor, CosmWasm, etc.) but works with any language
-- Optional for Solidity projects: [slither-mcp](https://github.com/trailofbits/slither-mcp) for enhanced static analysis
-
-## References
-
-See the `references/` directory for:
-- `dimension-algebra.md` - Rules for dimensional arithmetic
-- `common-dimensions.md` - DeFi dimension vocabulary
-- `bug-patterns.md` - Dimensional bug patterns with examples
-- `annotate.md` - Full annotated protocol examples (ERC-4626, AMM, Lending)
-
-## Author
-
-Coriolan Pinhas & Benjamin Samuels - Trail of Bits
+|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 31 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

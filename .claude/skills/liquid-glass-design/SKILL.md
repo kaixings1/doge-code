@@ -243,37 +243,4 @@ VStack { /* 内容 */ }
 ## 关键设计决策
 
 | 决策 | 理由 |
-|----------|-----------|
-| 使用 GlassEffectContainer 包裹 | 性能优化，支持玻璃元素之间的变形过渡 |
-| `spacing` 参数 | 控制合并距离 — 微调元素融合所需的接近程度 |
-| `@Namespace` + `glassEffectID` | 支持在视图层级变化时实现平滑的变形过渡 |
-| `interactive()` 修饰符 | 显式开启触摸/指针反应 — 并非所有玻璃都应有响应 |
-| UIKit 中的 UIGlassContainerEffect | 与 SwiftUI 保持一致的容器模式 |
-| 小组件中的强调渲染模式 | 当用户选择强调色主屏幕时，系统会应用色调玻璃 |
-
-## 最佳实践
-
-- **始终使用 GlassEffectContainer**：当对多个兄弟视图应用玻璃效果时，它可以启用变形效果并提高渲染性能。
-- **在其他外观修饰符（frame, font, padding）之后应用** `.glassEffect()`。
-- **仅在响应用户交互的元素上使用** `.interactive()`（如按钮、可切换项目）。
-- **仔细选择容器间距**：以控制玻璃效果何时合并。
-- **使用 `withAnimation`**：在更改视图层级时使用，以启用平滑的变形过渡。
-- **在不同外观下进行测试**：包括浅色模式、深色模式以及强调色/色调模式。
-- **确保无障碍对比度**：玻璃上的文字必须保持清晰可读。
-
-## 应避免的反模式
-
-- 在没有 GlassEffectContainer 的情况下使用多个独立的 `.glassEffect()` 视图。
-- 嵌套过多的玻璃效果：会降低性能和视觉清晰度。
-- 为每个视图都应用玻璃效果：应保留给交互元素、工具栏和卡片。
-- 在 UIKit 中使用圆角时忘记设置 `clipsToBounds = true`。
-- 忽略小组件中的强调渲染模式：这会破坏强调色主屏幕的外观。
-- 在玻璃背后使用不透明背景：这会破坏半透明效果。
-
-## 何时使用
-
-- 采用新 iOS 26 设计的导航栏、工具栏和标签栏。
-- 悬浮操作按钮和卡片式容器。
-- 需要视觉深度和触摸反馈的交互式控件。
-- 应该与系统灵动玻璃外观集成的小组件。
-- 相关 UI 状态之间的变形过渡。
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 17 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
