@@ -1,116 +1,83 @@
 ---
-name: googleslides-automation
-description: "通过 Rube MCP (Composio) 自动执行 Google Slides 任务：create presentations, add slides from Markdown, batch update, copy from templates, get thumbnails. Always search tools first for current schemas."
+name: googleslides-自动化
+description: "通过 Rube MCP (Composio) 自动化 Googleslides 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---
 
-# Google Slides Automation via Rube MCP
+# 通过 Rube MCP 实现 Googleslides 自动化
 
-Create, edit, and manage Google Slides presentations programmatically using Rube MCP (Composio).
+通过 Rube MCP 使用 Composio 的 Googleslides 工具包自动化 Googleslides 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/googleslides](https://composio.dev/toolkits/googleslides)
+**工具包文档**：[composio.dev/toolkits/googleslides](https://composio.dev/toolkits/googleslides)
 
-## Prerequisites
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `googleslides`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Googleslides 连接，工具包为 `googleslides`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `googleslides`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+## 设置
 
-## Core Workflows
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-### 1. Create a Blank Presentation
-Use `GOOGLESLIDES_PRESENTATIONS_CREATE` to initialize a new blank presentation.
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `googleslides` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
+
+## 工具发现
+
+在执行工作流之前始终发现可用工具：
+
 ```
-Tool: GOOGLESLIDES_PRESENTATIONS_CREATE
-Parameters:
-  - title (required): Title for the new presentation
-  - presentationId (optional): Specific ID to assign (usually auto-generated)
-```
-
-### 2. Create Slides from Markdown
-Use `GOOGLESLIDES_CREATE_SLIDES_MARKDOWN` to generate a full presentation from Markdown text. Content is automatically split into slides.
-```
-Tool: GOOGLESLIDES_CREATE_SLIDES_MARKDOWN
-Parameters:
-  - title (required): Presentation title
-  - markdown_text (required): Markdown content (auto-split into slides)
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Googleslides operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-### 3. Batch Update a Presentation
-Use `GOOGLESLIDES_PRESENTATIONS_BATCH_UPDATE` to apply updates to an existing presentation using Markdown or raw API requests.
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
+
+## 核心工作流模式
+
+### 步骤 1：发现可用工具
+
 ```
-Tool: GOOGLESLIDES_PRESENTATIONS_BATCH_UPDATE
-Parameters:
-  - presentationId (required): Target presentation ID
-  - markdown_text: Markdown content to update slides
-  - requests: Raw Google Slides API batch update requests
-  - writeControl: Write control settings
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Googleslides task"}]
+session: {id: "existing_session_id"}
 ```
 
-### 4. Copy from Template
-Use `GOOGLESLIDES_PRESENTATIONS_COPY_FROM_TEMPLATE` to duplicate an existing presentation as a template.
+### 步骤 2：检查连接
+
 ```
-Tool: GOOGLESLIDES_PRESENTATIONS_COPY_FROM_TEMPLATE
-Parameters:
-  - template_presentation_id (required): Source template presentation ID
-  - new_title (required): Title for the new copy
-  - parent_folder_id (optional): Google Drive folder for the copy
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["googleslides"]
+session_id: "your_session_id"
 ```
 
-### 5. Get Presentation Details
-Use `GOOGLESLIDES_PRESENTATIONS_GET` to retrieve the current state of a presentation including all slides and elements.
-```
-Tool: GOOGLESLIDES_PRESENTATIONS_GET
-Parameters:
-  - presentationId (required): Presentation ID to retrieve
-  - fields (optional): Specific fields to return
-```
+### 步骤 3：执行工具
 
-### 6. Generate Slide Thumbnails
-Use `GOOGLESLIDES_PRESENTATIONS_PAGES_GET_THUMBNAIL` to generate a thumbnail image URL for a specific slide.
 ```
-Tool: GOOGLESLIDES_PRESENTATIONS_PAGES_GET_THUMBNAIL
-Parameters:
-  - presentationId (required): Presentation ID
-  - pageObjectId (required): Page/slide object ID
-  - thumbnailProperties.mimeType: Image format (e.g., PNG)
-  - thumbnailProperties.thumbnailSize: Thumbnail size
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
 ```
 
-## Common Patterns
+## 已知陷阱
 
-- **Markdown-first workflow**: Use `GOOGLESLIDES_CREATE_SLIDES_MARKDOWN` to quickly generate presentations from structured text. The tool auto-splits content into separate slides.
-- **Template-based generation**: Use `GOOGLESLIDES_PRESENTATIONS_COPY_FROM_TEMPLATE` to copy a styled template, then `GOOGLESLIDES_PRESENTATIONS_BATCH_UPDATE` to fill in content.
-- **Retrieve then modify**: Use `GOOGLESLIDES_PRESENTATIONS_GET` to inspect slide structure and object IDs, then `GOOGLESLIDES_PRESENTATIONS_BATCH_UPDATE` to make targeted changes.
-- **Export thumbnails**: Use `GOOGLESLIDES_PRESENTATIONS_PAGES_GET` to list page object IDs, then `GOOGLESLIDES_PRESENTATIONS_PAGES_GET_THUMBNAIL` to generate preview images.
-- **Share presentations**: Combine with `GOOGLEDRIVE_ADD_FILE_SHARING_PREFERENCE` (googledrive toolkit) to share after creation.
-
-## Known Pitfalls
-
-- `GOOGLESLIDES_CREATE_SLIDES_MARKDOWN` creates a brand-new presentation each time -- it cannot append to an existing one.
-- `GOOGLESLIDES_PRESENTATIONS_BATCH_UPDATE` with raw `requests` requires knowledge of the Google Slides API request format. Prefer `markdown_text` for simpler updates.
-- Page object IDs must be obtained from `GOOGLESLIDES_PRESENTATIONS_GET` before using thumbnail or page-get tools.
-- The `presentationId` is the long alphanumeric string from the Google Slides URL (between `/d/` and `/edit`).
-- Copying from a template requires the authenticated user to have at least read access to the template presentation.
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
-| Action | Tool | Key Parameters |
-|--------|------|----------------|
-| Create blank presentation | `GOOGLESLIDES_PRESENTATIONS_CREATE` | `title` |
-| Create from Markdown | `GOOGLESLIDES_CREATE_SLIDES_MARKDOWN` | `title`, `markdown_text` |
-| Batch update slides | `GOOGLESLIDES_PRESENTATIONS_BATCH_UPDATE` | `presentationId`, `markdown_text` or `requests` |
-| Copy from template | `GOOGLESLIDES_PRESENTATIONS_COPY_FROM_TEMPLATE` | `template_presentation_id`, `new_title` |
-| Get presentation | `GOOGLESLIDES_PRESENTATIONS_GET` | `presentationId` |
-| Get page details | `GOOGLESLIDES_PRESENTATIONS_PAGES_GET` | `presentationId`, `pageObjectId` |
-| Get slide thumbnail | `GOOGLESLIDES_PRESENTATIONS_PAGES_GET_THUMBNAIL` | `presentationId`, `pageObjectId` |
 
----
-*Powered by [Composio](https://composio.dev)*
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

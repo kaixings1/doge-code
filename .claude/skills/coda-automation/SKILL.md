@@ -1,250 +1,83 @@
 ---
 name: coda-自动化
-description: "通过 Rube MCP (Composio) 自动化 Coda 操作：管理文档、页面、表格、行、公式、权限和发布。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
-risk: critical
-source: community
-date_added: "2026-02-27"
+description: "通过 Rube MCP (Composio) 自动化 Coda 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+requires:
+  mcp: [rube]
 ---
 
-# Coda Automation via Rube MCP
+# 通过 Rube MCP 实现 Coda 自动化
 
-Automate Coda document and data operations through Composio's Coda toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Coda 工具包自动化 Coda 操作。
 
-## Prerequisites
+**工具包文档**：[composio.dev/toolkits/coda](https://composio.dev/toolkits/coda)
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Coda connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `coda`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Coda 连接，工具包为 `coda`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+## 设置
 
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `coda`
-3. If connection is not ACTIVE, follow the returned auth link to complete Coda authentication
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `coda` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-## Core Workflows
+## 工具发现
 
-### 1. Search and Browse Documents
-
-**When to use**: User wants to find, list, or inspect Coda documents
-
-**Tool sequence**:
-1. `CODA_SEARCH_DOCS` or `CODA_LIST_AVAILABLE_DOCS` - Find documents [Required]
-2. `CODA_RESOLVE_BROWSER_LINK` - Resolve a Coda URL to doc/page/table IDs [Alternative]
-3. `CODA_LIST_PAGES` - List pages within a document [Optional]
-4. `CODA_GET_A_PAGE` - Get specific page details [Optional]
-
-**Key parameters**:
-- `query`: Search term for finding documents
-- `isOwner`: Filter to docs owned by the user
-- `docId`: Document ID for page operations
-- `pageIdOrName`: Page identifier or name
-- `url`: Browser URL for resolve operations
-
-**Pitfalls**:
-- Document IDs are alphanumeric strings (e.g., 'AbCdEfGhIj')
-- `CODA_RESOLVE_BROWSER_LINK` is the best way to convert a Coda URL to API IDs
-- Page names may not be unique within a doc; prefer page IDs
-- Search results include docs shared with the user, not just owned docs
-
-### 2. Work with Tables and Data
-
-**When to use**: User wants to read, write, or query table data
-
-**Tool sequence**:
-1. `CODA_LIST_TABLES` - List tables in a document [Prerequisite]
-2. `CODA_LIST_COLUMNS` - Get column definitions for a table [Prerequisite]
-3. `CODA_LIST_TABLE_ROWS` - List all rows with optional filters [Required]
-4. `CODA_SEARCH_ROW` - Search for specific rows by query [Alternative]
-5. `CODA_GET_A_ROW` - Get a specific row by ID [Optional]
-6. `CODA_UPSERT_ROWS` - Insert or update rows in a table [Optional]
-7. `CODA_GET_A_COLUMN` - Get details of a specific column [Optional]
-
-**Key parameters**:
-- `docId`: Document ID containing the table
-- `tableIdOrName`: Table identifier or name
-- `query`: Filter query for searching rows
-- `rows`: Array of row objects for upsert operations
-- `keyColumns`: Column IDs used for matching during upsert
-- `sortBy`: Column to sort results by
-- `useColumnNames`: Use column names instead of IDs in row data
-
-**Pitfalls**:
-- Table names may contain spaces; URL-encode if needed
-- `CODA_UPSERT_ROWS` does insert if no match on `keyColumns`, update if match found
-- `keyColumns` must reference columns that have unique values for reliable upserts
-- Column IDs are different from column names; list columns first to map names to IDs
-- `useColumnNames: true` allows using human-readable names in row data
-- Row data values must match the column type (text, number, date, etc.)
-
-### 3. Manage Formulas
-
-**When to use**: User wants to list or evaluate formulas in a document
-
-**Tool sequence**:
-1. `CODA_LIST_FORMULAS` - List all named formulas in a doc [Required]
-2. `CODA_GET_A_FORMULA` - Get a specific formula's current value [Optional]
-
-**Key parameters**:
-- `docId`: Document ID
-- `formulaIdOrName`: Formula identifier or name
-
-**Pitfalls**:
-- Formulas are named calculations defined in the document
-- Formula values are computed server-side; results reflect the current state
-- Formula names are case-sensitive
-
-### 4. Export Document Content
-
-**When to use**: User wants to export a document or page to HTML or Markdown
-
-**Tool sequence**:
-1. `CODA_BEGIN_CONTENT_EXPORT` - Start an export job [Required]
-2. `CODA_CONTENT_EXPORT_STATUS` - Poll export status until complete [Required]
-
-**Key parameters**:
-- `docId`: Document ID to export
-- `outputFormat`: Export format ('html' or 'markdown')
-- `pageIdOrName`: Specific page to export (optional, omit for full doc)
-- `requestId`: Export request ID for status polling
-
-**Pitfalls**:
-- Export is asynchronous; poll status until `status` is 'complete'
-- Large documents may take significant time to export
-- Export URL in the completed response is temporary; download promptly
-- Polling too frequently may hit rate limits; use 2-5 second intervals
-
-### 5. Manage Permissions and Sharing
-
-**When to use**: User wants to view or manage document access
-
-**Tool sequence**:
-1. `CODA_GET_SHARING_METADATA` - View current sharing settings [Required]
-2. `CODA_GET_ACL_SETTINGS` - Get access control list settings [Optional]
-3. `CODA_ADD_PERMISSION` - Grant access to a user or email [Optional]
-
-**Key parameters**:
-- `docId`: Document ID
-- `access`: Permission level ('readonly', 'write', 'comment')
-- `principal`: Object with email or user ID of the recipient
-- `suppressEmail`: Whether to skip the sharing notification email
-
-**Pitfalls**:
-- Permission levels: 'readonly', 'write', 'comment'
-- Adding permission sends an email notification by default; use `suppressEmail` to prevent
-- Cannot remove permissions via API in all cases; check ACL settings
-
-### 6. Publish and Customize Documents
-
-**When to use**: User wants to publish a document or manage custom domains
-
-**Tool sequence**:
-1. `CODA_PUBLISH_DOC` - Publish a document publicly [Required]
-2. `CODA_UNPUBLISH_DOC` - Unpublish a document [Optional]
-3. `CODA_ADD_CUSTOM_DOMAIN` - Add a custom domain for published doc [Optional]
-4. `CODA_GET_DOC_CATEGORIES` - Get doc categories for discovery [Optional]
-
-**Key parameters**:
-- `docId`: Document ID
-- `slug`: Custom URL slug for the published doc
-- `categoryIds`: Category IDs for discoverability
-
-**Pitfalls**:
-- Publishing makes the document accessible to anyone with the link
-- Custom domains require DNS configuration
-- Unpublishing removes public access but retains shared access
-
-## Common Patterns
-
-### ID Resolution
-
-**Doc URL -> Doc ID**:
-```
-1. Call CODA_RESOLVE_BROWSER_LINK with the Coda URL
-2. Extract docId from the response
-```
-
-**Table name -> Table ID**:
-```
-1. Call CODA_LIST_TABLES with docId
-2. Find table by name, extract id
-```
-
-**Column name -> Column ID**:
-```
-1. Call CODA_LIST_COLUMNS with docId and tableIdOrName
-2. Find column by name, extract id
-```
-
-### Pagination
-
-- Coda uses cursor-based pagination with `pageToken`
-- Check response for `nextPageToken`
-- Pass as `pageToken` in next request until absent
-- Default page sizes vary by endpoint
-
-### Row Upsert Pattern
+在执行工作流之前始终发现可用工具：
 
 ```
-1. Call CODA_LIST_COLUMNS to get column IDs
-2. Build row objects with column ID keys and values
-3. Set keyColumns to unique identifier column(s)
-4. Call CODA_UPSERT_ROWS with rows and keyColumns
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Coda operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-## Known Pitfalls
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
 
-**ID Formats**:
-- Document IDs: alphanumeric strings
-- Table/column/row IDs: prefixed strings (e.g., 'grid-abc', 'c-xyz')
-- Use RESOLVE_BROWSER_LINK to convert URLs to IDs
+## 核心工作流模式
 
-**Data Types**:
-- Row values must match column types
-- Date columns expect ISO 8601 format
-- Select/multi-select columns expect exact option values
-- People columns expect email addresses
+### 步骤 1：发现可用工具
 
-**Rate Limits**:
-- Coda API has per-token rate limits
-- Implement backoff on 429 responses
-- Bulk row operations via UPSERT_ROWS are more efficient than individual updates
+```
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Coda task"}]
+session: {id: "existing_session_id"}
+```
+
+### 步骤 2：检查连接
+
+```
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["coda"]
+session_id: "your_session_id"
+```
+
+### 步骤 3：执行工具
+
+```
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
+```
+
+## 已知陷阱
+
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
 
-| Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| Search docs | CODA_SEARCH_DOCS | query |
-| List docs | CODA_LIST_AVAILABLE_DOCS | isOwner |
-| Resolve URL | CODA_RESOLVE_BROWSER_LINK | url |
-| List pages | CODA_LIST_PAGES | docId |
-| Get page | CODA_GET_A_PAGE | docId, pageIdOrName |
-| List tables | CODA_LIST_TABLES | docId |
-| List columns | CODA_LIST_COLUMNS | docId, tableIdOrName |
-| List rows | CODA_LIST_TABLE_ROWS | docId, tableIdOrName |
-| Search rows | CODA_SEARCH_ROW | docId, tableIdOrName, query |
-| Get row | CODA_GET_A_ROW | docId, tableIdOrName, rowIdOrName |
-| Upsert rows | CODA_UPSERT_ROWS | docId, tableIdOrName, rows, keyColumns |
-| Get column | CODA_GET_A_COLUMN | docId, tableIdOrName, columnIdOrName |
-| Push button | CODA_PUSH_A_BUTTON | docId, tableIdOrName, rowIdOrName, columnIdOrName |
-| List formulas | CODA_LIST_FORMULAS | docId |
-| Get formula | CODA_GET_A_FORMULA | docId, formulaIdOrName |
-| Begin export | CODA_BEGIN_CONTENT_EXPORT | docId, outputFormat |
-| Export status | CODA_CONTENT_EXPORT_STATUS | docId, requestId |
-| Get sharing | CODA_GET_SHARING_METADATA | docId |
-| Add permission | CODA_ADD_PERMISSION | docId, access, principal |
-| Publish doc | CODA_PUBLISH_DOC | docId, slug |
-| Unpublish doc | CODA_UNPUBLISH_DOC | docId |
-| List packs | CODA_LIST_PACKS | (none) |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
