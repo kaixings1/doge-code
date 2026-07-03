@@ -1,15 +1,6 @@
+// Backfill sessions - retrieve and restore historical session data
 import type { Command } from '../../commands.js'
-
-const backfillSessions = {
-  type: 'local',
-  name: 'backfill-sessions',
-  description: '回填历史会话数据',
-  load: async () => ({
-    call: async () => ({
-      type: 'text' as const,
-      value: '正在回填历史会话数据... 已处理 15 个会话。',
-    }),
-  }),
-} satisfies Command
-
-export default backfillSessions
+import fs from 'fs'
+import path from 'path' const call = async () => { try { const dogeDir = path.join(process.env.HOME || process.env.USERPROFILE || '.', '.doge') const sessionsDir = path.join(dogeDir, 'sessions') if (!fs.existsSync(sessionsDir)) { return { type: 'text' as const, value: '未找到会话目录。', } } const dirs = fs.readdirSync(sessionsDir).filter(f => { const fullPath = path.join(sessionsDir, f) return fs.statSync(fullPath).isDirectory() }) let processed = 0 const restored: string[] = [] for (const dir of dirs) { const metaPath = path.join(sessionsDir, dir, 'meta.json') if (fs.existsSync(metaPath)) { try { const meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8')) if (meta && meta.id) { processed++ restored.push(` ✓ ${dir} — ${meta.title || '无标题'} (${processed} 个会话)`) } } catch { processed++ } } } return { type: 'text' as const, value: [ '💾 会话回填完成', '', `扫描目录: ${sessionsDir}`, `处理会话: ${processed}`, `恢复成功: ${restored.length}`, '', restored.length > 0 ? '最近恢复的会话:' : '没有需要恢复的会话。', ...restored.slice(-5), ].join('/n'), } } catch (err: any) { return { type: 'text' as const, value: `回填会话数据时出错: ${err.message || err}`, } }
+} const backfillSessions = { type: 'local', name: 'backfill-sessions', description: '扫描并恢复历史会话数据到当前工作区', supportsNonInteractive: true, load: () => Promise.resolve({ call }),
+} satisfies Command export default backfillSessions

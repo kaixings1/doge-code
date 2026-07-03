@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const LessPermissionPromptsTool: Tool = {
   name: 'less-permission-prompts',
-  description: 'Scan transcripts for common read-only Bash and MCP tool calls, propose permission whitelist',
+  description: '工具 calls, propose permission whitelist',
   callOn: 'manual',
   input: z.object({
     scope: z.enum(['session', 'project', 'global']).optional().describe('Scope for the permission whitelist'),
