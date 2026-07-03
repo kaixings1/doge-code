@@ -1,16 +1,12 @@
 import type { Command } from '../../commands.js'
 
-const lessPermissionPrompts: Command = {
+const lessPermissionPrompts = {
+  type: 'local' as const,
   name: 'less-permission-prompts',
   description: '扫描会话，生成权限白名单',
-  type: 'prompt',
-  source: 'builtin',
-  async getPromptForCommand(args, context) {
-    return {
-      command: '/less-permission-prompts\n\n分析当前会话中使用的工具和权限，生成最小权限集。',
-      description: '扫描会话，生成权限白名单',
-    }
-  },
-}
+  aliases: ['lpp', 'permission-scan'],
+  supportsNonInteractive: true,
+  load: () => import('./lessPermissionPrompts.js'),
+} satisfies Command
 
 export default lessPermissionPrompts
