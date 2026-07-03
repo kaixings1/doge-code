@@ -1,73 +1,19 @@
 {
   "mcpServers": {
     "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}" }
-    },
-    "claude-kit": {
-      "command": "npx",
-      "args": ["-y", "@chris1807/claude-kit"]
-    },
-    "playwright": {
-      "command": "npx",
-      "args": ["@playwright/mcp"]
-    },
-    "teams": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/mcp-teams-server"],
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-github"],
       "env": {
-        "TEAMS_TENANT_ID": "${TEAMS_TENANT_ID}",
-        "TEAMS_CLIENT_ID": "${TEAMS_CLIENT_ID}",
-        "TEAMS_CLIENT_SECRET": "${TEAMS_CLIENT_SECRET}"
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
       }
     },
-    "stripe": {
-      "command": "npx",
-      "args": ["-y", "@stripe/mcp"],
-      "env": { "STRIPE_SECRET_KEY": "${STRIPE_SECRET_KEY}" }
+    "claude-kit": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@chris1807/claude-kit"]
     },
-    "azure": {
-      "command": "npx",
-      "args": ["-y", "@azure/mcp@latest", "server", "start"]
-    },
-    "azure-devops": {
-      "command": "npx",
-      "args": ["-y", "@azure-devops/mcp", "richgolden"],
-      "env": { "AZURE_DEVOPS_PAT": "${AZURE_DEVOPS_PAT}" }
-    },
-    "firebase": {
-      "command": "npx",
-      "args": ["-y", "firebase-tools@latest", "mcp"]
-    },
-    "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp"]
-    },
-    "gitlab": {
-      "type": "http",
-      "url": "https://gitlab.com/api/v4/mcp"
-    },
-    "linear": {
-      "type": "http",
-      "url": "https://mcp.linear.app/mcp"
-    },
-    "asana": {
-      "type": "sse",
-      "url": "https://mcp.asana.com/sse"
-    },
-    "greptile": {
-      "type": "http",
-      "url": "https://api.greptile.com/mcp",
-      "headers": { "Authorization": "Bearer ${GREPTILE_API_KEY}" }
-    },
-    "laravel-boost": {
-      "command": "php",
-      "args": ["artisan", "boost:mcp"]
-    },
-    "terraform": {
-      "command": "docker",
-      "args": ["run", "-i", "--rm", "-e", "TFE_TOKEN=${TFE_TOKEN}", "hashicorp/terraform-mcp-server:0.4.0"]
+    "playwright": {
+      "command": "cmd",
+      "args": ["/c", "npx", "@playwright/mcp"]
     }
   }
 }
