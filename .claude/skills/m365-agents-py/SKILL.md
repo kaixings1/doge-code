@@ -329,22 +329,4 @@ asyncio.run(main())
 ## Reference Files
 
 | File | Contents |
-| --- | --- |
-| references/acceptance-criteria.md | Import paths, hosting pipeline, streaming, OAuth, and Copilot Studio patterns |
-
-## Reference Links
-
-| Resource | URL |
-| --- | --- |
-| Microsoft 365 Agents SDK | https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/ |
-| GitHub samples (Python) | https://github.com/microsoft/Agents-for-python |
-| PyPI packages | https://pypi.org/search/?q=microsoft-agents |
-| Integrate with Copilot Studio | https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/integrate-with-mcs |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 47 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

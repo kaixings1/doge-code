@@ -171,46 +171,4 @@ processedPhotos[item.id] = await processor.extractSticker(data: data, with: item
 ## 关键设计决策
 
 | 决策 | 原理 |
-|----------|-----------|
-| 默认单线程 | 大多数自然编写的代码都是无数据竞争的；并发是选填的 |
-| 异步保留在调用执行角色上 | 消除导致数据竞争错误的隐式卸载 |
-| 隔离一致性 | `MainActor` 类型可以遵守协议，而无需不安全的临时方案 |
-| `@concurrent` 显式选填 | 后台执行是深思熟虑的性能选择，而非偶然 |
-| `MainActor` 默认推断 | 减少 App 目标中冗余的 `@MainActor` 注解 |
-| 选填式采用 | 非破坏性的迁移路径 —— 增量启用功能 |
-
-## 迁移步骤
-
-1. **在 Xcode 中启用**：构建设置 (Build Settings) 中的 Swift Compiler > Concurrency 部分
-2. **在 SPM 中启用**：在包清单中使用 `SwiftSettings` API
-3. **使用迁移工具**：通过 swift.org/migration 进行自动代码更改
-4. **从 MainActor 默认设置开始**：为 App 目标启用推断模式
-5. **在需要处添加 `@concurrent`**：先进行性能分析 (Profile)，然后卸载热点路径
-6. **彻底测试**：数据竞争问题将变为编译时错误
-
-## 最佳实践
-
-- **从 MainActor 开始** —— 先编写单线程代码，稍后再进行优化
-- **仅针对 CPU 密集型工作使用 `@concurrent`** —— 图像处理、压缩、复杂计算
-- **为大部分是单线程的 App 目标启用 MainActor 推断模式**
-- **在卸载前进行性能分析** —— 使用 Instruments 查找真正的瓶颈
-- **使用 MainActor 保护全局变量** —— 全局/静态可变状态需要执行角色隔离
-- **使用隔离一致性**，而不是 `nonisolated` 临时方案或 `@Sendable` 包装器
-- **增量迁移** —— 在构建设置中一次启用一个功能
-
-## 应避免的反模式 (Anti-Patterns)
-
-- 对每个异步函数都应用 `@concurrent`（大多数函数不需要后台执行）
-- 在不理解隔离的情况下使用 `nonisolated` 来压制编译器错误
-- 在执行角色（Actors）提供相同安全性时仍保留旧的 `DispatchQueue` 模式
-- 在并发相关的 Foundation Models 代码中跳过 `model.availability` 检查
-- 与编译器对抗 —— 如果它报告数据竞争，说明代码存在真正的并发问题
-- 假设所有异步代码都在后台运行（Swift 6.2 默认：保留在调用执行角色上）
-
-## 何时使用
-
-- 所有新的 Swift 6.2+ 项目（推荐默认使用“易用的并发”）
-- 从 Swift 5.x 或 6.0/6.1 并发迁移现有 App
-- 在采用 Xcode 26 期间解决数据竞争安全的编译器错误
-- 构建以 `MainActor` 为中心的应用架构（大多数 UI App）
-- 性能优化 —— 将特定的繁重计算卸载到后台
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  21 HOURS 59 MINUTES 58 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

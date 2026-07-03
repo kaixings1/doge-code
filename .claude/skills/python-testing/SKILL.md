@@ -802,15 +802,4 @@ pytest --pdb
 ## 快速参考
 
 | 模式 | 用途 |
-|---------|-------|
-| `pytest.raises()` | 测试预期的异常 |
-| `@pytest.fixture()` | 创建可重用的测试夹具 |
-| `@pytest.mark.parametrize()` | 使用多个输入运行测试 |
-| `@pytest.mark.slow` | 标记慢速测试 |
-| `pytest -m "not slow"` | 跳过慢速测试 |
-| `@patch()` | 模拟函数和类 |
-| `tmp_path` 夹具 | 自动生成临时目录 |
-| `pytest --cov` | 生成覆盖率报告 |
-| `assert` | 简单且可读的断言 |
-
-**记住**：测试代码也是代码。请保持其整洁、可读且易于维护。好的测试能发现 bug；卓越的测试能预防 bug。
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 29 MINUTES 47 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

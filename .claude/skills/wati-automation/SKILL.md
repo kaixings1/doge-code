@@ -80,12 +80,4 @@ session_id: "your_session_id"
 ## 快速参考
 
 | 操作 | 方法 |
-|-----------|----------|
-| 查找工具 | 使用 Wati 特定用例调用 `RUBE_SEARCH_TOOLS` |
-| 连接 | 使用工具包 `wati` 调用 `RUBE_MANAGE_CONNECTIONS` |
-| 执行 | 使用已发现的工具 slugs 调用 `RUBE_MULTI_EXECUTE_TOOL` |
-| 批量操作 | 使用 `run_composio_tool()` 调用 `RUBE_REMOTE_WORKBENCH` |
-| 完整 schema | 对带有 `schemaRef` 的工具使用 `RUBE_GET_TOOL_SCHEMAS` |
-
----
-*由 [Composio](https://composio.dev) 提供支持*
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 42 MINUTES 11 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

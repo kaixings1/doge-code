@@ -100,11 +100,4 @@ For bulk operations, use `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` in a
 ## Quick Reference
 
 | Operation | Approach |
-|-----------|----------|
-| Find tools | `RUBE_SEARCH_TOOLS` with New Relic-specific use case |
-| Connect | `RUBE_MANAGE_CONNECTIONS` with toolkit `new_relic` |
-| Execute | `RUBE_MULTI_EXECUTE_TOOL` with discovered tool slugs |
-| Bulk ops | `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` |
-| Full schema | `RUBE_GET_TOOL_SCHEMAS` for tools with `schemaRef` |
-
-> **Toolkit docs**: [composio.dev/toolkits/new_relic](https://composio.dev/toolkits/new_relic)
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 04 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
