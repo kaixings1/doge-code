@@ -1,5 +1,103 @@
 // Workflows - automate repetitive tasks with scriptable sequences
 import type { Command } from '../../commands.js'
-import { getIsNonInteractiveSession } from '../../bootstrap/state.js' const call = async (args: string) => { const action = args.trim().toLowerCase() || 'help' if (action === 'help' || action === '') { return { type: 'text' as const, value: [ '/u2699/ufe0f Workflows /u2014 /u81ea/u52a8/u5316/u5de5/u4f5c/u6d41/u811a/u672c', '', '/u7528/u6cd5:', ' /workflows list /u2014 /u5217/u51fa/u6240/u6709/u53ef/u7528/u5de5/u4f5c/u6d41', ' /workflows run <name> /u2014 /u8fd0/u884c/u6307/u5b9a/u5de5/u4f5c/u6d41', ' /workflows create <name> /u2014 /u521b/u5efa/u65b0/u5de5/u4f5c/u6d41', ' /workflows edit <name> /u2014 /u7f16/u8f91/u5de5/u4f5c/u6d41', ' /workflows delete <name> /u2014 /u5220/u9664/u5de5/u4f5c/u6d41', '', '/u9884/u7f6e/u5de5/u4f5c/u6d41:', ' /u2022 full-stack-app /u2014 /u521b/u5efa/u5b8c/u6574/u524d/u540e/u7aef/u5e94/u7528', ' /u2022 api-service /u2014 /u642d/u5efa REST API /u670d/u52a1', ' /u2022 migrate-project /u2014 /u9879/u76ee/u8fc1/u79fb/u52a9/u624b', ' /u2022 code-review /u2014 /u81ea/u52a8/u5316/u4ee3/u7801/u5ba1/u67e5', ' /u2022 test-generator /u2014 /u6279/u91cf/u751f/u6210/u6d4b/u8bd5/u7528/u4f8b', '', '/u529f/u80fd/u7279/u6027:', '/u2022 /u53ef/u811a/u672c/u5316/u7684/u4efb/u52a1/u5e8f/u5217', '/u2022 /u652f/u6301/u6761/u4ef6/u5206/u652f/u4e0e/u5faa/u73af', '/u2022 /u4e0e/u73b0/u6709/u547d/u4ee4/u548c/u5de5/u5177/u65e0/u7f1d/u96c6/u6210', '/u2022 /u53ef/u5171/u4eab/u548c/u590d/u7528/u5de5/u4f5c/u6d41/u6a21/u677f', ].join('/n'), } } if (action === 'list' || action === 'ls') { return { type: 'text' as const, value: [ '/U0001f4cb /u53ef/u7528/u5de5/u4f5c/u6d41', '', ' full-stack-app /u521b/u5efa/u5b8c/u6574/u524d/u540e/u7aef/u5e94/u7528', ' api-service /u642d/u5efa REST API /u670d/u52a1', ' migrate-project /u9879/u76ee/u8fc1/u79fb/u52a9/u624b', ' code-review /u81ea/u52a8/u5316/u4ee3/u7801/u5ba1/u67e5', ' test-generator /u6279/u91cf/u751f/u6210/u6d4b/u8bd5/u7528/u4f8b', '', '/u4f7f/u7528 /workflows run <name> /u6267/u884c/u5de5/u4f5c/u6d41/u3002', ].join('/n'), } } if (action.startsWith('run ') || action.startsWith('execute ')) { const wfName = action.replace(/^(run|execute)/s+/, '').trim() return { type: 'text' as const, value: [ , '', , , '', '/u6b65/u9aa4:', ' 1. /u5206/u6790/u9879/u76ee/u7ed3/u6784/u548c/u9700/u6c42', ' 2. /u5236/u5b9a/u5b9e/u65bd/u8ba1/u5212', ' 3. /u9010/u6b65/u6267/u884c/u81ea/u52a8/u5316/u4efb/u52a1', ' 4. /u9a8c/u8bc1/u7ed3/u679c/u5e76/u63d0/u4ea4', ].join('/n'), } } if (action.startsWith('create ')) { const wfName = action.replace(/^create/s+/, '').trim() return { type: 'text' as const, value: [ , '', '/u5728/u5de5/u4f5c/u6d41/u521b/u5efa/u5411/u5bfc/u4e2d/uff0c/u4f60/u53ef/u4ee5:', ' /u2022 /u5b9a/u4e49/u89e6/u53d1/u6761/u4ef6', ' /u2022 /u7f16/u6392/u5de5/u5177/u8c03/u7528/u5e8f/u5217', ' /u2022 /u8bbe/u7f6e/u6761/u4ef6/u5206/u652f', ' /u2022 /u6dfb/u52a0/u4eba/u5de5/u786e/u8ba4/u70b9', '', '/u4f7f/u7528 /workflows edit /u8fdb/u4e00/u6b65/u914d/u7f6e/u3002', ].join('/n'), } } return { type: 'text' as const, value: [ '/u2699/ufe0f /u672a/u77e5/u5de5/u4f5c/u6d41/u64cd/u4f5c/u3002', '', '/u4f7f/u7528 /workflows help /u67e5/u770b/u6240/u6709/u53ef/u7528/u547d/u4ee4/u3002', ].join('/n'), }
-} const workflows: Command = { type: 'local', name: 'workflows', description: '/u81ea/u52a8/u5316/u5de5/u4f5c/u6d41/u811a/u672c /u2014 /u7f16/u6392/u548c/u8fd0/u884c/u53ef/u590d/u7528/u7684/u4efb/u52a1/u5e8f/u5217', isEnabled: () => !getIsNonInteractiveSession(), supportsNonInteractive: true, load: () => Promise.resolve({ call }),
-} export default workflows
+import { getIsNonInteractiveSession } from '../../bootstrap/state.js'
+
+const NL = '\n'
+
+const call = async (args: string) => {
+ const action = args.trim().toLowerCase() || 'help'
+
+ if (action === 'help' || action === '') {
+ return {
+ type: 'text' as const,
+ value: [
+ 'Workflows - automation workflow scripts',
+ '',
+ 'Usage:',
+ ' /workflows list - list all available workflows',
+ ' /workflows run <name> - run specified workflow',
+ ' /workflows create <name> - create new workflow',
+ ' /workflows edit <name> - edit workflow',
+ ' /workflows delete <name> - delete workflow',
+ '',
+ 'Preset workflows:',
+ ' - full-stack-app - create full stack app',
+ ' - api-service - build REST API service',
+ ' - migrate-project - project migration assistant',
+ ' - code-review - automated code review',
+ ' - test-generator - batch test case generation',
+ '',
+ 'Features:',
+ ' - Scriptable task sequences',
+ ' - Support conditional branching and loops',
+ ' - Seamless integration with existing commands and tools',
+ ' - Shareable and reusable workflow templates',
+ ].join(NL),
+ }
+ }
+
+ if (action === 'list' || action === 'ls') {
+ return {
+ type: 'text' as const,
+ value: [
+ 'Available workflows',
+ '',
+ ' full-stack-app - create full stack app',
+ ' api-service - build REST API service',
+ ' migrate-project - project migration assistant',
+ ' code-review - automated code review',
+ ' test-generator - batch test case generation',
+ '',
+ 'Use /workflows run <name> to execute a workflow.',
+ ].join(NL),
+ }
+ }
+
+ if (action.startsWith('run ') || action.startsWith('execute ')) {
+ const wfName = action.replace(/^(run|execute)//s+/, '').trim()
+ return {
+ type: 'text' as const,
+ value: [
+ '',
+ 'Steps:',
+ ' 1. Analyze project structure and requirements',
+ ' 2. Create implementation plan',
+ ' 3. Execute automated tasks step by step',
+ ' 4. Verify results and submit',
+ ].join(NL),
+ }
+ }
+
+ if (action.startsWith('create ')) {
+ const wfName = action.replace(/^create//s+/, '').trim()
+ return {
+ type: 'text' as const,
+ value: [
+ '',
+ 'In the workflow creation wizard, you can:',
+ ' - Define trigger conditions',
+ ' - Orchestrate tool call sequences',
+ ' - Set conditional branches',
+ ' - Add manual confirmation points',
+ '',
+ 'Use /workflows edit for further configuration.',
+ ].join(NL),
+ }
+ }
+
+ return {
+ type: 'text' as const,
+ value: 'Unknown workflow operation. Use /workflows help.',
+ }
+}
+
+const workflows: Command = {
+ type: 'local',
+ name: 'workflows',
+ description: 'Automated workflow scripts - orchestrate reusable task sequences',
+ isEnabled: () => !getIsNonInteractiveSession(),
+ supportsNonInteractive: true,
+ load: () => Promise.resolve({ call }),
+} satisfies Command
+
+export default workflows

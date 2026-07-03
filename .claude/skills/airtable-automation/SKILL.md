@@ -154,25 +154,4 @@ Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 ## Quick Reference
 
 | Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| List bases | AIRTABLE_LIST_BASES | (none) |
-| Get schema | AIRTABLE_GET_BASE_SCHEMA | baseId |
-| List records | AIRTABLE_LIST_RECORDS | baseId, tableIdOrName |
-| Get record | AIRTABLE_GET_RECORD | baseId, tableIdOrName, recordId |
-| Create record | AIRTABLE_CREATE_RECORD | baseId, tableIdOrName, fields |
-| Create records | AIRTABLE_CREATE_RECORDS | baseId, tableIdOrName, records |
-| Update record | AIRTABLE_UPDATE_RECORD | baseId, tableIdOrName, recordId, fields |
-| Update records | AIRTABLE_UPDATE_MULTIPLE_RECORDS | baseId, tableIdOrName, records |
-| Delete record | AIRTABLE_DELETE_RECORD | baseId, tableIdOrName, recordId |
-| Create field | AIRTABLE_CREATE_FIELD | baseId, tableIdOrName, name, type |
-| Update field | AIRTABLE_UPDATE_FIELD | baseId, tableIdOrName, fieldId |
-| Update table | AIRTABLE_UPDATE_TABLE | baseId, tableIdOrName, name |
-| List comments | AIRTABLE_LIST_COMMENTS | baseId, tableIdOrName, recordId |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 25 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
