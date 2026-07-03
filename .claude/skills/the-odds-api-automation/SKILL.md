@@ -81,11 +81,11 @@ session_id: "your_session_id"
 
 | Operation | Approach |
 |-----------|----------|
-| Find tools | `RUBE_SEARCH_TOOLS` with The Odds API-specific use case |
-| Connect | `RUBE_MANAGE_CONNECTIONS` with toolkit `the_odds_api` |
-| Execute | `RUBE_MULTI_EXECUTE_TOOL` with discovered tool slugs |
-| Bulk ops | `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` |
-| Full schema | `RUBE_GET_TOOL_SCHEMAS` for tools with `schemaRef` |
+|查找工具|使用Odds API特定用例的“RUBE_SEARCH_TOOLS” |
+|使用工具包“the_odds_api”连接| “RUBE_MANAGE_connections” |
+|使用发现的工具slug执行| “RUBE_MULTI_EXECUTE_TOOL” |
+|批量操作| “RUBE_REMOTE_WORKBENCH”与“RUN_COMPOSIO_TOOL ()” |
+|完整架构| “schemaRef”工具的“RUBE_GET_TOOL_SCHEMAS” |
 
 ---
-*Powered by [Composio](https://composio.dev)*
+*由[Composio] (https://composio.dev)提供支持*

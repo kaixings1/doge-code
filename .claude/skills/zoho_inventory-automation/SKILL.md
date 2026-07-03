@@ -100,11 +100,4 @@ RUBE_MULTI_EXECUTE_TOOL:
 ## 快速参考
 
 | 操作 | 方法 |
-|-----------|----------|
-| 查找工具 | 使用 Zoho Inventory 特定用例调用 `RUBE_SEARCH_TOOLS` |
-| 连接 | 使用工具包 `zoho_inventory` 调用 `RUBE_MANAGE_CONNECTIONS` |
-| 执行 | 使用已发现的工具 slugs 调用 `RUBE_MULTI_EXECUTE_TOOL` |
-| 批量操作 | 使用 `run_composio_tool()` 调用 `RUBE_REMOTE_WORKBENCH` |
-| 完整 schema | 对带有 `schemaRef` 的工具使用 `RUBE_GET_TOOL_SCHEMAS` |
-
-> **工具包文档**: [composio.dev/toolkits/zoho_inventory](https://composio.dev/toolkits/zoho_inventory)
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 02 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

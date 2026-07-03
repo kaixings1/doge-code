@@ -126,39 +126,4 @@ let text = input.text();
 ## API Reference Table
 
 | Macro/Type | Description | Example |
-|------------|-------------|---------|
-| `live_design!` | Defines UI in DSL | `live_design! { App = {{App}} { ... } }` |
-| `app_main!` | Entry point macro | `app_main!(App);` |
-| `#[derive(Live)]` | Derive live data | `#[derive(Live, LiveHook)]` |
-| `WidgetRef` | Reference to UI tree | `#[live] ui: WidgetRef` |
-| `Cx` | Context for rendering | `fn handle_event(&mut self, cx: &mut Cx, ...)` |
-| `id!()` | Widget ID macro | `self.ui.button(id!(my_button))` |
-
-## Platform Setup
-
-| Platform | Requirements |
-|----------|--------------|
-| macOS | Works out of the box |
-| Windows | Works out of the box |
-| Linux | `apt-get install clang libaudio-dev libpulse-dev libx11-dev libxcursor-dev` |
-| Web | `cargo install wasm-pack` |
-
-## When Writing Code
-
-1. Always include required imports: `use makepad_widgets::*;`
-2. Use `live_design!` macro for all UI definitions
-3. Implement `LiveRegister` and `AppMain` traits
-4. Use `id!()` macro for widget references
-5. Handle events through `handle_event` method
-
-## When Answering Questions
-
-1. Emphasize live design - changes in DSL reflect instantly without recompilation
-2. Makepad is GPU-first - all rendering is shader-based
-3. Cross-platform: same code runs on Android, iOS, Linux, macOS, Windows, Web
-4. Recommend UI Zoo example for widget exploration
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 23 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

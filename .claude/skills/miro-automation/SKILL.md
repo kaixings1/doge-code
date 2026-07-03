@@ -193,22 +193,4 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 ## Quick Reference
 
 | Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| List boards | MIRO_GET_BOARDS2 | query, sort, limit, offset |
-| Get board details | MIRO_GET_BOARD | board_id |
-| Create board | MIRO_CREATE_BOARD | name, description |
-| Add sticky note | MIRO_CREATE_STICKY_NOTE_ITEM | board_id, data, style, position |
-| Add frame | MIRO_CREATE_FRAME_ITEM2 | board_id, data, geometry, position |
-| Bulk add items | MIRO_CREATE_ITEMS_IN_BULK | board_id, items |
-| Get board items | MIRO_GET_BOARD_ITEMS | board_id, type, cursor |
-| Share board | MIRO_SHARE_BOARD | board_id, emails, role |
-| Get members | MIRO_GET_BOARD_MEMBERS | board_id |
-| Get connectors | MIRO_GET_CONNECTORS2 | board_id |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 29 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

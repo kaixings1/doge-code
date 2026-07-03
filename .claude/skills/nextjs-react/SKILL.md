@@ -155,19 +155,4 @@ export const config = {
 Next.js vulnerabilities often enable chains:
 
 | Next.js Vulnerability | Chains To |
-|----------------------|-----------|
-| Server Action SSRF | Internal Flask/Django SSTI |
-| Server Action SSRF | Cloud metadata (169.254.169.254) |
-| Route Handler SQLi | Data exfiltration, auth bypass |
-| Middleware Bypass | Admin panel access |
-| Data Leak | Credential theft, session hijacking |
-
-## Remediation Checklist
-
-- [ ] All Server Actions validate authentication
-- [ ] All Route Handlers check authorization
-- [ ] Middleware uses case-insensitive matching
-- [ ] Server Components filter sensitive fields before passing to client
-- [ ] redirect() calls validate Host header or use absolute URLs
-- [ ] Database queries use parameterized statements
-- [ ] File operations validate paths
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 01 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -205,30 +205,4 @@ pub struct rasterizer::Settings {
 ## Text Properties
 
 | Property | Type | Description |
-|----------|------|-------------|
-| `text` | String | Text content |
-| `font` | Font | Font resource |
-| `font_size` | f64 | Size in points |
-| `line_spacing` | f64 | Line height multiplier |
-| `letter_spacing` | f64 | Character spacing |
-| `color` | Vec4 | Text color |
-| `brightness` | f64 | Text brightness |
-| `curve` | f64 | Text curve effect |
-
-## When Answering Questions
-
-1. Makepad uses SDF (Signed Distance Field) for crisp text at any scale
-2. Fonts are loaded once and cached in GPU texture atlases
-3. Text shaping uses harfbuzz for proper glyph positioning
-4. Use `dep("crate://...")` for embedded font resources
-5. Default font cache size is 4096 glyphs
-6. Atlas sizes: 4096x4096 for grayscale, 2048x2048 for color (emoji)
-
-
-## When to Use
-Use this skill when tackling tasks related to its primary domain or functionality as described above.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 19 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

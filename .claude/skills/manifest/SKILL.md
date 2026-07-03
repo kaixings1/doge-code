@@ -99,34 +99,4 @@ If it appears, tell the user setup is complete. If not, check the error messages
 ## Troubleshooting
 
 | Error | Fix |
-|-------|-----|
-| Missing apiKey | Re-run step 4 |
-| Invalid apiKey format | The key must start with `mnfst_` |
-| Connection refused | The endpoint is unreachable. Check the URL or ask if they self-host |
-| Duplicate OTel registration | Disable the conflicting built-in plugin: `claude plugins disable diagnostics-otel` |
-
-## Examples
-
-### Example 1: Basic setup
-
-```
-Use @manifest to set up observability for my agent.
-```
-
-### Example 2: Custom endpoint
-
-```
-Use @manifest to connect my agent to my self-hosted Manifest instance at https://manifest.internal.company.com/api/v1/otlp
-```
-
-## Best Practices
-
-- Always stop the gateway before making configuration changes
-- The default endpoint works for most users — only change it if self-hosting
-- API keys always start with `mnfst_` — any other format is invalid
-- Check gateway logs first when debugging any plugin issue
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 11 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

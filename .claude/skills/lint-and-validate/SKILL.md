@@ -35,22 +35,4 @@ date_added: "2026-02-27"
 - If `tsc` fails: Correct type mismatches before proceeding.
 - If no tool is configured: Check the project root for `.eslintrc`, `tsconfig.json`, `pyproject.toml` and suggest creating one.
 
----
-**Strict Rule:** No code should be committed or reported as "done" without passing these checks.
-
----
-
-## Scripts
-
-| Script | Purpose | Command |
-|--------|---------|---------|
-| `scripts/lint_runner.py` | Unified lint check | `python scripts/lint_runner.py <project_path>` |
-| `scripts/type_coverage.py` | Type coverage analysis | `python scripts/type_coverage.py <project_path>` |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 20 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

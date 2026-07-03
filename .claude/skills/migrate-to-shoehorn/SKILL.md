@@ -97,22 +97,4 @@ getUser(fromAny({ body: { id: 123 } }));
 ## When to use each
 
 | Function        | Use case                                           |
-| --------------- | -------------------------------------------------- |
-| `fromPartial()` | Pass partial data that still type-checks           |
-| `fromAny()`     | Pass intentionally wrong data (keeps autocomplete) |
-| `fromExact()`   | Force full object (swap with fromPartial later)    |
-
-## Workflow
-
-1. **Gather requirements** - ask user:
-   - What test files have `as` assertions causing problems?
-   - Are they dealing with large objects where only some properties matter?
-   - Do they need to pass intentionally wrong data for error testing?
-
-2. **Install and migrate**:
-   - [ ] Install: `npm i @total-typescript/shoehorn`
-   - [ ] Find test files with `as` assertions: `grep -r " as [A-Z]" --include="*.test.ts" --include="*.spec.ts"`
-   - [ ] Replace `as Type` with `fromPartial()`
-   - [ ] Replace `as unknown as Type` with `fromAny()`
-   - [ ] Add imports from `@total-typescript/shoehorn`
-   - [ ] Run type check to verify
+| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 32 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

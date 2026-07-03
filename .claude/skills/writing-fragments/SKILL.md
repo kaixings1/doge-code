@@ -49,31 +49,4 @@ A first fragment lives here.
 It can be multiple paragraphs. It can include lists, code, quotes — whatever
 shape the fragment naturally takes.
 
----
-
-A second fragment.
-
----
-
-> A quoted line that the user wants to keep around.
-
-A reaction to it.
-
----
-
-- A cluster of related observations
-- That hang together by feel
-- And want to be near each other
-```
-
-Fragments are separated by a horizontal rule (`\n---\n`). No headings inside the body. No tags. No order beyond the order they were added.
-
-## Writing rhythm
-
-Append silently. Don't ask permission for each fragment. Mention what you added in passing ("adding that"), but don't interrupt the conversation with save dialogs.
-
-Before every write: re-read the file from disk. The user may have edited, reordered, or deleted fragments between turns — preserve their changes. Never overwrite the file; only append (or, if the user asks, edit a specific fragment in place).
-
-The user can say "cut the last one", "rewrite that one sharper", "merge those two" at any time. Treat those as first-class instructions.
-
-</supporting-info>
+---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 34 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

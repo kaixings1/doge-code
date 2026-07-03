@@ -205,36 +205,4 @@ subscriber_hash = hashlib.md5(email.lower().encode()).hexdigest()
 ## Quick Reference
 
 | Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| List audiences | `MAILCHIMP_GET_LISTS_INFO` | `count`, `offset` |
-| Get audience details | `MAILCHIMP_GET_LIST_INFO` | `list_id` |
-| Create campaign | `MAILCHIMP_ADD_CAMPAIGN` | `type`, `recipients__list__id`, `settings__subject__line` |
-| Set campaign content | `MAILCHIMP_SET_CAMPAIGN_CONTENT` | `campaign_id`, `html` |
-| Send test email | `MAILCHIMP_SEND_TEST_EMAIL` | `campaign_id`, `test_emails` |
-| Send campaign | `MAILCHIMP_SEND_CAMPAIGN` | `campaign_id` |
-| Schedule campaign | `MAILCHIMP_SCHEDULE_CAMPAIGN` | `campaign_id`, `schedule_time` |
-| Get campaign info | `MAILCHIMP_GET_CAMPAIGN_INFO` | `campaign_id` |
-| Search campaigns | `MAILCHIMP_SEARCH_CAMPAIGNS` | `query` |
-| List campaigns | `MAILCHIMP_LIST_CAMPAIGNS` | `status`, `count`, `offset` |
-| Replicate campaign | `MAILCHIMP_REPLICATE_CAMPAIGN` | `campaign_id` |
-| List subscribers | `MAILCHIMP_LIST_MEMBERS_INFO` | `list_id`, `status`, `count`, `offset` |
-| Search members | `MAILCHIMP_SEARCH_MEMBERS` | `query`, `list_id` |
-| Get member info | `MAILCHIMP_GET_MEMBER_INFO` | `list_id`, `subscriber_hash` |
-| Add subscriber | `MAILCHIMP_ADD_MEMBER_TO_LIST` | `list_id`, `email_address`, `status` |
-| Upsert subscriber | `MAILCHIMP_ADD_OR_UPDATE_LIST_MEMBER` | `list_id`, `subscriber_hash`, `email_address`, `status_if_new` |
-| Batch members | `MAILCHIMP_BATCH_ADD_OR_REMOVE_MEMBERS` | `list_id`, `segment_id` |
-| List segments | `MAILCHIMP_LIST_SEGMENTS` | `list_id` |
-| Campaign report | `MAILCHIMP_GET_CAMPAIGN_REPORT` | `campaign_id` |
-| All reports | `MAILCHIMP_LIST_CAMPAIGN_REPORTS` | `count`, `offset` |
-| Link click details | `MAILCHIMP_LIST_CAMPAIGN_DETAILS` | `campaign_id`, `count` |
-| Subscriber activity | `MAILCHIMP_GET_SUBSCRIBER_EMAIL_ACTIVITY` | `campaign_id`, `subscriber_hash` |
-| Member recent activity | `MAILCHIMP_VIEW_RECENT_ACTIVITY` | `list_id`, `subscriber_hash` |
-| Campaign content | `MAILCHIMP_GET_CAMPAIGN_CONTENT` | `campaign_id` |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 38 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -276,24 +276,4 @@ await foreach (var activity in client.AskQuestionAsync("Hello!", null))
 ## Reference Files
 
 | File | Contents |
-| --- | --- |
-| references/acceptance-criteria.md | Import paths, hosting pipeline, Copilot Studio client patterns, anti-patterns |
-
-## Reference Links
-
-| Resource | URL |
-| --- | --- |
-| Microsoft 365 Agents SDK | https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/ |
-| AddAgent API | https://learn.microsoft.com/en-us/dotnet/api/microsoft.agents.hosting.aspnetcore.servicecollectionextensions.addagent?view=m365-agents-sdk |
-| AgentApplication API | https://learn.microsoft.com/en-us/dotnet/api/microsoft.agents.builder.app.agentapplication?view=m365-agents-sdk |
-| Auth configuration options | https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/microsoft-authentication-library-configuration-options |
-| Copilot Studio integration | https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/integrate-with-mcs |
-| GitHub samples | https://github.com/microsoft/agents |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 48 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

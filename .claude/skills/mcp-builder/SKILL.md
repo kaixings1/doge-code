@@ -225,36 +225,4 @@ server.sendLoggingMessage({ level: "info", data: "处理中" });
 **常见问题：**
 
 | 症状 | 原因 | 解决 |
-|------|------|------|
-| 启动无响应 | transport 未连接 | 检查 `server.connect()` |
-| Tool 不出现 | 注册在 connect 之后 | 先注册再 connect |
-| AI 不调用 Tool | 描述不清晰 | 改善名称和描述 |
-| 参数总错 | Schema 不明确 | 添加 `.describe()` |
-| 调用超时 | 外部服务慢 | 加超时和缓存 |
-
-**调试流程：** Inspector 验证基本功能 → 手动调用确认输入输出 → 连接真实 AI 客户端观察调用模式 → 根据实际行为调整设计。
-
-## 10. 构建检查清单
-
-### 设计
-- [ ] 明确 Tools vs Resources vs Prompts 分工
-- [ ] Tool 命名 `动词_名词`，描述说明用途和返回内容
-- [ ] 参数简洁，可选参数有合理默认值
-
-### 实现
-- [ ] 输入用 Zod/Pydantic 校验
-- [ ] 外部调用有 try/catch 和超时
-- [ ] 错误返回 `isError: true` 并附可操作信息
-- [ ] 不用 `console.log`（用 stderr 或 SDK 日志）
-- [ ] 敏感数据走环境变量
-
-### 测试
-- [ ] 核心逻辑有单元测试
-- [ ] 有集成测试验证 MCP 协议交互
-- [ ] 用 MCP Inspector 手动验证过
-- [ ] 用真实 AI 客户端测试过
-
-### 部署
-- [ ] README 含安装和配置说明
-- [ ] 提供客户端配置 JSON 示例
-- [ ] 遵循 semver，无硬编码密钥
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 00 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

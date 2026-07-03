@@ -16,28 +16,4 @@ Design a metrics hierarchy that aligns teams and drives the right behavior.
 
 ### AARRR (Pirate Metrics)
 | Stage | Metric |
-|-------|--------|
-| Acquisition | New signups, cost per acquisition |
-| Activation | Completed onboarding, "aha moment" |
-| Retention | DAU/MAU, D7/D30 retention |
-| Revenue | ARPU, MRR, conversion to paid |
-| Referral | Viral coefficient, referral rate |
-
-### HEART (Google)
-- Happiness, Engagement, Adoption, Retention, Task success
-
-### Leading vs. Lagging
-- **Leading**: Predict future outcomes (weekly active users → future revenue)
-- **Lagging**: Confirm past results (monthly revenue, churn rate)
-
-## Usage Examples
-
-```
-"Define the KPI framework for our B2B SaaS product with North Star and input metrics"
-```
-
-## Output Format
-
-- **Metrics Hierarchy**: North Star → input metrics → supporting metrics
-- **Definitions**: Precise calculation for each metric
-- **Dashboard Design**: How to visualize the framework
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 14 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

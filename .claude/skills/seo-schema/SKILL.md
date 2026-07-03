@@ -149,19 +149,4 @@ When generating schema for a page:
 
 ### Validation Results
 | Schema | Type | Status | Issues |
-|--------|------|--------|--------|
-| ... | ... | ✅/⚠️/❌ | ... |
-
-### Recommendations
-- Missing schema opportunities
-- Validation fixes needed
-- Generated code for implementation
-
-## Error Handling
-
-| Scenario | Action |
-|----------|--------|
-| URL unreachable | Report connection error with status code. Suggest verifying URL and checking if the page requires authentication. |
-| No schema markup found | Report that no JSON-LD, Microdata, or RDFa was detected. Recommend appropriate schema types based on page content analysis. |
-| Invalid JSON-LD syntax | Parse and report specific syntax errors (missing brackets, trailing commas, unquoted keys). Provide corrected JSON-LD output. |
-| Deprecated schema type detected | Flag the deprecated type with its retirement date. Recommend the current replacement type or advise removal if no replacement exists. |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 31 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

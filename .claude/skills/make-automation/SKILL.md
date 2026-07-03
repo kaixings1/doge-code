@@ -173,38 +173,4 @@ Make workflows often connect to other apps. Compose multi-tool workflows:
 ## Quick Reference
 
 | Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| Get operations | MAKE_GET_OPERATIONS | (check schema for filters) |
-| List languages | MAKE_LIST_ENUMS_LANGUAGES | (none) |
-| List timezones | MAKE_LIST_ENUMS_TIMEZONES | (none) |
-
-## Additional Notes
-
-### Alternative Approaches
-
-Since the Make toolkit has limited tools, consider these alternatives for common Make use cases:
-
-| Make Use Case | Alternative Approach |
-|--------------|---------------------|
-| Trigger a scenario | Use Make's native webhook or API endpoint directly |
-| Create a scenario | Use Make's scenario management API directly |
-| Schedule execution | Use RUBE_MANAGE_RECIPE_SCHEDULE with composed workflows |
-| Multi-app workflow | Compose individual toolkit tools via RUBE_MULTI_EXECUTE_TOOL |
-| Data transformation | Use RUBE_REMOTE_WORKBENCH for complex processing |
-
-### Composing Equivalent Workflows
-
-Instead of relying solely on Make's toolkit, build equivalent automation directly:
-1. Identify the apps involved in your Make scenario
-2. Search for each app's tools via RUBE_SEARCH_TOOLS
-3. Connect all required toolkits
-4. Build the workflow step-by-step using individual app tools
-5. Save as a recipe via RUBE_CREATE_UPDATE_RECIPE for reuse
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 25 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -78,14 +78,4 @@ When the user invokes this skill:
 ## Core Content & Takeaways
 [Central message and key insight]
 
----
-*Auto-generated with Gemini API*
-```
-
-## Notes
-
-- Language of the summary matches the language of the video
-- Files are auto-deleted from Gemini storage after processing (48h limit)
-- Already-summarized videos are skipped on re-runs
-- Script path: `scripts/summarize_videos.py`
-- Model: `gemini-3-flash-preview`
+---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 42 MINUTES 20 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

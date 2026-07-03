@@ -45,34 +45,4 @@ If multiple TS files were edited in a row, just remind once at the end.
 ## File-type cheat sheet
 
 | Path                           | Restart picks up edit? | Needs build? |
-| ------------------------------ | ---------------------- | ------------ |
-| `src/**/*.ts`                  | Only after build       | **Yes**      |
-| `templates/hooks/**/*.mjs`     | Yes                    | No           |
-| `scripts/**/*.mjs` / `*.cjs`   | Yes                    | No           |
-| `skills/**/SKILL.md`           | Yes                    | No           |
-| `agents/**/*.md`               | Yes                    | No           |
-| `commands/**/*.md`             | Yes                    | No           |
-| `.claude-plugin/plugin.json`   | Yes (on Claude restart)| No           |
-| `docs/**/*.md`                 | Cosmetic only          | No           |
-
-## One-command setup for hands-free dev
-
-If the user is iterating heavily and tired of remembering the build, suggest:
-
-```powershell
-npm run dev:full
-```
-
-This runs `tsc --watch` plus all bridge builders in parallel — every save
-triggers a rebuild within a second, so `restart Claude Code` is all that's
-needed afterwards.
-
-## Detection signal — how the AI knows it's "local mode"
-
-The HUD's `[OMC#X.Y.ZL]` suffix is the visible cue. Programmatically, the
-detection lives in `src/lib/version.ts::isRuntimePackageLocal()` and triggers
-on any of: `.git/` at package root, `src/` at package root, package reached
-via symlink/junction, or any ancestor is a symlink/junction.
-
-When running inside the OMC fork repo itself, the AI is by definition in
-local mode — the reminder always applies.
+| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 02 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

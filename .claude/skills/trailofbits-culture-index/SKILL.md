@@ -33,47 +33,4 @@ This skill provides expert interpretation of Culture Index behavioral assessment
 
 ### Trait Colors
 | Trait | Color | Measures |
-|-------|-------|----------|
-| A | Maroon | Autonomy, initiative |
-| B | Yellow | Social ability |
-| C | Blue | Pace/Patience |
-| D | Green | Conformity, detail |
-| L | Purple | Logic |
-| I | Cyan | Ingenuity |
-
-### Energy Utilization
-```
-Utilization = (Job EU / Survey EU) x 100
-
-70-130% = Healthy
->130% = STRESS (burnout risk)
-<70% = FRUSTRATION (flight risk)
-```
-
-### Gas/Brake/Glue Framework
-| Role | Trait | Function |
-|------|-------|----------|
-| Gas | High A | Growth, risk-taking |
-| Brake | High D | Quality control |
-| Glue | High B | Relationships, morale |
-
-## Input Formats
-
-- **JSON** - Extracted profiles from culture-index tool (recommended)
-- **PDF** - Direct PDF analysis using Claude's vision
-
-## Workflows
-
-- `interpret-individual.md` - Single profile analysis
-- `analyze-team.md` - Team composition assessment
-- `detect-burnout.md` - Stress/frustration detection
-- `compare-profiles.md` - Multi-profile compatibility
-
-## Reference Documents
-
-- `primary-traits.md` - A, B, C, D trait details
-- `secondary-traits.md` - EU, L, I trait details
-- `patterns-archetypes.md` - 19 patterns and archetypes
-- `motivators.md` - Engagement strategies by trait
-- `team-composition.md` - Gas/brake/glue framework
-- `anti-patterns.md` - Common interpretation mistakes
+|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 35 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

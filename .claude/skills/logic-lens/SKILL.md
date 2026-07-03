@@ -82,44 +82,4 @@ npx antigravity-awesome-skills --claude
 ## The 9 Risk Categories
 
 | Category | What It Checks |
-|----------|----------------|
-| **Null/Undefined** | Missing null checks, optional chaining gaps |
-| **Type Safety** | Implicit coercions, any-typed boundaries |
-| **Concurrency** | Race conditions, shared mutable state |
-| **Resource Management** | Unclosed handles, memory leaks |
-| **Security Injection** | SQL/XSS/Command injection, path traversal |
-| **Boundary Conditions** | Off-by-one errors, integer overflow |
-| **Algorithm Correctness** | Wrong complexity, incorrect assumptions |
-| **State Management** | Inconsistent state, missing rollbacks |
-| **API Contracts** | Undocumented side effects, broken interfaces |
-
-## Best Practices
-
-- Run `@logic-lens` on authentication and payment code before every release
-- Combine with `@lint-and-validate` for full coverage: style + logic
-- Review the CRITICAL and HIGH findings first; LOW findings can be deferred
-- Use `@logic-lens` on legacy code you are about to modify to understand risk surface
-
-## Benchmark Results
-
-Logic Lens was tested against real-world codebases and caught issues missed by ESLint, TypeScript strict mode, and Snyk:
-
-- **47% of critical bugs** found were invisible to linters
-- **Race conditions** detected in async code that static analysis missed
-- **Security vulnerabilities** identified before deployment in CI pipeline
-
-## Related Skills
-
-- `@lint-and-validate` — Complementary: run after logic-lens for style/syntax
-- `@security-auditor` — Specialized security-only deep scan
-- `@debugging-strategies` — Use when logic-lens findings need tracing
-
-## Additional Resources
-
-- [GitHub Repository](https://github.com/hyhmrright/logic-lens)
-- [Dev.to Article: Why AI Code Review Misses the Most Dangerous Bugs](https://dev.to/hyhmrright/why-ai-code-review-misses-the-most-dangerous-bugs-logic-lens-fixes-that-4a8l)
-- [Claude Code Skills Documentation](https://docs.anthropic.com/claude-code)
-
-## Limitations
-
-Use this skill only when the task clearly matches the scope described above (code review and logic analysis). Logic Lens provides AI-powered analysis and should be combined with human review for production-critical decisions. Do not treat the output as a substitute for environment-specific testing or security audits.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 58 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -21,42 +21,4 @@ This plugin provides:
 ### What Gets Intercepted
 
 | Tool | Pattern | Suggestion |
-|------|---------|------------|
-| `WebFetch` | `github.com/{owner}/{repo}` | `gh repo view owner/repo` |
-| `WebFetch` | `github.com/.../blob/...` | `gh repo clone` + Read |
-| `WebFetch` | `github.com/.../tree/...` | `gh repo clone` + Read/Glob/Grep |
-| `WebFetch` | `api.github.com/repos/.../pulls` | `gh pr list` / `gh pr view` |
-| `WebFetch` | `api.github.com/repos/.../issues` | `gh issue list` / `gh issue view` |
-| `WebFetch` | `api.github.com/...` | `gh api <endpoint>` |
-| `WebFetch` | `raw.githubusercontent.com/...` | `gh repo clone` + Read |
-| `Bash` | `curl https://api.github.com/...` | `gh api <endpoint>` |
-| `Bash` | `curl https://raw.githubusercontent.com/...` | `gh repo clone` + Read |
-| `Bash` | `wget https://github.com/...` | `gh release download` |
-| `Bash` (shim) | `gh api repos/.../contents/...` | `gh repo clone` + Read |
-| `Bash` (shim) | `gh repo clone ... /tmp/...` (non-session-scoped) | Session-scoped clone path |
-
-### What Passes Through
-
-- Non-GitHub URLs (any domain that isn't `github.com`, `api.github.com`, `raw.githubusercontent.com`, or `gist.github.com`)
-- GitHub Pages sites (`*.github.io`)
-- Commands already using `gh` (except anti-patterns blocked by the shim; see table above)
-- Git commands (`git clone`, `git push`, etc.)
-- Search commands that mention GitHub URLs (`grep`, `rg`, etc.)
-
-**Note:** When hooks deny blob/tree/raw URLs, the denial message explicitly warns against using `gh api` to fetch and base64-decode file contents as a fallback — clone the repo instead.
-
-### Automatic Cleanup
-
-Cloned repositories are stored in session-scoped temp directories (`$TMPDIR/gh-clones-<session-id>/`). A SessionEnd hook automatically removes them when the session ends, so there's no manual cleanup needed and concurrent sessions don't interfere with each other.
-
-## Prerequisites
-
-- [GitHub CLI (`gh`)](https://cli.github.com/) must be installed and authenticated (`gh auth login`)
-- If `gh` is not installed, the hooks pass through without disruption
-
-## Installation
-
-```
-/plugin marketplace add trailofbits/skills
-/plugin install gh-cli
-```
+|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 26 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

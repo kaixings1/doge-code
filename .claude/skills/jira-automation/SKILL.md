@@ -164,30 +164,4 @@ Automate Jira operations through Composio's Jira toolkit via Rube MCP.
 ## Quick Reference
 
 | Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| Search issues (JQL) | JIRA_SEARCH_FOR_ISSUES_USING_JQL_POST | jql, maxResults |
-| Get issue | JIRA_GET_ISSUE | issueIdOrKey |
-| Create issue | JIRA_CREATE_ISSUE | project, issuetype, summary |
-| Edit issue | JIRA_EDIT_ISSUE | issueIdOrKey, fields |
-| Assign issue | JIRA_ASSIGN_ISSUE | issueIdOrKey, accountId |
-| Add comment | JIRA_ADD_COMMENT | issueIdOrKey, body |
-| List comments | JIRA_LIST_ISSUE_COMMENTS | issueIdOrKey |
-| List projects | JIRA_GET_ALL_PROJECTS | (none) |
-| Get project | JIRA_GET_PROJECT | projectIdOrKey |
-| List boards | JIRA_LIST_BOARDS | (none) |
-| List sprints | JIRA_LIST_SPRINTS | boardId |
-| Move to sprint | JIRA_MOVE_ISSUE_TO_SPRINT | sprintId, issues |
-| Create sprint | JIRA_CREATE_SPRINT | name, boardId |
-| Find users | JIRA_FIND_USERS | query |
-| Get fields | JIRA_GET_FIELDS | (none) |
-| List filters | JIRA_LIST_FILTERS | (none) |
-| Project roles | JIRA_GET_PROJECT_ROLES | projectIdOrKey |
-| Project versions | JIRA_GET_PROJECT_VERSIONS | projectIdOrKey |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 42 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

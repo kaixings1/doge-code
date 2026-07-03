@@ -476,33 +476,4 @@ echo "Remote script executed on $remote_server"
 ### Common Script Patterns
 
 | Pattern | Purpose |
-|---------|---------|
-| `#!/bin/bash` | Shebang for bash |
-| `$(date +%Y%m%d)` | Date formatting |
-| `$((expression))` | Arithmetic |
-| `${var:-default}` | Default value |
-| `"$@"` | All arguments |
-
-### Useful Commands
-
-| Command | Purpose |
-|---------|---------|
-| `chmod +x script.sh` | Make executable |
-| `./script.sh` | Run script |
-| `nohup ./script.sh &` | Run in background |
-| `crontab -e` | Edit cron jobs |
-| `source script.sh` | Run in current shell |
-
-### Cron Format
-Minute(0-59) Hour(0-23) Day(1-31) Month(1-12) Weekday(0-7, 0/7=Sun)
-
-## Constraints and Limitations
-
-- Always test scripts in non-production first
-- Use absolute paths to avoid errors
-- Quote variables to handle spaces properly
-- Many scripts require root/sudo privileges
-- Use `bash -x script.sh` for debugging
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 18 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

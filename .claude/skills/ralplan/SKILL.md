@@ -103,38 +103,4 @@ The ralplan-first gate intercepts underspecified execution requests and redirect
 The gate auto-passes when it detects **any** concrete signal. You do not need all of them — one is enough:
 
 | Signal Type | Example prompt | Why it passes |
-|---|---|---|
-| File path | `ralph fix src/hooks/bridge.ts` | References a specific file |
-| Issue/PR number | `ralph implement #42` | Has a concrete work item |
-| camelCase symbol | `ralph fix processKeywordDetector` | Names a specific function |
-| PascalCase symbol | `ralph update UserModel` | Names a specific class |
-| snake_case symbol | `team fix user_model` | Names a specific identifier |
-| Test runner | `ralph npm test && fix failures` | Has an explicit test target |
-| Numbered steps | `ralph do:\n1. Add X\n2. Test Y` | Structured deliverables |
-| Acceptance criteria | `ralph add login - acceptance criteria: ...` | Explicit success definition |
-| Error reference | `ralph fix TypeError in auth` | Specific error to address |
-| Code block | `ralph add: \`\`\`ts ... \`\`\`` | Concrete code provided |
-| Escape prefix | `force: ralph do it` or `! ralph do it` | Explicit user override |
-
-### End-to-End Flow Example
-
-1. User types: `ralph add user authentication`
-2. Gate detects: execution keyword (`ralph`) + underspecified prompt (no files, functions, or test spec)
-3. Gate redirects to **ralplan** with message explaining the redirect
-4. Ralplan consensus runs:
-   - **Planner** creates initial plan (which files, what auth method, what tests)
-   - **Architect** reviews for soundness
-   - **Critic** validates quality and testability
-5. On consensus approval, user chooses execution path:
-   - **team**: parallel coordinated agents (recommended)
-   - **ralph**: sequential execution with verification
-6. Execution begins with a clear, bounded plan
-
-### Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| Gate fires on a well-specified prompt | Add a file reference, function name, or issue number to anchor the request |
-| Want to bypass the gate | Prefix with `force:` or `!` (e.g., `force: ralph fix it`) |
-| Gate does not fire on a vague prompt | The gate only catches prompts with <=15 effective words and no concrete anchors; add more detail or use `/ralplan` explicitly |
-| Redirected to ralplan but want execution | Use the structured approval option or explicitly say which execution skill should proceed; `just do it` / `skip planning` alone only ends planning with a `pending approval` artifact |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 29 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
