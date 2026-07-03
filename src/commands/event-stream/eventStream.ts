@@ -75,6 +75,28 @@ class EventStream extends EventEmitter {
         }
     }
 
+    getChannel(name: string): any {
+        return {
+            name,
+            type: 'pubsub',
+            subscribers: this.listenerCount(name),
+            messagesPerSecond: 0,
+            status: 'active'
+        }
+    }
+
+    listChannels(): any[] {
+        const names = this.eventNames()
+        if (names.length === 0) return [{ name: 'default', type: 'pubsub', subscribers: 0, messagesPerSecond: 0, status: 'inactive' }]
+        return names.map(n => ({
+            name: n,
+            type: typeof n === 'string' && n.startsWith('sub_') ? 'websocket' : 'pubsub',
+            subscribers: this.listenerCount(n),
+            messagesPerSecond: 0,
+            status: 'active'
+        }))
+    }
+
     clear(): number {
         const count = this.history.length
         this.history = []
@@ -94,14 +116,12 @@ export async function call(args: string, context: any): Promise<string> {
     const parts = args.trim().split(/\s+/)
     const command = parts[0].toLowerCase()
 
-    if (command === 'list') {
-        const event = parts[1]
-        const listeners = eventStream.eventNames()
-        if (event) {
-            const count = eventStream.listenerCount(event)
-            return `## event-stream \u4e8b\u4ef6: ${event}\n\u76d1\u542c\u5668: ${count} \u4e2a`
-        }
-        return `## event-stream \u6d3b\u8dc3\u4e8b\u4ef6:\n${listeners.map(e => `- ${e}: ${eventStream.listenerCount(e)} \u4e2a\u76d1\u542c\u5668`).join('\n')}`
+    if (command === 'list' || command === 'channels') {
+        const channels = eventStream.listChannels()
+        const result = channels.map((c: any) =>
+            `  ${c.name.padEnd(20)} | ${c.type.padEnd(10)} | ${c.status.padEnd(10)} | ${String(c.subscribers).padEnd(3)} 订阅者`
+        ).join('\n')
+        return `## event-stream 频道列表:\n\n${result}\n\n总频道数: ${channels.length}`
     }
 
     if (command === 'subscribe' && parts.length >= 2) {
@@ -109,7 +129,14 @@ export async function call(args: string, context: any): Promise<string> {
         const id = eventStream.subscribe(event, (data) => {
             console.log(`[${event}]`, data)
         })
-        return `## event-stream \u8ba2\u9605\u6210\u529f:\n- \u4e8b\u4ef6: ${event}\n- ID: ${id}\n- \u8f93\u51fa: \u63a7\u5236\u53f0`
+        const channel = eventStream.getChannel(event)
+        return `## event-stream 订阅成功:\n- 事件: ${event}\n- ID: ${id}\n- 类型: ${channel.type}\n- 状态: ${channel.status}\n- 输出: 控制台`
+    }
+
+    if (command === 'unsubscribe' && parts.length >= 2) {
+        const event = parts[1]
+        eventStream.removeAllListeners(event)
+        return `## event-stream 已取消订阅:\n- 事件: ${event}`
     }
 
     if (command === 'publish' && parts.length >= 2) {
@@ -122,7 +149,7 @@ export async function call(args: string, context: any): Promise<string> {
             parsedData = data
         }
         eventStream.publish(event, parsedData)
-        return `## event-stream \u53d1\u5e03\u6210\u529f:\n- \u4e8b\u4ef6: ${event}\n- \u6570\u636e: ${typeof parsedData === 'string' ? parsedData : JSON.stringify(parsedData)}`
+        return `## event-stream 发布成功:\n- 事件: ${event}\n- 数据: ${typeof parsedData === 'string' ? parsedData : JSON.stringify(parsedData)}`
     }
 
     if (command === 'history') {
@@ -130,24 +157,25 @@ export async function call(args: string, context: any): Promise<string> {
         const limit = parts[2] ? parseInt(parts[2]) : 20
         const history = eventStream.getHistory(event, limit)
         if (history.length === 0) {
-            return `## event-stream \u5386\u53f2\u8bb0\u5f55\u4e3a\u7a7a${event ? ` (\u4e8b\u4ef6: ${event})` : ''}`
+            return `## event-stream 历史记录为空${event ? ` (事件: ${event})` : ''}`
         }
         const list = history.map(h => `[${new Date(h.time).toLocaleString()}] ${h.event}: ${typeof h.data === 'string' ? h.data : JSON.stringify(h.data)}`).join('\n')
-        return `## event-stream \u5386\u53f2\u8bb0\u5f55${event ? ` (\u4e8b\u4ef6: ${event})` : ''}:\n${list}`
+        return `## event-stream 历史记录${event ? ` (事件: ${event})` : ''}:\n${list}`
     }
 
-    if (command === 'stats') {
+    if (command === 'stats' || command === 'status') {
         const stats = eventStream.getStats()
+        const channels = eventStream.listChannels()
         const events = Object.entries(stats.byEvent)
-            .map(([e, c]) => `- ${e}: ${c} \u6b21`)
+            .map(([e, c]) => `- ${e}: ${c} 次`)
             .join('\n')
-        return `## event-stream \u7edf\u8ba1:\n- \u603b\u4e8b\u4ef6: ${stats.total}\n- \u4e8b\u4ef6\u7c7b\u578b: ${Object.keys(stats.byEvent).length}\n- \u76d1\u542c\u5668: ${stats.listeners}\n\n\u4e8b\u4ef6\u7edf\u8ba1:\n${events || '\u6682\u65e0\u4e8b\u4ef6'}`
+        return `## event-stream 统计:\n- 总事件: ${stats.total}\n- 事件类型: ${Object.keys(stats.byEvent).length}\n- 监听器: ${stats.listeners}\n\n频道状态:\n${channels.map((c: any) => `  ${c.name}: ${c.status} (${c.subscribers} 订阅者)`).join('\n')}\n\n事件统计:\n${events || '暂无事件'}`
     }
 
     if (command === 'clear') {
         const count = eventStream.clear()
-        return `## event-stream \u5df2\u6e05\u7a7a:\n- \u79fb\u9664\u4e8b\u4ef6: ${count} \u4e2a`
+        return `## event-stream 已清空:\n- 移除事件: ${count} 个`
     }
 
-    return `## event-stream \u547d\u4ee4: ${args}\n\u53ef\u7528: list, subscribe, publish, history, stats, clear`
+    return `## event-stream 命令: ${args}\n可用: list, subscribe, unsubscribe, publish, history, stats/status, clear`
 }

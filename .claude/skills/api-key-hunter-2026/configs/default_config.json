@@ -1,3 +1,25 @@
-{ "search": { "enabled_sources": ["github", "gist", "stackoverflow"], "max_results_per_source": 50, "search_keywords": [ "free api key 2026", "ai api test key", "sk-test-", "openai api key free" ], "rate_limit": { "github": 10, "stackoverflow": 30 } }, "testing": { "concurrent_tests": 5, "timeout_seconds": 15, "test_endpoints": { "openai": "https://api.openai.com/v1/chat/completions", "anthropic": "https://api.anthropic.com/v1/messages", "deepseek": "https://api.deepseek.com/chat/completions", "openrouter": "https://api.openrouter.ai/api/v1/chat/completions" }, "test_payloads": { "openai": { "model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "test"}], "max_tokens": 5 }, "anthropic": { "model": "claude-3-haiku-20240307", "max_tokens": 5, "messages": [{"role": "user", "content": "test"}] } } }, "generation": { "key_format": "service-timestamp-random-purpose", "timestamp_format": "$Ym$dH$MS", "default_length": 48, "service_prefixes": { "openai": "sk-test", "anthropic": "sk-ant-test", "deepseek": "sk-ds-test", "openrouter": "sk-or-test", "generic": "test" } }, "output": { "save_results": true, "output_dir": "./api_key_results", "formats": ["json", "csv", "markdown"], "anonymize_keys": true, "include_metadata": true }, "monitoring": { "check_interval_hours": 24, "alert_on_expiry": true, "expiry_warning_days": 7, "track_usage": true }
-}
-EOF echo "配置文件创建完成"
+{
+ "search": {
+ "enabled_sources": ["github", "gist", "stackoverflow"],
+ "max_results_per_source": 50,
+ "search_keywords": [
+ "free api key 2026",
+ "sk-test-",
+ "openai api key free"
+ ]
+ },
+ "testing": {
+ "concurrent_tests": 5,
+ "timeout_seconds": 15
+ },
+ "generation": {
+ "key_format": "service-timestamp-random",
+ "default_length": 48,
+ "service_prefixes": {
+ "openai": "sk-test",
+ "anthropic": "sk-ant-test",
+ "deepseek": "sk-ds-test",
+ "openrouter": "sk-or-test"
+ }
+ }
+} echo 配置文件创建完成
