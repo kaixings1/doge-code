@@ -1,205 +1,83 @@
 ---
-name: googlesheets-automation
-description: "通过 Rube MCP (Composio) 自动执行 Google Sheets 操作（读取、写入、格式化、筛选、管理电子表格）。以编程方式读/写数据、管理标签、应用格式和搜索行。"
-risk: critical
-source: community
-date_added: "2026-02-27"
+name: googlesheets-自动化
+description: "通过 Rube MCP (Composio) 自动化 Googlesheets 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+requires:
+  mcp: [rube]
 ---
 
-# Google Sheets Automation via Rube MCP
+# 通过 Rube MCP 实现 Googlesheets 自动化
 
-Automate Google Sheets workflows including reading/writing data, managing spreadsheets and tabs, formatting cells, filtering rows, and upserting records through Composio's Google Sheets toolkit.
+通过 Rube MCP 使用 Composio 的 Googlesheets 工具包自动化 Googlesheets 操作。
 
-## Prerequisites
+**工具包文档**：[composio.dev/toolkits/googlesheets](https://composio.dev/toolkits/googlesheets)
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Google Sheets connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `googlesheets`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Googlesheets 连接，工具包为 `googlesheets`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+## 设置
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `googlesheets`
-3. If connection is not ACTIVE, follow the returned auth link to complete Google OAuth
-4. Confirm connection status shows ACTIVE before running any workflows
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-## Core Workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `googlesheets` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-### 1. Read and Write Data
+## 工具发现
 
-**When to use**: User wants to read data from or write data to a Google Sheet
+在执行工作流之前始终发现可用工具：
 
-**Tool sequence**:
-1. `GOOGLESHEETS_SEARCH_SPREADSHEETS` - Find spreadsheet by name if ID unknown [Prerequisite]
-2. `GOOGLESHEETS_GET_SHEET_NAMES` - Enumerate tab names to target the right sheet [Prerequisite]
-3. `GOOGLESHEETS_BATCH_GET` - Read data from one or more ranges [Required]
-4. `GOOGLESHEETS_BATCH_UPDATE` - Write data to a range or append rows [Required]
-5. `GOOGLESHEETS_VALUES_UPDATE` - Update a single specific range [Alternative]
-6. `GOOGLESHEETS_SPREADSHEETS_VALUES_APPEND` - Append rows to end of table [Alternative]
+```
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Googlesheets operations", known_fields: ""}]
+session: {generate_id: true}
+```
 
-**Key parameters**:
-- `spreadsheet_id`: Alphanumeric ID from the spreadsheet URL (between '/d/' and '/edit')
-- `ranges`: A1 notation array (e.g., 'Sheet1!A1:Z1000'); always use bounded ranges
-- `sheet_name`: Tab name (case-insensitive matching supported)
-- `values`: 2D array where each inner array is a row
-- `first_cell_location`: Starting cell in A1 notation (omit to append)
-- `valueInputOption`: 'USER_ENTERED' (parsed) or 'RAW' (literal)
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
 
-**Pitfalls**:
-- Mis-cased or non-existent tab names error "Sheet 'X' not found"
-- Empty ranges may omit `valueRanges[i].values`; treat missing as empty array
-- `GOOGLESHEETS_BATCH_UPDATE` values must be a 2D array (list of lists), even for a single row
-- Unbounded ranges like 'A:Z' on sheets with >10,000 rows may cause timeouts; always bound with row limits
-- Append follows the detected `tableRange`; use returned `updatedRange` to verify placement
+## 核心工作流模式
 
-### 2. Create and Manage Spreadsheets
+### 步骤 1：发现可用工具
 
-**When to use**: User wants to create a new spreadsheet or manage tabs within one
+```
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Googlesheets task"}]
+session: {id: "existing_session_id"}
+```
 
-**Tool sequence**:
-1. `GOOGLESHEETS_CREATE_GOOGLE_SHEET1` - Create a new spreadsheet [Required]
-2. `GOOGLESHEETS_ADD_SHEET` - Add a new tab/worksheet [Required]
-3. `GOOGLESHEETS_UPDATE_SHEET_PROPERTIES` - Rename, hide, reorder, or color tabs [Optional]
-4. `GOOGLESHEETS_GET_SPREADSHEET_INFO` - Get full spreadsheet metadata [Optional]
-5. `GOOGLESHEETS_FIND_WORKSHEET_BY_TITLE` - Check if a specific tab exists [Optional]
+### 步骤 2：检查连接
 
-**Key parameters**:
-- `title`: Spreadsheet or sheet tab name
-- `spreadsheetId`: Target spreadsheet ID
-- `forceUnique`: Auto-append suffix if tab name exists (default true)
-- `properties.gridProperties`: Set row/column counts, frozen rows
+```
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["googlesheets"]
+session_id: "your_session_id"
+```
 
-**Pitfalls**:
-- Sheet names must be unique within a spreadsheet
-- Default sheet names are locale-dependent ('Sheet1' in English, 'Hoja 1' in Spanish)
-- Don't use `index` when creating multiple sheets in parallel (causes 'index too high' errors)
-- `GOOGLESHEETS_GET_SPREADSHEET_INFO` can return 403 if account lacks access
+### 步骤 3：执行工具
 
-### 3. Search and Filter Rows
+```
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
+```
 
-**When to use**: User wants to find specific rows or apply filters to sheet data
+## 已知陷阱
 
-**Tool sequence**:
-1. `GOOGLESHEETS_LOOKUP_SPREADSHEET_ROW` - Find first row matching exact cell value [Required]
-2. `GOOGLESHEETS_SET_BASIC_FILTER` - Apply filter/sort to a range [Alternative]
-3. `GOOGLESHEETS_CLEAR_BASIC_FILTER` - Remove existing filter [Optional]
-4. `GOOGLESHEETS_BATCH_GET` - Read filtered results [Optional]
-
-**Key parameters**:
-- `query`: Exact text value to match (matches entire cell content)
-- `range`: A1 notation range to search within
-- `case_sensitive`: Boolean for case-sensitive matching (default false)
-- `filter.range`: Grid range with sheet_id for basic filter
-- `filter.criteria`: Column-based filter conditions
-- `filter.sortSpecs`: Sort specifications
-
-**Pitfalls**:
-- `GOOGLESHEETS_LOOKUP_SPREADSHEET_ROW` matches entire cell content, not substrings
-- Sheet names with spaces must be single-quoted in ranges (e.g., "'My Sheet'!A:Z")
-- Bare sheet names without ranges are not supported for lookup; always specify a range
-
-### 4. Upsert Rows by Key
-
-**When to use**: User wants to update existing rows or insert new ones based on a unique key column
-
-**Tool sequence**:
-1. `GOOGLESHEETS_UPSERT_ROWS` - Update matching rows or append new ones [Required]
-
-**Key parameters**:
-- `spreadsheetId`: Target spreadsheet ID
-- `sheetName`: Tab name
-- `keyColumn`: Column header name used as unique identifier (e.g., 'Email', 'SKU')
-- `headers`: List of column names for the data
-- `rows`: 2D array of data rows
-- `strictMode`: Error on mismatched column counts (default true)
-
-**Pitfalls**:
-- `keyColumn` must be an actual header name, NOT a column letter (e.g., 'Email' not 'A')
-- If `headers` is NOT provided, first row of `rows` is treated as headers
-- With `strictMode=true`, rows with more values than headers cause an error
-- Auto-adds missing columns to the sheet
-
-### 5. Format Cells
-
-**When to use**: User wants to apply formatting (bold, colors, font size) to cells
-
-**Tool sequence**:
-1. `GOOGLESHEETS_GET_SPREADSHEET_INFO` - Get numeric sheetId for target tab [Prerequisite]
-2. `GOOGLESHEETS_FORMAT_CELL` - Apply formatting to a range [Required]
-3. `GOOGLESHEETS_UPDATE_SHEET_PROPERTIES` - Change frozen rows, column widths [Optional]
-
-**Key parameters**:
-- `spreadsheet_id`: Spreadsheet ID
-- `worksheet_id`: Numeric sheetId (NOT tab name); get from GET_SPREADSHEET_INFO
-- `range`: A1 notation (e.g., 'A1:F1') - preferred over index fields
-- `bold`, `italic`, `underline`, `strikethrough`: Boolean formatting options
-- `red`, `green`, `blue`: Background color as 0.0-1.0 floats (NOT 0-255 ints)
-- `fontSize`: Font size in points
-
-**Pitfalls**:
-- Requires numeric `worksheet_id`, not tab title; get from spreadsheet metadata
-- Color channels are 0-1 floats (e.g., 1.0 for full red), NOT 0-255 integers
-- Responses may return empty reply objects ([{}]); verify formatting via readback
-- Format one range per call; batch formatting requires separate calls
-
-## Common Patterns
-
-### ID Resolution
-- **Spreadsheet name -> ID**: `GOOGLESHEETS_SEARCH_SPREADSHEETS` with `query`
-- **Tab name -> sheetId**: `GOOGLESHEETS_GET_SPREADSHEET_INFO`, extract from sheets metadata
-- **Tab existence check**: `GOOGLESHEETS_FIND_WORKSHEET_BY_TITLE`
-
-### Rate Limits
-Google Sheets enforces strict rate limits:
-- Max 60 reads/minute and 60 writes/minute
-- Exceeding limits causes errors; batch operations where possible
-- Use `GOOGLESHEETS_BATCH_GET` and `GOOGLESHEETS_BATCH_UPDATE` for efficiency
-
-### Data Patterns
-- Always read before writing to understand existing layout
-- Use `GOOGLESHEETS_UPSERT_ROWS` for CRM syncs, inventory updates, and dedup scenarios
-- Append mode (omit `first_cell_location`) is safest for adding new records
-- Use `GOOGLESHEETS_CLEAR_VALUES` to clear content while preserving formatting
-
-## Known Pitfalls
-
-- **Tab names**: Locale-dependent defaults; 'Sheet1' may not exist in non-English accounts
-- **Range notation**: Sheet names with spaces need single quotes in A1 notation
-- **Unbounded ranges**: Can timeout on large sheets; always specify row bounds (e.g., 'A1:Z10000')
-- **2D arrays**: All value parameters must be list-of-lists, even for single rows
-- **Color values**: Floats 0.0-1.0, not integers 0-255
-- **Formatting IDs**: `FORMAT_CELL` needs numeric sheetId, not tab title
-- **Rate limits**: 60 reads/min and 60 writes/min; batch to stay within limits
-- **Delete dimension**: `GOOGLESHEETS_DELETE_DIMENSION` is irreversible; double-check bounds
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
 
-| Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| Search spreadsheets | `GOOGLESHEETS_SEARCH_SPREADSHEETS` | `query`, `search_type` |
-| Create spreadsheet | `GOOGLESHEETS_CREATE_GOOGLE_SHEET1` | `title` |
-| List tabs | `GOOGLESHEETS_GET_SHEET_NAMES` | `spreadsheet_id` |
-| Add tab | `GOOGLESHEETS_ADD_SHEET` | `spreadsheetId`, `title` |
-| Read data | `GOOGLESHEETS_BATCH_GET` | `spreadsheet_id`, `ranges` |
-| Read single range | `GOOGLESHEETS_VALUES_GET` | `spreadsheet_id`, `range` |
-| Write data | `GOOGLESHEETS_BATCH_UPDATE` | `spreadsheet_id`, `sheet_name`, `values` |
-| Update range | `GOOGLESHEETS_VALUES_UPDATE` | `spreadsheet_id`, `range`, `values` |
-| Append rows | `GOOGLESHEETS_SPREADSHEETS_VALUES_APPEND` | `spreadsheetId`, `range`, `values` |
-| Upsert rows | `GOOGLESHEETS_UPSERT_ROWS` | `spreadsheetId`, `sheetName`, `keyColumn`, `rows` |
-| Lookup row | `GOOGLESHEETS_LOOKUP_SPREADSHEET_ROW` | `spreadsheet_id`, `query` |
-| Format cells | `GOOGLESHEETS_FORMAT_CELL` | `spreadsheet_id`, `worksheet_id`, `range` |
-| Set filter | `GOOGLESHEETS_SET_BASIC_FILTER` | `spreadsheetId`, `filter` |
-| Clear values | `GOOGLESHEETS_CLEAR_VALUES` | `spreadsheet_id`, range |
-| Delete rows/cols | `GOOGLESHEETS_DELETE_DIMENSION` | `spreadsheet_id`, `sheet_name`, dimension |
-| Spreadsheet info | `GOOGLESHEETS_GET_SPREADSHEET_INFO` | `spreadsheet_id` |
-| Update tab props | `GOOGLESHEETS_UPDATE_SHEET_PROPERTIES` | `spreadsheetId`, properties |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

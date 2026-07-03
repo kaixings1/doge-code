@@ -1,229 +1,83 @@
 ---
 name: bamboohr-自动化
-description: "通过 Rube MCP (Composio) 自动化 BambooHR 操作：员工、请假、福利、家属、员工更新。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
-risk: critical
-source: community
-date_added: "2026-02-27"
+description: "通过 Rube MCP (Composio) 自动化 Bamboohr 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+requires:
+  mcp: [rube]
 ---
 
-# BambooHR Automation via Rube MCP
+# 通过 Rube MCP 实现 Bamboohr 自动化
 
-Automate BambooHR human resources operations through Composio's BambooHR toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Bamboohr 工具包自动化 Bamboohr 操作。
 
-## Prerequisites
+**工具包文档**：[composio.dev/toolkits/bamboohr](https://composio.dev/toolkits/bamboohr)
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active BambooHR connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `bamboohr`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 前提条件
 
-## Setup
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Bamboohr 连接，工具包为 `bamboohr`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+## 设置
 
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `bamboohr`
-3. If connection is not ACTIVE, follow the returned auth link to complete BambooHR authentication
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `bamboohr` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-## Core Workflows
+## 工具发现
 
-### 1. List and Search Employees
-
-**When to use**: User wants to find employees or get the full employee directory
-
-**Tool sequence**:
-1. `BAMBOOHR_GET_ALL_EMPLOYEES` - Get the employee directory [Required]
-2. `BAMBOOHR_GET_EMPLOYEE` - Get detailed info for a specific employee [Optional]
-
-**Key parameters**:
-- For GET_ALL_EMPLOYEES: No required parameters; returns directory
-- For GET_EMPLOYEE:
-  - `id`: Employee ID (numeric)
-  - `fields`: Comma-separated list of fields to return (e.g., 'firstName,lastName,department,jobTitle')
-
-**Pitfalls**:
-- Employee IDs are numeric integers
-- GET_ALL_EMPLOYEES returns basic directory info; use GET_EMPLOYEE for full details
-- The `fields` parameter controls which fields are returned; omitting it may return minimal data
-- Common fields: firstName, lastName, department, division, jobTitle, workEmail, status
-- Inactive/terminated employees may be included; check `status` field
-
-### 2. Track Employee Changes
-
-**When to use**: User wants to detect recent employee data changes for sync or auditing
-
-**Tool sequence**:
-1. `BAMBOOHR_EMPLOYEE_GET_CHANGED` - Get employees with recent changes [Required]
-
-**Key parameters**:
-- `since`: ISO 8601 datetime string for change detection threshold
-- `type`: Type of changes to check (e.g., 'inserted', 'updated', 'deleted')
-
-**Pitfalls**:
-- `since` parameter is required; use ISO 8601 format (e.g., '2024-01-15T00:00:00Z')
-- Returns IDs of changed employees, not full employee data
-- Must call GET_EMPLOYEE separately for each changed employee's details
-- Useful for incremental sync workflows; cache the last sync timestamp
-
-### 3. Manage Time-Off
-
-**When to use**: User wants to view time-off balances, request time off, or manage requests
-
-**Tool sequence**:
-1. `BAMBOOHR_GET_META_TIME_OFF_TYPES` - List available time-off types [Prerequisite]
-2. `BAMBOOHR_GET_TIME_OFF_BALANCES` - Check current balances [Optional]
-3. `BAMBOOHR_GET_TIME_OFF_REQUESTS` - List existing requests [Optional]
-4. `BAMBOOHR_CREATE_TIME_OFF_REQUEST` - Submit a new request [Optional]
-5. `BAMBOOHR_UPDATE_TIME_OFF_REQUEST` - Modify or approve/deny a request [Optional]
-
-**Key parameters**:
-- For balances: `employeeId`, time-off type ID
-- For requests: `start`, `end` (date range), `employeeId`
-- For creation:
-  - `employeeId`: Employee to request for
-  - `timeOffTypeId`: Type ID from GET_META_TIME_OFF_TYPES
-  - `start`: Start date (YYYY-MM-DD)
-  - `end`: End date (YYYY-MM-DD)
-  - `amount`: Number of days/hours
-  - `notes`: Optional notes for the request
-- For update: `requestId`, `status` ('approved', 'denied', 'cancelled')
-
-**Pitfalls**:
-- Time-off type IDs are numeric; resolve via GET_META_TIME_OFF_TYPES first
-- Date format is 'YYYY-MM-DD' for start and end dates
-- Balances may be in hours or days depending on company configuration
-- Request status updates require appropriate permissions (manager/admin)
-- Creating a request does NOT auto-approve it; separate approval step needed
-
-### 4. Update Employee Information
-
-**When to use**: User wants to modify employee profile data
-
-**Tool sequence**:
-1. `BAMBOOHR_GET_EMPLOYEE` - Get current employee data [Prerequisite]
-2. `BAMBOOHR_UPDATE_EMPLOYEE` - Update employee fields [Required]
-
-**Key parameters**:
-- `id`: Employee ID (numeric, required)
-- Field-value pairs for the fields to update (e.g., `department`, `jobTitle`, `workPhone`)
-
-**Pitfalls**:
-- Only fields included in the request are updated; others remain unchanged
-- Some fields are read-only and cannot be updated via API
-- Field names must match BambooHR's expected field names exactly
-- Updates are audited; changes appear in the employee's change history
-- Verify current values with GET_EMPLOYEE before updating to avoid overwriting
-
-### 5. Manage Dependents and Benefits
-
-**When to use**: User wants to view employee dependents or benefit coverage
-
-**Tool sequence**:
-1. `BAMBOOHR_DEPENDENTS_GET_ALL` - List all dependents [Required]
-2. `BAMBOOHR_BENEFIT_GET_COVERAGES` - Get benefit coverage details [Optional]
-
-**Key parameters**:
-- For dependents: Optional `employeeId` filter
-- For benefits: Depends on schema; check RUBE_SEARCH_TOOLS for current parameters
-
-**Pitfalls**:
-- Dependent data includes sensitive PII; handle with appropriate care
-- Benefit coverages may include multiple plan types per employee
-- Not all BambooHR plans include benefits administration; check account features
-- Data access depends on API key permissions
-
-## Common Patterns
-
-### ID Resolution
-
-**Employee name -> Employee ID**:
-```
-1. Call BAMBOOHR_GET_ALL_EMPLOYEES
-2. Find employee by name in directory results
-3. Extract id (numeric) for detailed operations
-```
-
-**Time-off type name -> Type ID**:
-```
-1. Call BAMBOOHR_GET_META_TIME_OFF_TYPES
-2. Find type by name (e.g., 'Vacation', 'Sick Leave')
-3. Extract id for time-off requests
-```
-
-### Incremental Sync Pattern
-
-For keeping external systems in sync with BambooHR:
-```
-1. Store last_sync_timestamp
-2. Call BAMBOOHR_EMPLOYEE_GET_CHANGED with since=last_sync_timestamp
-3. For each changed employee ID, call BAMBOOHR_GET_EMPLOYEE
-4. Process updates in external system
-5. Update last_sync_timestamp
-```
-
-### Time-Off Workflow
+在执行工作流之前始终发现可用工具：
 
 ```
-1. GET_META_TIME_OFF_TYPES -> find type ID
-2. GET_TIME_OFF_BALANCES -> verify available balance
-3. CREATE_TIME_OFF_REQUEST -> submit request
-4. UPDATE_TIME_OFF_REQUEST -> approve/deny (manager action)
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Bamboohr operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-## Known Pitfalls
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
 
-**Employee IDs**:
-- Always numeric integers
-- Resolve names to IDs via GET_ALL_EMPLOYEES
-- Terminated employees retain their IDs
+## 核心工作流模式
 
-**Date Formats**:
-- Time-off dates: 'YYYY-MM-DD'
-- Change detection: ISO 8601 with timezone
-- Inconsistent formats between endpoints; check each endpoint's schema
+### 步骤 1：发现可用工具
 
-**Permissions**:
-- API key permissions determine accessible fields and operations
-- Some operations require admin or manager-level access
-- Time-off approvals require appropriate role permissions
+```
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Bamboohr task"}]
+session: {id: "existing_session_id"}
+```
 
-**Sensitive Data**:
-- Employee data includes PII (names, addresses, SSN, etc.)
-- Handle all responses with appropriate security measures
-- Dependent data is especially sensitive
+### 步骤 2：检查连接
 
-**Rate Limits**:
-- BambooHR API has rate limits per API key
-- Bulk operations should be throttled
-- GET_ALL_EMPLOYEES is more efficient than individual GET_EMPLOYEE calls
+```
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["bamboohr"]
+session_id: "your_session_id"
+```
 
-**Response Parsing**:
-- Response data may be nested under `data` key
-- Employee fields vary based on `fields` parameter
-- Empty fields may be omitted or returned as null
-- Parse defensively with fallbacks
+### 步骤 3：执行工具
+
+```
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
+```
+
+## 已知陷阱
+
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
 
-| Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| List all employees | BAMBOOHR_GET_ALL_EMPLOYEES | (none) |
-| Get employee details | BAMBOOHR_GET_EMPLOYEE | id, fields |
-| Track changes | BAMBOOHR_EMPLOYEE_GET_CHANGED | since, type |
-| Time-off types | BAMBOOHR_GET_META_TIME_OFF_TYPES | (none) |
-| Time-off balances | BAMBOOHR_GET_TIME_OFF_BALANCES | employeeId |
-| List time-off requests | BAMBOOHR_GET_TIME_OFF_REQUESTS | start, end, employeeId |
-| Create time-off request | BAMBOOHR_CREATE_TIME_OFF_REQUEST | employeeId, timeOffTypeId, start, end |
-| Update time-off request | BAMBOOHR_UPDATE_TIME_OFF_REQUEST | requestId, status |
-| Update employee | BAMBOOHR_UPDATE_EMPLOYEE | id, (field updates) |
-| List dependents | BAMBOOHR_DEPENDENTS_GET_ALL | employeeId |
-| Benefit coverages | BAMBOOHR_BENEFIT_GET_COVERAGES | (check schema) |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+| Operation | Approach |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

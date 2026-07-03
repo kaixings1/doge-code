@@ -1,110 +1,83 @@
 ---
-name: fillout_forms-automation
-description: "通过 Rube MCP (Composio) 自动执行 Fillout 任务：forms, submissions, workflows, and form builder. Always search tools first for current schemas."
+name: filloutforms-自动化
+description: "通过 Rube MCP (Composio) 自动化 Fillout_forms 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
 requires:
   mcp: [rube]
 ---
 
-# Fillout Automation via Rube MCP
+# 通过 Rube MCP 实现 Fillout_forms 自动化
 
-Automate Fillout operations through Composio's Fillout toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Fillout_forms 工具包自动化 Fillout_forms 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/fillout_forms](https://composio.dev/toolkits/fillout_forms)
+**工具包文档**：[composio.dev/toolkits/filloutforms](https://composio.dev/toolkits/filloutforms)
 
-## Prerequisites
+## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Fillout connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `fillout_forms`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Fillout_forms 连接，工具包为 `filloutforms`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `fillout_forms`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `filloutforms` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-## Tool Discovery
+## 工具发现
 
-Always discover available tools before executing workflows:
-
-```
-RUBE_SEARCH_TOOLS: queries=[{"use_case": "forms, submissions, workflows, and form builder", "known_fields": ""}]
-```
-
-This returns:
-- Available tool slugs for Fillout
-- Recommended execution plan steps
-- Known pitfalls and edge cases
-- Input schemas for each tool
-
-## Core Workflows
-
-### 1. Discover Available Fillout Tools
+在执行工作流之前始终发现可用工具：
 
 ```
-RUBE_SEARCH_TOOLS:
-  queries:
-    - use_case: "list all available Fillout tools and capabilities"
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "Fillout_forms operations", known_fields: ""}]
+session: {generate_id: true}
 ```
 
-Review the returned tools, their descriptions, and input schemas before proceeding.
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
 
-### 2. Execute Fillout Operations
+## 核心工作流模式
 
-After discovering tools, execute them via:
+### 步骤 1：发现可用工具
 
 ```
-RUBE_MULTI_EXECUTE_TOOL:
-  tools:
-    - tool_slug: "<discovered_tool_slug>"
-      arguments: {<schema-compliant arguments>}
-  memory: {}
-  sync_response_to_workbench: false
+RUBE_SEARCH_TOOLS
+queries: [{use_case: "your specific Fillout_forms task"}]
+session: {id: "existing_session_id"}
 ```
 
-### 3. Multi-Step Workflows
+### 步骤 2：检查连接
 
-For complex workflows involving multiple Fillout operations:
+```
+RUBE_MANAGE_CONNECTIONS
+toolkits: ["filloutforms"]
+session_id: "your_session_id"
+```
 
-1. Search for all relevant tools: `RUBE_SEARCH_TOOLS` with specific use case
-2. Execute prerequisite steps first (e.g., fetch before update)
-3. Pass data between steps using tool responses
-4. Use `RUBE_REMOTE_WORKBENCH` for bulk operations or data processing
+### 步骤 3：执行工具
 
-## Common Patterns
+```
+RUBE_MULTI_EXECUTE_TOOL
+tools: [{
+  tool_slug: "TOOL_SLUG_FROM_SEARCH",
+  arguments: {/* schema-compliant args from search results */}
+}]
+memory: {}
+session_id: "your_session_id"
+```
 
-### Search Before Action
-Always search for existing resources before creating new ones to avoid duplicates.
+## 已知陷阱
 
-### Pagination
-Many list operations support pagination. Check responses for `next_cursor` or `page_token` and continue fetching until exhausted.
-
-### Error Handling
-- Check tool responses for errors before proceeding
-- If a tool fails, verify the connection is still ACTIVE
-- Re-authenticate via `RUBE_MANAGE_CONNECTIONS` if connection expired
-
-### Batch Operations
-For bulk operations, use `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` in a loop with `ThreadPoolExecutor` for parallel execution.
-
-## Known Pitfalls
-
-- **Always search tools first**: Tool schemas and available operations may change. Never hardcode tool slugs without first discovering them via `RUBE_SEARCH_TOOLS`.
-- **Check connection status**: Ensure the Fillout connection is ACTIVE before executing any tools. Expired OAuth tokens require re-authentication.
-- **Respect rate limits**: If you receive rate limit errors, reduce request frequency and implement backoff.
-- **Validate schemas**: Always pass strictly schema-compliant arguments. Use `RUBE_GET_TOOL_SCHEMAS` to load full input schemas when `schemaRef` is returned instead of `input_schema`.
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
+- **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**：检查响应中的分页 token 并继续获取直到完成
 
 ## Quick Reference
 
 | Operation | Approach |
-|-----------|----------|
-| Find tools | `RUBE_SEARCH_TOOLS` with Fillout-specific use case |
-| Connect | `RUBE_MANAGE_CONNECTIONS` with toolkit `fillout_forms` |
-| Execute | `RUBE_MULTI_EXECUTE_TOOL` with discovered tool slugs |
-| Bulk ops | `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` |
-| Full schema | `RUBE_GET_TOOL_SCHEMAS` for tools with `schemaRef` |
-
-> **Toolkit docs**: [composio.dev/toolkits/fillout_forms](https://composio.dev/toolkits/fillout_forms)
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
