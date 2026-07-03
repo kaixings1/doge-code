@@ -76,10 +76,4 @@ Or run the standalone script directly:
 ## Vulnerability Categories
 
 | Category | Tests | Severity |
-|----------|-------|----------|
-| **Authentication** | Open signup, anonymous auth, email enumeration | Critical/High/Medium |
-| **Realtime Database** | Unauthenticated read/write, auth token bypass | Critical/High |
-| **Firestore** | Document access, collection enumeration | Critical/High |
-| **Storage** | Bucket listing, unauthenticated upload | Critical/High |
-| **Cloud Functions** | Unauthenticated access, function enumeration | Medium/Low |
-| **Remote Config** | Public parameter exposure | Medium |
+|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 29 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

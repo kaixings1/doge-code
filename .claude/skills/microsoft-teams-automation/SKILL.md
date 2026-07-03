@@ -193,28 +193,4 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 ## Quick Reference
 
 | Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| List teams | MICROSOFT_TEAMS_TEAMS_LIST | filter, select, top |
-| Get team details | MICROSOFT_TEAMS_GET_TEAM | team_id |
-| List channels | MICROSOFT_TEAMS_TEAMS_LIST_CHANNELS | team_id, filter |
-| Get channel | MICROSOFT_TEAMS_GET_CHANNEL | team_id, channel_id |
-| Create channel | MICROSOFT_TEAMS_TEAMS_CREATE_CHANNEL | team_id, displayName |
-| Post to channel | MICROSOFT_TEAMS_TEAMS_POST_CHANNEL_MESSAGE | team_id, channel_id, content |
-| List chats | MICROSOFT_TEAMS_CHATS_GET_ALL_CHATS | user_id, limit |
-| Create chat | MICROSOFT_TEAMS_TEAMS_CREATE_CHAT | chatType, members, topic |
-| Post to chat | MICROSOFT_TEAMS_TEAMS_POST_CHAT_MESSAGE | chat_id, content |
-| Create meeting | MICROSOFT_TEAMS_CREATE_MEETING | subject, start_date_time, end_date_time |
-| List users | MICROSOFT_TEAMS_LIST_USERS | filter, select, top |
-| List team members | MICROSOFT_TEAMS_LIST_TEAM_MEMBERS | team_id |
-| Add team member | MICROSOFT_TEAMS_ADD_MEMBER_TO_TEAM | team_id, user_id |
-| Search messages | MICROSOFT_TEAMS_SEARCH_MESSAGES | query |
-| Get chat message | MICROSOFT_TEAMS_GET_CHAT_MESSAGE | chat_id, message_id |
-| List joined teams | MICROSOFT_TEAMS_LIST_USER_JOINED_TEAMS | (none) |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 35 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -100,27 +100,4 @@ Load from `assets/` directory:
 
 ### KPI Targets
 | Metric | Baseline | 3 Month | 6 Month | 12 Month |
-|--------|----------|---------|---------|----------|
-| Organic Traffic | ... | ... | ... | ... |
-| Keyword Rankings | ... | ... | ... | ... |
-| Domain Authority | ... | ... | ... | ... |
-| Indexed Pages | ... | ... | ... | ... |
-| Core Web Vitals | ... | ... | ... | ... |
-
-### Success Criteria
-- Clear, measurable goals per phase
-- Resource requirements defined
-- Dependencies identified
-- Risk mitigation strategies
-
-## DataForSEO Integration (Optional)
-
-If DataForSEO MCP tools are available, use `dataforseo_labs_google_competitors_domain` and `dataforseo_labs_google_domain_intersection` for real competitive intelligence, `dataforseo_labs_bulk_traffic_estimation` for traffic estimates, `kw_data_google_ads_search_volume` and `dataforseo_labs_bulk_keyword_difficulty` for keyword research, and `business_data_business_listings_search` for local business data.
-
-## Error Handling
-
-| Scenario | Action |
-|----------|--------|
-| Unrecognized business type | Fall back to `generic.md` template. Inform user that no industry-specific template was found and proceed with the general business template. |
-| No website URL provided | Proceed with new-site planning mode. Skip current site assessment and competitive gap analysis that require a live URL. |
-| Industry template not found | Check `assets/` directory for available templates. If the requested template file is missing, use `generic.md` and note the missing template in output. |
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 34 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

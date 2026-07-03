@@ -31,11 +31,11 @@ od:
     - file_write
 ---
 
-# Hyperframes Video Template
+# Hyperframes 视频模板
 
-Ship a premium template-mode Hyperframes composition with a ready default showcase and deterministic timeline behavior.
+以高质量模板模式交付 Hyperframes 作品，自带默认演示展示和确定性的时间轴行为。
 
-## Resource map
+## 资源地图
 
 ```text
 8-bit-orbit-video-template/
@@ -47,22 +47,20 @@ Ship a premium template-mode Hyperframes composition with a ready default showca
 └── example.html
 ```
 
-The rendered MP4 showcase used by `example.html` is hosted at
-`https://repo-assets.open-design.ai/resources/videos/skills/8-bit-orbit-video-template/default-showcase.mp4`.
+`example.html` 使用的渲染 MP4 演示作品托管于
+`https://repo-assets.open-design.ai/resources/videos/skills/8-bit-orbit-video-template/default-showcase.mp4`。
 
-## Workflow
+## 工作流
 
-1. Copy `assets/template.html` to `index.html`.
-2. Keep the 3-scene structure and transition rhythm intact unless the user explicitly asks to change pacing.
-3. Personalize titles, subtitle lines, labels, and palette while preserving the retro pixel aesthetic.
-4. Keep timing constraint: every scene hold should stay within 3 seconds.
-5. Preserve deterministic behavior in generated compositions (no unseeded randomness, no infinite GSAP loops).
-6. Keep all code self-contained in one HTML file with inline CSS/JS.
-7. Validate against `references/checklist.md` before emitting the artifact.
+1. 将 `assets/template.html` 复制为 `index.html`。
+2. 保留 3 场景结构和转场节奏，除非用户明确要求更改节奏。
+3. 在保持复古像素风格的前提下，自定义标题、副标题行、标签和调色板。
+4. 遵守时间限制：每个场景的停留时间不超过 3 秒。
+5. 保持生成作品的确定性行为（不使用未播种的随机数，不使用无限 GSAP 循环）。
+6. 将所有代码保持在一个 HTML 文件内，使用内联 CSS/JS。
+7. 输出作品前，对照 `references/checklist.md` 进行验证。
 
-## Output contract
-
-Emit one short sentence before the artifact, then a single HTML artifact:
+## 输出约定
 
 ```xml
 <artifact identifier="8-bit-orbit-video-template" type="text/html" title="8-Bit Orbit Video Template">

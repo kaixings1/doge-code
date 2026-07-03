@@ -67,20 +67,4 @@ python-command-injection-java/
 ## Key Differences from semgrep-rule-creator
 
 | Aspect | semgrep-rule-creator | semgrep-rule-variant-creator |
-|--------|---------------------|------------------------------|
-| Input | Bug pattern description | Existing rule + target languages |
-| Output | Single rule+test | Multiple rule+test directories |
-| Workflow | Single creation cycle | Independent cycle per language |
-| Phase 1 | Problem analysis | Applicability analysis |
-
-## Skill Files
-
-- `skills/semgrep-rule-variant-creator/SKILL.md` - Main entry point
-- `skills/semgrep-rule-variant-creator/references/applicability-analysis.md` - Phase 1 guidance
-- `skills/semgrep-rule-variant-creator/references/language-syntax-guide.md` - Pattern translation guidance
-- `skills/semgrep-rule-variant-creator/references/workflow.md` - Detailed 4-phase workflow
-
-## Related Skills
-
-- **semgrep-rule-creator** - Create new Semgrep rules from scratch
-- **static-analysis** - Run existing Semgrep rules against code
+|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 23 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

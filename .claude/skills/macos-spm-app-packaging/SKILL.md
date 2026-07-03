@@ -79,31 +79,4 @@ spctl --assess --type execute --verbose build/HelloApp.app
 
 ## Common Notarization Failures
 | Symptom | Likely Cause | Recovery |
-|---|---|---|
-| `The software asset has already been uploaded` | Duplicate submission for same version | Bump `BUILD_NUMBER` in `version.env` and repackage. |
-| `Package Invalid: Invalid Code Signing Entitlements` | Entitlements in `.entitlements` file don't match provisioning | Audit entitlements against Apple's allowed set; remove unsupported keys. |
-| `The executable does not have the hardened runtime enabled` | Missing `--options runtime` flag in `codesign` invocation | Edit `sign-and-notarize.sh` to add `--options runtime` to all `codesign` calls. |
-| Notarization hangs / no status email | `xcrun notarytool` network or credential issue | Run `xcrun notarytool history` to check status; re-export App Store Connect API key if expired. |
-| `stapler validate` fails after successful notarization | Ticket not yet propagated | Wait ~60 s, then re-run `xcrun stapler staple`. |
-
-## Templates
-- `assets/templates/package_app.sh`: Build binaries, create the .app bundle, copy resources, sign.
-- `assets/templates/compile_and_run.sh`: Dev loop to kill running app, package, launch.
-- `assets/templates/build_icon.sh`: Generate .icns from an Icon Composer file (requires Xcode install).
-- `assets/templates/sign-and-notarize.sh`: Notarize, staple, and zip a release build.
-- `assets/templates/make_appcast.sh`: Generate Sparkle appcast entries for updates.
-- `assets/templates/setup_dev_signing.sh`: Create a stable dev code-signing identity.
-- `assets/templates/launch.sh`: Simple launcher for a packaged .app.
-- `assets/templates/version.env`: Example version file consumed by packaging scripts.
-- `assets/templates/bootstrap/`: Minimal SwiftPM macOS app skeleton (Package.swift, Sources/, version.env).
-
-## Notes
-- Keep entitlements and signing configuration explicit; edit the template scripts instead of reimplementing.
-- Remove Sparkle steps if you do not use Sparkle for updates.
-- Sparkle relies on the bundle build number (`CFBundleVersion`), so `BUILD_NUMBER` in `version.env` must increase for each update.
-- For menu bar apps, set `MENU_BAR_APP=1` when packaging to emit `LSUIElement` in Info.plist.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 44 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
