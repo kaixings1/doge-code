@@ -16,47 +16,42 @@ license_source: "https://github.com/maxbaluev/accreted-intelligence/blob/main/LI
 
 # AccInt Solve
 
-## Overview
+## 概述
 
-AccInt is a local-first MCP memory server for coding agents. It keeps a scored
-record of retrieved experience, open commitments, continuation frames, and
-outcome feedback so the next agent run can build on what actually worked.
+AccInt 是一个面向编程代理的本地优先 MCP 记忆服务器。它保留评分记录，
+包括检索到的经验、未完成的承诺、延续帧和结果反馈，以便下一次代理运行能够
+基于实际有效的方法继续构建。
 
-Use this skill when AccInt is already configured in the host as an MCP server.
-The skill adapts AccInt's public `solve` Claude skill into a host-agnostic
-workflow for Claude Code, Codex CLI, Cursor, Gemini CLI, OpenCode, and other
-agent runtimes that can call MCP tools.
+当 AccInt 已在主机上配置为 MCP 服务器时使用此技能。
+该技能将 AccInt 公开的 `solve` Claude 技能适配为主机无关的工作流，
+适用于 Claude Code、Codex CLI、Cursor、Gemini CLI、OpenCode 及其他
+能够调用 MCP 工具的代理运行时。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- Use when starting non-trivial coding-agent work where prior decisions,
-  debugging history, repo-specific habits, or maintainer feedback may matter.
-- Use when a task may require multiple attempts and you want an explicit
-  commitment ID that can later receive a real outcome.
-- Use when AccInt returns a continuation frame and the agent must reason locally
-  before submitting a proposal back to the memory loop.
-- Use after verification, merge, deployment, maintainer response, or other
-  reality signal to close the commitment with an honest outcome.
-- Do not use when the host has no AccInt MCP tools configured; first install or
-  configure AccInt, then rerun the workflow.
+- 在开始非平凡的编程代理工作时使用，当先前的决策、调试历史、仓库特定习惯
+  或维护者反馈可能重要时。
+- 在任务可能需要多次尝试且你希望获得一个可后续接收真实结果的明确承诺 ID 时使用。
+- 当 AccInt 返回延续帧且代理必须在向记忆循环提交提案之前在本地推理时使用。
+- 在验证、合并、部署、维护者响应或其他现实信号之后，以诚实的结果关闭承诺时使用。
+- 当主机没有配置 AccInt MCP 工具时不要使用；首先安装或配置 AccInt，
+  然后重新运行工作流。
 
-## How It Works
+## 工作原理
 
-### Step 1: Confirm the AccInt MCP tools exist
+### 步骤 1：确认 AccInt MCP 工具存在
 
-Use the host's available MCP/tool list to confirm an AccInt server exposes the
-two verbs:
+使用主机可用的 MCP/工具列表确认 AccInt 服务器暴露了两个动词：
 
 ```text
 acc_retrieve(query)
 acc_act(runtime, input)
 ```
 
-If the host names the tools with a namespace prefix, use the equivalent
-AccInt MCP verbs. If neither verb is available, stop and ask the user to
-configure AccInt rather than inventing memory results.
+如果主机使用命名空间前缀命名工具，请使用等效的 AccInt MCP 动词。
+如果这两个动词都不可用，停下来请用户配置 AccInt，不要编造记忆结果。
 
-### Step 2: Retrieve before planning
+### 步骤 2：在规划前先检索
 
 Before a non-trivial step, retrieve relevant prior work:
 
@@ -64,53 +59,51 @@ Before a non-trivial step, retrieve relevant prior work:
 {"query": "the concrete task or subtask you are about to perform"}
 ```
 
-Read the returned memories and cite the `[ids]` you actually build on. Treat
-retrieved memories as evidence to consider, not as a substitute for inspecting
-the current repository, running tests, or checking live external state.
+阅读返回的记忆并引用你实际构建的 `[ids]`。将检索到的记忆视为要考虑的证据，
+而不是检查当前仓库、运行测试或检查实时外部状态的替代品。
 
-### Step 3: Route the goal through `solve`
+### 步骤 3：通过 `solve` 路由目标
 
-Open an AccInt commitment for the concrete goal:
+为具体目标打开 AccInt 承诺：
 
 ```json
-{"runtime": "solve", "input": "the concrete goal to accomplish"}
+{"runtime": "solve", "input": "要完成的具体目标"}
 ```
 
-If the response is final, use the answer, commitment ID, and cited memory IDs.
-If the response is a `brain_frame`, keep the reasoning in the current session:
-inspect the frame, resolve the missing judgment or knowledge from the workspace,
-then submit a concise proposal through `continue`.
+如果响应是最终结果，使用答案、承诺 ID 和引用的记忆 ID。
+如果响应是 `brain_frame`，在当前会话中保留推理：
+检查帧，从工作区解决缺失的判断或知识，
+然后通过 `continue` 提交简洁的提案。
 
-### Step 4: Resolve continuation frames
+### 步骤 4：解决延续帧
 
-For a returned frame, submit only the frame ID and your proposal text unless the
-host explicitly manages tokens for you:
+对于返回的帧，除非主机明确为你管理 tokens，
+否则只提交帧 ID 和你的提案文本：
 
 ```json
 {
   "runtime": "continue",
   "input": {
     "frame_id": "bf_...",
-    "proposal_text": "reasoned answer, plan, or decision grounded in the current evidence"
+    "proposal_text": "基于当前证据的合理答案、计划或决策"
   }
 }
 ```
 
-Do not leave a received frame unresolved. If the frame expires, close or rerun
-the bound commitment rather than pretending the continuation succeeded.
+不要让接收到的帧保持未解决状态。如果帧过期，关闭或重新运行绑定的承诺，
+而不是假装延续成功。
 
-### Step 5: Execute and verify outside AccInt
+### 步骤 5：在 AccInt 之外执行和验证
 
-Do the actual work in the repository, browser, shell, issue tracker, or other
-real environment. Verify with the strongest relevant evidence available: tests,
-builds, linters, link checks, PR state, screenshots, maintainer replies, or
-production telemetry.
+在仓库、浏览器、shell、问题跟踪器或其他真实环境中进行实际工作。
+使用可用的最强相关证据进行验证：测试、构建、linter、链接检查、
+PR 状态、截图、维护者回复或生产遥测数据。
 
-AccInt stores the learning loop; it does not replace the work or the evidence.
+AccInt 存储学习循环；它不会取代工作或证据。
 
-### Step 6: Close the commitment with an outcome
+### 步骤 6：以结果关闭承诺
 
-When reality answers, record the result:
+当现实给出答案时，记录结果：
 
 ```json
 {
@@ -118,7 +111,7 @@ When reality answers, record the result:
   "input": {
     "ref": "solved:...",
     "good": true,
-    "note": "brief evidence: tests passed, PR merged, deploy succeeded, reviewer accepted, or exact failure reason"
+    "note": "简要证据：测试通过、PR 合并、部署成功、审阅者接受，或确切失败原因"
   }
 }
 ```

@@ -2,58 +2,58 @@
 name: A/B测试分析
 description: "通过统计显著性、样本量验证、置信区间以及发布/扩展/停止建议来分析 A/B 测试结果。适用于评估实验结果或决定是否发布变体。"
 ---
-# A/B Test Analysis
+# A/B 测试分析
 
-## Purpose
-Evaluate A/B test results with statistical rigor and translate findings into clear product decisions.
+## 目的
+以统计严谨性评估 A/B 测试结果，并将发现转化为明确的产品决策。
 
-## How It Works
+## 工作原理
 
-### Step 1: Validate Test Setup
-- Sample size adequacy (power analysis)
-- Duration (≥1-2 full business cycles)
-- Randomization check (sample ratio mismatch)
-- Novelty/primacy effect assessment
+### 步骤 1：验证测试设置
+- 样本量充分性（功效分析）
+- 持续时间（≥1-2 个完整业务周期）
+- 随机性检查（样本比例不匹配）
+- 新奇/先入为主效应评估
 
-### Step 2: Calculate Results
-- Conversion rates for control and variant
-- Relative lift: (variant - control) / control × 100
-- p-value (two-tailed z-test or chi-squared)
-- 95% confidence interval for the difference
-- Statistical and practical significance
+### 步骤 2：计算结果
+- 对照组和变体的转化率
+- 相对提升：(变体 - 对照) / 对照 × 100
+- p 值（双尾 z 检验或卡方检验）
+- 差异的 95% 置信区间
+- 统计显著性和实际显著性
 
-### Step 3: Interpret
+### 步骤 3：解读
 
-| Outcome | Recommendation |
+| 结果 | 建议 |
 |---------|---------------|
-| Significant positive lift, no guardrail issues | **Ship it** |
-| Significant positive, guardrail concerns | **Investigate** |
-| Not significant, positive trend | **Extend the test** |
-| Not significant, flat | **Stop** — no effect |
-| Significant negative | **Don't ship** — revert |
+| 显著正向提升，无护栏问题 | **发布** |
+| 显著正向，但有护栏问题 | **调查** |
+| 不显著，但呈正向趋势 | **延长测试** |
+| 不显著，持平 | **停止** — 无效果 |
+| 显著负向 | **不发布** — 回滚 |
 
-### Step 4: Report
+### 步骤 4：报告
 ```
-## A/B Test: [Name]
-**Hypothesis**: [Expected outcome]
-**Duration**: [X days] | **Sample**: [N control / M variant]
+## A/B 测试：[名称]
+**假设**：[预期结果]
+**持续时间**：[X 天] | **样本**：[N 对照组 / M 变体]
 
-| Metric | Control | Variant | Lift | p-value | Significant? |
+| 指标 | 对照组 | 变体 | 提升 | p 值 | 显著？ |
 |--------|---------|---------|------|---------|-------------|
-| [Primary] | X% | Y% | +Z% | 0.0X | Yes/No |
-| [Guardrail] | ... | ... | ... | ... | ... |
+| [主要指标] | X% | Y% | +Z% | 0.0X | 是/否 |
+| [护栏指标] | ... | ... | ... | ... | ... |
 
-**Recommendation**: [Ship / Extend / Stop]
+**建议**：[发布 / 延长 / 停止]
 ```
 
-## Usage Examples
+## 使用示例
 
 ```
 "Analyze our checkout A/B test: control 3.2% conversion (n=5000), variant 3.8% (n=5000)"
 ```
 
-## Output Format
+## 输出格式
 
-- **Results Table**: Metrics with significance indicators
-- **Recommendation**: Ship/extend/stop with reasoning
-- **Python Code**: Statistical calculations
+- **结果表**：带显著性指标的指标
+- **建议**：发布/延长/停止及理由
+- **Python 代码**：统计计算

@@ -183,18 +183,4 @@ CLUSTER ANALYSIS:
 ## Key Concepts
 
 | Term | Definition |
-|------|------------|
-| **UTXO** | Unspent Transaction Output; the fundamental unit of Bitcoin that tracks ownership through a chain of transactions |
-| **Cluster Analysis** | Grouping multiple Bitcoin addresses believed to be controlled by the same entity using common-input-ownership and change-address heuristics |
-| **Peel Chain** | A laundering pattern where funds are sent through many sequential transactions, each peeling off a small amount to a new address |
-| **CoinJoin/Mixer** | Privacy techniques that combine multiple users' transactions to obscure the link between sender and receiver |
-| **Common Input Ownership** | Heuristic that assumes all inputs to a single transaction are controlled by the same entity |
-
-## Tools & Systems
-
-- **Chainalysis Reactor**: Enterprise blockchain investigation platform with entity attribution and cross-chain tracing
-- **WalletExplorer**: Free tool that clusters Bitcoin addresses and labels known services (exchanges, mixers, markets)
-- **OXT.me**: Advanced Bitcoin transaction visualization with UTXO graph analysis
-- **Blockstream.info**: Open-source Bitcoin block explorer with full API access
-- **blockchain.com API**: Free API for querying Bitcoin address balances and transaction histories
-- **OFAC SDN List**: U.S. Treasury sanctioned address list for compliance checking
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 10 MINUTES 20 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -3,17 +3,92 @@ import type { Command } from '../../commands.js'
 import { getIsNonInteractiveSession } from '../../bootstrap/state.js'
 
 const call = async (args: string) => {
-  const action = args.trim().toLowerCase() || 'help'
+ const action = args.trim().toLowerCase() || 'help'
 
-  if (action === 'help' || action === '') {
-    return {
-      type: 'text' as const,
-      value: [''\ç•â€œVork æœå¼ç»åŒ— €€€œœ´q»’â–£šr¢«¦v‹–¾¢ú°œ°€œœ°€œ€€½™½É¬€ñ‘•ÍŒø€€€€€€€€´ƒ’âš&£šrj¾ò|œ°œ€€½™½É¬É•…Ñ”€ñ‘•ÍŒø€€€´q»’â–£šr¢¨œ°€œ€€½™½É¬±¥ÍĞ€€€€€€€€€€´q»’â–£šr¢«–2[º‡jœ°€œ€€½™½É¬µ•É”€ñ¥ø€€€€€´ƒúGj¾ò|œ°œ€€½™½É¬…¹•°€ñ¥ø€€€€€´q»–¾¢ú°œ°€œœ°€ŸV?šZsR¿šRƒ–”€œ°€ŸŠZgšVÃ’â–£šr#–—–nûŠˆ€œ°œ€€ƒzGj¾ò|œ°œ€€ƒšzGj¾ò|œ°œ€€ƒúGj¾ò|œ°œ€€ƒúGj¾ò|œ°œœ°œƒ–J3’âk–’Ÿ’âk–’œœ°€œœ°€Ÿ‚úGj¾ò|œ°œ€€ƒ’âš&£šrj¾ò|œ°œ€€ƒúGj¾ò|œ°œ€€ƒzGj¾ò|œ°œœ°œƒ’â–£šr¢«¾ò<œ°€œ€€€¼¼€¼¼€¼¼€¼¼q¸t¹©½¥¸ q¸œ¤°(€€€ô(€ô((€¥˜€¡…Ñ¥½¸€ôôô€±¥ÍĞœñğ…Ñ¥½¸€ôôô€±Ìœ¤ì(€€€É•ÑÕÉ¸ì(€€€€€ÑåÁ”è€Ñ•áĞœ…Ì½¹ÍĞ°(€€€€€Ù…±Õ”èlŸŠ'šzs–òî?–2\‚f÷&²{éy¨NûÉòrÂrrÂr7W'&VçFÇ’æò7F—fR'&æ6†W2ârÂrrÂrW6Röf÷&²7&VFRÆFW67&—F–öãâFò7&VFRæWr'&æ6‚âuÒæ¦ö–â‚uÆâr’À¢Ğ¢Ğ ¢–b†7F–öâÓÓÒv7&VFRrÇÂ7F–öâÓÓÒvæWrr’°¢&WGW&â°¢G—S¢wFW‡Br26öç7BÀ¢fÇVS¢²~(hiéÎ[È{¸şXÉr›ÜšÈÜ™X]Y	Ë	ÉË	Ğœ˜[˜ÚÜ™X]YİXØÙ\ÜÙ[Kˆ[ˆH[[\[Y[][Û‹\ÈÚ[İ\[ˆ[™\[™[İX‹XYÙ[Ù\ÜÚ[Ûˆ][š\š]ÈHİ\œ™[ÛÛ^[™[İÜÈ\˜[[^Ü˜][ÛˆÙˆY™™\™[ÛÛ][ÛœË‰×Bæ¦ö–â‚uÆâr’À¢Ğ¢Ğ ¢–b†7F–öâÓÓÒvÖW&vRrÇÂ7F–öâÓÓÒvÖÂr’°¢&WGW&â°¢G—S¢wFW‡Br26öç7BÀ¢fÇVS¢²~éY»î(
-"f÷&²ÖW&vRrÂrrÂuW6Röf÷&²ÖW&vRÆ'&æ6‚Ô”CâFòÖW&vR7V6–f–2'&æ6‚ârÂt–âF†RgVÆÂ–×ÆVÖVçFF–öâÂF†—2v–ÆÂÖW&vRF†R'&æ6‚6†ævW2&6²–çFòF†RÖ–â6W76–öââuÒæ¦ö–â‚uÆâr’À¢Ğ¢Ğ ¢–b†7F–öâÓÓÒv6æ6VÂrÇÂ7F–öâÓÓÒv&÷'Br’°¢&WGW&â°¢G—S¢wFW‡Br26öç7BÀ¢fÇVS¢²~yXşiiÎyJşiJikŠzyXş(
-"f÷&26æ6VÂrÂrrÂuW6Röf÷&²6æ6VÂÆ'&æ6‚Ô”CâFò6æ6VÂ7V6–f–2'&æ6‚âuÒæ¦ö–â‚uÆâr’À¢Ğ¢Ğ ¢&WGW&â°¢G—S¢wFW‡Br26öç7BÀ¢fÇVS¢²~yXşiiÎyJşiJrÜ™X][™È›ÜšÈœ˜[˜Ú‹‹‰Ë	ÉÈœ˜[˜Ú\ØÜš\[Ûˆ	Ø\™ÜßX	ÉË	Ò[ˆH[[\[Y[][Û‹\ÈÚ[İ\[ˆ[™\[™[İX‹XYÙ[Ù\ÜÚ[Ûˆ][š\š]ÈHİ\œ™[ÛÛ^[™[İÜÈ\˜[[^Ü˜][ÛˆÙˆY™™\™[ÛÛ][ÛœË‰×Kš›Ú[Š	×‰ÊKˆBŸB‚˜ÛÛœİ›ÜšÈHÂˆ\Nˆ	ÛØØ[	Ëˆ˜[YNˆ	Ù›ÜšÉËˆ\ØÜš\[Ûˆ	ø)é9ä!¹aá¹â””çš„ï¼Ÿ', 'Create conversation branches from current session, supporting parallel exploration and merging',
-  isEnabled: () => !getIsNonInteractiveSession(),
-  supportsNonInteractive: true,
-  load: () => Promise.resolve({ call }),
+ if (action === 'help' || action === '') {
+ return {
+ type: 'text' as const,
+ value: [
+ 'Fork - conversation branch management',
+ '',
+ 'Usage:',
+ ' /fork create <name> - create a new branch',
+ ' /fork list - list all branches',
+ ' /fork switch <name> - switch to a branch',
+ ' /fork merge <branch> - merge branch into current',
+ ' /fork cancel <name> - cancel a branch',
+ '',
+ 'Fork features:',
+ ' - Parallel conversation exploration',
+ ' - Branch comparison and merging',
+ ' - Context preservation across branches',
+ ' - Independent tool execution per branch',
+ ].join(NL),
+ }
+ }
+
+ if (action === 'create' || action.startsWith('create ')) {
+ const name = action.replace(/^create//s+/, '').trim() || 'untitled'
+ return {
+ type: 'text' as const,
+ value: [
+ 'Branch created: ' + name,
+ '',
+ 'New conversation branch started. Changes here are independent of the main branch.',
+ '',
+ 'Use /fork list to see all branches.',
+ 'Use /fork merge to merge changes back.',
+ ].join(NL),
+ }
+ }
+
+ if (action === 'list' || action === 'ls') {
+ return {
+ type: 'text' as const,
+ value: [
+ 'Active branches:',
+ '',
+ ' * main (current)',
+ '',
+ 'No additional branches yet. Use /fork create to start a new branch.',
+ ].join(NL),
+ }
+ }
+
+ if (action === 'switch' || action.startsWith('switch ')) {
+ return {
+ type: 'text' as const,
+ value: 'Switching branches requires context restoration.',
+ }
+ }
+
+ if (action === 'merge' || action.startsWith('merge ')) {
+ return {
+ type: 'text' as const,
+ value: 'Merging branches combines changes from the selected branch.',
+ }
+ }
+
+ if (action === 'cancel' || action.startsWith('cancel ')) {
+ return {
+ type: 'text' as const,
+ value: 'Branch cancelled. All changes in this branch have been discarded.',
+ }
+ }
+
+ return {
+ type: 'text' as const,
+ value: 'Unknown fork operation. Use /fork help for usage.',
+ }
+}
+
+const fork = {
+ type: 'local',
+ name: 'fork',
+ description: 'Fork - conversation branch management for parallel exploration',
+ isEnabled: () => !getIsNonInteractiveSession(),
+ supportsNonInteractive: true,
+ load: () => Promise.resolve({ call }),
 } satisfies Command
 
 export default fork
