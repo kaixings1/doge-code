@@ -90,42 +90,4 @@ uv run atom_analyzer.py --verbose rule.yar
 ## Reference Documentation
 
 | Document | Purpose |
-|----------|---------|
-| [style-guide.md](skills/yara-rule-authoring/references/style-guide.md) | Naming conventions, metadata requirements |
-| [performance.md](skills/yara-rule-authoring/references/performance.md) | Atom theory, optimization techniques |
-| [strings.md](skills/yara-rule-authoring/references/strings.md) | String selection judgment, good/bad patterns |
-| [testing.md](skills/yara-rule-authoring/references/testing.md) | Validation workflow, FP investigation |
-
-## Key Resources
-
-- [YARA-X Documentation](https://virustotal.github.io/yara-x/) (official)
-- [YARA-X GitHub](https://github.com/VirusTotal/yara-x)
-- [Neo23x0 YARA Style Guide](https://github.com/Neo23x0/YARA-Style-Guide)
-- [Neo23x0 Performance Guidelines](https://github.com/Neo23x0/YARA-Performance-Guidelines)
-- [signature-base Rule Collection](https://github.com/Neo23x0/signature-base)
-- [YARA-CI](https://yara-ci.cloud.virustotal.com/)
-
-## Requirements
-
-- Python 3.11+
-- [uv](https://github.com/astral-sh/uv) for running scripts
-- [YARA-X](https://virustotal.github.io/yara-x/) CLI (`yr`)
-
-The scripts use PEP 723 inline metadata, so dependencies are resolved automatically by `uv run`.
-
-## Migrating from Legacy YARA
-
-If you have existing rules written for legacy YARA:
-
-1. **Run validation:** `yr check --relaxed-re-syntax rules/`
-2. **Fix issues identified** (see SKILL.md migration section)
-3. **Validate without relaxed mode:** `yr check rules/`
-
-> **Note:** Use `--relaxed-re-syntax` only as a temporary diagnostic tool.
-> Fix all identified issues rather than relying on relaxed mode permanently.
-
-Common migration issues:
-- Unescaped `{` in regex patterns
-- Invalid escape sequences (`\R` → `\\R`)
-- Base64 patterns on strings < 3 characters
-- Negative array indexing
+|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 15 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

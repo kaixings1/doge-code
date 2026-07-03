@@ -24,44 +24,20 @@ The skill checks for nine categories of security issues:
 
 | Action | Repository | Notes |
 |--------|------------|-------|
-| Claude Code Action | anthropics/claude-code-action | |
-| Gemini CLI | google-github-actions/run-gemini-cli | Primary |
-| Gemini CLI (legacy) | google-gemini/gemini-cli-action | Archived |
+|克劳德守则行动| anthropics/claude-code-action | |
+| Gemini CLI | google-github-actions/run-gemini-cli |主要|
+| Gemini CLI （旧版） | google-gemini/gemini-cli-action |已存档|
 | OpenAI Codex | openai/codex-action | |
-| GitHub AI Inference | actions/ai-inference | |
+| GitHub AI推理| actions/ai-inference | |
 
-## Installation
+# #安装
 
-From a project with the Trail of Bits internal marketplace configured:
+从配置了Trail of Bits内部市场的项目：
 
 ```
 /plugin menu
 ```
 
-Select **agentic-actions-auditor** from the Security Tooling section.
+从安全工具部分选择* * agentic-actions-auditor * *。
 
-## Skills Included
-
-| Skill | Description |
-|-------|-------------|
-| agentic-actions-auditor | Audits GitHub Actions workflow files for AI agent security vulnerabilities |
-
-## Target Audience
-
-- **Security auditors** reviewing repositories that use AI agents in CI/CD
-- **Developers** configuring Claude Code Action, Gemini CLI, OpenAI Codex, or GitHub AI Inference in their workflows
-- **DevSecOps engineers** establishing secure defaults for AI-assisted code review pipelines
-
-## Usage
-
-Once installed, the skill activates automatically when Claude detects GitHub Actions workflow files (`.github/workflows/*.yml`) containing AI agent action references. You can also invoke it directly:
-
-```
-Audit the GitHub Actions workflows in this repository for AI agent security issues.
-```
-
-The skill produces a structured findings report covering each applicable attack vector with severity ratings and remediation guidance.
-
-## License
-
-[Creative Commons Attribution-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/)
+# #技能输入

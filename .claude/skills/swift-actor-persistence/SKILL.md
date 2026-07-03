@@ -111,33 +111,4 @@ final class QuestionListViewModel {
 ## 关键设计决策 (Key Design Decisions)
 
 | 决策 | 理由 |
-|----------|-----------|
-| 使用 Actor (而非 class + lock) | 编译器强制执行线程安全，无需手动同步 |
-| 内存缓存 + 文件持久化 | 缓存提供快速读取，磁盘提供持久化写入 |
-| 在 init 中同步加载 | 避免异步初始化的复杂性，且对本地文件影响较小 |
-| 以 ID 为键的字典 (Dictionary) | 通过标识符进行 O(1) 查找 |
-| 泛型支持 `Codable & Identifiable` | 可在任何模型类型中复用 |
-| 原子化文件写入 (`.atomic`) | 防止崩溃时出现部分写入导致的数据损坏 |
-
-## 最佳实践 (Best Practices)
-
-- **对所有跨 actor 边界的数据使用 `Sendable` 类型**
-- **保持 actor 的公共 API 最小化** —— 仅暴露业务领域操作，不暴露持久化细节
-- **使用 `.atomic` 写入** 以防止应用在写入过程中崩溃导致数据损坏
-- **在 `init` 中同步加载** —— 异步初始化会增加复杂性，而对本地文件的同步读取收益更高
-- **结合 `@Observable`** ViewModel 实现响应式 UI 更新
-
-## 避免的反模式 (Anti-Patterns to Avoid)
-
-- 在新的 Swift 并发代码中使用 `DispatchQueue` 或 `NSLock` 而非 actor
-- 将内部缓存字典直接暴露给外部调用者
-- 在没有验证的情况下让文件 URL 变为可配置
-- 遗忘所有 actor 方法调用都是 `await` 的 —— 调用者必须处理异步上下文
-- 使用 `nonisolated` 绕过 actor 隔离（这违背了使用 actor 的初衷）
-
-## 适用场景 (When to Use)
-
-- iOS/macOS 应用中的本地数据存储（用户数据、设置、缓存内容）
-- 稍后与服务器同步的离线优先（Offline-first）架构
-- 任何被应用多个部分并发访问的共享可变状态
-- 使用现代 Swift 并发（Swift Concurrency）替换旧有的基于 `DispatchQueue` 的线程安全方案
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  21 HOURS 59 MINUTES 59 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
