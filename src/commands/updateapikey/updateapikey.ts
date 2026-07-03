@@ -293,6 +293,8 @@ async function testKey(entry: ApiKeyEntry): Promise<TestResult> {
 }
 
 export const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult> => {
+  const now = new Date()
+  const timeStamp = `[${now.toLocaleString()}]`
   const cmd = (args || '').trim().toLowerCase()
 
   if (cmd === 'all' || cmd === 'update') {
@@ -300,7 +302,7 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
     const keys = await fetchLatestKeys()
     if (keys.length === 0) {
       log('ERROR', '全量更新失败：获取 Key 为空')
-      return { type: 'text', value: '❌ 无法从 GitHub 获取最新 Key，请检查网络连接。\n📋 详情请查看 updateapikey.log' }
+      return { type: 'text', value: `${timeStamp} ❌ 无法从 GitHub 获取最新 Key，请检查网络连接。\n📋 详情请查看 updateapikey.log` }
     }
 
     let output = `✅ 从 GitHub 获取到 ${keys.length} 个免费 Key，开始逐串行测试可用性...\n`
@@ -357,28 +359,28 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
     }
     output += `\n💡 现在可以使用 d.bat free${startIdx}~free${startIdx + updated - 1} 启动`
     log('INFO', '全量更新完成', { total: maxFiles, passed, failed, updated })
-    return { type: 'text', value: output }
+    return { type: 'text', value: timeStamp + '\n' + output }
   }
 
   else if (cmd.startsWith('free')) {
     // 更新单个文件
     const idx = parseInt(cmd.replace(/\D/g, ''))
     if (idx < 5) {
-      return { type: 'text', value: `❌ free${idx} 是注册方案，本命令仅支持更新 free5 及以上配置文件。` }
+      return { type: 'text', value: `${timeStamp} ❌ free${idx} 是注册方案，本命令仅支持更新 free5 及以上配置文件。` }
     }
     log('INFO', `开始更新单个配置文件`, { filename: `free${idx}.json` })
 
     const keys = await fetchLatestKeys()
     if (keys.length === 0) {
       log('ERROR', `free${idx} 更新失败：获取 Key 为空`)
-      return { type: 'text', value: `❌ 无法从 GitHub 获取最新 Key。\n📋 详情请查看 updateapikey.log` }
+      return { type: 'text', value: `${timeStamp} ❌ 无法从 GitHub 获取最新 Key。\n📋 详情请查看 updateapikey.log` }
     }
 
     // free5 对应 keys[0]
     const localIdx = idx - 5
     if (localIdx < 0 || localIdx >= keys.length) {
       log('WARN', `free${idx} 超出范围`, { localIdx, keyCount: keys.length })
-      return { type: 'text', value: `❌ free${idx} 超出范围，目前可用免费 Key 范围 free5~free${keys.length + 4}` }
+      return { type: 'text', value: `${timeStamp} ❌ free${idx} 超出范围，目前可用免费 Key 范围 free5~free${keys.length + 4}` }
     }
 
     const entry = keys[localIdx]
@@ -405,7 +407,7 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
       output += `\n❌ free${idx}.json 跳过更新（Key 不可用）\n  原因: ${testResult.message}`
     }
 
-    return { type: 'text', value: output }
+    return { type: 'text', value: timeStamp + '\n' + output }
   }
 
   else {
@@ -431,6 +433,6 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
     output += '  /updateapikey free5  - 仅更新指定编号的配置文件\n'
     output += '\n📋 详细日志已写入 updateapikey.log\n'
 
-    return { type: 'text', value: output }
+    return { type: 'text', value: timeStamp + '\n' + output }
   }
 }
