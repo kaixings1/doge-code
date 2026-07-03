@@ -6,109 +6,109 @@ source: community
 date_added: "2026-03-12"
 ---
 
-# Acceptance Orchestrator
+# 验收编排器
 
-## Overview
+## 概述
 
-Orchestrate coding work as a state machine that ends only when acceptance criteria are verified with evidence or the task is explicitly escalated.
+将编码工作编排为一个状态机，只有在验收标准通过证据验证或任务被明确升级时才结束。
 
-Core rule: **do not optimize for "code changed"; optimize for "DoD proven".**
+核心规则：**不要优化"代码已更改"；要优化"DoD 已证明"。**
 
-## When to Use
-- The task already has an issue or clear acceptance criteria and should run end-to-end with minimal human re-intervention.
-- You need structured handoff across implementation, review, deployment, and final verification.
-- You want explicit stop conditions and escalation instead of silent partial completion.
+## 何时使用
+- 任务已有 issue 或明确的验收标准，应端到端运行，最小化人工重新干预。
+- 需要在实现、审查、部署和最终验证之间进行结构化交接。
+- 需要明确的停止条件和升级机制，而不是静默的部分完成。
 
-## Required Sub-Skills
+## 必需子技能
 
 - `create-issue-gate`
 - `closed-loop-delivery`
 - `verification-before-completion`
 
-Optional supporting skills:
+可选支持技能：
 - `deploy-dev`
 - `pr-watch`
 - `pr-review-autopilot`
 - `git-ship`
 
-## Inputs
+## 输入
 
-Require these inputs:
-- issue id or issue body
-- issue status
-- acceptance criteria (DoD)
-- target environment (`dev` default)
+必需输入：
+- issue id 或 issue 内容
+- issue 状态
+- 验收标准（DoD）
+- 目标环境（默认 `dev`）
 
-Fixed defaults:
-- max iteration rounds = `2`
-- PR review polling = `3m -> 6m -> 10m`
+固定默认值：
+- 最大迭代轮数 = `2`
+- PR 审查轮询 = `3m -> 6m -> 10m`
 
-## State Machine
+## 状态机
 
-- `intake`
-- `issue-gated`
-- `executing`
-- `review-loop`
-- `deploy-verify`
-- `accepted`
-- `escalated`
+- `intake`（接收）
+- `issue-gated`（issue 门控）
+- `executing`（执行中）
+- `review-loop`（审查循环）
+- `deploy-verify`（部署验证）
+- `accepted`（已验收）
+- `escalated`（已升级）
 
-## Workflow
+## 工作流
 
-1. **Intake**
-   - Read issue and extract task goal + DoD.
+1. **接收**
+   - 读取 issue 并提取任务目标 + DoD。
 
-2. **Issue gate**
-   - Use `create-issue-gate` logic.
-   - If issue is not `ready` or execution gate is not `allowed`, stop immediately.
-   - Do not implement anything while issue remains `draft`.
+2. **Issue 门控**
+   - 使用 `create-issue-gate` 逻辑。
+   - 如果 issue 不是 `ready` 或执行门未 `allowed`，立即停止。
+   - issue 仍为 `draft` 时不要实施任何内容。
 
-3. **Execute**
-   - Hand off to `closed-loop-delivery` for implementation and local verification.
+3. **执行**
+   - 移交给 `closed-loop-delivery` 进行实施和本地验证。
 
-4. **Review loop**
-   - If PR feedback is relevant, batch polling windows as:
-     - wait `3m`
-     - then `6m`
-     - then `10m`
-   - After the `10m` round, stop waiting and process all visible comments together.
+4. **审查循环**
+   - 如果 PR 反馈相关，分批轮询窗口：
+     - 等待 `3m`
+     - 然后 `6m`
+     - 然后 `10m`
+   - `10m` 轮次后，停止等待并一起处理所有可见评论。
 
-5. **Deploy and runtime verification**
-   - If DoD depends on runtime behavior, deploy only to `dev` by default.
-   - Verify with real logs/API/Lambda behavior, not assumptions.
+5. **部署和运行时验证**
+   - 如果 DoD 依赖运行时行为，默认仅部署到 `dev`。
+   - 使用真实日志/API/Lambda 行为验证，不要假设。
 
-6. **Completion gate**
-   - Before any claim of completion, require `verification-before-completion`.
-   - No success claim without fresh evidence.
+6. **完成门控**
+   - 在任何完成声明之前，要求 `verification-before-completion`。
+   - 没有新证据不要声称成功。
 
-## Stop Conditions
+## 停止条件
 
-Move to `accepted` only when every acceptance criterion has matching evidence.
+只有在每个验收标准都有匹配证据时才转移到 `accepted`。
 
-Move to `escalated` when any of these happen:
-- DoD still fails after `2` full rounds
-- missing secrets/permissions/external dependency blocks progress
-- task needs production action or destructive operation approval
-- review instructions conflict and cannot both be satisfied
+在以下情况下转移到 `escalated`：
+- DoD 在 `2` 轮完整循环后仍失败
+- 缺少机密/权限/外部依赖阻碍进度
+- 任务需要生产操作或破坏性操作审批
+- 审查指令冲突且无法同时满足
 
-## Human Gates
+## 人工门控
 
-Always stop for human confirmation on:
-- prod/stage deploys beyond agreed scope
-- destructive git/data operations
-- billing or security posture changes
-- missing user-provided acceptance criteria
+始终停止以获取人工确认：
+- 超出约定范围的 prod/stage 部署
+- 破坏性的 git/数据操作
+- 计费或安全态势变更
+- 缺少用户提供的验收标准
 
-## Output Contract
+## 输出约定
 
-When reporting status, always include:
-- `Status`: intake / executing / accepted / escalated
-- `Acceptance Criteria`: pass/fail checklist
-- `Evidence`: commands, logs, API results, or runtime proof
-- `Open Risks`: anything still uncertain
-- `Need Human Input`: smallest next decision, if blocked
+报告状态时，始终包含：
+- `Status`：intake / executing / accepted / escalated
+- `Acceptance Criteria`：通过/失败检查清单
+- `Evidence`：命令、日志、API 结果或运行时证明
+- `Open Risks`：任何仍不确定的事项
+- `Need Human Input`：最小的下一步决策（如果被阻塞）
 
-Do not report "done" unless status is `accepted`.
+除非状态是 `accepted`，否则不要报告"完成"。
 
 ## Limitations
 - Use this skill only when the task clearly matches the scope described above.

@@ -181,24 +181,4 @@ ios hooking search classes UITextField
 ## Key Concepts
 
 | Term | Definition |
-|------|-----------|
-| **Objection** | Runtime mobile exploration toolkit built on Frida that provides pre-built scripts for common security testing tasks |
-| **Frida Gadget** | Shared library injected into app process to enable Frida instrumentation without jailbreak |
-| **Keychain** | iOS secure credential storage system; Objection can dump items accessible to the target app's keychain access group |
-| **SSL Pinning Bypass** | Runtime modification of certificate validation logic to allow proxy interception of HTTPS traffic |
-| **Method Hooking** | Intercepting Objective-C/Swift method calls at runtime to observe arguments, return values, and modify behavior |
-
-## Tools & Systems
-
-- **Objection**: High-level Frida-powered mobile security exploration toolkit with pre-built commands
-- **Frida**: Dynamic instrumentation framework providing JavaScript injection into native app processes
-- **Frida-tools**: CLI utilities for Frida including frida-ps, frida-trace, and frida-discover
-- **ideviceinstaller**: Cross-platform tool for installing/managing iOS apps via USB
-- **Burp Suite**: HTTP proxy for intercepting traffic after SSL pinning bypass
-
-## Common Pitfalls
-
-- **App crashes on attach**: Some apps implement Frida detection. Use `--startup-command` to hook anti-Frida checks early in the app lifecycle.
-- **Keychain access scope**: Objection can only dump keychain items within the app's access group. System keychain items require separate jailbreak-level tools.
-- **Swift name mangling**: Swift method names are mangled in the runtime. Use `ios hooking list classes` with grep to find demangled names.
-- **Non-persistent changes**: All Objection modifications are runtime-only and reset on app restart. Document findings immediately.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 10 MINUTES 44 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

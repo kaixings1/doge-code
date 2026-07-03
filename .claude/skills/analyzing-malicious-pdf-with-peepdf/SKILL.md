@@ -58,35 +58,4 @@ mitre_attack:
 ## Key Concepts
 
 | Concept | Description |
-|---------|-------------|
-| /OpenAction | Automatic action executed when PDF is opened |
-| /JavaScript /JS | Embedded JavaScript code in PDF objects |
-| /Launch | Action that launches external applications |
-| /EmbeddedFile | File embedded within the PDF structure |
-| FlateDecode | zlib compression filter used to hide content |
-| Object Streams | PDF objects stored in compressed streams |
-
-## Tools & Systems
-
-| Tool | Purpose |
-|------|---------|
-| peepdf / peepdf-3 | Interactive PDF analysis with JS emulation |
-| pdfid.py | Quick triage scanning for suspicious keywords |
-| pdf-parser.py | Deep object-level PDF parsing |
-| VirusTotal | Hash lookup and AV detection cross-reference |
-| CyberChef | Decode and transform extracted payloads |
-
-## Output Format
-
-```
-Analysis Report: PDF-MAL-[DATE]-[SEQ]
-File: [filename.pdf]
-SHA-256: [hash]
-Suspicious Keywords: [/JS, /OpenAction, etc.]
-Objects with JavaScript: [Object IDs]
-Extracted URLs: [List]
-Shellcode Detected: [Yes/No]
-Embedded Files: [Count and types]
-VirusTotal Detections: [X/Y engines]
-Risk Level: [Critical/High/Medium/Low]
-```
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 10 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

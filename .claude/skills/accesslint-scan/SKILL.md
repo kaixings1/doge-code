@@ -6,40 +6,40 @@ source: "https://github.com/AccessLint/skills"
 date_added: "2026-06-02"
 ---
 
-Audit a live page and report what's broken and where. Locate; don't fix. If no URL in `$ARGUMENTS`, ask for one.
+审计实时页面并报告哪些地方有问题以及在哪里。定位问题；不要修复。如果 `$ARGUMENTS` 中没有 URL，请询问。
 
-## When to Use
-- Use this skill when the task matches this description: Audit a live page for accessibility issues, locate each WCAG violation precisely, and return a selector-grounded fix worklist without editing.
+## 何时使用
+- 当任务与此描述匹配时使用此技能：审计实时页面的无障碍问题，精确定位每个 WCAG 违规，并返回基于选择器的修复工作清单，不进行编辑。
 
-## 1. Audit
+## 1. 审计
 
 ```bash
 PORT=$(npx -y @accesslint/chrome@latest ensure | node -e 'process.stdin.on("data",d=>process.stdout.write(""+JSON.parse(d).port))')
 npx -y @accesslint/cli@latest "<url>" --port "$PORT" --format json
 ```
 
-Flags as needed: `--selector`, `--wait-for "<selector>"`, `--include-aaa`, `--disable <rules>`.
+按需使用标志：`--selector`、`--wait-for "<selector>"`、`--include-aaa`、`--disable <rules>`。
 
-## 2. Report
+## 2. 报告
 
-Counts by impact, then one entry per violation:
+按影响计数，然后每个违规一个条目：
 
-- **where** — selector verbatim + `file:line (symbol)` if `source` is present — never fabricate. If no violation has `source`, note "source mapping unavailable — located by selector only".
-- **evidence** — contrast ratio, missing attribute, empty name
-- **fix** — mechanical change or `NEEDS HUMAN`
+- **位置** — 选择器原文 + `file:line (symbol)`（如果存在 `source`）— 绝不编造。如果没有违规有 `source`，注明 "source mapping unavailable — located by selector only"。
+- **证据** — 对比度、缺少属性、空名称
+- **修复** — 机械变更或 `NEEDS HUMAN`
 
-Don't edit. For fixes: apply mechanical ones then re-run to verify; for bulk work hand off to `accesslint:audit`.
+不要编辑。对于修复：应用机械修复然后重新运行验证；批量工作移交给 `accesslint:audit`。
 
-## 3. Tear down
+## 3. 清理
 
 ```bash
-npx -y @accesslint/chrome@latest stop --all  # skip if ensure reported "managed":false
+npx -y @accesslint/chrome@latest stop --all  # 如果 ensure 报告 "managed":false 则跳过
 ```
 
-## Gotchas
+## 注意事项
 
-- `ensure` always determines the port — never hardcode 9222.
-- CLI exit 2 = bad URL or page never loaded; check the dev server.
+- `ensure` 始终决定端口 — 永远不要硬编码 9222。
+- CLI exit 2 = URL 错误或页面从未加载；检查 dev server。
 
 ## Limitations
 - Use this skill only when the task clearly matches the scope described above.

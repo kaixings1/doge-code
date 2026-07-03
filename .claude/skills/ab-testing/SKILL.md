@@ -22,332 +22,332 @@ metadata:
 
 ---
 
-## Core Principles
+## 核心原则
 
-### 1. Start with a Hypothesis
-- Not just "let's see what happens"
-- Specific prediction of outcome
-- Based on reasoning or data
+### 1. 从假设开始
+- 不只是"看看会发生什么"
+- 对结果做出具体预测
+- 基于推理或数据
 
-### 2. Test One Thing
-- Single variable per test
-- Otherwise you don't know what worked
+### 2. 一次只测一个变量
+- 每次测试只改变一个变量
+- 否则你无法知道是哪个改动生效了
 
-### 3. Statistical Rigor
-- Pre-determine sample size
-- Don't peek and stop early
-- Commit to the methodology
+### 3. 统计严谨性
+- 预先确定样本量
+- 不要提前查看结果就停止测试
+- 坚持既定方法论
 
-### 4. Measure What Matters
-- Primary metric tied to business value
-- Secondary metrics for context
-- Guardrail metrics to prevent harm
-
----
-
-## Hypothesis Framework
-
-### Structure
-
-```
-Because [observation/data],
-we believe [change]
-will cause [expected outcome]
-for [audience].
-We'll know this is true when [metrics].
-```
-
-### Example
-
-**Weak**: "Changing the button color might increase clicks."
-
-**Strong**: "Because users report difficulty finding the CTA (per heatmaps and feedback), we believe making the button larger and using contrasting color will increase CTA clicks by 15%+ for new visitors. We'll measure click-through rate from page view to signup start."
+### 4. 衡量真正重要的指标
+- 主要指标与业务价值挂钩
+- 次要指标提供上下文
+- 护栏指标防止负面影响
 
 ---
 
-## Test Types
+## 假设框架
 
-| Type | Description | Traffic Needed |
+### 结构
+
+```
+因为 [观察/数据]，
+我们相信 [改动]
+将会导致 [预期结果]
+对于 [目标用户]。
+当 [指标] 达到时，我们就知道这是真的。
+```
+
+### 示例
+
+**弱假设**："更改按钮颜色可能会增加点击。"
+
+**强假设**："因为用户反馈难以找到 CTA（根据热图和反馈），我们相信将按钮放大并使用对比色将使新访客的 CTA 点击率提升 15% 以上。我们将衡量从页面浏览到注册开始的点击率。"
+
+---
+
+## 测试类型
+
+| 类型 | 描述 | 所需流量 |
 |------|-------------|----------------|
-| A/B | Two versions, single change | Moderate |
-| A/B/n | Multiple variants | Higher |
-| MVT | Multiple changes in combinations | Very high |
-| Split URL | Different URLs for variants | Moderate |
+| A/B | 两个版本，单一改动 | 中等 |
+| A/B/n | 多个变体 | 较高 |
+| MVT | 多种改动的组合 | 非常高 |
+| Split URL | 不同 URL 的变体 | 中等 |
 
 ---
 
-## Sample Size
+## 样本量
 
-### Quick Reference
+### 快速参考
 
-| Baseline | 10% Lift | 20% Lift | 50% Lift |
+| 基线转化率 | 10% 提升 | 20% 提升 | 50% 提升 |
 |----------|----------|----------|----------|
-| 1% | 150k/variant | 39k/variant | 6k/variant |
-| 3% | 47k/variant | 12k/variant | 2k/variant |
-| 5% | 27k/variant | 7k/variant | 1.2k/variant |
-| 10% | 12k/variant | 3k/variant | 550/variant |
+| 1% | 150k/变体 | 39k/变体 | 6k/变体 |
+| 3% | 47k/变体 | 12k/变体 | 2k/变体 |
+| 5% | 27k/变体 | 7k/变体 | 1.2k/变体 |
+| 10% | 12k/变体 | 3k/变体 | 550/变体 |
 
-**Calculators:**
-- [Evan Miller's](https://www.evanmiller.org/ab-testing/sample-size.html)
-- [Optimizely's](https://www.optimizely.com/sample-size-calculator/)
+**计算器：**
+- [Evan Miller 的样本量计算器](https://www.evanmiller.org/ab-testing/sample-size.html)
+- [Optimizely 的样本量计算器](https://www.optimizely.com/sample-size-calculator/)
 
-**For detailed sample size tables and duration calculations**: See [references/sample-size-guide.md](references/sample-size-guide.md)
-
----
-
-## Metrics Selection
-
-### Primary Metric
-- Single metric that matters most
-- Directly tied to hypothesis
-- What you'll use to call the test
-
-### Secondary Metrics
-- Support primary metric interpretation
-- Explain why/how the change worked
-
-### Guardrail Metrics
-- Things that shouldn't get worse
-- Stop test if significantly negative
-
-### Example: Pricing Page Test
-- **Primary**: Plan selection rate
-- **Secondary**: Time on page, plan distribution
-- **Guardrail**: Support tickets, refund rate
+**详细的样本量表和持续时间计算**：请参阅 [references/sample-size-guide.md](references/sample-size-guide.md)
 
 ---
 
-## Designing Variants
+## 指标选择
 
-### What to Vary
+### 主要指标
+- 唯一重要的指标
+- 与假设直接相关
+- 用来判定测试结果的指标
 
-| Category | Examples |
+### 次要指标
+- 辅助解释主要指标
+- 说明改动为何生效/如何生效
+
+### 护栏指标
+- 不应恶化的指标
+- 若显著变差则停止测试
+
+### 示例：定价页测试
+- **主要指标**：方案选择率
+- **次要指标**：页面停留时间、方案分布
+- **护栏指标**：支持工单、退款率
+
+---
+
+## 设计变体
+
+### 可变因素
+
+| 类别 | 示例 |
 |----------|----------|
-| Headlines/Copy | Message angle, value prop, specificity, tone |
-| Visual Design | Layout, color, images, hierarchy |
-| CTA | Button copy, size, placement, number |
-| Content | Information included, order, amount, social proof |
+| 标题/文案 | 信息角度、价值主张、具体性、语气 |
+| 视觉设计 | 布局、颜色、图片、层级 |
+| CTA | 按钮文案、大小、位置、数量 |
+| 内容 | 包含的信息、顺序、数量、社会证明 |
 
-### Best Practices
-- Single, meaningful change
-- Bold enough to make a difference
-- True to the hypothesis
+### 最佳实践
+- 单一、有意义的改动
+- 足够大胆以产生效果
+- 与假设保持一致
 
 ---
 
-## Traffic Allocation
+## 流量分配
 
-| Approach | Split | When to Use |
+| 方案 | 比例 | 适用场景 |
 |----------|-------|-------------|
-| Standard | 50/50 | Default for A/B |
-| Conservative | 90/10, 80/20 | Limit risk of bad variant |
-| Ramping | Start small, increase | Technical risk mitigation |
+| 标准 | 50/50 | A/B 默认方案 |
+| 保守 | 90/10、80/20 | 限制差变体的风险 |
+| 渐进 | 从小开始，逐步增加 | 技术风险缓解 |
 
-**Considerations:**
-- Consistency: Users see same variant on return
-- Balanced exposure across time of day/week
-
----
-
-## Implementation
-
-### Client-Side
-- JavaScript modifies page after load
-- Quick to implement, can cause flicker
-- Tools: PostHog, Optimizely, VWO
-
-### Server-Side
-- Variant determined before render
-- No flicker, requires dev work
-- Tools: PostHog, LaunchDarkly, Split
+**注意事项：**
+- 一致性：返回的用户看到相同变体
+- 在一周中的不同时间/时段均衡曝光
 
 ---
 
-## Running the Test
+## 实施
 
-### Pre-Launch Checklist
-- [ ] Hypothesis documented
-- [ ] Primary metric defined
-- [ ] Sample size calculated
-- [ ] Variants implemented correctly
-- [ ] Tracking verified
-- [ ] QA completed on all variants
+### 客户端
+- 页面加载后通过 JavaScript 修改
+- 实现快，但可能造成闪烁
+- 工具：PostHog、Optimizely、VWO
 
-### During the Test
-
-**DO:**
-- Monitor for technical issues
-- Check segment quality
-- Document external factors
-
-**Avoid:**
-- Peek at results and stop early
-- Make changes to variants
-- Add traffic from new sources
-
-### The Peeking Problem
-Looking at results before reaching sample size and stopping early leads to false positives and wrong decisions. Pre-commit to sample size and trust the process.
+### 服务端
+- 渲染前确定变体
+- 无闪烁，但需要开发工作
+- 工具：PostHog、LaunchDarkly、Split
 
 ---
 
-## Analyzing Results
+## 运行测试
 
-### Statistical Significance
-- 95% confidence = p-value < 0.05
-- Means <5% chance result is random
-- Not a guarantee—just a threshold
+### 上线前检查清单
+- [ ] 假设已记录
+- [ ] 主要指标已定义
+- [ ] 样本量已计算
+- [ ] 变体已正确实施
+- [ ] 追踪已验证
+- [ ] 所有变体已完成 QA
 
-### Analysis Checklist
+### 测试期间
 
-1. **Reach sample size?** If not, result is preliminary
-2. **Statistically significant?** Check confidence intervals
-3. **Effect size meaningful?** Compare to MDE, project impact
-4. **Secondary metrics consistent?** Support the primary?
-5. **Guardrail concerns?** Anything get worse?
-6. **Segment differences?** Mobile vs. desktop? New vs. returning?
+**要做：**
+- 监控技术问题
+- 检查分段质量
+- 记录外部因素
 
-### Interpreting Results
+**避免：**
+- 提前查看结果并停止测试
+- 中途更改变体
+- 添加新来源的流量
 
-| Result | Conclusion |
+### 偷看问题
+在达到样本量前查看结果并提前停止会导致假阳性和错误决策。预先承诺样本量并信任流程。
+
+---
+
+## 分析结果
+
+### 统计显著性
+- 95% 置信度 = p 值 < 0.05
+- 意味着结果随机概率 <5%
+- 不能保证正确，只是一个阈值
+
+### 分析检查清单
+
+1. **达到样本量了吗？** 如果没有，结果是初步的
+2. **统计显著吗？** 检查置信区间
+3. **效果大小有意义吗？** 与 MDE、项目影响进行比较
+4. **次要指标一致吗？** 是否支持主要指标？
+5. **护栏指标有问题吗？** 是否有指标恶化？
+6. **分段差异吗？** 移动端 vs 桌面端？新用户 vs 回访用户？
+
+### 结果解读
+
+| 结果 | 结论 |
 |--------|------------|
-| Significant winner | Implement variant |
-| Significant loser | Keep control, learn why |
-| No significant difference | Need more traffic or bolder test |
-| Mixed signals | Dig deeper, maybe segment |
+| 显著胜出 | 实施该变体 |
+| 显著失败 | 保留原版本，找出原因 |
+| 无显著差异 | 需要更多流量或更激进的测试 |
+| 信号混杂 | 深挖，可能需要分段分析 |
 
 ---
 
-## Documentation
+## 文档记录
 
-Document every test with:
-- Hypothesis
-- Variants (with screenshots)
-- Results (sample, metrics, significance)
-- Decision and learnings
+记录每次测试的内容：
+- 假设
+- 变体（含截图）
+- 结果（样本、指标、显著性）
+- 决策与经验
 
-**For templates**: See [references/test-templates.md](references/test-templates.md)
+**模板请参见**：[references/test-templates.md](references/test-templates.md)
 
 ---
 
-## Growth Experimentation Program
+## 增长实验计划
 
-Individual tests are valuable. A continuous experimentation program is a compounding asset. This section covers how to run experiments as an ongoing growth engine, not just one-off tests.
+单独测试很有价值，但持续的实验计划才是复利资产。本节介绍如何将实验作为持续增长引擎来运行，而不是零散的一次性测试。
 
-### The Experiment Loop
+### 实验循环
 
 ```
-1. Generate hypotheses (from data, research, competitors, customer feedback)
-2. Prioritize with ICE scoring
-3. Design and run the test
-4. Analyze results with statistical rigor
-5. Promote winners to a playbook
-6. Generate new hypotheses from learnings
-→ Repeat
+1. 生成假设（来自数据、研究、竞品、客户反馈）
+2. 用 ICE 评分进行优先级排序
+3. 设计和运行测试
+4. 用统计严谨性分析结果
+5. 将获胜方案纳入 playbook
+6. 从经验中生成新假设
+→ 重复
 ```
 
-### Hypothesis Generation
+### 假设生成
 
-Feed your experiment backlog from multiple sources:
+从多个来源为实验 backlog 提供输入：
 
-| Source | What to Look For |
+| 来源 | 关注点 |
 |--------|-----------------|
-| Analytics | Drop-off points, low-converting pages, underperforming segments |
-| Customer research | Pain points, confusion, unmet expectations |
-| Competitor analysis | Features, messaging, or UX patterns they use that you don't |
-| Support tickets | Recurring questions or complaints about conversion flows |
-| Heatmaps/recordings | Where users hesitate, rage-click, or abandon |
-| Past experiments | "Significant loser" tests often reveal new angles to try |
+| 分析数据 | 流失点、低转化页面、表现不佳的分段 |
+| 客户研究 | 痛点、困惑、未满足的期望 |
+| 竞品分析 | 他们使用而你尚未采用的特性、信息或 UX 模式 |
+| 支持工单 | 转化流程中的重复问题或投诉 |
+| 热图/录屏 | 用户犹豫、愤怒点击或放弃的地方 |
+| 过去实验 | "显著失败"的测试往往能揭示新的尝试角度 |
 
-### ICE Prioritization
+### ICE 优先级
 
-Score each hypothesis 1-10 on three dimensions:
+在三个维度上对每个假设进行 1-10 分评分：
 
-| Dimension | Question |
+| 维度 | 问题 |
 |-----------|----------|
-| **Impact** | If this works, how much will it move the primary metric? |
-| **Confidence** | How sure are we this will work? (Based on data, not gut.) |
-| **Ease** | How fast and cheap can we ship and measure this? |
+| **影响** | 如果成功，对主要指标有多大提升？ |
+| **信心** | 我们有多大把握这会生效？（基于数据，而非直觉。） |
+| **难度** | 交付和衡量需要多快、多便宜？ |
 
-**ICE Score** = (Impact + Confidence + Ease) / 3
+**ICE 分数** = (影响 + 信心 + 难度) / 3
 
-Run highest-scoring experiments first. Re-score monthly as context changes.
+优先运行分数最高的实验。随着背景变化每月重新评分。
 
-### Experiment Velocity
+### 实验速度
 
-Track your experimentation rate as a leading indicator of growth:
+将实验率作为增长的领先指标来追踪：
 
-| Metric | Target |
+| 指标 | 目标 |
 |--------|--------|
-| Experiments launched per month | 4-8 for most teams |
-| Win rate | 20-30% is common for mature programs (sustained higher rates may indicate conservative hypotheses) |
-| Average test duration | 2-4 weeks |
-| Backlog depth | 20+ hypotheses queued |
-| Cumulative lift | Compound gains from all winners |
+| 每月启动的实验数 | 大多数团队 4-8 个 |
+| 胜率 | 成熟计划 20-30% 是常见值（持续更高可能说明假设过于保守） |
+| 平均测试周期 | 2-4 周 |
+| Backlog 深度 | 20+ 个排队的假设 |
+| 累计提升 | 所有获胜方案带来的复合收益 |
 
-### The Experiment Playbook
+### 实验手册
 
-When a test wins, don't just implement it — document the pattern:
+当测试获胜时，不要只实施它——记录这个模式：
 
 ```
-## [Experiment Name]
-**Date**: [date]
-**Hypothesis**: [the hypothesis]
-**Sample size**: [n per variant]
-**Result**: [winner/loser/inconclusive] — [primary metric] changed by [X%] (95% CI: [range], p=[value])
-**Guardrails**: [any guardrail metrics and their outcomes]
-**Segment deltas**: [notable differences by device, segment, or cohort]
-**Why it worked/failed**: [analysis]
-**Pattern**: [the reusable insight — e.g., "social proof near pricing CTAs increases plan selection"]
-**Apply to**: [other pages/flows where this pattern might work]
-**Status**: [implemented / parked / needs follow-up test]
+## [实验名称]
+**日期**：[日期]
+**假设**：[假设内容]
+**样本量**：[每个变体的 n]
+**结果**：[获胜/失败/ inconclusive] — [主要指标] 变化了 [X%]（95% CI：[范围]，p=[值]）
+**护栏**：任何护栏指标及其结果
+**分段差异**：按设备、分段或同期群的重要差异
+**为何生效/失败**：分析
+**模式**：可复用的洞见 — 例如"定价 CTA 附近的社会认同能提升方案选择"
+**应用于**：该模式可能适用的其他页面/流程
+**状态**：[已实施 / 暂存 / 需要后续测试]
 ```
 
-Over time, your playbook becomes a library of proven growth patterns specific to your product and audience.
+随着时间推移，你的 playbook 会成为特定产品和受众的经过验证的增长模式库。
 
-### Experiment Cadence
+### 实验节奏
 
-**Weekly (30 min)**: Review running experiments for technical issues and guardrail metrics. Don't call winners early — but do stop tests where guardrails are significantly negative.
+**每周（30 分钟）**：检查正在运行的实验是否存在技术问题和护栏指标。不要提前判定赢家——但如果护栏指标显著为负，要停止测试。
 
-**Bi-weekly**: Conclude completed experiments. Analyze results, update playbook, launch next experiment from backlog.
+**每两周**：完成已结束的实验。分析结果、更新 playbook、从 backlog 启动下一个实验。
 
-**Monthly (1 hour)**: Review experiment velocity, win rate, cumulative lift. Replenish hypothesis backlog. Re-prioritize with ICE.
+**每月（1 小时）**：检查实验速度、胜率、累计提升。补充假设 backlog。用 ICE 重新排序。
 
-**Quarterly**: Audit the playbook. Which patterns have been applied broadly? Which winning patterns haven't been scaled yet? What areas of the funnel are under-tested?
-
----
-
-## Common Mistakes
-
-### Test Design
-- Testing too small a change (undetectable)
-- Testing too many things (can't isolate)
-- No clear hypothesis
-
-### Execution
-- Stopping early
-- Changing things mid-test
-- Not checking implementation
-
-### Analysis
-- Ignoring confidence intervals
-- Cherry-picking segments
-- Over-interpreting inconclusive results
+**每季度**：审计 playbook。哪些模式已广泛应用？哪些获胜模式尚未规模化？漏斗的哪些区域测试不足？
 
 ---
 
-## Task-Specific Questions
+## 常见错误
 
-1. What's your current conversion rate?
-2. How much traffic does this page get?
-3. What change are you considering and why?
-4. What's the smallest improvement worth detecting?
-5. What tools do you have for testing?
-6. Have you tested this area before?
+### 测试设计
+- 改动太小（检测不到）
+- 一测太多（无法隔离）
+- 没有清晰的假设
+
+### 执行
+- 提前停止
+- 测试中途更改变量
+- 不检查实施情况
+
+### 分析
+- 忽略置信区间
+- 挑选有利分段
+- 过度解读不显著结果
 
 ---
 
-## Related Skills
+## 任务相关问题
 
-- **cro**: For generating test ideas based on CRO principles
-- **analytics**: For setting up test measurement
-- **copywriting**: For creating variant copy
+1. 你当前的转化率是多少？
+2. 这个页面的流量有多少？
+3. 你考虑什么改动，为什么？
+4. 可检测的最小提升是多少？
+5. 你有什么测试工具？
+6. 你之前测试过这个区域吗？
+
+---
+
+## 相关技能
+
+- **cro**：基于 CRO 原则生成测试创意
+- **analytics**：设置测试衡量
+- **copywriting**：创建变体文案

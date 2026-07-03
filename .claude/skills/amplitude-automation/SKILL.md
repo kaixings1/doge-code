@@ -205,21 +205,4 @@ For cohort membership updates:
 ## Quick Reference
 
 | Task | Tool Slug | Key Params |
-|------|-----------|------------|
-| Send events | AMPLITUDE_SEND_EVENTS | events (array) |
-| Find user | AMPLITUDE_FIND_USER | user |
-| Get user activity | AMPLITUDE_GET_USER_ACTIVITY | user, offset, limit |
-| Identify user | AMPLITUDE_IDENTIFY | user_id, user_properties |
-| List cohorts | AMPLITUDE_LIST_COHORTS | (none) |
-| Get cohort | AMPLITUDE_GET_COHORT | cohort_id |
-| Update cohort members | AMPLITUDE_UPDATE_COHORT_MEMBERSHIP | cohort_id, memberships |
-| Check cohort status | AMPLITUDE_CHECK_COHORT_STATUS | request_id |
-| List event categories | AMPLITUDE_GET_EVENT_CATEGORIES | (none) |
-
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 02 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
