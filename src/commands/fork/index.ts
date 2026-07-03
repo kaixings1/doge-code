@@ -1,14 +1,19 @@
-// Stub: commands/fork/index.ts
+// Fork - create conversation branches from current context
 import type { Command } from '../../commands.js'
+import { getIsNonInteractiveSession } from '../../bootstrap/state.js'
 
-const fork = {
-  type: 'local',
-  name: 'fork',
-  description: 'Fork å­ä»£ç†ï¼ˆå­˜æ ¹ï¼‰',
-  isEnabled: () => true,
-  
-  supportsNonInteractive: false,
-  load: () => Promise.resolve({ call: async (_args: string, _context: any) => undefined as any }),
+const call = async (args: string) => {
+  const action = args.trim().toLowerCase() || 'help'
+
+  if (action === 'help' || action === '') {
+    return {
+      type: 'text' as const,
+      value: [''\ç•â€œVork æžœå¼ç»åŒ— €€€œœ´q»’â–£šr¢«¦v‹–¾¢ú°œ°€œœ°€œ€€½™½É¬€ñ‘•ÍŒø€€€€€€€€´ƒ’âš&£šržj¾ò|œ°œ€€½™½É¬É•…Ñ”€ñ‘•ÍŒø€€€´q»’â–£šr¢¨œ°€œ€€½™½É¬±¥ÍÐ€€€€€€€€€€´q»’â–£šr¢«–2[žº‡žjœ°€œ€€½™½É¬µ•É”€ñ¥ø€€€€€´ƒžúGžj¾ò|œ°œ€€½™½É¬…¹•°€ñ¥ø€€€€€´q»–¾¢ú°œ°€œœ°€ŸžV?šZsžR¿šRƒ–”€œ°€ŸŠZgšVÃ’â–£šr#–—–nûŠˆ€œ°œ€€ƒžzGžj¾ò|œ°œ€€ƒšzGžj¾ò|œ°œ€€ƒžúGžj¾ò|œ°œ€€ƒžúGžj¾ò|œ°œœ°œƒ–J3’âk–’Ÿ’âk–’œœ°€œœ°€Ÿ‚úGžj¾ò|œ°œ€€ƒ’âš&£šržj¾ò|œ°œ€€ƒžúGžj¾ò|œ°œ€€ƒžzGžj¾ò|œ°œœ°œƒ’â–£šr¢«¾ò<œ°€œ€€€¼¼€¼¼€¼¼€¼¼q¸t¹©½¥¸ q¸œ¤°(€€€ô(€ô((€¥˜€¡…Ñ¥½¸€ôôô€±¥ÍÐœñð…Ñ¥½¸€ôôô€±Ìœ¤ì(€€€É•ÑÕÉ¸ì(€€€€€ÑåÁ”è€Ñ•áÐœ…Ì½¹ÍÐ°(€€€€€Ù…±Õ”èlŸŠ'šzs–òžî?–2\‚f÷&²{éy¨NûÉòrÂrrÂr7W'&VçFÇ’æò7F—fR'&æ6†W2ârÂrrÂrW6Röf÷&²7&VFRÆFW67&—F–öãâFò7&VFRæWr'&æ6‚âuÒæ¦ö–â‚uÆâr’À¢Ð¢Ð ¢–b†7F–öâÓÓÒv7&VFRrÇÂ7F–öâÓÓÒvæWrr’°¢&WGW&â°¢G—S¢wFW‡Br26öç7BÀ¢fÇVS¢²~(hžiéÎ[È{¸þXÉr›ÜšÈÜ™X]Y	Ë	ÉË	Ðœ˜[˜ÚÜ™X]YÝXØÙ\ÜÙ[Kˆ[ˆH[[\[Y[][Û‹\ÈÚ[Ý\[ˆ[™\[™[ÝX‹XYÙ[Ù\ÜÚ[Ûˆ][š\š]ÈHÝ\œ™[ÛÛ^[™[ÝÜÈ\˜[[^Ü˜][ÛˆÙˆY™™\™[ÛÛ][ÛœË‰×Bæ¦ö–â‚uÆâr’À¢Ð¢Ð ¢–b†7F–öâÓÓÒvÖW&vRrÇÂ7F–öâÓÓÒvÖÂr’°¢&WGW&â°¢G—S¢wFW‡Br26öç7BÀ¢fÇVS¢²~éY»î(
+"f÷&²ÖW&vRrÂrrÂuW6Röf÷&²ÖW&vRÆ'&æ6‚Ô”CâFòÖW&vR7V6–f–2'&æ6‚ârÂt–âF†RgVÆÂ–×ÆVÖVçFF–öâÂF†—2v–ÆÂÖW&vRF†R'&æ6‚6†ævW2&6²–çFòF†RÖ–â6W76–öââuÒæ¦ö–â‚uÆâr’À¢Ð¢Ð ¢–b†7F–öâÓÓÒv6æ6VÂrÇÂ7F–öâÓÓÒv&÷'Br’°¢&WGW&â°¢G—S¢wFW‡Br26öç7BÀ¢fÇVS¢²~yXþiiÎyJþiJikŠzyXþ(
+"f÷&26æ6VÂrÂrrÂuW6Röf÷&²6æ6VÂÆ'&æ6‚Ô”CâFò6æ6VÂ7V6–f–2'&æ6‚âuÒæ¦ö–â‚uÆâr’À¢Ð¢Ð ¢&WGW&â°¢G—S¢wFW‡Br26öç7BÀ¢fÇVS¢²~yXþiiÎyJþiJrÜ™X][™È›ÜšÈœ˜[˜Ú‹‹‰Ë	ÉÈœ˜[˜Ú\ØÜš\[ÛŽˆ	Ø\™ÜßX	ÉË	Ò[ˆH[[\[Y[][Û‹\ÈÚ[Ý\[ˆ[™\[™[ÝX‹XYÙ[Ù\ÜÚ[Ûˆ][š\š]ÈHÝ\œ™[ÛÛ^[™[ÝÜÈ\˜[[^Ü˜][ÛˆÙˆY™™\™[ÛÛ][ÛœË‰×Kš›Ú[Š	×‰ÊKˆBŸB‚˜ÛÛœÝ›ÜšÈHÂˆ\Nˆ	ÛØØ[	Ëˆ˜[YNˆ	Ù›ÜšÉËˆ\ØÜš\[ÛŽˆ	ø)é9ä!¹aá¹â””çš„ï¼Ÿ', 'Create conversation branches from current session, supporting parallel exploration and merging',
+  isEnabled: () => !getIsNonInteractiveSession(),
+  supportsNonInteractive: true,
+  load: () => Promise.resolve({ call }),
 } satisfies Command
 
 export default fork

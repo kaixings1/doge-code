@@ -17,7 +17,7 @@ type BaseTextInputComponentProps = BaseTextInputProps & {
 };
 
 /**
- * A base component for text inputs that handles rendering and basic input
+ * 文本输入的基础组件，处理渲染和基本输入
  */
 export function BaseTextInput(t0) {
   const $ = _c(14);

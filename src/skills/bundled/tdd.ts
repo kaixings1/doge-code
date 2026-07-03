@@ -1,57 +1,57 @@
 import { registerBundledSkill } from '../bundledSkills.js'
 
-const TDD_PROMPT = `# Test-Driven Development
+const TDD_PROMPT = `# 测试驱动开发 (TDD)
 
-## Core Principle
-Tests should verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't.
+## 核心原则
+测试应通过公共接口验证行为，而非实现细节。代码可以完全改变；测试不应随之改变。
 
-Good tests are integration-style: they exercise real code paths through public APIs. They describe what the system does, not how it does it.
+好的测试是集成风格的：它们通过公共 API 执行真实的代码路径。它们描述系统做什么，而非怎么做。
 
-## Anti-Pattern: Horizontal Slices
-DO NOT write all tests first, then all implementation. This produces crap tests.
+## 反模式：水平切片
+不要先写所有测试，再写所有实现。这会产生糟糕的测试。
 
-Correct approach: Vertical slices via tracer bullets. One test, one implementation, repeat. Each test responds to what you learned from the previous cycle.
+正确做法：通过示踪弹进行垂直切片。一个测试，一个实现，重复。每个测试响应从前一个周期中学到的内容。
 
-## Workflow
+## 工作流
 
-### 1. Planning
-Before writing any code:
-- Confirm with user what interface changes are needed
-- Confirm which behaviors to test (prioritize)
-- List the behaviors to test (not implementation steps)
-- Get user approval on the plan
+### 1. 规划
+在编写任何代码之前：
+- 与用户确认需要什么接口变更
+- 确认需要测试哪些行为（优先级）
+- 列出需要测试的行为（而非实现步骤）
+- 获得用户对计划的批准
 
-### 2. Tracer Bullet
-Write ONE test that confirms ONE thing about the system:
-RED: Write test for first behavior, test fails
-GREEN: Write minimal code to pass, test passes
+### 2. 示踪弹
+编写 ONE 测试来确认系统的一个方面：
+RED：为第一个行为编写测试，测试失败
+GREEN：编写最少代码使其通过，测试通过
 
-### 3. Incremental Loop
-For each remaining behavior:
-RED: Write next test, fails
-GREEN: Minimal code to pass, passes
+### 3. 增量循环
+对每个剩余行为：
+RED：编写下一个测试，失败
+GREEN：编写最少代码使其通过，通过
 
-Rules:
-- One test at a time
-- Only enough code to pass current test
-- Don't anticipate future tests
-- Keep tests focused on observable behavior
+规则：
+- 一次一个测试
+- 只为当前测试编写足够代码
+- 不要预测未来的测试
+- 保持测试聚焦于可观察的行为
 
-### 4. Refactor
-After all tests pass:
-- Extract duplication
-- Deepen modules (move complexity behind simple interfaces)
-- Apply SOLID principles where natural
-- Run tests after each refactor step
+### 4. 重构
+所有测试通过后：
+- 提取重复代码
+- 深化模块（将复杂性移到简单接口之后）
+- 在自然之处应用 SOLID 原则
+- 每次重构步骤后运行测试
 
-Never refactor while RED. Get to GREEN first.
+在 RED 状态下绝不重构。先达到 GREEN。
 
-## Checklist Per Cycle
-- Test describes behavior, not implementation
-- Test uses public interface only
-- Test would survive internal refactor
-- Code is minimal for this test
-- No speculative features added
+## 每周期检查清单
+- 测试描述行为，而非实现
+- 测试仅使用公共接口
+- 测试会在内部重构后仍然存活
+- 代码对此测试而言是最小的
+- 未添加推测性功能
 `
 
 export function registerTddSkill(): void {

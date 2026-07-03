@@ -59,43 +59,44 @@ export function registerDebugSkill(): void {
       const justEnabledSection = wasAlreadyLogging
         ? ''
         : `
-## Debug Logging Just Enabled
 
-Debug logging was OFF for this session until now. Nothing prior to this /debug invocation was captured.
+## 刚刚启用了调试日志
 
-Tell the user that debug logging is now active at \`${debugLogPath}\`, ask them to reproduce the issue, then re-read the log. If they can't reproduce, they can also restart with \`claude --debug\` to capture logs from startup.
+本次会话的调试日志此前处于关闭状态，从现在开始才启用。在本次 /debug 调用之前的所有内容均未被捕获。
+
+告知用户调试日志现在已在 \`${debugLogPath}\` 激活，请他们复现问题，然后重新读取日志。如果他们无法复现，也可以通过 \`claude --debug\` 重新启动以捕获从启动开始的日志。
 `
 
-      const prompt = `# Debug Skill
+      const prompt = `# 调试技能
 
-Help the user debug an issue they're encountering in this current Claude Code session.
+帮助用户调试他们在当前 Claude Code 会话中遇到的问题。
 ${justEnabledSection}
-## Session Debug Log
+## 会话调试日志
 
-The debug log for the current session is at: \`${debugLogPath}\`
+当前会话的调试日志位于：\`${debugLogPath}\`
 
 ${logInfo}
 
-For additional context, grep for [ERROR] and [WARN] lines across the full file.
+为了获取更多上下文，请在整个文件中搜索 [ERROR] 和 [WARN] 行。
 
-## Issue Description
+## 问题描述
 
-${args || 'The user did not describe a specific issue. Read the debug log and summarize any errors, warnings, or notable issues.'}
+${args || '用户未描述具体问题。请阅读调试日志并总结任何错误、警告或值得注意的问题。'}
 
-## Settings
+## 设置
 
-Remember that settings are in:
-* user - ${getSettingsFilePathForSource('userSettings')}
-* project - ${getSettingsFilePathForSource('projectSettings')}
-* local - ${getSettingsFilePathForSource('localSettings')}
+请记住设置位于：
+* 用户配置 - ${getSettingsFilePathForSource('userSettings')}
+* 项目配置 - ${getSettingsFilePathForSource('projectSettings')}
+* 本地配置 - ${getSettingsFilePathForSource('localSettings')}
 
-## Instructions
+## 操作指南
 
-1. Review the user's issue description
-2. The last ${DEFAULT_DEBUG_LINES_READ} lines show the debug file format. Look for [ERROR] and [WARN] entries, stack traces, and failure patterns across the file
-3. Consider launching the ${CLAUDE_CODE_GUIDE_AGENT_TYPE} subagent to understand the relevant Claude Code features
-4. Explain what you found in plain language
-5. Suggest concrete fixes or next steps
+1. 回顾用户的问题描述
+2. 最后 ${DEFAULT_DEBUG_LINES_READ} 行展示了调试文件格式。请查找 [ERROR] 和 [WARN] 条目、堆栈跟踪以及跨文件的失败模式
+3. 考虑启动 ${CLAUDE_CODE_GUIDE_AGENT_TYPE} 子代理以理解相关的 Claude Code 功能
+4. 用通俗语言解释你的发现
+5. 提出具体的修复方案或下一步建议
 `
       return [{ type: 'text', text: prompt }]
     },

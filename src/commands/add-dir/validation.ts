@@ -40,7 +40,13 @@ export async function validateDirectoryForWorkspace(
 
   // resolve() 会去除 expandPath 在绝对路径上可能留下的尾部斜杠
   // 输入，因此 /foo 和 /foo/ 会映射到相同的存储键 (CC-33)。
-  const absolutePath = resolve(expandPath(directoryPath))
+  // 首先去除可能存在的引号（expandPath 应该已经处理了，但这里作为备用）
+  let processedDirectoryPath = directoryPath.trim();
+  if ((processedDirectoryPath.startsWith('"') && processedDirectoryPath.endsWith('"')) ||
+      (processedDirectoryPath.startsWith("'") && processedDirectoryPath.endsWith("'"))) {
+    processedDirectoryPath = processedDirectoryPath.slice(1, -1).trim();
+  }
+  const absolutePath = resolve(expandPath(processedDirectoryPath))
 
   // 检查路径是否存在且是目录（单个系统调用）
   try {
