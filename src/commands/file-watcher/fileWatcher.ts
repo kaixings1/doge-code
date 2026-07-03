@@ -123,10 +123,3 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 	return { type: 'jsx', render: () => '文件监听器状态：未运行。使用 /file-watcher help 查看帮助。' }
 }
 
-export default {
-	type: 'local-jsx',
-	name: 'file-watcher',
-	description: '监控目录文件变化，实时检测编辑和保存操作',
-	supportsNonInteractive: true,
-	load: () => Promise.resolve({ call }),
-}
