@@ -83,10 +83,3 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     )
 }
 
-export default {
- type: 'local-jsx',
- name: 'queue',
- description: '持久化任务队列管理',
- supportsNonInteractive: true,
- load: () => Promise.resolve({ call }),
-}
