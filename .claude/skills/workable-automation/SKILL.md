@@ -1,83 +1,37 @@
 ---
 name: workable-automation
 description: "通过 Rube MCP (Composio) 自动执行 Workable 任务。使用前始终先搜索工具以获取当前 schema。"
-requires:
-  mcp: [rube]
----
-
-# Workable Automation via Rube MCP
-
-Automate Workable operations through Composio's Workable toolkit via Rube MCP.
-
-**Toolkit docs**: [composio.dev/toolkits/workable](https://composio.dev/toolkits/workable)
-
-## Prerequisites
-
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Workable connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `workable`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
-
-## Setup
-
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
-
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `workable`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
-
-## Tool Discovery
-
-Always discover available tools before executing workflows:
-
-```
+requires: mcp: [rube]
+--- # Workable 自动化 — 通过 Rube MCP 通过 Rube MCP 使用 Composio 的 Workable 工具包自动化 Workable 操作。 **工具包文档**: [composio.dev/toolkits/workable](https://composio.dev/toolkits/workable) ## 前提条件 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立有效的 Workable 连接，工具包 `workable`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema ## 设置 **获取 Rube MCP**: 在客户端配置中添加 `https://rube.app/mcp` 作为 MCP 服务器。无需 API key — 只需添加端点即可使用。 1. 通过确认 `RUBE_SEARCH_TOOLS` 有响应来验证 Rube MCP 可用
+2. 使用工具包 `workable` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接未处于 ACTIVE 状态，请按返回的授权链接完成设置
+4. 运行任何工作流前确认连接状态为 ACTIVE ## 工具发现 执行工作流前始终先发现可用工具： ```
 RUBE_SEARCH_TOOLS
-queries: [{use_case: "Workable operations", known_fields: ""}]
+queries: [{use_case: "Workable 操作", known_fields: ""}]
 session: {generate_id: true}
-```
-
-This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
-
-## Core Workflow Pattern
-
-### Step 1: Discover Available Tools
-
-```
+``` 此命令返回可用工具 slug、输入 schema、推荐执行计划及已知陷阱。 ## 核心工作流模式 ### 第 1 步：发现可用工具 ```
 RUBE_SEARCH_TOOLS
-queries: [{use_case: "your specific Workable task"}]
+queries: [{use_case: "你的具体 Workable 任务"}]
 session: {id: "existing_session_id"}
-```
-
-### Step 2: Check Connection
-
-```
+``` ### 第 2 步：检查连接 ```
 RUBE_MANAGE_CONNECTIONS
 toolkits: ["workable"]
 session_id: "your_session_id"
-```
-
-### Step 3: Execute Tools
-
-```
-RUBE_MULTI_EXECUTE_TOOL
-tools: [{
-  tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
+``` ### 第 3 步：执行工具 ```
+RUBE_MULTI_execute_TOOL
+tools: [{ tool_slug: "TOOL_SLUG_FROM_SEARCH", arguments: {/* 来自搜索结果的 schema 合规参数 */}
 }]
 memory: {}
 session_id: "your_session_id"
-```
-
-## Known Pitfalls
-
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
-
-## Quick Reference
-
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 43 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+``` ## 已知陷阱 - **始终先搜索**: 工具 schema 会变化。从未在不调用 `RUBE_SEARCH_TOOLS` 的情况下硬编码工具 slug 或参数
+- **检查连接**: 执行工具前确认 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规性**: 使用搜索结果中的精确字段名和类型
+- **Memory 参数**: 始终在 `RUBE_MULTI_execute_TOOL` 调用中包含 `memory`，即使为空 (`{}`)
+- **Session 复用**: 在同一工作流内复用 session ID。为新工作流生成新 ID
+- **分页**: 检查响应中的分页 token，并继续获取直至完成 ## 快速参考 | 操作 | 方法 |
+|------|------|
+| 发现工具 | `RUBE_SEARCH_TOOLS` |
+| 检查连接 | `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | `RUBE_MULTI_execute_TOOL` |
