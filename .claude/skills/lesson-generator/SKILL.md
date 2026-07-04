@@ -20,9 +20,9 @@ tools:
   - cursor
 ---
 
-## When to Use
+## 何时使用
 
-Use when this workflow matches the user request: Build compact, standalone multi-lesson course artifacts with lesson navigation, objectives, flashcards, quizzes, and source links.
+当此工作流匹配用户请求时使用：构建紧凑独立的课程产物：课程导航、学习目标、闪卡、测验和源链接。
 
 
 _Source: [dair-ai/dair-academy-plugins](https://github.com/dair-ai/dair-academy-plugins) (MIT)._Use this skill when the user asks for an interactive lesson, mini-course, study guide, course module, flashcards, quizzes, knowledge checks, or a learning artifact.
@@ -83,8 +83,8 @@ Prioritize teaching usefulness over decoration: one focused course topic, clear 
 Keep the UI responsive and dense enough for repeated study. Avoid oversized marketing hero layouts; this should feel like a polished lesson workspace, not a landing page.
 
 
-## Limitations
+## 限制
 
-- Requires the upstream tool, account, API key, or local setup when the workflow names one.
-- Does not authorize destructive, production, paid, or external-message actions without explicit user approval.
-- Validate generated artifacts or recommendations against the user's real sources before treating them as final.
+- 当工作流指定时，需要上游工具、账户、API 密钥或本地设置。
+- 未经用户明确批准，不授权破坏性、生产性、付费或外部消息操作。
+- 在将生成的产物或建议视为最终结果之前，请对照用户的真实来源进行验证。

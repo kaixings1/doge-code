@@ -111,13 +111,13 @@ The harness scaffolds a procedure that flags "tests pass" as a tool-shortcut sig
 - ❌ Do not call harness_memory without observing first; it sharpens an existing observation, not creates one
 - ❌ Do not treat the API as a hard dependency; on a 5-second timeout, fall back to native capability gracefully
 
-## Limitations
+## 局限性
 
 - The harness shapes the substance of reasoning; it does not guarantee a correct answer. Domain expertise and source verification still apply.
 - 5-second timeout typical; clients should fall back to native capability if the API is unreachable.
 - The scaffold is a procedure, not a knowledge base. It does not retrieve facts, only structured reasoning patterns.
 
-## Security & Safety Notes
+## 安全性 & Safety Notes
 
 - The MCP server makes outbound HTTPS requests to the Ejentum Logic API gateway (Zuplo-hosted).
 - Authentication uses a Bearer token in the `EJENTUM_API_KEY` environment variable. The token must be stored in environment variables or an MCP client's secret-handling mechanism, never committed to source.

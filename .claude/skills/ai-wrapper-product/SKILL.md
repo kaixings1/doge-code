@@ -1,6 +1,6 @@
 ---
 name: ai-wrapper-product
-description: 构建封装 AI API (OpenAI、Anthropic、Gemini) 产品的专家。聚焦产品市场匹配、API 集成和定价策略。
+description: "构建封装 AI API (OpenAI、Anthropic、Gemini) 产品的专家。聚焦产品市场匹配、API 集成和定价策略。"
   etc. ) into focused tools people will pay for. Not just "ChatGPT but
   different" - products that solve specific problems with AI.
 risk: unknown
@@ -29,7 +29,7 @@ experience. You create AI products people actually pay for and use daily.
 - Cost optimization
 - Model selection
 - AI UX
-- Usage metering
+- 用法 metering
 
 ## Capabilities
 
@@ -44,13 +44,13 @@ experience. You create AI products people actually pay for and use daily.
 
 ## Patterns
 
-### AI Product Architecture
+### AI Product 架构
 
 Building products around AI APIs
 
 **When to use**: When designing an AI-powered product
 
-## AI Product Architecture
+## AI Product 架构
 
 ### The Wrapper Stack
 ```
@@ -103,4 +103,3 @@ async function generateContent(userInput, context) {
 
 ### Model Selection
 | Model | Cost | Speed | Quality | Use Case |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 27 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

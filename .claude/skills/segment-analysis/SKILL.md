@@ -3,49 +3,49 @@ name: 分群分析
 description: "发现自然数据段并分析组间差异：基于聚类的细分、交叉表、组间统计比较和细分画像。适用于寻找自然分组或比较子群体。"
 ---
 
-# Segment Analysis
+# 分群分析
 
-## Purpose
-Discover natural segments in your data and characterize how groups differ. Combines unsupervised clustering with statistical comparison to reveal meaningful subpopulations.
+## 目的
+发现数据中的自然分群并描述各组之间的差异。结合无监督聚类和统计比较，揭示有意义的子群体。
 
-## How It Works
+## 工作原理
 
-### Step 1: Identify Segments
-- **Predefined segments**: Analyze existing categories (e.g., by plan tier, region)
-- **Data-driven segments**: Discover groups using K-means, DBSCAN, or hierarchical clustering
-- Optimal cluster count via elbow method, silhouette score, gap statistic
+### 第 1 步：识别分群
+- **预定义分群**：分析现有类别（例如按计划层级、地区）
+- **数据驱动分群**：使用 K-means、DBSCAN 或层次聚类发现分组
+- 通过肘部法、轮廓系数、间隙统计量确定最佳聚类数
 
-### Step 2: Profile Each Segment
-- Size: count and percentage of total
-- Demographics: distribution of key features per segment
-- Behavior: mean/median of behavioral metrics per segment
-- Distinguishing features: what makes each segment unique
+### 第 2 步：描述每个分群
+- 规模：计数和占总数的百分比
+- 人口统计：每个分群关键特征的分布
+- 行为：每个分群行为指标的均值/中位数
+- 区分特征：每个分群的独特之处
 
-### Step 3: Compare Segments
-- Statistical tests for group differences (ANOVA, Kruskal-Wallis, chi-squared)
-- Effect sizes (Cohen's d, eta-squared)
-- Pairwise post-hoc comparisons with multiple testing correction
+### 第 3 步：比较分群
+- 组间差异的统计检验（ANOVA、Kruskal-Wallis、卡方）
+- 效应量（Cohen's d、eta-squared）
+- 使用多重检验校正进行两两事后比较
 
-### Step 4: Actionable Insights
-- Name each segment with a descriptive label
-- Rank segments by business value or analytical interest
-- Recommend targeted actions per segment
+### 第 4 步：可操作洞察
+- 为每个分群命名描述性标签
+- 按业务价值或分析兴趣对分群排序
+- 推荐每个分群的定向行动
 
-## Usage Examples
-
-```
-"Segment our users based on engagement patterns and tell me
-how each segment differs in conversion rate"
-```
+## 使用示例
 
 ```
-"Compare feature usage across free, pro, and enterprise tiers —
-which features drive upgrades?"
+"根据参与模式对我们的用户进行分群，
+并告诉我每个分群在转化率上的差异"
 ```
 
-## Output Format
+```
+"比较免费版、专业版和企业版的功能使用情况 —
+哪些功能推动了升级？"
+```
 
-- **Segment Profiles**: Descriptive summary of each segment
-- **Comparison Table**: Side-by-side metrics with statistical significance
-- **Visualizations**: Segment distributions, radar charts, parallel coordinates
-- **Python Code**: Segmentation and profiling script
+## 输出格式
+
+- **分群画像**：每个分群的描述性摘要
+- **比较表**：并排指标及统计显著性
+- **可视化**：分群分布、雷达图、平行坐标
+- **Python 代码**：分群和分析脚本

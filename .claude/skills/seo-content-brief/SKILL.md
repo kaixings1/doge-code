@@ -1,12 +1,6 @@
 ---
 name: seo-content-brief
-description: "Seo Content Brief — Seo Content Brief 相关功能和最佳实践"
-  Generate competitive SEO content briefs with per-section word counts,
-  competitor scoring, keyword density guidance, and page-type templates.
-  Supports both new page briefs and improve-existing-page briefs.
-  Use when user says "content brief", "write a brief", "content outline",
-  "blog brief", "service page brief", "brief for", "writing brief",
-  "content plan", or "outline for".
+description: "Seo Content Brief — 生成竞争性 SEO 内容简报的相关功能和最佳实践，含分节字数、竞争对手评分、关键词密度指导和页面类型模板。"
 user-invocable: true
 argument-hint: "[url-or-keyword] [page-type]"
 license: MIT
@@ -17,27 +11,27 @@ metadata:
   category: seo
 ---
 
-# SEO Content Brief Generator
+# SEO 内容简报生成器
 
-Generate research-backed content briefs that help writers produce pages capable of outranking current top results. Briefs include competitor analysis with gap scoring, per-section word count breakdowns, keyword placement rules, and page-type-specific templates.
+生成研究支持的内容简报，帮助作者写出能超越当前顶级结果的页面。简报包括含差距评分的竞争对手分析、分节字数细分、关键词放置规则和特定页面类型模板。
 
-## Process
+## 流程
 
-### 1. Determine Brief Mode
+### 1. 确定简报模式
 
-**Improve mode** (existing page URL provided):
-- Fetch the existing page content and structure
-- Identify what is already strong (keep it)
-- Identify missing, thin, or outdated sections
-- Distinguish "keep/strengthen" vs "add new" sections in the outline
-- Do not recommend a full rewrite when targeted improvements will win
+**改进模式**（提供现有页面 URL）：
+- 获取现有页面内容和结构
+- 识别已经强的部分（保留）
+- 识别缺失、薄弱或过时的部分
+- 在提纲中区分"保留/加强"与"新增"部分
+- 当定向改进足以取胜时，不推荐完全重写
 
-**New page mode** (keyword or topic provided, no existing page):
-- Use the target site's homepage or sitemap for business context only
-- Build the brief from scratch for a new page
-- Focus on competitive gaps the new page can fill
+**新建页面模式**（提供关键词或主题，无现有页面）：
+- 仅使用目标网站的主页或站点地图获取业务上下文
+- 从头构建新页面的简报
+- 关注新页面可以填补的竞争空白
 
-### 2. Fetch Context
+### 2. Fetch 上下文
 
 - Fetch the target URL or homepage to understand the business
 - Fetch the sitemap to discover all existing pages, categories, and services
@@ -47,7 +41,7 @@ Generate research-backed content briefs that help writers produce pages capable 
 
 - Identify the top 5 ranking pages for the target keyword
 - Filter out non-competitors (Wikipedia, Reddit, Pinterest, Amazon, YouTube, government sites, SEO tool pages, job boards, directories, news aggregators, social platforms). See `references/excluded-domains.md` for the full list.
-- Score each real competitor: Depth (1-10), Formatting (1-10), SEO (1-10), UX (1-10)
+- Score each real competitor: Depth (1-10), 格式ting (1-10), SEO (1-10), UX (1-10)
 - Identify three gap types:
   - **Topic gaps:** subtopics competitors miss entirely
   - **Depth gaps:** topics covered but shallow
@@ -61,7 +55,7 @@ Generate research-backed content briefs that help writers produce pages capable 
 - **Transactional:** user is ready to act (buy, book, enquire, sign up)
 - **Navigational:** user is looking for a specific site or page
 
-Identify what SERP format Google rewards for this query: long-form guide, listicle, comparison table, landing page, FAQ, video, local pack.
+Identify what SERP format Google rewards for this query: long-form guide, listicle, comparison table, landing page, 常见问题, video, local pack.
 
 ### 5. Build the Brief
 
@@ -71,7 +65,7 @@ Apply the page-type template from `references/page-type-templates.md`, then cust
 
 ### Website Relevance Rule
 
-Every heading, subtopic, keyword, and FAQ you suggest MUST be something the target website can credibly write about based on its actual services or products.
+Every heading, subtopic, keyword, and 常见问题 you suggest MUST be something the target website can credibly write about based on its actual services or products.
 
 - Read the site's homepage and sitemap to understand what it does
 - Do not borrow competitor structure if those sections cover things this site does not offer
@@ -89,13 +83,13 @@ For non-hub pages (single service page, blog post), use site structure to sugges
 
 ### Output Language Rules
 
-- Never mention researcher names, framework names, or tool names in the output (no "Ben Goodey method", "Frase.io formula", "Princeton GEO", "Clearscope", "Backlinko")
+- 绝不 mention researcher names, framework names, or tool names in the output (no "Ben Goodey method", "Frase.io formula", "Princeton GEO", "Clearscope", "Backlinko")
 - These are internal thinking tools only. The output must read as plain, professional advice.
 - Write for a business owner or content writer, not an SEO academic
 
 ## Keyword Density and Placement
 
-Read `references/keyword-density.md` for the full rules. Summary:
+Read `references/keyword-density.md` for the full rules. 总结:
 
 **Primary keyword density:** 0.5% to 2.0% of total word count.
 - Above 2% requires review. Above 3% risks keyword stuffing penalties.
@@ -123,7 +117,7 @@ Read `references/keyword-density.md` for the full rules. Summary:
 **Per-section keyword guidance:** For each section in the outline, specify:
 - Which keyword (primary or secondary) belongs in the heading
 - Whether the body should include the primary keyword or a variation
-- Example: "Use secondary keyword 'structural drafting services' in H2. Body: mention primary keyword once."
+- 示例: "Use secondary keyword 'structural drafting services' in H2. Body: mention primary keyword once."
 
 **Distribution:** Spread the primary keyword evenly. Do not front-load or cluster in one section.
 
@@ -151,7 +145,7 @@ Every brief must specify EXACTLY what new value this content adds that no curren
 - Original synthesis or unique framework
 - NOT "more detail" or "better formatting"
 
-## E-E-A-T Requirements
+## E-E-A-T 需求
 
 List the exact trust signals this content needs:
 - Author credentials and bio relevant to the topic
@@ -168,7 +162,7 @@ List the exact trust signals this content needs:
 
 ## Output Format
 
-Always output in this exact structure:
+始终 output in this exact structure:
 
 ```
 ## Content Brief: [Primary Keyword]
@@ -178,4 +172,3 @@ Always output in this exact structure:
 
 ### Competitor Analysis
 | # | URL | Key H2 Sections | Est. Words | Score | Main Gap |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 50 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

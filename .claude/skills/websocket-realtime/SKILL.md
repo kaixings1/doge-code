@@ -3,9 +3,9 @@ name: websocket-realtime
 description: WebSocket实时通信 — 使用WebSocket、Socket.io和SSE的实时通信模式。
 ---
 
-# WebSocket & Real-Time
+# WebSocket 与实时通信
 
-## WebSocket Server
+## WebSocket 服务器
 
 ```typescript
 import { WebSocketServer, WebSocket } from "ws";
@@ -61,7 +61,7 @@ function broadcastToRoom(room: string, payload: unknown, sender: WebSocket) {
 }
 ```
 
-## Socket.io with Rooms
+## 带房间的 Socket.io
 
 ```typescript
 import { Server } from "socket.io";
@@ -108,7 +108,7 @@ io.on("connection", (socket) => {
 });
 ```
 
-## Server-Sent Events (SSE)
+## 服务器发送事件（SSE）
 
 ```typescript
 app.get("/events/:userId", authenticate, (req, res) => {
@@ -143,9 +143,9 @@ app.get("/events/:userId", authenticate, (req, res) => {
 });
 ```
 
-SSE is simpler than WebSocket for server-to-client unidirectional streaming. Works through HTTP proxies and load balancers without special configuration.
+SSE 比 WebSocket 更简单，适用于服务器到客户端的单向流。可通过 HTTP 代理和负载均衡器工作，无需特殊配置。
 
-## Client Reconnection
+## 客户端重连
 
 ```typescript
 class ReconnectingWebSocket {
@@ -179,22 +179,22 @@ class ReconnectingWebSocket {
 }
 ```
 
-## Anti-Patterns
+## 反模式
 
-- Not authenticating WebSocket connections during the handshake
-- Sending unbounded payloads without message size limits
-- Missing heartbeat/ping-pong to detect stale connections
-- Using WebSocket when SSE would suffice (server-to-client only)
-- Not using a Redis adapter for horizontal scaling with Socket.io
-- Blocking the event loop with synchronous processing of messages
+- 在握手期间未认证 WebSocket 连接
+- 发送无界负载，未设置消息大小限制
+- 缺少心跳/ping-pong 检测失效连接
+- 在 SSE 足够时使用 WebSocket（仅服务器到客户端通信）
+- Socket.io 未使用 Redis 适配器进行水平扩展
+- 使用同步消息处理阻塞事件循环
 
-## Checklist
+## 检查清单
 
-- [ ] WebSocket connections authenticated during handshake
-- [ ] Message size limits enforced on incoming data
-- [ ] Heartbeat mechanism detects and closes stale connections
-- [ ] Client implements exponential backoff reconnection
-- [ ] Redis pub/sub adapter used for multi-server deployment
-- [ ] SSE used when communication is server-to-client only
-- [ ] Room/channel membership cleaned up on disconnect
-- [ ] Rate limiting applied to prevent message flooding
+- [ ] WebSocket 连接在握手期间已认证
+- [ ] 对传入数据实施了消息大小限制
+- [ ] 心跳机制检测并关闭失效连接
+- [ ] 客户端实现了指数退避重连
+- [ ] 多服务器部署使用了 Redis pub/sub 适配器
+- [ ] 仅服务器到客户端通信时使用 SSE
+- [ ] 断开连接时清理房间/频道成员
+- [ ] 应用速率限制防止消息洪水

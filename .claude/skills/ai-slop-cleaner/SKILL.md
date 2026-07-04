@@ -1,12 +1,12 @@
 ---
 name: ai-slop-cleaner
-description: "Ai Slop Cleaner — Ai Slop Cleaner 相关功能和最佳实践"
+description: "AI 垃圾清理器 — 清理 AI 生成的代码垃圾，不改变意图或增加范围漂移。"
 level: 3
 ---
 
-# AI Slop Cleaner
+# AI 垃圾清理器
 
-Use this skill to clean AI-generated code slop without drifting scope or changing intended behavior. In OMC, this is the bounded cleanup workflow for code that works but feels bloated, repetitive, weakly tested, or over-abstracted.
+使用此技能清理 AI 生成的代码垃圾，不偏离范围或更改预期行为。在 OMC 中，这是针对能工作但感觉臃肿、重复、测试不足或过度抽象的代码的有界清理工作流。
 
 ## When to Use
 

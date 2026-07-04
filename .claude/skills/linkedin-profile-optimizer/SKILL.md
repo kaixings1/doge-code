@@ -11,13 +11,13 @@ tags: [linkedin, branding, career, growth, personal-brand]
 tools: [claude, cursor, gemini, antigravity]
 ---
 
-# LinkedIn Profile Optimizer & Authority Builder
+# LinkedIn 档案优化器与权威建设者
 
-## Overview
+## 概述
 
-Act as a **global LinkedIn strategist, profile optimizer, and career coach**. Your goal is to perform deep **profile checks and optimizations**, transforming local "CV-style" lists into international authority profiles that rank in the top 1% of their niche.
+担任**全球 LinkedIn 策略师、档案优化师和职业教练**。你的目标是执行深度**档案检查和优化**，将本地"简历式"列表转变为在其细分领域中排名前 1% 的国际权威档案。
 
-This skill helps professionals (founders, lecturers, IT experts, and agritech builders) align their core identity, remove brand confusion, and attract global opportunities by synthesizing information from multiple sources like portfolios, CVs, and existing profile links.
+此技能帮助专业人士（创始人、讲师、IT 专家和农业科技建设者）对齐其核心身份，消除品牌混淆，并通过综合来自作品集、简历和现有档案链接等多来源信息来吸引全球机会。
 
 ## When to Use This Skill
 
@@ -47,7 +47,7 @@ Before proceeding to context gathering, analyze the provided input:
 - **If a Portfolio Link is provided**: Identify core projects, technical stacks, and visual/creative authority.
 - **If Multiple Sources are provided**: Cross-reference data to ensure consistency and highlight the "Red Thread."
 
-### Phase 1: Context & Identity Gathering
+### Phase 1: 上下文 & Identity Gathering
 
 Before optimizing, you must identify the user's **Core Identity**.
 If the user has multiple roles (e.g., Founder + Lecturer + IT Professional), you must determine the primary focus to avoid "brand confusion."
@@ -82,7 +82,7 @@ Critically evaluate the existing profile like a global recruiter, high-level inv
 
 #### 2. Featured Section (Portfolio & Proof)
 - **Mandatory Call-to-Action**: Instruct the user to add their best work to the "Featured" section.
-- **Link & Post Integration**: 
+- **Link & Post 集成**: 
     - **Broken Link Check**: Ensure every link in the "Featured" section is active and leads to the correct destination.
     - Add links to Portfolio, GitHub, or Case Studies.
     - Feature high-performing LinkedIn posts that demonstrate authority or "Red Thread" identity.
@@ -96,7 +96,7 @@ Critically evaluate the existing profile like a global recruiter, high-level inv
 
 #### 4. Skills & SEO
 - **Identify Bulk Skills**: Remove generic fillers (e.g., "Teamwork", "Microsoft Office", "Communication") that add no competitive edge.
-- **Merge Low-Scope Skills**: Identify fragmented skills and merge them into high-authority clusters.
+- **Merge Low-范围 Skills**: Identify fragmented skills and merge them into high-authority clusters.
     - *Example*: Merge "Data Entry" + "Excel" + "Admin" → **Operations & Data Strategy**.
     - *Example*: Merge "HTML" + "CSS" + "JS" → **Full-Stack Engineering / UI Development**.
 - **Top 5 Strategic Skills**: Prioritize skills that align with the "Mission" and "Red Thread."
@@ -153,13 +153,13 @@ Critically evaluate the existing profile like a global recruiter, high-level inv
 - **Problem**: "Bulk Skill Dumping" (Listing 50+ generic, low-scope skills like "Teamwork" or "PowerPoint").
 - **Solution**: Identify and merge low-scope skills into high-authority clusters. Curate a focused list of 10-15 strategic skills.
 
-## Limitations
+## 局限性
 
 - **Live Data**: This skill cannot browse the live, private LinkedIn backend; it relies on text provided, public URLs, or PDF uploads.
-- **Direct Messaging**: This skill provides strategy for outreach but cannot send messages on behalf of the user.
+- **Direct Messaging**: 此技能提供 strategy for outreach but cannot send messages on behalf of the user.
 - **Visual Design**: While it provides brand guidance, it does not generate profile/banner images directly (suggest using an AI image generation tool or professional designer).
 
-## Related Skills
+## 相关 Skills
 
 - `@copywriting` - For deep narrative writing and conversion-focused text.
 - `@jobgpt` - For specific job application workflows and interview prep.

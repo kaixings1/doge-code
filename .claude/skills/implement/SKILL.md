@@ -1,15 +1,16 @@
 ---
 name: implement
-description: "基于 PRD 或一组 Issue 实现工作。"
-disable-model-invocation: true
+description: "实现 — 实现功能和最佳实践"
+risk: unknown
+source: community
 ---
-
-Implement the work described by the user in the PRD or issues.
-
-Use /tdd where possible, at pre-agreed seams.
-
-Run typechecking regularly, single test files regularly, and the full test suite once at the end.
-
-Once done, use /review to review the work.
-
-Commit your work to the current branch.
+# 实现
+功能实现的分步指导。
+## 使用此技能的情况
+- 实现新功能或组件时
+- 需要实现指导或检查清单时
+## 操作指南
+- 澄清目标、约束和所需输入
+- 应用相关最佳实践并验证结果
+- 提供可操作的步骤和验证
+## 限制

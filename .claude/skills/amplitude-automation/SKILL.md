@@ -1,22 +1,22 @@
 ---
 name: amplitude-automation
-description: "通过 Rube MCP (Composio) 自动执行 Amplitude 任务：events, user activity, cohorts, user identification. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 Amplitude 任务：事件、用户活动、群组、用户识别。始终先搜索工具以获取当前 schema。"
 risk: critical
 source: community
 date_added: "2026-02-27"
 ---
 
-# Amplitude Automation via Rube MCP
+# 通过 Rube MCP 实现 Amplitude 自动化
 
 Automate Amplitude product analytics through Composio's Amplitude toolkit via Rube MCP.
 
-## Prerequisites
+## 前提条件
 
 - Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
 - Active Amplitude connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `amplitude`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- 始终 call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
-## Setup
+## 设置
 
 **Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
 
@@ -33,7 +33,7 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 **When to use**: User wants to track events or send event data to Amplitude
 
 **Tool sequence**:
-1. `AMPLITUDE_SEND_EVENTS` - Send one or more events to Amplitude [Required]
+1. `AMPLITUDE_SEND_EVENTS` - Send one or more events to Amplitude [必需]
 
 **Key parameters**:
 - `events`: Array of event objects, each containing:
@@ -49,7 +49,7 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 - `event_type` is required for every event; cannot be empty
 - `time` must be in milliseconds (13-digit epoch), not seconds
 - Batch limit applies; check schema for maximum events per request
-- Events are processed asynchronously; successful API response does not mean data is immediately queryable
+- 事件 are processed asynchronously; successful API response does not mean data is immediately queryable
 
 ### 2. Get User Activity
 
@@ -57,7 +57,7 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 
 **Tool sequence**:
 1. `AMPLITUDE_FIND_USER` - Find user by ID or property [Prerequisite]
-2. `AMPLITUDE_GET_USER_ACTIVITY` - Retrieve user's event stream [Required]
+2. `AMPLITUDE_GET_USER_ACTIVITY` - Retrieve user's event stream [必需]
 
 **Key parameters**:
 - `user`: Amplitude internal user ID (from FIND_USER)
@@ -75,8 +75,8 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 **When to use**: User wants to look up users or set user properties
 
 **Tool sequence**:
-1. `AMPLITUDE_FIND_USER` - Search for a user by various identifiers [Required]
-2. `AMPLITUDE_IDENTIFY` - Set or update user properties [Optional]
+1. `AMPLITUDE_FIND_USER` - Search for a user by various identifiers [必需]
+2. `AMPLITUDE_IDENTIFY` - Set or update user properties [可选]
 
 **Key parameters**:
 - For FIND_USER:
@@ -98,10 +98,10 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 **When to use**: User wants to list cohorts, view cohort details, or update cohort membership
 
 **Tool sequence**:
-1. `AMPLITUDE_LIST_COHORTS` - List all saved cohorts [Required]
-2. `AMPLITUDE_GET_COHORT` - Get detailed cohort information [Optional]
-3. `AMPLITUDE_UPDATE_COHORT_MEMBERSHIP` - Add/remove users from a cohort [Optional]
-4. `AMPLITUDE_CHECK_COHORT_STATUS` - Check async cohort operation status [Optional]
+1. `AMPLITUDE_LIST_COHORTS` - List all saved cohorts [必需]
+2. `AMPLITUDE_GET_COHORT` - Get detailed cohort information [可选]
+3. `AMPLITUDE_UPDATE_COHORT_MEMBERSHIP` - Add/remove users from a cohort [可选]
+4. `AMPLITUDE_CHECK_COHORT_STATUS` - Check async cohort operation status [可选]
 
 **Key parameters**:
 - For LIST_COHORTS: No required parameters
@@ -123,7 +123,7 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 **When to use**: User wants to discover available event types and categories in Amplitude
 
 **Tool sequence**:
-1. `AMPLITUDE_GET_EVENT_CATEGORIES` - List all event categories [Required]
+1. `AMPLITUDE_GET_EVENT_CATEGORIES` - List all event categories [必需]
 
 **Key parameters**:
 - No required parameters; returns all configured event categories
@@ -179,7 +179,7 @@ For cohort membership updates:
 3. Repeat step 2 until status is 'complete' or 'error'
 ```
 
-## Known Pitfalls
+## 已知陷阱
 
 **User IDs**:
 - Amplitude has its own internal user IDs separate from your application's
@@ -202,7 +202,6 @@ For cohort membership updates:
 - Cohort lists may include archived cohorts; check status field
 - Parse defensively with fallbacks for optional fields
 
-## Quick Reference
+## 快速参考
 
 | Task | Tool Slug | Key Params |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 02 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

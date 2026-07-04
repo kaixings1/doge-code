@@ -1,40 +1,14 @@
 ---
 name: hybrid-search-implementation
-description: "结合向量和关键词搜索以改进检索。适用于实现 RAG 系统、构建搜索引擎或任一方法单独无法提供足够召回率时。"
-risk: safe
+description: "混合搜索实现 — 全文搜索和向量搜索混合实现"
+risk: unknown
 source: community
-date_added: "2026-02-27"
 ---
-
-# Hybrid Search Implementation
-
-Patterns for combining vector similarity and keyword-based search.
-
-## Use this skill when
-
-- Building RAG systems with improved recall
-- Combining semantic understanding with exact matching
-- Handling queries with specific terms (names, codes)
-- Improving search for domain-specific vocabulary
-- When pure vector search misses keyword matches
-
-## Do not use this skill when
-
-- The task is unrelated to hybrid search implementation
-- You need a different domain or tool outside this scope
-
-## Instructions
-
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
-
-## Resources
-
-- `resources/implementation-playbook.md` for detailed patterns and examples.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+# 混合搜索实现
+全文搜索和向量搜索的混合实现。
+## 核心概念
+- 全文搜索
+- 向量搜索
+- 混合排名
+- 性能优化
+## 限制

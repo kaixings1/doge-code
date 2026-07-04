@@ -6,31 +6,31 @@ source: community
 date_added: "2026-06-19"
 ---
 
-# Testing with Mailtrap Email Sandbox
+# 使用 Mailtrap Email 沙箱进行测试
 
-## Overview
+## 概述
 
-**Email Sandbox** captures mail in **sandboxes (test inboxes)**—a test environment where messages are **not** delivered to real recipients. You can send to sandboxes using our **SDKs**, **HTTP API**, or **SMTP**, depending on your needs.
+**Email 沙箱**将邮件捕获在**沙箱（测试收件箱）**中——这是一个测试环境，消息**不会**投递到真实收件人。您可以根据需要使用 **SDK**、**HTTP API** 或 **SMTP** 发送到沙箱。
 
-**Before generating SDK code:** read the README of the relevant SDK repository (see `mailtrap-sending-emails`) for current sandbox mode options, **inbox id**, and constructor flags. Do not rely on memory.
+**在生成 SDK 代码之前：** 阅读相关 SDK 仓库的 README（请参阅 `mailtrap-sending-emails`）以获取当前的沙箱模式选项、**inbox id** 和构造函数标志。不要依赖记忆。
 
-**Related skills:** `mailtrap-sending-emails` (live sending hosts and streams).
+**相关技能：** `mailtrap-sending-emails`（实时发送主机和流）。
 
-## When to use
+## 使用时机
 
-- You want **no real delivery**: dev, staging, CI, or demos where mail must stay in a **test inbox**.
-- You need to **inspect** what was sent: bodies, headers, attachments, or basic checks (e.g. spam report) via **Sandbox / Testing API** or the **UI**.
-- You are **automating** tests against captured mail.
-- You will **only change SMTP settings** so an existing app sends into a sandbox—no need for a framework-by-framework tutorial from this skill.
+- 您希望**不进行真实投递**：开发、预发布、CI 或演示环境，邮件必须保留在**测试收件箱**中。
+- 您需要**检查**发送的内容：通过**沙箱/测试 API** 或 **UI** 查看正文、标头、附件或基本检查（例如垃圾邮件报告）。
+- 您正在**自动化**针对捕获邮件的测试。
+- 您**仅更改 SMTP 设置**以使现有应用发送到沙箱——无需此技能的按框架教程。
 
-## When not to use
+## 何时不使用
 
-- **Live** sends to real recipients (`mailtrap-sending-emails`).
-- For full framework setup guides or detailed API references, link users to Mailtrap's Integration tab for SMTP/API details and the [API docs](https://docs.mailtrap.io/developers/) for specifics—don't cover every framework or API field here.
+- **实时**发送到真实收件人（`mailtrap-sending-emails`）。
+- 对于完整的框架设置指南或详细的 API 参考，请引导用户访问 Mailtrap 的集成选项卡以获取 SMTP/API 详情，以及 [API 文档](https://docs.mailtrap.io/developers/)获取具体内容——这里不涵盖每个框架或 API 字段。
 
-## Quick reference
+## 快速参考
 
-### API base
+### API 基础
 
-| Service                  | Send mail URL                                         | Auth header examples                              |
-| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 28 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 服务 | 发送邮件 URL | 认证标头示例 |
+|------|-------------|--------------|

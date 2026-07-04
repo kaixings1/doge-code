@@ -6,12 +6,10 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Laravel Security Audit
+# Laravel 安全审计
 
-## Skill Metadata
+## 技能元数据
 
-Name: laravel-security-audit  
-Focus: Security Review & Vulnerability Detection  
-Scope: Laravel 10/11+ Applications
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 02 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+名称：laravel-security-audit  
+焦点：安全审查与漏洞检测  
+范围：Laravel 10/11+ 应用

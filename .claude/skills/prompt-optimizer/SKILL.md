@@ -46,7 +46,7 @@ and output a complete optimized prompt the user can paste and run.
 
 **Advisory only — do not execute the user's task.**
 
-Do NOT write code, create files, run commands, or take any implementation
+不要 write code, create files, run commands, or take any implementation
 action. Your ONLY output is an analysis plus an optimized prompt.
 
 If the user says "just do it", "直接做", or "don't optimize, just execute",
@@ -54,7 +54,7 @@ do not switch into implementation mode inside this skill. Tell the user this
 skill only produces optimized prompts, and instruct them to make a normal
 task request if they want execution instead.
 
-Run this 6-phase pipeline sequentially. Present results using the Output Format below.
+Run this 6-phase pipeline sequentially. Present results using the Output 格式 below.
 
 ### Analysis Pipeline
 
@@ -75,7 +75,7 @@ Before analyzing the prompt, detect the current project context:
    - `*.csproj` / `*.sln` → .NET
    - `Makefile` / `CMakeLists.txt` → C / C++
    - `cpanfile` / `Makefile.PL` → Perl
-3. Note detected tech stack for use in Phase 3 and Phase 4
+3. 注意 detected tech stack for use in Phase 3 and Phase 4
 
 If no project files are found (e.g., the prompt is abstract or for a new project),
 skip detection and flag "tech stack unknown" in Phase 4.
@@ -84,5 +84,4 @@ skip detection and flag "tech stack unknown" in Phase 4.
 
 Classify the user's task into one or more categories:
 
-| Category | Signal Words | Example |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 29 MINUTES 57 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| Category | Signal Words | 示例 |

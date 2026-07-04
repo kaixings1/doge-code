@@ -1,1 +1,10 @@
----/nname: open-autoglm-apps-harmonyos/ndescription: Open-AutoGLM 鸿蒙应用配置/n---/n/n# Open-AutoGLM HarmonyOS Apps/n/n鸿蒙系统应用包名与操作映射。/n/n[Open-AutoGLM](https://github.com/zai-org/Open-AutoGLM)
+---
+name: open-autoglm-apps-harmonyos
+description: Open-AutoGLM 鸿蒙应用配置
+---
+
+# Open-AutoGLM 鸿蒙应用配置
+
+鸿蒙系统应用包名与操作映射。
+
+[Open-AutoGLM](https://github.com/zai-org/Open-AutoGLM)

@@ -4,11 +4,11 @@ description: "To Issues — To Issues 相关功能和最佳实践"
 disable-model-invocation: true
 ---
 
-# To Issues
+# 转为议题
 
-Break a plan into independently-grabbable issues using vertical slices (tracer bullets).
+使用垂直切片（追踪子弹）将计划分解为可独立处理的议题。
 
-The issue tracker and triage label vocabulary should have been provided to you — run `/setup-matt-pocock-skills` if not.
+议题追踪器和分类标签词汇应已提供给你——如果没有，请运行 `/setup-matt-pocock-skills`。
 
 ## Process
 

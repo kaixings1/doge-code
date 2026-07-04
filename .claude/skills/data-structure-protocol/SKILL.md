@@ -6,22 +6,22 @@ source: "https://github.com/k-kolomeitsev/data-structure-protocol"
 date_added: "2026-02-27"
 ---
 
-# Data Structure Protocol (DSP)
+# 数据结构协议 (DSP)
 
-LLM coding agents lose context between tasks. On large codebases they spend most of their tokens on "orientation" — figuring out where things live, what depends on what, and what is safe to change. DSP solves this by externalizing the project's structural map into a persistent, queryable graph stored in a `.dsp/` directory next to the code.
+LLM 编码代理在任务之间会丢失上下文。在大型代码库上，它们将大部分 token 花在"定向"上——弄清文件在哪里、什么依赖什么、以及什么可以安全更改。DSP 通过将项目的结构映射外化到一个持久的、可查询的图中来解决这个问题，该图存储在代码旁边的 `.dsp/` 目录中。
 
-DSP is NOT documentation for humans and NOT an AST dump. It captures three things: **meaning** (why an entity exists), **boundaries** (what it imports and exposes), and **reasons** (why each connection exists). This is enough for an agent to navigate, refactor, and generate code without loading the entire source tree into the context window.
+DSP 不是给人看的文档，也不是 AST 转储。它捕获三样东西：**含义**（实体存在的原因）、**边界**（它导入和暴露的内容）和**原因**（每个连接存在的原因）。这足以让代理导航、重构和生成代码，而无需将整个源代码树加载到上下文窗口中。
 
-## When to Use
-Use this skill when:
-- The project has a `.dsp/` directory (DSP is already set up)
-- The user asks to set up DSP, bootstrap, or map a project's structure
-- Creating, modifying, or deleting code files in a DSP-tracked project (to keep the graph updated)
-- Navigating project structure, understanding dependencies, or finding specific modules
+## 何时使用
+在以下情况下使用此技能：
+- 项目有一个 `.dsp/` 目录（DSP 已设置）
+- 用户要求设置 DSP、引导或映射项目结构
+- 在 DSP 跟踪的项目中创建、修改或删除代码文件（以保持图更新）
+- 导航项目结构、理解依赖关系或查找特定模块
 - The user mentions DSP, dsp-cli, `.dsp`, or structure mapping
 - Performing impact analysis before a refactor or dependency replacement
 
-## Core Concepts
+## 核心概念
 
 ### Code = graph
 
@@ -81,7 +81,7 @@ Every file or artifact that is imported anywhere must be represented in `.dsp` a
 
 ## How It Works
 
-### Initial Setup
+### Initial 设置
 
 The skill relies on a standalone Python CLI script `dsp-cli.py`. If it is missing from the project, download it:
 
@@ -89,7 +89,7 @@ The skill relies on a standalone Python CLI script `dsp-cli.py`. If it is missin
 curl -O https://raw.githubusercontent.com/k-kolomeitsev/data-structure-protocol/main/skills/data-structure-protocol/scripts/dsp-cli.py
 ```
 
-Requires **Python 3.10+**. All commands use `python dsp-cli.py --root <project-root> <command>`.
+需要 **Python 3.10+**. All commands use `python dsp-cli.py --root <project-root> <command>`.
 
 ### Bootstrap (initial mapping)
 
@@ -176,7 +176,7 @@ python dsp-cli.py --root . get-recipients obj-11223344
 ## Best Practices
 
 - ✅ **Do:** Update DSP immediately when creating new files, adding imports, or changing public APIs
-- ✅ **Do:** Always add a meaningful `why` reason when recording an import — this is where most of DSP's value lives
+- ✅ **Do:** 始终 add a meaningful `why` reason when recording an import — this is where most of DSP's value lives
 - ✅ **Do:** Use `kind: external` for third-party libraries without analyzing their internals
 - ✅ **Do:** Keep descriptions minimal (1-3 sentences about purpose, not implementation)
 - ✅ **Do:** Treat `.dsp/` diffs like code diffs — review them, keep them accurate
@@ -184,20 +184,20 @@ python dsp-cli.py --root . get-recipients obj-11223344
 - ❌ **Don't:** Change an entity's UID on rename/move (use `move-entity` instead)
 - ❌ **Don't:** Create UIDs for every local variable or helper — only file-level Objects and public/shared entities
 
-## Integration
+## 集成
 
 This skill connects naturally to:
 - **context-compression** — DSP reduces the need for compression by providing targeted retrieval instead of loading everything
 - **context-optimization** — DSP is a structural optimization: agents pull minimal "context bundles" instead of raw source
 - **architecture** — DSP captures architectural boundaries (imports/exports) that feed system design decisions
 
-## References
+## 参考资料
 
 - **Full architecture specification**: [ARCHITECTURE.md](https://github.com/k-kolomeitsev/data-structure-protocol/blob/main/ARCHITECTURE.md)
 - **CLI source + reference docs**: [skills/data-structure-protocol](https://github.com/k-kolomeitsev/data-structure-protocol/tree/main/skills/data-structure-protocol)
-- **Introduction article**: [article.md](https://github.com/k-kolomeitsev/data-structure-protocol/blob/main/article.md)
+- **简介 article**: [article.md](https://github.com/k-kolomeitsev/data-structure-protocol/blob/main/article.md)
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

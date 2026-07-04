@@ -89,4 +89,3 @@ steps:                             # 执行步骤
 
 从文件中提取：
 - **角色名**：frontmatter 中的 `name` 字段
-- **角色 system prompt**：第二个 `---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 40 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

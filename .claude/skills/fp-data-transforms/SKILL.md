@@ -1,6 +1,6 @@
 ---
 name: fp-data-transforms
-description: "Fp Data Transforms — Fp Data Transforms 相关功能和最佳实践"
+description: "实用的 TypeScript 数据转换模式：数组操作、对象重塑、API 响应归一化、分组聚合和空安全嵌套值访问。"
 risk: unknown
 source: community
 version: 1.0.0
@@ -17,34 +17,34 @@ tags:
   - null-safety
 ---
 
-# Practical Data Transformations
+# 实用数据转换
 
-This skill covers the data transformations you do every day: working with arrays, reshaping objects, normalizing API responses, grouping data, and safely accessing nested values. Each section shows the imperative approach first, then the functional equivalent, with honest assessments of when each approach shines.
+本技能涵盖您每天使用的数据转换：处理数组、重塑对象、归一化 API 响应、分组数据和安全访问嵌套值。每个章节先展示命令式方法，然后是函数式等价方法，并诚实评估每种方法何时更优。
 
-## When to Use
-- You need to transform arrays, objects, grouped data, or nested values in TypeScript.
-- The task involves reshaping API responses, null-safe access, aggregation, or normalization.
-- You want practical functional patterns for everyday data work instead of low-level loops.
-
----
-
-## Table of Contents
-
-1. [Array Operations](#1-array-operations)
-2. [Object Transformations](#2-object-transformations)
-3. [Data Normalization](#3-data-normalization)
-4. [Grouping and Aggregation](#4-grouping-and-aggregation)
-5. [Null-Safe Access](#5-null-safe-access)
-6. [Real-World Examples](#6-real-world-examples)
-7. [When to Use What](#7-when-to-use-what)
+## 何时使用
+- 需要在 TypeScript 中转换数组、对象、分组数据或嵌套值。
+- 任务涉及重塑 API 响应、空安全访问、聚合或归一化。
+- 您希望为日常数据处理工作提供实用的函数式模式，而非底层循环。
 
 ---
 
-## 1. Array Operations
+## 目录
 
-Array operations are the bread and butter of data transformation. Let's replace verbose loops with expressive, chainable operations.
+1. [数组操作](#1-数组操作)
+2. [对象转换](#2-对象转换)
+3. [数据归一化](#3-数据归一化)
+4. [分组与聚合](#4-分组与聚合)
+5. [空安全访问](#5-空安全访问)
+6. [真实示例](#6-真实示例)
+7. [何时使用什么](#7-何时使用什么)
 
-### Map: Transform Every Element
+---
+
+## 1. 数组操作
+
+数组操作是数据转换的核心。让我们用表达力强、可链式调用的操作替换冗长的循环。
+
+### Map：转换每个元素
 
 **The Task**: Convert an array of prices from cents to dollars.
 
@@ -78,7 +78,7 @@ const dollars = pricesInCents.map(toDollars);
 
 **Why functional is better here**: The intent is immediately clear. `map` says "transform each element." The transformation logic (`toDollars`) is named and reusable. No index management, no manual array building.
 
-### Filter: Keep What Matches
+### Filter：保留匹配项
 
 **The Task**: Get all active users from a list.
 
@@ -115,7 +115,7 @@ const activeUsers = users.filter(user => user.isActive);
 
 **Why functional is better here**: The predicate (`isActive`) is separated from the iteration logic. You can reuse, test, and compose predicates independently.
 
-### Reduce: Accumulate Into Something New
+### Reduce：聚合成新内容
 
 **The Task**: Calculate the total price of items in a cart.
 
@@ -155,7 +155,7 @@ const calculateTotal = (items: CartItem[]): number =>
 
 **Honest assessment**: For simple sums, the imperative loop is actually quite readable. The functional version shines when you need to compose the accumulation with other transformations, or when the reduction logic is complex enough to benefit from being named.
 
-### Chaining: Combine Operations
+### 链式调用：组合操作
 
 **The Task**: Get the names of all active premium users, sorted alphabetically.
 
@@ -207,7 +207,7 @@ const getActivePremiumNames = (users: User[]): string[] =>
 
 **Why functional is better here**: Each step in the chain has a single responsibility. You can read the transformation as a series of steps: "filter active, filter premium, get names, sort." Adding or removing a step is trivial.
 
-### Using fp-ts Array Module
+### 使用 fp-ts 数组模块
 
 fp-ts provides additional array utilities with better composition support:
 
@@ -260,11 +260,11 @@ const uniqueTags = pipe(
 
 ---
 
-## 2. Object Transformations
+## 2. 对象转换
 
 Objects need reshaping constantly: picking fields, omitting sensitive data, merging settings, and updating nested values.
 
-### Pick: Select Specific Fields
+### Pick：选择特定字段
 
 **The Task**: Extract only the public fields from a user object.
 
@@ -310,7 +310,7 @@ const publicUser = getPublicUser(user);
 
 **Why functional is better here**: The `pick` utility is reusable across your codebase. Type safety ensures you can only pick keys that exist.
 
-### Omit: Remove Specific Fields
+### Omit：移除特定字段
 
 **The Task**: Remove sensitive fields before logging.
 
@@ -345,7 +345,7 @@ const sanitizeForLogging = omit<User, 'passwordHash' | 'internalNotes'>([
 
 **Honest assessment**: For one-off omits, destructuring (the imperative approach) is perfectly fine and very readable. The functional `omit` utility pays off when you have many such transformations or need to compose them.
 
-### Merge: Combine Objects
+### Merge：合并对象
 
 **The Task**: Merge user settings with defaults.
 
@@ -404,7 +404,7 @@ const finalSettings = mergeSettings(defaults, userPrefs);
 
 **Why functional is better here**: Spread syntax is concise and handles any number of keys. Later spreads override earlier ones, giving you natural "defaults with overrides" behavior.
 
-### Deep Merge: Nested Object Combination
+### 深合并：嵌套对象组合
 
 **The Task**: Merge nested configuration objects.
 
@@ -473,7 +473,7 @@ const customConfig = deepMerge(defaultConfig, {
 // ui.theme overridden, ui.animations preserved
 ```
 
-### Immutable Updates: Change Nested Values
+### 不可变更新：更改嵌套值
 
 **The Task**: Update a deeply nested value without mutation.
 
@@ -535,11 +535,11 @@ const newState = updatePath(state, ['user', 'profile', 'settings', 'theme'], 'da
 
 ---
 
-## 3. Data Normalization
+## 3. 数据归一化
 
-API responses rarely match the shape your app needs. Normalization transforms nested, denormalized data into flat, indexed structures.
+API 响应很少与应用需要的形状匹配。归一化将嵌套的非规范化数据转换为扁平的索引结构。
 
-### API Response to App State
+### API 响应到应用状态
 
 **The Task**: Transform a nested API response into a normalized state.
 
@@ -722,7 +722,7 @@ const normalizeApiResponse = (response: ApiResponse): NormalizedState => ({
 
 **Why functional is better here**: Each extraction is independent and testable. The `createNormalizedCollection` helper is reusable. Adding a new entity type means adding one new extraction function.
 
-### Transform API Response to UI-Ready Data
+### 转换 API 响应为 UI 就绪数据
 
 **The Task**: Convert API data to what your components need.
 
@@ -772,11 +772,11 @@ const toDisplayUsers = (apiUsers: ApiUser[]): DisplayUser[] =>
 
 ---
 
-## 4. Grouping and Aggregation
+## 4. 分组与聚合
 
-Grouping and aggregating data is essential for reports, dashboards, and analytics.
+分组和聚合数据对于报告、仪表板和分析至关重要。
 
-### GroupBy: Organize by Key
+### GroupBy：按键组织
 
 **The Task**: Group orders by customer.
 
@@ -843,7 +843,7 @@ const ordersByCustomer = pipe(
 ); // Record<string, NonEmptyArray<Order>>
 ```
 
-### CountBy: Count Occurrences
+### CountBy：计数出现次数
 
 **The Task**: Count orders by status.
 
@@ -884,7 +884,7 @@ const orderCountByStatus = countBy((order: Order) => order.status)(orders);
 // { pending: 5, shipped: 12, delivered: 8 }
 ```
 
-### SumBy: Aggregate Numeric Values
+### SumBy：聚合数值
 
 **The Task**: Calculate total revenue per product category.
 
@@ -935,7 +935,7 @@ const revenueByCategory = sumBy(
 // { electronics: 15000, clothing: 8500, books: 3200 }
 ```
 
-### Complex Aggregation Example
+### 复杂聚合示例
 
 **The Task**: Calculate totals from line items with quantity and unit price.
 
@@ -1001,11 +1001,11 @@ const calculateInvoiceTotal = (invoice: Invoice) => {
 
 ---
 
-## 5. Null-Safe Access
+## 5. 空安全访问
 
-Stop writing `if (x && x.y && x.y.z)`. Safely navigate nested structures without runtime errors.
+停止编写 `if (x && x.y && x.y.z)`。安全地导航嵌套结构，无运行时错误。
 
-### The Problem
+### 问题
 
 ```typescript
 interface Config {
@@ -1041,7 +1041,7 @@ function getDatabaseHost(config: Config): string {
 }
 ```
 
-#### Optional Chaining (Modern TypeScript)
+#### 可选 Chaining (Modern TypeScript)
 
 ```typescript
 const getDatabaseHost = (config: Config): string =>
@@ -1050,7 +1050,7 @@ const getDatabaseHost = (config: Config): string =>
 
 **Honest assessment**: For simple access patterns, optional chaining (`?.`) is perfect. It's built into the language and very readable. Use fp-ts Option when you need to compose operations on potentially missing values.
 
-### When to Use Option Instead
+### 何时改用 Option
 
 Use fp-ts Option when:
 - You need to chain multiple operations on potentially missing values
@@ -1084,7 +1084,7 @@ const host = pipe(
 );
 ```
 
-### Safe Array Access
+### 安全的数组访问
 
 ```typescript
 import * as A from 'fp-ts/Array';
@@ -1114,7 +1114,7 @@ const third = pipe(
 );
 ```
 
-### Safe Record/Dictionary Access
+### 安全的记录/字典访问
 
 ```typescript
 import * as R from 'fp-ts/Record';
@@ -1141,7 +1141,7 @@ const email = pipe(
 );
 ```
 
-### Combining Multiple Optional Values
+### 组合多个可选值
 
 **The Task**: Get a user's display name, which requires both first and last name.
 
@@ -1183,9 +1183,9 @@ const getDisplayName = (profile: Profile): string =>
 
 ---
 
-## 6. Real-World Examples
+## 6. 真实示例
 
-### Example 1: Transform API Response to UI-Ready Data
+### 示例 1：转换 API 响应为 UI 就绪数据
 
 ```typescript
 // API response
@@ -1260,7 +1260,7 @@ const toOrderSummaries = (orders: ApiOrder[]): OrderSummary[] =>
   orders.map(toOrderSummary);
 ```
 
-### Example 2: Merge User Settings with Defaults
+### 示例 2：合并用户设置与默认值
 
 ```typescript
 interface AppSettings {
@@ -1323,7 +1323,7 @@ const userPreferences: DeepPartial<AppSettings> = {
 const finalSettings = deepMergeSettings(DEFAULT_SETTINGS, userPreferences);
 ```
 
-### Example 3: Group Orders by Customer with Totals
+### 示例 3：按客户分组订单并计算总额
 
 ```typescript
 interface Order {
@@ -1361,7 +1361,7 @@ const groupOrdersByCustomer = (orders: Order[]): CustomerOrderSummary[] => {
 };
 ```
 
-### Example 4: Safely Access Deeply Nested Config
+### 示例 4：安全访问深层嵌套配置
 
 ```typescript
 interface AppConfig {
@@ -1424,14 +1424,14 @@ const getDbConfig = (config: AppConfig) => ({
 
 ---
 
-## 7. When to Use What
+## 7. 何时使用什么
 
-### Use Native Methods When:
+### 使用原生方法的情况：
 
 - **Simple transformations**: `.map()`, `.filter()`, `.reduce()` are perfectly good
 - **No composition needed**: You're doing a one-off transformation
 - **Team familiarity**: Everyone knows native methods
-- **Optional chaining suffices**: `obj?.prop?.value ?? default` handles your null-safety needs
+- **可选 chaining suffices**: `obj?.prop?.value ?? default` handles your null-safety needs
 
 ```typescript
 // Native is fine here
@@ -1440,7 +1440,7 @@ const activeUserNames = users
   .map(u => u.name);
 ```
 
-### Use fp-ts When:
+### 使用 fp-ts 的情况：
 
 - **Chaining operations that might fail**: Multiple steps where each can return nothing
 - **Composing transformations**: Building reusable transformation pipelines
@@ -1459,7 +1459,7 @@ const result = pipe(
 );
 ```
 
-### Use Custom Utilities When:
+### 使用自定义工具的情况：
 
 - **Domain-specific operations**: `groupBy`, `countBy`, `sumBy` for your data
 - **Repeated patterns**: You find yourself writing the same transformation many times
@@ -1473,7 +1473,7 @@ const revenueByRegion = sumBy(
 )(sales);
 ```
 
-### Performance Considerations
+### 性能考虑
 
 - **Chaining creates intermediate arrays**: `arr.filter().map()` creates one array, then another
 - **For hot paths, consider `reduce`**: One pass through the data
@@ -1496,7 +1496,7 @@ const result = items
 
 ---
 
-## Summary
+## 总结
 
 | Task | Imperative | Functional | Recommendation |
 |------|-----------|------------|----------------|
@@ -1519,10 +1519,10 @@ const result = items
 **The imperative approach is acceptable when:**
 - The transformation is a one-off
 - The logic is simple and linear
-- Performance is critical and you've measured
+- 性能 is critical and you've measured
 - The team is more comfortable with it
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

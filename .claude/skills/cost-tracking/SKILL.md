@@ -5,19 +5,15 @@ metadata:
   origin: community
 ---
 
-# Cost Tracking
+# 成本追踪
 
-Use this skill to analyze Claude Code cost and usage history from the metrics log
-that ECC's `stop:cost-tracker` hook writes.
+使用此技能从 ECC 的 `stop:cost-tracker` 钩子写入的指标日志中分析 Claude Code 成本和用量历史。
 
-## Where the data lives
+## 数据存储位置
 
-The tracker appends one JSON object per session-stop to
-`~/.claude/metrics/costs.jsonl`. Each row is a **cumulative snapshot for that
-session**, so to total spend you take the **latest row per `session_id`** and
-sum across sessions — summing every row multiply-counts.
+追踪器每次停止会话时向 `~/.claude/metrics/costs.jsonl` 追加一个 JSON 对象。每行是该会话的**累积快照**，因此要计算总支出，你需要取每个 `session_id` 的**最新行**并在会话间求和——对每行求和会重复计算。
 
-Row schema:
+行 schema：
 
 | Field | Meaning |
 | --- | --- |

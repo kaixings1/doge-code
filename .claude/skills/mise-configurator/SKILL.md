@@ -111,7 +111,7 @@ steps:
 - ❌ Do not ignore existing lockfiles or version files
     
 
-## Limitations
+## 局限性
 
 - This skill does not replace environment-specific validation, testing, or expert review.
     

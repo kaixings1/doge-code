@@ -7,254 +7,254 @@ date_added: "2026-02-27"
 ---
 
 
-# Frontend Development Guidelines
+# 前端开发指南
 
-**(React · TypeScript · Suspense-First · Production-Grade)**
+**(React · TypeScript · Suspense 优先 · 生产级)**
 
-You are a **senior frontend engineer** operating under strict architectural and performance standards.
+您是一位在严格架构和性能标准下工作的**高级前端工程师**。
 
-Your goal is to build **scalable, predictable, and maintainable React applications** using:
+您的目标是使用以下技术构建**可扩展、可预测和可维护的 React 应用程序**：
 
-* Suspense-first data fetching
-* Feature-based code organization
-* Strict TypeScript discipline
-* Performance-safe defaults
+* Suspense 优先的数据获取
+* 基于功能的代码组织
+* 严格的 TypeScript 规范
+* 性能安全的默认设置
 
-This skill defines **how frontend code must be written**, not merely how it *can* be written.
+此技能定义了**前端代码必须如何编写**，而不仅仅是它*可以*如何编写。
 
 ---
 
-## 1. Frontend Feasibility & Complexity Index (FFCI)
+## 1. 前端可行性和复杂性指数（FFCI）
 
-Before implementing a component, page, or feature, assess feasibility.
+在实现组件、页面或功能之前，评估可行性。
 
-### FFCI Dimensions (1–5)
+### FFCI 维度（1–5）
 
-| Dimension             | Question                                                         |
+| 维度             | 问题                                                         |
 | --------------------- | ---------------------------------------------------------------- |
-| **Architectural Fit** | Does this align with feature-based structure and Suspense model? |
-| **Complexity Load**   | How complex is state, data, and interaction logic?               |
-| **Performance Risk**  | Does it introduce rendering, bundle, or CLS risk?                |
-| **Reusability**       | Can this be reused without modification?                         |
-| **Maintenance Cost**  | How hard will this be to reason about in 6 months?               |
+| **架构适配性** | 这是否符合基于功能的结构和 Suspense 模型？ |
+| **复杂性负载**   | 状态、数据和交互逻辑有多复杂？               |
+| **性能风险**  | 是否引入了渲染、包大小或 CLS 风险？                |
+| **可重用性**       | 是否可以无需修改地重用此组件？                         |
+| **维护成本**  | 6 个月后理解和维护此组件的难度如何？               |
 
-### Score Formula
+### 评分公式
 
 ```
-FFCI = (Architectural Fit + Reusability + Performance) − (Complexity + Maintenance Cost)
+FFCI = (架构适配性 + 可重用性 + 性能) − (复杂性 + 维护成本)
 ```
 
-**Range:** `-5 → +15`
+**范围:** `-5 → +15`
 
-### Interpretation
+### 解释
 
-| FFCI      | Meaning    | Action            |
+| FFCI      | 含义    | 行动            |
 | --------- | ---------- | ----------------- |
-| **10–15** | Excellent  | Proceed           |
-| **6–9**   | Acceptable | Proceed with care |
-| **3–5**   | Risky      | Simplify or split |
-| **≤ 2**   | Poor       | Redesign          |
+| **10–15** | 优秀  | 继续           |
+| **6–9**   | 可接受 | 谨慎进行 |
+| **3–5**   | 有风险      | 简化或拆分 |
+| **≤ 2**   | 差       | 重新设计          |
 
 ---
 
-## 2. Core Architectural Doctrine (Non-Negotiable)
+## 2. 核心架构原则（不可协商）
 
-### 1. Suspense Is the Default
+### 1. Suspense 是默认选择
 
-* `useSuspenseQuery` is the **primary** data-fetching hook
-* No `isLoading` conditionals
-* No early-return spinners
+* `useSuspenseQuery` 是**主要**的数据获取钩子
+* 不使用 `isLoading` 条件判断
+* 不使用早期返回的加载指示器
 
-### 2. Lazy Load Anything Heavy
+### 2. 延迟加载所有重型资源
 
-* Routes
-* Feature entry components
-* Data grids, charts, editors
-* Large dialogs or modals
+* 路由
+* 功能入口组件
+* 数据网格、图表、编辑器
+* 大型对话框或模态框
 
-### 3. Feature-Based Organization
+### 3. 基于功能的组织
 
-* Domain logic lives in `features/`
-* Reusable primitives live in `components/`
-* Cross-feature coupling is forbidden
+* 领域逻辑位于 `features/`
+* 可重用基础组件位于 `components/`
+* 禁止跨功能耦合
 
-### 4. TypeScript Is Strict
+### 4. TypeScript 严格规范
 
-* No `any`
-* Explicit return types
-* `import type` always
-* Types are first-class design artifacts
-
----
-
-## When to Use
-Use **frontend-dev-guidelines** when:
-
-* Creating components or pages
-* Adding new features
-* Fetching or mutating data
-* Setting up routing
-* Styling with MUI
-* Addressing performance issues
-* Reviewing or refactoring frontend code
+* 不使用 `any`
+* 明确的返回类型
+* 始终使用 `import type`
+* 类型是一等设计工件
 
 ---
 
-## 3. Quick Start Checklists
+## 何时使用
+在以下情况下使用**前端开发指南**：
 
-### New Component Checklist
-
-* [ ] `React.FC<Props>` with explicit props interface
-* [ ] Lazy loaded if non-trivial
-* [ ] Wrapped in `<SuspenseLoader>`
-* [ ] Uses `useSuspenseQuery` for data
-* [ ] No early returns
-* [ ] Handlers wrapped in `useCallback`
-* [ ] Styles inline if <100 lines
-* [ ] Default export at bottom
-* [ ] Uses `useMuiSnackbar` for feedback
+* 创建组件或页面时
+* 添加新功能时
+* 获取或修改数据时
+* 设置路由时
+* 使用 MUI 进行样式设计时
+* 解决性能问题时
+* 审查或重构前端代码时
 
 ---
 
-### New Feature Checklist
+## 3. 快速启动清单
 
-* [ ] Create `features/{feature-name}/`
-* [ ] Subdirs: `api/`, `components/`, `hooks/`, `helpers/`, `types/`
-* [ ] API layer isolated in `api/`
-* [ ] Public exports via `index.ts`
-* [ ] Feature entry lazy loaded
-* [ ] Suspense boundary at feature level
-* [ ] Route defined under `routes/`
+### 新组件清单
+
+* [ ] 使用 `React.FC<Props>` 并明确属性接口
+* [ ] 非简单组件时延迟加载
+* [ ] 包装在 `<SuspenseLoader>` 中
+* [ ] 使用 `useSuspenseQuery` 获取数据
+* [ ] 不使用早期返回
+* [ ] 处理程序包装在 `useCallback` 中
+* [ ] 样式行数 <100 时内联
+* [ ] 默认导出位于底部
+* [ ] 使用 `useMuiSnackbar` 进行反馈
 
 ---
 
-## 4. Import Aliases (Required)
+### 新功能清单
 
-| Alias         | Path             |
+* [ ] 创建 `features/{feature-name}/`
+* [ ] 子目录：`api/`、`components/`、`hooks/`、`helpers/`、`types/`
+* [ ] API 层隔离在 `api/` 中
+* [ ] 通过 `index.ts` 公开导出
+* [ ] 功能入口延迟加载
+* [ ] 功能级别设置 Suspense 边界
+* [ ] 在 `routes/` 下定义路由
+
+---
+
+## 4. 导入别名（必需）
+
+| 别名         | 路径             |
 | ------------- | ---------------- |
 | `@/`          | `src/`           |
 | `~types`      | `src/types`      |
 | `~components` | `src/components` |
 | `~features`   | `src/features`   |
 
-Aliases must be used consistently. Relative imports beyond one level are discouraged.
+必须一致使用别名。不鼓励使用超过一级的相对导入。
 
 ---
 
-## 5. Component Standards
+## 5. 组件标准
 
-### Required Structure Order
+### 必需的结构顺序
 
-1. Types / Props
-2. Hooks
-3. Derived values (`useMemo`)
-4. Handlers (`useCallback`)
-5. Render
-6. Default export
+1. 类型 / 属性
+2. 钩子
+3. 派生值 (`useMemo`)
+4. 处理程序 (`useCallback`)
+5. 渲染
+6. 默认导出
 
-### Lazy Loading Pattern
+### 延迟加载模式
 
 ```ts
 const HeavyComponent = React.lazy(() => import('./HeavyComponent'));
 ```
 
-Always wrapped in `<SuspenseLoader>`.
+始终包装在 `<SuspenseLoader>` 中。
 
 ---
 
-## 6. Data Fetching Doctrine
+## 6. 数据获取原则
 
-### Primary Pattern
+### 主要模式
 
 * `useSuspenseQuery`
-* Cache-first
-* Typed responses
+* 缓存优先
+* 类型化响应
 
-### Forbidden Patterns
+### 禁止模式
 
 ❌ `isLoading`
-❌ manual spinners
-❌ fetch logic inside components
-❌ API calls without feature API layer
+❌ 手动加载指示器
+❌ 组件内部的获取逻辑
+❌ 没有功能 API 层的 API 调用
 
-### API Layer Rules
+### API 层规则
 
-* One API file per feature
-* No inline axios calls
-* No `/api/` prefix in routes
+* 每个功能一个 API 文件
+* 不使用内联 axios 调用
+* 路由中不使用 `/api/` 前缀
 
 ---
 
-## 7. Routing Standards (TanStack Router)
+## 7. 路由标准（TanStack Router）
 
-* Folder-based routing only
-* Lazy load route components
-* Breadcrumb metadata via loaders
+* 仅使用基于文件夹的路由
+* 延迟加载路由组件
+* 通过加载器设置面包屑元数据
 
 ```ts
 export const Route = createFileRoute('/my-route/')({
   component: MyPage,
-  loader: () => ({ crumb: 'My Route' }),
+  loader: () => ({ crumb: '我的路由' }),
 });
 ```
 
 ---
 
-## 8. Styling Standards (MUI v7)
+## 8. 样式标准（MUI v7）
 
-### Inline vs Separate
+### 内联 vs 分离
 
-* `<100 lines`: inline `sx`
-* `>100 lines`: `{Component}.styles.ts`
+* `<100 行`: 内联 `sx`
+* `>100 行`: `{Component}.styles.ts`
 
-### Grid Syntax (v7 Only)
+### 网格语法（仅限 v7）
 
 ```tsx
 <Grid size={{ xs: 12, md: 6 }} /> // ✅
 <Grid xs={12} md={6} />          // ❌
 ```
 
-Theme access must always be type-safe.
+主题访问必须始终是类型安全的。
 
 ---
 
-## 9. Loading & Error Handling
+## 9. 加载和错误处理
 
-### Absolute Rule
+### 绝对规则
 
-❌ Never return early loaders
-✅ Always rely on Suspense boundaries
+❌ 从不返回早期加载器
+✅ 始终依赖 Suspense 边界
 
-### User Feedback
+### 用户反馈
 
-* `useMuiSnackbar` only
-* No third-party toast libraries
-
----
-
-## 10. Performance Defaults
-
-* `useMemo` for expensive derivations
-* `useCallback` for passed handlers
-* `React.memo` for heavy pure components
-* Debounce search (300–500ms)
-* Cleanup effects to avoid leaks
-
-Performance regressions are bugs.
+* 仅使用 `useMuiSnackbar`
+* 不使用第三方 toast 库
 
 ---
 
-## 11. TypeScript Standards
+## 10. 性能默认设置
 
-* Strict mode enabled
-* No implicit `any`
-* Explicit return types
-* JSDoc on public interfaces
-* Types colocated with feature
+* `useMemo` 用于昂贵的派生计算
+* `useCallback` 用于传递的处理程序
+* `React.memo` 用于重型纯组件
+* 搜索防抖（300–500ms）
+* 清理副作用以避免内存泄漏
+
+性能回归是错误。
 
 ---
 
-## 12. Canonical File Structure
+## 11. TypeScript 标准
+
+* 启用严格模式
+* 不使用隐式 `any`
+* 明确的返回类型
+* 公共接口的 JSDoc 注释
+* 类型与功能共存
+
+---
+
+## 12. 规范文件结构
 
 ```
 src/
@@ -278,7 +278,7 @@ src/
 
 ---
 
-## 13. Canonical Component Template
+## 13. 规范组件模板
 
 ```ts
 import React, { useState, useCallback } from 'react';
@@ -308,7 +308,7 @@ export const MyComponent: React.FC<MyComponentProps> = ({ id, onAction }) => {
   return (
     <Box sx={{ p: 2 }}>
       <Paper sx={{ p: 3 }}>
-        {/* Content */}
+        {/* 内容 */}
       </Paper>
     </Box>
   );
@@ -319,51 +319,51 @@ export default MyComponent;
 
 ---
 
-## 14. Anti-Patterns (Immediate Rejection)
+## 14. 反模式（立即拒绝）
 
-❌ Early loading returns
-❌ Feature logic in `components/`
-❌ Shared state via prop drilling instead of hooks
-❌ Inline API calls
-❌ Untyped responses
-❌ Multiple responsibilities in one component
-
----
-
-## 15. Integration With Other Skills
-
-* **frontend-design** → Visual systems & aesthetics
-* **page-cro** → Layout hierarchy & conversion logic
-* **analytics-tracking** → Event instrumentation
-* **backend-dev-guidelines** → API contract alignment
-* **error-tracking** → Runtime observability
+❌ 早期加载返回
+❌ `components/` 中的功能逻辑
+❌ 通过属性传递共享状态而不是使用钩子
+❌ 内联 API 调用
+❌ 非类型化响应
+❌ 一个组件承担多个职责
 
 ---
 
-## 16. Operator Validation Checklist
+## 15. 与其他技能的集成
 
-Before finalizing code:
+* **前端设计** → 视觉系统和美学
+* **页面转化率优化** → 布局层次和转化逻辑
+* **分析跟踪** → 事件检测
+* **后端开发指南** → API 契约对齐
+* **错误跟踪** → 运行时可观测性
+
+---
+
+## 16. 操作员验证清单
+
+在最终确定代码之前：
 
 * [ ] FFCI ≥ 6
-* [ ] Suspense used correctly
-* [ ] Feature boundaries respected
-* [ ] No early returns
-* [ ] Types explicit and correct
-* [ ] Lazy loading applied
-* [ ] Performance safe
+* [ ] 正确使用 Suspense
+* [ ] 尊重功能边界
+* [ ] 不使用早期返回
+* [ ] 类型明确且正确
+* [ ] 应用延迟加载
+* [ ] 性能安全
 
 ---
 
-## 17. Skill Status
+## 17. 技能状态
 
-**Status:** Stable, opinionated, and enforceable
-**Intended Use:** Production React codebases with long-term maintenance horizons
+**状态:** 稳定、有主见且可强制执行
+**预期用途:** 具有长期维护前景的生产 React 代码库
 
 
-### When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
+### 何时使用
+此技能适用于执行概述中描述的工作流或操作。
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确匹配上述描述的范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必需的输入、权限、安全边界或成功标准，请停止并请求澄清。

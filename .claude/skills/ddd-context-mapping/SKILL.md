@@ -7,16 +7,16 @@ tags: "[ddd, context-map, anti-corruption-layer, integration]"
 date_added: "2026-02-27"
 ---
 
-# DDD Context Mapping
+# DDD 上下文映射
 
-## Use this skill when
+## 使用此技能的场景
 
-- Defining integration patterns between bounded contexts.
-- Preventing domain leakage across service boundaries.
-- Planning anti-corruption layers during migration.
-- Clarifying upstream and downstream ownership for contracts.
+- 定义限界上下文之间的集成模式。
+- 防止跨服务边界的领域泄漏。
+- 在迁移期间规划防腐层。
+- 明确契约的上游和下游所有权。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - You have a single-context system with no integrations.
 - You only need internal class design.
@@ -45,7 +45,7 @@ Use @ddd-context-mapping to define how Checkout integrates with Billing,
 Inventory, and Fraud contexts, including ACL and contract ownership.
 ```
 
-## Limitations
+## 局限性
 
 - This skill does not replace API-level schema design.
 - It does not guarantee organizational alignment by itself.

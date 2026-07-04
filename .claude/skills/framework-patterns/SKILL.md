@@ -5,9 +5,9 @@ description: "用于识别 Web 框架特定漏洞模式的技能。涵盖 Django
 
 # 框架安全模式
 
-Framework-specific vulnerability patterns that arise from how modern web frameworks handle requests, responses, and data flow. These patterns are more durable than version-specific CVEs.
+现代 Web 框架在处理请求、响应和数据流时产生的框架特定漏洞模式。这些模式比特定版本的 CVE 更具持久性。
 
-## Why Framework Patterns Matter
+## 为什么框架模式很重要
 
 1. **Frameworks have implicit behaviors** - redirect(), Server Actions, template rendering have side effects
 2. **Trust assumptions differ** - Internal vs external, server vs client boundaries

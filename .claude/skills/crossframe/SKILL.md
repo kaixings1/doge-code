@@ -34,7 +34,7 @@ tags:
 
 This AAS-ready copy preserves the original CrossFrame skill body below. Chinese remains the canonical semantic layer; English metadata is only for discovery, installation, and repository review.
 
-## Limitations
+## 局限性
 
 - The skill body is intentionally Chinese-canonical; English metadata is for discovery and does not replace the original Chinese terms.
 - Use only after explicit CrossFrame invocation or `crossframe-suite` routing; do not apply it as a generic default reasoning layer.

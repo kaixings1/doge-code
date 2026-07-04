@@ -1,27 +1,33 @@
 ---
-name: writer-memory
-description: 面向写作者的智能记忆系统——追踪角色、关系、场景和主题
+name: 写作者记忆
+description: "面向写作者的智能记忆系统——追踪角色、关系、场景和主题，跨会话持久化。"
 argument-hint: "init|char|rel|scene|query|validate|synopsis|status|export [args]"
 level: 7
+triggers:
+  - "writer-memory"
+  - "writer memory"
+  - "写作者记忆"
+  - "writer memory"
+  - "角色记忆"
+  - "写作记忆系统"
 ---
 
-# Writer Memory - Agentic Memory System for Writers
+# 写作者记忆（Writer Memory）— 写作者智能记忆系统
 
-Persistent memory system designed for creative writers, with first-class support for Korean storytelling workflows.
+专为创意写作者设计的跨会话持久化记忆系统，尤其擅长韩国叙事工作流。
 
-## Overview
+## 概述
 
-Writer Memory maintains context across Claude sessions for fiction writers. It tracks:
+Writer Memory 在 Claude 会话中为小说创作者维护上下文，追踪以下五类要素：
 
-- **Characters (캐릭터)**: Emotional arcs (감정궤도), attitudes (태도), dialogue tone (대사톤), speech levels
-- **World (세계관)**: Settings, rules, atmosphere, constraints
-- **Relationships (관계)**: Character dynamics and evolution over time
-- **Scenes (장면)**: Cut composition (컷구성), narration tone, emotional tags
-- **Themes (테마)**: Emotional themes (정서테마), authorial intent
+- **角色（Characters）**：情感弧线、态度、对话语气、说话方式
+- **世界观（World）**：设定、规则、氛围、约束条件
+- **关系（Relationships）**：角色动态与随时间演变
+- **场景（Scenes）**：场景构图、叙事语气、情感标签
+- **主题（Themes）**：情感主题、作者意图
 
-All data persists in `.writer-memory/memory.json` for git-friendly collaboration.
+所有数据持久化存储于 `.writer-memory/memory.json`，支持 git 友好协作。
 
-## Commands
+## 命令
 
-| Command | Action |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 35 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 命令 | 作用 |

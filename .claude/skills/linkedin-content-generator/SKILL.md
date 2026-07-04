@@ -14,16 +14,13 @@ license: "MIT"
 license_source: "https://github.com/sarveshtalele/linkedin-content-skill/blob/main/LICENSE"
 ---
 
-# LinkedIn Content Generator
+# LinkedIn 内容生成器
 
-## Overview
+## 概述
 
-A full LinkedIn content-creation suite for Claude Code that turns a topic and niche into
-publish-ready posts, multi-slide carousels, long-form newsletter editions, and 30-day content
-calendars — all wired through a personal reinforcement-learning memory system so every output
-improves as you give feedback.
+一个面向 Claude Code 的完整 LinkedIn 内容创建套件，将主题和细分领域转化为
+可发布的帖子、多幻灯片轮播、长篇通讯版本和 30 天内容日历—全部通过个人强化学习记忆系统连接，因此每次输出都会随着您的反馈而改进。
 
-Seven coordinated commands cover the full content workflow:
+七个协同命令覆盖完整的内容工作流：
 
-| Command | Purpose |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 24 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 命令 | 用途 |

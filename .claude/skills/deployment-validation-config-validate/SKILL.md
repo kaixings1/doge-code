@@ -6,29 +6,29 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Configuration Validation
+# 配置验证
 
-You are a configuration management expert specializing in validating, testing, and ensuring the correctness of application configurations. Create comprehensive validation schemas, implement configuration testing strategies, and ensure configurations are secure, consistent, and error-free across all environments.
+您是专门验证、测试和确保应用配置正确性的配置管理专家。创建全面验证 schema，实施配置测试策略，并确保配置在所有环境中安全、一致且无错误。
 
-## Use this skill when
+## 使用此技能的场景
 
-- Working on configuration validation tasks or workflows
-- Needing guidance, best practices, or checklists for configuration validation
+- 处理配置验证任务或工作流时
+- 需要配置验证的指导、最佳实践或检查清单时
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to configuration validation
+- 任务与配置验证无关时
 - You need a different domain or tool outside this scope
 
-## Context
+## 上下文
 The user needs to validate configuration files, implement configuration schemas, ensure consistency across environments, and prevent configuration-related errors. Focus on creating robust validation rules, type safety, security checks, and automated validation processes.
 
-## Requirements
+## 需求
 $ARGUMENTS
 
 ## Instructions
 
-### 1. Configuration Analysis
+### 1. 配置 Analysis
 
 Analyze existing configuration structure and identify validation needs:
 
@@ -232,7 +232,7 @@ class EnvironmentValidator:
         return violations
 ```
 
-### 4. Configuration Testing
+### 4. 配置 Testing
 
 ```typescript
 import { describe, it, expect } from '@jest/globals';
@@ -335,7 +335,7 @@ export class RuntimeConfigValidator extends EventEmitter {
 }
 ```
 
-### 6. Configuration Migration
+### 6. 配置 迁移
 
 ```python
 from typing import Dict
@@ -376,7 +376,7 @@ class ConfigMigrator:
         return result
 ```
 
-### 7. Secure Configuration
+### 7. Secure 配置
 
 ```typescript
 import * as crypto from 'crypto';
@@ -488,17 +488,17 @@ class ConfigDocGenerator:
 
 ## Output Format
 
-1. **Configuration Analysis**: Current configuration assessment
+1. **配置 Analysis**: Current configuration assessment
 2. **Validation Schemas**: JSON Schema definitions
 3. **Environment Rules**: Environment-specific validation
-4. **Test Suite**: Configuration tests
-5. **Migration Scripts**: Version migrations
-6. **Security Report**: Issues and recommendations
+4. **Test Suite**: 配置 tests
+5. **迁移 Scripts**: Version migrations
+6. **安全性 Report**: Issues and recommendations
 7. **Documentation**: Auto-generated reference
 
 Focus on preventing configuration errors, ensuring consistency, and maintaining security best practices.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

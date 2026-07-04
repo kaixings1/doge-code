@@ -6,10 +6,8 @@ requires:
     - rube
 ---
 
-# SEMrush Automation
+# SEMrush 自动化
 
-Run **SEMrush** SEO analytics directly from Claude Code. Analyze domain keywords, audit backlink profiles, research keyword difficulty, discover related terms, and track organic page performance without leaving your terminal.
+直接从 Claude Code 运行 **SEMrush** SEO 分析。无需离开终端即可分析域名关键词、审计反向链接画像、研究关键词难度、发现相关术语和跟踪自然页面表现。
 
-**Toolkit docs:** [composio.dev/toolkits/semrush](https://composio.dev/toolkits/semrush)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 02 MINUTES 07 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+**工具包文档：** [composio.dev/toolkits/semrush](https://composio.dev/toolkits/semrush)

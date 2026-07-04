@@ -1,6 +1,6 @@
 ---
 name: -21risk-automation
-description: "通过 Rube MCP (Composio) 自动执行 21risk 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 21risk 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
@@ -80,4 +80,3 @@ session_id: "your_session_id"
 ## 快速参考
 
 | 操作 | 方法 |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 42 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

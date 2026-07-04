@@ -5,19 +5,19 @@ requires:
   mcp: [rube]
 ---
 
-# Amcards Automation via Rube MCP
+# 通过 Rube MCP 实现 Amcards 自动化
 
-Automate Amcards operations through Composio's Amcards toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Amcards 工具包自动化 Amcards 操作。
 
 **Toolkit docs**: [composio.dev/toolkits/amcards](https://composio.dev/toolkits/amcards)
 
-## Prerequisites
+## 前提条件
 
 - Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
 - Active Amcards connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `amcards`
 - Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
-## Setup
+## 设置
 
 **Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
 
@@ -68,16 +68,16 @@ memory: {}
 session_id: "your_session_id"
 ```
 
-## Known Pitfalls
+## 已知陷阱
 
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
+- **始终先搜索**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
+- **检查连接**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
+- **Schema 合规**: Use exact field names and types from the search results
+- **Memory 参数**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
+- **会话复用**: Reuse session IDs within a workflow. Generate new ones for new workflows
+- **分页**: Check responses for pagination tokens and continue fetching until complete
 
-## Quick Reference
+## 快速参考
 
 | Operation | Approach |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 04 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -7,34 +7,34 @@ author: zebbern
 date_added: "2026-02-27"
 ---
 
-# Linux Production Shell Scripts
+# Linux 生产级 Shell 脚本
 
-## Purpose
+## 目的
 
-Provide production-ready shell script templates for common Linux system administration tasks including backups, monitoring, user management, log analysis, and automation. These scripts serve as building blocks for security operations and penetration testing environments.
+为常见 Linux 系统管理任务提供生产就绪的 shell 脚本模板，包括备份、监控、用户管理、日志分析和自动化。这些脚本作为安全操作和渗透测试环境的构建块。
 
-## Prerequisites
+## 前提条件
 
-### Required Environment
-- Linux/Unix system (bash shell)
-- Appropriate permissions for tasks
-- Required utilities installed (rsync, openssl, etc.)
+### 所需环境
+- Linux/Unix 系统（bash shell）
+- 任务所需的适当权限
+- 已安装所需工具（rsync、openssl 等）
 
-### Required Knowledge
-- Basic bash scripting
-- Linux file system structure
-- System administration concepts
+### 所需知识
+- 基本的 bash 脚本编写
+- Linux 文件系统结构
+- 系统管理概念
 
-## Outputs and Deliverables
+## 输出和可交付成果
 
-1. **Backup Solutions** - Automated file and database backups
-2. **Monitoring Scripts** - Resource usage tracking
-3. **Automation Tools** - Scheduled task execution
-4. **Security Scripts** - Password management, encryption
+1. **备份解决方案** - 自动化的文件和数据库备份
+2. **监控脚本** - 资源使用跟踪
+3. **自动化工具** - 计划任务执行
+4. **安全脚本** - 密码管理、加密
 
-## Core Workflow
+## 核心工作流
 
-### Phase 1: File Backup Scripts
+### 阶段 1：文件备份脚本
 
 **Basic Directory Backup**
 ```bash
@@ -363,7 +363,7 @@ else
 fi
 ```
 
-### Phase 8: File Operations
+### 阶段 8：文件操作
 
 **Directory Synchronization**
 ```bash
@@ -404,7 +404,7 @@ echo "Total size:"
 du -sh "$folder_path"
 ```
 
-### Phase 9: System Information
+### 阶段 9：系统信息
 
 **System Info Collector**
 ```bash
@@ -438,7 +438,7 @@ output_file="system_info_$(hostname)_$(date +%Y%m%d).txt"
 echo "System info saved to $output_file"
 ```
 
-### Phase 10: Git and Development
+### 阶段 10：Git 与开发
 
 **Git Repository Updater**
 ```bash
@@ -471,9 +471,8 @@ ssh "$remote_server" "bash -s" < "$remote_script"
 echo "Remote script executed on $remote_server"
 ```
 
-## Quick Reference
+## 快速参考
 
-### Common Script Patterns
+### 常见脚本模式
 
-| Pattern | Purpose |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 18 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 模式 | 用途 |

@@ -6,24 +6,24 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Kotlin Coroutines Expert
+# Kotlin 协程专家
 
-## Overview
+## 概述
 
-A guide to mastering asynchronous programming with Kotlin Coroutines. Covers advanced topics like structured concurrency, `Flow` transformations, exception handling, and testing strategies.
+掌握 Kotlin 协程异步编程的指南。涵盖结构化并发、`Flow` 转换、异常处理和测试策略等高级主题。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- Use when implementing asynchronous operations in Kotlin.
-- Use when designing reactive data streams with `Flow`.
-- Use when debugging coroutine cancellations or exceptions.
-- Use when writing unit tests for suspending functions or Flows.
+- 在 Kotlin 中实现异步操作时使用
+- 使用 `Flow` 设计响应式数据流时使用
+- 调试协程取消或异常时使用
+- 为挂起函数或 Flow 编写单元测试时使用
 
-## Step-by-Step Guide
+## 分步指南
 
-### 1. Structured Concurrency
+### 1. 结构化并发
 
-Always launch coroutines within a defined `CoroutineScope`. Use `coroutineScope` or `supervisorScope` to group concurrent tasks.
+始终在定义的 `CoroutineScope` 内启动协程。使用 `coroutineScope` 或 `supervisorScope` 来分组并发任务。
 
 ```kotlin
 suspend fun loadDashboardData(): DashboardData = coroutineScope {
@@ -37,9 +37,9 @@ suspend fun loadDashboardData(): DashboardData = coroutineScope {
 }
 ```
 
-### 2. Exception Handling
+### 2. 异常处理
 
-Use `CoroutineExceptionHandler` for top-level scopes, but rely on `try-catch` within suspending functions for granular control.
+对顶级作用域使用 `CoroutineExceptionHandler`，但在挂起函数内依赖 `try-catch` 进行细粒度控制。
 
 ```kotlin
 val handler = CoroutineExceptionHandler { _, exception ->
@@ -50,29 +50,29 @@ viewModelScope.launch(handler) {
     try {
         riskyOperation()
     } catch (e: IOException) {
-        // Handle network error specifically
+        // 专门处理网络错误
     }
 }
 ```
 
-### 3. Reactive Streams with Flow
+### 3. 使用 Flow 的响应式流
 
-Use `StateFlow` for state that needs to be retained, and `SharedFlow` for events.
+对需要保留的状态使用 `StateFlow`，对事件使用 `SharedFlow`。
 
 ```kotlin
-// Cold Flow (Lazy)
+// Cold Flow (惰性)
 val searchResults: Flow<List<Item>> = searchQuery
     .debounce(300)
     .flatMapLatest { query -> searchRepo.search(query) }
     .flowOn(Dispatchers.IO)
 
-// Hot Flow (State)
+// Hot Flow (状态)
 val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 ```
 
-## Examples
+## 示例
 
-### Example 1: Parallel Execution with Error Handling
+### 示例 1: 带错误处理的并行执行
 
 ```kotlin
 suspend fun fetchDataWithErrorHandling() = supervisorScope {
@@ -81,26 +81,26 @@ suspend fun fetchDataWithErrorHandling() = supervisorScope {
     }
     val task2 = async { api.fetchB() }
     
-    // If task2 fails, task1 is NOT cancelled because of supervisorScope
+    // 如果 task2 失败，task1 不会被取消，因为使用了 supervisorScope
     val result1 = task1.await()
-    val result2 = task2.await() // May throw
+    val result2 = task2.await() // 可能抛出异常
 }
 ```
 
-## Best Practices
+## 最佳实践
 
-- ✅ **Do:** Use `Dispatchers.IO` for blocking I/O operations.
-- ✅ **Do:** Cancel scopes when they are no longer needed (e.g., `ViewModel.onCleared`).
-- ✅ **Do:** Use `TestScope` and `runTest` for unit testing coroutines.
-- ❌ **Don't:** Use `GlobalScope`. It breaks structured concurrency and can lead to leaks.
-- ❌ **Don't:** Catch `CancellationException` unless you rethrow it.
+- ✅ **应该做:** 对阻塞 I/O 操作使用 `Dispatchers.IO`
+- ✅ **应该做:** 当不再需要时取消作用域（例如 `ViewModel.onCleared`）
+- ✅ **应该做:** 对协程单元测试使用 `TestScope` 和 `runTest`
+- ❌ **不要做:** 使用 `GlobalScope`。它会破坏结构化并发并可能导致内存泄漏
+- ❌ **不要做:** 捕获 `CancellationException`，除非重新抛出它
 
-## Troubleshooting
+## 故障排除
 
-**Problem:** Coroutine test hangs or fails unpredictably.
-**Solution:** Ensure you are using `runTest` and injecting `TestDispatcher` into your classes so you can control virtual time.
+**问题:** 协程测试挂起或不可预测地失败。
+**解决方案:** 确保使用 `runTest` 并将 `TestDispatcher` 注入到您的类中，以便控制虚拟时间。
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确匹配上述描述的范围时才使用此技能
+- 不要将输出视为特定环境验证、测试或专家评审的替代品
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清

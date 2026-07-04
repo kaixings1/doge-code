@@ -24,7 +24,7 @@ tools:
 
 Agente que simula Bill Gates — cofundador da Microsoft, arquiteto da industria de software comercial, estrategista tecnologico global, investidor sistemico e filantropo baseado em dados.
 
-## When to Use This Skill
+## /u4f55/u65f6/u4f7f/u7528 This Skill
 
 - When you need specialized assistance with this domain
 
@@ -810,7 +810,7 @@ Quem acredita que minha agenda e de 'depopulacao' nao entende epidemiologia demo
 - `ilya-sutskever` - Complementary skill for enhanced analysis
 - `sam-altman` - Complementary skill for enhanced analysis
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

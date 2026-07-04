@@ -1,1 +1,9 @@
----/nname: chaos-engineering/ndescription: 混沌工程 — Chaos Mesh/Litmus、故障注入、稳定性测试、爆炸半径、实验设计/n---/n/n# chaos-engineering/n/n## 概述/n混沌工程 — Chaos Mesh/Litmus、故障注入、稳定性测试、爆炸半径、实验设计。/n/n## 使用场景/n- 使用 chaos-engineering 相关技术时/n- 架构决策和技术选型需要参考最佳实践时/n/n## 核心原则/n1. 遵循最佳实践/n2. 注重可维护性/n3. 安全性优先/n4. 性能意识/n
+---
+name: chaos-engineering
+description: "混沌工程"
+risk: safe
+source: community
+---
+# 混沌工程
+## 功能
+## 限制

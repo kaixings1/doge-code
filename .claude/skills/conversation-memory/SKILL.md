@@ -7,11 +7,11 @@ source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
 ---
 
-# Conversation Memory
+# 对话记忆
 
-Persistent memory systems for LLM conversations including short-term, long-term, and entity-based memory
+LLM 对话的持久记忆系统 including short-term, long-term, and entity-based memory
 
-## Capabilities
+## 能力
 
 - short-term-memory
 - long-term-memory
@@ -20,17 +20,17 @@ Persistent memory systems for LLM conversations including short-term, long-term,
 - memory-retrieval
 - memory-consolidation
 
-## Prerequisites
+## 前提条件
 
 - Knowledge: LLM conversation patterns, Database basics, Key-value stores
 - Skills_recommended: context-window-management, rag-implementation
 
-## Scope
+## 范围
 
 - Does_not_cover: Knowledge graph construction, Semantic search implementation, Database administration
 - Boundaries: Focus is memory patterns for LLMs, Covers storage and retrieval strategies
 
-## Ecosystem
+## 生态系统
 
 ### Primary_tools
 
@@ -38,9 +38,9 @@ Persistent memory systems for LLM conversations including short-term, long-term,
 - LangChain Memory - Memory utilities in LangChain
 - Redis - In-memory data store for session memory
 
-## Patterns
+## 模式
 
-### Tiered Memory System
+### 分层记忆系统
 
 Different memory tiers for different purposes
 
@@ -117,7 +117,7 @@ class TieredMemory implements MemorySystem {
     }
 }
 
-### Entity Memory
+### 实体记忆
 
 Store and update facts about entities
 
@@ -194,7 +194,7 @@ class EntityMemory {
     }
 }
 
-### Memory-Aware Prompting
+### 记忆感知提示
 
 Include relevant memories in prompts
 
@@ -238,9 +238,9 @@ ${query}
     return response;
 }
 
-## Sharp Edges
+## 易错点
 
-### Memory store grows unbounded, system slows
+### 记忆存储无限制增长, system slows
 
 Severity: HIGH
 
@@ -310,7 +310,7 @@ class ManagedMemory {
     }
 }
 
-### Retrieved memories not relevant to current query
+### 检索的记忆不相关 to current query
 
 Severity: HIGH
 
@@ -358,7 +358,7 @@ async function retrieveRelevant(
         .slice(0, maxResults);
 }
 
-### Memories from one user accessible to another
+### 一个用户的记忆可被另一用户访问
 
 Severity: CRITICAL
 
@@ -427,9 +427,9 @@ class IsolatedMemory {
     }
 }
 
-## Validation Checks
+## 验证检查
 
-### No User Isolation in Memory
+### 记忆中没有用户隔离
 
 Severity: CRITICAL
 
@@ -437,7 +437,7 @@ Message: Memory operations without user isolation. Privacy vulnerability.
 
 Fix action: Add userId to all memory operations, filter by user on retrieval
 
-### No Importance Filtering
+### 没有重要性过滤
 
 Severity: WARNING
 
@@ -445,7 +445,7 @@ Message: Storing memories without importance filtering. May cause memory explosi
 
 Fix action: Score importance before storing, filter low-importance content
 
-### Memory Storage Without Retrieval
+### 有存储无检索
 
 Severity: WARNING
 
@@ -453,7 +453,7 @@ Message: Storing memories but no retrieval logic. Memories won't be used.
 
 Fix action: Implement memory retrieval and include in prompts
 
-### No Memory Cleanup
+### 没有记忆清理
 
 Severity: INFO
 
@@ -461,15 +461,15 @@ Message: No memory cleanup mechanism. Storage will grow unbounded.
 
 Fix action: Implement consolidation and cleanup based on age/importance
 
-## Collaboration
+## 协作
 
-### Delegation Triggers
+### 委托触发器
 
 - context window|token -> context-window-management (Need context optimization)
 - rag|retrieval|vector -> rag-implementation (Need retrieval system)
 - cache|caching -> prompt-caching (Need caching strategies)
 
-### Complete Memory System
+### 完整记忆系统
 
 Skills: conversation-memory, context-window-management, rag-implementation
 
@@ -482,18 +482,18 @@ Workflow:
 4. Add consolidation and cleanup
 ```
 
-## Related Skills
+## 相关技能
 
 Works well with: `context-window-management`, `rag-implementation`, `prompt-caching`, `llm-npc-dialogue`
 
-## When to Use
+## 何时使用
 - User mentions or implies: conversation memory
 - User mentions or implies: remember
 - User mentions or implies: memory persistence
 - User mentions or implies: long-term memory
 - User mentions or implies: chat history
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

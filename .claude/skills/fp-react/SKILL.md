@@ -1,6 +1,6 @@
 ---
 name: fp-react
-description: "Fp React — Fp React 相关功能和最佳实践"
+description: "在 React 中使用 fp-ts 的实用模式——hooks、状态、表单、数据获取。适用于使用函数式编程模式构建 React 应用。兼容 React 18/19、Next.js 14/15。"
 risk: unknown
 source: community
 version: 2.0.0
@@ -8,29 +8,29 @@ author: fp-ts-skills
 tags: [fp-ts, react, typescript, hooks, state-management, forms, data-fetching, remote-data, react-19, next-js]
 ---
 
-# Functional Programming in React
+# React 中的函数式编程
 
-Practical patterns for React apps. No jargon, just code that works.
+React 应用的实用模式。没有术语，只有能用的代码。
 
 ---
 
-## Quick Reference
+## 快速参考
 
-| Pattern | Use When |
+| 模式 | 何时使用 |
 |---------|----------|
-| `Option` | Value might be missing (user not loaded yet) |
-| `Either` | Operation might fail (form validation) |
-| `TaskEither` | Async operation might fail (API calls) |
-| `RemoteData` | Need to show loading/error/success states |
-| `pipe` | Chaining multiple transformations |
+| `Option` | 值可能缺失（用户尚未加载） |
+| `Either` | 操作可能失败（表单验证） |
+| `TaskEither` | 异步操作可能失败（API 调用） |
+| `RemoteData` | 需要显示加载/错误/成功状态 |
+| `pipe` | 链接多个转换 |
 
 ---
 
-## 1. State with Option (Maybe It's There, Maybe Not)
+## 1. 使用 Option 管理状态（可能存在，也可能不存在）
 
 Use `Option` instead of `null | undefined` for clearer intent.
 
-### Basic Pattern
+### 基本模式
 
 ```typescript
 import { useState } from 'react'
@@ -44,7 +44,7 @@ interface User {
 }
 
 function UserProfile() {
-  // Option says "this might not exist yet"
+  // Option 表示"这个可能还不存在"
   const [user, setUser] = useState<O.Option<User>>(O.none)
 
   const handleLogin = (userData: User) => {
@@ -58,15 +58,15 @@ function UserProfile() {
   return pipe(
     user,
     O.match(
-      // When there's no user
+      // 没有用户时
       () => <button onClick={() => handleLogin({ id: '1', name: 'Alice', email: 'alice@example.com' })}>
-        Log In
+        登录
       </button>,
-      // When there's a user
+      // 有用户时
       (u) => (
         <div>
-          <p>Welcome, {u.name}!</p>
-          <button onClick={handleLogout}>Log Out</button>
+          <p>欢迎, {u.name}!</p>
+          <button onClick={handleLogout}>退出登录</button>
         </div>
       )
     )
@@ -74,7 +74,7 @@ function UserProfile() {
 }
 ```
 
-### Chaining Optional Values
+### 链式可选值
 
 ```typescript
 import * as O from 'fp-ts/Option'
@@ -101,11 +101,11 @@ function getTheme(profile: Profile): string {
 
 ---
 
-## 2. Form Validation with Either
+## 2. 使用 Either 进行表单验证
 
-Either is perfect for validation: `Left` = errors, `Right` = valid data.
+Either 非常适合验证：`Left` = 错误，`Right` = 有效数据。
 
-### Simple Form Validation
+### 简单表单验证
 
 ```typescript
 import * as E from 'fp-ts/Either'
@@ -129,7 +129,7 @@ const validateName = (name: string): E.Either<string, string> =>
     : E.left('Name is required')
 ```
 
-### Collecting All Errors (Not Just First One)
+### 收集所有错误（不仅仅是第一个）
 
 ```typescript
 import * as E from 'fp-ts/Either'
@@ -211,7 +211,7 @@ function SignupForm() {
 }
 ```
 
-### Field-Level Errors (Better UX)
+### 字段级错误（更好的用户体验）
 
 ```typescript
 type FieldErrors = Partial<Record<keyof SignupForm, string>>
@@ -234,11 +234,11 @@ function validateFormWithFieldErrors(form: SignupForm): E.Either<FieldErrors, Va
 
 ---
 
-## 3. Data Fetching with TaskEither
+## 3. 使用 TaskEither 获取数据
 
-TaskEither = async operation that might fail. Perfect for API calls.
+TaskEither = 可能失败的异步操作。非常适合 API 调用。
 
-### Basic Fetch Hook
+### 基本 Fetch Hook
 
 ```typescript
 import { useState, useEffect } from 'react'
@@ -299,7 +299,7 @@ function UserList() {
 }
 ```
 
-### Chaining API Calls
+### 链式 API 调用
 
 ```typescript
 // Fetch user, then fetch their posts
@@ -312,7 +312,7 @@ const fetchUserWithPosts = (userId: string) => pipe(
 )
 ```
 
-### Parallel API Calls
+### 并行 API 调用
 
 ```typescript
 import { sequenceT } from 'fp-ts/Apply'
@@ -334,7 +334,7 @@ const fetchDashboardData = () => pipe(
 
 ---
 
-## 4. RemoteData Pattern (The Right Way to Handle Async State)
+## 4. RemoteData 模式（处理异步状态的正确方式）
 
 Stop using `{ data, loading, error }` booleans. Use a proper state machine.
 
@@ -408,7 +408,7 @@ function UserProfile({ userId }: { userId: string }) {
 }
 ```
 
-### Why RemoteData Beats Booleans
+### 为什么 RemoteData 优于布尔值
 
 ```typescript
 // ❌ BAD: Impossible states are possible
@@ -426,7 +426,7 @@ type GoodState = RemoteData<Error, User>
 
 ---
 
-## 5. Referential Stability (Preventing Re-renders)
+## 5. 引用稳定性（防止重渲染）
 
 fp-ts values like `O.some(1)` create new objects each render. React sees them as "changed".
 
@@ -489,11 +489,11 @@ function StableComponent() {
 
 ---
 
-## 6. Dependency Injection with Context
+## 6. 使用 上下文 实现依赖注入
 
 Use ReaderTaskEither for testable components with injected dependencies.
 
-### Setup Dependencies
+### 设置 依赖项
 
 ```typescript
 import * as RTE from 'fp-ts/ReaderTaskEither'
@@ -548,7 +548,7 @@ function UserProfile({ userId }: { userId: string }) {
 }
 ```
 
-### Testing with Mock Dependencies
+### Testing with Mock 依赖项
 
 ```typescript
 const mockDeps: AppDependencies = {
@@ -778,7 +778,7 @@ const modalProps = {
 | Async operation might fail | `TaskEither<E, A>` |
 | Need loading/error/success UI | `RemoteData<E, A>` |
 | Form with multiple validations | `Either` with validation applicative |
-| Dependency injection | Context + `ReaderTaskEither` |
+| Dependency injection | 上下文 + `ReaderTaskEither` |
 | Prevent re-renders with fp-ts | `useMemo` or `fp-ts-react-stable-hooks` |
 
 ---
@@ -791,7 +791,7 @@ const modalProps = {
 - **[io-ts](https://github.com/gcanti/io-ts)** - Runtime type validation
 - **[zod](https://github.com/colinhacks/zod)** - Schema validation (works great with fp-ts)
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

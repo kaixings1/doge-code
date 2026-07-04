@@ -5,13 +5,13 @@ disable-model-invocation: true
 argument-hint: "A workflow to design, or nothing to go find one"
 ---
 
-Run a stateful `/grilling` session whose only output is **workflow** specs. Use the grilling discipline — relentless, one question at a time, a recommended answer attached to each — aimed at the vocabulary and goal below. Create, edit, and delete specs as the grilling resolves things.
+运行一个有状态的 `/grilling` 会话，其唯一输出是**工作流**规范。使用追问纪律——不懈，一次一个问题，每个附带一个推荐答案——针对下面的词汇和目标。随着追问解决问题，创建、编辑和删除规范。
 
-## The loop lens
+## 循环视角
 
-A **loop** is a recurring pattern in the user's life: their career, their week, their morning, a single repeated activity. Picturing a life as loops within loops reveals how predictable its activities really are — which is what makes them worth **delegating**. Use the lens to find loops worth specifying, and propose ones the user hasn't noticed.
+一个**循环**是用户生活中重复出现的模式：他们的职业生涯、他们的一周、他们的早晨、一个单一重复的活动。将生活想象为循环中的循环，揭示了其活动实际上多么可预测——这正是使它们值得**委托**的原因。使用此视角找到值得规范的循环，并建议用户尚未注意到的循环。
 
-A **workflow** is the spec of one loop, made real. You run a workflow on a loop — the loop is its running instantiation. Workflows live in `workflows/*.md` and are the source of truth.
+一个**工作流**是使一个循环具体化的规范。你在循环上运行工作流——循环是其运行的实例化。工作流存在于 `workflows/*.md` 中，是事实的来源。
 
 ## Vocabulary
 

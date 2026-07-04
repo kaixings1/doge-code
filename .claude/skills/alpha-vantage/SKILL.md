@@ -7,7 +7,7 @@ metadata:
     skill-author: K-Dense Inc.
 ---
 
-# Alpha Vantage — Financial Market Data
+# Alpha Vantage — 金融市场数据
 
 Access 20+ years of global financial data: equities, options, forex, crypto, commodities, economic indicators, and 50+ technical indicators.
 
@@ -78,4 +78,3 @@ rsi = av_get("RSI", symbol="AAPL", interval="daily", time_period=14, series_type
 ## API Categories
 
 | Category | Key Functions |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 15 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

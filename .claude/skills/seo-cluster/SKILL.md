@@ -1,13 +1,6 @@
 ---
 name: seo-cluster
-description: "Seo Cluster — Seo Cluster 相关功能和最佳实践"
-  SERP-based semantic topic clustering for content architecture planning. Groups
-  keywords by actual Google SERP overlap (not text similarity), designs hub-and-spoke
-  content clusters with internal link matrices, and generates interactive
-  visualizations. Optionally executes content creation if claude-blog is installed.
-  Use when user says "topic cluster", "content cluster", "semantic clustering",
-  "pillar page", "hub and spoke", "content architecture", "keyword grouping",
-  or "cluster plan".
+description: "Seo Cluster — 基于 SERP 的语义主题聚类相关功能和最佳实践，用于内容架构规划。按实际 Google SERP 重叠（而非文本相似度）对关键词分组，设计中心辐射式内容集群与内链矩阵，并生成交互式可视化。可选择在安装 claude-blog 后执行内容创建。"
 user-invocable: true
 argument-hint: "<seed-keyword or url>"
 license: MIT
@@ -18,13 +11,10 @@ metadata:
   category: seo
 ---
 
-# Semantic Topic Clustering (v1.9.0)
+# 语义主题聚类（v1.9.0）
 
-SERP-overlap-driven keyword clustering for content architecture. Groups keywords
-by how Google actually ranks them (shared top-10 results), not by text similarity.
-Designs hub-and-spoke content clusters with internal link matrices and generates
-interactive cluster map visualizations.
+基于 SERP 重叠驱动的关键词聚类，用于内容架构。按 Google 实际排名方式（共享前 10 结果）对关键词分组，而非按文本相似度。设计中心辐射式内容集群与内链矩阵，并生成交互式集群图谱可视化。
 
-**Scripts:** Located at the plugin root `scripts/` directory.
+**脚本：** 位于插件根目录的 `scripts/` 目录。
 
 ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 53 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

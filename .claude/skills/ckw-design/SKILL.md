@@ -122,7 +122,7 @@ the wrong set.
   check-all) needs its inverse one tap away. Symmetry of action — see
   restraint-rule (don't strand the user mid-task).
 
-## Limitations
+## 局限性
 
 - This skill improves visual direction and review discipline, but it does not replace rendering the actual UI and checking it in target browsers or devices.
 - Some recommendations assume access to screenshots, browser automation, or vision review; when those are unavailable, treat the guidance as a design checklist rather than proof.

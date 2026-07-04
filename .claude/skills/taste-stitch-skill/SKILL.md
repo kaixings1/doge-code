@@ -5,14 +5,14 @@ description: 适用于 Google Stitch 的语义化设计系统技能。生成对�
 
 # Stitch Design Taste — Semantic Design System Skill
 
-## Overview
+## 概述
 This skill generates `DESIGN.md` files optimized for Google Stitch screen generation. It translates the battle-tested anti-slop frontend engineering directives into Stitch's native semantic design language — descriptive, natural-language rules paired with precise values that Stitch's AI agent can interpret to produce premium, non-generic interfaces.
 
 The generated `DESIGN.md` serves as the **single source of truth** for prompting Stitch to generate new screens that align with a curated, high-agency design language. Stitch interprets design through **"Visual Descriptions"** supported by specific color values, typography specs, and component behaviors.
 
-## Prerequisites
+## 前提条件
 - Access to Google Stitch via [labs.google/stitch](https://labs.google/stitch)
-- Optionally: Stitch MCP Server for programmatic integration with Cursor, Antigravity, or Gemini CLI
+- 可选ly: Stitch MCP Server for programmatic integration with Cursor, Antigravity, or Gemini CLI
 
 ## The Goal
 Generate a `DESIGN.md` file that encodes:
@@ -32,7 +32,7 @@ Evaluate the target project's intent. Use evocative adjectives from the taste sp
 - **Variance:** "Predictable Symmetric" (1–3) → "Offset Asymmetric" (4–7) → "Artsy Chaotic" (8–10)
 - **Motion:** "Static Restrained" (1–3) → "Fluid CSS" (4–7) → "Cinematic Choreography" (8–10)
 
-Default baseline: Variance 8, Motion 6, Density 4. Adapt dynamically based on user's vibe description.
+默认 baseline: Variance 8, Motion 6, Density 4. Adapt dynamically based on user's vibe description.
 
 ### 2. Map the Color Palette
 For each color provide: **Descriptive Name** + **Hex Code** + **Functional Role**.
@@ -42,7 +42,7 @@ For each color provide: **Descriptive Name** + **Hex Code** + **Functional Role*
 - The "AI Purple/Blue Neon" aesthetic is strictly BANNED — no purple button glows, no neon gradients
 - Use absolute neutral bases (Zinc/Slate) with high-contrast singular accents
 - Stick to one palette for the entire output — no warm/cool gray fluctuation
-- Never use pure black (`#000000`) — use Off-Black, Zinc-950, or Charcoal
+- 绝不 use pure black (`#000000`) — use Off-Black, Zinc-950, or Charcoal
 
 ### 3. Establish Typography Rules
 - **Display/Headlines:** Track-tight, controlled scale. Not screaming. Hierarchy through weight and color, not just massive size
@@ -90,8 +90,8 @@ Every design must work across all viewports:
 ### 8. Encode Motion Philosophy
 - **Spring Physics default:** `stiffness: 100, damping: 20` — premium, weighty feel. No linear easing
 - **Perpetual Micro-Interactions:** Every active component should have an infinite loop state (Pulse, Typewriter, Float, Shimmer)
-- **Staggered Orchestration:** Never mount lists instantly — use cascade delays for waterfall reveals
-- **Performance:** Animate exclusively via `transform` and `opacity`. Never animate `top`, `left`, `width`, `height`. Grain/noise filters on fixed pseudo-elements only
+- **Staggered Orchestration:** 绝不 mount lists instantly — use cascade delays for waterfall reveals
+- **性能:** Animate exclusively via `transform` and `opacity`. 绝不 animate `top`, `left`, `width`, `height`. Grain/noise filters on fixed pseudo-elements only
 
 ### 9. List Anti-Patterns (AI Tells)
 Encode these as explicit "NEVER DO" rules in the DESIGN.md:
@@ -172,7 +172,7 @@ no generic placeholder names, no broken image links.)
 1. Start with the atmosphere — understand the vibe before detailing tokens
 2. Look for patterns — identify consistent spacing, sizing, and styling
 3. Think semantically — name colors by purpose, not just appearance
-4. Consider hierarchy — document how visual weight communicates importance
+4. 考虑 hierarchy — document how visual weight communicates importance
 5. Encode the bans — anti-patterns are as important as the rules themselves
 
 ## Common Pitfalls to Avoid
@@ -181,4 +181,4 @@ no generic placeholder names, no broken image links.)
 - Forgetting functional roles of design elements
 - Being too vague in atmosphere descriptions
 - Ignoring the anti-pattern list — these are what make the output premium
-- Defaulting to generic "safe" designs instead of enforcing the curated aesthetic
+- 默认ing to generic "safe" designs instead of enforcing the curated aesthetic

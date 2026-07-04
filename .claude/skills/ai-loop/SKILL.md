@@ -1,6 +1,6 @@
 ---
 name: ai-loop
-description: "Ai Loop — Ai Loop 相关功能和最佳实践"
+description: "AI Loop — AI 开发反馈循环：构建、测试、学习、迭代的持续改进工作流。"
 category: workflow
 risk: safe
 source: community
@@ -11,7 +11,7 @@ tools: [claude, cursor, codex, gemini]
 
 # AI-Loop Skill
 
-## Overview
+## 概述
 
 The `ai-loop` skill structures a bounded development cycle for agentic workflows. By dividing the process into distinct planning (Spec), implementation (Build), and validation (Review) phases, it helps an agent build and correct scoped code changes while keeping requirements, risk gates, and stop conditions explicit.
 
@@ -108,7 +108,7 @@ Before starting, define:
 - ❌ Don't skip the review phase or pass it without verifying every single requirement.
 - ❌ Don't keep retrying the same failing fix without new evidence or a changed approach.
 
-## Limitations
+## 局限性
 
 - This skill requires sufficient context about the feature to be provided during the Spec phase.
 - It is best suited for isolated features or tasks with clear boundaries, rather than open-ended architectural refactoring.
@@ -116,9 +116,9 @@ Before starting, define:
 - It is not a replacement for human approval on security-sensitive, destructive, production, compliance, or externally visible changes.
 - It should stop rather than continue if requirements conflict, tests cannot run, or verification depends on unavailable credentials or systems.
 
-## Security & Safety Notes
+## 安全性 & Safety Notes
 
-- Be cautious when running or testing code generated during the Build phase. Always run tests in a safe, sandboxed environment.
+- Be cautious when running or testing code generated during the Build phase. 始终 run tests in a safe, sandboxed environment.
 - Avoid executing arbitrary shell commands provided directly by the user without validating their safety.
 - Make sure no hardcoded secrets, keys, or credentials are added to the code or specifications.
 - Treat production deploys, data migrations, payment flows, credential changes, and external write actions as approval-gated work.
@@ -130,7 +130,7 @@ Before starting, define:
 - **Problem:** The spec is vague, causing the build phase to rely on assumptions.
   **Solution:** Spend extra time in the planning phase asking targeted questions to pin down requirements.
 
-## Related Skills
+## 相关 Skills
 
 - `@plan-writing` - For writing more detailed implementation plans for larger projects.
 - `@ask-questions-if-underspecified` - For standard guidelines on interviewing the user.

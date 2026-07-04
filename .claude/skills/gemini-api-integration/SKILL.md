@@ -6,9 +6,9 @@ source: community
 date_added: "2026-03-04"
 ---
 
-# Gemini API Integration
+# Gemini API 集成
 
-## Overview
+## 概述
 
 This skill guides AI agents through integrating Google Gemini API into applications — from basic text generation to advanced multimodal, function calling, and streaming use cases. It covers the full Gemini SDK lifecycle with production-grade patterns.
 
@@ -23,7 +23,7 @@ This skill guides AI agents through integrating Google Gemini API into applicati
 
 ## Step-by-Step Guide
 
-### 1. Installation & Setup
+### 1. Installation & 设置
 
 **Node.js / TypeScript:**
 ```bash
@@ -146,7 +146,7 @@ console.log(response.response.text());
 ## Best Practices
 
 - ✅ **Do:** Use `gemini-1.5-flash` for most tasks — it's fast and cost-effective
-- ✅ **Do:** Always stream responses for user-facing chat UIs to reduce perceived latency
+- ✅ **Do:** 始终 stream responses for user-facing chat UIs to reduce perceived latency
 - ✅ **Do:** Store API keys in environment variables, never hard-code them
 - ✅ **Do:** Implement exponential backoff for rate limit (429) errors
 - ✅ **Do:** Use `systemInstruction` to set persistent model behavior
@@ -182,12 +182,12 @@ try {
 **Solution:** Check `result.response.promptFeedback.blockReason` and adjust your prompt or safety settings.
 
 **Problem:** Slow response times
-**Solution:** Switch to `gemini-1.5-flash` and enable streaming. Consider caching repeated prompts.
+**Solution:** Switch to `gemini-1.5-flash` and enable streaming. 考虑 caching repeated prompts.
 
 **Problem:** `RESOURCE_EXHAUSTED` (quota exceeded)
 **Solution:** Check your quota in Google Cloud Console. Implement request queuing and exponential backoff.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

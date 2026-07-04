@@ -6,21 +6,21 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Revert Track
+# 撤销轨道
 
-Revert changes by logical work unit with full git awareness. Supports reverting entire tracks, specific phases, or individual tasks.
+通过逻辑工作单元撤销更改，具有完整的 git 感知。支持撤销整个轨道、特定阶段或单个任务。
 
-## Use this skill when
+## 使用此技能的场景
 
-- Working on revert track tasks or workflows
-- Needing guidance, best practices, or checklists for revert track
+- 处理撤销轨道任务或工作流时
+- 需要撤销轨道的指导、最佳实践或检查清单时
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to revert track
-- You need a different domain or tool outside this scope
+- 任务与撤销轨道无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -254,14 +254,14 @@ After successful git reverts, update plan.md:
    - Update `status` if needed
    - Update `updated` timestamp
 
-**Do NOT commit plan.md changes** - they are part of the revert operation
+**不要 commit plan.md changes** - they are part of the revert operation
 
-## Track Status Updates
+## Track 状态 Updates
 
 ### If reverting entire track:
 
 - In tracks.md: Change `[x]` or `[~]` to `[ ]`
-- Consider offering to delete the track directory entirely
+- 考虑 offering to delete the track directory entirely
 
 ### If reverting to incomplete state:
 
@@ -306,7 +306,7 @@ If issues are found, you may need to:
 
 1. **NEVER use `git reset --hard`** - Only use `git revert`
 2. **NEVER use `git push --force`** - Only safe push operations
-3. **NEVER auto-resolve conflicts** - Always halt for human intervention
+3. **NEVER auto-resolve conflicts** - 始终 halt for human intervention
 4. **ALWAYS show full plan** - User must see exactly what will happen
 5. **REQUIRE explicit 'YES'** - Not 'y', not enter, only 'YES'
 6. **HALT on ANY error** - Do not attempt to continue past failures
@@ -314,7 +314,7 @@ If issues are found, you may need to:
 
 ## Edge Cases
 
-### Track Never Committed
+### Track 绝不 Committed
 
 ```
 No commits found for track: {trackId}
@@ -372,7 +372,7 @@ Alternatively, if not yet pushed:
 (Use with caution - this discards the revert commits)
 ```
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

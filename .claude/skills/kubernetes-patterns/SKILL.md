@@ -5,42 +5,41 @@ metadata:
   origin: ECC
 ---
 
-# Kubernetes Patterns
+# Kubernetes 模式
 
-Production-grade Kubernetes patterns for deploying, managing, and debugging workloads reliably.
+用于可靠部署、管理和调试工作负载的生产级 Kubernetes 模式。
 
-## When to Activate
+## 何时激活
 
-- Writing Kubernetes manifests (Deployments, Services, Ingress, Jobs)
-- Configuring resource requests/limits, liveness/readiness probes
-- Setting up RBAC, namespaces, or ServiceAccounts
-- Managing configuration and secrets in K8s
-- Debugging CrashLoopBackOff, OOMKilled, pending pods, or image pull errors
-- Configuring HPA (Horizontal Pod Autoscaler) or PodDisruptionBudgets
-- Reviewing K8s YAML for security or correctness
+- 编写 Kubernetes 清单（部署、服务、入口、作业）
+- 配置资源请求/限制、存活/就绪探针
+- 设置 RBAC、命名空间或服务账户
+- 在 K8s 中管理配置和密钥
+- 调试 CrashLoopBackOff、OOMKilled、挂起 pod 或镜像拉取错误
+- 配置 HPA（水平 Pod 自动扩缩器）或 Pod 中断预算
+- 审查 K8s YAML 的安全性或正确性
 
-## When to Use
+## 何时使用
 
-> Same as **When to Activate** above. This alias satisfies repo skill-format conventions. Use this skill any time you are writing, reviewing, or debugging Kubernetes YAML and workloads.
+> 与上面的**何时激活**相同。此别名满足仓库技能格式约定。在编写、审查或调试 Kubernetes YAML 和工作负载的任何时候使用此技能。
 
-## How It Works
+## 工作原理
 
-This skill provides **copy-pasteable, production-grade YAML patterns** and **kubectl debugging commands** organized by task:
+此技能提供按任务组织的**可复制粘贴的生产级 YAML 模式**和 **kubectl 调试命令**：
 
-1. **Deployment template** — A fully configured production `Deployment` with security context, rolling update strategy, all three probe types, resource limits, and environment injection from ConfigMap/Secret.
-2. **Probes** — Decision table for startup vs liveness vs readiness, with correct `failureThreshold × periodSeconds` math.
-3. **Services & Ingress** — ClusterIP, LoadBalancer, and TLS Ingress patterns with cert-manager annotations.
-4. **ConfigMaps & Secrets** — `envFrom`, file-mount, and external secrets guidance.
-5. **Resource management** — Requests vs limits rules of thumb by workload type (web API, JVM, worker, sidecar).
-6. **RBAC** — Least-privilege ServiceAccount → Role → RoleBinding chain.
-7. **HPA & PDB** — Autoscaling and node-drain safety configurations.
-8. **Jobs & CronJobs** — One-off and scheduled workload patterns with correct `restartPolicy`.
-9. **kubectl cheatsheet** — Logs, exec, rollback, port-forward, dry-run, and common error diagnosis commands.
-10. **Anti-patterns & checklist** — What NOT to do, and a security/reliability/observability checklist.
+1. **部署模板** — 完全配置的生产 `Deployment`，包含安全上下文、滚动更新策略、所有三种探针类型、资源限制以及来自 ConfigMap/Secret 的环境注入。
+2. **探针** — 启动、存活和就绪探针的决策表，包含正确的 `failureThreshold × periodSeconds` 计算。
+3. **服务与入口** — 带有 cert-manager 注解的 ClusterIP、LoadBalancer 和 TLS 入口模式。
+4. **ConfigMap 与 Secret** — `envFrom`、文件挂载和外部密钥指导。
+5. **资源管理** — 按工作负载类型（Web API、JVM、工作器、边车）的经验法则：请求与限制。
+6. **RBAC** — 最小权限服务账户 → 角色 → 角色绑定链。
+7. **HPA 与 PDB** — 自动扩缩和节点排空安全配置。
+8. **作业与定时作业** — 具有正确 `restartPolicy` 的一次性和计划工作负载模式。
+9. **kubectl 速查表** — 日志、执行、回滚、端口转发、试运行和常见错误诊断命令。
+10. **反模式与清单** — 不应做什么，以及安全/可靠性/可观察性清单。
 
-## Examples
+## 示例
 
-See the sections below for complete, runnable examples. Quick references:
+请参阅下面的完整可运行示例。快速参考：
 
-| Task | Jump to |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 12 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 任务 | 跳转到 |

@@ -1,7 +1,7 @@
 ---
 name: figma-create-new-file
 description: "Figma Create New File — Figma Create New File 相关功能和最佳实践"
-  Create a new blank Figma Design or FigJam file. Useful as the first step in scripted design-system or workshop workflows.
+  创建新的空白 Figma Design 或 FigJam 文件。作为脚本化设计系统或工作坊工作流的第一步很有用。
 triggers:
   - "figma new file"
   - "figjam new"
@@ -14,28 +14,24 @@ od:
 
 # figma-create-new-file
 
-> Curated from Figma's MCP server guide.
+> 整理自 Figma 的 MCP 服务器指南。
 
-## What it does
+## 功能说明
 
-Create a new blank Figma Design or FigJam file. Useful as the first step in scripted design-system or workshop workflows.
+创建新的空白 Figma Design 或 FigJam 文件。作为脚本化设计系统或工作坊工作流的第一步很有用。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/figma/skills
-- Category: `figma`
+- 上游：https://github.com/figma/skills
+- 分类：`figma`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录项在 Open Design 中宣传技能，以便代理在规划期间发现它。要运行包含原始资源、脚本和参考的完整上游工作流，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 检查上游 README 获取确切路径
 open https://github.com/figma/skills
 ```
 
-Then ask the agent to invoke this skill by name (`figma-create-new-file`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后让代理通过技能名称（`figma-create-new-file`）或此技能 frontmatter 中列出的触发短语之一来调用此技能。

@@ -6,52 +6,52 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# GitHub Issue Creator
+# GitHub Issue 创建器
 
-Transform messy input (error logs, voice notes, screenshots) into clean, actionable GitHub issues.
+将杂乱的输入（错误日志、语音笔记、截图）转化为干净、可操作的 GitHub Issue。
 
-## Output Template
+## 输出模板
 
 ```markdown
-## Summary
+## 摘要
 [One-line description of the issue]
 
-## Environment
+## 环境
 - **Product/Service**: 
 - **Region/Version**: 
-- **Browser/OS**: (if relevant)
+- **Browser/[Issue 的一行描述/]S**: (if relevant)
 
-## Reproduction Steps
+## 复现步骤
 1. [Step]
 2. [Step]
 3. [Step]
 
-## Expected Behavior
+## 预期行为
 [What should happen]
 
-## Actual Behavior
+## 实际行为
 [What actually happens]
 
-## Error Details
+## 错误详情
 ```
-[Error message/code if applicable]
+[Error message/[Issue 的一行描述/]ode if applicable]
 ```
 
-## Visual Evidence
+## 可视证据
 [Reference to attached screenshots/GIFs]
 
-## Impact
+## 影响
 [Severity: Critical/High/Medium/Low + brief explanation]
 
-## Additional Context
+## 附加上下文
 [Any other relevant details]
 ```
 
-## Output Location
+## 输出位置
 
-**Create issues as markdown files** in `/issues/` directory at the repo root. Use naming convention: `YYYY-MM-DD-short-description.md`
+**Create issues as markdown files** in `/[Issue 的一行描述/]ssues/` directory at the repo root. Use naming convention: `YYYY-MM-DD-short-description.md`
 
-## Guidelines
+## 指南
 
 **Be crisp**: No fluff. Every word should add value.
 
@@ -69,36 +69,36 @@ Transform messy input (error logs, voice notes, screenshots) into clean, actiona
 
 **Image/GIF handling**: Reference attachments inline. Format: `!Description`
 
-## Examples
+## 示例
 
 **Input (voice dictation)**:
 > so I was trying to deploy the agent and it just failed silently no error nothing the workflow ran but then poof gone from the list had to refresh and try again three times
 
 **Output**:
 ```markdown
-## Summary
+## 摘要
 Agent deployment fails silently - no error displayed, agent disappears from list
 
-## Environment
+## 环境
 - **Product/Service**: Azure AI Foundry
 - **Region/Version**: westus2
 
-## Reproduction Steps
+## 复现步骤
 1. Navigate to agent deployment
 2. Configure and deploy agent
 3. Observe workflow completes
 4. Check agent list
 
-## Expected Behavior
+## 预期行为
 Agent appears in list with deployment status, errors shown if deployment fails
 
-## Actual Behavior
+## 实际行为
 Agent disappears from list. No error message. Requires page refresh and retry.
 
-## Impact
+## 影响
 **High** - Blocks agent deployment workflow, no feedback on failure cause
 
-## Additional Context
+## 附加上下文
 Required 3 retry attempts before successful deployment
 ```
 
@@ -109,40 +109,40 @@ Required 3 retry attempts before successful deployment
 
 **Output**:
 ```markdown
-## Summary
+## 摘要
 403 PERMISSION_DENIED error when publishing to Teams channel
 
-## Environment
+## 环境
 - **Product/Service**: Copilot Studio → Teams integration
 - **Region/Version**: [REGION]
 
-## Reproduction Steps
+## 复现步骤
 1. Configure agent for Teams channel
 2. Attempt to publish
 
-## Expected Behavior
+## 预期行为
 Agent publishes successfully to Teams channel
 
-## Actual Behavior
+## 实际行为
 Returns `PERMISSION_DENIED` with code 403
 
-## Error Details
+## 错误详情
 ```
 Error: PERMISSION_DENIED
 Code: 403
 ```
 
-## Impact
+## 影响
 **High** - Blocks Teams integration, regression from previous working state
 
-## Additional Context
-Was working yesterday - possible permission/config change or service regression
+## 附加上下文
+Was working yesterday - possible permission/[Issue 的一行描述/]onfig change or service regression
 ```
 
-## When to Use
+## 何时使用
 Use this skill when you have unstructured bug input such as pasted errors, support notes, screenshots, or voice dictation and need to turn it into a clean GitHub issue with a summary, reproduction steps, expected vs actual behavior, impact, and attachment references.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

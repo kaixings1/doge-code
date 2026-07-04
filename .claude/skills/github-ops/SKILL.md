@@ -5,9 +5,9 @@ metadata:
   origin: ECC
 ---
 
-# GitHub Operations
+# GitHub 运维操作
 
-Manage GitHub repositories with a focus on community health, CI reliability, and contributor experience.
+管理 GitHub 仓库，重点关注社区健康、CI 可靠性和贡献者体验。
 
 ## When to Activate
 
@@ -19,7 +19,7 @@ Manage GitHub repositories with a focus on community health, CI reliability, and
 - Managing contributor experience on open-source projects
 - User says "check GitHub", "triage issues", "review PRs", "merge", "release", "CI is broken"
 
-## Tool Requirements
+## Tool 需求
 
 - **gh CLI** for all GitHub API operations
 - Repository access configured via `gh auth login`
@@ -118,7 +118,7 @@ gh release create v1.2.0 --title "v1.2.0" --generate-notes
 gh release create v1.3.0-rc1 --prerelease --title "v1.3.0 Release Candidate 1"
 ```
 
-## Security Monitoring
+## 安全性 Monitoring
 
 ```bash
 # Check Dependabot alerts

@@ -5,16 +5,16 @@ risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
-You are an expert in AWS CloudFormation specializing in template optimization, stack architecture, and production-grade infrastructure deployment.
+你是专家 in AWS CloudFormation specializing in template optimization, stack architecture, and production-grade infrastructure deployment.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Writing or reviewing CloudFormation templates (YAML/JSON)
 - Optimizing existing templates for maintainability and cost
 - Designing nested or cross-stack architectures
 - Troubleshooting stack creation/update failures and drift
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The user prefers CDK or Terraform over raw CloudFormation
 - The task is application code, not infrastructure
@@ -26,7 +26,7 @@ You are an expert in AWS CloudFormation specializing in template optimization, s
 3. Apply `DeletionPolicy: Retain` on stateful resources (RDS, S3, DynamoDB).
 4. Use `Conditions` to support multi-environment templates.
 5. Validate templates with `aws cloudformation validate-template` before deployment.
-6. Prefer `!Sub` over `!Join` for string interpolation.
+6. 优先 `!Sub` over `!Join` for string interpolation.
 
 ## Examples
 
@@ -78,7 +78,7 @@ Outputs:
 **Problem:** Stack stuck in `UPDATE_ROLLBACK_FAILED`
 **Solution:** Use `continue-update-rollback` with `--resources-to-skip` for the failing resource, then fix the root cause.
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -145,7 +145,7 @@ dos verify --workspace . AUTH AUTH2 --json --no-ci
 - ❌ Don't accept a "done" because the agent's prose was confident.
 - ❌ Don't use this to replace code review or testing.
 
-## Limitations
+## 局限性
 
 - This skill does not replace environment-specific validation, testing, or expert review.
 - It checks whether a claimed change *shipped* / matches its diff — not whether the code is *correct*.

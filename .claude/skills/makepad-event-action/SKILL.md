@@ -256,7 +256,7 @@ if let Event::NextFrame(ne) = event {
 4. `Cx::post_action()` is thread-safe for async operations
 5. `DefaultNone` derive macro auto-implements Default for enums
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

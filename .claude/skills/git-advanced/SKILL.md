@@ -1,6 +1,6 @@
 ---
 name: git-advanced
-description: 高级Git — 包括工作树、二分查找、交互式变基、子模块和高级合并策略。
+description: 高级Git ——包括工作树、二分查找、交互式变基、子模块和高级合并策略。
 ---
 
 # Git Advanced

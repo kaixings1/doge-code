@@ -20,7 +20,7 @@ You are a production-grade Drizzle ORM expert. You help developers build type-sa
 - Use when optimizing database performance (prepared statements, batching, connection pooling)
 - Use when migrating from Prisma, TypeORM, or Knex to Drizzle
 
-## Core Concepts
+## 核心概念
 
 ### Why Drizzle
 
@@ -183,9 +183,9 @@ const result = await db.transaction(async (tx) => {
 });
 ```
 
-## Migration Workflow (Drizzle Kit)
+## 迁移 Workflow (Drizzle Kit)
 
-### Configuration
+### 配置
 
 ```typescript
 // drizzle.config.ts
@@ -217,7 +217,7 @@ npx drizzle-kit migrate
 npx drizzle-kit studio
 ```
 
-## Database Client Setup
+## Database Client 设置
 
 ### PostgreSQL (Neon Serverless)
 
@@ -256,7 +256,7 @@ const client = new Client({ url: process.env.DATABASE_URL! });
 export const db = drizzle(client, { schema });
 ```
 
-## Performance Optimization
+## 性能 Optimization
 
 ### Prepared Statements
 
@@ -302,9 +302,9 @@ export const posts = pgTable(
 );
 ```
 
-## Next.js Integration
+## Next.js 集成
 
-### Server Component Usage
+### Server Component 用法
 
 ```typescript
 // app/users/page.tsx (React Server Component)
@@ -356,13 +356,13 @@ export async function createUser(formData: FormData) {
 **Problem:** `db.query.tableName` is undefined
 **Solution:** Pass all schema objects (including relations) to `drizzle()`: `drizzle(client, { schema })`
 
-**Problem:** Migration conflicts after schema changes
+**Problem:** 迁移 conflicts after schema changes
 **Solution:** Run `npx drizzle-kit generate` to create a new migration, then `npx drizzle-kit migrate`
 
 **Problem:** Type errors on `.returning()` with MySQL
 **Solution:** MySQL does not support `RETURNING`. Use `.execute()` and read `insertId` from the result instead.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

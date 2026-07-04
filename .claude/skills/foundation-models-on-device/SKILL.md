@@ -7,7 +7,7 @@ description: Apple FoundationModels 框架，用于设备端大语言模型（LL
 
 使用 FoundationModels 框架将 Apple 的设备端语言模型集成到应用中的模式。涵盖文本生成、使用 `@Generable` 的结构化输出、自定义工具调用以及快照流式传输 —— 全部在设备端运行，以支持隐私保护和离线使用。
 
-## 何时激活
+## 何时使用此技能
 
 - 使用 Apple Intelligence 在设备端构建 AI 驱动的功能
 - 在不依赖云端的情况下生成或总结文本

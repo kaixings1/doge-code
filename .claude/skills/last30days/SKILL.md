@@ -6,46 +6,44 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# last30days: Research Any Topic from the Last 30 Days
+# last30days: 研究过去 30 天的任何话题
 
-Research ANY topic across Reddit, X, and the web. Surface what people are actually discussing, recommending, and debating right now.
+在 Reddit、X 和全网范围内研究任意话题。发现人们当下真正在讨论、推荐和争论的内容。
 
-Use cases:
+使用场景：
 
-- **Prompting**: "photorealistic people in Nano Banana Pro", "Midjourney prompts", "ChatGPT image generation" → learn techniques, get copy-paste prompts
-- **Recommendations**: "best Claude Code skills", "top AI tools" → get a LIST of specific things people mention
-- **News**: "what's happening with OpenAI", "latest AI announcements" → current events and updates
-- **General**: any topic you're curious about → understand what the community is saying
+- **提示词技巧**："Nano Banana Pro 中的逼真人物"、"Midjourney 提示词"、"ChatGPT 图片生成" → 学习技巧，获取可复制粘贴的提示词
+- **推荐**："最佳 Claude Code 技能"、"顶级 AI 工具" → 获取人们提到的具体内容清单
+- **新闻**："OpenAI 发生了什么"、"最新 AI 公告" → 当前事件和更新
+- **综合**：你感兴趣的任何话题 → 了解社区的观点
 
-## CRITICAL: Parse User Intent
+## 关键：解析用户意图
 
-Before doing anything, parse the user's input for:
+在执行任何操作之前，解析用户的输入：
 
-1. **TOPIC**: What they want to learn about (e.g., "web app mockups", "Claude Code skills", "image generation")
-2. **TARGET TOOL** (if specified): Where they'll use the prompts (e.g., "Nano Banana Pro", "ChatGPT", "Midjourney")
-3. **QUERY TYPE**: What kind of research they want:
-   - **PROMPTING** - "X prompts", "prompting for X", "X best practices" → User wants to learn techniques and get copy-paste prompts
-   - **RECOMMENDATIONS** - "best X", "top X", "what X should I use", "recommended X" → User wants a LIST of specific things
-   - **NEWS** - "what's happening with X", "X news", "latest on X" → User wants current events/updates
-   - **GENERAL** - anything else → User wants broad understanding of the topic
+1. **主题（TOPIC）**：他们想了解什么（例如 "网页应用原型"、"Claude Code 技能"、"图片生成"）
+2. **目标工具（TARGET TOOL）**（如果指定）：他们将在哪里使用提示词（例如 "Nano Banana Pro"、"ChatGPT"、"Midjourney"）
+3. **查询类型（QUERY TYPE）**：他们想要哪种类型的研究：
+   - **提示词技巧（PROMPTING）** - "X 提示词"、"X 的提示技巧"、"X 最佳实践" → 用户想学习技巧并获取可复制粘贴的提示词
+   - **推荐（RECOMMENDATIONS）** - "最好的 X"、"顶级的 X"、"我应该用什么 X"、"推荐的 X" → 用户想要具体内容的清单
+   - **新闻（NEWS）** - "X 发生了什么"、"X 新闻"、"X 最新动态" → 用户想要当前事件/更新
+   - **综合（GENERAL）** - 其他任何内容 → 用户想要广泛了解该话题
 
-Common patterns:
+常见模式：
 
-- `[topic] for [tool]` → "web mockups for Nano Banana Pro" → TOOL IS SPECIFIED
-- `[topic] prompts for [tool]` → "UI design prompts for Midjourney" → TOOL IS SPECIFIED
-- Just `[topic]` → "iOS design mockups" → TOOL NOT SPECIFIED, that's OK
-- "best [topic]" or "top [topic]" → QUERY_TYPE = RECOMMENDATIONS
-- "what are the best [topic]" → QUERY_TYPE = RECOMMENDATIONS
+- `[话题] for [工具]` → "Nano Banana Pro 的网页原型" → 已指定工具
+- `[话题] prompts for [工具]` → "Midjourney 的 UI 设计提示词" → 已指定工具
+- 只有 `[话题]` → "iOS 设计原型" → 未指定工具，这也可以
+- "最好的 [话题]" 或 "顶级的 [话题]" → 查询类型 = 推荐
+- "最好的 [话题] 有哪些" → 查询类型 = 推荐
 
-**IMPORTANT: Do NOT ask about target tool before research.**
+**重要：不要在研究前询问目标工具。**
 
-- If tool is specified in the query, use it
-- If tool is NOT specified, run research first, then ask AFTER showing results
+- 如果查询中指定了工具，使用它
+- 如果未指定工具，先进行研究，然后在展示结果后再询问
 
-**Store these variables:**
+**存储这些变量：**
 
-- `TOPIC = [extracted topic]`
-- `TARGET_TOOL = [extracted tool, or "unknown" if not specified]`
+- `TOPIC = [提取的主题]`
+- `TARGET_TOOL = [提取的工具，或"未知"（如果未指定）]`
 - `QUERY_TYPE = [RECOMMENDATIONS | NEWS | HOW-TO | GENERAL]`
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 01 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

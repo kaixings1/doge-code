@@ -9,7 +9,7 @@ date_added: "2026-02-27"
 
 # AI Agent Development Workflow
 
-## Overview
+## 概述
 
 Specialized workflow for building AI agents including single autonomous agents, multi-agent systems, agent orchestration, tool integration, and human-in-the-loop patterns.
 
@@ -96,7 +96,7 @@ Use @crewai to build multi-agent system with roles
 Use @langgraph to create stateful agent workflows
 ```
 
-### Phase 5: Tool Integration
+### Phase 5: Tool 集成
 
 #### Skills to Invoke
 - `agent-tool-builder` - Tool building
@@ -150,7 +150,7 @@ Use @agent-memory-systems to implement agent memory
 Use @agent-evaluation to evaluate agent performance
 ```
 
-## Agent Architecture
+## Agent 架构
 
 ```
 User Input -> Planner -> Agent -> Tools -> Memory -> Response
@@ -166,13 +166,13 @@ User Input -> Planner -> Agent -> Tools -> Memory -> Response
 - [ ] Orchestration tested
 - [ ] Evaluation passing
 
-## Related Workflow Bundles
+## 相关 Workflow Bundles
 
 - `ai-ml` - AI/ML development
 - `rag-implementation` - RAG systems
 - `workflow-automation` - Workflow patterns
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

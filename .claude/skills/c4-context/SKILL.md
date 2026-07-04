@@ -8,12 +8,12 @@ date_added: '2026-02-27'
 
 # C4 Context Level: System Context
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on c4 context level: system context tasks or workflows
 - Needing guidance, best practices, or checklists for c4 context level: system context
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to c4 context level: system context
 - You need a different domain or tool outside this scope
@@ -145,7 +145,7 @@ When creating context documentation, provide:
 - Stakeholder-friendly documentation understandable by non-technical audiences
 - Consistent documentation format
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

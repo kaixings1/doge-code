@@ -6,203 +6,202 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Mailchimp Automation via Rube MCP
+# 通过 Rube MCP 实现 Mailchimp 自动化
 
-Automate Mailchimp email marketing workflows including campaign creation and sending, audience/list management, subscriber operations, segmentation, and performance analytics through Composio's Mailchimp toolkit.
+通过 Composio 的 Mailchimp 工具包自动化 Mailchimp 电子邮件营销工作流，包括活动创建与发送、受众/列表管理、订阅者操作、细分和性能分析。
 
-## Prerequisites
+## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Mailchimp connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `mailchimp`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- 必须连接 Rube MCP（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 使用 `mailchimp` 工具包激活 Mailchimp 连接
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**：将 `https://rube.app/mcp` 作为 MCP 服务器添加到客户端配置中。无需 API 密钥——只需添加端点即可使用。
 
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用 `mailchimp` 工具包调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接未处于 ACTIVE 状态，请按照返回的认证链接完成 Mailchimp OAuth
+4. 在运行任何工作流之前确认连接状态显示为 ACTIVE
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `mailchimp`
-3. If connection is not ACTIVE, follow the returned auth link to complete Mailchimp OAuth
-4. Confirm connection status shows ACTIVE before running any workflows
+## 核心工作流
 
-## Core Workflows
+### 1. 创建和发送电子邮件活动
 
-### 1. Create and Send Email Campaigns
+**使用时机**：用户想要创建、配置、测试和发送电子邮件活动。
 
-**When to use**: User wants to create, configure, test, and send an email campaign.
+**工具顺序**：
+1. `MAILCHIMP_GET_LISTS_INFO` - 列出可用受众并获取 list_id [前置]
+2. `MAILCHIMP_ADD_CAMPAIGN` - 使用类型、受众、主题、发件人姓名创建新活动 [必需]
+3. `MAILCHIMP_SET_CAMPAIGN_CONTENT` - 设置活动的 HTML 内容 [必需]
+4. `MAILCHIMP_SEND_TEST_EMAIL` - 在实际发送前向审阅者发送预览 [可选]
+5. `MAILCHIMP_SEND_CAMPAIGN` - 立即发送活动 [必需]
+6. `MAILCHIMP_SCHEDULE_CAMPAIGN` - 安排在未来某个时间发送 [可选]
 
-**Tool sequence**:
-1. `MAILCHIMP_GET_LISTS_INFO` - List available audiences and get list_id [Prerequisite]
-2. `MAILCHIMP_ADD_CAMPAIGN` - Create a new campaign with type, audience, subject, from name [Required]
-3. `MAILCHIMP_SET_CAMPAIGN_CONTENT` - Set HTML content for the campaign [Required]
-4. `MAILCHIMP_SEND_TEST_EMAIL` - Send preview to reviewers before live send [Optional]
-5. `MAILCHIMP_SEND_CAMPAIGN` - Send the campaign immediately [Required]
-6. `MAILCHIMP_SCHEDULE_CAMPAIGN` - Schedule for future delivery instead of immediate send [Optional]
+**MAILCHIMP_ADD_CAMPAIGN 的关键参数**：
+- `type`："regular"、"plaintext"、"rss" 或 "variate"（必需）
+- `recipients__list__id`：收件人的受众/列表 ID
+- `settings__subject__line`：电子邮件主题行
+- `settings__from__name`：发件人显示名称
+- `settings__reply__to`：回复邮箱地址（发送必需）
+- `settings__title`：内部活动标题
+- `settings__preview__text`：收件箱中显示的预览文本
 
-**Key parameters for MAILCHIMP_ADD_CAMPAIGN**:
-- `type`: "regular", "plaintext", "rss", or "variate" (required)
-- `recipients__list__id`: Audience/list ID for recipients
-- `settings__subject__line`: Email subject line
-- `settings__from__name`: Sender display name
-- `settings__reply__to`: Reply-to email address (required for sending)
-- `settings__title`: Internal campaign title
-- `settings__preview__text`: Preview text shown in inbox
+**MAILCHIMP_SET_CAMPAIGN_CONTENT 的关键参数**：
+- `campaign_id`：创建步骤中的活动 ID（必需）
+- `html`：电子邮件的原始 HTML 内容
+- `plain_text`：纯文本版本（省略时自动生成）
+- `template__id`：使用预构建模板替代原始 HTML
 
-**Key parameters for MAILCHIMP_SET_CAMPAIGN_CONTENT**:
-- `campaign_id`: Campaign ID from creation step (required)
-- `html`: Raw HTML content for the email
-- `plain_text`: Plain-text version (auto-generated if omitted)
-- `template__id`: Use a pre-built template instead of raw HTML
+**陷阱**：
+- `MAILCHIMP_SEND_CAMPAIGN` 不可逆；始终先发送测试邮件并获得用户明确批准
+- 活动必须处于"save"（草稿）状态，且具有有效的受众、主题、发件人姓名、已验证邮箱和内容才能发送
+- `MAILCHIMP_SCHEDULE_CAMPAIGN` 需要有效的未来日期时间；过去的时间戳会失败
+- 模板和 HTML 内容必须包含合规的页脚/退订合并标签
+- Mailchimp 对嵌套参数使用双下划线表示法（例如 `settings__subject__line`）
 
-**Pitfalls**:
-- `MAILCHIMP_SEND_CAMPAIGN` is irreversible; always send a test email first and get explicit user approval
-- Campaign must be in "save" (draft) status with valid audience, subject, from name, verified email, and content before sending
-- `MAILCHIMP_SCHEDULE_CAMPAIGN` requires a valid future datetime; past timestamps fail
-- Templates and HTML content must include compliant footer/unsubscribe merge tags
-- Mailchimp uses double-underscore notation for nested params (e.g., `settings__subject__line`)
+### 2. 管理受众和订阅者
 
-### 2. Manage Audiences and Subscribers
+**使用时机**：用户想要查看受众、列出订阅者或查看订阅者详情。
 
-**When to use**: User wants to view audiences, list subscribers, or check subscriber details.
+**工具顺序**：
+1. `MAILCHIMP_GET_LISTS_INFO` - 列出所有受众及其成员数 [必需]
+2. `MAILCHIMP_GET_LIST_INFO` - 获取特定受众的详情 [可选]
+3. `MAILCHIMP_LIST_MEMBERS_INFO` - 使用状态过滤和分页列出成员 [必需]
+4. `MAILCHIMP_SEARCH_MEMBERS` - 按邮箱或名称跨列表搜索 [可选]
+5. `MAILCHIMP_GET_MEMBER_INFO` - 获取特定订阅者的详细资料 [可选]
+6. `MAILCHIMP_LIST_SEGMENTS` - 列出受众内的细分 [可选]
 
-**Tool sequence**:
-1. `MAILCHIMP_GET_LISTS_INFO` - List all audiences with member counts [Required]
-2. `MAILCHIMP_GET_LIST_INFO` - Get details for a specific audience [Optional]
-3. `MAILCHIMP_LIST_MEMBERS_INFO` - List members with status filter and pagination [Required]
-4. `MAILCHIMP_SEARCH_MEMBERS` - Search by email or name across lists [Optional]
-5. `MAILCHIMP_GET_MEMBER_INFO` - Get detailed profile for a specific subscriber [Optional]
-6. `MAILCHIMP_LIST_SEGMENTS` - List segments within an audience [Optional]
+**MAILCHIMP_LIST_MEMBERS_INFO 的关键参数**：
+- `list_id`：受众 ID（必需）
+- `status`："subscribed"、"unsubscribed"、"cleaned"、"pending"、"transactional"、"archived"
+- `count`：每页记录数（默认 10，最大 1000）
+- `offset`：分页偏移量（默认 0）
+- `sort_field`："timestamp_opt"、"timestamp_signup" 或 "last_changed"
+- `fields`：逗号分隔列表，用于限制响应大小
 
-**Key parameters for MAILCHIMP_LIST_MEMBERS_INFO**:
-- `list_id`: Audience ID (required)
-- `status`: "subscribed", "unsubscribed", "cleaned", "pending", "transactional", "archived"
-- `count`: Records per page (default 10, max 1000)
-- `offset`: Pagination offset (default 0)
-- `sort_field`: "timestamp_opt", "timestamp_signup", or "last_changed"
-- `fields`: Comma-separated list to limit response size
+**陷阱**：
+- `stats.avg_open_rate` 和 `stats.avg_click_rate` 是 0-1 的小数，不是 0-100 的百分比
+- 始终使用 `status="subscribed"` 过滤活跃订阅者；省略将返回所有状态
+- 必须使用 `count` 和 `offset` 进行分页，直到收集的成员数与 `total_items` 匹配
+- 大型列表响应可能被截断；数据位于 `response.data.members` 下
 
-**Pitfalls**:
-- `stats.avg_open_rate` and `stats.avg_click_rate` are 0-1 fractions, NOT 0-100 percentages
-- Always use `status="subscribed"` to filter active subscribers; omitting returns all statuses
-- Must paginate using `count` and `offset` until collected members match `total_items`
-- Large list responses may be truncated; data is under `response.data.members`
+### 3. 添加和更新订阅者
 
-### 3. Add and Update Subscribers
+**使用时机**：用户想要添加新订阅者、更新现有订阅者或批量管理列表成员资格。
 
-**When to use**: User wants to add new subscribers, update existing ones, or bulk-manage list membership.
+**工具顺序**：
+1. `MAILCHIMP_GET_LIST_INFO` - 验证目标受众存在 [前置]
+2. `MAILCHIMP_SEARCH_MEMBERS` - 检查联系人是否已存在 [可选]
+3. `MAILCHIMP_ADD_OR_UPDATE_LIST_MEMBER` - 插入订阅者（创建或更新） [必需]
+4. `MAILCHIMP_ADD_MEMBER_TO_LIST` - 添加新订阅者（仅创建） [可选]
+5. `MAILCHIMP_BATCH_ADD_OR_REMOVE_MEMBERS` - 批量管理细分成员资格 [可选]
 
-**Tool sequence**:
-1. `MAILCHIMP_GET_LIST_INFO` - Validate target audience exists [Prerequisite]
-2. `MAILCHIMP_SEARCH_MEMBERS` - Check if contact already exists [Optional]
-3. `MAILCHIMP_ADD_OR_UPDATE_LIST_MEMBER` - Upsert subscriber (create or update) [Required]
-4. `MAILCHIMP_ADD_MEMBER_TO_LIST` - Add new subscriber (create only) [Optional]
-5. `MAILCHIMP_BATCH_ADD_OR_REMOVE_MEMBERS` - Bulk manage segment membership [Optional]
+**MAILCHIMP_ADD_OR_UPDATE_LIST_MEMBER 的关键参数**：
+- `list_id`：受众 ID（必需）
+- `subscriber_hash`：小写邮箱的 MD5 哈希（必需）
+- `email_address`：订阅者邮箱（必需）
+- `status_if_new`：新订阅者的状态："subscribed"、"pending" 等（必需）
+- `status`：现有订阅者的状态
+- `merge_fields`：包含合并标签键的对象（例如 `{"FNAME": "John", "LNAME": "Doe"}`）
+- `tags`：标签字符串数组
 
-**Key parameters for MAILCHIMP_ADD_OR_UPDATE_LIST_MEMBER**:
-- `list_id`: Audience ID (required)
-- `subscriber_hash`: MD5 hash of lowercase email (required)
-- `email_address`: Subscriber email (required)
-- `status_if_new`: Status for new subscribers: "subscribed", "pending", etc. (required)
-- `status`: Status for existing subscribers
-- `merge_fields`: Object with merge tag keys (e.g., `{"FNAME": "John", "LNAME": "Doe"}`)
-- `tags`: Array of tag strings
+**MAILCHIMP_ADD_MEMBER_TO_LIST 的关键参数**：
+- `list_id`：受众 ID（必需）
+- `email_address`：订阅者邮箱（必需）
+- `status`："subscribed"、"pending"、"unsubscribed"、"cleaned"、"transactional"（必需）
 
-**Key parameters for MAILCHIMP_ADD_MEMBER_TO_LIST**:
-- `list_id`: Audience ID (required)
-- `email_address`: Subscriber email (required)
-- `status`: "subscribed", "pending", "unsubscribed", "cleaned", "transactional" (required)
+**陷阱**：
+- `subscriber_hash` 必须是**小写**邮箱的 MD5；大小写错误会导致 404 或重复
+- 使用 `MAILCHIMP_ADD_OR_UPDATE_LIST_MEMBER`（插入）替代 `MAILCHIMP_ADD_MEMBER_TO_LIST` 以避免重复错误
+- `status_if_new` 仅适用于新联系人；现有联系人使用 `status`
+- 使用 `skip_merge_validation: true` 可跳过必需的合并字段验证
+- `MAILCHIMP_BATCH_ADD_OR_REMOVE_MEMBERS` 管理的是静态细分成员资格，而非列表成员资格
 
-**Pitfalls**:
-- `subscriber_hash` must be MD5 of the **lowercase** email; incorrect casing causes 404s or duplicates
-- Use `MAILCHIMP_ADD_OR_UPDATE_LIST_MEMBER` (upsert) instead of `MAILCHIMP_ADD_MEMBER_TO_LIST` to avoid duplicate errors
-- `status_if_new` determines status only for new contacts; existing contacts use `status`
-- Use `skip_merge_validation: true` to bypass required merge field validation
-- `MAILCHIMP_BATCH_ADD_OR_REMOVE_MEMBERS` manages static segment membership, not list membership
+### 4. 查看活动报告和分析
 
-### 4. View Campaign Reports and Analytics
+**使用时机**：用户想要查看活动表现、打开率、点击率或订阅者互动情况。
 
-**When to use**: User wants to review campaign performance, open rates, click rates, or subscriber engagement.
+**工具顺序**：
+1. `MAILCHIMP_LIST_CAMPAIGNS` - 列出已发送活动及其报告摘要 [必需]
+2. `MAILCHIMP_SEARCH_CAMPAIGNS` - 按名称、主题或内容查找活动 [可选]
+3. `MAILCHIMP_GET_CAMPAIGN_REPORT` - 获取活动的详细性能报告 [必需]
+4. `MAILCHIMP_LIST_CAMPAIGN_REPORTS` - 批量获取多个活动的报告 [可选]
+5. `MAILCHIMP_LIST_CAMPAIGN_DETAILS` - 获取链接级别的点击统计 [可选]
+6. `MAILCHIMP_GET_CAMPAIGN_LINK_DETAILS` - 深入查看特定链接的点击数据 [可选]
+7. `MAILCHIMP_LIST_CLICKED_LINK_SUBSCRIBERS` - 查看谁点击了特定链接 [可选]
+8. `MAILCHIMP_GET_SUBSCRIBER_EMAIL_ACTIVITY` - 获取每个订阅者的活动参与情况 [可选]
+9. `MAILCHIMP_GET_CAMPAIGN_CONTENT` - 检索活动 HTML 内容 [可选]
 
-**Tool sequence**:
-1. `MAILCHIMP_LIST_CAMPAIGNS` - List sent campaigns with report summaries [Required]
-2. `MAILCHIMP_SEARCH_CAMPAIGNS` - Find campaigns by name, subject, or content [Optional]
-3. `MAILCHIMP_GET_CAMPAIGN_REPORT` - Get detailed performance report for a campaign [Required]
-4. `MAILCHIMP_LIST_CAMPAIGN_REPORTS` - Bulk fetch reports across multiple campaigns [Optional]
-5. `MAILCHIMP_LIST_CAMPAIGN_DETAILS` - Get link-level click statistics [Optional]
-6. `MAILCHIMP_GET_CAMPAIGN_LINK_DETAILS` - Drill into specific link click data [Optional]
-7. `MAILCHIMP_LIST_CLICKED_LINK_SUBSCRIBERS` - See who clicked a specific link [Optional]
-8. `MAILCHIMP_GET_SUBSCRIBER_EMAIL_ACTIVITY` - Get per-subscriber campaign activity [Optional]
-9. `MAILCHIMP_GET_CAMPAIGN_CONTENT` - Retrieve campaign HTML content [Optional]
+**MAILCHIMP_LIST_CAMPAIGNS 的关键参数**：
+- `status`："save"、"paused"、"schedule"、"sending"、"sent"
+- `count` / `offset`：分页（默认 10，最大 1000）
+- `since_send_time` / `before_send_time`：ISO 8601 日期范围过滤
+- `sort_field`："create_time" 或 "send_time"
+- `fields`：限制响应字段以提升性能
 
-**Key parameters for MAILCHIMP_LIST_CAMPAIGNS**:
-- `status`: "save", "paused", "schedule", "sending", "sent"
-- `count` / `offset`: Pagination (default 10, max 1000)
-- `since_send_time` / `before_send_time`: ISO 8601 date range filter
-- `sort_field`: "create_time" or "send_time"
-- `fields`: Limit response fields for performance
+**MAILCHIMP_GET_CAMPAIGN_REPORT 的关键参数**：
+- `campaign_id`：活动 ID（必需）
+- 返回：打开、点击、退回、退订、时间序列、行业统计
 
-**Key parameters for MAILCHIMP_GET_CAMPAIGN_REPORT**:
-- `campaign_id`: Campaign ID (required)
-- Returns: opens, clicks, bounces, unsubscribes, timeseries, industry_stats
+**陷阱**：
+- `MAILCHIMP_LIST_CAMPAIGNS` 仅返回高级别的 `report_summary`；使用 `MAILCHIMP_GET_CAMPAIGN_REPORT` 获取详细指标
+- 草稿/未发送的活动缺乏有意义的报告数据
+- 在 LIST_CAMPAIGNS 上使用 `fields` 参数时，明确请求 `send_time` 和 `report_summary` 子字段
+- 分页默认值较小（10 条记录）；使用 `count` 和 `offset` 迭代直到覆盖 `total_items`
+- `send_time` 是带时区的 ISO 8601 格式；请仔细解析
 
-**Pitfalls**:
-- `MAILCHIMP_LIST_CAMPAIGNS` only returns high-level `report_summary`; use `MAILCHIMP_GET_CAMPAIGN_REPORT` for detailed metrics
-- Draft/unsent campaigns lack meaningful report data
-- When using `fields` parameter on LIST_CAMPAIGNS, explicitly request `send_time` and `report_summary` subfields
-- Pagination defaults are low (10 records); iterate with `count` and `offset` until `total_items` is covered
-- `send_time` is ISO 8601 with timezone; parse carefully
+## 常见模式
 
-## Common Patterns
+### ID 解析
+操作前始终将名称解析为 ID：
+- **受众名称 -> list_id**：`MAILCHIMP_GET_LISTS_INFO` 并按名称匹配
+- **订阅者邮箱 -> subscriber_hash**：在代码中计算小写邮箱的 MD5
+- **活动名称 -> campaign_id**：使用 `MAILCHIMP_SEARCH_CAMPAIGNS` 查询
+- **细分名称 -> segment_id**：使用 `MAILCHIMP_LIST_SEGMENTS` 并指定 list_id
 
-### ID Resolution
-Always resolve names to IDs before operations:
-- **Audience name -> list_id**: `MAILCHIMP_GET_LISTS_INFO` and match by name
-- **Subscriber email -> subscriber_hash**: Compute MD5 of lowercase email in code
-- **Campaign name -> campaign_id**: `MAILCHIMP_SEARCH_CAMPAIGNS` with query
-- **Segment name -> segment_id**: `MAILCHIMP_LIST_SEGMENTS` with list_id
+### 分页
+Mailchimp 使用基于偏移量的分页：
+- 使用 `count`（页面大小，最大 1000）和 `offset`（跳过 N 条记录）
+- 持续进行直到收集的记录数与响应中的 `total_items` 匹配
+- 默认 `count` 为 10；批量操作时始终显式设置
+- 搜索端点的上限为 10 页（每页 30 条，共 300 条结果）
 
-### Pagination
-Mailchimp uses offset-based pagination:
-- Use `count` (page size, max 1000) and `offset` (skip N records)
-- Continue until collected records match `total_items` from the response
-- Default `count` is 10; always set explicitly for bulk operations
-- Search endpoints max at 10 pages (300 results for 30/page)
-
-### Subscriber Hash
-Many endpoints require `subscriber_hash` (MD5 of lowercase email):
+### 订阅者哈希
+许多端点需要 `subscriber_hash`（小写邮箱的 MD5）：
 ```
 import hashlib
 subscriber_hash = hashlib.md5(email.lower().encode()).hexdigest()
 ```
 
-## Known Pitfalls
+## 已知陷阱
 
-### ID Formats
-- `list_id` (audience ID) is a short alphanumeric string (e.g., "abc123def4")
-- `campaign_id` is an alphanumeric string
-- `subscriber_hash` is an MD5 hex string (32 characters)
-- Segment IDs are integers
+### ID 格式
+- `list_id`（受众 ID）是短字母数字字符串（例如 "abc123def4"）
+- `campaign_id` 是字母数字字符串
+- `subscriber_hash` 是 MD5 十六进制字符串（32 个字符）
+- 细分 ID 是整数
 
-### Rate Limits
-- Mailchimp enforces API rate limits; use batching for bulk subscriber operations
-- High-volume use of GET_MEMBER_INFO and ADD_OR_UPDATE_LIST_MEMBER can trigger throttling
-- Use `MAILCHIMP_BATCH_ADD_OR_REMOVE_MEMBERS` for bulk segment operations
+### 速率限制
+- Mailchimp 强制执行 API 速率限制；对批量订阅者操作使用批处理
+- 高频率使用 GET_MEMBER_INFO 和 ADD_OR_UPDATE_LIST_MEMBER 可能触发限流
+- 对批量细分操作使用 `MAILCHIMP_BATCH_ADD_OR_REMOVE_MEMBERS`
 
-### Parameter Quirks
-- Nested parameters use double-underscore notation: `settings__subject__line`, `recipients__list__id`
-- `avg_open_rate` and `avg_click_rate` are 0-1 fractions, not percentages
-- `status_if_new` only applies to new contacts in upsert operations
-- `subscriber_hash` must be MD5 of lowercase email; wrong casing creates phantom records
-- Campaign `type` is required for creation; most common is "regular"
-- `MAILCHIMP_SEND_CAMPAIGN` returns HTTP 204 on success (no body)
+### 参数特性
+- 嵌套参数使用双下划线表示法：`settings__subject__line`、`recipients__list__id`
+- `avg_open_rate` 和 `avg_click_rate` 是 0-1 的小数，不是百分比
+- `status_if_new` 仅适用于插入操作中的新联系人
+- `subscriber_hash` 必须是小写邮箱的 MD5；错误的格式会创建幽灵记录
+- 活动 `type` 在创建时为必需项；最常见的是 "regular"
+- `MAILCHIMP_SEND_CAMPAIGN` 成功时返回 HTTP 204（无响应体）
 
-### Content and Compliance
-- Campaign HTML must include unsubscribe link and physical address (merge tags)
-- Content must be set via `MAILCHIMP_SET_CAMPAIGN_CONTENT` before sending
-- Test emails require campaign to have content already set
+### 内容和合规性
+- 活动 HTML 必须包含退订链接和实际地址（合并标签）
+- 发送前必须通过 `MAILCHIMP_SET_CAMPAIGN_CONTENT` 设置内容
+- 测试邮件要求活动已设置内容
 
-## Quick Reference
+## 快速参考
 
-| Task | Tool Slug | Key Params |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 38 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 任务 | 工具标识 | 关键参数 |
+|------|----------|----------|

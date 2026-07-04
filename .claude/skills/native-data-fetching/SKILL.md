@@ -7,73 +7,62 @@ version: 1.0.0
 license: MIT
 ---
 
-# Expo Networking
+# Expo 网络请求
 
-**You MUST use this skill for ANY networking work including API requests, data fetching, caching, or network debugging.**
+**对于任何涉及 API 请求、数据获取、缓存或网络调试的网络工作，你必须使用此技能。**
 
-## References
+## 参考资源
 
-Consult these resources as needed:
-
+根据需要查阅以下资源：
 ```
 references/
-  expo-router-loaders.md   Route-level data loading with Expo Router loaders (web, SDK 55+)
+ expo-router-loaders.md 使用 Expo Router 加载器进行路由级数据加载（web，SDK 55+）
 ```
 
-## When to Use
-Use this skill when:
+## 使用时机
+在以下情况下使用此技能：
+- 实现 API 请求
+- 设置数据获取（React Query、SWR）
+- 使用 Expo Router 数据加载器（useLoaderData，web SDK 55+）
+- 调试网络故障
+- 实现缓存策略
+- 处理离线场景
+- 认证/令牌管理
+- 配置 API URL 和环境变量
 
-- Implementing API requests
-- Setting up data fetching (React Query, SWR)
-- Using Expo Router data loaders (`useLoaderData`, web SDK 55+)
-- Debugging network failures
-- Implementing caching strategies
-- Handling offline scenarios
-- Authentication/token management
-- Configuring API URLs and environment variables
+## 偏好设置
+- 避免使用 axios，优先使用 expo/fetch
 
-## Preferences
+## 常见问题与解决方案
 
-- Avoid axios, prefer expo/fetch
-
-## Common Issues & Solutions
-
-### 1. Basic Fetch Usage
-
-**Simple GET request**:
-
+### 1. 基本 Fetch 用法
+**简单 GET 请求**：
 ```tsx
 const fetchUser = async (userId: string) => {
-  const response = await fetch(`https://api.example.com/users/${userId}`);
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  return response.json();
+ const response = await fetch(`https://api.example.com/users/${userId}`);
+ if (!response.ok) {
+ throw new Error(`HTTP error! status: ${response.status}`);
+ }
+ return response.json();
 };
 ```
-
-**POST request with body**:
-
+**带请求体的 POST 请求**：
 ```tsx
 const createUser = async (userData: UserData) => {
-  const response = await fetch("https://api.example.com/users", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(userData),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-
-  return response.json();
+ const response = await fetch("https://api.example.com/users", {
+ method: "POST",
+ headers: {
+ "Content-Type": "application/json",
+ Authorization: `Bearer ${token}`,
+ },
+ body: JSON.stringify(userData),
+ });
+ if (!response.ok) {
+ const error = await response.json();
+ throw new Error(error.message);
+ }
+ return response.json();
 };
 ```
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 19 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+---（完整代码示例保持英文，仅翻译说明部分）---

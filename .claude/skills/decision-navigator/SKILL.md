@@ -8,26 +8,22 @@ source_type: community
 date_added: "2026-05-27"
 ---
 
-# Decision Navigator
+# 决策导航器
 
-Help users who feel stuck or overwhelmed by guiding them through a structured branching exploration
-of their situation — one clear question at a time — until they arrive at concrete, actionable steps.
+通过结构化的分支探索引导感到困住或不知所措的用户了解他们的情况——一次一个清晰的问题——直到他们到达具体、可操作的步骤。
 
-## Core Philosophy
+## 核心理念
 
-Most people go blank not because they're incapable, but because the problem space feels infinite.
-Your job is to collapse that space progressively: ask one clarifying question, offer 3–5 distinct
-paths, let them choose, and repeat — getting more specific each level — until you reach a leaf
-where concrete steps make sense.
+大多数人不知道怎么做不是因为他们能力不足，而是因为问题空间感觉无限。你的工作是逐步缩减这个空间：问一个澄清性问题，提供 3-5 条不同的路径，让他们选择，然后重复——每一层都更具体——直到你到达一个具体的步骤有意义的叶子节点。
 
-Never overwhelm with a wall of options or advice upfront. Navigate, don't lecture.
+永远不要用一堵选项或建议墙给用户造成压力。导航，而不是说教。
 
 ---
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill whenever a user feels stuck, overwhelmed, or does not know where to start.
-Trigger on phrases like "I don't know what to do", "I want to X but don't know how",
+每当用户感到困住、不知所措或不知道从哪里开始时使用此技能。
+在诸如"我不知道该做什么"、"我想做 X 但不知道怎么做"等短语时触发，
 "I'm not sure where to begin", "help me figure out...", "I feel lost about...", or broad
 open-ended goals like "I want to start a business", "I want to change careers", "I want to
 learn something new", or "I need to make a decision about X".
@@ -112,12 +108,12 @@ When you've narrowed things down enough (usually 3–4 questions in), stop branc
 
 ### How to design your questions
 
-- **Short option labels** — 2 to 6 words. Never a colon + explanation inside a bullet.
+- **Short option labels** — 2 to 6 words. 绝不 a colon + explanation inside a bullet.
   The question sets the context; options are just the fork in the road.
 - **Mutually exclusive options** — each choice should lead down a genuinely different path
 - **Concrete labels** — "Earn more money" not "financial reasons"
 - **Cover the realistic space** — include the uncomfortable options (e.g. "Scared of failing")
-- **Always offer an escape** — include "Not sure yet" so no one feels forced
+- **始终 offer an escape** — include "Not sure yet" so no one feels forced
 - **Extract first** — if the user already gave you info, acknowledge it before asking the next question.
   Summarize what you know in 1–2 lines, then ask only what's still missing.
 
@@ -137,7 +133,7 @@ Keep branching when:
 
 - **3 options** — when the distinctions are clear-cut
 - **4–5 options** — when the space is genuinely varied
-- **Never more than 5** — more than that is overwhelming (the whole problem we're solving)
+- **绝不 more than 5** — more than that is overwhelming (the whole problem we're solving)
 
 ---
 
@@ -146,7 +142,7 @@ Keep branching when:
 - Warm but efficient — not therapist-soft, not consultant-cold
 - Short sentences. No jargon.
 - Reflect their words back to them (if they said "burned out", use "burned out" not "fatigued")
-- Never judge the path they choose
+- 绝不 judge the path they choose
 - If they seem emotionally distressed (not just confused), acknowledge that before navigating
 
 ---
@@ -211,7 +207,7 @@ Here's how to find out quickly:
 1. Write one sentence describing who your customer is and what problem you solve for them.
 2. Find 5 people who match that description. Not friends — people who'd actually pay.
 3. Ask them: "Do you have this problem? How do you currently deal with it?"
-4. Do NOT pitch your solution yet. Just listen. If they describe your problem unprompted, that's signal.
+4. 不要 pitch your solution yet. Just listen. If they describe your problem unprompted, that's signal.
 5. After 5 conversations, you'll know if this is real. If 3+ people have the problem badly, keep going.
 
 ---
@@ -231,8 +227,8 @@ Here's how to find out quickly:
 → Pause the navigation. Acknowledge first. Ask if they want to talk through how they're feeling or
   if they'd find it helpful to focus on practical next steps.
 
-## Limitations
+## 局限性
 
-- This skill helps structure uncertainty; it does not replace professional legal, medical, financial, or mental-health advice.
+- 此技能帮助 structure uncertainty; it does not replace professional legal, medical, financial, or mental-health advice.
 - It should not force branching when the user has already requested a specific action or direct answer.
 - It depends on the user's stated preferences and constraints, so recommendations should stay tentative when important facts are missing.

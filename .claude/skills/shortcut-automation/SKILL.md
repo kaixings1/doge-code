@@ -11,5 +11,3 @@ requires:
 Automate your Shortcut project management operations directly from Claude Code. Create and list stories, add tasks and comments, batch-create stories, and navigate workflows -- all without leaving your terminal.
 
 **Toolkit docs:** [composio.dev/toolkits/shortcut](https://composio.dev/toolkits/shortcut)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 10 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

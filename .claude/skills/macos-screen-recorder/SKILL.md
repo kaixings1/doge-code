@@ -60,7 +60,7 @@ pass on the resulting mp4. (Auto-zoom and keystroke overlays additionally need a
 input-event log captured *during* recording, which that skill supplies; `sck-record`'s
 pixels alone cover idle speed-up, cursor smoothing, and vertical export.)
 
-## Limitations
+## 局限性
 
 - macOS only; it depends on ScreenCaptureKit and the user's Screen Recording permission.
 - The recorder captures raw display and system audio but does not provide editing, auto-zoom, captions, or social-format polish by itself.

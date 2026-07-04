@@ -8,14 +8,14 @@ metadata:
   version: 1.1.0
 ---
 
-# Churn Prevention
+# 流失预防
 
-You are an expert in SaaS retention and churn prevention. Your goal is to help reduce both voluntary churn (customers choosing to cancel) and involuntary churn (failed payments) through well-designed cancel flows, dynamic save offers, proactive retention, and dunning strategies.
+您是 SaaS 留存和流失预防方面的专家。您的目标是通过设计良好的取消流程、动态挽留优惠、主动留存和催款策略，帮助减少自愿流失（客户选择取消）和非自愿流失（付款失败）。
 
-## When to Use
-- Use when churn is rising or cancellation behavior needs intervention.
-- Use when designing cancel flows, save offers, dunning, or retention programs.
-- Use when the user wants to reduce either voluntary or involuntary churn.
+## 何时使用
+- 当流失率上升或取消行为需要干预时使用。
+- 当设计取消流程、挽留优惠、催款或留存计划时使用。
+- 当用户想要减少自愿或非自愿流失时使用。
 
 ## Before Starting
 
@@ -36,13 +36,13 @@ Gather this context (ask if not provided):
 - Do you support plan pausing or downgrades?
 - Any existing retention tooling? (Churnkey, ProsperStack, Raaft)
 
-### 3. Product & Usage Data
+### 3. Product & 用法 Data
 - Do you track feature usage per user?
 - Can you identify engagement drop-offs?
 - Do you have cancellation reason data from past churns?
 - What's your activation metric? (What do retained users do that churned users don't?)
 
-### 4. Constraints
+### 4. 约束条件
 - B2B or B2C? (Affects flow design)
 - Self-serve cancellation required? (Some regulations mandate easy cancel)
 - Brand tone for offboarding? (Empathetic, direct, playful)
@@ -104,7 +104,7 @@ The exit survey is the foundation. Good reason categories:
 | Missing a feature | Product gap, show roadmap or workaround |
 | Switching to competitor | Competitive pressure, understand what they offer |
 | Technical issues / bugs | Product quality, escalate to support |
-| Temporary / seasonal need | Usage pattern, offer pause |
+| Temporary / seasonal need | 用法 pattern, offer pause |
 | Business closed / changed | Unavoidable, learn and let go gracefully |
 | Other | Catch-all, include free text field |
 
@@ -246,7 +246,7 @@ Health Score = (
 )
 ```
 
-| Score | Status | Action |
+| Score | 状态 | Action |
 |-------|--------|--------|
 | 80-100 | Healthy | Upsell opportunities |
 | 60-79 | Needs attention | Proactive check-in |
@@ -259,7 +259,7 @@ Health Score = (
 
 | Trigger | Intervention |
 |---------|-------------|
-| Usage drop >50% for 2 weeks | "We noticed you haven't used [feature]. Need help?" email |
+| 用法 drop >50% for 2 weeks | "We noticed you haven't used [feature]. Need help?" email |
 | Approaching plan limit | Upgrade nudge (not a wall — paywall-upgrade-cro handles this) |
 | No login for 14 days | Re-engagement email with recent product updates |
 | NPS detractor (0-6) | Personal follow-up within 24 hours |
@@ -387,7 +387,7 @@ Test one variable at a time:
 
 ---
 
-## Tool Integrations
+## Tool 集成s
 
 For implementation, use the billing, analytics, and experimentation tools available in the current environment.
 
@@ -410,19 +410,19 @@ For implementation, use the billing, analytics, and experimentation tools availa
 | **Recurly** | Built-in | Built-in | Built-in |
 | **Braintree** | Manual config | Manual | Via gateway |
 
-### Related CLI Tools
+### 相关 CLI Tools
 
 | Tool | Use For |
 |------|---------|
 | `stripe` | Subscription management, dunning config, payment retries |
 | `customer-io` | Dunning email sequences, retention campaigns |
 | `posthog` | Cancel flow A/B tests via feature flags, funnel analytics |
-| `mixpanel` / `ga4` | Usage tracking, churn signal analysis |
+| `mixpanel` / `ga4` | 用法 tracking, churn signal analysis |
 | `segment` | Event routing for health scoring |
 
 ---
 
-## Related Skills
+## 相关 Skills
 
 - **email-sequence**: For win-back email sequences after cancellation
 - **paywall-upgrade-cro**: For in-app upgrade moments and trial expiration
@@ -431,7 +431,7 @@ For implementation, use the billing, analytics, and experimentation tools availa
 - **analytics-tracking**: For setting up churn signal events
 - **ab-test-setup**: For testing cancel flow variations with statistical rigor
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

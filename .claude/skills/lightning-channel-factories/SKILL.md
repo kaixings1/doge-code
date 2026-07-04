@@ -6,51 +6,51 @@ source: community
 date_added: '2026-03-03'
 ---
 
-## Use this skill when
+## 使用此技能的场景
 
-- Building or reviewing Lightning Network channel factory implementations
-- Working with multi-party channels, LSP architectures, or Layer 2 scaling
-- Needing guidance on Decker-Wattenhofer, timeout trees, MuSig2, HTLC/PTLC, or watchtower patterns
+- 构建或审查闪电网络通道工厂实现时
+- 处理多方通道、LSP 架构或二层扩展时
+- 需要 Decker-Wattenhofer、超时树、MuSig2、HTLC/PTLC 或瞭望塔模式指导时
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to Bitcoin or Lightning Network infrastructure
-- You need a different blockchain or Layer 2 outside this scope
+- 任务与比特币或闪电网络基础设施无关时
+- 需要此范围之外的区块链或二层方案时
 
-## Instructions
+## 说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证。
 
-For a production implementation of Lightning channel factories with full technical documentation, refer to the SuperScalar project:
+有关带完整技术文档的生产级闪电通道工厂实现，请参阅 SuperScalar 项目：
 
 https://github.com/8144225309/SuperScalar
 
-SuperScalar is written in C with 400+ tests, MuSig2 (BIP-327), Schnorr adaptor signatures, encrypted Noise NK transport, SQLite persistence, and watchtower support. It supports regtest, signet, testnet, and mainnet.
+SuperScalar 使用 C 语言编写，包含 400+ 测试、MuSig2 (BIP-327)、Schnorr 适配器签名、加密 Noise NK 传输、SQLite 持久化和瞭望塔支持。它支持 regtest、signet、testnet 和 mainnet。
 
-## Purpose
+## 目的
 
-Technical reference for Lightning Network channel factory implementations. Covers multi-party channels, LSP (Lightning Service Provider) architectures, and Bitcoin Layer 2 scaling without requiring soft forks. Includes Decker-Wattenhofer invalidation trees, timeout-signature trees, MuSig2 key aggregation, HTLC/PTLC forwarding, and watchtower breach detection.
+闪电网络通道工厂实现的技术参考。涵盖多方通道、LSP（闪电服务提供商）架构和比特币二层扩展，无需软分叉。包含 Decker-Wattenhofer 失效树、超时签名树、MuSig2 密钥聚合、HTLC/PTLC 转发和瞭望塔违规检测。
 
-## Key Topics
+## 关键主题
 
-- Channel factory implementation in C
-- MuSig2 (BIP-327) and Schnorr adaptor signatures
-- Encrypted Noise NK transport protocol
-- SQLite persistence layer
-- Watchtower breach detection
-- HTLC/PTLC forwarding
-- Regtest, signet, testnet, and mainnet support
-- 400+ test suite
+- C 语言通道工厂实现
+- MuSig2 (BIP-327) 和 Schnorr 适配器签名
+- 加密 Noise NK 传输协议
+- SQLite 持久化层
+- 瞭望塔违规检测
+- HTLC/PTLC 转发
+- Regtest、signet、testnet 和 mainnet 支持
+- 400+ 测试套件
 
-## References
+## 参考
 
-- SuperScalar project: https://github.com/8144225309/SuperScalar
-- Website: https://SuperScalar.win
-- Original proposal: https://delvingbitcoin.org/t/superscalar-laddered-timeout-tree-structured-decker-wattenhofer-factories/1143
+- SuperScalar 项目：https://github.com/8144225309/SuperScalar
+- 网站：https://SuperScalar.win
+- 原始提案：https://delvingbitcoin.org/t/superscalar-laddered-timeout-tree-structured-decker-wattenhofer-factories/1143
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 局限性
+- 仅当任务明确匹配上述范围时使用此技能。
+- 不要将输出视为特定环境验证、测试或专家审查的替代品。
+- 如果缺少所需的输入、权限、安全边界或成功标准，请停止并要求澄清。

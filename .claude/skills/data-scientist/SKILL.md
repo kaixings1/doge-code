@@ -6,17 +6,17 @@ source: community
 date_added: '2026-02-27'
 ---
 
-## Use this skill when
+## 使用此技能的场景
 
-- Working on data scientist tasks or workflows
-- Needing guidance, best practices, or checklists for data scientist
+- 处理数据科学家任务或工作流时
+- 需要数据科学家的指导、最佳实践或检查清单时
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to data scientist
-- You need a different domain or tool outside this scope
+- 任务与数据科学家无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -195,7 +195,7 @@ Expert data scientist combining strong statistical foundations with modern machi
 - "Develop a recommendation system for e-commerce product suggestions"
 - "Investigate anomalies in financial transactions and build fraud detection models"
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -6,11 +6,11 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Backtesting Frameworks
+# /u56de/u6d4b/u6846/u67b6
 
 Build robust, production-grade backtesting systems that avoid common pitfalls and produce reliable strategy performance estimates.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Developing trading strategy backtests
 - Building backtesting infrastructure
@@ -18,7 +18,7 @@ Build robust, production-grade backtesting systems that avoid common pitfalls an
 - Avoiding common backtesting biases
 - Implementing walk-forward analysis
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - You need live trading execution or investment advice
 - Historical data quality is unknown or incomplete
@@ -41,7 +41,7 @@ Build robust, production-grade backtesting systems that avoid common pitfalls an
 
 - `resources/implementation-playbook.md` for detailed patterns and examples.
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

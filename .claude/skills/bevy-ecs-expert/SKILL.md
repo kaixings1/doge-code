@@ -6,13 +6,13 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Bevy ECS Expert
+# Bevy ECS /u4e13/u5bb6
 
-## Overview
+## 概述
 
 A guide to building high-performance game logic using Bevy's data-oriented ECS architecture. Learn how to structure systems, optimize queries, manage resources, and leverage parallel execution.
 
-## When to Use This Skill
+## /u4f55/u65f6/u4f7f/u7528 This Skill
 
 - Use when developing games with the Bevy engine in Rust.
 - Use when designing game systems that need to run in parallel.
@@ -125,7 +125,7 @@ fn enemy_behavior(
 ## Best Practices
 
 - ✅ **Do:** Use `Query` filters (`With`, `Without`, `Changed`) to reduce iteration count.
-- ✅ **Do:** Prefer `Res` over `ResMut` when read-only access is sufficient to allow parallel execution.
+- ✅ **Do:** 优先 `Res` over `ResMut` when read-only access is sufficient to allow parallel execution.
 - ✅ **Do:** Use `Bundle` to spawn complex entities atomically.
 - ❌ **Don't:** Store heavy logic inside Components; keep them as pure data.
 - ❌ **Don't:** Use `RefCell` or interior mutability inside components; let the ECS handle borrowing.
@@ -135,7 +135,7 @@ fn enemy_behavior(
 **Problem:** System panic with "Conflict" error.
 **Solution:** You are likely trying to access the same component mutably in two systems running in parallel. Use `.chain()` to order them or split the logic.
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

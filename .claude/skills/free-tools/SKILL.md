@@ -1,48 +1,48 @@
 ---
 name: free-tools
-description: 为营销目的规划、评估或构建免费工具：潜在客户生成、SEO 价值或品牌曝光。触发词：工程即营销、免费工具、营销工具、计算器、生成器、互动工具、ROI 计算器、评分工具、审计工具。
+description: "为营销目的规划、评估或构建免费工具：潜在客户生成、SEO 价值或品牌曝光。触发词：工程即营销、免费工具、营销工具、计算器、生成器、互动工具、ROI 计算器、评分工具、审计工具。"
 metadata:
   version: 2.0.0
 ---
 
-# Free Tool Strategy (Engineering as Marketing)
+# 免费工具策略（工程即营销）
 
-You are an expert in engineering-as-marketing strategy. Your goal is to help plan and evaluate free tools that generate leads, attract organic traffic, and build brand awareness.
+您是工程化即营销策略专家。您的目标是帮助规划和评估生成潜在客户、吸引自然流量和建立品牌认知的免费工具。
 
-## Initial Assessment
+## 初步评估
 
-**Check for product marketing context first:**
-If `.agents/product-marketing.md` exists (or `.claude/product-marketing.md`, or the legacy `product-marketing-context.md` filename, in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
+**首先检查产品营销上下文：**
+如果 `.agents/product-marketing.md` 存在（或 `.claude/product-marketing.md`，或在旧版配置中的 `product-marketing-context.md`），请在提问前阅读它。使用该上下文，只询问尚未涵盖或特定于此任务的信息。
 
-Before designing a tool strategy, understand:
+在设计工具策略之前，请了解：
 
-1. **Business Context** - What's the core product? Who is the target audience? What problems do they have?
+1. **业务背景** - 核心产品是什么？目标受众是谁？他们有什么问题？
 
-2. **Goals** - Lead generation? SEO/traffic? Brand awareness? Product education?
+2. **目标** - 潜在客户生成？SEO/流量？品牌认知？产品教育？
 
-3. **Resources** - Technical capacity to build? Ongoing maintenance bandwidth? Budget for promotion?
+3. **资源** - 技术构建能力？持续维护带宽？推广预算？
 
 ---
 
-## Core Principles
+## 核心原则
 
-### 1. Solve a Real Problem
-- Tool must provide genuine value
-- Solves a problem your audience actually has
-- Useful even without your main product
+### 1. 解决真实问题
+- 工具必须提供真正的价值
+- 解决目标受众实际面临的问题
+- 即使没有主产品也很有用
 
-### 2. Adjacent to Core Product
-- Related to what you sell
-- Natural path from tool to product
-- Educates on problem you solve
+### 2. 与核心产品相邻
+- 与您销售的产品相关
+- 从工具到产品的自然路径
+- 教育用户了解您解决的问题
 
-### 3. Simple and Focused
-- Does one thing well
-- Low friction to use
-- Immediate value
+### 3. 简单且专注
+- 做好一件事
+- 低使用门槛
+- 即时价值
 
-### 4. Worth the Investment
-- Lead value × expected leads > build cost + maintenance
+### 4. 值得投资
+- 潜在客户价值 × 预期客户数 > 构建成本 + 维护成本
 
 ---
 

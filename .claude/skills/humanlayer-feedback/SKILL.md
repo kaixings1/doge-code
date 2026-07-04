@@ -1,1 +1,13 @@
----/nname: humanlayer-feedback/ndescription: humanlayer-feedback/n---/n/n# humanlayer-feedback/n/nHumanLayer 反馈循环 — 人工反馈收集、上下文传递、迭代优化、质量评分/n
+---
+name: humanlayer-feedback
+description: "HumanLayer 反馈 — AI 工作流中的人类反馈收集"
+risk: safe
+source: community
+---
+# HumanLayer 反馈
+AI 工作流中的人类反馈收集。
+## 功能
+- 反馈请求
+- 反馈分析
+- 迭代改进
+## 限制

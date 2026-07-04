@@ -3,9 +3,9 @@ name: docker-best-practices
 description: Docker最佳实践 — 包括多阶段构建、Compose优化、层缓存和安全扫描。
 ---
 
-# Docker Best Practices
+# Docker /u6700/u4f73/u5b9e/u8df5
 
-## Multi-Stage Build
+## /u591a/u9636/u6bb5/u6784/u5efa
 
 ```dockerfile
 FROM node:22-alpine AS deps
@@ -34,7 +34,7 @@ CMD ["node", "dist/server.js"]
 
 Separate dependency installation from build steps. Final stage contains only runtime artifacts.
 
-## Python Multi-Stage
+## Python /u591a/u9636/u6bb5
 
 ```dockerfile
 FROM python:3.12-slim AS builder
@@ -114,9 +114,9 @@ coverage
 dist
 ```
 
-Always include a `.dockerignore` to reduce build context size and prevent leaking secrets.
+始终 include a `.dockerignore` to reduce build context size and prevent leaking secrets.
 
-## Image Optimization Tips
+## /u955c/u50cf/u4f18/u5316/u6280/u5de7
 
 ```bash
 # Check image size breakdown
@@ -131,7 +131,7 @@ docker buildx build --platform linux/amd64,linux/arm64 -t registry/app:1.0 --pus
 
 Combine `RUN` commands to reduce layers. Order instructions from least to most frequently changing for cache efficiency.
 
-## Anti-Patterns
+## /u53cd/u6a21/u5f0f
 
 - Running as root inside containers
 - Using `ADD` when `COPY` suffices (ADD auto-extracts tarballs, pulls URLs)
@@ -140,7 +140,7 @@ Combine `RUN` commands to reduce layers. Order instructions from least to most f
 - Missing `.dockerignore` causing large build contexts
 - Installing dev dependencies in production images
 
-## Checklist
+## /u6e05/u5355
 
 - [ ] Multi-stage build separates build and runtime stages
 - [ ] Non-root user created and used with `USER` directive

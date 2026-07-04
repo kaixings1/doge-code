@@ -24,7 +24,7 @@ dotnet add package Azure.ResourceManager.ArizeAIObservabilityEval --version 1.0.
 | Version | `1.0.0` (GA) |
 | API Version | `2024-10-01` |
 | ARM Type | `ArizeAi.ObservabilityEval/organizations` |
-| Dependencies | `Azure.Core` >= 1.46.2, `Azure.ResourceManager` >= 1.13.1 |
+| 依赖项 | `Azure.Core` >= 1.46.2, `Azure.ResourceManager` >= 1.13.1 |
 
 ## Environment Variables
 
@@ -167,19 +167,19 @@ await org.Value.DeleteAsync(WaitUntil.Completed);
 | `ArizeAIObservabilityEvalOrganizationResource` | Main ARM resource for Arize organizations |
 | `ArizeAIObservabilityEvalOrganizationCollection` | Collection for CRUD operations |
 | `ArizeAIObservabilityEvalOrganizationData` | Resource data model |
-| `ArizeAIObservabilityEvalOrganizationProperties` | Organization properties |
+| `ArizeAIObservabilityEvalOrganization属性` | Organization properties |
 | `ArizeAIObservabilityEvalMarketplaceDetails` | Azure Marketplace subscription info |
 | `ArizeAIObservabilityEvalOfferDetails` | Marketplace offer configuration |
 | `ArizeAIObservabilityEvalUserDetails` | User contact information |
 | `ArizeAIObservabilityEvalOrganizationPatch` | Patch model for updates |
-| `ArizeAIObservabilityEvalSingleSignOnPropertiesV2` | SSO configuration |
+| `ArizeAIObservabilityEvalSingleSignOn属性V2` | SSO configuration |
 
 ## Enums
 
 | Enum | Values |
 |------|--------|
 | `ArizeAIObservabilityEvalOfferProvisioningState` | `Succeeded`, `Failed`, `Canceled`, `Provisioning`, `Updating`, `Deleting`, `Accepted` |
-| `ArizeAIObservabilityEvalMarketplaceSubscriptionStatus` | `PendingFulfillmentStart`, `Subscribed`, `Suspended`, `Unsubscribed` |
+| `ArizeAIObservabilityEvalMarketplaceSubscription状态` | `PendingFulfillmentStart`, `Subscribed`, `Suspended`, `Unsubscribed` |
 | `ArizeAIObservabilityEvalSingleSignOnState` | `Initial`, `Enable`, `Disable` |
 | `ArizeAIObservabilityEvalSingleSignOnType` | `Saml`, `OpenId` |
 
@@ -231,7 +231,7 @@ var data = await org.GetAsync();
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -65,7 +65,7 @@ Every recommended mental model **must be scored**.
 | Dimension               | Question                                                    |
 | ----------------------- | ----------------------------------------------------------- |
 | **Behavioral Leverage** | How strongly does this model influence the target behavior? |
-| **Context Fit**         | How well does it fit the product, audience, and stage?      |
+| **上下文 Fit**         | How well does it fit the product, audience, and stage?      |
 | **Implementation Ease** | How easy is it to apply correctly?                          |
 | **Speed to Signal**     | How quickly can we observe impact?                          |
 | **Ethical Safety**      | Low risk of manipulation or backlash?                       |
@@ -116,8 +116,8 @@ PLFS = (5 + 5 + 4 + 5) − 2 = 17 (cap at 15)
 
 ## 3. Mandatory Selection Rules
 
-* Never recommend more than **5 models**
-* Never recommend models with **PLFS ≤ 0**
+* 绝不 recommend more than **5 models**
+* 绝不 recommend models with **PLFS ≤ 0**
 * Each model must map to a **specific behavior**
 * Each model must include **an ethical note**
 
@@ -136,7 +136,7 @@ PLFS = (5 + 5 + 4 + 5) − 2 = 17 (cap at 15)
 
 ---
 
-## 5. Required Output Format (Updated)
+## 5. 必需 Output Format (Updated)
 
 When applying psychology, **always use this structure**:
 
@@ -185,7 +185,7 @@ Use these biases when scoring:
 * Authority Bias
 * Social Proof
 
-### Consideration
+### 考虑ation
 
 * Framing Effect
 * Anchoring
@@ -196,14 +196,14 @@ Use these biases when scoring:
 
 * Loss Aversion
 * Paradox of Choice
-* Default Effect
+* 默认 Effect
 * Risk Reversal
 
 ### Retention
 
 * Endowment Effect
 * IKEA Effect
-* Status-Quo Bias
+* 状态-Quo Bias
 * Switching Costs
 
 ---
@@ -224,7 +224,7 @@ If ethical risk > leverage → **do not recommend**
 
 ---
 
-## 8. Integration with Other Skills
+## 8. 集成 with Other Skills
 
 * **page-cro** → Apply psychology to layout & hierarchy
 * **copywriting / copy-editing** → Translate models into language
@@ -260,7 +260,7 @@ Before responding, confirm:
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

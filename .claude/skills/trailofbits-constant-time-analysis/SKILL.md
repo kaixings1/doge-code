@@ -1,4 +1,4 @@
-# Constant-Time Analyzer (ct-analyzer)
+# 恒定时间分析器
 
 A portable tool for detecting timing side-channel vulnerabilities in compiled cryptographic code. Analyzes assembly output from multiple compilers and architectures to detect instructions that could leak secret data through execution timing.
 
@@ -22,7 +22,7 @@ The infamous [KyberSlash](https://kyberslash.cr.yp.to/) attack demonstrated how 
 - **Multiple output formats**: Text, JSON, GitHub Actions annotations
 - **Cross-compilation**: Analyze code for different target architectures
 
-## Quick Start
+## 快速开始
 
 ```bash
 # Install
@@ -32,7 +32,7 @@ uv pip install -e .
 ct-analyzer crypto.c
 ```
 
-## Usage
+## 用法
 
 ### Basic Analysis
 
@@ -43,4 +43,3 @@ ct-analyzer <source_file>
 ### Options
 
 | Option | Description |
-|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 36 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

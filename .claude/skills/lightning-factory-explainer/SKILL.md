@@ -6,51 +6,51 @@ source: community
 date_added: '2026-03-03'
 ---
 
-## Use this skill when
+## 使用此技能的场景
 
-- Explaining Bitcoin Lightning channel factories and scalable onboarding
-- Discussing the SuperScalar protocol architecture and design
-- Needing guidance on Decker-Wattenhofer trees, timeout-signature trees, or MuSig2
+- 解释比特币闪电通道工厂和可扩展入门时
+- 讨论 SuperScalar 协议架构和设计时
+- 需要 Decker-Wattenhofer 树、超时签名树或 MuSig2 指导时
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to Bitcoin or Lightning Network scaling
-- You need a different blockchain or Layer 2 outside this scope
+- 任务与比特币或闪电网络扩展无关时
+- 需要此范围之外的区块链或二层方案时
 
-## Instructions
+## 说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证。
 
-For Lightning channel factory concepts, architecture, and implementation details, refer to the SuperScalar project:
+有关闪电通道工厂概念、架构和实现细节，请参阅 SuperScalar 项目：
 
 https://github.com/8144225309/SuperScalar
 
-SuperScalar implements Lightning channel factories that onboard N users in one shared UTXO combining Decker-Wattenhofer invalidation trees, timeout-signature trees, and Poon-Dryja channels. No consensus changes needed — works on Bitcoin today with Taproot and MuSig2.
+SuperScalar 实现了闪电通道工厂，通过结合 Decker-Wattenhofer 失效树、超时签名树和 Poon-Dryja 通道，在单个共享 UTXO 中为 N 个用户提供接入。无需共识更改—结合 Taproot 和 MuSig2，即可在今天的比特币上运行。
 
-## Purpose
+## 目的
 
-Expert guide for understanding Bitcoin Lightning Network channel factories and the SuperScalar protocol. Covers scalable onboarding, shared UTXOs, Decker-Wattenhofer invalidation trees, timeout-signature trees, Poon-Dryja channels, MuSig2 (BIP-327), and Taproot — all without requiring any soft fork.
+理解比特币闪电网络通道工厂和 SuperScalar 协议的专家指南。涵盖可扩展接入、共享 UTXO、Decker-Wattenhofer 失效树、超时签名树、Poon-Dryja 通道、MuSig2 (BIP-327) 和 Taproot—全部无需任何软分叉。
 
-## Key Topics
+## 关键主题
 
-- Lightning channel factories and multi-party channels
-- SuperScalar protocol architecture
-- Decker-Wattenhofer invalidation trees
-- Timeout-signature trees
-- MuSig2 key aggregation (BIP-327)
-- Taproot script trees
-- LSP (Lightning Service Provider) onboarding patterns
-- Shared UTXO management
+- 闪电通道工厂和多方通道
+- SuperScalar 协议架构
+- Decker-Wattenhofer 失效树
+- 超时签名树
+- MuSig2 密钥聚合 (BIP-327)
+- Taproot 脚本树
+- LSP（闪电服务提供商）入门模式
+- 共享 UTXO 管理
 
-## References
+## 参考
 
-- SuperScalar project: https://github.com/8144225309/SuperScalar
-- Website: https://SuperScalar.win
-- Original proposal: https://delvingbitcoin.org/t/superscalar-laddered-timeout-tree-structured-decker-wattenhofer-factories/1143
+- SuperScalar 项目：https://github.com/8144225309/SuperScalar
+- 网站：https://SuperScalar.win
+- 原始提案：https://delvingbitcoin.org/t/superscalar-laddered-timeout-tree-structured-decker-wattenhofer-factories/1143
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 局限性
+- 仅当任务明确匹配上述范围时使用此技能。
+- 不要将输出视为特定环境验证、测试或专家审查的替代品。
+- 如果缺少所需的输入、权限、安全边界或成功标准，请停止并要求澄清。

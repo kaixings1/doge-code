@@ -10,7 +10,7 @@ date_added: "2026-03-25"
 
 Fetch any X/Twitter post as structured JSON for analysis using the ADHX API.
 
-## Overview
+## 概述
 
 ADHX provides a free API that returns clean JSON for any X post, including full long-form article content. This is far superior to scraping or browser-based approaches for LLM consumption. Works with regular tweets and full X Articles.
 
@@ -31,4 +31,3 @@ https://adhx.com/api/share/tweet/{username}/{statusId}
 Extract `username` and `statusId` from any of these URL formats:
 
 | Format | Example |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 17 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

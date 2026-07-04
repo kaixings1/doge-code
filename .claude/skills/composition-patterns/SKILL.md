@@ -6,18 +6,15 @@ source: "https://github.com/vercel-labs/agent-skills"
 date_added: "2026-06-02"
 ---
 
-# React Composition Patterns
+# React 组合模式
 
-Composition patterns for building flexible, maintainable React components. Avoid
-boolean prop proliferation by using compound components, lifting state, and
-composing internals. These patterns make codebases easier for both humans and AI
-agents to work with as they scale.
+用于构建灵活、可维护的 React 组件的组合模式。通过使用复合组件、状态提升和内部组合来避免布尔 prop 泛滥。这些模式使代码库在扩展时对人类和 AI 代理都更易于处理。
 
-## When to Use
-Reference these guidelines when:
+## 何时使用
+在以下情况下参考这些指南：
 
-- Refactoring components with many boolean props
-- Building reusable component libraries
+- 重构具有许多布尔 prop 的组件
+- 构建可复用的组件库
 - Designing flexible component APIs
 - Reviewing component architecture
 - Working with compound components or context providers
@@ -31,7 +28,7 @@ Reference these guidelines when:
 | 3        | Implementation Patterns | MEDIUM | `patterns-`     |
 | 4        | React 19 APIs           | MEDIUM | `react19-`      |
 
-## Quick Reference
+## 快速参考
 
 ### 1. Component Architecture (HIGH)
 
@@ -81,7 +78,7 @@ Each rule file contains:
 
 For the complete guide with all rules expanded: `AGENTS.md`
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

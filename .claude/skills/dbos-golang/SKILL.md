@@ -6,13 +6,13 @@ source: "https://docs.dbos.dev/"
 date_added: "2026-02-27"
 ---
 
-# DBOS Go Best Practices
+# DBOS Go 最佳实践
 
-Guide for building reliable, fault-tolerant Go applications with DBOS durable workflows.
+使用 DBOS 持久化工作流构建可靠、容错的 Go 应用指南。
 
-## When to Use
-Reference these guidelines when:
-- Adding DBOS to existing Go code
+## 何时使用
+在以下情况下参考这些指南：
+- 将 DBOS 添加到现有 Go 代码中
 - Creating workflows and steps
 - Using queues for concurrency control
 - Implementing workflow communication (events, messages, streams)
@@ -44,7 +44,7 @@ Install the DBOS Go module:
 go get github.com/dbos-inc/dbos-transact-golang/dbos@latest
 ```
 
-### DBOS Configuration and Launch
+### DBOS 配置 and Launch
 
 A DBOS application MUST create a context, register workflows, and launch before running any workflows:
 
@@ -102,12 +102,12 @@ func myWorkflow(ctx dbos.DBOSContext, input string) (string, error) {
 }
 ```
 
-### Key Constraints
+### Key 约束条件
 
-- Do NOT start or enqueue workflows from within steps
-- Do NOT use uncontrolled goroutines to start workflows - use `dbos.RunWorkflow` with queues or `dbos.Go`/`dbos.Select` for concurrent steps
+- 不要 start or enqueue workflows from within steps
+- 不要 use uncontrolled goroutines to start workflows - use `dbos.RunWorkflow` with queues or `dbos.Go`/`dbos.Select` for concurrent steps
 - Workflows MUST be deterministic - non-deterministic operations go in steps
-- Do NOT modify global variables from workflows or steps
+- 不要 modify global variables from workflows or steps
 - All workflows and queues MUST be registered before calling `Launch()`
 
 ## How to Use
@@ -120,12 +120,12 @@ references/workflow-determinism.md
 references/queue-concurrency.md
 ```
 
-## References
+## 参考资料
 
 - https://docs.dbos.dev/
 - https://github.com/dbos-inc/dbos-transact-golang
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

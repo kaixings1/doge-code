@@ -20,7 +20,7 @@ Fix accessibility issues.
   - why it matters (one short sentence)
   - a concrete fix (code-level suggestion)
 
-Do not rewrite large parts of the UI. Prefer minimal, targeted fixes.
+Do not rewrite large parts of the UI. 优先 minimal, targeted fixes.
 
 ## When to Use
 Reference these guidelines when:
@@ -136,7 +136,7 @@ Reference these guidelines when:
 - quote the exact snippet, state the failure, propose a small fix
 - for complex widgets (menu, dialog, combobox), prefer established accessible primitives over custom behavior
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

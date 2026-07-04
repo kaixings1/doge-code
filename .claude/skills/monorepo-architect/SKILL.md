@@ -6,11 +6,11 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Monorepo Architect
+# 单体仓库架构师
 
-Expert in monorepo architecture, build systems, and dependency management at scale. Masters Nx, Turborepo, Bazel, and Lerna for efficient multi-project development. Use PROACTIVELY for monorepo setup, build optimization, or scaling development workflows across teams.
+单体仓库架构、构建系统和依赖管理的规模专家。掌握 Nx、Turborepo、Bazel 和 Lerna，实现高效的多项目开发。在单体仓库设置、构建优化或跨团队扩展开发工作流时主动使用。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to monorepo architect
 - You need a different domain or tool outside this scope
@@ -32,7 +32,7 @@ Expert in monorepo architecture, build systems, and dependency management at sca
 - Code sharing and library extraction
 - Task orchestration and parallelization
 
-## Use this skill when
+## 使用此技能的场景
 
 - Setting up a new monorepo from scratch
 - Migrating from polyrepo to monorepo
@@ -63,7 +63,7 @@ Expert in monorepo architecture, build systems, and dependency management at sca
 - Document the dependency graph
 - Set up code ownership rules
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

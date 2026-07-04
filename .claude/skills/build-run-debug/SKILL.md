@@ -5,13 +5,13 @@ description: 构建、运行和调试macOS应用
 
 # Build / Run / Debug
 
-## Quick Start
+## 快速开始
 
 Use this skill to set up one project-local `script/build_and_run.sh` entrypoint,
 wire `.codex/environments/environment.toml` so the Codex app shows a Run button,
 then use that script as the default build/run path.
 
-Prefer shell-first workflows:
+优先 shell-first workflows:
 
 - `./script/build_and_run.sh` as the single kill + build + run entrypoint once it exists
 - `xcodebuild` for Xcode workspaces or projects
@@ -30,7 +30,7 @@ simulator-specific workflows onto pure macOS tasks.
 
 1. Discover the project shape.
    - Check whether the workspace is already inside a git repo with `git rev-parse --is-inside-work-tree`.
-   - If no git repo is present, run `git init` at the project/workspace root before building so Codex app git-backed features are available. Never run `git init` inside a nested subdirectory when the current workspace already belongs to a parent repo.
+   - If no git repo is present, run `git init` at the project/workspace root before building so Codex app git-backed features are available. 绝不 run `git init` inside a nested subdirectory when the current workspace already belongs to a parent repo.
    - Look for `.xcworkspace`, `.xcodeproj`, and `Package.swift`.
    - If more than one candidate exists, explain the default choice and the ambiguity.
 
@@ -54,7 +54,7 @@ simulator-specific workflows onto pure macOS tasks.
      - `--telemetry` to stream unified logs filtered to the app subsystem/category
      - `--verify` to launch the app and confirm the process exists with `pgrep -x <AppName>`
    - Keep the default no-flag path simple: kill, build, run.
-   - Prefer writing one script that owns this workflow instead of repeatedly asking the agent to manually run `swift build`, locate the artifact, then invoke an ad hoc run command.
+   - 优先 writing one script that owns this workflow instead of repeatedly asking the agent to manually run `swift build`, locate the artifact, then invoke an ad hoc run command.
    - For SwiftPM GUI apps, make the script build the product, create `dist/<AppName>.app`, copy the binary to `Contents/MacOS/<AppName>`, generate a minimal `Contents/Info.plist` with `CFBundlePackageType=APPL`, `CFBundleExecutable`, `CFBundleIdentifier`, `CFBundleName`, `LSMinimumSystemVersion`, and `NSPrincipalClass=NSApplication`, then launch with `/usr/bin/open -n <bundle>`.
    - For SwiftPM GUI `--logs` and `--telemetry`, launch the bundle with `/usr/bin/open -n` first, then stream unified logs with `/usr/bin/log stream --info ...`.
    - Do not recommend direct SwiftPM executable launch for AppKit/SwiftUI GUI apps.
@@ -71,7 +71,7 @@ simulator-specific workflows onto pure macOS tasks.
    - Keep this Codex environment config separate from Swift app source files.
 
 5. Build and run through the script.
-   - Default to `./script/build_and_run.sh`.
+   - 默认 to `./script/build_and_run.sh`.
    - Use `./script/build_and_run.sh --debug`, `--logs`, `--telemetry`, or `--verify` when the user asks for debugger/log/telemetry/process verification support.
 
 6. Summarize failures correctly.
@@ -90,7 +90,7 @@ simulator-specific workflows onto pure macOS tasks.
    - Use the MCP for Xcode-aware discovery or debug/logging workflows when the available tool surface clearly matches the task.
    - Fall back to shell commands immediately when the MCP does not provide a clean macOS path.
 
-## Preferred Commands
+## 优先red Commands
 
 - Project discovery:
   - `find . -name '*.xcworkspace' -o -name '*.xcodeproj' -o -name 'Package.swift'`
@@ -104,13 +104,13 @@ simulator-specific workflows onto pure macOS tasks.
   - `./script/build_and_run.sh --telemetry`
   - `./script/build_and_run.sh --verify`
 
-## References
+## 参考资料
 
 - `references/run-button-bootstrap.md`: canonical `build_and_run.sh` and `.codex/environments/environment.toml` contract.
 
 ## Guardrails
 
-- Prefer the narrowest command that proves or disproves the current theory.
+- 优先 the narrowest command that proves or disproves the current theory.
 - Do not leave the user with a one-off manual command chain once a stable `build_and_run.sh` script can own the workflow.
 - Do not write `.codex/environments/environment.toml` before the run script exists, and do not point the Run action at a stale script path.
 - Do not launch a SwiftUI/AppKit SwiftPM GUI app as a raw executable unless the user explicitly wants to diagnose that failure mode: it can produce no Dock icon, no foreground activation, and missing bundle identifier warnings. Keep raw executable launch only for true command-line tools.

@@ -13,7 +13,7 @@ Automate payment processing operations via Stripe-compatible tooling including m
 
 ---
 
-## Setup
+## 设置
 
 This skill requires the **Rube MCP server** connected at `https://rube.app/mcp`.
 
@@ -34,14 +34,14 @@ Create new customers and retrieve existing customer details.
 - `STRIPE_LIST_CUSTOMERS` -- List customers with pagination
 - `STRIPE_GET_V1_CUSTOMERS_SEARCH_CUSTOMERS` -- Search customers by email, name, metadata
 
-**Key Parameters for `STRIPE_CREATE_CUSTOMER`:**
+**Key 参数 for `STRIPE_CREATE_CUSTOMER`:**
 - `email` -- Customer's primary email address
 - `name` -- Full name or business name
 - `phone` -- Phone number with country code
 - `description` -- Internal reference notes
 - `address` -- Billing address object with `line1`, `city`, `state`, `postal_code`, `country`
 
-**Key Parameters for `STRIPE_GET_V1_CUSTOMERS_SEARCH_CUSTOMERS`:**
+**Key 参数 for `STRIPE_GET_V1_CUSTOMERS_SEARCH_CUSTOMERS`:**
 - `query` (required) -- Stripe Search Query Language. Must use `field:value` syntax:
   - `email:'user@example.com'` -- Exact match (case insensitive)
   - `name~'John'` -- Substring match (min 3 chars)
@@ -77,7 +77,7 @@ Create subscriptions and view customer subscription details.
 - `STRIPE_GET_CUSTOMERS_CUSTOMER_SUBSCRIPTIONS` -- List all subscriptions for a customer
 - `STRIPE_GET_CUSTOMERS_CUSTOMER_SUBS_SUB_EXPOSED_ID` -- Get a specific subscription
 
-**Key Parameters for `STRIPE_CREATE_SUBSCRIPTION`:**
+**Key 参数 for `STRIPE_CREATE_SUBSCRIPTION`:**
 - `customer` (required) -- Customer ID, e.g., `"cus_xxxxxxxxxxxxxx"`
 - `items` (required) -- Array of subscription items, each with:
   - `price` -- Price ID, e.g., `"price_xxxxxxxxxxxxxx"` (use this OR `price_data`)
@@ -88,7 +88,7 @@ Create subscriptions and view customer subscription details.
 - `collection_method` -- `"charge_automatically"` (default) or `"send_invoice"`
 - `cancel_at_period_end` -- Cancel at end of billing period (boolean)
 
-**Key Parameters for `STRIPE_GET_CUSTOMERS_CUSTOMER_SUBSCRIPTIONS`:**
+**Key 参数 for `STRIPE_GET_CUSTOMERS_CUSTOMER_SUBSCRIPTIONS`:**
 - `customer` (required) -- Customer ID
 - `status` -- Filter: `"active"`, `"all"`, `"canceled"`, `"trialing"`, `"past_due"`, etc.
 - `limit` -- Results per page (1--100, default 10)
@@ -104,7 +104,7 @@ Arguments:
 
 ---
 
-### 3. Manage Payment Methods
+### 3. Manage Payment 方法
 
 List and attach payment methods to customers.
 
@@ -112,7 +112,7 @@ List and attach payment methods to customers.
 - `STRIPE_GET_CUSTOMERS_CUSTOMER_PAYMENT_METHODS` -- List a customer's payment methods
 - `STRIPE_ATTACH_PAYMENT_METHOD` -- Attach a payment method to a customer
 
-**Key Parameters for `STRIPE_GET_CUSTOMERS_CUSTOMER_PAYMENT_METHODS`:**
+**Key 参数 for `STRIPE_GET_CUSTOMERS_CUSTOMER_PAYMENT_METHODS`:**
 - `customer` (required) -- Customer ID
 - `type` -- Filter by type: `"card"`, `"sepa_debit"`, `"us_bank_account"`, etc.
 - `limit` -- Results per page (1--100, default 10)
@@ -134,7 +134,7 @@ Retrieve the history of balance changes for a customer.
 
 **Tool:** `STRIPE_GET_CUSTOMERS_CUSTOMER_BALANCE_TRANSACTIONS`
 
-**Key Parameters:**
+**Key 参数:**
 - `customer` (required) -- Customer ID
 - `created` -- Filter by creation date with comparison operators: `{"gte": 1609459200}` or `{"gt": 1609459200, "lt": 1640995200}`
 - `invoice` -- Filter by related invoice ID
@@ -152,7 +152,7 @@ Arguments:
 
 ---
 
-## Known Pitfalls
+## 已知陷阱
 
 | Pitfall | Detail |
 |---------|--------|
@@ -165,7 +165,7 @@ Arguments:
 
 ---
 
-## Quick Reference
+## 快速参考
 
 | Tool Slug | Description |
 |-----------|-------------|

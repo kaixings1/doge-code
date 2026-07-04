@@ -3,7 +3,7 @@ name: 汇总统计
 description: "计算和解释描述性统计：集中趋势、离散度、形状和置信区间。超越 pandas .describe()，提供统计解释和上下文含义。适用于需要数据的全面统计摘要时。"
 ---
 
-# Summary Statistics
+# 总结 Statistics
 
 ## Purpose
 Provide a comprehensive statistical summary with interpretation — not just numbers, but what they mean for your analysis.
@@ -35,7 +35,7 @@ Provide a comprehensive statistical summary with interpretation — not just num
 - Effect sizes between groups (Cohen's d, Cliff's delta)
 - Statistical significance of group differences
 
-## Usage Examples
+## 用法 Examples
 
 ```
 "Calculate summary statistics for the conversion_rate column,

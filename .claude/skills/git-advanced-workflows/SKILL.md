@@ -6,23 +6,23 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Git Advanced Workflows
+# Git 高级工作流
 
-Master advanced Git techniques to maintain clean history, collaborate effectively, and recover from any situation with confidence.
+掌握高级 Git 技术以维护干净的历史、有效协作并有信心从任何情况恢复。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to git advanced workflows
-- You need a different domain or tool outside this scope
+- 任务与 Git 高级工作流无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证。
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Cleaning up commit history before merging
 - Applying specific commits across branches
@@ -414,7 +414,7 @@ git branch recovered-branch abc123
 - **assets/git-aliases.md**: Useful Git aliases for advanced workflows
 - **scripts/git-clean-branches.sh**: Clean up merged and stale branches
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -6,16 +6,16 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Deployment Pipeline Design
+# 部署流水线设计
 
-Architecture patterns for multi-stage CI/CD pipelines with approval gates and deployment strategies.
+具有审批门和部署策略的多阶段 CI/CD 流水线架构模式。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to deployment pipeline design
-- You need a different domain or tool outside this scope
+- 任务与部署流水线设计无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -26,7 +26,7 @@ Architecture patterns for multi-stage CI/CD pipelines with approval gates and de
 
 Design robust, secure deployment pipelines that balance speed with safety through proper stage organization and approval workflows.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Design CI/CD architecture
 - Implement deployment gates
@@ -50,7 +50,7 @@ Design robust, secure deployment pipelines that balance speed with safety throug
 2. **Build** - Compile, package, containerize
 3. **Test** - Unit, integration, security scans
 4. **Staging Deploy** - Deploy to staging environment
-5. **Integration Tests** - E2E, smoke tests
+5. **集成 Tests** - E2E, smoke tests
 6. **Approval Gate** - Manual approval required
 7. **Production Deploy** - Canary, blue-green, rolling
 8. **Verification** - Health checks, monitoring
@@ -114,9 +114,9 @@ stages:
 
 **Reference:** See `assets/approval-gate-template.yml`
 
-## Deployment Strategies
+## 部署 Strategies
 
-### 1. Rolling Deployment
+### 1. Rolling 部署
 
 ```yaml
 apiVersion: apps/v1
@@ -138,7 +138,7 @@ spec:
 - Easy rollback
 - Best for most applications
 
-### 2. Blue-Green Deployment
+### 2. Blue-Green 部署
 
 ```yaml
 # Blue (current)
@@ -160,7 +160,7 @@ kubectl label service my-app version=blue
 - Doubles infrastructure cost temporarily
 - Good for high-risk deployments
 
-### 3. Canary Deployment
+### 3. Canary 部署
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -185,7 +185,7 @@ spec:
 - Gradual traffic shift
 - Risk mitigation
 - Real user testing
-- Requires service mesh or similar
+- 需要 service mesh or similar
 
 ### 4. Feature Flags
 
@@ -287,7 +287,7 @@ jobs:
 4. **Artifact management** - Store build artifacts
 5. **Environment parity** - Keep environments consistent
 6. **Secrets management** - Use secret stores (Vault, etc.)
-7. **Deployment windows** - Schedule deployments appropriately
+7. **部署 windows** - Schedule deployments appropriately
 8. **Monitoring integration** - Track deployment metrics
 9. **Rollback automation** - Auto-rollback on failures
 10. **Documentation** - Document pipeline stages
@@ -338,14 +338,14 @@ kubectl rollout undo deployment/my-app --to-revision=3
 
 ### Key Pipeline Metrics
 
-- **Deployment Frequency** - How often deployments occur
+- **部署 Frequency** - How often deployments occur
 - **Lead Time** - Time from commit to production
 - **Change Failure Rate** - Percentage of failed deployments
 - **Mean Time to Recovery (MTTR)** - Time to recover from failure
 - **Pipeline Success Rate** - Percentage of successful runs
 - **Average Pipeline Duration** - Time to complete pipeline
 
-### Integration with Monitoring
+### 集成 with Monitoring
 
 ```yaml
 - name: Post-deployment verification
@@ -367,13 +367,13 @@ kubectl rollout undo deployment/my-app --to-revision=3
 - `references/pipeline-orchestration.md` - Complex pipeline patterns
 - `assets/approval-gate-template.yml` - Approval workflow templates
 
-## Related Skills
+## 相关 Skills
 
 - `github-actions-templates` - For GitHub Actions implementation
 - `gitlab-ci-patterns` - For GitLab CI implementation
 - `secrets-management` - For secrets handling
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

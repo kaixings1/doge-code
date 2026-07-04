@@ -4,17 +4,17 @@ description: "Deepinit — Deepinit 相关功能和最佳实践"
 level: 4
 ---
 
-# Deep Init Skill
+# Deep Init 技能
 
-Creates comprehensive, hierarchical AGENTS.md documentation across the entire codebase.
+在整个代码库中创建全面的、分层的 AGENTS.md 文档。
 
-## Core Concept
+## 核心概念
 
-AGENTS.md files serve as **AI-readable documentation** that helps agents understand:
-- What each directory contains
-- How components relate to each other
+AGENTS.md 文件作为**AI 可读的文档**，帮助代理理解：
+- 每个目录包含什么
+- 组件之间如何相互关联
 - Special instructions for working in that area
-- Dependencies and relationships
+- 依赖项 and relationships
 
 ## Hierarchical Tagging System
 
@@ -313,7 +313,7 @@ When running on an existing codebase with AGENTS.md files:
 4. Generate diff between existing and current
 5. Apply updates while preserving manual sections
 
-## Performance Considerations
+## 性能 考虑ations
 
 - **Cache directory listings** - Don't re-scan same directories
 - **Batch small directories** - Process multiple at once

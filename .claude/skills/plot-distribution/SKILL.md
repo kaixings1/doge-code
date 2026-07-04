@@ -3,14 +3,26 @@ name: 分布图
 description: "创建分布可视化：直方图、KDE 图、箱线图、小提琴图、ECDF 和脊线图。适用于探索变量分布、比较跨组分布或检查正态性。"
 ---
 
-# Plot Distribution
+# 分布图
 
-## Purpose
-Visualize the distribution of numeric variables using the most appropriate chart type.
+## 用途
+使用最合适的图表类型可视化数值变量的分布。
 
-## How It Works
+## 工作原理
 
-### Chart Types
+### 图表类型
 
-| Chart | Best For | Code Library |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 32 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 图表 | 最佳用途 | 代码库 |
+|------|----------|--------|
+| 直方图 | 显示单个变量的分布形状 | matplotlib/seaborn |
+| KDE 图 | 直方图的平滑版本，更好的分布形状描述 | seaborn |
+| 箱线图 | 比较跨组别的分布（中位数、四分位数、异常值） | matplotlib/seaborn |
+| 小提琴图 | 箱线图 + KDE 的组合 | seaborn |
+| ECDF | 显示经验累积分布，无需分箱 | seaborn/statsmodels |
+| 脊线图 | 在单个面板中比较多个组的分布 | seaborn |
+
+## 输出格式
+
+- **图表代码：** 完整实现的 Python 代码
+- **设计原理：** 为什么选择该图表类型以及进行了哪些自定义
+- **数据要求：** 必要的列和格式

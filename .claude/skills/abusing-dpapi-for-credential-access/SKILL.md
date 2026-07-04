@@ -1,6 +1,6 @@
 ---
 name: abusing-dpapi-for-credential-access
-description: 离线或在线提取受 DPAPI 保护的敏感信息，包括凭据和浏览器数据等。
+description: "离线或在线提取受 DPAPI 保护的敏感信息，包括凭据和浏览器数据等。"
 domain: cybersecurity
 subdomain: red-teaming
 tags:
@@ -22,9 +22,9 @@ mitre_attack:
 ---
 # Abusing DPAPI for Credential Access
 
-> **Legal Notice:** This skill is for authorized penetration testing, red-team engagements, and educational purposes only. Extracting credentials from systems you do not own or lack explicit written authorization to test is illegal and may violate computer fraud and abuse laws. Always operate within a signed rules-of-engagement and document every action.
+> **Legal Notice:** 此技能适用于 authorized penetration testing, red-team engagements, and educational purposes only. Extracting credentials from systems you do not own or lack explicit written authorization to test is illegal and may violate computer fraud and abuse laws. 始终 operate within a signed rules-of-engagement and document every action.
 
-## Overview
+## 概述
 
 The Windows Data Protection API (DPAPI) is the operating system's built-in symmetric-encryption service that applications use to protect secrets at rest: saved RDP and Windows Credential Manager credentials, web and Wi-Fi credentials in the Credential Vault, browser saved logins and cookies (Chrome/Edge), KeePass keys, certificate private keys, and Scheduled Task passwords. DPAPI derives a per-user (or per-machine) **master key** from the user's password (or the machine account secret), and that master key encrypts individual "DPAPI blobs." The encrypted master keys live under `%APPDATA%\Microsoft\Protect\<SID>\` (user) and `%WINDIR%\System32\Microsoft\Protect\` (machine).
 
@@ -44,7 +44,7 @@ The canonical tooling is **SharpDPAPI** (GhostPack, a C# port of Mimikatz DPAPI 
 - When triaging exfiltrated `Credentials`, `Vault`, or `Protect` directories from disk images.
 - During purple-team exercises to validate detection of DPAPI master-key access and LSASS/Protect-folder reads.
 
-## Prerequisites
+## 前提条件
 
 - An authorized foothold (interactive session, beacon, or remote admin) on the target Windows host.
 - Knowledge of the target user's SID, and one of: the user's session, password, NTLM hash, or Domain Admin rights for the backup key.
@@ -75,4 +75,3 @@ pipx install donpapi             # https://github.com/login-securite/DonPAPI
 ## MITRE ATT&CK Mapping
 
 | Technique ID | Name | Tactic | Relevance |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 33 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

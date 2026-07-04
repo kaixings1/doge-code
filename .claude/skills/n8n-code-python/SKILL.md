@@ -5,8 +5,6 @@ risk: unknown
 source: community
 ---
 
-# Python Code Node (Beta)
+# Python 代码节点（Beta）
 
-Expert guidance for writing Python code in n8n Code nodes.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 31 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+为在 n8n 代码节点中编写 Python 代码提供专家指导。
