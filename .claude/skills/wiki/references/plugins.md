@@ -1,18 +1,18 @@
-# Obsidian Setup
+# Obsidian 设置
 
 ---
 
-## Install Obsidian
+## 安装 Obsidian
 
-### Linux (Flatpak: recommended)
+### Linux（Flatpak：推荐）
 
-Check if installed:
+检查是否已安装：
 ```bash
-flatpak list 2>/dev/null | grep -i obsidian && echo "FOUND via flatpak" || \
-which obsidian 2>/dev/null && echo "FOUND in PATH" || echo "NOT FOUND"
+flatpak list 2>/dev/null | grep -i obsidian && echo "已通过 flatpak 找到" || \
+which obsidian 2>/dev/null && echo "已在 PATH 中找到" || echo "未找到"
 ```
 
-Install if not found:
+如果未找到则安装：
 ```bash
 flatpak install flathub md.obsidian.Obsidian
 ```
@@ -20,77 +20,77 @@ flatpak install flathub md.obsidian.Obsidian
 ### macOS
 
 ```bash
-ls /Applications/Obsidian.app 2>/dev/null && echo "FOUND" || brew install --cask obsidian
+ls /Applications/Obsidian.app 2>/dev/null && echo "已找到" || brew install --cask obsidian
 ```
 
 ### Windows
 
 ```powershell
-Test-Path "$env:LOCALAPPDATA\Obsidian" && echo "FOUND" || winget install Obsidian.Obsidian
+Test-Path "$env:LOCALAPPDATA\Obsidian" && echo "已找到" || winget install Obsidian.Obsidian
 ```
 
-### All platforms: direct download
+### 所有平台：直接下载
 
 https://obsidian.md/download
 
 ---
 
-## Open the Vault
+## 打开 Vault
 
-After installing: Obsidian > Manage Vaults > Open Folder as Vault > select your vault directory.
+安装后：Obsidian > 管理 Vault > 将文件夹作为 Vault 打开 > 选择你的 Vault 目录。
 
 ---
 
-## Core Plugins (Built-in: No Install Required)
+## 核心插件（内置：无需安装）
 
-These ship with Obsidian. Enable them in Settings > Core Plugins:
+这些随 Obsidian 一起提供。在设置 > 核心插件中启用：
 
-| Plugin | Purpose |
-|--------|---------|
-| **Bases** | Native database-like views for `.base` files. Powers `wiki/meta/dashboard.base`. Available since Obsidian v1.9.10 (August 2025). **Replaces Dataview for most wiki use cases.** |
-| **Properties** | Visual frontmatter editor. Always enabled. |
-| **Backlinks** | Outgoing/incoming links pane. |
-| **Outline** | Document heading navigation. |
+| 插件 | 用途 |
+|------|------|
+| **Bases** | `.base` 文件的原生类数据库视图。驱动 `wiki/meta/dashboard.base`。自 Obsidian v1.9.10（2025 年 8 月）起可用。**对于大多数 Wiki 用例，可替代 Dataview。** |
+| **Properties** | 可视化前置元数据编辑器。始终启用。 |
+| **Backlinks** | 出站/入站链接面板。 |
+| **Outline** | 文档标题导航。 |
 
-## Recommended Community Plugins
+## 推荐的社区插件
 
-Install via Settings > Community Plugins > Turn off Restricted Mode > Browse.
+通过设置 > 第三方插件 > 关闭安全模式 > 浏览安装。
 
-| Plugin | Purpose |
-|--------|---------|
-| **Templater** | Auto-populate frontmatter on note creation from `_templates/`. |
-| **Obsidian Git** | Auto-commit every 15 minutes. Protects against bad writes. |
-| **Calendar** | Right-sidebar calendar with word count, task, and link indicators. Pre-installed in this vault via `.obsidian/plugins/calendar/`. |
-| **Thino** | Quick memo capture panel in right sidebar. Pre-installed via `.obsidian/plugins/thino/`. |
-| **Iconize** | Visual folder icons for navigation. |
-| **Minimal Theme** | Best dark theme for dense information display. |
-| **Dataview** *(optional/legacy)* | Only needed if you're on Obsidian < 1.9.10 or want to use the legacy `dashboard.md` queries. The primary dashboard now uses Bases. |
+| 插件 | 用途 |
+|------|------|
+| **Templater** | 从 `_templates/` 创建笔记时自动填充前置元数据。 |
+| **Obsidian Git** | 每 15 分钟自动提交。防止错误写入。 |
+| **Calendar** | 右侧边栏日历，含字数、任务和链接指示器。通过 `.obsidian/plugins/calendar/` 预安装在此 Vault 中。 |
+| **Thino** | 右侧边栏快速备忘录捕获面板。通过 `.obsidian/plugins/thino/` 预安装。 |
+| **Iconize** | 导航的可视化文件夹图标。 |
+| **Minimal Theme** | 适合密集信息显示的最佳暗色主题。 |
+| **Dataview** *（可选/旧版）* | 仅当你使用 Obsidian < 1.9.10 或想使用旧版 `dashboard.md` 查询时才需要。主仪表板现在使用 Bases。 |
 
-**Calendar and Thino are pre-installed**. They ship with this vault. Enable them in Settings → Community Plugins → toggle on. No download needed.
+**Calendar 和 Thino 已预安装**。它们随此 Vault 一起提供。在设置 → 第三方插件中启用开关即可。无需下载。
 
-If installing in a different vault: download `main.js` + `manifest.json` from their GitHub releases into `.obsidian/plugins/calendar/` and `.obsidian/plugins/thino/` respectively.
+如果在其他 Vault 中安装：从其 GitHub 发布版本下载 `main.js` + `manifest.json`，分别放入 `.obsidian/plugins/calendar/` 和 `.obsidian/plugins/thino/`。
 
-Optional additions:
-- **Smart Connections**: semantic search across all notes
-- **QuickAdd**: macros for fast note creation
-- **Folder Notes**: click a folder to open an overview note
+可选附加：
+- **Smart Connections**：跨所有笔记的语义搜索
+- **QuickAdd**：快速创建笔记的宏
+- **Folder Notes**：点击文件夹打开概览笔记
 
 ---
 
 ## Web Clipper
 
-The Obsidian Web Clipper browser extension converts web articles to markdown and sends them to `.raw/` in one click.
+Obsidian Web Clipper 浏览器扩展可将网页文章转换为 Markdown，一键发送到 `.raw/`。
 
-Install for Chrome, Firefox, or Safari from the Obsidian website.
+从 Obsidian 网站为 Chrome、Firefox 或 Safari 安装。
 
-Set the default folder to `.raw/` in the extension settings.
+在扩展设置中将默认文件夹设置为 `.raw/`。
 
 ---
 
-## After Installing Plugins
+## 安装插件后
 
-1. Enable Bases: Settings > Core Plugins > toggle on (already on by default in Obsidian v1.9.10+)
-2. Enable Templater: Settings > Templater > set template folder to `_templates`
-3. Enable Obsidian Git: Settings > Obsidian Git > Auto backup interval: 15 minutes
-4. Enable the CSS snippet: Settings > Appearance > CSS Snippets > toggle on `vault-colors`
-5. *(Optional)* Enable Dataview only if you want the legacy `wiki/meta/dashboard.md` queries to work alongside the primary `dashboard.base`
+1. 启用 Bases：设置 > 核心插件 > 开启开关（Obsidian v1.9.10+ 上默认已开启）
+2. 启用 Templater：设置 > Templater > 将模板文件夹设置为 `_templates`
+3. 启用 Obsidian Git：设置 > Obsidian Git > 自动备份间隔：15 分钟
+4. 启用 CSS 代码片段：设置 > 外观 > CSS 代码片段 > 开启 `vault-colors`
+5. *（可选）* 仅当你想让旧版 `wiki/meta/dashboard.md` 查询与主 `dashboard.base` 一起工作时才启用 Dataview

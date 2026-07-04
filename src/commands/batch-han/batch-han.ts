@@ -80,18 +80,18 @@ function appendLog(logFile: string, message: string): void {
 
 // 专门针对 UI 字符串的翻译（仅在引号中的字符串替换）
 const UI_TRANSLATIONS: Record<string, string> = {
-  'Excluded Commands': '排除的命令',
-  'Filesystem': '文件系统',
-  'Network': '网络',
-  'Unix Sockets': 'Unix 套接字',
-  'seatbelt built-in': 'seatbelt 内置',
-  'Your bash commands will be sandboxed': '您的 bash 命令将在沙箱中执行',
-  'Learn more': '了解更多',
-  'Also requested': '也已请求',
-  'Hooks Restricted by Policy': '受策略限制的钩子',
-  'Binary file': '二进制文件',
-  'Large file diff': '大文件差异',
-  'External imports': '外部导入',
+  '排除的命令': '排除的命令',
+  '文件系统': '文件系统',
+  '网络': '网络',
+  'Unix 套接字': 'Unix 套接字',
+  'seatbelt 内置': 'seatbelt 内置',
+  '您的 bash 命令将在沙箱中执行': '您的 bash 命令将在沙箱中执行',
+  '了解更多': '了解更多',
+  '也已请求': '也已请求',
+  '受策略限制的钩子': '受策略限制的钩子',
+  '二进制文件': '二进制文件',
+  '大文件差异': '大文件差异',
+  '外部导入': '外部导入',
 }
 
 function localizeStrings(content: string): string {
@@ -174,8 +174,34 @@ function isRunning(pidFile: string): boolean {
   }
 }
 
+function showHelp(): string {
+  return `📖 batch-han 使用说明
+
+用法:
+  /batch-han                   扫描 <src> 目录下的 .ts/.tsx 文件进行汉化
+  /batch-han <目录路径>         扫描指定目录进行汉化
+  /batch-han --status          查看当前执行状态
+  /batch-han -c <并发数>       设置并发数
+
+示例:
+  /batch-han d:/doge-code/.claude/skills   汉化 skills 目录
+  /batch-han .                              汉化当前目录
+  /batch-han --status                       查看进度
+
+说明:
+  - 日志文件 (.batch-han-log.txt) 和进度文件 (.batch-progress.json)
+    会存放在目标目录下
+  - 跳过 node_modules、.git、dist、build、.doge 目录
+  - 支持断点续传：处理过的文件不会重复处理`
+}
+
 export const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult> => {
   const parts = args.trim().split(/\s+/).filter(Boolean)
+
+  // ❗ 空参数 → 显示帮助
+  if (parts.length === 0) {
+    return { type: 'text', value: showHelp() }
+  }
 
   // 状态查询模式
   if (parts.length === 1 && (parts[0] === '--status' || parts[0] === '-s')) {
@@ -200,6 +226,11 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
     }
   }
 
+  // ❗ 帮助模式
+  if (parts[0] === '--help' || parts[0] === '-h') {
+    return { type: 'text', value: showHelp() }
+  }
+
   let targetDir = DEFAULT_DIR
   let concurrency = CONCURRENCY
 
@@ -209,7 +240,11 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
       if (isNaN(concurrency) || concurrency < 1) concurrency = CONCURRENCY
       i++
     } else if (!parts[i].startsWith('-')) {
-      targetDir = parts[i]
+      // ❗ 兼容中文"汉化"前缀：去掉开头的中文"汉化"文字
+      let cleaned = parts[i]
+      // 去掉开头的中文字符前缀（如"汉化"）
+      cleaned = cleaned.replace(/^[一-龥]+/, '')
+      targetDir = cleaned
     }
   }
 
@@ -219,7 +254,7 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
   const pidFile = path.join(absTargetDir, PID_FILE)
 
   if (!fs.existsSync(absTargetDir)) {
-    return { type: 'text', value: '错误：未找到目录：' + absTargetDir }
+    return { type: 'text', value: '错误：未找到目录：' + absTargetDir + '\n' + showHelp() }
   }
 
   // 检查是否已有实例在运行
