@@ -20,7 +20,7 @@ Client library for running large-scale parallel and high-performance computing (
 </dependency>
 ```
 
-## Prerequisites
+## 前提条件
 
 - Azure Batch account
 - Pool configured with compute nodes
@@ -382,7 +382,7 @@ try {
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

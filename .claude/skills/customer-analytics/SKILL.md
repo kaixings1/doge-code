@@ -2,44 +2,44 @@
 name: 客户分析
 description: "客户分析：客户生命周期价值 (CLV)、流失预测、RFM 细分、客户健康评分和 NPS 分析。适用于了解客户价值、预测流失或细分客户。"
 ---
-# Customer Analytics
+# 客户分析
 
-## Purpose
-Understand customer value, predict churn risk, and segment customers for targeted actions.
+## 目的
+理解客户价值，预测流失风险，并对客户进行细分以采取针对性行动。
 
-## How It Works
+## 工作原理
 
-### Customer Lifetime Value (CLV)
-- **Historical CLV**: Sum of past revenue per customer
-- **Predictive CLV**: BG/NBD + Gamma-Gamma model (probabilistic)
-- **Simple CLV**: ARPU × Average Lifespan × Gross Margin
+### 客户生命周期价值 (CLV)
+- **历史 CLV**：每位客户的历史收入总和
+- **预测 CLV**：BG/NBD + Gamma-Gamma 模型（概率方法）
+- **简易 CLV**：ARPU × 平均生命周期 × 毛利率
 
-### RFM Segmentation
-- **Recency**: Days since last purchase/activity
-- **Frequency**: Number of purchases/sessions
-- **Monetary**: Total spend or value generated
-- Score each 1-5, create segments (Champions, At Risk, Lost, etc.)
+### RFM 细分
+- **近度 (Recency)**：距上次购买/活动的天数
+- **频度 (Frequency)**：购买/会话次数
+- **金额 (Monetary)**：总消费或产生的价值
+- 按 1-5 分评分，创建细分群体（冠军客户、风险客户、流失客户等）
 
-### Churn Prediction
-- Define churn (no activity in X days, subscription cancelled)
-- Feature engineering from behavioral data
-- Train classifier (XGBoost, logistic regression)
-- Create risk tiers for proactive intervention
+### 流失预测
+- 定义流失（X 天内无活动、订阅已取消）
+- 从行为数据中进行特征工程
+- 训练分类器（XGBoost、逻辑回归）
+- 创建风险等级以进行主动干预
 
-### Customer Health Score
-- Composite metric: usage + satisfaction + support + value
-- Weight by importance, normalize 0-100
-- Set thresholds: healthy / at-risk / critical
+### 客户健康评分
+- 综合指标：使用量 + 满意度 + 支持 + 价值
+- 按重要性加权，归一化至 0-100
+- 设置阈值：健康 / 有风险 / 严重
 
-## Usage Examples
+## 使用示例
 
 ```
-"Calculate CLV and segment our customers using RFM analysis"
+"计算 CLV 并使用 RFM 分析对我们的客户进行细分"
 ```
 
-## Output Format
+## 输出格式
 
-- **CLV Estimates**: Per customer and per segment
-- **RFM Segments**: Labeled segments with profiles
-- **Churn Risk**: Scored customers with risk tiers
-- **Python Code**: lifetimes / sklearn implementation
+- **CLV 估算**：按客户和按细分群体
+- **RFM 细分**：带画像的标签化细分群体
+- **流失风险**：带风险等级的客户评分
+- **Python 代码**：lifetimes / sklearn 实现

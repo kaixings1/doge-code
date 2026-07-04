@@ -1,1 +1,13 @@
----/nname: humanlayer-approval/ndescription: humanlayer-approval/n---/n/n# humanlayer-approval/n/nHumanLayer 人工审批 — AI 操作需要人工确认时的网关模式、超时处理、审批链/n
+---
+name: humanlayer-approval
+description: "HumanLayer 审批 — AI 工作流中的人工审批"
+risk: safe
+source: community
+---
+# HumanLayer 审批
+AI 工作流中的人工审批集成。
+## 功能
+- 审批请求
+- 审批跟踪
+- 通知管理
+## 限制

@@ -1,7 +1,6 @@
 ---
 name: screenshot
-description: "Screenshot — Screenshot 相关功能和最佳实践"
-  Capture desktop, app windows, or pixel regions across OS platforms. Useful for marketing screenshots, design reviews, and bug reports.
+description: "Screenshot — 跨平台捕获桌面、应用窗口或像素区域相关功能和最佳实践。适用于营销截屏、设计审查和错误报告。"
 triggers:
   - "screenshot"
   - "capture screen"
@@ -15,28 +14,24 @@ od:
 
 # screenshot
 
-> Curated from OpenAI's skills repository.
+> 来自 OpenAI 技能仓库的策选集。
 
-## What it does
+## 功能
 
-Capture desktop, app windows, or pixel regions across OS platforms. Useful for marketing screenshots, design reviews, and bug reports.
+跨平台捕获桌面、应用窗口或像素区域。适用于营销截屏、设计审查和错误报告。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/openai/skills
-- Category: `screenshots`
+- 上游：https://github.com/openai/skills
+- 类别：`screenshots`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在开放设计中宣传该技能，以便代理在规划时发现它。要运行包含原始资产、脚本和引用的完整上游工作流，请将上游包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README 获取确切路径
 open https://github.com/openai/skills
 ```
 
-Then ask the agent to invoke this skill by name (`screenshot`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后让代理通过名称（`screenshot`）或此技能 frontmatter 中列出的触发短语之一来调用此技能。

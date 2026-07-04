@@ -12,7 +12,7 @@ To access Anthropic's official brand identity and style resources, use this skil
 
 **Keywords**: branding, corporate identity, visual identity, post-processing, styling, brand colors, typography, Anthropic brand, visual formatting, visual design
 
-## Brand Guidelines
+## /u54c1/u724c/u6307/u5357
 
 ### Colors
 

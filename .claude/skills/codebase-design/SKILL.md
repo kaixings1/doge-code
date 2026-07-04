@@ -20,9 +20,9 @@ tools:
   - cursor
 ---
 
-# Codebase Design
+# 代码库设计
 
-## When to Use
+## 何时使用
 
 Use when this workflow matches the user request: Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.
 
@@ -138,8 +138,8 @@ Good interfaces make testing natural:
 - **Exploring alternative interfaces** — see [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md): spin up parallel sub-agents to design the interface several radically different ways, then compare on depth, locality, and seam placement.
 
 
-## Limitations
+## 限制
 
-- Requires the upstream tool, account, API key, or local setup when the workflow names one.
+- 需要 the upstream tool, account, API key, or local setup when the workflow names one.
 - Does not authorize destructive, production, paid, or external-message actions without explicit user approval.
 - Validate generated artifacts or recommendations against the user's real sources before treating them as final.

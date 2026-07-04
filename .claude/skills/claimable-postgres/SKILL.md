@@ -7,9 +7,9 @@ source: community
 
 # Claimable Postgres
 
-Instant Postgres databases for local development, demos, prototyping, and test environments. No account required. Databases expire after 72 hours unless claimed to a Neon account.
+用于本地开发、演示、原型设计和测试环境的即时 Postgres 数据库。无需账户。除非声明到 Neon 账户，否则数据库在 72 小时后过期。
 
-## Quick Start
+## 快速开始
 
 ```bash
 curl -s -X POST "https://pg.new/api/v1/database" \
@@ -17,11 +17,11 @@ curl -s -X POST "https://pg.new/api/v1/database" \
   -d '{"ref": "agent-skills"}'
 ```
 
-Parse `connection_string` and `claim_url` from the JSON response. Write `connection_string` to the project's `.env` as `DATABASE_URL`.
+从 JSON 响应中解析 `connection_string` 和 `claim_url`。将 `connection_string` 作为 `DATABASE_URL` 写入项目的 `.env`。
 
-For other methods (CLI, SDK, Vite plugin), see [Which Method?](#which-method) below.
+对于其他方法（CLI、SDK、Vite 插件），请参阅下面的[哪个方法？](#哪个方法)。
 
-## Which Method?
+## 哪个方法？
 
 - **REST API**: Returns structured JSON. No runtime dependency beyond `curl`. Preferred when the agent needs predictable output and error handling.
 - **CLI** (`npx get-db@latest --yes`): Provisions and writes `.env` in one command. Convenient when Node.js is available and the user wants a simple setup.
@@ -221,7 +221,7 @@ If the agent needs a database to fulfill a task (e.g. "build me a todo app with 
 ## When to Use
 Use this skill when tackling tasks related to its primary domain or functionality as described above.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

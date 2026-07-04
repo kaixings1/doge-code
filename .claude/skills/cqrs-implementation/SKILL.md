@@ -6,20 +6,20 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# CQRS Implementation
+# CQRS 实现
 
-Comprehensive guide to implementing CQRS (Command Query Responsibility Segregation) patterns.
+实现 CQRS（命令查询职责分离）模式的全面指南。
 
-## Use this skill when
+## 使用此技能的场景
 
-- Separating read and write concerns
-- Scaling reads independently from writes
-- Building event-sourced systems
-- Optimizing complex query scenarios
-- Different read/write data models are needed
-- High-performance reporting is required
+- 分离读和写关注点
+- 独立于写入扩展读取
+- 构建事件溯源系统
+- 优化复杂查询场景
+- 需要不同的读/写数据模型
+- 需要高性能报告
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The domain is simple and CRUD is sufficient
 - You cannot operate separate read/write models
@@ -37,7 +37,7 @@ Comprehensive guide to implementing CQRS (Command Query Responsibility Segregati
 
 - `resources/implementation-playbook.md` for detailed CQRS patterns and templates.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

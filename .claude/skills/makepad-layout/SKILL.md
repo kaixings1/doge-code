@@ -10,40 +10,40 @@ risk: safe
 source: community
 ---
 
-# Makepad Layout Skill
+# Makepad 布局技能
 
-> **Version:** makepad-widgets (dev branch) | **Last Updated:** 2026-01-19
+> **版本：** makepad-widgets（dev 分支）| **最后更新：** 2026-01-19
 >
-> Check for updates: https://crates.io/crates/makepad-widgets
+> 检查更新：https://crates.io/crates/makepad-widgets
 
-You are an expert at Makepad layout system. Help users by:
-- **Writing code**: Generate layout code following the patterns below
-- **Answering questions**: Explain layout concepts, sizing, flow directions
+您是 Makepad 布局系统方面的专家。通过以下方式帮助用户：
+- **编写代码**：按照下面的模式生成布局代码
+- **回答问题**：解释布局概念、尺寸调整、流向方向
 
-## When to Use
-- You need to size, align, or position widgets in a Makepad UI.
-- The task involves `Walk`, `Align`, `Fit`, `Fill`, padding, spacing, or container flow configuration.
-- You want Makepad-specific layout solutions for centering, responsiveness, or composition.
+## 使用时机
+- 您需要在 Makepad UI 中调整大小、对齐或定位微件。
+- 任务涉及 `Walk`、`Align`、`Fit`、`Fill`、内边距、间距或容器流向配置。
+- 您需要 Makepad 特定的布局解决方案来实现居中、响应式或组合布局。
 
-## Documentation
+## 文档
 
-Refer to the local files for detailed documentation:
-- `./references/layout-system.md` - Complete layout reference
-- `./references/core-types.md` - Walk, Align, Margin, Padding types
+有关详细文档，请参考本地文件：
+- `./references/layout-system.md` - 完整的布局参考
+- `./references/core-types.md` - Walk、Align、Margin、Padding 类型
 
-## IMPORTANT: Documentation Completeness Check
+## 重要提示：文档完整性检查
 
-**Before answering questions, Claude MUST:**
+**在回答问题之前，Claude 必须：**
 
-1. Read the relevant reference file(s) listed above
-2. If file read fails or file is empty:
-   - Inform user: "本地文档不完整，建议运行 `/sync-crate-skills makepad --force` 更新文档"
-   - Still answer based on SKILL.md patterns + built-in knowledge
-3. If reference file exists, incorporate its content into the answer
+1. 阅读上面列出的相关参考文件
+2. 如果文件读取失败或文件为空：
+   - 告知用户："本地文档不完整，建议运行 `/sync-crate-skills makepad --force` 更新文档"
+   - 仍基于 SKILL.md 模式 + 内置知识进行回答
+3. 如果参考文件存在，将其内容纳入答案
 
-## Key Patterns
+## 关键模式
 
-### 1. Basic Layout Container
+### 1. 基本布局容器
 
 ```rust
 <View> {
@@ -58,7 +58,7 @@ Refer to the local files for detailed documentation:
 }
 ```
 
-### 2. Centering Content
+### 2. 居中内容
 
 ```rust
 <View> {
@@ -70,7 +70,7 @@ Refer to the local files for detailed documentation:
 }
 ```
 
-### 3. Horizontal Row Layout
+### 3. 水平行布局
 
 ```rust
 <View> {
@@ -78,15 +78,15 @@ Refer to the local files for detailed documentation:
     height: Fit
     flow: Right
     spacing: 10.0
-    align: { y: 0.5 }  // Vertically center items
+    align: { y: 0.5 }  // 垂直居中项目
 
     <Button> { text: "Left" }
-    <View> { width: Fill }  // Spacer
+    <View> { width: Fill }  // 弹性间距
     <Button> { text: "Right" }
 }
 ```
 
-### 4. Fixed + Flexible Layout
+### 4. 固定 + 弹性布局
 
 ```rust
 <View> {
@@ -94,21 +94,21 @@ Refer to the local files for detailed documentation:
     height: Fill
     flow: Down
 
-    // Fixed header
+    // 固定头部
     <View> {
         width: Fill
         height: 60.0
     }
 
-    // Flexible content
+    // 弹性内容
     <View> {
         width: Fill
-        height: Fill  // Takes remaining space
+        height: Fill  // 占据剩余空间
     }
 }
 ```
 
-## Layout Properties Reference
+## 布局属性参考
 
-| Property | Type | Description |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 18 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 属性 | 类型 | 描述 |
+|------|------|------|

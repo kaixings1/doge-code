@@ -1,13 +1,6 @@
 ---
 name: seo-geo
-description: "Seo Geo — Seo Geo 相关功能和最佳实践"
-  Optimize content for AI Overviews (formerly SGE), ChatGPT web search,
-  Perplexity, and other AI-powered search experiences. Generative Engine
-  Optimization (GEO) analysis including brand mention signals, AI crawler
-  accessibility, llms.txt compliance, passage-level citability scoring, and
-  platform-specific optimization. Use when user says "AI Overviews", "SGE",
-  "GEO", "AI search", "LLM optimization", "Perplexity", "AI citations",
-  "ChatGPT search", or "AI visibility".
+description: "Seo Geo — AI 搜索/GEO 优化相关功能和最佳实践：优化内容以适应 AI Overviews、ChatGPT 搜索、Perplexity 等 AI 驱动搜索体验。"
 user-invocable: true
 argument-hint: "[url]"
 license: MIT
@@ -17,7 +10,7 @@ metadata:
   category: seo
 ---
 
-# AI Search / GEO Optimization (May 2026)
+# AI 搜索 / GEO 优化（2026 年 5 月）
 
 ## Primary Source: Google's AI Optimization Guide
 

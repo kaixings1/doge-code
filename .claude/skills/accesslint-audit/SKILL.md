@@ -111,7 +111,7 @@ date_added: "2026-06-02"
 
 每个循环：使用的流程、按影响分列的违规、已应用的内容（文件 + 规则）、推迟的内容（`TODO` + 原因）、最终 diff。
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

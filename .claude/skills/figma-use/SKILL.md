@@ -1,7 +1,7 @@
 ---
 name: figma-use
 description: "Figma Use — Figma Use 相关功能和最佳实践"
-  Run Figma Plugin API scripts for canvas writes, inspections, variables, and design-system work. Prerequisite for every other Figma skill in this catalogue.
+  运行 Figma 插件 API 脚本进行画布写入、检查、变量和设计系统工作。是本目录中所有其他 Figma 技能的先决条件。
 triggers:
   - "figma use"
   - "figma plugin api"
@@ -15,28 +15,24 @@ od:
 
 # figma-use
 
-> Curated from Figma's MCP server guide.
+> 整理自 Figma 的 MCP 服务器指南。
 
-## What it does
+## 功能说明
 
-Run Figma Plugin API scripts for canvas writes, inspections, variables, and design-system work. Prerequisite for every other Figma skill in this catalogue.
+运行 Figma 插件 API 脚本进行画布写入、检查、变量和设计系统工作。是本目录中所有其他 Figma 技能的先决条件。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/figma/skills
-- Category: `figma`
+- 上游：https://github.com/figma/skills
+- 分类：`figma`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录项在 Open Design 中宣传技能，以便代理在规划期间发现它。要运行包含原始资源、脚本和参考的完整上游工作流，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 检查上游 README 获取确切路径
 open https://github.com/figma/skills
 ```
 
-Then ask the agent to invoke this skill by name (`figma-use`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后让代理通过技能名称（`figma-use`）或此技能 frontmatter 中列出的触发短语之一来调用此技能。

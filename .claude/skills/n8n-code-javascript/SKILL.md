@@ -1,12 +1,10 @@
 ---
 name: n8n-code-javascript
-description: "N8N Code Javascript — N8N Code Javascript 相关功能和最佳实践"
+description: "N8N Code JavaScript — N8N Code JavaScript 相关功能和最佳实践"
 risk: unknown
 source: community
 ---
 
-# JavaScript Code Node
+# JavaScript 代码节点
 
-Expert guidance for writing JavaScript code in n8n Code nodes.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 32 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+为在 n8n 代码节点中编写 JavaScript 代码提供专家指导。

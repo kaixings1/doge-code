@@ -1,6 +1,6 @@
 ---
 name: crossframe-org
-description: "适用于crossframe suite routes explicit chinese analysis of teams, projects, organizations, responsibility chains, feedback write-back, repair, or retrospectives.的情况。"
+description: "适用于 CrossFrame Suite 路由到中文团队、项目、组织分析、责任链、反馈写回、修复或复盘回顾的场景。"
 category: business
 risk: safe
 source: community
@@ -23,23 +23,21 @@ tags:
 ---
 # CrossFrame Org
 
+## 何时使用此技能
 
+- 当 `crossframe-suite` 将显式 CrossFrame 任务路由到关于团队、项目、组织、责任链、授权链、反馈写回、复盘回顾或修复时使用。
+- 当组织失败需要机制候选而非人格判断时使用。
+- 除非用户显式命名此同级技能，否则不要独立使用。
 
-## When to Use This Skill
+## 打包来源说明
 
-- Use when `crossframe-suite` routes an explicit CrossFrame task about teams, projects, organizations, responsibility chains, authority chains, feedback write-back, retrospectives, or repair.
-- Use when an organizational failure needs mechanism candidates rather than personality judgment.
-- Do not use independently unless the user explicitly names this sibling skill.
+这份 AAS 就绪副本保留了以下原始 CrossFrame 技能正文。中文仍然是权威语义层；英文元数据仅用于发现、安装和仓库审查。
 
-## Packaged Source Note
+## 限制
 
-This AAS-ready copy preserves the original CrossFrame skill body below. Chinese remains the canonical semantic layer; English metadata is only for discovery, installation, and repository review.
-
-## Limitations
-
-- The skill body is intentionally Chinese-canonical; English metadata is for discovery and does not replace the original Chinese terms.
-- Use only after explicit CrossFrame invocation or `crossframe-suite` routing; do not apply it as a generic default reasoning layer.
-- It structures analysis, drafting, and review, but does not replace source verification, domain expertise, or legal, medical, or financial judgment.
+- 技能正文有意以中文为规范；英文元数据仅用于发现，不替代原始中文术语。
+- 仅在显式 CrossFrame 调用或 `crossframe-suite` 路由后使用；不要将其应用为通用默认推理层。
+- 它结构化分析、底稿和审查，但不替代来源验证、领域专业知识或法律、医疗、财务判断。
 
 > **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 

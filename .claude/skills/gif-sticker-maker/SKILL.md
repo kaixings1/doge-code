@@ -1,7 +1,7 @@
 ---
 name: gif-sticker-maker
 description: "Gif Sticker Maker — Gif Sticker Maker 相关功能和最佳实践"
-  Convert photos into animated GIF stickers in Funko Pop / Pop Mart style via the MiniMax API. Useful for personalized chat stickers and avatar packs.
+  通过 MiniMax API 将照片转换为 Funko Pop / Pop Mart 风格的动画 GIF 贴纸。适用于个性化聊天贴纸和头像包。
 triggers:
   - "gif sticker"
   - "funko sticker"
@@ -14,20 +14,20 @@ od:
   upstream: "https://github.com/MiniMax-AI/skills"
 ---
 
-# gif-sticker-maker
+# GIF 贴纸制作器
 
 > Curated from MiniMax AI team.
 
-## What it does
+## 功能
 
-Convert photos into animated GIF stickers in Funko Pop / Pop Mart style via the MiniMax API. Useful for personalized chat stickers and avatar packs.
+通过 MiniMax API 将照片转换为 Funko Pop / Pop Mart 风格的动画 GIF 贴纸。适用于个性化聊天贴纸和头像包。
 
-## Source
+## 来源
 
 - Upstream: https://github.com/MiniMax-AI/skills
 - Category: `image-generation`
 
-## How to use
+## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
 discovers it during planning. To run the full upstream workflow with

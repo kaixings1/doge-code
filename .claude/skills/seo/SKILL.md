@@ -10,18 +10,14 @@ metadata:
   category: seo
 ---
 
-# SEO: Universal SEO Analysis Skill
+# SEO：通用 SEO 分析技能
 
-**Invocation:** `/seo $1 $2` where `$1` is the command and `$2` is the URL or argument.
+**调用：** `/seo $1 $2`，其中 `$1` 是命令，`$2` 是 URL 或参数。
 
-**Scripts:** Located at the plugin root `scripts/` directory.
+**脚本：** 位于插件根目录的 `scripts/` 目录。
 
-Comprehensive SEO analysis across all industries (SaaS, local services,
-e-commerce, publishers, agencies). Orchestrates 24 sub-skills (21 core + 1 framework
-integration + 2 extension mirrors) and 18 sub-agents. A separate optional Firecrawl
-extension is also installable (see "Optional Extensions" below).
+涵盖所有行业（SaaS、本地服务、电商、发布商、机构）的全面 SEO 分析。编排 24 个子技能（21 个核心 + 1 个框架集成 + 2 个扩展镜像）和 18 个子代理。另可安装可选的 Firecrawl 扩展（见下方"可选扩展"）。
 
-## Quick Reference
+## 快速参考
 
-| Command | What it does |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 57 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 命令 | 功能 |

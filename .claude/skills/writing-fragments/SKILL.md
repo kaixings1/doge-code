@@ -1,52 +1,14 @@
 ---
-name: writing-fragments
-description: 写作，探索阶段——挖掘原始片段，尚未形成结构。
+name: 写作片段
+description: "写作探索阶段——挖掘原始素材片段，尚未形成结构。通过访谈式对话收集素材，存入 Markdown 文件。"
 disable-model-invocation: true
----
-
-<what-to-do>
-
-This is pure **explore**: widen the space of what could be written without committing to structure — committing is _exploit_, a separate skill's job. Run a grilling session that produces fragments, interviewing the user relentlessly about whatever they want to write about. Imposing phases, outlines, or article structure is out of scope here.
-
-As fragments emerge from either side of the conversation, append them to a single markdown file.
-
-If the user did not pass a path, ask once where to save the document, then remember it for the rest of the session.
-
-Capture fragments from the very first thing the user says, including the initial prompt.
-
-On first write, put a single H1 at the top with a working title (it can change later) and nothing else — no metadata, no TOC, no date.
-
-</what-to-do>
-
-<supporting-info>
-
-## What is a fragment
-
-A fragment is any piece of text that might survive into the final article. It must be _readable by the author_ — the author can tell what it means — but it does not need to define its terms or be comprehensible to a cold reader. The bar is "is this a piece of good writing?", not "is this a self-contained argument?"
-
-Fragments are deliberately heterogeneous. Examples of what could be a fragment:
-
-- A sharp sentence you'd want to deploy somewhere but don't yet know where.
-- A claim with a one-line justification.
-- A vignette: a thing that happened, a code snippet, a scenario, an analogy.
-- A half-thought: "something about how X feels like Y, work this out later."
-- A quote, a piece of dialogue, an overheard line.
-- A list of related observations that hang together by feel.
-- A complaint, a confession, a punchline.
-- A **leading word** — a compact metaphor or coinage the whole piece can hang on (one term that names the idea, the way _tracer bullets_ or _fog of war_ names a whole pattern).
-
-Of these, the leading word is the most valuable fragment to land. It is load-bearing: name the right one in explore and it shapes the structure, the transitions, and the title later — paying dividends through the entire exploit phase. When the conversation circles a recurring idea, push to coin a word for it.
-
-The novelist's diary is the model: years of unstructured noticings that later get mined for raw material. Fragments are noticings.
-
-## File format
-
-```markdown
-# Working title
-
-A first fragment lives here.
-
-It can be multiple paragraphs. It can include lists, code, quotes — whatever
-shape the fragment naturally takes.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 34 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+triggers: - "writing-fragments" - "写作片段" - "片段挖掘" - "素材探索" - "创意探索"
+--- <what-to-do> 这是纯粹的 **探索（explore）**：在探索阶段尽可能拓宽写作空间，不承诺特定结构——承诺结构是 **利用（exploit）**，由其他技能负责。通过与用户访谈式对话挖掘原始片段， relentless 追问用户想写什么。在此阶段不引入固定大纲、章节结构或成文框架。 当任何一方（用户或模型）产生片段时，将所有片段追加到同一个 Markdown 文件。如果用户起始时直接给出了内容，也将其以片段形式记录。 如果用户未指定保存路径，在第一次写入前询问一次，然后记住该路径用于整个会话。 从用户说的第一句话开始就捕捉片段，包括初始提示。 首次写入文件时：只在顶部放置一个 H1 标题和一句话工作标题（后续可改），之后什么都不加——不要写元数据、目录、日期。</what-to-do> <supporting-info> ## 什么是片段 片段是任何有可能保留到最终文章中的文本。它必须 **对作者本人可读**——作者能理解其意义——但不要求已经定义术语，也不必能被冷读者理解。判断标准是"这段是好的写作吗？"，而不是"这是一个自包含的论点？"。 片段刻意保持异构性。可成为片段的例子： - 一句精炼的话，你想把这段话用在某个地方，但还不确定位置。
+- 一个主张加一句单行支撑。
+- 一段 vignette：发生过的一件事、一段代码、一个场景、一个类比。
+- 一个半成型想法："X 感觉像 Y，这事之后再想。"
+- 一句引用、一段对话、一句偶然记下的句子。
+- 一组相关观察，只是因为感觉相关而已。
+- 一句吐槽、一段自白、一句点睛之笔。
+- 一个 **引导词**：一个简短的隐喻或新造词，能让整篇文章围绕它展开（像 tracer bullets 或 fog of war 那样的一个词命中一个模式）。 其中，引导词是最有价值的片段。它是 load-bearing：命中一个好的引导词，会塑造结构、过渡和标题，在整个 **利用阶段**持续产生红利。当对话反复指向某个浮现中的概念时，要 push 为你所讨论的东西造一个词。 小说家的日记就是模型：多年非结构化的 noticing，后来被挖成原文素材。片段就是 noticing。 ## 文件格式 ```markdown
+# Working Title 第一个片段放在这里。 它可以是一到多段。可以包含列表、代码、引用——片段自然呈现的任何形式。 MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN 20 HOURS 41 MINUTES 34 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

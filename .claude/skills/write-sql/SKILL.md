@@ -1,48 +1,22 @@
 ---
 name: SQL编写
 description: "从自然语言描述生成 SQL 查询。支持 BigQuery、PostgreSQL、MySQL、Snowflake 和其他方言。从上传的图表或文档读取数据库 schema。适用于编写 SQL、构建数据报告或将业务问题转化为查询。"
----
-# SQL Query Generator
-
-## Purpose
-Transform natural language requirements into optimized SQL queries across multiple database platforms.
-
-## How It Works
-
-### Step 1: Understand Your Database Schema
-- If you provide a schema file, read and analyze it
-- Extract table names, column definitions, relationships
-- Identify primary keys, foreign keys, and indexes
-
-### Step 2: Process Your Request
-- Clarify the exact data you need
-- Confirm SQL dialect (BigQuery, PostgreSQL, MySQL, Snowflake)
-- Ask for any additional requirements (filters, aggregations, sorting)
-
-### Step 3: Generate Optimized Query
-- Write efficient SQL leveraging your database structure
-- Include comments explaining complex logic
-- Use CTEs for readability in complex queries
-- Handle edge cases (NULLs, timezones, duplicates)
-
-### Step 4: Explain and Iterate
-- Explain query logic in plain English
-- Suggest performance optimizations
-- Offer alternative approaches
-
-## Usage Examples
-
-```
-"Generate a query to find users who signed up in the last 30 days and had at least 5 active sessions"
-```
-
-```
-"Create a BigQuery query for revenue by region with year-over-year growth rates"
-```
-
-## Output Format
-
-- **SQL Query**: Production-ready code with comments
-- **Explanation**: What the query does and how
-- **Performance Notes**: Optimization tips
-- **Assumptions**: Schema assumptions made
+triggers: - "write sql" - "write-sql" - "SQL 生成" - "生成 SQL" - "写 SQL" - "SQL query" - "数据查询"
+--- # SQL 查询生成器 ## 目标
+将自然语言需求转换为多数据库平台的高效 SQL 查询。 ## 工作流程 ### 步骤 1：理解数据库结构
+- 如果提供了 schema 文件，读取并分析它
+- 提取表名、列定义、关系信息
+- 识别主键、外键和索引 ### 步骤 2：处理需求
+- 明确所需的确切数据
+- 确认 SQL 方言（BigQuery、PostgreSQL、MySQL、Snowflake）
+- 询问额外要求（过滤条件、聚合方式、排序） ### 步骤 3：生成优化查询
+- 按数据库结构编写高效 SQL
+- 包含注释解释复杂逻辑
+- 复杂查询使用 CTE 提升可读性
+- 处理边界情况（NULL、时区、重复值） ### 步骤 4：说明与迭代
+- 用通俗语言解释查询逻辑
+- 建议性能优化方案
+- 提供替代方案 ## 使用示例 "生成一个查询：找出过去 30 天注册且至少有 5 次活跃会话的用户" "创建一个按地区统计并按同比增长率排序收入的 BigQuery 查询" ## 输出格式 - **SQL 查询**：生产就绪的代码，带注释
+- **说明**：查询功能和原理
+- **性能建议**：优化提示
+- **假设说明**：基于 schema 的假设

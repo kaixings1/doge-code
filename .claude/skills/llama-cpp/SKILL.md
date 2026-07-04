@@ -11,9 +11,8 @@ description: "Llama Cpp — Llama Cpp 相关功能和最佳实践"
   HuggingFace to GGUF, or comparing with vLLM/Ollama/TensorRT-LLM.
 ---
 
-# llama.cpp -- C/C++ LLM Inference Framework Guide
+# llama.cpp — C/C++ LLM 推理框架指南
 
-## Official Documentation
+## 官方文档
 
-| Source | URL |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 12 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 来源 | URL |

@@ -2,21 +2,21 @@
 name: 数据版本管理
 description: "数据集和模型版本管理：DVC、LakeFS、Delta Lake 用于跟踪数据变更、复现实验和维护数据血缘。适用于需要可复现性或数据治理的场景。"
 ---
-# Data Versioning
+# 数据版本管理
 
-## Purpose
-Track dataset and model versions to ensure reproducibility and maintain data lineage.
+## 目的
+跟踪数据集和模型版本以确保可复现性和维护数据血缘。
 
-## How It Works
+## 工作原理
 
-### Tool Selection
+### 工具选择
 
-| Tool | Best For | Storage |
+| 工具 | 最适合 | 存储 |
 |------|----------|---------|
-| DVC | Git-based, ML projects | S3, GCS, local |
-| LakeFS | Data lake versioning | S3-compatible |
-| Delta Lake | Spark/Databricks | Cloud storage |
-| Git LFS | Small binary files | Git remote |
+| DVC | 基于 Git 的 ML 项目 | S3、GCS、本地 |
+| LakeFS | 数据湖版本管理 | S3 兼容 |
+| Delta Lake | Spark/Databricks | 云存储 |
+| Git LFS | 小二进制文件 | Git 远程 |
 
 ### DVC Workflow
 1. Initialize DVC in your git repo

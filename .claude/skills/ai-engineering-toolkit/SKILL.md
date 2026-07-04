@@ -1,6 +1,6 @@
 ---
 name: ai-engineering-toolkit
-description: "Ai Engineering Toolkit — Ai Engineering Toolkit 相关功能和最佳实践"
+description: "AI 工程工具包 — 构建生产级 AI 应用的工程工具和实践集合。"
 category: data-ai
 risk: offensive
 source: community
@@ -106,7 +106,7 @@ cp -r ai-engineering-toolkit/skills/* ~/.claude/skills/
 **Repository**: [github.com/viliawang-pm/ai-engineering-toolkit](https://github.com/viliawang-pm/ai-engineering-toolkit)
 **License**: MIT
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

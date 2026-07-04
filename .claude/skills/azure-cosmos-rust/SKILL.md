@@ -110,7 +110,7 @@ container.patch_item("partition1", "1", patch, None).await?;
 container.delete_item("partition1", "1", None).await?;
 ```
 
-## Key Auth (Optional)
+## Key Auth (可选)
 
 Enable key-based authentication with feature flag:
 
@@ -120,7 +120,7 @@ cargo add azure_data_cosmos --features key_auth
 
 ## Best Practices
 
-1. **Always specify partition key** — required for point reads and writes
+1. **始终 specify partition key** — required for point reads and writes
 2. **Use `into_model()?`** — to deserialize responses into your types
 3. **Derive `Serialize` and `Deserialize`** — for all document types
 4. **Use Entra ID auth** — prefer `DeveloperToolsCredential` over key auth
@@ -137,7 +137,7 @@ cargo add azure_data_cosmos --features key_auth
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

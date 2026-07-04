@@ -6,23 +6,23 @@ requires:
     - rube
 ---
 
-# Docker Hub Automation
+# Docker Hub /u81ea/u52a8/u5316
 
 Automate your Docker Hub workflows -- create and manage organizations, repositories, teams, add members, set up image push webhooks, and list container images.
 
-**Toolkit docs:** [composio.dev/toolkits/docker_hub](https://composio.dev/toolkits/docker_hub)
+**/u5de5/u5177/u5305/u6587/u6863/uff1a** [composio.dev/toolkits/docker_hub](https://composio.dev/toolkits/docker_hub)
 
 ---
 
-## Setup
+## /u8bbe/u7f6e
 
-1. Add the Composio MCP server to your client: `https://rube.app/mcp`
-2. Connect your Docker Hub account when prompted (JWT/token authentication)
-3. Start using the workflows below
+1. /u5c06 Composio MCP /u670d/u52a1/u5668/u6dfb/u52a0/u5230/u60a8/u7684/u5ba2/u6237/u7aef/uff1a `https://rube.app/mcp`
+2. /u6309/u63d0/u793a/u8fde/u63a5/u60a8/u7684 Docker Hub /u8d26/u6237/uff08JWT//u4ee4/u724c/u8ba4/u8bc1/uff09
+3. /u5f00/u59cb/u4f7f/u7528/u4ee5/u4e0b/u5de5/u4f5c/u6d41
 
 ---
 
-## Core Workflows
+## /u6838/u5fc3/u5de5/u4f5c/u6d41
 
 ### 1. List Organizations
 
@@ -46,7 +46,7 @@ Inputs:
   - company: string (optional) -- company name associated with the org
 ```
 
-**Note:** Requires JWT authentication obtained via `/v2/users/login` and may have restricted access.
+**Note:** 需要 JWT authentication obtained via `/v2/users/login` and may have restricted access.
 
 ### 3. Get Organization Details and Repositories
 
@@ -106,9 +106,9 @@ Tool: DOCKER_HUB_CREATE_WEBHOOK
 
 ---
 
-## Known Pitfalls
+## /u5df2/u77e5/u9677/u9631
 
-| Pitfall | Detail |
+| /u9677/u9631 | /u8be6/u60c5 |
 |---------|--------|
 | JWT authentication | `DOCKER_HUB_CREATE_ORGANIZATION` requires JWT auth from `/v2/users/login` -- standard API tokens may not suffice. |
 | Private repo limits | Creating private repos (`is_private: true`) requires a paid Docker Hub plan. |
@@ -118,9 +118,9 @@ Tool: DOCKER_HUB_CREATE_WEBHOOK
 
 ---
 
-## Quick Reference
+## /u5feb/u901f/u53c2/u8003
 
-| Tool Slug | Description |
+| /u5de5/u5177 Slug | /u63cf/u8ff0 |
 |-----------|-------------|
 | `DOCKER_HUB_LIST_ORGANIZATIONS` | List orgs the user belongs to |
 | `DOCKER_HUB_CREATE_ORGANIZATION` | Create a new Docker Hub organization |
@@ -133,4 +133,4 @@ Tool: DOCKER_HUB_CREATE_WEBHOOK
 
 ---
 
-*Powered by [Composio](https://composio.dev)*
+*/u7531 [Composio](https://composio.dev) /u63d0/u4f9b/u652f/u6301*

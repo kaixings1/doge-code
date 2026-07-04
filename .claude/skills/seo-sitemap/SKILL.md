@@ -1,7 +1,6 @@
 ---
 name: seo-sitemap
-description: "Seo Sitemap — Seo Sitemap 相关功能和最佳实践"
-  Analyze existing XML sitemaps or generate new ones with industry templates.
+description: "Seo Sitemap — 分析现有 XML 站点地图或生成新站点地图相关功能和最佳实践。"
   Validates format, URLs, and structure. Use when user says "sitemap",
   "generate sitemap", "sitemap issues", or "XML sitemap".
 user-invocable: true
@@ -36,4 +35,3 @@ metadata:
 
 ### Common Issues
 | Issue | Severity | Fix |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 30 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

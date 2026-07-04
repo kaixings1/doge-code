@@ -1,1 +1,8 @@
----/nname: omc-rust/ndescription: omc-rust/n---/n/n# omc-rust/n/nRust 高效开发 — 所有权、生命周期、错误处理、异步编程/n
+---
+name: omc-rust
+description: Rust 高效开发 — 所有权、生命周期、错误处理、异步编程
+---
+
+# OMC Rust 开发
+
+Rust 高效开发 — 所有权、生命周期、错误处理、异步编程

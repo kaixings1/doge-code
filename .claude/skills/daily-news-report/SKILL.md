@@ -8,9 +8,9 @@ date_added: "2026-02-27"
 
 # Daily News Report v3.0
 
-> **Architecture Upgrade**: Main Agent Orchestration + SubAgent Execution + Browser Scraping + Smart Caching
+> **架构 Upgrade**: Main Agent Orchestration + SubAgent Execution + Browser Scraping + Smart Caching
 
-## Core Architecture
+## Core 架构
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -49,7 +49,7 @@ date_added: "2026-02-27"
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-## Configuration Files
+## 配置 Files
 
 This skill uses the following configuration files:
 
@@ -253,7 +253,7 @@ Task Call:
     Return JSON directly, no explanation.
 ```
 
-### Using worker Agent (Requires session restart)
+### Using worker Agent (需要 session restart)
 
 ```
 Task Call:
@@ -311,7 +311,7 @@ Task Call:
 *Sources: HN, HuggingFace, OneUsefulThing, ...*
 ```
 
-## Constraints & Principles
+## 约束条件 & Principles
 
 1.  **Quality over Quantity**: Low-quality content does not enter the report.
 2.  **Early Stop**: Stop scraping once 20 high-quality items are reached.
@@ -321,12 +321,12 @@ Task Call:
 6.  **Main Agent Control**: All decisions are made by the Main Agent.
 7.  **Fallback Awareness**: Detect sub-agent availability, gracefully degrade if unavailable.
 
-## Expected Performance
+## Expected 性能
 
 | Scenario | Expected Time | Note |
 |---|---|---|
 | Optimal | ~2 mins | Tier1 sufficient, no browser needed |
-| Normal | ~3-4 mins | Requires Tier2 supplement |
+| Normal | ~3-4 mins | 需要 Tier2 supplement |
 | Browser Needed | ~5-6 mins | Includes JS rendered pages |
 
 ## Error Handling

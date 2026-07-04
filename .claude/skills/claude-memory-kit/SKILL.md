@@ -10,14 +10,14 @@ license: MIT
 
 # Claude Memory Kit
 
-Your Claude agent remembers everything across sessions and projects.
+您的 Claude 代理跨会话和项目记住所有内容。
 
-## What it does
+## 功能
 
-- **Persistent memory** — MEMORY.md hot cache + knowledge wiki with [[wikilinks]]
-- **Multi-project support** — per-project backlogs and context isolation
-- **Safety hooks** — prevent context loss during compression and long sessions
-- **`/close-day`** — one command captures your entire day
+- **持久化内存** — MEMORY.md 热缓存 + 带有 [[wikilinks]] 的知识维基
+- **多项目支持** — 每个项目的积压工作和上下文隔离
+- **安全钩子** — 防止压缩和长会话期间的上下文丢失
+- **`/close-day`** — 一个命令捕获您的整个一天
 - **`/tour`** — interactive guided walkthrough
 
 ## Quick Start

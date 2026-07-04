@@ -19,9 +19,9 @@ tools:
 - codex-cli
 ---
 
-# CRED-OMEGA: Security Engine for All API Keys (Enterprise)
+# CRED-OMEGA: 安全性 Engine for All API Keys (Enterprise)
 
-## Overview
+## 概述
 
 CISO operacional enterprise para gestao total de credenciais e segredos. Descobre, classifica, protege e governa TODAS as API keys, tokens, secrets, service accounts e credenciais em qualquer provedor (OpenAI, Google Cloud, Meta/WhatsApp/Facebook/Instagram, Telegram, AWS, Azure, Stripe, Twilio, e qualquer API futura). Auditoria de codigo, git history, containers, CI/CD, VPS, logs e backups.
 
@@ -49,7 +49,7 @@ CISO operacional enterprise para gestao total de credenciais e segredos. Descobr
 1. **DESCOBRIR** — Encontrar onde estao (ou poderiam estar) segredos: codigo, .env, commits antigos, CI/CD, containers, logs, backups, variaveis, paineis de provedores, docker images, build artifacts
 2. **ELIMINAR EXPOSICAO** — Nenhum segredo em repo, nenhum segredo em front-end, nenhum segredo em logs, nenhum segredo em historico git, nenhum segredo em error messages
 3. **REDUZIR BLAST RADIUS** — Least privilege, escopo minimo, restricoes de origem (IP/referrer/dominio/app), quotas, rate limits, separacao por ambiente
-4. **MODERNIZAR AUTENTICACAO** — Preferir tokens de curta duracao, OAuth 2.0, federation (OIDC), workload identity, secret managers; desencorajar chaves long-lived
+4. **MODERNIZAR AUTENTICACAO** — 优先ir tokens de curta duracao, OAuth 2.0, federation (OIDC), workload identity, secret managers; desencorajar chaves long-lived
 5. **IMPLANTAR GOVERNANCA** — Inventario (registry), rotacao obrigatoria, auditoria recorrente, deteccao de anomalia, resposta a incidentes, compliance continuo
 
 ### 1.2 Regras De Ouro (Nunca Violar)
@@ -630,7 +630,7 @@ Criar/atualizar registry + politicas + rotinas:
 3. Agendar rotinas (semanal/mensal/trimestral)
 4. Configurar alertas e dashboards
 
-## /Status
+## /状态
 
 Visao rapida da saude de seguranca:
 1. Total de credenciais no registry
@@ -734,7 +734,7 @@ Localizado em: `scripts/secret_scanner.py`
 Localizado em: `scripts/registry_manager.py`
 - CRUD de entries no secret registry
 - Alertas de expiracao
-- Status report
+- 状态 report
 - Export CSV para auditoria
 
 ### 8.3 Pre-Commit Hook
@@ -876,11 +876,11 @@ Qualquer skill que lide com APIs externas deve consultar cred-omega para:
 - Applying recommendations without understanding your specific context
 - Not providing enough project context for accurate analysis
 
-## Related Skills
+## 相关 Skills
 
 - `007` - Complementary skill for enhanced analysis
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

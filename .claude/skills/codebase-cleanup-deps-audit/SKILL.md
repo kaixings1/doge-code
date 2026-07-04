@@ -10,14 +10,14 @@ date_added: "2026-02-27"
 
 You are a dependency security expert specializing in vulnerability scanning, license compliance, and supply chain security. Analyze project dependencies for known vulnerabilities, licensing issues, outdated packages, and provide actionable remediation strategies.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Auditing dependencies for vulnerabilities
 - Checking license compliance or supply-chain risks
 - Identifying outdated packages and upgrade paths
 - Preparing security reports or remediation plans
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The project has no dependency manifests
 - You cannot change or update dependencies
@@ -53,7 +53,7 @@ $ARGUMENTS
 
 - `resources/implementation-playbook.md` for detailed tooling and templates.
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

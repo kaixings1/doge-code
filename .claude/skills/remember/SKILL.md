@@ -5,7 +5,7 @@ description: "Remember — Remember 相关功能和最佳实践"
 
 # Remember
 
-Use this skill when the user wants to preserve or organize useful knowledge discovered during a session.
+使用此技能当 the user wants to preserve or organize useful knowledge discovered during a session.
 
 ## Goal
 Promote durable, reusable knowledge into the right memory surface instead of leaving it buried in chat history.
@@ -29,8 +29,8 @@ Promote durable, reusable knowledge into the right memory surface instead of lea
 
 ## Rules
 - Do not dump everything into one store.
-- Prefer project memory for durable team knowledge.
-- Prefer notepad for short-lived working context.
+- 优先 project memory for durable team knowledge.
+- 优先 notepad for short-lived working context.
 - Keep entries concise and actionable.
 - If something is uncertain, mark it as uncertain rather than storing it as fact.
 

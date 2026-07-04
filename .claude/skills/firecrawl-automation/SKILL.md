@@ -14,7 +14,7 @@ Run **Firecrawl** web crawling and extraction directly from Claude Code. Scrape 
 
 ---
 
-## Setup
+## 设置
 
 1. Add the Composio MCP server to your configuration:
    ```
@@ -142,7 +142,7 @@ Example prompt: *"Check the status of crawl job 019b0806-b7a1-7652-94c1-e865b5d2
 
 ---
 
-## Known Pitfalls
+## 已知陷阱
 
 - **Rate limiting:** Firecrawl can trigger "Rate limit exceeded" errors (429). Prefer `FIRECRAWL_BATCH_SCRAPE` over many individual `FIRECRAWL_SCRAPE` calls, and implement backoff on 429/5xx responses.
 - **Credit consumption:** `FIRECRAWL_EXTRACT` can fail with "Insufficient credits." Scope tightly and avoid broad homepage URLs that yield sparse fields. Test on small URL sets first.
@@ -156,7 +156,7 @@ Example prompt: *"Check the status of crawl job 019b0806-b7a1-7652-94c1-e865b5d2
 
 ---
 
-## Quick Reference
+## 快速参考
 
 | Tool Slug | Description |
 |---|---|

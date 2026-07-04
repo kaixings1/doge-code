@@ -6,23 +6,23 @@ source: "https://github.com/huifer/Claude-Ally-Health"
 date_added: "2026-02-27"
 ---
 
-# Claude Ally Health
+# Claude Ally 健康
 
-## Overview
+## 概述
 
-A health assistant skill for medical information analysis, symptom tracking, and wellness guidance.
+用于医疗信息分析、症状跟踪和健康指导的健康助手技能。
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when you need to work with a health assistant skill for medical information analysis, symptom tracking, and wellness guidance..
+当您需要使用健康助手技能进行医疗信息分析、症状跟踪和健康指导时使用此技能。
 
 ## Instructions
 
-This skill provides guidance and patterns for a health assistant skill for medical information analysis, symptom tracking, and wellness guidance..
+此技能提供 guidance and patterns for a health assistant skill for medical information analysis, symptom tracking, and wellness guidance..
 
 For more information, see the [source repository](https://github.com/huifer/Claude-Ally-Health).
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

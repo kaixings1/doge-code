@@ -6,23 +6,23 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Data Storytelling
+# 数据讲故事
 
-Transform raw data into compelling narratives that drive decisions and inspire action.
+将原始数据转化为推动决策和激发行动的引人入胜的叙述。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to data storytelling
-- You need a different domain or tool outside this scope
+- 任务与数据讲故事无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Presenting analytics to executives
 - Creating quarterly business reviews
@@ -467,7 +467,7 @@ Present ranges:
 - [The Pyramid Principle (Barbara Minto)](https://www.amazon.com/Pyramid-Principle-Logic-Writing-Thinking/dp/0273710516)
 - [Resonate (Nancy Duarte)](https://www.duarte.com/resonate/)
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

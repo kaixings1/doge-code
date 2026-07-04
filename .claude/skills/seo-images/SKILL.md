@@ -1,7 +1,6 @@
 ---
 name: seo-images
-description: "Seo Images — Seo Images 相关功能和最佳实践"
-  Image optimization analysis for SEO and performance. Checks alt text, file
+description: "Seo Images — 图像优化分析相关功能和最佳实践：替代文本、文件大小、格式、响应式图片、懒加载、CLS 预防和图像 SERP 排名。"
   sizes, formats, responsive images, lazy loading, CLS prevention, image SERP
   rankings (via DataForSEO), and image file optimization (WebP/AVIF conversion,
   IPTC/XMP metadata injection). Use when user says "image optimization",

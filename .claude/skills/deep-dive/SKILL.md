@@ -5,14 +5,14 @@ user-invocable: true
 argument: The research question or topic to investigate deeply
 ---
 
-# Deep Dive
+# 深度探究
 
-Autonomous deep research using the same DAG-based planning pattern as Google's Deep Research — but running entirely on Claude Code with no external dependencies.
+使用与 Google Deep Research 相同的基于 DAG 的规划模式进行自主深度研究——但完全在 Claude Code 上运行，无外部依赖。
 
-## How it works
+## 工作原理
 
-1. **Plan** — decompose the question into a DAG of sub-questions with dependencies
-2. **Fan out** — run independent sub-questions in parallel via Agent subagents
+1. **规划** — 将问题分解为具有依赖关系的子问题 DAG
+2. **扇出** — 通过 Agent 子代理并行运行独立的子问题
 3. **Gap analysis** — each subagent returns findings + identified gaps
 4. **Iterate** — gaps become new sub-questions, fed back into the DAG
 5. **Synthesize** — once all nodes complete, produce a final report
@@ -129,9 +129,9 @@ Mark the "Synthesize report" task as `in_progress`. Combine all findings into a 
 
 ## Rules
 
-- **Always show the DAG plan first.** Print it, then immediately start researching — no confirmation needed.
+- **始终 show the DAG plan first.** Print it, then immediately start researching — no confirmation needed.
 - **Parallel where possible.** Independent questions should always run as concurrent subagents.
 - **One gap round max.** Don't spiral into infinite research loops.
 - **Synthesize, don't concatenate.** The final report should read as a coherent document, not a list of subagent outputs stapled together.
 - **Be honest about confidence.** If the research didn't produce clear answers, say so. Don't fill gaps with speculation.
-- **Always persist the final report.** After synthesis, save the report as a markdown file in the appropriate project's `docs/deep-dive/` directory (create it if needed). Determine the project root from the current working directory or the context of the research request. Use a slugified topic name with date as the filename (e.g., `2026-04-02-jira-docs-from-microservices.md`). Never write final reports only to `/tmp` — they must land in a durable location within the relevant project.
+- **始终 persist the final report.** After synthesis, save the report as a markdown file in the appropriate project's `docs/deep-dive/` directory (create it if needed). Determine the project root from the current working directory or the context of the research request. Use a slugified topic name with date as the filename (e.g., `2026-04-02-jira-docs-from-microservices.md`). 绝不 write final reports only to `/tmp` — they must land in a durable location within the relevant project.

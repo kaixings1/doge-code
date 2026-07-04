@@ -1,7 +1,6 @@
 ---
 name: seo-plan
-description: "Seo Plan — Seo Plan 相关功能和最佳实践"
-  Strategic SEO planning for new or existing websites. Industry-specific
+description: "Seo Plan — 战略性 SEO 规划相关功能和最佳实践：为新网站或现有网站制定行业特定模板、竞争分析、内容策略和实施路线图。"
   templates, competitive analysis, content strategy, and implementation
   roadmap. Use when user says "SEO plan", "SEO strategy", "SEO planning",
   "content strategy", "keyword strategy", "content calendar",

@@ -8,13 +8,13 @@ date_added: "2026-02-27"
 
 # Anthropic Brand Styling
 
-## Overview
+## 概述
 
 To access Anthropic's official brand identity and style resources, use this skill.
 
 **Keywords**: branding, corporate identity, visual identity, post-processing, styling, brand colors, typography, Anthropic brand, visual formatting, visual design
 
-## Brand Guidelines
+## /u54c1/u724c/u6307/u5357
 
 ### Colors
 
@@ -74,10 +74,10 @@ To access Anthropic's official brand identity and style resources, use this skil
 - Applied via python-pptx's RGBColor class
 - Maintains color fidelity across different systems
 
-## When to Use
+## /u4f55/u65f6/u4f7f/u7528
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

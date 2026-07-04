@@ -1,23 +1,23 @@
 ---
 name: onesignal_rest_api-automation
-description: "通过 Rube MCP (Composio) 自动执行 OneSignal 任务：push notifications, segments, templates, and messaging. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 OneSignal 任务：推送通知、细分、模板和消息。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
-# OneSignal Automation via Rube MCP
+# 通过 Rube MCP 实现 OneSignal 自动化
 
-Automate OneSignal operations through Composio's OneSignal toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 OneSignal 工具包自动化 OneSignal 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/onesignal_rest_api](https://composio.dev/toolkits/onesignal_rest_api)
+**工具包文档**: [composio.dev/toolkits/onesignal_rest_api](https://composio.dev/toolkits/onesignal_rest_api)
 
-## Prerequisites
+## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active OneSignal connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `onesignal_rest_api`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 OneSignal 连接，工具包为 `onesignal_rest_api`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-## Setup
+## 设置
 
 **Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
 
@@ -28,7 +28,7 @@ Automate OneSignal operations through Composio's OneSignal toolkit via Rube MCP.
 
 ## Tool Discovery
 
-Always discover available tools before executing workflows:
+始终 discover available tools before executing workflows:
 
 ```
 RUBE_SEARCH_TOOLS: queries=[{"use_case": "push notifications, segments, templates, and messaging", "known_fields": ""}]
@@ -77,7 +77,7 @@ For complex workflows involving multiple OneSignal operations:
 ## Common Patterns
 
 ### Search Before Action
-Always search for existing resources before creating new ones to avoid duplicates.
+始终 search for existing resources before creating new ones to avoid duplicates.
 
 ### Pagination
 Many list operations support pagination. Check responses for `next_cursor` or `page_token` and continue fetching until exhausted.
@@ -90,14 +90,21 @@ Many list operations support pagination. Check responses for `next_cursor` or `p
 ### Batch Operations
 For bulk operations, use `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` in a loop with `ThreadPoolExecutor` for parallel execution.
 
-## Known Pitfalls
+## 已知陷阱
 
-- **Always search tools first**: Tool schemas and available operations may change. Never hardcode tool slugs without first discovering them via `RUBE_SEARCH_TOOLS`.
+- **始终 search tools first**: Tool schemas and available operations may change. 绝不 hardcode tool slugs without first discovering them via `RUBE_SEARCH_TOOLS`.
 - **Check connection status**: Ensure the OneSignal connection is ACTIVE before executing any tools. Expired OAuth tokens require re-authentication.
 - **Respect rate limits**: If you receive rate limit errors, reduce request frequency and implement backoff.
-- **Validate schemas**: Always pass strictly schema-compliant arguments. Use `RUBE_GET_TOOL_SCHEMAS` to load full input schemas when `schemaRef` is returned instead of `input_schema`.
+- **Validate schemas**: 始终 pass strictly schema-compliant arguments. Use `RUBE_GET_TOOL_SCHEMAS` to load full input schemas when `schemaRef` is returned instead of `input_schema`.
 
-## Quick Reference
+## 快速参考
 
 | Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 31 MINUTES 35 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+|-----------|----------|
+| Find tools | `RUBE_SEARCH_TOOLS` with OneSignal-specific use case |
+| Connect | `RUBE_MANAGE_CONNECTIONS` with toolkit `onesignal_rest_api` |
+| Execute | `RUBE_MULTI_EXECUTE_TOOL` with discovered tool slugs |
+| Bulk ops | `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` |
+| Full schema | `RUBE_GET_TOOL_SCHEMAS` for tools with `schemaRef` |
+
+> **Toolkit docs**: [composio.dev/toolkits/onesignal_rest_api](https://composio.dev/toolkits/onesignal_rest_api)

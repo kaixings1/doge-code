@@ -8,7 +8,7 @@ date_added: "2026-05-31"
 
 # DOC2MATH — Document-to-Mathematics Problem Specification
 
-## When to Use This Skill
+## /u4f55/u65f6/u4f7f/u7528/u6b64/u6280/u80fd
 
 - "Formalize this problem statement into math"
 - "Extract the mathematical structure from this research paper section"
@@ -16,7 +16,7 @@ date_added: "2026-05-31"
 - "Convert this word problem to a structured MPS"
 - "Find what's missing in this problem formulation"
 
-## Zero-Inference Protocol (Mandatory)
+## /u96f6/u63a8/u65ad/u534f/u8bae/uff08/u5f3a/u5236/uff09
 
 1. **Closed World** — if it is not stated in the document, it does not exist in output
 2. **Grounding Rule** — every element must cite the exact source phrase (`"evidence"` field)
@@ -25,13 +25,13 @@ date_added: "2026-05-31"
 5. **MISSING Markers** — elements mentioned but insufficiently defined get `"status": "MISSING"` with `"missing_reason"`
 6. **No Hallucinated Math** — never introduce equations or values not in the source text
 
-## Limitations
+## /u9650/u5236
 
 - Does not invent missing equations, domains, values, or assumptions that are absent from the source document.
 - Requires enough source text to cite every extracted element; sparse prompts should be returned with explicit missing-information markers.
 - Produces a formal specification, not a solved optimization model or proof.
 
-## How It Works
+## /u5de5/u4f5c/u539f/u7406
 
 ### Step 1 — Receive Document
 
@@ -67,7 +67,7 @@ Identify what the document implies but doesn't state: `missing_information[]` wi
 - `missing_count`: integer
 - `overall_formalizability`: HIGH/MEDIUM/LOW
 
-## Output Format
+## /u8f93/u51fa/u683c/u5f0f
 
 Produce the complete MPS as a JSON object:
 
@@ -88,14 +88,14 @@ Produce the complete MPS as a JSON object:
 }
 ```
 
-## Best Practices
+## /u6700/u4f73/u5b9e/u8df5
 
 - ✅ Apply all 6 Zero-Inference Protocol rules before outputting any element
 - ✅ Surface MISSING markers rather than silently inferring — incomplete formalization is valid output
 - ✅ Cite the exact source phrase in every `evidence` field
 - ❌ Never introduce mathematical relationships not grounded in the source text
 
-## Additional Resources
+## /u9644/u52a0/u8d44/u6e90
 
 - Repository: [thebrierfox/doc2math-skill](https://github.com/thebrierfox/doc2math-skill)
 - Full BYOK tool: [ace-license-server-production.up.railway.app/byok/doc2math](https://ace-license-server-production.up.railway.app/byok/doc2math)

@@ -8,17 +8,17 @@ date_added: "2026-02-27"
 
 # 🔧 GitHub Workflow Automation
 
-> Patterns for automating GitHub workflows with AI assistance, inspired by [Gemini CLI](https://github.com/google-gemini/gemini-cli) and modern DevOps practices.
+> 使用 AI 辅助自动化 GitHub 工作流的模式, inspired by [Gemini CLI](https://github.com/google-gemini/gemini-cli) and modern DevOps practices.
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when:
+在以下情况使用此技能：
 
-- Automating PR reviews with AI
-- Setting up issue triage automation
-- Creating GitHub Actions workflows
-- Integrating AI into CI/CD pipelines
-- Automating Git operations (rebases, cherry-picks)
+- 使用 AI 自动化 PR 审查时
+- 设置 issue 分类自动化时
+- 创建 GitHub Actions 工作流时
+- 将 AI 集成到 CI/CD 流水线时
+- 自动化 Git 操作（变基、精选提交）时
 
 ---
 
@@ -848,7 +848,7 @@ Dockerfile @org/devops-team
 - [GitHub REST API](https://docs.github.com/en/rest)
 - [CODEOWNERS Syntax](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners)
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

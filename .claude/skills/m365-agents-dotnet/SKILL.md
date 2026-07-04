@@ -8,7 +8,7 @@ date_added: '2026-02-27'
 
 # Microsoft 365 Agents SDK (.NET)
 
-## Overview
+## 概述
 Build enterprise agents for Microsoft 365, Teams, and Copilot Studio using the Microsoft.Agents SDK with ASP.NET Core hosting, agent routing, and MSAL-based authentication.
 
 ## Before implementation
@@ -25,7 +25,7 @@ dotnet add package Microsoft.Agents.CopilotStudio.Client
 dotnet add package Microsoft.Identity.Client.Extensions.Msal
 ```
 
-## Configuration (appsettings.json)
+## 配置 (appsettings.json)
 
 ```json
 {
@@ -271,9 +271,8 @@ await foreach (var activity in client.AskQuestionAsync("Hello!", null))
 3. Enable TokenValidation in production and require authorization on /api/messages.
 4. Keep auth secrets in configuration providers (Key Vault, managed identity, env vars).
 5. Reuse HttpClient from IHttpClientFactory and cache MSAL tokens.
-6. Prefer async handlers and pass CancellationToken to SDK calls.
+6. 优先 async handlers and pass CancellationToken to SDK calls.
 
 ## Reference Files
 
 | File | Contents |
-| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 48 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

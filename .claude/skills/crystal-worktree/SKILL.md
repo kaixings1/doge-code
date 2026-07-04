@@ -1,4 +1,4 @@
-<div align="center">
+# Crystal Worktree 工作树工具
   <a href="https://nimbalyst.com/">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://nimbalyst.com/nimbalyst-logo-white.svg" />
@@ -21,7 +21,7 @@
   </a>
 </div>
 
-## Migration
+## 迁移
 
 - Download Nimbalyst: https://nimbalyst.com/
 - Documentation: https://docs.nimbalyst.com/
@@ -47,7 +47,7 @@
 - Project-level workspace management and AI session tracking
 - Built on production-grade desktop foundations with Electron
 
-## FAQ
+## 常见问题
 
 - **Is Crystal discontinued?** Yes. Crystal is deprecated and replaced by Nimbalyst.
 - **Can I still use Crystal?** Yes. You can continue using Crystal, but we recommend moving to Nimbalyst for active updates.

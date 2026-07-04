@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Cross-language patterns for memory-safe programming including RAII, ownership, smart pointers, and resource management.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Writing memory-safe systems code
 - Managing resources (files, sockets, memory)
@@ -19,7 +19,7 @@ Cross-language patterns for memory-safe programming including RAII, ownership, s
 - Choosing between languages for safety
 - Debugging memory issues
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to memory safety patterns
 - You need a different domain or tool outside this scope
@@ -35,7 +35,7 @@ Cross-language patterns for memory-safe programming including RAII, ownership, s
 
 - `resources/implementation-playbook.md` for detailed patterns and examples.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

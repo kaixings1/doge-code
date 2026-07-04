@@ -45,4 +45,7 @@ Plankton（感谢 @alxfazio）的集成参考，这是一个针对 Claude Code �
 ### 主智能体看到的内容
 
 | 场景 | 智能体看到的内容 | 钩子退出码 |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 41 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+|------|----------------|------------|
+| 全部通过 | 无输出 —— 零干扰 | 0 |
+| 已修复 | 无输出 —— 零干扰 | 0 |
+| 仍有违规 | 违规摘要以 `⛔ 未修复的违规项:` 开头 | 2 |

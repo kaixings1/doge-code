@@ -227,12 +227,12 @@ catch (RequestFailedException ex) when (ex.Status == 404)
 | `WeightsAndBiasesInstanceResource` | W&B instance resource |
 | `WeightsAndBiasesInstanceData` | Instance configuration data |
 | `WeightsAndBiasesInstanceCollection` | Collection of instances |
-| `WeightsAndBiasesInstanceProperties` | Instance properties |
+| `WeightsAndBiasesInstance属性` | Instance properties |
 | `WeightsAndBiasesMarketplaceDetails` | Marketplace subscription info |
 | `WeightsAndBiasesOfferDetails` | Marketplace offer details |
 | `WeightsAndBiasesUserDetails` | Admin user information |
-| `WeightsAndBiasesPartnerProperties` | W&B-specific configuration |
-| `WeightsAndBiasSingleSignOnPropertiesV2` | SSO configuration |
+| `WeightsAndBiasesPartner属性` | W&B-specific configuration |
+| `WeightsAndBiasSingleSignOn属性V2` | SSO configuration |
 | `WeightsAndBiasesInstancePatch` | Patch for updates |
 | `WeightsAndBiasesRegion` | Supported regions enum |
 
@@ -259,7 +259,7 @@ For Azure Marketplace integration:
 
 ## Best Practices
 
-1. **Use DefaultAzureCredential** — Supports multiple auth methods automatically
+1. **Use 默认AzureCredential** — Supports multiple auth methods automatically
 2. **Enable managed identity** — For secure access to other Azure resources
 3. **Configure SSO** — Enable Entra ID SSO for enterprise security
 4. **Tag resources** — Use tags for cost tracking and organization
@@ -291,7 +291,7 @@ catch (RequestFailedException ex)
 }
 ```
 
-## Integration with W&B SDK
+## 集成 with W&B SDK
 
 After creating the Azure resource, use the W&B Python SDK for experiment tracking:
 
@@ -312,7 +312,7 @@ wandb.log({"accuracy": 0.95, "loss": 0.05})
 run.finish()
 ```
 
-## Related SDKs
+## 相关 SDKs
 
 | SDK | Purpose | Install |
 |-----|---------|---------|
@@ -331,7 +331,7 @@ run.finish()
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

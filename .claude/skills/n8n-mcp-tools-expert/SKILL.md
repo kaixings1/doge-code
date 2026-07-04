@@ -5,13 +5,11 @@ risk: unknown
 source: community
 ---
 
-# n8n MCP Tools Expert
+# n8n MCP 工具专家
 
-Master guide for using n8n-mcp MCP server tools to build workflows.
+使用 n8n-mcp MCP 服务器工具构建工作流的主指南。
 
-## When to Use
-- You are using the `n8n-mcp` toolset to discover nodes, validate configs, or manage workflows.
-- The task involves choosing the right MCP tool or understanding its expected parameters and usage pattern.
-- You need guidance on workflow creation or editing through n8n MCP rather than through the n8n UI alone.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 29 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+## 使用时机
+- 正在使用 n8n-mcp 工具集来发现节点、验证配置或管理工作流。
+- 任务涉及选择合适的 MCP 工具或理解其预期参数和使用模式。
+- 需要关于通过 n8n MCP（而非仅通过 n8n UI）创建工作流或编辑的指导。

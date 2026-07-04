@@ -31,19 +31,19 @@ metadata:
   version: "3.1.3"
 ---
 
-# Planning with Files
+# 文件规划系统
 
-Work like Manus: Use persistent markdown files as your "working memory on disk."
+像 Manus 一样工作：用持久化的 Markdown 文件作为你的"磁盘工作记忆"。
 
-## FIRST: Restore Context (v2.2.0)
+## 第一步：恢复上下文（v2.2.0）
 
-**Before doing anything else**, check if planning files exist and read them:
+**在做任何事之前**，检查规划文件是否存在并读取它们：
 
-1. If `task_plan.md` exists, read `task_plan.md`, `progress.md`, and `findings.md` immediately.
-2. Then check for unsynced context from a previous session:
+1. 如果 `task_plan.md` 存在，立即读取 `task_plan.md`、`progress.md` 和 `findings.md`。
+2. 然后检查上一个会话是否有未同步的上下文：
 
 ```bash
-# Linux/macOS — auto-detects skill directory (plugin env or default install path)
+# Linux/macOS — 自动检测技能目录
 SKILL_DIR="${CLAUDE_PLUGIN_ROOT:-$HOME/.claude/skills/planning-with-files}"
 $(command -v python3 || command -v python) "${SKILL_DIR}/scripts/session-catchup.py" "$(pwd)"
 ```
@@ -53,16 +53,15 @@ $(command -v python3 || command -v python) "${SKILL_DIR}/scripts/session-catchup
 & (Get-Command python -ErrorAction SilentlyContinue).Source "$env:USERPROFILE\.claude\skills\planning-with-files\scripts\session-catchup.py" (Get-Location)
 ```
 
-If catchup report shows unsynced context:
-1. Run `git diff --stat` to see actual code changes
-2. Read current planning files
-3. Update planning files based on catchup + git diff
-4. Then proceed with task
+如果恢复报告显示有未同步的上下文：
+1. 运行 `git diff --stat` 查看实际代码变更
+2. 读取当前规划文件
+3. 根据恢复报告和 git diff 更新规划文件
+4. 然后继续任务
 
-## Important: Where Files Go
+## 重要：文件存放位置
 
-- **Templates** are in `${CLAUDE_PLUGIN_ROOT}/templates/`
-- **Your planning files** go in **your project directory**
+- **模板**在 `${CLAUDE_PLUGIN_ROOT}/templates/` 中
+- **你的规划文件**放在**你的项目目录**中
 
-| Location | What Goes There |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 39 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 位置 | 存放内容 |

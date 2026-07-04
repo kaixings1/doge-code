@@ -1,12 +1,6 @@
 ---
 name: seo-sxo
-description: "Seo Sxo — Seo Sxo 相关功能和最佳实践"
-  Search Experience Optimization: reads Google SERPs backwards to detect page-type
-  mismatches, derives user stories from search intent signals, and scores pages
-  from multiple persona perspectives. Identifies why well-optimized pages fail
-  to rank by analyzing what Google rewards for each keyword. Use when user says
-  "SXO", "search experience", "page type mismatch", "SERP analysis", "user story",
-  "persona scoring", "why isn't my page ranking", "intent mismatch", or "wireframe".
+description: "Seo Sxo — 搜索体验优化（SXO）相关功能和最佳实践：反向读取 Google SERP 检测页面类型不匹配，从搜索意图信号推导用户故事，从多角色视角评分页面。"
 user-invocable: true
 argument-hint: "<url> [keyword]"
 license: MIT
@@ -17,7 +11,7 @@ metadata:
   category: seo
 ---
 
-# Search Experience Optimization (SXO)
+# 搜索体验优化（SXO）
 
 SXO bridges the gap between SEO (what Google rewards) and UX (what users need).
 Traditional SEO audits check technical health. SXO asks: "Does this page deserve

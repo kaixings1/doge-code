@@ -1,8 +1,6 @@
 ---
 name: agent-tool-builder
-description: 工具是 AI 代理与外界交互的桥梁；设计良好的工具能提升代理执行力。
-  tool is the difference between an agent that works and one that hallucinates,
-  fails silently, or costs 10x more tokens than necessary. This skill covers
+description: "工具是 AI 代理与外界交互的桥梁；设计良好的工具能提升代理执行力。工具是工作代理与产生幻觉、静默失败或消耗 10 倍 token 的代理之间的区别。"
   tool design from schema to error handling.
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)
@@ -40,7 +38,7 @@ The LLM never sees your code - it only sees the schema and description.
 - tool-validation
 - tool-error-handling
 
-## Scope
+## 范围
 
 - multi-agent-coordination → multi-agent-orchestration
 - agent-memory → agent-memory-systems
@@ -52,7 +50,7 @@ The LLM never sees your code - it only sees the schema and description.
 ### Standards
 
 - JSON Schema - When: All tool definitions Note: The universal format for tool schemas
-- MCP (Model Context Protocol) - When: Building reusable, cross-platform tools Note: Anthropic's open standard, widely adopted
+- MCP (Model 上下文 Protocol) - When: Building reusable, cross-platform tools Note: Anthropic's open standard, widely adopted
 
 ### Frameworks
 
@@ -91,7 +89,7 @@ GOOD - Comprehensive:
   "description": "Retrieves the current stock price for a given ticker
     symbol. The ticker symbol must be a valid symbol for a publicly
     traded company on a major US stock exchange like NYSE or NASDAQ.
-    Returns the latest trade price in USD. Use when the user asks
+    返回值 the latest trade price in USD. Use when the user asks
     about current or recent stock prices. Does NOT provide historical
     data, company info, or predictions.",
   "input_schema": {
@@ -125,7 +123,7 @@ Every parameter needs:
   "unit": {
     "type": "string",
     "enum": ["celsius", "fahrenheit"],
-    "description": "Temperature unit. Defaults to user's locale if not
+    "description": "Temperature unit. 默认s to user's locale if not
       specified. Use 'fahrenheit' for US users, 'celsius' for others."
   }
 }
@@ -148,19 +146,19 @@ Enums constrain the LLM to valid values:
 }
 """
 
-## 4. Required vs Optional
+## 4. 必需 vs 可选
 """
 Be explicit about what's required:
 
 {
   "type": "object",
   "properties": {
-    "query": {...},      // Required
-    "limit": {...},      // Optional with default
-    "offset": {...}      // Optional
+    "query": {...},      // 必需
+    "limit": {...},      // 可选 with default
+    "offset": {...}      // 可选
   },
   "required": ["query"],
-  "additionalProperties": false  // Strict mode
+  "additional属性": false  // Strict mode
 }
 """
 
@@ -339,14 +337,14 @@ def get_weather(location: str) -> ToolResult:
 
 ### MCP Tool Pattern
 
-Building tools using Model Context Protocol
+Building tools using Model 上下文 Protocol
 
 **When to use**: Creating reusable, cross-platform tools
 
 # MCP TOOL IMPLEMENTATION:
 
 """
-MCP (Model Context Protocol) is Anthropic's open standard for
+MCP (Model 上下文 Protocol) is Anthropic's open standard for
 connecting AI agents to external systems. Build once, use everywhere.
 """
 
@@ -365,7 +363,7 @@ server.setRequestHandler("tools/list", async () => ({
   tools: [
     {
       name: "get_weather",
-      description: "Get current weather for a location. Returns
+      description: "Get current weather for a location. 返回值
         temperature, conditions, and humidity. Use for weather
         queries about specific cities.",
       inputSchema: {
@@ -608,7 +606,7 @@ Tool descriptions should be at least 100 characters
 
 Message: Tool description is too short. Add details about when to use it, parameters, and return values.
 
-### Parameter Descriptions Required
+### Parameter Descriptions 必需
 
 Severity: WARNING
 
@@ -616,7 +614,7 @@ Every parameter should have a description
 
 Message: Parameter missing description. Describe what it is and the expected format.
 
-### Schema Should Specify Required Fields
+### Schema Should Specify 必需 Fields
 
 Severity: INFO
 
@@ -660,7 +658,7 @@ Message: Tool function without visible input validation. Validate before executi
 
 Severity: ERROR
 
-Never concatenate user input into SQL
+绝不 concatenate user input into SQL
 
 Message: SQL query appears to use string concatenation. Use parameterized queries.
 
@@ -690,7 +688,7 @@ Message: MCP tool definition missing inputSchema.
 - user needs computer control tools -> computer-use-agents (Desktop automation tools)
 - user wants to test their tools -> agent-evaluation (Tool testing and evaluation)
 
-## Related Skills
+## 相关 Skills
 
 Works well with: `multi-agent-orchestration`, `api-designer`, `llm-architect`, `backend`
 
@@ -708,7 +706,7 @@ Works well with: `multi-agent-orchestration`, `api-designer`, `llm-architect`, `
 - User mentions or implies: tool_use
 - User mentions or implies: tool_result
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

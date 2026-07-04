@@ -13,7 +13,7 @@ Automate Microsoft Dynamics 365 CRM operations including creating and updating c
 
 ---
 
-## Setup
+## 设置
 
 This skill requires the **Rube MCP server** connected at `https://rube.app/mcp`.
 
@@ -33,7 +33,7 @@ Create, update, retrieve, and list lead records.
 - `DYNAMICS365_DYNAMICSCRM_GET_A_LEAD` -- Retrieve a lead by GUID
 - `DYNAMICS365_DYNAMICSCRM_GET_ALL_LEADS` -- List/filter all leads
 
-**Key Parameters for `DYNAMICS365_DYNAMICSCRM_CREATE_LEAD`:**
+**Key 参数 for `DYNAMICS365_DYNAMICSCRM_CREATE_LEAD`:**
 - `firstname` -- First name of the lead
 - `lastname` -- Last name of the lead
 - `emailaddress1` -- Primary email address
@@ -41,7 +41,7 @@ Create, update, retrieve, and list lead records.
 - `companyname` -- Associated company name
 - `subject` -- Brief title/description
 
-**Key Parameters for `DYNAMICS365_DYNAMICSCRM_GET_ALL_LEADS`:**
+**Key 参数 for `DYNAMICS365_DYNAMICSCRM_GET_ALL_LEADS`:**
 - `filter` -- OData filter, e.g., `"contains(fullname,'John')"`
 - `select` -- Fields to return, e.g., `"fullname,emailaddress1"`
 - `orderby` -- Sort expression, e.g., `"createdon desc"`
@@ -66,7 +66,7 @@ Create and organize account (company) records in the CRM.
 
 **Tool:** `DYNAMICS365_DYNAMICSCRM_CREATE_ACCOUNT`
 
-**Key Parameters:**
+**Key 参数:**
 - `name` -- Account/company name
 - `description` -- Description of the account
 - `revenue` -- Revenue amount (number)
@@ -91,7 +91,7 @@ Create detailed contact records with address and phone information.
 
 **Tool:** `DYNAMICS365_DYNAMICSCRM_CREATE_CONTACT`
 
-**Key Parameters:**
+**Key 参数:**
 - `firstname`, `lastname` -- Contact name
 - `emailaddress1` -- Primary email
 - `telephone1` -- Primary phone
@@ -121,7 +121,7 @@ Create and update sales opportunities with estimated values and close dates.
 - `DYNAMICS365_DYNAMICSCRM_CREATE_OPPORTUNITY` -- Create a new opportunity
 - `DYNAMICS365_DYNAMICSCRM_UPDATE_OPPORTUNITY` -- Update an existing opportunity
 
-**Key Parameters for `DYNAMICS365_DYNAMICSCRM_CREATE_OPPORTUNITY`:**
+**Key 参数 for `DYNAMICS365_DYNAMICSCRM_CREATE_OPPORTUNITY`:**
 - `name` (required) -- Opportunity title
 - `description` -- Brief description
 - `estimatedvalue` -- Anticipated revenue (number)
@@ -129,7 +129,7 @@ Create and update sales opportunities with estimated values and close dates.
 - `customer_account_id` -- GUID of the related account (no curly braces)
 - `customer_contact_id` -- GUID of the related contact (no curly braces)
 
-**Key Parameters for `DYNAMICS365_DYNAMICSCRM_UPDATE_OPPORTUNITY`:**
+**Key 参数 for `DYNAMICS365_DYNAMICSCRM_UPDATE_OPPORTUNITY`:**
 - `opportunity_id` (required) -- GUID of the opportunity
 - `opportunityratingcode` -- 1 (Cold), 2 (Warm), 3 (Hot)
 - `salesstagecode` -- 1 (Qualify), 2 (Develop), 3 (Propose)
@@ -155,23 +155,23 @@ Create and update sales orders; generate invoices for billing.
 - `DYNAMICS365_DYNAMICSCRM_UPDATE_SALES_ORDER` -- Update an existing sales order
 - `DYNAMICS365_DYNAMICSCRM_CREATE_INVOICE` -- Create a new invoice
 
-**Key Parameters for `DYNAMICS365_DYNAMICSCRM_CREATE_SALES_ORDER`:**
+**Key 参数 for `DYNAMICS365_DYNAMICSCRM_CREATE_SALES_ORDER`:**
 - `name` -- Sales order name
 - `description` -- Description
 - `account_id` -- Reference to account, format: `"/accounts(GUID)"`
 - `currency_id` -- Currency reference, format: `"/transactioncurrencies(GUID)"`
 - `price_level_id` -- Price list reference, format: `"/pricelevels(GUID)"`
 
-**Key Parameters for `DYNAMICS365_DYNAMICSCRM_UPDATE_SALES_ORDER`:**
+**Key 参数 for `DYNAMICS365_DYNAMICSCRM_UPDATE_SALES_ORDER`:**
 - `salesorder_id` (required) -- GUID of the sales order
 - `name` -- Updated name
 - `discountamount` -- Updated discount
 - `freightamount` -- Updated shipping cost
 
-**Key Parameters for `DYNAMICS365_DYNAMICSCRM_CREATE_INVOICE`:**
+**Key 参数 for `DYNAMICS365_DYNAMICSCRM_CREATE_INVOICE`:**
 - `name` -- Invoice name/number, e.g., `"Invoice #12345"`
 - `description` -- Invoice description
-- `account_id` -- Related account reference
+- `account_id` -- 相关 account reference
 - `currency_id` -- Currency reference
 - `price_level_id` -- Price list reference
 
@@ -183,13 +183,13 @@ Create incident/case records for customer support tracking.
 
 **Tool:** `DYNAMICS365_DYNAMICSCRM_CREATE_CASE`
 
-**Key Parameters:**
+**Key 参数:**
 - `title` -- Subject/title of the case
 - `description` -- Detailed description
 - `prioritycode` -- 1 (Low), 2 (Normal), 3 (High)
 - `caseorigincode` -- 1 (Phone), 2 (Email), 3 (Web)
-- `account_id` -- Related account, format: `"/accounts(GUID)"`
-- `contact_id` -- Related contact, format: `"/contacts(GUID)"`
+- `account_id` -- 相关 account, format: `"/accounts(GUID)"`
+- `contact_id` -- 相关 contact, format: `"/contacts(GUID)"`
 
 **Example:**
 ```
@@ -203,19 +203,19 @@ Arguments:
 
 ---
 
-## Known Pitfalls
+## 已知陷阱
 
 | Pitfall | Detail |
 |---------|--------|
 | **GUID format** | All entity IDs are GUIDs (e.g., `"00000000-0000-0000-0000-000000000000"`). Do not include curly braces for opportunity/contact references. |
-| **Reference format** | Related entity references use the format `"/entityset(GUID)"` (e.g., `"/accounts(abc-123)"`). Missing the leading slash or parentheses causes errors. |
+| **Reference format** | 相关 entity references use the format `"/entityset(GUID)"` (e.g., `"/accounts(abc-123)"`). Missing the leading slash or parentheses causes errors. |
 | **OData filter syntax** | Use Dynamics 365 OData syntax for `filter` (e.g., `contains(fullname,'John')`). Incorrect syntax returns empty or error responses. |
 | **user_id default** | Most tools default `user_id` to `"me"` for the authenticated user. Override only when acting on behalf of another user. |
-| **Required fields** | `CREATE_OPPORTUNITY` requires `name`. Other create tools have no strict required fields but will create empty records without data. |
+| **必需 fields** | `CREATE_OPPORTUNITY` requires `name`. Other create tools have no strict required fields but will create empty records without data. |
 
 ---
 
-## Quick Reference
+## 快速参考
 
 | Tool Slug | Description |
 |-----------|-------------|

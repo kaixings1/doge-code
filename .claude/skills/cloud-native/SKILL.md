@@ -10,7 +10,7 @@ version: 1.0.0
 
 Identify security vulnerabilities specific to cloud-native environments, including IMDS exploitation, cloud provider misconfigurations, Kubernetes security issues, and serverless attack vectors. Cloud-native applications have unique trust boundaries and implicit assumptions that create vulnerability classes not present in traditional deployments.
 
-## When to Use
+## 何时使用
 
 Activate this skill when:
 - Reviewing code that interacts with AWS, GCP, or Azure APIs

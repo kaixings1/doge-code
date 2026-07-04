@@ -17,117 +17,117 @@ plugin:
     docs: SKILL.md
 ---
 
-# 2slides Presentation Generation
+# 2slides 演示文稿生成
 
-## Overview
+## 概述
 
-Generate professional presentations using the 2slides AI API. The skill supports content-based generation (theme-driven Fast PPT), style matching from a reference image, custom PDF design, document summarization, AI voice narration, and exporting pages/audio. It returns both an interactive slide URL and a downloadable PDF.
+使用 2slides AI API 生成专业的演示文稿。该技能支持基于内容的生成（主题驱动的快速PPT）、参考图像样式匹配、自定义PDF设计、文档摘要、AI语音旁白以及导出页面/音频。它返回交互式幻灯片URL和可下载的PDF。
 
-This skill is adapted from the official 2slides skill repository ([`2slides/slides-generation-2slides-skills`](https://github.com/2slides/slides-generation-2slides-skills)). It calls the hosted 2slides API and requires the user's own API key and credits.
+此技能改编自官方的 2slides 技能仓库 ([`2slides/slides-generation-2slides-skills`](https://github.com/2slides/slides-generation-2slides-skills))。它调用托管的 2slides API，需要用户自己的API密钥和积分。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- Use when the user asks to "create a presentation", "make slides", or "generate a deck" from text or an outline.
-- Use when the user wants slides that match the style of a reference image ("create slides like this image").
-- Use when the user wants custom-designed PDF slides without a reference image.
-- Use when the user uploads a document and asks to "create slides from this document".
-- Use when the user wants to add AI voice narration to generated slides, or export slides as PNG images and narration as WAV audio.
-- Use when the user asks "what themes are available?" or wants to browse/select a theme.
+- 当用户要求从文本或大纲"创建演示文稿"、"制作幻灯片"或"生成演示文稿"时使用。
+- 当用户想要与参考图像样式匹配的幻灯片时使用（"创建像这张图片一样的幻灯片"）。
+- 当用户想要自定义设计的PDF幻灯片而无需参考图像时使用。
+- 当用户上传文档并要求"从此文档创建幻灯片"时使用。
+- 当用户想要为生成的幻灯片添加AI语音旁白，或将幻灯片导出为PNG图像并将旁白导出为WAV音频时使用。
+- 当用户询问"有哪些主题可用？"或想要浏览/选择主题时使用。
 
-## Setup Requirements
+## 设置要求
 
-Users must have a 2slides API key and credits:
+用户必须拥有 2slides API 密钥和积分：
 
-1. **Get API Key:** Visit https://2slides.com/api to create an account and API key
-   - New users receive **500 free credits** (~50 Fast PPT pages)
-2. **Purchase Credits (Optional):** Visit https://2slides.com/pricing to buy additional credits
-   - Pay-as-you-go, no subscriptions
-   - Credits never expire
-   - Up to 20% off on larger packages
-3. **Set API Key:** Store the key in environment variable: `SLIDES_2SLIDES_API_KEY`
+1. **获取API密钥：** 访问 https://2slides.com/api 创建账户和API密钥
+   - 新用户获得**500免费积分**（约50页快速PPT）
+2. **购买积分（可选）：** 访问 https://2slides.com/pricing 购买额外积分
+   - 按需付费，无需订阅
+   - 积分永不过期
+   - 大额套餐最高可享20%折扣
+3. **设置API密钥：** 将密钥存储在环境变量中：`SLIDES_2SLIDES_API_KEY`
 
 ```bash
 read -r -s SLIDES_2SLIDES_API_KEY
 export SLIDES_2SLIDES_API_KEY
 ```
 
-4. **Install Script Dependencies:** From this skill directory, install the pinned local requirements before using the Python scripts:
+4. **安装脚本依赖：** 在使用Python脚本之前，从此技能目录安装固定的本地要求：
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-**Credit Costs:**
-- Fast PPT: 10 credits/page
-- Nano Banana 1K/2K: 100 credits/page
-- Nano Banana 4K: 200 credits/page
-- Voice Narration: 210 credits/page
-- Download Export: FREE
+**积分成本：**
+- 快速PPT：10积分/页
+- Nano Banana 1K/2K：100积分/页
+- Nano Banana 4K：200积分/页
+- 语音旁白：210积分/页
+- 下载导出：免费
 
-See [references/pricing.md](references/pricing.md) for detailed pricing information.
+有关详细定价信息，请参阅 [references/pricing.md](references/pricing.md)。
 
-## Workflow Decision Tree
+## 工作流程决策树
 
-Choose the appropriate approach based on the user's request:
+根据用户的请求选择适当的方法：
 
 ```
-User Request
+用户请求
 │
-├─ "Create slides from this content/text"
-│  └─> Use Content-Based Generation (Section 1)
+├─ "从此内容/文本创建幻灯片"
+│  └─> 使用基于内容的生成（第1节）
 │
-├─ "Create slides like this image"
-│  └─> Use Reference Image Generation (Section 2)
+├─ "创建像这张图片一样的幻灯片"
+│  └─> 使用参考图像生成（第2节）
 │
-├─ "Create custom designed slides" or "Create PDF slides"
-│  └─> Use Custom PDF Generation (Section 3)
+├─ "创建自定义设计的幻灯片" 或 "创建PDF幻灯片"
+│  └─> 使用自定义PDF生成（第3节）
 │
-├─ "Create slides from this document"
-│  └─> Use Document Summarization (Section 4)
+├─ "从此文档创建幻灯片"
+│  └─> 使用文档摘要（第4节）
 │
-├─ "Add voice narration" or "Generate audio for slides"
-│  └─> Use Voice Narration (Section 5)
+├─ "添加语音旁白" 或 "为幻灯片生成音频"
+│  └─> 使用语音旁白（第5节）
 │
-├─ "Download slides as images" or "Export slides and voices"
-│  └─> Use Download Export (Section 6)
+├─ "将幻灯片下载为图像" 或 "导出幻灯片和语音"
+│  └─> 使用下载导出（第6节）
 │
-└─ "Search for themes" or "What themes are available?"
-   └─> Use Theme Search (Section 7)
+└─ "搜索主题" 或 "有哪些主题可用？"
+   └─> 使用主题搜索（第7节）
 ```
 
 ---
 
-## 1. Content-Based Generation
+## 1. 基于内容的生成
 
-Generate slides from user-provided text content.
+从用户提供的文本内容生成幻灯片。
 
-### When to Use
-- User provides content directly in their message
-- User says "create a presentation about X"
-- User provides structured outline or bullet points
+### 何时使用
+- 用户在消息中直接提供内容
+- 用户说"创建关于X的演示文稿"
+- 用户提供结构化大纲或要点
 
-### Workflow
+### 工作流程
 
-**Step 1: Prepare Content**
+**步骤 1：准备内容**
 
-Structure the content clearly for best results:
+为获得最佳结果，清晰构建内容结构：
 
 ```
-Title: [Main Topic]
+标题：[主要主题]
 
-Section 1: [Subtopic]
-- Key point 1
-- Key point 2
-- Key point 3
+第1部分：[子主题]
+- 关键点1
+- 关键点2
+- 关键点3
 
-Section 2: [Subtopic]
-- Key point 1
-- Key point 2
+第2部分：[子主题]
+- 关键点1
+- 关键点2
 ```
 
-**Step 2: Choose Theme (Required)**
+**步骤 2：选择主题（必需）**
 
-Search for an appropriate theme (themeId is required):
+搜索适当的主题（themeId是必需的）：
 
 ```bash
 python scripts/search_themes.py --query "business"
@@ -135,26 +135,26 @@ python scripts/search_themes.py --query "professional"
 python scripts/search_themes.py --query "creative"
 ```
 
-Pick a theme ID from the results.
+从结果中选择主题ID。
 
-**Step 3: Generate Slides**
+**步骤 3：生成幻灯片**
 
-Use the `generate_slides.py` script with the theme ID:
+使用 `generate_slides.py` 脚本和主题ID：
 
 ```bash
-# Basic generation (theme ID required)
-python scripts/generate_slides.py --content "Your content here" --theme-id "theme123"
+# 基本生成（需要主题ID）
+python scripts/generate_slides.py --content "您的内容在此" --theme-id "theme123"
 
-# In different language
-python scripts/generate_slides.py --content "Your content" --theme-id "theme123" --language "Spanish"
+# 使用不同语言
+python scripts/generate_slides.py --content "您的内容" --theme-id "theme123" --language "Spanish"
 
-# Async mode for longer presentations
-python scripts/generate_slides.py --content "Your content" --theme-id "theme123" --mode async
+# 异步模式适用于较长演示文稿
+python scripts/generate_slides.py --content "您的内容" --theme-id "theme123" --mode async
 ```
 
-**Step 4: Handle Results**
+**步骤 4：处理结果**
 
-**Sync mode response:**
+**同步模式响应：**
 ```json
 {
   "slideUrl": "https://2slides.com/slides/abc123",
@@ -163,11 +163,11 @@ python scripts/generate_slides.py --content "Your content" --theme-id "theme123"
 }
 ```
 
-Provide both URLs to the user:
-- `slideUrl`: Interactive online slides
-- `pdfUrl`: Downloadable PDF version
+向用户提供两个URL：
+- `slideUrl`：交互式在线幻灯片
+- `pdfUrl`：可下载的PDF版本
 
-**Async mode response:**
+**异步模式响应：**
 ```json
 {
   "jobId": "job123",
@@ -175,23 +175,23 @@ Provide both URLs to the user:
 }
 ```
 
-Poll for results:
+轮询结果：
 ```bash
 python scripts/get_job_status.py --job-id "job123"
 ```
 
 ---
 
-## 2. Reference Image Generation
+## 2. 参考图像生成
 
 Generate slides that match the style of a reference image.
 
-### When to Use
+### 何时使用
 - User provides an image URL and says "create slides like this"
 - User wants to match existing brand/design style
 - User has a template image they want to emulate
 
-### Workflow
+### 工作流程
 
 **Step 1: Verify Image URL**
 
@@ -249,17 +249,17 @@ Provide both URLs to the user:
 
 ---
 
-## 3. Custom PDF Generation
+## 3. 自定义PDF生成
 
 Generate custom-designed slides from text without needing a reference image.
 
-### When to Use
+### 何时使用
 - User wants custom design without providing a reference image
 - User requests "create PDF slides"
 - User wants to specify design characteristics
 - Alternative to theme-based generation with more design flexibility
 
-### Workflow
+### 工作流程
 
 **Step 1: Prepare Content**
 
@@ -329,16 +329,16 @@ Returns same structure as create-like-this:
 
 ---
 
-## 4. Document Summarization
+## 4. 文档摘要
 
 Generate slides from document content.
 
-### When to Use
+### 何时使用
 - User uploads a document (PDF, DOCX, TXT, etc.)
 - User says "create slides from this document"
 - User wants to summarize long content into presentation format
 
-### Workflow
+### 工作流程
 
 **Step 1: Read Document**
 
@@ -404,17 +404,17 @@ python scripts/generate_slides.py --content "[Structured content from step 3]" -
 
 ---
 
-## 5. Voice Narration
+## 5. 语音旁白
 
 Add AI-generated voice narration to slides.
 
-### When to Use
+### 何时使用
 - User wants to add audio to slides
 - User requests "add voice narration" or "generate audio"
 - User wants presentations with spoken content
 - User needs multi-speaker narration
 
-### Prerequisites
+### 先决条件
 
 **IMPORTANT:** The slide generation job must be completed before adding narration.
 
@@ -422,7 +422,7 @@ Add AI-generated voice narration to slides.
 2. Get the job ID from the generation result
 3. Ensure job status is "completed" before requesting narration
 
-### Workflow
+### 工作流程
 
 **Step 1: Choose Voice**
 
@@ -483,17 +483,17 @@ Once completed, the job will include narration files. Use download endpoint (Sec
 
 ---
 
-## 6. Download Export
+## 6. 下载导出
 
 Download slides as PNG images and voice narrations as WAV files.
 
-### When to Use
+### 何时使用
 - User wants to download slides as images
 - User needs voice files separately
 - User wants transcripts
 - User needs slides in image format for other tools
 
-### Workflow
+### 工作流程
 
 **Step 1: Verify Job Complete**
 
@@ -529,16 +529,16 @@ The ZIP archive contains:
 
 ---
 
-## 7. Theme Search
+## 7. 主题搜索
 
 Find appropriate themes for presentations.
 
-### When to Use
+### 何时使用
 - Before generating slides with specific styling
 - User asks "what themes are available?"
 - User wants professional or branded appearance
 
-### Workflow
+### 工作流程
 
 **Search themes:**
 
@@ -561,7 +561,7 @@ python scripts/search_themes.py --query "modern" --limit 50
 
 ---
 
-## Using the MCP Server
+## 使用MCP服务器
 
 If the 2slides MCP server is configured in Claude Desktop, use the integrated tools instead of scripts.
 
@@ -589,7 +589,7 @@ See [mcp-integration.md](references/mcp-integration.md) for complete setup instr
 
 ---
 
-## Advanced Features
+## 高级功能
 
 ### Sync vs Async Mode
 
@@ -604,7 +604,7 @@ See [mcp-integration.md](references/mcp-integration.md) for complete setup instr
 - Best for large presentations or batch processing
 - **Recommended polling:** Check every 20-30 seconds to avoid server strain
 
-### Rate Limits
+### 速率限制
 
 Different endpoints have different rate limits:
 
@@ -613,7 +613,7 @@ Different endpoints have different rate limits:
 
 If rate limited, wait before retrying or check plan limits.
 
-### Credit Costs
+### 积分成本
 
 - **Fast PPT (generate endpoint):** 10 credits per page
 - **Nano Banana 1K/2K (create-like-this, create-pdf-slides):** 100 credits per page
@@ -621,7 +621,7 @@ If rate limited, wait before retrying or check plan limits.
 - **Voice Narration:** 210 credits per page (10 for text, 200 for audio)
 - **Download Export:** FREE (no credits)
 
-### Purchasing Credits
+### 购买积分
 
 2slides uses a pay-as-you-go credit system with no subscriptions required.
 
@@ -638,11 +638,11 @@ If rate limited, wait before retrying or check plan limits.
 
 **Purchase credits at:** https://2slides.com/pricing
 
-### Download URL Expiration
+### 下载URL过期时间
 
 All download URLs (PDF, ZIP archives) are valid for **1 hour only**. Download files promptly after generation.
 
-### Language Support
+### 语言支持
 
 Generate slides in multiple languages (use full language name):
 
@@ -660,7 +660,7 @@ Generate slides in multiple languages (use full language name):
 
 And more: Arabic, Portuguese, Indonesian, Russian, Hindi, Vietnamese, Turkish, Polish, Italian
 
-### Error Handling
+### 错误处理
 
 **Common error codes:**
 
@@ -697,7 +697,7 @@ And more: Arabic, Portuguese, Indonesian, Russian, Hindi, Vietnamese, Turkish, P
 
 ---
 
-## Script Parameter Reference (2slides API)
+## 脚本参数参考（2slides API）
 
 All scripts accept parameters that match [2slides API](https://2slides.com/api.md). Allowed values are defined in `scripts/api_constants.py` and enforced where applicable.
 
@@ -718,7 +718,7 @@ All scripts accept parameters that match [2slides API](https://2slides.com/api.m
 
 ---
 
-## Additional Documentation
+## 附加文档
 
 ### API Reference
 See [api-reference.md](references/api-reference.md) for:
@@ -738,7 +738,7 @@ See [pricing.md](references/pricing.md) for:
 
 ---
 
-## Tips for Best Results
+## 最佳结果提示
 
 **Content Structure:**
 - Use clear headings and subheadings
@@ -767,7 +767,7 @@ See [pricing.md](references/pricing.md) for:
 
 ---
 
-## Security & Safety Notes
+## 安全注意事项
 
 - **Credentials:** This skill reads the API key from the `SLIDES_2SLIDES_API_KEY` environment variable. Never hard-code the key in commands, commit it, or echo it back to the user. The scripts send it as a bearer/`apikey` value to `https://2slides.com` over HTTPS only.
 - **Network + paid mutations:** Every generation call makes an outbound network request to the 2slides API and **spends the user's credits** (10–210 credits/page depending on mode). Treat generation, reference-image, custom-PDF, and narration calls as billable actions — confirm intent before generating large or high-resolution (4K) decks, and surface the expected page count/cost when it is non-trivial.
@@ -775,13 +775,13 @@ See [pricing.md](references/pricing.md) for:
 - **Input handling:** Reference-image and document inputs are sent to the 2slides service for processing. Do not submit confidential material the user has not authorized for third-party processing.
 - **Download URLs expire in 1 hour** — fetch artifacts promptly and do not treat the URLs as durable storage.
 
-## Limitations
+## 限制
 
 - Requires a valid 2slides account, API key, and sufficient credits; this skill does not provision or pay for credits.
 - Results are AI-generated drafts intended as a starting point, not a final, fact-checked deliverable — review content before use.
 - This skill does not replace environment-specific validation or expert review. Stop and ask for clarification if the API key, required inputs, or intended cost/scope are missing.
 - Rate limits apply (Fast PPT 10/min, Nano Banana 6/min); poll async jobs every 20–30s rather than tight-looping.
 
-## Related Skills
+## 相关技能
 
 - `@youtube-full` — fetch source material (transcripts) that can be summarized into a deck with this skill.

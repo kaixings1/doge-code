@@ -6,16 +6,16 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Cloud Cost Optimization
+# 云成本优化
 
-Strategies and patterns for optimizing cloud costs across AWS, Azure, and GCP.
+优化 AWS、Azure 和 GCP 云成本的策略和模式。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to cloud cost optimization
-- You need a different domain or tool outside this scope
+- 任务与云成本优化无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -26,7 +26,7 @@ Strategies and patterns for optimizing cloud costs across AWS, Azure, and GCP.
 
 Implement systematic cost optimization strategies to reduce cloud spending while maintaining performance and reliability.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Reduce cloud spending
 - Right-size resources
@@ -54,7 +54,7 @@ Implement systematic cost optimization strategies to reduce cloud spending while
 - Implement savings plans
 - Use committed use discounts
 
-### 4. Architecture Optimization
+### 4. 架构 Optimization
 - Use managed services
 - Implement caching
 - Optimize data transfer
@@ -207,7 +207,7 @@ resource "aws_budgets_budget" "monthly" {
 - Azure Cost Management alerts
 - GCP Budget alerts
 
-## Architecture Patterns
+## 架构 Patterns
 
 ### Pattern 1: Serverless First
 - Use Lambda/Functions for event-driven
@@ -283,12 +283,12 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high" {
 - `references/tagging-standards.md` - Tagging conventions
 - `assets/cost-analysis-template.xlsx` - Cost analysis spreadsheet
 
-## Related Skills
+## 相关 Skills
 
 - `terraform-module-library` - For resource provisioning
 - `multi-cloud-architecture` - For cloud selection
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

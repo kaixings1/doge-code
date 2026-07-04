@@ -1,7 +1,7 @@
 ---
 name: trace
 description: "Trace — Trace 相关功能和最佳实践"
-argument-hint: "<observation to trace>"
+argument-hint: "<要追踪的观察>"
 agent: tracer
 level: 2
 ---

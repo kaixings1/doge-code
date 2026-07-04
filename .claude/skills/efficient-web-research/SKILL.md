@@ -313,7 +313,7 @@ Never output:
 
 ---
 
-## Limitations
+## 局限性
 
 - **JavaScript Reliance**: Standard fetching may not fully render Single Page Applications (SPAs). You must fallback to `browser_subagent` for these, which is slower and more expensive.
 - **Paywalls & Protections**: This skill cannot bypass CAPTCHAs, bot protections (e.g., strict Cloudflare rules), or hard paywalls.

@@ -23,22 +23,21 @@ tags:
 ---
 # CrossFrame Suite
 
+## 何时使用此技能
 
-## When to Use This Skill
+- 仅在用户显式命名 CrossFrame Suite、`crossframe-suite`、`/crossframe-suite` 或 `$crossframe-suite` 时使用。
+- 当 CrossFrame 任务可能需要多个同级技能（如诊断加公共分析、文章输出和审查）时，作为总路由器使用。
+- 不要默认加载所有同级技能；遵循下方原始正文中的路由工作流和渐进式读取规则。
 
-- Use only when the user explicitly names CrossFrame Suite, `crossframe-suite`, `/crossframe-suite`, or `$crossframe-suite`.
-- Use as the umbrella router when a CrossFrame task may need multiple sibling skills, such as diagnosis plus public analysis, essay output, and review.
-- Do not load every sibling skill by default; follow the routed workflow and progressive-reading rules in the original body below.
+## 打包来源说明
 
-## Packaged Source Note
+这份 AAS 就绪副本保留了以下原始 CrossFrame 技能正文。中文仍然是权威语义层；英文元数据仅用于发现、安装和仓库审查。
 
-This AAS-ready copy preserves the original CrossFrame skill body below. Chinese remains the canonical semantic layer; English metadata is only for discovery, installation, and repository review.
+## 限制
 
-## Limitations
-
-- The skill body is intentionally Chinese-canonical; English metadata is for discovery and does not replace the original Chinese terms.
-- Use only after explicit CrossFrame invocation or `crossframe-suite` routing; do not apply it as a generic default reasoning layer.
-- It structures analysis, drafting, and review, but does not replace source verification, domain expertise, or legal, medical, or financial judgment.
+- 技能正文有意以中文为规范；英文元数据仅用于发现，不替代原始中文术语。
+- 仅在显式 CrossFrame 调用或 `crossframe-suite` 路由后使用；不要将其应用为通用默认推理层。
+- 它结构化分析、底稿和审查，但不替代来源验证、领域专业知识或法律、医疗、财务判断。
 
 `crossframe-suite` 是总调度 skill，不替代任何专项 skill。它只做三件事：
 

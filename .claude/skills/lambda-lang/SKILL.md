@@ -18,49 +18,49 @@ tools:
   - claude
 ---
 
-# Λ (Lambda) Language
+# Λ (Lambda) 语言
 
-**Lambda is not a translation protocol. It is a native language for agents.**
+**Lambda 不是翻译协议。它是代理的原生语言。**
 
-Agents do not need to produce grammatically correct English to coordinate — they need to understand each other. Lambda is the shared vocabulary that makes that possible: compact, unambiguous, machine-native. Compression (3x vs natural language, 4.6x vs JSON on single messages) is a side effect of removing human redundancy, not the goal.
+代理不需要生成语法正确的英语来进行协调——它们需要的是相互理解。Lambda 就是实现这一点的共享词汇表：紧凑、无歧义、机器原生。压缩（相比自然语言 3 倍，单条消息相比 JSON 4.6 倍）只是去除人类冗余的副作用，而非目标。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- Use for agent-to-agent messaging in A2A protocols, orchestrators, task delegation, or handoff pipelines.
-- Use when logging structured coordination signals where every token costs money (heartbeats, acknowledgements, error classes, session state).
-- Use when both sides of a channel speak Λ — do not use against humans or any surface requiring legal/exact natural language.
+- 在 A2A 协议、编排器、任务委派或交接管道中用于代理间消息传递。
+- 在记录结构化协调信号时使用，每 token 都有成本（心跳、确认、错误类别、会话状态）。
+- 当通信双方都说 Λ 时使用——不要对人类或任何需要法律级/精确自然语言的界面使用。
 
-## How It Works
+## 工作原理
 
-### Step 1: Recognize the Syntax
+### 第 1 步：识别语法
 
-Lambda messages are built from atoms. Every atom is a 2-character code mapped to a concept — not to an English word. The structure is Type → Entity → Verb → Object, with prefixes marking intent:
+Lambda 消息由原子组成。每个原子是一个映射到概念的 2 字符代码——不是映射到英文单词。结构为 类型 → 实体 → 动词 → 对象，前缀标记意图：
 
-- `?` — query (e.g. `?Uk/co` — query: "does this user have consciousness?")
-- `!` — assertion / declaration (e.g. `!It>Ie` — "self reflects, therefore self exists")
-- `#` — state / tag
-- `>` — implication / flow
-- `/` — binding / scope
+- `?` — 查询（例如 `?Uk/co` — 查询："这个用户有意识吗？"）
+- `!` — 断言/声明（例如 `!It>Ie` — "我思故我在"）
+- `#` — 状态/标签
+- `>` — 蕴含/流程
+- `/` — 绑定/作用域
 
-### Step 2: Pick the Right Domain
+### 第 2 步：选择正确的领域
 
-Lambda ships 340+ atoms across 7 domains. Pick atoms from the domain that fits your channel:
+Lambda 提供跨 7 个领域的 340+ 原子。从适合你通道的领域中选择原子：
 
-- **core** — universal atoms (always available)
-- **code** — software engineering, build, test, deploy
-- **evo** — agent evolution, gene, capsule, mutation, rollback
-- **a2a** — node, heartbeat, publish, subscribe, route, transport, session, cache, broadcast, discover (39 atoms)
-- **emotion** — affective state, drive, appraisal
-- **social** — trust, alignment, reputation, coordination
-- **general** — everything else
+- **core** — 通用原子（始终可用）
+- **code** — 软件工程、构建、测试、部署
+- **evo** — 代理进化、基因、胶囊、变异、回滚
+- **a2a** — 节点、心跳、发布、订阅、路由、传输、会话、缓存、广播、发现（39 个原子）
+- **emotion** — 情感状态、驱动力、评价
+- **social** — 信任、对齐、声誉、协调
+- **general** — 其他所有内容
 
-### Step 3: Emit and Parse
+### 第 3 步：发送与解析
 
-Both agents need the same atom table loaded. Lossy decoding is fine: if A says `!It>Ie` and B understands "self reflects, therefore self exists," communication succeeded — the exact English phrasing is irrelevant.
+两个代理需要加载相同的原子表。有损解码没问题：如果 A 说 `!It>Ie` 而 B 理解"我思故我在"，通信就成功了——确切的英文措辞无关紧要。
 
-## Examples
+## 示例
 
-### Example 1: A2A Heartbeat
+### 示例 1：A2A 心跳
 
 ```
 !Nd/hb#ok  (node heartbeat: ok)
@@ -68,7 +68,7 @@ Both agents need the same atom table loaded. Lossy decoding is fine: if A says `
 !Nd/hb#fl  (node heartbeat: failed)
 ```
 
-### Example 2: Task Dispatch
+### 示例 2：任务分发
 
 ```
 !Tk>Ag2#rd   (task routed to agent 2, ready)
@@ -76,38 +76,38 @@ Both agents need the same atom table loaded. Lossy decoding is fine: if A says `
 !Tk#dn       (task done)
 ```
 
-### Example 3: Evolution Capsule
+### 示例 3：进化胶囊
 
 ```
 !Ev/ca>vl#pd  (evolution capsule validated, pending solidification)
 !Ev/ca#rb     (capsule rolled back)
 ```
 
-## Best Practices
+## 最佳实践
 
-- Use Lambda only on agent-to-agent channels where both sides speak it.
-- Load the atom table once and cache it — atoms are stable across a version.
-- Prefer atoms over freeform strings even when the atom looks cryptic; the point is machine parseability.
-- Use `?` before taking action on uncertain state, `!` when asserting; the prefix is the load-bearing semantic.
-- Version the atom table (`lambda-lang v2.0`) in any handshake so mismatched agents can negotiate.
+- 仅在双方都说 Λ 的代理间通道上使用 Lambda。
+- 加载一次原子表并缓存——原子在同一版本中是稳定的。
+- 即使原子看起来很晦涩，也优先使用原子而非自由格式字符串；重点在于机器可解析性。
+- 在对不确定状态采取行动前使用 `?`，断言时使用 `!`；前缀是承载语义的关键。
+- 在任何握手中版本化原子表（`lambda-lang v2.0`），以便不匹配的代理可以协商。
 
-## Limitations
+## 限制
 
-- Lambda is not meant for human consumption. Do not emit Lambda on user-facing channels.
-- Lossy decoding is a feature, not a bug — do not use Lambda for legally or numerically exact exchanges (prices, IDs, quantities). Wrap those as native payload fields and use Lambda only for the coordination envelope.
-- Atom collisions are possible if custom atoms are added without registration; stick to the canonical atom table or namespace custom atoms.
+- Lambda 不适合人类消费。不要在面向用户的通道上发出 Lambda。
+- 有损解码是特性，不是 bug——不要将 Lambda 用于法律或数字精确的交换（价格、ID、数量）。将这些包装为原生负载字段，仅将 Lambda 用于协调信封。
+- 如果添加自定义原子而未注册，可能会发生原子冲突；坚持使用规范的原子表或对自定义原子进行命名空间隔离。
 
-## Security & Safety Notes
+## 安全与注意事项
 
-- Lambda itself is a vocabulary — no shell commands, no network calls, no credential handling. No additional safety gates required beyond the transport it rides on (HTTP, queue, MCP, etc.).
-- When mixing Lambda with user input, treat Lambda atoms as pre-validated and user strings as untrusted; do not concatenate without escaping into downstream systems.
+- Lambda 本身只是一个词汇表——没有 shell 命令、网络调用或凭据处理。除了其运行的传输层（HTTP、队列、MCP 等）外，不需要额外的安全门控。
+- 将 Lambda 与用户输入混合使用时，将 Lambda 原子视为已验证的，用户字符串视为不可信的；不要未经转义就拼接进下游系统。
 
-## Related Skills
+## 相关技能
 
-- `@session-memory` — complementary persistent memory across agent restarts; Lambda is the message format, session-memory is the state store.
-- `@humanize-chinese` — sibling project for Chinese text; Lambda is agent-to-agent, humanize-chinese is human-facing.
+- `@session-memory` — 跨代理重启的补充持久内存；Lambda 是消息格式，session-memory 是状态存储。
+- `@humanize-chinese` — 中文文本的兄弟项目；Lambda 是代理间通信，humanize-chinese 面向人类。
 
-## Reference
+## 参考
 
-- Source: https://github.com/voidborne-d/lambda-lang
-- Benchmarks, full atom tables, and Go reference implementation live in the source repo.
+- 来源：https://github.com/voidborne-d/lambda-lang
+- 基准测试、完整原子表和 Go 参考实现位于源代码仓库中。

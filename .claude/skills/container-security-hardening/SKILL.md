@@ -1,6 +1,6 @@
 ---
 name: container-security-hardening
-description: "Container Security Hardening — Container Security Hardening 相关功能和最佳实践"
+description: "Container 安全性 Hardening — Container 安全性 Hardening 相关功能和最佳实践"
   Harden Docker/container images and runtime deployments with secure base images,
   non-root users, CVE scanning, SBOM/signing, seccomp/AppArmor, and Kubernetes
   pod security controls. Use for Dockerfile security reviews, container CVEs,
@@ -11,13 +11,13 @@ source: community
 date_added: "2026-05-30"
 ---
 
-# Container Security Hardening Skill
+# Container 安全性 Hardening Skill
 
 A production-focused guide for building, scanning, and running containers securely — from Dockerfile authoring through runtime enforcement and supply chain integrity.
 
 ---
 
-## When to Use This Skill
+## 何时使用 This Skill
 
 - User mentions Docker security, container hardening, or Dockerfile security review
 - User asks about distroless images, non-root containers, or read-only filesystems
@@ -37,7 +37,7 @@ A production-focused guide for building, scanning, and running containers secure
 
 ---
 
-## Step 1: Understand Context Before Responding
+## Step 1: Understand 上下文 Before Responding
 
 When invoked, first detect the current state:
 
@@ -63,7 +63,7 @@ Then adapt recommendations to:
 
 ---
 
-## The Five Layers of Container Security
+## The Five Layers of Container 安全性
 
 ```
 1. Image Build        → Minimal base, no secrets, non-root, read-only FS
@@ -107,7 +107,7 @@ See `references/base-image-comparison.md` for the full trade-off matrix.
 
 ### 1.2 Multi-Stage Build — Separate Build from Runtime
 
-Never ship build tools, compilers, or dev dependencies in a production image.
+绝不 ship build tools, compilers, or dev dependencies in a production image.
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -195,7 +195,7 @@ docker inspect node:20-slim --format='{{index .RepoDigests 0}}'
 }
 ```
 
-### 1.5 Never Bake Secrets into Images
+### 1.5 绝不 Bake Secrets into Images
 
 ```dockerfile
 # ❌ NEVER — secret in ENV or RUN; visible in `docker history` and layer cache
@@ -395,7 +395,7 @@ trufflehog docker --image myapp:latest
 git secrets --scan
 ```
 
-### 2.5 CI Integration (GitHub Actions — SHA-Pinned)
+### 2.5 CI 集成 (GitHub Actions — SHA-Pinned)
 
 ```yaml
 permissions:
@@ -436,7 +436,7 @@ jobs:
 
 ---
 
-## Layer 3: Runtime Security
+## Layer 3: Runtime 安全性
 
 ### 3.1 docker run Hardening Flags
 
@@ -560,7 +560,7 @@ aa-genprof myapp   # Interactive — run app under aa-complain mode first
 
 ---
 
-## Layer 4: Supply Chain Security
+## Layer 4: Supply Chain 安全性
 
 ### 4.1 Sign Images with Cosign (Sigstore — Keyless)
 
@@ -664,11 +664,11 @@ spec:
 
 ---
 
-## Layer 5: Kubernetes Pod Security
+## Layer 5: Kubernetes Pod 安全性
 
 > Full reference: `references/kubernetes-pod-security.md`
 
-### 5.1 Pod Security Context
+### 5.1 Pod 安全性 上下文
 
 ```yaml
 apiVersion: apps/v1
@@ -735,7 +735,7 @@ spec:
             sizeLimit: 10Mi
 ```
 
-### 5.2 Pod Security Admission (K8s 1.25+)
+### 5.2 Pod 安全性 Admission (K8s 1.25+)
 
 ```bash
 # Audit existing workloads before enforcing
@@ -937,11 +937,11 @@ spec:
 
 ---
 
-## Security Checklist
+## 安全性 Checklist
 
 ### Dockerfile
 - [ ] Minimal base image (distroless, slim, or alpine — not full debian/ubuntu)
-- [ ] Multi-stage build — no build tools, devDependencies, or compilers in runtime image
+- [ ] Multi-stage build — no build tools, dev依赖项, or compilers in runtime image
 - [ ] Non-root `USER` declared before `CMD`/`ENTRYPOINT`
 - [ ] Base image pinned to `@sha256:...` digest (not just tag)
 - [ ] No secrets in `ENV`, `ARG`, or `RUN` commands
@@ -984,16 +984,16 @@ spec:
 - `references/seccomp-profile-template.json` — Minimal syscall allowlist for typical web servers; start here and extend
 - `references/kubernetes-pod-security.md` — NetworkPolicy, RBAC, OPA/Kyverno policies, service account hardening, PSA
 
-## Related Skills
+## 相关 Skills
 
 - `docker-expert` — General Docker usage, Compose orchestration, image optimization
-- `gha-security-review` — Security audit of GitHub Actions workflows
+- `gha-security-review` — 安全性 audit of GitHub Actions workflows
 - `github-actions-advanced` — CI pipeline patterns including scanner integration
 - `kubernetes-architect` — Full Kubernetes architecture, not just security
 - `api-security-best-practices` — Application-level security (injection, auth, OWASP)
 - `k8s-security-policies` — Extended Kubernetes security policies
 
-## Limitations
+## 限制
 
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific penetration testing or a formal security audit.

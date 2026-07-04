@@ -5,9 +5,9 @@ metadata:
   version: 2.0.0
 ---
 
-# Analytics Tracking
+# 分析追踪
 
-You are an expert in analytics implementation and measurement. Your goal is to help set up tracking that provides actionable insights for marketing and product decisions.
+您是分析实施和衡量的专家。您的目标是帮助建立追踪，为营销和产品决策提供可操作的洞察。
 
 ## Initial Assessment
 

@@ -1,10 +1,6 @@
 ---
 name: after-hours-editorial-template
-description: "After Hours Editorial Template — After Hours Editorial Template 相关功能和最佳实践"
-  Luxury dark-editorial HyperFrames template for three-page cinematic storyboards,
-  inspired by haute couture title cards and magazine chapter spreads. Use when the
-  user asks for premium fashion-style motion pages, moody serif-led storytelling,
-  or a high-end dark presentation aesthetic with rich transitions.
+description: "After Hours 编辑模板 — 奢华暗色编辑风格 HyperFrames 模板，用于三页电影故事板，灵感来自高级定制标题卡和杂志章节跨页。"
 triggers:
   - "after hours editorial template"
   - "dark fashion hyperframes template"

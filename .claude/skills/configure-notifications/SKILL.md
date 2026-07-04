@@ -16,7 +16,7 @@ triggers:
 level: 2
 ---
 
-# Configure Notifications
+# 配置通知
 
 Set up OMC notification integrations so you're alerted when sessions end, need input, or complete background tasks.
 
@@ -37,7 +37,7 @@ Detect which provider the user wants based on their request or argument:
 
 ---
 
-## Telegram Setup
+## Telegram 设置
 
 Set up Telegram notifications so OMC can message you when sessions end, need input, or complete background tasks.
 
@@ -45,7 +45,7 @@ Set up Telegram notifications so OMC can message you when sessions end, need inp
 
 This is an interactive, natural-language configuration skill. Walk the user through setup by asking questions with AskUserQuestion. Write the result to `${CLAUDE_CONFIG_DIR:-~/.claude}/.omc-config.json`.
 
-### Step 1: Detect Existing Configuration
+### Step 1: Detect Existing 配置
 
 ```bash
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
@@ -144,9 +144,9 @@ Use AskUserQuestion with multiSelect:
 3. **Session start** - When a new session begins
 4. **Session continuing** - When a persistent mode keeps the session alive
 
-Default selection: session-end + ask-user-question.
+默认 selection: session-end + ask-user-question.
 
-### Step 7: Write Configuration
+### Step 7: Write 配置
 
 Read the existing config, merge the new Telegram settings, and write back:
 
@@ -186,7 +186,7 @@ echo "$(cat "$CONFIG_FILE")" | jq \
    .notifications.events["session-start"] = {enabled: false}' > "$CONFIG_FILE"
 ```
 
-### Step 8: Test the Configuration
+### Step 8: Test the 配置
 
 After writing config, offer to send a test notification:
 
@@ -263,7 +263,7 @@ Env vars are auto-detected by the notification system without needing `.omc-conf
 
 ---
 
-## Discord Setup
+## Discord 设置
 
 Set up Discord notifications so OMC can ping you when sessions end, need input, or complete background tasks.
 
@@ -271,7 +271,7 @@ Set up Discord notifications so OMC can ping you when sessions end, need input, 
 
 This is an interactive, natural-language configuration skill. Walk the user through setup by asking questions with AskUserQuestion. Write the result to `${CLAUDE_CONFIG_DIR:-~/.claude}/.omc-config.json`.
 
-### Step 1: Detect Existing Configuration
+### Step 1: Detect Existing 配置
 
 ```bash
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
@@ -309,13 +309,13 @@ Use AskUserQuestion:
 1. **Webhook (Recommended)** - Create a webhook in your Discord channel. Simple, no bot needed. Just paste the URL.
 2. **Bot API** - Use a Discord bot token + channel ID. More flexible, requires a bot application.
 
-### Step 3A: Webhook Setup
+### Step 3A: Webhook 设置
 
 If user chose Webhook:
 
 Use AskUserQuestion:
 
-**Question:** "Paste your Discord webhook URL. To create one: Server Settings > Integrations > Webhooks > New Webhook > Copy URL"
+**Question:** "Paste your Discord webhook URL. To create one: Server Settings > 集成s > Webhooks > New Webhook > Copy URL"
 
 The user will type their webhook URL in the "Other" field.
 
@@ -323,7 +323,7 @@ The user will type their webhook URL in the "Other" field.
 - Must start with `https://discord.com/api/webhooks/` or `https://discordapp.com/api/webhooks/`
 - If invalid, explain the format and ask again
 
-### Step 3B: Bot API Setup
+### Step 3B: Bot API 设置
 
 If user chose Bot API:
 
@@ -367,9 +367,9 @@ Use AskUserQuestion with multiSelect:
 3. **Session start** - When a new session begins
 4. **Session continuing** - When a persistent mode keeps the session alive
 
-Default selection: session-end + ask-user-question.
+默认 selection: session-end + ask-user-question.
 
-### Step 6: Optional Username Override
+### Step 6: 可选 Username Override
 
 Use AskUserQuestion:
 
@@ -380,7 +380,7 @@ Use AskUserQuestion:
 2. **Claude Code** - Display as "Claude Code"
 3. **Custom** - Enter a custom name
 
-### Step 7: Write Configuration
+### Step 7: Write 配置
 
 Read the existing config, merge the new Discord settings, and write back:
 
@@ -445,7 +445,7 @@ echo "$(cat "$CONFIG_FILE")" | jq \
    .notifications.events["session-start"] = {enabled: false}' > "$CONFIG_FILE"
 ```
 
-### Step 8: Test the Configuration
+### Step 8: Test the 配置
 
 After writing config, offer to send a test notification:
 
@@ -513,7 +513,7 @@ Env vars are auto-detected by the notification system without needing `.omc-conf
 
 ---
 
-## Slack Setup
+## Slack 设置
 
 Set up Slack notifications so OMC can message you when sessions end, need input, or complete background tasks.
 
@@ -521,7 +521,7 @@ Set up Slack notifications so OMC can message you when sessions end, need input,
 
 This is an interactive, natural-language configuration skill. Walk the user through setup by asking questions with AskUserQuestion. Write the result to `${CLAUDE_CONFIG_DIR:-~/.claude}/.omc-config.json`.
 
-### Step 1: Detect Existing Configuration
+### Step 1: Detect Existing 配置
 
 ```bash
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
@@ -615,9 +615,9 @@ Use AskUserQuestion with multiSelect:
 3. **Session start** - When a new session begins
 4. **Session continuing** - When a persistent mode keeps the session alive
 
-Default selection: session-end + ask-user-question.
+默认 selection: session-end + ask-user-question.
 
-### Step 6: Optional Channel Override
+### Step 6: 可选 Channel Override
 
 Use AskUserQuestion:
 
@@ -629,7 +629,7 @@ Use AskUserQuestion:
 
 If override, ask for the channel name (e.g., `#alerts`).
 
-### Step 7: Optional Username Override
+### Step 7: 可选 Username Override
 
 Use AskUserQuestion:
 
@@ -640,7 +640,7 @@ Use AskUserQuestion:
 2. **Claude Code** - Display as "Claude Code"
 3. **Custom** - Enter a custom name
 
-### Step 8: Write Configuration
+### Step 8: Write 配置
 
 Read the existing config, merge the new Slack settings, and write back:
 
@@ -682,7 +682,7 @@ echo "$(cat "$CONFIG_FILE")" | jq \
    .notifications.events["session-start"] = {enabled: false}' > "$CONFIG_FILE"
 ```
 
-### Step 9: Test the Configuration
+### Step 9: Test the 配置
 
 After writing config, offer to send a test notification:
 
@@ -877,7 +877,7 @@ Use AskUserQuestion:
 
 If per-platform: ask for each enabled platform's template separately.
 
-### Step 6: Write Configuration
+### Step 6: Write 配置
 
 Read or create `${CLAUDE_CONFIG_DIR:-~/.claude}/omc_config.hook.json` and merge the new settings:
 
@@ -933,13 +933,13 @@ Offer to send a test notification with the new template.
 
 ---
 
-## Related
+## 相关
 
 - `/oh-my-claudecode:configure-openclaw` — Configure OpenClaw gateway integration
 
 ---
 
-## Custom Integration (OpenClaw, n8n, CLI, etc.)
+## Custom 集成 (OpenClaw, n8n, CLI, etc.)
 
 Configure custom webhooks and CLI commands for services beyond the native Discord/Telegram/Slack integrations.
 
@@ -947,7 +947,7 @@ Configure custom webhooks and CLI commands for services beyond the native Discor
 
 If the user says "custom integration", "openclaw", "n8n", "webhook", "cli command", or similar → follow this section.
 
-### Migration from OpenClaw
+### 迁移 from OpenClaw
 
 If `~/.claude/omc_config.openclaw.json` exists, detect and offer migration:
 
@@ -967,7 +967,7 @@ else
 fi
 ```
 
-**Step 2: Offer Migration**
+**Step 2: Offer 迁移**
 If legacy found and not migrated:
 
 **Question:** "Existing OpenClaw configuration detected. Would you like to migrate it to the new format?"
@@ -984,9 +984,9 @@ If migrate:
 - Backup legacy to `omc_config.openclaw.json.bak`
 - Show success message
 
-### Custom Integration Wizard
+### Custom 集成 Wizard
 
-**Step 1: Select Integration Type**
+**Step 1: Select 集成 Type**
 
 **Question:** "Which type of custom integration would you like to configure?"
 
@@ -1007,7 +1007,7 @@ If migrate:
 - Must be HTTPS (except localhost for development)
 - Must be valid URL format
 
-**Step 3: Authentication (Optional)**
+**Step 3: Authentication (可选)**
 
 **Question:** "Does your gateway require authentication?"
 
@@ -1032,8 +1032,8 @@ Use AskUserQuestion with multiSelect:
 - session-idle
 - ask-user-question
 
-Default for OpenClaw: session-start, session-end, stop
-Default for n8n: session-end, ask-user-question
+默认 for OpenClaw: session-start, session-end, stop
+默认 for n8n: session-end, ask-user-question
 
 **Step 5: Test**
 
@@ -1055,7 +1055,7 @@ curl -X POST \
 
 Show result (HTTP status, any error).
 
-**Step 6: Write Configuration**
+**Step 6: Write 配置**
 
 Merge into `.omc-config.json`:
 
@@ -1093,15 +1093,15 @@ Merge into `.omc-config.json`:
 Ask for webhook URL (HTTPS required).
 
 **Step 3: Method**
-Ask for HTTP method (GET, POST, PUT, PATCH, DELETE). Default: POST.
+Ask for HTTP method (GET, POST, PUT, PATCH, DELETE). 默认: POST.
 
 **Step 4: Headers**
-Ask for headers in "Name: Value" format, one per line. Default: Content-Type: application/json
+Ask for headers in "Name: Value" format, one per line. 默认: Content-Type: application/json
 
 **Step 5: Body Template**
 Show available template variables and ask for body template (JSON or other format).
 
-Default:
+默认:
 ```json
 {
   "event": "{{event}}",
@@ -1112,7 +1112,7 @@ Default:
 ```
 
 **Step 6: Timeout**
-Ask for timeout in milliseconds (1000-60000). Default: 10000.
+Ask for timeout in milliseconds (1000-60000). 默认: 10000.
 
 **Step 7: Events**
 Multi-select events.
@@ -1148,7 +1148,7 @@ https://my-api.com/notify
 Show available template variables reference.
 
 **Step 4: Timeout**
-Ask for timeout (1000-60000ms). Default: 5000.
+Ask for timeout (1000-60000ms). 默认: 5000.
 
 **Step 5: Events**
 Multi-select events.
@@ -1162,7 +1162,7 @@ $COMMAND "${ARGS[@]//{{event}}/test}"
 
 Show stdout/stderr and exit code.
 
-### Managing Custom Integrations
+### Managing Custom 集成s
 
 **List existing:**
 ```bash
@@ -1200,14 +1200,14 @@ All custom integrations support these template variables:
 | `{{tmuxSession}}` | tmux session name | `claude:my-project` |
 
 Session-end only:
-- `{{agentsSpawned}}`, `{{agentsCompleted}}`, `{{modesUsed}}`, `{{contextSummary}}`
+- `{{agentsSpawned}}`, `{{agentsCompleted}}`, `{{modesUsed}}`, `{{context总结}}`
 
 Ask-user-question only:
 - `{{question}}`
 
 ---
 
-## Related
+## 相关
 
 - Template variables: `src/notifications/template-variables.ts`
 - Validation: `src/notifications/validation.ts`

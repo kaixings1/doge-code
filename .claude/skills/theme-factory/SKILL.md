@@ -1,7 +1,6 @@
 ---
 name: theme-factory
-description: "Theme Factory — Theme Factory 相关功能和最佳实践"
-  Apply professional font and color themes to artifacts including slides, docs, reports, and HTML landing pages. Ships 10 pre-set themes.
+description: "Theme Factory — 主题工厂。为幻灯片、文档、报告和 HTML 着陆页等工件应用专业字体和颜色主题。内置 10 个预设主题。"
 triggers:
   - "theme factory"
   - "apply theme"
@@ -16,28 +15,24 @@ od:
 
 # theme-factory
 
-> Curated from Anthropic's official skills repository.
+> 来自 Anthropic 官方技能仓库。
 
-## What it does
+## 功能
 
-Apply professional font and color themes to artifacts including slides, docs, reports, and HTML landing pages. Ships 10 pre-set themes.
+为幻灯片、文档、报告和 HTML 着陆页等工件应用专业字体和颜色主题。内置 10 个预设主题。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/anthropics/skills/tree/main/skills/theme-factory
-- Category: `design-systems`
+- 上游：https://github.com/anthropics/skills/tree/main/skills/theme-factory
+- 分类：`design-systems`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在 Open Design 中宣传该技能，以便代理在规划期间发现它。要运行完整的上游工作流及其原始资产、脚本和参考资料，将上游包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README 获取确切路径
 open https://github.com/anthropics/skills/tree/main/skills/theme-factory
 ```
 
-Then ask the agent to invoke this skill by name (`theme-factory`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后让代理按名称（`theme-factory`）或使用此技能 frontmatter 中列出的触发短语之一调用此技能。

@@ -10,20 +10,20 @@ Orchestrate end-to-end feature development from requirements to production deplo
 
 [Extended thinking: This workflow orchestrates specialized agents through comprehensive feature development phases - from discovery and planning through implementation, testing, and deployment. Each phase builds on previous outputs, ensuring coherent feature delivery. The workflow supports multiple development methodologies (traditional, TDD/BDD, DDD), feature complexity levels, and modern deployment strategies including feature flags, gradual rollouts, and observability-first development. Agents receive detailed context from previous phases to maintain consistency and quality throughout the development lifecycle.]
 
-## Use this skill when
+## /u4f55/u65f6/u4f7f/u7528/u6b64/u6280/u80fd
 
 - Coordinating end-to-end feature delivery across backend, frontend, and data
 - Managing requirements, architecture, implementation, testing, and rollout
 - Planning multi-service changes with deployment and monitoring needs
 - Aligning teams on scope, risks, and success metrics
 
-## Do not use this skill when
+## /u4e0d/u8981/u4f7f/u7528/u6b64/u6280/u80fd/u7684/u60c5/u51b5
 
 - The task is a small, isolated backend change or bug fix
 - You only need a single specialist task, not a full workflow
 - There is no deployment or cross-team coordination involved
 
-## Instructions
+## /u8bf4/u660e
 
 1. Confirm feature scope, success metrics, and constraints.
 2. Select a methodology and define phase outputs.
@@ -182,7 +182,7 @@ If issues arise during or after deployment:
 
 Feature description: $ARGUMENTS
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

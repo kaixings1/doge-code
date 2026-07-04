@@ -18,9 +18,9 @@ tools:
 - codex-cli
 ---
 
-# Claude Monitor — Diagnóstico de Performance
+# Claude Monitor — Diagnóstico de 性能
 
-## Overview
+## 概述
 
 Monitor de performance do Claude Code e sistema local. Diagnostica lentidao, mede CPU/RAM/disco, verifica API latency e gera relatorios de saude do sistema.
 
@@ -177,7 +177,7 @@ Quando apresentar o diagnóstico, inclua estas dicas contextuais:
 - Applying recommendations without understanding your specific context
 - Not providing enough project context for accurate analysis
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

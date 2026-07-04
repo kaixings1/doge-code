@@ -49,7 +49,7 @@ In central this lives as a subdir of ckw-design; it **publishes separately** as
 `deterministic-design-skill` (its own distribution) via publish-skill. One of the two
 flagship narratives — the *determinism* one; its sibling is human-in-the-loop (lookdev).
 
-## Limitations
+## 局限性
 
 - Layout metrics and vision-judged audits catch many spatial and usability failures, but they are not a substitute for product judgment or user testing.
 - The workflow requires a rendered UI or screenshot; it cannot validate components that have not been built or captured.

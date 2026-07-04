@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Complete end-to-end MLOps pipeline orchestration from data preparation through model deployment.
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to ml pipeline workflow
 - You need a different domain or tool outside this scope
@@ -26,7 +26,7 @@ Complete end-to-end MLOps pipeline orchestration from data preparation through m
 
 This skill provides comprehensive guidance for building production ML pipelines that handle the full lifecycle: data ingestion → preparation → training → validation → deployment → monitoring.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Building new ML pipelines from scratch
 - Designing workflow orchestration for ML systems
@@ -259,7 +259,7 @@ After setting up your pipeline:
 - **hyperparameter-tuning**: Automated hyperparameter optimization
 - **model-deployment-patterns**: Advanced deployment strategies
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

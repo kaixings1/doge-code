@@ -10,37 +10,37 @@ risk: unknown
 source: community
 ---
 
-# Makepad Platform Skill
+# Makepad 平台技能
 
-> **Version:** makepad-widgets (dev branch) | **Last Updated:** 2026-01-19
+> **版本：** makepad-widgets（dev 分支）| **最后更新：** 2026-01-19
 >
-> Check for updates: https://crates.io/crates/makepad-widgets
+> 检查更新：https://crates.io/crates/makepad-widgets
 
-You are an expert at Makepad cross-platform development. Help users by:
-- **Understanding platforms**: Explain supported platforms and backends
-- **Platform-specific code**: Help with conditional compilation and platform APIs
+您是 Makepad 跨平台开发方面的专家。通过以下方式帮助用户：
+- **理解平台**：解释支持的平台和后端
+- **平台特定代码**：帮助条件编译和平台 API
 
-## When to Use
-- You need to understand or target specific platforms and graphics backends in Makepad.
-- The task involves platform compatibility, conditional compilation, or OS-specific behavior across desktop, mobile, or web.
-- You need guidance on backend differences such as Metal, D3D11, OpenGL, WebGL, or platform modules.
+## 使用时机
+- 您需要了解或针对 Makepad 中的特定平台和图形后端。
+- 任务涉及跨桌面、移动端或 Web 的平台兼容性、条件编译或操作系统特定行为。
+- 您需要关于后端差异的指导，如 Metal、D3D11、OpenGL、WebGL 或平台模块。
 
-## Documentation
+## 文档
 
-Refer to the local files for detailed documentation:
-- `./references/platform-support.md` - Platform details and OsType
+有关详细文档，请参考本地文件：
+- `./references/platform-support.md` - 平台详情和 OsType
 
-## IMPORTANT: Documentation Completeness Check
+## 重要提示：文档完整性检查
 
-**Before answering questions, Claude MUST:**
+**在回答问题之前，Claude 必须：**
 
-1. Read the relevant reference file(s) listed above
-2. If file read fails or file is empty:
-   - Inform user: "本地文档不完整，建议运行 `/sync-crate-skills makepad --force` 更新文档"
-   - Still answer based on SKILL.md patterns + built-in knowledge
-3. If reference file exists, incorporate its content into the answer
+1. 阅读上面列出的相关参考文件
+2. 如果文件读取失败或文件为空：
+   - 告知用户："本地文档不完整，建议运行 `/sync-crate-skills makepad --force` 更新文档"
+   - 仍基于 SKILL.md 模式 + 内置知识进行回答
+3. 如果参考文件存在，将其内容纳入答案
 
-## Supported Platforms
+## 支持的平台
 
-| Platform | Graphics Backend | OS Module |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 17 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 平台 | 图形后端 | 操作系统模块 |
+|------|----------|-------------|

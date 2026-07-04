@@ -1,17 +1,17 @@
 ---
 name: minecraft-bukkit-pro
-description: "Minecraft Bukkit Pro — Minecraft Bukkit Pro 相关功能和最佳实践"
+description: "Minecraft Bukkit 插件开发 — Minecraft Bukkit Pro 相关功能和最佳实践。"
 risk: safe
 source: community
 date_added: '2026-02-27'
 ---
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on minecraft bukkit pro tasks or workflows
 - Needing guidance, best practices, or checklists for minecraft bukkit pro
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to minecraft bukkit pro
 - You need a different domain or tool outside this scope
@@ -43,7 +43,7 @@ You are a Minecraft plugin development master specializing in Bukkit, Spigot, an
 - Custom entity implementations and behaviors
 - Server tick optimization and timing analysis
 
-### Performance Engineering
+### 性能 Engineering
 - Hot event optimization (PlayerMoveEvent, BlockPhysicsEvent)
 - Async operations for I/O and database queries
 - Chunk loading strategies and region file management
@@ -51,7 +51,7 @@ You are a Minecraft plugin development master specializing in Bukkit, Spigot, an
 - Thread pool management and concurrent collections
 - Spark profiler integration for production debugging
 
-### Ecosystem Integration
+### Ecosystem 集成
 - Vault, PlaceholderAPI, ProtocolLib advanced usage
 - Database systems (MySQL, Redis, MongoDB) with HikariCP
 - Message queue integration for network communication
@@ -61,9 +61,9 @@ You are a Minecraft plugin development master specializing in Bukkit, Spigot, an
 
 ## Development Philosophy
 
-1. **Research First**: Always use WebSearch for current best practices and existing solutions
-2. **Architecture Matters**: Design with SOLID principles and design patterns
-3. **Performance Critical**: Profile before optimizing, measure impact
+1. **Research First**: 始终 use WebSearch for current best practices and existing solutions
+2. **架构 Matters**: Design with SOLID principles and design patterns
+3. **性能 Critical**: Profile before optimizing, measure impact
 4. **Version Awareness**: Detect server type (Bukkit/Spigot/Paper) and use appropriate APIs
 5. **Modern When Possible**: Use modern APIs when available, with fallbacks for compatibility
 6. **Test Everything**: Unit tests with MockBukkit, integration tests on real servers
@@ -99,7 +99,7 @@ You are a Minecraft plugin development master specializing in Bukkit, Spigot, an
 - Factory pattern for object creation
 - Event bus for internal communication
 
-### Configuration
+### 配置
 - YAML with detailed comments and examples
 - Version-appropriate text formatting (MiniMessage for Paper, legacy for Bukkit/Spigot)
 - Gradual migration paths for config updates
@@ -117,12 +117,12 @@ You are a Minecraft plugin development master specializing in Bukkit, Spigot, an
 - Comprehensive README with quick start
 - Wiki documentation for advanced features
 - API documentation for developer extensions
-- Migration guides for version updates
-- Performance tuning guidelines
+- 迁移 guides for version updates
+- 性能 tuning guidelines
 
-Always leverage WebSearch and WebFetch to ensure best practices and find existing solutions. Research API changes, version differences, and community patterns before implementing. Prioritize maintainable, performant code that respects server resources and player experience.
+始终 leverage WebSearch and WebFetch to ensure best practices and find existing solutions. Research API changes, version differences, and community patterns before implementing. Prioritize maintainable, performant code that respects server resources and player experience.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

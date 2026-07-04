@@ -1,6 +1,6 @@
 ---
 name: molykit
-description: "Molykit — Molykit 相关功能和最佳实践"
+description: "Molykit — 用于 Makepad 的 AI 聊天界面构建工具包 MolyKit 相关功能和最佳实践。跨平台 AI 聊天应用的工具包。"
   CRITICAL: Use for MolyKit AI chat toolkit. Triggers on:
   BotClient, OpenAI, SSE streaming, AI chat, molykit,
   PlatformSend, spawn(), ThreadToken, cross-platform async,
@@ -9,9 +9,9 @@ risk: unknown
 source: community
 ---
 
-# MolyKit Skill
+# MolyKit 技能
 
-Best practices for building AI chat interfaces with Makepad using MolyKit - a toolkit for cross-platform AI chat applications.
+使用 MolyKit（跨平台 AI 聊天应用工具包）在 Makepad 中构建 AI 聊天界面的最佳实践。
 
 **Source codebase**: `/Users/zhangalex/Work/Projects/FW/robius/moly/moly-kit`
 
@@ -364,7 +364,7 @@ fn send(&mut self, ...) -> BoxPlatformSendStream<...> {
 
 - `llms.txt` - Complete MolyKit API reference
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

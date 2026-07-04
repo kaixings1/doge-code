@@ -1,13 +1,12 @@
 ---
 name: ai-product
-description: "Ai Product — Ai Product 相关功能和最佳实践"
-  build it right or ship a demo that falls apart in production.
+description: "AI 产品开发 — 构建正确的 AI 产品，而非在生产环境中崩溃的演示版本。"
 risk: safe
 source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
 ---
 
-# AI Product Development
+# AI 产品开发
 
 Every product will be AI-powered. The question is whether you'll build it
 right or ship a demo that falls apart in production.
@@ -747,7 +746,7 @@ Workflow:
 ## When to Use
 Use this skill when the request clearly matches the capabilities and patterns described above.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -1,7 +1,7 @@
 ---
 name: pdf
-description: "Pdf — Pdf 相关功能和最佳实践"
-  Extract text, create PDFs, and handle forms. Useful for press releases, branded one-pagers, and printable design deliverables.
+description: "Pdf — PDF 相关功能和最佳实践"
+  提取文本、创建 PDF 和处理表单。适用于新闻稿、品牌一页纸和可打印的设计交付物。
 triggers:
   - "pdf"
   - "create pdf"
@@ -14,30 +14,26 @@ od:
   upstream: "https://github.com/anthropics/skills/tree/main/skills/pdf"
 ---
 
-# pdf
+# PDF
 
-> Curated from Anthropic's official skills repository.
+> 来自 Anthropic 官方技能仓库。
 
-## What it does
+## 功能
 
-Extract text, create PDFs, and handle forms. Useful for press releases, branded one-pagers, and printable design deliverables.
+提取文本、创建 PDF 和处理表单。适用于新闻稿、品牌一页纸和可打印的设计交付物。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/anthropics/skills/tree/main/skills/pdf
-- Category: `documents`
+- 上游: https://github.com/anthropics/skills/tree/main/skills/pdf
+- 分类: `documents`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在 Open Design 中宣传该技能，以便代理在规划期间发现它。要运行完整的上游工作流及其原始资源、脚本和参考资料，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README 获取确切路径
 open https://github.com/anthropics/skills/tree/main/skills/pdf
 ```
 
-Then ask the agent to invoke this skill by name (`pdf`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后通过名称（`pdf`）或此技能前置元数据中列出的触发短语之一要求代理调用此技能。

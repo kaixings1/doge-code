@@ -1,6 +1,6 @@
 ---
 name: miro-automation
-description: "通过 Rube MCP (Composio) 自动执行 Miro 任务：boards, items, sticky notes, frames, sharing, connectors. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 Miro 任务：boards, items, sticky notes, frames, sharing, connectors. 始终 search tools first for current schemas."
 risk: critical
 source: community
 date_added: "2026-02-27"
@@ -10,13 +10,13 @@ date_added: "2026-02-27"
 
 Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP.
 
-## Prerequisites
+## 前提条件
 
 - Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
 - Active Miro connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `miro`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- 始终 call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
-## Setup
+## 设置
 
 **Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
 
@@ -33,8 +33,8 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 **When to use**: User wants to find boards or get board details
 
 **Tool sequence**:
-1. `MIRO_GET_BOARDS2` - List all accessible boards [Required]
-2. `MIRO_GET_BOARD` - Get detailed info for a specific board [Optional]
+1. `MIRO_GET_BOARDS2` - List all accessible boards [必需]
+2. `MIRO_GET_BOARD` - Get detailed info for a specific board [可选]
 
 **Key parameters**:
 - `query`: Search term to filter boards by name
@@ -53,10 +53,10 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 **When to use**: User wants to create a new board or add items to an existing board
 
 **Tool sequence**:
-1. `MIRO_CREATE_BOARD` - Create a new empty board [Optional]
-2. `MIRO_CREATE_STICKY_NOTE_ITEM` - Add sticky notes to a board [Optional]
-3. `MIRO_CREATE_FRAME_ITEM2` - Add frames to organize content [Optional]
-4. `MIRO_CREATE_ITEMS_IN_BULK` - Add multiple items at once [Optional]
+1. `MIRO_CREATE_BOARD` - Create a new empty board [可选]
+2. `MIRO_CREATE_STICKY_NOTE_ITEM` - Add sticky notes to a board [可选]
+3. `MIRO_CREATE_FRAME_ITEM2` - Add frames to organize content [可选]
+4. `MIRO_CREATE_ITEMS_IN_BULK` - Add multiple items at once [可选]
 
 **Key parameters**:
 - `name` / `description`: Board name and description (for CREATE_BOARD)
@@ -78,8 +78,8 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 **When to use**: User wants to view, find, or organize items on a board
 
 **Tool sequence**:
-1. `MIRO_GET_BOARD_ITEMS` - List all items on a board [Required]
-2. `MIRO_GET_CONNECTORS2` - List connections between items [Optional]
+1. `MIRO_GET_BOARD_ITEMS` - List all items on a board [必需]
+2. `MIRO_GET_CONNECTORS2` - List connections between items [可选]
 
 **Key parameters**:
 - `board_id`: Target board ID (required)
@@ -99,14 +99,14 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 
 **Tool sequence**:
 1. `MIRO_GET_BOARDS2` - Find the board to share [Prerequisite]
-2. `MIRO_SHARE_BOARD` - Share the board with users [Required]
-3. `MIRO_GET_BOARD_MEMBERS` - Verify current board members [Optional]
+2. `MIRO_SHARE_BOARD` - Share the board with users [必需]
+3. `MIRO_GET_BOARD_MEMBERS` - Verify current board members [可选]
 
 **Key parameters**:
 - `board_id`: Board to share (required)
 - `emails`: Array of email addresses to invite
 - `role`: Access level ('viewer', 'commenter', 'editor')
-- `message`: Optional invitation message
+- `message`: 可选 invitation message
 
 **Pitfalls**:
 - Email addresses must be valid; invalid emails cause the entire request to fail
@@ -120,7 +120,7 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 
 **Tool sequence**:
 1. `MIRO_GET_BOARD_ITEMS` - Find items to connect [Prerequisite]
-2. `MIRO_GET_CONNECTORS2` - View existing connections [Optional]
+2. `MIRO_GET_CONNECTORS2` - View existing connections [可选]
 
 **Key parameters**:
 - `board_id`: Target board ID
@@ -157,7 +157,7 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 - Boards: Use `offset` and `limit` (offset-based)
 - Board items: Use `cursor` and `limit` (cursor-based)
 - Continue until no more results or cursor is absent
-- Default page sizes vary by endpoint
+- 默认 page sizes vary by endpoint
 
 ### Coordinate System
 
@@ -167,11 +167,11 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 - Use `position: {x: 0, y: 0}` for center of board
 - Frames define bounded areas; items inside inherit frame position
 
-## Known Pitfalls
+## 已知陷阱
 
 **Board IDs**:
 - Board IDs are required for virtually all operations
-- Always resolve board names to IDs via GET_BOARDS2 first
+- 始终 resolve board names to IDs via GET_BOARDS2 first
 - Do not hardcode board IDs; they vary by account
 
 **Item Creation**:
@@ -190,7 +190,6 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 - Item types determine which fields are present in response
 - Parse defensively; optional fields may be absent
 
-## Quick Reference
+## 快速参考
 
 | Task | Tool Slug | Key Params |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 29 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

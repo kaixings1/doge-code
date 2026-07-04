@@ -75,8 +75,8 @@ Every generated board must answer:
 Unless the user specifies otherwise:
 
 - Generate one brand-kit overview image
-- Default layout: `3 × 3`
-- Default aspect ratio: `4:3` or `16:10`
+- 默认 layout: `3 × 3`
+- 默认 aspect ratio: `4:3` or `16:10`
 - Use a clean presentation grid
 - Use consistent gutters
 - Use minimal text
@@ -118,7 +118,7 @@ Examples:
 |---|---|---|
 | Developer tool | building, speed, precision, control | cursor, frame, bolt, scaffold, grid |
 | AI assistant | delegation, intelligence, clarity | spark, orbit, signal, path, node |
-| Security | protection, vigilance, boundary | shield, eye, seal, protected core |
+| 安全性 | protection, vigilance, boundary | shield, eye, seal, protected core |
 | Gaming / betting | chance, reward, tension, speed | dice, gem, card, signal, trophy |
 | Voice AI | sound, rhythm, command, flow | waveform, mic, orb, speech path |
 | Compliance | trust, order, rules, protection | seal, dog, badge, document, shield |
@@ -411,7 +411,7 @@ calm, trustworthy, focused.
 
 ---
 
-## Dark Security / Threat Intelligence
+## Dark 安全性 / Threat Intelligence
 
 Use for:
 security, compliance, monitoring, network products.
@@ -662,7 +662,7 @@ Mockups are identity applications, not feature demos.
 
 Use one dominant palette.
 
-Default:
+默认:
 - base color
 - primary accent
 - secondary accent
@@ -688,7 +688,7 @@ Rules:
 
 # ANTI-GENERIC RULES
 
-Never make:
+绝不 make:
 - random floating icons
 - generic startup gradients
 - overdesigned logos

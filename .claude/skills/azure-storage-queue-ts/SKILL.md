@@ -30,7 +30,7 @@ AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=...
 
 ## Authentication
 
-### DefaultAzureCredential (Recommended)
+### 默认AzureCredential (Recommended)
 
 ```typescript
 import { QueueServiceClient } from "@azure/storage-queue";
@@ -123,7 +123,7 @@ await queueClient.delete();
 await queueClient.deleteIfExists();
 ```
 
-### Get Queue Properties
+### Get Queue 属性
 
 ```typescript
 const properties = await queueClient.getProperties();
@@ -501,12 +501,12 @@ import {
 | Max visibility timeout | 7 days |
 | Max time-to-live | 7 days (or -1 for infinite) |
 | Max messages per receive | 32 |
-| Default visibility timeout | 30 seconds |
+| 默认 visibility timeout | 30 seconds |
 
 ## Best Practices
 
-1. **Use DefaultAzureCredential** — Prefer AAD over connection strings/keys
-2. **Always delete after processing** — Prevent duplicate processing
+1. **Use 默认AzureCredential** — 优先 AAD over connection strings/keys
+2. **始终 delete after processing** — Prevent duplicate processing
 3. **Handle poison messages** — Move failed messages to a dead-letter queue
 4. **Use appropriate visibility timeout** — Set based on expected processing time
 5. **Extend visibility for long tasks** — Update message to prevent timeout
@@ -520,14 +520,14 @@ import {
 |---------|---------|---------|
 | `StorageSharedKeyCredential` | ✅ | ❌ |
 | SAS generation | ✅ | ❌ |
-| DefaultAzureCredential | ✅ | ❌ |
+| 默认AzureCredential | ✅ | ❌ |
 | Anonymous/SAS access | ✅ | ✅ |
 | All message operations | ✅ | ✅ |
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

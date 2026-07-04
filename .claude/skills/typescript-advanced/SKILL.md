@@ -3,9 +3,9 @@ name: typescript-advanced
 description: TypeScript高级 — 包括泛型、条件类型、映射类型、模板字面量类型和装饰器。
 ---
 
-# TypeScript Advanced
+# TypeScript 高级
 
-## Generics with Constraints
+## 带约束的泛型
 
 ```typescript
 interface HasId {
@@ -38,7 +38,7 @@ async function fetchApi<T>(url: string): Promise<ApiResponse<T>> {
 }
 ```
 
-## Conditional Types
+## 条件类型
 
 ```typescript
 type IsString<T> = T extends string ? true : false;
@@ -59,7 +59,7 @@ type ExtractRouteParams<T extends string> =
 type Params = ExtractRouteParams<"/users/:userId/posts/:postId">;
 ```
 
-## Mapped Types
+## 映射类型
 
 ```typescript
 type Readonly<T> = { readonly [K in keyof T]: T[K] };
@@ -88,7 +88,7 @@ type EventMap<T> = {
 type UserEvents = EventMap<{ login: User; logout: string }>;
 ```
 
-## Discriminated Unions
+## 可辨识联合类型
 
 ```typescript
 type Result<T, E = Error> =
@@ -121,7 +121,7 @@ function area(shape: Shape): number {
 }
 ```
 
-## Type Guards
+## 类型守卫
 
 ```typescript
 function isNonNull<T>(value: T | null | undefined): value is T {
@@ -142,7 +142,7 @@ function assertNever(value: never): never {
 }
 ```
 
-## Utility Type Combinations
+## 工具类型组合
 
 ```typescript
 type DeepPartial<T> = {
@@ -157,22 +157,22 @@ type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyo
 type UpdateUserInput = RequireAtLeastOne<{ name: string; email: string; age: number }>;
 ```
 
-## Anti-Patterns
+## 反模式
 
-- Using `any` instead of `unknown` for values of uncertain type
-- Type assertions (`as`) when a type guard would be safer
-- Overly complex generic signatures that reduce readability
-- Not using discriminated unions for state machines or result types
-- Using `enum` when a union of string literals suffices
-- Ignoring `strictNullChecks` in tsconfig
+- 对不确定类型的值使用 `any` 而非 `unknown`
+- 在类型守卫更安全时使用类型断言（`as`）
+- 过度复杂的泛型签名降低可读性
+- 不为状态机或结果类型使用可辨识联合类型
+- 在字符串字面量联合类型足够时使用 `enum`
+- 在 tsconfig 中忽略 `strictNullChecks`
 
-## Checklist
+## 检查清单
 
-- [ ] `strict: true` enabled in tsconfig
-- [ ] `unknown` used instead of `any` for external data
-- [ ] Type guards validate runtime types safely
-- [ ] Discriminated unions model state with exhaustive switches
-- [ ] Generic constraints (`extends`) prevent misuse
-- [ ] Mapped types used to derive related types from a source
-- [ ] Utility types (`Pick`, `Omit`, `Partial`) preferred over manual retyping
-- [ ] Template literal types used for string pattern enforcement
+- [ ] tsconfig 中启用 `strict: true`
+- [ ] 外部数据使用 `unknown` 而非 `any`
+- [ ] 类型守卫安全验证运行时类型
+- [ ] 可辨识联合类型使用穷举 switch 建模状态
+- [ ] 泛型约束（`extends`）防止误用
+- [ ] 映射类型用于从源类型派生相关类型
+- [ ] 优先使用工具类型（`Pick`、`Omit`、`Partial`）而非手动重写类型
+- [ ] 模板字面量类型用于字符串模式强制执行

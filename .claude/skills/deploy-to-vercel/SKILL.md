@@ -6,14 +6,14 @@ source: "https://github.com/vercel-labs/agent-skills"
 date_added: "2026-06-02"
 ---
 
-# Deploy to Vercel
+# 部署到 Vercel
 
-Deploy any project to Vercel. **Always deploy as preview** (not production) unless the user explicitly asks for production.
+将任何项目部署到 Vercel。**始终以预览（而非生产）方式部署**，除非用户明确要求生产环境。
 
-The goal is to get the user into the best long-term setup: their project linked to Vercel with git-push deploys. Every method below tries to move the user closer to that state.
+目标是让用户进入最佳长期设置：他们的项目链接到 Vercel 并通过 git-push 部署。下面的每个方法都试图让用户更接近该状态。
 
-## When to Use
-- Use this skill when the task matches this description: Deploy applications and websites to Vercel. Use when the user requests deployment actions like "deploy my app", "deploy and give me the link", "push this live", or "create a preview deployment".
+## 何时使用
+- 当任务匹配此描述时使用此技能：将应用和网站部署到 Vercel。当用户请求部署操作如"部署我的应用"、"部署并给我链接"、"推送到线上"或"创建预览部署"时使用。
 
 ## Step 1: Gather Project State
 
@@ -298,7 +298,7 @@ the command with escalated permissions — want me to proceed?
 
 If `vercel login` or `vercel deploy` fails with authentication errors, fall back to the no-auth deploy script (claude.ai or Codex variant, depending on the environment).
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

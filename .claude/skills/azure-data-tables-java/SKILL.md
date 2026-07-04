@@ -58,7 +58,7 @@ TableServiceClient serviceClient = new TableServiceClientBuilder()
     .buildClient();
 ```
 
-### With DefaultAzureCredential (Storage only)
+### With 默认AzureCredential (Storage only)
 
 ```java
 import com.azure.identity.DefaultAzureCredentialBuilder;
@@ -322,7 +322,7 @@ COSMOS_TABLE_ENDPOINT=https://<account>.table.cosmosdb.azure.com
 
 1. **Partition Key Design**: Choose keys that distribute load evenly
 2. **Batch Operations**: Use transactions for atomic multi-entity updates
-3. **Query Optimization**: Always filter by PartitionKey when possible
+3. **Query Optimization**: 始终 filter by PartitionKey when possible
 4. **Select Projection**: Only select needed properties for performance
 5. **Entity Size**: Keep entities under 1MB (Storage) or 2MB (Cosmos)
 
@@ -338,7 +338,7 @@ COSMOS_TABLE_ENDPOINT=https://<account>.table.cosmosdb.azure.com
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

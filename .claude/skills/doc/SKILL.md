@@ -13,20 +13,20 @@ od:
   upstream: "https://github.com/openai/skills"
 ---
 
-# doc
+# /u6587/u6863/u5904/u7406
 
 > Curated from OpenAI's skills repository.
 
-## What it does
+## /u529f/u80fd/u8bf4/u660e
 
 Read, create, and edit .docx documents with formatting and layout fidelity via OpenAI's document skill.
 
-## Source
+## /u6765/u6e90
 
 - Upstream: https://github.com/openai/skills
 - Category: `documents`
 
-## How to use
+## /u4f7f/u7528/u65b9/u6cd5
 
 This catalogue entry advertises the skill in Open Design so the agent
 discovers it during planning. To run the full upstream workflow with

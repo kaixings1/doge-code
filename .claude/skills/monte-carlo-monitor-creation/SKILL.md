@@ -12,9 +12,9 @@ tags: [data-observability, monitoring, monte-carlo, monitors-as-code]
 tools: [claude, cursor, codex]
 ---
 
-# Monte Carlo Monitor Creation Skill
+# Monte Carlo 监控器创建技能
 
-This skill teaches you to create Monte Carlo monitors correctly via MCP. Every creation tool runs in **dry-run mode** and returns monitors-as-code (MaC) YAML. No monitors are created directly -- the user applies the YAML via the Monte Carlo CLI or CI/CD.
+本技能教你如何通过 MCP 正确创建 Monte Carlo 监控器。每个创建工具在**干运行模式**下运行，返回 monitors-as-code（MaC）YAML。不会直接创建监控器——用户通过 Monte Carlo CLI 或 CI/CD 应用 YAML。
 
 Reference files live next to this skill file. **Use the Read tool** (not MCP resources) to access them:
 
@@ -44,5 +44,3 @@ Do not activate when the user is:
 - Running impact assessments before code changes (use the prevent skill's Workflow 4)
 - Asking about existing monitor configuration (use `getMonitors` directly)
 - Editing or deleting existing monitors
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 58 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

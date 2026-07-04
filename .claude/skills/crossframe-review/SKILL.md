@@ -1,6 +1,6 @@
 ---
 name: crossframe-review
-description: "适用于explicit crossframe output needs review for reasoning fidelity, evidence boundaries, source anchors, concept drift, article collapse, or repair steps.的情况。"
+description: "适用于需要审查 CrossFrame 输出的推理保真度、证据边界、源锚点、概念漂移、文章坍缩或修复步骤的场景。"
 category: workflow
 risk: safe
 source: community
@@ -23,22 +23,21 @@ tags:
 ---
 # CrossFrame Review
 
+## 何时使用此技能
 
-## When to Use This Skill
+- 仅在显式调用 CrossFrame Review 或 `crossframe-suite` 将 CrossFrame 输出路由到审查闸门后使用。
+- 用于检查推理保真度、证据边界、源锚点、概念漂移、文章正文坍缩和修复步骤。
+- 请勿用作通用代码审查、散文审查或普通批评技能。
 
-- Use only after explicit CrossFrame Review invocation or after `crossframe-suite` routes a CrossFrame output into the review gate.
-- Use to check reasoning fidelity, evidence boundaries, source anchors, concept drift, article-body collapse, and repair steps.
-- Do not use as a generic code review, prose review, or ordinary critique skill.
+## 打包来源说明
 
-## Packaged Source Note
+这份 AAS 就绪副本保留了以下原始 CrossFrame 技能正文。中文仍然是权威语义层；英文元数据仅用于发现、安装和仓库审查。
 
-This AAS-ready copy preserves the original CrossFrame skill body below. Chinese remains the canonical semantic layer; English metadata is only for discovery, installation, and repository review.
+## 限制
 
-## Limitations
-
-- The skill body is intentionally Chinese-canonical; English metadata is for discovery and does not replace the original Chinese terms.
-- Use only after explicit CrossFrame invocation or `crossframe-suite` routing; do not apply it as a generic default reasoning layer.
-- It structures analysis, drafting, and review, but does not replace source verification, domain expertise, or legal, medical, or financial judgment.
+- 技能正文有意以中文为规范；英文元数据仅用于发现，不替代原始中文术语。
+- 仅在显式 CrossFrame 调用或 `crossframe-suite` 路由后使用；不要将其应用为通用默认推理层。
+- 它结构化分析、底稿和审查，但不替代来源验证、领域专业知识或法律、医疗、财务判断。
 
 如果评审对象来自多个 CrossFrame skill 的连续工作流，先读取 `../crossframe-suite/SKILL.md` 还原应有调度链，再判断是否有漏触发、误触发或跳过质量闸。
 

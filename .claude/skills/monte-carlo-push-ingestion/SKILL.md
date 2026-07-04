@@ -12,36 +12,28 @@ tags: [data-observability, ingestion, monte-carlo, pycarlo, metadata]
 tools: [claude, cursor, codex]
 ---
 
-# Monte Carlo Push Ingestion
+# Monte Carlo 推送采集
 
-You are an agent that helps customers collect metadata, lineage, and query logs from their
-data warehouses and push that data to Monte Carlo via the push ingestion API. The push model
-works with **any data source** — if the customer's warehouse does not have a ready-made
-template, derive the appropriate collection queries from that warehouse's system catalog or
-metadata APIs. The push format and pycarlo SDK calls are the same regardless of source.
+您是帮助客户从其数据仓库收集元数据、血统和查询日志，并通过推送采集 API 将这些数据推送到 Monte Carlo 的代理。推送模型适用于**任何数据源**——如果客户的数据仓库没有现成模板，则从该仓库的系统目录或元数据 API 推导适当的采集查询。推送格式和 pycarlo SDK 调用无论来源如何都是相同的。
 
-Monte Carlo's push model lets customers send metadata, lineage, and query logs directly to
-Monte Carlo instead of waiting for the pull collector to gather it. It fills gaps the pull
-model cannot always cover — integrations that don't expose query history, custom lineage
-between non-warehouse assets, or customers who already have this data and want to send it
-directly.
+Monte Carlo 的推送模型让客户直接将元数据、血统和查询日志发送到 Monte Carlo，而无需等待拉取采集器收集。它填补了拉取模型无法始终覆盖的空白——不暴露查询历史的集成、非仓库资产之间的自定义血统，或已有此数据并希望直接发送的客户。
 
 ## When to Use
 
-Use this skill when the user needs to collect metadata, lineage, freshness, volume, or query-log data from a warehouse or adjacent system and push it into Monte Carlo through the push-ingestion API.
+使用此技能当 the user needs to collect metadata, lineage, freshness, volume, or query-log data from a warehouse or adjacent system and push it into Monte Carlo through the push-ingestion API.
 
 Push data travels through the integration gateway → dedicated Kinesis streams → thin
 adapter/normalizer code → the same downstream systems that power the pull model. The only
 new infrastructure is the ingress layer; everything after it is shared.
 
-## MANDATORY — Always start from templates
+## MANDATORY — 始终 start from templates
 
 When generating any push-ingestion script, you MUST:
 
 1. **Read the corresponding template** before writing any code. Templates live in this skill's
    directory under `scripts/templates/<warehouse>/`. To find them, glob for
    `**/push-ingestion/scripts/templates/<warehouse>/*.py` — this works regardless of where the
-   skill is installed. Do NOT search from the current working directory alone.
+   skill is installed. 不要 search from the current working directory alone.
 2. **Adapt the template** to the customer's needs — do not write pycarlo imports, model constructors,
    or SDK method calls from memory.
 3. If no template exists for the target warehouse, read the **Snowflake template** as the canonical
@@ -54,7 +46,7 @@ Template files follow this naming pattern:
 
 **After running any push script**, you MUST surface the `invocation_id`(s) returned by the API
 to the user. The invocation ID is the only way to trace pushed data through downstream systems
-and is required for validation. Never let a push complete without showing the user the
+and is required for validation. 绝不 let a push complete without showing the user the
 invocation IDs — they need them for `/mc-validate-metadata`, `/mc-validate-lineage`, and
 debugging.
 
@@ -120,8 +112,7 @@ RelationalAsset(
 
 ## Environment variable conventions
 
-All generated scripts MUST use these exact variable names. Do NOT invent alternatives like
+All generated scripts MUST use these exact variable names. 不要 invent alternatives like
 `MCD_KEY_ID`, `MC_TOKEN`, `MONTE_CARLO_KEY`, etc.
 
 | Variable | Purpose | Used by |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 56 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

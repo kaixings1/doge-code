@@ -12,9 +12,9 @@ tags: [data-observability, dbt, schema, monte-carlo, lineage]
 tools: [claude, cursor, codex]
 ---
 
-# Monte Carlo Prevent Skill
+# Monte Carlo 预防技能
 
-This skill brings Monte Carlo's data observability context directly into your editor. When you're modifying a dbt model or SQL pipeline, use it to surface table health, lineage, active alerts, and to generate monitors-as-code without leaving Claude Code.
+本技能将 Monte Carlo 的数据可观察性上下文直接带入您的编辑器。当您修改 dbt 模型或 SQL 管道时，使用它来展示表健康度、血统、活跃告警，并生成 monitors-as-code，无需离开 Claude Code。
 
 Reference files live next to this skill file. **Use the Read tool** (not MCP resources) to access them:
 

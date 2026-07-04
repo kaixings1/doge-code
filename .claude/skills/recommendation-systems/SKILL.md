@@ -10,7 +10,7 @@ Design and build industrial-grade recommendation systems using the multi-stage a
 
 ## How It Works
 
-### System Architecture (Industrial Standard)
+### System 架构 (Industrial Standard)
 
 ```
 ┌──────────────────────────────────────────────────────┐
@@ -38,5 +38,3 @@ Design and build industrial-grade recommendation systems using the multi-stage a
 │  Latency budget: <30ms                                │
 └──────────────────────────────────────────────────────┘
 ```
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 29 MINUTES 30 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

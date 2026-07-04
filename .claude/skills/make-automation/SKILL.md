@@ -1,176 +1,175 @@
 ---
 name: make-automation
-description: "通过 Rube MCP (Composio) 自动执行 Make (Integromat) 任务：operations, enums, language and timezone lookups. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 Make (Integromat) 任务：操作、枚举、语言和时区查询。使用前始终先搜索工具以获取当前 schema。"
 risk: critical
 source: community
 date_added: "2026-02-27"
 ---
 
-# Make Automation via Rube MCP
+# 通过 Rube MCP 实现 Make 自动化
 
-Automate Make (formerly Integromat) operations through Composio's Make toolkit via Rube MCP.
+通过 Rube MCP 经 Composio 的 Make 工具包自动化 Make（原 Integromat）操作。
 
-## Prerequisites
+## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Make connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `make`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- 必须连接 Rube MCP（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 使用 `make` 工具包激活 Make 连接
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前 tool schema
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**：将 `https://rube.app/mcp` 作为 MCP 服务器添加到客户端配置中。无需 API 密钥——只需添加端点即可使用。
 
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用 `make` 工具包调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接未处于 ACTIVE 状态，请按照返回的认证链接完成 Make 认证
+4. 在运行任何工作流之前确认连接状态显示为 ACTIVE
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `make`
-3. If connection is not ACTIVE, follow the returned auth link to complete Make authentication
-4. Confirm connection status shows ACTIVE before running any workflows
+## 核心工作流
 
-## Core Workflows
+### 1. 获取操作数据
 
-### 1. Get Operations Data
+**使用时机**：用户想要检索 Make 场景中的操作日志或使用数据
 
-**When to use**: User wants to retrieve operation logs or usage data from Make scenarios
+**工具顺序**：
+1. `MAKE_GET_OPERATIONS` - 检索操作记录 [必需]
 
-**Tool sequence**:
-1. `MAKE_GET_OPERATIONS` - Retrieve operation records [Required]
+**关键参数**：
+- 通过 RUBE_SEARCH_TOOLS 检查当前 schema 以获取可用过滤器
+- 可能包含日期范围、场景 ID 或状态过滤器
 
-**Key parameters**:
-- Check current schema via RUBE_SEARCH_TOOLS for available filters
-- May include date range, scenario ID, or status filters
+**陷阱**：
+- 操作数据可能分页；检查分页标记
+- 日期过滤器必须与 schema 中的预期格式匹配
+- 大型结果集应按日期范围或场景进行过滤
 
-**Pitfalls**:
-- Operations data may be paginated; check for pagination tokens
-- Date filters must match expected format from schema
-- Large result sets should be filtered by date range or scenario
+### 2. 列出可用语言
 
-### 2. List Available Languages
+**使用时机**：用户想要查看 Make 场景或界面支持的语言
 
-**When to use**: User wants to see supported languages for Make scenarios or interfaces
+**工具顺序**：
+1. `MAKE_LIST_ENUMS_LANGUAGES` - 获取所有支持的语言代码 [必需]
 
-**Tool sequence**:
-1. `MAKE_LIST_ENUMS_LANGUAGES` - Get all supported language codes [Required]
+**关键参数**：
+- 无必需参数；返回完整的语言列表
 
-**Key parameters**:
-- No required parameters; returns complete language list
+**陷阱**：
+- 语言代码遵循标准区域格式（例如 'en'、'fr'、'de'）
+- 列表是静态的，很少变化；尽可能缓存结果
 
-**Pitfalls**:
-- Language codes follow standard locale format (e.g., 'en', 'fr', 'de')
-- List is static and rarely changes; cache results when possible
+### 3. 列出可用时区
 
-### 3. List Available Timezones
+**使用时机**：用户想要查看调度 Make 场景支持的时区
 
-**When to use**: User wants to see supported timezones for scheduling Make scenarios
+**工具顺序**：
+1. `MAKE_LIST_ENUMS_TIMEZONES` - 获取所有支持的时区标识符 [必需]
 
-**Tool sequence**:
-1. `MAKE_LIST_ENUMS_TIMEZONES` - Get all supported timezone identifiers [Required]
+**关键参数**：
+- 无必需参数；返回完整的时区列表
 
-**Key parameters**:
-- No required parameters; returns complete timezone list
+**陷阱**：
+- 时区标识符使用 IANA 格式（例如 'America/New_York'、'Europe/London'）
+- 列表是静态的，很少变化；尽可能缓存结果
+- 在配置场景调度时使用这些确切的时区字符串
 
-**Pitfalls**:
-- Timezone identifiers use IANA format (e.g., 'America/New_York', 'Europe/London')
-- List is static and rarely changes; cache results when possible
-- Use these exact timezone strings when configuring scenario schedules
+### 4. 场景配置查询
 
-### 4. Scenario Configuration Lookup
+**使用时机**：用户需要使用正确的语言和时区值配置场景
 
-**When to use**: User needs to configure scenarios with correct language and timezone values
+**工具顺序**：
+1. `MAKE_LIST_ENUMS_LANGUAGES` - 获取有效的语言代码 [必需]
+2. `MAKE_LIST_ENUMS_TIMEZONES` - 获取有效的时区标识符 [必需]
 
-**Tool sequence**:
-1. `MAKE_LIST_ENUMS_LANGUAGES` - Get valid language codes [Required]
-2. `MAKE_LIST_ENUMS_TIMEZONES` - Get valid timezone identifiers [Required]
+**关键参数**：
+- 两个调用都无需参数
 
-**Key parameters**:
-- No parameters needed for either call
+**陷阱**：
+- 在配置中使用之前，始终验证语言和时区值是否与这些枚举匹配
+- 在场景配置中使用无效值将导致错误
 
-**Pitfalls**:
-- Always verify language and timezone values against these enums before using in configuration
-- Using invalid values in scenario configuration will cause errors
+## 常见模式
 
-## Common Patterns
+### 枚举验证
 
-### Enum Validation
-
-Before configuring any Make scenario properties that accept language or timezone:
+在配置任何接受语言或时区的 Make 场景属性之前：
 ```
-1. Call MAKE_LIST_ENUMS_LANGUAGES or MAKE_LIST_ENUMS_TIMEZONES
-2. Verify the desired value exists in the returned list
-3. Use the exact string value from the enum list
-```
-
-### Operations Monitoring
-
-```
-1. Call MAKE_GET_OPERATIONS with date range filters
-2. Analyze operation counts, statuses, and error rates
-3. Identify failed operations for troubleshooting
+1. 调用 MAKE_LIST_ENUMS_LANGUAGES 或 MAKE_LIST_ENUMS_TIMEZONES
+2. 验证所需值存在于返回的列表中
+3. 使用枚举列表中的确切字符串值
 ```
 
-### Caching Strategy for Enums
+### 操作监控
 
-Since language and timezone lists are static:
 ```
-1. Call MAKE_LIST_ENUMS_LANGUAGES once at workflow start
-2. Store results in memory or local cache
-3. Validate user inputs against cached values
-4. Refresh cache only when starting a new session
+1. 使用日期范围过滤器调用 MAKE_GET_OPERATIONS
+2. 分析操作计数、状态和错误率
+3. 识别失败的操作以进行故障排除
 ```
 
-### Operations Analysis Workflow
+### 枚举的缓存策略
 
-For scenario health monitoring:
+由于语言和时区列表是静态的：
 ```
-1. Call MAKE_GET_OPERATIONS with recent date range
-2. Group operations by scenario ID
-3. Calculate success/failure ratios per scenario
-4. Identify scenarios with high error rates
-5. Report findings to user or notification channel
-```
-
-### Integration with Other Toolkits
-
-Make workflows often connect to other apps. Compose multi-tool workflows:
-```
-1. Call RUBE_SEARCH_TOOLS to find tools for the target app
-2. Connect required toolkits via RUBE_MANAGE_CONNECTIONS
-3. Use Make operations data to understand workflow execution patterns
-4. Execute equivalent workflows directly via individual app toolkits
+1. 在工作流开始时调用一次 MAKE_LIST_ENUMS_LANGUAGES
+2. 将结果存储在内存或本地缓存中
+3. 根据缓存的值验证用户输入
+4. 仅在启动新会话时刷新缓存
 ```
 
-## Known Pitfalls
+### 操作分析工作流
 
-**Limited Toolkit**:
-- The Make toolkit in Composio currently has limited tools (operations, languages, timezones)
-- For full scenario management (creating, editing, running scenarios), consider using Make's native API
-- Always call RUBE_SEARCH_TOOLS to check for newly available tools
-- The toolkit may be expanded over time; re-check periodically
+用于场景健康监控：
+```
+1. 使用最近的日期范围调用 MAKE_GET_OPERATIONS
+2. 按场景 ID 对操作进行分组
+3. 计算每个场景的成功/失败比率
+4. 识别错误率高的场景
+5. 向用户或通知渠道报告发现
+```
 
-**Operations Data**:
-- Operation records may have significant volume for active accounts
-- Always filter by date range to avoid fetching excessive data
-- Operation counts relate to Make's pricing tiers and quota usage
-- Failed operations should be investigated; they may indicate scenario configuration issues
+### 与其他工具包集成
 
-**Response Parsing**:
-- Response data may be nested under `data` key
-- Enum lists return arrays of objects with code and label fields
-- Operations data includes nested metadata about scenario execution
-- Parse defensively with fallbacks for optional fields
+Make 工作流通常连接到其他应用。组合多工具工作流：
+```
+1. 调用 RUBE_SEARCH_TOOLS 查找目标应用的工具
+2. 通过 RUBE_MANAGE_CONNECTIONS 连接所需的工具包
+3. 使用 Make 操作数据了解工作流执行模式
+4. 直接通过各个应用工具包执行等效工作流
+```
 
-**Rate Limits**:
-- Make API has rate limits per API token
-- Avoid rapid repeated calls to the same endpoint
-- Cache enum results (languages, timezones) as they rarely change
-- Operations queries should use targeted date ranges
+## 已知陷阱
 
-**Authentication**:
-- Make API uses token-based authentication
-- Tokens may have different permission scopes
-- Some operations data may be restricted based on token scope
-- Check that the authenticated user has access to the target organization
+**有限的工具包**：
+- Composio 中的 Make 工具包目前工具有限（操作、语言、时区）
+- 对于完整的场景管理（创建、编辑、运行场景），考虑使用 Make 的原生 API
+- 始终调用 RUBE_SEARCH_TOOLS 检查新可用的工具
+- 工具包可能会随时间扩展；定期重新检查
 
-## Quick Reference
+**操作数据**：
+- 活跃账户的操作记录可能数量庞大
+- 始终按日期范围过滤以避免获取过多数据
+- 操作计数与 Make 的定价层级和配额使用相关
+- 失败的操作应进行调查；它们可能表示场景配置问题
 
-| Task | Tool Slug | Key Params |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 25 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+**响应解析**：
+- 响应数据可能嵌套在 `data` 键下
+- 枚举列表返回包含代码和标签字段的对象数组
+- 操作数据包含关于场景执行的嵌套元数据
+- 防御性解析，为可选字段提供回退
+
+**速率限制**：
+- Make API 对每个 API 令牌有速率限制
+- 避免快速重复调用同一端点
+- 缓存枚举结果（语言、时区），因为它们很少变化
+- 操作查询应使用有针对性的日期范围
+
+**认证**：
+- Make API 使用基于令牌的认证
+- 令牌可能具有不同的权限范围
+- 某些操作数据可能基于令牌范围受到限制
+- 检查认证用户是否有权访问目标组织
+
+## 快速参考
+
+| 任务 | 工具标识 | 关键参数 |
+|------|----------|----------|

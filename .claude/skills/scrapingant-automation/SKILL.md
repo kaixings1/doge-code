@@ -1,34 +1,34 @@
 ---
 name: scrapingant-automation
-description: "通过 Rube MCP (Composio) 自动执行 Scrapingant 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Scrapingant 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
-# Scrapingant Automation via Rube MCP
+# 通过 Rube MCP 实现 Scrapingant 自动化
 
-Automate Scrapingant operations through Composio's Scrapingant toolkit via Rube MCP.
+通过 Rube MCP 经由 Composio 的 Scrapingant 工具包自动执行 Scrapingant 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/scrapingant](https://composio.dev/toolkits/scrapingant)
+**工具包文档**：[composio.dev/toolkits/scrapingant](https://composio.dev/toolkits/scrapingant)
 
-## Prerequisites
+## 前置条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Scrapingant connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `scrapingant`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- 必须连接 Rube MCP（`RUBE_SEARCH_TOOLS` 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 使用 `scrapingant` 工具包建立活跃的 Scrapingant 连接
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**：在客户端配置中添加 `https://rube.app/mcp` 作为 MCP 服务器。无需 API 密钥——只需添加端点即可工作。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `scrapingant`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 确认 `RUBE_SEARCH_TOOLS` 有响应，验证 Rube MCP 可用
+2. 使用工具包 `scrapingant` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接状态不是 ACTIVE，按照返回的认证链接完成设置
+4. 在运行任何工作流前确认连接状态显示 ACTIVE
 
-## Tool Discovery
+## 工具发现
 
-Always discover available tools before executing workflows:
+在执行工作流前始终先发现可用工具：
 
 ```
 RUBE_SEARCH_TOOLS
@@ -36,11 +36,11 @@ queries: [{use_case: "Scrapingant operations", known_fields: ""}]
 session: {generate_id: true}
 ```
 
-This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
+这将返回可用的工具 slug、输入 schema、推荐的执行计划以及已知陷阱。
 
-## Core Workflow Pattern
+## 核心工作流模式
 
-### Step 1: Discover Available Tools
+### 第 1 步：发现可用工具
 
 ```
 RUBE_SEARCH_TOOLS
@@ -48,7 +48,7 @@ queries: [{use_case: "your specific Scrapingant task"}]
 session: {id: "existing_session_id"}
 ```
 
-### Step 2: Check Connection
+### 第 2 步：检查连接
 
 ```
 RUBE_MANAGE_CONNECTIONS
@@ -56,28 +56,28 @@ toolkits: ["scrapingant"]
 session_id: "your_session_id"
 ```
 
-### Step 3: Execute Tools
+### 第 3 步：执行工具
 
 ```
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
+  arguments: {/* 符合 schema 的搜索参数 */}
 }]
 memory: {}
 session_id: "your_session_id"
 ```
 
-## Known Pitfalls
+## 已知陷阱
 
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
+- **始终先搜索**：工具 schema 会变化。未经调用 `RUBE_SEARCH_TOOLS` 切勿硬编码工具 slug 或参数
+- **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **符合 schema**：使用搜索结果中的准确字段名和类型
+- **memory 参数**：`RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使为空（`{}`）
+- **会话复用**：同一工作流内复用会话 ID。新工作流生成新 ID
+- **分页**：检查响应中的分页令牌，持续获取直到完成
 
-## Quick Reference
+## 快速参考
 
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 02 MINUTES 24 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 操作 | 方法 |
+|------|-------|MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 02 MINUTES 24 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

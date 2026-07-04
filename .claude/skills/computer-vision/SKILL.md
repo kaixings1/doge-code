@@ -3,21 +3,21 @@ name: 计算机视觉
 description: "构建计算机视觉模型：图像分类、目标检测、分割、姿态估计和人脸识别。涵盖 YOLO、ResNet、Vision Transformer 和 SAM。"
 ---
 
-# Computer Vision
+# 计算机视觉
 
-## Purpose
-Build and train computer vision models for image classification, detection, and segmentation.
+## 目的
+构建和训练用于图像分类、检测和分割的计算机视觉模型。
 
-## How It Works
+## 工作原理
 
-### Task Selection
+### 任务选择
 
-| Task | Architecture | Library |
+| 任务 | 架构 | 库 |
 |------|-------------|---------|
-| Image classification | ResNet, EfficientNet, ViT | torchvision, timm |
-| Object detection | YOLOv8, Faster R-CNN, DETR | ultralytics, detectron2 |
-| Segmentation | U-Net, Mask R-CNN, SAM | segmentation_models |
-| Similarity search | CLIP, embeddings | transformers |
+| 图像分类 | ResNet、EfficientNet、ViT | torchvision、timm |
+| 目标检测 | YOLOv8、Faster R-CNN、DETR | ultralytics、detectron2 |
+| 分割 | U-Net、Mask R-CNN、SAM | segmentation_models |
+| 相似度搜索 | CLIP、嵌入 | transformers |
 
 ### Data Augmentation
 - **Geometric**: rotation, flip, crop, resize, affine
@@ -36,7 +36,7 @@ Build and train computer vision models for image classification, detection, and 
 - Confusion matrix, per-class precision/recall
 - GradCAM for visual explanations
 
-## Usage Examples
+## 用法 Examples
 
 ```
 "Build an image classifier for 10 product categories with only 500 images"
@@ -48,7 +48,7 @@ Build and train computer vision models for image classification, detection, and 
 
 ## Output Format
 
-- **Architecture**: Model design with layer details
+- **架构**: Model design with layer details
 - **Training Code**: PyTorch / torchvision / ultralytics implementation
 - **Augmentation Pipeline**: albumentations configuration
 - **Evaluation**: Metrics and GradCAM visualizations

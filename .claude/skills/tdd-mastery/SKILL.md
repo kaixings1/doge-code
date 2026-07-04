@@ -3,29 +3,29 @@ name: tdd-mastery
 description: TDD精通 — 红-绿-重构循环、参数化测试、BDD和覆盖率驱动的测试开发。
 ---
 
-# TDD Mastery
+# TDD 精通
 
-## Core Cycle: Red-Green-Refactor
+## 核心循环：红-绿-重构
 
-1. **Red** - Write a failing test that defines the desired behavior
-2. **Green** - Write the minimum code to make the test pass
-3. **Refactor** - Clean up while keeping tests green
+1. **红** - 编写一个定义期望行为的失败测试
+2. **绿** - 编写最少的代码使测试通过
+3. **重构** - 清理代码同时保持测试为绿
 
-Never write production code without a failing test first. Each cycle should take 2-10 minutes.
+没有先编写失败的测试，绝不编写生产代码。每个循环应耗时 2-10 分钟。
 
-## Test Structure
+## 测试结构
 
-Use the Arrange-Act-Assert pattern consistently:
+持续使用 Arrange-Act-Assert（准备-执行-断言）模式：
 
 ```
-Arrange: Set up test data and dependencies
-Act:     Execute the behavior under test
-Assert:  Verify the expected outcome
+准备（Arrange）：设置测试数据和依赖
+执行（Act）：    执行被测试的行为
+断言（Assert）： 验证期望的结果
 ```
 
-Name tests as `test_<unit>_<scenario>_<expected_result>` or `it("should <behavior> when <condition>")`.
+测试命名为 `test_<单元>_<场景>_<期望结果>` 或 `it("当<条件>时应<行为>")`。
 
-## Jest / Vitest Patterns
+## Jest / Vitest 模式
 
 ```typescript
 describe("OrderService", () => {
@@ -42,9 +42,9 @@ describe("OrderService", () => {
 });
 ```
 
-Use `vi.fn()` / `jest.fn()` for mocks. Prefer dependency injection over module mocking. Use `beforeEach` for shared setup, never share mutable state between tests.
+使用 `vi.fn()` / `jest.fn()` 进行模拟。优先使用依赖注入而非模块模拟。使用 `beforeEach` 进行共享设置，绝不在测试之间共享可变状态。
 
-## pytest Patterns
+## pytest 模式
 
 ```python
 @pytest.fixture
@@ -67,9 +67,9 @@ def test_password_validation(input, expected):
     assert validate_password(input) == expected
 ```
 
-Use `pytest.raises` for exceptions. Use `conftest.py` for shared fixtures. Mark slow tests with `@pytest.mark.slow`.
+异常使用 `pytest.raises`。共享测试夹具使用 `conftest.py`。慢速测试标记为 `@pytest.mark.slow`。
 
-## Go Testing Patterns
+## Go 测试模式
 
 ```go
 func TestParseConfig(t *testing.T) {
@@ -98,24 +98,24 @@ func TestParseConfig(t *testing.T) {
 }
 ```
 
-Use table-driven tests by default. Use `t.Helper()` in test utility functions. Use `testify/assert` only if the team already uses it.
+默认使用表驱动测试。测试工具函数中使用 `t.Helper()`。仅当团队已在使用时才使用 `testify/assert`。
 
-## Test Levels
+## 测试层级
 
-| Level | Scope | Speed | Dependencies |
-|-------|-------|-------|-------------|
-| Unit | Single function/class | <100ms | None (mock all) |
-| Integration | Module boundaries | <5s | Real DB, real FS |
-| E2E | Full user flow | <30s | Full stack |
+| 层级 | 范围 | 速度 | 依赖 |
+|------|------|------|------|
+| 单元 | 单个函数/类 | <100ms | 无（全部模拟） |
+| 集成 | 模块边界 | <5s | 真实数据库、真实文件系统 |
+| E2E | 完整用户流程 | <30s | 全栈 |
 
-Ratio target: 70% unit, 20% integration, 10% e2e.
+比例目标：70% 单元，20% 集成，10% E2E。
 
-## Coverage Rules
+## 覆盖率规则
 
-- Enforce **80% line coverage minimum** in CI
-- Track branch coverage, not just line coverage
-- Exclude generated code, type definitions, and config files
-- Never write tests just to hit coverage numbers; test behavior
+- 在 CI 中强制**最低 80% 行覆盖率**
+- 跟踪分支覆盖率，而不仅仅是行覆盖率
+- 排除生成的代码、类型定义和配置文件
+- 绝不要仅为达到覆盖率数字而编写测试；测试行为
 
 ```bash
 # Jest/Vitest
@@ -129,19 +129,19 @@ go test -coverprofile=cover.out -coverpkg=./... ./...
 go tool cover -func=cover.out
 ```
 
-## Mocking Guidelines
+## 模拟指南
 
-- Mock at boundaries: HTTP clients, databases, file systems, clocks
-- Never mock the unit under test
-- Prefer fakes (in-memory implementations) over mocks for repositories
-- Assert on behavior, not on mock call counts
-- Use `t.Cleanup` / `afterEach` to reset shared mocks
+- 在边界处模拟：HTTP 客户端、数据库、文件系统、时钟
+- 绝不模拟被测单元
+- 对于仓库，优先使用假实现（内存实现）而非模拟
+- 断言行为，而非模拟调用次数
+- 使用 `t.Cleanup` / `afterEach` 重置共享模拟
 
-## Anti-Patterns to Avoid
+## 要避免的反模式
 
-- Testing implementation details instead of behavior
-- Tests that pass when code is deleted (tautological tests)
-- Shared mutable state between test cases
-- Ignoring flaky tests instead of fixing them
-- Testing private methods directly
-- Giant test setup that obscures intent
+- 测试实现细节而非行为
+- 代码被删除后测试仍通过（同义反复的测试）
+- 测试用例之间共享可变状态
+- 忽视不稳定的测试而非修复它们
+- 直接测试私有方法
+- 掩盖意图的巨大测试设置代码

@@ -9,46 +9,45 @@ level: 4
 ---
 
 <Purpose>
-Plan creates comprehensive, actionable work plans through intelligent interaction. It auto-detects whether to interview the user (broad requests) or plan directly (detailed requests), and supports consensus mode (iterative Planner/Architect/Critic loop with RALPLAN-DR structured deliberation) and review mode (Critic evaluation of existing plans).
+Plan 通过智能交互创建全面、可执行的工作计划。它自动检测是否需要面试用户（宽泛请求）或直接规划（详细请求），并支持共识模式（Planner/Architect/Critic 迭代循环与 RALPLAN-DR 结构化审议）和审查模式（Critic 评估现有计划）。
 </Purpose>
 
 <Use_When>
 
-- User wants to plan before implementing -- "plan this", "plan the", "let's plan"
-- User wants structured requirements gathering for a vague idea
-- User wants an existing plan reviewed -- "review this plan", `--review`
-- User wants multi-perspective consensus on a plan -- `--consensus`, "ralplan"
-- Task is broad or vague and needs scoping before any code is written
+- 用户希望在实现之前进行规划 -- "plan this", "plan the", "let's plan"
+- 用户希望对模糊的想法进行结构化需求收集
+- 用户希望审查现有计划 -- "review this plan", `--review`
+- 用户希望计划获得多视角共识 -- `--consensus`, "ralplan"
+- 任务宽泛或模糊，在编写代码前需要确定范围
   </Use_When>
 
 <Do_Not_Use_When>
 
-- User wants autonomous end-to-end execution -- use `autopilot` instead
-- User wants to start coding immediately with a clear task -- use `ralph` or delegate to executor
-- User asks a simple question that can be answered directly -- just answer it
-- Task is a single focused fix with obvious scope -- use an execution skill instead of running it from this planning module
+- 用户希望自主端到端执行 -- 改用 `autopilot`
+- 用户希望立即开始编码，任务明确 -- 改用 `ralph` 或委托给执行者
+- 用户提出可以直接回答的简单问题 -- 直接回答即可
+- 任务是范围明确的单一修复 -- 改用执行技能，而非从本规划模块运行
   </Do_Not_Use_When>
 
 <Why_This_Exists>
-Jumping into code without understanding requirements leads to rework, scope creep, and missed edge cases. Plan provides structured requirements gathering, expert analysis, and quality-gated plans so that execution starts from a solid foundation. The consensus mode adds multi-perspective validation for high-stakes projects.
+在不了解需求的情况下直接编码会导致返工、范围蔓延和遗漏边界情况。Plan 提供结构化的需求收集、专家分析和质量把关计划，使执行从坚实的基础开始。共识模式为高风险项目增加了多视角验证。
 </Why_This_Exists>
 
 <Execution_Policy>
 
-- Auto-detect interview vs direct mode based on request specificity
-- Ask one question at a time during interviews -- never batch multiple questions
-- Gather codebase facts via `explore` agent before asking the user about them
-- Plans must meet quality standards: 80%+ claims cite file/line, 90%+ criteria are testable
-- Consensus mode runs fully automated by default; add `--interactive` to enable user prompts at draft review and final approval steps
-- Consensus mode uses RALPLAN-DR short mode by default; switch to deliberate mode with `--deliberate` or when the request explicitly signals high risk (auth/security, data migration, destructive/irreversible changes, production incident, compliance/PII, public API breakage)
-- **Planning/execution boundary:** planning modes inspect context and produce plans/specs/proposals only. They MUST mark artifacts as `pending approval` unless the user has explicitly opted into execution in the current turn or via the structured approval UI. Before explicit execution approval, planning modes MUST NOT run mutation-oriented shell commands, edit source files, commit, push, open PRs, invoke execution skills, or delegate implementation tasks.
-- **Goal workflow boundary:** when a plan compares Claude Code `/goal`, Ralph, Team, UltraQA, or artifact-only Ultragoal, identify exactly one primary loop authority and use the deterministic conflict policies `refuse`, `adopt_existing`, and `artifact_only` rather than non-deterministic warning handling. `/goal` facts must cite Claude Code/Anthropic sources only (Claude Code `/goal` docs: https://code.claude.com/docs/en/goal; Anthropic Claude Code changelog: https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md), and plans MUST NOT claim the `/goal` evaluator independently runs commands or reads files; require surfaced proof evidence before any completion claim.
-- **Goal workflow doc target:** for user-facing comparisons, keep examples aligned with `docs/shared/mode-selection-guide.md#goal-oriented-workflow-selection` and `docs/REFERENCE.md#goal-workflow-ux-goal-ralph-team-ultraqa-ultragoal`.
+- 根据请求的具体程度自动检测面试模式 vs 直接模式
+- 面试时一次只问一个问题——绝不批量询问多个问题
+- 在询问用户之前，通过 `explore` 代理收集代码库事实
+- 计划必须满足质量标准：80%+ 的声明引用文件/行号，90%+ 的标准是可测试的
+- 共识模式默认完全自动化运行；添加 `--interactive` 可在草稿审查和最终批准步骤启用用户提示
+- 共识模式默认使用 RALPLAN-DR 简短模式；当请求明确标记高风险（认证/安全、数据迁移、破坏性/不可逆变更、生产事故、合规/PII、公共 API 破坏）时，使用 `--deliberate` 切换到深思模式
+- **规划/执行边界：** 规划模式仅检查上下文并生成计划/规格/提案。除非用户在当前轮次或通过结构化批准 UI 明确选择执行，否则它们必须将产物标记为 `pending approval`。在获得明确执行批准前，规划模式不得运行变更性的 shell 命令、编辑源文件、提交、推送、打开 PR、调用执行技能或委派实现任务。
+- **Goal 工作流边界：** 当计划比较 Claude Code `/goal`、Ralph、Team、UltraQA 或仅产物的 Ultragoal 时，必须确定一个主循环权威，并使用确定性冲突策略 `refuse`、`adopt_existing` 和 `artifact_only`，而非非确定性警告处理。`/goal` 事实必须仅引用 Claude Code/Anthropic 来源（Claude Code `/goal` 文档：https://code.claude.com/docs/en/goal；Anthropic Claude Code 更新日志：https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md），且计划不得声称 `/goal` 评估器独立运行命令或读取文件；在声明完成前需要展示已呈现的证明证据。
+- **Goal 工作流文档目标：** 面向用户的比较，保持示例与 `docs/shared/mode-selection-guide.md#goal-oriented-workflow-selection` 和 `docs/REFERENCE.md#goal-workflow-ux-goal-ralph-team-ultraqa-ultragoal` 一致。
   </Execution_Policy>
 
 <Steps>
 
-### Mode Selection
+### 模式选择
 
-| Mode      | Trigger                         | Behavior                                                                                                                                                                                                       |
-| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 44 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 模式 | 触发器 | 行为 |

@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 > **⚠️ DEPRECATION NOTICE**: This package is deprecated. Migrate to `azure-monitor-opentelemetry-autoconfigure`.
 >
-> See [Migration Guide](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/MIGRATION.md) for detailed instructions.
+> See [迁移 Guide](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/MIGRATION.md) for detailed instructions.
 
 Export OpenTelemetry telemetry data to Azure Monitor / Application Insights.
 
@@ -40,7 +40,7 @@ Export OpenTelemetry telemetry data to Azure Monitor / Application Insights.
 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=xxx;IngestionEndpoint=https://xxx.in.applicationinsights.azure.com/
 ```
 
-## Basic Setup with Autoconfigure (Recommended)
+## Basic 设置 with Autoconfigure (Recommended)
 
 ### Using Environment Variable
 
@@ -235,14 +235,14 @@ latencyHistogram.record(150, Attributes.of(
 | SpanProcessor | Intercepts span lifecycle for customization |
 | Exporter | Sends telemetry to Azure Monitor |
 
-## Migration to Autoconfigure
+## 迁移 to Autoconfigure
 
 The `azure-monitor-opentelemetry-autoconfigure` package provides:
 - Automatic instrumentation of common libraries
 - Simplified configuration
 - Better integration with OpenTelemetry SDK
 
-### Migration Steps
+### 迁移 Steps
 
 1. Replace dependency:
    ```xml
@@ -259,17 +259,17 @@ The `azure-monitor-opentelemetry-autoconfigure` package provides:
    </dependency>
    ```
 
-2. Update initialization code per [Migration Guide](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/MIGRATION.md)
+2. Update initialization code per [迁移 Guide](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/MIGRATION.md)
 
 ## Best Practices
 
 1. **Use autoconfigure** — Migrate to `azure-monitor-opentelemetry-autoconfigure`
 2. **Set meaningful span names** — Use descriptive operation names
 3. **Add relevant attributes** — Include contextual data for debugging
-4. **Handle exceptions** — Always record exceptions on spans
+4. **Handle exceptions** — 始终 record exceptions on spans
 5. **Use semantic conventions** — Follow OpenTelemetry semantic conventions
 6. **End spans in finally** — Ensure spans are always ended
-7. **Use try-with-resources** — Scope management with try-with-resources pattern
+7. **Use try-with-resources** — 范围 management with try-with-resources pattern
 
 ## Reference Links
 
@@ -277,7 +277,7 @@ The `azure-monitor-opentelemetry-autoconfigure` package provides:
 |----------|-----|
 | Maven Package | https://central.sonatype.com/artifact/com.azure/azure-monitor-opentelemetry-exporter |
 | GitHub | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter |
-| Migration Guide | https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/MIGRATION.md |
+| 迁移 Guide | https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/MIGRATION.md |
 | Autoconfigure Package | https://central.sonatype.com/artifact/com.azure/azure-monitor-opentelemetry-autoconfigure |
 | OpenTelemetry Java | https://opentelemetry.io/docs/languages/java/ |
 | Application Insights | https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview |
@@ -285,7 +285,7 @@ The `azure-monitor-opentelemetry-autoconfigure` package provides:
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

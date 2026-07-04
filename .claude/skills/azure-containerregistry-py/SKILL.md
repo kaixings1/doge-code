@@ -59,7 +59,7 @@ for repository in client.list_repository_names():
 
 ## Repository Operations
 
-### Get Repository Properties
+### Get Repository 属性
 
 ```python
 properties = client.get_repository_properties("my-image")
@@ -69,7 +69,7 @@ print(f"Manifests: {properties.manifest_count}")
 print(f"Tags: {properties.tag_count}")
 ```
 
-### Update Repository Properties
+### Update Repository 属性
 
 ```python
 from azure.containerregistry import RepositoryProperties
@@ -125,7 +125,7 @@ for manifest in client.list_manifest_properties(
     print(f"Size: {manifest.size_in_bytes}")
 ```
 
-### Get Manifest Properties
+### Get Manifest 属性
 
 ```python
 manifest = client.get_manifest_properties("my-image", "latest")
@@ -134,7 +134,7 @@ print(f"Architecture: {manifest.architecture}")
 print(f"OS: {manifest.operating_system}")
 ```
 
-### Update Manifest Properties
+### Update Manifest 属性
 
 ```python
 from azure.containerregistry import ArtifactManifestProperties
@@ -162,7 +162,7 @@ client.delete_manifest("my-image", manifest.digest)
 
 ## Tag Operations
 
-### Get Tag Properties
+### Get Tag 属性
 
 ```python
 tag = client.get_tag_properties("my-image", "latest")
@@ -254,7 +254,7 @@ for manifest in client.list_manifest_properties("my-image"):
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -1,53 +1,53 @@
 ---
 name: ultrawork
-description: "Ultrawork — Ultrawork 相关功能和最佳实践"
+description: "超级工作 — 独立任务的并行执行引擎和协议"
 argument-hint: "<task description with parallel work items>"
 level: 4
 ---
 
-<Purpose>
-Ultrawork is a parallel execution engine and execution protocol for independent work. It emphasizes intent grounding, parallel context gathering, dependency-aware task graphs for non-trivial work, and concise evidence-backed execution summaries. It is a component, not a standalone persistence mode -- it provides parallelism and routing guidance, but not persistence, verification loops, or long-lived state management.
-</Purpose>
+<目的>
+Ultrawork是独立任务的并行执行引擎和执行协议。它强调意图基础、并行上下文收集、非平凡工作的依赖感知任务图以及简洁的基于证据的执行摘要。它是一个组件，不是独立的持久化模式 — 它提供并行性和路由指导，但不提供持久化、验证循环或长期状态管理。
+</目的>
 
-<Use_When>
-- Multiple independent tasks can run simultaneously
-- User says "ulw", "ultrawork", or wants parallel execution
-- You need to delegate work to multiple agents at once
-- Task benefits from concurrent execution but the user will manage completion themselves
-</Use_When>
+<使用时机>
+- 多个独立任务可以同时运行
+- 用户说"ulw"、"ultrawork"，或想要并行执行
+- 您需要一次将工作委托给多个代理
+- 任务受益于并发执行，但用户将自行管理完成
+</使用时机>
 
-<Do_Not_Use_When>
-- Task requires guaranteed completion with verification -- use `ralph` instead (ralph includes ultrawork)
-- Task requires a full autonomous pipeline -- use `autopilot` instead (autopilot includes ralph which includes ultrawork)
-- There is only one sequential task with no parallelism opportunity -- delegate directly to an executor agent
-- User needs session persistence for resume -- use `ralph` which adds persistence on top of ultrawork
-</Do_Not_Use_When>
+<不使用时机>
+- 任务需要带验证的保证完成 — 使用`ralph`代替（ralph包含ultrawork）
+- 任务需要完整的自主管道 — 使用`autopilot`代替（autopilot包含ralph，ralph包含ultrawork）
+- 只有一个顺序任务，没有并行机会 — 直接委托给执行器代理
+- 用户需要会话持久化以恢复 — 使用`ralph`，它在ultrawork之上添加持久化
+</不使用时机>
 
-<Why_This_Exists>
-Sequential task execution wastes time when tasks are independent. Ultrawork enables firing multiple agents simultaneously and routing each to the right model tier, reducing total execution time while controlling token costs. It is designed as a composable component that ralph and autopilot layer on top of.
-</Why_This_Exists>
+<存在原因>
+当任务独立时，顺序任务执行浪费时间。Ultrawork能够同时启动多个代理并将每个代理路由到正确的模型层，减少总执行时间同时控制令牌成本。它被设计为可组合组件，ralph和autopilot在其基础上构建。
+</存在原因>
 
-<Execution_Policy>
-- Fire all independent agent calls simultaneously -- never serialize independent work
-- Always pass the `model` parameter explicitly when delegating
-- Read `docs/shared/agent-tiers.md` before first delegation for agent selection guidance
-- Use `run_in_background: true` for operations over ~30 seconds (installs, builds, tests)
-- Run quick commands (git status, file reads, simple checks) in the foreground
-- Resolve intent and uncertainty before implementation; explore first, ask only when still blocked
-- For non-trivial tasks, produce a dependency-aware plan with parallel waves before execution
-- Keep delegated-task reports concise: short summary, files touched, verification status, blockers
-- Manual QA is required for implemented behavior, not just diagnostics
-</Execution_Policy>
+<执行策略>
+- 同时启动所有独立代理调用 — 切勿序列化独立工作
+- 委托时始终明确传递`model`参数
+- 首次委托前阅读`docs/shared/agent-tiers.md`以获取代理选择指导
+- 对于超过约30秒的操作（安装、构建、测试）使用`run_in_background: true`
+- 在后台运行快速命令（git状态、文件读取、简单检查）
+- 在实现之前解决意图和不确定性；先探索，仅在仍然阻塞时询问
+- 对于非平凡任务，在执行前生成具有并行波次的依赖感知计划
+- 保持委托任务报告简洁：简短摘要、触及的文件、验证状态、阻塞项
+- 手动QA对于实现的行为是必需的，不仅仅是诊断
+</执行策略>
 
-<Steps>
-1. **Read agent reference**: Load `docs/shared/agent-tiers.md` for tier selection
-2. **Ground intent first**: Confirm whether the request is implementation, investigation, evaluation, or research; do not code before that is clear
-3. **Gather context in parallel**:
-   - direct tools for quick reads/searches
-   - exploration/docs agents for broad context
-4. **Classify tasks by independence**: Identify which tasks can run in parallel vs which have dependencies
-5. **Create a task graph for non-trivial work**:
-   - Parallel Execution Waves
+<步骤>
+1. **阅读代理参考**：加载`docs/shared/agent-tiers.md`以进行层选择
+2. **首先确定意图**：确认请求是实现、调查、评估还是研究；在明确之前不要编码
+3. **并行收集上下文**：
+   - 直接工具进行快速读取/搜索
+   - 探索/文档代理获取广泛上下文
+4. **按独立性分类任务**：识别哪些任务可以并行运行，哪些有依赖关系
+5. **为非平凡工作创建任务图**：
+   - 并行执行波次
    - Dependency Matrix
    - acceptance criteria and verification steps per task
 6. **Route to correct tiers**:
@@ -64,13 +64,13 @@ Sequential task execution wastes time when tasks are independent. Ultrawork enab
    - No new errors introduced
 </Steps>
 
-<Tool_Usage>
+<Tool_用法>
 - Use `Task(subagent_type="oh-my-claudecode:executor", model="haiku", ...)` for simple changes
 - Use `Task(subagent_type="oh-my-claudecode:executor", model="sonnet", ...)` for standard work
 - Use `Task(subagent_type="oh-my-claudecode:executor", model="opus", ...)` for complex work
 - Use `run_in_background: true` for package installs, builds, and test suites
 - Use foreground execution for quick status checks and file operations
-</Tool_Usage>
+</Tool_用法>
 
 <Examples>
 <Good>

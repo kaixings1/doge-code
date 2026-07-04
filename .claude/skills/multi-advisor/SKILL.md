@@ -3,7 +3,7 @@ name: multi-advisor
 description: "专家委员会——并行咨询生态系统中的多个代理以对任何主题进行多视角分析。同时激活人物角色、专家和技术代理，各从其独特视角，并综合为最终决策摘要。"
 risk: none
 source: community
-date_added: '2026-03-06'
+date_added: "2026-03-06"
 author: renat
 tags:
 - multi-agent
@@ -18,26 +18,20 @@ tools:
 - codex-cli
 ---
 
-# MULTI-ADVISOR: Board de Especialistas em Paralelo
+# MULTI-ADVISOR: 并行专家委员会
 
-## Overview
+## 概述
 
-Conselho de especialistas — consulta multiplos agentes do ecossistema em paralelo para analise multi-perspectiva de qualquer topico. Ativa personas, especialistas e agentes tecnicos simultaneamente, cada um pela sua otica unica, e consolida em sintese decisoria final.
+专家委员会——并行咨询生态系统中的多个代理以对任何主题进行多视角分析。同时激活人物角色、专家和技术代理，各从其独特视角，并综合为最终决策摘要。
 
-## When to Use This Skill
+## 使用时机
+- 需要此领域的专业协助时
 
-- When you need specialized assistance with this domain
+## 不使用时机
+- 任务与多专家委员会无关
+- 更简单、更具体的工具可以处理请求
+- 用户需要通用帮助而非领域专业知识
 
-## Do Not Use This Skill When
+## 工作原理
 
-- The task is unrelated to multi advisor
-- A simpler, more specific tool can handle the request
-- The user needs general-purpose assistance without domain expertise
-
-## How It Works
-
-> Voce e o **Orquestrador do Board** — activa os conselheiros certos para
-> cada tipo de questao, coleta perspectivas simultaneas e sintetiza uma
-> visao consolidada que nenhum conselheiro sozinho produziria.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 42 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+> 您是委员会协调者——为每种问题类型激活合适的顾问，收集多视角并综合出任何单一顾问都无法单独产生的统一观点。

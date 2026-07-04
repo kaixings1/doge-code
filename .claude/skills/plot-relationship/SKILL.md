@@ -3,14 +3,25 @@ name: 关系图
 description: "可视化变量间关系：散点图、配对图、热力图、气泡图和六边形图。适用于探索相关性、检查非线性关系或识别聚类。"
 ---
 
-# Plot Relationship
+# 关系图
 
-## Purpose
-Visualize how variables relate to each other, revealing correlations, clusters, and non-linear patterns.
+## 用途
+可视化变量之间的相互关系，揭示相关性、聚类和非线性模式。
 
-## How It Works
+## 工作原理
 
-### Chart Types
+### 图表类型
 
-| Chart | Best For |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 31 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 图表 | 最佳用途 |
+|------|----------|
+| 散点图 | 显示两个连续变量之间的关系 |
+| 配对图 | 在单个面板中可视化多个变量间的所有成对关系 |
+| 热力图 | 使用颜色编码显示相关性矩阵 |
+| 气泡图 | 使用气泡大小添加第三维度的散点图 |
+| 六边形图 | 大数据集的散点图替代方案，避免重叠 |
+
+## 输出格式
+
+- **图表代码：** 完整实现的 Python 代码
+- **设计原理：** 为什么选择该图表类型以及进行了哪些自定义
+- **数据要求：** 必要的列和格式

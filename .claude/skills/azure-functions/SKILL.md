@@ -30,7 +30,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var host = new HostBuilder()
-    .ConfigureFunctionsWorkerDefaults()
+    .ConfigureFunctionsWorker默认s()
     .ConfigureServices(services =>
     {
         // Add Application Insights
@@ -75,14 +75,14 @@ public class HttpTriggerFunction
         {
             var result = await _service.ProcessAsync(req);
 
-            var response = req.CreateResponse(HttpStatusCode.OK);
+            var response = req.CreateResponse(Http状态Code.OK);
             await response.WriteAsJsonAsync(result);
             return response;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing request");
-            var response = req.CreateResponse(HttpStatusCode.InternalServerError);
+            var response = req.CreateResponse(Http状态Code.InternalServerError);
             await response.WriteAsJsonAsync(new { error = "Internal server error" });
             return response;
         }
@@ -105,11 +105,11 @@ Modern code-centric approach for TypeScript/JavaScript
 ### Template
 
 // src/functions/httpTrigger.ts
-import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
+import { app, HttpRequest, HttpResponseInit, Invocation上下文 } from "@azure/functions";
 
 export async function httpTrigger(
   request: HttpRequest,
-  context: InvocationContext
+  context: Invocation上下文
 ): Promise<HttpResponseInit> {
   context.log(`Http function processed request for url "${request.url}"`);
 
@@ -245,7 +245,7 @@ public class OrderWorkflow
 {
     [Function("OrderOrchestrator")]
     public static async Task<OrderResult> RunOrchestrator(
-        [OrchestrationTrigger] TaskOrchestrationContext context)
+        [OrchestrationTrigger] TaskOrchestration上下文 context)
     {
         var order = context.GetInput<Order>();
 
@@ -265,14 +265,14 @@ public class OrderWorkflow
         return new OrderResult
         {
             OrderId = order.Id,
-            Status = "Completed",
+            状态 = "Completed",
             TrackingNumber = shipped.TrackingNumber
         };
     }
 
     [Function("ValidateOrder")]
     public static async Task<ValidatedOrder> ValidateOrder(
-        [ActivityTrigger] Order order, FunctionContext context)
+        [ActivityTrigger] Order order, Function上下文 context)
     {
         var logger = context.GetLogger<OrderWorkflow>();
         logger.LogInformation("Validating order {OrderId}", order.Id);
@@ -283,7 +283,7 @@ public class OrderWorkflow
 
     [Function("ProcessPayment")]
     public static async Task<PaymentResult> ProcessPayment(
-        [ActivityTrigger] ValidatedOrder order, FunctionContext context)
+        [ActivityTrigger] ValidatedOrder order, Function上下文 context)
     {
         // Payment processing with built-in retry...
         return new PaymentResult { /* ... */ };
@@ -293,13 +293,13 @@ public class OrderWorkflow
     public static async Task<HttpResponseData> HttpStart(
         [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req,
         [DurableClient] DurableTaskClient client,
-        FunctionContext context)
+        Function上下文 context)
     {
         var order = await req.ReadFromJsonAsync<Order>();
         string instanceId = await client.ScheduleNewOrchestrationInstanceAsync(
             "OrderOrchestrator", order);
 
-        return client.CreateCheckStatusResponse(req, instanceId);
+        return client.CreateCheck状态Response(req, instanceId);
     }
 }
 
@@ -326,7 +326,7 @@ public class ParallelProcessing
 {
     [Function("ProcessImagesOrchestrator")]
     public static async Task<ProcessingResult> RunOrchestrator(
-        [OrchestrationTrigger] TaskOrchestrationContext context)
+        [OrchestrationTrigger] TaskOrchestration上下文 context)
     {
         var images = context.GetInput<List<string>>();
 
@@ -352,7 +352,7 @@ public class ParallelProcessing
 
     [Function("ProcessImage")]
     public static async Task<ImageResult> ProcessImage(
-        [ActivityTrigger] string imageUrl, FunctionContext context)
+        [ActivityTrigger] string imageUrl, Function上下文 context)
     {
         var logger = context.GetLogger<ParallelProcessing>();
         logger.LogInformation("Processing image: {Url}", imageUrl);
@@ -378,7 +378,7 @@ public class ParallelProcessing
 
     // Python equivalent
     // @app.orchestration_trigger(context_name="context")
-    // def process_images_orchestrator(context: df.DurableOrchestrationContext):
+    // def process_images_orchestrator(context: df.DurableOrchestration上下文):
     //     images = context.get_input()
     //
     //     # Fan-out: Create parallel tasks
@@ -420,8 +420,8 @@ Minimize cold start latency in production
 // 2. Add warmup trigger (Premium Plan)
 [Function("Warmup")]
 public static void Warmup(
-    [WarmupTrigger] object warmupContext,
-    FunctionContext context)
+    [WarmupTrigger] object warmup上下文,
+    Function上下文 context)
 {
     var logger = context.GetLogger("Warmup");
     logger.LogInformation("Warmup trigger executed - initializing dependencies");
@@ -519,7 +519,7 @@ public class QueueProcessor
         }
     }
 
-    // Optional: Monitor poison queue
+    // 可选: Monitor poison queue
     [Function("ProcessPoisonQueue")]
     public async Task ProcessPoison(
         [QueueTrigger("myqueue-items-poison", Connection = "AzureWebJobsStorage")]
@@ -566,7 +566,7 @@ Handle work exceeding 230-second HTTP limit
 public static async Task<HttpResponseData> StartLongRunning(
     [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req,
     [DurableClient] DurableTaskClient client,
-    FunctionContext context)
+    Function上下文 context)
 {
     var input = await req.ReadFromJsonAsync<WorkRequest>();
 
@@ -575,7 +575,7 @@ public static async Task<HttpResponseData> StartLongRunning(
         "LongRunningOrchestrator", input);
 
     // Return status URLs for polling
-    return client.CreateCheckStatusResponse(req, instanceId);
+    return client.CreateCheck状态Response(req, instanceId);
 }
 
 // Response includes:
@@ -591,7 +591,7 @@ public static async Task<HttpResponseData> StartLongRunning(
 [QueueOutput("work-queue")]
 public static async Task<WorkItem> StartWork(
     [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req,
-    FunctionContext context)
+    Function上下文 context)
 {
     var input = await req.ReadFromJsonAsync<WorkRequest>();
     var workId = Guid.NewGuid().ToString();
@@ -604,7 +604,7 @@ public static async Task<WorkItem> StartWork(
     };
 
     // Return work ID for status checking
-    var response = req.CreateResponse(HttpStatusCode.Accepted);
+    var response = req.CreateResponse(Http状态Code.Accepted);
     await response.WriteAsJsonAsync(new
     {
         workId = workId,
@@ -617,7 +617,7 @@ public static async Task<WorkItem> StartWork(
 [Function("ProcessWork")]
 public static async Task ProcessWork(
     [QueueTrigger("work-queue")] WorkItem work,
-    FunctionContext context)
+    Function上下文 context)
 {
     // Long-running processing here
     // Update status in storage for polling
@@ -815,7 +815,7 @@ causing deadlocks and timeouts.
 
 Recommended fix:
 
-## Always use async/await
+## 始终 use async/await
 
 ```csharp
 // BAD - blocks thread
@@ -875,7 +875,7 @@ Works in development (with longer timeout) but fails in production.
 
 Why this breaks:
 Consumption plan has a hard limit of 10 minutes execution time.
-Default is 5 minutes if not configured.
+默认 is 5 minutes if not configured.
 
 This cannot be increased beyond 10 minutes on Consumption plan.
 Long-running work requires Premium plan or different architecture.
@@ -1035,7 +1035,7 @@ be properly connected to the Azure Functions logging pipeline.
 Local development especially affected - logs may go nowhere.
 Application Insights requires explicit configuration.
 
-The ILogger from FunctionContext works differently than
+The ILogger from Function上下文 works differently than
 the injected ILogger<T>.
 
 Recommended fix:
@@ -1286,7 +1286,7 @@ Using .Wait() blocks threads
 
 Message: Blocking .Wait() call. Use await instead.
 
-### Thread.Sleep Usage
+### Thread.Sleep 用法
 
 Severity: ERROR
 
@@ -1316,7 +1316,7 @@ Severity: INFO
 
 In-process model deprecated November 2026
 
-Message: In-process FunctionName attribute. Consider migrating to isolated worker.
+Message: In-process FunctionName attribute. 考虑 migrating to isolated worker.
 
 ### Missing Function Attribute
 
@@ -1344,7 +1344,7 @@ Message: HttpTrigger without [Function] attribute (isolated worker requires it).
 - User mentions or implies: azure serverless
 - User mentions or implies: function app
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

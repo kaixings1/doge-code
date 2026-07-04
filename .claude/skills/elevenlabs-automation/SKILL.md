@@ -14,7 +14,7 @@ Automate your ElevenLabs text-to-speech workflows -- convert text to natural spe
 
 ---
 
-## Setup
+## 设置
 
 1. Add the Composio MCP server to your client: `https://rube.app/mcp`
 2. Connect your ElevenLabs account when prompted (API key authentication)
@@ -101,7 +101,7 @@ Tool: ELEVENLABS_GET_AUDIO_FROM_HISTORY_ITEM
 
 ---
 
-## Known Pitfalls
+## 已知陷阱
 
 | Pitfall | Detail |
 |---------|--------|
@@ -114,7 +114,7 @@ Tool: ELEVENLABS_GET_AUDIO_FROM_HISTORY_ITEM
 
 ---
 
-## Quick Reference
+## 快速参考
 
 | Tool Slug | Description |
 |-----------|-------------|

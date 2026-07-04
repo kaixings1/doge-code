@@ -6,7 +6,7 @@ version: 0.1.0
 
 # Agent Development for Claude Code Plugins
 
-## Overview
+## 概述
 
 Agents are autonomous subprocesses that handle complex, multi-step tasks independently. Understanding agent structure, triggering conditions, and system prompt design enables creating powerful autonomous capabilities.
 
@@ -22,4 +22,3 @@ Agents are autonomous subprocesses that handle complex, multi-step tasks indepen
 ### Complete Format
 
 ```markdown
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 58 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

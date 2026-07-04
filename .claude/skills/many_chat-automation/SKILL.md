@@ -5,44 +5,44 @@ requires:
   mcp: [rube]
 ---
 
-# ManyChat Automation via Rube MCP
+# 通过 Rube MCP 实现 ManyChat 自动化
 
-Automate ManyChat operations through Composio's ManyChat toolkit via Rube MCP.
+通过 Rube MCP 经 Composio 的 ManyChat 工具包自动化 ManyChat 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/many_chat](https://composio.dev/toolkits/many_chat)
+**工具包文档**：[composio.dev/toolkits/many_chat](https://composio.dev/toolkits/many_chat)
 
-## Prerequisites
+## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active ManyChat connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `many_chat`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- 必须连接 Rube MCP（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 使用 `many_chat` 工具包激活 ManyChat 连接
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前 tool schema
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**：将 `https://rube.app/mcp` 作为 MCP 服务器添加到客户端配置中。无需 API 密钥——只需添加端点即可使用。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `many_chat`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用 `many_chat` 工具包调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接未处于 ACTIVE 状态，请按照返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示为 ACTIVE
 
-## Tool Discovery
+## 工具发现
 
-Always discover available tools before executing workflows:
+在执行工作流之前始终发现可用的工具：
 
 ```
 RUBE_SEARCH_TOOLS: queries=[{"use_case": "chatbot flows, subscribers, broadcasts, and messenger automation", "known_fields": ""}]
 ```
 
-This returns:
-- Available tool slugs for ManyChat
-- Recommended execution plan steps
-- Known pitfalls and edge cases
-- Input schemas for each tool
+这将返回：
+- ManyChat 的可用工具标识
+- 推荐的执行计划步骤
+- 已知陷阱和边界情况
+- 每个工具的输入 schema
 
-## Core Workflows
+## 核心工作流
 
-### 1. Discover Available ManyChat Tools
+### 1. 发现可用的 ManyChat 工具
 
 ```
 RUBE_SEARCH_TOOLS:
@@ -50,11 +50,11 @@ RUBE_SEARCH_TOOLS:
     - use_case: "list all available ManyChat tools and capabilities"
 ```
 
-Review the returned tools, their descriptions, and input schemas before proceeding.
+在继续之前审查返回的工具、其描述和输入 schema。
 
-### 2. Execute ManyChat Operations
+### 2. 执行 ManyChat 操作
 
-After discovering tools, execute them via:
+发现工具后，通过以下方式执行：
 
 ```
 RUBE_MULTI_EXECUTE_TOOL:
@@ -65,39 +65,39 @@ RUBE_MULTI_EXECUTE_TOOL:
   sync_response_to_workbench: false
 ```
 
-### 3. Multi-Step Workflows
+### 3. 多步骤工作流
 
-For complex workflows involving multiple ManyChat operations:
+对于涉及多个 ManyChat 操作的复杂工作流：
 
-1. Search for all relevant tools: `RUBE_SEARCH_TOOLS` with specific use case
-2. Execute prerequisite steps first (e.g., fetch before update)
-3. Pass data between steps using tool responses
-4. Use `RUBE_REMOTE_WORKBENCH` for bulk operations or data processing
+1. 搜索所有相关工具：`RUBE_SEARCH_TOOLS` 带特定用例
+2. 首先执行前置步骤（例如，更新前先获取）
+3. 使用工具响应在步骤之间传递数据
+4. 对批量操作或数据处理使用 `RUBE_REMOTE_WORKBENCH`
 
-## Common Patterns
+## 常见模式
 
-### Search Before Action
-Always search for existing resources before creating new ones to avoid duplicates.
+### 先搜索后操作
+在创建新资源之前始终搜索现有资源，以避免重复。
 
-### Pagination
-Many list operations support pagination. Check responses for `next_cursor` or `page_token` and continue fetching until exhausted.
+### 分页
+许多列表操作支持分页。检查响应中的 `next_cursor` 或 `page_token`，并持续获取直到耗尽。
 
-### Error Handling
-- Check tool responses for errors before proceeding
-- If a tool fails, verify the connection is still ACTIVE
-- Re-authenticate via `RUBE_MANAGE_CONNECTIONS` if connection expired
+### 错误处理
+- 在继续之前检查工具响应中的错误
+- 如果工具失败，验证连接仍处于 ACTIVE 状态
+- 如果连接过期，通过 `RUBE_MANAGE_CONNECTIONS` 重新认证
 
-### Batch Operations
-For bulk operations, use `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` in a loop with `ThreadPoolExecutor` for parallel execution.
+### 批量操作
+对于批量操作，使用 `RUBE_REMOTE_WORKBENCH` 配合 `run_composio_tool()` 循环，结合 `ThreadPoolExecutor` 进行并行执行。
 
-## Known Pitfalls
+## 已知陷阱
 
-- **Always search tools first**: Tool schemas and available operations may change. Never hardcode tool slugs without first discovering them via `RUBE_SEARCH_TOOLS`.
-- **Check connection status**: Ensure the ManyChat connection is ACTIVE before executing any tools. Expired OAuth tokens require re-authentication.
-- **Respect rate limits**: If you receive rate limit errors, reduce request frequency and implement backoff.
-- **Validate schemas**: Always pass strictly schema-compliant arguments. Use `RUBE_GET_TOOL_SCHEMAS` to load full input schemas when `schemaRef` is returned instead of `input_schema`.
+- **始终先搜索工具**：工具 schema 和可用操作可能变化。未经通过 `RUBE_SEARCH_TOOLS` 发现，切勿硬编码工具标识。
+- **检查连接状态**：在执行任何工具之前确保 ManyChat 连接处于 ACTIVE 状态。过期的 OAuth 令牌需要重新认证。
+- **遵守速率限制**：如果收到速率限制错误，降低请求频率并实现退避策略。
+- **验证 Schema**：始终传递严格符合 schema 的参数。当返回 `schemaRef` 而非 `input_schema` 时，使用 `RUBE_GET_TOOL_SCHEMAS` 加载完整的输入 schema。
 
-## Quick Reference
+## 快速参考
 
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 09 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 操作 | 方法 |
+|------|------|

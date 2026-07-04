@@ -8,7 +8,7 @@ date_added: "2026-04-02"
 
 # AgentFlow
 
-## Overview
+## 概述
 
 AgentFlow turns your existing Kanban board into a fully autonomous AI development pipeline. Instead of building custom orchestration infrastructure, it treats your project management tool (Asana, GitHub Projects, Linear) as a distributed state machine — tasks move through stages, AI agents read and write state via comments, and humans intervene through the same UI they already use.
 
@@ -22,7 +22,7 @@ The result is complete pipeline observability from your phone, free crash recove
 - Use when running a solo or team project that needs autonomous task dispatch with cost tracking
 - Use when you need crash-proof orchestration that survives session restarts
 
-## Core Concepts
+## 核心概念
 
 ### 7-Stage Kanban Pipeline
 
@@ -134,11 +134,11 @@ Automatic guardrails: warning at $3/$8, hard stop at $10/$20 (Sonnet/Opus) with 
 
 ## Safety and Recovery
 
-- **Auto-revert**: Integration failures trigger `git revert` (new commit, never force-push)
+- **Auto-revert**: 集成 failures trigger `git revert` (new commit, never force-push)
 - **Blocked tasks**: After 2 failed attempts, tasks escalate to human review
 - **Dead agent detection**: Heartbeat every 5 min, reassign after 10 min timeout
 - **Graceful shutdown**: `/sdlc-stop` drains workers, returns unstarted tasks to backlog
-- **Scope creep detection**: PR diff files compared against predicted files list
+- **范围 creep detection**: PR diff files compared against predicted files list
 - **Spec drift detection**: SHA-256 hash comparison catches requirement changes mid-sprint
 
 ## Installation
@@ -180,11 +180,11 @@ Or install as a Claude Code plugin:
 **Symptoms:** Task moved to "Needs Human" with COST:CRITICAL tag
 **Solution:** Review the task's comment thread for accumulated context. Decide whether to increase the budget, simplify the task, or split it into smaller pieces.
 
-### Problem: Integration test failure after merge
+### Problem: 集成 test failure after merge
 **Symptoms:** Task auto-reverted from main
 **Solution:** The auto-revert preserves main stability. Check the task's retry context in comments, which carries what was tried and what failed. The next worker assigned will use this context.
 
-## Related Skills
+## 相关 Skills
 
 - `@brainstorming` - Use before AgentFlow to design your SPEC.md
 - `@writing-plans` - Complements spec writing for task decomposition
@@ -194,11 +194,11 @@ Or install as a Claude Code plugin:
 ## Additional Resources
 
 - [AgentFlow Repository](https://github.com/UrRhb/agentflow)
-- [Architecture Documentation](https://github.com/UrRhb/agentflow/blob/main/docs/architecture.md)
+- [架构 Documentation](https://github.com/UrRhb/agentflow/blob/main/docs/architecture.md)
 - [Gap Registry (45 failure modes)](https://github.com/UrRhb/agentflow/blob/main/docs/gap-registry.md)
-- [Getting Started Guide](https://github.com/UrRhb/agentflow/blob/main/docs/getting-started.md)
+- [入门指南 Guide](https://github.com/UrRhb/agentflow/blob/main/docs/getting-started.md)
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

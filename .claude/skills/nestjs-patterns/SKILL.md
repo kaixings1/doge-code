@@ -1,231 +1,91 @@
 ---
 name: nestjs-patterns
-description: "Nestjs Patterns — Nestjs Patterns 相关功能和最佳实践"
+description: "NestJS 开发模式 — 模块化 TypeScript 后端的生产级 NestJS 模式。"
 metadata:
-  origin: ECC
+ origin: ECC
 ---
 
-# NestJS Development Patterns
+# NestJS 开发模式
 
-Production-grade NestJS patterns for modular TypeScript backends.
+模块化 TypeScript 后端的生产级 NestJS 模式。
 
-## When to Activate
+## 使用时机
+- 构建 NestJS API 或服务时
+- 组织模块、控制器和提供者时
+- 添加 DTO 验证、守卫、拦截器或异常过滤器时
+- 配置环境感知设置和数据库集成时
+- 测试 NestJS 单元或 HTTP 端点时
 
-- Building NestJS APIs or services
-- Structuring modules, controllers, and providers
-- Adding DTO validation, guards, interceptors, or exception filters
-- Configuring environment-aware settings and database integrations
-- Testing NestJS units or HTTP endpoints
-
-## Project Structure
-
+## 项目结构
 ```text
 src/
-├── app.module.ts
-├── main.ts
-├── common/
-│   ├── filters/
-│   ├── guards/
-│   ├── interceptors/
-│   └── pipes/
-├── config/
-│   ├── configuration.ts
-│   └── validation.ts
-├── modules/
-│   ├── auth/
-│   │   ├── auth.controller.ts
-│   │   ├── auth.module.ts
-│   │   ├── auth.service.ts
-│   │   ├── dto/
-│   │   ├── guards/
-│   │   └── strategies/
-│   └── users/
-│       ├── dto/
-│       ├── entities/
-│       ├── users.controller.ts
-│       ├── users.module.ts
-│       └── users.service.ts
-└── prisma/ or database/
++-- app.module.ts
++-- main.ts
++-- common/
+| +-- filters/
+| +-- guards/
+| +-- interceptors/
+| +-- pipes/
++-- config/
++-- modules/
+| +-- auth/
+| +-- users/
++-- prisma/ or database/
 ```
 
-- Keep domain code inside feature modules.
-- Put cross-cutting filters, decorators, guards, and interceptors in `common/`.
-- Keep DTOs close to the module that owns them.
-
-## Bootstrap and Global Validation
-
+## 启动和全局验证
 ```ts
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
-
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  );
-
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-  app.useGlobalFilters(new HttpExceptionFilter());
-
-  await app.listen(process.env.PORT ?? 3000);
+ const app = await NestFactory.create(AppModule, { bufferLogs: true });
+ app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+ app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+ app.useGlobalFilters(new HttpExceptionFilter());
+ await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
 ```
 
-- Always enable `whitelist` and `forbidNonWhitelisted` on public APIs.
-- Prefer one global validation pipe instead of repeating validation config per route.
-
-## Modules, Controllers, and Providers
-
+## 模块、控制器和提供者
 ```ts
-@Module({
-  controllers: [UsersController],
-  providers: [UsersService],
-  exports: [UsersService],
-})
+@Module({ controllers: [UsersController], providers: [UsersService], exports: [UsersService] })
 export class UsersModule {}
-
-@Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
-
-  @Get(':id')
-  getById(@Param('id', ParseUUIDPipe) id: string) {
-    return this.usersService.getById(id);
-  }
-
-  @Post()
-  create(@Body() dto: CreateUserDto) {
-    return this.usersService.create(dto);
-  }
-}
-
-@Injectable()
-export class UsersService {
-  constructor(private readonly usersRepo: UsersRepository) {}
-
-  async create(dto: CreateUserDto) {
-    return this.usersRepo.create(dto);
-  }
-}
 ```
 
-- Controllers should stay thin: parse HTTP input, call a provider, return response DTOs.
-- Put business logic in injectable services, not controllers.
-- Export only the providers other modules genuinely need.
-
-## DTOs and Validation
-
+## DTO 和验证
 ```ts
 export class CreateUserDto {
-  @IsEmail()
-  email!: string;
-
-  @IsString()
-  @Length(2, 80)
-  name!: string;
-
-  @IsOptional()
-  @IsEnum(UserRole)
-  role?: UserRole;
+ @IsEmail() email: string;
+ @IsString() @Length(2,80) name: string;
+ @IsOptional() @IsEnum(UserRole) role?: UserRole;
 }
 ```
 
-- Validate every request DTO with `class-validator`.
-- Use dedicated response DTOs or serializers instead of returning ORM entities directly.
-- Avoid leaking internal fields such as password hashes, tokens, or audit columns.
+## 认证、守卫和请求上下文
+使用 @UseGuards(JwtAuthGuard, RolesGuard) 和 @Roles(admin) 装饰器进行访问控制。
 
-## Auth, Guards, and Request Context
+## 异常过滤器和错误格式
+保持 API 一致的错误响应格式。
 
+## 配置和环境验证
+ConfigModule.forRoot() 启动时验证环境变量。
+
+## 持久化和事务
+将仓库/ORM 代码放在提供者之后，使用领域语言。
+
+## 测试
 ```ts
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('admin')
-@Get('admin/report')
-getAdminReport(@Req() req: AuthenticatedRequest) {
-  return this.reportService.getForUser(req.user.id);
-}
-```
-
-- Keep auth strategies and guards module-local unless they are truly shared.
-- Encode coarse access rules in guards, then do resource-specific authorization in services.
-- Prefer explicit request types for authenticated request objects.
-
-## Exception Filters and Error Shape
-
-```ts
-@Catch()
-export class HttpExceptionFilter implements ExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost) {
-    const response = host.switchToHttp().getResponse<Response>();
-    const request = host.switchToHttp().getRequest<Request>();
-
-    if (exception instanceof HttpException) {
-      return response.status(exception.getStatus()).json({
-        path: request.url,
-        error: exception.getResponse(),
-      });
-    }
-
-    return response.status(500).json({
-      path: request.url,
-      error: 'Internal server error',
-    });
-  }
-}
-```
-
-- Keep one consistent error envelope across the API.
-- Throw framework exceptions for expected client errors; log and wrap unexpected failures centrally.
-
-## Config and Environment Validation
-
-```ts
-ConfigModule.forRoot({
-  isGlobal: true,
-  load: [configuration],
-  validate: validateEnv,
+describe(UsersController, () => {
+ let app: INestApplication;
+ beforeAll(async () => {
+ const moduleRef = await Test.createTestingModule({ imports: [UsersModule] }).compile();
+ app = moduleRef.createNestApplication();
+ await app.init();
+ });
 });
 ```
 
-- Validate env at boot, not lazily at first request.
-- Keep config access behind typed helpers or config services.
-- Split dev/staging/prod concerns in config factories instead of branching throughout feature code.
-
-## Persistence and Transactions
-
-- Keep repository / ORM code behind providers that speak domain language.
-- For Prisma or TypeORM, isolate transactional workflows in services that own the unit of work.
-- Do not let controllers coordinate multi-step writes directly.
-
-## Testing
-
-```ts
-describe('UsersController', () => {
-  let app: INestApplication;
-
-  beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [UsersModule],
-    }).compile();
-
-    app = moduleRef.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-    await app.init();
-  });
-});
-```
-
-- Unit test providers in isolation with mocked dependencies.
-- Add request-level tests for guards, validation pipes, and exception filters.
-- Reuse the same global pipes/filters in tests that you use in production.
-
-## Production Defaults
-
-- Enable structured logging and request correlation ids.
-- Terminate on invalid env/config instead of booting partially.
-- Prefer async provider initialization for DB/cache clients with explicit health checks.
-- Keep background jobs and event consumers in their own modules, not inside HTTP controllers.
-- Make rate limiting, auth, and audit logging explicit for public endpoints.
+## 生产默认设置
+- 启用结构化日志和请求关联 ID
+- 无效环境/配置时终止而非部分启动
+- 优先使用异步提供者初始化 DB/缓存客户端
+- 后台任务和事件消费者放在独立模块中
+- 对公共端点明确设置速率限制、认证和审计日志

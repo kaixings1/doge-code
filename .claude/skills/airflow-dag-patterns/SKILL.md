@@ -6,11 +6,11 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Apache Airflow DAG Patterns
+# Apache Airflow DAG 模式
 
 Production-ready patterns for Apache Airflow including DAG design, operators, sensors, testing, and deployment strategies.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Creating data pipeline orchestration with Airflow
 - Designing DAG structures and dependencies
@@ -19,7 +19,7 @@ Production-ready patterns for Apache Airflow including DAG design, operators, se
 - Setting up Airflow in production
 - Debugging failed DAG runs
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - You only need a simple cron job or shell script
 - Airflow is not part of the tooling stack
@@ -43,7 +43,7 @@ Refer to `resources/implementation-playbook.md` for detailed patterns, checklist
 
 - `resources/implementation-playbook.md` for detailed patterns, checklists, and templates.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

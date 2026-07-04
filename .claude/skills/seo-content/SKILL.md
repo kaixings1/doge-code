@@ -1,9 +1,6 @@
 ---
 name: seo-content
-description: "Seo Content — Seo Content 相关功能和最佳实践"
-  Content quality and E-E-A-T analysis with AI citation readiness assessment.
-  Use when user says "content quality", "E-E-A-T", "content analysis",
-  "readability check", "thin content", or "content audit".
+description: "Seo Content — 内容质量与 E-E-A-T 分析相关功能和最佳实践，含 AI 引用就绪度评估。"
 user-invocable: true
 argument-hint: "[url]"
 license: MIT
@@ -13,12 +10,12 @@ metadata:
   category: seo
 ---
 
-# Content Quality & E-E-A-T Analysis
+# 内容质量与 E-E-A-T 分析
 
-## Google's "Who / How / Why" Test (canonical heuristic)
+## Google 的"谁 / 如何 / 为什么"测试（权威启发式方法）
 
-Before scoring E-E-A-T sub-factors, every page audit should pass Google's
-own three-question heuristic from the helpful-content guide:
+在对 E-E-A-T 子因素评分之前，每个页面审计应通过 Google
+自身帮助性内容指南中的三个问题启发式：
 
-| Question | What to look for |
+| 问题 | 检查什么 |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 51 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

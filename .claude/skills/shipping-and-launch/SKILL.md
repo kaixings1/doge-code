@@ -3,19 +3,19 @@ name: shipping-and-launch
 description: 发布与上线 — 准备生产发布。在部署到生产环境时使用。
 ---
 
-# Shipping and Launch
+# 发布与上线
 
-## Overview
+## 概述
 
-Ship with confidence. The goal is not just to deploy — it's to deploy safely, with monitoring in place, a rollback plan ready, and a clear understanding of what success looks like. Every launch should be reversible, observable, and incremental.
+自信地发布。目标不仅仅是部署，而是安全地部署，具备监控、回滚计划和明确成功标准。每次发布都应该是可逆的、可观察的和渐进的。
 
-## When to Use
+## 使用时机
 
-- Deploying a feature to production for the first time
-- Releasing a significant change to users
-- Migrating data or infrastructure
-- Opening a beta or early access program
-- Any deployment that carries risk (all of them)
+- 首次将功能部署到生产环境
+- 向用户发布重大变更
+- 迁移数据或基础设施
+- 开启测试版或早期访问计划
+- 任何带有风险的部署（所有部署都有风险）
 
 ## The Pre-Launch Checklist
 

@@ -1,64 +1,63 @@
 ---
 name: llm-structured-output
-description: "Llm Structured Output — Llm Structured Output 相关功能和最佳实践"
-  Get reliable JSON, enums, and typed objects from LLMs using response_format, tool_use, and schema-constrained decoding across OpenAI, Anthropic, and Google APIs.
+description: "LLM 结构化输出 — 使用 response_format、tool_use 和 schema 约束解码从 OpenAI、Anthropic 和 Google API 获取可靠的 JSON、枚举和类型化对象。"
 risk: safe
 source: community
 date_added: "2026-03-12"
 ---
 
-# LLM Structured Output
+# LLM 结构化输出
 
-## What This Skill Does
+## 此技能的用途
 
-Extract typed, validated data from LLM API responses instead of parsing free-text. This skill covers the three main approaches: OpenAI's `response_format` with JSON Schema, Anthropic's `tool_use` block for structured extraction, and Google's `responseSchema` in Gemini. You will learn when each approach works, when it breaks, and how to build retry logic around schema validation failures that every production system encounters.
+从 LLM API 响应中提取类型化、经过验证的数据，而不是解析自由文本。本技能涵盖三种主要方法：OpenAI 的 `response_format` 与 JSON Schema、Anthropic 的 `tool_use` 块用于结构化提取，以及 Google Gemini 的 `responseSchema`。你将了解每种方法何时有效、何时失效，以及如何围绕每个生产系统都会遇到的 schema 验证失败构建重试逻辑。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- The user needs to extract structured data (JSON objects, arrays, enums) from an LLM response
-- The user is building a pipeline where LLM output feeds directly into code (database writes, API calls, UI rendering)
-- The user asks about `response_format`, `json_mode`, `json_object`, or `json_schema` in OpenAI
-- The user asks about using Anthropic's `tool_use` or `tool_result` blocks for data extraction (not for actual tool execution)
-- The user asks about Zod schemas with `zodResponseFormat()` from the `openai` npm package
-- The user needs to parse LLM output into Pydantic models using `instructor`, `marvin`, or manual validation
-- The user is getting malformed JSON, missing fields, or wrong types from LLM responses and needs a fix
-- The user asks about `controlled generation`, `constrained decoding`, or `grammar-based sampling` in local models
+- 用户需要从 LLM 响应中提取结构化数据（JSON 对象、数组、枚举）
+- 用户正在构建 LLM 输出直接输入代码的流水线（数据库写入、API 调用、UI 渲染）
+- 用户询问 OpenAI 的 `response_format`、`json_mode`、`json_object` 或 `json_schema`
+- 用户询问使用 Anthropic 的 `tool_use` 或 `tool_result` 块进行数据提取（而非实际工具执行）
+- 用户询问来自 `openai` npm 包的 Zod schema 与 `zodResponseFormat()`
+- 用户需要使用 `instructor`、`marvin` 或手动验证将 LLM 输出解析为 Pydantic 模型
+- 用户从 LLM 响应中得到格式错误的 JSON、缺失字段或错误类型，需要修复
+- 用户询问本地模型中的 `controlled generation`、`constrained decoding` 或 `grammar-based sampling`
 
-Do NOT use this skill when:
-- The user wants free-form text generation (summaries, essays, chat)
-- The user is asking about Zod for form validation or API input validation (use `zod-validation-expert` instead)
-- The user needs prompt engineering for better text quality (not structure)
-- The user wants to call real external tools/APIs (this skill covers using tool_use as a structured output hack, not actual tool orchestration)
+不要使用此技能的场景：
+- 用户需要自由文本生成（摘要、文章、聊天）
+- 用户询问 Zod 用于表单验证或 API 输入验证（请使用 `zod-validation-expert`）
+- 用户需要提示工程以获得更好的文本质量（而非结构）
+- 用户想要调用真实的第三方工具/API（此技能涵盖使用 tool_use 作为结构化输出的技巧，而非实际工具编排）
 
-## Core Workflow
+## 核心工作流
 
-1. Identify the target schema. Ask the user what fields they need extracted. Define every field with its type, whether it's required or optional, and valid enum values if applicable. Do not proceed without a concrete schema.
+1. **识别目标 schema。** 询问用户需要提取哪些字段。定义每个字段的类型、是否必需或可选，以及适用的枚举值。在没有具体 schema 之前不要继续。
 
-2. Choose the provider-appropriate method:
-   - **OpenAI (gpt-4o, gpt-4o-mini):** Use `response_format: { type: "json_schema", json_schema: { ... } }`. This enables Structured Outputs with guaranteed schema conformance via constrained decoding.
-   - **Anthropic (Claude):** Define a single tool with the target schema as `input_schema` and set `tool_choice: { type: "tool", name: "extract_data" }`. Claude returns the structured data in the `tool_use` content block.
-   - **Google (Gemini):** Use `generationConfig.responseSchema` with a JSON Schema object and set `responseMimeType: "application/json"`.
-   - **Local models (llama.cpp, vLLM):** Use GBNF grammars or `--json-schema` flag for constrained decoding at the token level.
+2. **选择提供商对应的方法：**
+   - **OpenAI（gpt-4o、gpt-4o-mini）：** 使用 `response_format: { type: "json_schema", json_schema: { ... } }`。这通过约束解码实现保证 schema 一致性的结构化输出。
+   - **Anthropic（Claude）：** 定义一个工具，将目标 schema 设为 `input_schema`，并设置 `tool_choice: { type: "tool", name: "extract_data" }`。Claude 在 `tool_use` 内容块中返回结构化数据。
+   - **Google（Gemini）：** 使用 `generationConfig.responseSchema` 配合 JSON Schema 对象，并设置 `responseMimeType: "application/json"`。
+   - **本地模型（llama.cpp、vLLM）：** 使用 GBNF 语法或 `--json-schema` 标志在 token 级别进行约束解码。
 
-3. Write the schema definition in the user's language. For Python, define a Pydantic `BaseModel`. For TypeScript, define a Zod schema and convert it with `zodResponseFormat()`. For raw API calls, write JSON Schema directly.
+3. **用用户的语言编写 schema 定义。** 对于 Python，定义 Pydantic `BaseModel`。对于 TypeScript，定义 Zod schema 并使用 `zodResponseFormat()` 转换。对于原始 API 调用，直接编写 JSON Schema。
 
-4. Include field-level descriptions in the schema. Every field should have a `description` string that tells the model what to put there. Models use these descriptions as implicit prompt instructions — a field described as `"The user's sentiment as positive, negative, or neutral"` produces better results than a bare `sentiment: str` with no context.
+4. **在 schema 中包含字段级描述。** 每个字段都应有 `description` 字符串，告诉模型该放什么。模型将这些描述作为隐式提示指令——一个描述为 `"用户的情感为正面、负面或中立"` 的字段比裸写 `sentiment: str`（无上下文）产生更好的结果。
 
-5. Set the system prompt to reinforce structure. Tell the model its job is data extraction, not conversation. Example: `"You are a data extraction system. Analyze the input and return the requested fields. Do not include explanations outside the JSON structure."`
+5. **设置系统提示词以强化结构。** 告诉模型它的工作是数据提取，而非对话。示例：`"你是一个数据提取系统。分析输入并返回请求的字段。不要在 JSON 结构之外包含解释。"`
 
-6. If using OpenAI's `json_schema` mode, set `"strict": true` in the schema definition. This activates constrained decoding where the model can only output tokens that conform to the schema. Without `strict: true`, the model may still produce invalid JSON.
+6. **如果使用 OpenAI 的 `json_schema` 模式，** 在 schema 定义中设置 `"strict": true`。这将激活约束解码，模型只能输出符合 schema 的 token。没有 `strict: true`，模型可能仍会生成无效 JSON。
 
-7. If using Anthropic's tool_use approach, extract the structured data from `response.content` by finding the block where `type == "tool_use"` and reading its `input` field. Do not parse the text blocks — the structured data lives exclusively in the tool_use block.
+7. **如果使用 Anthropic 的 tool_use 方法，** 通过查找 `type == "tool_use"` 的块并读取其 `input` 字段，从 `response.content` 中提取结构化数据。不要解析文本块——结构化数据仅存在于 tool_use 块中。
 
-8. Validate the response against the schema in your application code. Even with constrained decoding, validate with Pydantic's `model_validate()` or Zod's `.parse()` before passing data downstream. This catches semantic issues (empty strings, out-of-range numbers) that schema conformance alone cannot prevent.
+8. **在应用程序代码中根据 schema 验证响应。** 即使使用了约束解码，在将数据传递给下游之前，也要使用 Pydantic 的 `model_validate()` 或 Zod 的 `.parse()` 进行验证。这能捕获 schema 一致性本身无法阻止的语义问题（空字符串、超出范围的数字）。
 
-9. Build a retry loop for validation failures. When validation fails, send the original input plus the failed output and the validation error back to the model with an instruction like `"Your previous output failed validation: {error}. Fix the output."` Cap retries at 3 attempts.
+9. **为验证失败构建重试循环。** 当验证失败时，将原始输入、失败输出和验证错误一起发送回模型，指令类似于 `"你之前的输出未通过验证：{error}。请修复输出。"` 重试次数限制为 3 次。
 
-10. Log every structured output call with: the input, the raw response, the parsed result, and any validation errors. When structured output breaks in production, you need these logs to determine whether the failure was a schema design issue, a prompt issue, or a model regression.
+10. **记录每次结构化输出调用：** 包括输入、原始响应、解析结果和任何验证错误。当结构化输出在生产中出问题时，你需要这些日志来确定失败是 schema 设计问题、提示词问题还是模型回归。
 
-## Examples
+## 示例
 
-### Example 1: OpenAI Structured Outputs with Pydantic (Python)
+### 示例 1：使用 Pydantic 的 OpenAI 结构化输出（Python）
 
 ```python
 from pydantic import BaseModel, Field
@@ -91,7 +90,7 @@ result = response.choices[0].message.parsed
 # result.purchase_intent == True
 ```
 
-### Example 2: Anthropic tool_use for Structured Extraction (Python)
+### 示例 2：使用 Anthropic tool_use 进行结构化提取（Python）
 
 ```python
 import anthropic
@@ -135,7 +134,7 @@ invoice = tool_block.input
 # invoice["total_amount"] == 55.0
 ```
 
-### Example 3: TypeScript with Zod + zodResponseFormat
+### 示例 3：使用 Zod + zodResponseFormat 的 TypeScript
 
 ```typescript
 import OpenAI from "openai";
@@ -164,49 +163,49 @@ const event = completion.choices[0].message.parsed;
 // event.is_virtual === false
 ```
 
-## Never Do This
+## 绝对不要做
 
-1. **Never use `response_format: { type: "json_object" }` without a schema.** This is OpenAI's legacy JSON mode — it guarantees valid JSON syntax but not schema conformance. The model can return `{"result": "hello"}` when you expected `{"name": str, "age": int}`. Always use `json_schema` with a full schema definition instead.
+1. **不要在没有 schema 的情况下使用 `response_format: { type: "json_object" }`。** 这是 OpenAI 的旧版 JSON 模式——它保证有效的 JSON 语法，但不保证 schema 一致性。当你期望 `{"name": str, "age": int}` 时，模型可能返回 `{"result": "hello"}`。始终使用带完整 schema 定义的 `json_schema`。
 
-2. **Never parse Anthropic's text blocks for structured data.** When using `tool_choice` to force structured output, the data is in the `tool_use` content block, not in any `text` block. Parsing `response.content[0].text` will either return empty string or a conversational preamble — never the data you need.
+2. **不要解析 Anthropic 的文本块来获取结构化数据。** 使用 `tool_choice` 强制结构化输出时，数据位于 `tool_use` 内容块中，而非任何 `text` 块中。解析 `response.content[0].text` 要么返回空字符串，要么返回对话前言——绝不是你需要的数据。
 
-3. **Never define schema fields without descriptions.** A field named `status` with no description can mean HTTP status, order status, or review status. Models use field descriptions as extraction instructions. Omitting them is equivalent to omitting half your prompt.
+3. **不要定义没有描述的 schema 字段。** 名为 `status` 但没有描述的字段可能表示 HTTP 状态、订单状态或审核状态。模型将字段描述作为提取指令。省略它们相当于省略了提示词的一半。
 
-4. **Never use `additionalProperties: true` in strict mode schemas.** OpenAI's strict mode requires `additionalProperties: false` on every object in the schema. If you set it to true or omit it, the API rejects the request with a 400 error, not at response time — you will never get a response at all.
+4. **不要在严格模式 schema 中使用 `additionalProperties: true`。** OpenAI 的严格模式要求 schema 中每个对象上都有 `additionalProperties: false`。如果设置为 true 或省略，API 会返回 400 错误拒绝请求——你根本不会得到任何响应。
 
-5. **Never put extraction instructions only in the user message and not the system prompt.** The system prompt has higher attention weight for behavioral instructions. Putting "extract the following fields" only in the user message alongside the source text forces the model to split attention between the instruction and the data. System prompt defines behavior; user message provides input data.
+5. **不要仅将提取指令放在用户消息中而不放在系统提示词中。** 系统提示词对行为指令具有更高的注意力权重。仅在用户消息中与源文本一起放置"提取以下字段"会迫使模型在指令和数据之间分散注意力。系统提示词定义行为；用户消息提供输入数据。
 
-6. **Never assume structured output means correct output.** Constrained decoding guarantees the response matches the schema's types and structure. It does not guarantee the values are correct. A model can return `{"sentiment": "positive"}` for a negative review if the source text is ambiguous. Always validate semantics in application code after schema validation.
+6. **不要假设结构化输出就是正确的输出。** 约束解码保证响应符合 schema 的类型和结构。它不能保证值是正确的。如果源文本有歧义，模型可能对差评也返回 `{"sentiment": "positive"}`。在 schema 验证之后，始终在应用程序代码中验证语义。
 
-7. **Never use recursive or deeply nested schemas without testing.** Recursive types (`$ref` pointing to the same definition) and schemas deeper than 3 levels increase decoding latency significantly and raise the probability of the model hitting max_tokens before completing the JSON structure. Flatten nested schemas where possible.
+7. **不要在未经测试的情况下使用递归或深度嵌套的 schema。** 递归类型（`$ref` 指向同一定义）和深度超过 3 层的 schema 会显著增加解码延迟，并提高模型在完成 JSON 结构之前达到 max_tokens 的可能性。尽可能展平嵌套 schema。
 
-## Edge Cases
+## 边界情况
 
-1. **Long source text exceeding context window.** When the input text is too long, the model may truncate its reading and return incomplete extractions. Split long documents into chunks, extract from each chunk independently, then merge results in application code. Do not rely on the model to handle 50-page documents in a single call.
+1. **源文本过长超出上下文窗口。** 当输入文本太长时，模型可能截断其读取并返回不完整的提取结果。将长文档拆分为多个块，独立从每个块中提取，然后在应用程序代码中合并结果。不要依赖模型在单次调用中处理 50 页的文档。
 
-2. **The model returns a `refusal` instead of structured data.** OpenAI's structured output can return a `refusal` field when the model considers the request unsafe. Check `response.choices[0].message.refusal` before accessing `.parsed`. If `refusal` is not None, the parsed data will be None and accessing it throws an error.
+2. **模型返回 `refusal` 而不是结构化数据。** OpenAI 的结构化输出在模型认为请求不安全时可能返回 `refusal` 字段。在访问 `.parsed` 之前检查 `response.choices[0].message.refusal`。如果 `refusal` 不为 None，则解析数据将为 None，访问它会抛出错误。
 
-3. **Array fields returning empty when data exists.** Models sometimes return `[]` for array fields when the source text contains the data but the field description is too vague. Fix by making the description prescriptive: `"List of all product names mentioned in the text. Return at least one if any product is referenced."`.
+3. **数组字段在存在数据时返回空。** 当源文本包含数据但字段描述过于模糊时，模型有时会为数组字段返回 `[]`。修复方法是将描述改为指令性语言：`"文本中提到的所有产品名称列表。如果引用了任何产品，请至少返回一项。"`
 
-4. **Enum values not matching due to casing.** If you define an enum as `["Active", "Inactive"]` but the model returns `"active"`, validation fails. Either lowercase all enum values in the schema or add a normalization step before validation. OpenAI's strict mode respects exact casing; Anthropic may not.
+4. **枚举值因大小写不匹配。** 如果你将枚举定义为 `["Active", "Inactive"]` 但模型返回 `"active"`，验证将失败。要么在 schema 中将所有枚举值小写，要么在验证前添加规范化步骤。OpenAI 的严格模式尊重精确大小写；Anthropic 可能不尊重。
 
-5. **Streaming with structured output.** OpenAI supports streaming structured output where partial JSON arrives chunk by chunk. You cannot parse intermediate chunks as valid JSON. Use the `openai` SDK's built-in partial parsing or buffer chunks until the stream completes. Anthropic's tool_use blocks arrive complete in a single `content_block_stop` event — no partial assembly needed.
+5. **带结构化输出的流式传输。** OpenAI 支持流式结构化输出，部分 JSON 逐块到达。你不能将中间块解析为有效 JSON。使用 `openai` SDK 内置的部分解析或缓存块直到流完成。Anthropic 的 tool_use 块在单个 `content_block_stop` 事件中完整到达——无需部分组装。
 
-## Best Practices
+## 最佳实践
 
-1. **Start with the simplest schema that solves the problem.** Flat objects with 3-5 fields produce higher accuracy than nested schemas with 20+ fields. If you need complex data, extract in two passes: first extract top-level entities, then make a second call to extract details for each entity.
+1. **从解决该问题的最简单 schema 开始。** 3-5 个字段的扁平对象比 20+ 字段的嵌套 schema 产生更高的准确率。如果你需要复杂数据，分两轮提取：首先提取顶层实体，然后进行第二次调用以提取每个实体的详细信息。
 
-2. **Use enums instead of free-form strings for categorical data.** A field `mood: str` can return anything. A field `mood: Literal["happy", "sad", "neutral", "angry"]` constrains the model to exactly those values. This reduces downstream parsing logic to zero.
+2. **对分类数据使用枚举而不是自由格式字符串。** 字段 `mood: str` 可以返回任何内容。字段 `mood: Literal["happy", "sad", "neutral", "angry"]` 将模型约束为仅返回这些值。这使下游解析逻辑减少到零。
 
-3. **Pin the model version in production.** `gpt-4o` is an alias that changes when OpenAI releases new versions. Structured output behavior can change between versions. Use `gpt-4o-2024-08-06` explicitly so that your schema+prompt combination remains stable until you deliberately upgrade.
+3. **在生产中固定模型版本。** `gpt-4o` 是一个别名，当 OpenAI 发布新版本时会改变。结构化输出行为可能在不同版本之间发生变化。明确使用 `gpt-4o-2024-08-06`，以便你的 schema+提示词组合保持稳定，直到你有意升级。
 
-4. **Test schema changes against 20+ real inputs before deploying.** Schema changes (adding a field, changing a type, modifying a description) can break extraction on inputs that previously worked. Build a test suite of real inputs with expected outputs and run it on every schema change. This is the structured output equivalent of unit testing.
+4. **在部署前使用 20 个以上的真实输入测试 schema 更改。** Schema 更改（添加字段、更改类型、修改描述）可能会破坏之前能正常工作的输入的提取。构建一个包含真实输入和预期输出的测试套件，并在每次 schema 更改时运行它。这是结构化输出版本的单元测试。
 
-5. **Use `default` values in Pydantic models for optional fields.** When a field might not have relevant data in the source text, define it as `Optional[str] = None` in Pydantic or `.optional()` in Zod. Without defaults, the model is forced to hallucinate a value for fields where the source text has no answer.
+5. **在 Pydantic 模型中对可选字段使用 `default` 值。** 当某个字段在源文本中可能没有相关数据时，在 Pydantic 中将其定义为 `Optional[str] = None`，或在 Zod 中定义为 `.optional()`。没有默认值，模型被迫为源文本中没有答案的字段编造一个值。
 
-6. **Separate extraction schemas from application schemas.** Your LLM extraction schema should match what the model can reliably produce. Your application database schema may have additional computed fields, foreign keys, or constraints. Map between them in application code — do not force the LLM to understand your database schema.
+6. **将提取 schema 与应用程序 schema 分离。** 你的 LLM 提取 schema 应与模型能可靠生成的内容匹配。你的应用程序数据库 schema 可能有额外的计算字段、外键或约束。在应用程序代码中进行映射——不要强迫 LLM 理解你的数据库 schema。
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确匹配上述范围时才使用此技能。
+- 不要将输出视为环境特定验证、测试或专家审查的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停下来询问澄清。

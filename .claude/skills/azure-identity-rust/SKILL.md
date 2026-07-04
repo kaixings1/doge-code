@@ -53,7 +53,7 @@ let client = SecretClient::new(
 
 ## Credential Types
 
-| Credential | Usage |
+| Credential | 用法 |
 |------------|-------|
 | `DeveloperToolsCredential` | Local development - tries CLI tools |
 | `ManagedIdentityCredential` | Azure VMs, App Service, Functions, AKS |
@@ -117,7 +117,7 @@ let credential = ClientSecretCredential::new(
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

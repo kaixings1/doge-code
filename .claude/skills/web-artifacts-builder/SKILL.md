@@ -13,30 +13,26 @@ od:
   upstream: "https://github.com/anthropics/skills/tree/main/skills/web-artifacts-builder"
 ---
 
-# web-artifacts-builder
+# Web 制品构建器
 
-> Curated from Anthropic's official skills repository.
+> 精选自 Anthropic 官方技能仓库。
 
-## What it does
+## 功能
 
-Build complex claude.ai HTML artifacts with React and Tailwind. Anthropic's reference workflow for shipping rich, embeddable artifacts.
+使用 React 和 Tailwind 构建复杂的 claude.ai HTML 制品。Anthropic 的参考工作流，用于交付丰富、可嵌入的制品。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/anthropics/skills/tree/main/skills/web-artifacts-builder
-- Category: `web-artifacts`
+- 上游：https://github.com/anthropics/skills/tree/main/skills/web-artifacts-builder
+- 分类：`web-artifacts`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在 Open Design 中发布技能信息，以便代理在规划期间发现它。要运行完整的上游工作流及其原始资源、脚本和参考文件，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README 了解确切路径
 open https://github.com/anthropics/skills/tree/main/skills/web-artifacts-builder
 ```
 
-Then ask the agent to invoke this skill by name (`web-artifacts-builder`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后要求代理通过名称（`web-artifacts-builder`）或此技能 frontmatter 中列出的触发短语之一调用此技能。

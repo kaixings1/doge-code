@@ -192,7 +192,7 @@ If any link is broken, mark MEDIUM (needs verification) or drop the finding.
 
 If no findings: "No exploitable vulnerabilities identified. All workflows reviewed and cleared."
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

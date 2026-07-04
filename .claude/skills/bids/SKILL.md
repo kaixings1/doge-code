@@ -1,7 +1,7 @@
 ---
 name: bids
 description: "Bids — Bids 相关功能和最佳实践"
-  Use this skill when working with Brain Imaging Data Structure (BIDS) datasets:
+  使用此技能当 working with Brain Imaging Data Structure (BIDS) datasets:
   organizing neuroscience and biomedical data (MRI, EEG, MEG, iEEG, PET, microscopy,
   NIRS, motion capture, EMG, MR spectroscopy, behavioral), querying BIDS layouts,
   validating compliance, converting DICOM to BIDS, writing metadata sidecars, or
@@ -12,7 +12,7 @@ metadata: {"version": "1.0", "skill-author": "Yaroslav Halchenko"}
 
 # Brain Imaging Data Structure (BIDS)
 
-## Overview
+## 概述
 
 The Brain Imaging Data Structure (BIDS) is a community standard for organizing and describing neuroscience and biomedical research datasets. It defines a consistent file naming convention, directory hierarchy, and metadata schema so that datasets are immediately understandable by humans and software tools alike. BIDS is governed by the BIDS Specification (currently v1.11.x) and is maintained by the community via the BIDS-Standard GitHub organization.
 
@@ -28,7 +28,7 @@ Adoption is required or strongly encouraged by major data repositories (OpenNeur
 
 The Python ecosystem for BIDS centers on **PyBIDS** (`pybids`) for querying and indexing BIDS datasets, and the **bids-validator** (Deno-based, available as PyPI package `bids-validator-deno` or via Deno directly) for compliance checking. Conversion from DICOM is typically done with **HeuDiConv**, **dcm2bids**, or **BIDScoin**.
 
-## When to Use This Skill
+## /u4f55/u65f6/u4f7f/u7528 This Skill
 
 Apply this skill when:
 - Organizing raw neuroscience data (imaging, electrophysiology, behavioral) into BIDS-compliant directory structures
@@ -264,7 +264,7 @@ The tables below are a convenient summary; when in doubt, consult the schema.
 
 BIDS filenames are built from ordered key-value entity pairs:
 
-| Entity | Key | Example | Required for |
+| Entity | Key | Example | 必需 for |
 |--------|-----|---------|--------------|
 | Subject | `sub-` | `sub-01` | All files |
 | Session | `ses-` | `ses-pre` | Multi-session studies |
@@ -352,7 +352,7 @@ See `references/conversion_tools.md` for complete heuristic file examples.
 - **`is_motion_corrected` filter**: use in heuristics to exclude scanner-generated MOCO series (e.g., `if not s.is_motion_corrected`)
 - Both `--files` (explicit paths) and `-d` (template with `{subject}`, `{session}` placeholders) are supported for specifying DICOM input
 
-#### dcm2bids (Configuration-file-based)
+#### dcm2bids (配置-file-based)
 
 ```bash
 # Step 1: Generate helper output to inspect series
@@ -435,7 +435,7 @@ onset	duration	trial_type	response_time
 7.5	0.5	scrambled	0.298
 ```
 
-**Required columns:**
+**必需 columns:**
 - `onset` - onset time in seconds relative to the start of the acquisition
 - `duration` - duration in seconds (use `n/a` for instantaneous events)
 
@@ -520,7 +520,7 @@ my_dataset/
 - Each pipeline gets its own directory under `derivatives/`
 - Must have its own `dataset_description.json` with `GeneratedBy`
 
-### 11. PyBIDS: Advanced Usage
+### 11. PyBIDS: Advanced 用法
 
 ```python
 from bids import BIDSLayout
@@ -615,7 +615,7 @@ This skill includes detailed reference documentation:
 - **bids_schema.json**: Machine-readable BIDS schema (from https://bids-specification.readthedocs.io/en/stable/schema.json). This is the authoritative source for entity definitions, ordering rules, filename templates, allowed suffixes per datatype, and metadata field requirements. BEP-specific schemas are at https://github.com/bids-standard/bids-schema/tree/main/BEPs.
 - **beps.yml**: Current list of all BIDS Extension Proposals with titles, leads, status, and links (from [bids-website](https://github.com/bids-standard/bids-website/blob/main/data/beps/beps.yml))
 - **bids_specification.md**: Human-readable summary of the entity table, datatype reference, directory structure rules, template spaces, and specification changelog
-- **metadata_fields.md**: Required and recommended JSON sidecar fields for every BIDS modality (anat, func, dwi, fmap, eeg, meg, pet, etc.)
+- **metadata_fields.md**: 必需 and recommended JSON sidecar fields for every BIDS modality (anat, func, dwi, fmap, eeg, meg, pet, etc.)
 - **conversion_tools.md**: Detailed workflows for HeuDiConv, dcm2bids, and BIDScoin including heuristic/config examples and troubleshooting
 
 Update schema and BEPs with: `python scripts/update_schema.py`
@@ -675,13 +675,13 @@ layout = BIDSLayout("/data", database_path="/data/.pybids_cache.db")
    func/sub-01_task-rest_bold.nii.gz	2025-01-15T10:30:00	good
    ```
 
-7. **Version your dataset** - Use `CHANGES` to document dataset modifications. Consider DataLad for full version control of large datasets.
+7. **Version your dataset** - Use `CHANGES` to document dataset modifications. 考虑 DataLad for full version control of large datasets.
 
 8. **Deface anatomical images** - Remove facial features from T1w/T2w images before sharing (e.g., using `pydeface`, `mri_deface`, or `afni_refacer`). Store defaced versions as the primary data or use `_defacemask` files.
 
 9. **Use BIDS URIs for provenance** - In derivatives, reference source files using BIDS URIs: `bids::sub-01/anat/sub-01_T1w.nii.gz`.
 
-10. **Prefer community tools** - Use established BIDS-Apps (fMRIPrep, MRIQC, QSIPrep) rather than custom pipelines when possible. They handle BIDS I/O correctly and produce BIDS-compliant derivatives.
+10. **优先 community tools** - Use established BIDS-Apps (fMRIPrep, MRIQC, QSIPrep) rather than custom pipelines when possible. They handle BIDS I/O correctly and produce BIDS-compliant derivatives.
 
 11. **Study bids-examples** - The [bids-examples](https://github.com/bids-standard/bids-examples) repository is the canonical collection of prototypical BIDS datasets covering different modalities and use cases (MRI, fMRI, DWI, EEG, MEG, iEEG, PET, ASL, genetics, derivatives, and more). Use it as a reference when structuring your own dataset, as test data for BIDS tools, or to understand how a specific modality should be organized. Each example passes the BIDS validator.
 
@@ -691,7 +691,7 @@ BEPs are community-driven proposals to extend BIDS to new modalities, derivative
 
 **Current BEPs** (as of schema update):
 
-| BEP | Title | Content | Status |
+| BEP | Title | Content | 状态 |
 |-----|-------|---------|--------|
 | 004 | Susceptibility Weighted Imaging | raw | Seeking new leader |
 | 011 | Structural preprocessing derivatives | derivative | Has PR (#518) |
@@ -719,11 +719,11 @@ BEPs are community-driven proposals to extend BIDS to new modalities, derivative
 | 046 | Diffusion Tractography | derivative | In development |
 | 047 | Audio/video recordings for behavioral experiments | raw | Has PR (#2231) |
 
-**Related standards:**
+**相关 standards:**
 - **BIDS-Stats Models**: JSON specification for defining GLM-based neuroimaging analyses
 - **BIDS-Derivatives** (BEP003): Standard for preprocessed/analysis outputs (partially merged into spec)
 
-## Related Tools Ecosystem
+## 相关 Tools Ecosystem
 
 | Tool | Purpose |
 |------|---------|

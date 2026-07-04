@@ -1,7 +1,6 @@
 ---
 name: ai-agents-architect
-description: 设计和构建自主 AI 代理。精通工具使用、规划、记忆和上下文管理，能构建从简单工作流到复杂多代理系统。
-  use, memory systems, planning strategies, and multi-agent orchestration.
+description: "设计和构建自主 AI 代理。精通工具使用、规划、记忆和上下文管理，能构建从简单工作流到复杂多代理系统。"
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
@@ -47,7 +46,7 @@ knowing when an agent should ask for help vs proceed independently.
 - Multi-agent orchestration
 - Agent evaluation and debugging
 
-## Prerequisites
+## 前提条件
 
 - Required skills: LLM API usage, Understanding of function calling, Basic prompt engineering
 
@@ -334,7 +333,7 @@ Works well with: `rag-engineer`, `prompt-engineer`, `backend`, `mcp-builder`
 - User mentions or implies: autogen
 - User mentions or implies: claude agent sdk
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -1,7 +1,6 @@
 ---
 name: screenshots-marketing
-description: "Screenshots Marketing — Screenshots Marketing 相关功能和最佳实践"
-  Generate marketing screenshots with Playwright. Useful for landing-page hero shots, App Store screenshots, and changelog visuals.
+description: "Screenshots Marketing — 使用 Playwright 生成营销截屏相关功能和最佳实践。适用于落地页主图、应用商店截屏和更新日志可视化。"
 triggers:
   - "marketing screenshot"
   - "playwright screenshot"
@@ -15,28 +14,24 @@ od:
 
 # screenshots-marketing
 
-> Curated from @Shpigford.
+> 来自 @Shpigford 的策选集。
 
-## What it does
+## 功能
 
-Generate marketing screenshots with Playwright. Useful for landing-page hero shots, App Store screenshots, and changelog visuals.
+使用 Playwright 生成营销截屏。适用于落地页主图、应用商店截屏和更新日志可视化。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/Shpigford/screenshots
-- Category: `screenshots`
+- 上游：https://github.com/Shpigford/screenshots
+- 类别：`screenshots`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在开放设计中宣传该技能，以便代理在规划时发现它。要运行包含原始资产、脚本和引用的完整上游工作流，请将上游包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README 获取确切路径
 open https://github.com/Shpigford/screenshots
 ```
 
-Then ask the agent to invoke this skill by name (`screenshots-marketing`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后让代理通过名称（`screenshots-marketing`）或此技能 frontmatter 中列出的触发短语之一来调用此技能。

@@ -1,83 +1,45 @@
 ---
 name: mx-toolbox-automation
-description: "通过 Rube MCP (Composio) 自动执行 Mx Toolbox 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Mx Toolbox 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
-  mcp: [rube]
+ mcp: [rube]
 ---
 
-# Mx Toolbox Automation via Rube MCP
+# 通过 Rube MCP 自动执行 Mx Toolbox 操作
 
-Automate Mx Toolbox operations through Composio's Mx Toolbox toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Mx Toolbox 工具包自动执行 Mx Toolbox 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/mx_toolbox](https://composio.dev/toolkits/mx_toolbox)
+**工具包文档**: [composio.dev/toolkits/mx_toolbox](https://composio.dev/toolkits/mx_toolbox)
 
-## Prerequisites
+## 前提条件
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 RUBE_MANAGE_CONNECTIONS 使用工具包 mx_toolbox 建立活跃连接
+- 始终先调用 RUBE_SEARCH_TOOLS 获取当前工具 schema
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Mx Toolbox connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `mx_toolbox`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 设置
+**获取 Rube MCP**: 在客户端配置中添加 https://rube.app/mcp 作为 MCP 服务器。
+1. 确认 RUBE_SEARCH_TOOLS 有响应
+2. 使用工具包 mx_toolbox 调用 RUBE_MANAGE_CONNECTIONS
+3. 如果连接不是 ACTIVE，按认证链接完成设置
+4. 确认 ACTIVE 后运行工作流
 
-## Setup
-
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
-
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `mx_toolbox`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
-
-## Tool Discovery
-
-Always discover available tools before executing workflows:
-
+## 工具发现
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "Mx Toolbox operations", known_fields: ""}]
 session: {generate_id: true}
 ```
 
-This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
+## 核心工作流模式
+### 步骤 1：发现工具 -> 步骤 2：检查连接 -> 步骤 3：执行工具
 
-## Core Workflow Pattern
+## 已知陷阱
+- 始终先搜索工具 schema
+- 检查连接状态为 ACTIVE
+- 使用 schema 合规的参数
+- 始终包含 memory 参数
+- 复用或生成会话 ID
+- 检查分页
 
-### Step 1: Discover Available Tools
-
-```
-RUBE_SEARCH_TOOLS
-queries: [{use_case: "your specific Mx Toolbox task"}]
-session: {id: "existing_session_id"}
-```
-
-### Step 2: Check Connection
-
-```
-RUBE_MANAGE_CONNECTIONS
-toolkits: ["mx_toolbox"]
-session_id: "your_session_id"
-```
-
-### Step 3: Execute Tools
-
-```
-RUBE_MULTI_EXECUTE_TOOL
-tools: [{
-  tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
-}]
-memory: {}
-session_id: "your_session_id"
-```
-
-## Known Pitfalls
-
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
-
-## Quick Reference
-
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 34 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+## 快速参考
+| 操作 | 方法 |

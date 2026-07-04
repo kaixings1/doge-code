@@ -269,7 +269,7 @@ COPY src ./src
 CMD ["src/index.js"]
 ```
 
-## 4. Lazy Initialize Heavy Dependencies
+## 4. Lazy Initialize Heavy 依赖项
 
 ```javascript
 // Lazy load heavy libraries
@@ -308,7 +308,7 @@ gcloud run deploy my-service \
 - Distroless_image: Smaller attack surface, faster pull
 - Lazy_init: Defers heavy loading to first request
 
-### Concurrency Configuration Pattern
+### Concurrency 配置 Pattern
 
 Proper concurrency settings for Cloud Run
 
@@ -385,10 +385,10 @@ def get_data():
 
 - Concurrency=1: Only for CPU-bound or unsafe code
 - Concurrency=8 20: Memory-intensive workloads
-- Concurrency=80: Default, good for I/O-bound
+- Concurrency=80: 默认, good for I/O-bound
 - Concurrency=250: Maximum, for very lightweight handlers
 
-### Pub/Sub Integration Pattern
+### Pub/Sub 集成 Pattern
 
 Event-driven processing with Cloud Pub/Sub
 
@@ -545,9 +545,9 @@ def get_engine():
 - Use connection pooling (max 5-10 per instance)
 - Set appropriate idle timeouts
 - Handle connection errors gracefully
-- Consider Cloud SQL Proxy for local development
+- 考虑 Cloud SQL Proxy for local development
 
-### Secret Manager Integration
+### Secret Manager 集成
 
 Securely manage secrets in Cloud Run
 
@@ -975,7 +975,7 @@ Severity: HIGH
 Situation: Deploying containers with slow initialization
 
 Symptoms:
-Deployment fails with "Container failed to start".
+部署 fails with "Container failed to start".
 Service never becomes healthy.
 "Revision failed to become ready" errors.
 Works locally but fails on Cloud Run.
@@ -1179,7 +1179,7 @@ def get_execution_environment():
     return 'gen1'
 ```
 
-### Request Timeout Configuration Mismatch
+### Request Timeout 配置 Mismatch
 
 Severity: MEDIUM
 
@@ -1336,7 +1336,7 @@ Severity: WARNING
 
 /tmp uses container memory, large writes can cause OOM
 
-Message: /tmp writes consume memory. Consider Cloud Storage for large files.
+Message: /tmp writes consume memory. 考虑 Cloud Storage for large files.
 
 ### Synchronous File Operations
 
@@ -1374,9 +1374,9 @@ Message: Singleton pattern - ensure thread safety if using concurrency > 1.
 - user needs workflow orchestration -> workflow-automation (Cloud Workflows, Eventarc)
 
 ## When to Use
-Use this skill when the request clearly matches the capabilities and patterns described above.
+使用此技能当 the request clearly matches the capabilities and patterns described above.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

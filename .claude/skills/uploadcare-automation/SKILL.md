@@ -6,10 +6,8 @@ requires:
     - rube
 ---
 
-# Uploadcare Automation
+# Uploadcare 自动化
 
-Automate Uploadcare file handling workflows -- list project files, permanently store uploads, retrieve file metadata, get download URLs, and manage file groups -- all through natural language.
+通过自然语言自动执行 Uploadcare 文件处理工作流——列出项目文件、永久存储上传、检索文件元数据、获取下载 URL 以及管理文件组。
 
-**Toolkit docs:** [composio.dev/toolkits/uploadcare](https://composio.dev/toolkits/uploadcare)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 42 MINUTES 44 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+**工具包文档：** [composio.dev/toolkits/uploadcare](https://composio.dev/toolkits/uploadcare)

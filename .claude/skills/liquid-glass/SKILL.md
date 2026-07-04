@@ -5,37 +5,24 @@ description: Liquid Glass设计系统指南
 
 # Liquid Glass
 
-## Overview
+## 概述
 
-Use this skill to bring a macOS SwiftUI app into the modern macOS design system
-with the least custom chrome possible. Start with standard app structure,
-toolbars, search placement, sheets, and controls, then add custom Liquid Glass
-only where the app needs a distinctive surface.
+使用此技能以最少的自定义 Chrome 将 macOS SwiftUI 应用带入现代 macOS 设计系统。从标准应用结构、工具栏、搜索位置、面板和控件开始，仅在应用需要独特表面时添加自定义 Liquid Glass。
 
-Prefer system-provided glass and adaptive materials over bespoke blur, opaque
-backgrounds, or custom toolbar/sidebar skins. Audit existing UI for extra fills,
-scrims, and clipping before adding more effects.
+优先使用系统提供的玻璃和自适应材质，而非定制模糊、不透明背景或自定义工具栏/侧边栏皮肤。在添加更多效果之前，审计现有 UI 是否存在额外的填充、遮罩和裁剪。
 
-## Workflow
+## 工作流
 
-1. Read the relevant scene or root view and identify the structural pattern:
-   `NavigationSplitView`, `TabView`, sheet presentation, detail/inspector
-   layout, toolbar, or custom floating controls.
-2. Remove custom backgrounds or darkening layers behind system sheets,
-   sidebars, and toolbars unless the product explicitly needs them. These can
-   obscure Liquid Glass and interfere with the automatic scroll-edge effect.
-3. Update standard SwiftUI structure and controls first.
-4. Add custom `glassEffect` surfaces only for app-specific UI that standard
-   controls do not cover.
-5. Validate that glass grouping, transitions, icon treatment, and foreground
-   activation are visually coherent and still usable with pointer and keyboard.
-6. If the UI change also affects launch behavior for a SwiftPM GUI app, use
-   `build-run-debug` so the app runs as a foreground `.app` bundle rather
-   than as a raw executable.
+1. 读取相关场景或根视图，识别结构模式：`NavigationSplitView`、`TabView`、面板呈现、详情/检查器布局、工具栏或自定义浮动控件。
+2. 移除系统面板、侧边栏和工具栏后面的自定义背景或变暗层，除非产品明确需要它们。这些会遮挡 Liquid Glass 并干扰自动滚动边缘效果。
+3. 首先更新标准的 SwiftUI 结构和控件。
+4. 仅对标准控件未覆盖的应用特定 UI 添加自定义 `glassEffect` 表面。
+5. 验证玻璃分组、过渡、图标处理和前景激活在视觉上保持一致，并且仍可使用指针和键盘操作。
+6. 如果 UI 更改也影响 SwiftPM GUI 应用的启动行为，请使用 `build-run-debug`，以便应用以前景 `.app` 包而非原始可执行文件运行。
 
-## App Structure
+## 应用结构
 
-- Prefer `NavigationSplitView` for hierarchy-driven macOS layouts. Let the
+- 优先 `NavigationSplitView` for hierarchy-driven macOS layouts. Let the
   sidebar use the system Liquid Glass material instead of painting over it.
 - For hero artwork or large media adjacent to a floating sidebar, use
   `backgroundExtensionEffect` so the visual can extend beyond the safe area
@@ -52,7 +39,7 @@ scrims, and clipping before adding more effects.
   make the presenting item the source of a navigation zoom transition and mark
   the sheet content as the destination.
 
-## Toolbars
+## 工具栏
 
 - Assume toolbar items are rendered on a floating Liquid Glass surface and are
   grouped automatically.
@@ -72,7 +59,7 @@ scrims, and clipping before adding more effects.
   treatment with `scrollEdgeEffectStyle` instead of building a custom bar
   background.
 
-## Search
+## 搜索
 
 - For a search field that applies across a whole split-view hierarchy, attach
   `searchable` to the `NavigationSplitView`, not to just one column.
@@ -86,9 +73,9 @@ scrims, and clipping before adding more effects.
 - On iPad and Mac, expect the dedicated search tab to show a centered field
   above browsing suggestions rather than a bottom search bar.
 
-## Controls
+## 控件
 
-- Prefer standard SwiftUI controls before creating custom glass components.
+- 优先 standard SwiftUI controls before creating custom glass components.
 - Expect bordered buttons to default to a capsule shape at larger sizes. On
   macOS, mini/small/medium controls preserve a rounded-rectangle shape for
   denser layouts.
@@ -107,7 +94,7 @@ scrims, and clipping before adding more effects.
   window corner, use a concentric rectangle shape with the
   `containerConcentric` corner configuration instead of guessing a radius.
 
-## Custom Liquid Glass
+## 自定义灵动玻璃
 
 - Use `glassEffect` for custom glass surfaces. The default shape is capsule-like
   and text foregrounds are automatically made vibrant and legible against
@@ -123,7 +110,7 @@ scrims, and clipping before adding more effects.
 - Use `glassEffectID` with a local `@Namespace` when matching glass elements
   should morph between collapsed and expanded states.
 
-## Review Checklist
+## 审查清单
 
 - Standard structures and controls were updated first before adding custom
   glass.
@@ -141,7 +128,7 @@ scrims, and clipping before adding more effects.
 - Any SwiftPM GUI app used to test the result is launched as a `.app` bundle,
   not as a raw executable.
 
-## Guardrails
+## 安全护栏
 
 - Do not rebuild system sidebars, toolbars, sheets, or controls from scratch if
   standard SwiftUI APIs already provide the modern macOS behavior.
@@ -152,12 +139,12 @@ scrims, and clipping before adding more effects.
   `GlassEffectContainer`s.
 - Do not tint every icon or glass surface for visual variety alone.
 - Do not assume an iPhone tab/search behavior is the right answer on macOS.
-  Prefer desktop-native toolbar, split-view, and inspector placement.
+  优先 desktop-native toolbar, split-view, and inspector placement.
 - Do not leave a GUI SwiftPM app launching as a bare executable when reviewing
   Liquid Glass behavior; missing foreground activation can make a design bug
   look like a rendering bug.
 
-## When To Use Other Skills
+## 何时使用其他技能
 
 - Use `swiftui-patterns` when the main question is scene architecture,
   sidebar/detail layout, commands, or settings rather than Liquid Glass-specific

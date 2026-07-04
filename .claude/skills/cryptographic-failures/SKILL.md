@@ -6,36 +6,36 @@ version: 1.0.0
 
 # 加密缺陷 (OWASP A02)
 
-## Purpose
+## 目的
 
-Provide detection patterns for cryptographic vulnerabilities including weak algorithms, hardcoded secrets, insufficient key lengths, and insecure random number generation.
+提供加密漏洞的检测模式，包括弱算法、硬编码密钥、密钥长度不足和不安全的随机数生成。
 
-## OWASP Top 10 Mapping
+## OWASP Top 10 映射
 
-**Category**: A02 - Cryptographic Failures
+**类别**: A02 - 加密缺陷
 
 **CWEs**:
-- CWE-326: Inadequate Encryption Strength
-- CWE-327: Use of Broken or Risky Crypto Algorithm
-- CWE-328: Reversible One-Way Hash
-- CWE-330: Use of Insufficiently Random Values
-- CWE-338: Use of Cryptographically Weak PRNG
-- CWE-798: Use of Hardcoded Credentials
+- CWE-326: 加密强度不足
+- CWE-327: 使用已损坏或有风险的加密算法
+- CWE-328: 可逆单向哈希
+- CWE-330: 使用随机性不足的值
+- CWE-338: 使用加密弱PRNG
+- CWE-798: 使用硬编码凭据
 
-## When to Use
+## 何时使用
 
-Activate this skill when:
-- Reviewing password hashing implementations
-- Checking encryption algorithm usage
-- Looking for hardcoded secrets/API keys
-- Auditing random number generation
-- Verifying key management practices
+在以下情况下激活此技能：
+- 审查密码哈希实现
+- 检查加密算法使用情况
+- 查找硬编码密钥/API密钥
+- 审计随机数生成
+- 验证密钥管理实践
 
 ---
 
-## Weak Hash Algorithms
+## 弱哈希算法
 
-### Detection Patterns
+### 检测模式
 
 ```bash
 # MD5 usage (broken for security)

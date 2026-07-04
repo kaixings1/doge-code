@@ -6,28 +6,28 @@ source: original
 date_added: "2026-02-27"
 ---
 
-# Local Legal SEO Audit
+# 本地法律 SEO 审计
 
-You are an expert in local SEO for legal and professional services. Your goal is to audit and improve the organic visibility of law firms, attorneys, forensic experts, legal consultants, and related professional services with a local or regional presence.
+您是法律和专业服务的本地 SEO 专家。您的目标是审计和改善律师事务所、律师、法医专家、法律顾问及相关专业服务在本地或区域范围内的自然搜索可见性。
 
-This skill is scoped to the **specific needs of legal and professional services sites**, where trust signals, local authority, E-E-A-T, and directory presence are the primary ranking levers.
+此技能的范围限定于**法律和专业服务网站的特定需求**，其中信任信号、本地权威、E-E-A-T 和目录存在是主要的排名杠杆。
 
-## When to Use
-Use this skill when:
-- You need to audit or improve local SEO for a law firm, attorney, forensic expert, or similar legal/professional services website.
-- The goal is to improve visibility in Google local pack/maps, legal directories, and local organic results for specific practice areas or cities.
+## 何时使用
+在以下情况下使用此技能：
+- 您需要审计或改善律师事务所、律师、法医专家或类似法律/专业服务网站的本地 SEO。
+- 目标是在 Google 本地包/地图、法律目录和特定业务领域或城市的本地自然搜索结果中提高可见性。
 
-Do **not** use this skill when:
-- You need a general SEO health check across any niche (use `seo-audit`).
-- You are investigating a sudden traffic or rankings crash (use `seo-forensic-incident-response`).
+**不要**在以下情况下使用此技能：
+- 您需要在任何细分领域进行通用 SEO 健康检查（使用 `seo-audit`）。
+- 您正在调查突然的流量或排名暴跌（使用 `seo-forensic-incident-response`）。
 
 ---
 
-## Initial Assessment
+## 初步评估
 
-Before auditing, gather context:
+在审计之前，收集上下文：
 
-1. **Practice & Business Context**
+1. **实践与业务上下文**
    - What is the practice area? (criminal law, civil litigation, forensic expertise, notary, etc.)
    - Solo practitioner, small firm, or large office?
    - Single location or multiple offices?
@@ -61,7 +61,7 @@ Before auditing, gather context:
 3. **On-Page Optimization** (practice area pages, location pages)
 4. **Technical Foundations** (crawlability, mobile, speed)
 5. **Directory & Citation Consistency** (NAP, legal directories)
-6. **Content Strategy** (FAQ, blog, case types)
+6. **Content Strategy** (常见问题, blog, case types)
 7. **Reviews & Reputation** (trust and local ranking factor)
 
 ---
@@ -213,7 +213,7 @@ Focus on issues most common in legal site CMS platforms (WordPress, Wix, Squares
 - XML sitemap submitted to Google Search Console
 - All practice area and location pages indexed
 
-**HTTPS & Security**
+**HTTPS & 安全性**
 - Full HTTPS with valid certificate
 - No mixed content
 - Privacy policy accessible
@@ -256,13 +256,13 @@ For local legal SEO, citations in authoritative directories are a significant ra
 
 ## Content Strategy for Legal Sites
 
-### FAQ Content
+### 常见问题 Content
 
-Legal FAQ pages rank well for long-tail queries and build trust.
+Legal 常见问题 pages rank well for long-tail queries and build trust.
 
-- Create FAQ pages per practice area
+- Create 常见问题 pages per practice area
 - Target "question" queries: "o que fazer quando", "quanto tempo demora", "qual a diferença entre"
-- Use FAQ schema markup for rich results
+- Use 常见问题 schema markup for rich results
 - Keep answers accurate, brief, and written in plain language
 
 ### Blog / Legal Articles
@@ -296,7 +296,7 @@ Legal FAQ pages rank well for long-tail queries and build trust.
 
 ### Audit Report Structure
 
-**Executive Summary**
+**Executive 总结**
 - Overall local visibility assessment
 - Top 3–5 priority issues
 - Quick wins identified (e.g., incomplete GBP, missing practice area pages)
@@ -322,7 +322,7 @@ Same format
 **Prioritized Action Plan**
 1. Critical (blocks visibility or trust: missing GBP, no HTTPS, no practice area pages)
 2. High impact (E-E-A-T improvements, location pages, review strategy)
-3. Quick wins (title tags, meta descriptions, GBP photos, FAQ schema)
+3. Quick wins (title tags, meta descriptions, GBP photos, 常见问题 schema)
 4. Long-term (content strategy, link building, academic publications)
 
 ---
@@ -338,15 +338,15 @@ Same format
 
 ---
 
-## Related Skills
+## 相关 Skills
 
 - **seo-audit**: For general SEO health checks outside the legal/local context.
 - **seo-forensic-incident-response**: For investigating sudden drops in traffic or rankings.
-- **schema-markup**: For implementing LegalService, Attorney, and FAQ structured data.
+- **schema-markup**: For implementing LegalService, Attorney, and 常见问题 structured data.
 - **ai-seo**: For optimizing legal content for AI search experiences and featured snippets.
 - **page-cro**: For improving conversion rate on practice area pages and contact forms.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

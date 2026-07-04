@@ -6,7 +6,7 @@ source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
 ---
 
-# 3D Web Experience
+# 3D 网页体验
 
 Web 端 3D 体验构建专家 — Three.js、React Three Fiber、Spline、WebGL 及交互式 3D 场景。涵盖产品配置器、3D 作品集、沉浸式网站，为 Web 体验增添立体感。
 
@@ -47,4 +47,16 @@ Web 端 3D 体验构建专家 — Three.js、React Three Fiber、Spline、WebGL 
 
 ### 方案对比
 | 工具 | 最适合 | 学习曲线 | 控制力 |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 39 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+|------|--------|----------|--------|
+| Three.js | 完全自定义3D体验 | 高 | 完全控制 |
+| React Three Fiber | React生态中的3D | 中等 | 高 |
+| Spline | 设计师友好的3D | 低 | 中等 |
+| WebGL原生 | 高性能图形 | 非常高 | 完全控制 |
+| Babylon.js | 游戏和复杂交互 | 高 | 高 |
+
+### 3D性能优化
+- 模型压缩和减面
+- 纹理优化
+- LOD（细节层次）系统
+- 视锥体裁剪
+- WebGL渲染优化

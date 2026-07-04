@@ -1,7 +1,6 @@
 ---
 name: seo-google
-description: "Seo Google — Seo Google 相关功能和最佳实践"
-  Google SEO APIs: Search Console (Search Analytics, URL Inspection, Sitemaps),
+description: "Seo Google — Google SEO API 相关功能和最佳实践：Search Console、PageSpeed Insights、CrUX、Indexing API 和 GA4 自然流量数据。"
   PageSpeed Insights v5, CrUX field data with 25-week history, Indexing API v3,
   and GA4 organic traffic. Provides real Google field data for Core Web Vitals,
   indexation status, search performance, and organic traffic trends. Use when
@@ -24,10 +23,10 @@ Direct access to Google's own SEO data. Bridges the gap between crawl-based
 analysis (existing claude-seo skills) and Google's real-time field data: actual
 Chrome user metrics, real indexation status, search performance, and organic traffic.
 
-All APIs are free. Setup requires a Google Cloud project with API key and/or
+All APIs are free. 设置 requires a Google Cloud project with API key and/or
 service account -- run `/seo google setup` for step-by-step instructions.
 
-## Prerequisites
+## 前提条件
 
 Before executing any command, check credentials:
 ```bash
@@ -49,4 +48,3 @@ If missing, read `references/auth-setup.md` and walk the user through setup.
 ### Credential Tiers
 
 | Tier | Detection | Available Commands |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 42 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

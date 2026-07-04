@@ -3,9 +3,9 @@ name: graphql-design
 description: GraphQL设计 — Schema设计、解析器模式、订阅、数据加载器和联邦网关。
 ---
 
-# GraphQL Design
+# GraphQL 设计
 
-## Schema Design
+## Schema 设计
 
 ```graphql
 type Query {
@@ -62,9 +62,9 @@ type PageInfo {
 }
 ```
 
-Use Relay-style connections for pagination. Return payload types from mutations with both result and errors.
+为分页使用 Relay 风格的连接。从变更操作返回负载类型，包含结果和错误。
 
-## Resolvers
+## 解析器
 
 ```typescript
 const resolvers: Resolvers = {
@@ -116,7 +116,7 @@ const resolvers: Resolvers = {
 };
 ```
 
-## DataLoader for N+1 Prevention
+## 用于 N+1 预防的 DataLoader
 
 ```typescript
 import DataLoader from "dataloader";
@@ -147,9 +147,9 @@ function createLoaders(db: Database) {
 }
 ```
 
-Create new DataLoader instances per request to avoid stale cache across users.
+为每个请求创建新的 DataLoader 实例，以避免跨用户的过期缓存。
 
-## Subscriptions
+## 订阅
 
 ```typescript
 const pubsub = new PubSub();
@@ -172,22 +172,22 @@ const resolvers = {
 };
 ```
 
-## Anti-Patterns
+## 反模式
 
-- Exposing database schema directly as GraphQL schema
-- Resolving nested fields without DataLoader (causes N+1 queries)
-- Using offset-based pagination instead of cursor-based for large datasets
-- Throwing raw errors from resolvers instead of returning typed error payloads
-- Creating a single monolithic schema file instead of modular type definitions
-- Allowing unbounded queries without depth or complexity limits
+- 直接将数据库 schema 暴露为 GraphQL schema
+- 不使用 DataLoader 解析嵌套字段（导致 N+1 查询）
+- 对于大数据集使用基于偏移量的分页而非基于游标的分页
+- 从解析器抛出原始错误而非返回类型化的错误负载
+- 创建单个庞大的 schema 文件而非模块化类型定义
+- 允许无界查询而不设深度或复杂度限制
 
-## Checklist
+## 检查清单
 
-- [ ] Relay-style cursor pagination for all list fields
-- [ ] DataLoader used for all batched entity lookups
-- [ ] Mutations return payload types with both result and error fields
-- [ ] Input types used for mutation arguments
-- [ ] Query depth and complexity limits configured
-- [ ] DataLoader instances created per-request in context
-- [ ] Schema split into domain-specific modules
-- [ ] Subscriptions use filtered topics to avoid broadcasting to all clients
+- [ ] 所有列表字段使用 Relay 风格游标分页
+- [ ] 所有批量实体查询使用 DataLoader
+- [ ] 变更操作返回同时包含结果和错误字段的负载类型
+- [ ] 使用输入类型作为变更参数
+- [ ] 配置了查询深度和复杂度限制
+- [ ] 在上下文中按请求创建 DataLoader 实例
+- [ ] Schema 按领域拆分为独立模块
+- [ ] 订阅使用过滤主题以避免广播给所有客户端

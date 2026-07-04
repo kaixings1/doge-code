@@ -6,13 +6,13 @@ compatibility: Requires the BGPT MCP server configured in the agent host (npx mc
 metadata: {"version": "1.1", "skill-author": "BGPT", "website": "https://bgpt.pro/mcp", "github": "https://github.com/connerlambden/bgpt-mcp"}
 ---
 
-# BGPT Paper Search
+# BGPT /u8bba/u6587/u641c/u7d22
 
 ## Overview
 
 BGPT is a remote MCP server that searches a curated database of scientific papers built from raw experimental data extracted from full-text studies. Unlike traditional literature databases that return titles and abstracts, BGPT returns structured data from the actual paper content — methods, quantitative results, sample sizes, quality assessments, and 25+ metadata fields per paper.
 
-## When to Use This Skill
+## /u4f55/u65f6/u4f7f/u7528 This Skill
 
 Use this skill when:
 - Searching for scientific papers with specific experimental details
@@ -23,7 +23,7 @@ Use this skill when:
 - Needing structured data from full-text papers (not just abstracts)
 - Building evidence tables for meta-analyses or clinical guidelines
 
-## Setup
+## 设置
 
 BGPT is a remote MCP server — no local installation required. Configure it in your agent's MCP settings before use; this skill instructs the agent to call the `search_papers` MCP tool and does not enable MCP access by itself.
 

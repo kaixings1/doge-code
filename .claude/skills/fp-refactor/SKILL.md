@@ -1,6 +1,6 @@
 ---
 name: fp-refactor
-description: "Fp Refactor — Fp Refactor 相关功能和最佳实践"
+description: "将命令式 TypeScript 代码迁移到 fp-ts 函数式编程模式的全面策略：try/catch、空检查、回调、DI、循环等转换。"
 risk: unknown
 source: community
 version: 1.0.0
@@ -17,26 +17,26 @@ tags:
   - reader
 ---
 
-# Refactoring Imperative Code to fp-ts
+# 将命令式代码重构为 fp-ts
 
-This skill provides comprehensive patterns and strategies for migrating existing imperative TypeScript code to fp-ts functional programming patterns.
+本技能提供了将现有命令式 TypeScript 代码迁移到 fp-ts 函数式编程模式的全面策略。
 
-## When to Use
-- You are refactoring an existing imperative TypeScript codebase toward fp-ts patterns.
-- The task involves converting `try/catch`, null checks, callbacks, DI, or loops into functional equivalents.
-- You need migration guidance and tradeoffs, not just isolated fp-ts examples.
+## 何时使用
+- 您正在将现有命令式 TypeScript 代码库重构为 fp-ts 模式。
+- 任务涉及将 `try/catch`、空检查、回调、DI 或循环转换为函数式等价形式。
+- 您需要迁移指导和权衡考虑，而不仅仅是孤立的 fp-ts 示例。
 
-## Table of Contents
+## 目录
 
-1. [Converting try-catch to Either/TaskEither](#1-converting-try-catch-to-eithertaskeither)
-2. [Converting null checks to Option](#2-converting-null-checks-to-option)
-3. [Converting callbacks to Task](#3-converting-callbacks-to-task)
-4. [Converting class-based DI to Reader](#4-converting-class-based-di-to-reader)
-5. [Converting imperative loops to functional operations](#5-converting-imperative-loops-to-functional-operations)
-6. [Migrating Promise chains to TaskEither](#6-migrating-promise-chains-to-taskeither)
-7. [Common Pitfalls](#7-common-pitfalls)
-8. [Gradual Adoption Strategies](#8-gradual-adoption-strategies)
-9. [When NOT to Refactor](#9-when-not-to-refactor)
+1. [将 try-catch 转换为 Either/TaskEither](#1-将-try-catch-转换为-eithertaskeither)
+2. [将空检查转换为 Option](#2-将空检查转换为-option)
+3. [将回调转换为 Task](#3-将回调转换为-task)
+4. [将基于类的 DI 转换为 Reader](#4-将基于类的-di-转换为-reader)
+5. [将命令式循环转换为函数式操作](#5-将命令式循环转换为函数式操作)
+6. [将 Promise 链迁移到 TaskEither](#6-将-promise-链迁移到-taskeither)
+7. [常见陷阱](#7-常见陷阱)
+8. [渐进式采用策略](#8-渐进式采用策略)
+9. [何时不重构](#9-何时不重构)
 
 ---
 
@@ -1749,7 +1749,7 @@ describe('UserService', () => {
 
 ---
 
-## Quick Reference: Imperative to fp-ts Mapping
+## 快速参考: Imperative to fp-ts Mapping
 
 | Imperative Pattern | fp-ts Equivalent |
 |-------------------|------------------|
@@ -1787,7 +1787,7 @@ Migrating to fp-ts is a journey, not a destination. Key principles:
 
 The goal is more maintainable, type-safe code—not functional programming for its own sake.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

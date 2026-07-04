@@ -6,22 +6,22 @@ source: "https://github.com/whatiskadudoing/fp-ts-skills"
 date_added: "2026-02-27"
 ---
 
-# Pragmatic Functional Programming
+# 实用函数式编程
 
-**Read this first.** This guide cuts through the academic jargon and shows you what actually matters. No category theory. No abstract nonsense. Just patterns that make your code better.
+**请先阅读此内容。** 本指南剔除了学术术语，向您展示真正重要的内容。没有范畴论。没有抽象废话。只有让您的代码变得更好的模式。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- When starting with fp-ts and need practical guidance
-- When writing TypeScript code that handles nullable values, errors, or async operations
-- When you want cleaner, more maintainable functional code without the academic overhead
-- When refactoring imperative code to functional style
+- 刚开始使用 fp-ts 并需要实用指导时
+- 编写处理可空值、错误或异步操作的 TypeScript 代码时
+- 希望获得更清晰、更易维护的函数式代码且没有学术负担时
+- 将命令式代码重构为函数式风格时
 
-## The Golden Rule
+## 黄金法则
 
-> **If functional programming makes your code harder to read, don't use it.**
+> **如果函数式编程让您的代码更难阅读，就不要使用它。**
 
-FP is a tool, not a religion. Use it when it helps. Skip it when it doesn't.
+函数式编程是一种工具，不是宗教。在它有帮助时使用它。在它无用时跳过它。
 
 ---
 
@@ -238,7 +238,7 @@ const result = pipe(
 )
 ```
 
-### Performance-Critical Code
+### 性能-Critical Code
 
 ```typescript
 // For hot paths, imperative is faster (no intermediate arrays)
@@ -321,7 +321,7 @@ const config = pipe(
 )
 ```
 
-### 3. Replace undefined Returns with Option
+### 3. Replace undefined 返回值 with Option
 
 ```typescript
 // Before: Caller might forget to check
@@ -536,7 +536,7 @@ const result = pipe(
 )
 ```
 
-### Just Right (Prefer)
+### Just Right (优先)
 
 ```typescript
 const activeItems = data.filter(item => item.status === 'active')
@@ -564,7 +564,7 @@ const result = pipe(
 | What you want | Plain language | fp-ts |
 |--------------|----------------|-------|
 | Handle null/undefined | "Wrap this nullable" | `O.fromNullable(x)` |
-| Default for missing | "Use this if nothing" | `O.getOrElse(() => default)` |
+| 默认 for missing | "Use this if nothing" | `O.getOrElse(() => default)` |
 | Transform if present | "If something, change it" | `O.map(fn)` |
 | Chain nullable operations | "If something, try this" | `O.flatMap(fn)` |
 | Return success | "Worked, here's the value" | `E.right(value)` |
@@ -588,7 +588,7 @@ But don't rush. The basics here will handle 80% of real-world scenarios. Get com
 
 ---
 
-## Summary
+## 总结
 
 1. **Use pipe** for 3+ operations
 2. **Use Option** for nullable chains
@@ -598,7 +598,7 @@ But don't rush. The basics here will handle 80% of real-world scenarios. Get com
 6. **Skip FP** when it hurts readability
 7. **Keep it simple** - if your team can't read it, it's not good code
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -1,4 +1,4 @@
-# zeroize-audit (Claude Skill)
+# zeroize-audit 零化审计技能
 
 Audits C/C++/Rust code for missing zeroization and compiler-removed wipes.
 Pipeline: source scan → MCP/LSP semantic context → IR diff → assembly/MIR checks.
@@ -11,13 +11,13 @@ Pipeline: source scan → MCP/LSP semantic context → IR diff → assembly/MIR 
 - `SECRET_COPY`, `INSECURE_HEAP_ALLOC`
 - `MISSING_ON_ERROR_PATH`, `NOT_DOMINATING_EXITS`, `LOOP_UNROLLED_INCOMPLETE`
 
-## Prerequisites
+## 前提条件
 
 ### C/C++
 
 - `compile_commands.json` is required (`compile_db` input field).
 - Codebase must be buildable with commands from the compile DB.
-- Required tools: `clang`, `uvx` (for Serena MCP server), `python3`.
+- 必需 tools: `clang`, `uvx` (for Serena MCP server), `python3`.
 
 ```bash
 which clang uvx python3
@@ -27,7 +27,7 @@ which clang uvx python3
 
 - `Cargo.toml` path is required (`cargo_manifest` input field).
 - Crate must be buildable (`cargo check` passes).
-- Required tools: `cargo +nightly` toolchain, `uv`.
+- 必需 tools: `cargo +nightly` toolchain, `uv`.
 
 ```bash
 # Quick check
@@ -51,7 +51,7 @@ cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 bear -- make -j$(nproc)
 ```
 
-## Usage
+## 用法
 
 **C/C++ only:**
 ```json
@@ -89,7 +89,7 @@ bear -- make -j$(nproc)
 }
 ```
 
-## Agent Architecture
+## Agent 架构
 
 The analysis pipeline uses 10 agents across 8 phases, enabling parallel source analysis (C/C++ and Rust simultaneously), per-TU compiler analysis, mandatory PoC validation with verification, and protection against context pressure:
 
@@ -113,4 +113,3 @@ Phase 8: Orchestrator — Return final-report.md
 ```
 
 | Agent | Phase | Purpose | Output Directory |
-|---|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 14 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

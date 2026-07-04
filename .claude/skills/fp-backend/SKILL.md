@@ -1,6 +1,6 @@
 ---
 name: fp-backend
-description: "Fp Backend — Fp Backend 相关功能和最佳实践"
+description: "使用 fp-ts 构建类型安全、可测试的后端服务的函数式编程模式。涵盖依赖注入、服务组合和 ReaderTaskEither。"
 risk: unknown
 source: community
 version: 1.0.0
@@ -16,18 +16,18 @@ tags:
   - reader-task-either
 ---
 
-# fp-ts Backend Patterns
+# fp-ts 后端模式
 
-Functional programming patterns for building type-safe, testable backend services using fp-ts.
+使用 fp-ts 构建类型安全、可测试后端服务的函数式编程模式。
 
-## When to Use
-- You are building or refactoring a Node.js or Deno backend with fp-ts.
-- The task involves dependency injection, service composition, or typed backend errors with `ReaderTaskEither`.
-- You need functional backend architecture patterns rather than isolated utility snippets.
+## 何时使用
+- 您正在使用 fp-ts 构建或重构 Node.js 或 Deno 后端。
+- 任务涉及依赖注入、服务组合或使用 `ReaderTaskEither` 的类型化后端错误。
+- 您需要函数式后端架构模式，而非孤立的工具片段。
 
-## Core Concepts
+## 核心概念
 
-### ReaderTaskEither (RTE)
+### ReaderTaskEither（RTE）
 
 The `ReaderTaskEither<R, E, A>` type is the backbone of functional backend development:
 - **R** (Reader): Dependencies/environment (database, config, logger)
@@ -72,9 +72,9 @@ const getUser = (id: string): RTE.ReaderTaskEither<Deps, AppError, User> =>
   )
 ```
 
-## Service Layer Patterns
+## 服务层模式
 
-### Defining Service Modules
+### 定义服务模块
 
 Structure services as modules exporting RTE functions:
 
@@ -182,7 +182,7 @@ const checkEmailUnique = (
   )
 ```
 
-### Composing Services
+### 组合服务
 
 ```typescript
 // src/services/order.service.ts
@@ -237,9 +237,9 @@ export const createOrder = (
   )
 ```
 
-## Functional Dependency Injection
+## 函数式依赖注入
 
-### Building the Dependency Container
+### 构建依赖容器
 
 ```typescript
 // src/deps.ts
@@ -349,7 +349,7 @@ export const destroyDeps = (deps: AppDeps): TE.TaskEither<Error, void> =>
   )
 ```
 
-### Running Programs with Dependencies
+### 使用依赖运行程序
 
 ```typescript
 // src/main.ts
@@ -390,9 +390,9 @@ const main = async () => {
 main()
 ```
 
-## Database Operations
+## 数据库操作
 
-### Prisma Wrappers
+### Prisma 封装
 
 ```typescript
 // src/lib/db.ts
@@ -484,7 +484,7 @@ export const createRepository = <
 const userRepo = createRepository(prisma, prisma.user)
 ```
 
-### Transaction Handling
+### 事务处理
 
 ```typescript
 // src/lib/transaction.ts
@@ -576,9 +576,9 @@ const debitAccount = (
   )
 ```
 
-## Middleware Patterns
+## 中间件模式
 
-### Express Middleware
+### Express 中间件
 
 ```typescript
 // src/middleware/fp-express.ts
@@ -635,7 +635,7 @@ const getUserHandler = toHandler(
 app.get('/users/:id', getUserHandler)
 ```
 
-### Hono Middleware
+### Hono 中间件
 
 ```typescript
 // src/middleware/fp-hono.ts
@@ -737,7 +737,7 @@ app.get(
 )
 ```
 
-### Request Context Pattern
+### 请求上下文模式
 
 ```typescript
 // src/context.ts
@@ -803,9 +803,9 @@ export const withContext: MiddlewareHandler = async (c, next) => {
 }
 ```
 
-## Error Handling Patterns
+## 错误处理模式
 
-### Typed Error Hierarchy
+### 类型化错误层级
 
 ```typescript
 // src/errors.ts
@@ -930,7 +930,7 @@ export const toResponseBody = (
 }
 ```
 
-### Error Recovery
+### 错误恢复
 
 ```typescript
 // src/lib/recovery.ts
@@ -1058,9 +1058,9 @@ export const createCircuitBreaker = <E>(
 }
 ```
 
-## Testing Strategies
+## 测试策略
 
-### Mocking Dependencies
+### 模拟依赖
 
 ```typescript
 // src/services/__tests__/user.service.test.ts
@@ -1166,7 +1166,7 @@ describe('UserService', () => {
 })
 ```
 
-### Integration Testing with Test Containers
+### 使用测试容器的集成测试
 
 ```typescript
 // src/__tests__/integration/user.integration.test.ts
@@ -1230,7 +1230,7 @@ describe('UserService Integration', () => {
 })
 ```
 
-### Property-Based Testing
+### 基于属性的测试
 
 ```typescript
 // src/__tests__/property/user.property.test.ts
@@ -1278,7 +1278,7 @@ describe('Validation Properties', () => {
 })
 ```
 
-## Quick Reference
+## 快速参考
 
 ### Common Imports
 
@@ -1338,7 +1338,7 @@ export const myOperation = (
   )
 ```
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

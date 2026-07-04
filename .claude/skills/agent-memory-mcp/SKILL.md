@@ -10,11 +10,11 @@ date_added: "2026-02-27"
 
 This skill provides a persistent, searchable memory bank that automatically syncs with project documentation. It runs as an MCP server to allow reading/writing/searching of long-term memories.
 
-## Prerequisites
+## 前提条件
 
 - Node.js (v18+)
 
-## Setup
+## 设置
 
 1. **Clone the Repository**:
    Clone the `agentMemory` project into your agent's workspace or a parallel directory:
@@ -86,7 +86,7 @@ Access at: `http://localhost:3333`
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

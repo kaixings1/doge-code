@@ -1,7 +1,7 @@
 ---
 name: platform-design
-description: "Platform Design — Platform Design 相关功能和最佳实践"
-  300+ design rules from Apple HIG, Material Design 3, and WCAG 2.2 for cross-platform apps. Useful when shipping a single design across iOS, Android, and the web.
+description: "Platform Design — 平台设计相关功能和最佳实践"
+  来自 Apple HIG、Material Design 3 和 WCAG 2.2 的 300+ 跨平台应用设计规则。适用于在 iOS、Android 和 Web 之间发布统一设计。
 triggers:
   - "platform design"
   - "cross platform design"
@@ -14,30 +14,26 @@ od:
   upstream: "https://github.com/ehmo/platform-design-skills"
 ---
 
-# platform-design
+# 平台设计
 
-> Curated from @ehmo.
+> 来自 @ehmo。
 
-## What it does
+## 功能
 
-300+ design rules from Apple HIG, Material Design 3, and WCAG 2.2 for cross-platform apps. Useful when shipping a single design across iOS, Android, and the web.
+来自 Apple HIG、Material Design 3 和 WCAG 2.2 的 300+ 跨平台应用设计规则。适用于在 iOS、Android 和 Web 之间发布统一设计。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/ehmo/platform-design-skills
-- Category: `design-systems`
+- 上游: https://github.com/ehmo/platform-design-skills
+- 分类: `design-systems`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在 Open Design 中宣传该技能，以便代理在规划期间发现它。要运行完整的上游工作流及其原始资源、脚本和参考资料，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README 获取确切路径
 open https://github.com/ehmo/platform-design-skills
 ```
 
-Then ask the agent to invoke this skill by name (`platform-design`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后通过名称（`platform-design`）或此技能前置元数据中列出的触发短语之一要求代理调用此技能。

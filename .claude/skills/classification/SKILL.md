@@ -3,28 +3,28 @@ name: 分类分析
 description: "构建分类模型：逻辑回归、决策树、随机森林、XGBoost、LightGBM、SVM 和 KNN。包含类别不平衡处理、阈值调优和多类策略。适用于从特征预测类别。"
 ---
 
-# Classification
+# 分类分析
 
-## Purpose
-Build, train, and evaluate classification models with proper handling of imbalanced classes, threshold optimization, and multi-class strategies.
+## 目的
+构建、训练和评估分类模型，正确处理不平衡类、阈值优化和多类策略。
 
-## How It Works
+## 工作原理
 
-### Step 1: Problem Setup
-- Binary vs. multi-class vs. multi-label
-- Class distribution analysis (imbalance detection)
-- Train/validation/test split strategy (stratified)
+### 步骤 1：问题设置
+- 二分类 vs. 多分类 vs. 多标签
+- 类别分布分析（不平衡检测）
+- 训练/验证/测试拆分策略（分层）
 
-### Step 2: Handle Class Imbalance
-- **Resampling**: SMOTE, ADASYN (oversample minority), random undersampling
-- **Class weights**: Adjust loss function (class_weight='balanced')
+### 步骤 2：处理类别不平衡
+- **重采样**：SMOTE、ADASYN（过采样少数类）、随机欠采样
+- **类别权重**：调整损失函数（class_weight='balanced'）
 - **Threshold tuning**: Optimize decision threshold for business metric
 - **Ensemble**: BalancedRandomForest, EasyEnsemble
 
 ### Step 3: Train Models
 - Start with logistic regression (baseline)
 - Try tree-based: Random Forest, XGBoost, LightGBM
-- Consider SVM for high-dimensional data
+- 考虑 SVM for high-dimensional data
 - Use cross-validation for reliable estimates
 
 ### Step 4: Evaluate
@@ -39,7 +39,7 @@ Build, train, and evaluate classification models with proper handling of imbalan
 - Find optimal threshold for business objective (minimize false negatives vs. false positives)
 - Report metrics at chosen threshold
 
-## Usage Examples
+## 用法 Examples
 
 ```
 "Build a churn prediction model — only 5% of users churn,
@@ -53,7 +53,7 @@ so the data is highly imbalanced"
 ## Output Format
 
 - **Model Comparison**: Metrics table across models
-- **Best Model**: Configuration, hyperparameters, performance
+- **Best Model**: 配置, hyperparameters, performance
 - **Confusion Matrix**: Visual with per-class analysis
 - **Feature Importance**: Top predictive features
 - **Python Code**: Complete sklearn / XGBoost pipeline

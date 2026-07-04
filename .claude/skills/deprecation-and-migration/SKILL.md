@@ -3,21 +3,21 @@ name: deprecation-and-migration
 description: 弃用与迁移 — 管理弃用和迁移。在移除旧系统或升级依赖时使用。
 ---
 
-# Deprecation and Migration
+# 弃用与迁移
 
-## Overview
+## 概述
 
-Code is a liability, not an asset. Every line of code has ongoing maintenance cost — bugs to fix, dependencies to update, security patches to apply, and new engineers to onboard. Deprecation is the discipline of removing code that no longer earns its keep, and migration is the process of moving users safely from the old to the new.
+代码是负债而非资产。每行代码都有持续的维护成本——要修复的错误、要更新的依赖、要应用的安全补丁以及要培训的新工程师。弃用是移除不再值得保留的代码的纪律，而迁移则是将用户安全地从旧系统迁移到新系统的过程。
 
-Most engineering organizations are good at building things. Few are good at removing them. This skill addresses that gap.
+大多数工程组织擅长构建东西，但很少擅长移除东西。此技能解决了这一差距。
 
-## When to Use
+## 何时使用
 
-- Replacing an old system, API, or library with a new one
-- Sunsetting a feature that's no longer needed
-- Consolidating duplicate implementations
-- Removing dead code that nobody owns but everybody depends on
-- Planning the lifecycle of a new system (deprecation planning starts at design time)
+- 用新系统、API 或库替换旧的
+- 逐步淘汰不再需要的功能
+- 合并重复实现
+- 移除无人拥有但所有人都依赖的死代码
+- 规划新系统的生命周期（弃用规划从设计时开始）
 - Deciding whether to maintain a legacy system or invest in migration
 
 ## Core Principles
@@ -59,12 +59,12 @@ Before deprecating anything, answer these questions:
 
 | Type | When to Use | Mechanism |
 |------|-------------|-----------|
-| **Advisory** | Migration is optional, old system is stable | Warnings, documentation, nudges. Users migrate on their own timeline. |
+| **Advisory** | 迁移 is optional, old system is stable | Warnings, documentation, nudges. Users migrate on their own timeline. |
 | **Compulsory** | Old system has security issues, blocks progress, or maintenance cost is unsustainable | Hard deadline. Old system will be removed by date X. Provide migration tooling. |
 
-**Default to advisory.** Use compulsory only when the maintenance cost or risk justifies forcing migration. Compulsory deprecation requires providing migration tooling, documentation, and support — you can't just announce a deadline.
+**默认 to advisory.** Use compulsory only when the maintenance cost or risk justifies forcing migration. Compulsory deprecation requires providing migration tooling, documentation, and support — you can't just announce a deadline.
 
-## The Migration Process
+## The 迁移 Process
 
 ### Step 1: Build the Replacement
 
@@ -117,7 +117,7 @@ Only after all consumers have migrated:
 5. Celebrate — removing code is an achievement
 ```
 
-## Migration Patterns
+## 迁移 Patterns
 
 ### Strangler Pattern
 
@@ -148,7 +148,7 @@ class LegacyTaskService implements OldTaskAPI {
 }
 ```
 
-### Feature Flag Migration
+### Feature Flag 迁移
 
 Use feature flags to switch consumers from old to new system one at a time:
 
@@ -168,7 +168,7 @@ Zombie code is code that nobody owns but everybody depends on. It's not actively
 - No commits in 6+ months but active consumers exist
 - No assigned maintainer or team
 - Failing tests that nobody fixes
-- Dependencies with known vulnerabilities that nobody updates
+- 依赖项 with known vulnerabilities that nobody updates
 - Documentation that references systems that no longer exist
 
 **Response:** Either assign an owner and maintain it properly, or deprecate it with a concrete migration plan. Zombie code cannot stay in limbo — it either gets investment or removal.
@@ -179,7 +179,7 @@ Zombie code is code that nobody owns but everybody depends on. It's not actively
 |---|---|
 | "It still works, why remove it?" | Working code that nobody maintains accumulates security debt and complexity. Maintenance cost grows silently. |
 | "Someone might need it later" | If it's needed later, it can be rebuilt. Keeping unused code "just in case" costs more than rebuilding. |
-| "The migration is too expensive" | Compare migration cost to ongoing maintenance cost over 2-3 years. Migration is usually cheaper long-term. |
+| "The migration is too expensive" | Compare migration cost to ongoing maintenance cost over 2-3 years. 迁移 is usually cheaper long-term. |
 | "We'll deprecate it after we finish the new system" | Deprecation planning starts at design time. By the time the new system is done, you'll have new priorities. Plan now. |
 | "Users will migrate on their own" | They won't. Provide tooling, documentation, and incentives — or do the migration yourself (the Churn Rule). |
 | "We can maintain both systems indefinitely" | Two systems doing the same thing is double the maintenance, testing, documentation, and onboarding cost. |
@@ -199,7 +199,7 @@ Zombie code is code that nobody owns but everybody depends on. It's not actively
 After completing a deprecation:
 
 - [ ] Replacement is production-proven and covers all critical use cases
-- [ ] Migration guide exists with concrete steps and examples
+- [ ] 迁移 guide exists with concrete steps and examples
 - [ ] All active consumers have been migrated (verified by metrics/logs)
 - [ ] Old code, tests, documentation, and configuration are fully removed
 - [ ] No references to the deprecated system remain in the codebase

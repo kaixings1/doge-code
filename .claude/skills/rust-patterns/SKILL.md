@@ -60,7 +60,7 @@ fn normalize(input: &str) -> Cow<'_, str> {
 
 ## Error Handling
 
-### Use `Result` and `?` — Never `unwrap()` in Production
+### Use `Result` and `?` — 绝不 `unwrap()` in Production
 
 ```rust
 // Good: Propagate errors with context
@@ -258,7 +258,7 @@ impl ServerConfigBuilder {
 
 ## Iterators and Closures
 
-### Prefer Iterator Chains Over Manual Loops
+### 优先 Iterator Chains Over Manual Loops
 
 ```rust
 // Good: Declarative, lazy, composable
@@ -456,7 +456,6 @@ cargo update             # Update dependencies
 cargo bench              # Run benchmarks
 ```
 
-## Quick Reference: Rust Idioms
+## 快速参考: Rust Idioms
 
 | Idiom | Description |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 02 MINUTES 43 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -1,34 +1,34 @@
 ---
 name: kickbox-automation
-description: "通过 Rube MCP (Composio) 自动执行 Kickbox 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Kickbox 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
-# Kickbox Automation via Rube MCP
+# 通过 Rube MCP 实现 Kickbox 自动化
 
-Automate Kickbox operations through Composio's Kickbox toolkit via Rube MCP.
+通过 Composio 的 Kickbox 工具包和 Rube MCP 自动化 Kickbox 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/kickbox](https://composio.dev/toolkits/kickbox)
+**工具包文档**: [composio.dev/toolkits/kickbox](https://composio.dev/toolkits/kickbox)
 
-## Prerequisites
+## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Kickbox connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `kickbox`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 使用工具包 `kickbox` 建立活跃的 Kickbox 连接
+- 始终先调用 `RUBE_SEARCH_TOOLS` 以获取当前工具模式
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**: 在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥——只需添加端点即可工作。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `kickbox`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 是否可用
+2. 使用工具包 `kickbox` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接状态不是 ACTIVE，请按照返回的授权链接完成设置
+4. 在运行任何工作流之前，确认连接状态显示为 ACTIVE
 
-## Tool Discovery
+## 工具发现
 
-Always discover available tools before executing workflows:
+在执行工作流之前始终发现可用工具：
 
 ```
 RUBE_SEARCH_TOOLS
@@ -36,11 +36,11 @@ queries: [{use_case: "Kickbox operations", known_fields: ""}]
 session: {generate_id: true}
 ```
 
-This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
+这将返回可用的工具标识、输入模式、推荐执行计划和已知陷阱。
 
-## Core Workflow Pattern
+## 核心工作流模式
 
-### Step 1: Discover Available Tools
+### 步骤 1: 发现可用工具
 
 ```
 RUBE_SEARCH_TOOLS
@@ -48,7 +48,7 @@ queries: [{use_case: "your specific Kickbox task"}]
 session: {id: "existing_session_id"}
 ```
 
-### Step 2: Check Connection
+### 步骤 2: 检查连接
 
 ```
 RUBE_MANAGE_CONNECTIONS
@@ -56,7 +56,7 @@ toolkits: ["kickbox"]
 session_id: "your_session_id"
 ```
 
-### Step 3: Execute Tools
+### 步骤 3: 执行工具
 
 ```
 RUBE_MULTI_EXECUTE_TOOL
@@ -68,16 +68,16 @@ memory: {}
 session_id: "your_session_id"
 ```
 
-## Known Pitfalls
+## 已知陷阱
 
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
+- **始终先搜索**: 工具模式会变化。不要在不调用 `RUBE_SEARCH_TOOLS` 的情况下硬编码工具标识或参数
+- **检查连接**: 在执行工具之前，验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **模式合规性**: 使用搜索结果中的确切字段名称和类型
+- **内存参数**: 始终在 `RUBE_MULTI_EXECUTE_TOOL` 调用中包含 `memory`，即使为空 (`{}`)
+- **会话重用**: 在工作流内重用会话 ID。为新工作流生成新的会话 ID
+- **分页**: 检查响应中的分页令牌，并继续获取直到完成
 
-## Quick Reference
+## 快速参考
 
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 25 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 操作 | 方法 |
+|---|---

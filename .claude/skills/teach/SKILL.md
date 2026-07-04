@@ -1,8 +1,8 @@
 ---
 name: teach
-description: "Teach — Teach 相关功能和最佳实践"
+description: "Teach — 教学技能。用户要求你教他们某个主题。创建一个教学工作区，包含课程、学习记录和参考资料。有状态请求——用户意图通过多个会话学习该主题。"
 disable-model-invocation: true
-argument-hint: "What would you like to learn about?"
+argument-hint: "你想学习什么？"
 ---
 
 The user has asked you to teach them something. This is a stateful request - they intend to learn the topic over multiple sessions.
@@ -27,7 +27,7 @@ To learn at a deep level, the user needs three things:
 - **Skills**, acquired through highly-relevant interactive lessons devised by you, based on the knowledge
 - **Wisdom**, which comes from interacting with other learners and practitioners
 
-Before the `RESOURCES.md` is well-populated, your focus should be to find high-quality resources which will help the user acquire knowledge. Never trust your parametric knowledge.
+Before the `RESOURCES.md` is well-populated, your focus should be to find high-quality resources which will help the user acquire knowledge. 绝不 trust your parametric knowledge.
 
 Some topics may require more skills than knowledge. Learning more about theoretical physics might be more knowledge-based. For yoga, more skills-based.
 
@@ -127,7 +127,7 @@ Lessons will rarely be revisited later - reference documents will be. They shoul
 
 Some learning topics lend themselves to reference:
 
-- Syntax and code snippets for programming
+- 语法 and code snippets for programming
 - Algorithms and flowcharts for processes
 - Yoga poses and sequences for yoga
 - Exercises and routines for fitness

@@ -12,7 +12,7 @@ date_added: "2026-02-27"
 
 ## When to Use This Skill
 
-Use this skill when:
+使用此技能当:
 
 - Starting new JS/TS projects with Bun
 - Migrating from Node.js to Bun
@@ -22,7 +22,7 @@ Use this skill when:
 
 ---
 
-## 1. Getting Started
+## 1. 入门指南
 
 ### 1.1 Installation
 
@@ -57,14 +57,14 @@ bun upgrade
 | :-------------- | :------------- | :-------------------------- |
 | Startup time    | ~25ms          | ~100ms+                     |
 | Package install | 10-100x faster | Baseline                    |
-| TypeScript      | Native         | Requires transpiler         |
-| JSX             | Native         | Requires transpiler         |
+| TypeScript      | Native         | 需要 transpiler         |
+| JSX             | Native         | 需要 transpiler         |
 | Test runner     | Built-in       | External (Jest, Vitest)     |
 | Bundler         | Built-in       | External (Webpack, esbuild) |
 
 ---
 
-## 2. Project Setup
+## 2. Project 设置
 
 ### 2.1 Create New Project
 
@@ -567,7 +567,7 @@ bun build ./src/cli.ts --compile --outfile myapp --embed ./assets
 
 ---
 
-## 8. Migration from Node.js
+## 8. 迁移 from Node.js
 
 ### 8.1 Compatibility
 
@@ -589,7 +589,7 @@ console.log(__dirname);
 console.log(__filename);
 ```
 
-### 8.2 Common Migration Steps
+### 8.2 Common 迁移 Steps
 
 ```bash
 # 1. Install Bun
@@ -632,7 +632,7 @@ Bun.password.hash(password);           // Built-in hashing
 
 ---
 
-## 9. Performance Tips
+## 9. 性能 Tips
 
 ### 9.1 Use Bun-native APIs
 
@@ -677,7 +677,7 @@ bun run ./dist/index.js
 
 ---
 
-## Quick Reference
+## 快速参考
 
 | Task         | Command                                    |
 | :----------- | :----------------------------------------- |
@@ -700,7 +700,7 @@ bun run ./dist/index.js
 - [Elysia Framework](https://elysiajs.com/)
 - [Bun Discord](https://bun.sh/discord)
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

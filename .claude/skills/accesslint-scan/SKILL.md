@@ -41,7 +41,7 @@ npx -y @accesslint/chrome@latest stop --all  # 如果 ensure 报告 "managed":fa
 - `ensure` 始终决定端口 — 永远不要硬编码 9222。
 - CLI exit 2 = URL 错误或页面从未加载；检查 dev server。
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

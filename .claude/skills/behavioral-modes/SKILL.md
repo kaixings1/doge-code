@@ -6,7 +6,7 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Behavioral Modes - Adaptive AI Operating Modes
+# /u884c/u4e3a/u6a21/u5f0f - Adaptive AI Operating Modes
 
 ## Purpose
 This skill defines distinct behavioral modes that optimize AI performance for specific tasks. Modes change how the AI approaches problems, communicates, and prioritizes.
@@ -243,10 +243,10 @@ Users can explicitly request a mode:
 /review this pull request
 ```
 
-## When to Use
+## /u4f55/u65f6/u4f7f/u7528
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

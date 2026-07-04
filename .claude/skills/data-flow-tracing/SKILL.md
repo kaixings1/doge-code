@@ -18,7 +18,7 @@ Activate this skill when:
 - Understanding data transformations and filters
 - Determining if sanitization can be bypassed
 
-## Core Concepts
+## 核心概念
 
 ### Sources (Input Entry Points)
 
@@ -55,7 +55,7 @@ Track how data changes between source and sink:
 ### Step 1: Identify the Sink
 Start from the dangerous function identified during code review.
 
-### Step 2: Find Direct Parameters
+### Step 2: Find Direct 参数
 Identify what variables/parameters are passed to the sink.
 
 ```
@@ -93,7 +93,7 @@ Source: $_GET['input']
 ```
 
 ### Step 6: Assess Exploitability
-Consider:
+考虑:
 - Are filters/sanitization bypassable?
 - Is the full input controllable?
 - Are there alternative paths?
@@ -154,7 +154,7 @@ $row = $db->query("SELECT cmd FROM jobs")->fetch();
 system($row['cmd']);  // Vulnerable if original input wasn't sanitized
 ```
 
-### Configuration Flow
+### 配置 Flow
 ```
 // Config loaded from user-modifiable file
 $config = parse_ini_file('/var/www/config.ini');
@@ -182,7 +182,7 @@ $input = preg_replace('/[^a-z]/', '', $_GET['x']);  // Whitelist
 
 ### Assess Bypass Potential
 
-| Sanitization | Bypass Considerations |
+| Sanitization | Bypass 考虑ations |
 |--------------|----------------------|
 | Blacklist | Missing characters, encoding |
 | Whitelist | Logic errors, regex flaws |
@@ -230,7 +230,7 @@ When tracing, document findings:
 - Payload: `valid_command%0awhoami`
 ```
 
-## Integration with Other Skills
+## 集成 with Other Skills
 
 - Use **dangerous-functions** to identify sinks
 - Use **vuln-patterns** for exploitation techniques

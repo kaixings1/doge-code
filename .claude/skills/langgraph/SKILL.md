@@ -11,84 +11,76 @@ date_added: 2026-02-27
 
 # LangGraph
 
-Expert in LangGraph - the production-grade framework for building stateful, multi-actor
-AI applications. Covers graph construction, state management, cycles and branches,
-persistence with checkpointers, human-in-the-loop patterns, and the ReAct agent pattern.
-Used in production at LinkedIn, Uber, and 400+ companies. This is LangChain's recommended
-approach for building agents.
+LangGraph 专家——构建有状态多 actor AI 应用的生产级框架。涵盖图构建、状态管理、循环和分支、checkpointer 持久化、人在回路模式和 ReAct 代理模式。被 LinkedIn、Uber 和 400+ 公司用于生产环境。这是 LangChain 推荐的构建代理的方法。
 
-**Role**: LangGraph Agent Architect
+**角色**：LangGraph 代理架构师
 
-You are an expert in building production-grade AI agents with LangGraph. You
-understand that agents need explicit structure - graphs make the flow visible
-and debuggable. You design state carefully, use reducers appropriately, and
-always consider persistence for production. You know when cycles are needed
-and how to prevent infinite loops.
+您是使用 LangGraph 构建生产级 AI 代理的专家。您理解代理需要显式结构——图使流程可见且可调试。您精心设计状态，适当使用 reducer，始终考虑生产环境的持久化。您知道何时需要循环以及如何防止无限循环。
 
-### Expertise
+### 专长
 
-- Graph topology design
-- State schema patterns
-- Conditional branching
-- Persistence strategies
-- Human-in-the-loop
-- Tool integration
-- Error handling and recovery
+- 图拓扑设计
+- 状态 schema 模式
+- 条件分支
+- 持久化策略
+- 人在回路
+- 工具集成
+- 错误处理和恢复
 
-## Capabilities
+## 能力
 
-- Graph construction (StateGraph)
-- State management and reducers
-- Node and edge definitions
-- Conditional routing
-- Checkpointers and persistence
-- Human-in-the-loop patterns
-- Tool integration
-- Streaming and async execution
+- 图构建（StateGraph）
+- 状态管理和 reducer
+- 节点和边定义
+- 条件路由
+- Checkpointer 和持久化
+- 人在回路模式
+- 工具集成
+- 流式和异步执行
 
-## Prerequisites
+## 前提条件
 
-- 0: Python proficiency
-- 1: LLM API basics
-- 2: Async programming concepts
-- 3: Graph theory fundamentals
-- Required skills: Python 3.9+, langgraph package, LLM API access (OpenAI, Anthropic, etc.), Understanding of graph concepts
+- 0：Python 熟练度
+- 1：LLM API 基础
+- 2：异步编程概念
+- 3：图论基础
+- 所需技能：Python 3.9+、langgraph 包、LLM API 访问（OpenAI、Anthropic 等）、理解图概念
 
-## Scope
+## 范围
 
-- 0: Python-only (TypeScript in early stages)
-- 1: Learning curve for graph concepts
-- 2: State management complexity
-- 3: Debugging can be challenging
+- 0：仅 Python（TypeScript 处于早期阶段）
+- 1：图概念的学习曲线
+- 2：状态管理复杂度
+- 3：调试可能具有挑战性
 
-## Ecosystem
+## 生态系统
 
-### Primary
+### 主要
 
 - LangGraph
 - LangChain
-- LangSmith (observability)
+- LangSmith（可观测性）
 
-### Common_integrations
+### 常用集成
 
 - OpenAI / Anthropic / Google
-- Tavily (search)
-- SQLite / PostgreSQL (persistence)
-- Redis (state store)
+- Tavily（搜索）
+- SQLite / PostgreSQL（持久化）
+- Redis（状态存储）
 
-### Platforms
+### 平台
 
-- Python applications
-- FastAPI / Flask backends
-- Cloud deployments
+- Python 应用
+- FastAPI / Flask 后端
+- 云部署
 
-## Patterns
+## 模式
 
-### Basic Agent Graph
+### 基本代理图
 
-Simple ReAct-style agent with tools
+简单的 ReAct 风格代理与工具
 
-**When to use**: Single agent with tool calling
+**何时使用**：单代理带工具调用
 
 from typing import Annotated, TypedDict
 from langgraph.graph import StateGraph, START, END
@@ -156,11 +148,11 @@ result = app.invoke({
     "messages": [("user", "What is 25 * 4?")]
 })
 
-### State with Reducers
+### 带 Reducer 的状态
 
-Complex state management with custom reducers
+使用自定义 reducer 的复杂状态管理
 
-**When to use**: Multiple agents updating shared state
+**何时使用**：多个代理更新共享状态
 
 from typing import Annotated, TypedDict
 from operator import add
@@ -212,11 +204,11 @@ graph.add_node("researcher", researcher)
 graph.add_node("writer", writer)
 # ... add edges
 
-### Conditional Branching
+### 条件分支
 
-Route to different paths based on state
+根据状态路由到不同路径
 
-**When to use**: Multiple possible workflows
+**何时使用**：多种可能的工作流
 
 from langgraph.graph import StateGraph, START, END
 
@@ -248,7 +240,7 @@ def chat_agent(state: RouterState) -> dict:
 def route_query(state: RouterState) -> str:
     """Route to appropriate agent."""
     query_type = state["query_type"]
-    return query_type  # Returns node name
+    return query_type  # 返回值 node name
 
 # Build graph
 graph = StateGraph(RouterState)
@@ -278,11 +270,11 @@ graph.add_edge("chat", END)
 
 app = graph.compile()
 
-### Persistence with Checkpointer
+### 带 Checkpointer 的持久化
 
-Save and resume agent state
+保存和恢复代理状态
 
-**When to use**: Multi-turn conversations, long-running agents
+**何时使用**：多轮对话、长时间运行的代理
 
 from langgraph.graph import StateGraph
 from langgraph.checkpoint.sqlite import SqliteSaver
@@ -323,11 +315,11 @@ print(state.values["messages"])
 for checkpoint in app.get_state_history(config):
     print(checkpoint.config, checkpoint.values)
 
-### Human-in-the-Loop
+### 人在回路
 
-Pause for human approval before actions
+在操作前暂停等待人工批准
 
-**When to use**: Sensitive operations, review before execution
+**何时使用**：敏感操作，执行前审查
 
 from langgraph.graph import StateGraph, START, END
 
@@ -386,11 +378,11 @@ print(f"Pending: {pending}")  # Human reviews
 app.update_state(config, {"approved": True})
 result = app.invoke(None, config)  # Resume
 
-### Parallel Execution (Map-Reduce)
+### 并行执行（Map-Reduce）
 
-Run multiple branches in parallel
+并行运行多个分支
 
-**When to use**: Parallel research, batch processing
+**何时使用**：并行研究、批量处理
 
 from langgraph.graph import StateGraph, START, END, Send
 from langgraph.constants import Send
@@ -409,7 +401,7 @@ def research_topic(state: dict) -> dict:
 def summarize(state: ParallelState) -> dict:
     """Combine all research results."""
     all_results = state["results"]
-    summary = f"Summary of {len(all_results)} topics"
+    summary = f"总结 of {len(all_results)} topics"
     return {"summary": summary}
 
 def fanout_topics(state: ParallelState) -> list[Send]:
@@ -438,20 +430,20 @@ result = app.invoke({
 })
 # Research runs in parallel, then summarizes
 
-## Collaboration
+## 协作
 
-### Delegation Triggers
+### 委派触发器
 
 - crewai|role-based|crew -> crewai (Need role-based multi-agent approach)
 - observability|tracing|langsmith -> langfuse (Need LLM observability)
 - structured output|json schema -> structured-output (Need structured LLM responses)
 - evaluate|benchmark|test agent -> agent-evaluation (Need to evaluate agent performance)
 
-### Production Agent Stack
+### 生产级代理栈
 
-Skills: langgraph, langfuse, structured-output
+技能：langgraph, langfuse, structured-output
 
-Workflow:
+工作流：
 
 ```
 1. Design agent graph with LangGraph
@@ -460,11 +452,11 @@ Workflow:
 4. Test and monitor in production
 ```
 
-### Multi-Agent System
+### 多代理系统
 
-Skills: langgraph, crewai, agent-communication
+技能：langgraph, crewai, agent-communication
 
-Workflow:
+工作流：
 
 ```
 1. Design agent roles (CrewAI patterns)
@@ -473,11 +465,11 @@ Workflow:
 4. Orchestrate with supervisor pattern
 ```
 
-### Evaluated Agent
+### 评估式代理
 
-Skills: langgraph, agent-evaluation, langfuse
+技能：langgraph, agent-evaluation, langfuse
 
-Workflow:
+工作流：
 
 ```
 1. Build agent with LangGraph
@@ -486,20 +478,20 @@ Workflow:
 4. Iterate based on metrics
 ```
 
-## Related Skills
+## 相关技能
 
-Works well with: `crewai`, `autonomous-agents`, `langfuse`, `structured-output`
+与以下技能配合良好：`crewai`、`autonomous-agents`、`langfuse`、`structured-output`
 
-## When to Use
-- User mentions or implies: langgraph
-- User mentions or implies: langchain agent
-- User mentions or implies: stateful agent
-- User mentions or implies: agent graph
-- User mentions or implies: react agent
-- User mentions or implies: agent workflow
-- User mentions or implies: multi-step agent
+## 何时使用
+- 用户提及或暗示：langgraph
+- 用户提及或暗示：langchain agent
+- 用户提及或暗示：有状态代理
+- 用户提及或暗示：代理图
+- 用户提及或暗示：react agent
+- 用户提及或暗示：代理工作流
+- 用户提及或暗示：多步骤代理
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确匹配上述范围时使用此技能。
+- 不要将输出视为特定环境验证、测试或专家审查的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

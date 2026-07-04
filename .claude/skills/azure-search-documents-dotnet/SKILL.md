@@ -30,7 +30,7 @@ SEARCH_API_KEY=<api-key>
 
 ## Authentication
 
-**DefaultAzureCredential (preferred)**:
+**默认AzureCredential (preferred)**:
 ```csharp
 using Azure.Identity;
 using Azure.Search.Documents;
@@ -324,7 +324,7 @@ catch (RequestFailedException ex)
 
 ## Best Practices
 
-1. **Use `DefaultAzureCredential`** over API keys for production
+1. **Use `默认AzureCredential`** over API keys for production
 2. **Use `FieldBuilder`** with model attributes for type-safe index definitions
 3. **Use `CreateOrUpdateIndexAsync`** for idempotent index creation
 4. **Batch document operations** for better throughput
@@ -342,7 +342,7 @@ catch (RequestFailedException ex)
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

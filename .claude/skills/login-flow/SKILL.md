@@ -14,9 +14,9 @@ triggers:
   - 密码登录
 ---
 
-# Login Flow Skill
+# 登录流程技能
 
-A skill for generating mobile-first login and authentication screens. Use this when the user wants a sign-in experience for a mobile app, including phone + SMS verification, password-based login, and social SSO options.
+用于生成移动优先的登录和认证屏幕的技能。当用户想要移动应用的登录体验时使用，包括手机+短信验证、密码登录和社交 SSO 选项。
 
 ## Workflow
 

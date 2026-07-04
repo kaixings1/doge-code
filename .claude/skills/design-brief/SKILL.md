@@ -1,11 +1,8 @@
 ---
 name: design-brief
 description: "Design Brief — Design Brief 相关功能和最佳实践"
-  Parse a structured design brief written in I-Lang protocol format into a
-  concrete design spec. Eliminates ambiguity from vague requests like
-  "make it professional" by requiring explicit dimensions: palette, typography,
-  layout, mood, density, and constraints.
-  Trigger keywords: "design brief", "create a design brief", "ilang brief", "structured brief".
+  将以 I-Lang 协议格式编写的结构化设计简报解析为具体的设计规范。通过要求明确的维度（调色板、排版、布局、氛围、密度和约束），消除"看起来专业"等模糊请求中的歧义。
+  触发关键词："设计简报"、"创建设计简报"、"ilang brief"、"结构化简报"。
 triggers:
   - "design brief"
   - "create a design brief"
@@ -114,7 +111,7 @@ The values listed below form a closed vocabulary. Only values in this table have
 | 5 | Layout model | `layout` | single_column, two_column, asymmetric |
 | 6 | Mood | `mood` | professional_minimal, playful, brutalist, editorial |
 | 7 | Density | `density` | compact, balanced, spacious |
-| 8 | Constraints | `exclude` | animations, gradients, stock_photos, carousel |
+| 8 | 约束条件 | `exclude` | animations, gradients, stock_photos, carousel |
 
 ### 2.1 Symbolic → concrete token resolution
 
@@ -145,20 +142,20 @@ Each symbolic value maps to concrete design tokens. The agent must resolve these
 
 Symbolic values not in this table are not valid. If the user provides an unrecognized value (e.g., `palette=ocean_blue`), the agent must prompt for clarification: "I don't recognize `palette=ocean_blue`. Did you mean `navy_and_white`, `monochrome_dark`, `light_clean`, or `earth_tones`?"
 
-### 2.2 Default resolution rules
+### 2.2 默认 resolution rules
 
 When a dimension is unspecified, defaults are selected based on mood compatibility:
 
-| Unspecified dimension | Default rule |
+| Unspecified dimension | 默认 rule |
 |----------------------|-------------|
 | `palette` | If mood=editorial → `light_clean`. If mood=brutalist → `monochrome_dark`. Otherwise → `light_clean`. |
 | `accent` | If palette is dark → `coral`. If palette is light → `electric_blue`. |
-| `typography` | Always → `inter` (highest cross-platform legibility). |
+| `typography` | 始终 → `inter` (highest cross-platform legibility). |
 | `display` | If mood=editorial → `playfair`. If mood=brutalist → `space_grotesk`. Otherwise → `same_as_body`. |
-| `layout` | Always → `single_column` (safest responsive default). |
-| `mood` | Always → `professional_minimal` (least opinionated). |
-| `density` | Always → `balanced`. |
-| `exclude` | Always → none (no constraints unless specified). |
+| `layout` | 始终 → `single_column` (safest responsive default). |
+| `mood` | 始终 → `professional_minimal` (least opinionated). |
+| `density` | 始终 → `balanced`. |
+| `exclude` | 始终 → none (no constraints unless specified). |
 
 If mood is also unspecified, all defaults fall back to the safe neutral set: `palette=light_clean`, `accent=electric_blue`, `typography=inter`, `display=same_as_body`, `layout=single_column`, `mood=professional_minimal`, `density=balanced`, `exclude=none`.
 

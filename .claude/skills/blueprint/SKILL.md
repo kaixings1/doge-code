@@ -7,7 +7,7 @@ source: community
 date_added: "2026-03-10"
 ---
 
-# Blueprint — Construction Plan Generator
+# /u84dd/u56fe — Construction Plan Generator
 
 Turn a one-line objective into a step-by-step plan any coding agent can execute cold.
 
@@ -15,7 +15,7 @@ Turn a one-line objective into a step-by-step plan any coding agent can execute 
 
 Blueprint is for multi-session, multi-agent engineering projects where each step must be independently executable by a fresh agent that has never seen the conversation history. Install it once, invoke it with `/blueprint <project> <objective>`.
 
-## When to Use This Skill
+## /u4f55/u65f6/u4f7f/u7528 This Skill
 
 - Use when the task requires multiple PRs or sessions
 - Use when multiple agents or team members need to share execution
@@ -69,7 +69,7 @@ git clone https://github.com/antbotlab/blueprint.git ~/.claude/skills/blueprint
 - [Examples: small plan](https://github.com/antbotlab/blueprint/blob/main/examples/small-plan.md)
 - [Examples: large plan](https://github.com/antbotlab/blueprint/blob/main/examples/large-plan.md)
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

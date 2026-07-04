@@ -3,7 +3,7 @@ name: content-engine
 description: 内容引擎工作流
 ---
 
-# Content Engine
+# 内容引擎
 
 Build platform-native content without flattening the author's real voice into platform slop.
 
@@ -123,7 +123,7 @@ Before delivering:
 - no duplicated copy across platforms unless requested
 - any CTA is earned and user-approved
 
-## Related Skills
+## 相关技能
 
 - `brand-voice` for source-derived voice profiles
 - `crosspost` for platform-specific distribution

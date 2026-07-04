@@ -3,42 +3,42 @@ name: verification-loop
 description: 验证循环工作流
 ---
 
-# Verification Loop Skill
+# 验证循环技能
 
-A comprehensive verification system for Claude Code sessions.
+用于 Claude Code 会话的全面验证系统。
 
-## When to Use
+## 使用时机
 
-Invoke this skill:
-- After completing a feature or significant code change
-- Before creating a PR
-- When you want to ensure quality gates pass
-- After refactoring
+调用此技能：
+- 完成功能或重大代码变更后
+- 创建 PR 之前
+- 需要确保质量关卡通过时
+- 重构之后
 
-## Verification Phases
+## 验证阶段
 
-### Phase 1: Build Verification
+### 阶段 1：构建验证
 ```bash
-# Check if project builds
+# 检查项目是否能构建
 npm run build 2>&1 | tail -20
-# OR
+# 或者
 pnpm build 2>&1 | tail -20
 ```
 
-If build fails, STOP and fix before continuing.
+如果构建失败，停止并在继续之前修复。
 
-### Phase 2: Type Check
+### 阶段 2：类型检查
 ```bash
-# TypeScript projects
+# TypeScript 项目
 npx tsc --noEmit 2>&1 | head -30
 
-# Python projects
+# Python 项目
 pyright . 2>&1 | head -30
 ```
 
-Report all type errors. Fix critical ones before continuing.
+报告所有类型错误。在继续之前修复关键错误。
 
-### Phase 3: Lint Check
+### 阶段 3：Lint 检查
 ```bash
 # JavaScript/TypeScript
 npm run lint 2>&1 | head -30
@@ -47,79 +47,79 @@ npm run lint 2>&1 | head -30
 ruff check . 2>&1 | head -30
 ```
 
-### Phase 4: Test Suite
+### 阶段 4：测试套件
 ```bash
-# Run tests with coverage
+# 运行测试并带覆盖率
 npm run test -- --coverage 2>&1 | tail -50
 
-# Check coverage threshold
-# Target: 80% minimum
+# 检查覆盖率阈值
+# 目标：最低 80%
 ```
 
-Report:
-- Total tests: X
-- Passed: X
-- Failed: X
-- Coverage: X%
+报告：
+- 总测试数：X
+- 通过：X
+- 失败：X
+- 覆盖率：X%
 
-### Phase 5: Security Scan
+### 阶段 5：安全扫描
 ```bash
-# Check for secrets
+# 检查密钥泄露
 grep -rn "sk-" --include="*.ts" --include="*.js" . 2>/dev/null | head -10
 grep -rn "api_key" --include="*.ts" --include="*.js" . 2>/dev/null | head -10
 
-# Check for console.log
+# 检查 console.log
 grep -rn "console.log" --include="*.ts" --include="*.tsx" src/ 2>/dev/null | head -10
 ```
 
-### Phase 6: Diff Review
+### 阶段 6：差异审查
 ```bash
-# Show what changed
+# 显示变更内容
 git diff --stat
 git diff HEAD~1 --name-only
 ```
 
-Review each changed file for:
-- Unintended changes
-- Missing error handling
-- Potential edge cases
+审查每个变更文件：
+- 非预期的变更
+- 缺少错误处理
+- 潜在的边界情况
 
-## Output Format
+## 输出格式
 
-After running all phases, produce a verification report:
+运行所有阶段后，生成验证报告：
 
 ```
-VERIFICATION REPORT
+验证报告
 ==================
 
-Build:     [PASS/FAIL]
-Types:     [PASS/FAIL] (X errors)
-Lint:      [PASS/FAIL] (X warnings)
-Tests:     [PASS/FAIL] (X/Y passed, Z% coverage)
-Security:  [PASS/FAIL] (X issues)
-Diff:      [X files changed]
+构建：     [通过/失败]
+类型：     [通过/失败] (X 个错误)
+Lint：     [通过/失败] (X 个警告)
+测试：     [通过/失败] (X/Y 通过, Z% 覆盖率)
+安全：     [通过/失败] (X 个问题)
+差异：     [X 个文件变更]
 
-Overall:   [READY/NOT READY] for PR
+总体：     [就绪/未就绪] 用于 PR
 
-Issues to Fix:
+待修复问题：
 1. ...
 2. ...
 ```
 
-## Continuous Mode
+## 连续模式
 
-For long sessions, run verification every 15 minutes or after major changes:
+对于长时间会话，每 15 分钟或在重大变更后运行验证：
 
 ```markdown
-Set a mental checkpoint:
-- After completing each function
-- After finishing a component
-- Before moving to next task
+设置心理检查点：
+- 完成每个函数后
+- 完成组件后
+- 移动到下一个任务前
 
-Run: /verify
+运行：/verify
 ```
 
-## Integration with Hooks
+## 与 Hooks 集成
 
-This skill complements PostToolUse hooks but provides deeper verification.
-Hooks catch issues immediately; this skill provides comprehensive review.
+此技能补充 PostToolUse hooks，但提供更深入的验证。
+Hooks 即时捕获问题；此技能提供全面的审查。

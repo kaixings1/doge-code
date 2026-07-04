@@ -1,4 +1,4 @@
-# git-cleanup
+# git-cleanup Git 清理工具
 
 A Claude Code skill for safely cleaning up accumulated git worktrees and local branches.
 
@@ -24,7 +24,7 @@ Invoke with `/git-cleanup` when you have accumulated many local branches and wor
 - Two confirmation gates (analysis review, then deletion confirmation)
 - Uses safe delete (`git branch -d`) for merged branches; force delete (`git branch -D`) only for squash-merged branches where git cannot detect the merge
 - Blocks removal of worktrees with uncommitted changes
-- Never touches protected branches (main, master, develop, release/*)
+- 绝不 touches protected branches (main, master, develop, release/*)
 - Flags `[gone]` branches for review instead of auto-deleting
 
 ## Installation

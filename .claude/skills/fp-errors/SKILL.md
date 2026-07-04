@@ -1,6 +1,6 @@
 ---
 name: fp-errors
-description: "Fp Errors — Fp Errors 相关功能和最佳实践"
+description: "使用 fp-ts Either 和 TaskEither 将错误作为值处理，编写更清晰、更可预测的 TypeScript 代码。适用于使用 fp-ts 实现错误处理模式。"
 risk: unknown
 source: community
 version: 1.0.0
@@ -15,24 +15,24 @@ tags:
   - practical
 ---
 
-# Practical Error Handling with fp-ts
+# 使用 fp-ts 的实用错误处理
 
-This skill teaches you how to handle errors without try/catch spaghetti. No academic jargon - just practical patterns for real problems.
+本技能教您如何在不编写嵌套 try/catch 的情况下处理错误。没有学术术语——只有解决实际问题的实用模式。
 
-The core idea: **Errors are just data**. Instead of throwing them into the void and hoping someone catches them, return them as values that TypeScript can track.
+核心理念：**错误就是数据**。与其将它们抛入虚无并希望有人捕获它们，不如将它们作为 TypeScript 可以追踪的值返回。
 
-## When to Use
-- You need to replace exception-heavy code with `Either` or `TaskEither`.
-- The task involves validation, domain errors, or clearer error contracts in TypeScript.
-- You want pragmatic fp-ts error-handling guidance for real application code.
+## 何时使用
+- 需要使用 `Either` 或 `TaskEither` 替换异常密集型代码。
+- 任务涉及验证、领域错误或在 TypeScript 中获得更清晰的错误契约。
+- 您希望为实际应用代码提供实用的 fp-ts 错误处理指导。
 
 ---
 
-## 1. Stop Throwing Everywhere
+## 1. 停止到处抛出异常
 
-### The Problem with Exceptions
+### 异常的问题
 
-Exceptions are invisible in your types. They break the contract between functions.
+异常在类型中是不可见的。它们破坏了函数之间的契约。
 
 ```typescript
 // What this function signature promises:
@@ -83,7 +83,7 @@ function processOrder(orderId: string) {
 }
 ```
 
-### The Solution: Return Errors as Values
+### 解决方案：将错误作为值返回
 
 ```typescript
 import * as E from 'fp-ts/Either'
@@ -104,7 +104,7 @@ const result = getUser(id)
 
 ---
 
-## 2. The Result Pattern (Either)
+## 2. 结果模式（Either）
 
 `Either<E, A>` is simple: it holds either an error (`E`) or a value (`A`).
 
@@ -135,7 +135,7 @@ const message = pipe(
 )
 ```
 
-### Converting Throwing Code to Either
+### 将抛出异常的代码转换为 Either
 
 ```typescript
 // Wrap any throwing function with tryCatch
@@ -155,7 +155,7 @@ const safeParseJSON = E.tryCatchK(
 )
 ```
 
-### Common Either Operations
+### 常用 Either 操作
 
 ```typescript
 import * as E from 'fp-ts/Either'
@@ -186,7 +186,7 @@ fromNullable(user)  // Right(user) if exists, Left('not found') if null/undefine
 
 ---
 
-## 3. Chaining Operations That Might Fail
+## 3. 链式可能失败的操作
 
 The real power comes from chaining. Each step can fail, but you write it as a clean pipeline.
 
@@ -233,7 +233,7 @@ function processUserOrder(userId: string, productId: string): Result | null {
 }
 ```
 
-### After: Clean Chain with Either
+### 之后：使用 Either 的清晰链式
 
 ```typescript
 import * as E from 'fp-ts/Either'
@@ -282,7 +282,7 @@ const processUserOrder = (userId: string, productId: string): E.Either<string, O
   )
 ```
 
-### Different Error Types? Use chainW
+### 不同的错误类型？使用 chainW
 
 ```typescript
 type ValidationError = { type: 'validation'; message: string }
@@ -301,7 +301,7 @@ const process = (id: string): E.Either<ValidationError | DbError, User> =>
 
 ---
 
-## 4. Collecting Multiple Errors
+## 4. 收集多个错误
 
 Sometimes you want ALL errors, not just the first one. Form validation is the classic example.
 
@@ -334,7 +334,7 @@ function validateForm(form: FormData): { valid: boolean; errors: string[] } {
 }
 ```
 
-### After: Validation with Error Accumulation
+### 之后：带错误累积的验证
 
 ```typescript
 import * as E from 'fp-ts/Either'
@@ -408,7 +408,7 @@ const getFieldError = (errors: FormErrors, field: string): string | undefined =>
 
 ---
 
-## 5. Async Operations (TaskEither)
+## 5. 异步操作（TaskEither）
 
 For async operations that can fail, use `TaskEither`. It's like `Either` but for promises.
 
@@ -542,7 +542,7 @@ const getUserData = (id: string) =>
 
 ---
 
-## 6. Converting Between Patterns
+## 6. 模式间的转换
 
 Real codebases have throwing functions, nullable values, and promises. Here's how to work with them.
 
@@ -826,7 +826,7 @@ const deleteUsers = (userIds: string[]) =>
 
 ---
 
-## Quick Reference
+## 快速参考
 
 | Pattern | Use When | Example |
 |---------|----------|---------|
@@ -835,7 +835,7 @@ const deleteUsers = (userIds: string[]) =>
 | `E.tryCatch(fn, onError)` | Wrapping throwing code | `E.tryCatch(() => JSON.parse(s), toError)` |
 | `E.fromNullable(error)` | Converting nullable | `E.fromNullable('missing')(maybeValue)` |
 | `E.map(fn)` | Transform success | `pipe(result, E.map(x => x * 2))` |
-| `E.mapLeft(fn)` | Transform error | `pipe(result, E.mapLeft(addContext))` |
+| `E.mapLeft(fn)` | Transform error | `pipe(result, E.mapLeft(add上下文))` |
 | `E.chain(fn)` | Chain operations | `pipe(getA(), E.chain(a => getB(a.id)))` |
 | `E.chainW(fn)` | Chain with different error type | `pipe(validate(), E.chainW(save))` |
 | `E.fold(onError, onSuccess)` | Handle both cases | `E.fold(showError, showData)` |
@@ -853,7 +853,7 @@ All Either operations have TaskEither equivalents:
 
 ---
 
-## Summary
+## 总结
 
 1. **Return errors as values** - Use Either/TaskEither instead of throwing
 2. **Chain with confidence** - `chain` stops at first error automatically
@@ -863,7 +863,7 @@ All Either operations have TaskEither equivalents:
 
 The payoff: TypeScript tracks your errors, no more forgotten try/catch, clear control flow, and composable error handling.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -67,4 +67,60 @@ $(command -v python3 || command -v python) "${SKILL_DIR}/scripts/session-catchup
 - **你的规划文件**放在**你的项目目录**中
 
 | 位置 | 存放内容 |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 38 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+|-------|----------|
+| `${CLAUDE_PLUGIN_ROOT}/templates/` | 规划模板：初始 task_plan.md、progress.md、findings.md |
+| 你的项目根目录 | `task_plan.md`、`progress.md`、`findings.md`（规划文件） |
+| `.planning/` | 多规划支持（每规划一个子目录） |
+
+## 核心文件
+
+### task_plan.md
+
+你的主规划文件。定义任务、阶段和里程碑。
+
+```
+# 项目名称
+
+## 阶段 1：基础
+- [x] 任务 1：设置项目骨架
+- [ ] 任务 2：实现核心逻辑
+- [ ] 任务 3：添加测试
+
+## 阶段 2：功能
+- [ ] 任务 4：用户认证
+- [ ] 任务 5：数据管理
+```
+
+### progress.md
+
+运行日志。记录已完成的工作、阻碍和决策。
+
+```
+## 2026-07-04
+
+### 完成
+- 设置 TypeScript 配置
+- 创建基础目录结构
+
+### 待办
+- 等待 API 密钥配置
+```
+
+### findings.md
+
+研究笔记。记录调查结果、架构决策和发现。
+
+```
+## 认证策略
+- 使用 JWT + refresh token
+- 过期时间：access 15min, refresh 7d
+
+## API 设计
+- RESTful，版本化 (/api/v1)
+```
+
+## 挂钩说明
+
+此技能使用挂钩自动注入和读取规划文件。当您使用任意工具（Read、Write、Edit 等）时，挂钩会：
+1. 在工具前注入当前任务规划上下文
+2. 在工具后提示更新 progress.md

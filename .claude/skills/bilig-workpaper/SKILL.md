@@ -18,7 +18,7 @@ plugin:
 
 # Bilig WorkPaper
 
-## Overview
+## 概述
 
 Bilig WorkPaper gives agents a code-first workbook runtime for spreadsheet-style business logic. Use it when the task is easier to model as sheets and formulas, but the reliable path is to edit cells through an API, recalculate, read computed values back, and persist a JSON workbook document.
 
@@ -26,7 +26,7 @@ The main use case is replacing fragile spreadsheet UI automation with determinis
 
 ## When To Use This Skill
 
-Use this skill when the user needs to:
+使用此技能当 the user needs to:
 
 - work with spreadsheet formulas from a Node.js service, route, test, or agent tool;
 - write workbook inputs and verify calculated outputs with readback proof;
@@ -38,14 +38,14 @@ Do not use it for manual spreadsheet editing, VBA/macros, pivots, charts, COM au
 
 ## Safer Command Pattern
 
-Prefer argument arrays in MCP/client configuration. Do not shell-concatenate user-provided paths, sheet names, formulas, or cell addresses. Reject path or cell input containing newlines, backticks, `$(`, `;`, `&`, `|`, `<`, or `>` before using it in a command.
+优先 argument arrays in MCP/client configuration. Do not shell-concatenate user-provided paths, sheet names, formulas, or cell addresses. Reject path or cell input containing newlines, backticks, `$(`, `;`, `&`, `|`, `<`, or `>` before using it in a command.
 
 The MCP examples execute the public `@bilig/workpaper` npm package. Treat that
 as third-party code execution: pin the package version you reviewed, run it only
 in a trusted project, and get explicit user approval before starting a writable
 MCP server.
 
-## Quick MCP Setup
+## Quick MCP 设置
 
 First prove the package-owned challenge works:
 
@@ -125,7 +125,7 @@ const saved = serializeWorkPaperDocument(
 console.log({ revenue, savedBytes: saved.length });
 ```
 
-## Required Verification
+## 必需 Verification
 
 A good agent response should include:
 
@@ -138,13 +138,13 @@ A good agent response should include:
 
 If any proof step fails, report the blocker instead of saying the workbook was updated.
 
-## Limitations
+## /u9650/u5236
 
 - WorkPaper behavior is not a complete replacement for desktop Excel, VBA, pivots, charts, or UI automation.
 - Formula compatibility depends on the Bilig runtime and should be verified against Excel when exact parity matters.
 - MCP writes should remain scoped to trusted workbook paths and must be followed by readback validation.
 
-## References
+## 参考资料
 
 - Repository: https://github.com/proompteng/bilig
 - Compact docs map: https://proompteng.github.io/bilig/llms.txt

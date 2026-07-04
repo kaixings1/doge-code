@@ -1,6 +1,6 @@
 ---
 name: context-guardian
-description: "Context Guardian — Context Guardian 相关功能和最佳实践"
+description: "上下文 Guardian — 上下文 Guardian 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-06'
@@ -18,13 +18,13 @@ tools:
 - codex-cli
 ---
 
-# Context Guardian
+# 上下文 Guardian
 
-## Overview
+## 概述
 
 Guardiao de contexto que preserva dados criticos antes da compactacao automatica. Snapshots, verificacao de integridade e zero perda de informacao.
 
-## When to Use This Skill
+## 何时使用 This Skill
 
 - When the user mentions "compactacao contexto" or related topics
 - When the user mentions "perda de contexto" or related topics
@@ -129,8 +129,8 @@ P2 = perda toleravel).
 |-----------|--------------|
 | Padroes descobertos | Convencoes, patterns de codigo observados |
 | Dependencias entre componentes | "scan_registry.py E match_skills.py devem ter categorias identicas" |
-| Preferencias do usuario | Idioma, estilo, nivel de detalhe, workflow preferido |
-| Contexto de projeto | Estrutura de diretorios, arquivos-chave, proposito |
+| 优先encias do usuario | Idioma, estilo, nivel de detalhe, workflow preferido |
+| 上下文o de projeto | Estrutura de diretorios, arquivos-chave, proposito |
 | Questoes em aberto | Perguntas sem resposta, ambiguidades nao resolvidas |
 
 **P2 — Perda Toleravel (resumo compacto)**
@@ -185,7 +185,7 @@ Atualizar `C:\Users\renat\.claude\projects\C--Users-renat-Skill-JUD\memory\MEMOR
 com as informacoes P0 mais criticas em formato ultra-compacto. O MEMORY.md e carregado
 automaticamente em toda nova sessao, entao ele e a ultima linha de defesa.
 
-**Camada 3 — Context-agent save**
+**Camada 3 — 上下文-agent save**
 
 ```bash
 python C:\Users\renat\skills\context-agent\scripts\context_manager.py save
@@ -294,7 +294,7 @@ Antes da compactacao, executa protocolo completo:
 - Briefing de transicao no topo do contexto
 Proximo Claude continua com precisao total, zero re-trabalho.
 
-## Consideracoes De Performance
+## 考虑acoes De 性能
 
 - O protocolo completo leva 2-5 minutos de trabalho do Claude
 - Para projetos simples, usar apenas o protocolo rapido
@@ -315,11 +315,11 @@ Proximo Claude continua com precisao total, zero re-trabalho.
 - Applying recommendations without understanding your specific context
 - Not providing enough project context for accurate analysis
 
-## Related Skills
+## 相关 Skills
 
 - `context-agent` - Complementary skill for enhanced analysis
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

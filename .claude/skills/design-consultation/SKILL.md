@@ -13,11 +13,11 @@ od:
   upstream: "https://github.com/garrytan/gstack"
 ---
 
-# design-consultation
+# 设计咨询
 
-> Curated from Garry Tan (gstack).
+> 来自 Garry Tan (gstack) 的精选。
 
-## What it does
+## 功能
 
 Build a complete design system from scratch with creative risks and realistic product mockups. Useful for kickoff workshops and brand-from-zero work.
 

@@ -19,7 +19,7 @@ tools: [claude, cursor, codex, antigravity]
 - Use when designing warm monochrome interfaces with crisp borders, generous whitespace, muted pastel accents, and quiet motion.
 - Use when the task should avoid gradients, heavy shadows, saturated colors, pill-heavy components, and generic SaaS visuals.
 
-## Limitations
+## 局限性
 
 - Minimalism can hide hierarchy when content is dense; validate scannability, contrast, and navigation clarity with real content.
 - This skill assumes the product can support restrained palettes and typography-led layouts; do not override an established brand system without cause.

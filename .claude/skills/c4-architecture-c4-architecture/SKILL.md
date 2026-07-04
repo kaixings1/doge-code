@@ -12,12 +12,12 @@ Generate comprehensive C4 architecture documentation for an existing repository/
 
 [Extended thinking: This workflow implements a complete C4 architecture documentation process following the C4 model (Context, Container, Component, Code). It uses a bottom-up approach, starting from the deepest code directories and working upward, ensuring every code element is documented before synthesizing into higher-level abstractions. The workflow coordinates four specialized C4 agents (Code, Component, Container, Context) to create a complete architectural documentation set that serves both technical and non-technical stakeholders.]
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on c4 architecture documentation workflow tasks or workflows
 - Needing guidance, best practices, or checklists for c4 architecture documentation workflow
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to c4 architecture documentation workflow
 - You need a different domain or tool outside this scope
@@ -391,7 +391,7 @@ This will:
 
 All documentation written to: C4-Documentation/
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

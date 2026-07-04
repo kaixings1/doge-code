@@ -5,31 +5,31 @@ risk: unknown
 source: community
 ---
 
-# Filesystem-Based Context Engineering
+# 基于文件系统的上下文工程
 
-The filesystem provides a single interface through which agents can flexibly store, retrieve, and update an effectively unlimited amount of context. This pattern addresses the fundamental constraint that context windows are limited while tasks often require more information than fits in a single window.
+文件系统提供了一个单一接口，通过该接口代理可以灵活地存储、检索和更新实际上无限量的上下文。这种模式解决了上下文窗口有限的基本约束，而任务通常需要比单个窗口容纳的更多信息。
 
-The core insight is that files enable dynamic context discovery: agents pull relevant context on demand rather than carrying everything in the context window. This contrasts with static context, which is always included regardless of relevance.
+核心见解是文件支持动态上下文发现：代理按需拉取相关上下文，而不是在上下文窗口中携带所有内容。这与静态上下文形成对比，后者无论相关性如何都始终包含。
 
-## When to Use
-Activate this skill when:
-- Tool outputs are bloating the context window
-- Agents need to persist state across long trajectories
-- Sub-agents must share information without direct message passing
-- Tasks require more context than fits in the window
-- Building agents that learn and update their own instructions
-- Implementing scratch pads for intermediate results
-- Terminal outputs or logs need to be accessible to agents
+## 何时使用
+在以下情况激活此技能：
+- 工具输出使上下文窗口膨胀
+- 代理需要在长轨迹中持久化状态
+- 子代理必须在不直接消息传递的情况下共享信息
+- 任务需要的上下文超过窗口容量
+- 构建学习并更新自身指令的代理
+- 为中间结果实现草稿板
+- 终端输出或日志需要可被代理访问
 
-## Core Concepts
+## 核心概念
 
-Context engineering can fail in four predictable ways. First, when the context an agent needs is not in the total available context. Second, when retrieved context fails to encapsulate needed context. Third, when retrieved context far exceeds needed context, wasting tokens and degrading performance. Fourth, when agents cannot discover niche information buried in many files.
+上下文工程可能以四种可预测的方式失败。首先，当代理需要的上下文不在总可用上下文中时。其次，当检索到的上下文未能封装所需上下文时。第三，当检索到的上下文远超过所需上下文时，浪费令牌并降低性能。第四，当代理无法发现埋藏在许多文件中的小众信息时。
 
-The filesystem addresses these failures by providing a persistent layer where agents write once and read selectively, offloading bulk content while preserving the ability to retrieve specific information through search tools.
+文件系统通过提供持久层来解决这些失败，代理可以在其中写入一次并有选择地读取，卸载大量内容，同时保留通过搜索工具检索特定信息的能力。
 
-## Detailed Topics
+## /u8be6/u7ec6/u4e3b/u9898
 
-### The Static vs Dynamic Context Trade-off
+### /u9759/u6001/u4e0e/u52a8/u6001/u4e0a/u4e0b/u6587/u7684/u6743/u8861
 
 **Static Context**
 Static context is always included in the prompt: system instructions, tool definitions, and critical rules. Static context consumes tokens regardless of task relevance. As agents accumulate more capabilities (tools, skills, instructions), static context grows and crowds out space for dynamic information.
@@ -41,7 +41,7 @@ Dynamic discovery is more token-efficient because only necessary data enters the
 
 The trade-off: dynamic discovery requires the model to correctly identify when to load additional context. This works well with current frontier models but may fail with less capable models that do not recognize when they need more information.
 
-### Pattern 1: Filesystem as Scratch Pad
+### /u6a21/u5f0f 1/uff1a/u6587/u4ef6/u7cfb/u7edf/u4f5c/u4e3a/u8349/u7a3f/u677f
 
 **The Problem**
 Tool calls can return massive outputs. A web search may return 10k tokens of raw content. A database query may return hundreds of rows. If this content enters the message history, it remains for the entire conversation, inflating token costs and potentially degrading attention to more relevant information.
@@ -71,7 +71,7 @@ The agent can then use `grep` to search for specific patterns or `read_file` wit
 - Preserves full output for later reference
 - Enables targeted retrieval instead of carrying everything
 
-### Pattern 2: Plan Persistence
+### /u6a21/u5f0f 2/uff1a/u8ba1/u5212/u6301/u4e45/u5316
 
 **The Problem**
 Long-horizon tasks require agents to make plans and follow them. But as conversations extend, plans can fall out of attention or be lost to summarization. The agent loses track of what it was supposed to do.
@@ -99,7 +99,7 @@ steps:
 
 The agent reads this file at the start of each turn or when it needs to re-orient.
 
-### Pattern 3: Sub-Agent Communication via Filesystem
+### /u6a21/u5f0f 3/uff1a/u901a/u8fc7/u6587/u4ef6/u7cfb/u7edf/u7684/u5b50/u4ee3/u7406/u901a/u4fe1
 
 **The Problem**
 In multi-agent systems, sub-agents typically report findings to a coordinator agent through message passing. This creates a "game of telephone" where information degrades through summarization at each hop.
@@ -123,7 +123,7 @@ workspace/
 
 Each agent operates in relative isolation but shares state through the filesystem.
 
-### Pattern 4: Dynamic Skill Loading
+### /u6a21/u5f0f 4/uff1a/u52a8/u6001/u6280/u80fd/u52a0/u8f7d
 
 **The Problem**
 Agents may have many skills or instruction sets, but most are irrelevant to any given task. Stuffing all instructions into the system prompt wastes tokens and can confuse the model with contradictory or irrelevant guidance.
@@ -142,7 +142,7 @@ Available skills (load with read_file when relevant):
 
 Agent loads `skills/database-optimization/SKILL.md` only when working on database tasks.
 
-### Pattern 5: Terminal and Log Persistence
+### /u6a21/u5f0f 5/uff1a/u7ec8/u7aef/u548c/u65e5/u5fd7/u6301/u4e45/u5316
 
 **The Problem**
 Terminal output from long-running processes accumulates rapidly. Copying and pasting output into agent input is manual and inefficient.
@@ -163,7 +163,7 @@ Agents query with targeted grep:
 grep -A 5 "error" terminals/1.txt
 ```
 
-### Pattern 6: Learning Through Self-Modification
+### /u6a21/u5f0f 6/uff1a/u901a/u8fc7/u81ea/u6211/u4fee/u6539/u5b66/u4e60
 
 **The Problem**
 Agents often lack context that users provide implicitly or explicitly during interactions. Traditionally, this requires manual system prompt updates between sessions.
@@ -186,7 +186,7 @@ Subsequent sessions include a step to load user preferences if the file exists.
 **Caution**
 This pattern is still emerging. Self-modification requires careful guardrails to prevent agents from accumulating incorrect or contradictory instructions over time.
 
-### Filesystem Search Techniques
+### /u6587/u4ef6/u7cfb/u7edf/u641c/u7d22/u6280/u672f
 
 Models are specifically trained to understand filesystem traversal. The combination of `ls`, `glob`, `grep`, and `read_file` with line ranges provides powerful context discovery:
 
@@ -199,7 +199,7 @@ This combination often outperforms semantic search for technical content (code, 
 
 Semantic search and filesystem search work well together: semantic search for conceptual queries, filesystem search for structural and exact-match queries.
 
-## Practical Guidance
+## /u5b9e/u7528/u6307/u5357
 
 ### When to Use Filesystem Context
 
@@ -242,7 +242,7 @@ Track where tokens originate:
 
 Optimize based on measurements, not assumptions.
 
-## Examples
+## /u793a/u4f8b
 
 **Example 1: Tool Output Offloading**
 ```
@@ -273,7 +273,7 @@ Action:
 Result: Agent can search history file to recover details lost in summarization
 ```
 
-## Guidelines
+## /u89c4/u8303
 
 1. Write large outputs to files; return summaries and references to context
 2. Store plans and state in structured files for re-reading
@@ -286,7 +286,7 @@ Result: Agent can search history file to recover details lost in summarization
 9. Implement cleanup for scratch files to prevent unbounded growth
 10. Guard self-modification patterns with validation
 
-## Integration
+## /u96c6/u6210
 
 This skill connects to:
 
@@ -296,7 +296,7 @@ This skill connects to:
 - context-compression - File references enable lossless "compression"
 - tool-design - Tools should return file references for large outputs
 
-## References
+## /u53c2/u8003
 
 Internal reference:
 - Implementation Patterns - Detailed pattern implementations
@@ -313,14 +313,14 @@ External resources:
 
 ---
 
-## Skill Metadata
+## /u6280/u80fd/u5143/u6570/u636e
 
 **Created**: 2026-01-07
 **Last Updated**: 2026-01-07
 **Author**: Agent Skills for Context Engineering Contributors
 **Version**: 1.0.0
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

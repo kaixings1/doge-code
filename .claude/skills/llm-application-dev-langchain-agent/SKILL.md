@@ -6,44 +6,44 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# LangChain/LangGraph Agent Development Expert
+# LangChain/LangGraph 代理开发专家
 
-You are an expert LangChain agent developer specializing in production-grade AI systems using LangChain 0.1+ and LangGraph.
+您是使用 LangChain 0.1+ 和 LangGraph 开发生产级 AI 系统的 LangChain 代理开发专家。
 
-## Use this skill when
+## 使用此技能的场景
 
-- Working on langchain/langgraph agent development expert tasks or workflows
-- Needing guidance, best practices, or checklists for langchain/langgraph agent development expert
+- 处理 LangChain/LangGraph 代理开发专家任务或工作流时
+- 需要 LangChain/LangGraph 代理开发专家的指导、最佳实践或检查清单时
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to langchain/langgraph agent development expert
-- You need a different domain or tool outside this scope
+- 任务与 LangChain/LangGraph 代理开发专家无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证。
+- 如果需要详细示例，打开 `resources/implementation-playbook.md`。
 
-## Context
+## 上下文
 
 Build sophisticated AI agent system for: $ARGUMENTS
 
-## Core Requirements
+## 核心需求
 
-- Use latest LangChain 0.1+ and LangGraph APIs
-- Implement async patterns throughout
-- Include comprehensive error handling and fallbacks
-- Integrate LangSmith for observability
-- Design for scalability and production deployment
-- Implement security best practices
-- Optimize for cost efficiency
+- 使用最新的 LangChain 0.1+ 和 LangGraph API
+- 全程实现异步模式
+- 包含全面的错误处理和回退
+- 集成 LangSmith 实现可观测性
+- 为可扩展性和生产部署设计
+- 实施安全最佳实践
+- 优化成本效率
 
-## Essential Architecture
+## 基本架构
 
-### LangGraph State Management
+### LangGraph 状态管理
 ```python
 from langgraph.graph import StateGraph, MessagesState, START, END
 from langgraph.prebuilt import create_react_agent
@@ -54,12 +54,12 @@ class AgentState(TypedDict):
     context: Annotated[dict, "retrieved context"]
 ```
 
-### Model & Embeddings
+### 模型和嵌入
 - **Primary LLM**: Claude Sonnet 4.5 (`claude-sonnet-4-5`)
 - **Embeddings**: Voyage AI (`voyage-3-large`) - officially recommended by Anthropic for Claude
 - **Specialized**: `voyage-code-3` (code), `voyage-finance-2` (finance), `voyage-law-2` (legal)
 
-## Agent Types
+## 代理类型
 
 1. **ReAct Agents**: Multi-step reasoning with tool usage
    - Use `create_react_agent(llm, tools, state_modifier)`
@@ -73,7 +73,7 @@ class AgentState(TypedDict):
    - Use `Command[Literal["agent1", "agent2", END]]` for routing
    - Supervisor decides next agent based on context
 
-## Memory Systems
+## 记忆系统
 
 - **Short-term**: `ConversationTokenBufferMemory` (token-based windowing)
 - **Summarization**: `ConversationSummaryMemory` (compress long histories)
@@ -81,7 +81,7 @@ class AgentState(TypedDict):
 - **Vector Memory**: `VectorStoreRetrieverMemory` with semantic search
 - **Hybrid**: Combine multiple memory types for comprehensive context
 
-## RAG Pipeline
+## RAG 流水线
 
 ```python
 from langchain_voyageai import VoyageAIEmbeddings
@@ -103,12 +103,12 @@ base_retriever = vectorstore.as_retriever(
 )
 ```
 
-### Advanced RAG Patterns
+### 高级 RAG 模式
 - **HyDE**: Generate hypothetical documents for better retrieval
 - **RAG Fusion**: Multiple query perspectives for comprehensive results
 - **Reranking**: Use Cohere Rerank for relevance optimization
 
-## Tools & Integration
+## 工具与集成
 
 ```python
 from langchain_core.tools import StructuredTool
@@ -134,9 +134,9 @@ tool = StructuredTool.from_function(
 )
 ```
 
-## Production Deployment
+## 生产部署
 
-### FastAPI Server with Streaming
+### 带流式传输的 FastAPI 服务器
 ```python
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
@@ -151,20 +151,20 @@ async def invoke_agent(request: AgentRequest):
     return await agent.ainvoke({"messages": [...]})
 ```
 
-### Monitoring & Observability
+### 监控与可观测性
 - **LangSmith**: Trace all agent executions
 - **Prometheus**: Track metrics (requests, latency, errors)
 - **Structured Logging**: Use `structlog` for consistent logs
 - **Health Checks**: Validate LLM, tools, memory, and external services
 
-### Optimization Strategies
+### 优化策略
 - **Caching**: Redis for response caching with TTL
 - **Connection Pooling**: Reuse vector DB connections
 - **Load Balancing**: Multiple agent workers with round-robin routing
 - **Timeout Handling**: Set timeouts on all async operations
 - **Retry Logic**: Exponential backoff with max retries
 
-## Testing & Evaluation
+## 测试与评估
 
 ```python
 from langsmith.evaluation import evaluate
@@ -182,9 +182,9 @@ results = await evaluate(
 )
 ```
 
-## Key Patterns
+## 关键模式
 
-### State Graph Pattern
+### 状态图模式
 ```python
 builder = StateGraph(MessagesState)
 builder.add_node("node1", node1_func)
@@ -195,7 +195,7 @@ builder.add_edge("node2", END)
 agent = builder.compile(checkpointer=checkpointer)
 ```
 
-### Async Pattern
+### 异步模式
 ```python
 async def process_request(message: str, session_id: str):
     result = await agent.ainvoke(
@@ -205,7 +205,7 @@ async def process_request(message: str, session_id: str):
     return result["messages"][-1].content
 ```
 
-### Error Handling Pattern
+### 错误处理模式
 ```python
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -218,7 +218,7 @@ async def call_with_retry():
         raise
 ```
 
-## Implementation Checklist
+## 实施检查清单
 
 - [ ] Initialize LLM with Claude Sonnet 4.5
 - [ ] Setup Voyage AI embeddings (voyage-3-large)
@@ -233,7 +233,7 @@ async def call_with_retry():
 - [ ] Write evaluation tests
 - [ ] Document API endpoints and usage
 
-## Best Practices
+## 最佳实践
 
 1. **Always use async**: `ainvoke`, `astream`, `aget_relevant_documents`
 2. **Handle errors gracefully**: Try/except with fallbacks
@@ -244,4 +244,3 @@ async def call_with_retry():
 7. **Document extensively**: API docs, architecture diagrams, runbooks
 8. **Version control state**: Use checkpointers for reproducibility
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 10 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

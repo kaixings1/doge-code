@@ -2,14 +2,12 @@
 name: New Relic Automation
 description: "通过 Composio MCP 集成自动执行 New Relic 可观察性工作流——管理告警策略、通知渠道、告警条件以及监控应用和浏览器应用。"
 requires:
-  mcp:
-    - rube
+ mcp:
+ - rube
 ---
 
-# New Relic Automation
+# New Relic 自动化
 
-Automate your New Relic observability workflows -- create and manage alert policies, configure notification channels (email, Slack, webhook, PagerDuty), monitor APM applications, inspect alert conditions, and integrate New Relic alerting into cross-app pipelines.
+自动执行 New Relic 可观察性工作流——创建和管理告警策略、配置通知渠道（邮件、Slack、Webhook、PagerDuty）、监控 APM 应用、检查告警条件，并将 New Relic 告警集成到跨应用管道中。
 
-**Toolkit docs:** [composio.dev/toolkits/new_relic](https://composio.dev/toolkits/new_relic)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 06 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+**工具包文档:** [composio.dev/toolkits/new_relic](https://composio.dev/toolkits/new_relic)

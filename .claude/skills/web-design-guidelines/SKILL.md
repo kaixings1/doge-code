@@ -13,30 +13,26 @@ od:
   upstream: "https://github.com/vercel-labs/skills"
 ---
 
-# web-design-guidelines
+# Web 设计指南
 
-> Curated from the Vercel engineering team.
+> 精选自 Vercel 工程团队。
 
-## What it does
+## 功能
 
-Web design guidelines and standards by the Vercel engineering team. Covers layout, typography, color, motion, and accessibility for product UI.
+Vercel 工程团队制定的 Web 设计指南和标准。涵盖产品 UI 的布局、排版、色彩、动效和无障碍。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/vercel-labs/skills
-- Category: `design-systems`
+- 上游：https://github.com/vercel-labs/skills
+- 分类：`design-systems`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在 Open Design 中发布技能信息，以便代理在规划期间发现它。要运行完整的上游工作流及其原始资源、脚本和参考文件，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README 了解确切路径
 open https://github.com/vercel-labs/skills
 ```
 
-Then ask the agent to invoke this skill by name (`web-design-guidelines`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后要求代理通过名称（`web-design-guidelines`）或此技能 frontmatter 中列出的触发短语之一调用此技能。

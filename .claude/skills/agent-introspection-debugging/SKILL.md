@@ -5,7 +5,7 @@ description: AI代理故障的结构化自调试工作流
 
 # Agent Introspection Debugging
 
-Use this skill when an agent run is failing repeatedly, consuming tokens without progress, looping on the same tools, or drifting away from the intended task.
+使用此技能当 an agent run is failing repeatedly, consuming tokens without progress, looping on the same tools, or drifting away from the intended task.
 
 This is a workflow skill, not a hidden runtime. It teaches the agent to debug itself systematically before escalating to a human.
 
@@ -13,11 +13,11 @@ This is a workflow skill, not a hidden runtime. It teaches the agent to debug it
 
 - Maximum tool call / loop-limit failures
 - Repeated retries with no forward progress
-- Context growth or prompt drift that starts degrading output quality
+- 上下文 growth or prompt drift that starts degrading output quality
 - File-system or environment state mismatch between expectation and reality
 - Tool failures that are likely recoverable with diagnosis and a smaller corrective action
 
-## Scope Boundaries
+## 范围 Boundaries
 
 Activate this skill for:
 - capturing failure state before retrying blindly
@@ -61,4 +61,3 @@ Minimum capture template:
 Match the failure to a known pattern before changing anything.
 
 | Pattern | Likely Cause | Check |
-| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 56 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

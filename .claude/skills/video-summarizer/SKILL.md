@@ -6,14 +6,14 @@ description: "Video Summarizer — Video Summarizer 相关功能和最佳实践"
   Use when the user wants to summarize, analyze, or extract key points from video files in bulk.
   Triggers on requests like "summarize my videos", "create markdown summaries for the videos",
   "analyze videos with Gemini", "generate video summaries", or "extract X from my videos".
-  Requires GEMINI_API_KEY environment variable set in the system.
+  需要 GEMINI_API_KEY environment variable set in the system.
 ---
 
 # Video Summarizer
 
 Analyzes MP4 files in a directory via the Gemini API and writes a `.md` summary file next to each video.
 
-## Prerequisites
+## 前提条件
 
 - `GEMINI_API_KEY` env var must be set
 - `google-genai` installed: `py -m pip install google-genai`
@@ -25,10 +25,10 @@ Analyzes MP4 files in a directory via the Gemini API and writes a `.md` summary 
 
 Check if the user provided a custom prompt or specific extraction instructions.
 
-- **No custom prompt** -> use the default (structured summary with Title, Summary, Key Points, Takeaways)
+- **No custom prompt** -> use the default (structured summary with Title, 总结, Key Points, Takeaways)
 - **User provides custom instructions** -> pass them via `--prompt` or `--prompt-file`
 
-A custom prompt **completely replaces** the default. Examples of custom prompts:
+A custom prompt **completely replaces** the default. 示例s of custom prompts:
 - "Extract all mentioned tools, their prices, and a one-line description for each"
 - "List every action item and deadline mentioned in this video"
 - "Create a transcript outline with timestamps"
@@ -62,7 +62,7 @@ When the user invokes this skill:
 3. If the user gives **no specific instructions**, run without `--prompt` to use the default format.
 4. If the user specifies a **directory**, pass it as the first positional argument.
 
-### 4. Default output format (when no custom prompt is given)
+### 4. 默认 output format (when no custom prompt is given)
 
 ```markdown
 # [Video Title]
@@ -77,5 +77,3 @@ When the user invokes this skill:
 
 ## Core Content & Takeaways
 [Central message and key insight]
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 42 MINUTES 20 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

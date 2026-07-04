@@ -6,60 +6,60 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# LLM Evaluation
+# LLM 评估
 
-Master comprehensive evaluation strategies for LLM applications, from automated metrics to human evaluation and A/B testing.
+掌握 LLM 应用的全面评估策略，从自动化指标到人工评估和 A/B 测试。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to llm evaluation
-- You need a different domain or tool outside this scope
+- 任务与 LLM 评估无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证。
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Use this skill when
+## 使用此技能的场景
 
-- Measuring LLM application performance systematically
-- Comparing different models or prompts
-- Detecting performance regressions before deployment
-- Validating improvements from prompt changes
-- Building confidence in production systems
-- Establishing baselines and tracking progress over time
-- Debugging unexpected model behavior
+- 系统性地衡量 LLM 应用性能时
+- 比较不同模型或提示时
+- 在部署前检测性能回归时
+- 验证提示更改带来的改进时
+- 建立对生产系统的信心时
+- 建立基线并随时间跟踪进展时
+- 调试意外模型行为时
 
-## Core Evaluation Types
+## 核心评估类型
 
-### 1. Automated Metrics
-Fast, repeatable, scalable evaluation using computed scores.
+### 1. 自动化指标
+快速、可重复、可扩展的评分评估。
 
-**Text Generation:**
+**文本生成：**
 - **BLEU**: N-gram overlap (translation)
 - **ROUGE**: Recall-oriented (summarization)
 - **METEOR**: Semantic similarity
 - **BERTScore**: Embedding-based similarity
 - **Perplexity**: Language model confidence
 
-**Classification:**
+**分类：**
 - **Accuracy**: Percentage correct
 - **Precision/Recall/F1**: Class-specific performance
 - **Confusion Matrix**: Error patterns
 - **AUC-ROC**: Ranking quality
 
-**Retrieval (RAG):**
+**检索（RAG）：**
 - **MRR**: Mean Reciprocal Rank
 - **NDCG**: Normalized Discounted Cumulative Gain
 - **Precision@K**: Relevant in top K
 - **Recall@K**: Coverage in top K
 
-### 2. Human Evaluation
-Manual assessment for quality aspects difficult to automate.
+### 2. 人工评估
+对难以自动化的质量方面进行人工评估。
 
-**Dimensions:**
+**维度：**
 - **Accuracy**: Factual correctness
 - **Coherence**: Logical flow
 - **Relevance**: Answers the question
@@ -67,16 +67,16 @@ Manual assessment for quality aspects difficult to automate.
 - **Safety**: No harmful content
 - **Helpfulness**: Useful to the user
 
-### 3. LLM-as-Judge
-Use stronger LLMs to evaluate weaker model outputs.
+### 3. LLM 作为评委
+使用更强的 LLM 评估较弱模型的输出。
 
-**Approaches:**
+**方法：**
 - **Pointwise**: Score individual responses
 - **Pairwise**: Compare two responses
 - **Reference-based**: Compare to gold standard
 - **Reference-free**: Judge without ground truth
 
-## Quick Start
+## 快速开始
 
 ```python
 from llm_eval import EvaluationSuite, Metric
@@ -109,9 +109,9 @@ print(f"Overall Accuracy: {results.metrics['accuracy']}")
 print(f"BLEU Score: {results.metrics['bleu']}")
 ```
 
-## Automated Metrics Implementation
+## 自动化指标实现
 
-### BLEU Score
+### BLEU 分数
 ```python
 from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 
@@ -132,7 +132,7 @@ bleu = calculate_bleu(
 )
 ```
 
-### ROUGE Score
+### ROUGE 分数
 ```python
 from rouge_score import rouge_scorer
 
@@ -168,7 +168,7 @@ def calculate_bertscore(references, hypotheses):
     }
 ```
 
-### Custom Metrics
+### 自定义指标
 ```python
 def calculate_groundedness(response, context):
     """Check if response is grounded in provided context."""
@@ -196,9 +196,9 @@ def calculate_factuality(claim, knowledge_base):
     pass
 ```
 
-## LLM-as-Judge Patterns
+## LLM 评委模式
 
-### Single Output Evaluation
+### 单输出评估
 ```python
 def llm_judge_quality(response, question):
     """Use GPT-5 to judge response quality."""
@@ -228,7 +228,7 @@ Provide ratings in JSON format:
     return json.loads(result.choices[0].message.content)
 ```
 
-### Pairwise Comparison
+### 成对比较
 ```python
 def compare_responses(question, response_a, response_b):
     """Compare two responses using LLM judge."""
@@ -259,7 +259,7 @@ Answer with JSON:
     return json.loads(result.choices[0].message.content)
 ```
 
-## Human Evaluation Frameworks
+## 人工评估框架
 
 ### Annotation Guidelines
 ```python
@@ -323,7 +323,7 @@ def calculate_agreement(rater1_scores, rater2_scores):
     }
 ```
 
-## A/B Testing
+## A/B 测试
 
 ### Statistical Testing Framework
 ```python
@@ -380,7 +380,7 @@ class ABTest:
             return "large"
 ```
 
-## Regression Testing
+## 回归测试
 
 ### Regression Detection
 ```python
@@ -418,7 +418,7 @@ class RegressionDetector:
         }
 ```
 
-## Benchmarking
+## 基准测试
 
 ### Running Benchmarks
 ```python
@@ -455,7 +455,7 @@ class BenchmarkRunner:
         }
 ```
 
-## Resources
+## 资源
 
 - **references/metrics.md**: Comprehensive metric guide
 - **references/human-evaluation.md**: Annotation best practices
@@ -466,18 +466,18 @@ class BenchmarkRunner:
 - **assets/benchmark-dataset.jsonl**: Example datasets
 - **scripts/evaluate-model.py**: Automated evaluation runner
 
-## Best Practices
+## 最佳实践
 
 1. **Multiple Metrics**: Use diverse metrics for comprehensive view
 2. **Representative Data**: Test on real-world, diverse examples
-3. **Baselines**: Always compare against baseline performance
+3. **Baselines**: 始终 compare against baseline performance
 4. **Statistical Rigor**: Use proper statistical tests for comparisons
 5. **Continuous Evaluation**: Integrate into CI/CD pipeline
 6. **Human Validation**: Combine automated metrics with human judgment
 7. **Error Analysis**: Investigate failures to understand weaknesses
 8. **Version Control**: Track evaluation results over time
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Single Metric Obsession**: Optimizing for one metric at the expense of others
 - **Small Sample Size**: Drawing conclusions from too few examples
@@ -485,7 +485,7 @@ class BenchmarkRunner:
 - **Ignoring Variance**: Not accounting for statistical uncertainty
 - **Metric Mismatch**: Using metrics not aligned with business goals
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

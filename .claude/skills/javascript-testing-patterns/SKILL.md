@@ -5,39 +5,23 @@ risk: safe
 source: community
 date_added: "2026-02-27"
 ---
-
-# JavaScript Testing Patterns
-
-Comprehensive guide for implementing robust testing strategies in JavaScript/TypeScript applications using modern testing frameworks and best practices.
-
-## Use this skill when
-
-- Setting up test infrastructure for new projects
-- Writing unit tests for functions and classes
-- Creating integration tests for APIs and services
-- Implementing end-to-end tests for user flows
-- Mocking external dependencies and APIs
-- Testing React, Vue, or other frontend components
-- Implementing test-driven development (TDD)
-- Setting up continuous testing in CI/CD pipelines
-
-## Do not use this skill when
-
-- The task is unrelated to javascript testing patterns
-- You need a different domain or tool outside this scope
-
-## Instructions
-
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
-
-## Resources
-
-- `resources/implementation-playbook.md` for detailed patterns and examples.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+# JavaScript 测试模式
+在 JavaScript/TypeScript 应用中使用现代测试框架和最佳实践实施健壮测试策略的全面指南。
+## 使用此技能的情况
+- 为新项目设置测试基础设施
+- 为函数和类编写单元测试
+- 为 API 和服务创建集成测试
+- 实现用户流程的端到端测试
+- 模拟外部依赖和 API
+- 测试 React、Vue 或其他前端组件
+- 实施测试驱动开发（TDD）
+- 在 CI/CD 流水线中设置持续测试
+## 不使用此技能的情况
+- 任务与 JavaScript 测试模式无关
+## 操作指南
+- 明确目标、约束和输入
+- 应用最佳实践并验证结果
+- 提供可操作的步骤和验证
+## 资源
+- resources/implementation-playbook.md
+## 限制

@@ -1,6 +1,6 @@
 ---
 name: ads
-description: "当用户wants help with paid advertising campaigns on Google Ads, Meta (Facebook/Instagram), LinkedIn, Twitter/X, or other ad platforms. Also use when the user mentions 'PPC,' 'paid media,' 'ROAS,' 'CPA,' 'ad campaign,' 'retargeting,' 'audience targeting,' 'Google Ads,' 'Facebook ads,' 'LinkedIn ads,' 'ad budget,' 'cost per click,' 'ad spend,' or 'should I run ads.' Use this for campaign strategy, audience targeting, bidding, and optimization. For bulk ad creative generation and iteration, see ad-creative. For landing page optimization, see cro.时使用此技能。"
+description: "当用户需要在 Google Ads、Meta (Facebook/Instagram)、LinkedIn、Twitter/X 或其他广告平台上获得付费广告活动帮助时使用此技能。涵盖广告策略、受众定位、竞价和优化。"
 metadata:
   version: 2.0.1
 ---

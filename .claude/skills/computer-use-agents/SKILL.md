@@ -8,16 +8,13 @@ source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
 ---
 
-# Computer Use Agents
+# 计算机使用代理
 
-Build AI agents that interact with computers like humans do - viewing screens,
-moving cursors, clicking buttons, and typing text. Covers Anthropic's Computer
-Use, OpenAI's Operator/CUA, and open-source alternatives. Critical focus on
-sandboxing, security, and handling the unique challenges of vision-based control.
+构建像人类一样与计算机交互的 AI 代理——查看屏幕、移动光标、点击按钮和输入文本。涵盖 Anthropic 的 Computer Use、OpenAI 的 Operator/CUA 和开源替代方案。重点关注沙箱、安全性和处理基于视觉的控制的独特挑战。
 
-## Patterns
+## 模式
 
-### Perception-Reasoning-Action Loop
+### 感知-推理-行动循环
 
 The fundamental architecture of computer use agents: observe screen,
 reason about next action, execute action, repeat. This loop integrates
@@ -2160,7 +2157,7 @@ Message: Consider adding max_cost_per_task to prevent expensive runaway tasks.
 - User mentions or implies: visual agent
 - User mentions or implies: RPA with AI
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -2,41 +2,41 @@
 name: 作品集项目
 description: "设计展示真实技能的数据科学作品集项目：问题框架、数据收集、分析、建模和沟通。适用于为求职申请建立作品集。"
 ---
-# Portfolio Project
+# 作品集项目
 
-## Purpose
-Design impressive portfolio projects that showcase the full data science skillset.
+## 用途
+设计令人印象深刻的数据科学作品集项目，展示完整的技能集。
 
-## How It Works
+## 工作原理
 
-### Project Types That Impress
-1. **End-to-end ML**: Problem → EDA → feature engineering → modeling → deployment
-2. **Business analysis**: Real question → data → insight → recommendation
-3. **Data engineering**: Pipeline → warehouse → dashboard
-4. **Research reproduction**: Replicate a paper with your own analysis
+### 令人印象深刻的项目类型
+1. **端到端 ML**：问题 → EDA → 特征工程 → 建模 → 部署
+2. **业务分析**：真实问题 → 数据 → 洞察 → 建议
+3. **数据工程**：管道 → 仓库 → 仪表板
+4. **研究复现**：用自己的分析复现论文
 
-### Structure
-- Clear problem statement (why does this matter?)
-- Data collection and cleaning (show you can wrangle messy data)
-- EDA with insights (not just plots — interpretations)
-- Modeling with evaluation (not just accuracy — business metrics)
-- Communication (README, notebook narrative, blog post)
+### 结构
+- 清晰的问题陈述（为什么这很重要？）
+- 数据收集和清洗（展示你能处理杂乱数据）
+- 带有洞察的 EDA（不仅仅是图表——还有解读）
+- 带评估的建模（不仅仅是准确率——还有业务指标）
+- 沟通（README、notebook 叙述、博客文章）
 
-### What Hiring Managers Look For
-- Code quality (modular, documented, reproducible)
-- Statistical rigor (proper train/test split, significance testing)
-- Business framing (so what? → actions)
-- Creativity (unique datasets, novel angles)
+### 招聘经理看重的
+- 代码质量（模块化、有文档、可复现）
+- 统计严谨性（正确的训练/测试拆分、显著性检验）
+- 业务框架（所以呢？→ 行动）
+- 创造力（独特的数据集、新颖的角度）
 
-## Usage Examples
+## 使用示例
 
 ```
-"Design a portfolio project for a senior DS role at a fintech company"
+"为金融科技公司的高级数据科学职位设计一个作品集项目"
 ```
 
-## Output Format
+## 输出格式
 
-- **Project Plan**: Problem, data sources, methodology, deliverables
-- **Timeline**: Realistic completion estimate
-- **Tech Stack**: Tools and frameworks to use
-- **Differentiation**: What makes this project stand out
+- **项目计划**：问题、数据来源、方法论、交付物
+- **时间线**：现实的完成估计
+- **技术栈**：要使用的工具和框架
+- **差异化**：什么使这个项目脱颖而出

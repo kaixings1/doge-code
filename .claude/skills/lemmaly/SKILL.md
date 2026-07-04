@@ -13,24 +13,23 @@ license: "Apache-2.0"
 license_source: "https://github.com/morsechimwai/lemmaly/blob/main/LICENSE"
 ---
 
-# lemmaly — Algorithm-First Proof
+# lemmaly — 算法优先原则
 
-The model already knows Big-O, hash tables, divide-and-conquer, dynamic programming, sorting, graph algorithms, and amortized analysis. It just does not apply them spontaneously. lemmaly fixes the behavior, not the knowledge.
+模型已经知道 Big-O、哈希表、分治、动态规划、排序、图算法和摊还分析，只是不会自发地应用它们。lemmaly 修复的是行为，而不是知识。
 
-This skill is the gateway for an algorithm-discipline suite of four skills (`lemmaly`, `mathguard`, `invariant-guard`, `complexity-cuts`). It enforces the hard rules that every other guard in the suite assumes.
+此技能是算法规范四件套的入口 (`lemmaly`, `mathguard`, `invariant-guard`, `complexity-cuts`). 它强制执行套件中其他守卫所依赖的硬性规则。
 
-**Violating the letter of these rules is violating the spirit of the skill.** "Just this once" is how O(n²) ships to production.
+**违反这些规则的文字就是违反技能的精神。** "就这一次" 正是 O(n²) 流入生产的方式。
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use **lemmaly** when:
+在以下情况使用 **lemmaly**：
 
-- Writing, editing, or reviewing code that involves loops, collections, lookups, searches, joins, recursion, graphs, queries, or any computation over more than a handful of items.
-- About to write a `for` inside a `for`, `.find` / `.includes` / `.indexOf` inside a loop, `await` inside `for` / `map` / `forEach` over independent items, or one query per item in a collection.
-- Auditing a codebase / PR for known anti-patterns (await-in-loop, `.includes` inside `.filter`, string-concat in loop, `SELECT *`, N+1, etc.).
-- Reviewing AI-generated code that "looks idiomatic" but might hide O(n²) or N+1.
+- 编写、编辑或审查涉及循环、集合、查找、搜索、连接、递归、图、查询或对超过少数项进行任何计算的代码时
+- 即将编写 `for` 嵌套 `for`、循环内的 `.find` / `.includes` / `.indexOf`、独立项上的 `for` / `map` / `forEach` 中的 `await`，或集合中每项一个查询时
+- 审计代码库/PR 以发现已知反模式（循环中的 await-in-loop、`.filter` 内的 `.includes`、循环中的字符串拼接、`SELECT *`、N+1 等）时
+- 审查 AI 生成的"看起来惯用"但可能隐藏 O(n²) 或 N+1 的代码时
 
-When in doubt, **start at lemmaly** — it is the gateway and will tell you when to escalate to its three sibling skills.
+如有疑问，**从 lemmaly 开始**——它是入口网关，会告诉您何时应升级到其三个兄弟技能。
 
 | If you are about to… | Use | Why |
-| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 38 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

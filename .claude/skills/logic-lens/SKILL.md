@@ -16,9 +16,9 @@ tools: [claude, codex, cursor, gemini]
 
 # Logic Lens
 
-## Overview
+## 概述
 
-Logic Lens is a Claude Code skill that performs deep, logic-driven code review using formal reasoning frameworks. Unlike traditional linters that check syntax and style, Logic Lens analyzes your code for logical errors, race conditions, security vulnerabilities, type mismatches, and algorithmic flaws that only appear when you reason through the code's behavior.
+Logic Lens 是一个 Claude Code 技能，使用形式化推理框架执行深度、逻辑驱动的代码审查。不同于 traditional linters that check syntax and style, Logic Lens analyzes your code for logical errors, race conditions, security vulnerabilities, type mismatches, and algorithmic flaws that only appear when you reason through the code's behavior.
 
 Powered by structured AI analysis, Logic Lens applies systematic logical inspection across 9 risk categories: null/undefined handling, type safety, concurrency, resource management, security injection, boundary conditions, algorithm correctness, state management, and API contract violations.
 
@@ -53,7 +53,7 @@ npx antigravity-awesome-skills --claude
 
 ## Examples
 
-### Example 1: Review a Single File
+### 示例 1: Review a Single File
 
 ```
 @logic-lens review src/auth/login.ts for security issues
@@ -67,7 +67,7 @@ npx antigravity-awesome-skills --claude
 [LOW] Error messages may leak valid usernames (user enumeration)
 ```
 
-### Example 2: Full Repository Scan
+### 示例 2: Full Repository Scan
 
 ```
 @logic-lens scan the entire codebase and prioritize by severity
@@ -82,4 +82,3 @@ npx antigravity-awesome-skills --claude
 ## The 9 Risk Categories
 
 | Category | What It Checks |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 58 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

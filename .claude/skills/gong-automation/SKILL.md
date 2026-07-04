@@ -15,7 +15,7 @@ Unlock insights from your sales calls -- retrieve transcripts, analyze call data
 
 ---
 
-## Setup
+## 设置
 
 1. Add the Composio MCP server to your client configuration:
    ```
@@ -39,11 +39,11 @@ Get transcripts for all calls within a specified time period, with optional filt
 **Key parameters:**
 - `filter__fromDateTime` -- ISO-8601 start date (e.g., `2025-02-01T00:00:00Z`)
 - `filter__toDateTime` -- ISO-8601 end date (e.g., `2025-02-10T23:59:59Z`)
-- `filter__callIds` -- Optional array of specific call IDs to filter
-- `filter__workspaceId` -- Optional workspace ID filter
+- `filter__callIds` -- 可选 array of specific call IDs to filter
+- `filter__workspaceId` -- 可选 workspace ID filter
 - `cursor` -- Pagination cursor from previous response
 
-**Required scope:** `api:calls:read:transcript`
+**必需 scope:** `api:calls:read:transcript`
 
 ---
 
@@ -59,7 +59,7 @@ Retrieve transcripts with speaker information, timestamps, and topic categorizat
 - `filter.callIds` -- Array of specific call IDs (e.g., `["555785916001072125"]`)
 - `filter.fromDateTime` -- ISO-8601 start date
 - `filter.toDateTime` -- ISO-8601 end date
-- `filter.workspaceId` -- Optional workspace filter
+- `filter.workspaceId` -- 可选 workspace filter
 - `cursor` -- Pagination cursor
 
 ---
@@ -75,10 +75,10 @@ Retrieve basic call metadata (participants, duration, timing) for calls within a
 **Key parameters (both required):**
 - `fromDateTime` -- ISO-8601 start date (e.g., `2025-02-03T00:00:00Z`)
 - `toDateTime` -- ISO-8601 end date (e.g., `2025-02-10T00:00:00Z`)
-- `workspaceId` -- Optional workspace filter
+- `workspaceId` -- 可选 workspace filter
 - `cursor` -- Pagination cursor
 
-**Required scope:** `api:calls:read:basic`
+**必需 scope:** `api:calls:read:basic`
 
 ---
 
@@ -111,7 +111,7 @@ Retrieve extensive call details including highlights, key points, topics, tracke
   - `contentSelector__exposedFields__collaboration__publicComments` -- Public comments
 - `contentSelector__context` -- "Basic", "Extended", or "None" for CRM/external system links
 
-**Required scope:** `api:calls:read:extensive` (plus `api:calls:read:media-url` for media)
+**必需 scope:** `api:calls:read:extensive` (plus `api:calls:read:media-url` for media)
 
 ---
 
@@ -126,7 +126,7 @@ Retrieve basic data for a single call using its unique Gong ID.
 **Key parameters (required):**
 - `id` -- Gong's unique numeric identifier for the call (up to 20 digits)
 
-**Required scope:** `api:calls:read:basic`
+**必需 scope:** `api:calls:read:basic`
 
 ---
 
@@ -140,25 +140,25 @@ Retrieve all workspaces in your Gong organization to get workspace IDs for filte
 
 **Key parameters:** None required.
 
-**Required scope:** `api:workspaces:read`
+**必需 scope:** `api:workspaces:read`
 
 ---
 
-## Known Pitfalls
+## 已知陷阱
 
 - **ISO-8601 date format is mandatory**: All date parameters must use ISO-8601 format with timezone: `2025-02-01T00:00:00Z` or `2025-02-01T02:30:00-07:00`. Plain dates will fail.
 - **Date range is exclusive on toDateTime**: The `toDateTime` parameter returns calls started UP TO BUT EXCLUDING the specified time. To include calls on a specific day, set `toDateTime` to the next day.
 - **Pagination is required for large result sets**: All list endpoints return paginated results. Use the `cursor` value from the previous response to fetch the next page. Continue until no cursor is returned.
-- **Scope requirements vary by endpoint**: Different endpoints require different API scopes. Transcript access needs `api:calls:read:transcript`, basic call data needs `api:calls:read:basic`, and detailed analytics need `api:calls:read:extensive`.
+- **范围 requirements vary by endpoint**: Different endpoints require different API scopes. Transcript access needs `api:calls:read:transcript`, basic call data needs `api:calls:read:basic`, and detailed analytics need `api:calls:read:extensive`.
 - **Media URLs expire after 8 hours**: Audio and video URLs returned by the detailed call endpoint are temporary and expire after 8 hours.
 - **Tracker occurrence data availability**: Tracker occurrence data (timing and speaker ID) is only available for calls recorded since January 1, 2023. Contact Gong support for backfill.
 - **Web-conference vs. regular calls**: For web-conference calls recorded by Gong, the date represents the scheduled time. For other calls, it represents the actual start time.
 
 ---
 
-## Quick Reference
+## 快速参考
 
-| Action | Tool Slug | Required Params |
+| Action | Tool Slug | 必需 Params |
 |---|---|---|
 | Get transcripts by date | `GONG_RETRIEVE_TRANSCRIPTS_OF_CALLS_V2_CALLS_TRANSCRIPT` | None (date range recommended) |
 | Get call transcript | `GONG_GET_CALL_TRANSCRIPT` | `filter` object |

@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 You are a senior Cloudflare Workers Engineer specializing in edge computing architectures, performance optimization at the edge, and the full Cloudflare developer ecosystem (Wrangler, KV, D1, Queues, etc.).
 
-## Use this skill when
+## 使用此技能的场景
 
 - Designing and deploying serverless functions to Cloudflare's Edge
 - Implementing edge-side data storage using KV, D1, or Durable Objects
@@ -16,7 +16,7 @@ You are a senior Cloudflare Workers Engineer specializing in edge computing arch
 - Building full-stack apps with Cloudflare Pages and Workers
 - Handling request/response modification, security headers, and edge-side caching
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is for traditional Node.js/Express apps run on servers
 - Targeting AWS Lambda or Google Cloud Functions (use their respective skills)
@@ -88,7 +88,7 @@ export default {
 **Problem:** Request exceeded CPU time limit.
 **Solution:** Optimize loops, reduce the number of await calls, and move synchronous heavy lifting out of the request/response path. Use `ctx.waitUntil()` for tasks that don't block the response.
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

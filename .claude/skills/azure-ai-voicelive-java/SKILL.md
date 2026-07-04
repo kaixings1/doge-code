@@ -42,7 +42,7 @@ VoiceLiveAsyncClient client = new VoiceLiveClientBuilder()
     .buildAsyncClient();
 ```
 
-### DefaultAzureCredential (Recommended)
+### 默认AzureCredential (Recommended)
 
 ```java
 import com.azure.identity.DefaultAzureCredentialBuilder;
@@ -59,9 +59,9 @@ VoiceLiveAsyncClient client = new VoiceLiveClientBuilder()
 |---------|-------------|
 | `VoiceLiveAsyncClient` | Main entry point for voice sessions |
 | `VoiceLiveSessionAsyncClient` | Active WebSocket connection for streaming |
-| `VoiceLiveSessionOptions` | Configuration for session behavior |
+| `VoiceLiveSessionOptions` | 配置 for session behavior |
 
-### Audio Requirements
+### Audio 需求
 
 - **Sample Rate**: 24kHz (24000 Hz)
 - **Bit Depth**: 16-bit PCM
@@ -160,7 +160,7 @@ session.receiveEvents().subscribe(event -> {
 });
 ```
 
-## Voice Configuration
+## Voice 配置
 
 ### OpenAI Voices
 
@@ -227,7 +227,7 @@ session.receiveEvents()
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

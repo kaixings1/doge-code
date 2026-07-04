@@ -77,7 +77,4 @@ session_id: "your_session_id"
 - **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
 - **分页**：检查响应中的分页 token 并继续获取直到完成
 
-## Quick Reference
-
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+## /u5feb/u901f/u53c2/u8003/n/n| /u64cd/u4f5c | /u65b9/u6cd5 |/n|---|---|/n| /u641c/u7d22/u5de5/u5177 | /u4f7f/u7528 RUBE_SEARCH_TOOLS /u67e5/u8be2/n| /u68c0/u67e5/u8fde/u63a5 | /u4f7f/u7528 RUBE_MANAGE_CONNECTIONS |/n| /u6267/u884c/u5de5/u5177 | /u4f7f/u7528 RUBE_MULTI_EXECUTE_TOOL |/n| /u5904/u7406/u5206/u9875 | /u68c0/u67e5/u54cd/u5e94/u4e2d/u7684/u5206/u9875 token |/n| /u4f1a/u8bdd/u7ba1/u7406 | /u590d/u7528/u73b0/u6709/u4f1a/u8bdd ID |/n/n*/u7531 [Composio](https://composio.dev) /u63d0/u4f9b/u652f/u6301*/n

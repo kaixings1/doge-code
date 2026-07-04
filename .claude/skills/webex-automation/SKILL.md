@@ -6,10 +6,8 @@ requires:
     - rube
 ---
 
-# Webex Automation
+# Webex 自动化
 
-Automate Cisco Webex collaboration workflows -- send messages, manage rooms and teams, configure webhooks, and look up people -- all through natural language.
+通过自然语言自动执行 Cisco Webex 协作工作流——发送消息、管理房间和团队、配置 webhook、查找人员。
 
-**Toolkit docs:** [composio.dev/toolkits/webex](https://composio.dev/toolkits/webex)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 42 MINUTES 05 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+**工具包文档：** [composio.dev/toolkits/webex](https://composio.dev/toolkits/webex)

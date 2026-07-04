@@ -18,15 +18,15 @@ Derived from 1960s corporate identity systems and heavy machinery blueprints.
 
 ### 2.2 Tactical Telemetry & CRT Terminal
 Derived from classified military databases, legacy mainframes, and aerospace Heads-Up Displays (HUDs).
-*   **Characteristics:** Dark mode exclusivity. High-density tabular data presentation. Absolute dominance of monospaced typography. Integration of technical framing devices (ASCII brackets, crosshairs). Application of simulated hardware limitations (phosphor glow, scanlines, low bit-depth rendering).
+*   **Characteristics:** Dark mode exclusivity. High-density tabular data presentation. Absolute dominance of monospaced typography. 集成 of technical framing devices (ASCII brackets, crosshairs). Application of simulated hardware limitations (phosphor glow, scanlines, low bit-depth rendering).
 
-## 3. Typographic Architecture
+## 3. Typographic 架构
 Typography is the primary structural and decorative infrastructure. Imagery is secondary. The system demands extreme variance in scale, weight, and spacing.
 
 ### 3.1 Macro-Typography (Structural Headers)
 *   **Classification:** Neo-Grotesque / Heavy Sans-Serif.
 *   **Optimal Web Fonts:** Neue Haas Grotesk (Black), Inter (Extra Bold/Black), Archivo Black, Roboto Flex (Heavy), Monument Extended.
-*   **Implementation Parameters:**
+*   **Implementation 参数:**
     *   **Scale:** Deployed at massive scales using fluid typography (e.g., `clamp(4rem, 10vw, 15rem)`).
     *   **Tracking (Letter-spacing):** Extremely tight, often negative (`-0.03em` to `-0.06em`), forcing glyphs to form solid architectural blocks.
     *   **Leading (Line-height):** Highly compressed (`0.85` to `0.95`).
@@ -35,7 +35,7 @@ Typography is the primary structural and decorative infrastructure. Imagery is s
 ### 3.2 Micro-Typography (Data & Telemetry)
 *   **Classification:** Monospace / Technical Sans.
 *   **Optimal Web Fonts:** JetBrains Mono, IBM Plex Mono, Space Mono, VT323, Courier Prime.
-*   **Implementation Parameters:**
+*   **Implementation 参数:**
     *   **Scale:** Fixed and small (`10px` to `14px` / `0.7rem` to `0.875rem`).
     *   **Tracking:** Generous (`0.05em` to `0.1em`) to simulate mechanical typewriter spacing or terminal matrices.
     *   **Leading:** Standard to tight (`1.2` to `1.4`).
@@ -44,12 +44,12 @@ Typography is the primary structural and decorative infrastructure. Imagery is s
 ### 3.3 Textural Contrast (Artistic Disruption)
 *   **Classification:** High-Contrast Serif.
 *   **Optimal Web Fonts:** Playfair Display, EB Garamond, Times New Roman.
-*   **Implementation Parameters:** Used exceedingly sparingly. Must be subjected to heavy post-processing (halftone filters, 1-bit dithering) to degrade vector perfection and create textural juxtaposition against the clean sans-serifs.
+*   **Implementation 参数:** Used exceedingly sparingly. Must be subjected to heavy post-processing (halftone filters, 1-bit dithering) to degrade vector perfection and create textural juxtaposition against the clean sans-serifs.
 
 ## 4. Color System
 The color architecture is uncompromising. Gradients, soft drop shadows, and modern translucency are strictly prohibited. Colors simulate physical media or primitive emissive displays.
 
-**CRITICAL: Choose ONE substrate palette per project and use it consistently. Never mix light and dark substrates within the same interface.**
+**CRITICAL: Choose ONE substrate palette per project and use it consistently. 绝不 mix light and dark substrates within the same interface.**
 
 ### If Swiss Industrial Print (Light):
 *   **Background:** `#F4F4F0` or `#EAE8E3` (Matte, unbleached documentation paper).
@@ -60,7 +60,7 @@ The color architecture is uncompromising. Gradients, soft drop shadows, and mode
 *   **Background:** `#0A0A0A` or `#121212` (Deactivated CRT. Avoid pure `#000000`).
 *   **Foreground:** `#EAEAEA` (White phosphor). This is the primary text color.
 *   **Accent:** `#E61919` or `#FF2A2A` (Aviation/Hazard Red). Same red, same rules.
-*   **Terminal Green (`#4AF626`):** Optional. Use ONLY for a single specific UI element (e.g., one status indicator or one data readout) — never as a general text color. If it doesn't serve a clear purpose, omit it entirely.
+*   **Terminal Green (`#4AF626`):** 可选. Use ONLY for a single specific UI element (e.g., one status indicator or one data readout) — never as a general text color. If it doesn't serve a clear purpose, omit it entirely.
 
 ## 5. Layout and Spatial Engineering
 The layout must appear mathematically engineered. It rejects conventional web padding in favor of visible compartmentalization.
@@ -73,11 +73,11 @@ The layout must appear mathematically engineered. It rejects conventional web pa
 ## 6. UI Components and Symbology
 Standard web UI conventions are replaced with utilitarian, industrial graphic elements.
 
-*   **Syntax Decoration:** Utilization of ASCII characters to frame data points.
+*   **语法 Decoration:** Utilization of ASCII characters to frame data points.
     *   *Framing:* `[ DELIVERY SYSTEMS ]`, `< RE-IND >`
     *   *Directional:* `>>>`, `///`, `\\\\`
 *   **Industrial Markers:** Prominent integration of registration (`®`), copyright (`©`), and trademark (`™`) symbols functioning as structural geometric elements rather than legal text.
-*   **Technical Assets:** Integration of crosshairs (`+`) at grid intersections, repeating vertical lines (barcodes), thick horizontal warning stripes, and randomized string data (e.g., `REV 2.6`, `UNIT / D-01`) to simulate active mechanical processes.
+*   **Technical Assets:** 集成 of crosshairs (`+`) at grid intersections, repeating vertical lines (barcodes), thick horizontal warning stripes, and randomized string data (e.g., `REV 2.6`, `UNIT / D-01`) to simulate active mechanical processes.
 
 ## 7. Textural and Post-Processing Effects
 To prevent the design from appearing purely digital, simulated analog degradation is engineered into the frontend via CSS and SVG filters.

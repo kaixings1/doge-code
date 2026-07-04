@@ -6,10 +6,8 @@ requires:
     - rube
 ---
 
-# PandaDoc Automation
+# PandaDoc 自动化
 
-Manage **PandaDoc** document workflows directly from Claude Code. Create documents from uploaded files, manage recipients and contacts, organize with folders, set up event webhooks, create templates, and track document status without leaving your terminal.
+通过 Claude Code 直接管理 **PandaDoc** 文档工作流。从上传的文件创建文档、管理收件人和联系人、使用文件夹组织、设置事件 webhook、创建模板以及跟踪文档状态，无需离开终端。
 
-**Toolkit docs:** [composio.dev/toolkits/pandadoc](https://composio.dev/toolkits/pandadoc)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 31 MINUTES 20 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+**工具集文档:** [composio.dev/toolkits/pandadoc](https://composio.dev/toolkits/pandadoc)

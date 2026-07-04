@@ -6,18 +6,18 @@ source: "ClawForge (https://github.com/jackjin1997/ClawForge)"
 date_added: "2026-02-27"
 ---
 
-# Clean Code Skill
+# 整洁代码技能
 
-This skill embodies the principles of "Clean Code" by Robert C. Martin (Uncle Bob). Use it to transform "code that works" into "code that is clean."
+此技能体现了 Robert C. Martin（Uncle Bob）的"整洁代码"原则。用于将"能用的代码"转变为"干净的代码"。
 
-## 🧠 Core Philosophy
-> "Code is clean if it can be read, and enhanced by a developer other than its original author." — Grady Booch
+## 🧠 核心理念
+> "如果代码能被非原始作者的开发者读取和增强，那它就是干净的。" — Grady Booch
 
-## When to Use
-Use this skill when:
-- **Writing new code**: To ensure high quality from the start.
-- **Reviewing Pull Requests**: To provide constructive, principle-based feedback.
-- **Refactoring legacy code**: To identify and remove code smells.
+## 何时使用
+在以下情况下使用此技能：
+- **编写新代码**：确保从一开始就高质量。
+- **审查 Pull Request**：提供建设性的、基于原则的反馈。
+- **重构遗留代码**：识别和消除代码异味。
 - **Improving team standards**: To align on industry-standard best practices.
 
 ## 1. Meaningful Names
@@ -93,7 +93,7 @@ Use this skill when:
 - [ ] Am I passing too many arguments?
 - [ ] Is there a failing test for this change?
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

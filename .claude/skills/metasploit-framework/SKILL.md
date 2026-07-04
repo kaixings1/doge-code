@@ -1,6 +1,6 @@
 ---
 name: metasploit-framework
-description: "Metasploit Framework — Metasploit Framework 相关功能和最佳实践"
+description: "Metasploit Framework— 渗透测试框架的相关功能和最佳实践。"
 risk: offensive
 source: community
 author: zebbern
@@ -18,7 +18,7 @@ date_added: "2026-02-27"
 
 Leverage the Metasploit Framework for comprehensive penetration testing, from initial exploitation through post-exploitation activities. Metasploit provides a unified platform for vulnerability exploitation, payload generation, auxiliary scanning, and maintaining access to compromised systems during authorized security assessments.
 
-## Prerequisites
+## 前提条件
 
 ### Required Tools
 ```bash
@@ -398,7 +398,7 @@ msf6 > jobs -l
 msf6 > sessions -i 1
 ```
 
-## Quick Reference
+## 快速参考
 
 ### Essential MSFConsole Commands
 

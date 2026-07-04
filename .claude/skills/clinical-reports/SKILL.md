@@ -2,14 +2,14 @@
 name: clinical-reports
 description: "Clinical Reports — Clinical Reports 相关功能和最佳实践"
 allowed-tools: Read Write Edit Bash
-license: MIT License
+license: MIT 许可证
 required_environment_variables: [{"name": "OPENROUTER_API_KEY", "prompt": "OpenRouter API key for the skill's LLM-powered steps.", "required_for": "optional features"}]
 metadata: {"version": "1.1", "skill-author": "K-Dense Inc.", "openclaw": {"primaryEnv": "OPENROUTER_API_KEY", "envVars": [{"name": "OPENROUTER_API_KEY", "required": false, "description": "OpenRouter API key for the skill's LLM-powered steps."}]}}
 ---
 
 # Clinical Report Writing
 
-## Overview
+## 概述
 
 Clinical report writing is the process of documenting medical information with precision, accuracy, and compliance with regulatory standards. This skill covers four major categories of clinical reports: case reports for journal publication, diagnostic reports for clinical practice, clinical trial reports for regulatory submission, and patient documentation for medical records. Apply this skill for healthcare documentation, research dissemination, and regulatory compliance.
 
@@ -87,14 +87,14 @@ The CARE (CAse REport) guidelines provide a standardized framework for case repo
 - Use MeSH (Medical Subject Headings) terms when possible
 
 **Abstract** (structured or unstructured, 150-250 words)
-- Introduction: What is unique or novel about the case?
+- 简介: What is unique or novel about the case?
 - Patient concerns: Primary symptoms and key medical history
 - Diagnoses: Primary and secondary diagnoses
 - Interventions: Key treatments and procedures
 - Outcomes: Clinical outcome and follow-up
-- Conclusions: Main takeaway or clinical lesson
+- 结论s: Main takeaway or clinical lesson
 
-**Introduction**
+**简介**
 - Brief background on the medical condition
 - Why this case is novel or important
 - Literature review of similar cases (brief)
@@ -148,7 +148,7 @@ The CARE (CAse REport) guidelines provide a standardized framework for case repo
 **Discussion**
 - Strengths and novelty of the case
 - How this case compares to existing literature
-- Limitations of the case report
+- 限制 of the case report
 - Potential mechanisms or explanations
 - Clinical implications and lessons learned
 - Unanswered questions or areas for future research
@@ -167,7 +167,7 @@ The CARE (CAse REport) guidelines provide a standardized framework for case repo
 
 For detailed CARE guidelines, refer to `references/case_report_guidelines.md`.
 
-#### Journal-Specific Requirements
+#### Journal-Specific 需求
 
 Different journals have specific formatting requirements:
 - Word count limits (typically 1500-3000 words)
@@ -187,7 +187,7 @@ Check journal instructions for authors before submission.
 4. Telephone numbers
 5. Fax numbers
 6. Email addresses
-7. Social Security numbers
+7. Social 安全性 numbers
 8. Medical record numbers
 9. Health plan beneficiary numbers
 10. Account numbers
@@ -255,7 +255,7 @@ Radiology reports follow a standardized structure to ensure clarity and complete
   - Mediastinum: No lymphadenopathy. Heart size normal.
   - Abdomen: Liver, spleen, pancreas unremarkable. No free fluid.
 
-**6. Impression/Conclusion**
+**6. Impression/结论**
 - Concise summary of key findings
 - Answers to the clinical question
 - Differential diagnosis if applicable
@@ -417,10 +417,10 @@ SAE reports document unexpected serious adverse reactions during clinical trials
 An adverse event is serious if it:
 - Results in death
 - Is life-threatening
-- Requires inpatient hospitalization or prolongation of existing hospitalization
+- 需要 inpatient hospitalization or prolongation of existing hospitalization
 - Results in persistent or significant disability/incapacity
 - Is a congenital anomaly/birth defect
-- Requires intervention to prevent permanent impairment or damage
+- 需要 intervention to prevent permanent impairment or damage
 
 **SAE Report Components:**
 
@@ -518,7 +518,7 @@ The ICH E3 guideline defines the structure and content of clinical study reports
 - Study organization
 - Monitoring and quality assurance
 
-**7. Introduction** (Section 4)
+**7. 简介** (Section 4)
 - Background and rationale
 - Study objectives and purpose
 
@@ -549,7 +549,7 @@ The ICH E3 guideline defines the structure and content of clinical study reports
 - Vital signs and physical findings
 - Deaths and other serious events
 
-**12. Discussion and Overall Conclusions** (Section 9)
+**12. Discussion and Overall 结论s** (Section 9)
 - Interpretation of results
 - Benefit-risk assessment
 - Clinical implications
@@ -571,7 +571,7 @@ The ICH E3 guideline defines the structure and content of clinical study reports
 - Comprehensive data presentation
 - Adherence to statistical analysis plan
 - Clear presentation of safety data
-- Integration of appendices
+- 集成 of appendices
 
 For ICH-E3 templates and detailed guidance, see `references/clinical_trial_reporting.md` and `assets/clinical_trial_csr_template.md`.
 
@@ -584,7 +584,7 @@ Protocol deviations are departures from the approved study protocol. They must b
 - **Major deviation**: May impact patient safety, data integrity, or study conduct
 - **Violation**: Serious deviation requiring immediate action and reporting
 
-**Documentation Requirements:**
+**Documentation 需求:**
 - Description of deviation
 - Date of occurrence
 - Subject ID affected
@@ -735,7 +735,7 @@ For H&P templates, see `assets/history_physical_template.md`.
 
 Discharge summaries document the hospital stay and communicate care plan to outpatient providers.
 
-**Required Elements:**
+**必需 Elements:**
 
 **1. Patient Identification**
 - Name, date of birth, medical record number
@@ -808,19 +808,19 @@ For discharge summary templates, see `assets/discharge_summary_template.md`.
 
 The Health Insurance Portability and Accountability Act (HIPAA) mandates protection of patient health information.
 
-**Key Requirements:**
+**Key 需求:**
 - Minimum necessary disclosure
 - Patient authorization for use beyond treatment/payment/operations
 - Secure storage and transmission
 - Audit trails for electronic records
 - Breach notification procedures
 
-**De-identification Methods:**
+**De-identification 方法:**
 1. **Safe Harbor Method**: Remove 18 identifiers
 2. **Expert Determination**: Statistical method confirming low re-identification risk
 
 **Business Associate Agreements:**
-Required when PHI is shared with third parties for services
+必需 when PHI is shared with third parties for services
 
 For detailed HIPAA guidance, see `references/regulatory_compliance.md`.
 
@@ -858,7 +858,7 @@ For ICH-GCP compliance, see `references/regulatory_compliance.md`.
 
 **ICD-10-CM (International Classification of Diseases, 10th Revision, Clinical Modification)**
 - Diagnosis coding for billing and epidemiology
-- Required for reimbursement
+- 必需 for reimbursement
 
 **CPT (Current Procedural Terminology)**
 - Procedure coding for billing
@@ -950,7 +950,7 @@ Validation scripts are available in the `scripts/` directory.
 
 For data presentation standards, see `references/data_presentation.md`.
 
-## Integration with Other Skills
+## 集成 with Other Skills
 
 This clinical reports skill integrates with:
 - **Scientific Writing**: For clear, professional medical writing
@@ -1116,7 +1116,7 @@ Before finalizing any clinical report, verify:
 - [ ] Appropriate medical terminology and coding
 - [ ] Clear, professional language
 - [ ] Proper formatting per guidelines
-- [ ] References cited appropriately
+- [ ] 参考资料 cited appropriately
 - [ ] Figures and tables labeled correctly
 - [ ] Spell-checked and proofread
 - [ ] Regulatory requirements met
@@ -1126,6 +1126,6 @@ Before finalizing any clinical report, verify:
 
 ---
 
-**Final Note**: Clinical report writing requires attention to detail, medical accuracy, regulatory compliance, and clear communication. Whether documenting patient care, reporting research findings, or communicating diagnostic results, the quality of clinical reports directly impacts patient safety, healthcare delivery, and medical knowledge advancement. Always prioritize accuracy, privacy, and professionalism in all clinical documentation.
+**Final Note**: Clinical report writing requires attention to detail, medical accuracy, regulatory compliance, and clear communication. Whether documenting patient care, reporting research findings, or communicating diagnostic results, the quality of clinical reports directly impacts patient safety, healthcare delivery, and medical knowledge advancement. 始终 prioritize accuracy, privacy, and professionalism in all clinical documentation.
 
 

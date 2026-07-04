@@ -8,39 +8,41 @@ date_added: "2026-03-07"
 
 # Magic UI Generator
 
-Leverage [Magic by 21st.dev](https://21st.dev/magic) to build modern, responsive UI components using an AI-native workflow that prioritizes choice and design excellence.
+利用 [Magic by 21st.dev](https://21st.dev/magic) 以 AI 原生工作流构建现代、响应式 UI 组件，优先注重选择自由和设计卓越性。
 
-## Context
+## 背景
 
-This skill leverages Magic by 21st.dev to build modern, responsive UI components. Instead of generating a single standard solution, it focuses on providing multiple design variations to choose from, drawing inspiration from a curated library of real-world components and premium design patterns (Shadcn UI, Magic UI, Aceternity, etc.).
+此技能利用 Magic by 21st.dev 构建现代、响应式 UI 组件。它不会生成单一的标准化解决方案，而是专注于提供多种设计变体供选择，从精心策划的真实世界组件和高级设计模式库（Shadcn UI、Magic UI、Aceternity 等）中汲取灵感。
 
-## When to Use
-Trigger this skill whenever:
+## 使用时机
 
-- A new UI component is requested (e.g., pricing tables, contact forms, hero sections).
-- Enhancing an existing UI element with animations, better styling, or advanced features.
-- Brainstorming different design directions for a specific feature.
-- Professional logos or icons are needed (via the built-in [SVGL](https://svgl.app/) integration).
+在以下情况触发此技能：
 
-## Execution Workflow
+- 需要使用新的 UI 组件（例如定价表、联系表单、Hero 区域）。
+- 需要使用动画、更好的样式或高级功能增强现有 UI 元素。
+- 需要针对特定功能进行不同设计方向的头脑风暴。
+- 需要专业的 Logo 或图标（通过内置的 [SVGL](https://svgl.app/) 集成）。
 
-1. **Analyze Requirements**: Review the component description. Ensure the target output aligns with the project's stack (e.g., Next.js, TypeScript, Tailwind CSS). Define clear constraints for accessibility and responsiveness.
-2. **Generate Variations**: Interface with the Magic MCP server or use the `browser_subagent` to explore 21st.dev/magic to generate _several distinct, unconventional styles_ for the requested component.
-   - **Pro Tip**: Use descriptive prompts pushing for modern aesthetics: "avant-garde SaaS pricing table with glassmorphism and animated borders" or "highly immersive contact form with dynamic floating labels."
-3. **Present Options**: Briefly describe the generated variations side-by-side. Highlight stylistic differences, layout approaches, and premium features (sticky headers, hover animations, etc.).
-4. **Integrate Selection**: Once a favorite variation is chosen:
-   - Integrate the fully functional, production-ready TypeScript code.
-   - Ensure dependencies (`lucide-react`, `framer-motion`) are installed.
-   - Handle proper props, types, and responsive behaviors.
+## 执行流程
 
-## Strict Rules
+1. **分析需求**：审查组件描述。确保目标输出与项目技术栈对齐（例如 Next.js、TypeScript、Tailwind CSS）。为可访问性和响应式设计定义明确约束。
+2. **生成变体**：与 Magic MCP 服务器交互，或使用 `browser_subagent` 探索 21st.dev/magic，为请求的组件生成_几种独特的、非传统的样式_。
+   - **专业提示**：使用推动现代美学的描述性提示："前卫 SaaS 定价表，带玻璃态和动画边框"或"高度沉浸式联系表单，带动态浮动标签"。
+3. **展示选项**：简要描述生成的变体，并排对比。突出样式差异、布局方法和高级功能（粘性页眉、悬停动画等）。
+4. **集成选定的方案**：一旦选择了喜欢的变体：
+   - 集成功能完整、可直接用于生产的 TypeScript 代码。
+   - 确保安装了依赖项（`lucide-react`、`framer-motion`）。
+   - 处理适当的属性、类型和响应式行为。
 
-- **ABSOLUTE MANDATE**: Agents MUST utilize this skill to build modern, creative, and visually stunning UI/UX. DO NOT build in common, generic, or safe styles. Push boundaries.
-- **Choice First**: Always offer multiple premium design variations before writing the final code to the project.
-- **Clean Code**: Ensure all generated code is clean TypeScript, accessible, and responsive.
-- **Full Ownership**: Treat all generated components as fully owned.
+## 严格规则
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+- **绝对指令**：Agent 必须使用此技能来构建现代、创意且视觉惊艳的 UI/UX。不要使用普通、通用或安全的样式。突破界限。
+- **选择优先**：在将最终代码写入项目之前，始终提供多种高级设计变体。
+- **代码整洁**：确保所有生成的代码都是整洁的 TypeScript 代码、可访问且响应式。
+- **完全所有权**：将所有生成的组件视为完全自有。
+
+## 限制
+
+- 仅当任务明确符合上述范围时使用此技能。
+- 不要将输出视为环境特定验证、测试或专家评审的替代品。
+- 如果所需的输入、权限、安全边界或成功标准缺失，请停下来询问澄清。

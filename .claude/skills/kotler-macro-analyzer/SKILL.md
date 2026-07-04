@@ -11,38 +11,38 @@ tags: [marketing, economics, strategy, kotler, pestel]
 tools: [claude, cursor]
 ---
 
-# Kotler Macro-Environment Analyzer
+# Kotler 宏观环境分析器
 
-## Overview
-This skill transforms the agent into a senior strategic consultant specializing in Philip Kotler’s macro-marketing environment analysis. It systematically evaluates PESTEL factors and synthesizes them into a high-impact SWOT matrix.
+## 概述
+此技能将代理转变为专注于 Philip Kotler 宏观营销环境分析的高级战略顾问。它系统性地评估 PESTEL 因素，并将其合成为高影响力的 SWOT 矩阵。
 
-## When to Use This Skill
-- Use when conducting market entry research or a periodic strategic audit.
-- Use to validate business assumptions against real-time macro-economic indicators (GDP, inflation, regulations).
-- Use when preparing for high-level business planning sessions.
+## 何时使用此技能
+- 在进行市场进入研究或定期战略审计时使用
+- 用于根据实时宏观经济指标（GDP、通货膨胀、法规）验证业务假设
+- 在准备高级业务规划会议时使用
 
-## How It Works
-### Step 1: Real-time Data Retrieval
-The agent uses search tools to gather the latest economic, political, and legal data for the target region.
-### Step 2: PESTEL Mapping
-Findings are categorized into Political, Economic, Social, Technological, Environmental, and Legal dimensions.
-### Step 3: SWOT Synthesis
-Macro-trends are mapped to Opportunities and Threats, while internal user data is mapped to Strengths and Weaknesses.
+## 工作原理
+### 步骤 1: 实时数据检索
+代理使用搜索工具收集目标区域的最新经济、政治和法律数据。
+### 步骤 2: PESTEL 映射
+将发现分类为政治、经济、社会、技术、环境和法律维度。
+### 步骤 3: SWOT 综合
+将宏观趋势映射到机会和威胁，同时将内部用户数据映射到优势和劣势。
 
-## Examples
+## 示例
 
-### Example 1: Regional Market Entry
-"Conduct a Kotler-style strategic audit for a renewable energy startup planning to enter the Eastern European market in 2026. Focus on regulatory shifts and green energy subsidies."
+### 示例 1: 区域市场进入
+"为计划在 2026 年进入东欧市场的可再生能源初创公司进行 Kotler 风格的战略审计。重点关注监管变化和绿色能源补贴。"
 
-### Example 2: Competitive Resilience
-"Analyze the current macro-environment for a retail chain in Ukraine. Identify threats from inflation and opportunities from shifting consumer displacement trends."
+### 示例 2: 竞争韧性
+"分析乌克兰零售连锁店的当前宏观环境。识别通货膨胀的威胁和消费者转移趋势带来的机会。"
 
-## Best Practices
-- ✅ Always use search tools to verify specific economic indicators (e.g., current central bank rates).
-- ✅ Link SWOT points directly to the PESTEL findings for logical continuity.
-- ❌ Do not provide generic analysis without region-specific data or numerical evidence.
+## 最佳实践
+- ✅ 始终使用搜索工具验证特定的经济指标（例如当前中央银行利率）
+- ✅ 将 SWOT 点直接链接到 PESTEL 发现，以确保逻辑连续性
+- ❌ 不要在没有区域特定数据或数字证据的情况下提供通用分析
 
-## Limitations
-- **Expert Review Required**: This skill provides strategic frameworks but does not substitute for professional financial, legal, or management consulting.
-- **Data Freshness**: The quality of the output depends on the real-time availability of data from search tools; results may vary in rapidly shifting economic environments.
-- **Scope**: The analysis focuses on macro-level factors and does not include detailed internal operational auditing.
+## 限制
+- **需要专家评审**: 此技能提供战略框架，但不能替代专业的财务、法律或管理咨询
+- **数据新鲜度**: 输出的质量取决于搜索工具实时数据的可用性；在快速变化的经济环境中，结果可能有所不同
+- **范围**: 分析侧重于宏观层面因素，不包括详细的内部运营审计

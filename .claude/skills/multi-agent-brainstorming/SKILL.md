@@ -6,21 +6,18 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Multi-Agent Brainstorming (Structured Design Review)
+# 多代理头脑风暴（结构化设计评审）
 
-## Purpose
+## 目的
 
-Transform a single-agent design into a **robust, review-validated design**
-by simulating a formal peer-review process using multiple constrained agents.
+将单代理设计转变为**经过评审验证的健壮设计**，通过使用多个约束代理模拟正式同行评审过程。
 
-This skill exists to:
-- surface hidden assumptions
-- identify failure modes early
-- validate non-functional constraints
-- stress-test designs before implementation
-- prevent idea swarm chaos
+此技能旨在：
+- 揭示隐藏假设
+- 早期识别故障模式
+- 验证非功能约束
+- 在实施前对设计进行压力测试
+- 防止想法混乱
 
-This is **not parallel brainstorming**.
-It is **sequential design review with enforced roles**.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 40 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+这不是**并行头脑风暴**。
+这是**带强制角色的顺序设计评审**。

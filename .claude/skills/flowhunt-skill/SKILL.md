@@ -126,7 +126,7 @@ Deliver a structured Automation Opportunity Report in markdown:
 - Recommending automations for tools the user didn't mention → stay scoped
 - Skipping the prioritization matrix → every opportunity looks equal without it
 
-## Limitations
+## 局限性
 
 - This skill identifies and prioritizes automation opportunities; it does not implement the automations for the user.
 - Tool audits depend on the user's stated stack and any explicitly connected data sources; do not assume access to Gmail, Calendar, Slack, CRMs, or task trackers.

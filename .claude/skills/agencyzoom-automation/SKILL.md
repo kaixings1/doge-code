@@ -11,13 +11,13 @@ Automate Agencyzoom operations through Composio's Agencyzoom toolkit via Rube MC
 
 **Toolkit docs**: [composio.dev/toolkits/agencyzoom](https://composio.dev/toolkits/agencyzoom)
 
-## Prerequisites
+## 前提条件
 
 - Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
 - Active Agencyzoom connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `agencyzoom`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- 始终 call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
-## Setup
+## 设置
 
 **Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
 
@@ -28,7 +28,7 @@ Automate Agencyzoom operations through Composio's Agencyzoom toolkit via Rube MC
 
 ## Tool Discovery
 
-Always discover available tools before executing workflows:
+始终 discover available tools before executing workflows:
 
 ```
 RUBE_SEARCH_TOOLS
@@ -68,16 +68,15 @@ memory: {}
 session_id: "your_session_id"
 ```
 
-## Known Pitfalls
+## 已知陷阱
 
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
+- **始终 search first**: Tool schemas change. 绝不 hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
+- **检查连接**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
+- **Schema 合规**: Use exact field names and types from the search results
+- **Memory 参数**: 始终 include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
+- **会话复用**: Reuse session IDs within a workflow. Generate new ones for new workflows
+- **分页**: Check responses for pagination tokens and continue fetching until complete
 
-## Quick Reference
+## 快速参考
 
 | Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 01 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

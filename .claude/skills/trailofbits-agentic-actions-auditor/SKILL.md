@@ -1,4 +1,4 @@
-# agentic-actions-auditor
+# Agentic Actions 审计器
 
 Audits GitHub Actions workflows for security vulnerabilities in AI agent integrations. Detects misconfigurations and attack vectors specific to Claude Code Action, Gemini CLI, OpenAI Codex, and GitHub AI Inference when used in CI/CD pipelines.
 
@@ -22,7 +22,7 @@ The skill checks for nine categories of security issues:
 
 ## Supported AI Actions
 
-| Action | Repository | Notes |
+| Action | Repository | 注意s |
 |--------|------------|-------|
 |克劳德守则行动| anthropics/claude-code-action | |
 | Gemini CLI | google-github-actions/run-gemini-cli |主要|

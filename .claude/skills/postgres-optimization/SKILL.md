@@ -3,9 +3,9 @@ name: postgres-optimization
 description: PostgreSQL优化 — 包括索引、查询计划、分区、连接池和性能调优。
 ---
 
-# PostgreSQL Optimization
+# PostgreSQL 优化
 
-## Index Strategies
+## 索引策略
 
 ```sql
 -- B-tree index for equality and range queries (default)
@@ -33,7 +33,7 @@ CREATE INDEX idx_articles_search ON articles USING GiST (
 CREATE INDEX CONCURRENTLY idx_large_table_col ON large_table (col);
 ```
 
-## Reading Query Plans
+## 阅读查询计划
 
 ```sql
 EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT)
@@ -46,13 +46,13 @@ ORDER BY o.created_at DESC
 LIMIT 20;
 ```
 
-Key things to look for in the plan:
-- `Seq Scan` on large tables indicates a missing index
-- `Nested Loop` with high row estimates suggests missing join index
-- `Sort` without `Index Scan` means the sort is happening in memory/disk
-- `Buffers: shared hit` vs `shared read` shows cache efficiency
+在计划中需要关注的关键点：
+- 大表上的 `Seq Scan` 表示缺少索引
+- 高行估计的 `Nested Loop` 表示缺少连接索引
+- 没有 `Index Scan` 的 `Sort` 意味着排序在内存/磁盘中进行
+- `Buffers: shared hit` vs `shared read` 显示缓存效率
 
-## Partitioning
+## 分区
 
 ```sql
 CREATE TABLE events (
@@ -71,9 +71,9 @@ CREATE TABLE events_2024_q2 PARTITION OF events
 CREATE INDEX ON events (created_at, event_type);
 ```
 
-Partition tables with more than 10M rows when queries consistently filter on the partition key.
+当查询持续按分区键过滤时，对超过 1000 万行的表进行分区。
 
-## JSONB Operations
+## JSONB 操作
 
 ```sql
 -- Query nested JSONB fields
@@ -92,7 +92,7 @@ FROM products
 WHERE metadata ? 'tags';
 ```
 
-## Connection Pooling
+## 连接池
 
 ```ini
 # pgbouncer.ini
@@ -108,9 +108,9 @@ reserve_pool_size = 5
 server_idle_timeout = 300
 ```
 
-Use transaction-level pooling for web applications. Session-level pooling for apps that use prepared statements or temp tables.
+Web 应用使用事务级连接池。使用预处理语句或临时表的应用使用会话级连接池。
 
-## Common Tuning Parameters
+## 常见调优参数
 
 ```sql
 -- Check for slow queries
@@ -126,22 +126,22 @@ WHERE idx_scan = 0
 ORDER BY pg_relation_size(indexrelid) DESC;
 ```
 
-## Anti-Patterns
+## 反模式
 
-- Creating indexes on every column instead of analyzing actual query patterns
-- Using `SELECT *` when only a few columns are needed
-- Not using `EXPLAIN ANALYZE` to verify index usage
-- Storing large blobs in JSONB when a separate table with proper types is better
-- Missing connection pooling (each connection uses ~10MB of server memory)
-- Running `VACUUM FULL` during peak hours (locks the entire table)
+- 在每个列上创建索引而非分析实际查询模式
+- 只需要几列时使用 `SELECT *`
+- 不使用 `EXPLAIN ANALYZE` 验证索引使用情况
+- 当使用独立表配合适当类型更好时将大 blob 存储在 JSONB 中
+- 缺少连接池（每个连接使用约 10MB 服务器内存）
+- 在高峰时段运行 `VACUUM FULL`（锁定整个表）
 
-## Checklist
+## 检查清单
 
-- [ ] Indexes match actual query patterns (check `pg_stat_statements`)
-- [ ] Composite indexes ordered: equality, then sort, then range columns
-- [ ] `EXPLAIN ANALYZE` run on all critical queries
-- [ ] Partial indexes used for frequently filtered subsets
-- [ ] Connection pooler (PgBouncer/pgcat) in front of PostgreSQL
-- [ ] Table partitioning considered for tables over 10M rows
-- [ ] Unused indexes identified and dropped
-- [ ] `pg_stat_statements` enabled for query performance monitoring
+- [ ] 索引匹配实际查询模式（检查 `pg_stat_statements`）
+- [ ] 复合索引排序：等值列、排序列、范围列
+- [ ] 对所有关键查询运行了 `EXPLAIN ANALYZE`
+- [ ] 对频繁过滤的子集使用了部分索引
+- [ ] PostgreSQL 前配置了连接池（PgBouncer/pgcat）
+- [ ] 对超过 1000 万行的表考虑了分区
+- [ ] 识别并删除未使用的索引
+- [ ] 启用 `pg_stat_statements` 用于查询性能监控

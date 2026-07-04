@@ -10,13 +10,13 @@ tags: [mcp, aeo, tool-quality, agent-readiness, api-scoring, clarvia]
 tools: [claude, cursor, windsurf, cline]
 ---
 
-# Clarvia AEO Check
+# Clarvia AEO 检查
 
-## Overview
+## 概述
 
-Before adding any MCP server, API, or CLI tool to your agent workflow, use Clarvia to score its agent-readiness. Clarvia evaluates 15,400+ AI tools across four AEO dimensions: API accessibility, data structuring, agent compatibility, and trust signals.
+在将任何 MCP 服务器、API 或 CLI 工具添加到您的代理工作流之前，使用 Clarvia 对其代理就绪性进行评分。Clarvia 评估 15,400+ AI 工具的四个 AEO 维度：API 可访问性、数据结构化、代理兼容性和信任信号。
 
-## Prerequisites
+## 前提条件
 
 Add Clarvia MCP server to your config:
 
@@ -132,7 +132,7 @@ Add to your CI pipeline using the GitHub Action:
 - `@mcp-builder` - Build a new MCP server that scores well on AEO
 - `@agent-evaluation` - Broader agent quality evaluation framework
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

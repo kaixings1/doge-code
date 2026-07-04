@@ -7,44 +7,38 @@ tags: null
 date_added: '2026-02-27'
 ---
 
-# Crypto BD Agent — Autonomous Business Development for Exchanges
+# Crypto BD Agent — 交易所的自主业务开发
 
-> Production-tested patterns for building AI agents that autonomously discover,
-> evaluate, and acquire token listings for cryptocurrency exchanges.
+> 经过生产测试的模式，用于构建自主发现、评估和获取加密货币交易所代币列表的AI代理。
 
-## Overview
+## 概述
 
-This skill teaches AI agents systematic crypto business development: discover
-promising tokens across chains, score them with a 100-point weighted system,
-verify safety through wallet forensics, and manage outreach pipelines with
-human-in-the-loop oversight.
+此技能教授AI代理系统性的加密货币业务开发：跨链发现有前景的代币，使用100分加权系统进行评分，通过钱包取证验证安全性，并在人在环监督下管理外联管道。
 
-Built from production experience running Buzz BD Agent by SolCex Exchange —
-an autonomous agent on decentralized infrastructure with 13 intelligence
-sources, x402 micropayments, and dual-chain ERC-8004 registration.
+基于SolCex Exchange运行Buzz BD Agent的生产经验构建——一个在去中心化基础设施上的自主代理，拥有13个情报源、x402微支付和双链ERC-8004注册。
 
-Reference implementation: https://github.com/buzzbysolcex/buzz-bd-agent
+参考实现：https://github.com/buzzbysolcex/buzz-bd-agent
 
-## When to Use This Skill
+## 何时使用此技能
 
-- Building an AI agent for crypto/DeFi business development
-- Creating token evaluation and scoring systems
-- Implementing multi-chain scanning pipelines
-- Setting up autonomous payment workflows (x402)
-- Designing wallet forensics for deployer analysis
-- Managing BD pipelines with human-in-the-loop
-- Registering agents on-chain via ERC-8004
-- Implementing cost-efficient LLM cascades
+- 构建用于加密货币/DeFi业务开发的AI代理
+- 创建代币评估和评分系统
+- 实现多链扫描管道
+- 设置自主支付工作流（x402）
+- 设计用于部署者分析的钱包取证
+- 在人在环监督下管理业务开发管道
+- 通过ERC-8004在链上注册代理
+- 实现成本效益高的LLM级联
 
-## Do Not Use When
+## 何时不使用
 
-- Building trading bots (this is BD, not trading)
-- Creating DeFi protocols or smart contracts
-- Non-crypto business development
+- 构建交易机器人（这是业务开发，不是交易）
+- 创建DeFi协议或智能合约
+- 非加密货币业务开发
 
 ---
 
-## Architecture
+## 架构
 ```text
 Intelligence Sources (Free + Paid via x402)
         |
@@ -81,7 +75,7 @@ Run a quality gate (10+ test cases) before promoting any new model.
 ## 1. Intelligence Gathering
 
 ### Free-First Principle
-Always exhaust free data before paying. Target: $0/day for 90% of intelligence.
+始终 exhaust free data before paying. Target: $0/day for 90% of intelligence.
 
 ### Recommended Source Categories
 
@@ -196,7 +190,7 @@ tracking + code verification scores + agent verification systems.
 1. Discovered → 2. Scored → 3. Verified → 4. Qualified → 5. Outreach Drafted
 → 6. Human Approved → 7. Sent → 8. Responded → 9. Negotiating → 10. Listed
 
-### Required Data for Entry
+### 必需 Data for Entry
 - Contract address (verified — NEVER rely on token name alone)
 - Pair address from DEX aggregator
 - Token age from pair creation date
@@ -211,7 +205,7 @@ tracking + code verification scores + agent verification systems.
 
 ---
 
-## 6. Security Rules
+## 6. 安全性 Rules
 
 1. NEVER share API keys or wallet private keys
 2. All outreach requires human approval before sending
@@ -234,7 +228,7 @@ Buzz BD Agent (SolCex Exchange):
 - Verify: 8004scan.io
 - GitHub: https://github.com/buzzbysolcex/buzz-bd-agent
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

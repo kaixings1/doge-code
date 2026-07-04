@@ -6,10 +6,10 @@ requires:
     - rube
 ---
 
-# Spotify Automation
+# Spotify 自动化
 
-Automate Spotify operations -- manage playlists, search the music catalog, control playback, browse albums and tracks, and access user profiles -- all orchestrated through the Composio MCP integration.
+通过 Composio MCP 集成自动执行 Spotify 操作——管理播放列表、搜索音乐目录、控制播放、浏览专辑和曲目，以及访问用户资料。
 
-**Toolkit docs:** [composio.dev/toolkits/spotify](https://composio.dev/toolkits/spotify)
+**工具包文档：** [composio.dev/toolkits/spotify](https://composio.dev/toolkits/spotify)
 
 ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 00 MINUTES 25 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

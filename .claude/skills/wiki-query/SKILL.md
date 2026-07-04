@@ -4,8 +4,6 @@ description: "使用 Obsidian wiki vault 回答问题。先读取热缓存，然
 allowed-tools: Read Glob Grep
 ---
 
-# wiki-query: Query the Wiki
+# wiki-query：查询 Wiki
 
-The wiki has already done the synthesis work. Read strategically, answer precisely, and file good answers back so the knowledge compounds.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 53 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+Wiki 已经完成了综合工作。有策略地读取，精确地回答，并将好的答案归档回去，让知识不断累积。

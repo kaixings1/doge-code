@@ -8,12 +8,12 @@ date_added: '2026-02-27'
 
 # C4 Code Level: [Directory Name]
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on c4 code level: [directory name] tasks or workflows
 - Needing guidance, best practices, or checklists for c4 code level: [directory name]
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to c4 code level: [directory name]
 - You need a different domain or tool outside this scope
@@ -25,7 +25,7 @@ date_added: '2026-02-27'
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Overview
+## 概述
 
 - **Name**: [Descriptive name for this code directory]
 - **Description**: [Short description of what this code does]
@@ -35,34 +35,34 @@ date_added: '2026-02-27'
 
 ## Code Elements
 
-### Functions/Methods
+### Functions/方法
 
 - `functionName(param1: Type, param2: Type): ReturnType`
   - Description: [What this function does]
   - Location: [file path:line number]
-  - Dependencies: [what this function depends on]
+  - 依赖项: [what this function depends on]
 
 ### Classes/Modules
 
 - `ClassName`
   - Description: [What this class does]
   - Location: [file path]
-  - Methods: [list of methods]
-  - Dependencies: [what this class depends on]
+  - 方法: [list of methods]
+  - 依赖项: [what this class depends on]
 
-## Dependencies
+## 依赖项
 
-### Internal Dependencies
+### Internal 依赖项
 
 - [List of internal code dependencies]
 
-### External Dependencies
+### External 依赖项
 
 - [List of external libraries, frameworks, services]
 
 ## Relationships
 
-Optional Mermaid diagrams for complex code structures. Choose the diagram type based on the programming paradigm. Code diagrams show the **internal structure of a single component**.
+可选 Mermaid diagrams for complex code structures. Choose the diagram type based on the programming paradigm. Code diagrams show the **internal structure of a single component**.
 
 ### Object-Oriented Code (Classes, Interfaces)
 
@@ -115,7 +115,7 @@ classDiagram
             <<module>>
             +parseJSON(raw) Record
             +normalize(data) NormalizedData
-            +aggregate(items) Summary
+            +aggregate(items) 总结
         }
         class io {
             <<module>>
@@ -159,7 +159,7 @@ flowchart LR
 
 ```mermaid
 ---
-title: Function Dependencies for [Component Name]
+title: Function 依赖项 for [Component Name]
 ---
 flowchart TB
     subgraph Public API
@@ -226,7 +226,7 @@ flowchart TB
 ## Key Distinctions
 - **vs C4-Component agent**: Focuses on individual code elements; Component agent synthesizes multiple code files into components
 - **vs C4-Container agent**: Documents code structure; Container agent maps components to deployment units
-- **vs C4-Context agent**: Provides code-level detail; Context agent creates high-level system diagrams
+- **vs C4-上下文 agent**: Provides code-level detail; 上下文 agent creates high-level system diagrams
 
 ## Output Examples
 When analyzing code, provide:
@@ -240,7 +240,7 @@ When analyzing code, provide:
 
 ```
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

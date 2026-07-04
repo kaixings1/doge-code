@@ -404,22 +404,22 @@ IotHubDeviceCreatedEventData deviceCreated;
 | `CloudEvent` | CloudEvents 1.0 schema |
 | `ReceiveResult` | Pull delivery response |
 | `ReceiveDetails` | Event with broker properties |
-| `BrokerProperties` | Lock token, delivery count |
+| `Broker属性` | Lock token, delivery count |
 
 ## Event Schemas Comparison
 
 | Feature | EventGridEvent | CloudEvent |
 |---------|----------------|------------|
 | Standard | Azure-specific | CNCF standard |
-| Required fields | subject, eventType, dataVersion, data | source, type |
+| 必需 fields | subject, eventType, dataVersion, data | source, type |
 | Extensibility | Limited | Extension attributes |
 | Interoperability | Azure only | Cross-platform |
 
 ## Best Practices
 
-1. **Use CloudEvents** — Prefer CloudEvents for new implementations (industry standard)
+1. **Use CloudEvents** — 优先 CloudEvents for new implementations (industry standard)
 2. **Batch events** — Send multiple events in one call for efficiency
-3. **Use Entra ID** — Prefer managed identity over access keys
+3. **Use Entra ID** — 优先 managed identity over access keys
 4. **Idempotent handlers** — Events may be delivered more than once
 5. **Set event TTL** — Configure time-to-live for namespace events
 6. **Handle partial failures** — Acknowledge/release events individually
@@ -469,7 +469,7 @@ catch (RequestFailedException)
 }
 ```
 
-## Related SDKs
+## 相关 SDKs
 
 | SDK | Purpose | Install |
 |-----|---------|---------|
@@ -491,7 +491,7 @@ catch (RequestFailedException)
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

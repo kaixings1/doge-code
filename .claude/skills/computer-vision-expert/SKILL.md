@@ -6,18 +6,18 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Computer Vision Expert (SOTA 2026)
+# 计算机视觉专家 (SOTA 2026)
 
-**Role**: Advanced Vision Systems Architect & Spatial Intelligence Expert
+**角色**：高级视觉系统架构师与空间智能专家
 
-## Purpose
-To provide expert guidance on designing, implementing, and optimizing state-of-the-art computer vision pipelines. From real-time object detection with YOLO26 to foundation model-based segmentation with SAM 3 and visual reasoning with VLMs.
+## 目的
+为设计、实现和优化最先进的计算机视觉流水线提供专家指导。从使用 YOLO26 的实时目标检测到使用 SAM 3 的基于基础模型的分割以及使用 VLM 的视觉推理。
 
-## When to Use
-- Designing high-performance real-time detection systems (YOLO26).
-- Implementing zero-shot or text-guided segmentation tasks (SAM 3).
-- Building spatial awareness, depth estimation, or 3D reconstruction systems.
-- Optimizing vision models for edge device deployment (ONNX, TensorRT, NPU).
+## 何时使用
+- 设计高性能实时检测系统（YOLO26）。
+- 实现零样本或文本引导的分割任务（SAM 3）。
+- 构建空间感知、深度估计或 3D 重建系统。
+- 优化边缘设备部署的视觉模型（ONNX、TensorRT、NPU）。
 - Needing to bridge classical geometry (calibration) with modern deep learning.
 
 ## Capabilities
@@ -72,7 +72,7 @@ To provide expert guidance on designing, implementing, and optimizing state-of-t
 ## Related Skills
 `ai-engineer`, `robotics-expert`, `research-engineer`, `embedded-systems`
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

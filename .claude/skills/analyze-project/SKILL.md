@@ -7,7 +7,7 @@ version: "1.0"
 tags: [analysis, diagnostics, meta, root-cause, project-health, session-review]
 ---
 
-# /analyze-project — Root Cause Analyst Workflow
+# /analyze-project — 根因分析工作流
 
 Analyze AI-assisted coding sessions in `~/.gemini/antigravity/brain/` and produce a report that explains not just **what happened**, but **why it happened**, **who/what caused it**, and **what should change next time**.
 
@@ -44,5 +44,3 @@ For each session, determine:
 - Evidence precedence:
   - artifact contents > timestamps > metadata summaries > inference
 - If evidence is weak, say so
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 10 MINUTES 58 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

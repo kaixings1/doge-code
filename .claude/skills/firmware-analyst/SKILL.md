@@ -30,12 +30,12 @@ Chip-off           - Physical chip removal and reading
 Logic analyzer     - Protocol capture and analysis
 ```
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on download from vendor tasks or workflows
 - Needing guidance, best practices, or checklists for download from vendor
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to download from vendor
 - You need a different domain or tool outside this scope
@@ -316,7 +316,7 @@ sudo chroot squashfs-root /usr/bin/qemu-arm-static /bin/httpd
 5. **Identify issues**: Security vulnerabilities and misconfigurations
 6. **Document findings**: Clear reporting with remediation guidance
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

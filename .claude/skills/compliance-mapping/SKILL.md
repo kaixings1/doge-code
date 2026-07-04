@@ -6,17 +6,17 @@ version: 1.0.0
 
 # 合规映射
 
-## Purpose
+## 目的
 
-Map VulnScout security findings to compliance framework requirements. This enables security teams to understand the regulatory impact of discovered vulnerabilities and prioritize remediation based on compliance obligations.
+将 VulnScout 安全发现映射到合规框架要求。这使安全团队能够了解已发现漏洞的监管影响，并根据合规义务优先修复。
 
-## Supported Frameworks
+## 支持的框架
 
 ### PCI-DSS v4.0
 
-Payment Card Industry Data Security Standard for organizations handling cardholder data.
+适用于处理持卡人数据的组织的支付卡行业数据安全标准。
 
-| Requirement | Description | VulnScout Finding Types |
+| 要求 | 描述 | VulnScout 发现类型 |
 |-------------|-------------|------------------------|
 | 6.2.1 | Secure development practices | All code-level findings |
 | 6.2.2 | Software security training | Recurring pattern findings |
@@ -28,7 +28,7 @@ Payment Card Industry Data Security Standard for organizations handling cardhold
 | 6.4.2 | Automated technical solution for web attacks | WAF findings, missing CSP |
 | 6.5.1-6.5.6 | Address common coding vulnerabilities | Injection, auth bypass, XSS, access control |
 
-### HIPAA Security Rule (45 CFR 164.312)
+### HIPAA 安全性 Rule (45 CFR 164.312)
 
 Health Insurance Portability and Accountability Act technical safeguards.
 
@@ -42,7 +42,7 @@ Health Insurance Portability and Accountability Act technical safeguards.
 | 164.312(c)(1) | Integrity Controls | sql-injection, deserialization, ssti |
 | 164.312(c)(2) | Authentication of ePHI | auth-bypass, hardcoded-secret |
 | 164.312(d) | Person/Entity Authentication | auth-bypass, insecure-randomness |
-| 164.312(e)(1) | Transmission Security | cryptographic-failures, ssrf |
+| 164.312(e)(1) | Transmission 安全性 | cryptographic-failures, ssrf |
 | 164.312(e)(2)(i) | Integrity Controls (transmission) | ssti, xss, command-injection |
 | 164.312(e)(2)(ii) | Encryption in Transit | cryptographic-failures |
 
@@ -60,7 +60,7 @@ Service Organization Control 2 for SaaS and cloud service providers.
 | CC6.8 | Malicious Software Prevention | command-injection, code-injection, ssti |
 | CC7.1 | System Monitoring | logging-failures, exception-handling |
 | CC7.2 | Anomaly Detection | insecure-randomness, race-condition |
-| CC7.3 | Security Event Evaluation | logging-failures |
+| CC7.3 | 安全性 Event Evaluation | logging-failures |
 | CC7.4 | Incident Response | All critical/high findings |
 | CC8.1 | Change Management | Findings in diff (--since-commit) |
 
@@ -71,7 +71,7 @@ Service Organization Control 2 for SaaS and cloud service providers.
 | **Identify** | ID.AM - Asset Management | Framework detection, scope results |
 | **Identify** | ID.RA - Risk Assessment | Threat model, STRIDE analysis |
 | **Protect** | PR.AC - Access Control | access-control, idor, auth-bypass |
-| **Protect** | PR.DS - Data Security | sql-injection, path-traversal, cryptographic-failures |
+| **Protect** | PR.DS - Data 安全性 | sql-injection, path-traversal, cryptographic-failures |
 | **Protect** | PR.IP - Protective Processes | All remediated findings |
 | **Protect** | PR.MA - Maintenance | Diff-aware scan results |
 | **Detect** | DE.AE - Anomalies and Events | logging-failures, exception-handling |
@@ -100,7 +100,7 @@ Service Organization Control 2 for SaaS and cloud service providers.
 | idor | 6.5.4 | 164.312(a)(1) | CC6.1 | PR.AC |
 | ldap-injection | 6.2.4, 6.5.1 | 164.312(c)(1) | CC6.8 | PR.DS |
 
-## Report Integration
+## Report 集成
 
 When generating a compliance-aware report, use the `--compliance` flag:
 
@@ -136,7 +136,7 @@ Ask the user which compliance frameworks apply to their organization.
 /vuln-scout:full-audit .
 ```
 
-### Step 3: Map Findings to Requirements
+### Step 3: Map Findings to 需求
 Use the mapping table above to categorize each finding by its compliance impact.
 
 ### Step 4: Prioritize by Compliance Risk
@@ -145,7 +145,7 @@ Findings that affect multiple frameworks should be prioritized higher.
 ### Step 5: Generate Compliance Report
 Include both the technical finding details and the compliance requirement references.
 
-## Integration with Other Skills
+## 集成 with Other Skills
 
 - Use **business-logic** for access control requirement mapping (PCI-DSS 6.5.4, HIPAA 164.312(a))
 - Use **cryptographic-failures** for encryption requirements (HIPAA 164.312(e), PCI-DSS 6.2.4)

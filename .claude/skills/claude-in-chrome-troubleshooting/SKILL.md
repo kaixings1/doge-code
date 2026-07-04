@@ -5,16 +5,16 @@ risk: critical
 source: community
 ---
 
-# Claude in Chrome MCP Troubleshooting
+# Claude in Chrome MCP 故障排除
 
-Use this skill when Claude in Chrome MCP tools fail to connect or work unreliably.
+当 Claude in Chrome MCP 工具无法连接或工作不可靠时使用此技能。
 
-## When to Use
-- `mcp__claude-in-chrome__*` tools fail with "Browser extension is not connected"
-- Browser automation works erratically or times out
-- After updating Claude Code or Claude.app
-- When switching between Claude Code CLI and Claude.app (Cowork)
-- Native host process is running but MCP tools still fail
+## 何时使用
+- `mcp__claude-in-chrome__*` 工具失败，显示"浏览器扩展未连接"
+- 浏览器自动化工作不稳定或超时
+- 更新 Claude Code 或 Claude.app 后
+- 在 Claude Code CLI 和 Claude.app (Cowork) 之间切换时
+- 本机主机进程正在运行，但 MCP 工具仍然失败
 
 ## When NOT to Use
 
@@ -251,7 +251,7 @@ echo "Expected: $(getconf DARWIN_USER_TEMP_DIR)"
 
 *Original skill by [@jeffzwang](https://github.com/jeffzwang) from [@ExaAILabs](https://github.com/ExaAILabs). Enhanced and updated for current versions of Claude Desktop and Claude Code.*
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

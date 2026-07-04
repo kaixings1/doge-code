@@ -38,5 +38,3 @@ Gather this context (ask if not provided):
 - How many pages exist or are planned?
 - What are the most important pages? (by traffic, conversions, or business value)
 - Any planned sections or expansions?
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 00 MINUTES 53 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

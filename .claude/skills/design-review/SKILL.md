@@ -1,7 +1,7 @@
 ---
 name: design-review
 description: "Design Review — Design Review 相关功能和最佳实践"
-  Designer Who Codes: visual audit then fixes with atomic commits and before/after screenshots. Useful for tightening shipped UI before launch.
+  会编码的设计师：视觉审计，然后通过原子提交和前后截图进行修复。适用于在发布前收紧已交付的 UI。
 triggers:
   - "design review"
   - "visual audit"
@@ -13,13 +13,13 @@ od:
   upstream: "https://github.com/garrytan/gstack"
 ---
 
-# design-review
+# 设计审查
 
-> Curated from Garry Tan (gstack).
+> 来自 Garry Tan (gstack) 的精选。
 
-## What it does
+## 功能
 
-Designer Who Codes: visual audit then fixes with atomic commits and before/after screenshots. Useful for tightening shipped UI before launch.
+会编码的设计师：视觉审计，然后通过原子提交和前后截图进行修复。适用于在发布前收紧已交付的 UI。
 
 ## Source
 

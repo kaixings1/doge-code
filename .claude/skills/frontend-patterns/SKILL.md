@@ -3,32 +3,32 @@ name: frontend-patterns
 description: 前端开发模式和最佳实践
 ---
 
-# Frontend Development Patterns
+# 前端开发模式
 
-Modern frontend patterns for React, Next.js, and performant user interfaces.
+适用于 React、Next.js 和高性能用户界面的现代前端模式。
 
-## When to Activate
+## 何时激活
 
-- Building React components (composition, props, rendering)
-- Managing state (useState, useReducer, Zustand, Context)
-- Implementing data fetching (SWR, React Query, server components)
-- Optimizing performance (memoization, virtualization, code splitting)
-- Working with forms (validation, controlled inputs, Zod schemas)
-- Handling client-side routing and navigation
-- Building accessible, responsive UI patterns
+- 构建 React 组件（组合、属性、渲染）
+- 管理状态（useState、useReducer、Zustand、Context）
+- 实现数据获取（SWR、React Query、服务器组件）
+- 优化性能（记忆化、虚拟化、代码拆分）
+- 处理表单（验证、受控输入、Zod 模式）
+- 处理客户端路由和导航
+- 构建可访问、响应式的 UI 模式
 
-## Privacy and Data Boundaries
+## 隐私和数据边界
 
-Frontend examples should use synthetic or domain-generic data. Do not collect, log, persist, or display credentials, access tokens, SSNs, health data, payment details, private emails, phone numbers, or other sensitive personal data unless the user explicitly requests a scoped implementation with appropriate validation, redaction, and access controls.
+前端示例应使用合成数据或领域通用数据。除非用户明确请求具有适当验证、编辑和访问控制的范围实现，否则请勿收集、记录、持久化或显示凭据、访问令牌、社会安全号码、健康数据、支付详情、私人电子邮件、电话号码或其他敏感个人数据。
 
-Avoid adding analytics, tracking pixels, third-party scripts, or external data sinks without explicit approval. When handling user data, prefer least-privilege APIs, client-side redaction before logging, and server-side validation for every boundary.
+未经明确批准，避免添加分析、跟踪像素、第三方脚本或外部数据接收器。处理用户数据时，优先使用最小权限 API、记录前客户端编辑以及每个边界的服务器端验证。
 
-## Component Patterns
+## 组件模式
 
-### Composition Over Inheritance
+### 组合优于继承
 
 ```typescript
-// PASS: GOOD: Component composition
+// 通过：良好：组件组合
 interface CardProps {
   children: React.ReactNode
   variant?: 'default' | 'outlined'
@@ -53,7 +53,7 @@ export function CardBody({ children }: { children: React.ReactNode }) {
 </Card>
 ```
 
-### Compound Components
+### 复合组件
 
 ```typescript
 interface TabsContextValue {
@@ -103,7 +103,7 @@ export function Tab({ id, children }: { id: string, children: React.ReactNode })
 </Tabs>
 ```
 
-### Render Props Pattern
+### 渲染属性模式
 
 ```typescript
 interface DataLoaderProps<T> {
@@ -137,9 +137,9 @@ export function DataLoader<T>({ url, children }: DataLoaderProps<T>) {
 </DataLoader>
 ```
 
-## Custom Hooks Patterns
+## 自定义 Hooks 模式
 
-### State Management Hook
+### 状态管理 Hook
 
 ```typescript
 export function useToggle(initialValue = false): [boolean, () => void] {
@@ -156,7 +156,7 @@ export function useToggle(initialValue = false): [boolean, () => void] {
 const [isOpen, toggleOpen] = useToggle()
 ```
 
-### Async Data Fetching Hook
+### 异步数据获取 Hook
 
 ```typescript
 interface UseQueryOptions<T> {
@@ -211,7 +211,7 @@ const { data: markets, loading, error, refetch } = useQuery(
 )
 ```
 
-### Debounce Hook
+### 防抖 Hook
 
 ```typescript
 export function useDebounce<T>(value: T, delay: number): T {
@@ -239,9 +239,9 @@ useEffect(() => {
 }, [debouncedQuery])
 ```
 
-## State Management Patterns
+## 状态管理模式
 
-### Context + Reducer Pattern
+### Context + Reducer 模式
 
 ```typescript
 interface State {
@@ -294,12 +294,12 @@ export function useMarkets() {
 }
 ```
 
-## Performance Optimization
+## 性能优化
 
-### Memoization
+### 记忆化
 
 ```typescript
-// PASS: useMemo for expensive computations
+// 通过：useMemo 用于昂贵的计算
 const sortedMarkets = useMemo(() => {
   return markets.sort((a, b) => b.volume - a.volume)
 }, [markets])
@@ -320,12 +320,12 @@ export const MarketCard = React.memo<MarketCardProps>(({ market }) => {
 })
 ```
 
-### Code Splitting & Lazy Loading
+### 代码拆分和懒加载
 
 ```typescript
 import { lazy, Suspense } from 'react'
 
-// PASS: Lazy load heavy components
+// 通过：懒加载重型组件
 const HeavyChart = lazy(() => import('./HeavyChart'))
 const ThreeJsBackground = lazy(() => import('./ThreeJsBackground'))
 
@@ -344,7 +344,7 @@ export function Dashboard() {
 }
 ```
 
-### Virtualization for Long Lists
+### 长列表虚拟化
 
 ```typescript
 import { useVirtualizer } from '@tanstack/react-virtual'
@@ -355,8 +355,8 @@ export function VirtualMarketList({ markets }: { markets: Market[] }) {
   const virtualizer = useVirtualizer({
     count: markets.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 100,  // Estimated row height
-    overscan: 5  // Extra items to render
+    estimateSize: () => 100,  // 估计行高
+    overscan: 5  // 额外渲染的项目
   })
 
   return (
@@ -388,9 +388,9 @@ export function VirtualMarketList({ markets }: { markets: Market[] }) {
 }
 ```
 
-## Form Handling Patterns
+## 表单处理模式
 
-### Controlled Form with Validation
+### 具有验证的受控表单
 
 ```typescript
 interface FormData {
@@ -465,7 +465,7 @@ export function CreateMarketForm() {
 }
 ```
 
-## Error Boundary Pattern
+## 错误边界模式
 
 ```typescript
 interface ErrorBoundaryState {
@@ -513,14 +513,14 @@ export class ErrorBoundary extends React.Component<
 </ErrorBoundary>
 ```
 
-## Animation Patterns
+## 动画模式
 
-### Framer Motion Animations
+### Framer Motion 动画
 
 ```typescript
 import { motion, AnimatePresence } from 'framer-motion'
 
-// PASS: List animations
+// 通过：列表动画
 export function AnimatedMarketList({ markets }: { markets: Market[] }) {
   return (
     <AnimatePresence>
@@ -567,9 +567,9 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
 }
 ```
 
-## Accessibility Patterns
+## 可访问性模式
 
-### Keyboard Navigation
+### 键盘导航
 
 ```typescript
 export function Dropdown({ options, onSelect }: DropdownProps) {
@@ -610,7 +610,7 @@ export function Dropdown({ options, onSelect }: DropdownProps) {
 }
 ```
 
-### Focus Management
+### 焦点管理
 
 ```typescript
 export function Modal({ isOpen, onClose, children }: ModalProps) {
@@ -619,13 +619,13 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
 
   useEffect(() => {
     if (isOpen) {
-      // Save currently focused element
+      // 保存当前聚焦元素
       previousFocusRef.current = document.activeElement as HTMLElement
 
-      // Focus modal
+      // 聚焦模态框
       modalRef.current?.focus()
     } else {
-      // Restore focus when closing
+      // 关闭时恢复焦点
       previousFocusRef.current?.focus()
     }
   }, [isOpen])
@@ -644,4 +644,4 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
 }
 ```
 
-**Remember**: Modern frontend patterns enable maintainable, performant user interfaces. Choose patterns that fit your project complexity.
+**记住**: 现代前端模式能够实现可维护、高性能的用户界面。选择适合项目复杂度的模式。

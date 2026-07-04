@@ -72,7 +72,7 @@ Also create:
 
 ## Input contract
 
-Required:
+必需:
 
 - At least one uploaded product reference image in the active project.
 
@@ -118,7 +118,7 @@ Use these anchors in every generation prompt.
 
 Create a compact shot plan before dispatch:
 
-| Slot | Default aspect | Goal |
+| Slot | 默认 aspect | Goal |
 |---|---:|---|
 | main | 1:1 | Product-first marketplace image on white or soft neutral background |
 | feature | 4:5 | One clear selling point with close-up detail or simple callout space |
@@ -287,11 +287,11 @@ Do not emit an `<artifact>` tag.
 
 - V1 requires real product reference imagery. No brief-only concept products.
 - One product per run.
-- Default to exactly three slots: main, feature, lifestyle.
+- 默认 to exactly three slots: main, feature, lifestyle.
 - Preserve the product; do not redesign it.
 - Do not invent claims, certifications, measurements, ingredients, or
   performance data.
 - Use `"$OD_NODE_BIN" "$OD_BIN" media generate`; do not call provider APIs
   directly.
-- Always create `image-manifest.json` after generation.
+- 始终 create `image-manifest.json` after generation.
 - Run `references/checklist.md` before handoff.

@@ -21,35 +21,35 @@ tools:
   - cursor
 ---
 
-# LLM Council (Fireworks AI)
+# LLM 评议会（Fireworks AI）
 
-## When to Use
+## 何时使用
 
-Use when this workflow matches the user request: Use this skill for its documented workflow.
+当此工作流匹配用户请求时使用：使用此技能执行其文档化的工作流。
 
 
 _Source: [dair-ai/dair-academy-plugins](https://github.com/dair-ai/dair-academy-plugins) (MIT)._
 
-This skill implements Karpathy's LLM Council concept where multiple open-weight LLMs deliberate on a query, powered entirely by Fireworks AI:
+此技能实现了 Karpathy 的 LLM 评议会概念，其中多个开源权重 LLM 对一个查询进行审议, 完全由 Fireworks AI 提供支持：
 
-1. **Phase 1**: All models respond to the query independently (parallel)
-2. **Phase 2**: Models rank each other's anonymized responses
-3. **Phase 3**: A Chairman LLM synthesizes the final answer
+1. **阶段 1**：所有模型独立响应查询（并行）
+2. **阶段 2**：模型对彼此的匿名响应进行排名
+3. **阶段 3**：主席 LLM 综合最终答案
 
-All inference runs through **Fireworks AI** using open-weight models. The speed and pricing of Fireworks makes it practical to run multi-model deliberation that would be slow or expensive on other providers.
+所有推理通过 **Fireworks AI** 使用开放权重模型运行。Fireworks 的速度和定价使得运行多模型审议变得实用，而在其他提供商上这会很慢或昂贵。
 
-## CRITICAL RULES
+## 关键规则
 
-1. **ALWAYS use AskUserQuestion** to let the user select council models (multiselect) and the Chairman model
-2. **ALWAYS save raw responses to files** - never summarize or truncate API outputs
-3. **ALWAYS show full transparency** - display all individual responses, all rankings, AND the final synthesis
-4. **NEVER skip the ranking phase** - it is essential to the council deliberation process
-5. **Read from files for display** - ensures content is shown unmodified
-6. **ALWAYS display the final output to the user** after Phase 3 completes
+1. **始终使用 AskUserQuestion** 让用户选择评议会模型（多选）和主席模型
+2. **始终将原始响应保存到文件** - 绝不总结或截断 API 输出
+3. **始终展示完全透明度** - 显示所有个体响应、所有排名以及最终综合
+4. **绝不跳过排名阶段** - 这是评议会审议过程的关键
+5. **从文件读取以显示** - 确保内容未经修改地展示
+6. **始终在阶段 3 完成后向用户显示最终输出**
 
-## Pre-flight Check
+## 飞行前检查
 
-Before running any phase, verify the Fireworks API key is set:
+在运行任何阶段之前，验证 Fireworks API 密钥已设置：
 
 ```bash
 if [ -z "$FIREWORKS_API_KEY" ]; then
@@ -62,9 +62,8 @@ fi
 echo "FIREWORKS_API_KEY is set."
 ```
 
-## Available Models
+## 可用模型
 
-Present these options to the user via AskUserQuestion (multiselect):
+通过 AskUserQuestion（多选）向用户展示以下选项：
 
 | Model | Fireworks ID | Provider |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 07 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

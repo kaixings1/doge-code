@@ -11,13 +11,13 @@ Automate SimilarWeb operations through Composio's SimilarWeb toolkit via Rube MC
 
 **Toolkit docs**: [composio.dev/toolkits/similarweb_digitalrank_api](https://composio.dev/toolkits/similarweb_digitalrank_api)
 
-## Prerequisites
+## 前提条件
 
 - Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
 - Active SimilarWeb connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `similarweb_digitalrank_api`
 - Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
-## Setup
+## 设置
 
 **Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
 
@@ -90,14 +90,14 @@ Many list operations support pagination. Check responses for `next_cursor` or `p
 ### Batch Operations
 For bulk operations, use `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` in a loop with `ThreadPoolExecutor` for parallel execution.
 
-## Known Pitfalls
+## 已知陷阱
 
 - **Always search tools first**: Tool schemas and available operations may change. Never hardcode tool slugs without first discovering them via `RUBE_SEARCH_TOOLS`.
 - **Check connection status**: Ensure the SimilarWeb connection is ACTIVE before executing any tools. Expired OAuth tokens require re-authentication.
 - **Respect rate limits**: If you receive rate limit errors, reduce request frequency and implement backoff.
 - **Validate schemas**: Always pass strictly schema-compliant arguments. Use `RUBE_GET_TOOL_SCHEMAS` to load full input schemas when `schemaRef` is returned instead of `input_schema`.
 
-## Quick Reference
+## 快速参考
 
 | Operation | Approach |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 00 MINUTES 58 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

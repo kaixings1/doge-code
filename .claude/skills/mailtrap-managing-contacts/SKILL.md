@@ -6,31 +6,31 @@ source: community
 date_added: "2026-06-19"
 ---
 
-# Managing Mailtrap contacts
+# 管理 Mailtrap 联系人
 
-## Overview
+## 概述
 
-**Before generating API request bodies:** check the [Contacts OpenAPI spec](https://github.com/mailtrap/mailtrap-openapi/blob/main/specs/contacts.openapi.yml) for current field names, required parameters, and nested structures.
+**生成 API 请求体之前：** 查看 [Contacts OpenAPI 规范](https://github.com/mailtrap/mailtrap-openapi/blob/main/specs/contacts.openapi.yml) 以获取当前字段名称、必需参数和嵌套结构。
 
-**Contacts** are the marketing database: lists, segments, custom fields, and imports for **campaign audiences** and related workflows. The **Contacts API** automates create/update and can feed **CRM or CDP sync** (your code, or tools like Zapier, Make, n8n — see [Import contacts](https://docs.mailtrap.io/email-marketing/contacts/import-contacts.md)).
+**联系人**是营销数据库：用于**营销活动受众**和相关工作流的列表、细分、自定义字段和导入。**Contacts API** 可自动化创建/更新操作，并能输入 **CRM 或 CDP 同步**（您的代码，或 Zapier、Make、n8n 等工具——请参阅[导入联系人](https://docs.mailtrap.io/email-marketing/contacts/import-contacts.md)）。
 
-**Suppressions** (hard bounces, spam complaints, unsubscribes on the **sending** side) live in the sending product and **block delivery** for those addresses on your streams. That is applied separately from **marketing** filters (segments, list membership, consent flags) that decide who is eligible for campaigns. For sending-side blocks, see [Suppressions](https://docs.mailtrap.io/developers/email-sending/suppressions.md) and `mailtrap-sending-emails`.
+**抑制**（硬退回、垃圾邮件投诉、**发送**侧的退订）存在于发送产品中，并**阻止投递**到您流中的这些地址。这与决定谁有资格参与活动的**营销**过滤器（细分、列表成员资格、同意标记）是分开应用的。有关发送侧阻止，请参阅[抑制](https://docs.mailtrap.io/developers/email-sending/suppressions.md)和 `mailtrap-sending-emails`。
 
-**Related skills:** `mailtrap-sending-emails` (live send paths).
+**相关技能：** `mailtrap-sending-emails`（实时发送路径）。
 
-## When to use
+## 使用时机
 
-- Programmatic contact management (create, update, [bulk import](https://docs.mailtrap.io/developers/promotional/contacts/bulk-import.md))
-- Sync with CRMs or data warehouses
-- Contact list cleanup and CSV import
-- Updating contacts with **custom fields** or firing **custom events** for [automations](https://docs.mailtrap.io/email-marketing/automations.md)
-- Segments and [custom fields](https://docs.mailtrap.io/email-marketing/contacts/custom-fields.md) for audience building
+- 编程式联系人管理（创建、更新、[批量导入](https://docs.mailtrap.io/developers/promotional/contacts/bulk-import.md)）
+- 与 CRM 或数据仓库同步
+- 联系列表清理和 CSV 导入
+- 使用**自定义字段**更新联系人，或为[自动化](https://docs.mailtrap.io/email-marketing/automations.md)触发**自定义事件**
+- 用于受众构建的细分和[自定义字段](https://docs.mailtrap.io/email-marketing/contacts/custom-fields.md)
 
-## Authorization
+## 授权
 
-All endpoints below need `Authorization: Bearer $MAILTRAP_API_TOKEN` and an `$MAILTRAP_ACCOUNT_ID` in the path. Resolve `$MAILTRAP_ACCOUNT_ID` from `GET https://mailtrap.io/api/accounts`, and store tokens in environment variables or a secrets manager.
+以下所有端点都需要在路径中包含 `Authorization: Bearer $MAILTRAP_API_TOKEN` 和 `$MAILTRAP_ACCOUNT_ID`。从 `GET https://mailtrap.io/api/accounts` 解析 `$MAILTRAP_ACCOUNT_ID`，并将令牌存储在环境变量或机密管理器中。
 
-## Endpoints (replace placeholders)
+## 端点（替换占位符）
 
-| Action                                 | Method  | URL                                                                                       | Reference                                                                                      |
-| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 31 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 操作 | 方法 | URL | 参考 |
+|------|------|-----|------|

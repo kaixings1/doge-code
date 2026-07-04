@@ -1,4 +1,4 @@
-# Workflow Skill Design
+# 工作流技能设计
 
 A Claude Code plugin that teaches design patterns for building workflow-based skills and provides a review agent for auditing existing skills.
 
@@ -17,4 +17,3 @@ A Claude Code plugin that teaches design patterns for building workflow-based sk
 Five workflow patterns for structuring skills:
 
 | Pattern | Use When |
-|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 16 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

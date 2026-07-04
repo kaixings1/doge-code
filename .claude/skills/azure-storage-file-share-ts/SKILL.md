@@ -55,7 +55,7 @@ const client = new ShareServiceClient(
 );
 ```
 
-### DefaultAzureCredential
+### 默认AzureCredential
 
 ```typescript
 import { ShareServiceClient } from "@azure/storage-file-share";
@@ -124,7 +124,7 @@ await shareClient.delete();
 await shareClient.deleteIfExists();
 ```
 
-### Get Share Properties
+### Get Share 属性
 
 ```typescript
 const properties = await shareClient.getProperties();
@@ -288,9 +288,9 @@ const copyPoller = await destFileClient.startCopyFromURL(sourceUrl);
 await copyPoller.pollUntilDone();
 ```
 
-## File Properties & Metadata
+## File 属性 & Metadata
 
-### Get File Properties
+### Get File 属性
 
 ```typescript
 const fileClient = shareClient.rootDirectoryClient.getFileClient("my-file.txt");
@@ -472,7 +472,7 @@ import {
 ## Best Practices
 
 1. **Use connection strings for simplicity** — Easiest setup for development
-2. **Use DefaultAzureCredential for production** — Enable managed identity in Azure
+2. **Use 默认AzureCredential for production** — Enable managed identity in Azure
 3. **Set quotas on shares** — Prevent unexpected storage costs
 4. **Use streaming for large files** — `uploadStream`/`downloadToFile` for files > 256MB
 5. **Use ranges for partial updates** — More efficient than full file replacement
@@ -490,13 +490,13 @@ import {
 | `downloadToFile()` | ✅ | ❌ |
 | `downloadToBuffer()` | ✅ | ❌ |
 | SAS generation | ✅ | ❌ |
-| DefaultAzureCredential | ✅ | ❌ |
+| 默认AzureCredential | ✅ | ❌ |
 | Anonymous/SAS access | ✅ | ✅ |
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

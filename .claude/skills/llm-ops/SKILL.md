@@ -19,25 +19,25 @@ tools:
 - codex-cli
 ---
 
-# LLM-OPS -- IA de Producao
+# LLM-OPS — 生产级 AI 运维
 
-## Overview
+## 概述
 
-LLM Operations -- RAG, embeddings, vector databases, fine-tuning, prompt engineering avancado, custos de LLM, evals de qualidade e arquiteturas de IA para producao. Ativar para: implementar RAG, criar pipeline de embeddings, Pinecone/Chroma/pgvector, fine-tuning, prompt engineering, reducao de custos de LLM, evals, cache semantico, streaming, agents.
+LLM 运维 — RAG、嵌入、向量数据库、微调、高级提示工程、LLM 成本、质量评估和生产级 AI 架构。适用于：实现 RAG、创建嵌入流水线、Pinecone/Chroma/pgvector、微调、提示工程、降低 LLM 成本、评估、语义缓存、流式传输、代理。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- When you need specialized assistance with this domain
+- 当你需要此领域的专业协助时
 
-## Do Not Use This Skill When
+## 不要使用此技能的场景
 
-- The task is unrelated to llm ops
-- A simpler, more specific tool can handle the request
-- The user needs general-purpose assistance without domain expertise
+- 任务与 LLM 运维无关
+- 有更简单、更具体的工具可以处理该请求
+- 用户需要的是无需领域专业知识的通用协助
 
-## How It Works
+## 工作原理
 
-> A diferenca entre um prototipo de IA e um produto de IA e operabilidade.
-> LLM-Ops e a engenharia que torna IA confiavel, escalavel e economica.
+> AI 原型与 AI 产品之间的区别在于可运维性。
+> LLM-Ops 是让 AI 变得可靠、可扩展且经济的工程实践。
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 06 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+/n/n

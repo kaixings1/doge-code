@@ -21,8 +21,8 @@ Build and maintain macOS menubar apps with a Tuist-first workflow and stable lau
 - Keep state transitions in a store layer (`@Observable` or equivalent), not in row/view presentation code.
 - Keep model decoding resilient to API drift: optional fields, safe fallbacks, and defensive parsing.
 - Treat Tuist manifests as the source of truth. Do not rely on hand-edited generated Xcode artifacts.
-- Prefer script-based launch for local iteration when `tuist run` is unreliable for macOS target/device resolution.
-- Prefer `tuist xcodebuild build` over raw `xcodebuild` in local run scripts when building generated projects.
+- 优先 script-based launch for local iteration when `tuist run` is unreliable for macOS target/device resolution.
+- 优先 `tuist xcodebuild build` over raw `xcodebuild` in local run scripts when building generated projects.
 
 ## Expected File Shape
 
@@ -107,7 +107,7 @@ Trace root cause in model/client/store before changing row/menu presentation.
 - Run the validation matrix for touched areas.
 - Report concrete commands run and outcomes.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

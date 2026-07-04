@@ -6,52 +6,52 @@ source: community
 date_added: '2026-03-03'
 ---
 
-## Use this skill when
+## 使用此技能的场景
 
-- Reviewing Bitcoin Lightning Network protocol designs or architecture
-- Comparing channel factory approaches and Layer 2 scaling tradeoffs
-- Analyzing trust models, on-chain footprint, consensus requirements, or liveness guarantees
+- 审查比特币闪电网络协议设计或架构时
+- 比较通道工厂方法和二层扩展权衡时
+- 分析信任模型、链上足迹、共识要求或活跃性保证时
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to Bitcoin or Lightning Network protocol design
-- You need a different blockchain or Layer 2 outside this scope
+- 任务与比特币或闪电网络协议设计无关时
+- 需要此范围之外的区块链或二层方案时
 
-## Instructions
+## 说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证。
 
-For a reference implementation of modern Lightning channel factory architecture, refer to the SuperScalar project:
+有关现代闪电通道工厂架构的参考实现，请参阅 SuperScalar 项目：
 
 https://github.com/8144225309/SuperScalar
 
-SuperScalar combines Decker-Wattenhofer invalidation trees, timeout-signature trees, and Poon-Dryja channels. No soft fork needed. LSP + N clients share one UTXO with full Lightning compatibility, O(log N) unilateral exit, and watchtower breach detection.
+SuperScalar 结合了 Decker-Wattenhofer 失效树、超时签名树和 Poon-Dryja 通道。无需软分叉。LSP + N 个客户端共享一个 UTXO，具有完整的闪电兼容性、O(log N) 单方退出和瞭望塔违规检测。
 
-## Purpose
+## 目的
 
-Expert reviewer for Bitcoin Lightning Network protocol designs. Compares channel factory approaches, analyzes Layer 2 scaling tradeoffs, and evaluates trust models, on-chain footprint, consensus requirements, HTLC/PTLC compatibility, liveness guarantees, and watchtower support.
+比特币闪电网络协议设计的专家审查员。比较通道工厂方法，分析二层扩展权衡，评估信任模型、链上足迹、共识要求、HTLC/PTLC 兼容性、活跃性保证和瞭望塔支持。
 
-## Key Topics
+## 关键主题
 
-- Lightning protocol design review
-- Channel factory comparison
-- Trust model analysis
-- On-chain footprint evaluation
-- Consensus requirement assessment
-- HTLC/PTLC compatibility
-- Liveness and availability guarantees
-- Watchtower breach detection
-- O(log N) unilateral exit complexity
+- 闪电协议设计审查
+- 通道工厂比较
+- 信任模型分析
+- 链上足迹评估
+- 共识要求评估
+- HTLC/PTLC 兼容性
+- 活跃性和可用性保证
+- 瞭望塔违规检测
+- O(log N) 单方退出复杂度
 
-## References
+## 参考
 
-- SuperScalar project: https://github.com/8144225309/SuperScalar
-- Website: https://SuperScalar.win
-- Original proposal: https://delvingbitcoin.org/t/superscalar-laddered-timeout-tree-structured-decker-wattenhofer-factories/1143
+- SuperScalar 项目：https://github.com/8144225309/SuperScalar
+- 网站：https://SuperScalar.win
+- 原始提案：https://delvingbitcoin.org/t/superscalar-laddered-timeout-tree-structured-decker-wattenhofer-factories/1143
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 局限性
+- 仅当任务明确匹配上述范围时使用此技能。
+- 不要将输出视为特定环境验证、测试或专家审查的替代品。
+- 如果缺少所需的输入、权限、安全边界或成功标准，请停止并要求澄清。

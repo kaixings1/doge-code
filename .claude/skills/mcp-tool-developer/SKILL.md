@@ -104,7 +104,7 @@ Wrap an external API as an MCP tool with auth, rate limiting, and error handling
 - Add rate limiting for external API calls
 - Use environment variables for secrets, never hardcode credentials
 
-## Limitations
+## 局限性
 
 - This skill provides guidance and code generation; actual runtime testing requires a development environment
 - MCP specification is evolving; always check the latest spec version

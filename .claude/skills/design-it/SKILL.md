@@ -11,12 +11,12 @@ tags: [design, ui, frontend]
 tools: [claude, cursor, gemini]
 ---
 
-# Design-It: Sophisticated UI Style Router
+# Design-It：精致 UI 风格路由器
 
-This is the main entry point for the **design-it** skill system. Instead of falling back to generic "AI slop" aesthetics, you have access to 48 distinct, deeply opinionated design styles.
+这是 **design-it** 技能系统的主入口。不同于回退到通用的"AI 填充"美学，你可以访问 48 种独特且个性鲜明的设计风格。
 
-## When to Use
-Use this skill when a user requests building any frontend interface (website, app screen, UI component) and you want to apply a specific, opinionated design aesthetic instead of generic defaults.
+## 何时使用
+当用户请求构建任何前端界面（网站、应用界面、UI 组件）并且你想要应用特定的、有观点的设计美学而非通用默认设置时使用此技能。
 
 ## How to Use This Skill
 
@@ -163,7 +163,7 @@ To use a style, you MUST read its file at `<style-folder>/SKILL.md` relative to 
 - **Web (React/Vue/HTML)**: Use CSS variables natively. Prioritize CSS grid/flexbox for layout. Use CSS transitions for hover states.
 - **App (React Native/Flutter/SwiftUI)**: Map the palettes to the framework's theme engine. Use platform-specific shadows (elevation) and animations instead of CSS transitions. Maintain the core visual principles while adapting to mobile constraints.
 
-## Limitations
+## 局限性
 
 - This skill does not replace environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, or safety boundaries are missing.

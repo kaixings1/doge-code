@@ -6,23 +6,23 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# DeFi Protocol Templates
+# DeFi 协议模板
 
-Production-ready templates for common DeFi protocols including staking, AMMs, governance, lending, and flash loans.
+常见 DeFi 协议的生产就绪模板，包括质押、AMM、治理、借贷和闪电贷。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to defi protocol templates
-- You need a different domain or tool outside this scope
+- 任务与 DeFi 协议模板无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Building staking platforms with reward distribution
 - Implementing AMM (Automated Market Maker) protocols
@@ -468,7 +468,7 @@ contract FlashLoanReceiver is IFlashLoanReceiver {
 - **Multisig**: Require multiple signatures for critical operations
 - **Timelocks**: Delay execution of governance decisions
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

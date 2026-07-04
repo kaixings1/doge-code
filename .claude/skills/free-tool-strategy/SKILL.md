@@ -6,15 +6,15 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Free Tool Strategy (Engineering as Marketing)
+# 免费工具策略（工程即营销）
 
-You are an expert in engineering-as-marketing strategy. Your goal is to help plan and evaluate free tools that generate leads, attract organic traffic, and build brand awareness.
+您是工程化即营销策略专家。您的目标是帮助规划和评估生成潜在客户、吸引自然流量和建立品牌认知的免费工具。
 
-## Initial Assessment
+## 初步评估
 
-Before designing a tool strategy, understand:
+在设计工具策略之前，请了解：
 
-1. **Business Context**
+1. **Business 上下文**
    - What's the core product/service?
    - Who is the target audience?
    - What problems do they have?
@@ -32,82 +32,82 @@ Before designing a tool strategy, understand:
 
 ---
 
-## Core Principles
+## 核心原则
 
-### 1. Solve a Real Problem
-- Tool must provide genuine value
-- Solves a problem your audience actually has
-- Useful even without your main product
+### 1. 解决真实问题
+- 工具必须提供真正的价值
+- 解决目标受众实际面临的问题
+- 即使没有主产品也很有用
 
-### 2. Adjacent to Core Product
-- Related to what you sell
-- Natural path from tool to product
-- Educates on problem you solve
+### 2. 与核心产品相邻
+- 与您销售的产品相关
+- 从工具到产品的自然路径
+- 教育用户了解您解决的问题
 
-### 3. Simple and Focused
-- Does one thing well
-- Low friction to use
-- Immediate value
+### 3. 简单且专注
+- 做好一件事
+- 低使用门槛
+- 即时价值
 
-### 4. Worth the Investment
-- Lead value × expected leads > build cost + maintenance
-- Consider SEO value
-- Consider brand halo effect
+### 4. 值得投资
+- 潜在客户价值 × 预期客户数 > 构建成本 + 维护成本
+- 考虑 SEO 价值
+- 考虑品牌光环效应
 
 ---
 
-## Tool Types
+## 工具类型
 
-### Calculators
+### 计算器
 
-**Best for**: Decisions involving numbers, comparisons, estimates
+**最适合**：涉及数字决策、比较、估算
 
-**Examples**:
-- ROI calculator
-- Savings calculator
-- Cost comparison tool
-- Salary calculator
-- Tax estimator
+**示例**：
+- ROI 计算器
+- 储蓄计算器
+- 成本比较工具
+- 薪资计算器
+- 税费估算器
 
-**Why they work**:
-- Personalized output
-- High perceived value
-- Share-worthy results
-- Clear problem → solution
+**为什么有效**：
+- 个性化输出
+- 高感知价值
+- 可分享的结果
+- 清晰的问题 → 解决方案
 
-### Generators
+### 生成器
 
-**Best for**: Creating something useful quickly
+**最适合**：快速创建有用的东西
 
-**Examples**:
-- Policy generator
-- Template generator
-- Name/tagline generator
-- Email subject line generator
-- Resume builder
+**示例**：
+- 政策生成器
+- 模板生成器
+- 名称/标语生成器
+- 邮件主题行生成器
+- 简历构建器
 
-**Why they work**:
-- Tangible output
-- Saves time
-- Easily shared
-- Repeat usage
+**为什么有效**：
+- 有形的输出
+- 节省时间
+- 易于分享
+- 可重复使用
 
-### Analyzers/Auditors
+### 分析器/审计器
 
-**Best for**: Evaluating existing work or assets
+**最适合**：评估现有工作或资产
 
-**Examples**:
-- Website grader
-- SEO analyzer
-- Email subject tester
-- Headline analyzer
-- Security checker
+**示例**：
+- 网站评分器
+- SEO 分析器
+- 邮件主题测试器
+- 标题分析器
+- 安全检查器
 
-**Why they work**:
-- Curiosity-driven
-- Personalized insights
-- Creates awareness of problems
-- Natural lead to solution
+**为什么有效**：
+- 好奇心驱动
+- 个性化洞察
+- 创建问题意识
+- 自然地导向解决方案
 
 ### Testers/Validators
 
@@ -210,7 +210,7 @@ Before designing a tool strategy, understand:
 
 ---
 
-## SEO Considerations
+## SEO 考虑ations
 
 ### Keyword Strategy
 
@@ -277,7 +277,7 @@ Free tools attract links because:
 - Value exchange clear: "Get your full report"
 - Minimal friction: Email only
 - Show preview of what they'll get
-- Optional: Segment by asking one qualifying question
+- 可选: Segment by asking one qualifying question
 
 ### Post-Capture
 
@@ -298,7 +298,7 @@ Free tools attract links because:
 - High strategic value
 - Have development capacity
 
-**Consider:**
+**考虑:**
 - Development time
 - Ongoing maintenance
 - Hosting costs
@@ -324,14 +324,14 @@ Free tools attract links because:
 - White-label options available
 - Not core differentiator
 
-**Consider:**
+**考虑:**
 - Branding limitations
 - Dependency on third party
 - Cost vs. build
 
 ---
 
-## MVP Scope
+## MVP 范围
 
 ### Minimum Viable Tool
 
@@ -570,7 +570,7 @@ If you need more context:
 
 ---
 
-## Related Skills
+## 相关 Skills
 
 - **page-cro**: For optimizing the tool's landing page
 - **seo-audit**: For SEO-optimizing the tool
@@ -581,7 +581,7 @@ If you need more context:
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

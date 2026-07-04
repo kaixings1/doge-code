@@ -21,61 +21,61 @@ plugin:
 
 # KubeStellar Console
 
-## Overview
+## 概述
 
-KubeStellar Console is an open-source multi-cluster Kubernetes dashboard (CNCF project) with AI-powered operations. It ships with `kc-agent`, an MCP server that bridges coding agents to kubeconfig and Kubernetes APIs, plus 10+ built-in agent skills for development, testing, and operations.
+KubeStellar Console 是一个开源的、支持 AI 驱动的多集群 Kubernetes 仪表板（CNCF 项目）。它附带 `kc-agent`，这是一个将编码代理连接到 kubeconfig 和 Kubernetes API 的 MCP 服务器，以及 10 多个用于开发、测试和操作的内置代理技能。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- Use when managing multiple Kubernetes clusters across edge and cloud
-- Use when you need AI-assisted Kubernetes troubleshooting and debugging
-- Use when running performance tests, cache compliance checks, or CI debugging on a Kubernetes dashboard
-- Use when integrating with CNCF projects (Argo, Kyverno, Istio, and 20+ others)
+- 在跨边缘和云管理多个 Kubernetes 集群时使用
+- 在需要 AI 辅助的 Kubernetes 故障排除和调试时使用
+- 在 Kubernetes 仪表板上运行性能测试、缓存合规性检查或 CI 调试时使用
+- 在与 CNCF 项目（Argo、Kyverno、Istio 等 20 多个）集成时使用
 
-## How It Works
+## 工作原理
 
-### Step 1: Install kc-agent
+### 步骤 1: 安装 kc-agent
 
 ```bash
 brew tap kubestellar/tap && brew install kc-agent
 ```
 
-### Step 2: Start the MCP server
+### 步骤 2: 启动 MCP 服务器
 
 ```bash
 kc-agent
 ```
 
-This bridges the active kubeconfig context to any MCP-compatible coding agent. Do not start it from a cluster-admin or write-capable context unless the user explicitly accepts that risk.
+这将活动 kubeconfig 上下文桥接到任何兼容 MCP 的编码代理。除非用户明确接受该风险，否则不要从具有集群管理员或写入权限的上下文启动它。
 
-### Step 3: Use built-in agent skills
+### 步骤 3: 使用内置代理技能
 
-The project ships with agent skills accessible via `CLAUDE.md` and `AGENTS.md`:
+该项目通过 `CLAUDE.md` 和 `AGENTS.md` 提供代理技能：
 
-- **@perf-test** — Dashboard performance testing and TTFI analysis
-- **@cache-test** — Card cache compliance testing (IndexedDB warm return)
-- **@nav-test** — Navigation performance testing
-- **@ui-compliance-test** — Card loading compliance (8 criteria, 150+ cards)
-- **@ci-status** — CI pipeline monitoring and status checks
-- **@rca** — Root cause analysis for CI/test failures
-- **@tdd** — Test-driven development workflow
-- **@k8s-debug** — Kubernetes debugging and troubleshooting
+- **@perf-test** — 仪表板性能测试和 TTFI 分析
+- **@cache-test** — 卡片缓存合规性测试（IndexedDB 热返回）
+- **@nav-test** — 导航性能测试
+- **@ui-compliance-test** — 卡片加载合规性（8 个标准，150+ 张卡片）
+- **@ci-status** — CI 流水线监控和状态检查
+- **@rca** — CI/测试失败的根因分析
+- **@tdd** — 测试驱动开发工作流
+- **@k8s-debug** — Kubernetes 调试和故障排除
 
-## Key Features
+## 主要特性
 
-- Multi-cluster management across edge and cloud
-- Real-time streaming observability
-- 20+ CNCF project integrations (Argo, Kyverno, Istio, etc.)
-- GitHub OAuth authentication
-- Supply chain security (SBOM, SLSA)
-- SQLite WASM caching with stale-while-revalidate pattern
-- 15+ themes with dark/light mode
+- 跨边缘和云的多集群管理
+- 实时流式可观察性
+- 20+ CNCF 项目集成（Argo、Kyverno、Istio 等）
+- GitHub OAuth 认证
+- 供应链安全（SBOM、SLSA）
+- 使用陈旧重新验证模式的 SQLite WASM 缓存
+- 15+ 主题，支持深色/浅色模式
 
-## Security & Safety Notes
+## 安全与安全注意事项
 
-- **Critical risk:** `kc-agent` bridges your active kubeconfig context to MCP-compatible agents. If that context carries cluster-admin, write permissions, or secret read access, agents inherit those capabilities.
-- **Do not rely on RBAC objects alone:** creating a ServiceAccount or ClusterRoleBinding does not change the credentials `kc-agent` uses. Start `kc-agent` only after switching `KUBECONFIG`/context to dedicated least-privilege credentials and verifying them.
-- **Recommended read-only scope:** avoid `resources='*'`, because it includes sensitive objects such as Secrets. Prefer an explicit non-secret resource list and verify access before starting the MCP server:
+- **关键风险：** `kc-agent` 将您的活动 kubeconfig 上下文桥接到兼容 MCP 的代理。如果该上下文具有集群管理员、写入权限或密钥读取访问权限，代理将继承这些能力。
+- **不要仅依赖 RBAC 对象：** 创建 ServiceAccount 或 ClusterRoleBinding 不会更改 `kc-agent` 使用的凭据。只有在切换到专用最小权限凭据并验证它们之后，才启动 `kc-agent`。
+- **推荐的只读范围：** 避免 `resources='*'`，因为它包括敏感对象（如 Secret）。首选明确列出非敏感资源，并在启动 MCP 服务器之前验证访问权限：
   ```bash
   kubectl create serviceaccount kc-agent -n default
   kubectl create clusterrole kc-agent-readonly \
@@ -87,15 +87,15 @@ The project ships with agent skills accessible via `CLAUDE.md` and `AGENTS.md`:
   kubectl auth can-i get secrets --as=system:serviceaccount:default:kc-agent
   kubectl auth can-i list pods --as=system:serviceaccount:default:kc-agent
   ```
-- The first `can-i` command must return `no`; the second should return `yes`. Then create or select a kubeconfig that actually authenticates as that ServiceAccount before running `kc-agent`.
-- Do not expose `kc-agent` on a public network without authentication.
-- Review [SECURITY-AI.md](https://github.com/kubestellar/console/blob/main/docs/security/SECURITY-AI.md) for prompt injection and agent drift mitigations.
+- 第一个 `can-i` 命令必须返回 `no`；第二个应该返回 `yes`。然后在运行 `kc-agent` 之前创建或选择一个实际以该 ServiceAccount 身份认证的 kubeconfig。
+- 不要在没有认证的情况下将 `kc-agent` 暴露在公共网络上。
+- 查看 [SECURITY-AI.md](https://github.com/kubestellar/console/blob/main/docs/security/SECURITY-AI.md) 了解提示注入和代理漂移缓解措施。
 
-## Limitations
+## 限制
 
-- This skill requires an external binary (`kc-agent`) installed separately via Homebrew.
-- Do not treat agent output as a substitute for environment-specific validation or expert review.
-- Stop and ask for clarification if required permissions or safety boundaries are unclear.
+- 此技能需要单独通过 Homebrew 安装的外部二进制文件（`kc-agent`）。
+- 不要将代理输出视为特定环境验证或专家评审的替代品。
+- 如果所需的权限或安全边界不明确，请停止并请求澄清。
 
 ## Links
 

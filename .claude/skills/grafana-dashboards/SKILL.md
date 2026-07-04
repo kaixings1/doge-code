@@ -6,60 +6,60 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Grafana Dashboards
+# Grafana 仪表板
 
-Create and manage production-ready Grafana dashboards for comprehensive system observability.
+创建和管理生产就绪的 Grafana 仪表板，实现全面的系统可观测性。
 
-## Do not use this skill when
+## 何时不使用本技能
 
-- The task is unrelated to grafana dashboards
-- You need a different domain or tool outside this scope
+- 任务与 grafana 仪表板无关
+- 您需要此范围之外的不同领域或工具
 
-## Instructions
+## 使用说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- 明确目标、约束和所需的输入。
+- 应用相关的最佳实践并验证结果。
+- 提供可操作的步骤和验证方法。
+- 如果需要详细示例，请打开 `resources/implementation-playbook.md`。
 
-## Purpose
+## 目的
 
-Design effective Grafana dashboards for monitoring applications, infrastructure, and business metrics.
+设计有效的 Grafana 仪表板，用于监控应用程序、基础设施和业务指标。
 
-## Use this skill when
+## 何时使用本技能
 
-- Visualize Prometheus metrics
-- Create custom dashboards
-- Implement SLO dashboards
-- Monitor infrastructure
-- Track business KPIs
+- 可视化 Prometheus 指标
+- 创建自定义仪表板
+- 实施 SLO 仪表板
+- 监控基础设施
+- 跟踪业务 KPI
 
-## Dashboard Design Principles
+## 仪表板设计原则
 
-### 1. Hierarchy of Information
+### 1. 信息层级
 ```
 ┌─────────────────────────────────────┐
-│  Critical Metrics (Big Numbers)     │
+│  关键指标（大数字）                    │
 ├─────────────────────────────────────┤
-│  Key Trends (Time Series)           │
+│  主要趋势（时间序列）                  │
 ├─────────────────────────────────────┤
-│  Detailed Metrics (Tables/Heatmaps) │
+│  详细指标（表格/热力图）               │
 └─────────────────────────────────────┘
 ```
 
-### 2. RED Method (Services)
-- **Rate** - Requests per second
-- **Errors** - Error rate
-- **Duration** - Latency/response time
+### 2. RED 方法（服务）
+- **速率（Rate）** - 每秒请求数
+- **错误（Errors）** - 错误率
+- **耗时（Duration）** - 延迟/响应时间
 
-### 3. USE Method (Resources)
-- **Utilization** - % time resource is busy
-- **Saturation** - Queue length/wait time
-- **Errors** - Error count
+### 3. USE 方法（资源）
+- **利用率（Utilization）** - 资源忙碌时间百分比
+- **饱和度（Saturation）** - 队列长度/等待时间
+- **错误（Errors）** - 错误计数
 
-## Dashboard Structure
+## 仪表板结构
 
-### API Monitoring Dashboard
+### API 监控仪表板
 
 ```json
 {
@@ -119,13 +119,13 @@ Design effective Grafana dashboards for monitoring applications, infrastructure,
 
 **Reference:** See `assets/api-dashboard.json`
 
-## Panel Types
+## 面板类型
 
-### 1. Stat Panel (Single Value)
+### 1. 统计面板（单值）
 ```json
 {
   "type": "stat",
-  "title": "Total Requests",
+  "title": "总请求数",
   "targets": [{
     "expr": "sum(http_requests_total)"
   }],
@@ -153,11 +153,11 @@ Design effective Grafana dashboards for monitoring applications, infrastructure,
 }
 ```
 
-### 2. Time Series Graph
+### 2. 时间序列图
 ```json
 {
   "type": "graph",
-  "title": "CPU Usage",
+  "title": "CPU 使用率",
   "targets": [{
     "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)"
   }],
@@ -168,11 +168,11 @@ Design effective Grafana dashboards for monitoring applications, infrastructure,
 }
 ```
 
-### 3. Table Panel
+### 3. 表格面板
 ```json
 {
   "type": "table",
-  "title": "Service Status",
+  "title": "服务状态",
   "targets": [{
     "expr": "up",
     "format": "table",
@@ -195,11 +195,11 @@ Design effective Grafana dashboards for monitoring applications, infrastructure,
 }
 ```
 
-### 4. Heatmap
+### 4. 热力图
 ```json
 {
   "type": "heatmap",
-  "title": "Latency Heatmap",
+  "title": "延迟热力图",
   "targets": [{
     "expr": "sum(rate(http_request_duration_seconds_bucket[5m])) by (le)",
     "format": "heatmap"
@@ -211,9 +211,9 @@ Design effective Grafana dashboards for monitoring applications, infrastructure,
 }
 ```
 
-## Variables
+## 变量
 
-### Query Variables
+### 查询变量
 ```json
 {
   "templating": {
@@ -239,12 +239,12 @@ Design effective Grafana dashboards for monitoring applications, infrastructure,
 }
 ```
 
-### Use Variables in Queries
+### 在查询中使用变量
 ```
 sum(rate(http_requests_total{namespace="$namespace", service=~"$service"}[5m]))
 ```
 
-## Alerts in Dashboards
+## 仪表板中的告警
 
 ```json
 {
@@ -276,7 +276,7 @@ sum(rate(http_requests_total{namespace="$namespace", service=~"$service"}[5m]))
 }
 ```
 
-## Dashboard Provisioning
+## 仪表板配置管理
 
 **dashboards.yml:**
 ```yaml
@@ -294,59 +294,59 @@ providers:
       path: /etc/grafana/dashboards
 ```
 
-## Common Dashboard Patterns
+## 常见仪表板模式
 
-### Infrastructure Dashboard
+### 基础设施仪表板
 
-**Key Panels:**
-- CPU utilization per node
-- Memory usage per node
-- Disk I/O
-- Network traffic
-- Pod count by namespace
-- Node status
+**关键面板：**
+- 每个节点的 CPU 利用率
+- 每个节点的内存使用率
+- 磁盘 I/O
+- 网络流量
+- 按命名空间的 Pod 数量
+- 节点状态
 
-**Reference:** See `assets/infrastructure-dashboard.json`
+**参考：** 查看 `assets/infrastructure-dashboard.json`
 
-### Database Dashboard
+### 数据库仪表板
 
-**Key Panels:**
-- Queries per second
-- Connection pool usage
-- Query latency (P50, P95, P99)
-- Active connections
-- Database size
-- Replication lag
-- Slow queries
+**关键面板：**
+- 每秒查询数
+- 连接池使用率
+- 查询延迟（P50、P95、P99）
+- 活跃连接数
+- 数据库大小
+- 复制延迟
+- 慢查询
 
-**Reference:** See `assets/database-dashboard.json`
+**参考：** 查看 `assets/database-dashboard.json`
 
-### Application Dashboard
+### 应用仪表板
 
-**Key Panels:**
-- Request rate
-- Error rate
-- Response time (percentiles)
-- Active users/sessions
-- Cache hit rate
-- Queue length
+**关键面板：**
+- 请求速率
+- 错误率
+- 响应时间（百分位数）
+- 活跃用户/会话数
+- 缓存命中率
+- 队列长度
 
-## Best Practices
+## 最佳实践
 
-1. **Start with templates** (Grafana community dashboards)
-2. **Use consistent naming** for panels and variables
-3. **Group related metrics** in rows
-4. **Set appropriate time ranges** (default: Last 6 hours)
-5. **Use variables** for flexibility
-6. **Add panel descriptions** for context
-7. **Configure units** correctly
-8. **Set meaningful thresholds** for colors
-9. **Use consistent colors** across dashboards
-10. **Test with different time ranges**
+1. **从模板开始**（Grafana 社区仪表板）
+2. **对面板和变量使用一致命名**
+3. **将相关指标分组到行中**
+4. **设置适当的时间范围**（默认：过去 6 小时）
+5. **使用变量提高灵活性**
+6. **添加面板说明以提供上下文**
+7. **正确配置单位**
+8. **为颜色设置有意义的阈值**
+9. **在仪表板间使用一致的颜色**
+10. **使用不同的时间范围进行测试**
 
-## Dashboard as Code
+## 仪表板即代码
 
-### Terraform Provisioning
+### Terraform 配置管理
 
 ```hcl
 resource "grafana_dashboard" "api_monitoring" {
@@ -359,7 +359,7 @@ resource "grafana_folder" "monitoring" {
 }
 ```
 
-### Ansible Provisioning
+### Ansible 配置管理
 
 ```yaml
 - name: Deploy Grafana dashboards
@@ -371,19 +371,19 @@ resource "grafana_folder" "monitoring" {
   notify: restart grafana
 ```
 
-## Reference Files
+## 参考文件
 
-- `assets/api-dashboard.json` - API monitoring dashboard
-- `assets/infrastructure-dashboard.json` - Infrastructure dashboard
-- `assets/database-dashboard.json` - Database monitoring dashboard
-- `references/dashboard-design.md` - Dashboard design guide
+- `assets/api-dashboard.json` - API 监控仪表板
+- `assets/infrastructure-dashboard.json` - 基础设施仪表板
+- `assets/database-dashboard.json` - 数据库监控仪表板
+- `references/dashboard-design.md` - 仪表板设计指南
 
-## Related Skills
+## 相关技能
 
-- `prometheus-configuration` - For metric collection
-- `slo-implementation` - For SLO dashboards
+- `prometheus-configuration` - 用于指标收集
+- `slo-implementation` - 用于 SLO 仪表板
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 局限性
+- 仅当任务明确匹配上述范围时使用本技能。
+- 不要将输出视为环境特定验证、测试或专家评审的替代品。
+- 如果缺少所需的输入、权限、安全边界或成功标准，请停下来寻求澄清。

@@ -24,5 +24,3 @@ allowedTools: [Bash, Read, Write, Edit, Glob, Grep]
 这不是「写一个计划」，而是「生成一个可直接编译运行的项目骨架」。你回答得越详细，输出的代码就越接近成品。
 
 每个问题的答案都会直接影响生成的文件内容。最终产出：CMakeLists.txt、源码文件、配置文件、CI 脚本、安装包脚本——全部可直接使用。
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 43 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

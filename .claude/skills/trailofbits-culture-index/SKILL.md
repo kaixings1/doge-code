@@ -1,4 +1,4 @@
-# Culture Index
+# 文化指数工具
 
 Interprets Culture Index survey results for individuals and teams.
 
@@ -6,7 +6,7 @@ Interprets Culture Index survey results for individuals and teams.
 
 ## When to Use
 
-Use this skill when you need to:
+使用此技能当 you need to:
 - Interpret an individual's Culture Index profile
 - Analyze team composition for gas/brake/glue balance
 - Detect burnout signals by comparing Survey vs Job traits
@@ -15,9 +15,9 @@ Use this skill when you need to:
 
 ## What It Does
 
-This skill provides expert interpretation of Culture Index behavioral assessments:
+此技能提供 expert interpretation of Culture Index behavioral assessments:
 
-- **Relative Interpretation** - Always uses distance from arrow, never absolute values
+- **Relative Interpretation** - 始终 uses distance from arrow, never absolute values
 - **Survey vs Job Analysis** - Identifies behavior modification and energy drain
 - **Pattern Recognition** - Maps profiles to 19 archetypes
 - **Team Analysis** - Assesses gas/brake/glue balance and gaps
@@ -33,4 +33,3 @@ This skill provides expert interpretation of Culture Index behavioral assessment
 
 ### Trait Colors
 | Trait | Color | Measures |
-|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 35 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

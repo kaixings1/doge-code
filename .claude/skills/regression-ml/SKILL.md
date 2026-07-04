@@ -32,7 +32,7 @@ Build regression models using machine learning algorithms for problems where lin
 - Partial dependence plots
 - Residual vs. predicted plots
 
-## Usage Examples
+## 用法 Examples
 
 ```
 "Predict monthly revenue using marketing spend, seasonality, and market data"

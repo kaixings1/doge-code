@@ -1,8 +1,6 @@
 ---
 name: agentic-actions-auditor
-description: "Agentic Actions Auditor — Agentic Actions Auditor 相关功能和最佳实践"
-  Audits GitHub Actions workflows for security
-  vulnerabilities in AI agent integrations 
+description: "Agentic Actions Auditor — 审计 GitHub Actions 工作流中 AI 代理集成的安全漏洞。" 
   including Claude Code Action, 
   Gemini CLI, OpenAI Codex, and GitHub AI 
   Inference. 

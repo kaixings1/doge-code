@@ -18,7 +18,7 @@ Create zero-dependency, animation-rich HTML presentations that run entirely in t
 
 ## Core Principles
 
-1. **Zero Dependencies** — Single HTML files with inline CSS/JS. No npm, no build tools.
+1. **Zero 依赖项** — Single HTML files with inline CSS/JS. No npm, no build tools.
 2. **Show, Don't Tell** — Generate visual previews, not abstract choices. People discover what they want by seeing it.
 3. **Distinctive Design** — No generic "AI slop." Every presentation must feel custom-crafted.
 4. **Viewport Fitting (NON-NEGOTIABLE)** — Every slide MUST fit exactly within 100vh. No scrolling within slides, ever. Content overflows? Split into multiple slides.
@@ -53,7 +53,7 @@ These invariants apply to EVERY slide in EVERY presentation:
 - Images: `max-height: min(50vh, 400px)`
 - Breakpoints required for heights: 700px, 600px, 500px
 - Include `prefers-reduced-motion` support
-- Never negate CSS functions directly (`-clamp()`, `-min()`, `-max()` are silently ignored) — use `calc(-1 * clamp(...))` instead
+- 绝不 negate CSS functions directly (`-clamp()`, `-min()`, `-max()` are silently ignored) — use `calc(-1 * clamp(...))` instead
 
 **When generating, read `viewport-base.css` and include its full contents in every presentation.**
 
@@ -68,7 +68,7 @@ These invariants apply to EVERY slide in EVERY presentation:
 | Quote slide   | 1 quote (max 3 lines) + attribution                       |
 | Image slide   | 1 heading + 1 image (max 60vh height)                     |
 
-**Content exceeds limits? Split into multiple slides. Never cram, never scroll.**
+**Content exceeds limits? Split into multiple slides. 绝不 cram, never scroll.**
 
 ---
 
@@ -90,7 +90,7 @@ When enhancing existing presentations, viewport fitting is the biggest risk:
 4. **After ANY modification, verify:** `.slide` has `overflow: hidden`, new elements use `clamp()`, images have viewport-relative max-height, content fits at 1280x720
 5. **Proactively reorganize:** If modifications will cause overflow, automatically split content and inform the user. Don't wait to be asked
 
-**When adding images to existing slides:** Move image to new slide or reduce other content first. Never add images without checking if existing content already fills the viewport.
+**When adding images to existing slides:** Move image to new slide or reduce other content first. 绝不 add images without checking if existing content already fills the viewport.
 
 ---
 
@@ -235,7 +235,7 @@ When converting PowerPoint files:
 | [animation-patterns.md](animation-patterns.md)     | CSS/JS animation snippets and effect-to-feeling guide                | Phase 3 (generation)      |
 | [scripts/extract-pptx.py](scripts/extract-pptx.py) | Python script for PPT content extraction                             | Phase 4 (conversion)      |
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

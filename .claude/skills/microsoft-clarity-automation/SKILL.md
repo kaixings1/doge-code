@@ -11,5 +11,3 @@ requires:
 Export **Microsoft Clarity** user behavior analytics directly from Claude Code. Pull heatmap data, session metrics, and engagement insights segmented by multiple dimensions without leaving your terminal.
 
 **Toolkit docs:** [composio.dev/toolkits/microsoft_clarity](https://composio.dev/toolkits/microsoft_clarity)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

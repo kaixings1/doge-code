@@ -1,22 +1,22 @@
 ---
 name: fp-taskeither-ref
-description: "Fp Taskeither Ref — Fp Taskeither Ref 相关功能和最佳实践"
+description: "fp-ts TaskEither 快速参考：异步操作错误处理模式，涵盖 API 调用、Promise 封装和异步管道组合。"
 risk: unknown
 source: community
 version: 1.0.0
 tags: [fp-ts, taskeither, async, promise, error-handling, quick-reference]
 ---
 
-# TaskEither Quick Reference
+# TaskEither /u5feb/u901f/u53c2/u8003
 
-TaskEither = async operation that can fail. Like `Promise<Either<E, A>>`.
+TaskEither = /u53ef/u80fd/u5931/u8d25/u7684/u5f02/u6b65/u64cd/u4f5c/u3002/u7c7b/u4f3c `Promise<Either<E, A>>`/u3002
 
-## When to Use
-- You need a quick fp-ts reference for async operations that can fail.
-- The task involves API calls, Promise wrapping, or composing asynchronous error-handling pipelines.
-- You want a concise cheat sheet for `TaskEither` operators and patterns.
+## /u4f55/u65f6/u4f7f/u7528
+- /u9700/u8981/u5904/u7406/u53ef/u80fd/u5931/u8d25/u7684/u5f02/u6b65/u64cd/u4f5c/u7684/u5feb/u901f/u53c2/u8003
+- /u6d89/u53ca API /u8c03/u7528/u3001Promise /u5c01/u88c5/u6216/u7ec4/u5408/u5f02/u6b65/u9519/u8bef/u5904/u7406/u7ba1/u9053
+- /u60a8/u5e0c/u671b/u83b7/u5f97/u7b80/u6d01/u7684 `TaskEither` /u64cd/u4f5c/u7b26/u548c/u6a21/u5f0f/u5c0f/u6284
 
-## Create
+## /u521b/u5efa
 
 ```typescript
 import * as TE from 'fp-ts/TaskEither'
@@ -27,7 +27,7 @@ TE.tryCatch(asyncFn, toError)  // Promise → TaskEither
 TE.fromEither(either)    // Either → TaskEither
 ```
 
-## Transform
+## /u8f6c/u6362
 
 ```typescript
 TE.map(fn)               // Transform success value
@@ -36,7 +36,7 @@ TE.flatMap(fn)           // Chain (fn returns TaskEither)
 TE.orElse(fn)            // Recover from error
 ```
 
-## Execute
+## /u6267/u884c
 
 ```typescript
 // TaskEither is lazy - must call () to run
@@ -52,7 +52,7 @@ await pipe(
 )()
 ```
 
-## Common Patterns
+## /u5e38/u89c1/u6a21/u5f0f
 
 ```typescript
 import { pipe } from 'fp-ts/function'
@@ -87,7 +87,7 @@ pipe(
 )
 ```
 
-## vs async/await
+## /u5bf9/u6bd4 async/await
 
 ```typescript
 // ❌ async/await - errors hidden
@@ -107,9 +107,9 @@ const getUser = (id: string) => pipe(
 )
 ```
 
-Use TaskEither when you need **typed errors** for async operations.
+/u5728/u9700/u8981/u4e3a/u5f02/u6b65/u64cd/u4f5c/u63d0/u4f9b/u7c7b/u578b/u5316/u9519/u8bef/u5904/u7406/u65f6/u4f7f/u7528 TaskEither/u3002
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

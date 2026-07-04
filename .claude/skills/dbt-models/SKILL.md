@@ -2,10 +2,10 @@
 name: DBT模型
 description: "设计 dbt（数据构建工具）模型：项目结构、staging/intermediate/marts 分层、源新鲜度测试、自定义 schema 测试和文档。适用于使用 dbt 构建分析工程流水线。"
 ---
-# dbt Models
+# dbt 模型
 
-## Purpose
-Design a well-structured dbt project following analytics engineering best practices.
+## 目的
+遵循分析工程最佳实践设计结构良好的 dbt 项目。
 
 ## How It Works
 

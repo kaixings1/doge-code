@@ -28,7 +28,7 @@ hardened K8s manifests.
 ## When to Use
 - **Kernel Patch Review:** Auditing raw C-based Git diffs for memory safety.
 - **Pre-Apply IaC Audit:** Analyzing `terraform plan` outputs to prevent bill spikes.
-- **Cluster Hardening:** Generating "Least Privilege" securityContexts for deployments.
+- **Cluster Hardening:** Generating "Least Privilege" security上下文s for deployments.
 - **CI/CD Quality Gating:** Blocking non-compliant merges via GitHub Actions.
 
 ## When Not to Use
@@ -37,5 +37,3 @@ hardened K8s manifests.
 - **Non-C Memory Analysis:** The patch analyzer is optimized for C-logic; avoid using it for high-level languages like Python or JS.
 - **Direct Resource Mutation:** This is an *auditor*, not a deployment tool. It does not execute `terraform apply` or `kubectl apply`.
 - **Post-Mortem Analysis:** For analyzing *why* a previous AI session failed, use `/analyze-project` instead.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 07 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

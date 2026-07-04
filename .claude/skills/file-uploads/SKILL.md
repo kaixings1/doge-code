@@ -1,53 +1,53 @@
 ---
 name: file-uploads
 description: "File Uploads — File Uploads 相关功能和最佳实践"
-  Cloudflare R2, presigned URLs, multipart uploads, and image optimization.
-  Knows how to handle large files without blocking.
+  Cloudflare R2, 预签名URL, 多部分上传和图像优化。
+  知道如何处理大文件而不阻塞。
 risk: none
 source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
 ---
 
-# File Uploads & Storage
+# 文件上传与存储
 
-Expert at handling file uploads and cloud storage. Covers S3,
-Cloudflare R2, presigned URLs, multipart uploads, and image
-optimization. Knows how to handle large files without blocking.
+擅长处理文件上传和云存储。涵盖 S3、
+Cloudflare R2、预签名URL、多部分上传和图像
+优化。知道如何处理大文件而不阻塞。
 
-**Role**: File Upload Specialist
+**角色**：文件上传专家
 
-Careful about security and performance. Never trusts file
-extensions. Knows that large uploads need special handling.
-Prefers presigned URLs over server proxying.
+注重安全和性能。从不信任文件
+扩展名。知道大文件需要特殊处理。
+倾向于使用预签名URL而不是服务器代理。
 
-### Principles
+### 原则
 
-- Never trust client file type claims
-- Use presigned URLs for direct uploads
-- Stream large files, never buffer
-- Validate on upload, optimize after
+- 从不信任客户端提供的文件类型声明
+- 使用预签名URL进行直接上传
+- 流式传输大文件，绝不缓冲
+- 上传时验证，上传后优化
 
-## Sharp Edges
+## 尖锐问题
 
-### Trusting client-provided file type
+### 信任客户端提供的文件类型
 
-Severity: CRITICAL
+严重性：关键
 
-Situation: User uploads malware.exe renamed to image.jpg. You check
-extension, looks fine. Store it. Serve it. Another user
-downloads and executes it.
+情况：用户上传重命名为image.jpg的malware.exe。你检查
+扩展名，看起来没问题。存储它。提供它。另一个用户
+下载并执行它。
 
-Symptoms:
-- Malware uploaded as images
-- Wrong content-type served
+症状：
+- 恶意软件作为图像上传
+- 提供错误的内容类型
 
-Why this breaks:
-File extensions and Content-Type headers can be faked.
-Attackers rename executables to bypass filters.
+为什么这会出问题：
+文件扩展名和Content-Type头部可以被伪造。
+攻击者重命名可执行文件以绕过过滤器。
 
-Recommended fix:
+推荐修复：
 
-# CHECK MAGIC BYTES
+# 检查魔数字节
 
 import { fileTypeFromBuffer } from "file-type";
 
@@ -63,11 +63,11 @@ async function validateImage(buffer: Buffer) {
   return type;
 }
 
-// For streams
+// 对于流
 import { fileTypeFromStream } from "file-type";
 const type = await fileTypeFromStream(readableStream);
 
-### No upload size restrictions
+### /u6ca1/u6709/u4e0a/u4f20/u5927/u5c0f/u9650/u5236
 
 Severity: HIGH
 
@@ -111,7 +111,7 @@ const command = new PutObjectCommand({
   ContentLength: expectedSize, // Enforce size
 });
 
-### User-controlled filename allows path traversal
+### /u7528/u6237/u63a7/u5236/u7684/u6587/u4ef6/u540d/u5bfc/u81f4/u8def/u5f84/u904d/u5386
 
 Severity: CRITICAL
 
@@ -152,13 +152,13 @@ function safeFilename(userFilename: string): string {
   return crypto.randomUUID() + ext;
 }
 
-// Never do this
+// 绝不 do this
 const path = "uploads/" + req.body.filename; // DANGER!
 
 // Do this
 const path = "uploads/" + safeFilename(req.body.filename);
 
-### Presigned URL shared or cached incorrectly
+### /u9884/u7b7e/u540d URL /u5171/u4eab/u6216/u7f13/u5b58/u4e0d/u6b63/u786e
 
 Severity: MEDIUM
 
@@ -192,9 +192,9 @@ return Response.json({ url }, {
 
 // Or use CloudFront signed URLs for more control
 
-## Validation Checks
+## /u9a8c/u8bc1/u68c0/u67e5
 
-### Only checking file extension
+### /u4ec5/u68c0/u67e5/u6587/u4ef6/u6269/u5c55/u540d
 
 Severity: CRITICAL
 
@@ -202,7 +202,7 @@ Message: Check magic bytes, not just extension
 
 Fix action: Use file-type library to verify actual type
 
-### User filename used directly in path
+### /u7528/u6237/u6587/u4ef6/u540d/u76f4/u63a5/u7528/u4e8e/u8def/u5f84
 
 Severity: CRITICAL
 
@@ -210,14 +210,14 @@ Message: Sanitize filenames to prevent path traversal
 
 Fix action: Use path.basename() and generate safe name
 
-## Collaboration
+## /u534f/u4f5c
 
-### Delegation Triggers
+### /u59d4/u6258/u89e6/u53d1/u5668
 
 - image optimization CDN -> performance-optimization (Image delivery)
 - storing file metadata -> postgres-wizard (Database schema)
 
-## When to Use
+## /u4f55/u65f6/u4f7f/u7528
 - User mentions or implies: file upload
 - User mentions or implies: S3
 - User mentions or implies: R2
@@ -226,7 +226,7 @@ Fix action: Use path.basename() and generate safe name
 - User mentions or implies: image upload
 - User mentions or implies: cloud storage
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

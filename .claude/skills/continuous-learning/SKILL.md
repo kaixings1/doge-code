@@ -3,9 +3,9 @@ name: continuous-learning
 description: 从编码会话中自动提取模式、跟踪修正，并使用置信度评分构建可复用的知识库。
 ---
 
-# Continuous Learning
+# 持续学习
 
-## Pattern Extraction Framework
+## 模式提取框架
 
 After every significant coding session, extract and categorize learnings into three buckets:
 
@@ -13,7 +13,7 @@ After every significant coding session, extract and categorize learnings into th
 2. **Successful Approaches** - Patterns that worked well and should be repeated
 3. **Anti-Patterns** - Approaches that caused problems and should be avoided
 
-## Learning Entry Format
+## 学习条目格式
 
 ```yaml
 pattern:
@@ -32,7 +32,7 @@ pattern:
   last_seen: "2025-06-15"
 ```
 
-## Confidence Scoring
+## 置信度评分
 
 | Score | Meaning | Action |
 |-------|---------|--------|
@@ -48,7 +48,7 @@ Update confidence based on:
 - -0.15 when pattern leads to a correction
 - -0.20 when pattern is explicitly rejected by user
 
-## Session Wrap-Up Protocol
+## 会话结束协议
 
 At the end of each session or before context compaction:
 
@@ -75,7 +75,7 @@ At the end of each session or before context compaction:
 - [0.65] Avoid: Using `any` to suppress TypeScript errors in catch blocks (use `unknown`)
 ```
 
-## Knowledge Base Organization
+## 知识库组织
 
 Structure the knowledge base by domain:
 
@@ -91,7 +91,7 @@ knowledge/
 
 Each file follows the same entry format. Deduplicate entries with matching `observation` fields by incrementing `frequency` and updating `confidence`.
 
-## Correction Tracking
+## 修正跟踪
 
 When a user corrects code or approach:
 
@@ -110,7 +110,7 @@ When a user corrects code or approach:
 - **Confidence**: 0.90 (confirmed across 4 components)
 ```
 
-## Pattern Reinforcement
+## 模式强化
 
 Track how often patterns are applied and whether they hold:
 
@@ -123,13 +123,13 @@ Pattern: "Use zod for API input validation"
   Status: ESTABLISHED
 ```
 
-Statuses:
+状态es:
 - **EMERGING** (frequency < 3) - New pattern, needs validation
 - **GROWING** (frequency 3-7) - Building evidence, apply with mention
 - **ESTABLISHED** (frequency 8+, confidence > 0.85) - Apply automatically
 - **DEPRECATED** - Once valid, now superseded by a better approach
 
-## Integration with Memory Files
+## 与记忆文件集成
 
 Store learnings in the project's memory file (CLAUDE.md or equivalent):
 

@@ -6,23 +6,23 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Track Manager
+# 轨道管理器
 
-Manage the complete track lifecycle including archiving, restoring, deleting, renaming, and cleaning up orphaned artifacts.
+管理完整的轨道生命周期，包括归档、恢复、删除、重命名和清理孤立工件。
 
-## Use this skill when
+## 使用此技能的场景
 
-- Archiving, restoring, renaming, or deleting Conductor tracks
-- Listing track status or cleaning orphaned artifacts
-- Managing the track lifecycle across active, completed, and archived states
+- 归档、恢复、重命名或删除 Conductor 轨道
+- 列出轨道状态或清理孤立工件
+- 管理跨活跃、已完成和已归档状态的轨道生命周期
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- Conductor is not initialized in the repository
-- You lack permission to modify track metadata or files
-- The task is unrelated to Conductor track management
+- Conductor 未在仓库中初始化
+- 您没有修改轨道元数据或文件的权限
+- 任务与 Conductor 轨道管理无关
 
-## Instructions
+## 说明
 
 - Verify `conductor/` structure and required files before proceeding.
 - Determine the operation mode from arguments or interactive prompts.
@@ -39,7 +39,7 @@ Manage the complete track lifecycle including archiving, restoring, deleting, re
 
 - `resources/implementation-playbook.md` for detailed modes, prompts, and workflows.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

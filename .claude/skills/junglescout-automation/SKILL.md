@@ -1,83 +1,16 @@
 ---
 name: junglescout-automation
-description: "通过 Rube MCP (Composio) 自动执行 Junglescout 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Junglescout 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
-
-# Junglescout Automation via Rube MCP
-
-Automate Junglescout operations through Composio's Junglescout toolkit via Rube MCP.
-
-**Toolkit docs**: [composio.dev/toolkits/junglescout](https://composio.dev/toolkits/junglescout)
-
-## Prerequisites
-
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Junglescout connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `junglescout`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
-
-## Setup
-
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
-
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `junglescout`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
-
-## Tool Discovery
-
-Always discover available tools before executing workflows:
-
-```
-RUBE_SEARCH_TOOLS
-queries: [{use_case: "Junglescout operations", known_fields: ""}]
-session: {generate_id: true}
-```
-
-This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
-
-## Core Workflow Pattern
-
-### Step 1: Discover Available Tools
-
-```
-RUBE_SEARCH_TOOLS
-queries: [{use_case: "your specific Junglescout task"}]
-session: {id: "existing_session_id"}
-```
-
-### Step 2: Check Connection
-
-```
-RUBE_MANAGE_CONNECTIONS
-toolkits: ["junglescout"]
-session_id: "your_session_id"
-```
-
-### Step 3: Execute Tools
-
-```
-RUBE_MULTI_EXECUTE_TOOL
-tools: [{
-  tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
-}]
-memory: {}
-session_id: "your_session_id"
-```
-
-## Known Pitfalls
-
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
-
-## Quick Reference
-
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 35 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+# 通过 Rube MCP 实现 Junglescout 自动化
+通过 Composio 的 Junglescout 工具包和 Rube MCP 自动化 Junglescout 操作。
+**工具包文档**: [composio.dev/toolkits/junglescout](https://composio.dev/toolkits/junglescout)
+## 核心工作流模式
+### 步骤 1: 发现可用工具
+### 步骤 2: 检查连接
+### 步骤 3: 执行工具
+## 已知陷阱
+| 操作 | 方法 |
+|---|---|

@@ -14,13 +14,13 @@ tools: [claude, cursor, codex, copilot]
 
 Systematically probe an AI model's behavioral patterns and generate a visual report. The AI agent probes *itself* — no API key or external setup needed.
 
-## Overview
+## 概述
 
 bdistill's Behavioral X-Ray runs 30 carefully designed probe questions across 6 dimensions, auto-tags each response with behavioral metadata, and compiles results into a styled HTML report with radar charts and actionable insights.
 
 Use it to understand your model before building with it, compare models for task selection, or track behavioral drift over time.
 
-## When to Use This Skill
+## /u4f55/u65f6/u4f7f/u7528 This Skill
 
 - Use when you want to understand how your AI model actually behaves (not how it claims to)
 - Use when choosing between models for a specific task
@@ -81,11 +81,11 @@ A styled HTML report showing:
 - Compare reports across models to make informed selection decisions
 - Use adversarial knowledge extraction (`/distill --adversarial`) alongside behavioral probes for complete model profiling
 
-## Related Skills
+## 相关 Skills
 
 - `@bdistill-knowledge-extraction` - Extract structured domain knowledge from any AI model
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

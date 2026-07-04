@@ -175,7 +175,7 @@ Do not paste large chunks of NDJSON into the chat — it is noisy and not where 
 - Scan times out → either narrow the `--root` set, scope with `--ecosystem`, or raise `--max-duration`. Do not loop and retry blindly.
 - Exposure catalog rejected → check that the JSON has both `schema_version` and `entries` keys (bare top-level arrays are rejected) and that `schema_version` is one Bumblebee understands.
 
-## Limitations
+## 局限性
 
 - This skill only reports local inventory and exposure matches; it does not remediate affected packages, extensions, or configs.
 - Scan coverage depends on Bumblebee's supported ecosystems, the selected roots, and the current user's filesystem permissions.

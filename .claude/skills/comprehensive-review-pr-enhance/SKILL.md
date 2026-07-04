@@ -9,14 +9,14 @@ risk: unknown
 source: community
 ---
 
-# Pull Request Enhancement
+# Pull Request 增强
 
-## When to Use
-- You need to turn a git diff into a reviewer-friendly pull request description.
-- You want a PR summary with change categories, risks, testing notes, and a checklist.
-- The diff is large enough that reviewers need explicit structure instead of a short ad hoc summary.
+## 何时使用
+- 你需要将 git diff 转化为对审查者友好的 PR 描述。
+- 你想要包含变更类别、风险、测试说明和检查清单的 PR 摘要。
+- diff 足够大，审查者需要显式结构而不是简短的非正式摘要。
 
-## Workflow
+## 工作流
 
 1. Run `git diff <base>...HEAD --stat` to identify changed files and scope
 2. Categorise changes: source, test, config, docs, build, styles
@@ -76,7 +76,7 @@ git cherry-pick <commits-for-part-1>
 
 - `resources/implementation-playbook.md` — Python helpers for automated PR analysis, coverage reports, and risk scoring
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

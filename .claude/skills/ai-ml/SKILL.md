@@ -9,7 +9,7 @@ date_added: "2026-02-27"
 
 # AI/ML Workflow Bundle
 
-## Overview
+## 概述
 
 Comprehensive AI/ML workflow for building LLM applications, implementing RAG systems, creating AI agents, and developing machine learning pipelines. This bundle orchestrates skills for production AI development.
 
@@ -49,7 +49,7 @@ Use @ai-product to design AI-powered features
 Use @ai-agents-architect to design multi-agent system
 ```
 
-### Phase 2: LLM Integration
+### Phase 2: LLM 集成
 
 #### Skills to Invoke
 - `llm-application-dev-ai-assistant` - AI assistant development
@@ -192,11 +192,11 @@ Use @langfuse to set up LLM observability
 Use @evaluation to create evaluation framework
 ```
 
-### Phase 7: AI Security
+### Phase 7: AI 安全性
 
 #### Skills to Invoke
 - `prompt-engineering` - Prompt security
-- `security-scanning-security-sast` - Security scanning
+- `security-scanning-security-sast` - 安全性 scanning
 
 #### Actions
 1. Implement input validation
@@ -208,7 +208,7 @@ Use @evaluation to create evaluation framework
 
 ## AI Development Checklist
 
-### LLM Integration
+### LLM 集成
 - [ ] API keys secured
 - [ ] Rate limiting configured
 - [ ] Error handling implemented
@@ -239,19 +239,19 @@ Use @evaluation to create evaluation framework
 ## Quality Gates
 
 - [ ] All AI features tested
-- [ ] Performance benchmarks met
-- [ ] Security measures in place
+- [ ] 性能 benchmarks met
+- [ ] 安全性 measures in place
 - [ ] Observability configured
 - [ ] Documentation complete
 
-## Related Workflow Bundles
+## 相关 Workflow Bundles
 
 - `development` - Application development
 - `database` - Data management
 - `cloud-devops` - Infrastructure
 - `testing-qa` - AI testing
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

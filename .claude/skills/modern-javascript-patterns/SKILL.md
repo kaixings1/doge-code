@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Comprehensive guide for mastering modern JavaScript (ES6+) features, functional programming patterns, and best practices for writing clean, maintainable, and performant code.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Refactoring legacy JavaScript to modern syntax
 - Implementing functional programming patterns
@@ -21,7 +21,7 @@ Comprehensive guide for mastering modern JavaScript (ES6+) features, functional 
 - Migrating from callbacks to Promises/async-await
 - Implementing data transformation pipelines
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to modern javascript patterns
 - You need a different domain or tool outside this scope
@@ -37,7 +37,7 @@ Comprehensive guide for mastering modern JavaScript (ES6+) features, functional 
 
 - `resources/implementation-playbook.md` for detailed patterns and examples.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

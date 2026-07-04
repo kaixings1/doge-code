@@ -16,7 +16,7 @@ Use this skill to turn model work into a production ML system with clear data co
 - Debugging failures caused by data drift, label leakage, stale features, artifact mismatch, or inconsistent training and serving logic
 - Adding model monitoring, canary rollout, shadow traffic, or post-deploy quality checks
 
-## Scope Calibration
+## 范围 Calibration
 
 Use only the lanes that fit the system in front of you. This skill is useful for ranking, search, recommendations, classifiers, forecasting, embeddings, LLM workflows, anomaly detection, and batch analytics, but it should not force one architecture onto all of them.
 
@@ -25,7 +25,7 @@ Use only the lanes that fit the system in front of you. This skill is useful for
 - Do make assumptions explicit when the project lacks labels, delayed outcomes, slice definitions, production traffic, or monitoring ownership.
 - Treat examples as interchangeable scaffolds. Replace metrics, serving mode, data stores, and rollout mechanics with the project-native equivalents.
 
-## Related Skills
+## 相关 Skills
 
 - `python-patterns` and `python-testing` for Python implementation and pytest coverage
 - `pytorch-patterns` for deep learning models, data loaders, device handling, and training loops
@@ -40,4 +40,3 @@ Do not treat MLE as separate from software engineering. Most ECC SWE workflows a
 The recommended `minimal --with capability:machine-learning` install keeps the core agent surface available alongside this skill. For skill-only or agent-limited harnesses, pair `skill:mle-workflow` with `agent:mle-reviewer` where the target supports agents.
 
 | SWE surface | MLE use |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 21 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Practical implementation guide for GDPR-compliant data processing, consent management, and privacy controls.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Building systems that process EU personal data
 - Implementing consent management
@@ -19,7 +19,7 @@ Practical implementation guide for GDPR-compliant data processing, consent manag
 - Designing privacy-first architectures
 - Creating data processing agreements
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to gdpr data handling
 - You need a different domain or tool outside this scope
@@ -35,7 +35,7 @@ Practical implementation guide for GDPR-compliant data processing, consent manag
 
 - `resources/implementation-playbook.md` for detailed patterns and examples.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

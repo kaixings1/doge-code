@@ -6,22 +6,22 @@ source: "https://github.com/whatiskadudoing/fp-ts-skills"
 date_added: "2026-02-27"
 ---
 
-# Functional Programming in React
+# React 中的函数式编程
 
-Practical patterns for React apps. No jargon, just code that works.
+React 应用的实用模式。没有术语，只有能用的代码。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- When building React apps with fp-ts for type-safe state management
-- When handling loading/error/success states in data fetching
-- When implementing form validation with error accumulation
-- When using React 18/19 or Next.js 14/15 with functional patterns
+- 使用 fp-ts 构建 React 应用以实现类型安全状态管理时
+- 在数据获取中处理加载/错误/成功状态时
+- 实现带错误累积的表单验证时
+- 使用 React 18/19 或 Next.js 14/15 配合函数式模式时
 
 ---
 
-## Quick Reference
+## 快速参考
 
-| Pattern | Use When |
+| 模式 | 何时使用 |
 |---------|----------|
 | `Option` | Value might be missing (user not loaded yet) |
 | `Either` | Operation might fail (form validation) |
@@ -796,7 +796,7 @@ const modalProps = {
 - **[io-ts](https://github.com/gcanti/io-ts)** - Runtime type validation
 - **[zod](https://github.com/colinhacks/zod)** - Schema validation (works great with fp-ts)
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

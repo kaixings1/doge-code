@@ -14,10 +14,9 @@ metadata:
   category: seo
 ---
 
-# Programmatic SEO Analysis & Planning
+# 程序化 SEO 分析与规划
 
-Build and audit SEO pages generated at scale from structured data sources.
-Enforces quality gates to prevent thin content penalties and index bloat.
+从结构化数据源大规模构建和审计 SEO 页面。强制执行质量门以防止内容稀薄惩罚和索引膨胀。
 
 ## Data Source Assessment
 
@@ -36,7 +35,7 @@ Design templates that produce unique, valuable pages:
 - **Variable injection points**: Title, H1, body sections, meta description, schema
 - **Content blocks**: Static (shared across pages) vs dynamic (unique per page)
 - **Conditional logic**: Show/hide sections based on data availability
-- **Supplementary content**: Related items, contextual tips, user-generated content
+- **Supplementary content**: 相关 items, contextual tips, user-generated content
 - Template review checklist:
   - Each page must read as a standalone, valuable resource
   - No "mad-libs" patterns (just swapping city/product names in identical text)
@@ -47,7 +46,7 @@ Design templates that produce unique, valuable pages:
 ### Common Patterns
 - `/tools/[tool-name]`: Tool/product directory pages
 - `/[city]/[service]`: Location + service pages
-- `/integrations/[platform]`: Integration landing pages
+- `/integrations/[platform]`: 集成 landing pages
 - `/glossary/[term]`: Definition/reference pages
 - `/templates/[template-name]`: Downloadable template pages
 
@@ -62,7 +61,7 @@ Design templates that produce unique, valuable pages:
 ## Internal Linking Automation
 
 - **Hub/spoke model**: Category hub pages linking to individual programmatic pages
-- **Related items**: Auto-link to 3-5 related pages based on data attributes
+- **相关 items**: Auto-link to 3-5 related pages based on data attributes
 - **Breadcrumbs**: Generate BreadcrumbList schema from URL hierarchy
 - **Cross-linking**: Link between programmatic pages sharing attributes (same category, same city, same feature)
 - **Anchor text**: Use descriptive, varied anchor text. Avoid exact-match keyword repetition
@@ -73,4 +72,3 @@ Design templates that produce unique, valuable pages:
 ### Quality Gates
 
 | Metric | Threshold | Action |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 33 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

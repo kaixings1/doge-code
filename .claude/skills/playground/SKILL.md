@@ -1,76 +1,76 @@
 ---
 name: playground
-description: "Playground — Playground 相关功能和最佳实践"
+description: "Playground — 交互式沙盒相关功能和最佳实践"
 ---
 
-# Playground Builder
+# 沙盒构建器
 
-A playground is a self-contained HTML file with interactive controls on one side, a live preview on the other, and a prompt output at the bottom with a copy button. The user adjusts controls, explores visually, then copies the generated prompt back into Claude.
+沙盒是一个自包含的 HTML 文件，一侧有交互式控件，另一侧有实时预览，底部有带复制按钮的提示输出。用户调整控件、直观探索，然后将生成的提示复制回 Claude。
 
-## When to use this skill
+## 何时使用此技能
 
-When the user asks for an interactive playground, explorer, or visual tool for a topic — especially when the input space is large, visual, or structural and hard to express as plain text.
+当用户请求某个主题的交互式沙盒、浏览器或可视化工具时——尤其是当输入空间很大、涉及视觉或结构元素、难以用纯文本表达时。
 
-## How to use this skill
+## 如何使用此技能
 
-1. **Identify the playground type** from the user's request
-2. **Load the matching template** from `templates/`:
-   - `templates/design-playground.md` — Visual design decisions (components, layouts, spacing, color, typography)
-   - `templates/data-explorer.md` — Data and query building (SQL, APIs, pipelines, regex)
-   - `templates/concept-map.md` — Learning and exploration (concept maps, knowledge gaps, scope mapping)
-   - `templates/document-critique.md` — Document review (suggestions with approve/reject/comment workflow)
-   - `templates/diff-review.md` — Code review (git diffs, commits, PRs with line-by-line commenting)
-   - `templates/code-map.md` — Codebase architecture (component relationships, data flow, layer diagrams)
-3. **Follow the template** to build the playground. If the topic doesn't fit any template cleanly, use the one closest and adapt.
-4. **Open in browser.** After writing the HTML file, run `open <filename>.html` to launch it in the user's default browser.
+1. **根据用户请求识别沙盒类型**
+2. **从 `templates/` 加载匹配的模板**：
+   - `templates/design-playground.md` — 视觉设计决策（组件、布局、间距、颜色、排版）
+   - `templates/data-explorer.md` — 数据和查询构建（SQL、API、管道、正则表达式）
+   - `templates/concept-map.md` — 学习和探索（概念图、知识盲区、范围映射）
+   - `templates/document-critique.md` — 文档审查（含批准/拒绝/评论工作流的建议）
+   - `templates/diff-review.md` — 代码审查（git diff、提交、PR 逐行评论）
+   - `templates/code-map.md` — 代码库架构（组件关系、数据流、层级图）
+3. **遵循模板**构建沙盒。如果主题不完全匹配任何模板，使用最接近的并调整。
+4. **在浏览器中打开。** 写入 HTML 文件后，运行 `open <filename>.html` 在用户默认浏览器中启动。
 
-## Core requirements (every playground)
+## 核心要求（每个沙盒）
 
-- **Single HTML file.** Inline all CSS and JS. No external dependencies.
-- **Live preview.** Updates instantly on every control change. No "Apply" button.
-- **Prompt output.** Natural language, not a value dump. Only mentions non-default choices. Includes enough context to act on without seeing the playground. Updates live.
-- **Copy button.** Clipboard copy with brief "Copied!" feedback.
-- **Sensible defaults + presets.** Looks good on first load. Include 3-5 named presets that snap all controls to a cohesive combination.
-- **Dark theme.** System font for UI, monospace for code/values. Minimal chrome.
+- **单个 HTML 文件。** 内联所有 CSS 和 JS。无外部依赖。
+- **实时预览。** 每次控件更改时立即更新。无"应用"按钮。
+- **提示输出。** 自然语言，而非值转储。仅提及非默认选择。包含足够的上下文，无需看到沙盒即可操作。实时更新。
+- **复制按钮。** 剪贴板复制，带短暂的"已复制！"反馈。
+- **合理的默认值 + 预设。** 首次加载时看起来不错。包含 3-5 个命名预设，将所有控件切换为连贯的组合。
+- **深色主题。** UI 使用系统字体，代码/值使用等宽字体。极简装饰。
 
-## State management pattern
+## 状态管理模式
 
-Keep a single state object. Every control writes to it, every render reads from it.
+保持单一状态对象。每个控件写入它，每次渲染读取它。
 
 ```javascript
-const state = { /* all configurable values */ };
+const state = { /* 所有可配置的值 */ };
 
 function updateAll() {
-  renderPreview(); // update the visual
-  updatePrompt();  // rebuild the prompt text
+  renderPreview(); // 更新可视化
+  updatePrompt();  // 重建提示文本
 }
-// Every control calls updateAll() on change
+// 每个控件在更改时调用 updateAll()
 ```
 
-## Prompt output pattern
+## 提示输出模式
 
 ```javascript
 function updatePrompt() {
   const parts = [];
 
-  // Only mention non-default values
+  // 仅提及非默认值
   if (state.borderRadius !== DEFAULTS.borderRadius) {
-    parts.push(`border-radius of ${state.borderRadius}px`);
+    parts.push(`border-radius 为 ${state.borderRadius}px`);
   }
 
-  // Use qualitative language alongside numbers
-  if (state.shadowBlur > 16) parts.push('a pronounced shadow');
-  else if (state.shadowBlur > 0) parts.push('a subtle shadow');
+  // 配合数字使用定性语言
+  if (state.shadowBlur > 16) parts.push('明显的阴影');
+  else if (state.shadowBlur > 0) parts.push('微妙的阴影');
 
-  prompt.textContent = `Update the card to use ${parts.join(', ')}.`;
+  prompt.textContent = `将卡片更新为使用 ${parts.join(', ')}。`;
 }
 ```
 
-## Common mistakes to avoid
+## 常见错误
 
-- Prompt output is just a value dump → write it as a natural instruction
-- Too many controls at once → group by concern, hide advanced in a collapsible section
-- Preview doesn't update instantly → every control change must trigger immediate re-render
-- No defaults or presets → starts empty or broken on load
-- External dependencies → if CDN is down, playground is dead
-- Prompt lacks context → include enough that it's actionable without the playground
+- 提示输出仅是值转储 → 应写成自然指令
+- 一次性控件太多 → 按关注点分组，高级选项隐藏在可折叠部分
+- 预览不会立即更新 → 每次控件更改必须触发立即重渲染
+- 无默认值或预设 → 加载时为空或损坏
+- 外部依赖 → 如果 CDN 宕机，沙盒无法使用
+- 提示缺乏上下文 → 包含足够信息，使其无需沙盒即能操作

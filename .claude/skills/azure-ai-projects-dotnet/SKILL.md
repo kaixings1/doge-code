@@ -158,7 +158,7 @@ AIProjectConnection defaultConn = projectClient.Connections.GetDefaultConnection
     includeCredentials: false);
 ```
 
-### 4. Deployments
+### 4. 部署s
 
 ```csharp
 // List all deployments
@@ -289,7 +289,7 @@ Console.WriteLine(result.Content[0].Text);
 | Azure AI Search | `AzureAISearchToolDefinition` | Search Azure AI indexes |
 | OpenAPI | `OpenApiToolDefinition` | Call external APIs |
 | Azure Functions | `AzureFunctionToolDefinition` | Invoke Azure Functions |
-| MCP | `MCPToolDefinition` | Model Context Protocol tools |
+| MCP | `MCPToolDefinition` | Model 上下文 Protocol tools |
 
 ## Key Types Reference
 
@@ -300,14 +300,14 @@ Console.WriteLine(result.Content[0].Text);
 | `PromptAgentDefinition` | Versioned agent definition |
 | `AgentVersion` | Versioned agent instance |
 | `AIProjectConnection` | Connection to Azure resource |
-| `AIProjectDeployment` | Model deployment info |
+| `AIProject部署` | Model deployment info |
 | `AIProjectDataset` | Dataset metadata |
 | `AIProjectIndex` | Search index metadata |
 | `Evaluation` | Evaluation configuration and results |
 
 ## Best Practices
 
-1. **Use `DefaultAzureCredential`** for production authentication
+1. **Use `默认AzureCredential`** for production authentication
 2. **Use async methods** (`*Async`) for all I/O operations
 3. **Poll with appropriate delays** (500ms recommended) when waiting for runs
 4. **Clean up resources** — delete threads, agents, and files when done
@@ -331,7 +331,7 @@ catch (RequestFailedException ex)
 }
 ```
 
-## Related SDKs
+## 相关 SDKs
 
 | SDK | Purpose | Install |
 |-----|---------|---------|
@@ -351,7 +351,7 @@ catch (RequestFailedException ex)
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

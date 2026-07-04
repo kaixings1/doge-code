@@ -20,7 +20,7 @@ Design data models at conceptual, logical, and physical levels for databases and
 - **Data Vault 2.0**: Hubs, links, satellites — flexible and auditable
 - **Activity Schema**: Single wide event table pattern
 
-## Usage Examples
+## 用法 Examples
 
 ```
 "Create a dimensional model for our e-commerce analytics"

@@ -5,49 +5,49 @@ requires:
   mcp: [rube]
 ---
 
-# Zoho Mail Automation via Rube MCP
+# 通过 Rube MCP 实现 Zoho Mail 自动化
 
-Automate Zoho Mail operations through Composio's Zoho Mail toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Zoho Mail 工具包实现 Zoho Mail 操作自动化。
 
-**Toolkit docs**: [composio.dev/toolkits/zoho_mail](https://composio.dev/toolkits/zoho_mail)
+**工具包文档**: [composio.dev/toolkits/zoho_mail](https://composio.dev/toolkits/zoho_mail)
 
-## Prerequisites
+## 先决条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Zoho Mail connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `zoho_mail`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Zoho Mail 连接，使用工具包 `zoho_mail`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 以获取当前工具模式
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**: 在客户端配置中添加 `https://rube.app/mcp` 作为 MCP 服务器。无需 API 密钥——只需添加端点即可工作。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `zoho_mail`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 确认 `RUBE_SEARCH_TOOLS` 响应，验证 Rube MCP 是否可用
+2. 调用 `RUBE_MANAGE_CONNECTIONS` 并指定工具包 `zoho_mail`
+3. 如果连接不是 ACTIVE 状态，请按照返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示为 ACTIVE
 
-## Tool Discovery
+## 工具发现
 
-Always discover available tools before executing workflows:
+在执行工作流之前始终发现可用工具：
 
 ```
 RUBE_SEARCH_TOOLS: queries=[{"use_case": "email sending, folders, labels, and mailbox management", "known_fields": ""}]
 ```
 
-This returns:
-- Available tool slugs for Zoho Mail
-- Recommended execution plan steps
-- Known pitfalls and edge cases
-- Input schemas for each tool
+这将返回：
+- Zoho Mail 的可用工具标识符
+- 推荐执行计划步骤
+- 已知问题和边界情况
+- 每个工具的输入模式
 
-## Core Workflows
+## 核心工作流
 
-### 1. Discover Available Zoho Mail Tools
+### 1. 发现可用 Zoho Mail 工具
 
 ```
 RUBE_SEARCH_TOOLS:
   queries:
-    - use_case: "list all available Zoho Mail tools and capabilities"
+    - use_case: "列出所有可用的 Zoho Mail 工具和功能"
 ```
 
 Review the returned tools, their descriptions, and input schemas before proceeding.
@@ -90,14 +90,14 @@ Many list operations support pagination. Check responses for `next_cursor` or `p
 ### Batch Operations
 For bulk operations, use `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` in a loop with `ThreadPoolExecutor` for parallel execution.
 
-## Known Pitfalls
+## 已知陷阱
 
 - **Always search tools first**: Tool schemas and available operations may change. Never hardcode tool slugs without first discovering them via `RUBE_SEARCH_TOOLS`.
 - **Check connection status**: Ensure the Zoho Mail connection is ACTIVE before executing any tools. Expired OAuth tokens require re-authentication.
 - **Respect rate limits**: If you receive rate limit errors, reduce request frequency and implement backoff.
 - **Validate schemas**: Always pass strictly schema-compliant arguments. Use `RUBE_GET_TOOL_SCHEMAS` to load full input schemas when `schemaRef` is returned instead of `input_schema`.
 
-## Quick Reference
+## 快速参考
 
 | Operation | Approach |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 00 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -6,13 +6,13 @@ source: "https://docs.dbos.dev/"
 date_added: "2026-02-27"
 ---
 
-# DBOS TypeScript Best Practices
+# DBOS TypeScript 最佳实践
 
-Guide for building reliable, fault-tolerant TypeScript applications with DBOS durable workflows.
+使用 DBOS 持久化工作流构建可靠、容错的 TypeScript 应用指南。
 
-## When to Use
-Reference these guidelines when:
-- Adding DBOS to existing TypeScript code
+## 何时使用
+在以下情况下参考这些指南：
+- 将 DBOS 添加到现有 TypeScript 代码中
 - Creating workflows and steps
 - Using queues for concurrency control
 - Implementing workflow communication (events, messages, streams)
@@ -38,13 +38,13 @@ Reference these guidelines when:
 
 ### Installation
 
-Always install the latest version of DBOS:
+始终 install the latest version of DBOS:
 
 ```bash
 npm install @dbos-inc/dbos-sdk@latest
 ```
 
-### DBOS Configuration and Launch
+### DBOS 配置 and Launch
 
 A DBOS application MUST configure and launch DBOS before running any workflows:
 
@@ -81,12 +81,12 @@ async function myWorkflowFn() {
 const myWorkflow = DBOS.registerWorkflow(myWorkflowFn);
 ```
 
-### Key Constraints
+### Key 约束条件
 
-- Do NOT call, start, or enqueue workflows from within steps
-- Do NOT use threads or uncontrolled concurrency to start workflows - use `DBOS.startWorkflow` or queues
+- 不要 call, start, or enqueue workflows from within steps
+- 不要 use threads or uncontrolled concurrency to start workflows - use `DBOS.startWorkflow` or queues
 - Workflows MUST be deterministic - non-deterministic operations go in steps
-- Do NOT modify global variables from workflows or steps
+- 不要 modify global variables from workflows or steps
 
 ## How to Use
 
@@ -98,12 +98,12 @@ references/workflow-determinism.md
 references/queue-concurrency.md
 ```
 
-## References
+## 参考资料
 
 - https://docs.dbos.dev/
 - https://github.com/dbos-inc/dbos-transact-ts
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

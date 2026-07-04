@@ -4,15 +4,15 @@ description: "Claude Md Improver — Claude Md Improver 相关功能和最佳实
 tools: Read, Glob, Grep, Bash, Edit
 ---
 
-# CLAUDE.md Improver
+# CLAUDE.md 改进器
 
-Audit, evaluate, and improve CLAUDE.md files across a codebase to ensure Claude Code has optimal project context.
+审计、评估和改进整个代码库的 CLAUDE.md 文件，确保 Claude Code 具有最佳的项目上下文。
 
-**This skill can write to CLAUDE.md files.** After presenting a quality report and getting user approval, it updates CLAUDE.md files with targeted improvements.
+**此技能可以写入 CLAUDE.md 文件。** 在呈现质量报告并获得用户批准后，它会有针对性地改进更新 CLAUDE.md 文件。
 
-## Workflow
+## 工作流
 
-### Phase 1: Discovery
+### 阶段 1：发现
 
 Find all CLAUDE.md files in the repository:
 
@@ -41,7 +41,7 @@ For each CLAUDE.md file, evaluate against quality criteria. See [references/qual
 | Criterion | Weight | Check |
 |-----------|--------|-------|
 | Commands/workflows documented | High | Are build/test/deploy commands present? |
-| Architecture clarity | High | Can Claude understand the codebase structure? |
+| 架构 clarity | High | Can Claude understand the codebase structure? |
 | Non-obvious patterns | Medium | Are gotchas and quirks documented? |
 | Conciseness | Medium | No verbose explanations or obvious info? |
 | Currency | High | Does it reflect current codebase state? |
@@ -103,7 +103,7 @@ After outputting the quality report, ask user for confirmation before updating.
    - Gotchas or non-obvious patterns found in code
    - Package relationships that weren't clear
    - Testing approaches that work
-   - Configuration quirks
+   - 配置 quirks
 
 2. **Keep it minimal** - Avoid:
    - Restating what's obvious from the code
@@ -124,7 +124,7 @@ After outputting the quality report, ask user for confirmation before updating.
 **Why:** Build command was missing, causing confusion about how to run the project.
 
 ```diff
-+ ## Quick Start
++ ## 快速开始
 +
 + ```bash
 + npm install
@@ -144,9 +144,9 @@ See [references/templates.md](references/templates.md) for CLAUDE.md templates b
 ## Common Issues to Flag
 
 1. **Stale commands**: Build commands that no longer work
-2. **Missing dependencies**: Required tools not mentioned
+2. **Missing dependencies**: 必需 tools not mentioned
 3. **Outdated architecture**: File structure that's changed
-4. **Missing environment setup**: Required env vars or config
+4. **Missing environment setup**: 必需 env vars or config
 5. **Broken test commands**: Test scripts that have changed
 6. **Undocumented gotchas**: Non-obvious patterns not captured
 
@@ -170,7 +170,7 @@ When presenting recommendations, remind users:
 
 **Recommended sections** (use only what's relevant):
 - Commands (build, test, dev, lint)
-- Architecture (directory structure)
+- 架构 (directory structure)
 - Key Files (entry points, config)
 - Code Style (project conventions)
 - Environment (required vars, setup)

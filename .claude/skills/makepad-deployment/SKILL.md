@@ -10,16 +10,16 @@ risk: critical
 source: community
 ---
 
-# Makepad Packaging & Deployment
+# Makepad 打包与部署
 
-This skill covers packaging Makepad applications for all supported platforms.
+此技能涵盖为所有支持的平台打包 Makepad 应用。
 
-## When to Use
-- You need to package, distribute, or automate deployment of a Makepad application.
-- The task involves desktop installers, APK/IPA builds, WebAssembly output, or CI-based release artifacts.
-- You need guidance on `cargo-packager`, `cargo-makepad`, or GitHub Actions packaging flows for Makepad.
+## 使用时机
+- 您需要打包、分发或自动化部署 Makepad 应用。
+- 任务涉及桌面安装程序、APK/IPA 构建、WebAssembly 输出或基于 CI 的发布工件。
+- 您需要关于 `cargo-packager`、`cargo-makepad` 或 Makepad 的 GitHub Actions 打包流程的指导。
 
-## Quick Navigation
+## 快速导航
 
-| Platform | Tool | Output |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 22 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 平台 | 工具 | 输出 |
+|------|------|------|

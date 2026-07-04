@@ -6,7 +6,7 @@ version: 1.0.0
 
 # AI/ML 攻击面
 
-## Purpose
+## 定位
 
 Detect security vulnerabilities specific to AI/ML pipelines, LLM-backed applications, and data science workflows. These attack surfaces are increasingly common and often overlooked by traditional SAST tools.
 
@@ -28,4 +28,3 @@ The most critical ML-specific vulnerability. Many ML serialization formats execu
 **Dangerous Functions:**
 
 | Framework | Dangerous | Safe Alternative |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 32 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

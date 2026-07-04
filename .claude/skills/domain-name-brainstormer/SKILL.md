@@ -5,7 +5,7 @@ description: "Domain Name Brainstormer — Domain Name Brainstormer 相关功能
 
 # Domain Name Brainstormer
 
-This skill helps you find the perfect domain name for your project by generating creative options and checking what's actually available to register.
+此技能帮助 you find the perfect domain name for your project by generating creative options and checking what's actually available to register.
 
 ## When to Use This Skill
 
@@ -38,7 +38,7 @@ Suggest domain names.
 Help me brainstorm domain names for a personal finance app
 ```
 
-### Specific Preferences
+### Specific 优先ences
 
 ```
 I need a domain name for my AI writing assistant. 
@@ -194,7 +194,7 @@ management tools, then suggest similar available ones
 6. **Check Trademarks**: Ensure no legal conflicts
 7. **Think Long-term**: Will it still make sense in 5 years?
 
-## Pricing Context
+## Pricing 上下文
 
 When suggesting domains, I'll note:
 - Standard domains: ~$10-15/year
@@ -202,7 +202,7 @@ When suggesting domains, I'll note:
 - Taken domains: Market price if listed
 - Premium domains: $hundreds to $thousands
 
-## Related Tools
+## 相关 Tools
 
 After picking a domain:
 - Check logo design options

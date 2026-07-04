@@ -1,6 +1,6 @@
 ---
 name: mixpanel-automation
-description: "通过 Rube MCP (Composio) 自动执行 Mixpanel 任务：events, segmentation, funnels, cohorts, user profiles, JQL queries. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 Mixpanel 任务：events, segmentation, funnels, cohorts, user profiles, JQL queries. 始终 search tools first for current schemas."
 risk: critical
 source: community
 date_added: "2026-02-27"
@@ -10,13 +10,13 @@ date_added: "2026-02-27"
 
 Automate Mixpanel product analytics through Composio's Mixpanel toolkit via Rube MCP.
 
-## Prerequisites
+## 前提条件
 
 - Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
 - Active Mixpanel connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `mixpanel`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- 始终 call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
-## Setup
+## 设置
 
 **Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
 
@@ -34,7 +34,7 @@ Automate Mixpanel product analytics through Composio's Mixpanel toolkit via Rube
 
 **Tool sequence**:
 1. `MIXPANEL_GET_ALL_PROJECTS` - List projects to get project ID [Prerequisite]
-2. `MIXPANEL_AGGREGATE_EVENT_COUNTS` - Get event counts and aggregations [Required]
+2. `MIXPANEL_AGGREGATE_EVENT_COUNTS` - Get event counts and aggregations [必需]
 
 **Key parameters**:
 - `event`: Event name or array of event names to aggregate
@@ -54,7 +54,7 @@ Automate Mixpanel product analytics through Composio's Mixpanel toolkit via Rube
 **When to use**: User wants to break down events by properties for detailed analysis
 
 **Tool sequence**:
-1. `MIXPANEL_QUERY_SEGMENTATION` - Run segmentation analysis [Required]
+1. `MIXPANEL_QUERY_SEGMENTATION` - Run segmentation analysis [必需]
 
 **Key parameters**:
 - `event`: Event name to segment
@@ -77,7 +77,7 @@ Automate Mixpanel product analytics through Composio's Mixpanel toolkit via Rube
 
 **Tool sequence**:
 1. `MIXPANEL_LIST_FUNNELS` - List saved funnels to find funnel ID [Prerequisite]
-2. `MIXPANEL_QUERY_FUNNEL` - Execute funnel analysis [Required]
+2. `MIXPANEL_QUERY_FUNNEL` - Execute funnel analysis [必需]
 
 **Key parameters**:
 - `funnel_id`: ID of the saved funnel to query
@@ -98,8 +98,8 @@ Automate Mixpanel product analytics through Composio's Mixpanel toolkit via Rube
 **When to use**: User wants to query or update user profiles in Mixpanel
 
 **Tool sequence**:
-1. `MIXPANEL_QUERY_PROFILES` - Search and filter user profiles [Required]
-2. `MIXPANEL_PROFILE_BATCH_UPDATE` - Update multiple user profiles [Optional]
+1. `MIXPANEL_QUERY_PROFILES` - Search and filter user profiles [必需]
+2. `MIXPANEL_PROFILE_BATCH_UPDATE` - Update multiple user profiles [可选]
 
 **Key parameters**:
 - `where`: Filter expression for profile properties (e.g., `properties["plan"] == "premium"`)
@@ -120,7 +120,7 @@ Automate Mixpanel product analytics through Composio's Mixpanel toolkit via Rube
 **When to use**: User wants to list or analyze user cohorts
 
 **Tool sequence**:
-1. `MIXPANEL_COHORTS_LIST` - List all saved cohorts [Required]
+1. `MIXPANEL_COHORTS_LIST` - List all saved cohorts [必需]
 
 **Key parameters**:
 - No required parameters; returns all accessible cohorts
@@ -137,8 +137,8 @@ Automate Mixpanel product analytics through Composio's Mixpanel toolkit via Rube
 **When to use**: User wants to run custom JQL queries or insight analyses
 
 **Tool sequence**:
-1. `MIXPANEL_JQL_QUERY` - Execute a custom JQL (JavaScript Query Language) query [Optional]
-2. `MIXPANEL_QUERY_INSIGHT` - Run a saved insight query [Optional]
+1. `MIXPANEL_JQL_QUERY` - Execute a custom JQL (JavaScript Query Language) query [可选]
+2. `MIXPANEL_QUERY_INSIGHT` - Run a saved insight query [可选]
 
 **Key parameters**:
 - For JQL: `script` containing the JQL JavaScript code
@@ -169,7 +169,7 @@ Automate Mixpanel product analytics through Composio's Mixpanel toolkit via Rube
 3. Extract funnel_id
 ```
 
-### Mixpanel Expression Syntax
+### Mixpanel Expression 语法
 
 Used in `where` and `on` parameters:
 - Property reference: `properties["property_name"]`
@@ -185,14 +185,14 @@ Used in `where` and `on` parameters:
 - Profile queries: Use `page` number and `session_id` for consistent results
 - Funnel/cohort lists: Typically return complete results without pagination
 
-## Known Pitfalls
+## 已知陷阱
 
 **Date Formats**:
-- Always use 'YYYY-MM-DD' format
+- 始终 use 'YYYY-MM-DD' format
 - Date ranges are inclusive on both ends
 - Data freshness depends on Mixpanel ingestion delay (typically minutes)
 
-**Expression Syntax**:
+**Expression 语法**:
 - Property references always use `properties["name"]` format
 - String values must be quoted: `properties["status"] == "active"`
 - Numeric values are unquoted: `properties["count"] > 10`
@@ -209,7 +209,6 @@ Used in `where` and `on` parameters:
 - Numeric values may be returned as strings; parse explicitly
 - Empty date ranges return empty objects, not empty arrays
 
-## Quick Reference
+## 快速参考
 
 | Task | Tool Slug | Key Params |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 23 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

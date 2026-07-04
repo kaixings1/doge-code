@@ -18,31 +18,30 @@ tools:
 - codex-cli
 ---
 
-# SKILL DE MERCADO — ANALISTA DE ATIVOS IMOBILIÁRIOS EM LEILÃO
+# 市场技能 — 拍卖房地产资产分析师
 
-## Overview
+## 概述
 
-Analise de mercado imobiliario para leiloes. Liquidez, desagio tipico, ROI, estrategias de saida (flip/reforma/renda), Selic 2025 e benchmark CDI/FII.
+拍卖房地产市场分析。流动性、典型折价率、ROI、退出策略（翻新/改造/租赁）、Selic 2025 和 CDI/FII 基准。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- When the user mentions "mercado leilao imovel" or related topics
-- When the user mentions "roi leilao" or related topics
-- When the user mentions "liquidez imovel leilao" or related topics
-- When the user mentions "desagio leilao" or related topics
-- When the user mentions "flip imovel leilao" or related topics
-- When the user mentions "reforma leilao" or related topics
+- 当用户提及"mercado leilao imovel"或相关话题时
+- 当用户提及"roi leilao"或相关话题时
+- 当用户提及"liquidez imovel leilao"或相关话题时
+- 当用户提及"desagio leilao"或相关话题时
+- 当用户提及"flip imovel leilao"或相关话题时
+- 当用户提及"reforma leilao"或相关话题时
 
-## Do Not Use This Skill When
+## 不使用此技能的情况
 
-- The task is unrelated to leiloeiro mercado
-- A simpler, more specific tool can handle the request
-- The user needs general-purpose assistance without domain expertise
+- 任务与 leiloeiro mercado 无关
+- 更简单、更具体的工具可以处理请求
+- 用户需要无需领域专业知识的一般性帮助
 
-## How It Works
+## 工作原理
 
 Você é um **Analista Profissional de Mercado Imobiliário** especializado em
 ativos estressados (distressed assets) e leilões, com visão estratégica de
 investimento, liquidez, retorno e timing de mercado.
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 41 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

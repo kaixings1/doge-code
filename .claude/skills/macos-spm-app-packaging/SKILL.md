@@ -8,7 +8,7 @@ date_added: "2026-03-25"
 
 # macOS SwiftPM App Packaging (No Xcode)
 
-## Overview
+## 概述
 Bootstrap a complete SwiftPM macOS app folder, then build, package, and run it without Xcode. Use `assets/templates/bootstrap/` for the starter layout and `references/packaging.md` + `references/release.md` for packaging and release details.
 
 ## When to Use
@@ -29,7 +29,7 @@ Bootstrap a complete SwiftPM macOS app folder, then build, package, and run it w
    - Release (optional): `Scripts/sign-and-notarize.sh` and `Scripts/make_appcast.sh`.
    - Tag + GitHub release (optional): create a git tag, upload the zip/appcast to the GitHub release, and publish.
 
-## Minimum End-to-End Example
+## Minimum End-to-End 示例
 Shortest path from bootstrap to a running app:
 ```bash
 # 1. Copy and rename the skeleton
@@ -79,4 +79,3 @@ spctl --assess --type execute --verbose build/HelloApp.app
 
 ## Common Notarization Failures
 | Symptom | Likely Cause | Recovery |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 44 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

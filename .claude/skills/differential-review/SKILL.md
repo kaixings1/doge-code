@@ -5,16 +5,16 @@ risk: unknown
 source: community
 ---
 
-# Differential Security Review
+# 差异安全审查
 
-Security-focused code review for PRs, commits, and diffs.
+面向安全的 PR、提交和差异代码审查。
 
-## When to Use
-- You need a security-focused review of a PR, commit range, or diff rather than a general code review.
-- The changes touch auth, crypto, external calls, value transfer, permissions, or other high-risk logic.
-- You need findings backed by code evidence, attack scenarios, and an explicit report artifact.
+## 何时使用
+- 您需要对 PR、提交范围或差异进行安全重点审查，而非通用代码审查。
+- 变更涉及认证、加密、外部调用、价值转移、权限或其他高风险逻辑。
+- 您需要由代码证据、攻击场景和明确的报告工件支持的安全发现。
 
-## Core Principles
+## 核心原则
 
 1. **Risk-First**: Focus on auth, crypto, value transfer, external calls
 2. **Evidence-Based**: Every finding backed by git history, line numbers, attack scenarios
@@ -38,7 +38,7 @@ Security-focused code review for PRs, commits, and diffs.
 
 ---
 
-## Quick Reference
+## 快速参考
 
 ### Codebase Size Strategy
 
@@ -216,7 +216,7 @@ These patterns require adversarial analysis even in quick triage.
 
 **For experienced users:** Use this page's Quick Reference and Decision Tree to navigate directly to needed content.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

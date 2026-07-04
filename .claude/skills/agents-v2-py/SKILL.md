@@ -24,7 +24,7 @@ pip install azure-ai-projects>=2.0.0b3 azure-identity
 AZURE_AI_PROJECT_ENDPOINT=https://<resource>.services.ai.azure.com/api/projects/<project>
 ```
 
-## Prerequisites
+## 前提条件
 
 Before creating hosted agents:
 

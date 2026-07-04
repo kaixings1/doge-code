@@ -7,44 +7,44 @@ author: zebbern
 date_added: "2026-02-27"
 ---
 
-> AUTHORIZED USE ONLY: Use this skill only for authorized security assessments, defensive validation, or controlled educational environments.
+> 仅限授权使用：仅在授权的安全评估、防御验证或受控教育环境中使用此技能。
 
-# File Path Traversal Testing
+# 文件路径遍历测试
 
-## Purpose
+## 目的
 
-Identify and exploit file path traversal (directory traversal) vulnerabilities that allow attackers to read arbitrary files on the server, potentially including sensitive configuration files, credentials, and source code. This vulnerability occurs when user-controllable input is passed to filesystem APIs without proper validation.
+识别和利用文件路径遍历（目录遍历）漏洞，这些漏洞允许攻击者读取服务器上的任意文件，可能包括敏感配置文件、凭证和源代码。当用户可控的输入未经适当验证就传递给文件系统API时，会出现此漏洞。
 
-## Prerequisites
+## 先决条件
 
-### Required Tools
-- Web browser with developer tools
-- Burp Suite or OWASP ZAP
-- cURL for testing payloads
-- Wordlists for automation
-- ffuf or wfuzz for fuzzing
+### 必需工具
+- 带开发者工具的Web浏览器
+- Burp Suite 或 OWASP ZAP
+- 用于测试有效载荷的cURL
+- 自动化用的单词列表
+- 用于模糊测试的ffuf或wfuzz
 
-### Required Knowledge
-- HTTP request/response structure
-- Linux and Windows filesystem layout
-- Web application architecture
-- Basic understanding of file APIs
+### 必需知识
+- HTTP请求/响应结构
+- Linux和Windows文件系统布局
+- Web应用程序架构
+- 文件API的基本理解
 
-## Outputs and Deliverables
+## 输出和交付物
 
-1. **Vulnerability Report** - Identified traversal points and severity
-2. **Exploitation Proof** - Extracted file contents
-3. **Impact Assessment** - Accessible files and data exposure
-4. **Remediation Guidance** - Secure coding recommendations
+1. **漏洞报告** - 识别的遍历点和严重性
+2. **利用证明** - 提取的文件内容
+3. **影响评估** - 可访问的文件和数据暴露
+4. **修复指导** - 安全编码建议
 
-## Core Workflow
+## 核心工作流
 
-### Phase 1: Understanding Path Traversal
+### 阶段1：理解路径遍历
 
-Path traversal occurs when applications use user input to construct file paths:
+当应用程序使用用户输入构造文件路径时会发生路径遍历：
 
 ```php
-// Vulnerable PHP code example
+// 易受攻击的PHP代码示例
 $template = "blue.php";
 if (isset($_COOKIE['template']) && !empty($_COOKIE['template'])) {
     $template = $_COOKIE['template'];
@@ -52,18 +52,18 @@ if (isset($_COOKIE['template']) && !empty($_COOKIE['template'])) {
 include("/home/user/templates/" . $template);
 ```
 
-Attack principle:
-- `../` sequence moves up one directory
-- Chain multiple sequences to reach root
-- Access files outside intended directory
+攻击原理：
+- `../` 序列向上移动一个目录
+- 链接多个序列以到达根目录
+- 访问预期目录之外的文件
 
-Impact:
-- **Confidentiality** - Read sensitive files
-- **Integrity** - Write/modify files (in some cases)
-- **Availability** - Delete files (in some cases)
-- **Code Execution** - If combined with file upload or log poisoning
+影响：
+- **机密性** - 读取敏感文件
+- **完整性** - 写入/修改文件（在某些情况下）
+- **可用性** - 删除文件（在某些情况下）
+- **代码执行** - 如果与文件上传或日志投毒结合
 
-### Phase 2: Identifying Traversal Points
+### /u9636/u6bb5 2/uff1a/u8bc6/u522b/u904d/u5386/u70b9
 
 Map application for potential file operations:
 
@@ -96,7 +96,7 @@ Common vulnerable functionality:
 - Document viewers: `/view?doc=manual.pdf`
 - Include mechanisms: `?page=about`
 
-### Phase 3: Basic Exploitation Techniques
+### /u9636/u6bb5 3/uff1a/u57fa/u672c/u5229/u7528/u6280/u672f
 
 #### Simple Path Traversal
 
@@ -135,7 +135,7 @@ C:\windows\system32\drivers\etc\hosts
 C:\boot.ini
 ```
 
-### Phase 4: Bypass Techniques
+### /u9636/u6bb5 4/uff1a/u7ed5/u8fc7/u6280/u672f
 
 #### Bypass Stripped Traversal Sequences
 
@@ -198,7 +198,7 @@ images/../../../etc/passwd
 ....\\....\\etc\\passwd
 ```
 
-### Phase 5: Linux Target Files
+### /u9636/u6bb5 5/uff1aLinux /u76ee/u6807/u6587/u4ef6
 
 High-value files to target:
 
@@ -243,7 +243,7 @@ High-value files to target:
 /opt/lampp/etc/httpd.conf
 ```
 
-### Phase 6: Windows Target Files
+### /u9636/u6bb5 6/uff1aWindows /u76ee/u6807/u6587/u4ef6
 
 Windows-specific targets:
 
@@ -272,7 +272,7 @@ C:\Users\<user>\Desktop\
 C:\Documents and Settings\<user>\
 ```
 
-### Phase 7: Automated Testing
+### /u9636/u6bb5 7/uff1a/u81ea/u52a8/u5316/u6d4b/u8bd5
 
 #### Using Burp Suite
 
@@ -313,7 +313,7 @@ wfuzz -c -z file,traversal.txt \
       "http://target.com/load?path=FUZZ"
 ```
 
-### Phase 8: LFI to RCE Escalation
+### /u9636/u6bb5 8/uff1aLFI /u5230 RCE /u5347/u7ea7
 
 #### Log Poisoning
 
@@ -358,7 +358,7 @@ curl "http://target.com/page?file=data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR
 curl "http://target.com/page?file=expect://id"
 ```
 
-### Phase 9: Testing Methodology
+### /u9636/u6bb5 9/uff1a/u6d4b/u8bd5/u65b9/u6cd5/u8bba
 
 Structured testing approach:
 
@@ -389,7 +389,7 @@ php://filter/convert.base64-encode/resource=index.php
 # Step 8: Attempt log poisoning for RCE
 ```
 
-### Phase 10: Prevention Measures
+### /u9636/u6bb5 10/uff1a/u9884/u9632/u63aa/u65bd
 
 Secure coding practices:
 
@@ -431,7 +431,7 @@ def safe_file_access(base_dir, filename):
         raise Exception("Access denied")
 ```
 
-## Quick Reference
+## /u5feb/u901f/u53c2/u8003
 
 ### Common Payloads
 
@@ -463,7 +463,7 @@ def safe_file_access(base_dir, filename):
 | Unicode | `%c0%af` = `/` |
 | Null Byte | `%00` |
 
-## Constraints and Limitations
+## /u9650/u5236/u4e0e/u7ea6/u675f
 
 ### Permission Restrictions
 - Cannot read files application user cannot access
@@ -480,7 +480,7 @@ def safe_file_access(base_dir, filename):
 - Avoid accessing genuinely sensitive data
 - Document all successful access
 
-## Troubleshooting
+## /u6545/u969c/u6392/u9664
 
 | Problem | Solutions |
 |---------|-----------|
@@ -488,5 +488,5 @@ def safe_file_access(base_dir, filename):
 | Payload blocked | Use encoding variants, nested sequences, case variations |
 | Cannot escalate to RCE | Check logs, PHP wrappers, file upload, session poisoning |
 
-## When to Use
+## /u4f55/u65f6/u4f7f/u7528
 This skill is applicable to execute the workflow or actions described in the overview.

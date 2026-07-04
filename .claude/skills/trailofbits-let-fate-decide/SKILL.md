@@ -1,4 +1,4 @@
-# let-fate-decide
+# let-fate-decide 命运决策器
 
 A Claude Code skill that draws Tarot cards using `secrets` to inject
 entropy into vague or underspecified planning decisions.

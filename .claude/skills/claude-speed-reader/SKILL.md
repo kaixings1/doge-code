@@ -6,15 +6,15 @@ source: "https://github.com/SeanZoR/claude-speed-reader"
 date_added: "2026-02-27"
 ---
 
-# Claude Speed Reader
+# Claude 速度阅读器
 
-## Overview
+## 概述
 
--Speed read Claude's responses at 600+ WPM using RSVP with Spritz-style ORP highlighting
+- 使用 RSVP 和 Spritz 风格的 ORP 高亮，以 600+ WPM 的速度阅读 Claude 的回复
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when you need to work with -speed read claude's responses at 600+ wpm using rsvp with spritz-style orp highlighting.
+当您需要以 600+ WPM 的速度使用 RSVP 和 Spritz 风格的 ORP 高亮读取 Claude 的回复时使用此技能。
 
 ## Instructions
 
@@ -22,7 +22,7 @@ This skill provides guidance and patterns for -speed read claude's responses at 
 
 For more information, see the [source repository](https://github.com/SeanZoR/claude-speed-reader).
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

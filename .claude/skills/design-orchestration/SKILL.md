@@ -6,15 +6,14 @@ source: community
 date_added: '2026-02-27'
 ---
 
-# Design Orchestration (Meta-Skill)
+# 设计编排（元技能）
 
-## Purpose
+## 目的
 
-Ensure that **ideas become designs**, **designs are reviewed**, and
-**only validated designs reach implementation**.
+确保**想法变为设计**、**设计被审查**，并且**只有经过验证的设计才能进入实现**。
 
-This skill does not generate designs.
-It **controls the flow between other skills**.
+此技能不会生成设计。
+它**控制其他技能之间的流程**。
 
 ---
 
@@ -106,7 +105,7 @@ Require:
 - current Design
 - Decision Log
 
-Do NOT allow:
+不要 allow:
 - new ideation
 - scope expansion
 - reopening problem definition
@@ -133,10 +132,10 @@ If any condition fails:
 
 ## Enforcement Rules
 
-- Do NOT allow implementation without a validated design
-- Do NOT allow skipping required review
-- Do NOT allow silent escalation or de-escalation
-- Do NOT merge design and implementation phases
+- 不要 allow implementation without a validated design
+- 不要 allow skipping required review
+- 不要 allow silent escalation or de-escalation
+- 不要 merge design and implementation phases
 
 ---
 
@@ -168,7 +167,7 @@ This meta-skill exists to enforce the former.
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

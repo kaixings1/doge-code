@@ -299,7 +299,7 @@ AZURE_COMMUNICATION_USER_TOKEN=<user-access-token>
 ## Best Practices
 
 1. **Token Management** - User tokens expire; implement refresh logic with `CommunicationTokenRefreshOptions`
-2. **Pagination** - Use `listMessages(options)` with `maxPageSize` for large threads
+2. **分页** - Use `listMessages(options)` with `maxPageSize` for large threads
 3. **Share History** - Set `shareHistoryTime` when adding participants to control message visibility
 4. **Message Types** - Filter system messages (`PARTICIPANT_ADDED`, etc.) from user messages
 5. **Read Receipts** - Send receipts only when messages are actually viewed by user
@@ -314,7 +314,7 @@ AZURE_COMMUNICATION_USER_TOKEN=<user-access-token>
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

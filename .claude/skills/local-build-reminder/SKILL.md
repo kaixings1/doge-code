@@ -1,48 +1,38 @@
 ---
 name: local-build-reminder
-description: "Local Build Reminder — Local Build Reminder 相关功能和最佳实践"
+description: "本地构建提醒 — OMC Fork 开发时提醒编译 TypeScript 更改"
 level: 1
 ---
 
-# Local Build Reminder
+# 本地构建提醒
 
-**Always-on reminder for OMC fork development.** When OMC is running in local
-mode (HUD shows `[OMC#X.Y.ZL]` with an `L` suffix), Claude Code loads compiled
-JavaScript from `dist/` — NOT TypeScript source from `src/`. Edits to `.ts`
-files are invisible to the running plugin until `npm run build` regenerates
-`dist/`.
+**OMC Fork 开发的常驻提醒。** 当 OMC 以本地模式运行时（HUD 显示带 `L` 后缀的 `[OMC#X.Y.ZL]`），Claude Code 会从 `dist/` 加载编译后的 JavaScript——而不是 `src/` 中的 TypeScript 源码。对 `.ts` 文件的编辑在运行中的插件上不可见，直到 `npm run build` 重新生成 `dist/`。
 
-## When to invoke this skill
+## 何时引用此技能
 
-The AI should mention this reminder whenever **any of these** happens:
+当 **以下任一情况** 发生时，AI 应提及此提醒：
 
-1. The user (or the AI itself) just edited `src/**/*.ts` in this repo.
-2. The user asks "why isn't my change working?" / "I edited X but it does the same" after a TS edit.
-3. The user is about to restart Claude Code and the working tree has TS edits with no rebuild.
-4. The user runs an OMC command and expects new behavior tied to a TS edit.
+1. 用户（或 AI 本身）刚刚编辑了此仓库中的 `src/**/*.ts`。
+2. 用户在 TS 编辑后询问"为什么我的更改不生效？"/"我编辑了 X 但结果一样"。
+3. 用户即将重启 Claude Code，且工作目录中有未重建的 TS 编辑。
+4. 用户运行 OMC 命令并期望与 TS 编辑相关的新行为。
 
-## What to say
+## 应说什么
 
-Surface one clear sentence followed by the exact command. Don't repeat the
-reminder on every turn — once per "round" of TS editing is enough. Example:
+给出一个清晰的句子，后跟确切的命令。不要每次对话都重复提醒——每轮 TS 编辑提醒一次即可。示例：
 
-> Heads up: you edited `src/...`. Run `npm run build` before restarting
-> Claude Code — `dist/` won't reflect the change otherwise.
+> 注意：你编辑了 `src/...`。在重启 Claude Code 之前运行 `npm run build`——否则 `dist/` 不会反映更改。
 
-If multiple TS files were edited in a row, just remind once at the end.
+如果连续编辑了多个 TS 文件，只需在最后提醒一次。
 
-## When NOT to remind
+## 不需要提醒的情况
 
-- The user only edited `.mjs` / `.cjs` / `.md` / `.json` — those load directly
-  from disk, no build needed.
-- The user is in a Claude Code session that isn't running OMC locally
-  (no `L` in the HUD).
-- A `tsc --watch` / `npm run dev:full` is already running in the background
-  — those rebuild automatically on save.
-- The user just asked an unrelated question; don't shoehorn the reminder
-  into off-topic responses.
+- 用户只编辑了 `.mjs` / `.cjs` / `.md` / `.json`——这些直接从磁盘加载，无需构建。
+- 用户的 Claude Code 会话未在本地运行 OMC（HUD 中没有 `L`）。
+- `tsc --watch` / `npm run dev:full` 已在后台运行——这些会在保存时自动重建。
+- 用户刚刚问了一个不相关的问题；不要硬塞提醒到无关的回复中。
 
-## File-type cheat sheet
+## 文件类型速查表
 
-| Path                           | Restart picks up edit? | Needs build? |
+| 路径                           | 重启后生效？ | 需要构建？ |
 | ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 02 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

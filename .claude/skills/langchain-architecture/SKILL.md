@@ -6,85 +6,85 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# LangChain Architecture
+# LangChain 架构
 
-Master the LangChain framework for building sophisticated LLM applications with agents, chains, memory, and tool integration.
+掌握 LangChain 框架，使用代理、链、记忆和工具集成构建复杂的 LLM 应用。
 
-## Do not use this skill when
+## 不使用此技能的情况
 
-- The task is unrelated to langchain architecture
-- You need a different domain or tool outside this scope
+- 任务与 langchain 架构无关
+- 需要此范围之外的不同领域或工具
 
-## Instructions
+## 使用说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- 明确目标、约束和所需的输入。
+- 应用相关的最佳实践并验证结果。
+- 提供可执行的步骤和验证方法。
+- 如果需要详细示例，请打开 `resources/implementation-playbook.md`。
 
-## Use this skill when
+## 何时使用此技能
 
-- Building autonomous AI agents with tool access
-- Implementing complex multi-step LLM workflows
-- Managing conversation memory and state
-- Integrating LLMs with external data sources and APIs
-- Creating modular, reusable LLM application components
-- Implementing document processing pipelines
-- Building production-grade LLM applications
+- 构建具有工具访问权限的自主 AI 代理
+- 实现复杂的多步骤 LLM 工作流
+- 管理对话记忆和状态
+- 将 LLM 与外部数据源和 API 集成
+- 创建模块化、可重用的 LLM 应用组件
+- 实现文档处理管道
+- 构建生产级 LLM 应用
 
-## Core Concepts
+## 核心概念
 
-### 1. Agents
-Autonomous systems that use LLMs to decide which actions to take.
+### 1. 代理
+使用 LLM 决定采取哪些行动的自主系统。
 
-**Agent Types:**
-- **ReAct**: Reasoning + Acting in interleaved manner
-- **OpenAI Functions**: Leverages function calling API
-- **Structured Chat**: Handles multi-input tools
-- **Conversational**: Optimized for chat interfaces
-- **Self-Ask with Search**: Decomposes complex queries
+**代理类型：**
+- **ReAct**：交错推理和行动
+- **OpenAI Functions**：利用函数调用 API
+- **Structured Chat**：处理多输入工具
+- **Conversational**：为聊天界面优化
+- **Self-Ask with Search**：分解复杂查询
 
-### 2. Chains
-Sequences of calls to LLMs or other utilities.
+### 2. 链
+对 LLM 或其他工具的调用序列。
 
-**Chain Types:**
-- **LLMChain**: Basic prompt + LLM combination
-- **SequentialChain**: Multiple chains in sequence
-- **RouterChain**: Routes inputs to specialized chains
-- **TransformChain**: Data transformations between steps
-- **MapReduceChain**: Parallel processing with aggregation
+**链类型：**
+- **LLMChain**：基本提示 + LLM 组合
+- **SequentialChain**：多个链按顺序执行
+- **RouterChain**：将输入路由到专门的链
+- **TransformChain**：步骤之间的数据转换
+- **MapReduceChain**：带聚合的并行处理
 
-### 3. Memory
-Systems for maintaining context across interactions.
+### 3. 记忆
+在交互之间维持上下文的系统。
 
-**Memory Types:**
-- **ConversationBufferMemory**: Stores all messages
-- **ConversationSummaryMemory**: Summarizes older messages
-- **ConversationBufferWindowMemory**: Keeps last N messages
-- **EntityMemory**: Tracks information about entities
-- **VectorStoreMemory**: Semantic similarity retrieval
+**记忆类型：**
+- **ConversationBufferMemory**：存储所有消息
+- **Conversation总结Memory**：总结较旧的消息
+- **ConversationBufferWindowMemory**：保留最近 N 条消息
+- **EntityMemory**：跟踪实体的信息
+- **VectorStoreMemory**：语义相似性检索
 
-### 4. Document Processing
-Loading, transforming, and storing documents for retrieval.
+### 4. 文档处理
+加载、转换和存储文档以便检索。
 
-**Components:**
-- **Document Loaders**: Load from various sources
-- **Text Splitters**: Chunk documents intelligently
-- **Vector Stores**: Store and retrieve embeddings
-- **Retrievers**: Fetch relevant documents
-- **Indexes**: Organize documents for efficient access
+**组件：**
+- **Document Loaders**：从各种来源加载
+- **Text Splitters**：智能分块文档
+- **Vector Stores**：存储和检索嵌入
+- **Retrievers**：获取相关文档
+- **Indexes**：组织文档以便高效访问
 
-### 5. Callbacks
-Hooks for logging, monitoring, and debugging.
+### 5. 回调
+用于日志记录、监控和调试的钩子。
 
-**Use Cases:**
-- Request/response logging
-- Token usage tracking
-- Latency monitoring
-- Error handling
-- Custom metrics collection
+**用例：**
+- 请求/响应日志记录
+- Token 使用跟踪
+- 延迟监控
+- 错误处理
+- 自定义指标收集
 
-## Quick Start
+## 快速开始
 
 ```python
 from langchain.agents import AgentType, initialize_agent, load_tools
@@ -113,9 +113,9 @@ agent = initialize_agent(
 result = agent.run("What's the weather in SF? Then calculate 25 * 4")
 ```
 
-## Architecture Patterns
+## 架构模式
 
-### Pattern 1: RAG with LangChain
+### 模式 1：基于 LangChain 的 RAG
 ```python
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import TextLoader
@@ -146,7 +146,7 @@ qa_chain = RetrievalQA.from_chain_type(
 result = qa_chain({"query": "What is the main topic?"})
 ```
 
-### Pattern 2: Custom Agent with Tools
+### 模式 2：自定义代理与工具
 ```python
 from langchain.agents import Tool, AgentExecutor
 from langchain.agents.react.base import ReActDocstoreAgent
@@ -174,7 +174,7 @@ agent = initialize_agent(
 )
 ```
 
-### Pattern 3: Multi-Step Chain
+### 模式 3：多步骤链
 ```python
 from langchain.chains import LLMChain, SequentialChain
 from langchain.prompts import PromptTemplate
@@ -209,9 +209,9 @@ overall_chain = SequentialChain(
 )
 ```
 
-## Memory Management Best Practices
+## 记忆管理最佳实践
 
-### Choosing the Right Memory Type
+### 选择正确的记忆类型
 ```python
 # For short conversations (< 10 messages)
 from langchain.memory import ConversationBufferMemory
@@ -234,9 +234,9 @@ from langchain.memory import VectorStoreRetrieverMemory
 memory = VectorStoreRetrieverMemory(retriever=retriever)
 ```
 
-## Callback System
+## 回调系统
 
-### Custom Callback Handler
+### 自定义回调处理器
 ```python
 from langchain.callbacks.base import BaseCallbackHandler
 
@@ -260,7 +260,7 @@ class CustomCallbackHandler(BaseCallbackHandler):
 agent.run("query", callbacks=[CustomCallbackHandler()])
 ```
 
-## Testing Strategies
+## 测试策略
 
 ```python
 import pytest
@@ -287,9 +287,9 @@ def test_memory_persistence():
     assert "Hello!" in memory.load_memory_variables({})['history']
 ```
 
-## Performance Optimization
+## 性能优化
 
-### 1. Caching
+### 1. 缓存
 ```python
 from langchain.cache import InMemoryCache
 import langchain
@@ -297,7 +297,7 @@ import langchain
 langchain.llm_cache = InMemoryCache()
 ```
 
-### 2. Batch Processing
+### 2. 批量处理
 ```python
 # Process multiple documents in parallel
 from langchain.document_loaders import DirectoryLoader
@@ -313,14 +313,14 @@ with ThreadPoolExecutor(max_workers=4) as executor:
     split_docs = list(executor.map(process_doc, docs))
 ```
 
-### 3. Streaming Responses
+### 3. 流式响应
 ```python
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 llm = OpenAI(streaming=True, callbacks=[StreamingStdOutCallbackHandler()])
 ```
 
-## Resources
+## 资源
 
 - **references/agents.md**: Deep dive on agent architectures
 - **references/memory.md**: Memory system patterns
@@ -331,28 +331,28 @@ llm = OpenAI(streaming=True, callbacks=[StreamingStdOutCallbackHandler()])
 - **assets/memory-config.yaml**: Memory configuration examples
 - **assets/chain-example.py**: Complex chain examples
 
-## Common Pitfalls
+## 常见陷阱
 
-1. **Memory Overflow**: Not managing conversation history length
-2. **Tool Selection Errors**: Poor tool descriptions confuse agents
-3. **Context Window Exceeded**: Exceeding LLM token limits
-4. **No Error Handling**: Not catching and handling agent failures
-5. **Inefficient Retrieval**: Not optimizing vector store queries
+1. **记忆溢出**：未管理对话历史长度
+2. **工具选择错误**：工具描述不佳导致代理混淆
+3. **超出上下文窗口**：超过 LLM token 限制
+4. **无错误处理**：未捕获和处理代理故障
+5. **检索效率低**：未优化向量存储查询
 
-## Production Checklist
+## 生产检查清单
 
-- [ ] Implement proper error handling
-- [ ] Add request/response logging
-- [ ] Monitor token usage and costs
-- [ ] Set timeout limits for agent execution
-- [ ] Implement rate limiting
-- [ ] Add input validation
-- [ ] Test with edge cases
-- [ ] Set up observability (callbacks)
-- [ ] Implement fallback strategies
-- [ ] Version control prompts and configurations
+- [ ] 实现适当的错误处理
+- [ ] 添加请求/响应日志记录
+- [ ] 监控 token 使用量和成本
+- [ ] 设置代理执行超时限制
+- [ ] 实现速率限制
+- [ ] 添加输入验证
+- [ ] 测试边缘情况
+- [ ] 设置可观测性（回调）
+- [ ] 实现回退策略
+- [ ] 版本控制提示和配置
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确匹配上述范围时使用此技能。
+- 不要将输出视为特定环境验证、测试或专家审查的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

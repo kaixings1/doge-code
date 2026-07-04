@@ -3,7 +3,7 @@ name: 聚类分析
 description: "无监督聚类：K-Means、DBSCAN、层次凝聚聚类、高斯混合模型、HDBSCAN 和 OPTICS。包含评估指标和可视化。"
 ---
 
-# Clustering
+# 聚类分析
 
 ## Purpose
 Discover natural groupings in data without predefined labels. Includes cluster validation and business-ready profiling.
@@ -17,11 +17,11 @@ Discover natural groupings in data without predefined labels. Includes cluster v
 
 ### Step 2: Choose Algorithm
 
-| Algorithm | Best For | Requires K? |
+| Algorithm | Best For | 需要 K? |
 |-----------|----------|-------------|
 | K-Means | Spherical clusters, large datasets | Yes |
 | DBSCAN | Arbitrary shapes, noise handling | No (ε, minPts) |
-| Hierarchical | Small datasets, dendrogram visualization | Optional |
+| Hierarchical | Small datasets, dendrogram visualization | 可选 |
 | Gaussian Mixture | Elliptical clusters, soft assignments | Yes |
 | Spectral | Complex shapes, graph-based | Yes |
 | HDBSCAN | Variable density, robust | No |
@@ -39,7 +39,7 @@ Discover natural groupings in data without predefined labels. Includes cluster v
 - Profile each cluster: mean features, distinguishing characteristics
 - Business naming: assign descriptive labels
 
-## Usage Examples
+## 用法 Examples
 
 ```
 "Segment our customers into groups based on purchase behavior,
@@ -53,7 +53,7 @@ how many clusters there should be"
 
 ## Output Format
 
-- **Cluster Summary**: Size, key characteristics per cluster
+- **Cluster 总结**: Size, key characteristics per cluster
 - **Validation Metrics**: Silhouette, stability scores
 - **Visualization**: 2D/3D scatter with cluster colors, dendrogram
 - **Profiles**: Feature means/distributions per cluster with business labels

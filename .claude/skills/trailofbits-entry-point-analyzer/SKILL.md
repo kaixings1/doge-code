@@ -1,4 +1,4 @@
-# Entry Point Analyzer
+# 入口点分析器
 
 A Claude skill for systematically identifying **state-changing** entry points in smart contract codebases to guide security audits.
 
@@ -9,4 +9,3 @@ When auditing smart contracts, examining each file or function individually is i
 ## Supported Languages
 
 | Language | File Extensions | Framework Support |
-|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 30 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

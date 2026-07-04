@@ -3,26 +3,26 @@ name: 异常值检测
 description: "统计和基于 ML 的异常值检测：IQR 方法、Z-score、修正 Z-score、Isolation Forest、DBSCAN 和局部异常因子。适用于调查异常、在建模前清理数据或构建异常检测系统。"
 ---
 
-# Detect Outliers
+# 异常值检测
 
-## Purpose
-Identify anomalous data points using a combination of statistical and machine learning methods. Determines whether outliers are errors to remove, interesting signals to investigate, or natural variation to keep.
+## 目的
+使用统计和机器学习方法的组合识别异常数据点。确定异常值是应移除的错误、应调查的有趣信号，还是应保留的自然变异。
 
-## How It Works
+## 工作原理
 
-### Step 1: Univariate Detection
-- **IQR Method**: Flag points outside Q1 - 1.5×IQR to Q3 + 1.5×IQR
-- **Z-Score**: Flag points >3 standard deviations from the mean
-- **Modified Z-Score**: Use MAD (Median Absolute Deviation) for robustness against skewed data
-- **Percentile-Based**: Flag extreme percentiles (1st/99th or custom thresholds)
+### 步骤 1：单变量检测
+- **IQR 方法**：标记 Q1 - 1.5×IQR 到 Q3 + 1.5×IQR 范围之外的点
+- **Z 分数**：标记与均值相差 >3 个标准差的点
+- **修正 Z 分数**：使用 MAD（中位数绝对偏差）以增强对偏斜数据的鲁棒性
+- **基于百分位**：标记极端百分位数（第 1/99 或自定义阈值）
 
-### Step 2: Multivariate Detection
-- **Isolation Forest**: Tree-based anomaly detection — isolates outliers in fewer splits
+### 步骤 2：多变量检测
+- **Isolation Forest**：基于树的异常检测——在更少的分裂中隔离异常值
 - **Local Outlier Factor (LOF)**: Density-based — compares local density to neighbors
 - **DBSCAN**: Cluster-based — points not assigned to any cluster are anomalies
 - **Mahalanobis Distance**: Accounts for correlations between features
 
-### Step 3: Contextual Analysis
+### Step 3: 上下文ual Analysis
 - Are outliers clustered in time? → Possible data collection issues
 - Are outliers associated with specific categories? → Segment-specific behavior
 - Do outliers have domain meaning? → e.g., Black Friday sales spikes are real
@@ -43,7 +43,7 @@ Identify anomalous data points using a combination of statistical and machine le
 - Visualization: box plots, scatter plots with outliers highlighted
 - Before/after comparison with impact on summary statistics
 
-## Usage Examples
+## 用法 Examples
 
 **Example 1: Sales data**
 ```

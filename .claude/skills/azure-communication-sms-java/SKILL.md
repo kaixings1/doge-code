@@ -241,14 +241,14 @@ public void handleDeliveryReport(String eventJson) {
 }
 ```
 
-## SmsSendResult Properties
+## SmsSendResult 属性
 
 | Property | Type | Description |
 |----------|------|-------------|
 | `getMessageId()` | String | Unique message identifier |
 | `getTo()` | String | Recipient phone number |
 | `isSuccessful()` | boolean | Whether send succeeded |
-| `getHttpStatusCode()` | int | HTTP status for this recipient |
+| `getHttp状态Code()` | int | HTTP status for this recipient |
 | `getErrorMessage()` | String | Error details if failed |
 | `getRepeatabilityResult()` | RepeatabilityResult | Idempotency result |
 
@@ -278,7 +278,7 @@ SMS_FROM_NUMBER=+14255550100
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

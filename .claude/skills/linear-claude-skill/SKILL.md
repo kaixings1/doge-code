@@ -6,86 +6,86 @@ source: "https://github.com/wrsmith108/linear-claude-skill"
 date_added: "2026-02-27"
 ---
 
-## When to Use This Skill
+## 何时使用此技能
 
-Manage Linear issues, projects, and teams
+管理 Linear 的 Issue、项目和团队
 
-Use this skill when working with manage linear issues, projects, and teams.
+当需要管理 Linear 的 issue、项目和团队时使用此技能。
 # Linear
 
-Tools and workflows for managing issues, projects, and teams in Linear.
+用于管理 Linear 中 issue、项目和团队的工具和工作流。
 
 ---
 
-## ⚠️ Tool Availability (READ FIRST)
+## ⚠️ 工具可用性（先阅读）
 
-**This skill supports multiple tool backends. Use whichever is available:**
+**此技能支持多个工具后端。使用可用的即可：**
 
-1. **MCP Tools (mcp__linear)** - Use if available in your tool set
-2. **Linear CLI (`linear` command)** - Always available via Bash
-3. **Helper Scripts** - For complex operations
+1. **MCP 工具 (mcp__linear)** - 如果工具集中可用则使用
+2. **Linear CLI（`linear` 命令）** - 始终可通过 Bash 使用
+3. **辅助脚本** - 用于复杂操作
 
-**If MCP tools are NOT available**, use the Linear CLI via Bash:
+**如果 MCP 工具不可用**，通过 Bash 使用 Linear CLI：
 
 ```bash
-# View an issue
+# 查看 issue
 linear issues view ENG-123
 
-# Create an issue
-linear issues create --title "Issue title" --description "Description"
+# 创建 issue
+linear issues create --title "Issue 标题" --description "描述"
 
-# Update issue status (get state IDs first)
+# 更新 issue 状态（先获取状态 ID）
 linear issues update ENG-123 -s "STATE_ID"
 
-# Add a comment
-linear issues comment add ENG-123 -m "Comment text"
+# 添加评论
+linear issues comment add ENG-123 -m "评论内容"
 
-# List issues
+# 列出 issues
 linear issues list
 ```
 
-**Do NOT report "MCP tools not available" as a blocker** - use CLI instead.
+**不要报告"MCP 工具不可用"作为阻碍**—改为使用 CLI。
 
 ---
 
-## 🔐 Security: Varlock Integration
+## 🔐 安全：Varlock 集成
 
-**CRITICAL**: Never expose API keys in terminal output or Claude's context.
+**关键**：绝不在终端输出或 Claude 上下文中暴露 API 密钥。
 
-### Safe Commands (Always Use)
+### 安全命令（始终使用）
 
 ```bash
-# Validate LINEAR_API_KEY is set (masked output)
+# 验证 LINEAR_API_KEY 已设置（掩码输出）
 varlock load 2>&1 | grep LINEAR
 
-# Run commands with secrets injected
+# 运行注入密钥的命令
 varlock run -- npx tsx scripts/query.ts "query { viewer { name } }"
 
-# Check schema (safe - no values)
+# 检查 schema（安全—无值）
 cat .env.schema | grep LINEAR
 ```
 
-### Unsafe Commands (NEVER Use)
+### 不安全命令（绝不使用）
 
 ```bash
-# ❌ NEVER - exposes key to Claude's context
+# ❌ 绝不—将密钥暴露给 Claude 上下文
 linear config show
 echo $LINEAR_API_KEY
 printenv | grep LINEAR
 cat .env
 ```
 
-### Setup for New Projects
+### 新项目设置
 
-1. Create `.env.schema` with `@sensitive` annotation:
+1. 使用 `@sensitive` 注释创建 `.env.schema`：
    ```bash
    # @type=string(startsWith=lin_api_) @required @sensitive
    LINEAR_API_KEY=
    ```
 
-2. Add `LINEAR_API_KEY` to `.env` (never commit this file)
+2. 将 `LINEAR_API_KEY` 添加到 `.env`（切勿提交此文件）
 
-3. Configure MCP to use environment variable:
+3. 配置 MCP 使用环境变量：
    ```json
    {
      "mcpServers": {
@@ -96,238 +96,238 @@ cat .env
    }
    ```
 
-4. Use `varlock load` to validate before operations
+4. 使用 `varlock load` 在操作前验证
 
 ---
 
-## Quick Start (First-Time Users)
+## 快速入门（首次用户）
 
-### 1. Check Your Setup
+### 1. 检查你的设置
 
-Run the setup check to verify your configuration:
+运行设置检查以验证你的配置：
 
 ```bash
 npx tsx ~/.claude/skills/linear/scripts/setup.ts
 ```
 
-This will check:
-- LINEAR_API_KEY is set and valid
-- @linear/sdk is installed
-- Linear CLI availability (optional)
-- MCP configuration (optional)
+这将检查：
+- LINEAR_API_KEY 是否已设置且有效
+- @linear/sdk 是否已安装
+- Linear CLI 可用性（可选）
+- MCP 配置（可选）
 
-### 2. Get API Key (If Needed)
+### 2. 获取 API 密钥（如果需要）
 
-If setup reports a missing API key:
+如果设置报告缺少 API 密钥：
 
-1. Open [Linear](https://linear.app) in your browser
-2. Go to **Settings** (gear icon) -> **Security & access** -> **Personal API keys**
-3. Click **Create key** and copy the key (starts with `lin_api_`)
-4. Add to your environment:
+1. 在浏览器中打开 [Linear](https://linear.app)
+2. 转到 **设置**（齿轮图标）-> **安全与访问** -> **个人 API 密钥**
+3. 点击 **创建密钥** 并复制密钥（以 `lin_api_` 开头）
+4. 添加到你的环境：
 
 ```bash
-# Option A: Add to shell profile (~/.zshrc or ~/.bashrc)
+# 选项 A：添加到 shell 配置文件（~/.zshrc 或 ~/.bashrc）
 export LINEAR_API_KEY="lin_api_your_key_here"
 
-# Option B: Add to Claude Code environment
+# 选项 B：添加到 Claude Code 环境
 echo 'LINEAR_API_KEY=lin_api_your_key_here' >> ~/.claude/.env
 
-# Then reload your shell or restart Claude Code
+# 然后重新加载 shell 或重启 Claude Code
 ```
 
-### 3. Test Connection
+### 3. 测试连接
 
-Verify everything works:
+验证一切正常：
 
 ```bash
 npx tsx ~/.claude/skills/linear/scripts/query.ts "query { viewer { name } }"
 ```
 
-You should see your name from Linear.
+你应该能看到你的 Linear 用户名。
 
-### 4. Common Operations
+### 4. 常见操作
 
 ```bash
-# Create issue in a project
-npx tsx scripts/linear-ops.ts create-issue "Project" "Title" "Description"
+# 在项目中创建 issue
+npx tsx scripts/linear-ops.ts create-issue "项目名称" "标题" "描述"
 
-# Update issue status
+# 更新 issue 状态
 npx tsx scripts/linear-ops.ts status Done ENG-123 ENG-124
 
-# Create sub-issue
-npx tsx scripts/linear-ops.ts create-sub-issue ENG-100 "Sub-task" "Details"
+# 创建子 issue
+npx tsx scripts/linear-ops.ts create-sub-issue ENG-100 "子任务" "详情"
 
-# Update project status
-npx tsx scripts/linear-ops.ts project-status "Phase 1" completed
+# 更新项目状态
+npx tsx scripts/linear-ops.ts project-status "阶段 1" completed
 
-# Show all commands
+# 显示所有命令
 npx tsx scripts/linear-ops.ts help
 ```
 
-See [Project Management Commands](#project-management-commands) for full reference.
+有关完整参考，请参阅[项目管理命令](#项目管理命令)。
 
 ---
 
-## Project Planning Workflow
+## 项目规划工作流
 
-### Create Issues in the Correct Project from the Start
+### 从一开始就在正确的项目中创建 Issue
 
-**Best Practice**: When planning a new phase or initiative, create the project and its issues together in a single planning session. Avoid creating issues in a catch-all project and moving them later.
+**最佳实践**：在规划新阶段或新计划时，在单个规划会话中一起创建项目及其 issue。避免在综合项目中创建 issue 然后后续移动。
 
-#### Recommended Workflow
+#### 推荐工作流
 
-1. **Create the project first**:
+1. **先创建项目**：
    ```bash
-   npx tsx scripts/linear-ops.ts create-project "Phase X: Feature Name" "My Initiative"
+   npx tsx scripts/linear-ops.ts create-project "阶段 X：功能名称" "我的计划"
    ```
 
-2. **Set project state to Planned**:
+2. **将项目状态设为已计划**：
    ```bash
-   npx tsx scripts/linear-ops.ts project-status "Phase X: Feature Name" planned
+   npx tsx scripts/linear-ops.ts project-status "阶段 X：功能名称" planned
    ```
 
-3. **Create issues directly in the project**:
+3. **直接在项目中创建 issue**：
    ```bash
-   npx tsx scripts/linear-ops.ts create-issue "Phase X: Feature Name" "Parent task" "Description"
-   npx tsx scripts/linear-ops.ts create-sub-issue ENG-XXX "Sub-task 1" "Description"
-   npx tsx scripts/linear-ops.ts create-sub-issue ENG-XXX "Sub-task 2" "Description"
+   npx tsx scripts/linear-ops.ts create-issue "阶段 X：功能名称" "父任务" "描述"
+   npx tsx scripts/linear-ops.ts create-sub-issue ENG-XXX "子任务 1" "描述"
+   npx tsx scripts/linear-ops.ts create-sub-issue ENG-XXX "子任务 2" "描述"
    ```
 
-4. **Update project state when work begins**:
+4. **工作开始时更新项目状态**：
    ```bash
-   npx tsx scripts/linear-ops.ts project-status "Phase X: Feature Name" in-progress
+   npx tsx scripts/linear-ops.ts project-status "阶段 X：功能名称" in-progress
    ```
 
-#### Why This Matters
+#### 为什么这很重要
 
-- **Traceability**: Issues are linked to their project from creation
-- **Metrics**: Project progress tracking is accurate from day one
-- **Workflow**: No time wasted moving issues between projects
-- **Organization**: Linear views and filters work correctly
+- **可追溯性**：Issue 从创建时就与其项目关联
+- **指标**：项目进度跟踪从第一天起就是准确的
+- **工作流**：无需浪费时间在项目间移动 issue
+- **组织性**：Linear 视图和过滤器正常工作
 
-#### Anti-Pattern to Avoid
+#### 应避免的反模式
 
-❌ Creating issues in a "holding" project and moving them later:
+❌ 在"暂存"项目中创建 issue 然后后续移动：
 ```bash
-# Don't do this
-create-issue "Phase 6A" "New feature"  # Wrong project
-# Later: manually move to Phase X      # Extra work
+# 不要这样做
+create-issue "阶段 6A" "新功能"  # 错误项目
+# 后续：手动移到阶段 X      # 额外工作
 ```
 
 ---
 
-## Project Management Commands
+## 项目管理命令
 
 ### project-status
 
-Update a project's state in Linear. Accepts user-friendly terminology that maps to Linear's API.
+更新 Linear 中的项目状态。接受映射到 Linear API 的用户友好术语。
 
 ```bash
 npx tsx scripts/linear-ops.ts project-status <project-name> <state>
 ```
 
-**Valid States:**
-| Input | Description | API Value |
+**有效状态：**
+| 输入 | 描述 | API 值 |
 |-------|-------------|-----------|
-| `backlog` | Not yet started | backlog |
-| `planned` | Scheduled for future | planned |
-| `in-progress` | Currently active | started |
-| `paused` | Temporarily on hold | paused |
-| `completed` | Successfully finished | completed |
-| `canceled` | Will not be done | canceled |
+| `backlog` | 尚未开始 | backlog |
+| `planned` | 已计划未来进行 | planned |
+| `in-progress` | 当前活跃 | started |
+| `paused` | 暂时暂停 | paused |
+| `completed` | 成功完成 | completed |
+| `canceled` | 不会完成 | canceled |
 
-**Examples:**
+**示例：**
 ```bash
-# Start working on a project
-npx tsx scripts/linear-ops.ts project-status "Phase 8: MCP Decision Engine" in-progress
+# 开始处理项目
+npx tsx scripts/linear-ops.ts project-status "阶段 8：MCP 决策引擎" in-progress
 
-# Mark project complete
-npx tsx scripts/linear-ops.ts project-status "Phase 8" completed
+# 标记项目完成
+npx tsx scripts/linear-ops.ts project-status "阶段 8" completed
 
-# Partial name matching works
-npx tsx scripts/linear-ops.ts project-status "Phase 8" paused
+# 部分名称匹配也有效
+npx tsx scripts/linear-ops.ts project-status "阶段 8" paused
 ```
 
 ### link-initiative
 
-Link an existing project to an initiative.
+将现有项目链接到计划。
 
 ```bash
 npx tsx scripts/linear-ops.ts link-initiative <project-name> <initiative-name>
 ```
 
-**Examples:**
+**示例：**
 ```bash
-# Link a project to an initiative
-npx tsx scripts/linear-ops.ts link-initiative "Phase 8: MCP Decision Engine" "Q1 Goals"
+# 将项目链接到计划
+npx tsx scripts/linear-ops.ts link-initiative "阶段 8：MCP 决策引擎" "Q1 目标"
 
-# Partial matching works
-npx tsx scripts/linear-ops.ts link-initiative "Phase 8" "Q1 Goals"
+# 部分匹配也有效
+npx tsx scripts/linear-ops.ts link-initiative "阶段 8" "Q1 目标"
 ```
 
 ### unlink-initiative
 
-Remove a project from an initiative.
+将项目从计划中移除。
 
 ```bash
 npx tsx scripts/linear-ops.ts unlink-initiative <project-name> <initiative-name>
 ```
 
-**Examples:**
+**示例：**
 ```bash
-# Remove incorrect link
-npx tsx scripts/linear-ops.ts unlink-initiative "Phase 8" "Linear Skill"
+# 移除错误链接
+npx tsx scripts/linear-ops.ts unlink-initiative "阶段 8" "Linear 技能"
 
-# Clean up test links
-npx tsx scripts/linear-ops.ts unlink-initiative "Test Project" "Q1 Goals"
+# 清理测试链接
+npx tsx scripts/linear-ops.ts unlink-initiative "测试项目" "Q1 目标"
 ```
 
-**Error Handling:**
-- Returns error if project is not linked to the specified initiative
-- Returns error if project or initiative not found
+**错误处理：**
+- 如果项目未链接到指定计划，返回错误
+- 如果未找到项目或计划，返回错误
 
-### Complete Project Lifecycle Example
+### 完整项目生命周期示例
 
 ```bash
-# 1. Create project linked to initiative
-npx tsx scripts/linear-ops.ts create-project "Phase 11: New Feature" "Q1 Goals"
+# 1. 创建项目并链接到计划
+npx tsx scripts/linear-ops.ts create-project "阶段 11：新功能" "Q1 目标"
 
-# 2. Set state to planned
-npx tsx scripts/linear-ops.ts project-status "Phase 11" planned
+# 2. 将状态设为已计划
+npx tsx scripts/linear-ops.ts project-status "阶段 11" planned
 
-# 3. Create issues in the project
-npx tsx scripts/linear-ops.ts create-issue "Phase 11" "Parent task" "Description"
-npx tsx scripts/linear-ops.ts create-sub-issue ENG-XXX "Sub-task 1" "Details"
+# 3. 在项目中创建 issue
+npx tsx scripts/linear-ops.ts create-issue "阶段 11" "父任务" "描述"
+npx tsx scripts/linear-ops.ts create-sub-issue ENG-XXX "子任务 1" "详情"
 
-# 4. Start work - update to in-progress
-npx tsx scripts/linear-ops.ts project-status "Phase 11" in-progress
+# 4. 开始工作—更新为进行中
+npx tsx scripts/linear-ops.ts project-status "阶段 11" in-progress
 
-# 5. Mark issues done
+# 5. 标记 issue 完成
 npx tsx scripts/linear-ops.ts status Done ENG-XXX ENG-YYY
 
-# 6. Complete project
-npx tsx scripts/linear-ops.ts project-status "Phase 11" completed
+# 6. 完成项目
+npx tsx scripts/linear-ops.ts project-status "阶段 11" completed
 
-# 7. (Optional) Link to additional initiative
-npx tsx scripts/linear-ops.ts link-initiative "Phase 11" "Q2 Goals"
+# 7. （可选）链接到额外的计划
+npx tsx scripts/linear-ops.ts link-initiative "阶段 11" "Q2 目标"
 ```
 
 ---
 
-## Tool Selection
+## 工具选择
 
-Choose the right tool for the task:
+为任务选择正确的工具：
 
-| Tool | When to Use |
+| 工具 | 何时使用 |
 |------|-------------|
-| **MCP (Official Server)** | Most operations - PREFERRED |
-| **Helper Scripts** | Bulk operations, when MCP unavailable |
-| **SDK scripts** | Complex operations (loops, conditionals) |
-| **GraphQL API** | Operations not supported by MCP/SDK |
+| **MCP（官方服务器）** | 大多数操作—首选 |
+| **辅助脚本** | 批量操作，MCP 不可用时 |
+| **SDK 脚本** | 复杂操作（循环、条件） |
+| **GraphQL API** | MCP/SDK 不支持的操作 |
 
-### MCP Server Configuration
+### MCP 服务器配置
 
-**Use the official Linear MCP server** at `mcp.linear.app`:
+**使用官方的 Linear MCP 服务器**，地址为 `mcp.linear.app`：
 
 ```json
 {
@@ -341,183 +341,182 @@ Choose the right tool for the task:
 }
 ```
 
-> **WARNING**: Do NOT use deprecated community servers. See troubleshooting.md for details.
+> **警告**：不要使用已废弃的社区服务器。详情请参阅 troubleshooting.md。
 
-### MCP Reliability (Official Server)
+### MCP 可靠性（官方服务器）
 
-| Operation | Reliability | Notes |
+| 操作 | 可靠性 | 备注 |
 |-----------|-------------|-------|
-| Create issue | ✅ High | Full support |
-| Update status | ✅ High | Use `state: "Done"` directly |
-| List/Search issues | ✅ High | Supports filters, queries |
-| Add comment | ✅ High | Works with issue IDs |
+| 创建 issue | ✅ 高 | 完全支持 |
+| 更新状态 | ✅ 高 | 直接使用 `state: "Done"` |
+| 列出/搜索 issues | ✅ 高 | 支持过滤器、查询 |
+| 添加评论 | ✅ 高 | 与 issue ID 一起使用 |
 
-### Quick Status Update
+### 快速状态更新
 
 ```bash
-# Via MCP - use human-readable state names
+# 通过 MCP—使用人类可读的状态名称
 update_issue with id="issue-uuid", state="Done"
 
-# Via helper script (bulk operations)
+# 通过辅助脚本（批量操作）
 node scripts/linear-helpers.mjs update-status Done 123 124 125
 ```
 
-### Helper Script Reference
+### 辅助脚本参考
 
-For detailed helper script usage, see **troubleshooting.md**.
+有关辅助脚本的详细用法，请参阅 **troubleshooting.md**。
 
-### Parallel Agent Execution
+### 并行代理执行
 
-For bulk operations or background execution, use the `Linear-specialist` subagent:
+对于批量操作或后台执行，使用 `Linear-specialist` 子代理：
 
 ```javascript
 Task({
-  description: "Update Linear issues",
-  prompt: "Mark ENG-101, ENG-102, ENG-103 as Done",
+  description: "更新 Linear issues",
+  prompt: "标记 ENG-101、ENG-102、ENG-103 为 Done",
   subagent_type: "Linear-specialist"
 })
 ```
 
-**When to use `Linear-specialist` (parallel):**
-- Bulk status updates (3+ issues)
-- Project status changes
-- Creating multiple issues
-- Sync operations after code changes
+**何时使用 `Linear-specialist`（并行）：**
+- 批量状态更新（3 个以上 issue）
+- 项目状态变更
+- 创建多个 issue
+- 代码变更后的同步操作
 
-**When to use direct execution:**
-- Single issue queries
-- Viewing issue details
-- Quick status checks
-- Operations needing immediate results
+**何时直接执行：**
+- 单个 issue 查询
+- 查看 issue 详情
+- 快速状态检查
+- 需要即时结果的操作
 
-See **sync.md** for parallel execution patterns.
+有关并行执行模式，请参阅 **sync.md**。
 
-## Critical Requirements
+## 关键要求
 
 ### Issues → Projects → Initiatives
 
-**Every issue MUST be attached to a project. Every project MUST be linked to an initiative.**
+**每个 issue 必须关联到一个项目。每个项目必须链接到一个计划。**
 
-| Entity | Must Link To | If Missing |
+| 实体 | 必须链接到 | 如果缺失 |
 |--------|--------------|------------|
-| Issue | Project | Not visible in project board |
-| Project | Initiative | Not visible in roadmap |
+| Issue | 项目 | 在项目看板中不可见 |
+| 项目 | 计划 | 在路线图中不可见 |
 
-See **projects.md** for complete project creation checklist.
+有关完整的项目创建检查清单，请参阅 **projects.md**。
 
 ---
 
-## Conventions
+## 约定
 
-### Issue Status
+### Issue 状态
 
-- **Assigned to me**: Set `state: "Todo"`
-- **Unassigned**: Set `state: "Backlog"`
+- **分配给我**：设置 `state: "Todo"`
+- **未分配**：设置 `state: "Backlog"`
 
-### Labels
+### 标签
 
-Uses **domain-based label taxonomy**. See docs/labels.md.
+使用**基于领域的标签分类法**。请参阅 docs/labels.md。
 
-**Key rules:**
-- ONE Type label: `feature`, `bug`, `refactor`, `chore`, `spike`
-- 1-2 Domain labels: `security`, `backend`, `frontend`, etc.
-- Scope labels when applicable: `blocked`, `breaking-change`, `tech-debt`
+**关键规则：**
+- 一个类型标签：`feature`、`bug`、`refactor`、`chore`、`spike`
+- 1-2 个领域标签：`security`、`backend`、`frontend` 等
+- 适用时使用范围标签：`blocked`、`breaking-change`、`tech-debt`
 
 ```bash
-# Validate labels
+# 验证标签
 npx tsx scripts/linear-ops.ts labels validate "feature,security"
 
-# Suggest labels for issue
-npx tsx scripts/linear-ops.ts labels suggest "Fix XSS vulnerability"
+# 为 issue 建议标签
+npx tsx scripts/linear-ops.ts labels suggest "修复 XSS 漏洞"
 ```
 
-## SDK Automation Scripts
+## SDK 自动化脚本
 
-**Use only when MCP tools are insufficient.** For complex operations involving loops, mapping, or bulk updates, write TypeScript scripts using `@linear/sdk`. See `sdk.md` for:
+**仅在 MCP 工具不足时使用。** 对于涉及循环、映射或批量更新的复杂操作，请使用 `@linear/sdk` 编写 TypeScript 脚本。请参阅 `sdk.md` 了解：
+- 完整的脚本模式和模板
+- 常见自动化示例（批量更新、过滤、报告）
+- 工具选择标准
 
-- Complete script patterns and templates
-- Common automation examples (bulk updates, filtering, reporting)
-- Tool selection criteria
-
-Scripts provide full type hints and are easier to debug than raw GraphQL for multi-step operations.
+脚本提供完整的类型提示，对于多步骤操作比原始 GraphQL 更易于调试。
 
 ## GraphQL API
 
-**Fallback only.** Use when operations aren't supported by MCP or SDK.
+**仅作为备用。** 当操作不受 MCP 或 SDK 支持时使用。
 
-See **api.md** for complete documentation including:
-- Authentication and setup
-- Example queries and mutations
-- Timeout handling patterns
-- MCP timeout workarounds
-- Shell script compatibility
+请参阅 **api.md** 获取完整文档，包括：
+- 认证和设置
+- 示例查询和变更
+- 超时处理模式
+- MCP 超时解决方法
+- Shell 脚本兼容性
 
-**Quick ad-hoc query:**
+**快速临时查询：**
 
 ```bash
 npx tsx ~/.claude/skills/linear/scripts/query.ts "query { viewer { name } }"
 ```
 
-## Projects & Initiatives
+## 项目与计划
 
-For advanced project and initiative management patterns, see **projects.md**.
+有关高级项目和计划管理模式，请参阅 **projects.md**。
 
-**Quick reference** - common project commands:
+**快速参考**—常见项目命令：
 
 ```bash
-# Create project linked to initiative
-npx tsx scripts/linear-ops.ts create-project "Phase X: Name" "My Initiative"
+# 创建项目并链接到计划
+npx tsx scripts/linear-ops.ts create-project "阶段 X：名称" "我的计划"
 
-# Update project status
-npx tsx scripts/linear-ops.ts project-status "Phase X" in-progress
-npx tsx scripts/linear-ops.ts project-status "Phase X" completed
+# 更新项目状态
+npx tsx scripts/linear-ops.ts project-status "阶段 X" in-progress
+npx tsx scripts/linear-ops.ts project-status "阶段 X" completed
 
-# Link/unlink projects to initiatives
-npx tsx scripts/linear-ops.ts link-initiative "Phase X" "My Initiative"
-npx tsx scripts/linear-ops.ts unlink-initiative "Phase X" "Old Initiative"
+# 链接/取消链接项目到计划
+npx tsx scripts/linear-ops.ts link-initiative "阶段 X" "我的计划"
+npx tsx scripts/linear-ops.ts unlink-initiative "阶段 X" "旧计划"
 ```
 
-**Key topics in projects.md:**
-- Project creation checklist (mandatory steps)
-- Content vs Description fields
-- Discovery before creation
-- Codebase verification before work
-- Sub-issue management
-- Project status updates
-- Project updates (status reports)
+**projects.md 中的关键主题：**
+- 项目创建检查清单（强制步骤）
+- 内容与描述字段
+- 创建前的发现
+- 工作前的代码库验证
+- 子 issue 管理
+- 项目状态更新
+- 项目更新（状态报告）
 
 ---
 
-## Sync Patterns (Bulk Operations)
+## 同步模式（批量操作）
 
-For bulk synchronization of code changes to Linear, see **sync.md**.
+有关代码变更到 Linear 的批量同步，请参阅 **sync.md**。
 
-**Quick sync commands:**
+**快速同步命令：**
 
 ```bash
-# Bulk update issues to Done
+# 批量更新 issue 为 Done
 npx tsx scripts/linear-ops.ts status Done ENG-101 ENG-102 ENG-103
 
-# Update project status
-npx tsx scripts/linear-ops.ts project-status "My Project" completed
+# 更新项目状态
+npx tsx scripts/linear-ops.ts project-status "我的项目" completed
 ```
 
 ---
 
-## Reference
+## 参考
 
-| Document | Purpose |
+| 文档 | 用途 |
 |----------|---------|
-| api.md | GraphQL API reference, timeout handling |
-| sdk.md | SDK automation patterns |
-| sync.md | Bulk sync patterns |
-| projects.md | Project & initiative management |
-| troubleshooting.md | Common issues, MCP debugging |
-| docs/labels.md | Label taxonomy |
+| api.md | GraphQL API 参考、超时处理 |
+| sdk.md | SDK 自动化模式 |
+| sync.md | 批量同步模式 |
+| projects.md | 项目和计划管理 |
+| troubleshooting.md | 常见问题、MCP 调试 |
+| docs/labels.md | 标签分类法 |
 
-**External:** [Linear MCP Documentation](https://linear.app/docs/mcp.md)
+**外部：**[Linear MCP 文档](https://linear.app/docs/mcp.md)
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 局限性
+- 仅当任务明确匹配上述范围时使用此技能。
+- 不要将输出视为特定环境验证、测试或专家审查的替代品。
+- 如果缺少所需的输入、权限、安全边界或成功标准，请停止并要求澄清。

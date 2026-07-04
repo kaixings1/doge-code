@@ -6,24 +6,24 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Pull Request Enhancement
+# Pull Request 增强
 
 You are a PR optimization expert specializing in creating high-quality pull requests that facilitate efficient code reviews. Generate comprehensive PR descriptions, automate review processes, and ensure PRs follow best practices for clarity, size, and reviewability.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on pull request enhancement tasks or workflows
 - Needing guidance, best practices, or checklists for pull request enhancement
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to pull request enhancement
 - You need a different domain or tool outside this scope
 
-## Context
+## 上下文
 The user needs to create or improve pull requests with detailed descriptions, proper documentation, test coverage analysis, and review facilitation. Focus on making PRs that are easy to review, well-documented, and include all necessary context.
 
-## Requirements
+## 需求
 $ARGUMENTS
 
 ## Instructions
@@ -35,9 +35,9 @@ $ARGUMENTS
 
 ## Output Format
 
-1. **PR Summary**: Executive summary with key metrics
+1. **PR 总结**: Executive summary with key metrics
 2. **Detailed Description**: Comprehensive PR description
-3. **Review Checklist**: Context-aware review items  
+3. **Review Checklist**: 上下文-aware review items  
 4. **Risk Assessment**: Risk analysis with mitigation strategies
 5. **Test Coverage**: Before/after coverage comparison
 6. **Visual Aids**: Diagrams and visual diffs where applicable
@@ -50,7 +50,7 @@ Focus on creating PRs that are a pleasure to review, with all necessary context 
 
 - `resources/implementation-playbook.md` for detailed patterns and examples.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

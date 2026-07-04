@@ -20,13 +20,13 @@ plugin:
 
 # MockHunter — Live Page Reality Check
 
-## Overview
+## 概述
 
 MockHunter is a Claude Code skill that audits a live web page and tells you, for every visible value, whether it is real, mocked, LLM-generated, hardcoded, broken, or unknown. It is built for vibe-coded apps (Lovable, Bolt, v0, Replit, AI Studio, Cursor Composer) where the UI may look complete but the data layer often is not. It uses Playwright MCP to drive a real browser, then traces each visible value through the network and DOM to its source.
 
 This skill adapts the upstream `CodeShuX/mockhunter` project (community source).
 
-Because this workflow drives a real browser against live pages, treat it as an interactive audit tool, not a plugin-safe read-only helper. Default to observation-only until the user confirms the target is theirs, identifies a safe test account or environment, and explicitly approves any click, submit, or authenticated action that can mutate state.
+Because this workflow drives a real browser against live pages, treat it as an interactive audit tool, not a plugin-safe read-only helper. 默认 to observation-only until the user confirms the target is theirs, identifies a safe test account or environment, and explicitly approves any click, submit, or authenticated action that can mutate state.
 
 ## When to Use This Skill
 
@@ -37,7 +37,7 @@ Because this workflow drives a real browser against live pages, treat it as an i
 
 ## How It Works
 
-### Phase 1: Setup & Smart Questions
+### Phase 1: 设置 & Smart Questions
 
 1. Greet the user, ask for the target URL
 2. Auto-detect the stack from the URL (`*.lovable.app`, `*.bolt.new`, `*.v0.app`, `*.replit.app`, `aistudio.google.com`, otherwise Custom)
@@ -90,7 +90,7 @@ Uniformity heuristics flag suspicious data:
 ### Phase 5: Report
 
 Generate `mockhunter-report.md` with:
-- Summary table (verdict counts)
+- 总结 table (verdict counts)
 - Findings per section/tab (element / value / verdict / source / severity / action)
 - Console errors and network failures
 - NO-OP buttons
@@ -133,7 +133,7 @@ Skill: ...
 - ❌ Don't trust a destructive-button exclusion list by itself — localized labels, icons, aria text, and backend routes can hide mutating actions
 - ❌ Don't trust the audit if the page failed to load — check console first
 
-## Limitations
+## 局限性
 
 - Single-page audit per run — no multi-page crawl in v0.1.0
 - Form-login only for auth — no OAuth, magic-link, or 2FA in v0.1.0
@@ -141,10 +141,10 @@ Skill: ...
 - Markdown report only — no JSON output yet
 - DB verification supports any DB reachable via shell command (psql, mysql, mongosh, wrangler, supabase REST), but not Firestore directly
 
-## Security & Safety Notes
+## 安全性 & Safety Notes
 
 - The skill runs read-only DB SELECTs only, never INSERT/UPDATE/DELETE
 - Skips destructive-looking, ambiguous, icon-only, localized, or external-write controls unless the user has explicitly allowlisted the exact control and environment
-- Never submits forms that look like payment, account deletion, external write operations, account changes, invites, publishing, deployment, messaging, or money movement
+- 绝不 submits forms that look like payment, account deletion, external write operations, account changes, invites, publishing, deployment, messaging, or money movement
 - Uses placeholder credentials (`mockhunter@example.com`) for any throwaway form tests, never the user's real credentials
 - All Playwright actions happen in a controlled MCP browser context — no headless escalation

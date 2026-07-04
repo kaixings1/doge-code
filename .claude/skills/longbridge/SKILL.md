@@ -20,76 +20,76 @@ plugin:
 
 # Longbridge
 
-## Overview
+## 概述
 
-Longbridge is the official skill collection for Longbridge Securities, covering 125+ agent skills across real-time market data, chart analysis, company fundamentals, portfolio management, options, sector screening, and more. Supports HK, US, A-share (SH/SZ), and SG markets. All skills are trilingual (Simplified Chinese / Traditional Chinese / English).
+Longbridge 是 Longbridge Securities 的官方技能集合，涵盖 125+ 代理技能，涵盖实时市场数据、图表分析、公司基本面、投资组合管理、期权、行业筛选等。支持港股、美股、A 股（沪/深）和新加坡市场。所有技能均为三语（简体中文/繁体中文/英文）。
 
-Source repository: [github.com/longbridge/skills](https://github.com/longbridge/skills) (~840 stars, MIT)
+来源仓库：[github.com/longbridge/skills](https://github.com/longbridge/skills)（约 840 星，MIT）
 
-## When to Use This Skill
+## 何时使用此技能
 
-- Use when the user asks about stock prices, charts, or market data for HK/US/A-share/SG markets
-- Use when the user wants company fundamentals, earnings, or analyst ratings
-- Use when the user asks about their portfolio, positions, or account P&L via Longbridge
-- Use when the user wants options analysis, sector rankings, capital flow, or news
-- Use when the user asks in Chinese (Simplified or Traditional) or English about any securities topic
+- 当用户询问港股/美股/A 股/新加坡市场的股票价格、图表或市场数据时使用
+- 当用户想要公司基本面、财报或分析师评级时使用
+- 当用户通过 Longbridge 询问其投资组合、持仓或账户盈亏时使用
+- 当用户想要期权分析、行业排名、资金流向或新闻时使用
+- 当用户用中文（简体或繁体）或英文询问任何证券话题时使用
 
-## How It Works
+## 工作原理
 
-### Step 1: Discover the Right Subcommand
+### 步骤 1：发现正确的子命令
 
 ```bash
 longbridge --help
 ```
 
-List all available subcommands. Never hard-code subcommand names — the CLI evolves.
+列出所有可用的子命令。切勿硬编码子命令名称——CLI 会不断演进。
 
-### Step 2: Check Subcommand Options
+### 步骤 2：检查子命令选项
 
 ```bash
 longbridge <subcommand> --help
 ```
 
-Confirm flags and output format before calling.
+在调用前确认标志和输出格式。
 
-### Step 3: Call with JSON Output
+### 步骤 3：以 JSON 输出调用
 
 ```bash
 longbridge <subcommand> --format json
 ```
 
-Parse the structured output and render in the user's language (detect from input).
+解析结构化输出并以用户的语言（从输入检测）呈现。
 
-## Authentication
+## 认证
 
 ```bash
-longbridge auth login          # Basic market data (read-only)
-longbridge auth login --trade  # Portfolio and account features
+longbridge auth login          # 基本市场数据（只读）
+longbridge auth login --trade  # 投资组合和账户功能
 ```
 
-## Install
+## 安装
 
 ```bash
-# Claude Code plugin marketplace
+# Claude Code 插件市场
 /plugin marketplace add longbridge/skills
 
-# Or via npx
+# 或通过 npx
 npx skills add https://github.com/longbridge/skills
 ```
 
-## MCP Fallback
+## MCP 回退
 
-If the `longbridge` CLI binary is not installed, fall back to MCP tools. Inspect available MCP tools at runtime — do not hard-code MCP tool names as they change with server versions.
+如果未安装 `longbridge` CLI 二进制文件，回退到 MCP 工具。在运行时检查可用的 MCP 工具——切勿硬编码 MCP 工具名称，因为它们会随服务器版本而变化。
 
-## Limitations
+## 局限性
 
-- Portfolio and account features require login with Trade scope.
-- Real-time data is subject to Longbridge data subscription (delayed data available without subscription).
-- Crypto symbols use `.HAS` suffix on the Longbridge platform.
-- This skill does not place orders — read-only by default unless using the account write scope.
+- 投资组合和账户功能需要使用 Trade 范围登录。
+- 实时数据受 Longbridge 数据订阅限制（未订阅也可获取延迟数据）。
+- 加密货币符号在 Longbridge 平台上使用 `.HAS` 后缀。
+- 此技能不进行下单——默认只读，除非使用账户写入范围。
 
-## Security & Safety Notes
+## 安全与注意事项
 
-- All market data queries are read-only (no side effects).
-- Watchlist mutations and order-related features follow a preview + confirm two-step protocol.
-- Credentials are handled by the Longbridge auth system; this skill does not store or transmit tokens.
+- 所有市场数据查询均为只读（无副作用）。
+- 自选列表变更和订单相关功能遵循预览 + 确认的两步协议。
+- 凭证由 Longbridge 认证系统处理；此技能不存储或传输令牌。

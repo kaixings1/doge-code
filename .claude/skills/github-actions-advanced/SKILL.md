@@ -10,13 +10,13 @@ source: community
 date_added: "2026-05-30"
 ---
 
-# GitHub Actions Advanced Skill
+# GitHub Actions 高级技能
 
 Expert guidance for designing, writing, debugging, and securing **production-grade** GitHub Actions workflows.
 
 ---
 
-## When to Use This Skill
+## 何时使用此技能
 
 - User mentions GitHub Actions, `.github/workflows`, CI/CD pipelines, runners, jobs, steps, or actions
 - User wants to automate builds, tests, deployments, or releases via GitHub
@@ -1092,7 +1092,7 @@ Before merging any workflow to `main`, verify:
 - `kubernetes-architect` — Deploying to Kubernetes from GitHub Actions
 - `gitlab-ci-patterns` — GitLab CI/CD equivalent patterns
 
-## Limitations
+## 局限性
 
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.

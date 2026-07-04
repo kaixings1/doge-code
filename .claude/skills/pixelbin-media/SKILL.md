@@ -1,7 +1,7 @@
 ---
 name: pixelbin-media
-description: "Pixelbin Media — Pixelbin Media 相关功能和最佳实践"
-  Generate and edit images and videos with an 85+ API portfolio and build visually appealing website pages via Pixelbin.
+description: "Pixelbin Media — Pixelbin 媒体相关功能和最佳实践"
+  使用 85+ API 组合生成和编辑图片和视频，并通过 Pixelbin 构建视觉吸引人的网站页面。
 triggers:
   - "pixelbin"
   - "media generation"
@@ -14,30 +14,26 @@ od:
   upstream: "https://github.com/pixelbin-dev/skills"
 ---
 
-# pixelbin-media
+# Pixelbin 媒体
 
-> Curated from Pixelbin.
+> 来自 Pixelbin。
 
-## What it does
+## 功能
 
-Generate and edit images and videos with an 85+ API portfolio and build visually appealing website pages via Pixelbin.
+使用 85+ API 组合生成和编辑图片和视频，并通过 Pixelbin 构建视觉吸引人的网站页面。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/pixelbin-dev/skills
-- Category: `image-generation`
+- 上游: https://github.com/pixelbin-dev/skills
+- 分类: `image-generation`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在 Open Design 中宣传该技能，以便代理在规划期间发现它。要运行完整的上游工作流及其原始资源、脚本和参考资料，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README 获取确切路径
 open https://github.com/pixelbin-dev/skills
 ```
 
-Then ask the agent to invoke this skill by name (`pixelbin-media`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后通过名称（`pixelbin-media`）或此技能前置元数据中列出的触发短语之一要求代理调用此技能。

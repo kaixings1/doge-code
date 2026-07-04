@@ -6,10 +6,9 @@ requires:
     - rube
 ---
 
-# Lemlist Automation
+# Lemlist 自动化
 
-Automate your Lemlist multichannel outreach workflows -- manage campaigns, enroll leads at scale, enrich with custom variables, export campaign data, and clean up unsubscribes.
+自动化您的 Lemlist 多渠道外展工作流——管理活动、批量注册潜在客户、使用自定义变量丰富数据、导出活动数据以及清理退订。
 
-**Toolkit docs:** [composio.dev/toolkits/lemlist](https://composio.dev/toolkits/lemlist)
+**工具包文档:** [composio.dev/toolkits/lemlist](https://composio.dev/toolkits/lemlist)
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 39 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

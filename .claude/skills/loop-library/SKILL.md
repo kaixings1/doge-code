@@ -161,7 +161,7 @@ Apply these rules:
 Designing a loop does not authorize enabling a schedule, changing production,
 or sending external messages. Implement or activate it only when the user asks.
 
-## Limitations
+## 局限性
 
 - Does not replace live catalog verification when the user asks for the latest
   published loops.

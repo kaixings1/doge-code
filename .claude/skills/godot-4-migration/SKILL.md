@@ -6,31 +6,31 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Godot 4 Migration Guide
+# Godot 4 迁移指南
 
-## Overview
+## 概述
 
-A critical guide for developers transitioning from Godot 3.x to Godot 4. This skill focuses on the major syntax changes in GDScript 2.0, the new `Tween` system, and `export` annotation updates.
+从 Godot 3.x 迁移到 Godot 4 的关键指南。本技能专注于 GDScript 2.0 的主要语法更改、新的 `Tween` 系统和 `export` 注解更新。
 
-## When to Use This Skill
+## 使用此技能的场景
 
-- Use when porting a Godot 3 project to Godot 4.
-- Use when encountering syntax errors after upgrading.
-- Use when replacing deprecated nodes (like `Tween` node vs `create_tween`).
-- Use when updating `export` variables to `@export` annotations.
+- 将 Godot 3 项目移植到 Godot 4 时
+- 升级后遇到语法错误时
+- 替换已弃用的节点时（如 `Tween` 节点 vs `create_tween`）
+- 将 `export` 变量更新为 `@export` 注解时
 
-## Key Changes
+## 关键更改
 
-### 1. Annotations (`@`)
+### 1. 注解（`@`）
 
-Godot 4 uses `@` for keywords that modify behavior.
+Godot 4 使用 `@` 表示修改行为的关键字。
 - `export var x` -> `@export var x`
 - `onready var y` -> `@onready var y`
-- `tool` -> `@tool` (at top of file)
+- `tool` -> `@tool`（在文件顶部）
 
-### 2. Setters and Getters
+### 2. Setter 和 Getter
 
-Properties now define setters/getters inline.
+属性现在内联定义 setter/getter。
 
 **Godot 3:**
 ```gdscript
@@ -50,9 +50,9 @@ var health: int:
         return health
 ```
 
-### 3. Tween System
+### 3. Tween 系统
 
-The `Tween` node is deprecated. Use `create_tween()` in code.
+`Tween` 节点已弃用。在代码中使用 `create_tween()`。
 
 **Godot 3:**
 ```gdscript
@@ -67,9 +67,9 @@ tween.tween_property($Sprite, "position", Vector2(100, 100), 1.0)
 tween.parallel().tween_property($Sprite, "modulate:a", 0.0, 1.0)
 ```
 
-### 4. Signal Connections
+### 4. 信号连接
 
-String-based connections are discouraged. Use callables.
+不鼓励使用基于字符串的连接。使用可调用对象。
 
 **Godot 3:**
 ```gdscript
@@ -81,11 +81,11 @@ connect("pressed", self, "_on_pressed")
 pressed.connect(_on_pressed)
 ```
 
-## Examples
+## 示例
 
-### Example 1: Typed Arrays
+### 示例 1：类型化数组
 
-GDScript 2.0 supports typed arrays for better performance and type safety.
+GDScript 2.0 支持类型化数组以提高性能和类型安全。
 
 ```gdscript
 # Godot 3
@@ -100,9 +100,9 @@ func _ready():
             enemies.append(child)
 ```
 
-### Example 2: Awaiting Signals (Coroutines)
+### 示例 2：等待信号（协程）
 
-`yield` is replaced by `await`.
+`yield` 被 `await` 替换。
 
 **Godot 3:**
 ```gdscript
@@ -114,19 +114,19 @@ yield(get_tree().create_timer(1.0), "timeout")
 await get_tree().create_timer(1.0).timeout
 ```
 
-## Best Practices
+## 最佳实践
 
-- ✅ **Do:** Use `@export_range`, `@export_file`, etc., for better inspector UI.
-- ✅ **Do:** Type all variables (`var x: int`) for performance gains in GDScript 2.0.
-- ✅ **Do:** Use `super()` to call parent methods instead of `.function_name()`.
-- ❌ **Don't:** Use string names for signals (`emit_signal("name")`) if you can use the signal object (`name.emit()`).
+- ✅ **建议：** 使用 `@export_range`、`@export_file` 等以获取更好的检查器 UI
+- ✅ **建议：** 为所有变量添加类型（`var x: int`）以在 GDScript 2.0 中获得性能提升
+- ✅ **建议：** 使用 `super()` 调用父方法，而不是 `.function_name()`
+- ❌ **不要：** 如果可以使用信号对象（`name.emit()`），就不要使用字符串名称的信号（`emit_signal("name")`）
 
-## Troubleshooting
+## 故障排除
 
-**Problem:** "Identifier 'Tween' is not a valid type."
-**Solution:** `Tween` is now `SceneTreeTween` or just an object returned by `create_tween()`. You rarely type it explicitly, just use `var tween = create_tween()`.
+**问题：** "Identifier 'Tween' is not a valid type."
+**解决方案：** `Tween` 现在是 `SceneTreeTween` 或只是 `create_tween()` 返回的对象。您很少需要显式指定其类型，只需使用 `var tween = create_tween()`。
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确符合上述范围时使用此技能
+- 不要将输出视为环境特定验证、测试或专家评审的替代品
+- 如果缺少必需的输入、权限、安全边界或成功标准，请停止并请求澄清

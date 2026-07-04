@@ -6,21 +6,21 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Implement Track
+# 实现轨道
 
-Execute tasks from a track's implementation plan, following the workflow rules defined in `conductor/workflow.md`.
+按照 `conductor/workflow.md` 中定义的工作流规则，从轨道的实施计划执行任务。
 
-## Use this skill when
+## 使用此技能的场景
 
-- Working on implement track tasks or workflows
-- Needing guidance, best practices, or checklists for implement track
+- 处理实现轨道任务或工作流时
+- 需要实现轨道的指导、最佳实践或检查清单时
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to implement track
-- You need a different domain or tool outside this scope
+- 任务与实现轨道无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -388,7 +388,7 @@ If implementation is paused and resumed:
 5. **Commit frequently** - Each task completion should be committed
 6. **Track all commits** - Record commit hashes in metadata.json for potential revert
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

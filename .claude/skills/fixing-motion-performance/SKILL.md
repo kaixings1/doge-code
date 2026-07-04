@@ -1,6 +1,6 @@
 ---
 name: fixing-motion-performance
-description: "Fixing Motion Performance — Fixing Motion Performance 相关功能和最佳实践"
+description: "Fixing Motion 性能 — Fixing Motion 性能 相关功能和最佳实践"
 risk: safe
 source: community
 ---
@@ -151,7 +151,7 @@ requestAnimationFrame(() => { el.style.transition = 'transform 0.3s'; el.style.t
 - for any non-default choice, state the constraint that justifies it (surface size, duration, or interaction requirement)
 - when reviewing, prefer actionable notes and concrete alternatives over theory
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -3,9 +3,9 @@ name: performance-optimization
 description: 性能优化 — 打包分析、懒加载、缓存策略、Core Web Vitals和CDN配置。
 ---
 
-# Performance Optimization
+# 性能优化
 
-## Bundle Analysis and Code Splitting
+## 打包分析与代码分割
 
 ```typescript
 // Dynamic import for route-level code splitting
@@ -47,7 +47,7 @@ npx vite-bundle-visualizer
 npx source-map-explorer dist/assets/*.js
 ```
 
-## Image Optimization
+## 图片优化
 
 ```tsx
 import Image from "next/image";
@@ -84,7 +84,7 @@ function ProductImage({ src, alt }: { src: string; alt: string }) {
 <link rel="preload" as="image" href="/hero.webp" fetchpriority="high" />
 ```
 
-## Caching Headers
+## 缓存头配置
 
 ```typescript
 function setCacheHeaders(res: Response, options: CacheOptions) {
@@ -112,7 +112,7 @@ app.use("/api", (req, res, next) => {
 });
 ```
 
-## Virtual Lists for Large Data
+## 大数据虚拟列表
 
 ```tsx
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -150,7 +150,7 @@ function VirtualList({ items }: { items: Item[] }) {
 }
 ```
 
-## Core Web Vitals Monitoring
+## Core Web Vitals 监控
 
 ```typescript
 import { onCLS, onINP, onLCP } from "web-vitals";
@@ -164,26 +164,26 @@ onINP(sendMetric);
 onLCP(sendMetric);
 ```
 
-- **LCP** (Largest Contentful Paint): < 2.5s. Preload hero images, optimize server response time.
-- **INP** (Interaction to Next Paint): < 200ms. Avoid long tasks, use `requestIdleCallback`.
-- **CLS** (Cumulative Layout Shift): < 0.1. Set explicit dimensions on images and embeds.
+- **LCP** (Largest Contentful Paint): < 2.5s。预加载主图，优化服务器响应时间。
+- **INP** (Interaction to Next Paint): < 200ms。避免长任务，使用 `requestIdleCallback`。
+- **CLS** (Cumulative Layout Shift): < 0.1。为图片和内嵌内容设置显式尺寸。
 
-## Anti-Patterns
+## 反模式
 
-- Loading all JavaScript upfront instead of code-splitting by route
-- Serving unoptimized images (no WebP/AVIF, no responsive sizes)
-- Missing `width` and `height` on images (causes layout shift)
-- Using `Cache-Control: no-cache` on static assets with content hashes
-- Rendering thousands of DOM nodes instead of virtualizing lists
-- Blocking the main thread with synchronous computation
+- 一次性加载所有 JavaScript 而非按路由代码分割
+- 服务未优化的图片（无 WebP/AVIF，无响应式尺寸）
+- 图片缺少 `width` 和 `height`（导致布局偏移）
+- 对带有内容哈希的静态资源使用 `Cache-Control: no-cache`
+- 渲染数千个 DOM 节点而非使用虚拟列表
+- 使用同步计算阻塞主线程
 
-## Checklist
+## 检查清单
 
-- [ ] Routes lazy-loaded with dynamic `import()` and Suspense
-- [ ] Bundle analyzed and vendor chunks separated
-- [ ] Images served in WebP/AVIF with responsive `sizes` attribute
-- [ ] LCP image preloaded with `fetchpriority="high"`
-- [ ] Static assets cached with immutable headers and content hashes
-- [ ] Lists with 100+ items use virtualization
-- [ ] Core Web Vitals monitored in production (LCP, INP, CLS)
-- [ ] No render-blocking resources in the critical path
+- [ ] 路由使用动态 `import()` 和 Suspense 懒加载
+- [ ] 打包已分析，vendor 块已分离
+- [ ] 图片以 WebP/AVIF 格式提供并带有响应式 `sizes` 属性
+- [ ] LCP 图片已预加载并设置 `fetchpriority="high"`
+- [ ] 静态资源使用不可变头信息和内容哈希缓存
+- [ ] 100+ 项的列表使用虚拟化
+- [ ] 生产环境监控 Core Web Vitals（LCP, INP, CLS）
+- [ ] 关键渲染路径中无阻塞渲染的资源

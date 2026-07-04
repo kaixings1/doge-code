@@ -11,23 +11,23 @@ metadata:
 
 # Gmail
 
-Lightweight Gmail integration with standalone OAuth authentication. No MCP server required.
+轻量级 Gmail 集成，使用独立 OAuth 认证。不需要 MCP 服务器。
 
-> **⚠️ Requires Google Workspace account.** Personal Gmail accounts are not supported.
+> **⚠️ 需要 Google Workspace account.** Personal Gmail accounts are not supported.
 
-## When to Use
-- You need to search, read, or send Gmail messages from the command line without an MCP server.
-- You are automating inbox workflows for a Google Workspace account.
-- You want a lightweight Gmail integration backed by standalone OAuth scripts.
+## 何时使用
+- 您需要通过命令行搜索、阅读或发送 Gmail 消息，且不需要 MCP 服务器。
+- 您正在为 Google Workspace 账户自动化收件箱工作流。
+- 您想要一个由独立 OAuth 脚本支持的轻量级 Gmail 集成。
 
-## First-Time Setup
+## 首次设置
 
-Authenticate with Google (opens browser):
+使用 Google 认证（打开浏览器）：
 ```bash
 python scripts/auth.py login
 ```
 
-Check authentication status:
+检查认证状态：
 ```bash
 python scripts/auth.py status
 ```
@@ -132,7 +132,7 @@ python scripts/gmail.py modify MESSAGE_ID --remove-label UNREAD --add-label STAR
 python scripts/gmail.py list-labels
 ```
 
-## Gmail Query Syntax
+## Gmail Query 语法
 
 Gmail supports powerful search operators:
 
@@ -185,7 +185,7 @@ Service name: `gmail-skill-oauth`
 
 Tokens automatically refresh when expired using Google's cloud function.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

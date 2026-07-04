@@ -1,4 +1,4 @@
-# StyleSeed — Design Judgment Engine
+# StyleSeed 设计判断引擎
 
 > Teaches Claude Code design judgment, not just design data. 69 visual rules that make AI output look designed, not generated.
 
@@ -11,7 +11,7 @@
 - **Component variance** — never 4 identical KPI cards, stagger content types
 - **Motion & feedback** — 200ms normal, spring for entrance, ease-out for exit
 
-## Quick Start
+## 快速开始
 
 ```bash
 # Copy engine into your project
@@ -32,4 +32,4 @@ cp -r styleseed/engine/* your-project/
 
 - **Repository:** https://github.com/bitjaru/styleseed
 - **Live demo:** https://styleseed-demo.vercel.app
-- **License:** MIT
+- **许可证:** MIT

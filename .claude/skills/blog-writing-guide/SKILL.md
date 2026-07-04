@@ -14,7 +14,7 @@ This skill enforces Sentry's blog writing standards across every post — whethe
 
 What follows are the core principles to internalize and apply to every piece of content.
 
-## When to Use
+## /u4f55/u65f6/u4f7f/u7528
 - You need to draft or edit a Sentry blog post.
 - The task involves technical storytelling, product announcements, or engineering deep-dives in Sentry's blog voice.
 - You want blog content that is opinionated, specific, and technically credible rather than generic marketing copy.
@@ -31,7 +31,7 @@ Use "we" (Sentry) and "you" (the reader). This is a conversation, not a paper.
 
 ## Banned Language
 
-Never use these. They are automatic red flags:
+绝不 use these. They are automatic red flags:
 
 - "We're excited/thrilled to announce" — just announce it
 - "Best-in-class" / "industry-leading" / "cutting-edge" — show, don't tell
@@ -45,7 +45,7 @@ Never use these. They are automatic red flags:
 
 ## The Opening (First 2-3 Sentences)
 
-The opening must do one of two things: **state the problem** or **state the conclusion**. Never start with background, company history, or hype.
+The opening must do one of two things: **state the problem** or **state the conclusion**. 绝不 start with background, company history, or hype.
 
 **Good:** "Two weeks before launch, we killed our entire metrics product. Here's why pre-aggregating time-series metrics breaks down for debugging, and how we rebuilt the system from scratch."
 
@@ -66,7 +66,7 @@ For engineering deep-dives, also address:
 
 ## Section Headings Must Convey Information
 
-**Weak:** "Background," "Architecture," "Results," "Conclusion"
+**Weak:** "Background," "架构," "Results," "结论"
 
 **Strong:** "Why time-series pre-aggregation destroys debugging context," "The scatter-gather approach to distributed GROUP BY," "Where this breaks down: the cardinality wall"
 
@@ -80,7 +80,7 @@ For engineering deep-dives, also address:
 
 **Diagrams for systems.** If you describe a system with more than two interacting components, include a diagram. Label with real service names, not generic boxes.
 
-**Honesty over hype.** Never overstate what a feature does. Acknowledge limitations. If something is in beta, say so. If a competitor does something well, it's okay to note that. Do not claim AI features are more capable than they are — "Seer suggests a likely root cause" ≠ "Seer finds the root cause."
+**Honesty over hype.** 绝不 overstate what a feature does. Acknowledge limitations. If something is in beta, say so. If a competitor does something well, it's okay to note that. Do not claim AI features are more capable than they are — "Seer suggests a likely root cause" ≠ "Seer finds the root cause."
 
 ## Title Guidelines
 
@@ -93,12 +93,12 @@ The title is the highest-leverage sentence in the post. It must stop a developer
 
 **Weak titles** are vague announcements:
 - "Introducing our new metrics product"
-- "Performance improvements in Sentry"
+- "性能 improvements in Sentry"
 - "AI-powered debugging with Seer"
 
 ## The Closing
 
-End with something useful — a link to docs, a way to try it, a call to give feedback. Never end with generic hype ("We can't wait to see what you build!") or recaps of what you just said.
+End with something useful — a link to docs, a way to try it, a call to give feedback. 绝不 end with generic hype ("We can't wait to see what you build!") or recaps of what you just said.
 
 ## Post Types
 
@@ -106,7 +106,7 @@ Here's the quick map by post type:
 
 | Type | Goal | Byline |
 |------|------|--------|
-| Engineering Deep Dive | Explain a technical system/decision so other engineers learn | The engineer(s) who built it. Always. |
+| Engineering Deep Dive | Explain a technical system/decision so other engineers learn | The engineer(s) who built it. 始终. |
 | Product Launch | Explain what shipped, why it matters, how to use it | PM, engineer, or DevEx. Not PMM unless marketing built it. |
 | Postmortem | Transparent failure analysis with timeline and fixes | Engineering leadership |
 | Data / Research | Original insights from Sentry's unique data position | Data team, engineering, or research |
@@ -125,9 +125,9 @@ Posts worth sharing contain at least one of:
 
 ## Non-Negotiables (Quick Reference)
 
-1. Never publish without a real person's name on it. No "The Sentry Team" bylines.
-2. Never publish code that doesn't work.
-3. Never say "we're excited to announce." Just announce it.
+1. 绝不 publish without a real person's name on it. No "The Sentry Team" bylines.
+2. 绝不 publish code that doesn't work.
+3. 绝不 say "we're excited to announce." Just announce it.
 4. If you describe a system, include a diagram.
 5. If you make a performance claim, include the number.
 6. If you discuss a decision, explain what you didn't choose and why.
@@ -143,7 +143,7 @@ Run through both checklists:
 **Technical Review:**
 - All technical claims accurate
 - Code samples work
-- Architecture descriptions match reality
+- 架构 descriptions match reality
 - Numbers and benchmarks correct
 - No oversimplifications that would make an expert cringe
 
@@ -162,7 +162,7 @@ Run through both checklists:
 
 When providing feedback, be specific and constructive. Quote the weak passage, explain why it's weak, and rewrite it to show the standard.
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

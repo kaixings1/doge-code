@@ -5,7 +5,7 @@ description: 文档与ADR — 记录决策和文档。在做出架构决策时�
 
 # Documentation and ADRs
 
-## Overview
+## 概述
 
 Document decisions, not just code. The most valuable documentation captures the *why* — the context, constraints, and trade-offs that led to a decision. Code shows *what* was built; documentation explains *why it was built this way* and *what alternatives were considered*. This context is essential for future humans and agents working in the codebase.
 
@@ -20,7 +20,7 @@ Document decisions, not just code. The most valuable documentation captures the 
 
 **When NOT to use:** Don't document obvious code. Don't add comments that restate what the code already says. Don't write docs for throwaway prototypes.
 
-## Architecture Decision Records (ADRs)
+## 架构 Decision Records (ADRs)
 
 ADRs capture the reasoning behind significant technical decisions. They're the highest-value documentation you can write.
 
@@ -143,7 +143,7 @@ export function initializeTheme(theme: Theme): void {
 
 For public APIs (REST, GraphQL, library interfaces):
 
-### Inline with Types (Preferred for TypeScript)
+### Inline with Types (优先red for TypeScript)
 
 ```typescript
 /**

@@ -8,7 +8,7 @@ allowed-tools:
 
 # firecrawl search
 
-Web search with optional content scraping. Returns search results as JSON, optionally with full page content.
+Web search with optional content scraping. 返回值 search results as JSON, optionally with full page content.
 
 ## When to use
 
@@ -47,7 +47,7 @@ firecrawl search "your query" --sources news --tbs qdr:d -o .firecrawl/news.json
 ## Tips
 
 - **`--scrape` fetches full content** — don't re-scrape URLs from search results. This saves credits and avoids redundant fetches.
-- Always write results to `.firecrawl/` with `-o` to avoid context window bloat.
+- 始终 write results to `.firecrawl/` with `-o` to avoid context window bloat.
 - Use `jq` to extract URLs or titles: `jq -r '.data.web[].url' .firecrawl/search.json`
 - Naming convention: `.firecrawl/search-{query}.json` or `.firecrawl/search-{query}-scraped.json`
 

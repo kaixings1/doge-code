@@ -13,4 +13,3 @@ Rigorously evaluate model performance using appropriate metrics, cross-validatio
 ### Classification Metrics
 
 | Metric | When to Use | Formula |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 08 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

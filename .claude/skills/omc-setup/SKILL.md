@@ -1,85 +1,85 @@
 ---
 name: omc-setup
-description: "Omc Setup — Omc Setup 相关功能和最佳实践"
+description: "Omc Setup — OMC 安装设置相关功能和最佳实践"
 level: 2
 ---
 
-# OMC Setup
+# OMC 安装设置
 
-This is the **only command you need to learn**. After running this, everything else is automatic.
+这是您**唯一需要学习的命令**。运行此命令后，其他一切都将自动完成。
 
-**When this skill is invoked, immediately execute the workflow below. Do not only restate or summarize these instructions back to the user.**
+**当调用此技能时，立即执行下面的工作流。不要仅向用户重述或总结这些指令。**
 
-Note: All `~/.claude/...` paths in this guide respect `CLAUDE_CONFIG_DIR` when that environment variable is set.
+注意：当设置了 `CLAUDE_CONFIG_DIR` 环境变量时，本指南中所有 `~/.claude/...` 路径均遵循该变量。
 
-## Best-Fit Use
+## 最佳使用场景
 
-Choose this setup flow when the user wants to **install, refresh, or repair OMC itself**.
+当用户想要**安装、刷新或修复 OMC 本身**时使用此设置流程。
 
-- Marketplace/plugin install users should land here after `/plugin install oh-my-claudecode`
-- npm users should land here after `npm i -g oh-my-claude-sisyphus@latest`
-- local-dev and worktree users should land here after updating the checked-out repo and rerunning setup
+- 市场/插件安装用户在 `/plugin install oh-my-claudecode` 后应进入此流程
+- npm 用户在 `npm i -g oh-my-claude-sisyphus@latest` 后应进入此流程
+- 本地开发和工作树用户在更新检出仓库并重新运行设置后应进入此流程
 
-## Flag Parsing
+## 标志解析
 
-Check for flags in the user's invocation:
-- `--help` → Show Help Text (below) and stop
-- `--local` → Phase 1 only (target=local), then stop
-- `--global` → Phase 1 only (target=global), then stop
-- `--force` → Skip Pre-Setup Check, run full setup (Phase 1 → 2 → 3 → 4)
-- No flags → Run Pre-Setup Check, then full setup if needed
+检查用户调用中的标志：
+- `--help` → 显示帮助文本（见下方）并停止
+- `--local` → 仅阶段 1（目标=本地），然后停止
+- `--global` → 仅阶段 1（目标=全局），然后停止
+- `--force` → 跳过预设置检查，运行完整设置（阶段 1 → 2 → 3 → 4）
+- 无标志 → 运行预设置检查，然后根据需要运行完整设置
 
-## Help Text
+## 帮助文本
 
-When user runs with `--help`, display this and stop:
+当用户使用 `--help` 运行时，显示以下内容并停止：
 
 ```
-OMC Setup - Configure oh-my-claudecode
+OMC 设置 - 配置 oh-my-claudecode
 
-USAGE:
-  /oh-my-claudecode:omc-setup           Run initial setup wizard (or update if already configured)
-  /oh-my-claudecode:omc-setup --local   Configure local project (.claude/CLAUDE.md)
-  /oh-my-claudecode:omc-setup --global  Configure global settings (~/.claude/CLAUDE.md)
-  /oh-my-claudecode:omc-setup --force   Force full setup wizard even if already configured
-  /oh-my-claudecode:omc-setup --help    Show this help
+用法：
+  /oh-my-claudecode:omc-setup           运行初始设置向导（如果已配置则更新）
+  /oh-my-claudecode:omc-setup --local   配置本地项目（.claude/CLAUDE.md）
+  /oh-my-claudecode:omc-setup --global  配置全局设置（~/.claude/CLAUDE.md）
+  /oh-my-claudecode:omc-setup --force   即使已配置也强制运行完整设置向导
+  /oh-my-claudecode:omc-setup --help    显示此帮助
 
-MODES:
-  Initial Setup (no flags)
-    - Interactive wizard for first-time setup
-    - Configures CLAUDE.md (local or global)
-    - Sets up HUD statusline
-    - Checks for updates
-    - Offers MCP server configuration
-    - Configures team mode defaults (agent count, type, model)
-    - If already configured, offers quick update option
+模式：
+  初始设置（无标志）
+    - 首次设置的交互式向导
+    - 配置 CLAUDE.md（本地或全局）
+    - 设置 HUD 状态栏
+    - 检查更新
+    - 提供 MCP 服务器配置
+    - 配置团队模式默认值（代理数量、类型、模型）
+    - 如果已配置，提供快速更新选项
 
-  Local Configuration (--local)
-    - Downloads fresh CLAUDE.md to ./.claude/
-    - Backs up existing CLAUDE.md to .claude/CLAUDE.md.backup.YYYY-MM-DD
-    - Project-specific settings
-    - Use this to update project config after OMC upgrades
+  本地配置（--local）
+    - 下载新的 CLAUDE.md 到 ./.claude/
+    - 备份现有 CLAUDE.md 到 .claude/CLAUDE.md.backup.YYYY-MM-DD
+    - 项目特定设置
+    - 用于在 OMC 升级后更新项目配置
 
-  Global Configuration (--global)
-    - Downloads fresh CLAUDE.md to ~/.claude/
-    - Backs up existing CLAUDE.md to ~/.claude/CLAUDE.md.backup.YYYY-MM-DD
-    - Default: explicitly overwrites ~/.claude/CLAUDE.md so plain `claude` also uses OMC
-    - Optional preserve mode keeps the user's base `CLAUDE.md` and installs OMC into `CLAUDE-omc.md` for `omc` launches
-    - Applies to all Claude Code sessions
-    - Cleans up legacy hooks
-    - Use this to update global config after OMC upgrades
+  全局配置（--global）
+    - 下载新的 CLAUDE.md 到 ~/.claude/
+    - 备份现有 CLAUDE.md 到 ~/.claude/CLAUDE.md.backup.YYYY-MM-DD
+    - 默认：显式覆盖 ~/.claude/CLAUDE.md，使普通 `claude` 也使用 OMC
+    - 可选保留模式保持用户的基础 `CLAUDE.md`，并将 OMC 安装到 `CLAUDE-omc.md` 供 `omc` 启动
+    - 应用于所有 Claude Code 会话
+    - 清理旧版钩子
+    - 用于在 OMC 升级后更新全局配置
 
-  Force Full Setup (--force)
-    - Bypasses the "already configured" check
-    - Runs the complete setup wizard from scratch
-    - Use when you want to reconfigure preferences
+  强制完整设置（--force）
+    - 绕过"已配置"检查
+    - 从头开始运行完整的设置向导
+    - 当您想要重新配置偏好时使用
 
-EXAMPLES:
-  /oh-my-claudecode:omc-setup           # First time setup (or update CLAUDE.md if configured)
-  /oh-my-claudecode:omc-setup --local   # Update this project
-  /oh-my-claudecode:omc-setup --global  # Update all projects
-  /oh-my-claudecode:omc-setup --force   # Re-run full setup wizard
+示例：
+  /oh-my-claudecode:omc-setup           # 首次设置（如果已配置则更新 CLAUDE.md）
+  /oh-my-claudecode:omc-setup --local   # 更新此项目
+  /oh-my-claudecode:omc-setup --global  # 更新所有项目
+  /oh-my-claudecode:omc-setup --force   # 重新运行完整设置向导
 
-For more info: https://github.com/Yeachan-Heo/oh-my-claudecode
+更多信息：https://github.com/Yeachan-Heo/oh-my-claudecode
 ```
 
 
@@ -98,12 +98,12 @@ Use `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}` for all setup script and p
 node "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/repair-plugin-cache.mjs"
 ```
 
-## Pre-Setup Check: Already Configured?
+## 预设置检查：是否已配置？
 
-**CRITICAL**: Before doing anything else, check if setup has already been completed. This prevents users from having to re-run the full setup wizard after every update.
+**关键**：在做任何其他事情之前，检查设置是否已经完成。这可以防止用户在每次更新后重新运行完整的设置向导。
 
 ```bash
-# Check if setup was already completed
+# 检查设置是否已完成
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
 
 if [ -f "$CONFIG_FILE" ]; then
@@ -111,94 +111,94 @@ if [ -f "$CONFIG_FILE" ]; then
   SETUP_VERSION=$(jq -r '.setupVersion // empty' "$CONFIG_FILE" 2>/dev/null)
 
   if [ -n "$SETUP_COMPLETED" ] && [ "$SETUP_COMPLETED" != "null" ]; then
-    echo "OMC setup was already completed on: $SETUP_COMPLETED"
-    [ -n "$SETUP_VERSION" ] && echo "Setup version: $SETUP_VERSION"
+    echo "OMC 设置已于 $SETUP_COMPLETED 完成"
+    [ -n "$SETUP_VERSION" ] && echo "设置版本: $SETUP_VERSION"
     ALREADY_CONFIGURED="true"
   fi
 fi
 ```
 
-### If Already Configured (and no --force flag)
+### 如果已配置（且无 --force 标志）
 
-If `ALREADY_CONFIGURED` is true AND the user did NOT pass `--force`, `--local`, or `--global` flags:
+如果 `ALREADY_CONFIGURED` 为 true 且用户没有传递 `--force`、`--local` 或 `--global` 标志：
 
-Use AskUserQuestion to prompt:
+使用 AskUserQuestion 提示：
 
-**Question:** "OMC is already configured. What would you like to do?"
+**问题：** "OMC 已配置。您想做什么？"
 
-**Options:**
-1. **Update CLAUDE.md only** - Download latest CLAUDE.md without re-running full setup
-2. **Run full setup again** - Go through the complete setup wizard
-3. **Cancel** - Exit without changes
+**选项：**
+1. **仅更新 CLAUDE.md** - 下载最新的 CLAUDE.md 而不重新运行完整设置
+2. **重新运行完整设置** - 再次完成完整的设置向导
+3. **取消** - 退出而不做任何更改
 
-**If user chooses "Update CLAUDE.md only":**
-- Detect if local (.claude/CLAUDE.md) or global (~/.claude/CLAUDE.md) config exists
-- If local exists, run: `bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-claude-md.sh" local`
-- If only global exists, run: `bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-claude-md.sh" global`
-- Skip all other steps
-- Report success and exit
+**如果用户选择"仅更新 CLAUDE.md"：**
+- 检测是否存在本地（.claude/CLAUDE.md）或全局（~/.claude/CLAUDE.md）配置
+- 如果存在本地配置，运行：`bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-claude-md.sh" local`
+- 如果仅存在全局配置，运行：`bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-claude-md.sh" global`
+- 跳过所有其他步骤
+- 报告成功并退出
 
-**If user chooses "Run full setup again":**
-- Continue with Resume Detection below
+**如果用户选择"重新运行完整设置"：**
+- 继续执行下面的恢复检测
 
-**If user chooses "Cancel":**
-- Exit without any changes
+**如果用户选择"取消"：**
+- 退出而不做任何更改
 
 ### Force Flag Override
 
 If user passes `--force` flag, skip this check and proceed directly to setup.
 
-## Resume Detection
+## 恢复检测
 
-Before starting any phase, check for existing state:
+在开始任何阶段之前，检查现有状态：
 
 ```bash
 bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-progress.sh" resume
 ```
 
-If state exists (output is not "fresh"), use AskUserQuestion to prompt:
+如果存在状态（输出不是"fresh"），使用 AskUserQuestion 提示：
 
-**Question:** "Found a previous setup session. Would you like to resume or start fresh?"
+**问题：** "发现之前的设置会话。您想恢复还是重新开始？"
 
-**Options:**
-1. **Resume from step $LAST_STEP** - Continue where you left off
-2. **Start fresh** - Begin from the beginning (clears saved state)
+**选项：**
+1. **从步骤 $LAST_STEP 恢复** - 从上次中断处继续
+2. **重新开始** - 从头开始（清除已保存状态）
 
-If user chooses "Start fresh":
+如果用户选择"重新开始"：
 ```bash
 bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-progress.sh" clear
 ```
 
-## Phase Execution
+## 阶段执行
 
-### For `--local` or `--global` flags:
-Read the file at `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/01-install-claude-md.md` and follow its instructions.
-(The phase file handles early exit for flag mode.)
+### 对于 `--local` 或 `--global` 标志：
+读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/01-install-claude-md.md` 文件并遵循其说明。
+（阶段文件处理标志模式的提前退出。）
 
-### For full setup (default or --force):
-Execute phases sequentially. For each phase, read the corresponding file and follow its instructions:
+### 对于完整设置（默认或 --force）：
+按顺序执行阶段。对于每个阶段，读取相应的文件并遵循其说明：
 
-1. **Phase 1 - Install CLAUDE.md**: Read `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/01-install-claude-md.md` and follow its instructions.
+1. **阶段 1 - 安装 CLAUDE.md**：读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/01-install-claude-md.md` 并遵循其说明。
 
-2. **Phase 2 - Environment Configuration**: Read `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/02-configure.md` and follow its instructions. Phase 2 must delegate HUD/statusLine setup to the `hud` skill; do not generate or patch `statusLine` paths inline here.
+2. **阶段 2 - 环境配置**：读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/02-configure.md` 并遵循其说明。阶段 2 必须将 HUD/statusLine 设置委托给 `hud` 技能；不要在此处内联生成或修补 `statusLine` 路径。
 
-3. **Phase 3 - Integration Setup**: Read `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/03-integrations.md` and follow its instructions.
+3. **阶段 3 - 集成设置**：读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/03-integrations.md` 并遵循其说明。
 
-4. **Phase 4 - Completion**: Read `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/04-welcome.md` and follow its instructions.
+4. **阶段 4 - 完成**：读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/04-welcome.md` 并遵循其说明。
 
-## Graceful Interrupt Handling
+## 优雅中断处理
 
-**IMPORTANT**: This setup process saves progress after each phase via `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-progress.sh`. If interrupted (Ctrl+C or connection loss), the setup can resume from where it left off.
+**重要**：此设置过程通过 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-progress.sh` 在每个阶段后保存进度。如果中断（Ctrl+C 或连接丢失），设置可以从停止处恢复。
 
-## Keeping Up to Date
+## 保持最新
 
-After installing oh-my-claudecode updates (via npm or plugin update):
+安装 oh-my-claudecode 更新后（通过 npm 或插件更新）：
 
-**Automatic**: Just run `/oh-my-claudecode:omc-setup` - it will detect you've already configured and offer a quick "Update CLAUDE.md only" option that skips the full wizard.
+**自动方式**：只需运行 `/oh-my-claudecode:omc-setup` - 它会检测您已配置并提供跳过完整向导的"仅更新 CLAUDE.md"快速选项。
 
-**Manual options**:
-- `/oh-my-claudecode:omc-setup --local` to update project config only
-- `/oh-my-claudecode:omc-setup --global` to update global config only
-- `/oh-my-claudecode:omc-setup --force` to re-run the full wizard (reconfigure preferences)
+**手动选项**：
+- `/oh-my-claudecode:omc-setup --local` 仅更新项目配置
+- `/oh-my-claudecode:omc-setup --global` 仅更新全局配置
+- `/oh-my-claudecode:omc-setup --force` 重新运行完整向导（重新配置偏好）
 
-This ensures you have the newest features and agent configurations without the token cost of repeating the full setup.
+这确保您拥有最新的功能和代理配置，而无需重复完整设置的令牌成本。

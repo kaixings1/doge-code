@@ -419,12 +419,12 @@ pool.on("error", (err, client) => {
 });
 ```
 
-## Azure-Specific Configuration
+## Azure-Specific 配置
 
 | Setting | Value | Description |
 |---------|-------|-------------|
-| `ssl.rejectUnauthorized` | `true` | Always use SSL for Azure |
-| Default port | `5432` | Standard PostgreSQL port |
+| `ssl.rejectUnauthorized` | `true` | 始终 use SSL for Azure |
+| 默认 port | `5432` | Standard PostgreSQL port |
 | PgBouncer port | `6432` | Use when PgBouncer enabled |
 | Token scope | `https://ossrdbms-aad.database.windows.net/.default` | Entra ID token scope |
 | Token lifetime | ~1 hour | Refresh before expiry |
@@ -441,10 +441,10 @@ pool.on("error", (err, client) => {
 
 ## Best Practices
 
-1. **Always use connection pools** for production applications
-2. **Use parameterized queries** - Never concatenate user input
-3. **Always close connections** - Use `try/finally` or connection pools
-4. **Enable SSL** - Required for Azure (`ssl: { rejectUnauthorized: true }`)
+1. **始终 use connection pools** for production applications
+2. **Use parameterized queries** - 绝不 concatenate user input
+3. **始终 close connections** - Use `try/finally` or connection pools
+4. **Enable SSL** - 必需 for Azure (`ssl: { rejectUnauthorized: true }`)
 5. **Handle token refresh** - Entra ID tokens expire after ~1 hour
 6. **Set connection timeouts** - Avoid hanging on network issues
 7. **Use transactions** - For multi-statement operations
@@ -480,7 +480,7 @@ import {
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -257,7 +257,7 @@ public class EmailSenderService : BackgroundService
 - ✅ AutoMapper for DTO mapping
 - ✅ CQRS with MediatR (for complex domains)
 
-## Limitations
+## 局限性
 
 - Assumes modern .NET (ASP.NET Core 8+); older .NET Framework projects may require different patterns.
 - Does not cover client-side/frontend implementations.

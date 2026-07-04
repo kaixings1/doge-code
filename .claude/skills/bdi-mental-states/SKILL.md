@@ -9,7 +9,7 @@ source: community
 
 Transform external RDF context into agent mental states (beliefs, desires, intentions) using formal BDI ontology patterns. This skill enables agents to reason about context through cognitive architecture, supporting deliberative reasoning, explainability, and semantic interoperability within multi-agent systems.
 
-## When to Use
+## /u4f55/u65f6/u4f7f/u7528
 Activate this skill when:
 - Processing external RDF context into agent beliefs about world states
 - Modeling rational agency with perception, deliberation, and action cycles
@@ -294,7 +294,7 @@ Primary sources:
 - Rao & Georgeff "BDI agents: From theory to practice" (1995)
 - Bratman "Intention, plans, and practical reason" (1987)
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

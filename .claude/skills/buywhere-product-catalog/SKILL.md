@@ -16,9 +16,9 @@ tools: [claude, cursor, codex, gemini]
 
 # BuyWhere Product Catalog
 
-## Overview
+## 概述
 
-BuyWhere gives AI agents a product-catalog surface for shopping flows, price comparison, and deal discovery. Use this skill when you want an agent to connect product search or merchant-aware commerce actions through BuyWhere's MCP setup path or API onboarding flow.
+BuyWhere gives AI agents a product-catalog surface for shopping flows, price comparison, and deal discovery. 使用此技能当 you want an agent to connect product search or merchant-aware commerce actions through BuyWhere's MCP setup path or API onboarding flow.
 
 The safest public starting points are the live developer portal, API key signup flow, MCP guide, and the official Cursor plugin repository.
 
@@ -52,7 +52,7 @@ Do not assume the same config file or launch command works across all hosts.
 
 ### Step 3: Guide the first successful connection
 
-Prefer a minimal first-run path:
+优先 a minimal first-run path:
 
 1. Get a BuyWhere API key.
 2. Follow the MCP or plugin setup path for the host runtime.
@@ -89,12 +89,12 @@ Use BuyWhere Product Catalog to set up BuyWhere MCP for my shopping agent and ke
 - ❌ Do not claim a specific product-count or retailer-count unless you have current runtime evidence.
 - ❌ Do not send users to deprecated or broken documentation surfaces when a working public page exists.
 
-## Limitations
+## 局限性
 
 - This skill does not replace environment-specific validation inside the target MCP host or API client.
 - Public BuyWhere surfaces can change, so re-check live URLs when precise setup details matter.
 
-## Security & Safety Notes
+## 安全性 & Safety Notes
 
 - Treat API keys as secrets. Use placeholders in examples and never paste live credentials into chat, docs, or screenshots.
 - Confirm the user's target host before suggesting filesystem paths, launch commands, or local config edits.
@@ -105,9 +105,9 @@ Use BuyWhere Product Catalog to set up BuyWhere MCP for my shopping agent and ke
   **Solution:** Start at `https://buywhere.ai/api-keys/` and only move to config after that step is complete.
 
 - **Problem:** A documentation hostname is unavailable.
-  **Solution:** Prefer the live developer portal, API key flow, MCP guide on `api.buywhere.ai`, and the official GitHub plugin repo.
+  **Solution:** 优先 the live developer portal, API key flow, MCP guide on `api.buywhere.ai`, and the official GitHub plugin repo.
 
-## Related Skills
+## 相关 Skills
 
 - `@api-design-principles` - Use when the user needs API-shape guidance around a commerce integration.
 - `@mcp-builder` - Use when the user is building or extending an MCP server rather than consuming one.

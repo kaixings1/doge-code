@@ -10,12 +10,12 @@ date_added: "2026-02-27"
 
 Comprehensive techniques for acquiring, analyzing, and extracting artifacts from memory dumps for incident response and malware analysis.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on memory forensics tasks or workflows
 - Needing guidance, best practices, or checklists for memory forensics
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to memory forensics
 - You need a different domain or tool outside this scope
@@ -84,7 +84,7 @@ virsh dump <domain> memory.raw --memory-only
 
 ## Volatility 3 Framework
 
-### Installation and Setup
+### Installation and 设置
 
 ```bash
 # Install Volatility 3
@@ -391,7 +391,7 @@ vol -f memory.raw windows.cachedump
 # Requires specific plugins/tools
 ```
 
-## YARA Integration
+## YARA 集成
 
 ### Writing Memory YARA Rules
 
@@ -493,7 +493,7 @@ floss pid.1234.dmp
 - **Smear**: Memory may change during acquisition
 - **Encryption**: Some data may be encrypted in memory
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

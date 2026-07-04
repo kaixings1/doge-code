@@ -6,18 +6,18 @@ source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-03-06
 ---
 
-# Devcontainer Setup Skill
+# Devcontainer 设置技能
 
-Creates a pre-configured devcontainer with Claude Code and language-specific tooling.
+创建一个预配置的 devcontainer，包含 Claude Code 和特定语言的工具。
 
-## When to Use
-- User asks to "set up a devcontainer" or "add devcontainer support"
-- User wants a sandboxed Claude Code development environment
-- User needs isolated development environments with persistent configuration
+## 何时使用
+- 用户要求"设置 devcontainer"或"添加 devcontainer 支持"
+- 用户想要一个沙盒化的 Claude Code 开发环境
+- 用户需要具有持久化配置的隔离开发环境
 
-## When NOT to Use
+## 何时不使用
 
-- User already has a devcontainer configuration and just needs modifications
+- 用户已有 devcontainer 配置，只需要修改
 - User is asking about general Docker or container questions
 - User wants to deploy production containers (this is for development only)
 
@@ -301,7 +301,7 @@ After generating, inform the user:
 2. Alternative: `devcontainer up --workspace-folder .`
 3. CLI helper: Run `.devcontainer/install.sh self-install` to add the `devc` command to PATH
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

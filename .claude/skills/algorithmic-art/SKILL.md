@@ -6,7 +6,7 @@ source: community
 date_added: "2026-02-27"
 ---
 
-Algorithmic philosophies are computational aesthetic movements that are then expressed through code. Output .md files (philosophy), .html files (interactive viewer), and .js files (generative algorithms).
+算法哲学是通过代码表达的计算美学运动。输出 .md 文件（哲学）、.html 文件（交互式查看器）和 .js 文件（生成算法）。
 
 This happens in two steps:
 1. Algorithmic Philosophy Creation (.md file)
@@ -27,7 +27,7 @@ To begin, create an ALGORITHMIC PHILOSOPHY (not static images or templates) that
 - What is created: An algorithmic philosophy/generative aesthetic movement.
 - What happens next: The same version receives the philosophy and EXPRESSES IT IN CODE - creating p5.js sketches that are 90% algorithmic generation, 10% essential parameters.
 
-Consider this approach:
+考虑 this approach:
 - Write a manifesto for a generative art movement
 - The next phase involves writing the algorithm that brings it to life
 
@@ -79,12 +79,10 @@ Algorithmic expression: Randomized circle packing or Voronoi tessellation. Start
 
 ### ESSENTIAL PRINCIPLES
 - **ALGORITHMIC PHILOSOPHY**: Creating a computational worldview to be expressed through code
-- **PROCESS OVER PRODUCT**: Always emphasize that beauty emerges from the algorithm's execution - each run is unique
+- **PROCESS OVER PRODUCT**: 始终 emphasize that beauty emerges from the algorithm's execution - each run is unique
 - **PARAMETRIC EXPRESSION**: Ideas communicate through mathematical relationships, forces, behaviors - not static composition
 - **ARTISTIC FREEDOM**: The next Claude interprets the philosophy algorithmically - provide creative implementation room
 - **PURE GENERATIVE ART**: This is about making LIVING ALGORITHMS, not static images with randomness
 - **EXPERT CRAFTSMANSHIP**: Repeatedly emphasize the final algorithm must feel meticulously crafted, refined through countless iterations, the product of deep expertise by someone at the absolute top of their field in computational aesthetics
 
 **The algorithmic philosophy should be 4-6 paragraphs long.** Fill it with poetic computational philosophy that brings together the intended vision. Avoid repeating the same points. Output this algorithmic philosophy as a .md file.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 19 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

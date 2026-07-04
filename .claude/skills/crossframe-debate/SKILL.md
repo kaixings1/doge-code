@@ -25,21 +25,21 @@ tags:
 
 
 
-## When to Use This Skill
+## 何时使用此技能
 
-- Use when `crossframe-suite` routes an explicit CrossFrame task about propositions, debate, hidden premises, rebuttals, strongest opposing arguments, evidence requirements, or withdrawal conditions.
-- Use to test claims before they become strong judgments.
-- Do not use independently unless the user explicitly names this sibling skill.
+- 当 `crossframe-suite` 路由关于命题、辩论、隐藏前提、反驳、最强反对论点、证据要求或撤回条件的明确 CrossFrame 任务时使用。
+- 用于在主张成为强判断之前测试它们。
+- 除非用户明确指定此兄弟技能，否则不要独立使用。
 
-## Packaged Source Note
+## 打包源说明
 
-This AAS-ready copy preserves the original CrossFrame skill body below. Chinese remains the canonical semantic layer; English metadata is only for discovery, installation, and repository review.
+此 AAS 就绪副本保留下面的原始 CrossFrame 技能主体。中文仍然是权威语义层；英文元数据仅用于发现、安装和仓库审查。
 
-## Limitations
+## 限制
 
-- The skill body is intentionally Chinese-canonical; English metadata is for discovery and does not replace the original Chinese terms.
-- Use only after explicit CrossFrame invocation or `crossframe-suite` routing; do not apply it as a generic default reasoning layer.
-- It structures analysis, drafting, and review, but does not replace source verification, domain expertise, or legal, medical, or financial judgment.
+- 技能主体是故意以中文为权威的；英文元数据用于发现，不替代原始中文术语。
+- 仅在明确调用 CrossFrame 或 `crossframe-suite` 路由后使用；不要将其作为通用的默认推理层应用。
+- 它构建分析、起草和审查的结构，但不替代来源验证、领域专业知识或法律、医疗或财务判断。
 
 > **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 

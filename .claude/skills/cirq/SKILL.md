@@ -8,14 +8,14 @@ risk: unknown
 source: community
 ---
 
-# Cirq - Quantum Computing with Python
+# Cirq - 使用 Python 进行量子计算
 
-Cirq is Google Quantum AI's open-source framework for designing, simulating, and running quantum circuits on quantum computers and simulators.
+Cirq 是 Google Quantum AI 的开源框架，用于在量子计算机和模拟器上设计、模拟和运行量子电路。
 
-## When to Use
-- You are designing, simulating, or executing quantum circuits with the Cirq ecosystem.
-- You need Google Quantum AI-style primitives, parameterized circuits, or integrations like `cirq-google` and `cirq-ionq`.
-- You are prototyping or teaching quantum workflows in Python and want concrete circuit examples.
+## 何时使用
+- 您正在使用 Cirq 生态系统设计、模拟或执行量子电路。
+- 您需要 Google Quantum AI 风格的原语、参数化电路或 `cirq-google` 和 `cirq-ionq` 等集成。
+- 您正在用 Python 原型设计或教授量子工作流，并想要具体的电路示例。
 
 ## Installation
 
@@ -349,7 +349,7 @@ results = noise_comparison_study(circuit, noise_levels)
 - Use noise models selectively on critical operations only
 - See `simulation.md` for performance optimization
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

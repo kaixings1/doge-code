@@ -5,11 +5,6 @@ requires:
   mcp:
     - rube
 ---
-
-# Jotform Automation
-
-Automate Jotform workflows -- list and search forms, inspect user details, browse activity history, manage folders and labels, and check plan limits -- all through natural language.
-
-**Toolkit docs:** [composio.dev/toolkits/jotform](https://composio.dev/toolkits/jotform)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 39 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+# Jotform 自动化
+通过自然语言自动执行 Jotform 工作流。
+**工具包文档:** [composio.dev/toolkits/jotform](https://composio.dev/toolkits/jotform)

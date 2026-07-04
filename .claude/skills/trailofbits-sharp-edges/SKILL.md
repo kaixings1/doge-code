@@ -1,4 +1,4 @@
-# Sharp Edges
+# Sharp Edges 锐利边缘检测
 
 Identifies error-prone APIs, dangerous configurations, and footgun designs that enable security mistakes through developer confusion, laziness, or malice.
 
@@ -33,4 +33,3 @@ Analyzes code and designs through the lens of three adversaries:
 The skill identifies six categories of misuse-prone designs:
 
 | Category | Example |
-|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 21 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

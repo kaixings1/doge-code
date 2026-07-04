@@ -5,54 +5,53 @@ description: "Video Download — Video Download 相关功能和最佳实践"
   1000+ other platforms as MP4 files using yt-dlp. Auto-recovers from YouTube
   bot detection ("Sign in to confirm you're not a bot", LOGIN_REQUIRED) by
   rotating through browser cookies and cookie files without manual
-  intervention. Use this skill when the user wants to download, save, or grab
+  intervention. 使用此技能当 the user wants to download, save, or grab
   one or more videos from any social media or video platform URL. Supports
   single videos or full playlists, configurable resolution, and saving to a
   specified target folder.
 ---
 
-# Video Download Skill
+# 视频下载技能
 
-Wraps yt-dlp with automatic recovery for YouTube anti-bot challenges.
+封装 yt-dlp 并自动恢复以应对 YouTube 反机器人挑战。
 
-## Tool
+## 工具
 
-`scripts/download.py` — installs yt-dlp on first run, merges video+audio to MP4,
-auto-rotates strategies on bot detection, uses a download-archive for safe resume.
+`scripts/download.py` — 首次运行时安装 yt-dlp，合并视频+音频为 MP4，
+在检测到机器人验证时自动轮换策略，使用下载存档以安全恢复。
 
-## Workflow
+## 工作流程
 
-1. Collect all URLs from the user's request.
-2. Determine output directory (current working directory if unspecified).
-3. Decide single-video vs playlist mode:
-   - User says "this video" / single URL → leave default (single-video).
-   - User says "playlist" / "all videos" / passes a `playlist?list=` URL → add `--playlist`.
-4. Run the script. If YouTube bot detection hits, the script auto-rotates strategies.
-5. Report which files were saved and which strategy worked.
+1. 从用户请求中收集所有 URL。
+2. 确定输出目录（如果未指定则为当前工作目录）。
+3. 决定单视频 vs 播放列表模式：
+   - 用户说"这个视频" / 单个 URL → 保留默认（单视频）。
+   - 用户说"播放列表" / "所有视频" / 传递 `playlist?list=` URL → 添加 `--playlist`。
+4. 运行脚本。如果触发 YouTube 机器人检测，脚本会自动轮换策略。
+5. 报告哪些文件已保存以及哪种策略有效。
 
-## Usage
+## 用法
 
 ```bash
-# Single video, current directory
+# 单视频，当前目录
 python scripts/download.py "https://www.youtube.com/watch?v=..."
 
-# Multiple URLs to a folder
+# 多个 URL 到文件夹
 python scripts/download.py "URL1" "URL2" -o "/path/to/output"
 
-# Full playlist as 720p MP4
+# 完整播放列表作为 720p MP4
 python scripts/download.py "https://www.youtube.com/playlist?list=..." --playlist -o "./out"
 
-# Force a specific browser for cookies (skips auto-rotation)
+# 强制使用特定浏览器获取 cookies（跳过自动轮换）
 python scripts/download.py "URL" --cookies-from-browser chrome
 
-# Force a manual cookies.txt file
+# 强制使用手动 cookies.txt 文件
 python scripts/download.py "URL" --cookies "~/Downloads/www.youtube.com_cookies.txt"
 
-# Higher quality
+# 更高画质
 python scripts/download.py "URL" --max-height 1080
 ```
 
-## Flags
+## 标志
 
-| Flag | Default | Notes |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 42 MINUTES 23 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 标志 | 默认值 | 说明 |

@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Master microservices architecture patterns including service boundaries, inter-service communication, data management, and resilience patterns for building distributed systems.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Decomposing monoliths into microservices
 - Designing service boundaries and contracts
@@ -20,7 +20,7 @@ Master microservices architecture patterns including service boundaries, inter-s
 - Implementing service discovery and load balancing
 - Designing event-driven architectures
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The system is small enough for a modular monolith
 - You need a quick prototype without distributed complexity
@@ -37,7 +37,7 @@ Master microservices architecture patterns including service boundaries, inter-s
 
 - `resources/implementation-playbook.md` for detailed patterns and examples.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

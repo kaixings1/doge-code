@@ -6,17 +6,17 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Airtable Automation via Rube MCP
+# 通过 Rube MCP 实现 Airtable 自动化
 
 Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 
-## Prerequisites
+## 前提条件
 
 - Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
 - Active Airtable connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `airtable`
 - Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
-## Setup
+## 设置
 
 **Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
 
@@ -138,7 +138,7 @@ Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 - Pass `offset` to next request unchanged
 - Keep filters/sorts/view stable between pages
 
-## Known Pitfalls
+## 已知陷阱
 
 **ID Formats**:
 - Base IDs: `appXXXXXXXXXXXXXX` (17 chars)
@@ -151,7 +151,7 @@ Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 - UPDATE_MULTIPLE_RECORDS: max 10 per request
 - DELETE_MULTIPLE_RECORDS: max 10 per request
 
-## Quick Reference
+## 快速参考
 
 | Task | Tool Slug | Key Params |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 25 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

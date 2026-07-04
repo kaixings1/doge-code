@@ -128,7 +128,7 @@ guard against critical anomalies or unhealthy runs.
 - Prefer JSON output for automation and Markdown output for human review.
 - Use trace metrics for process failures and diff/reference review for semantic drift.
 
-## Limitations
+## 局限性
 
 - agenttrace can only analyze logs that are present locally or provided as exports.
 - Some agents do not expose enough fields to infer cost, model, cache use, or latency.

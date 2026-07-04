@@ -5,25 +5,25 @@ metadata:
   origin: ECC
 ---
 
-# Kotlin Development Patterns
+# Kotlin 开发模式
 
-Idiomatic Kotlin patterns and best practices for building robust, efficient, and maintainable applications.
+构建健壮、高效和可维护应用程序的惯用 Kotlin 模式和最佳实践。
 
-## When to Use
+## 何时使用
 
-- Writing new Kotlin code
-- Reviewing Kotlin code
-- Refactoring existing Kotlin code
-- Designing Kotlin modules or libraries
-- Configuring Gradle Kotlin DSL builds
+- 编写新的 Kotlin 代码
+- 评审 Kotlin 代码
+- 重构现有的 Kotlin 代码
+- 设计 Kotlin 模块或库
+- 配置 Gradle Kotlin DSL 构建
 
-## How It Works
+## 工作原理
 
-This skill enforces idiomatic Kotlin conventions across seven key areas: null safety using the type system and safe-call operators, immutability via `val` and `copy()` on data classes, sealed classes and interfaces for exhaustive type hierarchies, structured concurrency with coroutines and `Flow`, extension functions for adding behaviour without inheritance, type-safe DSL builders using `@DslMarker` and lambda receivers, and Gradle Kotlin DSL for build configuration.
+此技能在七个关键领域强制实施惯用的 Kotlin 约定：使用类型系统和安全调用操作符的空安全、通过数据类的 `val` 和 `copy()` 实现的不可变性、用于详尽类型层次结构的密封类和接口、使用协程和 `Flow` 的结构化并发、用于在不继承的情况下添加行为的扩展函数、使用 `@DslMarker` 和 lambda 接收器的类型安全 DSL 构建器，以及用于构建配置的 Gradle Kotlin DSL。
 
-## Examples
+## 示例
 
-**Null safety with Elvis operator:**
+**使用 Elvis 操作符的空安全:**
 ```kotlin
 fun getUserEmail(userId: String): String {
     val user = userRepository.findById(userId)
@@ -31,7 +31,7 @@ fun getUserEmail(userId: String): String {
 }
 ```
 
-**Sealed class for exhaustive results:**
+**用于详尽结果的密封类:**
 ```kotlin
 sealed class Result<out T> {
     data class Success<T>(val data: T) : Result<T>()
@@ -40,7 +40,7 @@ sealed class Result<out T> {
 }
 ```
 
-**Structured concurrency with async/await:**
+**使用 async/await 的结构化并发:**
 ```kotlin
 suspend fun fetchUserWithPosts(userId: String): UserProfile =
     coroutineScope {
@@ -50,63 +50,63 @@ suspend fun fetchUserWithPosts(userId: String): UserProfile =
     }
 ```
 
-## Core Principles
+## 核心原则
 
-### 1. Null Safety
+### 1. 空安全
 
-Kotlin's type system distinguishes nullable and non-nullable types. Leverage it fully.
+Kotlin 的类型系统区分可空类型和非空类型。充分利用它。
 
 ```kotlin
-// Good: Use non-nullable types by default
+// 好: 默认使用非空类型
 fun getUser(id: String): User {
     return userRepository.findById(id)
         ?: throw UserNotFoundException("User $id not found")
 }
 
-// Good: Safe calls and Elvis operator
+// 好: 安全调用和 Elvis 操作符
 fun getUserEmail(userId: String): String {
     val user = userRepository.findById(userId)
     return user?.email ?: "unknown@example.com"
 }
 
-// Bad: Force-unwrapping nullable types
+// 不好: 强制解包可空类型
 fun getUserEmail(userId: String): String {
     val user = userRepository.findById(userId)
-    return user!!.email // Throws NPE if null
+    return user!!.email // 如果为 null 则抛出 NPE
 }
 ```
 
-### 2. Immutability by Default
+### 2. 默认不可变性
 
-Prefer `val` over `var`, immutable collections over mutable ones.
+优先使用 `val` 而不是 `var`，优先使用不可变集合而不是可变集合。
 
 ```kotlin
-// Good: Immutable data
+// 好: 不可变数据
 data class User(
     val id: String,
     val name: String,
     val email: String,
 )
 
-// Good: Transform with copy()
+// 好: 使用 copy() 进行转换
 fun updateEmail(user: User, newEmail: String): User =
     user.copy(email = newEmail)
 
-// Good: Immutable collections
+// 好: 不可变集合
 val users: List<User> = listOf(user1, user2)
 val filtered = users.filter { it.email.isNotBlank() }
 
-// Bad: Mutable state
-var currentUser: User? = null // Avoid mutable global state
-val mutableUsers = mutableListOf<User>() // Avoid unless truly needed
+// 不好: 可变状态
+var currentUser: User? = null // 避免可变全局状态
+val mutableUsers = mutableListOf<User>() // 除非真正需要，否则避免使用
 ```
 
-### 3. Expression Bodies and Single-Expression Functions
+### 3. 表达式体和单表达式函数
 
-Use expression bodies for concise, readable functions.
+使用表达式体实现简洁、可读的函数。
 
 ```kotlin
-// Good: Expression body
+// 好: 表达式体
 fun isAdult(age: Int): Boolean = age >= 18
 
 fun formatFullName(first: String, last: String): String =
@@ -115,7 +115,7 @@ fun formatFullName(first: String, last: String): String =
 fun User.displayName(): String =
     name.ifBlank { email.substringBefore('@') }
 
-// Good: When as expression
+// 好: 作为表达式的 when
 fun statusMessage(code: Int): String = when (code) {
     200 -> "OK"
     404 -> "Not Found"
@@ -123,25 +123,25 @@ fun statusMessage(code: Int): String = when (code) {
     else -> "Unknown status: $code"
 }
 
-// Bad: Unnecessary block body
+// 不好: 不必要的块体
 fun isAdult(age: Int): Boolean {
     return age >= 18
 }
 ```
 
-### 4. Data Classes for Value Objects
+### 4. 用于值对象的数据类
 
-Use data classes for types that primarily hold data.
+对主要保存数据的类型使用数据类。
 
 ```kotlin
-// Good: Data class with copy, equals, hashCode, toString
+// 好: 带有 copy、equals、hashCode、toString 的数据类
 data class CreateUserRequest(
     val name: String,
     val email: String,
     val role: Role = Role.USER,
 )
 
-// Good: Value class for type safety (zero overhead at runtime)
+// 好: 用于类型安全的值类（运行时零开销）
 @JvmInline
 value class UserId(val value: String) {
     init {
@@ -623,31 +623,31 @@ fun withdraw(account: Account, amount: Money): Account {
 }
 ```
 
-## Collection Operations
+## 集合操作
 
-### Idiomatic Collection Processing
+### 惯用的集合处理
 
 ```kotlin
-// Good: Chained operations
+// 好: 链式操作
 val activeAdminEmails: List<String> = users
     .filter { it.role == Role.ADMIN && it.isActive }
     .sortedBy { it.name }
     .map { it.email }
 
-// Good: Grouping and aggregation
+// 好: 分组和聚合
 val usersByRole: Map<Role, List<User>> = users.groupBy { it.role }
 
 val oldestByRole: Map<Role, User?> = users.groupBy { it.role }
     .mapValues { (_, users) -> users.minByOrNull { it.createdAt } }
 
-// Good: Associate for map creation
+// 好: 用于创建映射的 associate
 val usersById: Map<UserId, User> = users.associateBy { it.id }
 
-// Good: Partition for splitting
+// 好: 用于拆分的 partition
 val (active, inactive) = users.partition { it.isActive }
 ```
 
-## Quick Reference: Kotlin Idioms
+## 快速参考: Kotlin 惯用语
 
-| Idiom | Description |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 17 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 惯用语 | 描述 |
+|---|---

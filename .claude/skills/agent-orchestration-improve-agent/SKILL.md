@@ -12,14 +12,14 @@ Systematic improvement of existing agents through performance analysis, prompt e
 
 [Extended thinking: Agent optimization requires a data-driven approach combining performance metrics, user feedback analysis, and advanced prompt engineering techniques. Success depends on systematic evaluation, targeted improvements, and rigorous testing with rollback capabilities for production safety.]
 
-## Use this skill when
+## 使用此技能的场景
 
 - Improving an existing agent's performance or reliability
 - Analyzing failure modes, prompt quality, or tool usage
 - Running structured A/B tests or evaluation suites
 - Designing iterative optimization workflows for agents
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - You are building a brand-new agent from scratch
 - There are no metrics, feedback, or test cases available
@@ -351,7 +351,7 @@ Establish regular improvement cadence:
 
 Remember: Agent optimization is an iterative process. Each cycle builds upon previous learnings, gradually improving performance while maintaining stability and safety.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -13,9 +13,9 @@ DO NOT USE EMOJIS IN YOUR CODE, COMMENTS, OR OUTPUT. Maintain strictly professio
 ## 1. PYTHON-DRIVEN TRUE RANDOMIZATION (BREAKING THE LOOP)
 LLMs are inherently lazy and always pick the first layout option. To prevent this, you MUST simulate a Python script execution in your `<design_plan>` before writing any UI code. 
 Use a deterministic seed (e.g., character count of the user prompt modulo math) to simulate `random.choice()` and strictly select:
-- 1 Hero Architecture (from Section 3)
+- 1 Hero 架构 (from Section 3)
 - 1 Typography Stack (Satoshi, Cabinet Grotesk, Outfit, or Geist. NEVER Inter)
-- 3 Unique Component Architectures (from Section 6)
+- 3 Unique Component 架构s (from Section 6)
 - 2 Advanced GSAP Paradigms (from Section 5)
 You are forbidden from defaulting to the same UI twice. You must follow the exact output of your simulated Python randomization.
 
@@ -33,11 +33,11 @@ The Hero must breathe. It must NOT be a narrow, 6-line text wall.
 - **The Container Width Fix:** You MUST use ultra-wide containers for the H1 (e.g., `max-w-5xl`, `max-w-6xl`, `w-full`). Allow the words to flow horizontally.
 - **The Line Limit:** The H1 MUST NEVER exceed 2 to 3 lines. 4, 5, or 6 lines is a catastrophic failure. Make the font size smaller (`clamp(3rem, 5vw, 5.5rem)`) and the container wider to ensure this.
 - **Hero Layout Options (Randomly Assigned via Python):**
-  1. *Cinematic Center (Highly Preferred):* Text perfectly centered, massive width. Below the text, exactly two high-contrast CTAs. Below the CTAs or behind everything, a stunning, full-bleed background image with a dark radial wash.
+  1. *Cinematic Center (Highly 优先red):* Text perfectly centered, massive width. Below the text, exactly two high-contrast CTAs. Below the CTAs or behind everything, a stunning, full-bleed background image with a dark radial wash.
   2. *Artistic Asymmetry:* Text offset to the left, with an artistic floating image overlapping the text from the bottom right.
   3. *Editorial Split:* Text left, image right, but with massive negative space.
 - **Button Contrast:** Buttons must be perfectly legible. Dark background = white text. Light background = dark text. Invisible text is a failure.
-- **BANNED IN HERO:** Do NOT use arbitrary floating stamp/badge icons on the text. Do NOT use pill-tags under the hero. Do NOT place raw data/stats in the hero.
+- **BANNED IN HERO:** 不要 use arbitrary floating stamp/badge icons on the text. 不要 use pill-tags under the hero. 不要 place raw data/stats in the hero.
 
 ## 4. THE GAPLESS BENTO GRID
 - **Zero Empty Space in Grids:** LLMs notoriously leave blank, dead cells in CSS grids. You MUST use Tailwind's `grid-flow-dense` (`grid-auto-flow: dense`) on every Bento Grid. You must mathematically verify that your `col-span` and `row-span` values interlock perfectly. No grid shall have a missing corner or empty void.
@@ -60,7 +60,7 @@ Select components from this arsenal based on your randomization:
 
 ## 7. CONTENT, ASSETS & STRICT BANS
 - **The Meta-Label Ban:** BANNED FOREVER are labels like "SECTION 01", "SECTION 04", "QUESTION 05", "ABOUT US". Remove them entirely. They look cheap and unprofessional.
-- **Image Context & Style:** Use `https://picsum.photos/seed/{keyword}/1920/1080` and match the keyword to the vibe. Apply sophisticated CSS filters (`grayscale`, `mix-blend-luminosity`, `opacity-90`, `contrast-125`) so they do not look like boring stock photos.
+- **Image 上下文 & Style:** Use `https://picsum.photos/seed/{keyword}/1920/1080` and match the keyword to the vibe. Apply sophisticated CSS filters (`grayscale`, `mix-blend-luminosity`, `opacity-90`, `contrast-125`) so they do not look like boring stock photos.
 - **Creative Backgrounds:** Inject subtle, professional ambient design. Use deep radial blurs, grainy mesh gradients, or shifting dark overlays. Avoid flat, boring colors.
 - **Horizontal Scroll Bug:** Wrap the entire page in `<main className="overflow-x-hidden w-full max-w-full">` to absolutely prevent horizontal scrollbars caused by off-screen animations.
 

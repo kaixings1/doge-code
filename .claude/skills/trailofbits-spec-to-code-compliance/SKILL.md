@@ -1,4 +1,4 @@
-# Spec-to-Code Compliance
+# 规格到代码一致性检查
 
 Specification-to-code compliance checker for blockchain audits with evidence-based alignment analysis.
 
@@ -6,7 +6,7 @@ Specification-to-code compliance checker for blockchain audits with evidence-bas
 
 ## When to Use
 
-Use this skill when you need to:
+使用此技能当 you need to:
 - Verify that code implements exactly what documentation specifies
 - Find gaps between intended behavior and actual implementation
 - Audit smart contracts against whitepapers or design documents
@@ -14,7 +14,7 @@ Use this skill when you need to:
 
 ## What It Does
 
-This skill performs deterministic, evidence-based alignment between specifications and code:
+此技能执行 deterministic, evidence-based alignment between specifications and code:
 
 - **Documentation Discovery** - Finds all spec sources (whitepapers, READMEs, design notes)
 - **Spec Intent Extraction** - Normalizes all intended behavior into structured format
@@ -38,7 +38,7 @@ This skill performs deterministic, evidence-based alignment between specificatio
 ## Phases
 
 1. **Documentation Discovery** - Identify all spec sources
-2. **Format Normalization** - Create clean spec corpus
+2. **格式 Normalization** - Create clean spec corpus
 3. **Spec Intent IR** - Extract all intended behavior
 4. **Code Behavior IR** - Line-by-line code analysis
 5. **Alignment IR** - Compare spec to code
@@ -61,7 +61,7 @@ This skill performs deterministic, evidence-based alignment between specificatio
 - If unclear: classify as **AMBIGUOUS**
 - Every claim must quote original text or line numbers
 
-## Related Skills
+## 相关 Skills
 
 - `context-building` - Deep code understanding
-- `issue-writer` - Format compliance gaps as findings
+- `issue-writer` - 格式 compliance gaps as findings

@@ -14,7 +14,7 @@ Manage your **Contentful** headless CMS spaces directly from Claude Code. List s
 
 ---
 
-## Setup
+## 设置
 
 1. Add the Composio MCP server to your configuration:
    ```
@@ -83,7 +83,7 @@ Example prompt: *"Audit all Contentful spaces -- list them with their creation d
 
 ---
 
-## Known Pitfalls
+## 已知陷阱
 
 - **Version conflicts on update:** `CONTENTFUL_UPDATE_SPACE` requires the latest `sys.version` from `CONTENTFUL_GET_SPACE`. If someone else modified the space between your read and write, the update will fail with a version conflict. Always fetch the space immediately before updating.
 - **Pagination for many spaces:** `CONTENTFUL_LIST_SPACES` uses `limit` and `skip` parameters. When you have many spaces, iterate by incrementing `skip` until no more results are returned to avoid missing spaces.
@@ -93,7 +93,7 @@ Example prompt: *"Audit all Contentful spaces -- list them with their creation d
 
 ---
 
-## Quick Reference
+## 快速参考
 
 | Tool Slug | Description |
 |---|---|

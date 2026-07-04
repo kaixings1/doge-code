@@ -184,7 +184,7 @@ Do not start implementing in the current session even if the user asks immediate
 
 - `@brainstorming` - Use when exploring abstract ideas rather than gathering a build specification.
 
-## Limitations
+## 局限性
 
 - **No Code Generation:** This skill intentionally does not write any application code or scaffold repositories.
 - **Requires New Session:** The generated `prompt.md` must be executed in a fresh agent session to ensure clean context.

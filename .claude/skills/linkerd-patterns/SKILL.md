@@ -6,34 +6,34 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Linkerd Patterns
+# Linkerd 模式
 
-Production patterns for Linkerd service mesh - the lightweight, security-first service mesh for Kubernetes.
+Linkerd 服务网格的生产模式——轻量级、安全优先的 Kubernetes 服务网格。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to linkerd patterns
-- You need a different domain or tool outside this scope
+- 任务与 Linkerd 模式无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证。
+- 如果需要详细示例，打开 `resources/implementation-playbook.md`。
 
-## Use this skill when
+## 使用此技能的场景
 
-- Setting up a lightweight service mesh
-- Implementing automatic mTLS
-- Configuring traffic splits for canary deployments
-- Setting up service profiles for per-route metrics
-- Implementing retries and timeouts
-- Multi-cluster service mesh
+- 设置轻量级服务网格
+- 实现自动 mTLS
+- 配置金丝雀部署的流量拆分
+- 设置每路由指标的服务配置文件
+- 实现重试和超时
+- 多集群服务网格
 
-## Core Concepts
+## 核心概念
 
-### 1. Linkerd Architecture
+### 1. Linkerd 架构
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -55,7 +55,6 @@ Production patterns for Linkerd service mesh - the lightweight, security-first s
 └─────────────────────────────────────────────┘
 ```
 
-### 2. Key Resources
+### 2. 关键资源
 
-| Resource | Purpose |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 23 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 资源 | 用途 |

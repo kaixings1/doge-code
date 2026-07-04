@@ -6,140 +6,140 @@ requires:
     - rube
 ---
 
-# Gorgias Automation
+# Gorgias 自动化
 
-Automate your Gorgias helpdesk operations directly from Claude Code. Create, update, and triage support tickets, manage customers, and organize your support team -- all without leaving your terminal.
+直接从 Claude Code 自动化您的 Gorgias 客服操作。创建、更新和分类支持工单，管理客户，组织您的支持团队——无需离开终端。
 
-**Toolkit docs:** [composio.dev/toolkits/gorgias](https://composio.dev/toolkits/gorgias)
-
----
-
-## Setup
-
-1. Add the Rube MCP server to your Claude Code config with URL: `https://rube.app/mcp`
-2. When prompted, authenticate your Gorgias account through the connection link provided
-3. Start automating your support workflows with natural language
+**工具包文档：** [composio.dev/toolkits/gorgias](https://composio.dev/toolkits/gorgias)
 
 ---
 
-## Core Workflows
+## 设置
 
-### 1. List and Filter Tickets
-
-Retrieve tickets with filtering by status, channel, assignee, date range, and more.
-
-**Tool:** `GORGIAS_LIST_TICKETS`
-
-```
-List all open tickets from the email channel created in the last 7 days
-```
-
-Key parameters:
-- `status` -- filter by ticket status (e.g., "open", "closed")
-- `channel` -- filter by channel (e.g., "email", "chat")
-- `assignee_user_id` / `assignee_team_id` -- filter by assigned agent or team
-- `created_from` / `created_to` -- ISO date range filters
-- `limit` (max 100) / `offset` -- pagination controls
-- `order_by` / `order_dir` -- sorting options
-
-### 2. Create and Update Tickets
-
-Create new tickets or update existing ones with assignment, priority, and status changes.
-
-**Tools:** `GORGIAS_CREATE_TICKET`, `GORGIAS_UPDATE_TICKET`, `GORGIAS_GET_TICKET`
-
-```
-Create a high-priority ticket for customer 12345 about a missing order with subject "Order #9876 not delivered"
-```
-
-- `GORGIAS_CREATE_TICKET` requires `customer_id`; accepts `subject`, `status`, `priority`, `channel`, `messages`, `tags`
-- `GORGIAS_UPDATE_TICKET` requires `ticket_id`; all other fields are optional partial updates
-- `GORGIAS_GET_TICKET` retrieves full ticket details by `ticket_id`
-
-### 3. Manage Ticket Tags
-
-Add tags to tickets for categorization, routing, and reporting.
-
-**Tools:** `GORGIAS_ADD_TICKET_TAGS`, `GORGIAS_LIST_TICKET_TAGS`
-
-```
-Add tags 101 and 202 to ticket 5678, then show me all tags on that ticket
-```
-
-- `GORGIAS_ADD_TICKET_TAGS` requires `ticket_id` and `tag_ids` (array of integers)
-- `GORGIAS_LIST_TICKET_TAGS` requires `ticket_id` to retrieve current tags
-
-### 4. Customer Management
-
-Create new customers or merge duplicate customer records.
-
-**Tools:** `GORGIAS_CREATE_CUSTOMER`, `GORGIAS_MERGE_CUSTOMERS`, `GORGIAS_LIST_CUSTOMERS`
-
-```
-Create a new customer named "Jane Doe" with email jane@example.com and phone channel
-```
-
-- `GORGIAS_CREATE_CUSTOMER` requires `name`; accepts `email`, `channels` (array with `type` and `value`), `external_id`, `address`, `data`
-- `GORGIAS_MERGE_CUSTOMERS` requires `source_customer_id` and `target_customer_id` -- source is merged into target
-- `GORGIAS_LIST_CUSTOMERS` retrieves customers with filtering options
-
-### 5. Team and Account Operations
-
-List teams, retrieve account info, and inspect ticket custom fields.
-
-**Tools:** `GORGIAS_LIST_TEAMS`, `GORGIAS_GET_TEAM`, `GORGIAS_GET_ACCOUNT`, `GORGIAS_LIST_TICKET_FIELD_VALUES`
-
-```
-Show me all support teams in our Gorgias account
-```
-
-- `GORGIAS_GET_ACCOUNT` returns account-level metrics and configuration
-- `GORGIAS_LIST_TEAMS` / `GORGIAS_GET_TEAM` manage team lookup
-- `GORGIAS_LIST_TICKET_FIELD_VALUES` returns custom field values for a given ticket
-
-### 6. Activity and Event Tracking
-
-Monitor ticket activity and customer event history.
-
-**Tools:** `GORGIAS_LIST_EVENTS`
-
-```
-List recent events to see what activity has happened across our support queue
-```
-
-- `GORGIAS_LIST_EVENTS` provides an activity timeline with filtering options
+1. 将 Rube MCP 服务器添加到您的 Claude Code 配置中，URL 为 `https://rube.app/mcp`
+2. 根据提示，通过提供的连接链接认证您的 Gorgias 账户
+3. 开始使用自然语言自动化您的支持工作流
 
 ---
 
-## Known Pitfalls
+## 核心工作流
 
-- **Pagination required:** `GORGIAS_LIST_TICKETS` uses `limit`/`offset` pagination. Failing to loop through pages will miss older tickets and produce incomplete data.
-- **Filter specificity:** Missing or overly broad filters on `GORGIAS_LIST_TICKETS` can overload the export or omit the desired reporting window. Always set `created_from`/`created_to` for time-bound queries.
-- **Custom fields are separate:** Key business KPIs may only exist in custom fields. You must query `GORGIAS_LIST_TICKET_FIELD_VALUES` explicitly to include them.
-- **Rate limits:** High-volume exports across `GORGIAS_LIST_TICKETS` and related endpoints can hit Gorgias rate limits. Add backoff and resume from the last offset.
-- **Auth errors:** 401/403 responses on any Gorgias tool indicate token or permission issues. Do not treat partial data as a complete dataset.
+### 1. 列出和筛选工单
+
+通过状态、渠道、负责人、日期范围等条件检索工单。
+
+**工具：** `GORGIAS_LIST_TICKETS`
+
+```
+列出过去 7 天内从电子邮件渠道创建的所有未结工单
+```
+
+关键参数：
+- `status` -- 按工单状态筛选（例如 "open"、"closed"）
+- `channel` -- 按渠道筛选（例如 "email"、"chat"）
+- `assignee_user_id` / `assignee_team_id` -- 按分配的客服或团队筛选
+- `created_from` / `created_to` -- ISO 日期范围筛选
+- `limit`（最大 100）/ `offset` -- 分页控制
+- `order_by` / `order_dir` -- 排序选项
+
+### 2. 创建和更新工单
+
+创建新工单或更新现有工单的分配、优先级和状态变更。
+
+**工具：** `GORGIAS_CREATE_TICKET`、`GORGIAS_UPDATE_TICKET`、`GORGIAS_GET_TICKET`
+
+```
+为客户 12345 创建一个关于缺失订单的高优先级工单，主题为"订单 #9876 未送达"
+```
+
+- `GORGIAS_CREATE_TICKET` 需要 `customer_id`；接受 `subject`、`status`、`priority`、`channel`、`messages`、`tags`
+- `GORGIAS_UPDATE_TICKET` 需要 `ticket_id`；所有其他字段均为可选的局部更新
+- `GORGIAS_GET_TICKET` 通过 `ticket_id` 检索完整的工单详情
+
+### 3. 管理工单标签
+
+为工单添加标签以进行分类、路由和报告。
+
+**工具：** `GORGIAS_ADD_TICKET_TAGS`、`GORGIAS_LIST_TICKET_TAGS`
+
+```
+为工单 5678 添加标签 101 和 202，然后显示该工单的所有标签
+```
+
+- `GORGIAS_ADD_TICKET_TAGS` 需要 `ticket_id` 和 `tag_ids`（整数数组）
+- `GORGIAS_LIST_TICKET_TAGS` 需要 `ticket_id` 来检索当前标签
+
+### 4. 客户管理
+
+创建新客户或合并重复的客户记录。
+
+**工具：** `GORGIAS_CREATE_CUSTOMER`、`GORGIAS_MERGE_CUSTOMERS`、`GORGIAS_LIST_CUSTOMERS`
+
+```
+创建一个名为"张三"的新客户，邮箱为 zhangsan@example.com，电话渠道
+```
+
+- `GORGIAS_CREATE_CUSTOMER` 需要 `name`；接受 `email`、`channels`（包含 `type` 和 `value` 的数组）、`external_id`、`address`、`data`
+- `GORGIAS_MERGE_CUSTOMERS` 需要 `source_customer_id` 和 `target_customer_id` -- 源客户合并到目标客户
+- `GORGIAS_LIST_CUSTOMERS` 检索带筛选选项的客户列表
+
+### 5. 团队与账户操作
+
+列出团队、检索账户信息以及查看工单自定义字段。
+
+**工具：** `GORGIAS_LIST_TEAMS`、`GORGIAS_GET_TEAM`、`GORGIAS_GET_ACCOUNT`、`GORGIAS_LIST_TICKET_FIELD_VALUES`
+
+```
+显示我们 Gorgias 账户中的所有支持团队
+```
+
+- `GORGIAS_GET_ACCOUNT` 返回账户级别的指标和配置
+- `GORGIAS_LIST_TEAMS` / `GORGIAS_GET_TEAM` 管理团队查询
+- `GORGIAS_LIST_TICKET_FIELD_VALUES` 返回指定工单的自定义字段值
+
+### 6. 活动与事件跟踪
+
+监控工单活动和客户事件历史。
+
+**工具：** `GORGIAS_LIST_EVENTS`
+
+```
+列出近期事件以查看我们的支持队列中有哪些活动
+```
+
+- `GORGIAS_LIST_EVENTS` 提供带筛选选项的活动时间线
 
 ---
 
-## Quick Reference
+## 已知陷阱
 
-| Tool Slug | Description |
+- **需要分页：** `GORGIAS_LIST_TICKETS` 使用 `limit`/`offset` 分页。不循环页面将错过较旧的工单并产生不完整的数据。
+- **筛选条件精确性：** `GORGIAS_LIST_TICKETS` 缺少或过于宽泛的筛选条件可能导致导出超载或遗漏所需的报告窗口。始终为时间范围查询设置 `created_from`/`created_to`。
+- **自定义字段是独立的：** 关键业务 KPI 可能仅存在于自定义字段中。您必须显式查询 `GORGIAS_LIST_TICKET_FIELD_VALUES` 才能包含它们。
+- **速率限制：** 在 `GORGIAS_LIST_TICKETS` 和相关端点上的高量导出可能触及 Gorgias 的速率限制。添加退避策略并从最后一个偏移量继续。
+- **认证错误：** 任何 Gorgias 工具上的 401/403 响应都表示令牌或权限问题。不要将部分数据视为完整数据集。
+
+---
+
+## 快速参考
+
+| 工具标识 | 描述 |
 |---|---|
-| `GORGIAS_LIST_TICKETS` | List tickets with filters (status, channel, date, assignee) |
-| `GORGIAS_GET_TICKET` | Retrieve a specific ticket by ID |
-| `GORGIAS_CREATE_TICKET` | Create a new ticket (requires `customer_id`) |
-| `GORGIAS_UPDATE_TICKET` | Update ticket fields (requires `ticket_id`) |
-| `GORGIAS_ADD_TICKET_TAGS` | Add tags to a ticket |
-| `GORGIAS_LIST_TICKET_TAGS` | List all tags on a ticket |
-| `GORGIAS_LIST_TICKET_FIELD_VALUES` | List custom field values for a ticket |
-| `GORGIAS_CREATE_CUSTOMER` | Create a new customer (requires `name`) |
-| `GORGIAS_MERGE_CUSTOMERS` | Merge two customer records |
-| `GORGIAS_LIST_CUSTOMERS` | List customers with filters |
-| `GORGIAS_LIST_TEAMS` | List all teams |
-| `GORGIAS_GET_TEAM` | Retrieve a specific team |
-| `GORGIAS_GET_ACCOUNT` | Retrieve account information |
-| `GORGIAS_LIST_EVENTS` | List activity events with filters |
+| `GORGIAS_LIST_TICKETS` | 带筛选条件列出工单（状态、渠道、日期、负责人） |
+| `GORGIAS_GET_TICKET` | 通过 ID 检索特定工单 |
+| `GORGIAS_CREATE_TICKET` | 创建新工单（需要 `customer_id`） |
+| `GORGIAS_UPDATE_TICKET` | 更新工单字段（需要 `ticket_id`） |
+| `GORGIAS_ADD_TICKET_TAGS` | 为工单添加标签 |
+| `GORGIAS_LIST_TICKET_TAGS` | 列出工单上的所有标签 |
+| `GORGIAS_LIST_TICKET_FIELD_VALUES` | 列出工单的自定义字段值 |
+| `GORGIAS_CREATE_CUSTOMER` | 创建新客户（需要 `name`） |
+| `GORGIAS_MERGE_CUSTOMERS` | 合并两条客户记录 |
+| `GORGIAS_LIST_CUSTOMERS` | 带筛选条件列出客户 |
+| `GORGIAS_LIST_TEAMS` | 列出所有团队 |
+| `GORGIAS_GET_TEAM` | 检索特定团队 |
+| `GORGIAS_GET_ACCOUNT` | 检索账户信息 |
+| `GORGIAS_LIST_EVENTS` | 带筛选条件列出活动事件 |
 
 ---
 
-*Powered by [Composio](https://composio.dev)*
+*由 [Composio](https://composio.dev) 提供支持*

@@ -13,11 +13,11 @@ license: "Apache-2.0"
 license_source: "https://github.com/morsechimwai/lemmaly/blob/main/LICENSE"
 ---
 
-# complexity-cuts — Lower Big-O on Existing Code
+# complexity-cuts — 降低现有代码的 Big-O
 
-`lemmaly` prevents bad complexity before code is written. **complexity-cuts** fixes it after the fact: code already exists, it works, but its time or space complexity is worse than necessary.
+`lemmaly` 在代码编写前防止不良复杂度。**complexity-cuts** 在事后修复：代码已存在、能工作，但其时间或空间复杂度高于必要水平。
 
-**Violating the letter of these rules is violating the spirit of the skill.** Adapting "just a little" is how a faster-but-wrong rewrite ships.
+**违反这些规则的字面意思就是违反此技能的精神。** "稍微调整"是快速但错误的改写出货的方式。
 
 ## When to Use This Skill
 
@@ -234,7 +234,7 @@ Before claiming an optimization is complete:
 
 Cannot check every box? The optimization is not done. Either revert or finish the gap — do not ship a half-verified speedup.
 
-## Limitations
+## 局限性
 
 - **Requires existing tests or a written characterization test.** Without one, you cannot detect silent semantic regressions; the Iron Law refuses to skip this.
 - **Asymptotic wins only; constant-factor work is a separate mode** (clearly labeled). The playbook will not improve cache locality or SIMD utilization on its own.

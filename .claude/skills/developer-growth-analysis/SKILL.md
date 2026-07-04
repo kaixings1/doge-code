@@ -3,25 +3,25 @@ name: developer-growth-analysis
 description: "Developer Growth Analysis — Developer Growth Analysis 相关功能和最佳实践"
 ---
 
-# Developer Growth Analysis
+# 开发者成长分析
 
-This skill provides personalized feedback on your recent coding work by analyzing your Claude Code chat interactions and identifying patterns that reveal strengths and areas for growth.
+此技能通过分析您的 Claude Code 聊天交互并识别揭示优势和成长领域的模式，为您最近的编码工作提供个性化反馈。
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when you want to:
-- Understand your development patterns and habits from recent work
-- Identify specific technical gaps or recurring challenges
-- Discover which topics would benefit from deeper study
-- Get curated learning resources tailored to your actual work patterns
-- Track improvement areas across your recent projects
-- Find high-quality articles that directly address the skills you're developing
+当您想要以下内容时使用此技能：
+- 从近期工作中了解您的开发模式和习惯
+- 识别特定的技术差距或反复出现的挑战
+- 发现哪些主题值得深入学习
+- 获取根据您实际工作模式定制的学习资源
+- 跟踪近期项目的改进领域
+- 找到直接针对您正在发展的技能的高质量文章
 
-This skill is ideal for developers who want structured feedback on their growth without waiting for code reviews, and who prefer data-driven insights from their own work history.
+此技能适合那些希望获得关于其成长的结构化反馈而无需等待代码审查的开发者，以及偏好基于自身工作历史的数据驱动洞察的开发者。
 
 ## What This Skill Does
 
-This skill performs a six-step analysis of your development work:
+此技能执行 a six-step analysis of your development work:
 
 1. **Reads Your Chat History**: Accesses your local Claude Code chat history from the past 24-48 hours to understand what you've been working on.
 
@@ -50,7 +50,7 @@ Analyze my work from today and suggest areas for improvement
 ```
 
 The skill will generate a formatted report with:
-- Overview of your recent work
+- 概述 of your recent work
 - Key improvement areas identified
 - Specific recommendations for each area
 - Curated learning resources from HackerNews
@@ -196,14 +196,14 @@ When a user requests analysis of their developer growth or coding patterns from 
    - If not connected, use RUBE_MANAGE_CONNECTIONS to initiate Slack auth
    - Use RUBE_MULTI_EXECUTE_TOOL to send the report as a formatted message:
      - Send the report title and period as the first message
-     - Break the report into logical sections (Summary, Improvements, Strengths, Actions, Resources)
+     - Break the report into logical sections (总结, Improvements, Strengths, Actions, Resources)
      - Format each section as a well-structured Slack message with proper markdown
      - Include clickable links for the learning resources
    - Confirm delivery in the CLI output
 
    This ensures the user has the report in a place they check regularly and can reference it throughout the week.
 
-## Example Usage
+## Example 用法
 
 ### Input
 

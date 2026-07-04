@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Production patterns for implementing data quality with Great Expectations, dbt tests, and data contracts to ensure reliable data pipelines.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Implementing data quality checks in pipelines
 - Setting up Great Expectations validation
@@ -19,7 +19,7 @@ Production patterns for implementing data quality with Great Expectations, dbt t
 - Monitoring data quality metrics
 - Automating data validation in CI/CD
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The data sources are undefined or unavailable
 - You cannot modify validation rules or schemas
@@ -42,7 +42,7 @@ Production patterns for implementing data quality with Great Expectations, dbt t
 
 - `resources/implementation-playbook.md` for detailed frameworks, templates, and examples.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

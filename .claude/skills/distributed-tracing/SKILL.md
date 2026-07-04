@@ -6,16 +6,16 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Distributed Tracing
+# 分布式追踪
 
-Implement distributed tracing with Jaeger and Tempo for request flow visibility across microservices.
+使用 Jaeger 和 Tempo 实现分布式追踪，实现微服务间的请求流可见性。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to distributed tracing
-- You need a different domain or tool outside this scope
+- 任务与分布式追踪无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -26,7 +26,7 @@ Implement distributed tracing with Jaeger and Tempo for request flow visibility 
 
 Track requests across distributed systems to understand latency, dependencies, and failure points.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Debug latency issues
 - Understand service dependencies
@@ -452,7 +452,7 @@ def process_request():
 - `grafana-dashboards` - For visualization
 - `slo-implementation` - For latency SLOs
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

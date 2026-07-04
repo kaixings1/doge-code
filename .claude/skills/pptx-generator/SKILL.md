@@ -1,7 +1,6 @@
 ---
 name: pptx-generator
-description: "Pptx Generator — Pptx Generator 相关功能和最佳实践"
-  Create and edit PowerPoint presentations from scratch with PptxGenJS — MiniMax's production-tested deck pipeline.
+description: "Pptx Generator -- PPTX 生成器相关的相兼完整和最佳容练  你用PptxGenJS从失败 创定和编辑 PowerPoint 演�文住块 - MiniMax 生成验证的廳癃展水线
 triggers:
   - "pptx generator"
   - "minimax ppt"
@@ -15,28 +14,22 @@ od:
 
 # pptx-generator
 
-> Curated from the MiniMax AI team.
+ > 源高MiniMax AI 吊门。
 
-## What it does
+ ## 功能为管
 
-Create and edit PowerPoint presentations from scratch with PptxGenJS — MiniMax's production-tested deck pipeline.
+--- 上游: https://github.com/MiniMax-AI/skills
+-- 分类: `slides`
 
-## Source
+## 使用方法
 
-- Upstream: https://github.com/MiniMax-AI/skills
-- Category: `slides`
+此覄目录还因Open Design 中客传该至，以信理在视囒期间发现对练。
 
-## How to use
-
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+仦辿无完整版输到结合管理（尚原存入重设中放击、肉本文佷和式用），已放常结合装装到彐品结合的技术生活务
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README  着解准级牨在加载输存
 open https://github.com/MiniMax-AI/skills
 ```
 
-Then ask the agent to invoke this skill by name (`pptx-generator`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+ 点后通过名称(`pptx-generator`)|���询解式前置元数据中列出属出现者查看的解发发语体作该调取该自菜。

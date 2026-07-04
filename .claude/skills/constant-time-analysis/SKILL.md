@@ -9,7 +9,7 @@ source: community
 
 Analyze cryptographic code to detect operations that leak secret data through execution timing variations.
 
-## When to Use
+## 何时使用
 ```text
 User writing crypto code? ──yes──> Use this skill
          │
@@ -120,7 +120,7 @@ uv run {baseDir}/ct_analyzer/analyzer.py --opt-level O0 crypto.swift
 
 Note: Swift compiles to native code like C/C++/Go/Rust, so it uses assembly-level analysis and supports `--arch` and `--opt-level` flags.
 
-### Prerequisites
+### 前提条件
 
 | Language               | Requirements                                              |
 | ---------------------- | --------------------------------------------------------- |
@@ -146,7 +146,7 @@ export PATH="$HOME/.dotnet/tools:$PATH"
 
 See references/vm-compiled.md for detailed setup instructions and troubleshooting.
 
-## Quick Reference
+## 快速参考
 
 | Problem                | Detection                       | Fix                                          |
 | ---------------------- | ------------------------------- | -------------------------------------------- |
@@ -199,7 +199,7 @@ For each flagged violation, ask: **Does this operation's input depend on secret 
 | Is the operand derived from key/plaintext/secret? | **TRUE POSITIVE**     | Likely false positive |
 | Can an attacker influence the operand value?      | **TRUE POSITIVE**     | Likely false positive |
 
-## Limitations
+## 限制
 
 1. **Static Analysis Only**: Analyzes assembly/bytecode, not runtime behavior. Cannot detect cache timing or microarchitectural side-channels.
 

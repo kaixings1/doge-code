@@ -85,7 +85,7 @@ For complex verification, use `type: "agent"` (runs a full agent):
 }
 ```
 
-## Setup Guide
+## 设置 Guide
 
 1. Choose which operations to gate
 2. Write the prompt (keep it focused, under 100 words)

@@ -1,15 +1,13 @@
 ---
 name: LaunchDarkly Automation
-description: "通过 Composio MCP 集成自动执行 LaunchDarkly 功能标志管理——列出项目和环境、创建和删除触发器工作流以及跟踪代码引用。"
+description: "通过 Composio MCP 集成自动执行 LaunchDarkly 功能标志管理--列出项目和环境、创建和删除触发器工作流以及跟踪代码引用。"
 requires:
-  mcp:
-    - rube
+ mcp:
+ - rube
 ---
 
-# LaunchDarkly Automation
+# LaunchDarkly 自动化
 
-Automate your LaunchDarkly feature flag workflows -- enumerate projects and environments, create webhook-driven flag triggers, manage trigger lifecycle, and audit code references across repositories.
+自动执行你的 LaunchDarkly 功能标志工作流--枚举项目和环境、创建 Webhook 驱动的标志触发器、管理触发器生命周期以及跨仓库审计代码引用。
 
-**Toolkit docs:** [composio.dev/toolkits/launch_darkly](https://composio.dev/toolkits/launch_darkly)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 57 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+**工具包文档：** composio.dev/toolkits/launch_darkly

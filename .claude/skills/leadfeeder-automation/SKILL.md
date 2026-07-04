@@ -5,30 +5,30 @@ requires:
   mcp: [rube]
 ---
 
-# Leadfeeder Automation via Rube MCP
+# 通过 Rube MCP 实现 Leadfeeder 自动化
 
-Automate Leadfeeder operations through Composio's Leadfeeder toolkit via Rube MCP.
+通过 Composio's Leadfeeder toolkit via Rube MCP.
 
-**Toolkit docs**: [composio.dev/toolkits/leadfeeder](https://composio.dev/toolkits/leadfeeder)
+**工具包文档**: [composio.dev/toolkits/leadfeeder](https://composio.dev/toolkits/leadfeeder)
 
-## Prerequisites
+## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
+- Rube MCP 必须已连接 (RUBE_SEARCH_TOOLS 可用)
 - Active Leadfeeder connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `leadfeeder`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- Always call `RUBE_SEARCH_TOOLS` first to get 当前工具 schema
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
+1. 验证 Rube MCP 可用 by confirming `RUBE_SEARCH_TOOLS` responds
 2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `leadfeeder`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+3. 如果连接不是 ACTIVE, 按返回的认证链接完成设置
+4. 确认连接状态显示 ACTIVE before running any workflows
 
-## Tool Discovery
+## 工具发现
 
-Always discover available tools before executing workflows:
+在执行工作流之前始终发现可用工具:
 
 ```
 RUBE_SEARCH_TOOLS
@@ -36,11 +36,11 @@ queries: [{use_case: "Leadfeeder operations", known_fields: ""}]
 session: {generate_id: true}
 ```
 
-This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
 
-## Core Workflow Pattern
+## 核心工作流模式
 
-### Step 1: Discover Available Tools
+### 步骤 1：发现可用工具
 
 ```
 RUBE_SEARCH_TOOLS
@@ -48,7 +48,7 @@ queries: [{use_case: "your specific Leadfeeder task"}]
 session: {id: "existing_session_id"}
 ```
 
-### Step 2: Check Connection
+### 步骤 2：检查连接
 
 ```
 RUBE_MANAGE_CONNECTIONS
@@ -56,7 +56,7 @@ toolkits: ["leadfeeder"]
 session_id: "your_session_id"
 ```
 
-### Step 3: Execute Tools
+### 步骤 3：执行工具
 
 ```
 RUBE_MULTI_EXECUTE_TOOL
@@ -68,16 +68,15 @@ memory: {}
 session_id: "your_session_id"
 ```
 
-## Known Pitfalls
+## 已知陷阱
 
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
+- **始终先搜索**: 工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS`
+- **检查连接**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
+- **Schema 合规**: 使用搜索结果中的确切字段名和类型
+- **Memory 参数**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
+- **会话复用**: 在同一工作流中复用会话 ID。为新工作流生成新的
+- **分页**: 检查响应中的分页 token 并继续获取直到完成
 
-## Quick Reference
+## 快速参考
 
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 52 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 操作 | 方法 |

@@ -22,15 +22,15 @@ ls -la conductor/tracks/
 ls conductor/index.md conductor/product.md conductor/tech-stack.md conductor/workflow.md conductor/tracks.md
 ```
 
-## Use this skill when
+## 使用此技能的场景
 
-- Working on check if conductor directory exists tasks or workflows
-- Needing guidance, best practices, or checklists for check if conductor directory exists
+- 处理检查 Conductor 目录是否存在的任务或工作流时
+- 需要检查 Conductor 目录是否存在的指导、最佳实践或检查清单时
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to check if conductor directory exists
-- You need a different domain or tool outside this scope
+- 任务与检查 Conductor 目录是否存在无关时
+- 需要此范围之外的领域或工具时
 
 ## Instructions
 
@@ -64,7 +64,7 @@ ls conductor/index.md conductor/product.md conductor/tech-stack.md conductor/wor
 Example: feature_user_auth_20250115
 ```
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -87,14 +87,14 @@ for event in events {
 }
 ```
 
-### Get Event Hub Properties
+### Get Event Hub 属性
 
 ```rust
 let properties = consumer.get_eventhub_properties(None).await?;
 println!("Partitions: {:?}", properties.partition_ids);
 ```
 
-### Get Partition Properties
+### Get Partition 属性
 
 ```rust
 let partition_props = consumer.get_partition_properties("0", None).await?;
@@ -110,7 +110,7 @@ println!("Last sequence number: {}", partition_props.last_enqueued_sequence_numb
 5. **Use consumer groups** — isolate different consuming applications
 6. **Handle checkpointing** — use `azure_messaging_eventhubs_checkpointstore_blob` for distributed consumers
 
-## Checkpoint Store (Optional)
+## Checkpoint Store (可选)
 
 For distributed consumers with checkpointing:
 
@@ -129,7 +129,7 @@ cargo add azure_messaging_eventhubs_checkpointstore_blob
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

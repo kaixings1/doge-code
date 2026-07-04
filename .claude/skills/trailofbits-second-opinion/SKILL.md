@@ -2,7 +2,7 @@
 
 Run code reviews using external LLM CLIs (OpenAI Codex, Google Gemini) on uncommitted changes, branch diffs, or specific commits.
 
-## Prerequisites
+## 前提条件
 
 ### OpenAI Codex CLI
 

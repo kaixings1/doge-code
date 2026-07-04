@@ -160,7 +160,7 @@ window.WebChat.renderWebChat({
 ## Best Practices
 
 1. Use AgentApplication for routing and keep handlers focused on one responsibility.
-2. Prefer streamingResponse for long-running completions and call endStream in finally blocks.
+2. 优先 streamingResponse for long-running completions and call endStream in finally blocks.
 3. Keep secrets out of source code; load tokens from environment variables or secure stores.
 4. Reuse CopilotStudioClient instances and cache tokens in your token provider.
 5. Validate invoke payloads before logging or persisting feedback.
@@ -168,4 +168,3 @@ window.WebChat.renderWebChat({
 ## Reference Files
 
 | File | Contents |
-| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 46 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

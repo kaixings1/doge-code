@@ -5,9 +5,9 @@ description: SwiftPM macOS开发指南
 
 # SwiftPM for macOS
 
-## Quick Start
+## 快速开始
 
-Use this skill when `Package.swift` is the primary entrypoint or when SwiftPM is
+使用此技能当 `Package.swift` is the primary entrypoint or when SwiftPM is
 the fastest path to a reproducible result.
 
 ## Workflow
@@ -37,7 +37,7 @@ the fastest path to a reproducible result.
 
 ## Guardrails
 
-- Prefer SwiftPM over Xcode when both exist and the package path is clearly simpler.
+- 优先 SwiftPM over Xcode when both exist and the package path is clearly simpler.
 - Do not assume an app bundle exists in a pure package workflow.
 - Explain when the package is library-only and therefore not directly runnable.
 

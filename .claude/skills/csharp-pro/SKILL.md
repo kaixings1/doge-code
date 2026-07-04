@@ -6,17 +6,17 @@ source: community
 date_added: '2026-02-27'
 ---
 
-## Use this skill when
+## 何时使用此技能
 
 - Working on csharp pro tasks or workflows
 - Needing guidance, best practices, or checklists for csharp pro
 
-## Do not use this skill when
+## 不要使用此技能的情况
 
 - The task is unrelated to csharp pro
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -56,7 +56,7 @@ You are a C# expert specializing in modern .NET development and enterprise-grade
 
 Follow .NET coding standards and include comprehensive XML documentation.
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

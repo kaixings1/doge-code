@@ -11,5 +11,3 @@ requires:
 Automate SurveyMonkey survey workflows -- create surveys, list and search existing surveys, manage collectors and distribution links, retrieve responses, and inspect survey details -- all through natural language.
 
 **Toolkit docs:** [composio.dev/toolkits/survey_monkey](https://composio.dev/toolkits/survey_monkey)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 00 MINUTES 03 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

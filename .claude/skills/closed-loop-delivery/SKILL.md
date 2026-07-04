@@ -6,7 +6,7 @@ source: community
 date_added: "2026-03-12"
 ---
 
-# Closed-Loop Delivery
+# 闭环交付
 
 ## Overview
 
@@ -14,7 +14,7 @@ Treat each task as incomplete until acceptance criteria are verified in evidence
 
 Core rule: **deliver against DoD (Definition of Done), not against code diff size.**
 
-## When to Use
+## 何时使用
 Use this skill when:
 - user gives a coding/fix task and expects end-to-end completion
 - task spans code + tests + PR comments + dev deploy + runtime checks
@@ -115,7 +115,7 @@ When claiming completion, always include:
 
 Do not claim success without evidence.
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -6,12 +6,10 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Laravel Expert
+# Laravel 专家
 
-## Skill Metadata
+## 技能元数据
 
-Name: laravel-expert  
-Focus: General Laravel Development  
-Scope: Laravel Framework (10/11+)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 03 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+名称：laravel-expert  
+焦点：通用 Laravel 开发  
+范围：Laravel 框架（10/11+）

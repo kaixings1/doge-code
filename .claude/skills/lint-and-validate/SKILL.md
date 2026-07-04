@@ -6,33 +6,32 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Lint and Validate Skill
+# Lint 和验证技能
 
-> **MANDATORY:** Run appropriate validation tools after EVERY code change. Do not finish a task until the code is error-free.
+> **强制：** 在每次代码更改后运行适当的验证工具。在代码无错误之前不要完成任务。
 
-### Procedures by Ecosystem
+### 各生态系统的步骤
 
 #### Node.js / TypeScript
-1. **Lint/Fix:** `npm run lint` or `npx eslint "path" --fix`
-2. **Types:** `npx tsc --noEmit`
-3. **Security:** `npm audit --audit-level=high`
+1. **Lint/修复：** `npm run lint` 或 `npx eslint "path" --fix`
+2. **类型检查：** `npx tsc --noEmit`
+3. **安全：** `npm audit --audit-level=high`
 
 #### Python
-1. **Linter (Ruff):** `ruff check "path" --fix` (Fast & Modern)
-2. **Security (Bandit):** `bandit -r "path" -ll`
-3. **Types (MyPy):** `mypy "path"`
+1. **Linter（Ruff）：** `ruff check "path" --fix`（快速且现代）
+2. **安全（Bandit）：** `bandit -r "path" -ll`
+3. **类型（MyPy）：** `mypy "path"`
 
-## The Quality Loop
-1. **Write/Edit Code**
-2. **Run Audit** for the project's ecosystem:
-   - **Node.js / TypeScript:** `npm run lint && npx tsc --noEmit`
-   - **Python:** `ruff check . --fix && mypy . && bandit -r . -ll`
-3. **Analyze Report:** Check the "FINAL AUDIT REPORT" section.
-4. **Fix & Repeat:** Submitting code with "FINAL AUDIT" failures is NOT allowed.
+## 质量循环
+1. **写/编辑代码**
+2. **运行审计**针对项目生态系统：
+   - **Node.js / TypeScript：** `npm run lint && npx tsc --noEmit`
+   - **Python：** `ruff check . --fix && mypy . && bandit -r . -ll`
+3. **分析报告：** 检查"最终审计报告"部分。
+4. **修复并重复：** 提交带有"最终审计"失败的代码是不允许的。
 
-## Error Handling
-- If `lint` fails: Fix the style or syntax issues immediately.
-- If `tsc` fails: Correct type mismatches before proceeding.
-- If no tool is configured: Check the project root for `.eslintrc`, `tsconfig.json`, `pyproject.toml` and suggest creating one.
+## 错误处理
+- 如果 `lint` 失败：立即修复样式或语法问题。
+- 如果 `tsc` 失败：在继续之前纠正类型不匹配。
+- 如果没有工具配置：检查项目根目录是否存在 `.eslintrc`、`tsconfig.json`、`pyproject.toml` 并建议创建一个。
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 20 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

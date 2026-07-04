@@ -249,7 +249,7 @@ capacity = poller.result()
 
 ## Best Practices
 
-1. **Use DefaultAzureCredential** for authentication
+1. **Use 默认AzureCredential** for authentication
 2. **Suspend unused capacities** to reduce costs
 3. **Start with smaller SKUs** and scale up as needed
 4. **Use tags** for cost tracking and organization
@@ -261,7 +261,7 @@ capacity = poller.result()
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

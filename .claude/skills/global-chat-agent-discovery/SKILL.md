@@ -14,9 +14,9 @@ tools: [claude, cursor, gemini, codex]
 
 # Global Chat Agent Discovery
 
-## Overview
+## 概述
 
-Global Chat is a cross-protocol AI agent discovery platform that aggregates MCP servers and AI agents from 6+ registries into a single searchable directory. This skill helps you find the right MCP server, A2A agent, or agents.txt endpoint for any task by searching across 18,000+ indexed entries. It also provides an MCP server (`@global-chat/mcp-server`) for programmatic access to the directory from any MCP-compatible client.
+Global Chat is a cross-protocol AI agent discovery platform that aggregates MCP servers and AI agents from 6+ registries into a single searchable directory. 此技能帮助 you find the right MCP server, A2A agent, or agents.txt endpoint for any task by searching across 18,000+ indexed entries. It also provides an MCP server (`@global-chat/mcp-server`) for programmatic access to the directory from any MCP-compatible client.
 
 ## When to Use This Skill
 
@@ -112,13 +112,13 @@ Agent (via Global Chat MCP): 4 registries carry Kubernetes-related agents (23 to
 - **Problem:** MCP server not connecting
   **Solution:** Ensure `npx` is available and run `npx -y @global-chat/mcp-server` manually first to verify
 
-## Related Skills
+## 相关 Skills
 
 - `@mcp-client` - For general MCP client setup and configuration
 - `@agent-orchestration-multi-agent-optimize` - For orchestrating multiple discovered agents
 - `@agent-memory-mcp` - For persisting discovered agent information across sessions
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

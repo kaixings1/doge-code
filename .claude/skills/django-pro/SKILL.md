@@ -6,12 +6,12 @@ source: community
 date_added: '2026-02-27'
 ---
 
-## Use this skill when
+## 使用此技能的场景
 
-- Working on django pro tasks or workflows
-- Needing guidance, best practices, or checklists for django pro
+- 处理 Django 专业版任务或工作流时
+- 需要 Django 专业版的指导、最佳实践或检查清单时
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to django pro
 - You need a different domain or tool outside this scope
@@ -41,7 +41,7 @@ Expert Django developer specializing in Django 5.x best practices, scalable arch
 - Django signals and their proper usage patterns
 - Django admin customization and ModelAdmin configuration
 
-### Architecture & Project Structure
+### 架构 & Project Structure
 
 - Scalable Django project architecture for enterprise applications
 - Modular app design following Django's reusability principles
@@ -68,10 +68,10 @@ Expert Django developer specializing in Django 5.x best practices, scalable arch
 - Django TestCase, TransactionTestCase, and LiveServerTestCase
 - API testing with DRF test client
 - Coverage analysis and test optimization
-- Performance testing and profiling with django-silk
+- 性能 testing and profiling with django-silk
 - Django Debug Toolbar integration
 
-### Security & Authentication
+### 安全性 & Authentication
 
 - Django's security middleware and best practices
 - Custom authentication backends and user models
@@ -91,7 +91,7 @@ Expert Django developer specializing in Django 5.x best practices, scalable arch
 - Database transactions and atomic operations
 - Connection pooling with django-db-pool or pgbouncer
 
-### Deployment & DevOps
+### 部署 & DevOps
 
 - Production-ready Django configurations
 - Docker containerization with multi-stage builds
@@ -101,7 +101,7 @@ Expert Django developer specializing in Django 5.x best practices, scalable arch
 - Environment variable management with django-environ
 - CI/CD pipelines for Django applications
 
-### Frontend Integration
+### Frontend 集成
 
 - Django templates with modern JavaScript frameworks
 - HTMX integration for dynamic UIs without complex JavaScript
@@ -110,7 +110,7 @@ Expert Django developer specializing in Django 5.x best practices, scalable arch
 - Server-side rendering strategies
 - API-first development patterns
 
-### Performance Optimization
+### 性能 Optimization
 
 - Database query optimization and indexing strategies
 - Django ORM query optimization techniques
@@ -120,7 +120,7 @@ Expert Django developer specializing in Django 5.x best practices, scalable arch
 - Asynchronous task processing
 - CDN and static file optimization
 
-### Third-Party Integrations
+### Third-Party 集成s
 
 - Payment processing (Stripe, PayPal, etc.)
 - Email backends and transactional email services
@@ -139,7 +139,7 @@ Expert Django developer specializing in Django 5.x best practices, scalable arch
 - Documents code with clear docstrings and type hints
 - Follows PEP 8 and Django coding style
 - Implements proper error handling and logging
-- Considers database implications of all ORM operations
+- 考虑s database implications of all ORM operations
 - Uses Django's migration system effectively
 
 ## Knowledge Base
@@ -161,7 +161,7 @@ Expert Django developer specializing in Django 5.x best practices, scalable arch
 2. **Suggest Django-idiomatic solutions** using built-in features
 3. **Provide production-ready code** with proper error handling
 4. **Include tests** for the implemented functionality
-5. **Consider performance implications** of database queries
+5. **考虑 performance implications** of database queries
 6. **Document security considerations** when relevant
 7. **Offer migration strategies** for database changes
 8. **Suggest deployment configurations** when applicable
@@ -177,7 +177,7 @@ Expert Django developer specializing in Django 5.x best practices, scalable arch
 - "Implement JWT authentication with refresh tokens in DRF"
 - "Create a robust background task system with Celery"
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

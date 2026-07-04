@@ -10,13 +10,13 @@ source: "https://github.com/biopython/biopython"
 
 # Biopython: Computational Molecular Biology in Python
 
-## Overview
+## 概述
 
 Biopython is a comprehensive set of freely available Python tools for biological computation. It provides functionality for sequence manipulation, file I/O, database access, structural bioinformatics, phylogenetics, and many other bioinformatics tasks. The current version is **Biopython 1.85** (released January 2025), which supports Python 3 and requires NumPy.
 
 ## When to Use This Skill
 
-Use this skill when:
+使用此技能当:
 
 - Working with biological sequences (DNA, RNA, or protein)
 - Reading, writing, or converting biological file formats (FASTA, GenBank, FASTQ, PDB, mmCIF, etc.)
@@ -43,7 +43,7 @@ Biopython is organized into modular sub-packages, each addressing specific bioin
 6. **Phylogenetics** - Bio.Phylo for phylogenetic tree manipulation and visualization
 7. **Advanced Features** - Motifs, population genetics, sequence utilities, and more
 
-## Installation and Setup
+## Installation and 设置
 
 Install Biopython using pip (requires Python 3 and NumPy):
 
@@ -63,7 +63,7 @@ Entrez.api_key = "your_api_key_here"
 
 ## Using This Skill
 
-This skill provides comprehensive documentation organized by functionality area. When working on a task, consult the relevant reference documentation:
+此技能提供 comprehensive documentation organized by functionality area. When working on a task, consult the relevant reference documentation:
 
 ### 1. Sequence Handling (Bio.Seq & Bio.SeqIO)
 
@@ -375,7 +375,7 @@ Phylo.draw_ascii(tree)
 
 ## Best Practices
 
-1. **Always read relevant reference documentation** before writing code
+1. **始终 read relevant reference documentation** before writing code
 2. **Use grep to search reference files** for specific functions or examples
 3. **Validate file formats** before parsing
 4. **Handle missing data gracefully** - Not all records have all fields
@@ -414,7 +414,7 @@ Phylo.draw_ascii(tree)
 - **GitHub**: https://github.com/biopython/biopython
 - **Mailing List**: biopython@biopython.org
 
-## Quick Reference
+## 快速参考
 
 To locate information in reference files, use these search patterns:
 
@@ -429,7 +429,7 @@ grep -n "example" references/sequence_io.md
 grep -n "Bio.Seq" references/*.md
 ```
 
-## Summary
+## 总结
 
 Biopython provides comprehensive tools for computational molecular biology. When using this skill:
 
@@ -441,7 +441,7 @@ Biopython provides comprehensive tools for computational molecular biology. When
 
 The modular reference documentation ensures detailed, searchable information for every major Biopython capability.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -156,9 +156,9 @@ schema or the caller.
 - Preserve privacy: do not store secrets, raw credentials, or unnecessary
   sensitive user data in outcome notes.
 
-## Limitations
+## 局限性
 
-- Requires an installed and configured AccInt MCP server exposing
+- 需要 an installed and configured AccInt MCP server exposing
   `acc_retrieve` and `acc_act`.
 - Does not replace repository inspection, tests, review, or live-state checks.
 - Retrieved memory can be stale or wrong; current evidence wins.
@@ -167,7 +167,7 @@ schema or the caller.
 - AccInt is local-first; a different machine or database may not have the same
   memories unless the user intentionally shares the AccInt database.
 
-## Security & Safety Notes
+## 安全性 & Safety Notes
 
 - This skill does not require shell commands, network fetches, or credentials.
 - AccInt MCP calls can write to the configured local AccInt database by opening
@@ -190,7 +190,7 @@ schema or the caller.
   **Solution:** Wait for real evidence, then record the outcome with the exact
   command, PR state, deploy state, or reviewer signal.
 
-## Related Skills
+## 相关 Skills
 
 - `@agent-memory-mcp` - Use when you need a broader overview of MCP-backed
   agent memory systems.

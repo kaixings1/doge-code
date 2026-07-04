@@ -1,6 +1,6 @@
 ---
 name: agents-md
-description: 创建和维护 AGENTS.md：保持代理描述、工具配置、触发条件和简洁高密度文档。
+description: "创建和维护 AGENTS.md：保持代理描述、工具配置、触发条件和简洁高密度文档。"
 risk: unknown
 source: community
 ---
@@ -14,7 +14,7 @@ AGENTS.md is the canonical agent-facing documentation. Keep it minimal—agents 
 - The project needs concise, high-signal agent instructions derived from the actual toolchain and repo layout.
 - Existing agent documentation is too long, duplicated, or drifting away from real project conventions.
 
-## File Setup
+## File 设置
 
 1. Create `AGENTS.md` at project root
 2. Create symlink: `ln -s AGENTS.md CLAUDE.md`
@@ -36,10 +36,10 @@ Analyze the project to understand what belongs in the file:
 - **Reference, don't embed** — Point to existing docs: "See `CONTRIBUTING.md` for setup" or "Follow patterns in `src/api/routes/`"
 - **No filler** — No intros, conclusions, or pleasantries
 - **Trust capabilities** — Omit obvious context
-- **Prefer file-scoped commands** — Per-file test/lint/typecheck commands over project-wide builds
+- **优先 file-scoped commands** — Per-file test/lint/typecheck commands over project-wide builds
 - **Don't duplicate linters** — Code style lives in linter configs, not AGENTS.md
 
-## Required Sections
+## 必需 Sections
 
 ### Package Manager
 Which tool and key commands only:
@@ -48,9 +48,8 @@ Which tool and key commands only:
 Use **pnpm**: `pnpm install`, `pnpm dev`, `pnpm test`
 ```
 
-### File-Scoped Commands
-Per-file commands are faster and cheaper than full project builds. Always include when available:
+### File-范围d Commands
+Per-file commands are faster and cheaper than full project builds. 始终 include when available:
 ```markdown
 ## File-Scoped Commands
 | Task | Command |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 41 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

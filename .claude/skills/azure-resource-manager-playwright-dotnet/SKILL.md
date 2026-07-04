@@ -214,7 +214,7 @@ await workspace.Value.DeleteAsync(WaitUntil.Completed);
 | `PlaywrightExtensions` | Extension methods for ARM resources |
 | `PlaywrightCheckNameAvailabilityContent` | Name availability check request |
 
-## Workspace Properties
+## Workspace 属性
 
 | Property | Description |
 |----------|-------------|
@@ -228,7 +228,7 @@ await workspace.Value.DeleteAsync(WaitUntil.Completed);
 
 1. **Use `WaitUntil.Completed`** for operations that must finish before proceeding
 2. **Use `WaitUntil.Started`** when you want to poll manually or run operations in parallel
-3. **Always use `DefaultAzureCredential`** — never hardcode keys
+3. **始终 use `默认AzureCredential`** — never hardcode keys
 4. **Handle `RequestFailedException`** for ARM API errors
 5. **Use `CreateOrUpdateAsync`** for idempotent operations
 6. **Navigate hierarchy** via `Get*` methods (e.g., `resourceGroup.GetPlaywrightWorkspaces()`)
@@ -258,7 +258,7 @@ catch (RequestFailedException ex)
 }
 ```
 
-## Integration with Test Execution
+## 集成 with Test Execution
 
 After creating a workspace, use the `DataplaneUri` to configure your Playwright tests:
 
@@ -277,7 +277,7 @@ Environment.SetEnvironmentVariable("PLAYWRIGHT_SERVICE_URL", serviceUrl.ToString
 // (separate package for test execution)
 ```
 
-## Related SDKs
+## 相关 SDKs
 
 | SDK | Purpose | Install |
 |-----|---------|---------|
@@ -288,19 +288,19 @@ Environment.SetEnvironmentVariable("PLAYWRIGHT_SERVICE_URL", serviceUrl.ToString
 ## API Information
 
 - **Resource Provider**: `Microsoft.LoadTestService`
-- **Default API Version**: `2025-09-01`
+- **默认 API Version**: `2025-09-01`
 - **Resource Type**: `Microsoft.LoadTestService/playwrightWorkspaces`
 
 ## Documentation Links
 
 - [Azure.ResourceManager.Playwright API Reference](https://learn.microsoft.com/en-us/dotnet/api/azure.resourcemanager.playwright)
-- [Microsoft Playwright Testing Overview](https://learn.microsoft.com/en-us/azure/playwright-testing/overview-what-is-microsoft-playwright-testing)
+- [Microsoft Playwright Testing 概述](https://learn.microsoft.com/en-us/azure/playwright-testing/overview-what-is-microsoft-playwright-testing)
 - [Quickstart: Run Playwright Tests at Scale](https://learn.microsoft.com/en-us/azure/playwright-testing/quickstart-run-end-to-end-tests)
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

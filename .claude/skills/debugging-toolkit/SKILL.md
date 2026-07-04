@@ -6,27 +6,27 @@ source: "alias"
 date_added: "2026-06-02"
 ---
 
-# Debugging Toolkit
+# 调试工具包
 
-> **This is an alias.** The canonical skill is **`debugging-toolkit-smart-debug`**.
+> **这是一个别名。** 标准技能是 **`debugging-toolkit-smart-debug`**。
 
-This skill redirects to `debugging-toolkit-smart-debug`. Load it from the vault:
+此技能重定向到 `debugging-toolkit-smart-debug`。从库中加载：
 
 `skill-libraries/code-quality/debugging-toolkit-smart-debug/SKILL.md`
 
-## When to Use
-- Use this skill when working with debugging toolkit smart debug (Alias for debugging-toolkit-smart-debug)
+## 何时使用
+- 使用调试工具包智能调试时使用此技能（debugging-toolkit-smart-debug 的别名）
 
-## Why this alias exists
+## 为什么存在这个别名
 
-Users commonly search for `debugging-toolkit` but the full skill name in this collection is `debugging-toolkit-smart-debug`. This alias ensures discoverability.
+用户通常搜索 `debugging-toolkit`，但此集合中的完整技能名称是 `debugging-toolkit-smart-debug`。此别名确保可发现性。
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 局限性
+- 仅当任务明确匹配上述范围时使用此技能。
+- 不要将输出视为特定环境验证、测试或专家审查的替代品。
+- 如果缺少所需的输入、权限、安全边界或成功标准，请停止并要求澄清。
 
-## Examples
+## 示例
 ```text
 Use @debugging-toolkit for this task: Use when working with debugging toolkit smart debug (Alias for debugging-toolkit-smart-debug).
 

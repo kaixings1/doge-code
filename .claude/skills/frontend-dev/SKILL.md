@@ -1,43 +1,39 @@
 ---
 name: frontend-dev
-description: "Frontend Dev — Frontend Dev 相关功能和最佳实践"
-  Full-stack frontend with cinematic animations, AI-generated media via MiniMax API, and generative art. Useful for hero pages and showcase sites.
+description: "前端开发 — 前端开发相关功能和最佳实践"
+  使用 MiniMax API 实现具有电影级动画、AI 生成媒体和生成艺术的全栈前端。适用于英雄页面和展示站点。
 triggers:
-  - "frontend dev"
-  - "cinematic frontend"
-  - "generative web"
-  - "hero page"
-  - "showcase site"
+  - "前端开发"
+  - "电影级前端"
+  - "生成式网页"
+  - "英雄页面"
+  - "展示站点"
 od:
   mode: prototype
   category: web-artifacts
   upstream: "https://github.com/MiniMax-AI/skills"
 ---
 
-# frontend-dev
+# 前端开发
 
-> Curated from the MiniMax AI team.
+> 由 MiniMax AI 团队策划。
 
-## What it does
+## 功能概述
 
-Full-stack frontend with cinematic animations, AI-generated media via MiniMax API, and generative art. Useful for hero pages and showcase sites.
+使用 MiniMax API 实现具有电影级动画、AI 生成媒体和生成艺术的全栈前端。适用于英雄页面和展示站点。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/MiniMax-AI/skills
-- Category: `web-artifacts`
+- 上游: https://github.com/MiniMax-AI/skills
+- 分类: `web-artifacts`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在 Open Design 中宣传技能，以便代理在规划期间发现它。要运行完整的上游工作流及其原始资产、脚本和参考，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 检查上游 README 获取确切路径
 open https://github.com/MiniMax-AI/skills
 ```
 
-Then ask the agent to invoke this skill by name (`frontend-dev`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后要求代理按名称 (`frontend-dev`) 或使用此技能 frontmatter 中列出的触发短语之一调用此技能。

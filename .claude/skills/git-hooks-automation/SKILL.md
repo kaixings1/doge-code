@@ -6,18 +6,18 @@ source: community
 date_added: "2026-03-07"
 ---
 
-# Git Hooks Automation
+# Git 钩子自动化
 
-Automate code quality enforcement at the Git level. Set up hooks that lint, format, test, and validate before commits and pushes ever reach your CI pipeline — catching issues in seconds instead of minutes.
+在 Git 层面自动化代码质量执行。设置钩子，在提交和推送到达 CI 流水线之前进行 lint、格式化、测试和验证——在几秒内捕获问题，而不是几分钟。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- User asks to "set up git hooks" or "add pre-commit hooks"
-- Configuring Husky, lint-staged, or the pre-commit framework
-- Enforcing commit message conventions (Conventional Commits, commitlint)
-- Automating linting, formatting, or type-checking before commits
-- Setting up pre-push hooks for test runners
-- Migrating from Husky v4 to v9+ or adopting hooks from scratch
+- 用户要求"设置 git hooks"或"添加 pre-commit hooks"时
+- 配置 Husky、lint-staged 或 pre-commit 框架时
+- 强制执行提交消息约定（Conventional Commits、commitlint）时
+- 在提交前自动化 lint、格式化或类型检查时
+- 为测试运行器设置 pre-push 钩子时
+- 从 Husky v4 迁移到 v9+ 或从头开始采用钩子时
 - User mentions "pre-commit", "commit-msg", "pre-push", "lint-staged", or "githooks"
 
 ## Git Hooks Fundamentals
@@ -415,7 +415,7 @@ echo "npx --no -- commitlint --edit \$1" > .husky/commit-msg
 - `@bash-pro` - Advanced shell scripting for custom hooks
 - `@github-actions-templates` - CI/CD workflow templates
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

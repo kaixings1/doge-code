@@ -4,168 +4,51 @@ description: "使用 LangGraph、LangChain 和 DeepAgents 设计和优化生产�
 risk: safe
 source: community
 metadata:
-  category: ai-engineering
-  source_repo: pravin-python/antigravity-awesome-skills
-  source_type: community
-  date_added: "2025-05-07"
-  author: community
-  tags: [langgraph, langchain, multi-agent, orchestration, deepagents, rag, tool-calling]
-  tools: [claude, cursor, gemini]
-  license: "MIT"
-  license_source: "https://github.com/pravin-python/antigravity-awesome-skills/blob/main/LICENSE"
+ category: ai-engineering
+ source_repo: pravin-python/antigravity-awesome-skills
+ source_type: community
+ date_added: "2025-05-07"
+ author: community
+ tags: [langgraph, langchain, multi-agent, orchestration, deepagents, rag, tool-calling]
+ tools: [claude, cursor, gemini]
+ license: "MIT"
+ license_source: "https://github.com/pravin-python/antigravity-awesome-skills/blob/main/LICENSE"
 ---
 
+# 多代理架构师与更新技能
 
-# Multi-Agent Architect & Updater Skill
+## 概述
 
-## Overview
+此技能将 Claude 转变为专门研究 LangGraph、LangChain 和 DeepAgents 的高级 AI 多代理架构师。它提供用于创建和更新生产级多代理系统的结构化工作流——包括监督者代理、规划器、研究员、编码器和内存支持自主管道。在需要设计、构建、调试或扩展任何多代理 AI 系统时使用。
 
-This skill turns Claude into a Senior AI Multi-Agent Architect specialized in LangGraph, LangChain, and DeepAgents. It provides structured workflows for creating and updating production-grade multi-agent systems — including supervisor agents, planners, researchers, coders, and memory-backed autonomous pipelines. Use it whenever you need to design, build, debug, or scale any multi-agent AI system.
+## 使用时机
+- 从头创建新代理或多代理工作流时
+- 使用 LangGraph 状态图、节点、边或条件路由时
+- 用户询问代理通信、内存系统或工具调用管道时
+- 调试或优化现有 LangChain/LangGraph 代理系统时
+- 架构监督者、规划器、研究员、编码器或验证器代理角色时
+- 集成 DeepAgents 与分层规划和委托时
 
-If this skill adapts material from an external GitHub repository, declare both:
+## 工作原理
+### 步骤 1：理解目标
+在编写任何代码之前，明确：业务目标、需要的代理角色、每个代理需要的工具、所需的内存策略、连接代理的通信协议。
 
-- `source_repo: owner/repo`
-- `source_type: official` or `source_type: community`
+### 步骤 2：定义状态 Schema
+所有代理共享通过图传递的类型化状态对象。
 
-## When to Use This Skill
+### 步骤 3：定义代理节点
+每个代理是一个从状态读取并返回更新状态的异步函数。
 
-- Use when you need to create a new agent or multi-agent workflow from scratch
-- Use when working with LangGraph state graphs, nodes, edges, or conditional routing
-- Use when the user asks about agent communication, memory systems, or tool-calling pipelines
-- Use when debugging or optimizing an existing LangChain/LangGraph agent system
-- Use when architecting supervisor, planner, research, coding, or validation agent roles
-- Use when integrating DeepAgents with hierarchical planning and delegation
+### 步骤 4：构建 LangGraph
+使用边和条件路由将节点连接在一起。
 
-## How It Works
+### 步骤 5：添加内存
+使用 Redis 或 Vector DB 实现会话内存。
 
-### Step 1: Understand the Goal
+### 步骤 6：运行图
+编译状态图并执行。
 
-Before writing any code, clarify:
-- What is the **business objective** this agent system must achieve?
-- What **agent roles** are needed (supervisor, planner, researcher, coder, validator)?
-- What **tools** does each agent require?
-- What **memory** strategy is needed (Redis, Vector DB, LangChain Memory)?
-- What **communication protocol** connects agents (shared state, message passing)?
+### 步骤 7：通过 FastAPI 暴露（可选）
+使用 FastAPI 创建 API 端点。
 
-### Step 2: Define the State Schema
-
-All agents share a typed state object passed through the graph:
-
-```python
-from typing import TypedDict
-
-class AgentState(TypedDict):
-    user_goal: str
-    tasks: list[str]
-    completed_tasks: list[str]
-    next_agent: str
-    context: dict
-    step_count: int          # guards against infinite loops
-    error: str | None
-```
-
-### Step 3: Define Agent Nodes
-
-Each agent is an **async function** that reads from state and returns an updated state:
-
-```python
-import logging
-from langchain_openai import ChatOpenAI
-
-logger = logging.getLogger(__name__)
-
-async def research_node(state: AgentState) -> AgentState:
-    logger.info("research_node: starting")
-    llm = ChatOpenAI(model="gpt-4o")
-    result = await llm.bind_tools(research_tools).ainvoke(state["user_goal"])
-    state["context"]["research"] = result.content
-    state["next_agent"] = "coder"
-    return state
-```
-
-### Step 4: Build the LangGraph
-
-Wire nodes together with edges and conditional routing:
-
-```python
-from langgraph.graph import StateGraph, END
-from langgraph.prebuilt import ToolNode
-
-def build_graph() -> StateGraph:
-    graph = StateGraph(AgentState)
-
-    graph.add_node("supervisor", supervisor_node)
-    graph.add_node("research",   research_node)
-    graph.add_node("coder",      coding_node)
-    graph.add_node("validator",  validation_node)
-    graph.add_node("tools",      ToolNode(all_tools))
-
-    graph.set_entry_point("supervisor")
-
-    graph.add_conditional_edges(
-        "supervisor",
-        route_next,
-        {"research": "research", "coder": "coder", "end": END}
-    )
-
-    graph.add_edge("research",  "supervisor")
-    graph.add_edge("coder",     "validator")
-    graph.add_edge("validator", "supervisor")
-
-    return graph.compile()
-
-def route_next(state: AgentState) -> str:
-    if state["step_count"] > 20:
-        return "end"
-    return state["next_agent"]
-```
-
-### Step 5: Add Memory
-
-```python
-from langchain_community.chat_message_histories import RedisChatMessageHistory
-
-def get_memory(session_id: str):
-    return RedisChatMessageHistory(
-        session_id=session_id,
-        url=os.getenv("REDIS_URL"),
-        ttl=3600
-    )
-```
-
-### Step 6: Run the Graph
-
-```python
-async def run(user_goal: str, session_id: str):
-    graph = build_graph()
-    initial_state = AgentState(
-        user_goal=user_goal,
-        tasks=[],
-        completed_tasks=[],
-        next_agent="supervisor",
-        context={},
-        step_count=0,
-        error=None,
-    )
-    return await graph.ainvoke(initial_state)
-```
-
-### Step 7: Expose via FastAPI (optional)
-
-```python
-from fastapi import FastAPI
-from pydantic import BaseModel
-
-app = FastAPI()
-
-class RunRequest(BaseModel):
-    goal: str
-    session_id: str
-
-@app.post("/run")
-async def run_agent(req: RunRequest):
-    result = await run(req.goal, req.session_id)
-    return {"result": result}
-```
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 41 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+详细 Python 代码示例请参考原始英文文档。

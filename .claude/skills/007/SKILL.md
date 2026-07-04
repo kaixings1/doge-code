@@ -28,9 +28,9 @@ tools:
 
 ## 何时使用此技能
 
-- 用户提到 "audite" 或相关主题
-- 用户提到 "auditoria" 或相关主题
-- 用户提到 "seguranca" 或相关主题
+- 用户提到 "审计" 或相关主题
+- 用户提到 "安全审计" 或相关主题
+- 用户提到 "安全" 或相关主题
 - 用户提到 "security audit" 或相关主题
 - 用户提到 "threat model" 或相关主题
 - 用户提到 "STRIDE" 或相关主题
@@ -68,32 +68,32 @@ tools:
 
 ## 模式 1：审计（默认）
 
-**触发词**："audite este codigo"、"revise a seguranca"、"tem algum risco?"
+**触发词**："审计此代码"、"检查安全性"、"有任何风险吗？"
 执行完整的安全分析，遵循 6 阶段流程。
 
 ## 模式 2：威胁建模
 
-**触发词**："modele ameacas"、"threat model"、"STRIDE"、"PASTA"
+**触发词**："威胁建模"、"threat model"、"STRIDE"、"PASTA"
 使用 STRIDE 和/或 PASTA 进行正式威胁建模。
 
 ## 模式 3：审批
 
-**触发词**："aprove este agente"、"posso colocar em producao?"、"esta ok para deploy?"
+**触发词**："批准此代理"、"可以投入生产吗？"、"可以部署吗？"
 发出技术判定：批准、附条件批准，或阻止。
 
 ## 模式 4：阻止
 
-**触发词**："bloqueie este fluxo"、"isso e inseguro"、"kill switch"
+**触发词**："阻止此流程"、"这不安全"、"kill switch"
 识别并记录应阻止某事物的原因。
 
 ## 模式 5：监控
 
-**触发词**："configure monitoramento"、"alertas de seguranca"、"observabilidade"
+**触发词**："配置监控"、"安全警报"、"可观测性"
 定义监控、日志记录和告警策略。
 
 ## 模式 6：事件响应
 
-**触发词**："incidente"、"fui hackeado"、"vazou token"、"estou sob ataque"
+**触发词**："事件"、"我被黑了"、"token泄露"、"我正在遭受攻击"
 激活事件响应手册，执行即时处置流程。
 
 ## 分析流程 — 6 个阶段

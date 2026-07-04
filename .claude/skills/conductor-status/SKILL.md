@@ -6,21 +6,21 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Conductor Status
+# Conductor 状态
 
-Display the current status of the Conductor project, including overall progress, active tracks, and next actions.
+显示 Conductor 项目的当前状态，包括总体进度、活跃轨道和下一步行动。
 
-## Use this skill when
+## 使用此技能的场景
 
-- Working on conductor status tasks or workflows
-- Needing guidance, best practices, or checklists for conductor status
+- 处理 Conductor 状态任务或工作流时
+- 需要 Conductor 状态的指导、最佳实践或检查清单时
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to conductor status
-- You need a different domain or tool outside this scope
+- 任务与 Conductor 状态无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -47,7 +47,7 @@ Read `conductor/product.md` and extract:
 - Project name
 - Project description
 
-### 2. Tracks Overview
+### 2. Tracks 概述
 
 Read `conductor/tracks.md` and parse:
 
@@ -74,7 +74,7 @@ Read `conductor/tracks/{trackId}/metadata.json`:
 - Track type (feature, bug, chore, refactor)
 - Created date
 - Last updated date
-- Status
+- 状态
 
 Read `conductor/tracks/{trackId}/spec.md`:
 
@@ -85,12 +85,12 @@ Read `conductor/tracks/{trackId}/spec.md`:
 Scan for potential blockers:
 
 - Tasks marked with `BLOCKED:` prefix
-- Dependencies on incomplete tracks
+- 依赖项 on incomplete tracks
 - Failed verification tasks
 
 ## Output Format
 
-### Full Project Status (no argument)
+### Full Project 状态 (no argument)
 
 ```
 ================================================================================
@@ -154,7 +154,7 @@ Commands: /conductor:implement {trackId} | /conductor:new-track | /conductor:rev
 ================================================================================
 ```
 
-### Single Track Status (with track-id argument)
+### Single Track 状态 (with track-id argument)
 
 ```
 ================================================================================
@@ -222,7 +222,7 @@ Commands: /conductor:implement {trackId} | /conductor:revert {trackId}
 ================================================================================
 ```
 
-## Status Markers Legend
+## 状态 Markers Legend
 
 Display at bottom if helpful:
 
@@ -338,7 +338,7 @@ If invoked with `--json`:
 }
 ```
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

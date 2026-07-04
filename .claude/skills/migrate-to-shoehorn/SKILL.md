@@ -1,6 +1,6 @@
 ---
 name: migrate-to-shoehorn
-description: "Migrate To Shoehorn — Migrate To Shoehorn 相关功能和最佳实践"
+description: "Shoehorn 迁移指南 — 从 as 断言迁移到类型安全的 shoehorn 方法"
 ---
 
 # Migrate to Shoehorn

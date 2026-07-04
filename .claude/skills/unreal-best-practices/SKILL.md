@@ -1,6 +1,6 @@
 ---
 name: unreal-best-practices
-description: "Unreal Best Practices — Unreal Best Practices 相关功能和最佳实践"
+description: "Unreal 最佳实践 — Unreal Engine 5.x 开发综合最佳实践指南"
   现代 Unreal Engine 5.x 开发的综合最佳实践指南。
   涵盖 Epic 面向现代系统的战略方向（GAS、Enhanced Input、StateTree、
   MetaSounds、Niagara、PCG、CommonUI、World Partition、Game Feature Plugins、Gameplay Tags），
@@ -14,22 +14,22 @@ description: "Unreal Best Practices — Unreal Best Practices 相关功能和最
   或比较传统系统与现代替代方案时也会触发。涵盖已弃用系统及其迁移路径。
 ---
 
-# Unreal Engine 5.x Best Practices Guide
+# Unreal Engine 5.x 最佳实践指南
 
-## The "Research First" Principle
+## "先研究"原则
 
-**Before implementing any gameplay system, always investigate whether Epic provides a newer, purpose-built system for it.** Epic Games continuously introduces modern frameworks that replace ad-hoc solutions. Using the latest recommended system yields better performance, easier networking, designer-friendly workflows, and future compatibility.
+**在实现任何游戏系统之前，始终先调查 Epic 是否提供了更新的、专用构建的系统。** Epic Games 不断引入现代框架来替代临时解决方案。使用最新的推荐系统能带来更好的性能、更简便的网络功能、设计师友好的工作流和未来兼容性。
 
-**Workflow:**
-1. Identify the problem domain (input, abilities, audio, particles, AI, UI, movement, etc.)
-2. Check the [Modern Systems Quick Reference](#modern-systems-quick-reference) below
-3. If uncertain, search Epic's documentation and the UE Public Roadmap for the latest system status
-4. Prefer production-ready modern systems over legacy approaches
-5. For experimental systems: evaluate maturity before committing -- use them in prototypes, not shipping builds
+**工作流：**
+1. 确定问题领域（输入、技能、音频、粒子、AI、UI、移动等）
+2. 查看下方的[现代系统快速参考](#modern-systems-quick-reference)
+3. 如有不确定，搜索 Epic 文档和 UE 公开路线图了解最新系统状态
+4. 优先选择生产就绪的现代系统，而非遗留方案
+5. 对于实验性系统：在投入前评估其成熟度——在原型中使用，而非发布版本
 
-**Why this matters:** Epic signals their direction through actions, not just announcements. When they rebuild the First/Third Person templates to use GAS and Enhanced Input, or when Fortnite ships with Game Feature Plugins and CommonUI, that is the clearest indicator of where the ecosystem is heading.
+**为何重要：** Epic 通过行动而非仅靠公告来指示方向。当他们重建第一/三人称模板以使用 GAS 和增强输入，或当 Fortnite 使用 Game Feature Plugins 和 CommonUI 发货时，这就是生态系统走向的最清晰信号。
 
-## Official Documentation (always consult for latest details)
+## 官方文档（始终查阅最新详情）
 
-| Source | URL |
+| 来源 | URL |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 42 MINUTES 52 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

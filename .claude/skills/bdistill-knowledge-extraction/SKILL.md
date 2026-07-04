@@ -20,7 +20,7 @@ bdistill turns your AI subscription sessions into a compounding knowledge base. 
 
 Adversarial mode challenges the agent's claims — forcing evidence, corrections, and acknowledged limitations — producing validated knowledge entries.
 
-## When to Use This Skill
+## /u4f55/u65f6/u4f7f/u7528 This Skill
 
 - Use when you need structured reference data on any domain (medical, legal, finance, cybersecurity)
 - Use when building lookup tables, Q&A datasets, or research corpora
@@ -104,7 +104,7 @@ bdistill extract --domain medical --model qwen3:4b
 
 - `@bdistill-behavioral-xray` - X-ray a model's behavioral patterns
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -1,28 +1,13 @@
 ---
 name: ffuf-claude-skill
-description: "使用 ffuf 进行 Web 模糊测试"
-risk: safe
-source: "https://github.com/jthack/ffuf_claude_skill"
-date_added: "2026-02-27"
+description: "FFUF — Web 模糊测试工具"
+risk: unknown
+source: community
 ---
-
-# Ffuf Claude Skill
-
-## Overview
-
-Web fuzzing with ffuf
-
-## When to Use This Skill
-
-Use this skill when you need to work with web fuzzing with ffuf.
-
-## Instructions
-
-This skill provides guidance and patterns for web fuzzing with ffuf.
-
-For more information, see the [source repository](https://github.com/jthack/ffuf_claude_skill).
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+# FFUF
+Web 模糊测试工具。
+## 功能
+- 目录爆破
+- 参数模糊测试
+- 子域名枚举
+## 限制

@@ -2,22 +2,22 @@
 name: 需求预测
 description: "预测产品需求：整合季节性、促销、节假日、价格效应和外部因素。适用于库存规划、容量管理或收入预测。"
 ---
-# Demand Forecasting
+# 需求预测
 
-## Purpose
-Predict future demand incorporating multiple factors for accurate planning.
+## 目的
+结合多种因素预测未来需求以实现准确规划。
 
-## How It Works
+## 工作原理
 
-### Step 1: Analyze Historical Demand
-- Trend, seasonality, cyclicality
-- Promotional effects and holiday impacts
-- External factors (weather, economic indicators)
+### 步骤 1：分析历史需求
+- 趋势、季节性、周期性
+- 促销效果和节假日影响
+- 外部因素（天气、经济指标）
 
-### Step 2: Choose Model
-- **Simple**: Moving average, exponential smoothing
-- **Statistical**: SARIMA, Prophet with regressors
-- **ML**: XGBoost with lag features, LightGBM
+### 步骤 2：选择模型
+- **简单**：移动平均、指数平滑
+- **统计**：SARIMA、带回归量的 Prophet
+- **机器学习**：带滞后特征的 XGBoost、LightGBM
 - **Hierarchy**: Top-down, bottom-up, middle-out reconciliation
 
 ### Step 3: Include External Factors

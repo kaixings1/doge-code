@@ -77,7 +77,4 @@ session_id: "your_session_id"
 - **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
 - **分页**：检查响应中的分页 token 并继续获取直到完成
 
-## Quick Reference
-
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+## 快速参考/n/n| 操作 | 方法 |/n|---|---|/n| 列出工具 | `RUBE_SEARCH_TOOLS` 查询 `FRAUDLABS operations` |/n| 检查连接 | `RUBE_MANAGE_CONNECTIONS` 工具包 `fraudlabs-pro` |/n| 执行工具 | `RUBE_MULTI_EXECUTE_TOOL` 带 tool_slug 和参数 |/n/n*由 [Composio](https://composio.dev) 提供支持*/n

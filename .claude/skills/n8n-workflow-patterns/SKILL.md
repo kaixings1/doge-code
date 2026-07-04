@@ -1,17 +1,15 @@
 ---
 name: n8n-workflow-patterns
-description: "构建 n8n 工作流的经过验证的架构模式。"
+description: "构建 n8n 工作流经过验证的架构模式。"
 risk: unknown
 source: community
 ---
 
-# n8n Workflow Patterns
+# n8n 工作流模式
 
-Proven architectural patterns for building n8n workflows.
+构建 n8n 工作流的经过验证的架构模式。
 
-## When to Use
-- You need to choose an architectural pattern for an n8n workflow before building it.
-- The task involves webhook processing, API integration, scheduled jobs, database sync, or AI-agent workflow design.
-- You want a high-level workflow structure rather than node-by-node troubleshooting.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 25 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+## 使用时机
+- 在构建 n8n 工作流之前需要选择合适的架构模式。
+- 任务涉及 Webhook 处理、API 集成、定时任务、数据库同步或 AI 代理工作流设计。
+- 需要高层级的工作流结构，而非逐个节点的故障排查。

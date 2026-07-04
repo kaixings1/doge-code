@@ -6,23 +6,23 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Dependency Upgrade
+# 依赖升级
 
-Master major dependency version upgrades, compatibility analysis, staged upgrade strategies, and comprehensive testing approaches.
+掌握主要依赖版本升级、兼容性分析、分阶段升级策略和全面测试方法。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to dependency upgrade
-- You need a different domain or tool outside this scope
+- 任务与依赖升级无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Upgrading major framework versions
 - Updating security-vulnerable dependencies
@@ -423,7 +423,7 @@ Post-Upgrade:
 - Skipping major versions
 - Not having rollback plan
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

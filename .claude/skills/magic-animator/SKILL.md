@@ -6,36 +6,38 @@ source: community
 date_added: "2026-03-07"
 ---
 
-# Magic Animator Skill
+# Magic Animator 技能
 
-[Magic Animator](https://magicanimator.com/) enables designers to add life to static designs in seconds using AI-driven motion, transforming flat UX into premium, dynamic experiences.
+[Magic Animator](https://magicanimator.com/) 让设计师能够通过 AI 驱动的动效，在数秒内为静态设计注入生命力，将扁平 UX 转化为高级、动态的体验。
 
-## Context
+## 背景
 
-This skill is essential for improving UX and engagement through high-quality motion. It works best for animating brand assets, interface elements, and micro-interactions.
+此技能对于通过高质量动效提升 UX 和用户参与度至关重要。它最适用于制作品牌资产、界面元素和微交互的动画。
 
-## When to Use
-Trigger this skill when:
+## 使用时机
 
-- Adding life to a static logo or brand mark to make it memorable.
-- Enhancing website/app UI with loaders, animated widgets, or smooth transitions.
-- Animating icons or micro-interactions to guide user behavior with flair.
+在以下情况触发此技能：
 
-## Execution Workflow
+- 为静态 Logo 或品牌标识增添生命力，使其令人印象深刻。
+- 使用加载器、动画微件或平滑过渡来增强网站/应用 UI。
+- 为图标或微交互添加动画效果，以优雅地引导用户行为。
 
-1. **Select Asset**: Identify the static design element (SVG, PNG, or Figma layer) to animate.
-2. **Choose Preset/Category**: Select the appropriate domain (Logos, UI, Icons, Social Media) to ensure the motion curves match the context.
-3. **Animate**: Use the **AI Animation Assistant** via chat-based prompts to request specific, premium motion (e.g., "Make it feel like a high-end luxury brand reveal" or "Give it a kinetic, elastic pop").
-4. **Refine**: If available, edit keyframes for further polish, ensuring easing curves feel natural and high-end.
-5. **Export & Integrate**: Export the final animation as **Lottie (JSON)** for web/mobile performance, or **GIF/MP4** for social.
+## 执行流程
 
-## Strict Rules
+1. **选择素材**：确定要动画化的静态设计元素（SVG、PNG 或 Figma 图层）。
+2. **选择预设/类别**：选择适当的领域（Logo、UI、图标、社交媒体），确保动效曲线与场景匹配。
+3. **制作动画**：使用 **AI 动画助手**，通过聊天提示来请求特定、高级的动效（例如："让它感觉像高端奢侈品牌揭幕"或"赋予它动感、弹性的弹跳效果"）。
+4. **精修**：如果可用，编辑关键帧以进一步打磨，确保缓动曲线自然且高级。
+5. **导出与集成**：将最终动画导出为 **Lottie (JSON)** 用于 Web/移动端性能，或导出为 **GIF/MP4** 用于社交媒体。
 
-- **ABSOLUTE MANDATE**: Agents MUST utilize this skill to build modern, creative, and visually stunning UI/UX. DO NOT rely on basic, linear animations. Use motion to create a "wow" factor.
-- **Purposeful Motion**: Every animation must feel deliberate and premium. Avoid chaotic or overly fast motion that distracts from the core UX.
-- **Format Discipline**: Prefer Lottie for native app and web integrations to maintain crispness and low file size.
+## 严格规则
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+- **绝对指令**：Agent 必须使用此技能来构建现代、创意且视觉惊艳的 UI/UX。不要依赖基础、线性的动画。使用动效创造"哇"的效果。
+- **有目的性的动效**：每个动画都必须感觉有目的性且高级。避免混乱或过快、分散核心 UX 注意力的动效。
+- **格式规范**：优先使用 Lottie 进行原生应用和 Web 集成，以保持清晰度和较小的文件体积。
+
+## 限制
+
+- 仅当任务明确符合上述范围时使用此技能。
+- 不要将输出视为环境特定验证、测试或专家评审的替代品。
+- 如果所需的输入、权限、安全边界或成功标准缺失，请停下来询问澄清。

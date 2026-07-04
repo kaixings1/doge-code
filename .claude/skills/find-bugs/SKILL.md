@@ -5,83 +5,83 @@ risk: unknown
 source: community
 ---
 
-# Find Bugs
+# 查找 Bug
 
-Review changes on this branch for bugs, security vulnerabilities, and code quality issues.
+审查此分支上的更改，查找 bug、安全漏洞和代码质量问题。
 
-## When to Use
-- You need a review focused on bugs, security issues, or risky code changes.
-- The task involves auditing the current branch diff rather than implementing new behavior.
-- You want a structured review process with checklist-driven verification against changed files.
+## 何时使用
+- 您需要针对 bug、安全问题或风险代码更改进行审查。
+- 任务涉及审计当前分支差异而不是实现新行为。
+- 您希望使用清单驱动的验证对更改文件进行结构化审查。
 
-## Phase 1: Complete Input Gathering
+## 阶段 1：完整输入收集
 
-1. Get the FULL diff: `git diff $(gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name')...HEAD`
-2. If output is truncated, read each changed file individually until you have seen every changed line
-3. List all files modified in this branch before proceeding
+1. 获取完整差异： `git diff $(gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name')...HEAD`
+2. 如果输出被截断，逐个读取每个更改的文件，直到看到每个更改的行
+3. 在继续之前列出此分支中修改的所有文件
 
-## Phase 2: Attack Surface Mapping
+## 阶段 2：攻击面映射
 
-For each changed file, identify and list:
+对于每个更改的文件，识别并列出：
 
-* All user inputs (request params, headers, body, URL components)
-* All database queries
-* All authentication/authorization checks
-* All session/state operations
-* All external calls
-* All cryptographic operations
+* 所有用户输入（请求参数、标头、主体、URL 组件）
+* 所有数据库查询
+* 所有身份验证/授权检查
+* 所有会话/状态操作
+* 所有外部调用
+* 所有加密操作
 
-## Phase 3: Security Checklist (check EVERY item for EVERY file)
+## 阶段 3：安全检查清单（对每个文件检查每个项目）
 
-* [ ] **Injection**: SQL, command, template, header injection
-* [ ] **XSS**: All outputs in templates properly escaped?
-* [ ] **Authentication**: Auth checks on all protected operations?
-* [ ] **Authorization/IDOR**: Access control verified, not just auth?
-* [ ] **CSRF**: State-changing operations protected?
-* [ ] **Race conditions**: TOCTOU in any read-then-write patterns?
-* [ ] **Session**: Fixation, expiration, secure flags?
-* [ ] **Cryptography**: Secure random, proper algorithms, no secrets in logs?
-* [ ] **Information disclosure**: Error messages, logs, timing attacks?
-* [ ] **DoS**: Unbounded operations, missing rate limits, resource exhaustion?
-* [ ] **Business logic**: Edge cases, state machine violations, numeric overflow?
+* [ ] **注入**：SQL、命令、模板、头部注入
+* [ ] **XSS**：模板中的所有输出都正确转义了吗？
+* [ ] **身份验证**：所有受保护操作都有身份验证检查吗？
+* [ ] **授权/IDOR**：访问控制已验证，不仅仅是身份验证？
+* [ ] **CSRF**：状态更改操作受到保护了吗？
+* [ ] **竞争条件**：任何读后写模式中存在TOCTOU吗？
+* [ ] **会话**：固定、过期、安全标志？
+* [ ] **加密**：安全随机数、适当算法、日志中没有秘密？
+* [ ] **信息泄露**：错误消息、日志、时序攻击？
+* [ ] **DoS**：无界操作、缺少速率限制、资源耗尽？
+* [ ] **业务逻辑**：边缘情况、状态机违规、数字溢出？
 
-## Phase 4: Verification
+## 阶段 4：验证
 
-For each potential issue:
+对于每个潜在问题：
 
-* Check if it's already handled elsewhere in the changed code
-* Search for existing tests covering the scenario
-* Read surrounding context to verify the issue is real
+* 检查是否已在更改代码的其他地方处理
+* 搜索涵盖该场景的现有测试
+* 阅读周围上下文以验证问题是真实的
 
-## Phase 5: Pre-Conclusion Audit
+## 阶段 5：结论前审计
 
-Before finalizing, you MUST:
+在最终确定之前，您必须：
 
-1. List every file you reviewed and confirm you read it completely
-2. List every checklist item and note whether you found issues or confirmed it's clean
-3. List any areas you could NOT fully verify and why
-4. Only then provide your final findings
+1. 列出你审查的每个文件并确认你完全阅读了它
+2. 列出每个检查清单项目并注明是否发现问题或确认它是干净的
+3. 列出任何你无法完全验证的领域及原因
+4. 只有在此之后才提供你的最终发现
 
-## Output Format
+## 输出格式
 
-**Prioritize**: security vulnerabilities > bugs > code quality
+**优先级**：安全漏洞 > Bug > 代码质量
 
-**Skip**: stylistic/formatting issues
+**跳过**：样式/格式问题
 
-For each issue:
+对于每个问题：
 
-* **File:Line** - Brief description
-* **Severity**: Critical/High/Medium/Low
-* **Problem**: What's wrong
-* **Evidence**: Why this is real (not already fixed, no existing test, etc.)
-* **Fix**: Concrete suggestion
-* **References**: OWASP, RFCs, or other standards if applicable
+* **文件:行号** - 简要描述
+* **严重性**：关键/高/中/低
+* **问题**：什么出错了
+* **证据**：为什么这是真实的（尚未修复、没有现有测试等）
+* **修复**：具体建议
+* **参考**：OWASP、RFC或其他适用标准
 
-If you find nothing significant, say so - don't invent issues.
+如果没有发现重大问题，如实说明 - 不要编造问题。
 
-Do not make changes - just report findings. I'll decide what to address.
+不要进行更改 - 只报告发现。我将决定如何处理。
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确符合上述描述的范围时才使用此技能。
+- 不要将输出视为环境特定验证、测试或专家评审的替代品。
+- 如果缺少必需的输入、权限、安全边界或成功标准，请停止并请求澄清。

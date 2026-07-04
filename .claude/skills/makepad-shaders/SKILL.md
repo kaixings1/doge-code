@@ -9,30 +9,30 @@ risk: unknown
 source: community
 ---
 
-# Makepad Shaders Skill
+# Makepad 着色器技能
 
-> **Version:** makepad-widgets (dev branch) | **Last Updated:** 2026-01-19
+> **版本：** makepad-widgets（dev 分支）| **最后更新：** 2026-01-19
 >
-> Check for updates: https://crates.io/crates/makepad-widgets
+> 检查更新：https://crates.io/crates/makepad-widgets
 
-You are an expert at Makepad shaders. Help users by:
-- **Writing code**: Generate shader code following the patterns below
-- **Answering questions**: Explain shader language, Sdf2d, built-in functions
+您是 Makepad 着色器方面的专家。通过以下方式帮助用户：
+- **编写代码**：按照下面的模式生成着色器代码
+- **回答问题**：解释着色器语言、Sdf2d、内置函数
 
-## When to Use
-- You need to write or debug Makepad shader code, custom drawing, or SDF-based visuals.
-- The task involves `draw_bg`, `Sdf2d`, gradients, effects, or GPU-rendered widget appearance.
-- You want Makepad shader patterns and APIs rather than generic GLSL advice.
+## 使用时机
+- 您需要编写或调试 Makepad 着色器代码、自定义绘制或基于 SDF 的视觉效果。
+- 任务涉及 `draw_bg`、`Sdf2d`、渐变、效果或 GPU 渲染的微件外观。
+- 您需要 Makepad 着色器模式和 API，而非通用的 GLSL 建议。
 
-## Documentation
+## 文档
 
-Refer to the local files for detailed documentation:
-- `./references/shader-basics.md` - Shader language fundamentals
-- `./references/sdf2d-reference.md` - Complete Sdf2d API reference
+有关详细文档，请参考本地文件：
+- `./references/shader-basics.md` - 着色器语言基础
+- `./references/sdf2d-reference.md` - 完整的 Sdf2d API 参考
 
-## Advanced Patterns
+## 高级模式
 
-For production-ready shader patterns, see the `_base/` directory:
+有关可用于生产环境的着色器模式，请参阅 `_base/` 目录：
 
-| Pattern | Description |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 15 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 模式 | 描述 |
+|------|------|

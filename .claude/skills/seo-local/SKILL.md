@@ -1,7 +1,6 @@
 ---
 name: seo-local
-description: "Seo Local — Seo Local 相关功能和最佳实践"
-  Local SEO analysis covering Google Business Profile optimization, NAP
+description: "Seo Local — 本地 SEO 分析相关功能和最佳实践：Google Business Profile 优化、NAP 一致性、引证健康度、评论信号、本地 schema 标记等。"
   consistency, citation health, review signals, local schema markup,
   location page quality, multi-location SEO, and industry-specific
   recommendations. Detects business type (brick-and-mortar, SAB, hybrid)
@@ -24,4 +23,3 @@ metadata:
 ## Key Statistics
 
 | Metric | Value | Source |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

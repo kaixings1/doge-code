@@ -9,15 +9,15 @@ date_added: "2026-02-27"
 
 > AUTHORIZED USE ONLY: Use this skill only for authorized security assessments, defensive validation, or controlled educational environments.
 
-# Cloud Penetration Testing
+# 云渗透测试
 
 ## Purpose
 
 Conduct comprehensive security assessments of cloud infrastructure across Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP). This skill covers reconnaissance, authentication testing, resource enumeration, privilege escalation, data extraction, and persistence techniques for authorized cloud security engagements.
 
-## Prerequisites
+## 前提条件
 
-### Required Tools
+### 必需 Tools
 ```bash
 # Azure tools
 Install-Module -Name Az -AllowClobber -Force
@@ -40,20 +40,20 @@ gcloud init
 pip install scoutsuite pacu
 ```
 
-### Required Knowledge
+### 必需 Knowledge
 - Cloud architecture fundamentals
 - Identity and Access Management (IAM)
 - API authentication mechanisms
 - DevOps and automation concepts
 
-### Required Access
+### 必需 Access
 - Written authorization for testing
 - Test credentials or access tokens
 - Defined scope and rules of engagement
 
 ## Outputs and Deliverables
 
-1. **Cloud Security Assessment Report** - Comprehensive findings and risk ratings
+1. **Cloud 安全性 Assessment Report** - Comprehensive findings and risk ratings
 2. **Resource Inventory** - Enumerated services, storage, and compute instances
 3. **Credential Findings** - Exposed secrets, keys, and misconfigurations
 4. **Remediation Recommendations** - Hardening guidance per platform
@@ -360,7 +360,7 @@ sudo cp -r /home/user/.config/gcloud ~/.config
 gcloud auth list
 ```
 
-## Quick Reference
+## 快速参考
 
 ### Azure Key Commands
 
@@ -419,25 +419,25 @@ gcloud auth list
 | MicroBurst | Azure security assessment |
 | PowerZure | Azure post-exploitation |
 
-## Constraints and Limitations
+## 约束条件 and 限制
 
-### Legal Requirements
+### Legal 需求
 - Only test with explicit written authorization
 - Respect scope boundaries between cloud accounts
 - Do not access production customer data
 - Document all testing activities
 
-### Technical Limitations
+### Technical 限制
 - MFA may prevent credential-based attacks
 - Conditional Access policies may restrict access
 - CloudTrail/Activity Logs record all API calls
 - Some resources require specific regional access
 
-### Detection Considerations
+### Detection 考虑ations
 - Cloud providers log all API activity
 - Unusual access patterns trigger alerts
 - Use slow, deliberate enumeration
-- Consider GuardDuty, Security Center, Cloud Armor
+- 考虑 GuardDuty, 安全性 Center, Cloud Armor
 
 ## Examples
 
@@ -503,9 +503,9 @@ gcloud beta compute ssh instance-name --zone us-central1-a --project target-proj
 | Metadata service blocked | Check IMDSv2 (AWS); verify instance role; check firewall for 169.254.169.254 |
 | Rate limiting | Add delays; spread across regions; use multiple credentials; focus on high-value targets |
 
-## References
+## 参考资料
 
 - [Advanced Cloud Scripts](references/advanced-cloud-scripts.md) - Azure Automation runbooks, Function Apps enumeration, AWS data exfiltration, GCP advanced exploitation
 
-## When to Use
+## 何时使用
 This skill is applicable to execute the workflow or actions described in the overview.

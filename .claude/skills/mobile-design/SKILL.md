@@ -1,6 +1,6 @@
 ---
 name: mobile-design
-description: "Mobile Design — Mobile Design 相关功能和最佳实践"
+description: "移动端设计 — 触控优先、平台尊重、移动端体验设计规范"
 risk: unknown
 source: community
 date_added: "2026-02-27"

@@ -16,38 +16,36 @@ tags:
   - career-change
 ---
 
-# CV Generator Skill — FlowCV / Canva Edition
+# CV 生成器技能 — FlowCV / Canva 版本
 
-## When to Use
+## 何时使用
 
-Use this skill when you need to:
-- Generate a professional, ATS-optimized CV from multiple sources (LinkedIn, GitHub, Portfolio).
-- Tailor an existing CV for a specific Job Description (JD).
-- Improve the language, metrics, and structure of a draft resume.
-- Prepare a paste-ready version of your CV for tools like FlowCV or Canva.
+当您需要时使用此技能：
+- 从多个来源（LinkedIn、GitHub、作品集）生成专业的、ATS优化的简历。
+- 为特定的职位描述（JD）定制现有简历。
+- 改进草稿简历的语言、指标和结构。
+- 为FlowCV或Canva等工具准备可粘贴版本的简历。
 
-Turns raw profile data into a polished, ATS-ready CV. Outputs a paste-ready plain-text
-version formatted for FlowCV, Canva, Google Docs, or Word — with a flaw report and
-missing-info checklist.
+将原始个人资料数据转化为精美的、ATS就绪的简历。输出为FlowCV、Canva、Google Docs或Word格式的可粘贴纯文本版本——附带缺陷报告和缺失信息检查清单。
 
 ---
 
-## FLAW REGISTER — KNOWN ISSUES FIXED IN THIS VERSION
+## 缺陷登记 — 此版本中修复的已知问题
 
-The following issues were identified across the two prior skill drafts and are corrected here:
+在之前两个技能草案中发现了以下问题，并在此处进行了纠正：
 
-| # | Flaw | Fix applied |
+| # | 缺陷 | 应用的修复 |
 |---|------|-------------|
-| F-01 | Output was Markdown-first, not paste-ready plain text | Final output is plain text; Markdown is internal staging only |
-| F-02 | FlowCV/Canva field structure was never addressed | Section mapping to tool fields added (section 11c) |
-| F-03 | Questionnaire dumped all 20 questions at once in practice | Hard rule: one question at a time, wait for answer |
-| F-04 | Anti-hallucination rules listed but never enforced structurally | Enforcement gate added before every output (section 10) |
-| F-05 | Cover letter was offered but never scoped for these tools | Cover letter now outputs to a separate plain-text block, not inline |
-| F-06 | ATS check listed but had no scored output | Flaw report now scores 0–100 with per-item pass/fail |
-| F-07 | Seniority detection was "detect or ask" with no fallback | Default is mid-level if undetectable; user is told the assumption |
-| F-08 | No guidance on what FlowCV/Canva cannot render | Added explicit field-by-field paste map (section 11c) |
-| F-09 | Tense rules stated but never verified in quality gate | Tense check is now a hard gate — output blocked until corrected |
-| F-10 | "Passionate about" and similar banned phrases still appeared in examples | Phrase blocklist now machine-checkable (section 7c) |
+| F-01 | 输出是Markdown优先，而不是可粘贴的纯文本 | 最终输出是纯文本；Markdown仅用于内部暂存 |
+| F-02 | 从未处理FlowCV/Canva字段结构 | 添加了到工具字段的章节映射（第11c节） |
+| F-03 | 问卷在实践中一次性转储了所有20个问题 | 硬规则：一次一个问题，等待回答 |
+| F-04 | 列出了防幻觉规则但从未在结构上强制执行 | 在每个输出前添加了强制执行关卡（第10节） |
+| F-05 | 提供了求职信但从未为这些工具定义范围 | 求职信现在输出到单独的纯文本块，而不是内联 |
+| F-06 | 列出了ATS检查但没有评分输出 | 缺陷报告现在评分为0-100分，每个项目都有通过/失败 |
+| F-07 | 资历检测是"检测或询问"，没有回退方案 | 如果无法检测，默认是中级别；告知用户此假设 |
+| F-08 | 没有关于FlowCV/Canva无法呈现内容的指导 | 添加了明确的逐字段粘贴映射（第11c节） |
+| F-09 | 陈述了时态规则但在质量关卡中从未验证 | 时态检查现在是硬关卡——在纠正前阻止输出 |
+| F-10 | "对...充满热情"和类似禁止短语仍出现在示例中 | 短语阻止列表现在可机器检查（第7c节） |
 | F-11 | Nepal/South Asia market conventions were present but incomplete | Confirmed and expanded (section 14) |
 | F-12 | No explicit rule on what to do when LinkedIn scraping is blocked | Hard fallback rule: ask for PDF export immediately, do not proceed empty |
 | F-13 | File naming convention mentioned once, never enforced | File name rule is part of the final output block (section 11) |
@@ -147,7 +145,7 @@ If the page is blocked or returns no content, **stop immediately** and ask:
 If accessible, extract in order:
 1. Full name and headline
 2. Contact information (email, phone, location — public only)
-3. About / Professional Summary
+3. About / Professional 总结
 4. Work experience: title, company, location, dates, bullets
 5. Education: degree, institution, dates, grade/honours
 6. Skills (flag top endorsed skills)
@@ -172,7 +170,7 @@ Hard rules:
 ### Portfolio / personal website
 
 Extract:
-- About / bio → Professional Summary
+- About / bio → Professional 总结
 - Projects: name, description, technologies, outcomes, live/repo URLs
 - Skills and services
 - Testimonials or client logos → Achievements
@@ -242,7 +240,7 @@ Rules:
 ### GitHub profile
 
 Extract:
-- Bio / tagline → supplement Professional Summary
+- Bio / tagline → supplement Professional 总结
 - Pinned repositories: name, description, tech stack, stars/forks
 - Contribution activity (years active, languages used)
 - README content for context on major projects
@@ -257,7 +255,7 @@ Extract:
 
 **Gap over 12 months:** add a neutral framing entry in the experience section;
 highlight any upskilling, freelance, volunteering, or relevant activity during the gap.
-Never fabricate activity.
+绝不 fabricate activity.
 
 **Contract / freelance / part-time:** label employment type clearly. Group multiple
 short contracts under one umbrella entry (e.g. "Freelance Consultant") if they share
@@ -287,7 +285,7 @@ advise the user to have the translation reviewed by a native speaker.
 2. Deduplicate: keep the most detailed version of each entry.
 3. If two sources conflict on a date or title, flag it and ask the user to confirm.
 4. Identify gaps; ask follow-up questions only for critical missing data.
-5. Never fabricate a detail — mark it **[Not provided]** until the user confirms.
+5. 绝不 fabricate a detail — mark it **[Not provided]** until the user confirms.
 
 ---
 
@@ -369,7 +367,7 @@ advise the user to have the translation reviewed by a native speaker.
 
 ## Writing rules
 
-### Professional Summary
+### Professional 总结
 
 Write 3–5 sentences (executive: 5–7) covering:
 1. Who the person is: job title + years of experience
@@ -397,7 +395,7 @@ Rules:
 - 15–30 words per bullet
 - Different verb to open each bullet — never repeat within one role
 - If no metric was provided: write a result-focused statement without inventing numbers
-- Never fabricate metrics — if the user says "we grew a lot", ask for specifics
+- 绝不 fabricate metrics — if the user says "we grew a lot", ask for specifics
 
 Action verb bank:
 
@@ -489,7 +487,7 @@ This is a hard gate — output is blocked until tense is correct:
 | No icons in bullets or headings | Symbols like ➤ ✓ ★ corrupt parsed text |
 | Bullet characters: hyphen (-) or plain dot (•) only | Safe across all ATS platforms |
 | Standard section headings only | Non-standard headings cause misclassification |
-| No "Objective" heading | Flags CV as outdated; use "Professional Summary" |
+| No "Objective" heading | Flags CV as outdated; use "Professional 总结" |
 | Font: minimum 10pt body, 12–14pt headings | Smaller text garbles in PDF-to-text conversion |
 | Margins: minimum 0.5 in / 1.27 cm all sides | Narrow margins cause line-wrapping errors |
 | Spell out all URLs fully | Anchor text loses URL when ATS strips formatting |
@@ -520,7 +518,7 @@ This is a hard gate — output is blocked until tense is correct:
 | iCIMS | DOCX preferred; strips header/footer text |
 | SmartRecruiters | Handles DOCX and PDF; relatively lenient |
 
-Default when platform is unknown: apply Taleo-level strictness.
+默认 when platform is unknown: apply Taleo-level strictness.
 
 ---
 
@@ -530,7 +528,7 @@ When a JD is provided, run four steps:
 
 **Step 1 — Parse:**
 - Job title and seniority signals
-- Required vs preferred qualifications
+- 必需 vs preferred qualifications
 - Hard skills: tools, languages, platforms, methodologies
 - Soft skills and collaboration patterns
 - Industry terminology
@@ -543,7 +541,7 @@ absent.
 **Step 3 — Integrate:**
 - Strengthen weak keyword placements.
 - Weave in missing keywords the user genuinely has experience with.
-- Never add a keyword the user cannot truthfully claim.
+- 绝不 add a keyword the user cannot truthfully claim.
 
 **Step 4 — Report (include at end of output):**
 ```
@@ -575,7 +573,7 @@ Before any output is produced, confirm every item in the CV passes this check.
 | Projects | Only those named by the user |
 
 If any item cannot be verified: mark it **[Not provided]** and include it in the
-missing information checklist (section 11d). Never fill gaps silently.
+missing information checklist (section 11d). 绝不 fill gaps silently.
 
 ---
 
@@ -768,7 +766,7 @@ If yes, output as a **separate clearly labelled plain-text block** — not inlin
 
 Rules:
 - Opens with a specific hook — not "I am writing to apply for…"
-- References company and role by name
+- 参考资料 company and role by name
 - Bridges 2–3 strongest CV points to the JD's key requirements
 - Closes with a clear call to action
 - Matches tone of the target industry
@@ -777,22 +775,22 @@ Rules:
 
 ---
 
-## Limitations
+## 局限性
 
-- **No hallucination.** Never invent a title, company, date, degree, cert, skill, metric, or award.
+- **No hallucination.** 绝不 invent a title, company, date, degree, cert, skill, metric, or award.
 - **No fake metrics.** If the user says "we grew a lot", ask for specifics — never insert a percentage.
 - **Respect source truth.** "Junior Developer" stays "Junior Developer" — suggest a reframe if needed; never silently change it.
 - **No silent changes.** If something is materially reworded, note the change.
 - **One version at a time.** Complete the CV before offering variants.
 - **Privacy.** Do not expose full home address, national ID, DOB, marital status, or religion unless the user's target market requires it.
 - **No keyword stuffing.** Adding skills the user does not have is fraud. Flag gaps; never fabricate.
-- **OCR warning.** Always display before continuing: "OCR was used — please verify the extracted text for accuracy."
+- **OCR warning.** 始终 display before continuing: "OCR was used — please verify the extracted text for accuracy."
 
 ---
 
 ## Country and market conventions
 
-| Market | Length | Photo | DOB | Marital status | References |
+| Market | Length | Photo | DOB | Marital status | 参考资料 |
 |--------|--------|-------|-----|----------------|------------|
 | USA | 1–2 pages | No | No | No | "Available on request" |
 | Canada | 1–2 pages | No | No | No | "Available on request" |
@@ -800,22 +798,22 @@ Rules:
 | Ireland | 2 pages | No | No | No | "Available on request" |
 | Australia / NZ | 2–3 pages | No | No | No | "Available on request" |
 | Germany / Austria / Switzerland | 2–3 pages | Yes (expected) | Yes | Sometimes | Listed or on request |
-| France | 1–2 pages | Optional | No (illegal to require) | No | On request |
-| Netherlands / Scandinavia | 1–2 pages | Optional | No | No | On request |
+| France | 1–2 pages | 可选 | No (illegal to require) | No | On request |
+| Netherlands / Scandinavia | 1–2 pages | 可选 | No | No | On request |
 | Japan | 1–2 pages (rirekisho) | Yes | Yes | Yes | Listed |
 | South Korea | 1–2 pages | Yes | Yes | Yes | Listed |
 | China | 1–2 pages | Yes | Yes | Yes | Listed |
-| India | 2–3 pages | Optional | Yes (common) | Sometimes | Listed |
+| India | 2–3 pages | 可选 | Yes (common) | Sometimes | Listed |
 | Nepal | 2–3 pages | Yes (common) | Yes | Sometimes | Listed |
 | Bangladesh / Sri Lanka | 2–3 pages | Yes (common) | Yes | Sometimes | Listed |
 | UAE / Gulf (GCC) | 2–3 pages | Yes (common) | Yes | Yes (sometimes) | Listed |
 | Nigeria / East Africa | 2–3 pages | Yes (common) | Yes | Sometimes | Listed |
-| South Africa | 3–5 pages | Optional | Yes (common) | No | Listed |
-| Brazil | 1–2 pages | Optional | Yes (common) | No | On request |
+| South Africa | 3–5 pages | 可选 | Yes (common) | No | Listed |
+| Brazil | 1–2 pages | 可选 | Yes (common) | No | On request |
 | Academic (global) | No limit | Varies | Varies | No | Full list required |
 | Executive / board (global) | 2–3 pages | No | No | No | On request |
 
-Default when market is unknown: UK / international conventions (no photo, no DOB, 2 pages,
+默认 when market is unknown: UK / international conventions (no photo, no DOB, 2 pages,
 "Available on request").
 
 ---

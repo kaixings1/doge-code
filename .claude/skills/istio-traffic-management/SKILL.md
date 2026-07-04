@@ -5,35 +5,24 @@ risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
-
-# Istio Traffic Management
-
-Comprehensive guide to Istio traffic management for production service mesh deployments.
-
-## Do not use this skill when
-
-- The task is unrelated to istio traffic management
-- You need a different domain or tool outside this scope
-
-## Instructions
-
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
-
-## Use this skill when
-
-- Configuring service-to-service routing
-- Implementing canary or blue-green deployments
-- Setting up circuit breakers and retries
-- Load balancing configuration
-- Traffic mirroring for testing
-- Fault injection for chaos engineering
-
-## Core Concepts
-
-### 1. Traffic Management Resources
-
-| Resource | Purpose | Scope |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 47 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+# Istio 流量管理
+用于生产服务网格部署的 Istio 流量管理全面指南。
+## 不使用此技能的情况
+- 任务与 Istio 流量管理无关
+- 你需要此范围之外的其他领域或工具
+## 操作指南
+- 明确目标、约束条件和所需输入
+- 应用相关最佳实践并验证结果
+- 提供可操作的步骤和验证方法
+- 如果需要详细示例，请打开 resources/implementation-playbook.md
+## 使用此技能的情况
+- 配置服务到服务的路由
+- 实施金丝雀或蓝绿部署
+- 设置断路器和重试机制
+- 负载均衡配置
+- 用于测试的流量镜像
+- 用于混沌工程的故障注入
+## 核心概念
+### 1. 流量管理资源
+| 资源 | 用途 | 范围 |
+|---|---|---|

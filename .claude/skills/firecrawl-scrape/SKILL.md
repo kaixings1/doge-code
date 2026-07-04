@@ -8,7 +8,7 @@ allowed-tools:
 
 # firecrawl scrape
 
-Scrape one or more URLs. Returns clean, LLM-optimized markdown. Multiple URLs are scraped concurrently.
+Scrape one or more URLs. 返回值 clean, LLM-optimized markdown. Multiple URLs are scraped concurrently.
 
 ## When to use
 
@@ -53,11 +53,11 @@ firecrawl scrape "https://example.com/pricing" --query "What is the enterprise p
 
 ## Tips
 
-- **Prefer plain scrape over `--query`.** Scrape to a file, then use `grep`, `head`, or read the markdown directly — you can search and reason over the full content yourself. Use `--query` only when you want a single targeted answer without saving the page (costs 5 extra credits).
+- **优先 plain scrape over `--query`.** Scrape to a file, then use `grep`, `head`, or read the markdown directly — you can search and reason over the full content yourself. Use `--query` only when you want a single targeted answer without saving the page (costs 5 extra credits).
 - **Try scrape before interact.** Scrape handles static pages and JS-rendered SPAs. Only escalate to `interact` when you need interaction (clicks, form fills, pagination).
 - Multiple URLs are scraped concurrently — check `firecrawl --status` for your concurrency limit.
 - Single format outputs raw content. Multiple formats (e.g., `--format markdown,links`) output JSON.
-- Always quote URLs — shell interprets `?` and `&` as special characters.
+- 始终 quote URLs — shell interprets `?` and `&` as special characters.
 - Naming convention: `.firecrawl/{site}-{path}.md`
 
 ## See also

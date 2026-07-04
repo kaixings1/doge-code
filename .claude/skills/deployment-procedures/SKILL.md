@@ -6,18 +6,18 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Deployment Procedures
+# 部署流程
 
-> Deployment principles and decision-making for safe production releases.
-> **Learn to THINK, not memorize scripts.**
+> 安全生产发布的原则和决策方法。
+> **学会思考，而不是记忆脚本。**
 
 ---
 
-## ⚠️ How to Use This Skill
+## ⚠️ 如何使用此技能
 
-This skill teaches **deployment principles**, not bash scripts to copy.
+此技能教授**部署原则**，而不是可复制的 bash 脚本。
 
-- Every deployment is unique
+- 每次部署都是独特的
 - Understand the WHY behind each step
 - Adapt procedures to your platform
 
@@ -245,7 +245,7 @@ Before deploying:
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

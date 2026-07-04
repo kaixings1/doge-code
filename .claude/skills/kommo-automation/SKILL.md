@@ -7,10 +7,8 @@ requires:
     - rube
 ---
 
-# Kommo Automation
+# Kommo 自动化
 
-Manage your Kommo CRM sales pipeline -- list and filter leads, navigate pipeline stages, create and update deals, assign tasks, and work with custom fields -- all through natural language commands.
+管理您的 Kommo CRM 销售管道——通过自然语言命令列出和筛选潜在客户、导航管道阶段、创建和更新交易、分配任务以及处理自定义字段。
 
-**Toolkit docs:** [composio.dev/toolkits/kommo](https://composio.dev/toolkits/kommo)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 19 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+**工具包文档:** [composio.dev/toolkits/kommo](https://composio.dev/toolkits/kommo)

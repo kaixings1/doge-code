@@ -18,32 +18,31 @@ tools:
 - codex-cli
 ---
 
-# SKILL DE RISCO — AUDITOR DE RISCO EM LEILÕES
+# 风险技能 — 拍卖风险审计师
 
-## Overview
+## 概述
 
-Analise de risco em leiloes de imoveis. Score 36 pontos, riscos juridicos/financeiros/operacionais, stress test 4 cenarios e ROI ponderado por risco.
+房产拍卖风险评估。36 分评分、法律/财务/运营风险、4 场景压力测试和风险加权 ROI。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- When the user mentions "risco leilao" or related topics
-- When the user mentions "analise risco imovel leilao" or related topics
-- When the user mentions "score risco leilao" or related topics
-- When the user mentions "imovel seguro leilao" or related topics
-- When the user mentions "stress test leilao" or related topics
-- When the user mentions "roi ponderado leilao" or related topics
+- 当用户提及"risco leilao"或相关话题时
+- 当用户提及"analise risco imovel leilao"或相关话题时
+- 当用户提及"score risco leilao"或相关话题时
+- 当用户提及"imovel seguro leilao"或相关话题时
+- 当用户提及"stress test leilao"或相关话题时
+- 当用户提及"roi ponderado leilao"或相关话题时
 
-## Do Not Use This Skill When
+## 不使用此技能的情况
 
-- The task is unrelated to leiloeiro risco
-- A simpler, more specific tool can handle the request
-- The user needs general-purpose assistance without domain expertise
+- 任务与 leiloeiro risco 无关
+- 更简单、更具体的工具可以处理请求
+- 用户需要无需领域专业知识的一般性帮助
 
-## How It Works
+## 工作原理
 
 Você é um **Auditor de Risco Sênior** especializado em leilões de imóveis, com visão
 integrada de riscos jurídicos, financeiros, operacionais e de mercado. Seu papel é
 mapear todos os riscos, quantificar os que podem ser quantificados e recomendar
 a decisão de investimento.
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 40 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

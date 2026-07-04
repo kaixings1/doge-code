@@ -5,16 +5,16 @@ risk: unknown
 source: community
 ---
 
-# Claude Settings Audit
+# Claude 设置审计
 
-Analyze this repository and generate recommended Claude Code `settings.json` permissions for read-only commands.
+分析此仓库并为只读命令生成推荐的 Claude Code `settings.json` 权限。
 
-## When to Use
-- You are setting up or auditing Claude Code `settings.json` permissions for a repository.
-- You need to infer a safe read-only allow list from the repo's tech stack, tooling, and monorepo structure.
-- You want to review or replace an existing Claude permissions baseline with something evidence-based.
+## 何时使用
+- 您正在为仓库设置或审计 Claude Code `settings.json` 权限。
+- 您需要从仓库的技术栈、工具和单体仓库结构推断出安全的只读允许列表。
+- 您想要用基于证据的内容审查或替换现有的 Claude 权限基线。
 
-## Phase 1: Detect Tech Stack
+## 阶段 1：检测技术栈
 
 Run these commands to detect the repository structure:
 
@@ -48,7 +48,7 @@ Check for service integrations:
 
 Read dependency files to identify frameworks:
 
-- `package.json` → check `dependencies` and `devDependencies`
+- `package.json` → check `dependencies` and `dev依赖项`
 - `pyproject.toml` → check `[project.dependencies]` or `[tool.poetry.dependencies]`
 - `Gemfile` → check gem names
 - `Cargo.toml` → check `[dependencies]`
@@ -63,7 +63,7 @@ cat .claude/settings.json 2>/dev/null || echo "No existing settings"
 
 Build the allow list by combining:
 
-### Baseline Commands (Always Include)
+### Baseline Commands (始终 Include)
 
 ```json
 [
@@ -177,7 +177,7 @@ If this is a Sentry project (or sentry-skills plugin is installed), include:
 
 ### WebFetch Domains
 
-#### Always Include (Sentry Projects)
+#### 始终 Include (Sentry Projects)
 
 ```json
 [
@@ -206,7 +206,7 @@ If this is a Sentry project (or sentry-skills plugin is installed), include:
 | **Kubernetes** | `kubernetes.io`                                 |
 | **Terraform**  | `registry.terraform.io`                         |
 
-### MCP Server Suggestions
+### MCP 服务器 Suggestions
 
 MCP servers are configured in `.mcp.json` (not `settings.json`). Check for existing config:
 
@@ -247,13 +247,13 @@ Add to `.mcp.json`:
 }
 ```
 
-**Note**: Never suggest GitHub MCP. Always use `gh` CLI commands for GitHub.
+**Note**: 绝不 suggest GitHub MCP. 始终 use `gh` CLI commands for GitHub.
 
 ## Output Format
 
 Present your findings as:
 
-1. **Summary Table** - What was detected
+1. **总结 Table** - What was detected
 2. **Recommended settings.json** - Complete JSON ready to copy
 3. **MCP Suggestions** - If applicable
 4. **Merge Instructions** - If existing settings found
@@ -300,8 +300,8 @@ If you use Sentry or Linear, add the MCP config to `.mcp.json`...
 
 ### What to NEVER Include
 
-- **Absolute paths** - Never include user-specific paths like `/home/user/scripts/foo` or `/Users/name/bin/bar`
-- **Custom scripts** - Never include project scripts that may have side effects (e.g., `./scripts/deploy.sh`)
+- **Absolute paths** - 绝不 include user-specific paths like `/home/user/scripts/foo` or `/Users/name/bin/bar`
+- **Custom scripts** - 绝不 include project scripts that may have side effects (e.g., `./scripts/deploy.sh`)
 - **Alternative package managers** - If the project uses pnpm, do NOT include npm/yarn commands
 - **Commands that modify state** - No install, build, run, write, or delete commands
 
@@ -309,7 +309,7 @@ If you use Sentry or Linear, add the MCP config to `.mcp.json`...
 
 Only include the package manager actually used by the project:
 
-| If Detected         | Include         | Do NOT Include                         |
+| If Detected         | Include         | 不要 Include                         |
 | ------------------- | --------------- | -------------------------------------- |
 | `pnpm-lock.yaml`    | pnpm commands   | npm, yarn                              |
 | `yarn.lock`         | yarn commands   | npm, pnpm                              |
@@ -320,7 +320,7 @@ Only include the package manager actually used by the project:
 
 If multiple lock files exist, include only the commands for each detected manager.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

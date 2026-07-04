@@ -6,17 +6,17 @@ version: 1.0.0
 
 # CPG 分析
 
-## What is a Code Property Graph?
+## 什么是代码属性图？
 
-A Code Property Graph (CPG) is a unified data structure that combines three representations of code:
+代码属性图（CPG）是一种统一的数据结构，结合了代码的三种表示形式：
 
-1. **Abstract Syntax Tree (AST)** - Structural representation
-2. **Control Flow Graph (CFG)** - Execution paths
-3. **Program Dependence Graph (PDG)** - Data and control dependencies
+1. **抽象语法树（AST）**— 结构表示
+2. **控制流图（CFG）**— 执行路径
+3. **程序依赖图（PDG）**— 数据和控制依赖
 
-This combination enables powerful semantic queries that pattern-matching tools cannot achieve.
+这种组合实现了模式匹配工具无法实现的强大语义查询。
 
-## When to Use CPG vs Pattern Matching
+## 何时使用 CPG 与模式匹配
 
 | Approach | Use When | Example |
 |----------|----------|---------|
@@ -25,7 +25,7 @@ This combination enables powerful semantic queries that pattern-matching tools c
 
 **Rule of thumb**: Use CPG when you need to prove data flows between points, especially across function boundaries.
 
-## Joern Overview
+## Joern 概述
 
 Joern is the primary tool for CPG analysis. It:
 - Parses source code into CPG representation
@@ -51,7 +51,7 @@ joern
 
 CPGQL uses Scala syntax with CPG-specific operations.
 
-### Core Concepts
+### 核心概念
 
 **Nodes**: Represent code elements
 - `cpg.method` - All methods/functions
@@ -103,12 +103,12 @@ After CPG verification:
 | No flow found | LOW (0.3-0.6) | May be false positive or complex flow |
 | Verification failed | UNKNOWN | Query error, manual analysis required |
 
-## Skill References
+## Skill 参考资料
 
 - `references/cpgql-patterns.md` - Common vulnerability query patterns
 - `references/joern-cheatsheet.md` - Quick Joern/CPGQL reference
 
-## Related Skills
+## 相关 Skills
 
 - **data-flow-tracing** - Manual source-to-sink analysis
 - **dangerous-functions** - Sink identification by language

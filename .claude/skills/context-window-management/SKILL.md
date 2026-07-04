@@ -7,11 +7,11 @@ source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
 ---
 
-# Context Window Management
+# 上下文窗口管理
 
-Strategies for managing LLM context windows including summarization, trimming, routing, and avoiding context rot
+管理 LLM 上下文窗口的策略 including summarization, trimming, routing, and avoiding context rot
 
-## Capabilities
+## 能力
 
 - context-engineering
 - context-summarization
@@ -20,17 +20,17 @@ Strategies for managing LLM context windows including summarization, trimming, r
 - token-counting
 - context-prioritization
 
-## Prerequisites
+## 前提条件
 
 - Knowledge: LLM fundamentals, Tokenization basics, Prompt engineering
 - Skills_recommended: prompt-engineering
 
-## Scope
+## 范围
 
 - Does_not_cover: RAG implementation details, Model fine-tuning, Embedding models
 - Boundaries: Focus is context optimization, Covers strategies not specific implementations
 
-## Ecosystem
+## 生态系统
 
 ### Primary_tools
 
@@ -38,9 +38,9 @@ Strategies for managing LLM context windows including summarization, trimming, r
 - LangChain - Framework with context management utilities
 - Claude API - 200K+ context with caching support
 
-## Patterns
+## 模式
 
-### Tiered Context Strategy
+### 分层上下文策略
 
 Different strategies based on context size
 
@@ -87,7 +87,7 @@ async function prepareContext(messages: Message[]): PreparedContext {
     }
 }
 
-### Serial Position Optimization
+### 序列位置优化
 
 Place important content at start and end
 
@@ -132,7 +132,7 @@ function buildOptimalPrompt(components: {
     return parts.join('\n\n');
 }
 
-### Intelligent Summarization
+### 智能摘要
 
 Summarize by importance, not just recency
 
@@ -187,7 +187,7 @@ async function smartSummarize(
     return keep.sort((a, b) => a.timestamp - b.timestamp);
 }
 
-### Token Budget Allocation
+### Token 预算分配
 
 Allocate token budget across context components
 
@@ -242,7 +242,7 @@ async function buildWithBudget(
     return prepared;
 }
 
-## Validation Checks
+## 验证检查
 
 ### No Token Counting
 
@@ -276,15 +276,15 @@ Message: LLM calls without context management strategy.
 
 Fix action: Implement context management: budgets, summarization, or RAG
 
-## Collaboration
+## 协作
 
-### Delegation Triggers
+### 委托触发器
 
 - retrieval|rag|search -> rag-implementation (Need retrieval system)
 - memory|persistence|remember -> conversation-memory (Need memory storage)
 - cache|caching -> prompt-caching (Need caching optimization)
 
-### Complete Context System
+### 完整上下文系统
 
 Skills: context-window-management, rag-implementation, conversation-memory, prompt-caching
 
@@ -297,11 +297,11 @@ Workflow:
 4. Add caching for performance
 ```
 
-## Related Skills
+## 相关技能
 
 Works well with: `rag-implementation`, `conversation-memory`, `prompt-caching`, `llm-npc-dialogue`
 
-## When to Use
+## 何时使用
 - User mentions or implies: context window
 - User mentions or implies: token limit
 - User mentions or implies: context management
@@ -309,7 +309,7 @@ Works well with: `rag-implementation`, `conversation-memory`, `prompt-caching`, 
 - User mentions or implies: long context
 - User mentions or implies: context overflow
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

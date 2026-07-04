@@ -1,18 +1,34 @@
 ---
 name: writing-hookify-rules
-description: 当用户要求"创建 hookify 规则"、"编写 hook 规则"、"配置 hookify"、"添加 hookify 规则"或需要 hookify 规则语法与模式指导时使用此技能。
+description: 当用户要求创建 hookify 规则、编写 hook 规则、配置 hookify、添加 hookify 规则或需要 hookify 规则语法与模式指导时使用此技能。
 version: 0.1.0
 ---
 
-# Writing Hookify Rules
+# 编写 Hookify 规则
 
-## Overview
+## 概述
 
-Hookify rules are markdown files with YAML frontmatter that define patterns to watch for and messages to show when those patterns match. Rules are stored in `.claude/hookify.{rule-name}.local.md` files.
+Hookify 规则是带有 YAML 前置元数据的 Markdown 文件，用于定义要监视的模式，以及在匹配这些模式时显示的消息。规则存储在 .claude/hookify.{规则名称}.local.md 文件中。
 
-## Rule File Format
+## 规则文件格式
 
-### Basic Structure
+### 基本结构
 
 ```markdown
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 31 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+---
+name: my-rule
+description: 简短描述此规则的用途
+---
+
+# 规则名称
+
+## 模式
+
+- 描述要监视的内容
+- 使用正则表达式或文本匹配
+
+## 消息
+
+- 当模式匹配时显示的内容
+- 提供指导或警告
+```

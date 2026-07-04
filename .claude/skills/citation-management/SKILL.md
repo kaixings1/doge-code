@@ -1,24 +1,24 @@
 ---
 name: citation-management
 description: "在整个研究和写作过程中系统地管理引用。"
-license: MIT License
+license: MIT 许可证
 metadata:
     skill-author: K-Dense Inc.
 risk: unknown
 source: community
 ---
 
-# Citation Management
+# 引用管理
 
-## Overview
+## 概述
 
-Manage citations systematically throughout the research and writing process. This skill provides tools and strategies for searching academic databases (Google Scholar, PubMed), extracting accurate metadata from multiple sources (CrossRef, PubMed, arXiv), validating citation information, and generating properly formatted BibTeX entries.
+在整个研究和写作过程中系统地管理引用。此技能提供了搜索学术数据库（Google Scholar、PubMed）、从多个来源（CrossRef、PubMed、arXiv）提取准确的元数据、验证引用信息以及生成格式正确的 BibTeX 条目的工具和策略。
 
-Critical for maintaining citation accuracy, avoiding reference errors, and ensuring reproducible research. Integrates seamlessly with the literature-review skill for comprehensive research workflows.
+对于维护引用准确性、避免参考文献错误和确保可复现研究至关重要。与文献综述技能无缝集成，形成全面的研究工作流。
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when:
+使用此技能当:
 - Searching for specific papers on Google Scholar or PubMed
 - Converting DOIs, PMIDs, or arXiv IDs to properly formatted BibTeX
 - Extracting complete metadata for citations (authors, title, journal, year, etc.)
@@ -207,7 +207,7 @@ python scripts/extract_metadata.py --input identifiers.txt --output citations.bi
    - Free access
 
 **What Gets Extracted**:
-- **Required fields**: author, title, year
+- **必需 fields**: author, title, year
 - **Journal articles**: journal, volume, number, pages, DOI
 - **Books**: publisher, ISBN, edition
 - **Conference papers**: booktitle, conference location, pages
@@ -230,7 +230,7 @@ See `references/bibtex_formatting.md` for complete guide.
 - `@phdthesis`: Dissertations
 - `@misc`: Preprints, software, datasets
 
-**Required Fields by Type**:
+**必需 Fields by Type**:
 
 ```bibtex
 @article{citationkey,
@@ -328,7 +328,7 @@ python scripts/validate_citations.py references.bib \
    - Metadata matches between BibTeX and CrossRef
    - No broken or invalid DOIs
 
-2. **Required Fields**:
+2. **必需 Fields**:
    - All required fields present for entry type
    - No empty or missing critical information
    - Author names properly formatted
@@ -380,9 +380,9 @@ python scripts/validate_citations.py references.bib \
 }
 ```
 
-### Phase 5: Integration with Writing Workflow
+### Phase 5: 集成 with Writing Workflow
 
-#### Building References for Manuscripts
+#### Building 参考资料 for Manuscripts
 
 Complete workflow for creating a bibliography:
 
@@ -423,7 +423,7 @@ cat validation.json
 # \bibliography{final_references}
 ```
 
-#### Integration with Literature Review Skill
+#### 集成 with Literature Review Skill
 
 This skill complements the `literature-review` skill:
 
@@ -453,7 +453,7 @@ python scripts/format_bibtex.py my_review_references.bib \
 
 **Finding Seminal and High-Impact Papers** (CRITICAL):
 
-Always prioritize papers based on citation count, venue quality, and author reputation:
+始终 prioritize papers based on citation count, venue quality, and author reputation:
 
 **Citation Count Thresholds:**
 | Paper Age | Citations | Classification |
@@ -466,7 +466,7 @@ Always prioritize papers based on citation count, venue quality, and author repu
 | 7+ years | 1000+ | Foundational |
 
 **Venue Quality Tiers:**
-- **Tier 1 (Prefer):** Nature, Science, Cell, NEJM, Lancet, JAMA, PNAS
+- **Tier 1 (优先):** Nature, Science, Cell, NEJM, Lancet, JAMA, PNAS
 - **Tier 2 (High Priority):** Impact Factor >10, top conferences (NeurIPS, ICML, ICLR)
 - **Tier 3 (Good):** Specialized journals (IF 5-10)
 - **Tier 4 (Sparingly):** Lower-impact peer-reviewed venues
@@ -548,7 +548,7 @@ AND "Clinical Trial"[Publication Type] AND 2020:2024[Publication Date]
 The scripts use NCBI E-utilities API for programmatic access:
 - **ESearch**: Search and retrieve PMIDs
 - **EFetch**: Retrieve full metadata
-- **ESummary**: Get summary information
+- **E总结**: Get summary information
 - **ELink**: Find related articles
 
 See `references/pubmed_search.md` for complete API documentation.
@@ -566,7 +566,7 @@ Search Google Scholar and export results.
 - Export to JSON or BibTeX
 - Citation count information
 
-**Usage**:
+**用法**:
 ```bash
 # Basic search
 python scripts/search_google_scholar.py "quantum computing"
@@ -597,7 +597,7 @@ Search PubMed using E-utilities API.
 - Batch retrieval with metadata
 - Export to JSON or BibTeX
 
-**Usage**:
+**用法**:
 ```bash
 # Simple keyword search
 python scripts/search_pubmed.py "CRISPR gene editing"
@@ -629,7 +629,7 @@ Extract complete metadata from paper identifiers.
 - Batch processing
 - Multiple output formats
 
-**Usage**:
+**用法**:
 ```bash
 # Single DOI
 python scripts/extract_metadata.py --doi 10.1038/s41586-021-03819-2
@@ -661,13 +661,13 @@ Validate BibTeX entries for accuracy and completeness.
 
 **Features**:
 - DOI verification via doi.org and CrossRef
-- Required field checking
+- 必需 field checking
 - Duplicate detection
 - Format validation
 - Auto-fix common issues
 - Detailed reporting
 
-**Usage**:
+**用法**:
 ```bash
 # Basic validation
 python scripts/validate_citations.py references.bib
@@ -699,7 +699,7 @@ Format and clean BibTeX files.
 - Fix common errors
 - Enforce citation key conventions
 
-**Usage**:
+**用法**:
 ```bash
 # Basic formatting
 python scripts/format_bibtex.py references.bib
@@ -734,7 +734,7 @@ Quick DOI to BibTeX conversion.
 - Multiple output formats
 - Clipboard support
 
-**Usage**:
+**用法**:
 ```bash
 # Single DOI
 python scripts/doi_to_bibtex.py 10.1038/s41586-021-03819-2
@@ -779,7 +779,7 @@ python scripts/doi_to_bibtex.py 10.1038/nature12345 --clipboard
 
 ### Metadata Extraction
 
-1. **Always use DOIs when available**:
+1. **始终 use DOIs when available**:
    - Most reliable identifier
    - Permanent link to the publication
    - Best metadata source via CrossRef
@@ -867,10 +867,10 @@ python scripts/doi_to_bibtex.py 10.1038/nature12345 --clipboard
    - **Solution**: Use proper escaping or Unicode in BibTeX
 
 9. **No validation before submission**: Submitting with citation errors
-   - **Solution**: Always run validation as final check
+   - **Solution**: 始终 run validation as final check
 
 10. **Manual BibTeX entry**: Typing entries by hand
-    - **Solution**: Always extract from metadata sources using scripts
+    - **Solution**: 始终 extract from metadata sources using scripts
 
 ## Example Workflows
 
@@ -997,7 +997,7 @@ python scripts/extract_metadata.py \
 # The BibTeX file now contains the most influential papers
 ```
 
-## Integration with Other Skills
+## 集成 with Other Skills
 
 ### Literature Review Skill
 
@@ -1032,7 +1032,7 @@ python scripts/extract_metadata.py \
 
 ### Bundled Resources
 
-**References** (in `references/`):
+**参考资料** (in `references/`):
 - `google_scholar_search.md`: Complete Google Scholar search guide
 - `pubmed_search.md`: PubMed and E-utilities API documentation
 - `metadata_extraction.md`: Metadata sources and field requirements
@@ -1073,9 +1073,9 @@ python scripts/extract_metadata.py \
 - BibTeX documentation: http://www.bibtex.org/
 - LaTeX bibliography management: https://www.overleaf.com/learn/latex/Bibliography_management
 
-## Dependencies
+## 依赖项
 
-### Required Python Packages
+### 必需 Python Packages
 
 ```bash
 # Core dependencies
@@ -1089,7 +1089,7 @@ pip install scholarly  # Google Scholar API wrapper
 pip install selenium  # For more robust Scholar scraping
 ```
 
-### Optional Tools
+### 可选 Tools
 
 ```bash
 # For advanced validation
@@ -1097,7 +1097,7 @@ pip install crossref-commons  # Enhanced CrossRef API access
 pip install pylatexenc  # LaTeX special character handling
 ```
 
-## Summary
+## 总结
 
 The citation-management skill provides:
 
@@ -1106,12 +1106,12 @@ The citation-management skill provides:
 3. **Citation validation** with DOI verification and completeness checking
 4. **BibTeX formatting** with standardization and cleaning tools
 5. **Quality assurance** through validation and reporting
-6. **Integration** with scientific writing workflow
+6. **集成** with scientific writing workflow
 7. **Reproducibility** through documented search and extraction methods
 
 Use this skill to maintain accurate, complete citations throughout your research and ensure publication-ready bibliographies.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
