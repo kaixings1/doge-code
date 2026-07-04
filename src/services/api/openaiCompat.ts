@@ -245,11 +245,14 @@ export function convertAnthropicRequestToOpenAI(input: {
           },
         }))
 
+      // 注意：不保留 reasoning_content。
+      // 某些 thinking 模式 API（如 DeepSeek）要求 assistant 消息中如果带 reasoning_content，
+      // 必须伴随实际的 thinking 令牌一起返回，但历史消息中的 reasoning_content 只是上次推理结果，
+      // 再次发送会触发 "The reasoning_content in the thinking mode must be passed back" 错误。
       messages.push({
         role: 'assistant',
         content: text || null,
         ...(toolCalls.length > 0 ? { tool_calls: toolCalls } : {}),
-        ...(reasoningContent ? { reasoning_content: reasoningContent } : {}),
       })
       logForDebugging(`[openaiCompat] 添加 assistant 消息 (text长度=${text.length}, toolCalls数量=${toolCalls.length}, reasoning_content=${reasoningContent ? '有' : '无'})`, { level: 'debug' })
     }

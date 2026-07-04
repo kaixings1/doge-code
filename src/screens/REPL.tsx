@@ -1560,7 +1560,7 @@ export function REPL({
   const onlySleepToolActive = useMemo(() => {
     const lastAssistant = messages.findLast(m => m.type === 'assistant');
     if (lastAssistant?.type !== 'assistant') return false;
-    const inProgressToolUses = lastAssistant.message.content.filter(b => b.type === 'tool_use' && inProgressToolUseIDs.has(b.id));
+    const inProgressToolUses = (Array.isArray(lastAssistant.message.content) ? lastAssistant.message.content : []).filter(b => b.type === 'tool_use' && inProgressToolUseIDs.has(b.id));
     return inProgressToolUses.length > 0 && inProgressToolUses.every(b => b.type === 'tool_use' && b.name === SLEEP_TOOL_NAME);
   }, [messages, inProgressToolUseIDs]);
   const {

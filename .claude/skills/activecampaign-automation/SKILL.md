@@ -6,48 +6,47 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# ActiveCampaign Automation via Rube MCP
+# 通过 Rube MCP 实现 ActiveCampaign 自动化
 
-Automate ActiveCampaign CRM and marketing automation operations through Composio's ActiveCampaign toolkit via Rube MCP.
+通过 Composio 的 ActiveCampaign 工具包和 Rube MCP 自动化 ActiveCampaign CRM 和营销自动化操作。
 
-## Prerequisites
+## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active ActiveCampaign connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `active_campaign`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 ActiveCampaign 连接，使用工具包 `active_campaign`
+- 始终首先调用 `RUBE_SEARCH_TOOLS` 以获取当前工具模式
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**: 在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加端点即可工作。
 
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 是否可用
+2. 使用工具包 `active_campaign` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE 状态，请按照返回的身份验证链接完成 ActiveCampaign 认证
+4. 在运行任何工作流之前确认连接状态显示为 ACTIVE
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `active_campaign`
-3. If connection is not ACTIVE, follow the returned auth link to complete ActiveCampaign authentication
-4. Confirm connection status shows ACTIVE before running any workflows
+## 核心工作流
 
-## Core Workflows
+### 1. 创建和查找联系人
 
-### 1. Create and Find Contacts
+**何时使用**: 用户想要创建新联系人或查找现有联系人
 
-**When to use**: User wants to create new contacts or look up existing ones
+**工具序列**:
+1. `ACTIVE_CAMPAIGN_FIND_CONTACT` - 搜索现有联系人 [可选]
+2. `ACTIVE_CAMPAIGN_CREATE_CONTACT` - 创建新联系人 [必需]
 
-**Tool sequence**:
-1. `ACTIVE_CAMPAIGN_FIND_CONTACT` - Search for an existing contact [Optional]
-2. `ACTIVE_CAMPAIGN_CREATE_CONTACT` - Create a new contact [Required]
+**查找的关键参数**:
+- `email`: 按电子邮件地址搜索
+- `id`: 按 ActiveCampaign 联系人ID搜索
+- `phone`: 按电话号码搜索
 
-**Key parameters for find**:
-- `email`: Search by email address
-- `id`: Search by ActiveCampaign contact ID
-- `phone`: Search by phone number
-
-**Key parameters for create**:
-- `email`: Contact email address (required)
-- `first_name`: Contact first name
-- `last_name`: Contact last name
-- `phone`: Contact phone number
-- `organization_name`: Contact's organization
-- `job_title`: Contact's job title
+**创建的关键参数**:
+- `email`: 联系人电子邮件地址（必需）
+- `first_name`: 联系人名字
+- `last_name`: 联系人姓氏
+- `phone`: 联系人电话号码
+- `organization_name`: 联系人的组织
+- `job_title`: 联系人的职位
 - `tags`: Comma-separated list of tags to apply
 
 **Pitfalls**:

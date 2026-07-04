@@ -1,204 +1,551 @@
 // Backfill sessions - retrieve and restore historical session data
-import type { Command, LocalCommandCall } from ' ../../types/command.js '
-import fs from 'fs'
-import path from 'path'
+import type { Command, LocalCommandCall } from '../../types/command.js';
+import fs from 'fs';
+import path from 'path';
 
-interface SessionMeta {
- id?: string
- title?: string
- createdAt?: string | number
- updatedAt?: string | number
- model?: string
- tags?: string[]
-}
+const SESSION_DIR = path.join(process.env.HOME || process.env.USERPROFILE || '.', '.doge', 'sessions');
 
 interface SessionInfo {
- name: string
- meta: SessionMeta
- isValid: boolean
- hasMessages: boolean
- sizeBytes: number
+  id: string;
+  name: string;
+  timestamp: string;
+  messageCount: number;
+  size: number;
+  isEmpty: boolean;
 }
 
-const call: LocalCommandCall = async (args: string, context) => {
- const _ctx = context || {}
- const action = (args || '').trim().toLowerCase()
+const call: LocalCommandCall = async (args: string) => {
+  const action = (args || '').trim().toLowerCase();
 
- if (action === 'help' || action === '') {
- return { type: 'text' as const, value: [
- '💾 会话回填工具', '', '用法:',
- ' /backfill-sessions list',
- ' /backfill-sessions stats',
- ' /backfill-sessions search <keyword>',
- ' /backfill-sessions find-empty',
- ' /backfill-sessions cleanup',
- ].join(\n) }
- }
- if (action === 'list' || action === 'ls') return listSessions()
- if (action === 'stats' || action === 'st') return showStats()
- if (action.startsWith('search ')) {
- const kw = action.replace(/^search\s+/,'').trim()
- return searchSessions(kw)
- }
- if (action === 'find-empty' || action === 'empty') return findEmptySessions()
- if (action === 'cleanup' || action === 'clean') return cleanupSessions()
- return { type: 'text' as const, value: 'Unknown action.' }
-}
-function getDogeDir(): string {
- return path.join(process.env.HOME || process.env.USERPROFILE || '.', '.doge')
-}
+  if (action === 'help' || action === '') {
+    return {
+      type: 'text' as const,
+      value: [
+        '💾 会话回填工具',
+        '',
+        '用法:',
+        ' /backfill-sessions list - 列出所有会话',
+        ' /backfill-sessions stats - 显示统计信息',
+        ' /backfill-sessions search <keyword> - 搜索会话',
+        ' /backfill-sessions find-empty - 查找空会话',
+        ' /backfill-sessions cleanup - 清理无效会话',
+        ' /backfill-sessions restore <id> - 恢复指定会话',
+        ' /backfill-sessions backup - 备份当前会话',
+        '',
+        '示例:',
+        ' /backfill-sessions list',
+        ' /backfill-sessions search "error"',
+        ' /backfill-sessions restore 123456'
+      ].join('\n')
+    };
+  }
 
-function scanSessionsDir(): SessionInfo[] {
- const sd = path.join(getDogeDir(), 'sessions')
- const res: SessionInfo[] = []
- if (!fs.existsSync(sd)) return res
- try {
- const entries = fs.readdirSync(sd, { withFileTypes: true })
- for (const e of entries) {
- if (!e.isDirectory()) continue
- const dp = path.join(sd, e.name)
- let meta: SessionMeta = {}
- let valid = false
- let hasMsg = false
- let sz = 0
- try {
- const mp = path.join(dp, 'meta.json')
- if (fs.existsSync(mp)) {
- const raw = fs.readFileSync(mp, 'utf-8')
- meta = JSON.parse(raw) as SessionMeta
- valid = !!(meta && meta.id)
- sz += Buffer.byteLength(raw, 'utf-8')
- }
- } catch { valid = false }
- try {
- const msp = path.join(dp, 'messages.json')
- if (fs.existsSync(msp)) {
- const mr = fs.readFileSync(msp, 'utf-8')
- hasMsg = mr.length > 0
- sz += Buffer.byteLength(mr, 'utf-8')
- }
- } catch { hasMsg = false }
- try {
- const ff = fs.readdirSync(dp)
- for (const fi of ff) {
- const fp = path.join(dp, fi)
- try { if (fs.statSync(fp).isFile()) sz += fs.statSync(fp).size } catch {}
- }
- } catch {}
- res.push({ name: e.name, meta, isValid: valid, hasMessages: hasMsg, sizeBytes: sz })
- }
- } catch {}
- return res
-}
+  try {
+    if (action === 'list') {
+      return await listSessions();
+    }
 
-function fmtSize(b: number): string {
- if (b < 1024) return `${b} B`
- if (b < 1048576) return `${(b/1024).toFixed(1)} KB`
- return `${(b/1048576).toFixed(1)} MB`
-}
+    if (action === 'stats') {
+      return await showStats();
+    }
 
-function fmtDate(v: string | number | undefined): string {
- if (!v) return '未知'
- try {
- const d = new Date(typeof v === 'number' ? v : parseInt(v))
- if (isNaN(d.getTime())) return typeof v === 'string' ? v : '未知'
- return d.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })
- } catch { return typeof v === 'string' ? v : '未知' }
-}
-function listSessions(): ReturnType<typeof call> {
- const ss = scanSessionsDir()
- if (ss.length === 0) return { type: 'text' as const, value: '未找到任何会话目录。' }
- const ls: string[] = [
- `${📂 会话列表 ('${ss.length} 个会话)}`,
- '',
- `${ '${名称}.padEnd(36) '${有效}.padEnd(6) '${消息}.padEnd(8) '${大小}.padEnd(8) '${标题}}`,
- `${ '${-}.repeat(36) '${-}.repeat(6) '${-}.repeat(8) '${-}.repeat(8) '${-}.repeat(30)}`,
- ]
- for (const s of ss) {
- const t = s.meta.title || '(无标题)'
- const mc = s.hasMessages ? '有' : '无'
- ls.push(`${ '${s.name.padEnd(36) '${(s.isValid ? '✹' : '❌').padEnd(6) '${mc.padEnd(8) '${fmtSize(s.sizeBytes).padEnd(8) '${t.substring(0, 30)}}`)
- }
- ls.push('')
- ls.push(`${总计: '${ss.length} 个会话, '${fmtSize(ss.reduce((a,s)=>a+s.sizeBytes,0))}`)
- return { type: 'text' as const, value: ls.join(\n) }
-}
-function showStats(): ReturnType<typeof call> {
- const ss = scanSessionsDir()
- if (ss.length === 0) return { type: 'text' as const, value: '未找到任何会话目录。' }
- const vc = ss.filter(s => s.isValid).length
- const ec = ss.filter(s => !s.meta.title).length
- const ts = ss.reduce((a, s) => a + s.sizeBytes, 0)
- const ms = new Set(ss.map(s => s.meta.model).filter(Boolean))
- const gr: Record<string, number> = {}
- for (const s of ss) {
- const p = s.name.charAt(0).toUpperCase()
- gr[p] = (gr[p] || 0) + 1
- }
- const sg = Object.entries(gr).sort((a, b) => a[0].localeCompare(b[0]))
- return {
- type: 'text' as const,
- value: [
- '📊 会话统计', '',
- `${ 总会话数: '${ss.length}`,
- `${ 有效会话: '${vc}`,
- `${ 无效/损坏: '${ss.length - vc}`,
- `${ 无标题会话: '${ec}`,
- `${ 总占用空间: '${fmtSize(ts)}`,
- `${ 使用模型: '${ms.size > 0 ? Array.from(ms).join(', ') : '未知}`,
- '', ' 按首字母分布:',
- ...sg.map(([l, c]) => `${ '${l}: '${c} 个}`),
- ].join(\n),
- }
-}
-function searchSessions(keyword: string): ReturnType<typeof call> {
- if (!keyword) return { type: 'text' as const, value: '请提供搜索关键词。\n用法: /backfill-sessions search <关键词>' }
- const ss = scanSessionsDir()
- const rs: SessionInfo[] = []
- const kw = keyword.toLowerCase()
- for (const s of ss) {
- const t = (s.meta.title || ).toLowerCase()
- const id = (s.meta.id || ).toLowerCase()
- const tg = (s.meta.tags || []).join(' ').toLowerCase()
- if (t.includes(kw) || id.includes(kw) || tg.includes(kw) || s.name.toLowerCase().includes(kw)) {
- rs.push(s)
- }
- }
- if (rs.length === 0) return { type: 'text' as const, value: `${未找到包含 '${keyword} 的会话。}' }
- const ls = [`${🔍 搜索结果: '${keyword} ('${rs.length} 个匹配)}`, '']
- for (const r of rs) {
- const t = r.meta.title || '(无标题)'
- const dt = fmtDate(r.meta.updatedAt)
- ls.push(`${ '${r.name} — '${t} ('${dt})}`)
- }
- return { type: 'text' as const, value: ls.join(\n) }
-}
-function findEmptySessions(): ReturnType<typeof call> {
- const ss = scanSessionsDir()
- const em = ss.filter(s => !s.meta.title || s.meta.title.trim() === '')
- if (em.length === 0) return { type: 'text' as const, value: '所有会话都有标题，无需清理。' }
- const ls = [`${📭 无标题会话 ('${em.length} 个)}`, '', ' 建议使用 /compact 重新命名这些会话。', '']
- for (const e of em) ls.push(`${ - '${e.name}`)
- return { type: 'text' as const, value: ls.join(\n) }
+    if (action.startsWith('search ')) {
+      const keyword = action.replace(/^search\s+/, '').trim();
+      return await searchSessions(keyword);
+    }
+
+    if (action === 'find-empty') {
+      return await findEmptySessions();
+    }
+
+    if (action === 'cleanup') {
+      return await cleanupSessions();
+    }
+
+    if (action.startsWith('restore ')) {
+      const sessionId = action.replace(/^restore\s+/, '').trim();
+      return await restoreSession(sessionId);
+    }
+
+    if (action === 'backup') {
+      return await backupCurrentSession();
+    }
+
+    return {
+      type: 'text' as const,
+      value: `未知命令: ${action}\n使用 /backfill-sessions help 查看帮助。`
+    };
+  } catch (error) {
+    return {
+      type: 'text' as const,
+      value: `执行命令时出错: ${error instanceof Error ? error.message : String(error)}`
+    };
+  }
+};
+
+async function listSessions(): Promise<ReturnType<typeof call>> {
+  try {
+    if (!fs.existsSync(SESSION_DIR)) {
+      return {
+        type: 'text' as const,
+        value: '会话目录不存在。'
+      };
+    }
+
+    const files = fs.readdirSync(SESSION_DIR)
+      .filter(f => f.endsWith('.json'))
+      .sort((a, b) => fs.statSync(path.join(SESSION_DIR, b)).mtime.getTime() -
+                     fs.statSync(path.join(SESSION_DIR, a)).mtime.getTime());
+
+    if (files.length === 0) {
+      return {
+        type: 'text' as const,
+        value: '没有找到会话文件。'
+      };
+    }
+
+    const sessions: SessionInfo[] = [];
+    for (const file of files.slice(0, 20)) {
+      const filePath = path.join(SESSION_DIR, file);
+      try {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const data = JSON.parse(content);
+        const stats = fs.statSync(filePath);
+
+        sessions.push({
+          id: file.replace('.json', ''),
+          name: data.name || '未命名会话',
+          timestamp: stats.mtime.toISOString(),
+          messageCount: Array.isArray(data.messages) ? data.messages.length : 0,
+          size: stats.size,
+          isEmpty: !Array.isArray(data.messages) || data.messages.length === 0
+        });
+      } catch (e) {
+        // 跳过无法解析的文件
+      }
+    }
+
+    const lines = ['📋 会话列表', ''];
+    for (const session of sessions) {
+      const status = session.isEmpty ? '⚪' : '🟢';
+      const sizeKB = (session.size / 1024).toFixed(1);
+      const date = new Date(session.timestamp).toLocaleDateString('zh-CN');
+      lines.push(`${status} ${session.id.slice(0, 8)} - ${session.name}`);
+      lines.push(`   消息: ${session.messageCount} | 大小: ${sizeKB}KB | 时间: ${date}`);
+    }
+
+    if (files.length > 20) {
+      lines.push(`\n...还有 ${files.length - 20} 个会话未显示`);
+    }
+
+    return {
+      type: 'text' as const,
+      value: lines.join('\n')
+    };
+  } catch (error) {
+    return {
+      type: 'text' as const,
+      value: `列出会话时出错: ${error instanceof Error ? error.message : String(error)}`
+    };
+  }
 }
 
-function cleanupSessions(): ReturnType<typeof call> {
- const ss = scanSessionsDir()
- const iv = ss.filter(s => !s.isValid)
- if (iv.length === 0) return { type: 'text' as const, value: '所有会话元数据都有效，无需清理。' }
- const ls = [`${🧹 清理报告}`, '', `${ 发现 '${iv.length} 个无效/损坏的会话元数据:}`, '']
- for (const v of iv) ls.push(`${ - '${v.name} (缺少有效 ID)}`)
- ls.push('', ' 建议: 手动检查这些会话目录，确认是否可以安全删除。')
- ls.push(' 注意: 为避免数据丢失，本命令不会自动删除任何文件。')
- return { type: 'text' as const, value: ls.join(\n) }
+async function showStats(): Promise<ReturnType<typeof call>> {
+  try {
+    if (!fs.existsSync(SESSION_DIR)) {
+      return {
+        type: 'text' as const,
+        value: '会话目录不存在。'
+      };
+    }
+
+    const files = fs.readdirSync(SESSION_DIR).filter(f => f.endsWith('.json'));
+    let totalSize = 0;
+    let totalMessages = 0;
+    let emptyCount = 0;
+    const sessionsByDate: Record<string, number> = {};
+
+    for (const file of files) {
+      const filePath = path.join(SESSION_DIR, file);
+      try {
+        const stats = fs.statSync(filePath);
+        totalSize += stats.size;
+
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const data = JSON.parse(content);
+        const messageCount = Array.isArray(data.messages) ? data.messages.length : 0;
+        totalMessages += messageCount;
+
+        if (messageCount === 0) {
+          emptyCount++;
+        }
+
+        const date = stats.mtime.toISOString().split('T')[0];
+        sessionsByDate[date] = (sessionsByDate[date] || 0) + 1;
+      } catch (e) {
+        // 跳过无法解析的文件
+      }
+    }
+
+    const recentDates = Object.keys(sessionsByDate)
+      .sort()
+      .reverse()
+      .slice(0, 5);
+
+    const lines = [
+      '📊 会话统计',
+      '',
+      `会话总数: ${files.length}`,
+      `空会话数: ${emptyCount}`,
+      `总消息数: ${totalMessages}`,
+      `总大小: ${(totalSize / 1024 / 1024).toFixed(2)} MB`,
+      `平均大小: ${files.length > 0 ? (totalSize / files.length / 1024).toFixed(1) : 0} KB`,
+      '',
+      '📅 最近创建:'
+    ];
+
+    for (const date of recentDates) {
+      lines.push(`  ${date}: ${sessionsByDate[date]} 个会话`);
+    }
+
+    if (emptyCount > 0) {
+      lines.push('\n💡 建议:');
+      lines.push(`  使用 /backfill-sessions find-empty 查看空会话`);
+      lines.push(`  使用 /backfill-sessions cleanup 清理无效会话`);
+    }
+
+    return {
+      type: 'text' as const,
+      value: lines.join('\n')
+    };
+  } catch (error) {
+    return {
+      type: 'text' as const,
+      value: `获取统计信息时出错: ${error instanceof Error ? error.message : String(error)}`
+    };
+  }
+}
+
+async function searchSessions(keyword: string): Promise<ReturnType<typeof call>> {
+  try {
+    if (!keyword) {
+      return {
+        type: 'text' as const,
+        value: '请输入搜索关键词。'
+      };
+    }
+
+    if (!fs.existsSync(SESSION_DIR)) {
+      return {
+        type: 'text' as const,
+        value: '会话目录不存在。'
+      };
+    }
+
+    const files = fs.readdirSync(SESSION_DIR).filter(f => f.endsWith('.json'));
+    const results: Array<{id: string, name: string, match: string}> = [];
+
+    for (const file of files.slice(0, 50)) {
+      const filePath = path.join(SESSION_DIR, file);
+      try {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const data = JSON.parse(content);
+
+        // 搜索会话名称
+        if (data.name && data.name.toLowerCase().includes(keyword.toLowerCase())) {
+          results.push({
+            id: file.replace('.json', ''),
+            name: data.name,
+            match: `名称匹配: ${data.name}`
+          });
+          continue;
+        }
+
+        // 搜索消息内容
+        if (Array.isArray(data.messages)) {
+          for (const msg of data.messages) {
+            if (msg.content && typeof msg.content === 'string' &&
+                msg.content.toLowerCase().includes(keyword.toLowerCase())) {
+              const preview = msg.content.substring(0, 60).replace(/\n/g, ' ');
+              results.push({
+                id: file.replace('.json', ''),
+                name: data.name || '未命名会话',
+                match: `内容匹配: ${preview}...`
+              });
+              break;
+            }
+          }
+        }
+      } catch (e) {
+        // 跳过无法解析的文件
+      }
+    }
+
+    if (results.length === 0) {
+      return {
+        type: 'text' as const,
+        value: `未找到包含 "${keyword}" 的会话。`
+      };
+    }
+
+    const lines = [`🔍 搜索结果 (${results.length} 个匹配)`, ''];
+    for (const result of results.slice(0, 10)) {
+      lines.push(`📁 ${result.id.slice(0, 8)} - ${result.name}`);
+      lines.push(`   ${result.match}`);
+    }
+
+    if (results.length > 10) {
+      lines.push(`\n...还有 ${results.length - 10} 个结果未显示`);
+    }
+
+    lines.push('\n💡 使用 /backfill-sessions restore <id> 恢复会话');
+
+    return {
+      type: 'text' as const,
+      value: lines.join('\n')
+    };
+  } catch (error) {
+    return {
+      type: 'text' as const,
+      value: `搜索会话时出错: ${error instanceof Error ? error.message : String(error)}`
+    };
+  }
+}
+
+async function findEmptySessions(): Promise<ReturnType<typeof call>> {
+  try {
+    if (!fs.existsSync(SESSION_DIR)) {
+      return {
+        type: 'text' as const,
+        value: '会话目录不存在。'
+      };
+    }
+
+    const files = fs.readdirSync(SESSION_DIR).filter(f => f.endsWith('.json'));
+    const emptySessions: Array<{id: string, name: string, size: number, mtime: Date}> = [];
+
+    for (const file of files) {
+      const filePath = path.join(SESSION_DIR, file);
+      try {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const data = JSON.parse(content);
+        const stats = fs.statSync(filePath);
+
+        const messageCount = Array.isArray(data.messages) ? data.messages.length : 0;
+        if (messageCount === 0) {
+          emptySessions.push({
+            id: file.replace('.json', ''),
+            name: data.name || '未命名会话',
+            size: stats.size,
+            mtime: stats.mtime
+          });
+        }
+      } catch (e) {
+        // 跳过无法解析的文件
+      }
+    }
+
+    if (emptySessions.length === 0) {
+      return {
+        type: 'text' as const,
+        value: '未找到空会话。'
+      };
+    }
+
+    const lines = ['⚪ 空会话列表', ''];
+    for (const session of emptySessions.slice(0, 15)) {
+      const date = session.mtime.toLocaleDateString('zh-CN');
+      lines.push(`${session.id.slice(0, 8)} - ${session.name}`);
+      lines.push(`   大小: ${session.size} 字节 | 修改时间: ${date}`);
+    }
+
+    if (emptySessions.length > 15) {
+      lines.push(`\n...还有 ${emptySessions.length - 15} 个空会话`);
+    }
+
+    lines.push('\n💡 使用 /backfill-sessions cleanup 清理这些空会话');
+
+    return {
+      type: 'text' as const,
+      value: lines.join('\n')
+    };
+  } catch (error) {
+    return {
+      type: 'text' as const,
+      value: `查找空会话时出错: ${error instanceof Error ? error.message : String(error)}`
+    };
+  }
+}
+
+async function cleanupSessions(): Promise<ReturnType<typeof call>> {
+  try {
+    if (!fs.existsSync(SESSION_DIR)) {
+      return {
+        type: 'text' as const,
+        value: '会话目录不存在。'
+      };
+    }
+
+    const files = fs.readdirSync(SESSION_DIR).filter(f => f.endsWith('.json'));
+    let deletedCount = 0;
+    let errorCount = 0;
+
+    for (const file of files) {
+      const filePath = path.join(SESSION_DIR, file);
+      try {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const data = JSON.parse(content);
+        const messageCount = Array.isArray(data.messages) ? data.messages.length : 0;
+
+        // 删除空会话和损坏的会话
+        if (messageCount === 0 || !data.messages) {
+          fs.unlinkSync(filePath);
+          deletedCount++;
+        }
+      } catch (e) {
+        // 删除无法解析的文件
+        try {
+          fs.unlinkSync(filePath);
+          deletedCount++;
+        } catch (unlinkError) {
+          errorCount++;
+        }
+      }
+    }
+
+    const lines = ['🧹 会话清理完成', ''];
+    lines.push(`删除会话数: ${deletedCount}`);
+    if (errorCount > 0) {
+      lines.push(`删除失败数: ${errorCount}`);
+    }
+
+    if (deletedCount === 0) {
+      lines.push('\n💡 没有找到需要清理的会话。');
+    } else {
+      lines.push('\n✅ 清理完成，释放了存储空间。');
+    }
+
+    return {
+      type: 'text' as const,
+      value: lines.join('\n')
+    };
+  } catch (error) {
+    return {
+      type: 'text' as const,
+      value: `清理会话时出错: ${error instanceof Error ? error.message : String(error)}`
+    };
+  }
+}
+
+async function restoreSession(sessionId: string): Promise<ReturnType<typeof call>> {
+  try {
+    if (!sessionId) {
+      return {
+        type: 'text' as const,
+        value: '请输入要恢复的会话ID。'
+      };
+    }
+
+    const sessionFile = sessionId.endsWith('.json') ? sessionId : `${sessionId}.json`;
+    const filePath = path.join(SESSION_DIR, sessionFile);
+
+    if (!fs.existsSync(filePath)) {
+      // 尝试匹配部分ID
+      const files = fs.existsSync(SESSION_DIR) ?
+        fs.readdirSync(SESSION_DIR).filter(f => f.endsWith('.json') && f.includes(sessionId)) : [];
+
+      if (files.length === 0) {
+        return {
+          type: 'text' as const,
+          value: `未找到会话 "${sessionId}"。`
+        };
+      }
+
+      if (files.length > 1) {
+        const lines = [`找到多个匹配的会话:`, ''];
+        for (const file of files.slice(0, 5)) {
+          const id = file.replace('.json', '');
+          lines.push(`  ${id}`);
+        }
+        if (files.length > 5) {
+          lines.push(`  ...还有 ${files.length - 5} 个`);
+        }
+        lines.push('\n💡 请使用完整的会话ID。');
+        return {
+          type: 'text' as const,
+          value: lines.join('\n')
+        };
+      }
+
+      return {
+        type: 'text' as const,
+        value: `找到会话: ${files[0].replace('.json', '')}\n使用完整ID进行恢复。`
+      };
+    }
+
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const data = JSON.parse(content);
+    const stats = fs.statSync(filePath);
+
+    const messageCount = Array.isArray(data.messages) ? data.messages.length : 0;
+    const date = stats.mtime.toLocaleString('zh-CN');
+
+    return {
+      type: 'text' as const,
+      value: [
+        '✅ 会话信息',
+        '',
+        `会话ID: ${sessionId}`,
+        `会话名称: ${data.name || '未命名'}`,
+        `消息数量: ${messageCount}`,
+        `文件大小: ${stats.size} 字节`,
+        `修改时间: ${date}`,
+        '',
+        '💡 恢复功能需要集成到主应用中。',
+        '目前仅提供会话信息查看。'
+      ].join('\n')
+    };
+  } catch (error) {
+    return {
+      type: 'text' as const,
+      value: `恢复会话时出错: ${error instanceof Error ? error.message : String(error)}`
+    };
+  }
+}
+
+async function backupCurrentSession(): Promise<ReturnType<typeof call>> {
+  try {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const backupId = `backup-${timestamp}`;
+
+    return {
+      type: 'text' as const,
+      value: [
+        '💾 备份功能',
+        '',
+        `备份ID: ${backupId}`,
+        '当前会话备份功能需要集成到主应用中。',
+        '',
+        '💡 建议:',
+        '1. 在主应用中实现会话导出功能',
+        '2. 添加自动备份机制',
+        '3. 支持增量备份'
+      ].join('\n')
+    };
+  } catch (error) {
+    return {
+      type: 'text' as const,
+      value: `备份会话时出错: ${error instanceof Error ? error.message : String(error)}`
+    };
+  }
 }
 
 const backfillSessions = {
- type: 'local',
- name: 'backfill-sessions',
- description: '扫描并恢复历史会话数据到当前工作区',
- supportsNonInteractive: true,
- load: () => Promise.resolve({ call }),
-} satisfies Command
+  type: 'local',
+  name: 'backfill-sessions',
+  description: '扫描并恢复历史会话数据到当前工作区',
+  supportsNonInteractive: true,
+  load: () => Promise.resolve({ call }),
+} satisfies Command;
 
-export default backfillSessions
+export default backfillSessions;

@@ -14,6 +14,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
 import type { LocalCommandCall, LocalCommandResult } from '../../types/command.js'
+import type { Message } from '../../types/message.js'
 
 // ---------- 日志模块 ----------
 const LOG_FILE = path.resolve('updateapikey.log')
@@ -57,7 +58,7 @@ const ANTHROPIC_ENDPOINTS = [
   'https://aiapiv2.pekpik.com/',
 ]
 const DOGE_DIR = path.resolve('.doge')
-const TEST_TIMEOUT = 120000 // 每个 Key 测试超时 120 秒（代理响应很慢）
+const TEST_TIMEOUT = 15000 // 每个 Key 测试超时 15 秒
 const TEST_MAX_TOKENS = 50  // 请求 50 个 token 验证实际可用性
 const SERIAL_DELAY_MS = 2000 // 串行测试时每个 Key 间隔（毫秒），防止触发限流
 
@@ -292,13 +293,30 @@ async function testKey(entry: ApiKeyEntry): Promise<TestResult> {
   return { ok: false, message: '所有端点均超时/限流' }
 }
 
-export const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult> => {
+export const call: LocalCommandCall = async (args: string, context): Promise<LocalCommandResult> => {
   const now = new Date()
   const timeStamp = `[${now.toLocaleString()}]`
   const cmd = (args || '').trim().toLowerCase()
 
+  /** 通过 context.setMessages 追加一条消息（用于实时输出进度） */
+  function pushProgress(text: string) {
+    if (context?.setMessages) {
+      context.setMessages(prev => [
+        ...prev,
+        {
+          type: 'assistant' as const,
+          isMeta: true,
+          uuid: `progress-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+          message: { content: [{ type: 'text', text }] },
+        } as Message,
+      ])
+    }
+  }
+
   if (cmd === 'all' || cmd === 'update') {
     log('INFO', '开始执行全量更新', { mode: 'all' })
+
+    pushProgress(`${timeStamp} 🚀 正在从 GitHub 获取最新 Key...`)
     const keys = await fetchLatestKeys()
     if (keys.length === 0) {
       log('ERROR', '全量更新失败：获取 Key 为空')
@@ -307,6 +325,7 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
 
     let output = `✅ 从 GitHub 获取到 ${keys.length} 个免费 Key，开始逐串行测试可用性...\n`
     output += `   端点池: ${OPENAI_ENDPOINTS.length} 个 (429/403 自动轮换) | 间隔: ${SERIAL_DELAY_MS}ms\n\n`
+    pushProgress(output)
 
     // 更新 free5~freeN（free1~free4 为注册方案，跳过）
     const startIdx = 5
@@ -322,12 +341,13 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
       const displayName = modelChineseName(entry.model)
       const isAnthropic = entry.model.includes('claude') && !entry.model.includes('openai')
 
-      output += `  ${filename} ← ${displayName} ... `
-
       // 间隔延迟，防止并发触发限流
       if (localIdx > 0) {
         await new Promise(resolve => setTimeout(resolve, SERIAL_DELAY_MS))
       }
+
+      // 先输出正在测试的提示
+      pushProgress(`  ${filename} ← ${displayName} ... ⏳`)
 
       const testResult = await testKey(entry)
 
@@ -342,13 +362,15 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
         }
         writeConfig(filename, config)
         log('INFO', `写入配置文件`, { filename, model: entry.model, budget: entry.budget, baseURL: usedEndpoint, keyPreview: entry.key.substring(0, 12) + '...' })
-        output += `✅ ${testResult.message}\n`
+        output += `  ${filename} ← ${displayName} ... ✅ ${testResult.message}\n`
         passed++
         updated++
+        pushProgress(`  ${filename} ← ${displayName} ... ✅ ${testResult.message}`)
       } else {
-        output += `❌ ${testResult.message}\n`
+        output += `  ${filename} ← ${displayName} ... ❌ ${testResult.message}\n`
         failed++
         log('INFO', `跳过写入`, { filename, reason: testResult.message })
+        pushProgress(`  ${filename} ← ${displayName} ... ❌ ${testResult.message}`)
       }
     }
 
@@ -370,6 +392,7 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
     }
     log('INFO', `开始更新单个配置文件`, { filename: `free${idx}.json` })
 
+    pushProgress(`${timeStamp} 🚀 正在从 GitHub 获取最新 Key...`)
     const keys = await fetchLatestKeys()
     if (keys.length === 0) {
       log('ERROR', `free${idx} 更新失败：获取 Key 为空`)
@@ -388,6 +411,9 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
     const isAnthropic = entry.model.includes('claude') && !entry.model.includes('openai')
     const displayName = modelChineseName(entry.model)
 
+    // 先输出正在测试的提示
+    pushProgress(`📡 正在测试 ${displayName} ... ⏳`)
+
     // 先测试可用性
     const testResult = await testKey(entry)
     let output = `📡 测试 ${displayName} ... ${testResult.ok ? '✅' : '❌'} ${testResult.message}\n`
@@ -403,8 +429,10 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
       writeConfig(filename, config)
       log('INFO', `配置文件已更新`, { filename, model: entry.model, budget: entry.budget, keyPreview: entry.key.substring(0, 12) + '...' })
       output += `\n✅ free${idx}.json 已更新\n  模型: ${displayName}\n  预算: ${entry.budget}\n  过期: ${entry.expires}\n  端点: ${isAnthropic ? BASE_ANTHROPIC : BASE_OPENAI}\n\n💡 使用 d.bat free${idx} 启动`
+      pushProgress(`✅ ${displayName} 测试通过 (${testResult.message})`)
     } else {
       output += `\n❌ free${idx}.json 跳过更新（Key 不可用）\n  原因: ${testResult.message}`
+      pushProgress(`❌ ${displayName} 测试失败: ${testResult.message}`)
     }
 
     return { type: 'text', value: timeStamp + '\n' + output }

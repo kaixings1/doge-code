@@ -261,6 +261,11 @@ const usageReport: Command = {
 }
 import oauthRefresh from './commands/oauth-refresh/index.js'
 import debugToolCall from './commands/debug-tool-call/index.js'
+// 新增开发者工具命令
+import memoryMonitor from './commands/memory-monitor/index.js'
+import performanceProfiler from './commands/performance-profiler/index.js'
+import codeReviewAssistant from './commands/code-review-assistant/index.js'
+import dependencyAnalyzer from './commands/dependency-analyzer/index.js'
 import { getSettingSourceName } from './utils/settings/constants.js'
 import {
   type Command,
@@ -452,6 +457,11 @@ const COMMANDS = memoize((): Command[] => [
   backup,
   mcpToolSearch,
   promptDiff,
+  // 新增开发者工具
+  memoryMonitor,
+  performanceProfiler,
+  codeReviewAssistant,
+  dependencyAnalyzer,
   ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO
     ? INTERNAL_ONLY_COMMANDS
     : []),
