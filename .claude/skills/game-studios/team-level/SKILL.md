@@ -52,7 +52,7 @@ Always provide full context in each agent's prompt (game concept, pillars, exist
 
 3. **Orchestrate the level design team** in sequence:
 
-### Step 1: Narrative + Visual Direction (narrative-director + world-builder + art-director, parallel)
+### 步骤 1: Narrative + Visual Direction (narrative-director + world-builder + art-director, parallel)
 
 Spawn all three agents simultaneously — issue all three Task calls before waiting for any result.
 
@@ -77,7 +77,7 @@ Spawn the `art-director` agent to:
 
 **Gate**: Use `AskUserQuestion` to present all three Step 1 outputs (narrative brief, lore foundation, visual direction targets) and confirm before proceeding to Step 2.
 
-### Step 2: Layout and Encounter Design (level-designer)
+### 步骤 2: Layout and Encounter Design (level-designer)
 Spawn the `level-designer` agent with the full Step 1 output as context:
 - Narrative brief (from narrative-director)
 - Lore foundation (from world-builder)
@@ -102,7 +102,7 @@ Do NOT invent content for the missing adjacent area.
 
 **Gate**: Use `AskUserQuestion` to present Step 2 layout (including any unresolved adjacent area dependencies) and confirm before proceeding to Step 3.
 
-### Step 3: Systems Integration (systems-designer)
+### 步骤 3: Systems Integration (systems-designer)
 Spawn the `systems-designer` agent to:
 - Specify enemy compositions and encounter formulas
 - Define loot tables and reward placement
@@ -112,7 +112,7 @@ Spawn the `systems-designer` agent to:
 
 **Gate**: Use `AskUserQuestion` to present Step 3 outputs and confirm before proceeding to Step 4.
 
-### Step 4: Production Concepts + Accessibility (art-director + accessibility-specialist, parallel)
+### 步骤 4: Production Concepts + Accessibility (art-director + accessibility-specialist, parallel)
 
 **Note**: The art-director's directional pass (visual theme, color targets, mood) happened in Step 1. This pass is location-specific production concepts — given the finalized layout, what does each specific space look like?
 
@@ -138,7 +138,7 @@ Wait for both agents to return before proceeding.
 
 Do NOT proceed to Step 5 without the user acknowledging any BLOCKING accessibility concerns.
 
-### Step 5: QA Planning (qa-tester)
+### 步骤 5: QA Planning (qa-tester)
 Spawn the `qa-tester` agent to:
 - Write test cases for the critical path
 - Identify boundary and edge cases (sequence breaks, softlocks)
@@ -169,7 +169,7 @@ protocol. This orchestrator does not write files directly.
 Verdict: **COMPLETE** — level design document produced and all team outputs compiled.
 Verdict: **BLOCKED** — one or more agents blocked; partial report produced with unresolved items listed.
 
-## Next Steps
+## 后续步骤
 
 - Run `/design-review design/levels/[level-name].md` to validate the completed level design doc.
 - Run `/dev-story` to implement level content once the design is approved.

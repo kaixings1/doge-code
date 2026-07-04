@@ -19,7 +19,7 @@ date_added: "2026-02-27"
 - 处理 Stitch 设计语言
 - 为 Stitch 项目生成本设计文档
 
-## Overview
+## 概述
 
 This skill helps you create `DESIGN.md` files that serve as the "source of truth" for prompting Stitch to generate new screens that align perfectly with existing design language. Stitch interprets design through "Visual Descriptions" supported by specific color values.
 
@@ -154,7 +154,7 @@ To use this skill for the Furniture Collection project:
    - Ensure all color codes are accurate
    - Use evocative, designer-friendly language
 
-## Best Practices
+## 最佳实践
 
 - **Be Descriptive:** Avoid generic terms like "blue" or "rounded." Use "Ocean-deep Cerulean (#0077B6)" or "Gently curved edges"
 - **Be Functional:** Always explain what each design element is used for

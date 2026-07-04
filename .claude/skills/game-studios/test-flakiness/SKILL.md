@@ -198,7 +198,7 @@ After writing:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 - **Never delete test files** — quarantine means annotate + list, not remove
 - **Statistical confidence matters** — with < 3 runs, flag findings as

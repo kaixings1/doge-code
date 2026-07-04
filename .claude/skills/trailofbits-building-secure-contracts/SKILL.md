@@ -4,14 +4,14 @@ Comprehensive smart contract security toolkit based on Trail of Bits' [Building 
 
 **Author:** Omar Inuwa
 
-## Overview
+## 概述
 
 This plugin provides 11 specialized skills for smart contract security across multiple blockchain platforms:
 
 - **6 Vulnerability Scanners** for platform-specific attack patterns
 - **5 Development Guidelines Assistants** for secure development practices
 
-## Installation
+## 安装
 
 ```
 /plugin install trailofbits/skills/plugins/building-secure-contracts

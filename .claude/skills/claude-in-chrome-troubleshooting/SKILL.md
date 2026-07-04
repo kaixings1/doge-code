@@ -239,7 +239,7 @@ echo "Expected: $(getconf DARWIN_USER_TEMP_DIR)"
 | `$TMPDIR/claude-mcp-browser-bridge-$USER` | Socket file (Claude Code) |
 | `/tmp/claude-mcp-browser-bridge-$USER/<PID>.sock` | Socket files (Claude.app) |
 
-## Summary
+## 总结
 
 1. **Primary issue:** Claude.app (Cowork) and Claude Code use different native hosts with incompatible socket formats
 2. **Fix:** Disable the native messaging config for whichever one you're NOT using

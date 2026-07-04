@@ -52,7 +52,7 @@ Suggest domain names using the words "pixel" or "studio"
 for my design agency
 ```
 
-## Example
+## 示例
 
 **User**: "I'm building a tool for developers to share code snippets. Suggest creative domain names."
 

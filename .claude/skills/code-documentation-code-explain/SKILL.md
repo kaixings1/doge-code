@@ -29,7 +29,7 @@ The user needs help understanding complex code sections, algorithms, design patt
 ## Requirements
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 - Assess structure, dependencies, and complexity hotspots.
 - Explain the high-level flow, then drill into key components.
@@ -37,14 +37,14 @@ $ARGUMENTS
 - Call out pitfalls, edge cases, and key terminology.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Output Format
+## 输出格式
 
 - High-level summary of purpose and flow
 - Step-by-step walkthrough of key parts
 - Diagram or annotated snippet when helpful
 - Pitfalls, edge cases, and suggested next steps
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed examples and templates.
 

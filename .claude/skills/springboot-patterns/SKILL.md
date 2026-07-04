@@ -139,7 +139,7 @@ public class GlobalExceptionHandler {
 }
 ```
 
-## Anti-Patterns
+## 反模式
 
 - Injecting repositories directly into controllers (bypassing service layer)
 - Using `FetchType.EAGER` on entity relationships by default

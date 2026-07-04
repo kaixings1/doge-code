@@ -9,7 +9,7 @@ date_added: "2026-02-27"
 
 # Bash Scripting Workflow
 
-## Overview
+## 概述
 
 Specialized workflow for creating robust, production-ready bash scripts with defensive programming patterns, comprehensive error handling, and automated testing.
 

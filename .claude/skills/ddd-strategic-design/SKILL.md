@@ -22,7 +22,7 @@ date_added: "2026-02-27"
 - You need tactical code patterns only.
 - The task is purely infrastructure or UI oriented.
 
-## Instructions
+## 使用说明
 
 1. Extract domain capabilities and classify subdomains.
 2. Define bounded contexts around consistency and ownership.
@@ -38,7 +38,7 @@ If detailed templates are needed, open `references/strategic-design-template.md`
 - Glossary with canonical terms
 - Boundary decisions with rationale
 
-## Examples
+## 示例
 
 ```text
 Use @ddd-strategic-design to map our commerce domain into bounded contexts,

@@ -5,10 +5,10 @@ description: "实验的功效分析和样本量计算：最小可检测效应、
 
 # Sample Size Calculator
 
-## Purpose
+## 目的
 Calculate the sample size needed for your experiment to detect a meaningful effect with adequate statistical power.
 
-## How It Works
+## 工作原理
 
 ### Inputs
 - **Baseline metric**: Current conversion rate, mean, or proportion
@@ -51,7 +51,7 @@ Baseline conversion is 3%, MDE is 0.5%, power 80%."
 detecting a 2% lift in signup rate?"
 ```
 
-## Output Format
+## 输出格式
 
 - **Sample Size**: Per group and total
 - **Duration**: Estimated days based on traffic

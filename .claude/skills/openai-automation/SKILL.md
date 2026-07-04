@@ -22,7 +22,7 @@ requires:
 
 ---
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Generate a Response (Text, Multimodal, Structured)
 

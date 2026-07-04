@@ -79,7 +79,7 @@ Everything is plain text. Diffable. Reviewable. No database needed.
 
 Every file or artifact that is imported anywhere must be represented in `.dsp` as an Object — code, images, styles, configs, JSON, wasm, everything. External dependencies (npm packages, stdlib, etc.) are recorded as `kind: external` but their internals are never analyzed.
 
-## How It Works
+## 工作原理
 
 ### Initial 设置
 
@@ -135,7 +135,7 @@ If `.dsp/` is empty, traverse the project from root entrypoint(s) via DFS on imp
 | Purpose changed | `update-description` |
 | Internal-only change | **No DSP update needed** |
 
-## Examples
+## 示例
 
 ### Example 1: Setting up DSP and documenting a module
 
@@ -173,7 +173,7 @@ python dsp-cli.py --root . get-recipients obj-11223344
 # Shows every module that imports lodash and WHY — lets you systematically replace it
 ```
 
-## Best Practices
+## 最佳实践
 
 - ✅ **Do:** Update DSP immediately when creating new files, adding imports, or changing public APIs
 - ✅ **Do:** 始终 add a meaningful `why` reason when recording an import — this is where most of DSP's value lives

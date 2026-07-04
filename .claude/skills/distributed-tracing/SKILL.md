@@ -22,7 +22,7 @@ date_added: "2026-02-27"
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Purpose
+## 目的
 
 Track requests across distributed systems to understand latency, dependencies, and failure points.
 
@@ -395,7 +395,7 @@ Jaeger automatically generates service dependency graphs showing:
 - Error rates
 - Average latencies
 
-## Best Practices
+## 最佳实践
 
 1. **Sample appropriately** (1-10% in production)
 2. **Add meaningful tags** (user_id, request_id)
@@ -427,7 +427,7 @@ def process_request():
     )
 ```
 
-## Troubleshooting
+## 故障排除
 
 **No traces appearing:**
 - Check collector endpoint
@@ -440,13 +440,13 @@ def process_request():
 - Use batch span processor
 - Check exporter configuration
 
-## Reference Files
+## 参考文件
 
 - `references/jaeger-setup.md` - Jaeger installation
 - `references/instrumentation.md` - Instrumentation patterns
 - `assets/jaeger-config.yaml.template` - Jaeger configuration
 
-## Related Skills
+## 相关技能
 
 - `prometheus-configuration` - For metrics
 - `grafana-dashboards` - For visualization

@@ -38,7 +38,7 @@ Read all sprint reports for sprints within this milestone from `production/sprin
 ```markdown
 # Milestone Review: [Milestone Name]
 
-## Overview
+## 概述
 - **Target Date**: [Date]
 - **Current Date**: [Today]
 - **Days Remaining**: [N]

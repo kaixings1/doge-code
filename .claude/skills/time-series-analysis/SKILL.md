@@ -5,18 +5,18 @@ description: "SOTA 时间序列建模：基础模型（TimesFM、Chronos、Lag-L
 
 # Time Series Analysis
 
-## Purpose
+## 目的
 Model and forecast temporal data using the latest foundation models alongside proven classical methods.
 
-## How It Works
+## 工作原理
 
-### Step 1: Assess Data
+### 步骤 1: Assess Data
 - Stationarity: ADF, KPSS tests
 - Frequency detection, missing timestamps, gaps
 - Length: <100 → classical; >100 → ML/DL; any → foundation models (zero-shot)
 - Decomposition: STL for trend/seasonal/residual
 
-### Step 2: Model Selection (2025 SOTA)
+### 步骤 2: Model Selection (2025 SOTA)
 
 | Category | Model | Best For |
 |----------|-------|----------|

@@ -34,7 +34,7 @@ Export OpenTelemetry telemetry data to Azure Monitor / Application Insights.
 </dependency>
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=xxx;IngestionEndpoint=https://xxx.in.applicationinsights.azure.com/
@@ -225,7 +225,7 @@ latencyHistogram.record(150, Attributes.of(
 ));
 ```
 
-## Key Concepts
+## 关键概念
 
 | Concept | Description |
 |---------|-------------|
@@ -261,7 +261,7 @@ The `azure-monitor-opentelemetry-autoconfigure` package provides:
 
 2. Update initialization code per [迁移 Guide](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/MIGRATION.md)
 
-## Best Practices
+## 最佳实践
 
 1. **Use autoconfigure** — Migrate to `azure-monitor-opentelemetry-autoconfigure`
 2. **Set meaningful span names** — Use descriptive operation names
@@ -271,7 +271,7 @@ The `azure-monitor-opentelemetry-autoconfigure` package provides:
 6. **End spans in finally** — Ensure spans are always ended
 7. **Use try-with-resources** — 范围 management with try-with-resources pattern
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -282,7 +282,7 @@ The `azure-monitor-opentelemetry-autoconfigure` package provides:
 | OpenTelemetry Java | https://opentelemetry.io/docs/languages/java/ |
 | Application Insights | https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

@@ -16,7 +16,7 @@ license_source: "https://clawhub.ai/jiawei248/daily-gift"
 
 # Daily Gift
 
-## Overview
+## 概述
 
 A relationship-aware gift engine that decides *whether* a gift should exist before deciding *what* it should be. Uses a five-stage creative pipeline to generate personalized daily gifts in H5 (interactive web pages), AI-generated images, or AI-generated videos. The core design principle is "idea before medium" — the creative concept is locked before the output format is chosen.
 
@@ -29,7 +29,7 @@ Published on ClawHub: https://clawhub.ai/jiawei248/daily-gift
 - Use when the user manually requests a visual gift from a quote, poem, or creative brief
 - Use when you want a daily cron-triggered creative output that avoids repetition and template fatigue
 
-## How It Works
+## 工作原理
 
 ### Stage 1: Editorial Judgment
 
@@ -64,7 +64,7 @@ Produce the final artifact. H5 gifts use p5.js/canvas with a quality floor set b
 - **11 content directions**: reflect, extension, compass, mirror, gift-from-elsewhere, play, real-world-nudge, curation, delayed-payoff, openclaw-inner-life, utility
 - **8 concept families**: borrowed-media, interactive-object, transformation, narrative, data-viz, game-puzzle, real-world, poetic-literary
 
-## Best Practices
+## 最佳实践
 
 - ✅ Let the editorial judgment decide — not every day needs a gift
 - ✅ Generate 5+ concept candidates before selecting one
@@ -88,7 +88,7 @@ Produce the final artifact. H5 gifts use p5.js/canvas with a quality floor set b
 - User taste data and gift history are stored locally in `workspace/daily-gift/`. No data is sent to external services beyond the configured rendering APIs.
 - The skill reads conversation context and memory files to inform editorial judgment — this is core to personalization but means it has broad read access within the agent's workspace.
 
-## Related Skills
+## 相关技能
 
 - Image generation skills — for standalone image creation without the gift pipeline
 - Cron/scheduling skills — for understanding the daily trigger mechanism

@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 High-throughput event streaming and real-time data ingestion.
 
-## Installation
+## 安装
 
 ```bash
 npm install @azure/event-hubs @azure/identity
@@ -21,7 +21,7 @@ For checkpointing with consumer groups:
 npm install @azure/eventhubs-checkpointstore-blob @azure/storage-blob
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 EVENTHUB_NAMESPACE=<namespace>.servicebus.windows.net
@@ -30,7 +30,7 @@ STORAGE_ACCOUNT_NAME=<storage-account>
 STORAGE_CONTAINER_NAME=checkpoints
 ```
 
-## Authentication
+## 认证
 
 ```typescript
 import { EventHubProducerClient, EventHubConsumerClient } from "@azure/event-hubs";
@@ -52,7 +52,7 @@ const consumer = new EventHubConsumerClient(
 );
 ```
 
-## Core Workflow
+## 核心工作流
 
 ### Send Events
 
@@ -232,7 +232,7 @@ consumer.subscribe({
 });
 ```
 
-## Error Handling
+## 错误处理
 
 ```typescript
 consumer.subscribe({
@@ -259,7 +259,7 @@ consumer.subscribe({
 });
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use checkpointing** - Always checkpoint in production for exactly-once processing
 2. **Batch sends** - Use `createBatch()` for efficient sending
@@ -269,7 +269,7 @@ consumer.subscribe({
 6. **Close clients** - Always close producer/consumer when done
 7. **Monitor lag** - Track `lastEnqueuedSequenceNumber` vs processed sequence
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

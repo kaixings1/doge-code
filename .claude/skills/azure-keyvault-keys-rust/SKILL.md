@@ -10,19 +10,19 @@ date_added: '2026-02-27'
 
 Client library for Azure Key Vault Keys — secure storage and management of cryptographic keys.
 
-## Installation
+## 安装
 
 ```sh
 cargo add azure_security_keyvault_keys azure_identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_KEYVAULT_URL=https://<vault-name>.vault.azure.net/
 ```
 
-## Authentication
+## 认证
 
 ```rust
 use azure_identity::DeveloperToolsCredential;
@@ -142,7 +142,7 @@ Key Vault can perform crypto operations without exposing the private key:
 // - wrapKey/unwrapKey (RSA)
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use Entra ID auth** — `DeveloperToolsCredential` for dev, `ManagedIdentityCredential` for production
 2. **Use HSM keys for sensitive workloads** — hardware-protected keys
@@ -158,7 +158,7 @@ Assign these Key Vault roles:
 - `Key Vault Crypto User` — use keys for crypto operations
 - `Key Vault Crypto Officer` — full CRUD on keys
 
-## Reference Links
+## 参考链接
 
 | Resource | Link |
 |----------|------|
@@ -166,7 +166,7 @@ Assign these Key Vault roles:
 | Source Code | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/keyvault/azure_security_keyvault_keys |
 | crates.io | https://crates.io/crates/azure_security_keyvault_keys |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

@@ -5,7 +5,7 @@ description: "关键统计概念的参考指南：p 值、置信区间、效应�
 
 # Statistical Concepts Reference
 
-## Purpose
+## 目的
 Quick reference for statistical concepts, common misconceptions, and practical guidance on choosing the right approach.
 
 ## Core Concepts

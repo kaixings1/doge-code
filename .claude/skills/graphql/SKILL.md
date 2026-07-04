@@ -1058,7 +1058,7 @@ Fix action: Use update function to modify cache directly
 
 Works well with: `backend`, `postgres-wizard`, `nextjs-app-router`, `react-patterns`
 
-## When to Use
+## 使用场景
 - User mentions or implies: graphql
 - User mentions or implies: graphql schema
 - User mentions or implies: graphql resolver

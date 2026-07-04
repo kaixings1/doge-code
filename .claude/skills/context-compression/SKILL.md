@@ -70,7 +70,7 @@ Effective structured summaries include explicit sections:
 - 14 tests passing, 2 failing
 - Remaining: mock setup for session service tests
 
-## Next Steps
+## 后续步骤
 1. Fix remaining test failures
 2. Run full test suite
 3. Update documentation
@@ -172,7 +172,7 @@ This is particularly important when the agent cannot distinguish essential compl
 
 The 0.7% additional tokens retained by structured summarization buys 0.35 quality points. For any task where re-fetching costs matter, this trade-off favors structured approaches.
 
-## Examples
+## 示例
 
 **Example 1: Debugging Session Compression**
 
@@ -202,7 +202,7 @@ Stale Redis connection in session store. JWT generated correctly but session cou
 ## Test Status
 14 passing, 2 failing (mock setup issues)
 
-## Next Steps
+## 后续步骤
 1. Fix remaining test failures (mock session service)
 2. Run full test suite
 3. Deploy to staging
@@ -240,7 +240,7 @@ This skill connects to several others in the collection:
 - evaluation - Probe-based evaluation applies to compression testing
 - memory-systems - Compression relates to scratchpad and summary memory patterns
 
-## References
+## 参考
 
 Internal reference:
 - Evaluation Framework Reference - Detailed probe types and scoring rubrics

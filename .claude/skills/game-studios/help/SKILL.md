@@ -19,7 +19,7 @@ gap analysis, use `/project-stage-detect`.
 
 ---
 
-## Step 1: Read the Catalog
+## 步骤 1: Read the Catalog
 
 Read `.claude/docs/workflow-catalog.yaml`. This is the authoritative list of all
 phases, their steps (in order), whether each step is required or optional, and
@@ -50,7 +50,7 @@ skills in production/polish, etc.).
 
 ---
 
-## Step 2: Determine Current Phase
+## 步骤 2: Determine Current Phase
 
 Check in this order:
 
@@ -74,7 +74,7 @@ Check in this order:
 
 ---
 
-## Step 3: Read Session Context
+## 步骤 3: Read Session Context
 
 Read `production/session-state/active.md` if it exists. Extract:
 - What was most recently worked on
@@ -86,7 +86,7 @@ the output.
 
 ---
 
-## Step 4: Check Step Completion for the Current Phase
+## 步骤 4: Check Step Completion for the Current Phase
 
 For each step in the current phase (from the catalog):
 
@@ -126,7 +126,7 @@ Label these differently — show what's been detected, then note it may be ongoi
 
 ---
 
-## Step 5: Find Position and Identify Next Steps
+## 步骤 5: Find Position and Identify Next Steps
 
 From the completion data, determine:
 
@@ -218,7 +218,7 @@ Only show this if the user's input suggested confusion (e.g. "I don't know", "st
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 - **Never auto-run the next skill.** Recommend it, let the user invoke it.
 - **Ask about MANUAL steps** rather than assuming complete or incomplete.

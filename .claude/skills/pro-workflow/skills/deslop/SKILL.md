@@ -19,7 +19,7 @@ git diff origin/main...HEAD --stat
 git diff origin/main...HEAD
 ```
 
-## Workflow
+## 工作流
 
 1. Run diff commands to see all changes on the branch.
 2. Identify slop patterns from the focus areas below.
@@ -48,7 +48,7 @@ git diff origin/main...HEAD
 - If you remove something, verify it's truly unused first.
 - Keep the final summary concise (1-3 sentences).
 
-## Output
+## 输出
 
 - List of slop patterns found with file locations
 - Edits applied

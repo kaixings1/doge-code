@@ -12,7 +12,7 @@ tools: [claude, cursor, gemini, copilot]
 
 # AI Engineering Toolkit
 
-## Overview
+## 概述
 
 A collection of 6 structured, expert-level workflows that turn your AI coding assistant into a senior AI engineering partner. Each skill encodes a repeatable methodology — not just "ask AI to help," but a step-by-step decision framework with quantitative scoring, checklists, and decision trees.
 
@@ -27,7 +27,7 @@ The key difference from ad-hoc AI assistance: **every workflow produces consiste
 - Use when building evaluation frameworks for LLM applications
 - Use when thinking through product strategy before writing code
 
-## How It Works
+## 工作原理
 
 ### Skill 1: Prompt Evaluator
 
@@ -58,7 +58,7 @@ Designs evaluation metric systems for LLM applications. Includes LLM-as-Judge sc
 
 A 5-phase guided conversation framework: dig into motivation → assess market opportunity → find the path → design scenarios → analyze competition. Useful for thinking through "should we build this?" before writing any code.
 
-## Examples
+## 示例
 
 ### Example 1: Prompt Evaluation
 
@@ -76,7 +76,7 @@ Ask: "Run a security audit on my customer support agent"
 
 Result: 65 tests executed. 3 critical failures found: Base64-encoded instruction bypass, path traversal via tool calls, system prompt extraction via role-play. Fix recommendations provided for each.
 
-## Best Practices
+## 最佳实践
 
 - ✅ Run prompt-evaluator before any production deployment — set a team baseline (e.g., ≥70/100)
 - ✅ Use context-budget-planner early in development, not after hitting truncation issues
@@ -92,7 +92,7 @@ Result: 65 tests executed. 3 critical failures found: Base64-encoded instruction
 - **agent-safety-guard is classified as an offensive skill**: it generates attack payloads (prompt injection, SQL injection, command injection) for authorized security testing. The skill requires explicit user confirmation before executing each test phase. Run in a sandboxed environment when possible.
 - No weaponized payloads are included. All adversarial prompts are educational in nature.
 
-## Installation
+## 安装
 
 ```bash
 # Via skill install command (Claude Code / WorkBuddy / Cursor)

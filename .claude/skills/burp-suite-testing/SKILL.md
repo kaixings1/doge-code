@@ -11,7 +11,7 @@ date_added: "2026-02-27"
 
 # Burp Suite Web Application Testing
 
-## Purpose
+## 目的
 
 Execute comprehensive web application security testing using Burp Suite's integrated toolset, including HTTP traffic interception and modification, request analysis and replay, automated vulnerability scanning, and manual testing workflows. This skill enables systematic discovery and exploitation of web application vulnerabilities through proxy-based testing methodology.
 
@@ -46,7 +46,7 @@ Execute comprehensive web application security testing using Burp Suite's integr
 - HTTP history and site map documentation
 - Proof-of-concept exploits for identified vulnerabilities
 
-## Core Workflow
+## 核心工作流
 
 ### Phase 1: Intercepting HTTP Traffic
 
@@ -320,7 +320,7 @@ javascript:alert(1)
 - Save project regularly to preserve work
 - Review scan results manually for false positives
 
-## Examples
+## 示例
 
 ### Example 1: Business Logic Testing
 
@@ -356,7 +356,7 @@ javascript:alert(1)
 
 **Finding**: Apache Struts 2.5.12 disclosed in stack trace.
 
-## Troubleshooting
+## 故障排除
 
 ### Browser Not Connecting Through Proxy
 - Verify proxy listener is active (Proxy > Options)
@@ -382,5 +382,5 @@ javascript:alert(1)
 - Ensure browser is using Burp proxy
 - Verify target isn't using unsupported protocol
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.

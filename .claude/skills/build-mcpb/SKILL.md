@@ -168,7 +168,7 @@ Widget authoring is covered in the **`build-mcp-app`** skill; it works the same 
 
 ---
 
-## Testing
+## 测试
 
 ```bash
 # Interactive manifest creation (first time)

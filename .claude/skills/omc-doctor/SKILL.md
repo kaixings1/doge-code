@@ -25,7 +25,7 @@ npm view oh-my-claude-sisyphus version 2>/dev/null || echo "Latest: (unavailable
 - If INSTALLED != LATEST: WARN - outdated plugin
 - If multiple versions exist: WARN - stale cache
 
-### Step 2: Check for Legacy Hooks in settings.json
+### 步骤 2: Check for Legacy Hooks in settings.json
 
 Read both `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json` (profile-level) and `./.claude/settings.json` (project-level) and check if there's a `"hooks"` key with entries like:
 - `bash ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/keyword-detector.sh`
@@ -35,7 +35,7 @@ Read both `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json` (profile-level) and `.
 **Diagnosis**:
 - If found: CRITICAL - legacy hooks causing duplicates
 
-### Step 3: Check for Legacy Bash Hook Scripts
+### 步骤 3: Check for Legacy Bash Hook Scripts
 
 ```bash
 ls -la "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/hooks/*.sh 2>/dev/null
@@ -44,7 +44,7 @@ ls -la "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/hooks/*.sh 2>/dev/null
 **Diagnosis**:
 - If `keyword-detector.sh`, `persistent-mode.sh`, `session-start.sh`, or `stop-continuation.sh` exist: WARN - legacy scripts (can cause confusion)
 
-### Step 4: Check CLAUDE.md
+### 步骤 4: Check CLAUDE.md
 
 ```bash
 # Check if CLAUDE.md exists
@@ -74,7 +74,7 @@ grep -o "CLAUDE-[^ )]*\.md" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/CLAUDE.md" 2>/d
 - If `OMC:VERSION` marker is missing from deterministic CLAUDE source scan (base + referenced companion): WARN - cannot verify CLAUDE.md freshness
 - If `CLAUDE.md OMC version` != `Latest cached plugin version`: WARN - version drift detected (run `omc update` or `omc setup`)
 
-### Step 5: Check Ralph Ruby Dependency
+### 步骤 5: Check Ralph Ruby Dependency
 
 Ralph workflows require Ruby. Check for Ruby explicitly so fresh installations get actionable guidance instead of a later opaque Ralph failure.
 

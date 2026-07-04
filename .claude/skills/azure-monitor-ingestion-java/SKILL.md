@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Client library for sending custom logs to Azure Monitor using the Logs Ingestion API via Data Collection Rules.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -50,7 +50,7 @@ Or use Azure SDK BOM:
 - Log Analytics workspace
 - Target table (custom or built-in: Common安全性Log, 安全性Events, Syslog, WindowsEvents)
 
-## Environment Variables
+## 环境变量
 
 ```bash
 DATA_COLLECTION_ENDPOINT=https://<dce-name>.<region>.ingest.monitor.azure.com
@@ -87,7 +87,7 @@ LogsIngestionAsyncClient asyncClient = new LogsIngestionClientBuilder()
     .buildAsyncClient();
 ```
 
-## Key Concepts
+## 关键概念
 
 | Concept | Description |
 |---------|-------------|
@@ -180,7 +180,7 @@ public class MyLogEntry {
 }
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.core.exception.HttpResponseException;
@@ -199,7 +199,7 @@ try {
 }
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Batch logs** — Upload in batches rather than one at a time
 2. **Use concurrency** — Set `maxConcurrency` for large uploads
@@ -218,7 +218,7 @@ Use azure-monitor-query to query ingested logs:
 String query = "MyTable_CL | where TimeGenerated > ago(1h) | limit 10";
 ```
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -229,7 +229,7 @@ String query = "MyTable_CL | where TimeGenerated > ago(1h) | limit 10";
 | DCR 概述 | https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-rule-overview |
 | Troubleshooting | https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-ingestion/TROUBLESHOOTING.md |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

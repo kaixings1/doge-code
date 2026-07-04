@@ -109,7 +109,7 @@ All file writes (narrative docs, dialogue files, lore entries) are delegated to
 sub-agents spawned via Task. Each sub-agent enforces the "May I write to [path]?"
 protocol. This orchestrator does not write files directly.
 
-## Output
+## 输出
 
 A summary report covering: narrative brief status, lore entries created/updated, dialogue lines written, level narrative integration points, consistency review results, and any unresolved contradictions.
 
@@ -119,7 +119,7 @@ If the pipeline stops because a dependency is unresolved (e.g., lore contradicti
 
 Verdict: **BLOCKED** — [reason]
 
-## Next Steps
+## 后续步骤
 
 - Run `/design-review` on the narrative documents for consistency validation.
 - Run `/localize extract` to extract new strings for translation after dialogue is finalized.

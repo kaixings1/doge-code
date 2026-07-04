@@ -10,14 +10,14 @@ date_added: "2026-02-27"
 
 Manage cryptographic keys with Azure Key Vault.
 
-## Installation
+## 安装
 
 ```bash
 # Keys SDK
 npm install @azure/keyvault-keys @azure/identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 KEY_VAULT_URL=https://<vault-name>.vault.azure.net
@@ -25,7 +25,7 @@ KEY_VAULT_URL=https://<vault-name>.vault.azure.net
 AZURE_KEYVAULT_NAME=<vault-name>
 ```
 
-## Authentication
+## 认证
 
 ```typescript
 import { DefaultAzureCredential } from "@azure/identity";
@@ -247,7 +247,7 @@ import {
 } from "@azure/keyvault-secrets";
 ```
 
-## Error Handling
+## 错误处理
 
 ```typescript
 try {
@@ -261,7 +261,7 @@ try {
 }
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use 默认AzureCredential** - Works across dev and production
 2. **Enable soft-delete** - 必需 for production vaults
@@ -270,7 +270,7 @@ try {
 5. **Limit key operations** - Only grant needed operations (encrypt, sign, etc.)
 6. **Browser not supported** - These SDKs are Node.js only
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

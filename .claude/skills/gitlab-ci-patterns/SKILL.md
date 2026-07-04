@@ -15,14 +15,14 @@ Comprehensive GitLab CI/CD pipeline patterns for automated testing, building, an
 - The task is unrelated to gitlab ci patterns
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Purpose
+## 目的
 
 Create efficient GitLab CI pipelines with proper stage organization, caching, and deployment strategies.
 
@@ -261,12 +261,12 @@ trigger-child:
     strategy: depend
 ```
 
-## Reference Files
+## 参考文件
 
 - `assets/gitlab-ci.yml.template` - Complete pipeline template
 - `references/pipeline-stages.md` - Stage organization patterns
 
-## Best Practices
+## 最佳实践
 
 1. **Use specific image tags** (node:20, not node:latest)
 2. **Cache dependencies** appropriately
@@ -279,7 +279,7 @@ trigger-child:
 9. **Use CI/CD variables** for secrets
 10. **Monitor pipeline performance**
 
-## Related Skills
+## 相关技能
 
 - `github-actions-templates` - For GitHub Actions
 - `deployment-pipeline-design` - For architecture

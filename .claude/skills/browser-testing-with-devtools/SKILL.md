@@ -9,7 +9,7 @@ description: 浏览器测试 — 通过Chrome DevTools MCP在真实浏览器中�
 
 Use Chrome DevTools MCP to give your agent eyes into the browser. This bridges the gap between static code analysis and live browser execution — the agent can see what the user sees, inspect the DOM, read console logs, analyze network requests, and capture performance data. Instead of guessing what's happening at runtime, verify it.
 
-## When to Use
+## 使用场景
 
 - Building or modifying anything that renders in a browser
 - Debugging UI issues (layout, styling, interaction)

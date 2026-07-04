@@ -37,7 +37,7 @@ knowing when an agent should ask for help vs proceed independently.
 - Planning reduces but doesn't eliminate errors
 - Multi-agent adds complexity - justify the overhead
 
-## Capabilities
+## 能力
 
 - Agent architecture design
 - Tool and function calling
@@ -50,7 +50,7 @@ knowing when an agent should ask for help vs proceed independently.
 
 - Required skills: LLM API usage, Understanding of function calling, Basic prompt engineering
 
-## Patterns
+## 模式
 
 ### ReAct Loop
 
@@ -315,11 +315,11 @@ Robust output handling:
 - Retry with format instructions on parse failure
 - Handle multiple output formats
 
-## Related Skills
+## 相关技能
 
 Works well with: `rag-engineer`, `prompt-engineer`, `backend`, `mcp-builder`
 
-## When to Use
+## 使用场景
 - User mentions or implies: build agent
 - User mentions or implies: AI agent
 - User mentions or implies: autonomous agent

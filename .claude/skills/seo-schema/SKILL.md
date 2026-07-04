@@ -141,7 +141,7 @@ When generating schema for a page:
 }
 ```
 
-## Output
+## 输出
 
 - `SCHEMA-REPORT.md`: detection and validation results
 - `generated-schema.json`: ready-to-use JSON-LD snippets

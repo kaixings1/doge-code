@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 .NET SDK for managing Arize AI Observability and Evaluation resources on Azure.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.ArizeAIObservabilityEval --version 1.0.0
@@ -26,7 +26,7 @@ dotnet add package Azure.ResourceManager.ArizeAIObservabilityEval --version 1.0.
 | ARM Type | `ArizeAi.ObservabilityEval/organizations` |
 | 依赖项 | `Azure.Core` >= 1.46.2, `Azure.ResourceManager` >= 1.13.1 |
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -35,7 +35,7 @@ AZURE_CLIENT_ID=<your-client-id>
 AZURE_CLIENT_SECRET=<your-client-secret>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -47,7 +47,7 @@ var credential = new DefaultAzureCredential();
 var armClient = new ArmClient(credential);
 ```
 
-## Core Workflow
+## 核心工作流
 
 ### Create an Arize AI Organization
 
@@ -183,7 +183,7 @@ await org.Value.DeleteAsync(WaitUntil.Completed);
 | `ArizeAIObservabilityEvalSingleSignOnState` | `Initial`, `Enable`, `Disable` |
 | `ArizeAIObservabilityEvalSingleSignOnType` | `Saml`, `OpenId` |
 
-## Best Practices
+## 最佳实践
 
 1. **Use async methods** — All operations support async/await
 2. **Handle long-running operations** — Use `WaitUntil.Completed` or poll manually
@@ -192,7 +192,7 @@ await org.Value.DeleteAsync(WaitUntil.Completed);
 5. **Use resource identifiers** — For direct resource access without listing
 6. **Close clients properly** — Use `using` statements or dispose explicitly
 
-## Error Handling
+## 错误处理
 
 ```csharp
 try
@@ -228,7 +228,7 @@ var data = await org.GetAsync();
 - [Azure SDK for .NET](https://github.com/Azure/azure-sdk-for-net)
 - [Arize AI](https://arize.com/)
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

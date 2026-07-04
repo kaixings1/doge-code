@@ -12,7 +12,7 @@ tools: [claude, cursor, gemini]
 ---
 # Mise Configurator
 
-## Overview
+## 概述
 
 This skill generates clean, production-ready `mise.toml` configurations for local development environments and CI/CD pipelines.
 
@@ -26,9 +26,9 @@ It helps standardize runtime versions, simplify onboarding, replace legacy versi
 - Use when migrating from `.tool-versions`, `asdf`, `nvm`, or `pyenv`
 - Use when standardizing tool versions across teams or monorepos
 
-## How It Works
+## 工作原理
 
-### Step 1: Detect Project Context
+### 步骤 1: Detect Project Context
 
 Inspect available repository files such as:
 
@@ -44,7 +44,7 @@ Inspect available repository files such as:
 
 Infer languages, package managers, and pinned versions.
 
-### Step 2: Generate `mise.toml`
+### 步骤 2: Generate `mise.toml`
 
 Create a minimal, valid, copy-paste-ready configuration using:
 
@@ -53,7 +53,7 @@ Create a minimal, valid, copy-paste-ready configuration using:
 - practical defaults for developer productivity
 - concrete pinned versions in shared production configs
 
-### Step 3: Add Bootstrap Commands
+### 步骤 3: Add Bootstrap Commands
 
 Provide setup commands such as:
 
@@ -62,11 +62,11 @@ mise trust
 mise install
 ```
 
-### Step 4: Generate CI/CD Integration
+### 步骤 4: Generate CI/CD Integration
 
 If requested, generate pipeline examples using mise with caching and runtime installation.
 
-## Examples
+## 示例
 
 ### Example 1: Node.js + pnpm Project
 
@@ -92,7 +92,7 @@ steps:
   - run: pytest
 ```
 
-## Best Practices
+## 最佳实践
 
 - ✅ Respect versions already pinned in the repository
     
@@ -133,7 +133,7 @@ steps:
 - Use only in authorized repositories and environments.
     
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Problem:** Wrong runtime version selected  
     **Solution:** Check repository lockfiles and pinned versions first.
@@ -145,7 +145,7 @@ steps:
     **Solution:** Verify plugin support or install manually.
     
 
-## Related Skills
+## 相关技能
 
 - `@docker-expert` - Use when building containerized development environments
     

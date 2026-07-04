@@ -263,7 +263,7 @@ Silently append to `production/session-state/active.md` (create the file if it d
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 - **Never write the plan without asking** — Phase 5 requires explicit approval.
 - **Classify conservatively**: when a story is ambiguous between Logic and

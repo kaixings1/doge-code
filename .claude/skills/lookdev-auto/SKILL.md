@@ -21,7 +21,7 @@ tools:
   - gemini-cli
   - codex-cli
 ---
-## When to Use
+## 使用场景
 
 Use whenever "looks/feels right" is the success criterion and there's no cheap numeric metric — animation easing/timing, zoom/camera feel, color grade, layout/spacing, design params, render/encoder settings, prompt params. Use the automated counterpart to lookdev when there's no human to sit the loop.
 

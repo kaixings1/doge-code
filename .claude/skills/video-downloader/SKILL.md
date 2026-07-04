@@ -26,7 +26,7 @@ Download videos from YouTube and other platforms for offline viewing, editing, o
 - Upstream: https://github.com/ComposioHQ/awesome-claude-skills/tree/master/video-downloader
 - Category: `video-generation`
 
-## How to use
+## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
 discovers it during planning. To run the full upstream workflow with

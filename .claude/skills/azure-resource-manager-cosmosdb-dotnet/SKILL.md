@@ -14,7 +14,7 @@ Management plane SDK for provisioning and managing Azure Cosmos DB resources via
 > - **This SDK (Azure.ResourceManager.CosmosDB)**: Create accounts, databases, containers, configure throughput, manage RBAC
 > - **Data Plane SDK (Microsoft.Azure.Cosmos)**: CRUD operations on documents, queries, stored procedures execution
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.CosmosDB
@@ -23,7 +23,7 @@ dotnet add package Azure.Identity
 
 **Current Versions**: Stable v1.4.0, Preview v1.4.0-beta.13
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -33,7 +33,7 @@ AZURE_CLIENT_ID=<client-id>
 AZURE_CLIENT_SECRET=<client-secret>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -68,7 +68,7 @@ ArmClient
             └── CosmosDBTableResource
 ```
 
-## Core Workflow
+## 核心工作流
 
 ### 1. Create Cosmos DB Account
 
@@ -192,7 +192,7 @@ foreach (var cs in connectionStrings.Value.ConnectionStrings)
 }
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -206,7 +206,7 @@ foreach (var cs in connectionStrings.Value.ConnectionStrings)
 | `CosmosDBSqlContainerCreateOrUpdateContent` | Container creation payload |
 | `ThroughputSettingsUpdateData` | Throughput configuration |
 
-## Best Practices
+## 最佳实践
 
 1. **Use `WaitUntil.Completed`** for operations that must finish before proceeding
 2. **Use `WaitUntil.Started`** when you want to poll manually or run operations in parallel
@@ -215,7 +215,7 @@ foreach (var cs in connectionStrings.Value.ConnectionStrings)
 5. **Use `CreateOrUpdateAsync`** for idempotent operations
 6. **Navigate hierarchy** via `Get*` methods (e.g., `account.GetCosmosDBSqlDatabases()`)
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -235,7 +235,7 @@ catch (RequestFailedException ex)
 }
 ```
 
-## Reference Files
+## 参考文件
 
 | File | When to Read |
 |------|--------------|
@@ -250,7 +250,7 @@ catch (RequestFailedException ex)
 | `Microsoft.Azure.Cosmos` | Data plane (document CRUD, queries) | `dotnet add package Microsoft.Azure.Cosmos` |
 | `Azure.ResourceManager.CosmosDB` | Management plane (this SDK) | `dotnet add package Azure.ResourceManager.CosmosDB` |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

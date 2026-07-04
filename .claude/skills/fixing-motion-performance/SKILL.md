@@ -22,7 +22,7 @@ Fix animation performance issues.
 
 Do not migrate animation libraries unless explicitly requested. Apply rules within the existing stack.
 
-## When to Use
+## 使用场景
 Reference these guidelines when:
 - adding or changing UI animations (CSS, WAAPI, Motion, rAF, GSAP)
 - refactoring janky interactions or transitions

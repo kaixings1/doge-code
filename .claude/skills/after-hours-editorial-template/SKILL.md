@@ -47,7 +47,7 @@ after-hours-editorial-template/
 └── example.html
 ```
 
-## Workflow
+## 工作流
 
 1. Read active `DESIGN.md` and map colors, typography tone, and layout rhythm
    into CSS variables while preserving a dark editorial baseline.

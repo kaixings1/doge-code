@@ -18,7 +18,7 @@ date_added: '2026-02-27'
 - The task is unrelated to c4 code level: [directory name]
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -199,13 +199,13 @@ flowchart TB
 
 **Note**: According to the [C4 model](https://c4model.com/diagrams), code diagrams are typically only created when needed for complex components. Most teams find system context and container diagrams sufficient. Choose the diagram type that best communicates the code structure regardless of paradigm.
 
-## Notes
+## 备注
 
 [Any additional context or important information]
 
 ```
 
-## Example Interactions
+## 交互示例
 
 ### Object-Oriented Codebases
 - "Analyze the src/api directory and create C4 Code-level documentation"

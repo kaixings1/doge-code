@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 High-throughput event streaming SDK for sending and receiving events via Azure Event Hubs.
 
-## Installation
+## 安装
 
 ```bash
 # Core package (sending and simple receiving)
@@ -28,7 +28,7 @@ dotnet add package Azure.Storage.Blobs
 
 **Current Versions**: Azure.Messaging.EventHubs v5.12.2, Azure.Messaging.EventHubs.Processor v5.12.2
 
-## Environment Variables
+## 环境变量
 
 ```bash
 EVENTHUB_FULLY_QUALIFIED_NAMESPACE=<namespace>.servicebus.windows.net
@@ -42,7 +42,7 @@ BLOB_CONTAINER_NAME=<checkpoint-container>
 EVENTHUB_CONNECTION_STRING=Endpoint=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=...
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -75,7 +75,7 @@ var producer = new EventHubProducerClient(
 | `EventHubConsumerClient` | Simple event reading | Prototyping only, NOT for production |
 | `EventProcessorClient` | Production event processing | **Always use this for receiving in production** |
 
-## Core Workflow
+## 核心工作流
 
 ### 1. Send Events (Batch)
 
@@ -290,7 +290,7 @@ public class EventService
 }
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use `EventProcessorClient` for receiving** — Never use `EventHubConsumerClient` in production
 2. **Checkpoint strategically** — After N events or time interval, not every event
@@ -301,7 +301,7 @@ public class EventService
 7. **Batch events** — Use `CreateBatchAsync()` to respect size limits
 8. **Use buffered producer** — For high-volume scenarios with automatic batching
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure.Messaging.EventHubs;
@@ -362,7 +362,7 @@ processor.ProcessEventAsync += async args =>
 | `Azure.ResourceManager.EventHubs` | Management plane (create hubs) | `dotnet add package Azure.ResourceManager.EventHubs` |
 | `Microsoft.Azure.WebJobs.Extensions.EventHubs` | Azure Functions binding | `dotnet add package Microsoft.Azure.WebJobs.Extensions.EventHubs` |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

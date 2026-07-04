@@ -31,7 +31,7 @@ adapt the closest loop or design a new one through a focused interview. Treat a
 loop as a feedback system with terminal states, not as permission for endless
 autonomy.
 
-## When to Use
+## 使用场景
 
 Use when the user asks for a loop, recurring agent workflow, automation cadence,
 iterative improvement process, existing Loop Library recommendation, or help

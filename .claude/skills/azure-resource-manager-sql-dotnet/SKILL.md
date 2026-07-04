@@ -14,7 +14,7 @@ Management plane SDK for provisioning and managing Azure SQL resources via Azure
 > - **This SDK (Azure.ResourceManager.Sql)**: Create servers, databases, elastic pools, configure firewall rules, manage failover groups
 > - **Data Plane SDK (Microsoft.Data.SqlClient)**: Execute queries, stored procedures, manage connections
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.Sql
@@ -23,7 +23,7 @@ dotnet add package Azure.Identity
 
 **Current Versions**: Stable v1.3.0, Preview v1.4.0-beta.3
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -33,7 +33,7 @@ AZURE_CLIENT_ID=<client-id>
 AZURE_CLIENT_SECRET=<client-secret>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -67,7 +67,7 @@ ArmClient
             └── VirtualNetworkRuleResource
 ```
 
-## Core Workflow
+## 核心工作流
 
 ### 1. Create SQL Server
 
@@ -226,7 +226,7 @@ var connectionString = $"Server=tcp:{serverFqdn},1433;" +
     "Connection Timeout=30;";
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -268,7 +268,7 @@ var connectionString = $"Server=tcp:{serverFqdn},1433;" +
 | `GP_Gen5_2` | GeneralPurpose | vCore-based |
 | `BC_Gen5_2` | BusinessCritical | vCore-based |
 
-## Best Practices
+## 最佳实践
 
 1. **Use `WaitUntil.Completed`** for operations that must finish before proceeding
 2. **Use `WaitUntil.Started`** when you want to poll manually or run operations in parallel
@@ -279,7 +279,7 @@ var connectionString = $"Server=tcp:{serverFqdn},1433;" +
 7. **Use elastic pools** for cost optimization when managing multiple databases
 8. **Configure firewall rules** before attempting connections
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -303,7 +303,7 @@ catch (RequestFailedException ex)
 }
 ```
 
-## Reference Files
+## 参考文件
 
 | File | When to Read |
 |------|--------------|
@@ -319,7 +319,7 @@ catch (RequestFailedException ex)
 | `Azure.ResourceManager.Sql` | Management plane (this SDK) | `dotnet add package Azure.ResourceManager.Sql` |
 | `Microsoft.EntityFrameworkCore.SqlServer` | ORM for SQL Server | `dotnet add package Microsoft.EntityFrameworkCore.SqlServer` |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

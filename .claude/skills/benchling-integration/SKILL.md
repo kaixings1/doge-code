@@ -10,7 +10,7 @@ metadata: {"version": "1.3", "skill-author": "K-Dense Inc.", "openclaw": {"prima
 
 # Benchling /u96c6/u6210
 
-## Overview
+## 概述
 
 Benchling is a cloud platform for life sciences R&D. Access registry entities (DNA, RNA, proteins), inventory, electronic lab notebooks, and workflows programmatically via the Python SDK and REST API.
 
@@ -378,7 +378,7 @@ The Benchling Data Warehouse provides SQL access to Benchling data for analytics
 - BI tools (Tableau, Looker, PowerBI)
 - Custom dashboards
 
-## Best Practices
+## 最佳实践
 
 ### Error Handling
 
@@ -436,7 +436,7 @@ The SDK handles unknown enum values and types gracefully:
 - Rotate keys if compromised; use OAuth for multi-user production apps
 - Grant minimal necessary permissions for apps in the Developer Console
 
-## Resources
+## 资源
 
 ### references/
 

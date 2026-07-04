@@ -74,7 +74,7 @@ For complex workflows involving multiple Zoho Invoice operations:
 3. Pass data between steps using tool responses
 4. Use `RUBE_REMOTE_WORKBENCH` for bulk operations or data processing
 
-## Common Patterns
+## 常见模式
 
 ### Search Before Action
 始终 search for existing resources before creating new ones to avoid duplicates.

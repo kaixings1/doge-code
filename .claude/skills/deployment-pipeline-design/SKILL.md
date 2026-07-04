@@ -22,7 +22,7 @@ date_added: "2026-02-27"
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Purpose
+## 目的
 
 Design robust, secure deployment pipelines that balance speed with safety through proper stage organization and approval workflows.
 
@@ -362,7 +362,7 @@ kubectl rollout undo deployment/my-app --to-revision=3
     fi
 ```
 
-## Reference Files
+## 参考文件
 
 - `references/pipeline-orchestration.md` - Complex pipeline patterns
 - `assets/approval-gate-template.yml` - Approval workflow templates

@@ -172,14 +172,14 @@ All file writes (UX specs, interaction pattern library updates, implementation f
 delegated to sub-agents and sub-skills (`/ux-design`, `ui-programmer`). Each enforces the
 "May I write to [path]?" protocol. This orchestrator does not write files directly.
 
-## Output
+## 输出
 
 A summary report covering: UX spec status, UX review verdict, visual design status, implementation status, accessibility compliance, input method support, interaction pattern library update status, and any outstanding issues.
 
 Verdict: **COMPLETE** — UI feature delivered through full pipeline (UX spec → visual → implementation → review → polish).
 Verdict: **BLOCKED** — pipeline halted; surface the blocker and its phase before stopping.
 
-## Next Steps
+## 后续步骤
 
 - Run `/ux-review` on the final spec if not yet approved.
 - Run `/code-review` on the UI implementation before closing stories.

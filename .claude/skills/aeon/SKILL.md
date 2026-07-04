@@ -9,7 +9,7 @@ metadata: {"version": "1.0", "skill-author": "K-Dense Inc."}
 
 # Aeon Time Series Machine Learning
 
-## Overview
+## 概述
 
 Aeon is a scikit-learn compatible Python toolkit for time series machine learning ([aeon-toolkit.org](https://www.aeon-toolkit.org/)). It provides algorithms across classification, regression, clustering, forecasting, anomaly detection, segmentation, similarity search, distances, transformations, benchmarking, and visualization — with a consistent estimator API.
 
@@ -26,7 +26,7 @@ Apply this skill when:
 - Comparing time series with specialized distance metrics
 - Extracting features from temporal data
 
-## Installation
+## 安装
 
 Requires **Python 3.10+** (3.11+ recommended). Pin a 1.x release for reproducibility:
 
@@ -328,7 +328,7 @@ plt.axhline(np.percentile(scores, 95), color='k', linestyle='--')
 plt.show()
 ```
 
-## Best Practices
+## 最佳实践
 
 ### Data Preparation
 

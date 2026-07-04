@@ -25,7 +25,7 @@ Run **Firecrawl** web crawling and extraction directly from Claude Code. Scrape 
 
 ---
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Scrape a Single Page
 

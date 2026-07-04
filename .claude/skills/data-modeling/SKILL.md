@@ -4,10 +4,10 @@ description: "数据建模方法——概念、逻辑和物理模型。涵盖 ER
 ---
 # Data Modeling
 
-## Purpose
+## 目的
 Design data models at conceptual, logical, and physical levels for databases and data warehouses.
 
-## How It Works
+## 工作原理
 
 ### Modeling Levels
 1. **Conceptual**: Business entities and relationships (non-technical)
@@ -26,7 +26,7 @@ Design data models at conceptual, logical, and physical levels for databases and
 "Create a dimensional model for our e-commerce analytics"
 ```
 
-## Output Format
+## 输出格式
 
 - **Model Diagrams**: ERD at each level
 - **Data Dictionary**: Column descriptions and business rules

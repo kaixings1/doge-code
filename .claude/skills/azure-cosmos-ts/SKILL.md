@@ -14,7 +14,7 @@ Data plane SDK for Azure Cosmos DB NoSQL API operations — CRUD on documents, q
 > - **This SDK (@azure/cosmos)**: CRUD operations on documents, queries, stored procedures
 > - **Management SDK (@azure/arm-cosmosdb)**: Create accounts, databases, containers via ARM
 
-## Installation
+## 安装
 
 ```bash
 npm install @azure/cosmos @azure/identity
@@ -23,7 +23,7 @@ npm install @azure/cosmos @azure/identity
 **Current Version**: 4.9.0  
 **Node.js**: >= 20.0.0
 
-## Environment Variables
+## 环境变量
 
 ```bash
 COSMOS_ENDPOINT=https://<account>.documents.azure.com:443/
@@ -33,7 +33,7 @@ COSMOS_CONTAINER=<container-name>
 COSMOS_KEY=<account-key>
 ```
 
-## Authentication
+## 认证
 
 ### AAD with DefaultAzureCredential (Recommended)
 
@@ -316,7 +316,7 @@ const { resource: order } = await container
   .read();
 ```
 
-## Error Handling
+## 错误处理
 
 ```typescript
 import { ErrorResponse } from "@azure/cosmos";
@@ -406,7 +406,7 @@ import {
 } from "@azure/cosmos";
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use AAD authentication** — Prefer `DefaultAzureCredential` over keys
 2. **Always use parameterized queries** — Prevents injection, improves plan caching
@@ -416,7 +416,7 @@ import {
 6. **Use ETags for concurrency** — Prevent lost updates in concurrent scenarios
 7. **Close client on shutdown** — Call `client.dispose()` in cleanup
 
-## Common Patterns
+## 常见模式
 
 ### Service Layer Pattern
 
@@ -471,7 +471,7 @@ export class ProductService {
 | `@azure/arm-cosmosdb` | Management plane (ARM) | `npm install @azure/arm-cosmosdb` |
 | `@azure/identity` | Authentication | `npm install @azure/identity` |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

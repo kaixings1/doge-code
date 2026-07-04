@@ -15,7 +15,7 @@ Production patterns for Bazel in large-scale monorepos.
 - The task is unrelated to bazel build optimization
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -378,7 +378,7 @@ bazel build //... --memory_profile=memory.json
 bazel build //... --notrack_incremental_state
 ```
 
-## Best Practices
+## 最佳实践
 
 ### Do's
 - **Use fine-grained targets** - Better caching
@@ -393,7 +393,7 @@ bazel build //... --notrack_incremental_state
 - **Don't skip WORKSPACE setup** - Foundation of build
 - **Don't ignore build warnings** - Technical debt
 
-## Resources
+## 资源
 
 - [Bazel Documentation](https://bazel.build/docs)
 - [Bazel Remote Execution](https://bazel.build/docs/remote-execution)

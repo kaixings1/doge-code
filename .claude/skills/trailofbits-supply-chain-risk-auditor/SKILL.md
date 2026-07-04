@@ -6,7 +6,7 @@ Generate a report on the supply-chain threat landscape of a project's direct dep
 
 **Author:** Spencer Michaels
 
-## When to Use
+## 使用场景
 
 使用此技能当 a client is concerned about supply-chain threats to their application and wants to identify dependencies are at the highest risk of takeover or compromise, with an eye toward replacing them with better-secured alternatives.
 
@@ -15,7 +15,7 @@ Generate a report on the supply-chain threat landscape of a project's direct dep
 This skill enumerates all of the direct dependencies of a target project, then uses the `gh` command line tool to query a variety of information about each dependency, including maintainer identities, commit history, frequency of updates, security contacts, and so on. Based on these factors, it holistically assesses the supply-chain risk presented by each dependency, enumerates the details in a table, and presents a summary report to the user with recommendations for remediation.
 
 
-## Installation
+## 安装
 
 ```
 	/plugin install trailofbits/skills/plugins/supply-chain-risk-auditor

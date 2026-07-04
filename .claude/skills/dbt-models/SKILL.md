@@ -7,7 +7,7 @@ description: "设计 dbt（数据构建工具）模型：项目结构、staging/
 ## 目的
 遵循分析工程最佳实践设计结构良好的 dbt 项目。
 
-## How It Works
+## 工作原理
 
 ### Project Structure
 ```
@@ -37,13 +37,13 @@ models/
 - `sources.yml` with source freshness checks
 - Generate docs with `dbt docs generate`
 
-## Usage Examples
+## 使用示例
 
 ```
 "Set up a dbt project for our e-commerce analytics — staging from PostgreSQL, marts for BI"
 ```
 
-## Output Format
+## 输出格式
 
 - **Project Structure**: Directory layout
 - **Model SQL**: Staging, intermediate, and marts models

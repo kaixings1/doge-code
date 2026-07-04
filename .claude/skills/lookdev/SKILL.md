@@ -23,7 +23,7 @@ tools:
   - gemini-cli
   - codex-cli
 ---
-## When to Use
+## 使用场景
 
 Use when the user says "lookdev", or asks to tune / dial in / iterate on the look of something, compare variations by feel, or review / edit / annotate a blog post, doc, copy, or media set. Use whenever "show me, I'll pick" beats asking the user to specify a number, and whenever you'd otherwise hand back a static grid or a wall of prose for review.
 

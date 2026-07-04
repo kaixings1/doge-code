@@ -26,7 +26,7 @@ Activate when the user:
 
 ## How it works
 
-### Step 1: Resolve the Library ID
+### 步骤 1: Resolve the Library ID
 
 Call the **resolve-library-id** MCP tool with:
 
@@ -35,7 +35,7 @@ Call the **resolve-library-id** MCP tool with:
 
 You must obtain a 上下文7-compatible library ID (format `/org/project` or `/org/project/version`) before querying docs. Do not call query-docs without a valid library ID from this step.
 
-### Step 2: Select the Best Match
+### 步骤 2: Select the Best Match
 
 From the resolution results, choose one result using:
 
@@ -44,7 +44,7 @@ From the resolution results, choose one result using:
 - **Source reputation**: 优先 High or Medium reputation when available.
 - **Version**: If the user specified a version (e.g. "React 19", "Next.js 15"), prefer a version-specific library ID if listed (e.g. `/org/project/v1.2.0`).
 
-### Step 3: Fetch the Documentation
+### 步骤 3: Fetch the Documentation
 
 Call the **query-docs** MCP tool with:
 
@@ -53,13 +53,13 @@ Call the **query-docs** MCP tool with:
 
 Limit: do not call query-docs (or resolve-library-id) more than 3 times per question. If the answer is unclear after 3 calls, state the uncertainty and use the best information you have rather than guessing.
 
-### Step 4: Use the Documentation
+### 步骤 4: Use the Documentation
 
 - Answer the user's question using the fetched, current information.
 - Include relevant code examples from the docs when helpful.
 - Cite the library or version when it matters (e.g. "In Next.js 15...").
 
-## Examples
+## 示例
 
 ### Example: Next.js middleware
 
@@ -81,7 +81,7 @@ Limit: do not call query-docs (or resolve-library-id) more than 3 times per ques
 2. Pick the Supabase docs library ID.
 3. Call **query-docs**; summarize the auth methods and show minimal examples from the fetched docs.
 
-## Best Practices
+## 最佳实践
 
 - **Be specific**: Use the user's full question as the query where possible for better relevance.
 - **Version awareness**: When users mention versions, use version-specific library IDs from the resolve step when available.

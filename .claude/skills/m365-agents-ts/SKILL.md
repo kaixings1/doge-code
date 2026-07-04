@@ -14,14 +14,14 @@ Build enterprise agents for Microsoft 365, Teams, and Copilot Studio using the M
 - Use the microsoft-docs MCP to verify the latest API signatures for AgentApplication, startServer, and CopilotStudioClient.
 - Confirm package versions on npm before wiring up samples or templates.
 
-## Installation
+## 安装
 
 ```bash
 npm install @microsoft/agents-hosting @microsoft/agents-hosting-express @microsoft/agents-activity
 npm install @microsoft/agents-copilotstudio-client
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 PORT=3978
@@ -157,7 +157,7 @@ window.WebChat.renderWebChat({
 }, document.getElementById("webchat")!);
 ```
 
-## Best Practices
+## 最佳实践
 
 1. Use AgentApplication for routing and keep handlers focused on one responsibility.
 2. 优先 streamingResponse for long-running completions and call endStream in finally blocks.
@@ -165,6 +165,6 @@ window.WebChat.renderWebChat({
 4. Reuse CopilotStudioClient instances and cache tokens in your token provider.
 5. Validate invoke payloads before logging or persisting feedback.
 
-## Reference Files
+## 参考文件
 
 | File | Contents |

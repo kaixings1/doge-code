@@ -695,7 +695,7 @@ score and pass validation.
 
 ---
 
-## Reference Files
+## 参考文件
 
 | File | When to Read | Contents |
 |------|-------------|----------|

@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Shared authentication utilities and data structures for Azure Communication Services.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -20,7 +20,7 @@ Shared authentication utilities and data structures for Azure Communication Serv
 </dependency>
 ```
 
-## Key Concepts
+## 关键概念
 
 | Class | Purpose |
 |-------|---------|
@@ -258,14 +258,14 @@ MicrosoftTeamsUserIdentifier teamsUser = new MicrosoftTeamsUserIdentifier("<user
     .setCloudEnvironment(CommunicationCloudEnvironment.GCCH);
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_COMMUNICATION_ENDPOINT=https://<resource>.communication.azure.com
 AZURE_COMMUNICATION_USER_TOKEN=<user-access-token>
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Proactive Refresh** - Always use `setRefreshProactively(true)` for long-lived clients
 2. **Token Security** - Never log or expose full tokens
@@ -305,7 +305,7 @@ private String refreshToken() {
 - "CommunicationUserIdentifier", "PhoneNumberIdentifier"
 - "Azure Communication Services authentication"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

@@ -151,7 +151,7 @@ Confirm the filename has been created and indicate it's time to fill in each sec
 
 **For each section:**
 
-### Step 1: Clarifying Questions
+### 步骤 1: Clarifying Questions
 
 Announce work will begin on the [SECTION NAME] section. Ask 5-10 clarifying questions about what should be included:
 
@@ -159,7 +159,7 @@ Generate 5-10 specific questions based on context and section purpose.
 
 Inform them they can answer in shorthand or just indicate what's important to cover.
 
-### Step 2: Brainstorming
+### 步骤 2: Brainstorming
 
 For the [SECTION NAME] section, brainstorm [5-20] things that might be included, depending on the section's complexity. Look for:
 - Context shared that might have been forgotten
@@ -167,7 +167,7 @@ For the [SECTION NAME] section, brainstorm [5-20] things that might be included,
 
 Generate 5-20 numbered options based on section complexity. At the end, offer to brainstorm more if they want additional options.
 
-### Step 3: Curation
+### 步骤 3: Curation
 
 Ask which points should be kept, removed, or combined. Request brief justifications to help learn priorities for the next sections.
 
@@ -179,11 +179,11 @@ Provide examples:
 
 **If user gives freeform feedback** (e.g., "looks good" or "I like most of it but...") instead of numbered selections, extract their preferences and proceed. Parse what they want kept/removed/changed and apply it.
 
-### Step 4: Gap Check
+### 步骤 4: Gap Check
 
 Based on what they've selected, ask if there's anything important missing for the [SECTION NAME] section.
 
-### Step 5: Drafting
+### 步骤 5: Drafting
 
 Use `str_replace` to replace the placeholder text for this section with the actual drafted content.
 
@@ -252,13 +252,13 @@ Explain that testing will now occur to see if the document actually works for re
 
 Perform the testing directly without user involvement.
 
-### Step 1: Predict Reader Questions
+### 步骤 1: Predict Reader Questions
 
 Announce intention to predict what questions readers might ask when trying to discover this document.
 
 Generate 5-10 questions that readers would realistically ask.
 
-### Step 2: Test with Sub-Agent
+### 步骤 2: Test with Sub-Agent
 
 Announce that these questions will be tested with a fresh Claude instance (no context from this conversation).
 
@@ -266,7 +266,7 @@ For each question, invoke a sub-agent with just the document content and the que
 
 Summarize what Reader Claude got right/wrong for each question.
 
-### Step 3: Run Additional Checks
+### 步骤 3: Run Additional Checks
 
 Announce additional checks will be performed.
 
@@ -274,7 +274,7 @@ Invoke sub-agent to check for ambiguity, false assumptions, contradictions.
 
 Summarize any issues found.
 
-### Step 4: Report and Fix
+### 步骤 4: Report and Fix
 
 If issues found:
 Report that Reader Claude struggled with specific issues.
@@ -291,13 +291,13 @@ Loop back to refinement for problematic sections.
 
 The user will need to do the testing manually.
 
-### Step 1: Predict Reader Questions
+### 步骤 1: Predict Reader Questions
 
 Ask what questions people might ask when trying to discover this document. What would they type into Claude.ai?
 
 Generate 5-10 questions that readers would realistically ask.
 
-### Step 2: Setup Testing
+### 步骤 2: Setup Testing
 
 Provide testing instructions:
 1. Open a fresh Claude conversation: https://claude.ai
@@ -311,14 +311,14 @@ For each question, instruct Reader Claude to provide:
 
 Check if Reader Claude gives correct answers or misinterprets anything.
 
-### Step 3: Additional Checks
+### 步骤 3: Additional Checks
 
 Also ask Reader Claude:
 - "What in this doc might be ambiguous or unclear to readers?"
 - "What knowledge or context does this doc assume readers already have?"
 - "Are there any internal contradictions or inconsistencies?"
 
-### Step 4: Iterate Based on Results
+### 步骤 4: Iterate Based on Results
 
 Ask what Reader Claude got wrong or struggled with. Indicate intention to fix those gaps.
 

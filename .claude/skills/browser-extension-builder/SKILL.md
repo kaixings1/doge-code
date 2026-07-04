@@ -31,7 +31,7 @@ use daily. You know the difference between a toy and a tool.
 - Extension UX
 - Store publishing
 
-## Capabilities
+## 能力
 
 - Extension architecture
 - Manifest v3 (MV3)
@@ -42,7 +42,7 @@ use daily. You know the difference between a toy and a tool.
 - Chrome Web Store publishing
 - Cross-browser support
 
-## Patterns
+## 模式
 
 ### Architecture Patterns
 
@@ -368,11 +368,11 @@ Workflow:
 6. Publish and grow
 ```
 
-## Related Skills
+## 相关技能
 
 Works well with: `frontend`, `micro-saas-launcher`, `personal-tool-builder`
 
-## When to Use
+## 使用场景
 - User mentions or implies: browser extension
 - User mentions or implies: chrome extension
 - User mentions or implies: firefox addon

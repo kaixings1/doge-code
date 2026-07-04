@@ -10,19 +10,19 @@ date_added: '2026-02-27'
 
 Simple, cost-effective message queuing for asynchronous communication.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-storage-queue azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_STORAGE_ACCOUNT_URL=https://<account>.queue.core.windows.net
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -202,7 +202,7 @@ queue_client = QueueClient(
 queue_client.send_message(b"Binary content")
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Delete messages after processing** to prevent reprocessing
 2. **Set appropriate visibility timeout** based on processing time
@@ -212,7 +212,7 @@ queue_client.send_message(b"Binary content")
 6. **Set `time_to_live`** to prevent stale messages
 7. **Consider Service Bus** for advanced features (sessions, topics)
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

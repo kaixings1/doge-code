@@ -53,7 +53,7 @@ After compaction, immediately:
 | Compact at task boundaries | Preserves coherence | Between logical steps |
 | Use `/resume` for fresh start | 100% | Unrelated new task |
 
-## Output
+## 输出
 
 After running compact-guard:
 ```text

@@ -28,7 +28,7 @@ Moodle external APIs follow a strict three-method pattern:
 
 ## Step-by-Step 实现
 
-### Step 1: Create the External API Class File
+### 步骤 1: Create the External API Class File
 
 **Location**: `/local/yourplugin/classes/external/your_api_name.php`
 
@@ -57,7 +57,7 @@ class your_api_name extends external_api {
 - Include the security check: `defined('MOODLE_INTERNAL') || die();`
 - Require externallib.php for base classes
 
-### Step 2: Define Input 参数
+### 步骤 2: Define Input 参数
 
 ```php
 public static function execute_parameters() {
@@ -90,7 +90,7 @@ public static function execute_parameters() {
 - `VALUE_OPTIONAL` - Parameter is optional
 - `VALUE_DEFAULT, defaultvalue` - 可选 with default
 
-### Step 3: Implement Business Logic
+### 步骤 3: Implement Business Logic
 
 ```php
 public static function execute($userid, $courseid, $options = []) {
@@ -150,7 +150,7 @@ public static function execute($userid, $courseid, $options = []) {
 4. **Use parameterized queries** to prevent SQL injection
 5. **Return structured data** matching return definition
 
-### Step 4: Define Return Structure
+### 步骤 4: Define Return Structure
 
 ```php
 public static function execute_returns() {
@@ -173,7 +173,7 @@ public static function execute_returns() {
 - Document each field with description
 - Nested structures allowed
 
-### Step 5: Register the Service
+### 步骤 5: Register the Service
 
 **Location**: `/local/yourplugin/db/services.php`
 

@@ -4,7 +4,7 @@ Interact with and analyze DWARF debug files, understand the DWARF debug format/s
 
 **Author:** Evan Hellman
 
-## When to Use
+## 使用场景
 
 Use this skill when you need to:
 - Understand or parse DWARF debug information from compiled binaries
@@ -31,7 +31,7 @@ This skill uses the following authoritative sources for DWARF standard informati
 - **LLVM source**: `llvm/lib/DebugInfo/DWARF/` for reference implementations
 - **libdwarf source**: github.com/davea42/libdwarf-code for C implementations
 
-## Installation
+## 安装
 
 ```
 /plugin install trailofbits/skills/plugins/dwarf-expert
