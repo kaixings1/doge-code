@@ -1,21 +1,21 @@
-# Fold Page Template
+# 折叠页面模板
 
-Canonical output format for `wiki-fold`. Every fold page uses this layout exactly.
+`wiki-fold` 的规范输出格式。每个折叠页面严格使用此布局。
 
 ---
 
-## Frontmatter
+## 前置元数据
 
 ```yaml
 ---
 type: fold
-title: "Fold k{K} — {EARLIEST-DATE} to {LATEST-DATE} — n{COUNT}"
-fold_id: "fold-k{K}-from-{EARLIEST-DATE}-to-{LATEST-DATE}-n{COUNT}"
+title: "折叠 k{K} — {最早日期} 到 {最晚日期} — n{数量}"
+fold_id: "fold-k{K}-from-{最早日期}-to-{最晚日期}-n{数量}"
 batch_exponent: {K}
-entry_count: {COUNT}
+entry_count: {数量}
 entry_range:
-  from: "{EARLIEST-CHILD-DATE}"
-  to: "{LATEST-CHILD-DATE}"
+  from: "{最早子条目日期}"
+  to: "{最晚子条目日期}"
 created: "{YYYY-MM-DD}"
 updated: "{YYYY-MM-DD}"
 tags:
@@ -26,10 +26,10 @@ status: mature
 children:
   - date: "{YYYY-MM-DD}"
     op: "{save|ingest|fold|session|setup|decision}"
-    title: "{log entry title verbatim}"
-    page: "[[{canonical page wikilink}]]"
+    title: "{日志条目标题（逐字）}"
+    page: "[[{规范页面 Wiki 链接}]]"
     page_missing: false
-  # ... one record per log entry. No dedupe by page.
+  # ... 每个日志条目一条记录。不按页面去重。
 related:
   - "[[DragonScale Memory]]"
   - "[[log]]"
@@ -37,97 +37,97 @@ related:
 ---
 ```
 
-All fields are required. Missing any field is a dry-run failure. `title` does not contain the current date. `fold_id` is deterministic and matches the filename.
+所有字段都是必需的。缺失任何字段都是试运行失败。`title` 不包含当前日期。`fold_id` 是确定性的，与文件名匹配。
 
 ---
 
-## Body Sections (in order, all required)
+## 正文部分（按顺序，全部必需）
 
-### 1. Scope (one paragraph)
+### 1. 范围（一段）
 
 ```markdown
-Level-{K} fold of {COUNT} log entries spanning {FROM} to {TO}. Dominant themes: {THEME-1}, {THEME-2}, {THEME-3}.
+跨越 {从} 到 {至} 的 {数量} 条日志条目的第 {K} 级折叠。主导主题：{主题1}、{主题2}、{主题3}。
 ```
 
-### 2. Child Entries
+### 2. 子条目
 
-One row per log entry. Row count must equal `entry_count` in frontmatter and the length of `children:`.
+每个日志条目一行。行数必须等于前置元数据中的 `entry_count` 和 `children:` 的长度。
 
 ```markdown
-## Child Entries
+## 子条目
 
-| Date | Op | Title | Page | Summary (extractive) |
+| 日期 | 操作 | 标题 | 页面 | 摘要（提取式） |
 |---|---|---|---|---|
-| 2026-04-23 | save | DragonScale Memory v0.2 — post-adversarial-review | [[DragonScale Memory]] | Adversarial-review rewrite; 7/7 critiques accepted after one surgical fix. |
-| 2026-04-15 | save | Claude SEO v1.9.0 Slides and GitHub Release | [[2026-04-15-slides-and-release-session]] | 15-slide HTML deck, v1.9.0 tagged, GitHub release with PDF asset. |
-<!-- one row per log entry; no dedupe by page -->
+| 2026-04-23 | save | DragonScale Memory v0.2 — 对抗审查后 | [[DragonScale Memory]] | 对抗审查重写；一次精确修复后 7/7 批评被接受。 |
+| 2026-04-15 | save | Claude SEO v1.9.0 幻灯片和 GitHub 发布 | [[2026-04-15-slides-and-release-session]] | 15 页 HTML 演示文稿，打上 v1.9.0 标签，附 PDF 资产的 GitHub 发布。 |
+<!-- 每个日志条目一行；不按页面去重 -->
 ```
 
-The Summary column is extractive: one sentence paraphrased from the log entry's bullets. If the source is ambiguous, write "ambiguous in source" rather than guessing.
+摘要列是提取式的：从日志条目的要点改写的一句话。如果来源不明确，写"来源不明确"而不是猜测。
 
-### 3. Key Outcomes (3-7 bullets, extractive)
+### 3. 关键成果（3-7 条，提取式）
 
-Every bullet must cite the specific child entry (by date) it draws from. Every numeric value must be grep-verifiable against that child entry. Count-check before emitting.
+每条必须引用其来源的特定子条目（按日期）。每个数值必须可通过对该子条目进行 grep 验证。输出前检查计数。
 
 ```markdown
-## Key Outcomes
+## 关键成果
 
-- {CONCRETE CHANGE 1, quoting or paraphrasing a child entry} (from 2026-04-14 session entry)
-- {CONCRETE CHANGE 2, with numeric grep-verified against source} (from 2026-04-10 session entry)
-<!-- max 7 bullets. Each bullet names a concrete artifact or decision AND cites its source entry. -->
+- {具体变更 1，引用或改写子条目}（来自 2026-04-14 会话条目）
+- {具体变更 2，通过 grep 与来源验证的数值}（来自 2026-04-10 会话条目）
+<!-- 最多 7 条。每条命名一个具体工件或决策，并引用其来源条目。 -->
 ```
 
-### 4. Cross-entry Themes (0-4 bullets, must name contributing entries)
+### 4. 跨条目主题（0-4 条，必须指明贡献条目）
 
-Themes are optional. If a theme cannot be supported by naming at least two child entries that contribute to it, do not write it.
+主题可选。如果一个主题不能通过命名至少两个贡献子条目来支持，则不要写。
 
 ```markdown
-## Cross-entry Themes
+## 跨条目主题
 
-- {THEME: describes a pattern supported by multiple entries} (supported by: 2026-04-14, 2026-04-15, 2026-04-23 entries)
+- {主题：描述由多个条目支持的模式}（由以下条目支持：2026-04-14、2026-04-15、2026-04-23）
 ```
 
-Do not invent a theme to justify the fold. If no cross-entry patterns are present, write "No cross-entry themes identified; entries are independent within this range."
+不要为了合理化折叠而编造主题。如果没有跨条目模式存在，写"未识别到跨条目主题；条目在此范围内是独立的。"
 
-### 5. Contradictions or Corrections
+### 5. 矛盾或更正
 
 ```markdown
-## Contradictions or Corrections
+## 矛盾或更正
 
-- None detected.
+- 未检测到。
 ```
 
-Or, if present:
+或者，如果存在：
 
 ```markdown
-## Contradictions or Corrections
+## 矛盾或更正
 
-- [[Earlier Entry]] claimed X; [[Later Entry]] corrected to Y. Resolution: {STATUS}.
+- [[较早条目]] 声称 X；[[较晚条目]] 更正为 Y。解决状态：{状态}。
 ```
 
-### 6. Links
+### 6. 链接
 
-The `Child Pages` section is **deduped by page**: one wikilink per unique target page, even if multiple log entries point at it. This is the graph-connection section, different from frontmatter `children:` which is **per log entry** (no dedupe).
+`子页面` 部分 **按页面去重**：每个唯一目标页面一个 Wiki 链接，即使多个日志条目指向它。这是图谱连接部分，不同于前置元数据中的 `children:`（后者是 **每个日志条目**，不去重）。
 
 ```markdown
-## Child Pages
+## 子页面
 
-- [[{UNIQUE-PAGE-1}]]
-- [[{UNIQUE-PAGE-2}]]
-<!-- dedupe by page; see frontmatter `children:` for per-entry records -->
+- [[{唯一页面1}]]
+- [[{唯一页面2}]]
+<!-- 按页面去重；参见前置元数据 `children:` 获取按条目记录 -->
 
-## Related
+## 相关
 
-- [[DragonScale Memory]] - fold-operator spec
-- [[log]] - source entries
-- [[index]] - vault catalog
+- [[DragonScale Memory]] - 折叠操作符规范
+- [[log]] - 来源条目
+- [[index]] - Vault 目录
 ```
 
 ---
 
-## Notes
+## 备注
 
-- No hot-cache update: that is the save/ingest skill's responsibility.
-- No edits to child pages. Folds are strictly read-only with respect to children.
-- If a child entry's referenced pages are missing, note "source missing" in the Summary column rather than fabricating content.
-- The body is terse. A fold is a rollup, not a retelling. Target 200-400 lines total for a k=4 fold.
+- 无热缓存更新：这是 save/ingest 技能的职责。
+- 不编辑子页面。折叠对子页面严格只读。
+- 如果子条目引用的页面缺失，在摘要列中注明"来源缺失"而非编造内容。
+- 正文简洁。折叠是汇总，而非复述。k=4 折叠的目标总行数为 200-400 行。

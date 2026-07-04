@@ -1,29 +1,29 @@
-# Wiki Modes
+# Wiki 模式
 
-Six modes cover the most common use cases. Pick the one that fits, or combine them.
+六种模式覆盖最常见的用例。选择适合的，或组合使用。
 
 ---
 
-## Mode A: Website / Sitemap
+## 模式 A：网站 / 站点地图
 
-Use when: "build a sitemap wiki for my website", "map content gaps", "SEO audit wiki"
+使用场景："为我的网站构建站点地图 Wiki"、"映射内容缺口"、"SEO 审计 Wiki"
 
 ```
 vault/
-├── .raw/              # crawl exports, analytics, scraped pages, GSC data
+├── .raw/              # 爬取导出、分析数据、抓取页面、GSC 数据
 ├── wiki/
-│   ├── pages/         # one note per URL: status, meta, content summary
-│   ├── structure/     # site architecture, nav hierarchy, internal link map
-│   ├── audits/        # content gaps, redirect needs, thin content flags
-│   ├── keywords/      # keyword clusters, target page assignments
-│   └── entities/      # brand, authors, topic hubs
+│   ├── pages/         # 每个 URL 一条笔记：状态、元数据、内容摘要
+│   ├── structure/     # 站点架构、导航层次结构、内部链接映射
+│   ├── audits/        # 内容缺口、重定向需求、内容单薄标记
+│   ├── keywords/      # 关键词集群、目标页面分配
+│   └── entities/      # 品牌、作者、主题中心
 ├── _meta/
 │   ├── index.md
 │   └── log.md
 └── CLAUDE.md
 ```
 
-Frontmatter for `wiki/pages/` notes:
+`wiki/pages/` 笔记的前置元数据：
 ```yaml
 ---
 type: page
@@ -45,30 +45,30 @@ updated: YYYY-MM-DD
 ---
 ```
 
-Key wiki pages to create: `[[Site Overview]]`, `[[Navigation Structure]]`, `[[Content Gaps]]`, `[[Redirect Map]]`, `[[Keyword Clusters]]`
+要创建的关键 Wiki 页面：`[[站点概览]]`、`[[导航结构]]`、`[[内容缺口]]`、`[[重定向映射]]`、`[[关键词集群]]`
 
 ---
 
-## Mode B: GitHub / Repository
+## 模式 B：GitHub / 仓库
 
-Use when: "map my codebase", "architecture wiki for my repo", "understand this project"
+使用场景："映射我的代码库"、"为我的仓库构建架构 Wiki"、"理解这个项目"
 
 ```
 vault/
-├── .raw/              # README, git log exports, code dumps, issue exports
+├── .raw/              # README、git 日志导出、代码转储、议题导出
 ├── wiki/
-│   ├── modules/       # one note per major module / package / service
-│   ├── components/    # reusable UI or functional components
-│   ├── decisions/     # Architecture Decision Records (ADRs)
-│   ├── dependencies/  # external deps, versions, risk assessment
-│   └── flows/         # data flows, request paths, auth flows
+│   ├── modules/       # 每个主要模块/包/服务一条笔记
+│   ├── components/    # 可复用的 UI 或功能组件
+│   ├── decisions/     # 架构决策记录（ADR）
+│   ├── dependencies/  # 外部依赖、版本、风险评估
+│   └── flows/         # 数据流、请求路径、认证流程
 ├── _meta/
 │   ├── index.md
 │   └── log.md
 └── CLAUDE.md
 ```
 
-Frontmatter for `wiki/modules/` notes:
+`wiki/modules/` 笔记的前置元数据：
 ```yaml
 ---
 type: module           # module | component | decision | dependency | flow
@@ -87,35 +87,35 @@ updated: YYYY-MM-DD
 ---
 ```
 
-Key wiki pages to create: `[[Architecture Overview]]`, `[[Data Flow]]`, `[[Tech Stack]]`, `[[Dependency Graph]]`, `[[Key Decisions]]`
+要创建的关键 Wiki 页面：`[[架构概览]]`、`[[数据流]]`、`[[技术栈]]`、`[[依赖图]]`、`[[关键决策]]`
 
 ---
 
-## Mode C: Business / Project
+## 模式 C：商业 / 项目
 
-Use when: "project wiki", "competitive intelligence", "team knowledge base", "meeting notes"
+使用场景："项目 Wiki"、"竞争情报"、"团队知识库"、"会议笔记"
 
 ```
 vault/
-├── .raw/              # meeting transcripts, Slack exports, docs, emails
+├── .raw/              # 会议记录、Slack 导出、文档、邮件
 ├── wiki/
-│   ├── stakeholders/  # people, companies, decision-makers
-│   ├── decisions/     # key decisions with rationale and date
-│   ├── deliverables/  # milestones, outputs, status tracking
-│   ├── intel/         # competitor analysis, market research
-│   └── comms/         # synthesized meeting notes, key threads
+│   ├── stakeholders/  # 人员、公司、决策者
+│   ├── decisions/     # 关键决策及理由和日期
+│   ├── deliverables/  # 里程碑、产出、状态跟踪
+│   ├── intel/         # 竞品分析、市场调研
+│   └── comms/         # 综合会议笔记、关键话题
 ├── _meta/
 │   ├── index.md
 │   └── log.md
 └── CLAUDE.md
 ```
 
-Frontmatter for `wiki/decisions/` notes:
+`wiki/decisions/` 笔记的前置元数据：
 ```yaml
 ---
 type: decision         # stakeholder | decision | deliverable | intel | meeting | competitor
 status: active         # active | pending | done | blocked | superseded
-priority: 3            # 1 (highest) to 5 (lowest)
+priority: 3            # 1（最高）到 5（最低）
 date: YYYY-MM-DD
 owner: ""
 due_date: ""
@@ -126,31 +126,31 @@ updated: YYYY-MM-DD
 ---
 ```
 
-Key wiki pages to create: `[[Project Overview]]`, `[[Stakeholder Map]]`, `[[Decision Log]]`, `[[Competitor Landscape]]`
+要创建的关键 Wiki 页面：`[[项目概览]]`、`[[干系人映射]]`、`[[决策日志]]`、`[[竞争格局]]`
 
 ---
 
-## Mode D: Personal / Second Brain
+## 模式 D：个人 / 第二大脑
 
-Use when: "personal second brain", "track my goals", "journal synthesis", "life wiki"
+使用场景："个人第二大脑"、"追踪我的目标"、"日记综合"、"生活 Wiki"
 
 ```
 vault/
-├── .raw/              # journal entries, articles, podcast notes, voice transcripts
+├── .raw/              # 日记条目、文章、播客笔记、语音转录
 ├── wiki/
-│   ├── goals/         # personal and professional goals with progress tracking
-│   ├── learning/      # concepts being mastered, skill development
-│   ├── people/        # relationships, shared context, follow-ups
-│   ├── areas/         # life areas: health, finances, career, creative
-│   └── resources/     # books, courses, tools worth referencing
+│   ├── goals/         # 个人和职业目标及进度跟踪
+│   ├── learning/      # 正在掌握的概念、技能发展
+│   ├── people/        # 人际关系、共享上下文、后续跟进
+│   ├── areas/         # 生活领域：健康、财务、职业、创意
+│   └── resources/     # 值得参考的书籍、课程、工具
 ├── _meta/
 │   ├── index.md
 │   ├── log.md
-│   └── hot-cache.md   # ~500-word summary of most active context
+│   └── hot-cache.md   # 约 500 字的最活跃上下文摘要
 └── CLAUDE.md
 ```
 
-Frontmatter for `wiki/goals/` notes:
+`wiki/goals/` 笔记的前置元数据：
 ```yaml
 ---
 type: goal             # goal | concept | person | area | resource | reflection
@@ -158,39 +158,39 @@ status: active         # active | paused | completed | abandoned
 area: career           # health | career | finance | creative | relationships | growth
 priority: 1
 target_date: YYYY-MM-DD
-progress: 0            # 0-100 percent
+progress: 0            # 0-100 百分比
 tags: [goal]
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
 ```
 
-Hot cache note: `_meta/hot-cache.md` is a ~500-word file Claude updates at the end of each session. It captures current focus areas, recent wins, and open threads. This prevents Claude from having to crawl the whole wiki to answer "where were we?".
+热缓存笔记：`_meta/hot-cache.md` 是一个约 500 字的文件，Claude 在每个会话结束时更新。它记录了当前关注领域、最近的胜利和未完成的话题。这避免了 Claude 需要爬取整个 Wiki 才能回答"我们进行到哪了？"。
 
-Key wiki pages to create: `[[North Star]]`, `[[Weekly Review Template]]`, `[[Annual Goals]]`
+要创建的关键 Wiki 页面：`[[北极星]]`、`[[周回顾模板]]`、`[[年度目标]]`
 
 ---
 
-## Mode E: Research
+## 模式 E：研究
 
-Use when: "research wiki on [topic]", "track papers I'm reading", "build a thesis"
+使用场景："关于[主题]的研究 Wiki"、"追踪我正在阅读的论文"、"构建论文"
 
 ```
 vault/
-├── .raw/              # PDFs, web clips, data files, raw notes
+├── .raw/              # PDF、网页剪辑、数据文件、原始笔记
 ├── wiki/
-│   ├── papers/        # paper summaries with key claims and methodology
-│   ├── concepts/      # extracted concepts, models, frameworks
-│   ├── entities/      # people, organizations, methods, datasets
-│   ├── thesis/        # evolving synthesis: the "state of the field" pages
-│   └── gaps/          # open questions, contradictions, research needed
+│   ├── papers/        # 论文摘要及关键声明和方法论
+│   ├── concepts/      # 提取的概念、模型、框架
+│   ├── entities/      # 人物、组织、方法、数据集
+│   ├── thesis/        # 演进中的综合："领域现状"页面
+│   └── gaps/          # 开放问题、矛盾、需要研究的内容
 ├── _meta/
 │   ├── index.md
 │   └── log.md
 └── CLAUDE.md
 ```
 
-Frontmatter for `wiki/papers/` notes:
+`wiki/papers/` 笔记的前置元数据：
 ```yaml
 ---
 type: paper            # paper | concept | entity | thesis | gap
@@ -208,30 +208,30 @@ updated: YYYY-MM-DD
 ---
 ```
 
-Key wiki pages to create: `[[Research Overview]]`, `[[Key Claims Map]]`, `[[Open Questions]]`, `[[Methodology Comparison]]`
+要创建的关键 Wiki 页面：`[[研究概览]]`、`[[关键声明映射]]`、`[[开放问题]]`、`[[方法论对比]]`
 
 ---
 
-## Mode F: Book / Course
+## 模式 F：书籍 / 课程
 
-Use when: "companion wiki for a book", "course notes wiki", "as I read [title]"
+使用场景："书籍的伴读 Wiki"、"课程笔记 Wiki"、"阅读[书名]时"
 
 ```
 vault/
-├── .raw/              # chapter notes, highlights, exercises
+├── .raw/              # 章节笔记、重点、练习
 ├── wiki/
-│   ├── characters/    # characters, personas, agents, experts (adapt to content)
-│   ├── themes/        # major themes with supporting evidence
-│   ├── concepts/      # domain-specific terms and frameworks
-│   ├── timeline/      # plot structure, curriculum sequence, chapter map
-│   └── synthesis/     # your own takeaways, questions, applications
+│   ├── characters/    # 角色、人物、代理、专家（根据内容调整）
+│   ├── themes/        # 主要主题及支撑证据
+│   ├── concepts/      # 领域特定术语和框架
+│   ├── timeline/      # 情节结构、课程顺序、章节映射
+│   └── synthesis/     # 你自己的收获、问题、应用
 ├── _meta/
 │   ├── index.md
 │   └── log.md
 └── CLAUDE.md
 ```
 
-Frontmatter for `wiki/concepts/` notes:
+`wiki/concepts/` 笔记的前置元数据：
 ```yaml
 ---
 type: concept          # concept | character | theme | chapter | synthesis
@@ -244,16 +244,16 @@ updated: YYYY-MM-DD
 ---
 ```
 
-Key wiki pages to create: `[[Book Overview]]`, `[[Theme Map]]`, `[[Character / Expert Index]]`, `[[My Takeaways]]`
+要创建的关键 Wiki 页面：`[[书籍概览]]`、`[[主题映射]]`、`[[角色/专家索引]]`、`[[我的收获]]`
 
 ---
 
-## Combining Modes
+## 组合模式
 
-You can combine modes. Examples:
+你可以组合模式。示例：
 
-- "GitHub repo + research on the AI approach used" -> Mode B folders + Mode E papers/ folder
-- "My SaaS business + second brain" -> Mode C intel/ + Mode D goals/
-- "YouTube channel" -> Mode F (content as "book") + Mode E (research on topics covered)
+- "GitHub 仓库 + 对所用 AI 方法的研究" -> 模式 B 文件夹 + 模式 E papers/ 文件夹
+- "我的 SaaS 业务 + 第二大脑" -> 模式 C intel/ + 模式 D goals/
+- "YouTube 频道" -> 模式 F（内容作为"书籍"）+ 模式 E（对覆盖主题的研究）
 
-When combining, keep folder names distinct. Don't merge `decisions/` from Mode B and Mode C into one folder.
+组合时，保持文件夹名称独立。不要将模式 B 和模式 C 的 `decisions/` 合并为一个文件夹。

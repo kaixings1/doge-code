@@ -10,19 +10,19 @@ sources: []
 
 # {{title}}
 
-## Summary
+## 摘要
 
-(2-3 sentences: what is this, why is it here, what is it useful for?)
+（2-3 句话：这是什么，为什么在这里，它有什么用途？）
 
-## Key content
+## 关键内容
 
-(The actual reference material — quotes, summaries, links, structured information.)
+（实际的参考资料——引用、摘要、链接、结构化信息。）
 
-## Sources
+## 来源
 
-- (citations, links to external material)
+- （引用、指向外部材料的链接）
 
-## Related
+## 相关
 
-- Areas using this: [[{{area-1}}]]
-- Projects using this: [[{{project-1}}]]
+- 使用此资源的领域：[[{{area-1}}]]
+- 使用此资源的项目：[[{{project-1}}]]

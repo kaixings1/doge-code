@@ -1,13 +1,13 @@
 ---
 name: graphify
-description: "Graphify Src — Graphify Src 相关功能和最佳实践"
+description: "Graphify 源码 — 将任意文件文件夹转换为可查询的知识图谱，包含社区检测和审计跟踪"
 ---
 
 # /graphify
 
 Turn any folder of files into a navigable knowledge graph with community detection, an honest audit trail, and three outputs: interactive HTML, GraphRAG-ready JSON, and a plain-language GRAPH_REPORT.md.
 
-## Usage
+## 用法
 
 ```
 /graphify                                             # full pipeline on current directory → Obsidian vault

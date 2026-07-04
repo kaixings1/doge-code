@@ -10,23 +10,23 @@ related_projects: []
 
 # {{title}}
 
-## Scope
+## 范围
 
-(One paragraph: what ongoing responsibility does this area cover? What's IN scope, what's OUT of scope?)
+（一段：此领域涵盖什么持续责任？哪些在范围内，哪些在范围外？）
 
-## Standards
+## 标准
 
-(What good looks like. What you aim to maintain.)
+（好的标准是什么。你旨在维持什么样的水平。）
 
-## Active projects in this area
+## 此领域中的活跃项目
 
 - [[{{project-1}}]]
 - [[{{project-2}}]]
 
-## Reference material
+## 参考资料
 
 - [[{{resource-1}}]]
 
-## Review cadence
+## 审查节奏
 
-(How often you check in on this area. Default: weekly.)
+（你多久检查一次此领域。默认：每周。）
