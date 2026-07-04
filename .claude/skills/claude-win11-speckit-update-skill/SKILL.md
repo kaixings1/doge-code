@@ -16,7 +16,7 @@ Windows 11 系统管理
 
 当您需要使用 Windows 11 系统管理时使用此技能。
 
-## Instructions
+## 使用说明
 
 此技能提供 guidance and patterns for windows 11 system management.
 

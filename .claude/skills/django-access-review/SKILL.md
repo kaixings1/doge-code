@@ -22,7 +22,7 @@ Find access control vulnerabilities by investigating how the codebase answers on
 
 **Can User A access, modify, or delete User B's data?**
 
-## When to Use
+## 使用场景
 - You need to review Django or DRF code for access control gaps, IDOR risk, or object-level authorization failures.
 - The task involves confirming whether one user can access, modify, or delete another user's data.
 - You want an investigation-driven authorization review instead of generic pattern matching.

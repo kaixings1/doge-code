@@ -4,7 +4,7 @@ description: "审查数据科学代码的最佳实践：可复现性、代码质
 ---
 # Code Review
 
-## Purpose
+## 目的
 Review data science code for correctness, reproducibility, and best practices.
 
 ## Review Checklist
@@ -35,13 +35,13 @@ Review data science code for correctness, reproducibility, and best practices.
 - [ ] Missing data strategy documented
 - [ ] Model evaluation on holdout set
 
-## Usage Examples
+## 使用示例
 
 ```
 "Review this Jupyter notebook for my churn prediction model"
 ```
 
-## Output Format
+## 输出格式
 
 - **Review Summary**: Pass/fail by category
 - **Issues**: Prioritized list with severity

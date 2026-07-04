@@ -13,7 +13,7 @@ Analyzes your local git repository and categorizes branches/worktrees into:
 
 The skill uses a gated workflow requiring explicit user confirmation before any deletions.
 
-## When to Use
+## 使用场景
 
 Invoke with `/git-cleanup` when you have accumulated many local branches and worktrees that need cleanup.
 
@@ -27,13 +27,13 @@ Invoke with `/git-cleanup` when you have accumulated many local branches and wor
 - 绝不 touches protected branches (main, master, develop, release/*)
 - Flags `[gone]` branches for review instead of auto-deleting
 
-## Installation
+## 安装
 
 ```bash
 claude plugins:add trailofbits/skills/git-cleanup
 ```
 
-## Example
+## 示例
 
 ```
 User: /git-cleanup

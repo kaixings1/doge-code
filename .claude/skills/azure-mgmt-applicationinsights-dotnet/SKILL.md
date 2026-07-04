@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Azure Resource Manager SDK for managing Application Insights resources for application performance monitoring.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.ApplicationInsights
@@ -20,7 +20,7 @@ dotnet add package Azure.Identity
 **Current Version**: v1.0.0 (GA)  
 **API Version**: 2022-06-15
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -28,7 +28,7 @@ AZURE_RESOURCE_GROUP=<your-resource-group>
 AZURE_APPINSIGHTS_NAME=<your-appinsights-component>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -53,7 +53,7 @@ Subscription
             └── MyWorkbook                     # Private workbooks
 ```
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Create Application Insights Component (Workspace-based)
 
@@ -374,7 +374,7 @@ WebTestResource webTest = await resourceGroup.GetWebTestAsync("webtest-homepage"
 await webTest.DeleteAsync(WaitUntil.Completed);
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -416,7 +416,7 @@ await webTest.DeleteAsync(WaitUntil.Completed);
 | `latam-br-gru-edge` | Brazil South |
 | `emea-au-syd-edge` | Australia East |
 
-## Best Practices
+## 最佳实践
 
 1. **Use workspace-based** — Workspace-based App Insights is the current standard
 2. **Link to Log Analytics** — Store data in Log Analytics for better querying
@@ -429,7 +429,7 @@ await webTest.DeleteAsync(WaitUntil.Completed);
 9. **Tag resources** — For cost allocation and organization
 10. **Use private endpoints** — For secure data ingestion
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -477,7 +477,7 @@ builder.Services.AddApplicationInsightsTelemetry(options =>
 | `Microsoft.ApplicationInsights.AspNetCore` | ASP.NET Core integration | `dotnet add package Microsoft.ApplicationInsights.AspNetCore` |
 | `Azure.Monitor.OpenTelemetry.Exporter` | OpenTelemetry export | `dotnet add package Azure.Monitor.OpenTelemetry.Exporter` |
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -486,7 +486,7 @@ builder.Services.AddApplicationInsightsTelemetry(options =>
 | Product Documentation | https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview |
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/applicationinsights/Azure.ResourceManager.ApplicationInsights |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

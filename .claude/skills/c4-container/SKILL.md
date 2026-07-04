@@ -18,7 +18,7 @@ date_added: '2026-02-27'
 - The task is unrelated to c4 container level: system deployment
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -35,7 +35,7 @@ date_added: '2026-02-27'
 - **Technology**: [Primary technologies: Node.js, Python, PostgreSQL, Redis, etc.]
 - **部署**: [Docker, Kubernetes, Cloud Service, etc.]
 
-## Purpose
+## 目的
 
 [Detailed description of what this container does and how it's deployed]
 
@@ -140,7 +140,7 @@ paths:
                 type: object
 ````
 
-## Example Interactions
+## 交互示例
 
 - "Synthesize all components into containers based on deployment definitions"
 - "Map the API components to containers and document their APIs as OpenAPI specs"

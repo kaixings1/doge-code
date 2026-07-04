@@ -26,7 +26,7 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 3. If connection is not ACTIVE, follow the returned auth link to complete Amplitude authentication
 4. Confirm connection status shows ACTIVE before running any workflows
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Send Events
 
@@ -133,7 +133,7 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 - Event names within categories are case-sensitive
 - Use these categories to validate event_type values before sending events
 
-## Common Patterns
+## 常见模式
 
 ### ID Resolution
 

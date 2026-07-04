@@ -314,7 +314,7 @@ Before reporting ANY issue:
 
 ---
 
-## Output Format
+## 输出格式
 
 ```markdown
 ## Django Performance Review: [File/Component Name]

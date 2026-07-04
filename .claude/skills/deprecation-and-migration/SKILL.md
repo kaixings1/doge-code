@@ -66,7 +66,7 @@ Before deprecating anything, answer these questions:
 
 ## The 迁移 Process
 
-### Step 1: Build the Replacement
+### 步骤 1: Build the Replacement
 
 Don't deprecate without a working alternative. The replacement must:
 
@@ -74,7 +74,7 @@ Don't deprecate without a working alternative. The replacement must:
 - Have documentation and migration guides
 - Be proven in production (not just "theoretically better")
 
-### Step 2: Announce and Document
+### 步骤 2: Announce and Document
 
 ```markdown
 ## Deprecation Notice: OldService
@@ -91,7 +91,7 @@ Don't deprecate without a working alternative. The replacement must:
 3. Run the migration verification script: `npx migrate-check`
 ```
 
-### Step 3: Migrate Incrementally
+### 步骤 3: Migrate Incrementally
 
 Migrate consumers one at a time, not all at once. For each consumer:
 
@@ -105,7 +105,7 @@ Migrate consumers one at a time, not all at once. For each consumer:
 
 **The Churn Rule:** If you own the infrastructure being deprecated, you are responsible for migrating your users — or providing backward-compatible updates that require no migration. Don't announce deprecation and leave users to figure it out.
 
-### Step 4: Remove the Old System
+### 步骤 4: Remove the Old System
 
 Only after all consumers have migrated:
 

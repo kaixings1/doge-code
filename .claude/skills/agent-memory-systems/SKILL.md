@@ -32,7 +32,7 @@ and procedural memory (how-to knowledge).
 - Test retrieval accuracy before production
 - Background memory formation beats real-time
 
-## Capabilities
+## 能力
 
 - agent-memory
 - long-term-memory
@@ -75,7 +75,7 @@ and procedural memory (how-to knowledge).
 - nomic-embed-text-v1.5 - When: Open-source, local deployment 注意: 768 dimensions, good quality
 - all-MiniLM-L6-v2 - When: Lightweight, fast local embedding 注意: 384 dimensions, lowest latency
 
-## Patterns
+## 模式
 
 ### Memory Type 架构
 

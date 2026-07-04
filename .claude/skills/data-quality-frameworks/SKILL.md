@@ -25,7 +25,7 @@ Production patterns for implementing data quality with Great Expectations, dbt t
 - You cannot modify validation rules or schemas
 - The task is unrelated to data quality or contracts
 
-## Instructions
+## 使用说明
 
 - Identify critical datasets and quality dimensions.
 - Define expectations/tests and contract rules.
@@ -33,12 +33,12 @@ Production patterns for implementing data quality with Great Expectations, dbt t
 - Set alerting, ownership, and remediation steps.
 - If detailed patterns are required, open `resources/implementation-playbook.md`.
 
-## Safety
+## 安全
 
 - Avoid blocking critical pipelines without a fallback plan.
 - Handle sensitive data securely in validation outputs.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed frameworks, templates, and examples.
 

@@ -14,7 +14,7 @@ Create a clean, objective pull request description by analyzing commit history b
 
 ---
 
-## When to Use
+## 使用场景
 
 Use this skill when you need to generate a structured pull request description based on commit history, especially for maintaining consistency and reducing manual effort.
 
@@ -121,7 +121,7 @@ Rules:
 
 ## Description Format (STRICT)
 
-## Summary
+## 总结
 1–2 lines explaining the purpose
 
 ## Changes
@@ -167,7 +167,7 @@ feat(auth): implement JWT authentication and session handling
 
 ---
 
-## Summary
+## 总结
 Adds authentication flow and resolves session persistence issues.
 
 ## Changes

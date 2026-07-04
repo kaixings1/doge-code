@@ -15,7 +15,7 @@ Lightweight Google Slides integration with standalone OAuth authentication. No M
 
 > **Requires Google Workspace account.** Personal Gmail accounts are not supported.
 
-## When to Use
+## 使用场景
 - You need to create, inspect, or modify Google Slides presentations from local automation.
 - The task involves reading slide text, adding/removing slides, or batch updating presentation content.
 - You want Slides automation for Workspace documents without using an MCP server.
@@ -101,7 +101,7 @@ You can use either:
 
 The scripts automatically extract the ID from URLs.
 
-## Output Format
+## 输出格式
 
 ### get-text
 Returns extracted text from all slides, including:

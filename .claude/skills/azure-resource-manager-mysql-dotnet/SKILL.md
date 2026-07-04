@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Azure Resource Manager SDK for managing MySQL Flexible Server deployments.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.MySql
@@ -22,7 +22,7 @@ dotnet add package Azure.Identity
 
 > **Note**: This skill focuses on MySQL Flexible Server. Single Server is deprecated and scheduled for retirement.
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -30,7 +30,7 @@ AZURE_RESOURCE_GROUP=<your-resource-group>
 AZURE_MYSQL_SERVER_NAME=<your-mysql-server>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -55,7 +55,7 @@ Subscription
         └── MySqlFlexibleServerAadAdministrator # Entra ID admin
 ```
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Create MySQL Flexible Server
 
@@ -281,7 +281,7 @@ MySqlFlexibleServerResource server = await resourceGroup
 await server.DeleteAsync(WaitUntil.Completed);
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -314,7 +314,7 @@ await server.DeleteAsync(WaitUntil.Completed);
 | `SameZone` | HA within same availability zone |
 | `ZoneRedundant` | HA across availability zones |
 
-## Best Practices
+## 最佳实践
 
 1. **Use Flexible Server** — Single Server is deprecated
 2. **Enable zone-redundant HA** — For production workloads
@@ -327,7 +327,7 @@ await server.DeleteAsync(WaitUntil.Completed);
 9. **Monitor with Azure Monitor** — Enable metrics and logs
 10. **Stop dev/test servers** — Save costs when not in use
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -383,7 +383,7 @@ string connectionString = $"Server={server.Data.FullyQualifiedDomainName};" +
 | `Azure.ResourceManager.PostgreSql` | PostgreSQL management | `dotnet add package Azure.ResourceManager.PostgreSql` |
 | `MySqlConnector` | MySQL data access | `dotnet add package MySqlConnector` |
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -392,7 +392,7 @@ string connectionString = $"Server={server.Data.FullyQualifiedDomainName};" +
 | Product Documentation | https://learn.microsoft.com/azure/mysql/flexible-server/ |
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/mysql/Azure.ResourceManager.MySql |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

@@ -42,7 +42,7 @@ firecrawl agent "get feature list" --urls "<url>" --wait -o .firecrawl/features.
 | `--pretty`             | Pretty print JSON output                  |
 | `-o, --output <path>`  | Output file path                          |
 
-## Tips
+## 提示
 
 - 始终 use `--wait` to get results inline. Without it, returns a job ID.
 - Use `--schema` for predictable, structured output — otherwise the agent returns freeform data.

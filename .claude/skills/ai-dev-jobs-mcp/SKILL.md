@@ -13,7 +13,7 @@ tools: [claude, cursor, gemini]
 
 # AI Dev Jobs MCP
 
-## Overview
+## 概述
 
 AI Dev Jobs is a remote MCP server that gives AI agents access to a live index of AI and ML job listings. As of April 17, 2026, the live MCP stats report 8,405 active roles across 489 companies, a $213,500 median salary, and 600 new jobs this week. Agents can search jobs by role, location, or company, retrieve full job details, list hiring companies, match roles to a profile, and get salary or aggregate market statistics. It is designed for AI agents that assist with job searching, recruiting, or labor market analysis.
 
@@ -108,7 +108,7 @@ List indexed tags that can be used to filter searches or salary analysis.
 list_tags({})
 ```
 
-## Examples
+## 示例
 
 ### Example 1: Find Remote ML Jobs
 
@@ -158,7 +158,7 @@ Use @ai-dev-jobs-mcp to compare senior LLM salary data.
 
 The agent will call `get_salary_data({ tag: "llm", level: "senior" })` and summarize available compensation ranges.
 
-## Best Practices
+## 最佳实践
 
 - Use `search_jobs` with specific keywords for targeted results rather than broad queries
 - Use `list_companies` to discover companies, then `search_jobs` filtered by company name for focused searches
@@ -174,7 +174,7 @@ The agent will call `get_salary_data({ tag: "llm", level: "senior" })` and summa
 - Salary data is available when companies provide it; not all listings include salary information.
 - Counts and salary medians are live market data and should be refreshed with `get_stats` before quoting them in user-facing output.
 
-## Related Skills
+## 相关技能
 
 - `@not-human-search-mcp` - Discover AI-ready tools and APIs via MCP
 - `@mcp-builder` - For building your own MCP servers

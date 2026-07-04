@@ -15,7 +15,7 @@ Guide for implementing and maintaining context as a managed artifact alongside c
 - The task is unrelated to context-driven development
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -385,7 +385,7 @@ If interrupted mid-task:
 2. Commit work-in-progress to feature branch
 3. Document any uncommitted decisions in plan.md
 
-## Best Practices
+## 最佳实践
 
 1. **Read context first**: Always read relevant artifacts before starting work
 2. **Small updates**: Make incremental context changes, not massive rewrites

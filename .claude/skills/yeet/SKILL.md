@@ -27,7 +27,7 @@ This workflow is hybrid:
 - Commit: `{description}` (terse).
 - PR title: `[codex] {description}` summarizing the full diff.
 
-## Workflow
+## 工作流
 
 1. Confirm intended scope.
    - Run `git status -sb` and inspect the diff before staging.

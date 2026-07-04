@@ -161,7 +161,7 @@ no neon glows, no 3-column equal grids, no AI copywriting clichés,
 no generic placeholder names, no broken image links.)
 ```
 
-## Best Practices
+## 最佳实践
 - **Be Descriptive:** "Deep Charcoal Ink (#18181B)" — not just "dark text"
 - **Be Functional:** Explain what each element is used for
 - **Be Consistent:** Same terminology throughout the document

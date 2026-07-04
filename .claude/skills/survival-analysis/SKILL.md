@@ -5,34 +5,34 @@ description: "生存分析和时间-事件分析：Kaplan-Meier 曲线、log-ran
 
 # Survival Analysis
 
-## Purpose
+## 目的
 Analyze time-to-event data with proper handling of censoring. Common applications: customer churn, subscription duration, time to conversion, mechanical failure analysis.
 
-## How It Works
+## 工作原理
 
-### Step 1: Prepare Data
+### 步骤 1: Prepare Data
 - Define event (churn, conversion, failure) and censoring (still active, lost to follow-up)
 - Calculate duration: time from entry to event or censoring
 - Validate: no negative durations, reasonable timeframes
 
-### Step 2: Non-Parametric Analysis
+### 步骤 2: Non-Parametric Analysis
 - **Kaplan-Meier estimator**: Survival curves with confidence bands
 - **Log-rank test**: Compare survival between groups
 - **Median survival time**: When 50% of subjects have experienced the event
 
-### Step 3: Semi-Parametric Modeling
+### 步骤 3: Semi-Parametric Modeling
 - **Cox Proportional Hazards**: Model hazard as a function of covariates
 - Check proportional hazards assumption (Schoenfeld residuals)
 - Hazard ratios with confidence intervals
 - Time-varying covariates if needed
 
-### Step 4: Interpretation
+### 步骤 4: Interpretation
 - Survival probability at specific time points
 - Hazard ratios: which factors increase/decrease risk
 - Expected remaining lifetime for active subjects
 - Business recommendations based on risk factors
 
-## Usage Examples
+## 使用示例
 
 ```
 "Analyze customer churn: how long do free-trial users last before churning?
@@ -44,7 +44,7 @@ Compare survival by acquisition channel."
 include plan type, usage frequency, and support tickets."
 ```
 
-## Output Format
+## 输出格式
 
 - **Kaplan-Meier Curves**: Survival plots with confidence bands
 - **Cox Model Summary**: Hazard ratios, CIs, p-values

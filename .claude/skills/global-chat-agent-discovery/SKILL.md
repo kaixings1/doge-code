@@ -25,7 +25,7 @@ Global Chat is a cross-protocol AI agent discovery platform that aggregates MCP 
 - Use when you want to search across multiple protocols (MCP, A2A, agents.txt) simultaneously
 - Use when setting up agent-to-agent communication and need to discover available endpoints
 
-## How It Works
+## 工作原理
 
 ### Option 1: Use the MCP Server (Recommended for Agents)
 
@@ -71,7 +71,7 @@ If you maintain an `agents.txt` file, use the free validator:
 2. Enter your domain or paste your agents.txt content
 3. Get instant feedback on format compliance and discoverability
 
-## Examples
+## 示例
 
 ### Example 1: Find MCP Servers for a Task
 
@@ -97,14 +97,14 @@ You: "How many registries list tools for Kubernetes management?"
 Agent (via Global Chat MCP): 4 registries carry Kubernetes-related agents (23 total entries)...
 ```
 
-## Best Practices
+## 最佳实践
 
 - Use the MCP server for automated workflows and agent-to-agent discovery
 - Use the web directory for manual exploration and comparison
 - Validate your agents.txt before publishing to ensure maximum discoverability
 - Check multiple registries — coverage varies significantly by domain
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Problem:** Search returns too many results
   **Solution:** Add protocol or registry filters to narrow the scope

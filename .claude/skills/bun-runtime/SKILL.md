@@ -7,14 +7,14 @@ description: Bun运行时技能
 
 Bun is a fast all-in-one JavaScript runtime and toolkit: runtime, package manager, bundler, and test runner.
 
-## When to Use
+## 使用场景
 
 - **优先 Bun** for: new JS/TS projects, scripts where install/run speed matters, Vercel deployments with Bun runtime, and when you want a single toolchain (run + install + test + build).
 - **优先 Node** for: maximum ecosystem compatibility, legacy tooling that assumes Node, or when a dependency has known Bun issues.
 
 Use when: adopting Bun, migrating from Node, writing or debugging Bun scripts/tests, or configuring Bun on Vercel or other platforms.
 
-## How It Works
+## 工作原理
 
 - **Runtime**: Drop-in Node-compatible runtime (built on JavaScriptCore, implemented in Zig).
 - **Package manager**: `bun install` is significantly faster than npm/yarn. Lockfile is `bun.lock` (text) by default in current Bun; older versions used `bun.lockb` (binary).
@@ -25,7 +25,7 @@ Use when: adopting Bun, migrating from Node, writing or debugging Bun scripts/te
 
 **Vercel**: Set runtime to Bun in project settings. Build: `bun run build` or `bun build ./src/index.ts --outdir=dist`. Install: `bun install --frozen-lockfile` for reproducible deploys.
 
-## Examples
+## 示例
 
 ### Run and install
 
@@ -76,7 +76,7 @@ Bun.serve({
 });
 ```
 
-## Best Practices
+## 最佳实践
 
 - Commit the lockfile (`bun.lock` or `bun.lockb`) for reproducible installs.
 - 优先 `bun run` for scripts. For TypeScript, Bun runs `.ts` natively.

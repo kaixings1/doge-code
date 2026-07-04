@@ -41,7 +41,7 @@ Description here
 
 If the subfolder has code, it also needs a `main.ts` (>1 line). But for stubs, a readme-only exercise is fine.
 
-## Workflow
+## 工作流
 
 1. **Parse the plan** - extract section names, exercise names, and variant types
 2. **Create directories** - `mkdir -p` for each path

@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Build container-based hosted agents using `ImageBasedHostedAgentDefinition` from the Azure AI Projects SDK.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-ai-projects>=2.0.0b3 azure-identity
@@ -18,7 +18,7 @@ pip install azure-ai-projects>=2.0.0b3 azure-identity
 
 **Minimum SDK Version:** `2.0.0b3` or later required for hosted agent support.
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_AI_PROJECT_ENDPOINT=https://<resource>.services.ai.azure.com/api/projects/<project>
@@ -33,7 +33,7 @@ Before creating hosted agents:
 3. **Capability Host** - Account-level capability host with `enablePublicHostingEnvironment=true`
 4. **SDK Version** - Ensure `azure-ai-projects>=2.0.0b3`
 
-## Authentication
+## 认证
 
 Always use `DefaultAzureCredential`:
 
@@ -48,7 +48,7 @@ client = AIProjectClient(
 )
 ```
 
-## Core Workflow
+## 核心工作流
 
 ### 1. Imports
 

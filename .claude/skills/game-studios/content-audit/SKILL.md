@@ -138,7 +138,7 @@ If yes, write the file:
 ```markdown
 # Content Audit — [Date]
 
-## Summary
+## 总结
 - **Total specified**: [N] content items across [M] systems
 - **Total found**: [N]
 - **Gap**: [N] items ([X%] unimplemented)

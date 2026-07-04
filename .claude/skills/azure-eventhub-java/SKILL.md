@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Build real-time streaming applications using the Azure Event Hubs SDK for Java.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -293,7 +293,7 @@ EventPosition.fromSequenceNumber(100L)
 EventPosition.fromEnqueuedTime(Instant.now().minus(Duration.ofHours(1)))
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.messaging.eventhubs.models.ErrorContext;
@@ -331,7 +331,7 @@ try (EventHubProducerClient producer = new EventHubClientBuilder()
 }
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 EVENT_HUBS_CONNECTION_STRING=Endpoint=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=...
@@ -339,7 +339,7 @@ EVENT_HUBS_NAME=<event-hub-name>
 STORAGE_CONNECTION_STRING=<for-checkpointing>
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use EventProcessorClient**: For production, provides load balancing and checkpointing
 2. **Batch Events**: Use `EventDataBatch` for efficient sending
@@ -357,7 +357,7 @@ STORAGE_CONNECTION_STRING=<for-checkpointing>
 - "event hub producer consumer"
 - "partition processing"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

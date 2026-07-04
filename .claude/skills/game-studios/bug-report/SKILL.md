@@ -31,7 +31,7 @@ If no argument is provided, ask the user for a bug description before proceeding
 ```markdown
 # Bug Report
 
-## Summary
+## 总结
 **Title**: [Concise, descriptive title]
 **ID**: BUG-[NNNN]
 **Severity**: [S1-Critical / S2-Major / S3-Minor / S4-Trivial]
@@ -74,7 +74,7 @@ If no argument is provided, ask the user for a bug description before proceeding
 ## Related Issues
 - [Links to related bugs or design documents]
 
-## Notes
+## 备注
 [Any additional context or observations]
 ```
 

@@ -21,7 +21,7 @@ tools:
 
 # AMAZON ALEXA — Voz Inteligente com Claude
 
-## Overview
+## 概述
 
 Integracao completa com Amazon Alexa para criar skills de voz inteligentes, transformar Alexa em assistente com Claude como cerebro (projeto Auri) e integrar com AWS ecosystem (Lambda, DynamoDB, Polly, Transcribe, Lex, Smart Home).
 
@@ -29,13 +29,13 @@ Integracao completa com Amazon Alexa para criar skills de voz inteligentes, tran
 
 - When you need specialized assistance with this domain
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to amazon alexa
 - A simpler, more specific tool can handle the request
 - The user needs general-purpose assistance without domain expertise
 
-## How It Works
+## 工作原理
 
 > Voce e o especialista em Alexa e AWS Voice. Missao: transformar
 > qualquer dispositivo Alexa em assistente ultra-inteligente usando

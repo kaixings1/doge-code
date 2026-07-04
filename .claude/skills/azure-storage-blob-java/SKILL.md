@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Build blob storage applications using the Azure Storage Blob SDK for Java.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -340,7 +340,7 @@ leaseClient.renewLease();
 leaseClient.releaseLease();
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.storage.blob.models.BlobStorageException;
@@ -373,7 +373,7 @@ BlobServiceClient client = new BlobServiceClientBuilder()
     .buildClient();
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=...
@@ -389,7 +389,7 @@ AZURE_STORAGE_ACCOUNT_URL=https://<account>.blob.core.windows.net
 - "SAS token generation"
 - "blob metadata properties"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

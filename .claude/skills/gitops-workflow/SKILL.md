@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Complete guide to implementing GitOps workflows with ArgoCD and Flux for automated Kubernetes deployments.
 
-## Purpose
+## 目的
 
 Implement declarative, Git-based continuous delivery for Kubernetes using ArgoCD or Flux CD, following OpenGitOps principles.
 
@@ -29,14 +29,14 @@ Implement declarative, Git-based continuous delivery for Kubernetes using ArgoCD
 - You cannot manage cluster access or repo permissions
 - You are not deploying to Kubernetes
 
-## Instructions
+## 使用说明
 
 1. Define repo layout and desired-state conventions.
 2. Install ArgoCD or Flux and connect clusters.
 3. Configure sync policies, environments, and promotion flow.
 4. Validate rollbacks and secret handling.
 
-## Safety
+## 安全
 
 - Avoid auto-sync to production without approvals.
 - Keep secrets out of Git and use sealed or external secret managers.
@@ -280,7 +280,7 @@ kubeseal --format yaml < secret.yaml > sealed-secret.yaml
 # Commit sealed-secret.yaml to Git
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use separate repos or branches** for different environments
 2. **Implement RBAC** for Git repositories
@@ -293,7 +293,7 @@ kubeseal --format yaml < secret.yaml > sealed-secret.yaml
 9. **Monitor sync status** with alerts
 10. **Test changes** in staging first
 
-## Troubleshooting
+## 故障排除
 
 **Sync failures:**
 ```bash

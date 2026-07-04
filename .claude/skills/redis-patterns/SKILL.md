@@ -168,7 +168,7 @@ async function withLock<T>(
 }
 ```
 
-## Anti-Patterns
+## 反模式
 
 - Storing large objects (>100KB) in Redis without compression
 - Using `KEYS *` in production (blocks the server; use `SCAN` instead)

@@ -26,7 +26,7 @@ The user needs to validate configuration files, implement configuration schemas,
 ## 需求
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 ### 1. 配置 Analysis
 
@@ -486,7 +486,7 @@ class ConfigDocGenerator:
         return sections
 ```
 
-## Output Format
+## 输出格式
 
 1. **配置 Analysis**: Current configuration assessment
 2. **Validation Schemas**: JSON Schema definitions

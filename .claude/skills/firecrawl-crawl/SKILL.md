@@ -44,7 +44,7 @@ firecrawl crawl <job-id>
 | `--pretty`                | Pretty print JSON output                    |
 | `-o, --output <path>`     | Output file path                            |
 
-## Tips
+## 提示
 
 - Always use `--wait` when you need the results immediately. Without it, crawl returns a job ID for async polling.
 - Use `--include-paths` to scope the crawl — don't crawl an entire site when you only need one section.

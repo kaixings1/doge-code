@@ -34,7 +34,7 @@ Produce a self-contained HTML report of Claude Code usage and save it to the cur
 
 5. **Report** the saved file path to the user. Do not open it or render it.
 
-## Notes
+## 备注
 
 - The template is the source of interactivity (sorting, expand/collapse, block-char bars). Your job is data + narrative, not markup.
 - Keep commentary terse and specific — reference actual project names, numbers, timestamps from the JSON.

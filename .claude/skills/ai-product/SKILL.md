@@ -31,7 +31,7 @@ Show progress. Pre-compute when possible. Cache aggressively. | Examples: Good: 
 Measure cost per query. Use smaller models where possible. Cache
 everything cacheable. | Examples: Good: GPT-4 for complex tasks, GPT-3.5 for simple ones, cached embeddings | Bad: GPT-4 for everything, no caching, verbose prompts
 
-## Patterns
+## 模式
 
 ### Structured Output with Validation
 
@@ -743,7 +743,7 @@ Workflow:
 4. Usage analytics (analytics-architecture)
 ```
 
-## When to Use
+## 使用场景
 Use this skill when the request clearly matches the capabilities and patterns described above.
 
 ## 局限性

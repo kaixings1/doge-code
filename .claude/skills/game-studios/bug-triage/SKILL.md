@@ -232,7 +232,7 @@ If user declined write: Verdict: **BLOCKED** — user declined write.
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 - **Never close or mark bugs Won't Fix without user approval** — surface them
   as P4 candidates and ask: "Are these acceptable as Won't Fix?"

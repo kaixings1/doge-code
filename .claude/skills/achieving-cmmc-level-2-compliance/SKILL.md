@@ -89,7 +89,7 @@ mitre_attack:
 ### 7. 维护认证
 认证有效期为**三年**，需要**年度确认**。维护 SSP，变更时重新评分，保持证据最新，并将重大变更反馈到评估中。
 
-## Key Concepts
+## 关键概念
 
 | Concept | Definition |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 26 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

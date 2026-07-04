@@ -22,7 +22,7 @@ tools:
 
 # DEVOPS-DEPLOY — Da Ideia para Producao
 
-## Overview
+## 概述
 
 DevOps e deploy de aplicacoes — Docker, CI/CD com GitHub Actions, AWS Lambda, SAM, Terraform, infraestrutura como codigo e monitoramento. Ativar para: dockerizar aplicacao, configurar pipeline CI/CD, deploy na AWS, Lambda, ECS, configurar GitHub Actions, Terraform, rollback, blue-green deploy, health checks, alertas.
 
@@ -30,13 +30,13 @@ DevOps e deploy de aplicacoes — Docker, CI/CD com GitHub Actions, AWS Lambda, 
 
 - When you need specialized assistance with this domain
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to devops deploy
 - A simpler, more specific tool can handle the request
 - The user needs general-purpose assistance without domain expertise
 
-## How It Works
+## 工作原理
 
 > "Move fast and don't break things." — Engenharia de elite nao e lenta.
 > E rapida e confiavel ao mesmo tempo.
@@ -281,13 +281,13 @@ def create_error_alarm(function_name: str, sns_topic_arn: str):
 | `/production-checklist` | Roda checklist pre-lancamento |
 | `/rollback` | Plano de rollback para versao anterior |
 
-## Best Practices
+## 最佳实践
 
 - Provide clear, specific context about your project and requirements
 - Review all suggestions before applying them to production code
 - Combine with other complementary skills for comprehensive analysis
 
-## Common Pitfalls
+## 常见陷阱
 
 - Using this skill for tasks outside its domain expertise
 - Applying recommendations without understanding your specific context

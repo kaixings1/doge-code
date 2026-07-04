@@ -15,14 +15,14 @@ date_added: "2026-02-27"
 - The task is unrelated to monorepo architect
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Capabilities
+## 能力
 
 - Monorepo tool selection (Nx, Turborepo, Bazel, Lerna)
 - Workspace configuration and project structure
@@ -41,7 +41,7 @@ date_added: "2026-02-27"
 - Managing dependencies across projects
 - Implementing consistent tooling across teams
 
-## Workflow
+## 工作流
 
 1. Assess codebase size and team structure
 2. Select appropriate monorepo tooling
@@ -52,7 +52,7 @@ date_added: "2026-02-27"
 7. Configure remote caching for CI
 8. Document conventions and workflows
 
-## Best Practices
+## 最佳实践
 
 - Start with clear project boundaries
 - Use consistent naming conventions

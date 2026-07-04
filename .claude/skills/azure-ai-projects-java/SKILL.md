@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 High-level SDK for Azure AI Foundry project management with access to connections, datasets, indexes, and evaluations.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -20,13 +20,13 @@ High-level SDK for Azure AI Foundry project management with access to connection
 </dependency>
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 PROJECT_ENDPOINT=https://<resource>.services.ai.azure.com/api/projects/<project>
 ```
 
-## Authentication
+## 认证
 
 ```java
 import com.azure.ai.projects.AIProjectClientBuilder;
@@ -119,7 +119,7 @@ EvalService evalService = evaluationsClient.getOpenAIClient();
 // Use OpenAI evaluation APIs directly
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use DefaultAzureCredential** for production authentication
 2. **Reuse client builder** to create multiple sub-clients efficiently
@@ -127,7 +127,7 @@ EvalService evalService = evaluationsClient.getOpenAIClient();
 4. **Use environment variables** for connection names and configuration
 5. **Check connection types** before accessing credentials
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.core.exception.HttpResponseException;
@@ -142,7 +142,7 @@ try {
 }
 ```
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -151,7 +151,7 @@ try {
 | GitHub Source | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/ai/azure-ai-projects |
 | Samples | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/ai/azure-ai-projects/src/samples |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

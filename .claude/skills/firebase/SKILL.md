@@ -34,7 +34,7 @@ your data model for your query patterns, not your data relationships.
 - Cloud Functions for what clients shouldn't do
 - Environment-based config, never hardcode keys in client
 
-## Capabilities
+## 能力
 
 - firebase-auth
 - firestore
@@ -73,7 +73,7 @@ your data model for your query patterns, not your data relationships.
 - vuefire - When: Vue + Firebase Note: Vue-specific bindings
 - angularfire - When: Angular + Firebase Note: Official Angular bindings
 
-## Patterns
+## 模式
 
 ### Modular SDK Import
 
@@ -673,11 +673,11 @@ const isAdmin = claims.admin === true;
 - user needs relational data model -> postgres-wizard (Firestore is wrong choice for highly relational data)
 - user needs full-text search -> elasticsearch-search (Firestore doesn't support full-text search - use Algolia/Elastic)
 
-## Related Skills
+## 相关技能
 
 Works well with: `nextjs-app-router`, `react-patterns`, `authentication-oauth`, `stripe`
 
-## When to Use
+## 使用场景
 - User mentions or implies: firebase
 - User mentions or implies: firestore
 - User mentions or implies: firebase auth

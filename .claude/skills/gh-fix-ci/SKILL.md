@@ -27,7 +27,7 @@ Prereq: authenticate with GitHub CLI once, then confirm with `gh auth status`. R
 - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "<number-or-url>"`
 - Add `--json` if you want machine-friendly output for summarization.
 
-## Workflow
+## 工作流
 
 1. Verify gh authentication.
    - Run `gh auth status` in the repo.

@@ -103,7 +103,7 @@ Design with explicit context budgets in mind. Know the effective context limit f
 
 Effective context budgeting requires understanding not just raw token counts but also attention distribution patterns. The middle of context receives less attention than the beginning and end. Place critical information at attention-favored positions.
 
-## Examples
+## 示例
 
 **Example 1: Organizing System Prompts**
 ```markdown
@@ -162,7 +162,7 @@ This skill provides foundational context that all other skills build upon. It sh
 - multi-agent-patterns - How context isolation enables multi-agent systems
 - tool-design - How tool definitions interact with context
 
-## References
+## 参考
 
 Internal reference:
 - Context Components Reference - Detailed technical reference

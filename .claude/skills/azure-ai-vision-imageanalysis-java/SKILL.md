@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Build image analysis applications using the Azure AI Vision Image Analysis SDK for Java.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -250,7 +250,7 @@ asyncClient.analyzeFromUrl(
     );
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.core.exception.HttpResponseException;
@@ -263,7 +263,7 @@ try {
 }
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 VISION_ENDPOINT=https://<resource>.cognitiveservices.azure.com/
@@ -290,7 +290,7 @@ Caption and Dense Captions require GPU-supported regions. Check [supported regio
 - "smart crop thumbnail"
 - "detect people image"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

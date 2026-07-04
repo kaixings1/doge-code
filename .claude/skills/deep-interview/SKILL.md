@@ -694,7 +694,7 @@ Why bad: 45% ambiguity means nearly half the requirements are unclear. The mathe
 </Final_Checklist>
 
 <Advanced>
-## Configuration
+## 配置
 
 Optional settings in `.claude/settings.json`:
 

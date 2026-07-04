@@ -178,7 +178,7 @@ expect(emailService.getSent()).toHaveLength(1);
 expect(emailService.getSent()[0].subject).toBe("Welcome");
 ```
 
-## Anti-Patterns
+## 反模式
 
 - Testing implementation details instead of behavior
 - Sharing mutable state between tests (no `beforeEach` reset)

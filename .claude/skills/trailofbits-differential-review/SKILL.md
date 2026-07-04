@@ -4,7 +4,7 @@ Security-focused differential review of code changes with git history analysis a
 
 **Author:** Omar Inuwa
 
-## When to Use
+## 使用场景
 
 Use this skill when you need to:
 - Review PRs, commits, or diffs for security vulnerabilities
@@ -22,7 +22,7 @@ This skill performs comprehensive security review of code changes:
 - **Test Coverage Gaps** - Identifies untested changes
 - **Adaptive Depth** - Scales analysis based on codebase size (small/medium/large)
 
-## Installation
+## 安装
 
 ```
 /plugin install trailofbits/skills/plugins/differential-review
@@ -71,7 +71,7 @@ This skill uses a **modular documentation architecture** for token efficiency an
 - **Maintainable** - Each concern separated into its own file
 - **Navigable** - Decision tree routes you to the right document
 
-## Workflow
+## 工作流
 
 The complete workflow spans Pre-Analysis + Phases 0-6:
 
@@ -86,7 +86,7 @@ The complete workflow spans Pre-Analysis + Phases 0-6:
 
 **Navigation:** Use the decision tree in SKILL.md to jump directly to the phase you need.
 
-## Output
+## 输出
 
 Generates a markdown report with:
 - Executive summary with severity distribution
@@ -103,7 +103,7 @@ Review the security implications of this PR:
 git diff main..feature/auth-changes
 ```
 
-## Related Skills
+## 相关技能
 
 - `context-building` - Used for baseline context analysis
 - `issue-writer` - Transform findings into formal audit reports

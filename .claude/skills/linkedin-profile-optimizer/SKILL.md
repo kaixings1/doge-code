@@ -36,7 +36,7 @@ This skill accepts and can process:
 - **Multiple Sources**: Synthesizing information from one or more links (e.g., LinkedIn + Portfolio + CV).
 - **Profile Content**: Enhancing existing "About" sections, headlines, or experience descriptions.
 
-## How It Works
+## 工作原理
 
 ### Phase 0: Input Analysis & Enhancement
 
@@ -115,7 +115,7 @@ Critically evaluate the existing profile like a global recruiter, high-level inv
     - **Gen-Z / Impactful**: Short, punchy, and modern.
     - **Osho-style / Reflective**: Calm, deep, and insightful.
 
-## Examples
+## 示例
 
 ### Example 1: Profile Verification Gate (Handle Only)
 
@@ -139,14 +139,14 @@ Critically evaluate the existing profile like a global recruiter, high-level inv
 > "IT Strategist & Agritech Founder | Transforming Agricultural Systems with Scalable Tech | Lecturer in Computer Science"
 > *Result: Clear authority, multiple roles unified by tech/agritech focus, keyword-optimized.*
 
-## Best Practices
+## 最佳实践
 
 - ✅ **Quantify Impact**: Use numbers, percentages, and dollar amounts wherever possible.
 - ✅ **Unify the Brand**: Find the "Red Thread" that connects diverse roles.
 - ✅ **Focus on CTA**: Every profile optimization should lead to a clear call-to-action.
 - ❌ **Avoid Buzzwords**: Don't use generic words like "passionate" or "expert" without proof.
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Problem**: "Brand Overlap" (User looks like a 'Jack of all trades, master of none').
 - **Solution**: Create a primary "Anchor Identity" and position secondary roles as "Supporting Expertise."

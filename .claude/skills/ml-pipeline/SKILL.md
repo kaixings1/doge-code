@@ -4,12 +4,12 @@ description: "构建可复现的 ML 流水线：数据摄取、特征工程、�
 ---
 # ML Pipeline
 
-## Purpose
+## 目的
 Build automated, reproducible ML pipelines that handle the full lifecycle from data to deployment.
 
-## How It Works
+## 工作原理
 
-### Step 1: Design Pipeline Stages
+### 步骤 1: Design Pipeline Stages
 1. Data ingestion and validation
 2. Feature engineering and transformation
 3. Model training and hyperparameter tuning
@@ -17,6 +17,6 @@ Build automated, reproducible ML pipelines that handle the full lifecycle from d
 5. Model registration and deployment
 6. Monitoring and feedback loop
 
-### Step 2: Choose Orchestrator
+### 步骤 2: Choose Orchestrator
 
 | Tool | Best For | Complexity |

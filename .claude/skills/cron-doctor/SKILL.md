@@ -16,7 +16,7 @@ license_source: "https://github.com/takeaseatventure/devops-skills/blob/main/LIC
 
 # cron-doctor
 
-## Overview
+## 概述
 
 Cron is deceptively error-prone. The failure mode is **silent** — a syntactically
 valid expression that simply never fires, or fires far more often than intended.
@@ -40,9 +40,9 @@ needed) that parses, describes, deep-validates, and computes next fire times.
   `schedule` field.
 - Use when a user pastes a 5-field cron expression and asks for a sanity check.
 
-## How It Works
+## 工作原理
 
-### Step 1: Parse the expression
+### 步骤 1: Parse the expression
 
 Split on whitespace into 5 fields: minute, hour, day-of-month, month, day-of-week.
 Confirm valid ranges:
@@ -55,16 +55,16 @@ Confirm valid ranges:
 | month | 4 | 1–12 | names (JAN–DEC) accepted |
 | day-of-week | 5 | 0–7 | 0 and 7 both = Sunday; names (SUN–SAT) accepted |
 
-### Step 2: Describe it in plain English
+### 步骤 2: Describe it in plain English
 
 State what the user *thinks* it does vs. what it *actually* does. Be explicit
 about OR-vs-AND semantics for day-of-month + day-of-week (see death-trap #2).
 
-### Step 3: Run the trap checklist
+### 步骤 3: Run the trap checklist
 
 Check the five death-traps below and flag any that apply.
 
-### Step 4: Calculate next runs and annual fire count
+### 步骤 4: Calculate next runs and annual fire count
 
 Compute the next 5 fire times as concrete dates so the user can verify the
 schedule behaves as expected. Estimate annual fire count — a schedule that fires
@@ -189,7 +189,7 @@ node scripts/cli.js next "0 9 * * 1-5" 5
 | `0 0 1 * *` | Midnight 1st of month | Monthly report |
 | `0 0 1 1 *` | Midnight Jan 1st | Annual task |
 
-## Best Practices
+## 最佳实践
 
 - ✅ Always provide the plain-English description AND run the trap checklist.
 - ✅ Stagger midnight jobs to avoid the spike.
@@ -200,7 +200,7 @@ node scripts/cli.js next "0 9 * * 1-5" 5
 - ❌ Don't restrict both day-of-month and day-of-week without confirming OR-logic.
 - ❌ Don't schedule everything at `0 0`.
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Problem:** "My cron job isn't running."
   **Solution:** Check for an impossible date (trap #1) and confirm the daemon is
@@ -230,7 +230,7 @@ node scripts/cli.js next "0 9 * * 1-5" 5
   review. Stop and ask for clarification if required inputs, permissions, or
   safety boundaries are missing.
 
-## Related Skills
+## 相关技能
 
 - `docker-expert` — when the cron job runs inside a container and the issue is the
   container/entrypoint rather than the schedule.

@@ -275,7 +275,7 @@ from blockrun_llm import generate_wallet_qr_ascii, get_wallet_address
 print(generate_wallet_qr_ascii(get_wallet_address()))
 ```
 
-## Troubleshooting
+## 故障排除
 
 **"Grok says it has no real-time access"**
 → You forgot to enable Live Search. Add `search=True`:

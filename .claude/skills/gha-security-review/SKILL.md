@@ -17,7 +17,7 @@ Find exploitable vulnerabilities in GitHub Actions workflows. Every finding MUST
 
 This skill encodes attack patterns from real GitHub Actions exploits — not generic CI/CD theory.
 
-## When to Use
+## 使用场景
 - You are reviewing GitHub Actions workflows for exploitable security issues.
 - The task requires tracing a concrete attack path from an external attacker to workflow execution or secret exposure.
 - You need a security review of workflow files, composite actions, or workflow-related scripts with evidence-based findings only.
@@ -70,7 +70,7 @@ If you cannot construct all five, report as MEDIUM (needs verification).
 
 ---
 
-## Step 1: Classify Triggers and Load References
+## 步骤 1: Classify Triggers and Load References
 
 For each workflow, identify triggers and load the appropriate reference:
 
@@ -88,7 +88,7 @@ For each workflow, identify triggers and load the appropriate reference:
 
 Load references selectively — only what's relevant to the triggers found.
 
-## Step 2: Check for Vulnerability Classes
+## 步骤 2: Check for Vulnerability Classes
 
 ### Check 1: Pwn Request
 
@@ -153,7 +153,7 @@ Before reporting, check if the pattern is actually safe:
 
 **Key distinction:** `${{ }}` is dangerous in `run:` blocks (shell expansion) but safe in `if:`, `with:`, and `env:` at the job/step level (Actions runtime evaluation).
 
-## Step 3: Validate Before Reporting
+## 步骤 3: Validate Before Reporting
 
 Before including any finding, read the actual workflow YAML and trace the complete attack path:
 
@@ -167,7 +167,7 @@ If any link is broken, mark MEDIUM (needs verification) or drop the finding.
 
 **If no checks produced a finding, report zero findings. Do not invent issues.**
 
-## Step 4: Report Findings
+## 步骤 4: Report Findings
 
 ````markdown
 ## GitHub Actions Security Review

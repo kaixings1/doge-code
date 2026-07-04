@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 Client library for Azure Cosmos DB NoSQL API — globally distributed, multi-model database.
 
-## Installation
+## 安装
 
 ```sh
 cargo add azure_data_cosmos azure_identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 COSMOS_ENDPOINT=https://<account>.documents.azure.com:443/
@@ -24,7 +24,7 @@ COSMOS_DATABASE=mydb
 COSMOS_CONTAINER=mycontainer
 ```
 
-## Authentication
+## 认证
 
 ```rust
 use azure_identity::DeveloperToolsCredential;
@@ -46,7 +46,7 @@ let client = CosmosClient::new(
 | `DatabaseClient` | Database operations | `client.database_client()` |
 | `ContainerClient` | Container/item operations | `database.container_client()` |
 
-## Core Workflow
+## 核心工作流
 
 ### Get Database and Container Clients
 
@@ -118,7 +118,7 @@ Enable key-based authentication with feature flag:
 cargo add azure_data_cosmos --features key_auth
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **始终 specify partition key** — required for point reads and writes
 2. **Use `into_model()?`** — to deserialize responses into your types
@@ -126,7 +126,7 @@ cargo add azure_data_cosmos --features key_auth
 4. **Use Entra ID auth** — prefer `DeveloperToolsCredential` over key auth
 5. **Reuse client instances** — clients are thread-safe and reusable
 
-## Reference Links
+## 参考链接
 
 | Resource | Link |
 |----------|------|
@@ -134,7 +134,7 @@ cargo add azure_data_cosmos --features key_auth
 | Source Code | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/cosmos/azure_data_cosmos |
 | crates.io | https://crates.io/crates/azure_data_cosmos |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

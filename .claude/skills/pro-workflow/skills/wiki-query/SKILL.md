@@ -25,7 +25,7 @@ node $SKILL_ROOT/scripts/query.js show <slug> <rel-path>
 
 `search` with no `--wiki` ranks across all wikis. `related` finds adjacent pages by reusing the page's title + summary as the query.
 
-## Output
+## 输出
 
 JSON-friendly. Each hit:
 

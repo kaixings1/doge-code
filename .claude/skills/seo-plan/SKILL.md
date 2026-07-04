@@ -88,7 +88,7 @@ Load from `assets/` directory:
 - `agency.md`: Agencies and consultancies
 - `generic.md`: General business template
 
-## Output
+## 输出
 
 ### Deliverables
 - `SEO-STRATEGY.md`: Complete strategic plan

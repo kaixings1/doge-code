@@ -22,7 +22,7 @@ requires:
 
 ---
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Create or Update a Contact
 Upsert a contact by email identifier with subscription status, profile fields, and optional welcome message.

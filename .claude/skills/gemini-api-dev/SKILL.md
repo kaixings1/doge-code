@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # Gemini API Development Skill
 
-## Overview
+## 概述
 
 The Gemini API provides access to Google's most advanced AI models. Key capabilities include:
 - **Text generation** - Chat, completion, summarization
@@ -129,7 +129,7 @@ This index contains links to all documentation pages in `.md.txt` format. Use we
 - [Interactions API](https://ai.google.dev/gemini-api/docs/interactions.md.txt)
 - [SDK migration guide](https://ai.google.dev/gemini-api/docs/migrate.md.txt)
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

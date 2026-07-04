@@ -26,14 +26,14 @@ The user needs to create or improve pull requests with detailed descriptions, pr
 ## 需求
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Output Format
+## 输出格式
 
 1. **PR 总结**: Executive summary with key metrics
 2. **Detailed Description**: Comprehensive PR description
@@ -46,7 +46,7 @@ $ARGUMENTS
 
 Focus on creating PRs that are a pleasure to review, with all necessary context and documentation for efficient code review process.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed patterns and examples.
 

@@ -29,7 +29,7 @@ The user needs help refactoring code to make it cleaner, more maintainable, and 
 ## 需求
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 - Identify high-impact refactor candidates and risks.
 - Break work into small, testable steps.
@@ -37,19 +37,19 @@ $ARGUMENTS
 - Validate with tests and targeted regression checks.
 - If detailed patterns are required, open `resources/implementation-playbook.md`.
 
-## Safety
+## 安全
 
 - Avoid large rewrites without agreement on scope.
 - Keep changes reviewable and reversible.
 
-## Output Format
+## 输出格式
 
 - Cleanup plan with prioritized steps
 - Key refactor targets and rationale
 - Expected impact and risk notes
 - Test/verification plan
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed patterns and examples.
 

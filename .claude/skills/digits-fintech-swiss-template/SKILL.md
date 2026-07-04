@@ -43,7 +43,7 @@ digits-fintech-swiss-template/
 └── example.html
 ```
 
-## Workflow
+## 工作流
 
 1. Start from `assets/template.html` and keep the three-slide structure intact.
 2. Replace copy and metric values while preserving card hierarchy and reading order.

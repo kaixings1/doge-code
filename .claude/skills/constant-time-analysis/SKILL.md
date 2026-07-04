@@ -213,7 +213,7 @@ For each flagged violation, ask: **Does this operation's input depend on secret 
 - **Lucky Thirteen (2013)**: Timing differences in CBC padding validation enabled plaintext recovery
 - **RSA Timing Attacks**: Early implementations leaked private key bits through division timing
 
-## References
+## 参考
 
 - [Cryptocoding Guidelines](https://github.com/veorq/cryptocoding) - Defensive coding for crypto
 - [KyberSlash](https://kyberslash.cr.yp.to/) - Division timing in post-quantum crypto

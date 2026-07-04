@@ -19,7 +19,7 @@ Analyzes MP4 files in a directory via the Gemini API and writes a `.md` summary 
 - `google-genai` installed: `py -m pip install google-genai`
 - Python available as `py` (Windows) or `python3`
 
-## Workflow
+## 工作流
 
 ### 1. Determine the prompt
 
@@ -67,7 +67,7 @@ When the user invokes this skill:
 ```markdown
 # [Video Title]
 
-## Summary
+## 总结
 [2-3 sentence description]
 
 ## Key Points

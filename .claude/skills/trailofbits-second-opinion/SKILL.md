@@ -16,14 +16,14 @@ Run code reviews using external LLM CLIs (OpenAI Codex, Google Gemini) on uncomm
 - Code review extension: `gemini extensions install https://github.com/gemini-cli-extensions/code-review`
 - Security extension: `gemini extensions install https://github.com/gemini-cli-extensions/security`
 
-## Installation
+## 安装
 
 ```
 /plugin marketplace add trailofbits/skills
 /plugin install second-opinion
 ```
 
-## Usage
+## 用法
 
 ```
 /second-opinion
@@ -44,7 +44,7 @@ The command will prompt for:
 
 Inline arguments pre-fill the scope and focus, skipping redundant questions.
 
-## How It Works
+## 工作原理
 
 Shells out to `codex review` and/or `gemini` CLI with high-capability model configurations. When both tools are selected (the default), runs Codex first then Gemini, presenting results side by side for comparison.
 

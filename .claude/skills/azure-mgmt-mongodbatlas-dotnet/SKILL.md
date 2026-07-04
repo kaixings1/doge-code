@@ -20,7 +20,7 @@ Manage MongoDB Atlas Organizations as Azure ARM resources with unified billing t
 | Resource Type | `MongoDB.Atlas/organizations` |
 | NuGet | [Azure.ResourceManager.MongoDBAtlas](https://www.nuget.org/packages/Azure.ResourceManager.MongoDBAtlas) |
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.MongoDBAtlas
@@ -38,7 +38,7 @@ This SDK manages **MongoDB Atlas Organizations as Azure ARM resources** for mark
 
 For cluster management, use the MongoDB Atlas API directly after creating the organization.
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -277,7 +277,7 @@ await organization.DeleteAsync(WaitUntil.Completed);
 | `Suspended` | Subscription suspended |
 | `Unsubscribed` | Subscription canceled |
 
-## Best Practices
+## 最佳实践
 
 ### Use Async Methods
 
@@ -355,7 +355,7 @@ var response = await orgResource.GetAsync();
 - [API Reference](https://learn.microsoft.com/en-us/dotnet/api/azure.resourcemanager.mongodbatlas)
 - [Azure SDK for .NET](https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/mongodbatlas)
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

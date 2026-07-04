@@ -5,10 +5,10 @@ description: "解释 ML 模型预测：SHAP 值、排列重要性、部分依赖
 
 # Model Interpretation
 
-## Purpose
+## 目的
 Explain why the model makes specific predictions. Essential for stakeholder trust, debugging, and regulatory compliance (GDPR, ECOA).
 
-## How It Works
+## 工作原理
 
 ### Global Explanations (Overall Model Behavior)
 

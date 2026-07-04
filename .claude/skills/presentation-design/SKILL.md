@@ -4,10 +4,10 @@ description: "设计数据演示：幻灯片结构、图表选择、叙事流程
 ---
 # Presentation Design
 
-## Purpose
+## 目的
 Design data presentations that drive decisions using the Pyramid Principle.
 
-## How It Works
+## 工作原理
 
 ### Slide Structure (Pyramid Principle)
 1. **Recommendation slide**: Lead with the answer
@@ -26,13 +26,13 @@ Design data presentations that drive decisions using the Pyramid Principle.
 - **Peers**: 10-15 slides, methodology + findings
 - **Technical**: Full methodology, code, assumptions
 
-## Usage Examples
+## 使用示例
 
 ```
 "Design a 10-slide presentation of our customer segmentation analysis"
 ```
 
-## Output Format
+## 输出格式
 
 - **Slide Outline**: Structure with key messages
 - **Chart Specifications**: Visualization per slide

@@ -406,7 +406,7 @@ agent to begin manual verification."
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 - **Never treat NOT RUN as automatic FAIL** — record it as NOT RUN and let
   the developer confirm status manually. Unconfirmed NOT RUN contributes to

@@ -8,7 +8,7 @@ level: 3
 
 使用此技能清理 AI 生成的代码垃圾，不偏离范围或更改预期行为。在 OMC 中，这是针对能工作但感觉臃肿、重复、测试不足或过度抽象的代码的有界清理工作流。
 
-## When to Use
+## 使用场景
 
 Use this skill when:
 - the user explicitly says `deslop`, `anti-slop`, or `AI slop`
@@ -75,7 +75,7 @@ In review mode:
 4. Produce a reviewer verdict with required follow-ups.
 5. Hand needed changes back to a separate writer pass instead of fixing and approving in one step.
 
-## Workflow
+## 工作流
 
 1. **Protect current behavior first**
    - Identify what must stay the same.
@@ -127,7 +127,7 @@ Use these as review prompts, not absolute bans. Keep intentional brand, accessib
    - **Behavior lock / verification run**
    - **Remaining risks**
 
-## Usage
+## 用法
 
 - `/oh-my-claudecode:ai-slop-cleaner <target>`
 - `/oh-my-claudecode:ai-slop-cleaner <target> --review`

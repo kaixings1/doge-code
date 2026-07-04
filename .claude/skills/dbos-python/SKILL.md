@@ -89,7 +89,7 @@ references/workflow-determinism.md
 references/queue-concurrency.md
 ```
 
-## References
+## 参考
 
 - https://docs.dbos.dev/
 - https://github.com/dbos-inc/dbos-transact-py

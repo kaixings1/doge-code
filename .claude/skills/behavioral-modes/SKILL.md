@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # /u884c/u4e3a/u6a21/u5f0f - Adaptive AI Operating Modes
 
-## Purpose
+## 目的
 This skill defines distinct behavioral modes that optimize AI performance for specific tasks. Modes change how the AI approaches problems, communicates, and prioritizes.
 
 ---

@@ -28,7 +28,7 @@ The user needs comprehensive XSS vulnerability scanning for client-side code, id
 
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 ### 1. XSS Vulnerability Detection
 
@@ -314,7 +314,7 @@ class XSSReportGenerator {
 - Angular: Use built-in sanitization
 - Avoid bypassing framework security features
 
-## Output Format
+## 输出格式
 
 1. **Vulnerability Report**: Detailed findings with severity levels
 2. **Risk Analysis**: Impact assessment for each vulnerability

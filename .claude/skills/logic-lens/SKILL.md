@@ -30,7 +30,7 @@ Powered by structured AI analysis, Logic Lens applies systematic logical inspect
 - Use when refactoring complex business logic
 - Use when onboarding to a new codebase and need to understand risk areas
 
-## How It Works
+## 工作原理
 
 Logic Lens uses Claude Code's reasoning capabilities to:
 
@@ -40,7 +40,7 @@ Logic Lens uses Claude Code's reasoning capabilities to:
 4. Identify security anti-patterns (injection, privilege escalation, data leakage)
 5. Report findings with severity levels and actionable fix suggestions
 
-## Installation
+## 安装
 
 ```bash
 # Install via Claude Code plugin marketplace
@@ -51,7 +51,7 @@ npx antigravity-awesome-skills --claude
 # Then invoke: @logic-lens
 ```
 
-## Examples
+## 示例
 
 ### 示例 1: Review a Single File
 

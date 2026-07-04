@@ -15,7 +15,7 @@ source: community
 
 **Source codebase**: `/Users/zhangalex/Work/Projects/FW/robius/moly/moly-kit`
 
-## When to Use
+## 使用场景
 Use this skill when:
 - Building AI chat interfaces with Makepad
 - Integrating OpenAI or other LLM APIs
@@ -24,7 +24,7 @@ Use this skill when:
 - Handling SSE streaming responses
 - Keywords: molykit, moly-kit, ai chat, bot client, openai makepad, chat widget, sse streaming
 
-## Overview
+## 概述
 
 MolyKit provides:
 - Cross-platform async utilities (PlatformSend, spawn(), ThreadToken)
@@ -349,7 +349,7 @@ fn send(&mut self, ...) -> BoxPlatformSendStream<...> {
 }
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use PlatformSend for cross-platform**: Same code works on native and WASM
 2. **Use spawn() not tokio::spawn**: Platform-agnostic task spawning
@@ -360,7 +360,7 @@ fn send(&mut self, ...) -> BoxPlatformSendStream<...> {
 7. **Use UiRunner::defer_with_redraw**: Update widget from async context
 8. **Handle ClientResult partial success**: May have value AND errors
 
-## Reference Files
+## 参考文件
 
 - `llms.txt` - Complete MolyKit API reference
 

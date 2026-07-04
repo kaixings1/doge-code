@@ -5,7 +5,7 @@ Diagnose and fix Claude in Chrome MCP extension connectivity issues.
 **Original Author:** [@jeffzwang](https://github.com/jeffzwang) from [@ExaAILabs](https://github.com/ExaAILabs)
 **Enhanced by:** Trail of Bits
 
-## When to Use
+## 使用场景
 
 - `mcp__claude-in-chrome__*` tools fail with "Browser extension is not connected"
 - Browser automation works erratically or times out
@@ -20,7 +20,7 @@ Diagnose and fix Claude in Chrome MCP extension connectivity issues.
 - Full reset procedure
 - Covers edge cases (multiple profiles, stale wrappers, TMPDIR issues)
 
-## Installation
+## 安装
 
 ```
 /plugin install trailofbits/skills/plugins/claude-in-chrome-troubleshooting

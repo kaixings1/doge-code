@@ -25,14 +25,14 @@ Systematic improvement of existing agents through performance analysis, prompt e
 - There are no metrics, feedback, or test cases available
 - The task is unrelated to agent performance or prompt quality
 
-## Instructions
+## 使用说明
 
 1. Establish baseline metrics and collect representative examples.
 2. Identify failure modes and prioritize high-impact fixes.
 3. Apply prompt and workflow improvements with measurable goals.
 4. Validate with tests and roll out changes in controlled stages.
 
-## Safety
+## 安全
 
 - Avoid deploying prompt changes without regression testing.
 - Roll back quickly if quality or safety metrics regress.

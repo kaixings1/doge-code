@@ -69,7 +69,7 @@ Write this file at the root of the project being audited (or the relevant scope 
 ```markdown
 # Bug Report — [project/scope name] — [date]
 
-## Summary
+## 总结
 - Critical: N open, N fixed
 - Intermediate: N open, N fixed
 - Normal: N open, N fixed

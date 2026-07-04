@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 Client library for Azure AI Translator text translation service for real-time text translation, transliteration, and language operations.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-ai-translation-text
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_TRANSLATOR_KEY=<your-api-key>
@@ -25,7 +25,7 @@ AZURE_TRANSLATOR_REGION=<your-region>  # e.g., eastus, westus2
 AZURE_TRANSLATOR_ENDPOINT=https://<resource>.cognitiveservices.azure.com
 ```
 
-## Authentication
+## 认证
 
 ### API Key with Region
 
@@ -263,7 +263,7 @@ async def translate_text():
 | `lookup_dictionary_examples` | Get usage examples |
 | `get_supported_languages` | List supported languages |
 
-## Best Practices
+## 最佳实践
 
 1. **Batch translations** — Send multiple texts in one request (up to 100)
 2. **Specify source language** when known to improve accuracy
@@ -273,7 +273,7 @@ async def translate_text():
 6. **Use html text_type** when translating HTML content
 7. **Include alignment** for applications needing word mapping
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

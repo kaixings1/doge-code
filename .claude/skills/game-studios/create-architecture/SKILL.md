@@ -437,7 +437,7 @@ Omit this section entirely if there are no open QQs.
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 This skill follows the collaborative design principle at every phase:
 

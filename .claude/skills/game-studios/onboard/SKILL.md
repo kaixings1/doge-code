@@ -61,7 +61,7 @@ Read recent changes (git log if available) to understand current momentum.
 ## Key Dependencies
 [What other roles/systems this role interacts with most]
 
-## Common Pitfalls
+## 常见陷阱
 [Things that trip up new contributors in this area]
 
 ## First Tasks

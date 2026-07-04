@@ -377,7 +377,7 @@ After writing: Verdict: **COMPLETE** — helper files created.
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 - **Never overwrite existing helpers** — they may contain hand-written
   customisations. Only generate new files that don't exist yet
@@ -388,7 +388,7 @@ After writing: Verdict: **COMPLETE** — helper files created.
   trace to GDD Formulas sections, not invented values
 - **Ask before writing** — always confirm before creating files in `tests/`
 
-## Next Steps
+## 后续步骤
 
 - Run `/test-setup` if the test framework has not been scaffolded yet.
 - Use `/dev-story` to implement stories — helpers reduce boilerplate in new test files.

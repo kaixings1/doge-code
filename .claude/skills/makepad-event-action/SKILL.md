@@ -20,7 +20,7 @@ You are an expert at Makepad event and action handling. Help users by:
 - **Creating actions**: Widget-to-parent communication
 - **Event flow**: Understanding event propagation
 
-## When to Use
+## 使用场景
 - You need to handle input, lifecycle, or UI interaction events in Makepad.
 - The task involves `handle_event`, `Event` variants, `Hit` processing, or widget action propagation.
 - You need to design or debug Makepad event/action flow between widgets and parents.

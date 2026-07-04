@@ -46,7 +46,7 @@ description: "构建计算机视觉模型：图像分类、目标检测、分割
 "Set up object detection for detecting defects in manufacturing images"
 ```
 
-## Output Format
+## 输出格式
 
 - **架构**: Model design with layer details
 - **Training Code**: PyTorch / torchvision / ultralytics implementation

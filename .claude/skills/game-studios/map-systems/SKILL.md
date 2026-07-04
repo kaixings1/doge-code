@@ -324,7 +324,7 @@ After any individual GDD is completed:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 This skill follows the collaborative design principle at every phase:
 

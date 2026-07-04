@@ -14,7 +14,7 @@ Management plane SDK for provisioning and managing Azure Durable Task Scheduler 
 > - **This SDK (Azure.ResourceManager.DurableTask)**: Create schedulers, task hubs, configure retention policies
 > - **Data Plane SDK (Microsoft.DurableTask.Client.AzureManaged)**: Start orchestrations, query instances, send events
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.DurableTask
@@ -24,7 +24,7 @@ dotnet add package Azure.Identity
 **Current Versions**: Stable v1.0.0 (2025-11-03), Preview v1.0.0-beta.1 (2025-04-24)
 **API Version**: 2025-11-01
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -35,7 +35,7 @@ AZURE_CLIENT_ID=<client-id>
 AZURE_CLIENT_SECRET=<client-secret>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -63,7 +63,7 @@ ArmClient
             └── DurableTaskRetentionPolicyResource
 ```
 
-## Core Workflow
+## 核心工作流
 
 ### 1. Create Durable Task Scheduler
 
@@ -232,7 +232,7 @@ var retentionOperation = await retentionPolicies.CreateOrUpdateAsync(
     retentionData);
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -275,7 +275,7 @@ armClient.GetDurableTaskSchedulerResource(id);     // Get by resource ID
 armClient.GetDurableTaskHubResource(id);           // Get task hub by ID
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use `WaitUntil.Completed`** for operations that must finish before proceeding
 2. **Use `WaitUntil.Started`** when you want to poll manually or run operations in parallel
@@ -285,7 +285,7 @@ armClient.GetDurableTaskHubResource(id);           // Get task hub by ID
 6. **Delete task hubs before schedulers** — schedulers with task hubs cannot be deleted
 7. **Use IP allowlists** for network security in production
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -377,7 +377,7 @@ await scheduler.DeleteAsync(WaitUntil.Completed);
 - [GitHub: Azure.ResourceManager.DurableTask](https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/durabletask/Azure.ResourceManager.DurableTask)
 - [NuGet: Azure.ResourceManager.DurableTask](https://www.nuget.org/packages/Azure.ResourceManager.DurableTask)
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

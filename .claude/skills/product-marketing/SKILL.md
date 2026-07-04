@@ -11,9 +11,9 @@ You help users create and maintain a product marketing context document. This ca
 
 The document is stored at `.agents/product-marketing.md`.
 
-## Workflow
+## 工作流
 
-### Step 1: Check for Existing Context
+### 步骤 1: Check for Existing Context
 
 First, check if `.agents/product-marketing.md` already exists. Also check `.claude/product-marketing.md` and the legacy filename `product-marketing-context.md` (in either `.agents/` or `.claude/`) for older setups — if found anywhere other than `.agents/product-marketing.md`, offer to move it to the canonical location.
 
@@ -30,7 +30,7 @@ First, check if `.agents/product-marketing.md` already exists. Also check `.clau
 
 Most users prefer option 1. After presenting the draft, ask: "What needs correcting? What's missing?"
 
-### Step 2: Gather Information
+### 步骤 2: Gather Information
 
 **If auto-drafting:**
 1. Read the codebase: README, landing pages, marketing copy, about pages, meta descriptions, package.json, any existing docs

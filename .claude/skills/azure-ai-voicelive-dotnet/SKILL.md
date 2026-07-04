@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Real-time voice AI SDK for building bidirectional voice assistants with Azure AI.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.AI.VoiceLive
@@ -20,7 +20,7 @@ dotnet add package NAudio                    # For audio capture/playback
 
 **Current Versions**: Stable v1.0.0, Preview v1.1.0-beta.1
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_VOICELIVE_ENDPOINT=https://<resource>.services.ai.azure.com/
@@ -30,7 +30,7 @@ AZURE_VOICELIVE_VOICE=en-US-AvaNeural
 AZURE_VOICELIVE_API_KEY=<your-api-key>
 ```
 
-## Authentication
+## 认证
 
 ### Microsoft Entra ID (Recommended)
 
@@ -65,7 +65,7 @@ VoiceLiveClient
     └── StartResponseAsync()
 ```
 
-## Core Workflow
+## 核心工作流
 
 ### 1. Start Session and Configure
 
@@ -201,7 +201,7 @@ if (serverEvent is SessionUpdateResponseFunctionCallArgumentsDone functionCall)
 | `gpt-4o-mini-realtime-preview` | Lightweight, fast interactions |
 | `phi4-mm-realtime` | Cost-effective multimodal |
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -216,7 +216,7 @@ if (serverEvent is SessionUpdateResponseFunctionCallArgumentsDone functionCall)
 | `SessionUpdateResponseAudioDelta` | Audio chunk event |
 | `SessionUpdateResponseTextDelta` | Text chunk event |
 
-## Best Practices
+## 最佳实践
 
 1. **Always set both modalities** — Include `Text` and `Audio` for voice assistants
 2. **Use `AzureSemanticVadTurnDetection`** — Provides natural conversation flow
@@ -225,7 +225,7 @@ if (serverEvent is SessionUpdateResponseFunctionCallArgumentsDone functionCall)
 5. **Handle all event types** — Check for errors, audio, text, and function calls
 6. **Use DefaultAzureCredential** — Never hardcode API keys
 
-## Error Handling
+## 错误处理
 
 ```csharp
 if (serverEvent is SessionUpdateError error)
@@ -256,7 +256,7 @@ if (serverEvent is SessionUpdateError error)
 | `Microsoft.CognitiveServices.Speech` | Speech-to-text, text-to-speech | `dotnet add package Microsoft.CognitiveServices.Speech` |
 | `NAudio` | Audio capture/playback | `dotnet add package NAudio` |
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -265,7 +265,7 @@ if (serverEvent is SessionUpdateError error)
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/ai/Azure.AI.VoiceLive |
 | Quickstart | https://learn.microsoft.com/azure/ai-services/speech-service/voice-live-quickstart |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

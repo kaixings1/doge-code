@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Build real-time web applications using the Azure Web PubSub SDK for Java.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -69,7 +69,7 @@ WebPubSubServiceAsyncClient asyncClient = new WebPubSubServiceClientBuilder()
     .buildAsyncClient();
 ```
 
-## Key Concepts
+## 关键概念
 
 - **Hub**: Logical isolation unit for connections
 - **Group**: Subset of connections within a hub
@@ -255,7 +255,7 @@ asyncClient.sendToGroup("developers", "Group message", WebPubSubContentType.TEXT
     .subscribe();
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.core.exception.HttpResponseException;
@@ -268,7 +268,7 @@ try {
 }
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 WEB_PUBSUB_CONNECTION_STRING=Endpoint=https://<resource>.webpubsub.azure.com;AccessKey=...
@@ -285,7 +285,7 @@ WEB_PUBSUB_ACCESS_KEY=<your-access-key>
 | `webpubsub.joinLeaveGroup.<group>` | Join/leave specific group |
 | `webpubsub.sendToGroup.<group>` | Send to specific group |
 
-## Best Practices
+## 最佳实践
 
 1. **Use Groups**: Organize connections into groups for targeted messaging
 2. **User IDs**: Associate connections with user IDs for user-level messaging
@@ -303,7 +303,7 @@ WEB_PUBSUB_ACCESS_KEY=<your-access-key>
 - "chat application backend"
 - "live updates broadcasting"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

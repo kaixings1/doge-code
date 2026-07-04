@@ -481,7 +481,7 @@ how system evolves over time
 
 ---
 
-## Anti-Patterns
+## 反模式
 
 | Don't | Do Instead | Why |
 |-------|------------|-----|

@@ -19,7 +19,7 @@ A toolkit providing utilities and knowledge for creating animated GIFs optimized
 - Colors: 48-128 (fewer = smaller file size)
 - Duration: Keep under 3 seconds for emoji GIFs
 
-## Core Workflow
+## 核心工作流
 
 ```python
 from core.gif_builder import GIFBuilder
@@ -247,7 +247,7 @@ It does NOT provide:
 
 Be creative! Combine concepts (bouncing + rotating, pulsing + sliding, etc.) and use PIL's full capabilities.
 
-## Dependencies
+## 依赖
 
 ```bash
 pip install pillow imageio numpy

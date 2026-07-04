@@ -195,7 +195,7 @@ function SignupForm() {
 
 WCAG AA requires 4.5:1 contrast for normal text, 3:1 for large text (18px bold or 24px regular).
 
-## Anti-Patterns
+## 反模式
 
 - Using `div` and `span` for clickable elements instead of `button` or `a`
 - Removing focus outlines without providing an alternative indicator

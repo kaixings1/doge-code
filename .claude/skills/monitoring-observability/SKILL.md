@@ -175,7 +175,7 @@ groups:
           severity: warning
 ```
 
-## Anti-Patterns
+## 反模式
 
 - Logging sensitive data (passwords, tokens, PII) without redaction
 - Using string interpolation in log messages instead of structured fields

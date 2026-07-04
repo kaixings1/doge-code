@@ -128,21 +128,21 @@ This appends a Compliance Impact section to the report:
 
 ## Methodology
 
-### Step 1: Determine Applicable Frameworks
+### 步骤 1: Determine Applicable Frameworks
 Ask the user which compliance frameworks apply to their organization.
 
-### Step 2: Run Standard Audit
+### 步骤 2: Run Standard Audit
 ```
 /vuln-scout:full-audit .
 ```
 
-### Step 3: Map Findings to 需求
+### 步骤 3: Map Findings to 需求
 Use the mapping table above to categorize each finding by its compliance impact.
 
-### Step 4: Prioritize by Compliance Risk
+### 步骤 4: Prioritize by Compliance Risk
 Findings that affect multiple frameworks should be prioritized higher.
 
-### Step 5: Generate Compliance Report
+### 步骤 5: Generate Compliance Report
 Include both the technical finding details and the compliance requirement references.
 
 ## 集成 with Other Skills

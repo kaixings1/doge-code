@@ -218,7 +218,7 @@ Use `AskUserQuestion`:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 - **Scope discipline is everything** — resist scope creep; every addition increases risk
 - **Rollback plan first, always** — a patch without a rollback plan is irresponsible

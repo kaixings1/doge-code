@@ -14,7 +14,7 @@ Management plane SDK for provisioning and managing Azure API Management resource
 > - **This SDK (Azure.ResourceManager.ApiManagement)**: Create services, APIs, products, subscriptions, policies, users, groups
 > - **Data Plane**: Direct API calls to your APIM gateway endpoints
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.ApiManagement
@@ -23,7 +23,7 @@ dotnet add package Azure.Identity
 
 **Current Version**: v1.3.0
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -33,7 +33,7 @@ AZURE_CLIENT_ID=<client-id>
 AZURE_CLIENT_SECRET=<client-secret>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -78,7 +78,7 @@ ArmClient
             └── ApiManagementLoggerResource
 ```
 
-## Core Workflow
+## 核心工作流
 
 ### 1. Create API Management Service
 
@@ -231,7 +231,7 @@ await service.BackupAsync(WaitUntil.Completed, backupParams);
 await service.RestoreAsync(WaitUntil.Completed, backupParams);
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -258,7 +258,7 @@ await service.RestoreAsync(WaitUntil.Completed, backupParams);
 | `Premium` | High availability, multi-region | 1-12 per region |
 | `Consumption` | Serverless, pay-per-call | N/A |
 
-## Best Practices
+## 最佳实践
 
 1. **Use `WaitUntil.Completed`** for operations that must finish before proceeding
 2. **Use `WaitUntil.Started`** for long operations like service creation (30+ min)
@@ -269,7 +269,7 @@ await service.RestoreAsync(WaitUntil.Completed, backupParams);
 7. **Policy format** — Use XML format for policies; JSON is also supported
 8. **Service creation** — Developer SKU is fastest for testing (~15-30 min)
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -293,7 +293,7 @@ catch (RequestFailedException ex)
 }
 ```
 
-## Reference Files
+## 参考文件
 
 | File | When to Read |
 |------|--------------|
@@ -310,7 +310,7 @@ catch (RequestFailedException ex)
 | [Policy Reference](https://learn.microsoft.com/en-us/azure/api-management/api-management-policies) | Complete policy reference |
 | [SDK Reference](https://learn.microsoft.com/en-us/dotnet/api/azure.resourcemanager.apimanagement) | .NET API reference |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

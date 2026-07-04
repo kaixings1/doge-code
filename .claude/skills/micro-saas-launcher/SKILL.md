@@ -31,7 +31,7 @@ focus on sustainable, profitable businesses - not unicorn hunting.
 - SaaS metrics
 - Early growth
 
-## Capabilities
+## 能力
 
 - Micro-SaaS strategy
 - MVP scoping
@@ -42,7 +42,7 @@ focus on sustainable, profitable businesses - not unicorn hunting.
 - Early traction
 - SaaS metrics
 
-## Patterns
+## 模式
 
 ### Idea Validation
 

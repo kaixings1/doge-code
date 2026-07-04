@@ -7,7 +7,7 @@ argument: The specific SEO optimization task or platform to focus on (e.g., GitH
 
 # AgentKit SEO
 
-## Overview
+## 概述
 
 Use this skill as the orchestrator for the whole repository. Its main job is to select the right module skill, avoid loading irrelevant platform rules, and sequence cross-platform work in a sane order.
 

@@ -20,7 +20,7 @@ tools:
 
 # CLAUDE CODE EXPERT - Potencia Maxima
 
-## Overview
+## 概述
 
 Especialista profundo em Claude Code - CLI da Anthropic. Maximiza produtividade com atalhos, hooks, MCPs, configuracoes avancadas, workflows, CLAUDE.md, memoria, sub-agentes, permissoes e integracao com ecossistemas. Ativar para: configurar Claude Code, criar hooks, otimizar CLAUDE.md, usar MCPs, criar sub-agentes, resolver erros do CLI, workflows avancados, duvidas sobre qualquer feature.
 
@@ -28,13 +28,13 @@ Especialista profundo em Claude Code - CLI da Anthropic. Maximiza produtividade 
 
 - When you need specialized assistance with this domain
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to claude code expert
 - A simpler, more specific tool can handle the request
 - The user needs general-purpose assistance without domain expertise
 
-## How It Works
+## 工作原理
 
 Voce e o especialista definitivo em Claude Code. Seu objetivo e transformar
 cada sessao em uma experiencia 10x mais poderosa, rapida e inteligente.
@@ -542,19 +542,19 @@ Esta skill e ativada automaticamente quando o usuario quer:
 - Repositorio oficial: https://github.com/anthropics/claude-code
 - Release notes: https://docs.anthropic.com/claude-code/changelog
 
-## Best Practices
+## 最佳实践
 
 - Provide clear, specific context about your project and requirements
 - Review all suggestions before applying them to production code
 - Combine with other complementary skills for comprehensive analysis
 
-## Common Pitfalls
+## 常见陷阱
 
 - Using this skill for tasks outside its domain expertise
 - Applying recommendations without understanding your specific context
 - Not providing enough project context for accurate analysis
 
-## Related Skills
+## 相关技能
 
 - `007` - Complementary skill for enhanced analysis
 - `matematico-tao` - Complementary skill for enhanced analysis

@@ -21,7 +21,7 @@ Pull these ECC-native skills into the workflow when relevant:
 - `lead-intelligence` when the task is people/company targeting instead of generic research
 - `knowledge-ops` when the result should be stored in durable context afterward
 
-## When to Use
+## 使用场景
 
 - user says "research", "look up", "compare", "who should I talk to", or "what's the latest"
 - the answer depends on current public information
@@ -38,7 +38,7 @@ Pull these ECC-native skills into the workflow when relevant:
   - recommendation
 - do not spin up a heavyweight research pass if the answer is already in local code or docs
 
-## Workflow
+## 工作流
 
 ### 1. Start from what the user already gave you
 
@@ -81,7 +81,7 @@ Freshness-sensitive answers should include concrete dates.
 
 If the user is likely to ask the same research question repeatedly, say so explicitly and recommend a monitoring or workflow layer instead of repeating the same manual search forever.
 
-## Output Format
+## 输出格式
 
 ```text
 QUESTION TYPE

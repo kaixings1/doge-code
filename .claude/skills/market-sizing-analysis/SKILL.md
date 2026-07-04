@@ -20,7 +20,7 @@ Comprehensive market sizing methodologies for calculating Total Addressable Mark
 - The task is unrelated to market sizing analysis
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -149,7 +149,7 @@ SOM = SAM × Realistic Adoption Rate
 
 ## Step-by-Step Process
 
-### Step 1: Define the Market
+### 步骤 1: Define the Market
 
 Clearly specify what market is being measured.
 
@@ -167,7 +167,7 @@ Clearly specify what market is being measured.
 - Geography: North America initially, global expansion
 - Horizon: 3-5 year opportunity
 
-### Step 2: Gather Data Sources
+### 步骤 2: Gather Data Sources
 
 Identify credible data for calculations.
 
@@ -190,7 +190,7 @@ Identify credible data for calculations.
 - ROI case studies
 - Pricing research and willingness-to-pay surveys
 
-### Step 3: Calculate TAM
+### 步骤 3: Calculate TAM
 
 Apply chosen methodology to determine total market.
 
@@ -212,7 +212,7 @@ Apply chosen methodology to determine total market.
 3. Estimate pricing based on value
 4. Multiply for TAM
 
-### Step 4: Calculate SAM
+### 步骤 4: Calculate SAM
 
 Narrow TAM to serviceable addressable market.
 
@@ -235,7 +235,7 @@ SAM = TAM × (% matching all filters)
 - Feature filter: 60% (need AI capabilities)
 - SAM = $10B × 0.40 × 0.30 × 0.60 = $720M
 
-### Step 5: Calculate SOM
+### 步骤 5: Calculate SOM
 
 Determine realistic obtainable market share.
 

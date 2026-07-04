@@ -24,7 +24,7 @@ Manage your **Contentful** headless CMS spaces directly from Claude Code. List s
 
 ---
 
-## Core Workflows
+## 核心工作流
 
 ### 1. List All Spaces
 

@@ -2145,7 +2145,7 @@ Message: Consider adding max_cost_per_task to prevent expensive runaway tasks.
 - user needs vision model optimization -> llm-architect (Model selection, prompt engineering)
 - user needs multi-agent coordination -> multi-agent-orchestration (Multiple computer use agents working together)
 
-## When to Use
+## 使用场景
 - User mentions or implies: computer use
 - User mentions or implies: desktop automation agent
 - User mentions or implies: screen control AI

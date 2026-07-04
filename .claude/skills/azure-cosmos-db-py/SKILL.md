@@ -10,13 +10,13 @@ date_added: "2026-02-27"
 
 Build production-grade Azure Cosmos DB NoSQL services following clean code, security best practices, and TDD principles.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-cosmos azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 COSMOS_ENDPOINT=https://<account>.documents.azure.com:443/
@@ -26,7 +26,7 @@ COSMOS_CONTAINER_ID=<container-id>
 COSMOS_KEY=<emulator-key>
 ```
 
-## Authentication
+## 认证
 
 **DefaultAzureCredential (preferred)**:
 ```python
@@ -195,7 +195,7 @@ async def test_get_project_by_id_returns_project(mock_cosmos_container):
 
 **Full testing guide**: See references/testing.md
 
-## Reference Files
+## 参考文件
 
 | File | When to Read |
 |------|--------------|
@@ -240,7 +240,7 @@ async def test_get_project_by_id_returns_project(mock_cosmos_container):
 - Async wrapping prevents blocking FastAPI event loop
 - Minimal document conversion overhead
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

@@ -12,7 +12,7 @@ This skill displays the current date and time in Pakistan Standard Time (PKT).
 
 Display the current date and time in Pakistan Standard Time (UTC+5).
 
-## Instructions
+## 使用说明
 
 1. **Get Current Time**: Run the following bash command:
    ```

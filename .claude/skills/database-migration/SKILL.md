@@ -15,7 +15,7 @@ Master database schema and data migrations across ORMs (Sequelize, TypeORM, Pris
 - The task is unrelated to database migration
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -408,7 +408,7 @@ module.exports = {
 };
 ```
 
-## Resources
+## 资源
 
 - **references/orm-switching.md**: ORM migration guides
 - **references/schema-migration.md**: Schema transformation patterns
@@ -418,7 +418,7 @@ module.exports = {
 - **assets/data-migration-script.py**: Data migration utilities
 - **scripts/test-migration.sh**: Migration testing script
 
-## Best Practices
+## 最佳实践
 
 1. **Always Provide Rollback**: Every up() needs a down()
 2. **Test Migrations**: Test on staging first
@@ -429,7 +429,7 @@ module.exports = {
 7. **Document**: Explain why and how
 8. **Idempotent**: Migrations should be rerunnable
 
-## Common Pitfalls
+## 常见陷阱
 
 - Not testing rollback procedures
 - Making breaking changes without downtime strategy

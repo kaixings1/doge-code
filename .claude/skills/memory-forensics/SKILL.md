@@ -20,7 +20,7 @@ Comprehensive techniques for acquiring, analyzing, and extracting artifacts from
 - The task is unrelated to memory forensics
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -468,7 +468,7 @@ floss malware.exe > floss_output.txt
 floss pid.1234.dmp
 ```
 
-## Best Practices
+## 最佳实践
 
 ### Acquisition Best Practices
 

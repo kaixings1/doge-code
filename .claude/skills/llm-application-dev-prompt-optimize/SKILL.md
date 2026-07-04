@@ -28,7 +28,7 @@ date_added: "2026-02-27"
 
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 - 明确目标、约束和所需输入。
 - 应用相关最佳实践并验证结果。

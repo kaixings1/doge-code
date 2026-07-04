@@ -4,10 +4,10 @@ description: "关联规则挖掘：使用 Apriori、FP-Growth 发现经常一起
 ---
 # Market Basket Analysis
 
-## Purpose
+## 目的
 Discover product associations and co-purchase patterns for cross-sell and bundling strategies.
 
-## How It Works
+## 工作原理
 
 ### Metrics
 - **Support**: How often items appear together (frequency)
@@ -24,13 +24,13 @@ Discover product associations and co-purchase patterns for cross-sell and bundli
 - Cross-sell/upsell in e-commerce
 - Frequently viewed together
 
-## Usage Examples
+## 使用示例
 
 ```
 "Find products frequently bought together in our transaction data"
 ```
 
-## Output Format
+## 输出格式
 
 - **Top Rules**: Ranked by lift, with support and confidence
 - **Visualization**: Network graph of product associations

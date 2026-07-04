@@ -11,7 +11,7 @@ End your coding session with intention.
 
 Use when ending a session, saying "wrap up", "done for now", or before closing the editor.
 
-## Workflow
+## 工作流
 
 1. **Changes Audit** — What files were modified? Anything uncommitted? TODOs left in code?
 2. **Quality Check** — Run lint, typecheck, and tests. All passing? Any warnings?
@@ -40,7 +40,7 @@ Navigation, Editing, Testing, Git, Quality, Context, Architecture, Performance
 - If tests are failing, flag before ending session.
 - If uncommitted changes exist, ask whether to commit or stash.
 
-## Output
+## 输出
 
 - Modified file list with uncommitted changes highlighted
 - Quality gate results

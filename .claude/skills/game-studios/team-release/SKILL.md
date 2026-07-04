@@ -154,14 +154,14 @@ All file writes (release checklists, changelogs, patch notes, deployment scripts
 delegated to sub-agents and sub-skills. Each enforces the "May I write to [path]?"
 protocol. This orchestrator does not write files directly.
 
-## Output
+## 输出
 
 A summary report covering: release version, scope, quality gate results, go/no-go decision, deployment status, and monitoring plan.
 
 Verdict: **COMPLETE** — release executed and deployed.
 Verdict: **BLOCKED** — release halted; go/no-go was NO or a hard blocker is unresolved.
 
-## Next Steps
+## 后续步骤
 
 - Monitor post-release dashboards for 48 hours.
 - Run `/retrospective` if significant issues occurred during the release.

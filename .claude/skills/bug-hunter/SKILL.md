@@ -372,7 +372,7 @@ After fixing, document it:
 - Add tests to prevent regression
 - Document what you learned
 
-## Related Skills
+## 相关技能
 
 - `@systematic-debugging` - Advanced debugging
 - `@test-driven-development` - Testing

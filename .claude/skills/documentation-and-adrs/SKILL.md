@@ -9,7 +9,7 @@ description: 文档与ADR — 记录决策和文档。在做出架构决策时�
 
 Document decisions, not just code. The most valuable documentation captures the *why* — the context, constraints, and trade-offs that led to a decision. Code shows *what* was built; documentation explains *why it was built this way* and *what alternatives were considered*. This context is essential for future humans and agents working in the codebase.
 
-## When to Use
+## 使用场景
 
 - Making a significant architectural decision
 - Choosing between competing approaches
@@ -210,7 +210,7 @@ One-paragraph description of what this project does.
 | `npm run build` | Production build |
 | `npm run lint` | Run linter |
 
-## Architecture
+## 架构
 Brief overview of the project structure and key design decisions.
 Link to ADRs for details.
 

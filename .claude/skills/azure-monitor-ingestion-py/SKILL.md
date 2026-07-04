@@ -10,14 +10,14 @@ date_added: '2026-02-27'
 
 Send custom logs to Azure Monitor Log Analytics workspace using the Logs Ingestion API.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-monitor-ingestion
 pip install azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 # Data Collection Endpoint (DCE)
@@ -39,7 +39,7 @@ Before using this SDK, you need:
 3. **Data Collection Rule (DCR)** — Defines schema and destination
 4. **Custom Table** — In Log Analytics (created via DCR or manually)
 
-## Authentication
+## 认证
 
 ```python
 from azure.monitor.ingestion import LogsIngestionClient
@@ -177,7 +177,7 @@ No manual batching needed for large log sets.
 | `LogsIngestionClient` | Sync client for uploading logs |
 | `LogsIngestionClient` (aio) | Async client for uploading logs |
 
-## Key Concepts
+## 关键概念
 
 | Concept | Description |
 |---------|-------------|
@@ -192,7 +192,7 @@ Stream names follow patterns:
 - `Custom-<TableName>_CL` — For custom tables
 - `Microsoft-<TableName>` — For built-in tables
 
-## Best Practices
+## 最佳实践
 
 1. **Use DefaultAzureCredential** for authentication
 2. **Handle errors gracefully** — use `on_error` callback for partial failures
@@ -203,7 +203,7 @@ Stream names follow patterns:
 7. **Monitor ingestion** — Check Log Analytics for ingestion status
 8. **Use context manager** — Ensures proper client cleanup
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

@@ -7,7 +7,7 @@ description: 使用并行子代理为模块生成多个截然不同的接口设�
 
 Based on "Design It Twice" from "A Philosophy of Software Design": your first idea is unlikely to be the best. Generate multiple radically different designs, then compare.
 
-## Workflow
+## 工作流
 
 ### 1. Gather Requirements
 
@@ -86,7 +86,7 @@ From "A Philosophy of Software Design":
 
 **Depth**: Small interface hiding significant complexity = deep module (good). Large interface with thin implementation = shallow module (avoid).
 
-## Anti-Patterns
+## 反模式
 
 - Don't let sub-agents produce similar designs - enforce radical difference
 - Don't skip comparison - the value is in contrast

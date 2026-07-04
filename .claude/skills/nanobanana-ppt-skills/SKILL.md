@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # Nanobanana Ppt Skills
 
-## Overview
+## 概述
 
 AI-powered PPT generation with document analysis and styled images
 
@@ -16,7 +16,7 @@ AI-powered PPT generation with document analysis and styled images
 
 Use this skill when you need to work with ai-powered ppt generation with document analysis and styled images.
 
-## Instructions
+## 使用说明
 
 This skill provides guidance and patterns for ai-powered ppt generation with document analysis and styled images.
 

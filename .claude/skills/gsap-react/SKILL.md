@@ -24,7 +24,7 @@ Apply when writing or reviewing GSAP code in React (or React-based frameworks li
 
 **相关 skills:** For tweens and timelines use **gsap-core** and **gsap-timeline**; for scroll-based animation use **gsap-scrolltrigger**; for Vue/Svelte or other frameworks use **gsap-frameworks**.
 
-## Installation
+## 安装
 
 ```bash
 # Install the GSAP library

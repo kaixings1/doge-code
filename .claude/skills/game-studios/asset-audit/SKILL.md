@@ -49,7 +49,7 @@ Scan the target asset directory using Glob:
 ```markdown
 # Asset Audit Report -- [Category] -- [Date]
 
-## Summary
+## 总结
 - **Total assets scanned**: [N]
 - **Naming violations**: [N]
 - **Size violations**: [N]

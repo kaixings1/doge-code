@@ -277,7 +277,7 @@ After writing the manifest:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 1. **Load silently** — read all inputs before presenting anything
 2. **Show the summary first** — let the user see the scope before writing

@@ -338,7 +338,7 @@ export async function createUser(formData: FormData) {
 }
 ```
 
-## Best Practices
+## 最佳实践
 
 - ✅ **Do:** Keep all schema definitions in a single `db/schema.ts` or split by domain (`db/schema/users.ts`, `db/schema/posts.ts`)
 - ✅ **Do:** Use `InferSelectModel` and `InferInsertModel` for type safety instead of manual interfaces
@@ -351,7 +351,7 @@ export async function createUser(formData: FormData) {
 - ❌ **Don't:** Forget to define `relations()` if you want to use `db.query.*` with `with`
 - ❌ **Don't:** Create a new database connection per request in serverless — use connection pooling
 
-## Troubleshooting
+## 故障排除
 
 **Problem:** `db.query.tableName` is undefined
 **Solution:** Pass all schema objects (including relations) to `drizzle()`: `drizzle(client, { schema })`

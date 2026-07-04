@@ -14,7 +14,7 @@ Walks through a 5-phase configuration workflow:
 4. **Validate test command and timeout** — verify the command works; set manual timeout for recompilation-heavy languages (Solidity/Foundry, heavy C++)
 5. **Final validation checklist** — confirm config, mutant count, target selection, and timeout before running
 
-## When to Use
+## 使用场景
 
 - Setting up a new mutation testing campaign
 - Optimizing a campaign that would take too long to run

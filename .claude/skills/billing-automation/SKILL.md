@@ -35,12 +35,12 @@ Master automated billing systems including recurring billing, invoice generation
 - Validate with sandbox payments and reconcile ledger outputs.
 - If detailed templates are required, open `resources/implementation-playbook.md`.
 
-## Safety
+## 安全
 
 - Do not charge real customers in testing environments.
 - Verify tax handling and compliance obligations before production rollout.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed patterns, checklists, and examples.
 

@@ -28,7 +28,7 @@ The user needs automated documentation generation that extracts information from
 ## Requirements
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 - Identify required doc types and target audiences.
 - Extract information from code, configs, and comments.
@@ -36,17 +36,17 @@ $ARGUMENTS
 - Add automation (linting, CI) and validate accuracy.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Safety
+## 安全
 
 - Avoid exposing secrets, internal URLs, or sensitive data in docs.
 
-## Output Format
+## 输出格式
 
 - Documentation plan and artifacts to generate
 - File paths and tooling configuration
 - Assumptions, gaps, and follow-up tasks
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed examples and templates.
 

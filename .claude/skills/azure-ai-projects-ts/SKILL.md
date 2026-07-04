@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 High-level SDK for Azure AI Foundry projects with agents, connections, deployments, and evaluations.
 
-## Installation
+## 安装
 
 ```bash
 npm install @azure/ai-projects @azure/identity
@@ -21,14 +21,14 @@ For tracing:
 npm install @azure/monitor-opentelemetry @opentelemetry/api
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_AI_PROJECT_ENDPOINT=https://<resource>.services.ai.azure.com/api/projects/<project>
 MODEL_DEPLOYMENT_NAME=gpt-4o
 ```
 
-## Authentication
+## 认证
 
 ```typescript
 import { AIProjectClient } from "@azure/ai-projects";
@@ -282,7 +282,7 @@ import {
 } from "@azure/ai-projects";
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use getOpenAIClient()** - For responses, conversations, files, and vector stores
 2. **Version your agents** - Use `createVersion` for reproducible agent definitions
@@ -290,7 +290,7 @@ import {
 4. **Use connections** - Get credentials from project connections, don't hardcode
 5. **Filter deployments** - Use `modelPublisher` filter to find specific models
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

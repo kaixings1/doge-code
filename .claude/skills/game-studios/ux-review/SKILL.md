@@ -8,7 +8,7 @@ model: sonnet
 agent: ux-designer
 ---
 
-## Overview
+## 概述
 
 Validates UX design documents before they enter the implementation pipeline.
 Acts as the quality gate between UX Design and Visual Design/Implementation in

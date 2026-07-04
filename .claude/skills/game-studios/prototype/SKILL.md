@@ -9,7 +9,7 @@ agent: prototyper
 isolation: worktree
 ---
 
-## Purpose
+## 目的
 
 This is the **concept prototype** — a fast, throwaway build that answers one question:
 *"Is this core idea actually fun to interact with?"*

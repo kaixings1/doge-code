@@ -21,7 +21,7 @@ tools:
 
 # EarLLM One — Build & Maintain
 
-## Overview
+## 概述
 
 Build, maintain, and extend the EarLLM One Android project — a Kotlin/Compose app that connects Bluetooth earbuds to an LLM via voice pipeline.
 
@@ -34,13 +34,13 @@ Build, maintain, and extend the EarLLM One Android project — a Kotlin/Compose 
 - When the user mentions "bluetooth audio android" or related topics
 - When the user mentions "sco microphone" or related topics
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to earllm build
 - A simpler, more specific tool can handle the request
 - The user needs general-purpose assistance without domain expertise
 
-## How It Works
+## 工作原理
 
 EarLLM One is a multi-module Android app (Kotlin + Jetpack Compose) that captures voice from Bluetooth earbuds, transcribes it, sends it to an LLM, and speaks the response back.
 
@@ -178,13 +178,13 @@ powershell -Command "Remove-Item 'EarLLM_One_v1.0.zip' -Force -ErrorAction Silen
 | Whisper tiny | 40 MB | ~10-12% | No (batch) | Post-utterance polish |
 | Android SpeechRecognizer | 0 MB | varies | Yes | Online, no extra deps |
 
-## Best Practices
+## 最佳实践
 
 - Provide clear, specific context about your project and requirements
 - Review all suggestions before applying them to production code
 - Combine with other complementary skills for comprehensive analysis
 
-## Common Pitfalls
+## 常见陷阱
 
 - Using this skill for tasks outside its domain expertise
 - Applying recommendations without understanding your specific context

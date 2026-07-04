@@ -33,13 +33,13 @@ Advogado especialista em todas as areas do Direito brasileiro: familia, criminal
 - When the user mentions "lei" or related topics
 - When the user mentions "processo judicial" or related topics
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to advogado especialista
 - A simpler, more specific tool can handle the request
 - The user needs general-purpose assistance without domain expertise
 
-## How It Works
+## 工作原理
 
 Voce e o **Advogado Especialista mais completo do ecossistema** — equivalente a uma banca de advocacia de elite com os melhores profissionais do Brasil reunidos em um so. Sua capacidade juridica e equivalente a:
 

@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Build search applications with full-text, vector, semantic, and hybrid search capabilities.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.Search.Documents
@@ -19,7 +19,7 @@ dotnet add package Azure.Identity
 
 **Current Versions**: Stable v11.7.0, Preview v11.8.0-beta.1
 
-## Environment Variables
+## 环境变量
 
 ```bash
 SEARCH_ENDPOINT=https://<search-service>.search.windows.net
@@ -28,7 +28,7 @@ SEARCH_INDEX_NAME=<index-name>
 SEARCH_API_KEY=<api-key>
 ```
 
-## Authentication
+## 认证
 
 **默认AzureCredential (preferred)**:
 ```csharp
@@ -303,7 +303,7 @@ var results = await searchClient.SearchAsync<Hotel>("luxury beachfront", options
 | `IsHidden = true` | Exclude from results |
 | `AnalyzerName` | Specify text analyzer |
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -322,7 +322,7 @@ catch (RequestFailedException ex)
 }
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use `默认AzureCredential`** over API keys for production
 2. **Use `FieldBuilder`** with model attributes for type-safe index definitions
@@ -332,14 +332,14 @@ catch (RequestFailedException ex)
 6. **Configure semantic search** for natural language queries
 7. **Combine vector + keyword + semantic** for best relevance
 
-## Reference Files
+## 参考文件
 
 | File | Contents |
 |------|----------|
 | references/vector-search.md | Vector search, hybrid search, vectorizers |
 | references/semantic-search.md | Semantic ranking, captions, answers |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Big data streaming platform for high-throughput event ingestion.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-eventhub azure-identity
@@ -18,7 +18,7 @@ pip install azure-eventhub azure-identity
 pip install azure-eventhub-checkpointstoreblob-aio
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 EVENT_HUB_FULLY_QUALIFIED_NAMESPACE=<namespace>.servicebus.windows.net
@@ -27,7 +27,7 @@ STORAGE_ACCOUNT_URL=https://<account>.blob.core.windows.net
 CHECKPOINT_CONTAINER=checkpoints
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -221,7 +221,7 @@ with producer:
         print(f"Partition {partition_id}: {partition_info['last_enqueued_sequence_number']}")
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use batches** for sending multiple events
 2. **Use checkpoint store** in production for reliable processing
@@ -231,7 +231,7 @@ with producer:
 6. **Use context managers** (`with`/`async with`) for proper cleanup
 7. **Set appropriate consumer groups** for different applications
 
-## Reference Files
+## 参考文件
 
 | File | Contents |
 |------|----------|
@@ -239,7 +239,7 @@ with producer:
 | references/partitions.md | Partition management, load balancing, starting positions |
 | scripts/setup_consumer.py | CLI for Event Hub info, consumer setup, and event sending/receiving |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

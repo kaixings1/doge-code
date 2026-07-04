@@ -6,11 +6,11 @@ version: 1.0.0
 
 # 危险函数参考
 
-## Purpose
+## 目的
 
 Provide comprehensive knowledge of security-sensitive functions (sinks) across programming languages for whitebox penetration testing. These functions are common targets during code review because improper use leads to critical vulnerabilities.
 
-## When to Use
+## 使用场景
 
 Activate this skill during:
 - Code review phase of whitebox security review
@@ -49,14 +49,14 @@ Activate this skill during:
 
 ## Methodology
 
-### Step 1: Identify Application Language
+### 步骤 1: Identify Application Language
 
 Determine the primary language(s) used:
 - Check file extensions (.php, .java, .py, .js, .cs, .go, .rb)
 - Review package managers (composer.json, pom.xml, requirements.txt, package.json)
 - Check framework indicators
 
-### Step 2: Load Language-Specific Reference
+### 步骤 2: Load Language-Specific Reference
 
 Consult the appropriate reference file for comprehensive sink lists:
 - `references/php-sinks.md` for PHP applications
@@ -70,14 +70,14 @@ Consult the appropriate reference file for comprehensive sink lists:
 - `references/swift-sinks.md` for Swift/iOS applications *(preview -- not in supported language list)*
 - `references/solidity-sinks.md` for Solidity smart contracts
 
-### Step 3: Search for Sinks
+### 步骤 3: Search for Sinks
 
 Use Grep tool to search for dangerous functions:
 - Search one category at a time (command, code, SQL, file, etc.)
 - Use case-insensitive search for better coverage
 - Include all relevant file extensions
 
-### Step 4: Catalog Findings
+### 步骤 4: Catalog Findings
 
 For each identified sink, document:
 - File path and line number
@@ -85,7 +85,7 @@ For each identified sink, document:
 - Input sources (if visible)
 - Initial risk assessment
 
-### Step 5: Prioritize for Testing
+### 步骤 5: Prioritize for Testing
 
 Rank findings using this framework:
 

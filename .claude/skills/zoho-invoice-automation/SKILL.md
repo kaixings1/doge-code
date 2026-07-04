@@ -26,7 +26,7 @@ requires:
 3. 如果连接不是 ACTIVE 状态，请按照返回的认证链接完成设置
 4. 在运行任何工作流之前确认连接状态显示为 ACTIVE
 
-## Tool Discovery
+## 工具发现
 
 Always discover available tools before executing workflows:
 
@@ -38,9 +38,9 @@ session: {generate_id: true}
 
 This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
 
-## Core Workflow Pattern
+## 核心工作流模式
 
-### Step 1: Discover Available Tools
+### 步骤 1: Discover Available Tools
 
 ```
 RUBE_SEARCH_TOOLS
@@ -48,7 +48,7 @@ queries: [{use_case: "your specific Zoho Invoice task"}]
 session: {id: "existing_session_id"}
 ```
 
-### Step 2: Check Connection
+### 步骤 2: Check Connection
 
 ```
 RUBE_MANAGE_CONNECTIONS
@@ -56,7 +56,7 @@ toolkits: ["zoho_invoice"]
 session_id: "your_session_id"
 ```
 
-### Step 3: Execute Tools
+### 步骤 3: Execute Tools
 
 ```
 RUBE_MULTI_EXECUTE_TOOL

@@ -24,7 +24,7 @@ Comprehensive guidance for writing comprehensive unit tests for shell scripts us
 - You need integration tests beyond shell behavior
 - The goal is only linting or formatting
 
-## Instructions
+## 使用说明
 
 - Confirm shell dialects and supported environments.
 - Set up a test structure with helpers and fixtures.
@@ -32,7 +32,7 @@ Comprehensive guidance for writing comprehensive unit tests for shell scripts us
 - Add setup/teardown and run tests in CI.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed patterns and examples.
 

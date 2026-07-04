@@ -21,7 +21,7 @@ metadata:
 
 Intercept the response flow to offer the user a choice about response depth **before** Claude answers.
 
-## When to Use
+## 使用场景
 
 - User wants to control how long or detailed a response is
 - User mentions tokens, budget, depth, or response length
@@ -30,7 +30,7 @@ Intercept the response flow to offer the user a choice about response depth **be
 
 **Do not trigger** when: user already set a level this session (maintain it silently), or the answer is trivially one line.
 
-## How It Works
+## 工作原理
 
 ### Step 1 — Estimate input tokens
 

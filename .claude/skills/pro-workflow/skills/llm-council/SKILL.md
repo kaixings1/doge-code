@@ -48,7 +48,7 @@ node $SKILL_ROOT/scripts/council.js show <session-id>
 
 `--wiki <slug>` writes the full transcript to `<wiki>/derived/council/<session-id>.md` and registers it via `wiki-cli.js page` so it shows in FTS5 search.
 
-## Output
+## 输出
 
 Each session writes:
 

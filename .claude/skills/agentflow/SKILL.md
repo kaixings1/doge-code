@@ -141,7 +141,7 @@ Automatic guardrails: warning at $3/$8, hard stop at $10/$20 (Sonnet/Opus) with 
 - **范围 creep detection**: PR diff files compared against predicted files list
 - **Spec drift detection**: SHA-256 hash comparison catches requirement changes mid-sprint
 
-## Installation
+## 安装
 
 ```bash
 # Clone the repo
@@ -160,7 +160,7 @@ Or install as a Claude Code plugin:
 /plugin install agentflow
 ```
 
-## Best Practices
+## 最佳实践
 
 - Do: Write a clear SPEC.md before running `/spec-to-board`
 - Do: Start with 3-4 workers for a typical project
@@ -170,7 +170,7 @@ Or install as a Claude Code plugin:
 - Don't: Force-push to main — AgentFlow uses `git revert` for safety
 - Don't: Run more workers than your project's parallelism supports
 
-## Troubleshooting
+## 故障排除
 
 ### Problem: Worker appears stuck or dead
 **Symptoms:** Task card hasn't moved in 15+ minutes, no new comments

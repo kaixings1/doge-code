@@ -18,7 +18,7 @@ od:
 Use this when a PR has review feedback, merge conflicts, pending checks, or
 needs a monitored follow-up after a fix.
 
-## Workflow
+## 工作流
 
 1. Inspect PR state first: comments, reviews, mergeability, checks, branch, and
    local worktree status. Keep unrelated local changes out of the PR.

@@ -29,7 +29,7 @@ The user needs comprehensive dependency analysis to identify security vulnerabil
 ## 需求
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 - Inventory direct and transitive dependencies.
 - Run vulnerability and license scans.
@@ -37,12 +37,12 @@ $ARGUMENTS
 - Propose upgrades with compatibility notes.
 - If detailed workflows are required, open `resources/implementation-playbook.md`.
 
-## Safety
+## 安全
 
 - Do not publish sensitive vulnerability details to public channels.
 - Verify upgrades in staging before production rollout.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed tooling and templates.
 

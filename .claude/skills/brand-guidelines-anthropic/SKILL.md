@@ -37,7 +37,7 @@ To access Anthropic's official brand identity and style resources, use this skil
 - **Body Text**: Lora (with Georgia fallback)
 - **Note**: Fonts should be pre-installed in your environment for best results
 
-## Features
+## 特性
 
 ### Smart Font Application
 

@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Azure Functions extension for handling Microsoft Entra ID custom authentication events.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Microsoft.Azure.WebJobs.Extensions.AuthenticationEvents

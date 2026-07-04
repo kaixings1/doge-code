@@ -5,11 +5,11 @@ description: 规范驱动开发 — 在编码前创建规范。在开始新项�
 
 # Spec-Driven Development
 
-## Overview
+## 概述
 
 Write a structured specification before writing any code. The spec is the shared source of truth between you and the human engineer — it defines what we're building, why, and how we'll know it's done. Code without a spec is guessing.
 
-## When to Use
+## 使用场景
 
 - Starting a new project or feature
 - Requirements are ambiguous or incomplete

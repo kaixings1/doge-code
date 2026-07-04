@@ -10,7 +10,7 @@ Search and extract data from Burp Suite project files (.burp) for use in Claude
 - **burpsuite-project-file-parser extension** - Must be installed in Burp Suite (Available: https://github.com/BuffaloWill/burpsuite-project-file-parser)
 - **jq** (optional) - Recommended for formatting/filtering JSON output
 
-## When to Use
+## 使用场景
 
 使用此技能当 you need to get the following from a Burp project:
 - Search response headers or bodies using regex patterns
@@ -29,7 +29,7 @@ Trigger phrases: "search the burp project", "find in burp file", "what vulnerabi
 3. **Dump traffic data** - Export proxy history and site map entries as JSON
 4. **Filter output** - Use sub-component filters to optimize performance on large projects
 
-## Installation
+## 安装
 
 ```
 /plugin install trailofbits/skills/plugins/burpsuite-project-parser

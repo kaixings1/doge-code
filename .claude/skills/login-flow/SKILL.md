@@ -18,7 +18,7 @@ triggers:
 
 用于生成移动优先的登录和认证屏幕的技能。当用户想要移动应用的登录体验时使用，包括手机+短信验证、密码登录和社交 SSO 选项。
 
-## Workflow
+## 工作流
 
 1. **Read reference files first** (see below)
 2. **Clarify auth method**: phone/SMS, password, or social SSO
@@ -30,7 +30,7 @@ triggers:
 
 - `references/checklist.md` — P0/P1 acceptance criteria
 
-## Output
+## 输出
 
 A single standalone HTML file implementing the login screen with:
 - Labels above inputs (never placeholder-only)

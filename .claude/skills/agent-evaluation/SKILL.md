@@ -10,7 +10,7 @@ date_added: 2026-02-27
 
 Testing and benchmarking LLM agents including behavioral testing, capability assessment, reliability metrics, and production monitoring—where even top agents achieve less than 50% on real-world benchmarks
 
-## Capabilities
+## 能力
 
 - agent-testing
 - benchmark-design
@@ -47,7 +47,7 @@ Testing and benchmarking LLM agents including behavioral testing, capability ass
 
 - Manual testing only
 
-## Patterns
+## 模式
 
 ### Statistical Test Evaluation
 
@@ -1116,11 +1116,11 @@ Workflow:
 4. Load testing for scalability
 ```
 
-## Related Skills
+## 相关技能
 
 Works well with: `multi-agent-orchestration`, `agent-communication`, `autonomous-agents`
 
-## When to Use
+## 使用场景
 - User mentions or implies: agent testing
 - User mentions or implies: agent evaluation
 - User mentions or implies: benchmark agents

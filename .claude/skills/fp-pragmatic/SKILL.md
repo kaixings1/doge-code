@@ -594,7 +594,7 @@ But don't rush. The basics here will handle 80% of real-world scenarios. Get com
 
 ---
 
-## Summary
+## 总结
 
 1. **Use pipe** for 3+ operations
 2. **Use Option** for nullable chains

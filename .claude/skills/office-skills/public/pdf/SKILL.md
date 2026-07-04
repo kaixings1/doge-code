@@ -5,7 +5,7 @@ description: "Office Skills\Public\Pdf — Office Skills\Public\Pdf 相关功能
 
 # PDF Processing Guide
 
-## Overview
+## 概述
 
 This guide covers essential PDF processing operations using Python libraries and command-line tools. For advanced features, JavaScript libraries, and detailed examples, see REFERENCE.md. If you need to fill out a PDF form, read FORMS.md and follow its instructions.
 
@@ -285,7 +285,7 @@ with open("encrypted.pdf", "wb") as output:
 | OCR scanned PDFs | pytesseract | Convert to image first |
 | Fill PDF forms | pdf-lib or pypdf (see FORMS.md) | See FORMS.md |
 
-## Next Steps
+## 后续步骤
 
 - For advanced pypdfium2 usage, see REFERENCE.md
 - For JavaScript libraries (pdf-lib), see REFERENCE.md

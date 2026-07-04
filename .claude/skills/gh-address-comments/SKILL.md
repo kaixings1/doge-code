@@ -9,7 +9,7 @@ description: GitHub评论批量处理工具
 
 Run all `gh` commands with elevated network access. If CLI auth is required, confirm `gh auth status` first and ask the user to authenticate with `gh auth login` if it fails.
 
-## Workflow
+## 工作流
 
 1. Resolve the PR.
    - If the user provides a repository and PR number or URL, use that directly.

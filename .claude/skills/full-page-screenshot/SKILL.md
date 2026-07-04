@@ -26,7 +26,7 @@ Capture full-page screenshots of web pages via Chrome DevTools Protocol with zer
 - Upstream: https://github.com/LewisLiu007/full-page-screenshot
 - Category: `screenshots`
 
-## How to use
+## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
 discovers it during planning. To run the full upstream workflow with

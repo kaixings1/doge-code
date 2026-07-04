@@ -11,7 +11,7 @@ level: 4
 
 `/omc-teams` 是 CLI 优先运行时的旧版兼容技能：请使用 `omc team ...` 命令（而非已弃用的 MCP 运行时工具）。
 
-## Usage
+## 用法
 
 ```bash
 /oh-my-claudecode:omc-teams N:claude "task description"
@@ -50,7 +50,7 @@ level: 4
 - **grok** CLI: install and authenticate the Grok CLI used by your environment
 - **cursor** CLI: install and authenticate `cursor-agent`; if unavailable, report this setup requirement instead of silently falling back to Claude-only execution
 
-## Workflow
+## 工作流
 
 ### Phase 0: Verify prerequisites
 

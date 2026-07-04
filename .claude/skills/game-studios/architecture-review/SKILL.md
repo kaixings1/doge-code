@@ -646,7 +646,7 @@ If any spawned agent returns BLOCKED, errors, or fails to complete:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 1. **Read silently** — do not narrate every file read
 2. **Show the matrix** — present the full traceability matrix before asking for

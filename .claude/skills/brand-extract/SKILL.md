@@ -225,7 +225,7 @@ email, newsletter, form) lit up as live previews that each link to their full
 palette, typography, voice, and the assets they can now preview — and confirm
 the brand was registered.
 
-## Safety
+## 安全
 
 - Do not bypass CAPTCHAs, paywalls, or security walls — ask the user to clear
   them in the Browser tab (see the anti-bot section above).

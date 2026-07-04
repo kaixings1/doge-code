@@ -225,7 +225,7 @@ Use the template structure from `.claude/docs/templates/game-design-document.md`
 > **Last Updated**: [today's date]
 > **Implements Pillar**: [from context]
 
-## Overview
+## 概述
 
 [To be designed]
 
@@ -255,7 +255,7 @@ Use the template structure from `.claude/docs/templates/game-design-document.md`
 
 [To be designed]
 
-## Dependencies
+## 依赖
 
 [To be designed]
 
@@ -829,7 +829,7 @@ disruption.
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 This skill follows the collaborative design principle at every step:
 

@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 Full-text, vector, and hybrid search with AI enrichment capabilities.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-search-documents
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SEARCH_ENDPOINT=https://<service-name>.search.windows.net
@@ -24,7 +24,7 @@ AZURE_SEARCH_API_KEY=<your-api-key>
 AZURE_SEARCH_INDEX_NAME=<your-index-name>
 ```
 
-## Authentication
+## 认证
 
 ### API Key
 
@@ -295,7 +295,7 @@ indexer = SearchIndexer(
 indexer_client.create_or_update_indexer(indexer)
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use hybrid search** for best relevance combining vector and keyword
 2. **Enable semantic ranking** for natural language queries
@@ -305,7 +305,7 @@ indexer_client.create_or_update_indexer(indexer)
 6. **Use HNSW algorithm** for large-scale vector search
 7. **Create suggesters** at index creation time (cannot add later)
 
-## Reference Files
+## 参考文件
 
 | File | Contents |
 |------|----------|
@@ -510,7 +510,7 @@ async with SearchClient(endpoint, index_name, credential) as client:
 | `Collection(Edm.Single)` | List[float] | Vector embeddings |
 | `Collection(Edm.String)` | List[str] | String arrays |
 
-## Error Handling
+## 错误处理
 
 ```python
 from azure.core.exceptions import (
@@ -527,7 +527,7 @@ except HttpResponseError as e:
     print(f"Search error: {e.message}")
 ```
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

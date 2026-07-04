@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 Centralized configuration management with feature flags and dynamic settings.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-appconfiguration
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_APPCONFIGURATION_CONNECTION_STRING=Endpoint=https://<name>.azconfig.io;Id=...;Secret=...
@@ -24,7 +24,7 @@ AZURE_APPCONFIGURATION_CONNECTION_STRING=Endpoint=https://<name>.azconfig.io;Id=
 AZURE_APPCONFIGURATION_ENDPOINT=https://<name>.azconfig.io
 ```
 
-## Authentication
+## 认证
 
 ### Connection String
 
@@ -238,7 +238,7 @@ async def main():
 | `begin_create_snapshot` | Create point-in-time snapshot |
 | `list_snapshots` | List all snapshots |
 
-## Best Practices
+## 最佳实践
 
 1. **Use labels** for environment separation (dev, staging, prod)
 2. **Use key prefixes** for logical grouping (app:database:*, app:cache:*)
@@ -248,7 +248,7 @@ async def main():
 6. **Refresh settings periodically** in long-running applications
 7. **Use feature flags** for gradual rollouts and A/B testing
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

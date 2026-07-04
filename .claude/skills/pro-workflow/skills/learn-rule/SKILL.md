@@ -11,7 +11,7 @@ Capture a lesson from the current session into permanent memory.
 
 Use when the user says "remember this", "add to rules", "don't do that again", or after a mistake is identified.
 
-## Workflow
+## 工作流
 
 1. Identify the lesson — what mistake was made? What should happen instead?
 2. Format the rule with full context.
@@ -50,7 +50,7 @@ The capture hook auto-detects `Wiki: <slug>` and links the learning to that wiki
 | Architecture | Design decisions, wrong abstractions |
 | Performance | Optimization, O(n^2) loops, memory |
 
-## Example
+## 示例
 
 ```
 Recent mistake: Edited wrong utils.ts file
@@ -67,7 +67,7 @@ Add to LEARNED section? (y/n)
 - Bad: "Write good code". Good: "Always use snake_case for database columns".
 - Include the mistake context so the rule makes sense later.
 
-## Output
+## 输出
 
 - The proposed `[LEARN]` rule with category
 - Confirmation after persisting

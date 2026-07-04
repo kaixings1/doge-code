@@ -14,7 +14,7 @@ tools: [claude, cursor, codex, copilot]
 
 Extract structured, quality-scored domain knowledge from any AI model — in-session from closed models (no API key) or locally from open-source models via Ollama.
 
-## Overview
+## 概述
 
 bdistill turns your AI subscription sessions into a compounding knowledge base. The agent answers targeted domain questions, bdistill structures and quality-scores the responses, and the output accumulates into a searchable, exportable reference dataset.
 
@@ -27,16 +27,16 @@ Adversarial mode challenges the agent's claims — forcing evidence, corrections
 - Use when generating training data for traditional ML models (regression, classification — NOT competing LLMs)
 - Use when you want cross-model comparison on domain knowledge
 
-## How It Works
+## 工作原理
 
-### Step 1: Install
+### 步骤 1: Install
 
 ```bash
 pip install bdistill
 claude mcp add bdistill -- bdistill-mcp   # Claude Code
 ```
 
-### Step 2: Extract knowledge in-session
+### 步骤 2: Extract knowledge in-session
 
 ```
 /distill medical cardiology                    # Preset domain
@@ -44,7 +44,7 @@ claude mcp add bdistill -- bdistill-mcp   # Claude Code
 /distill --adversarial medical                 # With adversarial validation
 ```
 
-### Step 3: Search, export, compound
+### 步骤 3: Search, export, compound
 
 ```bash
 bdistill kb list                               # Show all domains
@@ -53,7 +53,7 @@ bdistill kb export -d medical -f csv           # Export as spreadsheet
 bdistill kb export -d medical -f markdown      # Readable knowledge document
 ```
 
-## Output Format
+## 输出格式
 
 Structured reference JSONL — not training data:
 
@@ -100,7 +100,7 @@ bdistill extract --domain medical --model qwen3:4b
 - No data is sent to external services
 - Output is reference data, not LLM training format
 
-## Related Skills
+## 相关技能
 
 - `@bdistill-behavioral-xray` - X-ray a model's behavioral patterns
 

@@ -816,7 +816,7 @@ Dockerfile @org/devops-team
 
 ---
 
-## Best Practices
+## 最佳实践
 
 ### Security
 
@@ -841,7 +841,7 @@ Dockerfile @org/devops-team
 
 ---
 
-## Resources
+## 资源
 
 - [Gemini CLI GitHub Action](https://github.com/google-github-actions/run-gemini-cli)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)

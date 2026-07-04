@@ -9,7 +9,7 @@ date_added: "2026-02-27"
 
 # Documentation Workflow Bundle
 
-## Overview
+## 概述
 
 Comprehensive documentation workflow for generating API documentation, architecture documentation, README files, code comments, and technical content from codebases.
 

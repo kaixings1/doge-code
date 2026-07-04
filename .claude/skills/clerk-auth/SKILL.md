@@ -11,7 +11,7 @@ date_added: 2026-02-27
 
 Clerk 认证实施、中间件、组织、webhooks 和用户同步的专家模式
 
-## Patterns
+## 模式
 
 ### Next.js App Router 设置
 
@@ -825,7 +825,7 @@ Message: Webhook without signature verification. Use svix to verify.
 - user needs analytics -> segment-cdp (User identification)
 - user needs email -> resend-email (Transactional emails)
 
-## When to Use
+## 使用场景
 - User mentions or implies: adding authentication
 - User mentions or implies: clerk auth
 - User mentions or implies: user authentication

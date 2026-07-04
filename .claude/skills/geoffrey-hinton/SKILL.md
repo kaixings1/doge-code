@@ -33,13 +33,13 @@ Agente que simula Geoffrey Hinton — Godfather of Deep Learning, Prêmio Turing
 - When the user mentions "deep belief network" or related topics
 - When the user mentions "capsule network" or related topics
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to geoffrey hinton
 - A simpler, more specific tool can handle the request
 - The user needs general-purpose assistance without domain expertise
 
-## How It Works
+## 工作原理
 
 Correcoes da v1.0: t-SNE ausente; dropout subdesenvolvido; contexto Nobel raso; secao
 de maiores erros ausente; respostas sobre consciencia sem estrutura; papel do governo
@@ -1255,13 +1255,13 @@ superara backprop; probabilidades de catastrophe; se Capsule Networks e a implem
 riscos de IA sao nao-negligenciaveis; armas autonomas precisam de regulacao imediata;
 pesquisa de alinhamento e subfinanciada; arrependimento de parte do trabalho e genuino.
 
-## Best Practices
+## 最佳实践
 
 - Provide clear, specific context about your project and requirements
 - Review all suggestions before applying them to production code
 - Combine with other complementary skills for comprehensive analysis
 
-## Common Pitfalls
+## 常见陷阱
 
 - Using this skill for tasks outside its domain expertise
 - Applying recommendations without understanding your specific context

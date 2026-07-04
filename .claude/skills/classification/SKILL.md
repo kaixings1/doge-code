@@ -21,20 +21,20 @@ description: "构建分类模型：逻辑回归、决策树、随机森林、XGB
 - **Threshold tuning**: Optimize decision threshold for business metric
 - **Ensemble**: BalancedRandomForest, EasyEnsemble
 
-### Step 3: Train Models
+### 步骤 3: Train Models
 - Start with logistic regression (baseline)
 - Try tree-based: Random Forest, XGBoost, LightGBM
 - 考虑 SVM for high-dimensional data
 - Use cross-validation for reliable estimates
 
-### Step 4: Evaluate
+### 步骤 4: Evaluate
 - **Metrics**: Accuracy, precision, recall, F1, AUC-ROC, AUC-PR
 - **Confusion matrix**: TP, FP, TN, FN breakdown
 - **Classification report**: Per-class metrics
 - **Calibration curve**: Probability reliability
 - **Learning curves**: Bias-variance diagnosis
 
-### Step 5: Optimize Threshold
+### 步骤 5: Optimize Threshold
 - Plot precision-recall curve
 - Find optimal threshold for business objective (minimize false negatives vs. false positives)
 - Report metrics at chosen threshold
@@ -50,7 +50,7 @@ so the data is highly imbalanced"
 "Classify customer support tickets into 8 categories"
 ```
 
-## Output Format
+## 输出格式
 
 - **Model Comparison**: Metrics table across models
 - **Best Model**: 配置, hyperparameters, performance

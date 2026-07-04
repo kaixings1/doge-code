@@ -5,10 +5,10 @@ description: "评估 ML 模型性能：分类指标（准确率、AUC、F1）、
 
 # Model Evaluation
 
-## Purpose
+## 目的
 Rigorously evaluate model performance using appropriate metrics, cross-validation, and diagnostic tools.
 
-## How It Works
+## 工作原理
 
 ### Classification Metrics
 

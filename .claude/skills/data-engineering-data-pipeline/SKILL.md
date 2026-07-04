@@ -35,7 +35,7 @@ $ARGUMENTS
 - Monitor pipelines with CloudWatch/Prometheus/Grafana
 - Optimize costs through partitioning, lifecycle policies, and compute optimization
 
-## Instructions
+## 使用说明
 
 ### 1. Architecture Design
 - Assess: sources, volume, latency requirements, targets

@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # DOCX creation, editing, and analysis
 
-## Overview
+## 概述
 
 A user may ask you to create, edit, or analyze the contents of a .docx file. A .docx file is essentially a ZIP archive containing XML files and other resources that you can read or edit. You have different tools and workflows available for different tasks.
 
@@ -188,7 +188,7 @@ pdftoppm -jpeg -r 150 -f 2 -l 5 document.pdf page  # Converts only pages 2-5
 - Avoid verbose variable names and redundant operations
 - Avoid unnecessary print statements
 
-## Dependencies
+## 依赖
 
 Required dependencies (install if not available):
 
@@ -198,7 +198,7 @@ Required dependencies (install if not available):
 - **Poppler**: `sudo apt-get install poppler-utils` (for pdftoppm to convert PDF to images)
 - **defusedxml**: `pip install defusedxml` (for secure XML parsing)
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

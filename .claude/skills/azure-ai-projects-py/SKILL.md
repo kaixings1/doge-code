@@ -10,20 +10,20 @@ date_added: "2026-02-27"
 
 Build AI applications on Microsoft Foundry using the `azure-ai-projects` SDK.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-ai-projects azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_AI_PROJECT_ENDPOINT="https://<resource>.services.ai.azure.com/api/projects/<project>"
 AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-4o-mini"
 ```
 
-## Authentication
+## 认证
 
 ```python
 import os
@@ -261,7 +261,7 @@ agent = client.agents.create_agent(
 )
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use context managers** for async client: `async with AIProjectClient(...) as client:`
 2. **Clean up agents** when done: `client.agents.delete_agent(agent.id)`
@@ -282,7 +282,7 @@ agent = client.agents.create_agent(
 | Evaluation | Via OpenAI client | No |
 | When to use | Full Foundry integration | Standalone agent apps |
 
-## Reference Files
+## 参考文件
 
 - references/agents.md: Agent operations with PromptAgentDefinition
 - references/tools.md: All agent tools with examples
@@ -296,7 +296,7 @@ agent = client.agents.create_agent(
 - references/api-reference.md: Complete API reference for all 373 SDK exports (v2.0.0b4)
 - scripts/run_batch_evaluation.py: CLI tool for batch evaluations
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

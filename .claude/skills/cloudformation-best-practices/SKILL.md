@@ -19,7 +19,7 @@ date_added: "2026-02-27"
 - The user prefers CDK or Terraform over raw CloudFormation
 - The task is application code, not infrastructure
 
-## Instructions
+## 使用说明
 
 1. Use YAML over JSON for readability.
 2. Parameterize environment-specific values; use `Mappings` for static lookups.
@@ -28,7 +28,7 @@ date_added: "2026-02-27"
 5. Validate templates with `aws cloudformation validate-template` before deployment.
 6. 优先 `!Sub` over `!Join` for string interpolation.
 
-## Examples
+## 示例
 
 ### Example 1: Parameterized VPC Template
 
@@ -65,7 +65,7 @@ Outputs:
       Name: !Sub "${Environment}-VpcId"
 ```
 
-## Best Practices
+## 最佳实践
 
 - ✅ **Do:** Use `Outputs` with `Export` for cross-stack references
 - ✅ **Do:** Add `DeletionPolicy` and `UpdateReplacePolicy` on stateful resources
@@ -73,7 +73,7 @@ Outputs:
 - ❌ **Don't:** Hardcode ARNs or account IDs — use `!Sub` with pseudo parameters
 - ❌ **Don't:** Put all resources in a single monolithic template
 
-## Troubleshooting
+## 故障排除
 
 **Problem:** Stack stuck in `UPDATE_ROLLBACK_FAILED`
 **Solution:** Use `continue-update-rollback` with `--resources-to-skip` for the failing resource, then fix the root cause.

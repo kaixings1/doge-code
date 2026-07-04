@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 Client library for Azure Cosmos DB NoSQL API — globally distributed, multi-model database.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-cosmos azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 COSMOS_ENDPOINT=https://<account>.documents.azure.com:443/
@@ -24,7 +24,7 @@ COSMOS_DATABASE=mydb
 COSMOS_CONTAINER=mycontainer
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -44,7 +44,7 @@ client = CosmosClient(url=endpoint, credential=credential)
 | `DatabaseProxy` | Database operations | `client.get_database_client()` |
 | `ContainerProxy` | Container/item operations | `database.get_container_client()` |
 
-## Core Workflow
+## 核心工作流
 
 ### Setup Database and Container
 
@@ -245,7 +245,7 @@ import asyncio
 asyncio.run(cosmos_operations())
 ```
 
-## Error Handling
+## 错误处理
 
 ```python
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -261,7 +261,7 @@ except CosmosHttpResponseError as e:
         raise
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Always specify partition key** for point reads and queries
 2. **Use parameterized queries** to prevent injection and improve caching
@@ -271,7 +271,7 @@ except CosmosHttpResponseError as e:
 6. **Design partition key** for even data distribution
 7. **Use `read_item`** instead of query for single document retrieval
 
-## Reference Files
+## 参考文件
 
 | File | Contents |
 |------|----------|
@@ -279,7 +279,7 @@ except CosmosHttpResponseError as e:
 | references/query-patterns.md | Query optimization, aggregations, pagination, transactions, change feed |
 | scripts/setup_cosmos_container.py | CLI tool for creating containers with partitioning, throughput, and indexing |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

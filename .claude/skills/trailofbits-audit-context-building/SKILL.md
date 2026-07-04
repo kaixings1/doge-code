@@ -4,7 +4,7 @@ Build deep architectural context through ultra-granular code analysis before vul
 
 **Author:** Omar Inuwa
 
-## When to Use
+## 使用场景
 
 使用此技能当 you need to:
 - Develop deep comprehension of a codebase before security auditing
@@ -32,7 +32,7 @@ This is a **pure context building** skill. It does NOT:
 
 It exists solely to build deep understanding before the vulnerability-hunting phase.
 
-## Installation
+## 安装
 
 ```
 /plugin install trailofbits/skills/plugins/audit-context-building

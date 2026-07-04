@@ -37,7 +37,7 @@ firecrawl map "<url>" --limit 500 --json -o .firecrawl/urls.json
 | `--json`                          | Output as JSON               |
 | `-o, --output <path>`             | Output file path             |
 
-## Tips
+## 提示
 
 - **Map + scrape is a common pattern**: use `map --search` to find the right URL, then `scrape` it.
 - Example: `map https://docs.example.com --search "auth"` → found `/docs/api/authentication` → `scrape` that URL.

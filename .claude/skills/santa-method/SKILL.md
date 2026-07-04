@@ -23,7 +23,7 @@ Invoke this skill when:
 
 Do NOT use for internal drafts, exploratory research, or tasks with deterministic verification (use build/test/lint pipelines for those).
 
-## Architecture
+## 架构
 
 ```
 ┌─────────────┐
@@ -96,7 +96,7 @@ You are an independent quality reviewer. You have NOT seen any other review of t
 ## Evaluation Rubric
 {rubric}
 
-## Instructions
+## 使用说明
 Evaluate the output against EACH rubric criterion. For each:
 - PASS: criterion fully met, no issues
 - FAIL: specific issue found (cite the exact problem)

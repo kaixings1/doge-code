@@ -33,7 +33,7 @@ Ative automaticamente este workflow completo em TODA tarefa:
 - Responda de forma concisa.
 - Priorize: pixel-perfect + c/u00f3digo limpo + performance + seguran/u00e7a.
 
-## When to Use
+## 使用场景
 Use when you need maximum quality output with Gemini 3.1 Pro High, pixel-perfect UI, and token-efficient workflow.
 
 ## 局限性

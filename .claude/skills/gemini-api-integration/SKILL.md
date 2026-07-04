@@ -143,7 +143,7 @@ console.log(response.response.text());
 | `gemini-2.0-flash` | Latest fast model, multimodal | Very Fast | Low |
 | `gemini-2.0-pro` | Most capable, advanced tasks | Slow | High |
 
-## Best Practices
+## 最佳实践
 
 - ✅ **Do:** Use `gemini-1.5-flash` for most tasks — it's fast and cost-effective
 - ✅ **Do:** 始终 stream responses for user-facing chat UIs to reduce perceived latency
@@ -154,7 +154,7 @@ console.log(response.response.text());
 - ❌ **Don't:** Send large base64 images inline for files > 20MB — use File API instead
 - ❌ **Don't:** Ignore safety ratings in responses for production apps
 
-## Error Handling
+## 错误处理
 
 ```javascript
 try {
@@ -173,7 +173,7 @@ try {
 }
 ```
 
-## Troubleshooting
+## 故障排除
 
 **Problem:** `API_KEY_INVALID` error
 **Solution:** Ensure `GEMINI_API_KEY` environment variable is set and the key is active in Google AI Studio.

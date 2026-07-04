@@ -167,7 +167,7 @@ If quality is uncertain, write less. Silence beats slop.
 - No bullet points unless requested.
 - If the user requests bullets, keep them taut and non-corporate.
 
-## Examples
+## 示例
 
 ### Bad (banned)
 "This isn't about money. It's about power."

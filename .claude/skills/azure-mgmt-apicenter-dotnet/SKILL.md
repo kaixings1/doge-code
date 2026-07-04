@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Centralized API inventory and governance SDK for managing APIs across your organization.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.ApiCenter
@@ -20,7 +20,7 @@ dotnet add package Azure.Identity
 **Current Version**: v1.0.0 (GA)  
 **API Version**: 2024-03-01
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -28,7 +28,7 @@ AZURE_RESOURCE_GROUP=<your-resource-group>
 AZURE_APICENTER_SERVICE_NAME=<your-apicenter-service>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -53,7 +53,7 @@ Subscription
         └── MetadataSchema                  # Custom metadata definitions
 ```
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Create API Center Service
 
@@ -343,7 +343,7 @@ await foreach (ApiCenterDeploymentResource deployment in workspace.GetApiCenterD
 }
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -360,7 +360,7 @@ await foreach (ApiCenterDeploymentResource deployment in workspace.GetApiCenterD
 | `ApiCenterEnvironmentKind` | development, testing, staging, production |
 | `ApiCenterDeploymentState` | active, inactive |
 
-## Best Practices
+## 最佳实践
 
 1. **Organize with workspaces** — Group APIs by team, domain, or product
 2. **Use metadata schemas** — Define custom properties for governance
@@ -371,7 +371,7 @@ await foreach (ApiCenterDeploymentResource deployment in workspace.GetApiCenterD
 7. **Link deployments** — Connect APIs to their runtime environments
 8. **Use managed identity** — Enable SystemAssigned identity for secure integrations
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -402,7 +402,7 @@ catch (RequestFailedException ex)
 | `Azure.ResourceManager.ApiCenter` | API Center management (this SDK) | `dotnet add package Azure.ResourceManager.ApiCenter` |
 | `Azure.ResourceManager.ApiManagement` | API gateway and policies | `dotnet add package Azure.ResourceManager.ApiManagement` |
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -411,7 +411,7 @@ catch (RequestFailedException ex)
 | Product Documentation | https://learn.microsoft.com/azure/api-center/ |
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/apicenter/Azure.ResourceManager.ApiCenter |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

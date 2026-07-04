@@ -27,21 +27,21 @@ Comprehensive guidance for writing production-ready Bash scripts using defensive
 - The target environment requires strict POSIX sh only
 - The task is unrelated to shell scripting or automation
 
-## Instructions
+## 使用说明
 
 1. Confirm the target shell, OS, and execution environment.
 2. Enable strict mode and safe defaults from the start.
 3. Validate inputs, quote variables, and handle files safely.
 4. Add logging, error traps, and basic tests.
 
-## Safety
+## 安全
 
 - Avoid destructive commands without confirmation or dry-run flags.
 - Do not run scripts as root unless strictly required.
 
 Refer to `resources/implementation-playbook.md` for detailed patterns, checklists, and templates.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed patterns, checklists, and templates.
 

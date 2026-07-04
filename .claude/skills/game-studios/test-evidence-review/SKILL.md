@@ -240,7 +240,7 @@ Verdict: **COMPLETE** — evidence review finished. Use CONCERNS if BLOCKING ite
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 - **Report quality issues, do not fix them** — this skill reads and evaluates;
   it does not modify test files or evidence documents

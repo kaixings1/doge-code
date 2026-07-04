@@ -18,7 +18,7 @@ tools: [claude, cursor, codex]
 
 Monte Carlo 的推送模型让客户直接将元数据、血统和查询日志发送到 Monte Carlo，而无需等待拉取采集器收集。它填补了拉取模型无法始终覆盖的空白——不暴露查询历史的集成、非仓库资产之间的自定义血统，或已有此数据并希望直接发送的客户。
 
-## When to Use
+## 使用场景
 
 使用此技能当 the user needs to collect metadata, lineage, freshness, volume, or query-log data from a warehouse or adjacent system and push it into Monte Carlo through the push-ingestion API.
 

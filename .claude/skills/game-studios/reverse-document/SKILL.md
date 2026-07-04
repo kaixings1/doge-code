@@ -19,7 +19,7 @@ appropriate design or architecture documentation. Use this when:
 
 ---
 
-## Workflow
+## 工作流
 
 ## Phase 1: Parse Arguments
 
@@ -247,7 +247,7 @@ Agent: ✅ Written to design/gdd/[system-name].md
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 This skill follows the collaborative design principle:
 

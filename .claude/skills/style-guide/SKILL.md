@@ -5,10 +5,10 @@ description: "数据可视化风格指南：调色板、排版、可访问性 (W
 
 # Style Guide
 
-## Purpose
+## 目的
 Apply professional, accessible, publication-ready styling to any data visualization.
 
-## How It Works
+## 工作原理
 
 ### Color Palettes
 
@@ -49,7 +49,7 @@ Apply professional, accessible, publication-ready styling to any data visualizat
 - **Web**: SVG or interactive HTML (Plotly)
 - **Print**: CMYK color space, 300+ DPI
 
-## Usage Examples
+## 使用示例
 
 ```
 "Apply a professional dark theme to this matplotlib chart for a keynote"
@@ -59,7 +59,7 @@ Apply professional, accessible, publication-ready styling to any data visualizat
 "Make this chart colorblind-accessible and add proper annotations"
 ```
 
-## Output Format
+## 输出格式
 
 - **Style Configuration**: matplotlib rcParams / seaborn theme / plotly template
 - **Python Code**: Theme application code

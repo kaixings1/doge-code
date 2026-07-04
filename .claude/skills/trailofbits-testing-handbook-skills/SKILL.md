@@ -2,7 +2,7 @@
 
 Meta-skill that generates Claude Code skills from the [Trail of Bits Application Security Testing Handbook](https://appsec.guide).
 
-## Overview
+## 概述
 
 This plugin provides a skill generator that:
 
@@ -11,7 +11,7 @@ This plugin provides a skill generator that:
 3. Generates skills using appropriate templates
 4. Validates generated skills
 
-## Installation
+## 安装
 
 Add to your Claude Code skills configuration:
 
@@ -27,7 +27,7 @@ claude skills install testing-handbook-skills
 }
 ```
 
-## Usage
+## 用法
 
 ### Generate All Skills
 

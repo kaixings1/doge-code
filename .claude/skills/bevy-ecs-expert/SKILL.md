@@ -82,7 +82,7 @@ fn main() {
 }
 ```
 
-## Examples
+## 示例
 
 ### Example 1: Spawning Entities with Require Component
 
@@ -122,7 +122,7 @@ fn enemy_behavior(
 }
 ```
 
-## Best Practices
+## 最佳实践
 
 - ✅ **Do:** Use `Query` filters (`With`, `Without`, `Changed`) to reduce iteration count.
 - ✅ **Do:** 优先 `Res` over `ResMut` when read-only access is sufficient to allow parallel execution.
@@ -130,7 +130,7 @@ fn enemy_behavior(
 - ❌ **Don't:** Store heavy logic inside Components; keep them as pure data.
 - ❌ **Don't:** Use `RefCell` or interior mutability inside components; let the ECS handle borrowing.
 
-## Troubleshooting
+## 故障排除
 
 **Problem:** System panic with "Conflict" error.
 **Solution:** You are likely trying to access the same component mutably in two systems running in parallel. Use `.chain()` to order them or split the logic.

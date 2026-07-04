@@ -78,7 +78,7 @@ Set mental checkpoints:
 - **80% budget** — Wrap up current task, avoid new exploration
 - **100% budget** — Commit what you have, start fresh session
 
-## Output
+## 输出
 
 ```text
 COST TRACKER

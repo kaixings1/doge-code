@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Client library for Azure Cosmos DB NoSQL API with global distribution and reactive patterns.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -43,14 +43,14 @@ Or use Azure SDK BOM:
 </dependencies>
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 COSMOS_ENDPOINT=https://<account>.documents.azure.com:443/
 COSMOS_KEY=<your-primary-key>
 ```
 
-## Authentication
+## 认证
 
 ### Key-based Authentication
 
@@ -101,7 +101,7 @@ CosmosClient client = new CosmosClientBuilder()
 | `CosmosDatabase` / `CosmosAsyncDatabase` | Database operations |
 | `CosmosContainer` / `CosmosAsyncContainer` | Container/item operations |
 
-## Core Workflow
+## 核心工作流
 
 ### Create Database
 
@@ -188,7 +188,7 @@ CosmosPagedIterable<User> results = container.queryItems(
 results.forEach(user -> System.out.println("User: " + user.getName()));
 ```
 
-## Key Concepts
+## 关键概念
 
 ### Partition Keys
 
@@ -216,7 +216,7 @@ CosmosItemResponse<User> response = container.createItem(user);
 System.out.println("RU charge: " + response.getRequestCharge());
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Reuse CosmosClient** — Create once, reuse throughout application
 2. **Use async client** for high-throughput scenarios
@@ -226,7 +226,7 @@ System.out.println("RU charge: " + response.getRequestCharge());
 6. **Handle 429 errors** with retry policies (built-in by default)
 7. **Use direct mode** for lowest latency in production
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.cosmos.CosmosException;
@@ -246,7 +246,7 @@ try {
 }
 ```
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -257,7 +257,7 @@ try {
 | 性能 Guide | https://learn.microsoft.com/azure/cosmos-db/performance-tips-java-sdk-v4-sql |
 | Troubleshooting | https://learn.microsoft.com/azure/cosmos-db/troubleshoot-java-sdk-v4-sql |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

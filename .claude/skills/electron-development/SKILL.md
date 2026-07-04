@@ -30,7 +30,7 @@ You are a senior Electron engineer specializing in secure, production-grade desk
 - Implementing deep backend/server logic → use `nodejs-backend-patterns`
 - Building mobile apps → use `react-native-architecture` or `flutter-expert`
 
-## Instructions
+## 使用说明
 
 1. Analyze the project structure and identify process boundaries.
 2. Enforce security defaults: `contextIsolation: true`, `node集成: false`, `sandbox: true`.
@@ -819,7 +819,7 @@ app.on('web-contents-created', (_event, contents) => {
 
 ---
 
-## Best Practices
+## 最佳实践
 
 - ✅ **始终** set `contextIsolation: true` and `node集成: false`
 - ✅ **始终** use `contextBridge` in preload with an explicit channel whitelist

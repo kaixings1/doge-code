@@ -22,13 +22,13 @@ description: "统计和基于 ML 的异常值检测：IQR 方法、Z-score、修
 - **DBSCAN**: Cluster-based — points not assigned to any cluster are anomalies
 - **Mahalanobis Distance**: Accounts for correlations between features
 
-### Step 3: 上下文ual Analysis
+### 步骤 3: 上下文ual Analysis
 - Are outliers clustered in time? → Possible data collection issues
 - Are outliers associated with specific categories? → Segment-specific behavior
 - Do outliers have domain meaning? → e.g., Black Friday sales spikes are real
 - Are outliers influential on model results? → Cook's distance, leverage plots
 
-### Step 4: Treatment Recommendation
+### 步骤 4: Treatment Recommendation
 
 | Scenario | Action |
 |----------|--------|
@@ -38,7 +38,7 @@ description: "统计和基于 ML 的异常值检测：IQR 方法、Z-score、修
 | Interesting signal | Investigate further — separate analysis |
 | Model-influential | Winsorize or use robust estimators |
 
-### Step 5: Generate Code
+### 步骤 5: Generate Code
 - Python code for detection (scipy, sklearn, pyod)
 - Visualization: box plots, scatter plots with outliers highlighted
 - Before/after comparison with impact on summary statistics
@@ -63,7 +63,7 @@ I use, and should I remove or winsorize the outliers?"
 individual features look normal but some combinations are suspicious"
 ```
 
-## Output Format
+## 输出格式
 
 - **Outlier Report**: Count and percentage flagged per method
 - **Visualization**: Annotated plots showing detected outliers

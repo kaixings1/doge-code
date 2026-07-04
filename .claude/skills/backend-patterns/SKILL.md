@@ -427,7 +427,7 @@ export const DELETE = requirePermission('delete')(
 )
 ```
 
-## Rate Limiting
+## 速率限制
 
 ### Simple In-Memory Rate Limiter
 

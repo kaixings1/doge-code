@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 Query logs and metrics from Azure Monitor and Log Analytics workspaces.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-monitor-query
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 # Log Analytics
@@ -26,7 +26,7 @@ AZURE_LOG_ANALYTICS_WORKSPACE_ID=<workspace-id>
 AZURE_METRICS_RESOURCE_URI=/subscriptions/<sub>/resourceGroups/<rg>/providers/<provider>/<type>/<name>
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -241,7 +241,7 @@ AppExceptions
 | `LogsQueryClient` | Query Log Analytics workspaces |
 | `MetricsQueryClient` | Query Azure Monitor metrics |
 
-## Best Practices
+## 最佳实践
 
 1. **Use timedelta** for relative time ranges
 2. **Handle partial results** for large queries
@@ -251,7 +251,7 @@ AppExceptions
 6. **Use aggregations** to summarize metric data
 7. **Filter by dimensions** to narrow metric results
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

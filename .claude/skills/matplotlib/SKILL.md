@@ -249,7 +249,7 @@ ax.set_ylabel('Y Label')
 ax.set_zlabel('Z Label')
 ```
 
-## Best Practices
+## 最佳实践
 
 ### 1. Interface Selection
 - **Use the object-oriented interface** (fig, ax = plt.subplots()) for production code

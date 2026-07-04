@@ -5,7 +5,7 @@ requires:
   mcp: [rube]
 ---
 
-# RingCentral Automation via Rube MCP
+# RingCentral 自动化（通过 Rube MCP）
 
 Automate RingCentral operations through Composio's RingCentral toolkit via Rube MCP.
 
@@ -26,7 +26,7 @@ Automate RingCentral operations through Composio's RingCentral toolkit via Rube 
 3. If connection is not ACTIVE, follow the returned auth link to complete setup
 4. Confirm connection status shows ACTIVE before running any workflows
 
-## Tool Discovery
+## 工具发现
 
 始终 discover available tools before executing workflows:
 
@@ -40,7 +40,7 @@ This returns:
 - Known pitfalls and edge cases
 - Input schemas for each tool
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Discover Available RingCentral Tools
 
@@ -74,7 +74,7 @@ For complex workflows involving multiple RingCentral operations:
 3. Pass data between steps using tool responses
 4. Use `RUBE_REMOTE_WORKBENCH` for bulk operations or data processing
 
-## Common Patterns
+## 常见模式
 
 ### Search Before Action
 始终 search for existing resources before creating new ones to avoid duplicates.

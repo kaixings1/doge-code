@@ -24,7 +24,7 @@ tools: [claude, cursor, gemini, antigravity]
 - Use to optimize slow pipelines by identifying bottlenecks in workflow steps.
 - Use to update and modernize deprecated actions or workflow syntax.
 
-## How It Works
+## 工作原理
 
 1. **Log Ingestion & Redaction:** Analyze the provided GitHub Actions workflow log (often exported as a raw text file or pasted directly). **CRITICAL SAFETY REQUIREMENT:** The user/agent must redact all sensitive credentials, secrets, tokens, private keys, and internal system paths from the logs before pasting or uploading them.
 2. **上下文 Mapping:** Cross-reference the failure point with the specific step and job in the `.github/workflows/*.yml` definition.
@@ -36,14 +36,14 @@ tools: [claude, cursor, gemini, antigravity]
    - Invalid action versions or deprecated actions.
 4. **Resolution Proposal:** Provide a direct `diff` of the `.yml` file or the underlying script that needs to be modified.
 
-## Best Practices
+## 最佳实践
 
 - **Provide Full 上下文:** 始终 review both the workflow definition (`.yml` file) and the failure log simultaneously to ensure accurate diagnosis.
 - **Check Action Versions:** Many failures are caused by deprecated runtime versions (e.g., Node.js 16) in older third-party actions (e.g., `actions/checkout@v2`). 始终 recommend upgrading to the latest major versions (e.g., `v4`).
 - **Permissions Audit:** Ensure the workflow has the correct `permissions:` block if it's attempting to write to the repository, packages, or deploy environments.
 - **Reproducibility:** If a test fails in CI but passes locally, investigate environment differences such as timezone, headless browser state, memory limits, or parallel execution race conditions.
 
-## Examples
+## 示例
 
 ### Example 1: Fixing a Deprecated Node.js Action Version Error
 **Failing Log:**
@@ -87,7 +87,7 @@ Error: API Key is required for deployment. Process exited with code 1.
 - It cannot execute the GitHub action itself to test the fix; validation requires pushing the proposed fix to the repository and triggering a workflow run.
 - Network-related transient failures (e.g., a package registry being down temporarily) might be incorrectly diagnosed as structural workflow issues if not carefully analyzed.
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Ignoring Transient Failures**: Mistaking temporary network dropouts or registry downtime (e.g., npm or pip install errors) for actual code or configuration bugs. 始终 check if a rerun succeeds before attempting heavy changes.
 - **Hardcoding Tokens**: Fixing authentication errors by hardcoding secrets or API tokens directly into the YAML files instead of utilizing GitHub Secrets (`${{ secrets.SECRET_NAME }}`).

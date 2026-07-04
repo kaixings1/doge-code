@@ -9,7 +9,7 @@ date_added: "2026-02-27"
 
 # /u8ba4/u8bc1/u7f3a/u9677 Testing
 
-## Purpose
+## 目的
 
 Identify and exploit authentication and session management vulnerabilities in web applications. Broken authentication consistently ranks in the OWASP Top 10 and can lead to account takeover, identity theft, and unauthorized access to sensitive systems. This skill covers testing methodologies for password policies, session handling, multi-factor authentication, and credential management.
 
@@ -39,7 +39,7 @@ Identify and exploit authentication and session management vulnerabilities in we
 3. **Session 安全性 Analysis** - Token randomness and timeout evaluation
 4. **Remediation Recommendations** - 安全性 hardening guidance
 
-## Core Workflow
+## 核心工作流
 
 ### Phase 1: Authentication Mechanism Analysis
 
@@ -397,7 +397,7 @@ True-Client-IP: 127.0.0.1
 - Third-party authentication may be out of scope
 - Production testing requires extra caution
 
-## Examples
+## 示例
 
 ### Example 1: Account Lockout Bypass
 
@@ -467,7 +467,7 @@ https://target.com/reset?token=a1b2c3d4e5f6&email=admin@example.com
 # Check if admin's password can be reset with test user's token
 ```
 
-## Troubleshooting
+## 故障排除
 
 | Issue | Solutions |
 |-------|-----------|

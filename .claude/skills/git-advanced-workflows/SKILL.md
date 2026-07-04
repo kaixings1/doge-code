@@ -352,7 +352,7 @@ git checkout abc123 -- path/to/file1.py path/to/file2.py
 git commit -m "cherry-pick: apply specific changes from abc123"
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Always Use --force-with-lease**: Safer than --force, prevents overwriting others' work
 2. **Rebase Only Local Commits**: Don't rebase commits that have been pushed and shared
@@ -373,7 +373,7 @@ git rebase -i main
 git reset --hard backup-branch
 ```
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Rebasing Public Branches**: Causes history conflicts for collaborators
 - **Force Pushing Without Lease**: Can overwrite teammate's work
@@ -405,7 +405,7 @@ git reflog
 git branch recovered-branch abc123
 ```
 
-## Resources
+## 资源
 
 - **references/git-rebase-guide.md**: Deep dive into interactive rebase
 - **references/git-conflict-resolution.md**: Advanced conflict resolution strategies

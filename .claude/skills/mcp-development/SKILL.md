@@ -61,7 +61,7 @@ server.tool(
 );
 ```
 
-## Resources
+## 资源
 
 ```typescript
 server.resource(
@@ -164,7 +164,7 @@ await server.connect(transport);
 
 For HTTP-based servers, use the SSE transport for streaming responses to clients.
 
-## Anti-Patterns
+## 反模式
 
 - Creating tools with vague descriptions that don't explain when to use them
 - Not validating inputs with Zod schemas before processing

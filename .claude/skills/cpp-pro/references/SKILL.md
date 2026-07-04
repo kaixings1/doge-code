@@ -39,7 +39,7 @@ For complete rules on specific topics:
 - [Comments](comments.md) - Documentation style and requirements
 - [Formatting](formatting.md) - Whitespace, braces, line length
 
-## Common Patterns
+## 常见模式
 
 ### Header File Template
 

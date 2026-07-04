@@ -12,7 +12,7 @@ source: community
 
 Search and extract data from Burp Suite project files using the burpsuite-project-file-parser extension.
 
-## When to Use
+## 使用场景
 - Searching response headers or bodies with regex patterns
 - Extracting security audit findings from Burp projects
 - Dumping proxy history or site map data
@@ -143,7 +143,7 @@ siteMap
 
 **CRITICAL: Always check result size BEFORE retrieving data.** A broad search can return thousands of records, each potentially megabytes. This will overflow the context window.
 
-### Step 1: Always Check Size First
+### 步骤 1: Always Check Size First
 
 Before any search, check BOTH record count AND byte size:
 
@@ -165,7 +165,7 @@ The `wc -cl` output shows: `<bytes> <lines>` (e.g., `524288 42` means 512KB acro
 
 **A single 10MB response on one line will show high byte count but only 1 line - the byte check catches this.**
 
-### Step 2: Refine Broad Searches
+### 步骤 2: Refine Broad Searches
 
 If count/size is too high:
 
@@ -192,7 +192,7 @@ If count/size is too high:
      jq -c 'select(.url | test("/api/"))' | head -n 50
    ```
 
-### Step 3: Always Truncate Output
+### 步骤 3: Always Truncate Output
 
 Even after narrowing, always pipe through truncation:
 
@@ -288,7 +288,7 @@ Common shortcuts that lead to missed vulnerabilities or false reports:
 | "Proxy history is complete" | May be filtered by Burp scope/intercept settings; you see only what Burp captured |
 | "Burp found it, so it's a vuln" | Burp findings require manual verification—they indicate potential issues, not proof |
 
-## Output Format
+## 输出格式
 
 All output is JSON, one object per line. Pipe to `jq` for formatting:
 ```bash
@@ -300,7 +300,7 @@ Filter with grep:
 {baseDir}/scripts/burp-search.sh project.burp auditItems | grep -i "sql injection"
 ```
 
-## Examples
+## 示例
 
 Search for CORS headers (with byte limit):
 ```bash

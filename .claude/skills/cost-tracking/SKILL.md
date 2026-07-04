@@ -28,14 +28,14 @@ metadata:
 Prefer `estimated_cost_usd` over hand-calculating pricing — model and cache
 prices change, and the tracker is the source of truth.
 
-## When to Use
+## 使用场景
 
 - The user asks "how much have I spent?", "what did this session cost?", or
   "what is my token usage?"
 - The user mentions budgets, spending limits, overruns, or cost controls.
 - The user wants a cost breakdown by model, session, or date, or a CSV export.
 
-## How It Works
+## 工作原理
 
 First verify the log exists (use `node`, not `sqlite3` — the tracker writes
 JSONL, and `node` is cross-platform):
@@ -76,7 +76,7 @@ When presenting cost data, include today's spend vs yesterday, total across all
 sessions, a by-model breakdown, and session count. Format sub-dollar amounts
 with four decimals, larger amounts with two.
 
-## Anti-Patterns
+## 反模式
 
 - Do not sum every row — they are cumulative per session; reduce to the latest
   row per `session_id` first.

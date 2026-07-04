@@ -15,7 +15,7 @@ Build enterprise agents for Microsoft 365, Teams, and Copilot Studio using the M
 - Use the microsoft-docs MCP to verify the latest APIs for AddAgent, AgentApplication, and authentication options.
 - Confirm package versions in NuGet for the Microsoft.Agents.* packages you plan to use.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Microsoft.Agents.Hosting.AspNetCore
@@ -264,7 +264,7 @@ await foreach (var activity in client.AskQuestionAsync("Hello!", null))
 }
 ```
 
-## Best Practices
+## 最佳实践
 
 1. Use AgentApplication subclasses to centralize routing and error handling.
 2. Use MemoryStorage only for development; use persisted storage in production.
@@ -273,6 +273,6 @@ await foreach (var activity in client.AskQuestionAsync("Hello!", null))
 5. Reuse HttpClient from IHttpClientFactory and cache MSAL tokens.
 6. 优先 async handlers and pass CancellationToken to SDK calls.
 
-## Reference Files
+## 参考文件
 
 | File | Contents |

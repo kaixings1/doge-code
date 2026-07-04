@@ -142,7 +142,7 @@ date_added: "2026-02-27"
 - `relid` is the numeric contact ID, not the email address
 - `assignee` is a user ID; resolve user names to IDs via the ActiveCampaign UI
 
-## Common Patterns
+## 常见模式
 
 ### Contact Lookup Flow
 

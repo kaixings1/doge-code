@@ -24,7 +24,7 @@ plugin:
 
 # Verify done-claims against ground truth, not the agent's word
 
-## Overview
+## 概述
 
 When an AI agent says "done", "shipped", or "fixed", that is a **claim**, not a
 fact — and a claim the agent checks by re-reading its own work is *consistency,
@@ -51,9 +51,9 @@ This skill adapts the DOS reference "witness-claim" pattern
 - **Do not** use it to judge whether code is *correct* — that is what the test
   suite is for. This skill checks did-the-claimed-thing-actually-ship.
 
-## How It Works
+## 工作原理
 
-### Step 1: Install the kernel (once)
+### 步骤 1: Install the kernel (once)
 
 ```bash
 python3 -m venv .dos-venv
@@ -61,7 +61,7 @@ python3 -m venv .dos-venv
 python -m pip install 'dos-kernel==<reviewed-version>'  # provides the `dos` CLI
 ```
 
-### Step 2: Audit the latest commit's claim vs its diff
+### 步骤 2: Audit the latest commit's claim vs its diff
 
 A commit subject is forgeable (whoever wrote the message authored it); the files
 it touched are not (git did). `dos commit-audit` grades the subject against the
@@ -80,7 +80,7 @@ claim's *kind*), `CLAIM_UNWITNESSED` (the subject's claim is not evidenced by th
 diff — treat the "done" as unproven), or `ABSTAIN`. This judges the *kind* of
 change, never correctness — run the tests for that.
 
-### Step 3: Verify a named phase actually shipped
+### 步骤 3: Verify a named phase actually shipped
 
 If the agent claims a specific plan/phase landed, confirm it from git history
 rather than the transcript:
@@ -106,13 +106,13 @@ distrust:
   corroborate it (run `dos commit-audit` on that commit, below) before you close.
 - `none` — no positive evidence; accept as "not shipped", not as a tool failure.
 
-### Step 4: Fold only confirmed effects
+### 步骤 4: Fold only confirmed effects
 
 Accept the agent's "done" **only** when Step 2/3 corroborate it. If
 `CLAIM_UNWITNESSED` or `shipped: false`, the work is not done regardless of how
 confidently the agent narrated it — send it back.
 
-## Examples
+## 示例
 
 ### Example 1: gate an agent's "I fixed the bug" claim
 
@@ -134,7 +134,7 @@ dos verify --workspace . AUTH AUTH2 --json --no-ci
 # shipped: false, source: none -> no evidence; keep the ticket open
 ```
 
-## Best Practices
+## 最佳实践
 
 - ✅ Run `dos commit-audit HEAD` immediately after every agent commit.
 - ✅ Treat `source: none` / `CLAIM_UNWITNESSED` as "not done", not as a tool error.
@@ -169,7 +169,7 @@ dos verify --workspace . AUTH AUTH2 --json --no-ci
 - Run in the repository you intend to adjudicate; the `--workspace .` argument
   scopes every verdict to that repo.
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Problem:** `dos verify` returns `source: none` and it looks like a failure.
   **Solution:** That is the honest "no evidence" verdict — it means the phase has
@@ -178,7 +178,7 @@ dos verify --workspace . AUTH AUTH2 --json --no-ci
 - **Problem:** Installing the wrong package.
   **Solution:** The PyPI name is `dos-kernel`, not `dos`.
 
-## Related Skills
+## 相关技能
 
 - The upstream DOS reference screenplays (`dos-witness-claim`, `dos-goal-gate`)
   in `anthony-chaudhary/dos-kernel` cover the multi-agent fan-out and

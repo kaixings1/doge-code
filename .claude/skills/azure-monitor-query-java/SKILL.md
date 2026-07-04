@@ -16,7 +16,7 @@ date_added: '2026-02-27'
 
 Client library for querying Azure Monitor Logs and Metrics.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -55,7 +55,7 @@ Or use Azure SDK BOM:
 - Azure resource (for metrics queries)
 - TokenCredential with appropriate permissions
 
-## Environment Variables
+## 环境变量
 
 ```bash
 LOG_ANALYTICS_WORKSPACE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
@@ -123,7 +123,7 @@ MetricsQueryClient metricsClient = new MetricsQueryClientBuilder()
     .buildClient();
 ```
 
-## Key Concepts
+## 关键概念
 
 | Concept | Description |
 |---------|-------------|
@@ -375,7 +375,7 @@ MetricsQueryResult
             ├── maximum, minimum
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.core.exception.HttpResponseException;
@@ -394,7 +394,7 @@ try {
 }
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use batch queries** — Combine multiple queries into a single request
 2. **Set appropriate timeouts** — Long queries may need extended server timeout
@@ -404,7 +404,7 @@ try {
 6. **Cache results** — Metrics don't change frequently; cache when appropriate
 7. **Migrate to new packages** — Plan migration to `azure-monitor-query-logs` and `azure-monitor-query-metrics`
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -415,7 +415,7 @@ try {
 | Log Analytics Limits | https://learn.microsoft.com/azure/azure-monitor/service-limits#la-query-api |
 | Troubleshooting | https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-query/TROUBLESHOOTING.md |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

@@ -365,7 +365,7 @@ Ask: "May I create the skeleton file at `design/ux/[filename].md`?"
 
 ---
 
-## Overview
+## 概述
 
 [To be designed]
 
@@ -377,7 +377,7 @@ Ask: "May I create the skeleton file at `design/ux/[filename].md`?"
 
 ---
 
-## Patterns
+## 模式
 
 [Individual pattern entries added here as they are defined]
 
@@ -951,7 +951,7 @@ When delegating to another agent via the Task tool:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 This skill follows the collaborative design principle at every step:
 

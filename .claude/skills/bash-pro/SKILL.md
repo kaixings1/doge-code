@@ -29,7 +29,7 @@ date_added: '2026-02-27'
 3. Implement core logic with defensive patterns.
 4. Add tests and linting with Bats and ShellCheck.
 
-## Safety
+## 安全
 
 - Treat input as untrusted; avoid eval and unsafe globbing.
 - 优先 dry-run modes before destructive actions.
@@ -206,7 +206,7 @@ date_added: '2026-02-27'
 - Scripts are portable across target platforms (Linux, macOS)
 - 性能 is adequate for expected workloads and data sizes
 
-## Output
+## 输出
 
 - Production-ready Bash scripts with defensive programming practices
 - Comprehensive test suites using bats-core or shellspec with TAP output

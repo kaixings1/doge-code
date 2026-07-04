@@ -16,7 +16,7 @@ tools: [claude, codex, cursor, gemini]
 
 # Brooks Lint
 
-## Overview
+## 概述
 
 Brooks Lint is a Claude Code skill that reviews your code through the lens of 12 classic software engineering books. Instead of checking style rules, it asks: "What would the authors of *The Pragmatic Programmer*, *Clean Code*, and *Designing Data-Intensive Applications* say about this code?"
 
@@ -49,7 +49,7 @@ Named after Fred Brooks, author of *The Mythical Man-Month* — because the hard
 - Use when onboarding to a codebase to quickly map risk areas
 - Use for design reviews before starting a new module or service
 
-## How It Works
+## 工作原理
 
 Brooks Lint applies each book's core principles as a review lens:
 
@@ -60,7 +60,7 @@ Brooks Lint applies each book's core principles as a review lens:
 5. **Stability patterns**: Flags missing timeouts, retries, and circuit breakers (Release It!)
 6. **Complexity scoring**: Applies APOSD complexity metrics to identify over-engineered sections
 
-## Installation
+## 安装
 
 ```bash
 # Install via Claude Code plugin marketplace
@@ -71,7 +71,7 @@ npx antigravity-awesome-skills --claude
 # Then invoke: @brooks-lint
 ```
 
-## Examples
+## 示例
 
 ### Example 1: Review a Service Class
 
@@ -113,14 +113,14 @@ npx antigravity-awesome-skills --claude
 | **Legacy Debt** | WELC | Hard-to-test code, missing seams |
 | **Domain Clarity** | DDD, XP | Anemic models, missing bounded contexts |
 
-## Best Practices
+## 最佳实践
 
 - Run `@brooks-lint` after writing new service layers or data pipelines
 - Combine with `@logic-lens` for full coverage: logic bugs + design smells
 - Use `@brooks-lint analyze architecture` weekly on growing codebases
 - Focus on CRITICAL and HIGH findings first — LOW findings are style suggestions
 
-## Related Skills
+## 相关技能
 
 - `@logic-lens` — Complementary: catches logic bugs; brooks-lint catches design issues
 - `@security-auditor` — Specialized security-only deep scan

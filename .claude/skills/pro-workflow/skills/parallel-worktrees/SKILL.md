@@ -35,7 +35,7 @@ These features are Claude Code-specific (skip if using Cursor):
 - `Ctrl+F` kills all background agents (two-press confirmation)
 - `Ctrl+B` sends a task to background
 
-## Workflow
+## 工作流
 
 1. Show current worktrees: `git worktree list`
 2. Create a worktree for the parallel task.
@@ -82,7 +82,7 @@ Each worktree runs its own AI session independently.
 - Don't forget to clean up worktrees when done (`git worktree prune`).
 - Avoid editing the same files in multiple worktrees simultaneously.
 
-## Output
+## 输出
 
 - Current worktree list
 - Created worktree path and branch

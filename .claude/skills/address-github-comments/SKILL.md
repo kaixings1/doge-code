@@ -22,7 +22,7 @@ gh auth status
 
 If not logged in, run `gh auth login`.
 
-## Workflow
+## 工作流
 
 ### 1. Inspect Comments
 
@@ -57,7 +57,7 @@ gh pr comment <PR_NUMBER> --body "Addressed in latest commit."
 - **Applying fixes without understanding context**: 始终 read the surrounding code of a comment.
 - **Not verifying auth**: Check `gh auth status` before starting.
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

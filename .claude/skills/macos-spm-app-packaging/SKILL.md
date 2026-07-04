@@ -11,7 +11,7 @@ date_added: "2026-03-25"
 ## 概述
 Bootstrap a complete SwiftPM macOS app folder, then build, package, and run it without Xcode. Use `assets/templates/bootstrap/` for the starter layout and `references/packaging.md` + `references/release.md` for packaging and release details.
 
-## When to Use
+## 使用场景
 - When the user needs a SwiftPM-based macOS app without relying on an Xcode project.
 - When you need packaging, signing, notarization, or appcast guidance for a SwiftPM app.
 

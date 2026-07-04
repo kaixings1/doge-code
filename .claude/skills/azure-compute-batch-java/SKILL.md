@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Client library for running large-scale parallel and high-performance computing (HPC) batch jobs in Azure.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -26,7 +26,7 @@ Client library for running large-scale parallel and high-performance computing (
 - Pool configured with compute nodes
 - Azure subscription
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_BATCH_ENDPOINT=https://<account>.<region>.batch.azure.com
@@ -75,7 +75,7 @@ BatchClient batchClient = new BatchClientBuilder()
     .buildClient();
 ```
 
-## Key Concepts
+## 关键概念
 
 | Concept | Description |
 |---------|-------------|
@@ -338,7 +338,7 @@ BatchJobSchedule schedule = batchClient.getJobSchedule("myScheduleId");
 System.out.println("Schedule state: " + schedule.getState());
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.compute.batch.models.BatchErrorException;
@@ -357,7 +357,7 @@ try {
 }
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use Entra ID** — Preferred over shared key for authentication
 2. **Use management SDK for pools** — `azure-resourcemanager-batch` supports managed identities
@@ -368,7 +368,7 @@ try {
 7. **Use low-priority nodes** — Cost savings for fault-tolerant workloads
 8. **Enable autoscale** — Dynamically adjust pool size based on workload
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -379,7 +379,7 @@ try {
 | REST API | https://learn.microsoft.com/rest/api/batchservice/ |
 | Samples | https://github.com/azure/azure-batch-samples |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

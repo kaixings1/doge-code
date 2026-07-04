@@ -23,7 +23,7 @@ reliable async execution in Node.js/TypeScript applications.
 - Job data should be small - pass IDs, not payloads
 - Graceful shutdown prevents orphaned jobs - handle SIGTERM properly
 
-## Capabilities
+## 能力
 
 - bullmq-queues
 - job-scheduling
@@ -72,7 +72,7 @@ reliable async execution in Node.js/TypeScript applications.
 - rate-limiting
 - sandboxed-processors
 
-## Patterns
+## 模式
 
 ### Basic Queue 设置
 
@@ -379,7 +379,7 @@ Workflow:
 
 Works well with: `redis-specialist`, `backend`, `nextjs-app-router`, `email-systems`, `ai-workflow-automation`, `performance-hunter`
 
-## When to Use
+## 使用场景
 - User mentions or implies: bullmq
 - User mentions or implies: bull queue
 - User mentions or implies: redis queue

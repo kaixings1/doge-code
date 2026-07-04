@@ -56,7 +56,7 @@ The skill will generate a formatted report with:
 - Curated learning resources from HackerNews
 - Action items you can focus on
 
-## Instructions
+## 使用说明
 
 When a user requests analysis of their developer growth or coding patterns from recent work:
 

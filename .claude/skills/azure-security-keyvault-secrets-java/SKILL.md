@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Securely store and manage secrets like passwords, API keys, and connection strings.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -266,7 +266,7 @@ public void rotateSecret(String secretName, String newValue) {
 }
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.core.exception.HttpResponseException;
@@ -305,13 +305,13 @@ try {
 | `recoveryLevel` | Soft-delete recovery level |
 | `tags` | User-defined metadata |
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_KEYVAULT_URL=https://<vault-name>.vault.azure.net
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Enable Soft Delete** - Protects against accidental deletion
 2. **Use Tags** - Tag secrets with environment, service, owner
@@ -357,7 +357,7 @@ secretClient.setSecret(new KeyVaultSecret("cert-password", "CertP@ss!")
 - "retrieve secret", "rotate secret"
 - "Azure secrets", "vault secrets"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

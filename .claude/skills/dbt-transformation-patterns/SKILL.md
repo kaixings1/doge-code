@@ -24,7 +24,7 @@ dbt（数据构建工具）的生产就绪模式，包括模型组织、测试�
 - You only need ad-hoc SQL queries
 - There is no access to source data or schemas
 
-## Instructions
+## 使用说明
 
 - Define model layers, naming, and ownership.
 - Implement tests, documentation, and freshness checks.
@@ -32,7 +32,7 @@ dbt（数据构建工具）的生产就绪模式，包括模型组织、测试�
 - Optimize runs with selectors and CI workflows.
 - If detailed patterns are required, open `resources/implementation-playbook.md`.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed dbt patterns and examples.
 

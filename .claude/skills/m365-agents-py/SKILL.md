@@ -18,7 +18,7 @@ Build enterprise agents for Microsoft 365, Teams, and Copilot Studio using the M
 
 > **⚠️ Breaking Change**: Recent updates have changed the Python import structure from `microsoft.agents` to `microsoft_agents` (using underscores instead of dots).
 
-## Installation
+## 安装
 
 ```bash
 pip install microsoft-agents-hosting-core
@@ -315,7 +315,7 @@ async def main():
 asyncio.run(main())
 ```
 
-## Best Practices
+## 最佳实践
 
 1. Use `microsoft_agents` import prefix (underscores, not dots).
 2. Use `MemoryStorage` only for development; use BlobStorage or CosmosDB in production.
@@ -326,7 +326,7 @@ asyncio.run(main())
 7. Use `auth_handlers` parameter on message decorators for OAuth-protected routes.
 8. Keep secrets in environment variables, not in source code.
 
-## Reference Files
+## 参考文件
 
 | File | Contents |
 | ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 47 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

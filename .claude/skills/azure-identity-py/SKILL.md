@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 Authentication library for Azure SDK clients using Microsoft Entra ID (formerly Azure AD).
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 # Service Principal (for production/CI)
@@ -181,7 +181,7 @@ async def main():
     await credential.close()
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use DefaultAzureCredential** for code that runs locally and in Azure
 2. **Never hardcode credentials** — use environment variables or managed identity
@@ -191,7 +191,7 @@ async def main():
 6. **Set AZURE_CLIENT_ID** for user-assigned managed identities
 7. **Exclude unused credentials** to speed up authentication
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

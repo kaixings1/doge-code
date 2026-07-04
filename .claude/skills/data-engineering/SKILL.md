@@ -203,7 +203,7 @@ CREATE TABLE fact_orders (
 );
 ```
 
-## Anti-Patterns
+## 反模式
 
 - Processing data row-by-row instead of in batches or sets
 - Not partitioning large tables by date or category

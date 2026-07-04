@@ -128,7 +128,7 @@ Is the user asking for a quick hack explicitly?
 
 Say "skipping thoroughness scoring — this is a spike/one-off" so the user knows it was a conscious choice.
 
-## Anti-Patterns
+## 反模式
 
 - Scoring everything the same (if all options are T:7, you aren't thinking hard enough)
 - Using low scores to justify shortcuts ("it's only T:4, so it's fine" — no, raise it)

@@ -34,7 +34,7 @@ When starting a new project, create a `CLAUDE.md` file in the root directory to 
 - Tailwind CSS for styling.
 - Early returns for error handling.
 
-## Workflow
+## 工作流
 
 - Read `README.md` first to understand project context.
 - Before editing, read the file content.
@@ -60,7 +60,7 @@ If the agent is stuck or behaving unexpectedly:
 2. **Explicit Instructions**: Be extremely specific about paths, filenames, and desired outcomes.
 3. **Logs**: Ask the agent to "check the logs" or "run the command with verbose output".
 
-## Best Practices
+## 最佳实践
 
 1. **Small 上下文s**: Don't dump the entire codebase into the context. Use `grep` or `find` to locate relevant files first.
 2. **Iterative Development**: Ask for small changes, verify, then proceed.
@@ -70,7 +70,7 @@ If the agent is stuck or behaving unexpectedly:
 
 Based on [Claude Code Guide by zebbern](https://github.com/zebbern/claude-code-guide).
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

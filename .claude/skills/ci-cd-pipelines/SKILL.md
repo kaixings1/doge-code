@@ -182,7 +182,7 @@ test:
     - run: npm ci && npm test
 ```
 
-## Anti-Patterns
+## 反模式
 
 - Not caching dependencies (npm, pip, cargo) between runs
 - Running all jobs sequentially when lint and test can parallelize

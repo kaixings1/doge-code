@@ -92,7 +92,7 @@ See the `azure-communication-callautomation-java` skill for:
 - "callingserver legacy", "deprecated calling SDK"
 - "migrate callingserver to callautomation"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

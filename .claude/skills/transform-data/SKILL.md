@@ -5,17 +5,17 @@ description: "使用 pandas、polars 或 SQL 重塑、透视、融合、合并�
 
 # Transform Data
 
-## Purpose
+## 目的
 Reshape and restructure datasets to match the format required for analysis, visualization, or modeling. Covers all common transformation patterns in pandas, polars, and SQL.
 
-## How It Works
+## 工作原理
 
-### Step 1: Understand the Current and Target Structure
+### 步骤 1: Understand the Current and Target Structure
 - Identify the current data shape (wide vs. long, normalized vs. denormalized)
 - Clarify the desired output structure
 - Map columns to their roles (identifiers, variables, values)
 
-### Step 2: Apply Transformations
+### 步骤 2: Apply Transformations
 
 **Reshaping:**
 - **Pivot**: Long → wide (aggregate values into columns)
@@ -39,12 +39,12 @@ Reshape and restructure datasets to match the format required for analysis, visu
 - **Ranking**: Rank values within groups
 - **Lag/Lead**: Shift values for time-based comparisons
 
-### Step 3: Generate Code
+### 步骤 3: Generate Code
 - pandas, polars, or SQL — based on user preference
 - Include data validation before and after transformation
 - Add comments explaining each step
 
-## Usage Examples
+## 使用示例
 
 **Example 1: Pivot for dashboard**
 ```
@@ -64,7 +64,7 @@ keeping all users even if they have no events"
 grouped by country and platform"
 ```
 
-## Output Format
+## 输出格式
 
 - **Transformation Plan**: Step-by-step description of the restructuring
 - **Code**: pandas / polars / SQL implementation with comments

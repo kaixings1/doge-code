@@ -11,7 +11,7 @@ Like muscle memory for your coding sessions. Find and surface relevant learnings
 
 Use when starting a new task, saying "what do I know about", "before I start", "replay", or "remind me about".
 
-## Workflow
+## 工作流
 
 1. Extract keywords from the task description (e.g. "auth refactor" → `auth`, `middleware`, `refactor`).
 2. Search learnings/memory for matching patterns:
@@ -24,7 +24,7 @@ Use when starting a new task, saying "what do I know about", "before I start", "
 4. Surface the top learnings ranked by relevance.
 5. If no learnings found, suggest starting with the scout agent to explore first.
 
-## Output
+## 输出
 
 ```
 REPLAY BRIEFING: <task>

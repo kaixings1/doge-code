@@ -9,7 +9,7 @@ description: Git工作流与版本控制 — 规范Git工作流实践。在提�
 
 Git 是你的安全网。将提交视为存档点，分支视为沙箱，历史视为文档。随着 AI 代理高速生成代码，严格的版本控制是保持更改可管理、可审查和可逆的机制。
 
-## When to Use
+## 使用场景
 
 始终. Every code change flows through git.
 

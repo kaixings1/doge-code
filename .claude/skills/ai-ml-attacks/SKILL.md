@@ -10,7 +10,7 @@ version: 1.0.0
 
 Detect security vulnerabilities specific to AI/ML pipelines, LLM-backed applications, and data science workflows. These attack surfaces are increasingly common and often overlooked by traditional SAST tools.
 
-## When to Use
+## 使用场景
 
 Activate this skill when reviewing code that:
 - Imports ML frameworks (torch, tensorflow, sklearn, transformers, langchain)

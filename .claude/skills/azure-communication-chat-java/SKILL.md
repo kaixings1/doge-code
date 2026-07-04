@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Build real-time chat applications with thread management, messaging, participants, and read receipts.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -46,7 +46,7 @@ ChatAsyncClient chatAsyncClient = new ChatClientBuilder()
     .buildAsyncClient();
 ```
 
-## Key Concepts
+## 关键概念
 
 | Class | Purpose |
 |-------|---------|
@@ -236,7 +236,7 @@ for (ChatThreadItem thread : threads) {
 }
 ```
 
-## Pagination
+## 分页
 
 ```java
 import com.azure.core.http.rest.PagedResponse;
@@ -255,7 +255,7 @@ pagedMessages.iterableByPage().forEach(page -> {
 });
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.core.exception.HttpResponseException;
@@ -289,14 +289,14 @@ try {
 | `PARTICIPANT_ADDED` | System message - participant joined |
 | `PARTICIPANT_REMOVED` | System message - participant left |
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_COMMUNICATION_ENDPOINT=https://<resource>.communication.azure.com
 AZURE_COMMUNICATION_USER_TOKEN=<user-access-token>
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Token Management** - User tokens expire; implement refresh logic with `CommunicationTokenRefreshOptions`
 2. **分页** - Use `listMessages(options)` with `maxPageSize` for large threads
@@ -311,7 +311,7 @@ AZURE_COMMUNICATION_USER_TOKEN=<user-access-token>
 - "read receipts", "typing notifications"
 - "Azure Communication Services chat"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

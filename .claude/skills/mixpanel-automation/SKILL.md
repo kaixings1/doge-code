@@ -6,7 +6,7 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Mixpanel Automation via Rube MCP
+# Mixpanel 自动化（通过 Rube MCP）
 
 Automate Mixpanel product analytics through Composio's Mixpanel toolkit via Rube MCP.
 
@@ -26,7 +26,7 @@ Automate Mixpanel product analytics through Composio's Mixpanel toolkit via Rube
 3. If connection is not ACTIVE, follow the returned auth link to complete Mixpanel authentication
 4. Confirm connection status shows ACTIVE before running any workflows
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Aggregate Event Data
 
@@ -151,7 +151,7 @@ Automate Mixpanel product analytics through Composio's Mixpanel toolkit via Rube
 - Insight `bookmark_id` must reference an existing saved insight
 - JQL is a legacy feature; check Mixpanel documentation for current availability
 
-## Common Patterns
+## 常见模式
 
 ### ID Resolution
 

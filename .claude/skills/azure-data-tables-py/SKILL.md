@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 NoSQL key-value store for structured data (Azure Storage Tables or Cosmos DB Table API).
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-data-tables azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 # Azure Storage Tables
@@ -26,7 +26,7 @@ AZURE_STORAGE_ACCOUNT_URL=https://<account>.table.core.windows.net
 COSMOS_TABLE_ENDPOINT=https://<account>.table.cosmos.azure.com
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -232,7 +232,7 @@ asyncio.run(table_operations())
 | `bytes` | Binary |
 | `UUID` | Guid |
 
-## Best Practices
+## 最佳实践
 
 1. **Design partition keys** for query patterns and even distribution
 2. **Query within partitions** whenever possible (cross-partition is expensive)
@@ -242,7 +242,7 @@ asyncio.run(table_operations())
 6. **Keep entities small** — max 1MB per entity
 7. **Use async client** for high-throughput scenarios
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

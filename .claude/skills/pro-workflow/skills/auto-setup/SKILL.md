@@ -16,13 +16,13 @@ Use when:
 
 ## Detection
 
-### Step 1: Identify Project Type
+### 步骤 1: Identify Project Type
 
 ```bash
 ls package.json pyproject.toml Cargo.toml go.mod Gemfile pom.xml build.gradle 2>/dev/null
 ```
 
-### Step 2: Configure Quality Gates
+### 步骤 2: Configure Quality Gates
 
 **Node.js/TypeScript:**
 ```json
@@ -64,18 +64,18 @@ ls package.json pyproject.toml Cargo.toml go.mod Gemfile pom.xml build.gradle 2>
 }
 ```
 
-### Step 3: Verify Tools Are Installed
+### 步骤 3: Verify Tools Are Installed
 
 Run each command with `--version` or `--help` to confirm availability. Report missing tools.
 
-### Step 4: Create Configuration
+### 步骤 4: Create Configuration
 
 Generate a `.claude/settings.json` with:
 - Quality gate commands for the detected project type
 - Suggested permission rules (user reviews and approves)
 - Hook configuration for the project
 
-## Output
+## 输出
 
 ```text
 AUTO SETUP

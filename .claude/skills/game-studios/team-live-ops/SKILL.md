@@ -146,13 +146,13 @@ All file writes (season design docs, analytics plans, communication calendars) a
 delegated to sub-agents spawned via Task. Each sub-agent enforces the
 "May I write to [path]?" protocol. This orchestrator does not write files directly.
 
-## Output
+## 输出
 
 A summary covering: season theme and scope, economy design highlights, success metrics, content list, communication plan, and any open decisions needing user input before production.
 
 Verdict: **COMPLETE** — season plan produced and handed off for production.
 
-## Next Steps
+## 后续步骤
 
 - Run `/design-review` on the season design document for consistency validation.
 - Run `/sprint-plan` to schedule content creation work for the season.

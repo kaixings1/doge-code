@@ -37,7 +37,7 @@ When anything unexpected happens:
 
 Work through these steps in order. Do not skip steps.
 
-### Step 1: Reproduce
+### 步骤 1: Reproduce
 
 Make the failure happen reliably. If you can't reproduce it, you can't fix it with confidence.
 
@@ -84,7 +84,7 @@ npm test -- --verbose
 npm test -- --testPathPattern="specific-file" --runInBand
 ```
 
-### Step 2: Localize
+### 步骤 2: Localize
 
 Narrow down WHERE the failure happens:
 
@@ -108,7 +108,7 @@ git bisect good <known-good-sha> # This commit worked
 git bisect run npm test -- --grep "failing test"
 ```
 
-### Step 3: Reduce
+### 步骤 3: Reduce
 
 Create the minimal failing case:
 
@@ -118,7 +118,7 @@ Create the minimal failing case:
 
 A minimal reproduction makes the root cause obvious and prevents fixing symptoms instead of causes.
 
-### Step 4: Fix the Root Cause
+### 步骤 4: Fix the Root Cause
 
 Fix the underlying issue, not the symptom:
 
@@ -135,7 +135,7 @@ Root cause fix (good):
 
 Ask: "Why does this happen?" until you reach the actual cause, not just where it manifests.
 
-### Step 5: Guard Against Recurrence
+### 步骤 5: Guard Against Recurrence
 
 Write a test that catches this specific failure:
 

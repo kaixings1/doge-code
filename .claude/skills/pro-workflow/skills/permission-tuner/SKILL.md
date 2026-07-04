@@ -14,7 +14,7 @@ Use when:
 - Starting a new project and want to configure permissions
 - After a session with many manual approvals
 
-## Workflow
+## 工作流
 
 1. Scan recent session data for permission patterns
 2. Identify frequently-approved tools and patterns
@@ -23,7 +23,7 @@ Use when:
 
 ## Analysis
 
-### Step 1: Gather Permission Data
+### 步骤 1: Gather Permission Data
 
 Check current permission rules:
 ```bash
@@ -31,7 +31,7 @@ cat .claude/settings.json 2>/dev/null | grep -A 20 "permissions"
 cat ~/.claude/settings.json 2>/dev/null | grep -A 20 "permissions"
 ```
 
-### Step 2: Identify Safe Patterns
+### 步骤 2: Identify Safe Patterns
 
 **Allow-list candidates** (low risk):
 - `Read` — all file reads (read-only, no side effects)
@@ -58,7 +58,7 @@ cat ~/.claude/settings.json 2>/dev/null | grep -A 20 "permissions"
 - `Bash(curl*POST*)` — external API calls
 - Any command with `--force` or `--no-verify`
 
-### Step 3: Generate Rules
+### 步骤 3: Generate Rules
 
 ```json
 {
@@ -83,7 +83,7 @@ cat ~/.claude/settings.json 2>/dev/null | grep -A 20 "permissions"
 }
 ```
 
-## Output
+## 输出
 
 ```text
 PERMISSION TUNER REPORT

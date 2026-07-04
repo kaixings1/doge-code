@@ -14,7 +14,7 @@ Expert patterns for Azure Functions development including isolated worker model,
 Durable Functions orchestration, cold start optimization, and production patterns.
 Covers .NET, Python, and Node.js programming models.
 
-## Patterns
+## 模式
 
 ### Isolated Worker Model (.NET)
 
@@ -1337,7 +1337,7 @@ Message: HttpTrigger without [Function] attribute (isolated worker requires it).
 - user needs authentication -> auth-specialist (Azure AD, Easy Auth, managed identity)
 - user needs complex orchestration -> workflow-automation (Logic Apps, Power Automate)
 
-## When to Use
+## 使用场景
 - User mentions or implies: azure function
 - User mentions or implies: azure functions
 - User mentions or implies: durable functions

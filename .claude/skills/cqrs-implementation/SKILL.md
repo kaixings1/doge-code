@@ -25,7 +25,7 @@ date_added: "2026-02-27"
 - You cannot operate separate read/write models
 - Strong immediate consistency is required everywhere
 
-## Instructions
+## 使用说明
 
 - Identify read/write workloads and consistency needs.
 - Define command and query models with clear boundaries.
@@ -33,7 +33,7 @@ date_added: "2026-02-27"
 - Validate performance, recovery, and failure modes.
 - If detailed patterns are required, open `resources/implementation-playbook.md`.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed CQRS patterns and templates.
 

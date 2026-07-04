@@ -22,7 +22,7 @@ date_added: "2026-02-27"
 - You only need localized bug fixes.
 - There is no access to domain knowledge and no proxy product expert.
 
-## Instructions
+## 使用说明
 
 1. Run a viability check before committing to full DDD.
 2. Produce strategic artifacts first: subdomains, bounded contexts, language glossary.
@@ -60,7 +60,7 @@ If templates are needed, open `references/ddd-deliverables.md`.
 - Explicit artifacts produced
 - Open risks and next step recommendation
 
-## Examples
+## 示例
 
 ```text
 Use @domain-driven-design to assess if this billing platform should adopt full DDD.

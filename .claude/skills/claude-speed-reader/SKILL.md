@@ -16,7 +16,7 @@ date_added: "2026-02-27"
 
 当您需要以 600+ WPM 的速度使用 RSVP 和 Spritz 风格的 ORP 高亮读取 Claude 的回复时使用此技能。
 
-## Instructions
+## 使用说明
 
 This skill provides guidance and patterns for -speed read claude's responses at 600+ wpm using rsvp with spritz-style orp highlighting.
 

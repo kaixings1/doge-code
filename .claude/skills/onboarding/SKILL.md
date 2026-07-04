@@ -164,7 +164,7 @@ Identify biggest drops and focus there.
 
 ---
 
-## Output Format
+## 输出格式
 
 ### Onboarding Audit
 For each issue: Finding → Impact → Recommendation → Priority
@@ -212,7 +212,7 @@ When recommending experiments, consider tests for:
 
 ---
 
-## Related Skills
+## 相关技能
 
 - **signup**: For optimizing the signup before onboarding
 - **emails**: For onboarding email series

@@ -26,7 +26,7 @@ Create and edit .pptx presentation decks with PptxGenJS. Useful for sales decks,
 - Upstream: https://github.com/openai/skills
 - Category: `slides`
 
-## How to use
+## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
 discovers it during planning. To run the full upstream workflow with

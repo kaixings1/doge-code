@@ -26,15 +26,15 @@ A skill to construct, refine, and maintain high-performance `.geminiignore` file
 - Use when the AI context window is reaching its limits or when billing optimization (FinOps) is a priority.
 - Use when the AI agent is accidentally reading build outputs, lock files, databases, or binary media.
 
-## How It Works
+## 工作原理
 
-### Step 1: Analyze the Workspace Tech Stack
+### 步骤 1: Analyze the Workspace Tech Stack
 Detect the languages, frameworks, and dependency managers present in the project (e.g., Node.js, Python, PHP, Dart/Flutter, Rust).
 
-### Step 2: Initialize or Update the `.geminiignore` File
+### 步骤 2: Initialize or Update the `.geminiignore` File
 Create a `.geminiignore` file at the root of the active workspace. If one already exists, review it to add missing categories.
 
-### Step 3: Implement the 7 Core Rules
+### 步骤 3: Implement the 7 Core Rules
 Add rules divided into the following categories to filter out unnecessary machine noise while keeping human-written code visible:
 
 1. **System & Editor Noise**: Block OS temp files (`.DS_Store`, `Thumbs.db`) and user-specific IDE caches (`.idea/`, `.vscode/*`, Xcode user data).
@@ -45,10 +45,10 @@ Add rules divided into the following categories to filter out unnecessary machin
 6. **Local Databases & Logs**: Block log files (`*.log`) and SQL dumps or local SQLite DBs (`*.sqlite`, `*.db`).
 7. **Compiled Binaries & Mobile Builds**: Block mobile package files (`*.apk`, `*.ipa`) and compiled binaries (`*.class`, `*.pyc`, `*.dll`).
 
-### Step 4: Validate Exclusions
+### 步骤 4: Validate Exclusions
 Verify that the AI can still see critical configuration blueprints (like `.env.example`, `package.json`, `composer.json`, `pyproject.toml`) but ignores the actual `.env` files and compilation artifacts.
 
-## Examples
+## 示例
 
 ### Example 1: Standard Universal `.geminiignore` Template
 
@@ -155,7 +155,7 @@ __pycache__/
 *.css.map
 ```
 
-## Best Practices
+## 最佳实践
 
 - ✅ **Ignore dependency lock files**: Standard lock files (e.g., `package-lock.json`, `yarn.lock`) contain thousands of lines of redundant package resolution trees. Ignoring them is the single largest FinOps win.
 - ✅ **Keep configurations visible**: Ensure manifests like `package.json`, `composer.json`, `Cargo.toml`, and `pyproject.toml` are NEVER ignored, as the AI needs them to understand dependencies.

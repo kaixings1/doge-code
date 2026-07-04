@@ -25,7 +25,7 @@ Production-ready patterns for Apache Airflow including DAG design, operators, se
 - Airflow is not part of the tooling stack
 - The task is unrelated to workflow orchestration
 
-## Instructions
+## 使用说明
 
 1. Identify data sources, schedules, and dependencies.
 2. Design idempotent tasks with clear ownership and retries.
@@ -34,12 +34,12 @@ Production-ready patterns for Apache Airflow including DAG design, operators, se
 
 Refer to `resources/implementation-playbook.md` for detailed patterns, checklists, and templates.
 
-## Safety
+## 安全
 
 - Avoid changing production DAG schedules without approval.
 - Test backfills and retries carefully to prevent data duplication.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed patterns, checklists, and templates.
 

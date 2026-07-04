@@ -136,10 +136,10 @@ Translate developer language to player language:
 ### Networking
 - Fixed [description]
 
-## Performance
+## 性能
 - [Improvement players will notice]
 
-## Known Issues
+## 已知问题
 - [Issue and workaround if available]
 ```
 

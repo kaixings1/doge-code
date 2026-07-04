@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Authentication library for Azure SDK clients using Microsoft Entra ID (formerly Azure AD).
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.Identity
@@ -24,7 +24,7 @@ dotnet add package Azure.Identity.Broker
 
 **Current Versions**: Stable v1.17.1, Preview v1.18.0-beta.2
 
-## Environment Variables
+## 环境变量
 
 ### Service Principal with Secret
 ```bash
@@ -224,7 +224,7 @@ var credential = new DefaultAzureCredential(
 | | `AzureDeveloperCliCredential` | Azure Developer CLI |
 | | `VisualStudioCredential` | Visual Studio |
 
-## Best Practices
+## 最佳实践
 
 ### 1. Use Deterministic Credentials in Production
 
@@ -274,7 +274,7 @@ using AzureEventSourceListener listener = new((args, message) =>
 }, EventLevel.LogAlways);
 ```
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure.Identity;
@@ -329,7 +329,7 @@ All credential implementations are thread-safe. A single credential instance can
 | `Microsoft.Extensions.Azure` | DI integration | `dotnet add package Microsoft.Extensions.Azure` |
 | `Azure.Identity.Broker` | Brokered auth (Windows) | `dotnet add package Azure.Identity.Broker` |
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -339,7 +339,7 @@ All credential implementations are thread-safe. A single credential instance can
 | Best Practices | https://learn.microsoft.com/dotnet/azure/sdk/authentication/best-practices |
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/identity/Azure.Identity |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

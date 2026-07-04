@@ -34,7 +34,7 @@ Expert guidance for designing, writing, debugging, and securing **production-gra
 
 ---
 
-## Step 1: Understand Context Before Responding
+## 步骤 1: Understand Context Before Responding
 
 When invoked, first gather context:
 
@@ -1084,7 +1084,7 @@ Before merging any workflow to `main`, verify:
 
 ---
 
-## Related Skills
+## 相关技能
 
 - `gha-security-review` — Deep security audit of existing workflow files
 - `github-actions-templates` — Copy-paste ready workflow templates

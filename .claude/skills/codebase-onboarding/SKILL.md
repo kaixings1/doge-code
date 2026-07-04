@@ -17,7 +17,7 @@ Systematically analyze an unfamiliar codebase and produce a structured onboardin
 - User asks to generate a CLAUDE.md for a project
 - User says "onboard me" or "walk me through this repo"
 
-## How It Works
+## 工作原理
 
 ### Phase 1: Reconnaissance
 
@@ -114,7 +114,7 @@ Produce two outputs:
 ```markdown
 # Onboarding Guide: [Project Name]
 
-## Overview
+## 概述
 [2-3 sentences: what this project does and who it serves]
 
 ## Tech Stack
@@ -127,7 +127,7 @@ Produce two outputs:
 | ORM | Prisma | 5.x |
 | Testing | Jest + Playwright | - |
 
-## Architecture
+## 架构
 [Diagram or description of how components connect]
 
 ## Key Entry Points
@@ -182,7 +182,7 @@ Generate or update a project-specific CLAUDE.md based on detected conventions. I
 - [Detected naming conventions]
 - [Detected patterns to follow]
 
-## Testing
+## 测试
 - Run tests: `[detected test command]`
 - Test pattern: [detected test file convention]
 - Coverage: [if configured, the coverage command]
@@ -201,7 +201,7 @@ Generate or update a project-specific CLAUDE.md based on detected conventions. I
 - [Error handling patterns]
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Don't read everything** — reconnaissance should use Glob and Grep, not Read on every file. Read selectively only for ambiguous signals.
 2. **Verify, don't guess** — if a framework is detected from config but the actual code uses something different, trust the code.
@@ -216,7 +216,7 @@ Generate or update a project-specific CLAUDE.md based on detected conventions. I
 - Describing obvious directory names — `src/` doesn't need an explanation
 - Copying the README — the onboarding guide adds structural insight the README lacks
 
-## Examples
+## 示例
 
 ### Example 1: First time in a new repo
 **User**: "Onboard me to this codebase"

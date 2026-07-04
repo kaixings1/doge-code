@@ -42,7 +42,7 @@ Apply this skill when:
 - Configuring `.bidsignore` to exclude files from validation
 - Preparing data for upload to OpenNeuro, DANDI, or other BIDS-aware repositories
 
-## Installation
+## 安装
 
 ```bash
 # Core BIDS querying library
@@ -63,7 +63,7 @@ uv pip install nibabel          # NIfTI/other neuroimaging file I/O
 uv pip install pydicom          # DICOM file reading (used by converters)
 ```
 
-## Core Workflows
+## 核心工作流
 
 ### 1. BIDS Directory Structure
 
@@ -657,7 +657,7 @@ layout = BIDSLayout("/data", database_path="/data/.pybids_cache.db")
 **Cause**: Encoding or delimiter issues (spaces instead of tabs, BOM characters, Windows line endings).
 **Fix**: Ensure tab-separated values with UTF-8 encoding and Unix line endings (`\n`). Use `n/a` (not `NA`, `NaN`, or empty) for missing values.
 
-## Best Practices
+## 最佳实践
 
 1. **Validate early and often** - Run the BIDS validator after every conversion or modification. Fix errors before they compound.
 

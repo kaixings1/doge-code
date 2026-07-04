@@ -27,7 +27,7 @@ source: community
 ## PR Description Template
 
 ```markdown
-## Summary
+## 总结
 <!-- one-paragraph executive summary: what changed and why -->
 
 ## Changes
@@ -40,7 +40,7 @@ source: community
 ## Why
 <!-- link to issue/ticket + one sentence on motivation -->
 
-## Testing
+## 测试
 - [ ] unit tests pass (`npm test`)
 - [ ] manual smoke test on staging
 - [ ] no coverage regression
@@ -72,7 +72,7 @@ git checkout -b feature/part-1
 git cherry-pick <commits-for-part-1>
 ```
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` — Python helpers for automated PR analysis, coverage reports, and risk scoring
 

@@ -4,7 +4,7 @@ Modern Python tooling and best practices using uv, ruff, ty, and pytest. Based o
 
 **Author:** William Tan
 
-## When to Use
+## 使用场景
 
 - Setting up a new Python project with modern, fast tooling
 - Replacing pip/virtualenv with uv for faster dependency management

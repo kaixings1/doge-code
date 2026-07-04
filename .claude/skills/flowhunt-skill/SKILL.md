@@ -16,7 +16,7 @@ license_source: "https://github.com/heyneuron/flowhunt-skill/blob/main/LICENSE"
 
 # FlowHunt Skill — Automation Discovery Audit
 
-## Overview
+## 概述
 
 FlowHunt is an automation discovery audit skill. It guides agents through a structured 5-question intake to understand the user's business context, then systematically audits connected tools (Gmail, Google Calendar, Slack, task trackers, and more) to surface concrete automation opportunities ranked by impact and effort.
 
@@ -31,9 +31,9 @@ Install: `npx skills add heyneuron/flowhunt-skill`
 - Use when starting an automation engagement and need structured discovery before recommending solutions
 - Use when the user says "show me automation opportunities" or "FlowHunt"
 
-## How It Works
+## 工作原理
 
-### Step 1: Intake — 5-Question Workflow Questionnaire
+### 步骤 1: Intake — 5-Question Workflow Questionnaire
 
 Ask the user exactly these five questions, one at a time:
 
@@ -45,7 +45,7 @@ Ask the user exactly these five questions, one at a time:
 
 Wait for answers before moving to the audit.
 
-### Step 2: Audit — Scan Connected Tools
+### 步骤 2: Audit — Scan Connected Tools
 
 For each tool the user mentioned, surface automation patterns:
 
@@ -75,7 +75,7 @@ For each tool the user mentioned, surface automation patterns:
 - Follow-up sequences triggered by deal stage change
 - Contact enrichment on new lead creation
 
-### Step 3: Prioritization Matrix
+### 步骤 3: Prioritization Matrix
 
 Rank each identified opportunity on a 2x2:
 
@@ -90,7 +90,7 @@ Present the top 3 quick-win automations with:
 - Estimated time saved per week
 - Suggested implementation path (Zapier / Make / n8n / custom code)
 
-### Step 4: Output
+### 步骤 4: Output
 
 Deliver a structured Automation Opportunity Report in markdown:
 

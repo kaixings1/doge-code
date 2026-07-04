@@ -10,7 +10,7 @@ date_added: "2026-04-14"
 
 Use `mmx` to generate text, images, video, speech, music, and perform web search via the MiniMax AI platform.
 
-## When to Use
+## 使用场景
 
 使用此技能当 the user wants to generate or inspect text, images, video, speech, music, web-search results, or MiniMax API resources through the `mmx` terminal CLI.
 

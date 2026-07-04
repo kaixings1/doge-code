@@ -6,7 +6,7 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Miro Automation via Rube MCP
+# Miro 自动化（通过 Rube MCP）
 
 Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP.
 
@@ -26,7 +26,7 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 3. If connection is not ACTIVE, follow the returned auth link to complete Miro OAuth
 4. Confirm connection status shows ACTIVE before running any workflows
 
-## Core Workflows
+## 核心工作流
 
 ### 1. List and Browse Boards
 
@@ -134,7 +134,7 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 - Connector styles vary; check available options in schema
 - Self-referencing connections (same start and end) are not allowed
 
-## Common Patterns
+## 常见模式
 
 ### ID Resolution
 

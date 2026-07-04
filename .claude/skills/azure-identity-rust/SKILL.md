@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 Authentication library for Azure SDK clients using Microsoft Entra ID (formerly Azure AD).
 
-## Installation
+## 安装
 
 ```sh
 cargo add azure_identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 # Service Principal (for production/CI)
@@ -98,7 +98,7 @@ let credential = ClientSecretCredential::new(
 )?;
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use `DeveloperToolsCredential` for local dev** — automatically picks up Azure CLI
 2. **Use `ManagedIdentityCredential` in production** — no secrets to manage
@@ -106,7 +106,7 @@ let credential = ClientSecretCredential::new(
 4. **Reuse credential instances** — same credential can be used with multiple clients
 5. **Use `tokio` feature** — `cargo add azure_identity --features tokio`
 
-## Reference Links
+## 参考链接
 
 | Resource | Link |
 |----------|------|
@@ -114,7 +114,7 @@ let credential = ClientSecretCredential::new(
 | Source Code | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/identity/azure_identity |
 | crates.io | https://crates.io/crates/azure_identity |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

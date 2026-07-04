@@ -20,24 +20,24 @@ description: "预测产品需求：整合季节性、促销、节假日、价格
 - **机器学习**：带滞后特征的 XGBoost、LightGBM
 - **Hierarchy**: Top-down, bottom-up, middle-out reconciliation
 
-### Step 3: Include External Factors
+### 步骤 3: Include External Factors
 - Promotions and pricing changes
 - Calendar events and holidays
 - Competitor actions
 - Economic indicators
 
-### Step 4: Evaluate
+### 步骤 4: Evaluate
 - Backtest with rolling origin cross-validation
 - MAE, MAPE, WMAPE by product/region
 - Bias detection (over/under-forecasting)
 
-## Usage Examples
+## 使用示例
 
 ```
 "Forecast weekly demand for our top 50 products including holiday effects"
 ```
 
-## Output Format
+## 输出格式
 
 - **Forecasts**: Point predictions with confidence intervals
 - **Accuracy Metrics**: Historical backtest results

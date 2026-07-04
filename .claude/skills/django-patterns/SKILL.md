@@ -119,7 +119,7 @@ class RequestTimingMiddleware:
         return response
 ```
 
-## Anti-Patterns
+## 反模式
 
 - Putting business logic in views or serializers instead of service layers
 - Using `Model.objects.all()` without pagination in list endpoints

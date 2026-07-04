@@ -4,7 +4,7 @@ Interprets Culture Index survey results for individuals and teams.
 
 **Author:** Dan Guido
 
-## When to Use
+## 使用场景
 
 使用此技能当 you need to:
 - Interpret an individual's Culture Index profile
@@ -23,13 +23,13 @@ Interprets Culture Index survey results for individuals and teams.
 - **Team Analysis** - Assesses gas/brake/glue balance and gaps
 - **Burnout Detection** - Calculates energy utilization and flags risk
 
-## Installation
+## 安装
 
 ```
 /plugin install trailofbits/skills/plugins/culture-index
 ```
 
-## Key Concepts
+## 关键概念
 
 ### Trait Colors
 | Trait | Color | Measures |

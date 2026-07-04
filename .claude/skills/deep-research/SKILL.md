@@ -100,7 +100,7 @@ python3 scripts/research.py --list
 - Historical research and timelines
 - Comparative analysis (frameworks, products, technologies)
 
-## Workflow
+## 工作流
 
 1. User requests research → Run `--query "..."`
 2. Inform user of estimated time (2-10 minutes)

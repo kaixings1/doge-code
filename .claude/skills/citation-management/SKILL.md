@@ -64,7 +64,7 @@ For detailed guidance on creating schematics, refer to the scientific-schematics
 
 ---
 
-## Core Workflow
+## 核心工作流
 
 Citation management follows a systematic process:
 
@@ -752,7 +752,7 @@ python scripts/doi_to_bibtex.py --input dois.txt --output references.bib
 python scripts/doi_to_bibtex.py 10.1038/nature12345 --clipboard
 ```
 
-## Best Practices
+## 最佳实践
 
 ### Search Strategy
 
@@ -1028,7 +1028,7 @@ python scripts/extract_metadata.py \
 - Generate properly formatted references
 - Validate citations meet venue requirements
 
-## Resources
+## 资源
 
 ### Bundled Resources
 

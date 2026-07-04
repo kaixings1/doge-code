@@ -10,13 +10,13 @@ date_added: "2026-02-27"
 
 Authenticate to Azure services with various credential types.
 
-## Installation
+## 安装
 
 ```bash
 npm install @azure/identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ### Service Principal (Secret)
 
@@ -295,7 +295,7 @@ AzureLogger.log = (...args) => {
 };
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use DefaultAzureCredential** - Works in development (CLI) and production (managed identity)
 2. **Never hardcode credentials** - Use environment variables or managed identity
@@ -304,7 +304,7 @@ AzureLogger.log = (...args) => {
 5. **Handle token refresh** - Azure SDK handles this automatically
 6. **Use ChainedTokenCredential** - For custom fallback scenarios
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

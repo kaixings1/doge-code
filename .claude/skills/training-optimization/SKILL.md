@@ -5,10 +5,10 @@ description: "优化深度学习训练：学习率调度（余弦、预热、one
 
 # Training Optimization
 
-## Purpose
+## 目的
 Optimize neural network training for faster convergence, better generalization, and efficient resource usage.
 
-## How It Works
+## 工作原理
 
 ### Learning Rate Strategies
 - **Warm-up**: Gradually increase LR from small value (prevents early divergence)
@@ -38,7 +38,7 @@ Optimize neural network training for faster convergence, better generalization, 
 - Early stopping with patience (5-10 epochs typical)
 - Watch for gradient explosion/vanishing
 
-## Usage Examples
+## 使用示例
 
 ```
 "My model is overfitting after 10 epochs — what regularization should I add?"
@@ -48,7 +48,7 @@ Optimize neural network training for faster convergence, better generalization, 
 "Optimize training speed — I'm training on a single GPU and it takes 8 hours"
 ```
 
-## Output Format
+## 输出格式
 
 - **Optimization Plan**: Recommended changes with rationale
 - **Training Configuration**: Complete config (optimizer, scheduler, regularization)

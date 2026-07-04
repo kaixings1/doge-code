@@ -37,7 +37,7 @@ A production-focused guide for building, scanning, and running containers secure
 
 ---
 
-## Step 1: Understand 上下文 Before Responding
+## 步骤 1: Understand 上下文 Before Responding
 
 When invoked, first detect the current state:
 
@@ -978,7 +978,7 @@ spec:
 
 ---
 
-## Reference Files
+## 参考文件
 
 - `references/base-image-comparison.md` — Size, CVE count, shell/pkg-manager trade-offs: distroless vs alpine vs slim vs scratch
 - `references/seccomp-profile-template.json` — Minimal syscall allowlist for typical web servers; start here and extend

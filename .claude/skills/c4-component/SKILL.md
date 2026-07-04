@@ -18,21 +18,21 @@ date_added: '2026-02-27'
 - The task is unrelated to c4 component level: [component name]
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Overview
+## 概述
 
 - **Name**: [Component name]
 - **Description**: [Short description of component purpose]
 - **Type**: [Component type: Application, Service, Library, etc.]
 - **Technology**: [Primary technologies used]
 
-## Purpose
+## 目的
 
 [Detailed description of what this component does and what problems it solves]
 
@@ -58,7 +58,7 @@ This component contains the following code-level elements:
 - **Operations**:
   - `operationName(params): ReturnType` - [Description]
 
-## Dependencies
+## 依赖
 
 ### Components Used
 
@@ -122,7 +122,7 @@ C4Component
 [Mermaid diagram showing all components and their relationships]
 ````
 
-## Example Interactions
+## 交互示例
 
 - "Synthesize all c4-code-\*.md files into logical components"
 - "Define component boundaries for the authentication and authorization code"

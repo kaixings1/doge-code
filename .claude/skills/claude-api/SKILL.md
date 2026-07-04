@@ -124,7 +124,7 @@ If the answer is "no" to any of these, stay at a simpler tier (single call or wo
 
 ---
 
-## Architecture
+## 架构
 
 Everything goes through `POST /v1/messages`. Tools and output constraints are features of this single endpoint — not separate APIs.
 
@@ -238,7 +238,7 @@ Use WebFetch to get the latest documentation when:
 
 Live documentation URLs are in `shared/live-sources.md`.
 
-## Common Pitfalls
+## 常见陷阱
 
 - Don't truncate inputs when passing files or content to the API. If the content is too long to fit in the context window, notify the user and discuss options (chunking, summarization, etc.) rather than silently truncating.
 - **Opus 4.6 / Sonnet 4.6 thinking:** Use `thinking: {type: "adaptive"}` — do NOT use `budget_tokens` (deprecated on both Opus 4.6 and Sonnet 4.6). For older models, `budget_tokens` must be less than `max_tokens` (minimum 1024). This will throw an error if you get it wrong.

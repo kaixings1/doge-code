@@ -172,7 +172,7 @@ After user confirms, write:
 > **Status**: Ready
 > **Stories**: Not yet created — run `/create-stories [epic-slug]`
 
-## Overview
+## 概述
 
 [1 paragraph describing what this epic implements, derived from the GDD Overview
 and the architecture module's stated responsibilities]
@@ -231,7 +231,7 @@ After writing all epics for the requested scope:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 1. **One epic at a time** — present each epic definition before asking to create it
 2. **Warn on gaps** — flag untraced requirements before proceeding

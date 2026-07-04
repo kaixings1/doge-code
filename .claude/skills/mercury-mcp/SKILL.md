@@ -38,9 +38,9 @@ has reviewed the exact target and payload and explicitly confirmed the action.
 - Use when scheduling or editing recurring automations.
 - Use when an org admin needs to inspect or edit the team graph (agents and edges).
 
-## How It Works
+## 工作原理
 
-### Step 1: Connect to the Mercury MCP server
+### 步骤 1: Connect to the Mercury MCP server
 
 The server is a JSON-RPC 2.0 endpoint.
 
@@ -55,7 +55,7 @@ claude mcp add --transport http --scope user \
   -H "x-api-key: ak_agent_..."
 ```
 
-### Step 2: Use the core tools
+### 步骤 2: Use the core tools
 
 Every connected agent gets these.
 

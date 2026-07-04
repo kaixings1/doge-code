@@ -10,19 +10,19 @@ date_added: '2026-02-27'
 
 Manage container images, artifacts, and repositories in Azure Container Registry.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-containerregistry
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_CONTAINERREGISTRY_ENDPOINT=https://<registry-name>.azurecr.io
 ```
 
-## Authentication
+## 认证
 
 ### Entra ID (Recommended)
 
@@ -241,7 +241,7 @@ for manifest in client.list_manifest_properties("my-image"):
 | `download_manifest` | Download manifest content |
 | `download_blob` | Download layer blob |
 
-## Best Practices
+## 最佳实践
 
 1. **Use Entra ID** for authentication in production
 2. **Delete by digest** not tag to avoid orphaned images
@@ -251,7 +251,7 @@ for manifest in client.list_manifest_properties("my-image"):
 6. **Order by last_updated** to find recent/old images
 7. **Check manifest.tags** before deleting to avoid removing tagged images
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

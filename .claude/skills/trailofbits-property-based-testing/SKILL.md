@@ -2,7 +2,7 @@
 
 Property-based testing guidance for multiple languages and smart contracts.
 
-## Installation
+## 安装
 
 This plugin is part of the Trail of Bits Skills marketplace.
 

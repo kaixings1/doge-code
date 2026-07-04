@@ -23,19 +23,19 @@ description: "设计数据库 schema：规范化（1NF-BCNF）、反规范化策
 | OLAP/DW | Star/snowflake schema, denormalized |
 | Hybrid | Normalized core + materialized aggregations |
 
-### Step 3: Model
+### 步骤 3: Model
 - Entity-relationship diagram
 - Table definitions with data types and constraints
 - Index strategy for common query patterns
 - Migration scripts (CREATE TABLE statements)
 
-## Usage Examples
+## 使用示例
 
 ```
 "Design a schema for an e-commerce platform — users, products, orders, reviews"
 ```
 
-## Output Format
+## 输出格式
 
 - **ERD**: Entity-relationship diagram
 - **DDL**: CREATE TABLE statements

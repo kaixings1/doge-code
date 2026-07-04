@@ -21,7 +21,7 @@ Before executing any tools, ensure an active connection exists for the `dynamics
 
 ---
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Manage Leads
 

@@ -15,7 +15,7 @@ metadata:
 
 # CLI Developer
 
-## Core Workflow
+## 核心工作流
 
 1. **Analyze UX** — Identify user workflows, command hierarchy, common tasks. Validate by listing all commands and their expected `--help` output before writing code.
 2. **Design commands** — Plan subcommands, flags, arguments, configuration. Confirm flag naming is consistent and no existing signatures are broken.

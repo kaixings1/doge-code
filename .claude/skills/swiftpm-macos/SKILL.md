@@ -10,7 +10,7 @@ description: SwiftPM macOS开发指南
 使用此技能当 `Package.swift` is the primary entrypoint or when SwiftPM is
 the fastest path to a reproducible result.
 
-## Workflow
+## 工作流
 
 1. Inspect the package.
    - Read `Package.swift`.

@@ -8,7 +8,7 @@ date_added: "2026-03-12"
 
 # 闭环交付
 
-## Overview
+## 概述
 
 Treat each task as incomplete until acceptance criteria are verified in evidence, not until code is merely changed.
 

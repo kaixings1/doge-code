@@ -273,7 +273,7 @@ change meaning. This is what the programmer reads instead of the ADR.]
 
 ---
 
-## Dependencies
+## 依赖
 
 - Depends on: [Story NNN-1 must be DONE, or "None"]
 - Unlocks: [Story NNN+1, or "None"]
@@ -318,7 +318,7 @@ Note in output: "Work through stories in order — each story's `Depends on:` fi
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 1. **Read before presenting** — load all inputs silently before showing the story list
 2. **Ask once** — present all stories for the epic in one summary, not one at a time

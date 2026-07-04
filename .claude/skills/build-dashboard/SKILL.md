@@ -5,24 +5,24 @@ description: "设计多图表分析仪表盘：布局规划、图表选择、KPI
 
 # Build Dashboard
 
-## Purpose
+## 目的
 Design a complete analytical dashboard — layout, chart selection, KPI placement, and interaction design.
 
-## How It Works
+## 工作原理
 
-### Step 1: Define Dashboard Purpose
+### 步骤 1: Define Dashboard Purpose
 - **Strategic**: Executive-level KPIs, high-level trends (update: weekly/monthly)
 - **Operational**: Real-time monitoring, alerts (update: minutes/hours)
 - **Analytical**: Deep-dive exploration, self-service (update: on-demand)
 
-### Step 2: Information 架构
+### 步骤 2: Information 架构
 - **KPI cards**: Top-level metrics with trend indicators (top of dashboard)
 - **Primary chart**: The most important visualization (largest, center)
 - **Supporting charts**: 上下文, breakdowns, comparisons
 - **Filters**: Time range, segments, dimensions (sidebar or top)
 - **Details**: Tables, drill-down links (bottom)
 
-### Step 3: Layout Patterns
+### 步骤 3: Layout Patterns
 
 ```
 ┌────────────────────────────────────────────────────────┐
@@ -41,14 +41,14 @@ Design a complete analytical dashboard — layout, chart selection, KPI placemen
 └────────────────────────────────────────────────────────┘
 ```
 
-### Step 4: Design Principles
+### 步骤 4: Design Principles
 - **Glanceable**: Key story visible in 5 seconds
 - **Layered**: 概述 first, details on demand (Shneiderman's mantra)
 - **Consistent**: Same colors for same categories across charts
 - **Minimal**: No chart junk, no redundant decorations
 - **Responsive**: Works on desktop and tablet
 
-### Step 5: Implementation
+### 步骤 5: Implementation
 - Generate Python code (Plotly Dash, Streamlit, or Panel)
 - Include layout, data loading, callbacks, and styling
 
@@ -64,7 +64,7 @@ revenue, and feature adoption"
 to track campaign performance"
 ```
 
-## Output Format
+## 输出格式
 
 - **Dashboard Blueprint**: Visual layout with chart placements
 - **Chart Specifications**: Chart type, data source, and configuration for each

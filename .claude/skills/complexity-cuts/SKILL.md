@@ -247,7 +247,7 @@ Cannot check every box? The optimization is not done. Either revert or finish th
 
 > **Existing code earned its slowness one shortcut at a time. complexity-cuts removes them one transformation at a time — and refuses to ship the optimization without a green test.**
 
-## Related Skills
+## 相关技能
 
 - `lemmaly` — prevention gateway; use when writing new code instead of refactoring existing.
 - `invariant-guard` — escalation target when 3+ transformations have failed tests — the missing piece is a contract, not an optimization.

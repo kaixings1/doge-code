@@ -38,11 +38,11 @@ This creates a fully configured project with:
 - ✅ Parcel configured for bundling (via .parcelrc)
 - ✅ Node 18+ compatibility (auto-detects and pins Vite version)
 
-### Step 2: Develop Your Artifact
+### 步骤 2: Develop Your Artifact
 
 To build the artifact, edit the generated files. See **Common Development Tasks** below for guidance.
 
-### Step 3: Bundle to Single HTML File
+### 步骤 3: Bundle to Single HTML File
 
 To bundle the React app into a single HTML artifact:
 ```bash
@@ -59,11 +59,11 @@ This creates `bundle.html` - a self-contained artifact with all JavaScript, CSS,
 - Builds with Parcel (no source maps)
 - Inlines all assets into single HTML using html-inline
 
-### Step 4: Share Artifact with User
+### 步骤 4: Share Artifact with User
 
 Finally, share the bundled HTML file in conversation with the user so they can view it as an artifact.
 
-### Step 5: Testing/Visualizing the Artifact (Optional)
+### 步骤 5: Testing/Visualizing the Artifact (Optional)
 
 Note: This is a completely optional step. Only perform if necessary or requested.
 

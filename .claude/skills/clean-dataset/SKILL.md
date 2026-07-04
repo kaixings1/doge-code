@@ -17,7 +17,7 @@ description: "检测和修复常见数据质量问题：缺失值、重复项、
 - Check for mixed data types within columns
 - Detect encoding issues (mojibake, special characters)
 
-### Step 2: Missing Value Analysis
+### 步骤 2: Missing Value Analysis
 - Classify missing data mechanism: MCAR, MAR, or MNAR
 - Visualize missing patterns (nullity matrix)
 - Recommend strategy per column:
@@ -26,20 +26,20 @@ description: "检测和修复常见数据质量问题：缺失值、重复项、
   - **Impute (advanced)**: KNN or MICE when relationships exist between features
 - Generate Python code for each fix
 
-### Step 3: Duplicate Detection & Resolution
+### 步骤 3: Duplicate Detection & Resolution
 - Identify exact duplicates
 - Find near-duplicates using fuzzy matching on key columns
 - Recommend: keep first, keep last, or aggregate
 - Generate deduplication code
 
-### Step 4: Type Correction & Standardization
+### 步骤 4: Type Correction & Standardization
 - Convert string numbers to numeric (handling locale-specific formats)
 - Parse date strings into datetime objects
 - Standardize categorical values (case, whitespace, typos)
 - Convert boolean-like strings to actual booleans
 - Detect and fix encoding issues (UTF-8 normalization)
 
-### Step 5: Validation & Report
+### 步骤 5: Validation & Report
 - Re-run initial assessment to confirm fixes
 - Generate a before/after comparison summary
 - Produce a cleaning log documenting every transformation
@@ -81,7 +81,7 @@ don't touch anything else"
 3. **Specify priorities** — tell me which columns matter most for your analysis
 4. **State the end goal** — cleaning for a dashboard is different from cleaning for ML
 
-## Output Format
+## 输出格式
 
 You'll receive:
 - **Issue Report**: 总结 of all detected problems with severity ratings

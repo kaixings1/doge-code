@@ -84,7 +84,7 @@ Stage all changed/created files and commit with message: `Add pre-commit hooks (
 
 This will run through the new pre-commit hooks — a good smoke test that everything works.
 
-## Notes
+## 备注
 
 - Husky v9+ doesn't need shebangs in hook files
 - `prettier --ignore-unknown` skips files Prettier can't parse (images, etc.)

@@ -26,7 +26,7 @@ The user needs a comprehensive technical debt analysis to understand what's slow
 ## Requirements
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 ### 1. Technical Debt Inventory
 
@@ -376,7 +376,7 @@ Track progress with clear KPIs:
 - Security audit results
 - Cost savings achieved
 
-## Output Format
+## 输出格式
 
 1. **Debt Inventory**: Comprehensive list categorized by type with metrics
 2. **Impact Analysis**: Cost calculations and risk assessments

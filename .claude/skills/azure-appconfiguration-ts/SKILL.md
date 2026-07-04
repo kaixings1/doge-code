@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Centralized configuration management with feature flags and dynamic refresh.
 
-## Installation
+## 安装
 
 ```bash
 # Low-level CRUD SDK
@@ -23,7 +23,7 @@ npm install @azure/app-configuration-provider @azure/identity
 npm install @microsoft/feature-management
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_APPCONFIG_ENDPOINT=https://<your-resource>.azconfig.io
@@ -31,7 +31,7 @@ AZURE_APPCONFIG_ENDPOINT=https://<your-resource>.azconfig.io
 AZURE_APPCONFIG_CONNECTION_STRING=Endpoint=https://...;Id=...;Secret=...
 ```
 
-## Authentication
+## 认证
 
 ```typescript
 import { AppConfigurationClient } from "@azure/app-configuration";
@@ -340,7 +340,7 @@ import {
 } from "@microsoft/feature-management";
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use provider for apps** - `@azure/app-configuration-provider` for runtime config
 2. **Use low-level for management** - `@azure/app-configuration` for CRUD operations
@@ -350,7 +350,7 @@ import {
 6. **Sentinel pattern** - Use a sentinel key to trigger full refresh
 7. **RBAC roles** - `App Configuration Data Reader` for read-only access
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

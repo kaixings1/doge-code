@@ -42,9 +42,9 @@ mitre_attack:
 - 取证工作站上的root/sudo权限
 - SHA-256或MD5哈希工具（`sha256sum`、`md5sum`）
 
-## Workflow
+## 工作流
 
-### Step 1: Identify the Target Device and Enable Write Protection
+### 步骤 1: Identify the Target Device and Enable Write Protection
 
 ```bash
 # List all connected block devices to identify the target
@@ -65,7 +65,7 @@ echo 'SUBSYSTEM=="block", ATTRS{serial}=="WD-WCAV5H861234", ATTR{ro}="1"' > /etc
 udevadm control --reload-rules
 ```
 
-### Step 2: Prepare the Destination and Document the Source
+### 步骤 2: Prepare the Destination and Document the Source
 
 ```bash
 # Create case directory structure
@@ -81,7 +81,7 @@ smartctl -i /dev/sdb >> /cases/case-2024-001/notes/source_drive_info.txt
 sha256sum /dev/sdb | tee /cases/case-2024-001/hashes/source_hash_before.txt
 ```
 
-### Step 3: Acquire the Image Using dd
+### 步骤 3: Acquire the Image Using dd
 
 ```bash
 # Basic dd acquisition with progress and error handling
@@ -99,7 +99,7 @@ dd if=/dev/sdb of=/cases/case-2024-001/images/first_1gb.dd \
    bs=1M count=1024 status=progress
 ```
 
-### Step 4: Acquire Using dcfldd (优先red Forensic Method)
+### 步骤 4: Acquire Using dcfldd (优先red Forensic Method)
 
 ```bash
 # Install dcfldd if not present
@@ -133,7 +133,7 @@ dcfldd if=/dev/sdb \
    verifylog=/cases/case-2024-001/logs/verify.log
 ```
 
-### Step 5: Verify Image Integrity
+### 步骤 5: Verify Image Integrity
 
 ```bash
 # Hash the acquired image
@@ -189,6 +189,6 @@ tar -czf /cases/case-2024-001/acquisition_package.tar.gz \
    /cases/case-2024-001/notes/
 ```
 
-## Key Concepts
+## 关键概念
 
 | Concept | Description |

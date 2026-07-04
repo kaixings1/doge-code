@@ -33,7 +33,7 @@ description: "降维：PCA、t-SNE、UMAP、SVD 和自编码器。适用于高�
 3. Generate 2D/3D embedding
 4. Color by labels or clusters for interpretation
 
-## Usage Examples
+## 使用示例
 
 ```
 "Visualize this 50-feature customer dataset in 2D to see if
@@ -45,7 +45,7 @@ natural clusters exist"
 before training a model"
 ```
 
-## Output Format
+## 输出格式
 
 - **Method Choice**: Rationale for selected approach
 - **Explained Variance**: Scree plot, cumulative variance

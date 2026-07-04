@@ -28,9 +28,9 @@ The safest public starting points are the live developer portal, API key signup 
 - Use when the user asks for BuyWhere MCP setup in Cursor, Claude Desktop, or a custom agent runtime.
 - Use when you need a concrete onboarding path for BuyWhere API keys, MCP configuration, or plugin discovery.
 
-## How It Works
+## 工作原理
 
-### Step 1: Choose the integration surface
+### 步骤 1: Choose the integration surface
 
 Start from the public BuyWhere entry point that matches the user's setup:
 
@@ -39,7 +39,7 @@ Start from the public BuyWhere entry point that matches the user's setup:
 - MCP integration guide: `https://api.buywhere.ai/docs/guides/mcp`
 - Cursor plugin repo: `https://github.com/BuyWhere/buywhere-cursor-plugin`
 
-### Step 2: Confirm the user's runtime
+### 步骤 2: Confirm the user's runtime
 
 Ask which host the user is integrating with before giving setup instructions:
 
@@ -50,7 +50,7 @@ Ask which host the user is integrating with before giving setup instructions:
 
 Do not assume the same config file or launch command works across all hosts.
 
-### Step 3: Guide the first successful connection
+### 步骤 3: Guide the first successful connection
 
 优先 a minimal first-run path:
 
@@ -58,7 +58,7 @@ Do not assume the same config file or launch command works across all hosts.
 2. Follow the MCP or plugin setup path for the host runtime.
 3. Run one simple product-search request before expanding to comparison or deal workflows.
 
-### Step 4: Expand into commerce workflows
+### 步骤 4: Expand into commerce workflows
 
 Once the first query works, help the user branch into the next layer:
 
@@ -67,7 +67,7 @@ Once the first query works, help the user branch into the next layer:
 - deal discovery flows
 - shopping-agent orchestration that routes users to merchant destinations
 
-## Examples
+## 示例
 
 ### Example 1: Cursor plugin discovery
 
@@ -81,7 +81,7 @@ Use BuyWhere Product Catalog to help me connect BuyWhere inside Cursor and verif
 Use BuyWhere Product Catalog to set up BuyWhere MCP for my shopping agent and keep the first test minimal.
 ```
 
-## Best Practices
+## 最佳实践
 
 - ✅ Start from the live developer portal or API key flow before giving configuration details.
 - ✅ Keep the first proof of integration to one successful query.
@@ -99,7 +99,7 @@ Use BuyWhere Product Catalog to set up BuyWhere MCP for my shopping agent and ke
 - Treat API keys as secrets. Use placeholders in examples and never paste live credentials into chat, docs, or screenshots.
 - Confirm the user's target host before suggesting filesystem paths, launch commands, or local config edits.
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Problem:** The user wants BuyWhere setup help but has not created an API key yet.
   **Solution:** Start at `https://buywhere.ai/api-keys/` and only move to config after that step is complete.

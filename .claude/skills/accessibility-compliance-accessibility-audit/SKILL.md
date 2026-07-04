@@ -31,7 +31,7 @@ The user needs to audit and improve accessibility to ensure compliance with WCAG
 
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 - Confirm scope (platforms, WCAG level, target pages, key user journeys).
 - Run automated scans to collect baseline violations and coverage gaps.
@@ -40,7 +40,7 @@ $ARGUMENTS
 - Provide remediation steps and re-test after fixes.
 - If detailed procedures are required, open `resources/implementation-playbook.md`.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed audit steps, tooling, and remediation examples.
 

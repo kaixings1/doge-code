@@ -156,7 +156,7 @@ def rehydrate_context(project_context, token_budget=8192):
 3. Adapt context to target project's domain
 4. Validate knowledge transferability
 
-## Usage Examples
+## 使用示例
 
 ```bash
 # Full context restoration

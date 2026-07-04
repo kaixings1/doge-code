@@ -249,7 +249,7 @@ Add to `.mcp.json`:
 
 **Note**: 绝不 suggest GitHub MCP. 始终 use `gh` CLI commands for GitHub.
 
-## Output Format
+## 输出格式
 
 Present your findings as:
 

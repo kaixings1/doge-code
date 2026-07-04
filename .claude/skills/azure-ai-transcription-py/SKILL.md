@@ -10,20 +10,20 @@ date_added: '2026-02-27'
 
 Client library for Azure AI Transcription (speech-to-text) with real-time and batch transcription.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-ai-transcription
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 TRANSCRIPTION_ENDPOINT=https://<resource>.cognitiveservices.azure.com
 TRANSCRIPTION_KEY=<your-key>
 ```
 
-## Authentication
+## 认证
 
 Use subscription key authentication (DefaultAzureCredential is not supported for this client):
 
@@ -59,7 +59,7 @@ for event in stream:
     print(event.text)
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Enable diarization** when multiple speakers are present
 2. **Use batch transcription** for long files stored in blob storage
@@ -68,7 +68,7 @@ for event in stream:
 5. **Handle streaming backpressure** for real-time transcription
 6. **Close transcription sessions** when complete
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

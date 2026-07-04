@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 Manage SMB file shares for cloud-native and lift-and-shift scenarios.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-storage-file-share
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...
@@ -24,7 +24,7 @@ AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=...;A
 AZURE_STORAGE_ACCOUNT_URL=https://<account>.file.core.windows.net
 ```
 
-## Authentication
+## 认证
 
 ### Connection String
 
@@ -228,7 +228,7 @@ async def upload_file():
 | `ShareDirectoryClient` | Directory operations |
 | `ShareFileClient` | File operations |
 
-## Best Practices
+## 最佳实践
 
 1. **Use connection string** for simplest setup
 2. **Use Entra ID** for production with RBAC
@@ -238,7 +238,7 @@ async def upload_file():
 6. **Use ranges** for partial file updates
 7. **Close async clients** explicitly
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

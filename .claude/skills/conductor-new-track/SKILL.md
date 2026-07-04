@@ -198,7 +198,7 @@ Create `conductor/tracks/{trackId}/spec.md`:
 **Created:** {YYYY-MM-DD}
 **Status:** Draft
 
-## Summary
+## 总结
 
 {1-2 sentence summary}
 
@@ -220,7 +220,7 @@ As a {user}, I want to {action} so that {benefit}.
 - [ ] {Criterion 2}
 - [ ] {Criterion 3}
 
-## Dependencies
+## 依赖
 
 {List dependencies or "None"}
 
@@ -266,7 +266,7 @@ After spec approval, generate `conductor/tracks/{trackId}/plan.md`:
 **Created:** {YYYY-MM-DD}
 **Status:** [ ] Not Started
 
-## Overview
+## 概述
 
 {Brief summary of implementation approach}
 
@@ -427,7 +427,7 @@ Next steps:
 3. Run /conductor:status to see project progress
 ```
 
-## Error Handling
+## 错误处理
 
 - If directory creation fails: Halt and report, do not register in tracks.md
 - If any file write fails: Clean up partial track, report error

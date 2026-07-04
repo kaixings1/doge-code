@@ -33,13 +33,13 @@ Geracao de imagens humanizadas via Google AI Studio (Gemini). Fotos realistas es
 - When the user mentions "imagem humanizada" or related topics
 - When the user mentions "foto influencer" or related topics
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to ai studio image
 - A simpler, more specific tool can handle the request
 - The user needs general-purpose assistance without domain expertise
 
-## How It Works
+## 工作原理
 
 A diferenca entre uma imagem de IA e uma foto real esta nos detalhes imperceptiveis:
 a leve granulacao de um sensor de celular, a iluminacao que nao e perfeita, o enquadramento

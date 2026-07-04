@@ -57,7 +57,7 @@ BFRI = (Architectural Fit + Testability) − (Complexity + Data Risk + Operation
 
 ---
 
-## When to Use
+## 使用场景
 Automatically applies when working on:
 
 * Routes, controllers, services, repositories

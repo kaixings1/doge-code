@@ -21,7 +21,7 @@ Each MCP server adds ALL its tool descriptions to every API request. A server wi
 
 ## Audit Steps
 
-### Step 1: List Active Servers
+### 步骤 1: List Active Servers
 
 Check all MCP configurations:
 ```bash
@@ -29,7 +29,7 @@ cat .claude/settings.json 2>/dev/null | grep -A 50 "mcpServers"
 cat ~/.claude/settings.json 2>/dev/null | grep -A 50 "mcpServers"
 ```
 
-### Step 2: Count Tools Per Server
+### 步骤 2: Count Tools Per Server
 
 For each server, estimate token overhead:
 - 1-5 tools: ~200-500 tokens (low overhead)
@@ -37,7 +37,7 @@ For each server, estimate token overhead:
 - 16-30 tools: ~1500-3000 tokens (high)
 - 30+ tools: ~3000+ tokens (excessive — consider tool filtering)
 
-### Step 3: Check Usage
+### 步骤 3: Check Usage
 
 Questions to ask:
 - Which servers were actually used this session?
@@ -45,7 +45,7 @@ Questions to ask:
 - Are there servers with overlapping functionality?
 - Are there servers only needed for specific tasks?
 
-### Step 4: Recommend Actions
+### 步骤 4: Recommend Actions
 
 **Disable** servers that:
 - Haven't been used in 7+ days
@@ -57,7 +57,7 @@ Questions to ask:
 - Provide unique capabilities needed for current work
 - Have low tool count (<5 tools)
 
-## Output
+## 输出
 
 ```text
 MCP AUDIT

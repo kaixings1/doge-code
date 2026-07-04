@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
 });
 ```
 
-## Anti-Patterns
+## 反模式
 
 - Using `ScrollView` with `.map()` for dynamic lists (use `FlatList` or `SectionList`)
 - Storing all state in a global store instead of colocating with components

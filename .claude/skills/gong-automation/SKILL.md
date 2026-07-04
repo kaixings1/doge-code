@@ -26,7 +26,7 @@ Unlock insights from your sales calls -- retrieve transcripts, analyze call data
 
 ---
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Retrieve Call Transcripts by Date Range
 Get transcripts for all calls within a specified time period, with optional filtering by specific call IDs or workspace.

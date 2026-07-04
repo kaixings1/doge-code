@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 Enterprise messaging for reliable cloud communication with queues and pub/sub topics.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-servicebus azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 SERVICEBUS_FULLY_QUALIFIED_NAMESPACE=<namespace>.servicebus.windows.net
@@ -25,7 +25,7 @@ SERVICEBUS_TOPIC_NAME=mytopic
 SERVICEBUS_SUBSCRIPTION_NAME=mysubscription
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -248,7 +248,7 @@ with ServiceBusClient(
             receiver.complete_message(msg)
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use async client** for production workloads
 2. **Use context managers** (`async with`) for proper cleanup
@@ -258,7 +258,7 @@ with ServiceBusClient(
 6. **Use message batches** for high-throughput scenarios
 7. **Set `max_wait_time`** to avoid infinite blocking
 
-## Reference Files
+## 参考文件
 
 | File | Contents |
 |------|----------|
@@ -266,7 +266,7 @@ with ServiceBusClient(
 | references/dead-letter.md | DLQ handling, poison messages, reprocessing strategies |
 | scripts/setup_servicebus.py | CLI for queue/topic/subscription management and DLQ monitoring |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

@@ -371,7 +371,7 @@ Create `tests/smoke/critical-paths.md`:
 5. Save game completes without error (once save system is implemented)
 6. Load game restores correct state (once load system is implemented)
 
-## Performance
+## 性能
 
 7. No visible frame rate drops on target hardware (60fps target)
 8. No memory growth over 5 minutes of play (once core loop is implemented)
@@ -413,7 +413,7 @@ Verdict: **COMPLETE** — test framework scaffolded and CI/CD wired up.
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 - **Never overwrite existing test files** — only create files that are missing.
   If a test runner file exists, leave it as-is.

@@ -29,13 +29,13 @@ tools:
 
 - When you need specialized assistance with this domain
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to monetization
 - A simpler, more specific tool can handle the request
 - The user needs general-purpose assistance without domain expertise
 
-## How It Works
+## 工作原理
 
 > Price is what you pay. Value is what you get. - Warren Buffett
 > A monetizacao perfeita captura valor proporcional ao valor entregue.

@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Real-time messaging with WebSocket connections and pub/sub patterns.
 
-## Installation
+## 安装
 
 ```bash
 # Server-side management
@@ -23,7 +23,7 @@ npm install @azure/web-pubsub-client
 npm install @azure/web-pubsub-express
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 WEBPUBSUB_CONNECTION_STRING=Endpoint=https://<resource>.webpubsub.azure.com;AccessKey=<key>;Version=1.0;
@@ -302,7 +302,7 @@ import {
 } from "@azure/web-pubsub-express";
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use Entra ID auth** - `DefaultAzureCredential` for production
 2. **Register handlers before start** - Don't miss initial events
@@ -311,7 +311,7 @@ import {
 5. **Validate in handleConnect** - Reject unauthorized connections early
 6. **Use noEcho** - Prevent message echo back to sender when needed
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

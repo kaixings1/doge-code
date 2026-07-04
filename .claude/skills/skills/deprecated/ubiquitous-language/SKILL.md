@@ -19,7 +19,7 @@ Extract and formalize domain terminology from the current conversation into a co
 4. **Write to `UBIQUITOUS_LANGUAGE.md`** in the working directory using the format below
 5. **Output a summary** inline in the conversation
 
-## Output Format
+## 输出格式
 
 Write a `UBIQUITOUS_LANGUAGE.md` file with this structure:
 

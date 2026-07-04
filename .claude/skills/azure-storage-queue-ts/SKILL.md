@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 SDK for Azure Queue Storage operations — send, receive, peek, and manage messages in queues.
 
-## Installation
+## 安装
 
 ```bash
 npm install @azure/storage-queue @azure/identity
@@ -19,7 +19,7 @@ npm install @azure/storage-queue @azure/identity
 **Current Version**: 12.x  
 **Node.js**: >= 18.0.0
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_STORAGE_ACCOUNT_NAME=<account-name>
@@ -28,7 +28,7 @@ AZURE_STORAGE_ACCOUNT_KEY=<account-key>
 AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=...
 ```
 
-## Authentication
+## 认证
 
 ### 默认AzureCredential (Recommended)
 
@@ -427,7 +427,7 @@ const sasToken = generateAccountSASQueryParameters(
 ).toString();
 ```
 
-## Error Handling
+## 错误处理
 
 ```typescript
 import { RestError } from "@azure/storage-queue";
@@ -503,7 +503,7 @@ import {
 | Max messages per receive | 32 |
 | 默认 visibility timeout | 30 seconds |
 
-## Best Practices
+## 最佳实践
 
 1. **Use 默认AzureCredential** — 优先 AAD over connection strings/keys
 2. **始终 delete after processing** — Prevent duplicate processing
@@ -524,7 +524,7 @@ import {
 | Anonymous/SAS access | ✅ | ✅ |
 | All message operations | ✅ | ✅ |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

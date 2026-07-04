@@ -25,7 +25,7 @@ Build features through structured phases with validation gates.
       └── Code review → commit
 ```
 
-## Usage
+## 用法
 
 When asked to build a feature:
 

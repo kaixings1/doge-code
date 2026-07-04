@@ -18,7 +18,7 @@ date_added: '2026-02-27'
 - The task is unrelated to c4 context level: system context
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -117,7 +117,7 @@ C4Context
 - Keep it **stakeholder-friendly** - understandable by non-technical audiences
 - Avoid showing technologies, protocols, or low-level details
 
-## Example Interactions
+## 交互示例
 
 - "Create C4 Context-level documentation for the system"
 - "Identify all personas and create user journey maps for key features"

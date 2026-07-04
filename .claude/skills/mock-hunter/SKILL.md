@@ -35,7 +35,7 @@ Because this workflow drives a real browser against live pages, treat it as an i
 - Use before showing a vibe-coded MVP to a customer or investor
 - Use when a dashboard "looks too clean" — every metric uniformly round, all timestamps clustered, no variance — and you suspect seeded data
 
-## How It Works
+## 工作原理
 
 ### Phase 1: 设置 & Smart Questions
 
@@ -97,7 +97,7 @@ Generate `mockhunter-report.md` with:
 - Suspicious patterns
 - Smart follow-up questions for the user
 
-## Examples
+## 示例
 
 ### Example 1: Auditing a Lovable admin dashboard
 
@@ -123,7 +123,7 @@ Skill: ...
                  No console errors, no broken endpoints.
 ```
 
-## Best Practices
+## 最佳实践
 
 - ✅ Provide DB access when available — lifts UNKNOWN verdicts to REAL or MOCK
 - ✅ Use a dedicated test account for form-login auth

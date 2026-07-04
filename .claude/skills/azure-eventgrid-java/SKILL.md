@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Build event-driven applications using the Azure Event Grid SDK for Java.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -269,7 +269,7 @@ receiverClient.release(Arrays.asList(lockToken),
     new ReleaseOptions().setDelay(ReleaseDelay.BY_60_SECONDS));
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.core.exception.HttpResponseException;
@@ -282,14 +282,14 @@ try {
 }
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 EVENT_GRID_TOPIC_ENDPOINT=https://<topic-name>.<region>.eventgrid.azure.net/api/events
 EVENT_GRID_ACCESS_KEY=<your-access-key>
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Batch Events**: Send multiple events in one call when possible
 2. **Idempotency**: Include unique event IDs for deduplication
@@ -306,7 +306,7 @@ EVENT_GRID_ACCESS_KEY=<your-access-key>
 - "pub/sub Azure"
 - "webhook events"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

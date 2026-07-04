@@ -8,7 +8,7 @@ date_added: "2026-03-14"
 
 # LaTeX Paper Conversion
 
-## Overview
+## 概述
 
 This skill automates the tedious and recurring process of converting an academic paper written in LaTeX from one publisher's template to another. Different journals (e.g., Springer, MDPI, IEEE) have vastly different structural requirements, document classes, margin settings, and bibliography styles. This skill streamlines these conversions by executing a structured multi-stage workflow, extracting content, mapping it to a new template, and resolving common compilation errors.
 
@@ -18,25 +18,25 @@ This skill automates the tedious and recurring process of converting an academic
 - Use when the user provides an existing `.tex` file and a new template directory.
 - Use when the user mentions converting from format A (e.g., IPOL/Neural Processing) to format B (e.g., MDPI).
 
-## How It Works
+## 工作原理
 
-### Step 1: Pre-requisites & Assessment
+### 步骤 1: Pre-requisites & Assessment
 Identify the **Source LaTeX file** and asking the user for the **Target Template Directory**. Understand the core layout mapping (single-column vs. double-column, bibliography style).
 
-### Step 2: Extraction & Injection Script Generation
+### 步骤 2: Extraction & Injection Script Generation
 Create a Python script (e.g., `convert_format.py`) to parse the source LaTeX file. Use Regular Expressions to extract core text blocks. Merge the new template's `preamble`, the extracted `body`, and the `backmatter`. Write this to a new file in an output directory.
 
-### Step 3: Systematic Fixing
+### 步骤 3: Systematic Fixing
 Perform generic fixes on the extracted body text before writing the final file, or in subsequent calls:
 - Convert math environment cases (e.g., `\begin{theorem}` to `\begin{Theorem}`).
 - Adjust aggressive float placements (e.g., `[!t]` or `[h!]`) to template-supported options. Avoid forcing `[H]` unless the `float` package is explicitly loaded.
 - Ensure `\includegraphics` paths are relative to the new `.tex` file location.
 - Convert `\begin{tabular}` to `\begin{tabularx}{\textwidth}` or use `\resizebox` if moving to a double-column layout.
 
-### Step 4: Compilation & Debugging
+### 步骤 4: Compilation & Debugging
 Run a build cycle (`pdflatex` -> `bibtex` -> `pdflatex`). Check the `.log` file using `grep` or `rg` to systematically fix any packages conflicts, undefined commands, or compilation halts.
 
-## Examples
+## 示例
 
 ### Example 1: Converting IPOL to MDPI
 \```
@@ -49,14 +49,14 @@ AGENT: *Triggers latex-paper-conversion skill*
 5. Compiles via pdflatex and bibtex to confirm zero errors.
 \```
 
-## Best Practices
+## 最佳实践
 
 - ✅ Always write a Python extraction script; DO NOT manually copy-paste thousands of lines of LaTeX.
 - ✅ Always run `pdflatex` and verify the `.log` to ensure the final output compiles.
 - ✅ Explicitly ask the user for the structural mapping if the source and target differ drastically (e.g., merging abstract and keywords).
 - ❌ Don't assume all math packages automatically exist in the new template (e.g., add `\usepackage{amsmath}` if missing).
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Problem:** Overfull hboxes in tables when moving from single to double column.
   **Solution:** Detect `\begin{tabular}` and automatically wrap in `\resizebox{\columnwidth}{!}{...}` or suggest a format change.

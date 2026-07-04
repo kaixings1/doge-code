@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 Client library for Azure Blob Storage — object storage for unstructured data.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-storage-blob azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_STORAGE_ACCOUNT_NAME=<your-storage-account>
@@ -24,7 +24,7 @@ AZURE_STORAGE_ACCOUNT_NAME=<your-storage-account>
 AZURE_STORAGE_ACCOUNT_URL=https://<account>.blob.core.windows.net
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -44,7 +44,7 @@ blob_service_client = BlobServiceClient(account_url, credential=credential)
 | `ContainerClient` | Container operations | `blob_service_client.get_container_client()` |
 | `BlobClient` | Single blob operations | `container_client.get_blob_client()` |
 
-## Core Workflow
+## 核心工作流
 
 ### Create Container
 
@@ -208,7 +208,7 @@ async def download_async():
         data = await stream.readall()
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use DefaultAzureCredential** instead of connection strings
 2. **Use context managers** for async clients
@@ -218,7 +218,7 @@ async def download_async():
 6. **Use `walk_blobs()`** for hierarchical listing
 7. **Set appropriate content types** for web-served blobs
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

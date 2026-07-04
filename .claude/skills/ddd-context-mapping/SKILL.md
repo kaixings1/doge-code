@@ -22,7 +22,7 @@ date_added: "2026-02-27"
 - You only need internal class design.
 - You are selecting cloud infrastructure tooling.
 
-## Instructions
+## 使用说明
 
 1. List all context pairs and dependency direction.
 2. Choose relationship patterns per pair.
@@ -38,7 +38,7 @@ If detailed mapping structures are needed, open `references/context-map-patterns
 - Translation and anti-corruption decisions
 - Known coupling risks and mitigation plan
 
-## Examples
+## 示例
 
 ```text
 Use @ddd-context-mapping to define how Checkout integrates with Billing,

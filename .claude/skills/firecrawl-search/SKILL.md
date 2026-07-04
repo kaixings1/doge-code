@@ -44,7 +44,7 @@ firecrawl search "your query" --sources news --tbs qdr:d -o .firecrawl/news.json
 | `-o, --output <path>`                | Output file path                              |
 | `--json`                             | Output as JSON                                |
 
-## Tips
+## 提示
 
 - **`--scrape` fetches full content** — don't re-scrape URLs from search results. This saves credits and avoids redundant fetches.
 - 始终 write results to `.firecrawl/` with `-o` to avoid context window bloat.

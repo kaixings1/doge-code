@@ -16,7 +16,7 @@ claude  # starts as team lead
 
 The first session becomes the team lead. Subsequent sessions in the same repo join as teammates.
 
-## Architecture
+## 架构
 
 ```text
 Team Lead (coordinates, delegates, reviews)
@@ -147,7 +147,7 @@ Use these to trigger notifications, auto-assign next tasks, or run integration t
 | One-off delegation | Subagent with `isolation: worktree` |
 | Large-scale migration (20+ files) | `/batch` command |
 
-## Anti-Patterns
+## 反模式
 
 - More than 5 teammates — coordination overhead dominates
 - Tasks that share mutable state or the same files

@@ -624,7 +624,7 @@ If any spawned agent returns BLOCKED, errors, or fails to complete:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 1. **Read silently** — load all GDDs before presenting anything
 2. **Show everything** — present the full consistency and design theory analysis

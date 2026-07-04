@@ -9,7 +9,7 @@ This skill turns product intent into explicit engineering constraints.
 
 Use it when the gap is not "what should we build?" but "what exactly must be true before implementation starts?"
 
-## When to Use
+## 使用场景
 
 - A PRD, roadmap item, discussion, or founder note exists, but the implementation constraints are still implicit
 - A feature crosses multiple services, repos, or teams and needs a capability contract before coding
@@ -48,7 +48,7 @@ Read only what is needed:
 4. Delivery constraints
    - auth, billing, compliance, rollout, backwards compatibility, performance, review policy
 
-## Core Workflow
+## 核心工作流
 
 ### 1. Restate the capability
 
@@ -106,7 +106,7 @@ If useful, point to the next ECC-native lane:
 - `tdd-workflow`
 - `verification-loop`
 
-## Output Format
+## 输出格式
 
 Return the result in this order:
 

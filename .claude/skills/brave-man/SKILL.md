@@ -8,7 +8,7 @@ date_added: "2026-06-16"
 
 # Brave Man
 
-## Overview
+## 概述
 
 Most people describing a project ("vibe coders" included) only give a brief or partial picture of what they want. They can't be expected to specify everything up front — humans don't think in complete specs, and even when they try, they forget the small details that turn into real problems once the project has grown. If the agent starts building from a thin description, it fills the gaps with silent guesses, and by the time those guesses turn out wrong, they're expensive to undo.
 
@@ -83,7 +83,7 @@ Work through these one phase at a time. Within a phase, ask questions in one bat
 - If you handed this to someone to test, what would they check to confirm it's working correctly?
 - What's explicitly out of scope for the first version, so it isn't accidentally built or left half-done?
 
-## Best Practices
+## 最佳实践
 
 - ✅ **Do:** Batch, don't drip. One themed round per phase, not an endless single-question ping-pong.
 - ✅ **Do:** Plain language over jargon. Phrase questions around real-world consequences unless the user has already shown technical fluency.
@@ -120,7 +120,7 @@ specification — everything needed to build it correctly is below.
 Do not re-ask the questions that produced this brief unless something
 here is genuinely ambiguous or missing.
 
-## Overview
+## 概述
 <one paragraph: what it is, who it's for, what success looks like>
 
 ## Core Features (prioritized)
@@ -165,7 +165,7 @@ After writing `prompt.md`, tell the user, plainly:
 
 Do not start implementing in the current session even if the user asks immediately after — point them to the new-chat handoff, since that's the whole point of separating interview from execution.
 
-## Examples
+## 示例
 
 ### Example 1: User says "Build me a todo app"
 ```markdown
@@ -174,13 +174,13 @@ Do not start implementing in the current session even if the user asks immediate
 3. **Synthesis:** Outputs `prompt.md` with React/Firebase stack based on interview.
 ```
 
-## Troubleshooting
+## 故障排除
 
 ### Problem: User is frustrated by too many questions
 **Symptoms:** User replies with "just build it" or "I don't care".
 **Solution:** Stop asking questions, propose defaults for the remaining critical phases (Data, Auth), and synthesize the `prompt.md`.
 
-## Related Skills
+## 相关技能
 
 - `@brainstorming` - Use when exploring abstract ideas rather than gathering a build specification.
 

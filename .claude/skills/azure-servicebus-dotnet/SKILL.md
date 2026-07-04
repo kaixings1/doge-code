@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Enterprise messaging SDK for reliable message delivery with queues, topics, subscriptions, and sessions.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.Messaging.ServiceBus
@@ -19,7 +19,7 @@ dotnet add package Azure.Identity
 
 **Current Version**: v7.20.1 (stable)
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SERVICEBUS_FULLY_QUALIFIED_NAMESPACE=<namespace>.servicebus.windows.net
@@ -27,7 +27,7 @@ AZURE_SERVICEBUS_FULLY_QUALIFIED_NAMESPACE=<namespace>.servicebus.windows.net
 AZURE_SERVICEBUS_CONNECTION_STRING=Endpoint=sb://...
 ```
 
-## Authentication
+## 认证
 
 ### Microsoft Entra ID (Recommended)
 
@@ -70,7 +70,7 @@ ServiceBusClient
 ServiceBusAdministrationClient (separate client for CRUD)
 ```
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Send Messages
 
@@ -271,7 +271,7 @@ using (var ts = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
 }
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -286,7 +286,7 @@ using (var ts = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
 | `ServiceBusReceivedMessage` | Received message with metadata |
 | `ServiceBusMessageBatch` | Batch of messages |
 
-## Best Practices
+## 最佳实践
 
 1. **Use singletons** — Clients, senders, receivers, and processors are thread-safe
 2. **始终 dispose** — Use `await using` or call `DisposeAsync()`
@@ -299,7 +299,7 @@ using (var ts = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
 9. **Set appropriate lock duration** — 默认 is 30 seconds
 10. **Use sessions for ordering** — FIFO within a session
 
-## Error Handling
+## 错误处理
 
 ```csharp
 try
@@ -324,7 +324,7 @@ catch (ServiceBusException ex)
 | `Azure.Messaging.EventHubs` | Event streaming | `dotnet add package Azure.Messaging.EventHubs` |
 | `Azure.Messaging.EventGrid` | Event routing | `dotnet add package Azure.Messaging.EventGrid` |
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -333,7 +333,7 @@ catch (ServiceBusException ex)
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/servicebus/Azure.Messaging.ServiceBus |
 | Troubleshooting | https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/servicebus/Azure.Messaging.ServiceBus/TROUBLESHOOTING.md |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

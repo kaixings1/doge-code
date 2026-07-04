@@ -51,7 +51,7 @@ firecrawl scrape "https://example.com/pricing" --query "What is the enterprise p
 | `--exclude-tags <tags>`  | Exclude these HTML tags                                          |
 | `-o, --output <path>`    | Output file path                                                 |
 
-## Tips
+## 提示
 
 - **优先 plain scrape over `--query`.** Scrape to a file, then use `grep`, `head`, or read the markdown directly — you can search and reason over the full content yourself. Use `--query` only when you want a single targeted answer without saving the page (costs 5 extra credits).
 - **Try scrape before interact.** Scrape handles static pages and JS-rendered SPAs. Only escalate to `interact` when you need interaction (clicks, form fills, pagination).

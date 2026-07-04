@@ -16,7 +16,7 @@ Simple REST API for speech-to-text transcription of short audio files (up to 60 
 2. **Speech resource** - Create in [Azure Portal](https://portal.azure.com/#create/Microsoft.CognitiveServicesSpeechServices)
 3. **Get credentials** - After deployment, go to resource > Keys and Endpoint
 
-## Environment Variables
+## 环境变量
 
 ```bash
 # Required
@@ -27,7 +27,7 @@ AZURE_SPEECH_REGION=<region>  # e.g., eastus, westus2, westeurope
 AZURE_SPEECH_ENDPOINT=https://<region>.stt.speech.microsoft.com
 ```
 
-## Installation
+## 安装
 
 ```bash
 pip install requests
@@ -245,7 +245,7 @@ params = {"language": "en-US", "profanity": "removed"}
 params = {"language": "en-US", "profanity": "raw"}
 ```
 
-## Error Handling
+## 错误处理
 
 ```python
 import requests
@@ -345,7 +345,7 @@ Common language codes (see [full list](https://learn.microsoft.com/azure/ai-serv
 | `ko-KR` | Korean |
 | `pt-BR` | Portuguese (Brazil) |
 
-## Best Practices
+## 最佳实践
 
 1. **Use WAV PCM 16kHz mono** for best compatibility
 2. **Enable chunked transfer** for lower latency
@@ -365,13 +365,13 @@ Use the Speech SDK or Batch Transcription API instead when you need:
 - Custom speech models
 - Batch transcription of many files
 
-## Reference Files
+## 参考文件
 
 | File | Contents |
 |------|----------|
 | references/pronunciation-assessment.md | Pronunciation assessment parameters and scoring |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

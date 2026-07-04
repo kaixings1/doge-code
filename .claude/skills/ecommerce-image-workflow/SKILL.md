@@ -85,7 +85,7 @@ Ask only for missing essentials:
 
 Do not ask broad discovery questions. Keep the workflow moving.
 
-## Workflow
+## 工作流
 
 ### Step 0 - Confirm reference-product mode
 

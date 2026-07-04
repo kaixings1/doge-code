@@ -32,7 +32,7 @@ ls conductor/index.md conductor/product.md conductor/tech-stack.md conductor/wor
 - 任务与检查 Conductor 目录是否存在无关时
 - 需要此范围之外的领域或工具时
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.

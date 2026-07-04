@@ -62,7 +62,7 @@ Unless otherwise stated by the user or existing template
 
 # XLSX creation, editing, and analysis
 
-## Overview
+## 概述
 
 A user may ask you to create, edit, or analyze the contents of an .xlsx file. You have different tools and workflows available for different tasks.
 
@@ -259,7 +259,7 @@ The script returns JSON with error details:
 }
 ```
 
-## Best Practices
+## 最佳实践
 
 ### Library Selection
 - **pandas**: Best for data analysis, bulk operations, and simple data export

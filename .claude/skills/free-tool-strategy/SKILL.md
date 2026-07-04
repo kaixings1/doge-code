@@ -472,7 +472,7 @@ Payback period: Build cost / (Monthly value - Monthly maintenance)
 
 ---
 
-## Output Format
+## 输出格式
 
 ### Tool Strategy Document
 
@@ -578,7 +578,7 @@ If you need more context:
 - **email-sequence**: For nurturing leads from the tool
 - **programmatic-seo**: For building tool-based pages at scale
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

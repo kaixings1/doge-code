@@ -294,7 +294,7 @@ Follow these principles when writing Biopython code:
        print(f"Error: {e}")
    ```
 
-## Common Patterns
+## 常见模式
 
 ### Pattern 1: Fetch Sequence from GenBank
 
@@ -373,7 +373,7 @@ tree = constructor.nj(dm)
 Phylo.draw_ascii(tree)
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **始终 read relevant reference documentation** before writing code
 2. **Use grep to search reference files** for specific functions or examples

@@ -10,14 +10,14 @@ date_added: '2026-02-27'
 
 Connect to Azure Database for PostgreSQL Flexible Server using the `pg` (node-postgres) package with support for password and Microsoft Entra ID (passwordless) authentication.
 
-## Installation
+## 安装
 
 ```bash
 npm install pg @azure/identity
 npm install -D @types/pg
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 # Required
@@ -34,7 +34,7 @@ AZURE_POSTGRESQL_USER=<entra-user>@<server>   # e.g., user@contoso.com
 AZURE_POSTGRESQL_CLIENTID=<managed-identity-client-id>  # For user-assigned identity
 ```
 
-## Authentication
+## 认证
 
 ### Option 1: Password Authentication
 
@@ -84,7 +84,7 @@ const client = new Client({
 await client.connect();
 ```
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Single Client Connection
 
@@ -347,7 +347,7 @@ const azurePool = new AzurePostgresPool({
 const result = await azurePool.query("SELECT NOW()");
 ```
 
-## Error Handling
+## 错误处理
 
 ```typescript
 import { DatabaseError } from "pg";
@@ -439,7 +439,7 @@ pool.on("error", (err, client) => {
 
 > **Note**: Azure PostgreSQL has connection limits based on SKU. Check your tier's max connections.
 
-## Best Practices
+## 最佳实践
 
 1. **始终 use connection pools** for production applications
 2. **Use parameterized queries** - 绝不 concatenate user input
@@ -467,7 +467,7 @@ import {
 } from "pg";
 ```
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -477,7 +477,7 @@ import {
 | Azure PostgreSQL Docs | https://learn.microsoft.com/azure/postgresql/flexible-server/ |
 | Passwordless Connection | https://learn.microsoft.com/azure/postgresql/flexible-server/how-to-connect-with-managed-identity |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

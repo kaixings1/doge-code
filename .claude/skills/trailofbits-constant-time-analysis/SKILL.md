@@ -12,7 +12,7 @@ Timing side-channel attacks exploit variations in execution time to extract secr
 
 The infamous [KyberSlash](https://kyberslash.cr.yp.to/) attack demonstrated how division instructions in post-quantum cryptographic implementations could be exploited to recover secret keys.
 
-## Features
+## 特性
 
 - **Multi-language support**: C, C++, Go, Rust, PHP, JavaScript, TypeScript, Python, Ruby
 - **Multi-architecture support**: x86_64, ARM64, ARM, RISC-V, PowerPC, s390x, i386

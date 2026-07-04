@@ -40,7 +40,7 @@ RIGHT (vertical):
   ...
 ```
 
-## Workflow
+## 工作流
 
 ### 1. Planning
 

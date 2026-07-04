@@ -33,13 +33,13 @@ description: "为 ML 项目设置 CI/CD：自动化测试（数据验证、模�
 5. Deploy to staging → run integration tests
 6. Progressive rollout to production
 
-## Usage Examples
+## 使用示例
 
 ```
 "Set up GitHub Actions CI for our ML project with model quality gates"
 ```
 
-## Output Format
+## 输出格式
 
 - **CI/CD Pipeline**: GitHub Actions / GitLab CI configuration
 - **Quality Gates**: Test definitions and thresholds

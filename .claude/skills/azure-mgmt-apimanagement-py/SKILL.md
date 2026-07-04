@@ -10,20 +10,20 @@ date_added: '2026-02-27'
 
 Manage Azure API Management services, APIs, products, and policies.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-mgmt-apimanagement
 pip install azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=your-subscription-id
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -268,7 +268,7 @@ user = client.user.create_or_update(
 | `certificate` | Certificates |
 | `gateway` | Self-hosted gateways |
 
-## Best Practices
+## 最佳实践
 
 1. **Use named values** for secrets and configuration
 2. **Apply policies** at appropriate scopes (global, product, API, operation)
@@ -277,7 +277,7 @@ user = client.user.create_or_update(
 5. **Use backends** to abstract backend services
 6. **Version your APIs** using APIM's versioning features
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

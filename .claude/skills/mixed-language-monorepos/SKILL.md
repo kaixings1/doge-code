@@ -6,11 +6,11 @@ version: 1.0.0
 
 # 多语言单体仓库安全分析
 
-## Purpose
+## 目的
 
 Provide comprehensive guidance for security analysis of polyglot codebases where multiple services are written in different programming languages. These are increasingly common in modern architectures (Go APIs + Python ML + TypeScript frontends).
 
-## When to Use
+## 使用场景
 
 Activate this skill when:
 - Monorepo contains services in 2+ different languages

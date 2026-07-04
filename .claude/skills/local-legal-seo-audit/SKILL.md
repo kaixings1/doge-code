@@ -292,7 +292,7 @@ Legal 常见问题 pages rank well for long-tail queries and build trust.
 
 ---
 
-## Output Format
+## 输出格式
 
 ### Audit Report Structure
 

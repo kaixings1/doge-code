@@ -95,7 +95,7 @@ If Total >= 0.70:  ⚠️  Present alternatives, ask questions
 If Total < 0.70:   ❌ STOP - Request more context
 ```
 
-## Output Format
+## 输出格式
 
 ```
 📋 Confidence Checks:

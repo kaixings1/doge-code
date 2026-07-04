@@ -11,7 +11,7 @@ Use this skill when the failure smells like codesigning rather than compilation:
 launch refusal, missing entitlement, invalid signature, sandbox mismatch,
 hardened runtime confusion, or trust-policy rejection.
 
-## Workflow
+## 工作流
 
 1. Inspect the bundle or binary.
    - Locate the `.app` or executable.

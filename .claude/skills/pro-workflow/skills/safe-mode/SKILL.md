@@ -99,7 +99,7 @@ Removes all restrictions for the current session. Both cautious warnings and loc
 SAFE MODE: All restrictions cleared for this session.
 ```
 
-## Implementation
+## 实现
 
 ### PreToolUse Hook — Bash (Cautious Mode)
 
@@ -169,7 +169,7 @@ Now you get:
 
 Clear removes both.
 
-## When to Use
+## 使用场景
 
 | Situation | Mode |
 |-----------|------|
@@ -179,7 +179,7 @@ Clear removes both.
 | Pair programming, limiting AI scope | Lockdown |
 | Done with restrictions | Clear |
 
-## Anti-Patterns
+## 反模式
 
 - Leaving lockdown on when you need to edit tests (update the path or clear it)
 - Using safe-mode as a substitute for git branches (branches protect history, safe-mode protects the session)

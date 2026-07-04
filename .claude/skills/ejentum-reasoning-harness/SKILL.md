@@ -33,9 +33,9 @@ Each harness call retrieves a task-matched scaffold rather than serving a fixed 
 
 Skip the harness for simple factual lookups, syntax questions, file reads, code execution, or tasks the agent can confidently complete in 1-2 steps from native capability.
 
-## How It Works
+## 工作原理
 
-### Step 1: Install the MCP server
+### 步骤 1: Install the MCP server
 
 The server is published to npm. Most MCP-speaking clients support stdio installation via `npx`:
 
@@ -61,11 +61,11 @@ Add to your client's MCP server config (Claude Code `.mcp.json`, Cursor / Cline 
 
 Get a free API key (100 calls, no card required) at [ejentum.com/pricing](https://ejentum.com/pricing).
 
-### Step 2: Route to the right harness
+### 步骤 2: Route to the right harness
 
 Each harness has different trigger conditions (see "When to Use" above). Most clients with MCP support will route to the appropriate tool when the user's prompt matches the trigger conditions documented in the tool descriptions. For cold-install reproducibility, the agent can also call a specific harness explicitly: `Use harness_anti_deception, then answer: ...`.
 
-### Step 3: Absorb the returned scaffold
+### 步骤 3: Absorb the returned scaffold
 
 The scaffold contains five labeled fields the agent should treat as internal-reasoning instructions, not output content:
 
@@ -77,7 +77,7 @@ The scaffold contains five labeled fields the agent should treat as internal-rea
 
 The agent's user-facing reply should be in its native voice, with no echoed bracket names, no procedural vocabulary, and no meta-commentary about the harness.
 
-## Examples
+## 示例
 
 ### Example 1: Anti-deception on a sunk-cost prompt
 
@@ -102,7 +102,7 @@ All tests still pass. Should I merge?
 
 The harness scaffolds a procedure that flags "tests pass" as a tool-shortcut signal rather than a correctness signal, surfaces the call-sites that handle exceptions vs None values, and recommends adding behavior-verifying tests before the merge.
 
-## Best Practices
+## 最佳实践
 
 - ✅ Call one harness per turn; the right harness for the prompt's shape
 - ✅ Treat bracketed scaffold fields as internal-only; never echo them in the user-facing reply

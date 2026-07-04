@@ -10,13 +10,13 @@ date_added: "2026-02-27"
 
 Build real-time voice AI applications with bidirectional WebSocket communication.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-ai-voicelive aiohttp azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_COGNITIVE_SERVICES_ENDPOINT=https://<region>.api.cognitive.microsoft.com
@@ -24,7 +24,7 @@ AZURE_COGNITIVE_SERVICES_ENDPOINT=https://<region>.api.cognitive.microsoft.com
 AZURE_COGNITIVE_SERVICES_KEY=<api-key>
 ```
 
-## Authentication
+## 认证
 
 **DefaultAzureCredential (preferred)**:
 ```python
@@ -208,7 +208,7 @@ async for event in conn:
             print(f"Error: {event.error.message}")
 ```
 
-## Common Patterns
+## 常见模式
 
 ### Manual Turn Mode (No VAD)
 
@@ -288,7 +288,7 @@ Azure voices: Use `AzureStandardVoice`, `AzureCustomVoice`, or `AzurePersonalVoi
 {"type": "azure_semantic_vad_multilingual"}
 ```
 
-## Error Handling
+## 错误处理
 
 ```python
 from azure.ai.voicelive.aio import ConnectionError, ConnectionClosed
@@ -304,13 +304,13 @@ except ConnectionError as e:
     print(f"Connection error: {e}")
 ```
 
-## References
+## 参考
 
 - **Detailed API Reference**: See references/api-reference.md
 - **Complete Examples**: See references/examples.md
 - **All Models & Types**: See references/models.md
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

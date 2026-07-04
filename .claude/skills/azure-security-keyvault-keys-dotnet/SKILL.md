@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Client library for managing cryptographic keys in Azure Key Vault and Managed HSM.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.Security.KeyVault.Keys
@@ -19,7 +19,7 @@ dotnet add package Azure.Identity
 
 **Current Version**: 4.7.0 (stable)
 
-## Environment Variables
+## 环境变量
 
 ```bash
 KEY_VAULT_NAME=<your-key-vault-name>
@@ -48,7 +48,7 @@ KeyResolver (key resolution)
 └── Resolve(keyId) → CryptographyClient
 ```
 
-## Authentication
+## 认证
 
 ### DefaultAzureCredential (Recommended)
 
@@ -297,7 +297,7 @@ policy.LifetimeActions.Add(new KeyRotationLifetimeAction
 await client.UpdateKeyRotationPolicyAsync("my-rsa-key", policy);
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -346,7 +346,7 @@ await client.UpdateKeyRotationPolicyAsync("my-rsa-key", policy);
 | `A128KW` | Oct | AES-128 Key Wrap |
 | `A256KW` | Oct | AES-256 Key Wrap |
 
-## Best Practices
+## 最佳实践
 
 1. **Use Managed Identity** — Prefer `DefaultAzureCredential` over secrets
 2. **Enable soft-delete** — Protect against accidental deletion
@@ -357,7 +357,7 @@ await client.UpdateKeyRotationPolicyAsync("my-rsa-key", policy);
 7. **Use specific versions** — Pin to versions in production
 8. **Cache CryptographyClient** — Reuse for multiple operations
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -397,7 +397,7 @@ catch (RequestFailedException ex)
 | `Azure.Security.KeyVault.Certificates` | Certificates | `dotnet add package Azure.Security.KeyVault.Certificates` |
 | `Azure.Identity` | Authentication | `dotnet add package Azure.Identity` |
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -406,7 +406,7 @@ catch (RequestFailedException ex)
 | Quickstart | https://learn.microsoft.com/azure/key-vault/keys/quick-create-net |
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/keyvault/Azure.Security.KeyVault.Keys |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

@@ -20,7 +20,7 @@ tools:
 
 # Agent Orchestrator
 
-## Overview
+## 概述
 
 Meta-skill que orquestra todos os agentes do ecossistema. Scan automatico de skills, match por capacidades, coordenacao de workflows multi-skill e registry management.
 
@@ -28,13 +28,13 @@ Meta-skill que orquestra todos os agentes do ecossistema. Scan automatico de ski
 
 - When you need specialized assistance with this domain
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to agent orchestrator
 - A simpler, more specific tool can handle the request
 - The user needs general-purpose assistance without domain expertise
 
-## How It Works
+## 工作原理
 
 Meta-skill que funciona como camada central de decisao e coordenacao para todo
 o ecossistema de skills. Faz varredura automatica, identifica agentes relevantes

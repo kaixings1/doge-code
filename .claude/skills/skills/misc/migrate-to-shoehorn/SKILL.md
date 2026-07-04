@@ -102,7 +102,7 @@ getUser(fromAny({ body: { id: 123 } }));
 | `fromAny()`     | Pass intentionally wrong data (keeps autocomplete) |
 | `fromExact()`   | Force full object (swap with fromPartial later)    |
 
-## Workflow
+## 工作流
 
 1. **Gather requirements** - ask user:
    - What test files have `as` assertions causing problems?

@@ -5,18 +5,18 @@ description: "创建用于测试、原型设计和演示的真实合成数据集
 
 # Generate Synthetic Data
 
-## Purpose
+## 目的
 Create realistic synthetic datasets that mirror real-world data characteristics. Useful for prototyping analyses, testing pipelines, building demos, and sharing data without privacy risks.
 
-## How It Works
+## 工作原理
 
-### Step 1: Define the Schema
+### 步骤 1: Define the Schema
 - Column names, data types, and descriptions
 - Relationships between columns (foreign keys, correlations)
 - Business constraints (e.g., revenue > 0, age between 18-100)
 - Target variable distribution (for ML datasets)
 
-### Step 2: Configure Data 属性
+### 步骤 2: Configure Data 属性
 - **Distributions**: Normal, log-normal, uniform, Poisson, custom
 - **Correlations**: Specify relationships between features
 - **Missing data**: Inject realistic missing patterns (MCAR, MAR, MNAR)
@@ -24,13 +24,13 @@ Create realistic synthetic datasets that mirror real-world data characteristics.
 - **Temporal patterns**: Trends, seasonality, cyclicality for time series
 - **Categories**: Realistic category distributions (Zipf's law for names, cities)
 
-### Step 3: Generate Data
+### 步骤 3: Generate Data
 - Use Faker for realistic names, emails, addresses, company names
 - Use numpy/scipy distributions for numeric columns
 - Maintain referential integrity across related tables
 - Generate in requested format: CSV, JSON, SQL INSERT, Parquet, pandas DataFrame
 
-### Step 4: Validate Synthetic Data
+### 步骤 4: Validate Synthetic Data
 - Compare summary statistics to specified parameters
 - Verify correlations match expectations
 - Check constraint satisfaction
@@ -57,7 +57,7 @@ with proper foreign key relationships between tables."
 30% class imbalance, and some noisy features for benchmarking models."
 ```
 
-## Output Format
+## 输出格式
 
 - **Dataset**: Generated data in requested format (CSV, JSON, SQL, DataFrame code)
 - **Schema Documentation**: Column descriptions and data generation rules

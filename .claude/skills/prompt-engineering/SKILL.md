@@ -120,7 +120,7 @@ Respond with a JSON array of findings. If no issues, return an empty array.
 Each finding: {{"severity": "critical|warning|info", "line": number, "message": "string", "suggestion": "string"}}"""
 ```
 
-## Anti-Patterns
+## 反模式
 
 - Vague instructions like "be helpful" or "do your best"
 - Asking the model to "be creative" when you need deterministic output

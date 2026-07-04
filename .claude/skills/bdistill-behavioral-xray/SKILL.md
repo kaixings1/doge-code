@@ -28,9 +28,9 @@ Use it to understand your model before building with it, compare models for task
 - Use for compliance auditing — documenting model behavior at deployment boundaries
 - Use for red team assessments — systematic boundary mapping across safety dimensions
 
-## How It Works
+## 工作原理
 
-### Step 1: Install
+### 步骤 1: Install
 
 ```bash
 pip install bdistill
@@ -39,7 +39,7 @@ claude mcp add bdistill -- bdistill-mcp   # Claude Code
 
 For other tools, add bdistill-mcp as an MCP server in your project config.
 
-### Step 2: Run the probe
+### 步骤 2: Run the probe
 
 In Claude Code:
 ```
@@ -66,7 +66,7 @@ In any tool with MCP:
 | **persona** | Identity, tone matching, composure under hostility |
 | **grounding** | Hallucination resistance, fabrication traps, knowledge limits |
 
-## Output
+## 输出
 
 A styled HTML report showing:
 - Refusal rate, hedge rate, chain-of-thought usage
@@ -74,7 +74,7 @@ A styled HTML report showing:
 - Notable response examples with behavioral tags
 - Actionable insights (e.g., "you already show CoT 85% of the time, no need to prompt for it")
 
-## Best Practices
+## 最佳实践
 
 - Answer probe questions honestly — the value is in authentic behavioral data
 - Run probes on the same model periodically to track behavioral drift

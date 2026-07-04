@@ -9,7 +9,7 @@ description: 源码驱动开发 — 将每个实现决策建立在官方文档�
 
 Every framework-specific code decision must be backed by official documentation. Don't implement from memory — verify, cite, and let the user see your sources. Training data goes stale, APIs get deprecated, best practices evolve. This skill ensures the user gets code they can trust because every pattern traces back to an authoritative source they can check.
 
-## When to Use
+## 使用场景
 
 - The user wants code that follows current best practices for a given framework
 - Building boilerplate, starter code, or patterns that will be copied across a project
@@ -35,7 +35,7 @@ DETECT ──→ FETCH ──→ IMPLEMENT ──→ CITE
             docs       patterns
 ```
 
-### Step 1: Detect Stack and Versions
+### 步骤 1: Detect Stack and Versions
 
 Read the project's dependency file to identify exact versions:
 
@@ -60,7 +60,7 @@ STACK DETECTED:
 
 If versions are missing or ambiguous, **ask the user**. Don't guess — the version determines which patterns are correct.
 
-### Step 2: Fetch Official Documentation
+### 步骤 2: Fetch Official Documentation
 
 Fetch the specific documentation page for the feature you're implementing. Not the homepage, not the full docs — the relevant page.
 

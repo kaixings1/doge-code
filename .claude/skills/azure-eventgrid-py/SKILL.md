@@ -10,20 +10,20 @@ date_added: '2026-02-27'
 
 Event routing service for building event-driven applications with pub/sub semantics.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-eventgrid azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 EVENTGRID_TOPIC_ENDPOINT=https://<topic-name>.<region>.eventgrid.azure.net/api/events
 EVENTGRID_NAMESPACE_ENDPOINT=https://<namespace>.<region>.eventgrid.azure.net
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -158,7 +158,7 @@ async with EventGridPublisherClient(
     )
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use CloudEvents** for new applications (industry standard)
 2. **Batch events** when publishing multiple events
@@ -167,7 +167,7 @@ async with EventGridPublisherClient(
 5. **Handle retries** — Event Grid has built-in retry
 6. **Set appropriate event types** for routing and filtering
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

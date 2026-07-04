@@ -6,7 +6,7 @@ version: 1.0.0
 
 # 业务逻辑分析
 
-## Purpose
+## 目的
 
 Provide comprehensive knowledge of business logic vulnerabilities - flaws that arise from incorrect assumptions about how users will interact with an application, rather than from traditional injection or parsing errors.
 
@@ -14,7 +14,7 @@ Provide comprehensive knowledge of business logic vulnerabilities - flaws that a
 
 ---
 
-## When to Use
+## 使用场景
 
 Activate this skill when:
 - Beginning a whitebox security review (understand before hunt)
@@ -252,7 +252,7 @@ grep -rniE "@(app\.|router\.)(route|post).*register" --include="*.py" --include=
 
 ---
 
-## Reference Files
+## 参考文件
 
 For detailed patterns and examples:
 - **`references/workflow-patterns.md`** - Multi-step process bypass techniques

@@ -45,7 +45,7 @@ Before designing schema:
 
 ---
 
-## Anti-Patterns
+## 反模式
 
 ❌ 默认 to PostgreSQL for simple apps (SQLite may suffice)
 ❌ Skip indexing
@@ -53,7 +53,7 @@ Before designing schema:
 ❌ Store JSON when structured data is better
 ❌ Ignore N+1 queries
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

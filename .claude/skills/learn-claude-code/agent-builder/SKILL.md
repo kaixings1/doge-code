@@ -93,7 +93,7 @@ The pattern is universal. Only the capabilities change.
 5. **Trust liberates** - Let the model reason
 6. **Iteration reveals** - Start minimal, evolve from usage
 
-## Anti-Patterns
+## 反模式
 
 | Pattern | Problem | Solution |
 |---------|---------|----------|
@@ -103,7 +103,7 @@ The pattern is universal. Only the capabilities change.
 | Front-loaded knowledge | Context bloat | Load on-demand |
 | Micromanagement | Undercuts intelligence | Trust the model |
 
-## Resources
+## 资源
 
 **Philosophy & Theory**:
 - `references/agent-philosophy.md` - Deep dive into why agents work

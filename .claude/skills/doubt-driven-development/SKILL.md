@@ -5,13 +5,13 @@ description: 疑问驱动开发 — 对每个非平凡决策进行全新上下�
 
 # Doubt-Driven Development
 
-## Overview
+## 概述
 
 A confident answer is not a correct one. Long sessions accumulate context that quietly turns assumptions into "facts" without anyone noticing. Doubt-driven development is the discipline of materializing a fresh-context reviewer — biased to **disprove**, not approve — before any non-trivial output stands.
 
 This is not `/review`. `/review` is a verdict on a finished artifact. This is an in-flight posture: non-trivial decisions get cross-examined while course-correction is still cheap.
 
-## When to Use
+## 使用场景
 
 A decision is **non-trivial** when at least one of these is true:
 
@@ -59,7 +59,7 @@ Doubt cycle:
 - [ ] Step 5: STOP — met stop condition (trivial findings, 3 cycles, or user override)
 ```
 
-### Step 1: CLAIM — Surface what stands
+### 步骤 1: CLAIM — Surface what stands
 
 Name the decision in two or three lines:
 
@@ -72,7 +72,7 @@ WHY THIS MATTERS: a race here corrupts user data and is
 
 If you can't write the claim that compactly, you have a vibe, not a decision. Surface it before scrutinizing it.
 
-### Step 2: EXTRACT — Smallest reviewable unit
+### 步骤 2: EXTRACT — Smallest reviewable unit
 
 A fresh-context reviewer needs the **artifact** and the **contract**, not the journey.
 
@@ -82,7 +82,7 @@ A fresh-context reviewer needs the **artifact** and the **contract**, not the jo
 
 Strip your reasoning. If you hand over conclusions, you'll get back validation of your conclusions. The unit must be small enough that a reviewer can hold it in mind in one read — if it's a 500-line PR, decompose first.
 
-### Step 3: DOUBT — Invoke the fresh-context reviewer
+### 步骤 3: DOUBT — Invoke the fresh-context reviewer
 
 The reviewer's prompt **must be adversarial**. Framing decides the answer.
 
@@ -165,7 +165,7 @@ Acknowledge the skip in the output (*"Proceeding with single-model findings only
 
 Cross-model adds cost, latency, and tool fragility. The agent surfaces the choice every cycle; the user decides whether this artifact warrants it.
 
-### Step 4: RECONCILE — Fold findings back
+### 步骤 4: RECONCILE — Fold findings back
 
 The reviewer's output is data, not verdict. **You are still the orchestrator.** Re-read the artifact text against each finding before classifying — rubber-stamping the reviewer is the same failure mode as ignoring it.
 
@@ -178,7 +178,7 @@ For each finding, classify in this **precedence order** (first matching class wi
 
 A fresh reviewer can be wrong because it lacks context. Don't defer just because it's "fresh."
 
-### Step 5: STOP — Bounded loop, not recursion
+### 步骤 5: STOP — Bounded loop, not recursion
 
 Stop when:
 

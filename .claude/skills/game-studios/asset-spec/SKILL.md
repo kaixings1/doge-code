@@ -334,7 +334,7 @@ If any spawned agent returns BLOCKED or cannot complete:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 Every phase follows: **Identify → Confirm → Generate → Review → Approve → Write**
 

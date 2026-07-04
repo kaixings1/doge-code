@@ -31,13 +31,13 @@ description: "数据集和模型版本管理：DVC、LakeFS、Delta Lake 用于�
 - Document data changes in commit messages
 - Automate data validation on version changes
 
-## Usage Examples
+## 使用示例
 
 ```
 "Set up DVC to version our training datasets stored on S3"
 ```
 
-## Output Format
+## 输出格式
 
 - **Setup Guide**: Tool installation and configuration
 - **Workflow**: How to version, retrieve, and compare data

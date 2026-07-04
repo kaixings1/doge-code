@@ -11,7 +11,7 @@ Different from wrap-up. Wrap-up is a checklist for *you*. Handoff is a document 
 
 Use when saying "handoff", "continue later", "pass to next session", "session transfer", or ending a session and wanting to resume smoothly.
 
-## Workflow
+## 工作流
 
 1. Gather current state from git.
 2. List completed, in-progress, and pending work.
@@ -28,7 +28,7 @@ git log --oneline -5
 git branch --show-current
 ```
 
-## Output
+## 输出
 
 ```markdown
 # Session Handoff — [date] [time]

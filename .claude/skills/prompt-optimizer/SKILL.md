@@ -23,7 +23,7 @@ metadata:
 Analyze a draft prompt, critique it, match it to ECC ecosystem components,
 and output a complete optimized prompt the user can paste and run.
 
-## When to Use
+## 使用场景
 
 - User says "optimize this prompt", "improve my prompt", "rewrite this prompt"
 - User says "help me write a better prompt for..."
@@ -42,7 +42,7 @@ and output a complete optimized prompt the user can paste and run.
 - User wants a skill inventory (use `skill-stocktake` instead)
 - User says "just do it" or "直接做"
 
-## How It Works
+## 工作原理
 
 **Advisory only — do not execute the user's task.**
 

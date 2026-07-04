@@ -2,7 +2,7 @@
 
 Security skill for detecting insecure default configurations that create vulnerabilities when applications run with missing or incomplete configuration.
 
-## Overview
+## 概述
 
 The `insecure-defaults` skill helps identify security vulnerabilities caused by:
 
@@ -14,7 +14,7 @@ The `insecure-defaults` skill helps identify security vulnerabilities caused by:
 
 **Critical Distinction:** This skill emphasizes **fail-secure vs. fail-open** behavior. Applications that crash without proper configuration are safe; applications that run with insecure defaults are vulnerable.
 
-## Installation
+## 安装
 
 ```bash
 cd parent-folder/skills
@@ -26,7 +26,7 @@ Or from the plugin marketplace:
 /plugin install insecure-defaults
 ```
 
-## When to Use
+## 使用场景
 
 Use this skill when:
 
@@ -38,7 +38,7 @@ Use this skill when:
 - **API security review** checking CORS, rate limiting, authentication
 - **Third-party integration** review for hardcoded test credentials
 
-## Usage
+## 用法
 
 ```
 Audit this codebase for insecure defaults—focus on environment variable fallbacks and authentication configuration

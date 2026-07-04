@@ -6,7 +6,7 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Klaviyo Automation via Rube MCP
+# Klaviyo 自动化（通过 Rube MCP）
 
 Automate Klaviyo email and SMS marketing operations through Composio's Klaviyo toolkit via Rube MCP.
 
@@ -26,7 +26,7 @@ Automate Klaviyo email and SMS marketing operations through Composio's Klaviyo t
 3. If connection is not ACTIVE, follow the returned auth link to complete Klaviyo authentication
 4. Confirm connection status shows ACTIVE before running any workflows
 
-## Core Workflows
+## 核心工作流
 
 ### 1. List and Filter Campaigns
 
@@ -120,7 +120,7 @@ Automate Klaviyo email and SMS marketing operations through Composio's Klaviyo t
 - Job statuses indicate whether the send is queued, in progress, complete, or failed
 - Rate limit: 10/s burst, 150/m steady
 
-## Common Patterns
+## 常见模式
 
 ### Campaign Discovery Pattern
 

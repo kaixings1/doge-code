@@ -8,14 +8,14 @@ date_added: "2026-02-27"
 
 # context7-auto-research
 
-## Overview
+## 概述
 Automatically fetch latest library/framework documentation for Claude Code via Context7 API
 
-## When to Use
+## 使用场景
 - When you need up-to-date documentation for libraries and frameworks
 - When asking about React, Next.js, Prisma, or any other popular library
 
-## Installation
+## 安装
 ```bash
 npx skills add -g BenedictKing/context7-auto-research
 ```
@@ -25,17 +25,17 @@ npx skills add -g BenedictKing/context7-auto-research
 2. Configure API key (optional, see GitHub repo for details)
 3. Use naturally in Claude Code conversations
 
-## Examples
+## 示例
 See [GitHub Repository](https://github.com/BenedictKing/context7-auto-research) for examples.
 
 ## 最佳实践
 - Configure API keys via environment variables for higher rate limits
 - Use the skill's auto-trigger feature for seamless integration
 
-## Troubleshooting
+## 故障排除
 See the GitHub repository for troubleshooting guides.
 
-## Related Skills
+## 相关技能
 - tavily-web, exa-search, firecrawl-scraper, codex-review
 
 ## 局限性

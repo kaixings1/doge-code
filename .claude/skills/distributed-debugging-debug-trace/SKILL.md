@@ -29,7 +29,7 @@ The user needs to set up debugging and tracing capabilities to efficiently diagn
 ## 需求
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 - Identify services, trace boundaries, and key spans.
 - Configure local debugging and production-safe tracing.
@@ -37,12 +37,12 @@ $ARGUMENTS
 - Validate end-to-end trace coverage and sampling.
 - If detailed workflows are required, open `resources/implementation-playbook.md`.
 
-## Safety
+## 安全
 
 - Avoid enabling verbose tracing in production without safeguards.
 - Redact secrets and PII from logs and traces.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed tooling and configuration patterns.
 

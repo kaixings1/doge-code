@@ -9,7 +9,7 @@ description: "Pro Workflow\Skills\Smart Commit — Pro Workflow\Skills\Smart Com
 
 Use when saying "commit", "save changes", or ready to commit after making changes.
 
-## Workflow
+## 工作流
 
 1. Check current state and identify what to commit.
 2. Run quality gates (lint, typecheck, tests on affected files).
@@ -60,7 +60,7 @@ Flag any issues before proceeding.
 - No generic messages ("fix bug", "update code").
 - Reference issue numbers when applicable.
 
-## Output
+## 输出
 
 - Quality gate results (pass/fail)
 - Issues found in staged changes

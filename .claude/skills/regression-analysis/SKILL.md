@@ -5,12 +5,12 @@ description: "构建和诊断回归模型：线性、逻辑、多项式、岭回
 
 # Regression Analysis
 
-## Purpose
+## 目的
 Build, diagnose, and interpret regression models. Covers the full workflow from model specification through diagnostics to interpretation.
 
-## How It Works
+## 工作原理
 
-### Step 1: Model Selection
+### 步骤 1: Model Selection
 
 | Outcome Type | Method |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 29 MINUTES 24 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

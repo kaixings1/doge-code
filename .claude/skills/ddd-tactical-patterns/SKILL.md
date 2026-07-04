@@ -22,7 +22,7 @@ date_added: "2026-02-27"
 - The task is only API documentation or UI layout.
 - Full DDD complexity is not justified.
 
-## Instructions
+## 使用说明
 
 1. Identify invariants first and design aggregates around them.
 2. Model immutable value objects for validated concepts.
@@ -32,7 +32,7 @@ date_added: "2026-02-27"
 
 If detailed checklists are needed, open `references/tactical-checklist.md`.
 
-## Example
+## 示例
 
 ```typescript
 class Order {

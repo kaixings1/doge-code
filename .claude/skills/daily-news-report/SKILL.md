@@ -329,7 +329,7 @@ Task Call:
 | Normal | ~3-4 mins | 需要 Tier2 supplement |
 | Browser Needed | ~5-6 mins | Includes JS rendered pages |
 
-## Error Handling
+## 错误处理
 
 | Error Type | Handling |
 |---|---|
@@ -354,5 +354,5 @@ To ensure usability across different Agent environments, the following checks mu
 3.  **User Alert**:
     -   MUST include a clear warning in the generated report header indicating the current degraded mode.
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.

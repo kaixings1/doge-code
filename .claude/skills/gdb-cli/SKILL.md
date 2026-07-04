@@ -23,7 +23,7 @@ tools:
 
 # GDB Debugging Assistant
 
-## Overview
+## 概述
 
 A GDB debugging skill designed for AI agents. Combines **source code analysis** with **runtime state inspection** using gdb-cli to provide intelligent debugging assistance for C/C++ programs.
 
@@ -35,7 +35,7 @@ A GDB debugging skill designed for AI agents. Combines **source code analysis** 
 - Get intelligent debugging assistance with source code context
 - Debug multi-threaded applications
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to C/C++ debugging
 - The user needs general-purpose assistance without debugging
@@ -59,9 +59,9 @@ gdb -nx -q -batch -ex "python print('OK')"
 - GDB 9.0+ with Python support enabled
 - Linux OS
 
-## How It Works
+## 工作原理
 
-### Step 1: Initialize Debug Session
+### 步骤 1: Initialize Debug Session
 
 **For core dump analysis:**
 ```bash
@@ -75,7 +75,7 @@ gdb-cli attach --pid <pid> [--binary <binary_path>]
 
 **Output:** A session_id like `"session_id": "a1b2c3"`. Store this for subsequent commands.
 
-### Step 2: Gather Initial Information
+### 步骤 2: Gather Initial Information
 
 ```bash
 SESSION="<session_id>"
@@ -90,7 +90,7 @@ gdb-cli bt -s $SESSION --full
 gdb-cli registers -s $SESSION
 ```
 
-### Step 3: Correlate Source Code (CRITICAL)
+### 步骤 3: Correlate Source Code (CRITICAL)
 
 For each frame in the backtrace:
 1. **Extract frame info**: `{file}:{line} in {function}`
@@ -112,7 +112,7 @@ Variables show:
 Analysis: The NULL check on line 86 didn't catch the issue.
 ```
 
-### Step 4: Deep Investigation
+### 步骤 4: Deep Investigation
 
 ```bash
 # Examine variables
@@ -133,7 +133,7 @@ gdb-cli thread-apply -s $SESSION bt --all
 gdb-cli sharedlibs -s $SESSION
 ```
 
-### Step 5: Session Management
+### 步骤 5: Session Management
 
 ```bash
 # List active sessions
@@ -184,7 +184,7 @@ gdb-cli memory -s $SESSION "&variable" --size 128
 gdb-cli registers -s $SESSION
 ```
 
-## Examples
+## 示例
 
 ### Example 1: Core Dump Analysis
 
@@ -212,7 +212,7 @@ gdb-cli threads -s b2c3d4
 gdb-cli thread-apply -s b2c3d4 bt --all
 ```
 
-## Best Practices
+## 最佳实践
 
 - Always read source code before drawing conclusions from variable values
 - Use `--range` for pagination on large thread counts or deep backtraces
@@ -227,7 +227,7 @@ gdb-cli thread-apply -s b2c3d4 bt --all
 - Core dumps may contain sensitive data - handle with care
 - Only debug processes you have authorization to analyze
 
-## Related Skills
+## 相关技能
 
 - `@systematic-debugging` - General debugging methodology
 - `@test-driven-development` - Write tests before implementation

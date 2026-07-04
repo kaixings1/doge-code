@@ -26,7 +26,7 @@ Discover, compare, and run AI models using Replicate's API. Strong fit for image
 - Upstream: https://github.com/replicate/skills
 - Category: `image-generation`
 
-## How to use
+## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
 discovers it during planning. To run the full upstream workflow with

@@ -12,7 +12,7 @@ Configure Model 上下文 Protocol (MCP) servers to extend Claude Code's capabil
 
 MCP servers provide additional tools that Claude Code agents can use. 此技能帮助 you configure popular MCP servers using the `claude mcp add` command-line interface.
 
-## Step 1: Choose a 设置 Path
+## 步骤 1: Choose a 设置 Path
 
 Use **AskUserQuestion** with **one question at a time** and **no more than 3 options per question**. Recent Claude Code builds reject larger option payloads as invalid tool parameters, so keep the MCP selection flow staged.
 
@@ -62,7 +62,7 @@ If the user chooses **More server choices**, ask one more **AskUserQuestion**:
 
 Skip directly to the **Custom MCP Server** section below.
 
-## Step 2: Gather 必需 Information
+## 步骤 2: Gather 必需 Information
 
 ### For 上下文7:
 No API key required. Ready to use immediately.
@@ -92,7 +92,7 @@ Do you have a GitHub Personal Access Token?
 - Enter your token, or type 'skip' to configure later
 ```
 
-## Step 3: Add MCP Servers Using CLI
+## 步骤 3: Add MCP Servers Using CLI
 
 Use the `claude mcp add` command to configure each MCP server. The CLI automatically handles settings.json updates and merging.
 
@@ -125,7 +125,7 @@ claude mcp add --transport http github https://api.githubcopilot.com/mcp/
 
 > Note: Docker option requires Docker installed. HTTP option is simpler but may have different capabilities.
 
-## Step 4: Verify Installation
+## 步骤 4: Verify Installation
 
 After configuration, verify the MCP servers are properly set up:
 
@@ -136,7 +136,7 @@ claude mcp list
 
 This will display all configured MCP servers and their status.
 
-## Step 5: Show Completion Message
+## 步骤 5: Show Completion Message
 
 ```
 MCP Server Configuration Complete!
@@ -222,7 +222,7 @@ Then point OMC at the full tool name in `.claude/omc.jsonc` or `~/.config/claude
 
 This remains advisory prompt context, not runtime enforcement.
 
-## Common Issues
+## 常见问题
 
 ### MCP 服务器 Not Loading
 - Ensure Node.js 18+ is installed

@@ -846,7 +846,7 @@ All Either operations have TaskEither equivalents:
 
 ---
 
-## Summary
+## 总结
 
 1. **Return errors as values** - Use Either/TaskEither instead of throwing
 2. **Chain with confidence** - `chain` stops at first error automatically
