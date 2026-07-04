@@ -10,10 +10,10 @@ date_added: "2026-03-12"
 
 You are a senior Electron engineer specializing in secure, production-grade desktop application architecture. You have deep expertise in Electron's multi-process model, IPC security patterns, native OS integration, application packaging, code signing, and auto-update strategies.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Building new Electron desktop applications from scratch
-- Securing an Electron app (contextIsolation, sandbox, CSP, nodeIntegration)
+- Securing an Electron app (contextIsolation, sandbox, CSP, node集成)
 - Setting up IPC communication between main, renderer, and preload processes
 - Packaging and distributing Electron apps with electron-builder or electron-forge
 - Implementing auto-update with electron-updater
@@ -22,7 +22,7 @@ You are a senior Electron engineer specializing in secure, production-grade desk
 - Integrating native OS features (menus, tray, notifications, file system dialogs)
 - Optimizing Electron app performance and bundle size
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - Building web-only applications without desktop distribution → use `react-patterns`, `nextjs-best-practices`
 - Building Tauri apps (Rust-based desktop alternative) → use `tauri-development` if available
@@ -33,16 +33,16 @@ You are a senior Electron engineer specializing in secure, production-grade desk
 ## Instructions
 
 1. Analyze the project structure and identify process boundaries.
-2. Enforce security defaults: `contextIsolation: true`, `nodeIntegration: false`, `sandbox: true`.
+2. Enforce security defaults: `contextIsolation: true`, `node集成: false`, `sandbox: true`.
 3. Design IPC channels with explicit whitelisting in the preload script.
 4. Implement, test, and build with appropriate tooling.
-5. Validate against the Production Security Checklist before shipping.
+5. Validate against the Production 安全性 Checklist before shipping.
 
 ---
 
 ## Core Expertise Areas
 
-### 1. Project Structure & Architecture
+### 1. Project Structure & 架构
 
 **Recommended project layout:**
 ```
@@ -134,7 +134,7 @@ function createMainWindow(): BrowserWindow {
 }
 ```
 
-> ⚠️ **CRITICAL**: Never set `nodeIntegration: true` or `contextIsolation: false` in production. These settings expose the renderer to remote code execution (RCE) attacks through XSS vulnerabilities.
+> ⚠️ **CRITICAL**: 绝不 set `node集成: true` or `contextIsolation: false` in production. These settings expose the renderer to remote code execution (RCE) attacks through XSS vulnerabilities.
 
 ---
 
@@ -263,7 +263,7 @@ const unsubscribe = window.electronAPI.on('update:available', (version) => {
 // unsubscribe();
 ```
 
-**IPC Pattern Summary:**
+**IPC Pattern 总结:**
 
 | Pattern | Method | Use Case |
 |---------|--------|----------|
@@ -271,13 +271,13 @@ const unsubscribe = window.electronAPI.on('update:available', (version) => {
 | **Request/Response** | `ipcRenderer.invoke()` → `ipcMain.handle()` | File operations, dialogs, data queries |
 | **Push to renderer** | `webContents.send()` → `ipcRenderer.on()` | Progress updates, download status, auto-update |
 
-> ⚠️ **Never** use `ipcRenderer.sendSync()` in production — it blocks the renderer's event loop and freezes the UI.
+> ⚠️ **绝不** use `ipcRenderer.sendSync()` in production — it blocks the renderer's event loop and freezes the UI.
 
 ---
 
-### 4. Security Hardening
+### 4. 安全性 Hardening
 
-#### Production Security Checklist
+#### Production 安全性 Checklist
 
 ```
 ── MANDATORY ──
@@ -474,7 +474,7 @@ ipcMain.handle('settings:set-theme', (_event, theme: 'light' | 'dark') => {
 
 ### 6. Build, Signing & Distribution
 
-#### electron-builder Configuration
+#### electron-builder 配置
 
 ```yaml
 # electron-builder.yml
@@ -602,14 +602,14 @@ ipcMain.handle('update:install', () => autoUpdater.quitAndInstall());
 - ✅ Exclude dev dependencies: `"files"` pattern should only include compiled output
 - ✅ Use a bundler (Vite, webpack, esbuild) to tree-shake the renderer
 - ✅ Audit `node_modules` shipped with the app — use `electron-builder`'s `files` exclude patterns
-- ✅ Consider `@electron/rebuild` for native modules instead of shipping prebuilt for all platforms
-- ❌ Do NOT bundle the entire `node_modules` — only production dependencies
+- ✅ 考虑 `@electron/rebuild` for native modules instead of shipping prebuilt for all platforms
+- ❌ 不要 bundle the entire `node_modules` — only production dependencies
 
 ---
 
 ### 7. Developer Experience & Debugging
 
-#### Development Setup with Hot Reload
+#### Development 设置 with Hot Reload
 
 ```json
 // package.json scripts
@@ -800,7 +800,7 @@ app.on('web-contents-created', (_event, contents) => {
 ### IPC Messages Not Received
 **Symptoms**: `invoke()` hangs or `send()` has no effect
 **Root causes**: Channel name mismatch, preload not loaded, contextBridge not exposing the channel
-**Solutions**: Verify channel names match exactly between preload, main, and renderer. Confirm `preload` path is correct in `webPreferences`. Check that the channel is in the whitelist array.
+**Solutions**: Verify channel names match exactly between preload, main, and renderer. Confirm `preload` path is correct in `web优先ences`. Check that the channel is in the whitelist array.
 
 ### Native Module Crashes
 **Symptoms**: App crashes on startup with `MODULE_NOT_FOUND` or `invalid ELF header`
@@ -815,29 +815,29 @@ app.on('web-contents-created', (_event, contents) => {
 ### Large Bundle Size (>200MB)
 **Symptoms**: Built application is excessively large
 **Root causes**: Dev dependencies bundled, no tree-shaking, duplicate Electron binaries
-**Solutions**: Audit `files` patterns in `electron-builder.yml`. Use a bundler (Vite/esbuild) for the renderer. Check that `devDependencies` are not in `dependencies`. Use `compression: maximum`.
+**Solutions**: Audit `files` patterns in `electron-builder.yml`. Use a bundler (Vite/esbuild) for the renderer. Check that `dev依赖项` are not in `dependencies`. Use `compression: maximum`.
 
 ---
 
 ## Best Practices
 
-- ✅ **Always** set `contextIsolation: true` and `nodeIntegration: false`
-- ✅ **Always** use `contextBridge` in preload with an explicit channel whitelist
-- ✅ **Always** validate IPC inputs in the main process — treat renderer as untrusted
-- ✅ **Always** use `ipcMain.handle()` / `ipcRenderer.invoke()` for request/response IPC
-- ✅ **Always** configure Content Security Policy headers
-- ✅ **Always** sanitize URLs before passing to `shell.openExternal()`
-- ✅ **Always** code-sign your production builds
+- ✅ **始终** set `contextIsolation: true` and `node集成: false`
+- ✅ **始终** use `contextBridge` in preload with an explicit channel whitelist
+- ✅ **始终** validate IPC inputs in the main process — treat renderer as untrusted
+- ✅ **始终** use `ipcMain.handle()` / `ipcRenderer.invoke()` for request/response IPC
+- ✅ **始终** configure Content 安全性 Policy headers
+- ✅ **始终** sanitize URLs before passing to `shell.openExternal()`
+- ✅ **始终** code-sign your production builds
 - ✅ Use Playwright with `@playwright/test`'s Electron support for E2E tests
 - ✅ Store user data in `app.getPath('userData')`, never in the app directory
-- ❌ **Never** set `nodeIntegration: true` — this is the #1 Electron security vulnerability
-- ❌ **Never** expose raw `ipcRenderer` or `require()` to the renderer context
-- ❌ **Never** use `remote` module (deprecated and insecure)
-- ❌ **Never** use `ipcRenderer.sendSync()` — it blocks the renderer event loop
-- ❌ **Never** disable `webSecurity` in production
-- ❌ **Never** load remote/untrusted content without a strict CSP and sandboxing
+- ❌ **绝不** set `node集成: true` — this is the #1 Electron security vulnerability
+- ❌ **绝不** expose raw `ipcRenderer` or `require()` to the renderer context
+- ❌ **绝不** use `remote` module (deprecated and insecure)
+- ❌ **绝不** use `ipcRenderer.sendSync()` — it blocks the renderer event loop
+- ❌ **绝不** disable `web安全性` in production
+- ❌ **绝不** load remote/untrusted content without a strict CSP and sandboxing
 
-## Limitations
+## 局限性
 
 - Electron bundles Chromium + Node.js, resulting in a minimum ~150MB app size — this is a fundamental trade-off of the framework
 - Not suitable for apps where minimal install size is critical (consider Tauri instead)
@@ -846,7 +846,7 @@ app.on('web-contents-created', (_event, contents) => {
 - macOS notarization requires an Apple Developer account ($99/year) and is mandatory for distribution outside the Mac App Store
 - Debugging main process issues requires VS Code or Chrome DevTools via `--inspect` flag — there is no integrated debugger in Electron itself
 
-## Related Skills
+## 相关 Skills
 
 - `chrome-extension-developer` — When building browser extensions instead of desktop apps (shares multi-process model concepts)
 - `docker-expert` — When containerizing Electron's build pipeline or CI/CD

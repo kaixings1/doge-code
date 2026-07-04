@@ -15,10 +15,10 @@ Design a complete analytical dashboard — layout, chart selection, KPI placemen
 - **Operational**: Real-time monitoring, alerts (update: minutes/hours)
 - **Analytical**: Deep-dive exploration, self-service (update: on-demand)
 
-### Step 2: Information Architecture
+### Step 2: Information 架构
 - **KPI cards**: Top-level metrics with trend indicators (top of dashboard)
 - **Primary chart**: The most important visualization (largest, center)
-- **Supporting charts**: Context, breakdowns, comparisons
+- **Supporting charts**: 上下文, breakdowns, comparisons
 - **Filters**: Time range, segments, dimensions (sidebar or top)
 - **Details**: Tables, drill-down links (bottom)
 
@@ -43,7 +43,7 @@ Design a complete analytical dashboard — layout, chart selection, KPI placemen
 
 ### Step 4: Design Principles
 - **Glanceable**: Key story visible in 5 seconds
-- **Layered**: Overview first, details on demand (Shneiderman's mantra)
+- **Layered**: 概述 first, details on demand (Shneiderman's mantra)
 - **Consistent**: Same colors for same categories across charts
 - **Minimal**: No chart junk, no redundant decorations
 - **Responsive**: Works on desktop and tablet
@@ -52,7 +52,7 @@ Design a complete analytical dashboard — layout, chart selection, KPI placemen
 - Generate Python code (Plotly Dash, Streamlit, or Panel)
 - Include layout, data loading, callbacks, and styling
 
-## Usage Examples
+## 用法 Examples
 
 ```
 "Design a product metrics dashboard with DAU, retention,
@@ -76,4 +76,4 @@ to track campaign performance"
 ### Further Reading
 
 - Stephen Few — *Information Dashboard Design*
-- Ben Shneiderman — "Overview first, zoom and filter, then details-on-demand"
+- Ben Shneiderman — "概述 first, zoom and filter, then details-on-demand"

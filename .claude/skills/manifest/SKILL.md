@@ -6,11 +6,11 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Manifest Setup
+# Manifest 设置
 
-Follow these steps **in order**. Do not skip ahead.
+按以下步骤操作 **in order**. Do not skip ahead.
 
-## Use this skill when
+## 使用此技能的场景
 
 - User wants to set up observability or telemetry for their agent
 - User wants to connect their agent to Manifest for monitoring
@@ -18,7 +18,7 @@ Follow these steps **in order**. Do not skip ahead.
 - User is troubleshooting Manifest plugin connection issues
 - User wants to verify the Manifest plugin is running
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - User needs general observability design (use `observability-engineer` instead)
 - User wants to build custom dashboards or alerting rules
@@ -93,10 +93,9 @@ If it appears, tell the user setup is complete. If not, check the error messages
 
 ## Safety
 
-- Never log or echo the API key in plain text after configuration
+- 绝不 log or echo the API key in plain text after configuration
 - Verify the key format (`mnfst_` prefix) before writing to config
 
 ## Troubleshooting
 
 | Error | Fix |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 11 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

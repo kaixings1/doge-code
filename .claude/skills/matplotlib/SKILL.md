@@ -10,9 +10,9 @@ source: community
 
 # Matplotlib
 
-## Overview
+## 概述
 
-Matplotlib is Python's foundational visualization library for creating static, animated, and interactive plots. This skill provides guidance on using matplotlib effectively, covering both the pyplot interface (MATLAB-style) and the object-oriented API (Figure/Axes), along with best practices for creating publication-quality visualizations.
+Matplotlib is Python's foundational visualization library for creating static, animated, and interactive plots. 此技能提供 guidance on using matplotlib effectively, covering both the pyplot interface (MATLAB-style) and the object-oriented API (Figure/Axes), along with best practices for creating publication-quality visualizations.
 
 ## When to Use This Skill
 
@@ -26,7 +26,7 @@ This skill should be used when:
 - Working with 3D visualizations
 - Integrating plots into Jupyter notebooks or GUI applications
 
-## Core Concepts
+## 核心概念
 
 ### The Matplotlib Hierarchy
 
@@ -254,7 +254,7 @@ ax.set_zlabel('Z Label')
 ### 1. Interface Selection
 - **Use the object-oriented interface** (fig, ax = plt.subplots()) for production code
 - Reserve pyplot interface for quick interactive exploration only
-- Always create figures explicitly rather than relying on implicit state
+- 始终 create figures explicitly rather than relying on implicit state
 
 ### 2. Figure Size and DPI
 - Set figsize at creation: `fig, ax = plt.subplots(figsize=(10, 6))`
@@ -279,7 +279,7 @@ ax.set_zlabel('Z Label')
 - Ensure sufficient contrast between elements
 - Include descriptive labels and legends
 
-### 6. Performance
+### 6. 性能
 - For large datasets, use `rasterized=True` in plot calls to reduce file size
 - Use appropriate data reduction before plotting (e.g., downsample dense time series)
 - For animations, use blitting for better performance
@@ -307,14 +307,14 @@ fig, ax = create_analysis_plot(my_data, 'My Analysis')
 plt.savefig('analysis.png', dpi=300, bbox_inches='tight')
 ```
 
-## Quick Reference Scripts
+## 快速参考 Scripts
 
 This skill includes helper scripts in the `scripts/` directory:
 
 ### `plot_template.py`
 Template script demonstrating various plot types with best practices. Use this as a starting point for creating new visualizations.
 
-**Usage:**
+**用法:**
 ```bash
 python scripts/plot_template.py
 ```
@@ -322,12 +322,12 @@ python scripts/plot_template.py
 ### `style_configurator.py`
 Interactive utility to configure matplotlib style preferences and generate custom style sheets.
 
-**Usage:**
+**用法:**
 ```bash
 python scripts/style_configurator.py
 ```
 
-## Detailed References
+## Detailed 参考资料
 
 For comprehensive information, consult the reference documents:
 
@@ -336,7 +336,7 @@ For comprehensive information, consult the reference documents:
 - **`references/api_reference.md`** - Core classes and methods reference
 - **`references/common_issues.md`** - Troubleshooting guide for common problems
 
-## Integration with Other Tools
+## 集成 with Other Tools
 
 Matplotlib integrates well with:
 - **NumPy/Pandas** - Direct plotting from arrays and DataFrames
@@ -359,7 +359,7 @@ Matplotlib integrates well with:
 - Cheatsheets: https://matplotlib.org/cheatsheets/
 - Tutorials: https://matplotlib.org/stable/tutorials/index.html
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

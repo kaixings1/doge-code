@@ -6,17 +6,17 @@ source: community
 date_added: '2026-02-27'
 ---
 
-## Use this skill when
+## /u4f55/u65f6/u4f7f/u7528/u6b64/u6280/u80fd
 
 - Working on blockchain developer tasks or workflows
 - Needing guidance, best practices, or checklists for blockchain developer
 
-## Do not use this skill when
+## /u4e0d/u8981/u4f7f/u7528/u6b64/u6280/u80fd/u7684/u60c5/u51b5
 
 - The task is unrelated to blockchain developer
 - You need a different domain or tool outside this scope
 
-## Instructions
+## /u8bf4/u660e
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -205,7 +205,7 @@ Expert blockchain developer specializing in smart contract development, DeFi pro
 - "Build a decentralized social media platform with token-based incentives"
 - "Implement a blockchain voting system with zero-knowledge privacy preservation"
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -6,18 +6,18 @@ risk: safe
 source: community
 ---
 
-# GitHub Review Requests
+# GitHub 审查请求
 
 Fetch unread `review_requested` notifications for open (unmerged) PRs, filtered by a GitHub team.
 
-**Requires**: GitHub CLI (`gh`) authenticated.
+**需要**: GitHub CLI (`gh`) authenticated.
 
-## When to Use
+## 何时使用
 - You need to find unread GitHub PR review requests for a specific team.
 - You want to check which open PRs currently need your review or a teammate's review.
 - You need a filtered review queue instead of manually browsing GitHub notifications.
 
-## Step 1: Identify the Team
+## 步骤 1：识别团队
 
 If the user has not specified a team, ask:
 
@@ -25,7 +25,7 @@ If the user has not specified a team, ask:
 
 Accept either a team slug (`streaming-platform`) or a display name ("Streaming Platform") — convert to lowercase-hyphenated slug before passing to the script.
 
-## Step 2: Run the Script
+## 步骤 2：运行脚本
 
 ```bash
 uv run ${CLAUDE_SKILL_ROOT}/scripts/fetch_review_requests.py --org getsentry --teams <team-slug>
@@ -37,7 +37,7 @@ To filter by multiple teams, pass a comma-separated list:
 uv run ${CLAUDE_SKILL_ROOT}/scripts/fetch_review_requests.py --org getsentry --teams <team slugs>
 ```
 
-### Script output
+### 脚本输出
 
 ```json
 {
@@ -60,7 +60,7 @@ uv run ${CLAUDE_SKILL_ROOT}/scripts/fetch_review_requests.py --org getsentry --t
 - `"review requested from: <Team Name>"` — the team is a requested reviewer
 - `"opened by: <login>"` — the PR author is a team member
 
-## Step 3: Present Results
+## 步骤 3：呈现结果
 
 Display results as a markdown table with full URLs:
 
@@ -70,7 +70,7 @@ Display results as a markdown table with full URLs:
 
 If `total` is 0, say: "No unread review requests found for that team."
 
-## Fallback
+## 回退方案
 
 If the script fails, run manually:
 
@@ -83,7 +83,7 @@ Then for each `review_requested` notification, check:
 - `gh api repos/{repo}/pulls/{number}/requested_reviewers` — check `teams[].name`
 - `gh api orgs/{org}/teams/{slug}/members` — check if author is a member
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -3,7 +3,7 @@ name: adaptyv
 author: "K-Dense, Inc."
 description: "如何使用 Adaptyv Bio Foundry API 和 Python SDK 进行蛋白质实验设计、提交和结果检索。当用户提到 Adaptyv、Foundry API、蛋白质结合实验、蛋白质筛选实验、BLI/SPR 实验、热稳定性实验或想要提交蛋白质序列进行实验表征时使用此技能。当代码导入 adaptyv、adaptyv_sdk 或 FoundryClient，或引用 foundry-api-public.adaptyvbio.com 时也触发。"
 license: MIT
-compatibility: Requires Python 3.10+, an Adaptyv Foundry account, and an API key from foundry.adaptyvbio.com. Install adaptyv-sdk from GitHub with uv pip install.
+compatibility: 需要 Python 3.10+, an Adaptyv Foundry account, and an API key from foundry.adaptyvbio.com. Install adaptyv-sdk from GitHub with uv pip install.
 metadata: {"version": "1.2", "skill-author": "K-Dense Inc."}
 ---
 
@@ -106,5 +106,4 @@ results = client.experiments.get_results(exp.experiment_id)
 
 ## Experiment Types
 
-| Type | Method | Measures | Requires Target |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 20 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| Type | Method | Measures | 需要 Target |

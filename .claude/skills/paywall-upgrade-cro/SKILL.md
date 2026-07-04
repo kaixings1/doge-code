@@ -1,7 +1,7 @@
 ---
 name: paywall-upgrade-cro
-description: "Paywall Upgrade Cro — Paywall Upgrade Cro 相关功能和最佳实践"
-  Design and optimize upgrade screens, paywalls, and upsell modals. Useful for SaaS conversion design and pricing-page experiments.
+description: "Paywall Upgrade Cro — 付费墙升级 CRO 相关功能和最佳实践"
+  设计和优化升级界面、付费墙和追加销售弹窗。适用于 SaaS 转化设计和定价页面实验。
 triggers:
   - "paywall"
   - "upgrade screen"
@@ -14,30 +14,26 @@ od:
   upstream: "https://github.com/coreyhaines31/marketingskills"
 ---
 
-# paywall-upgrade-cro
+# 付费墙升级 CRO
 
-> Curated from Corey Haines.
+> 来自 Corey Haines。
 
-## What it does
+## 功能
 
-Design and optimize upgrade screens, paywalls, and upsell modals. Useful for SaaS conversion design and pricing-page experiments.
+设计和优化升级界面、付费墙和追加销售弹窗。适用于 SaaS 转化设计和定价页面实验。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/coreyhaines31/marketingskills
-- Category: `marketing-creative`
+- 上游: https://github.com/coreyhaines31/marketingskills
+- 分类: `marketing-creative`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在 Open Design 中宣传该技能，以便代理在规划期间发现它。要运行完整的上游工作流及其原始资源、脚本和参考资料，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README 获取确切路径
 open https://github.com/coreyhaines31/marketingskills
 ```
 
-Then ask the agent to invoke this skill by name (`paywall-upgrade-cro`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后通过名称（`paywall-upgrade-cro`）或此技能前置元数据中列出的触发短语之一要求代理调用此技能。

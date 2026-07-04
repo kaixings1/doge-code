@@ -3,52 +3,51 @@ name: test-triage
 description: 测试分类工作流
 ---
 
-# Test Triage
+# 测试分类
 
-## Quick Start
+## 快速开始
 
-Use this skill to run the smallest meaningful test scope first, classify
-failures precisely, and avoid treating every test failure like a product bug.
+使用此技能先运行最小有意义的测试范围，精确分类失败原因，避免将每个测试失败都当作产品缺陷。
 
-## Workflow
+## 工作流
 
-1. Detect the test harness.
-   - Use `xcodebuild test` for Xcode-based projects.
-   - Use `swift test` for SwiftPM packages.
+1. 检测测试框架。
+   - Xcode 项目使用 `xcodebuild test`。
+   - SwiftPM 包使用 `swift test`。
 
-2. Narrow the scope.
-   - If the user gave a target, product, or test filter, use it.
-   - If not, prefer the smallest likely failing target before a full suite.
+2. 缩小范围。
+   - 如果用户给出了目标、产品或测试过滤器，使用它。
+   - 否则，在全套运行前优先选择最小的可能失败目标。
 
-3. Classify the result.
-   - Build failure
-   - Assertion failure
-   - Crash or signal
-   - Async timing or flake
-   - Environment or fixture setup issue
-   - Missing entitlement or host app issue
+3. 分类结果。
+   - 构建失败
+   - 断言失败
+   - 崩溃或信号
+   - 异步时序或不稳定测试
+   - 环境或夹具设置问题
+   - 缺少授权或宿主应用问题
 
-4. Rerun intelligently.
-   - Use focused reruns when a specific case fails.
-   - Avoid burning time on full-suite reruns without new information.
+4. 智能重跑。
+   - 特定用例失败时使用聚焦重跑。
+   - 避免在没有新信息的情况下耗费时间进行全套重跑。
 
-5. Summarize clearly.
-   - What command ran
-   - Which tests failed
-   - What kind of failure it was
-   - The best next proof step or fix path
+5. 清晰总结。
+   - 运行的命令
+   - 哪些测试失败
+   - 失败类型
+   - 最佳的下一个验证步骤或修复路径
 
-## Guardrails
+## 护栏
 
-- Distinguish compilation failures from test execution failures.
-- Call out when a test appears to assume iOS-only or simulator-only behavior.
-- Mark likely flakes as such instead of overstating confidence.
+- 区分编译失败与测试执行失败。
+- 指出何时测试似乎假设了仅 iOS 或仅模拟器的行为。
+- 将可能的不稳定测试标记为如此，而非过度自信。
 
-## Output Expectations
+## 输出期望
 
-Provide:
-- the command used
-- the smallest failing scope
-- the top failure category
-- a concise explanation of the likely cause
-- the next rerun or fix step
+提供：
+- 使用的命令
+- 最小失败范围
+- 最高优先级失败类别
+- 对可能原因的简洁解释
+- 下一步重跑或修复步骤

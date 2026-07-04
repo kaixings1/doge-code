@@ -113,7 +113,7 @@ Changes that almost always have compliance impact — check proactively when the
 - Never output real card numbers, even as examples; use the standard test PANs (e.g. 4111 1111 1111 1111) when illustrating.
 - Read-only: this skill reviews and reports; it never modifies code, infrastructure, or configuration.
 
-## Limitations
+## 局限性
 
 - Covers only the bundled PCI-DSS v4.0 and MAS TRM engineering summaries; other frameworks or local policy overlays need separate review.
 - Provides engineering triage, not legal advice, QSA assessment, or formal compliance sign-off.

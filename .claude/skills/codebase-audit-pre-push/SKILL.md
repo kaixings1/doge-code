@@ -11,7 +11,7 @@ date_added: "2026-03-05"
 
 As a senior engineer, you're doing the final review before pushing this code to GitHub. Check everything carefully and fix problems as you find them.  
 
-## When to Use This Skill  
+## 何时使用 This Skill  
 
 - User requests "audit the codebase" or "review before push"  
 - Before making the first push to GitHub  
@@ -34,7 +34,7 @@ Start by looking for files that shouldn't be on GitHub:
 - Logs: `*.log`, `npm-debug.log*`, `yarn-error.log*`  
 - Temp files: `*.tmp`, `*.temp`, `*.cache`, `*.swp`  
 - Build output: `dist/`, `build/`, `.next/`, `out/`, `.cache/`  
-- Dependencies: `node_modules/`, `vendor/`, `__pycache__/`, `*.pyc`  
+- 依赖项: `node_modules/`, `vendor/`, `__pycache__/`, `*.pyc`  
 - IDE files: `.idea/`, `.vscode/` (ask user first), `*.iml`, `.project`  
 - Backup files: `*.bak`, `*_old.*`, `*_backup.*`, `*_copy.*`  
 - Test artifacts: `coverage/`, `.nyc_output/`, `test-results/`  
@@ -81,7 +81,7 @@ Look through each code file and check:
 - Possibilities for infinite loops  
 - Missing `default` in switch statements  
 
-### 4. Security Check (Zero Tolerance)  
+### 4. 安全性 Check (Zero Tolerance)  
 
 **Secrets:** Search for hardcoded passwords, API keys, and tokens. They must be in environment variables.  
 
@@ -102,7 +102,7 @@ Look through each code file and check:
 - Error messages do not expose stack traces or database details  
 - Pagination is present on list endpoints  
 
-**Dependencies:**  
+**依赖项:**  
 - Run `npm audit` or an equivalent tool  
 - Flag critically outdated or vulnerable packages  
 
@@ -125,7 +125,7 @@ Look through each code file and check:
 - Clean up event listeners (to avoid memory leaks)  
 - Stream large files instead of loading them into memory  
 
-### 6. Architecture Check  
+### 6. 架构 Check  
 
 **Organization:**  
 - Clear folder structure  
@@ -143,7 +143,7 @@ Look through each code file and check:
 - Constants defined once and imported  
 - Types/interfaces reused, not redefined  
 
-### 7. Performance  
+### 7. 性能  
 
 **Backend:**  
 - Expensive operations do not block requests  
@@ -161,7 +161,7 @@ Look through each code file and check:
 **README.md must include:**  
 - Description of what the project does  
 - Instructions for installation and execution  
-- Required environment variables  
+- 必需 environment variables  
 - Guidance on running tests  
 
 **Code comments:**  
@@ -231,15 +231,15 @@ Overall: 9/10
 - If uncertain about removing something, ask the user  
 - Test after making changes  
 - Be thorough but practical—focus on real problems  
-- Security issues are blockers—nothing should ship with critical vulnerabilities  
+- 安全性 issues are blockers—nothing should ship with critical vulnerabilities  
 
-## Related Skills  
+## 相关 Skills  
 
 - `@security-auditor` - Deeper security review  
 - `@systematic-debugging` - Investigate specific issues  
 - `@git-pushing` - Push code after audit
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

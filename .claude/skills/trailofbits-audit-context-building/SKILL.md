@@ -1,4 +1,4 @@
-# Audit Context Building
+# 审计上下文构建
 
 Build deep architectural context through ultra-granular code analysis before vulnerability hunting.
 
@@ -6,7 +6,7 @@ Build deep architectural context through ultra-granular code analysis before vul
 
 ## When to Use
 
-Use this skill when you need to:
+使用此技能当 you need to:
 - Develop deep comprehension of a codebase before security auditing
 - Build bottom-up understanding instead of high-level guessing
 - Reduce hallucinations and context loss during complex analysis
@@ -46,12 +46,12 @@ It exists solely to build deep understanding before the vulnerability-hunting ph
 
 ## Anti-Hallucination Rules
 
-- Never reshape evidence to fit earlier assumptions
+- 绝不 reshape evidence to fit earlier assumptions
 - Update the model explicitly when contradicted
 - Avoid vague guesses; use "Unclear; need to inspect X"
 - Cross-reference constantly to maintain global coherence
 
-## Related Skills
+## 相关 Skills
 
 - `issue-writer` - Write up findings after context is built
 - `differential-review` - Uses context-building for baseline analysis

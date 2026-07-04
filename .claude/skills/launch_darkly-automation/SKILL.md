@@ -1,103 +1,102 @@
 ---
 name: launch_darkly-automation
-description: "通过 Rube MCP (Composio) 自动执行 LaunchDarkly 任务：feature flags, environments, segments, and rollout management. Always search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 LaunchDarkly 任务：功能标志、环境、分段和发布管理。始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
-# LaunchDarkly Automation via Rube MCP
+# 通过 Rube MCP 实现 LaunchDarkly 自动化
 
-Automate LaunchDarkly operations through Composio's LaunchDarkly toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 LaunchDarkly 工具包自动执行 LaunchDarkly 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/launch_darkly](https://composio.dev/toolkits/launch_darkly)
+**工具包文档**：[composio.dev/toolkits/launch_darkly](https://composio.dev/toolkits/launch_darkly)
 
-## Prerequisites
+## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active LaunchDarkly connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `launch_darkly`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 LaunchDarkly 连接，工具包为 `launch_darkly`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `launch_darkly`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `launch_darkly` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-## Tool Discovery
+## 工具发现
 
-Always discover available tools before executing workflows:
+在执行工作流之前始终发现可用工具：
 
 ```
-RUBE_SEARCH_TOOLS: queries=[{"use_case": "feature flags, environments, segments, and rollout management", "known_fields": ""}]
+RUBE_SEARCH_TOOLS: queries=[{"use_case": "功能标志、环境、分段和发布管理", "known_fields": ""}]
 ```
 
-This returns:
-- Available tool slugs for LaunchDarkly
-- Recommended execution plan steps
-- Known pitfalls and edge cases
-- Input schemas for each tool
+这将返回：
+- LaunchDarkly 的可用工具 slug
+- 推荐的执行计划步骤
+- 已知陷阱和边缘情况
+- 每个工具的输入 schema
 
-## Core Workflows
+## 核心工作流
 
-### 1. Discover Available LaunchDarkly Tools
+### 1. 发现可用的 LaunchDarkly 工具
 
 ```
 RUBE_SEARCH_TOOLS:
   queries:
-    - use_case: "list all available LaunchDarkly tools and capabilities"
+    - use_case: "列出所有可用的 LaunchDarkly 工具和功能"
 ```
 
-Review the returned tools, their descriptions, and input schemas before proceeding.
+在继续之前审查返回的工具、其描述和输入 schema。
 
-### 2. Execute LaunchDarkly Operations
+### 2. 执行 LaunchDarkly 操作
 
-After discovering tools, execute them via:
+发现工具后，通过以下方式执行：
 
 ```
 RUBE_MULTI_EXECUTE_TOOL:
   tools:
-    - tool_slug: "<discovered_tool_slug>"
-      arguments: {<schema-compliant arguments>}
+    - tool_slug: "<发现的工具_slug>"
+      arguments: {<符合 schema 的参数>}
   memory: {}
   sync_response_to_workbench: false
 ```
 
-### 3. Multi-Step Workflows
+### 3. 多步骤工作流
 
-For complex workflows involving multiple LaunchDarkly operations:
+对于涉及多个 LaunchDarkly 操作的复杂工作流：
 
-1. Search for all relevant tools: `RUBE_SEARCH_TOOLS` with specific use case
-2. Execute prerequisite steps first (e.g., fetch before update)
-3. Pass data between steps using tool responses
-4. Use `RUBE_REMOTE_WORKBENCH` for bulk operations or data processing
+1. 搜索所有相关工具：使用特定用例的 `RUBE_SEARCH_TOOLS`
+2. 先执行前置步骤（例如，先获取再更新）
+3. 使用工具响应在步骤之间传递数据
+4. 对批量操作或数据处理使用 `RUBE_REMOTE_WORKBENCH`
 
-## Common Patterns
+## 常见模式
 
-### Search Before Action
-Always search for existing resources before creating new ones to avoid duplicates.
+### 先搜索再操作
+在创建新资源之前始终搜索现有资源以避免重复。
 
-### Pagination
-Many list operations support pagination. Check responses for `next_cursor` or `page_token` and continue fetching until exhausted.
+### 分页
+许多列表操作支持分页。检查响应中的 `next_cursor` 或 `page_token` 并继续获取直到完成。
 
-### Error Handling
-- Check tool responses for errors before proceeding
-- If a tool fails, verify the connection is still ACTIVE
-- Re-authenticate via `RUBE_MANAGE_CONNECTIONS` if connection expired
+### 错误处理
+- 在继续之前检查工具响应中的错误
+- 如果工具失败，验证连接是否仍为 ACTIVE
+- 如果连接过期，通过 `RUBE_MANAGE_CONNECTIONS` 重新认证
 
-### Batch Operations
-For bulk operations, use `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` in a loop with `ThreadPoolExecutor` for parallel execution.
+### 批量操作
+对于批量操作，使用 `RUBE_REMOTE_WORKBENCH`，在循环中配合 `ThreadPoolExecutor` 使用 `run_composio_tool()` 进行并行执行。
 
-## Known Pitfalls
+## 已知陷阱
 
-- **Always search tools first**: Tool schemas and available operations may change. Never hardcode tool slugs without first discovering them via `RUBE_SEARCH_TOOLS`.
-- **Check connection status**: Ensure the LaunchDarkly connection is ACTIVE before executing any tools. Expired OAuth tokens require re-authentication.
-- **Respect rate limits**: If you receive rate limit errors, reduce request frequency and implement backoff.
-- **Validate schemas**: Always pass strictly schema-compliant arguments. Use `RUBE_GET_TOOL_SCHEMAS` to load full input schemas when `schemaRef` is returned instead of `input_schema`.
+- **始终先搜索工具**：工具 schema 和可用操作可能会变化。在通过 `RUBE_SEARCH_TOOLS` 发现之前，切勿硬编码工具 slug。
+- **检查连接状态**：在执行任何工具之前确保 LaunchDarkly 连接为 ACTIVE。过期的 OAuth 令牌需要重新认证。
+- **遵守速率限制**：如果收到速率限制错误，降低请求频率并实现退避策略。
+- **验证 schema**：始终传递严格符合 schema 的参数。当返回 `schemaRef` 而非 `input_schema` 时，使用 `RUBE_GET_TOOL_SCHEMAS` 加载完整输入 schema。
 
-## Quick Reference
+## 快速参考
 
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 55 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 操作 | 方法 |

@@ -3,9 +3,9 @@ name: llm-integration
 description: LLM集成 — 包括API使用、流式传输、函数调用、嵌入和向量数据库的集成模式。
 ---
 
-# LLM Integration
+# LLM 集成
 
-## API Client Pattern
+## API 客户端模式
 
 ```typescript
 import Anthropic from "@anthropic-ai/sdk";
@@ -30,7 +30,7 @@ async function generateResponse(
 }
 ```
 
-## Streaming Responses
+## 流式响应
 
 ```typescript
 async function streamResponse(
@@ -61,7 +61,7 @@ const response = await streamResponse(
 );
 ```
 
-## Function Calling (Tool Use)
+## 函数调用（工具使用）
 
 ```typescript
 const tools: Anthropic.Tool[] = [
@@ -114,7 +114,7 @@ async function agentLoop(userMessage: string): Promise<string> {
 }
 ```
 
-## RAG Pipeline
+## RAG 流水线
 
 ```typescript
 import { embed } from "./embeddings";
@@ -155,7 +155,7 @@ async function retrieveAndGenerate(query: string): Promise<string> {
 }
 ```
 
-## Document Chunking
+## 文档分块
 
 ```typescript
 function chunkDocument(
@@ -183,7 +183,7 @@ function chunkDocument(
 }
 ```
 
-## Cost Optimization
+## 成本优化
 
 ```typescript
 function selectModel(task: TaskType): string {
@@ -202,24 +202,24 @@ function selectModel(task: TaskType): string {
 }
 ```
 
-Use the smallest model that achieves acceptable quality. Cache embeddings and responses where possible. Batch requests when latency is not critical.
+使用能满足质量要求的最小模型。尽可能缓存嵌入和响应。在延迟要求不高的场景下，对请求进行批处理。
 
-## Anti-Patterns
+## 反模式
 
-- Sending entire documents when only relevant chunks are needed
-- Not implementing retry logic with exponential backoff for API calls
-- Ignoring token usage tracking (leads to unexpected costs)
-- Using the most expensive model for simple classification tasks
-- Not validating or sanitizing LLM output before using it in code
-- Building RAG without evaluating retrieval quality first
+- 发送整个文档，而只需要相关片段
+- API 调用未实现带指数退避的重试逻辑
+- 忽略 Token 用量追踪（导致意外成本）
+- 对简单分类任务使用最昂贵的模型
+- 在代码中使用 LLM 输出前未验证或清理
+- 在未先评估检索质量的情况下构建 RAG
 
-## Checklist
+## 检查清单
 
-- [ ] API calls wrapped with retry logic and error handling
-- [ ] Streaming used for user-facing responses
-- [ ] Function calling schemas include clear descriptions
-- [ ] RAG chunks sized appropriately (500-1000 tokens) with overlap
-- [ ] Model selection based on task complexity
-- [ ] Token usage tracked and monitored for cost control
-- [ ] LLM output validated before downstream use
-- [ ] Embeddings cached to avoid redundant API calls
+- [ ] API 调用包装了重试逻辑和错误处理
+- [ ] 面向用户的响应使用流式传输
+- [ ] 函数调用 schema 包含清晰的描述
+- [ ] RAG 块大小适当（500-1000 tokens）并带有重叠
+- [ ] 根据任务复杂度选择模型
+- [ ] 追踪和监控 Token 用量以控制成本
+- [ ] LLM 输出在下游使用前经过验证
+- [ ] 嵌入已缓存，避免重复 API 调用

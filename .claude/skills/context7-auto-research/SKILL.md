@@ -28,7 +28,7 @@ npx skills add -g BenedictKing/context7-auto-research
 ## Examples
 See [GitHub Repository](https://github.com/BenedictKing/context7-auto-research) for examples.
 
-## Best Practices
+## 最佳实践
 - Configure API keys via environment variables for higher rate limits
 - Use the skill's auto-trigger feature for seamless integration
 
@@ -38,7 +38,7 @@ See the GitHub repository for troubleshooting guides.
 ## Related Skills
 - tavily-web, exa-search, firecrawl-scraper, codex-review
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

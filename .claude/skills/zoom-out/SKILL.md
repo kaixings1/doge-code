@@ -4,4 +4,4 @@ description: 告诉代理缩小视野，提供更广泛的上下文或更高层�
 disable-model-invocation: true
 ---
 
-I don't know this area of code well. Go up a layer of abstraction. Give me a map of all the relevant modules and callers, using the project's domain glossary vocabulary.
+我不太熟悉这段代码。请提升一个抽象层次。给我所有相关模块和调用者的地图，使用项目的领域词汇表。

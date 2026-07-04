@@ -233,4 +233,3 @@ This is where taste lives. AI clears the repetitive work. You make the final cal
 Different platforms need different aspect ratios:
 
 | Platform | Aspect Ratio | Resolution |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 42 MINUTES 22 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

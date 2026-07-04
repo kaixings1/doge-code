@@ -45,7 +45,7 @@ curl -X POST https://api.theagentmail.net/v1/accounts/{accountId}/messages \
   }'
 ```
 
-Optional fields: `cc`, `bcc` (string arrays), `inReplyTo`, `references` (strings for threading), `attachments` (array of `{filename, contentType, content}` where content is base64).
+可选 fields: `cc`, `bcc` (string arrays), `inReplyTo`, `references` (strings for threading), `attachments` (array of `{filename, contentType, content}` where content is base64).
 
 ### Read inbox
 
@@ -99,9 +99,8 @@ curl https://api.theagentmail.net/v1/accounts/{accountId}/messages/{messageId}/a
   -H "Authorization: Bearer am_..."
 ```
 
-Returns `{"data": {"url": "https://signed-download-url..."}}`.
+返回值 `{"data": {"url": "https://signed-download-url..."}}`.
 
 ## Full API reference
 
 | Method | Path | Description | Karma |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 48 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -1,17 +1,15 @@
 ---
 name: n8n-expression-syntax
-description: "N8N Expression Syntax — N8N Expression Syntax 相关功能和最佳实践"
+description: "N8N Expression Syntax — N8N 表达式语法相关功能和最佳实践"
 risk: unknown
 source: community
 ---
 
-# n8n Expression Syntax
+# n8n 表达式语法
 
-Expert guide for writing correct n8n expressions in workflows.
+在工作流中编写正确的 n8n 表达式的专家指南。
 
-## When to Use
-- You need to write or debug n8n expressions using `{{ ... }}` syntax.
-- The task involves `$json`, `$node`, webhook payloads, or expression-related workflow errors.
-- You want syntax-correct dynamic values inside n8n nodes and parameters.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 30 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+## 使用时机
+- 需要使用 {{ ... }} 语法编写或调试 n8n 表达式。
+- 任务涉及 $json、$node、Webhook 负载或表达式相关的工作流错误。
+- 需要在 n8n 节点和参数中使用语法正确的动态值。

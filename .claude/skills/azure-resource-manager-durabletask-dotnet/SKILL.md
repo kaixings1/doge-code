@@ -240,7 +240,7 @@ var retentionOperation = await retentionPolicies.CreateOrUpdateAsync(
 | `DurableTaskSchedulerResource` | Represents a Durable Task Scheduler |
 | `DurableTaskSchedulerCollection` | Collection for scheduler CRUD |
 | `DurableTaskSchedulerData` | Scheduler creation/update payload |
-| `DurableTaskSchedulerProperties` | Scheduler configuration (SKU, IPAllowlist) |
+| `DurableTaskScheduler属性` | Scheduler configuration (SKU, IPAllowlist) |
 | `DurableTaskSchedulerSku` | SKU configuration (Name, Capacity, RedundancyState) |
 | `DurableTaskSchedulerSkuName` | SKU options: `Dedicated`, `Consumption` |
 | `DurableTaskHubResource` | Represents a Task Hub |
@@ -257,7 +257,7 @@ var retentionOperation = await retentionPolicies.CreateOrUpdateAsync(
 | `Dedicated` | Fixed capacity with configurable instances | Production workloads, predictable performance |
 | `Consumption` | Serverless, auto-scaling | Development, variable workloads |
 
-## Extension Methods
+## Extension 方法
 
 The SDK provides extension methods on `SubscriptionResource` and `ResourceGroupResource`:
 
@@ -279,7 +279,7 @@ armClient.GetDurableTaskHubResource(id);           // Get task hub by ID
 
 1. **Use `WaitUntil.Completed`** for operations that must finish before proceeding
 2. **Use `WaitUntil.Started`** when you want to poll manually or run operations in parallel
-3. **Always use `DefaultAzureCredential`** — never hardcode keys
+3. **始终 use `默认AzureCredential`** — never hardcode keys
 4. **Handle `RequestFailedException`** for ARM API errors
 5. **Use `CreateOrUpdateAsync`** for idempotent operations
 6. **Delete task hubs before schedulers** — schedulers with task hubs cannot be deleted
@@ -362,7 +362,7 @@ await taskHub.DeleteAsync(WaitUntil.Completed);
 await scheduler.DeleteAsync(WaitUntil.Completed);
 ```
 
-## Related SDKs
+## 相关 SDKs
 
 | SDK | Purpose | Install |
 |-----|---------|---------|
@@ -380,7 +380,7 @@ await scheduler.DeleteAsync(WaitUntil.Completed);
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

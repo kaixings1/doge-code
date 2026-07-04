@@ -41,7 +41,7 @@ A GDB debugging skill designed for AI agents. Combines **source code analysis** 
 - The user needs general-purpose assistance without debugging
 - No GDB is available (GDB 9.0+ with Python support required)
 
-## Prerequisites
+## 前提条件
 
 ```bash
 # Install gdb-cli
@@ -238,7 +238,7 @@ gdb-cli thread-apply -s b2c3d4 bt --all
 - **PyPI**: https://pypi.org/project/gdb-cli/
 - **Documentation**: https://github.com/Cerdore/gdb-cli#readme
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

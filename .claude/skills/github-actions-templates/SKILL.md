@@ -6,14 +6,14 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# GitHub Actions Templates
+# GitHub Actions 模板
 
-Production-ready GitHub Actions workflow patterns for testing, building, and deploying applications.
+用于测试、构建和部署应用的生产就绪 GitHub Actions 工作流模式。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to github actions templates
-- You need a different domain or tool outside this scope
+- 任务与 GitHub Actions 模板无关时
+- 需要此范围之外的领域或工具时
 
 ## Instructions
 
@@ -26,7 +26,7 @@ Production-ready GitHub Actions workflow patterns for testing, building, and dep
 
 Create efficient, secure GitHub Actions workflows for continuous integration and deployment across various tech stacks.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Automate testing and deployment
 - Build Docker images and push to registries
@@ -347,7 +347,7 @@ jobs:
 - `deployment-pipeline-design` - For pipeline architecture
 - `secrets-management` - For secrets handling
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

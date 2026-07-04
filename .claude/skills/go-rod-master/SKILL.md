@@ -6,144 +6,144 @@ source: "https://github.com/go-rod/rod"
 date_added: "2026-02-27"
 ---
 
-# Go-Rod Browser Automation Master
+# Go-Rod 浏览器自动化大师
 
-## Overview
+## 概述
 
-[Rod](https://github.com/go-rod/rod) is a high-level Go driver built directly on the [Chrome DevTools Protocol](https://chromedevtools.github.io/devtools-protocol/) for browser automation and web scraping. Unlike wrappers around other tools, Rod communicates with the browser natively via CDP, providing thread-safe operations, chained context design for timeouts/cancellation, auto-wait for elements, correct iframe/shadow DOM handling, and zero zombie browser processes.
+[Rod](https://github.com/go-rod/rod) 是一个高级 Go 驱动，直接构建在 [Chrome DevTools 协议](https://chromedevtools.github.io/devtools-protocol/) 之上，用于浏览器自动化和网页抓取。与其他工具的包装不同，Rod 通过 CDP 原生与浏览器通信，提供线程安全操作、用于超时/取消的链式上下文设计、元素自动等待、正确的 iframe/Shadow DOM 处理以及零僵尸浏览器进程。
 
-The companion library [go-rod/stealth](https://github.com/go-rod/stealth) injects anti-bot-detection evasions based on [puppeteer-extra stealth](https://github.com/nichochar/puppeteer-extra/tree/master/packages/extract-stealth-evasions), hiding headless browser fingerprints from detection systems.
+配套库 [go-rod/stealth](https://github.com/go-rod/stealth) 基于 [puppeteer-extra stealth](https://github.com/nichochar/puppeteer-extra/tree/master/packages/extract-stealth-evasions) 注入反机器人检测规避手段，隐藏无头浏览器指纹以避开检测系统。
 
-## When to Use This Skill
+## 何时使用本技能
 
-- Use when the user asks to **scrape**, **automate**, or **test** a website using Go.
-- Use when the user needs a **headless browser** for dynamic/SPA content (React, Vue, Angular).
-- Use when the user mentions **stealth**, **anti-bot**, **avoiding detection**, **Cloudflare**, or **bot detection bypass**.
-- Use when the user wants to work with the **Chrome DevTools Protocol (CDP)** directly from Go.
-- Use when the user needs to **intercept** or **hijack** network requests in a browser context.
-- Use when the user asks about **concurrent browser scraping** or **page pooling** in Go.
-- Use when the user is migrating from **chromedp** or **Playwright Go** and wants a simpler API.
+- 当用户要求使用 Go **抓取**、**自动化**或**测试**网站时使用。
+- 当用户需要对动态/SPA 内容（React、Vue、Angular）使用**无头浏览器**时使用。
+- 当用户提到**隐身**、**反机器人**、**避免检测**、**Cloudflare** 或**绕过机器人检测**时使用。
+- 当用户想要直接从 Go 中使用 **Chrome DevTools 协议 (CDP)** 时使用。
+- 当用户需要在浏览器中**拦截**或**劫持**网络请求时使用。
+- 当用户询问 Go 中的**并发浏览器抓取**或**页面池**时使用。
+- 当用户正在从 **chromedp** 或 **Playwright Go** 迁移并希望使用更简单的 API 时使用。
 
-## Safety & Risk
+## 安全与风险
 
-**Risk Level: 🔵 Safe**
+**风险等级：🔵 安全**
 
-- **Read-Only by Default:** Default behavior is navigating and reading page content (scraping/testing).
-- **Isolated Contexts:** Browser contexts are sandboxed; cookies and storage do not persist unless explicitly saved.
-- **Resource Cleanup:** Designed around Go's `defer` pattern — browsers and pages close automatically.
-- **No External Mutations:** Does not modify external state unless the script explicitly submits forms or POSTs data.
+- **默认只读：** 默认行为是导航和读取页面内容（抓取/测试）。
+- **隔离上下文：** 浏览器上下文是沙箱化的；除非显式保存，否则 cookie 和存储不会持久化。
+- **资源清理：** 围绕 Go 的 `defer` 模式设计——浏览器和页面自动关闭。
+- **无外部变更：** 除非脚本显式提交表单或 POST 数据，否则不修改外部状态。
 
-## Installation
+## 安装
 
 ```bash
-# Core rod library
+# 核心 rod 库
 go get github.com/go-rod/rod@latest
 
-# Stealth anti-detection plugin (ALWAYS include for production scraping)
+# 隐身反检测插件（生产环境抓取始终包含）
 go get github.com/go-rod/stealth@latest
 ```
 
-Rod auto-downloads a compatible Chromium binary on first run. To pre-download:
+Rod 在首次运行时自动下载兼容的 Chromium 二进制文件。如需预下载：
 
 ```bash
 go run github.com/nichochar/go-rod.github.io/cmd/launcher@latest
 ```
 
-## Core Concepts
+## 核心概念
 
-### Browser Lifecycle
+### 浏览器生命周期
 
-Rod manages three layers: **Browser → Page → Element**.
+Rod 管理三个层级：**浏览器 → 页面 → 元素**。
 
 ```go
-// Launch and connect to a browser
+// 启动并连接浏览器
 browser := rod.New().MustConnect()
 defer browser.MustClose()
 
-// Create a page (tab)
+// 创建页面（标签页）
 page := browser.MustPage("https://example.com")
 
-// Find an element
+// 查找元素
 el := page.MustElement("h1")
 fmt.Println(el.MustText())
 ```
 
-### Must vs Error Patterns
+### Must 与 Error 模式
 
-Rod provides two API styles for every operation:
+Rod 为每个操作提供两种 API 风格：
 
-| Style | Method | Use Case |
+| 风格 | 方法 | 使用场景 |
 |:------|:-------|:---------|
-| **Must** | `MustElement()`, `MustClick()`, `MustText()` | Scripting, debugging, prototyping. Panics on error. |
-| **Error** | `Element()`, `Click()`, `Text()` | Production code. Returns `error` for explicit handling. |
+| **Must** | `MustElement()`、`MustClick()`、`MustText()` | 脚本、调试、原型开发。出错时 panic。 |
+| **Error** | `Element()`、`Click()`、`Text()` | 生产代码。返回 `error` 进行显式处理。 |
 
-**Production pattern:**
+**生产模式：**
 
 ```go
 el, err := page.Element("#login-btn")
 if err != nil {
-    return fmt.Errorf("login button not found: %w", err)
+    return fmt.Errorf("未找到登录按钮: %w", err)
 }
 if err := el.Click(proto.InputMouseButtonLeft, 1); err != nil {
-    return fmt.Errorf("click failed: %w", err)
+    return fmt.Errorf("点击失败: %w", err)
 }
 ```
 
-**Scripting pattern with Try:**
+**带 Try 的脚本模式：**
 
 ```go
 err := rod.Try(func() {
     page.MustElement("#login-btn").MustClick()
 })
 if errors.Is(err, context.DeadlineExceeded) {
-    log.Println("timeout finding login button")
+    log.Println("查找登录按钮超时")
 }
 ```
 
-### Context & Timeout
+### 上下文与超时
 
-Rod uses Go's `context.Context` for cancellation and timeouts. Context propagates recursively to all child operations.
+Rod 使用 Go 的 `context.Context` 实现取消和超时。上下文递归传播到所有子操作。
 
 ```go
-// Set a 5-second timeout for the entire operation chain
+// 为整个操作链设置 5 秒超时
 page.Timeout(5 * time.Second).
     MustWaitLoad().
     MustElement("title").
-    CancelTimeout(). // subsequent calls are not bound by the 5s timeout
+    CancelTimeout(). // 后续调用不受 5 秒超时约束
     Timeout(30 * time.Second).
     MustText()
 ```
 
-### Element Selectors
+### 元素选择器
 
-Rod supports multiple selector strategies:
+Rod 支持多种选择器策略：
 
 ```go
-// CSS selector (most common)
+// CSS 选择器（最常用）
 page.MustElement("div.content > p.intro")
 
-// CSS selector with text regex matching
-page.MustElementR("button", "Submit|Send")
+// CSS 选择器 + 文本正则匹配
+page.MustElementR("button", "提交|发送")
 
 // XPath
 page.MustElementX("//div[@class='content']//p")
 
-// Search across iframes and shadow DOM (like DevTools Ctrl+F)
+// 跨 iframe 和 shadow DOM 搜索（类似 DevTools Ctrl+F）
 page.MustSearch(".deeply-nested-element")
 ```
 
-### Auto-Wait
+### 自动等待
 
-Rod automatically retries element queries until the element appears or the context times out. You do not need manual sleeps:
+Rod 自动重试元素查询，直到元素出现或上下文超时。您无需手动 sleep：
 
 ```go
-// This will automatically wait until the element exists
+// 这将自动等待直到元素存在
 el := page.MustElement("#dynamic-content")
 
-// Wait until the element is stable (position/size not changing)
+// 等待直到元素稳定（位置/大小不再变化）
 el.MustWaitStable().MustClick()
 
-// Wait until page has no pending network requests
+// 等待直到页面没有待处理的网络请求
 wait := page.MustWaitRequestIdle()
 page.MustElement("#search").MustInput("query")
 wait()
@@ -151,24 +151,24 @@ wait()
 
 ---
 
-## Stealth & Anti-Bot Detection (go-rod/stealth)
+## 隐身与反机器人检测 (go-rod/stealth)
 
-> **IMPORTANT:** For any production scraping or automation against real websites, ALWAYS use `stealth.MustPage()` instead of `browser.MustPage()`. This is the single most important step for avoiding bot detection.
+> **重要提示：** 对于任何针对真实网站的生产级抓取或自动化，始终使用 `stealth.MustPage()` 而非 `browser.MustPage()`。这是避免机器人检测最重要的一步。
 
-### How Stealth Works
+### 隐身工作原理
 
-The `go-rod/stealth` package injects JavaScript evasions into every new page that:
+`go-rod/stealth` 包向每个新页面注入 JavaScript 规避手段，这些手段：
 
-- **Remove `navigator.webdriver`** — the primary headless detection signal.
-- **Spoof WebGL vendor/renderer** — presents real GPU info (e.g., "Intel Inc." / "Intel Iris OpenGL Engine") instead of headless markers like "Google SwiftShader".
-- **Fix Chrome plugin array** — reports proper `PluginArray` type with realistic plugin count.
-- **Patch permissions API** — returns `"prompt"` instead of bot-revealing values.
-- **Set realistic languages** — reports `en-US,en` instead of empty arrays.
-- **Fix broken image dimensions** — headless browsers report 0x0; stealth fixes this to 16x16.
+- **移除 `navigator.webdriver`** — 主要的无头检测信号。
+- **伪造 WebGL 供应商/渲染器** — 呈现真实 GPU 信息（例如 "Intel Inc." / "Intel Iris OpenGL Engine"）而非无头标记（如 "Google SwiftShader"）。
+- **修复 Chrome 插件数组** — 报告正确的 `PluginArray` 类型和真实的插件数量。
+- **修补权限 API** — 返回 `"prompt"` 而非暴露机器人的值。
+- **设置真实语言** — 报告 `en-US,en` 而非空数组。
+- **修复损坏的图片尺寸** — 无头浏览器报告 0x0；隐身修复为 16x16。
 
-### Usage
+### 使用方法
 
-**Creating a stealth page (recommended for all production use):**
+**创建隐身页面（推荐用于所有生产环境）：**
 
 ```go
 import (
@@ -179,34 +179,34 @@ import (
 browser := rod.New().MustConnect()
 defer browser.MustClose()
 
-// Use stealth.MustPage instead of browser.MustPage
+// 使用 stealth.MustPage 替代 browser.MustPage
 page := stealth.MustPage(browser)
 page.MustNavigate("https://bot.sannysoft.com")
 ```
 
-**With error handling:**
+**带错误处理：**
 
 ```go
 page, err := stealth.Page(browser)
 if err != nil {
-    return fmt.Errorf("failed to create stealth page: %w", err)
+    return fmt.Errorf("创建隐身页面失败: %w", err)
 }
 page.MustNavigate("https://example.com")
 ```
 
-**Using stealth.JS directly (advanced — for custom page creation):**
+**直接使用 stealth.JS（高级——用于自定义页面创建）：**
 
 ```go
-// If you need to create the page yourself (e.g., with specific options),
-// inject stealth.JS manually via EvalOnNewDocument
+// 如果您需要自己创建页面（例如带特定选项），
+// 通过 EvalOnNewDocument 手动注入 stealth.JS
 page := browser.MustPage()
 page.MustEvalOnNewDocument(stealth.JS)
 page.MustNavigate("https://example.com")
 ```
 
-### Verifying Stealth
+### 验证隐身效果
 
-Navigate to a bot detection test page to verify evasions:
+导航到机器人检测测试页面以验证规避效果：
 
 ```go
 page := stealth.MustPage(browser)
@@ -214,35 +214,35 @@ page.MustNavigate("https://bot.sannysoft.com")
 page.MustScreenshot("stealth_test.png")
 ```
 
-Expected results for a properly stealth-configured browser:
+正确配置隐身后的浏览器的预期结果：
 - **WebDriver**: `missing (passed)`
 - **Chrome**: `present (passed)`
-- **Plugins Length**: `3` (not `0`)
-- **Languages**: `en-US,en`
+- **插件数量**: `3` (不是 `0`)
+- **语言**: `en-US,en`
 
 ---
 
-## Implementation Guidelines
+## 实现指南
 
-### 1. Launcher Configuration
+### 1. 启动器配置
 
-Use the `launcher` package to customize browser launch flags:
+使用 `launcher` 包自定义浏览器启动标志：
 
 ```go
 import "github.com/go-rod/rod/lib/launcher"
 
 url := launcher.New().
-    Headless(true).             // false for debugging
-    Proxy("127.0.0.1:8080").    // upstream proxy
-    Set("disable-gpu", "").     // custom Chrome flag
-    Delete("use-mock-keychain"). // remove a default flag
+    Headless(true).             // false 为调试模式
+    Proxy("127.0.0.1:8080").    // 上游代理
+    Set("disable-gpu", "").     // 自定义 Chrome 标志
+    Delete("use-mock-keychain"). // 移除默认标志
     MustLaunch()
 
 browser := rod.New().ControlURL(url).MustConnect()
 defer browser.MustClose()
 ```
 
-**Debugging mode (visible browser + slow motion):**
+**调试模式（可见浏览器 + 慢动作）：**
 
 ```go
 l := launcher.New().
@@ -257,123 +257,123 @@ browser := rod.New().
     MustConnect()
 ```
 
-### 2. Proxy Support
+### 2. 代理支持
 
 ```go
-// Set proxy at launch
+// 启动时设置代理
 url := launcher.New().
     Proxy("socks5://127.0.0.1:1080").
     MustLaunch()
 
 browser := rod.New().ControlURL(url).MustConnect()
 
-// Handle proxy authentication
+// 处理代理认证
 go browser.MustHandleAuth("username", "password")()
 
-// Ignore SSL certificate errors (for MITM proxies)
+// 忽略 SSL 证书错误（用于 MITM 代理）
 browser.MustIgnoreCertErrors(true)
 ```
 
-### 3. Input Simulation
+### 3. 输入模拟
 
 ```go
 import "github.com/go-rod/rod/lib/input"
 
-// Type into an input field (replaces existing value)
+// 在输入框中输入（替换现有值）
 page.MustElement("#email").MustInput("user@example.com")
 
-// Simulate keyboard keys
+// 模拟键盘按键
 page.Keyboard.MustType(input.Enter)
 
-// Press key combinations
+// 按下组合键
 page.Keyboard.MustPress(input.ControlLeft)
 page.Keyboard.MustType(input.KeyA)
 page.Keyboard.MustRelease(input.ControlLeft)
 
-// Mouse click at coordinates
+// 在坐标处点击鼠标
 page.Mouse.MustClick(input.MouseLeft)
 page.Mouse.MustMoveTo(100, 200)
 ```
 
-### 4. Network Request Interception (Hijacking)
+### 4. 网络请求拦截（劫持）
 
 ```go
 router := browser.HijackRequests()
 defer router.MustStop()
 
-// Block all image requests
+// 阻止所有图片请求
 router.MustAdd("*.png", func(ctx *rod.Hijack) {
     ctx.Response.Fail(proto.NetworkErrorReasonBlockedByClient)
 })
 
-// Modify request headers
+// 修改请求头
 router.MustAdd("*api.example.com*", func(ctx *rod.Hijack) {
     ctx.Request.Req().Header.Set("Authorization", "Bearer token123")
     ctx.MustLoadResponse()
 })
 
-// Modify response body
+// 修改响应体
 router.MustAdd("*.js", func(ctx *rod.Hijack) {
     ctx.MustLoadResponse()
-    ctx.Response.SetBody(ctx.Response.Body() + "\n// injected")
+    ctx.Response.SetBody(ctx.Response.Body() + "\n// 已注入")
 })
 
 go router.Run()
 ```
 
-### 5. Waiting Strategies
+### 5. 等待策略
 
 ```go
-// Wait for page load event
+// 等待页面加载事件
 page.MustWaitLoad()
 
-// Wait for no pending network requests (AJAX idle)
+// 等待无待处理网络请求（AJAX 空闲）
 wait := page.MustWaitRequestIdle()
 page.MustElement("#search").MustInput("query")
 wait()
 
-// Wait for element to be stable (not animating)
+// 等待元素稳定（不再动画）
 page.MustElement(".modal").MustWaitStable().MustClick()
 
-// Wait for element to become invisible
+// 等待元素变为不可见
 page.MustElement(".loading").MustWaitInvisible()
 
-// Wait for JavaScript condition
+// 等待 JavaScript 条件
 page.MustWait(`() => document.title === 'Ready'`)
 
-// Wait for specific navigation/event
+// 等待特定导航/事件
 wait := page.WaitEvent(&proto.PageLoadEventFired{})
 page.MustNavigate("https://example.com")
 wait()
 ```
 
-### 6. Race Selectors (Multiple Outcomes)
+### 6. 竞态选择器（多结果）
 
-Handle pages where the result can be one of several outcomes (e.g., login success vs error):
+处理可能产生多种结果的页面（例如登录成功 vs 错误）：
 
 ```go
 page.MustElement("#username").MustInput("user")
 page.MustElement("#password").MustInput("pass").MustType(input.Enter)
 
-// Race between success and error selectors
+// 在成功和错误选择器之间竞态
 elm := page.Race().
     Element(".dashboard").MustHandle(func(e *rod.Element) {
-        fmt.Println("Login successful:", e.MustText())
+        fmt.Println("登录成功:", e.MustText())
     }).
     Element(".error-message").MustDo()
 
 if elm.MustMatches(".error-message") {
-    log.Fatal("Login failed:", elm.MustText())
+    log.Fatal("登录失败:", elm.MustText())
 }
 ```
 
-### 7. Screenshots & PDF
+### 7. 截图与 PDF
 
 ```go
-// Full-page screenshot
+// 全页截图
 page.MustScreenshot("page.png")
 
-// Custom screenshot (JPEG, specific region)
+// 自定义截图（JPEG，特定区域）
 img, _ := page.Screenshot(true, &proto.PageCaptureScreenshot{
     Format:  proto.PageCaptureScreenshotFormatJpeg,
     Quality: gson.Int(90),
@@ -383,18 +383,18 @@ img, _ := page.Screenshot(true, &proto.PageCaptureScreenshot{
 })
 utils.OutputFile("screenshot.jpg", img)
 
-// Scroll screenshot (captures full scrollable page)
+// 滚动截图（捕获整个可滚动页面）
 img, _ := page.MustWaitStable().ScrollScreenshot(nil)
 utils.OutputFile("full_page.jpg", img)
 
-// PDF export
+// PDF 导出
 page.MustPDF("output.pdf")
 ```
 
-### 8. Concurrent Page Pool
+### 8. 并发页面池
 
 ```go
-pool := rod.NewPagePool(5) // max 5 concurrent pages
+pool := rod.NewPagePool(5) // 最多 5 个并发页面
 
 create := func() *rod.Page {
     return browser.MustIncognito().MustPage()
@@ -418,58 +418,58 @@ wg.Wait()
 pool.Cleanup(func(p *rod.Page) { p.MustClose() })
 ```
 
-### 9. Event Handling
+### 9. 事件处理
 
 ```go
-// Listen for console.log output
+// 监听 console.log 输出
 go page.EachEvent(func(e *proto.RuntimeConsoleAPICalled) {
     if e.Type == proto.RuntimeConsoleAPICalledTypeLog {
         fmt.Println(page.MustObjectsToJSON(e.Args))
     }
 })()
 
-// Wait for a specific event before proceeding
+// 在继续前等待特定事件
 wait := page.WaitEvent(&proto.PageLoadEventFired{})
 page.MustNavigate("https://example.com")
 wait()
 ```
 
-### 10. File Download
+### 10. 文件下载
 
 ```go
 wait := browser.MustWaitDownload()
 
-page.MustElementR("a", "Download PDF").MustClick()
+page.MustElementR("a", "下载 PDF").MustClick()
 
 data := wait()
 utils.OutputFile("downloaded.pdf", data)
 ```
 
-### 11. JavaScript Evaluation
+### 11. JavaScript 求值
 
 ```go
-// Execute JS on the page
+// 在页面上执行 JS
 page.MustEval(`() => console.log("hello")`)
 
-// Pass parameters and get return value
+// 传递参数并获取返回值
 result := page.MustEval(`(a, b) => a + b`, 1, 2)
 fmt.Println(result.Int()) // 3
 
-// Eval on a specific element ("this" = the DOM element)
+// 在特定元素上求值（"this" = DOM 元素）
 title := page.MustElement("title").MustEval(`() => this.innerText`).String()
 
-// Direct CDP calls for features Rod doesn't wrap
+// 直接调用 CDP 实现 Rod 未封装的功能
 proto.PageSetAdBlockingEnabled{Enabled: true}.Call(page)
 ```
 
-### 12. Loading Chrome Extensions
+### 12. 加载 Chrome 扩展
 
 ```go
 extPath, _ := filepath.Abs("./my-extension")
 
 u := launcher.New().
     Set("load-extension", extPath).
-    Headless(false). // extensions require headed mode
+    Headless(false). // 扩展需要非无头模式
     MustLaunch()
 
 browser := rod.New().ControlURL(u).MustConnect()
@@ -477,69 +477,69 @@ browser := rod.New().ControlURL(u).MustConnect()
 
 ---
 
-## Examples
+## 示例
 
-See the `examples/` directory for complete, runnable Go files:
-- `examples/basic_scrape.go` — Minimal scraping example
-- `examples/stealth_page.go` — Anti-detection with go-rod/stealth
-- `examples/request_hijacking.go` — Intercepting and modifying network requests
-- `examples/concurrent_pages.go` — Page pool for concurrent scraping
+查看 `examples/` 目录获取完整的可运行 Go 文件：
+- `examples/basic_scrape.go` — 最小抓取示例
+- `examples/stealth_page.go` — 使用 go-rod/stealth 进行反检测
+- `examples/request_hijacking.go` — 拦截和修改网络请求
+- `examples/concurrent_pages.go` — 用于并发抓取的页面池
 
 ---
 
-## Best Practices
+## 最佳实践
 
-- ✅ **ALWAYS use `stealth.MustPage(browser)`** instead of `browser.MustPage()` for real-world sites.
-- ✅ **ALWAYS `defer browser.MustClose()`** immediately after connecting.
-- ✅ Use the error-returning API (not `Must*`) in production code.
-- ✅ Set explicit timeouts with `.Timeout()` — never rely on defaults for production.
-- ✅ Use `browser.MustIncognito().MustPage()` for isolated sessions.
-- ✅ Use `PagePool` for concurrent scraping instead of spawning unlimited pages.
-- ✅ Use `MustWaitStable()` before clicking elements that might be animating.
-- ✅ Use `MustWaitRequestIdle()` after actions that trigger AJAX calls.
-- ✅ Use `launcher.New().Headless(false).Devtools(true)` for debugging.
-- ❌ **NEVER** use `time.Sleep()` for waiting — use Rod's built-in wait methods.
-- ❌ **NEVER** create a new `Browser` per task — create one Browser, use multiple `Page` instances.
-- ❌ **NEVER** use `browser.MustPage()` for production scraping — use `stealth.MustPage()`.
-- ❌ **NEVER** ignore errors in production — always handle them explicitly.
-- ❌ **NEVER** forget to defer-close browsers, pages, and hijack routers.
+- ✅ **始终使用 `stealth.MustPage(browser)`** 替代 `browser.MustPage()` 处理真实网站。
+- ✅ **连接后立即 `defer browser.MustClose()`**。
+- ✅ 在生产代码中使用返回错误的 API（非 `Must*`）。
+- ✅ 使用 `.Timeout()` 设置显式超时——生产环境绝不依赖默认值。
+- ✅ 使用 `browser.MustIncognito().MustPage()` 实现隔离会话。
+- ✅ 使用 `PagePool` 进行并发抓取，而非生成无限制的页面。
+- ✅ 在点击可能正在动画的元素之前使用 `MustWaitStable()`。
+- ✅ 在触发 AJAX 调用后的操作中使用 `MustWaitRequestIdle()`。
+- ✅ 使用 `launcher.New().Headless(false).Devtools(true)` 进行调试。
+- ❌ **绝不**使用 `time.Sleep()` 等待——使用 Rod 内置的等待方法。
+- ❌ **绝不**为每个任务创建新的 `Browser`——创建一个 Browser，使用多个 `Page` 实例。
+- ❌ **绝不**在生产抓取中使用 `browser.MustPage()`——使用 `stealth.MustPage()`。
+- ❌ **绝不**在生产中忽略错误——始终显式处理它们。
+- ❌ **绝不**忘记 defer-close 浏览器、页面和劫持路由器。
 
-## Common Pitfalls
+## 常见陷阱
 
-- **Problem:** Element not found even though it exists on the page.
-  **Solution:** The element may be inside an iframe or shadow DOM. Use `page.MustSearch()` instead of `page.MustElement()` — it searches across all iframes and shadow DOMs.
+- **问题：** 页面中存在元素但找不到。
+  **解决方案：** 元素可能在 iframe 或 shadow DOM 中。使用 `page.MustSearch()` 替代 `page.MustElement()`——它会在所有 iframe 和 shadow DOM 中搜索。
 
-- **Problem:** Click doesn't work because the element is animating.
-  **Solution:** Call `el.MustWaitStable()` before `el.MustClick()`.
+- **问题：** 点击无效因为元素正在动画。
+  **解决方案：** 在 `el.MustClick()` 之前调用 `el.MustWaitStable()`。
 
-- **Problem:** Bot detection despite using stealth.
-  **Solution:** Combine `stealth.MustPage()` with: randomized viewport sizes, realistic User-Agent strings, human-like input delays between keystrokes, and random idle behaviors (scroll, hover).
+- **问题：** 即使使用了隐身仍被机器人检测。
+  **解决方案：** 将 `stealth.MustPage()` 与以下措施结合：随机化视口大小、真实的 User-Agent 字符串、类似人类的击键延迟以及随机空闲行为（滚动、悬停）。
 
-- **Problem:** Browser process leaks (zombie processes).
-  **Solution:** Always `defer browser.MustClose()`. Rod uses [leakless](https://github.com/ysmood/leakless) to kill zombies after main process crash, but explicit cleanup is preferred.
+- **问题：** 浏览器进程泄漏（僵尸进程）。
+  **解决方案：** 始终 `defer browser.MustClose()`。Rod 使用 [leakless](https://github.com/ysmood/leakless) 在主进程崩溃后杀死僵尸进程，但显式清理是首选。
 
-- **Problem:** Timeout errors on slow pages.
-  **Solution:** Use chained context: `page.Timeout(30 * time.Second).MustWaitLoad()`. For AJAX-heavy pages, use `MustWaitRequestIdle()` instead of `MustWaitLoad()`.
+- **问题：** 慢页面上的超时错误。
+  **解决方案：** 使用链式上下文：`page.Timeout(30 * time.Second).MustWaitLoad()`。对于 AJAX 密集型页面，使用 `MustWaitRequestIdle()` 替代 `MustWaitLoad()`。
 
-- **Problem:** HijackRequests router not intercepting requests.
-  **Solution:** You must call `go router.Run()` after setting up routes, and `defer router.MustStop()` for cleanup.
+- **问题：** HijackRequests 路由器未拦截请求。
+  **解决方案：** 设置路由后必须调用 `go router.Run()`，并使用 `defer router.MustStop()` 进行清理。
 
-## Limitations
+## 局限性
 
-- **CAPTCHAs:** Rod does not include CAPTCHA solving. External services (2captcha, etc.) must be integrated separately.
-- **Extreme Anti-Bot:** While `go-rod/stealth` handles common detection (WebDriver, plugin fingerprints, WebGL), extremely strict systems (some Cloudflare configurations, Akamai Bot Manager) may still detect automation. Additional measures (residential proxies, human-like behavioral patterns) may be needed.
-- **DRM Content:** Cannot interact with DRM-protected media (e.g., Widevine).
-- **Resource Usage:** Each browser instance consumes significant RAM (~100-300MB+). Use `PagePool` and limit concurrency on memory-constrained systems.
-- **Extensions in Headless:** Chrome extensions do not work in headless mode. Use `Headless(false)` with XVFB for server environments.
-- **Platform:** Requires a Chromium-compatible browser. Does not support Firefox or Safari.
+- **验证码：** Rod 不包含验证码解决功能。需要单独集成外部服务（2captcha 等）。
+- **极端反机器人：** 虽然 `go-rod/stealth` 处理了常见检测（WebDriver、插件指纹、WebGL），但极其严格的系统（某些 Cloudflare 配置、Akamai Bot Manager）仍可能检测到自动化。可能需要额外措施（住宅代理、类人行为模式）。
+- **DRM 内容：** 无法与 DRM 保护的媒体交互（例如 Widevine）。
+- **资源使用：** 每个浏览器实例消耗大量 RAM（约 100-300MB+）。在内存受限的系统上使用 `PagePool` 并限制并发数。
+- **无头模式下的扩展：** Chrome 扩展在无头模式下无法工作。在服务器环境中使用带有 XVFB 的 `Headless(false)`。
+- **平台：** 需要兼容 Chromium 的浏览器。不支持 Firefox 或 Safari。
 
-## Documentation References
+## 文档参考
 
-- [Official Documentation](https://go-rod.github.io/) — Guides, tutorials, FAQ
-- [Go API Reference](https://pkg.go.dev/github.com/go-rod/rod) — Complete type and method documentation
-- [go-rod/stealth](https://github.com/go-rod/stealth) — Anti-bot detection plugin
-- [Examples (source)](https://github.com/go-rod/rod/blob/main/examples_test.go) — Official example tests
-- [Rod vs Chromedp Comparison](https://github.com/nichochar/go-rod.github.io/blob/main/lib/examples/compare-chromedp) — Migration reference
-- [Chrome DevTools Protocol Docs](https://chromedevtools.github.io/devtools-protocol/) — Underlying protocol reference
-- [Chrome CLI Flags Reference](https://peter.sh/experiments/chromium-command-line-switches) — Launcher flag documentation
-- `references/api-reference.md` — Quick-reference cheat sheet
+- [官方文档](https://go-rod.github.io/) — 指南、教程、FAQ
+- [Go API 参考](https://pkg.go.dev/github.com/go-rod/rod) — 完整的类型和方法文档
+- [go-rod/stealth](https://github.com/go-rod/stealth) — 反机器人检测插件
+- [示例（源码）](https://github.com/go-rod/rod/blob/main/examples_test.go) — 官方示例测试
+- [Rod vs Chromedp 比较](https://github.com/nichochar/go-rod.github.io/blob/main/lib/examples/compare-chromedp) — 迁移参考
+- [Chrome DevTools 协议文档](https://chromedevtools.github.io/devtools-protocol/) — 底层协议参考
+- [Chrome CLI 标志参考](https://peter.sh/experiments/chromium-command-line-switches) — 启动器标志文档
+- `references/api-reference.md` — 快速参考速查表

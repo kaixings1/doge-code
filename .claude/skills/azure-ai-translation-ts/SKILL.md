@@ -227,7 +227,7 @@ const operationId = new URL(response.headers["operation-location"])
   .pathname.split("/").pop();
 ```
 
-### Get Translation Status
+### Get Translation 状态
 
 ```typescript
 import { isUnexpected, paginate } from "@azure-rest/ai-translation-document";
@@ -284,13 +284,13 @@ import type {
 1. **Auto-detect source** - Omit `language` parameter to auto-detect
 2. **Batch requests** - Translate multiple texts in one call for efficiency
 3. **Use SAS tokens** - For document translation, use time-limited SAS URLs
-4. **Handle errors** - Always check `isUnexpected(response)` before accessing body
+4. **Handle errors** - 始终 check `isUnexpected(response)` before accessing body
 5. **Regional endpoints** - Use regional endpoints for lower latency
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

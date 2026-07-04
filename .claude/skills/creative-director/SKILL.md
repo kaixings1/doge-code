@@ -14,15 +14,15 @@ od:
   upstream: "https://github.com/smixs/creative-director-skill"
 ---
 
-# creative-director
+# 创意总监
 
-> Curated from @smixs.
+> 精选自 @smixs。
 
-## What it does
+## 功能说明
 
 AI creative director with recursive self-assessment: 20+ methodologies (SIT, TRIZ, Bisociation, SCAMPER, Synectics), 3-axis evaluation calibrated against Cannes/D&AD/HumanKind, 5-phase process from brief to presentation.
 
-## Open Design orchestration mode
+## Open Design 编排模式
 
 When this skill is invoked inside Open Design, treat it as the design-flow
 director, not as a single polish checklist.
@@ -47,12 +47,12 @@ director, not as a single polish checklist.
    guide setup; otherwise use the closest configured alternative and mark the
    tradeoff.
 
-## Source
+## 来源
 
 - Upstream: https://github.com/smixs/creative-director-skill
 - Category: `creative-direction`
 
-## How to use
+## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
 discovers it during planning. To run the full upstream workflow with

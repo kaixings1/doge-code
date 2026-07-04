@@ -7,117 +7,117 @@ requires:
     - rube
 ---
 
-# Gumroad Automation
+# Gumroad 自动化
 
-Automate your Gumroad storefront -- list products, track sales, verify licenses, and manage real-time webhooks -- all through natural language commands.
+自动化您的 Gumroad 商店——列出产品、跟踪销售、验证许可证和管理实时 webhook——全部通过自然语言命令完成。
 
-**Toolkit docs:** [composio.dev/toolkits/gumroad](https://composio.dev/toolkits/gumroad)
+**工具包文档：** [composio.dev/toolkits/gumroad](https://composio.dev/toolkits/gumroad)
 
 ---
 
-## Setup
+## 设置
 
-1. Add the Composio MCP server to your client configuration:
+1. 将 Composio MCP 服务器添加到您的客户端配置：
    ```
    https://rube.app/mcp
    ```
-2. Connect your Gumroad account when prompted (API key authentication).
-3. Start issuing natural language commands to manage your Gumroad store.
+2. 根据提示连接您的 Gumroad 账户（API 密钥认证）。
+3. 开始发出自然语言命令来管理您的 Gumroad 商店。
 
 ---
 
-## Core Workflows
+## 核心工作流
 
-### 1. List All Products
-Retrieve every product in your authenticated Gumroad account to get product IDs for downstream operations.
+### 1. 列出所有产品
+检索您已验证的 Gumroad 账户中的每个产品，以获取下游操作所需的产品 ID。
 
-**Tool:** `GUMROAD_LIST_PRODUCTS`
+**工具：** `GUMROAD_LIST_PRODUCTS`
 
-**Example prompt:**
-> "List all my Gumroad products"
+**示例提示：**
+> "列出我所有的 Gumroad 产品"
 
-**Parameters:** None required -- returns all products for the authenticated account.
-
----
-
-### 2. Track Sales with Filters
-Retrieve successful sales with optional filtering by email, date range, product, or pagination.
-
-**Tool:** `GUMROAD_GET_SALES`
-
-**Example prompt:**
-> "Show me all Gumroad sales from January 2025 for product prod_ABC123"
-
-**Key parameters:**
-- `after` -- ISO8601 date/time to filter sales after (e.g., `2025-01-01T00:00:00Z`)
-- `before` -- ISO8601 date/time to filter sales before
-- `email` -- Filter by customer email address
-- `product_id` -- Filter by specific product ID
-- `page` -- Page number for paginated results (minimum 1)
+**参数：** 无需参数——返回已验证账户的所有产品。
 
 ---
 
-### 3. Verify License Keys
-Check if a license key is valid against a specific product, inspect usage count, or verify membership entitlement.
+### 2. 带筛选条件的销售跟踪
+检索成功销售记录，可选择按邮箱、日期范围、产品或分页进行筛选。
 
-**Tool:** `GUMROAD_VERIFY_LICENSE`
+**工具：** `GUMROAD_GET_SALES`
 
-**Example prompt:**
-> "Verify license key ABCD-EFGH-IJKL-MNOP for product prod_ABC123"
+**示例提示：**
+> "显示 2025 年 1 月产品 prod_ABC123 的所有 Gumroad 销售记录"
 
-**Key parameters (all required):**
-- `product_id` -- The product ID to verify against (required for products created on/after Jan 9, 2023)
-- `license_key` -- The license key string (e.g., `ABCD-EFGH-IJKL-MNOP`)
-- `increment_uses_count` -- Whether to increment usage count (defaults to true)
-
----
-
-### 4. Subscribe to Webhook Events
-Set up real-time event notifications by subscribing your endpoint URL to specific Gumroad resource events.
-
-**Tool:** `GUMROAD_SUBSCRIBE_TO_RESOURCE`
-
-**Example prompt:**
-> "Subscribe my webhook https://example.com/hook to Gumroad sale events"
-
-**Key parameters (all required):**
-- `resource_name` -- One of: `sale`, `refund`, `dispute`, `dispute_won`, `cancellation`, `subscription_updated`, `subscription_ended`, `subscription_restarted`
-- `post_url` -- Your endpoint URL that receives HTTP POST notifications
+**关键参数：**
+- `after` -- ISO8601 日期/时间，筛选此时间之后的销售（例如 `2025-01-01T00:00:00Z`）
+- `before` -- ISO8601 日期/时间，筛选此时间之前的销售
+- `email` -- 按客户邮箱地址筛选
+- `product_id` -- 按特定产品 ID 筛选
+- `page` -- 分页结果的页码（至少 1）
 
 ---
 
-### 5. List Active Webhook Subscriptions
-Review existing webhook subscriptions for a given resource type before adding new ones to avoid duplicates.
+### 3. 验证许可证密钥
+检查许可证密钥对特定产品是否有效，检查使用次数，或验证会员资格。
 
-**Tool:** `GUMROAD_GET_RESOURCE_SUBSCRIPTIONS`
+**工具：** `GUMROAD_VERIFY_LICENSE`
 
-**Example prompt:**
-> "Show all my active Gumroad webhook subscriptions for sale events"
+**示例提示：**
+> "验证产品 prod_ABC123 的许可证密钥 ABCD-EFGH-IJKL-MNOP"
 
-**Key parameters (required):**
-- `resource_name` -- One of the eight supported event types (e.g., `sale`, `refund`)
-
----
-
-## Known Pitfalls
-
-- **Product ID required for license verification**: Products created on or after January 9, 2023 require the `product_id` parameter. Older products may work without it but providing it is recommended.
-- **Pagination on sales**: Sales results are paginated. Always check if more pages exist by incrementing the `page` parameter.
-- **Webhook deduplication**: Before subscribing to a resource, use `GUMROAD_GET_RESOURCE_SUBSCRIPTIONS` to check for existing subscriptions and avoid duplicate webhooks.
-- **ISO8601 date format**: Date filters on sales must use ISO8601 format (e.g., `2025-01-01T00:00:00Z`), not plain dates.
+**关键参数（全部必需）：**
+- `product_id` -- 要验证的产品 ID（2023 年 1 月 9 日当日及之后创建的产品必需）
+- `license_key` -- 许可证密钥字符串（例如 `ABCD-EFGH-IJKL-MNOP`）
+- `increment_uses_count` -- 是否增加使用计数（默认为 true）
 
 ---
 
-## Quick Reference
+### 4. 订阅 Webhook 事件
+通过将您的端点 URL 订阅到特定的 Gumroad 资源事件来设置实时事件通知。
 
-| Action | Tool Slug | Required Params |
+**工具：** `GUMROAD_SUBSCRIBE_TO_RESOURCE`
+
+**示例提示：**
+> "将我的 webhook https://example.com/hook 订阅到 Gumroad 销售事件"
+
+**关键参数（全部必需）：**
+- `resource_name` -- 其中之一：`sale`、`refund`、`dispute`、`dispute_won`、`cancellation`、`subscription_updated`、`subscription_ended`、`subscription_restarted`
+- `post_url` -- 接收 HTTP POST 通知的端点 URL
+
+---
+
+### 5. 列出活跃的 Webhook 订阅
+在添加新的 webhook 订阅之前，查看给定资源类型的现有订阅以避免重复。
+
+**工具：** `GUMROAD_GET_RESOURCE_SUBSCRIPTIONS`
+
+**示例提示：**
+> "显示我所有活跃的 Gumroad 销售事件 webhook 订阅"
+
+**关键参数（必需）：**
+- `resource_name` -- 八种支持的事件类型之一（例如 `sale`、`refund`）
+
+---
+
+## 已知陷阱
+
+- **许可证验证需要产品 ID**：2023 年 1 月 9 日当日及之后创建的产品需要 `product_id` 参数。较旧的产品可能无需此参数即可工作，但建议提供。
+- **销售记录分页**：销售结果是分页的。始终通过递增 `page` 参数检查是否还有更多页。
+- **Webhook 去重**：在订阅资源之前，使用 `GUMROAD_GET_RESOURCE_SUBSCRIPTIONS` 检查现有订阅以避免重复 webhook。
+- **ISO8601 日期格式**：销售记录的日期筛选必须使用 ISO8601 格式（例如 `2025-01-01T00:00:00Z`），而非普通日期。
+
+---
+
+## 快速参考
+
+| 操作 | 工具标识 | 必需参数 |
 |---|---|---|
-| List products | `GUMROAD_LIST_PRODUCTS` | None |
-| Get sales | `GUMROAD_GET_SALES` | None (all optional filters) |
-| Verify license | `GUMROAD_VERIFY_LICENSE` | `product_id`, `license_key` |
-| Subscribe to events | `GUMROAD_SUBSCRIBE_TO_RESOURCE` | `resource_name`, `post_url` |
-| List webhook subs | `GUMROAD_GET_RESOURCE_SUBSCRIPTIONS` | `resource_name` |
+| 列出产品 | `GUMROAD_LIST_PRODUCTS` | 无 |
+| 获取销售记录 | `GUMROAD_GET_SALES` | 无（所有筛选条件均为可选） |
+| 验证许可证 | `GUMROAD_VERIFY_LICENSE` | `product_id`、`license_key` |
+| 订阅事件 | `GUMROAD_SUBSCRIBE_TO_RESOURCE` | `resource_name`、`post_url` |
+| 列出 webhook 订阅 | `GUMROAD_GET_RESOURCE_SUBSCRIPTIONS` | `resource_name` |
 
 ---
 
-*Powered by [Composio](https://composio.dev)*
+*由 [Composio](https://composio.dev) 提供支持*

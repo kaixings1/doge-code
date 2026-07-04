@@ -3,7 +3,7 @@ name: testing-strategies
 description: 测试策略 — 包括契约测试、快照测试、混沌工程和端到端测试。
 ---
 
-# Testing Strategies
+# 测试策略
 
 ## Test Structure (Arrange-Act-Assert)
 
@@ -134,7 +134,7 @@ describe("sortUsers", () => {
 });
 ```
 
-## Integration Test with Test Containers
+## 集成 Test with Test Containers
 
 ```typescript
 import { PostgreSqlContainer } from "@testcontainers/postgresql";
@@ -194,6 +194,6 @@ expect(emailService.getSent()[0].subject).toBe("Welcome");
 - [ ] Contract tests verify inter-service API compatibility
 - [ ] Snapshot tests reviewed during code review (not blindly updated)
 - [ ] Property-based tests cover invariants for algorithmic code
-- [ ] Integration tests use test containers for real dependencies
+- [ ] 集成 tests use test containers for real dependencies
 - [ ] Test doubles are minimal and behavior-focused
 - [ ] CI fails on flaky test detection

@@ -141,7 +141,7 @@ All three review streams must report before proceeding to Phase 5.
 - **Verify `design/ux/interaction-patterns.md` is up to date** — if any new patterns were introduced during this feature's implementation, confirm they have been added to the library
 - **Confirm all HUD elements respect the visual budget** defined in `design/ux/hud.md` (element count, screen region allocations, maximum opacity values)
 
-## Quick Reference — When to Use Which Skill
+## 快速参考 — When to Use Which Skill
 
 - `/ux-design` — Author a new UX spec for a screen, flow, or HUD from scratch
 - `/ux-review` — Validate a completed UX spec before implementation

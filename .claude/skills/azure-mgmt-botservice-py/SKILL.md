@@ -312,7 +312,7 @@ for conn in connections:
 
 ## Best Practices
 
-1. **Use DefaultAzureCredential** for authentication
+1. **Use 默认AzureCredential** for authentication
 2. **Start with F0 SKU** for development, upgrade to S1 for production
 3. **Store MSA App ID/Secret securely** — use Key Vault
 4. **Enable only needed channels** — reduces attack surface
@@ -323,7 +323,7 @@ for conn in connections:
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

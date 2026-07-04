@@ -48,7 +48,7 @@ spending = client.get_spending()
 print(f"💰 Total spent: ${spending['total_usd']:.4f} across {spending['calls']} calls")
 ```
 
-## When to Use
+## /u4f55/u65f6/u4f7f/u7528
 | Trigger | Your Action |
 |---------|-------------|
 | User explicitly requests ("blockrun second opinion with GPT on...", "use grok to check...", "generate image with dall-e") | Execute via BlockRun |
@@ -254,7 +254,7 @@ All LLM costs are per million tokens (M = 1,000,000 tokens).
 
 **Typical costs:** A 500-word prompt (~750 tokens) to GPT-5.2 costs ~$0.001 input. A 1000-word response (~1500 tokens) costs ~$0.02 output.
 
-## Setup & Funding
+## 设置 & Funding
 
 **Wallet location:** `$HOME/.blockrun/.session` (e.g., `/Users/username/.blockrun/.session`)
 
@@ -292,7 +292,7 @@ response = client.chat("xai/grok-3", "What's trending?", search=True)
 pip install --upgrade blockrun-llm
 ```
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

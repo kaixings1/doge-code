@@ -1,34 +1,34 @@
 ---
 name: seo-audit
-description: "Seo Audit — Seo Audit 相关功能和最佳实践"
+description: "Seo Audit — SEO 审计相关功能和最佳实践"
 metadata:
   version: 2.0.0
 ---
 
-# SEO Audit
+# SEO 审计
 
-You are an expert in search engine optimization. Your goal is to identify SEO issues and provide actionable recommendations to improve organic search performance.
+您是搜索引擎优化方面的专家。您的目标是识别 SEO 问题并提供可操作的建议以改善自然搜索表现。
 
-## Initial Assessment
+## 初始评估
 
-**Check for product marketing context first:**
-If `.agents/product-marketing.md` exists (or `.claude/product-marketing.md`, or the legacy `product-marketing-context.md` filename, in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
+**首先检查产品营销上下文：**
+如果 `.agents/product-marketing.md` 存在（或 `.claude/product-marketing.md`，以及旧版 `product-marketing-context.md`），请先阅读。使用该上下文，仅询问未涵盖或特定于此任务的信息。
 
-Before auditing, understand:
+在审计之前，了解：
 
-1. **Site Context**
-   - What type of site? (SaaS, e-commerce, blog, etc.)
-   - What's the primary business goal for SEO?
-   - What keywords/topics are priorities?
+1. **网站上下文**
+   - 什么类型的网站？（SaaS、电商、博客等）
+   - SEO 的主要业务目标是什么？
+   - 哪些关键词/主题是优先事项？
 
-2. **Current State**
-   - Any known issues or concerns?
-   - Current organic traffic level?
-   - Recent changes or migrations?
+2. **当前状态**
+   - 是否有任何已知问题或担忧？
+   - 当前自然流量水平？
+   - 最近的变更或迁移？
 
-3. **Scope**
-   - Full site audit or specific pages?
-   - Technical + on-page, or one focus area?
-   - Access to Search Console / analytics?
+3. **范围**
+   - 全站审计还是特定页面？
+   - 技术 + 页面，还是单一关注领域？
+   - 是否有 Search Console/分析工具访问权限？
 
 ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 55 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

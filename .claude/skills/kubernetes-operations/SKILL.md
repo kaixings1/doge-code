@@ -5,7 +5,7 @@ description: Kubernetes运维 — 包括清单、Helm图表、Operator模式、�
 
 # Kubernetes Operations
 
-## Deployment Manifest
+## 部署 Manifest
 
 ```yaml
 apiVersion: apps/v1
@@ -70,9 +70,9 @@ spec:
               app: api-server
 ```
 
-Always set resource requests and limits. Use topology spread constraints for high availability.
+始终设置资源请求和限制。使用拓扑分布约束以实现高可用性。
 
-## Helm Chart Structure
+## Helm Chart 结构
 
 ```
 chart/
@@ -164,14 +164,14 @@ kubectl get events -n <namespace> --sort-by='.lastTimestamp'
 kubectl get pods -A --field-selector=status.phase!=Running
 ```
 
-## Anti-Patterns
+## 反模式
 
-- Running containers as root without `securityContext.runAsNonRoot: true`
-- Missing resource requests/limits (causes scheduling issues and noisy neighbors)
-- Using `latest` tag instead of pinned image versions
-- Not setting `PodDisruptionBudget` for critical workloads
-- Storing secrets in ConfigMaps instead of Secrets (or external secret managers)
-- Ignoring pod anti-affinity for replicated deployments
+- 在没有 `security上下文.runAsNonRoot: true` 的情况下以 root 身份运行容器
+- 缺少资源请求/限制（导致调度问题和"吵闹的邻居"问题）
+- 使用 `latest` 标签而不是固定的镜像版本
+- 没有为关键工作负载设置 `PodDisruptionBudget`
+- 将密钥存储在 ConfigMaps 而不是 Secrets（或外部密钥管理器）中
+- 忽略复制部署的 pod 反亲和性
 
 ## Checklist
 

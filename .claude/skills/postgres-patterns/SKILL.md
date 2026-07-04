@@ -13,7 +13,7 @@ PostgreSQL 最佳实践快速参考。如需详细指导，请使用 `database-r
 - 编写 SQL 查询或迁移脚本
 - 设计数据库架构 (Schema)
 - 排查慢查询问题
-- 实现行级安全性 (Row Level Security, RLS)
+- 实现行级安全性 (Row Level 安全性, RLS)
 - 设置连接池 (Connection Pooling)
 
 ## 快速参考
@@ -21,4 +21,12 @@ PostgreSQL 最佳实践快速参考。如需详细指导，请使用 `database-r
 ### 索引速查表 (Index Cheat Sheet)
 
 | 查询模式 | 索引类型 | 示例 |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 20 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+|----------|----------|------|
+| 等值查询 (`=`) | B-tree | `CREATE INDEX ON users (email);` |
+| 范围查询 (`>`, `<`, `BETWEEN`) | B-tree | `CREATE INDEX ON orders (created_at);` |
+| 排序 (`ORDER BY`) | B-tree | `CREATE INDEX ON users (created_at DESC);` |
+| 文本搜索 (`ILIKE`, `to_tsvector`) | GIN / GiST | `CREATE INDEX ON articles USING GIN (to_tsvector('english', title));` |
+| JSONB 包含 (`@>`) | GIN | `CREATE INDEX ON products USING GIN (metadata);` |
+| 数组包含 | GIN | `CREATE INDEX ON posts USING GIN (tags);` |
+| 部分查询 (`WHERE status = 'active'`) | 部分索引 | `CREATE INDEX ON users (email) WHERE status = 'active';` |
+| 覆盖索引（避免回表） | 包含索引 | `CREATE INDEX ON users (id) INCLUDE (name, email);` |

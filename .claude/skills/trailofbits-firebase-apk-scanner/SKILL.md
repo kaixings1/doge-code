@@ -45,7 +45,7 @@ This skill automates Firebase security testing for Android applications. When in
 /plugin install trailofbits/skills/plugins/firebase-apk-scanner
 ```
 
-## Prerequisites
+## 前提条件
 
 Install required dependencies before use:
 

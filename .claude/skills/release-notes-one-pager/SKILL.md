@@ -80,7 +80,7 @@ For every CTA in the emitted HTML (topnav, hero, closing strip), replace both th
 
 If the user does not provide details, do not invent them. Write explicit placeholders:
 
-- Summary: `No summary provided.`
+- 总结: `No summary provided.`
 - Added: `No additions provided`
 - Fixed: `No fixes provided`
 - Breaking changes: `None`

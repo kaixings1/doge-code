@@ -3,16 +3,16 @@ name: 数据清洗
 description: "检测和修复常见数据质量问题：缺失值、重复项、类型不匹配、格式不一致和异常值。"
 ---
 
-# Clean Dataset
+# 数据清洗
 
-## Purpose
-Systematically identify and resolve data quality issues in any tabular dataset. This skill provides a structured cleaning pipeline that handles the most common problems analysts encounter.
+## 目的
+系统地识别和解决任何表格数据集中的数据质量问题。此技能提供了一个结构化的清洗流水线，处理分析师遇到的最常见问题。
 
-## How It Works
+## 工作原理
 
-### Step 1: Initial Assessment
-- Load the dataset and display shape, dtypes, and first/last rows
-- Calculate the percentage of missing values per column
+### 步骤 1：初步评估
+- 加载数据集并显示形状、dtypes 以及首/尾行
+- 计算每列缺失值的百分比
 - Identify duplicate rows (exact and near-duplicates)
 - Check for mixed data types within columns
 - Detect encoding issues (mojibake, special characters)
@@ -45,7 +45,7 @@ Systematically identify and resolve data quality issues in any tabular dataset. 
 - Produce a cleaning log documenting every transformation
 - Suggest next steps (EDA, feature engineering)
 
-## Usage Examples
+## 用法 Examples
 
 **Example 1: CSV with mixed issues**
 ```
@@ -84,10 +84,10 @@ don't touch anything else"
 ## Output Format
 
 You'll receive:
-- **Issue Report**: Summary of all detected problems with severity ratings
+- **Issue Report**: 总结 of all detected problems with severity ratings
 - **Cleaning Plan**: Recommended fix for each issue with rationale
 - **Python Code**: Ready-to-run pandas/polars code implementing all fixes
-- **Validation Summary**: Before/after comparison confirming improvements
+- **Validation 总结**: Before/after comparison confirming improvements
 - **Cleaning Log**: Audit trail of all transformations applied
 
 ---

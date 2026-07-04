@@ -4,155 +4,24 @@ description: "用于审计 Next.js/React 应用安全的技能。涵盖 SSR 漏�
 ---
 
 # Next.js/React 安全分析
+涵盖 Next.js 和 React 应用的全面安全模式，覆盖客户端和服务端攻击面。
 
-Comprehensive security patterns for Next.js and React applications, covering both client-side and server-side attack surfaces.
+## 攻击面分类
+- 服务器操作：SSRF、直接对象引用、缺少认证
+- 路由处理器：未认证端点、CORS配置错误
+- 服务器组件：数据泄露、服务端XSS
+- 中间件：路径绕过、头部注入
+- 客户端组件：XSS、原型污染
 
-## Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     Next.js Application                      │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  Client-Side (Browser)          Server-Side (Node.js)       │
-│  ┌──────────────────┐          ┌──────────────────────┐    │
-│  │ React Components │          │ Server Components    │    │
-│  │ Client Actions   │◄────────►│ Server Actions       │    │
-│  │ useEffect/State  │          │ Route Handlers       │    │
-│  └──────────────────┘          │ Middleware           │    │
-│                                │ getServerSideProps   │    │
-│                                └──────────────────────┘    │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## Attack Surface Categories
-
-### 1. Server Actions (`"use server"`)
-- SSRF via redirect() with Host header manipulation
-- Insecure direct object references
-- Missing authentication/authorization
-- SQL injection in database operations
-
-### 2. Route Handlers (`app/api/**/route.ts`)
-- Unauthenticated API endpoints
-- Mass assignment vulnerabilities
-- Rate limiting bypass
-- CORS misconfiguration
-
-### 3. Server Components
-- Data exposure in serialized props
-- Sensitive data in `__NEXT_DATA__`
-- Server-side XSS in rendered content
-
-### 4. Middleware
-- Path-based bypass (normalization)
-- Authentication bypass
-- Header injection
-
-### 5. Client Components
-- XSS via unsanitized rendering
-- Prototype pollution
-- Open redirects
-
-## Detection Workflow
-
-### Step 1: Map the Application
-
+## 检测命令
 ```bash
-# Find all Server Actions
-grep -rn '"use server"' --include="*.ts" --include="*.tsx"
-
-# Find all Route Handlers
-find . -path "*/app/api/*" \( -name "route.ts" -o -name "route.js" \)
-
-# Find middleware
-find . -name "middleware.ts" -o -name "middleware.js"
-
-# Find page components
-find ./app -name "page.tsx" -o -name "page.js"
+grep -rn '"use server"' --include=*.ts --include=*.tsx
+find . -path */app/api/* -name route.ts -o -name route.js
+find . -name middleware.ts
 ```
 
-### Step 2: Identify Entry Points
-
-```bash
-# Server Actions called from forms
-grep -rn "action=" --include="*.tsx" | grep -v node_modules
-
-# Server Actions called programmatically
-grep -rn "startTransition\|useTransition" --include="*.tsx"
-
-# Route Handler methods
-grep -rn "export.*function\s\+\(GET\|POST\|PUT\|DELETE\|PATCH\)" --include="route.ts"
-```
-
-### Step 3: Check Authentication
-
-```bash
-# Find auth patterns
-grep -rn "getServerSession\|getSession\|auth\(\)" --include="*.ts" --include="*.tsx"
-
-# Find unprotected handlers (no auth import)
-for f in $(find . -path "*/app/api/*" -name "route.ts"); do
-  if ! grep -q "getServerSession\|auth\|verify" "$f"; then
-    echo "Potentially unprotected: $f"
-  fi
-done
-```
-
-### Step 4: Trace Data Flow
-
-```bash
-# Find request data access
-grep -rn "request\.json\|request\.formData\|request\.text" --include="*.ts"
-
-# Find database operations
-grep -rn "prisma\.\|db\.\|sql\`\|query\(" --include="*.ts"
-
-# Find external API calls
-grep -rn "fetch\(\|axios\.\|got\(" --include="*.ts"
-```
-
-## Key Patterns
-
-### SSRF via Server Action Redirect
-
-See `framework-patterns/nextjs-patterns.md` for detailed pattern.
-
-### Unprotected Route Handler
-
-```typescript
-// VULNERABLE: No auth check
-export async function DELETE(req: Request) {
-  const { id } = await req.json();
-  await db.user.delete({ where: { id } });  // Anyone can delete!
-  return Response.json({ success: true });
-}
-```
-
-### Server Component Data Leak
-
-```typescript
-// VULNERABLE: Sensitive data exposed
-async function UserProfile({ userId }: { userId: string }) {
-  const user = await db.user.findUnique({ where: { id: userId } });
-  // Full user object including password hash goes to client!
-  return <ClientProfile user={user} />;
-}
-```
-
-### Middleware Bypass
-
-```typescript
-// VULNERABLE: Case-sensitive matching
-export const config = {
-  matcher: '/admin/:path*'  // /Admin/secret bypasses!
-}
-```
-
-## Integration with Chain Detection
-
-Next.js vulnerabilities often enable chains:
-
-| Next.js Vulnerability | Chains To |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 01 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+## 常见漏洞模式
+- 服务器操作 SSRF
+- 未保护的路由处理器
+- 服务器组件数据泄露
+- 中间件绕过

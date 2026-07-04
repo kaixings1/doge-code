@@ -176,7 +176,7 @@ environment = client.environments.create_or_update(
 )
 ```
 
-## Create Deployment
+## Create 部署
 
 ```python
 from azure.mgmt.apicenter.models import Deployment, DeploymentState
@@ -228,7 +228,7 @@ metadata = client.metadata_schemas.create_or_update(
 | `apis` | API registration and management |
 | `api_versions` | API version management |
 | `api_definitions` | API definition management |
-| `deployments` | Deployment tracking |
+| `deployments` | 部署 tracking |
 | `environments` | Environment management |
 | `metadata_schemas` | Custom metadata definitions |
 
@@ -244,7 +244,7 @@ metadata = client.metadata_schemas.create_or_update(
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

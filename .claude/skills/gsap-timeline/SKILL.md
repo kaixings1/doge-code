@@ -1,7 +1,6 @@
 ---
 name: gsap-timeline
-description: "Gsap Timeline — Gsap Timeline 相关功能和最佳实践"
-  Official GSAP skill for timelines — gsap.timeline(), position parameter, nesting, playback. Use when sequencing animations, choreographing keyframes, or when the user asks about animation sequencing, timelines, or animation order (in GSAP or when recommending a library that supports timelines).
+description: "GSAP Timeline — GSAP 时间线：gsap.timeline()、位置参数、嵌套、播放控制。当编排多步动画序列或用户询问动画顺序时使用。"
 triggers:
   - "gsap timeline"
   - "animation timeline"
@@ -22,7 +21,7 @@ od:
 
 Apply when building multi-step animations, coordinating several tweens in sequence or parallel, or when the user asks about timelines, sequencing, or keyframe-style animation in GSAP.
 
-**Related skills:** For single tweens and eases use **gsap-core**; for scroll-driven timelines use **gsap-scrolltrigger**; for React use **gsap-react**.
+**相关 skills:** For single tweens and eases use **gsap-core**; for scroll-driven timelines use **gsap-scrolltrigger**; for React use **gsap-react**.
 
 ## Creating a Timeline
 
@@ -53,7 +52,7 @@ tl.to(".c", { opacity: 0 }, "<");     // same start as previous
 tl.to(".d", { scale: 2 }, "<0.2");    // 0.2s after previous start
 ```
 
-## Timeline Defaults
+## Timeline 默认s
 
 Pass defaults into the timeline so all child tweens inherit:
 
@@ -105,7 +104,7 @@ master.to(".c", { opacity: 0 }, "+=0.2");
 
 ## Official GSAP Best practices
 
-- ✅ Prefer timelines for sequencing
+- ✅ 优先 timelines for sequencing
 - ✅ Use the **position parameter** (third argument) to place tweens at specific times or relative to labels.
 - ✅ Add **labels** with `addLabel()` for readable, maintainable sequencing.
 - ✅ Pass **defaults** into the timeline constructor so child tweens inherit duration, ease, etc.

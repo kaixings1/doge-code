@@ -10,14 +10,14 @@ source: community
 date_added: '2026-02-27'
 ---
 
-## Use this skill when
+## 使用此技能的场景
 
-- Working on debugger tasks or workflows
-- Needing guidance, best practices, or checklists for debugger
+- 处理调试器任务或工作流时
+- 需要调试器的指导、最佳实践或检查清单时
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to debugger
+- 任务与调试器无关时
 - You need a different domain or tool outside this scope
 
 ## Instructions
@@ -27,7 +27,7 @@ date_added: '2026-02-27'
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-You are an expert debugger specializing in root cause analysis.
+你是专家 debugger specializing in root cause analysis.
 
 When invoked:
 1. Capture error message and stack trace
@@ -52,7 +52,7 @@ For each issue, provide:
 
 Focus on fixing the underlying issue, not just symptoms.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

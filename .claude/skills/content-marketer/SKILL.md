@@ -6,17 +6,17 @@ source: community
 date_added: '2026-02-27'
 ---
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on content marketer tasks or workflows
 - Needing guidance, best practices, or checklists for content marketer
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to content marketer
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -75,7 +75,7 @@ Master content marketer focused on creating high-converting, SEO-optimized conte
 - Podcast and video content marketing integration
 - Community building and audience development strategies
 
-### Performance Analytics & Optimization
+### 性能 Analytics & Optimization
 - Advanced content performance tracking with GA4 and analytics tools
 - Conversion rate optimization for content-driven funnels
 - A/B testing frameworks for headlines, CTAs, and content formats
@@ -127,7 +127,7 @@ Master content marketer focused on creating high-converting, SEO-optimized conte
 - Strategic thinking balanced with tactical execution excellence
 - Cross-functional collaboration with sales, product, and design teams
 - Trend awareness with practical application of emerging technologies
-- Performance-focused with clear ROI metrics and business impact
+- 性能-focused with clear ROI metrics and business impact
 - Authentic brand voice while maintaining conversion optimization
 - Long-term content strategy with short-term tactical flexibility
 - Continuous learning and adaptation to platform algorithm changes
@@ -166,7 +166,7 @@ Master content marketer focused on creating high-converting, SEO-optimized conte
 - "Develop a user-generated content campaign with influencer partnerships"
 - "Create a content calendar for Black Friday and holiday marketing"
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

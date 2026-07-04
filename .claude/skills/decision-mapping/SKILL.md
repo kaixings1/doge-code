@@ -4,29 +4,29 @@ description: "Decision Mapping — Decision Mapping 相关功能和最佳实践"
 disable-model-invocation: true
 ---
 
-This skill is invoked when a loose idea requires more than one agent session to turn into a plan. It creates a stateful decision map in a markdown file, and drives the user through a sequence of tickets to resolve the open questions - which may require either prototyping, research or discussion.
+当一个不成熟的想法需要一个以上的代理会话才能转化为计划时，调用此技能。它在 markdown 文件中创建一个有状态的决策图，并通过一系列工单驱动用户解决未解决的问题——这可能涉及原型制作、研究或讨论。
 
-## The Decision Map
+## 决策图
 
-The decision map is a single compact Markdown file, one per planning effort, git-tracked alongside the project. It is the canonical artifact — the **whole map is loaded as context into every session**, so it must stay compact.
+决策图是一个紧凑的 Markdown 文件，每个规划工作一个，与项目一起进行 git 跟踪。它是规范性的工件——**整个图作为上下文加载到每个会话中**，因此它必须保持紧凑。
 
-Assets created during tickets should be linked to from the map, not duplicated within it.
+工单期间创建的资产应从图中链接，而不是在其中复制。
 
-### Structure
+### 结构
 
-Numbered entries ("tickets"), each its own section keyed by its number:
+编号条目（"工单"），每个都有自己以编号为键的部分：
 
 ```markdown
-## #1: Relational Or Non-Relational Database?
+## #1：关系型还是非关系型数据库？
 
-Blocked by: #<ticket-number>, #<ticket-number>
-Type: Research | Prototype | Grilling
+被以下阻塞：#<ticket-number>、#<ticket-number>
+类型：研究 | 原型 | 追问
 
-### Question
+### 问题
 
-<question-here>
+<问题在此>
 
-### Answer
+### 答案
 
 <answer-here>
 ```

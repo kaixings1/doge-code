@@ -14,30 +14,26 @@ od:
   upstream: "https://github.com/veniceai/skills"
 ---
 
-# venice-audio-music
+# Venice 音频音乐
 
-> Curated from the Venice.ai team.
+> 精选自 Venice.ai 团队。
 
-## What it does
+## 功能
 
-Music generation queueing, retrieval, and completion endpoints via Venice.ai. Suited for jingles, background loops, and prototype scoring.
+通过 Venice.ai 进行音乐生成排队、检索和完成端点。适用于广告曲、背景循环和原型配乐。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/veniceai/skills
-- Category: `audio-music`
+- 上游：https://github.com/veniceai/skills
+- 分类：`audio-music`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在 Open Design 中发布技能信息，以便代理在规划期间发现它。要运行完整的上游工作流及其原始资源、脚本和参考文件，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README 了解确切路径
 open https://github.com/veniceai/skills
 ```
 
-Then ask the agent to invoke this skill by name (`venice-audio-music`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后要求代理通过名称（`venice-audio-music`）或此技能 frontmatter 中列出的触发短语之一调用此技能。

@@ -1,31 +1,13 @@
 ---
 name: infinite-gratitude
-description: "多代理研究技能，用于并行研究执行（10 个代理，经过真实案例研究验证）。"
+description: "无限感恩 — 感恩练习和正念指导"
 risk: safe
-source: "https://github.com/sstklen/infinite-gratitude"
-date_added: "2026-02-27"
+source: community
 ---
-
-# Infinite Gratitude
-
-> **Source**: [sstklen/infinite-gratitude](https://github.com/sstklen/infinite-gratitude)
-
-## Description
-
-A multi-agent research skill designed for parallel research execution. It orchestrates 10 agents to conduct deep research, battle-tested with real case studies.
-
-## When to Use
-Use this skill when you need to perform extensive, parallelized research on a topic, leveraging multiple agents to gather and synthesize information more efficiently than a single linear process.
-
-## How to Use
-
-This is an external skill. Please refer to the [official repository](https://github.com/sstklen/infinite-gratitude) for installation and usage instructions.
-
-```bash
-git clone https://github.com/sstklen/infinite-gratitude
-```
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+# 无限感恩
+感恩练习和正念指导。
+## 核心实践
+- 每日感恩记录
+- 正念冥想
+- 积极心理练习
+## 限制

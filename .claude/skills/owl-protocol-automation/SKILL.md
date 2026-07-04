@@ -1,23 +1,23 @@
 ---
 name: owl-protocol-automation
-description: "通过 Rube MCP (Composio) 自动执行 Owl Protocol 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Owl Protocol 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
-# Owl Protocol Automation via Rube MCP
+# 通过 Rube MCP 实现 Owl Protocol 自动化
 
-Automate Owl Protocol operations through Composio's Owl Protocol toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Owl Protocol 工具包自动化 Owl Protocol 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/owl_protocol](https://composio.dev/toolkits/owl_protocol)
+**工具包文档**: [composio.dev/toolkits/owl_protocol](https://composio.dev/toolkits/owl_protocol)
 
-## Prerequisites
+## 前提条件
 
 - Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
 - Active Owl Protocol connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `owl_protocol`
 - Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
-## Setup
+## 设置
 
 **Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
 
@@ -68,16 +68,24 @@ memory: {}
 session_id: "your_session_id"
 ```
 
-## Known Pitfalls
+## 已知陷阱
 
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
+- **始终先搜索**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
+- **检查连接**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
+- **Schema 合规**: Use exact field names and types from the search results
+- **Memory 参数**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
+- **会话复用**: Reuse session IDs within a workflow. Generate new ones for new workflows
+- **分页**: Check responses for pagination tokens and continue fetching until complete
 
-## Quick Reference
+## 快速参考
 
 | Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 31 MINUTES 22 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+|-----------|----------|
+| Find tools | `RUBE_SEARCH_TOOLS` with Owl Protocol-specific use case |
+| Connect | `RUBE_MANAGE_CONNECTIONS` with toolkit `owl_protocol` |
+| Execute | `RUBE_MULTI_EXECUTE_TOOL` with discovered tool slugs |
+| Bulk ops | `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` |
+| Full schema | `RUBE_GET_TOOL_SCHEMAS` for tools with `schemaRef` |
+
+---
+*Powered by [Composio](https://composio.dev)*

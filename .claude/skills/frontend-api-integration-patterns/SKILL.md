@@ -19,19 +19,19 @@ tools:
   - codex
 ---
 
-# Frontend API Integration Patterns
+# 前端 API 集成模式
 
-## Overview
+## 概述
 
-This skill provides production-ready patterns for integrating frontend applications with backend APIs.
+此技能提供将前端应用与后端 API 集成的生产级模式。
 
-Most frontend issues are not caused by APIs being difficult to call, but by **incorrect handling of asynchronous behavior**—leading to race conditions, stale data, duplicated requests, and poor user experience.
+多数前端问题并非由于 API 难以调用，而是由于**异步行为的错误处理**—导致竞态条件、过期数据、重复请求和不良用户体验。
 
-This skill focuses on **correctness, resilience, and user experience**, not just making API calls work.
+此技能聚焦于**正确性、弹性和用户体验**，而不仅仅是让 API 调用正常工作。
 
 ---
 
-## When to Use This Skill
+## 何时使用此技能
 
 * Connecting frontend apps (React, React Native, Vue, etc.) to backend APIs
 * Integrating ML/AI endpoints (`/predict`, `/recommend`)
@@ -41,7 +41,7 @@ This skill focuses on **correctness, resilience, and user experience**, not just
 
 ---
 
-## Core Patterns
+## 核心模式
 
 ### 1. API Layer (Separation of Concerns)
 
@@ -210,7 +210,7 @@ export const dedupedFetch = (key, fn) => {
 
 ---
 
-## Examples
+## 示例
 
 ### Example 1: ML Prediction with Cancellation
 
@@ -283,7 +283,7 @@ const deleteItem = async (id) => {
 
 ---
 
-## Best Practices
+## 最佳实践
 
 * ✅ Centralize API logic in a dedicated layer
 * ✅ Normalize errors using a custom error class
@@ -295,7 +295,7 @@ const deleteItem = async (id) => {
 
 ---
 
-## Anti-Patterns
+## 反模式
 
 * ❌ Retrying 4xx errors
 * ❌ No request cancellation (memory leaks)
@@ -306,7 +306,7 @@ const deleteItem = async (id) => {
 
 ---
 
-## Common Pitfalls
+## 常见陷阱
 
 **Problem:** UI shows stale data
 **Solution:** Use cancellation or guard against outdated responses
@@ -325,7 +325,7 @@ const deleteItem = async (id) => {
 
 ---
 
-## Limitations
+## 限制
 
 * These examples use vanilla JavaScript patterns; adapt them to your framework's data-fetching library when using React Query, SWR, Apollo, Relay, or similar tools.
 * Do not retry non-idempotent mutations unless the backend provides idempotency keys or another duplicate-safe contract.
@@ -333,7 +333,7 @@ const deleteItem = async (id) => {
 
 ---
 
-## Additional Resources
+## 附加资源
 
 * https://developer.mozilla.org/en-US/docs/Web/API/AbortController
 * https://react.dev

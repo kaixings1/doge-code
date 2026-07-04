@@ -8,16 +8,15 @@ source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
 ---
 
-# Discord Bot Architect
+# Discord Bot 架构师
 
-Specialized skill for building production-ready Discord bots.
-Covers Discord.js (JavaScript) and Pycord (Python), gateway intents,
-slash commands, interactive components, rate limiting, and sharding.
+用于构建生产级 Discord 机器人的专业技能。
+涵盖 Discord.js (JavaScript) 和 Pycord (Python)、网关意图、斜杠命令、交互组件、速率限制和分片。
 
-## Principles
+## 原则
 
-- Slash commands over message parsing (Message Content Intent deprecated)
-- Acknowledge interactions within 3 seconds, always
+- 斜杠命令优先于消息解析（消息内容意图已弃用）
+- 始终在 3 秒内确认交互
 - Request only required intents (minimize privileged intents)
 - Handle rate limits gracefully with exponential backoff
 - Plan for sharding from the start (required at 2500+ guilds)
@@ -193,7 +192,7 @@ discord-bot/
 
 Discord bot with Pycord (Python) and application commands
 
-**When to use**: Building Discord bots with Python,Prefer async/await patterns,Need good slash command support
+**When to use**: Building Discord bots with Python,优先 async/await patterns,Need good slash command support
 
 ```python
 # main.py
@@ -586,7 +585,7 @@ async def slow_task(ctx: discord.ApplicationContext):
 
 Rich embedded messages for professional-looking content
 
-**When to use**: Displaying formatted information,Status updates, help menus, logs,Data with structure (fields, images)
+**When to use**: Displaying formatted information,状态 updates, help menus, logs,Data with structure (fields, images)
 
 ```javascript
 const { EmbedBuilder, Colors } = require('discord.js');
@@ -871,7 +870,7 @@ Discord requires ALL interactions to be acknowledged within 3 seconds:
 - Slash commands
 - Button clicks
 - Select menu selections
-- Context menu commands
+- 上下文 menu commands
 
 If you do ANY slow operation (database, API, file I/O) before responding,
 you'll miss the window. Discord shows an error even if your bot processes
@@ -922,7 +921,7 @@ await interaction.deferUpdate();
 await interaction.deferReply({ ephemeral: true });
 ```
 
-### Missing Privileged Intent Configuration
+### Missing Privileged Intent 配置
 
 Severity: CRITICAL
 
@@ -1096,7 +1095,7 @@ Common exposure points:
 
 Recommended fix:
 
-## Never hardcode tokens
+## 绝不 hardcode tokens
 
 ```javascript
 // BAD - never do this
@@ -1138,7 +1137,7 @@ require('dotenv').config();
 const token = process.env.DISCORD_TOKEN;
 ```
 
-### Bot Missing applications.commands Scope
+### Bot Missing applications.commands 范围
 
 Severity: HIGH
 
@@ -1260,7 +1259,7 @@ Discord gateway requires regular heartbeats. Issues:
 
 Recommended fix:
 
-## Never block the event loop
+## 绝不 block the event loop
 
 ```javascript
 // BAD - blocks event loop
@@ -1378,7 +1377,7 @@ Message: Token assigned from string literal. Use environment variable.
 
 Severity: ERROR
 
-Never expose Discord tokens to browsers
+绝不 expose Discord tokens to browsers
 
 Message: Discord credentials exposed client-side. Only use server-side.
 
@@ -1404,7 +1403,7 @@ Severity: WARNING
 
 Message Content is privileged, prefer slash commands
 
-Message: Using Message Content intent. Consider slash commands instead.
+Message: Using Message Content intent. 考虑 slash commands instead.
 
 ### Requesting All Intents
 
@@ -1434,7 +1433,7 @@ Message: Registering commands in loop. Use bulk registration.
 
 Severity: INFO
 
-Consider handling rate limits for bulk operations
+考虑 handling rate limits for bulk operations
 
 Message: Bulk operation without rate limit handling.
 
@@ -1451,9 +1450,9 @@ Message: Bulk operation without rate limit handling.
 - user needs payment integration -> stripe-specialist (Premium bot features, subscription management)
 
 ## When to Use
-Use this skill when the request clearly matches the capabilities and patterns described above.
+使用此技能当 the request clearly matches the capabilities and patterns described above.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

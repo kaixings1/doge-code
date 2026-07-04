@@ -7,13 +7,13 @@ source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
 ---
 
-# Clerk Authentication
+# Clerk 认证
 
-Expert patterns for Clerk auth implementation, middleware, organizations, webhooks, and user sync
+Clerk 认证实施、中间件、组织、webhooks 和用户同步的专家模式
 
 ## Patterns
 
-### Next.js App Router Setup
+### Next.js App Router 设置
 
 Complete Clerk setup for Next.js 14/15 App Router.
 
@@ -96,7 +96,7 @@ export function Header() {
 - Pattern: ClerkProvider inside page component | Why: Provider must wrap entire app in root layout | Fix: Move ClerkProvider to app/layout.tsx
 - Pattern: Using auth() without middleware | Why: auth() requires clerkMiddleware to be configured | Fix: Set up middleware.ts with clerkMiddleware
 
-### References
+### 参考资料
 
 - https://clerk.com/docs/nextjs/getting-started/quickstart
 
@@ -141,7 +141,7 @@ export const config = {
   matcher: [
     // Match all routes except static files
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
+    // 始终 run for API routes
     '/(api|trpc)(.*)',
   ],
 };
@@ -173,7 +173,7 @@ export default clerkMiddleware(async (auth, req) => {
 - Pattern: Manual redirects in components | Why: Double redirects, missed routes | Fix: Handle all redirects in middleware
 - Pattern: Missing matcher config | Why: Middleware won't run on all routes | Fix: Add comprehensive matcher pattern
 
-### References
+### 参考资料
 
 - https://clerk.com/docs/reference/nextjs/clerk-middleware
 
@@ -182,8 +182,8 @@ export default clerkMiddleware(async (auth, req) => {
 Access auth state in Server Components using auth() and currentUser().
 
 Key functions:
-- auth(): Returns userId, sessionId, orgId, claims
-- currentUser(): Returns full User object
+- auth(): 返回值 userId, sessionId, orgId, claims
+- currentUser(): 返回值 full User object
 - Both require clerkMiddleware to be configured
 
 ### Code_example
@@ -265,7 +265,7 @@ export async function createPost(formData: FormData) {
 - Pattern: Not awaiting auth() | Why: auth() is async in App Router | Fix: Use await auth() or const { userId } = await auth()
 - Pattern: Using currentUser() for simple checks | Why: Counts toward rate limits, slower than auth() | Fix: Use auth() for userId checks, currentUser() for user data
 
-### References
+### 参考资料
 
 - https://clerk.com/docs/references/nextjs/auth
 
@@ -365,10 +365,10 @@ export function ProtectedContent() {
 
 ### Anti_patterns
 
-- Pattern: Not checking isLoaded | Why: Auth state undefined during hydration | Fix: Always check isLoaded before accessing user/auth state
+- Pattern: Not checking isLoaded | Why: Auth state undefined during hydration | Fix: 始终 check isLoaded before accessing user/auth state
 - Pattern: Using hooks in Server Components | Why: Hooks only work in Client Components | Fix: Use auth() and currentUser() in Server Components
 
-### References
+### 参考资料
 
 - https://clerk.com/docs/references/react/use-user
 
@@ -472,10 +472,10 @@ export function AdminPanel() {
 
 ### Anti_patterns
 
-- Pattern: Not scoping data by orgId | Why: Data leaks between organizations | Fix: Always filter queries by orgId from auth()
+- Pattern: Not scoping data by orgId | Why: Data leaks between organizations | Fix: 始终 filter queries by orgId from auth()
 - Pattern: Hardcoding role strings | Why: Typos cause access issues | Fix: Define role constants or use TypeScript enums
 
-### References
+### 参考资料
 
 - https://clerk.com/docs/guides/organizations
 - https://clerk.com/articles/multi-tenancy-in-react-applications-guide
@@ -595,11 +595,11 @@ model User {
 
 ### Anti_patterns
 
-- Pattern: Not verifying webhook signature | Why: Anyone can hit your endpoint with fake data | Fix: Always verify with svix
+- Pattern: Not verifying webhook signature | Why: Anyone can hit your endpoint with fake data | Fix: 始终 verify with svix
 - Pattern: Blocking middleware for webhook routes | Why: Webhooks come from Clerk, not authenticated users | Fix: Add /api/webhooks(.*)' to public routes
 - Pattern: Not handling race conditions | Why: user.created might arrive after user.updated | Fix: Use upsert instead of create, handle missing records
 
-### References
+### 参考资料
 
 - https://clerk.com/docs/webhooks/sync-data
 - https://clerk.com/articles/how-to-sync-clerk-user-data-to-your-database
@@ -684,10 +684,10 @@ export async function GET(req: Request) {
 
 ### Anti_patterns
 
-- Pattern: Trusting middleware alone | Why: Middleware can be bypassed (CVE-2025-29927) | Fix: Always verify auth in route handler too
-- Pattern: Not checking orgId for multi-tenant | Why: Users might access other org's data | Fix: Always filter by orgId from auth()
+- Pattern: Trusting middleware alone | Why: Middleware can be bypassed (CVE-2025-29927) | Fix: 始终 verify auth in route handler too
+- Pattern: Not checking orgId for multi-tenant | Why: Users might access other org's data | Fix: 始终 filter by orgId from auth()
 
-### References
+### 参考资料
 
 - https://clerk.com/docs/guides/protecting-pages
 
@@ -705,7 +705,7 @@ Severity: HIGH
 
 Severity: HIGH
 
-### auth() Requires clerkMiddleware Configuration
+### auth() 需要 clerkMiddleware 配置
 
 Severity: HIGH
 
@@ -729,7 +729,7 @@ Severity: MEDIUM
 
 Severity: MEDIUM
 
-### Organization Data Not Scoped by orgId
+### Organization Data Not 范围d by orgId
 
 Severity: HIGH
 
@@ -837,7 +837,7 @@ Message: Webhook without signature verification. Use svix to verify.
 - User mentions or implies: sso
 - User mentions or implies: single sign-on
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

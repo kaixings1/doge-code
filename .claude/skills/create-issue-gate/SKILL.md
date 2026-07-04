@@ -6,20 +6,20 @@ source: community
 date_added: "2026-03-12"
 ---
 
-# Create Issue Gate
+# 创建问题门禁
 
-## Overview
+## 概述
 
-Create GitHub issues as the single tracking entrypoint for tasks, with a hard gate on acceptance criteria.
+创建 GitHub issue 作为任务的唯一跟踪入口，对验收标准设置硬性门禁。
 
-Core rule: **no explicit, testable acceptance criteria from user => issue stays `draft` and execution is blocked.**
+核心规则：**用户没有提供明确、可测试的验收标准 => issue 保持 `draft` 状态，执行被阻塞。**
 
-## When to Use
+## 何时使用
 - You are starting a new implementation task and want a GitHub issue to be the required tracking entrypoint.
 - The work must be blocked until the user provides explicit, testable acceptance criteria.
 - You need to distinguish between `draft`, `ready`, and `blocked` work before execution begins.
 
-## Required Fields
+## 必填字段
 
 Every issue must include these sections:
 - Problem
@@ -30,7 +30,7 @@ Every issue must include these sections:
 - Dependencies/Blockers
 - Status (`draft` | `ready` | `blocked` | `done`)
 
-## Acceptance Criteria Gate
+## 验收标准门禁
 
 Acceptance criteria are valid only when they are testable and pass/fail checkable.
 
@@ -44,7 +44,7 @@ If criteria are missing or non-testable:
 - add `Execution Gate: blocked (missing valid acceptance criteria)`
 - do not move task to execution
 
-## Issue Creation Mode
+## Issue 创建模式
 
 Default mode is direct GitHub creation using `gh issue create`.
 
@@ -76,7 +76,7 @@ draft|ready|blocked|done
 allowed|blocked (<reason>)
 ```
 
-## Status Rules
+## 状态规则
 
 - `draft`: missing/weak acceptance criteria or incomplete task definition
 - `ready`: acceptance criteria are explicit and testable
@@ -85,7 +85,7 @@ allowed|blocked (<reason>)
 
 Never mark an issue `ready` without valid acceptance criteria.
 
-## Handoff to Execution
+## 移交到执行
 
 Execution workflows (for example `closed-loop-delivery`) may start only when:
 - issue status is `ready`
@@ -93,7 +93,7 @@ Execution workflows (for example `closed-loop-delivery`) may start only when:
 
 If issue is `draft`, stop and request user-provided acceptance criteria.
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

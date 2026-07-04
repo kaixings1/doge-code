@@ -14,9 +14,9 @@ license: "MIT"
 license_source: "https://github.com/iradoweck/antigravity-awesome-skills/blob/main/LICENSE"
 ---
 
-# GeminiIgnore FinOps Setup & Optimization
+# GeminiIgnore FinOps 设置 & Optimization
 
-## Overview
+## 概述
 
 A skill to construct, refine, and maintain high-performance `.geminiignore` files across diverse tech stacks. By filtering out machine-generated code, heavy logs, package locks, and binary assets, this skill optimizes the AI agent's context window, accelerates processing speed, and reduces token consumption costs (FinOps).
 
@@ -162,12 +162,12 @@ __pycache__/
 - ✅ **Whitelist config examples**: Use rules like `!.env.example` alongside `.env` ignores so the AI understands configuration structure without exposing credentials.
 - ❌ **Do not ignore source code**: Avoid overly broad folder patterns like `lib/` or `app/` if they contain primary source code. Be specific (e.g., block `vendor/bundle/` but not your actual code).
 
-## Limitations
+## 局限性
 
 - A `.geminiignore` file only affects AI tools parsing the workspace; it does not replace `.gitignore` for Git repository hosting.
 - Patterns must be formatted correctly according to gitignore-style globbing to avoid accidentally ignoring source files.
 
-## Related Skills
+## 相关 Skills
 
 - `@context-optimization` - Broad tactics for context window management.
 - `@clean-code` - Architectural practices for clean, human-readable codebases.

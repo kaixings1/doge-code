@@ -1,7 +1,7 @@
 ---
 name: pptx
-description: "Pptx — Pptx 相关功能和最佳实践"
-  Read, generate, and adjust PowerPoint slides, layouts, and templates. Useful for executive decks, training material, and product reviews.
+description: "Pptx — PowerPoint 相关功能和最佳实践"
+  读取、生成和调整 PowerPoint 幻灯片、布局和模板。适用于高管汇报、培训材料和产品评审。
 triggers:
   - "pptx"
   - "powerpoint"
@@ -14,30 +14,26 @@ od:
   upstream: "https://github.com/anthropics/skills/tree/main/skills/pptx"
 ---
 
-# pptx
+# PPTX
 
-> Curated from Anthropic's official skills repository.
+> 来自 Anthropic 官方技能仓库。
 
-## What it does
+## 功能
 
-Read, generate, and adjust PowerPoint slides, layouts, and templates. Useful for executive decks, training material, and product reviews.
+读取、生成和调整 PowerPoint 幻灯片、布局和模板。适用于高管汇报、培训材料和产品评审。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/anthropics/skills/tree/main/skills/pptx
-- Category: `slides`
+- 上游: https://github.com/anthropics/skills/tree/main/skills/pptx
+- 分类: `slides`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在 Open Design 中宣传该技能，以便代理在规划期间发现它。要运行完整的上游工作流及其原始资源、脚本和参考资料，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README 获取确切路径
 open https://github.com/anthropics/skills/tree/main/skills/pptx
 ```
 
-Then ask the agent to invoke this skill by name (`pptx`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后通过名称（`pptx`）或此技能前置元数据中列出的触发短语之一要求代理调用此技能。

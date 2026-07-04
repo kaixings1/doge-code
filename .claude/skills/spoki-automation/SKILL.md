@@ -5,30 +5,30 @@ requires:
   mcp: [rube]
 ---
 
-# Spoki Automation via Rube MCP
+# 通过 Rube MCP 自动执行 Spoki
 
-Automate Spoki operations through Composio's Spoki toolkit via Rube MCP.
+通过 Rube MCP 经由 Composio 的 Spoki 工具包自动执行 Spoki 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/spoki](https://composio.dev/toolkits/spoki)
+**工具包文档：** [composio.dev/toolkits/spoki](https://composio.dev/toolkits/spoki)
 
-## Prerequisites
+## 前置条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Spoki connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `spoki`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 使用工具包 `spoki` 建立活动的 Spoki 连接
+- 始终先调用 `RUBE_SEARCH_TOOLS` 以获取当前工具 schema
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**：在客户端配置中添加 `https://rube.app/mcp` 作为 MCP 服务器。无需 API 密钥——只需添加端点即可工作。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `spoki`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `spoki` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按照返回的认证链接���成设置
+4. 在运行任何工作流之前确认连接状态显示为 ACTIVE
 
-## Tool Discovery
+## 工具发现
 
-Always discover available tools before executing workflows:
+在执行工作流之前始终先发现可用工具：
 
 ```
 RUBE_SEARCH_TOOLS
@@ -36,11 +36,11 @@ queries: [{use_case: "Spoki operations", known_fields: ""}]
 session: {generate_id: true}
 ```
 
-This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
+这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
 
-## Core Workflow Pattern
+## 核心工作流模式
 
-### Step 1: Discover Available Tools
+### 步骤 1：发现可用工具
 
 ```
 RUBE_SEARCH_TOOLS
@@ -48,7 +48,7 @@ queries: [{use_case: "your specific Spoki task"}]
 session: {id: "existing_session_id"}
 ```
 
-### Step 2: Check Connection
+### 步骤 2：检查连接
 
 ```
 RUBE_MANAGE_CONNECTIONS
@@ -56,7 +56,7 @@ toolkits: ["spoki"]
 session_id: "your_session_id"
 ```
 
-### Step 3: Execute Tools
+### 步骤 3：执行工具
 
 ```
 RUBE_MULTI_EXECUTE_TOOL
@@ -68,16 +68,16 @@ memory: {}
 session_id: "your_session_id"
 ```
 
-## Known Pitfalls
+## 已知陷阱
 
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
+- **始终先搜索**：工具 schema 会变化。未经调用 `RUBE_SEARCH_TOOLS` 切勿硬编码工具 slug 或参数
+- **检查连接**：执行工具前确认 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
+- **Schema 合规**：使用搜索结果中的精确字段名和类型
+- **Memory 参数**：始终在 `RUBE_MULTI_EXECUTE_TOOL` 调用中包含 `memory`，即使为空（`{}`）
+- **会话复用**：在工作流中复用会话 ID。为新工作流生成新 ID
+- **分页**：检查响应中的分页令牌，持续获取直到完成
 
-## Quick Reference
+## 快速参考
 
-| Operation | Approach |
+| 操作 | 方法 |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 00 MINUTES 28 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

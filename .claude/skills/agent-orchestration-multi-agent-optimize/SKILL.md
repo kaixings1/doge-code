@@ -8,14 +8,14 @@ date_added: "2026-02-27"
 
 # Multi-Agent Optimization Toolkit
 
-## Use this skill when
+## 使用此技能的场景
 
 - Improving multi-agent coordination, throughput, or latency
 - Profiling agent workflows to identify bottlenecks
 - Designing orchestration strategies for complex workflows
 - Optimizing cost, context usage, or tool efficiency
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - You only need to tune a single agent prompt
 - There are no measurable metrics or evaluation data
@@ -33,16 +33,16 @@ date_added: "2026-02-27"
 - Avoid deploying orchestration changes without regression testing.
 - Roll out changes gradually to prevent system-wide regressions.
 
-## Role: AI-Powered Multi-Agent Performance Engineering Specialist
+## Role: AI-Powered Multi-Agent 性能 Engineering Specialist
 
-### Context
+### 上下文
 
 The Multi-Agent Optimization Tool is an advanced AI-driven framework designed to holistically improve system performance through intelligent, coordinated agent-based optimization. Leveraging cutting-edge AI orchestration techniques, this tool provides a comprehensive approach to performance engineering across multiple domains.
 
 ### Core Capabilities
 
 - Intelligent multi-agent coordination
-- Performance profiling and bottleneck identification
+- 性能 profiling and bottleneck identification
 - Adaptive optimization strategies
 - Cross-domain performance optimization
 - Cost and efficiency tracking
@@ -55,9 +55,9 @@ The tool processes optimization arguments with flexible input parameters:
 - `$PERFORMANCE_GOALS`: Specific performance metrics and objectives
 - `$OPTIMIZATION_SCOPE`: Depth of optimization (quick-win, comprehensive)
 - `$BUDGET_CONSTRAINTS`: Cost and resource limitations
-- `$QUALITY_METRICS`: Performance quality thresholds
+- `$QUALITY_METRICS`: 性能 quality thresholds
 
-## 1. Multi-Agent Performance Profiling
+## 1. Multi-Agent 性能 Profiling
 
 ### Profiling Strategy
 
@@ -67,17 +67,17 @@ The tool processes optimization arguments with flexible input parameters:
 
 #### Profiling Agents
 
-1. **Database Performance Agent**
+1. **Database 性能 Agent**
    - Query execution time analysis
    - Index utilization tracking
    - Resource consumption monitoring
 
-2. **Application Performance Agent**
+2. **Application 性能 Agent**
    - CPU and memory profiling
    - Algorithmic complexity assessment
    - Concurrency and async operation analysis
 
-3. **Frontend Performance Agent**
+3. **Frontend 性能 Agent**
    - Rendering performance metrics
    - Network request optimization
    - Core Web Vitals monitoring
@@ -99,7 +99,7 @@ def multi_agent_profiler(target_system):
     return aggregate_performance_metrics(performance_profile)
 ```
 
-## 2. Context Window Optimization
+## 2. 上下文 Window Optimization
 
 ### Optimization Techniques
 
@@ -108,7 +108,7 @@ def multi_agent_profiler(target_system):
 - Dynamic context window resizing
 - Token budget management
 
-### Context Compression Algorithm
+### 上下文 Compression Algorithm
 
 ```python
 def compress_context(context, max_tokens=4000):
@@ -191,7 +191,7 @@ class CostOptimizer:
 
 ## 6. Latency Reduction Techniques
 
-### Performance Acceleration
+### 性能 Acceleration
 
 - Predictive caching
 - Pre-warming agent contexts
@@ -202,7 +202,7 @@ class CostOptimizer:
 
 ### Optimization Spectrum
 
-- Performance thresholds
+- 性能 thresholds
 - Acceptable degradation margins
 - Quality-aware optimization
 - Intelligent compromise selection
@@ -225,23 +225,23 @@ class CostOptimizer:
 3. Cost and performance tracking
 4. Continuous improvement cycle
 
-### Workflow 2: Enterprise API Performance Enhancement
+### Workflow 2: Enterprise API 性能 Enhancement
 
 1. Comprehensive system analysis
 2. Multi-layered agent optimization
 3. Iterative performance refinement
 4. Cost-efficient scaling strategy
 
-## Key Considerations
+## Key 考虑ations
 
-- Always measure before and after optimization
+- 始终 measure before and after optimization
 - Maintain system stability during optimization
 - Balance performance gains with resource consumption
 - Implement gradual, reversible changes
 
 Target Optimization: $ARGUMENTS
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

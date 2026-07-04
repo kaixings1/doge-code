@@ -3,14 +3,25 @@ name: 时间序列图
 description: "创建时间序列可视化：折线图、面积图、季节性分解图、迷你图和日历热力图。适用于展示随时间变化的趋势、比较时间模式或呈现预测结果。"
 ---
 
-# Plot Time Series
+# 时间序列图
 
-## Purpose
-Visualize temporal data with charts optimized for showing trends, seasonality, and changes over time.
+## 用途
+使用针对显示趋势、季节性和随时间变化而优化的图表可视化时间数据。
 
-## How It Works
+## 工作原理
 
-### Chart Types
+### 图表类型
 
-| Chart | Best For |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 30 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 图表 | 最佳用途 |
+|------|----------|
+| 折线图 | 显示随时间变化的趋势 |
+| 面积图 | 强调随时间变化的幅度，适合堆叠比较 |
+| 季节性分解图 | 将时间序列分解为趋势、季节性和残差 |
+| 迷你图 | 在文本或表格中嵌入紧凑的时间序列 |
+| 日历热力图 | 在日历网格中显示每日值（如 GitHub 贡献图） |
+
+## 输出格式
+
+- **图表代码：** 完整实现的 Python 代码
+- **设计原理：** 为什么选择该图表类型以及进行了哪些自定义
+- **数据要求：** 必要的列和格式

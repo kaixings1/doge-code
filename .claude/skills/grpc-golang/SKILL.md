@@ -8,38 +8,38 @@ date_added: "2026-02-27"
 
 # gRPC Golang (gRPC-Go)
 
-## Overview
+## 概述
 
-Comprehensive guide for designing and implementing production-grade gRPC services in Go. Covers contract standardization with Buf, transport layer security via mTLS, and deep observability with OpenTelemetry interceptors.
+在 Go 中设计和实现生产级 gRPC 服务的全面指南。涵盖使用 Buf 进行契约标准化、通过 mTLS 的传输层安全以及使用 OpenTelemetry 拦截器的深度可观测性。
 
-## Use this skill when
+## 何时使用本技能
 
-- Designing microservices communication with gRPC in Go.
-- Building high-performance internal APIs using Protobuf.
-- Implementing streaming workloads (unidirectional or bidirectional).
-- Standardizing API contracts using Protobuf and Buf.
-- Configuring mTLS for service-to-service authentication.
+- 在 Go 中使用 gRPC 设计微服务通信时。
+- 使用 Protobuf 构建高性能内部 API 时。
+- 实现流式工作负载（单向或双向）时。
+- 使用 Protobuf 和 Buf 标准化 API 契约时。
+- 配置 mTLS 实现服务到服务认证时。
 
-## Do not use this skill when
+## 何时不使用本技能
 
-- Building pure REST/HTTP public APIs without gRPC requirements.
-- Modifying legacy `.proto` files without the ability to introduce a new API version (e.g., `api.v2`) or ensure backward compatibility.
-- Managing service mesh traffic routing (e.g., Istio/Linkerd), which is outside the application code scope.
+- 构建纯 REST/HTTP 公共 API 且无 gRPC 需求时。
+- 修改遗留 `.proto` 文件但无法引入新 API 版本（例如 `api.v2`）或确保向后兼容时。
+- 管理服务网格流量路由（例如 Istio/Linkerd），这超出了应用代码范围。
 
-## Step-by-Step Guide
+## 分步指南
 
-1. **Confirm Technical Context**: Identify Go version, gRPC-Go version, and whether the project uses Buf or raw protoc.
-2. **Confirm Requirements**: Identify mTLS needs, load patterns (unary/streaming), SLOs, and message size limits.
-3. **Plan Schema**: Define package versioning (e.g., `api.v1`), resource types, and error mapping.
-4. **Security Design**: Implement mTLS for service-to-service authentication.
-5. **Observability**: Configure interceptors for tracing, metrics, and structured logging.
-6. **Verification**: Always run `buf lint` and breaking change checks before finalizing code generation.
+1. **确认技术上下文**：确定 Go 版本、gRPC-Go 版本以及项目使用 Buf 还是原始 protoc。
+2. **确认需求**：确定 mTLS 需求、负载模式（一元/流式）、SLO 和消息大小限制。
+3. **规划 Schema**：定义包版本控制（例如 `api.v1`）、资源类型和错误映射。
+4. **安全设计**：实现 mTLS 进行服务到服务认证。
+5. **可观测性**：配置拦截器用于追踪、指标和结构化日志。
+6. **验证**：在最终确定代码生成之前，始终运行 `buf lint` 和破坏性变更检查。
 
-Refer to `resources/implementation-playbook.md` for detailed patterns, code examples, and anti-patterns.
+有关详细的模式、代码示例和反模式，请参考 `resources/implementation-playbook.md`。
 
-## Examples
+## 示例
 
-### Example 1: Defining a Service & Message (v1 API)
+### 示例 1：定义服务与消息（v1 API）
 
 ```proto
 syntax = "proto3";
@@ -64,41 +64,41 @@ message GetUserResponse {
 }
 ```
 
-## Best Practices
+## 最佳实践
 
-- ✅ **Do:** Use Buf to standardize your toolchain and linting with `buf.yaml` and `buf.gen.yaml`.
-- ✅ **Do:** Always use semantic versioning in package paths (e.g., `package api.v1`).
-- ✅ **Do:** Enforce mTLS for all internal service-to-service communication.
-- ✅ **Do:** Handle `ctx.Done()` in all streaming handlers to prevent resource leaks.
-- ✅ **Do:** Map domain errors to standard gRPC status codes (e.g., `codes.NotFound`).
-- ❌ **Don't:** Return raw internal error strings or stack traces to gRPC clients.
-- ❌ **Don't:** Create a new `grpc.ClientConn` per request; always reuse connections.
+- ✅ **应做：** 使用 Buf 通过 `buf.yaml` 和 `buf.gen.yaml` 标准化工具链和代码检查。
+- ✅ **应做：** 始终在包路径中使用语义版本控制（例如 `package api.v1`）。
+- ✅ **应做：** 对所有内部服务间通信强制使用 mTLS。
+- ✅ **应做：** 在所有流式处理器中处理 `ctx.Done()` 以防止资源泄漏。
+- ✅ **应做：** 将领域错误映射到标准 gRPC 状态码（例如 `codes.NotFound`）。
+- ❌ **不应：** 向 gRPC 客户端返回原始内部错误字符串或堆栈跟踪。
+- ❌ **不应：** 为每个请求创建新的 `grpc.ClientConn`；始终复用连接。
 
-## Troubleshooting
+## 故障排除
 
-- **Error: Inconsistent Gen**: If the generated code does not match the schema, run `buf generate` and verify the `go_package` option.
-- **Error: Context Deadline**: Check client timeouts and ensure the server is not blocking infinitely in streaming handlers.
-- **Error: mTLS Handshake**: Ensure the CA certificate is correctly added to the `x509.CertPool` on both client and server sides.
+- **错误：生成不一致**：如果生成的代码与 schema 不匹配，运行 `buf generate` 并验证 `go_package` 选项。
+- **错误：上下文超时**：检查客户端超时并确保服务器在流式处理器中不会无限阻塞。
+- **错误：mTLS 握手**：确保 CA 证书已正确添加到客户端和服务端的 `x509.CertPool`。
 
-## Limitations
+## 局限性
 
-- Does not cover service mesh traffic routing (Istio/Linkerd configuration).
-- Does not cover gRPC-Web or browser-based gRPC integration.
-- Assumes Go 1.21+ and gRPC-Go v1.60+; older versions may have different APIs (e.g., `grpc.Dial` vs `grpc.NewClient`).
-- Does not cover L7 gRPC-aware load balancer configuration (e.g., Envoy, NGINX).
-- Does not address Protobuf schema registry or large-scale schema governance beyond Buf lint.
+- 不涵盖服务网格流量路由（Istio/Linkerd 配置）。
+- 不涵盖 gRPC-Web 或基于浏览器的 gRPC 集成。
+- 假定 Go 1.21+ 和 gRPC-Go v1.60+；旧版本可能有不同的 API（例如 `grpc.Dial` 与 `grpc.NewClient`）。
+- 不涵盖 L7 gRPC 感知负载均衡器配置（例如 Envoy、NGINX）。
+- 不涉及超出 Buf lint 范围的 Protobuf schema 注册中心或大规模 schema 治理。
 
-## Resources
+## 资源
 
-- `resources/implementation-playbook.md` for detailed patterns, code examples, and anti-patterns.
-- [Google API Design Guide](https://cloud.google.com/apis/design)
-- [Buf Docs](https://buf.build/docs)
-- [gRPC-Go Docs](https://grpc.io/docs/languages/go/)
-- [OpenTelemetry Go Instrumentation](https://opentelemetry.io/docs/instrumentation/go/)
+- `resources/implementation-playbook.md` 包含详细的模式、代码示例和反模式。
+- [Google API 设计指南](https://cloud.google.com/apis/design)
+- [Buf 文档](https://buf.build/docs)
+- [gRPC-Go 文档](https://grpc.io/docs/languages/go/)
+- [OpenTelemetry Go 插桩](https://opentelemetry.io/docs/instrumentation/go/)
 
-## Related Skills
+## 相关技能
 
-- @golang-pro - General Go patterns and performance optimization outside the gRPC layer.
-- @go-concurrency-patterns - Advanced goroutine lifecycle management for streaming handlers.
-- @api-design-principles - Resource naming and versioning strategy before writing `.proto` files.
-- @docker-expert - Containerizing gRPC services and configuring TLS cert injection via Docker secrets.
+- @golang-pro - gRPC 层外的通用 Go 模式和性能优化。
+- @go-concurrency-patterns - 流式处理器的高级 goroutine 生命周期管理。
+- @api-design-principles - 编写 `.proto` 文件前的资源命名和版本控制策略。
+- @docker-expert - 容器化 gRPC 服务并通过 Docker 密钥配置 TLS 证书注入。

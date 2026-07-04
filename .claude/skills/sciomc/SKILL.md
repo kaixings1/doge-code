@@ -1,81 +1,81 @@
 ---
 name: sciomc
-description: "Sciomc — Sciomc 相关功能和最佳实践"
+description: "Sciomc — 协调并行科学家代理进行全面研究工作流的相关功能和最佳实践"
 argument-hint: <research goal>
 level: 4
 ---
 
-# Research Skill
+# 研究技能
 
-Orchestrate parallel scientist agents for comprehensive research workflows with optional AUTO mode for fully autonomous execution.
+协调并行科学家代理进行全面研究工作流，可选 AUTO 模式实现完全自主执行。
 
-## Overview
+## 概述
 
-Research is a multi-stage workflow that decomposes complex research goals into parallel investigations:
+研究是一个多阶段工作流，将复杂研究目标分解为并行调查：
 
-1. **Decomposition** - Break research goal into independent stages/hypotheses
-2. **Execution** - Run parallel scientist agents on each stage
-3. **Verification** - Cross-validate findings, check consistency
-4. **Synthesis** - Aggregate results into comprehensive report
+1. **分解** - 将研究目标拆分为独立阶段/假设
+2. **执行** - 在每个阶段运行并行科学家代理
+3. **验证** - 交叉验证发现，检查一致性
+4. **综合** - 汇总结果形成综合报告
 
-## Usage Examples
-
-```
-/oh-my-claudecode:sciomc <goal>                    # Standard research with user checkpoints
-/oh-my-claudecode:sciomc AUTO: <goal>              # Fully autonomous until complete
-/oh-my-claudecode:sciomc status                    # Check current research session status
-/oh-my-claudecode:sciomc resume                    # Resume interrupted research session
-/oh-my-claudecode:sciomc list                      # List all research sessions
-/oh-my-claudecode:sciomc report <session-id>       # Generate report for session
-```
-
-### Quick Examples
+## 使用示例
 
 ```
-/oh-my-claudecode:sciomc What are the performance characteristics of different sorting algorithms?
-/oh-my-claudecode:sciomc AUTO: Analyze authentication patterns in this codebase
-/oh-my-claudecode:sciomc How does the error handling work across the API layer?
+/oh-my-claudecode:sciomc <goal>                    # 标准研究，带有用户检查点
+/oh-my-claudecode:sciomc AUTO: <goal>              # 完全自主直到完成
+/oh-my-claudecode:sciomc status                    # 检查当前研究会话状态
+/oh-my-claudecode:sciomc resume                    # 恢复中断的研究会话
+/oh-my-claudecode:sciomc list                      # 列出所有研究会话
+/oh-my-claudecode:sciomc report <session-id>       # 为会话生成报告
 ```
 
-## Research Protocol
+### 快速示例
 
-### Stage Decomposition Pattern
+```
+/oh-my-claudecode:sciomc 不同排序算法的性能特征有哪些？
+/oh-my-claudecode:sciomc AUTO: 分析此代码库中的认证模式
+/oh-my-claudecode:sciomc API 层的错误处理是如何工作的？
+```
 
-When given a research goal, decompose into 3-7 independent stages:
+## 研究协议
+
+### 阶段分解模式
+
+给定研究目标时，分解为 3-7 个独立阶段：
 
 ```markdown
-## Research Decomposition
+## 研究分解
 
-**Goal:** <original research goal>
+**目标：** <原始研究目标>
 
-### Stage 1: <stage-name>
-- **Focus:** What this stage investigates
-- **Hypothesis:** Expected finding (if applicable)
-- **Scope:** Files/areas to examine
-- **Tier:** LOW | MEDIUM | HIGH
+### 阶段 1：<阶段名称>
+- **焦点：** 此阶段调查的内容
+- **假设：** 预期发现（如适用）
+- **范围：** 要检查的文件/区域
+- **层级：** LOW | MEDIUM | HIGH
 
-### Stage 2: <stage-name>
+### 阶段 2：<阶段名称>
 ...
 ```
 
-### Parallel Scientist Invocation
+### 并行科学家调用
 
-Fire independent stages in parallel via Task tool:
+通过 Task 工具并行触发独立阶段：
 
 ```
-// Stage 1 - Simple data gathering
-Task(subagent_type="oh-my-claudecode:scientist", model="haiku", prompt="[RESEARCH_STAGE:1] Investigate...")
+// 阶段 1 - 简单数据收集
+Task(subagent_type="oh-my-claudecode:scientist", model="haiku", prompt="[RESEARCH_STAGE:1] 调查...")
 
-// Stage 2 - Standard analysis
-Task(subagent_type="oh-my-claudecode:scientist", model="sonnet", prompt="[RESEARCH_STAGE:2] Analyze...")
+// 阶段 2 - 标准分析
+Task(subagent_type="oh-my-claudecode:scientist", model="sonnet", prompt="[RESEARCH_STAGE:2] 分析...")
 
-// Stage 3 - Complex reasoning
-Task(subagent_type="oh-my-claudecode:scientist", model="opus", prompt="[RESEARCH_STAGE:3] Deep analysis of...")
+// 阶段 3 - 复杂推理
+Task(subagent_type="oh-my-claudecode:scientist", model="opus", prompt="[RESEARCH_STAGE:3] 深入分析...")
 ```
 
-### Smart Model Routing
+### 智能模型路由
 
-**CRITICAL: Always pass `model` parameter explicitly!**
+**关键：始终显式传递 `model` 参数！**
 
-| Task Complexity | Agent | Model | Use For |
+| 任务复杂度 | 代理 | 模型 | 用途 |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 02 MINUTES 29 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -7,12 +7,12 @@ risk: unknown
 source: community
 ---
 
-# Django Performance Review
+# Django 性能审查
 
-Review Django code for **validated** performance issues. Research the codebase to confirm issues before reporting. Report only what you can prove.
+审查 Django 代码的**已验证**性能问题。在报告之前研究代码库以确认问题。只报告你能证明的问题。
 
-## When to Use
-- You need a Django performance review focused on verified ORM and query issues.
+## 何时使用
+- 需要针对已验证的 ORM 和查询问题进行 Django 性能审查时。
 - The code likely has N+1 queries, unbounded querysets, missing indexes, or other database-driven bottlenecks.
 - You want only provable performance findings, not speculative optimization advice.
 
@@ -402,7 +402,7 @@ N+1 requires a loop. A single object doing 2 queries instead of 1 can be reporte
 **Style preferences are not performance issues:**
 If your only suggestion is "combine these two lines" or "rename this variable" - that's style, not performance. Don't report it.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -218,7 +218,7 @@ node scripts/cli.js next "0 9 * * 1-5" 5
   **Solution:** Timezone mismatch. Kubernetes `CronJob` and GitHub Actions default
   to UTC. Confirm `timeZone` / `TZ` is set as intended.
 
-## Limitations
+## 局限性
 
 - This skill targets standard 5-field cron as implemented by Vixie cron, systemd
   timers, Kubernetes `CronJob`, GitHub Actions `schedule`, and most libraries. It

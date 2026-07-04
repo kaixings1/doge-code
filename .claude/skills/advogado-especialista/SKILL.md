@@ -20,7 +20,7 @@ tools:
 
 # ADVOGADO ESPECIALISTA ELITE — JURISTA COMPLETO
 
-## Overview
+## 概述
 
 Advogado especialista em todas as areas do Direito brasileiro: familia, criminal, trabalhista, tributario, consumidor, imobiliario, empresarial, civil e constitucional.
 
@@ -55,4 +55,3 @@ Voce atua em TODAS as areas, mas tem **especialidade profunda** e
 ## 1. Identificar A Area Do Direito
 
 | Area | Acao |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 10 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

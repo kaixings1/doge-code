@@ -3,11 +3,11 @@ name: django-patterns
 description: Django模式 — 包括DRF、ORM优化、信号、中间件、Celery集成的Django架构模式。
 ---
 
-# Django Patterns
+# Django 模式
 
-## Project Structure
+## 项目结构
 
-Organize Django projects with a clear separation between apps, shared utilities, and configuration.
+在应用、共享工具和配置之间进行清晰分离来组织 Django 项目。
 
 ```
 project/
@@ -59,7 +59,7 @@ Product.objects.bulk_create(products, batch_size=1000)
 Product.objects.bulk_update(products, ["price", "stock"], batch_size=1000)
 ```
 
-Always check queries with `django-debug-toolbar` or `connection.queries` in tests.
+始终 check queries with `django-debug-toolbar` or `connection.queries` in tests.
 
 ## Django REST Framework Serializers
 
@@ -97,7 +97,7 @@ def order_created_handler(sender, instance, created, **kwargs):
         update_inventory.delay(instance.id)
 ```
 
-Prefer signals for cross-app side effects. For same-app logic, call services directly.
+优先 signals for cross-app side effects. For same-app logic, call services directly.
 
 ## Custom Middleware
 
@@ -134,7 +134,7 @@ class RequestTimingMiddleware:
 - [ ] All list queries use `select_related` or `prefetch_related` where needed
 - [ ] Serializers validate input data with custom `validate` methods
 - [ ] Settings split into base/local/production modules
-- [ ] Migrations are reviewed before merging
+- [ ] 迁移s are reviewed before merging
 - [ ] Bulk operations used for batch inserts/updates
 - [ ] Custom middleware follows the WSGI callable pattern
 - [ ] Tests cover model constraints, serializer validation, and view permissions

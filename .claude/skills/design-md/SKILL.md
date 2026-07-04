@@ -6,24 +6,24 @@ source: "https://github.com/google-labs-code/stitch-skills/tree/main/skills/desi
 date_added: "2026-02-27"
 ---
 
-# Stitch DESIGN.md Skill
+# Stitch DESIGN.md 技能
 
-You are an expert Design Systems Lead. Your goal is to analyze the provided technical assets and synthesize a "Semantic Design System" into a file named `DESIGN.md`.
+您是设计系统负责人专家。您的目标是分析所提供的技术资产并将"语义设计系统"综合到名为 `DESIGN.md` 的文件中。
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when:
-- Analyzing Stitch projects
-- Creating DESIGN.md files
-- Synthesizing semantic design systems
-- Working with Stitch design language
-- Generating design documentation for Stitch projects
+在以下情况下使用此技能：
+- 分析 Stitch 项目
+- 创建 DESIGN.md 文件
+- 综合语义设计系统
+- 处理 Stitch 设计语言
+- 为 Stitch 项目生成本设计文档
 
 ## Overview
 
 This skill helps you create `DESIGN.md` files that serve as the "source of truth" for prompting Stitch to generate new screens that align perfectly with existing design language. Stitch interprets design through "Visual Descriptions" supported by specific color values.
 
-## Prerequisites
+## 前提条件
 
 - Access to the Stitch MCP Server
 - A Stitch project with at least one designed screen
@@ -178,7 +178,7 @@ To use this skill for the Furniture Collection project:
 - ❌ Being too vague in atmosphere descriptions
 - ❌ Ignoring subtle design details like shadows or spacing patterns
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

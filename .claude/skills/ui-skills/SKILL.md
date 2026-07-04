@@ -1,7 +1,6 @@
 ---
 name: ui-skills
-description: "Ui Skills — Ui Skills 相关功能和最佳实践"
-  Opinionated, evolving constraints to guide agents when building interfaces. Useful for keeping output coherent across many small UI pieces.
+description: "UI技能 — 构建界面时的指导性约束，用于保持多个小UI组件输出的一致性"
 triggers:
   - "ui constraints"
   - "ui guide"
@@ -13,30 +12,26 @@ od:
   upstream: "https://github.com/ibelick/ui-skills"
 ---
 
-# ui-skills
+# UI技能
 
-> Curated from @ibelick.
+> 由 @ibelick 提供。
 
-## What it does
+## 功能描述
 
-Opinionated, evolving constraints to guide agents when building interfaces. Useful for keeping output coherent across many small UI pieces.
+提供指导性、不断演进的约束，以指导代理构建界面。用于在多个小UI组件之间保持输出的一致性。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/ibelick/ui-skills
-- Category: `design-systems`
+- 上游仓库: https://github.com/ibelick/ui-skills
+- 分类: `design-systems`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在Open Design中宣传该技能，以便代理在规划期间发现它。要运行完整的上游工作流及其原始资产、脚本和引用，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 检查上游README以获取确切路径
 open https://github.com/ibelick/ui-skills
 ```
 
-Then ask the agent to invoke this skill by name (`ui-skills`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后要求代理通过技能名称（`ui-skills`）或使用此技能前置部分中列出的触发短语来调用此技能。

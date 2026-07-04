@@ -6,18 +6,17 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# 🤖 LLM Application Patterns
+# 🤖 LLM 应用模式
 
-> Production-ready patterns for building LLM applications, inspired by [Dify](https://github.com/langgenius/dify) and industry best practices.
+> 构建 LLM 应用的生产就绪模式，灵感来自 [Dify](https://github.com/langgenius/dify) 和行业最佳实践。
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when:
+在以下情况使用此技能：
 
-- Designing LLM-powered applications
-- Implementing RAG (Retrieval-Augmented Generation)
-- Building AI agents with tools
-- Setting up LLMOps monitoring
-- Choosing between agent architectures
+- 设计基于 LLM 的应用时
+- 实现 RAG（检索增强生成）时
+- 构建具有工具的 AI 代理时
+- 设置 LLMOps 监控时
+- 选择代理架构时
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 11 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -15,15 +15,15 @@ date_added: "2026-02-27"
 
 Execute comprehensive web application security testing using Burp Suite's integrated toolset, including HTTP traffic interception and modification, request analysis and replay, automated vulnerability scanning, and manual testing workflows. This skill enables systematic discovery and exploitation of web application vulnerabilities through proxy-based testing methodology.
 
-## Inputs / Prerequisites
+## Inputs / 前置条件
 
-### Required Tools
+### 必需 Tools
 - Burp Suite Community or Professional Edition installed
 - Burp's embedded browser or configured external browser
 - Target web application URL
 - Valid credentials for authenticated testing (if applicable)
 
-### Environment Setup
+### Environment 设置
 - Burp Suite launched with temporary or named project
 - Proxy listener active on 127.0.0.1:8080 (default)
 - Browser configured to use Burp proxy (or use Burp's browser)
@@ -120,9 +120,9 @@ productId=1&quantity=1&price=1
 
 Result: Item added to cart at modified price.
 
-### Phase 3: Setting Target Scope
+### Phase 3: Setting Target 范围
 
-#### Define Scope
+#### Define 范围
 Focus testing on specific target:
 
 1. Go to **Target > Site map**
@@ -130,14 +130,14 @@ Focus testing on specific target:
 3. Select **Add to scope**
 4. When prompted, click **Yes** to exclude out-of-scope traffic
 
-#### Filter by Scope
+#### Filter by 范围
 Remove noise from HTTP history:
 
 1. Click display filter above HTTP history
 2. Select **Show only in-scope items**
 3. History now shows only target site traffic
 
-#### Scope Benefits
+#### 范围 Benefits
 - Reduces clutter from third-party requests
 - Prevents accidental testing of out-of-scope sites
 - Improves scanning efficiency
@@ -194,7 +194,7 @@ Initiate vulnerability scanning (Professional only):
 3. Enter target URL in **URLs to scan** field
 4. Configure scan settings
 
-#### Scan Configuration Options
+#### Scan 配置 Options
 
 | Mode | Description | Duration |
 |------|-------------|----------|
@@ -260,7 +260,7 @@ Review attack output:
 - Use grep to search for specific strings
 - Export results for documentation
 
-## Quick Reference
+## 快速参考
 
 ### Keyboard Shortcuts
 | Action | Windows/Linux | macOS |
@@ -300,7 +300,7 @@ javascript:alert(1)
 - Compare requests using Comparer tool
 - Save interesting requests to project
 
-## Constraints and Guardrails
+## 约束条件 and Guardrails
 
 ### Operational Boundaries
 - Test only authorized applications
@@ -308,14 +308,14 @@ javascript:alert(1)
 - Rate-limit scans to avoid denial of service
 - Document all findings and actions
 
-### Technical Limitations
+### Technical 限制
 - Community Edition lacks automated scanner
 - Some sites may block proxy traffic
 - HSTS/certificate pinning may require additional configuration
 - Heavy scanning may trigger WAF blocks
 
 ### Best Practices
-- Always set target scope before extensive testing
+- 始终 set target scope before extensive testing
 - Use Burp's browser for reliable interception
 - Save project regularly to preserve work
 - Review scan results manually for false positives
@@ -370,7 +370,7 @@ javascript:alert(1)
 - Add certificate to trusted roots
 - Restart browser after installation
 
-### Slow Performance
+### Slow 性能
 - Limit scope to reduce processing
 - Disable unnecessary extensions
 - Increase Java heap size in startup options

@@ -8,12 +8,12 @@ date_added: '2026-02-27'
 
 # C4 Component Level: [Component Name]
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on c4 component level: [component name] tasks or workflows
 - Needing guidance, best practices, or checklists for c4 component level: [component name]
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to c4 component level: [component name]
 - You need a different domain or tool outside this scope
@@ -149,7 +149,7 @@ When synthesizing components, provide:
 - Master component index with all components
 - Consistent documentation format across all components
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

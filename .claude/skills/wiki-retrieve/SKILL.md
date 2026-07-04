@@ -4,10 +4,10 @@ description: "Compound Vault 的混合检索原语。用上下文前缀 + BM25 +
 allowed-tools: Read Bash
 ---
 
-# wiki-retrieve: Hybrid Retrieval over the Vault
+# wiki-retrieve：Vault 的混合检索
 
-The v1.6 query path was `Read(hot.md) → Read(index.md) → Read(3-5 pages) → synthesize`. It worked, but page-level granularity loses to chunk-level granularity any time the answer lives in a specific passage rather than a whole page. The v1.7 `wiki-retrieve` skill is the chunk-level upgrade — opt-in, feature-gated, and replaces nothing if you don't run the setup.
+v1.6 的查询路径是 `Read(hot.md) → Read(index.md) → Read(3-5 pages) → synthesize`。它有效，但每当答案存在于特定段落而非整个页面时，页面级粒度就输给了块级粒度。v1.7 的 `wiki-retrieve` 技能是块级升级——可选加入、功能门控，如果不运行设置则不会替换任何现有功能。
 
-**Origin**: This skill is original to claude-obsidian. There is no upstream kepano equivalent. The technique is from [Anthropic's Sept 2024 Contextual Retrieval research](https://www.anthropic.com/news/contextual-retrieval) — we implement it as agent-skill plumbing.
+**来源**：此技能是 claude-obsidian 原创的。没有上游 kepano 等价物。该技术来自 [Anthropic 2024 年 9 月的上下文检索研究](https://www.anthropic.com/news/contextual-retrieval)——我们将其实现为 agent-skill 管道。
 
 ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 51 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

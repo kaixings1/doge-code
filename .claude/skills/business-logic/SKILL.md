@@ -25,7 +25,7 @@ Activate this skill when:
 
 ---
 
-## Core Concepts
+## 核心概念
 
 ### 1. Deep Application Understanding
 
@@ -128,7 +128,7 @@ For each critical workflow:
 ### Phase 3: Identify Attack Surface
 
 Look for:
-- Parameters that control flow (step, status, role)
+- 参数 that control flow (step, status, role)
 - IDs/references without ownership validation
 - Values that should be server-controlled but come from client
 - Actions that should be rate-limited or single-use
@@ -225,7 +225,7 @@ grep -rniE "(status|state|step)\s*=\s*(request|req|params)" --include="*.py" --i
 grep -rniE "(step|stage|phase)\s*(==|!=|>=|<=)" --include="*.py" --include="*.java" --include="*.php" --include="*.js"
 ```
 
-### Find Registration Security Issues
+### Find Registration 安全性 Issues
 
 ```bash
 # Privileged username registration (absence of reserved check is the vulnerability)
@@ -243,7 +243,7 @@ grep -rniE "@(app\.|router\.)(route|post).*register" --include="*.py" --include=
 
 ---
 
-## Integration with Other Skills
+## 集成 with Other Skills
 
 - Use **dangerous-functions** after mapping trust boundaries
 - Use **data-flow-tracing** to trace user input through authorization checks

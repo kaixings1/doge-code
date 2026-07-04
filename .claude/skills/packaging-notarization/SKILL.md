@@ -3,45 +3,43 @@ name: packaging-notarization
 description: macOS应用打包和公证指南
 ---
 
-# Packaging & Notarization
+# 打包与公证
 
-## Quick Start
+## 快速开始
 
-Use this skill when the work is about shipping the app rather than merely
-running it locally: archives, exported app bundles, notarization readiness,
-hardened runtime, or distribution validation.
+当工作涉及发布应用而非仅在本地运行时使用此技能：归档、导出的应用包、公证准备、强化运行时或分发验证。
 
-## Workflow
+## 工作流程
 
-1. Confirm the distribution goal.
-   - Local archive validation
-   - Signed distributable app
-   - Notarization troubleshooting
+1. 确认分发目标。
+   - 本地归档验证
+   - 已签名的可分发应用
+   - 公证故障排查
 
-2. Inspect the artifact.
-   - Validate app bundle structure.
-   - Check nested frameworks, helper tools, and entitlements.
+2. 检查产物。
+   - 验证应用包结构。
+   - 检查嵌套框架、辅助工具和权限配置。
 
-3. Inspect signing and runtime prerequisites.
-   - Hardened runtime
-   - Signing identity
-   - Nested code signatures
-   - Required entitlements
+3. 检查签名和运行时先决条件。
+   - 强化运行时
+   - 签名身份
+   - 嵌套代码签名
+   - 所需权限
 
-4. Explain notarization readiness or failure.
-   - Separate packaging issues from trust-policy symptoms.
-   - Point to the minimum follow-up validation commands.
+4. 说明公证准备状态或失败原因。
+   - 区分打包问题与信任策略症状。
+   - 指出后续最少验证命令。
 
-## Guardrails
+## 规范
 
-- Do not present notarization as required for ordinary local debug runs.
-- Call out when you lack the actual exported artifact and are inferring from project settings.
-- Keep advice concrete and verifiable.
+- 不要将公证呈现为普通本地调试运行的必需条件。
+- 当你没有实际的导出产物而从项目设置推断时，需明确指出。
+- 建议应具体且可验证。
 
-## Output Expectations
+## 输出预期
 
-Provide:
-- what artifact or settings were inspected
-- whether the app looks distribution-ready
-- the top missing prerequisite or failure mode
-- the next validation or repair step
+提供：
+- 检查了哪些产物或设置
+- 应用是否看起来已准备好分发
+- 最重要的缺失先决条件或失败模式
+- 下一步验证或修复步骤

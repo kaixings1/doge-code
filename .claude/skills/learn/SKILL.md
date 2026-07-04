@@ -20,137 +20,136 @@ tools:
   - cursor
 ---
 
-## When to Use
+## 使用场景
 
-Use when this workflow matches the user request: Help a user learn a topic through adaptive tutoring, lesson planning, practice, retrieval checks, explanations, study guides, or exercises. Use when the user asks to learn, understand, practice, drill, review, study, or be tutored on something.
-
-
-_Source: [dair-ai/dair-academy-plugins](https://github.com/dair-ai/dair-academy-plugins) (MIT)._Use this skill when the user wants to learn a topic or improve a skill. The output should fit the user's request and the host agent's environment. Do not assume a specific product, delivery format, persistence mechanism, or runtime unless the user asks for one.
-
-## Core Workflow
-
-1. Diagnose the learner's current level and goal.
-2. Choose a small next learning objective.
-3. Teach with concrete examples before abstractions.
-4. Give the learner an active task, question, or exercise.
-5. Provide immediate feedback and correction.
-6. Record or summarize the next recommended step when useful.
-
-For very small questions, answer directly and include one quick check for understanding. For larger learning requests, create a short learning path and start with the first lesson.
-
-## Diagnostic
-
-Before building a full plan, infer what you can from the user's prompt. Ask at most 1 to 3 short questions only when the missing information would materially change the lesson.
-
-Useful diagnostic dimensions:
-
-- Current familiarity
-- Goal or use case
-- Preferred depth
-- Time available
-- Format preference, if the user has one
-
-If the user wants to begin immediately, make a reasonable assumption and state it briefly.
-
-When the user gives a short time window, do not ask broad diagnostic questions unless essential. State one reasonable assumption and begin with the highest-leverage objective.
-
-## Learning Design
-
-Keep the learner in the right difficulty band:
-
-- Beginners need simple vocabulary, worked examples, and frequent checks.
-- Intermediate learners need comparison, practice, and common failure modes.
-- Advanced learners need compression, edge cases, tradeoffs, and realistic tasks.
-
-Teach one useful concept at a time. Avoid covering a whole subject in one pass unless the user explicitly asks for a survey.
-
-Use active learning:
-
-- Retrieval questions
-- Prediction prompts
-- Worked examples followed by a similar problem
-- Debugging or critique tasks
-- Short applied exercises
-- Spaced review of earlier ideas
-
-Make feedback specific. Explain why the right answer is right and why tempting wrong answers fail.
-
-## Output Formats
-
-Choose the lightest format that satisfies the request:
-
-- Conversational lesson for quick tutoring
-- Study plan for multi-session learning
-- Markdown notes for durable reference
-- Exercises or quizzes for practice
-- Code examples for programming topics
-- Diagrams or tables when they clarify relationships
-- Files, notebooks, slides, or web pages only when requested or clearly useful
-
-Do not force every learning task into an app, web page, persistent hub, or local file set.
-
-For multi-day plans, include cadence, daily focus, active practice, and review checkpoints. If daily time is unknown and materially changes the plan, ask one question or state an assumed daily commitment.
-
-## Lesson Structure
-
-A strong lesson usually includes:
-
-- A short objective
-- A concrete example or scenario
-- The principle behind the example
-- A guided practice step
-- A knowledge check
-- Feedback or answer key
-- A next step
-
-Keep explanations concise. Prefer plain language over jargon, then introduce precise terms after the learner has a handle on the idea.
-
-## Practice And Assessment
-
-Every substantial lesson should include at least one way for the learner to test themselves.
-
-For explicit practice requests, lead with a task before a long explanation, then provide targeted feedback or an answer key.
-
-Good checks include:
-
-- Multiple-choice questions with unambiguous distractors
-- Short answer prompts
-- Fill-in-the-blank exercises
-- Explain-the-mistake questions
-- Code tracing or prediction
-- Mini projects with clear success criteria
-
-For multiple-choice questions, make only one answer clearly correct unless the question explicitly asks for multiple answers.
-
-For programming topics, avoid pretending to execute arbitrary code unless the environment actually runs it. Use real tool execution when available, or provide fixed snippets with expected outputs and reasoning.
-
-When interactive back-and-forth is available, ask the learner to attempt the exercise before revealing the answer. For self-contained responses, include the answer key after the task.
-
-## Adaptation
-
-Use the learner's answers and mistakes to adjust:
-
-- Slow down and add examples when confusion appears.
-- Increase difficulty when answers are consistently correct.
-- Revisit misconceptions explicitly.
-- Connect new material to the learner's stated goal.
-
-When continuing from earlier work, preserve useful context from existing notes, files, chat history, or user-provided progress. Do not assume a specific persistence mechanism.
-
-## Quality Bar
-
-Before finishing, check that:
-
-- The lesson matches the learner's level and goal.
-- The explanation has a concrete example.
-- The practice task is solvable from the lesson.
-- The answer or feedback is included when appropriate.
-- The next step is clear.
-- Any generated files or code are actually usable in the target environment.
+当此工作流匹配用户请求时使用：帮助用户通过自适应辅导、课程规划、练习、检索检查、讲解、学习指南或习题来学习一个话题。当用户请求学习、理解、练习、训练、复习、研究或接受某个方面的辅导时使用。
 
 
-## Limitations
+_来源：[dair-ai/dair-academy-plugins](https://github.com/dair-ai/dair-academy-plugins) (MIT)。_当用户想学习一个话题或提升一项技能时使用此技能。输出应适应用户的请求和宿主代理的环境。除非用户要求，否则不要假定特定的产品、交付格式、持久化机制或运行时。
 
-- Requires the upstream tool, account, API key, or local setup when the workflow names one.
-- Does not authorize destructive, production, paid, or external-message actions without explicit user approval.
-- Validate generated artifacts or recommendations against the user's real sources before treating them as final.
+## 核心工作流
+
+1. 诊断学习者当前水平和目标。
+2. 选择一个小的下一个学习目标。
+3. 先通过具体示例教学，再讲抽象概念。
+4. 给学习者一个主动任务、问题或练习。
+5. 提供即时反馈和纠正。
+6. 在必要时记录或总结下一步推荐操作。
+
+对于非常小的问题，直接回答并包含一个快速理解检查。对于较大的学习请求，创建简短的学习路径并从第一课开始。
+
+## 诊断
+
+在制定完整计划之前，从用户的提示中推断你能获得的信息。仅在缺失信息会实质性改变课程时，最多提出 1 到 3 个简短问题。
+
+有用的诊断维度：
+
+- 当前熟悉程度
+- 目标或使用场景
+- 偏好的深度
+- 可用时间
+- 格式偏好（如果用户有）
+
+如果用户想立即开始，做出合理假设并简要说明。
+
+当用户给出较短的时间窗口时，除非必要，不要问宽泛的诊断问题。陈述一个合理假设，从最高杠杆目标开始。
+
+## 学习设计
+
+让学习者保持在适当的难度区间：
+
+- 初学者需要简单词汇、讲解示例和频繁检查。
+- 中级学习者需要对比、练习和常见失败模式。
+- 高级学习者需要压缩、边界情况、权衡和实际任务。
+
+每次讲授一个有用的概念。除非用户明确要求概览，否则避免一次覆盖整个主题。
+
+使用主动学习：
+
+- 检索问题
+- 预测提示
+- 讲解示例后跟类似问题
+- 调试或评论任务
+- 简短的应用练习
+- 间隔复习之前的概念
+
+提供具体的反馈。解释正确答案为什么正确，以及诱人的错误答案为什么失败。
+
+## 输出格式
+
+选择满足请求的最精简格式：
+
+- 对话式课程用于快速辅导
+- 学习计划用于多会话学习
+- Markdown 笔记用于持久参考
+- 练习或测验用于实践
+- 代码示例用于编程主题
+- 图表或表格用于阐明关系
+- 仅在请求或明确有用时创建文件、笔记本、幻灯片或网页
+
+不要强制每个学习任务都变成应用、网页、持久化中心或本地文件集。
+
+对于多日计划，包含节奏、每日焦点、主动练习和复习检查点。如果每日时间未知且会实质性改变计划，问一个问题或陈述一个假设的每日投入时间。
+
+## 课程结构
+
+一个优秀的课程通常包含：
+
+- 简短的目标
+- 具体示例或场景
+- 示例背后的原理
+- 引导式练习步骤
+- 知识检查
+- 反馈或参考答案
+- 下一步
+
+保持解释简洁。优先使用平实的语言而非术语，在学习者掌握了概念后再引入精确术语。
+
+## 练习与评估
+
+每个实质性课程应至少包含一种学习者自我测试的方式。
+
+对于明确的练习请求，先给出任务再进行长解释，然后提供针对性反馈或参考答案。
+
+好的检查方式包括：
+
+- 带有明确干扰项的选择题
+- 简答题提示
+- 填空题练习
+- 找错题
+- 代码追踪或预测
+- 带有明确成功标准的小项目
+
+对于选择题，除非问题明确要求多选，否则只让一个答案明显正确。
+
+对于编程主题，除非环境实际运行代码，否则避免假装执行任意代码。在可用时使用真实的工具执行，或提供带有预期输出和推理的固定代码片段。
+
+当交互式来回可用时，让学习者在揭示答案前先尝试练习。对于自包含的响应，在任务后包含参考答案。
+
+## 适应性调整
+
+根据学习者的答案和错误进行调整：
+
+- 出现困惑时放慢速度并增加示例。
+- 答案持续正确时增加难度。
+- 明确重新审视误解。
+- 将新材料与学习者陈述的目标联系起来。
+
+当从之前的工作继续时，保留来自现有笔记、文件、聊天记录或用户提供进度的有用上下文。不要假定特定的持久化机制。
+
+## 质量检查
+
+在结束前，检查：
+
+- 课程匹配学习者的水平和目标。
+- 解释包含具体示例。
+- 练习任务可从课程内容中解答。
+- 答案或反馈在适当时包含在内。
+- 下一步清晰明确。
+- 任何生成的文件或代码在目标环境中实际可用。
+
+## 局限性
+
+- 当工作流指定了上游工具时，需要相应的账户、API 密钥或本地设置。
+- 未经用户明确批准，不授权破坏性、生产环境、付费或外部消息操作。
+- 在将生成的工件或建议视为最终结果之前，需对照用户的真实来源进行验证。

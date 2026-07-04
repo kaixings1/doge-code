@@ -6,7 +6,7 @@ source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
 ---
 
-# Algolia Search Integration
+# Algolia 搜索集成
 
 Expert patterns for Algolia search implementation, indexing strategies, React InstantSearch, and relevance tuning
 
@@ -917,7 +917,7 @@ Message: No customRanking configured. Add business metrics (popularity, rating).
 - User mentions or implies: search index
 - User mentions or implies: search as you type
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

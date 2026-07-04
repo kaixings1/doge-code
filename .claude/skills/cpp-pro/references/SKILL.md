@@ -7,7 +7,7 @@ description: "Cpp Pro\References — Cpp Pro\References 相关功能和最佳实
 
 This skill provides the complete Google C++ Style Guide for C++20. Apply these rules when writing or reviewing C++ code.
 
-## Quick Reference
+## 快速参考
 
 | Topic | Key Rules |
 |-------|-----------|

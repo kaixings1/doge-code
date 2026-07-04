@@ -11,31 +11,31 @@ date_added: 2026-02-27
 
 # GraphQL
 
-GraphQL gives clients exactly the data they need - no more, no less. One
-endpoint, typed schema, introspection. But the flexibility that makes it
-powerful also makes it dangerous. Without proper controls, clients can
-craft queries that bring down your server.
+GraphQL 为客户端提供恰好所需的数据——不多不少。一个
+端点，类型化 schema，内省。但使其强大的灵活性
+同时也使其危险。如果没有适当的控制，客户端可以
+构造出击垮您服务器的查询。
 
-This skill covers schema design, resolvers, DataLoader for N+1 prevention,
-federation for microservices, and client integration with Apollo/urql.
-Key insight: GraphQL is a contract. The schema is the API documentation.
-Design it carefully.
+本技能涵盖 schema 设计、解析器、用于 N+1 预防的 DataLoader、
+微服务联邦以及与 Apollo/urql 的客户端集成。
+关键洞察：GraphQL 是一个契约。schema 就是 API 文档。
+请仔细设计。
 
-2025 lesson: GraphQL isn't always the answer. For simple CRUD, REST is
-simpler. For high-performance public APIs, REST with caching wins. Use
-GraphQL when you have complex data relationships and diverse client needs.
+2025 年的教训：GraphQL 并不总是答案。对于简单的 CRUD，REST
+更简单。对于高性能公共 API，带缓存的 REST 胜出。当
+您有复杂的数据关系和多样化的客户端需求时，使用 GraphQL。
 
-## Principles
+## 原则
 
-- Schema-first design - the schema is the contract
-- Prevent N+1 queries with DataLoader
-- Limit query depth and complexity
-- Use fragments for reusable selections
-- Mutations should be specific, not generic update operations
-- Errors are data - use union types for expected failures
-- Nullability is meaningful - design it intentionally
+- Schema 优先设计——schema 即契约
+- 使用 DataLoader 预防 N+1 查询
+- 限制查询深度和复杂度
+- 使用片段实现可复用的选择
+- 变更操作应具体，而非通用的更新操作
+- 错误也是数据——使用联合类型处理预期失败
+- 可空性是有意义的——有意图地设计它
 
-## Capabilities
+## 能力
 
 - graphql-schema-design
 - graphql-resolvers
@@ -47,39 +47,39 @@ GraphQL when you have complex data relationships and diverse client needs.
 - apollo-client
 - urql
 
-## Scope
+## 范围
 
 - database-queries -> postgres-wizard
 - authentication -> authentication-oauth
 - rest-api-design -> backend
 - websocket-infrastructure -> backend
 
-## Tooling
+## 工具
 
-### Server
+### 服务端
 
-- @apollo/server - When: Apollo Server v4 Note: Most popular GraphQL server
-- graphql-yoga - When: Lightweight alternative Note: Good for serverless
-- mercurius - When: Fastify integration Note: Fast, uses JIT
+- @apollo/server - 何时使用：Apollo Server v4 注意：最流行的 GraphQL 服务器
+- graphql-yoga - 何时使用：轻量级替代方案 注意：适合无服务器环境
+- mercurius - 何时使用：Fastify 集成 注意：快速，使用 JIT
 
-### Client
+### 客户端
 
-- @apollo/client - When: Full-featured client Note: Caching, state management
-- urql - When: Lightweight alternative Note: Smaller, simpler
-- graphql-request - When: Simple requests Note: Minimal, no caching
+- @apollo/client - 何时使用：功能完整的客户端 注意：缓存，状态管理
+- urql - 何时使用：轻量级替代方案 注意：更小，更简单
+- graphql-request - 何时使用：简单请求 注意：最小化，无缓存
 
-### Tools
+### 工具
 
-- graphql-codegen - When: Type generation Note: Essential for TypeScript
-- dataloader - When: N+1 prevention Note: Batches and caches
+- graphql-codegen - 何时使用：类型生成 注意：TypeScript 必备
+- dataloader - 何时使用：N+1 预防 注意：批量处理与缓存
 
-## Patterns
+## 模式
 
-### Schema Design
+### Schema 设计
 
-Type-safe schema with proper nullability
+具有适当可空性的类型安全 schema
 
-**When to use**: Designing any GraphQL API
+**何时使用**：设计任何 GraphQL API
 
 # SCHEMA DESIGN:
 
@@ -188,18 +188,18 @@ type PageInfo {
   endCursor: String
 }
 
-### DataLoader for N+1 Prevention
+### 用于 N+1 预防的 DataLoader
 
-Batch and cache database queries
+批量处理和缓存数据库查询
 
-**When to use**: Resolving relationships
+**何时使用**：解析关系时
 
-# DATALOADER:
+# DATALOADER：
 
 """
-Without DataLoader, fetching 10 posts with authors
-makes 11 queries (1 for posts + 10 for each author).
-DataLoader batches into 2 queries.
+没有 DataLoader，获取 10 篇帖子及其作者
+需要 11 次查询（1 次获取帖子 + 10 次获取每个作者）。
+DataLoader 将其批量化为 2 次查询。
 """
 
 import DataLoader from 'dataloader';
@@ -263,17 +263,17 @@ const resolvers = {
   }
 };
 
-### Apollo Client Caching
+### Apollo 客户端缓存
 
-Normalized cache with type policies
+使用类型策略的规范化缓存
 
-**When to use**: Client-side data management
+**何时使用**：客户端数据管理
 
-# APOLLO CLIENT CACHING:
+# APOLLO 客户端缓存：
 
 """
-Apollo Client normalizes responses into a flat cache.
-Configure type policies for custom cache behavior.
+Apollo 客户端将响应规范化为扁平缓存。
+配置类型策略以实现自定义缓存行为。
 """
 
 import { ApolloClient, InMemoryCache } from '@apollo/client';
@@ -390,20 +390,20 @@ function CreateUserForm() {
   });
 }
 
-### Code Generation
+### 代码生成
 
-Type-safe operations from schema
+从 schema 生成类型安全操作
 
-**When to use**: TypeScript projects
+**何时使用**：TypeScript 项目
 
-# GRAPHQL CODEGEN:
+# GRAPHQL CODEGEN：
 
 """
-Generate TypeScript types from your schema and operations.
-No more manually typing query responses.
+从您的 schema 和操作生成 TypeScript 类型。
+不再需要手动输入查询响应。
 """
 
-# Install
+# 安装
 npm install -D @graphql-codegen/cli
 npm install -D @graphql-codegen/typescript
 npm install -D @graphql-codegen/typescript-operations
@@ -432,32 +432,32 @@ const config: CodegenConfig = {
 
 export default config;
 
-# Run generation
+# 运行生成
 npx graphql-codegen
 
-# Usage - fully typed!
+# 用法 - 完全类型化！
 import { useGetUserQuery, useCreateUserMutation } from './generated/graphql';
 
 function UserProfile({ userId }: { userId: string }) {
   const { data, loading } = useGetUserQuery({
-    variables: { id: userId }  // Type-checked!
+    variables: { id: userId }  // 类型已检查！
   });
 
-  // data.user is fully typed
+  // data.user 是完全类型化的
   return <div>{data?.user?.name}</div>;
 }
 
-### Error Handling with Unions
+### 使用联合类型进行错误处理
 
-Expected errors as data, not exceptions
+将预期错误作为数据，而非异常
 
-**When to use**: Operations that can fail in expected ways
+**何时使用**：可能以预期方式失败的操作
 
-# ERRORS AS DATA:
+# 错误即数据：
 
 """
-Use union types for expected failure cases.
-GraphQL errors are for unexpected failures.
+对预期失败情况使用联合类型。
+GraphQL 错误用于意外失败。
 """
 
 # Schema
@@ -551,27 +551,27 @@ switch (result.__typename) {
     break;
 }
 
-## Sharp Edges
+## 尖锐边缘
 
-### Each resolver makes separate database queries
+### 每个解析器都发起独立的数据库查询
 
-Severity: CRITICAL
+严重性：严重
 
-Situation: You write resolvers that fetch data individually. A query for
-10 posts with authors makes 11 database queries. For 100 posts,
-that's 101 queries. Response time becomes seconds.
+情境：您编写的解析器单独获取数据。一个查询请求
+10 篇帖子及其作者，会产生 11 次数据库查询。对于 100 篇帖子，
+那就是 101 次查询。响应时间变成秒级。
 
-Symptoms:
-- Slow API responses
-- Many similar database queries in logs
-- Performance degrades with list size
+症状：
+- API 响应缓慢
+- 日志中出现许多类似的数据库查询
+- 性能随列表大小增加而下降
 
-Why this breaks:
-GraphQL resolvers run independently. Without batching, the author
-resolver runs separately for each post. The database gets hammered
-with repeated similar queries.
+为什么这会出问题：
+GraphQL 解析器独立运行。没有批处理，作者
+解析器会为每篇帖子单独运行。数据库被重复的
+类似查询反复冲击。
 
-Recommended fix:
+推荐的修复方案：
 
 # USE DATALOADER
 
@@ -600,25 +600,25 @@ const resolvers = {
 # 2. Return results in same order as input IDs
 # 3. Handle missing items (return null, not skip)
 
-### Deeply nested queries can DoS your server
+### 深度嵌套的查询可能对您的服务器进行拒绝服务攻击
 
-Severity: CRITICAL
+严重性：严重
 
-Situation: Your schema has circular relationships (user.posts.author.posts...).
-A client sends a query 20 levels deep. Your server tries to resolve
-it and either times out or crashes.
+情境：您的 schema 具有循环关系（user.posts.author.posts...）。
+客户端发送一个深度达 20 层的查询。您的服务器尝试解析
+它，结果要么超时要么崩溃。
 
-Symptoms:
-- Server timeouts on certain queries
-- Memory exhaustion
-- Slow response for nested queries
+症状：
+- 某些查询出现服务器超时
+- 内存耗尽
+- 嵌套查询响应缓慢
 
-Why this breaks:
-GraphQL allows clients to request any valid query shape. Without
-limits, a malicious or buggy client can craft queries that require
-exponential work. Even legitimate queries can accidentally be too deep.
+为什么这会出问题：
+GraphQL 允许客户端请求任何有效的查询形状。没有
+限制，恶意或有 bug 的客户端可以构造需要指数级
+工作量的查询。即使是合法的查询也可能意外地过深。
 
-Recommended fix:
+推荐的修复方案：
 
 # LIMIT QUERY DEPTH AND COMPLEXITY
 
@@ -646,25 +646,25 @@ const server = new ApolloServer({
 # - Rate limiting per client
 # - Persisted queries (only allow pre-registered queries)
 
-### Introspection enabled in production exposes your schema
+### 生产环境启用内省会暴露您的 schema
 
-Severity: HIGH
+严重性：高
 
-Situation: You deploy to production with introspection enabled. Anyone can
-query your schema, discover all types, mutations, and field names.
-Attackers know exactly what to target.
+情境：您在生产环境部署时启用了内省。任何人都可以
+查询您的 schema，发现所有类型、变更操作和字段名称。
+攻击者确切知道要攻击什么。
 
-Symptoms:
-- Schema visible via introspection query
-- GraphQL Playground accessible in production
-- Full type information exposed
+症状：
+- 通过内省查询可见 schema
+- 生产环境可访问 GraphQL Playground
+- 完整的类型信息暴露
 
-Why this breaks:
-Introspection is essential for development and tooling, but in
-production it's a roadmap for attackers. They can find admin
-mutations, internal fields, and deprecated but still working APIs.
+为什么这会出问题：
+内省对开发和工具是必需的，但在
+生产环境中，它为攻击者提供了路线图。他们可以找到管理员
+变更操作、内部字段以及已弃用但仍可工作的 API。
 
-Recommended fix:
+推荐的修复方案：
 
 # DISABLE INTROSPECTION IN PRODUCTION
 
@@ -675,7 +675,7 @@ const server = new ApolloServer({
   plugins: [
     process.env.NODE_ENV === 'production'
       ? ApolloServerPluginLandingPageDisabled()
-      : ApolloServerPluginLandingPageLocalDefault()
+      : ApolloServerPluginLandingPageLocal默认()
   ]
 });
 
@@ -689,25 +689,25 @@ const server = new ApolloServer({
   }
 });
 
-### Authorization only in schema directives, not resolvers
+### 仅在 schema 指令中做授权，不在解析器中
 
-Severity: HIGH
+严重性：高
 
-Situation: You rely entirely on @auth directives for authorization. Someone
-finds a way around the directive, or complex business rules don't
-fit in a simple directive. Authorization fails.
+情境：您完全依赖 @auth 指令进行授权。有人
+找到了绕过指令的方法，或者复杂的业务规则无法
+适配简单的指令。授权失败。
 
-Symptoms:
-- Unauthorized access to data
-- Business rules not enforced
-- Directive-only security bypassed
+症状：
+- 未授权访问数据
+- 业务规则未强制执行
+- 仅依赖指令的安全性被绕过
 
-Why this breaks:
-Directives are good for simple checks but can't handle complex
-business logic. "User can edit their own posts, or any post in
-groups they moderate" doesn't fit in a directive.
+为什么这会出问题：
+指令适合简单检查，但无法处理复杂的
+业务逻辑。"用户可以编辑自己的帖子，或他们管理的
+组中的任何帖子"无法适配指令。
 
-Recommended fix:
+推荐的修复方案：
 
 # AUTHORIZE IN RESOLVERS
 
@@ -749,25 +749,25 @@ User: {
   }
 }
 
-### Authorization on queries but not on fields
+### 对查询做了授权但未对字段做授权
 
-Severity: HIGH
+严重性：高
 
-Situation: You check if a user can access a resource, but not individual
-fields. User A can see User B's public profile, and accidentally
-also sees their private email and phone number.
+情境：您检查用户是否可以访问资源，但不检查单个
+字段。用户 A 可以看到用户 B 的公共资料，并且意外地
+也看到了他们的私人邮箱和电话号码。
 
-Symptoms:
-- Sensitive data exposed
-- Privacy violations
-- Field data visible to wrong users
+症状：
+- 敏感数据暴露
+- 隐私违规
+- 字段数据对错误用户可见
 
-Why this breaks:
-Field resolvers run after the parent is returned. If the parent
-query returns a user, all fields are resolved - including sensitive
-ones. Each sensitive field needs its own auth check.
+为什么这会出问题：
+字段解析器在父对象返回后运行。如果父
+查询返回一个用户，所有字段都会被解析——包括敏感
+字段。每个敏感字段都需要自己的权限检查。
 
-Recommended fix:
+推荐的修复方案：
 
 # FIELD-LEVEL AUTHORIZATION
 
@@ -800,25 +800,25 @@ const resolvers = {
   }
 };
 
-### Non-null field failure nullifies entire parent
+### 非空字段失败会导致整个父对象为空
 
-Severity: MEDIUM
+严重性：中
 
-Situation: You make fields non-null for convenience. A resolver throws or
-returns null. The error propagates up, nullifying parent objects,
-until the whole query response is null or errors out.
+情境：您为了方便将字段设置为非空。某个解析器抛出异常或
+返回 null。错误向上传播，使父对象变为 null，
+直到整个查询响应为 null 或出错。
 
-Symptoms:
-- Queries return null unexpectedly
-- One error affects unrelated fields
-- Partial data can't be returned
+症状：
+- 查询意外返回 null
+- 一个错误影响无关字段
+- 无法返回部分数据
 
-Why this breaks:
-GraphQL's null propagation means if a non-null field can't resolve,
-its parent becomes null. If that parent is also non-null, it
-propagates further. One failing field can break an entire response.
+为什么这会出问题：
+GraphQL 的 null 传播意味着如果非空字段无法解析，
+其父对象变为 null。如果该父对象也是非空，则
+进一步传播。一个失败的字段可能破坏整个响应。
 
-Recommended fix:
+推荐的修复方案：
 
 # DESIGN NULLABILITY INTENTIONALLY
 
@@ -833,10 +833,10 @@ type User {
 
 # RIGHT: Nullable where appropriate
 type User {
-  id: ID!              # Always exists
-  name: String!        # Required field
-  email: String!       # Required field
-  avatar: String       # Optional - may not exist
+  id: ID!              # 始终 exists
+  name: String!        # 必需 field
+  email: String!       # 必需 field
+  avatar: String       # 可选 - may not exist
   lastLogin: DateTime  # Nullable - may be null
 }
 
@@ -850,25 +850,25 @@ type User {
 # - Non-null if always present and failure should fail query
 # - Nullable if optional or failure shouldn't break response
 
-### Expensive queries treated same as cheap ones
+### 昂贵查询与廉价查询同等对待
 
-Severity: MEDIUM
+严重性：中
 
-Situation: Every query is processed the same. A simple user(id) query uses
-the same resources as users(first: 1000) { posts { comments } }.
-Expensive queries starve out cheap ones.
+情境：每个查询都得到相同处理。一个简单的 user(id) 查询使用
+与 users(first: 1000) { posts { comments } } 相同的资源。
+昂贵的查询会挤垮廉价的查询。
 
-Symptoms:
-- Expensive queries slow everything
-- No way to prioritize queries
-- Rate limiting is ineffective
+症状：
+- 昂贵查询拖慢一切
+- 无法优先处理查询
+- 速率限制无效
 
-Why this breaks:
-Not all GraphQL operations are equal. Fetching 1000 users with
-nested data is orders of magnitude more expensive than fetching
-one user. Without cost analysis, you can't rate limit properly.
+为什么这会出问题：
+并非所有 GraphQL 操作都是平等的。获取 1000 个用户及其
+嵌套数据比获取一个用户要昂贵数个数量级。
+没有成本分析，您无法正确地进行速率限制。
 
-Recommended fix:
+推荐的修复方案：
 
 # QUERY COST ANALYSIS
 
@@ -903,25 +903,25 @@ const costPlugin = {
   }
 };
 
-### Subscriptions not properly cleaned up
+### 订阅未正确清理
 
-Severity: MEDIUM
+严重性：中
 
-Situation: Clients subscribe but don't unsubscribe cleanly. Network issues
-leave orphaned subscriptions. Server memory grows as dead
-subscriptions accumulate.
+情境：客户端订阅但没有干净地取消订阅。网络问题
+留下孤儿订阅。服务器内存随着死
+订阅累积而增长。
 
-Symptoms:
-- Memory usage grows over time
-- Dead connections accumulate
-- Server slows down
+症状：
+- 内存使用随时间增长
+- 死连接累积
+- 服务器变慢
 
-Why this breaks:
-Each subscription holds server resources. Without proper cleanup
-on disconnect, resources accumulate. Long-running servers
-eventually run out of memory.
+为什么这会出问题：
+每个订阅占用服务器资源。没有在断开连接时
+进行适当清理，资源会不断累积。长时间运行的服务器
+最终会耗尽内存。
 
-Recommended fix:
+推荐的修复方案：
 
 # PROPER SUBSCRIPTION CLEANUP
 
@@ -985,7 +985,7 @@ Fix action: Set introspection: process.env.NODE_ENV !== 'production'
 
 Severity: WARNING
 
-Message: Consider using DataLoader to batch and cache queries
+Message: 考虑 using DataLoader to batch and cache queries
 
 Fix action: Create DataLoader and use .load() instead of direct query
 
@@ -993,7 +993,7 @@ Fix action: Create DataLoader and use .load() instead of direct query
 
 Severity: WARNING
 
-Message: Consider adding depth limiting to prevent DoS
+Message: 考虑 adding depth limiting to prevent DoS
 
 Fix action: Add validationRules: [depthLimit(10)]
 
@@ -1001,7 +1001,7 @@ Fix action: Add validationRules: [depthLimit(10)]
 
 Severity: INFO
 
-Message: Consider wrapping resolver logic in try-catch
+Message: 考虑 wrapping resolver logic in try-catch
 
 Fix action: Add error handling to provide better error messages
 
@@ -1017,7 +1017,7 @@ Fix action: Define proper input/output types
 
 Severity: INFO
 
-Message: Consider using payload types for mutations (includes errors)
+Message: 考虑 using payload types for mutations (includes errors)
 
 Fix action: Create CreateUserPayload type with user and errors fields
 
@@ -1041,7 +1041,7 @@ Fix action: Destructure and handle error: const { error } = useQuery(...)
 
 Severity: INFO
 
-Message: Consider cache update instead of refetch for better UX
+Message: 考虑 cache update instead of refetch for better UX
 
 Fix action: Use update function to modify cache directly
 
@@ -1054,7 +1054,7 @@ Fix action: Use update function to modify cache directly
 - user needs caching layer -> caching-strategies (Response caching, DataLoader caching)
 - user needs real-time infrastructure -> backend (WebSocket setup for subscriptions)
 
-## Related Skills
+## 相关 Skills
 
 Works well with: `backend`, `postgres-wizard`, `nextjs-app-router`, `react-patterns`
 
@@ -1070,7 +1070,7 @@ Works well with: `backend`, `postgres-wizard`, `nextjs-app-router`, `react-patte
 - User mentions or implies: graphql query
 - User mentions or implies: graphql mutation
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -6,39 +6,39 @@ source: "Dimillian/Skills (MIT)"
 date_added: "2026-03-25"
 ---
 
-# GitHub Skill
+# GitHub 技能
 
-Use the `gh` CLI to interact with GitHub. Always specify `--repo owner/repo` when not in a git directory, or use URLs directly.
+Use the `gh` CLI to interact with GitHub. 始终 specify `--repo owner/repo` when not in a git directory, or use URLs directly.
 
-## When to Use
-- When the user asks about GitHub issues, pull requests, workflow runs, or CI failures.
+## 何时使用
+- 当用户询问 GitHub issues、pull requests、workflow runs 或 CI 失败时。
 - When you need `gh issue`, `gh pr`, `gh run`, or `gh api` from the command line.
 
-## Pull Requests
+## 拉取请求
 
-Check CI status on a PR:
+检查 PR 上的 CI 状态：
 ```bash
 gh pr checks 55 --repo owner/repo
 ```
 
-List recent workflow runs:
+列出最近的工作流运行：
 ```bash
 gh run list --repo owner/repo --limit 10
 ```
 
-View a run and see which steps failed:
+查看运行并查看哪些步骤失败：
 ```bash
 gh run view <run-id> --repo owner/repo
 ```
 
-View logs for failed steps only:
+仅查看失败步骤的日志：
 ```bash
 gh run view <run-id> --repo owner/repo --log-failed
 ```
 
-### Debugging a CI Failure
+### 调试 CI 失败
 
-Follow this sequence to investigate a failing CI run:
+按以下顺序调查失败的 CI 运行：
 
 1. **Check PR status** — identify which checks are failing:
    ```bash
@@ -57,16 +57,16 @@ Follow this sequence to investigate a failing CI run:
    gh run view <run-id> --repo owner/repo --log-failed
    ```
 
-## API for Advanced Queries
+## API 高级查询
 
 The `gh api` command is useful for accessing data not available through other subcommands.
 
-Get PR with specific fields:
+使用特定字段获取 PR：
 ```bash
 gh api repos/owner/repo/pulls/55 --jq '.title, .state, .user.login'
 ```
 
-## JSON Output
+## JSON 输出
 
 Most commands support `--json` for structured output.  You can use `--jq` to filter:
 
@@ -74,7 +74,7 @@ Most commands support `--json` for structured output.  You can use `--jq` to fil
 gh issue list --repo owner/repo --json number,title --jq '.[] | "\(.number): \(.title)"'
 ```
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

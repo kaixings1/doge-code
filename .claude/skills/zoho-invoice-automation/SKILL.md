@@ -5,26 +5,26 @@ requires:
   mcp: [rube]
 ---
 
-# Zoho Invoice Automation via Rube MCP
+# 通过 Rube MCP 实现 Zoho Invoice 自动化
 
-Automate Zoho Invoice operations through Composio's Zoho Invoice toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Zoho Invoice 工具包实现 Zoho Invoice 操作自动化。
 
-**Toolkit docs**: [composio.dev/toolkits/zoho_invoice](https://composio.dev/toolkits/zoho_invoice)
+**工具包文档**: [composio.dev/toolkits/zoho_invoice](https://composio.dev/toolkits/zoho_invoice)
 
-## Prerequisites
+## 先决条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Zoho Invoice connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `zoho_invoice`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Zoho Invoice 连接，使用工具包 `zoho_invoice`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 以获取当前工具模式
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**: 在客户端配置中添加 `https://rube.app/mcp` 作为 MCP 服务器。无需 API 密钥——只需添加端点即可工作。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `zoho_invoice`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 确认 `RUBE_SEARCH_TOOLS` 响应，验证 Rube MCP 是否可用
+2. 调用 `RUBE_MANAGE_CONNECTIONS` 并指定工具包 `zoho_invoice`
+3. 如果连接不是 ACTIVE 状态，请按照返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示为 ACTIVE
 
 ## Tool Discovery
 
@@ -68,16 +68,16 @@ memory: {}
 session_id: "your_session_id"
 ```
 
-## Known Pitfalls
+## 已知陷阱
 
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
+- **始终先搜索**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
+- **检查连接**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
+- **Schema 合规**: Use exact field names and types from the search results
+- **Memory 参数**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
+- **会话复用**: Reuse session IDs within a workflow. Generate new ones for new workflows
+- **分页**: Check responses for pagination tokens and continue fetching until complete
 
-## Quick Reference
+## 快速参考
 
 | Operation | Approach |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 08 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

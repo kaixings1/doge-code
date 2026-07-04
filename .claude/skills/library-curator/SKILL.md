@@ -15,55 +15,46 @@ od:
   category: assets
 ---
 
-# library-curator
+# 图书馆策展人
 
-Reuse assets that already live in the user's OD Library — images captured with
-the OD Clipper, manual uploads, agent-generated media, and design-system
-material — without asking the user to re-upload them.
+重用已存在于用户 OD 库中的资产—使用 OD Clipper 捕获的图片、手动上传、代理生成媒体和设计系统素材—无需要求用户重新上传。
 
-## When to use
+## 何时使用
 
-- The user references an asset they already have ("the screenshot I clipped",
-  "my logo", "that hero image from earlier").
-- You need an image for the page you're building and the user prefers their own
-  library over freshly generated media.
+- 用户引用他们已经拥有的资产（"我剪切的截图"、"我的标志"、"之前那个主图"）。
+- 你需要为正在构建的页面制作图片，且用户倾向于使用自己的库而非新生成的媒体。
 
-## Tools (tool-token track)
+## 工具（工具令牌方式）
 
-Both endpoints authenticate with the run's tool token (`OD_TOOL_TOKEN`, injected
-by the daemon) and operate on the project the run belongs to.
+两个端点都使用运行的 tool token（`OD_TOOL_TOKEN`，由守护进程注入）进行认证，并对运行所属的项目进行操作。
 
-### Search
+### 搜索
 
 `POST /api/tools/library/search`
 
 ```json
-{ "query": "blue hero background", "kind": "image", "limit": 20 }
+{ "query": "蓝色主图背景", "kind": "image", "limit": 20 }
 ```
 
-Returns `{ "results": [{ "asset": { "id": "...", "kind": "image", "sourceTitle": "...", "width": 1600, "height": 900, "sources": [...] }, "score": 0 }], "semantic": false }`.
+返回 `{ "results": [{ "asset": { "id": "...", "kind": "image", "sourceTitle": "...", "width": 1600, "height": 900, "sources": [...] }, "score": 0 }], "semantic": false }`。
 
-`semantic: false` means keyword/metadata matching (no embedding model
-configured). Filter and rank the results yourself from the asset metadata.
+`semantic: false` 表示关键词/元数据匹配（未配置嵌入模型）。根据资产元数据自行筛选和排序结果。
 
-### Apply
+### 应用
 
 `POST /api/tools/library/apply`
 
 ```json
-{ "assetId": "<id from search>", "dir": "assets" }
+{ "assetId": "<搜索结果的 ID>", "dir": "assets" }
 ```
 
-Copies the asset into the project (default subdir `library/`, or the `dir` you
-pass) and returns `{ "relPath": "assets/<hash>.png" }`. Reference that
-`relPath` from the HTML/CSS you write (e.g. `<img src="assets/ab12cd34ef.png">`).
+将资产复制到项目中（默认子目录 `library/`，或你传入的 `dir`）并返回 `{ "relPath": "assets/<hash>.png" }`。在你编写的 HTML/CSS 中引用该 `relPath`（例如 `<img src="assets/ab12cd34ef.png">`）。
 
-## Recipe
+## 操作步骤
 
-1. Search with a tight query for the kind you need.
-2. Pick the best result by dimensions / title / source.
-3. Apply it to get a project-relative path.
-4. Wire that path into the artifact you're editing.
+1. 使用精确查询搜索所需类型的资产。
+2. 根据尺寸/标题/来源选择最佳结果。
+3. 应用它以获取项目相对路径。
+4. 将该路径接入你正在编辑的工件中。
 
-If search returns nothing, fall back to media generation rather than guessing a
-path — never invent a `relPath` that `apply` did not return.
+如果搜索无结果，回退到媒体生成而不是猜测路径—切勿编造 `apply` 未返回的 `relPath`。

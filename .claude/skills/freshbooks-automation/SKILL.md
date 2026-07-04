@@ -5,63 +5,63 @@ requires:
   mcp: [rube]
 ---
 
-# FreshBooks Automation
+# FreshBooks 自动化
 
-Automate FreshBooks operations including listing businesses, managing projects, tracking time, and monitoring budgets for small and medium-sized business accounting.
+自动化 FreshBooks 操作，包括列出业务、管理项目、追踪时间以及为中小企业会计监控预算。
 
-**Toolkit docs:** [composio.dev/toolkits/freshbooks](https://composio.dev/toolkits/freshbooks)
-
----
-
-## Setup
-
-This skill requires the **Rube MCP server** connected at `https://rube.app/mcp`.
-
-Before executing any tools, ensure an active connection exists for the `freshbooks` toolkit. If no connection is active, initiate one via `RUBE_MANAGE_CONNECTIONS`.
+**工具包文档：**[composio.dev/toolkits/freshbooks](https://composio.dev/toolkits/freshbooks)
 
 ---
 
-## Core Workflows
+## 设置
 
-### 1. List Businesses
+此技能需要连接 **Rube MCP 服务器** `https://rube.app/mcp`。
 
-Retrieve all businesses associated with the authenticated user. The `business_id` from this response is required for most other FreshBooks API calls.
-
-**Tool:** `FRESHBOOKS_LIST_BUSINESSES`
-
-**Parameters:** None required.
-
-**Example:**
-```
-Tool: FRESHBOOKS_LIST_BUSINESSES
-Arguments: {}
-```
-
-**Output:** Returns business membership information including all businesses the user has access to, along with their role in each business.
-
-> **Important:** Always call this first to obtain a valid `business_id` before performing project-specific operations.
+在执行任何工具之前，确保 `freshbooks` 工具包存在活跃连接。如果没有活跃连接，通过 `RUBE_MANAGE_CONNECTIONS` 发起一个。
 
 ---
 
-### 2. List and Filter Projects
+## 核心工作流
 
-Retrieve all projects for a business with comprehensive filtering and sorting options.
+### 1. 列出业务
 
-**Tool:** `FRESHBOOKS_LIST_PROJECTS`
+检索与已认证用户关联的所有业务。此响应中的 `business_id` 对大多数其他 FreshBooks API 调用是必需的。
 
-**Key Parameters:**
-- `business_id` (required) -- Business ID obtained from `FRESHBOOKS_LIST_BUSINESSES`
-- `active` -- Filter by active status: `true` (active only), `false` (inactive only), omit for all
-- `complete` -- Filter by completion: `true` (completed), `false` (incomplete), omit for all
-- `sort_by` -- Sort order: `"created_at"`, `"due_date"`, or `"title"`
-- `updated_since` -- UTC datetime in RFC3339 format, e.g., `"2026-01-01T00:00:00Z"`
-- `include_logged_duration` -- `true` to include total logged time (in seconds) per project
-- `skip_group` -- `true` to omit team member/invitation data (reduces response size)
+**工具：** `FRESHBOOKS_LIST_BUSINESSES`
 
-**Example:**
+**参数：** 无需参数。
+
+**示例：**
 ```
-Tool: FRESHBOOKS_LIST_PROJECTS
-Arguments:
+工具：FRESHBOOKS_LIST_BUSINESSES
+参数：{}
+```
+
+**输出：** 返回业务成员信息，包括用户有权访问的所有业务及其在每个业务中的角色。
+
+> **重要：** 始终先调用此方法获取有效的 `business_id`，然后再执行项目特定的操作。
+
+---
+
+### 2. 列出和筛选项目
+
+检索业务的所有项目，提供全面的筛选和排序选项。
+
+**工具：** `FRESHBOOKS_LIST_PROJECTS`
+
+**关键参数：**
+- `business_id`（必需）-- 从 `FRESHBOOKS_LIST_BUSINESSES` 获取的业务 ID
+- `active` -- 按活跃状态筛选：`true`（仅活跃）、`false`（仅不活跃）、省略则返回全部
+- `complete` -- 按完成状态筛选：`true`（已完成）、`false`（未完成）、省略则返回全部
+- `sort_by` -- 排序方式：`"created_at"`、`"due_date"` 或 `"title"`
+- `updated_since` -- RFC3339 格式的 UTC 日期时间，例如 `"2026-01-01T00:00:00Z"`
+- `include_logged_duration` -- `true` 则包含每个项目记录的总时间（秒）
+- `skip_group` -- `true` 则省略团队成员/邀请数据（减少响应大小）
+
+**示例：**
+```
+工具：FRESHBOOKS_LIST_PROJECTS
+参数：
   business_id: 123456
   active: true
   complete: false
@@ -69,38 +69,38 @@ Arguments:
   include_logged_duration: true
 ```
 
-**Use Cases:**
-- Get all projects for time tracking or invoicing
-- Find projects by client, status, or date range
-- Monitor project completion and budget tracking
-- Retrieve team assignments and project groups
+**使用场景：**
+- 获取所有项目用于时间跟踪或开票
+- 按客户、状态或日期范围查找项目
+- 监控项目完成情况和预算跟踪
+- 检索团队分配和项目分组
 
 ---
 
-### 3. Monitor Active Projects
+### 3. 监控活跃项目
 
-Track project progress and budgets by filtering for active, incomplete projects.
+通过筛选活跃、未完成的项目来跟踪项目进度和预算。
 
-**Steps:**
-1. Call `FRESHBOOKS_LIST_BUSINESSES` to get `business_id`
-2. Call `FRESHBOOKS_LIST_PROJECTS` with `active: true`, `complete: false`, `include_logged_duration: true`
-3. Analyze logged duration vs. budget for each project
+**步骤：**
+1. 调用 `FRESHBOOKS_LIST_BUSINESSES` 获取 `business_id`
+2. 调用 `FRESHBOOKS_LIST_PROJECTS`，参数为 `active: true`、`complete: false`、`include_logged_duration: true`
+3. 分析每个项目的已记录时长与预算的关系
 
 ---
 
-### 4. Review Recently Updated Projects
+### 4. 查看最近更新的项目
 
-Check for recent project activity using the `updated_since` filter.
+使用 `updated_since` 筛选器检查最近的项目活动。
 
-**Steps:**
-1. Call `FRESHBOOKS_LIST_BUSINESSES` to get `business_id`
-2. Call `FRESHBOOKS_LIST_PROJECTS` with `updated_since` set to your cutoff datetime
-3. Review returned projects for recent changes
+**步骤：**
+1. 调用 `FRESHBOOKS_LIST_BUSINESSES` 获取 `business_id`
+2. 调用 `FRESHBOOKS_LIST_PROJECTS`，将 `updated_since` 设置为截止日期时间
+3. 审查返回的项目以了解最近的更改
 
-**Example:**
+**示例：**
 ```
-Tool: FRESHBOOKS_LIST_PROJECTS
-Arguments:
+工具：FRESHBOOKS_LIST_PROJECTS
+参数：
   business_id: 123456
   updated_since: "2026-02-01T00:00:00Z"
   sort_by: "created_at"
@@ -108,33 +108,33 @@ Arguments:
 
 ---
 
-## Recommended Execution Plan
+## 推荐执行计划
 
-1. **Get the business ID** by calling `FRESHBOOKS_LIST_BUSINESSES`
-2. **List projects** using `FRESHBOOKS_LIST_PROJECTS` with the obtained `business_id`
-3. **Filter as needed** using `active`, `complete`, `updated_since`, and `sort_by` parameters
+1. **获取业务 ID**：调用 `FRESHBOOKS_LIST_BUSINESSES`
+2. **列出项目**：使用获取的 `business_id` 调用 `FRESHBOOKS_LIST_PROJECTS`
+3. **按需筛选**：使用 `active`、`complete`、`updated_since` 和 `sort_by` 参数
 
 ---
 
-## Known Pitfalls
+## 已知陷阱
 
-| Pitfall | Detail |
+| 陷阱 | 详情 |
 |---------|--------|
-| **business_id required** | Most FreshBooks operations require a `business_id`. Always call `FRESHBOOKS_LIST_BUSINESSES` first to obtain it. |
-| **Date format** | The `updated_since` parameter must be in RFC3339 format: `"2026-01-01T00:00:00Z"`. Other formats will fail. |
-| **Paginated results** | Project list responses are paginated. Check for additional pages in the response. |
-| **Empty results** | Returns an empty list if no projects exist or match the applied filters. This is not an error. |
-| **Logged duration units** | When `include_logged_duration` is true, the duration is returned in seconds. Convert to hours (divide by 3600) for display. |
+| **business_id 必需** | 大多数 FreshBooks 操作需要 `business_id`。始终先调用 `FRESHBOOKS_LIST_BUSINESSES` 获取它。 |
+| **日期格式** | `updated_since` 参数必须使用 RFC3339 格式：`"2026-01-01T00:00:00Z"`。其他格式将失败。 |
+| **分页结果** | 项目列表响应是分页的。请检查响应中是否有其他页面。 |
+| **空结果** | 如果没有项目存在或匹配应用的筛选器，则返回空列表。这不是错误。 |
+| **记录时长单位** | 当 `include_logged_duration` 为 true 时，时长以秒为单位返回。转换为小时（除以 3600）以便显示。 |
 
 ---
 
-## Quick Reference
+## 快速参考
 
-| Tool Slug | Description |
+| 工具 Slug | 描述 |
 |-----------|-------------|
-| `FRESHBOOKS_LIST_BUSINESSES` | List all businesses for the authenticated user |
-| `FRESHBOOKS_LIST_PROJECTS` | List projects with filtering and sorting for a business |
+| `FRESHBOOKS_LIST_BUSINESSES` | 列出已认证用户的所有业务 |
+| `FRESHBOOKS_LIST_PROJECTS` | 列出业务的项目，支持筛选和排序 |
 
 ---
 
-*Powered by [Composio](https://composio.dev)*
+*由 [Composio](https://composio.dev) 提供支持*

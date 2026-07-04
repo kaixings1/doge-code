@@ -1,14 +1,6 @@
 ---
 name: seo-dataforseo
-description: "Seo Dataforseo — Seo Dataforseo 相关功能和最佳实践"
-  Live SEO data via DataForSEO MCP server. SERP analysis (Google, Bing, Yahoo,
-  YouTube, Google Images), keyword research (volume, difficulty, intent, trends),
-  backlink profiles, on-page analysis (Lighthouse, content parsing), competitor
-  analysis, content analysis, business listings, AI visibility (ChatGPT scraper,
-  LLM mention tracking), and domain analytics. Requires DataForSEO extension
-  installed. Use when user says "dataforseo", "live SERP", "keyword volume",
-  "backlink data", "competitor data", "AI visibility check", "LLM mentions",
-  "image SERP", "google images", "image rankings", or "real search data".
+description: "Seo Dataforseo — 通过 DataForSEO MCP 服务器获取实时 SEO 数据的相关功能和最佳实践。"
 user-invocable: true
 argument-hint: "[command] [query]"
 license: MIT
@@ -19,14 +11,14 @@ metadata:
   category: seo
 ---
 
-# DataForSEO: Live SEO Data (Extension)
+# DataForSEO：实时 SEO 数据（扩展）
 
 Live search data via the DataForSEO MCP server. Provides real-time SERP results
 (organic + images), keyword metrics, backlink profiles, on-page analysis, content
 analysis, business listings, AI visibility checking, and LLM mention tracking
 across 10 API modules with 79+ MCP tools.
 
-## Prerequisites
+## 前提条件
 
 This skill requires the DataForSEO extension to be installed:
 ```bash
@@ -69,7 +61,7 @@ python3 scripts/dataforseo_costs.py log <endpoint> <actual_cost>
 
 Load `references/cost-tiers.md` for the full pricing table, budget presets, and cost reduction tips.
 
-## Quick Reference
+## 快速参考
 
 | Command | What it does |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 48 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

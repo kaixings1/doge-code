@@ -1,15 +1,15 @@
 ---
 name: fp-pipe-ref
-description: "Fp Pipe Ref — Fp Pipe Ref 相关功能和最佳实践"
+description: "fp-ts pipe 和 flow 快速参考：函数组合模式，pipe 用于值转换，flow 用于创建可复用管道。"
 risk: unknown
 source: community
 version: 1.0.0
 tags: [fp-ts, pipe, flow, composition, quick-reference]
 ---
 
-# pipe & flow Quick Reference
+# pipe /u4e0e flow /u5feb/u901f/u53c2/u8003
 
-## pipe - Transform a Value
+## pipe - /u8f6c/u6362/u4e00/u4e2a/u503c
 
 ```typescript
 import { pipe } from 'fp-ts/function'
@@ -26,7 +26,7 @@ const result = pipe(
 // ['HELLO', 'WORLD']
 ```
 
-## flow - Create Reusable Pipeline
+## flow - /u521b/u5efa/u53ef/u590d/u7528/u7684/u7ba1/u9053
 
 ```typescript
 import { flow } from 'fp-ts/function'
@@ -42,13 +42,13 @@ process('  hello world  ') // ['HELLO', 'WORLD']
 process('  foo bar  ')     // ['FOO', 'BAR']
 ```
 
-## When to Use
-| Use | When |
+## /u4f55/u65f6/u4f7f/u7528
+| /u7528/u9014 | /u4f55/u65f6/u4f7f/u7528 |
 |-----|------|
-| `pipe` | Transform a specific value now |
-| `flow` | Create reusable transformation |
+| `pipe` | /u7acb/u5373/u8f6c/u6362/u4e00/u4e2a/u5177/u4f53/u503c |
+| `flow` | /u521b/u5efa/u53ef/u590d/u7528/u7684/u8f6c/u6362/u51fd/u6570 |
 
-## With fp-ts Types
+## /u4e0e fp-ts /u7c7b/u578b/u4e00/u8d77/u4f7f/u7528
 
 ```typescript
 import * as O from 'fp-ts/Option'
@@ -69,21 +69,21 @@ pipe(
 )
 ```
 
-## Common Pattern
+## /u5e38/u89c1/u6a21/u5f0f
 
 ```typescript
-// Data last enables partial application
+// /u6570/u636e/u6700/u540e/u7684/u98ce/u683c/u5b9e/u73b0/u90e8/u5206/u5e94/u7528
 const getActiveNames = flow(
   A.filter((u: User) => u.active),
   A.map(u => u.name)
 )
 
-// Reuse anywhere
+// /u4efb/u4f55/u5730/u65b9/u90fd/u53ef/u590d/u7528
 getActiveNames(users1)
 getActiveNames(users2)
 ```
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

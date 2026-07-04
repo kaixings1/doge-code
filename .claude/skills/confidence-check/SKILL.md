@@ -3,29 +3,29 @@ name: Confidence Check
 description: "Confidence Check — Confidence Check 相关功能和最佳实践"
 ---
 
-# Confidence Check Skill
+# 信心检查技能
 
-## Purpose
+## 目的
 
-Prevents wrong-direction execution by assessing confidence **BEFORE** starting implementation.
+通过在**开始实现之前**评估信心来防止错误方向的执行。
 
-**Requirement**: ≥90% confidence to proceed with implementation.
+**要求**：≥90% 信心才能继续实施。
 
-**Test Results** (2025-10-21):
-- Precision: 1.000 (no false positives)
-- Recall: 1.000 (no false negatives)
-- 8/8 test cases passed
+**测试结果**（2025-10-21）：
+- 精确度：1.000（无假阳性）
+- 召回率：1.000（无假阴性）
+- 8/8 测试用例通过
 
-## When to Use
+## 何时使用
 
-Use this skill BEFORE implementing any task to ensure:
-- No duplicate implementations exist
-- Architecture compliance verified
-- Official documentation reviewed
-- Working OSS implementations found
-- Root cause properly identified
+在实现任何任务**之前**使用此技能，以确保：
+- 不存在重复实现
+- 架构合规性已验证
+- 官方文档已审阅
+- 找到可用的 OSS 实现
+- 根本原因已正确识别
 
-## Confidence Assessment Criteria
+## 信心评估标准
 
 Calculate confidence score (0.0 - 1.0) based on 5 checks:
 

@@ -2,18 +2,18 @@
 name: KPI框架
 description: "定义 KPI 框架：北极星指标、输入指标、领先和滞后指标、AARRR 海盗指标和 HEART 框架。适用于设置产品分析、定义成功指标或让团队在衡量什么上保持一致。"
 ---
-# KPI Framework
+# KPI 框架
 
-## Purpose
-Design a metrics hierarchy that aligns teams and drives the right behavior.
+## 目的
+设计一个使团队保持一致并驱动正确行为的指标层次结构。
 
-## Frameworks
+## 框架
 
-### North Star Metric
-- Single metric that captures core value delivered to customers
-- Input metrics that drive the North Star (2-5 levers)
-- Example: Spotify = "Time spent listening"
+### 北极星指标
+- 捕捉交付给客户核心价值的单一指标
+- 驱动北极星指标的输入指标（2-5 个杠杆）
+- 示例：Spotify = "听歌时间"
 
-### AARRR (Pirate Metrics)
-| Stage | Metric |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 14 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+### AARRR（海盗指标）
+| 阶段 | 指标 |
+|---|---

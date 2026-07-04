@@ -9,18 +9,18 @@ date_added: "2026-02-27"
 
 # Kubernetes Deployment Workflow
 
-## Overview
+## 概述
 
-Specialized workflow for deploying applications to Kubernetes including container orchestration, Helm charts, service mesh configuration, and production-ready K8s patterns.
+专门用于部署应用到 Kubernetes 的工作流，包括容器编排、Helm chart、服务网格配置和生产就绪的 K8s 模式。
 
-## When to Use This Workflow
+## 何时使用此工作流
 
-Use this workflow when:
-- Deploying to Kubernetes
-- Creating Helm charts
-- Configuring service mesh
-- Setting up K8s networking
-- Implementing K8s security
+在以下情况下使用此工作流：
+- 部署到 Kubernetes 时
+- 创建 Helm chart 时
+- 配置服务网格时
+- 设置 K8s 网络时
+- 实施 K8s 安全时
 
 ## Workflow Phases
 
@@ -165,7 +165,7 @@ Use @gitops-workflow to implement GitOps deployment
 - `terraform-infrastructure` - Infrastructure
 - `docker-containerization` - Containers
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

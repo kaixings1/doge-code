@@ -3,7 +3,7 @@ name: brand-voice
 description: 品牌语调指南
 ---
 
-# Brand Voice
+# /u54c1/u724c/u58f0/u97f3
 
 Build a durable voice profile from real source material, then use that profile everywhere instead of re-deriving style from scratch or defaulting to generic AI copy.
 
@@ -28,7 +28,7 @@ Do not use generic platform exemplars as source material.
 ## Collection Workflow
 
 1. Gather 5 to 20 representative samples when available.
-2. Prefer recent material over old material unless the user says the older writing is more canonical.
+2. 优先 recent material over old material unless the user says the older writing is more canonical.
 3. Separate "public launch voice" from "private working voice" if the source set clearly splits.
 4. If live X access is available, use `x-api` to pull recent original posts before drafting.
 5. If site copy matters, include the current ECC landing page and repo/plugin framing.
@@ -51,7 +51,7 @@ Produce a reusable `VOICE PROFILE` block that downstream skills can consume dire
 
 Keep the profile structured and short enough to reuse in session context. The point is not literary criticism. The point is operational reuse.
 
-## Affaan / ECC Defaults
+## Affaan / ECC 默认s
 
 If the user wants Affaan / ECC voice and live sources are thin, start here unless newer source material overrides it:
 

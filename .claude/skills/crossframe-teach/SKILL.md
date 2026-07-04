@@ -1,6 +1,6 @@
 ---
 name: crossframe-teach
-description: "适用于crossframe suite routes explicit chinese teaching of crossframe concepts, misreading boundaries, plain-language examples, signals, or exercises.的情况。"
+description: "适用于 CrossFrame Suite 路由到中文 CrossFrame 概念教学、误读边界、白话示例、信号识别或练习题的场景。"
 category: content
 risk: safe
 source: community
@@ -23,23 +23,21 @@ tags:
 ---
 # CrossFrame Teach
 
+## 何时使用此技能
 
+- 当 `crossframe-suite` 将显式 CrossFrame 工作路由到概念教学、误读纠偏、白话示例、可观察信号或练习题时使用。
+- 当用户想要理解 CrossFrame 概念而不将术语变成口号时使用。
+- 除非用户显式命名此同级技能，否则不要独立使用。
 
-## When to Use This Skill
+## 打包来源说明
 
-- Use when `crossframe-suite` routes explicit CrossFrame work into concept teaching, misreading correction, plain-language examples, observable signals, or exercises.
-- Use when the user wants to understand a CrossFrame concept without turning terms into slogans.
-- Do not use independently unless the user explicitly names this sibling skill.
+这份 AAS 就绪副本保留了以下原始 CrossFrame 技能正文。中文仍然是权威语义层；英文元数据仅用于发现、安装和仓库审查。
 
-## Packaged Source Note
+## 限制
 
-This AAS-ready copy preserves the original CrossFrame skill body below. Chinese remains the canonical semantic layer; English metadata is only for discovery, installation, and repository review.
-
-## Limitations
-
-- The skill body is intentionally Chinese-canonical; English metadata is for discovery and does not replace the original Chinese terms.
-- Use only after explicit CrossFrame invocation or `crossframe-suite` routing; do not apply it as a generic default reasoning layer.
-- It structures analysis, drafting, and review, but does not replace source verification, domain expertise, or legal, medical, or financial judgment.
+- 技能正文有意以中文为规范；英文元数据仅用于发现，不替代原始中文术语。
+- 仅在显式 CrossFrame 调用或 `crossframe-suite` 路由后使用；不要将其应用为通用默认推理层。
+- 它结构化分析、底稿和审查，但不替代来源验证、领域专业知识或法律、医疗、财务判断。
 
 > **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 

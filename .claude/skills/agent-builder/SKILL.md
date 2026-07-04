@@ -1,8 +1,6 @@
 ---
 name: agent-builder
-description: "Agent Builder — Agent Builder 相关功能和最佳实践"
-  Design and build AI agents for any domain. Use when users:
-  (1) ask to "create an agent", "build an assistant", or "design an AI system"
+description: "Agent Builder — 设计和构建适用于任何领域的 AI 代理。当用户要求"创建代理""构建助手"或"设计 AI 系统"时使用。"
   (2) want to understand agent architecture, agentic patterns, or autonomous AI
   (3) need help with capabilities, subagents, planning, or skill mechanisms
   (4) ask about Claude Code, Cursor, or similar agent internals
@@ -44,11 +42,11 @@ Domain expertise injected on-demand: policies, workflows, best practices, schema
 
 **Design principle**: Make knowledge available, not mandatory. Load it when relevant, not upfront.
 
-### 3. Context (What has happened?)
+### 3. 上下文 (What has happened?)
 
 The conversation history - the thread connecting actions into coherent behavior.
 
-**Design principle**: Context is precious. Isolate noisy subtasks. Truncate verbose outputs. Protect clarity.
+**Design principle**: 上下文 is precious. Isolate noisy subtasks. Truncate verbose outputs. Protect clarity.
 
 ## Agent Design Thinking
 
@@ -67,4 +65,3 @@ Before building, understand:
 Start simple. Add complexity only when real usage reveals the need:
 
 | Level | What to add | When to add it |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 00 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -6,7 +6,7 @@ requires:
     - rube
 ---
 
-# Clockify Automation
+# Clockify 自动化
 
 Automate your Clockify time tracking operations directly from Claude Code. Log time entries, query historical data, manage workspaces, and audit team activity -- all without leaving your terminal.
 
@@ -14,7 +14,7 @@ Automate your Clockify time tracking operations directly from Claude Code. Log t
 
 ---
 
-## Setup
+## 设置
 
 1. Add the Rube MCP server to your Claude Code config with URL: `https://rube.app/mcp`
 2. When prompted, authenticate your Clockify account through the connection link provided
@@ -22,7 +22,7 @@ Automate your Clockify time tracking operations directly from Claude Code. Log t
 
 ---
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Create Time Entries
 
@@ -121,7 +121,7 @@ Start a timer on project abc in workspace xyz with description "Working on bug f
 
 ---
 
-## Known Pitfalls
+## 已知陷阱
 
 - **Workspace and user IDs are required:** Most Clockify tools require both `workspaceId` and `userId`. Always call `CLOCKIFY_GET_ALL_MY_WORKSPACES` and `CLOCKIFY_GET_CURRENTLY_LOGGED_IN_USER_INFO` first to resolve these IDs.
 - **ISO 8601 timestamps:** All time parameters must be in ISO 8601 format with timezone (e.g., `2026-02-11T09:00:00Z`). Omitting the timezone causes unpredictable behavior.
@@ -131,7 +131,7 @@ Start a timer on project abc in workspace xyz with description "Working on bug f
 
 ---
 
-## Quick Reference
+## 快速参考
 
 | Tool Slug | Description |
 |---|---|
@@ -144,4 +144,4 @@ Start a timer on project abc in workspace xyz with description "Working on bug f
 
 ---
 
-*Powered by [Composio](https://composio.dev)*
+*由 [Composio](https://composio.dev) 提供支持*

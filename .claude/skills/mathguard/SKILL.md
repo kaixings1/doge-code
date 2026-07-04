@@ -56,7 +56,7 @@ This rule has saved more incidents than any other in this skill. Do not soften i
    - If approximate: the error parameter (ε, δ, false-positive rate) and a sentence on whether the caller can tolerate it.
    - If the caller needs exact and there is no exact win, say so and stop — do not silently degrade to approximate.
 
-2. **Cite the technique by name.** Never describe a probabilistic or numerical trick in vague terms. Name it: `Bloom filter`, `HyperLogLog`, `Count-Min Sketch`, `MinHash + LSH`, `Johnson–Lindenstrauss projection`, `FFT`, `NTT`, `fast exponentiation`, `Karatsuba`, `Strassen`, `sweep line`, `kd-tree`, `BVH`, `union-find with path compression`, `Floyd's cycle detection`, `Boyer-Moore majority`, `reservoir sampling`, `Knuth shuffle`, `Aho-Corasick`, `suffix automaton`, `segment tree with lazy propagation`, `Fenwick tree`, `monoid scan / parallel prefix`. A named technique is auditable; "a smart approximation" is not.
+2. **Cite the technique by name.** 绝不 describe a probabilistic or numerical trick in vague terms. Name it: `Bloom filter`, `HyperLogLog`, `Count-Min Sketch`, `MinHash + LSH`, `Johnson–Lindenstrauss projection`, `FFT`, `NTT`, `fast exponentiation`, `Karatsuba`, `Strassen`, `sweep line`, `kd-tree`, `BVH`, `union-find with path compression`, `Floyd's cycle detection`, `Boyer-Moore majority`, `reservoir sampling`, `Knuth shuffle`, `Aho-Corasick`, `suffix automaton`, `segment tree with lazy propagation`, `Fenwick tree`, `monoid scan / parallel prefix`. A named technique is auditable; "a smart approximation" is not.
 
 3. **State the trade you are making.** Every math-level optimization buys something at a cost. In one line:
    - Buys: `space`, `time`, `wall-clock`, `parallelism`.
@@ -96,4 +96,3 @@ If any of 1–7 is missing, do not propose the technique.
 ### Sketches and probabilistic structures (massive data, approximate)
 
 | Problem | Classical | Math technique | Win | Caveat |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 03 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -1,31 +1,31 @@
 ---
 name: setup
-description: "Setup — Setup 相关功能和最佳实践"
+description: "设置 — Claude Code 设置和配置功能"
 level: 2
 ---
 
-# Setup
+# 设置
 
-Use `/oh-my-claudecode:setup` as the unified setup/configuration entrypoint.
+使用 `/oh-my-claudecode:setup` 作为统一的设置/配置入口点。
 
-## Usage
+## 使用方法
 
 ```bash
-/oh-my-claudecode:setup                # full setup wizard
-/oh-my-claudecode:setup doctor         # installation diagnostics
-/oh-my-claudecode:setup mcp            # MCP server configuration
-/oh-my-claudecode:setup wizard --local # explicit wizard path
+/oh-my-claudecode:setup                # 完整设置向导
+/oh-my-claudecode:setup doctor         # 安装诊断
+/oh-my-claudecode:setup mcp            # MCP 服务器配置
+/oh-my-claudecode:setup wizard --local # 显式向导路径
 ```
 
-## Routing
+## 路由规则
 
-Process the request by the **first argument only** so install/setup questions land on the right flow immediately:
+仅根据**第一个参数**处理请求，以便安装/设置问题立即进入正确的流程：
 
-- No argument, `wizard`, `local`, `global`, or `--force` -> route to `/oh-my-claudecode:omc-setup` with the same remaining args
-- `doctor` -> route to `/oh-my-claudecode:omc-doctor` with everything after the `doctor` token
-- `mcp` -> route to `/oh-my-claudecode:mcp-setup` with everything after the `mcp` token
+- 无参数、`wizard`、`local`、`global` 或 `--force` -> 路由到 `/oh-my-claudecode:omc-setup`，带有相同的剩余参数
+- `doctor` -> 路由到 `/oh-my-claudecode:omc-doctor`，带有 `doctor` 令牌之后的所有内容
+- `mcp` -> 路由到 `/oh-my-claudecode:mcp-setup`，带有 `mcp` 令牌之后的所有内容
 
-Examples:
+示例：
 
 ```bash
 /oh-my-claudecode:setup --local          # => /oh-my-claudecode:omc-setup --local
@@ -33,9 +33,100 @@ Examples:
 /oh-my-claudecode:setup mcp github       # => /oh-my-claudecode:mcp-setup github
 ```
 
-## Notes
+## 功能说明
 
-- `/oh-my-claudecode:omc-setup`, `/oh-my-claudecode:omc-doctor`, and `/oh-my-claudecode:mcp-setup` remain valid compatibility entrypoints.
-- Prefer `/oh-my-claudecode:setup` in new documentation and user guidance.
+### 完整设置向导
+- 交互式配置 Claude Code
+- 设置 API 密钥和端点
+- 配置 MCP 服务器
+- 设置环境变量
+- 验证安装完整性
 
-Task: {{ARGUMENTS}}
+### 安装诊断
+- 检查系统依赖
+- 验证 API 连接
+- 测试工具功能
+- 诊断常见问题
+- 生成诊断报告
+
+### MCP 服务器配置
+- 添加 MCP 服务器
+- 配置服务器连接
+- 管理服务器列表
+- 测试服务器连接
+- 更新服务器配置
+
+## 配置选项
+
+### 本地配置
+- 项目级配置
+- 用户级配置
+- 环境变量配置
+- 配置文件管理
+
+### 全局配置
+- 系统级设置
+- 默认值配置
+- 模板管理
+- 插件配置
+
+## 最佳实践
+
+### 初始设置
+1. 运行完整设置向导
+2. 配置 API 端点
+3. 添加 MCP 服务器
+4. 验证安装
+
+### 故障排除
+1. 运行安装诊断
+2. 检查错误日志
+3. 验证网络连接
+4. 更新配置
+
+### 维护更新
+1. 定期检查更新
+2. 备份配置
+3. 测试新功能
+4. 更新文档
+
+## 注意事项
+
+- `/oh-my-claudecode:omc-setup`、`/oh-my-claudecode:omc-doctor` 和 `/oh-my-claudecode:mcp-setup` 仍然是有效的兼容性入口点。
+- 在新文档和用户指南中优先使用 `/oh-my-claudecode:setup`。
+
+## 常见问题
+
+### 配置问题
+- 配置文件位置错误
+- 权限问题
+- 格式错误
+- 依赖缺失
+
+### 连接问题
+- API 端点不可达
+- 认证失败
+- 网络限制
+- 超时设置
+
+### 功能问题
+- 工具不可用
+- 命令未识别
+- 性能问题
+- 兼容性问题
+
+## 支持资源
+
+### 文档
+- 官方文档
+- 社区指南
+- 故障排除手册
+- API 参考
+
+### 社区
+- 问题跟踪
+- 讨论论坛
+- 贡献指南
+- 更新日志
+
+任务：{{ARGUMENTS}}
