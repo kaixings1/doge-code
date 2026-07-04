@@ -10,21 +10,21 @@ tags: []
 
 # {{id}} — {{title}}
 
-## Claim
+## 声明
 
-(One atomic claim. Should answer one question or assert one observation. If you can't state it in 1-3 sentences, split into multiple zettels.)
+（一个原子级声明。应回答一个问题或断言一个观察。如果不能用 1-3 句话陈述，拆分为多个卡片盒笔记。）
 
-## Reasoning
+## 推理
 
-(Why is this claim true? What does it rest on?)
+（为什么这个声明成立？它基于什么？）
 
-## Sources
+## 来源
 
-- (external citations)
-- Parent zettel: [[{{parent-id}}]] (the broader claim this refines)
-- Child zettels: (claims that build on this one, populated as they're written)
+- （外部引用）
+- 父卡片盒笔记：[[{{parent-id}}]]（此声明细化的更广泛声明）
+- 子卡片盒笔记：（建立在此声明之上的声明，编写时填充）
 
-## Cross-references
+## 交叉引用
 
-- [[{{related-zettel-1}}]] — (relationship)
-- [[{{related-zettel-2}}]] — (relationship)
+- [[{{related-zettel-1}}]] —（关系）
+- [[{{related-zettel-2}}]] —（关系）

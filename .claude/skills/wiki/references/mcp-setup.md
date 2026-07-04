@@ -1,34 +1,34 @@
-# MCP Setup
+# MCP 设置
 
-MCP lets Claude read and write vault notes directly without copy-paste. Four options ordered from simplest to most featureful.
+MCP 让 Claude 直接读写 Vault 笔记，无需复制粘贴。四种选项按从最简单到功能最丰富排列。
 
-> [!tip] Recommendation
-> If you have **Obsidian v1.12 or newer**, start with **Option D: Obsidian CLI**. It needs no MCP server, no plugins, and no TLS workarounds. Use Options A or B only if you need persistent MCP integration or are on an older Obsidian version.
+> [!tip] 推荐
+> 如果你有 **Obsidian v1.12 或更新版本**，从**选项 D：Obsidian CLI** 开始。它不需要 MCP 服务器、插件或 TLS 变通方案。仅当你需要持久化 MCP 集成或使用较旧版本的 Obsidian 时，才使用选项 A 或 B。
 
 ---
 
-## Step 1: Install the Local REST API Plugin
+## 步骤 1：安装 Local REST API 插件
 
-You must do this in Obsidian (Claude cannot do it programmatically):
+你必须在 Obsidian 中执行此操作（Claude 无法以编程方式完成）：
 
-1. Obsidian > Settings > Community Plugins > Turn off Restricted Mode
-2. Browse > Search "Local REST API" > Install > Enable
-3. Settings > Local REST API > Copy the API key
+1. Obsidian > 设置 > 第三方插件 > 关闭安全模式
+2. 浏览 > 搜索 "Local REST API" > 安装 > 启用
+3. 设置 > Local REST API > 复制 API 密钥
 
-The plugin runs on `https://127.0.0.1:27124` with a self-signed certificate.
+该插件在 `https://127.0.0.1:27124` 上运行，使用自签名证书。
 
-Test it:
+测试：
 ```bash
-curl -sk -H "Authorization: Bearer <YOUR_KEY>" https://127.0.0.1:27124/
+curl -sk -H "Authorization: Bearer <你的密钥>" https://127.0.0.1:27124/
 ```
 
-You should get a JSON response with vault info.
+你应该会收到包含 Vault 信息的 JSON 响应。
 
 ---
 
-## Option A: mcp-obsidian (REST API based)
+## 选项 A：mcp-obsidian（基于 REST API）
 
-Uses MarkusPfundstein's mcp-obsidian. Requires the Local REST API plugin running.
+使用 MarkusPfundstein 的 mcp-obsidian。需要 Local REST API 插件正在运行。
 
 ```bash
 claude mcp add-json obsidian-vault '{
@@ -36,7 +36,7 @@ claude mcp add-json obsidian-vault '{
   "command": "uvx",
   "args": ["mcp-obsidian"],
   "env": {
-    "OBSIDIAN_API_KEY": "<YOUR_KEY>",
+    "OBSIDIAN_API_KEY": "<你的密钥>",
     "OBSIDIAN_HOST": "127.0.0.1",
     "OBSIDIAN_PORT": "27124",
     "NODE_TLS_REJECT_UNAUTHORIZED": "0"
@@ -44,91 +44,91 @@ claude mcp add-json obsidian-vault '{
 }' --scope user
 ```
 
-> [!warning] Security
-> `NODE_TLS_REJECT_UNAUTHORIZED: "0"` **disables TLS certificate verification process-wide** for the MCP server. It is required here because the Local REST API plugin uses a self-signed certificate. This is acceptable for `127.0.0.1` (localhost) connections only. Never use this setting for any non-loopback connection. If you are uncomfortable with the global TLS bypass, prefer **Option D (Obsidian CLI)** or **Option B (filesystem-based)** which avoid this entirely.
+> [!warning] 安全性
+> `NODE_TLS_REJECT_UNAUTHORIZED: "0"` **在进程范围内禁用**了 MCP 服务器的 TLS 证书验证。这里需要这样做是因为 Local REST API 插件使用自签名证书。这仅接受用于 `127.0.0.1`（localhost）连接。切勿在任何非回环连接中使用此设置。如果你对全局 TLS 绕过感到不安，请优先选择**选项 D（Obsidian CLI）**或**选项 B（基于文件系统）**，它们完全避免了这个问题。
 
-Capabilities: read notes, write notes, search, patch frontmatter fields, append under headings.
+功能：读取笔记、写入笔记、搜索、修补前置元数据字段、在标题下追加内容。
 
 ---
 
-## Option B: MCPVault (filesystem based)
+## 选项 B：MCPVault（基于文件系统）
 
-No Obsidian plugin needed. Reads the vault directory directly.
+无需 Obsidian 插件。直接读取 Vault 目录。
 
 ```bash
 claude mcp add-json obsidian-vault '{
   "type": "stdio",
   "command": "npx",
-  "args": ["-y", "@bitbonsai/mcpvault@latest", "/absolute/path/to/your/vault"]
+  "args": ["-y", "@bitbonsai/mcpvault@latest", "/你的/vault/绝对路径"]
 }' --scope user
 ```
 
-Replace `/absolute/path/to/your/vault` with the actual vault path.
+将 `/你的/vault/绝对路径` 替换为实际的 Vault 路径。
 
-Tools available: `search_notes` (BM25), `read_note`, `create_note`, `update_note`, `get_frontmatter`, `update_frontmatter`, `list_all_tags`, `read_multiple_notes`.
-
----
-
-## Option C: Direct REST API via curl
-
-No MCP needed. Use curl in bash throughout the session. See `rest-api.md` for all commands.
+可用工具：`search_notes`（BM25）、`read_note`、`create_note`、`update_note`、`get_frontmatter`、`update_frontmatter`、`list_all_tags`、`read_multiple_notes`。
 
 ---
 
-## Option D: Obsidian CLI (recommended for v1.12+)
+## 选项 C：通过 curl 直接使用 REST API
 
-Obsidian shipped a native CLI in v1.12 (2026). It exposes vault operations directly to the terminal. No REST API plugin, no MCP server, no self-signed certs, no TLS workarounds. Claude calls it through the Bash tool.
+无需 MCP。在整个会话中使用 bash 的 curl。所有命令参见 `rest-api.md`。
 
-**Check if available:**
+---
+
+## 选项 D：Obsidian CLI（推荐用于 v1.12+）
+
+Obsidian 在 v1.12（2026 年）中推出了原生 CLI。它直接向终端公开 Vault 操作。无需 REST API 插件、MCP 服务器、自签名证书或 TLS 变通方案。Claude 通过 Bash 工具调用它。
+
+**检查是否可用：**
 ```bash
 which obsidian-cli 2>/dev/null && obsidian-cli --version
-# or, on flatpak:
+# 或者在 flatpak 上：
 flatpak run md.obsidian.Obsidian --cli --version
 ```
 
-**Common operations:**
+**常见操作：**
 ```bash
-# List all notes in a folder
-obsidian-cli list /path/to/vault wiki/
+# 列出文件夹中的所有笔记
+obsidian-cli list /路径/到/vault wiki/
 
-# Read a note
-obsidian-cli read /path/to/vault wiki/index.md
+# 读取笔记
+obsidian-cli read /路径/到/vault wiki/index.md
 
-# Create or update a note
-obsidian-cli write /path/to/vault wiki/new-note.md < content.md
+# 创建或更新笔记
+obsidian-cli write /路径/到/vault wiki/new-note.md < content.md
 
-# Search notes by content
-obsidian-cli search /path/to/vault "query term"
+# 按内容搜索笔记
+obsidian-cli search /路径/到/vault "查询词"
 ```
 
-**Why prefer this**:
-- No plugin install required (CLI is built into Obsidian)
-- No MCP server process to manage
-- No TLS certificate bypass needed
-- Survives Obsidian restarts (no persistent connection)
-- Works identically across desktop and headless environments
+**为什么优先选择此选项：**
+- 无需安装插件（CLI 内置于 Obsidian）
+- 无需管理 MCP 服务器进程
+- 无需 TLS 证书绕过
+- 重启 Obsidian 后仍有效（无持久连接）
+- 在桌面和无头环境中工作方式相同
 
-**When to use Options A/B/C instead**: If you need persistent semantic search, frontmatter patching, or are on Obsidian < v1.12.
+**何时改用选项 A/B/C：** 如果需要持久化语义搜索、前置元数据修补，或使用 Obsidian < v1.12。
 
-The `kepano/obsidian-skills` repo includes an `obsidian-cli` skill that wraps these commands as reusable patterns. Install it alongside this plugin for first-class CLI support.
+`kepano/obsidian-skills` 仓库包含一个 `obsidian-cli` 技能，将这些命令包装为可复用的模式。与此插件一同安装以获得一流的 CLI 支持。
 
 ---
 
-## Use `--scope user`
+## 使用 `--scope user`
 
-Both MCP options use `--scope user` so the vault is available across all Claude Code projects, not just the one where you ran the command.
+两个 MCP 选项均使用 `--scope user`，以便 Vault 在所有 Claude Code 项目中可用，而不仅限于运行命令的那个项目。
 
 ---
 
-## Verification
+## 验证
 
-After setup:
+设置后：
 
 ```bash
-claude mcp list               # confirm the server appears
-claude mcp get obsidian-vault # confirm the path or URL is correct
+claude mcp list               # 确认服务器出现
+claude mcp get obsidian-vault # 确认路径或 URL 正确
 ```
 
-In a Claude Code session, type `/mcp` to check connection status.
+在 Claude Code 会话中，输入 `/mcp` 检查连接状态。
 
-Then test: "List all notes in my wiki folder."
+然后测试："列出我的 wiki 文件夹中的所有笔记。"

@@ -1,16 +1,16 @@
-# REST API Quick Reference
+# REST API 快速参考
 
-Use these commands when MCP tools are not available. Requires the Local REST API plugin running in Obsidian (port 27124).
+当 MCP 工具不可用时使用这些命令。需要 Obsidian 中运行 Local REST API 插件（端口 27124）。
 
-Set your key before running any command:
+运行任何命令前设置你的密钥：
 ```bash
 API="https://127.0.0.1:27124"
-KEY="your-api-key-here"
+KEY="你的-api-密钥"
 ```
 
 ---
 
-## Read a file
+## 读取文件
 
 ```bash
 curl -sk \
@@ -20,7 +20,7 @@ curl -sk \
 
 ---
 
-## Create or replace a file
+## 创建或替换文件
 
 ```bash
 curl -sk -X PUT \
@@ -30,20 +30,20 @@ curl -sk -X PUT \
   "$API/vault/wiki/entities/Name.md"
 ```
 
-Or with inline content:
+或使用内联内容：
 ```bash
 curl -sk -X PUT \
   -H "Authorization: Bearer $KEY" \
   -H "Content-Type: text/markdown" \
   --data "# Page Title
 
-Content here." \
+此处为内容。" \
   "$API/vault/wiki/concepts/Name.md"
 ```
 
 ---
 
-## Append to a file
+## 追加到文件
 
 ```bash
 curl -sk -X POST \
@@ -55,7 +55,7 @@ curl -sk -X POST \
 
 ---
 
-## Patch a frontmatter field
+## 修补前置元数据字段
 
 ```bash
 curl -sk -X PATCH \
@@ -70,7 +70,7 @@ curl -sk -X PATCH \
 
 ---
 
-## Append content under a heading
+## 在标题下追加内容
 
 ```bash
 curl -sk -X PATCH \
@@ -85,16 +85,16 @@ curl -sk -X PATCH \
 
 ---
 
-## Search
+## 搜索
 
-Simple keyword search:
+简单关键词搜索：
 ```bash
 curl -sk -X POST \
   -H "Authorization: Bearer $KEY" \
   "$API/search/simple/?query=machine+learning"
 ```
 
-Dataview query:
+Dataview 查询：
 ```bash
 curl -sk -X POST \
   -H "Authorization: Bearer $KEY" \
@@ -105,7 +105,7 @@ curl -sk -X POST \
 
 ---
 
-## List all tags
+## 列出所有标签
 
 ```bash
 curl -sk \
@@ -115,7 +115,7 @@ curl -sk \
 
 ---
 
-## List files in a folder
+## 列出文件夹中的文件
 
 ```bash
 curl -sk \
