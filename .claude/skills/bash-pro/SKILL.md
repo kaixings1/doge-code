@@ -11,18 +11,18 @@ risk: critical
 source: community
 date_added: '2026-02-27'
 ---
-## Use this skill when
+## /u4f55/u65f6/u4f7f/u7528/u6b64/u6280/u80fd
 
 - Writing or reviewing Bash scripts for automation, CI/CD, or ops
 - Hardening shell scripts for safety and portability
 
-## Do not use this skill when
+## /u4e0d/u8981/u4f7f/u7528/u6b64/u6280/u80fd/u7684/u60c5/u51b5
 
 - You need POSIX-only shell without Bash features
 - The task requires a higher-level language for complex logic
 - You need Windows-native scripting (PowerShell)
 
-## Instructions
+## /u8bf4/u660e
 
 1. Define script inputs, outputs, and failure modes.
 2. Apply strict mode and safe argument parsing.
@@ -32,7 +32,7 @@ date_added: '2026-02-27'
 ## Safety
 
 - Treat input as untrusted; avoid eval and unsafe globbing.
-- Prefer dry-run modes before destructive actions.
+- 优先 dry-run modes before destructive actions.
 
 ## Focus Areas
 
@@ -49,13 +49,13 @@ date_added: '2026-02-27'
 
 ## Approach
 
-- Always use strict mode with `set -Eeuo pipefail` and proper error trapping
+- 始终 use strict mode with `set -Eeuo pipefail` and proper error trapping
 - Quote all variable expansions to prevent word splitting and globbing issues
-- Prefer arrays and proper iteration over unsafe patterns like `for f in $(ls)`
+- 优先 arrays and proper iteration over unsafe patterns like `for f in $(ls)`
 - Use `[[ ]]` for Bash conditionals, fall back to `[ ]` for POSIX compliance
 - Implement comprehensive argument parsing with `getopts` and usage functions
 - Create temporary files and directories safely with `mktemp` and cleanup traps
-- Prefer `printf` over `echo` for predictable output formatting
+- 优先 `printf` over `echo` for predictable output formatting
 - Use command substitution `$()` instead of backticks for readability
 - Implement structured logging with timestamps and configurable verbosity
 - Design scripts to be idempotent and support dry-run modes
@@ -97,7 +97,7 @@ date_added: '2026-02-27'
 - Document function parameters and return values in header comments
 - Extract magic numbers and strings to named constants at top of script
 
-## Safety & Security Patterns
+## Safety & 安全性 Patterns
 
 - Declare constants with `readonly` to prevent accidental modification
 - Use `local` keyword for all function variables to avoid polluting global scope
@@ -106,7 +106,7 @@ date_added: '2026-02-27'
 - Use process substitution `<(command)` instead of temporary files when possible
 - Sanitize user input before using in commands or file operations
 - Validate numeric input with pattern matching: `[[ $num =~ ^[0-9]+$ ]]`
-- Never use `eval` on user input; use arrays for dynamic command construction
+- 绝不 use `eval` on user input; use arrays for dynamic command construction
 - Set restrictive umask for sensitive operations: `(umask 077; touch "$secure_file")`
 - Log security-relevant operations (authentication, privilege changes, file access)
 - Use `--` to separate options from arguments: `rm -rf -- "$user_input"`
@@ -114,7 +114,7 @@ date_added: '2026-02-27'
 - Check exit codes of all security-critical operations explicitly
 - Use `trap` to ensure cleanup happens even on abnormal exit
 
-## Performance Optimization
+## 性能 Optimization
 
 - Avoid subshells in loops; use `while read` instead of `for i in $(cat file)`
 - Use Bash built-ins over external commands: `[[ ]]` instead of `test`, `${var//pattern/replacement}` instead of `sed`
@@ -122,7 +122,7 @@ date_added: '2026-02-27'
 - Use `mapfile`/`readarray` for efficient array population from command output
 - Avoid repeated command substitutions; store result in variable once
 - Use arithmetic expansion `$(( ))` instead of `expr` for calculations
-- Prefer `printf` over `echo` for formatted output (faster and more reliable)
+- 优先 `printf` over `echo` for formatted output (faster and more reliable)
 - Use associative arrays for lookups instead of repeated grepping
 - Process files line-by-line for large files instead of loading entire file into memory
 - Use `xargs -P` for parallel processing when operations are independent
@@ -156,7 +156,7 @@ date_added: '2026-02-27'
 - Employ `wait -n` to wait for any background job (Bash 4.3+)
 - Use `mapfile -d delim` for custom delimiters (Bash 4.4+)
 
-## CI/CD Integration
+## CI/CD 集成
 
 - **GitHub Actions**: Use `shellcheck-problem-matchers` for inline annotations
 - **Pre-commit hooks**: Configure `.pre-commit-config.yaml` with `shellcheck`, `shfmt`, `checkbashisms`
@@ -168,14 +168,14 @@ date_added: '2026-02-27'
 - **Coverage reporting**: Track test coverage and fail on regressions
 - Example workflow: `shellcheck *.sh && shfmt -d *.sh && bats test/`
 
-## Security Scanning & Hardening
+## 安全性 Scanning & Hardening
 
 - **SAST**: Integrate Semgrep with custom rules for shell-specific vulnerabilities
 - **Secrets detection**: Use `gitleaks` or `trufflehog` to prevent credential leaks
 - **Supply chain**: Verify checksums of sourced external scripts
 - **Sandboxing**: Run untrusted scripts in containers with restricted privileges
 - **SBOM**: Document dependencies and external tools for compliance
-- **Security linting**: Use ShellCheck with security-focused rules enabled
+- **安全性 linting**: Use ShellCheck with security-focused rules enabled
 - **Privilege analysis**: Audit scripts for unnecessary root/sudo requirements
 - **Input sanitization**: Validate all external inputs against allowlists
 - **Audit logging**: Log all security-relevant operations to syslog
@@ -190,7 +190,7 @@ date_added: '2026-02-27'
 - **Metrics export**: Output Prometheus-format metrics for monitoring
 - **Error context**: Include stack traces, environment info in error logs
 - **Log rotation**: Configure log file rotation for long-running scripts
-- **Performance metrics**: Track execution time, resource usage, external call latency
+- **性能 metrics**: Track execution time, resource usage, external call latency
 - Example: `log_info() { logger -t "$SCRIPT_NAME" -p user.info "$*"; echo "[INFO] $*" >&2; }`
 
 ## Quality Checklist
@@ -204,7 +204,7 @@ date_added: '2026-02-27'
 - Scripts support `--help` and provide clear usage information
 - Input validation prevents injection attacks and handles edge cases
 - Scripts are portable across target platforms (Linux, macOS)
-- Performance is adequate for expected workloads and data sizes
+- 性能 is adequate for expected workloads and data sizes
 
 ## Output
 
@@ -214,10 +214,10 @@ date_added: '2026-02-27'
 - Documentation generated with shdoc and man pages with shellman
 - Structured project layout with reusable library functions and dependency management
 - Static analysis configuration files (.shellcheckrc, .shfmt.toml, .editorconfig)
-- Performance benchmarks and profiling reports for critical workflows
-- Security review with SAST, secrets scanning, and vulnerability reports
+- 性能 benchmarks and profiling reports for critical workflows
+- 安全性 review with SAST, secrets scanning, and vulnerability reports
 - Debugging utilities with trace modes, structured logging, and observability
-- Migration guides for Bash 3→5 upgrades and legacy modernization
+- 迁移 guides for Bash 3→5 upgrades and legacy modernization
 - Package distribution configurations (Homebrew formulas, deb/rpm specs)
 - Container images for reproducible execution environments
 
@@ -268,16 +268,16 @@ date_added: '2026-02-27'
 - **Version pinning**: Lock dependencies to specific versions to prevent breaking changes
 - **Dependency isolation**: Use separate directories for different dependency sets
 - **Update automation**: Automate dependency updates with Dependabot or Renovate
-- **Security scanning**: Scan dependencies for known vulnerabilities
+- **安全性 scanning**: Scan dependencies for known vulnerabilities
 - Example: `basher install username/repo@version` or `bpkg install username/repo -g`
 
 ## Advanced Techniques
 
-- **Error Context**: Use `trap 'echo "Error at line $LINENO: exit $?" >&2' ERR` for debugging
+- **Error 上下文**: Use `trap 'echo "Error at line $LINENO: exit $?" >&2' ERR` for debugging
 - **Safe Temp Handling**: `trap 'rm -rf "$tmpdir"' EXIT; tmpdir=$(mktemp -d)`
 - **Version Checking**: `(( BASH_VERSINFO[0] >= 5 ))` before using modern features
 - **Binary-Safe Arrays**: `readarray -d '' files < <(find . -print0)`
-- **Function Returns**: Use `declare -g result` for returning complex data from functions
+- **Function 返回值**: Use `declare -g result` for returning complex data from functions
 - **Associative Arrays**: `declare -A config=([host]="localhost" [port]="8080")` for complex data structures
 - **Parameter Expansion**: `${filename%.sh}` remove extension, `${path##*/}` basename, `${text//old/new}` replace all
 - **Signal Handling**: `trap cleanup_function SIGHUP SIGINT SIGTERM` for graceful shutdown
@@ -291,9 +291,9 @@ date_added: '2026-02-27'
 - **Improved Error Trapping**: `set -Eeuo pipefail; shopt -s inherit_errexit` for comprehensive error handling
 - **Parallel Execution**: `xargs -P $(nproc) -n 1 command` for parallel processing with CPU core count
 - **Structured Output**: `jq -n --arg key "$value" '{key: $key}'` for JSON generation
-- **Performance Profiling**: Use `time -v` for detailed resource usage or `TIMEFORMAT` for custom timing
+- **性能 Profiling**: Use `time -v` for detailed resource usage or `TIMEFORMAT` for custom timing
 
-## References & Further Reading
+## 参考资料 & Further Reading
 
 ### Style Guides & Best Practices
 - [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html) - Comprehensive style guide covering quoting, arrays, and when to use shell
@@ -309,12 +309,12 @@ date_added: '2026-02-27'
 - [bashly](https://bashly.dannyb.co/) - Modern Bash CLI framework generator
 - [shdoc](https://github.com/reconquest/shdoc) - Documentation generator for shell scripts
 
-### Security & Advanced Topics
-- [Bash Security Best Practices](https://github.com/carlospolop/PEASS-ng) - Security-focused shell script patterns
+### 安全性 & Advanced Topics
+- [Bash 安全性 Best Practices](https://github.com/carlospolop/PEASS-ng) - 安全性-focused shell script patterns
 - [Awesome Bash](https://github.com/awesome-lists/awesome-bash) - Curated list of Bash resources and tools
 - [Pure Bash Bible](https://github.com/dylanaraps/pure-bash-bible) - Collection of pure bash alternatives to external commands
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

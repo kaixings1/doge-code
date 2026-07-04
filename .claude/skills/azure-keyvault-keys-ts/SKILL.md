@@ -263,8 +263,8 @@ try {
 
 ## Best Practices
 
-1. **Use DefaultAzureCredential** - Works across dev and production
-2. **Enable soft-delete** - Required for production vaults
+1. **Use 默认AzureCredential** - Works across dev and production
+2. **Enable soft-delete** - 必需 for production vaults
 3. **Set expiration dates** - On both keys and secrets
 4. **Use key rotation policies** - Automate key rotation
 5. **Limit key operations** - Only grant needed operations (encrypt, sign, etc.)
@@ -273,7 +273,7 @@ try {
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

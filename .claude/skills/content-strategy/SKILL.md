@@ -8,11 +8,11 @@ metadata:
   version: 1.1.0
 ---
 
-# Content Strategy
+# 内容策略
 
 You are a content strategist. Your goal is to help plan content that drives traffic, builds authority, and generates leads by being either searchable, shareable, or both.
 
-## When to Use
+## 何时使用
 - Use when deciding what content to create, in what order, and for which audience.
 - Use when building topic clusters, content pillars, or an editorial roadmap.
 - Use when the user needs strategy and prioritization, not just copywriting.
@@ -24,7 +24,7 @@ If `.agents/product-marketing-context.md` exists (or `.claude/product-marketing-
 
 Gather this context (ask if not provided):
 
-### 1. Business Context
+### 1. Business 上下文
 - What does the company do?
 - Who is the ideal customer?
 - What's the primary goal for content? (traffic, leads, brand awareness, thought leadership)
@@ -183,7 +183,7 @@ Example: If customers ask about project management basics:
 - "Guide to Sprint Planning"
 - "How to Run a Standup Meeting"
 
-### Consideration Stage
+### 考虑ation Stage
 Modifiers: "best," "top," "vs," "alternatives," "comparison"
 
 Example: If customers evaluate multiple tools:
@@ -204,7 +204,7 @@ Modifiers: "templates," "examples," "tutorial," "how to use," "setup"
 
 Example: If support tickets show implementation struggles:
 - "Project Template Library"
-- "Step-by-Step Setup Tutorial"
+- "Step-by-Step 设置 Tutorial"
 - "How to Use [Feature]"
 
 ---
@@ -226,7 +226,7 @@ Output as prioritized table:
 ### 2. Call Transcripts
 
 If user provides sales or customer call transcripts, extract:
-- Questions asked → FAQ content or blog posts
+- Questions asked → 常见问题 content or blog posts
 - Pain points → problems in their own words
 - Objections → content to address proactively
 - Language patterns → exact phrases to use (voice of customer)
@@ -257,7 +257,7 @@ Use web search to find content ideas:
 
 **Other:** Indie Hackers, Hacker News, Product Hunt, industry Slack/Discord
 
-Extract: FAQs, misconceptions, debates, problems being solved, terminology used.
+Extract: 常见问题s, misconceptions, debates, problems being solved, terminology used.
 
 ### 5. Competitor Analysis
 
@@ -310,7 +310,7 @@ Score each idea on four factors:
 - Are there related long-tail opportunities?
 - Is search interest growing or declining?
 
-### 4. Resource Requirements (10%)
+### 4. Resource 需求 (10%)
 - Do you have expertise to create authoritative content?
 - What additional research is needed?
 - What assets (graphics, data, examples) will you need?
@@ -324,7 +324,7 @@ Score each idea on four factors:
 
 ---
 
-## Output Format
+## 输出格式
 
 When creating a content strategy, provide:
 
@@ -356,13 +356,13 @@ Visual or structured representation of how content interconnects.
 
 ---
 
-## References
+## 参考资料
 
 - **[Headless CMS Guide](references/headless-cms.md)**: CMS selection, content modeling for marketing, editorial workflows, platform comparison (Sanity, Contentful, Strapi)
 
 ---
 
-## Related Skills
+## 相关技能
 
 - **copywriting**: For writing individual content pieces
 - **seo-audit**: For technical SEO and on-page optimization
@@ -372,7 +372,7 @@ Visual or structured representation of how content interconnects.
 - **email-sequence**: For email-based content
 - **social-content**: For social media content
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

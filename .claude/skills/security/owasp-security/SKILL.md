@@ -12,7 +12,7 @@ Apply these security standards when writing or reviewing code.
 - [`reference/languages.md`](reference/languages.md) — per-language security quirks with unsafe/safe examples for 20+ languages.
 - [`reference/owasp-report.md`](reference/owasp-report.md) — comprehensive deep-dive on every OWASP 2025–2026 standard.
 
-## Quick Reference: OWASP Top 10:2025
+## 快速参考: OWASP Top 10:2025
 
 | # | Vulnerability | Key Prevention |
 |---|---------------|----------------|

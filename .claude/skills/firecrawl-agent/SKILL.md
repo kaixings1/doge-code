@@ -44,7 +44,7 @@ firecrawl agent "get feature list" --urls "<url>" --wait -o .firecrawl/features.
 
 ## Tips
 
-- Always use `--wait` to get results inline. Without it, returns a job ID.
+- 始终 use `--wait` to get results inline. Without it, returns a job ID.
 - Use `--schema` for predictable, structured output — otherwise the agent returns freeform data.
 - Agent runs consume more credits than simple scrapes. Use `--max-credits` to cap spending.
 - For simple single-page extraction, prefer `scrape` — it's faster and cheaper.

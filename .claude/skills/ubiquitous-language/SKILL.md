@@ -28,5 +28,4 @@ disable-model-invocation: true
 
 ## Order lifecycle
 
-| Term        | Definition                                              | Aliases to avoid      |
-| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 42 MINUTES 57 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 术语 | 定义 | 避免的别名 |

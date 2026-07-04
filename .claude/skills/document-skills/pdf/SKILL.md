@@ -273,7 +273,7 @@ with open("encrypted.pdf", "wb") as output:
     writer.write(output)
 ```
 
-## Quick Reference
+## 快速参考
 
 | Task | Best Tool | Command/Code |
 |------|-----------|--------------|

@@ -6,15 +6,15 @@ source: "https://github.com/K-Dense-AI/claude-scientific-skills"
 date_added: "2026-02-27"
 ---
 
-# Claude Scientific Skills
+# Claude 科学技能
 
-## Overview
+## 概述
 
-Scientific research and analysis skills
+科学研究和分析技能
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when you need to work with scientific research and analysis skills.
+当您需要使用科学研究与分析技能时使用此技能。
 
 ## Instructions
 
@@ -22,7 +22,7 @@ This skill provides guidance and patterns for scientific research and analysis s
 
 For more information, see the [source repository](https://github.com/K-Dense-AI/claude-scientific-skills).
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

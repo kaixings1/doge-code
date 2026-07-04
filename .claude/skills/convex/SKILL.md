@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 You are an expert in Convex — the open-source, reactive backend platform where queries are TypeScript code. You have deep knowledge of schema design, function authoring (queries, mutations, actions), real-time data subscriptions, authentication, file storage, scheduling, and deployment workflows across React, Next.js, Angular, Vue, Svelte, React Native, and server-side environments.
 
-## When to Use
+## 何时使用
 - Use when building a new project with Convex as the backend
 - Use when adding Convex to an existing React, Next.js, Angular, Vue, Svelte, or React Native app
 - Use when designing schemas for a Convex document-relational database
@@ -20,7 +20,7 @@ You are an expert in Convex — the open-source, reactive backend platform where
 - Use when working with Convex file storage, scheduled functions, or cron jobs
 - Use when deploying or managing Convex projects
 
-## Core Concepts
+## 核心概念
 
 Convex is a **document-relational** database with a fully managed backend. Key differentiators:
 
@@ -39,9 +39,9 @@ Convex is a **document-relational** database with a fully managed backend. Key d
 | **Action**      | Side effects              | via `runQuery` | via `runMutation` | ✅                     | ❌              |
 | **HTTP Action** | Webhooks/custom endpoints | via `runQuery` | via `runMutation` | ✅                     | ❌              |
 
-## Project Setup
+## 项目设置
 
-### New Project (Next.js)
+### 新项目 (Next.js)
 
 ```bash
 npx create-next-app@latest my-app
@@ -49,7 +49,7 @@ cd my-app && npm install convex
 npx convex dev
 ```
 
-### Add to Existing Project
+### 添加到现有项目
 
 ```bash
 npm install convex
@@ -80,7 +80,7 @@ my-app/
 └── convex.json            ← Project config (optional)
 ```
 
-## Schema Design
+## Schema 设计
 
 Define your schema in `convex/schema.ts` using the validator library:
 
@@ -165,9 +165,9 @@ defineTable({ embedding: v.array(v.float64()), text: v.string() }).vectorIndex(
 );
 ```
 
-## Writing Functions
+## 编写函数
 
-### Queries (Read Data)
+### 查询（读取数据）
 
 Queries are reactive — clients automatically get updates when data changes.
 
@@ -211,7 +211,7 @@ export const getMyProfile = query({
   },
 });
 
-### Paginated Queries
+### 分页查询
 
 Use cursor-based pagination for lists or infinite scroll UIs.
 
@@ -232,7 +232,7 @@ export const listPaginated = query({
 });
 ```
 
-### Mutations (Write Data)
+### 变更（写入数据）
 
 Mutations run as ACID transactions with serializable isolation.
 
@@ -291,7 +291,7 @@ export const transferCredits = mutation({
 });
 ````
 
-### Actions (External APIs & Side Effects)
+### 动作（外部 API 和副作用）
 
 Actions can call third-party services but cannot directly access the database — they must use `ctx.runQuery` and `ctx.runMutation`.
 
@@ -354,7 +354,7 @@ export const generateEmbedding = action({
 });
 ```
 
-### HTTP Actions (Webhooks)
+### HTTP 动作（Webhook）
 
 ```typescript
 import { httpRouter } from "convex/server";
@@ -382,7 +382,7 @@ http.route({
 export default http;
 ```
 
-## Client-Side Integration
+## 客户端集成
 
 ### React / Next.js
 
@@ -479,7 +479,7 @@ export function MessageLog() {
 }
 ```
 
-### With Auth (First-Party Convex Auth)
+### 认证（第一方 Convex Auth）
 
 Convex provides a robust, native authentication library (`@convex-dev/auth`) featuring Magic Links, Passwords, and 80+ OAuth providers without needing a third-party service.
 
@@ -511,7 +511,7 @@ export function Login() {
 }
 ```
 
-### With Auth (Third-Party Clerk Example)
+### 认证（第三方 Clerk 示例）
 
 If you prefer a hosted third-party solution like Clerk:
 
@@ -535,7 +535,7 @@ export function ConvexClientProvider({ children }: { children: ReactNode }) {
 }
 ```
 
-### With Auth (Better Auth Component)
+### 认证（Better Auth 组件）
 
 Convex also has a community component (`@convex-dev/better-auth`) that integrates the Better Auth library directly into the Convex backend. This is currently in **early alpha**.
 
@@ -547,7 +547,7 @@ npx convex env set SITE_URL http://localhost:3000
 
 Better Auth provides email/password, social logins, two-factor authentication, and session management — all running inside Convex functions rather than an external auth server.
 
-### Angular Integration
+### Angular 集成
 
 Convex does not have an official Angular client library, but Angular apps can use the core `convex` package directly with Angular's Dependency Injection and Signals.
 
@@ -612,7 +612,7 @@ export class TaskListComponent {
 
 > **Note:** The community library `@robmanganelly/ngx-convex` provides a more Angular-native experience with React-like hooks adapted for Angular DI and Signals.
 
-## Scheduling & Cron Jobs
+## 调度与定时任务
 
 ### One-off Scheduled Functions
 
@@ -651,7 +651,7 @@ crons.cron(
 export default crons;
 ```
 
-## File Storage
+## 文件存储
 
 ```typescript
 // Generate an upload URL (mutation)
@@ -682,7 +682,7 @@ export const getFileUrl = query({
 });
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 # Set environment variables for your deployment
@@ -703,7 +703,7 @@ Access in actions (NOT in queries or mutations):
 const apiKey = process.env.OPENAI_API_KEY;
 ```
 
-## Deployment & CLI
+## 部署与 CLI
 
 ```bash
 # Development (watches for changes, syncs to dev deployment)
@@ -728,7 +728,7 @@ npx convex run tasks:list
 npx convex logs
 ```
 
-## Best Practices
+## 最佳实践
 
 - ✅ Define schemas — adds type safety across your entire stack
 - ✅ Use indexes for queries — avoids full table scans
@@ -741,7 +741,7 @@ npx convex logs
 - ✅ Return `null` when a document isn't found instead of throwing an error unless missing is exceptional
 - ✅ Prefer `withIndex` over `.filter()` for query performance
 
-## Anti-Patterns to Avoid
+## 应避免的反模式
 
 1. **❌ External API calls in queries/mutations**: Only actions can call external services. Queries and mutations run in the Convex transaction engine.
 2. **❌ Doing slow CPU-bound work in mutations**: Mutations block database commits; offload heavy processing to actions.
@@ -751,7 +751,7 @@ npx convex logs
 6. **❌ Storing large blobs in documents**: Use Convex file storage (`_storage`) for files; keep documents lean.
 7. **❌ Circular `runQuery`/`runMutation` chains**: Actions calling mutations that schedule actions can create infinite loops.
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Problem:** "Query returns `undefined` on first render"
   **Solution:** This is expected — Convex queries are async. Check for `undefined` before rendering (this means loading, not empty).
@@ -768,7 +768,7 @@ npx convex logs
 - **Problem:** "Schema push fails with existing data"
   **Solution:** Convex validates existing data against new schemas. Either migrate existing documents first, or use `v.optional()` for new fields.
 
-## Limitations
+## 限制
 
 - Queries and mutations cannot call external HTTP APIs (use actions instead)
 - No raw SQL — you work with the Convex query builder API
@@ -778,7 +778,7 @@ npx convex logs
 - No server-side rendering of Convex data without specific SSR patterns (use preloading)
 - Schemas are enforced at write-time; changing schemas requires data migration for existing documents
 
-## Related Skills
+## 相关技能
 
 - `@firebase` — Alternative BaaS with Firestore (compare: Convex is TypeScript-first with ACID transactions)
 - `@supabase-automation` — Alternative with PostgreSQL backend (compare: Convex is document-relational with built-in reactivity)
@@ -788,7 +788,7 @@ npx convex logs
 - `@authentication-oauth` — Auth patterns (Convex supports Clerk, Auth0, Convex Auth)
 - `@stripe` — Payment integration via Convex actions and HTTP webhooks
 
-## Resources
+## 资源
 
 - [Official Docs](https://docs.convex.dev)
 - [Convex Stack (Blog)](https://stack.convex.dev)

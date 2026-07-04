@@ -6,45 +6,45 @@ source: community
 date_added: "2026-02-27"
 ---
 
-## When to Use
-Use this skill when you need to automate LinkedIn tasks such as profile fetching, connection management, or post creation via CLI, especially when integrated into automated workflows.
+## 何时使用
+当您需要通过 CLI 自动化 LinkedIn 任务（如获取个人资料、管理连接或创建帖子）时使用此技能，特别是集成到自动化工作流中时。
 
-# LinkedIn Skill
+# LinkedIn 技能
 
-You have access to `linkedin` – a CLI tool for LinkedIn automation. Use it to fetch profiles, search people and companies, send messages, manage connections, create posts, react, comment, and more.
+你可以使用 `linkedin` — 一个用于 LinkedIn 自动化的 CLI 工具。用于获取个人资料、搜索人员和公司、发送消息、管理连接、创建帖子、点赞、评论等。
 
-Each command sends a request to Linked API, which runs a real cloud browser to perform the action on LinkedIn. Operations are **not instant** – expect 30 seconds to several minutes depending on complexity.
+每个命令向 Linked API 发送请求，该 API 运行真实的云浏览器在 LinkedIn 上执行操作。操作**不是即时的**—根据复杂程度，预计需要 30 秒到几分钟。
 
-If `linkedin` is not available, install it:
+如果 `linkedin` 不可用，请安装：
 
 ```bash
 npm install -g @linkedapi/linkedin-cli
 ```
 
-## Authentication
+## 认证
 
-If a command fails with exit code 2 (authentication error), ask the user to set up their account:
+如果命令以退出码 2（认证错误）失败，请让用户设置他们的账户：
 
-1. Go to [app.linkedapi.io](https://app.linkedapi.io) and sign up or log in
-2. Connect their LinkedIn account
-3. Copy the **Linked API Token** and **Identification Token** from the dashboard
+1. 前往 [app.linkedapi.io](https://app.linkedapi.io) 注册或登录
+2. 连接他们的 LinkedIn 账户
+3. 从仪表板复制 **Linked API Token** 和 **Identification Token**
 
-Once the user provides the tokens, run:
+一旦用户提供了令牌，运行：
 
 ```bash
 linkedin setup --linked-api-token=TOKEN --identification-token=TOKEN
 ```
 
-### When to Use
-Use this skill when you need to **orchestrate LinkedIn actions from scripts or an AI agent** instead of clicking through the web UI:
+### 何时使用
+当你需要**从脚本或 AI 代理编排 LinkedIn 操作**而不是通过网页 UI 点击时使用此技能：
 
-- Building outreach, research, or recruiting workflows that rely on LinkedIn data and messaging.
-- Enriching leads or accounts by fetching people and company profiles in bulk.
-- Coordinating multi-step Sales Navigator or workflow runs where JSON output and exit codes are required.
+- 构建依赖 LinkedIn 数据和消息的拓展、研究或招聘工作流。
+- 通过批量获取人脉和公司资料来丰富潜在客户或账户。
+- 协调需要 JSON 输出和退出码的多步骤 Sales Navigator 或工作流。
 
-Always respect LinkedIn’s terms of service, local regulations, and your organisation’s compliance policies when using automation against real accounts.
+使用自动化操作真实账户时，始终遵守 LinkedIn 的服务条款、当地法规和组织的合规政策。
 
-## Global Flags
+## 全局标志
 
 Always use `--json` and `-q` for machine-readable output:
 
@@ -52,5 +52,4 @@ Always use `--json` and `-q` for machine-readable output:
 linkedin <command> --json -q
 ```
 
-| Flag                    | Description                             |
-| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 25 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 标志                    | 描述                             |

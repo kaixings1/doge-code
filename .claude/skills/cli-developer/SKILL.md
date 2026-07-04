@@ -63,7 +63,7 @@ program.parse();
 
 For Python (click/typer) and Go (cobra) quick-start examples, see `references/python-cli.md` and `references/go-cli.md`.
 
-## Constraints
+## 约束条件
 
 ### MUST DO
 - Keep startup time under 50ms
@@ -103,7 +103,7 @@ For Python (click/typer) and Go (cobra) quick-start examples, see `references/py
 
 When implementing CLI features, provide:
 1. Command structure (main entry point, subcommands)
-2. Configuration handling (files, env vars, flags)
+2. 配置 handling (files, env vars, flags)
 3. Core implementation with error handling
 4. Shell completion scripts if applicable
 5. Brief explanation of UX decisions

@@ -8,7 +8,7 @@ required_environment_variables: [{"name": "BENCHLING_TENANT_URL", "prompt": "Ben
 metadata: {"version": "1.3", "skill-author": "K-Dense Inc.", "openclaw": {"primaryEnv": "BENCHLING_API_KEY", "envVars": [{"name": "BENCHLING_TENANT_URL", "required": true, "description": "Benchling tenant base URL."}, {"name": "BENCHLING_API_KEY", "required": false, "description": "API key auth (alternative to OAuth)."}, {"name": "BENCHLING_CLIENT_ID", "required": false, "description": "OAuth app client id."}, {"name": "BENCHLING_CLIENT_SECRET", "required": false, "description": "OAuth app client secret."}, {"name": "BENCHLING_PROD_TENANT_URL", "required": false, "description": "Production tenant URL (multi-env setups)."}, {"name": "BENCHLING_PROD_API_KEY", "required": false, "description": "Production API key (multi-env setups)."}, {"name": "BENCHLING_STAGING_TENANT_URL", "required": false, "description": "Staging tenant URL (multi-env setups)."}, {"name": "BENCHLING_STAGING_API_KEY", "required": false, "description": "Staging API key (multi-env setups)."}]}}
 ---
 
-# Benchling Integration
+# Benchling /u96c6/u6210
 
 ## Overview
 
@@ -16,7 +16,7 @@ Benchling is a cloud platform for life sciences R&D. Access registry entities (D
 
 **Version note:** Examples target **benchling-sdk 1.25.0** (latest stable on PyPI). Docs: [benchling.com/sdk-docs](https://benchling.com/sdk-docs/). Platform guide: [docs.benchling.com](https://docs.benchling.com/).
 
-## When to Use This Skill
+## /u4f55/u65f6/u4f7f/u7528 This Skill
 
 This skill should be used when:
 - Working with Benchling's Python SDK or REST API

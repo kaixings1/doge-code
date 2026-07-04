@@ -77,7 +77,7 @@ session_id: "your_session_id"
 - **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
 - **分页**：检查响应中的分页 token 并继续获取直到完成
 
-## Quick Reference
+## 快速参考
 
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 操作 | 方法 |
+|---|---|

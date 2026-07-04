@@ -7,7 +7,7 @@ metadata: {"version": "1.0", "skill-author": "K-Dense Inc."}
 
 # Bulk RNA-seq
 
-## Overview
+## 概述
 
 This skill orchestrates a complete, **defensible** bulk RNA-seq differential-expression study, from raw sequencing reads to enriched pathways and figures. It is a router, not a reimplementation: most stages already have dedicated skills in this repo, and this skill connects them in the right order, fills the one real gap (raw reads → a gene-level counts matrix), and enforces the design and QC decisions that determine whether the final result is trustworthy.
 
@@ -20,12 +20,12 @@ The pipeline is: **FastQC/trim → align/quant (STAR/Salmon) → counts → DE (
 
 ## When to Use This Skill
 
-Use this skill when the user wants to:
+使用此技能当 the user wants to:
 - Go from FASTQ files (or a sequencing run) to differentially expressed genes and pathways.
 - Run or configure `nf-core/rnaseq`, or align/quantify with STAR, Salmon, or featureCounts.
 - Turn Salmon/STAR/featureCounts output into a counts matrix ready for DESeq2/PyDESeq2.
 - Design or sanity-check a bulk RNA-seq experiment (replicates, batch, strandedness) before committing compute.
-- Scope an end-to-end RNA-seq analysis and decide which tools and skills to chain.
+- 范围 an end-to-end RNA-seq analysis and decide which tools and skills to chain.
 
 This is **bulk** RNA-seq (samples = biological specimens). For single-cell/nuclei data use `scanpy`; for the DE statistics alone use `pydeseq2`; for enrichment alone use `pathway-enrichment`.
 
@@ -64,7 +64,7 @@ When unsure, prefer **Path A**: `nf-core/rnaseq` already wires together FastQC �
 
 Both paths converge on a **gene-level counts matrix**, after which the workflow is identical.
 
-## Setup
+## 设置
 
 ```bash
 # This skill's glue (bridge + handoffs) — Python
@@ -83,7 +83,7 @@ conda create -n rnaseq -c bioconda -c conda-forge \
 
 Record the exact versions you use (pipeline revision, tool versions, reference genome + annotation release) — they belong in the methods section and make the analysis reproducible.
 
-## Quick Start
+## 快速开始
 
 ### Path A — nf-core/rnaseq (recommended)
 
@@ -166,18 +166,18 @@ These cause most wrong or irreproducible bulk RNA-seq results:
 4. **Feeding TPM/FPKM to DESeq2.** DESeq2 needs raw (or length-scaled) **counts**, never TPM/FPKM/normalized values. The bridge handles this.
 5. **Non-integer counts.** PyDESeq2 requires integers; round Salmon estimates (the bridge does this).
 6. **Gene-ID mismatch into enrichment.** DESeq2 output is often Ensembl IDs; Enrichr/MSigDB want symbols. Map IDs before `pathway-enrichment` or "nothing is significant".
-7. **Skipping post-quant QC.** Always look at the PCA and sample-distance heatmap before trusting DE — they expose swapped labels, outliers, and hidden batches.
+7. **Skipping post-quant QC.** 始终 look at the PCA and sample-distance heatmap before trusting DE — they expose swapped labels, outliers, and hidden batches.
 8. **Mixing aligners across samples.** Quantify every sample with the same tool, version, reference, and parameters.
 9. **Unpinned versions.** "latest" pipelines/genomes make results unreproducible; pin `-r`, tool versions, and the genome/annotation release.
 
-## Integration with Other Skills
+## 集成 with Other Skills
 
 - **Upstream execution:** `nextflow` (runs `nf-core/rnaseq`, Path A; HPC/cloud/containers).
 - **Reference data / gene IDs:** `gget` (`gget ref` for genome+GTF, `gget info`/`gget search` for ID mapping), `database-lookup` (Ensembl/NCBI), `biopython`/`pysam` (FASTA/BAM handling).
 - **Differential expression:** `pydeseq2` (the DE engine this skill hands counts to).
 - **Enrichment:** `pathway-enrichment` (ORA + GSEA; its `scripts/run_enrichment.py` reads a DESeq2 results CSV directly).
 - **Figures & reporting:** `scientific-visualization`, `matplotlib`, `seaborn`; `scientific-writing` for the methods/results narrative.
-- **Related but distinct:** `scanpy` (single-cell), `statistical-analysis` (multiple-testing depth).
+- **相关 but distinct:** `scanpy` (single-cell), `statistical-analysis` (multiple-testing depth).
 
 ## Reference Files
 

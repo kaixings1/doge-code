@@ -13,4 +13,3 @@ Adapt state-of-the-art pretrained models to your specific task with modern fine-
 ### Step 1: Choose Base Model (2025 SOTA)
 
 | Domain | Model | Params | Strengths |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 13 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

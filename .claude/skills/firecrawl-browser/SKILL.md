@@ -18,7 +18,7 @@ Interact with scraped pages in a live browser session. Scrape a page first, then
 - `scrape` failed because content is behind JavaScript interaction
 - You need to navigate a multi-step flow
 - Last resort in the [workflow escalation pattern](firecrawl-cli): search → scrape → map → crawl → **interact**
-- **Never use interact for web searches** — use `search` instead
+- **绝不 use interact for web searches** — use `search` instead
 
 ## Quick start
 
@@ -72,7 +72,7 @@ firecrawl scrape "https://app.example.com" --profile my-app --no-save-changes
 
 ## Tips
 
-- Always scrape first — `interact` requires a scrape ID from a previous `firecrawl scrape` call
+- 始终 scrape first — `interact` requires a scrape ID from a previous `firecrawl scrape` call
 - The scrape ID is saved automatically, so you don't need `--scrape-id` for subsequent interact calls
 - Use `firecrawl interact stop` to free resources when done
 - For parallel work, scrape multiple pages and interact with each using `--scrape-id`

@@ -65,7 +65,7 @@ let secret = client
     .into_model()?;
 ```
 
-### Update Secret Properties
+### Update Secret 属性
 
 ```rust
 use azure_security_keyvault_secrets::models::UpdateSecretPropertiesParameters;
@@ -144,7 +144,7 @@ Assign these Key Vault roles:
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

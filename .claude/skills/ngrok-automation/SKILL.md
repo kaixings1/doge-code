@@ -1,83 +1,65 @@
 ---
 name: ngrok-automation
-description: "通过 Rube MCP (Composio) 自动执行 Ngrok 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Ngrok 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
-  mcp: [rube]
+ mcp: [rube]
 ---
 
-# Ngrok Automation via Rube MCP
+# 通过 Rube MCP 自动执行 Ngrok 操作
 
-Automate Ngrok operations through Composio's Ngrok toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Ngrok 工具包自动执行 Ngrok 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/ngrok](https://composio.dev/toolkits/ngrok)
+**工具包文档**: [composio.dev/toolkits/ngrok](https://composio.dev/toolkits/ngrok)
 
-## Prerequisites
+## 前提条件
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 RUBE_MANAGE_CONNECTIONS 使用工具包 ngrok 建立活跃的 Ngrok 连接
+- 始终先调用 RUBE_SEARCH_TOOLS 获取当前工具 schema
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Ngrok connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `ngrok`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+## 设置
+**获取 Rube MCP**: 在客户端配置中添加 https://rube.app/mcp 作为 MCP 服务器。无需 API 密钥 — 只需添加端点即可使用。
+1. 通过确认 RUBE_SEARCH_TOOLS 有响应来验证 Rube MCP 可用
+2. 使用工具包 ngrok 调用 RUBE_MANAGE_CONNECTIONS
+3. 如果连接不是 ACTIVE 状态，按照返回的认证链接完成设置
+4. 在运行任何工作流之前确认连接状态显示为 ACTIVE
 
-## Setup
-
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
-
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `ngrok`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
-
-## Tool Discovery
-
-Always discover available tools before executing workflows:
-
+## 工具发现
+在执行工作流之前始终先发现可用工具：
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "Ngrok operations", known_fields: ""}]
 session: {generate_id: true}
 ```
+这将返回可用工具 slug、输入 schema、推荐的执行计划和已知陷阱。
 
-This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
-
-## Core Workflow Pattern
-
-### Step 1: Discover Available Tools
-
+## 核心工作流模式
+### 步骤 1：发现可用工具
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "your specific Ngrok task"}]
 session: {id: "existing_session_id"}
 ```
-
-### Step 2: Check Connection
-
+### 步骤 2：检查连接
 ```
 RUBE_MANAGE_CONNECTIONS
 toolkits: ["ngrok"]
 session_id: "your_session_id"
 ```
-
-### Step 3: Execute Tools
-
+### 步骤 3：执行工具
 ```
 RUBE_MULTI_EXECUTE_TOOL
-tools: [{
-  tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
-}]
+tools: [{ tool_slug: "TOOL_SLUG_FROM_SEARCH", arguments: {/* 符合 schema 的参数 */} }],
 memory: {}
 session_id: "your_session_id"
 ```
 
-## Known Pitfalls
+## 已知陷阱
+- **始终先搜索**：工具 schema 会变化。未调用 RUBE_SEARCH_TOOLS 时切勿硬编码工具 slug 或参数。
+- **检查连接**：在执行工具前确认 RUBE_MANAGE_CONNECTIONS 显示 ACTIVE 状态。
+- **Schema 合规性**：使用搜索结果中的确切字段名和类型。
+- **Memory 参数**：始终在 RUBE_MULTI_EXECUTE_TOOL 调用中包含 memory，即使为空（{}）。
+- **会话复用**：在工作流中复用会话 ID。为新的工作流生成新的会话 ID。
+- **分页**：检查响应中的分页令牌，持续获取直到完成。
 
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
-
-## Quick Reference
-
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 00 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+## 快速参考
+| 操作 | 方法 |

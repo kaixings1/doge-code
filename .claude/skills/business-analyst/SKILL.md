@@ -6,12 +6,12 @@ source: community
 date_added: '2026-02-27'
 ---
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on business analyst tasks or workflows
 - Needing guidance, best practices, or checklists for business analyst
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to business analyst
 - You need a different domain or tool outside this scope
@@ -179,7 +179,7 @@ Expert business analyst focused on transforming complex business data into actio
 - "Analyze our sales funnel performance and identify optimization opportunities"
 - "Create a competitive intelligence framework with automated data collection"
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

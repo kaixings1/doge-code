@@ -5,11 +5,11 @@ metadata:
   origin: ECC
 ---
 
-# Codebase Onboarding
+# 代码库上手
 
 Systematically analyze an unfamiliar codebase and produce a structured onboarding guide. Designed for developers joining a new project or setting up Claude Code in an existing repo for the first time.
 
-## When to Use
+## 何时使用
 
 - First time opening a project with Claude Code
 - Joining a new team or repository

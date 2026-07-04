@@ -68,7 +68,7 @@ Detect when dependencies change and remind to run `npm install`.
 ### Watch tsconfig.json for Config Changes
 Remind to restart TypeScript checks when config changes.
 
-## Setup
+## 设置
 
 Add to hooks.json:
 ```json

@@ -25,7 +25,7 @@ func LoadConfig(path string) (Config, error) {
 ```
 
 Rules:
-- Always wrap errors with context using `fmt.Errorf("context: %w", err)`
+- 始终 wrap errors with context using `fmt.Errorf("context: %w", err)`
 - Use `%w` to allow callers to use `errors.Is` and `errors.As`
 - Handle errors at the appropriate level; do not log and return the same error
 - Define sentinel errors for expected conditions
@@ -73,7 +73,7 @@ func NewService(store UserStore, logger *slog.Logger) *Service {
 
 Rules:
 - Define interfaces where they are used (consumer side), not where they are implemented
-- Prefer small, composable interfaces over large ones
+- 优先 small, composable interfaces over large ones
 - Use `io.Reader`, `io.Writer`, `fmt.Stringer` from the standard library
 - An interface with one method should be named after the method + `er` suffix
 
@@ -130,13 +130,13 @@ func fanOut[T, R any](ctx context.Context, items []T, fn func(T) R, concurrency 
 ```
 
 Rules:
-- Always pass `context.Context` as the first parameter
-- Always ensure goroutines can be stopped (via context cancellation or channel close)
+- 始终 pass `context.上下文` as the first parameter
+- 始终 ensure goroutines can be stopped (via context cancellation or channel close)
 - Use `sync.WaitGroup` to wait for goroutine completion
 - Use buffered channels when producer and consumer run at different speeds
-- Never start a goroutine without knowing how it will stop
+- 绝不 start a goroutine without knowing how it will stop
 
-## Context Propagation
+## 上下文 Propagation
 
 ```go
 func (s *Service) HandleRequest(ctx context.Context, req Request) (Response, error) {
@@ -156,9 +156,9 @@ func (s *Service) HandleRequest(ctx context.Context, req Request) (Response, err
 Rules:
 - Pass context as the first parameter of every function that does I/O
 - Use `context.WithTimeout` or `context.WithDeadline` for all external calls
-- Always `defer cancel()` after creating a cancellable context
+- 始终 `defer cancel()` after creating a cancellable context
 - Use `context.WithValue` sparingly (request-scoped values only: trace IDs, auth info)
-- Never store context in a struct
+- 绝不 store context in a struct
 
 ## Table-Driven Tests
 
@@ -265,10 +265,10 @@ func (s *Server) ListenAndServe() error {
 ```
 
 Rules:
-- Prefer structs with meaningful zero values over constructors
+- 优先 structs with meaningful zero values over constructors
 - Use pointer receivers when the method modifies the receiver
 - Use value receivers when the method only reads
-- Never export fields that users should not set directly; use constructor functions
+- 绝不 export fields that users should not set directly; use constructor functions
 
 ## Structured Logging
 

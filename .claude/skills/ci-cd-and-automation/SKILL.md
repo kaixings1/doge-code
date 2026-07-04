@@ -3,21 +3,21 @@ name: ci-cd-and-automation
 description: CI/CD与自动化 — 自动化CI/CD管道设置。在设置或修改构建部署管道时使用。
 ---
 
-# CI/CD and Automation
+# CI/CD 与自动化
 
-## Overview
+## 概述
 
-Automate quality gates so that no change reaches production without passing tests, lint, type checking, and build. CI/CD is the enforcement mechanism for every other skill — it catches what humans and agents miss, and it does so consistently on every single change.
+自动化质量门，使得没有通过测试、lint、类型检查和构建的变更无法到达生产环境。CI/CD 是每个其他技能的执行机制——它捕获人类和代理遗漏的问题，并且一致地对每个变更执行。
 
-**Shift Left:** Catch problems as early in the pipeline as possible. A bug caught in linting costs minutes; the same bug caught in production costs hours. Move checks upstream — static analysis before tests, tests before staging, staging before production.
+**左移：** 尽可能在流水线早期捕获问题。在 lint 中捕获的错误花费几分钟；同样的错误在生产中捕获花费数小时。将检查向上游移动——测试前做静态分析、预发布前做测试、生产前做预发布。
 
-**Faster is Safer:** Smaller batches and more frequent releases reduce risk, not increase it. A deployment with 3 changes is easier to debug than one with 30. Frequent releases build confidence in the release process itself.
+**越快越安全：** 更小的批次和更频繁的发布降低风险，而不是增加风险。包含 3 个变更的部署比包含 30 个的更容易调试。频繁发布建立对发布过程本身的信心。
 
-## When to Use
+## 何时使用
 
-- Setting up a new project's CI pipeline
-- Adding or modifying automated checks
-- Configuring deployment pipelines
+- 设置新项目的 CI 流水线
+- 添加或修改自动化检查
+- 配置部署流水线
 - When a change should trigger automated verification
 - Debugging CI failures
 

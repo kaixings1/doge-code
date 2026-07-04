@@ -12,30 +12,26 @@ od:
   upstream: "https://github.com/veniceai/skills"
 ---
 
-# venice-image-edit
+# Venice 图片编辑
 
-> Curated from the Venice.ai team.
+> 精选自 Venice.ai 团队。
 
-## What it does
+## 功能
 
-Image edits, upscaling, and background removal via the Venice.ai API.
+通过 Venice.ai API 进行图片编辑、放大和背景移除。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/veniceai/skills
-- Category: `image-generation`
+- 上游：https://github.com/veniceai/skills
+- 分类：`image-generation`
 
-## How to use
+## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在 Open Design 中发布技能信息，以便代理在规划期间发现它。要运行完整的上游工作流及其原始资源、脚本和参考文件，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README 了解确切路径
 open https://github.com/veniceai/skills
 ```
 
-Then ask the agent to invoke this skill by name (`venice-image-edit`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后要求代理通过名称（`venice-image-edit`）或此技能 frontmatter 中列出的触发短语之一调用此技能。

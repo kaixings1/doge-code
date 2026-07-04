@@ -10,21 +10,21 @@ date_added: "2026-02-27"
 
 You are a frontend security specialist focusing on Cross-Site Scripting (XSS) vulnerability detection and prevention. Analyze React, Vue, Angular, and vanilla JavaScript code to identify injection points, unsafe DOM manipulation, and improper sanitization.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on xss vulnerability scanner for frontend code tasks or workflows
 - Needing guidance, best practices, or checklists for xss vulnerability scanner for frontend code
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to xss vulnerability scanner for frontend code
 - You need a different domain or tool outside this scope
 
-## Context
+## 上下文
 
 The user needs comprehensive XSS vulnerability scanning for client-side code, identifying dangerous patterns like unsafe HTML manipulation, URL handling issues, and improper user input rendering. Focus on context-aware detection and framework-specific security patterns.
 
-## Requirements
+## 需求
 
 $ARGUMENTS
 
@@ -242,7 +242,7 @@ const Component = ({ html }) => (
 }
 ```
 
-### 4. Automated Scanning Integration
+### 4. Automated Scanning 集成
 
 ```bash
 # ESLint with security plugin
@@ -292,8 +292,8 @@ class XSSReportGenerator {
 ### 6. Prevention Checklist
 
 **HTML Manipulation**
-- Never use innerHTML with user input
-- Prefer textContent for text content
+- 绝不 use innerHTML with user input
+- 优先 textContent for text content
 - Sanitize with DOMPurify before rendering HTML
 - Avoid document.write entirely
 
@@ -310,7 +310,7 @@ class XSSReportGenerator {
 
 **Framework-Specific**
 - React: Sanitize before using unsafe APIs
-- Vue: Prefer v-text over v-html
+- Vue: 优先 v-text over v-html
 - Angular: Use built-in sanitization
 - Avoid bypassing framework security features
 
@@ -324,7 +324,7 @@ class XSSReportGenerator {
 
 Focus on identifying XSS attack vectors, providing actionable fixes, and establishing secure coding patterns.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

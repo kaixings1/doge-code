@@ -3,9 +3,9 @@ name: monitoring-observability
 description: 监控与可观测性 — 使用OpenTelemetry、Prometheus、Grafana和日志聚合。
 ---
 
-# Monitoring & Observability
+# 监控与可观测性
 
-## OpenTelemetry Setup
+## OpenTelemetry 设置
 
 ```typescript
 import { NodeSDK } from "@opentelemetry/sdk-node";

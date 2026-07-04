@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Build reliable, fast, and maintainable end-to-end test suites that provide confidence to ship code quickly and catch regressions before users do.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Implementing end-to-end test automation
 - Debugging flaky or unreliable tests
@@ -21,7 +21,7 @@ Build reliable, fast, and maintainable end-to-end test suites that provide confi
 - Testing responsive designs
 - Establishing E2E testing standards
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - You only need unit or integration tests
 - The environment cannot support stable UI automation
@@ -43,7 +43,7 @@ Build reliable, fast, and maintainable end-to-end test suites that provide confi
 
 - `resources/implementation-playbook.md` for detailed E2E patterns and templates.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

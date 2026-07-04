@@ -1,12 +1,13 @@
 ---
 name: WordPress设计系统
-description: "Wpds — Wpds 相关功能和最佳实践"
-  WordPress 设计系统。应用 WordPress 官方设计标记、排版和组件模式到主题和网站。
+description: "应用 WordPress 官方设计标记、排版和组件模式到主题和网站。当用户需要 WordPress 设计系统、wpds、wp tokens、wp design system 时使用此技能。"
 triggers:
   - "wpds"
   - "wordpress design"
   - "wp tokens"
   - "wp design system"
+  - "WordPress 设计系统"
+  - "WordPress 主题设计"
 od:
   mode: design-system
   category: design-systems

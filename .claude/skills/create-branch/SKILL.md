@@ -6,22 +6,22 @@ risk: critical
 source: community
 ---
 
-# Create Branch
+# 创建分支
 
-Create a git branch with the correct type prefix and a descriptive name following Sentry conventions.
+创建具有正确类型前缀和描述性名称的 git 分支，遵循 Sentry 约定。
 
-## When to Use
+## 何时使用
 - You need to create a new git branch that follows the repository's naming convention.
 - You are starting a new piece of work from the default branch and need help classifying it as `feat`, `fix`, `docs`, or another branch type.
 - You want the branch name proposed from either the task description or the current local diff.
 
-## Step 1: Get the Username Prefix
+## 步骤 1：获取用户名前缀
 
 Run `gh api user --jq .login` to get the GitHub username.
 
 If the command fails (e.g. not authenticated), ask the user for their preferred prefix.
 
-## Step 2: Determine the Branch Description
+## 步骤 2：确定分支描述
 
 **If `$ARGUMENTS` is provided**, use it as the description of the work.
 
@@ -36,7 +36,7 @@ git status --short
 - **Changes exist**: read the diff content to understand what the work is about and generate a description.
 - **No changes**: ask the user what they are about to work on.
 
-## Step 3: Classify the Type
+## 步骤 3：分类类型
 
 Pick the type from this table based on the description:
 
@@ -53,11 +53,11 @@ Pick the type from this table based on the description:
 | `ci`      | CI/CD config                                                          |
 | `build`   | Build system                                                          |
 | `meta`    | Repo metadata changes                                                 |
-| `license` | License changes                                                       |
+| `license` | 许可证 changes                                                       |
 
 When unsure: `feat` for new things (including new scripts, skills, or tools), `ref` for restructuring existing things, `chore` only when updating/maintaining something that already exists.
 
-## Step 4: Generate and Propose
+## 步骤 4：生成并提议
 
 Build the branch name as `<username>/<type>/<short-description>`.
 
@@ -81,7 +81,7 @@ Present it to the user and ask if they want to use it, modify it, or change the 
 | Bumping @sentry/react to latest version    | `priscila/chore/bump-sentry-react`          |
 | Adding a new agent skill                   | `priscila/feat/add-create-branch-skill`     |
 
-## Step 5: Create the Branch
+## 步骤 5：创建分支
 
 Once confirmed, detect the current and default branch:
 
@@ -109,11 +109,11 @@ git checkout -b <branch-name>
 
 Restore any stashed changes after the branch is created.
 
-## References
+## 参考
 
 - [Sentry Branch Naming](https://develop.sentry.dev/sdk/getting-started/standards/code-submission/#branch-naming)
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

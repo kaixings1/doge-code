@@ -5,14 +5,14 @@ metadata:
   version: 2.0.0
 ---
 
-# Directory Submissions
+# 目录提交
 
-You are an expert in directory-driven distribution for software products. Your goal is to help the user build a compounding backlink + discovery foundation by submitting to the right directories, in the right order, with the right positioning — and to make sure that foundation actually produces leads instead of vanity backlinks.
+您是软件产品目录驱动分发的专家。您的目标是帮助用户通过以正确的顺序、正确的定位提交到正确的目录，建立复合的反向链接+发现基础——并确保该基础实际产生潜在客户而不是虚荣的反向链接。
 
-## Before Starting
+## 开始之前
 
-**Check for product marketing context first:**
-If `.agents/product-marketing.md` exists (or `.claude/product-marketing.md`, or the legacy `product-marketing-context.md` filename, in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
+**首先检查产品营销上下文：**
+如果 `.agents/product-marketing.md` 存在（或 `.claude/product-marketing.md`，或在旧设置中的旧版 `product-marketing-context.md` 文件名），在提问之前阅读它。使用该上下文，仅询问尚未涵盖或特定于此任务的信息。
 
 ---
 
@@ -22,7 +22,7 @@ Directory submissions are the **foundation layer** of distribution — never the
 
 1. **Pass dofollow backlinks** from high domain-rating sites into your marketing pages. This raises your DR, which makes your entire site easier to rank for competitive keywords.
 2. **Create discovery surface area** — people browsing AI/SaaS directories are in-market buyers, not random traffic.
-3. **Get cited by AI engines** — ChatGPT, Claude, Perplexity, and Google AI Overviews all pull heavily from high-DR directories when answering "what's the best [category]?" queries. AI-referred traffic converts **6–27× higher** than traditional search traffic.
+3. **Get cited by AI engines** — ChatGPT, Claude, Perplexity, and Google AI 概述s all pull heavily from high-DR directories when answering "what's the best [category]?" queries. AI-referred traffic converts **6–27× higher** than traditional search traffic.
 
 But directories alone will not generate meaningful leads. They exist to pass link equity into the pages that DO generate leads — template galleries, comparison pages, alternative pages, blog posts. **Build the destination pages first, then submit to directories so the link equity has somewhere useful to land.**
 
@@ -33,14 +33,14 @@ The full directory catalog lives in `references/directory-list.md`. The position
 ## The Three Hard Rules
 
 ### Rule 1: Foundation before submission
-Never submit to a directory until the landing page it will link to is live, indexed, and has:
+绝不 submit to a directory until the landing page it will link to is live, indexed, and has:
 - A single `<h1>` and sequential heading hierarchy — pages with clean hierarchy have **2.8× higher AI citation rates**, and 87% of ChatGPT-cited pages use a single H1.
 - A real pricing page (even "free while in beta" counts — most Tier 1 directories require one).
 - Privacy policy + terms.
 - Logo assets in PNG + SVG + square 1024×1024 + favicon.
 - 5–8 real product screenshots at 1920×1080 (not marketing mockups).
 - A 60–90 second demo video — products with video on Product Hunt get **2.7× more upvotes**.
-- FAQ schema markup (AI engines heavily weight `FAQPage` JSON-LD for answer extraction).
+- 常见问题 schema markup (AI engines heavily weight `常见问题Page` JSON-LD for answer extraction).
 - Structured data: `Organization`, `Product`, `SoftwareApplication`.
 
 ### Rule 2: Destination pages before directories
@@ -51,7 +51,7 @@ Directories are the *source* of link equity. You need *destinations* that can co
 - 1 "best of" blog post you wrote yourself about your own category, including honest coverage of competitors.
 
 ### Rule 3: Positioning varies by directory type
-Never copy-paste the same description everywhere. AI engines penalize duplicate content, and each directory audience responds to different framing. See `references/positioning-variations.md` for the full variant library. Short version:
+绝不 copy-paste the same description everywhere. AI engines penalize duplicate content, and each directory audience responds to different framing. See `references/positioning-variations.md` for the full variant library. Short version:
 
 | Surface | Lead with | Why |
 |---|---|---|
@@ -76,7 +76,7 @@ Ask the user these 9 questions. If any are "no", they're not ready — help them
 3. Are privacy policy + terms live?
 4. Logo assets in PNG + SVG + square + favicon?
 5. 5–8 real screenshots + 60–90s demo video?
-6. Landing pages GEO-ready (single H1, sequential hierarchy, FAQ schema, structured data)?
+6. Landing pages GEO-ready (single H1, sequential hierarchy, 常见问题 schema, structured data)?
 7. At least 3 alternative pages and 3 use-case pages live and indexed?
 8. Template gallery or lead magnet asset (if applicable to category)?
 9. At least 20 beta/early users who could leave a review on G2?
@@ -85,7 +85,7 @@ A "no" on any of 1–7 is a hard block. A "no" on 8–9 is a soft block: you can
 
 ### Step 2: Choose the tiers
 
-Full catalog in `references/directory-list.md`. Summary:
+Full catalog in `references/directory-list.md`. 总结:
 
 | Tier | When | Examples | Typical count |
 |---|---|---|---|
@@ -95,7 +95,7 @@ Full catalog in `references/directory-list.md`. Summary:
 | **Tier 4 — Agent/MCP registries** | Week 1–3 (if MCP) | Glama, APITracker, LF MCP Registry, AI Agents List | ~10 |
 | **Tier 5 — No-code directories** | Week 1–3 (if no-code) | NoCodeFinder, No Code MBA, We Are No Code, MakerPad | ~8 |
 | **Tier 6 — "Best of" listicles** | Rolling outreach | Cold outreach to DR 40+ blog posts | ~10 inclusions |
-| **Tier 7 — Integration marketplaces** | When integrations ship | Zapier, HubSpot, Slack, Airtable, Notion | ~5 |
+| **Tier 7 — 集成 marketplaces** | When integrations ship | Zapier, HubSpot, Slack, Airtable, Notion | ~5 |
 | **Tier 8 — Profile & content platforms** | Rolling | GitHub, WordPress.com, Substack, Dev.to, SlideShare, Behance | ~50 |
 | **Tier 9 — Local business directories** | Rolling (if applicable) | Manta, Hotfrog, Locanto, MerchantCircle | ~20 |
 | **Tier 10 — Forums & communities** | Rolling (participate first) | SitePoint, GrowthHackers, Warrior Forum, Designer News | ~13 |
@@ -140,7 +140,7 @@ Product Hunt is the single highest-leverage submission but also the most easily 
 
 - **Day -21 to -14:** Warm up hunter account. Upvote + thoughtfully comment on 3 launches/day. Follow 100+ active makers. Build history so your account looks real to the algorithm.
 - **Day -14:** Create "Upcoming" page on PH. Drive traffic to it to collect "notify on launch" subscribers.
-- **Day -10:** (Optional) book a hunter. Don't pay cash — trade a feature, shoutout, or intro. A known hunter adds ~15% to day-one momentum but isn't required.
+- **Day -10:** (可选) book a hunter. Don't pay cash — trade a feature, shoutout, or intro. A known hunter adds ~15% to day-one momentum but isn't required.
 - **Day -7:** Draft launch-day assets: gallery images (1270×760), tagline, 260-char description, first comment from you, first comment from a customer.
 - **Day -3:** Email list warm-up. "We're launching Tuesday. Here's what to expect. Reply if you want a heads up."
 - **Day -1:** Final check — product works in incognito, video autoplays, CTA goes to signup, PH listing preview looks right.
@@ -152,7 +152,7 @@ Product Hunt is the single highest-leverage submission but also the most easily 
 - **Post the first comment yourself** with the story: why you built it, what's different, what to try first.
 - **Reply to every comment** in under 30 minutes. PH measures maker responsiveness.
 - **Share the link to:** Twitter/X thread, LinkedIn long-form post, personal Slack/Discord communities, your email list, Indie Hackers, every power user via DM.
-- **Never ask for upvotes.** Ask for **feedback**. "Would love your honest take on the positioning" converts 3× better than "support us!" and doesn't trigger the algorithm's anti-manipulation filters.
+- **绝不 ask for upvotes.** Ask for **feedback**. "Would love your honest take on the positioning" converts 3× better than "support us!" and doesn't trigger the algorithm's anti-manipulation filters.
 - **Don't message strangers.** The community flags this and moderators will hide your post.
 
 ### Post-launch
@@ -207,7 +207,7 @@ Competitor alternative pages convert at **5–15%**, often hitting 15–30% for 
 - `/alternatives/[competitor-3]`
 - `/alternatives/[competitor-4]`
 
-Each page needs: honest feature comparison table, "when to choose X over us," "when to choose us over X," pricing comparison, 3–5 use-case examples, strong FAQ with schema.
+Each page needs: honest feature comparison table, "when to choose X over us," "when to choose us over X," pricing comparison, 3–5 use-case examples, strong 常见问题 with schema.
 
 **Critical:** Be honest. AI engines cross-reference competitor feature claims and de-rank pages that lie.
 
@@ -222,14 +222,14 @@ Every ICP gets a dedicated landing page:
 Typeform's template library generated **30,000 non-branded organic signups and $3M/year LTV**. The pattern:
 - One indexable page per template at `/templates/[slug]`.
 - H1 with the keyword, 150+ word description, screenshot, "when to use this," "use this template" CTA.
-- Related templates at the bottom of each page (internal linking = SEO compounding).
+- 相关 templates at the bottom of each page (internal linking = SEO compounding).
 - 100 templates by day 30, 300 by day 90 is the realistic target.
 
 ### 4. "Best of" listicles you wrote yourself
 
 Write honest roundups of your own category: `/blog/best-[category]-tools-2026`. Include yourself + 10 competitors with real reviews. These rank for category queries AND serve as canonical references AI engines cite.
 
-### 5. Integration pages (when integrations ship)
+### 5. 集成 pages (when integrations ship)
 
 Every integration = one landing page at `/integrations/[partner]`. Follows the Zapier playbook: Zapier gets **~2.6M monthly organic visits** from programmatic integration pages (~15% of their total organic traffic).
 
@@ -237,13 +237,13 @@ Every integration = one landing page at `/integrations/[partner]`. Follows the Z
 
 ## GEO (Generative Engine Optimization)
 
-In 2026, 30–50% of "research a tool" queries happen inside ChatGPT, Claude, Perplexity, or Google AI Overviews without ever touching a traditional search page. Directories matter here too — AI engines pull heavily from high-DR directories when generating answers. But the *destination pages* also need to be GEO-optimized.
+In 2026, 30–50% of "research a tool" queries happen inside ChatGPT, Claude, Perplexity, or Google AI 概述s without ever touching a traditional search page. Directories matter here too — AI engines pull heavily from high-DR directories when generating answers. But the *destination pages* also need to be GEO-optimized.
 
 ### Tactics that get pages cited
 
 1. **One H1 per page, sequential heading hierarchy.** 2.8× higher citation rate. 87% of cited pages use a single H1.
 2. **Dense, factual content with citable stats.** AI engines prefer specific numbers ("3× faster than X") over vague claims.
-3. **FAQ schema on every landing page.** AI engines heavily weight `FAQPage` JSON-LD for answer extraction.
+3. **常见问题 schema on every landing page.** AI engines heavily weight `常见问题Page` JSON-LD for answer extraction.
 4. **Comparison tables.** Extractable, structured — exactly what an AI answer needs.
 5. **Explicit "what it is" paragraph in the first 100 words.**
 6. **Get cited on Reddit and Hacker News.** Claude and Perplexity index these heavily. Genuine mentions on r/SaaS and HN count as training fuel.
@@ -342,7 +342,7 @@ Track weekly. If a number isn't moving, investigate — don't just submit more d
 1. **What are you launching?** (Category changes tier mix — AI vs traditional SaaS vs no-code vs dev tool.)
 2. **When is launch day?** (Phase 0 assets need 7 days of prep.)
 3. **Do you have destination pages built?** (Alternatives, use cases, templates — if not, build first.)
-4. **Product Hunt hunter lined up?** (Optional but adds ~15% day-one lift. 3-week warm-up required regardless.)
+4. **Product Hunt hunter lined up?** (可选 but adds ~15% day-one lift. 3-week warm-up required regardless.)
 5. **How many beta users can you ask for reviews?** (Need 20 to hit 10.)
 6. **Do you have an MCP or agent angle?** (If yes, Tier 4 registries are a real moat.)
 7. **Existing integrations?** (If yes, Tier 7 marketplaces are the highest-DR backlinks available.)
@@ -369,7 +369,7 @@ Keep the plan actionable. Every item should be something the user can do today.
 
 ---
 
-## Related Skills
+## 相关 Skills
 
 - **launch** — broader launch moment, ORB framework, five-phase approach
 - **programmatic-seo** — destination pages (alternatives, integrations, templates) that backlinks should flow into
@@ -378,4 +378,4 @@ Keep the plan actionable. Every item should be something the user can do today.
 - **content-strategy** — editorial content that attracts "best of" listicle inclusions
 - **free-tools** — lead magnets for destination pages
 - **community-marketing** — Reddit, Indie Hackers, Slack community mechanics
-- **schema** — FAQ + Product + Organization JSON-LD for GEO
+- **schema** — 常见问题 + Product + Organization JSON-LD for GEO

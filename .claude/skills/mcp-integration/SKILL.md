@@ -1,14 +1,14 @@
 ---
 name: mcp-integration
-description: "Mcp Integration — Mcp Integration 相关功能和最佳实践"
+description: "Mcp 集成 — Mcp 集成 相关功能和最佳实践"
 version: 0.1.0
 ---
 
-# MCP Integration for Claude Code Plugins
+# MCP 集成 for Claude Code Plugins
 
-## Overview
+## 概述
 
-Model Context Protocol (MCP) enables Claude Code plugins to integrate with external services and APIs by providing structured tool access. Use MCP integration to expose external service capabilities as tools within Claude Code.
+Model 上下文 Protocol (MCP) enables Claude Code plugins to integrate with external services and APIs by providing structured tool access. Use MCP integration to expose external service capabilities as tools within Claude Code.
 
 **Key capabilities:**
 - Connect to external services (databases, APIs, file systems)
@@ -16,7 +16,7 @@ Model Context Protocol (MCP) enables Claude Code plugins to integrate with exter
 - Handle OAuth and complex authentication flows
 - Bundle MCP servers with plugins for automatic setup
 
-## MCP Server Configuration Methods
+## MCP Server 配置 方法
 
 Plugins can bundle MCP servers in two ways:
 
@@ -68,7 +68,7 @@ Add `mcpServers` field to plugin.json:
 
 Execute local MCP servers as child processes. Best for local tools and custom servers.
 
-**Configuration:**
+**配置:**
 ```json
 {
   "filesystem": {
@@ -96,7 +96,7 @@ Execute local MCP servers as child processes. Best for local tools and custom se
 
 Connect to hosted MCP servers with OAuth support. Best for cloud services.
 
-**Configuration:**
+**配置:**
 ```json
 {
   "asana": {
@@ -121,7 +121,7 @@ Connect to hosted MCP servers with OAuth support. Best for cloud services.
 
 Connect to RESTful MCP servers with token authentication.
 
-**Configuration:**
+**配置:**
 ```json
 {
   "api-service": {
@@ -145,7 +145,7 @@ Connect to RESTful MCP servers with token authentication.
 
 Connect to WebSocket MCP servers for real-time bidirectional communication.
 
-**Configuration:**
+**配置:**
 ```json
 {
   "realtime-service": {
@@ -191,7 +191,7 @@ All MCP configurations support environment variable substitution:
 
 When MCP servers provide tools, they're automatically prefixed:
 
-**Format:** `mcp__plugin_<plugin-name>_<server-name>__<tool-name>`
+**格式:** `mcp__plugin_<plugin-name>_<server-name>__<tool-name>`
 
 **Example:**
 - Plugin: `asana`
@@ -204,4 +204,3 @@ When MCP servers provide tools, they're automatically prefixed:
 Pre-allow specific MCP tools in command frontmatter:
 
 ```markdown
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 57 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

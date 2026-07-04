@@ -1,8 +1,8 @@
 ---
 name: firebase
 description: "Firebase — Firebase 相关功能和最佳实践"
-  storage, functions, hosting. But the ease of setup hides real complexity.
-  Security rules are your last line of defense, and they're often wrong.
+  存储、函数、托管。但设置的简便性隐藏了真正的复杂性。
+  安全规则是你的最后一道防线，但它们经常出错。
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
@@ -689,7 +689,7 @@ Works well with: `nextjs-app-router`, `react-patterns`, `authentication-oauth`, 
 - User mentions or implies: security rules
 - User mentions or implies: firebase admin
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

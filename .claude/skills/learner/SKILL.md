@@ -4,14 +4,13 @@ description: "Learner — Learner 相关功能和最佳实践"
 level: 7
 ---
 
-# Learner Skill
+# 学习者技能
 
-> Deprecated compatibility alias: use `/oh-my-claudecode:skillify` for new skill extraction workflows. This file remains for internal implementation/history and compatibility.
+> 已弃用的兼容性别名：对于新的技能提取工作流，请使用 `/oh-my-claudecode:skillify`。此文件保留用于内部实现/历史和兼容性。
 
-This is a Level 7 (self-improving) skill. It has two distinct sections:
-- **Expertise**: Domain knowledge about what makes a good skill. Updated automatically as patterns are discovered.
-- **Workflow**: Stable extraction procedure. Rarely changes.
+这是一个 7 级（自我改进）技能。它包含两个不同的部分：
+- **专业知识**：关于什么构成好技能的领域知识。随着发现模式自动更新。
+- **工作流**：稳定的提取流程。很少更改。
 
-Only the Expertise section should be updated during improvement cycles.
+只有专业知识部分应在改进周期中更新。
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 49 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

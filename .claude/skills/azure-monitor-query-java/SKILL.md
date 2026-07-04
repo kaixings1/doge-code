@@ -12,7 +12,7 @@ date_added: '2026-02-27'
 > - `azure-monitor-query-logs` — For Log Analytics queries
 > - `azure-monitor-query-metrics` — For metrics queries
 >
-> See migration guides: [Logs Migration](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-query-logs/migration-guide.md) | [Metrics Migration](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-query-metrics/migration-guide.md)
+> See migration guides: [Logs 迁移](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-query-logs/migration-guide.md) | [Metrics 迁移](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-query-metrics/migration-guide.md)
 
 Client library for querying Azure Monitor Logs and Metrics.
 
@@ -49,7 +49,7 @@ Or use Azure SDK BOM:
 </dependencies>
 ```
 
-## Prerequisites
+## 前提条件
 
 - Log Analytics workspace (for logs queries)
 - Azure resource (for metrics queries)
@@ -107,7 +107,7 @@ MetricsQueryAsyncClient metricsAsyncClient = new MetricsQueryClientBuilder()
     .buildAsyncClient();
 ```
 
-### Sovereign Cloud Configuration
+### Sovereign Cloud 配置
 
 ```java
 // Azure China Cloud - Logs
@@ -418,7 +418,7 @@ try {
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

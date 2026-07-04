@@ -25,4 +25,3 @@ Show all available skills organized by scope.
 ```
 BUILT-IN SKILLS (bundled with oh-my-claudecode):
 | Name              | Description                    | Scope    |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 00 MINUTES 51 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

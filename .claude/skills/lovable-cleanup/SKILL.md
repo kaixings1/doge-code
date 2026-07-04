@@ -15,5 +15,3 @@ tools: [claude, cursor, codex, antigravity, gemini-cli]
 
 > Remove every trace of Lovable scaffolding and ship the project as your own.
 > Made with [antigravity-awesome-skills](https://github.com/sickn33/antigravity-awesome-skills) · author: **whoisabhishekadhikari**
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 50 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

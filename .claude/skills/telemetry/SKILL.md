@@ -3,7 +3,7 @@ name: telemetry
 description: 为 macOS 应用添加轻量级运行时遥测和调试工具，然后在构建和运行后验证这些事件。当连接 `Logger` / `os.Logger`、添加窗口/侧边栏/菜单栏操作的日志点、从 Console 或 `log stream` 读取运行时日志或确认预期事件在本地运行后触发时使用。
 ---
 
-# Telemetry
+# 遥测
 
 ## Quick Start
 

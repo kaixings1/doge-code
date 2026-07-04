@@ -15,7 +15,7 @@ Single-component analysis misses:
 - Data leakage through shared databases
 - Privilege escalation via service-to-service calls
 
-## Step 1: Map the Architecture
+## Step 1: Map the 架构
 
 ### Find Orchestration Configs
 

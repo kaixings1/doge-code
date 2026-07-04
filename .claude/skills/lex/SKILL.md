@@ -10,67 +10,67 @@ tags: [legal, context, cross-jurisdictional, compliance, scaffolding]
 tools: [claude, cursor, gemini]
 ---
 
-# LEX: Legal-Entity-X-ref
+# LEX：法律实体交叉引用
 
-## Overview
+## 概述
 
-LEX is a structured truth engine designed to eliminate legal hallucinations by grounding agents in verified government references and legislation across 29+ jurisdictions. It provides deterministic context for business formation, employment, and contract drafting.
+LEX 是一个结构化真相引擎，旨在通过将代理锚定在 29+ 司法管辖区的已验证政府参考和立法中，消除法律幻觉。它为商业成立、雇佣和合同起草提供确定性上下文。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- Use when you need to cross-reference or compare legal requirements between different territories, such as verifying the compliance gap between an **EU SARL** and a **US LLC**.
-- Use when working with foundational business or employment documents that require specific, jurisdiction-compliant clauses to be inserted into a professional scaffold.
-- Use when the user asks about the specific regulatory nuances, formation steps, or "truth-based" definitions of legal entities within the **29 supported jurisdictions** (USA, Canada, and the EU).
+- 当需要交叉引用或比较不同地区之间的法律要求时使用，例如验证 **欧盟 SARL** 与 **美国 LLC** 之间的合规差距。
+- 当处理需要将特定于司法管辖区、合规的条款插入到专业框架中的基础商业或雇佣文件时使用。
+- 当用户询问 **29 个支持司法管辖区**（美国、加拿大和欧盟）内法律实体的具体监管细节、成立步骤或"基于事实"的定义时使用。
 
-## How It Works
+## 工作原理
 
-### Step 1: Identify Jurisdiction
-Before drafting, determine if the user's entity or contract target is in the **USA, Canada, or the EU**.
+### 第 1 步：确定司法管辖区
+在起草前，确定用户的实体或合同目标位于 **美国、加拿大还是欧盟**。
 
-### Step 2: Search & Fetch Context
-Use the CLI shortcuts to find the relevant legal patterns and templates.
-- Run `lex search <query>` to find matching templates.
-- Run `lex get <path>` to read the granular metadata and requirements.
+### 第 2 步：搜索并获取上下文
+使用 CLI 快捷键查找相关的法律模式和模板。
+- 运行 `lex search <query>` 查找匹配模板。
+- 运行 `lex get <path>` 读取详细的元数据和要求。
 
-### Step 3: Scaffold Drafting
-Generate foundation-level documents using `lex draft <description>`. This ensures that all drafts include the mandatory AI-generated content disclaimer.
+### 第 3 步：框架起草
+使用 `lex draft <description>` 生成基础级文档。这确保所有草稿都包含强制性 AI 生成内容免责声明。
 
-### Step 4: Verify Authority
-Always include a "Verified Sources" section in your output by running `lex verify`, which fetches official government links for the retrieved context.
+### 第 4 步：验证权威性
+通过运行 `lex verify` 始终在输出中包含"已验证来源"部分，该命令会获取所检索上下文的官方政府链接。
 
-## Examples
+## 示例
 
-### Example 1: Comparing Employment Laws
+### 示例 1：比较雇佣法
 ```bash
-# Get the workforce template to compare US vs EU notice periods
+# 获取劳动力模板以比较美国与欧盟的通知期
 lex get templates/02_employment_workforce.md
 ```
 
-### Example 2: Drafting a Czech Contract
+### 示例 2：起草捷克合同
 ```bash
-# Create a house sale contract scaffold in Czech language
+# 创建捷克语的房屋销售合同框架
 lex draft "Czech house sale contract"
 ```
 
-## Best Practices
+## 最佳实践
 
-- ✅ **Trust but Verify**: Always include the links provided by `lex verify` in your output.
-- ✅ **Table Formatting**: Use tables when comparing results across multiple jurisdictions.
-- ❌ **No Guessing**: If a jurisdiction is outside the US/EU/CA scope, state that it is outside the LEX "Truth Engine" coverage.
-- ❌ **No Anecdotal Advice**: Stick strictly to the findings in the templates or verified government domains.
+- ✅ **信任但验证**：始终在输出中包含 `lex verify` 提供的链接。
+- ✅ **表格格式**：在跨多个司法管辖区比较结果时使用表格。
+- ❌ **不要猜测**：如果司法管辖区超出美国/欧盟/加拿大范围，请声明该区域超出 LEX"真相引擎"覆盖范围。
+- ❌ **不要提供轶事建议**：严格遵循模板或已验证政府域中的发现。
 
-## Common Pitfalls
+## 常见陷阱
 
-- **Problem:** Legal hallucination regarding specific EU notice periods.
-  **Solution:** Run `lex get templates/02_employment_workforce.md` to see the restrictive covenant comparison table.
+- **问题：** 有关特定欧盟通知期的法律幻觉。
+  **解决方案：** 运行 `lex get templates/02_employment_workforce.md` 查看限制性契约比较表。
 
-## Related Skills
+## 相关技能
 
-- `@employment-contract-templates` - For more specific HR policy phrasing.
-- `@legal-advisor` - For general legal framework architecture.
-- `@security-auditor` - For reviewing the final repository security.
+- `@employment-contract-templates` - 用于更具体的 HR 政策措辞。
+- `@legal-advisor` - 用于通用法律框架架构。
+- `@security-auditor` - 用于审查最终仓库安全性。
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确匹配上述范围时使用此技能。
+- 不要将输出视为特定环境验证、测试或专家审查的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

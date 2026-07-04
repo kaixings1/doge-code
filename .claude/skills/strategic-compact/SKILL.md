@@ -35,7 +35,7 @@ The `suggest-compact.js` script runs on PreToolUse (Edit/Write) and:
 2. **Threshold detection** — Suggests at configurable threshold (default: 50 calls)
 3. **Periodic reminders** — Reminds every 25 calls after threshold
 
-## Hook Setup
+## Hook 设置
 
 Add to your `~/.claude/settings.json`:
 
@@ -56,7 +56,7 @@ Add to your `~/.claude/settings.json`:
 }
 ```
 
-## Configuration
+## 配置
 
 Environment variables:
 - `COMPACT_THRESHOLD` — Tool calls before first suggestion (default: 50)
@@ -66,4 +66,3 @@ Environment variables:
 Use this table to decide when to compact:
 
 | Phase Transition | Compact? | Why |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 00 MINUTES 12 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

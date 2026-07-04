@@ -8,7 +8,7 @@ description: 品牌发现工作流
   session with disk-persisted state and a master brandbook (90_SYNTHESIS.md).
 ---
 
-# Brand Discovery
+# /u54c1/u724c/u53d1/u73b0
 
 Use this skill to conduct a structured, adaptive brand identity interview.
 The goal is a complete `90_SYNTHESIS.md` — a master brandbook the

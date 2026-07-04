@@ -5,10 +5,10 @@ risk: safe
 source: self
 ---
 
-# 📔 Unified Diary System
+# 📔 统一日记系统
 
-## When to Use This Skill
-Use this skill when you want to summarize progress, write a daily dev log, or perform a daily review while keeping project contexts isolated and synced to Notion/Obsidian.
+## 何时使用此技能
+当您想要总结进度、编写每日开发日志或执行每日回顾，同时保持项目上下文隔离并同步到 Notion/Obsidian 时使用此技能。
 
 > 🚨 **Agent One-Shot Integrity Constraint (Highest Priority)**: Steps 1-4 are an **indivisible atomic workflow**. The AI **MUST use Continuous Tool Calling** to complete all actions in one breath.
 > - **ABSOLUTELY FORBIDDEN** to output conversational text and wait for the user after completing Step 1, 2, or 3.
@@ -16,7 +16,7 @@ Use this skill when you want to summarize progress, write a daily dev log, or pe
 
 > ⚠️ **Ironclad Rule 1**: The local project diary in Step 1 **must NEVER be polluted with global data**. It only records the current project.
 > ⚠️ **Ironclad Rule 2**: When using tools like `run_command` to execute predefined python scripts (Step 2, Step 4), you must set them to `SafeToAutoRun: true` to avoid getting stuck waiting for user authorization.
-> ⚠️ **Ironclad Rule 3**: **Never guess the project name**. The AI must confirm the current directory name as the project identifier using a terminal command BEFORE taking any action in Step 1.
+> ⚠️ **Ironclad Rule 3**: **绝不 guess the project name**. The AI must confirm the current directory name as the project identifier using a terminal command BEFORE taking any action in Step 1.
 
 ---
 
@@ -30,7 +30,7 @@ Use this skill when you want to summarize progress, write a daily dev log, or pe
   - 📁 **Auto-Creation**: Create subfolders `diary/YYYY/MM/` based on the year and month.
   - ⚡ **Force Continue**: Once writing is complete, **do not interrupt the conversation; immediately call the terminal tool and proceed to Step 2.**
 
-## Step 1.5: Refresh Project Context (Automation Script)
+## Step 1.5: Refresh Project 上下文 (Automation Script)
 - **Prerequisite**: You have confirmed the current project directory path (from Action 0's `pwd` result).
 - **Action**: Call the terminal to execute the following command to automatically scan the project state and generate/update `AGENT_CONTEXT.md`:
   ```powershell
@@ -50,7 +50,7 @@ Use this skill when you want to summarize progress, write a daily dev log, or pe
 
 ## Step 3: AI Smart Fusion & Global Archiving (AI Execution) 🧠
 - **Action**: Based on the two materials printed by the terminal in Step 2, complete a **seamless fusion** mentally, then write it to the global diary: `{diary_system_path}/diary/YYYY/MM/YYYY-MM-DD.md`.
-- **Context Firewall (Core Mechanism)**:
+- **上下文 Firewall (Core Mechanism)**:
   1. **No Tag Drift**: When reading "Global Progress Material", there may be progress from other projects. **It is strictly forbidden to categorize today's conversation achievements under existing project headings belonging to other projects.**
   2. **Priority Definition**: The content marked as `📁 [Current Project Latest Progress]` in Step 2 is the protagonist of today's diary.
 - **Rewrite Rules**:
@@ -159,7 +159,7 @@ Strictly apply the following Markdown templates to ensure clarity during Step 1 
 - [ ] (System environment maintenance, etc.)
 ```
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

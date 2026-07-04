@@ -2,21 +2,21 @@
 name: ML CI/CD管道
 description: "为 ML 项目设置 CI/CD：自动化测试（数据验证、模型质量门）、模型注册集成、分阶段部署（影子、金丝雀、蓝绿）和回滚策略。适用于建立 MLOps 实践。"
 ---
-# CI/CD for ML
+# ML 的 CI/CD
 
-## Purpose
-Automate testing, validation, and deployment of ML models with proper quality gates.
+## 目的
+使用适当的质量门自动化 ML 模型的测试、验证和部署。
 
-## How It Works
+## 工作原理
 
-### ML-Specific CI Checks
-- Data validation (schema, distribution, quality)
-- Training reproducibility (same data → same model ± tolerance)
-- Model quality gates (accuracy > threshold, no regression)
-- Performance benchmarks (latency, memory, throughput)
-- Bias and fairness checks
+### ML 特定的 CI 检查
+- 数据验证（schema、分布、质量）
+- 训练可复现性（相同数据→相同模型±容差）
+- 模型质量门（准确率>阈值、无回归）
+- 性能基准（延迟、内存、吞吐量）
+- 偏差和公平性检查
 
-### Deployment Strategies
+### 部署策略
 
 | Strategy | Risk | Complexity |
 |----------|------|-----------|

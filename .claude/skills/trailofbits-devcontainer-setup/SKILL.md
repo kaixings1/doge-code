@@ -1,4 +1,4 @@
-# Devcontainer Setup Plugin
+# Devcontainer 设置插件
 
 Create pre-configured devcontainers with Claude Code and language-specific tooling.
 
@@ -12,7 +12,7 @@ Create pre-configured devcontainers with Claude Code and language-specific tooli
 - **Network isolation**: iptables/ipset with NET_ADMIN capability for restricting outbound traffic
 - **Token forwarding**: `CLAUDE_CODE_OAUTH_TOKEN` and `ANTHROPIC_API_KEY` forwarded to container
 
-## Usage
+## 用法
 
 Tell Claude to "set up a devcontainer" or "add devcontainer support" in your project.
 
@@ -24,4 +24,3 @@ The skill will:
 ## Generated Files
 
 | File | Purpose |
-|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 33 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -1,8 +1,6 @@
 ---
 name: agent-evaluation
-description: "Agent Evaluation — Agent Evaluation 相关功能和最佳实践"
-  capability assessment, reliability metrics, and production monitoring—where
-  even top agents achieve less than 50% on real-world benchmarks
+description: "Agent Evaluation — AI 代理的能力评估、可靠性指标和生产监控——即使顶尖代理在真实基准测试中也实现不到 50%。"
 risk: safe
 source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
@@ -20,7 +18,7 @@ Testing and benchmarking LLM agents including behavioral testing, capability ass
 - reliability-metrics
 - regression-testing
 
-## Prerequisites
+## 前提条件
 
 - Knowledge: Testing methodologies, Statistical analysis basics, LLM behavior patterns
 - Skills_recommended: autonomous-agents, multi-agent-orchestration
@@ -1129,7 +1127,7 @@ Works well with: `multi-agent-orchestration`, `agent-communication`, `autonomous
 - User mentions or implies: agent reliability
 - User mentions or implies: test agent
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

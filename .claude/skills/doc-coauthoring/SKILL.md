@@ -6,11 +6,11 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Doc Co-Authoring Workflow
+# /u6587/u6863/u534f/u540c/u521b/u4f5c/u5de5/u4f5c/u6d41
 
-This skill provides a structured workflow for guiding users through collaborative document creation. Act as an active guide, walking users through three stages: Context Gathering, Refinement & Structure, and Reader Testing.
+此技能提供 a structured workflow for guiding users through collaborative document creation. Act as an active guide, walking users through three stages: 上下文 Gathering, Refinement & Structure, and Reader Testing.
 
-## When to Offer This Workflow
+## /u4f55/u65f6/u63d0/u4f9b/u6b64/u5de5/u4f5c/u6d41
 
 **Trigger conditions:**
 - User mentions writing documentation: "write a doc", "draft a proposal", "create a spec", "write up"
@@ -20,7 +20,7 @@ This skill provides a structured workflow for guiding users through collaborativ
 **Initial offer:**
 Offer the user a structured workflow for co-authoring the document. Explain the three stages:
 
-1. **Context Gathering**: User provides all relevant context while Claude asks clarifying questions
+1. **上下文 Gathering**: User provides all relevant context while Claude asks clarifying questions
 2. **Refinement & Structure**: Iteratively build each section through brainstorming and editing
 3. **Reader Testing**: Test the doc with a fresh Claude (no context) to catch blind spots before others read it
 
@@ -28,7 +28,7 @@ Explain that this approach helps ensure the doc works well when others read it (
 
 If user declines, work freeform. If user accepts, proceed to Stage 1.
 
-## Stage 1: Context Gathering
+## /u9636/u6bb5 1/uff1a/u4e0a/u4e0b/u6587/u6536/u96c6
 
 **Goal:** Close the gap between what the user knows and what Claude knows, enabling smart guidance later.
 
@@ -58,7 +58,7 @@ Inform them they can answer in shorthand or dump information however works best 
 
 Once initial questions are answered, encourage the user to dump all the context they have. Request information such as:
 - Background on the project/problem
-- Related team discussions or shared documents
+- 相关 team discussions or shared documents
 - Why alternative solutions aren't being used
 - Organizational context (team dynamics, past incidents, politics)
 - Timeline pressures or constraints
@@ -104,7 +104,7 @@ Ask if there's any more context they want to provide at this stage, or if it's t
 
 If user wants to add more, let them. When ready, proceed to Stage 2.
 
-## Stage 2: Refinement & Structure
+## /u9636/u6bb5 2/uff1a/u4f18/u5316/u4e0e/u7ed3/u6784
 
 **Goal:** Build the document section by section through brainstorming, curation, and iterative refinement.
 
@@ -123,7 +123,7 @@ Start with whichever section has the most unknowns (usually the core decision/pr
 If the document structure is clear:
 Ask which section they'd like to start with.
 
-Suggest starting with whichever section has the most unknowns. For decision docs, that's usually the core proposal. For specs, it's typically the technical approach. Summary sections are best left for last.
+Suggest starting with whichever section has the most unknowns. For decision docs, that's usually the core proposal. For specs, it's typically the technical approach. 总结 sections are best left for last.
 
 If user doesn't know what sections they need:
 Based on the type of document and template, suggest 3-5 sections appropriate for the doc type.
@@ -165,7 +165,7 @@ Inform them they can answer in shorthand or just indicate what's important to co
 ### Step 2: Brainstorming
 
 For the [SECTION NAME] section, brainstorm [5-20] things that might be included, depending on the section's complexity. Look for:
-- Context shared that might have been forgotten
+- 上下文 shared that might have been forgotten
 - Angles or considerations not yet mentioned
 
 Generate 5-20 numbered options based on section complexity. At the end, offer to brainstorm more if they want additional options.
@@ -242,7 +242,7 @@ Provide any final suggestions.
 
 Ask if ready to move to Reader Testing, or if they want to refine anything else.
 
-## Stage 3: Reader Testing
+## /u9636/u6bb5 3/uff1a/u8bfb/u8005/u6d4b/u8bd5
 
 **Goal:** Test the document with a fresh Claude (no context bleed) to verify it works for readers.
 
@@ -300,7 +300,7 @@ Ask what questions people might ask when trying to discover this document. What 
 
 Generate 5-10 questions that readers would realistically ask.
 
-### Step 2: Setup Testing
+### Step 2: 设置 Testing
 
 Provide testing instructions:
 1. Open a fresh Claude conversation: https://claude.ai
@@ -333,7 +333,7 @@ Loop back to refinement for any problematic sections.
 
 When Reader Claude consistently answers questions correctly and doesn't surface new gaps or ambiguities, the doc is ready.
 
-## Final Review
+## /u6700/u7ec8/u5ba1/u67e5
 
 When Reader Testing passes:
 Announce the doc has passed Reader Claude testing. Before completion:
@@ -346,11 +346,11 @@ Ask if they want one more review, or if the work is done.
 
 **If user wants final review, provide it. Otherwise:**
 Announce document completion. Provide a few final tips:
-- Consider linking this conversation in an appendix so readers can see how the doc was developed
+- 考虑 linking this conversation in an appendix so readers can see how the doc was developed
 - Use appendices to provide depth without bloating the main doc
 - Update the doc as feedback is received from real readers
 
-## Tips for Effective Guidance
+## /u6709/u6548/u5f15/u5bfc/u6280/u5de7
 
 **Tone:**
 - Be direct and procedural
@@ -360,9 +360,9 @@ Announce document completion. Provide a few final tips:
 **Handling Deviations:**
 - If user wants to skip a stage: Ask if they want to skip this and write freeform
 - If user seems frustrated: Acknowledge this is taking longer than expected. Suggest ways to move faster
-- Always give user agency to adjust the process
+- 始终 give user agency to adjust the process
 
-**Context Management:**
+**上下文 Management:**
 - Throughout, if context is missing on something mentioned, proactively ask
 - Don't let gaps accumulate - address them as they come up
 
@@ -370,17 +370,17 @@ Announce document completion. Provide a few final tips:
 - Use `create_file` for drafting full sections
 - Use `str_replace` for all edits
 - Provide artifact link after every change
-- Never use artifacts for brainstorming lists - that's just conversation
+- 绝不 use artifacts for brainstorming lists - that's just conversation
 
 **Quality over Speed:**
 - Don't rush through stages
 - Each iteration should make meaningful improvements
 - The goal is a document that actually works for readers
 
-## When to Use
+## /u4f55/u65f6/u4f7f/u7528
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

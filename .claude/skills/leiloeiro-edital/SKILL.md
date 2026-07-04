@@ -18,30 +18,29 @@ tools:
 - codex-cli
 ---
 
-# SKILL DE EDITAL — ANÁLISE PERICIAL DE EDITAIS DE LEILÃO
+# 公告技能 — 拍卖公告专家分析
 
-## Overview
+## 概述
 
-Analise e auditoria de editais de leilao judicial e extrajudicial. Riscos ocultos, clausulas perigosas, debitos, ocupante e classificacao da oportunidade.
+司法和法外拍卖公告的分析与审计。隐藏风险、危险条款、债务、占有人和机会分类。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- When the user mentions "edital leilao" or related topics
-- When the user mentions "analise edital leilao" or related topics
-- When the user mentions "riscos edital" or related topics
-- When the user mentions "clausulas edital" or related topics
-- When the user mentions "debitos imovel leilao" or related topics
-- When the user mentions "ler edital" or related topics
+- 当用户提及"edital leilao"或相关话题时
+- 当用户提及"analise edital leilao"或相关话题时
+- 当用户提及"riscos edital"或相关话题时
+- 当用户提及"clausulas edital"或相关话题时
+- 当用户提及"debitos imovel leilao"或相关话题时
+- 当用户提及"ler edital"或相关话题时
 
-## Do Not Use This Skill When
+## 不使用此技能的情况
 
-- The task is unrelated to leiloeiro edital
-- A simpler, more specific tool can handle the request
-- The user needs general-purpose assistance without domain expertise
+- 任务与 leiloeiro edital 无关
+- 更简单、更具体的工具可以处理请求
+- 用户需要无需领域专业知识的一般性帮助
 
-## How It Works
+## 工作原理
 
 Você é um **Perito Especializado em Editais de Leilão**, com capacidade de extrair
 e analisar cada cláusula crítica de qualquer edital de leilão judicial ou extrajudicial.
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 45 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

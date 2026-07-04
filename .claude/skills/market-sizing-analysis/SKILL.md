@@ -10,12 +10,12 @@ date_added: '2026-02-27'
 
 Comprehensive market sizing methodologies for calculating Total Addressable Market (TAM), Serviceable Available Market (SAM), and Serviceable Obtainable Market (SOM) for startup opportunities.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on market sizing analysis tasks or workflows
 - Needing guidance, best practices, or checklists for market sizing analysis
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to market sizing analysis
 - You need a different domain or tool outside this scope
@@ -27,11 +27,11 @@ Comprehensive market sizing methodologies for calculating Total Addressable Mark
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Overview
+## 概述
 
 Market sizing provides the foundation for startup strategy, fundraising, and business planning. Calculate market opportunity using three complementary methodologies: top-down (industry reports), bottom-up (customer segment calculations), and value theory (willingness to pay).
 
-## Core Concepts
+## 核心概念
 
 ### The Three-Tier Market Framework
 
@@ -96,7 +96,7 @@ SOM = SAM × Realistic Capture Rate (2-5%)
 
 **Strengths:** Quick, uses credible data, validates market existence
 
-**Limitations:** May overestimate for new categories, less granular
+**限制:** May overestimate for new categories, less granular
 
 ### Methodology 2: Bottom-Up Analysis
 
@@ -119,7 +119,7 @@ SOM = SAM × Realistic Penetration Rate (Year 3-5)
 
 **Strengths:** Most credible for investors, granular, defensible
 
-**Limitations:** Requires detailed customer research, time-intensive
+**限制:** 需要 detailed customer research, time-intensive
 
 ### Methodology 3: Value Theory
 
@@ -145,7 +145,7 @@ SOM = SAM × Realistic Adoption Rate
 
 **Strengths:** Shows value creation, works for new markets
 
-**Limitations:** Requires assumptions, harder to validate
+**限制:** 需要 assumptions, harder to validate
 
 ## Step-by-Step Process
 
@@ -239,7 +239,7 @@ SAM = TAM × (% matching all filters)
 
 Determine realistic obtainable market share.
 
-**Consider:**
+**考虑:**
 - Current market share of competitors
 - Typical market share for new entrants (2-5%)
 - Resources available (funding, team, time)
@@ -276,7 +276,7 @@ Cross-check using multiple methods.
 - SOM that's too aggressive (> 10% in 5 years for new entrant)
 - Inconsistency between methodologies (> 50% difference)
 
-## Industry-Specific Considerations
+## Industry-Specific 考虑ations
 
 ### SaaS Markets
 
@@ -376,7 +376,7 @@ TAM = Total Target Companies × Average Deal Size × Deals per Year
 **Mistake 3: Using Only Top-Down**
 - Investors prefer bottom-up validation
 - Top-down alone lacks credibility
-- Always triangulate with multiple methods
+- 始终 triangulate with multiple methods
 
 **Mistake 4: Cherry-Picking Data**
 - Use consistent, recent data sources
@@ -385,7 +385,7 @@ TAM = Total Target Companies × Average Deal Size × Deals per Year
 
 **Mistake 5: Ignoring Market Dynamics**
 - Account for market growth/decline
-- Consider competitive intensity
+- 考虑 competitive intensity
 - Factor in switching costs and barriers
 
 ## Additional Resources
@@ -406,7 +406,7 @@ Working examples with complete calculations:
 
 Use these examples as templates for your own market sizing analysis. Each includes real numbers, data sources, and assumptions documented clearly.
 
-## Quick Start
+## 快速开始
 
 To perform market sizing analysis:
 
@@ -422,7 +422,7 @@ To perform market sizing analysis:
 
 For detailed step-by-step guidance on each methodology, reference the files in `references/` directory. For complete worked examples, see `examples/` directory.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

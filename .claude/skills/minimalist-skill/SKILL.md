@@ -1,15 +1,15 @@
 ---
 name: minimalist-ui
-description: "Minimalist Skill — Minimalist Skill 相关功能和最佳实践"
+description: "精简主义界面设计 — 高级精简、文档风格的前端界面建议。"
 ---
 
 # Protocol: Premium Utilitarian Minimalism UI Architect
 
-## 1. Protocol Overview
+## 1. Protocol 概述
 Name: Premium Utilitarian Minimalism & Editorial UI
 Description: An advanced frontend engineering directive for generating highly refined, ultra-minimalist, "document-style" web interfaces analogous to top-tier workspace platforms. This protocol strictly enforces a high-contrast warm monochrome palette, bespoke typographic hierarchies, meticulous structural macro-whitespace, bento-grid layouts, and an ultra-flat component architecture with deliberate muted pastel accents. It actively rejects standard generic SaaS design trends.
 
-## 2. Absolute Negative Constraints (Banned Elements)
+## 2. Absolute Negative 约束条件 (Banned Elements)
 The AI must strictly avoid the following generic web development defaults:
 - DO NOT use the "Inter", "Roboto", or "Open Sans" typefaces.
 - DO NOT use generic, thin-line icon libraries like "Lucide", "Feather", or standard "Heroicons".
@@ -21,7 +21,7 @@ The AI must strictly avoid the following generic web development defaults:
 - DO NOT use generic placeholder names like "John Doe", "Acme Corp", or "Lorem Ipsum". Use realistic, contextual content.
 - DO NOT use AI copywriting clichés: "Elevate", "Seamless", "Unleash", "Next-Gen", "Game-changer", "Delve". Write plain, specific language.
 
-## 3. Typographic Architecture
+## 3. Typographic 架构
 The interface must rely on extreme typographic contrast and premium font selection to establish an editorial feel.
 - Primary Sans-Serif (Body, UI, Buttons): Use clean, geometric, or system-native fonts with character. Target: `font-family: 'SF Pro Display', 'Geist Sans', 'Helvetica Neue', 'Switzer', sans-serif`.
 - Editorial Serif (Hero Headings & Quotes): Target: `font-family: 'Lyon Text', 'Newsreader', 'Playfair Display', 'Instrument Serif', serif`. Apply tight tracking (`letter-spacing: -0.02em` to `-0.04em`) and tight line-height (`1.1`).
@@ -49,10 +49,10 @@ Color is a scarce resource, utilized only for semantic meaning or subtle accents
   - Solid background `#111111`, text `#FFFFFF`. 
   - Slight border-radius (`4px` to `6px`). No box-shadow. 
   - Hover state should be a subtle color shift to `#333333` or a micro-scale `transform: scale(0.98)`.
-- Tags & Status Badges:
+- Tags & 状态 Badges:
   - Pill-shaped (`border-radius: 9999px`), very small typography (`text-xs`), uppercase with wide tracking (`letter-spacing: 0.05em`).
   - Background must use the defined Muted Pastels.
-- Accordions (FAQ):
+- Accordions (常见问题):
   - Strip all container boxes. Separate items only with a `border-bottom: 1px solid #EAEAEA`.
   - Use a clean, sharp `+` and `-` icon for the toggle state.
 - Keystroke Micro-UIs:
@@ -63,16 +63,16 @@ Color is a scarce resource, utilized only for semantic meaning or subtle accents
 ## 6. Iconography & Imagery Directives
 - System Icons: Use "Phosphor Icons (Bold or Fill weights)" or "Radix UI Icons" for a technical, slightly thicker-stroke aesthetic. Standardize stroke width across all icons.
 - Illustrations: Monochromatic, rough continuous-line ink sketches on a white background, featuring a single offset geometric shape filled with a muted pastel color.
-- Photography: Use high-quality, desaturated images with a warm tone. Apply subtle overlays (`opacity: 0.04` warm grain) to blend photos into the monochrome palette. Never use oversaturated stock photos. Use reliable placeholders like `https://picsum.photos/seed/{context}/1200/800` when real assets are unavailable.
+- Photography: Use high-quality, desaturated images with a warm tone. Apply subtle overlays (`opacity: 0.04` warm grain) to blend photos into the monochrome palette. 绝不 use oversaturated stock photos. Use reliable placeholders like `https://picsum.photos/seed/{context}/1200/800` when real assets are unavailable.
 - Hero & Section Backgrounds: Sections should not feel empty and flat. Use subtle full-width background imagery at very low opacity, soft radial light spots (`radial-gradient` with warm tones at `opacity: 0.03`), or minimal geometric line patterns to add depth without breaking the clean aesthetic.
 
 ## 7. Subtle Motion & Micro-Animations
 Motion should feel invisible — present but never distracting. The goal is quiet sophistication, not spectacle.
 - Scroll Entry: Elements fade in gently as they enter the viewport. Use `translateY(12px)` + `opacity: 0` resolving over `600ms` with `cubic-bezier(0.16, 1, 0.3, 1)`. Use `IntersectionObserver`, never `window.addEventListener('scroll')`.
 - Hover States: Cards lift with an ultra-subtle shadow shift (`box-shadow` transitioning from `0 0 0` to `0 2px 8px rgba(0,0,0,0.04)` over `200ms`). Buttons respond with `scale(0.98)` on `:active`.
-- Staggered Reveals: Lists and grid items enter with a cascade delay (`animation-delay: calc(var(--index) * 80ms)`). Never mount everything at once.
-- Background Ambient Motion: Optional. A single, very slow-moving radial gradient blob (`animation-duration: 20s+`, `opacity: 0.02-0.04`) drifting behind hero sections. Must be applied to a `position: fixed; pointer-events: none` layer. Never on scrolling containers.
-- Performance: Animate exclusively via `transform` and `opacity`. No layout-triggering properties (`top`, `left`, `width`, `height`). Use `will-change: transform` sparingly and only on actively animating elements.
+- Staggered Reveals: Lists and grid items enter with a cascade delay (`animation-delay: calc(var(--index) * 80ms)`). 绝不 mount everything at once.
+- Background Ambient Motion: 可选. A single, very slow-moving radial gradient blob (`animation-duration: 20s+`, `opacity: 0.02-0.04`) drifting behind hero sections. Must be applied to a `position: fixed; pointer-events: none` layer. 绝不 on scrolling containers.
+- 性能: Animate exclusively via `transform` and `opacity`. No layout-triggering properties (`top`, `left`, `width`, `height`). Use `will-change: transform` sparingly and only on actively animating elements.
 
 ## 8. Execution Protocol
 When tasked with writing frontend code (HTML, React, Tailwind, Vue) or designing a layout:

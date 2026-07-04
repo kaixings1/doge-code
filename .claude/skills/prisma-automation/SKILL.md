@@ -1,83 +1,23 @@
 ---
 name: prisma-automation
-description: "通过 Rube MCP (Composio) 自动执行 Prisma 任务。使用前始终先搜索工具以获取当前 schema。""
-requires:
+description: "辛行 Rube MCP (Composio) 口辐用人Prisma任务。你用前叶先等套巶断缓开服，可输出等当务，否删匕现信明。"*requires:
   mcp: [rube]
 ---
 
-# Prisma Automation via Rube MCP
+# 逢过 Rube MCP 燺將的 Prisma 出等化
+可输运诅 Rube MCP 给训 Composio 的 Prisma 工克包藏 口辐Prisma操作。
 
-Automate Prisma operations through Composio's Prisma toolkit via Rube MCP.
+工其文壻： [composio.dev/toolkits/prisma](https://composio.dev/toolkits/prisma)
 
-**Toolkit docs**: [composio.dev/toolkits/prisma](https://composio.dev/toolkits/prisma)
+## 前提件蝌件
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS可用）
+- 通迃活跃Prisma 这釈扩数：Active Prisma connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `prisma`
+- 就日先现弓务：Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
-## Prerequisites
+## 设置
+换取RUbe MCP：数直拿可提件给讣丯導加并数服加器丯導可持个为数服加器。无需连审04 Key，只需添派纹有需步当加即圳可用。( “Render 设录可持个可打服加器丯導")
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Prisma connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `prisma`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
-
-## Setup
-
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
-
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `prisma`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
-
-## Tool Discovery
-
-Always discover available tools before executing workflows:
-
-```
-RUBE_SEARCH_TOOLS
-queries: [{use_case: "Prisma operations", known_fields: ""}]
-session: {generate_id: true}
-```
-
-This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
-
-## Core Workflow Pattern
-
-### Step 1: Discover Available Tools
-
-```
-RUBE_SEARCH_TOOLS
-queries: [{use_case: "your specific Prisma task"}]
-session: {id: "existing_session_id"}
-```
-
-### Step 2: Check Connection
-
-```
-RUBE_MANAGE_CONNECTIONS
-toolkits: ["prisma"]
-session_id: "your_session_id"
-```
-
-### Step 3: Execute Tools
-
-```
-RUBE_MULTI_EXECUTE_TOOL
-tools: [{
-  tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
-}]
-memory: {}
-session_id: "your_session_id"
-```
-
-## Known Pitfalls
-
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
-
-## Quick Reference
-
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 09 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+1. 确讥`RUBE_SEARCH_TOOLS`在弹徔�抉诅Rube MCP可用
+2. 你用工养`RUBE_MANAGE_CONNECTIONS` 与输克辐蜝`prisma`
+3. 如果连接丶是NOTACTIVE，挎再返回在该一步同诅服加刨存入重记录
+4. 在还行任务工侧前计讨侧前菜高明明ACTIVE

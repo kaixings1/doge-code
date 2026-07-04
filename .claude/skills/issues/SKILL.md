@@ -8,32 +8,24 @@ metadata:
   author: Shpigford
   version: "1.0"
 ---
-
-Interact with GitHub issues - create, list, and view issues.
-
-## When to Use
-- The user wants to create, list, inspect, or otherwise work with GitHub issues.
-- The task involves issue intake or repository issue management through the GitHub CLI workflow.
-- You need a guided issue flow that gathers titles, descriptions, and action selection before running commands.
-
-## Instructions
-
-This command helps you work with GitHub issues using the `gh` CLI.
-
-### Step 1: Determine Action
-
-Use AskUserQuestion to ask what the user wants to do:
-
-**Question:**
-- question: "What would you like to do with GitHub issues?"
-- header: "Action"
+# Issues — GitHub Issues 交互
+与 GitHub Issues 进行交互——创建、列出和查看问题。
+## 何时使用
+- 用户想要创建、列出、查看或以其他方式处理 GitHub Issues
+- 任务涉及通过 GitHub CLI 工作流进行问题处理和仓库问题管理
+- 你需要一个引导式问题流程，在运行命令之前收集标题、描述和操作选择
+## 操作指南
+此命令帮助您使用 gh CLI 处理 GitHub Issues。
+### 步骤 1：确定操作
+使用 AskUserQuestion 询问用户想要做什么：
+**问题：**
+- question: "您想对 GitHub Issues 做什么？"
+- header: "操作"
 - multiSelect: false
 - options:
-  - label: "Create new issue"
-    description: "Open a new issue with title, body, and optional labels"
-  - label: "List issues"
-    description: "View open issues in the current repository"
-  - label: "View issue"
-    description: "See details of a specific issue by number"
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 48 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+  - label: "创建新 Issue"
+    description: "使用标题、正文和可选标签打开新 Issue"
+  - label: "列出 Issues"
+    description: "查看当前仓库中的开放 Issues"
+  - label: "查看 Issue"
+    description: "按编号查看特定 Issue 的详情"

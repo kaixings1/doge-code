@@ -6,11 +6,11 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Bazel Build Optimization
+# Bazel /u6784/u5efa/u4f18/u5316
 
 Production patterns for Bazel in large-scale monorepos.
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to bazel build optimization
 - You need a different domain or tool outside this scope
@@ -22,7 +22,7 @@ Production patterns for Bazel in large-scale monorepos.
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Setting up Bazel for monorepos
 - Configuring remote caching/execution
@@ -31,9 +31,9 @@ Production patterns for Bazel in large-scale monorepos.
 - Debugging build issues
 - Migrating to Bazel
 
-## Core Concepts
+## 核心概念
 
-### 1. Bazel Architecture
+### 1. Bazel 架构
 
 ```
 workspace/
@@ -64,7 +64,7 @@ workspace/
 
 ## Templates
 
-### Template 1: WORKSPACE Configuration
+### Template 1: WORKSPACE 配置
 
 ```python
 # WORKSPACE.bazel
@@ -111,7 +111,7 @@ load("@rules_python//python:repositories.bzl", "py_repositories")
 py_repositories()
 ```
 
-### Template 2: .bazelrc Configuration
+### Template 2: .bazelrc 配置
 
 ```bash
 # .bazelrc
@@ -320,7 +320,7 @@ bazel query "attr(tags, 'integration', //...)"
 bazel query "deps(//...)" --output=package | wc -l
 ```
 
-### Template 7: Remote Execution Setup
+### Template 7: Remote Execution 设置
 
 ```python
 # platforms/BUILD.bazel
@@ -361,7 +361,7 @@ toolchain(
 )
 ```
 
-## Performance Optimization
+## 性能 Optimization
 
 ```bash
 # Profile build
@@ -399,7 +399,7 @@ bazel build //... --notrack_incremental_state
 - [Bazel Remote Execution](https://bazel.build/docs/remote-execution)
 - [rules_js](https://github.com/aspect-build/rules_js)
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

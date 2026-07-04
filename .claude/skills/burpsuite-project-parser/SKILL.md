@@ -18,7 +18,7 @@ Search and extract data from Burp Suite project files using the burpsuite-projec
 - Dumping proxy history or site map data
 - Analyzing HTTP traffic captured in a Burp project file
 
-## Prerequisites
+## 前提条件
 
 This skill **delegates parsing to Burp Suite Professional** - it does not parse .burp files directly.
 
@@ -31,7 +31,7 @@ This skill **delegates parsing to Burp Suite Professional** - it does not parse 
 2. In Burp Suite: Extender → Extensions → Add
 3. Select the downloaded JAR file
 
-## Quick Reference
+## 快速参考
 
 Use the wrapper script:
 ```bash
@@ -358,7 +358,7 @@ If not using the wrapper script, invoke directly:
   --project-file=/path/to/project.burp [FLAGS]
 ```
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

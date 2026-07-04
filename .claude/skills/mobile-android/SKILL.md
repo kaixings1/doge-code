@@ -40,4 +40,3 @@ VulnScout ships dedicated mobile detectors. Each produces normalized findings
 with the standard schema (`stable_key`, `kind`, `severity`, `type`, etc.).
 
 | Detector | Type slug | What it finds |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 17 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

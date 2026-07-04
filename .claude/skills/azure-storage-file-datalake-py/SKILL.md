@@ -142,7 +142,7 @@ for path in file_system_client.get_paths(path="mydir", recursive=True):
     print(path.name)
 ```
 
-## File/Directory Properties
+## File/Directory 属性
 
 ```python
 # Get properties
@@ -208,12 +208,12 @@ asyncio.run(datalake_operations())
 4. **Use async client** for high-throughput scenarios
 5. **Use `get_paths` with `recursive=True`** for full directory listing
 6. **Set metadata** for custom file attributes
-7. **Consider Blob API** for simple object storage use cases
+7. **考虑 Blob API** for simple object storage use cases
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

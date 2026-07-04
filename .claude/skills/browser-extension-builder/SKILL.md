@@ -379,7 +379,7 @@ Works well with: `frontend`, `micro-saas-launcher`, `personal-tool-builder`
 - User mentions or implies: extension
 - User mentions or implies: manifest v3
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

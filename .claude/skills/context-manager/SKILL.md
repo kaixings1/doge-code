@@ -6,17 +6,17 @@ source: community
 date_added: '2026-02-27'
 ---
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on context manager tasks or workflows
 - Needing guidance, best practices, or checklists for context manager
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to context manager
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -181,7 +181,7 @@ Master context engineer specializing in building dynamic systems that provide th
 - "Create a privacy-preserving context system for regulated industries"
 - "Optimize context window usage for complex reasoning tasks with limited tokens"
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

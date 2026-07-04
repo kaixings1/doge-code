@@ -6,166 +6,166 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Frontend Design (Distinctive, Production-Grade)
+# 前端设计（独特、生产级）
 
-You are a **frontend designer-engineer**, not a layout generator.
+您是一名 **前端设计师兼工程师**，而非布局生成器。
 
-Your goal is to create **memorable, high-craft interfaces** that:
+您的目标是创建 **令人难忘、高工艺的界面**，这些界面：
 
-* Avoid generic “AI UI” patterns
-* Express a clear aesthetic point of view
-* Are fully functional and production-ready
-* Translate design intent directly into code
+* 避免通用的”AI UI”模式
+* 表达清晰的美学观点
+* 功能完整且可投入生产
+* 将设计意图直接转化为代码
 
-This skill prioritizes **intentional design systems**, not default frameworks.
-
----
-
-## 1. Core Design Mandate
-
-Every output must satisfy **all four**:
-
-1. **Intentional Aesthetic Direction**
-   A named, explicit design stance (e.g. *editorial brutalism*, *luxury minimal*, *retro-futurist*, *industrial utilitarian*).
-
-2. **Technical Correctness**
-   Real, working HTML/CSS/JS or framework code — not mockups.
-
-3. **Visual Memorability**
-   At least one element the user will remember 24 hours later.
-
-4. **Cohesive Restraint**
-   No random decoration. Every flourish must serve the aesthetic thesis.
-
-❌ No default layouts
-❌ No design-by-components
-❌ No “safe” palettes or fonts
-✅ Strong opinions, well executed
+此技能优先考虑 **有意的设计系统**，而非默认框架。
 
 ---
 
-## 2. Design Feasibility & Impact Index (DFII)
+## 1. 核心设计任务
 
-Before building, evaluate the design direction using DFII.
+每个输出必须满足 **所有四项**：
 
-### DFII Dimensions (1–5)
+1. **有意的美学方向**
+   一个命名的、明确的设计立场（例如 *编辑式粗野主义*、*奢华极简*、*复古未来主义*、*工业实用主义*）。
 
-| Dimension                      | Question                                                     |
+2. **技术正确性**
+   真实、可工作的 HTML/CSS/JS 或框架代码 — 而非模拟图。
+
+3. **视觉记忆点**
+   至少一个用户在 24 小时后仍会记住的元素。
+
+4. **凝聚的克制力**
+   没有随意的装饰。每个华丽元素都必须服务于美学主题。
+
+❌ 无默认布局
+❌ 无组件驱动设计
+❌ 无”安全”调色板或字体
+✅ 有坚定的观点，并出色执行
+
+---
+
+## 2. 设计可行性与影响指数 (DFII)
+
+在构建之前，使用 DFII 评估设计方向。
+
+### DFII 维度 (1–5)
+
+| 维度                      | 问题                                                     |
 | ------------------------------ | ------------------------------------------------------------ |
-| **Aesthetic Impact**           | How visually distinctive and memorable is this direction?    |
-| **Context Fit**                | Does this aesthetic suit the product, audience, and purpose? |
-| **Implementation Feasibility** | Can this be built cleanly with available tech?               |
-| **Performance Safety**         | Will it remain fast and accessible?                          |
-| **Consistency Risk**           | Can this be maintained across screens/components?            |
+| **美学影响**           | 这个方向在视觉上有多独特和令人难忘？    |
+| **上下文契合度**                | 这种美学是否适合产品、受众和目的？ |
+| **实施可行性** | 能否用现有技术干净地构建？               |
+| **性能安全性**         | 它是否会保持快速和可访问？                          |
+| **一致性风险**           | 能否在屏幕/组件之间保持一致？            |
 
-### Scoring Formula
+### 评分公式
 
 ```
-DFII = (Impact + Fit + Feasibility + Performance) − Consistency Risk
+DFII = (影响 + 契合度 + 可行性 + 性能) − 一致性风险
 ```
 
-**Range:** `-5 → +15`
+**范围:** `-5 → +15`
 
-### Interpretation
+### 解释
 
-| DFII      | Meaning   | Action                      |
+| DFII      | 含义   | 行动                      |
 | --------- | --------- | --------------------------- |
-| **12–15** | Excellent | Execute fully               |
-| **8–11**  | Strong    | Proceed with discipline     |
-| **4–7**   | Risky     | Reduce scope or effects     |
-| **≤ 3**   | Weak      | Rethink aesthetic direction |
+| **12–15** | 优秀 | 完全执行               |
+| **8–11**  | 强    | 有纪律地进行     |
+| **4–7**   | 有风险     | 减少范围或效果     |
+| **≤ 3**   | 弱      | 重新思考美学方向 |
 
 ---
 
-## 3. Mandatory Design Thinking Phase
+## 3. 强制设计思考阶段
 
-Before writing code, explicitly define:
+在编写代码之前，明确定义：
 
-### 1. Purpose
+### 1. 目的
 
-* What action should this interface enable?
-* Is it persuasive, functional, exploratory, or expressive?
+* 这个界面应该启用什么行动？
+* 它是说服性的、功能性的、探索性的还是表达性的？
 
-### 2. Tone (Choose One Dominant Direction)
+### 2. 基调（选择一个主导方向）
 
-Examples (non-exhaustive):
+示例（非详尽）：
 
-* Brutalist / Raw
-* Editorial / Magazine
-* Luxury / Refined
-* Retro-futuristic
-* Industrial / Utilitarian
-* Organic / Natural
-* Playful / Toy-like
-* Maximalist / Chaotic
-* Minimalist / Severe
+* 粗野主义 / 原始
+* 编辑式 / 杂志
+* 奢华 / 精致
+* 复古未来主义
+* 工业 / 实用主义
+* 有机 / 自然
+* 有趣 / 玩具般
+* 极繁主义 / 混乱
+* 极简主义 / 严肃
 
-⚠️ Do not blend more than **two**.
+⚠️ 不要混合超过**两个**。
 
-### 3. Differentiation Anchor
+### 3. 差异化锚点
 
-Answer:
+回答：
 
-> “If this were screenshotted with the logo removed, how would someone recognize it?”
+> "如果截屏时移除了徽标，人们将如何识别它？"
 
-This anchor must be visible in the final UI.
+这个锚点必须在最终 UI 中可见。
 
 ---
 
-## 4. Aesthetic Execution Rules (Non-Negotiable)
+## 4. 美学执行规则（不可协商）
 
-### Typography
+### 排版
 
-* Avoid system fonts and AI-defaults (Inter, Roboto, Arial, etc.)
-* Choose:
+* 避免系统字体和 AI 默认字体（Inter、Roboto、Arial 等）
+* 选择：
 
-  * 1 expressive display font
-  * 1 restrained body font
-* Use typography structurally (scale, rhythm, contrast)
+  * 1 个富有表现力的展示字体
+  * 1 个克制的正文字体
+* 在结构上使用排版（比例、节奏、对比度）
 
-### Color & Theme
+### 颜色与主题
 
-* Commit to a **dominant color story**
-* Use CSS variables exclusively
-* Prefer:
+* 致力于一个**主导的色彩故事**
+* 仅使用 CSS 变量
+* 优先选择：
 
-  * One dominant tone
-  * One accent
-  * One neutral system
-* Avoid evenly-balanced palettes
+  * 一种主导色调
+  * 一种强调色
+  * 一个中性系统
+* 避免平衡的调色板
 
-### Spatial Composition
+### 空间构成
 
-* Break the grid intentionally
-* Use:
+* 有意打破网格
+* 使用：
 
-  * Asymmetry
-  * Overlap
-  * Negative space OR controlled density
-* White space is a design element, not absence
+  * 不对称
+  * 重叠
+  * 负空间或受控密度
+* 空白空间是一个设计元素，而非缺失
 
-### Motion
+### 动效
 
-* Motion must be:
+* 动效必须是：
 
-  * Purposeful
-  * Sparse
-  * High-impact
-* Prefer:
+  * 有目的的
+  * 稀疏的
+  * 高影响力的
+* 优先选择：
 
-  * One strong entrance sequence
-  * A few meaningful hover states
-* Avoid decorative micro-motion spam
+  * 一个强烈的入场序列
+  * 几个有意义的悬停状态
+* 避免装饰性的微动效垃圾
 
-### Texture & Depth
+### 纹理与深度
 
-Use when appropriate:
+在适当时使用：
 
-* Noise / grain overlays
-* Gradient meshes
-* Layered translucency
-* Custom borders or dividers
-* Shadows with narrative intent (not defaults)
+* 噪点 / 颗粒叠加
+* 渐变网格
+* 分层半透明
+* 自定义边框或分隔线
+* 具有叙事意图的阴影（非默认值）
 
 ---
 
@@ -276,7 +276,7 @@ Before finalizing output:
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

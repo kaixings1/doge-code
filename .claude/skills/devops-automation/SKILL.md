@@ -3,9 +3,9 @@ name: devops-automation
 description: DevOps自动化 — 使用GitHub Actions、Docker、Kubernetes和Terraform进行CI/CD管道设计。
 ---
 
-# DevOps Automation
+# DevOps 自动化
 
-## GitHub Actions Workflow Structure
+## GitHub Actions 工作流结构
 
 ```yaml
 name: CI/CD
@@ -101,7 +101,7 @@ Rules:
 - Add `HEALTHCHECK` for orchestrator integration
 - Use `.dockerignore` to exclude `node_modules`, `.git`, tests
 
-## Kubernetes Deployment Manifest
+## Kubernetes 部署 Manifest
 
 ```yaml
 apiVersion: apps/v1
@@ -157,7 +157,7 @@ spec:
                   key: database-url
 ```
 
-Always set resource requests and limits. Always define readiness and liveness probes. Use `maxUnavailable: 0` for zero-downtime deploys.
+始终 set resource requests and limits. 始终 define readiness and liveness probes. Use `maxUnavailable: 0` for zero-downtime deploys.
 
 ## Helm Chart Structure
 

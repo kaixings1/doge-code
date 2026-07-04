@@ -151,7 +151,7 @@ Only if relevant:
 
 ---
 
-## Limitations
+## 局限性
 
 - Relies on commit message quality; vague commits may reduce accuracy
 - Does not deeply analyze code changes unless necessary

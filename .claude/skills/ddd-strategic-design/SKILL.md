@@ -7,16 +7,16 @@ tags: "[ddd, strategic-design, bounded-context, ubiquitous-language]"
 date_added: "2026-02-27"
 ---
 
-# DDD Strategic Design
+# DDD 战略设计
 
-## Use this skill when
+## 使用此技能的场景
 
-- Defining core, supporting, and generic subdomains.
-- Splitting a monolith or service landscape by domain boundaries.
-- Aligning teams and ownership with bounded contexts.
-- Building a shared ubiquitous language with domain experts.
+- 定义核心、支撑和通用子域。
+- 按领域边界拆分单体或服务架构。
+- 将团队和所有权与限界上下文对齐。
+- 与领域专家构建共享的通用语言。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The domain model is stable and already well bounded.
 - You need tactical code patterns only.
@@ -45,7 +45,7 @@ Use @ddd-strategic-design to map our commerce domain into bounded contexts,
 classify subdomains, and propose team ownership.
 ```
 
-## Limitations
+## 局限性
 
 - This skill does not produce executable code.
 - It cannot infer business truth without stakeholder input.

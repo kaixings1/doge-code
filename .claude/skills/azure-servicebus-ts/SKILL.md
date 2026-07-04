@@ -221,10 +221,10 @@ const receiver = client.createReceiver("my-queue", { receiveMode: "receiveAndDel
 
 1. **Use Entra ID auth** - Avoid connection strings in production
 2. **Reuse clients** - Create `ServiceBusClient` once, share across senders/receivers
-3. **Close resources** - Always close senders/receivers when done
+3. **Close resources** - 始终 close senders/receivers when done
 4. **Handle errors** - Implement `processError` callback for subscription receivers
 5. **Use sessions for ordering** - When message order matters within a group
-6. **Configure dead-letter** - Always handle DLQ messages
+6. **Configure dead-letter** - 始终 handle DLQ messages
 7. **Batch sends** - Use `createMessageBatch()` for multiple messages
 
 ## Reference Documentation
@@ -237,7 +237,7 @@ For detailed patterns, see:
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

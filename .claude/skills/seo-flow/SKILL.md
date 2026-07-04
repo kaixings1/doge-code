@@ -1,11 +1,6 @@
 ---
 name: seo-flow
-description: "Seo Flow — Seo Flow 相关功能和最佳实践"
-  FLOW framework integration — evidence-led SEO using the Find → Leverage →
-  Optimize → Win loop. Surfaces stage-specific AI prompts from the FLOW
-  knowledge base (41 prompts, CC BY 4.0). Use when user says "FLOW", "FLOW
-  framework", "seo flow", "evidence-led SEO", "find leverage optimize win",
-  or wants stage-specific SEO prompts.
+description: "Seo Flow — FLOW 框架集成相关功能和最佳实践——使用 Find → Leverage → Optimize → Win 循环的证据驱动型 SEO。"
 user-invocable: true
 argument-hint: "[stage] [url|topic]"
 license: MIT
@@ -15,7 +10,7 @@ metadata:
   category: seo
 ---
 
-# FLOW Framework — Find · Leverage · Optimize · Win
+# FLOW 框架 — 发现 · 杠杆 · 优化 · 获胜
 
 > Framework and prompts © Daniel Agrici, CC BY 4.0 — github.com/AgriciDaniel/flow
 
@@ -25,5 +20,3 @@ be driven by structured, evidence-backed AI prompts rather than improvised queri
 
 **Runtime context:** Load `references/flow-framework.md` on every `/seo flow` activation.
 Load prompt files on demand — only for the stage the user requests.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 44 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

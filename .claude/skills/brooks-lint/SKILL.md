@@ -41,7 +41,7 @@ Named after Fred Brooks, author of *The Mythical Man-Month* — because the hard
 | *The Art of UNIX Programming* | Modularity, composability, rule of least surprise |
 | *Extreme Programming Explained* | YAGNI, simple design, collective ownership |
 
-## When to Use This Skill
+## 何时使用 This Skill
 
 - Use when you want architectural feedback beyond what linters provide
 - Use before major refactors to identify structural debt
@@ -132,6 +132,6 @@ npx antigravity-awesome-skills --claude
 - [Dev.to Article: I Synthesized 12 Classic Engineering Books into an AI Code Reviewer](https://dev.to/hyhmrright/i-synthesized-12-classic-engineering-books-into-an-ai-code-reviewer-heres-what-it-caught-3ed1)
 - [Related skill: logic-lens](https://github.com/hyhmrright/logic-lens)
 
-## Limitations
+## 限制
 
 Use this skill only when the task clearly matches the scope described above (design review and architectural analysis). Brooks Lint applies AI-powered analysis grounded in established engineering principles. It should complement — not replace — human design review for production-critical decisions. Results reflect the principles of the 12 source books and may not apply to all architectural styles or domains.

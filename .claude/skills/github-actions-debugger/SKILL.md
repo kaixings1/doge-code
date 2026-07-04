@@ -11,13 +11,13 @@ tags: [github-actions, ci-cd, devops, debugging, workflows]
 tools: [claude, cursor, gemini, antigravity]
 ---
 
-# GitHub Actions Pipeline Debugger
+# GitHub Actions 流水线调试器
 
-## Overview
+## 概述
 
-This skill is designed to act as an expert CI/CD diagnostician. It focuses specifically on reading raw logs from failed GitHub Actions, identifying the root cause of the crash or failure, and outputting the precise YAML or code changes required to fix the pipeline.
+此技能旨在充当专家级 CI/CD 诊断工具。 它专门专注于读取失败 GitHub Actions 的原始日志、识别崩溃或失败的根本原因、并输出修复流水线所需的精确 YAML 或代码更改。
 
-## When to Use
+## 何时使用
 
 - Use when a GitHub Actions workflow fails unexpectedly and the error log is long, obscure, or misleading.
 - Use when debugging dependency mismatch errors, missing secrets, caching issues, or runner environment problems in CI.
@@ -27,19 +27,19 @@ This skill is designed to act as an expert CI/CD diagnostician. It focuses speci
 ## How It Works
 
 1. **Log Ingestion & Redaction:** Analyze the provided GitHub Actions workflow log (often exported as a raw text file or pasted directly). **CRITICAL SAFETY REQUIREMENT:** The user/agent must redact all sensitive credentials, secrets, tokens, private keys, and internal system paths from the logs before pasting or uploading them.
-2. **Context Mapping:** Cross-reference the failure point with the specific step and job in the `.github/workflows/*.yml` definition.
+2. **上下文 Mapping:** Cross-reference the failure point with the specific step and job in the `.github/workflows/*.yml` definition.
 3. **Root Cause Analysis:** Identify if the failure is due to:
    - Missing or misconfigured secrets (`${{ secrets.API_KEY }}`).
    - Node/Python/OS environment version mismatches.
    - Flaky tests or timeout limits.
-   - Syntax errors in bash scripts run within the `run:` block.
+   - 语法 errors in bash scripts run within the `run:` block.
    - Invalid action versions or deprecated actions.
 4. **Resolution Proposal:** Provide a direct `diff` of the `.yml` file or the underlying script that needs to be modified.
 
 ## Best Practices
 
-- **Provide Full Context:** Always review both the workflow definition (`.yml` file) and the failure log simultaneously to ensure accurate diagnosis.
-- **Check Action Versions:** Many failures are caused by deprecated runtime versions (e.g., Node.js 16) in older third-party actions (e.g., `actions/checkout@v2`). Always recommend upgrading to the latest major versions (e.g., `v4`).
+- **Provide Full 上下文:** 始终 review both the workflow definition (`.yml` file) and the failure log simultaneously to ensure accurate diagnosis.
+- **Check Action Versions:** Many failures are caused by deprecated runtime versions (e.g., Node.js 16) in older third-party actions (e.g., `actions/checkout@v2`). 始终 recommend upgrading to the latest major versions (e.g., `v4`).
 - **Permissions Audit:** Ensure the workflow has the correct `permissions:` block if it's attempting to write to the repository, packages, or deploy environments.
 - **Reproducibility:** If a test fails in CI but passes locally, investigate environment differences such as timezone, headless browser state, memory limits, or parallel execution race conditions.
 
@@ -76,12 +76,12 @@ Error: API Key is required for deployment. Process exited with code 1.
 +          DEPLOY_API_KEY: ${{ secrets.DEPLOY_API_KEY }}
 ```
 
-## Security & Safety Notes
+## 安全性 & Safety Notes
 
-- **Credential Exposure & Raw Log Redaction**: Under no circumstances should raw logs containing unmasked secrets, private URLs, deployment targets, or tokens be processed without prior redaction. Always ensure the user or agent redacts all sensitive info before ingestion.
+- **Credential Exposure & Raw Log Redaction**: Under no circumstances should raw logs containing unmasked secrets, private URLs, deployment targets, or tokens be processed without prior redaction. 始终 ensure the user or agent redacts all sensitive info before ingestion.
 - **Dry-Run Mode**: When recommending modifications to bash script steps inside workflows, ensure you suggest adding flags like `--dry-run` or staging execution where possible to prevent unintended side effects in downstream environments during debugging.
 
-## Limitations
+## 局限性
 
 - The skill cannot securely read repository secrets. It can only infer missing or malformed secrets if the log complains about undefined environment variables or authentication failures.
 - It cannot execute the GitHub action itself to test the fix; validation requires pushing the proposed fix to the repository and triggering a workflow run.
@@ -89,11 +89,11 @@ Error: API Key is required for deployment. Process exited with code 1.
 
 ## Common Pitfalls
 
-- **Ignoring Transient Failures**: Mistaking temporary network dropouts or registry downtime (e.g., npm or pip install errors) for actual code or configuration bugs. Always check if a rerun succeeds before attempting heavy changes.
+- **Ignoring Transient Failures**: Mistaking temporary network dropouts or registry downtime (e.g., npm or pip install errors) for actual code or configuration bugs. 始终 check if a rerun succeeds before attempting heavy changes.
 - **Hardcoding Tokens**: Fixing authentication errors by hardcoding secrets or API tokens directly into the YAML files instead of utilizing GitHub Secrets (`${{ secrets.SECRET_NAME }}`).
 - **Overlooking Caching Side Effects**: Forgetting that outdated cache keys can keep corrupt dependencies loaded. If dependency installation is failing, try running a job with actions caching bypassed.
 
-## Related Skills
+## 相关 Skills
 
 - `@devops-troubleshooter` - General DevOps and infrastructure issue resolution.
 - `@cicd-automation-workflow-automate` - For creating new CI/CD pipelines from scratch.

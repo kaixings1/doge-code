@@ -1,11 +1,6 @@
 ---
 name: seo-competitor-pages
-description: "Seo Competitor Pages — Seo Competitor Pages 相关功能和最佳实践"
-  Generate SEO-optimized competitor comparison and alternatives pages. Covers
-  "X vs Y" layouts, "alternatives to X" pages, feature matrices, schema markup,
-  and conversion optimization. Use when user says "comparison page", "vs page",
-  "alternatives page", "competitor comparison", "X vs Y", "versus",
-  "compare competitors", or "alternative to".
+description: "Seo Competitor Pages — 生成 SEO 优化的竞争对手对比和替代方案页面相关功能和最佳实践。涵盖'X vs Y'布局、'替代 X'页面、功能矩阵、schema 标记和转化优化。"
 user-invocable: true
 argument-hint: "[url or generate] [competitor]"
 license: MIT
@@ -15,37 +10,35 @@ metadata:
   category: seo
 ---
 
-# Competitor Comparison & Alternatives Pages
+# 竞争对手对比与替代方案页面
 
-Create high-converting comparison and alternatives pages that target
-competitive intent keywords with accurate, structured content.
+创建高转化率的对比和替代方案页面，以准确、结构化的内容针对竞争意图关键词。
 
-## Page Types
+## 页面类型
 
-### 1. "X vs Y" Comparison Pages
-- Direct head-to-head comparison between two products/services
-- Balanced feature-by-feature analysis
-- Clear verdict or recommendation with justification
-- Target keyword: `[Product A] vs [Product B]`
+### 1. "X vs Y" 对比页面
+- 两个产品/服务之间的正面直接对比
+- 逐功能均衡分析
+- 清晰裁决或推荐附理由
+- 目标关键词：`[产品 A] vs [产品 B]`
 
-### 2. "Alternatives to X" Pages
-- List of alternatives to a specific product/service
-- Each alternative with brief summary, pros/cons, best-for use case
-- Target keyword: `[Product] alternatives`, `best alternatives to [Product]`
+### 2. "X 的替代方案" 页面
+- 特定产品/服务的替代方案列表
+- 每个替代方案附简要摘要、优缺点、最佳使用场景
+- 目标关键词：`[产品] 替代方案`、`[产品] 的最佳替代方案`
 
-### 3. "Best [Category] Tools" Roundup Pages
-- Curated list of top tools/services in a category
-- Ranking criteria clearly stated
-- Target keyword: `best [category] tools [year]`, `top [category] software`
+### 3. "最佳 [类别] 工具" 综述页面
+- 类别中顶级工具/服务的精选列表
+- 明确说明排名标准
+- 目标关键词：`最佳 [类别] 工具 [年份]`、`顶级 [类别] 软件`
 
-### 4. Comparison Table Pages
-- Feature matrix with multiple products in columns
-- Sortable/filterable if interactive
-- Target keyword: `[category] comparison`, `[category] comparison chart`
+### 4. 对比表格页面
+- 多产品列式功能矩阵
+- 如可交互则支持排序/筛选
+- 目标关键词：`[类别] 对比`、`[类别] 对比图表`
 
 ## Comparison Table Generation
 
 ### Feature Matrix Layout
 ```
 | Feature          | Your Product | Competitor A | Competitor B |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 52 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

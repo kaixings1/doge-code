@@ -10,8 +10,8 @@ allowed-tools:
 risk: unknown
 source: community
 ---
-# Overview
-This skill provides technical knowledge and expertise about the DWARF standard and how to interact with DWARF files. Tasks include answering questions about the DWARF standard, providing examples of various DWARF features, parsing and/or creating DWARF files, and writing/modifying/analyzing code that interacts with DWARF data.
+# 概述
+此技能提供 technical knowledge and expertise about the DWARF standard and how to interact with DWARF files. Tasks include answering questions about the DWARF standard, providing examples of various DWARF features, parsing and/or creating DWARF files, and writing/modifying/analyzing code that interacts with DWARF data.
 
 ## When to Use This Skill
 - Understanding or parsing DWARF debug information from compiled binaries
@@ -94,7 +94,7 @@ This skill supports writing, modifying, and reviewing code that interacts with D
     └─ Refer to the coding reference ({baseDir}/reference/coding.md)
 ```
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

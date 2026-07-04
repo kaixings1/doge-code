@@ -19,7 +19,7 @@ date_added: "2026-02-27"
 | `database-selection.md` | PostgreSQL vs Neon vs Turso vs SQLite | Choosing database |
 | `orm-selection.md` | Drizzle vs Prisma vs Kysely | Choosing ORM |
 | `schema-design.md` | Normalization, PKs, relationships | Designing schema |
-| `indexing.md` | Index types, composite indexes | Performance tuning |
+| `indexing.md` | Index types, composite indexes | 性能 tuning |
 | `optimization.md` | N+1, EXPLAIN ANALYZE | Query optimization |
 | `migrations.md` | Safe migrations, serverless DBs | Schema changes |
 
@@ -39,7 +39,7 @@ Before designing schema:
 
 - [ ] Asked user about database preference?
 - [ ] Chosen database for THIS context?
-- [ ] Considered deployment environment?
+- [ ] 考虑ed deployment environment?
 - [ ] Planned index strategy?
 - [ ] Defined relationship types?
 
@@ -47,7 +47,7 @@ Before designing schema:
 
 ## Anti-Patterns
 
-❌ Default to PostgreSQL for simple apps (SQLite may suffice)
+❌ 默认 to PostgreSQL for simple apps (SQLite may suffice)
 ❌ Skip indexing
 ❌ Use SELECT * in production
 ❌ Store JSON when structured data is better
@@ -56,7 +56,7 @@ Before designing schema:
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

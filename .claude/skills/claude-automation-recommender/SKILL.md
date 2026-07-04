@@ -4,20 +4,20 @@ description: "Claude Automation Recommender — Claude Automation Recommender �
 tools: Read, Glob, Grep, Bash
 ---
 
-# Claude Automation Recommender
+# Claude 自动化推荐器
 
-Analyze codebase patterns to recommend tailored Claude Code automations across all extensibility options.
+分析代码库模式，推荐在所有可扩展性选项中的定制 Claude Code 自动化。
 
-**This skill is read-only.** It analyzes the codebase and outputs recommendations. It does NOT create or modify any files. Users implement the recommendations themselves or ask Claude separately to help build them.
+**此技能是只读的。** 它分析代码库并输出推荐。它不会创建或修改任何文件。用户自行实施推荐，或单独请求 Claude 帮助构建它们。
 
-## Output Guidelines
+## 输出指南
 
-- **Recommend 1-2 of each type**: Don't overwhelm - surface the top 1-2 most valuable automations per category
-- **If user asks for a specific type**: Focus only on that type and provide more options (3-5 recommendations)
-- **Go beyond the reference lists**: The reference files contain common patterns, but use web search to find recommendations specific to the codebase's tools, frameworks, and libraries
-- **Tell users they can ask for more**: End by noting they can request more recommendations for any specific category
+- **每种类型推荐 1-2 个**：不要过多——每个类别只展示最有价值的 1-2 个自动化
+- **如果用户要求特定类型**：仅关注该类型并提供更多选项（3-5 个推荐）
+- **超越参考列表**：参考文件包含常见模式，但使用网络搜索找到针对代码库工具、框架和库的推荐
+- **告诉用户可以要求更多**：以用户可以请求任何特定类别的更多推荐来结束
 
-## Automation Types Overview
+## Automation Types 概述
 
 | Type | Best For |
 |------|----------|
@@ -123,7 +123,7 @@ See [references/hooks-patterns.md](references/hooks-patterns.md) for configurati
 | Tests directory exists | PostToolUse: run related tests |
 | `.env` files present | PreToolUse: block `.env` edits |
 | Lock files present | PreToolUse: block lock file edits |
-| Security-sensitive code | PreToolUse: require confirmation |
+| 安全性-sensitive code | PreToolUse: require confirmation |
 
 #### D. Subagent Recommendations
 
@@ -132,9 +132,9 @@ See [references/subagent-templates.md](references/subagent-templates.md) for tem
 | Codebase Signal | Recommended Subagent |
 |-----------------|---------------------|
 | Large codebase (>500 files) | **code-reviewer** - Parallel code review |
-| Auth/payments code | **security-reviewer** - Security audits |
+| Auth/payments code | **security-reviewer** - 安全性 audits |
 | API project | **api-documenter** - OpenAPI generation |
-| Performance critical | **performance-analyzer** - Bottleneck detection |
+| 性能 critical | **performance-analyzer** - Bottleneck detection |
 | Frontend heavy | **ui-reviewer** - Accessibility review |
 | Needs more tests | **test-writer** - Test generation |
 
@@ -232,7 +232,7 @@ disable-model-invocation: true  # for user-only
 **Invocation control:**
 - `disable-model-invocation: true` — User-only (for side effects: deploy, commit, send)
 - `user-invocable: false` — Claude-only (for background knowledge)
-- Default (omit both) — Both can invoke
+- 默认 (omit both) — Both can invoke
 
 ### When to Recommend Hooks
 - Repetitive post-edit actions (formatting, linting)
@@ -251,15 +251,15 @@ disable-model-invocation: true  # for user-only
 
 ---
 
-## Configuration Tips
+## 配置 Tips
 
-### MCP Server Setup
+### MCP 服务器 设置
 
 **Team sharing**: Check `.mcp.json` into repo so entire team gets same MCP servers
 
 **Debugging**: Use `--mcp-debug` flag to identify configuration issues
 
-**Prerequisites to recommend:**
+**前置条件 to recommend:**
 - GitHub CLI (`gh`) - enables native GitHub operations
 - Puppeteer/Playwright CLI - for browser MCP servers
 

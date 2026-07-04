@@ -7,13 +7,13 @@ date_added: "2026-04-12"
 author: WHOISABHISHEKADHIKARI
 ---
 
-# Codebase to WordPress Converter
+# 代码库到 WordPress 转换器
 
-## Overview
+## 概述
 
 This skill is designed for the high-fidelity conversion of static or React-based frontends into fully functional, CMS-driven WordPress themes. It acts as a **Senior WordPress Architect**, **React Expert**, and **QA Engineer** to ensure a 100% pixel-perfect match while integrating deep WordPress functionality like ACF, dynamic menus, and technical SEO preservation.
 
-## When to Use This Skill
+## 何时使用 This Skill
 
 - Use when converting a React (CRA/Vite/Next.js) or HTML project into a WordPress theme.
 - Use when the client demands a 100% pixel-perfect match with the original source.
@@ -25,7 +25,7 @@ This skill is designed for the high-fidelity conversion of static or React-based
 ### Phased Conversion & Audit
 The skill follows a strict 4-phase forensic process:
 1.  **Phase 1: Forensic UI Comparison**: Side-by-side table audit of React components vs. WordPress templates to find discrepancies.
-2.  **Phase 2: Full Audit**: Deep dive into UI, SEO, CMS Editability, Navigation, Functionality, and Performance.
+2.  **Phase 2: Full Audit**: Deep dive into UI, SEO, CMS Editability, Navigation, Functionality, and 性能.
 3.  **Phase 3: Action Plan**: Tasks classified as **SAFE**, **RISKY**, or **BLOCKED** to prevent breaking the UI.
 4.  **Phase 4: Iterative Fixing**: Executing one safe task at a time with validation after each step.
 
@@ -95,7 +95,7 @@ wp_nav_menu([
 - [Tailwind CSS in WordPress](https://tailwindcss.com/docs/installation)
 - [WordPress Theme Handbook](https://developer.wordpress.org/themes/)
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

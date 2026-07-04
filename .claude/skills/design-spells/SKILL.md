@@ -6,18 +6,18 @@ source: community
 date_added: "2026-03-07"
 ---
 
-# Design Spells Skill
+# Design Spells 技能
 
-[Design Spells](https://www.designspells.com/) is a collection of exceptional design details—micro-interactions, easter eggs, and clever UX patterns—that transform standard interfaces into memorable digital experiences.
+[Design Spells](https://www.designspells.com/) 是一个卓越设计细节的集合——微交互、彩蛋和巧妙的 UX 模式——将标准界面转变为令人难忘的数字体验。
 
-## Context
+## 上下文
 
-Use this skill specifically to elevate a UI from merely "functional" or "common" into something genuinely "magical." It focuses on the minute details that surprise and delight users, establishing a strong, premium brand personality.
+专门使用此技能将 UI 从单纯的"功能性"或"普通"提升为真正"神奇"的东西。它关注那些让用户惊喜和愉悦的微小细节，建立强大、高端的品牌个性。
 
-## When to Use
-Trigger this skill when:
+## 何时使用
+在以下情况下触发此技能：
 
-- Polishing a finished feature to actively add a "wow" factor.
+- 打磨已完成的功能，主动添加"哇"因素。
 - Designing unique interactions to replace standard web behaviors (e.g., clever hover states, creative loaders, surprising transitions).
 - Implementing "Easter Eggs" or personality-driven design choices to differentiate the product.
 - Looking to break away from generic, template-driven development.
@@ -35,7 +35,7 @@ Trigger this skill when:
 - **Delight, Don't Distract**: The detail must be additive to the experience, not a usability barrier. It should feel expensive and highly crafted.
 - **Quality Execution**: A broken or janky "spell" is worse than none. Ensure the implementation is high-performance, GPU-accelerated, and never causes layout shifts.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

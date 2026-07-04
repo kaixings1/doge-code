@@ -1,6 +1,6 @@
 ---
 name: fp-pragmatic
-description: "Fp Pragmatic — Fp Pragmatic 相关功能和最佳实践"
+description: "实用、无术语的 fp-ts 函数式编程指南——80/20 方法，无需学术开销即可取得成果。适用于使用 fp-ts 库编写 TypeScript。"
 risk: unknown
 source: community
 version: 1.0.0
@@ -14,28 +14,28 @@ tags:
   - best-practices
 ---
 
-# Pragmatic Functional Programming
+# 实用函数式编程
 
-**Read this first.** This guide cuts through the academic jargon and shows you what actually matters. No category theory. No abstract nonsense. Just patterns that make your code better.
+**请先阅读此内容。** 本指南剔除了学术术语，向您展示真正重要的内容。没有范畴论。没有抽象废话。只有让您的代码变得更好的模式。
 
-## When to Use
-- You want a pragmatic starting point for fp-ts or functional programming in TypeScript.
-- The task is exploratory or educational and needs an 80/20 view of what is actually worth adopting.
-- You need guidance on when FP helps and when it is better to keep code simple.
+## 何时使用
+- 您想要一个 fp-ts 或 TypeScript 函数式编程的实用起点。
+- 任务是探索性或教育性的，需要 80/20 的角度了解哪些内容真正值得采用。
+- 您需要指导，了解函数式编程何时有帮助，何时保持代码简单更好。
 
-## The Golden Rule
+## 黄金法则
 
 > **If functional programming makes your code harder to read, don't use it.**
 
-FP is a tool, not a religion. Use it when it helps. Skip it when it doesn't.
+函数式编程是一种工具，不是宗教。在它有帮助时使用它。在它无用时跳过它。
 
 ---
 
-## The 80/20 of FP
+## FP 的 80/20 法则
 
-These five patterns give you most of the benefits. Master these before exploring anything else.
+以下五种模式为您带来了大部分好处。在探索其他内容之前，请先掌握这些。
 
-### 1. Pipe: Chain Operations Clearly
+### 1. Pipe：清晰链式操作
 
 Instead of nesting function calls or creating intermediate variables, chain operations in reading order.
 
@@ -68,7 +68,7 @@ const result = pipe(
 - Just 1-2 operations (direct call is fine)
 - The operations don't naturally chain
 
-### 2. Option: Handle Missing Values Without null Checks
+### 2. Option：无需空检查处理缺失值
 
 Stop writing `if (x !== null && x !== undefined)` everywhere.
 
@@ -99,7 +99,7 @@ const getUserCity = (user: User | null): string =>
 - `O.flatMap(fn)` = "if we have something, apply this function"
 - `O.getOrElse(() => default)` = "unwrap, or use this default if nothing"
 
-### 3. Either: Make Errors Explicit
+### 3. Either：让错误显式化
 
 Stop throwing exceptions for expected failures. Return errors as values.
 
@@ -137,7 +137,7 @@ if (E.isRight(result)) {
 - `E.left(error)` = "failure with this error"
 - `E.isRight(x)` = "did it succeed?"
 
-### 4. Map: Transform Without Unpacking
+### 4. Map：无需拆包直接转换
 
 Transform values inside containers without extracting them first.
 
@@ -169,7 +169,7 @@ const doubled = pipe(
 )
 ```
 
-### 5. FlatMap: Chain Operations That Might Fail
+### 5. FlatMap：链式可能失败的操作
 
 When each step might fail, chain them together.
 
@@ -206,9 +206,9 @@ const getValidEmail = (input: string): E.Either<string, string> =>
 
 ---
 
-## When NOT to Use FP
+## 何时不使用函数式编程
 
-Functional programming is not always the answer. Here's when to keep it simple.
+函数式编程不总是答案。以下情况请保持简单。
 
 ### Simple Null Checks
 
@@ -287,7 +287,7 @@ const getUser = (id: string): TE.TaskEither<Error, User> =>
 
 ---
 
-## Quick Wins: Easy Changes That Improve Code Today
+## 快速取胜：今天就能改善代码的简单更改
 
 ### 1. Replace Nested Ternaries with pipe + fold
 
@@ -388,7 +388,7 @@ const handleError = (error: AppError): string => {
 
 ---
 
-## Common Refactors: Before and After
+## 常见重构：改造前后对比
 
 ### Callback Hell to Pipe
 
@@ -526,9 +526,9 @@ const processOrder = (orderId: string): TE.TaskEither<string, Receipt> =>
 
 ---
 
-## The Readability Rule
+## 可读性规则
 
-Before using any FP pattern, ask: **"Would a junior developer understand this?"**
+在使用任何函数式编程模式之前，请问：**"初级开发者能理解这个吗？"**
 
 ### Too Clever (Avoid)
 
@@ -565,7 +565,7 @@ const result = pipe(
 
 ---
 
-## Cheat Sheet
+## 速查表
 
 | What you want | Plain language | fp-ts |
 |--------------|----------------|-------|
@@ -581,7 +581,7 @@ const result = pipe(
 
 ---
 
-## When to Level Up
+## 何时提升水平
 
 Once comfortable with these patterns, explore:
 
@@ -604,7 +604,7 @@ But don't rush. The basics here will handle 80% of real-world scenarios. Get com
 6. **Skip FP** when it hurts readability
 7. **Keep it simple** - if your team can't read it, it's not good code
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

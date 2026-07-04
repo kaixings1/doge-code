@@ -6,12 +6,12 @@ source: https://github.com/ChaosRealmsAI/agent-cli-spec
 date_added: "2026-03-15"
 ---
 
-# Agent-Friendly CLI Spec v0.1
+# 代理友好型 CLI 规范 v0.1
 
 When building or modifying CLI tools, follow these rules to make them safe and
 reliable for AI agents to use.
 
-## Overview
+## 概述
 
 A comprehensive design specification for building AI-native CLI tools. It defines
 98 rules across three certification levels (Agent-Friendly, Agent-Ready, Agent-Native)
@@ -56,7 +56,7 @@ Certification maps to layers:
 
 ### Step 1: Output Mode
 
-Default is agent mode (JSON). Explicit flags to switch:
+默认 is agent mode (JSON). Explicit flags to switch:
 
 ```bash
 $ mycli list              # default = JSON output (agent mode)
@@ -64,7 +64,7 @@ $ mycli list --human      # human-friendly: colored, tables, formatted
 $ mycli list --agent      # explicit agent mode (override config if needed)
 ```
 
-- **Default (no flag)** -- JSON to stdout. Agent never needs to add a flag.
+- **默认 (no flag)** -- JSON to stdout. Agent never needs to add a flag.
 - **--human** -- human-friendly format (colors, tables, progress bars)
 - **--agent** -- explicit JSON mode (useful when env/config overrides default)
 
@@ -91,7 +91,7 @@ agent/
 3. **--help** (full self-description: brief + commands + rules + skills + issue)
 4. **skills \<name\>** (on-demand deep dive into a specific skill)
 
-## Certification Requirements
+## Certification 需求
 
 Each level includes all rules from the previous level.
 Priority tag `[P0]`=agent breaks without it, `[P1]`=agent works but poorly, `[P2]`=nice to have.
@@ -101,7 +101,7 @@ Priority tag `[P0]`=agent breaks without it, `[P1]`=agent works but poorly, `[P2
 Goal: CLI is a stable, callable API. Agent can invoke, parse, and handle errors.
 
 **Output** -- default is JSON, stable schema
-- `[P0]` O1: Default output is JSON. No `--json` flag needed
+- `[P0]` O1: 默认 output is JSON. No `--json` flag needed
 - `[P0]` O2: JSON MUST pass `jq .` validation
 - `[P0]` O3: JSON schema MUST NOT change within same version
 
@@ -142,11 +142,11 @@ Goal: CLI is self-describing, well-named, and pipe-friendly. Agent discovers cap
 - `[P1]` D1: `--help` outputs structured JSON with `commands[]`
 - `[P1]` D3: Schema has required fields (help, commands)
 - `[P1]` D4: All parameters have type declarations
-- `[P1]` D7: Parameters annotated as required/optional
+- `[P1]` D7: 参数 annotated as required/optional
 - `[P1]` D9: Every command has a description
 - `[P1]` D11: `--help` outputs JSON with help, rules, skills, commands
 - `[P1]` D15: `--brief` outputs `agent/brief.md` content
-- `[P1]` D16: Default JSON (agent mode), `--human` for human-friendly
+- `[P1]` D16: 默认 JSON (agent mode), `--human` for human-friendly
 - `[P2]` D2/D5/D6/D8/D10: per-command help, enums, defaults, output schema, version
 
 **Input** -- unambiguous calling convention
@@ -182,4 +182,3 @@ Goal: CLI is self-describing, well-named, and pipe-friendly. Agent discovers cap
 #### Reserved Flags
 
 | Flag | Semantics | Notes |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 31 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

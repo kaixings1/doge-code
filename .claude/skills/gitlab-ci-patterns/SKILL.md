@@ -6,11 +6,11 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# GitLab CI Patterns
+# GitLab CI 模式
 
 Comprehensive GitLab CI/CD pipeline patterns for automated testing, building, and deployment.
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to gitlab ci patterns
 - You need a different domain or tool outside this scope
@@ -26,7 +26,7 @@ Comprehensive GitLab CI/CD pipeline patterns for automated testing, building, an
 
 Create efficient GitLab CI pipelines with proper stage organization, caching, and deployment strategies.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Automate GitLab-based CI/CD
 - Implement multi-stage pipelines
@@ -285,7 +285,7 @@ trigger-child:
 - `deployment-pipeline-design` - For architecture
 - `secrets-management` - For secrets handling
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

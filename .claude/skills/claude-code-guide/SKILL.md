@@ -6,13 +6,13 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Claude Code Guide
+# Claude Code 指南
 
-## Purpose
+## 目的
 
-To provide a comprehensive reference for configuring and using Claude Code (the agentic coding tool) to its full potential. This skill synthesizes best practices, configuration templates, and advanced usage patterns.
+提供配置和使用 Claude Code（AI 编码工具）的全面参考，发挥其全部潜力。此技能综合了最佳实践、配置模板和高级使用模式。
 
-## Configuration (`CLAUDE.md`)
+## 配置 (`CLAUDE.md`)
 
 When starting a new project, create a `CLAUDE.md` file in the root directory to guide the agent.
 
@@ -56,13 +56,13 @@ Use these keywords in your prompts to trigger deeper reasoning from the agent:
 
 If the agent is stuck or behaving unexpectedly:
 
-1. **Clear Context**: Start a new session or ask the agent to "forget previous instructions" if confused.
+1. **Clear 上下文**: Start a new session or ask the agent to "forget previous instructions" if confused.
 2. **Explicit Instructions**: Be extremely specific about paths, filenames, and desired outcomes.
 3. **Logs**: Ask the agent to "check the logs" or "run the command with verbose output".
 
 ## Best Practices
 
-1. **Small Contexts**: Don't dump the entire codebase into the context. Use `grep` or `find` to locate relevant files first.
+1. **Small 上下文s**: Don't dump the entire codebase into the context. Use `grep` or `find` to locate relevant files first.
 2. **Iterative Development**: Ask for small changes, verify, then proceed.
 3. **Feedback Loop**: If the agent makes a mistake, correct it immediately and ask it to "add a lesson" to its memory (if supported) or `CLAUDE.md`.
 
@@ -73,7 +73,7 @@ Based on [Claude Code Guide by zebbern](https://github.com/zebbern/claude-code-g
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

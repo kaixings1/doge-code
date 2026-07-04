@@ -1,7 +1,7 @@
 ---
 name: analytics-product
 description: "产品分析 — PostHog、Mixpanel、事件、漏斗、群组、留存率、北极星指标、OKR 和产品仪表板。"
-risk: none
+risk: safe
 source: community
 date_added: '2026-03-06'
 author: renat
@@ -47,5 +47,3 @@ Errado:    signup, click, conversion
 ## Analytics-Product — Decida Com Dados
 
 > "In God we trust. All others must bring data." — W. Edwards Deming
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 00 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

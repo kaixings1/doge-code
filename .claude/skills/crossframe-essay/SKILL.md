@@ -1,6 +1,6 @@
 ---
 name: crossframe-essay
-description: "适用于explicit crossframe work needs a chinese critical insight essay, commentary, concept essay, public piece, or structure-to-article draft after diagnosis.的情况。"
+description: "适用于 CrossFrame 诊断后的中文批判性洞察文章、评论、概念文章、公共写作或结构到文章底稿的场景。"
 category: content
 risk: safe
 source: community
@@ -23,22 +23,21 @@ tags:
 ---
 # CrossFrame Essay
 
+## 何时使用此技能
 
-## When to Use This Skill
+- 仅在显式调用 CrossFrame Essay 或 `crossframe-suite` 将 CrossFrame 任务路由到文章输出后使用。
+- 用于中文批判性洞察文章、公共评论、概念文章、长文读者回复以及结构到文章的底稿写作。
+- 请勿在显式 CrossFrame 上下文之外将其用作通用写作技能。
 
-- Use only after explicit CrossFrame Essay invocation or after `crossframe-suite` routes a CrossFrame task into article output.
-- Use for Chinese critical insight essays, public commentary, concept essays, long-form reader replies, and structure-to-article drafting.
-- Do not use as a generic writing skill outside explicit CrossFrame context.
+## 打包来源说明
 
-## Packaged Source Note
+这份 AAS 就绪副本保留了以下原始 CrossFrame 技能正文。中文仍然是权威语义层；英文元数据仅用于发现、安装和仓库审查。
 
-This AAS-ready copy preserves the original CrossFrame skill body below. Chinese remains the canonical semantic layer; English metadata is only for discovery, installation, and repository review.
+## 限制
 
-## Limitations
-
-- The skill body is intentionally Chinese-canonical; English metadata is for discovery and does not replace the original Chinese terms.
-- Use only after explicit CrossFrame invocation or `crossframe-suite` routing; do not apply it as a generic default reasoning layer.
-- It structures analysis, drafting, and review, but does not replace source verification, domain expertise, or legal, medical, or financial judgment.
+- 技能正文有意以中文为规范；英文元数据仅用于发现，不替代原始中文术语。
+- 仅在显式 CrossFrame 调用或 `crossframe-suite` 路由后使用；不要将其应用为通用默认推理层。
+- 它结构化分析、底稿和审查，但不替代来源验证、领域专业知识或法律、医疗、财务判断。
 
 如果用户任务需要先诊断、再进入公共/组织/辩论/读书等专项判断，最后才成文，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责文章底稿与正文生成。
 

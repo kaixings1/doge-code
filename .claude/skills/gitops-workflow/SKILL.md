@@ -6,7 +6,7 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# GitOps Workflow
+# GitOps 工作流
 
 Complete guide to implementing GitOps workflows with ArgoCD and Flux for automated Kubernetes deployments.
 
@@ -14,7 +14,7 @@ Complete guide to implementing GitOps workflows with ArgoCD and Flux for automat
 
 Implement declarative, Git-based continuous delivery for Kubernetes using ArgoCD or Flux CD, following OpenGitOps principles.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Set up GitOps for Kubernetes clusters
 - Automate application deployments from Git
@@ -23,7 +23,7 @@ Implement declarative, Git-based continuous delivery for Kubernetes using ArgoCD
 - Configure automated sync policies
 - Set up secret management in GitOps
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - You need a one-off manual deployment
 - You cannot manage cluster access or repo permissions
@@ -48,7 +48,7 @@ Implement declarative, Git-based continuous delivery for Kubernetes using ArgoCD
 3. **Pulled Automatically** - Software agents pull desired state
 4. **Continuously Reconciled** - Agents reconcile actual vs desired state
 
-## ArgoCD Setup
+## ArgoCD 设置
 
 ### 1. Installation
 
@@ -132,7 +132,7 @@ spec:
     automated: {}
 ```
 
-## Flux CD Setup
+## Flux CD 设置
 
 ### 1. Installation
 
@@ -190,7 +190,7 @@ spec:
 
 ## Sync Policies
 
-### Auto-Sync Configuration
+### Auto-Sync 配置
 
 **ArgoCD:**
 ```yaml
@@ -220,7 +220,7 @@ spec:
 
 ## Progressive Delivery
 
-### Canary Deployment with ArgoCD Rollouts
+### Canary 部署 with ArgoCD Rollouts
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -239,7 +239,7 @@ spec:
       - setWeight: 100
 ```
 
-### Blue-Green Deployment
+### Blue-Green 部署
 
 ```yaml
 strategy:
@@ -307,12 +307,12 @@ argocd app diff my-app
 argocd app sync my-app --force
 ```
 
-## Related Skills
+## 相关 Skills
 
 - `k8s-manifest-generator` - For creating manifests
 - `helm-chart-scaffolding` - For packaging applications
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

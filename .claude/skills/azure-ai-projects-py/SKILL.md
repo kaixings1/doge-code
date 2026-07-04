@@ -37,7 +37,7 @@ client = AIProjectClient(
 )
 ```
 
-## Client Operations Overview
+## Client Operations 概述
 
 | Operation | Access | Purpose |
 |-----------|--------|---------|
@@ -126,7 +126,7 @@ agent_version = client.agents.create_version(
 
 See references/agents.md for detailed agent patterns.
 
-## Tools Overview
+## Tools 概述
 
 | Tool | Class | Use Case |
 |------|-------|----------|
@@ -136,7 +136,7 @@ See references/agents.md for detailed agent patterns.
 | Azure AI Search | `AzureAISearchTool` | Search your indexes |
 | Function Calling | `FunctionTool` | Call your Python functions |
 | OpenAPI | `OpenApiTool` | Call REST APIs |
-| MCP | `McpTool` | Model Context Protocol servers |
+| MCP | `McpTool` | Model 上下文 Protocol servers |
 | Memory Search | `MemorySearchTool` | Search agent memory stores |
 | SharePoint | `SharepointGroundingTool` | Search SharePoint content |
 
@@ -183,7 +183,7 @@ connection = client.connections.get(connection_name="my-search-connection")
 
 See references/connections.md for connection patterns.
 
-## Deployments
+## 部署s
 
 ```python
 # List available model deployments
@@ -267,7 +267,7 @@ agent = client.agents.create_agent(
 2. **Clean up agents** when done: `client.agents.delete_agent(agent.id)`
 3. **Use `create_and_process`** for simple runs, **streaming** for real-time UX
 4. **Use versioned agents** for production deployments
-5. **Prefer connections** for external service integration (AI Search, Bing, etc.)
+5. **优先 connections** for external service integration (AI Search, Bing, etc.)
 
 ## SDK Comparison
 
@@ -277,7 +277,7 @@ agent = client.agents.create_agent(
 | Client | `AIProjectClient` | `AgentsClient` |
 | Versioning | `create_version()` | Not available |
 | Connections | Yes | No |
-| Deployments | Yes | No |
+| 部署s | Yes | No |
 | Datasets/Indexes | Yes | No |
 | Evaluation | Via OpenAI client | No |
 | When to use | Full Foundry integration | Standalone agent apps |
@@ -290,7 +290,7 @@ agent = client.agents.create_agent(
 - references/built-in-evaluators.md: Complete built-in evaluator reference
 - references/custom-evaluators.md: Code and prompt-based evaluator patterns
 - references/connections.md: Connection operations
-- references/deployments.md: Deployment enumeration
+- references/deployments.md: 部署 enumeration
 - references/datasets-indexes.md: Dataset and index operations
 - references/async-patterns.md: Async client usage
 - references/api-reference.md: Complete API reference for all 373 SDK exports (v2.0.0b4)
@@ -299,7 +299,7 @@ agent = client.agents.create_agent(
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

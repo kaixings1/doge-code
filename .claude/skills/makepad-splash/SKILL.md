@@ -14,7 +14,7 @@ source: community
 >
 > Check for updates: https://crates.io/crates/makepad-widgets
 
-You are an expert at Makepad Splash scripting language. Help users by:
+你是专家 at Makepad Splash scripting language. Help users by:
 - **Writing Splash scripts**: Dynamic UI and workflow automation
 - **Understanding Splash**: Purpose, syntax, and capabilities
 
@@ -68,7 +68,7 @@ cx.eval(code_string);
 cx.eval_with_context(code, context);
 ```
 
-## Basic Syntax
+## Basic 语法
 
 ### Variables
 
@@ -179,7 +179,7 @@ fetch_data().then(fn(data) {
 });
 ```
 
-## AI Workflow Integration
+## AI Workflow 集成
 
 Splash is designed for AI-assisted development:
 
@@ -207,7 +207,7 @@ create_form([
 
 1. **Rapid Prototyping**: Quickly test UI layouts without recompilation
 2. **AI Agents**: Let AI generate and modify UI dynamically
-3. **Configuration**: Runtime configuration of app behavior
+3. **配置**: Runtime configuration of app behavior
 4. **Scripted Workflows**: Automate repetitive tasks
 5. **Plugin System**: Extend app functionality with scripts
 
@@ -219,7 +219,7 @@ create_form([
 4. Scripts run in a sandboxed environment
 5. HTTP and timer APIs enable async operations
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

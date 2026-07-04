@@ -1,7 +1,7 @@
 ---
 name: team
-description: "Team — Team 相关功能和最佳实践"
-argument-hint: "[N:agent-type] [ralph] <task description>"
+description: "Team — 团队协作技能。生成 N 个协调的代理，在共享任务列表上协作。支持执行器、调试器、设计者、Codex、Gemini 等代理类型。包含团队计划→PRD→执行→验证→修复的流水线。"
+argument-hint: "[N:代理类型] [ralph] <任务描述>"
 aliases: []
 level: 4
 ---

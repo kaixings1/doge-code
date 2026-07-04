@@ -1,91 +1,17 @@
 ---
 name: fp-option-ref
-description: "Fp Option Ref — Fp Option Ref 相关功能和最佳实践"
+description: "Fp Option Ref /u2014 Option /u5feb/u901f/u53c2/u8003/uff1aSome(value) /u6216 None"
 risk: unknown
 source: community
 version: 1.0.0
 tags: [fp-ts, option, nullable, maybe, quick-reference]
 ---
 
-# Option Quick Reference
+# Option /u5feb/u901f/u53c2/u8003
 
-Option = value that might not exist. `Some(value)` or `None`.
+Option = /u53ef/u80fd/u4e0d/u5b58/u5728/u7684/u503c/u3002`Some(value)` /u6216 `None`/u3002
 
-## When to Use
-- You need a quick fp-ts reference for nullable or optional values.
-- The task involves eliminating null checks, safe property access, or optional chaining with `Option`.
-- You want a short reference card rather than a full migration guide.
-
-## Create
-
-```typescript
-import * as O from 'fp-ts/Option'
-
-O.some(5)              // Some(5)
-O.none                 // None
-O.fromNullable(x)      // null/undefined → None, else Some(x)
-O.fromPredicate(x > 0)(x) // false → None, true → Some(x)
-```
-
-## Transform
-
-```typescript
-O.map(fn)              // Transform inner value
-O.flatMap(fn)          // Chain Options (fn returns Option)
-O.filter(predicate)    // None if predicate false
-```
-
-## Extract
-
-```typescript
-O.getOrElse(() => default)  // Get value or default
-O.toNullable(opt)           // Back to T | null
-O.toUndefined(opt)          // Back to T | undefined
-O.match(onNone, onSome)     // Pattern match
-```
-
-## Common Patterns
-
-```typescript
-import { pipe } from 'fp-ts/function'
-import * as O from 'fp-ts/Option'
-
-// Safe property access
-pipe(
-  O.fromNullable(user),
-  O.map(u => u.profile),
-  O.flatMap(p => O.fromNullable(p.avatar)),
-  O.getOrElse(() => '/default-avatar.png')
-)
-
-// Array first element
-import * as A from 'fp-ts/Array'
-pipe(
-  users,
-  A.head,  // Option<User>
-  O.map(u => u.name),
-  O.getOrElse(() => 'No users')
-)
-```
-
-## vs Nullable
-
-```typescript
-// ❌ Nullable - easy to forget checks
-const name = user?.profile?.name ?? 'Guest'
-
-// ✅ Option - explicit, composable
-pipe(
-  O.fromNullable(user),
-  O.flatMap(u => O.fromNullable(u.profile)),
-  O.map(p => p.name),
-  O.getOrElse(() => 'Guest')
-)
-```
-
-Use Option when you need to **chain** operations on optional values.
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## /u4f55/u65f6/u4f7f/u7528
+- /u9700/u8981/u5904/u7406/u53ef/u4e3a/u7a7a/u6216/u53ef/u9009/u503c/u7684/u5feb/u901f/u53c2/u8003
+- /u6d89/u53ca/u6d88/u9664 null /u68c0/u67e5/u3001/u5b89/u5168/u5c5e/u6027/u8bbf/u95ee/u6216/u4f7f/u7528 Option /u94fe/u5f0f/u64cd/u4f5c
+- /u60a8/u5e0c/u671b/u83b7/u5f97/u7b80/u6d01/u7684/u53c2/u8003/u5361/u800c/u975e/u5b8c/u6574/u7684/u8fc1/u79fb/u6307/u5357

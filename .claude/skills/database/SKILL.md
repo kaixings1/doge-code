@@ -9,7 +9,7 @@ date_added: "2026-02-27"
 
 # Database Workflow Bundle
 
-## Overview
+## 概述
 
 Comprehensive database workflow for database design, development, optimization, migrations, and data engineering. Covers SQL, NoSQL, and modern data platforms.
 
@@ -95,7 +95,7 @@ Use @database-optimizer to optimize database performance
 Use @sql-optimization-patterns to optimize SQL queries
 ```
 
-### Phase 4: Data Migration
+### Phase 4: Data 迁移
 
 #### Skills to Invoke
 - `database-migration` - Database migration
@@ -198,20 +198,20 @@ Skills: clickhouse-io, dbt-transformation-patterns
 ## Quality Gates
 
 - [ ] Schema designed and reviewed
-- [ ] Migrations tested
-- [ ] Performance benchmarks met
+- [ ] 迁移s tested
+- [ ] 性能 benchmarks met
 - [ ] Backups configured
 - [ ] Monitoring in place
 - [ ] Documentation complete
 
-## Related Workflow Bundles
+## 相关 Workflow Bundles
 
 - `development` - Application development
 - `cloud-devops` - Infrastructure
 - `ai-ml` - AI/ML data pipelines
 - `testing-qa` - Data testing
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

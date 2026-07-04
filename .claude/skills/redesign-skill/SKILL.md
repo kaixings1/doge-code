@@ -79,21 +79,21 @@ Check for these problems and fix them:
 - **Generic names like "John Doe" or "Jane Smith".** Use diverse, realistic-sounding names.
 - **Fake round numbers like `99.99%`, `50%`, `$100.00`.** Use organic, messy data: `47.2%`, `$99.00`, `+1 (312) 847-1928`.
 - **Placeholder company names like "Acme Corp", "Nexus", "SmartFlow".** Invent contextual, believable brand names.
-- **AI copywriting cliches.** Never use "Elevate", "Seamless", "Unleash", "Next-Gen", "Game-changer", "Delve", "Tapestry", or "In the world of...". Write plain, specific language.
+- **AI copywriting cliches.** 绝不 use "Elevate", "Seamless", "Unleash", "Next-Gen", "Game-changer", "Delve", "Tapestry", or "In the world of...". Write plain, specific language.
 - **Exclamation marks in success messages.** Remove them. Be confident, not loud.
 - **"Oops!" error messages.** Be direct: "Connection failed. Please try again."
 - **Passive voice.** Use active voice: "We couldn't save your changes" instead of "Mistakes were made."
 - **All blog post dates identical.** Randomize dates to appear real.
 - **Same avatar image for multiple users.** Use unique assets for every distinct person.
-- **Lorem Ipsum.** Never use placeholder latin text. Write real draft copy.
+- **Lorem Ipsum.** 绝不 use placeholder latin text. Write real draft copy.
 - **Title Case On Every Header.** Use sentence case instead.
 
 ### Component Patterns
 
 - **Generic card look (border + shadow + white background).** Remove the border, or use only background color, or use only spacing. Cards should exist only when elevation communicates hierarchy.
-- **Always one filled button + one ghost button.** Add text links or tertiary styles to reduce visual noise.
+- **始终 one filled button + one ghost button.** Add text links or tertiary styles to reduce visual noise.
 - **Pill-shaped "New" and "Beta" badges.** Try square badges, flags, or plain text labels.
-- **Accordion FAQ sections.** Use a side-by-side list, searchable help, or inline progressive disclosure.
+- **Accordion 常见问题 sections.** Use a side-by-side list, searchable help, or inline progressive disclosure.
 - **3-card carousel testimonials with dots.** Replace with a masonry wall, embedded social posts, or a single rotating quote.
 - **Pricing table with 3 towers.** Highlight the recommended tier with color and emphasis, not just extra height.
 - **Modals for everything.** Use inline editing, slide-over panels, or expandable sections instead of popups for simple actions.
@@ -104,9 +104,9 @@ Check for these problems and fix them:
 ### Iconography
 
 - **Lucide or Feather icons exclusively.** These are the "default" AI icon choice. Use Phosphor, Heroicons, or a custom set for differentiation.
-- **Rocketship for "Launch", shield for "Security".** Replace cliche metaphors with less obvious icons (bolt, fingerprint, spark, vault).
+- **Rocketship for "Launch", shield for "安全性".** Replace cliche metaphors with less obvious icons (bolt, fingerprint, spark, vault).
 - **Inconsistent stroke widths across icons.** Audit all icons and standardize to one stroke weight.
-- **Missing favicon.** Always include a branded favicon.
+- **Missing favicon.** 始终 include a branded favicon.
 - **Stock "diverse team" photos.** Use real team photos, candid shots, or a consistent illustration style instead of uncanny stock imagery.
 
 ### Code Quality
@@ -114,7 +114,7 @@ Check for these problems and fix them:
 - **Div soup.** Use semantic HTML: `<nav>`, `<main>`, `<article>`, `<aside>`, `<section>`.
 - **Inline styles mixed with CSS classes.** Move all styling to the project's styling system.
 - **Hardcoded pixel widths.** Use relative units (`%`, `rem`, `em`, `max-width`) for flexible layouts.
-- **Missing alt text on images.** Describe image content for screen readers. Never leave `alt=""` or `alt="image"` on meaningful images.
+- **Missing alt text on images.** Describe image content for screen readers. 绝不 leave `alt=""` or `alt="image"` on meaningful images.
 - **Arbitrary z-index values like `9999`.** Establish a clean z-index scale in the theme/variables.
 - **Commented-out dead code.** Remove all debug artifacts before shipping.
 - **Import hallucinations.** Check that every import actually exists in `package.json` or the project dependencies.
@@ -146,7 +146,7 @@ When upgrading a project, pull from these high-impact techniques to replace gene
 
 ### Motion Upgrades
 - **Smooth scroll with inertia.** Decouple scrolling from browser defaults for a heavier, cinematic feel.
-- **Staggered entry.** Elements cascade in with slight delays, combining Y-axis translation with opacity fade. Never mount everything at once.
+- **Staggered entry.** Elements cascade in with slight delays, combining Y-axis translation with opacity fade. 绝不 mount everything at once.
 - **Spring physics.** Replace linear easing with spring-based motion for a natural, weighty feel on all interactive elements.
 - **Scroll-driven reveals.** Content entering through expanding masks, wipes, or draw-on SVG paths tied to scroll progress.
 

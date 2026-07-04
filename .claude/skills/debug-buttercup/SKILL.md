@@ -7,16 +7,16 @@ source: community
 
 # Debug Buttercup
 
-## When to Use
-- Pods in the `crs` namespace are in CrashLoopBackOff, OOMKilled, or restarting
-- Multiple services restart simultaneously (cascade failure)
-- Redis is unresponsive or showing AOF warnings
-- Queues are growing but tasks are not progressing
-- Nodes show DiskPressure, MemoryPressure, or PID pressure
-- Build-bot cannot reach the Docker daemon (DinD failures)
-- Scheduler is stuck and not advancing task state
-- Health check probes are failing unexpectedly
-- Deployed Helm values don't match actual pod configuration
+## 何时使用
+- `crs` 命名空间中的 Pod 处于 CrashLoopBackOff、OOMKilled 或重启状态
+- 多个服务同时重启（级联故障）
+- Redis 无响应或显示 AOF 警告
+- 队列在增长但任务没有进展
+- 节点显示 DiskPressure、MemoryPressure 或 PID 压力
+- Build-bot 无法连接到 Docker 守护进程（DinD 故障）
+- 调度器卡住且不推进任务状态
+- 健康检查探针意外失败
+- 部署的 Helm 值与实际的 pod 配置不匹配
 
 ## When NOT to Use
 
@@ -273,7 +273,7 @@ bash {baseDir}/scripts/diagnose.sh --full
 
 This collects pod status, events, resource usage, Redis health, and queue depths in one pass.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

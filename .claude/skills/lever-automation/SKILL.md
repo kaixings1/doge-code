@@ -6,10 +6,9 @@ requires:
     - rube
 ---
 
-# Lever Automation
+# Lever 自动化
 
-Automate your recruiting operations in **Lever ATS** directly from Claude Code. Manage job postings, track candidate pipelines, update requisitions, and query opportunities without leaving your terminal.
+直接从 Claude Code 自动化您的 **Lever ATS**。管理职位发布、跟踪候选人管道、更新招聘需求以及查询机会，无需离开终端。
 
-**Toolkit docs:** [composio.dev/toolkits/lever](https://composio.dev/toolkits/lever)
+**工具包文档**：[composio.dev/toolkits/lever](https://composio.dev/toolkits/lever)
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 33 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

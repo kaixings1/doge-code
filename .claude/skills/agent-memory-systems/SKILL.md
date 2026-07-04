@@ -1,8 +1,6 @@
 ---
 name: agent-memory-systems
-description: "Agent Memory Systems — Agent Memory Systems 相关功能和最佳实践"
-  interaction starts from zero. This skill covers the architecture of agent
-  memory: short-term (context window), long-term (vector stores), and the
+description: "Agent Memory Systems — AI 代理记忆系统架构：短期（上下文窗口）、长期（向量存储）以及两者之间的互动。"
   cognitive architectures that organize them."
 risk: safe
 source: vibeship-spawner-skills (Apache 2.0)
@@ -28,7 +26,7 @@ and procedural memory (how-to knowledge).
 
 - Memory quality = retrieval quality, not storage quantity
 - Chunk for retrieval, not for storage
-- Context isolation is the enemy of memory
+- 上下文 isolation is the enemy of memory
 - Right memory type for right information
 - Decay old memories - not everything should be forever
 - Test retrieval accuracy before production
@@ -47,7 +45,7 @@ and procedural memory (how-to knowledge).
 - memory-formation
 - memory-decay
 
-## Scope
+## 范围
 
 - vector-database-operations → data-engineer
 - rag-pipeline-architecture → llm-architect
@@ -58,28 +56,28 @@ and procedural memory (how-to knowledge).
 
 ### Memory_frameworks
 
-- LangMem (LangChain) - When: LangGraph agents with persistent memory Note: Semantic, episodic, procedural memory types
-- MemGPT / Letta - When: Virtual context management, OS-style memory Note: Hierarchical memory tiers, automatic paging
-- Mem0 - When: User memory layer for personalization Note: Designed for user preferences and history
+- LangMem (LangChain) - When: LangGraph agents with persistent memory 注意: Semantic, episodic, procedural memory types
+- MemGPT / Letta - When: Virtual context management, OS-style memory 注意: Hierarchical memory tiers, automatic paging
+- Mem0 - When: User memory layer for personalization 注意: Designed for user preferences and history
 
 ### Vector_stores
 
-- Pinecone - When: Managed, enterprise-scale (billions of vectors) Note: Best query performance, highest cost
-- Qdrant - When: Complex metadata filtering, open-source Note: Rust-based, excellent filtering
-- Weaviate - When: Hybrid search, knowledge graph features Note: GraphQL interface, good for relationships
-- ChromaDB - When: Prototyping, small/medium apps Note: Developer-friendly, ~20ms p50 at 100K vectors
-- pgvector - When: Already using PostgreSQL, simpler setup Note: Good for <1M vectors, familiar tooling
+- Pinecone - When: Managed, enterprise-scale (billions of vectors) 注意: Best query performance, highest cost
+- Qdrant - When: Complex metadata filtering, open-source 注意: Rust-based, excellent filtering
+- Weaviate - When: Hybrid search, knowledge graph features 注意: GraphQL interface, good for relationships
+- ChromaDB - When: Prototyping, small/medium apps 注意: Developer-friendly, ~20ms p50 at 100K vectors
+- pgvector - When: Already using PostgreSQL, simpler setup 注意: Good for <1M vectors, familiar tooling
 
 ### Embedding_models
 
-- OpenAI text-embedding-3-large - When: Best quality, 3072 dimensions Note: $0.13/1M tokens
-- OpenAI text-embedding-3-small - When: Good balance, 1536 dimensions Note: $0.02/1M tokens, 5x cheaper
-- nomic-embed-text-v1.5 - When: Open-source, local deployment Note: 768 dimensions, good quality
-- all-MiniLM-L6-v2 - When: Lightweight, fast local embedding Note: 384 dimensions, lowest latency
+- OpenAI text-embedding-3-large - When: Best quality, 3072 dimensions 注意: $0.13/1M tokens
+- OpenAI text-embedding-3-small - When: Good balance, 1536 dimensions 注意: $0.02/1M tokens, 5x cheaper
+- nomic-embed-text-v1.5 - When: Open-source, local deployment 注意: 768 dimensions, good quality
+- all-MiniLM-L6-v2 - When: Lightweight, fast local embedding 注意: 384 dimensions, lowest latency
 
 ## Patterns
 
-### Memory Type Architecture
+### Memory Type 架构
 
 Choosing the right memory type for different information
 
@@ -106,7 +104,7 @@ Three memory types for different purposes:
    - "How did I solve this before?"
 """
 
-## LangMem Implementation
+## LangMem 实现
 """
 from langmem import MemoryStore
 from langgraph.graph import StateGraph
@@ -193,4 +191,3 @@ Choosing the right vector database for your use case
 Decision matrix:
 
 |            | Pinecone | Qdrant | Weaviate | ChromaDB | pgvector |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 53 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

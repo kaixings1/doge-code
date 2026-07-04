@@ -8,7 +8,7 @@ description: 基准测试方法论
   and a tension-plot. Precedes competitive-report-structure.
 ---
 
-# Benchmark Methodology
+# /u57fa/u51c6/u6d4b/u8bd5/u65b9/u6cd5/u8bba
 
 Use this skill to turn a scoped competitor set into **comparable, defensible
 scores**. Each competitor is assessed on the same nine dimensions, with

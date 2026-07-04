@@ -6,164 +6,162 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# LinkedIn Automation via Rube MCP
+# 通过 Rube MCP 实现 LinkedIn 自动化
 
-Automate LinkedIn operations through Composio's LinkedIn toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 LinkedIn 工具包自动执行 LinkedIn 操作。
 
-## Prerequisites
+## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active LinkedIn connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `linkedin`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 LinkedIn 连接，工具包为 `linkedin`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
-## Setup
+## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
 
+1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
+2. 使用工具包 `linkedin` 调用 `RUBE_MANAGE_CONNECTIONS`
+3. 如果连接不是 ACTIVE，按返回的认证链接完成 LinkedIn OAuth
+4. 在运行任何工作流之前确认连接状态显示 ACTIVE
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `linkedin`
-3. If connection is not ACTIVE, follow the returned auth link to complete LinkedIn OAuth
-4. Confirm connection status shows ACTIVE before running any workflows
+## 核心工作流
 
-## Core Workflows
+### 1. 创建 LinkedIn 帖子
 
-### 1. Create a LinkedIn Post
+**何时使用**：用户想要在 LinkedIn 上发布文本帖子
 
-**When to use**: User wants to publish a text post on LinkedIn
+**工具顺序**：
+1. `LINKEDIN_GET_MY_INFO` - 获取已验证用户的个人资料信息 [前置]
+2. `LINKEDIN_REGISTER_IMAGE_UPLOAD` - 如果帖子包含图片则注册图片上传 [可选]
+3. `LINKEDIN_CREATE_LINKED_IN_POST` - 发布帖子 [必需]
 
-**Tool sequence**:
-1. `LINKEDIN_GET_MY_INFO` - Get authenticated user's profile info [Prerequisite]
-2. `LINKEDIN_REGISTER_IMAGE_UPLOAD` - Register image upload if post includes an image [Optional]
-3. `LINKEDIN_CREATE_LINKED_IN_POST` - Publish the post [Required]
+**关键参数**：
+- `text`：帖子内容文本
+- `visibility`：'PUBLIC' 或 'CONNECTIONS'
+- `media_title`：附加媒体的标题
+- `media_description`：附加媒体的描述
 
-**Key parameters**:
-- `text`: Post content text
-- `visibility`: 'PUBLIC' or 'CONNECTIONS'
-- `media_title`: Title for attached media
-- `media_description`: Description for attached media
+**陷阱**：
+- 必须在创建帖子前通过 GET_MY_INFO 获取用户个人资料 URN
+- 图片上传需要两步过程：先注册上传，然后在帖子中包含资源
+- 帖子文本受 LinkedIn API 的字符限制
+- 可见性默认值可能不同；始终显式指定
 
-**Pitfalls**:
-- Must retrieve user profile URN via GET_MY_INFO before creating a post
-- Image uploads require a two-step process: register upload first, then include the asset in the post
-- Post text has character limits enforced by LinkedIn API
-- Visibility defaults may vary; always specify explicitly
+### 2. 获取个人资料信息
 
-### 2. Get Profile Information
+**何时使用**：用户想要检索他们的 LinkedIn 个人资料或公司信息
 
-**When to use**: User wants to retrieve their LinkedIn profile or company details
+**工具顺序**：
+1. `LINKEDIN_GET_MY_INFO` - 获取已验证用户的个人资料 [必需]
+2. `LINKEDIN_GET_COMPANY_INFO` - 获取公司页面信息 [可选]
 
-**Tool sequence**:
-1. `LINKEDIN_GET_MY_INFO` - Get authenticated user's profile [Required]
-2. `LINKEDIN_GET_COMPANY_INFO` - Get company page details [Optional]
+**关键参数**：
+- GET_MY_INFO 无需参数（使用已验证用户）
+- `organization_id`：用于 GET_COMPANY_INFO 的公司/组织 ID
 
-**Key parameters**:
-- No parameters needed for GET_MY_INFO (uses authenticated user)
-- `organization_id`: Company/organization ID for GET_COMPANY_INFO
+**陷阱**：
+- GET_MY_INFO 仅返回已验证用户；无法查询其他用户
+- 公司信息需要数字组织 ID，而非公司名称或自定义 URL
+- 某些个人资料字段可能受 OAuth 作用域限制
 
-**Pitfalls**:
-- GET_MY_INFO returns the authenticated user only; cannot look up other users
-- Company info requires the numeric organization ID, not the company name or vanity URL
-- Some profile fields may be restricted based on OAuth scopes granted
+### 3. 管理帖子图片
 
-### 3. Manage Post Images
+**何时使用**：用户想要上传图片并附加到 LinkedIn 帖子
 
-**When to use**: User wants to upload and attach images to LinkedIn posts
+**工具顺序**：
+1. `LINKEDIN_REGISTER_IMAGE_UPLOAD` - 向 LinkedIn 注册图片上传 [必需]
+2. 将图片二进制文件上传到返回的上传 URL [必需]
+3. `LINKEDIN_GET_IMAGES` - 验证上传的图片状态 [可选]
+4. `LINKEDIN_CREATE_LINKED_IN_POST` - 使用图片资源创建帖子 [必需]
 
-**Tool sequence**:
-1. `LINKEDIN_REGISTER_IMAGE_UPLOAD` - Register an image upload with LinkedIn [Required]
-2. Upload the image binary to the returned upload URL [Required]
-3. `LINKEDIN_GET_IMAGES` - Verify uploaded image status [Optional]
-4. `LINKEDIN_CREATE_LINKED_IN_POST` - Create post with the image asset [Required]
+**关键参数**：
+- `owner`：图片拥有者的 URN（用户或组织）
+- `image_id`：用于 GET_IMAGES 的上传图片 ID
 
-**Key parameters**:
-- `owner`: URN of the image owner (user or organization)
-- `image_id`: ID of the uploaded image for GET_IMAGES
+**陷阱**：
+- 上传是两阶段过程：先注册然后上传二进制文件
+- 创建帖子时必须使用注册时返回的图片资源 URN
+- 支持的格式通常包括 JPG、PNG 和 GIF
+- 大图片可能需要时间处理才能可用
 
-**Pitfalls**:
-- The upload is a two-phase process: register then upload binary
-- Image asset URN from registration must be used when creating the post
-- Supported formats typically include JPG, PNG, and GIF
-- Large images may take time to process before they are available
+### 4. 评论帖子
 
-### 4. Comment on Posts
+**何时使用**：用户想要评论现有的 LinkedIn 帖子
 
-**When to use**: User wants to comment on an existing LinkedIn post
+**工具顺序**：
+1. `LINKEDIN_CREATE_COMMENT_ON_POST` - 添加评论到帖子 [必需]
 
-**Tool sequence**:
-1. `LINKEDIN_CREATE_COMMENT_ON_POST` - Add a comment to a post [Required]
+**关键参数**：
+- `post_id`：要评论的帖子的 URN 或 ID
+- `text`：评论内容
+- `actor`：评论者的 URN（用户或组织）
 
-**Key parameters**:
-- `post_id`: The URN or ID of the post to comment on
-- `text`: Comment content
-- `actor`: URN of the commenter (user or organization)
+**陷阱**：
+- 帖子 ID 必须是有效的 LinkedIn URN 格式
+- 评论者 URN 必须匹配已验证用户或管理的组织
+- 评论创建有速率限制；避免快速连续评论
 
-**Pitfalls**:
-- Post ID must be a valid LinkedIn URN format
-- The actor URN must match the authenticated user or a managed organization
-- Rate limits apply to comment creation; avoid rapid-fire comments
+### 5. 删除帖子
 
-### 5. Delete a Post
+**何时使用**：用户想要删除之前发布的 LinkedIn 帖子
 
-**When to use**: User wants to remove a previously published LinkedIn post
+**工具顺序**：
+1. `LINKEDIN_DELETE_LINKED_IN_POST` - 删除指定帖子 [必需]
 
-**Tool sequence**:
-1. `LINKEDIN_DELETE_LINKED_IN_POST` - Delete the specified post [Required]
+**关键参数**：
+- `post_id`：要删除的帖子的 URN 或 ID
 
-**Key parameters**:
-- `post_id`: The URN or ID of the post to delete
+**陷阱**：
+- 删除是永久性的，无法撤销
+- 只有帖子作者或组织管理员可以删除帖子
+- post_id 必须是创建帖子时返回的确切 URN
 
-**Pitfalls**:
-- Deletion is permanent and cannot be undone
-- Only the post author or organization admin can delete a post
-- The post_id must be the exact URN returned when the post was created
+## 常见模式
 
-## Common Patterns
+### ID 解析
 
-### ID Resolution
-
-**User URN from profile**:
+**来自个人资料的用户 URN**：
 ```
-1. Call LINKEDIN_GET_MY_INFO
-2. Extract user URN (e.g., 'urn:li:person:XXXXXXXXXX')
-3. Use URN as actor/owner in subsequent calls
-```
-
-**Organization ID from company**:
-```
-1. Call LINKEDIN_GET_COMPANY_INFO with organization_id
-2. Extract organization URN for posting as a company page
+1. 调用 LINKEDIN_GET_MY_INFO
+2. 提取用户 URN（例如 'urn:li:person:XXXXXXXXXX'）
+3. 在后续调用中使用 URN 作为 actor/owner
 ```
 
-### Image Upload Flow
+**来自公司的组织 ID**：
+```
+1. 使用 organization_id 调用 LINKEDIN_GET_COMPANY_INFO
+2. 提取用于以公司页面身份发布的组织 URN
+```
 
-- Call REGISTER_IMAGE_UPLOAD to get upload URL and asset URN
-- Upload the binary image to the provided URL
-- Use the asset URN when creating a post with media
-- Verify with GET_IMAGES if upload status is uncertain
+### 图片上传流程
 
-## Known Pitfalls
+- 调用 REGISTER_IMAGE_UPLOAD 获取上传 URL 和资源 URN
+- 将图片二进制文件上传到提供的 URL
+- 创建带媒体的帖子时使用资源 URN
+- 如果上传状态不确定，使用 GET_IMAGES 验证
 
-**Authentication**:
-- LinkedIn OAuth tokens have limited scopes; ensure required permissions are granted
-- Tokens expire; re-authenticate if API calls return 401 errors
+## 已知陷阱
 
-**URN Formats**:
-- LinkedIn uses URN identifiers (e.g., 'urn:li:person:ABC123')
-- Always use the full URN format, not just the alphanumeric ID portion
-- Organization URNs differ from person URNs
+**认证**：
+- LinkedIn OAuth 令牌的作用域有限；确保已授予所需权限
+- 令牌会过期；如果 API 调用返回 401 错误则重新认证
 
-**Rate Limits**:
-- LinkedIn API has strict daily rate limits on post creation and comments
-- Implement backoff strategies for bulk operations
-- Monitor 429 responses and respect Retry-After headers
+**URN 格式**：
+- LinkedIn 使用 URN 标识符（例如 'urn:li:person:ABC123'）
+- 始终使用完整的 URN 格式，而不仅仅是字母数字 ID 部分
+- 组织 URN 不同于个人 URN
 
-**Content Restrictions**:
-- Posts have character limits enforced by the API
-- Some content types (polls, documents) may require additional API features
-- HTML markup in post text is not supported
+**速率限制**：
+- LinkedIn API 对帖子创建和评论有严格的每日速率限制
+- 对批量操作实现退避策略
+- 监控 429 响应并遵守 Retry-After 标头
 
-## Quick Reference
+**内容限制**：
+- 帖子受 API 强制的字符限制
+- 某些内容类型（投票、文档）可能需要额外的 API 功能
+- 帖子文本中不支持 HTML 标记
+
+## 快速参考
 
 | Task | Tool Slug | Key Params |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 27 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

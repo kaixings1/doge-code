@@ -169,7 +169,7 @@ date_added: "2026-02-27"
 2. Extract id from the response
 ```
 
-## Known Pitfalls
+## 已知陷阱
 
 **Action Capitalization**:
 - Tag actions: 'Add', 'Remove' (capitalized)
@@ -197,7 +197,7 @@ date_added: "2026-02-27"
 - Parse defensively with fallback patterns
 - Contact search may return multiple results; match by email for accuracy
 
-## Quick Reference
+## 快速参考
 
 | Task | Tool Slug | Key Params |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 22 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

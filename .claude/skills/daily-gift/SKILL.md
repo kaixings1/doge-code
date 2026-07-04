@@ -74,7 +74,7 @@ Produce the final artifact. H5 gifts use p5.js/canvas with a quality floor set b
 - ❌ Don't default to "reflect on today" every time — vary content direction
 - ❌ Don't choose the format before locking the concept
 
-## Limitations
+## 局限性
 
 - Requires API keys for image/video generation (optional — H5 works without them)
 - Cron mode runs in the agent's main session for full conversation context access

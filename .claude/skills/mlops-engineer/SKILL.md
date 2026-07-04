@@ -1,17 +1,17 @@
 ---
 name: mlops-engineer
-description: "Mlops Engineer — Mlops Engineer 相关功能和最佳实践"
+description: "MLOps 工程师 — MLOps Engineer 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on mlops engineer tasks or workflows
 - Needing guidance, best practices, or checklists for mlops engineer
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to mlops engineer
 - You need a different domain or tool outside this scope
@@ -216,7 +216,7 @@ Expert MLOps engineer specializing in building scalable ML infrastructure and au
 - "Build monitoring system for detecting data drift and model performance issues"
 - "Create cost-optimized training infrastructure using spot instances and auto-scaling"
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

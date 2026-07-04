@@ -72,7 +72,7 @@ VoiceLiveClient
     └── sendEvent()          → Send raw protocol events
 ```
 
-## Quick Start
+## 快速开始
 
 ```typescript
 import { DefaultAzureCredential } from "@azure/identity";
@@ -125,7 +125,7 @@ function sendAudioChunk(audioBuffer: ArrayBuffer) {
 }
 ```
 
-## Session Configuration
+## Session 配置
 
 ```typescript
 await session.updateSession({
@@ -365,7 +365,7 @@ turnDetection: {
 
 | Format | Sample Rate | Use Case |
 |--------|-------------|----------|
-| `pcm16` | 24kHz | Default, high quality |
+| `pcm16` | 24kHz | 默认, high quality |
 | `pcm16-8000hz` | 8kHz | Telephony |
 | `pcm16-16000hz` | 16kHz | Voice assistants |
 | `g711_ulaw` | 8kHz | Telephony (US) |
@@ -379,8 +379,8 @@ turnDetection: {
 | `VoiceLiveSession` | Active WebSocket session |
 | `VoiceLiveSessionHandlers` | Event handler interface |
 | `VoiceLiveSubscription` | Active event subscription |
-| `ConnectionContext` | Context for connection events |
-| `SessionContext` | Context for session events |
+| `Connection上下文` | 上下文 for connection events |
+| `Session上下文` | 上下文 for session events |
 | `ServerEventUnion` | Union of all server events |
 
 ## Error Handling
@@ -424,7 +424,7 @@ setLogLevel("info");
 // AZURE_LOG_LEVEL=info
 ```
 
-## Browser Usage
+## Browser 用法
 
 ```typescript
 // Browser requires bundler (Vite, webpack, etc.)
@@ -449,7 +449,7 @@ const audioContext = new AudioContext({ sampleRate: 24000 });
 
 ## Best Practices
 
-1. **Always use `DefaultAzureCredential`** — Never hardcode API keys
+1. **始终 use `默认AzureCredential`** — 绝不 hardcode API keys
 2. **Set both modalities** — Include `["text", "audio"]` for voice assistants
 3. **Use Azure Semantic VAD** — Better turn detection than basic server VAD
 4. **Handle all error types** — Connection, auth, and protocol errors
@@ -468,7 +468,7 @@ const audioContext = new AudioContext({ sampleRate: 24000 });
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -7,10 +7,10 @@ requires:
     - rube
 ---
 
-# Wave Accounting Automation
+# Wave Accounting 自动化
 
-> **Note:** The Wave Accounting toolkit (`wave_accounting`) does not currently have native tools available in the Composio platform. Searches for Wave Accounting-specific tools return results from other accounting/invoicing platforms (Stripe, Zoho Invoice) instead.
+> **注意：** Wave Accounting 工具包（`wave_accounting`）目前在 Composio 平台中没有可用的原生工具。搜索 Wave Accounting 特定工具会返回来自其他会计/发票平台（Stripe、Zoho Invoice）的结果。
 
-**Toolkit docs:** [composio.dev/toolkits/wave_accounting](https://composio.dev/toolkits/wave_accounting)
+**工具包文档：** [composio.dev/toolkits/wave_accounting](https://composio.dev/toolkits/wave_accounting)
 
 ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 42 MINUTES 10 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

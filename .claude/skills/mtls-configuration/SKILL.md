@@ -6,11 +6,11 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# mTLS Configuration
+# mTLS 配置
 
 Comprehensive guide to implementing mutual TLS for zero-trust service mesh communication.
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to mtls configuration
 - You need a different domain or tool outside this scope
@@ -22,7 +22,7 @@ Comprehensive guide to implementing mutual TLS for zero-trust service mesh commu
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Implementing zero-trust networking
 - Securing service-to-service communication

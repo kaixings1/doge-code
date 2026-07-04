@@ -1,7 +1,6 @@
 ---
 name: gsap-plugins
-description: "Gsap Plugins — Gsap Plugins 相关功能和最佳实践"
-  Official GSAP skill for GSAP plugins — registration, ScrollToPlugin, ScrollSmoother, Flip, Draggable, Inertia, Observer, SplitText, ScrambleText, SVG and physics plugins, CustomEase, EasePack, CustomWiggle, CustomBounce, GSDevTools. Use when the user asks about a GSAP plugin, scroll-to, flip animations, draggable, SVG drawing, or plugin registration.
+description: "GSAP Plugins — GSAP 插件：注册、ScrollToPlugin、Flip、Draggable、SplitText、CustomEase 等。当用户询问 GSAP 插件、滚动、Flip 动画、拖拽、SVG 绘制时使用。"
 triggers:
   - "gsap plugins"
   - "gsap plugin registration"
