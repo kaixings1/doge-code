@@ -25,22 +25,22 @@ mitre_attack:
 - T1074.001
 ---
 
-# Acquiring Disk Image with dd and dcfldd
+# 使用 dd 和 dcfldd 获取磁盘镜像
 
-## When to Use
-- When you need to create a forensic copy of a suspect drive for investigation
-- During incident response when preserving volatile disk evidence before analysis
-- When law enforcement or legal proceedings require a verified bit-for-bit copy
-- Before performing any destructive analysis on a storage device
-- When acquiring images from physical drives, USB devices, or memory cards
+## 何时使用
+- 当需要为调查创建可疑驱动器的取证副本时
+- 在事件响应期间，分析前保存易失性磁盘证据时
+- 当执法或法律程序需要经过验证的逐位副本时
+- 在对存储设备执行任何破坏性分析之前
+- 当从物理驱动器、USB设备或存储卡获取镜像时
 
-## Prerequisites
-- Linux-based forensic workstation (SIFT, Kali, or any Linux distro)
-- `dd` (pre-installed on all Linux systems) or `dcfldd` (enhanced forensic version)
-- Write-blocker hardware or software write-blocking configured
-- Destination drive with sufficient storage (larger than source)
-- Root/sudo privileges on the forensic workstation
-- SHA-256 or MD5 hashing utilities (`sha256sum`, `md5sum`)
+## 前提条件
+- 基于Linux的取证工作站（SIFT、Kali或任何Linux发行版）
+- `dd`（所有Linux系统预装）或`dcfldd`（增强的取证版本）
+- 写阻止器硬件或配置的软件写阻止
+- 具有足够存储空间的目标驱动器（大于源驱动器）
+- 取证工作站上的root/sudo权限
+- SHA-256或MD5哈希工具（`sha256sum`、`md5sum`）
 
 ## Workflow
 

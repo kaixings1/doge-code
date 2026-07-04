@@ -9,19 +9,19 @@ metadata: {"version": "1.2", "skill-author": "K-Dense Inc."}
 
 # Adaptyv Bio Foundry API
 
-Adaptyv Bio is a cloud lab that turns protein sequences into experimental data. Users submit amino acid sequences via API or UI; Adaptyv's automated lab runs assays (binding, thermostability, expression, fluorescence) and delivers results in ~21 days.
+Adaptyv Bio 是一个将蛋白质序列转化为实验数据的云实验室。用户通过 API 或 UI 提交氨基酸序列；Adaptyv 的自动化实验室运行测定（结合、热稳定性、表达、荧光）并在约 21 天内交付结果。
 
-**Official docs:** [docs.adaptyvbio.com/api-reference](https://docs.adaptyvbio.com/api-reference) · [llms.txt index](https://docs.adaptyvbio.com/llms.txt) · [OpenAPI spec](https://foundry-api-public.adaptyvbio.com/api/v1/openapi.json)
+**官方文档:** [docs.adaptyvbio.com/api-reference](https://docs.adaptyvbio.com/api-reference) · [llms.txt 索引](https://docs.adaptyvbio.com/llms.txt) · [OpenAPI 规范](https://foundry-api-public.adaptyvbio.com/api/v1/openapi.json)
 
-## Quick Start
+## 快速开始
 
-**Base URL:** `https://foundry-api-public.adaptyvbio.com/api/v1`
+**基础 URL:** `https://foundry-api-public.adaptyvbio.com/api/v1`
 
-**Authentication:** Bearer token in the `Authorization` header. Tokens are obtained from [foundry.adaptyvbio.com](https://foundry.adaptyvbio.com/) sidebar.
+**认证:** `Authorization` 头中的 Bearer 令牌。令牌从 [foundry.adaptyvbio.com](https://foundry.adaptyvbio.com/) 侧边栏获取。
 
-When writing code, always read the API key from the environment variable `ADAPTYV_API_KEY` or from a `.env` file — never hardcode tokens. Check for a `.env` file in the project root first; if one exists, use a library like `python-dotenv` to load it.
+编写代码时，始终从环境变量 `ADAPTYV_API_KEY` 或 `.env` 文件读取 API 密钥 — 切勿硬编码令牌。首先检查项目根目录中是否存在 `.env` 文件；如果存在，使用 `python-dotenv` 等库加载它。
 
-The [official API docs](https://docs.adaptyvbio.com/api-reference/api-introduction) use `FOUNDRY_API_TOKEN` in curl examples; that is the same bearer token — prefer `ADAPTYV_API_KEY` in Python and new shell scripts for consistency with the SDK.
+[官方 API 文档](https://docs.adaptyvbio.com/api-reference/api-introduction) 在 curl 示例中使用 `FOUNDRY_API_TOKEN`；这是相同的 bearer 令牌 — 在 Python 和新 shell 脚本中优先使用 `ADAPTYV_API_KEY` 以与 SDK 保持一致。
 
 ```bash
 export ADAPTYV_API_KEY="abs0_..."
@@ -29,23 +29,23 @@ curl https://foundry-api-public.adaptyvbio.com/api/v1/targets?limit=3 \
   -H "Authorization: Bearer $ADAPTYV_API_KEY"
 ```
 
-Every request except `GET /openapi.json` requires authentication. Store tokens in environment variables or `.env` files — never commit them to source control.
+除了 `GET /openapi.json` 之外，每个请求都需要认证。将令牌存储在环境变量或 `.env` 文件中 — 切勿将它们提交到源代码控制。
 
 ## Python SDK
 
-**Version note:** `adaptyv-sdk` **0.1.0** (beta) is not yet on PyPI — install from GitHub:
+**版本说明:** `adaptyv-sdk` **0.1.0** (beta) 尚未在 PyPI 上发布 — 从 GitHub 安装：
 
 ```bash
 uv pip install "git+https://github.com/adaptyvbio/adaptyv-sdk.git"
 ```
 
-In a project with `pyproject.toml`:
+在具有 `pyproject.toml` 的项目中：
 
 ```bash
 uv add "adaptyv-sdk @ git+https://github.com/adaptyvbio/adaptyv-sdk.git"
 ```
 
-**Environment variables** (set in shell or `.env` file):
+**环境变量**（在 shell 或 `.env` 文件中设置）：
 
 ```bash
 ADAPTYV_API_KEY=your_api_key
