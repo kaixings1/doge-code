@@ -10,13 +10,13 @@ related: []
 
 # {{title}}
 
-(One atomic idea, claim, or observation. Should fit on one screen; if it grows past that, split into two notes and link them.)
+（一个原子级想法、声明或观察。应适合一屏；如果超过，拆分为两条笔记并链接它们。）
 
-## Sources
+## 来源
 
 - [[{{source-1}}]]
-- (external citation, if any)
+- （外部引用，如果有）
 
-## See also
+## 另见
 
 - [[{{related-note}}]]

@@ -12,21 +12,21 @@ related_areas: []
 
 # {{title}}
 
-## Outcome
+## 成果
 
-(One sentence: what does "done" look like?)
+（一句话："完成"看起来是什么样？）
 
-## Status
+## 状态
 
-- **Current state:** active
-- **Deadline:** {{deadline-or-tbd}}
-- **Next action:** (single concrete next step)
+- **当前状态：** active
+- **截止日期：** {{deadline-or-tbd}}
+- **下一步操作：** （单个具体的下一步）
 
-## Notes
+## 笔记
 
-(Working notes, decisions, blockers.)
+（工作笔记、决策、阻碍因素。）
 
-## Related
+## 相关
 
-- Areas: [[{{related-area}}]]
-- Resources: [[{{related-resource}}]]
+- 领域：[[{{related-area}}]]
+- 资源：[[{{related-resource}}]]

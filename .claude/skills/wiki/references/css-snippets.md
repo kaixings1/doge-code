@@ -1,12 +1,12 @@
-# Visual Customization
+# 视觉自定义
 
-Apply during scaffold. This makes the file explorer color-coded by folder type and adds custom callout styles.
+在搭建时应用。使文件资源管理器按文件夹类型进行颜色编码，并添加自定义标注样式。
 
 ---
 
-## CSS Snippet
+## CSS 代码片段
 
-Create this file at `.obsidian/snippets/vault-colors.css` inside the vault:
+在 Vault 内的 `.obsidian/snippets/vault-colors.css` 路径下创建此文件：
 
 ```css
 :root {
@@ -19,7 +19,7 @@ Create this file at `.obsidian/snippets/vault-colors.css` inside the vault:
   --wiki-7: #569cd6;
 }
 
-/* Folder colors in file explorer */
+/* 文件资源管理器中的文件夹颜色 */
 .nav-folder-title[data-path^="wiki/domains"]     { color: var(--wiki-1); }
 .nav-folder-title[data-path^="wiki/entities"]    { color: var(--wiki-2); }
 .nav-folder-title[data-path^="wiki/concepts"]    { color: var(--wiki-3); }
@@ -29,7 +29,7 @@ Create this file at `.obsidian/snippets/vault-colors.css` inside the vault:
 .nav-folder-title[data-path^="wiki/meta"]        { color: var(--wiki-7); }
 .nav-folder-title[data-path=".raw"]              { color: #808080; opacity: 0.6; }
 
-/* Custom callouts */
+/* 自定义标注 */
 .callout[data-callout='contradiction'] {
   --callout-color: 209, 105, 105;
   --callout-icon: lucide-alert-triangle;
@@ -50,73 +50,73 @@ Create this file at `.obsidian/snippets/vault-colors.css` inside the vault:
 
 ---
 
-## Enable the Snippet
+## 启用代码片段
 
-Tell the user: Settings > Appearance > CSS Snippets > open folder > paste the file > click the refresh icon > toggle it on.
-
----
-
-## Graph View Groups
-
-Guide the user to set these in Graph View settings (click the settings icon in the graph view):
-
-| Query | Color |
-|-------|-------|
-| `path:wiki/domains` | Blue (`#4fc1ff`) |
-| `path:wiki/entities` | Purple (`#c586c0`) |
-| `path:wiki/concepts` | Yellow (`#dcdcaa`) |
-| `path:wiki/sources` | Orange (`#ce9178`) |
-| `path:wiki/questions` | Green (`#6a9955`) |
-| `path:.raw` | Gray (dimmed) |
+告知用户：设置 > 外观 > CSS 代码片段 > 打开文件夹 > 粘贴文件 > 点击刷新图标 > 开启开关。
 
 ---
 
-## Custom Callouts
+## 图谱视图分组
 
-This vault defines **four custom callout types** beyond Obsidian's built-in set (`note`, `tip`, `warning`, `info`, `todo`, `success`, `question`, `failure`, `danger`, `bug`, `example`, `quote`). They render correctly **only when `vault-colors.css` is enabled**. Without the snippet, they fall back to default callout styling (still readable, just plain).
+引导用户在图谱视图设置中设置这些（点击图谱视图中的设置图标）：
 
-| Custom callout | Color | Icon | Use for |
+| 查询 | 颜色 |
+|------|------|
+| `path:wiki/domains` | 蓝色（`#4fc1ff`） |
+| `path:wiki/entities` | 紫色（`#c586c0`） |
+| `path:wiki/concepts` | 黄色（`#dcdcaa`） |
+| `path:wiki/sources` | 橙色（`#ce9178`） |
+| `path:wiki/questions` | 绿色（`#6a9955`） |
+| `path:.raw` | 灰色（暗淡） |
+
+---
+
+## 自定义标注
+
+此 Vault 定义了 Obsidian 内置集（`note`、`tip`、`warning`、`info`、`todo`、`success`、`question`、`failure`、`danger`、`bug`、`example`、`quote`）之外的 **四种自定义标注类型**。它们**仅在 `vault-colors.css` 启用时**正确渲染。没有该代码片段时，会回退到默认标注样式（仍可读，只是朴素）。
+
+| 自定义标注 | 颜色 | 图标 | 用途 |
 |---|---|---|---|
-| `contradiction` | reddish-brown (rgb 209,105,105) | `lucide-alert-triangle` | New source conflicts with existing claim |
-| `gap` | beige (rgb 220,220,170) | `lucide-help-circle` | Topic has no source yet |
-| `key-insight` | bright blue (rgb 79,193,255) | `lucide-lightbulb` | Important takeaway worth highlighting |
-| `stale` | gray (rgb 128,128,128) | `lucide-clock` | Claim may be outdated, source older than threshold |
+| `contradiction` | 红棕色（rgb 209,105,105） | `lucide-alert-triangle` | 新来源与现有声明冲突 |
+| `gap` | 米色（rgb 220,220,170） | `lucide-help-circle` | 主题尚无来源 |
+| `key-insight` | 亮蓝色（rgb 79,193,255） | `lucide-lightbulb` | 值得强调的重要见解 |
+| `stale` | 灰色（rgb 128,128,128） | `lucide-clock` | 声明可能已过时，来源早于阈值 |
 
-### Usage
+### 用法
 
-Use these in wiki pages to flag important states:
+在 Wiki 页面中使用这些来标记重要状态：
 
 ```markdown
-> [!contradiction] Title
-> [[Page A]] claims X. [[Page B]] says Y. Needs resolution.
+> [!contradiction] 标题
+> [[页面 A]] 声称 X。[[页面 B]] 说是 Y。需要解决。
 
-> [!gap] Title
-> This topic has no source yet. Consider finding one.
+> [!gap] 标题
+> 此主题尚无来源。考虑寻找一个。
 
-> [!key-insight] Title
-> The most important takeaway from this section.
+> [!key-insight] 标题
+> 本部分最重要的收获。
 
-> [!stale] Title
-> This claim may be outdated. Source was from 2022.
+> [!stale] 标题
+> 此声明可能已过时。来源来自 2022 年。
 ```
 
-### Why custom callouts (vs built-in)
+### 为什么使用自定义标注（vs 内置）
 
-The four custom types map to wiki-specific concepts that don't fit cleanly into Obsidian's default set:
+四种自定义类型映射到 Wiki 特有概念，不完全适合 Obsidian 的默认分类：
 
-- `contradiction` is more specific than `warning`: it signals a **resolvable conflict** between two wiki pages, not a generic warning.
-- `gap` is more specific than `question`: it signals a **missing source**, an actionable improvement.
-- `key-insight` is more specific than `tip`: it marks **the** most important takeaway from a section, used sparingly.
-- `stale` has no built-in equivalent: it signals time-based decay of a claim.
+- `contradiction` 比 `warning` 更具体：它表示两个 Wiki 页面之间的**可解决的冲突**，而非泛泛的警告。
+- `gap` 比 `question` 更具体：它表示**缺失的来源**，是一个可操作的改进点。
+- `key-insight` 比 `tip` 更具体：它标记某部分**最重要的**收获，使用有节制。
+- `stale` 没有内置等价项：它表示声明基于时间的过期。
 
-If you don't want custom callouts, replace them with built-ins:
-- `[!contradiction]` → `[!warning] Contradiction`
-- `[!gap]` → `[!question] Gap`
-- `[!key-insight]` → `[!tip] Key insight`
-- `[!stale]` → `[!warning] Stale`
+如果不想使用自定义标注，可以用内置标注替换：
+- `[!contradiction]` → `[!warning] 矛盾`
+- `[!gap]` → `[!question] 缺口`
+- `[!key-insight]` → `[!tip] 关键见解`
+- `[!stale]` → `[!warning] 过期`
 
 ---
 
-## Minimal Theme (Recommended)
+## Minimal 主题（推荐）
 
-The color scheme looks best with the Minimal theme. Install via Settings > Appearance > Manage > search "Minimal".
+配色方案在 Minimal 主题下效果最佳。通过设置 > 外观 > 管理 > 搜索 "Minimal" 安装。
