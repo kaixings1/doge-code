@@ -22,7 +22,7 @@ date_added: "2026-02-27"
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Purpose
+## 目的
 
 Implement systematic cost optimization strategies to reduce cloud spending while maintaining performance and reliability.
 
@@ -278,7 +278,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high" {
 - **GCP:** Cost Management, Recommender
 - **Multi-cloud:** CloudHealth, Cloudability, Kubecost
 
-## Reference Files
+## 参考文件
 
 - `references/tagging-standards.md` - Tagging conventions
 - `assets/cost-analysis-template.xlsx` - Cost analysis spreadsheet

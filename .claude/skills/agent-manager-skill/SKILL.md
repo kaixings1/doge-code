@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # Agent Manager Skill
 
-## When to Use
+## 使用场景
 使用此技能当 you need to:
 
 - run multiple local CLI agents in parallel (separate tmux sessions)
@@ -36,7 +36,7 @@ Follow teams/fractalmind-ai-maintenance.md Workflow
 EOF
 ```
 
-## Notes
+## 备注
 
 - 需要 `tmux` and `python3`.
 - Agents are configured under an `agents/` directory (see the repo for examples).

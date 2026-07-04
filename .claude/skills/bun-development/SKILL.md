@@ -693,7 +693,7 @@ bun run ./dist/index.js
 
 ---
 
-## Resources
+## 资源
 
 - [Bun Documentation](https://bun.sh/docs)
 - [Bun GitHub](https://github.com/oven-sh/bun)

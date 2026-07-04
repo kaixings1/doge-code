@@ -443,7 +443,7 @@ Present ranges:
 • "Best case: X, Conservative: Y"
 ```
 
-## Best Practices
+## 最佳实践
 
 ### Do's
 
@@ -461,7 +461,7 @@ Present ranges:
 - **Don't show methodology first** - Context, then method
 - **Don't forget the narrative** - Numbers need meaning
 
-## Resources
+## 资源
 
 - [Storytelling with Data (Cole Nussbaumer)](https://www.storytellingwithdata.com/)
 - [The Pyramid Principle (Barbara Minto)](https://www.amazon.com/Pyramid-Principle-Logic-Writing-Thinking/dp/0273710516)

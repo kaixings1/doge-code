@@ -27,7 +27,7 @@ The user needs observability infrastructure for database migrations, including r
 ## Requirements
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 ### 1. Observable MongoDB Migrations
 
@@ -399,7 +399,7 @@ jobs:
             --max-lag 300
 ```
 
-## Output Format
+## 输出格式
 
 1. **Observable MongoDB Migrations**: Atlas framework with metrics and validation
 2. **CDC Pipeline with Monitoring**: Debezium integration with Kafka

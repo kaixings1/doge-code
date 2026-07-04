@@ -27,7 +27,7 @@ Programmatic video creation with React. Useful for branded explainers, social cu
 - Upstream: https://github.com/remotion-dev/remotion
 - Category: `video-generation`
 
-## How to use
+## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
 discovers it during planning. To run the full upstream workflow with

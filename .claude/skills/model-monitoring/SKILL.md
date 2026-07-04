@@ -4,10 +4,10 @@ description: "监控已部署的 ML 模型：检测数据漂移、概念漂移�
 ---
 # Model Monitoring
 
-## Purpose
+## 目的
 Detect when production models degrade and need retraining through drift detection and performance monitoring.
 
-## How It Works
+## 工作原理
 
 ### Types of Drift
 

@@ -438,7 +438,7 @@ If no more stories are ready but Must Have stories are still In Progress (not Co
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 - **Never mark a story complete without user approval** — Phase 7 requires an
   explicit "yes" before any file is edited.

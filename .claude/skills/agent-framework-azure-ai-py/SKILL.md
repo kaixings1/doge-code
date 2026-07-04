@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Build persistent agents on Azure AI Foundry using the Microsoft Agent Framework Python SDK.
 
-## Architecture
+## 架构
 
 ```
 User Query → AzureAIAgentsProvider → Azure AI Agent Service (Persistent)
@@ -22,7 +22,7 @@ User Query → AzureAIAgentsProvider → Azure AI Agent Service (Persistent)
               AgentThread (conversation persistence)
 ```
 
-## Installation
+## 安装
 
 ```bash
 # Full framework (recommended)
@@ -32,7 +32,7 @@ pip install agent-framework --pre
 pip install agent-framework-azure-ai --pre
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 export AZURE_AI_PROJECT_ENDPOINT="https://<project>.services.ai.azure.com/api/projects/<project-id>"
@@ -40,7 +40,7 @@ export AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-4o-mini"
 export BING_CONNECTION_ID="your-bing-connection-id"  # For web search
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity.aio import AzureCliCredential, DefaultAzureCredential
@@ -52,7 +52,7 @@ credential = AzureCliCredential()
 credential = DefaultAzureCredential()
 ```
 
-## Core Workflow
+## 核心工作流
 
 ### Basic Agent
 

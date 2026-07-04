@@ -7,7 +7,7 @@ description: "Pro Workflow\Skills\Batch Orchestration — Pro Workflow\Skills\Ba
 
 The `/batch` command pattern for large-scale parallel changes.
 
-## How It Works
+## 工作原理
 
 ```text
 /batch <instruction>
@@ -124,7 +124,7 @@ After all agents complete:
 | Test coverage gaps | Add tests to untested modules independently |
 | Lint rule adoption | Apply new rule fixes across all files |
 
-## Anti-Patterns
+## 反模式
 
 | Don't Batch | Why |
 |-------------|-----|

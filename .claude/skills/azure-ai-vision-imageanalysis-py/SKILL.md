@@ -10,20 +10,20 @@ date_added: '2026-02-27'
 
 Client library for Azure AI Vision 4.0 image analysis including captions, tags, objects, OCR, and more.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-ai-vision-imageanalysis
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 VISION_ENDPOINT=https://<resource>.cognitiveservices.azure.com
 VISION_KEY=<your-api-key>  # If using API key
 ```
 
-## Authentication
+## 认证
 
 ### API Key
 
@@ -227,7 +227,7 @@ async def analyze_image():
 | `PEOPLE` | People detection with bounding boxes |
 | `SMART_CROPS` | Suggested crop regions for thumbnails |
 
-## Error Handling
+## 错误处理
 
 ```python
 from azure.core.exceptions import HttpResponseError
@@ -249,7 +249,7 @@ except HttpResponseError as e:
 - Max size: 20 MB
 - Dimensions: 50x50 to 16000x16000 pixels
 
-## Best Practices
+## 最佳实践
 
 1. **Select only needed features** to optimize latency and cost
 2. **Use async client** for high-throughput scenarios
@@ -259,7 +259,7 @@ except HttpResponseError as e:
 6. **Use smart_crops_aspect_ratios** matching your thumbnail requirements
 7. **Cache results** when analyzing the same image multiple times
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

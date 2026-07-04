@@ -120,7 +120,7 @@ Use `good: false` when the approach failed. Do not tag an outcome as external
 or owner-validated unless a real external system or the owner actually supplied
 that verdict.
 
-## Examples
+## 示例
 
 ### Example 1: Start a repository fix with memory
 
@@ -144,7 +144,7 @@ schema or the caller.
 4. Continue implementation and verification.
 ```
 
-## Best Practices
+## 最佳实践
 
 - Cite retrieved `[ids]` whenever they shape your plan or answer.
 - Keep owner-held facts owner-held: ask instead of fabricating preferences,
@@ -177,7 +177,7 @@ schema or the caller.
   medical facts, or secrets, get the required authorization and verify against
   the appropriate external source before recording an outcome.
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Problem:** Using retrieved memory as if it were guaranteed current.
   **Solution:** Use it to guide investigation, then verify in the current

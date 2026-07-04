@@ -38,9 +38,9 @@ Add Clarvia MCP server to your config:
 - Use when building an agent that selects tools dynamically
 - Use when you want to find the highest-quality tool in a category
 
-## How It Works
+## 工作原理
 
-### Step 1: Score a specific tool
+### 步骤 1: Score a specific tool
 
 Ask Claude to score any tool by URL or name:
 
@@ -50,7 +50,7 @@ Score https://github.com/example/my-mcp-server for agent-readiness
 
 Clarvia returns a 0-100 AEO score with breakdown across four dimensions.
 
-### Step 2: Search tools by category
+### 步骤 2: Search tools by category
 
 ```
 Find the top-rated database MCP servers using Clarvia
@@ -58,7 +58,7 @@ Find the top-rated database MCP servers using Clarvia
 
 Returns ranked results from 15,400+ indexed tools.
 
-### Step 3: Compare tools head-to-head
+### 步骤 3: Compare tools head-to-head
 
 ```
 Compare supabase-mcp vs firebase-mcp using Clarvia
@@ -66,13 +66,13 @@ Compare supabase-mcp vs firebase-mcp using Clarvia
 
 Returns side-by-side score breakdown with a recommendation.
 
-### Step 4: Check leaderboard
+### 步骤 4: Check leaderboard
 
 ```
 Show me the top 10 MCP servers for authentication using Clarvia
 ```
 
-## Examples
+## 示例
 
 ### Example 1: Evaluate before installing
 
@@ -111,7 +111,7 @@ Add to your CI pipeline using the GitHub Action:
 | 30-49 | Agent Partial | Significant limitations |
 | 0-29 | Not Agent Ready | Avoid for agentic workflows |
 
-## Best Practices
+## 最佳实践
 
 - ✅ Score tools before adding them to long-running agent workflows
 - ✅ Use Clarvia's leaderboard to discover alternatives you haven't considered
@@ -119,7 +119,7 @@ Add to your CI pipeline using the GitHub Action:
 - ❌ Don't skip scoring for "well-known" tools — even popular tools can score poorly
 - ❌ Don't use tools scoring below 50 in production agent pipelines without understanding the limitations
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Problem:** Clarvia returns "not found" for a tool
   **Solution:** Try scanning by URL directly with `aeo_score` — Clarvia will score it on-demand
@@ -127,7 +127,7 @@ Add to your CI pipeline using the GitHub Action:
 - **Problem:** Score seems low for a tool I trust
   **Solution:** Use `get_score_breakdown` to see which dimensions are weak and decide if they matter for your use case
 
-## Related Skills
+## 相关技能
 
 - `@mcp-builder` - Build a new MCP server that scores well on AEO
 - `@agent-evaluation` - Broader agent quality evaluation framework

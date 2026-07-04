@@ -5,7 +5,7 @@ requires:
   mcp: [rube]
 ---
 
-# Renderform Automation via Rube MCP
+# Renderform 自动化（通过 Rube MCP）
 
 Automate Renderform operations through Composio's Renderform toolkit via Rube MCP.
 
@@ -26,7 +26,7 @@ Automate Renderform operations through Composio's Renderform toolkit via Rube MC
 3. If connection is not ACTIVE, follow the returned auth link to complete setup
 4. Confirm connection status shows ACTIVE before running any workflows
 
-## Tool Discovery
+## 工具发现
 
 始终 discover available tools before executing workflows:
 
@@ -38,9 +38,9 @@ session: {generate_id: true}
 
 This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
 
-## Core Workflow Pattern
+## 核心工作流模式
 
-### Step 1: Discover Available Tools
+### 步骤 1: Discover Available Tools
 
 ```
 RUBE_SEARCH_TOOLS
@@ -48,7 +48,7 @@ queries: [{use_case: "your specific Renderform task"}]
 session: {id: "existing_session_id"}
 ```
 
-### Step 2: Check Connection
+### 步骤 2: Check Connection
 
 ```
 RUBE_MANAGE_CONNECTIONS
@@ -56,7 +56,7 @@ toolkits: ["renderform"]
 session_id: "your_session_id"
 ```
 
-### Step 3: Execute Tools
+### 步骤 3: Execute Tools
 
 ```
 RUBE_MULTI_EXECUTE_TOOL

@@ -21,7 +21,7 @@ The `ai-loop` skill structures a bounded development cycle for agentic workflows
 - Use when working with isolated components, modules, or features that have well-defined scopes and constraints.
 - Use when the user asks for a complete development pass but the work still has clear success criteria, a reasonable verification path, and no unresolved safety or product decisions.
 
-## How It Works
+## 工作原理
 
 This skill executes a controlled development loop composed of three phases: Spec, Build, and Review. When invoked, the agent moves through those phases until the scoped requirements pass verification, a stop condition is reached, or human approval is needed.
 
@@ -58,7 +58,7 @@ Before starting, define:
 4. Stop and ask for human input when the next fix would change the spec, exceed the iteration budget, require risky operations, or depend on product decisions not captured in the spec.
 5. Only pass the build and conclude the skill execution when every requirement in the spec is fully met and the declared verification evidence has passed.
 
-## Examples
+## 示例
 
 ### Example 1: Creating a Basic Statistics Helper
 
@@ -97,7 +97,7 @@ Before starting, define:
 > 
 > All requirements passed! The statistics calculator is complete and verified.
 
-## Best Practices
+## 最佳实践
 
 - ✅ Do ask clarifying questions one at a time to avoid overwhelming the user during the planning phase.
 - ✅ Do document edge cases explicitly in `specs/<feature-name>.md` before writing any code.
@@ -123,7 +123,7 @@ Before starting, define:
 - Make sure no hardcoded secrets, keys, or credentials are added to the code or specifications.
 - Treat production deploys, data migrations, payment flows, credential changes, and external write actions as approval-gated work.
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Problem:** The agent tries to build a huge system all at once, leading to an overcomplicated spec and incomplete implementation.
   **Solution:** Keep the scope of `ai-loop` to small, modular features. Break larger systems into multiple independent loops.

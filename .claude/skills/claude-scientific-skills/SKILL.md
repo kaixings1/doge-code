@@ -16,7 +16,7 @@ date_added: "2026-02-27"
 
 当您需要使用科学研究与分析技能时使用此技能。
 
-## Instructions
+## 使用说明
 
 This skill provides guidance and patterns for scientific research and analysis skills.
 

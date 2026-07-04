@@ -37,7 +37,7 @@ content creation, blog posts, SEO, brand voice, social media, content calendar, 
 3. Optimize based on platform-specific guidelines
 4. Schedule using `assets/content_calendar_template.md`
 
-## Core Workflows
+## 核心工作流
 
 ### Establishing Brand Voice (First Time Setup)
 
@@ -164,7 +164,7 @@ Analyzes content for SEO optimization and provides actionable recommendations.
 - Understanding algorithm factors
 - Setting up analytics tracking
 
-## Best Practices
+## 最佳实践
 
 ### Content Creation Process
 1. Always start with audience need/pain point

@@ -15,7 +15,7 @@ date_added: "2026-06-02"
 ## 何时使用
 - 当任务匹配此描述时使用此技能：将应用和网站部署到 Vercel。当用户请求部署操作如"部署我的应用"、"部署并给我链接"、"推送到线上"或"创建预览部署"时使用。
 
-## Step 1: Gather Project State
+## 步骤 1: Gather Project State
 
 Run all four checks before deciding which method to use:
 
@@ -53,7 +53,7 @@ Either file means the project is linked. Check for both.
 
 **Do NOT** use `vercel project inspect`, `vercel ls`, or `vercel link` to detect state in an unlinked directory — without a `.vercel/` config, they will interactively prompt (or with `--yes`, silently link as a side-effect). Only `vercel whoami` is safe to run anywhere.
 
-## Step 2: Choose a Deploy Method
+## 步骤 2: Choose a Deploy Method
 
 ### Linked (`.vercel/` exists) + has git remote → Git Push
 
@@ -249,7 +249,7 @@ Codex runs in a sandbox. Check if the CLI is available first, then fall back to 
 
 ---
 
-## Output
+## 输出
 
 Always show the user the deployment URL.
 
@@ -270,7 +270,7 @@ Always show the user the deployment URL.
 
 ---
 
-## Troubleshooting
+## 故障排除
 
 ### Network Egress Error (claude.ai)
 

@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Azure Maps SDK for .NET providing location-based services: geocoding, routing, rendering, geolocation, and weather.
 
-## Installation
+## 安装
 
 ```bash
 # Search (geocoding, reverse geocoding)
@@ -42,14 +42,14 @@ dotnet add package Azure.Identity
 - `Azure.Maps.Geolocation`: v1.0.0-beta.3
 - `Azure.ResourceManager.Maps`: v1.1.0-beta.2
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_MAPS_SUBSCRIPTION_KEY=<your-subscription-key>
 AZURE_MAPS_CLIENT_ID=<your-client-id>  # For Entra ID auth
 ```
 
-## Authentication
+## 认证
 
 ### Subscription Key (Shared Key)
 
@@ -145,7 +145,7 @@ Azure.Maps.Weather
     └── GetSevereWeatherAlerts()          → Weather alerts
 ```
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Geocoding (Address to Coordinates)
 
@@ -388,7 +388,7 @@ foreach (var condition in result.Value.Results)
 }
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 ### Search Package
 
@@ -436,7 +436,7 @@ foreach (var condition in result.Value.Results)
 | `GeoPosition` | Geographic position (longitude, latitude) |
 | `GeoBoundingBox` | Bounding box for geographic area |
 
-## Best Practices
+## 最佳实践
 
 1. **Use Entra ID for production** — 优先 over subscription keys
 2. **Batch operations** — Use batch geocoding for multiple addresses
@@ -446,7 +446,7 @@ foreach (var condition in result.Value.Results)
 6. **Use async route matrix** — For large matrix calculations (>100)
 7. **考虑 traffic data** — Set `UseTrafficData = true` for accurate ETAs
 
-## Error Handling
+## 错误处理
 
 ```csharp
 try
@@ -484,7 +484,7 @@ catch (RequestFailedException ex)
 | `Azure.Maps.Weather` | Weather data | `dotnet add package Azure.Maps.Weather --prerelease` |
 | `Azure.ResourceManager.Maps` | Account management | `dotnet add package Azure.ResourceManager.Maps --prerelease` |
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -494,7 +494,7 @@ catch (RequestFailedException ex)
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/maps |
 | Pricing | https://azure.microsoft.com/pricing/details/azure-maps/ |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

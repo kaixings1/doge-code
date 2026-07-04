@@ -25,7 +25,7 @@ date_added: "2026-02-27"
 3. If connection is not ACTIVE, follow the returned auth link to complete Monday.com OAuth
 4. Confirm connection status shows ACTIVE before running any workflows
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Create and Manage Boards
 
@@ -158,7 +158,7 @@ date_added: "2026-02-27"
 - `MONDAY_CREATE_UPDATE` is for adding comments/updates to items (Monday's "updates" feature), not for modifying item values
 - `MONDAY_CREATE_OBJECT` is a raw GraphQL endpoint; ensure correct mutation syntax
 
-## Common Patterns
+## 常见模式
 
 ### ID Resolution
 始终 resolve display names to IDs before operations:

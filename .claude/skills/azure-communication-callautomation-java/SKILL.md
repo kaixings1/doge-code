@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Build server-side call automation workflows including IVR systems, call routing, recording, and AI-powered interactions.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -39,7 +39,7 @@ CallAutomationClient client = new CallAutomationClientBuilder()
     .buildClient();
 ```
 
-## Key Concepts
+## 关键概念
 
 | Class | Purpose |
 |-------|---------|
@@ -223,7 +223,7 @@ callConnection.hangUp(true);
 callConnection.hangUp(false);
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.core.exception.HttpResponseException;
@@ -239,7 +239,7 @@ try {
 }
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_COMMUNICATION_ENDPOINT=https://<resource>.communication.azure.com
@@ -255,7 +255,7 @@ CALLBACK_BASE_URL=https://your-app.com/api/callbacks
 - "answer incoming call", "transfer call Java"
 - "Azure Communication Services call automation"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

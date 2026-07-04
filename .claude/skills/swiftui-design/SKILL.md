@@ -27,7 +27,7 @@ SwiftUI 前端设计 skill — anti AI-slop rules, design direction advisor, bra
 - Upstream: https://github.com/wholiver/swiftui-design-skill
 - Category: `design-systems`
 
-## How to use
+## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
 discovers it during planning. To run the full upstream workflow with

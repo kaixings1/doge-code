@@ -408,7 +408,7 @@ echo "npx --no -- commitlint --edit \$1" > .husky/commit-msg
 - **CI as backup** — Hooks are convenience; CI is the enforcer
 - **Gradual adoption** — Start with formatting, add linting, then testing
 
-## Related Skills
+## 相关技能
 
 - `@codebase-audit-pre-push` - Deep audit before GitHub push
 - `@verification-before-completion` - Verification before claiming work is done

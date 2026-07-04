@@ -18,7 +18,7 @@ source: community
 - **Writing Splash scripts**: Dynamic UI and workflow automation
 - **Understanding Splash**: Purpose, syntax, and capabilities
 
-## When to Use
+## 使用场景
 - You need dynamic scripting inside Makepad using Splash.
 - The task involves `script!`, `cx.eval`, runtime-generated UI, or workflow automation in Makepad.
 - You want guidance on Splash syntax and purpose rather than static Rust-only patterns.
@@ -203,7 +203,7 @@ create_form([
 ]);
 ```
 
-## Use Cases
+## 使用案例
 
 1. **Rapid Prototyping**: Quickly test UI layouts without recompilation
 2. **AI Agents**: Let AI generate and modify UI dynamically

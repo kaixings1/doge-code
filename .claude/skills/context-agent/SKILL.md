@@ -33,13 +33,13 @@ Agente de contexto para continuidade entre sessoes. Salva resumos, decisoes, tar
 - When the user mentions "resumo sessao" or related topics
 - When the user mentions "continuidade sessao" or related topics
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to context agent
 - A simpler, more specific tool can handle the request
 - The user needs general-purpose assistance without domain expertise
 
-## How It Works
+## 工作原理
 
 Continuidade perfeita entre sessões do Claude Code. Captura, comprime e
 restaura contexto automaticamente — tópicos, decisões, tarefas, erros,
@@ -171,13 +171,13 @@ e decisões tomadas — sem precisar de nenhuma ação manual.
 - Para formato detalhado dos arquivos: `references/context-format.md`
 - Para regras de compressão e arquivamento: `references/compression-rules.md`
 
-## Best Practices
+## 最佳实践
 
 - Provide clear, specific context about your project and requirements
 - Review all suggestions before applying them to production code
 - Combine with other complementary skills for comprehensive analysis
 
-## Common Pitfalls
+## 常见陷阱
 
 - Using this skill for tasks outside its domain expertise
 - Applying recommendations without understanding your specific context

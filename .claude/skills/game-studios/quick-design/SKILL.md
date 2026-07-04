@@ -184,7 +184,7 @@ system specifically requires them.
 **Date**: [today]
 **Estimated Implementation**: [hours]
 
-## Overview
+## 概述
 
 [One paragraph a new team member could understand. What does this system do,
 when does it activate, and what does it produce?]

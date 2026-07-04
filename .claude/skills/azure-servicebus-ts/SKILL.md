@@ -10,13 +10,13 @@ date_added: "2026-02-27"
 
 Enterprise messaging with queues, topics, and subscriptions.
 
-## Installation
+## 安装
 
 ```bash
 npm install @azure/service-bus @azure/identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 SERVICEBUS_NAMESPACE=<namespace>.servicebus.windows.net
@@ -25,7 +25,7 @@ SERVICEBUS_TOPIC_NAME=my-topic
 SERVICEBUS_SUBSCRIPTION_NAME=my-subscription
 ```
 
-## Authentication
+## 认证
 
 ```typescript
 import { ServiceBusClient } from "@azure/service-bus";
@@ -35,7 +35,7 @@ const fullyQualifiedNamespace = process.env.SERVICEBUS_NAMESPACE!;
 const client = new ServiceBusClient(fullyQualifiedNamespace, new DefaultAzureCredential());
 ```
 
-## Core Workflow
+## 核心工作流
 
 ### Send Messages to Queue
 
@@ -217,7 +217,7 @@ await receiver.deadLetterMessage(message); // Move to DLQ
 const receiver = client.createReceiver("my-queue", { receiveMode: "receiveAndDelete" });
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use Entra ID auth** - Avoid connection strings in production
 2. **Reuse clients** - Create `ServiceBusClient` once, share across senders/receivers
@@ -234,7 +234,7 @@ For detailed patterns, see:
 - Queues vs Topics Patterns - Queue/topic patterns, sessions, receive modes, message settlement
 - Error Handling and Reliability - ServiceBusError codes, DLQ handling, lock renewal, graceful shutdown
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

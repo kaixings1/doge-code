@@ -5,37 +5,37 @@ description: "生成全面、可共享的数据画像报告，涵盖结构、质
 
 # Data Profiling Report
 
-## Purpose
+## 目的
 Generate a complete, stakeholder-ready data profiling report that serves as documentation and a starting point for analysis.
 
-## How It Works
+## 工作原理
 
-### Step 1: Executive Summary
+### 步骤 1: Executive Summary
 - Dataset overview: source, size, date range, purpose
 - Key quality metrics at a glance
 - Top 3 findings that need attention
 
-### Step 2: Schema Documentation
+### 步骤 2: Schema Documentation
 - Complete column inventory with types, descriptions, and example values
 - Primary keys, foreign keys, and relationships
 - Business glossary for domain-specific columns
 
-### Step 3: Quality Assessment
+### 步骤 3: Quality Assessment
 - Completeness, accuracy, consistency scores per column
 - Data freshness and update frequency
 - Known limitations and caveats
 
-### Step 4: Statistical Profile
+### 步骤 4: Statistical Profile
 - Descriptive statistics for all columns
 - Distribution summaries with visualizations
 - Correlation highlights
 
-### Step 5: Recommendations
+### 步骤 5: Recommendations
 - Data cleaning priorities
 - Suggested analyses based on the data available
 - Data collection gaps to address
 
-## Usage Examples
+## 使用示例
 
 ```
 "Generate a data profiling report I can share with the analytics team"
@@ -45,7 +45,7 @@ Generate a complete, stakeholder-ready data profiling report that serves as docu
 "Document this dataset for our data catalog"
 ```
 
-## Output Format
+## 输出格式
 
 - **Markdown Report**: Formatted for easy sharing
 - **Visualizations**: Embedded charts and tables

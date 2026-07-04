@@ -66,7 +66,7 @@ On every trigger, read:
 
 If the topic needs long-form style control, also read `../crossframe-essay/SKILL.md` and reuse only its article discipline, not its whole output contract.
 
-## Workflow
+## 工作流
 
 1. Build the CrossFrame base: object, fact boundary, scale window, mechanism candidates, judgment grade, and evidence gaps.
 2. Apply the critical matrix: cost chain, benefit chain, power/resource distribution, concept concealment, reproduction mechanism, weak signals, and counterconditions.
@@ -74,7 +74,7 @@ If the topic needs long-form style control, also read `../crossframe-essay/SKILL
 4. Write the full essay from the dossier. Default body length is 1800-2800 Chinese characters unless the user overrides it.
 5. Run a final boundary check: no personality judgment, no hat-labeling, no conspiracy claim, no unverified strong judgment, no slogan replacing analysis.
 
-## Output
+## 输出
 
 Default output has exactly three visible sections:
 

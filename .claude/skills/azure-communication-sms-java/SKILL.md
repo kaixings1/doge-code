@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Send SMS messages to single or multiple recipients with delivery reporting.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -181,7 +181,7 @@ asyncClient.sendWithResponse(
     });
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.core.exception.HttpResponseException;
@@ -252,7 +252,7 @@ public void handleDeliveryReport(String eventJson) {
 | `getErrorMessage()` | String | Error details if failed |
 | `getRepeatabilityResult()` | RepeatabilityResult | Idempotency result |
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_COMMUNICATION_ENDPOINT=https://<resource>.communication.azure.com
@@ -260,7 +260,7 @@ AZURE_COMMUNICATION_CONNECTION_STRING=endpoint=https://...;accesskey=...
 SMS_FROM_NUMBER=+14255550100
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Phone Number Format** - Use E.164 format: `+[country code][number]`
 2. **Delivery Reports** - Enable for critical messages (OTP, alerts)
@@ -275,7 +275,7 @@ SMS_FROM_NUMBER=+14255550100
 - "SMS notification", "OTP SMS", "bulk SMS"
 - "delivery report SMS", "Azure Communication Services SMS"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

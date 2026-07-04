@@ -22,7 +22,7 @@ tools:
   - gemini-cli
   - codex-cli
 ---
-## When to Use
+## 使用场景
 
 Use whenever building or styling web UIs — components, pages, dashboards, landing pages, React/Vue/HTML-CSS layouts — or whenever the user asks to make something "look better/nicer", fix spacing/layout, or mentions styling, color, typography, fonts, responsive design, polish, or aesthetics, even without the word "design".
 

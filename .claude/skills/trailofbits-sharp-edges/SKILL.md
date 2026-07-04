@@ -2,7 +2,7 @@
 
 Identifies error-prone APIs, dangerous configurations, and footgun designs that enable security mistakes through developer confusion, laziness, or malice.
 
-## When to Use
+## 使用场景
 
 - Reviewing API designs for security-relevant interfaces
 - Auditing configuration schemas that expose security choices
@@ -22,7 +22,7 @@ Analyzes code and designs through the lens of three adversaries:
 
 **The pit of success**: Secure usage should be the path of least resistance. If developers must read documentation carefully or remember special rules to avoid vulnerabilities, the API has failed.
 
-## Installation
+## 安装
 
 ```
 /plugin install trailofbits/skills/plugins/sharp-edges

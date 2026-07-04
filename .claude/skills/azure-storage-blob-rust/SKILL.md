@@ -10,20 +10,20 @@ date_added: '2026-02-27'
 
 Client library for Azure Blob Storage — Microsoft's object storage solution for the cloud.
 
-## Installation
+## 安装
 
 ```sh
 cargo add azure_storage_blob azure_identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_STORAGE_ACCOUNT_NAME=<storage-account-name>
 # Endpoint: https://<account>.blob.core.windows.net/
 ```
 
-## Authentication
+## 认证
 
 ```rust
 use azure_identity::DeveloperToolsCredential;
@@ -108,7 +108,7 @@ while let Some(blob) = pager.try_next().await? {
 }
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use Entra ID auth** — `DeveloperToolsCredential` for dev, `ManagedIdentityCredential` for production
 2. **Specify content length** — required for uploads
@@ -123,7 +123,7 @@ For Entra ID auth, assign one of these roles:
 - `Storage Blob Data Contributor` — read/write
 - `Storage Blob Data Owner` — full access including RBAC
 
-## Reference Links
+## 参考链接
 
 | Resource | Link |
 |----------|------|
@@ -131,7 +131,7 @@ For Entra ID auth, assign one of these roles:
 | Source Code | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/storage/azure_storage_blob |
 | crates.io | https://crates.io/crates/azure_storage_blob |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

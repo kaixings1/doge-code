@@ -67,7 +67,7 @@ Create a rules file that persists across sessions. This is the highest-leverage 
 - Ask before modifying database schema
 - Always run tests before committing
 
-## Patterns
+## 模式
 [One short example of a well-written component in your style]
 ```
 
@@ -250,7 +250,7 @@ PLAN:
 
 This catches wrong directions before you've built on them. It's a 30-second investment that prevents 30-minute rework.
 
-## Anti-Patterns
+## 反模式
 
 | Anti-Pattern | Problem | Fix |
 |---|---|---|

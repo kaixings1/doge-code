@@ -43,7 +43,7 @@ release-notes-one-pager/
 
 Do not write CSS from scratch unless the user explicitly asks for a bespoke structure.
 
-## Workflow
+## 工作流
 
 ### Step 0 — Pre-flight
 

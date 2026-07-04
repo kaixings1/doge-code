@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Real-time, bidirectional voice conversations with AI assistants using WebSocket technology.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -20,14 +20,14 @@ Real-time, bidirectional voice conversations with AI assistants using WebSocket 
 </dependency>
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_VOICELIVE_ENDPOINT=https://<resource>.openai.azure.com/
 AZURE_VOICELIVE_API_KEY=<your-api-key>
 ```
 
-## Authentication
+## 认证
 
 ### API Key
 
@@ -53,7 +53,7 @@ VoiceLiveAsyncClient client = new VoiceLiveClientBuilder()
     .buildAsyncClient();
 ```
 
-## Key Concepts
+## 关键概念
 
 | Concept | Description |
 |---------|-------------|
@@ -68,7 +68,7 @@ VoiceLiveAsyncClient client = new VoiceLiveClientBuilder()
 - **Channels**: Mono (1 channel)
 - **Format**: Signed PCM, little-endian
 
-## Core Workflow
+## 核心工作流
 
 ### 1. Start Session
 
@@ -196,7 +196,7 @@ VoiceLiveSessionOptions options = new VoiceLiveSessionOptions()
     .setInstructions("You have access to weather information.");
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use async client** — VoiceLive requires reactive patterns
 2. **Configure turn detection** for natural conversation flow
@@ -205,7 +205,7 @@ VoiceLiveSessionOptions options = new VoiceLiveSessionOptions()
 5. **Use Whisper transcription** for input audio transcription
 6. **Close sessions** properly when conversation ends
 
-## Error Handling
+## 错误处理
 
 ```java
 session.receiveEvents()
@@ -217,14 +217,14 @@ session.receiveEvents()
     .subscribe();
 ```
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
 | GitHub Source | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/ai/azure-ai-voicelive |
 | Samples | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/ai/azure-ai-voicelive/src/samples |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

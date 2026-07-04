@@ -5,11 +5,11 @@ description: "微调 SOTA 预训练模型：LoRA/QLoRA/DoRA 参数高效微调�
 
 # Transfer Learning
 
-## Purpose
+## 目的
 Adapt state-of-the-art pretrained models to your specific task with modern fine-tuning techniques.
 
-## How It Works
+## 工作原理
 
-### Step 1: Choose Base Model (2025 SOTA)
+### 步骤 1: Choose Base Model (2025 SOTA)
 
 | Domain | Model | Params | Strengths |

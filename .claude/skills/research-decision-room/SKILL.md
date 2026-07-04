@@ -80,7 +80,7 @@ Use this skill when the user has any mix of:
 
 Do not use it for pure visual inspiration, campaign ideation, or brand moodboards.
 
-## Workflow
+## 工作流
 
 ### Step 1 - Establish the decision frame
 

@@ -129,14 +129,14 @@ All file writes (design documents, implementation files, test cases) are
 delegated to sub-agents spawned via Task. Each sub-agent enforces the
 "May I write to [path]?" protocol. This orchestrator does not write files directly.
 
-## Output
+## 输出
 
 A summary report covering: design completion status, implementation status per team member, test results, and any open issues.
 
 Verdict: **COMPLETE** — combat feature designed, implemented, and validated.
 Verdict: **BLOCKED** — one or more phases could not complete; partial report produced with unresolved items listed.
 
-## Next Steps
+## 后续步骤
 
 - Run `/code-review` on the implemented combat code before closing stories.
 - Run `/balance-check` to validate combat formulas and tuning values.

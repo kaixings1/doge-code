@@ -12,7 +12,7 @@ Spawn N coordinated agents working on a shared task list using Claude Code's imp
 
 The `swarm` compatibility alias was removed in #1131.
 
-## Usage
+## 用法
 
 ```
 /oh-my-claudecode:team N:agent-type "task description"
@@ -44,7 +44,7 @@ The `swarm` compatibility alias was removed in #1131.
 # Mixed: Codex for backend analysis, Gemini/Antigravity for frontend (use /ccg instead for this)
 ```
 
-## Architecture
+## 架构
 
 ```
 User: "/team 3:executor fix all TypeScript errors"

@@ -10,20 +10,20 @@ date_added: '2026-02-27'
 
 Client library for Azure AI Language service NLP capabilities including sentiment, entities, key phrases, and more.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-ai-textanalytics
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_LANGUAGE_ENDPOINT=https://<resource>.cognitiveservices.azure.com
 AZURE_LANGUAGE_KEY=<your-api-key>  # If using API key
 ```
 
-## Authentication
+## 认证
 
 ### API Key
 
@@ -217,7 +217,7 @@ async def analyze():
 | `begin_analyze_healthcare_entities` | Healthcare NLP (long-running) |
 | `begin_analyze_actions` | Multiple analyses in batch |
 
-## Best Practices
+## 最佳实践
 
 1. **Use batch operations** for multiple documents (up to 10 per request)
 2. **Enable opinion mining** for detailed aspect-based sentiment
@@ -226,7 +226,7 @@ async def analyze():
 5. **Specify language** when known to improve accuracy
 6. **Use context manager** or close client explicitly
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

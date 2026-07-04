@@ -10,21 +10,21 @@ date_added: '2026-02-27'
 
 Manage Azure Bot Service resources including bots, channels, and connections.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-mgmt-botservice
 pip install azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
 AZURE_RESOURCE_GROUP=<your-resource-group>
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -310,7 +310,7 @@ for conn in connections:
 | `FacebookChannel` | Facebook | Messenger integration |
 | `EmailChannel` | Email | Email communication |
 
-## Best Practices
+## 最佳实践
 
 1. **Use 默认AzureCredential** for authentication
 2. **Start with F0 SKU** for development, upgrade to S1 for production
@@ -320,7 +320,7 @@ for conn in connections:
 6. **Use managed identity** when possible for bot connections
 7. **Configure proper CORS** for Web Chat channel
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

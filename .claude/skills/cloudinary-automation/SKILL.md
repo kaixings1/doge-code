@@ -22,7 +22,7 @@ Automate Cloudinary media management workflows -- create folders, configure uplo
 
 ---
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Organize Assets with Folders
 

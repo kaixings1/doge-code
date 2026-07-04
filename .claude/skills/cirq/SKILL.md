@@ -17,7 +17,7 @@ Cirq 是 Google Quantum AI 的开源框架，用于在量子计算机和模拟�
 - 您需要 Google Quantum AI 风格的原语、参数化电路或 `cirq-google` 和 `cirq-ionq` 等集成。
 - 您正在用 Python 原型设计或教授量子工作流，并想要具体的电路示例。
 
-## Installation
+## 安装
 
 ```bash
 uv pip install cirq
@@ -176,7 +176,7 @@ Common topics:
 - Statistical analysis and fidelity estimation
 - Parallel data collection
 
-## Common Patterns
+## 常见模式
 
 ### Variational Algorithm Template
 
@@ -281,7 +281,7 @@ noise_levels = [0.0, 0.001, 0.01, 0.05, 0.1]
 results = noise_comparison_study(circuit, noise_levels)
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Circuit Design**
    - Use appropriate qubit types for your topology
@@ -329,7 +329,7 @@ results = noise_comparison_study(circuit, noise_levels)
 - **Examples**: https://github.com/quantumlib/Cirq/tree/master/examples
 - **ReCirq**: https://github.com/quantumlib/ReCirq
 
-## Common Issues
+## 常见问题
 
 **Circuit too deep for hardware:**
 - Use circuit optimization transformers to reduce depth

@@ -21,7 +21,7 @@ Start an improvement loop for a skill.
 
 Stop the active improvement loop. Changes made during the loop are preserved.
 
-## How It Works
+## 工作原理
 
 1. `/skill-improver` resolves the skill path and creates a session state file
 2. The skill-improver methodology reviews, fixes, and re-reviews iteratively
@@ -32,7 +32,7 @@ Multiple sessions can run simultaneously on different skills. Each gets a unique
 
 See [SKILL.md](skills/skill-improver/SKILL.md) for detailed methodology and issue categorization.
 
-## Troubleshooting
+## 故障排除
 
 - **"subagent not found"**: Install the `plugin-dev` plugin
 - **Loop never completes**: Check state with `cat .claude/skill-improver.*.local.md`, cancel with `/cancel-skill-improver`

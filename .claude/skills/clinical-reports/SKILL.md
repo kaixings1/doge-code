@@ -1032,7 +1032,7 @@ This clinical reports skill integrates with:
 - Quality control review
 - Final approval and regulatory submission
 
-## Resources
+## 资源
 
 This skill includes comprehensive reference files and templates:
 

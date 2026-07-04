@@ -33,13 +33,13 @@ Monitor de performance do Claude Code e sistema local. Diagnostica lentidao, med
 - When the user mentions "travando" or related topics
 - When the user mentions "claude lento" or related topics
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to claude monitor
 - A simpler, more specific tool can handle the request
 - The user needs general-purpose assistance without domain expertise
 
-## How It Works
+## 工作原理
 
 Skill para diagnosticar e resolver problemas de lentidão no Claude Code e no sistema.
 Determina se o gargalo é local (PC) ou remoto (API Claude) e sugere ações corretivas.
@@ -165,13 +165,13 @@ Quando apresentar o diagnóstico, inclua estas dicas contextuais:
 - psutil (instalado automaticamente pelo script se não disponível)
 - Nenhuma API key necessária
 
-## Best Practices
+## 最佳实践
 
 - Provide clear, specific context about your project and requirements
 - Review all suggestions before applying them to production code
 - Combine with other complementary skills for comprehensive analysis
 
-## Common Pitfalls
+## 常见陷阱
 
 - Using this skill for tasks outside its domain expertise
 - Applying recommendations without understanding your specific context

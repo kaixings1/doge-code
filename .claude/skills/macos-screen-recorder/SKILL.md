@@ -30,7 +30,7 @@ plugin:
     summary: "Screen/audio/input capture requires sensitive macOS permissions; keep out of plugin-safe bundles."
     docs: SKILL.md
 ---
-## When to Use
+## 使用场景
 
 Use when you need to script a screen recording WITH system sound on macOS from the CLI (demos, captures, voice-demo recording) — the case QuickTime and `screencapture -v` can't cover without a virtual audio device.
 

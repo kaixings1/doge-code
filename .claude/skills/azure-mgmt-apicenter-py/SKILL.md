@@ -10,20 +10,20 @@ date_added: '2026-02-27'
 
 Manage API inventory, metadata, and governance in Azure API Center.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-mgmt-apicenter
 pip install azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=your-subscription-id
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -232,7 +232,7 @@ metadata = client.metadata_schemas.create_or_update(
 | `environments` | Environment management |
 | `metadata_schemas` | Custom metadata definitions |
 
-## Best Practices
+## 最佳实践
 
 1. **Use workspaces** to organize APIs by team or domain
 2. **Define metadata schemas** for consistent governance
@@ -241,7 +241,7 @@ metadata = client.metadata_schemas.create_or_update(
 5. **Use lifecycle stages** to track API maturity
 6. **Add contacts** for API ownership and support
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

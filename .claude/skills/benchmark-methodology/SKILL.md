@@ -176,7 +176,7 @@ from:
 
 Hand the completed cards plus the tension plot to `competitive-report-structure`.
 
-## Anti-Patterns
+## 反模式
 
 - **Averaging the tension axes.** The two poles of the client's strategic tension must be scored and reported separately. Averaging destroys the insight — the gap between poles is the finding.
 - **Scoring without evidence.** Every score requires a one-line justification and a source link. A score without evidence is an opinion, not a benchmark.
@@ -184,7 +184,7 @@ Hand the completed cards plus the tension plot to `competitive-report-structure`
 - **Applying generic rubric anchors without adapting.** The 1–5 anchors must be calibrated to the specific dimension and competitor set. The generic descriptions are a starting point, not a fixed standard.
 - **Running before the competitor set is scoped.** Use competitive-platform-analysis first to produce a tiered, pruned set. Scoring an unscoped list wastes effort on irrelevant competitors.
 
-## Related Skills
+## 相关技能
 
 - `competitive-platform-analysis` — the prerequisite; produces the tiered competitor set this skill scores.
 - `competitive-report-structure` — the next step; assembles the scored profile cards into a client-deliverable report.

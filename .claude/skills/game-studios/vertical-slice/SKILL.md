@@ -9,7 +9,7 @@ agent: prototyper
 isolation: worktree
 ---
 
-## Purpose
+## 目的
 
 The **vertical slice** answers a different question from the concept prototype:
 *"Can we build this full game loop at production quality, on schedule?"*

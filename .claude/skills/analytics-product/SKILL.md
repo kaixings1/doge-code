@@ -21,7 +21,7 @@ tools:
 
 # ANALYTICS-PRODUCT — Decida com Dados
 
-## Overview
+## 概述
 
 Analytics de produto — PostHog, Mixpanel, eventos, funnels, cohorts, retencao, north star metric, OKRs e dashboards de produto. Ativar para: configurar tracking de eventos, criar funil de conversao, analise de cohort, retencao, DAU/MAU, feature flags, A/B testing, north star metric, OKRs, dashboard de produto.
 
@@ -29,13 +29,13 @@ Analytics de produto — PostHog, Mixpanel, eventos, funnels, cohorts, retencao,
 
 - When you need specialized assistance with this domain
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to analytics product
 - A simpler, more specific tool can handle the request
 - The user needs general-purpose assistance without domain expertise
 
-## How It Works
+## 工作原理
 
 ```
 [objeto]_[verbo_passado]

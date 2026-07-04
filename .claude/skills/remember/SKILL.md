@@ -16,7 +16,7 @@ Promote durable, reusable knowledge into the right memory surface instead of lea
 - **Notepad working** — temporary active-session notes
 - **Docs / AGENTS / CLAUDE files** — durable instructions and conventions when they truly belong there
 
-## Workflow
+## 工作流
 1. Gather the relevant session findings.
 2. Classify each item:
    - durable project fact
@@ -34,7 +34,7 @@ Promote durable, reusable knowledge into the right memory surface instead of lea
 - Keep entries concise and actionable.
 - If something is uncertain, mark it as uncertain rather than storing it as fact.
 
-## Output
+## 输出
 - What was stored
 - Where it was stored
 - Any duplicates/conflicts found

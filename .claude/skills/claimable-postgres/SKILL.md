@@ -218,7 +218,7 @@ If the agent needs a database to fulfill a task (e.g. "build me a todo app with 
 - After writing credentials to an .env file, check that it's covered by .gitignore. If not, warn the user. Do not modify `.gitignore` without confirmation.
 
 
-## When to Use
+## 使用场景
 Use this skill when tackling tasks related to its primary domain or functionality as described above.
 
 ## 局限性

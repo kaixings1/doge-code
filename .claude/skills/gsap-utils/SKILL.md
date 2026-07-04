@@ -24,7 +24,7 @@ Apply when writing or reviewing code that uses **gsap.utils** for math, array/co
 
 **Related skills:** Use with **gsap-core**, **gsap-timeline**, and **gsap-scrolltrigger** when building animations; CustomEase and other easing utilities are in **gsap-plugins**.
 
-## Overview
+## 概述
 
 **gsap.utils** provides pure helpers; no need to register. Use in tween vars (e.g. function-based values), in ScrollTrigger or Observer callbacks, or in any JS that drives GSAP. All are on **gsap.utils** (e.g. `gsap.utils.clamp()`).
 

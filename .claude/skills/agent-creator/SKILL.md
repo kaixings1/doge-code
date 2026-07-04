@@ -48,12 +48,12 @@ Before creating any path, validate both `<agent-name>` and `<plugin-name>`:
 - resolve the final target path and verify it stays under `<appDataDir>\config\plugins\`
 - stop and ask for a safe replacement instead of sanitizing a suspicious name silently
 
-## Workflow
+## 工作流
 
 Follow these steps in order. Do NOT skip the interview — even a one-line
 description from the user needs to be expanded into a proper persona.
 
-### Step 1: Gather requirements
+### 步骤 1: Gather requirements
 
 Ask the user these questions one at a time (use the `ask_question` tool where
 appropriate, or ask conversationally if the flow is natural):
@@ -71,7 +71,7 @@ appropriate, or ask conversationally if the flow is natural):
 4. **Companion skill** — Should I also create a routing skill that auto-triggers
    this agent? (Default: yes)
 
-### Step 2: Generate the persona
+### 步骤 2: Generate the persona
 
 This is the most important step. The user might give you a one-liner like
 "for reviewing code" — your job is to expand that into a rich, detailed persona
@@ -99,7 +99,7 @@ For example, if the user says "for reviewing code", generate a persona like:
 > cases, error handling, resource leaks, and race conditions. You respect the
 > codebase's existing patterns unless they are actively harmful.
 
-### Step 3: Create the folder structure
+### 步骤 3: Create the folder structure
 
 Create the following structure:
 
@@ -113,7 +113,7 @@ plugins/<plugin-name>/
         └── SKILL.md
 ```
 
-### Step 4: Write plugin.json
+### 步骤 4: Write plugin.json
 
 If creating a new plugin, write a minimal `plugin.json`:
 
@@ -127,7 +127,7 @@ If creating a new plugin, write a minimal `plugin.json`:
 
 If adding to an existing plugin, do NOT modify the existing `plugin.json`.
 
-### Step 5: Write the agent file
+### 步骤 5: Write the agent file
 
 Write the `<agent-name>.md` file in the `agents/` folder following this exact structure. Ensure you include the YAML frontmatter and the Prompt Defense Baseline verbatim. For the `model` field in the frontmatter, dynamically insert the name of the model currently powering the session you are running in (e.g., `gemini-3.1-pro`, `opus`, `sonnet`).
 

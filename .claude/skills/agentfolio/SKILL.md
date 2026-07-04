@@ -19,7 +19,7 @@ This skill helps you:
 - Map the landscape of agent frameworks and hosted products.
 - Collect concrete examples and benchmarks for agent capabilities.
 
-## Capabilities
+## 能力
 
 - Discover autonomous AI agents, frameworks, and tools by use case.
 - Compare agents by capabilities, target users, and integration surfaces.
@@ -87,7 +87,7 @@ Use these prompts when working with this skill in an AI coding agent:
 - “Scan AgentFolio for agents that help with customer support triage. List the top options, their target customer size (SMB vs. enterprise), and any notable UX patterns.”
 - “Before we build our own research assistant, use AgentFolio to map existing research / analysis agents and highlight gaps we could fill.”
 
-## When to Use
+## 使用场景
 This skill is applicable when you need to **discover or compare autonomous AI agents** instead of building in a vacuum:
 
 - At the start of a new agent or workflow project.

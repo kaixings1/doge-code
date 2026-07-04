@@ -19,7 +19,7 @@ of artifacts, and gaps that need attention. It's especially useful when:
 
 ---
 
-## Workflow
+## 工作流
 
 ### 1. Scan Key Directories
 
@@ -182,7 +182,7 @@ After generating the report, suggest relevant next steps:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 This skill follows the collaborative design principle:
 

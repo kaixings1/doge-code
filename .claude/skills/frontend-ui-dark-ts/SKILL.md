@@ -68,7 +68,7 @@ src/
 └── main.tsx
 ```
 
-## Configuration
+## 配置
 
 ### index.html
 
@@ -590,7 +590,7 @@ export function PageTransition({ children }: PageTransitionProps) {
 - Components — Button, Card, Input, Dialog, Tabs, and more
 - Patterns — Page layouts, navigation, lists, forms
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

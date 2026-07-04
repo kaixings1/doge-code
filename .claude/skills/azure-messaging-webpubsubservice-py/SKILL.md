@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Real-time messaging with WebSocket connections at scale.
 
-## Installation
+## 安装
 
 ```bash
 # Service SDK (server-side)
@@ -20,7 +20,7 @@ pip install azure-messaging-webpubsubservice
 pip install azure-messaging-webpubsubclient
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_WEBPUBSUB_CONNECTION_STRING=Endpoint=https://<name>.webpubsub.azure.com;AccessKey=...
@@ -234,7 +234,7 @@ async def broadcast():
 | `close_connection` | Disconnect client |
 | `connection_exists` | Check connection status |
 
-## Best Practices
+## 最佳实践
 
 1. **Use roles** to limit client permissions
 2. **Use groups** for targeted messaging
@@ -244,7 +244,7 @@ async def broadcast():
 6. **Use JSON** content type for structured data
 7. **Close connections** gracefully with reasons
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

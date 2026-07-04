@@ -16,7 +16,7 @@ license_source: "https://github.com/luoyuctl/agenttrace/blob/master/LICENSE"
 
 # agenttrace Session Audit
 
-## Overview
+## 概述
 
 Use this skill to inspect local AI coding-agent sessions with
 [agenttrace](https://github.com/luoyuctl/agenttrace). It focuses on the process
@@ -34,9 +34,9 @@ generic JSON or JSONL traces.
 - Use when building a lightweight CI health gate for AI-assisted coding sessions.
 - Use when comparing two attempts and looking for changed tool paths, retries, or cost patterns.
 
-## How It Works
+## 工作原理
 
-### Step 1: Discover Available Sessions
+### 步骤 1: Discover Available Sessions
 
 Prefer an installed `agenttrace` binary when it is available on `PATH`. If the
 current repository is `luoyuctl/agenttrace`, use `go run ./cmd/agenttrace`
@@ -50,7 +50,7 @@ agenttrace --overview
 If no sessions are detected, report the directories checked by `--doctor` and
 ask for the exported session file or log directory.
 
-### Step 2: Produce a Human-Readable Audit
+### 步骤 2: Produce a Human-Readable Audit
 
 Use Markdown when the user wants a concise report they can inspect or share.
 
@@ -62,7 +62,7 @@ In the report, lead with the highest-risk sessions and explain why they matter:
 critical anomalies, repeated tool failures, token or cost waste, long latency
 gaps, low health scores, and suspiciously shallow sessions.
 
-### Step 3: Inspect One Session or Directory
+### 步骤 3: Inspect One Session or Directory
 
 Use the latest session for a quick check, or pass an explicit export path when
 the user provides one.
@@ -74,7 +74,7 @@ agenttrace path/to/session-or-export.json
 agenttrace --overview -d path/to/session-dir
 ```
 
-### Step 4: Compare Attempts When Semantics Matter
+### 步骤 4: Compare Attempts When Semantics Matter
 
 Token and latency metrics can look healthy even when an agent confidently takes
 the wrong implementation path. When the risk is semantic drift, pair the trace
@@ -87,7 +87,7 @@ Look for:
 - repeated edits around the same files without a clear reason
 - lower cost that came from skipping necessary exploration
 
-### Step 5: Add Automation Gates
+### 步骤 5: Add Automation Gates
 
 For CI or repeatable team workflows, use JSON output or health thresholds.
 
@@ -99,7 +99,7 @@ agenttrace --overview --fail-under-health 80 --fail-on-critical --max-tool-fail-
 Tune thresholds to the project. A strict gate is useful for critical workflows;
 a reporting-only command is better while the team is learning its baseline.
 
-## Examples
+## 示例
 
 ### Quick Local Review
 
@@ -120,7 +120,7 @@ agenttrace --overview --fail-under-health 80 --fail-on-critical
 Use this when agent session logs are available in CI and the team wants a simple
 guard against critical anomalies or unhealthy runs.
 
-## Best Practices
+## 最佳实践
 
 - Start with `--doctor` when session discovery is uncertain.
 - Report missing fields plainly; do not invent cost, model, latency, or health data.
@@ -141,7 +141,7 @@ guard against critical anomalies or unhealthy runs.
 - Do not overwrite user reports unless they requested that exact output path.
 - Avoid printing secrets found in prompts, tool output, environment variables, or logs.
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Problem:** No sessions are found.
   **Solution:** Run `agenttrace --doctor`, then point agenttrace at the exported file or log directory.
@@ -152,7 +152,7 @@ guard against critical anomalies or unhealthy runs.
 - **Problem:** CI fails too often after adding a health gate.
   **Solution:** Start with JSON or Markdown reporting, inspect normal baselines, then tighten thresholds gradually.
 
-## Related Skills
+## 相关技能
 
 - `@langfuse` - Use for production LLM application tracing and evaluation.
 - `@observability-engineer` - Use for broader service monitoring, SLOs, and incident workflows.

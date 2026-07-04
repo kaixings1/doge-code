@@ -51,7 +51,7 @@ swiss-creative-mode-template/
 └── example.html
 ```
 
-## Workflow
+## 工作流
 
 1. Read active `DESIGN.md` and map palette/type/layout decisions into root CSS variables.
 2. Copy `assets/template.html` to `index.html`.

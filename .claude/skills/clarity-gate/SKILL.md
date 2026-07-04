@@ -186,7 +186,7 @@ Clarity Gate **enforces** their presence where epistemically required ("Should u
 
 ---
 
-## When to Use
+## 使用场景
 - Before ingesting documents into RAG systems
 - Before sharing documents with other AI systems
 - After writing specifications, state docs, or methodology descriptions
@@ -544,7 +544,7 @@ The 9 Verification Points apply to SOT content:
 
 ---
 
-## Output Format
+## 输出格式
 
 After running Clarity Gate, report:
 

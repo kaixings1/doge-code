@@ -22,14 +22,14 @@ Generate comprehensive C4 architecture documentation for an existing repository/
 - The task is unrelated to c4 architecture documentation workflow
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Overview
+## 概述
 
 This workflow creates comprehensive C4 architecture documentation following the [official C4 model](https://c4model.com/diagrams) by:
 

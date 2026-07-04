@@ -20,7 +20,7 @@ Comprehensive patterns and techniques for analyzing compiled binaries, understan
 - The task is unrelated to binary analysis patterns
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -432,7 +432,7 @@ def auto_rename():
                 pass
 ```
 
-## Best Practices
+## 最佳实践
 
 ### Analysis Workflow
 

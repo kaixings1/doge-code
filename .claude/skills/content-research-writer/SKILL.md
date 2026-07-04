@@ -347,7 +347,7 @@ When a user requests writing assistance:
    Ready to publish! 🚀
    ```
 
-## Examples
+## 示例
 
 ### Example 1: Teresa Torres's Workflow
 
@@ -506,7 +506,7 @@ Recommended structure for writing projects:
     └── article2.md
 ```
 
-## Best Practices
+## 最佳实践
 
 ### For Research
 - Verify sources before citing

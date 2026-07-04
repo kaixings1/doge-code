@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Azure Resource Manager SDK for deploying and managing Weights & Biases ML experiment tracking instances via Azure Marketplace.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.WeightsAndBiases --prerelease
@@ -20,7 +20,7 @@ dotnet add package Azure.Identity
 **Current Version**: v1.0.0-beta.1 (preview)  
 **API Version**: 2024-09-18-preview
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -28,7 +28,7 @@ AZURE_RESOURCE_GROUP=<your-resource-group>
 AZURE_WANDB_INSTANCE_NAME=<your-wandb-instance>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -52,7 +52,7 @@ Subscription
         └── Identity                 # Managed identity (optional)
 ```
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Create Weights & Biases Instance
 
@@ -220,7 +220,7 @@ catch (RequestFailedException ex) when (ex.Status == 404)
 }
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -257,7 +257,7 @@ For Azure Marketplace integration:
 | Offer ID | `wandb-pay-as-you-go` |
 | Plan ID | `wandb-payg` (Pay As You Go) |
 
-## Best Practices
+## 最佳实践
 
 1. **Use 默认AzureCredential** — Supports multiple auth methods automatically
 2. **Enable managed identity** — For secure access to other Azure resources
@@ -267,7 +267,7 @@ For Azure Marketplace integration:
 6. **Use appropriate region** — Choose region closest to your compute
 7. **Monitor with Azure** — Use Azure Monitor for resource health
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -319,7 +319,7 @@ run.finish()
 | `Azure.ResourceManager.WeightsAndBiases` | W&B instance management (this SDK) | `dotnet add package Azure.ResourceManager.WeightsAndBiases --prerelease` |
 | `Azure.ResourceManager.MachineLearning` | Azure ML workspaces | `dotnet add package Azure.ResourceManager.MachineLearning` |
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -328,7 +328,7 @@ run.finish()
 | Azure Marketplace | https://azuremarketplace.microsoft.com/marketplace/apps/wandb.wandb-pay-as-you-go |
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/weightsandbiases |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

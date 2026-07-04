@@ -22,7 +22,7 @@ Fix accessibility issues.
 
 Do not rewrite large parts of the UI. 优先 minimal, targeted fixes.
 
-## When to Use
+## 使用场景
 Reference these guidelines when:
 - adding or changing buttons, links, inputs, menus, dialogs, tabs, dropdowns
 - building forms, validation, error states, helper text

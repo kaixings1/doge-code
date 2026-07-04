@@ -2,7 +2,7 @@
 
 Create pre-configured devcontainers with Claude Code and language-specific tooling.
 
-## Features
+## 特性
 
 - **Claude Code** pre-installed with `bypassPermissions` auto-configured and marketplace plugins
 - **Multi-language support**: Python 3.13, Node 22, Rust, Go

@@ -236,7 +236,7 @@ Verdict: **COMPLETE** — user oriented and handed off to next step.
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 1. **Ask first** — never assume the user's state or intent
 2. **Present options** — give clear paths, not mandates

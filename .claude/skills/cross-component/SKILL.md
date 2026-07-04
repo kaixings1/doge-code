@@ -15,7 +15,7 @@ Single-component analysis misses:
 - Data leakage through shared databases
 - Privilege escalation via service-to-service calls
 
-## Step 1: Map the 架构
+## 步骤 1: Map the 架构
 
 ### Find Orchestration Configs
 
@@ -66,7 +66,7 @@ Internet → [1337] Next.js → [3000] Flask → [6379] Redis
 ```
 ```
 
-## Step 2: Identify Trust Boundaries
+## 步骤 2: Identify Trust Boundaries
 
 ### Frontend → Backend Trust
 
@@ -88,7 +88,7 @@ grep -rn "fetch\|requests\.\|http\.get" --include="*.ts" --include="*.py" | grep
 grep -rn "SERVICE_TOKEN\|INTERNAL_API_KEY\|X-Internal" --include="*.ts" --include="*.py" --include="*.env*"
 ```
 
-## Step 3: Find Cross-Component Attack Paths
+## 步骤 3: Find Cross-Component Attack Paths
 
 ### SSRF → Internal Service
 
@@ -131,7 +131,7 @@ grep -rn "DATABASE_URL\|POSTGRES\|MYSQL\|MONGO" --include="*.env*"
 grep -rn "query\|execute\|rawQuery" --include="*.ts" --include="*.py"
 ```
 
-## Step 4: Document Attack Chains
+## 步骤 4: Document Attack Chains
 
 ### Chain Template
 

@@ -6,7 +6,7 @@ license: Proprietary. LICENSE.txt has complete terms
 
 # PPTX creation, editing, and analysis
 
-## Overview
+## 概述
 
 A user may ask you to create, edit, or analyze the contents of a .pptx file. A .pptx file is essentially a ZIP archive containing XML files and other resources that you can read or edit. You have different tools and workflows available for different tasks.
 
@@ -470,7 +470,7 @@ pdftoppm -jpeg -r 150 -f 2 -l 5 template.pdf slide  # Converts only pages 2-5
 - Avoid verbose variable names and redundant operations
 - Avoid unnecessary print statements
 
-## Dependencies
+## 依赖
 
 Required dependencies (should already be installed):
 

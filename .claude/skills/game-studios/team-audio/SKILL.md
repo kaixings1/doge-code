@@ -52,7 +52,7 @@ Always provide full context in each agent's prompt (feature description, existin
 
 3. **Orchestrate the audio team** in sequence:
 
-### Step 1: Audio Direction (audio-director)
+### 步骤 1: Audio Direction (audio-director)
 Spawn the `audio-director` agent to:
 - Define the sonic identity for this feature/area
 - Specify the emotional tone and audio palette
@@ -60,7 +60,7 @@ Spawn the `audio-director` agent to:
 - Define audio priorities and mix targets
 - Establish any adaptive audio rules (combat intensity, exploration, tension)
 
-### Step 2: Sound Design and Audio Accessibility (parallel)
+### 步骤 2: Sound Design and Audio Accessibility (parallel)
 Spawn the `sound-designer` agent to:
 - Create detailed SFX specifications for every audio event
 - Define sound categories (ambient, UI, gameplay, music, dialogue)
@@ -75,7 +75,7 @@ Spawn the `accessibility-specialist` agent in parallel to:
 - Review the audio event list for any that could cause issues for players with auditory sensitivities (high-frequency alerts, sudden loud events)
 - Output: audio accessibility requirements list integrated into the audio event spec
 
-### Step 3: Technical Implementation (parallel)
+### 步骤 3: Technical Implementation (parallel)
 Spawn the `technical-artist` agent to:
 - Design the audio middleware integration (Wwise/FMOD/native)
 - Define audio bus structure and routing
@@ -91,7 +91,7 @@ Spawn the **primary engine specialist** in parallel (from `.claude/docs/technica
 
 If no engine is configured, skip the specialist spawn.
 
-### Step 4: Code Integration (gameplay-programmer)
+### 步骤 4: Code Integration (gameplay-programmer)
 Spawn the `gameplay-programmer` agent to:
 - Implement audio manager system or review existing
 - Wire up audio events to gameplay triggers
@@ -120,7 +120,7 @@ All file writes (audio design docs, SFX specs, implementation files) are delegat
 to sub-agents spawned via Task. Each sub-agent enforces the "May I write to [path]?"
 protocol. This orchestrator does not write files directly.
 
-## Next Steps
+## 后续步骤
 
 - Review the audio design doc with the audio-director before implementation begins.
 - Use `/dev-story` to implement the audio manager and event system once the design is approved.

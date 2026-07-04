@@ -11,7 +11,7 @@ date_added: "2026-02-27"
 
 # 云渗透测试
 
-## Purpose
+## 目的
 
 Conduct comprehensive security assessments of cloud infrastructure across Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP). This skill covers reconnaissance, authentication testing, resource enumeration, privilege escalation, data extraction, and persistence techniques for authorized cloud security engagements.
 
@@ -58,7 +58,7 @@ pip install scoutsuite pacu
 3. **Credential Findings** - Exposed secrets, keys, and misconfigurations
 4. **Remediation Recommendations** - Hardening guidance per platform
 
-## Core Workflow
+## 核心工作流
 
 ### Phase 1: Reconnaissance
 
@@ -439,7 +439,7 @@ gcloud auth list
 - Use slow, deliberate enumeration
 - 考虑 GuardDuty, 安全性 Center, Cloud Armor
 
-## Examples
+## 示例
 
 ### Example 1: Azure Password Spray
 
@@ -494,7 +494,7 @@ gcloud compute project-info describe --project target-project | grep ssh
 gcloud beta compute ssh instance-name --zone us-central1-a --project target-project
 ```
 
-## Troubleshooting
+## 故障排除
 
 | Issue | Solutions |
 |-------|-----------|

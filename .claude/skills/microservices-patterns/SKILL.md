@@ -26,14 +26,14 @@ Master microservices architecture patterns including service boundaries, inter-s
 - You need a quick prototype without distributed complexity
 - There is no operational support for distributed systems
 
-## Instructions
+## 使用说明
 
 1. Identify domain boundaries and ownership for each service.
 2. Define contracts, data ownership, and communication patterns.
 3. Plan resilience, observability, and deployment strategy.
 4. Provide migration steps and operational guardrails.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed patterns and examples.
 

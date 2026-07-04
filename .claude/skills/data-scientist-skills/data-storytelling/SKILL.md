@@ -5,17 +5,17 @@ description: "使用 SCR（情境-复杂化-解决方案）框架构建数据驱
 
 # Data Storytelling
 
-## Purpose
+## 目的
 Transform analytical findings into compelling narratives that drive action. Uses proven storytelling frameworks to structure data presentations.
 
-## How It Works
+## 工作原理
 
-### Step 1: Apply the SCR Framework (McKinsey)
+### 步骤 1: Apply the SCR Framework (McKinsey)
 - **Situation**: What's the current context? (shared understanding)
 - **Complication**: What's changed or threatened? (the problem/opportunity)
 - **Resolution**: What should we do? (your recommendation)
 
-### Step 2: Structure the Narrative Arc
+### 步骤 2: Structure the Narrative Arc
 1. **Hook**: Lead with the most surprising or impactful finding
 2. **Context**: Provide just enough background (not a data dump)
 3. **Tension**: Show why the status quo is unsustainable
@@ -23,7 +23,7 @@ Transform analytical findings into compelling narratives that drive action. Uses
 5. **Resolution**: Clear recommendation with expected impact
 6. **Call to Action**: What specifically needs to happen next
 
-### Step 3: Design Supporting Visuals
+### 步骤 3: Design Supporting Visuals
 - One chart per slide — one message per chart
 - Title each chart with the insight, not the metric name
   - ❌ "Monthly Revenue by Region"
@@ -31,12 +31,12 @@ Transform analytical findings into compelling narratives that drive action. Uses
 - Remove everything that doesn't support the message
 - Use annotations to guide the reader's eye
 
-### Step 4: Tailor to Audience
+### 步骤 4: Tailor to Audience
 - **Executives**: 3 charts, clear recommendation, ROI framing
 - **Peers**: Method + findings, room for discussion
 - **Technical**: Full methodology, assumptions, limitations
 
-## Usage Examples
+## 使用示例
 
 ```
 "I found that users who complete onboarding in <3 days have 2x retention.
@@ -47,7 +47,7 @@ Help me build a presentation for the VP of Product."
 "Turn my churn analysis into a narrative for the board of directors"
 ```
 
-## Output Format
+## 输出格式
 
 - **Narrative Outline**: SCR structure with talking points per slide
 - **Chart Recommendations**: Which visualizations to include, with code

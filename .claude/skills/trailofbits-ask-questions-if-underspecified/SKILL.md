@@ -4,7 +4,7 @@ Ask the minimum set of clarifying questions needed to avoid wrong work.
 
 **Author:** Kevin Valerio
 
-## When to Use
+## 使用场景
 
 Use this skill when:
 - The request has multiple plausible interpretations
@@ -17,7 +17,7 @@ Use this skill when:
 - Pauses before acting until required answers are provided (unless the user approves proceeding on stated assumptions)
 - Restates confirmed requirements before starting work
 
-## Installation
+## 安装
 
 ```
 /plugin install trailofbits/skills/plugins/ask-questions-if-underspecified

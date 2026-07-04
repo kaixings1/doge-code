@@ -15,14 +15,14 @@ Complete end-to-end MLOps pipeline orchestration from data preparation through m
 - The task is unrelated to ml pipeline workflow
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Overview
+## 概述
 
 This skill provides comprehensive guidance for building production ML pipelines that handle the full lifecycle: data ingestion → preparation → training → validation → deployment → monitoring.
 
@@ -129,7 +129,7 @@ stages = [
    - Configure monitoring
    - Validate production traffic
 
-## Best Practices
+## 最佳实践
 
 ### Pipeline Design
 
@@ -194,7 +194,7 @@ Start with the basics and gradually add complexity:
 4. **Level 4**: Add A/B testing and gradual rollouts
 5. **Level 5**: Multi-model pipelines with ensemble strategies
 
-## Common Patterns
+## 常见模式
 
 ### Batch Training Pipeline
 
@@ -227,7 +227,7 @@ stages:
 # See references/model-training.md
 ```
 
-## Troubleshooting
+## 故障排除
 
 ### Common Issues
 
@@ -244,7 +244,7 @@ stages:
 4. Review experiment tracking metrics
 5. Inspect model artifacts and metadata
 
-## Next Steps
+## 后续步骤
 
 After setting up your pipeline:
 
@@ -253,7 +253,7 @@ After setting up your pipeline:
 3. Review **model-deployment-patterns** for serving strategies
 4. Implement monitoring with observability tools
 
-## Related Skills
+## 相关技能
 
 - **experiment-tracking-setup**: MLflow and Weights & Biases integration
 - **hyperparameter-tuning**: Automated hyperparameter optimization

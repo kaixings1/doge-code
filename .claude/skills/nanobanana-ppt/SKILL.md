@@ -27,7 +27,7 @@ AI-powered PPT generation with document analysis and styled images via the NanoB
 - Upstream: https://github.com/op7418/NanoBanana-PPT-Skills
 - Category: `image-generation`
 
-## How to use
+## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
 discovers it during planning. To run the full upstream workflow with
