@@ -30,7 +30,7 @@ Orchestrate end-to-end feature development from requirements to production deplo
 3. Orchestrate implementation, testing, and security validation.
 4. Prepare rollout, monitoring, and documentation plans.
 
-## Safety
+## 安全
 
 - Avoid production changes without approvals and rollback plans.
 - Validate data migrations and feature flags in staging first.

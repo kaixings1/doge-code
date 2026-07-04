@@ -260,7 +260,7 @@ SELECT ?task ?nextTask WHERE {
 } ORDER BY ?task
 ```
 
-## Anti-Patterns
+## 反模式
 
 1. **Conflating mental states with world states**: Mental states reference world states, they are not world states themselves.
 
@@ -281,7 +281,7 @@ SELECT ?task ?nextTask WHERE {
 - **Explainable AI**: Feed into explanation systems tracing perception through deliberation to action
 - **Neuro-Symbolic AI**: Apply in LAG pipelines to constrain LLM outputs with cognitive structures
 
-## References
+## 参考
 
 See `references/` folder for detailed documentation:
 - `bdi-ontology-core.md` - Core ontology patterns and class definitions

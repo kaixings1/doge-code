@@ -9,14 +9,14 @@ metadata:
 
 Idiomatic Rust patterns and best practices for building safe, performant, and maintainable applications.
 
-## When to Use
+## 使用场景
 
 - Writing new Rust code
 - Reviewing Rust code
 - Refactoring existing Rust code
 - Designing crate structure and module layout
 
-## How It Works
+## 工作原理
 
 This skill enforces idiomatic Rust conventions across six key areas: ownership and borrowing to prevent data races at compile time, `Result`/`?` error propagation with `thiserror` for libraries and `anyhow` for applications, enums and exhaustive pattern matching to make illegal states unrepresentable, traits and generics for zero-cost abstraction, safe concurrency via `Arc<Mutex<T>>`, channels, and async/await, and minimal `pub` surfaces organized by domain.
 
@@ -58,7 +58,7 @@ fn normalize(input: &str) -> Cow<'_, str> {
 }
 ```
 
-## Error Handling
+## 错误处理
 
 ### Use `Result` and `?` — 绝不 `unwrap()` in Production
 

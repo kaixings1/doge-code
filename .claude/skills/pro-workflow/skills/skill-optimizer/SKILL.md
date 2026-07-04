@@ -61,7 +61,7 @@ Options (all optional; sensible defaults shown):
 
 Kill switch: `touch ~/.pro-workflow/STOP` aborts the loop between steps.
 
-## Output
+## 输出
 
 - Candidate accepted → SKILL.md overwritten, hash stamp appended in HTML comment
 - Run details persist in `optimization_runs`, `optimization_candidates`, `optimization_patches`, `optimization_rejections`

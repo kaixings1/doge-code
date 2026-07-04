@@ -96,7 +96,7 @@ Productivity (last 10 sessions)
 - Flag recurring corrections that should become permanent rules.
 - Identify stale learnings that may no longer be relevant.
 
-## Output
+## 输出
 
 Formatted analytics report with:
 - Current session stats

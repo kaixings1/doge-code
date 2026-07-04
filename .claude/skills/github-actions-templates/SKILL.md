@@ -15,14 +15,14 @@ date_added: "2026-02-27"
 - 任务与 GitHub Actions 模板无关时
 - 需要此范围之外的领域或工具时
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Purpose
+## 目的
 
 Create efficient, secure GitHub Actions workflows for continuous integration and deployment across various tech stacks.
 
@@ -334,14 +334,14 @@ jobs:
           }
 ```
 
-## Reference Files
+## 参考文件
 
 - `assets/test-workflow.yml` - Testing workflow template
 - `assets/deploy-workflow.yml` - Deployment workflow template
 - `assets/matrix-build.yml` - Matrix build template
 - `references/common-workflows.md` - Common workflow patterns
 
-## Related Skills
+## 相关技能
 
 - `gitlab-ci-patterns` - For GitLab CI workflows
 - `deployment-pipeline-design` - For pipeline architecture

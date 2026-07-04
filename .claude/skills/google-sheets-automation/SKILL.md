@@ -140,7 +140,7 @@ Service name: `google-sheets-skill-oauth`
 Tokens automatically refresh when expired using Google's cloud function.
 
 
-## When to Use
+## 使用场景
 Use this skill when tackling tasks related to its primary domain or functionality as described above.
 
 ## 局限性

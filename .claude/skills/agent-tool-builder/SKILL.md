@@ -29,7 +29,7 @@ The LLM never sees your code - it only sees the schema and description.
 - Validation gates before execution - reject, fix, or escalate, never silent fail
 - Test tools with the LLM, not just unit tests
 
-## Capabilities
+## 能力
 
 - agent-tools
 - function-calling
@@ -59,7 +59,7 @@ The LLM never sees your code - it only sees the schema and description.
 - Vercel AI SDK - When: Multi-provider tool handling Note: Abstracts differences between providers
 - LangChain Tools - When: LangChain-based agents Note: Converts MCP tools to LangChain format
 
-## Patterns
+## 模式
 
 ### Tool Schema Design
 
@@ -692,7 +692,7 @@ Message: MCP tool definition missing inputSchema.
 
 Works well with: `multi-agent-orchestration`, `api-designer`, `llm-architect`, `backend`
 
-## When to Use
+## 使用场景
 - User mentions or implies: agent tool
 - User mentions or implies: function calling
 - User mentions or implies: tool schema

@@ -10,7 +10,7 @@ date_added: 2026-02-27
 
 Expert patterns for Algolia search implementation, indexing strategies, React InstantSearch, and relevance tuning
 
-## Patterns
+## 模式
 
 ### React InstantSearch with Hooks
 
@@ -905,7 +905,7 @@ Message: No customRanking configured. Add business metrics (popularity, rating).
 - user needs database setup -> postgres-wizard (Source data for indexing)
 - user needs serverless deployment -> aws-serverless (Lambda for indexing jobs)
 
-## When to Use
+## 使用场景
 - User mentions or implies: adding search to
 - User mentions or implies: algolia
 - User mentions or implies: instantsearch

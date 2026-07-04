@@ -131,7 +131,7 @@ paths and paths that escape via `..` segments. After all founders complete a
 module, run a reconciliation pass: summarise convergences and divergences in
 the module file, flag "productive tensions" for the group alignment workshop.
 
-## Anti-Patterns
+## 反模式
 
 - **Starting without reading state first.** Every session must open by checking for existing module files and `state.json`. Skipping this loses all continuity from prior sessions.
 - **Asking multiple questions at once.** One question at a time is not optional — lists produce checklist answers, not real insight.
@@ -139,7 +139,7 @@ the module file, flag "productive tensions" for the group alignment workshop.
 - **Skipping multi-founder reconciliation.** When multiple stakeholders are involved, individual interviews must complete before reconciliation. Discussing the brand collectively first introduces anchoring bias.
 - **Treating this as a one-shot session.** This skill is designed for multiple sessions. Rushing to `90_SYNTHESIS.md` in one conversation produces shallow output.
 
-## Related Skills
+## 相关技能
 
 - `competitive-platform-analysis` — after brand-discovery establishes the positioning brief, use this to scope and categorise the competitor set.
 - `brand-voice` (ECC) — if the brand-discovery voice-and-tone module needs a separate, source-derived writing-style profile.

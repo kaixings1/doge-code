@@ -8,7 +8,7 @@ level: 3
 
 A thin, repo-aware release assistant. On first run it inspects the project and CI to derive release rules, stores them in `.omc/RELEASE_RULE.md` for future use, then walks you through a release using those rules.
 
-## Usage
+## 用法
 
 ```
 /oh-my-claudecode:release [version]

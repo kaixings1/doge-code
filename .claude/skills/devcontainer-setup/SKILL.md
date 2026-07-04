@@ -21,7 +21,7 @@ date_added: 2026-03-06
 - User is asking about general Docker or container questions
 - User wants to deploy production containers (this is for development only)
 
-## Workflow
+## 工作流
 
 ```mermaid
 flowchart TB

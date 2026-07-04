@@ -27,7 +27,7 @@ Workflow obrigat/u00f3rio (sempre na ordem):
 
 Nunca entregue UI quebrada. Priorize sempre pixel-perfect + produ/u00e7/u00e3o-grade.
 
-## When to Use
+## 使用场景
 Use when you need a full senior engineering workflow with planning, architecture, TDD, clean code, and pixel-perfect UX validation in Portuguese (Brazil).
 
 ## 局限性

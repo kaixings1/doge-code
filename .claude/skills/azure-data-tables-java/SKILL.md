@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Build table storage applications using the Azure Tables SDK for Java. Works with both Azure Table Storage and Cosmos DB Table API.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -69,7 +69,7 @@ TableServiceClient serviceClient = new TableServiceClientBuilder()
     .buildClient();
 ```
 
-## Key Concepts
+## 关键概念
 
 - **TableServiceClient**: Manage tables (create, list, delete)
 - **TableClient**: Manage entities within a table (CRUD)
@@ -292,7 +292,7 @@ product.setPrice(999.99);
 tableClient.createEntity(product);
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.data.tables.models.TableServiceException;
@@ -307,7 +307,7 @@ try {
 }
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 # Storage Account
@@ -318,7 +318,7 @@ AZURE_TABLES_ENDPOINT=https://<account>.table.core.windows.net
 COSMOS_TABLE_ENDPOINT=https://<account>.table.cosmosdb.azure.com
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Partition Key Design**: Choose keys that distribute load evenly
 2. **Batch Operations**: Use transactions for atomic multi-entity updates
@@ -335,7 +335,7 @@ COSMOS_TABLE_ENDPOINT=https://<account>.table.cosmosdb.azure.com
 - "partition key row key"
 - "table entity CRUD"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

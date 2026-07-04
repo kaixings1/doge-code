@@ -70,7 +70,7 @@ Read-only reconnect (no writes to profile state):
 firecrawl scrape "https://app.example.com" --profile my-app --no-save-changes
 ```
 
-## Tips
+## 提示
 
 - 始终 scrape first — `interact` requires a scrape ID from a previous `firecrawl scrape` call
 - The scrape ID is saved automatically, so you don't need `--scrape-id` for subsequent interact calls

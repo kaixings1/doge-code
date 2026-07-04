@@ -148,7 +148,7 @@ SPRINT STATUS
   Session 3: fix/login-bug   STATUS: COMPLETE_WITH_NOTES (works, needs perf review)
 ```
 
-## Anti-Patterns
+## 反模式
 
 - Skipping the session header when multiple sessions are active
 - Using STATUS: COMPLETE when there are known issues (use COMPLETE_WITH_NOTES)

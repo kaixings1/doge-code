@@ -23,7 +23,7 @@ date_added: 2026-02-27
 - Use components (buttons, selects, modals) for rich UX
 - Test with guild commands first, deploy global when ready
 
-## Patterns
+## 模式
 
 ### Discord.js v14 Foundation
 
@@ -946,7 +946,7 @@ At 100+ servers, you need Discord verification to keep using them.
 
 Recommended fix:
 
-## Step 1: Enable in Developer Portal
+## 步骤 1: Enable in Developer Portal
 
 ```
 1. Go to https://discord.com/developers/applications
@@ -956,7 +956,7 @@ Recommended fix:
 5. Toggle ON the intents you need
 ```
 
-## Step 2: Request in code
+## 步骤 2: Request in code
 
 ```javascript
 // Discord.js
@@ -1232,7 +1232,7 @@ await rest.put(
 );
 ```
 
-## Workflow
+## 工作流
 
 1. Develop and test with guild commands (instant)
 2. When ready, deploy global commands
@@ -1449,7 +1449,7 @@ Message: Bulk operation without rate limit handling.
 - user needs high availability -> devops (Sharding, scaling, monitoring for large bots)
 - user needs payment integration -> stripe-specialist (Premium bot features, subscription management)
 
-## When to Use
+## 使用场景
 使用此技能当 the request clearly matches the capabilities and patterns described above.
 
 ## 局限性

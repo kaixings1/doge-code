@@ -26,7 +26,7 @@ it, use it only where it fits. Keep that usage narrow and honest: prefer it for
 Xcode-oriented discovery, logging, or debugging support, and do not force
 simulator-specific workflows onto pure macOS tasks.
 
-## Workflow
+## 工作流
 
 1. Discover the project shape.
    - Check whether the workspace is already inside a git repo with `git rev-parse --is-inside-work-tree`.

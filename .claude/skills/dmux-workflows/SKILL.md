@@ -100,7 +100,7 @@ Pane 3: "Review src/api/ for test coverage gaps"
 # Merge all reviews into a single report
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Independent tasks only.** Don't parallelize tasks that depend on each other's output.
 2. **Clear boundaries.** Each pane should work on distinct files or concerns.
@@ -135,7 +135,7 @@ git merge feat/billing
 | **Claude Code Task tool** | In-process subagent spawning | Programmatic parallelism within a session |
 | **Codex multi-agent** | Built-in agent roles | Codex-specific parallel work |
 
-## Troubleshooting
+## 故障排除
 
 - **Pane not responding:** Check if the agent session is waiting for input. Use `m` to read output.
 - **Merge conflicts:** Use git worktrees to isolate file changes per pane.

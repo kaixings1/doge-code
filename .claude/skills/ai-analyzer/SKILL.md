@@ -10,7 +10,7 @@ source: community
 
 基于AI技术的综合健康分析系统，提供智能健康洞察、风险预测和个性化建议。
 
-## When to Use
+## 使用场景
 - The user wants AI-driven health analysis across multiple health datasets or lifestyle signals.
 - You need anomaly detection, risk prediction, or personalized recommendations based on health inputs.
 - You need generated health reports or question-answering over health metrics and trends.

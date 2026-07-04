@@ -6,11 +6,11 @@ version: 1.0.0
 
 # 数据流追踪
 
-## Purpose
+## 目的
 
 Guide the process of tracing user-controlled input from entry points (sources) through the application to security-sensitive functions (sinks). This is essential for confirming vulnerability exploitability.
 
-## When to Use
+## 使用场景
 
 Activate this skill when:
 - Confirming if identified sinks receive user input
@@ -52,10 +52,10 @@ Track how data changes between source and sink:
 
 ## Tracing Methodology
 
-### Step 1: Identify the Sink
+### 步骤 1: Identify the Sink
 Start from the dangerous function identified during code review.
 
-### Step 2: Find Direct 参数
+### 步骤 2: Find Direct 参数
 Identify what variables/parameters are passed to the sink.
 
 ```
@@ -63,7 +63,7 @@ Example: system($cmd);
 Direct parameter: $cmd
 ```
 
-### Step 3: Trace Backwards
+### 步骤 3: Trace Backwards
 Follow each parameter to its origin:
 
 1. Check function parameters
@@ -72,7 +72,7 @@ Follow each parameter to its origin:
 4. Check loop iterations
 5. Check included/required files
 
-### Step 4: Identify Sources
+### 步骤 4: Identify Sources
 Determine where user input enters:
 
 ```
@@ -81,7 +81,7 @@ $cmd = $row['command'];   // Database (check how it was stored)
 $cmd = $config['cmd'];    // Config file (check if user-modifiable)
 ```
 
-### Step 5: Map Transformations
+### 步骤 5: Map Transformations
 Document all changes to the data:
 
 ```
@@ -136,7 +136,7 @@ grep -rn "\$varname" --include="*.php"
 grep -rn "functionName\s*(" --include="*.php"
 ```
 
-## Common Patterns
+## 常见模式
 
 ### Direct Flow
 ```

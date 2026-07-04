@@ -45,7 +45,7 @@ Set up Telegram notifications so OMC can message you when sessions end, need inp
 
 This is an interactive, natural-language configuration skill. Walk the user through setup by asking questions with AskUserQuestion. Write the result to `${CLAUDE_CONFIG_DIR:-~/.claude}/.omc-config.json`.
 
-### Step 1: Detect Existing 配置
+### 步骤 1: Detect Existing 配置
 
 ```bash
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
@@ -69,7 +69,7 @@ fi
 
 If existing config is found, show the user what's currently configured and ask if they want to update or reconfigure.
 
-### Step 2: Create a Telegram Bot
+### 步骤 2: Create a Telegram Bot
 
 Guide the user through creating a bot if they don't have one:
 
@@ -91,7 +91,7 @@ GET YOUR CHAT ID:
    - Group chat IDs are negative numbers (e.g., -1001234567890)
 ```
 
-### Step 3: Collect Bot Token
+### 步骤 3: Collect Bot Token
 
 Use AskUserQuestion:
 
@@ -103,7 +103,7 @@ The user will type their token in the "Other" field.
 - Must match pattern: `digits:alphanumeric` (e.g., `123456789:ABCdefGHI...`)
 - If invalid, explain the format and ask again
 
-### Step 4: Collect Chat ID
+### 步骤 4: Collect Chat ID
 
 Use AskUserQuestion:
 
@@ -122,7 +122,7 @@ echo "Fetching recent messages to find your chat ID..."
 curl -s "https://api.telegram.org/bot${BOT_TOKEN}/getUpdates" | jq '.result[-1].message.chat.id // .result[-1].message.from.id // "No messages found - send /start to your bot first"'
 ```
 
-### Step 5: Choose Parse Mode
+### 步骤 5: Choose Parse Mode
 
 Use AskUserQuestion:
 
@@ -271,7 +271,7 @@ Set up Discord notifications so OMC can ping you when sessions end, need input, 
 
 This is an interactive, natural-language configuration skill. Walk the user through setup by asking questions with AskUserQuestion. Write the result to `${CLAUDE_CONFIG_DIR:-~/.claude}/.omc-config.json`.
 
-### Step 1: Detect Existing 配置
+### 步骤 1: Detect Existing 配置
 
 ```bash
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
@@ -299,7 +299,7 @@ fi
 
 If existing config is found, show the user what's currently configured and ask if they want to update or reconfigure.
 
-### Step 2: Choose Discord Method
+### 步骤 2: Choose Discord Method
 
 Use AskUserQuestion:
 
@@ -332,7 +332,7 @@ Ask two questions:
 1. **"Paste your Discord bot token"** - From discord.com/developers > Your App > Bot > Token
 2. **"Paste the channel ID"** - Right-click channel > Copy Channel ID (requires Developer Mode)
 
-### Step 4: Configure Mention (User Ping)
+### 步骤 4: Configure Mention (User Ping)
 
 Use AskUserQuestion:
 
@@ -355,7 +355,7 @@ Ask: "What is the Discord role ID to mention? (Server Settings > Roles > right-c
 
 The mention format is: `<@&ROLE_ID>` (e.g., `<@&123456789>`)
 
-### Step 5: Configure Events
+### 步骤 5: Configure Events
 
 Use AskUserQuestion with multiSelect:
 
@@ -521,7 +521,7 @@ Set up Slack notifications so OMC can message you when sessions end, need input,
 
 This is an interactive, natural-language configuration skill. Walk the user through setup by asking questions with AskUserQuestion. Write the result to `${CLAUDE_CONFIG_DIR:-~/.claude}/.omc-config.json`.
 
-### Step 1: Detect Existing 配置
+### 步骤 1: Detect Existing 配置
 
 ```bash
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
@@ -547,7 +547,7 @@ fi
 
 If existing config is found, show the user what's currently configured and ask if they want to update or reconfigure.
 
-### Step 2: Create a Slack Incoming Webhook
+### 步骤 2: Create a Slack Incoming Webhook
 
 Guide the user through creating a webhook if they don't have one:
 
@@ -565,7 +565,7 @@ CREATE A WEBHOOK:
 8. Copy the webhook URL (starts with https://hooks.slack.com/services/...)
 ```
 
-### Step 3: Collect Webhook URL
+### 步骤 3: Collect Webhook URL
 
 Use AskUserQuestion:
 
@@ -577,7 +577,7 @@ The user will type their webhook URL in the "Other" field.
 - Must start with `https://hooks.slack.com/services/`
 - If invalid, explain the format and ask again
 
-### Step 4: Configure Mention (User/Group Ping)
+### 步骤 4: Configure Mention (User/Group Ping)
 
 Use AskUserQuestion:
 
@@ -603,7 +603,7 @@ The mention format is: `<!channel>`
 
 The mention format is: `<!here>`
 
-### Step 5: Configure Events
+### 步骤 5: Configure Events
 
 Use AskUserQuestion with multiSelect:
 
@@ -790,7 +790,7 @@ Customize notification messages per event and per platform using `omc_config.hoo
 
 If the trigger or argument contains "hook", "template", or "customize messages" → follow this section.
 
-### Step 1: Detect Existing Hook Config
+### 步骤 1: Detect Existing Hook Config
 
 Check if `${CLAUDE_CONFIG_DIR:-~/.claude}/omc_config.hook.json` exists. If it does, show the current configuration. If not, explain what it does.
 
@@ -802,7 +802,7 @@ events fire on which platform.
 Config file: ~/.claude/omc_config.hook.json
 ```
 
-### Step 2: Choose Event to Configure
+### 步骤 2: Choose Event to Configure
 
 Use AskUserQuestion:
 
@@ -814,7 +814,7 @@ Use AskUserQuestion:
 3. **session-idle** - When Claude finishes and waits for input
 4. **session-start** - When a new session begins
 
-### Step 3: Show Available Variables
+### 步骤 3: Show Available Variables
 
 Display the template variables available for the chosen event:
 
@@ -848,7 +848,7 @@ CONDITIONALS:
   {{#if variableName}}content shown when truthy{{/if}}
 ```
 
-### Step 4: Collect Template
+### 步骤 4: Collect Template
 
 Use AskUserQuestion:
 
@@ -865,7 +865,7 @@ If "Simple summary", use a pre-built compact template:
 - session-idle: `{{projectDisplay}} is idle. {{#if reason}}Reason: {{reason}}{{/if}}`
 - session-start: `Session started: {{projectDisplay}} at {{time}}`
 
-### Step 5: Per-Platform Overrides
+### 步骤 5: Per-Platform Overrides
 
 Use AskUserQuestion:
 

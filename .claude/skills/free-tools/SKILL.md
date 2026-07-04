@@ -170,7 +170,7 @@ Rate each factor 1-5:
 
 ---
 
-## Related Skills
+## 相关技能
 
 - **lead-magnets**: For downloadable content lead magnets (ebooks, checklists, templates)
 - **cro**: For optimizing the tool's landing page

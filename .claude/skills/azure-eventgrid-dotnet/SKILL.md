@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Client library for publishing events to Azure Event Grid topics, domains, and namespaces.
 
-## Installation
+## 安装
 
 ```bash
 # For topics and domains (push delivery)
@@ -25,7 +25,7 @@ dotnet add package Microsoft.Azure.Messaging.EventGrid.CloudNativeCloudEvents
 
 **Current Version**: 4.28.0 (stable)
 
-## Environment Variables
+## 环境变量
 
 ```bash
 # Topic/Domain endpoint
@@ -58,7 +58,7 @@ Pull Delivery (Namespaces)
     └── RejectAsync()
 ```
 
-## Authentication
+## 认证
 
 ### API Key Authentication
 
@@ -393,7 +393,7 @@ ContainerRegistryImagePushedEventData imagePushed;
 IotHubDeviceCreatedEventData deviceCreated;
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -415,7 +415,7 @@ IotHubDeviceCreatedEventData deviceCreated;
 | Extensibility | Limited | Extension attributes |
 | Interoperability | Azure only | Cross-platform |
 
-## Best Practices
+## 最佳实践
 
 1. **Use CloudEvents** — 优先 CloudEvents for new implementations (industry standard)
 2. **Batch events** — Send multiple events in one call for efficiency
@@ -426,7 +426,7 @@ IotHubDeviceCreatedEventData deviceCreated;
 7. **Use dead-letter** — Configure dead-letter for failed events
 8. **Validate schemas** — Validate event data before processing
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -478,7 +478,7 @@ catch (RequestFailedException)
 | `Azure.Identity` | Authentication | `dotnet add package Azure.Identity` |
 | `Microsoft.Azure.WebJobs.Extensions.EventGrid` | Azure Functions trigger | `dotnet add package Microsoft.Azure.WebJobs.Extensions.EventGrid` |
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -488,7 +488,7 @@ catch (RequestFailedException)
 | Pull Delivery | https://learn.microsoft.com/azure/event-grid/pull-delivery-overview |
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/eventgrid/Azure.Messaging.EventGrid |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

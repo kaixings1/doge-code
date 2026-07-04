@@ -248,7 +248,7 @@ It is about **learning the truth with confidence**.
 If you feel tempted to rush, simplify, or “just try it” —
 that is the signal to **slow down and re-check the design**.
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

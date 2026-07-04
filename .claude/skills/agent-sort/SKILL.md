@@ -9,7 +9,7 @@ Use this skill when a repo needs a project-specific ECC surface instead of the d
 
 The goal is not to guess what "feels useful." The goal is to classify ECC components with evidence from the actual codebase.
 
-## When to Use
+## 使用场景
 
 - A project only needs a subset of ECC and full installs are too noisy
 - The repo stack is clear, but nobody wants to hand-curate skills one by one
@@ -89,7 +89,7 @@ If parallel subagents are available, split the review into these passes:
 
 If subagents are not available, run the same passes sequentially.
 
-## Core Workflow
+## 核心工作流
 
 ### 1. Read the repo
 
@@ -192,7 +192,7 @@ If the next step is broader context trimming, hand off to:
 
 - `strategic-compact`
 
-## Output Format
+## 输出格式
 
 Return the result in this order:
 

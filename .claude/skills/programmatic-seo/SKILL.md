@@ -204,7 +204,7 @@ Watch for: Thin content warnings, Ranking drops, Manual actions, Crawl errors
 
 ---
 
-## Output Format
+## 输出格式
 
 ### Strategy Document
 - Opportunity analysis

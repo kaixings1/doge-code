@@ -22,7 +22,7 @@ tools:
   - gemini-cli
   - codex-cli
 ---
-## When to Use
+## 使用场景
 
 Use to catch AI-generated UI that "looks off", is misaligned or centered-mush, or fails usability — when you need to PROVE a layout is balanced and usable instead of trusting the model's eye. Compose it with any taste/token design skill before reporting design "done".
 

@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Client library for Azure App Configuration, a managed service for centralizing application configurations.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -48,7 +48,7 @@ Or use Azure SDK BOM:
 - Azure App Configuration store
 - Connection string or Entra ID credentials
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_APPCONFIG_CONNECTION_STRING=Endpoint=https://<store>.azconfig.io;Id=<id>;Secret=<secret>
@@ -89,7 +89,7 @@ ConfigurationClient configClient = new ConfigurationClientBuilder()
     .buildClient();
 ```
 
-## Key Concepts
+## 关键概念
 
 | Concept | Description |
 |---------|-------------|
@@ -431,7 +431,7 @@ asyncClient.listConfigurationSettings(new SettingSelector().setLabelFilter("Prod
     );
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.core.exception.HttpResponseException;
@@ -447,7 +447,7 @@ try {
 }
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use labels** — Separate configurations by environment (Dev, Staging, Production)
 2. **Use snapshots** — Create immutable snapshots for releases
@@ -458,7 +458,7 @@ try {
 7. **Use Entra ID** — Preferred over connection strings
 8. **Async client** — Use for high-throughput scenarios
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -469,7 +469,7 @@ try {
 | Samples | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/appconfiguration/azure-data-appconfiguration/src/samples |
 | Troubleshooting | https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/appconfiguration/azure-data-appconfiguration/TROUBLESHOOTING.md |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

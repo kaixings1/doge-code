@@ -8,16 +8,16 @@ date_added: "2026-02-27"
 
 # firecrawl-scraper
 
-## Overview
+## 概述
 Deep web scraping, screenshots, PDF parsing, and website crawling using Firecrawl API
 
-## When to Use
+## 使用场景
 - When you need deep content extraction from web pages
 - When page interaction is required (clicking, scrolling, etc.)
 - When you want screenshots or PDF parsing
 - When batch scraping multiple URLs
 
-## Installation
+## 安装
 ```bash
 npx skills add -g BenedictKing/firecrawl-scraper
 ```
@@ -27,16 +27,16 @@ npx skills add -g BenedictKing/firecrawl-scraper
 2. Configure Firecrawl API key
 3. Use naturally in Claude Code conversations
 
-## Examples
+## 示例
 See [GitHub Repository](https://github.com/BenedictKing/firecrawl-scraper) for examples.
 
-## Best Practices
+## 最佳实践
 - Configure API keys via environment variables
 
-## Troubleshooting
+## 故障排除
 See the GitHub repository for troubleshooting guides.
 
-## Related Skills
+## 相关技能
 - context7-auto-research, tavily-web, exa-search, codex-review
 
 ## 局限性

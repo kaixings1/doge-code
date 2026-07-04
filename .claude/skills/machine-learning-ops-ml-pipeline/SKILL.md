@@ -20,7 +20,7 @@ Design and implement a complete ML pipeline for: $ARGUMENTS
 - The task is unrelated to machine learning pipeline - multi-agent mlops orchestration
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.

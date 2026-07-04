@@ -9,7 +9,7 @@ date_added: "2026-02-27"
 
 # E2E Testing Workflow
 
-## Overview
+## 概述
 
 Specialized workflow for end-to-end testing using Playwright including browser automation, visual regression testing, cross-browser testing, and CI/CD integration.
 

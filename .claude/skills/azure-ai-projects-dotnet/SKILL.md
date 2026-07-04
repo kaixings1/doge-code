@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 High-level SDK for Azure AI Foundry project operations including agents, connections, datasets, deployments, evaluations, and indexes.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.AI.Projects
@@ -25,7 +25,7 @@ dotnet add package Azure.AI.Agents.Persistent --prerelease
 
 **Current Versions**: GA v1.1.0, Preview v1.2.0-beta.5
 
-## Environment Variables
+## 环境变量
 
 ```bash
 PROJECT_ENDPOINT=https://<resource>.services.ai.azure.com/api/projects/<project>
@@ -34,7 +34,7 @@ CONNECTION_NAME=<your-connection-name>
 AI_SEARCH_CONNECTION_NAME=<ai-search-connection>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -62,7 +62,7 @@ AIProjectClient
 └── GetPersistentAgentsClient() → PersistentAgentsClient
 ```
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Get Persistent Agents Client
 
@@ -291,7 +291,7 @@ Console.WriteLine(result.Content[0].Text);
 | Azure Functions | `AzureFunctionToolDefinition` | Invoke Azure Functions |
 | MCP | `MCPToolDefinition` | Model 上下文 Protocol tools |
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -305,7 +305,7 @@ Console.WriteLine(result.Content[0].Text);
 | `AIProjectIndex` | Search index metadata |
 | `Evaluation` | Evaluation configuration and results |
 
-## Best Practices
+## 最佳实践
 
 1. **Use `默认AzureCredential`** for production authentication
 2. **Use async methods** (`*Async`) for all I/O operations
@@ -316,7 +316,7 @@ Console.WriteLine(result.Content[0].Text);
 7. **Use `includeCredentials: true`** only when credentials are needed
 8. **Handle pagination** — use `AsyncPageable<T>` for listing operations
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -339,7 +339,7 @@ catch (RequestFailedException ex)
 | `Azure.AI.Agents.Persistent` | Low-level agent operations | `dotnet add package Azure.AI.Agents.Persistent` |
 | `Azure.AI.Projects.OpenAI` | Versioned agents with OpenAI | `dotnet add package Azure.AI.Projects.OpenAI` |
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -348,7 +348,7 @@ catch (RequestFailedException ex)
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/ai/Azure.AI.Projects |
 | Samples | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/ai/Azure.AI.Projects/samples |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

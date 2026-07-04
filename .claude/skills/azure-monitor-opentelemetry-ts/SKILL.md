@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Auto-instrument Node.js applications with distributed tracing, metrics, and logs.
 
-## Installation
+## 安装
 
 ```bash
 # Distro (recommended - auto-instrumentation)
@@ -23,7 +23,7 @@ npm install @azure/monitor-opentelemetry-exporter
 npm install @azure/monitor-ingestion
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=...;IngestionEndpoint=...
@@ -311,7 +311,7 @@ import {
 } from "@azure/monitor-ingestion";
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Call useAzureMonitor() first** - Before importing other modules
 2. **Use ESM loader for ESM projects** - `--import @azure/monitor-opentelemetry/loader`
@@ -320,7 +320,7 @@ import {
 5. **Add custom dimensions** - Use span processors for enrichment
 6. **Graceful shutdown** - Call `shutdownAzureMonitor()` to flush telemetry
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

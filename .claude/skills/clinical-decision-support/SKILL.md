@@ -22,7 +22,7 @@ All documents are generated as publication-ready LaTeX/PDF files optimized for p
 
 **Writing Style:** For publication-ready documents targeting medical journals, consult the **venue-templates** skill's `medical_journal_styles.md` for guidance on structured abstracts, evidence language, and CONSORT/STROBE compliance.
 
-## Capabilities
+## 能力
 
 ### Document Types
 
@@ -83,7 +83,7 @@ This skill is specifically designed for pharmaceutical and clinical research app
 - **Outcomes Research**: Long-term survival and safety in clinical practice
 - **Health Economics**: Cost-effectiveness analyses by biomarker subgroup
 
-## When to Use
+## 使用场景
 
 Use this skill when you need to:
 
@@ -259,7 +259,7 @@ The first page of every CDS document should contain ONLY the executive summary w
 - **Special Populations**: Elderly, renal/hepatic impairment, comorbidities
 - **References**: Full bibliography with trial names and citations
 
-## Output Format
+## 输出格式
 
 **MANDATORY FIRST PAGE REQUIREMENT:**
 - **Page 1**: Full-page executive summary with 3-5 colored tcolorbox elements
@@ -408,7 +408,7 @@ This skill integrates with:
 - **Conditional**: Trade-offs exist, patient values important
 - **Research**: Insufficient evidence, clinical trials needed
 
-## Best Practices
+## 最佳实践
 
 ### For Cohort Analyses
 
@@ -467,7 +467,7 @@ This skill integrates with:
 6. **Conflict of Interest**: Disclose pharmaceutical funding or relationships when applicable
 7. **Visual Hierarchy**: Use colored boxes consistently (blue=data, green=biomarkers, yellow/orange=recommendations, red=warnings)
 
-## References
+## 参考
 
 See the `references/` directory for detailed guidance on:
 - Patient cohort analysis and stratification methods

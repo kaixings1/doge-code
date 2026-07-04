@@ -2,7 +2,7 @@
 
 A plugin that enforces systematic false positive verification when verifying suspected security bugs.
 
-## Overview
+## 概述
 
 When asked to verify suspected security bugs, this plugin activates a rigorous per-bug verification process. Bugs are routed through one of two paths:
 
@@ -11,7 +11,7 @@ When asked to verify suspected security bugs, this plugin activates a rigorous p
 
 Both paths end with six mandatory gate reviews. Each bug receives a **TRUE POSITIVE** or **FALSE POSITIVE** verdict with documented evidence.
 
-## Installation
+## 安装
 
 ```
 /plugin install fp-check

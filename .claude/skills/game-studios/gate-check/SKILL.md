@@ -524,7 +524,7 @@ Based on the verdict, suggest specific next steps:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 This skill follows the collaborative design principle:
 

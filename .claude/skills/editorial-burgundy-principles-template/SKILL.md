@@ -45,7 +45,7 @@ editorial-burgundy-principles-template/
 └── example.html
 ```
 
-## Workflow
+## 工作流
 
 1. Start from `assets/template.html`.
 2. Keep the 3-slide sequence:

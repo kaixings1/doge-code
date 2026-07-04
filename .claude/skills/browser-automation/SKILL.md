@@ -33,7 +33,7 @@ problems, different solutions.
 - Headless for CI, headed for debugging
 - Anti-detection is cat-and-mouse - stay current or get blocked
 
-## Capabilities
+## 能力
 
 - browser-automation
 - playwright
@@ -71,7 +71,7 @@ problems, different solutions.
 - Browserbase - When: Managed headless infrastructure Note: Built-in stealth mode, session management
 - BrowserStack - When: Cross-browser testing at scale Note: Real devices, CI integration
 
-## Patterns
+## 模式
 
 ### Test Isolation Pattern
 
@@ -1092,11 +1092,11 @@ Message: Scraping loop without try/catch. One page failure will crash the entire
 - user needs browser automation in workflows -> workflow-automation (Durable execution for browser tasks)
 - user building browser tools for agents -> agent-tool-builder (Tool design patterns for LLM agents)
 
-## Related Skills
+## 相关技能
 
 Works well with: `agent-tool-builder`, `workflow-automation`, `computer-use-agents`, `test-architect`
 
-## When to Use
+## 使用场景
 - User mentions or implies: playwright
 - User mentions or implies: puppeteer
 - User mentions or implies: browser automation

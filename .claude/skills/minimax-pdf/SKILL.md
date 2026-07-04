@@ -27,7 +27,7 @@ Generate, fill, and reformat PDFs with a token-based design system and 15 cover 
 - Upstream: https://github.com/MiniMax-AI/skills
 - Category: `documents`
 
-## How to use
+## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
 discovers it during planning. To run the full upstream workflow with

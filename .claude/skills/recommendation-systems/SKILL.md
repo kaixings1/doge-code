@@ -5,10 +5,10 @@ description: "工业推荐系统：召回（DSSM、SASRec、MIND、Swing、ItemC
 
 # Recommendation Systems
 
-## Purpose
+## 目的
 Design and build industrial-grade recommendation systems using the multi-stage architecture adopted by Alibaba, ByteDance, Google, Meta, and other top tech companies.
 
-## How It Works
+## 工作原理
 
 ### System 架构 (Industrial Standard)
 

@@ -4,7 +4,7 @@ Find similar vulnerabilities and bugs across codebases using pattern-based analy
 
 **Author:** Axel Mierczuk
 
-## When to Use
+## 使用场景
 
 Use this skill when you need to:
 - Hunt for bug variants after finding an initial vulnerability
@@ -28,13 +28,13 @@ Includes:
 - Ready-to-use templates for CodeQL and Semgrep in Python, JavaScript, Java, Go, and C++
 - Detailed methodology documentation
 
-## Installation
+## 安装
 
 ```
 /plugin install trailofbits/skills/plugins/variant-analysis
 ```
 
-## Related Skills
+## 相关技能
 
 - `codeql` - Primary tool for deep interprocedural variant analysis
 - `semgrep` - Fast pattern matching for simpler variants

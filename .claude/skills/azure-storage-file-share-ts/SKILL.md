@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 SDK for Azure File Share operations — SMB file shares, directories, and file operations.
 
-## Installation
+## 安装
 
 ```bash
 npm install @azure/storage-file-share @azure/identity
@@ -19,7 +19,7 @@ npm install @azure/storage-file-share @azure/identity
 **Current Version**: 12.x  
 **Node.js**: >= 18.0.0
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_STORAGE_ACCOUNT_NAME=<account-name>
@@ -28,7 +28,7 @@ AZURE_STORAGE_ACCOUNT_KEY=<account-key>
 AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=...
 ```
 
-## Authentication
+## 认证
 
 ### Connection String (Simplest)
 
@@ -406,7 +406,7 @@ const sasToken = generateFileSASQueryParameters(
 ).toString();
 ```
 
-## Error Handling
+## 错误处理
 
 ```typescript
 import { RestError } from "@azure/storage-file-share";
@@ -469,7 +469,7 @@ import {
 } from "@azure/storage-file-share";
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use connection strings for simplicity** — Easiest setup for development
 2. **Use 默认AzureCredential for production** — Enable managed identity in Azure
@@ -493,7 +493,7 @@ import {
 | 默认AzureCredential | ✅ | ❌ |
 | Anonymous/SAS access | ✅ | ✅ |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

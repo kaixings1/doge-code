@@ -88,7 +88,7 @@ Scan for potential blockers:
 - 依赖项 on incomplete tracks
 - Failed verification tasks
 
-## Output Format
+## 输出格式
 
 ### Full Project 状态 (no argument)
 

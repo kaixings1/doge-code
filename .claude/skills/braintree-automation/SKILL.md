@@ -21,7 +21,7 @@ Before executing any tools, ensure an active connection exists for the `stripe` 
 
 ---
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Create and Manage Customers
 

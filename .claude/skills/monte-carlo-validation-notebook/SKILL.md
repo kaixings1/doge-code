@@ -18,7 +18,7 @@ Generate a SQL Notebook with validation queries for dbt changes.
 
 **Arguments:** $ARGUMENTS
 
-## When to Use
+## 使用场景
 
 Use this skill when the user wants to validate dbt model or snapshot changes with Monte Carlo SQL Notebook queries, either from a GitHub PR or a local dbt repository.
 

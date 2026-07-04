@@ -237,7 +237,7 @@ If no CRITICAL/HIGH findings:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 - **Never assume a pattern is safe** — flag it and let the user decide
 - **Accepted risk is a valid outcome** — some LOW findings are acceptable trade-offs for a solo team; document the decision

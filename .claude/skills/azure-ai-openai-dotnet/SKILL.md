@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Client library for Azure OpenAI Service providing access to OpenAI models including GPT-4, GPT-4o, embeddings, DALL-E, and Whisper.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.AI.OpenAI
@@ -21,7 +21,7 @@ dotnet add package OpenAI
 
 **Current Version**: 2.1.0 (stable)
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_OPENAI_ENDPOINT=https://<resource-name>.openai.azure.com
@@ -40,7 +40,7 @@ AzureOpenAIClient (top-level)
 └── GetAssistantClient()               → AssistantClient
 ```
 
-## Authentication
+## 认证
 
 ### API Key Authentication
 
@@ -381,7 +381,7 @@ if (completion.FinishReason == ChatFinishReason.ToolCalls)
 }
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -401,7 +401,7 @@ if (completion.FinishReason == ChatFinishReason.ToolCalls)
 | `ChatTool` | Function/tool definition |
 | `ChatToolCall` | Tool invocation request |
 
-## Best Practices
+## 最佳实践
 
 1. **Use Entra ID in production** — Avoid API keys; use `DefaultAzureCredential`
 2. **Reuse client instances** — Create once, share across requests
@@ -412,7 +412,7 @@ if (completion.FinishReason == ChatFinishReason.ToolCalls)
 7. **Monitor token usage** — Track `completion.Usage` for cost management
 8. **Validate tool calls** — Always validate function arguments before execution
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -445,7 +445,7 @@ catch (RequestFailedException ex)
 | `Azure.Identity` | Authentication | `dotnet add package Azure.Identity` |
 | `Azure.Search.Documents` | AI Search for RAG | `dotnet add package Azure.Search.Documents` |
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -455,7 +455,7 @@ catch (RequestFailedException ex)
 | Quickstart | https://learn.microsoft.com/azure/ai-services/openai/quickstart |
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

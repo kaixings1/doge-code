@@ -286,7 +286,7 @@ People abandon forms more from **thinking** than typing.
 
 ---
 
-## Error Handling
+## 错误处理
 
 ### Inline Validation
 
@@ -370,7 +370,7 @@ Examples:
 
 ---
 
-## Output Format
+## 输出格式
 
 ### Form Health Summary
 
@@ -429,7 +429,7 @@ Do **not** test:
 
 ---
 
-## Related Skills
+## 相关技能
 
 * **signup-flow-cro** – Account creation forms
 * **popup-cro** – Forms in modals
@@ -439,7 +439,7 @@ Do **not** test:
 
 ---
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

@@ -24,7 +24,7 @@ Build robust, production-grade backtesting systems that avoid common pitfalls an
 - Historical data quality is unknown or incomplete
 - The task is only a quick performance summary
 
-## Instructions
+## 使用说明
 
 - Define hypothesis, universe, timeframe, and evaluation criteria.
 - Build point-in-time data pipelines and realistic cost models.
@@ -32,12 +32,12 @@ Build robust, production-grade backtesting systems that avoid common pitfalls an
 - Use train/validation/test splits and walk-forward testing.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
-## Safety
+## 安全
 
 - Do not present backtests as guarantees of future performance.
 - Avoid providing financial or investment advice.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed patterns and examples.
 

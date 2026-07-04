@@ -27,7 +27,7 @@ description: "Debug — Debug 相关功能和最佳实践"
 - If the issue is actually a product/runtime bug rather than app code, say so plainly.
 - Do not prescribe broad rewrites before isolating the failure.
 
-## Output
+## 输出
 - Observed failure
 - Root-cause hypothesis
 - Evidence for that hypothesis

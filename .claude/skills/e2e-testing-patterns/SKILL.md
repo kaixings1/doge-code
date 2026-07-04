@@ -27,19 +27,19 @@ Build reliable, fast, and maintainable end-to-end test suites that provide confi
 - The environment cannot support stable UI automation
 - You cannot provision safe test accounts or data
 
-## Instructions
+## 使用说明
 
 1. Identify critical user journeys and success criteria.
 2. Build stable selectors and test data strategies.
 3. Implement tests with retries, tracing, and isolation.
 4. Run in CI with parallelization and artifact capture.
 
-## Safety
+## 安全
 
 - Avoid running destructive tests against production.
 - Use dedicated test data and scrub sensitive output.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed E2E patterns and templates.
 

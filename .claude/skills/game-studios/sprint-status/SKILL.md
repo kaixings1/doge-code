@@ -192,7 +192,7 @@ Run `/story-readiness sprint` to validate story file coverage.
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 This skill is read-only. It reports observed facts from files on disk.
 

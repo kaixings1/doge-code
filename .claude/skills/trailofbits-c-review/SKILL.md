@@ -2,7 +2,7 @@
 
 C/C++ security code review plugin. Based on [Trail of Bits Testing Handbook](https://appsec.guide/docs/languages/c-cpp/)
 
-## Usage
+## 用法
 
 Invoke with `/c-review:c-review`. The skill will prompt for:
 
@@ -13,7 +13,7 @@ Invoke with `/c-review:c-review`. The skill will prompt for:
 
 Findings + SARIF are written to `$(pwd)/.c-review-results/<iso-timestamp>/`.
 
-## Overview
+## 概述
 
 The skill takes the following inputs (collected via `AskUserQuestion`):
 
@@ -43,7 +43,7 @@ Conditional clusters:
 
 Each worker inventories candidate sites once for its cluster (Phase A), then runs that cluster's focused passes and writes one markdown-with-YAML-frontmatter finding file per issue into a shared `findings/` directory. After workers exit, two judges run sequentially: a **dedup judge** merges duplicates, then an **FP + severity judge** assigns `fp_verdict` / `severity` / `attack_vector` / `exploitability` and writes `REPORT.md`. The orchestrator then runs `scripts/generate_sarif.py` (Phase 8b safety net) to emit `REPORT.sarif` (SARIF 2.1.0) from the same frontmatter — idempotent, runs unconditionally so a crashed fp-judge can't leave a corrupt or stale SARIF on disk.
 
-## Architecture
+## 架构
 
 ```
 /c-review:c-review  (skill entry point — no command wrapper)

@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Text and document translation with REST-style clients.
 
-## Installation
+## 安装
 
 ```bash
 # Text translation
@@ -20,7 +20,7 @@ npm install @azure-rest/ai-translation-text @azure/identity
 npm install @azure-rest/ai-translation-document @azure/identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 TRANSLATOR_ENDPOINT=https://api.cognitive.microsofttranslator.com
@@ -279,7 +279,7 @@ import type {
 } from "@azure-rest/ai-translation-document";
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Auto-detect source** - Omit `language` parameter to auto-detect
 2. **Batch requests** - Translate multiple texts in one call for efficiency
@@ -287,7 +287,7 @@ import type {
 4. **Handle errors** - 始终 check `isUnexpected(response)` before accessing body
 5. **Regional endpoints** - Use regional endpoints for lower latency
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

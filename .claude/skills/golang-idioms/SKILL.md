@@ -5,7 +5,7 @@ description: Go语言惯用法 — 错误处理、接口、并发和包设计的
 
 # Go Idioms
 
-## Error Handling
+## 错误处理
 
 ```go
 // Return errors, never panic in library code

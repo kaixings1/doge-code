@@ -16,7 +16,7 @@ date_added: "2026-02-27"
 
 当您需要使用健康助手技能进行医疗信息分析、症状跟踪和健康指导时使用此技能。
 
-## Instructions
+## 使用说明
 
 此技能提供 guidance and patterns for a health assistant skill for medical information analysis, symptom tracking, and wellness guidance..
 

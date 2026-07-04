@@ -307,7 +307,7 @@ See `references/widget-templates.md` for more widget shapes.
 
 ---
 
-## Testing
+## 测试
 
 **Claude Desktop** — current builds still require the `command`/`args` config shape (no native `"type": "http"`). Wrap with `mcp-remote` and force `http-only` transport so the SSE probe doesn't swallow widget-capability negotiation:
 

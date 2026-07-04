@@ -1774,7 +1774,7 @@ describe('UserService', () => {
 
 ---
 
-## Summary
+## 总结
 
 Migrating to fp-ts is a journey, not a destination. Key principles:
 

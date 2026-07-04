@@ -14,7 +14,7 @@ Management plane SDK for provisioning and managing Azure Cache for Redis resourc
 > - **This SDK (Azure.ResourceManager.Redis)**: Create caches, configure firewall rules, manage access keys, set up geo-replication
 > - **Data Plane SDK (StackExchange.Redis)**: Get/set keys, pub/sub, streams, Lua scripts
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.Redis
@@ -25,7 +25,7 @@ dotnet add package Azure.Identity
 **API Version**: 2024-11-01  
 **Target Frameworks**: .NET 8.0, .NET Standard 2.0
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -35,7 +35,7 @@ AZURE_CLIENT_ID=<client-id>
 AZURE_CLIENT_SECRET=<client-secret>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -66,7 +66,7 @@ ArmClient
             └── RedisCacheAccessPolicyResource
 ```
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Create Redis Cache
 
@@ -262,7 +262,7 @@ await cache.Value.ForceRebootAsync(rebootContent);
 - P4: 53 GB per shard
 - P5: 120 GB per shard
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -280,7 +280,7 @@ await cache.Value.ForceRebootAsync(rebootContent);
 | `RedisAccessKeys` | Primary and secondary access keys |
 | `RedisRegenerateKeyContent` | Key regeneration request |
 
-## Best Practices
+## 最佳实践
 
 1. **Use `WaitUntil.Completed`** for operations that must finish before proceeding
 2. **Use `WaitUntil.Started`** when you want to poll manually or run operations in parallel
@@ -293,7 +293,7 @@ await cache.Value.ForceRebootAsync(rebootContent);
 9. **Disable non-SSL port** — set `EnableNonSslPort = false` for security
 10. **Rotate keys regularly** — use `RegenerateKeyAsync` and update connection strings
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -317,7 +317,7 @@ catch (RequestFailedException ex)
 }
 ```
 
-## Common Pitfalls
+## 常见陷阱
 
 1. **SKU downgrades not allowed** — You cannot downgrade from Premium to Standard/Basic
 2. **Clustering requires Premium** — Shard configuration only available on Premium SKU
@@ -356,7 +356,7 @@ var value = await db.StringGetAsync("key");
 | `Azure.ResourceManager.Redis` | Management plane (this SDK) | `dotnet add package Azure.ResourceManager.Redis` |
 | `Microsoft.Azure.StackExchangeRedis` | Azure-specific Redis extensions | `dotnet add package Microsoft.Azure.StackExchangeRedis` |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

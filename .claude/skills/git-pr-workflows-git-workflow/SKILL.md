@@ -22,7 +22,7 @@ Orchestrate a comprehensive git workflow from code review through PR creation, l
 - The task is unrelated to complete git workflow with multi-agent orchestration
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.

@@ -230,7 +230,7 @@ Based on the resolution decisions, suggest:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 1. **Read silently** — compute the full impact before presenting anything
 2. **Show the full report first** — let the user see the scope before asking for action

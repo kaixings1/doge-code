@@ -14,7 +14,7 @@ date_added: "2026-02-27"
 > You must have explicit, written permission from the system owner before using this tool.
 > Misuse of this tool is illegal and strictly prohibited.
 
-## Purpose
+## 目的
 
 Leverage the Metasploit Framework for comprehensive penetration testing, from initial exploitation through post-exploitation activities. Metasploit provides a unified platform for vulnerability exploitation, payload generation, auxiliary scanning, and maintaining access to compromised systems during authorized security assessments.
 
@@ -51,7 +51,7 @@ Before running exploit modules, ask the user to confirm the exact target host, s
 3. **Vulnerability Mapping** - Exploited vulnerabilities with CVE references
 4. **Post-Exploitation Artifacts** - Credentials, files, and system information
 
-## Core Workflow
+## 核心工作流
 
 ### Phase 1: MSFConsole Basics
 

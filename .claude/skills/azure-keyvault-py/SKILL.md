@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Secure storage and management for secrets, cryptographic keys, and certificates.
 
-## Installation
+## 安装
 
 ```bash
 # Secrets
@@ -26,7 +26,7 @@ pip install azure-keyvault-certificates azure-identity
 pip install azure-keyvault-secrets azure-keyvault-keys azure-keyvault-certificates azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_KEYVAULT_URL=https://<vault-name>.vault.azure.net/
@@ -220,7 +220,7 @@ import asyncio
 asyncio.run(get_secret())
 ```
 
-## Error Handling
+## 错误处理
 
 ```python
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
@@ -235,7 +235,7 @@ except HttpResponseError as e:
     raise
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use DefaultAzureCredential** for authentication
 2. **Use managed identity** in Azure-hosted applications
@@ -246,7 +246,7 @@ except HttpResponseError as e:
 7. **Cache secrets** appropriately to reduce API calls
 8. **Use async clients** for high-throughput scenarios
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

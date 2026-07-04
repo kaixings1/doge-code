@@ -10,21 +10,21 @@ date_added: '2026-02-27'
 
 Manage Microsoft Fabric capacities and resources programmatically.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-mgmt-fabric
 pip install azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
 AZURE_RESOURCE_GROUP=<your-resource-group>
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -247,7 +247,7 @@ while not poller.done():
 capacity = poller.result()
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use 默认AzureCredential** for authentication
 2. **Suspend unused capacities** to reduce costs
@@ -258,7 +258,7 @@ capacity = poller.result()
 7. **Set up capacity admins** — specify users who can manage workspaces
 8. **Monitor capacity usage** via Azure Monitor metrics
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

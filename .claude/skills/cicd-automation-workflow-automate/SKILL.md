@@ -23,7 +23,7 @@ date_added: "2026-02-27"
 - There is no workflow or automation context
 - The task is strictly product or UI design
 
-## Safety
+## 安全
 
 - Avoid running deployment steps without approvals and rollback plans.
 - Treat secrets and environment configuration changes as high risk.
@@ -34,7 +34,7 @@ The user needs to automate development workflows, deployment processes, or opera
 ## 需求
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 - Inventory current build, test, and deploy steps plus target environments.
 - Define pipeline stages with caching, artifacts, and quality gates.
@@ -42,14 +42,14 @@ $ARGUMENTS
 - Document rollout, rollback, and notification strategy.
 - If detailed workflow patterns are required, open `resources/implementation-playbook.md`.
 
-## Output Format
+## 输出格式
 
 - 总结 of pipeline stages and triggers
 - Proposed workflow files or step list
 - 必需 secrets, env vars, and service integrations
 - Risks, assumptions, and rollback notes
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed workflow patterns and examples.
 

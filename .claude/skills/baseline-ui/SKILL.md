@@ -14,7 +14,7 @@ Enforces an opinionated UI baseline to prevent AI-generated interface slop.
 - The task is to prevent generic or sloppy AI-generated interface decisions before they spread through the codebase.
 - You need concrete UI constraints to apply to a file review or an ongoing frontend implementation.
 
-## How to use
+## 使用方法
 
 - `/baseline-ui`
   Apply these constraints to any UI work in this conversation.
@@ -75,13 +75,13 @@ Enforces an opinionated UI baseline to prevent AI-generated interface slop.
 - MUST use a fixed `z-index` scale (no arbitrary `z-*`)
 - SHOULD use `size-*` for square elements instead of `w-*` + `h-*`
 
-## Performance
+## 性能
 
 - NEVER animate large `blur()` or `backdrop-filter` surfaces
 - NEVER apply `will-change` outside an active animation
 - NEVER use `useEffect` for anything that can be expressed as render logic
 
-## Design
+## 设计
 
 - NEVER use gradients unless explicitly requested
 - NEVER use purple or multicolor gradients

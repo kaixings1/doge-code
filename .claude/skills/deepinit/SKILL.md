@@ -41,7 +41,7 @@ This creates a navigable hierarchy:
 
 # {Directory Name}
 
-## Purpose
+## 目的
 {One-paragraph description of what this directory contains and its role}
 
 ## Key Files
@@ -69,7 +69,7 @@ This creates a navigable hierarchy:
 ### Common Patterns
 {Code patterns or conventions used here}
 
-## Dependencies
+## 依赖
 
 ### Internal
 {References to other parts of the codebase this depends on}
@@ -82,14 +82,14 @@ This creates a navigable hierarchy:
 
 ## Execution Workflow
 
-### Step 1: Map Directory Structure
+### 步骤 1: Map Directory Structure
 
 ```
 Task(subagent_type="explore", model="haiku",
   prompt="List all directories recursively. Exclude: node_modules, .git, dist, build, __pycache__, .venv, coverage, .next, .nuxt")
 ```
 
-### Step 2: Create Work Plan
+### 步骤 2: Create Work Plan
 
 Generate todo items for each directory, organized by depth level:
 
@@ -100,7 +100,7 @@ Level 2: /src/components, /src/utils, /docs/api
 ...
 ```
 
-### Step 3: Generate Level by Level
+### 步骤 3: Generate Level by Level
 
 **IMPORTANT**: Generate parent levels before child levels to ensure parent references are valid.
 
@@ -110,7 +110,7 @@ For each directory:
 3. Generate AGENTS.md content
 4. Write file with proper parent reference
 
-### Step 4: Compare and Update (if exists)
+### 步骤 4: Compare and Update (if exists)
 
 When AGENTS.md already exists:
 
@@ -127,7 +127,7 @@ When AGENTS.md already exists:
    - Preserve manual annotations
    - Update timestamp
 
-### Step 5: Validate Hierarchy
+### 步骤 5: Validate Hierarchy
 
 After generation, run validation checks:
 
@@ -172,7 +172,7 @@ Example minimal AGENTS.md for directory-only containers:
 <!-- Parent: ../AGENTS.md -->
 # {Directory Name}
 
-## Purpose
+## 目的
 Container directory for organizing related modules.
 
 ## Subdirectories
@@ -210,7 +210,7 @@ Container directory for organizing related modules.
 
 # my-project
 
-## Purpose
+## 目的
 A web application for managing user tasks with real-time collaboration features.
 
 ## Key Files
@@ -242,7 +242,7 @@ A web application for managing user tasks with real-time collaboration features.
 - Use barrel exports (index.ts)
 - Prefer functional components
 
-## Dependencies
+## 依赖
 
 ### External
 - React 18.x - UI framework
@@ -259,7 +259,7 @@ A web application for managing user tasks with real-time collaboration features.
 
 # components
 
-## Purpose
+## 目的
 Reusable React components organized by feature and complexity.
 
 ## Key Files
@@ -290,7 +290,7 @@ Reusable React components organized by feature and complexity.
 - Props interfaces defined above component
 - Use forwardRef for DOM-exposing components
 
-## Dependencies
+## 依赖
 
 ### Internal
 - `src/hooks/` - Custom hooks used by components

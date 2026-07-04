@@ -25,7 +25,7 @@ cold start optimization, and event-driven architecture with Pub/Sub.
 - Containers should start fast and be stateless
 - Handle signals gracefully for clean shutdown
 
-## Patterns
+## 模式
 
 ### Cloud Run Service Pattern
 
@@ -1373,7 +1373,7 @@ Message: Singleton pattern - ensure thread safety if using concurrency > 1.
 - user needs AI integration -> llm-architect (Vertex AI, Cloud Run + LLM)
 - user needs workflow orchestration -> workflow-automation (Cloud Workflows, Eventarc)
 
-## When to Use
+## 使用场景
 使用此技能当 the request clearly matches the capabilities and patterns described above.
 
 ## 局限性

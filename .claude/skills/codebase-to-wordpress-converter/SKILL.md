@@ -58,7 +58,7 @@ Maintain a live tracker of Total Issues, Fixed, and Remaining. Every fix must be
 - ✅ No DOM change
 - ✅ No class change
 
-## Examples
+## 示例
 
 ### Example 1: Navigation Conversion
 ```php
@@ -81,7 +81,7 @@ wp_nav_menu([
 <img src="<?php echo get_template_directory_uri(); ?>/assets/images/logo.png" alt="Logo" />
 ```
 
-## Best Practices
+## 最佳实践
 
 - ✅ **Do:** Use `get_page_by_path()` for robust internal linking.
 - ✅ **Do:** Implement ACF (Advanced Custom Fields) fallbacks in `functions.php`.
