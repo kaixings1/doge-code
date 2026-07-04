@@ -1,8 +1,8 @@
-# Mutation Testing — Campaign Configuration (mewt/muton)
+# 变异测试 — 测试配置
 
 Helps configure [mewt](https://github.com/trailofbits/mewt) or [muton](https://github.com/trailofbits/muton) mutation testing campaigns — scoping targets, tuning timeouts, and optimizing long-running runs so you can execute `mewt run` or `muton run` with confidence.
 
-> **Note**: muton and mewt share identical interfaces but target different languages — mewt for general-purpose languages, muton for TON smart contracts (Tact, Tolk, FunC). All commands and configuration patterns in this plugin apply to both tools. File names change accordingly: `mewt.toml` → `muton.toml`, `mewt.sqlite` → `muton.sqlite`.
+> **注意**: muton and mewt share identical interfaces but target different languages — mewt for general-purpose languages, muton for TON smart contracts (Tact, Tolk, FunC). All commands and configuration patterns in this plugin apply to both tools. File names change accordingly: `mewt.toml` → `muton.toml`, `mewt.sqlite` → `muton.sqlite`.
 
 ## What It Does
 
@@ -20,7 +20,7 @@ Walks through a 5-phase configuration workflow:
 - Optimizing a campaign that would take too long to run
 - Diagnosing why no mutants are generated or why the test command fails
 
-## Prerequisites
+## 前提条件
 
 - [mewt](https://github.com/trailofbits/mewt) v3.0.0+ or [muton](https://github.com/trailofbits/muton) v3.0.0+ installed
 - A test suite runnable from the command line
@@ -28,7 +28,7 @@ Walks through a 5-phase configuration workflow:
   - **mewt**: Rust, Solidity, Go, TypeScript, JavaScript
   - **muton**: Tact, Tolk, FunC (TON smart contract languages)
 
-## Example Usage
+## Example 用法
 
 ```
 User: "Help me set up mewt for this Solidity project"
@@ -37,7 +37,7 @@ User: "My mewt campaign would take 30 hours — how do I optimize it?"
 → Guides through configuration, scope assessment, and optimization
 ```
 
-## References
+## 参考资料
 
 - [mewt GitHub Repository](https://github.com/trailofbits/mewt)
 - [Use mutation testing to find the bugs your tests don't catch](https://blog.trailofbits.com/2025/09/18/use-mutation-testing-to-find-the-bugs-your-tests-dont-catch/) — Trail of Bits blog post

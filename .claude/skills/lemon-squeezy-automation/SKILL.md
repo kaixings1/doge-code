@@ -7,10 +7,9 @@ requires:
     - rube
 ---
 
-# Lemon Squeezy Automation
+# Lemon Squeezy 自动化
 
-Manage your Lemon Squeezy digital products business -- track orders, monitor subscriptions, analyze customers, review discounts, and audit checkouts -- all through natural language commands.
+通过自然语言命令管理您的 Lemon Squeezy 数字产品业务——跟踪订单、监控订阅、分析客户、审查折扣和审计结账。
 
-**Toolkit docs:** [composio.dev/toolkits/lemon_squeezy](https://composio.dev/toolkits/lemon_squeezy)
+**工具包文档**：[composio.dev/toolkits/lemon_squeezy](https://composio.dev/toolkits/lemon_squeezy)
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 35 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

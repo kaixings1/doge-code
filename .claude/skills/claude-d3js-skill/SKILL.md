@@ -6,18 +6,18 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# D3.js Visualisation
+# D3.js 可视化
 
-## Overview
+## 概述
 
-This skill provides guidance for creating sophisticated, interactive data visualisations using d3.js. D3.js (Data-Driven Documents) excels at binding data to DOM elements and applying data-driven transformations to create custom, publication-quality visualisations with precise control over every visual element. The techniques work across any JavaScript environment, including vanilla JavaScript, React, Vue, Svelte, and other frameworks.
+此技能为使用 d3.js 创建复杂的交互式数据可视化提供指导。D3.js（数据驱动文档）擅长将数据绑定到 DOM 元素并应用数据驱动的转换，以创建自定义的、可发表质量的可视化，对每个视觉元素进行精确控制。这些技术适用于任何 JavaScript 环境，包括原生 JavaScript、React、Vue、Svelte 和其他框架。
 
-## When to use d3.js
+## 何时使用 d3.js
 
-**Use d3.js for:**
-- Custom visualisations requiring unique visual encodings or layouts
-- Interactive explorations with complex pan, zoom, or brush behaviours
-- Network/graph visualisations (force-directed layouts, tree diagrams, hierarchies, chord diagrams)
+**使用 d3.js 用于：**
+- 需要独特视觉编码或布局的自定义可视化
+- 具有复杂平移、缩放或刷选行为的交互式探索
+- 网络/图形可视化（力导向布局、树图、层次结构、和弦图）
 - Geographic visualisations with custom projections
 - Visualisations requiring smooth, choreographed transitions
 - Publication-quality graphics with fine-grained styling control
@@ -822,7 +822,7 @@ These templates work with vanilla JavaScript, React, Vue, Svelte, or any other J
 
 To use these resources, read the relevant files when detailed guidance is needed for specific visualisation types or patterns.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

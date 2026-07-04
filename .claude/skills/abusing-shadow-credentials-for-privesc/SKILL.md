@@ -1,6 +1,6 @@
 ---
 name: abusing-shadow-credentials-for-privesc
-description: 利用 pyWhisker、Whisker 和 Certipy 将备用证书密钥写入 msDS-KeyCredentialLink（Shadow Credentials），接管 Active Directory 用户和计算机账户，并通过 PKINIT 进行身份验证。
+description: "利用 pyWhisker、Whisker 和 Certipy 将备用证书密钥写入 msDS-KeyCredentialLink（Shadow Credentials），接管 Active Directory 用户和计算机账户，并通过 PKINIT 进行身份验证。"
 domain: cybersecurity
 subdomain: red-teaming
 tags:
@@ -38,7 +38,7 @@ The technique was published by Elad Shamir (*"Shadow Credentials: Abusing Key Tr
 - During red-team operations needing account takeover without locking out the legitimate user
 - For purple-team exercises generating `msDS-KeyCredentialLink` modification telemetry
 
-## Prerequisites
+## 前提条件
 
 - Authorized engagement scope including AD credential-access techniques
 - Control of a principal with write access to the target's `msDS-KeyCredentialLink`

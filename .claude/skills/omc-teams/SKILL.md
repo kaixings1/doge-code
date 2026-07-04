@@ -1,15 +1,15 @@
 ---
 name: omc-teams
-description: "Omc Teams — Omc Teams 相关功能和最佳实践"
+description: 在 tmux 窗格中为 claude、codex、gemini、antigravity、grok 或 cursor 工作进程提供 CLI 团队运行时，适用于需要基于进程的并行执行时
 aliases: []
 level: 4
 ---
 
-# OMC Teams Skill
+# OMC 团队技能
 
-Spawn N CLI worker processes in tmux panes to execute tasks in parallel. Supports `claude`, `codex`, `gemini`, `antigravity`, `grok`, and `cursor` agent types. Cursor workers are executor-style only.
+在 tmux 窗格中生成 N 个 CLI 工作进程以并行执行任务。支持 `claude`、`codex`、`gemini`、`antigravity`、`grok` 和 `cursor` 代理类型。Cursor 工作进程仅为 executor 风格。
 
-`/omc-teams` is a legacy compatibility skill for the CLI-first runtime: use `omc team ...` commands (not deprecated MCP runtime tools).
+`/omc-teams` 是 CLI 优先运行时的旧版兼容技能：请使用 `omc team ...` 命令（而非已弃用的 MCP 运行时工具）。
 
 ## Usage
 
@@ -182,4 +182,21 @@ If encountered, switch to `omc team ...` CLI commands.
 ## Error Reference
 
 | Error                        | Cause                               | Fix                                                                                 |
-| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 31 MINUTES 45 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| ---------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------- |
+| `not inside tmux`            | Requested in-place pane topology from a non-tmux surface | Start tmux and rerun, or let `omc team` use its detached-session fallback           |
+| `cmux surface detected`      | Running inside cmux without `$TMUX` | Use the normal `omc team ...` flow; OMC will create native cmux worker splits      |
+| `Unsupported agent type`     | Requested agent is not claude/codex/gemini/antigravity/grok/cursor | Use `claude`, `codex`, `gemini`, `antigravity`, `grok`, or `cursor`; for native Claude Code agents use `/oh-my-claudecode:team` |
+| `codex: command not found`   | Codex CLI not installed             | `npm install -g @openai/codex`                                                      |
+| `gemini: command not found`  | Gemini CLI not installed            | `npm install -g @google/gemini-cli` (enterprise/API-key tier)                       |
+| `agy: command not found`     | Antigravity CLI not installed       | Install per the [official instructions](https://antigravity.google)                |
+| `Team <name> is not running` | stale or missing runtime state      | `omc team status <team-name>` then `omc team shutdown <team-name> --force` if stale |
+| `status: failed`             | Workers exited with incomplete work | inspect runtime output, narrow scope, rerun                                         |
+
+## Relationship to `/team`
+
+| Aspect       | `/team`                                                       | `/omc-teams`                                         |
+| ------------ | ------------------------------------------------------------- | ---------------------------------------------------- |
+| Worker type  | Claude Code implicit agent-team teammates                     | claude / codex / gemini / antigravity CLI processes in tmux        |
+| Invocation   | Agent/Task spawn with distinct `name` values; no TeamCreate/TeamDelete in Claude Code 2.1.178+ | `omc team [N:agent]` + `status` + `shutdown` + `api` |
+| Coordination | Native implicit-team messaging and staged pipeline            | tmux worker runtime + CLI API state files            |
+| Use when     | You want Claude-native in-session agent orchestration         | You want external CLI worker execution               |

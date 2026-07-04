@@ -3,26 +3,26 @@ name: debug
 description: "Debug — Debug 相关功能和最佳实践"
 ---
 
-# Debug
+# 调试
 
-Use this skill when the user wants help diagnosing a current OMC/Claude-Code session problem, workflow breakage, or confusing runtime behavior.
+当用户想要帮助诊断当前的 OMC/Claude-Code 会话问题、工作流故障或令人困惑的运行时行为时使用此技能。
 
-## Goal
-Find the real failure signal quickly and explain the next corrective step.
+## 目标
+快速找到真正的故障信号并解释下一步纠正步骤。
 
-## Workflow
-1. Read the user’s issue description carefully.
-2. Inspect the most relevant local evidence first:
-   - trace tools
-   - state tools
-   - notepad / project memory when relevant
-   - failing tests or commands
-3. Reproduce the issue narrowly if possible.
+## 工作流
+1. 仔细阅读用户的问题描述。
+2. 首先检查最相关的本地证据：
+   - 跟踪工具
+   - 状态工具
+   - 记事本/项目记忆（相关时）
+   - 失败的测试或命令
+3. 尽可能缩小范围复现问题。
 4. Distinguish symptoms from root cause.
 5. Recommend the smallest next fix or verification step.
 
 ## Rules
-- Prefer real evidence over guesses.
+- 优先 real evidence over guesses.
 - Use the trace/state surfaces when the issue involves orchestration, hooks, or agent flow.
 - If the issue is actually a product/runtime bug rather than app code, say so plainly.
 - Do not prescribe broad rewrites before isolating the failure.

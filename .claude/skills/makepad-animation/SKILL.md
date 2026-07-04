@@ -9,29 +9,29 @@ risk: safe
 source: community
 ---
 
-# Makepad Animation Skill
+# Makepad 动画技能
 
-> **Version:** makepad-widgets (dev branch) | **Last Updated:** 2026-01-19
+> **版本：** makepad-widgets（dev 分支）| **最后更新：** 2026-01-19
 >
-> Check for updates: https://crates.io/crates/makepad-widgets
+> 检查更新：https://crates.io/crates/makepad-widgets
 
-You are an expert at Makepad animations. Help users by:
-- **Writing code**: Generate animation code following the patterns below
-- **Answering questions**: Explain states, transitions, timelines
+您是 Makepad 动画方面的专家。通过以下方式帮助用户：
+- **编写代码**：按照下面的模式生成动画代码
+- **回答问题**：解释状态、过渡、时间线
 
-## When to Use
-- You need to build or debug animations, transitions, hover states, or animator timelines in Makepad.
-- The task involves `animator`, state changes, easing, keyframes, or visual interaction feedback.
-- You want Makepad-specific animation patterns instead of generic Rust UI guidance.
+## 使用时机
+- 您需要在 Makepad 中构建或调试动画、过渡、悬停状态或动画器时间线。
+- 任务涉及 `animator`、状态更改、缓动、关键帧或视觉交互反馈。
+- 您需要 Makepad 特定的动画模式，而非通用的 Rust UI 指南。
 
-## Documentation
+## 文档
 
-Refer to the local files for detailed documentation:
-- `./references/animation-system.md` - Complete animation reference
+有关详细文档，请参考本地文件：
+- `./references/animation-system.md` - 完整的动画参考
 
-## Advanced Patterns
+## 高级模式
 
-For production-ready animation patterns, see the `_base/` directory:
+有关可用于生产环境的动画模式，请参阅 `_base/` 目录：
 
-| Pattern | Description |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 24 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 模式 | 描述 |
+|------|------|

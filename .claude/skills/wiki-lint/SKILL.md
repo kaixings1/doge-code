@@ -7,8 +7,6 @@ description: "Wiki Lint — Wiki Lint 相关功能和最佳实践"
   "clean up wiki", "check the wiki", "wiki maintenance", "find orphans", "wiki audit".
 ---
 
-# wiki-lint: Wiki Health Check
+# wiki-lint：Wiki 健康检查
 
-Run lint after every 10-15 ingests, or weekly. Ask before auto-fixing anything. Output a lint report to `wiki/meta/lint-report-YYYY-MM-DD.md`.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 55 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+每 10-15 次导入后或每周运行一次检查。在自动修复任何内容前先询问。将检查报告输出到 `wiki/meta/lint-report-YYYY-MM-DD.md`。

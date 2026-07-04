@@ -11,25 +11,24 @@ metadata:
   category: seo
 ---
 
-# Backlink Profile Analysis
+# 反向链接画像分析
 
-## Source Detection
+## 来源检测
 
-Before analysis, detect available data sources:
+分析前，检测可用的数据源：
 
-1. **DataForSEO MCP** (premium): Check if `dataforseo_backlinks_summary` tool is available
-2. **Moz API** (free signup): `python3 scripts/backlinks_auth.py --check moz --json`
-3. **Bing Webmaster** (free signup): `python3 scripts/backlinks_auth.py --check bing --json`
-4. **Common Crawl** (always available): Domain-level graph with PageRank
-5. **Verification Crawler** (always available): Checks if known backlinks still exist
+1. **DataForSEO MCP**（付费）：检查 `dataforseo_backlinks_summary` 工具是否可用
+2. **Moz API**（免费注册）：`python3 scripts/backlinks_auth.py --check moz --json`
+3. **Bing Webmaster**（免费注册）：`python3 scripts/backlinks_auth.py --check bing --json`
+4. **Common Crawl**（始终可用）：域级图与 PageRank
+5. **验证爬虫**（始终可用）：检查已知反向链接是否仍然存在
 
-Run `python3 scripts/backlinks_auth.py --check --json` to detect all sources at once.
+运行 `python3 scripts/backlinks_auth.py --check --json` 一次性检测所有源。
 
-If no sources are configured beyond the always-available tier:
-- Still produce a report using Common Crawl domain metrics
-- Suggest: "Run `/seo backlinks setup` to add free Moz and Bing API keys for richer data"
+如果除了始终可用层外没有配置其他源：
+- 仍可使用 Common Crawl 域指标生成报告
+- 建议："运行 `/seo backlinks setup` 添加免费的 Moz 和 Bing API 密钥以获得更丰富的数据"
 
-## Quick Reference
+## 快速参考
 
-| Command | Purpose |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 54 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 命令 | 用途 |

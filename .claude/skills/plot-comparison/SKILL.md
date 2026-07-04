@@ -3,14 +3,26 @@ name: 比较图
 description: "创建比较可视化：条形图、分组条形图、棒棒糖图、点图、小倍数和哑铃图。适用于比较跨类别的值、显示排名或突出差异。"
 ---
 
-# Plot Comparison
+# 比较图
 
-## Purpose
-Compare values across categories with clear, effective charts.
+## 用途
+使用清晰有效的图表比较不同类别的值。
 
-## How It Works
+## 工作原理
 
-### Chart Types
+### 图表类型
 
-| Chart | Best For |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 33 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 图表 | 最佳用途 |
+|------|----------|
+| 条形图 | 比较少量类别（<20）的单个数值 |
+| 分组条形图 | 比较多个系列跨类别的值 |
+| 棒棒糖图 | 条形图的简约替代方案，关注点值 |
+| 点图 | 显示分布和沿共同轴线的排名 |
+| 小倍数 | 跨多个子图比较相同指标 |
+| 哑铃图 | 显示两个时间点之间的变化或范围 |
+
+## 输出格式
+
+- **图表代码：** 完整实现的 Python（matplotlib/seaborn/plotly）
+- **设计原理：** 为什么选择该图表类型以及进行了哪些自定义
+- **数据要求：** 必要的列和格式

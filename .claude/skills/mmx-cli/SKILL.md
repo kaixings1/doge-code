@@ -12,9 +12,9 @@ Use `mmx` to generate text, images, video, speech, music, and perform web search
 
 ## When to Use
 
-Use this skill when the user wants to generate or inspect text, images, video, speech, music, web-search results, or MiniMax API resources through the `mmx` terminal CLI.
+使用此技能当 the user wants to generate or inspect text, images, video, speech, music, web-search results, or MiniMax API resources through the `mmx` terminal CLI.
 
-## Prerequisites
+## 前提条件
 
 ```bash
 # Install
@@ -31,5 +31,3 @@ mmx text chat --api-key sk-xxxxx --message "Hello"
 ```
 
 Region is auto-detected. Override with `--region global` or `--region cn`.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 19 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

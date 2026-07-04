@@ -128,7 +128,7 @@ When the skill is active, output:
 - Structured bullet hierarchy
 - No commentary or explanation
 
-## Limitations
+## 局限性
 
 - Do not use for deliverables that require prose, narrative flow, or exact source quotation.
 - Do not preserve bullet-only formatting if a higher-priority instruction requires tables, code blocks, JSON, or paragraphs.

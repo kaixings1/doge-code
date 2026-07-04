@@ -3,126 +3,125 @@ name: planning-and-task-breakdown
 description: 规划与任务分解 — 将工作分解为有序任务。在有了规范或需求时使用。
 ---
 
-# Planning and Task Breakdown
+# 规划与任务分解
 
-## Overview
+## 概述
 
-Decompose work into small, verifiable tasks with explicit acceptance criteria. Good task breakdown is the difference between an agent that completes work reliably and one that produces a tangled mess. Every task should be small enough to implement, test, and verify in a single focused session.
+将工作分解为带有明确验收标准的小型可验证任务。好的任务分解决定了代理是可靠地完成工作还是产生一团糟。每个任务应足够小，可以在单次专注会话中实现、测试和验证。
 
-## When to Use
+## 何时使用
 
-- You have a spec and need to break it into implementable units
-- A task feels too large or vague to start
-- Work needs to be parallelized across multiple agents or sessions
-- You need to communicate scope to a human
-- The implementation order isn't obvious
+- 你有规格说明，需要将其分解为可实现单元
+- 任务感觉太大或太模糊而无法开始
+- 工作需要跨多个代理或会话并行化
+- 你需要向人传达范围
+- 实现顺序不明确
 
-**When NOT to use:** Single-file changes with obvious scope, or when the spec already contains well-defined tasks.
+**何时不使用：** 范围明确的单文件变更，或规格说明已包含定义良好的任务。
 
-## The Planning Process
+## 规划过程
 
-### Step 1: Enter Plan Mode
+### 步骤 1：进入规划模式
 
-Before writing any code, operate in read-only mode:
+在编写任何代码之前，以只读模式操作：
 
-- Read the spec and relevant codebase sections
-- Identify existing patterns and conventions
-- Map dependencies between components
-- Note risks and unknowns
+- 阅读规格说明和相关代码库部分
+- 识别现有模式和约定
+- 映射组件之间的依赖关系
+- 记录风险和未知因素
 
-**Do NOT write code during planning.** The output is a plan document, not implementation.
+**规划期间不要编写代码。** 输出是计划文档，而非实现。
 
-### Step 2: Identify the Dependency Graph
+### 步骤 2：识别依赖图谱
 
-Map what depends on what:
+映射依赖关系：
 
 ```
-Database schema
+数据库 schema
     │
-    ├── API models/types
+    ├── API 模型/类型
     │       │
-    │       ├── API endpoints
+    │       ├── API 端点
     │       │       │
-    │       │       └── Frontend API client
+    │       │       └── 前端 API 客户端
     │       │               │
-    │       │               └── UI components
+    │       │               └── UI 组件
     │       │
-    │       └── Validation logic
+    │       └── 验证逻辑
     │
-    └── Seed data / migrations
+    └── 种子数据 / 迁移
 ```
 
-Implementation order follows the dependency graph bottom-up: build foundations first.
+实现顺序遵循依赖图谱自底向上：先构建基础。
 
-### Step 3: Slice Vertically
+### 步骤 3：垂直切分
 
-Instead of building all the database, then all the API, then all the UI — build one complete feature path at a time:
+不是先构建所有数据库、再构建所有 API、再构建所有 UI——而是一次构建一个完整的功能路径：
 
-**Bad (horizontal slicing):**
+**差（水平切分）：**
 ```
-Task 1: Build entire database schema
-Task 2: Build all API endpoints
-Task 3: Build all UI components
-Task 4: Connect everything
-```
-
-**Good (vertical slicing):**
-```
-Task 1: User can create an account (schema + API + UI for registration)
-Task 2: User can log in (auth schema + API + UI for login)
-Task 3: User can create a task (task schema + API + UI for creation)
-Task 4: User can view task list (query + API + UI for list view)
+任务 1：构建完整数据库 schema
+任务 2：构建所有 API 端点
+任务 3：构建所有 UI 组件
+任务 4：连接所有内容
 ```
 
-Each vertical slice delivers working, testable functionality.
+**好（垂直切分）：**
+```
+任务 1：用户可以创建账户（注册的 schema + API + UI）
+任务 2：用户可以登录（认证 schema + API + UI）
+任务 3：用户可以创建任务（任务 schema + API + UI）
+任务 4：用户可以查看任务列表（查询 + API + UI）
+```
 
-### Step 4: Write Tasks
+每个垂直切分交付可工作、可测试的功能。
 
-Each task follows this structure:
+### 步骤 4：编写任务
+
+每个任务遵循此结构：
 
 ```markdown
-## Task [N]: [Short descriptive title]
+## 任务 [N]: [简短描述性标题]
 
-**Description:** One paragraph explaining what this task accomplishes.
+**描述：** 一段说明此任务完成什么。
 
-**Acceptance criteria:**
-- [ ] [Specific, testable condition]
-- [ ] [Specific, testable condition]
+**验收标准：**
+- [ ] [具体的、可测试的条件]
+- [ ] [具体的、可测试的条件]
 
-**Verification:**
-- [ ] Tests pass: `npm test -- --grep "feature-name"`
-- [ ] Build succeeds: `npm run build`
-- [ ] Manual check: [description of what to verify]
+**验证：**
+- [ ] 测试通过：`npm test -- --grep "feature-name"`
+- [ ] 构建成功：`npm run build`
+- [ ] 手动检查：[要验证的内容描述]
 
-**Dependencies:** [Task numbers this depends on, or "None"]
+**依赖：** [此任务依赖的任务编号，或"无"]
 
-**Files likely touched:**
+**可能触及的文件：**
 - `src/path/to/file.ts`
 - `tests/path/to/test.ts`
 
-**Estimated scope:** [Small: 1-2 files | Medium: 3-5 files | Large: 5+ files]
+**预估范围：** [小：1-2 个文件 | 中：3-5 个文件 | 大：5+ 个文件]
 ```
 
-### Step 5: Order and Checkpoint
+### 步骤 5：排序和检查点
 
-Arrange tasks so that:
+安排任务使得：
 
-1. Dependencies are satisfied (build foundation first)
-2. Each task leaves the system in a working state
-3. Verification checkpoints occur after every 2-3 tasks
-4. High-risk tasks are early (fail fast)
+1. 依赖关系满足（先建基础）
+2. 每个任务使系统保持工作状态
+3. 每 2-3 个任务后设置验证检查点
+4. 高风险任务靠前（快速失败）
 
-Add explicit checkpoints:
+添加显式检查点：
 
 ```markdown
-## Checkpoint: After Tasks 1-3
-- [ ] All tests pass
-- [ ] Application builds without errors
-- [ ] Core user flow works end-to-end
-- [ ] Review with human before proceeding
+## 检查点：任务 1-3 之后
+- [ ] 所有测试通过
+- [ ] 应用构建无错误
+- [ ] 核心用户流程端到端可用
+- [ ] 继续前与人工审查
 ```
 
-## Task Sizing Guidelines
+## 任务规模指南
 
-| Size | Files | Scope | Example |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 40 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 规模 | 文件数 | 范围 | 示例 |

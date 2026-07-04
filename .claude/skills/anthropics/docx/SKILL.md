@@ -10,7 +10,7 @@ license: Proprietary. LICENSE.txt has complete terms
 
 A .docx file is a ZIP archive containing XML files.
 
-## Quick Reference
+## 快速参考
 
 | Task | Approach |
 |------|----------|

@@ -3,11 +3,11 @@ name: git-guardrails-claude-code
 description: "Git Guardrails Claude Code — Git Guardrails Claude Code 相关功能和最佳实践"
 ---
 
-# Setup Git Guardrails
+# 设置 Git 安全护栏
 
-Sets up a PreToolUse hook that intercepts and blocks dangerous git commands before Claude executes them.
+设置 PreToolUse 钩子，在 Claude 执行之前拦截并阻止危险的 git 命令。
 
-## What Gets Blocked
+## 会被拦截的操作
 
 - `git push` (all variants including `--force`)
 - `git reset --hard`
@@ -15,9 +15,9 @@ Sets up a PreToolUse hook that intercepts and blocks dangerous git commands befo
 - `git branch -D`
 - `git checkout .` / `git restore .`
 
-When blocked, Claude sees a message telling it that it does not have authority to access these commands.
+被阻止时，Claude 会看到一条消息，告知它没有权限访问这些命令。
 
-## Steps
+## 步骤
 
 ### 1. Ask scope
 

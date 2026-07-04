@@ -40,7 +40,7 @@ BlobServiceClient serviceClient = new BlobServiceClientBuilder()
     .buildClient();
 ```
 
-### With DefaultAzureCredential
+### With 默认AzureCredential
 
 ```java
 import com.azure.identity.DefaultAzureCredentialBuilder;
@@ -298,7 +298,7 @@ BlobServiceSasSignatureValues containerSasValues = new BlobServiceSasSignatureVa
 String containerSas = containerClient.generateSas(containerSasValues);
 ```
 
-### Blob Properties and Metadata
+### Blob 属性 and Metadata
 
 ```java
 import com.azure.storage.blob.models.BlobProperties;
@@ -355,7 +355,7 @@ try {
 }
 ```
 
-## Proxy Configuration
+## Proxy 配置
 
 ```java
 import com.azure.core.http.ProxyOptions;
@@ -392,7 +392,7 @@ AZURE_STORAGE_ACCOUNT_URL=https://<account>.blob.core.windows.net
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

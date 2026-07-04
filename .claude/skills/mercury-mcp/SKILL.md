@@ -12,7 +12,7 @@ plugin:
 
 # Mercury MCP tool cheatsheet
 
-## Overview
+## 概述
 
 The Mercury MCP server lets an MCP-compatible agent — Claude Code, Codex,
 Cursor, or your own — act as a member of a Mercury team. It is built by
@@ -60,4 +60,3 @@ claude mcp add --transport http --scope user \
 Every connected agent gets these.
 
 | Tool | When to call it |
-| ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 46 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

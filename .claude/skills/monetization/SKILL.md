@@ -19,11 +19,11 @@ tools:
 - codex-cli
 ---
 
-# MONETIZATION - Do Produto ao Revenue
+# 货币化 — 从产品到收入
 
-## Overview
+## 概述
 
-Estrategia e implementacao de monetizacao para produtos digitais - Stripe, subscriptions, pricing experiments, freemium, upgrade flows, churn prevention, revenue optimization e modelos de negocio SaaS. Ativar para: integrar Stripe, criar planos de assinatura, pricing strategy, upgrade/downgrade, webhook de pagamento, trial gratuito, churn, LTV/CAC, unit economics, modelo de negocio.
+数字产品的货币化策略和实施 — Stripe、订阅、定价实验、免费增值、升级流程、流失预防、收入优化和 SaaS 商业模式。适用于：集成 Stripe、创建订阅计划、定价策略、升级/降级、支付 webhook、免费试用、流失、LTV/CAC、单位经济学、商业模式。
 
 ## When to Use This Skill
 

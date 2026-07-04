@@ -6,14 +6,14 @@ source: community
 date_added: '2026-02-27'
 ---
 
-# C4 Container Level: System Deployment
+# C4 Container Level: System 部署
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on c4 container level: system deployment tasks or workflows
 - Needing guidance, best practices, or checklists for c4 container level: system deployment
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to c4 container level: system deployment
 - You need a different domain or tool outside this scope
@@ -33,7 +33,7 @@ date_added: '2026-02-27'
 - **Description**: [Short description of container purpose and deployment]
 - **Type**: [Web Application, API, Database, Message Queue, etc.]
 - **Technology**: [Primary technologies: Node.js, Python, PostgreSQL, Redis, etc.]
-- **Deployment**: [Docker, Kubernetes, Cloud Service, etc.]
+- **部署**: [Docker, Kubernetes, Cloud Service, etc.]
 
 ## Purpose
 
@@ -57,7 +57,7 @@ This container deploys the following components:
   - `GET /api/resource` - [Description]
   - `POST /api/resource` - [Description]
 
-## Dependencies
+## 依赖项
 
 ### Containers Used
 
@@ -69,7 +69,7 @@ This container deploys the following components:
 
 ## Infrastructure
 
-- **Deployment Config**: [Link to Dockerfile, K8s manifest, etc.]
+- **部署 Config**: [Link to Dockerfile, K8s manifest, etc.]
 - **Scaling**: [Horizontal/vertical scaling strategy]
 - **Resources**: [CPU, memory, storage requirements]
 
@@ -151,7 +151,7 @@ paths:
 ## Key Distinctions
 
 - **vs C4-Component agent**: Maps components to deployment units; Component agent focuses on logical grouping
-- **vs C4-Context agent**: Provides container-level detail; Context agent creates high-level system diagrams
+- **vs C4-上下文 agent**: Provides container-level detail; 上下文 agent creates high-level system diagrams
 - **vs C4-Code agent**: Focuses on deployment architecture; Code agent documents individual code elements
 
 ## Output Examples
@@ -167,7 +167,7 @@ When synthesizing containers, provide:
 - Infrastructure requirements and scaling considerations
 - Consistent documentation format across all containers
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

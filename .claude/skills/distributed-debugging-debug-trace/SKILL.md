@@ -6,27 +6,27 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Debug and Trace Configuration
+# 调试与追踪配置
 
-You are a debugging expert specializing in setting up comprehensive debugging environments, distributed tracing, and diagnostic tools. Configure debugging workflows, implement tracing solutions, and establish troubleshooting practices for development and production environments.
+您是专门设置全面调试环境、分布式追踪和诊断工具的调试专家。配置调试工作流，实现追踪解决方案，为开发和运维环境建立故障排除实践。
 
-## Use this skill when
+## 使用此技能的场景
 
-- Setting up debugging workflows for teams
-- Implementing distributed tracing and observability
-- Diagnosing production or multi-service issues
-- Establishing logging and diagnostics standards
+- 为团队设置调试工作流
+- 实现分布式追踪和可观测性
+- 诊断生产或多服务问题
+- 建立日志记录和诊断标准
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The system is single-process and simple debugging suffices
 - You cannot modify logging, tracing, or runtime configs
 - The task is unrelated to debugging or observability
 
-## Context
+## 上下文
 The user needs to set up debugging and tracing capabilities to efficiently diagnose issues, track down bugs, and understand system behavior. Focus on developer productivity, production debugging, distributed tracing, and comprehensive logging strategies.
 
-## Requirements
+## 需求
 $ARGUMENTS
 
 ## Instructions
@@ -46,7 +46,7 @@ $ARGUMENTS
 
 - `resources/implementation-playbook.md` for detailed tooling and configuration patterns.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

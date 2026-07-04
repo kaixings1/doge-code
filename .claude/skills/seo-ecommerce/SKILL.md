@@ -1,12 +1,6 @@
 ---
 name: seo-ecommerce
-description: "Seo Ecommerce — Seo Ecommerce 相关功能和最佳实践"
-  E-commerce SEO analysis: Google Shopping visibility, Amazon marketplace
-  intelligence, product schema validation, competitor pricing analysis, and
-  marketplace keyword gaps. Combines on-page product SEO with marketplace data
-  from DataForSEO Merchant API. Use when user says "ecommerce SEO", "product SEO",
-  "Google Shopping", "marketplace SEO", "product schema", "Amazon SEO",
-  "product listings", "shopping ads", or "merchant SEO".
+description: "Seo Ecommerce — 电商 SEO 分析相关功能和最佳实践：Google Shopping 可见性、Amazon 市场情报、产品 schema 验证、竞争对手定价分析和市场关键词空白。"
 user-invocable: true
 argument-hint: "<url or keyword>"
 license: MIT
@@ -18,13 +12,11 @@ metadata:
   category: seo
 ---
 
-# E-commerce SEO Analysis
+# 电商 SEO 分析
 
-Comprehensive product page optimization, marketplace intelligence, and
-competitive pricing analysis. Works standalone (on-page + schema) and with
-DataForSEO Merchant API for live Google Shopping and Amazon data.
+全面的产品页面优化、市场情报和竞争定价分析。可独立运行（页面 + schema），也可与 DataForSEO Merchant API 配合获取实时 Google Shopping 和 Amazon 数据。
 
-## Commands
+## 命令
 
-| Command | Purpose | DataForSEO? |
+| 命令 | 用途 | 需要 DataForSEO？ |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 46 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

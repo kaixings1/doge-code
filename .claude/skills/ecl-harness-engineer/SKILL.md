@@ -26,7 +26,7 @@ Design and create Harness Engineering infrastructure so AI agents can work relia
 - Use when converting repeated agent workflow failures into repository-local documentation, tests, lint rules, or lightweight auto-evolution checks.
 - Do not use for ordinary business feature implementation unless the requested work is specifically about creating or improving the repository harness.
 
-## Limitations
+## 局限性
 
 - This skill creates or audits harness infrastructure; it does not replace product requirements, implementation planning, code review, or release approval for the target project.
 - The generated ECL docs, linters, scripts, and CI examples must be adapted to the repository's actual stack, security model, and existing contributor workflow before enforcement.

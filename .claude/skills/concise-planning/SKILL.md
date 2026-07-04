@@ -6,18 +6,18 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Concise Planning
+# 简洁规划
 
-## Goal
+## 目标
 
-Turn a user request into a **single, actionable plan** with atomic steps.
+将用户请求转化为具有原子步骤的**单一、可执行的计划**。
 
-## Workflow
+## 工作流
 
-### 1. Scan Context
+### 1. 扫描上下文
 
-- Read `README.md`, docs, and relevant code files.
-- Identify constraints (language, frameworks, tests).
+- 读取 `README.md`、文档和相关代码文件。
+- 识别约束条件（语言、框架、测试）。
 
 ### 2. Minimal Interaction
 
@@ -29,7 +29,7 @@ Turn a user request into a **single, actionable plan** with atomic steps.
 Use the following structure:
 
 - **Approach**: 1-3 sentences on what and why.
-- **Scope**: Bullet points for "In" and "Out".
+- **范围**: Bullet points for "In" and "Out".
 - **Action Items**: A list of 6-10 atomic, ordered tasks (Verb-first).
 - **Validation**: At least one item for testing.
 
@@ -67,7 +67,7 @@ Use the following structure:
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -1,6 +1,6 @@
 ---
 name: agent-orchestrator
-description: "Agent Orchestrator — Agent Orchestrator 相关功能和最佳实践"
+description: "Agent Orchestrator — 多代理编排器，协调多个 AI 代理协同完成复杂任务。"
 risk: safe
 source: community
 date_added: '2026-03-06'

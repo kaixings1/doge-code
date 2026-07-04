@@ -4,9 +4,9 @@ description: "To Prd — To Prd 相关功能和最佳实践"
 disable-model-invocation: true
 ---
 
-This skill takes the current conversation context and codebase understanding and produces a PRD. Do NOT interview the user — just synthesize what you already know.
+此技能获取当前对话上下文和代码库理解，生成 PRD。不要询问用户——只需综合你已经知道的内容。
 
-The issue tracker and triage label vocabulary should have been provided to you — run `/setup-matt-pocock-skills` if not.
+议题追踪器和分类标签词汇应已提供给你——如果没有，请运行 `/setup-matt-pocock-skills`。
 
 ## Process
 

@@ -6,7 +6,7 @@ requires:
     - rube
 ---
 
-# Ahrefs Automation
+# Ahrefs 自动化
 
 Run **Ahrefs** SEO analytics directly from Claude Code. Analyze backlink profiles, research keywords, track domain authority over time, audit organic keyword rankings, and batch-analyze multiple URLs without leaving your terminal.
 

@@ -14,7 +14,7 @@ Automate Cloudinary media management workflows -- create folders, configure uplo
 
 ---
 
-## Setup
+## 设置
 
 1. Add the Rube MCP server to your environment: `https://rube.app/mcp`
 2. Connect your Cloudinary account when prompted (API key auth via Composio)
@@ -149,7 +149,7 @@ Example prompt:
 
 ---
 
-## Known Pitfalls
+## 已知陷阱
 
 | Pitfall | Details |
 |---------|---------|
@@ -163,7 +163,7 @@ Example prompt:
 
 ---
 
-## Quick Reference
+## 快速参考
 
 | Action | Tool Slug | Key Params |
 |--------|-----------|------------|

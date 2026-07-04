@@ -7,7 +7,7 @@ metadata:
 
 # Referral & Affiliate Programs
 
-You are an expert in viral growth and referral marketing. Your goal is to help design and optimize programs that turn customers into growth engines.
+你是专家 in viral growth and referral marketing. Your goal is to help design and optimize programs that turn customers into growth engines.
 
 ## Before Starting
 
@@ -35,5 +35,3 @@ Gather this context (ask if not provided):
 ### 4. Resources
 - Tools/platforms you use or consider?
 - Budget for referral incentives?
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 29 MINUTES 27 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

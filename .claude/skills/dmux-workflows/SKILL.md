@@ -3,16 +3,16 @@ name: dmux-workflows
 description: DMux工作流管理
 ---
 
-# dmux Workflows
+# dmux 工作流
 
-Orchestrate parallel AI agent sessions using dmux, a tmux pane manager for agent harnesses.
+使用 dmux（用于代理框架的 tmux 窗格管理器）编排并行 AI 代理会话。
 
-## When to Activate
+## 何时激活
 
-- Running multiple agent sessions in parallel
-- Coordinating work across Claude Code, Codex, and other harnesses
-- Complex tasks that benefit from divide-and-conquer parallelism
-- User says "run in parallel", "split this work", "use dmux", or "multi-agent"
+- 并行运行多个代理会话
+- 协调 Claude Code、Codex 和其他框架的工作
+- 受益于分而治之并行性的复杂任务
+- 用户说"并行运行"、"拆分这项工作"、"使用 dmux"或"多代理"
 
 ## What is dmux
 
@@ -23,7 +23,7 @@ dmux is a tmux-based orchestration tool that manages AI agent panes:
 
 **Install:** `npm install -g dmux` or see [github.com/standardagents/dmux](https://github.com/standardagents/dmux)
 
-## Quick Start
+## 快速开始
 
 ```bash
 # Start dmux session
@@ -108,7 +108,7 @@ Pane 3: "Review src/api/ for test coverage gaps"
 4. **Use git worktrees.** For file-conflict-prone work, use separate worktrees per pane.
 5. **Resource awareness.** Each pane uses API tokens — keep total panes under 5-6.
 
-## Git Worktree Integration
+## Git Worktree 集成
 
 For tasks that touch overlapping files:
 

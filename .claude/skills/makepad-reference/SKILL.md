@@ -5,16 +5,16 @@ risk: unknown
 source: community
 ---
 
-# Makepad Reference
+# Makepad 参考
 
-This category provides reference materials for debugging, code quality, and advanced layout patterns.
+此类别提供调试、代码质量和高级布局模式的参考资料。
 
-## When to Use
-- You need quick-reference material for common Makepad errors, debugging, or API lookups.
-- The task is diagnostic or reference-oriented rather than writing a focused feature in one subsystem.
-- You want a central starting point before diving into more specialized Makepad skills.
+## 使用时机
+- 您需要常见 Makepad 错误、调试或 API 查询的快速参考材料。
+- 任务偏向诊断或参考性质，而非在单一子系统中编写专注的功能。
+- 在深入研究更专门的 Makepad 技能之前，您需要中心起点。
 
-## Quick Navigation
+## 快速导航
 
-| Topic | File | Use When |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 16 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 主题 | 文件 | 使用时机 |
+|------|------|----------|

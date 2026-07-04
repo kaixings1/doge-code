@@ -1,6 +1,6 @@
 ---
 name: context-agent
-description: "Context Agent — Context Agent 相关功能和最佳实践"
+description: "上下文 Agent — 上下文 Agent 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-06'
@@ -18,13 +18,13 @@ tools:
 - codex-cli
 ---
 
-# Context Agent
+# 上下文 Agent
 
-## Overview
+## 概述
 
 Agente de contexto para continuidade entre sessoes. Salva resumos, decisoes, tarefas pendentes e carrega briefing automatico na sessao seguinte.
 
-## When to Use This Skill
+## 何时使用 This Skill
 
 - When the user mentions "salvar contexto" or related topics
 - When the user mentions "salva o contexto" or related topics
@@ -78,7 +78,7 @@ C:\Users\renat\skills\context-agent\
 python C:\Users\renat\skills\context-agent\scripts\context_manager.py init
 ```
 
-## Salvar Contexto Da Sessão Atual
+## Salvar 上下文o Da Sessão Atual
 
 Quando a sessão está terminando ou antes de uma tarefa longa, salvar o contexto:
 
@@ -94,7 +94,7 @@ O que faz:
 5. Sincroniza com MEMORY.md (carregado no system prompt)
 6. Indexa para busca full-text
 
-## Carregar Contexto (Briefing)
+## Carregar 上下文o (Briefing)
 
 No início de uma nova sessão, carregar o contexto:
 
@@ -105,7 +105,7 @@ python C:\Users\renat\skills\context-agent\scripts\context_manager.py load
 Gera briefing com: projetos ativos, tarefas pendentes (por prioridade),
 bloqueadores, decisões recentes, convenções e resumo das últimas sessões.
 
-## Status Rápido
+## 状态 Rápido
 
 ```bash
 python C:\Users\renat\skills\context-agent\scripts\context_manager.py status
@@ -183,11 +183,11 @@ e decisões tomadas — sem precisar de nenhuma ação manual.
 - Applying recommendations without understanding your specific context
 - Not providing enough project context for accurate analysis
 
-## Related Skills
+## 相关 Skills
 
 - `context-guardian` - Complementary skill for enhanced analysis
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

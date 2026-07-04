@@ -3,58 +3,57 @@ name: 日期文本解析
 description: "解析和规范化日期、从文本中提取结构化信息、构建正则表达式模式。适用于清理混乱的日期格式、从文本列中提取实体或为非结构化数据构建解析逻辑。"
 ---
 
-# Parse Dates & Text
+# 日期与文本解析
 
-## Purpose
-Extract structured information from messy date strings, free-text columns, and unstructured data. Build robust parsing logic that handles real-world inconsistencies.
+## 目的
+从混乱的日期字符串、自由文本列和非结构化数据中提取结构化信息。构建能够处理现实世界不一致性的健壮解析逻辑。
 
-## How It Works
+## 工作原理
 
-### Step 1: Date Parsing
-- Detect date formats automatically across the dataset
-- Handle mixed formats within a single column (US vs EU, with/without time)
-- Parse relative dates ("3 days ago", "last Monday")
-- Handle timezone-aware and timezone-naive datetimes
-- Convert Unix timestamps, ISO 8601, and custom formats
-- Generate `pd.to_datetime()` code with appropriate `format` and `errors` parameters
+### 步骤 1：日期解析
+- 自动检测数据集中的日期格式
+- 处理单个列中的混合格式（美式 vs 欧式、含时间 vs 不含时间）
+- 解析相对日期（"3天前"、"上周一"）
+- 处理含时区和不含时区的日期时间
+- 转换 Unix 时间戳、ISO 8601 和自定义格式
+- 生成带有适当 `format` 和 `errors` 参数的 `pd.to_datetime()` 代码
 
-### Step 2: Text Extraction
-- **Regex patterns**: Build and explain regex for common extraction tasks
-  - Emails, phone numbers, URLs, IP addresses
-  - Currency amounts, percentages
-  - Product codes, order IDs, SKUs
-- **Structured extraction**: Parse addresses, names, key-value pairs
-- **Delimiter-based**: Split compound fields into separate columns
+### 步骤 2：文本提取
+- **正则表达式模式**：为常见提取任务构建和解释正则表达式
+  - 电子邮件、电话号码、URL、IP 地址
+  - 货币金额、百分比
+  - 产品代码、订单 ID、SKU
+- **结构化提取**：解析地址、姓名、键值对
+- **分隔符基础**：将复合字段拆分为单独的列
 
-### Step 3: Text Normalization
-- Case normalization (lowercase, title case)
-- Whitespace cleanup (strip, collapse multiple spaces)
-- Unicode normalization (NFD/NFC, accent removal)
-- Abbreviation expansion
-- Spelling correction for categorical values (fuzzy matching)
+### 步骤 3：文本规范化
+- 大小写规范化（小写、首字母大写）
+- 空白字符清理（去除、合并多个空格）
+- Unicode 规范化（NFD/NFC、重音去除）
+- 缩写扩展
+- 分类值的拼写纠正（模糊匹配）
 
-### Step 4: Validation
-- Check parsed results against expected patterns
-- Report parsing failures with context for manual review
-- Generate a confidence score for ambiguous parses
+### 步骤 4：验证
+- 检查解析结果是否符合预期模式
+- 报告解析失败并提供上下文供手动审查
+- 为模糊解析生成置信度分数
 
-## Usage Examples
+## 使用示例
 
-**Example 1: Mixed date formats**
+**示例 1：混合日期格式**
 ```
-"This column has dates like '03/08/2026', 'March 8, 2026', '2026-03-08',
-and 'Mar 8th 26' — normalize them all to ISO format"
-```
-
-**Example 2: Extract from text**
-```
-"Extract the dollar amount, date, and vendor name from these
-expense report descriptions"
+"此列包含日期如 '03/08/2026'、'March 8, 2026'、'2026-03-08'、
+和 'Mar 8th 26' — 将它们全部规范化为 ISO 格式"
 ```
 
-## Output Format
+**示例 2：从文本中提取**
+```
+"从这些费用报告描述中提取美元金额、日期和供应商名称"
+```
 
-- **Parsing Rules**: Detected patterns with confidence levels
-- **Python Code**: Robust parsing implementation with error handling
-- **Failure Report**: Rows that couldn't be parsed, with suggested fixes
-- **Validation Summary**: Success rate and edge cases
+## 输出格式
+
+- **解析规则**：检测到的模式及其置信度
+- **Python 代码**：带有错误处理的健壮解析实现
+- **失败报告**：无法解析的行及其建议的修复方法
+- **验证摘要**：成功率和边缘情况

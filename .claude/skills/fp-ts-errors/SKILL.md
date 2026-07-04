@@ -6,22 +6,22 @@ source: "https://github.com/whatiskadudoing/fp-ts-skills"
 date_added: "2026-02-27"
 ---
 
-# Practical Error Handling with fp-ts
+# 实用 fp-ts 错误处理
 
-This skill teaches you how to handle errors without try/catch spaghetti. No academic jargon - just practical patterns for real problems.
+本技能教您如何在不编写嵌套 try/catch 的情况下处理错误。没有学术术语——只有解决实际问题的实用模式。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- When you want type-safe error handling in TypeScript
-- When replacing try/catch with Either and TaskEither patterns
-- When building APIs or services that need explicit error types
-- When accumulating multiple validation errors
+- 当您希望在 TypeScript 中获得类型安全错误处理时
+- 当用 Either 和 TaskEither 模式替换 try/catch 时
+- 当构建需要显式错误类型的 API 或服务时
+- 当需要累积多个验证错误时
 
-The core idea: **Errors are just data**. Instead of throwing them into the void and hoping someone catches them, return them as values that TypeScript can track.
+核心理念：**错误就是数据**。与其将它们抛入虚无并希望有人捕获它们，不如将它们作为 TypeScript 可以追踪的值返回。
 
 ---
 
-## 1. Stop Throwing Everywhere
+## 1. 停止到处抛出异常
 
 ### The Problem with Exceptions
 
@@ -819,7 +819,7 @@ const deleteUsers = (userIds: string[]) =>
 
 ---
 
-## Quick Reference
+## 快速参考
 
 | Pattern | Use When | Example |
 |---------|----------|---------|
@@ -856,7 +856,7 @@ All Either operations have TaskEither equivalents:
 
 The payoff: TypeScript tracks your errors, no more forgotten try/catch, clear control flow, and composable error handling.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

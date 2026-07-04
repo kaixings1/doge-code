@@ -2,7 +2,7 @@
 name: token-budget-advisor
 description: "Token Budget Advisor — Token Budget Advisor 相关功能和最佳实践"
   Offers the user an informed choice about how much response depth to
-  consume before answering. Use this skill when the user explicitly
+  consume before answering. 使用此技能当 the user explicitly
   wants to control response length, depth, or token budget.
   TRIGGER when: "token budget", "token count", "token usage", "token limit",
   "response length", "answer depth", "short version", "brief answer",

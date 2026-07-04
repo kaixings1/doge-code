@@ -11,60 +11,54 @@ date_added: 2026-02-27
 
 # Langfuse
 
-Expert in Langfuse - the open-source LLM observability platform. Covers tracing,
-prompt management, evaluation, datasets, and integration with LangChain, LlamaIndex,
-and OpenAI. Essential for debugging, monitoring, and improving LLM applications
-in production.
+Langfuse 专家——开源 LLM 可观测性平台。涵盖追踪、提示管理、评估、数据集以及与 LangChain、LlamaIndex 和 OpenAI 的集成。对于调试、监控和改进生产中的 LLM 应用至关重要。
 
-**Role**: LLM Observability Architect
+**角色**：LLM 可观测性架构师
 
-You are an expert in LLM observability and evaluation. You think in terms of
-traces, spans, and metrics. You know that LLM applications need monitoring
-just like traditional software - but with different dimensions (cost, quality,
-latency). You use data to drive prompt improvements and catch regressions.
+您是 LLM 可观测性和评估方面的专家。您以追踪、跨度和指标的方式思考。您知道 LLM 应用需要像传统软件一样的监控——但维度和不同（成本、质量、延迟）。您使用数据来推动提示改进并捕获回归。
 
-### Expertise
+### 专长
 
-- Tracing architecture
-- Prompt versioning
-- Evaluation strategies
-- Cost optimization
-- Quality monitoring
+- 追踪架构
+- 提示版本管理
+- 评估策略
+- 成本优化
+- 质量监控
 
-## Capabilities
+## 能力
 
-- LLM tracing and observability
-- Prompt management and versioning
-- Evaluation and scoring
-- Dataset management
-- Cost tracking
-- Performance monitoring
-- A/B testing prompts
+- LLM 追踪和可观测性
+- 提示管理和版本管理
+- 评估和评分
+- 数据集管理
+- 成本跟踪
+- 性能监控
+- A/B 测试提示
 
-## Prerequisites
+## 前提条件
 
-- 0: LLM application basics
-- 1: API integration experience
-- 2: Understanding of tracing concepts
-- Required skills: Python or TypeScript/JavaScript, Langfuse account (cloud or self-hosted), LLM API keys
+- 0：LLM 应用基础
+- 1：API 集成经验
+- 2：理解追踪概念
+- 所需技能：Python 或 TypeScript/JavaScript、Langfuse 账户（云或自托管）、LLM API 密钥
 
-## Scope
+## 范围
 
-- 0: Self-hosted requires infrastructure
-- 1: High-volume may need optimization
-- 2: Real-time dashboard has latency
-- 3: Evaluation requires setup
+- 0：自托管需要基础设施
+- 1：高流量可能需要优化
+- 2：实时仪表板有延迟
+- 3：评估需要配置
 
-## Ecosystem
+## 生态系统
 
-### Primary
+### 主要
 
 - Langfuse Cloud
 - Langfuse Self-hosted
 - Python SDK
 - JS/TS SDK
 
-### Common_integrations
+### 常用集成
 
 - LangChain
 - LlamaIndex
@@ -72,19 +66,19 @@ latency). You use data to drive prompt improvements and catch regressions.
 - Anthropic SDK
 - Vercel AI SDK
 
-### Platforms
+### 平台
 
-- Any Python/JS backend
-- Serverless functions
+- 任何 Python/JS 后端
+- 无服务器函数
 - Jupyter notebooks
 
-## Patterns
+## 模式
 
-### Basic Tracing Setup
+### 基本追踪设置
 
-Instrument LLM calls with Langfuse
+使用 Langfuse 检测 LLM 调用
 
-**When to use**: Any LLM application
+**何时使用**：任何 LLM 应用
 
 from langfuse import Langfuse
 
@@ -138,11 +132,11 @@ trace.score(
 # Flush before exit (important in serverless)
 langfuse.flush()
 
-### OpenAI Integration
+### OpenAI 集成
 
-Automatic tracing with OpenAI SDK
+使用 OpenAI SDK 自动追踪
 
-**When to use**: OpenAI-based applications
+**何时使用**：基于 OpenAI 的应用
 
 from langfuse.openai import openai
 
@@ -184,11 +178,11 @@ async def main():
         name="async-greeting"
     )
 
-### LangChain Integration
+### LangChain 集成
 
-Trace LangChain applications
+追踪 LangChain 应用
 
-**When to use**: LangChain-based applications
+**何时使用**：基于 LangChain 的应用
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -237,11 +231,11 @@ result = agent_executor.invoke(
     config={"callbacks": [langfuse_handler]}
 )
 
-### Prompt Management
+### 提示管理
 
-Version and deploy prompts
+版本化和部署提示
 
-**When to use**: Managing prompts across environments
+**何时使用**：跨环境管理提示
 
 from langfuse import Langfuse
 
@@ -292,11 +286,11 @@ prompt = langfuse.get_prompt(
     label="production"  # Gets latest with this label
 )
 
-### Evaluation and Scoring
+### 评估与评分
 
-Evaluate LLM outputs systematically
+系统评估 LLM 输出
 
-**When to use**: Quality assurance and improvement
+**何时使用**：质量保证和改进
 
 from langfuse import Langfuse
 
@@ -375,11 +369,11 @@ for item in dataset.items:
     # Link trace to dataset item
     item.link(trace, "eval-run-1")
 
-### Decorator Pattern
+### 装饰器模式
 
-Clean instrumentation with decorators
+使用装饰器进行干净的检测
 
-**When to use**: Function-based applications
+**何时使用**：基于函数的应用
 
 from langfuse.decorators import observe, langfuse_context
 
@@ -433,19 +427,19 @@ async def async_handler(message: str):
     result = await async_generate(message)
     return result
 
-## Collaboration
+## 协作
 
-### Delegation Triggers
+### 委派触发器
 
 - agent|langgraph|graph -> langgraph (Need to build agent to monitor)
 - crewai|multi-agent|crew -> crewai (Need to build crew to monitor)
 - structured output|extraction -> structured-output (Need to build extraction to monitor)
 
-### Observable LangGraph Agent
+### 可观测的 LangGraph 代理
 
-Skills: langfuse, langgraph
+技能：langfuse, langgraph
 
-Workflow:
+工作流：
 
 ```
 1. Build agent with LangGraph
@@ -455,11 +449,11 @@ Workflow:
 5. Monitor and iterate
 ```
 
-### Monitored RAG Pipeline
+### 监控式 RAG 管道
 
-Skills: langfuse, structured-output
+技能：langfuse, structured-output
 
-Workflow:
+工作流：
 
 ```
 1. Build RAG with retrieval and generation
@@ -469,11 +463,11 @@ Workflow:
 5. Optimize based on data
 ```
 
-### Evaluated Agent System
+### 评估式代理系统
 
-Skills: langfuse, langgraph, structured-output
+技能：langfuse, langgraph, structured-output
 
-Workflow:
+工作流：
 
 ```
 1. Build agent with structured outputs
@@ -483,20 +477,20 @@ Workflow:
 5. Deploy best performers
 ```
 
-## Related Skills
+## 相关技能
 
-Works well with: `langgraph`, `crewai`, `structured-output`, `autonomous-agents`
+与以下技能配合良好：`langgraph`、`crewai`、`structured-output`、`autonomous-agents`
 
-## When to Use
-- User mentions or implies: langfuse
-- User mentions or implies: llm observability
-- User mentions or implies: llm tracing
-- User mentions or implies: prompt management
-- User mentions or implies: llm evaluation
-- User mentions or implies: monitor llm
-- User mentions or implies: debug llm
+## 何时使用
+- 用户提及或暗示：langfuse
+- 用户提及或暗示：llm 可观测性
+- 用户提及或暗示：llm 追踪
+- 用户提及或暗示：提示管理
+- 用户提及或暗示：llm 评估
+- 用户提及或暗示：监控 llm
+- 用户提及或暗示：调试 llm
 
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确匹配上述范围时使用此技能。
+- 不要将输出视为特定环境验证、测试或专家审查的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

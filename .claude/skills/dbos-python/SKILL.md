@@ -6,13 +6,13 @@ source: "https://docs.dbos.dev/"
 date_added: "2026-02-27"
 ---
 
-# DBOS Python Best Practices
+# DBOS Python 最佳实践
 
-Guide for building reliable, fault-tolerant Python applications with DBOS durable workflows.
+使用 DBOS 持久化工作流构建可靠、容错的 Python 应用指南。
 
-## When to Use
-Reference these guidelines when:
-- Adding DBOS to existing Python code
+## 何时使用
+在以下情况下参考这些指南：
+- 将 DBOS 添加到现有 Python 代码中
 - Creating workflows and steps
 - Using queues for concurrency control
 - Implementing workflow communication (events, messages, streams)
@@ -94,7 +94,7 @@ references/queue-concurrency.md
 - https://docs.dbos.dev/
 - https://github.com/dbos-inc/dbos-transact-py
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -10,13 +10,13 @@ date_added: "2026-02-27"
 
 Automate Klaviyo email and SMS marketing operations through Composio's Klaviyo toolkit via Rube MCP.
 
-## Prerequisites
+## 前提条件
 
 - Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
 - Active Klaviyo connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `klaviyo`
 - Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
-## Setup
+## 设置
 
 **Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
 
@@ -156,7 +156,7 @@ fields__template=['name', 'html', 'text']
 - greater-than(created_at,"2024-01-01T00:00:00Z") - Created after date
 ```
 
-## Known Pitfalls
+## 已知陷阱
 
 **API Version**:
 - Klaviyo API uses versioned endpoints (e.g., v2024-07-15)
@@ -180,7 +180,7 @@ fields__template=['name', 'html', 'text']
 - Compound statuses exist (e.g., 'Cancelled: No Recipients')
 - Server-side filtering may return mixed statuses; always validate client-side
 
-## Quick Reference
+## 快速参考
 
 | Task | Tool Slug | Key Params |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 36 MINUTES 23 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

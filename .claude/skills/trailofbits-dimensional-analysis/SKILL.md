@@ -1,8 +1,8 @@
-# Dimensional Analysis Plugin
+# 维度分析插件
 
 Add dimensional annotations to codebases and detect dimensional bugs. Uses an annotation format inspired by Reserve Protocol's Solidity conventions, but applicable to any language or protocol performing numeric arithmetic with mixed units, precisions, or scaling factors.
 
-## Overview
+## 概述
 
 This plugin runs one automatic workflow:
 1. **Discover** the dimensional vocabulary in your codebase (tokens, shares, prices, etc.)
@@ -36,7 +36,7 @@ struct RebalanceLimits {
 uint256 startPrice = Math.mulDiv(sellPrices.high, D27, buyPrices.low);
 ```
 
-## Usage
+## 用法
 
 The skill always executes in `full-auto` mode. Any supplied mode argument is ignored.
 
@@ -59,4 +59,3 @@ Workflow orchestration for all four phases lives in `skills/dimensional-analysis
 ## Agents
 
 | Agent | Purpose |
-|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 31 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

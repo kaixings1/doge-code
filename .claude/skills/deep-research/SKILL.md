@@ -6,27 +6,27 @@ source: "https://github.com/sanjay3290/ai-skills/tree/main/skills/deep-research"
 date_added: "2026-02-27"
 ---
 
-# Gemini Deep Research Skill
+# Gemini 深度研究技能
 
-Run autonomous research tasks that plan, search, read, and synthesize information into comprehensive reports.
+运行自主研究任务，规划、搜索、阅读和综合信息为全面报告。
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when:
-- Performing market analysis
-- Conducting competitive landscaping
-- Creating literature reviews
-- Doing technical research
-- Performing due diligence
+在以下情况下使用此技能：
+- 执行市场分析
+- 进行竞争格局研究
+- 创建文献综述
+- 进行技术研究
+- 执行尽职调查
 - Need detailed, cited research reports
 
-## Requirements
+## 需求
 
 - Python 3.8+
 - httpx: `pip install -r requirements.txt`
 - GEMINI_API_KEY environment variable
 
-## Setup
+## 设置
 
 1. Get a Gemini API key from [Google AI Studio](https://aistudio.google.com/)
 2. Set the environment variable:
@@ -35,7 +35,7 @@ Use this skill when:
    ```
    Or create a `.env` file in the skill directory.
 
-## Usage
+## 用法
 
 ### Start a research task
 ```bash
@@ -80,7 +80,7 @@ python3 scripts/research.py --list
 
 ## Output Formats
 
-- **Default**: Human-readable markdown report
+- **默认**: Human-readable markdown report
 - **JSON** (`--json`): Structured data for programmatic use
 - **Raw** (`--raw`): Unprocessed API response
 
@@ -114,7 +114,7 @@ python3 scripts/research.py --list
 - **1**: Error (API error, config issue, timeout)
 - **130**: Cancelled by user (Ctrl+C)
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

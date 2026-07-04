@@ -3,21 +3,21 @@ name: 降维分析
 description: "降维：PCA、t-SNE、UMAP、SVD 和自编码器。适用于高维数据可视化、降噪、特征压缩以及作为下游 ML 模型的预处理。"
 ---
 
-# Dimensionality Reduction
+# 降维分析
 
-## Purpose
-Reduce the number of features while preserving important structure. Essential for visualization, denoising, and preprocessing.
+## 目的
+在保留重要结构的同时减少特征数量。对于可视化、降噪和预处理至关重要。
 
-## How It Works
+## 工作原理
 
-### Method Selection
+### 方法选择
 
-| Method | Preserves | Best For | Linear? |
+| 方法 | 保留 | 最适合 | 线性？ |
 |--------|-----------|----------|---------|
-| PCA | Global variance | Feature compression, denoising | Yes |
-| t-SNE | Local structure | 2D/3D visualization | No |
-| UMAP | Local + global | Visualization, clustering prep | No |
-| SVD | Variance | Sparse data, NLP (LSA) | Yes |
+| PCA | 全局方差 | 特征压缩、降噪 | 是 |
+| t-SNE | 局部结构 | 2D/3D 可视化 | 否 |
+| UMAP | 局部+全局 | 可视化、聚类准备 | 否 |
+| SVD | 方差 | 稀疏数据、NLP (LSA) | 是 |
 | LDA | Class separation | Supervised dimensionality reduction | Yes |
 | Autoencoder | Learned representation | Complex non-linear compression | No |
 

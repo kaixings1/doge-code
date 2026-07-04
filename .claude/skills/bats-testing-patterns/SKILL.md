@@ -6,11 +6,11 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Bats Testing Patterns
+# Bats /u6d4b/u8bd5/u6a21/u5f0f
 
 Comprehensive guidance for writing comprehensive unit tests for shell scripts using Bats (Bash Automated Testing System), including test patterns, fixtures, and best practices for production-grade shell testing.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Writing unit tests for shell scripts
 - Implementing TDD for scripts
@@ -18,7 +18,7 @@ Comprehensive guidance for writing comprehensive unit tests for shell scripts us
 - Testing edge cases and error conditions
 - Validating behavior across shell environments
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The project does not use shell scripts
 - You need integration tests beyond shell behavior
@@ -36,7 +36,7 @@ Comprehensive guidance for writing comprehensive unit tests for shell scripts us
 
 - `resources/implementation-playbook.md` for detailed patterns and examples.
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

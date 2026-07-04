@@ -1,6 +1,6 @@
 ---
 name: moatmri
-description: "Moatmri — Moatmri 相关功能和最佳实践"
+description: "MoatMRI — AI 服务压力分析与竞争壁垒评估。"
 risk: safe
 source: community
 date_added: "2026-05-31"
@@ -27,7 +27,7 @@ Ask if not provided:
 - **Entity type** (e.g., "independent broker", "solo practitioner", "regional franchise")
 - **Target name** (optional — specific organization for named analysis)
 
-## Limitations
+## 局限性
 
 - Produces strategic risk analysis, not audited market research or investment advice.
 - Depends on current company, market, regulatory, and competitive context supplied by the user or gathered from reliable sources.

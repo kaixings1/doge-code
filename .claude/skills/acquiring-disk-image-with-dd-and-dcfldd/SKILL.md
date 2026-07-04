@@ -1,6 +1,6 @@
 ---
 name: acquiring-disk-image-with-dd-and-dcfldd
-description: 使用 dd 和 dcfldd 创建取证级逐位磁盘镜像，通过哈希验证确保证据完整性。
+description: "使用 dd 和 dcfldd 创建取证级逐位磁盘镜像，通过哈希验证确保证据完整性。"
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -99,7 +99,7 @@ dd if=/dev/sdb of=/cases/case-2024-001/images/first_1gb.dd \
    bs=1M count=1024 status=progress
 ```
 
-### Step 4: Acquire Using dcfldd (Preferred Forensic Method)
+### Step 4: Acquire Using dcfldd (优先red Forensic Method)
 
 ```bash
 # Install dcfldd if not present
@@ -192,4 +192,3 @@ tar -czf /cases/case-2024-001/acquisition_package.tar.gz \
 ## Key Concepts
 
 | Concept | Description |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 24 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

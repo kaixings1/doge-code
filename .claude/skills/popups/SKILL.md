@@ -5,35 +5,33 @@ metadata:
   version: 2.0.0
 ---
 
-# Popup CRO
+# 弹窗 CRO
 
-You are an expert in popup and modal optimization. Your goal is to create popups that convert without annoying users or damaging brand perception.
+您是弹窗和模态框优化专家。您的目标是创建能够转化而又不惹恼用户或损害品牌认知的弹窗。
 
-## Initial Assessment
+## 初始评估
 
-**Check for product marketing context first:**
-If `.agents/product-marketing.md` exists (or `.claude/product-marketing.md`, or the legacy `product-marketing-context.md` filename, in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
+**首先检查产品营销上下文：**
+如果存在 `.agents/product-marketing.md`（或 `.claude/product-marketing.md`，或在旧版中的 `product-marketing-context.md`），在提问前先读取它。利用该上下文，仅询问尚未涵盖或与本任务特定的信息。
 
-Before providing recommendations, understand:
+在提供建议前，需了解：
 
-1. **Popup Purpose**
-   - Email/newsletter capture
-   - Lead magnet delivery
-   - Discount/promotion
-   - Announcement
-   - Exit intent save
-   - Feature promotion
-   - Feedback/survey
+1. **弹窗目的**
+   - 邮件/通讯订阅
+   - 引流磁铁交付
+   - 折扣/促销
+   - 公告
+   - 退出意图挽留
+   - 功能推广
+   - 反馈/调查
 
-2. **Current State**
-   - Existing popup performance?
-   - What triggers are used?
-   - User complaints or feedback?
-   - Mobile experience?
+2. **当前状态**
+   - 现有弹窗表现？
+   - 使用什么触发器？
+   - 用户投诉或反馈？
+   - 移动端体验？
 
-3. **Traffic Context**
-   - Traffic sources (paid, organic, direct)
-   - New vs. returning visitors
-   - Page types where shown
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 21 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+3. **流量上下文**
+   - 流量来源（付费、自然、直接）
+   - 新访客 vs 回访者
+   - 展示的页面类型

@@ -1,6 +1,6 @@
 ---
 name: fp-async
-description: "Fp Async — Fp Async 相关功能和最佳实践"
+description: "使用 fp-ts TaskEither 进行实用的异步错误处理模式，替代嵌套 try/catch，构建干净的异步管道。"
 risk: unknown
 source: community
 version: 1.0.0
@@ -16,16 +16,16 @@ tags:
   - fetch
 ---
 
-# Practical Async Patterns with fp-ts
+# 使用 fp-ts 的实用异步模式
 
-Stop writing nested try/catch blocks. Stop losing error context. Start building clean async pipelines that handle errors properly.
+停止编写嵌套的 try/catch 块。停止丢失错误上下文。开始构建能正确处理错误的清晰异步管道。
 
-**TaskEither is simply an async operation that tracks success or failure.** That's it. No fancy terminology needed.
+**TaskEither 就是一个跟踪成功或失败的异步操作。** 仅此而已。不需要花哨的术语。
 
-## When to Use
-- You need async error handling in TypeScript with `TaskEither`.
-- The task involves wrapping Promises, composing API calls, or replacing nested `try/catch` flows.
-- You want practical fp-ts async patterns instead of academic explanations.
+## 何时使用
+- 需要在 TypeScript 中使用 `TaskEither` 进行异步错误处理。
+- 任务涉及包装 Promise、组合 API 调用或替换嵌套的 `try/catch` 流程。
+- 你想要实用的 fp-ts 异步模式，而非学术解释。
 
 ```typescript
 // TaskEither<Error, User> means:
@@ -34,9 +34,9 @@ Stop writing nested try/catch blocks. Stop losing error context. Start building 
 
 ---
 
-## 1. Wrapping Promises Safely
+## 1. 安全包装 Promise
 
-### The Problem: Try/Catch Everywhere
+### 问题：到处是 Try/Catch
 
 ```typescript
 // BEFORE: Try/catch hell
@@ -68,7 +68,7 @@ async function getUserData(userId: string) {
 }
 ```
 
-### The Solution: Wrap Once, Handle Cleanly
+### 解决方案：包装一次，干净处理
 
 ```typescript
 import * as TE from 'fp-ts/TaskEither'
@@ -93,9 +93,9 @@ const getUser = (userId: string) => fetchJson<User>(`/api/users/${userId}`)
 const getPosts = (userId: string) => fetchJson<Post[]>(`/api/users/${userId}/posts`)
 ```
 
-### tryCatch Explained
+### tryCatch 解释
 
-`TE.tryCatch` takes two things:
+`TE.tryCatch` 接受两个参数：
 1. An async function that might throw
 2. A function to convert the thrown value into your error type
 
@@ -106,7 +106,7 @@ TE.tryCatch(
 )
 ```
 
-### Creating Success and Failure Values
+### 创建成功和失败值
 
 ```typescript
 // Wrap a value as success
@@ -128,9 +128,9 @@ const mustBePositive = TE.fromPredicate(
 
 ---
 
-## 2. Chaining Async Operations
+## 2. 链式异步操作
 
-### The Problem: Callback Hell / Nested Awaits
+### 问题：回调地狱 / 嵌套 Await
 
 ```typescript
 // BEFORE: Deeply nested, hard to follow
@@ -175,10 +175,10 @@ async function processOrder(orderId: string) {
 }
 ```
 
-### The Solution: Clean Pipelines with chain
+### 解决方案：使用 chain 构建清晰管道
 
 ```typescript
-// AFTER: Flat, readable pipeline
+// 之后：扁平、可读的管道
 const processOrder = (orderId: string) =>
   pipe(
     fetchOrder(orderId),
@@ -193,7 +193,7 @@ const processOrder = (orderId: string) =>
   )
 ```
 
-### chain vs map
+### chain 与 map 的区别
 
 Use `map` when your transformation is synchronous and can't fail:
 
@@ -213,7 +213,7 @@ pipe(
 )
 ```
 
-### Building Context with Do Notation
+### 使用 Do 表示法构建上下文
 
 When you need values from multiple steps:
 
@@ -253,7 +253,7 @@ const processOrder = (orderId: string) =>
 
 ---
 
-## 3. Parallel vs Sequential Execution
+## 3. 并行执行与顺序执行
 
 ### When to Use Each
 
@@ -379,7 +379,7 @@ const createUserAndProfile = (userData: UserData) =>
 
 ---
 
-## 4. Error Recovery Patterns
+## 4. 错误恢复模式
 
 ### Fallback to Alternative
 
@@ -490,7 +490,7 @@ const fetchUserWithRetry = (userId: string) =>
   // Attempts: immediate, 1s, 2s delays between retries
 ```
 
-### Default Values
+### 默认 Values
 
 ```typescript
 // Get value or use default (removes the error channel)
@@ -511,7 +511,7 @@ const getUserWithDefault = (userId: string) =>
 
 ---
 
-## 5. Real API Examples
+## 5. 真实 API 示例
 
 ### Complete Fetch Wrapper
 
@@ -731,7 +731,7 @@ const loadConfig = () =>
 
 ---
 
-## 6. Handling Results
+## 6. 处理结果
 
 ### Pattern Matching with fold/match
 
@@ -799,9 +799,9 @@ app.get('/users/:id', async (req, res) => {
 
 ---
 
-## 7. Common Patterns Reference
+## 7. 常用模式参考
 
-### Quick Transformations
+### 快速转换
 
 ```typescript
 // Transform success value
@@ -817,7 +817,7 @@ TE.bimap(
 )
 ```
 
-### Filtering
+### 筛选
 
 ```typescript
 // Fail if condition not met
@@ -830,7 +830,7 @@ pipe(
 )
 ```
 
-### Side Effects Without Changing Value
+### 副作用但不改变值
 
 ```typescript
 // Log on success, keep the value unchanged
@@ -852,7 +852,7 @@ pipe(
 ) // Returns the created user, not the email result
 ```
 
-### Converting From Other Types
+### 从其他类型转换
 
 ```typescript
 // From Either
@@ -872,7 +872,7 @@ const fromBoolean = TE.fromPredicate(
 
 ---
 
-## Quick Reference Card
+## 快速参考 Card
 
 | What you want | How to do it |
 |---------------|--------------|
@@ -893,7 +893,7 @@ const fromBoolean = TE.fromPredicate(
 
 ---
 
-## Before/After Summary
+## Before/After 总结
 
 ### Fetching Data
 
@@ -970,7 +970,7 @@ const getData = (id: string) =>
   )
 ```
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

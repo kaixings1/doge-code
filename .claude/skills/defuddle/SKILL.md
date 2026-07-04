@@ -8,18 +8,18 @@ date_added: "2026-03-21"
 
 # Defuddle
 
-Use Defuddle CLI to extract clean readable content from web pages. Prefer over WebFetch for standard web pages — it removes navigation, ads, and clutter, reducing token usage.
+使用 Defuddle CLI 从网页中提取干净可读的内容。对于标准网页，优先于 WebFetch —— 它移除导航、广告和杂乱内容，减少 token 使用。
 
-## When to Use
-- Use when the user provides a normal webpage URL to read, summarize, or analyze.
-- Prefer it over noisy page-fetch approaches when token efficiency matters.
-- Use for docs, articles, blog posts, and similar public web content.
+## 何时使用
+- 当用户提供普通网页 URL 以读取、总结或分析时使用。
+- 当 token 效率至关重要时，优先于嘈杂的页面获取方法。
+- 用于文档、文章、博客文章和类似的公共网页内容。
 
-If not installed: `npm install -g defuddle`
+如果未安装：`npm install -g defuddle`
 
-## Usage
+## 用法
 
-Always use `--md` for markdown output:
+始终 use `--md` for markdown output:
 
 ```bash
 defuddle parse <url> --md
@@ -48,7 +48,7 @@ defuddle parse <url> -p domain
 | (none) | HTML |
 | `-p <name>` | Specific metadata property |
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

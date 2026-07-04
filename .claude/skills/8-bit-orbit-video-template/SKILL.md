@@ -1,34 +1,34 @@
 ---
 name: 8-bit-orbit-video-template
-description: "8 Bit Orbit Video Template — 8 Bit Orbit Video Template 相关功能和最佳实践"
+description: "8位轨道视频模板 — 8位轨道视频模板相关功能和最佳实践"
   基于 Hyperframes 的复古像素风格视频模板。用于需要高保真多场景 HTML 转视频、高级转场、交互式预览控制及即用渲染样式的场景。
 triggers:
-  - "hyperframes video template"
-  - "video template"
-  - "pixel motion deck"
-  - "retro presentation video"
-  - "Hyperframes 模板"
+  - "hyperframes视频模板"
+  - "视频模板"
+  - "像素动效演示"
+  - "复古演示视频"
+  - "Hyperframes模板"
   - "视频模板"
   - "像素风动效"
 od:
-  mode: template
-  surface: video
-  type: hyperframes
-  platform: desktop
-  preview:
-    type: html
-    entry: example.html
-    reload: debounce-100
-  design_system:
-    requires: false
-  outputs:
-    primary: index.html
-    secondary:
+  模式: 模板
+  表面: 视频
+  类型: hyperframes
+  平台: 桌面
+  预览:
+    类型: html
+    入口: example.html
+    重新加载: debounce-100
+  设计系统:
+    需要: false
+  输出:
+    主要: index.html
+    次要:
       - template.html
       - example.html
-  example_prompt: "Create a 3-page Hyperframes video deck in 8-bit retro style with advanced transitions, rich motion, and each page under 3 seconds."
-  capabilities_required:
-    - file_write
+  示例提示: "创建一个3页的Hyperframes视频演示，采用8位复古风格，具有高级转场、丰富的动画效果，每页不超过3秒。"
+  所需能力:
+    - 文件写入
 ---
 
 # Hyperframes 视频模板

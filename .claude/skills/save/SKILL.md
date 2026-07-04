@@ -1,19 +1,11 @@
 ---
 name: save
-description: "Save — Save 相关功能和最佳实践"
-  Save the current conversation, answer, or insight into the Obsidian wiki vault as a
-  structured note. Analyzes the chat, determines the right note type, creates frontmatter,
-  files it in the correct wiki folder, and updates index, log, and hot cache.
-  Triggers on: "save this", "save that answer", "/save", "file this",
-  "save to wiki", "save this session", "file this conversation", "keep this",
-  "save this analysis", "add this to the wiki".
+description: "Save — 保存当前对话、回答或见解到 Obsidian 维基仓库作为结构化笔记。分析聊天内容，确定正确的笔记类型，创建 frontmatter，归档到正确的维基文件夹，并更新索引、日志和热缓存。触发词：'save this'、'save that answer'、'/save'、'file this'、'save to wiki'、'save this session'、'file this conversation'、'keep this'、'save this analysis'、'add this to the wiki'。"
 allowed-tools: Read Write Edit Glob Grep
 ---
 
-# save: File Conversations Into the Wiki
+# save：将对话归档到维基
 
-Good answers and insights shouldn't disappear into chat history. This skill takes what was just discussed and files it as a permanent wiki page.
+好的回答和见解不应消失在聊天历史中。此技能将刚刚讨论的内容归档为永久的维基页面。
 
-The wiki compounds. Save often.
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 02 MINUTES 31 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+维基会不断积累。频繁保存。

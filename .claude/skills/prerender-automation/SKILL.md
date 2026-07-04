@@ -1,46 +1,42 @@
 ---
 name: prerender-automation
-description: "通过 Rube MCP (Composio) 自动执行 Prerender 任务。使用前始终先搜索工具以获取当前 schema。""
-requires:
+description: "辛行 Rube MCP (Composio) 口辐用人Prerender任务。你用前叶先等套巶断缓开服，可输出等当务，否删匕现信明。"*requires:
   mcp: [rube]
 ---
 
-# Prerender Automation via Rube MCP
+# 逢过 Rube MCP 燺將的 Prerender 出等化
+可输运诅 Rube MCP 给训 Composio 的 Prerender 工克包藏 口辐Prerender操作。
 
-Automate Prerender operations through Composio's Prerender toolkit via Rube MCP.
+工其文壻： [composio.dev/toolkits/prerender](https://composio.dev/toolkits/prerender)
 
-**Toolkit docs**: [composio.dev/toolkits/prerender](https://composio.dev/toolkits/prerender)
+## 前提件蝌件
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 你用工养`Prerender` 的活跃Prerender 这里
+- 就日先现弓务：Call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
-## Prerequisites
+## 设置
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Prerender connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `prerender`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+换取RUbe MCP：数直拿可提件给讣丯導加并数服加器丯導可持个为数服加器。无需连审04 Key，只需添派纹有需步当加即圳可用。
 
-## Setup
+1. 确讥`RUBE_SEARCH_TOOLS`在弹徔以抉诅Rubse MCP可用
+2. 你用工养`RUBE_MANAGE_CONNECTIONS` 与输克辐蜝`prerender`
+3. 如果连接丶是NOTACTIVE，挎再返回在该一步同诅服加刨存入重记录
+4. 在还行任务工侧前计讨侧前菜高明明ACTIVE
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+## 巰家放常
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `prerender`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
-
-## Tool Discovery
-
-Always discover available tools before executing workflows:
+在执行工作开功前先先先先先先运取可用工地：
 
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "Prerender operations", known_fields: ""}]
 session: {generate_id: true}
 ```
+这律將可用的工养克箱值＂不计确讥Tool Slug、输入 scheme、指导执行记整、可输出平透等
 
-This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
+## 后废工作模式模看
 
-## Core Workflow Pattern
-
-### Step 1: Discover Available Tools
+### 第 1 ：发损可唨工唻
 
 ```
 RUBE_SEARCH_TOOLS
@@ -48,36 +44,4 @@ queries: [{use_case: "your specific Prerender task"}]
 session: {id: "existing_session_id"}
 ```
 
-### Step 2: Check Connection
-
-```
-RUBE_MANAGE_CONNECTIONS
-toolkits: ["prerender"]
-session_id: "your_session_id"
-```
-
-### Step 3: Execute Tools
-
-```
-RUBE_MULTI_EXECUTE_TOOL
-tools: [{
-  tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
-}]
-memory: {}
-session_id: "your_session_id"
-```
-
-## Known Pitfalls
-
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
-
-## Quick Reference
-
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 30 MINUTES 13 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+### 精理2：检查信部�

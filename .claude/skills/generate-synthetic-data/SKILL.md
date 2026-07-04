@@ -16,7 +16,7 @@ Create realistic synthetic datasets that mirror real-world data characteristics.
 - Business constraints (e.g., revenue > 0, age between 18-100)
 - Target variable distribution (for ML datasets)
 
-### Step 2: Configure Data Properties
+### Step 2: Configure Data 属性
 - **Distributions**: Normal, log-normal, uniform, Poisson, custom
 - **Correlations**: Specify relationships between features
 - **Missing data**: Inject realistic missing patterns (MCAR, MAR, MNAR)
@@ -36,7 +36,7 @@ Create realistic synthetic datasets that mirror real-world data characteristics.
 - Check constraint satisfaction
 - Visual comparison: distribution plots, correlation heatmaps
 
-## Usage Examples
+## 用法 Examples
 
 **Example 1: E-commerce dataset**
 ```
@@ -61,5 +61,5 @@ with proper foreign key relationships between tables."
 
 - **Dataset**: Generated data in requested format (CSV, JSON, SQL, DataFrame code)
 - **Schema Documentation**: Column descriptions and data generation rules
-- **Statistics Summary**: Descriptive stats confirming the data meets specifications
+- **Statistics 总结**: Descriptive stats confirming the data meets specifications
 - **Python Code**: Reproducible generation script for regenerating with different seeds/sizes

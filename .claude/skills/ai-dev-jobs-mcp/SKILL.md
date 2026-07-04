@@ -1,7 +1,6 @@
 ---
 name: ai-dev-jobs-mcp
 description: "搜索 489 家公司超过 8400 个 AI/ML 职位，查看职位详情和雇主信息，匹配岗位，并查看薪资和市场规模数据。"
-description: "Search 8,400+ AI and ML jobs across 489 companies, inspect listings and employers, match roles, and view salary and market stats via AI Dev Jobs MCP"
 category: mcp
 risk: safe
 source: "https://aidevboard.com"
@@ -168,7 +167,7 @@ The agent will call `get_salary_data({ tag: "llm", level: "senior" })` and summa
 - Use `get_salary_data` only as market context; remind users that listings and compensation change quickly
 - Combine with resume or cover letter skills to create end-to-end job application workflows
 
-## Limitations
+## 局限性
 
 - The index covers AI and ML roles specifically; general software engineering jobs outside the AI space may not be included.
 - Job listings are refreshed regularly but may have a short delay before new postings appear.

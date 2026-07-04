@@ -123,7 +123,7 @@ with open("document_es.docx", "wb") as f:
     f.write(result)
 ```
 
-## Check Translation Status
+## Check Translation 状态
 
 ```python
 # Get all translation operations
@@ -138,7 +138,7 @@ for op in operations:
     print(f"Failed: {op.documents_failed_count}")
 ```
 
-## List Document Statuses
+## List Document 状态es
 
 ```python
 # Get status of individual documents in a job
@@ -231,7 +231,7 @@ async def translate_documents():
 | Structured | CSV, TSV, JSON, XML |
 | Localization | XLIFF, XLF, MHTML |
 
-## Storage Requirements
+## Storage 需求
 
 - Source and target containers must be Azure Blob Storage
 - Use SAS tokens with appropriate permissions:
@@ -251,7 +251,7 @@ async def translate_documents():
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

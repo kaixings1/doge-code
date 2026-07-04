@@ -3,11 +3,11 @@ name: find-skills
 description: Claude Code技能查找工具
 ---
 
-# Find Skills
+# /u67e5/u627e/u6280/u80fd
 
 This skill helps you discover and install skills from the open agent skills ecosystem.
 
-## When to Use This Skill
+## /u4f55/u65f6/u4f7f/u7528/u6b64/u6280/u80fd
 
 Use this skill when the user:
 
@@ -18,7 +18,7 @@ Use this skill when the user:
 - Wants to search for tools, templates, or workflows
 - Mentions they wish they had help with a specific domain (design, testing, deployment, etc.)
 
-## What is the Skills CLI?
+## /u4ec0/u4e48/u662f Skills CLI/uff1f
 
 The Skills CLI (`npx skills`) is the package manager for the open agent skills ecosystem. Skills are modular packages that extend agent capabilities with specialized knowledge, workflows, and tools.
 
@@ -31,9 +31,9 @@ The Skills CLI (`npx skills`) is the package manager for the open agent skills e
 
 **Browse skills at:** https://skills.sh/
 
-## How to Help Users Find Skills
+## /u5982/u4f55/u5e2e/u52a9/u7528/u6237/u67e5/u627e/u6280/u80fd
 
-### Step 1: Understand What They Need
+### /u6b65/u9aa4 1/uff1a/u4e86/u89e3/u4ed6/u4eec/u7684/u9700/u6c42
 
 When a user asks for help with something, identify:
 
@@ -41,7 +41,7 @@ When a user asks for help with something, identify:
 2. The specific task (e.g., writing tests, creating animations, reviewing PRs)
 3. Whether this is a common enough task that a skill likely exists
 
-### Step 2: Search for Skills
+### /u6b65/u9aa4 2/uff1a/u641c/u7d22/u6280/u80fd
 
 Run the find command with a relevant query:
 
@@ -64,7 +64,7 @@ vercel-labs/agent-skills@vercel-react-best-practices
 └ https://skills.sh/vercel-labs/agent-skills/vercel-react-best-practices
 ```
 
-### Step 3: Present Options to the User
+### /u6b65/u9aa4 3/uff1a/u5411/u7528/u6237/u5c55/u793a/u9009/u9879
 
 When you find relevant skills, present them to the user with:
 
@@ -84,7 +84,7 @@ npx skills add vercel-labs/agent-skills@vercel-react-best-practices
 Learn more: https://skills.sh/vercel-labs/agent-skills/vercel-react-best-practices
 ```
 
-### Step 4: Offer to Install
+### /u6b65/u9aa4 4/uff1a/u63d0/u4f9b/u5b89/u88c5
 
 If the user wants to proceed, you can install the skill for them:
 
@@ -94,7 +94,7 @@ npx skills add <owner/repo@skill> -g -y
 
 The `-g` flag installs globally (user-level) and `-y` skips confirmation prompts.
 
-## Common Skill Categories
+## /u5e38/u89c1/u6280/u80fd/u5206/u7c7b
 
 When searching, consider these common categories:
 
@@ -108,13 +108,13 @@ When searching, consider these common categories:
 | Design          | ui, ux, design-system, accessibility     |
 | Productivity    | workflow, automation, git                |
 
-## Tips for Effective Searches
+## /u6709/u6548/u641c/u7d22/u7684/u6280/u5de7
 
 1. **Use specific keywords**: "react testing" is better than just "testing"
 2. **Try alternative terms**: If "deploy" doesn't work, try "deployment" or "ci-cd"
 3. **Check popular sources**: Many skills come from `vercel-labs/agent-skills` or `ComposioHQ/awesome-claude-skills`
 
-## When No Skills Are Found
+## /u5f53/u672a/u627e/u5230/u6280/u80fd/u65f6
 
 If no relevant skills exist:
 

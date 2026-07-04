@@ -3,20 +3,20 @@ name: debugging-and-error-recovery
 description: 调试与错误恢复 — 指导系统性的根本原因调试。在测试失败或出现错误时使用。
 ---
 
-# Debugging and Error Recovery
+# 调试与错误恢复
 
-## Overview
+## 概述
 
-Systematic debugging with structured triage. When something breaks, stop adding features, preserve evidence, and follow a structured process to find and fix the root cause. Guessing wastes time. The triage checklist works for test failures, build errors, runtime bugs, and production incidents.
+使用结构化分类进行系统化调试。当出现问题时，停止添加功能，保留证据，并遵循结构化流程找到并修复根本原因。猜测是浪费时间。分类检查清单适用于测试失败、构建错误、运行时错误和生产事故。
 
-## When to Use
+## 何时使用
 
-- Tests fail after a code change
-- The build breaks
-- Runtime behavior doesn't match expectations
-- A bug report arrives
-- An error appears in logs or console
-- Something worked before and stopped working
+- 代码更改后测试失败
+- 构建中断
+- 运行时行为与预期不符
+- 收到错误报告
+- 日志或控制台中出现错误
+- 之前正常工作的内容停止工作
 
 ## The Stop-the-Line Rule
 

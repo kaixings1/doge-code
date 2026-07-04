@@ -81,7 +81,7 @@ npx -y @accesslint/chrome@latest stop --all  # 如果 ensure 报告 "managed":fa
 - 分支模式：无 HMR — CLI 每次运行打开新标签页。`--wait-for` 是重建门控。
 - 运行之间的大量 DOM 变更会导致选择器漂移 — 用 `accesslint:scan` 重新运行以获得全貌。
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

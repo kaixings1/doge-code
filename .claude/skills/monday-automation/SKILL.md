@@ -6,17 +6,17 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Monday.com Automation via Rube MCP
+# 通过 Rube MCP 实现 Monday.com 自动化
 
-Automate Monday.com work management workflows including board creation, item management, column value updates, group organization, subitems, and update/comment threads through Composio's Monday toolkit.
+通过 Composio 的 Monday 工具包自动执行 Monday.com 工作管理工作流，包括面板创建、项目管理、列值更新、组组织、子项目和更新/评论线程。
 
-## Prerequisites
+## 前提条件
 
 - Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
 - Active Monday.com connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `monday`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- 始终 call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
-## Setup
+## 设置
 
 **Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
 
@@ -33,11 +33,11 @@ Automate Monday.com work management workflows including board creation, item man
 
 **Tool sequence**:
 1. `MONDAY_GET_WORKSPACES` - List available workspaces and resolve workspace ID [Prerequisite]
-2. `MONDAY_LIST_BOARDS` - List existing boards to check for duplicates [Optional]
-3. `MONDAY_CREATE_BOARD` - Create a new board with name, kind, and workspace [Required]
-4. `MONDAY_CREATE_COLUMN` - Add columns to the new board [Optional]
-5. `MONDAY_CREATE_GROUP` - Add groups to organize items [Optional]
-6. `MONDAY_BOARDS` - Retrieve detailed board metadata [Optional]
+2. `MONDAY_LIST_BOARDS` - List existing boards to check for duplicates [可选]
+3. `MONDAY_CREATE_BOARD` - Create a new board with name, kind, and workspace [必需]
+4. `MONDAY_CREATE_COLUMN` - Add columns to the new board [可选]
+5. `MONDAY_CREATE_GROUP` - Add groups to organize items [可选]
+6. `MONDAY_BOARDS` - Retrieve detailed board metadata [可选]
 
 **Key parameters**:
 - `board_name`: Name for the new board (required)
@@ -60,10 +60,10 @@ Automate Monday.com work management workflows including board creation, item man
 1. `MONDAY_LIST_BOARDS` - Resolve board name to board ID [Prerequisite]
 2. `MONDAY_LIST_GROUPS` - List groups on the board to get group_id [Prerequisite]
 3. `MONDAY_LIST_COLUMNS` - Get column IDs and types for setting values [Prerequisite]
-4. `MONDAY_CREATE_ITEM` - Create a new item with name and column values [Required]
-5. `MONDAY_LIST_BOARD_ITEMS` - List all items on the board [Optional]
-6. `MONDAY_MOVE_ITEM_TO_GROUP` - Move an item to a different group [Optional]
-7. `MONDAY_ITEMS_PAGE` - Paginated item retrieval with filtering [Optional]
+4. `MONDAY_CREATE_ITEM` - Create a new item with name and column values [必需]
+5. `MONDAY_LIST_BOARD_ITEMS` - List all items on the board [可选]
+6. `MONDAY_MOVE_ITEM_TO_GROUP` - Move an item to a different group [可选]
+7. `MONDAY_ITEMS_PAGE` - Paginated item retrieval with filtering [可选]
 
 **Key parameters**:
 - `board_id`: Board ID (required, integer)
@@ -84,8 +84,8 @@ Automate Monday.com work management workflows including board creation, item man
 **Tool sequence**:
 1. `MONDAY_LIST_COLUMNS` or `MONDAY_COLUMNS` - Get column IDs and types [Prerequisite]
 2. `MONDAY_LIST_BOARD_ITEMS` or `MONDAY_ITEMS_PAGE` - Find the target item ID [Prerequisite]
-3. `MONDAY_CHANGE_SIMPLE_COLUMN_VALUE` - Update text, status, or dropdown with a string value [Required]
-4. `MONDAY_UPDATE_ITEM` - Update complex column types (timeline, people, date) with JSON [Required]
+3. `MONDAY_CHANGE_SIMPLE_COLUMN_VALUE` - Update text, status, or dropdown with a string value [必需]
+4. `MONDAY_UPDATE_ITEM` - Update complex column types (timeline, people, date) with JSON [必需]
 
 **Key parameters for MONDAY_CHANGE_SIMPLE_COLUMN_VALUE**:
 - `board_id`: Board ID (integer, required)
@@ -105,7 +105,7 @@ Automate Monday.com work management workflows including board creation, item man
 - Use `MONDAY_CHANGE_SIMPLE_COLUMN_VALUE` for simple text/status/dropdown updates (string value)
 - Use `MONDAY_UPDATE_ITEM` for complex types like timeline, people, date (JSON value)
 - Column IDs are lowercase strings with underscores (e.g., "status_1", "date_2", "text"); get them from `MONDAY_LIST_COLUMNS`
-- Status values can be set by label name ("Done") or index number ("1")
+- 状态 values can be set by label name ("Done") or index number ("1")
 - `create_labels_if_missing` defaults differ: true for CHANGE_SIMPLE, false for UPDATE_ITEM
 
 ### 4. Work with Groups and Board Structure
@@ -114,11 +114,11 @@ Automate Monday.com work management workflows including board creation, item man
 
 **Tool sequence**:
 1. `MONDAY_LIST_BOARDS` - Resolve board ID [Prerequisite]
-2. `MONDAY_LIST_GROUPS` - List all groups on a board [Required]
-3. `MONDAY_CREATE_GROUP` - Create a new group [Optional]
-4. `MONDAY_LIST_COLUMNS` or `MONDAY_COLUMNS` - Inspect column structure [Required]
-5. `MONDAY_CREATE_COLUMN` - Add a new column to the board [Optional]
-6. `MONDAY_MOVE_ITEM_TO_GROUP` - Reorganize items across groups [Optional]
+2. `MONDAY_LIST_GROUPS` - List all groups on a board [必需]
+3. `MONDAY_CREATE_GROUP` - Create a new group [可选]
+4. `MONDAY_LIST_COLUMNS` or `MONDAY_COLUMNS` - Inspect column structure [必需]
+5. `MONDAY_CREATE_COLUMN` - Add a new column to the board [可选]
+6. `MONDAY_MOVE_ITEM_TO_GROUP` - Reorganize items across groups [可选]
 
 **Key parameters**:
 - `board_id`: Board ID (required for all group/column operations)
@@ -139,9 +139,9 @@ Automate Monday.com work management workflows including board creation, item man
 
 **Tool sequence**:
 1. `MONDAY_LIST_BOARD_ITEMS` - Find parent item IDs [Prerequisite]
-2. `MONDAY_LIST_SUBITEMS_BY_PARENT` - Retrieve subitems with column values [Required]
-3. `MONDAY_CREATE_UPDATE` - Add a comment/update to an item [Optional]
-4. `MONDAY_CREATE_OBJECT` - Create subitems via GraphQL mutation [Optional]
+2. `MONDAY_LIST_SUBITEMS_BY_PARENT` - Retrieve subitems with column values [必需]
+3. `MONDAY_CREATE_UPDATE` - Add a comment/update to an item [可选]
+4. `MONDAY_CREATE_OBJECT` - Create subitems via GraphQL mutation [可选]
 
 **Key parameters for MONDAY_LIST_SUBITEMS_BY_PARENT**:
 - `parent_item_ids`: Array of parent item IDs (integer array, required)
@@ -150,7 +150,7 @@ Automate Monday.com work management workflows including board creation, item man
 
 **Key parameters for MONDAY_CREATE_OBJECT** (GraphQL):
 - `query`: Full GraphQL mutation string
-- `variables`: Optional variables object
+- `variables`: 可选 variables object
 
 **Pitfalls**:
 - Subitems can only be queried through their parent items
@@ -161,7 +161,7 @@ Automate Monday.com work management workflows including board creation, item man
 ## Common Patterns
 
 ### ID Resolution
-Always resolve display names to IDs before operations:
+始终 resolve display names to IDs before operations:
 - **Board name -> board_id**: `MONDAY_LIST_BOARDS` and match by name
 - **Group name -> group_id**: `MONDAY_LIST_GROUPS` with `board_id`
 - **Column title -> column_id**: `MONDAY_LIST_COLUMNS` with `board_id`
@@ -176,15 +176,15 @@ Monday.com uses cursor-based pagination for items:
 - Maximum `limit` is 500 per page
 - `MONDAY_LIST_BOARDS` and `MONDAY_GET_WORKSPACES` use page-based pagination with `page` and `limit`
 
-### Column Value Formatting
+### Column Value 格式ting
 Different column types require different value formats:
-- **Status**: `{"index": 0}` or `{"label": "Done"}` or simple string "Done"
+- **状态**: `{"index": 0}` or `{"label": "Done"}` or simple string "Done"
 - **Date**: `{"date": "YYYY-MM-DD"}`
 - **People**: `{"personsAndTeams": [{"id": 123, "kind": "person"}]}`
 - **Text/Numbers**: Plain string or number
 - **Timeline**: `{"from": "YYYY-MM-DD", "to": "YYYY-MM-DD"}`
 
-## Known Pitfalls
+## 已知陷阱
 
 ### ID Formats
 - Board IDs and item IDs are large integers (e.g., 1234567890)
@@ -208,7 +208,6 @@ Different column types require different value formats:
 - Column values include both raw `value` (JSON) and rendered `text` (display string)
 - Subitems are nested under parent items and cannot be queried independently
 
-## Quick Reference
+## 快速参考
 
 | Task | Tool Slug | Key Params |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 03 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

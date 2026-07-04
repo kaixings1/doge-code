@@ -7,16 +7,16 @@ tags: "[ddd, tactical, aggregates, value-objects, domain-events]"
 date_added: "2026-02-27"
 ---
 
-# DDD Tactical Patterns
+# DDD 战术模式
 
-## Use this skill when
+## 使用此技能的场景
 
-- Translating domain rules into code structures.
-- Designing aggregate boundaries and invariants.
-- Refactoring an anemic model into behavior-rich domain objects.
-- Defining repository contracts and domain event boundaries.
+- 将领域规则转化为代码结构。
+- 设计聚合边界和不变条件。
+- 将贫血模型重构为行为丰富的领域对象。
+- 定义仓储契约和领域事件边界。
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - You are still defining strategic boundaries.
 - The task is only API documentation or UI layout.
@@ -46,7 +46,7 @@ class Order {
 }
 ```
 
-## Limitations
+## 局限性
 
 - This skill does not define deployment architecture.
 - It does not choose databases or transport protocols.

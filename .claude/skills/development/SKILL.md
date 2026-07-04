@@ -7,17 +7,17 @@ source: personal
 date_added: "2026-02-27"
 ---
 
-# Development Workflow Bundle
+# 开发工作流捆绑包
 
-## Overview
+## 概述
 
-Consolidated workflow for end-to-end software development covering web, mobile, and backend development. This bundle orchestrates skills for building production-ready applications from scaffolding to deployment.
+涵盖 Web、移动和后端开发的端到端软件开发的综合工作流。此捆绑包编排从脚手架到部署构建生产就绪应用的技能。
 
-## When to Use This Workflow
+## 何时使用此工作流
 
-Use this workflow when:
-- Building new web or mobile applications
-- Adding features to existing applications
+在以下情况下使用此工作流：
+- 构建新的 Web 或移动应用
+- 向现有应用添加功能
 - Refactoring or modernizing legacy code
 - Setting up new projects with best practices
 - Full-stack feature development
@@ -261,7 +261,7 @@ Before moving to next phase, verify:
 - `testing-qa` - Comprehensive testing workflow
 - `documentation` - Documentation generation workflow
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

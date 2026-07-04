@@ -22,7 +22,7 @@ pip install azure-monitor-opentelemetry
 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=xxx;IngestionEndpoint=https://xxx.in.applicationinsights.azure.com/
 ```
 
-## Quick Start
+## 快速开始
 
 ```python
 from azure.monitor.opentelemetry import configure_azure_monitor
@@ -33,7 +33,7 @@ configure_azure_monitor()
 # Your application code...
 ```
 
-## Explicit Configuration
+## Explicit 配置
 
 ```python
 from azure.monitor.opentelemetry import configure_azure_monitor
@@ -202,9 +202,9 @@ configure_azure_monitor(
 | pymongo | Traces |
 | redis | Traces |
 
-## Configuration Options
+## 配置 Options
 
-| Parameter | Description | Default |
+| Parameter | Description | 默认 |
 |-----------|-------------|---------|
 | `connection_string` | Application Insights connection string | From env var |
 | `credential` | Azure credential for AAD auth | None |
@@ -226,7 +226,7 @@ configure_azure_monitor(
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -6,19 +6,19 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Moodle External API Development
+# Moodle 外部 API 开发
 
-This skill guides you through creating custom external web service APIs for Moodle LMS, following Moodle's external API framework and coding standards.
+本技能指导您按照 Moodle 的外部 API 框架和编码标准为 Moodle LMS 创建自定义外部 Web 服务 API。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- Creating custom web services for Moodle plugins
-- Implementing REST/AJAX endpoints for course management
-- Building APIs for quiz operations, user tracking, or reporting
-- Exposing Moodle functionality to external applications
-- Developing mobile app backends using Moodle
+- 为 Moodle 插件创建自定义 Web 服务
+- 实现课程管理的 REST/AJAX 端点
+- 构建测验操作、用户跟踪或报告的 API
+- 向外部应用公开 Moodle 功能
+- 使用 Moodle 开发移动应用后端
 
-## Core Architecture Pattern
+## Core 架构 Pattern
 
 Moodle external APIs follow a strict three-method pattern:
 
@@ -26,7 +26,7 @@ Moodle external APIs follow a strict three-method pattern:
 2. **`execute()`** - Contains business logic
 3. **`execute_returns()`** - Defines return structure
 
-## Step-by-Step Implementation
+## Step-by-Step 实现
 
 ### Step 1: Create the External API Class File
 
@@ -57,7 +57,7 @@ class your_api_name extends external_api {
 - Include the security check: `defined('MOODLE_INTERNAL') || die();`
 - Require externallib.php for base classes
 
-### Step 2: Define Input Parameters
+### Step 2: Define Input 参数
 
 ```php
 public static function execute_parameters() {
@@ -88,7 +88,7 @@ public static function execute_parameters() {
 **Value Flags**:
 - `VALUE_REQUIRED` - Parameter must be provided
 - `VALUE_OPTIONAL` - Parameter is optional
-- `VALUE_DEFAULT, defaultvalue` - Optional with default
+- `VALUE_DEFAULT, defaultvalue` - 可选 with default
 
 ### Step 3: Implement Business Logic
 
@@ -144,7 +144,7 @@ public static function execute($userid, $courseid, $options = []) {
 ```
 
 **Critical Steps**:
-1. **Always validate parameters** using `validate_parameters()`
+1. **始终 validate parameters** using `validate_parameters()`
 2. **Check context** using `validate_context()`
 3. **Verify capabilities** using `require_capability()`
 4. **Use parameterized queries** to prevent SQL injection
@@ -207,11 +207,11 @@ $services = [
 
 **Service Registration Keys**:
 - `classname` - Full namespaced class name
-- `methodname` - Always 'execute'
+- `methodname` - 始终 'execute'
 - `type` - 'read' (SELECT) or 'write' (INSERT/UPDATE/DELETE)
 - `ajax` - Set true for AJAX/REST access
-- `capabilities` - Required Moodle capabilities
-- `services` - Optional service bundles
+- `capabilities` - 必需 Moodle capabilities
+- `services` - 可选 service bundles
 
 ### Step 6: Implement Error Handling & Logging
 
@@ -261,7 +261,7 @@ public static function execute($userid, $courseid) {
 }
 ```
 
-**Error Handling Best Practices**:
+**Error Handling 最佳实践s**:
 - Wrap logic in try-catch blocks
 - Log errors with timestamps and context
 - Capture SQL queries on database errors
@@ -436,7 +436,7 @@ require(['core/ajax'], function(ajax) {
 });
 ```
 
-## Common Pitfalls & Solutions
+## 常见陷阱 & Solutions
 
 ### 1. "Function not found" Error
 **Solution**: 
@@ -452,8 +452,8 @@ require(['core/ajax'], function(ajax) {
 
 ### 3. SQL Injection Vulnerabilities
 **Solution**:
-- Always use placeholder parameters (`:paramname`)
-- Never concatenate user input into SQL strings
+- 始终 use placeholder parameters (`:paramname`)
+- 绝不 concatenate user input into SQL strings
 - Use Moodle's database methods: `get_record()`, `get_records()`, etc.
 
 ### 4. Permission Denied Errors
@@ -465,7 +465,7 @@ require(['core/ajax'], function(ajax) {
 ### 5. Transaction Deadlocks
 **Solution**:
 - Keep transactions short
-- Always commit or rollback in finally blocks
+- 始终 commit or rollback in finally blocks
 - Avoid nested transactions
 
 ## Debugging Checklist
@@ -497,7 +497,7 @@ local/yourplugin/
     └── external_test.php      # Unit tests (optional but recommended)
 ```
 
-## Examples from Real Implementation
+## 示例s from Real 实现
 
 ### Simple Read API (Get Quiz Attempts)
 
@@ -561,7 +561,6 @@ See attached `create_quiz_from_categories.php` for a comprehensive example inclu
 - Extensive error logging
 - Transaction management
 
-## Quick Reference: Common Moodle Tables
+## 快速参考: Common Moodle Tables
 
 | Table | Purpose |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 32 MINUTES 54 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

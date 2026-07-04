@@ -9,7 +9,7 @@ level: 3
 ---
 
 <Purpose>
-Deep Interview implements Ouroboros-inspired Socratic questioning with mathematical ambiguity scoring. It replaces vague ideas with crystal-clear specifications by asking targeted questions that expose hidden assumptions, measuring clarity across weighted dimensions, and refusing to proceed until ambiguity drops below the resolved threshold for this run. The output feeds into a gated pipeline: **deep-interview → omc-plan consensus refinement → pending approval → explicitly approved execution**, ensuring maximum clarity before any mutation starts.
+Deep Interview 实现了受 Ouroboros 启发的苏格拉底式提问，并带有数学歧义评分。它通过提出有针对性的问题来暴露隐藏的假设，测量跨加权维度的清晰度，并拒绝在歧义度降至本次运行的解决阈值以下之前继续，从而用清晰的规范取代模糊的想法。输出进入一个门控流水线：**deep-interview → omc-plan 共识完善 → 待批准 → 明确批准的执行**，确保在任何变更开始前达到最大清晰度。
 </Purpose>
 
 <Use_When>

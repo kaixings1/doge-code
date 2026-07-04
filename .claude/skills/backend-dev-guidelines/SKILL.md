@@ -65,14 +65,14 @@ Automatically applies when working on:
 * Prisma database access
 * Zod validation
 * Sentry error tracking
-* Configuration management
+* 配置 management
 * Backend refactors or migrations
 
 ---
 
-## 2. Core Architecture Doctrine (Non-Negotiable)
+## 2. Core 架构 Doctrine (Non-Negotiable)
 
-### 1. Layered Architecture Is Mandatory
+### 1. Layered 架构 Is Mandatory
 
 ```
 Routes → Controllers → Services → Repositories → Database
@@ -252,7 +252,7 @@ await userRepository.findActiveUsers();
 
 ## 7. Async & Error Handling
 
-### asyncErrorWrapper Required
+### asyncErrorWrapper 必需
 
 All async route handlers must be wrapped.
 
@@ -271,7 +271,7 @@ No unhandled promise rejections.
 
 ## 8. Observability & Monitoring
 
-### Required
+### 必需
 
 * Sentry error tracking
 * Sentry performance tracing
@@ -283,10 +283,10 @@ Every critical path must be observable.
 
 ## 9. Testing Discipline
 
-### Required Tests
+### 必需 Tests
 
 * **Unit tests** for services
-* **Integration tests** for routes
+* **集成 tests** for routes
 * **Repository tests** for complex queries
 
 ```ts
@@ -313,7 +313,7 @@ No tests → no merge.
 
 ---
 
-## 11. Integration With Other Skills
+## 11. 集成 With Other Skills
 
 * **frontend-dev-guidelines** → API contract alignment
 * **error-tracking** → Sentry standards
@@ -337,16 +337,16 @@ Before finalizing backend work:
 
 ---
 
-## 13. Skill Status
+## 13. Skill 状态
 
-**Status:** Stable · Enforceable · Production-grade
+**状态:** Stable · Enforceable · Production-grade
 **Intended Use:** Long-lived Node.js microservices with real traffic and real risk
 ---
 
 ### When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

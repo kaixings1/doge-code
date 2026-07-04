@@ -10,13 +10,13 @@ date_added: "2026-02-27"
 
 Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit via Rube MCP.
 
-## Prerequisites
+## 前提条件
 
 - Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
 - Active Microsoft Teams connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `microsoft_teams`
 - Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
-## Setup
+## 设置
 
 **Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
 
@@ -164,7 +164,7 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 - Use `top` parameter to control page size
 - Continue until @odata.nextLink is absent
 
-## Known Pitfalls
+## 已知陷阱
 
 **Authentication and Permissions**:
 - Different operations require different Microsoft Graph permissions
@@ -190,7 +190,7 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 - Message size limit is approximately 28KB
 - Split long content into multiple messages
 
-## Quick Reference
+## 快速参考
 
 | Task | Tool Slug | Key Params |
 |---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 35 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

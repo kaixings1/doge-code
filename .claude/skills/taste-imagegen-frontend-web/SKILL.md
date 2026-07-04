@@ -5,7 +5,7 @@ description: "Taste Imagegen Frontend Web — Taste Imagegen Frontend Web 相关
 
 # HARD OUTPUT RULE — READ FIRST
 
-**Generate one separate horizontal image PER section. Always. No exceptions.**
+**Generate one separate horizontal image PER section. 始终. No exceptions.**
 
 - 1 section requested -> 1 image
 - 4 sections requested -> 4 images
@@ -14,7 +14,7 @@ description: "Taste Imagegen Frontend Web — Taste Imagegen Frontend Web 相关
 - "landing page" with no count -> default to 6 sections -> 6 images
 - "full website template" -> default to 8 sections -> 8 images
 
-Each image is one section, generated as its own image call. Never combine multiple sections into one frame. Never return a single tall image that contains the whole page.
+Each image is one section, generated as its own image call. 绝不 combine multiple sections into one frame. 绝不 return a single tall image that contains the whole page.
 
 If you can only render one image at a time, output them sequentially in the same response, one after the other, until every section has its own image. Announce each one ("Section 1 of 8: Hero", "Section 2 of 8: Trust bar", etc.).
 
@@ -71,7 +71,7 @@ The output must feel:
 - clearly usable as a frontend reference
 
 Do not generate random mood art unless explicitly asked.
-Default to website design comps.
+默认 to website design comps.
 
 ---
 
@@ -109,7 +109,7 @@ Interpretation:
 - Use imagery as a core design material — including as **full-bleed backgrounds**, not only as inline assets, **when the brief allows it**.
 - Vary composition: do not default to "text left, image right". Move text to bottom-left, center, top-right, etc. across sections.
 - Keep sections breathable. Do not over-pack the page.
-- Prefer slightly more whitespace between sections than default.
+- 优先 slightly more whitespace between sections than default.
 - Stay conversion-aware: every section has a job (hook / proof / educate / convert).
 
 ### Brief-to-direction mapping
@@ -158,7 +158,7 @@ If the brief is silent on style:
 - Use defaults from §1 + §2 with confident background variety
 - Pick one Hero Scale decisively, do not split the difference
 
-Never force backgrounds, gradients, or full-bleed treatments where the brief asks for restraint. Never strip them out where the brief asks for atmosphere.
+绝不 force backgrounds, gradients, or full-bleed treatments where the brief asks for restraint. 绝不 strip them out where the brief asks for atmosphere.
 
 ---
 
@@ -195,9 +195,9 @@ Choose 1:
 5. Elegant editorial serif + sans pairing
 6. Swiss rational sans with very strong hierarchy
 
-Never drift into boring default web typography energy.
+绝不 drift into boring default web typography energy.
 
-### Hero Architecture
+### Hero 架构
 Choose 1:
 1. Cinematic Centered Minimalist
 2. Asymmetric Split Hero
@@ -336,7 +336,7 @@ The hero must feel cinematic, clear, and intentional.
 ### Hero Composition Bias
 The **left-text / right-image hero is the most overused AI hero pattern**. It is allowed, but it should not be your default starting point.
 
-Prefer one of these instead, unless left-text / right-image is genuinely the strongest fit:
+优先 one of these instead, unless left-text / right-image is genuinely the strongest fit:
 - Centered statement over full-bleed image (text in lower 40%)
 - Bottom-left text over background image
 - Bottom-right text over background image
@@ -365,7 +365,7 @@ The H1 should visually read like a premium statement.
 Do not let it feel long, weak, or overly wrapped.
 
 ### Typography Execution
-Prefer:
+优先:
 - medium / normal / light elegance
 - tight tracking
 - controlled line count
@@ -397,7 +397,7 @@ instead.
 ## 5. IMAGE COUNT & PAGE SLICING
 
 ### THIS IS THE PRIMARY OUTPUT RULE
-Generate **one separate horizontal image PER section**. Always.
+Generate **one separate horizontal image PER section**. 始终.
 
 - never combine multiple sections in a single image
 - never return a single tall slice that contains the whole page
@@ -415,7 +415,7 @@ If the request is ambiguous about section count, **default high**:
 If the model can only render one image per call, generate them **sequentially in the same response**, one after the other, labeled "Section X of N: <name>" until the full set is delivered.
 
 ### Format
-- Always horizontal (16:9, 16:10, or 21:9 depending on density)
+- 始终 horizontal (16:9, 16:10, or 21:9 depending on density)
 - Each image renders one focused section in high fidelity
 - Hero usually 16:9 or 21:9; narrower content sections may be 16:10
 
@@ -586,7 +586,7 @@ Use short, believable, design-friendly copy.
 Typography is not filler.
 Typography is a primary design material.
 
-Always ensure:
+始终 ensure:
 - clear size contrast
 - obvious reading order
 - strong display moments
@@ -658,7 +658,7 @@ Avoid generic fake dashboards.
 
 ### Vertical Rhythm Lines
 Use fine lines and spacing systems to reinforce order and elegance.
-Never let them become decorative clutter.
+绝不 let them become decorative clutter.
 
 ---
 
@@ -815,7 +815,7 @@ Avoid:
 8. Metrics / proof / integration
 9. Testimonials
 10. Pricing
-11. FAQ
+11. 常见问题
 12. CTA + footer
 
 ---
@@ -877,7 +877,7 @@ Apply unless the user opts out:
 Across the slice, deliberately vary foreground/background intensity at least twice (lighter → richer → calmer) so the scroll feels paced, not monotonous slabs.
 
 ### CTA specificity
-Prefer one unmistakable primary action per major viewport tier; secondary actions must look secondary (scale, outline, ghost), not clones of primary.
+优先 one unmistakable primary action per major viewport tier; secondary actions must look secondary (scale, outline, ghost), not clones of primary.
 
 ### Image variety inside one comp
 Mix at least **two distinct image crops** where multiple sections exist — e.g. macro product + contextual environment, or portrait editorial + widescreen artifact — avoiding one repeated stock silhouette.
@@ -957,7 +957,7 @@ Interpretation:
 - vary Composition Anchor across sections (centered low, right-third caption, bottom-left over chart visual, stacked center for closing CTA)
 - Background Mode mix: solid surface, full-bleed image background once, editorial side-image at use cases
 - one consistent palette (e.g. ink + paper + single brand accent)
-- conversion path: hook -> proof bar -> features -> use case -> testimonial -> pricing -> FAQ -> final CTA
+- conversion path: hook -> proof bar -> features -> use case -> testimonial -> pricing -> 常见问题 -> final CTA
 
 ### Example 3
 User: "creative agency landing page, 12 sections"

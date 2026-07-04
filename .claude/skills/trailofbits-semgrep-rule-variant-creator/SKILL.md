@@ -11,7 +11,7 @@ This skill takes an existing Semgrep rule and one or more target languages, then
 3. **Rule Creation** - Translate patterns and adapt for target language idioms
 4. **Validation** - Ensure all tests pass before proceeding
 
-## Prerequisites
+## 前提条件
 
 - [Semgrep](https://semgrep.dev/docs/getting-started/) installed and available in PATH
 - Existing Semgrep rule to port (in YAML)

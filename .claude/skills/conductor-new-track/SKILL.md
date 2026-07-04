@@ -6,21 +6,21 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# New Track
+# 新轨道
 
-Create a new track (feature, bug fix, chore, or refactor) with a detailed specification and phased implementation plan.
+创建包含详细规格和分阶段实施计划的新轨道（功能、错误修复、杂务或重构）。
 
-## Use this skill when
+## 使用此技能的场景
 
-- Working on new track tasks or workflows
-- Needing guidance, best practices, or checklists for new track
+- 处理新轨道任务或工作流时
+- 需要新轨道的指导、最佳实践或检查清单时
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
-- The task is unrelated to new track
-- You need a different domain or tool outside this scope
+- 任务与新轨道无关时
+- 需要此范围之外的领域或工具时
 
-## Instructions
+## 说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.

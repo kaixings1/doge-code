@@ -5,9 +5,7 @@ risk: unknown
 source: community
 version: 2.1.3
 description: "Clarity Gate — Clarity Gate 相关功能和最佳实践"
-  Pre-ingestion verification for epistemic quality in RAG systems.
-  Ensures documents are properly qualified before entering knowledge bases.
-  Produces CGD (Clarity-Gated Documents) and validates SOT (Source of Truth) files.
+  RAG 系统中认知质量的预摄取验证。确保文档在进入知识库之前经过适当鉴定。生成 CGD（清晰门控文档）并验证 SOT（事实来源）文件。
 author: Francesco Marinoni Moretto
 license: CC-BY-4.0
 repository: https://github.com/frmoretto/clarity-gate
@@ -47,10 +45,10 @@ spec_version: "2.1"
 
 | Feature | Description |
 |---------|-------------|
-| **Claim Completion Status** | PENDING/VERIFIED determined by field presence (no explicit status field) |
+| **Claim Completion 状态** | PENDING/VERIFIED determined by field presence (no explicit status field) |
 | **Source Field Semantics** | Actionable source (PENDING) vs. what-was-found (VERIFIED) |
 | **Claim ID Format Guidance** | Hash-based IDs preferred, collision analysis for scale |
-| **Body Structure Requirements** | HITL Verification Record section mandatory when claims exist |
+| **Body Structure 需求** | HITL Verification Record section mandatory when claims exist |
 | **New Validation Codes** | E-ST10, W-ST11, W-HC01, W-HC02, E-SC06 (FORMAT_SPEC); E-TB01-07 (SOT validation) |
 | **Bundled Scripts** | `claim_id.py` and `document_hash.py` for deterministic computations |
 
@@ -90,7 +88,7 @@ Clarity Gate defines validation codes for structural and semantic checks per FOR
 |------|-------|----------|
 | **E-TB01** | No `## Verified Claims` section | ERROR |
 | **E-TB02** | Table has no data rows | ERROR |
-| **E-TB03** | Required columns missing | ERROR |
+| **E-TB03** | 必需 columns missing | ERROR |
 | **E-TB04** | Column order wrong | ERROR |
 | **E-TB05** | Empty cell in required column | ERROR |
 | **E-TB06** | Invalid date format in Verified column | ERROR |
@@ -415,7 +413,7 @@ Claims like "Revenue will be $50M" become "Revenue is **projected** to be $50M *
 Clarity Gate: CLEAR | REVIEWED
 ```
 
-**Required CGD Elements (per spec):**
+**必需 CGD Elements (per spec):**
 - YAML frontmatter with all required fields:
   - `clarity-gate-version` — Tool version (no "v" prefix)
   - `processed-date` — YYYY-MM-DD format
@@ -432,14 +430,14 @@ Clarity Gate: CLEAR | REVIEWED
   ```
 - HITL verification record (if status is REVIEWED)
 
-**Optional/Computed Fields:**
+**可选/Computed Fields:**
 - `rag-ingestable` — **Computed by validators**, not manually set. Shows `true` only when `CLEAR | REVIEWED` with no exclusion blocks.
-- `document-sha256` — Required. 64-char lowercase hex hash for integrity verification. See spec §2 for computation rules.
-- `exclusions-coverage` — Optional. Fraction of body inside exclusion blocks (0.0–1.0).
+- `document-sha256` — 必需. 64-char lowercase hex hash for integrity verification. See spec §2 for computation rules.
+- `exclusions-coverage` — 可选. Fraction of body inside exclusion blocks (0.0–1.0).
 
 **Escape Mechanism:** To write about markers like `*(estimated)*` without triggering parsing, wrap in backticks: `` `*(estimated)*` ``
 
-### Claim Completion Status (v2.1)
+### Claim Completion 状态 (v2.1)
 
 Claim verification status is determined by field **presence**, not an explicit status field:
 
@@ -493,7 +491,7 @@ Legacy authentication details that require SME review...
 - IDs must match: `[A-Za-z0-9][A-Za-z0-9._-]{0,63}`
 - No nesting or overlapping blocks
 - Each ID used only once
-- Requires `hitl-status: REVIEWED_WITH_EXCEPTIONS`
+- 需要 `hitl-status: REVIEWED_WITH_EXCEPTIONS`
 - Must document `exceptions-reason` and `exceptions-ids` in frontmatter
 
 **Important:** Documents with exclusion blocks are **not RAG-ingestable**. They're rejected entirely (no partial ingestion).
@@ -514,7 +512,7 @@ SOT documents are CGDs with a `tier:` block. They require a `## Verified Claims`
 |------|-------|----------|
 | E-TB01 | No `## Verified Claims` section | ERROR |
 | E-TB02 | Table has no data rows | ERROR |
-| E-TB03 | Required columns missing (Claim, Value, Source, Verified) | ERROR |
+| E-TB03 | 必需 columns missing (Claim, Value, Source, Verified) | ERROR |
 | E-TB04 | Column order wrong (Claim not first or Verified not last) | ERROR |
 | E-TB05 | Empty cell in required column | ERROR |
 | E-TB06 | Invalid date format in Verified column | ERROR |
@@ -533,7 +531,7 @@ The 9 Verification Points apply to SOT content:
 | 8 | Check dates are chronologically consistent |
 | 9 | Flag specific numbers for external check |
 
-### SOT-Specific Requirements
+### SOT-Specific 需求
 
 - **Tier block required:** SOT is a CGD with `tier:` block containing `level`, `owner`, `version`, `promoted-date`, `promoted-by`
 - **Structured claims table:** `## Verified Claims` section with columns: Claim, Value, Source, Verified
@@ -606,7 +604,7 @@ Reply "confirmed" or flag any I misread.
 | **TEMPORAL** | Date/time inconsistency detected | Verify and update |
 | **VERIFIABLE** | Specific claim that could be fact-checked | Route to HITL or external search |
 | **ROUND A** | Derived from witnessed source | Quick confirmation |
-| **ROUND B** | Requires true verification | Cannot pass without confirmation |
+| **ROUND B** | 需要 true verification | Cannot pass without confirmation |
 | **PASS** | Clearly marked, no ambiguity, verified | No action needed |
 
 ---
@@ -638,7 +636,7 @@ Reply "confirmed" or flag any I misread.
 
 ---
 
-## Related Projects
+## 相关 Projects
 
 | Project | Purpose | URL |
 |---------|---------|-----|
@@ -659,13 +657,13 @@ Reply "confirmed" or flag any I misread.
 - **ADDED:** Fence-tracking test vectors (7 new tests, 15 total)
 
 ### v2.1.0 (2026-01-27)
-- **ADDED:** Claim Completion Status semantics (PENDING/VERIFIED by field presence)
+- **ADDED:** Claim Completion 状态 semantics (PENDING/VERIFIED by field presence)
 - **ADDED:** Source Field Semantics (actionable vs. what-was-found)
 - **ADDED:** Claim ID Format guidance with collision analysis
-- **ADDED:** Body Structure Requirements (HITL Verification Record mandatory when claims exist)
+- **ADDED:** Body Structure 需求 (HITL Verification Record mandatory when claims exist)
 - **ADDED:** New validation codes: E-ST10, W-ST11, W-HC01, W-HC02, E-SC06 (FORMAT_SPEC §1.2-1.3)
 - **ADDED:** Bundled scripts: `claim_id.py`, `document_hash.py`
-- **UPDATED:** References to FORMAT_SPEC v2.1
+- **UPDATED:** 参考资料 to FORMAT_SPEC v2.1
 - **UPDATED:** CGD output example to version 2.1
 
 ### v2.0.0 (2026-01-13)
@@ -710,4 +708,4 @@ Reply "confirmed" or flag any I misread.
 **Version:** 2.1.3
 **Spec Version:** 2.1
 **Author:** Francesco Marinoni Moretto
-**License:** CC-BY-4.0
+**许可证:** CC-BY-4.0

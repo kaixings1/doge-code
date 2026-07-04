@@ -3,9 +3,9 @@ name: ci-cd-pipelines
 description: "Ci Cd Pipelines — Ci Cd Pipelines 相关功能和最佳实践"
 ---
 
-# CI/CD Pipelines
+# CI/CD 流水线
 
-## GitHub Actions Workflow
+## GitHub Actions 工作流
 
 ```yaml
 name: CI
@@ -193,7 +193,7 @@ test:
 
 ## Checklist
 
-- [ ] Dependencies cached between CI runs
+- [ ] 依赖项 cached between CI runs
 - [ ] Concurrency groups cancel stale pipeline runs
 - [ ] Lint, typecheck, and test run as separate parallelizable jobs
 - [ ] Database services use health checks before tests start

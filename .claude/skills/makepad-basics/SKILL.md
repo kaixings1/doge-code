@@ -9,40 +9,40 @@ risk: unknown
 source: "https://github.com/makepad/makepad"
 ---
 
-# Makepad Basics Skill
+# Makepad 基础技能
 
-> **Version:** makepad-widgets (dev branch) | **Last Updated:** 2026-01-19
+> **版本：** makepad-widgets（dev 分支）| **最后更新：** 2026-01-19
 >
-> Check for updates: https://crates.io/crates/makepad-widgets
+> 检查更新：https://crates.io/crates/makepad-widgets
 
-You are an expert at the Rust `makepad-widgets` crate. Help users by:
-- **Writing code**: Generate Rust code following the patterns below
-- **Answering questions**: Explain concepts, troubleshoot issues, reference documentation
+您是 Rust `makepad-widgets` crate 方面的专家。通过以下方式帮助用户：
+- **编写代码**：按照下面的模式生成 Rust 代码
+- **回答问题**：解释概念、排查问题、引用文档
 
-## When to Use
-- You need to get started with Makepad or understand basic app structure and boilerplate.
-- The task involves project setup, `live_design!`, `app_main!`, or first-screen application wiring.
-- You want foundational Makepad guidance before moving into more specific layout, widget, or shader topics.
+## 使用时机
+- 您需要开始使用 Makepad 或了解基本的应用结构和样板代码。
+- 任务涉及项目设置、`live_design!`、`app_main!` 或首个屏幕的应用接线。
+- 在进入更具体的布局、微件或着色器主题之前，您需要基础的 Makepad 指导。
 
-## Documentation
+## 文档
 
-Refer to the local files for detailed documentation:
-- `./references/app-structure.md` - Complete app boilerplate and structure
-- `./references/event-handling.md` - Event handling patterns
+有关详细文档，请参考本地文件：
+- `./references/app-structure.md` - 完整的应用样板和结构
+- `./references/event-handling.md` - 事件处理模式
 
-## IMPORTANT: Documentation Completeness Check
+## 重要提示：文档完整性检查
 
-**Before answering questions, Claude MUST:**
+**在回答问题之前，Claude 必须：**
 
-1. Read the relevant reference file(s) listed above
-2. If file read fails or file is empty:
-   - Inform user: "本地文档不完整，建议运行 `/sync-crate-skills makepad --force` 更新文档"
-   - Still answer based on SKILL.md patterns + built-in knowledge
-3. If reference file exists, incorporate its content into the answer
+1. 阅读上面列出的相关参考文件
+2. 如果文件读取失败或文件为空：
+   - 告知用户："本地文档不完整，建议运行 `/sync-crate-skills makepad --force` 更新文档"
+   - 仍基于 SKILL.md 模式 + 内置知识进行回答
+3. 如果参考文件存在，将其内容纳入答案
 
-## Key Patterns
+## 关键模式
 
-### 1. Basic App Structure
+### 1. 基本应用结构
 
 ```rust
 use makepad_widgets::*;
@@ -86,7 +86,7 @@ impl AppMain for App {
 }
 ```
 
-### 2. Cargo.toml Setup
+### 2. Cargo.toml 设置
 
 ```toml
 [package]
@@ -98,7 +98,7 @@ edition = "2024"
 makepad-widgets = { git = "https://github.com/makepad/makepad", branch = "dev" }
 ```
 
-### 3. Handling Button Clicks
+### 3. 处理按钮点击
 
 ```rust
 impl AppMain for App {
@@ -112,10 +112,10 @@ impl AppMain for App {
 }
 ```
 
-### 4. Accessing and Modifying Widgets
+### 4. 访问和修改微件
 
 ```rust
-// Get widget references
+// 获取微件引用
 let label = self.ui.label(id!(my_label));
 label.set_text("Updated text");
 
@@ -123,7 +123,7 @@ let input = self.ui.text_input(id!(my_input));
 let text = input.text();
 ```
 
-## API Reference Table
+## API 参考表
 
-| Macro/Type | Description | Example |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 23 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 宏/类型 | 描述 | 示例 |
+|---------|------|------|

@@ -6,10 +6,8 @@ requires:
     - rube
 ---
 
-# MailerLite Automation
+# MailerLite 自动化
 
-Automate email marketing operations -- manage subscribers, analyze campaign performance, organize groups and segments, and monitor account health -- all orchestrated through the Composio MCP integration.
+通过 Composio MCP 集成编排电子邮件营销操作——管理订阅者、分析活动表现、组织群组和细分，以及监控账户健康状态。
 
-**Toolkit docs:** [composio.dev/toolkits/mailerlite](https://composio.dev/toolkits/mailerlite)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 36 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+**工具包文档：** [composio.dev/toolkits/mailerlite](https://composio.dev/toolkits/mailerlite)

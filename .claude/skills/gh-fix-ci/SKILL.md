@@ -6,9 +6,9 @@ description: "当用户要求调试或修复 GitHub Actions 中运行的 GitHub 
 
 # GitHub Actions CI Fix
 
-## Overview
+## 概述
 
-Use this skill when the task is specifically about failing GitHub Actions checks on a pull request. This workflow is hybrid by design:
+使用此技能当 the task is specifically about failing GitHub Actions checks on a pull request. This workflow is hybrid by design:
 
 - Use the GitHub app from this plugin for PR metadata, changed files, and review context.
 - Use `gh` for GitHub Actions checks and logs because the connector does not expose that workflow end to end.
@@ -37,7 +37,7 @@ Prereq: authenticate with GitHub CLI once, then confirm with `gh auth status`. R
    - Otherwise prefer the current branch PR with `gh pr view --json number,url`.
    - When repo and PR are known, fetch PR metadata and patch context through the GitHub app from this plugin.
 3. Inspect failing checks (GitHub Actions only).
-   - Preferred: run the bundled script (handles gh field drift and job-log fallbacks):
+   - 优先red: run the bundled script (handles gh field drift and job-log fallbacks):
      - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "<number-or-url>"`
      - Add `--json` for machine-friendly output.
    - Manual fallback:
@@ -48,7 +48,7 @@ Prereq: authenticate with GitHub CLI once, then confirm with `gh auth status`. R
        - `gh run view <run_id> --log`
      - If the run log says it is still in progress, fetch job logs directly:
        - `gh api "/repos/<owner>/<repo>/actions/jobs/<job_id>/logs" > "<path>"`
-4. Scope non-GitHub Actions checks.
+4. 范围 non-GitHub Actions checks.
    - If `detailsUrl` is not a GitHub Actions run, label it as external and only report the URL.
    - Do not attempt Buildkite or other providers; keep the workflow lean.
 5. Summarize failures for the user.
@@ -69,7 +69,7 @@ Prereq: authenticate with GitHub CLI once, then confirm with `gh auth status`. R
 
 Fetch failing PR checks, pull GitHub Actions logs, and extract a failure snippet. Exits non-zero when failures remain so it can be used in automation.
 
-Usage examples:
+用法 examples:
 - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "123"`
 - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "https://github.com/org/repo/pull/123" --json`
 - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --max-lines 200 --context 40`

@@ -3,15 +3,15 @@ name: git-workflow-and-versioning
 description: Git工作流与版本控制 — 规范Git工作流实践。在提交代码更改时使用。
 ---
 
-# Git Workflow and Versioning
+# Git 工作流与版本控制
 
-## Overview
+## 概述
 
-Git is your safety net. Treat commits as save points, branches as sandboxes, and history as documentation. With AI agents generating code at high speed, disciplined version control is the mechanism that keeps changes manageable, reviewable, and reversible.
+Git 是你的安全网。将提交视为存档点，分支视为沙箱，历史视为文档。随着 AI 代理高速生成代码，严格的版本控制是保持更改可管理、可审查和可逆的机制。
 
 ## When to Use
 
-Always. Every code change flows through git.
+始终. Every code change flows through git.
 
 ## Core Principles
 
@@ -29,7 +29,7 @@ This is the recommended default. Teams using gitflow or long-lived branches can 
 
 - **Dev branches are costs.** Every day a branch lives, it accumulates merge risk.
 - **Release branches are acceptable.** When you need to stabilize a release while main moves forward.
-- **Feature flags > long branches.** Prefer deploying incomplete work behind flags rather than keeping it on a branch for weeks.
+- **Feature flags > long branches.** 优先 deploying incomplete work behind flags rather than keeping it on a branch for weeks.
 
 ### 1. Commit Early, Commit Often
 
@@ -133,7 +133,7 @@ main (always deployable)
 - Branch from `main` (or the team's default branch)
 - Keep branches short-lived (merge within 1-3 days) — long-lived branches are hidden costs
 - Delete branches after merge
-- Prefer feature flags over long-lived branches for incomplete features
+- 优先 feature flags over long-lived branches for incomplete features
 
 ### Branch Naming
 
@@ -273,7 +273,7 @@ git log --grep="validation" --oneline
 |---|---|
 | "I'll commit when the feature is done" | One giant commit is impossible to review, debug, or revert. Commit each slice. |
 | "The message doesn't matter" | Messages are documentation. Future you (and future agents) will need to understand what changed and why. |
-| "I'll squash it all later" | Squashing destroys the development narrative. Prefer clean incremental commits from the start. |
+| "I'll squash it all later" | Squashing destroys the development narrative. 优先 clean incremental commits from the start. |
 | "Branches add overhead" | Short-lived branches are free and prevent conflicting work from colliding. Long-lived branches are the problem — merge within 1-3 days. |
 | "I'll split this change later" | Large changes are harder to review, riskier to deploy, and harder to revert. Split before submitting, not after. |
 | "I don't need a .gitignore" | Until `.env` with production secrets gets committed. Set it up immediately. |

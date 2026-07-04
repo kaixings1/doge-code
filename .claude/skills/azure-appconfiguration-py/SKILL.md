@@ -6,7 +6,7 @@ source: community
 date_added: '2026-02-27'
 ---
 
-# Azure App Configuration SDK for Python
+# Azure App 配置 SDK for Python
 
 Centralized configuration management with feature flags and dynamic settings.
 
@@ -48,7 +48,7 @@ client = AzureAppConfigurationClient(
 )
 ```
 
-## Configuration Settings
+## 配置 Settings
 
 ### Get Setting
 
@@ -251,7 +251,7 @@ async def main():
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

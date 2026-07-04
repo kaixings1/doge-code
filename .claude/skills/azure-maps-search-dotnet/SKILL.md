@@ -438,13 +438,13 @@ foreach (var condition in result.Value.Results)
 
 ## Best Practices
 
-1. **Use Entra ID for production** — Prefer over subscription keys
+1. **Use Entra ID for production** — 优先 over subscription keys
 2. **Batch operations** — Use batch geocoding for multiple addresses
 3. **Cache results** — Geocoding results don't change frequently
 4. **Use appropriate tile sizes** — 256 or 512 pixels based on display
 5. **Handle rate limits** — Implement exponential backoff
 6. **Use async route matrix** — For large matrix calculations (>100)
-7. **Consider traffic data** — Set `UseTrafficData = true` for accurate ETAs
+7. **考虑 traffic data** — Set `UseTrafficData = true` for accurate ETAs
 
 ## Error Handling
 
@@ -473,7 +473,7 @@ catch (RequestFailedException ex)
 }
 ```
 
-## Related SDKs
+## 相关 SDKs
 
 | SDK | Purpose | Install |
 |-----|---------|---------|
@@ -497,7 +497,7 @@ catch (RequestFailedException ex)
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -72,7 +72,7 @@ I just finished the "Why This Matters" section. Review it and give feedback.
 Review the full draft for flow, clarity, and consistency.
 ```
 
-## Instructions
+## 说明
 
 When a user requests writing assistance:
 

@@ -1,18 +1,18 @@
 ---
 name: mcp-setup
-description: "Mcp Setup — Mcp Setup 相关功能和最佳实践"
+description: "Mcp 设置 — Mcp 设置 相关功能和最佳实践"
 level: 2
 ---
 
-# MCP Setup
+# MCP 设置
 
-Configure Model Context Protocol (MCP) servers to extend Claude Code's capabilities with external tools like web search, file system access, and GitHub integration.
+Configure Model 上下文 Protocol (MCP) servers to extend Claude Code's capabilities with external tools like web search, file system access, and GitHub integration.
 
-## Overview
+## 概述
 
-MCP servers provide additional tools that Claude Code agents can use. This skill helps you configure popular MCP servers using the `claude mcp add` command-line interface.
+MCP servers provide additional tools that Claude Code agents can use. 此技能帮助 you configure popular MCP servers using the `claude mcp add` command-line interface.
 
-## Step 1: Choose a Setup Path
+## Step 1: Choose a 设置 Path
 
 Use **AskUserQuestion** with **one question at a time** and **no more than 3 options per question**. Recent Claude Code builds reject larger option payloads as invalid tool parameters, so keep the MCP selection flow staged.
 
@@ -32,9 +32,9 @@ Ask a follow-up **AskUserQuestion**:
 **Question:** "Which recommended MCP bundle should I configure?"
 
 **Options:**
-1. **Context7 only (Recommended)** - Zero-config docs/context server
-2. **Context7 + Exa** - Docs/context plus enhanced web search
-3. **Full recommended bundle** - Context7, Exa, Filesystem, and GitHub
+1. **上下文7 only (Recommended)** - Zero-config docs/context server
+2. **上下文7 + Exa** - Docs/context plus enhanced web search
+3. **Full recommended bundle** - 上下文7, Exa, Filesystem, and GitHub
 
 Map that choice to the server list you will configure.
 
@@ -45,7 +45,7 @@ Ask a follow-up **AskUserQuestion**:
 **Question:** "Which server should I configure first?"
 
 **Options:**
-1. **Context7 (Recommended)** - Documentation and code context from popular libraries
+1. **上下文7 (Recommended)** - Documentation and code context from popular libraries
 2. **Exa Web Search** - Enhanced web search (replaces built-in websearch)
 3. **More server choices** - Filesystem, GitHub, or the full recommended bundle
 
@@ -56,15 +56,15 @@ If the user chooses **More server choices**, ask one more **AskUserQuestion**:
 **Options:**
 1. **Filesystem (Recommended)** - Extended file system access with additional capabilities
 2. **GitHub** - GitHub API integration for issues, PRs, and repository management
-3. **Full recommended bundle** - Configure Context7, Exa, Filesystem, and GitHub together
+3. **Full recommended bundle** - Configure 上下文7, Exa, Filesystem, and GitHub together
 
 ### Step 1.4: If the user chooses "Custom server"
 
 Skip directly to the **Custom MCP Server** section below.
 
-## Step 2: Gather Required Information
+## Step 2: Gather 必需 Information
 
-### For Context7:
+### For 上下文7:
 No API key required. Ready to use immediately.
 
 ### For Exa Web Search:
@@ -96,22 +96,22 @@ Do you have a GitHub Personal Access Token?
 
 Use the `claude mcp add` command to configure each MCP server. The CLI automatically handles settings.json updates and merging.
 
-### Context7 Configuration:
+### 上下文7 配置:
 ```bash
 claude mcp add context7 -- npx -y @upstash/context7-mcp
 ```
 
-### Exa Web Search Configuration:
+### Exa Web Search 配置:
 ```bash
 claude mcp add -e EXA_API_KEY=<user-provided-key> exa -- npx -y exa-mcp-server
 ```
 
-### Filesystem Configuration:
+### Filesystem 配置:
 ```bash
 claude mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem <allowed-directories>
 ```
 
-### GitHub Configuration:
+### GitHub 配置:
 
 **Option 1: Docker (local)**
 ```bash
@@ -224,7 +224,7 @@ This remains advisory prompt context, not runtime enforcement.
 
 ## Common Issues
 
-### MCP Server Not Loading
+### MCP 服务器 Not Loading
 - Ensure Node.js 18+ is installed
 - Check that npx is available in PATH
 - Run `claude mcp list` to verify server status

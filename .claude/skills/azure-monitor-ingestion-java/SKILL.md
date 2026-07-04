@@ -43,12 +43,12 @@ Or use Azure SDK BOM:
 </dependencies>
 ```
 
-## Prerequisites
+## 前提条件
 
 - Data Collection Endpoint (DCE)
 - Data Collection Rule (DCR)
 - Log Analytics workspace
-- Target table (custom or built-in: CommonSecurityLog, SecurityEvents, Syslog, WindowsEvents)
+- Target table (custom or built-in: Common安全性Log, 安全性Events, Syslog, WindowsEvents)
 
 ## Environment Variables
 
@@ -225,14 +225,14 @@ String query = "MyTable_CL | where TimeGenerated > ago(1h) | limit 10";
 | Maven Package | https://central.sonatype.com/artifact/com.azure/azure-monitor-ingestion |
 | GitHub | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/monitor/azure-monitor-ingestion |
 | Product Docs | https://learn.microsoft.com/azure/azure-monitor/logs/logs-ingestion-api-overview |
-| DCE Overview | https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-endpoint-overview |
-| DCR Overview | https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-rule-overview |
+| DCE 概述 | https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-endpoint-overview |
+| DCR 概述 | https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-rule-overview |
 | Troubleshooting | https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-ingestion/TROUBLESHOOTING.md |
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

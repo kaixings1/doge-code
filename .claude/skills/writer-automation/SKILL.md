@@ -1,34 +1,39 @@
 ---
-name: writer-automation
+name: Writer自动化
 description: "通过 Rube MCP (Composio) 自动执行 Writer 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
+triggers:
+  - "writer automation"
+  - "writer-automation"
+  - "Writer 自动化"
+  - "自动执行 Writer"
 ---
 
-# Writer Automation via Rube MCP
+# Writer 自动化（通过 Rube MCP）
 
-Automate Writer operations through Composio's Writer toolkit via Rube MCP.
+通过 Composio 的 Writer 工具包实现 Writer 操作的自动化，使用 Rube MCP 作为桥接。
 
-**Toolkit docs**: [composio.dev/toolkits/writer](https://composio.dev/toolkits/writer)
+**工具包文档**：[composio.dev/toolkits/writer](https://composio.dev/toolkits/writer)
 
-## Prerequisites
+## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Writer connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `writer`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- Rube MCP 已连接（`RUBE_SEARCH_TOOLS` 可用）
+- Writer 连接已通过 `RUBE_MANAGE_CONNECTIONS` 激活（toolkit: `writer`）
+- 执行工作流前始终先调用 `RUBE_SEARCH_TOOLS` 获取最新工具 schema
 
-## Setup
+## 配置步骤
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**获取 Rube MCP**：在客户端配置中添加 `https://rube.app/mcp` 作为 MCP 服务器，无需 API 密钥，直接添加端点即可。
 
-1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
-2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `writer`
-3. If connection is not ACTIVE, follow the returned auth link to complete setup
-4. Confirm connection status shows ACTIVE before running any workflows
+1. 确认 `RUBE_SEARCH_TOOLS` 响应，验证 Rube MCP 可用
+2. 调用 `RUBE_MANAGE_CONNECTIONS` 并指定 toolkit `writer`
+3. 如果连接状态不是 ACTIVE，按返回的认证链接完成设置
+4. 执行任何工作流前，确认连接状态为 ACTIVE
 
-## Tool Discovery
+## 工具发现
 
-Always discover available tools before executing workflows:
+执行工作流前始终先发现可用工具：
 
 ```
 RUBE_SEARCH_TOOLS
@@ -36,11 +41,11 @@ queries: [{use_case: "Writer operations", known_fields: ""}]
 session: {generate_id: true}
 ```
 
-This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
+该调用返回可用工具标识、输入 schema、推荐执行方案和已知陷阱。
 
-## Core Workflow Pattern
+## 核心工作流
 
-### Step 1: Discover Available Tools
+### 步骤 1：发现可用工具
 
 ```
 RUBE_SEARCH_TOOLS
@@ -48,7 +53,7 @@ queries: [{use_case: "your specific Writer task"}]
 session: {id: "existing_session_id"}
 ```
 
-### Step 2: Check Connection
+### 步骤 2：检查连接
 
 ```
 RUBE_MANAGE_CONNECTIONS
@@ -56,7 +61,7 @@ toolkits: ["writer"]
 session_id: "your_session_id"
 ```
 
-### Step 3: Execute Tools
+### 步骤 3：执行工具
 
 ```
 RUBE_MULTI_EXECUTE_TOOL
@@ -68,16 +73,15 @@ memory: {}
 session_id: "your_session_id"
 ```
 
-## Known Pitfalls
+## 常见陷阱
 
-- **Always search first**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
-- **Check connection**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema compliance**: Use exact field names and types from the search results
-- **Memory parameter**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **Session reuse**: Reuse session IDs within a workflow. Generate new ones for new workflows
-- **Pagination**: Check responses for pagination tokens and continue fetching until complete
+- **始终先搜索**：工具 schema 会变更，不要在不调用 `RUBE_SEARCH_TOOLS` 的情况下硬编码工具标识或参数
+- **检查连接**：执行前确认 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE
+- **遵循 schema**：使用搜索结果中的精确字段名和类型
+- **memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 中始终包含 `memory`，即使为空（`{}`）
+- **会话复用**：同一工作流内复用会话 ID，不同工作流生成新 ID
+- **分页**：检查响应中的分页令牌并继续获取直至完整
 
-## Quick Reference
+## 快速参考
 
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 36 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 操作 | 建议 |

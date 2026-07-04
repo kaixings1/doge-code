@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Master C#/.NET patterns for building production-grade APIs, MCP servers, and enterprise backends with modern best practices (2024/2025).
 
-## Use this skill when
+## 使用此技能的场景
 
 - Developing new .NET Web APIs or MCP servers
 - Reviewing C# code for quality and performance
@@ -21,7 +21,7 @@ Master C#/.NET patterns for building production-grade APIs, MCP servers, and ent
 - Configuring applications with IOptions pattern
 - Handling errors and implementing resilience patterns
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The project is not using .NET or C#
 - You only need frontend or client guidance
@@ -39,7 +39,7 @@ Master C#/.NET patterns for building production-grade APIs, MCP servers, and ent
 
 - `resources/implementation-playbook.md` for detailed .NET patterns and examples.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

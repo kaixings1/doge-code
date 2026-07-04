@@ -6,10 +6,8 @@ requires:
     - rube
 ---
 
-# Zoho Books Automation
+# Zoho Books 自动化
 
-Automate Zoho Books accounting workflows -- create and manage invoices, track bills and payments, look up contacts, export PDFs, and handle multi-organization setups -- all through natural language.
+自动化 Zoho Books 会计工作流——通过自然语言创建和管理发票、跟踪账单和付款、查找联系人、导出 PDF 以及处理多组织设置。
 
-**Toolkit docs:** [composio.dev/toolkits/zoho_books](https://composio.dev/toolkits/zoho_books)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 12 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+**工具包文档:** [composio.dev/toolkits/zoho_books](https://composio.dev/toolkits/zoho_books)

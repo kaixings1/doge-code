@@ -24,7 +24,7 @@ Authenticate Java applications with Azure services using Microsoft Entra ID (Azu
 
 | Credential | Use Case |
 |------------|----------|
-| `DefaultAzureCredential` | **Recommended** - Works in dev and production |
+| `默认AzureCredential` | **Recommended** - Works in dev and production |
 | `ManagedIdentityCredential` | Azure-hosted apps (App Service, Functions, VMs) |
 | `EnvironmentCredential` | CI/CD pipelines with env vars |
 | `ClientSecretCredential` | Service principals with secret |
@@ -33,9 +33,9 @@ Authenticate Java applications with Azure services using Microsoft Entra ID (Azu
 | `InteractiveBrowserCredential` | Interactive login flow |
 | `DeviceCodeCredential` | Headless device authentication |
 
-## DefaultAzureCredential (Recommended)
+## 默认AzureCredential (Recommended)
 
-The `DefaultAzureCredential` tries multiple authentication methods in order:
+The `默认AzureCredential` tries multiple authentication methods in order:
 
 1. Environment variables
 2. Workload Identity
@@ -63,7 +63,7 @@ KeyClient keyClient = new KeyClientBuilder()
     .buildClient();
 ```
 
-### Configure DefaultAzureCredential
+### Configure 默认AzureCredential
 
 ```java
 DefaultAzureCredential credential = new DefaultAzureCredentialBuilder()
@@ -150,7 +150,7 @@ import com.azure.identity.EnvironmentCredentialBuilder;
 EnvironmentCredential credential = new EnvironmentCredentialBuilder().build();
 ```
 
-### Required Environment Variables
+### 必需 Environment Variables
 
 **For service principal with secret:**
 ```bash
@@ -340,7 +340,7 @@ AZURE_AUTHORITY_HOST=https://login.microsoftonline.com/
 
 ## Best Practices
 
-1. **Use DefaultAzureCredential** - Works seamlessly from dev to production
+1. **Use 默认AzureCredential** - Works seamlessly from dev to production
 2. **Managed Identity in Production** - No secrets to manage, automatic rotation
 3. **Azure CLI for Local Dev** - Run `az login` before running your app
 4. **Least Privilege** - Grant only required permissions to service principals
@@ -351,18 +351,18 @@ AZURE_AUTHORITY_HOST=https://login.microsoftonline.com/
 
 | Environment | Recommended Credential |
 |-------------|----------------------|
-| Local Development | `DefaultAzureCredential` (uses Azure CLI) |
-| Azure App Service | `DefaultAzureCredential` (uses Managed Identity) |
-| Azure Functions | `DefaultAzureCredential` (uses Managed Identity) |
+| Local Development | `默认AzureCredential` (uses Azure CLI) |
+| Azure App Service | `默认AzureCredential` (uses Managed Identity) |
+| Azure Functions | `默认AzureCredential` (uses Managed Identity) |
 | Azure Kubernetes Service | `WorkloadIdentityCredential` |
-| Azure VMs | `DefaultAzureCredential` (uses Managed Identity) |
+| Azure VMs | `默认AzureCredential` (uses Managed Identity) |
 | CI/CD Pipeline | `EnvironmentCredential` |
 | Desktop App | `InteractiveBrowserCredential` |
 | CLI Tool | `DeviceCodeCredential` |
 
 ## Trigger Phrases
 
-- "Azure authentication Java", "DefaultAzureCredential Java"
+- "Azure authentication Java", "默认AzureCredential Java"
 - "managed identity Java", "service principal Java"
 - "Azure login Java", "Azure credentials Java"
 - "AZURE_CLIENT_ID", "AZURE_TENANT_ID"
@@ -370,7 +370,7 @@ AZURE_AUTHORITY_HOST=https://login.microsoftonline.com/
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

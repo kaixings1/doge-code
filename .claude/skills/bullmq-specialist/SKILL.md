@@ -15,7 +15,7 @@ reliable async execution in Node.js/TypeScript applications.
 ## Principles
 
 - Jobs are fire-and-forget from the producer side - let the queue handle delivery
-- Always set explicit job options - defaults rarely match your use case
+- 始终 set explicit job options - defaults rarely match your use case
 - Idempotency is your responsibility - jobs may run more than once
 - Backoff strategies prevent thundering herds - exponential beats linear
 - Dead letter queues are not optional - failed jobs need a home
@@ -36,7 +36,7 @@ reliable async execution in Node.js/TypeScript applications.
 - flow-producers
 - job-dependencies
 
-## Scope
+## 范围
 
 - redis-infrastructure -> redis-specialist
 - serverless-queues -> upstash-qstash
@@ -74,7 +74,7 @@ reliable async execution in Node.js/TypeScript applications.
 
 ## Patterns
 
-### Basic Queue Setup
+### Basic Queue 设置
 
 Production-ready BullMQ queue with proper configuration
 
@@ -85,7 +85,7 @@ import IORedis from 'ioredis';
 
 // Shared connection for all queues
 const connection = new IORedis(process.env.REDIS_URL, {
-  maxRetriesPerRequest: null,  // Required for BullMQ
+  maxRetriesPerRequest: null,  // 必需 for BullMQ
   enableReadyCheck: false,
 });
 
@@ -145,7 +145,7 @@ await queue.removeRepeatable('daily-digest', {
   tz: 'America/New_York',
 });
 
-### Job Flows and Dependencies
+### Job Flows and 依赖项
 
 Complex multi-step job processing with parent-child relationships
 
@@ -266,7 +266,7 @@ Severity: INFO
 
 Queue additions should be fire-and-forget in request handlers
 
-Message: Queue.add awaited in request handler. Consider fire-and-forget for faster response.
+Message: Queue.add awaited in request handler. 考虑 fire-and-forget for faster response.
 
 ### Potentially large data in job payload
 
@@ -282,7 +282,7 @@ Severity: INFO
 
 Jobs should have timeouts to prevent infinite execution
 
-Message: Job added without explicit timeout. Consider adding timeout to prevent stuck jobs.
+Message: Job added without explicit timeout. 考虑 adding timeout to prevent stuck jobs.
 
 ### Retry without backoff strategy
 
@@ -375,7 +375,7 @@ Workflow:
 5. Results handled (backend)
 ```
 
-## Related Skills
+## 相关 Skills
 
 Works well with: `redis-specialist`, `backend`, `nextjs-app-router`, `email-systems`, `ai-workflow-automation`, `performance-hunter`
 
@@ -391,7 +391,7 @@ Works well with: `redis-specialist`, `backend`, `nextjs-app-router`, `email-syst
 - User mentions or implies: job scheduling
 - User mentions or implies: async processing
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

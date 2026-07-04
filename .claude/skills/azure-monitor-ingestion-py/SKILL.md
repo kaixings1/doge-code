@@ -30,7 +30,7 @@ AZURE_DCR_RULE_ID=dcr-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 AZURE_DCR_STREAM_NAME=Custom-MyTable_CL
 ```
 
-## Prerequisites
+## 前提条件
 
 Before using this SDK, you need:
 
@@ -206,7 +206,7 @@ Stream names follow patterns:
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

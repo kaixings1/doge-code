@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Simple REST API for speech-to-text transcription of short audio files (up to 60 seconds). No SDK required - just HTTP requests.
 
-## Prerequisites
+## 前提条件
 
 1. **Azure subscription** - [Create one free](https://azure.microsoft.com/free/)
 2. **Speech resource** - Create in [Azure Portal](https://portal.azure.com/#create/Microsoft.CognitiveServicesSpeechServices)
@@ -374,7 +374,7 @@ Use the Speech SDK or Batch Transcription API instead when you need:
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

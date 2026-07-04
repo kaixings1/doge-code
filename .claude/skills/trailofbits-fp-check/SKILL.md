@@ -1,4 +1,4 @@
-# fp-check
+# fp-check 假阳性检查
 
 A plugin that enforces systematic false positive verification when verifying suspected security bugs.
 
@@ -22,4 +22,3 @@ Both paths end with six mandatory gate reviews. Each bug receives a **TRUE POSIT
 ### Skills
 
 | Skill | Description |
-|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 28 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

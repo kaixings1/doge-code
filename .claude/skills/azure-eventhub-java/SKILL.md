@@ -46,7 +46,7 @@ EventHubProducerClient producer = new EventHubClientBuilder()
     .buildProducerClient();
 ```
 
-### With DefaultAzureCredential
+### With 默认AzureCredential
 
 ```java
 import com.azure.identity.DefaultAzureCredentialBuilder;
@@ -144,7 +144,7 @@ batch.tryAdd(new EventData("Customer event"));
 producer.send(batch);
 ```
 
-### Event with Properties
+### Event with 属性
 
 ```java
 EventData event = new EventData("Order created");
@@ -259,7 +259,7 @@ asyncConsumer.receiveFromPartition("0", EventPosition.latest())
     );
 ```
 
-### Get Event Hub Properties
+### Get Event Hub 属性
 
 ```java
 // Get hub info
@@ -346,7 +346,7 @@ STORAGE_CONNECTION_STRING=<for-checkpointing>
 3. **Partition Keys**: Use for ordering guarantees within a partition
 4. **Checkpointing**: Checkpoint after processing to avoid reprocessing
 5. **Error Handling**: Handle transient errors with retries
-6. **Close Clients**: Always close producer/consumer when done
+6. **Close Clients**: 始终 close producer/consumer when done
 
 ## Trigger Phrases
 
@@ -360,7 +360,7 @@ STORAGE_CONNECTION_STRING=<for-checkpointing>
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
 
-## Limitations
+## 局限性
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

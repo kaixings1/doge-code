@@ -1,7 +1,7 @@
 ---
 name: agentphone
 version: 0.3.0
-description: 通过 AgentPhone API 构建 AI 电话代理：拨打电话、收发短信、管理号码和语音代理。
+description: "通过 AgentPhone API 构建 AI 电话代理：拨打电话、收发短信、管理号码和语音代理。"
 risk: critical
 source: community
 homepage: https://agentphone.to
@@ -25,5 +25,3 @@ AgentPhone is an API-first telephony platform for AI agents. Give your agents ph
 **Docs:** [docs.agentphone.to](https://docs.agentphone.to)
 
 **Console:** [agentphone.to](https://agentphone.to)
-
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 45 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -7,27 +7,27 @@ author: zebbern
 date_added: "2026-02-27"
 ---
 
-# Broken Authentication Testing
+# /u8ba4/u8bc1/u7f3a/u9677 Testing
 
 ## Purpose
 
 Identify and exploit authentication and session management vulnerabilities in web applications. Broken authentication consistently ranks in the OWASP Top 10 and can lead to account takeover, identity theft, and unauthorized access to sensitive systems. This skill covers testing methodologies for password policies, session handling, multi-factor authentication, and credential management.
 
-## Prerequisites
+## 前提条件
 
-### Required Knowledge
+### 必需 Knowledge
 - HTTP protocol and session mechanisms
 - Authentication types (SFA, 2FA, MFA)
 - Cookie and token handling
 - Common authentication frameworks
 
-### Required Tools
+### 必需 Tools
 - Burp Suite Professional or Community
 - Hydra or similar brute-force tools
 - Custom wordlists for credential testing
 - Browser developer tools
 
-### Required Access
+### 必需 Access
 - Target application URL
 - Test account credentials
 - Written authorization for testing
@@ -36,8 +36,8 @@ Identify and exploit authentication and session management vulnerabilities in we
 
 1. **Authentication Assessment Report** - Document all identified vulnerabilities
 2. **Credential Testing Results** - Brute-force and dictionary attack outcomes
-3. **Session Security Analysis** - Token randomness and timeout evaluation
-4. **Remediation Recommendations** - Security hardening guidance
+3. **Session 安全性 Analysis** - Token randomness and timeout evaluation
+4. **Remediation Recommendations** - 安全性 hardening guidance
 
 ## Core Workflow
 
@@ -314,7 +314,7 @@ email=victim@email.com
 # Reset email may contain attacker's domain
 ```
 
-## Quick Reference
+## 快速参考
 
 ### Common Vulnerability Types
 
@@ -332,7 +332,7 @@ email=victim@email.com
 ### Credential Testing Payloads
 
 ```bash
-# Default credentials
+# 默认 credentials
 admin:admin
 admin:password
 admin:123456
@@ -476,5 +476,5 @@ https://target.com/reset?token=a1b2c3d4e5f6&email=admin@example.com
 | MFA cannot be bypassed | Document as secure; test backup/recovery mechanisms; check MFA fatigue; verify enrollment |
 | Account lockout prevents testing | Request multiple test accounts; test threshold first; use slower timing |
 
-## When to Use
+## /u4f55/u65f6/u4f7f/u7528
 This skill is applicable to execute the workflow or actions described in the overview.

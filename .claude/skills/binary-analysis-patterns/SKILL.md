@@ -6,16 +6,16 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Binary Analysis Patterns
+# /u4e8c/u8fdb/u5236/u5206/u6790/u6a21/u5f0f
 
 Comprehensive patterns and techniques for analyzing compiled binaries, understanding assembly code, and reconstructing program logic.
 
-## Use this skill when
+## 使用此技能的场景
 
 - Working on binary analysis patterns tasks or workflows
 - Needing guidance, best practices, or checklists for binary analysis patterns
 
-## Do not use this skill when
+## 不要使用此技能的场景
 
 - The task is unrelated to binary analysis patterns
 - You need a different domain or tool outside this scope
@@ -452,7 +452,7 @@ def auto_rename():
 - **Dead code**: Unreachable code from optimization
 - **Position-independent code**: RIP-relative addressing
 
-## Limitations
+## /u9650/u5236
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

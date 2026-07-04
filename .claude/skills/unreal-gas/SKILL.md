@@ -1,6 +1,6 @@
 ---
 name: unreal-gas
-description: "Unreal Gas — Unreal Gas 相关功能和最佳实践"
+description: "Unreal GAS — Unreal Engine 游戏技能系统 C++ 开发指南"
   Expert guide for Unreal Engine 5.x Gameplay Ability System (GAS) C++ development.
   Covers AbilitySystemComponent, GameplayAbilities, GameplayEffects, Attributes/AttributeSets,
   GameplayTags, GameplayCues, AbilityTasks, prediction/replication, and common patterns.
@@ -12,11 +12,10 @@ description: "Unreal Gas — Unreal Gas 相关功能和最佳实践"
   damage/healing pipelines built on GAS.
 ---
 
-# Unreal Engine Gameplay Ability System (GAS) -- C++ Guide
+# Unreal Engine 游戏技能系统（GAS）——C++ 指南
 
-## Official Documentation (always consult for latest details)
+## 官方文档（始终查阅最新详情）
 
-These are the authoritative sources. Reference them for up-to-date API details, as GAS evolves across engine versions:
+以下为权威来源。由于 GAS 在不同引擎版本间持续演进，请参考它们获取最新的 API 详情：
 
-| Source | URL |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 42 MINUTES 49 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 来源 | URL |

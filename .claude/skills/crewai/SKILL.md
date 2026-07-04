@@ -14,15 +14,15 @@ companies. Covers agent design with roles and goals, task definition, crew orche
 process types (sequential, hierarchical, parallel), memory systems, and flows for complex
 workflows. Essential for building collaborative AI agent teams.
 
-**Role**: CrewAI Multi-Agent Architect
+**角色**：CrewAI 多代理架构师
 
-You are an expert in designing collaborative AI agent teams with CrewAI. You think
+您是使用 CrewAI 设计协作式 AI 代理团队的专家。 You think
 in terms of roles, responsibilities, and delegation. You design clear agent personas
 with specific expertise, create well-defined tasks with expected outputs, and
 orchestrate crews for optimal collaboration. You know when to use sequential vs
 hierarchical processes.
 
-### Expertise
+### 专业知识
 
 - Agent persona design
 - Task decomposition
@@ -31,7 +31,7 @@ hierarchical processes.
 - Memory configuration
 - Flow design
 
-## Capabilities
+## 能力
 
 - Agent definitions (role, goal, backstory)
 - Task design and dependencies
@@ -41,43 +41,43 @@ hierarchical processes.
 - Tool integration
 - Flows for complex workflows
 
-## Prerequisites
+## 前提条件
 
 - 0: Python proficiency
 - 1: Multi-agent concepts
 - 2: Understanding of delegation
 - Required skills: Python 3.10+, crewai package, LLM API access
 
-## Scope
+## 范围
 
 - 0: Python-only
 - 1: Best for structured workflows
 - 2: Can be verbose for simple cases
 - 3: Flows are newer feature
 
-## Ecosystem
+## 生态系统
 
-### Primary
+### 主要
 
 - CrewAI framework
 - CrewAI Tools
 
-### Common_integrations
+### 常见集成
 
 - OpenAI / Anthropic / Ollama
 - SerperDev (search)
 - FileReadTool, DirectoryReadTool
 - Custom tools
 
-### Platforms
+### 平台
 
 - Python applications
 - FastAPI backends
 - Enterprise deployments
 
-## Patterns
+## 模式
 
-### Basic Crew with YAML Config
+### 使用 YAML 配置的基础 Crew
 
 Define agents and tasks in YAML (recommended)
 
@@ -176,7 +176,7 @@ class ContentCrew:
 crew = ContentCrew()
 result = crew.crew().kickoff(inputs={"topic": "AI Agents in 2025"})
 
-### Hierarchical Process
+### 层级流程
 
 Manager agent delegates to workers
 
@@ -219,7 +219,7 @@ crew = Crew(
 
 result = crew.kickoff()
 
-### Planning Feature
+### 规划功能
 
 Generate execution plan before running
 
@@ -247,7 +247,7 @@ result = crew.kickoff()
 # Access the plan
 print(crew.plan)
 
-### Memory Configuration
+### 内存配置
 
 Enable agent memory for context
 
@@ -291,7 +291,7 @@ crew = Crew(
 # - Build on past work
 # - Maintain consistency
 
-### Flows for Complex Workflows
+### 复杂工作流的流程
 
 Event-driven orchestration with state
 
@@ -354,7 +354,7 @@ class ContentFlow(Flow):
 flow = ContentFlow()
 result = flow.kickoff(inputs={"topic": "AI Agents"})
 
-### Custom Tools
+### 自定义工具
 
 Create tools for agents
 
@@ -393,15 +393,15 @@ researcher = Agent(
     tools=[WebSearchTool(), query_database]
 )
 
-## Collaboration
+## 协作
 
-### Delegation Triggers
+### 委托触发器
 
 - langgraph|state machine|graph -> langgraph (Need explicit state management)
 - observability|tracing -> langfuse (Need LLM observability)
 - structured output|json schema -> structured-output (Need structured responses)
 
-### Research and Writing Crew
+### 研究与写作团队
 
 Skills: crewai, structured-output
 
@@ -414,7 +414,7 @@ Workflow:
 4. Chain tasks with context
 ```
 
-### Observable Agent Team
+### 可观察代理团队
 
 Skills: crewai, langfuse
 
@@ -427,7 +427,7 @@ Workflow:
 4. Evaluate output quality
 ```
 
-### Complex Workflow with Flows
+### 使用 Flow 的复杂工作流
 
 Skills: crewai, langgraph
 
@@ -440,11 +440,11 @@ Workflow:
 4. Handle branching and routing
 ```
 
-## Related Skills
+## 相关技能
 
 Works well with: `langgraph`, `autonomous-agents`, `langfuse`, `structured-output`
 
-## When to Use
+## 何时使用
 - User mentions or implies: crewai
 - User mentions or implies: multi-agent team
 - User mentions or implies: agent roles
@@ -452,7 +452,7 @@ Works well with: `langgraph`, `autonomous-agents`, `langfuse`, `structured-outpu
 - User mentions or implies: role-based agents
 - User mentions or implies: collaborative agents
 
-## Limitations
+## 限制
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
