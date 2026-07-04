@@ -6,153 +6,153 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# A/B Test Setup
+# A/B 测试设置
 
-## 1️⃣ Purpose & Scope
+## 1️⃣ 目的与范围
 
-Ensure every A/B test is **valid, rigorous, and safe** before a single line of code is written.
+确保在编写任何代码之前，每个 A/B 测试都是**有效、严谨且安全**的。
 
-- Prevents "peeking"
-- Enforces statistical power
-- Blocks invalid hypotheses
-
----
-
-## 2️⃣ Pre-Requisites
-
-You must have:
-
-- A clear user problem
-- Access to an analytics source
-- Roughly estimated traffic volume
-
-### Hypothesis Quality Checklist
-
-A valid hypothesis includes:
-
-- Observation or evidence
-- Single, specific change
-- Directional expectation
-- Defined audience
-- Measurable success criteria
+- 防止”偷看”结果
+- 确保统计功效
+- 阻止无效假设
 
 ---
 
-## 3️⃣ Hypothesis Lock (Hard Gate)
+## 2️⃣ 前提条件
 
-Before designing variants or metrics, you MUST:
+您必须拥有：
 
-- Present the **final hypothesis**
-- Specify:
-  - Target audience
-  - Primary metric
-  - Expected direction of effect
-  - Minimum Detectable Effect (MDE)
+- 明确的用户问题
+- 访问分析数据源
+- 大致估计的流量规模
 
-Ask explicitly:
+### 假设质量检查清单
 
-> “Is this the final hypothesis we are committing to for this test?”
+有效的假设包括：
 
-**Do NOT proceed until confirmed.**
-
----
-
-## 4️⃣ Assumptions & Validity Check (Mandatory)
-
-Explicitly list assumptions about:
-
-- Traffic stability
-- User independence
-- Metric reliability
-- Randomization quality
-- External factors (seasonality, campaigns, releases)
-
-If assumptions are weak or violated:
-
-- Warn the user
-- Recommend delaying or redesigning the test
+- 观察或证据
+- 单一、具体的变更
+- 方向性预期
+- 定义明确的受众
+- 可衡量的成功标准
 
 ---
 
-## 5️⃣ Test Type Selection
+## 3️⃣ 假设锁定（硬性门槛）
 
-Choose the simplest valid test:
+在设计变体或指标之前，您必须：
 
-- **A/B Test** – single change, two variants
-- **A/B/n Test** – multiple variants, higher traffic required
-- **Multivariate Test (MVT)** – interaction effects, very high traffic
-- **Split URL Test** – major structural changes
+- 呈现**最终假设**
+- 指定：
+  - 目标受众
+  - 主要指标
+  - 预期效果方向
+  - 最小可检测效应 (MDE)
 
-Default to **A/B** unless there is a clear reason otherwise.
+明确询问：
 
----
+> “这是本次测试我们要承诺的最终假设吗？”
 
-## 6️⃣ Metrics Definition
-
-#### Primary Metric (Mandatory)
-
-- Single metric used to evaluate success
-- Directly tied to the hypothesis
-- Pre-defined and frozen before launch
-
-#### Secondary Metrics
-
-- Provide context
-- Explain _why_ results occurred
-- Must not override the primary metric
-
-#### Guardrail Metrics
-
-- Metrics that must not degrade
-- Used to prevent harmful wins
-- Trigger test stop if significantly negative
+**在确认之前不要继续。**
 
 ---
 
-## 7️⃣ Sample Size & Duration
+## 4️⃣ 假设与有效性检查（强制）
 
-Define upfront:
+明确列出以下假设：
 
-- Baseline rate
+- 流量稳定性
+- 用户独立性
+- 指标可靠性
+- 随机化质量
+- 外部因素（季节性、营销活动、发布）
+
+如果假设薄弱或被违反：
+
+- 警告用户
+- 建议推迟或重新设计测试
+
+---
+
+## 5️⃣ 测试类型选择
+
+选择最简单的有效测试：
+
+- **A/B 测试** – 单一变更，两个变体
+- **A/B/n 测试** – 多个变体，需要更高流量
+- **多变量测试 (MVT)** – 交互效应，需要非常高流量
+- **拆分 URL 测试** – 主要结构变更
+
+除非有明确理由，否则默认使用 **A/B 测试**。
+
+---
+
+## 6️⃣ 指标定义
+
+#### 主要指标（强制）
+
+- 用于评估成功的单一指标
+- 直接与假设相关联
+- 在启动前预先定义并固定
+
+#### 次要指标
+
+- 提供上下文信息
+- 解释结果发生的_原因_
+- 不得覆盖主要指标
+
+#### 护栏指标
+
+- 不得退化的指标
+- 用于防止有害的”胜利”
+- 如果显著为负，则触发测试停止
+
+---
+
+## 7️⃣ 样本量与持续时间
+
+预先定义：
+
+- 基准率
 - MDE
-- Significance level (typically 95%)
-- Statistical power (typically 80%)
+- 显著性水平（通常为 95%）
+- 统计功效（通常为 80%）
 
-Estimate:
+估计：
 
-- Required sample size per variant
-- Expected test duration
+- 每个变体所需的样本量
+- 预期的测试持续时间
 
-**Do NOT proceed without a realistic sample size estimate.**
-
----
-
-### Tracking Verification (Required before Gate 8)
-
-Before entering the Execution Readiness Gate below, run through this checklist to make "Tracking is verified" mean something concrete:
-
-1. **Event firing:** Trigger each event the primary and secondary metrics depend on (sign-up, add-to-cart, custom event) on staging or a debug page, and confirm it lands in your analytics destination within 30 seconds.
-2. **Variant attribution:** Verify that the variant assignment ID is attached to every fired event — not just the entry event. Use your analytics' raw event view to compare a sample of 5+ events per variant.
-3. **De-duplication:** Confirm that a user reloading the page does not cause double-counted events. If your stack uses client-side de-duping, the variant ID must be part of the dedup key.
-4. **Sample randomization:** Pull the first 100 assignment records from your assignment table; the variant split should be within ±5% of the configured allocation.
-5. **Guardrail metric pipeline:** Each guardrail metric defined in §6️⃣ must have a working dashboard or alert by the time the test launches.
-
-If any of the above fails, stop and resolve it before Gate 8.
+**没有现实的样本量估计，不要继续。**
 
 ---
 
-## 8️⃣ Execution Readiness Gate (Hard Stop)
+### 跟踪验证（第 8 道门槛前必需）
 
-You may proceed to implementation **only if all are true**:
+在进入下面的执行就绪门槛之前，运行此检查清单，使"跟踪已验证"具有具体含义：
 
-- Hypothesis is locked
-- Primary metric is frozen
-- Sample size is calculated
-- Test duration is defined
-- Guardrails are set
-- Tracking is verified
+1. **事件触发：** 在暂存环境或调试页面上触发主要和次要指标依赖的每个事件（注册、加入购物车、自定义事件），并在 30 秒内确认它到达您的分析目的地。
+2. **变体归因：** 验证变体分配 ID 是否附加到每个触发的事件——不仅仅是入口事件。使用您分析的原始事件视图比较每个变体的 5+ 个事件样本。
+3. **去重：** 确认用户重新加载页面不会导致重复计数的事件。如果您的技术栈使用客户端去重，变体 ID 必须是去重键的一部分。
+4. **样本随机化：** 从分配表中提取前 100 条分配记录；变体分配应在配置分配的 ±5% 范围内。
+5. **护栏指标流水线：** 在 §6️⃣ 中定义的每个护栏指标必须在测试启动时拥有正常工作的仪表板或警报。
 
-If any item is missing, stop and resolve it.
+如果以上任何一项失败，请在进入第 8 道门槛之前停止并解决。
+
+---
+
+## 8️⃣ 执行就绪门槛（硬性停止）
+
+**仅当所有条件都为真时**，您才可以继续实施：
+
+- 假设已锁定
+- 主要指标已固定
+- 样本量已计算
+- 测试持续时间已定义
+- 护栏已设置
+- 跟踪已验证
+
+如果缺少任何项目，请停止并解决。
 
 ---
 
