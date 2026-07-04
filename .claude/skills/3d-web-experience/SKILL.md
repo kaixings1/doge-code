@@ -43,7 +43,7 @@ Web 端 3D 体验构建专家 — Three.js、React Three Fiber、Spline、WebGL 
 
 **何时使用**：启动 3D Web 项目时
 
-## 3D Stack Selection
+## 3D 技术栈选择
 
 ### 方案对比
 | 工具 | 最适合 | 学习曲线 | 控制力 |

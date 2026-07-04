@@ -1,17 +1,13 @@
 ---
 name: achieving-cmmc-level-2-compliance
-description: "Achieving Cmmc Level 2 Compliance — Achieving Cmmc Level 2 Compliance 相关功能和最佳实践"
-  Prepare a defense-contractor environment for CMMC Level 2 certification: scope CUI
-  and FCI, implement the 110 NIST SP 800-171 Rev 2 security requirements across 14
-  families, compute the SPRS score with the DoD Assessment Methodology, manage a
-  compliant POA&M, and ready the organization for a C3PAO assessment. Use when an
-  organization handles Controlled Unclassified Information (CUI) under a DoD contract,
-  when a contract carries DFARS clause 252.204-7012/7019/7020/7021, when preparing for
-  or responding to a CMMC assessment, when computing or improving an SPRS score, when
-  building a System Security Plan or POA&M for 800-171, or when scoping which systems
-  are in the CUI boundary. Keywords: CMMC, CMMC Level 2, NIST 800-171, SP 800-171 Rev 2,
-  CUI, FCI, SPRS, DFARS 7012, C3PAO, POA&M, System Security Plan, DoD Assessment
-  Methodology, 110 controls, defense industrial base, DIB, FedRAMP equivalency.
+description: "实现 CMMC 二级合规 — 实现 CMMC 二级合规的相关功能和最佳实践"
+  为国防承包商环境准备 CMMC 二级认证：界定 CUI 和 FCI 范围，实施 14 个系列的 110 项 NIST SP 800-171 Rev 2 安全要求，
+  使用 DoD 评估方法计算 SPRS 分数，管理合规的 POA&M，并为 C3PAO 评估做好准备。
+  适用于以下情况：组织在 DoD 合同下处理受控非机密信息 (CUI)，合同包含 DFARS 条款 252.204-7012/7019/7020/7021，
+  准备或响应 CMMC 评估，计算或改进 SPRS 分数，为 800-171 构建系统安全计划或 POA&M，
+  或界定哪些系统在 CUI 边界内。关键词：CMMC、CMMC 二级、NIST 800-171、SP 800-171 Rev 2、
+  CUI、FCI、SPRS、DFARS 7012、C3PAO、POA&M、系统安全计划、DoD 评估方法、110项控制、
+  国防工业基础、DIB、FedRAMP 等效性。
 domain: cybersecurity
 subdomain: compliance-governance
 tags:
@@ -43,57 +39,57 @@ mitre_attack:
 - T1567
 ---
 
-# Achieving CMMC Level 2 Compliance
+# 实现 CMMC 二级合规
 
-## When to Use
+## 何时使用
 
-- When an organization in the **Defense Industrial Base (DIB)** stores, processes, or transmits **Controlled Unclassified Information (CUI)** under a DoD contract.
-- When a contract includes **DFARS 252.204-7012** (safeguarding/incident reporting), **-7019/-7020** (NIST 800-171 self-assessment + SPRS), or the new **-7021** (CMMC requirement).
-- When preparing for a **C3PAO** third-party assessment or a DoD-led assessment.
-- When you must **compute, post, or improve an SPRS score** based on the NIST SP 800-171 DoD Assessment Methodology.
-- When authoring or remediating a **System Security Plan (SSP)** and **POA&M** for the 110 requirements.
-- When **scoping** which assets fall inside the CUI/FCI boundary (CUI assets, security-protection assets, contractor risk-managed assets, out-of-scope).
+9	- 当**国防工业基础 (DIB)** 中的组织在 DoD 合同下存储、处理或传输**受控非机密信息 (CUI)** 时。
+10	- 当合同包含 **DFARS 252.204-7012**（保护/事件报告）、**-7019/-7020**（NIST 800-171 自我评估 + SPRS）或新的 **-7021**（CMMC 要求）时。
+11	- 当准备进行 **C3PAO** 第三方评估或 DoD 主导的评估时。
+12	- 当必须根据 NIST SP 800-171 DoD 评估方法**计算、发布或改进 SPRS 分数**时。
+13	- 当为 110 项要求编写或修复**系统安全计划 (SSP)** 和 **POA&M** 时。
+14	- 当**界定**哪些资产在 CUI/FCI 边界内时（CUI 资产、安全保护资产、承包商风险管理资产、范围外）。
 
-## Prerequisites
+## 前提条件
 
-- Knowledge of **which contracts carry CUI** and the CUI categories involved (check the contract and the DoD CUI Registry).
-- An asset inventory and network diagram so you can define the **CMMC assessment scope** before assessing controls.
-- The **NIST SP 800-171 Rev 2** requirements and the **DoD Assessment Methodology** scoring weights.
-- A documented **SSP** (its absence is itself a failed requirement — 3.12.4).
-- Identification of any **External Service Providers (ESPs)** / cloud services touching CUI, and whether they meet **FedRAMP Moderate (or equivalency)**.
+- 了解**哪些合同包含 CUI** 以及涉及的 CUI 类别（检查合同和 DoD CUI 注册表）。
+- 资产清单和网络图，以便在评估控制之前定义**CMMC 评估范围**。
+- **NIST SP 800-171 Rev 2** 要求和 **DoD 评估方法**评分权重。
+- 已记录的 **SSP**（其缺失本身就是一项未满足的要求 — 3.12.4）。
+- 识别任何接触 CUI 的**外部服务提供商 (ESP)**/云服务，以及它们是否符合**FedRAMP 中等（或等效）**。
 
-## Workflow
+## 工作流程
 
-### 1. Determine applicability and CUI categories
-Confirm the contract requires CMMC Level 2 (CUI present, not just FCI). FCI-only contracts are **Level 1** (the 15 FAR 52.204-21 requirements). Identify CUI categories from the contract and the DoD CUI Registry.
+### 1. 确定适用性和 CUI 类别
+确认合同需要 CMMC 二级（存在 CUI，不仅仅是 FCI）。仅 FCI 的合同是**一级**（15 项 FAR 52.204-21 要求）。从合同和 DoD CUI 注册表中识别 CUI 类别。
 
-### 2. Scope the environment
-Classify every asset into one of the CMMC scoping categories:
-- **CUI Assets** — process/store/transmit CUI (in scope, assessed against all applicable controls).
-- **Security Protection Assets** — provide security to the CUI environment (in scope).
-- **Contractor Risk Managed Assets** — could but are not intended to handle CUI; managed by policy.
-- **Specialized Assets** (IoT/OT, GFE, test equipment) — documented, limited assessment.
-- **Out-of-Scope** — physically/logically isolated from CUI.
+### 2. 界定环境范围
+将每个资产分类到 CMMC 界定类别之一：
+- **CUI 资产** — 处理/存储/传输 CUI（在范围内，针对所有适用控制进行评估）。
+- **安全保护资产** — 为 CUI 环境提供安全性（在范围内）。
+- **承包商风险管理资产** — 可能但无意处理 CUI；通过策略管理。
+- **专用资产**（物联网/操作技术、政府提供设备、测试设备）— 已记录，有限评估。
+- **范围外** — 物理/逻辑上与 CUI 隔离。
 
-Minimize scope deliberately — a smaller, well-segmented CUI enclave is far cheaper to certify than a flat network.
+有意最小化范围 — 一个更小、良好分段的 CUI 区域比扁平网络认证成本低得多。
 
-### 3. Implement the 110 requirements (NIST SP 800-171 Rev 2)
-Work the **14 families** (3.1–3.14). For each requirement, implement, then write the **how** in the SSP. High-leverage early wins: MFA (3.5.3), FIPS-validated cryptography (3.13.11), audit logging (3.3.x), access control + least privilege (3.1.x), and incident response (3.6.x).
+### 3. 实施 110 项要求（NIST SP 800-171 Rev 2）
+处理 **14 个系列**（3.1–3.14）。对于每项要求，实施后在 SSP 中编写**实施方式**。高杠杆早期成果：多因素认证 (3.5.3)、FIPS 验证的加密 (3.13.11)、审计日志记录 (3.3.x)、访问控制 + 最小权限 (3.1.x) 和事件响应 (3.6.x)。
 
-### 4. Score with the DoD Assessment Methodology (SPRS)
-Start at **110** and subtract the weighted value (**1, 3, or 5 points**) of each **unmet** requirement; partial credit applies to a small number of controls (e.g., MFA, FIPS crypto). The result is the **SPRS score** (maximum 110; the methodology floor is −203). Post the score, the SSP date, and the assessment scope to **SPRS** (or eMASS for higher assessments).
+### 4. 使用 DoD 评估方法 (SPRS) 评分
+从 **110** 开始，减去每项**未满足**要求的加权值（**1、3 或 5 分**）；少量控制适用部分学分（例如，多因素认证、FIPS 加密）。结果是 **SPRS 分数**（最高 110；方法下限为 −203）。将分数、SSP 日期和评估范围发布到 **SPRS**（或更高级评估的 eMASS）。
 
-### 5. Build a compliant POA&M
-Document every unmet requirement with owner, remediation, and milestone. **Constraints under the CMMC rule:** a **Conditional** status requires a score of at least **80%** (≥ 88 of 110), only **POA&M-eligible** requirements may be deferred (the highest-weighted security requirements must be fully met — verify eligibility against 32 CFR Part 170), and all POA&M items must be **closed within 180 days** to convert Conditional → **Final**.
+### 5. 构建合规的 POA&M
+记录每项未满足的要求，包括负责人、修复措施和里程碑。**CMMC 规则下的约束：** **条件**状态需要至少 **80%** 的分数（≥ 110 项中的 88 项），只有**符合 POA&M 资格**的要求可以延期（最高权重的安全要求必须完全满足 — 根据 32 CFR 第 170 部分验证资格），所有 POA&M 项目必须在 **180 天内关闭**以将条件状态转换为**最终**。
 
-### 6. Assess (self or C3PAO)
-- **Level 1** and a subset of Level 2 = annual **self-assessment** with an affirmation in SPRS.
-- **Level 2 (most CUI contracts)** = triennial **C3PAO** certification assessment.
-- **Level 3** = DoD (DIBCAC) assessment on top of Level 2, adding SP 800-172 enhanced requirements.
-Assessors evaluate each objective as **MET / NOT MET / N/A** with evidence (examine/interview/test). A senior official files the **annual affirmation** of continued compliance.
+### 6. 评估（自我或 C3PAO）
+- **一级**和二级子集 = 年度**自我评估**，并在 SPRS 中确认。
+- **二级（大多数 CUI 合同）** = 三年一次的 **C3PAO** 认证评估。
+- **三级** = DoD (DIBCAC) 在二级基础上进行的评估，增加 SP 800-172 增强要求。
+评估员根据证据（检查/访谈/测试）将每个目标评估为**满足/不满足/不适用**。高级官员提交持续合规的**年度确认**。
 
-### 7. Maintain certification
-Certification is valid **three years** with **annual affirmations**. Maintain the SSP, re-score on change, keep evidence current, and feed significant changes back into the assessment.
+### 7. 维护认证
+认证有效期为**三年**，需要**年度确认**。维护 SSP，变更时重新评分，保持证据最新，并将重大变更反馈到评估中。
 
 ## Key Concepts
 
