@@ -148,7 +148,7 @@ git reset --hard HEAD@{5}  # point before rebase started
   conflicts = diff --name-only --diff-filter=U
 ```
 
-## Anti-Patterns
+## 反模式
 
 - Force-pushing to shared branches without `--force-with-lease`
 - Rebasing commits that have already been pushed and shared

@@ -14,7 +14,7 @@ tools: [claude, cursor, gemini]
 
 # MCP Tool Developer
 
-## Overview
+## 概述
 
 Expert at building Model Context Protocol (MCP) servers that give AI agents new capabilities. Covers the full MCP development lifecycle: specification, implementation, testing, deployment, and registry publishing. Supports both TypeScript and Python with production-ready patterns.
 
@@ -28,9 +28,9 @@ This skill understands MCP specification primitives (tools, resources, prompts, 
 - Use when designing the tool schema for an MCP server
 - Use when publishing an MCP server to a registry
 
-## How It Works
+## 工作原理
 
-### Step 1: Define the MCP Server Scope
+### 步骤 1: Define the MCP Server Scope
 
 Identify what capabilities the server should expose:
 - **Tools** - Functions the LLM can call (primary use case)
@@ -42,7 +42,7 @@ Choose the transport:
 - **SSE (Server-Sent Events)** - For remote/hosted tools
 - **Streamable HTTP** - New in MCP spec for modern deployments
 
-### Step 2: Design the Tool Schema
+### 步骤 2: Design the Tool Schema
 
 Define input/output schemas before writing implementation:
 
@@ -58,15 +58,15 @@ Define input/output schemas before writing implementation:
 }
 ```
 
-### Step 3: Implement the Server
+### 步骤 3: Implement the Server
 
 Create the server with proper error handling, validation, and logging. Use the official MCP SDK for TypeScript (@modelcontextprotocol/sdk) or Python (mcp).
 
-### Step 4: Test and Deploy
+### 步骤 4: Test and Deploy
 
 Test with the MCP Inspector, validate tool schemas, handle edge cases, then deploy locally or remotely.
 
-## Examples
+## 示例
 
 ### Example 1: TypeScript MCP Server
 
@@ -94,7 +94,7 @@ Wrap an external API as an MCP tool with auth, rate limiting, and error handling
 - Transform API responses to LLM-friendly format
 - Add retry logic with exponential backoff
 
-## Best Practices
+## 最佳实践
 
 - Build small, focused tools that can be chained rather than monolithic tools
 - Return structured errors, not crashes - tools should fail gracefully
@@ -118,7 +118,7 @@ Wrap an external API as an MCP tool with auth, rate limiting, and error handling
 - Rate limit external API calls to prevent abuse
 - Review tool permissions carefully - tools can access files, networks, and execute code
 
-## Common Pitfalls
+## 常见陷阱
 
 - **Problem:** LLM calls tools with wrong parameters
   **Solution:** Improve tool descriptions and add examples in the description field. The LLM reads descriptions to decide how to call tools.
@@ -126,7 +126,7 @@ Wrap an external API as an MCP tool with auth, rate limiting, and error handling
 - **Problem:** Tool times out on large inputs
   **Solution:** Add input size validation and pagination. Stream large responses instead of buffering.
 
-## Related Skills
+## 相关技能
 
 - `api-integration-architect` - For API design patterns used in MCP tools
 - `security-audit-code-reviewer` - For reviewing MCP server code security

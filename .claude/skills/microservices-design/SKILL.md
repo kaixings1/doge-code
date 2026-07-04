@@ -146,7 +146,7 @@ app.get("/health", async (req, res) => {
 });
 ```
 
-## Anti-Patterns
+## 反模式
 
 - Sharing a database between services (tight coupling)
 - Synchronous HTTP chains across multiple services (cascading failures)

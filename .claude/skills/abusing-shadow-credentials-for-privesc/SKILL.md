@@ -24,13 +24,13 @@ mitre_attack:
 
 > **Legal Notice:** This skill is for authorized security testing and educational purposes only. Shadow Credentials grant full takeover of the targeted account. Use only against systems you own or are explicitly authorized in writing to test. Unauthorized access is a crime.
 
-## Overview
+## 概述
 
 The **Shadow Credentials** technique abuses the `msDS-KeyCredentialLink` attribute of Active Directory user and computer objects. This attribute stores raw public keys ("Key Credentials") used by Windows Hello for Business and Azure AD device registration for passwordless certificate-based logon via PKINIT (Public Key Cryptography for Initial Authentication in Kerberos). If an attacker has write permission over a target object's `msDS-KeyCredentialLink` — typically granted by `GenericWrite`, `GenericAll`, `WriteProperty`, or `AddKeyCredentialLink` ACEs surfaced in BloodHound — they can append their own attacker-generated public key. They then request a TGT for the target via PKINIT using the matching private key and recover the target's NT hash, achieving complete account takeover **without resetting the password**, which is far stealthier than a forced password reset.
 
 The technique was published by Elad Shamir (*"Shadow Credentials: Abusing Key Trust Account Mapping for Account Takeover"*) and implemented in the C# tool **Whisker**. The Python equivalent **pyWhisker** (ShutdownRepo) manipulates the attribute over LDAP, and **Certipy** integrates the entire chain via `certipy shadow auto`. The target environment must support PKINIT and have at least one Domain Controller running Windows Server 2016 or later. Sources: [pyWhisker](https://github.com/ShutdownRepo/pywhisker), [Whisker](https://github.com/eladshamir/Whisker), [The Hacker Recipes — Shadow Credentials](https://www.thehacker.recipes/ad/movement/kerberos/shadow-credentials).
 
-## When to Use
+## 使用场景
 
 - When BloodHound reveals `GenericWrite`/`GenericAll`/`AddKeyCredentialLink` over a higher-value user or computer
 - As a stealthier alternative to `ForceChangePassword` (no password reset = less disruption/alerting)

@@ -25,7 +25,7 @@ Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 3. If connection is not ACTIVE, follow the returned auth link to complete Airtable auth
 4. Confirm connection status shows ACTIVE before running any workflows
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Create and Manage Records
 
@@ -113,7 +113,7 @@ Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 **Pitfalls**:
 - Record IDs must be exactly 17 characters starting with 'rec'
 
-## Common Patterns
+## 常见模式
 
 ### Airtable Formula Syntax
 

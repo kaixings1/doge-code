@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Authenticate Java applications with Azure services using Microsoft Entra ID (Azure AD).
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -20,7 +20,7 @@ Authenticate Java applications with Azure services using Microsoft Entra ID (Azu
 </dependency>
 ```
 
-## Key Concepts
+## 关键概念
 
 | Credential | Use Case |
 |------------|----------|
@@ -284,7 +284,7 @@ DefaultAzureCredential chinaCredential = new DefaultAzureCredentialBuilder()
     .build();
 ```
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.identity.CredentialUnavailableException;
@@ -303,7 +303,7 @@ try {
 }
 ```
 
-## Logging
+## 日志
 
 Enable authentication logging for debugging.
 
@@ -317,7 +317,7 @@ DefaultAzureCredential credential = new DefaultAzureCredentialBuilder()
     .build();
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 # DefaultAzureCredential configuration
@@ -338,7 +338,7 @@ AZURE_LOG_LEVEL=verbose
 AZURE_AUTHORITY_HOST=https://login.microsoftonline.com/
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use 默认AzureCredential** - Works seamlessly from dev to production
 2. **Managed Identity in Production** - No secrets to manage, automatic rotation
@@ -367,7 +367,7 @@ AZURE_AUTHORITY_HOST=https://login.microsoftonline.com/
 - "Azure login Java", "Azure credentials Java"
 - "AZURE_CLIENT_ID", "AZURE_TENANT_ID"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

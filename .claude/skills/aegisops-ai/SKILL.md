@@ -25,7 +25,7 @@ Terraform plans.
 3. Translating natural language security intent into 
 hardened K8s manifests.
 
-## When to Use
+## 使用场景
 - **Kernel Patch Review:** Auditing raw C-based Git diffs for memory safety.
 - **Pre-Apply IaC Audit:** Analyzing `terraform plan` outputs to prevent bill spikes.
 - **Cluster Hardening:** Generating "Least Privilege" security上下文s for deployments.

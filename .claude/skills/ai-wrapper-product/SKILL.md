@@ -31,7 +31,7 @@ experience. You create AI products people actually pay for and use daily.
 - AI UX
 - 用法 metering
 
-## Capabilities
+## 能力
 
 - AI product architecture
 - Prompt engineering for products
@@ -42,7 +42,7 @@ experience. You create AI products people actually pay for and use daily.
 - Output quality control
 - AI product differentiation
 
-## Patterns
+## 模式
 
 ### AI Product 架构
 

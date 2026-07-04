@@ -10,7 +10,7 @@ metadata: {"version": "1.2", "skill-author": "K-Dense Inc.", "openclaw": {"envVa
 
 # BioServices
 
-## Overview
+## 概述
 
 BioServices is a Python package providing programmatic access to approximately 40 bioinformatics web services and databases. Retrieve biological data, perform cross-database queries, map identifiers, analyze sequences, and integrate multiple biological resources in Python workflows. The package handles both REST and SOAP/WSDL protocols transparently.
 
@@ -274,7 +274,7 @@ Convert multiple identifiers at once:
 python scripts/batch_id_converter.py input_ids.txt --from UniProtKB_AC-ID --to KEGG
 ```
 
-## Best Practices
+## 最佳实践
 
 ### Output Format Handling
 
@@ -328,7 +328,7 @@ BioServices works well with:
 - **NetworkX**: Network analysis of pathway interactions
 - **Galaxy**: Custom tool wrappers for workflow platforms
 
-## Resources
+## 资源
 
 ### scripts/
 
@@ -351,7 +351,7 @@ Detailed documentation loaded as needed:
 
 Load references when working with specific services or complex integration tasks.
 
-## Installation
+## 安装
 
 ```bash
 uv pip install "bioservices==1.16.0"

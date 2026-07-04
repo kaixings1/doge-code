@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Management plane SDK for provisioning and managing Azure Bot Service resources via Azure Resource Manager.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.BotService
@@ -19,7 +19,7 @@ dotnet add package Azure.Identity
 
 **Current Versions**: Stable v1.1.1, Preview v1.1.0-beta.1
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -29,7 +29,7 @@ AZURE_CLIENT_ID=<client-id>
 AZURE_CLIENT_SECRET=<client-secret>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -60,7 +60,7 @@ ArmClient
             └── BotServicePrivateEndpointConnectionResource
 ```
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Create Bot Resource
 
@@ -246,7 +246,7 @@ await bot.DeleteAsync(WaitUntil.Completed);
 | Telegram | `BotChannelName.TelegramChannel` | `TelegramChannel` |
 | Telephony | `BotChannelName.TelephonyChannel` | `TelephonyChannel` |
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -285,7 +285,7 @@ await bot.DeleteAsync(WaitUntil.Completed);
 | `BotMsaAppType.SingleTenant` | Single-tenant app |
 | `BotMsaAppType.UserAssignedMSI` | User-assigned managed identity |
 
-## Best Practices
+## 最佳实践
 
 1. **Always use `DefaultAzureCredential`** — supports multiple auth methods
 2. **Use `WaitUntil.Completed`** for synchronous operations
@@ -295,7 +295,7 @@ await bot.DeleteAsync(WaitUntil.Completed);
 6. **Use managed identity** (`BotMsaAppType.UserAssignedMSI`) for production bots
 7. **Enable secure sites** for DirectLine channels in production
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -325,7 +325,7 @@ catch (RequestFailedException ex)
 | `Microsoft.Bot.Builder` | Bot Framework SDK | `dotnet add package Microsoft.Bot.Builder` |
 | `Microsoft.Bot.Builder.Integration.AspNet.Core` | ASP.NET Core integration | `dotnet add package Microsoft.Bot.Builder.Integration.AspNet.Core` |
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -334,7 +334,7 @@ catch (RequestFailedException ex)
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/botservice/Azure.ResourceManager.BotService |
 | Azure Bot Service Docs | https://learn.microsoft.com/azure/bot-service/ |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

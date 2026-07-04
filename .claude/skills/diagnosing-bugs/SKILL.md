@@ -22,7 +22,7 @@ tools:
 
 # Diagnosing Bugs
 
-## When to Use
+## 使用场景
 
 Use when this workflow matches the user request: Use this skill for its documented workflow.
 

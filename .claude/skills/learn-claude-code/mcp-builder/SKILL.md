@@ -193,7 +193,7 @@ async def read_file(path: str) -> str:
     return open(path).read()
 ```
 
-## Testing
+## 测试
 
 ```bash
 # Test with MCP Inspector
@@ -203,7 +203,7 @@ npx @anthropics/mcp-inspector python3 my_server.py
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | python3 my_server.py
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Clear tool descriptions**: Claude uses these to decide when to call tools
 2. **Input validation**: Always validate and sanitize inputs

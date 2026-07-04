@@ -22,7 +22,7 @@ interprets the spread and uses the reading to inform its approach.
 - About to arbitrarily pick between 2+ valid approaches (draw cards instead)
 - "Try again" on a system with no actual changes (redraw)
 
-## How It Works
+## 工作原理
 
 1. A Python script uses `secrets.randbelow()` to perform Fisher-Yates shuffles
 2. A Major Arcana deck and Minor Arcana deck are shuffled separately

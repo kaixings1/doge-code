@@ -53,7 +53,7 @@ swiss-user-research-video-template/
 └── example.html
 ```
 
-## Workflow
+## 工作流
 
 1. Read `DESIGN.md`, then map tokens to the template CSS variables (`--paper`, `--ink`, `--muted`, rule colors, segment colors) without changing layout semantics.
 2. Start from `assets/template.html`; keep the three-slide structure:

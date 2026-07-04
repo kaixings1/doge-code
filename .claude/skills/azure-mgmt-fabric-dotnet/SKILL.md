@@ -13,7 +13,7 @@ Management plane SDK for provisioning and managing Microsoft Fabric capacity res
 > **Management Plane Only**
 > This SDK manages Fabric *capacities* (compute resources). For working with Fabric workspaces, lakehouses, warehouses, and data items, use the Microsoft Fabric REST API or data plane SDKs.
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.Fabric
@@ -24,7 +24,7 @@ dotnet add package Azure.Identity
 **API Version**: 2023-11-01  
 **Target Frameworks**: .NET 8.0, .NET Standard 2.0
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -34,7 +34,7 @@ AZURE_CLIENT_ID=<client-id>
 AZURE_CLIENT_SECRET=<client-secret>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -58,7 +58,7 @@ ArmClient
         └── FabricCapacityResource
 ```
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Create Fabric Capacity
 
@@ -232,7 +232,7 @@ await foreach (var skuDetails in capacity.Value.GetSkusForCapacityAsync())
 | F1024 | 1024 | P5/A8 |
 | F2048 | 2048 | - |
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -274,7 +274,7 @@ await foreach (var skuDetails in capacity.Value.GetSkusForCapacityAsync())
 - `Scaling` - Scaling to different SKU
 - `Preparing` - Preparing resources
 
-## Best Practices
+## 最佳实践
 
 1. **Use `WaitUntil.Completed`** for operations that must finish before proceeding
 2. **Use `WaitUntil.Started`** when you want to poll manually or run operations in parallel
@@ -285,7 +285,7 @@ await foreach (var skuDetails in capacity.Value.GetSkusForCapacityAsync())
 7. **Check provisioning state** before performing operations on a capacity
 8. **Use appropriate SKU** — Start small (F2/F4) for dev/test, scale up for production
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -313,7 +313,7 @@ catch (RequestFailedException ex)
 }
 ```
 
-## Common Pitfalls
+## 常见陷阱
 
 1. **Capacity names must be globally unique** — Fabric capacity names must be unique across all Azure subscriptions
 2. **Suspend doesn't delete** — Suspended capacities still exist but don't bill for compute
@@ -331,14 +331,14 @@ catch (RequestFailedException ex)
 | `Azure.ResourceManager` | Core ARM SDK | `dotnet add package Azure.ResourceManager` |
 | `Azure.Identity` | Authentication | `dotnet add package Azure.Identity` |
 
-## References
+## 参考
 
 - [Azure.ResourceManager.Fabric NuGet](https://www.nuget.org/packages/Azure.ResourceManager.Fabric)
 - [GitHub Source](https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/fabric/Azure.ResourceManager.Fabric)
 - [Microsoft Fabric Documentation](https://learn.microsoft.com/fabric/)
 - [Fabric Capacity Management](https://learn.microsoft.com/fabric/admin/service-admin-portal-capacity-settings)
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

@@ -10,7 +10,7 @@ date_added: "2026-03-25"
 
 Build and maintain macOS menubar apps with a Tuist-first workflow and stable launch scripts. Preserve strict architecture boundaries so networking, state, and UI remain testable and predictable.
 
-## When to Use
+## 使用场景
 - When working on LSUIElement menubar utilities built with Tuist and SwiftUI.
 - When you need Tuist manifests, launch scripts, or architecture guidance for a menubar app.
 
@@ -37,7 +37,7 @@ Use this placement by default:
 - `run-menubar.sh`: canonical local restart/build/launch path
 - `stop-menubar.sh`: explicit stop helper when needed
 
-## Workflow
+## 工作流
 
 1. Confirm Tuist ownership
 - Verify `Tuist.swift` and `Project.swift` (or workspace manifests) exist.

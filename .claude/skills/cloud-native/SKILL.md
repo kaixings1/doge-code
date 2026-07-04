@@ -6,7 +6,7 @@ version: 1.0.0
 
 # 云原生安全
 
-## Purpose
+## 目的
 
 Identify security vulnerabilities specific to cloud-native environments, including IMDS exploitation, cloud provider misconfigurations, Kubernetes security issues, and serverless attack vectors. Cloud-native applications have unique trust boundaries and implicit assumptions that create vulnerability classes not present in traditional deployments.
 
@@ -317,7 +317,7 @@ grep -rniE "pulumi\.(aws|gcp|azure)" --include="*.ts" --include="*.py"
 
 ## Methodology
 
-### Step 1: Identify Cloud Environment
+### 步骤 1: Identify Cloud Environment
 
 ```bash
 # Detect cloud SDKs in use
@@ -330,28 +330,28 @@ find . \( -name "*.tf" -o -name "Dockerfile" -o -name "docker-compose*.yml" -o -
 grep -rniE "apiVersion.*apps/v1|kind:\s*(Deployment|Service|Pod|StatefulSet)" --include="*.yaml" --include="*.yml"
 ```
 
-### Step 2: Assess IMDS Exposure
+### 步骤 2: Assess IMDS Exposure
 
 1. Identify all HTTP client calls that accept user-controlled URLs (SSRF vectors)
 2. Check if IMDS access is restricted (IMDSv2 enforcement, network policies)
 3. Assess instance/pod IAM role permissions
 4. Check for IMDS-specific URL blocklists in SSRF protections
 
-### Step 3: Review Cloud Credentials
+### 步骤 3: Review Cloud Credentials
 
 1. Scan for hardcoded access keys, secrets, and tokens
 2. Check environment variable configuration for leaked credentials
 3. Review IAM policies for overly broad permissions
 4. Assess role assumption chains for privilege escalation paths
 
-### Step 4: Audit Kubernetes Security
+### 步骤 4: Audit Kubernetes Security
 
 1. Review RBAC configuration for least privilege
 2. Check for privileged containers and dangerous volume mounts
 3. Verify ServiceAccount token automounting is disabled where unnecessary
 4. Assess network policies for pod-to-pod isolation
 
-### Step 5: Evaluate Serverless Security
+### 步骤 5: Evaluate Serverless Security
 
 1. Check for secrets in environment variables (use Secrets Manager/Key Vault instead)
 2. Review event handler input validation

@@ -4,10 +4,10 @@ description: "对照行业最佳实践审查数据科学简历：量化影响（
 ---
 # Review Resume
 
-## Purpose
+## 目的
 Review and improve data science resumes using proven best practices.
 
-## How It Works
+## 工作原理
 
 ### Assessment Criteria
 1. **Impact quantification**: Use XYZ formula (Accomplished [X], as measured by [Y], by doing [Z])
@@ -24,13 +24,13 @@ Review and improve data science resumes using proven best practices.
 - Irrelevant experience not trimmed
 - No GitHub/portfolio link
 
-## Usage Examples
+## 使用示例
 
 ```
 "Review my data science resume — I'm targeting senior DS roles at tech companies"
 ```
 
-## Output Format
+## 输出格式
 
 - **Score**: Overall rating with dimension breakdowns
 - **Strengths**: What's working well

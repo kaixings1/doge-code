@@ -2,7 +2,7 @@
 
 Scan Android APKs for Firebase security misconfigurations including open databases, exposed storage buckets, and authentication bypasses.
 
-## When to Use
+## 使用场景
 
 Use this skill when you need to:
 - Audit Android applications for Firebase misconfigurations
@@ -39,7 +39,7 @@ This skill automates Firebase security testing for Android applications. When in
 - Automatic cleanup of test data created during scans
 - Detailed vulnerability reference documentation included
 
-## Installation
+## 安装
 
 ```
 /plugin install trailofbits/skills/plugins/firebase-apk-scanner
@@ -59,7 +59,7 @@ brew install apktool curl jq binutils
 sudo apt install apktool curl jq unzip binutils
 ```
 
-## Usage
+## 用法
 
 ```
 /firebase-scan ./app.apk

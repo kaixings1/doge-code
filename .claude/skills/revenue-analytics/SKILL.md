@@ -4,7 +4,7 @@ description: "收入分析：MRR/ARR 追踪、单位经济（LTV:CAC）、定价
 ---
 # Revenue Analytics
 
-## Purpose
+## 目的
 Analyze revenue patterns, unit economics, and pricing for data-driven business decisions.
 
 ## Key Metrics
@@ -28,13 +28,13 @@ Analyze revenue patterns, unit economics, and pricing for data-driven business d
 - Payback period
 - Contribution margin per customer
 
-## Usage Examples
+## 使用示例
 
 ```
 "Build an MRR waterfall chart and calculate our unit economics"
 ```
 
-## Output Format
+## 输出格式
 
 - **Revenue Dashboard**: MRR waterfall, growth trends
 - **Unit Economics**: LTV, CAC, payback by segment

@@ -20,7 +20,7 @@ source: self
 
 ---
 
-## Step 1: Local Project Archiving (AI Generation)
+## 步骤 1: Local Project Archiving (AI Generation)
 - **Action 0 (Identify)**: Call the terminal `pwd` (Linux/Mac) or `(Get-Item .).Name` (Windows) to confirm the current folder name.
 - **Action 1 (Write)**: Summarize the achievements from the current conversation (Git Commits, file changes, task progress), and write them into the **current project folder** at `diary/YYYY/MM/YYYY-MM-DD-ProjectName.md`.
 - **Isolation and Naming Rules (Ironclad Rules)**:
@@ -40,7 +40,7 @@ source: self
 - **Result**: `AGENT_CONTEXT.md` in the project directory is refreshed to the latest state.
 - **After Completion**: Force continue to Step 2; do not wait for user confirmation.
 
-## Step 2: Extract Global & Project Material (Script Execution)
+## 步骤 2: Extract Global & Project Material (Script Execution)
 - **Action**: Call the extraction script, **passing in the absolute path of the project diary just written in Step 1**. The script will precisely print "Today's Global Progress" and "Current Project Progress".
 - **Execution Command**:
   ```powershell
@@ -48,7 +48,7 @@ source: self
   ```
 - **Result**: The terminal will print two sets of material side-by-side. The AI must read the terminal output directly and prepare for mental fusion.
 
-## Step 3: AI Smart Fusion & Global Archiving (AI Execution) 🧠
+## 步骤 3: AI Smart Fusion & Global Archiving (AI Execution) 🧠
 - **Action**: Based on the two materials printed by the terminal in Step 2, complete a **seamless fusion** mentally, then write it to the global diary: `{diary_system_path}/diary/YYYY/MM/YYYY-MM-DD.md`.
 - **上下文 Firewall (Core Mechanism)**:
   1. **No Tag Drift**: When reading "Global Progress Material", there may be progress from other projects. **It is strictly forbidden to categorize today's conversation achievements under existing project headings belonging to other projects.**
@@ -59,7 +59,7 @@ source: self
   3. **Lessons Learned**: Merge and deduplicate; attach action items to every entry.
   4. **Cleanup**: After writing or fusing globally, you **must** force-delete any temporary files created to avoid encoding issues (e.g., `temp_diary.txt`, `fetched_diary.txt`) to keep the workspace clean.
 
-## Step 4: Cloud Sync & Experience Extraction (Script + Human) 🛑
+## 步骤 4: Cloud Sync & Experience Extraction (Script + Human) 🛑
 - **Action 1 (Sync)**: Call the master script to push the global diary to Notion and Obsidian.
 - **Execution Command**:
   ```powershell

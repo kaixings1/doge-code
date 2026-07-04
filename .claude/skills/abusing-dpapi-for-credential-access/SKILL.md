@@ -36,7 +36,7 @@ Red teamers abuse DPAPI to recover plaintext secrets after gaining a foothold, m
 
 The canonical tooling is **SharpDPAPI** (GhostPack, a C# port of Mimikatz DPAPI functionality) for Windows, **SharpChrome** for browser secrets, and **Mimikatz** (`dpapi::*`) as the original implementation. On Linux, Impacket's `dpapi.py` and `donpapi` perform remote/offline triage.
 
-## When to Use
+## 使用场景
 
 - After compromising a Windows host where the user has saved RDP, browser, or vault credentials worth harvesting for lateral movement.
 - When you hold a user's password or NTLM hash and want to decrypt their DPAPI-protected secrets offline.

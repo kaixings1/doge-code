@@ -14,7 +14,7 @@ Management plane SDK for provisioning and managing Microsoft Playwright Testing 
 > - **This SDK (Azure.ResourceManager.Playwright)**: Create workspaces, manage quotas, check name availability
 > - **Test Execution SDK (Azure.Developer.MicrosoftPlaywrightTesting.NUnit)**: Run Playwright tests at scale on cloud browsers
 
-## Installation
+## 安装
 
 ```bash
 dotnet add package Azure.ResourceManager.Playwright
@@ -23,7 +23,7 @@ dotnet add package Azure.Identity
 
 **Current Versions**: Stable v1.0.0, Preview v1.0.0-beta.1
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -33,7 +33,7 @@ AZURE_CLIENT_ID=<client-id>
 AZURE_CLIENT_SECRET=<client-secret>
 ```
 
-## Authentication
+## 认证
 
 ```csharp
 using Azure.Identity;
@@ -61,7 +61,7 @@ ArmClient
             └── PlaywrightWorkspaceQuotaResource (workspace-level quotas)
 ```
 
-## Core Workflow
+## 核心工作流
 
 ### 1. Create Playwright Workspace
 
@@ -200,7 +200,7 @@ await foreach (var quota in workspaceQuotas.GetAllAsync())
 await workspace.Value.DeleteAsync(WaitUntil.Completed);
 ```
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -224,7 +224,7 @@ await workspace.Value.DeleteAsync(WaitUntil.Completed);
 | `LocalAuth` | Enable/disable local authentication (access tokens) |
 | `ProvisioningState` | Current provisioning state (Succeeded, Failed, etc.) |
 
-## Best Practices
+## 最佳实践
 
 1. **Use `WaitUntil.Completed`** for operations that must finish before proceeding
 2. **Use `WaitUntil.Started`** when you want to poll manually or run operations in parallel
@@ -234,7 +234,7 @@ await workspace.Value.DeleteAsync(WaitUntil.Completed);
 6. **Navigate hierarchy** via `Get*` methods (e.g., `resourceGroup.GetPlaywrightWorkspaces()`)
 7. **Store the DataplaneUri** after workspace creation for test execution configuration
 
-## Error Handling
+## 错误处理
 
 ```csharp
 using Azure;
@@ -297,7 +297,7 @@ Environment.SetEnvironmentVariable("PLAYWRIGHT_SERVICE_URL", serviceUrl.ToString
 - [Microsoft Playwright Testing 概述](https://learn.microsoft.com/en-us/azure/playwright-testing/overview-what-is-microsoft-playwright-testing)
 - [Quickstart: Run Playwright Tests at Scale](https://learn.microsoft.com/en-us/azure/playwright-testing/quickstart-run-end-to-end-tests)
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

@@ -32,7 +32,7 @@ date_added: "2026-02-27"
 - Document findings and verify the fix.
 - If detailed playbooks are required, open `resources/implementation-playbook.md`.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed debugging patterns and checklists.
 

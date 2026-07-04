@@ -10,19 +10,19 @@ date_added: '2026-02-27'
 
 Hierarchical file system for big data analytics workloads.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-storage-file-datalake azure-identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_STORAGE_ACCOUNT_URL=https://<account>.dfs.core.windows.net
 ```
 
-## Authentication
+## 认证
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -200,7 +200,7 @@ import asyncio
 asyncio.run(datalake_operations())
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use hierarchical namespace** for file system semantics
 2. **Use `append_data` + `flush_data`** for large file uploads
@@ -210,7 +210,7 @@ asyncio.run(datalake_operations())
 6. **Set metadata** for custom file attributes
 7. **考虑 Blob API** for simple object storage use cases
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

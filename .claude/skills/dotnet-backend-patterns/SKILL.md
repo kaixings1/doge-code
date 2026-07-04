@@ -27,7 +27,7 @@ Master C#/.NET patterns for building production-grade APIs, MCP servers, and ent
 - You only need frontend or client guidance
 - The task is unrelated to backend architecture
 
-## Instructions
+## 使用说明
 
 - Define architecture boundaries, modules, and layering.
 - Apply DI, async patterns, and resilience strategies.
@@ -35,7 +35,7 @@ Master C#/.NET patterns for building production-grade APIs, MCP servers, and ent
 - Add tests and observability for critical flows.
 - If detailed patterns are required, open `resources/implementation-playbook.md`.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed .NET patterns and examples.
 

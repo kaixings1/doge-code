@@ -13,7 +13,7 @@ tools: [claude, cursor, codex, antigravity]
 ---
 # CORE DIRECTIVE: AWWWARDS-LEVEL DESIGN ENGINEERING
 
-## When to Use
+## 使用场景
 
 - Use when the user asks for an award-level landing page, marketing page, or creative frontend with cinematic motion.
 - Use when GSAP, pinned scroll, scrubbing, card stacking, horizontal motion, or other advanced animation is appropriate.

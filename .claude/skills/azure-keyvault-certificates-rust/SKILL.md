@@ -10,19 +10,19 @@ date_added: '2026-02-27'
 
 Client library for Azure Key Vault Certificates — secure storage and management of certificates.
 
-## Installation
+## 安装
 
 ```sh
 cargo add azure_security_keyvault_certificates azure_identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_KEYVAULT_URL=https://<vault-name>.vault.azure.net/
 ```
 
-## Authentication
+## 认证
 
 ```rust
 use azure_identity::DeveloperToolsCredential;
@@ -153,7 +153,7 @@ client
 5. **Delete** — soft delete (recoverable)
 6. **Purge** — permanent deletion
 
-## Best Practices
+## 最佳实践
 
 1. **Use Entra ID auth** — `DeveloperToolsCredential` for dev
 2. **Use managed certificates** — auto-renewal with supported issuers
@@ -168,7 +168,7 @@ Assign these Key Vault roles:
 - `Key Vault Certificates Officer` — full CRUD on certificates
 - `Key Vault Reader` — read certificate metadata
 
-## Reference Links
+## 参考链接
 
 | Resource | Link |
 |----------|------|
@@ -176,7 +176,7 @@ Assign these Key Vault roles:
 | Source Code | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/keyvault/azure_security_keyvault_certificates |
 | crates.io | https://crates.io/crates/azure_security_keyvault_certificates |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

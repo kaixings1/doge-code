@@ -14,7 +14,7 @@ This skill doesn't dump YARA syntax at you. Instead, it teaches:
 
 An expert uses 5 tools: yarGen, FLOSS, `yr` CLI, signature-base, YARA-CI. Everything else is noise.
 
-## Installation
+## 安装
 
 ### YARA-X CLI
 

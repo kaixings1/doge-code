@@ -54,7 +54,7 @@ Collect:
 - integration complexity
 - lock-in, security, compliance, and operational risk
 
-## Output Format
+## 输出格式
 
 Default structure:
 1. executive summary

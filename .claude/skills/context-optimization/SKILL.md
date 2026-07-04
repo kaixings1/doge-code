@@ -113,7 +113,7 @@ Compaction should achieve 50-70% token reduction with less than 5% quality degra
 
 Monitor and iterate on optimization strategies based on measured effectiveness.
 
-## Examples
+## 示例
 
 **Example 1: Compaction Trigger**
 ```python

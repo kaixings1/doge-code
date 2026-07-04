@@ -21,14 +21,14 @@ date_added: "2026-02-27"
 - There are no measurable metrics or evaluation data
 - The task is unrelated to multi-agent orchestration
 
-## Instructions
+## 使用说明
 
 1. Establish baseline metrics and target performance goals.
 2. Profile agent workloads and identify coordination bottlenecks.
 3. Apply orchestration changes and cost controls incrementally.
 4. Validate improvements with repeatable tests and rollbacks.
 
-## Safety
+## 安全
 
 - Avoid deploying orchestration changes without regression testing.
 - Roll out changes gradually to prevent system-wide regressions.

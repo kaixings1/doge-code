@@ -157,7 +157,7 @@ Four strategies address different aspects of context degradation:
 
 Implement these strategies through specific architectural patterns. Use just-in-time context loading to retrieve information only when needed. Use observation masking to replace verbose tool outputs with compact references. Use sub-agent architectures to isolate context for different tasks. Use compaction to summarize growing context before it exceeds limits.
 
-## Examples
+## 示例
 
 **Example 1: Detecting Degradation**
 ```yaml

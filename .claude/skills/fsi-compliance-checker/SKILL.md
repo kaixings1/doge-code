@@ -16,7 +16,7 @@ license_source: "https://github.com/timwukp/agent-skills-best-practice/blob/main
 
 # FSI Compliance Checker
 
-## Overview
+## 概述
 
 Maps a concrete change (code diff, architecture design, IaC, pipeline config) to the specific controls it touches in financial services compliance frameworks — PCI-DSS v4.0 for payment card data and MAS TRM for Singapore-regulated institutions — and reports gaps with actionable remediation. This is engineering-level compliance triage: it helps teams catch violations before audit, but it does not replace a qualified assessor (QSA) or the institution's compliance function. Say so in every report.
 
@@ -27,9 +27,9 @@ Maps a concrete change (code diff, architecture design, IaC, pipeline config) to
 - Use when someone asks "is this compliant", "does logging this violate PCI", or requests a banking-regulation review of a diff, design, or Terraform change
 - Do NOT use for generic security review (no framework involved), GDPR/SOC2/HIPAA (out of bundled scope), or legal advice
 
-## How It Works
+## 工作原理
 
-### Step 1: Select the framework
+### 步骤 1: Select the framework
 
 Load only the reference file(s) the engagement needs:
 
@@ -42,15 +42,15 @@ Load only the reference file(s) the engagement needs:
 
 If the user hasn't said which applies, ask one question: what data does the change touch, and is the institution Singapore-regulated?
 
-### Step 2: Scope the change
+### 步骤 2: Scope the change
 
 Identify what the diff/design actually touches: data elements (card data? customer PII? credentials?), trust boundaries, environments (production? DR?), and third parties.
 
-### Step 3: Assess applicable controls
+### 步骤 3: Assess applicable controls
 
 Select the applicable controls from the loaded reference file(s) — typically 5-15 controls, not the whole framework. List what you ruled out and why (one line each) so the scoping is auditable. Assess each as `Compliant` / `Gap` / `Needs evidence` (can't tell from the artifact — name the evidence required).
 
-### Step 4: Report
+### 步骤 4: Report
 
 Every Gap gets: the control ID, what's wrong in this specific change, concrete remediation, and severity (Critical = violation involving live regulated data; High = control absent; Medium = control partial/undocumented).
 
@@ -76,11 +76,11 @@ Every Gap gets: the control ID, what's wrong in this specific change, concrete r
 - [Control]: [what artifact would demonstrate compliance]
 ```
 
-### Step 5: Offer story conversion
+### 步骤 5: Offer story conversion
 
 Offer to turn findings into backlog items with the control ID in each story for traceability.
 
-## Examples
+## 示例
 
 ### Example 1: Logging review
 

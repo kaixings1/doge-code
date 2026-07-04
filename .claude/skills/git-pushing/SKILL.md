@@ -18,7 +18,7 @@ date_added: "2026-02-27"
 - 完成功能并想分享时
 - Says phrases like "let's push this up" or "commit these changes"
 
-## Workflow
+## 工作流
 
 **ALWAYS use the script** - do NOT use manual git commands:
 

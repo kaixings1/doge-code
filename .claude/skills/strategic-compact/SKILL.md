@@ -27,7 +27,7 @@ Strategic compaction at logical boundaries:
 - **After completing a milestone** — Fresh start for next phase
 - **Before major context shifts** — Clear exploration context before different task
 
-## How It Works
+## 工作原理
 
 The `suggest-compact.js` script runs on PreToolUse (Edit/Write) and:
 

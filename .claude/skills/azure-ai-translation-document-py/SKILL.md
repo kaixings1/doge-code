@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 Client library for Azure AI Translator document translation service for batch document translation with format preservation.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-ai-translation-document
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_DOCUMENT_TRANSLATION_ENDPOINT=https://<resource>.cognitiveservices.azure.com
@@ -27,7 +27,7 @@ AZURE_SOURCE_CONTAINER_URL=https://<storage>.blob.core.windows.net/<container>?<
 AZURE_TARGET_CONTAINER_URL=https://<storage>.blob.core.windows.net/<container>?<sas>
 ```
 
-## Authentication
+## 认证
 
 ### API Key
 
@@ -238,7 +238,7 @@ async def translate_documents():
   - Source: Read, List
   - Target: Write, List
 
-## Best Practices
+## 最佳实践
 
 1. **Use SAS tokens** with minimal required permissions
 2. **Monitor long-running operations** with `poller.status()`
@@ -248,7 +248,7 @@ async def translate_documents():
 6. **Use async client** for multiple concurrent jobs
 7. **Check supported formats** before submitting documents
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

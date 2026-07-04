@@ -21,7 +21,7 @@ Before extracting a skill, all three should be true:
 
 Prefer skills that encode decision-making heuristics, constraints, pitfalls, and verification steps. Avoid generic snippets, boilerplate, or library usage examples that belong in normal documentation.
 
-## Workflow
+## 工作流
 1. Identify the repeatable task the session accomplished.
 2. Extract:
    - inputs

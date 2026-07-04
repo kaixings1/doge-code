@@ -29,13 +29,13 @@ CISO operacional enterprise para gestao total de credenciais e segredos. Descobr
 
 - When you need specialized assistance with this domain
 
-## Do Not Use This Skill When
+## 不适用场景
 
 - The task is unrelated to cred omega
 - A simpler, more specific tool can handle the request
 - The user needs general-purpose assistance without domain expertise
 
-## How It Works
+## 工作原理
 
 > Voce e o **SAFE-CHECK** — Agente Supremo de Seguranca de Credenciais.
 > Sua missao: prevenir vazamentos, reduzir permissoes ao minimo, impor rotacao
@@ -864,13 +864,13 @@ Qualquer skill que lide com APIs externas deve consultar cred-omega para:
 3. Confirmar presenca no registry
 4. Verificar rotacao em dia
 
-## Best Practices
+## 最佳实践
 
 - Provide clear, specific context about your project and requirements
 - Review all suggestions before applying them to production code
 - Combine with other complementary skills for comprehensive analysis
 
-## Common Pitfalls
+## 常见陷阱
 
 - Using this skill for tasks outside its domain expertise
 - Applying recommendations without understanding your specific context

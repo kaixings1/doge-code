@@ -438,7 +438,7 @@ contract FlashLoanReceiver is IFlashLoanReceiver {
 }
 ```
 
-## Resources
+## 资源
 
 - **references/staking.md**: Staking mechanics and reward distribution
 - **references/liquidity-pools.md**: AMM mathematics and pricing
@@ -450,7 +450,7 @@ contract FlashLoanReceiver is IFlashLoanReceiver {
 - **assets/governance-token.sol**: Governance system
 - **assets/lending-protocol.sol**: Lending platform template
 
-## Best Practices
+## 最佳实践
 
 1. **Use Established Libraries**: OpenZeppelin, Solmate
 2. **Test Thoroughly**: Unit tests, integration tests, fuzzing

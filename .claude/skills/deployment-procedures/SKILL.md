@@ -242,7 +242,7 @@ Before deploying:
 
 > **Remember:** Every deployment is a risk. Minimize risk through preparation, not speed.
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

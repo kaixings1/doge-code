@@ -58,7 +58,7 @@ metadata:
 - Flag potential INP issues (heavy JS, no async/defer)
 - Flag potential CLS issues (missing image dimensions, injected content)
 
-## Output
+## 输出
 
 ### Page Score Card
 ```
@@ -84,6 +84,6 @@ Ready-to-use JSON-LD code for detected opportunities
 
 If DataForSEO MCP tools are available, use `serp_organic_live_advanced` for real SERP positions and `backlinks_summary` for backlink data and spam scores.
 
-## Error Handling
+## 错误处理
 
 | Scenario | Action |

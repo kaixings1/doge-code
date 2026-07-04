@@ -4,7 +4,7 @@ Generate a MacOS Seatbelt configuration that sandboxes the target with the minim
 
 **Author:** Spencer Michaels
 
-## When to Use
+## 使用场景
 
 使用此技能当 you need a targeted way to isolate a process on MacOS without using containers. This can be helpful for applications that are themselves trusted, but might execute potentially-untrusted third-party code as part of normal operation (such as Javascript bundlers), or that are at a high risk of supply chain attacks. Running such an application in a restricted sandbox helps reduce the "blast radius" if it is exploited.
 
@@ -19,7 +19,7 @@ This skill should NOT be used to run an untrusted process, since it requires run
 4. **Create helper scripts if needed** - If the application has multiple subcommands that perform highly different functions (such as "serve" and "build" tasks), create separate Seatbelt configurations for each, and create a helper script to switch configurations based on how the target application is invoked.
 
 
-## Installation
+## 安装
 
 ```
 	/plugin install trailofbits/skills/plugins/seatbelt-sandboxer

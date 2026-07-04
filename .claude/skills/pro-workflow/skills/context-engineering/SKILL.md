@@ -136,7 +136,7 @@ Example baseline (calibrate with `/context`): ~200K total window, ~20K overhead 
 | Quick side question | `/btw` (doesn't pollute main context) |
 | Exploring multiple approaches | Worktrees or agent teams |
 
-## Anti-Patterns
+## 反模式
 
 - Loading entire files when you need one function
 - Keeping MCP tool results in context after extracting what you need

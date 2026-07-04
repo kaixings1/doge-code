@@ -40,7 +40,7 @@ func selectItem(_ item: SidebarItem) {
 Use feature-specific categories like `Windowing`, `Commands`, `MenuBar`, `Sidebar`,
 `Sync`, or `Import` so logs can be filtered quickly.
 
-## Workflow
+## 工作流
 
 1. Identify the behavior that needs observability.
    - Window open/close

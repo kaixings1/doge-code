@@ -273,7 +273,7 @@ If the verdict is FAIL, run `/smoke-check` again after fixing the issues."
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 - **This skill generates a protocol — humans run it** — never attempt to
   run a soak test automatically. The observations require a human observer.

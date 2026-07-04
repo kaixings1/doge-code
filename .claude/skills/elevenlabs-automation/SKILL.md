@@ -22,7 +22,7 @@ Automate your ElevenLabs text-to-speech workflows -- convert text to natural spe
 
 ---
 
-## Core Workflows
+## 核心工作流
 
 ### 1. Generate Speech from Text
 

@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 Real-time voice AI SDK for building bidirectional voice assistants with Azure AI in Node.js and browser environments.
 
-## Installation
+## 安装
 
 ```bash
 npm install @azure/ai-voicelive @azure/identity
@@ -24,7 +24,7 @@ npm install @types/node
 - Node.js LTS versions (20+)
 - Modern browsers (Chrome, Firefox, Safari, Edge)
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_VOICELIVE_ENDPOINT=https://<resource>.cognitiveservices.azure.com
@@ -34,7 +34,7 @@ AZURE_VOICELIVE_API_KEY=<your-api-key>
 AZURE_LOG_LEVEL=info
 ```
 
-## Authentication
+## 认证
 
 ### Microsoft Entra ID (Recommended)
 
@@ -371,7 +371,7 @@ turnDetection: {
 | `g711_ulaw` | 8kHz | Telephony (US) |
 | `g711_alaw` | 8kHz | Telephony (EU) |
 
-## Key Types Reference
+## 关键类型参考
 
 | Type | Purpose |
 |------|---------|
@@ -383,7 +383,7 @@ turnDetection: {
 | `Session上下文` | 上下文 for session events |
 | `ServerEventUnion` | Union of all server events |
 
-## Error Handling
+## 错误处理
 
 ```typescript
 import {
@@ -412,7 +412,7 @@ const subscription = session.subscribe({
 });
 ```
 
-## Logging
+## 日志
 
 ```typescript
 import { setLogLevel } from "@azure/logger";
@@ -447,7 +447,7 @@ const audioContext = new AudioContext({ sampleRate: 24000 });
 // ... (see samples for full implementation)
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **始终 use `默认AzureCredential`** — 绝不 hardcode API keys
 2. **Set both modalities** — Include `["text", "audio"]` for voice assistants
@@ -456,7 +456,7 @@ const audioContext = new AudioContext({ sampleRate: 24000 });
 5. **Clean up subscriptions** — Call `subscription.close()` when done
 6. **Use appropriate audio format** — PCM16 at 24kHz for best quality
 
-## Reference Links
+## 参考链接
 
 | Resource | URL |
 |----------|-----|
@@ -465,7 +465,7 @@ const audioContext = new AudioContext({ sampleRate: 24000 });
 | Samples | https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/ai/ai-voicelive/samples |
 | API Reference | https://learn.microsoft.com/javascript/api/@azure/ai-voicelive |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

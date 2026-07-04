@@ -10,13 +10,13 @@ date_added: '2026-02-27'
 
 One-line setup for Application Insights with OpenTelemetry auto-instrumentation.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-monitor-opentelemetry
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=xxx;IngestionEndpoint=https://xxx.in.applicationinsights.azure.com/
@@ -213,7 +213,7 @@ configure_azure_monitor(
 | `instrumentations` | List of instrumentations to enable | All |
 | `enable_live_metrics` | Enable Live Metrics stream | False |
 
-## Best Practices
+## 最佳实践
 
 1. **Call configure_azure_monitor() early** — Before importing instrumented libraries
 2. **Use environment variables** for connection string in production
@@ -223,7 +223,7 @@ configure_azure_monitor(
 6. **Add custom attributes** to spans for better debugging
 7. **Use AAD authentication** for production workloads
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

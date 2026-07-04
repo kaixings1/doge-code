@@ -16,7 +16,7 @@ date_added: '2026-02-27'
 - The task is unrelated to dx optimizer
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.

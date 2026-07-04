@@ -33,7 +33,7 @@ fn main() {
 
 Prefer borrowing (`&T`, `&mut T`) over ownership transfer. Use `Clone` only when necessary.
 
-## Error Handling
+## 错误处理
 
 ```rust
 use thiserror::Error;
@@ -167,7 +167,7 @@ impl ServerConfigBuilder {
 }
 ```
 
-## Anti-Patterns
+## 反模式
 
 - Using `.unwrap()` or `.expect()` in library code
 - Cloning data unnecessarily instead of borrowing

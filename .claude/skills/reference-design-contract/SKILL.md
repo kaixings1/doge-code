@@ -73,7 +73,7 @@ Create three files:
 If a preview is useful, also create `example.html` as a small hand-built
 contract preview. Do not make it the main deliverable.
 
-## Workflow
+## 工作流
 
 1. **Lock the job.** Identify target artifact type, audience, brand/product
    context, references, and constraints. Ask at most two questions only when a

@@ -223,7 +223,7 @@ pdftoppm -jpeg -r 150 -f N -l N output.pdf slide-fixed
 
 ---
 
-## Dependencies
+## 依赖
 
 - `pip install "markitdown[pptx]"` - text extraction
 - `pip install Pillow` - thumbnail grids

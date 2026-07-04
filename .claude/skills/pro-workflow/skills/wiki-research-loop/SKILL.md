@@ -110,7 +110,7 @@ If `wiki.config.md` has `private: true`, the loop refuses any non-local fetcher 
 
 `scripts/research-tick.js` is launchable from any cron-style runner. Picks the oldest opted-in wiki with pending seeds and runs a single iteration. Hook event: `pro-workflow:research-tick`.
 
-## Output
+## 输出
 
 Each run writes:
 

@@ -52,9 +52,9 @@ Certification maps to layers:
 - **Agent-Ready** -- all `core` + `recommended` rules pass
 - **Agent-Native** -- all layers pass
 
-## How It Works
+## 工作原理
 
-### Step 1: Output Mode
+### 步骤 1: Output Mode
 
 默认 is agent mode (JSON). Explicit flags to switch:
 
@@ -68,7 +68,7 @@ $ mycli list --agent      # explicit agent mode (override config if needed)
 - **--human** -- human-friendly format (colors, tables, progress bars)
 - **--agent** -- explicit JSON mode (useful when env/config overrides default)
 
-### Step 2: agent/ Directory Convention
+### 步骤 2: agent/ Directory Convention
 
 Every CLI tool MUST have an `agent/` directory at its project root. This is the
 tool's identity and behavior contract for AI agents.
@@ -84,7 +84,7 @@ agent/
     getting-started.md
 ```
 
-### Step 3: Four Levels of Self-Description
+### 步骤 3: Four Levels of Self-Description
 
 1. **--brief** (business card, injected into agent config)
 2. **Every Command Response** (always-on context: data + rules + skills + issue)

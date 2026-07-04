@@ -257,7 +257,7 @@ match command:
         raise ValueError(f"Unknown command: {command}")
 ```
 
-## Error Handling
+## 错误处理
 
 ```python
 class AppError(Exception):

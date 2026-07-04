@@ -40,7 +40,7 @@ Logic analyzer     - Protocol capture and analysis
 - The task is unrelated to download from vendor
 - You need a different domain or tool outside this scope
 
-## Instructions
+## 使用说明
 
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
@@ -307,7 +307,7 @@ sudo chroot squashfs-root /usr/bin/qemu-arm-static /bin/httpd
 - Attacking devices without permission
 - Industrial espionage
 
-## Response Approach
+## 响应方式
 
 1. **Verify authorization**: Ensure legitimate research context
 2. **Assess device**: Understand target device type and architecture

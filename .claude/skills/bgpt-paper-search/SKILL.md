@@ -8,7 +8,7 @@ metadata: {"version": "1.1", "skill-author": "BGPT", "website": "https://bgpt.pr
 
 # BGPT /u8bba/u6587/u641c/u7d22
 
-## Overview
+## 概述
 
 BGPT is a remote MCP server that searches a curated database of scientific papers built from raw experimental data extracted from full-text studies. Unlike traditional literature databases that return titles and abstracts, BGPT returns structured data from the actual paper content — methods, quantitative results, sample sizes, quality assessments, and 25+ metadata fields per paper.
 
@@ -48,7 +48,7 @@ Add to your MCP configuration:
 npx bgpt-mcp
 ```
 
-## Usage
+## 用法
 
 Once the BGPT MCP server is configured, call its `search_papers` tool via the agent's MCP interface (not via Bash):
 

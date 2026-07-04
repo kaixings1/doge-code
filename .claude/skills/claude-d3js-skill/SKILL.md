@@ -802,7 +802,7 @@ g.selectAll(".tick line")
 - Use `.join()` instead of separate enter/update/exit selections
 - Avoid unnecessary re-renders by checking dependencies
 
-## Resources
+## 资源
 
 ### references/
 Contains detailed reference materials:

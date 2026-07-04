@@ -104,7 +104,7 @@ for i in range(len(doc)):
 | HTML to PDF | pdfkit | `pip install pdfkit` + wkhtmltopdf |
 | Text extraction | pdftotext | `brew install poppler` / `apt install poppler-utils` |
 
-## Best Practices
+## 最佳实践
 
 1. **Always check if tools are installed** before using them
 2. **Handle encoding issues** - PDFs may contain various character encodings

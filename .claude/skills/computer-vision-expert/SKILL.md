@@ -20,7 +20,7 @@ date_added: "2026-02-27"
 - 优化边缘设备部署的视觉模型（ONNX、TensorRT、NPU）。
 - Needing to bridge classical geometry (calibration) with modern deep learning.
 
-## Capabilities
+## 能力
 
 ### 1. Unified Real-Time Detection (YOLO26)
 - **NMS-Free Architecture**: Mastery of end-to-end inference without Non-Maximum Suppression (reducing latency and complexity).
@@ -41,7 +41,7 @@ date_added: "2026-02-27"
 - **Sub-pixel Calibration**: Chessboard/Charuco pipelines for high-precision stereo/multi-camera rigs.
 - **Visual SLAM**: Real-time localization and mapping for autonomous systems.
 
-## Patterns
+## 模式
 
 ### 1. Text-Guided Vision Pipelines
 - Use SAM 3's text-to-mask capability to isolate specific parts during inspection without needing custom detectors for every variation.
@@ -54,7 +54,7 @@ date_added: "2026-02-27"
 ### 3. Progressive 3D Scene Reconstruction
 - Integrate monocular depth maps with geometric homographies to build accurate 2.5D/3D representations of scenes.
 
-## Anti-Patterns
+## 反模式
 
 - **Manual NMS Post-processing**: Stick to NMS-free architectures (YOLO26/v10+) for lower overhead.
 - **Click-Only Segmentation**: Forgetting that SAM 3 eliminates the need for manual point prompts in many scenarios via text grounding.
@@ -69,7 +69,7 @@ date_added: "2026-02-27"
 | Motion Blur | Medium | Optimize shutter speed or use SAM 3's temporal tracking consistency. |
 | Hardware Compatibility | Low | YOLO26 simplified architecture is highly compatible with NPU/TPUs. |
 
-## Related Skills
+## 相关技能
 `ai-engineer`, `robotics-expert`, `research-engineer`, `embedded-systems`
 
 ## 局限性

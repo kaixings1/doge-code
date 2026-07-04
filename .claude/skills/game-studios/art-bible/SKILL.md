@@ -228,7 +228,7 @@ Assign letters A, B, C… only to the options actually included. Mark the most l
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 Every section follows: **Question → Options → Decision → Draft (from art-director agent) → Approval → Write to file**
 

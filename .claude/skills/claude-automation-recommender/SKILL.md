@@ -27,7 +27,7 @@ tools: Read, Glob, Grep, Bash
 | **Plugins** | Collections of skills that can be installed |
 | **MCP Servers** | External tool integrations (databases, APIs, browsers, docs) |
 
-## Workflow
+## 工作流
 
 ### Phase 1: Codebase Analysis
 

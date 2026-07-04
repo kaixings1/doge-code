@@ -10,19 +10,19 @@ date_added: '2026-02-27'
 
 Client library for Azure Key Vault Secrets — secure storage for passwords, API keys, and other secrets.
 
-## Installation
+## 安装
 
 ```sh
 cargo add azure_security_keyvault_secrets azure_identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_KEYVAULT_URL=https://<vault-name>.vault.azure.net/
 ```
 
-## Authentication
+## 认证
 
 ```rust
 use azure_identity::DeveloperToolsCredential;
@@ -117,7 +117,7 @@ let secret = client
     .into_model()?;
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use Entra ID auth** — `DeveloperToolsCredential` for dev, `ManagedIdentityCredential` for production
 2. **Use `into_model()?`** — to deserialize responses
@@ -133,7 +133,7 @@ Assign these Key Vault roles:
 - `Key Vault Secrets User` — get and list
 - `Key Vault Secrets Officer` — full CRUD
 
-## Reference Links
+## 参考链接
 
 | Resource | Link |
 |----------|------|
@@ -141,7 +141,7 @@ Assign these Key Vault roles:
 | Source Code | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/keyvault/azure_security_keyvault_secrets |
 | crates.io | https://crates.io/crates/azure_security_keyvault_secrets |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

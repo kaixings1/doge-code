@@ -365,7 +365,7 @@ npm install --workspaces
 npm install package@latest --workspace=packages/app
 ```
 
-## Resources
+## 资源
 
 - **references/semver.md**: Semantic versioning guide
 - **references/compatibility-matrix.md**: Common compatibility issues
@@ -375,7 +375,7 @@ npm install package@latest --workspace=packages/app
 - **assets/compatibility-matrix.csv**: Version compatibility table
 - **scripts/audit-dependencies.sh**: Dependency audit script
 
-## Best Practices
+## 最佳实践
 
 1. **Read Changelogs**: Understand what changed
 2. **Upgrade Incrementally**: One major version at a time
@@ -413,7 +413,7 @@ Post-Upgrade:
 - [ ] Deploy to production
 ```
 
-## Common Pitfalls
+## 常见陷阱
 
 - Upgrading all dependencies at once
 - Not testing after each upgrade

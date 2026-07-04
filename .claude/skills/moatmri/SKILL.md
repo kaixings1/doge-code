@@ -18,7 +18,7 @@ date_added: "2026-05-31"
 - "I'm doing due diligence on [company] — what's their AI displacement risk?"
 - "Where does my competitive moat actually hold against AI pressure?"
 
-## How It Works
+## 工作原理
 
 ### Step 1 — Gather Inputs
 

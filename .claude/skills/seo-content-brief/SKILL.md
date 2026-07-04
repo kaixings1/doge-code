@@ -160,7 +160,7 @@ List the exact trust signals this content needs:
 - Specify whether the page is a hub (links out to cluster pages) or spoke (links to pillar page)
 - Use the site structure from the sitemap to find real link targets
 
-## Output Format
+## 输出格式
 
 始终 output in this exact structure:
 

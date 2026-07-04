@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 Manage cryptographic keys and perform cryptographic operations in Azure Key Vault and Managed HSM.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -326,7 +326,7 @@ KeyVaultKey importedKey = keyClient.importKey(importOptions);
 | `ES384` | EC P-384 | SHA-384 |
 | `ES512` | EC P-521 | SHA-512 |
 
-## Error Handling
+## 错误处理
 
 ```java
 import com.azure.core.exception.HttpResponseException;
@@ -342,13 +342,13 @@ try {
 }
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 AZURE_KEYVAULT_URL=https://<vault-name>.vault.azure.net
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use HSM Keys for Production** - Set `setHardwareProtected(true)` for sensitive keys
 2. **Enable Soft Delete** - Protects against accidental deletion
@@ -363,7 +363,7 @@ AZURE_KEYVAULT_URL=https://<vault-name>.vault.azure.net
 - "RSA key", "EC key", "HSM key"
 - "key rotation", "wrap unwrap key"
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

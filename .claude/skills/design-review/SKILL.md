@@ -26,7 +26,7 @@ od:
 - Upstream: https://github.com/garrytan/gstack
 - Category: `creative-direction`
 
-## How to use
+## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
 discovers it during planning. To run the full upstream workflow with

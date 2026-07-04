@@ -20,7 +20,7 @@ Access 20+ years of global financial data: equities, options, forex, crypto, com
 export ALPHAVANTAGE_API_KEY="your_key_here"
 ```
 
-## Installation
+## 安装
 
 ```bash
 uv pip install requests pandas

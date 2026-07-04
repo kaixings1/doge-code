@@ -167,7 +167,7 @@ If the answer is "no" to any of these, stay at a simpler tier (single call or wo
 
 ---
 
-## Architecture
+## 架构
 
 Everything goes through `POST /v1/messages`. Tools and output constraints are features of this single endpoint — not separate APIs.
 
@@ -520,7 +520,7 @@ Use WebFetch to get the latest documentation when:
 
 Live documentation URLs are in `shared/live-sources.md`.
 
-## Common Pitfalls
+## 常见陷阱
 
 - Don't truncate inputs when passing files or content to the API. If the content is too long to fit in the context window, notify the user and discuss options (chunking, summarization, etc.) rather than silently truncating.
 - **Fable 5 / Opus 4.8 / 4.7 thinking:** Adaptive only. `thinking: {type: "enabled", budget_tokens: N}` returns 400 — `budget_tokens` is fully removed (along with `temperature`, `top_p`, `top_k`). Use `thinking: {type: "adaptive"}`. Opus 4.8 inherits this surface from 4.7 with no new breaking changes; Fable 5 adds one — an explicit `thinking: {type: "disabled"}` returns a 400 (accepted on 4.7/4.8); omit the param instead.

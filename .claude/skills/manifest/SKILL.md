@@ -24,7 +24,7 @@ date_added: "2026-02-27"
 - User wants to build custom dashboards or alerting rules
 - User is not using the Manifest platform
 
-## Instructions
+## 使用说明
 
 ### Step 1 — Stop the gateway
 
@@ -91,11 +91,11 @@ Look for:
 
 If it appears, tell the user setup is complete. If not, check the error messages and troubleshoot.
 
-## Safety
+## 安全
 
 - 绝不 log or echo the API key in plain text after configuration
 - Verify the key format (`mnfst_` prefix) before writing to config
 
-## Troubleshooting
+## 故障排除
 
 | Error | Fix |

@@ -11,7 +11,7 @@ date_added: "2026-03-10"
 
 Turn a one-line objective into a step-by-step plan any coding agent can execute cold.
 
-## Overview
+## 概述
 
 Blueprint is for multi-session, multi-agent engineering projects where each step must be independently executable by a fresh agent that has never seen the conversation history. Install it once, invoke it with `/blueprint <project> <objective>`.
 
@@ -22,7 +22,7 @@ Blueprint is for multi-session, multi-agent engineering projects where each step
 - Use when you want adversarial review of the plan before execution
 - Use when parallel step detection and dependency graphs matter
 
-## How It Works
+## 工作原理
 
 1. **Research** — Scans the codebase, reads project memory, runs pre-flight checks
 2. **Design** — Breaks the objective into one-PR-sized steps, identifies parallelism, assigns model tiers
@@ -30,7 +30,7 @@ Blueprint is for multi-session, multi-agent engineering projects where each step
 4. **Review** — Delegates adversarial review to a strongest-model sub-agent (falls back to default model if unavailable)
 5. **Register** — Saves the plan and updates project memory
 
-## Examples
+## 示例
 
 ### Example 1: Database migration
 ```
@@ -42,7 +42,7 @@ Blueprint is for multi-session, multi-agent engineering projects where each step
 /blueprint antbot "extract providers into plugins"
 ```
 
-## Best Practices
+## 最佳实践
 
 - ✅ Use for tasks requiring 3+ PRs or multiple sessions
 - ✅ Let Blueprint auto-detect git/gh availability — it degrades gracefully
@@ -56,7 +56,7 @@ Blueprint is for multi-session, multi-agent engineering projects where each step
 - **Zero runtime risk**: Pure markdown — no hooks, no scripts, no executable code
 - **Plan mutation protocol**: Steps can be split, inserted, skipped with audit trail
 
-## Installation
+## 安装
 
 ```bash
 mkdir -p ~/.claude/skills

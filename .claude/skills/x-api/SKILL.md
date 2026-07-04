@@ -16,7 +16,7 @@ Programmatic interaction with X (Twitter) for posting, reading, searching, and a
 - Analytics and engagement tracking
 - User says "post to X", "tweet", "X API", or "Twitter API"
 
-## Authentication
+## 认证
 
 ### OAuth 2.0 Bearer Token (App-Only)
 
@@ -187,7 +187,7 @@ if remaining < 5:
     print(f"Rate limit approaching. Resets in {wait}s")
 ```
 
-## Error Handling
+## 错误处理
 
 ```python
 resp = oauth.post("https://api.x.com/2/tweets", json={"text": content})
@@ -202,7 +202,7 @@ else:
     raise Exception(f"X API error {resp.status_code}: {resp.text}")
 ```
 
-## Security
+## 安全
 
 - **Never hardcode tokens.** Use environment variables or `.env` files.
 - **Never commit `.env` files.** Add to `.gitignore`.
@@ -221,7 +221,7 @@ Use `brand-voice` plus `content-engine` to generate platform-native content, the
 6. Post via X API only after approval
 7. Track engagement via public_metrics
 
-## Related Skills
+## 相关技能
 
 - `brand-voice` — Build a reusable voice profile from real X and site/source material
 - `content-engine` — Generate platform-native content for X

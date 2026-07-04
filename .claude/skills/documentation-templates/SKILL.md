@@ -37,12 +37,12 @@ Brief one-line description.
 
 [Minimum steps to run]
 
-## Features
+## 特性
 
 - Feature 1
 - Feature 2
 
-## Configuration
+## 配置
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -167,7 +167,7 @@ For AI crawlers and agents:
 - [src/api/]: API routes
 - [docs/]: Documentation
 
-## Key Concepts
+## 关键概念
 - Concept 1: Brief explanation
 - Concept 2: Brief explanation
 ```
@@ -195,7 +195,7 @@ For RAG indexing:
 
 > **Remember:** Templates are starting points. Adapt to your project's needs.
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

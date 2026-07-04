@@ -10,20 +10,20 @@ date_added: '2026-02-27'
 
 Client library for Azure Event Hubs — big data streaming platform and event ingestion service.
 
-## Installation
+## 安装
 
 ```sh
 cargo add azure_messaging_eventhubs azure_identity
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 EVENTHUBS_HOST=<namespace>.servicebus.windows.net
 EVENTHUB_NAME=<eventhub-name>
 ```
 
-## Key Concepts
+## 关键概念
 
 - **Namespace** — container for Event Hubs
 - **Event Hub** — stream of events partitioned for parallel processing
@@ -101,7 +101,7 @@ let partition_props = consumer.get_partition_properties("0", None).await?;
 println!("Last sequence number: {}", partition_props.last_enqueued_sequence_number);
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Reuse clients** — create once, send many events
 2. **Use batches** — more efficient than individual sends
@@ -118,7 +118,7 @@ For distributed consumers with checkpointing:
 cargo add azure_messaging_eventhubs_checkpointstore_blob
 ```
 
-## Reference Links
+## 参考链接
 
 | Resource | Link |
 |----------|------|
@@ -126,7 +126,7 @@ cargo add azure_messaging_eventhubs_checkpointstore_blob
 | Source Code | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/eventhubs/azure_messaging_eventhubs |
 | crates.io | https://crates.io/crates/azure_messaging_eventhubs |
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

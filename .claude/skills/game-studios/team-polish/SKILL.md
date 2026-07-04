@@ -129,11 +129,11 @@ All file writes (performance reports, test results, evidence docs) are delegated
 sub-agents spawned via Task. Each sub-agent enforces the "May I write to [path]?"
 protocol. This orchestrator does not write files directly.
 
-## Output
+## 输出
 
 A summary report covering: performance before/after metrics, visual polish changes, audio polish changes, test results, and release readiness assessment.
 
-## Next Steps
+## 后续步骤
 
 - If READY FOR RELEASE: run `/release-checklist` for the final pre-release validation.
 - If NEEDS MORE WORK: schedule remaining issues in `/sprint-plan update` and re-run `/team-polish` after fixes.

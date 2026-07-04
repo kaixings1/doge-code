@@ -12,7 +12,7 @@ Run Playwright tests at scale with cloud-hosted browsers and integrated Azure po
 
 > **Migration Notice:** `@azure/microsoft-playwright-testing` is retired on **March 8, 2026**. Use `@azure/playwright` instead. See [migration guide](https://aka.ms/mpt/migration-guidance).
 
-## Installation
+## 安装
 
 ```bash
 # Recommended: Auto-generates config
@@ -28,13 +28,13 @@ npm install @azure/identity --save-dev
 - Playwright version 1.47+ (basic usage)
 - Playwright version 1.57+ (Azure reporter features)
 
-## Environment Variables
+## 环境变量
 
 ```bash
 PLAYWRIGHT_SERVICE_URL=wss://eastus.api.playwright.microsoft.com/playwrightworkspaces/{workspace-id}/browsers
 ```
 
-## Authentication
+## 认证
 
 ### Microsoft Entra ID (Recommended)
 
@@ -73,7 +73,7 @@ export default defineConfig(
 );
 ```
 
-## Core Workflow
+## 核心工作流
 
 ### Service Configuration
 
@@ -294,7 +294,7 @@ export default defineConfig(
 );
 ```
 
-## Best Practices
+## 最佳实践
 
 1. **Use Entra ID auth** — More secure than access tokens
 2. **Provide explicit credential** — Always pass `credential: new DefaultAzureCredential()`
@@ -303,7 +303,7 @@ export default defineConfig(
 5. **Region selection** — Choose region closest to your test targets
 6. **HTML reporter first** — When using Azure reporter, list HTML reporter before Azure reporter
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## 局限性

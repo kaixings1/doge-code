@@ -200,7 +200,7 @@ trap cleanup EXIT
 
 > **Remember:** Bash is text-based. Use `&&` for success chains, `set -e` for safety, and quote your variables!
 
-## When to Use
+## 使用场景
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## /u9650/u5236

@@ -30,12 +30,12 @@ date_added: "2026-02-27"
 - Update `tracks.md` and metadata consistently.
 - If detailed steps are required, open `resources/implementation-playbook.md`.
 
-## Safety
+## 安全
 
 - Backup track data before delete operations.
 - Avoid removing archived tracks without explicit approval.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed modes, prompts, and workflows.
 

@@ -2,7 +2,7 @@
 
 A Claude Code skill for porting existing Semgrep rules to new target languages with proper applicability analysis and test-driven validation.
 
-## Overview
+## 概述
 
 This skill takes an existing Semgrep rule and one or more target languages, then generates independent rule variants for each applicable language. Each variant goes through a complete 4-phase cycle:
 
@@ -17,7 +17,7 @@ This skill takes an existing Semgrep rule and one or more target languages, then
 - Existing Semgrep rule to port (in YAML)
 - Target languages specified
 
-## Usage
+## 用法
 
 Invoke the skill when you want to port an existing Semgrep rule:
 
@@ -47,7 +47,7 @@ For each applicable target language, the skill produces:
 └── <original-rule-id>-<language>.<ext>    # Test file
 ```
 
-## Example
+## 示例
 
 **Input:**
 - Rule: `python-command-injection.yaml`

@@ -156,7 +156,7 @@ This is the one stage with no upstream/downstream skill, so this skill owns it. 
 
 It writes `counts.csv` (genes × samples, integers) and `metadata_template.csv` (one row per sample) for you to fill in. **Salmon/RSEM counts are estimates (non-integer); they are rounded to integers** because PyDESeq2 requires integer counts — see `references/counts-and-handoff.md` for why this is acceptable with `length_scaled_tpm` and how it differs from the offset-based DESeq2+tximport route. That reference also covers Ensembl→symbol mapping (needed before enrichment) and the exact orientation PyDESeq2 wants.
 
-## Common Pitfalls
+## 常见陷阱
 
 These cause most wrong or irreproducible bulk RNA-seq results:
 
@@ -179,7 +179,7 @@ These cause most wrong or irreproducible bulk RNA-seq results:
 - **Figures & reporting:** `scientific-visualization`, `matplotlib`, `seaborn`; `scientific-writing` for the methods/results narrative.
 - **相关 but distinct:** `scanpy` (single-cell), `statistical-analysis` (multiple-testing depth).
 
-## Reference Files
+## 参考文件
 
 Read the relevant file when you need depth — each is self-contained:
 
@@ -188,7 +188,7 @@ Read the relevant file when you need depth — each is self-contained:
 - `references/counts-and-handoff.md` — turning quant output into PyDESeq2-ready `counts.csv`/`metadata.csv` (pytximport, STAR column selection, featureCounts), the integer/estimated-count nuance, Ensembl→symbol mapping, and the DE→enrichment rank/hit-list recipe.
 - `references/design-and-qc.md` — experimental design (replication, batch, confounding, design formulas) and QC-metric interpretation (mapping rate, duplication, rRNA, complexity, PCA/outliers) — the defensible-pipeline backbone.
 
-## Resources
+## 资源
 
 - nf-core/rnaseq: https://nf-co.re/rnaseq · STAR: https://github.com/alexdobin/STAR · Salmon: https://salmon.readthedocs.io
 - fastp: https://github.com/OpenGene/fastp · Trim Galore: https://github.com/FelixKrueger/TrimGalore · MultiQC: https://multiqc.info

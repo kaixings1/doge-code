@@ -88,7 +88,7 @@ Commits: [Count] ([first-hash]..[last-hash])
 - [Change that didn't fit other categories, or vague commit message]
   - Commits: [hashes]
 
-## Known Issues
+## 已知问题
 - [Issue description] -- [Severity] -- [ETA for fix if known]
 
 ## Metrics
@@ -124,7 +124,7 @@ Commits: [Count] ([first-hash]..[last-hash])
   Example: "Healing potions now restore 50 HP (up from 30) -- we felt
   players needed more recovery options in late-game encounters."]
 
-## Known Issues
+## 已知问题
 - We are aware of [issue description in player terms] and are working on a
   fix. [Workaround if one exists.]
 

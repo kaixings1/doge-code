@@ -297,19 +297,19 @@ Re-run `/adopt` anytime to check remaining gaps.
 
 ---
 
-## Step 1: Fix Blocking Gaps
+## 步骤 1: Fix Blocking Gaps
 
 [One sub-section per blocking gap with problem, fix command, time estimate, checkbox]
 
 ---
 
-## Step 2: Fix High-Priority Gaps
+## 步骤 2: Fix High-Priority Gaps
 
 [One sub-section per high gap]
 
 ---
 
-## Step 3: Bootstrap Infrastructure
+## 步骤 3: Bootstrap Infrastructure
 
 ### 3a. Register existing requirements (creates tr-registry.yaml)
 Run `/architecture-review` — even if ADRs already exist, this run bootstraps
@@ -334,13 +334,13 @@ Run `/gate-check [current-phase]`
 
 ---
 
-## Step 4: Medium-Priority Gaps
+## 步骤 4: Medium-Priority Gaps
 
 [One sub-section per medium gap]
 
 ---
 
-## Step 5: Optional Improvements
+## 步骤 5: Optional Improvements
 
 [One sub-section per low gap]
 
@@ -431,7 +431,7 @@ Use `AskUserQuestion`:
 
 ---
 
-## Collaborative Protocol
+## 协作协议
 
 1. **Read silently** — complete the full audit before presenting anything
 2. **Show the summary first** — let the user see scope before asking to write

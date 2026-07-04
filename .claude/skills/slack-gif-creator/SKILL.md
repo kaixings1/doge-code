@@ -26,7 +26,7 @@ Create animated GIFs optimized for Slack with validators for size constraints an
 - Upstream: https://github.com/anthropics/skills/tree/main/skills/slack-gif-creator
 - Category: `image-generation`
 
-## How to use
+## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
 discovers it during planning. To run the full upstream workflow with

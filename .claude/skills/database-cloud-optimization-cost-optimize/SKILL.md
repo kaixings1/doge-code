@@ -29,7 +29,7 @@ The user needs to optimize cloud infrastructure costs without compromising perfo
 ## Requirements
 $ARGUMENTS
 
-## Instructions
+## 使用说明
 
 - Collect cost data by service, resource, and time window.
 - Identify waste and quick wins with estimated savings.
@@ -37,12 +37,12 @@ $ARGUMENTS
 - Implement budgets, alerts, and ongoing optimization cadence.
 - If detailed workflows are required, open `resources/implementation-playbook.md`.
 
-## Safety
+## 安全
 
 - Validate changes in staging before production rollout.
 - Ensure backups and rollback paths before resizing or deletion.
 
-## Resources
+## 资源
 
 - `resources/implementation-playbook.md` for detailed cost analysis and tooling.
 

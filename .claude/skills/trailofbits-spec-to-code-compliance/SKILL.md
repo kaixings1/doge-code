@@ -4,7 +4,7 @@ Specification-to-code compliance checker for blockchain audits with evidence-bas
 
 **Author:** Omar Inuwa
 
-## When to Use
+## 使用场景
 
 使用此技能当 you need to:
 - Verify that code implements exactly what documentation specifies
@@ -29,7 +29,7 @@ Specification-to-code compliance checker for blockchain audits with evidence-bas
 - Specific code references (file + line numbers)
 - Confidence scores (0-1) for all mappings
 
-## Installation
+## 安装
 
 ```
 /plugin install trailofbits/skills/plugins/spec-to-code-compliance

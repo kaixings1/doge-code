@@ -5,7 +5,7 @@ description: 视图重构技能
 
 # View Refactor
 
-## Overview
+## 概述
 
 Refactor macOS views toward small, explicit, stable scene and view types. Default
 to native SwiftUI for layout, selection, commands, and settings. Reach for AppKit
@@ -75,7 +75,7 @@ only at the narrow edges where desktop behavior truly requires it.
 - Pass observables explicitly to children.
 - On older deployment targets, fall back to `@StateObject` and `@ObservedObject` where needed.
 
-## Workflow
+## 工作流
 
 1. Identify the current scene boundary and whether the file is trying to do too much.
 2. Reorder the file into a predictable top-to-bottom structure.
@@ -102,7 +102,7 @@ only at the narrow edges where desktop behavior truly requires it.
 - AppKit objects passed through many SwiftUI layers without a clear ownership reason.
 - Large computed view fragments standing in for real subviews.
 
-## Notes
+## 备注
 
 - A good macOS refactor should make scene structure, selection flow, and command ownership obvious.
 - When the problem is fundamentally a missing desktop pattern, use `swiftui-patterns`.

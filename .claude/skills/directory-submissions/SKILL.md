@@ -65,9 +65,9 @@ Directories are the *source* of link equity. You need *destinations* that can co
 
 ---
 
-## Workflow
+## 工作流
 
-### Step 1: Readiness assessment (Phase 0)
+### 步骤 1: Readiness assessment (Phase 0)
 
 Ask the user these 9 questions. If any are "no", they're not ready — help them build the missing piece first.
 
@@ -83,7 +83,7 @@ Ask the user these 9 questions. If any are "no", they're not ready — help them
 
 A "no" on any of 1–7 is a hard block. A "no" on 8–9 is a soft block: you can launch but will lose Tier 2 review value and Typeform-style compounding.
 
-### Step 2: Choose the tiers
+### 步骤 2: Choose the tiers
 
 Full catalog in `references/directory-list.md`. 总结:
 
@@ -105,7 +105,7 @@ Full catalog in `references/directory-list.md`. 总结:
 
 **Triage rule:** Only submit where the product is a genuine fit. Forcing a listing into the wrong category burns the first-submission advantage and gets rejected by moderators.
 
-### Step 3: Prepare asset variations
+### 步骤 3: Prepare asset variations
 
 For each tier, prep a distinct description variant (pulled from `references/positioning-variations.md`):
 - **Tagline** under 10 words
@@ -118,7 +118,7 @@ For each tier, prep a distinct description variant (pulled from `references/posi
 
 **Critical:** Don't copy-paste the same long description into every directory. Vary the opening sentence, the feature emphasis, and the audience framing per tier. AI engines cross-reference and down-weight duplicate content.
 
-### Step 4: Batch submit
+### 步骤 4: Batch submit
 
 Set up the tracker spreadsheet (`references/submission-tracker-template.csv`). Work left-to-right through it. 2–3 hours per batch is realistic.
 
@@ -351,7 +351,7 @@ Track weekly. If a number isn't moving, investigate — don't just submit more d
 
 ---
 
-## Output Format
+## 输出格式
 
 When the user asks for a directory plan, return:
 

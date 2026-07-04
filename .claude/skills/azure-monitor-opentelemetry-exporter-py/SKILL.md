@@ -10,19 +10,19 @@ date_added: '2026-02-27'
 
 Low-level exporter for sending OpenTelemetry traces, metrics, and logs to Application Insights.
 
-## Installation
+## 安装
 
 ```bash
 pip install azure-monitor-opentelemetry-exporter
 ```
 
-## Environment Variables
+## 环境变量
 
 ```bash
 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=xxx;IngestionEndpoint=https://xxx.in.applicationinsights.azure.com/
 ```
 
-## When to Use
+## 使用场景
 | Scenario | Use |
 |----------|-----|
 | Quick setup, auto-instrumentation | `azure-monitor-opentelemetry` (distro) |
@@ -196,7 +196,7 @@ exporter = AzureMonitorTraceExporter(
 | `disable_offline_storage` | Disable retry storage | False |
 | `storage_directory` | Custom storage path | Temp directory |
 
-## Best Practices
+## 最佳实践
 
 1. **Use BatchSpanProcessor** for production (not SimpleSpanProcessor)
 2. **Use ApplicationInsightsSampler** for consistent sampling across services
