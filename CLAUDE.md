@@ -17,6 +17,32 @@
 - **TypeScript 配置**: `tsconfig.json` — target ESNext, module bundler 模式, JSX react-jsx, strict=false, skipLibCheck=true
 - **全局命令名**: `doge`（`bun link` 注册 `@doge-code/cli`）
 
+## ⚠️ DANGER：本项目运行在 Windows Git Bash 下，禁止用 Bash 写 TS/JS 文件
+
+**🔴 最高优先级规则（违反必报错）：写文件必须用 `Write` 工具**
+
+本项目已经内置了 `Write` 工具（FileWriteTool，工具名为 `Write`）。
+它通过 API 直接写入文件，**不经过 shell**，不会遇到 Windows Git Bash 的转义问题。
+
+**规则**：任何时候需要创建新文件或覆盖已有文件，**必须**使用 `Write` 工具
+（参数：`file_path`=绝对路径，`content`=文件内容），而不是通过 bash 写入。
+
+**记录在案、已证实的失败案例：**
+- `python3 -c "with open(...)"` → MSYS2 吃掉换行和引号，语法报错
+- `node -e "fs.writeFileSync(...)"` → 同上
+- `cat > file << 'EOF'` → MSYS2 吃掉所有换行符，多行变一行
+- `echo 'content' > file` → echo 不处理换行，多行内容无法写入
+- `printf '%b' '\n'` → MSYS2 printf 的 `\n` 解析与非 POSIX 实现不一致
+
+**正确的操作方式（唯一选择）：**
+```typescript
+// 使用 Write 工具：
+// file_path: "D:/doge-code/src/xxx.ts"
+// content: "多行文件内容\n直接传入"
+```
+
+**⚠️ 如果你发现 Write 工具不可用：请立即停止操作，告知用户「Write 工具不可用，无法写文件」，不要尝试用任何 bash 命令写文件。**
+
 ## 开发命令
 
 ```bash

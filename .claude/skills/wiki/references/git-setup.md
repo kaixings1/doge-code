@@ -1,23 +1,23 @@
-# Git Setup
+# Git 设置
 
-Initialize git in the vault to get full history and protect against bad writes.
+在 Vault 中初始化 Git 以获取完整历史记录并防止错误写入。
 
 ---
 
-## Initialize
+## 初始化
 
 ```bash
 cd "$VAULT_PATH"
 git init
 git add -A
-git commit -m "Initial vault scaffold"
+git commit -m "初始 Vault 搭建"
 ```
 
 ---
 
 ## .gitignore
 
-The root `.gitignore` in this repo already covers the right exclusions:
+此仓库根目录的 `.gitignore` 已包含正确的排除项：
 
 ```
 .obsidian/workspace.json
@@ -28,31 +28,31 @@ The root `.gitignore` in this repo already covers the right exclusions:
 .DS_Store
 ```
 
-`workspace.json` changes constantly as you move panes around. Excluding it keeps the diff clean.
+`workspace.json` 在移动面板时会不断变化，排除它可以保持差异清晰。
 
 ---
 
-## Obsidian Git Plugin
+## Obsidian Git 插件
 
-After installing the plugin (see `plugins.md`):
+安装插件后（参见 `plugins.md`）：
 
-Settings > Obsidian Git:
-- Auto backup interval: **15 minutes**
-- Auto backup after file change: on
-- Push on backup: on (if you have a remote)
-- Commit message: `vault: auto backup {{date}}`
+设置 > Obsidian Git：
+- 自动备份间隔：**15 分钟**
+- 文件更改后自动备份：开启
+- 备份时推送：开启（如果有远程仓库）
+- 提交信息：`vault: auto backup {{date}}`
 
-This runs silently in the background. You get a full history of every note without thinking about it.
+这在后台静默运行。无需思考即可获得每条笔记的完整历史记录。
 
 ---
 
-## Remote (Optional)
+## 远程仓库（可选）
 
-To back up to GitHub:
+要备份到 GitHub：
 
 ```bash
-git remote add origin https://github.com/yourname/your-vault
+git remote add origin https://github.com/你的用户名/你的-vault
 git push -u origin main
 ```
 
-Keep the repo private if the vault contains personal notes.
+如果 Vault 包含个人笔记，请保持仓库私有。

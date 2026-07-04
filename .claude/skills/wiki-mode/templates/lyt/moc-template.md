@@ -7,26 +7,26 @@ tags:
 related: []
 ---
 
-# {{title}} — Map of Content
+# {{title}} — 内容地图
 
-> A Map of Content (MOC) links into a cluster of related atomic notes. It is a navigation hub, not a container. Notes are not stored under this MOC; they live flat under `wiki/notes/` and are reached by following these links.
+> 内容地图（MOC）链接到一个相关的原子笔记集群。它是一个导航枢纽，而非容器。笔记不存储在此 MOC 下；它们扁平地存在于 `wiki/notes/` 下，通过跟随这些链接访问。
 
-## Why this MOC exists
+## 此 MOC 为何存在
 
-(One paragraph: what cluster of thinking does this MOC serve? What question does following its links answer?)
+（一段：此 MOC 服务于什么思维集群？跟随其链接能回答什么问题？）
 
-## Core notes
+## 核心笔记
 
 - [[note-1]]
 - [[note-2]]
 - [[note-3]]
 
-## Adjacent MOCs
+## 相邻 MOC
 
 - [[adjacent-moc-1]]
 - [[adjacent-moc-2]]
 
-## Open questions / frontier
+## 开放问题 / 前沿
 
-- What questions does this cluster not yet answer?
-- What atomic notes would close those gaps?
+- 此集群尚未回答什么问题？
+- 哪些原子笔记可以填补这些空白？
