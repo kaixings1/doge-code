@@ -37,87 +37,87 @@ python scripts/auth.py status
 python scripts/auth.py logout
 ```
 
-## Commands
+## 命令
 
-All operations via `scripts/gcal.py`. Auto-authenticates on first use if not logged in.
+所有操作通过 `scripts/gcal.py` 进行。如果未登录，首次使用时自动认证。
 
-### List Calendars
+### 列出日历
 ```bash
 python scripts/gcal.py list-calendars
 ```
 
-### List Events
+### 列出事件
 ```bash
-# List events from primary calendar (default: next 30 days)
+# 列出主要日历中的事件（默认：未来30天）
 python scripts/gcal.py list-events
 
-# List events with specific time range
+# 列出特定时间范围内的事件
 python scripts/gcal.py list-events --time-min 2024-01-15T00:00:00Z --time-max 2024-01-31T23:59:59Z
 
-# List events from a specific calendar
+# 列出特定日历中的事件
 python scripts/gcal.py list-events --calendar "work@example.com"
 
-# Limit results
+# 限制结果数量
 python scripts/gcal.py list-events --max-results 10
 ```
 
-### Get Event Details
+### 获取事件详情
 ```bash
 python scripts/gcal.py get-event EVENT_ID
 python scripts/gcal.py get-event EVENT_ID --calendar "work@example.com"
 ```
 
-### Create Event
+### 创建事件
 ```bash
-# Basic event
+# 基本事件
 python scripts/gcal.py create-event "Team Meeting" "2024-01-15T10:00:00Z" "2024-01-15T11:00:00Z"
 
-# Event with description and location
+# 带描述和位置的事件
 python scripts/gcal.py create-event "Team Meeting" "2024-01-15T10:00:00Z" "2024-01-15T11:00:00Z" \
     --description "Weekly sync" --location "Conference Room A"
 
-# Event with attendees
+# 带与会者的事件
 python scripts/gcal.py create-event "Team Meeting" "2024-01-15T10:00:00Z" "2024-01-15T11:00:00Z" \
     --attendees user1@example.com user2@example.com
 
-# Event on specific calendar
+# 在特定日历上创建事件
 python scripts/gcal.py create-event "Meeting" "2024-01-15T10:00:00Z" "2024-01-15T11:00:00Z" \
     --calendar "work@example.com"
 ```
 
-### Update Event
+### 更新事件
 ```bash
-# Update event title
+# 更新事件标题
 python scripts/gcal.py update-event EVENT_ID --summary "New Title"
 
-# Update event time
+# 更新事件时间
 python scripts/gcal.py update-event EVENT_ID --start "2024-01-15T14:00:00Z" --end "2024-01-15T15:00:00Z"
 
-# Update multiple fields
+# 更新多个字段
 python scripts/gcal.py update-event EVENT_ID \
     --summary "Updated Meeting" --description "New agenda" --location "Room B"
 
-# Update attendees
+# 更新与会者
 python scripts/gcal.py update-event EVENT_ID --attendees user1@example.com user3@example.com
 ```
 
-### Delete Event
+### 删除事件
 ```bash
 python scripts/gcal.py delete-event EVENT_ID
 python scripts/gcal.py delete-event EVENT_ID --calendar "work@example.com"
 ```
 
-### Find Free Time
-Find the first available slot for a meeting with specified attendees:
+### 查找空闲时间
+查找指定与会者的第一个可用会议时间段：
 ```bash
-# Find 30-minute slot for yourself
+# 为自己查找30分钟的空闲时间段
 python scripts/gcal.py find-free-time \
     --attendees me \
     --time-min "2024-01-15T09:00:00Z" \
     --time-max "2024-01-15T17:00:00Z" \
     --duration 30
 
-# Find 60-minute slot with multiple attendees
+# 为多个与会者查找60分钟的空闲时间段
 python scripts/gcal.py find-free-time \
     --attendees me user1@example.com user2@example.com \
     --time-min "2024-01-15T09:00:00Z" \
@@ -125,18 +125,18 @@ python scripts/gcal.py find-free-time \
     --duration 60
 ```
 
-### Respond to Event Invitation
+### 响应事件邀请
 ```bash
-# Accept an invitation
+# 接受邀请
 python scripts/gcal.py respond-to-event EVENT_ID accepted
 
-# Decline an invitation
+# 拒绝邀请
 python scripts/gcal.py respond-to-event EVENT_ID declined
 
-# Mark as tentative
+# 标记为暂定
 python scripts/gcal.py respond-to-event EVENT_ID tentative
 
-# Respond without notifying organizer
+# 响应而不通知组织者
 python scripts/gcal.py respond-to-event EVENT_ID accepted --no-notify
 ```
 

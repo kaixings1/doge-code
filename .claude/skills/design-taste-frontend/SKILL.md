@@ -19,24 +19,24 @@ tools: [claude, cursor, codex, antigravity]
 - 当 React、Next.js、Tailwind、动效、组件状态、排版、间距、颜色或响应式行为需要高级设计判断时使用。
 - 当输出必须覆盖常见的 LLM UI 偏见时使用，例如居中主视觉、紫色渐变、过度使用卡片、糟糕的状态和脆弱的布局。
 
-## 局限性
+## 限制
 
-- 此技能提供 frontend design and implementation guidance; it does not replace project-specific product requirements, accessibility review, or user testing.
-- Verify framework versions, installed dependencies, responsive behavior, and build output in the target repository before treating generated UI as production-ready.
-- Do not force these design rules when the existing product, brand system, or platform conventions require a different visual direction.
+- 此技能提供前端设计和实施指导；它不能替代项目特定的产品需求、可访问性审查或用户测试。
+- 在将生成的 UI 视为生产就绪之前，请验证目标存储库中的框架版本、已安装的依赖项、响应式行为和构建输出。
+- 当现有产品、品牌系统或平台约定需要不同的视觉方向时，不要强制应用这些设计规则。
 
 
-## 1. ACTIVE BASELINE CONFIGURATION
-* DESIGN_VARIANCE: 8 (1=Perfect Symmetry, 10=Artsy Chaos)
-* MOTION_INTENSITY: 6 (1=Static/No movement, 10=Cinematic/Magic Physics)
-* VISUAL_DENSITY: 4 (1=Art Gallery/Airy, 10=Pilot Cockpit/Packed Data)
+## 1. 活动基线配置
+* 设计变化度: 8 (1=完美对称, 10=艺术性混乱)
+* 动效强度: 6 (1=静态/无动效, 10=电影级/魔法物理)
+* 视觉密度: 4 (1=艺术画廊/通风, 10=飞行员座舱/密集数据)
 
-**AI Instruction:** The standard baseline for all generations is strictly set to these values (8, 6, 4). Do not ask the user to edit this file. Otherwise, ALWAYS listen to the user: adapt these values dynamically based on what they explicitly request in their chat prompts. Use these baseline (or user-overridden) values as your global variables to drive the specific logic in Sections 3 through 7.
+**AI 指令:** 所有生成的标准基线严格设置为这些值 (8, 6, 4)。不要要求用户编辑此文件。否则，始终倾听用户：根据他们在聊天提示中明确请求的内容动态调整这些值。使用这些基线（或用户覆盖的）值作为您的全局变量，以驱动第 3 节到第 7 节中的特定逻辑。
 
-## 2. DEFAULT ARCHITECTURE & CONVENTIONS
-Unless the user explicitly specifies a different stack, adhere to these structural constraints to maintain consistency:
+## 2. 默认架构和约定
+除非用户明确指定不同的技术栈，否则请遵守这些结构约束以保持一致性：
 
-* **DEPENDENCY VERIFICATION [MANDATORY]:** Before importing ANY 3rd party library (e.g. `framer-motion`, `lucide-react`, `zustand`), you MUST check `package.json`. If the package is missing, you MUST output the installation command (e.g. `npm install package-name`) before providing the code. **绝不** assume a library exists.
+* **依赖验证 [强制]:** 在导入任何第三方库（例如 `framer-motion`、`lucide-react`、`zustand`）之前，您必须检查 `package.json`。如果缺少包，您必须在提供代码之前输出安装命令（例如 `npm install package-name`）。**绝不**假设库存在。
 * **Framework & Interactivity:** React or Next.js. 默认 to Server Components (`RSC`).
     * **RSC SAFETY:** Global state works ONLY in Client Components. In Next.js, wrap providers in a `"use client"` component.
     * **INTERACTIVITY ISOLATION:** If Sections 4 or 7 (Motion/Liquid Glass) are active, the specific interactive UI component MUST be extracted as an isolated leaf component with `'use client'` at the very top. Server Components must exclusively render static layouts.
@@ -53,19 +53,19 @@ Unless the user explicitly specifies a different stack, adhere to these structur
 * **Icons:** You MUST use exactly `@phosphor-icons/react` or `@radix-ui/react-icons` as the import paths (check installed version). Standardize `strokeWidth` globally (e.g., exclusively use `1.5` or `2.0`).
 
 
-## 3. DESIGN ENGINEERING DIRECTIVES (Bias Correction)
-LLMs have statistical biases toward specific UI cliché patterns. Proactively construct premium interfaces using these engineered rules:
+## 3. 设计工程指令（偏见纠正）
+LLMs 对特定的 UI 陈词滥调模式有统计偏见。使用这些工程规则主动构建高级界面：
 
-**Rule 1: Deterministic Typography**
-* **Display/Headlines:** 默认 to `text-4xl md:text-6xl tracking-tighter leading-none`.
-    * **ANTI-SLOP:** Discourage `Inter` for "Premium" or "Creative" vibes. Force unique character using `Geist`, `Outfit`, `Cabinet Grotesk`, or `Satoshi`.
-    * **TECHNICAL UI RULE:** Serif fonts are strictly BANNED for Dashboard/Software UIs. For these contexts, use exclusively high-end Sans-Serif pairings (`Geist` + `Geist Mono` or `Satoshi` + `JetBrains Mono`).
-* **Body/Paragraphs:** 默认 to `text-base text-gray-600 leading-relaxed max-w-[65ch]`.
+**规则 1：确定性排版**
+* **展示/标题:** 默认使用 `text-4xl md:text-6xl tracking-tighter leading-none`。
+    * **反垃圾:** 不鼓励为"高级"或"创意"氛围使用 `Inter`。强制使用独特字符，如 `Geist`、`Outfit`、`Cabinet Grotesk` 或 `Satoshi`。
+    * **技术 UI 规则:** 仪表板/软件 UI 严格禁止使用衬线字体。对于这些上下文，仅使用高端无衬线字体配对（`Geist` + `Geist Mono` 或 `Satoshi` + `JetBrains Mono`）。
+* **正文/段落:** 默认使用 `text-base text-gray-600 leading-relaxed max-w-[65ch]`。
 
-**Rule 2: Color Calibration**
-* **Constraint:** Max 1 Accent Color. Saturation < 80%.
-* **THE LILA BAN:** The "AI Purple/Blue" aesthetic is strictly BANNED. No purple button glows, no neon gradients. Use absolute neutral bases (Zinc/Slate) with high-contrast, singular accents (e.g. Emerald, Electric Blue, or Deep Rose).
-* **COLOR CONSISTENCY:** Stick to one palette for the entire output. Do not fluctuate between warm and cool grays within the same project.
+**规则 2：颜色校准**
+* **约束:** 最多 1 个强调色。饱和度 < 80%。
+* **LILA 禁令:** 严格禁止"AI 紫色/蓝色"美学。没有紫色按钮发光，没有霓虹渐变。使用绝对中性基础（Zinc/Slate）搭配高对比度、单一的强调色（例如 Emerald、Electric Blue 或 Deep Rose）。
+* **颜色一致性:** 在整个输出中坚持一个调色板。不要在同一项目中在暖灰色和冷灰色之间波动。
 
 **Rule 3: Layout Diversification**
 * **ANTI-CENTER BIAS:** Centered Hero/H1 sections are strictly BANNED when `LAYOUT_VARIANCE > 4`. Force "Split Screen" (50/50), "Left Aligned content/Right Aligned asset", or "Asymmetric White-space" structures.

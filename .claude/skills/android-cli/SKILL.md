@@ -1,6 +1,6 @@
 ---
 name: android-cli
-description: "Android CLI"
+description: "Android CLI — Android 命令行工具开发与调试技能。"
 risk: safe
 source: community
 ---

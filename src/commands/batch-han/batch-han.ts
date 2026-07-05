@@ -9,23 +9,22 @@ const PID_FILE = '.batch-han-pid.txt'
 const MAX_BATCH_TOKENS = 80000
 const CONCURRENCY = 2
 const RETRY_LIMIT = 2
+const DEFAULT_EXTENSIONS = ['.ts', '.tsx', '.md']
 
 function estimateTokens(text: string): number {
   return Math.ceil(text.length / 4)
 }
 
-function getAllTsFilesWithInfo(dir: string): Array<{
+interface FileInfo {
   path: string
   content: string
   mtime: number
   tokenCount: number
-}> {
-  const results: Array<{
-    path: string
-    content: string
-    mtime: number
-    tokenCount: number
-  }> = []
+  extension: string
+}
+
+function getAllFilesWithInfo(dir: string, extensions: string[] = DEFAULT_EXTENSIONS): FileInfo[] {
+  const results: FileInfo[] = []
   const absDir = path.resolve(dir)
   if (!fs.existsSync(absDir)) return results
 
@@ -43,13 +42,22 @@ function getAllTsFilesWithInfo(dir: string): Array<{
           const base = path.basename(full)
           if (base === 'node_modules' || base === '.git' || base === 'dist' || base === 'build' || base === '.doge') continue
           walk(full)
-        } else if (entry.isFile() && (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx'))) {
-          const stat = fs.statSync(full)
-          let content = fs.readFileSync(full, 'utf-8')
-          if (content.length > 0 && content.charCodeAt(0) === 0xFEFF) {
-            content = content.slice(1)
+        } else if (entry.isFile()) {
+          const ext = path.extname(entry.name).toLowerCase()
+          if (extensions.includes(ext)) {
+            const stat = fs.statSync(full)
+            let content = fs.readFileSync(full, 'utf-8')
+            if (content.length > 0 && content.charCodeAt(0) === 0xFEFF) {
+              content = content.slice(1)
+            }
+            results.push({
+              path: full,
+              content,
+              mtime: stat.mtimeMs,
+              tokenCount: estimateTokens(content),
+              extension: ext
+            })
           }
-          results.push({ path: full, content, mtime: stat.mtimeMs, tokenCount: estimateTokens(content) })
         }
       } catch {
         // skip unreadable files

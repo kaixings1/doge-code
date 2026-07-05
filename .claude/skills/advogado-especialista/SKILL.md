@@ -1,6 +1,6 @@
 ---
 name: advogado-especialista
-description: "Advogado Especialista — Advogado Especialista 相关功能和最佳实践"
+description: "Advogado Especialista — 巴西法律专家，涵盖家庭暴力、女性保护、刑法和民事诉讼等专业领域。"
 risk: safe
 source: community
 date_added: '2026-03-06'
