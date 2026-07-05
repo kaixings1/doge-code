@@ -7,7 +7,7 @@ author: zebbern
 date_added: "2026-02-27"
 ---
 
-> AUTHORIZED USE ONLY: Use this skill only for authorized security assessments, defensive validation, or controlled educational environments.
+> 仅限授权使用：此技能仅用于授权的安全评估、防御性验证或受控的教育环境。
 
 # 云渗透测试
 

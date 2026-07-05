@@ -8,13 +8,13 @@ allowed-tools:
 
 # firecrawl map
 
-Discover URLs on a site. Use `--search` to find a specific page within a large site.
+发现站点上的URL。使用 `--search` 在大型站点中查找特定页面。
 
-## When to use
+## 何时使用
 
-- You need to find a specific subpage on a large site
-- You want a list of all URLs on a site before scraping or crawling
-- Step 3 in the [workflow escalation pattern](firecrawl-cli): search → scrape → **map** → crawl → interact
+- 你需要在大型站点上查找特定的子页面
+- 在抓取或爬取之前，你想要站点上所有URL的列表
+- [工作流升级模式](firecrawl-cli)中的第3步：search → scrape → **map** → crawl → interact
 
 ## Quick start
 

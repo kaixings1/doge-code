@@ -1,7 +1,7 @@
 import { ensureBootstrapMacro } from './bootstrapMacro'
 import * as fs from 'fs'
 import * as path from 'path'
-
+process.env.CLAUDE_CODE_SIMPLE=1
 ensureBootstrapMacro();
 
 // 优先使用环境变量 DOGE_API_JSON 指定自定义配置路径（进程隔离用）

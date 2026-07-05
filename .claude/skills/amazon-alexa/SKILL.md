@@ -42,4 +42,3 @@ Integracao completa com Amazon Alexa para criar skills de voz inteligentes, tran
 > Claude como LLM backend, com voz neural, memoria persistente e
 > controle de Smart Home. Projeto-chave: AURI.
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 08 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

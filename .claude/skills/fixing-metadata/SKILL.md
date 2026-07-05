@@ -9,24 +9,25 @@ license: MIT
 
 ## 工作流
 
-1. Identify pages with missing or incorrect metadata (titles, descriptions, canonical, OG tags)
-2. Audit against the priority rules below — fix critical issues (duplicates, indexing) first
-3. Ensure title, description, canonical, and og:url all agree with each other
-4. Verify social cards render correctly on a real URL, not localhost
-5. Keep diffs minimal and scoped to metadata only — do not refactor unrelated code
+1. 识别缺少或不正确元数据的页面（标题、描述、规范URL、OG标签）
+2. 根据下面的优先级规则进行审计 — 先修复关键问题（重复、索引）
+3. 确保标题、描述、规范URL和og:url相互一致
+4. 验证社交媒体卡片在真实URL上正确渲染，而不是localhost
+5. 保持差异最小且仅限于元数据 — 不要重构不相关的代码
+
 ## 使用场景
-Reference these guidelines when:
-- adding or changing page titles, descriptions, canonical, robots
-- implementing Open Graph or Twitter card metadata
-- setting favicons, app icons, manifest, theme-color
-- building shared SEO components or layout metadata defaults
-- adding structured data (JSON-LD)
-- changing locale, alternate languages, or canonical routing
-- shipping new pages, marketing pages, or shareable links
+在以下情况下参考这些指南：
+- 添加或更改页面标题、描述、规范URL、robots
+- 实现Open Graph或Twitter卡片元数据
+- 设置favicon、应用图标、manifest、theme-color
+- 构建共享SEO组件或布局元数据默认值
+- 添加结构化数据（JSON-LD）
+- 更改区域设置、替代语言或规范路由
+- 发布新页面、营销页面或可分享链接
 
-## rule categories by priority
+## 按优先级的规则分类
 
-| priority | category | impact |
+| 优先级 | 类别 | 影响 |
 |----------|----------|--------|
 | 1 | correctness and duplication | critical |
 | 2 | title and description | high |
@@ -109,6 +110,6 @@ Reference these guidelines when:
 - keep diffs minimal and scoped to metadata only
 
 ## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+- 仅当任务明确匹配上述描述的范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

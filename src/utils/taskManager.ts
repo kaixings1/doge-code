@@ -1,11 +1,79 @@
-import fs from "fs/promises"
-import os from "os"
-import path from "path" const TASKS_DIR = path.join(os.homedir(), ".doge", "tasks") function taskFile(sessionId: string): string { return path.join(TASKS_DIR, sessionId + ".json")
-} async function loadTasks(sessionId: string) { const fp = taskFile(sessionId) try { const raw = await fs.readFile(fp, "utf-8").catch(() => "[]") return JSON.parse(raw) } catch { return [] }
-} async function saveTasks(sessionId: string, tasks: any[]) { await fs.mkdir(TASKS_DIR, { recursive: true }) await fs.writeFile(taskFile(sessionId), JSON.stringify(tasks, null, 2), "utf-8")
-} export async function createTask(sessionId: string, input: any) { const now = new Date().toISOString() const task = { id: "task_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6), title: input.title, description: input.description || "", status: "pending", priority: input.priority || "medium", tags: input.tags || ["auto-generated"], createdAt: now, updatedAt: now, dueAt: input.dueAt, remindedAt: null, } const tasks = await loadTasks(sessionId) tasks.push(task) await saveTasks(sessionId, tasks) return task
-} export async function listTasks(sessionId: string, opts?: any) { let tasks = await loadTasks(sessionId) tasks.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()) if (opts?.status) tasks = tasks.filter((t: any) => t.status === opts.status) if (opts?.priority) tasks = tasks.filter((t: any) => t.priority === opts.priority) return tasks
-} export async function updateTaskStatus(sessionId: string, id: string, status: string) { const tasks = await loadTasks(sessionId) const task = tasks.find((t: any) => t.id === id) if (!task) return null task.status = status task.updatedAt = new Date().toISOString() if (status === "done") task.remindedAt = task.updatedAt await saveTasks(sessionId, tasks) return task
-} export async function deleteTask(sessionId: string, id: string) { const tasks = await loadTasks(sessionId) const filtered = tasks.filter((t: any) => t.id !== id) if (filtered.length === tasks.length) return false await saveTasks(sessionId, filtered) return true
-} export async function clearDoneTasks(sessionId: string) { const tasks = await loadTasks(sessionId) const kept = tasks.filter((t: any) => t.status !== "done") const removed = tasks.length - kept.length await saveTasks(sessionId, kept) return removed
+import fs from "fs/promises";
+import os from "os";
+import path from "path";
+
+const TASKS_DIR = path.join(os.homedir(), ".doge", "tasks");
+
+function taskFile(sessionId: string): string {
+  return path.join(TASKS_DIR, sessionId + ".json");
+}
+
+async function loadTasks(sessionId: string) {
+  const fp = taskFile(sessionId);
+  try {
+    const raw = await fs.readFile(fp, "utf-8").catch(() => "[]");
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+async function saveTasks(sessionId: string, tasks: any[]) {
+  await fs.mkdir(TASKS_DIR, { recursive: true });
+  await fs.writeFile(taskFile(sessionId), JSON.stringify(tasks, null, 2), "utf-8");
+}
+
+export async function createTask(sessionId: string, input: any) {
+  const now = new Date().toISOString();
+  const task = {
+    id: "task_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
+    title: input.title,
+    description: input.description || "",
+    status: "pending",
+    priority: input.priority || "medium",
+    tags: input.tags || ["auto-generated"],
+    createdAt: now,
+    updatedAt: now,
+    dueAt: input.dueAt,
+    remindedAt: null,
+  };
+  const tasks = await loadTasks(sessionId);
+  tasks.push(task);
+  await saveTasks(sessionId, tasks);
+  return task;
+}
+
+export async function listTasks(sessionId: string, opts?: any) {
+  let tasks = await loadTasks(sessionId);
+  tasks.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+  if (opts?.status) tasks = tasks.filter((t: any) => t.status === opts.status);
+  if (opts?.priority) tasks = tasks.filter((t: any) => t.priority === opts.priority);
+  return tasks;
+}
+
+export async function updateTaskStatus(sessionId: string, id: string, status: string) {
+  const tasks = await loadTasks(sessionId);
+  const task = tasks.find((t: any) => t.id === id);
+  if (!task) return null;
+  task.status = status;
+  task.updatedAt = new Date().toISOString();
+  if (status === "done") task.remindedAt = task.updatedAt;
+  await saveTasks(sessionId, tasks);
+  return task;
+}
+
+export async function deleteTask(sessionId: string, id: string) {
+  const tasks = await loadTasks(sessionId);
+  const filtered = tasks.filter((t: any) => t.id !== id);
+  if (filtered.length === tasks.length) return false;
+  await saveTasks(sessionId, filtered);
+  return true;
+}
+
+export async function clearDoneTasks(sessionId: string) {
+  const tasks = await loadTasks(sessionId);
+  const kept = tasks.filter((t: any) => t.status !== "done");
+  const removed = tasks.length - kept.length;
+  await saveTasks(sessionId, kept);
+  return removed;
 }

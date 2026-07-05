@@ -8,21 +8,21 @@ allowed-tools:
 
 # firecrawl crawl
 
-Bulk extract content from a website. Crawls pages following links up to a depth/limit.
+从网站批量提取内容。爬取页面，按照链接深入到指定深度/限制。
 
-## When to use
+## 何时使用
 
-- You need content from many pages on a site (e.g., all `/docs/`)
-- You want to extract an entire site section
-- Step 4 in the [workflow escalation pattern](firecrawl-cli): search → scrape → map → **crawl** → interact
+- 你需要从网站的多个页面获取内容（例如所有 `/docs/`）
+- 你想要提取整个网站部分
+- [工作流升级模式](firecrawl-cli)中的第4步：search → scrape → map → **crawl** → interact
 
-## Quick start
+## 快速开始
 
 ```bash
-# Crawl a docs section
+# 爬取文档部分
 firecrawl crawl "<url>" --include-paths /docs --limit 50 --wait -o .firecrawl/crawl.json
 
-# Full crawl with depth limit
+# 带深度限制的完整爬取
 firecrawl crawl "<url>" --max-depth 3 --wait --progress -o .firecrawl/crawl.json
 
 # Check status of a running crawl

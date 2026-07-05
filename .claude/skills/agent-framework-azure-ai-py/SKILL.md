@@ -6,9 +6,9 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Agent Framework Azure Hosted Agents
+# Agent Framework Azure 托管代理
 
-Build persistent agents on Azure AI Foundry using the Microsoft Agent Framework Python SDK.
+使用 Microsoft Agent Framework Python SDK 在 Azure AI Foundry 上构建持久化代理。
 
 ## 架构
 
@@ -54,7 +54,7 @@ credential = DefaultAzureCredential()
 
 ## 核心工作流
 
-### Basic Agent
+### 基础代理
 
 ```python
 import asyncio
@@ -77,7 +77,7 @@ async def main():
 asyncio.run(main())
 ```
 
-### Agent with Function Tools
+### 带函数工具的代理
 
 ```python
 from typing import Annotated
@@ -111,7 +111,7 @@ async def main():
         print(result.text)
 ```
 
-### Agent with Hosted Tools
+### 带托管工具的代理
 
 ```python
 from agent_framework import (
@@ -140,7 +140,7 @@ async def main():
         print(result.text)
 ```
 
-### Streaming Responses
+### 流式响应
 
 ```python
 async def main():
@@ -160,7 +160,7 @@ async def main():
         print()
 ```
 
-### Conversation Threads
+### 对话线程
 
 ```python
 from agent_framework.azure import AzureAIAgentsProvider
@@ -192,7 +192,7 @@ async def main():
         print(f"Conversation ID: {thread.conversation_id}")
 ```
 
-### Structured Outputs
+### 结构化输出
 
 ```python
 from pydantic import BaseModel, ConfigDict

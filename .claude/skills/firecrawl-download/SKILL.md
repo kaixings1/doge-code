@@ -8,15 +8,15 @@ allowed-tools:
 
 # firecrawl download
 
-> **Experimental.** Convenience command that combines `map` + `scrape` to save an entire site as local files.
+> **实验性功能。** 便捷命令，结合 `map` + `scrape` 将整个站点保存为本地文件。
 
-Maps the site first to discover pages, then scrapes each one into nested directories under `.firecrawl/`. All scrape options work with download. 始终 pass `-y` to skip the confirmation prompt.
+先映射站点以发现页面，然后将每个页面抓取到 `.firecrawl/` 下的嵌套目录中。所有抓取选项都适用于 download。始终传递 `-y` 以跳过确认提示。
 
-## When to use
+## 何时使用
 
-- You want to save an entire site (or section) to local files
-- You need offline access to documentation or content
-- Bulk content extraction with organized file structure
+- 你想要将整个站点（或部分）保存到本地文件
+- 你需要离线访问文档或内容
+- 需要以组织化的文件结构进行批量内容提取
 
 ## Quick start
 

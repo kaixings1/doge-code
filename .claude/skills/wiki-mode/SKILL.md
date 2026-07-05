@@ -12,4 +12,3 @@ v1.6 + v1.7 版本的知识库结构是无偏见的——`wiki/sources/`、`wiki
 
 **根据 2026 年 5 月指南文档**：这是已识别的 5 个优先差距中等级 5 的。Ideaverse Pro 2.0（200 美元付费知识库）部署 LYT 作为偏好化结构；没有竞争对手的 Claude+Obsidian 产品将 PARA / 卡片盒笔记法 / 模式感知路由作为一级技能。v1.8 使我们在审计 §9 方法论支持轴上从平局变为领先（7 个轴中的 5 个为第 1）。
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 54 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

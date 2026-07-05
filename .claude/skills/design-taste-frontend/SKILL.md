@@ -84,10 +84,10 @@ LLMs 对特定的 UI 陈词滥调模式有统计偏见。使用这些工程规�
 **Rule 6: Data & Form Patterns**
 * **Forms:** Label MUST sit above input. Helper text is optional but should exist in markup. Error text below input. Use a standard `gap-2` for input blocks.
 
-## 4. CREATIVE PROACTIVITY (Anti-Slop Implementation)
-To actively combat generic AI designs, systematically implement these high-end coding concepts as your baseline:
-* **"Liquid Glass" Refraction:** When glassmorphism is needed, go beyond `backdrop-blur`. Add a 1px inner border (`border-white/10`) and a subtle inner shadow (`shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]`) to simulate physical edge refraction.
-* **Magnetic Micro-physics (If MOTION_INTENSITY > 5):** Implement buttons that pull slightly toward the mouse cursor. **CRITICAL:** NEVER use React `useState` for magnetic hover or continuous animations. Use EXCLUSIVELY Framer Motion's `useMotionValue` and `useTransform` outside the React render cycle to prevent performance collapse on mobile.
+## 4. 创造性主动性（反垃圾实施）
+为了积极对抗通用的 AI 设计，系统地将这些高端编码概念作为您的基线实施：
+* **"液态玻璃"折射:** 当需要玻璃态效果时，超越 `backdrop-blur`。添加 1px 内边框 (`border-white/10`) 和微妙的内阴影 (`shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]`) 以模拟物理边缘折射。
+* **磁性微物理（如果 MOTION_INTENSITY > 5）:** 实现略微向鼠标光标拉动的按钮。**关键:** 绝不使用 React `useState` 进行磁性悬停或连续动画。仅使用 Framer Motion 的 `useMotionValue` 和 `useTransform` 在 React 渲染循环之外，以防止移动端性能崩溃。
 * **Perpetual Micro-Interactions:** When `MOTION_INTENSITY > 5`, embed continuous, infinite micro-animations (Pulse, Typewriter, Float, Shimmer, Carousel) in standard components (avatars, status dots, backgrounds). Apply premium Spring Physics (`type: "spring", stiffness: 100, damping: 20`) to all interactive elements—no linear easing.
 * **Layout Transitions:** 始终 utilize Framer Motion's `layout` and `layoutId` props for smooth re-ordering, resizing, and shared element transitions across state changes.
 * **Staggered Orchestration:** Do not mount lists or grids instantly. Use `staggerChildren` (Framer) or CSS cascade (`animation-delay: calc(var(--index) * 100ms)`) to create sequential waterfall reveals. **CRITICAL:** For `staggerChildren`, the Parent (`variants`) and Children MUST reside in the identical Client Component tree. If data is fetched asynchronously, pass the data as props into a centralized Parent Motion wrapper.

@@ -1,36 +1,38 @@
-import type { LocalJSXCommandCall } from '../../types/command.js'
+import type { LocalCommandCall } from '../../types/command.js'
 
-export const call: LocalJSXCommandCall = async (onDone, context, args) => {
+export const call: LocalCommandCall = async (args) => {
   if (!args || args.trim() === '') {
-    onDone(`## task-create
+    return {
+      type: 'text',
+      value: `## 简单任务创建工具
 
-### 任务创建
+### 功能
+快速创建简单的任务记录，适合临时任务管理
 
 ### 用法
-- /task-create <任务名称> - 创建新任务
-- /task-create <任务名称> --priority <优先级> - 创建带优先级的任务
-- /task-create <任务名称> --due <截止日期> - 创建带截止日期的任务
-
-### 优先级
-- high - 高优先级
-- medium - 中优先级
-- low - 低优先级
+/task <任务描述>
 
 ### 示例
-/task-create "完成项目文档"
-/task-create "修复bug" --priority high --due 2024-01-20
+/task "编写一个记事本软件"
+/task "完成项目文档"
 
-> 任务创建工具`)
-    return
+### 注意
+此命令创建简单的任务记录，如需完整任务管理功能，请使用 /task-create 命令`
+    }
   }
 
-  onDone(`## task-create
+  const taskId = 'task_' + Date.now()
+  const now = new Date().toLocaleString()
 
-✓ 任务已创建
-- 名称: ${args}
-- ID: task_${Date.now()}
-- 状态: 待处理
-- 创建时间: ${new Date().toLocaleString()}
+  return {
+    type: 'text',
+    value: `## 任务已创建 ✓
 
-> 任务创建成功`)
+**任务名称**: ${args}
+**任务ID**: ${taskId}
+**状态**: 待处理
+**创建时间**: ${now}
+
+> 使用 /task-create list 查看所有任务`
+  }
 }

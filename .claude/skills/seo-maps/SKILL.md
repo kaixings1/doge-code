@@ -29,4 +29,3 @@ how a business appears on Google Maps, Bing Places, Apple Maps, and OpenStreetMa
 Do not duplicate seo-local on-page analysis. Recommend `/seo local <url>` for
 website-level checks.
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 36 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

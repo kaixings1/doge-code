@@ -7,44 +7,44 @@ author: zebbern
 date_added: "2026-02-27"
 ---
 
-> AUTHORIZED USE ONLY: Use this skill only for authorized security assessments, defensive validation, or controlled educational environments.
+> 仅限授权使用：此技能仅用于授权的安全评估、防御性验证或受控的教育环境。
 
-# Burp Suite Web Application Testing
+# Burp Suite Web 应用测试
 
 ## 目的
 
-Execute comprehensive web application security testing using Burp Suite's integrated toolset, including HTTP traffic interception and modification, request analysis and replay, automated vulnerability scanning, and manual testing workflows. This skill enables systematic discovery and exploitation of web application vulnerabilities through proxy-based testing methodology.
+使用 Burp Suite 集成工具集执行全面的 Web 应用安全测试，包括 HTTP 流量拦截和修改、请求分析和重放、自动漏洞扫描和手动测试工作流。此技能通过基于代理的测试方法实现 Web 应用漏洞的系统发现和利用。
 
-## Inputs / 前置条件
+## 输入 / 前置条件
 
-### 必需 Tools
-- Burp Suite Community or Professional Edition installed
-- Burp's embedded browser or configured external browser
-- Target web application URL
-- Valid credentials for authenticated testing (if applicable)
+### 必需工具
+- 已安装 Burp Suite 社区版或专业版
+- Burp 的内置浏览器或配置的外部浏览器
+- 目标 Web 应用 URL
+- 用于认证测试的有效凭据（如适用）
 
-### Environment 设置
-- Burp Suite launched with temporary or named project
-- Proxy listener active on 127.0.0.1:8080 (default)
-- Browser configured to use Burp proxy (or use Burp's browser)
-- CA certificate installed for HTTPS interception
+### 环境设置
+- 使用临时或命名项目启动 Burp Suite
+- 代理监听器在 127.0.0.1:8080 上激活（默认）
+- 浏览器配置为使用 Burp 代理（或使用 Burp 的浏览器）
+- 为 HTTPS 拦截安装 CA 证书
 
-### Editions Comparison
-| Feature | Community | Professional |
+### 版本比较
+| 功能 | 社区版 | 专业版 |
 |---------|-----------|--------------|
-| Proxy | ✓ | ✓ |
-| Repeater | ✓ | ✓ |
-| Intruder | Limited | Full |
-| Scanner | ✗ | ✓ |
-| Extensions | ✓ | ✓ |
+| 代理 | ✓ | ✓ |
+| 重放器 | ✓ | ✓ |
+| 入侵器 | 受限 | 完整 |
+| 扫描器 | ✗ | ✓ |
+| 扩展 | ✓ | ✓ |
 
-## Outputs / Deliverables
+## 输出 / 可交付成果
 
-### Primary Outputs
-- Intercepted and modified HTTP requests/responses
-- Vulnerability scan reports with remediation advice
-- HTTP history and site map documentation
-- Proof-of-concept exploits for identified vulnerabilities
+### 主要输出
+- 拦截和修改的 HTTP 请求/响应
+- 包含修复建议的漏洞扫描报告
+- HTTP 历史记录和站点地图文档
+- 已识别漏洞的概念验证利用
 
 ## 核心工作流
 

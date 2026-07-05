@@ -22,4 +22,3 @@ Use this skill when the user wants to inspect, create, edit, enable, disable, co
 Each skill lives in its own subdirectory with a `SKILL.md` file containing YAML frontmatter.
 
 | Tool | Global Path | Project Path |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 34 MINUTES 12 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

@@ -61,4 +61,3 @@ If the user provides a GitHub repository URL or `owner/repo` identifier, use rem
 Extract `owner/repo` and optional `ref` from the user's input:
 
 | Input Format | Extract |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 50 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

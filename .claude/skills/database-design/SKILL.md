@@ -6,57 +6,57 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Database Design
+# 数据库设计
 
-> **Learn to THINK, not copy SQL patterns.**
+> **学会思考，而不是复制 SQL 模式。**
 
-## 🎯 Selective Reading Rule
+## 🎯 选择性阅读规则
 
-**Read ONLY files relevant to the request!** Check the content map, find what you need.
+**仅阅读与请求相关的文件！** 检查内容地图，找到您需要的内容。
 
-| File | Description | When to Read |
+| 文件 | 描述 | 何时阅读 |
 |------|-------------|--------------|
-| `database-selection.md` | PostgreSQL vs Neon vs Turso vs SQLite | Choosing database |
-| `orm-selection.md` | Drizzle vs Prisma vs Kysely | Choosing ORM |
-| `schema-design.md` | Normalization, PKs, relationships | Designing schema |
-| `indexing.md` | Index types, composite indexes | 性能 tuning |
-| `optimization.md` | N+1, EXPLAIN ANALYZE | Query optimization |
-| `migrations.md` | Safe migrations, serverless DBs | Schema changes |
+| `database-selection.md` | PostgreSQL vs Neon vs Turso vs SQLite | 选择数据库时 |
+| `orm-selection.md` | Drizzle vs Prisma vs Kysely | 选择 ORM 时 |
+| `schema-design.md` | 规范化、主键、关系 | 设计模式时 |
+| `indexing.md` | 索引类型、复合索引 | 性能调优时 |
+| `optimization.md` | N+1、EXPLAIN ANALYZE | 查询优化时 |
+| `migrations.md` | 安全迁移、无服务器数据库 | 模式变更时 |
 
 ---
 
-## ⚠️ Core Principle
+## ⚠️ 核心原则
 
-- ASK user for database preferences when unclear
-- Choose database/ORM based on CONTEXT
-- Don't default to PostgreSQL for everything
+- 不明确时询问用户的数据库偏好
+- 基于上下文选择数据库/ORM
+- 不要为所有事情默认使用 PostgreSQL
 
 ---
 
-## Decision Checklist
+## 决策检查清单
 
-Before designing schema:
+在设计模式之前：
 
-- [ ] Asked user about database preference?
-- [ ] Chosen database for THIS context?
-- [ ] 考虑ed deployment environment?
-- [ ] Planned index strategy?
-- [ ] Defined relationship types?
+- [ ] 询问了用户的数据库偏好？
+- [ ] 为此上下文选择了数据库？
+- [ ] 考虑了部署环境？
+- [ ] 规划了索引策略？
+- [ ] 定义了关系类型？
 
 ---
 
 ## 反模式
 
-❌ 默认 to PostgreSQL for simple apps (SQLite may suffice)
-❌ Skip indexing
-❌ Use SELECT * in production
-❌ Store JSON when structured data is better
-❌ Ignore N+1 queries
+❌ 为简单应用默认使用 PostgreSQL（SQLite 可能足够）
+❌ 跳过索引
+❌ 在生产环境中使用 SELECT *
+❌ 当结构化数据更好时存储 JSON
+❌ 忽略 N+1 查询
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+此技能适用于执行概述中描述的工作流或操作。
 
-## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确匹配上述描述的范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

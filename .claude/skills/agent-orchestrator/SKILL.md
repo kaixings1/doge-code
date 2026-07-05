@@ -47,4 +47,3 @@ e orquestra multiplos skills para tarefas complexas.
 - Skills removidas sao **auto-excluidas** do registry
 - Nenhum comando manual e necessario para registrar novas skills
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 52 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

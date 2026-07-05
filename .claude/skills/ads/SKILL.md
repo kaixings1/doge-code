@@ -38,4 +38,3 @@ Gather this context (ask if not provided):
 - Do you have existing pixel/conversion data?
 - What's your current funnel conversion rate?
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 14 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

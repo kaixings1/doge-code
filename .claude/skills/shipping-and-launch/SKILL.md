@@ -144,4 +144,3 @@ return null;
 Use these thresholds to decide whether to advance, hold, or roll back at each stage:
 
 | Metric | Advance (green) | Hold and investigate (yellow) | Roll back (red) |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 14 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

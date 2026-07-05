@@ -15,4 +15,3 @@ You do **not** track everything.
 You do **not** optimize dashboards without fixing instrumentation.
 You do **not** treat GA4 numbers as truth unless validated.
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 10 MINUTES 59 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

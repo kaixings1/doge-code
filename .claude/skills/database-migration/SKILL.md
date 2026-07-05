@@ -6,31 +6,31 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Database Migration
+# 数据库迁移
 
-Master database schema and data migrations across ORMs (Sequelize, TypeORM, Prisma), including rollback strategies and zero-downtime deployments.
+掌握跨 ORM（Sequelize、TypeORM、Prisma）的数据库模式和数据迁移，包括回滚策略和零停机部署。
 
 ## 不要使用此技能的场景
 
-- The task is unrelated to database migration
-- You need a different domain or tool outside this scope
+- 任务与数据库迁移无关时
+- 您需要此范围之外的不同领域或工具时
 
 ## 使用说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证方法。
+- 如果需要详细示例，请打开 `resources/implementation-playbook.md`。
 
 ## 使用此技能的场景
 
-- Migrating between different ORMs
-- Performing schema transformations
-- Moving data between databases
-- Implementing rollback procedures
-- Zero-downtime deployments
-- Database version upgrades
-- Data model refactoring
+- 在不同 ORM 之间迁移时
+- 执行模式转换时
+- 在数据库之间移动数据时
+- 实施回滚程序时
+- 零停机部署时
+- 数据库版本升级时
+- 数据模型重构时
 
 ## ORM Migrations
 
@@ -410,35 +410,35 @@ module.exports = {
 
 ## 资源
 
-- **references/orm-switching.md**: ORM migration guides
-- **references/schema-migration.md**: Schema transformation patterns
-- **references/data-transformation.md**: Data migration scripts
-- **references/rollback-strategies.md**: Rollback procedures
-- **assets/schema-migration-template.sql**: SQL migration templates
-- **assets/data-migration-script.py**: Data migration utilities
-- **scripts/test-migration.sh**: Migration testing script
+- **references/orm-switching.md**: ORM 迁移指南
+- **references/schema-migration.md**: 模式转换模式
+- **references/data-transformation.md**: 数据迁移脚本
+- **references/rollback-strategies.md**: 回滚程序
+- **assets/schema-migration-template.sql**: SQL 迁移模板
+- **assets/data-migration-script.py**: 数据迁移实用工具
+- **scripts/test-migration.sh**: 迁移测试脚本
 
 ## 最佳实践
 
-1. **Always Provide Rollback**: Every up() needs a down()
-2. **Test Migrations**: Test on staging first
-3. **Use Transactions**: Atomic migrations when possible
-4. **Backup First**: Always backup before migration
-5. **Small Changes**: Break into small, incremental steps
-6. **Monitor**: Watch for errors during deployment
-7. **Document**: Explain why and how
-8. **Idempotent**: Migrations should be rerunnable
+1. **始终提供回滚**: 每个 up() 都需要一个 down()
+2. **测试迁移**: 首先在预演环境中测试
+3. **使用事务**: 尽可能使用原子迁移
+4. **先备份**: 迁移前始终备份
+5. **小变更**: 分解为小的增量步骤
+6. **监控**: 在部署期间注意错误
+7. **文档化**: 解释原因和方法
+8. **幂等性**: 迁移应该可以重新运行
 
 ## 常见陷阱
 
-- Not testing rollback procedures
-- Making breaking changes without downtime strategy
-- Forgetting to handle NULL values
-- Not considering index performance
-- Ignoring foreign key constraints
-- Migrating too much data at once
+- 不测试回滚程序
+- 在没有停机策略的情况下进行破坏性更改
+- 忘记处理 NULL 值
+- 不考虑索引性能
+- 忽略外键约束
+- 一次迁移过多数据
 
-## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确匹配上述描述的范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

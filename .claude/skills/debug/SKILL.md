@@ -1,6 +1,6 @@
 ---
 name: debug
-description: "Debug — Debug 相关功能和最佳实践"
+description: "Debug — 调试相关功能和最佳实践"
 ---
 
 # 调试

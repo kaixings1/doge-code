@@ -39,4 +39,3 @@ Prefer skills that encode decision-making heuristics, constraints, pitfalls, and
    - Do **not** write plain markdown without frontmatter.
    - Minimum frontmatter:
      ```yaml
-     ---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 00 MINUTES 46 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
