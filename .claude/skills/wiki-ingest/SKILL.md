@@ -9,4 +9,3 @@ description: "将源文件导入 Obsidian wiki vault。读取源，提取实体�
 
 **语法标准**：使用正确的 Obsidian 风味 Markdown 编写所有 Obsidian Markdown。Wiki 链接使用 `[[笔记名称]]`，标注使用 `> [!type] 标题`，嵌入使用 `![[文件]]`，属性使用 YAML 前置元数据。如果安装了 kepano/obsidian-skills 插件，优先使用其规范的 obsidian-markdown 技能作为 Obsidian 语法参考。否则，遵循此技能中的指南。
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 57 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

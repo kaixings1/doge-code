@@ -6,12 +6,12 @@ source: community
 date_added: "2026-02-27"
 ---
 
-BusyBox is a single binary that implements many common Unix tools.
+BusyBox 是一个实现许多常见 Unix 工具的单一二进制文件。
 
-Use this skill only on Windows. If you are on UNIX, then stop here.
+仅限在 Windows 上使用此技能。如果您在 UNIX 上，请在此停止。
 
-Run the following steps only if you cannot find a `busybox.exe` file in the same directory as this document is. 
-These are PowerShell commands, if you have a classic `cmd.exe` terminal, then you must use `powershell -Command "..."` to run them.
+仅当您在与本文档相同的目录中找不到 `busybox.exe` 文件时才运行以下步骤。
+这些是 PowerShell 命令，如果您使用经典的 `cmd.exe` 终端，则必须使用 `powershell -Command "..."` 来运行它们。
 1. Print the type of CPU: `Get-CimInstance -ClassName Win32_Processor | Select-Object Name, NumberOfCores, MaxClockSpeed`
 2. Print the OS versions: `Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" | Select-Object ProductName, DisplayVersion, CurrentBuild`
 3. Download a suitable build of BusyBox by running one of these PowerShell commands:
@@ -32,9 +32,9 @@ Documentation: https://frippery.org/busybox/
 Original BusyBox: https://busybox.net/
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+此技能适用于执行概述中描述的工作流或操作。
 
 ## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+- 仅当任务明确匹配上述描述的范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

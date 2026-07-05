@@ -79,4 +79,12 @@ session_id: "your_session_id"
 
 ## 快速参考
 
-| Operation | Approach |
+| 操作 | 方法 |
+|---|---|
+| 搜索工具 | 使用 RUBE_SEARCH_TOOLS 查询 `FIRMAO operations` |
+| 检查连接 | 使用 RUBE_MANAGE_CONNECTIONS |
+| 执行工具 | 使用 RUBE_MULTI_EXECUTE_TOOL |
+| 处理分页 | 检查响应中的分页 token |
+| 会话管理 | 复用现有会话 ID |
+
+*由 [Composio](https://composio.dev) 提供支持*

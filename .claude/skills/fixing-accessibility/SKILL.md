@@ -28,32 +28,32 @@ source: community
 - 构建表单、验证、错误状态、帮助文本
 - 实现键盘快捷键或自定义交互
 - 处理焦点状态、焦点捕获或模态行为
-- rendering icon-only controls
-- adding hover-only interactions or hidden content
+- 渲染纯图标控件
+- 添加仅悬停交互或隐藏内容
 
-## rule categories by priority
+## 按优先级的规则分类
 
-| priority | category | impact |
+| 优先级 | 类别 | 影响 |
 |----------|----------|--------|
-| 1 | accessible names | critical |
-| 2 | keyboard access | critical |
-| 3 | focus and dialogs | critical |
-| 4 | semantics | high |
-| 5 | forms and errors | high |
-| 6 | announcements | medium-high |
-| 7 | contrast and states | medium |
-| 8 | media and motion | low-medium |
-| 9 | tool boundaries | critical |
+| 1 | 可访问名称 | 关键 |
+| 2 | 键盘访问 | 关键 |
+| 3 | 焦点和对话框 | 关键 |
+| 4 | 语义 | 高 |
+| 5 | 表单和错误 | 高 |
+| 6 | 通知 | 中高 |
+| 7 | 对比度和状态 | 中 |
+| 8 | 媒体和动效 | 低中 |
+| 9 | 工具边界 | 关键 |
 
-## quick reference
+## 快速参考
 
-### 1. accessible names (critical)
+### 1. 可访问名称（关键）
 
-- every interactive control must have an accessible name
-- icon-only buttons must have aria-label or aria-labelledby
-- every input, select, and textarea must be labeled
-- links must have meaningful text (no “click here”)
-- decorative icons must be aria-hidden
+- 每个可交互控件必须有一个可访问名称
+- 纯图标按钮必须包含 aria-label 或 aria-labelledby
+- 每个输入框、选择框和文本区域必须有标签
+- 链接必须有有意义的文本（不要用”点击这里”）
+- 装饰性图标必须是 aria-hidden
 
 ### 2. keyboard access (critical)
 
@@ -137,6 +137,6 @@ source: community
 - for complex widgets (menu, dialog, combobox), prefer established accessible primitives over custom behavior
 
 ## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+- 仅当任务明确匹配上述描述的范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

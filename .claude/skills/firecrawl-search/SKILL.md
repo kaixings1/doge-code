@@ -8,15 +8,15 @@ allowed-tools:
 
 # firecrawl search
 
-Web search with optional content scraping. 返回值 search results as JSON, optionally with full page content.
+带有可选内容抓取的网页搜索。返回JSON格式的搜索结果，可选包含完整页面内容。
 
-## When to use
+## 何时使用
 
-- You don't have a specific URL yet
-- You need to find pages, answer questions, or discover sources
-- First step in the [workflow escalation pattern](firecrawl-cli): search → scrape → map → crawl → interact
+- 你还没有具体的URL
+- 你需要查找页面、回答问题或发现来源
+- [工作流升级模式](firecrawl-cli)中的第一步：search → scrape → map → crawl → interact
 
-## Quick start
+## 快速开始
 
 ```bash
 # Basic search

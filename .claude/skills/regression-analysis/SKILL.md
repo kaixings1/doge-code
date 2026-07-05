@@ -13,4 +13,3 @@ Build, diagnose, and interpret regression models. Covers the full workflow from 
 ### 步骤 1: Model Selection
 
 | Outcome Type | Method |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 29 MINUTES 24 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

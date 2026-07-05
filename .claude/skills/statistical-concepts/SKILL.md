@@ -40,4 +40,3 @@ Quick reference for statistical concepts, common misconceptions, and practical g
 ### Parametric vs. Non-Parametric
 
 | Parametric | Non-Parametric | When to Switch |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 00 MINUTES 18 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

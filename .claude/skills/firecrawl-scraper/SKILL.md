@@ -9,13 +9,13 @@ date_added: "2026-02-27"
 # firecrawl-scraper
 
 ## 概述
-Deep web scraping, screenshots, PDF parsing, and website crawling using Firecrawl API
+使用 Firecrawl API 进行深度网页抓取、截图、PDF 解析和网站爬取
 
 ## 使用场景
-- When you need deep content extraction from web pages
-- When page interaction is required (clicking, scrolling, etc.)
-- When you want screenshots or PDF parsing
-- When batch scraping multiple URLs
+- 当你需要从网页进行深度内容提取时
+- 当需要页面交互时（点击、滚动等）
+- 当你想要截图或PDF解析时
+- 当批量抓取多个URL时
 
 ## 安装
 ```bash
@@ -40,6 +40,6 @@ See the GitHub repository for troubleshooting guides.
 - context7-auto-research, tavily-web, exa-search, codex-review
 
 ## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+- 仅当任务明确匹配上述描述的范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

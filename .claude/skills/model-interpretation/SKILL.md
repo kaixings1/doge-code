@@ -13,4 +13,3 @@ Explain why the model makes specific predictions. Essential for stakeholder trus
 ### Global Explanations (Overall Model Behavior)
 
 | Method | What It Shows |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 07 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
