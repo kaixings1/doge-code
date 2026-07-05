@@ -1,13 +1,13 @@
 ---
 name: microsoft-tenant-automation
-description: "通过 Rube MCP (Composio) 自动执行 Microsoft Tenant 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Microsoft Tenant 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
 # Microsoft Tenant 自动化（通过 Rube MCP）
 
-Automate Microsoft Tenant operations through Composio's Microsoft Tenant toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Microsoft Tenant 工具包自动执行 Microsoft Tenant 操作。
 
 **Toolkit docs**: [composio.dev/toolkits/microsoft_tenant](https://composio.dev/toolkits/microsoft_tenant)
 

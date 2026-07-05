@@ -1,7 +1,7 @@
 ---
 name: nanobanana-ppt
 description: "Nanobanana Ppt — Nanobanana Ppt 相关功能和最佳实践"
-  AI-powered PPT generation with document analysis and styled images via the NanoBanana stack. Combines image generation with structured deck output.
+  通过 NanoBanana 技术栈实现 AI 驱动的 PPT 生成，支持文档分析和样式化图像。将图像生成与结构化幻灯片输出相结合。
 triggers:
   - "nanobanana ppt"
   - "ai ppt"
@@ -16,28 +16,24 @@ od:
 
 # nanobanana-ppt
 
-> Curated from @op7418.
+> 精选自 @op7418。
 
-## What it does
+## 功能说明
 
-AI-powered PPT generation with document analysis and styled images via the NanoBanana stack. Combines image generation with structured deck output.
+通过 NanoBanana 技术栈实现 AI 驱动的 PPT 生成，支持文档分析和样式化图像。将图像生成与结构化幻灯片输出相结合。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/op7418/NanoBanana-PPT-Skills
-- Category: `image-generation`
+- 上游：https://github.com/op7418/NanoBanana-PPT-Skills
+- 分类：`image-generation`
 
 ## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在 Open Design 中宣传该技能，以便代理在规划过程中发现它。要运行完整的上游工作流及其原始资源、脚本和参考文档，请将上游捆绑包安装到您的活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 查看上游 README 以获取确切路径
 open https://github.com/op7418/NanoBanana-PPT-Skills
 ```
 
-Then ask the agent to invoke this skill by name (`nanobanana-ppt`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后要求代理通过名称（`nanobanana-ppt`）或此技能 frontmatter 中列出的触发短语来调用此技能。

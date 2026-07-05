@@ -1,6 +1,6 @@
 ---
 name: zoho_invoice-automation
-description: "通过 Rube MCP (Composio) 自动执行 Zoho Invoice 任务：invoices, estimates, expenses, clients, and payment tracking. 始终 search tools first for current schemas."
+description: "通过 Rube MCP (Composio) 自动执行 Zoho Invoice 任务：发票、估算、支出、客户和付款跟踪。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---

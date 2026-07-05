@@ -1,13 +1,13 @@
 ---
 name: metaads-automation
-description: "通过 Rube MCP (Composio) 自动执行 Metaads 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Metaads 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
 # Metaads 自动化（通过 Rube MCP）
 
-Automate Metaads operations through Composio's Metaads toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Metaads 工具包自动执行 Metaads 操作。
 
 **Toolkit docs**: [composio.dev/toolkits/metaads](https://composio.dev/toolkits/metaads)
 

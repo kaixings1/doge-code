@@ -6,57 +6,57 @@ source: community
 date_added: 2026-03-18
 ---
 
-# Advanced Evaluation
+# 高级评估
 
-This skill covers production-grade techniques for evaluating LLM outputs using LLMs as judges. It synthesizes research from academic papers, industry practices, and practical implementation experience into actionable patterns for building reliable evaluation systems.
+此技能涵盖使用 LLM 作为评判者评估 LLM 输出的生产级技术。它将学术论文研究、行业实践和实际实施经验综合为可操作的模式，用于构建可靠的评估系统。
 
-**Key insight**: LLM-as-a-Judge is not a single technique but a family of approaches, each suited to different evaluation contexts. Choosing the right approach and mitigating known biases is the core competency this skill develops.
+**关键洞察**：LLM-as-a-Judge 不是单一技术，而是一系列方法，每种方法适用于不同的评估场景。选择正确的方法并缓解已知偏见是此技能培养的核心能力。
 
 ## 使用场景
-Activate this skill when:
+在以下情况下激活此技能：
 
-- Building automated evaluation pipelines for LLM outputs
-- Comparing multiple model responses to select the best one
-- Establishing consistent quality standards across evaluation teams
-- Debugging evaluation systems that show inconsistent results
-- Designing A/B tests for prompt or model changes
-- Creating rubrics for human or automated evaluation
-- Analyzing correlation between automated and human judgments
+- 构建 LLM 输出的自动化评估流水线
+- 比较多个模型响应以选择最佳响应
+- 建立跨评估团队的一致质量标准
+- 调试显示不一致结果的评估系统
+- 为提示或模型变更设计 A/B 测试
+- 创建人工或自动化评估的评分标准
+- 分析自动评估与人工判断之间的相关性
 
 ## 核心概念
 
-### The Evaluation Taxonomy
+### 评估分类法
 
-Evaluation approaches fall into two primary categories with distinct reliability profiles:
+评估方法分为两个主要类别，具有不同的可靠性特征：
 
-**Direct Scoring**: A single LLM rates one response on a defined scale.
-- Best for: Objective criteria (factual accuracy, instruction following, toxicity)
-- 可靠性: Moderate to high for well-defined criteria
-- Failure mode: Score calibration drift, inconsistent scale interpretation
+**直接评分**：单个 LLM 在定义好的量表上对一个响应进行评分。
+- 最适合：客观标准（事实准确性、指令遵循、毒性）
+- 可靠性：对于明确定义的标准，可靠性中等至高
+- 失败模式：分数校准漂移、量表解释不一致
 
-**Pairwise Comparison**: An LLM compares two responses and selects the better one.
-- Best for: Subjective preferences (tone, style, persuasiveness)
-- 可靠性: Higher than direct scoring for preferences
-- Failure mode: Position bias, length bias
+**成对比较**：LLM 比较两个响应并选择更好的一个。
+- 最适合：主观偏好（语气、风格、说服力）
+- 可靠性：对于偏好评估，可靠性高于直接评分
+- 失败模式：位置偏见、长度偏见
 
-Research from the MT-Bench paper (Zheng et al., 2023) establishes that pairwise comparison achieves higher agreement with human judges than direct scoring for preference-based evaluation, while direct scoring remains appropriate for objective criteria with clear ground truth.
+MT-Bench 论文（Zheng 等人，2023 年）的研究表明，对于基于偏好的评估，成对比较比直接评分与人类评判者达成更高的一致性，而直接评分仍然适用于具有明确真实情况的客观标准。
 
-### The Bias Landscape
+### 偏见格局
 
-LLM judges exhibit systematic biases that must be actively mitigated:
+LLM 评判者表现出必须主动缓解的系统性偏见：
 
-**Position Bias**: First-position responses receive preferential treatment in pairwise comparison. Mitigation: Evaluate twice with swapped positions, use majority vote or consistency check.
+**位置偏见**：在成对比较中，第一个位置的响应获得优待。缓解措施：交换位置评估两次，使用多数投票或一致性检查。
 
-**Length Bias**: Longer responses are rated higher regardless of quality. Mitigation: Explicit prompting to ignore length, length-normalized scoring.
+**长度偏见**：无论质量如何，较长的响应获得更高评分。缓解措施：明确提示忽略长度，使用长度归一化评分。
 
-**Self-Enhancement Bias**: Models rate their own outputs higher. Mitigation: Use different models for generation and evaluation, or acknowledge limitation.
+**自我增强偏见**：模型对自己的输出评分更高。缓解措施：使用不同的模型进行生成和评估，或承认局限性。
 
-**Verbosity Bias**: Detailed explanations receive higher scores even when unnecessary. Mitigation: Criteria-specific rubrics that penalize irrelevant detail.
+**冗长偏见**：详细的解释即使不必要也获得更高分数。缓解措施：特定标准的评分标准，惩罚无关细节。
 
-**Authority Bias**: Confident, authoritative tone rated higher regardless of accuracy. Mitigation: Require evidence citation, fact-checking layer.
+**权威偏见**：自信、权威的语气无论准确性如何都获得更高评分。缓解措施：要求证据引用，事实检查层。
 
-### Metric Selection Framework
+### 指标选择框架
 
-Choose metrics based on the evaluation task structure:
+根据评估任务结构选择指标：
 
-| Task Type | Primary Metrics | Secondary Metrics |
+| 任务类型 | 主要指标 | 次要指标 |
