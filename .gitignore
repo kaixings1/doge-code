@@ -81,3 +81,73 @@ cookbooks/
 .git-old-backup/
 # Temp scripts
 .tmp-*.py
+
+# =========================
+# 汉化辅助脚本 & 临时文件
+# =========================
+# 根目录杂项
+_b64_in.txt
+_build.cjs
+_cmd_script.txt
+_hz_final.cjs
+_patch2.cjs
+_test*.md
+_test_cmd.js
+_tmp_test.txt
+_write.cjs
+append.txt
+b64test.txt
+batch_data*.json
+chinese_test.txt
+data.json
+enc1.txt
+encoded_data.txt
+hanhua*.mjs
+han_automation_skills.*
+run.sh
+run_me.mjs
+scan_list.txt
+tmp_skills_paths.txt
+tmp_test.txt
+w.js
+ws.js
+w.py*
+_script_b64.txt*
+
+# .claude/skills/ 汉化辅助脚本
+.claude/skills/_*.cjs
+.claude/skills/_*.js
+.claude/skills/_*.txt
+.claude/skills/_*.sh
+.claude/skills/.batch-*
+.claude/skills/.han-*
+.claude/skills/batch_han.sh
+.claude/skills/check_skills.sh
+.claude/skills/fix_*.sh
+.claude/skills/han_*.sh
+.claude/skills/process_*.sh
+.claude/skills/file.txt
+.claude/skills/final_report.md
+.claude/skills/progress_report.md
+.claude/skills/i18n-check-report.txt
+.claude/skills/todo_skill_*.txt
+.claude/skills/todo_full_scan.txt
+.claude/skills/todo_skill_list.txt
+.claude/skills/todo_skill_scan.txt
+.claude/skills/AGENTS.md
+.claude/skills/CLAUDE.md
+.claude/skills/README.md
+.claude/skills/CONTEXT.md
+.claude/skills/llms.txt
+.claude/skills/cpp-windows-dev.md
+.claude/skills/test.txt
+.claude/skills/_fp_option_content.json
+
+# src/ 汉化临时文件
+src/.batch-*
+src/AGENT_RULES.md
+src/commands/database/*.backup
+
+# 备份文件
+*.orig
+*.original
