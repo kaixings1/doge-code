@@ -78,4 +78,3 @@ Task(subagent_type="oh-my-claudecode:scientist", model="opus", prompt="[RESEARCH
 **关键：始终显式传递 `model` 参数！**
 
 | 任务复杂度 | 代理 | 模型 | 用途 |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 02 MINUTES 29 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

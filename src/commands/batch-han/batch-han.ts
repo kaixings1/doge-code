@@ -102,18 +102,145 @@ const UI_TRANSLATIONS: Record<string, string> = {
   '外部导入': '外部导入',
 }
 
-function localizeStrings(content: string): string {
+// 针对 Markdown 文档的常见英文词汇翻译
+const MD_TRANSLATIONS: Record<string, string> = {
+  // 标题和常见术语
+  'Overview': '概述',
+  'Introduction': '简介',
+  'Prerequisites': '前置条件',
+  'Quick Start': '快速开始',
+  'Getting Started': '入门指南',
+  'Installation': '安装',
+  'Configuration': '配置',
+  'Usage': '用法',
+  'Examples': '示例',
+  'API Reference': 'API 参考',
+  'Documentation': '文档',
+  'Tutorial': '教程',
+  'Guide': '指南',
+  'Manual': '手册',
+  'Reference': '参考',
+  'Specification': '规范',
+  'Requirements': '需求',
+  'Dependencies': '依赖项',
+  'Setup': '设置',
+  'Deployment': '部署',
+  'Migration': '迁移',
+  'Performance': '性能',
+  'Security': '安全性',
+  'Limitations': '限制',
+  'Known Issues': '已知问题',
+  'FAQ': '常见问题',
+  'Troubleshooting': '故障排除',
+  'Debugging': '调试',
+  'Testing': '测试',
+  'Contributing': '贡献指南',
+  'License': '许可证',
+  'Changelog': '更新日志',
+  'Release Notes': '发布说明',
+  'Roadmap': '路线图',
+
+  // 技能文件特定
+  'Skill': '技能',
+  'Description': '描述',
+  'When to Use': '使用场景',
+  'Best Practices': '最佳实践',
+  'Tool Discovery': '工具发现',
+  'Core Workflow Pattern': '核心工作流模式',
+  'Environment Variables': '环境变量',
+  'How It Works': '工作原理',
+  'Purpose': '目的',
+  'Authentication': '认证',
+  'Error Handling': '错误处理',
+  'Output Format': '输出格式',
+  'Workflow': '工作流',
+  'Resources': '资源',
+  'Related Skills': '相关技能',
+  'Core Workflows': '核心工作流',
+  'Capabilities': '能力',
+  'Common Pitfalls': '常见陷阱',
+  'Reference Links': '参考链接',
+  'Anti-Patterns': '反模式',
+  'Safety': '安全',
+
+  // 常见短语
+  'Use this skill when': '使用此技能当',
+  'This skill performs': '此技能执行',
+  'This skill provides': '此技能提供',
+  'This skill helps': '此技能帮助',
+  'You are an expert': '你是专家',
+  'Follow these steps': '按以下步骤操作',
+  'Do NOT': '不要',
+  'Always': '始终',
+  'Never': '绝不',
+  'Prefer': '优先',
+  'Consider': '考虑',
+  'Requires': '需要',
+  'Required': '必需',
+  'Optional': '可选',
+  'Default': '默认',
+  'See Also': '另请参阅',
+  'Learn More': '了解更多',
+  'Key Features': '主要功能',
+  'Core Concepts': '核心概念',
+  'Architecture': '架构',
+  'Integration': '集成',
+  'Scope': '范围',
+  'Context': '上下文',
+  'Constraints': '约束条件',
+  'Status': '状态',
+}
+
+function localizeStrings(content: string, extension: string): string {
   let result = content
-  for (const [english, chinese] of Object.entries(UI_TRANSLATIONS)) {
-    // 更精确的替换：只在引号中的字符串替换
-    const escapedEn = english.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    // 双引号中的字符串
-    result = result.replace(new RegExp(`"${escapedEn}"`, 'g'), `"${chinese}"`)
-    // 单引号中的字符串
-    result = result.replace(new RegExp(`'${escapedEn}'`, 'g'), `'${chinese}'`)
-    // 模板字符串中的
-    result = result.replace(new RegExp('`' + escapedEn + '`', 'g'), '`' + chinese + '`')
+
+  // TypeScript/JavaScript 文件：只处理引号内的字符串
+  if (extension === '.ts' || extension === '.tsx') {
+    for (const [english, chinese] of Object.entries(UI_TRANSLATIONS)) {
+      const escapedEn = english.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      // 双引号中的字符串
+      result = result.replace(new RegExp(`"${escapedEn}"`, 'g'), `"${chinese}"`)
+      // 单引号中的字符串
+      result = result.replace(new RegExp(`'${escapedEn}'`, 'g'), `'${chinese}'`)
+      // 模板字符串中的
+      result = result.replace(new RegExp('`' + escapedEn + '`', 'g'), '`' + chinese + '`')
+    }
   }
+  // Markdown 文件：处理标题、段落和列表
+  else if (extension === '.md') {
+    // 1. 处理标题（# Title -> # 标题）
+    for (const [english, chinese] of Object.entries(MD_TRANSLATIONS)) {
+      const escapedEn = english.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      // 标题行：## Overview -> ## 概述
+      result = result.replace(new RegExp(`^(#+)\\s*${escapedEn}\\s*$`, 'gm'), `$1 ${chinese}`)
+      // 标题行：## Overview: -> ## 概述：
+      result = result.replace(new RegExp(`^(#+)\\s*${escapedEn}:\\s*$`, 'gm'), `$1 ${chinese}：`)
+      // 段落中的词汇
+      result = result.replace(new RegExp(`\\b${escapedEn}\\b`, 'gi'), chinese)
+    }
+
+    // 2. 处理常见的英文段落模式
+    const patterns = [
+      // 英文句子开头：The ... -> ...
+      [/\b(The|This|An?)\s+([A-Z][a-z]+)/g, '$2'],
+      // 被动语态：is used to -> 用于
+      [/\bis used to\b/gi, '用于'],
+      [/\bis designed to\b/gi, '设计用于'],
+      [/\ballows you to\b/gi, '允许你'],
+      [/\bprovides a way to\b/gi, '提供一种方式'],
+      // 常见连接词
+      [/\bfor example\b/gi, '例如'],
+      [/\bin addition\b/gi, '此外'],
+      [/\bhowever\b/gi, '然而'],
+      [/\btherefore\b/gi, '因此'],
+      [/\bin conclusion\b/gi, '总之'],
+    ]
+
+    for (const [pattern, replacement] of patterns) {
+      result = result.replace(pattern, replacement as string)
+    }
+  }
+
   return result
 }
 

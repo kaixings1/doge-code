@@ -67,4 +67,3 @@ python-command-injection-java/
 ## Key Differences from semgrep-rule-creator
 
 | Aspect | semgrep-rule-creator | semgrep-rule-variant-creator |
-|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 23 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

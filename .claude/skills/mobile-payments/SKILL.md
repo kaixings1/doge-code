@@ -36,4 +36,3 @@ Most modern card tokenization on Android follows this template:
 Each step has a corresponding VulnScout detector:
 
 | Step | Detector | What goes wrong |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 13 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

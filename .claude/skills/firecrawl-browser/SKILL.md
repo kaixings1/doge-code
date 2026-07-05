@@ -6,18 +6,18 @@ allowed-tools:
   - Bash(npx firecrawl *)
 ---
 
-# firecrawl interact (formerly browser)
+# firecrawl interact（原 browser）
 
-> **The `browser` command is deprecated.** Use `scrape` + `interact` instead. Interact lets you scrape a page and then click, fill forms, and navigate without managing sessions manually.
+> **`browser` 命令已弃用。** 请使用 `scrape` + `interact` 替代。Interact 允许你抓取页面，然后点击、填写表单和导航，无需手动管理会话。
 
-Interact with scraped pages in a live browser session. Scrape a page first, then use natural language prompts or code to click, fill forms, navigate, and extract data.
+在实时浏览器会话中与抓取的页面进行交互。先抓取页面，然后使用自然语言提示或代码进行点击、填写表单、导航和提取数据。
 
-## When to use
+## 何时使用
 
-- Content requires interaction: clicks, form fills, pagination, login
-- `scrape` failed because content is behind JavaScript interaction
-- You need to navigate a multi-step flow
-- Last resort in the [workflow escalation pattern](firecrawl-cli): search → scrape → map → crawl → **interact**
+- 内容需要交互：点击、表单填写、分页、登录
+- `scrape` 失败，因为内容在 JavaScript 交互之后
+- 你需要导航多步骤流程
+- [工作流升级模式](firecrawl-cli)中的最后手段：search → scrape → map → crawl → **interact**
 - **绝不 use interact for web searches** — use `search` instead
 
 ## Quick start

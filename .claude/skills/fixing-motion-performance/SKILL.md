@@ -7,27 +7,27 @@ source: community
 
 # fixing-motion-performance
 
-Fix animation performance issues.
+修复动画性能问题。
 
-## how to use
+## 使用方法
 
 - `/fixing-motion-performance`
-  Apply these constraints to any UI animation work in this conversation.
+  将这些约束应用于此对话中的任何UI动画工作。
 
-- `/fixing-motion-performance <file>`
-  Review the file against all rules below and report:
-  - violations (quote the exact line or snippet)
-  - why it matters (one short sentence)
-  - a concrete fix (code-level suggestion)
+- `/fixing-motion-performance <文件>`
+  根据以下所有规则审查文件并报告：
+  - 违规（引用确切的代码行或片段）
+  - 为什么重要（简短的一句话）
+  - 具体修复（代码级建议）
 
-Do not migrate animation libraries unless explicitly requested. Apply rules within the existing stack.
+除非明确要求，否则不要迁移动画库。在现有技术栈内应用规则。
 
 ## 使用场景
-Reference these guidelines when:
-- adding or changing UI animations (CSS, WAAPI, Motion, rAF, GSAP)
-- refactoring janky interactions or transitions
-- implementing scroll-linked motion or reveal-on-scroll
-- animating layout, filters, masks, gradients, or CSS variables
+在以下情况下参考这些指南：
+- 添加或更改UI动画（CSS、WAAPI、Motion、rAF、GSAP）
+- 重构卡顿的交互或过渡
+- 实现滚动联动动效或滚动显示效果
+- 对布局、滤镜、遮罩、渐变或CSS变量进行动画
 - reviewing components that use will-change, transforms, or measurement
 
 ## rendering steps glossary
@@ -152,6 +152,6 @@ requestAnimationFrame(() => { el.style.transition = 'transform 0.3s'; el.style.t
 - when reviewing, prefer actionable notes and concrete alternatives over theory
 
 ## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+- 仅当任务明确匹配上述描述的范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

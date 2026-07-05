@@ -12,4 +12,3 @@ CodeQL and Semgrep skills are based on the Trail of Bits Testing Handbook:
 ## Skills Included
 
 | Skill           | Purpose                                                  |
-|------MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 43 MINUTES 20 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
