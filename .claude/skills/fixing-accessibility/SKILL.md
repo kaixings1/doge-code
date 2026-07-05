@@ -5,29 +5,29 @@ risk: unknown
 source: community
 ---
 
-# fixing-accessibility
+# 修复可访问性问题
 
-Fix accessibility issues.
+修复可访问性问题。
 
-## how to use
+## 使用方法
 
 - `/fixing-accessibility`
-  Apply these constraints to any UI work in this conversation.
+  将这些约束应用于此对话中的任何UI工作。
 
-- `/fixing-accessibility <file>`
-  Review the file against all rules below and report:
-  - violations (quote the exact line or snippet)
-  - why it matters (one short sentence)
-  - a concrete fix (code-level suggestion)
+- `/fixing-accessibility <文件>`
+  根据以下所有规则审查文件并报告：
+  - 违规（引用确切的代码行或片段）
+  - 为什么重要（简短的一句话）
+  - 具体修复（代码级建议）
 
-Do not rewrite large parts of the UI. 优先 minimal, targeted fixes.
+不要重写UI的大部分内容。优先考虑最小化、有针对性的修复。
 
 ## 使用场景
-Reference these guidelines when:
-- adding or changing buttons, links, inputs, menus, dialogs, tabs, dropdowns
-- building forms, validation, error states, helper text
-- implementing keyboard shortcuts or custom interactions
-- working on focus states, focus trapping, or modal behavior
+在以下情况下参考这些指南：
+- 添加或更改按钮、链接、输入框、菜单、对话框、选项卡、下拉菜单
+- 构建表单、验证、错误状态、帮助文本
+- 实现键盘快捷键或自定义交互
+- 处理焦点状态、焦点捕获或模态行为
 - rendering icon-only controls
 - adding hover-only interactions or hidden content
 

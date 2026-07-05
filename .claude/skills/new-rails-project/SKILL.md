@@ -58,13 +58,13 @@ Set up the following tech stack:
 # Frontend
 - All React components and views should be TSX
 
-# General guidance
-- Ask lots of clarifying questions when planning. The more the better. Make extensive use of AskUserQuestionTool to gather requirements and specifications. You can't ask too many questions.
+# 通用指导
+- 规划时多问澄清问题。越多越好。充分利用 AskUserQuestionTool 来收集需求和规范。问再多问题都不为过。
 
-# Verify
-Verify the boilerplate is working by running `bin/rails server` and accessing the application at `http://localhost:3000` via playwright MCP.
+# 验证
+通过运行 `bin/rails server` 并通过 playwright MCP 访问 `http://localhost:3000` 来验证样板是否正常工作。
 
 ## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+- 仅当任务明确符合上述描述范围时使用此技能。
+- 不要将输出视为环境特定验证、测试或专家评审的替代品。
+- 如果缺少必需的输入、权限、安全边界或成功标准，请停止并请求澄清。

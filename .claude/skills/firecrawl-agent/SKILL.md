@@ -8,24 +8,24 @@ allowed-tools:
 
 # firecrawl agent
 
-AI-powered autonomous extraction. The agent navigates sites and extracts structured data (takes 2-5 minutes).
+AI驱动的自主提取。代理导航站点并提取结构化数据（需要2-5分钟）。
 
-## When to use
+## 何时使用
 
-- You need structured data from complex multi-page sites
-- Manual scraping would require navigating many pages
-- You want the AI to figure out where the data lives
+- 你需要从复杂的多页面站点获取结构化数据
+- 手动抓取需要导航多个页面
+- 你希望AI找出数据所在位置
 
-## Quick start
+## 快速开始
 
 ```bash
-# Extract structured data
+# 提取结构化数据
 firecrawl agent "extract all pricing tiers" --wait -o .firecrawl/pricing.json
 
-# With a JSON schema for structured output
+# 使用JSON模式进行结构化输出
 firecrawl agent "extract products" --schema '{"type":"object","properties":{"name":{"type":"string"},"price":{"type":"number"}}}' --wait -o .firecrawl/products.json
 
-# Focus on specific pages
+# 专注于特定页面
 firecrawl agent "get feature list" --urls "<url>" --wait -o .firecrawl/features.json
 ```
 
