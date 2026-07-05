@@ -20,4 +20,3 @@ Before implementing tracking, understand:
 2. **Current State** - What tracking exists? What tools are in use?
 3. **Technical Context** - What's the tech stack? Any privacy/compliance requirements?
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 11 MINUTES 01 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

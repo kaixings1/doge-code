@@ -10,4 +10,3 @@ v1.6 的查询路径是 `Read(hot.md) → Read(index.md) → Read(3-5 pages) →
 
 **来源**：此技能是 claude-obsidian 原创的。没有上游 kepano 等价物。该技术来自 [Anthropic 2024 年 9 月的上下文检索研究](https://www.anthropic.com/news/contextual-retrieval)——我们将其实现为 agent-skill 管道。
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 41 MINUTES 51 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

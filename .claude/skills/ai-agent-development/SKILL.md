@@ -7,147 +7,147 @@ source: personal
 date_added: "2026-02-27"
 ---
 
-# AI Agent Development Workflow
+# AI 代理开发工作流
 
 ## 概述
 
-Specialized workflow for building AI agents including single autonomous agents, multi-agent systems, agent orchestration, tool integration, and human-in-the-loop patterns.
+构建 AI 代理的专业工作流，包括单一自主代理、多代理系统、代理编排、工具集成和人在回路模式。
 
-## When to Use This Workflow
+## 何时使用此工作流
 
-Use this workflow when:
-- Building autonomous AI agents
-- Creating multi-agent systems
-- Implementing agent orchestration
-- Adding tool integration to agents
-- Setting up agent memory
+在以下情况下使用此工作流：
+- 构建自主 AI 代理
+- 创建多代理系统
+- 实现代理编排
+- 为代理添加工具集成
+- 设置代理记忆
 
-## Workflow Phases
+## 工作流阶段
 
-### Phase 1: Agent Design
+### 阶段 1: 代理设计
 
-#### Skills to Invoke
-- `ai-agents-architect` - Agent architecture
-- `autonomous-agents` - Autonomous patterns
+#### 要调用的技能
+- `ai-agents-architect` - 代理架构
+- `autonomous-agents` - 自主模式
 
-#### Actions
-1. Define agent purpose
-2. Design agent capabilities
-3. Plan tool integration
-4. Design memory system
-5. Define success metrics
+#### 操作
+1. 定义代理目的
+2. 设计代理能力
+3. 规划工具集成
+4. 设计记忆系统
+5. 定义成功指标
 
-#### Copy-Paste Prompts
+#### 复制粘贴提示
 ```
-Use @ai-agents-architect to design AI agent architecture
-```
-
-### Phase 2: Single Agent Implementation
-
-#### Skills to Invoke
-- `autonomous-agent-patterns` - Agent patterns
-- `autonomous-agents` - Autonomous agents
-
-#### Actions
-1. Choose agent framework
-2. Implement agent logic
-3. Add tool integration
-4. Configure memory
-5. Test agent behavior
-
-#### Copy-Paste Prompts
-```
-Use @autonomous-agent-patterns to implement single agent
+使用 @ai-agents-architect 设计 AI 代理架构
 ```
 
-### Phase 3: Multi-Agent System
+### 阶段 2: 单代理实现
 
-#### Skills to Invoke
-- `crewai` - CrewAI framework
-- `multi-agent-patterns` - Multi-agent patterns
+#### 要调用的技能
+- `autonomous-agent-patterns` - 代理模式
+- `autonomous-agents` - 自主代理
 
-#### Actions
-1. Define agent roles
-2. Set up agent communication
-3. Configure orchestration
-4. Implement task delegation
-5. Test coordination
+#### 操作
+1. 选择代理框架
+2. 实现代理逻辑
+3. 添加工具集成
+4. 配置记忆
+5. 测试代理行为
 
-#### Copy-Paste Prompts
+#### 复制粘贴提示
 ```
-Use @crewai to build multi-agent system with roles
-```
-
-### Phase 4: Agent Orchestration
-
-#### Skills to Invoke
-- `langgraph` - LangGraph orchestration
-- `workflow-orchestration-patterns` - Orchestration
-
-#### Actions
-1. Design workflow graph
-2. Implement state management
-3. Add conditional branches
-4. Configure persistence
-5. Test workflows
-
-#### Copy-Paste Prompts
-```
-Use @langgraph to create stateful agent workflows
+使用 @autonomous-agent-patterns 实现单代理
 ```
 
-### Phase 5: Tool 集成
+### 阶段 3: 多代理系统
 
-#### Skills to Invoke
-- `agent-tool-builder` - Tool building
-- `tool-design` - Tool design
+#### 要调用的技能
+- `crewai` - CrewAI 框架
+- `multi-agent-patterns` - 多代理模式
 
-#### Actions
-1. Identify tool needs
-2. Design tool interfaces
-3. Implement tools
-4. Add error handling
-5. Test tool usage
+#### 操作
+1. 定义代理角色
+2. 设置代理通信
+3. 配置编排
+4. 实现任务委派
+5. 测试协调
 
-#### Copy-Paste Prompts
+#### 复制粘贴提示
 ```
-Use @agent-tool-builder to create agent tools
-```
-
-### Phase 6: Memory Systems
-
-#### Skills to Invoke
-- `agent-memory-systems` - Memory architecture
-- `conversation-memory` - Conversation memory
-
-#### Actions
-1. Design memory structure
-2. Implement short-term memory
-3. Set up long-term memory
-4. Add entity memory
-5. Test memory retrieval
-
-#### Copy-Paste Prompts
-```
-Use @agent-memory-systems to implement agent memory
+使用 @crewai 构建带角色的多代理系统
 ```
 
-### Phase 7: Evaluation
+### 阶段 4: 代理编排
 
-#### Skills to Invoke
-- `agent-evaluation` - Agent evaluation
-- `evaluation` - AI evaluation
+#### 要调用的技能
+- `langgraph` - LangGraph 编排
+- `workflow-orchestration-patterns` - 编排
 
-#### Actions
-1. Define evaluation criteria
-2. Create test scenarios
-3. Measure agent performance
-4. Test edge cases
-5. Iterate improvements
+#### 操作
+1. 设计工作流图
+2. 实现状态管理
+3. 添加条件分支
+4. 配置持久化
+5. 测试工作流
 
-#### Copy-Paste Prompts
+#### 复制粘贴提示
 ```
-Use @agent-evaluation to evaluate agent performance
+使用 @langgraph 创建有状态的代理工作流
+```
+
+### 阶段 5: 工具集成
+
+#### 要调用的技能
+- `agent-tool-builder` - 工具构建
+- `tool-design` - 工具设计
+
+#### 操作
+1. 识别工具需求
+2. 设计工具接口
+3. 实现工具
+4. 添加错误处理
+5. 测试工具使用
+
+#### 复制粘贴提示
+```
+使用 @agent-tool-builder 创建代理工具
+```
+
+### 阶段 6: 记忆系统
+
+#### 要调用的技能
+- `agent-memory-systems` - 记忆架构
+- `conversation-memory` - 对话记忆
+
+#### 操作
+1. 设计记忆结构
+2. 实现短期记忆
+3. 设置长期记忆
+4. 添加实体记忆
+5. 测试记忆检索
+
+#### 复制粘贴提示
+```
+使用 @agent-memory-systems 实现代理记忆
+```
+
+### 阶段 7: 评估
+
+#### 要调用的技能
+- `agent-evaluation` - 代理评估
+- `evaluation` - AI 评估
+
+#### 操作
+1. 定义评估标准
+2. 创建测试场景
+3. 衡量代理性能
+4. 测试边界情况
+5. 迭代改进
+
+#### 复制粘贴提示
+```
+使用 @agent-evaluation 评估代理性能
 ```
 
 ## Agent 架构
@@ -158,21 +158,21 @@ User Input -> Planner -> Agent -> Tools -> Memory -> Response
          Decompose   LLM Core  Actions  Short/Long-term
 ```
 
-## Quality Gates
+## 质量门控
 
-- [ ] Agent logic working
-- [ ] Tools integrated
-- [ ] Memory functional
-- [ ] Orchestration tested
-- [ ] Evaluation passing
+- [ ] 代理逻辑正常工作
+- [ ] 工具已集成
+- [ ] 记忆功能正常
+- [ ] 编排已测试
+- [ ] 评估通过
 
-## 相关 Workflow Bundles
+## 相关工作流捆绑包
 
-- `ai-ml` - AI/ML development
-- `rag-implementation` - RAG systems
-- `workflow-automation` - Workflow patterns
+- `ai-ml` - AI/ML 开发
+- `rag-implementation` - RAG 系统
+- `workflow-automation` - 工作流模式
 
 ## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- 仅当任务明确匹配上述范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

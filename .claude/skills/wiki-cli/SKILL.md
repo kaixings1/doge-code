@@ -10,4 +10,3 @@ claude-obsidian v1.7+ 将 **Obsidian CLI**（随 Obsidian 1.12 提供）标准�
 
 **底层偏好（v1.7+）**：此技能是一个自包含的回退方案。**优先使用 `kepano/obsidian-skills`**（由 Obsidian CEO Steph Ango 编写）作为权威底层——其 `obsidian-cli` 技能是任何 Agent-Skills 运行时的规范 CLI 参考。如果你看到一个没有 `claude-obsidian:` 命名空间的 `obsidian-cli` 技能，那就是 kepano 的版本：请使用它。下方提供的指南确保了当未安装 kepano 市场时，claude-obsidian 仍然可用。安装 kepano：`claude plugin marketplace add kepano/obsidian-skills`。
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  20 HOURS 42 MINUTES 00 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

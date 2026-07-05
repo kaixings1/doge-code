@@ -1,6 +1,6 @@
 ---
 name: backend-patterns
-description: 后端开发模式和最佳实践
+description: "后端开发模式和最佳实践 — 涵盖分层架构、依赖注入、仓储模式、CQRS 等后端设计模式。"
 ---
 
 # Backend Development Patterns

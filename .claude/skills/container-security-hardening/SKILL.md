@@ -995,7 +995,7 @@ spec:
 
 ## 限制
 
-- Use this skill only when the task clearly matches the scope described above.
+- 仅当任务明确匹配上述描述的范围时才使用此技能。
 - Do not treat the output as a substitute for environment-specific penetration testing or a formal security audit.
 - Seccomp profiles and AppArmor are Linux-only; macOS/Windows Docker Desktop uses different mechanisms.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

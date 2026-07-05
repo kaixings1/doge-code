@@ -40,4 +40,3 @@ tools:
 > Price is what you pay. Value is what you get. - Warren Buffett
 > A monetizacao perfeita captura valor proporcional ao valor entregue.
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 33 MINUTES 02 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

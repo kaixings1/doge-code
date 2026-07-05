@@ -128,4 +128,3 @@ review_c = Agent(prompt=REVIEWER_PROMPT.format(...), description="Santa Reviewer
 The rubric is the most important input. Vague rubrics produce vague reviews. Every criterion must have an objective pass/fail condition.
 
 | Criterion | Pass Condition | Failure Signal |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 02 MINUTES 35 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
