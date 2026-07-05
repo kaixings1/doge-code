@@ -1,13 +1,13 @@
 ---
 name: metaphor-automation
-description: "通过 Rube MCP (Composio) 自动执行 Metaphor 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Metaphor 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
 # Metaphor 自动化（通过 Rube MCP）
 
-Automate Metaphor operations through Composio's Metaphor toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Metaphor 工具包自动执行 Metaphor 操作。
 
 **Toolkit docs**: [composio.dev/toolkits/metaphor](https://composio.dev/toolkits/metaphor)
 

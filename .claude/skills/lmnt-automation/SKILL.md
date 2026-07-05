@@ -1,6 +1,6 @@
 ---
 name: lmnt-automation
-description: "通过 Rube MCP (Composio) 自动执行 Lmnt 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Lmnt 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---

@@ -169,112 +169,112 @@ DFII = (影响 + 契合度 + 可行性 + 性能) − 一致性风险
 
 ---
 
-## 5. Implementation Standards
+## 5. 实施标准
 
-### Code Requirements
+### 代码要求
 
-* Clean, readable, and modular
-* No dead styles
-* No unused animations
-* Semantic HTML
-* Accessible by default (contrast, focus, keyboard)
+* 干净、可读且模块化
+* 没有死样式
+* 没有未使用的动画
+* 语义化 HTML
+* 默认可访问（对比度、焦点、键盘）
 
-### Framework Guidance
+### 框架指导
 
-* **HTML/CSS**: Prefer native features, modern CSS
-* **React**: Functional components, composable styles
-* **Animation**:
+* **HTML/CSS**: 优先使用原生功能、现代 CSS
+* **React**: 函数式组件、可组合样式
+* **动画**:
 
-  * CSS-first
-  * Framer Motion only when justified
+  * CSS 优先
+  * 仅在合理时使用 Framer Motion
 
-### Complexity Matching
+### 复杂度匹配
 
-* Maximalist design → complex code (animations, layers)
-* Minimalist design → extremely precise spacing & type
+* 极繁主义设计 → 复杂代码（动画、图层）
+* 极简主义设计 → 极其精确的间距和字体
 
-Mismatch = failure.
-
----
-
-## 6. Required Output Structure
-
-When generating frontend work:
-
-### 1. Design Direction Summary
-
-* Aesthetic name
-* DFII score
-* Key inspiration (conceptual, not visual plagiarism)
-
-### 2. Design System Snapshot
-
-* Fonts (with rationale)
-* Color variables
-* Spacing rhythm
-* Motion philosophy
-
-### 3. Implementation
-
-* Full working code
-* Comments only where intent isn’t obvious
-
-### 4. Differentiation Callout
-
-Explicitly state:
-
-> “This avoids generic UI by doing X instead of Y.”
+不匹配 = 失败。
 
 ---
 
-## 7. Anti-Patterns (Immediate Failure)
+## 6. 必需输出结构
 
-❌ Inter/Roboto/system fonts
-❌ Purple-on-white SaaS gradients
-❌ Default Tailwind/ShadCN layouts
-❌ Symmetrical, predictable sections
-❌ Overused AI design tropes
-❌ Decoration without intent
+生成前端工作时：
 
-If the design could be mistaken for a template → restart.
+### 1. 设计方向摘要
+
+* 美学名称
+* DFII 分数
+* 关键灵感（概念性的，非视觉抄袭）
+
+### 2. 设计系统快照
+
+* 字体（附带理由）
+* 颜色变量
+* 间距节奏
+* 动效哲学
+
+### 3. 实施
+
+* 完整可工作的代码
+* 仅在意图不明显的地方添加注释
+
+### 4. 差异化说明
+
+明确声明：
+
+> "这通过做 X 而不是 Y 来避免通用的 UI。"
 
 ---
 
-## 8. Integration With Other Skills
+## 7. 反模式（立即失败）
 
-* **page-cro** → Layout hierarchy & conversion flow
-* **copywriting** → Typography & message rhythm
-* **marketing-psychology** → Visual persuasion & bias alignment
-* **branding** → Visual identity consistency
-* **ab-test-setup** → Variant-safe design systems
+❌ Inter/Roboto/系统字体
+❌ 紫色-白色 SaaS 渐变
+❌ 默认的 Tailwind/ShadCN 布局
+❌ 对称、可预测的部分
+❌ 过度使用的 AI 设计套路
+❌ 无意图的装饰
+
+如果设计可能被误认为是模板 → 重新开始。
 
 ---
 
-## 9. Operator Checklist
+## 8. 与其他技能的集成
 
-Before finalizing output:
+* **page-cro** → 布局层次结构和转化流程
+* **copywriting** → 排版和消息节奏
+* **marketing-psychology** → 视觉说服和偏见对齐
+* **branding** → 视觉身份一致性
+* **ab-test-setup** → 变体安全的设计系统
 
-* [ ] Clear aesthetic direction stated
+---
+
+## 9. 操作员检查清单
+
+在最终确定输出之前：
+
+* [ ] 明确陈述了美学方向
 * [ ] DFII ≥ 8
-* [ ] One memorable design anchor
-* [ ] No generic fonts/colors/layouts
-* [ ] Code matches design ambition
-* [ ] Accessible and performant
+* [ ] 一个令人难忘的设计锚点
+* [ ] 没有通用的字体/颜色/布局
+* [ ] 代码与设计雄心匹配
+* [ ] 可访问且性能良好
 
 ---
 
-## 10. Questions to Ask (If Needed)
+## 10. 需要问的问题（如果需要）
 
-1. Who is this for, emotionally?
-2. Should this feel trustworthy, exciting, calm, or provocative?
-3. Is memorability or clarity more important?
-4. Will this scale to other pages/components?
-5. What should users *feel* in the first 3 seconds?
+1. 从情感上讲，这是为谁设计的？
+2. 这应该让人感到可信、兴奋、平静还是挑衅？
+3. 记忆性还是清晰度更重要？
+4. 这能否扩展到其他页面/组件？
+5. 用户在前 3 秒应该*感受到*什么？
 
 ---
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+此技能适用于执行概述中描述的工作流程或操作。
 
 ## 局限性
 - Use this skill only when the task clearly matches the scope described above.
