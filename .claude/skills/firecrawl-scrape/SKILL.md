@@ -8,15 +8,15 @@ allowed-tools:
 
 # firecrawl scrape
 
-Scrape one or more URLs. 返回值 clean, LLM-optimized markdown. Multiple URLs are scraped concurrently.
+抓取一个或多个URL。返回干净、LLM优化的markdown。多个URL并发抓取。
 
-## When to use
+## 何时使用
 
-- You have a specific URL and want its content
-- The page is static or JS-rendered (SPA)
-- Step 2 in the [workflow escalation pattern](firecrawl-cli): search → **scrape** → map → crawl → interact
+- 你有特定的URL并想要其内容
+- 页面是静态或JS渲染的（SPA）
+- [工作流升级模式](firecrawl-cli)中的第2步：search → **scrape** → map → crawl → interact
 
-## Quick start
+## 快速开始
 
 ```bash
 # Basic markdown extraction

@@ -1,6 +1,6 @@
 ---
 name: azure-functions
-description: "Azure Functions — Azure Functions 相关功能和最佳实践"
+description: "Azure Functions — Azure Functions 无服务器计算开发，涵盖触发器、绑定、Durable Functions 和最佳实践。"
   worker model, Durable Functions orchestration, cold start optimization, and
   production patterns. Covers .NET, Python, and Node.js programming models.
 risk: none
@@ -22,7 +22,7 @@ Modern .NET execution model with process isolation
 
 **When to use**: Building new .NET Azure Functions apps
 
-### Template
+### 模板
 
 // Program.cs - Isolated Worker Model
 using Microsoft.Azure.Functions.Worker;
@@ -89,20 +89,20 @@ public class HttpTriggerFunction
     }
 }
 
-### Notes
+### 备注
 
 - In-process model deprecated November 2026
 - Isolated worker supports .NET 8, 9, 10, and .NET Framework
 - Full dependency injection support
 - Custom middleware support
 
-### Node.js v4 Programming Model
+### Node.js v4 编程模型
 
 Modern code-centric approach for TypeScript/JavaScript
 
 **When to use**: Building Node.js Azure Functions
 
-### Template
+### 模板
 
 // src/functions/httpTrigger.ts
 import { app, HttpRequest, HttpResponseInit, Invocation上下文 } from "@azure/functions";
@@ -154,20 +154,20 @@ app.storageBlob("blobTrigger", {
   }
 });
 
-### Notes
+### 备注
 
 - v4 model is code-centric, no function.json files
 - Uses app object similar to Express.js
 - TypeScript first-class support
 - All triggers registered in code
 
-### Python v2 Programming Model
+### Python v2 编程模型
 
 Decorator-based approach for Python functions
 
 **When to use**: Building Python Azure Functions
 
-### Template
+### 模板
 
 # function_app.py
 import azure.functions as func
@@ -221,7 +221,7 @@ def blob_trigger(myblob: func.InputStream):
 def queue_trigger(msg: func.QueueMessage) -> None:
     logging.info(f"Queue message: {msg.get_body().decode('utf-8')}")
 
-### Notes
+### 备注
 
 - v2 model uses decorators, no function.json files
 - Python runs out-of-process (always isolated)
@@ -234,7 +234,7 @@ Sequential execution with state persistence
 
 **When to use**: Need sequential workflow with automatic retry
 
-### Template
+### 模板
 
 // C# Isolated Worker - Function Chaining
 using Microsoft.Azure.Functions.Worker;
@@ -303,7 +303,7 @@ public class OrderWorkflow
     }
 }
 
-### Notes
+### 备注
 
 - State automatically persisted between activities
 - Automatic retry on transient failures
@@ -316,7 +316,7 @@ Parallel execution with result aggregation
 
 **When to use**: Processing multiple items in parallel
 
-### Template
+### 模板
 
 // C# Isolated Worker - Fan-Out/Fan-In
 using Microsoft.Azure.Functions.Worker;
@@ -390,20 +390,20 @@ public class ParallelProcessing
     //     return {"processed": len(results), "results": results}
 }
 
-### Notes
+### 备注
 
 - Parallel execution for independent tasks
 - Results aggregated when all complete
 - Memory efficient - only stores task IDs
 - Up to thousands of parallel activities
 
-### Cold Start Optimization
+### 冷启动优化
 
 Minimize cold start latency in production
 
 **When to use**: Need fast response times in production
 
-### Template
+### 模板
 
 // 1. Use Premium Plan with pre-warmed instances
 // host.json
@@ -466,20 +466,20 @@ public class Startup
 //   --src myapp.zip \
 //   --build-remote true
 
-### Notes
+### 备注
 
 - Cold starts improved ~53% across all regions/languages
 - Premium Plan provides pre-warmed instances
 - Warmup trigger initializes before traffic
 - Package deployment can reduce cold start
 
-### Queue Trigger with Error Handling
+### 带错误处理的队列触发器
 
 Reliable message processing with poison queue
 
 **When to use**: Processing messages from Azure Storage Queue
 
-### Template
+### 模板
 
 // C# Isolated Worker - Queue Trigger
 using Microsoft.Azure.Functions.Worker;
@@ -546,20 +546,20 @@ public class QueueProcessor
 //   }
 // }
 
-### Notes
+### 备注
 
 - Messages retried up to maxDequeueCount times
 - Failed messages moved to poison queue
 - Configure visibilityTimeout for processing time
 - batchSize controls parallel processing
 
-### HTTP Trigger with Long-Running Pattern
+### 带长任务模式的 HTTP 触发器
 
 Handle work exceeding 230-second HTTP limit
 
 **When to use**: HTTP request triggers long-running work
 
-### Template
+### 模板
 
 // Async HTTP pattern - return immediately, poll for status
 [Function("StartLongRunning")]
@@ -623,16 +623,16 @@ public static async Task ProcessWork(
     // Update status in storage for polling
 }
 
-### Notes
+### 备注
 
 - HTTP timeout is 230 seconds regardless of plan
 - Use Durable Functions for async patterns
 - Return immediately with status endpoint
 - Client polls for completion
 
-## Sharp Edges
+## 尖锐边缘
 
-### HTTP Timeout is 230 Seconds Regardless of Plan
+### HTTP 超时无论计划类型均为 230 秒
 
 Severity: HIGH
 
@@ -706,7 +706,7 @@ public static async Task<HttpResponseData> StartWork(
 // When done, POST result to callback URL
 ```
 
-### Socket Exhaustion from HttpClient Instantiation
+### HttpClient 实例化导致套接字耗尽
 
 Severity: HIGH
 
@@ -792,7 +792,7 @@ public static class MyFunction
 // Use DI or static instances
 ```
 
-### Blocking Async Calls Cause Thread Starvation
+### 阻塞异步调用导致线程饥饿
 
 Severity: HIGH
 
@@ -861,7 +861,7 @@ private static async Task MainAsync(string[] args)
 }
 ```
 
-### Consumption Plan 10-Minute Timeout Limit
+### 消费计划 10 分钟超时限制
 
 Severity: MEDIUM
 
@@ -937,7 +937,7 @@ public static IEnumerable<WorkChunk> ProcessChunk(
 }
 ```
 
-### .NET In-Process Model Deprecated November 2026
+### .NET 进程内模型将于 2026 年 11 月弃用
 
 Severity: HIGH
 
@@ -1016,7 +1016,7 @@ public class IsolatedFunction
 - ILogger injection → constructor injection
 - Add Program.cs with HostBuilder
 
-### ILogger Not Outputting to Console or AppInsights
+### ILogger 未输出到控制台或 AppInsights
 
 Severity: MEDIUM
 
@@ -1345,6 +1345,6 @@ Message: HttpTrigger without [Function] attribute (isolated worker requires it).
 - User mentions or implies: function app
 
 ## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+- 仅当任务明确匹配上述描述的范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

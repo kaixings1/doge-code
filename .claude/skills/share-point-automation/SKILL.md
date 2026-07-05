@@ -11,4 +11,3 @@ Automate SharePoint operations including managing sites, lists, documents, folde
 
 **Toolkit docs:** [composio.dev/toolkits/share_point](https://composio.dev/toolkits/share_point)
 
----MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  22 HOURS 01 MINUTES 18 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE

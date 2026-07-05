@@ -32,7 +32,7 @@ requires:
 
 ```
 RUBE_SEARCH_TOOLS
-queries: [{use_case: "Datadog operations", known_fields: ""}]
+queries: [{use_case: "Datadog 操作", known_fields: ""}]
 session: {generate_id: true}
 ```
 
@@ -44,7 +44,7 @@ session: {generate_id: true}
 
 ```
 RUBE_SEARCH_TOOLS
-queries: [{use_case: "your specific Datadog task"}]
+queries: [{use_case: "你的特定 Datadog 任务"}]
 session: {id: "existing_session_id"}
 ```
 
@@ -61,8 +61,8 @@ session_id: "your_session_id"
 ```
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
-  tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
+  tool_slug: "来自搜索的_TOOL_SLUG",
+  arguments: {/* 来自搜索结果且符合 schema 的参数 */}
 }]
 memory: {}
 session_id: "your_session_id"
@@ -79,5 +79,4 @@ session_id: "your_session_id"
 
 ## 快速参考
 
-| Operation | Approach |
-|---MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN  18 HOURS 12 MINUTES 37 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+| 操作 | 方法 |

@@ -67,6 +67,7 @@ import testGen from './commands/test-gen.js'
 import lessPermissionPrompts from './commands/less-permission-prompts/index.js'
 import contextCollapse from './commands/context-collapse/index.js'
 import taskCreate from './commands/task-create/index.js'
+import task from './commands/task/index.js'
 import planMode from './commands/plan-mode/index.js'
 import compare from './commands/compare/index.js'
 import graphQL from './commands/graphql/index.js'
@@ -436,6 +437,7 @@ const COMMANDS = memoize((): Command[] => [
   lessPermissionPrompts,
   contextCollapse,
   taskCreate,
+  task,
   planMode,
   compare,
   graphQL,

@@ -298,18 +298,29 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
   const timeStamp = `[${now.toLocaleString()}]`
   const cmd = (args || '').trim().toLowerCase()
 
-  /** 通过 context.setMessages 追加一条消息（用于实时输出进度） */
-  function pushProgress(text: string) {
+  /** 通过 context.setMessages 追加或替换最后一条消息 */
+  function pushProgress(text: string, replaceLast = false) {
     if (context?.setMessages) {
-      context.setMessages(prev => [
-        ...prev,
-        {
-          type: 'assistant' as const,
-          isMeta: true,
-          uuid: `progress-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-          message: { content: [{ type: 'text', text }] },
-        } as Message,
-      ])
+      context.setMessages(prev => {
+        if (replaceLast && prev.length > 0) {
+          const last = prev[prev.length - 1]
+          if (last.type === 'assistant' && (last as any).isMeta) {
+            return [
+              ...prev.slice(0, -1),
+              { ...last, uuid: `progress-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`, message: { content: [{ type: 'text', text }] } },
+            ]
+          }
+        }
+        return [
+          ...prev,
+          {
+            type: 'assistant' as const,
+            isMeta: true,
+            uuid: `progress-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+            message: { content: [{ type: 'text', text }] },
+          } as Message,
+        ]
+      })
     }
   }
 
@@ -365,12 +376,12 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
         output += `  ${filename} ← ${displayName} ... ✅ ${testResult.message}\n`
         passed++
         updated++
-        pushProgress(`  ${filename} ← ${displayName} ... ✅ ${testResult.message}`)
+        pushProgress(`  ${filename} ← ${displayName} ... ✅ ${testResult.message}`, true)
       } else {
         output += `  ${filename} ← ${displayName} ... ❌ ${testResult.message}\n`
         failed++
         log('INFO', `跳过写入`, { filename, reason: testResult.message })
-        pushProgress(`  ${filename} ← ${displayName} ... ❌ ${testResult.message}`)
+        pushProgress(`  ${filename} ← ${displayName} ... ❌ ${testResult.message}`, true)
       }
     }
 
@@ -429,10 +440,10 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
       writeConfig(filename, config)
       log('INFO', `配置文件已更新`, { filename, model: entry.model, budget: entry.budget, keyPreview: entry.key.substring(0, 12) + '...' })
       output += `\n✅ free${idx}.json 已更新\n  模型: ${displayName}\n  预算: ${entry.budget}\n  过期: ${entry.expires}\n  端点: ${isAnthropic ? BASE_ANTHROPIC : BASE_OPENAI}\n\n💡 使用 d.bat free${idx} 启动`
-      pushProgress(`✅ ${displayName} 测试通过 (${testResult.message})`)
+      pushProgress(`📡 测试 ${displayName} ... ✅ ${testResult.message}`, true)
     } else {
       output += `\n❌ free${idx}.json 跳过更新（Key 不可用）\n  原因: ${testResult.message}`
-      pushProgress(`❌ ${displayName} 测试失败: ${testResult.message}`)
+      pushProgress(`📡 测试 ${displayName} ... ❌ ${testResult.message}`, true)
     }
 
     return { type: 'text', value: timeStamp + '\n' + output }

@@ -134,4 +134,4 @@ npx antigravity-awesome-skills --claude
 
 ## 限制
 
-Use this skill only when the task clearly matches the scope described above (design review and architectural analysis). Brooks Lint applies AI-powered analysis grounded in established engineering principles. It should complement — not replace — human design review for production-critical decisions. Results reflect the principles of the 12 source books and may not apply to all architectural styles or domains.
+仅当任务明确匹配上述描述的范围（设计审查和架构分析）时才使用此技能。Brooks Lint 应用基于成熟工程原则的 AI 驱动分析。它应补充——而非替代——针对生产关键决策的人工设计审查。结果反映了 12 本来源书中的原则，可能不适用于所有架构风格或领域。
