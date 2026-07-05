@@ -1,13 +1,13 @@
 ---
 name: mapulus-automation
-description: "通过 Rube MCP (Composio) 自动执行 Mapulus 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Mapulus 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
 # Mapulus 自动化（通过 Rube MCP）
 
-Automate Mapulus operations through Composio's Mapulus toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Mapulus 工具包自动执行 Mapulus 操作。
 
 **Toolkit docs**: [composio.dev/toolkits/mapulus](https://composio.dev/toolkits/mapulus)
 

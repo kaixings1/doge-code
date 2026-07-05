@@ -6,11 +6,11 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Daily News Report v3.0
+# 每日新闻报告 v3.0
 
-> **架构 Upgrade**: Main Agent Orchestration + SubAgent Execution + Browser Scraping + Smart Caching
+> **架构升级**: 主代理编排 + 子代理执行 + 浏览器抓取 + 智能缓存
 
-## Core 架构
+## 核心架构
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -49,18 +49,18 @@ date_added: "2026-02-27"
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-## 配置 Files
+## 配置文件
 
-This skill uses the following configuration files:
+此技能使用以下配置文件：
 
-| File | Purpose |
+| 文件 | 用途 |
 |------|---------|
-| `sources.json` | Source configuration, priorities, scrape methods |
-| `cache.json` | Cached data, historical stats, deduplication fingerprints |
+| `sources.json` | 源配置、优先级、抓取方法 |
+| `cache.json` | 缓存数据、历史统计、去重指纹 |
 
-## Execution Process Details
+## 执行过程详情
 
-### Phase 1: Initialization
+### 阶段 1: 初始化
 
 ```yaml
 Steps:
@@ -71,9 +71,9 @@ Steps:
   5. Check if a partial report exists for today (append mode)
 ```
 
-### Phase 2: Dispatch SubAgents
+### 阶段 2: 分派子代理
 
-**Strategy**: Parallel dispatch, batch execution, early stopping mechanism
+**策略**: 并行分派、批量执行、提前停止机制
 
 ```yaml
 Wave 1 (Parallel):
@@ -92,9 +92,9 @@ If still < 20 items:
     - Browser Worker: ProductHunt, Latent Space (Require JS rendering)
 ```
 
-### Phase 3: SubAgent Task Format
+### 阶段 3: 子代理任务格式
 
-Task format received by each SubAgent:
+每个子代理接收的任务格式：
 
 ```yaml
 task: fetch_and_extract
@@ -125,9 +125,9 @@ constraints:
 return_format: JSON
 ```
 
-### Phase 4: Main Agent Monitoring & Feedback
+### 阶段 4: 主代理监控与反馈
 
-Main Agent Responsibilities:
+主代理职责：
 
 ```yaml
 Monitoring:
@@ -146,7 +146,7 @@ Decision:
   - All batches done but < 20 → Generate with available content (Quality over Quantity)
 ```
 
-### Phase 5: Evaluation & Filtering
+### 阶段 5: 评估与过滤
 
 ```yaml
 Deduplication:
@@ -165,9 +165,9 @@ Sorting:
   - Take Top 20
 ```
 
-### Phase 6: Browser Scraping (MCP Chrome DevTools)
+### 阶段 6: 浏览器抓取 (MCP Chrome DevTools)
 
-For pages requiring JS rendering, use a headless browser:
+对于需要 JS 渲染的页面，使用无头浏览器：
 
 ```yaml
 Process:
@@ -183,7 +183,7 @@ Applicable Scenarios:
   - Other SPA applications
 ```
 
-### Phase 7: Generate Report
+### 阶段 7: 生成报告
 
 ```yaml
 Output:
@@ -198,7 +198,7 @@ Content Structure:
   - Generation Info (Version, Timestamps)
 ```
 
-### Phase 8: Update Cache
+### 阶段 8: 更新缓存
 
 ```yaml
 Update cache.json:
@@ -209,11 +209,11 @@ Update cache.json:
   - article_history: Record included articles
 ```
 
-## SubAgent Call Examples
+## 子代理调用示例
 
-### Using general-purpose Agent
+### 使用通用代理
 
-Since custom agents require session restart to be discovered, use general-purpose and inject worker prompts:
+由于自定义代理需要重新启动会话才能被发现，使用通用代理并注入工作提示：
 
 ```
 Task Call:
@@ -253,7 +253,7 @@ Task Call:
     Return JSON directly, no explanation.
 ```
 
-### Using worker Agent (需要 session restart)
+### 使用工作代理 (需要会话重启)
 
 ```
 Task Call:
@@ -277,7 +277,7 @@ Task Call:
       exclude: General Science/Marketing Puff/Overly Academic
 ```
 
-## Output Template
+## 输出模板
 
 ```markdown
 # Daily News Report (YYYY-MM-DD)
@@ -311,48 +311,48 @@ Task Call:
 *Sources: HN, HuggingFace, OneUsefulThing, ...*
 ```
 
-## 约束条件 & Principles
+## 约束条件与原则
 
-1.  **Quality over Quantity**: Low-quality content does not enter the report.
-2.  **Early Stop**: Stop scraping once 20 high-quality items are reached.
-3.  **Parallel First**: SubAgents in the same batch execute in parallel.
-4.  **Fault Tolerance**: Failure of a single source does not affect the whole process.
-5.  **Cache Reuse**: Avoid re-scraping the same content.
-6.  **Main Agent Control**: All decisions are made by the Main Agent.
-7.  **Fallback Awareness**: Detect sub-agent availability, gracefully degrade if unavailable.
+1.  **质量优先于数量**: 低质量内容不进入报告。
+2.  **提前停止**: 一旦达到 20 个高质量项目就停止抓取。
+3.  **并行优先**: 同一批次的子代理并行执行。
+4.  **容错性**: 单个源失败不影响整个流程。
+5.  **缓存重用**: 避免重新抓取相同内容。
+6.  **主代理控制**: 所有决策由主代理做出。
+7.  **降级感知**: 检测子代理可用性，如果不可用则优雅降级。
 
-## Expected 性能
+## 预期性能
 
-| Scenario | Expected Time | Note |
+| 场景 | 预期时间 | 备注 |
 |---|---|---|
-| Optimal | ~2 mins | Tier1 sufficient, no browser needed |
-| Normal | ~3-4 mins | 需要 Tier2 supplement |
-| Browser Needed | ~5-6 mins | Includes JS rendered pages |
+| 最优 | ~2 分钟 | Tier1 足够，无需浏览器 |
+| 正常 | ~3-4 分钟 | 需要 Tier2 补充 |
+| 需要浏览器 | ~5-6 分钟 | 包括 JS 渲染页面 |
 
 ## 错误处理
 
-| Error Type | Handling |
+| 错误类型 | 处理方式 |
 |---|---|
-| SubAgent Timeout | Log error, continue to next |
-| Source 403/404 | Mark disabled, update sources.json |
-| Extraction Failed | Return raw content, Main Agent decides |
-| Browser Crash | Skip source, log entry |
+| 子代理超时 | 记录错误，继续下一个 |
+| 源 403/404 | 标记为禁用，更新 sources.json |
+| 提取失败 | 返回原始内容，由主代理决定 |
+| 浏览器崩溃 | 跳过源，记录日志 |
 
-## Compatibility & Fallback
+## 兼容性与降级
 
-To ensure usability across different Agent environments, the following checks must be performed:
+为确保在不同代理环境中的可用性，必须执行以下检查：
 
-1.  **Environment Check**:
-    -   In Phase 1 initialization, attempt to detect if `worker` sub-agent exists.
-    -   If not exists (or plugin not installed), automatically switch to **Serial Execution Mode**.
+1.  **环境检查**:
+    -   在阶段 1 初始化时，尝试检测 `worker` 子代理是否存在。
+    -   如果不存在（或插件未安装），自动切换到**串行执行模式**。
 
-2.  **Serial Execution Mode**:
-    -   Do not use parallel block.
-    -   Main Agent executes scraping tasks for each source sequentially.
-    -   Slower, but guarantees basic functionality.
+2.  **串行执行模式**:
+    -   不使用并行块。
+    -   主代理按顺序为每个源执行抓取任务。
+    -   较慢，但保证基本功能。
 
-3.  **User Alert**:
-    -   MUST include a clear warning in the generated report header indicating the current degraded mode.
+3.  **用户警报**:
+    -   必须在生成的报告标题中包含明确的警告，指示当前降级模式。
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+此技能适用于执行概述中描述的工作流或操作。

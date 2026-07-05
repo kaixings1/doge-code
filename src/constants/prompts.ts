@@ -313,9 +313,12 @@ function getUsingYourToolsSection(enabledTools: Set<string>): string {
 }
 
 function getAgentToolSection(): string {
-  return isForkSubagentEnabled()
-    ? `调用 ${AGENT_TOOL_NAME} 而不指定 subagent_type 会创建一个 fork，它在后台运行并将其工具输出保留在你的上下文之外 — 因此你可以在此 fork 工作时继续与用户聊天。当研究或多步骤实现工作会使你的上下文充满你不再需要的原始输出时，请使用它。**如果你是 fork 本身** — 直接执行；不要重新委托。`
-    : `当手头的任务与代理的描述匹配时，使用 ${AGENT_TOOL_NAME} 工具与专门的代理配合。子代理对于并行化独立查询或保护主上下文窗口免受过多结果的影响很有价值，但在不需要时不应过度使用。重要的是，避免重复子代理已经在做的工作 — 如果你将研究委托给子代理，不要自己也执行相同的搜索。`
+  if (isForkSubagentEnabled()) {
+    return `调用 ${AGENT_TOOL_NAME} 而不指定 subagent_type 会创建一个 fork，它在后台运行并将其工具输出保留在你的上下文之外 — 因此你可以在此 fork 工作时继续与用户聊天。当研究或多步骤实现工作会使你的上下文充满你不再需要的原始输出时，请使用它。**如果你是 fork 本身** — 直接执行；不要重新委托。`
+  }
+  return `当手头的任务与代理的描述匹配时，使用 ${AGENT_TOOL_NAME} 工具与专门的代理配合。子代理对于并行化独立查询或保护主上下文窗口免受过多结果的影响很有价值，但在不需要时不应过度使用。重要的是，避免重复子代理已经在做的工作 — 如果你将研究委托给子代理，不要自己也执行相同的搜索。
+
+此外，**自定义代理**（来自 .claude/agents/ 目录）定义了用于特定领域任务的专门 agent。当用户明确要求使用某个自定义代理（例如 "使用 XXX agent"），或当前任务与某个自定义代理的 description 高度匹配时，**必须**优先使用 ${AGENT_TOOL_NAME} 并设置对应的 subagent_type 来调用它，而不是自行搜索或分析。你可以通过检查 agent_listing_delta（或本消息中的可用代理类型列表）来找到可用的自定义代理。`
 }
 
 /**

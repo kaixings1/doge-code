@@ -6,23 +6,23 @@ source: "https://github.com/op7418/NanoBanana-PPT-Skills"
 date_added: "2026-02-27"
 ---
 
-# Nanobanana Ppt Skills
+# Nanobanana PPT 技能
 
 ## 概述
 
-AI-powered PPT generation with document analysis and styled images
+通过 AI 驱动的 PPT 生成，支持文档分析和样式化图像。
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when you need to work with ai-powered ppt generation with document analysis and styled images.
+当您需要处理 AI 驱动的 PPT 生成、文档分析和样式化图像时使用此技能。
 
 ## 使用说明
 
-This skill provides guidance and patterns for ai-powered ppt generation with document analysis and styled images.
+此技能为 AI 驱动的 PPT 生成、文档分析和样式化图像提供指导和模式。
 
-For more information, see the [source repository](https://github.com/op7418/NanoBanana-PPT-Skills).
+更多信息，请参阅[源代码仓库](https://github.com/op7418/NanoBanana-PPT-Skills)。
 
 ## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+- 仅当任务明确符合上述描述范围时使用此技能。
+- 不要将输出视为环境特定验证、测试或专家评审的替代品。
+- 如果缺少必需的输入、权限、安全边界或成功标准，请停止并请求澄清。

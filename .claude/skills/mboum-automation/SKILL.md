@@ -1,13 +1,13 @@
 ---
 name: mboum-automation
-description: "通过 Rube MCP (Composio) 自动执行 Mboum 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Mboum 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
 # Mboum 自动化（通过 Rube MCP）
 
-Automate Mboum operations through Composio's Mboum toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Mboum 工具包自动执行 Mboum 操作。
 
 **Toolkit docs**: [composio.dev/toolkits/mboum](https://composio.dev/toolkits/mboum)
 

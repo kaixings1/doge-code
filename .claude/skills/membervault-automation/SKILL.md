@@ -1,13 +1,13 @@
 ---
 name: membervault-automation
-description: "通过 Rube MCP (Composio) 自动执行 Membervault 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Membervault 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
 # Membervault 自动化（通过 Rube MCP）
 
-Automate Membervault operations through Composio's Membervault toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Membervault 工具包自动执行 Membervault 操作。
 
 **Toolkit docs**: [composio.dev/toolkits/membervault](https://composio.dev/toolkits/membervault)
 

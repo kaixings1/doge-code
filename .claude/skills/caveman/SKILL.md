@@ -1,6 +1,6 @@
 ---
 name: caveman
-description: "Caveman"
+description: "Caveman — 基础工具和相关功能"
 risk: safe
 source: community
 ---

@@ -1,13 +1,13 @@
 ---
 name: mezmo-automation
-description: "通过 Rube MCP (Composio) 自动执行 Mezmo 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Mezmo 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
 # Mezmo 自动化（通过 Rube MCP）
 
-Automate Mezmo operations through Composio's Mezmo toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Mezmo 工具包自动执行 Mezmo 操作。
 
 **Toolkit docs**: [composio.dev/toolkits/mezmo](https://composio.dev/toolkits/mezmo)
 

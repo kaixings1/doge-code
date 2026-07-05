@@ -7,21 +7,21 @@ source: personal
 date_added: "2026-02-27"
 ---
 
-# Database Workflow Bundle
+# 数据库工作流包
 
 ## 概述
 
-Comprehensive database workflow for database design, development, optimization, migrations, and data engineering. Covers SQL, NoSQL, and modern data platforms.
+全面的数据库工作流，涵盖数据库设计、开发、优化、迁移和数据工程。包括 SQL、NoSQL 和现代数据平台。
 
-## When to Use This Workflow
+## 何时使用此工作流
 
-Use this workflow when:
-- Designing database schemas
-- Implementing database migrations
-- Optimizing query performance
-- Setting up data pipelines
-- Managing database operations
-- Implementing data quality
+在以下情况下使用此工作流：
+- 设计数据库模式时
+- 实施数据库迁移时
+- 优化查询性能时
+- 设置数据管道时
+- 管理数据库操作时
+- 实施数据质量时
 
 ## Workflow Phases
 
@@ -173,45 +173,45 @@ Use @data-quality-frameworks to implement data quality checks
 Use @database-admin to manage database operations
 ```
 
-## Database Technology Workflows
+## 数据库技术工作流
 
 ### PostgreSQL
 ```
-Skills: postgresql, postgres-best-practices, neon-postgres, prisma-expert
+技能: postgresql, postgres-best-practices, neon-postgres, prisma-expert
 ```
 
 ### MongoDB
 ```
-Skills: nosql-expert, azure-cosmos-db-py
+技能: nosql-expert, azure-cosmos-db-py
 ```
 
 ### Redis
 ```
-Skills: bullmq-specialist, upstash-qstash
+技能: bullmq-specialist, upstash-qstash
 ```
 
-### Data Warehousing
+### 数据仓库
 ```
-Skills: clickhouse-io, dbt-transformation-patterns
+技能: clickhouse-io, dbt-transformation-patterns
 ```
 
-## Quality Gates
+## 质量门
 
-- [ ] Schema designed and reviewed
-- [ ] 迁移s tested
-- [ ] 性能 benchmarks met
-- [ ] Backups configured
-- [ ] Monitoring in place
-- [ ] Documentation complete
+- [ ] 模式设计并审查完成
+- [ ] 迁移测试完成
+- [ ] 性能基准达成
+- [ ] 备份配置完成
+- [ ] 监控就位
+- [ ] 文档完成
 
-## 相关 Workflow Bundles
+## 相关工作流包
 
-- `development` - Application development
-- `cloud-devops` - Infrastructure
-- `ai-ml` - AI/ML data pipelines
-- `testing-qa` - Data testing
+- `development` - 应用开发
+- `cloud-devops` - 基础设施
+- `ai-ml` - AI/ML 数据管道
+- `testing-qa` - 数据测试
 
-## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确匹配上述描述的范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

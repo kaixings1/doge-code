@@ -33,11 +33,11 @@ tools:
 
 ## 何时使用此技能
 
-* Connecting frontend apps (React, React Native, Vue, etc.) to backend APIs
-* Integrating ML/AI endpoints (`/predict`, `/recommend`)
-* Handling asynchronous data in UI
-* Fixing stale data, flickering UI, or duplicate requests
-* Designing scalable frontend API layers
+* 将前端应用（React、React Native、Vue 等）连接到后端 API 时
+* 集成 ML/AI 端点（`/predict`、`/recommend`）时
+* 在 UI 中处理异步数据时
+* 修复陈旧数据、闪烁 UI 或重复请求时
+* 设计可扩展的前端 API 层时
 
 ---
 
@@ -117,7 +117,7 @@ useEffect(() => {
 }, []);
 ```
 
-> Use a cancellation flag for non-fetch async logic. For network requests, prefer AbortController.
+> 对于非 fetch 异步逻辑使用取消标志。对于网络请求，优先使用 AbortController。
 
 ---
 
@@ -212,7 +212,7 @@ export const dedupedFetch = (key, fn) => {
 
 ## 示例
 
-### Example 1: ML Prediction with Cancellation
+### 示例 1：具有取消功能的 ML 预测
 
 ```js id="n5q2pt"
 const controllerRef = useRef(null);
@@ -240,7 +240,7 @@ const handlePredict = async (input) => {
 
 ---
 
-### Example 2: Debounced Search
+### 示例 2：防抖搜索
 
 ```js id="w4z8yn"
 const debouncedQuery = useDebounce(query, 400);
@@ -254,7 +254,7 @@ useEffect(() => {
     .then(setResults)
     .catch((err) => {
       if (err.name !== "AbortError") {
-        setError("Search failed. Please try again.");
+        setError("搜索失败。请重试。");
       }
     });
 
@@ -264,7 +264,7 @@ useEffect(() => {
 
 ---
 
-### Example 3: Optimistic UI Update
+### 示例 3：乐观 UI 更新
 
 ```js id="q2k9hz"
 const deleteItem = async (id) => {
@@ -276,7 +276,7 @@ const deleteItem = async (id) => {
     await apiClient(`/items/${id}`, { method: "DELETE" });
   } catch (err) {
     setItems(previous);
-    setError("Delete failed. Please try again.");
+    setError("删除失败。请重试。");
   }
 };
 ```
@@ -285,51 +285,51 @@ const deleteItem = async (id) => {
 
 ## 最佳实践
 
-* ✅ Centralize API logic in a dedicated layer
-* ✅ Normalize errors using a custom error class
-* ✅ Always handle loading, error, and success states
-* ✅ Use AbortController for request cancellation
-* ✅ Retry only transient failures (5xx)
-* ✅ Use debouncing for input-driven APIs
-* ✅ Deduplicate identical requests
+* ✅ 在专用层中集中 API 逻辑
+* ✅ 使用自定义错误类规范化错误
+* ✅ 始终处理加载、错误和成功状态
+* ✅ 使用 AbortController 进行请求取消
+* ✅ 仅重试瞬态故障（5xx）
+* ✅ 对输入驱动的 API 使用防抖
+* ✅ 对相同请求进行去重
 
 ---
 
 ## 反模式
 
-* ❌ Retrying 4xx errors
-* ❌ No request cancellation (memory leaks)
-* ❌ Race-condition-prone state updates
-* ❌ Swallowing errors silently
-* ❌ Global loading/error state for multiple requests
-* ❌ Calling APIs directly inside components repeatedly
+* ❌ 重试 4xx 错误
+* ❌ 没有请求取消（内存泄漏）
+* ❌ 容易产生竞态条件的状态更新
+* ❌ 静默吞没错误
+* ❌ 多个请求的全局加载/错误状态
+* ❌ 直接在组件内部重复调用 API
 
 ---
 
 ## 常见陷阱
 
-**Problem:** UI shows stale data
-**Solution:** Use cancellation or guard against outdated responses
+**问题:** UI 显示陈旧数据
+**解决方案:** 使用取消或防护过时响应
 
-**Problem:** Too many API calls on input
-**Solution:** Use debouncing + cancellation
+**问题:** 输入时 API 调用过多
+**解决方案:** 使用防抖 + 取消
 
-**Problem:** Duplicate requests from multiple components
-**Solution:** Use request deduplication
+**问题:** 来自多个组件的重复请求
+**解决方案:** 使用请求去重
 
-**Problem:** Server overload during retry
-**Solution:** Use exponential backoff
+**问题:** 重试期间服务器过载
+**解决方案:** 使用指数退避
 
-**Problem:** State updates after component unmount
-**Solution:** Use AbortController cleanup
+**问题:** 组件卸载后的状态更新
+**解决方案:** 使用 AbortController 清理
 
 ---
 
 ## 限制
 
-* These examples use vanilla JavaScript patterns; adapt them to your framework's data-fetching library when using React Query, SWR, Apollo, Relay, or similar tools.
-* Do not retry non-idempotent mutations unless the backend provides idempotency keys or another duplicate-safe contract.
-* Do not expose privileged API keys in frontend code; proxy sensitive requests through a backend.
+* 这些示例使用原生 JavaScript 模式；在使用 React Query、SWR、Apollo、Relay 或类似工具时，请将其适配到您框架的数据获取库。
+* 不要重试非幂等变更，除非后端提供幂等性密钥或其他重复安全契约。
+* 不要在前端代码中暴露特权 API 密钥；通过后端代理敏感请求。
 
 ---
 
