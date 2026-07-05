@@ -142,7 +142,7 @@ Tokens stored securely using the system keyring:
 
 Service name: `google-slides-skill-oauth`
 
-Automatically refreshes expired tokens using Google's cloud function.
+Automatically refreshes expired 令牌s using Google's cloud function.
 
 ## 局限性
 - Use this skill only when the task clearly matches the scope described above.

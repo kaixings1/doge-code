@@ -18,77 +18,77 @@ license_source: "https://clawhub.ai/jiawei248/daily-gift"
 
 ## 概述
 
-A relationship-aware gift engine that decides *whether* a gift should exist before deciding *what* it should be. Uses a five-stage creative pipeline to generate personalized daily gifts in H5 (interactive web pages), AI-generated images, or AI-generated videos. The core design principle is "idea before medium" — the creative concept is locked before the output format is chosen.
+一个关系感知的礼物引擎，在决定*应该是什么*之前先决定*是否应该存在*礼物。使用五阶段创意流水线生成个性化的每日礼物，可以是 H5（交互式网页）、AI 生成的图像或 AI 生成的视频。核心设计原则是"先有想法，后有媒介"——在输出格式选定之前先锁定创意概念。
 
-Published on ClawHub: https://clawhub.ai/jiawei248/daily-gift
+发布于 ClawHub：https://clawhub.ai/jiawei248/daily-gift
 
-## When to Use This Skill
+## 何时使用此技能
 
-- Use when the agent should autonomously decide whether today deserves a personalized gift
-- Use when a milestone, anniversary, or emotionally meaningful moment should be marked with a creative artifact
-- Use when the user manually requests a visual gift from a quote, poem, or creative brief
-- Use when you want a daily cron-triggered creative output that avoids repetition and template fatigue
+- 当代理应自主决定今天是否值得获得个性化礼物时使用
+- 当里程碑、周年纪念或情感上有意义的时刻需要用创意作品标记时使用
+- 当用户手动从引文、诗歌或创意简报请求视觉礼物时使用
+- 当您想要避免重复和模板疲劳的每日定时触发创意输出时使用
 
 ## 工作原理
 
-### Stage 1: Editorial Judgment
+### 阶段 1: 编辑判断
 
-Decide whether a gift should exist today, how heavy it should be (skip / nudge / light / standard / heavy), and what content direction to take (reflect, extension, compass, mirror, play, curation, utility, etc.). Format is NOT chosen here.
+决定今天是否应该存在礼物，礼物的分量应该多大（跳过/轻推/轻度/标准/重度），以及采取什么内容方向（反思、延伸、指南针、镜子、游戏、策展、实用等）。此处不选择格式。
 
-### Stage 2: Synthesis + Gift Thesis
+### 阶段 2: 综合 + 礼物主题
 
-Extract six content slots from conversation context (today_theme, emotion_peaks, historical_echo, open_loop, lobster_judgment, preference_hint). Form a gift thesis = anchor (which moment deserves the center) + return (what new perspective the agent gives back). If the thesis has no return, it's not a gift — it's a decorated log entry.
+从对话上下文中提取六个内容槽（today_theme、emotion_peaks、historical_echo、open_loop、lobster_judgment、preference_hint）。形成礼物主题 = 锚点（哪个时刻值得成为中心）+ 回报（代理给出的新视角）。如果主题没有回报，那就不是礼物——而是装饰过的日志条目。
 
-### Stage 2.5: Creative Concept
+### 阶段 2.5: 创意概念
 
-Generate 5+ concept candidates using seven thinking angles (metaphor flip, format mashup, impossible action, scale shift, role reversal, time distortion, cultural remix). Cross-pollinate with a library of 73 creative seeds across 8 categories. Run three quality checks: concept quality, concept diversity (8 families), and visual/theme collision detection.
+使用七个思考角度（隐喻翻转、格式混搭、不可能的动作、尺度转换、角色反转、时间扭曲、文化混音）生成 5+ 个概念候选。与包含 8 个类别 73 个创意种子的库进行交叉融合。运行三个质量检查：概念质量、概念多样性（8 个家族）以及视觉/主题冲突检测。
 
-### Format Selection
+### 格式选择
 
-Only after the concept is locked does the system choose the output format (H5, image, or video) based on what best serves the concept.
+只有在概念锁定后，系统才会根据最能服务于概念的原则选择输出格式（H5、图像或视频）。
 
-### Stage 3: Visual Strategy
+### 阶段 3: 视觉策略
 
-Choose visual approach, plan assets (pure code, generated background, hybrid), select visual style, and run pre-visualization checks against recent gifts for anti-repetition.
+选择视觉方法，规划资源（纯代码、生成背景、混合），选择视觉风格，并针对最近的礼物运行预可视化检查以防止重复。
 
-### Stage 4: Rendering
+### 阶段 4: 渲染
 
-Produce the final artifact. H5 gifts use p5.js/canvas with a quality floor set by built-in templates (300-400 lines of tuned code). Image and video gifts use AI generation APIs. All formats have fallback chains.
+生成最终作品。H5 礼物使用 p5.js/canvas，质量底线由内置模板设定（300-400 行调整过的代码）。图像和视频礼物使用 AI 生成 API。所有格式都有备用链。
 
-## Key Features
+## 主要特性
 
-- **Five-stage creative pipeline** with explicit quality gates between stages
-- **Multi-layer anti-repetition**: concept family, visual elements, theme, style, content direction — each tracked across sliding windows of recent gifts
-- **Three-layer user taste profile**: Layer 1 (identity — stable), Layer 2 (context — updates every 5-7 gifts), Layer 3 (signals — auto-appended after every gift)
-- **Three runtime modes**: onboarding setup, daily cron, and manual trigger
-- **11 content directions**: reflect, extension, compass, mirror, gift-from-elsewhere, play, real-world-nudge, curation, delayed-payoff, openclaw-inner-life, utility
-- **8 concept families**: borrowed-media, interactive-object, transformation, narrative, data-viz, game-puzzle, real-world, poetic-literary
+- **五阶段创意流水线**，阶段之间有明确的质量门
+- **多层防重复**：概念家族、视觉元素、主题、风格、内容方向——每个都在最近礼物的滑动窗口中跟踪
+- **三层用户口味档案**：第 1 层（身份——稳定）、第 2 层（上下文——每 5-7 个礼物更新）、第 3 层（信号——每个礼物后自动附加）
+- **三种运行时模式**：入门设置、每日定时任务和手动触发
+- **11 种内容方向**：反思、延伸、指南针、镜子、来自他处的礼物、游戏、现实世界轻推、策展、延迟回报、openclaw 内心生活、实用
+- **8 个概念家族**：借用媒体、交互对象、转换、叙事、数据可视化、游戏谜题、现实世界、诗意文学
 
 ## 最佳实践
 
-- ✅ Let the editorial judgment decide — not every day needs a gift
-- ✅ Generate 5+ concept candidates before selecting one
-- ✅ Check recent gifts for visual and thematic collision before rendering
-- ✅ Use the taste profile to personalize over time
-- ❌ Don't skip straight from thesis to rendering without a real creative concept
-- ❌ Don't default to "reflect on today" every time — vary content direction
-- ❌ Don't choose the format before locking the concept
+- ✅ 让编辑判断决定——并非每天都需要礼物
+- ✅ 在选择之前生成 5+ 个概念候选
+- ✅ 在渲染前检查最近礼物的视觉和主题冲突
+- ✅ 使用口味档案随时间个性化
+- ❌ 不要在没有真正创意概念的情况下直接从主题跳到渲染
+- ❌ 不要每次都默认为"反思今天"——变化内容方向
+- ❌ 不要在锁定概念之前选择格式
 
 ## 局限性
 
-- Requires API keys for image/video generation (optional — H5 works without them)
-- Cron mode runs in the agent's main session for full conversation context access
-- Shell scripts make external API calls for rendering and asset fetching
-- The skill creates and manages local workspace files for state, history, and taste profiling
+- 需要图像/视频生成的 API 密钥（可选——H5 无需密钥即可工作）
+- 定时任务模式在代理的主会话中运行，以便完全访问对话上下文
+- Shell 脚本进行外部 API 调用以进行渲染和资源获取
+- 技能创建并管理本地工作空间文件，用于状态、历史和口味分析
 
-## Security & Safety Notes
+## 安全与安全注意事项
 
-- The skill creates a recurring cron job for daily gift delivery. Review and approve the cron setup step.
-- Shell scripts in `scripts/` call external APIs (image generation, video generation, asset hosting). Supply API keys only after reviewing which scripts use them.
-- User taste data and gift history are stored locally in `workspace/daily-gift/`. No data is sent to external services beyond the configured rendering APIs.
-- The skill reads conversation context and memory files to inform editorial judgment — this is core to personalization but means it has broad read access within the agent's workspace.
+- 技能创建重复的定时任务以进行每日礼物交付。审查并批准定时任务设置步骤。
+- `scripts/` 中的 Shell 脚本调用外部 API（图像生成、视频生成、资源托管）。仅在审查哪些脚本使用它们后才提供 API 密钥。
+- 用户口味数据和礼物历史存储在本地 `workspace/daily-gift/` 中。除了配置的渲染 API 外，没有数据发送到外部服务。
+- 技能读取对话上下文和内存文件以告知编辑判断——这是个性化的核心，但也意味着它在代理的工作空间内具有广泛的读取权限。
 
 ## 相关技能
 
-- Image generation skills — for standalone image creation without the gift pipeline
-- Cron/scheduling skills — for understanding the daily trigger mechanism
+- 图像生成技能——用于没有礼物流水线的独立图像创建
+- 定时任务/调度技能——用于理解每日触发机制

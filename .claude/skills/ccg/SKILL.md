@@ -1,6 +1,6 @@
 ---
 name: ccg
-description: "CCG"
+description: "CCG — 相关功能和最佳实践"
 risk: safe
 source: community
 ---

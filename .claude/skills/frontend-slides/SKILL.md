@@ -6,42 +6,42 @@ source: https://github.com/zarazhangrui/frontend-slides
 date_added: "2026-03-07"
 ---
 
-# Frontend Slides
+# 前端幻灯片
 
-Create zero-dependency, animation-rich HTML presentations that run entirely in the browser.
+创建零依赖、动画丰富的 HTML 演示文稿，完全在浏览器中运行。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- Use when the user asks to create a presentation, slide deck, or pitch from scratch.
-- Use when the user wants to convert an existing PPT or PPTX file into a web-based presentation.
-- Use when designing visually rich, animated HTML content that needs to fit exactly within the viewport.
+- 当用户要求从头开始创建演示文稿、幻灯片或推介时使用。
+- 当用户想要将现有的 PPT 或 PPTX 文件转换为基于 Web 的演示文稿时使用。
+- 当设计需要精确适应视口的视觉丰富、动画 HTML 内容时使用。
 
-## Core Principles
+## 核心原则
 
-1. **Zero 依赖项** — Single HTML files with inline CSS/JS. No npm, no build tools.
-2. **Show, Don't Tell** — Generate visual previews, not abstract choices. People discover what they want by seeing it.
-3. **Distinctive Design** — No generic "AI slop." Every presentation must feel custom-crafted.
-4. **Viewport Fitting (NON-NEGOTIABLE)** — Every slide MUST fit exactly within 100vh. No scrolling within slides, ever. Content overflows? Split into multiple slides.
+1. **零依赖项** — 具有内联 CSS/JS 的单个 HTML 文件。无需 npm，无需构建工具。
+2. **展示而非讲述** — 生成视觉预览，而非抽象选择。人们通过看到来发现他们想要什么。
+3. **独特设计** — 没有通用的"AI 垃圾"。每个演示文稿都必须感觉是定制的。
+4. **视口适配（不可协商）** — 每张幻灯片必须精确适应 100vh。幻灯片内绝无滚动。内容溢出？分割成多张幻灯片。
 
-## Design Aesthetics
+## 设计美学
 
-You tend to converge toward generic, "on distribution" outputs. In frontend design, this creates what users call the "AI slop" aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight.
+您倾向于趋同于通用的"分布上"输出。在前端设计中，这创造了用户所说的"AI 垃圾"美学。避免这种情况：制作有创意、独特的前端，令人惊喜和愉悦。
 
-Focus on:
+关注：
 
-- Typography: Choose fonts that are beautiful, unique, and interesting. Avoid generic fonts like Arial and Inter; opt instead for distinctive choices that elevate the frontend's aesthetics.
-- Color & Theme: Commit to a cohesive aesthetic. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes. Draw from IDE themes and cultural aesthetics for inspiration.
-- Motion: Use animations for effects and micro-interactions. Prioritize CSS-only solutions for HTML. Use Motion library for React when available. Focus on high-impact moments: one well-orchestrated page load with staggered reveals (animation-delay) creates more delight than scattered micro-interactions.
-- Backgrounds: Create atmosphere and depth rather than defaulting to solid colors. Layer CSS gradients, use geometric patterns, or add contextual effects that match the overall aesthetic.
+- 排版：选择美观、独特和有趣的字体。避免通用字体如 Arial 和 Inter；选择能提升前端美学的独特字体。
+- 颜色与主题：致力于一致的美学。使用 CSS 变量保持一致性。具有鲜明强调色的主导颜色优于胆怯、均匀分布的调色板。从 IDE 主题和文化美学中汲取灵感。
+- 动效：使用动画实现效果和微交互。优先为 HTML 使用纯 CSS 解决方案。可用时使用 React 的 Motion 库。专注于高影响力时刻：一个精心编排的页面加载，具有交错显示（animation-delay），比分散的微交互创造更多愉悦。
+- 背景：创建氛围和深度，而不是默认使用纯色。分层 CSS 渐变，使用几何图案，或添加与整体美学匹配的上下文效果。
 
-Avoid generic AI-generated aesthetics:
+避免通用的 AI 生成美学：
 
-- Overused font families (Inter, Roboto, Arial, system fonts)
-- Cliched color schemes (particularly purple gradients on white backgrounds)
-- Predictable layouts and component patterns
-- Cookie-cutter design that lacks context-specific character
+- 过度使用的字体系列（Inter、Roboto、Arial、系统字体）
+- 陈词滥调的色彩方案（特别是白色背景上的紫色渐变）
+- 可预测的布局和组件模式
+- 缺乏上下文特定特征的千篇一律设计
 
-Interpret creatively and make unexpected choices that feel genuinely designed for the context. Vary between light and dark themes, different fonts, different aesthetics. You still tend to converge on common choices (Space Grotesk, for example) across generations. Avoid this: it is critical that you think outside the box!
+创造性地解释，并做出感觉真正为上下文设计的选择。在浅色和深色主题、不同字体、不同美学之间变化。您仍然倾向于在几代之间趋同于常见选择（例如 Space Grotesk）。避免这种情况：跳出框框思考至关重要！
 
 ## Viewport Fitting Rules
 
@@ -235,7 +235,7 @@ When converting PowerPoint files:
 | [animation-patterns.md](animation-patterns.md)     | CSS/JS animation snippets and effect-to-feeling guide                | Phase 3 (generation)      |
 | [scripts/extract-pptx.py](scripts/extract-pptx.py) | Python script for PPT content extraction                             | Phase 4 (conversion)      |
 
-## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确匹配上述描述的范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必需的输入、权限、安全边界或成功标准，请停止并请求澄清。

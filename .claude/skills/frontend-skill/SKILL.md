@@ -13,30 +13,26 @@ od:
   upstream: "https://github.com/openai/skills"
 ---
 
-# frontend-skill
+# 前端技能
 
-> Curated from OpenAI's skills repository.
+> 源自 OpenAI 的技能仓库。
 
-## What it does
+## 功能说明
 
-Create visually strong landing pages, websites, and app UIs with restrained composition. OpenAI's production frontend playbook.
+使用克制的构图创建视觉强大的落地页、网站和应用 UI。OpenAI 的生产前端指南。
 
-## Source
+## 来源
 
-- Upstream: https://github.com/openai/skills
-- Category: `design-systems`
+- 上游: https://github.com/openai/skills
+- 分类: `design-systems`
 
 ## 使用方法
 
-This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
-its original assets, scripts, and references, install the upstream
-bundle into your active agent's skills directory:
+此目录条目在 Open Design 中宣传技能，以便代理在规划期间发现它。要运行完整的上游工作流及其原始资产、脚本和参考，请将上游捆绑包安装到活动代理的技能目录中：
 
 ```bash
-# Inspect the upstream README for exact paths
+# 检查上游 README 获取确切路径
 open https://github.com/openai/skills
 ```
 
-Then ask the agent to invoke this skill by name (`frontend-skill`) or with
-one of the trigger phrases listed in this skill's frontmatter.
+然后要求代理按名称 (`frontend-skill`) 或使用此技能 frontmatter 中列出的触发短语之一调用此技能。

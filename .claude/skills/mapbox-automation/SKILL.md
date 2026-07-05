@@ -1,13 +1,13 @@
 ---
 name: mapbox-automation
-description: "通过 Rube MCP (Composio) 自动执行 Mapbox 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Mapbox 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
 # Mapbox 自动化（通过 Rube MCP）
 
-Automate Mapbox operations through Composio's Mapbox toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Mapbox 工具包自动执行 Mapbox 操作。
 
 **Toolkit docs**: [composio.dev/toolkits/mapbox](https://composio.dev/toolkits/mapbox)
 

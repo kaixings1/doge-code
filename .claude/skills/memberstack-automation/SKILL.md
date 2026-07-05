@@ -1,13 +1,13 @@
 ---
 name: memberstack-automation
-description: "通过 Rube MCP (Composio) 自动执行 Memberstack 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Memberstack 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
 # Memberstack 自动化（通过 Rube MCP）
 
-Automate Memberstack operations through Composio's Memberstack toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Memberstack 工具包自动执行 Memberstack 操作。
 
 **Toolkit docs**: [composio.dev/toolkits/memberstack](https://composio.dev/toolkits/memberstack)
 

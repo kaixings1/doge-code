@@ -6,24 +6,24 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Frontend UI Dark Theme (TypeScript)
+# 前端 UI 暗色主题 (TypeScript)
 
-A modern dark-themed React UI system using **Tailwind CSS** and **Framer Motion**. Designed for dashboards, admin panels, and data-rich applications with glassmorphism effects and tasteful animations.
+使用 **Tailwind CSS** 和 **Framer Motion** 的现代暗色主题 React UI 系统。专为仪表板、管理面板和数据密集型应用设计，具有玻璃态效果和精致动画。
 
-## Stack
+## 技术栈
 
-| Package | Version | Purpose |
+| 包 | 版本 | 用途 |
 |---------|---------|---------|
-| `react` | ^18.x | UI framework |
-| `react-dom` | ^18.x | DOM rendering |
-| `react-router-dom` | ^6.x | Routing |
-| `framer-motion` | ^11.x | Animations |
-| `clsx` | ^2.x | Class merging |
-| `tailwindcss` | ^3.x | Styling |
-| `vite` | ^5.x | Build tool |
-| `typescript` | ^5.x | Type safety |
+| `react` | ^18.x | UI 框架 |
+| `react-dom` | ^18.x | DOM 渲染 |
+| `react-router-dom` | ^6.x | 路由 |
+| `framer-motion` | ^11.x | 动画 |
+| `clsx` | ^2.x | 类合并 |
+| `tailwindcss` | ^3.x | 样式 |
+| `vite` | ^5.x | 构建工具 |
+| `typescript` | ^5.x | 类型安全 |
 
-## Quick Start
+## 快速开始
 
 ```bash
 npm create vite@latest my-app -- --template react-ts
@@ -72,7 +72,7 @@ src/
 
 ### index.html
 
-The HTML entry point with mobile viewport, favicons, and social meta tags:
+具有移动视口、favicon 和社交元标签的 HTML 入口点：
 
 ```html
 <!DOCTYPE html>
@@ -114,7 +114,7 @@ The HTML entry point with mobile viewport, favicons, and social meta tags:
 
 ### public/site.webmanifest
 
-PWA manifest for installable web apps:
+用于可安装 Web 应用的 PWA 清单：
 
 ```json
 {
@@ -213,14 +213,14 @@ export default {
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
-      // Mobile: safe area insets for notched devices
+      // 移动端：凹口设备的安全区域插入
       spacing: {
         'safe-top': 'env(safe-area-inset-top)',
         'safe-bottom': 'env(safe-area-inset-bottom)',
         'safe-left': 'env(safe-area-inset-left)',
         'safe-right': 'env(safe-area-inset-right)',
       },
-      // Mobile: minimum touch target sizes (44px per Apple/Google guidelines)
+      // 移动端：最小触摸目标尺寸（根据 Apple/Google 指南为 44px）
       minHeight: {
         'touch': '44px',
       },
@@ -584,16 +584,16 @@ export function PageTransition({ children }: PageTransitionProps) {
 | Warning | Status warning | `text-status-warning` |
 | Error | Status error | `text-status-error` |
 
-## Related Files
+## 相关文件
 
-- Design Tokens — Complete color system, spacing, typography scales
-- Components — Button, Card, Input, Dialog, Tabs, and more
-- Patterns — Page layouts, navigation, lists, forms
+- 设计标记 — 完整的颜色系统、间距、排版比例
+- 组件 — 按钮、卡片、输入框、对话框、标签页等
+- 模式 — 页面布局、导航、列表、表单
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+此技能适用于执行概述中描述的工作流程或操作。
 
-## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+## 限制
+- 仅当任务明确匹配上述描述的范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少必需的输入、权限、安全边界或成功标准，请停止并请求澄清。
