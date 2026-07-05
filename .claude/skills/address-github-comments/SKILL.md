@@ -6,61 +6,61 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Address GitHub Comments
+# 处理 GitHub 评论
 
 ## 概述
 
-Efficiently address PR review comments or issue feedback using the GitHub CLI (`gh`). This skill ensures all feedback is addressed systematically.
+使用 GitHub CLI (`gh`) 高效处理 PR 审查评论或 issue 反馈。此技能确保所有反馈得到系统化处理。
 
 ## 前提条件
 
-Ensure `gh` is authenticated.
+确保 `gh` 已认证。
 
 ```bash
 gh auth status
 ```
 
-If not logged in, run `gh auth login`.
+如果未登录，运行 `gh auth login`。
 
 ## 工作流
 
-### 1. Inspect Comments
+### 1. 检查评论
 
-Fetch the comments for the current branch's PR.
+获取当前分支 PR 的评论。
 
 ```bash
 gh pr view --comments
 ```
 
-Or use a custom script if available to list threads.
+或者使用自定义脚本列出线程（如果可用）。
 
-### 2. Categorize and Plan
+### 2. 分类和计划
 
-- List the comments and review threads.
-- Propose a fix for each.
-- **Wait for user confirmation** on which comments to address first if there are many.
+- 列出评论和审查线程。
+- 为每个评论提出修复方案。
+- 如果评论较多，**等待用户确认**首先处理哪些评论。
 
-### 3. Apply Fixes
+### 3. 应用修复
 
-Apply the code changes for the selected comments.
+为选定的评论应用代码更改。
 
-### 4. Respond to Comments
+### 4. 回复评论
 
-Once fixed, respond to the threads as resolved.
+修复后，将线程标记为已解决。
 
 ```bash
-gh pr comment <PR_NUMBER> --body "Addressed in latest commit."
+gh pr comment <PR_NUMBER> --body "已在最新提交中处理。"
 ```
 
-## Common Mistakes
+## 常见错误
 
-- **Applying fixes without understanding context**: 始终 read the surrounding code of a comment.
-- **Not verifying auth**: Check `gh auth status` before starting.
+- **在不理解上下文的情况下应用修复**：始终阅读评论周围的代码。
+- **未验证认证**：在开始前检查 `gh auth status`。
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+此技能适用于执行概述中描述的工作流或操作。
 
 ## 局限性
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+- 仅当任务明确匹配上述范围时才使用此技能。
+- 不要将输出视为特定环境验证、测试或专家评审的替代品。
+- 如果缺少所需输入、权限、安全边界或成功标准，请停止并请求澄清。

@@ -11,28 +11,28 @@ metadata:
 
 # Google Calendar
 
-Lightweight Google Calendar integration with standalone OAuth authentication. No MCP server required.
+轻量级 Google Calendar 集成，使用独立 OAuth 认证。不需要 MCP 服务器。
 
-> **⚠️ Requires Google Workspace account.** Personal Gmail accounts are not supported.
+> **⚠️ 需要 Google Workspace 账户。** 不支持个人 Gmail 账户。
 
 ## 使用场景
-- You need to list, create, inspect, or update Google Calendar events from local scripts.
-- The task requires OAuth-backed calendar automation without standing up an MCP server.
-- You need quick operational access to calendars, schedules, attendees, or event details in a Workspace environment.
+- 需要从本地脚本列出、创建、检查或更新 Google Calendar 事件
+- 任务需要基于 OAuth 的日历自动化，无需搭建 MCP 服务器
+- 需要在 Workspace 环境中快速操作访问日历、日程、与会者或事件详情
 
-## First-Time Setup
+## 首次设置
 
-Authenticate with Google (opens browser):
+使用 Google 进行认证（打开浏览器）：
 ```bash
 python scripts/auth.py login
 ```
 
-Check authentication status:
+检查认证状态：
 ```bash
 python scripts/auth.py status
 ```
 
-Logout when needed:
+需要时注销：
 ```bash
 python scripts/auth.py logout
 ```

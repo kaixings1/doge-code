@@ -55,7 +55,7 @@ python scripts/drive.py search "https://drive.google.com/drive/folders/1ABC123..
 python scripts/drive.py search --shared-with-me
 
 # Search with pagination
-python scripts/drive.py search "report" --limit 5 --page-token "..."
+python scripts/drive.py search "report" --limit 5 --page-令牌 "..."
 
 # Find a folder by exact name
 python scripts/drive.py find-folder "Project Documents"
@@ -137,7 +137,7 @@ Tokens stored securely using the system keyring:
 
 Service name: `google-drive-skill-oauth`
 
-Automatically refreshes expired tokens using Google's cloud function.
+Automatically refreshes expired 令牌s using Google's cloud function.
 
 ## 局限性
 - Use this skill only when the task clearly matches the scope described above.

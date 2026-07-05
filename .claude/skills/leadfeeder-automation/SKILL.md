@@ -1,13 +1,13 @@
 ---
 name: leadfeeder-automation
-description: "通过 Rube MCP (Composio) 自动执行 Leadfeeder 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Leadfeeder 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
 
 # 通过 Rube MCP 实现 Leadfeeder 自动化
 
-通过 Composio's Leadfeeder toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Leadfeeder 工具包自动执行 Leadfeeder 操作。
 
 **工具包文档**: [composio.dev/toolkits/leadfeeder](https://composio.dev/toolkits/leadfeeder)
 

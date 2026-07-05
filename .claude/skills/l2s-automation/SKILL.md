@@ -1,6 +1,6 @@
 ---
 name: l2s-automation
-description: "通过 Rube MCP (Composio) 自动执行 L2s 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 L2s 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---

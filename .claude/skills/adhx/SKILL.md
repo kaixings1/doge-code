@@ -6,19 +6,19 @@ source: community
 date_added: "2026-03-25"
 ---
 
-# ADHX - X/Twitter Post Reader
+# ADHX - X/Twitter 帖子阅读器
 
-Fetch any X/Twitter post as structured JSON for analysis using the ADHX API.
+使用 ADHX API 获取任何 X/Twitter 帖子作为结构化 JSON 进行分析。
 
 ## 概述
 
-ADHX provides a free API that returns clean JSON for any X post, including full long-form article content. This is far superior to scraping or browser-based approaches for LLM consumption. Works with regular tweets and full X Articles.
+ADHX 提供一个免费 API，为任何 X 帖子返回干净的 JSON，包括完整的长篇文章内容。这比用于 LLM 消费的爬虫或基于浏览器的方法优越得多。适用于常规推文和完整的 X 文章。
 
-## When to Use This Skill
+## 何时使用此技能
 
-- Use when a user shares an X/Twitter link and wants to read, analyze, or summarize the post
-- Use when you need structured data from an X/Twitter post (author, engagement, content)
-- Use when working with long-form X Articles that need full content extraction
+- 当用户分享 X/Twitter 链接并希望阅读、分析或总结帖子时使用
+- 当您需要来自 X/Twitter 帖子的结构化数据（作者、互动、内容）时使用
+- 当处理需要完整内容提取的长篇 X 文章时使用
 
 ## API Endpoint
 
