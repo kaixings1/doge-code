@@ -11,12 +11,20 @@ PostgreSQL 最佳实践快速参考。如需详细指导，请使用 `database-r
 ## 何时激活
 
 - 编写 SQL 查询或迁移脚本
-- 设计数据库架构 (Schema)
+- 设计数据库架构 (架构)
 - 排查慢查询问题
 - 实现行级安全性 (Row Level 安全性, RLS)
 - 设置连接池 (Connection Pooling)
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 ### 索引速查表 (Index Cheat Sheet)
 

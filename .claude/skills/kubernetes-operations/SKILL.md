@@ -9,7 +9,7 @@ description: Kubernetes运维 — 包括清单、Helm图表、Operator模式、�
 
 ```yaml
 apiVersion: apps/v1
-kind: Deployment
+kind: 部署
 metadata:
   name: api-server
   labels:
@@ -81,7 +81,7 @@ chart/
   values-staging.yaml
   values-production.yaml
   templates/
-    deployment.yaml
+    部署.yaml
     service.yaml
     ingress.yaml
     hpa.yaml
@@ -119,7 +119,7 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: Deployment
+    kind: 部署
     name: api-server
   minReplicas: 2
   maxReplicas: 10
@@ -141,7 +141,7 @@ spec:
       stabilizationWindowSeconds: 300
 ```
 
-## Troubleshooting Commands
+## 故障排除 Commands
 
 ```bash
 # Pod diagnostics

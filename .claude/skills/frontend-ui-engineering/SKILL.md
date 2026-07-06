@@ -107,7 +107,7 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
 提升状态                     → 在 2-3 个兄弟组件之间共享
 Context                          → 主题、认证、区域设置（读取频繁，写入稀少）
 URL 状态 (searchParams)         → 过滤器、分页、可共享的 UI 状态
-服务器状态 (React Query, SWR)  → 具有缓存的远程数据
+服务器状态 (React 查询, SWR)  → 具有缓存的远程数据
 全局存储 (Zustand, Redux)    → 在整个应用程序中共享的复杂客户端状态
 ```
 

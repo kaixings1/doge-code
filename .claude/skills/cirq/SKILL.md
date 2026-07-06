@@ -23,7 +23,7 @@ Cirq 是 Google Quantum AI 的开源框架，用于在量子计算机和模拟�
 uv pip install cirq
 ```
 
-For hardware integration:
+For hardware 集成:
 ```bash
 # Google Quantum Engine
 uv pip install cirq-google
@@ -74,7 +74,7 @@ print(result.histogram(key='result'))
 ```python
 import sympy
 
-# Define symbolic parameter
+# Define symbolic 参数
 theta = sympy.Symbol('theta')
 
 # Create parameterized circuit
@@ -83,7 +83,7 @@ circuit = cirq.Circuit(
     cirq.measure(q0, key='m')
 )
 
-# Sweep over parameter values
+# Sweep over 参数 values
 sweep = cirq.Linspace('theta', start=0, stop=2*np.pi, length=20)
 results = simulator.run_sweep(circuit, params=sweep, repetitions=1000)
 
@@ -111,13 +111,13 @@ Common topics:
 - Working with qudits and observables
 
 ### Simulation
-For detailed information about simulating quantum circuits, including exact simulation, noisy simulation, parameter sweeps, and the Quantum Virtual Machine, see:
+For detailed information about simulating quantum circuits, including exact simulation, noisy simulation, 参数 sweeps, and the Quantum Virtual Machine, see:
 - **references/simulation.md** - Complete guide to quantum simulation
 
 Common topics:
 - Exact simulation (state vector, density matrix)
 - Sampling and measurements
-- Parameter sweeps (single and multiple parameters)
+- 参数 sweeps (single and multiple parameters)
 - Noisy simulation
 - State histograms and visualization
 - Quantum Virtual Machine (QVM)
@@ -137,9 +137,9 @@ Common topics:
 - Custom transformers
 - Transformation pipelines
 
-### Hardware Integration
+### Hardware 集成
 For information about running circuits on real quantum hardware from various providers, see:
-- **references/hardware.md** - Complete guide to hardware integration
+- **references/hardware.md** - Complete guide to hardware 集成
 
 Supported providers:
 - **Google Quantum AI** (cirq-google) - Sycamore, Weber processors
@@ -148,7 +148,7 @@ Supported providers:
 - **AQT** (cirq-aqt) - Alpine Quantum Technologies
 - **Pasqal** (cirq-pasqal) - Neutral atom quantum computers
 
-Topics include device representation, qubit selection, authentication, job management, and circuit optimization for hardware.
+Topics include device representation, qubit selection, 认证, job management, and circuit optimization for hardware.
 
 ### Noise Modeling
 For information about modeling noise, noisy simulation, characterization, and error mitigation, see:
@@ -164,12 +164,12 @@ Common topics:
 - Error mitigation techniques
 
 ### Quantum Experiments
-For information about designing experiments, parameter sweeps, data collection, and using the ReCirq framework, see:
+For information about designing experiments, 参数 sweeps, data collection, and using the ReCirq framework, see:
 - **references/experiments.md** - Complete guide to quantum experiments
 
 Common topics:
 - Experiment design patterns
-- Parameter sweeps and data collection
+- 参数 sweeps and data collection
 - ReCirq framework structure
 - Common algorithms (VQE, QAOA, QPE)
 - Data analysis and visualization
@@ -240,7 +240,7 @@ def run_on_hardware(circuit, provider='google', device_name='weber', repetitions
 
     elif provider == 'azure':
         from azure.quantum.cirq import AzureQuantumService
-        # Setup workspace...
+        # 设置 workspace...
         service = AzureQuantumService(workspace)
         result = service.run(circuit, repetitions=repetitions, target='ionq.qpu')
         return result
@@ -292,7 +292,7 @@ results = noise_comparison_study(circuit, noise_levels)
 2. **Simulation**
    - Use state vector simulation for pure states (more efficient)
    - Use density matrix simulation only when needed (mixed states, noise)
-   - Leverage parameter sweeps instead of individual runs
+   - Leverage 参数 sweeps instead of individual runs
    - Monitor memory usage for large systems (2^n grows quickly)
 
 3. **Hardware Execution**

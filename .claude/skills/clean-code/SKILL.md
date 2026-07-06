@@ -16,7 +16,7 @@ date_added: "2026-02-27"
 ## 何时使用
 在以下情况下使用此技能：
 - **编写新代码**：确保从一开始就高质量。
-- **审查 Pull Request**：提供建设性的、基于原则的反馈。
+- **审查 Pull 请求**：提供建设性的、基于原则的反馈。
 - **重构遗留代码**：识别和消除代码异味。
 - **Improving team standards**: To align on industry-standard best practices.
 
@@ -63,7 +63,7 @@ date_added: "2026-02-27"
 
 ## 6. Error Handling
 - **Use Exceptions instead of Return Codes**: Keeps logic clean.
-- **Write Try-Catch-Finally First**: Defines the scope of the operation.
+- **Write Try-Catch-Finally First**: Defines the scope of the 操作.
 - **Don't Return Null**: It forces the caller to check for null every time.
 - **Don't Pass Null**: Leads to `NullPointerException`.
 

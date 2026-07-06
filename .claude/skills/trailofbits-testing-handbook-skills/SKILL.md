@@ -13,7 +13,7 @@ This plugin provides a skill generator that:
 
 ## 安装
 
-Add to your Claude Code skills configuration:
+Add to your Claude Code skills 配置:
 
 ```bash
 # From the skills marketplace
@@ -74,4 +74,4 @@ plugins/testing-handbook-skills/
 
 ### Scripts
 
-| Script | Purpose |
+| Script | 目的 |

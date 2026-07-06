@@ -119,14 +119,14 @@ version: 0.1.0
 1. 编写前端 Web 应用每次都需要相同的样板 HTML/React
 2. 在技能中存储包含样板 HTML/React 项目文件的 `assets/hello-world/` 模板会有帮助
 
-示例：构建处理"今天有多少用户登录？"等查询的 `big-query` 技能时，分析显示：
+示例：构建处理"今天有多少用户登录？"等查询的 `big-查询` 技能时，分析显示：
 
 1. 查询 BigQuery 每次都需要重新发现表模式和关系
-2. 在技能中存储记录表模式的 `references/schema.md` 文件会有帮助
+2. 在技能中存储记录表模式的 `references/架构.md` 文件会有帮助
 
 **对于 Claude Code 插件：** 构建钩子技能时，分析显示：
 1. 开发人员反复需要验证 hooks.json 和测试钩子脚本
-2. `scripts/validate-hook-schema.sh` 和 `scripts/test-hook.sh` 实用程序会有帮助
+2. `scripts/validate-hook-架构.sh` 和 `scripts/test-hook.sh` 实用程序会有帮助
 3. `references/patterns.md` 用于详细的钩子模式，避免使 SKILL.md 臃肿
 
 要建立技能内容，分析每个具体示例以创建要包含的可重用资源列表：脚本、参考文档和资产。
@@ -136,7 +136,7 @@ version: 0.1.0
 对于 Claude Code 插件，创建技能目录结构：
 
 ```bash
-mkdir -p plugin-name/skills/skill-name/{references,examples,scripts}
+mkdir -p plugin-name/skills/skill-name/{references,示例,scripts}
 touch plugin-name/skills/skill-name/SKILL.md
 ```
 
@@ -150,7 +150,7 @@ touch plugin-name/skills/skill-name/SKILL.md
 
 要开始实施，从上面识别的可重用资源开始：`scripts/`、`references/` 和 `assets/` 文件。请注意，此步骤可能需要用户输入。例如，实施 `brand-guidelines` 技能时，用户可能需要提供品牌资产或模板存储在 `assets/` 中，或文档存储在 `references/` 中。
 
-此外，删除技能不需要的任何示例文件和目录。仅创建实际需要的目录（references/、examples/、scripts/）。
+此外，删除技能不需要的任何示例文件和目录。仅创建实际需要的目录（references/、示例/、scripts/）。
 
 #### 更新 SKILL.md
 
@@ -268,4 +268,4 @@ description: "当用户需要帮助完成特定任务时使用此技能。当用
 ## 常见问题解决
 
 ### 开发问题
-Incomplete translation. The content after this point would continue with more detailed information about skill development, troubleshooting, and best practices for Claude Code plugins.
+Incomplete translation. The content after this point would continue with more detailed information about skill development, 故障排除, and 最佳实践 for Claude Code plugins.

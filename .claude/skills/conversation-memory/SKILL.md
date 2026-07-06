@@ -36,7 +36,7 @@ LLM 对话的持久记忆系统 including short-term, long-term, and entity-base
 
 - Mem0 - Memory layer for AI applications
 - LangChain Memory - Memory utilities in LangChain
-- Redis - In-memory data store for session memory
+- Redis - In-memory data store for 会话 memory
 
 ## 模式
 
@@ -50,7 +50,7 @@ interface MemorySystem {
     // Buffer: Current conversation (in context)
     buffer: ConversationBuffer;
 
-    // Short-term: Recent interactions (session)
+    // Short-term: Recent interactions (会话)
     shortTerm: ShortTermMemory;
 
     // Long-term: Persistent across sessions
@@ -92,18 +92,18 @@ class TieredMemory implements MemorySystem {
         }
     }
 
-    async buildContext(query: string): Promise<string> {
+    async buildContext(查询: string): Promise<string> {
         const parts: string[] = [];
 
         // Relevant long-term memories
-        const longTermRelevant = await this.longTerm.search(query, 3);
+        const longTermRelevant = await this.longTerm.search(查询, 3);
         if (longTermRelevant.length) {
             parts.push('## Relevant Memories\n' +
                 longTermRelevant.map(m => `- ${m.content}`).join('\n'));
         }
 
         // Relevant entities
-        const entities = await this.entity.getRelevant(query);
+        const entities = await this.entity.getRelevant(查询);
         if (entities.length) {
             parts.push('## Known Entities\n' +
                 entities.map(e => `- ${e.name}: ${e.facts.join(', ')}`).join('\n'));
@@ -201,13 +201,13 @@ Include relevant memories in prompts
 **When to use**: Making LLM calls with memory context
 
 async function promptWithMemory(
-    query: string,
+    查询: string,
     memory: MemorySystem,
     systemPrompt: string
 ): Promise<string> {
     // Retrieve relevant memories
-    const relevantMemories = await memory.longTerm.search(query, 5);
-    const entities = await memory.entity.getRelevant(query);
+    const relevantMemories = await memory.longTerm.search(查询, 5);
+    const entities = await memory.entity.getRelevant(查询);
     const recentContext = memory.buffer.getRecent(5);
 
     // Build memory-augmented prompt
@@ -226,16 +226,16 @@ ${relevantMemories.length ? `Relevant past interactions:\n${relevantMemories.map
 ## Recent Conversation
 ${formatMessages(recentContext)}
 
-## Current Query
-${query}
+## Current 查询
+${查询}
     `.trim();
 
-    const response = await llm.complete(prompt);
+    const 响应 = await llm.complete(prompt);
 
-    // Extract any new memories from response
-    await memory.addMessage({ role: 'assistant', content: response });
+    // Extract any new memories from 响应
+    await memory.addMessage({ role: 'assistant', content: 响应 });
 
-    return response;
+    return 响应;
 }
 
 ## 易错点
@@ -310,7 +310,7 @@ class ManagedMemory {
     }
 }
 
-### 检索的记忆不相关 to current query
+### 检索的记忆不相关 to current 查询
 
 Severity: HIGH
 
@@ -331,26 +331,26 @@ Recommended fix:
 // Intelligent memory retrieval
 
 async function retrieveRelevant(
-    query: string,
+    查询: string,
     memories: MemoryStore,
     maxResults: number = 5
 ): Promise<Memory[]> {
     // 1. Semantic search
-    const candidates = await memories.semanticSearch(query, maxResults * 3);
+    const candidates = await memories.semanticSearch(查询, maxResults * 3);
 
     // 2. Score relevance with context
     const scored = await Promise.all(candidates.map(async (m) => {
         const relevanceScore = await llm.complete(`
-            Rate 0-1 how relevant this memory is to the query.
-            Query: "${query}"
+            Rate 0-1 how relevant this memory is to the 查询.
+            查询: "${查询}"
             Memory: "${m.content}"
             Return just the number.
         `);
         return { ...m, relevance: parseFloat(relevanceScore) };
     }));
 
-    // 3. Filter low relevance
-    const relevant = scored.filter(m => m.relevance > 0.5);
+    // 3. 过滤器 low relevance
+    const relevant = scored.过滤器(m => m.relevance > 0.5);
 
     // 4. Sort and limit
     return relevant
@@ -395,11 +395,11 @@ class IsolatedMemory {
         await this.store.set(key, memory);
     }
 
-    async search(userId: string, query: string): Promise<Memory[]> {
-        // CRITICAL: Filter by user in query
+    async search(userId: string, 查询: string): Promise<Memory[]> {
+        // CRITICAL: 过滤器 by user in 查询
         return await this.store.search({
-            query,
-            filter: { userId: userId },  // Mandatory filter
+            查询,
+            过滤器: { userId: userId },  // Mandatory 过滤器
             limit: 10
         });
     }
@@ -435,7 +435,7 @@ Severity: CRITICAL
 
 Message: Memory operations without user isolation. Privacy vulnerability.
 
-Fix action: Add userId to all memory operations, filter by user on retrieval
+Fix action: Add userId to all memory operations, 过滤器 by user on retrieval
 
 ### 没有重要性过滤
 
@@ -443,7 +443,7 @@ Severity: WARNING
 
 Message: Storing memories without importance filtering. May cause memory explosion.
 
-Fix action: Score importance before storing, filter low-importance content
+Fix action: Score importance before storing, 过滤器 low-importance content
 
 ### 有存储无检索
 
@@ -465,7 +465,7 @@ Fix action: Implement consolidation and cleanup based on age/importance
 
 ### 委托触发器
 
-- context window|token -> context-window-management (Need context optimization)
+- context window|令牌 -> context-window-management (Need context optimization)
 - rag|retrieval|vector -> rag-implementation (Need retrieval system)
 - cache|caching -> prompt-caching (Need caching strategies)
 
@@ -473,7 +473,7 @@ Fix action: Implement consolidation and cleanup based on age/importance
 
 Skills: conversation-memory, context-window-management, rag-implementation
 
-Workflow:
+工作流:
 
 ```
 1. Design memory tiers

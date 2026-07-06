@@ -342,7 +342,7 @@ Fix action: Add icons in 16, 48, and 128 pixel sizes
 
 Skills: browser-extension-builder, frontend, micro-saas-launcher
 
-Workflow:
+工作流:
 
 ```
 1. Define extension functionality
@@ -357,7 +357,7 @@ Workflow:
 
 Skills: browser-extension-builder, ai-wrapper-product, frontend
 
-Workflow:
+工作流:
 
 ```
 1. Design AI features for browser

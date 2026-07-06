@@ -131,13 +131,13 @@ def test_sample_data(sample_data):
     assert sample_data["age"] == 30
 ```
 
-### 带有设置/拆卸 (Setup/Teardown) 的夹具
+### 带有设置/拆卸 (设置/Teardown) 的夹具
 
 ```python
 @pytest.fixture
 def database():
     """带有设置和拆卸功能的夹具。"""
-    # 设置 (Setup)
+    # 设置 (设置)
     db = Database(":memory:")
     db.create_tables()
     db.insert_test_data()
@@ -149,7 +149,7 @@ def database():
 
 def test_database_query(database):
     """测试数据库操作。"""
-    result = database.query("SELECT * FROM users")
+    result = database.查询("SELECT * FROM users")
     assert len(result) > 0
 ```
 
@@ -172,7 +172,7 @@ def module_db():
     db.close()
 
 # 会话作用域 - 整个测试会话运行一次
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="会话")
 def shared_resource():
     resource = ExpensiveResource()
     yield resource
@@ -183,9 +183,9 @@ def shared_resource():
 
 ```python
 @pytest.fixture(params=[1, 2, 3])
-def number(request):
+def number(请求):
     """参数化夹具。"""
-    return request.param
+    return 请求.param
 
 def test_numbers(number):
     """测试将运行 3 次，每个参数一次。"""
@@ -239,12 +239,12 @@ def client():
 @pytest.fixture
 def auth_headers(client):
     """为 API 测试生成认证头。"""
-    response = client.post("/api/login", json={
+    响应 = client.post("/api/login", json={
         "username": "test",
         "password": "test"
     })
-    token = response.json["token"]
-    return {"Authorization": f"Bearer {token}"}
+    令牌 = 响应.json["令牌"]
+    return {"授权": f"Bearer {令牌}"}
 ```
 
 ## 参数化 (Parametrization)
@@ -293,18 +293,18 @@ def test_email_validation(input, expected):
 
 ```python
 @pytest.fixture(params=["sqlite", "postgresql", "mysql"])
-def db(request):
+def db(请求):
     """针对多个数据库后端进行测试。"""
-    if request.param == "sqlite":
+    if 请求.param == "sqlite":
         return Database(":memory:")
-    elif request.param == "postgresql":
+    elif 请求.param == "postgresql":
         return Database("postgresql://localhost/test")
-    elif request.param == "mysql":
+    elif 请求.param == "mysql":
         return Database("mysql://localhost/test")
 
 def test_database_operations(db):
     """测试将运行 3 次，每个数据库一次。"""
-    result = db.query("SELECT 1")
+    result = db.查询("SELECT 1")
     assert result is not None
 ```
 
@@ -319,10 +319,10 @@ def test_slow_operation():
     time.sleep(5)
 
 # 标记集成测试
-@pytest.mark.integration
+@pytest.mark.集成
 def test_api_integration():
-    response = requests.get("https://api.example.com")
-    assert response.status_code == 200
+    响应 = requests.get("https://api.example.com")
+    assert 响应.status_code == 200
 
 # 标记单元测试
 @pytest.mark.unit
@@ -337,10 +337,10 @@ def test_unit_logic():
 pytest -m "not slow"
 
 # 仅运行集成测试
-pytest -m integration
+pytest -m 集成
 
 # 运行集成测试或慢速测试
-pytest -m "integration or slow"
+pytest -m "集成 or slow"
 
 # 运行标记为 unit 但不是 slow 的测试
 pytest -m "unit and not slow"
@@ -352,7 +352,7 @@ pytest -m "unit and not slow"
 [pytest]
 markers =
     slow: 将测试标记为慢速
-    integration: 将测试标记为集成测试
+    集成: 将测试标记为集成测试
     unit: 将测试标记为单元测试
     django: 将测试标记为需要 Django
 ```
@@ -424,9 +424,9 @@ def test_file_reading(mock_file):
 def test_autospec(db_mock):
     """使用 autospec 捕获 API 误用。"""
     db = db_mock.return_value
-    db.query("SELECT * FROM users")
+    db.查询("SELECT * FROM users")
 
-    # 如果 DBConnection 没有 query 方法，这将会失败
+    # 如果 DBConnection 没有 查询 方法，这将会失败
     db_mock.assert_called_once()
 ```
 
@@ -479,8 +479,8 @@ async def test_async_function():
 @pytest.mark.asyncio
 async def test_async_with_fixture(async_client):
     """配合异步夹具测试异步函数。"""
-    response = await async_client.get("/api/users")
-    assert response.status_code == 200
+    响应 = await async_client.get("/api/users")
+    assert 响应.status_code == 200
 ```
 
 ### 异步夹具
@@ -496,8 +496,8 @@ async def async_client():
 @pytest.mark.asyncio
 async def test_api_endpoint(async_client):
     """使用异步夹具进行测试。"""
-    response = await async_client.get("/api/data")
-    assert response.status_code == 200
+    响应 = await async_client.get("/api/data")
+    assert 响应.status_code == 200
 ```
 
 ### 模拟异步函数
@@ -602,7 +602,7 @@ tests/
 │   ├── test_models.py
 │   ├── test_utils.py
 │   └── test_services.py
-├── integration/                # 集成测试
+├── 集成/                # 集成测试
 │   ├── __init__.py
 │   ├── test_api.py
 │   └── test_database.py
@@ -618,7 +618,7 @@ class TestUserService:
     """在类中组织相关的测试。"""
 
     @pytest.fixture(autouse=True)
-    def setup(self):
+    def 设置(self):
         """设置代码在类中的每个测试之前运行。"""
         self.service = UserService()
 
@@ -669,17 +669,17 @@ def client():
     return app.test_client()
 
 def test_get_user(client):
-    response = client.get("/api/users/1")
-    assert response.status_code == 200
-    assert response.json["id"] == 1
+    响应 = client.get("/api/users/1")
+    assert 响应.status_code == 200
+    assert 响应.json["id"] == 1
 
 def test_create_user(client):
-    response = client.post("/api/users", json={
+    响应 = client.post("/api/users", json={
         "name": "Alice",
         "email": "alice@example.com"
     })
-    assert response.status_code == 201
-    assert response.json["name"] == "Alice"
+    assert 响应.status_code == 201
+    assert 响应.json["name"] == "Alice"
 ```
 
 ### 测试数据库操作
@@ -688,18 +688,18 @@ def test_create_user(client):
 @pytest.fixture
 def db_session():
     """创建测试数据库会话。"""
-    session = Session(bind=engine)
-    session.begin_nested()
-    yield session
-    session.rollback()
-    session.close()
+    会话 = 会话(bind=engine)
+    会话.begin_nested()
+    yield 会话
+    会话.rollback()
+    会话.close()
 
 def test_create_user(db_session):
     user = User(name="Alice", email="alice@example.com")
     db_session.add(user)
     db_session.commit()
 
-    retrieved = db_session.query(User).filter_by(name="Alice").first()
+    retrieved = db_session.查询(User).filter_by(name="Alice").first()
     assert retrieved.email == "alice@example.com"
 ```
 
@@ -737,7 +737,7 @@ addopts =
     --cov-report=html
 markers =
     slow: 将测试标记为慢速
-    integration: 将测试标记为集成测试
+    集成: 将测试标记为集成测试
     unit: 将测试标记为单元测试
 ```
 
@@ -757,7 +757,7 @@ addopts = [
 ]
 markers = [
     "slow: 将测试标记为慢速",
-    "integration: 将测试标记为集成测试",
+    "集成: 将测试标记为集成测试",
     "unit: 将测试标记为单元测试",
 ]
 ```
@@ -800,5 +800,13 @@ pytest --pdb
 ```
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 | 模式 | 用途 |

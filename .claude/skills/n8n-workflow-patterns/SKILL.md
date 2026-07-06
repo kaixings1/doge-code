@@ -1,5 +1,5 @@
 ---
-name: n8n-workflow-patterns
+name: n8n-工作流-patterns
 description: "构建 n8n 工作流经过验证的架构模式。"
 risk: unknown
 source: community

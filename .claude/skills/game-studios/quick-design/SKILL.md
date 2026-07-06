@@ -10,10 +10,8 @@ model: sonnet
 # Quick Design
 
 This is the **lightweight design path** for changes that don't need a full GDD.
-Full GDD authoring via `/design-system` is the heavyweight path. Use this skill
-for work under approximately 4 hours of implementation — tuning adjustments,
-minor behavioral tweaks, small additions to existing systems, or standalone
-features too small to warrant a full document.
+通过 `/design-system` 的完整 GDD 编写是重量级路径。对于大约 4 小时以内的实施工作使用此技能——调优调整、
+轻微行为修改、现有系统的小型添加，或太小而无需完整文档的独立功能。
 
 **Output:** `design/quick-specs/[name]-[date].md`
 

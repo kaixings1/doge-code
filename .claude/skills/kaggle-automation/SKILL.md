@@ -1,10 +1,10 @@
 ---
 name: kaggle-automation
-description: "通过 Rube MCP (Composio) 自动执行 Kaggle 任务。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Kaggle 任务。使用前始终先搜索工具以获取当前 架构。"
 requires:
   mcp: [rube]
 ---
-# 通过 Rube MCP 实现 Kaggle 自动化
+# Kaggle 自动化
 通过 Composio 的 Kaggle 工具包和 Rube MCP 自动化 Kaggle 操作。
 **工具包文档**: [composio.dev/toolkits/kaggle](https://composio.dev/toolkits/kaggle)
 ## 核心工作流模式

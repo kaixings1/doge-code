@@ -1,7 +1,7 @@
 ---
 name: sciomc
 description: "Sciomc — 协调并行科学家代理进行全面研究工作流的相关功能和最佳实践"
-argument-hint: <research goal>
+参数-hint: <research goal>
 level: 4
 ---
 
@@ -26,7 +26,7 @@ level: 4
 /oh-my-claudecode:sciomc status                    # 检查当前研究会话状态
 /oh-my-claudecode:sciomc resume                    # 恢复中断的研究会话
 /oh-my-claudecode:sciomc list                      # 列出所有研究会话
-/oh-my-claudecode:sciomc report <session-id>       # 为会话生成报告
+/oh-my-claudecode:sciomc report <会话-id>       # 为会话生成报告
 ```
 
 ### 快速示例

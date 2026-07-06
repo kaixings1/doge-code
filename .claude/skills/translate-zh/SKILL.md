@@ -7,7 +7,7 @@ description: 将代码注释、文档或字符串资源翻译为简体中文，�
 ## 术语表（必须遵守）
 - `server` -> 服务器
 - `client` -> 客户端
-- `request` -> 请求
+- `请求` -> 请求
 - `config` -> 配置
 - `deprecated` -> 已弃用
 

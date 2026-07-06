@@ -1,13 +1,13 @@
 ---
 name: omc-teams
-description: 在 tmux 窗格中为 claude、codex、gemini、antigravity、grok 或 cursor 工作进程提供 CLI 团队运行时，适用于需要基于进程的并行执行时
+description: 在 tmux 窗格中为 claude、codex、gemini、antigravity、grok 或 游标 工作进程提供 CLI 团队运行时，适用于需要基于进程的并行执行时
 aliases: []
 level: 4
 ---
 
 # OMC 团队技能
 
-在 tmux 窗格中生成 N 个 CLI 工作进程以并行执行任务。支持 `claude`、`codex`、`gemini`、`antigravity`、`grok` 和 `cursor` 代理类型。Cursor 工作进程仅为 executor 风格。
+在 tmux 窗格中生成 N 个 CLI 工作进程以并行执行任务。支持 `claude`、`codex`、`gemini`、`antigravity`、`grok` 和 `游标` 代理类型。游标 工作进程仅为 executor 风格。
 
 `/omc-teams` 是 CLI 优先运行时的旧版兼容技能：请使用 `omc team ...` 命令（而非已弃用的 MCP 运行时工具）。
 
@@ -19,40 +19,40 @@ level: 4
 /oh-my-claudecode:omc-teams N:gemini "task description"
 /oh-my-claudecode:omc-teams N:antigravity "task description"
 /oh-my-claudecode:omc-teams N:grok "task description"
-/oh-my-claudecode:omc-teams N:cursor "implementation task description"
+/oh-my-claudecode:omc-teams N:游标 "implementation task description"
 ```
 
 ### Parameters
 
 - **N** - Number of CLI workers (1-10)
-- **agent-type** - `claude` (Claude CLI), `codex` (OpenAI Codex CLI), `gemini` (Google Gemini CLI; enterprise/API-key tier), `antigravity` (Antigravity CLI `agy`; Google's successor to the Gemini CLI), `grok` (xAI Grok CLI), or `cursor` (Cursor agent CLI; executor-style tasks only)
+- **agent-type** - `claude` (Claude CLI), `codex` (OpenAI Codex CLI), `gemini` (Google Gemini CLI; enterprise/API-key tier), `antigravity` (Antigravity CLI `agy`; Google's successor to the Gemini CLI), `grok` (xAI Grok CLI), or `游标` (游标 agent CLI; executor-style tasks only)
 - **task** - Task description to distribute across all workers
 
-### Examples
+### 示例
 
 ```bash
 /omc-teams 2:claude "implement auth module with tests"
 /omc-teams 2:codex "review the auth module for security issues"
 /omc-teams 3:gemini "redesign UI components for accessibility"
 /omc-teams 3:antigravity "redesign UI components for accessibility"
-/omc-teams 1:grok "prototype an implementation approach"
-/omc-teams 1:cursor "apply the implementation plan"
+/omc-teams 1:grok "prototype an implementation 方法"
+/omc-teams 1:游标 "apply the implementation plan"
 ```
 
 ## Requirements
 
 - **tmux binary** must be installed and discoverable (`command -v tmux`) when running from a plain terminal; classic tmux sessions reuse the current tmux surface.
 - **cmux surface optional** for in-place native splits (`CMUX_SURFACE_ID` set without `$TMUX`). Plain terminals still use the detached tmux fallback.
-- **claude** CLI: install and authenticate Claude Code using the [official setup instructions](https://code.claude.com/docs/en/setup); the legacy Anthropic npm package install path is deprecated for normal user installs.
+- **claude** CLI: install and authenticate Claude Code using the [official 设置 instructions](https://code.claude.com/docs/en/设置); the legacy Anthropic npm package install path is deprecated for normal user installs.
 - **codex** CLI: `npm install -g @openai/codex`
 - **gemini** CLI: `npm install -g @google/gemini-cli` (enterprise/API-key tier)
 - **antigravity** CLI: Install per the [official instructions](https://antigravity.google) (provides the `agy` binary) — verify with `agy --version`; Google's successor to the Gemini CLI
 - **grok** CLI: install and authenticate the Grok CLI used by your environment
-- **cursor** CLI: install and authenticate `cursor-agent`; if unavailable, report this setup requirement instead of silently falling back to Claude-only execution
+- **游标** CLI: install and authenticate `游标-agent`; if unavailable, report this 设置 requirement instead of silently falling back to Claude-only execution
 
 ## 工作流
 
-### Phase 0: Verify prerequisites
+### Phase 0: Verify 前提条件
 
 Check the active multiplexer before claiming tmux is missing. If `$TMUX` is empty and `CMUX_SURFACE_ID` is also empty, check tmux explicitly:
 
@@ -63,8 +63,8 @@ command -v tmux >/dev/null 2>&1
 - If the plain-terminal tmux check fails, report that **tmux is not installed** and stop.
 - If `$TMUX` is set, `omc team` can reuse the current tmux window/panes directly.
 - If `$TMUX` is empty but `CMUX_SURFACE_ID` is set, report that the user is running inside **cmux**. Do **not** say tmux is missing or that they are "not inside tmux"; `omc team` will create **native cmux splits** for workers.
-- If neither `$TMUX` nor `CMUX_SURFACE_ID` is set, report that the user is in a **plain terminal**. `omc team` can still launch a **detached tmux session**, but if they specifically want in-place pane/window topology they should start from a classic tmux session first.
-- If you need to confirm the active tmux session, use:
+- If neither `$TMUX` nor `CMUX_SURFACE_ID` is set, report that the user is in a **plain terminal**. `omc team` can still launch a **detached tmux 会话**, but if they specifically want in-place pane/window topology they should start from a classic tmux 会话 first.
+- If you need to confirm the active tmux 会话, use:
 
 ```bash
 tmux display-message -p '#S'
@@ -75,13 +75,13 @@ tmux display-message -p '#S'
 Extract:
 
 - `N` — worker count (1–10)
-- `agent-type` — `claude|codex|gemini|grok|cursor`
+- `agent-type` — `claude|codex|gemini|grok|游标`
 - `task` — task description
 
 Validate before decomposing or running anything:
 
-- Reject unsupported agent types up front. `/omc-teams` only supports **`claude`**, **`codex`**, **`gemini`**, **`antigravity`**, **`grok`**, and **`cursor`**.
-- Treat Cursor workers as executor-style only. Accept `N:cursor` and `N:cursor:executor`; reject or reframe reviewer, critic, security-reviewer, verdict, or final-approval work onto native Claude/OMC reviewer agents.
+- Reject unsupported agent types up front. `/omc-teams` only supports **`claude`**, **`codex`**, **`gemini`**, **`antigravity`**, **`grok`**, and **`游标`**.
+- Treat 游标 workers as executor-style only. Accept `N:游标` and `N:游标:executor`; reject or reframe reviewer, critic, security-reviewer, verdict, or final-approval work onto native Claude/OMC reviewer agents.
 - If the user asks for an unsupported type such as `expert`, explain that `/omc-teams` launches external CLI workers only.
 - For native Claude Code team agents/roles, direct them to **`/oh-my-claudecode:team`** instead.
 
@@ -104,7 +104,7 @@ working directory before launch:
   plan after `--cwd` changes the launch directory.
 - Include the explicit repo paths or repo names in the task text and subtasks.
 - Do not anchor the launch cwd to only the repo containing `.omc/plans/...` when
-  target repos are siblings; that strands `codex`, `claude`, `gemini`, `antigravity`, `grok`, and `cursor` workers in
+  target repos are siblings; that strands `codex`, `claude`, `gemini`, `antigravity`, `grok`, and `游标` workers in
   the plan repo instead of the implementation workspace.
 - If no safe shared workspace root can be identified, do not launch `/omc-teams`.
   Report the single-cwd constraint and ask for, or derive from evidence, the intended
@@ -121,17 +121,17 @@ state_write(mode="team", current_phase="team-exec", active=true)
 Start workers via CLI:
 
 ```bash
-omc team <N>:<claude|codex|gemini|antigravity|grok|cursor> "<task>"
+omc team <N>:<claude|codex|gemini|antigravity|grok|游标> "<task>"
 ```
 
 For the multi-repo case resolved in Phase 2.5, launch from the shared workspace root
 with the existing `--cwd` contract and keep the plan reference absolute:
 
 ```bash
-omc team <N>:<claude|codex|gemini|antigravity|grok|cursor> "<task with absolute plan path and explicit repo paths>" --cwd <workspace-root>
+omc team <N>:<claude|codex|gemini|antigravity|grok|游标> "<task with absolute plan path and explicit repo paths>" --cwd <workspace-root>
 ```
 
-Team name defaults to a slug from the task text (example: `review-auth-flow`).
+Team name defaults to a 标识符 from the task text (example: `review-auth-flow`).
 
 After launch, verify the command actually executed instead of assuming Enter fired. Check pane output and confirm the command or worker bootstrap text appears in pane history:
 
@@ -183,9 +183,9 @@ If encountered, switch to `omc team ...` CLI commands.
 
 | Error                        | Cause                               | Fix                                                                                 |
 | ---------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------- |
-| `not inside tmux`            | Requested in-place pane topology from a non-tmux surface | Start tmux and rerun, or let `omc team` use its detached-session fallback           |
+| `not inside tmux`            | Requested in-place pane topology from a non-tmux surface | Start tmux and rerun, or let `omc team` use its detached-会话 fallback           |
 | `cmux surface detected`      | Running inside cmux without `$TMUX` | Use the normal `omc team ...` flow; OMC will create native cmux worker splits      |
-| `Unsupported agent type`     | Requested agent is not claude/codex/gemini/antigravity/grok/cursor | Use `claude`, `codex`, `gemini`, `antigravity`, `grok`, or `cursor`; for native Claude Code agents use `/oh-my-claudecode:team` |
+| `Unsupported agent type`     | Requested agent is not claude/codex/gemini/antigravity/grok/游标 | Use `claude`, `codex`, `gemini`, `antigravity`, `grok`, or `游标`; for native Claude Code agents use `/oh-my-claudecode:team` |
 | `codex: command not found`   | Codex CLI not installed             | `npm install -g @openai/codex`                                                      |
 | `gemini: command not found`  | Gemini CLI not installed            | `npm install -g @google/gemini-cli` (enterprise/API-key tier)                       |
 | `agy: command not found`     | Antigravity CLI not installed       | Install per the [official instructions](https://antigravity.google)                |
@@ -199,4 +199,4 @@ If encountered, switch to `omc team ...` CLI commands.
 | Worker type  | Claude Code implicit agent-team teammates                     | claude / codex / gemini / antigravity CLI processes in tmux        |
 | Invocation   | Agent/Task spawn with distinct `name` values; no TeamCreate/TeamDelete in Claude Code 2.1.178+ | `omc team [N:agent]` + `status` + `shutdown` + `api` |
 | Coordination | Native implicit-team messaging and staged pipeline            | tmux worker runtime + CLI API state files            |
-| Use when     | You want Claude-native in-session agent orchestration         | You want external CLI worker execution               |
+| Use when     | You want Claude-native in-会话 agent orchestration         | You want external CLI worker execution               |

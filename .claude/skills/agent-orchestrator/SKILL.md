@@ -8,12 +8,12 @@ author: renat
 tags:
 - orchestration
 - multi-agent
-- workflow
+- 工作流
 - automation
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -24,14 +24,14 @@ tools:
 
 Meta-skill que orquestra todos os agentes do ecossistema. Scan automatico de skills, match por capacidades, coordenacao de workflows multi-skill e registry management.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - When you need specialized assistance with this domain
 
 ## 不适用场景
 
 - The task is unrelated to agent orchestrator
-- A simpler, more specific tool can handle the request
+- A simpler, more specific tool can handle the 请求
 - The user needs general-purpose assistance without domain expertise
 
 ## 工作原理

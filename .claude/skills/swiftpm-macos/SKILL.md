@@ -38,7 +38,7 @@ the fastest path to a reproducible result.
 ## Guardrails
 
 - 优先 SwiftPM over Xcode when both exist and the package path is clearly simpler.
-- Do not assume an app bundle exists in a pure package workflow.
+- Do not assume an app bundle exists in a pure package 工作流.
 - Explain when the package is library-only and therefore not directly runnable.
 
 ## Output Expectations

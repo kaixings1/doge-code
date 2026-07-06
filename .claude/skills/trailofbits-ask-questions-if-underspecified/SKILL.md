@@ -6,10 +6,10 @@ Ask the minimum set of clarifying questions needed to avoid wrong work.
 
 ## 使用场景
 
-Use this skill when:
-- The request has multiple plausible interpretations
-- Success criteria, scope, constraints, or environment details are unclear
-- Starting implementation without clarification risks doing the wrong work
+在以下情况下使用此技能：
+- 请求有多种合理解释
+- 成功标准、范围、约束或环境细节不明确
+- 未经澄清就开始实施可能做错工作
 
 ## What It Does
 

@@ -24,7 +24,7 @@ origin: ECC
 ```swift
 // 文件系统访问
 public protocol FileSystemProviding: Sendable {
-    func containerURL(for purpose: Purpose) -> URL?
+    func containerURL(for 目的: 目的) -> URL?
 }
 
 // 文件读写操作
@@ -47,7 +47,7 @@ public protocol BookmarkStorageProviding: Sendable {
 public struct DefaultFileSystemProvider: FileSystemProviding {
     public init() {}
 
-    public func containerURL(for purpose: Purpose) -> URL? {
+    public func containerURL(for 目的: 目的) -> URL? {
         FileManager.default.url(forUbiquityContainerIdentifier: nil)
     }
 }

@@ -35,13 +35,13 @@ Health Insurance Portability and Accountability Act technical safeguards.
 | Section | Description | VulnScout Finding Types |
 |---------|-------------|------------------------|
 | 164.312(a)(1) | Access Control | access-control, idor, business-logic |
-| 164.312(a)(2)(i) | Unique User Identification | auth-bypass, session fixation |
-| 164.312(a)(2)(iii) | Automatic Logoff | session management findings |
+| 164.312(a)(2)(i) | Unique User Identification | auth-bypass, 会话 fixation |
+| 164.312(a)(2)(iii) | Automatic Logoff | 会话 management findings |
 | 164.312(a)(2)(iv) | Encryption at Rest | cryptographic-failures, hardcoded-secret |
 | 164.312(b) | Audit Controls | logging-failures |
 | 164.312(c)(1) | Integrity Controls | sql-injection, deserialization, ssti |
-| 164.312(c)(2) | Authentication of ePHI | auth-bypass, hardcoded-secret |
-| 164.312(d) | Person/Entity Authentication | auth-bypass, insecure-randomness |
+| 164.312(c)(2) | 认证 of ePHI | auth-bypass, hardcoded-secret |
+| 164.312(d) | Person/Entity 认证 | auth-bypass, insecure-randomness |
 | 164.312(e)(1) | Transmission 安全性 | cryptographic-failures, ssrf |
 | 164.312(e)(2)(i) | Integrity Controls (transmission) | ssti, xss, command-injection |
 | 164.312(e)(2)(ii) | Encryption in Transit | cryptographic-failures |
@@ -61,7 +61,7 @@ Service Organization Control 2 for SaaS and cloud service providers.
 | CC7.1 | System Monitoring | logging-failures, exception-handling |
 | CC7.2 | Anomaly Detection | insecure-randomness, race-condition |
 | CC7.3 | 安全性 Event Evaluation | logging-failures |
-| CC7.4 | Incident Response | All critical/high findings |
+| CC7.4 | Incident 响应 | All critical/high findings |
 | CC8.1 | Change Management | Findings in diff (--since-commit) |
 
 ### NIST Cybersecurity Framework (CSF) 2.0

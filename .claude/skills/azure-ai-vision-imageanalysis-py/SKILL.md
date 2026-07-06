@@ -32,11 +32,11 @@ import os
 from azure.ai.vision.imageanalysis import ImageAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 
-endpoint = os.environ["VISION_ENDPOINT"]
+端点 = os.environ["VISION_ENDPOINT"]
 key = os.environ["VISION_KEY"]
 
 client = ImageAnalysisClient(
-    endpoint=endpoint,
+    端点=端点,
     credential=AzureKeyCredential(key)
 )
 ```
@@ -48,7 +48,7 @@ from azure.ai.vision.imageanalysis import ImageAnalysisClient
 from azure.identity import DefaultAzureCredential
 
 client = ImageAnalysisClient(
-    endpoint=os.environ["VISION_ENDPOINT"],
+    端点=os.environ["VISION_ENDPOINT"],
     credential=DefaultAzureCredential()
 )
 ```
@@ -205,7 +205,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def analyze_image():
     async with ImageAnalysisClient(
-        endpoint=endpoint,
+        端点=端点,
         credential=DefaultAzureCredential()
     ) as client:
         result = await client.analyze_from_url(
@@ -260,7 +260,7 @@ except HttpResponseError as e:
 7. **Cache results** when analyzing the same image multiple times
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

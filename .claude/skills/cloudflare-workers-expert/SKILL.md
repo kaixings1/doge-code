@@ -14,7 +14,7 @@ You are a senior Cloudflare Workers Engineer specializing in edge computing arch
 - Implementing edge-side data storage using KV, D1, or Durable Objects
 - Optimizing application latency by moving logic to the edge
 - Building full-stack apps with Cloudflare Pages and Workers
-- Handling request/response modification, security headers, and edge-side caching
+- Handling 请求/响应 modification, security headers, and edge-side caching
 
 ## 不要使用此技能的场景
 
@@ -24,12 +24,12 @@ You are a senior Cloudflare Workers Engineer specializing in edge computing arch
 
 ## 使用说明
 
-1. **Wrangler Ecosystem**: Use `wrangler.toml` for configuration and `npx wrangler dev` for local testing.
+1. **Wrangler Ecosystem**: Use `wrangler.toml` for 配置 and `npx wrangler dev` for local testing.
 2. **Fetch API**: Remember that Workers use the Web standard Fetch API, not Node.js globals.
-3. **Bindings**: Define all bindings (KV, D1, secrets) in `wrangler.toml` and access them through the `env` parameter in the `fetch` handler.
+3. **Bindings**: Define all bindings (KV, D1, secrets) in `wrangler.toml` and access them through the `env` 参数 in the `fetch` 处理器.
 4. **Cold Starts**: Workers have 0ms cold starts, but keep the bundle size small to stay within the 1MB limit for the free tier.
 5. **Durable Objects**: Use Durable Objects for stateful coordination and high-concurrency needs.
-6. **Error Handling**: Use `waitUntil()` for non-blocking asynchronous tasks (logging, analytics) that should run after the response is sent.
+6. **Error Handling**: Use `waitUntil()` for non-blocking asynchronous tasks (logging, analytics) that should run after the 响应 is sent.
 
 ## 示例
 
@@ -42,26 +42,26 @@ export interface Env {
 
 export default {
   async fetch(
-    request: Request,
+    请求: 请求,
     env: Env,
     ctx: ExecutionContext,
-  ): Promise<Response> {
+  ): Promise<响应> {
     const value = await env.MY_KV_NAMESPACE.get("my-key");
     if (!value) {
-      return new Response("Not Found", { status: 404 });
+      return new 响应("Not Found", { status: 404 });
     }
-    return new Response(`Stored Value: ${value}`);
+    return new 响应(`Stored Value: ${value}`);
   },
 };
 ```
 
-### Example 2: Edge Response Modification
+### Example 2: Edge 响应 Modification
 
 ```javascript
 export default {
-  async fetch(request, env, ctx) {
-    const response = await fetch(request);
-    const newResponse = new Response(response.body, response);
+  async fetch(请求, env, ctx) {
+    const 响应 = await fetch(请求);
+    const newResponse = new 响应(响应.body, 响应);
 
     // Add security headers at the edge
     newResponse.headers.set("X-Content-Type-Options", "nosniff");
@@ -78,15 +78,15 @@ export default {
 ## 最佳实践
 
 - ✅ **Do:** Use `env.VAR_NAME` for secrets and environment variables.
-- ✅ **Do:** Use `Response.redirect()` for clean edge-side redirects.
+- ✅ **Do:** Use `响应.redirect()` for clean edge-side redirects.
 - ✅ **Do:** Use `wrangler tail` for live production debugging.
 - ❌ **Don't:** Import large libraries; Workers have limited memory and CPU time.
 - ❌ **Don't:** Use Node.js specific libraries (like `fs`, `path`) unless using Node.js compatibility mode.
 
 ## 故障排除
 
-**Problem:** Request exceeded CPU time limit.
-**Solution:** Optimize loops, reduce the number of await calls, and move synchronous heavy lifting out of the request/response path. Use `ctx.waitUntil()` for tasks that don't block the response.
+**Problem:** 请求 exceeded CPU time limit.
+**Solution:** Optimize loops, reduce the number of await calls, and move synchronous heavy lifting out of the 请求/响应 path. Use `ctx.waitUntil()` for tasks that don't block the 响应.
 
 ## 限制
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

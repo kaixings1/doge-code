@@ -1,5 +1,5 @@
 ---
-name: expo-deployment
+name: expo-部署
 description: "Expo 应用部署"
 risk: safe
 source: community

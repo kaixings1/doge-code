@@ -18,7 +18,7 @@ const CreateUserSchema = z.object({
   age: z.number().int().min(13).max(150),
 });
 
-function createUser(req: Request) {
+function createUser(req: 请求) {
   const result = CreateUserSchema.safeParse(req.body);
   if (!result.success) {
     return { status: 400, errors: result.error.flatten().fieldErrors };
@@ -44,7 +44,7 @@ function createUser(req: Request) {
 const safeUrl = `/search?q=${encodeURIComponent(userInput)}`;
 
 // JSON 上下文：使用 JSON.stringify（处理转义）
-const safeJson = JSON.stringify({ query: userInput });
+const safeJson = JSON.stringify({ 查询: userInput });
 ```
 
 永远不要使用用户输入构造 HTML 字符串。使用启用了自动转义的模板引擎。
@@ -53,18 +53,18 @@ const safeJson = JSON.stringify({ query: userInput });
 
 ```python
 # 永远不要这样做
-cursor.execute(f"SELECT * FROM users WHERE id = {user_id}")
+游标.execute(f"SELECT * FROM users WHERE id = {user_id}")
 
 # 始终使用参数化查询
-cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+游标.execute("SELECT * FROM users WHERE id = %s", (user_id,))
 ```
 
 ```typescript
 // 永远不要这样做
-db.query(`SELECT * FROM users WHERE email = '${email}'`);
+db.查询(`SELECT * FROM users WHERE email = '${email}'`);
 
 // 始终使用参数化查询
-db.query("SELECT * FROM users WHERE email = $1", [email]);
+db.查询("SELECT * FROM users WHERE email = $1", [email]);
 ```
 
 使用 ORM 或查询构建器。如果编写原始 SQL，始终参数化。
@@ -82,9 +82,9 @@ function generateCsrfToken(): string {
 // 中间件：在状态变更请求上验证
 function csrfMiddleware(req, res, next) {
   if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
-    const token = req.headers['x-csrf-token'] || req.body._csrf;
-    if (!timingSafeEqual(token, req.session.csrfToken)) {
-      return res.status(403).json({ error: 'Invalid CSRF token' });
+    const 令牌 = req.headers['x-csrf-令牌'] || req.body._csrf;
+    if (!timingSafeEqual(令牌, req.会话.csrfToken)) {
+      return res.status(403).json({ error: 'Invalid CSRF 令牌' });
     }
   }
   next();
@@ -147,7 +147,7 @@ const rateLimits = {
 
 ```typescript
 // 使用所有检查验证 JWT
-const payload = jwt.verify(token, publicKey, {
+const 载荷 = jwt.verify(令牌, publicKey, {
   algorithms: ['RS256'],
   issuer: 'auth.example.com',
   audience: 'api.example.com',
@@ -191,7 +191,7 @@ govulncheck ./...
 
 ## 部署前清单
 
-1. 所有输入通过 schema 验证
+1. 所有输入通过 架构 验证
 2. SQL 查询参数化
 3. 安全标头已配置
 4. 通过 HSTS 强制 HTTPS

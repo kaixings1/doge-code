@@ -27,7 +27,7 @@ find . -name "docker-compose*.yml" -o -name "docker-compose*.yaml"
 find . -name "supervisord.conf" -o -name "supervisor*.conf"
 
 # Kubernetes
-find . -name "*.k8s.yaml" -o -name "deployment*.yaml" -o -name "service*.yaml"
+find . -name "*.k8s.yaml" -o -name "部署*.yaml" -o -name "service*.yaml"
 
 # PM2
 find . -name "ecosystem.config.js" -o -name "pm2*.json"
@@ -116,7 +116,7 @@ grep -rn "render_template_string\|eval\|exec\|deserialize" --include="*.py" back
 grep -rn "X-User\|X-Auth\|headers.*user" --include="*.ts" front-end/
 
 # Backend trusting headers
-grep -rn "request\.headers\[" --include="*.py" backend/ | grep -v "Authorization"
+grep -rn "请求\.headers\[" --include="*.py" backend/ | grep -v "授权"
 ```
 
 ### Shared Database → Data Leakage
@@ -128,7 +128,7 @@ grep -rn "request\.headers\[" --include="*.py" backend/ | grep -v "Authorization
 grep -rn "DATABASE_URL\|POSTGRES\|MYSQL\|MONGO" --include="*.env*"
 
 # If same DB, check both services for injection
-grep -rn "query\|execute\|rawQuery" --include="*.ts" --include="*.py"
+grep -rn "查询\|execute\|rawQuery" --include="*.ts" --include="*.py"
 ```
 
 ## 步骤 4: Document Attack Chains
@@ -145,7 +145,7 @@ grep -rn "query\|execute\|rawQuery" --include="*.ts" --include="*.py"
 2. [Service B] - [Vulnerability] at [location]
 
 **Attack Flow**:
-1. Attacker sends request to [external service]
+1. Attacker sends 请求 to [external service]
 2. [Vulnerability 1] causes [effect]
 3. [Effect] reaches [internal service]
 4. [Vulnerability 2] is triggered
@@ -184,11 +184,11 @@ RCE via Jinja2 SSTI
 ```
 React (external)
     │
-    │ GraphQL query
+    │ GraphQL 查询
     ▼
 Express (external)
     │
-    │ NoSQL injection in query
+    │ NoSQL injection in 查询
     ▼
 MongoDB
     │

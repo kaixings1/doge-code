@@ -32,11 +32,11 @@ date_added: "2026-02-27"
 1. Verify Conductor is initialized:
    - Check `conductor/product.md` exists
    - Check `conductor/tracks.md` exists
-   - If missing: Display error and suggest running `/conductor:setup` first
+   - If missing: Display error and suggest running `/conductor:设置` first
 
 2. Check for any tracks:
    - Read `conductor/tracks.md`
-   - If no tracks registered: Display setup complete message with suggestion to create first track
+   - If no tracks registered: Display 设置 complete message with suggestion to create first track
 
 ## Data Collection
 
@@ -90,7 +90,7 @@ Scan for potential blockers:
 
 ## 输出格式
 
-### Full Project 状态 (no argument)
+### Full Project 状态 (no 参数)
 
 ```
 ================================================================================
@@ -129,14 +129,14 @@ Progress in Phase:
   - [x] Task 2.1: Create dashboard layout
   - [x] Task 2.2: Add data fetching hooks
   - [~] Task 2.3: Implement chart rendering
-  - [ ] Task 2.4: Add filter controls
+  - [ ] Task 2.4: Add 过滤器 controls
 
 --------------------------------------------------------------------------------
                               NEXT ACTIONS
 --------------------------------------------------------------------------------
 
 1. Complete: Task 2.3 - Implement chart rendering (dashboard_20250112)
-2. Then: Task 2.4 - Add filter controls (dashboard_20250112)
+2. Then: Task 2.4 - Add 过滤器 controls (dashboard_20250112)
 3. After Phase 2: Phase verification checkpoint
 
 --------------------------------------------------------------------------------
@@ -154,7 +154,7 @@ Commands: /conductor:implement {trackId} | /conductor:new-track | /conductor:rev
 ================================================================================
 ```
 
-### Single Track 状态 (with track-id argument)
+### Single Track 状态 (with track-id 参数)
 
 ```
 ================================================================================
@@ -258,13 +258,13 @@ ERROR: Conductor not initialized
 
 Could not find conductor/product.md
 
-Run /conductor:setup to initialize Conductor for this project.
+Run /conductor:设置 to initialize Conductor for this project.
 ```
 
-### Track Not Found (with argument)
+### Track Not Found (with 参数)
 
 ```
-ERROR: Track not found: {argument}
+ERROR: Track not found: {参数}
 
 Available tracks:
   - auth_20250115

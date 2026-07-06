@@ -43,7 +43,7 @@ od:
 1. **CSS 多层 radial-gradient 错位呼吸** (最稳, 默认推荐):
    - 3-5 个大椭圆 `radial-gradient(...)`, 颜色取自调色板。
    - 每个椭圆套 `@keyframes` 平移 + scale + hue-rotate, 周期 8-14s, 错峰; 整个画面叠 `mix-blend-mode: screen` 或 `overlay`。
-   - 顶层加 1 层 `backdrop-filter: blur(80px)` 让边缘更糊。
+   - 顶层加 1 层 `backdrop-过滤器: blur(80px)` 让边缘更糊。
 2. **Canvas + simple perlin noise** (中阶):
    - 80 行 inline JS, 用 `requestAnimationFrame` 画 metaballs 或 simplex noise field。
    - 性能允许时启用, `prefers-reduced-motion` 时降回静态截图。

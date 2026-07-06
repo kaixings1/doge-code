@@ -18,9 +18,9 @@ date_added: "2026-02-27"
 ## 说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 使用此技能的场景
 
@@ -36,9 +36,9 @@ date_added: "2026-02-27"
 ### 1. Story Structure
 
 ```
-Setup → Conflict → Resolution
+设置 → Conflict → Resolution
 
-Setup: Context and baseline
+设置: Context and baseline
 Conflict: The problem or opportunity
 Resolution: Insights and recommendations
 ```
@@ -56,7 +56,7 @@ Resolution: Insights and recommendations
 
 ### 3. Three Pillars
 
-| Pillar        | Purpose  | Components                       |
+| Pillar        | 目的  | Components                       |
 | ------------- | -------- | -------------------------------- |
 | **Data**      | Evidence | Numbers, trends, comparisons     |
 | **Narrative** | Meaning  | Context, causation, implications |
@@ -335,7 +335,7 @@ ROI calculation
 Risk assessment
 
 Slide 7: THE ASK
-Specific request
+Specific 请求
 Decision needed
 Next steps
 ```
@@ -431,7 +431,7 @@ Moving to action:
 ### Handling Uncertainty
 
 ```markdown
-Acknowledge limitations:
+Acknowledge 限制:
 • "With 95% confidence, we can say..."
 • "The sample size of 500 shows..."
 • "While correlation is strong, causation requires..."

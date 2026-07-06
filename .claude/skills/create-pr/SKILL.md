@@ -11,12 +11,12 @@ source: community
 
 ## 何时使用
 - The user explicitly asks for `create-pr` or refers to the legacy skill name.
-- You need to redirect pull request creation work to the canonical `sentry-skills:pr-writer` workflow.
-- The task is specifically about writing or updating a pull request rather than general git operations.
+- You need to redirect pull 请求 creation work to the canonical `sentry-skills:pr-writer` 工作流.
+- The task is specifically about writing or updating a pull 请求 rather than general git operations.
 
 Use `sentry-skills:pr-writer` as the canonical skill for creating and editing pull requests.
 
-If invoked via `create-pr`, run the same workflow and conventions documented in `sentry-skills:pr-writer`.
+If invoked via `create-pr`, run the same 工作流 and conventions documented in `sentry-skills:pr-writer`.
 
 ## 限制
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

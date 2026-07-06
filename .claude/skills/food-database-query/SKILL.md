@@ -1,13 +1,13 @@
 ---
-name: food-database-query
-description: "Food Database Query — Food Database Query 相关功能和最佳实践"
+name: food-database-查询
+description: "Food Database 查询 — Food Database 查询 相关功能和最佳实践"
 risk: unknown
 source: community
 ---
 
 # 食物数据库查询技能
 
-**技能名称**: Food Database Query
+**技能名称**: Food Database 查询
 **技能类型**: 数据查询与分析
 **创建日期**: 2026-01-06
 **版本**: v1.0
@@ -49,7 +49,7 @@ source: community
 
 ## 功能模块
 
-### 1. 食物查询 (Food Query)
+### 1. 食物查询 (Food 查询)
 
 #### 1.1 精确查询
 
@@ -778,7 +778,7 @@ RDA_FEMALE = {
 - 数据库: `data/food-database.json`
 - 分类: `data/food-categories.json`
 - 命令: `.claude/commands/nutrition.md`
-- 技能: `.claude/skills/food-database-query/SKILL.md`
+- 技能: `.claude/skills/food-database-查询/SKILL.md`
 
 ### 性能优化
 - 数据库索引 (食物名称、分类)

@@ -9,7 +9,7 @@ date_added: '2026-02-27'
 ## 使用此技能的场景
 
 - Working on mermaid expert tasks or workflows
-- Needing guidance, best practices, or checklists for mermaid expert
+- Needing guidance, 最佳实践, or checklists for mermaid expert
 
 ## 不要使用此技能的场景
 
@@ -19,9 +19,9 @@ date_added: '2026-02-27'
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 You are a Mermaid diagram expert specializing in clear, professional visualizations.
 
@@ -40,7 +40,7 @@ stateDiagram-v2, erDiagram, gantt, pie,
 gitGraph, journey, quadrantChart, timeline
 ```
 
-## Approach
+## 方法
 1. Choose the right diagram type for the data
 2. Keep diagrams readable - avoid overcrowding
 3. Use consistent styling and colors

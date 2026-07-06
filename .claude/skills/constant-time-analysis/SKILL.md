@@ -40,7 +40,7 @@ Skip this skill
 
 - Non-cryptographic code (business logic, UI, etc.)
 - Public data processing where timing leaks don't matter
-- Code that doesn't handle secrets, keys, or authentication tokens
+- Code that doesn't handle secrets, keys, or 认证 tokens
 - High-level API usage where timing is handled by the library
 
 ## Language Selection
@@ -71,7 +71,7 @@ uv run {baseDir}/ct_analyzer/analyzer.py <source_file>
 # Include conditional branch warnings
 uv run {baseDir}/ct_analyzer/analyzer.py --warnings <source_file>
 
-# Filter to specific functions
+# 过滤器 to specific functions
 uv run {baseDir}/ct_analyzer/analyzer.py --func 'sign|verify' <source_file>
 
 # JSON output for CI
@@ -144,9 +144,17 @@ export PATH="/opt/homebrew/opt/openjdk@21/bin:$PATH"
 export PATH="$HOME/.dotnet/tools:$PATH"
 ```
 
-See references/vm-compiled.md for detailed setup instructions and troubleshooting.
+See references/vm-compiled.md for detailed 设置 instructions and troubleshooting.
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 | Problem                | Detection                       | Fix                                          |
 | ---------------------- | ------------------------------- | -------------------------------------------- |
@@ -170,9 +178,9 @@ See references/vm-compiled.md for detailed setup instructions and troubleshootin
 
 ## Verifying Results (Avoiding False Positives)
 
-**CRITICAL**: Not every flagged operation is a vulnerability. The tool has no data flow analysis - it flags ALL potentially dangerous operations regardless of whether they involve secrets.
+**CRITICAL**: Not every flagged 操作 is a vulnerability. The tool has no data flow analysis - it flags ALL potentially dangerous operations regardless of whether they involve secrets.
 
-For each flagged violation, ask: **Does this operation's input depend on secret data?**
+For each flagged violation, ask: **Does this 操作's input depend on secret data?**
 
 1. **Identify the secret inputs** to the function (private keys, plaintext, signatures, tokens)
 
@@ -195,7 +203,7 @@ For each flagged violation, ask: **Does this operation's input depend on secret 
 | Question                                          | If Yes                | If No                 |
 | ------------------------------------------------- | --------------------- | --------------------- |
 | Is the operand a compile-time constant?           | Likely false positive | Continue              |
-| Is the operand a public parameter (length, count)?| Likely false positive | Continue              |
+| Is the operand a public 参数 (length, count)?| Likely false positive | Continue              |
 | Is the operand derived from key/plaintext/secret? | **TRUE POSITIVE**     | Likely false positive |
 | Can an attacker influence the operand value?      | **TRUE POSITIVE**     | Likely false positive |
 

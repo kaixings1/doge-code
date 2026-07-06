@@ -41,19 +41,19 @@ server.tool(
 
 server.tool(
   "run_query",
-  "Execute a read-only SQL query against the application database",
+  "Execute a read-only SQL 查询 against the application database",
   {
-    query: z.string().describe("SQL SELECT query to execute"),
+    查询: z.string().describe("SQL SELECT 查询 to execute"),
     limit: z.number().default(100).describe("Maximum rows to return"),
   },
-  async ({ query, limit }) => {
-    if (!query.trim().toUpperCase().startsWith("SELECT")) {
+  async ({ 查询, limit }) => {
+    if (!查询.trim().toUpperCase().startsWith("SELECT")) {
       return {
         content: [{ type: "text", text: "Only SELECT queries are allowed" }],
         isError: true,
       };
     }
-    const rows = await db.query(`${query} LIMIT ${limit}`);
+    const rows = await db.查询(`${查询} LIMIT ${limit}`);
     return {
       content: [{ type: "text", text: JSON.stringify(rows, null, 2) }],
     };
@@ -65,11 +65,11 @@ server.tool(
 
 ```typescript
 server.resource(
-  "schema",
-  "db://schema",
-  "Current database schema with all tables, columns, and relationships",
+  "架构",
+  "db://架构",
+  "Current database 架构 with all tables, columns, and relationships",
   async () => {
-    const schema = await db.query(`
+    const 架构 = await db.查询(`
       SELECT table_name, column_name, data_type, is_nullable
       FROM information_schema.columns
       WHERE table_schema = 'public'
@@ -78,9 +78,9 @@ server.resource(
     return {
       contents: [
         {
-          uri: "db://schema",
+          uri: "db://架构",
           mimeType: "application/json",
-          text: JSON.stringify(schema, null, 2),
+          text: JSON.stringify(架构, null, 2),
         },
       ],
     };
@@ -90,7 +90,7 @@ server.resource(
 server.resource(
   "config",
   "config://app",
-  "Application configuration (secrets redacted)",
+  "Application 配置 (secrets redacted)",
   async () => {
     const config = await loadConfig();
     const safe = redactSecrets(config);
@@ -131,7 +131,7 @@ server.prompt(
 );
 ```
 
-## Client Configuration
+## Client 配置
 
 ```json
 {
@@ -146,14 +146,14 @@ server.prompt(
     "remote-server": {
       "url": "https://mcp.example.com/sse",
       "headers": {
-        "Authorization": "Bearer ${MCP_TOKEN}"
+        "授权": "Bearer ${MCP_TOKEN}"
       }
     }
   }
 }
 ```
 
-## Transport Setup
+## Transport 设置
 
 ```typescript
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
@@ -166,7 +166,7 @@ For HTTP-based servers, use the SSE transport for streaming responses to clients
 
 ## 反模式
 
-- Creating tools with vague descriptions that don't explain when to use them
+- Creating tools with vague descriptions that don't explain 使用场景 them
 - Not validating inputs with Zod schemas before processing
 - Returning raw error stack traces to the client
 - Missing `isError: true` flag on error responses
@@ -182,4 +182,4 @@ For HTTP-based servers, use the SSE transport for streaming responses to clients
 - [ ] Prompt templates provide structured starting points for common tasks
 - [ ] Server handles graceful shutdown on SIGINT/SIGTERM
 - [ ] Tools are composable (do one thing well) rather than monolithic
-- [ ] Client configuration documented with required environment variables
+- [ ] Client 配置 documented with required environment variables

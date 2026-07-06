@@ -40,12 +40,12 @@ const client = new AIProjectClient(
 );
 ```
 
-## Operation Groups
+## 操作 Groups
 
 | Group | Purpose |
 |-------|---------|
 | `client.agents` | Create and manage AI agents |
-| `client.connections` | List connected Azure resources |
+| `client.connections` | List connected Azure 资源 |
 | `client.deployments` | List model deployments |
 | `client.datasets` | Upload and manage datasets |
 | `client.indexes` | Create and manage search indexes |
@@ -58,7 +58,7 @@ const client = new AIProjectClient(
 const openAIClient = await client.getOpenAIClient();
 
 // Use for responses
-const response = await openAIClient.responses.create({
+const 响应 = await openAIClient.responses.create({
   model: "gpt-4o",
   input: "What is the capital of France?"
 });
@@ -77,7 +77,7 @@ const conversation = await openAIClient.conversations.create({
 const agent = await client.agents.createVersion("my-agent", {
   kind: "prompt",
   model: "gpt-4o",
-  instructions: "You are a helpful assistant."
+  使用说明: "You are a helpful assistant."
 });
 ```
 
@@ -88,7 +88,7 @@ const agent = await client.agents.createVersion("my-agent", {
 const agent = await client.agents.createVersion("code-agent", {
   kind: "prompt",
   model: "gpt-4o",
-  instructions: "You can execute code.",
+  使用说明: "You can execute code.",
   tools: [{ type: "code_interpreter", container: { type: "auto" } }]
 });
 
@@ -167,8 +167,8 @@ const conversation = await openAIClient.conversations.create({
   items: [{ type: "message", role: "user", content: "Hello!" }]
 });
 
-// Generate response using agent
-const response = await openAIClient.responses.create(
+// Generate 响应 using agent
+const 响应 = await openAIClient.responses.create(
   { conversation: conversation.id },
   { body: { agent: { name: agent.name, type: "agent_reference" } } }
 );
@@ -206,7 +206,7 @@ for await (const deployment of client.deployments.list()) {
   }
 }
 
-// Filter by publisher
+// 过滤器 by publisher
 for await (const d of client.deployments.list({ modelPublisher: "OpenAI" })) {
   console.log(d.name);
 }
@@ -286,12 +286,12 @@ import {
 
 1. **Use getOpenAIClient()** - For responses, conversations, files, and vector stores
 2. **Version your agents** - Use `createVersion` for reproducible agent definitions
-3. **Clean up resources** - Delete agents, conversations when done
+3. **Clean up 资源** - Delete agents, conversations when done
 4. **Use connections** - Get credentials from project connections, don't hardcode
-5. **Filter deployments** - Use `modelPublisher` filter to find specific models
+5. **过滤器 deployments** - Use `modelPublisher` 过滤器 to find specific models
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

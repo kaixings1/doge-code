@@ -6,11 +6,11 @@ Interact with and analyze DWARF debug files, understand the DWARF debug format/s
 
 ## 使用场景
 
-Use this skill when you need to:
-- Understand or parse DWARF debug information from compiled binaries
-- Answer questions about the DWARF standard (v3, v4, v5)
-- Write or review code that interacts with DWARF data
-- Use `dwarfdump` or `readelf` to extract debug information
+当您需要以下操作时使用此技能：
+- 理解或解析编译二进制文件中的 DWARF 调试信息
+- 回答关于 DWARF 标准（v3、v4、v5）的问题
+- 编写或审查与 DWARF 数据交互的代码
+- 使用 `dwarfdump` 或 `readelf` 提取调试信息
 - Verify DWARF data integrity using `llvm-dwarfdump --verify`
 - Work with DWARF parsing libraries (libdwarf, pyelftools, gimli, etc.)
 

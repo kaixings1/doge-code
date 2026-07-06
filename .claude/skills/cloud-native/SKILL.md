@@ -24,11 +24,11 @@ Activate this skill when:
 
 ### Overview
 
-Cloud instances expose a metadata service at a well-known IP address. SSRF vulnerabilities in cloud-hosted applications can be exploited to access this metadata, potentially leaking IAM credentials, instance identity tokens, and configuration data.
+Cloud instances expose a metadata service at a well-known IP address. SSRF vulnerabilities in cloud-hosted applications can be exploited to access this metadata, potentially leaking IAM credentials, instance identity tokens, and 配置 data.
 
 ### IMDS Endpoints
 
-| Provider | IPv4 Endpoint | IPv6 Endpoint | Protocol |
+| Provider | IPv4 端点 | IPv6 端点 | Protocol |
 |----------|--------------|---------------|----------|
 | AWS EC2 | `169.254.169.254` | `fd00:ec2::254` | HTTP |
 | GCP | `metadata.google.internal` (`169.254.169.254`) | N/A | HTTP |
@@ -40,8 +40,8 @@ Cloud instances expose a metadata service at a well-known IP address. SSRF vulne
 
 | Feature | IMDSv1 | IMDSv2 |
 |---------|--------|--------|
-| Request method | Simple GET | PUT to get token, then GET with token header |
-| SSRF exploitable | Yes (single GET request) | Harder (requires PUT + custom header) |
+| 请求 method | Simple GET | PUT to get 令牌, then GET with 令牌 header |
+| SSRF exploitable | Yes (single GET 请求) | Harder (requires PUT + custom header) |
 | Mitigation | Disable or upgrade | Enforce IMDSv2-only via `HttpTokens: required` |
 
 **IMDSv1 Exploitation** (simple GET):
@@ -51,11 +51,11 @@ GET http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>
 
 **IMDSv2 Exploitation** (requires PUT + header):
 ```
-PUT http://169.254.169.254/latest/api/token
-X-aws-ec2-metadata-token-ttl-seconds: 21600
+PUT http://169.254.169.254/latest/api/令牌
+X-aws-ec2-metadata-令牌-ttl-seconds: 21600
 
 GET http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>
-X-aws-ec2-metadata-token: <token>
+X-aws-ec2-metadata-令牌: <令牌>
 ```
 
 **Detection Patterns**:
@@ -63,7 +63,7 @@ X-aws-ec2-metadata-token: <token>
 # References to IMDS IP addresses
 grep -rniE "169\.254\.169\.254|fd00:ec2::254" --include="*.py" --include="*.js" --include="*.ts" --include="*.go" --include="*.java" --include="*.rb" --include="*.php" --include="*.yaml" --include="*.yml" --include="*.tf" --include="*.json"
 
-# GCP metadata endpoint
+# GCP metadata 端点
 grep -rniE "metadata\.google\.internal|metadata-flavor.*Google" --include="*.py" --include="*.js" --include="*.ts" --include="*.go" --include="*.java"
 
 # Azure metadata
@@ -121,7 +121,7 @@ grep -rniE "(aws_secret_access_key|AWS_SECRET_ACCESS_KEY|SecretAccessKey)\s*[:=]
 grep -rniE "(AWS_SESSION_TOKEN|aws_session_token|SessionToken)\s*[:=]" --include="*.py" --include="*.js" --include="*.ts" --include="*.env" --include="*.yaml"
 
 # AWS credentials in code (boto3)
-grep -rniE "boto3\.(client|resource|Session)\s*\(" --include="*.py" -A 5 | grep -iE "(aws_access_key_id|aws_secret_access_key|aws_session_token)"
+grep -rniE "boto3\.(client|resource|会话)\s*\(" --include="*.py" -A 5 | grep -iE "(aws_access_key_id|aws_secret_access_key|aws_session_token)"
 ```
 
 ### AWS SDK Usage Patterns
@@ -142,7 +142,7 @@ grep -rniE "\.(create_user|attach_user_policy|put_role_policy|create_access_key)
 ### Metadata Server Access
 
 ```bash
-# GCP metadata endpoint usage
+# GCP metadata 端点 usage
 grep -rniE "metadata\.google\.internal" --include="*.py" --include="*.js" --include="*.ts" --include="*.go" --include="*.java"
 
 # GCP metadata headers
@@ -172,10 +172,10 @@ grep -rniE "google_project_iam|google_service_account_iam" --include="*.tf" -A 1
 
 ## Azure-Specific Patterns
 
-### Managed Identity Endpoint
+### Managed Identity 端点
 
 ```bash
-# Azure IMDS endpoint
+# Azure IMDS 端点
 grep -rniE "169\.254\.169\.254.*metadata.*identity|IDENTITY_ENDPOINT|MSI_ENDPOINT" --include="*.py" --include="*.js" --include="*.ts" --include="*.go" --include="*.java" --include="*.cs"
 
 # Azure SDK managed identity
@@ -190,13 +190,13 @@ grep -rniE "(AZURE_CLIENT_SECRET|AZURE_TENANT_ID|AZURE_CLIENT_ID)\s*[:=]\s*[\"']
 
 ## Kubernetes Patterns
 
-### ServiceAccount Token Exposure
+### ServiceAccount 令牌 Exposure
 
-**Risk**: Every pod mounts a ServiceAccount token at a well-known path. If an attacker gains code execution in a pod, they can use this token to interact with the Kubernetes API.
+**Risk**: Every pod mounts a ServiceAccount 令牌 at a well-known path. If an attacker gains code execution in a pod, they can use this 令牌 to interact with the Kubernetes API.
 
 ```bash
-# ServiceAccount token path references
-grep -rniE "/var/run/secrets/kubernetes\.io/serviceaccount/(token|ca\.crt|namespace)" --include="*.py" --include="*.js" --include="*.ts" --include="*.go" --include="*.java" --include="*.sh" --include="*.yaml"
+# ServiceAccount 令牌 path references
+grep -rniE "/var/run/secrets/kubernetes\.io/serviceaccount/(令牌|ca\.crt|namespace)" --include="*.py" --include="*.js" --include="*.ts" --include="*.go" --include="*.java" --include="*.sh" --include="*.yaml"
 
 # Kubernetes API access from within pods
 grep -rniE "kubernetes\.default\.svc|KUBERNETES_SERVICE_HOST|kubernetes\.io/api" --include="*.py" --include="*.js" --include="*.ts" --include="*.go" --include="*.java"
@@ -264,21 +264,21 @@ grep -rniE "resources.*pods/exec|resources.*pods/attach" --include="*.yaml" --in
 
 ```bash
 # Lambda/Cloud Function environment variable secrets
-grep -rniE "(Environment|environment|env):" --include="*.yaml" --include="*.yml" --include="*.tf" --include="*.json" -A 20 | grep -iE "(password|secret|key|token|api_key|database_url|connection_string)"
+grep -rniE "(Environment|environment|env):" --include="*.yaml" --include="*.yml" --include="*.tf" --include="*.json" -A 20 | grep -iE "(password|secret|key|令牌|api_key|database_url|connection_string)"
 
 # Terraform Lambda environment variables
-grep -rniE "environment\s*\{" --include="*.tf" -A 20 | grep -iE "(password|secret|key|token)"
+grep -rniE "environment\s*\{" --include="*.tf" -A 20 | grep -iE "(password|secret|key|令牌)"
 
 # CloudFormation Lambda environment
-grep -rniE "Environment:" --include="*.yaml" --include="*.yml" -A 20 | grep -iE "(password|secret|key|token)"
+grep -rniE "Environment:" --include="*.yaml" --include="*.yml" -A 20 | grep -iE "(password|secret|key|令牌)"
 
 # Code reading env vars for secrets
-grep -rniE "(os\.environ|process\.env|System\.getenv)\[.*?(PASSWORD|SECRET|KEY|TOKEN)" --include="*.py" --include="*.js" --include="*.ts" --include="*.java"
+grep -rniE "(os\.environ|process\.env|System\.getenv)\[.*?(PASSWORD|SECRET|KEY|令牌)" --include="*.py" --include="*.js" --include="*.ts" --include="*.java"
 ```
 
 ### Cold Start Race Conditions
 
-**Risk**: During cold starts, serverless functions may have a window where initialization is incomplete, leading to race conditions with security implications (e.g., auth middleware not yet initialized).
+**Risk**: During cold starts, serverless functions may have a window where initialization is incomplete, leading to race conditions with security implications (e.g., auth 中间件 not yet initialized).
 
 ```bash
 # Global state initialization patterns
@@ -294,13 +294,13 @@ grep -rniE "if\s*\(\s*!\s*\w+(Client|Connection|Instance)\s*\)" --include="*.js"
 
 ```bash
 # Lambda event handling without validation
-grep -rniE "def\s+(handler|lambda_handler)\s*\(\s*event" --include="*.py" -A 20 | grep -iE "(event\[|event\.get)"
+grep -rniE "def\s+(处理器|lambda_handler)\s*\(\s*event" --include="*.py" -A 20 | grep -iE "(event\[|event\.get)"
 
 # Node.js Lambda event access
-grep -rniE "exports\.(handler|main)\s*=\s*async" --include="*.js" --include="*.ts" -A 20 | grep -iE "(event\.|event\[)"
+grep -rniE "exports\.(处理器|main)\s*=\s*async" --include="*.js" --include="*.ts" -A 20 | grep -iE "(event\.|event\[)"
 
 # Event data used in SQL/commands
-grep -rniE "event\[" --include="*.py" -A 3 | grep -iE "(execute|query|system|subprocess|eval)"
+grep -rniE "event\[" --include="*.py" -A 3 | grep -iE "(execute|查询|system|subprocess|eval)"
 ```
 
 ## Infrastructure as Code Detection
@@ -323,11 +323,11 @@ grep -rniE "pulumi\.(aws|gcp|azure)" --include="*.ts" --include="*.py"
 # Detect cloud SDKs in use
 grep -rniE "^(import|from|require|use)\s+" --include="*.py" --include="*.js" --include="*.ts" --include="*.go" --include="*.java" | grep -iE "(boto3|aws-sdk|@aws-sdk|google\.cloud|@google-cloud|azure|@azure)"
 
-# Find IaC and deployment configs
+# Find IaC and 部署 configs
 find . \( -name "*.tf" -o -name "Dockerfile" -o -name "docker-compose*.yml" -o -name "*.yaml" -o -name "*.yml" \) -not -path "*/.git/*" -not -path "*/node_modules/*" 2>/dev/null | head -50
 
 # Find Kubernetes manifests
-grep -rniE "apiVersion.*apps/v1|kind:\s*(Deployment|Service|Pod|StatefulSet)" --include="*.yaml" --include="*.yml"
+grep -rniE "apiVersion.*apps/v1|kind:\s*(部署|Service|Pod|StatefulSet)" --include="*.yaml" --include="*.yml"
 ```
 
 ### 步骤 2: Assess IMDS Exposure
@@ -340,21 +340,21 @@ grep -rniE "apiVersion.*apps/v1|kind:\s*(Deployment|Service|Pod|StatefulSet)" --
 ### 步骤 3: Review Cloud Credentials
 
 1. Scan for hardcoded access keys, secrets, and tokens
-2. Check environment variable configuration for leaked credentials
+2. Check environment variable 配置 for leaked credentials
 3. Review IAM policies for overly broad permissions
 4. Assess role assumption chains for privilege escalation paths
 
 ### 步骤 4: Audit Kubernetes Security
 
-1. Review RBAC configuration for least privilege
+1. Review RBAC 配置 for least privilege
 2. Check for privileged containers and dangerous volume mounts
-3. Verify ServiceAccount token automounting is disabled where unnecessary
+3. Verify ServiceAccount 令牌 automounting is disabled where unnecessary
 4. Assess network policies for pod-to-pod isolation
 
 ### 步骤 5: Evaluate Serverless Security
 
 1. Check for secrets in environment variables (use Secrets Manager/Key Vault instead)
-2. Review event handler input validation
+2. Review event 处理器 input validation
 3. Assess function permissions (least privilege)
 4. Check for cold start race conditions in auth initialization
 
@@ -362,11 +362,11 @@ grep -rniE "apiVersion.*apps/v1|kind:\s*(Deployment|Service|Pod|StatefulSet)" --
 
 **Severity Mapping**:
 - **CRITICAL**: Hardcoded AWS access keys, S3 bucket with `Principal: *` containing sensitive data, privileged container with host path mount, SSRF to IMDSv1
-- **HIGH**: Overly permissive IAM roles, ServiceAccount token with cluster-admin, secrets in Lambda environment variables, Docker socket mount
+- **HIGH**: Overly permissive IAM roles, ServiceAccount 令牌 with cluster-admin, secrets in Lambda environment variables, Docker socket mount
 - **MEDIUM**: IMDSv2 not enforced, GCP default compute service account, missing network policies, gRPC reflection in production
 - **LOW**: Non-sensitive S3 bucket public access, missing Kubernetes security context with limited impact
 
-## Integration with Findings Artifact
+## 集成 with Findings Artifact
 
 Map results to `.claude/findings.json` with:
 - `type`: `"cloud-credential-exposure"`, `"imds-ssrf"`, `"s3-misconfiguration"`, `"iam-overpermission"`, `"k8s-privileged-container"`, `"k8s-rbac-escalation"`, `"serverless-secret-leak"`, or `"cloud-misconfiguration"`
@@ -374,7 +374,7 @@ Map results to `.claude/findings.json` with:
 - `source_tool`: `"manual"`, `"semgrep"`, or `"checkov"`
 - `evidence`: Include the file, line, resource identifier, and description of the misconfiguration
 
-## Integration with Other Skills
+## 集成 with Other Skills
 
 - Use **secret-scanning** to find hardcoded cloud credentials
 - Use **vuln-patterns** for SSRF patterns that chain into IMDS exploitation

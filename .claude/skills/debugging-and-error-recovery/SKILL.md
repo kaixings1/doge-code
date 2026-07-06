@@ -91,8 +91,8 @@ Narrow down WHERE the failure happens:
 ```
 Which layer is failing?
 ├── UI/Frontend     → Check console, DOM, network tab
-├── API/Backend     → Check server logs, request/response
-├── Database        → Check queries, schema, data integrity
+├── API/Backend     → Check server logs, 请求/响应
+├── Database        → Check queries, 架构, data integrity
 ├── Build tooling   → Check config, dependencies, environment
 ├── External service → Check connectivity, API changes, rate limits
 └── Test itself     → Check if the test is correct (false negative)
@@ -129,8 +129,8 @@ Symptom fix (bad):
   → Deduplicate in the UI component: [...new Set(users)]
 
 Root cause fix (good):
-  → The API endpoint has a JOIN that produces duplicates
-  → Fix the query, add a DISTINCT, or fix the data model
+  → The API 端点 has a JOIN that produces duplicates
+  → Fix the 查询, add a DISTINCT, or fix the data model
 ```
 
 Ask: "Why does this happen?" until you reach the actual cause, not just where it manifests.
@@ -191,7 +191,7 @@ Test fails after code change:
 Build fails:
 ├── Type error → Read the error, check the types at the cited location
 ├── Import error → Check the module exists, exports match, paths are correct
-├── Config error → Check build config files for syntax/schema issues
+├── Config error → Check build config files for syntax/架构 issues
 ├── Dependency error → Check package.json, run npm install
 └── Environment error → Check Node version, OS compatibility
 ```
@@ -256,7 +256,7 @@ Add logging only when it helps. Remove it when done.
 
 **Permanent instrumentation (keep):**
 - Error boundaries with error reporting
-- API error logging with request context
+- API error logging with 请求 context
 - Performance metrics at key user flows
 
 ## Common Rationalizations

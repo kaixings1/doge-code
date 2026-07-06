@@ -1,6 +1,6 @@
 ---
 name: offers
-description: "When the user wants to design, construct, or improve an offer — the thing they actually sell — including value framing, bonus stacking, guarantee design, scarcity/urgency, naming, and payment structure. Also use when the user mentions 'offer,' 'offer design,' 'build an offer,' 'grand slam offer,' 'irresistible offer,' 'value stack,' 'bonus stack,' 'guarantee,' 'risk reversal,' 'money-back guarantee,' 'scarcity,' 'urgency,' 'high-ticket offer,' 'productize a service,' 'naming an offer,' 'payment plan,' 'down-sell,' 'upsell offer,' or 'why isn't my offer converting.' Best for services, agencies, courses, coaching, info products, high-ticket B2B, and direct-response. If you run pure self-serve SaaS, read pricing first — tiers and packaging do more work there. For price level itself (tiers, freemium, value metric), see pricing. For the page that presents the offer, see copywriting. For the launch moment, see launch. For sales collateral, see sales-enablement."
+description: "当用户想要设计、构建或改进产品方案（他们实际销售的东西）时，包括价值框架、奖励堆叠、担保设计、稀缺性/紧迫性、命名和支付结构。当用户提到 'offer'、'offer design'、'build an offer'、'grand slam offer'、'irresistible offer'、'value stack'、'bonus stack'、'guarantee'、'risk reversal'、'money-back guarantee'、'scarcity'、'urgency'、'high-ticket offer'、'productize a service'、'naming an offer'、'payment plan'、'down-sell'、'upsell offer' 或 'why isn't my offer converting' 时也使用此技能。最适合服务、代理机构、课程、教练、信息产品、高客单价 B2B 和直接响应式营销。如果你运营纯自助式 SaaS，请先阅读定价——层级和打包在此处作用更大。对于价格水平本身（层级、免费增值、价值指标），请参阅 pricing。对于展示方案的页面，请参阅 copywriting。对于发布时刻，请参阅 launch。对于销售资料，请参阅 sales-enablement。"
 metadata:
   version: 1.0.0
 ---
@@ -30,7 +30,7 @@ metadata:
 - **辅导**——1对1、小组、大师班
 - **Info products** — guides, swipe files, templates, communities
 - **High-ticket B2B** — $5K+ ACV with a sales conversation
-- **Direct-response** — e-com promo offers, infomercial-style, paid-traffic-to-VSL
+- **Direct-响应** — e-com promo offers, infomercial-style, paid-traffic-to-VSL
 
 ### When `pricing` does more of the work
 
@@ -44,7 +44,7 @@ Skim this skill in those cases for the value equation framing, then go to `prici
 
 ## The Value Equation
 
-The single most useful frame for offer design. Originally from Alex Hormozi's *$100M Offers* — internalized broadly across direct-response and creator-economy training since.
+The single most useful frame for offer design. Originally from Alex Hormozi's *$100M Offers* — internalized broadly across direct-响应 and creator-economy training since.
 
 ```
               Dream Outcome  ×  Perceived Likelihood of Achievement
@@ -63,7 +63,7 @@ You move the four levers like this:
 
 **Implication for offer construction**: most "lower the price" requests are actually "raise the numerator or lower the denominator" requests. Price is the comparison, not the value.
 
-**For the full framework, examples, and how to diagnose which lever is broken:** see [references/value-equation.md](references/value-equation.md)
+**For the full framework, 示例, and how to diagnose which lever is broken:** see [references/value-equation.md](references/value-equation.md)
 
 ---
 
@@ -82,7 +82,7 @@ A complete offer has six components. Skip any one and conversion suffers.
 
 Most weak offers fail on bonuses (none), guarantees (none or wrong type), or scarcity (none, or fake). Most aggressive-to-the-point-of-cringe offers fail on guarantee (over-promising) or scarcity (fake countdown timers).
 
-**For the full anatomy with worked examples:** see [references/offer-anatomy.md](references/offer-anatomy.md)
+**For the full anatomy with worked 示例:** see [references/offer-anatomy.md](references/offer-anatomy.md)
 
 ---
 
@@ -96,7 +96,7 @@ Most weak offers fail on bonuses (none), guarantees (none or wrong type), or sca
 | [bonus-stacking.md](references/bonus-stacking.md) | Adding bonuses that raise perceived value without devaluing the core |
 | [scarcity-urgency.md](references/scarcity-urgency.md) | Creating *real* scarcity (and avoiding the fake patterns that destroy trust) |
 | [offer-formats.md](references/offer-formats.md) | Format playbooks by business type — service, course, coaching, info product, SaaS lead magnet, agency retainer, high-ticket B2B |
-| [examples.md](references/examples.md) | Anonymized worked examples — before/after for each business type |
+| [示例.md](references/示例.md) | Anonymized worked 示例 — before/after for each business type |
 
 ---
 

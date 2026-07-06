@@ -8,11 +8,11 @@ date_added: '2026-02-27'
 
 # Azure.ResourceManager.DurableTask (.NET)
 
-Management plane SDK for provisioning and managing Azure Durable Task Scheduler resources via Azure Resource Manager.
+Management plane SDK for provisioning and managing Azure Durable Task Scheduler 资源 via Azure Resource Manager.
 
 > **⚠️ Management vs Data Plane**
 > - **This SDK (Azure.ResourceManager.DurableTask)**: Create schedulers, task hubs, configure retention policies
-> - **Data Plane SDK (Microsoft.DurableTask.Client.AzureManaged)**: Start orchestrations, query instances, send events
+> - **Data Plane SDK (Microsoft.DurableTask.Client.AzureManaged)**: Start orchestrations, 查询 instances, send events
 
 ## 安装
 
@@ -89,16 +89,16 @@ var schedulerData = new DurableTaskSchedulerData(AzureLocation.EastUS)
     }
 };
 
-// Create scheduler (long-running operation)
+// Create scheduler (long-running 操作)
 var schedulerCollection = resourceGroup.Value.GetDurableTaskSchedulers();
-var operation = await schedulerCollection.CreateOrUpdateAsync(
+var 操作 = await schedulerCollection.CreateOrUpdateAsync(
     WaitUntil.Completed,
     "my-scheduler",
     schedulerData);
 
-DurableTaskSchedulerResource scheduler = operation.Value;
+DurableTaskSchedulerResource scheduler = 操作.Value;
 Console.WriteLine($"Scheduler created: {scheduler.Data.Name}");
-Console.WriteLine($"Endpoint: {scheduler.Data.Properties.Endpoint}");
+Console.WriteLine($"端点: {scheduler.Data.Properties.端点}");
 ```
 
 ### 2. Create Scheduler with Consumption SKU
@@ -114,7 +114,7 @@ var consumptionSchedulerData = new DurableTaskSchedulerData(AzureLocation.EastUS
     }
 };
 
-var operation = await schedulerCollection.CreateOrUpdateAsync(
+var 操作 = await schedulerCollection.CreateOrUpdateAsync(
     WaitUntil.Completed,
     "my-serverless-scheduler",
     consumptionSchedulerData);
@@ -148,7 +148,7 @@ await foreach (var sched in subscription.GetDurableTaskSchedulersAsync())
     Console.WriteLine($"Scheduler: {sched.Data.Name}");
     Console.WriteLine($"  Location: {sched.Data.Location}");
     Console.WriteLine($"  SKU: {sched.Data.Properties.Sku?.Name}");
-    Console.WriteLine($"  Endpoint: {sched.Data.Properties.Endpoint}");
+    Console.WriteLine($"  端点: {sched.Data.Properties.端点}");
 }
 
 // List schedulers in resource group
@@ -200,7 +200,7 @@ var updateOperation = await schedulerCollection.CreateOrUpdateAsync(
     updateData);
 ```
 
-### 7. Delete Resources
+### 7. Delete 资源
 
 ```csharp
 // Delete task hub first
@@ -292,7 +292,7 @@ using Azure;
 
 try
 {
-    var operation = await schedulerCollection.CreateOrUpdateAsync(
+    var 操作 = await schedulerCollection.CreateOrUpdateAsync(
         WaitUntil.Completed, schedulerName, schedulerData);
 }
 catch (RequestFailedException ex) when (ex.Status == 409)
@@ -317,9 +317,9 @@ using Azure.Identity;
 using Azure.ResourceManager;
 using Azure.ResourceManager.DurableTask;
 using Azure.ResourceManager.DurableTask.Models;
-using Azure.ResourceManager.Resources;
+using Azure.ResourceManager.资源;
 
-// Setup
+// 设置
 var credential = new DefaultAzureCredential();
 var armClient = new ArmClient(credential);
 
@@ -347,7 +347,7 @@ var schedulerOp = await schedulerCollection.CreateOrUpdateAsync(
     WaitUntil.Completed, "my-scheduler", schedulerData);
 var scheduler = schedulerOp.Value;
 
-Console.WriteLine($"Scheduler endpoint: {scheduler.Data.Properties.Endpoint}");
+Console.WriteLine($"Scheduler 端点: {scheduler.Data.Properties.端点}");
 
 // Create task hub
 var taskHubData = new DurableTaskHubData();
@@ -378,7 +378,7 @@ await scheduler.DeleteAsync(WaitUntil.Completed);
 - [NuGet: Azure.ResourceManager.DurableTask](https://www.nuget.org/packages/Azure.ResourceManager.DurableTask)
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

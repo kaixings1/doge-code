@@ -70,7 +70,7 @@ date_added: "2026-02-27"
     "refresh": "30s",
     "panels": [
       {
-        "title": "Request Rate",
+        "title": "请求 Rate",
         "type": "graph",
         "targets": [
           {
@@ -94,8 +94,8 @@ date_added: "2026-02-27"
             {
               "evaluator": {"params": [5], "type": "gt"},
               "operator": {"type": "and"},
-              "query": {"params": ["A", "5m", "now"]},
-              "type": "query"
+              "查询": {"params": ["A", "5m", "now"]},
+              "type": "查询"
             }
           ]
         },
@@ -220,17 +220,17 @@ date_added: "2026-02-27"
     "list": [
       {
         "name": "namespace",
-        "type": "query",
+        "type": "查询",
         "datasource": "Prometheus",
-        "query": "label_values(kube_pod_info, namespace)",
+        "查询": "label_values(kube_pod_info, namespace)",
         "refresh": 1,
         "multi": false
       },
       {
         "name": "service",
-        "type": "query",
+        "type": "查询",
         "datasource": "Prometheus",
-        "query": "label_values(kube_service_info{namespace=\"$namespace\"}, service)",
+        "查询": "label_values(kube_service_info{namespace=\"$namespace\"}, service)",
         "refresh": 1,
         "multi": true
       }
@@ -257,11 +257,11 @@ sum(rate(http_requests_total{namespace="$namespace", service=~"$service"}[5m]))
           "type": "gt"
         },
         "operator": {"type": "and"},
-        "query": {
+        "查询": {
           "params": ["A", "5m", "now"]
         },
         "reducer": {"type": "avg"},
-        "type": "query"
+        "type": "查询"
       }
     ],
     "executionErrorState": "alerting",
@@ -380,7 +380,7 @@ resource "grafana_folder" "monitoring" {
 
 ## 相关技能
 
-- `prometheus-configuration` - 用于指标收集
+- `prometheus-配置` - 用于指标收集
 - `slo-implementation` - 用于 SLO 仪表板
 
 ## 局限性

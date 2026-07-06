@@ -12,19 +12,19 @@ license: "MIT"
 license_source: "https://github.com/mattpocock/skills/blob/main/LICENSE"
 tags:
   - architecture
-  - workflow
+  - 工作流
   - coding-agents
 tools:
   - claude-code
   - codex-cli
-  - cursor
+  - 游标
 ---
 
 # 代码库设计
 
 ## 何时使用
 
-Use when this workflow matches the user request: Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.
+Use when this 工作流 matches the user 请求: Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.
 
 
 _Source: [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)._
@@ -37,7 +37,7 @@ Use these terms exactly — don't substitute "component," "service," "API," or "
 
 **Module** — anything with an interface and an implementation. Deliberately scale-agnostic: a function, class, package, or tier-spanning slice. _Avoid_: unit, component, service.
 
-**Interface** — everything a caller must know to use the module correctly: the type signature, but also invariants, ordering constraints, error modes, required configuration, and performance characteristics. _Avoid_: API, signature (too narrow — they refer only to the type-level surface).
+**Interface** — everything a caller must know to use the module correctly: the type signature, but also invariants, ordering constraints, error modes, required 配置, and performance characteristics. _Avoid_: API, signature (too narrow — they refer only to the type-level surface).
 
 **Implementation** — what's inside a module, its body of code. Distinct from **Adapter**: a thing can be a small adapter with a large implementation (a Postgres repo) or a large adapter with a small implementation (an in-memory fake). Reach for "adapter" when the seam is the topic; "implementation" otherwise.
 
@@ -116,7 +116,7 @@ Good interfaces make testing natural:
    }
    ```
 
-3. **Small surface area.** Fewer methods = fewer tests needed. Fewer params = simpler test setup.
+3. **Small surface area.** Fewer methods = fewer tests needed. Fewer params = simpler test 设置.
 
 ## Relationships
 
@@ -140,6 +140,6 @@ Good interfaces make testing natural:
 
 ## 限制
 
-- 需要 the upstream tool, account, API key, or local setup when the workflow names one.
+- 需要 the upstream tool, account, API key, or local 设置 when the 工作流 names one.
 - Does not authorize destructive, production, paid, or external-message actions without explicit user approval.
 - Validate generated artifacts or recommendations against the user's real sources before treating them as final.

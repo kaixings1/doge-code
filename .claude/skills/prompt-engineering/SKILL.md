@@ -10,7 +10,7 @@ description: 提示工程 — 包括结构化提示、链式思考、少样本�
 ```
 You are a senior code reviewer. Your role is to analyze pull requests for:
 1. Correctness - logic errors, edge cases, off-by-one errors
-2. Security - injection, authentication, data exposure
+2. Security - injection, 认证, data exposure
 3. Performance - N+1 queries, unnecessary allocations, missing indexes
 4. Maintainability - naming, complexity, test coverage
 
@@ -28,16 +28,16 @@ Structure system prompts with role, scope, output format, and constraints. Be ex
 ## Chain-of-Thought
 
 ```
-Analyze this database query for performance issues.
+Analyze this database 查询 for performance issues.
 
 Think step by step:
 1. Identify the tables and joins involved
 2. Check if appropriate indexes exist for the WHERE and JOIN conditions
 3. Look for full table scans or cartesian products
 4. Estimate the row count at each step
-5. Suggest specific index creation or query restructuring
+5. Suggest specific index creation or 查询 restructuring
 
-Query:
+查询:
 SELECT o.*, u.name, p.title
 FROM orders o
 JOIN users u ON o.user_id = u.id
@@ -50,10 +50,10 @@ LIMIT 50;
 
 Chain-of-thought prompting improves accuracy on reasoning tasks by forcing the model to show intermediate steps.
 
-## Few-Shot Examples
+## Few-Shot 示例
 
 ```
-Convert natural language to SQL. Follow these examples:
+Convert natural language to SQL. Follow these 示例:
 
 Input: "How many orders were placed last month?"
 Output: SELECT COUNT(*) FROM orders WHERE created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month') AND created_at < DATE_TRUNC('month', CURRENT_DATE);
@@ -68,7 +68,7 @@ Now convert:
 Input: "Average order value per country for the last quarter"
 ```
 
-Provide 3-5 diverse examples that demonstrate the expected format and edge cases.
+Provide 3-5 diverse 示例 that demonstrate the expected format and edge cases.
 
 ## Tool Use / Function Calling
 
@@ -81,23 +81,23 @@ Provide 3-5 diverse examples that demonstrate the expected format and edge cases
       "parameters": {
         "type": "object",
         "properties": {
-          "query": {
+          "查询": {
             "type": "string",
             "description": "Regex pattern or keyword to search for"
           },
           "file_type": {
             "type": "string",
-            "description": "File extension filter (e.g., 'ts', 'py')"
+            "description": "File extension 过滤器 (e.g., 'ts', 'py')"
           }
         },
-        "required": ["query"]
+        "required": ["查询"]
       }
     }
   ]
 }
 ```
 
-Write tool descriptions that explain WHEN to use the tool, not just what it does.
+Write tool descriptions that explain 使用场景 the tool, not just what it does.
 
 ## Prompt Template Pattern
 
@@ -133,8 +133,8 @@ Each finding: {{"severity": "critical|warning|info", "line": number, "message": 
 
 - [ ] System prompt defines role, scope, format, and constraints
 - [ ] Chain-of-thought used for multi-step reasoning tasks
-- [ ] Few-shot examples cover typical and edge cases
-- [ ] Output format explicitly specified (JSON schema, markdown, etc.)
+- [ ] Few-shot 示例 cover typical and edge cases
+- [ ] Output format explicitly specified (JSON 架构, markdown, etc.)
 - [ ] Tool descriptions explain when and why to use each tool
 - [ ] Prompts tested with adversarial inputs
 - [ ] Temperature and top_p set appropriately for the task

@@ -151,8 +151,8 @@ When upgrading a project, pull from these high-impact techniques to replace gene
 - **Scroll-driven reveals.** Content entering through expanding masks, wipes, or draw-on SVG paths tied to scroll progress.
 
 ### Surface Upgrades
-- **True glassmorphism.** Go beyond `backdrop-filter: blur`. Add a 1px inner border and a subtle inner shadow to simulate edge refraction.
-- **Spotlight borders.** Card borders that illuminate dynamically under the cursor.
+- **True glassmorphism.** Go beyond `backdrop-过滤器: blur`. Add a 1px inner border and a subtle inner shadow to simulate edge refraction.
+- **Spotlight borders.** Card borders that illuminate dynamically under the 游标.
 - **Grain and noise overlays.** A fixed, pointer-events-none overlay with subtle noise to break digital flatness.
 - **Colored, tinted shadows.** Shadows that carry the hue of the background rather than using generic black.
 

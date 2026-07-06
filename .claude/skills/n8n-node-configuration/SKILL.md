@@ -1,6 +1,6 @@
 ---
-name: n8n-node-configuration
-description: "N8N Node Configuration — N8N 节点配置相关功能和最佳实践"
+name: n8n-node-配置
+description: "N8N Node 配置 — N8N 节点配置相关功能和最佳实践"
 risk: unknown
 source: community
 ---

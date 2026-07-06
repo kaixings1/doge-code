@@ -8,7 +8,7 @@ date_added: '2026-02-27'
 
 # Azure Monitor OpenTelemetry Distro for Python
 
-One-line setup for Application Insights with OpenTelemetry auto-instrumentation.
+One-line 设置 for Application Insights with OpenTelemetry auto-instrumentation.
 
 ## 安装
 
@@ -27,7 +27,7 @@ APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=xxx;IngestionEndpoint=h
 ```python
 from azure.monitor.opentelemetry import configure_azure_monitor
 
-# One-line setup - reads connection string from environment
+# One-line 设置 - reads connection string from environment
 configure_azure_monitor()
 
 # Your application code...
@@ -97,7 +97,7 @@ configure_azure_monitor()
 
 tracer = trace.get_tracer(__name__)
 
-with tracer.start_as_current_span("my-operation") as span:
+with tracer.start_as_current_span("my-操作") as span:
     span.set_attribute("custom.attribute", "value")
     # Do work...
 ```
@@ -148,7 +148,7 @@ Set cloud role name for Application Map:
 
 ```python
 from azure.monitor.opentelemetry import configure_azure_monitor
-from opentelemetry.sdk.resources import Resource, SERVICE_NAME
+from opentelemetry.sdk.资源 import Resource, SERVICE_NAME
 
 configure_azure_monitor(
     resource=Resource.create({SERVICE_NAME: "my-service-name"})
@@ -204,7 +204,7 @@ configure_azure_monitor(
 
 ## 配置 Options
 
-| Parameter | Description | 默认 |
+| 参数 | Description | 默认 |
 |-----------|-------------|---------|
 | `connection_string` | Application Insights connection string | From env var |
 | `credential` | Azure credential for AAD auth | None |
@@ -224,7 +224,7 @@ configure_azure_monitor(
 7. **Use AAD authentication** for production workloads
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

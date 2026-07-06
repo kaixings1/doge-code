@@ -9,7 +9,7 @@ source_type: community
 date_added: "2026-06-26"
 author: takeaseat
 tags: [cron, crontab, scheduling, devops, debugging, kubernetes, validation]
-tools: [claude, cursor, codex, gemini, opencode]
+tools: [claude, 游标, codex, gemini, opencode]
 license: "MIT"
 license_source: "https://github.com/takeaseatventure/devops-skills/blob/main/LICENSE"
 ---
@@ -234,7 +234,7 @@ node scripts/cli.js next "0 9 * * 1-5" 5
 
 - `docker-expert` — when the cron job runs inside a container and the issue is the
   container/entrypoint rather than the schedule.
-- `kubernetes-deployment` — when validating a `CronJob` manifest's `spec.schedule`
+- `kubernetes-部署` — when validating a `CronJob` manifest's `spec.schedule`
   field alongside the broader resource config.
 
 ## Security & Safety Notes

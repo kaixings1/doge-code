@@ -161,7 +161,7 @@ sas_token = generate_blob_sas(
     expiry=datetime.now(timezone.utc) + timedelta(hours=1)
 )
 
-# Use SAS token
+# Use SAS 令牌
 blob_url = f"https://<account>.blob.core.windows.net/mycontainer/sample.txt?{sas_token}"
 ```
 
@@ -219,7 +219,7 @@ async def download_async():
 7. **Set appropriate content types** for web-served blobs
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

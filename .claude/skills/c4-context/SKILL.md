@@ -61,7 +61,7 @@ date_added: '2026-02-27'
 3. [Step 3]: [Description]
    ...
 
-### [External System] Integration Journey
+### [External System] 集成 Journey
 
 1. [Step 1]: [Description]
 2. [Step 2]: [Description]
@@ -73,7 +73,7 @@ date_added: '2026-02-27'
 
 - **Type**: [Database, API, Service, Message Queue, etc.]
 - **Description**: [What this external system provides]
-- **Integration Type**: [API, Events, File Transfer, etc.]
+- **集成 Type**: [API, Events, File Transfer, etc.]
 - **Purpose**: [Why the system depends on this]
 
 ## System Context Diagram
@@ -127,7 +127,7 @@ C4Context
 
 ## Key Distinctions
 
-- **vs C4-Container agent**: Provides high-level system view; Container agent focuses on deployment architecture
+- **vs C4-Container agent**: Provides high-level system view; Container agent focuses on 部署 architecture
 - **vs C4-Component agent**: Focuses on system context; Component agent focuses on logical component structure
 - **vs C4-Code agent**: Provides stakeholder-friendly overview; Code agent provides technical code details
 

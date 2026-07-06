@@ -16,12 +16,12 @@ source: community
 **Source codebase**: `/Users/zhangalex/Work/Projects/FW/robius/moly/moly-kit`
 
 ## 使用场景
-Use this skill when:
-- Building AI chat interfaces with Makepad
-- Integrating OpenAI or other LLM APIs
-- Implementing cross-platform async for native and WASM
-- Creating chat widgets (messages, prompts, avatars)
-- Handling SSE streaming responses
+在以下情况下使用此技能：
+- 使用 Makepad 构建 AI 聊天界面
+- 集成 OpenAI 或其他 LLM API
+- 为本机和 WASM 实现跨平台异步
+- 创建聊天小部件（消息、提示、头像）
+- 处理 SSE 流式响应
 - Keywords: molykit, moly-kit, ai chat, bot client, openai makepad, chat widget, sse streaming
 
 ## 概述
@@ -29,7 +29,7 @@ Use this skill when:
 MolyKit provides:
 - Cross-platform async utilities (PlatformSend, spawn(), ThreadToken)
 - Ready-to-use chat widgets (Chat, Messages, PromptInput, Avatar)
-- BotClient trait for AI provider integration
+- BotClient trait for AI provider 集成
 - OpenAI-compatible client with SSE streaming
 - Protocol types for messages, bots, and tool calls
 - MCP (Model Context Protocol) support
@@ -89,7 +89,7 @@ fn start_task(&mut self) {
 ### ThreadToken for Non-Send Types on WASM
 
 ```rust
-/// Store non-Send value in thread-local, access via token
+/// Store non-Send value in thread-local, access via 令牌
 pub struct ThreadToken<T: 'static>;
 
 impl<T> ThreadToken<T> {
@@ -99,9 +99,9 @@ impl<T> ThreadToken<T> {
 }
 
 // Usage - wrap non-Send type for use across Send boundaries
-let token = ThreadToken::new(non_send_value);
+let 令牌 = ThreadToken::new(non_send_value);
 spawn(async move {
-    token.peek(|value| {
+    令牌.peek(|value| {
         // use value...
     });
 });
@@ -109,11 +109,11 @@ spawn(async move {
 
 ## BotClient Trait
 
-### Implementing AI Provider Integration
+### Implementing AI Provider 集成
 
 ```rust
 pub trait BotClient: Send {
-    /// Send message with streamed response
+    /// Send message with streamed 响应
     fn send(
         &mut self,
         bot_id: &BotId,
@@ -330,14 +330,14 @@ where
     B: AsRef<[u8]>,
 {
     // Split on "\n\n", extract "data:" content
-    // Filter comments and [DONE] messages
+    // 过滤器 comments and [DONE] messages
 }
 
 // Usage in BotClient::send
 fn send(&mut self, ...) -> BoxPlatformSendStream<...> {
     let stream = stream! {
-        let response = client.post(url).send().await?;
-        let events = parse_sse(response.bytes_stream());
+        let 响应 = client.post(url).send().await?;
+        let events = parse_sse(响应.bytes_stream());
 
         for await event in events {
             let completion: Completion = serde_json::from_str(&event)?;
@@ -354,7 +354,7 @@ fn send(&mut self, ...) -> BoxPlatformSendStream<...> {
 1. **Use PlatformSend for cross-platform**: Same code works on native and WASM
 2. **Use spawn() not tokio::spawn**: Platform-agnostic task spawning
 3. **Use AbortOnDropHandle**: Cancel tasks when widget drops
-4. **Use ThreadToken for non-Send on WASM**: Thread-local storage with token access
+4. **Use ThreadToken for non-Send on WASM**: Thread-local storage with 令牌 access
 5. **Use Slot for custom content**: Allow BotClient to provide custom widgets
 6. **Use read()/write() pattern**: Safe borrow access via WidgetRef
 7. **Use UiRunner::defer_with_redraw**: Update widget from async context

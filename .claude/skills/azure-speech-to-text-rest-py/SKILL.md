@@ -14,7 +14,7 @@ Simple REST API for speech-to-text transcription of short audio files (up to 60 
 
 1. **Azure subscription** - [Create one free](https://azure.microsoft.com/free/)
 2. **Speech resource** - Create in [Azure Portal](https://portal.azure.com/#create/Microsoft.CognitiveServicesSpeechServices)
-3. **Get credentials** - After deployment, go to resource > Keys and Endpoint
+3. **Get credentials** - After deployment, go to resource > Keys and 端点
 
 ## 环境变量
 
@@ -23,7 +23,7 @@ Simple REST API for speech-to-text transcription of short audio files (up to 60 
 AZURE_SPEECH_KEY=<your-speech-resource-key>
 AZURE_SPEECH_REGION=<region>  # e.g., eastus, westus2, westeurope
 
-# Alternative: Use endpoint directly
+# Alternative: Use 端点 directly
 AZURE_SPEECH_ENDPOINT=https://<region>.stt.speech.microsoft.com
 ```
 
@@ -58,10 +58,10 @@ def transcribe_audio(audio_file_path: str, language: str = "en-US") -> dict:
     }
     
     with open(audio_file_path, "rb") as audio_file:
-        response = requests.post(url, headers=headers, params=params, data=audio_file)
+        响应 = requests.post(url, headers=headers, params=params, data=audio_file)
     
-    response.raise_for_status()
-    return response.json()
+    响应.raise_for_status()
+    return 响应.json()
 
 # Usage
 result = transcribe_audio("audio.wav", "en-US")
@@ -75,7 +75,7 @@ print(result["DisplayText"])
 | WAV | PCM | 16 kHz, mono | **Recommended** |
 | OGG | OPUS | 16 kHz, mono | Smaller file size |
 
-**Limitations:**
+**限制:**
 - Maximum 60 seconds of audio
 - For pronunciation assessment: maximum 30 seconds
 - No partial/interim results (final only)
@@ -90,7 +90,7 @@ print(result["DisplayText"])
 "Content-Type": "audio/ogg; codecs=opus"
 ```
 
-## Response Formats
+## 响应 Formats
 
 ### Simple Format (default)
 
@@ -160,15 +160,15 @@ def transcribe_chunked(audio_file_path: str, language: str = "en-US") -> dict:
             while chunk := f.read(chunk_size):
                 yield chunk
     
-    response = requests.post(
+    响应 = requests.post(
         url, 
         headers=headers, 
         params=params, 
         data=generate_chunks(audio_file_path)
     )
     
-    response.raise_for_status()
-    return response.json()
+    响应.raise_for_status()
+    return 响应.json()
 ```
 
 ## Authentication Options
@@ -181,20 +181,20 @@ headers = {
 }
 ```
 
-### Option 2: Bearer Token
+### Option 2: Bearer 令牌
 
 ```python
 import requests
 import os
 
 def get_access_token() -> str:
-    """Get access token from the token endpoint."""
+    """Get access 令牌 from the 令牌 端点."""
     region = os.environ["AZURE_SPEECH_REGION"]
     api_key = os.environ["AZURE_SPEECH_KEY"]
     
     token_url = f"https://{region}.api.cognitive.microsoft.com/sts/v1.0/issueToken"
     
-    response = requests.post(
+    响应 = requests.post(
         token_url,
         headers={
             "Ocp-Apim-Subscription-Key": api_key,
@@ -202,21 +202,21 @@ def get_access_token() -> str:
             "Content-Length": "0"
         }
     )
-    response.raise_for_status()
-    return response.text
+    响应.raise_for_status()
+    return 响应.text
 
-# Use token in requests (valid for 10 minutes)
-token = get_access_token()
+# Use 令牌 in requests (valid for 10 minutes)
+令牌 = get_access_token()
 headers = {
-    "Authorization": f"Bearer {token}",
+    "Authorization": f"Bearer {令牌}",
     "Content-Type": "audio/wav; codecs=audio/pcm; samplerate=16000",
     "Accept": "application/json"
 }
 ```
 
-## Query Parameters
+## 查询 Parameters
 
-| Parameter | Required | Values | Description |
+| 参数 | Required | Values | Description |
 |-----------|----------|--------|-------------|
 | `language` | **Yes** | `en-US`, `de-DE`, etc. | Language of speech |
 | `format` | No | `simple`, `detailed` | Result format (default: simple) |
@@ -259,7 +259,7 @@ def transcribe_with_error_handling(audio_path: str, language: str = "en-US") -> 
     
     try:
         with open(audio_path, "rb") as audio_file:
-            response = requests.post(
+            响应 = requests.post(
                 url,
                 headers={
                     "Ocp-Apim-Subscription-Key": api_key,
@@ -270,26 +270,26 @@ def transcribe_with_error_handling(audio_path: str, language: str = "en-US") -> 
                 data=audio_file
             )
         
-        if response.status_code == 200:
-            result = response.json()
+        if 响应.status_code == 200:
+            result = 响应.json()
             if result.get("RecognitionStatus") == "Success":
                 return result
             else:
                 print(f"Recognition failed: {result.get('RecognitionStatus')}")
                 return None
-        elif response.status_code == 400:
-            print(f"Bad request: Check language code or audio format")
-        elif response.status_code == 401:
-            print(f"Unauthorized: Check API key or token")
-        elif response.status_code == 403:
+        elif 响应.status_code == 400:
+            print(f"Bad 请求: Check language code or audio format")
+        elif 响应.status_code == 401:
+            print(f"Unauthorized: Check API key or 令牌")
+        elif 响应.status_code == 403:
             print(f"Forbidden: Missing authorization header")
         else:
-            print(f"Error {response.status_code}: {response.text}")
+            print(f"Error {响应.status_code}: {响应.text}")
         
         return None
         
     except requests.exceptions.RequestException as e:
-        print(f"Request failed: {e}")
+        print(f"请求 failed: {e}")
         return None
 ```
 
@@ -315,13 +315,13 @@ async def transcribe_async(audio_file_path: str, language: str = "en-US") -> dic
     
     params = {"language": language, "format": "detailed"}
     
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession() as 会话:
         with open(audio_file_path, "rb") as f:
             audio_data = f.read()
         
-        async with session.post(url, headers=headers, params=params, data=audio_data) as response:
-            response.raise_for_status()
-            return await response.json()
+        async with 会话.post(url, headers=headers, params=params, data=audio_data) as 响应:
+            响应.raise_for_status()
+            return await 响应.json()
 
 # Usage
 result = asyncio.run(transcribe_async("audio.wav", "en-US"))
@@ -372,7 +372,7 @@ Use the Speech SDK or Batch Transcription API instead when you need:
 | references/pronunciation-assessment.md | Pronunciation assessment parameters and scoring |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

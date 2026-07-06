@@ -58,7 +58,7 @@ after-hours-editorial-template/
    - staged text reveal hierarchy
    - chapter wipe transitions
    - ambient grain/vignette depth
-   - restrained cursor-light interaction for local preview
+   - restrained 游标-light interaction for local preview
 5. Keep output single-file HTML with inline CSS and JS.
 6. Avoid sandbox-hostile browser APIs (e.g. localStorage and confirm).
 7. Validate with `references/checklist.md` before emitting.

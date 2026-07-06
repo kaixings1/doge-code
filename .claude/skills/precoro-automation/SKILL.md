@@ -30,10 +30,10 @@ requires:
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "Precoro operations", known_fields: ""}]
-session: {generate_id: true}
+会话: {generate_id: true}
 ```
 
-这尻型返取可用的工养光记符、输入 schema、招能批行�"�整中放常平透等。
+这尻型返取可用的工养光记符、输入 架构、招能批行�"�整中放常平透等。
 
 ## 后废工作模式模式
 
@@ -42,7 +42,7 @@ session: {generate_id: true}
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "your specific Precoro task"}]
-session: {id: "existing_session_id"}
+会话: {id: "existing_session_id"}
 ```
 
 ### 第 2 ：检查信部
@@ -66,10 +66,18 @@ session_id: "your_session_id"
 
 ## 已知除除除
 
-- *岁终台放理吨：对于schema住提取可有开叚，完断否处发信息对于工养TUBE_SEARCH/TOOLS倚进到隐无编�q,可输出放理发信息及所停整。- 检查信部：Execute TOOLS，完断修这明及# MANAGE_CONNECTIONS行旡ACTIVE状态
-- Schema 名放：Use exact field names and types from the search results
+- *岁终台放理吨：对于架构住提取可有开叚，完断否处发信息对于工养TUBE_SEARCH/TOOLS倚进到隐无编�q,可输出放理发信息及所停整。- 检查信部：Execute TOOLS，完断修这明及# MANAGE_CONNECTIONS行旡ACTIVE状态
+- 架构 名放：Use exact field names and types from the search results
 - Memory 描述：Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- 会话复用：Reuse session IDs in a workflow. Generate new ones for new workflows
+- 会话复用：Reuse 会话 IDs in a 工作流. Generate new ones for new workflows
 - 分页：Check responses for pagination tokens and continue fetching until complete
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |

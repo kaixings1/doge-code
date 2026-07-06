@@ -42,7 +42,7 @@ import { CosmosClient } from "@azure/cosmos";
 import { DefaultAzureCredential } from "@azure/identity";
 
 const client = new CosmosClient({
-  endpoint: process.env.COSMOS_ENDPOINT!,
+  端点: process.env.COSMOS_ENDPOINT!,
   aadCredentials: new DefaultAzureCredential(),
 });
 ```
@@ -52,9 +52,9 @@ const client = new CosmosClient({
 ```typescript
 import { CosmosClient } from "@azure/cosmos";
 
-// Option 1: Endpoint + Key
+// Option 1: 端点 + Key
 const client = new CosmosClient({
-  endpoint: process.env.COSMOS_ENDPOINT!,
+  端点: process.env.COSMOS_ENDPOINT!,
   key: process.env.COSMOS_KEY!,
 });
 
@@ -75,7 +75,7 @@ CosmosClient
 
 ## Core Operations
 
-### Database & Container Setup
+### Database & Container 设置
 
 ```typescript
 const { database } = await client.databases.createIfNotExists({
@@ -172,51 +172,51 @@ const { resource } = await container
 
 ## Queries
 
-### Simple Query
+### Simple 查询
 
 ```typescript
-const { resources } = await container.items
-  .query<Product>("SELECT * FROM c WHERE c.price < 1000")
+const { 资源 } = await container.items
+  .查询<Product>("SELECT * FROM c WHERE c.price < 1000")
   .fetchAll();
 ```
 
-### Parameterized Query (Recommended)
+### Parameterized 查询 (Recommended)
 
 ```typescript
 import { SqlQuerySpec } from "@azure/cosmos";
 
 const querySpec: SqlQuerySpec = {
-  query: "SELECT * FROM c WHERE c.partitionKey = @category AND c.price < @maxPrice",
+  查询: "SELECT * FROM c WHERE c.partitionKey = @category AND c.price < @maxPrice",
   parameters: [
     { name: "@category", value: "electronics" },
     { name: "@maxPrice", value: 1000 },
   ],
 };
 
-const { resources } = await container.items
-  .query<Product>(querySpec)
+const { 资源 } = await container.items
+  .查询<Product>(querySpec)
   .fetchAll();
 ```
 
-### Query with Pagination
+### 查询 with Pagination
 
 ```typescript
-const queryIterator = container.items.query<Product>(querySpec, {
+const queryIterator = container.items.查询<Product>(querySpec, {
   maxItemCount: 10, // Items per page
 });
 
 while (queryIterator.hasMoreResults()) {
-  const { resources, continuationToken } = await queryIterator.fetchNext();
-  console.log(`Page with ${resources?.length} items`);
+  const { 资源, continuationToken } = await queryIterator.fetchNext();
+  console.log(`Page with ${资源?.length} items`);
   // Use continuationToken for next page if needed
 }
 ```
 
-### Cross-Partition Query
+### Cross-Partition 查询
 
 ```typescript
-const { resources } = await container.items
-  .query<Product>(
+const { 资源 } = await container.items
+  .查询<Product>(
     "SELECT * FROM c WHERE c.price > 500",
     { enableCrossPartitionQuery: true }
   )
@@ -265,13 +265,13 @@ const operations: OperationInput[] = [
   },
 ];
 
-const response = await container.items.executeBulkOperations(operations);
+const 响应 = await container.items.executeBulkOperations(operations);
 
-response.forEach((result, index) => {
+响应.forEach((result, index) => {
   if (result.statusCode >= 200 && result.statusCode < 300) {
-    console.log(`Operation ${index} succeeded`);
+    console.log(`操作 ${index} succeeded`);
   } else {
-    console.error(`Operation ${index} failed: ${result.statusCode}`);
+    console.error(`操作 ${index} failed: ${result.statusCode}`);
   }
 });
 ```
@@ -306,13 +306,13 @@ const { resource } = await container.items.create({
   id: "order-1",
   tenantId: "tenant-a",
   userId: "user-123",
-  sessionId: "session-xyz",
+  sessionId: "会话-xyz",
   total: 99.99,
 });
 
 // Read with hierarchical partition key
 const { resource: order } = await container
-  .item("order-1", ["tenant-a", "user-123", "session-xyz"])
+  .item("order-1", ["tenant-a", "user-123", "会话-xyz"])
   .read();
 ```
 
@@ -374,7 +374,7 @@ if (resource && etag) {
 
 ```typescript
 import {
-  // Client & Resources
+  // Client & 资源
   CosmosClient,
   Database,
   Container,
@@ -452,13 +452,13 @@ export class ProductService {
 
   async findByCategory(category: string): Promise<Product[]> {
     const querySpec: SqlQuerySpec = {
-      query: "SELECT * FROM c WHERE c.partitionKey = @category",
+      查询: "SELECT * FROM c WHERE c.partitionKey = @category",
       parameters: [{ name: "@category", value: category }],
     };
-    const { resources } = await this.container.items
-      .query<Product>(querySpec)
+    const { 资源 } = await this.container.items
+      .查询<Product>(querySpec)
       .fetchAll();
-    return resources;
+    return 资源;
   }
 }
 ```
@@ -472,7 +472,7 @@ export class ProductService {
 | `@azure/identity` | Authentication | `npm install @azure/identity` |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

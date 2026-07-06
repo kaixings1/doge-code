@@ -68,7 +68,7 @@ problems, different solutions.
 
 ### Cloud_browsers
 
-- Browserbase - When: Managed headless infrastructure Note: Built-in stealth mode, session management
+- Browserbase - When: Managed headless infrastructure Note: Built-in stealth mode, 会话 management
 - BrowserStack - When: Cross-browser testing at scale Note: Real devices, CI integration
 
 ## 模式
@@ -737,7 +737,7 @@ test B fails if test A runs first. Random failures that "fix themselves"
 on rerun.
 
 Why this breaks:
-Shared browser context means shared cookies, localStorage, and session
+Shared browser context means shared cookies, localStorage, and 会话
 state. Test A logs in, test B expects logged-out state. Test A adds
 item to cart, test B's cart count is wrong.
 
@@ -1089,12 +1089,12 @@ Message: Scraping loop without try/catch. One page failure will crash the entire
 - user needs API testing alongside browser tests -> backend (API integration and testing patterns)
 - user needs testing strategy -> test-architect (Overall test architecture decisions)
 - user needs visual regression testing -> ui-design (Visual comparison and design validation)
-- user needs browser automation in workflows -> workflow-automation (Durable execution for browser tasks)
+- user needs browser automation in workflows -> 工作流-automation (Durable execution for browser tasks)
 - user building browser tools for agents -> agent-tool-builder (Tool design patterns for LLM agents)
 
 ## 相关技能
 
-Works well with: `agent-tool-builder`, `workflow-automation`, `computer-use-agents`, `test-architect`
+Works well with: `agent-tool-builder`, `工作流-automation`, `computer-use-agents`, `test-architect`
 
 ## 使用场景
 - User mentions or implies: playwright

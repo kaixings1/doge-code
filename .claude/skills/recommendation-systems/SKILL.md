@@ -14,7 +14,7 @@ Design and build industrial-grade recommendation systems using the multi-stage a
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│                    User Request                       │
+│                    User 请求                       │
 ├──────────────────────────────────────────────────────┤
 │  Stage 1: RECALL (Candidate Generation)               │
 │  Input: billions of items → Output: ~1000 candidates  │

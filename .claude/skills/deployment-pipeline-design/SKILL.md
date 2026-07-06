@@ -1,5 +1,5 @@
 ---
-name: deployment-pipeline-design
+name: 部署-pipeline-design
 description: "具有审批门和部署策略的多阶段 CI/CD 流水线架构模式。"
 risk: critical
 source: community
@@ -18,20 +18,20 @@ date_added: "2026-02-27"
 ## 说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 目的
 
-Design robust, secure deployment pipelines that balance speed with safety through proper stage organization and approval workflows.
+Design robust, secure 部署 pipelines that balance speed with safety through proper stage organization and approval workflows.
 
 ## 使用此技能的场景
 
 - Design CI/CD architecture
-- Implement deployment gates
+- Implement 部署 gates
 - Configure multi-environment pipelines
-- Establish deployment best practices
+- Establish 部署 最佳实践
 - Implement progressive delivery
 
 ## Pipeline Stages
@@ -48,7 +48,7 @@ Design robust, secure deployment pipelines that balance speed with safety throug
 
 1. **Source** - Code checkout
 2. **Build** - Compile, package, containerize
-3. **Test** - Unit, integration, security scans
+3. **Test** - Unit, 集成, security scans
 4. **Staging Deploy** - Deploy to staging environment
 5. **集成 Tests** - E2E, smoke tests
 6. **Approval Gate** - Manual approval required
@@ -71,7 +71,7 @@ production-deploy:
   steps:
     - name: Deploy to production
       run: |
-        # Deployment commands
+        # 部署 commands
 ```
 
 ### Pattern 2: Time-Based Approval
@@ -98,7 +98,7 @@ stages:
 - stage: Production
   dependsOn: Staging
   jobs:
-  - deployment: Deploy
+  - 部署: Deploy
     environment:
       name: production
       resourceType: Kubernetes
@@ -120,7 +120,7 @@ stages:
 
 ```yaml
 apiVersion: apps/v1
-kind: Deployment
+kind: 部署
 metadata:
   name: my-app
 spec:
@@ -142,11 +142,11 @@ spec:
 
 ```yaml
 # Blue (current)
-kubectl apply -f blue-deployment.yaml
+kubectl apply -f blue-部署.yaml
 kubectl label service my-app version=blue
 
 # Green (new)
-kubectl apply -f green-deployment.yaml
+kubectl apply -f green-部署.yaml
 # Test green environment
 kubectl label service my-app version=green
 
@@ -249,7 +249,7 @@ jobs:
       - name: Deploy to staging
         run: kubectl apply -f k8s/staging/
 
-  integration-test:
+  集成-test:
     needs: deploy-staging
     runs-on: ubuntu-latest
     steps:
@@ -257,12 +257,12 @@ jobs:
         run: npm run test:e2e
 
   deploy-production:
-    needs: integration-test
+    needs: 集成-test
     runs-on: ubuntu-latest
     environment:
       name: production
     steps:
-      - name: Canary deployment
+      - name: Canary 部署
         run: |
           kubectl apply -f k8s/production/
           kubectl argo rollouts promote my-app
@@ -276,10 +276,10 @@ jobs:
       - name: Notify team
         run: |
           curl -X POST ${{ secrets.SLACK_WEBHOOK }} \
-            -d '{"text":"Production deployment successful!"}'
+            -d '{"text":"Production 部署 successful!"}'
 ```
 
-## Pipeline Best Practices
+## Pipeline 最佳实践
 
 1. **Fail fast** - Run quick tests first
 2. **Parallel execution** - Run independent jobs concurrently
@@ -288,7 +288,7 @@ jobs:
 5. **Environment parity** - Keep environments consistent
 6. **Secrets management** - Use secret stores (Vault, etc.)
 7. **部署 windows** - Schedule deployments appropriately
-8. **Monitoring integration** - Track deployment metrics
+8. **Monitoring 集成** - Track 部署 metrics
 9. **Rollback automation** - Auto-rollback on failures
 10. **Documentation** - Document pipeline stages
 
@@ -303,7 +303,7 @@ deploy-and-verify:
       run: kubectl apply -f k8s/
 
     - name: Wait for rollout
-      run: kubectl rollout status deployment/my-app
+      run: kubectl rollout status 部署/my-app
 
     - name: Health check
       id: health
@@ -318,20 +318,20 @@ deploy-and-verify:
 
     - name: Rollback on failure
       if: failure()
-      run: kubectl rollout undo deployment/my-app
+      run: kubectl rollout undo 部署/my-app
 ```
 
 ### Manual Rollback
 
 ```bash
 # List revision history
-kubectl rollout history deployment/my-app
+kubectl rollout history 部署/my-app
 
 # Rollback to previous version
-kubectl rollout undo deployment/my-app
+kubectl rollout undo 部署/my-app
 
 # Rollback to specific revision
-kubectl rollout undo deployment/my-app --to-revision=3
+kubectl rollout undo 部署/my-app --to-revision=3
 ```
 
 ## Monitoring and Metrics
@@ -348,13 +348,13 @@ kubectl rollout undo deployment/my-app --to-revision=3
 ### 集成 with Monitoring
 
 ```yaml
-- name: Post-deployment verification
+- name: Post-部署 verification
   run: |
     # Wait for metrics stabilization
     sleep 60
 
     # Check error rate
-    ERROR_RATE=$(curl -s "$PROMETHEUS_URL/api/v1/query?query=rate(http_errors_total[5m])" | jq '.data.result[0].value[1]')
+    ERROR_RATE=$(curl -s "$PROMETHEUS_URL/api/v1/查询?查询=rate(http_errors_total[5m])" | jq '.data.result[0].value[1]')
 
     if (( $(echo "$ERROR_RATE > 0.01" | bc -l) )); then
       echo "Error rate too high: $ERROR_RATE"
@@ -365,7 +365,7 @@ kubectl rollout undo deployment/my-app --to-revision=3
 ## 参考文件
 
 - `references/pipeline-orchestration.md` - Complex pipeline patterns
-- `assets/approval-gate-template.yml` - Approval workflow templates
+- `assets/approval-gate-template.yml` - Approval 工作流 templates
 
 ## 相关 Skills
 

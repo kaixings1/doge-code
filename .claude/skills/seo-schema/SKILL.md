@@ -1,10 +1,10 @@
 ---
-name: seo-schema
-description: "Seo Schema — 检测、验证和生成 Schema.org 结构化数据相关功能和最佳实践。首选的 JSON-LD 格式。"
-  preferred. Use when user says "schema", "structured data", "rich results",
+name: seo-架构
+description: "Seo 架构 — 检测、验证和生成 架构.org 结构化数据相关功能和最佳实践。首选的 JSON-LD 格式。"
+  preferred. Use when user says "架构", "structured data", "rich results",
   "JSON-LD", or "markup".
 user-invocable: true
-argument-hint: "[url]"
+参数-hint: "[url]"
 license: MIT
 metadata:
   author: AgriciDaniel
@@ -12,7 +12,7 @@ metadata:
   category: seo
 ---
 
-# Schema Markup Analysis & Generation
+# 架构 Markup Analysis & Generation
 
 ## Detection
 
@@ -23,7 +23,7 @@ metadata:
 
 ## Validation
 
-- Check required properties per schema type
+- Check required properties per 架构 type
 - Validate against Google's supported rich result types
 - Test for common errors:
   - Missing @context
@@ -34,9 +34,9 @@ metadata:
   - Invalid date formats
 - Flag deprecated types (see below)
 
-## Schema Type Status (as of May 2026)
+## 架构 Type Status (as of May 2026)
 
-Read `references/schema-types.md` for the full list. Key rules:
+Read `references/架构-types.md` for the full list. Key rules:
 
 ### ACTIVE (recommend freely):
 Organization, LocalBusiness, SoftwareApplication, WebApplication, Product (with Certification markup as of April 2025), ProductGroup, Offer, Service, Article, BlogPosting, NewsArticle, Review, AggregateRating, BreadcrumbList, WebSite, WebPage, Person, ProfilePage, ContactPage, VideoObject, ImageObject, Event, JobPosting, Course, DiscussionForumPosting
@@ -44,7 +44,7 @@ Organization, LocalBusiness, SoftwareApplication, WebApplication, Product (with 
 ### VIDEO & SPECIALIZED (recommend freely):
 BroadcastEvent, Clip, SeekToAction, SoftwareSourceCode
 
-See `schema/templates.json` for ready-to-use JSON-LD templates for these types.
+See `架构/templates.json` for ready-to-use JSON-LD templates for these types.
 
 > **JSON-LD and JavaScript rendering:** Per Google's December 2025 JS SEO guidance, structured data injected via JavaScript may face delayed processing. For time-sensitive markup (especially Product, Offer), include JSON-LD in the initial server-rendered HTML.
 
@@ -63,19 +63,19 @@ See `schema/templates.json` for ready-to-use JSON-LD templates for these types.
 
 ## Generation
 
-When generating schema for a page:
+When generating 架构 for a page:
 1. Identify page type from content analysis
-2. Select appropriate schema type(s)
+2. Select appropriate 架构 type(s)
 3. Generate valid JSON-LD with all required + recommended properties
 4. Include only truthful, verifiable data. Use placeholders clearly marked for user to fill
 5. Validate output before presenting
 
-## Common Schema Templates
+## Common 架构 Templates
 
 ### Organization
 ```json
 {
-  "@context": "https://schema.org",
+  "@context": "https://架构.org",
   "@type": "Organization",
   "name": "[Company Name]",
   "url": "[Website URL]",
@@ -96,7 +96,7 @@ When generating schema for a page:
 ### LocalBusiness
 ```json
 {
-  "@context": "https://schema.org",
+  "@context": "https://架构.org",
   "@type": "LocalBusiness",
   "name": "[Business Name]",
   "address": {
@@ -120,7 +120,7 @@ When generating schema for a page:
 ### Article/BlogPosting
 ```json
 {
-  "@context": "https://schema.org",
+  "@context": "https://架构.org",
   "@type": "Article",
   "headline": "[Title]",
   "author": {
@@ -143,8 +143,8 @@ When generating schema for a page:
 
 ## 输出
 
-- `SCHEMA-REPORT.md`: detection and validation results
-- `generated-schema.json`: ready-to-use JSON-LD snippets
+- `架构-REPORT.md`: detection and validation results
+- `generated-架构.json`: ready-to-use JSON-LD snippets
 
 ### Validation Results
-| Schema | Type | Status | Issues |
+| 架构 | Type | Status | Issues |

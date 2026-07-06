@@ -142,7 +142,7 @@ class XSSScanner {
   }
 
   hasUserInput(line: string): boolean {
-    const indicators = ['props', 'state', 'params', 'query', 'input', 'formData'];
+    const indicators = ['props', 'state', 'params', '查询', 'input', 'formData'];
     return indicators.some(indicator => line.includes(indicator));
   }
 
@@ -199,7 +199,7 @@ class VueXSSScanner {
 }
 ```
 
-### 3. Secure Coding Examples
+### 3. Secure Coding 示例
 
 ```typescript
 class SecureCodingGuide {
@@ -305,7 +305,7 @@ class XSSReportGenerator {
 
 **Event Handlers**
 - Use addEventListener instead of inline handlers
-- Sanitize all event handler input
+- Sanitize all event 处理器 input
 - Avoid string-to-code patterns
 
 **Framework-Specific**
@@ -318,9 +318,9 @@ class XSSReportGenerator {
 
 1. **Vulnerability Report**: Detailed findings with severity levels
 2. **Risk Analysis**: Impact assessment for each vulnerability
-3. **Fix Recommendations**: Secure code examples
+3. **Fix Recommendations**: Secure code 示例
 4. **Sanitization Guide**: DOMPurify usage patterns
-5. **Prevention Checklist**: Best practices for XSS prevention
+5. **Prevention Checklist**: 最佳实践 for XSS prevention
 
 专注于识别 XSS 攻击向量、提供可操作的修复方案，并建立安全的编码模式。
 

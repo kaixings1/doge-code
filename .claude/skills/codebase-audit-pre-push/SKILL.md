@@ -16,7 +16,7 @@ As a senior engineer, you're doing the final review before pushing this code to 
 - User requests "audit the codebase" or "review before push"  
 - Before making the first push to GitHub  
 - Before making a repository public  
-- Pre-production deployment review  
+- Pre-production 部署 review  
 - User asks to "clean up the code" or "optimize everything"  
 
 ## Your Job  
@@ -42,7 +42,7 @@ Start by looking for files that shouldn't be on GitHub:
 
 **Critical - Check for secrets:**  
 - `.env` files (should never be committed)  
-- Files containing: `password`, `api_key`, `token`, `secret`, `private_key`  
+- Files containing: `password`, `api_key`, `令牌`, `secret`, `private_key`  
 - `*.pem`, `*.key`, `*.cert`, `credentials.json`, `serviceAccountKey.json`  
 
 If you find secrets in the code, mark it as a CRITICAL BLOCKER.  
@@ -91,10 +91,10 @@ Look through each code file and check:
 - Path traversal: No file paths from user input without validation  
 - XSS: No `innerHTML` or `dangerouslySetInnerHTML` with user data  
 
-**Auth/Authorization:**  
+**Auth/授权:**  
 - Passwords hashed with bcrypt/argon2 (never MD5 or plain text)  
-- Protected routes check for authentication  
-- Authorization checks on the server side, not just in the UI  
+- Protected routes check for 认证  
+- 授权 checks on the server side, not just in the UI  
 - No IDOR: verify users own the resources they are accessing  
 
 **Data exposure:**  
@@ -204,14 +204,14 @@ CODE CHANGES:
   🛡 Added try/catch around API call (line 47)  
 
 [src/db/queries.js]  
-  ⚡ Fixed N+1 query: now uses JOIN instead of loop  
+  ⚡ Fixed N+1 查询: now uses JOIN instead of loop  
 
 SECURITY ISSUES:  
 🚨 CRITICAL: Hardcoded API key in config.js (line 12) → moved to .env  
-⚠️ HIGH: SQL injection risk in search.js (line 34) → fixed with parameterized query  
+⚠️ HIGH: SQL injection risk in search.js (line 34) → fixed with parameterized 查询  
 
 SCALABILITY:  
-⚡ Added pagination to /api/users endpoint  
+⚡ Added pagination to /api/users 端点  
 ⚡ Added index on users.email column  
 
 FINAL STATUS:  

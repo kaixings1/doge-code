@@ -217,7 +217,7 @@ a big "Ag" per family — and the kit render in the real typefaces), mirrors you
 `imagery/` samples into the brand so the **Images** gallery resolves, and
 re-renders `brand.html` one last time with the status flipped to "Brand ready",
 a **Design system** module (the live component kit
-with a Light/Dark toggle plus the derived token chips — colorPrimary, fontSize,
+with a Light/Dark toggle plus the derived 令牌 chips — colorPrimary, fontSize,
 borderRadius, …), and the six **Brand Assets** tiles (landing, deck, poster,
 email, newsletter, form) lit up as live previews that each link to their full
 `system/artifacts/<kind>.html` page. If finalize reports a validation error, fix

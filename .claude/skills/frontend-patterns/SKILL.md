@@ -11,7 +11,7 @@ description: 前端开发模式和最佳实践
 
 - 构建 React 组件（组合、属性、渲染）
 - 管理状态（useState、useReducer、Zustand、Context）
-- 实现数据获取（SWR、React Query、服务器组件）
+- 实现数据获取（SWR、React 查询、服务器组件）
 - 优化性能（记忆化、虚拟化、代码拆分）
 - 处理表单（验证、受控输入、Zod 模式）
 - 处理客户端路由和导航
@@ -95,9 +95,9 @@ export function Tab({ id, children }: { id: string, children: React.ReactNode })
 }
 
 // Usage
-<Tabs defaultTab="overview">
+<Tabs defaultTab="概述">
   <TabList>
-    <Tab id="overview">Overview</Tab>
+    <Tab id="概述">概述</Tab>
     <Tab id="details">Details</Tab>
   </TabList>
 </Tabs>
@@ -218,11 +218,11 @@ export function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value)
 
   useEffect(() => {
-    const handler = setTimeout(() => {
+    const 处理器 = setTimeout(() => {
       setDebouncedValue(value)
     }, delay)
 
-    return () => clearTimeout(handler)
+    return () => clearTimeout(处理器)
   }, [value, delay])
 
   return debouncedValue
@@ -251,18 +251,18 @@ interface State {
 }
 
 type Action =
-  | { type: 'SET_MARKETS'; payload: Market[] }
-  | { type: 'SELECT_MARKET'; payload: Market }
-  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_MARKETS'; 载荷: Market[] }
+  | { type: 'SELECT_MARKET'; 载荷: Market }
+  | { type: 'SET_LOADING'; 载荷: boolean }
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'SET_MARKETS':
-      return { ...state, markets: action.payload }
+      return { ...state, markets: action.载荷 }
     case 'SELECT_MARKET':
-      return { ...state, selectedMarket: action.payload }
+      return { ...state, selectedMarket: action.载荷 }
     case 'SET_LOADING':
-      return { ...state, loading: action.payload }
+      return { ...state, loading: action.载荷 }
     default:
       return state
   }
@@ -305,8 +305,8 @@ const sortedMarkets = useMemo(() => {
 }, [markets])
 
 // PASS: useCallback for functions passed to children
-const handleSearch = useCallback((query: string) => {
-  setSearchQuery(query)
+const handleSearch = useCallback((查询: string) => {
+  setSearchQuery(查询)
 }, [])
 
 // PASS: React.memo for pure components

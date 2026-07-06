@@ -12,7 +12,7 @@ description: 前端卓越 — React服务器组件、性能优化、可访问性
 ```tsx
 // app/products/page.tsx（默认为服务器组件）
 async function ProductsPage() {
-  const products = await db.query("SELECT * FROM products WHERE active = true");
+  const products = await db.查询("SELECT * FROM products WHERE active = true");
   return (
     <main>
       <h1>产品</h1>

@@ -1,11 +1,11 @@
 ---
 name: kraken-io-automation
-description: "通过 Rube MCP (Composio) 自动执行 Kraken IO 任务。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Kraken IO 任务。使用前始终先搜索工具以获取当前 架构。"
 requires:
   mcp: [rube]
 ---
 
-# 通过 Rube MCP 实现 Kraken IO 自动化
+# Kraken IO 自动化
 
 通过 Composio 的 Kraken IO 工具包和 Rube MCP 自动化 Kraken IO 操作。
 
@@ -33,10 +33,10 @@ requires:
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "Kraken IO operations", known_fields: ""}]
-session: {generate_id: true}
+会话: {generate_id: true}
 ```
 
-这将返回可用的工具 slug、输入模式、推荐执行计划和已知陷阱。
+这将返回可用的工具 标识符、输入模式、推荐执行计划和已知陷阱。
 
 ## 核心工作流模式
 
@@ -45,7 +45,7 @@ session: {generate_id: true}
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "your specific Kraken IO task"}]
-session: {id: "existing_session_id"}
+会话: {id: "existing_session_id"}
 ```
 
 ### 步骤 2: 检查连接
@@ -62,7 +62,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
+  arguments: {/* 架构-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"
@@ -70,7 +70,7 @@ session_id: "your_session_id"
 
 ## 已知陷阱
 
-- **始终先搜索**: 工具模式会变化。不要在没有调用 `RUBE_SEARCH_TOOLS` 的情况下硬编码工具 slug 或参数
+- **始终先搜索**: 工具模式会变化。不要在没有调用 `RUBE_SEARCH_TOOLS` 的情况下硬编码工具 标识符 或参数
 - **检查连接**: 在执行工具之前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
 - **模式合规性**: 使用搜索结果中的确切字段名称和类型
 - **内存参数**: 始终在 `RUBE_MULTI_EXECUTE_TOOL` 调用中包含 `memory`，即使为空（`{}`）

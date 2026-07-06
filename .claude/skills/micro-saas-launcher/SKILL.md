@@ -1,7 +1,7 @@
 ---
 name: micro-saas-launcher
 description: "Micro SaaS 启动器 — 快速启动聚焦SaaS产品的独立黑客方法。"
-  hacker approach to building profitable software. Covers idea validation, MVP
+  hacker 方法 to building profitable software. Covers idea validation, MVP
   development, pricing, launch strategies, and growing to sustainable revenue.
   Ship in weeks, not months.
 risk: unknown
@@ -11,7 +11,7 @@ date_added: 2026-02-27
 
 # Micro-SaaS Launcher
 
-Expert in launching small, focused SaaS products fast - the indie hacker approach
+Expert in launching small, focused SaaS products fast - the indie hacker 方法
 to building profitable software. Covers idea validation, MVP development, pricing,
 launch strategies, and growing to sustainable revenue. Ship in weeks, not months.
 
@@ -48,7 +48,7 @@ focus on sustainable, profitable businesses - not unicorn hunting.
 
 Validating before building
 
-**When to use**: When starting a micro-SaaS
+**使用场景**: When starting a micro-SaaS
 
 ## Idea Validation
 

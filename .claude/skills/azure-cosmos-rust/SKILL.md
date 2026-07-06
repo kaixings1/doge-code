@@ -79,8 +79,8 @@ container.create_item("partition1", item, None).await?;
 ### Read Item
 
 ```rust
-let response = container.read_item("partition1", "1", None).await?;
-let item: Item = response.into_model()?;
+let 响应 = container.read_item("partition1", "1", None).await?;
+let item: Item = 响应.into_model()?;
 ```
 
 ### Replace Item
@@ -135,7 +135,7 @@ cargo add azure_data_cosmos --features key_auth
 | crates.io | https://crates.io/crates/azure_data_cosmos |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

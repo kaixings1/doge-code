@@ -13,7 +13,7 @@ tags:
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -36,7 +36,7 @@ Guardiao de contexto que preserva dados criticos antes da compactacao automatica
 ## 不适用场景
 
 - The task is unrelated to context guardian
-- A simpler, more specific tool can handle the request
+- A simpler, more specific tool can handle the 请求
 - The user needs general-purpose assistance without domain expertise
 
 ## 工作原理
@@ -129,7 +129,7 @@ P2 = perda toleravel).
 |-----------|--------------|
 | Padroes descobertos | Convencoes, patterns de codigo observados |
 | Dependencias entre componentes | "scan_registry.py E match_skills.py devem ter categorias identicas" |
-| 优先encias do usuario | Idioma, estilo, nivel de detalhe, workflow preferido |
+| 优先encias do usuario | Idioma, estilo, nivel de detalhe, 工作流 preferido |
 | 上下文o de projeto | Estrutura de diretorios, arquivos-chave, proposito |
 | Questoes em aberto | Perguntas sem resposta, ambiguidades nao resolvidas |
 

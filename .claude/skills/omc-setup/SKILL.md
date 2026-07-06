@@ -1,6 +1,6 @@
 ---
-name: omc-setup
-description: "Omc Setup — OMC 安装设置相关功能和最佳实践"
+name: omc-设置
+description: "Omc 设置 — OMC 安装设置相关功能和最佳实践"
 level: 2
 ---
 
@@ -37,11 +37,11 @@ level: 2
 OMC 设置 - 配置 oh-my-claudecode
 
 用法：
-  /oh-my-claudecode:omc-setup           运行初始设置向导（如果已配置则更新）
-  /oh-my-claudecode:omc-setup --local   配置本地项目（.claude/CLAUDE.md）
-  /oh-my-claudecode:omc-setup --global  配置全局设置（~/.claude/CLAUDE.md）
-  /oh-my-claudecode:omc-setup --force   即使已配置也强制运行完整设置向导
-  /oh-my-claudecode:omc-setup --help    显示此帮助
+  /oh-my-claudecode:omc-设置           运行初始设置向导（如果已配置则更新）
+  /oh-my-claudecode:omc-设置 --local   配置本地项目（.claude/CLAUDE.md）
+  /oh-my-claudecode:omc-设置 --global  配置全局设置（~/.claude/CLAUDE.md）
+  /oh-my-claudecode:omc-设置 --force   即使已配置也强制运行完整设置向导
+  /oh-my-claudecode:omc-设置 --help    显示此帮助
 
 模式：
   初始设置（无标志）
@@ -74,10 +74,10 @@ OMC 设置 - 配置 oh-my-claudecode
     - 当您想要重新配置偏好时使用
 
 示例：
-  /oh-my-claudecode:omc-setup           # 首次设置（如果已配置则更新 CLAUDE.md）
-  /oh-my-claudecode:omc-setup --local   # 更新此项目
-  /oh-my-claudecode:omc-setup --global  # 更新所有项目
-  /oh-my-claudecode:omc-setup --force   # 重新运行完整设置向导
+  /oh-my-claudecode:omc-设置           # 首次设置（如果已配置则更新 CLAUDE.md）
+  /oh-my-claudecode:omc-设置 --local   # 更新此项目
+  /oh-my-claudecode:omc-设置 --global  # 更新所有项目
+  /oh-my-claudecode:omc-设置 --force   # 重新运行完整设置向导
 
 更多信息：https://github.com/Yeachan-Heo/oh-my-claudecode
 ```
@@ -85,14 +85,14 @@ OMC 设置 - 配置 oh-my-claudecode
 
 ## Active Plugin Root Resolution
 
-Before running setup shell commands or reading phase files, resolve the current OMC plugin root. This prevents an already-running Claude Code session from continuing to use a stale `CLAUDE_PLUGIN_ROOT` after `/plugin marketplace update omc` installs a newer cache version.
+Before running 设置 shell commands or reading phase files, resolve the current OMC plugin root. This prevents an already-running Claude Code 会话 from continuing to use a stale `CLAUDE_PLUGIN_ROOT` after `/plugin marketplace update omc` installs a newer cache version.
 
 ```bash
-OMC_SETUP_PLUGIN_ROOT=$(node -e "const f=require('fs'),p=require('path'),h=require('os').homedir(),d=(process.env.CLAUDE_CONFIG_DIR||p.join(h,'.claude')).replace(/[\\/]+$/,''),b=p.join(d,'plugins','cache','omc','oh-my-claudecode'),valid=r=>f.existsSync(p.join(r,'skills','omc-setup','SKILL.md'))||f.existsSync(p.join(r,'hooks','hooks.json'))||f.existsSync(p.join(r,'docs','CLAUDE.md'));try{const vs=f.readdirSync(b,{withFileTypes:true}).filter(e=>(e.isDirectory()||e.isSymbolicLink())&&/^\d+\.\d+\.\d+/.test(e.name)).map(e=>e.name).sort((a,c)=>c.localeCompare(a,void 0,{numeric:true}));const hit=vs.map(v=>p.join(b,v)).find(valid);if(hit)console.log(hit);else if(process.env.CLAUDE_PLUGIN_ROOT)console.log(process.env.CLAUDE_PLUGIN_ROOT)}catch{if(process.env.CLAUDE_PLUGIN_ROOT)console.log(process.env.CLAUDE_PLUGIN_ROOT)}")
+OMC_SETUP_PLUGIN_ROOT=$(node -e "const f=require('fs'),p=require('path'),h=require('os').homedir(),d=(process.env.CLAUDE_CONFIG_DIR||p.join(h,'.claude')).replace(/[\\/]+$/,''),b=p.join(d,'plugins','cache','omc','oh-my-claudecode'),valid=r=>f.existsSync(p.join(r,'skills','omc-设置','SKILL.md'))||f.existsSync(p.join(r,'hooks','hooks.json'))||f.existsSync(p.join(r,'docs','CLAUDE.md'));try{const vs=f.readdirSync(b,{withFileTypes:true}).过滤器(e=>(e.isDirectory()||e.isSymbolicLink())&&/^\d+\.\d+\.\d+/.test(e.name)).map(e=>e.name).sort((a,c)=>c.localeCompare(a,void 0,{numeric:true}));const hit=vs.map(v=>p.join(b,v)).find(valid);if(hit)console.log(hit);else if(process.env.CLAUDE_PLUGIN_ROOT)console.log(process.env.CLAUDE_PLUGIN_ROOT)}catch{if(process.env.CLAUDE_PLUGIN_ROOT)console.log(process.env.CLAUDE_PLUGIN_ROOT)}")
 export OMC_SETUP_PLUGIN_ROOT
 ```
 
-Use `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}` for all setup script and phase paths, then immediately repair stale cache references before any prompts or phase work:
+Use `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}` for all 设置 script and phase paths, then immediately repair stale cache references before any prompts or phase work:
 
 ```bash
 node "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/repair-plugin-cache.mjs"
@@ -133,8 +133,8 @@ fi
 
 **如果用户选择"仅更新 CLAUDE.md"：**
 - 检测是否存在本地（.claude/CLAUDE.md）或全局（~/.claude/CLAUDE.md）配置
-- 如果存在本地配置，运行：`bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-claude-md.sh" local`
-- 如果仅存在全局配置，运行：`bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-claude-md.sh" global`
+- 如果存在本地配置，运行：`bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/设置-claude-md.sh" local`
+- 如果仅存在全局配置，运行：`bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/设置-claude-md.sh" global`
 - 跳过所有其他步骤
 - 报告成功并退出
 
@@ -146,14 +146,14 @@ fi
 
 ### Force Flag Override
 
-If user passes `--force` flag, skip this check and proceed directly to setup.
+If user passes `--force` flag, skip this check and proceed directly to 设置.
 
 ## 恢复检测
 
 在开始任何阶段之前，检查现有状态：
 
 ```bash
-bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-progress.sh" resume
+bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/设置-progress.sh" resume
 ```
 
 如果存在状态（输出不是"fresh"），使用 AskUserQuestion 提示：
@@ -166,39 +166,39 @@ bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-progress.sh"
 
 如果用户选择"重新开始"：
 ```bash
-bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-progress.sh" clear
+bash "${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/设置-progress.sh" clear
 ```
 
 ## 阶段执行
 
 ### 对于 `--local` 或 `--global` 标志：
-读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/01-install-claude-md.md` 文件并遵循其说明。
+读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-设置/phases/01-install-claude-md.md` 文件并遵循其说明。
 （阶段文件处理标志模式的提前退出。）
 
 ### 对于完整设置（默认或 --force）：
 按顺序执行阶段。对于每个阶段，读取相应的文件并遵循其说明：
 
-1. **阶段 1 - 安装 CLAUDE.md**：读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/01-install-claude-md.md` 并遵循其说明。
+1. **阶段 1 - 安装 CLAUDE.md**：读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-设置/phases/01-install-claude-md.md` 并遵循其说明。
 
-2. **阶段 2 - 环境配置**：读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/02-configure.md` 并遵循其说明。阶段 2 必须将 HUD/statusLine 设置委托给 `hud` 技能；不要在此处内联生成或修补 `statusLine` 路径。
+2. **阶段 2 - 环境配置**：读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-设置/phases/02-configure.md` 并遵循其说明。阶段 2 必须将 HUD/statusLine 设置委托给 `hud` 技能；不要在此处内联生成或修补 `statusLine` 路径。
 
-3. **阶段 3 - 集成设置**：读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/03-integrations.md` 并遵循其说明。
+3. **阶段 3 - 集成设置**：读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-设置/phases/03-integrations.md` 并遵循其说明。
 
-4. **阶段 4 - 完成**：读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-setup/phases/04-welcome.md` 并遵循其说明。
+4. **阶段 4 - 完成**：读取 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/omc-设置/phases/04-welcome.md` 并遵循其说明。
 
 ## 优雅中断处理
 
-**重要**：此设置过程通过 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/setup-progress.sh` 在每个阶段后保存进度。如果中断（Ctrl+C 或连接丢失），设置可以从停止处恢复。
+**重要**：此设置过程通过 `${OMC_SETUP_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/scripts/设置-progress.sh` 在每个阶段后保存进度。如果中断（Ctrl+C 或连接丢失），设置可以从停止处恢复。
 
 ## 保持最新
 
 安装 oh-my-claudecode 更新后（通过 npm 或插件更新）：
 
-**自动方式**：只需运行 `/oh-my-claudecode:omc-setup` - 它会检测您已配置并提供跳过完整向导的"仅更新 CLAUDE.md"快速选项。
+**自动方式**：只需运行 `/oh-my-claudecode:omc-设置` - 它会检测您已配置并提供跳过完整向导的"仅更新 CLAUDE.md"快速选项。
 
 **手动选项**：
-- `/oh-my-claudecode:omc-setup --local` 仅更新项目配置
-- `/oh-my-claudecode:omc-setup --global` 仅更新全局配置
-- `/oh-my-claudecode:omc-setup --force` 重新运行完整向导（重新配置偏好）
+- `/oh-my-claudecode:omc-设置 --local` 仅更新项目配置
+- `/oh-my-claudecode:omc-设置 --global` 仅更新全局配置
+- `/oh-my-claudecode:omc-设置 --force` 重新运行完整向导（重新配置偏好）
 
 这确保您拥有最新的功能和代理配置，而无需重复完整设置的令牌成本。

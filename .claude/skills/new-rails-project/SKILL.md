@@ -1,6 +1,6 @@
 ---
 name: new-rails-project
-argument-hint: [project name]
+参数-hint: [project name]
 description: 创建新的 Rails 项目。
 allowed-tools: Bash(rails *), Bash(bundle *), Bash(bin/*), Bash(npm *), Bash(yarn *)
 context: fork
@@ -16,7 +16,7 @@ Generate a new Rails project named $1 in the current directory. You may referenc
 ## 使用场景
 - You need to bootstrap a new Rails project with the opinionated stack defined in this skill.
 - The project should start with Rails, PostgreSQL, Inertia.js, React, Vite, Tailwind, Sidekiq, and Redis already planned together.
-- You want setup guidance that covers project creation, conventions, testing, and verification for a fresh Rails app.
+- You want 设置 guidance that covers project creation, conventions, testing, and verification for a fresh Rails app.
 
 # Tech Stack
 Set up the following tech stack:
@@ -52,7 +52,7 @@ Set up the following tech stack:
 
 # Code maintenace
 - Run `bundle exec rubocop -a` after significant code changes
-- Use `.rubocop.yml` for style configuration
+- Use `.rubocop.yml` for style 配置
 - Security scanning with `bundle exec brakeman`
 
 # Frontend

@@ -16,7 +16,7 @@ description: "Taste Imagegen Frontend Web — Taste Imagegen Frontend Web 相关
 
 Each image is one section, generated as its own image call. 绝不 combine multiple sections into one frame. 绝不 return a single tall image that contains the whole page.
 
-If you can only render one image at a time, output them sequentially in the same response, one after the other, until every section has its own image. Announce each one ("Section 1 of 8: Hero", "Section 2 of 8: Trust bar", etc.).
+If you can only render one image at a time, output them sequentially in the same 响应, one after the other, until every section has its own image. Announce each one ("Section 1 of 8: Hero", "Section 2 of 8: Trust bar", etc.).
 
 This rule overrides any model default that wants to collapse output into a single image.
 
@@ -75,7 +75,7 @@ Do not generate random mood art unless explicitly asked.
 
 ---
 
-## 1. ACTIVE BASELINE CONFIGURATION
+## 1. ACTIVE BASELINE 配置
 
 - DESIGN_VARIANCE: 8
   `(1 = rigid / symmetrical, 10 = artsy / asymmetric)`
@@ -326,7 +326,7 @@ Every generated image must clearly communicate:
 
 A developer or coding model should be able to look at the image and understand how to build it.
 
-Do not produce vague abstract artwork when the request is for frontend.
+Do not produce vague abstract artwork when the 请求 is for frontend.
 
 ---
 
@@ -404,7 +404,7 @@ Generate **one separate horizontal image PER section**. 始终.
 - never return one "best" image and skip the rest
 - never replace several sections with one collage
 
-If the request is ambiguous about section count, **default high**:
+If the 请求 is ambiguous about section count, **default high**:
 - "hero" -> 1 image
 - "landing page" / "site template" -> default to 6 sections -> 6 images
 - "full website" -> default to 8 sections -> 8 images
@@ -412,7 +412,7 @@ If the request is ambiguous about section count, **default high**:
 - "product page" -> default to 6 sections -> 6 images
 - "portfolio" -> default to 6 sections -> 6 images
 
-If the model can only render one image per call, generate them **sequentially in the same response**, one after the other, labeled "Section X of N: <name>" until the full set is delivered.
+If the model can only render one image per call, generate them **sequentially in the same 响应**, one after the other, labeled "Section X of N: <name>" until the full set is delivered.
 
 ### Format
 - 始终 horizontal (16:9, 16:10, or 21:9 depending on density)
@@ -527,7 +527,7 @@ Strictly avoid these patterns unless explicitly requested.
 - cloned left-text/right-image blocks
 - perfect but lifeless symmetry everywhere
 - fake complexity without hierarchy
-- empty decorative space with no purpose
+- empty decorative space with no 目的
 
 ### Visual slop
 - default purple/blue AI gradients
@@ -574,7 +574,7 @@ Use short, believable, design-friendly copy.
 ### Carousel / marquee slop (layout)
 - infinity logo strips repeating the same 6 blobs
 - “trusted by” ticker that is unreadable mosquito logos
-- auto-play-style hero dots with no semantic purpose
+- auto-play-style hero dots with no semantic 目的
 
 ### Data / KPI slop
 - three identical stat columns (99% satisfaction, $10 saved, ∞ scale) unless user asked for KPIs
@@ -734,7 +734,7 @@ Banned (AI gradient slop):
 - rainbow / mesh blob gradients
 - purple-to-blue "AI" defaults
 - pink-to-orange "creator" defaults
-- neon edges and glow halos with no purpose
+- neon edges and glow halos with no 目的
 - gradient text as a shortcut for "premium"
 - gradients that compete with imagery instead of supporting it
 
@@ -773,7 +773,7 @@ Allowed:
 - art-directed product visuals
 - refined editorial photography
 - UI crops
-- abstract forms with structural purpose
+- abstract forms with structural 目的
 - framed objects
 - premium texture use
 - campaign-style visuals
@@ -811,8 +811,8 @@ Avoid:
 4. Product preview
 5. Problem / solution
 6. Benefits
-7. Workflow
-8. Metrics / proof / integration
+7. 工作流
+8. Metrics / proof / 集成
 9. Testimonials
 10. Pricing
 11. 常见问题
@@ -911,7 +911,7 @@ For minimalist briefs: this rule is suspended. Restraint is the design.
 
 ---
 
-## 19. RESPONSE BEHAVIOR
+## 19. 响应 BEHAVIOR
 When the user asks for a frontend design:
 1. infer site type and primary conversion goal
 2. infer number of sections (if unclear, use the defaults from §5: landing page = 6, full website = 8)

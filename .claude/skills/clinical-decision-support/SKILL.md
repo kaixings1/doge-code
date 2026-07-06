@@ -48,7 +48,7 @@ All documents are generated as publication-ready LaTeX/PDF files optimized for p
 
 ### Clinical Features
 
-- **Biomarker Integration**: Genomic alterations (mutations, CNV, fusions), gene expression signatures, IHC markers, PD-L1 scoring
+- **Biomarker 集成**: Genomic alterations (mutations, CNV, fusions), gene expression signatures, IHC markers, PD-L1 scoring
 - **Statistical Analysis**: Hazard ratios, p-values, confidence intervals, survival curves, Cox regression, log-rank tests
 - **Evidence Grading**: GRADE system (1A/1B/2A/2B/2C), Oxford CEBM levels, quality of evidence assessment
 - **Clinical Terminology**: SNOMED-CT, LOINC, proper medical nomenclature, trial nomenclature
@@ -62,7 +62,7 @@ This skill is specifically designed for pharmaceutical and clinical research app
 **Drug Development**
 - **Phase 2/3 Trial Analyses**: Biomarker-stratified efficacy and safety analyses
 - **Subgroup Analyses**: Forest plots showing treatment effects across patient subgroups
-- **Companion Diagnostic Development**: Linking biomarkers to drug response
+- **Companion Diagnostic Development**: Linking biomarkers to drug 响应
 - **Regulatory Submissions**: IND/NDA documentation with evidence summaries
 
 **Medical Affairs**
@@ -85,12 +85,12 @@ This skill is specifically designed for pharmaceutical and clinical research app
 
 ## 使用场景
 
-Use this skill when you need to:
+当您需要以下操作时使用此技能：
 
-- **Analyze patient cohorts** stratified by biomarkers, molecular subtypes, or clinical characteristics
-- **Generate treatment recommendation reports** with evidence grading for clinical guidelines or pharmaceutical strategies
-- **Compare outcomes** between patient subgroups with statistical analysis (survival, response rates, hazard ratios)
-- **Produce pharmaceutical research documents** for drug development, clinical trials, or regulatory submissions
+- **分析患者队列**，按生物标志物、分子亚型或临床特征分层
+- **生成治疗建议报告**，带有临床指南或药物策略的证据等级评定
+- **比较患者亚组之间的结果**，使用统计分析（生存率、响应率、风险比）
+- **生成药物研究文档**，用于药物开发、临床试验或监管提交
 - **Develop clinical practice guidelines** with GRADE evidence grading and decision algorithms
 - **Document biomarker-guided therapy selection** at the population level (not individual patients)
 - **Synthesize evidence** from multiple trials or real-world data sources
@@ -229,7 +229,7 @@ The first page of every CDS document should contain ONLY the executive summary w
 - **Cohort Characteristics**: Demographics, baseline features, patient selection criteria
 - **Biomarker Stratification**: Molecular subtypes, genomic alterations, IHC profiles
 - **Treatment Exposure**: Therapies received, dosing, treatment duration by subgroup
-- **Outcome Analysis**: Response rates (ORR, DCR), survival data (OS, PFS), DOR
+- **Outcome Analysis**: 响应 rates (ORR, DCR), survival data (OS, PFS), DOR
 - **Statistical Methods**: Kaplan-Meier survival curves, hazard ratios, log-rank tests, Cox regression
 - **Subgroup Comparisons**: Biomarker-stratified efficacy, forest plots, statistical significance
 - **Safety Profile**: Adverse events by subgroup, dose modifications, discontinuations
@@ -286,14 +286,14 @@ The first page of every CDS document should contain ONLY the executive summary w
   - Evidence summary tables with GRADE ratings
 - **Figures**: 
   - Kaplan-Meier survival curves with log-rank p-values and number at risk tables
-  - Waterfall plots showing best response by patient
+  - Waterfall plots showing best 响应 by patient
   - Forest plots for subgroup analyses with confidence intervals
   - TikZ decision algorithm flowcharts
   - Swimmer plots for individual patient timelines
 - **Statistics**: Hazard ratios with 95% CI, p-values, median survival times, landmark survival rates
 - **Compliance**: De-identification per HIPAA Safe Harbor, confidentiality notices for proprietary data
 
-## Integration
+## 集成
 
 This skill integrates with:
 - **scientific-writing**: Citation management, statistical reporting, evidence synthesis
@@ -338,7 +338,7 @@ This skill integrates with:
 ```
 > Generate cohort analysis for 30 GBM patients classified into Cluster 1 (Mesenchymal-Immune-Active) 
 > and Cluster 2 (Proneural) molecular subtypes. Compare outcomes including median OS, 6-month PFS rate, 
-> and response to TMZ+bevacizumab. Include biomarker profile table and statistical comparison.
+> and 响应 to TMZ+bevacizumab. Include biomarker profile table and statistical comparison.
 ```
 
 **Example 3: Breast Cancer HER2 Cohort**
@@ -384,7 +384,7 @@ This skill integrates with:
 
 ### Outcome Metrics
 - Survival: OS (overall survival), PFS (progression-free survival)
-- Response: ORR (objective response rate), DOR (duration of response), DCR (disease control rate)
+- 响应: ORR (objective 响应 rate), DOR (duration of 响应), DCR (disease control rate)
 - Quality: ECOG performance status, symptom burden
 - Safety: Adverse events, dose modifications
 
@@ -420,7 +420,7 @@ This skill integrates with:
    - Specify statistical tests used (log-rank, Cox regression, Fisher's exact)
    - Account for multiple comparisons when appropriate
 4. **Outcome Definitions**: Use standard criteria:
-   - Response: RECIST 1.1, iRECIST for immunotherapy
+   - 响应: RECIST 1.1, iRECIST for immunotherapy
    - Adverse events: CTCAE version 5.0
    - Performance status: ECOG or Karnofsky
 5. **Survival Data Presentation**:
@@ -497,7 +497,7 @@ See the `assets/` directory for LaTeX templates:
 
 See the `scripts/` directory for analysis and visualization tools:
 - `generate_survival_analysis.py` - Kaplan-Meier curve generation with log-rank tests, hazard ratios, 95% CI
-- `create_waterfall_plot.py` - Best response visualization for cohort analyses
+- `create_waterfall_plot.py` - Best 响应 visualization for cohort analyses
 - `create_forest_plot.py` - Subgroup analysis visualization with confidence intervals
 - `create_cohort_tables.py` - Demographics, biomarker frequency, and outcomes tables
 - `build_decision_tree.py` - TikZ flowchart generation for treatment algorithms

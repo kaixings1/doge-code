@@ -18,7 +18,7 @@ description: DMux工作流管理
 
 dmux is a tmux-based orchestration tool that manages AI agent panes:
 - Press `n` to create a new pane with a prompt
-- Press `m` to merge pane output back to the main session
+- Press `m` to merge pane output back to the main 会话
 - Supports: Claude Code, Codex, OpenCode, Cline, Gemini, Qwen
 
 **Install:** `npm install -g dmux` or see [github.com/standardagents/dmux](https://github.com/standardagents/dmux)
@@ -26,31 +26,31 @@ dmux is a tmux-based orchestration tool that manages AI agent panes:
 ## 快速开始
 
 ```bash
-# Start dmux session
+# Start dmux 会话
 dmux
 
 # Create agent panes (press 'n' in dmux, then type prompt)
-# Pane 1: "Implement the auth middleware in src/auth/"
+# Pane 1: "Implement the auth 中间件 in src/auth/"
 # Pane 2: "Write tests for the user service"
 # Pane 3: "Update API documentation"
 
-# Each pane runs its own agent session
+# Each pane runs its own agent 会话
 # Press 'm' to merge results back
 ```
 
-## Workflow Patterns
+## 工作流 Patterns
 
 ### Pattern 1: Research + Implement
 
 Split research and implementation into parallel tracks:
 
 ```
-Pane 1 (Research): "Research best practices for rate limiting in Node.js.
+Pane 1 (Research): "Research 最佳实践 for rate limiting in Node.js.
   Check current libraries, compare approaches, and write findings to
   /tmp/rate-limit-research.md"
 
-Pane 2 (Implement): "Implement rate limiting middleware for our Express API.
-  Start with a basic token bucket, we'll refine after research completes."
+Pane 2 (Implement): "Implement rate limiting 中间件 for our Express API.
+  Start with a basic 令牌 bucket, we'll refine after research completes."
 
 # After Pane 1 completes, merge findings into Pane 2's context
 ```
@@ -60,11 +60,11 @@ Pane 2 (Implement): "Implement rate limiting middleware for our Express API.
 Parallelize work across independent files:
 
 ```
-Pane 1: "Create the database schema and migrations for the billing feature"
+Pane 1: "Create the database 架构 and migrations for the billing feature"
 Pane 2: "Build the billing API endpoints in src/api/billing/"
 Pane 3: "Create the billing dashboard UI components"
 
-# Merge all, then do integration in main pane
+# Merge all, then do 集成 in main pane
 ```
 
 ### Pattern 3: Test + Fix Loop
@@ -128,16 +128,16 @@ git merge feat/billing
 
 ## Complementary Tools
 
-| Tool | What It Does | When to Use |
+| Tool | What It Does | 使用场景 |
 |------|-------------|-------------|
 | **dmux** | tmux pane management for agents | Parallel agent sessions |
 | **Superset** | Terminal IDE for 10+ parallel agents | Large-scale orchestration |
-| **Claude Code Task tool** | In-process subagent spawning | Programmatic parallelism within a session |
+| **Claude Code Task tool** | In-process subagent spawning | Programmatic parallelism within a 会话 |
 | **Codex multi-agent** | Built-in agent roles | Codex-specific parallel work |
 
 ## 故障排除
 
-- **Pane not responding:** Check if the agent session is waiting for input. Use `m` to read output.
+- **Pane not responding:** Check if the agent 会话 is waiting for input. Use `m` to read output.
 - **Merge conflicts:** Use git worktrees to isolate file changes per pane.
-- **High token usage:** Reduce number of parallel panes. Each pane is a full agent session.
+- **High 令牌 usage:** Reduce number of parallel panes. Each pane is a full agent 会话.
 - **tmux not found:** Install with `brew install tmux` (macOS) or `apt install tmux` (Linux).

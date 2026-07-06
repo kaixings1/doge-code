@@ -5,7 +5,7 @@ description: "Remember — Remember 相关功能和最佳实践"
 
 # Remember
 
-使用此技能当 the user wants to preserve or organize useful knowledge discovered during a session.
+使用此技能当 the user wants to preserve or organize useful knowledge discovered during a 会话.
 
 ## Goal
 Promote durable, reusable knowledge into the right memory surface instead of leaving it buried in chat history.
@@ -13,11 +13,11 @@ Promote durable, reusable knowledge into the right memory surface instead of lea
 ## Memory surfaces
 - **Project memory** — durable team/project knowledge
 - **Notepad priority** — short high-signal context for the next turns
-- **Notepad working** — temporary active-session notes
+- **Notepad working** — temporary active-会话 notes
 - **Docs / AGENTS / CLAUDE files** — durable instructions and conventions when they truly belong there
 
 ## 工作流
-1. Gather the relevant session findings.
+1. Gather the relevant 会话 findings.
 2. Classify each item:
    - durable project fact
    - temporary working note

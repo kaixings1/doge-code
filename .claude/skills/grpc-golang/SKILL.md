@@ -30,7 +30,7 @@ date_added: "2026-02-27"
 
 1. **确认技术上下文**：确定 Go 版本、gRPC-Go 版本以及项目使用 Buf 还是原始 protoc。
 2. **确认需求**：确定 mTLS 需求、负载模式（一元/流式）、SLO 和消息大小限制。
-3. **规划 Schema**：定义包版本控制（例如 `api.v1`）、资源类型和错误映射。
+3. **规划 架构**：定义包版本控制（例如 `api.v1`）、资源类型和错误映射。
 4. **安全设计**：实现 mTLS 进行服务到服务认证。
 5. **可观测性**：配置拦截器用于追踪、指标和结构化日志。
 6. **验证**：在最终确定代码生成之前，始终运行 `buf lint` 和破坏性变更检查。
@@ -76,7 +76,7 @@ message GetUserResponse {
 
 ## 故障排除
 
-- **错误：生成不一致**：如果生成的代码与 schema 不匹配，运行 `buf generate` 并验证 `go_package` 选项。
+- **错误：生成不一致**：如果生成的代码与 架构 不匹配，运行 `buf generate` 并验证 `go_package` 选项。
 - **错误：上下文超时**：检查客户端超时并确保服务器在流式处理器中不会无限阻塞。
 - **错误：mTLS 握手**：确保 CA 证书已正确添加到客户端和服务端的 `x509.CertPool`。
 
@@ -86,7 +86,7 @@ message GetUserResponse {
 - 不涵盖 gRPC-Web 或基于浏览器的 gRPC 集成。
 - 假定 Go 1.21+ 和 gRPC-Go v1.60+；旧版本可能有不同的 API（例如 `grpc.Dial` 与 `grpc.NewClient`）。
 - 不涵盖 L7 gRPC 感知负载均衡器配置（例如 Envoy、NGINX）。
-- 不涉及超出 Buf lint 范围的 Protobuf schema 注册中心或大规模 schema 治理。
+- 不涉及超出 Buf lint 范围的 Protobuf 架构 注册中心或大规模 架构 治理。
 
 ## 资源
 

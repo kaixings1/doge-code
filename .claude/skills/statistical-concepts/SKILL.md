@@ -6,7 +6,7 @@ description: "关键统计概念的参考指南：p 值、置信区间、效应�
 # Statistical Concepts Reference
 
 ## 目的
-Quick reference for statistical concepts, common misconceptions, and practical guidance on choosing the right approach.
+快速参考 for statistical concepts, common misconceptions, and practical guidance on choosing the right 方法.
 
 ## Core Concepts
 
@@ -17,7 +17,7 @@ Quick reference for statistical concepts, common misconceptions, and practical g
 - **Misconception**: A small p-value doesn't mean a large effect
 
 ### Confidence Intervals
-- **What it is**: Range that would contain the true parameter 95% of the time if we repeated the study
+- **What it is**: Range that would contain the true 参数 95% of the time if we repeated the study
 - **What it is NOT**: 95% probability the true value is in this specific interval
 - **Practical use**: Width tells you precision; overlap tells you significance
 

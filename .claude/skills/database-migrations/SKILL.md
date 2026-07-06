@@ -1,12 +1,12 @@
 ---
 name: database-migrations
-description: 跨 PostgreSQL、MySQL 及常用 ORM（Prisma、Drizzle、Django、TypeORM、golang-migrate）的模式变更（schema changes）、数据迁移、回滚及零停机部署（zero-downtime deployments）的数据库迁移最佳实践。
+description: 跨 PostgreSQL、MySQL 及常用 ORM（Prisma、Drizzle、Django、TypeORM、golang-migrate）的模式变更（架构 changes）、数据迁移、回滚及零停机部署（zero-downtime deployments）的数据库迁移最佳实践。
 origin: ECC
 ---
 
-# 数据库迁移模式（Database Migration Patterns）
+# 数据库迁移模式（Database 迁移 Patterns）
 
-面向生产系统的安全、可逆的数据库模式变更（Schema Changes）。
+面向生产系统的安全、可逆的数据库模式变更（架构 Changes）。
 
 ## 激活时机
 
@@ -24,7 +24,7 @@ origin: ECC
 4. **针对生产规模数据进行测试** —— 在 100 行数据上正常的迁移可能会导致 1000 万行数据锁表
 5. **部署后的迁移不可变** —— 严禁编辑已在生产环境运行过的迁移文件
 
-## 迁移安全核查表（Migration Safety Checklist）
+## 迁移安全核查表（迁移 Safety Checklist）
 
 在执行任何迁移之前：
 
@@ -142,7 +142,7 @@ npx prisma migrate reset
 npx prisma generate
 ```
 
-### Schema 示例
+### 架构 示例
 
 ```prisma
 model User {
@@ -169,7 +169,7 @@ npx prisma migrate dev --create-only --name add_email_index
 ```
 
 ```sql
--- migrations/20240115_add_email_index/migration.sql
+-- migrations/20240115_add_email_index/迁移.sql
 -- Prisma 无法生成 CONCURRENTLY，因此我们手动编写
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email ON users (email);
 ```
@@ -189,7 +189,7 @@ npx drizzle-kit migrate
 npx drizzle-kit push
 ```
 
-### Schema 示例
+### 架构 示例
 
 ```typescript
 import { pgTable, text, timestamp, uuid, boolean } from "drizzle-orm/pg-core";
@@ -230,7 +230,7 @@ from django.db import migrations
 def backfill_display_names(apps, schema_editor):
     User = apps.get_model("accounts", "User")
     batch_size = 5000
-    users = User.objects.filter(display_name="")
+    users = User.objects.过滤器(display_name="")
     while users.exists():
         batch = list(users[:batch_size])
         for user in batch:
@@ -240,7 +240,7 @@ def backfill_display_names(apps, schema_editor):
 def reverse_backfill(apps, schema_editor):
     pass  # 数据迁移，无需回滚逻辑
 
-class Migration(migrations.Migration):
+class 迁移(migrations.迁移):
     dependencies = [("accounts", "0015_add_display_name")]
 
     operations = [
@@ -253,7 +253,7 @@ class Migration(migrations.Migration):
 从 Django 模型中移除列，但不立即从数据库中删除：
 
 ```python
-class Migration(migrations.Migration):
+class 迁移(migrations.迁移):
     operations = [
         migrations.SeparateDatabaseAndState(
             state_operations=[
@@ -294,7 +294,7 @@ DROP INDEX IF EXISTS idx_users_avatar;
 ALTER TABLE users DROP COLUMN IF EXISTS avatar_url;
 ```
 
-## 零停机迁移策略（Zero-Downtime Migration Strategy）
+## 零停机迁移策略（Zero-Downtime 迁移 Strategy）
 
 对于关键生产变更，遵循“扩展-收缩（expand-contract）”模式：
 

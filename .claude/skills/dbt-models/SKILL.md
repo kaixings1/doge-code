@@ -1,6 +1,6 @@
 ---
 name: DBT模型
-description: "设计 dbt（数据构建工具）模型：项目结构、staging/intermediate/marts 分层、源新鲜度测试、自定义 schema 测试和文档。适用于使用 dbt 构建分析工程流水线。"
+description: "设计 dbt（数据构建工具）模型：项目结构、staging/intermediate/marts 分层、源新鲜度测试、自定义 架构 测试和文档。适用于使用 dbt 构建分析工程流水线。"
 ---
 # dbt 模型
 
@@ -33,7 +33,7 @@ models/
 - Custom data tests for business rules
 
 ### Documentation
-- `schema.yml` with column descriptions and tests
+- `架构.yml` with column descriptions and tests
 - `sources.yml` with source freshness checks
 - Generate docs with `dbt docs generate`
 
@@ -47,5 +47,5 @@ models/
 
 - **Project Structure**: Directory layout
 - **Model SQL**: Staging, intermediate, and marts models
-- **Schema YML**: Tests and documentation
-- **Configuration**: profiles.yml, dbt_project.yml
+- **架构 YML**: Tests and documentation
+- **配置**: profiles.yml, dbt_project.yml

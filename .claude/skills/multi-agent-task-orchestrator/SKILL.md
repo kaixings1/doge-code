@@ -9,7 +9,7 @@ source_type: community
 date_added: "2026-04-09"
 author: milkomida77
 tags: [multi-agent, orchestration, task-routing, quality-gates, anti-duplication]
-tools: [claude, cursor, gemini]
+tools: [claude, 游标, gemini]
 ---
 
 # 多代理任务编排器

@@ -32,7 +32,7 @@ from azure.ai.voicelive.aio import connect
 from azure.identity.aio import DefaultAzureCredential
 
 async with connect(
-    endpoint=os.environ["AZURE_COGNITIVE_SERVICES_ENDPOINT"],
+    端点=os.environ["AZURE_COGNITIVE_SERVICES_ENDPOINT"],
     credential=DefaultAzureCredential(),
     model="gpt-4o-realtime-preview",
     credential_scopes=["https://cognitiveservices.azure.com/.default"]
@@ -46,7 +46,7 @@ from azure.ai.voicelive.aio import connect
 from azure.core.credentials import AzureKeyCredential
 
 async with connect(
-    endpoint=os.environ["AZURE_COGNITIVE_SERVICES_ENDPOINT"],
+    端点=os.environ["AZURE_COGNITIVE_SERVICES_ENDPOINT"],
     credential=AzureKeyCredential(os.environ["AZURE_COGNITIVE_SERVICES_KEY"]),
     model="gpt-4o-realtime-preview"
 ) as conn:
@@ -63,14 +63,14 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def main():
     async with connect(
-        endpoint=os.environ["AZURE_COGNITIVE_SERVICES_ENDPOINT"],
+        端点=os.environ["AZURE_COGNITIVE_SERVICES_ENDPOINT"],
         credential=DefaultAzureCredential(),
         model="gpt-4o-realtime-preview",
         credential_scopes=["https://cognitiveservices.azure.com/.default"]
     ) as conn:
-        # Update session with instructions
-        await conn.session.update(session={
-            "instructions": "You are a helpful assistant.",
+        # Update 会话 with 使用说明
+        await conn.会话.update(会话={
+            "使用说明": "You are a helpful assistant.",
             "modalities": ["text", "audio"],
             "voice": "alloy"
         })
@@ -78,9 +78,9 @@ async def main():
         # Listen for events
         async for event in conn:
             print(f"Event: {event.type}")
-            if event.type == "response.audio_transcript.done":
+            if event.type == "响应.audio_transcript.done":
                 print(f"Transcript: {event.transcript}")
-            elif event.type == "response.done":
+            elif event.type == "响应.done":
                 break
 
 asyncio.run(main())
@@ -88,26 +88,26 @@ asyncio.run(main())
 
 ## Core Architecture
 
-### Connection Resources
+### Connection 资源
 
-The `VoiceLiveConnection` exposes these resources:
+The `VoiceLiveConnection` exposes these 资源:
 
 | Resource | Purpose | Key Methods |
 |----------|---------|-------------|
-| `conn.session` | Session configuration | `update(session=...)` |
-| `conn.response` | Model responses | `create()`, `cancel()` |
+| `conn.会话` | 会话 configuration | `update(会话=...)` |
+| `conn.响应` | Model responses | `create()`, `cancel()` |
 | `conn.input_audio_buffer` | Audio input | `append()`, `commit()`, `clear()` |
 | `conn.output_audio_buffer` | Audio output | `clear()` |
 | `conn.conversation` | Conversation state | `item.create()`, `item.delete()`, `item.truncate()` |
-| `conn.transcription_session` | Transcription config | `update(session=...)` |
+| `conn.transcription_session` | Transcription config | `update(会话=...)` |
 
-## Session Configuration
+## 会话 Configuration
 
 ```python
 from azure.ai.voicelive.models import RequestSession, FunctionTool
 
-await conn.session.update(session=RequestSession(
-    instructions="You are a helpful voice assistant.",
+await conn.会话.update(会话=RequestSession(
+    使用说明="You are a helpful voice assistant.",
     modalities=["text", "audio"],
     voice="alloy",  # or "echo", "shimmer", "sage", etc.
     input_audio_format="pcm16",
@@ -153,10 +153,10 @@ await conn.input_audio_buffer.append(audio=b64_audio)
 
 ```python
 async for event in conn:
-    if event.type == "response.audio.delta":
+    if event.type == "响应.audio.delta":
         audio_bytes = base64.b64decode(event.delta)
         await play_audio(audio_bytes)
-    elif event.type == "response.audio.done":
+    elif event.type == "响应.audio.done":
         print("Audio complete")
 ```
 
@@ -165,11 +165,11 @@ async for event in conn:
 ```python
 async for event in conn:
     match event.type:
-        # Session events
-        case "session.created":
-            print(f"Session: {event.session}")
-        case "session.updated":
-            print("Session updated")
+        # 会话 events
+        case "会话.created":
+            print(f"会话: {event.会话}")
+        case "会话.updated":
+            print("会话 updated")
         
         # Audio input events
         case "input_audio_buffer.speech_started":
@@ -183,25 +183,25 @@ async for event in conn:
         case "conversation.item.input_audio_transcription.delta":
             print(f"Partial: {event.delta}")
         
-        # Response events
-        case "response.created":
-            print(f"Response started: {event.response.id}")
-        case "response.audio_transcript.delta":
+        # 响应 events
+        case "响应.created":
+            print(f"响应 started: {event.响应.id}")
+        case "响应.audio_transcript.delta":
             print(event.delta, end="", flush=True)
-        case "response.audio.delta":
+        case "响应.audio.delta":
             audio = base64.b64decode(event.delta)
-        case "response.done":
-            print(f"Response complete: {event.response.status}")
+        case "响应.done":
+            print(f"响应 complete: {event.响应.status}")
         
         # Function calls
-        case "response.function_call_arguments.done":
+        case "响应.function_call_arguments.done":
             result = handle_function(event.name, event.arguments)
             await conn.conversation.item.create(item={
                 "type": "function_call_output",
                 "call_id": event.call_id,
                 "output": json.dumps(result)
             })
-            await conn.response.create()
+            await conn.响应.create()
         
         # Errors
         case "error":
@@ -213,12 +213,12 @@ async for event in conn:
 ### Manual Turn Mode (No VAD)
 
 ```python
-await conn.session.update(session={"turn_detection": None})
+await conn.会话.update(会话={"turn_detection": None})
 
 # Manually control turns
 await conn.input_audio_buffer.append(audio=b64_audio)
 await conn.input_audio_buffer.commit()  # End of user turn
-await conn.response.create()  # Trigger response
+await conn.响应.create()  # Trigger 响应
 ```
 
 ### Interrupt Handling
@@ -226,8 +226,8 @@ await conn.response.create()  # Trigger response
 ```python
 async for event in conn:
     if event.type == "input_audio_buffer.speech_started":
-        # User interrupted - cancel current response
-        await conn.response.cancel()
+        # User interrupted - cancel current 响应
+        await conn.响应.cancel()
         await conn.output_audio_buffer.clear()
 ```
 
@@ -248,7 +248,7 @@ await conn.conversation.item.create(item={
     "content": [{"type": "input_text", "text": "Hello!"}]
 })
 
-await conn.response.create()
+await conn.响应.create()
 ```
 
 ## Voice Options
@@ -311,7 +311,7 @@ except ConnectionError as e:
 - **All Models & Types**: See references/models.md
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

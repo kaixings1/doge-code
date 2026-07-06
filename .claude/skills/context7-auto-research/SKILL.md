@@ -30,7 +30,7 @@ See [GitHub Repository](https://github.com/BenedictKing/context7-auto-research) 
 
 ## 最佳实践
 - Configure API keys via environment variables for higher rate limits
-- Use the skill's auto-trigger feature for seamless integration
+- Use the skill's auto-trigger feature for seamless 集成
 
 ## 故障排除
 See the GitHub repository for troubleshooting guides.

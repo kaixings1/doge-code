@@ -19,7 +19,7 @@ tags:
 tools:
   - claude-code
   - antigravity
-  - cursor
+  - 游标
   - gemini-cli
   - codex-cli
 ---
@@ -35,7 +35,7 @@ When the user says **"lookdev"** — or any of: *tune*, *dial in*, *iterate on t
 
 **Two studio shapes — pick by what's being tuned:**
 
-- **Visual-parameter lookdev** — the artifact's *look* is set by numbers/choices (color, type, layout, image treatment, animation, 3D). Controls = sliders, pickers, drag handles. This is the bulk of this skill (below).
+- **Visual-参数 lookdev** — the artifact's *look* is set by numbers/choices (color, type, layout, image treatment, animation, 3D). Controls = sliders, pickers, drag handles. This is the bulk of this skill (below).
 - **Text & media lookdev** — the artifact is a *document, blog post, copy, or media set* and the user is editing/curating it: rewriting sentences, cutting boring paragraphs, highlighting, leaving margin comments, flagging "diagram goes here" / "wrong image, replace." Controls = **direct inline editing + selection highlight + anchored comments + media annotation**. See the dedicated section below. **A blog post / doc / script review IS this mode — never hand back a long markdown file and ask the user to react in chat. Stand up the annotation studio.**
 
 ## What it covers
@@ -96,7 +96,7 @@ The agent ingests this and bakes: applies the inline edits to the source file, a
 - **Selection → offsets.** Use the `Selection`/`Range` API; store character offsets relative to the block's text content (not DOM node paths, which break on re-render). Re-apply highlights/comments on load by walking each block's text to the stored offsets.
 - **Editing toolbar floats with the selection** (a small popover at the selection rect) or a sticky top bar — controls stay reachable (see section above). Hotkeys: highlight on a key (e.g. `h`), comment on `c`.
 - **Keep edit/annotate modes distinct** so a stray click doesn't garble text while they meant to highlight — a mode toggle (Edit · Highlight · Comment) or modifier key.
-- Everything else — serve locally on a free port, verify headless, tear down after baking — is identical to the visual-parameter workflow below.
+- Everything else — serve locally on a free port, verify headless, tear down after baking — is identical to the visual-参数 工作流 below.
 
 ## Control patterns
 

@@ -7,8 +7,8 @@ source_repo: morsechimwai/lemmaly
 source_type: community
 date_added: "2026-05-26"
 author: morsechimwai
-tags: [algorithms, probabilistic-data-structures, approximate-algorithms, bloom-filter, hyperloglog, fft, performance]
-tools: [claude-code, antigravity, cursor, gemini-cli, codex-cli]
+tags: [algorithms, probabilistic-data-structures, approximate-algorithms, bloom-过滤器, hyperloglog, fft, performance]
+tools: [claude-code, antigravity, 游标, gemini-cli, codex-cli]
 license: "Apache-2.0"
 license_source: "https://github.com/morsechimwai/lemmaly/blob/main/LICENSE"
 ---
@@ -19,15 +19,15 @@ license_source: "https://github.com/morsechimwai/lemmaly/blob/main/LICENSE"
 
 The model knows these techniques. It almost never proposes them spontaneously. mathguard fixes that.
 
-**Violating the letter of these rules is violating the spirit of the skill.** A Bloom filter where the caller assumed exact answers is a production incident, not an optimization.
+**Violating the letter of these rules is violating the spirit of the skill.** A Bloom 过滤器 where the caller assumed exact answers is a production incident, not an optimization.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 Use **mathguard** when:
 
 - Working with large-scale data (`n ≥ 10⁶`): similarity search, deduplication, top-K / heavy-hitters, streaming analytics, cardinality estimation, embeddings, recommender systems.
 - Doing signal/image processing, polynomial or big-integer arithmetic, convolution, graph distance, computational geometry, randomized algorithms.
-- The classical O(n log n) is already the floor and you need an asymptotic win (Bloom filter, HyperLogLog, Count-Min Sketch, MinHash/LSH, FFT/NTT, Johnson-Lindenstrauss projection, sweep line, kd-tree/BVH, fast exponentiation, monoid parallel reduction, amortized potential method).
+- The classical O(n log n) is already the floor and you need an asymptotic win (Bloom 过滤器, HyperLogLog, Count-Min Sketch, MinHash/LSH, FFT/NTT, Johnson-Lindenstrauss projection, sweep line, kd-tree/BVH, fast exponentiation, monoid parallel reduction, amortized potential method).
 - Loaded *after* `lemmaly` has confirmed the classical answer is not enough.
 
 Do **not** use mathguard when:
@@ -43,7 +43,7 @@ NO APPROXIMATE STRUCTURE WITHOUT WRITTEN ε/δ AND EXPLICIT CALLER ACCEPTANCE
 
 Probabilistic data structures (Bloom, HyperLogLog, Count-Min, MinHash/LSH, t-digest), randomized projections (JL), and lossy transforms (floating FFT) all change the answer's meaning. Before proposing one:
 
-1. Write the error parameter the caller will see (false-positive rate, relative error, distortion bound).
+1. Write the error 参数 the caller will see (false-positive rate, relative error, distortion bound).
 2. Identify the caller and state, in one sentence, that they tolerate this kind of wrong answer.
 3. If you cannot identify the caller, or they need exact (auth checks, billing, dedup keys, deduplication for correctness, anything that flows into a primary key), DO NOT propose the approximate structure. Keep classical, or escalate to a sharded/streaming exact design.
 
@@ -53,17 +53,17 @@ This rule has saved more incidents than any other in this skill. Do not soften i
 
 1. **Declare exact vs approximate up front.** Before suggesting a math-level technique, state:
    - `mode: exact` or `mode: approximate`
-   - If approximate: the error parameter (ε, δ, false-positive rate) and a sentence on whether the caller can tolerate it.
+   - If approximate: the error 参数 (ε, δ, false-positive rate) and a sentence on whether the caller can tolerate it.
    - If the caller needs exact and there is no exact win, say so and stop — do not silently degrade to approximate.
 
-2. **Cite the technique by name.** 绝不 describe a probabilistic or numerical trick in vague terms. Name it: `Bloom filter`, `HyperLogLog`, `Count-Min Sketch`, `MinHash + LSH`, `Johnson–Lindenstrauss projection`, `FFT`, `NTT`, `fast exponentiation`, `Karatsuba`, `Strassen`, `sweep line`, `kd-tree`, `BVH`, `union-find with path compression`, `Floyd's cycle detection`, `Boyer-Moore majority`, `reservoir sampling`, `Knuth shuffle`, `Aho-Corasick`, `suffix automaton`, `segment tree with lazy propagation`, `Fenwick tree`, `monoid scan / parallel prefix`. A named technique is auditable; "a smart approximation" is not.
+2. **Cite the technique by name.** 绝不 describe a probabilistic or numerical trick in vague terms. Name it: `Bloom 过滤器`, `HyperLogLog`, `Count-Min Sketch`, `MinHash + LSH`, `Johnson–Lindenstrauss projection`, `FFT`, `NTT`, `fast exponentiation`, `Karatsuba`, `Strassen`, `sweep line`, `kd-tree`, `BVH`, `union-find with path compression`, `Floyd's cycle detection`, `Boyer-Moore majority`, `reservoir sampling`, `Knuth shuffle`, `Aho-Corasick`, `suffix automaton`, `segment tree with lazy propagation`, `Fenwick tree`, `monoid scan / parallel prefix`. A named technique is auditable; "a smart approximation" is not.
 
 3. **State the trade you are making.** Every math-level optimization buys something at a cost. In one line:
    - Buys: `space`, `time`, `wall-clock`, `parallelism`.
    - Costs: `accuracy ε=?`, `code complexity`, `dependency`, `non-determinism`, `numerical stability`.
    - If the cost is invisible to the caller, write "callers see no change".
 
-4. **Justify the asymptotic win.** Do not propose a math technique without a one-line bound argument:
+4. **Justify the asymptotic win.** Do not propose a math technique without a one-line bound 参数:
    - "HyperLogLog: count uniques in O(log log n) bits at standard error 1.04/√m."
    - "FFT: polynomial multiplication O(n log n) vs schoolbook O(n²)."
    - "JL projection: preserves pairwise distances within (1±ε) using O(log n / ε²) dimensions."

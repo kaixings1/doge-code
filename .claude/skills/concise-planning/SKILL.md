@@ -28,7 +28,7 @@ date_added: "2026-02-27"
 
 Use the following structure:
 
-- **Approach**: 1-3 sentences on what and why.
+- **方法**: 1-3 sentences on what and why.
 - **范围**: Bullet points for "In" and "Out".
 - **Action Items**: A list of 6-10 atomic, ordered tasks (Verb-first).
 - **Validation**: At least one item for testing.
@@ -38,7 +38,7 @@ Use the following structure:
 ```markdown
 # Plan
 
-<High-level approach>
+<High-level 方法>
 
 ## Scope
 
@@ -65,7 +65,7 @@ Use the following structure:
 - **Concrete**: Name specific files or modules when possible.
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。
