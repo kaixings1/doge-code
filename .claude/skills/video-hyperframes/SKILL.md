@@ -11,8 +11,8 @@ scenario: video
 aspect_hint: "1920×1080 (16:9)"
 recommended: 5
 tags: ["video", "hyperframes", "remotion", "视频"]
-example_id: sample-hyperframes-workflow
-example_name: "Hyperframes · AI workflow 视频"
+example_id: sample-hyperframes-工作流
+example_name: "Hyperframes · AI 工作流 视频"
 example_format: markdown
 example_tagline: "8 帧自动播放, 含进度条 + 元数据"
 example_desc: "电影感动画脚本, 可直接喂给 Remotion 做成 mp4"

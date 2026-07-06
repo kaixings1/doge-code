@@ -31,7 +31,7 @@ firecrawl download https://docs.example.com --screenshot --limit 20 -y
 firecrawl download https://docs.example.com --format markdown,links --screenshot --limit 20 -y
 # Creates per page: index.md + links.txt + screenshot.png
 
-# Filter to specific sections
+# 过滤器 to specific sections
 firecrawl download https://docs.example.com --include-paths "/features,/sdks"
 
 # Skip translations
@@ -51,7 +51,7 @@ firecrawl download https://docs.example.com \
 | Option                    | Description                                              |
 | ------------------------- | -------------------------------------------------------- |
 | `--limit <n>`             | Max pages to download                                    |
-| `--search <query>`        | Filter URLs by search query                              |
+| `--search <查询>`        | 过滤器 URLs by search 查询                              |
 | `--include-paths <paths>` | Only download matching paths                             |
 | `--exclude-paths <paths>` | Skip matching paths                                      |
 | `--allow-subdomains`      | Include subdomain pages                                  |

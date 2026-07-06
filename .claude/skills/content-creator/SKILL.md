@@ -12,7 +12,7 @@ date_added: "2026-02-27"
 Professional-grade brand voice analysis, SEO optimization, and platform-specific content frameworks.
 
 ## 何时使用
-Use this skill when writing blog posts, creating social media content, establishing brand voice, optimizing content for SEO, or planning content calendars.
+在撰写博客文章、创建社交媒体内容、建立品牌声音、优化内容以提高 SEO 或规划内容日历时使用此技能。
 
 ## Keywords
 content creation, blog posts, SEO, brand voice, social media, content calendar, marketing content, content strategy, content marketing, brand consistency, content optimization, social media marketing, content planning, blog writing, content frameworks, brand guidelines, social media strategy
@@ -39,7 +39,7 @@ content creation, blog posts, SEO, brand voice, social media, content calendar, 
 
 ## 核心工作流
 
-### Establishing Brand Voice (First Time Setup)
+### Establishing Brand Voice (First Time 设置)
 
 When creating content for a new brand or client:
 
@@ -113,7 +113,7 @@ When creating content for a new brand or client:
    - Align with optimal posting times
 
 3. **Batch Creation**
-   - Create all weekly content in one session
+   - Create all weekly content in one 会话
    - Maintain consistent voice across pieces
    - Prepare all visual assets together
 
@@ -220,7 +220,7 @@ Track these KPIs for content success:
 - Revenue attribution
 - ROI per content piece
 
-## Integration Points
+## 集成 Points
 
 This skill works best with:
 - Analytics platforms (Google Analytics, social media insights)

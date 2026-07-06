@@ -61,7 +61,7 @@ On every trigger, read:
 4. `protocols/critical-article-protocol.md`
 5. `references/critical-matrix.md`
 6. `references/example-and-evidence-rules.md`
-7. 若涉及真实公共对象、最新事实、机构、平台、政策、人物、公司、数据、AI/过程性产物或强判断，读取 `../crossframe/references/source-ledger-workflow.md` 并建立来源台账。
+7. 若涉及真实公共对象、最新事实、机构、平台、政策、人物、公司、数据、AI/过程性产物或强判断，读取 `../crossframe/references/source-ledger-工作流.md` 并建立来源台账。
 8. `templates/critical-output-template.md`
 
 If the topic needs long-form style control, also read `../crossframe-essay/SKILL.md` and reuse only its article discipline, not its whole output contract.

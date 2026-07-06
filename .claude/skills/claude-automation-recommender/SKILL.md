@@ -75,12 +75,12 @@ See [references/mcp-servers.md](references/mcp-servers.md) for detailed patterns
 | Uses popular libraries (React, Express, etc.) | **context7** - Live documentation lookup |
 | Frontend with UI testing needs | **Playwright** - Browser automation/testing |
 | Uses Supabase | **Supabase MCP** - Direct database operations |
-| PostgreSQL/MySQL database | **Database MCP** - Query and schema tools |
+| PostgreSQL/MySQL database | **Database MCP** - 查询 and 架构 tools |
 | GitHub repository | **GitHub MCP** - Issues, PRs, actions |
 | Uses Linear for issues | **Linear MCP** - Issue management |
 | AWS infrastructure | **AWS MCP** - Cloud resource management |
 | Slack workspace | **Slack MCP** - Team notifications |
-| Memory/context persistence | **Memory MCP** - Cross-session memory |
+| Memory/context persistence | **Memory MCP** - Cross-会话 memory |
 | Sentry error tracking | **Sentry MCP** - Error investigation |
 | Docker containers | **Docker MCP** - Container management |
 
@@ -103,13 +103,13 @@ Create skills in `.claude/skills/<name>/SKILL.md`. Some are also available via p
 | Codebase Signal | Skill to Create | Invocation |
 |-----------------|-----------------|------------|
 | API routes | **api-doc** (with OpenAPI template) | Both |
-| Database project | **create-migration** (with validation script) | User-only |
+| Database project | **create-迁移** (with validation script) | User-only |
 | Test suite | **gen-test** (with example tests) | User-only |
 | Component library | **new-component** (with templates) | User-only |
-| PR workflow | **pr-check** (with checklist) | User-only |
+| PR 工作流 | **pr-check** (with checklist) | User-only |
 | Releases | **release-notes** (with git context) | User-only |
 | Code style | **project-conventions** | Claude-only |
-| Onboarding | **setup-dev** (with prereq script) | User-only |
+| Onboarding | **设置-dev** (with prereq script) | User-only |
 
 #### C. Hooks Recommendations
 
@@ -214,10 +214,10 @@ disable-model-invocation: true  # for user-only
 ## Decision Framework
 
 ### When to Recommend MCP Servers
-- External service integration needed (databases, APIs)
+- External service 集成 needed (databases, APIs)
 - Documentation lookup for libraries/SDKs
 - Browser automation or testing
-- Team tool integration (GitHub, Linear, Slack)
+- Team tool 集成 (GitHub, Linear, Slack)
 - Cloud infrastructure management
 
 ### When to Recommend Skills
@@ -257,7 +257,7 @@ disable-model-invocation: true  # for user-only
 
 **Team sharing**: Check `.mcp.json` into repo so entire team gets same MCP servers
 
-**Debugging**: Use `--mcp-debug` flag to identify configuration issues
+**Debugging**: Use `--mcp-debug` flag to identify 配置 issues
 
 **前置条件 to recommend:**
 - GitHub CLI (`gh`) - enables native GitHub operations

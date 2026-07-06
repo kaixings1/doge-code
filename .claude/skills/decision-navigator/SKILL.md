@@ -58,7 +58,7 @@ The question itself carries the context; the options are just the choices.
 **Bad question format:**
 > "Tell me more about your situation." ← too open, doesn't reduce the space
 
-> "- Simplicity: I want the easiest setup with zero server management." ← option labels should never have colons or sub-explanations
+> "- Simplicity: I want the easiest 设置 with zero server management." ← option labels should never have colons or sub-explanations
 
 ### Step 2b — Extract before you ask
 
@@ -215,7 +215,7 @@ Here's how to find out quickly:
 ## Edge Cases
 
 **User gives a very vague situation** ("I don't know what to do with my life")
-→ Start even broader: ask what *area* of life feels most stuck (work, relationships, health, purpose, finances)
+→ Start even broader: ask what *area* of life feels most stuck (work, relationships, health, 目的, finances)
 
 **User picks "something else"**
 → Ask them to describe it briefly, then fit their answer into the next level of branching

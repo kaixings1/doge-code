@@ -16,7 +16,7 @@ Auto-instrument Node.js applications with distributed tracing, metrics, and logs
 # Distro (recommended - auto-instrumentation)
 npm install @azure/monitor-opentelemetry
 
-# Low-level exporters (custom OpenTelemetry setup)
+# Low-level exporters (custom OpenTelemetry 设置)
 npm install @azure/monitor-opentelemetry-exporter
 
 # Custom logs ingestion
@@ -66,7 +66,7 @@ node --import @azure/monitor-opentelemetry/loader ./dist/index.js
 
 ```typescript
 import { useAzureMonitor, AzureMonitorOpenTelemetryOptions } from "@azure/monitor-opentelemetry";
-import { resourceFromAttributes } from "@opentelemetry/resources";
+import { resourceFromAttributes } from "@opentelemetry/资源";
 
 const options: AzureMonitorOpenTelemetryOptions = {
   azureMonitorExporterOptions: {
@@ -112,7 +112,7 @@ const tracer = trace.getTracer("my-tracer");
 const span = tracer.startSpan("doWork");
 try {
   span.setAttribute("component", "worker");
-  span.setAttribute("operation.id", "42");
+  span.setAttribute("操作.id", "42");
   span.addEvent("processing started");
   
   // Your work here
@@ -147,7 +147,7 @@ gauge.addCallback((result) => {
 });
 ```
 
-## Manual Exporter Setup
+## Manual Exporter 设置
 
 ### Trace Exporter
 
@@ -207,11 +207,11 @@ logs.setGlobalLoggerProvider(loggerProvider);
 import { DefaultAzureCredential } from "@azure/identity";
 import { LogsIngestionClient, isAggregateLogsUploadError } from "@azure/monitor-ingestion";
 
-const endpoint = "https://<dce>.ingest.monitor.azure.com";
+const 端点 = "https://<dce>.ingest.monitor.azure.com";
 const ruleId = "<data-collection-rule-id>";
 const streamName = "Custom-MyTable_CL";
 
-const client = new LogsIngestionClient(endpoint, new DefaultAzureCredential());
+const client = new LogsIngestionClient(端点, new DefaultAzureCredential());
 
 const logs = [
   {
@@ -249,7 +249,7 @@ class FilteringSpanProcessor implements SpanProcessor {
     // Add custom attributes
     span.attributes["CustomDimension"] = "value";
     
-    // Filter out internal spans
+    // 过滤器 out internal spans
     if (span.kind === SpanKind.INTERNAL) {
       span.spanContext().traceFlags = TraceFlags.NONE;
     }
@@ -321,7 +321,7 @@ import {
 6. **Graceful shutdown** - Call `shutdownAzureMonitor()` to flush telemetry
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

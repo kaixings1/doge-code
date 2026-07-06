@@ -1,6 +1,6 @@
 ---
 name: userlist-automation
-description: "通过 Rube MCP (Composio) 自动执行 Userlist 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Userlist 任务。使用前始终先搜索工具以获取当前 架构。""
 requires:
   mcp: [rube]
 ---
@@ -15,7 +15,7 @@ requires:
 
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 使用工具包 `userlist` 建立活动的 Userlist 连接
-- 始终先调用 `RUBE_SEARCH_TOOLS` 以获取当前工具 schema
+- 始终先调用 `RUBE_SEARCH_TOOLS` 以获取当前工具 架构
 
 ## 设置
 
@@ -33,10 +33,10 @@ requires:
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "Userlist operations", known_fields: ""}]
-session: {generate_id: true}
+会话: {generate_id: true}
 ```
 
-这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
+这将返回可用的工具 标识符、输入 架构、推荐的执行计划和已知陷阱。
 
 ## 核心工作流模式
 
@@ -45,7 +45,7 @@ session: {generate_id: true}
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "your specific Userlist task"}]
-session: {id: "existing_session_id"}
+会话: {id: "existing_session_id"}
 ```
 
 ### 步骤 2：检查连接
@@ -62,7 +62,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
+  arguments: {/* 架构-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"
@@ -70,9 +70,9 @@ session_id: "your_session_id"
 
 ## 已知陷阱
 
-- **始终先搜索**：工具 schema 会变化。未经调用 `RUBE_SEARCH_TOOLS` 切勿硬编码工具 slug 或参数
+- **始终先搜索**：工具 架构 会变化。未经调用 `RUBE_SEARCH_TOOLS` 切勿硬编码工具 标识符 或参数
 - **检查连接**：执行工具前确认 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
-- **Schema 合规**：使用搜索结果中的精确字段名和类型
+- **架构 合规**：使用搜索结果中的精确字段名和类型
 - **Memory 参数**：始终在 `RUBE_MULTI_EXECUTE_TOOL` 调用中包含 `memory`，即使为空（`{}`）
 - **会话复用**：在工作流中复用会话 ID。为新工作流生成新 ID
 - **分页**：检查响应中的分页令牌，持续获取直到完成

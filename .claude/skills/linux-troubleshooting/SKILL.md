@@ -1,7 +1,7 @@
 ---
-name: linux-troubleshooting
+name: linux-故障排除
 description: "用于诊断和解决系统问题、性能问题和服务故障的 Linux 系统故障排除工作流。"
-category: granular-workflow-bundle
+category: granular-工作流-bundle
 risk: safe
 source: personal
 date_added: "2026-02-27"

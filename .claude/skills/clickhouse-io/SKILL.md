@@ -91,7 +91,7 @@ GROUP BY hour, market_id
 ORDER BY hour DESC;
 ```
 
-## 查询优化模式 (Query Optimization Patterns)
+## 查询优化模式 (查询 Optimization Patterns)
 
 ### 高效过滤
 
@@ -182,7 +182,7 @@ async function bulkInsertTrades(trades: Trade[]) {
     '${trade.timestamp.toISOString()}'
   )`).join(',')
 
-  await clickhouse.query(`
+  await clickhouse.查询(`
     INSERT INTO trades (id, market_id, user_id, amount, timestamp)
     VALUES ${values}
   `).toPromise()
@@ -191,7 +191,7 @@ async function bulkInsertTrades(trades: Trade[]) {
 // ❌ 逐条插入（缓慢）
 async function insertTrade(trade: Trade) {
   // 切勿在循环中这样做！
-  await clickhouse.query(`
+  await clickhouse.查询(`
     INSERT INTO trades VALUES ('${trade.id}', ...)
   `).toPromise()
 }
@@ -253,7 +253,7 @@ GROUP BY hour, market_id;
 SELECT
     query_id,
     user,
-    query,
+    查询,
     query_duration_ms,
     read_rows,
     read_bytes,
@@ -391,15 +391,15 @@ import { Client } from 'pg'
 
 const pgClient = new Client({ connectionString: process.env.DATABASE_URL })
 
-pgClient.query('LISTEN market_updates')
+pgClient.查询('LISTEN market_updates')
 
 pgClient.on('notification', async (msg) => {
-  const update = JSON.parse(msg.payload)
+  const update = JSON.parse(msg.载荷)
 
   await clickhouse.insert('market_updates', [
     {
       market_id: update.id,
-      event_type: update.operation,  // INSERT, UPDATE, DELETE
+      event_type: update.操作,  // INSERT, UPDATE, DELETE
       timestamp: new Date(),
       data: JSON.stringify(update.new_data)
     }

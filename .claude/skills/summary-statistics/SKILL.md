@@ -35,7 +35,7 @@ Provide a comprehensive statistical summary with interpretation — not just num
 - Effect sizes between groups (Cohen's d, Cliff's delta)
 - Statistical significance of group differences
 
-## 用法 Examples
+## 用法 示例
 
 ```
 "Calculate summary statistics for the conversion_rate column,

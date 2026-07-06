@@ -20,7 +20,7 @@ date_added: "2026-02-27"
 - 明确目标、约束和所需输入。
 - 应用相关最佳实践并验证结果。
 - 提供可操作的步骤和验证。
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 使用此技能的场景
 
@@ -154,7 +154,7 @@ git branch deleted-branch abc123
 
 ## Practical Workflows
 
-### Workflow 1: Clean Up Feature Branch Before PR
+### 工作流 1: Clean Up Feature Branch Before PR
 
 ```bash
 # Start with feature branch
@@ -173,7 +173,7 @@ git rebase -i main
 git push --force-with-lease origin feature/user-auth
 ```
 
-### Workflow 2: Apply Hotfix to Multiple Releases
+### 工作流 2: Apply Hotfix to Multiple Releases
 
 ```bash
 # Create fix on main
@@ -193,7 +193,7 @@ git cherry-pick --continue
 git cherry-pick --abort
 ```
 
-### Workflow 3: Find Bug Introduction
+### 工作流 3: Find Bug Introduction
 
 ```bash
 # Start bisect
@@ -218,7 +218,7 @@ git bisect start HEAD v2.1.0
 git bisect run npm test
 ```
 
-### Workflow 4: Multi-Branch Development
+### 工作流 4: Multi-Branch Development
 
 ```bash
 # Main project directory
@@ -242,7 +242,7 @@ git cherry-pick hotfix/critical-bug
 git worktree remove ../myapp-hotfix
 ```
 
-### Workflow 5: Recover from Mistakes
+### 工作流 5: Recover from Mistakes
 
 ```bash
 # Accidentally reset to wrong commit
@@ -291,13 +291,13 @@ git rebase --continue
 git merge origin/main
 ```
 
-### Autosquash Workflow
+### Autosquash 工作流
 
 Automatically squash fixup commits during rebase.
 
 ```bash
 # Make initial commit
-git commit -m "feat: add user authentication"
+git commit -m "feat: add user 认证"
 
 # Later, fix something in that commit
 # Stage changes
@@ -366,7 +366,7 @@ git commit -m "cherry-pick: apply specific changes from abc123"
 # Safe force push
 git push --force-with-lease origin feature/branch
 
-# Create backup before risky operation
+# Create backup before risky 操作
 git branch backup-branch
 git rebase -i main
 # If something goes wrong
@@ -410,7 +410,7 @@ git branch recovered-branch abc123
 - **references/git-rebase-guide.md**: Deep dive into interactive rebase
 - **references/git-conflict-resolution.md**: Advanced conflict resolution strategies
 - **references/git-history-rewriting.md**: Safely rewriting Git history
-- **assets/git-workflow-checklist.md**: Pre-PR cleanup checklist
+- **assets/git-工作流-checklist.md**: Pre-PR cleanup checklist
 - **assets/git-aliases.md**: Useful Git aliases for advanced workflows
 - **scripts/git-clean-branches.sh**: Clean up merged and stale branches
 

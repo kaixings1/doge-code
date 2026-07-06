@@ -12,7 +12,7 @@ The generated `DESIGN.md` serves as the **single source of truth** for prompting
 
 ## 前提条件
 - Access to Google Stitch via [labs.google/stitch](https://labs.google/stitch)
-- 可选ly: Stitch MCP Server for programmatic integration with Cursor, Antigravity, or Gemini CLI
+- 可选ly: Stitch MCP Server for programmatic 集成 with 游标, Antigravity, or Gemini CLI
 
 ## The Goal
 Generate a `DESIGN.md` file that encodes:
@@ -171,7 +171,7 @@ no generic placeholder names, no broken image links.)
 ## Tips for Success
 1. Start with the atmosphere — understand the vibe before detailing tokens
 2. Look for patterns — identify consistent spacing, sizing, and styling
-3. Think semantically — name colors by purpose, not just appearance
+3. Think semantically — name colors by 目的, not just appearance
 4. 考虑 hierarchy — document how visual weight communicates importance
 5. Encode the bans — anti-patterns are as important as the rules themselves
 

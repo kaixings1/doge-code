@@ -1,11 +1,11 @@
 ---
 name: zoho_bigin-automation
-description: "通过 Rube MCP (Composio) 自动执行 Zoho Bigin 任务：管道、联系人、公司、产品和小型企业 CRM。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Zoho Bigin 任务：管道、联系人、公司、产品和小型企业 CRM。使用前始终先搜索工具以获取当前 架构。"
 requires:
   mcp: [rube]
 ---
 
-# 通过 Rube MCP 实现 Zoho Bigin 自动化
+# Zoho Bigin 自动化
 
 通过 Rube MCP 使用 Composio 的 Zoho Bigin 工具包实现 Zoho Bigin 操作自动化。
 
@@ -60,7 +60,7 @@ After discovering tools, execute them via:
 RUBE_MULTI_EXECUTE_TOOL:
   tools:
     - tool_slug: "<discovered_tool_slug>"
-      arguments: {<schema-compliant arguments>}
+      arguments: {<架构-compliant arguments>}
   memory: {}
   sync_response_to_workbench: false
 ```
@@ -93,10 +93,10 @@ For bulk operations, use `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` in a
 ## 已知陷阱
 
 - **始终 search tools first**: Tool schemas and available operations may change. 绝不 hardcode tool slugs without first discovering them via `RUBE_SEARCH_TOOLS`.
-- **Check connection status**: Ensure the Zoho Bigin connection is ACTIVE before executing any tools. Expired OAuth tokens require re-authentication.
-- **Respect rate limits**: If you receive rate limit errors, reduce request frequency and implement backoff.
-- **Validate schemas**: 始终 pass strictly schema-compliant arguments. Use `RUBE_GET_TOOL_SCHEMAS` to load full input schemas when `schemaRef` is returned instead of `input_schema`.
+- **Check connection status**: Ensure the Zoho Bigin connection is ACTIVE before executing any tools. Expired OAuth tokens require re-认证.
+- **Respect rate limits**: If you receive rate limit errors, reduce 请求 frequency and implement backoff.
+- **Validate schemas**: 始终 pass strictly 架构-compliant arguments. Use `RUBE_GET_TOOL_SCHEMAS` to load full input schemas when `schemaRef` is returned instead of `input_schema`.
 
 ## 快速参考
 
-| Operation | Approach |
+| 操作 | 方法 |

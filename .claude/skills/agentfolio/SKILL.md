@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 **Role**: Autonomous Agent Discovery Guide
 
-Use this skill when you want to **discover, compare, and research autonomous AI agents** across ecosystems.
+当您想要跨生态系统**发现、比较和研究自主 AI 代理**时使用此技能。
 AgentFolio is a curated directory at https://agentfolio.io that tracks agent frameworks, products, and tools.
 
 This skill helps you:
@@ -31,14 +31,14 @@ This skill helps you:
 
 1. **Open the directory**
    - Visit `https://agentfolio.io` in your browser.
-   - Optionally filter by category (e.g., Dev Tools, Ops, Marketing, Productivity).
+   - Optionally 过滤器 by category (e.g., Dev Tools, Ops, Marketing, Productivity).
 
 2. **Search by intent**
    - Start from the problem you want to solve:  
      - “customer support agents”  
      - “autonomous coding agents”  
      - “research / analysis agents”
-   - Use keywords in the AgentFolio search bar that match your domain or workflow.
+   - Use keywords in the AgentFolio search bar that match your domain or 工作流.
 
 3. **Evaluate candidates**
    - For each interesting agent, capture:
@@ -90,7 +90,7 @@ Use these prompts when working with this skill in an AI coding agent:
 ## 使用场景
 This skill is applicable when you need to **discover or compare autonomous AI agents** instead of building in a vacuum:
 
-- At the start of a new agent or workflow project.
+- At the start of a new agent or 工作流 project.
 - When evaluating vendors or tools to integrate.
 - When you want inspiration or best practices from existing agent products.
 

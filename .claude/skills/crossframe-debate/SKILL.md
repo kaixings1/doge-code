@@ -18,7 +18,7 @@ tags:
   - crossframe
   - chinese
   - debate
-  - argument
+  - 参数
   - proposition
 ---
 # CrossFrame Debate

@@ -257,7 +257,7 @@ grep -rniE "nonce\s*=\s*['\"]|static.*nonce|const.*nonce" --include="*.go" --inc
 
 ```bash
 # Plaintext password storage
-grep -rniE "password\s*=\s*request|user\.password\s*=\s*" --include="*.go" --include="*.py" --include="*.java" --include="*.ts" --include="*.php"
+grep -rniE "password\s*=\s*请求|user\.password\s*=\s*" --include="*.go" --include="*.py" --include="*.java" --include="*.ts" --include="*.php"
 
 # HTTP instead of HTTPS
 grep -rniE "http://[^localhost]|http://[^127\.0\.0\.1]" --include="*.go" --include="*.py" --include="*.java" --include="*.ts" --include="*.php"
@@ -328,7 +328,7 @@ ciphertext = aesgcm.encrypt(nonce, plaintext, None)
 ```python
 # Python - Secure random
 import secrets
-token = secrets.token_hex(32)
+令牌 = secrets.token_hex(32)
 ```
 
 ---

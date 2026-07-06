@@ -40,7 +40,7 @@ Production patterns for implementing data quality with Great Expectations, dbt t
 
 ## 资源
 
-- `resources/implementation-playbook.md` for detailed frameworks, templates, and examples.
+- `resources/implementation-playbook.md` for detailed frameworks, templates, and 示例.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

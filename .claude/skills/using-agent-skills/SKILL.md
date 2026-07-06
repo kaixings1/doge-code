@@ -33,9 +33,9 @@ description: 使用代理技能 — 发现并调用代理技能。在开始会�
     │   ├── 太复杂？ ──────────────→ code-simplification
     │   ├── 安全问题？ ────────────→ security-and-hardening
     │   └── 性能问题？ ────────────→ performance-optimization
-    ├── 提交/分支？ ────────────────→ git-workflow-and-versioning
+    ├── 提交/分支？ ────────────────→ git-工作流-and-versioning
     ├── CI/CD 管道工作？ ───────────→ ci-cd-and-automation
-    ├── 废弃/迁移？ ───────────────→ deprecation-and-migration
+    ├── 废弃/迁移？ ───────────────→ deprecation-and-迁移
     ├── 编写文档/ADR？ ────────────→ documentation-and-adrs
     ├── 添加日志/指标/告警？ ──────→ observability-and-instrumentation
     └── 部署/发布？ ───────────────→ shipping-and-launch
@@ -154,14 +154,22 @@ description: 使用代理技能 — 发现并调用代理技能。在开始会�
 10. test-driven-development     → 证明每个片段工作正常
 11. code-review-and-quality     → 合并前审查
 12. code-simplification         → 在保持行为的同时减少不必要的复杂度
-13. git-workflow-and-versioning → 清洁的提交历史
+13. git-工作流-and-versioning → 清洁的提交历史
 14. documentation-and-adrs      → 记录决策
-15. deprecation-and-migration   → 需要时安全地淘汰旧系统并迁移用户
+15. deprecation-and-迁移   → 需要时安全地淘汰旧系统并迁移用户
 16. shipping-and-launch         → 安全部署
 ```
 
 不是每个任务都需要每个技能。一个错误修复可能只需要：`debugging-and-error-recovery` → `test-driven-development` → `code-review-and-quality`。
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 | 阶段 | 技能 | 一句话总结 |

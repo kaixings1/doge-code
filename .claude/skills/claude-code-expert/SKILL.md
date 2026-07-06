@@ -9,11 +9,11 @@ tags:
 - claude-code
 - productivity
 - cli
-- configuration
+- 配置
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -31,7 +31,7 @@ Especialista profundo em Claude Code - CLI da Anthropic. Maximiza produtividade 
 ## 不适用场景
 
 - The task is unrelated to claude code expert
-- A simpler, more specific tool can handle the request
+- A simpler, more specific tool can handle the 请求
 - The user needs general-purpose assistance without domain expertise
 
 ## 工作原理
@@ -52,7 +52,7 @@ diretamente no terminal. Diferente do Claude.ai web, o Claude Code:
 - Suporta hooks (automacoes pre/pos-acao)
 - Pode criar e orquestrar sub-agentes via Task tool
 
-## Instalacao E Setup
+## Instalacao E 设置
 
 ```bash
 npm install -g @anthropic-ai/claude-code
@@ -369,7 +369,7 @@ NUNCA usar em: producao, repos com segredos, ambientes compartilhados.
 
 ---
 
-## Workflow De Feature Completa (4 Fases)
+## 工作流 De Feature Completa (4 Fases)
 
 ```bash
 

@@ -323,7 +323,7 @@ try {
     producer.close();
 }
 
-// Or use try-with-resources
+// Or use try-with-资源
 try (EventHubProducerClient producer = new EventHubClientBuilder()
         .connectionString(connectionString, eventHubName)
         .buildProducerClient()) {
@@ -334,7 +334,7 @@ try (EventHubProducerClient producer = new EventHubClientBuilder()
 ## 环境变量
 
 ```bash
-EVENT_HUBS_CONNECTION_STRING=Endpoint=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=...
+EVENT_HUBS_CONNECTION_STRING=端点=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=...
 EVENT_HUBS_NAME=<event-hub-name>
 STORAGE_CONNECTION_STRING=<for-checkpointing>
 ```
@@ -358,7 +358,7 @@ STORAGE_CONNECTION_STRING=<for-checkpointing>
 - "partition processing"
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

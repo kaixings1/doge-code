@@ -9,11 +9,11 @@ source_type: community
 date_added: "2026-04-27"
 author: kubestellar
 tags: [kubernetes, multi-cluster, mcp, dashboard, cncf, devops, observability]
-tools: [claude, cursor, gemini, codex]
+tools: [claude, 游标, gemini, codex]
 license: "Apache-2.0"
 license_source: "https://github.com/kubestellar/console/blob/main/LICENSE"
 plugin:
-  setup:
+  设置:
     type: manual
     summary: "Requires kc-agent binary (brew tap kubestellar/tap && brew install kc-agent)"
     docs: "https://github.com/kubestellar/console#quick-start"

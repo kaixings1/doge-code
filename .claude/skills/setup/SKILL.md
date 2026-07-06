@@ -1,36 +1,36 @@
 ---
-name: setup
+name: 设置
 description: "设置 — Claude Code 设置和配置功能"
 level: 2
 ---
 
 # 设置
 
-使用 `/oh-my-claudecode:setup` 作为统一的设置/配置入口点。
+使用 `/oh-my-claudecode:设置` 作为统一的设置/配置入口点。
 
 ## 使用方法
 
 ```bash
-/oh-my-claudecode:setup                # 完整设置向导
-/oh-my-claudecode:setup doctor         # 安装诊断
-/oh-my-claudecode:setup mcp            # MCP 服务器配置
-/oh-my-claudecode:setup wizard --local # 显式向导路径
+/oh-my-claudecode:设置                # 完整设置向导
+/oh-my-claudecode:设置 doctor         # 安装诊断
+/oh-my-claudecode:设置 mcp            # MCP 服务器配置
+/oh-my-claudecode:设置 wizard --local # 显式向导路径
 ```
 
 ## 路由规则
 
 仅根据**第一个参数**处理请求，以便安装/设置问题立即进入正确的流程：
 
-- 无参数、`wizard`、`local`、`global` 或 `--force` -> 路由到 `/oh-my-claudecode:omc-setup`，带有相同的剩余参数
+- 无参数、`wizard`、`local`、`global` 或 `--force` -> 路由到 `/oh-my-claudecode:omc-设置`，带有相同的剩余参数
 - `doctor` -> 路由到 `/oh-my-claudecode:omc-doctor`，带有 `doctor` 令牌之后的所有内容
-- `mcp` -> 路由到 `/oh-my-claudecode:mcp-setup`，带有 `mcp` 令牌之后的所有内容
+- `mcp` -> 路由到 `/oh-my-claudecode:mcp-设置`，带有 `mcp` 令牌之后的所有内容
 
 示例：
 
 ```bash
-/oh-my-claudecode:setup --local          # => /oh-my-claudecode:omc-setup --local
-/oh-my-claudecode:setup doctor --json    # => /oh-my-claudecode:omc-doctor --json
-/oh-my-claudecode:setup mcp github       # => /oh-my-claudecode:mcp-setup github
+/oh-my-claudecode:设置 --local          # => /oh-my-claudecode:omc-设置 --local
+/oh-my-claudecode:设置 doctor --json    # => /oh-my-claudecode:omc-doctor --json
+/oh-my-claudecode:设置 mcp github       # => /oh-my-claudecode:mcp-设置 github
 ```
 
 ## 功能说明
@@ -92,8 +92,8 @@ level: 2
 
 ## 注意事项
 
-- `/oh-my-claudecode:omc-setup`、`/oh-my-claudecode:omc-doctor` 和 `/oh-my-claudecode:mcp-setup` 仍然是有效的兼容性入口点。
-- 在新文档和用户指南中优先使用 `/oh-my-claudecode:setup`。
+- `/oh-my-claudecode:omc-设置`、`/oh-my-claudecode:omc-doctor` 和 `/oh-my-claudecode:mcp-设置` 仍然是有效的兼容性入口点。
+- 在新文档和用户指南中优先使用 `/oh-my-claudecode:设置`。
 
 ## 常见问题
 

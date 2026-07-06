@@ -1,7 +1,7 @@
 ---
 name: crossframe-suite
 description: "当用户明确调用 CrossFrame Suite 进行中文结构性诊断工作流时使用，涵盖关系、组织、公共议题、哲学、研究或文章输出。"
-category: workflow
+category: 工作流
 risk: safe
 source: community
 source_repo: xi-kari/crossframe-skill
@@ -17,7 +17,7 @@ tools:
 tags:
   - crossframe
   - chinese
-  - workflow
+  - 工作流
   - multi-skill
   - structural-diagnosis
 ---
@@ -105,7 +105,7 @@ crossframe -> [needed sibling skills] -> crossframe-essay(full-visible-v5-longfo
 每次触发后读取：
 
 1. `references/output-mode-selector.md`
-2. `references/workflow-routing-map.md`
+2. `references/工作流-routing-map.md`
 3. `protocols/suite-dispatch-protocol.md`
 4. `templates/suite-reasoning-outline.md`
 

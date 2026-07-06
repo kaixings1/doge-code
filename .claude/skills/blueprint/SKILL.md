@@ -13,7 +13,7 @@ Turn a one-line objective into a step-by-step plan any coding agent can execute 
 
 ## 概述
 
-Blueprint is for multi-session, multi-agent engineering projects where each step must be independently executable by a fresh agent that has never seen the conversation history. Install it once, invoke it with `/blueprint <project> <objective>`.
+Blueprint is for multi-会话, multi-agent engineering projects where each step must be independently executable by a fresh agent that has never seen the conversation history. Install it once, invoke it with `/blueprint <project> <objective>`.
 
 ## /u4f55/u65f6/u4f7f/u7528 This Skill
 
@@ -26,7 +26,7 @@ Blueprint is for multi-session, multi-agent engineering projects where each step
 
 1. **Research** — Scans the codebase, reads project memory, runs pre-flight checks
 2. **Design** — Breaks the objective into one-PR-sized steps, identifies parallelism, assigns model tiers
-3. **Draft** — Generates the plan from a structured template with branch workflow rules, CI policy, and rollback strategies inline
+3. **Draft** — Generates the plan from a structured template with branch 工作流 rules, CI policy, and rollback strategies inline
 4. **Review** — Delegates adversarial review to a strongest-model sub-agent (falls back to default model if unavailable)
 5. **Register** — Saves the plan and updates project memory
 

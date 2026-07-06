@@ -100,10 +100,10 @@ PostgreSqlFlexibleServerData data = new PostgreSqlFlexibleServerData(AzureLocati
     }
 };
 
-ArmOperation<PostgreSqlFlexibleServerResource> operation = await servers
+ArmOperation<PostgreSqlFlexibleServerResource> 操作 = await servers
     .CreateOrUpdateAsync(WaitUntil.Completed, "my-postgresql-server", data);
 
-PostgreSqlFlexibleServerResource server = operation.Value;
+PostgreSqlFlexibleServerResource server = 操作.Value;
 Console.WriteLine($"Server created: {server.Data.FullyQualifiedDomainName}");
 ```
 
@@ -121,10 +121,10 @@ PostgreSqlFlexibleServerDatabaseData dbData = new PostgreSqlFlexibleServerDataba
     Collation = "en_US.utf8"
 };
 
-ArmOperation<PostgreSqlFlexibleServerDatabaseResource> operation = await databases
+ArmOperation<PostgreSqlFlexibleServerDatabaseResource> 操作 = await databases
     .CreateOrUpdateAsync(WaitUntil.Completed, "myappdb", dbData);
 
-PostgreSqlFlexibleServerDatabaseResource database = operation.Value;
+PostgreSqlFlexibleServerDatabaseResource database = 操作.Value;
 Console.WriteLine($"Database created: {database.Data.Name}");
 ```
 
@@ -140,7 +140,7 @@ PostgreSqlFlexibleServerFirewallRuleData ruleData = new PostgreSqlFlexibleServer
     EndIPAddress = System.Net.IPAddress.Parse("10.0.0.255")
 };
 
-ArmOperation<PostgreSqlFlexibleServerFirewallRuleResource> operation = await firewallRules
+ArmOperation<PostgreSqlFlexibleServerFirewallRuleResource> 操作 = await firewallRules
     .CreateOrUpdateAsync(WaitUntil.Completed, "allow-internal", ruleData);
 
 // Allow Azure services
@@ -169,7 +169,7 @@ PostgreSqlFlexibleServerConfigurationData configData = new PostgreSqlFlexibleSer
     Source = "user-override"
 };
 
-ArmOperation<PostgreSqlFlexibleServerConfigurationResource> operation = await configurations
+ArmOperation<PostgreSqlFlexibleServerConfigurationResource> 操作 = await configurations
     .CreateOrUpdateAsync(WaitUntil.Completed, "max_connections", configData);
 
 // Common PostgreSQL configurations to tune
@@ -197,7 +197,7 @@ PostgreSqlFlexibleServerActiveDirectoryAdministratorData adminData =
     TenantId = Guid.Parse("<tenant-id>")
 };
 
-ArmOperation<PostgreSqlFlexibleServerActiveDirectoryAdministratorResource> operation = await admins
+ArmOperation<PostgreSqlFlexibleServerActiveDirectoryAdministratorResource> 操作 = await admins
     .CreateOrUpdateAsync(WaitUntil.Completed, "<entra-object-id>", adminData);
 ```
 
@@ -241,7 +241,7 @@ PostgreSqlFlexibleServerData restoreData = new PostgreSqlFlexibleServerData(Azur
     PointInTimeUtc = DateTimeOffset.UtcNow.AddHours(-2)
 };
 
-ArmOperation<PostgreSqlFlexibleServerResource> operation = await servers
+ArmOperation<PostgreSqlFlexibleServerResource> 操作 = await servers
     .CreateOrUpdateAsync(WaitUntil.Completed, "my-postgresql-restored", restoreData);
 ```
 
@@ -255,7 +255,7 @@ PostgreSqlFlexibleServerData replicaData = new PostgreSqlFlexibleServerData(Azur
     Sku = new PostgreSqlFlexibleServerSku("Standard_D2ds_v4", PostgreSqlFlexibleServerSkuTier.GeneralPurpose)
 };
 
-ArmOperation<PostgreSqlFlexibleServerResource> operation = await servers
+ArmOperation<PostgreSqlFlexibleServerResource> 操作 = await servers
     .CreateOrUpdateAsync(WaitUntil.Completed, "my-postgresql-replica", replicaData);
 ```
 
@@ -295,7 +295,7 @@ PostgreSqlFlexibleServerPatch patch = new PostgreSqlFlexibleServerPatch
     }
 };
 
-ArmOperation<PostgreSqlFlexibleServerResource> operation = await server
+ArmOperation<PostgreSqlFlexibleServerResource> 操作 = await server
     .UpdateAsync(WaitUntil.Completed, patch);
 ```
 
@@ -317,7 +317,7 @@ await server.DeleteAsync(WaitUntil.Completed);
 | `PostgreSqlFlexibleServerCollection` | Collection of servers |
 | `PostgreSqlFlexibleServerDatabaseResource` | Database within server |
 | `PostgreSqlFlexibleServerFirewallRuleResource` | IP firewall rule |
-| `PostgreSqlFlexibleServerConfigurationResource` | Server parameter |
+| `PostgreSqlFlexibleServerConfigurationResource` | Server 参数 |
 | `PostgreSqlFlexibleServerBackupResource` | Backup metadata |
 | `PostgreSqlFlexibleServerActiveDirectoryAdministratorResource` | Entra ID admin |
 | `PostgreSqlFlexibleServerSku` | SKU (compute tier + size) |
@@ -373,7 +373,7 @@ using Azure;
 
 try
 {
-    ArmOperation<PostgreSqlFlexibleServerResource> operation = await servers
+    ArmOperation<PostgreSqlFlexibleServerResource> 操作 = await servers
         .CreateOrUpdateAsync(WaitUntil.Completed, "my-postgresql", data);
 }
 catch (RequestFailedException ex) when (ex.Status == 409)
@@ -402,15 +402,15 @@ string connectionString = $"Host={server.Data.FullyQualifiedDomainName};" +
     "Password=YourSecurePassword123!;" +
     "SSL Mode=Require;Trust Server Certificate=true;";
 
-// With Entra ID token (recommended)
+// With Entra ID 令牌 (recommended)
 var credential = new DefaultAzureCredential();
-var token = await credential.GetTokenAsync(
+var 令牌 = await credential.GetTokenAsync(
     new TokenRequestContext(new[] { "https://ossrdbms-aad.database.windows.net/.default" }));
 
 string connectionString = $"Host={server.Data.FullyQualifiedDomainName};" +
     "Database=myappdb;" +
     $"Username=aad-admin@contoso.com;" +
-    $"Password={token.Token};" +
+    $"Password={令牌.令牌};" +
     "SSL Mode=Require;";
 ```
 
@@ -433,7 +433,7 @@ string connectionString = $"Host={server.Data.FullyQualifiedDomainName};" +
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/postgresql/Azure.ResourceManager.PostgreSql |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

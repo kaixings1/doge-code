@@ -8,6 +8,6 @@ requires:
 
 # Microsoft Clarity Automation
 
-Export **Microsoft Clarity** user behavior analytics directly from Claude Code. Pull heatmap data, session metrics, and engagement insights segmented by multiple dimensions without leaving your terminal.
+Export **Microsoft Clarity** user behavior analytics directly from Claude Code. Pull heatmap data, 会话 metrics, and engagement insights segmented by multiple dimensions without leaving your terminal.
 
 **Toolkit docs:** [composio.dev/toolkits/microsoft_clarity](https://composio.dev/toolkits/microsoft_clarity)

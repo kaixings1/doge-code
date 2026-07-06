@@ -17,7 +17,7 @@ If `.agents/product-marketing.md` exists (or `.claude/product-marketing.md`, or 
 Before providing recommendations, identify:
 
 1. **Page Type**: Homepage, landing page, pricing, feature, blog, about, other
-2. **Primary Conversion Goal**: Sign up, request demo, purchase, subscribe, download, contact sales
+2. **Primary Conversion Goal**: Sign up, 请求 demo, purchase, subscribe, download, contact sales
 3. **Traffic 上下文**: Where are visitors coming from? (organic, paid, email, social)
 
 ---
@@ -132,7 +132,7 @@ For key elements (headlines, CTAs), provide 2-3 alternatives with rationale.
 ### 着陆页 CRO
 - Message match with traffic source
 - Single CTA (remove navigation if possible)
-- Complete argument on one page
+- Complete 参数 on one page
 
 ### 定价页面 CRO
 - Clear plan comparison
@@ -168,7 +168,7 @@ When recommending experiments, consider tests for:
 1. What's your current conversion rate and goal?
 2. Where is traffic coming from?
 3. What does your signup/purchase flow look like after this page?
-4. Do you have user research, heatmaps, or session recordings?
+4. Do you have user research, heatmaps, or 会话 recordings?
 5. What have you already tried?
 
 ---

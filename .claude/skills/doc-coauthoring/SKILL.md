@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # /u6587/u6863/u534f/u540c/u521b/u4f5c/u5de5/u4f5c/u6d41
 
-此技能提供 a structured workflow for guiding users through collaborative document creation. Act as an active guide, walking users through three stages: 上下文 Gathering, Refinement & Structure, and Reader Testing.
+此技能提供 a structured 工作流 for guiding users through collaborative document creation. Act as an active guide, walking users through three stages: 上下文 Gathering, Refinement & Structure, and Reader Testing.
 
 ## /u4f55/u65f6/u63d0/u4f9b/u6b64/u5de5/u4f5c/u6d41
 
@@ -18,13 +18,13 @@ date_added: "2026-02-27"
 - User seems to be starting a substantial writing task
 
 **Initial offer:**
-Offer the user a structured workflow for co-authoring the document. Explain the three stages:
+Offer the user a structured 工作流 for co-authoring the document. Explain the three stages:
 
 1. **上下文 Gathering**: User provides all relevant context while Claude asks clarifying questions
 2. **Refinement & Structure**: Iteratively build each section through brainstorming and editing
 3. **Reader Testing**: Test the doc with a fresh Claude (no context) to catch blind spots before others read it
 
-Explain that this approach helps ensure the doc works well when others read it (including when they paste it into Claude). Ask if they want to try this workflow or prefer to work freeform.
+Explain that this 方法 helps ensure the doc works well when others read it (including when they paste it into Claude). Ask if they want to try this 工作流 or prefer to work freeform.
 
 If user declines, work freeform. If user accepts, proceed to Stage 1.
 
@@ -46,17 +46,17 @@ Inform them they can answer in shorthand or dump information however works best 
 
 **If user provides a template or mentions a doc type:**
 - Ask if they have a template document to share
-- If they provide a link to a shared document, use the appropriate integration to fetch it
+- If they provide a link to a shared document, use the appropriate 集成 to fetch it
 - If they provide a file, read it
 
 **If user mentions editing an existing shared document:**
-- Use the appropriate integration to read the current state
+- Use the appropriate 集成 to read the current state
 - Check for images without alt-text
-- If images exist without alt-text, explain that when others use Claude to understand the doc, Claude won't be able to see them. Ask if they want alt-text generated. If so, request they paste each image into chat for descriptive alt-text generation.
+- If images exist without alt-text, explain that when others use Claude to understand the doc, Claude won't be able to see them. Ask if they want alt-text generated. If so, 请求 they paste each image into chat for descriptive alt-text generation.
 
 ### Info Dumping
 
-Once initial questions are answered, encourage the user to dump all the context they have. Request information such as:
+Once initial questions are answered, encourage the user to dump all the context they have. 请求 information such as:
 - Background on the project/problem
 - 相关 team discussions or shared documents
 - Why alternative solutions aren't being used
@@ -79,7 +79,7 @@ Inform them clarifying questions will be asked once they've done their initial d
 **During context gathering:**
 
 - If user mentions team channels or shared documents:
-  - If integrations available: Inform them the content will be read now, then use the appropriate integration
+  - If integrations available: Inform them the content will be read now, then use the appropriate 集成
   - If integrations not available: Explain lack of access. Suggest they enable connectors in Claude settings, or paste the relevant content directly.
 
 - If user mentions entities/projects that are unknown:
@@ -123,7 +123,7 @@ Start with whichever section has the most unknowns (usually the core decision/pr
 If the document structure is clear:
 Ask which section they'd like to start with.
 
-Suggest starting with whichever section has the most unknowns. For decision docs, that's usually the core proposal. For specs, it's typically the technical approach. 总结 sections are best left for last.
+Suggest starting with whichever section has the most unknowns. For decision docs, that's usually the core proposal. For specs, it's typically the technical 方法. 总结 sections are best left for last.
 
 If user doesn't know what sections they need:
 Based on the type of document and template, suggest 3-5 sections appropriate for the doc type.
@@ -158,7 +158,7 @@ Confirm the filename has been created and indicate it's time to fill in each sec
 
 Announce work will begin on the [SECTION NAME] section. Ask 5-10 clarifying questions about what should be included:
 
-Generate 5-10 specific questions based on context and section purpose.
+Generate 5-10 specific questions based on context and section 目的.
 
 Inform them they can answer in shorthand or just indicate what's important to cover.
 
@@ -172,9 +172,9 @@ Generate 5-20 numbered options based on section complexity. At the end, offer to
 
 ### 步骤 3: Curation
 
-Ask which points should be kept, removed, or combined. Request brief justifications to help learn priorities for the next sections.
+Ask which points should be kept, removed, or combined. 请求 brief justifications to help learn priorities for the next sections.
 
-Provide examples:
+Provide 示例:
 - "Keep 1,4,7,9"
 - "Remove 3 (duplicates 1)"
 - "Remove 6 (audience already knows this)"
@@ -249,7 +249,7 @@ Ask if ready to move to Reader Testing, or if they want to refine anything else.
 **Instructions to user:**
 Explain that testing will now occur to see if the document actually works for readers. This catches blind spots - things that make sense to the authors but might confuse others.
 
-### Testing Approach
+### Testing 方法
 
 **If access to sub-agents is available (e.g., in Claude Code):**
 
@@ -355,7 +355,7 @@ Announce document completion. Provide a few final tips:
 **Tone:**
 - Be direct and procedural
 - Explain rationale briefly when it affects user behavior
-- Don't try to "sell" the approach - just execute it
+- Don't try to "sell" the 方法 - just execute it
 
 **Handling Deviations:**
 - If user wants to skip a stage: Ask if they want to skip this and write freeform
@@ -378,7 +378,7 @@ Announce document completion. Provide a few final tips:
 - The goal is a document that actually works for readers
 
 ## /u4f55/u65f6/u4f7f/u7528
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the 概述.
 
 ## /u9650/u5236
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

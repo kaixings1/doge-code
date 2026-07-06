@@ -162,8 +162,8 @@ const path = "uploads/" + safeFilename(req.body.filename);
 
 Severity: MEDIUM
 
-Situation: Presigned URL for private file returned in API response.
-Response cached by CDN. Anyone with cached URL can access
+Situation: Presigned URL for private file returned in API 响应.
+响应 cached by CDN. Anyone with cached URL can access
 private file for hours.
 
 Symptoms:
@@ -184,7 +184,7 @@ const url = await getSignedUrl(s3, command, {
 });
 
 // No-cache headers for presigned URL responses
-return Response.json({ url }, {
+return 响应.json({ url }, {
   headers: {
     "Cache-Control": "no-store, max-age=0",
   },
@@ -215,7 +215,7 @@ Fix action: Use path.basename() and generate safe name
 ### /u59d4/u6258/u89e6/u53d1/u5668
 
 - image optimization CDN -> performance-optimization (Image delivery)
-- storing file metadata -> postgres-wizard (Database schema)
+- storing file metadata -> postgres-wizard (Database 架构)
 
 ## /u4f55/u65f6/u4f7f/u7528
 - User mentions or implies: file upload

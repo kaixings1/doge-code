@@ -1,7 +1,7 @@
 ---
-name: vfx-text-cursor
+name: vfx-text-游标
 zh_name: "VFX 文字光标"
-en_name: "VFX Text Cursor"
+en_name: "VFX Text 游标"
 emoji: "✨"
 description: "用于视频介绍中逐字引用揭示的光标光迹、色差射线和方向性光晕。"
 zh_description: "光标拖光 + 彩色像散射线 + 定向光斑, 适合视频片头逐字揭示金句"
@@ -11,14 +11,14 @@ scenario: video
 aspect_hint: "1920×1080 (16:9)"
 featured: 38
 recommended: 7
-tags: ["vfx", "text", "cursor", "chromatic", "reveal", "frame"]
-example_id: sample-vfx-text-cursor
+tags: ["vfx", "text", "游标", "chromatic", "reveal", "frame"]
+example_id: sample-vfx-text-游标
 example_name: "VFX 光标 · 开场金句"
 example_format: markdown
 example_tagline: "逐字揭示 + chromatic 拖光"
 example_desc: "光标打字 hot pink + cyan 像散, 视频开场用"
 example_source_url: "https://hyperframes.heygen.com/catalog"
-example_source_label: "hyperframes · vfx-text-cursor"
+example_source_label: "hyperframes · vfx-text-游标"
 od:
   mode: video
   surface: video
@@ -31,19 +31,19 @@ od:
     reload: debounce-100
   design_system:
     requires: false
-  example_prompt: "Use the VFX Text Cursor template to turn my content into a video-intro quote reveal with cursor light trails, chromatic rays, and directional flares. Preserve the template's visual signature, use real content and data, and avoid lorem ipsum or placeholder images."
+  example_prompt: "Use the VFX Text 游标 template to turn my content into a video-intro quote reveal with 游标 light trails, chromatic rays, and directional flares. Preserve the template's visual signature, use real content and data, and avoid lorem ipsum or placeholder images."
   example_prompt_i18n:
     zh-CN: "用「VFX 文字光标」模板把我的内容做成一段「光标拖光 + 彩色像散射线 + 定向光斑, 适合视频片头逐字揭示金句」。保持模板的视觉签名，使用真实内容和数据，避免 lorem ipsum 和占位图片。"
 ---
 
-【模板: VFX 文字光标 (Text Cursor)】
-【意图】视频开场/Hero 帧 —— 光标在画布上"打字", 文字逐字浮现, 后面拖着彩色像散尾迹 + 定向光斑。Inspired by hyperframes vfx-text-cursor。
+【模板: VFX 文字光标 (Text 游标)】
+【意图】视频开场/Hero 帧 —— 光标在画布上"打字", 文字逐字浮现, 后面拖着彩色像散尾迹 + 定向光斑。Inspired by hyperframes vfx-text-游标。
 
 【画布】1920×1080, 背景 `#06070a` 暗哑黑 或 `#0a0d12` (有暖偏蓝); 加微妙 vignette。
 
 【内容】
 - 一句金句 (中英不限), 居中, 字号 6-8vw, weight 700, 字体 `Inter Tight` / `Source Sans 3` / `Noto Sans SC`。
-- 逐字揭示, 每个字符 80ms 间隔; 当前字符后面跟着一个 cursor `▍` (或细 vertical bar)。
+- 逐字揭示, 每个字符 80ms 间隔; 当前字符后面跟着一个 游标 `▍` (或细 vertical bar)。
 - 已揭示文字默认白色 `#f5f5f7`, opacity 1; 即将揭示位置加 chromatic ghost: 一份 `text-shadow: 2px 0 #ff3b6f, -2px 0 #00d4ff` 在 reveal 瞬间, 200ms 内收敛回正常。
 - 光标本身: 16px 宽矩形, 颜色 = accent (取 1: hot pink `#ff3b6f` / cyan `#00d4ff` / amber `#ffb547`), 闪烁 `@keyframes` 1.0s 周期; 后面拖一条 60-120px 的 motion blur trail (径向渐变到透明)。
 

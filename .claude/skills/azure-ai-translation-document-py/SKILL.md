@@ -36,10 +36,10 @@ import os
 from azure.ai.translation.document import DocumentTranslationClient
 from azure.core.credentials import AzureKeyCredential
 
-endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
+端点 = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
 key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
 
-client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
+client = DocumentTranslationClient(端点, AzureKeyCredential(key))
 ```
 
 ### Entra ID (Recommended)
@@ -49,7 +49,7 @@ from azure.ai.translation.document import DocumentTranslationClient
 from azure.identity import DefaultAzureCredential
 
 client = DocumentTranslationClient(
-    endpoint=os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"],
+    端点=os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"],
     credential=DefaultAzureCredential()
 )
 ```
@@ -107,7 +107,7 @@ poller = client.begin_translation(
 ```python
 from azure.ai.translation.document import SingleDocumentTranslationClient
 
-single_client = SingleDocumentTranslationClient(endpoint, AzureKeyCredential(key))
+single_client = SingleDocumentTranslationClient(端点, AzureKeyCredential(key))
 
 with open("document.docx", "rb") as f:
     document_content = f.read()
@@ -130,7 +130,7 @@ with open("document_es.docx", "wb") as f:
 operations = client.list_translation_statuses()
 
 for op in operations:
-    print(f"Operation ID: {op.id}")
+    print(f"操作 ID: {op.id}")
     print(f"Status: {op.status}")
     print(f"Created: {op.created_on}")
     print(f"Total documents: {op.documents_total_count}")
@@ -216,7 +216,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def translate_documents():
     async with DocumentTranslationClient(
-        endpoint=endpoint,
+        端点=端点,
         credential=DefaultAzureCredential()
     ) as client:
         poller = await client.begin_translation(inputs=[...])
@@ -249,7 +249,7 @@ async def translate_documents():
 7. **Check supported formats** before submitting documents
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

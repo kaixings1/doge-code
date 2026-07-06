@@ -11,7 +11,7 @@ date_added: "2026-03-25"
 Use the `gh` CLI to interact with GitHub. 始终 specify `--repo owner/repo` when not in a git directory, or use URLs directly.
 
 ## 何时使用
-- 当用户询问 GitHub issues、pull requests、workflow runs 或 CI 失败时。
+- 当用户询问 GitHub issues、pull requests、工作流 runs 或 CI 失败时。
 - When you need `gh issue`, `gh pr`, `gh run`, or `gh api` from the command line.
 
 ## 拉取请求
@@ -68,7 +68,7 @@ gh api repos/owner/repo/pulls/55 --jq '.title, .state, .user.login'
 
 ## JSON 输出
 
-Most commands support `--json` for structured output.  You can use `--jq` to filter:
+Most commands support `--json` for structured output.  You can use `--jq` to 过滤器:
 
 ```bash
 gh issue list --repo owner/repo --json number,title --jq '.[] | "\(.number): \(.title)"'

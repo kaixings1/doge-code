@@ -1,6 +1,6 @@
 ---
 name: llm-prompt-optimizer
-description: "适用于improving prompts for any llm. applies proven prompt engineering techniques to boost output quality, reduce hallucinations, and cut token usage.的情况。"
+description: "适用于improving prompts for any llm. applies proven prompt engineering techniques to boost output quality, reduce hallucinations, and cut 令牌 usage.的情况。"
 risk: safe
 source: community
 date_added: "2026-03-04"
@@ -17,7 +17,7 @@ date_added: "2026-03-04"
 - 当提示词返回不一致、模糊或幻觉结果时使用
 - 当需要从 LLM 可靠地获取结构化/JSON 输出时使用
 - 当为 AI 代理或聊天机器人设计系统提示词时使用
-- 当希望在不牺牲质量的情况下减少 token 使用时使用
+- 当希望在不牺牲质量的情况下减少 令牌 使用时使用
 - Use when implementing chain-of-thought reasoning for complex tasks
 - Use when prompts work on one model but fail on another
 

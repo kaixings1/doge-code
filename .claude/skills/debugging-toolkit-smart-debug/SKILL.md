@@ -78,7 +78,7 @@ date_added: "2026-02-27"
 - 集成失败（API 更改、超时、认证）
 - 资源耗尽（内存泄漏、连接池）
 - 配置漂移（环境变量、功能标志）
-- 数据损坏（schema 不匹配、编码）
+- 数据损坏（架构 不匹配、编码）
 
 ### 4. 策略选择
 根据问题特征选择：
@@ -160,7 +160,7 @@ const analysis = await aiAnalyze({
 const sentryData = await getSentryIssue("CHECKOUT_TIMEOUT");
 const ddTraces = await getDataDogTraces({
   service: "checkout",
-  operation: "process_payment",
+  操作: "process_payment",
   duration: ">5000ms"
 });
 

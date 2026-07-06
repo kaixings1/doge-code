@@ -22,7 +22,7 @@ date_added: "2026-03-07"
 
 ## Git Hooks Fundamentals
 
-Git hooks are scripts that run automatically at specific points in the Git workflow. They live in `.git/hooks/` and are not version-controlled by default — which is why tools like Husky exist.
+Git hooks are scripts that run automatically at specific points in the Git 工作流. They live in `.git/hooks/` and are not version-controlled by default — which is why tools like Husky exist.
 
 ### Hook Types & When They Fire
 
@@ -46,7 +46,7 @@ cat > .git/hooks/pre-commit << 'EOF'
 set -e
 
 # Run linter on staged files only
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|ts|jsx|tsx)$' || true)
+STAGED_FILES=$(git diff --cached --name-only --diff-过滤器=ACM | grep -E '\.(js|ts|jsx|tsx)$' || true)
 
 if [ -n "$STAGED_FILES" ]; then
   echo "🔍 Linting staged files..."
@@ -63,7 +63,7 @@ chmod +x .git/hooks/pre-commit
 
 The modern standard for JavaScript/TypeScript projects. Husky manages Git hooks; lint-staged runs commands only on staged files for speed.
 
-### Quick Setup (Husky v9+)
+### Quick 设置 (Husky v9+)
 
 ```bash
 # Install
@@ -145,7 +145,7 @@ project/
 
 Language-agnostic framework that works with any project. Hooks are defined in YAML and run in isolated environments.
 
-### Setup
+### 设置
 
 ```bash
 # Install (Python required)
@@ -207,7 +207,7 @@ pre-commit run --all-files
 
 ```bash
 pre-commit install              # Install hooks
-pre-commit run --all-files      # Run on everything (CI or first setup)
+pre-commit run --all-files      # Run on everything (CI or first 设置)
 pre-commit autoupdate           # Update hook versions
 pre-commit run <hook-id>        # Run a specific hook
 pre-commit clean                # Clear cached environments
@@ -234,15 +234,15 @@ if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
 fi
 
 # 2. Check for debugging artifacts
-if git diff --cached --diff-filter=ACM | grep -nE '(console\.log|debugger|binding\.pry|import pdb)' > /dev/null 2>&1; then
+if git diff --cached --diff-过滤器=ACM | grep -nE '(console\.log|debugger|binding\.pry|import pdb)' > /dev/null 2>&1; then
   echo "⚠️  Debug statements found in staged files:"
-  git diff --cached --diff-filter=ACM | grep -nE '(console\.log|debugger|binding\.pry|import pdb)'
+  git diff --cached --diff-过滤器=ACM | grep -nE '(console\.log|debugger|binding\.pry|import pdb)'
   echo "Remove them or use git commit --no-verify to bypass."
   exit 1
 fi
 
 # 3. Check for large files (>1MB)
-LARGE_FILES=$(git diff --cached --name-only --diff-filter=ACM | while read f; do
+LARGE_FILES=$(git diff --cached --name-only --diff-过滤器=ACM | while read f; do
   size=$(wc -c < "$f" 2>/dev/null || echo 0)
   if [ "$size" -gt 1048576 ]; then echo "$f ($((size/1024))KB)"; fi
 done)
@@ -253,7 +253,7 @@ if [ -n "$LARGE_FILES" ]; then
 fi
 
 # 4. Check for secrets patterns
-if git diff --cached --diff-filter=ACM | grep -nEi '(AKIA[0-9A-Z]{16}|sk-[a-zA-Z0-9]{48}|ghp_[a-zA-Z0-9]{36}|password\s*=\s*["\x27][^"\x27]+["\x27])' > /dev/null 2>&1; then
+if git diff --cached --diff-过滤器=ACM | grep -nEi '(AKIA[0-9A-Z]{16}|sk-[a-zA-Z0-9]{48}|ghp_[a-zA-Z0-9]{36}|password\s*=\s*["\x27][^"\x27]+["\x27])' > /dev/null 2>&1; then
   echo "🚨 Potential secrets detected in staged changes! Review before committing."
   exit 1
 fi
@@ -267,14 +267,14 @@ echo "✅ All pre-commit checks passed"
 # In your repo, set a shared hooks directory
 git config core.hooksPath .githooks
 
-# Add to project setup docs or Makefile
+# Add to project 设置 docs or Makefile
 # Makefile
-setup:
+设置:
 	git config core.hooksPath .githooks
 	chmod +x .githooks/*
 ```
 
-## CI Integration
+## CI 集成
 
 Hooks are a first line of defense, but CI is the source of truth.
 
@@ -289,7 +289,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/设置-python@v5
         with:
           python-version: '3.12'
       - uses: pre-commit/action@v3.0.1
@@ -306,7 +306,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/设置-node@v4
         with:
           node-version: 20
       - run: npm ci
@@ -322,7 +322,7 @@ jobs:
 |---|---|---|
 | Hooks silently skipped | Not installed in `.git/hooks/` | Run `npx husky init` or `pre-commit install` |
 | "Permission denied" | Hook file not executable | `chmod +x .husky/pre-commit` |
-| Hooks run but wrong ones | Stale hooks from old setup | Delete `.git/hooks/` contents, reinstall |
+| Hooks run but wrong ones | Stale hooks from old 设置 | Delete `.git/hooks/` contents, reinstall |
 | Works locally, fails in CI | Different Node/Python versions | Pin versions in CI config |
 
 ### Performance Issues
@@ -358,9 +358,9 @@ SKIP=eslint git commit -m "fix: update config"
 
 > **Warning**: Bypassing hooks should be rare. If your team frequently bypasses, the hooks are too slow or too strict — fix them.
 
-## Migration Guide
+## 迁移 Guide
 
-### Husky v4 → v9 Migration
+### Husky v4 → v9 迁移
 
 ```bash
 # 1. Remove old Husky
@@ -413,7 +413,7 @@ echo "npx --no -- commitlint --edit \$1" > .husky/commit-msg
 - `@codebase-audit-pre-push` - Deep audit before GitHub push
 - `@verification-before-completion` - Verification before claiming work is done
 - `@bash-pro` - Advanced shell scripting for custom hooks
-- `@github-actions-templates` - CI/CD workflow templates
+- `@github-actions-templates` - CI/CD 工作流 templates
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

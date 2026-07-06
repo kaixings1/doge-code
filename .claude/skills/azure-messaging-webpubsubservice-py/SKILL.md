@@ -23,7 +23,7 @@ pip install azure-messaging-webpubsubclient
 ## 环境变量
 
 ```bash
-AZURE_WEBPUBSUB_CONNECTION_STRING=Endpoint=https://<name>.webpubsub.azure.com;AccessKey=...
+AZURE_WEBPUBSUB_CONNECTION_STRING=端点=https://<name>.webpubsub.azure.com;AccessKey=...
 AZURE_WEBPUBSUB_HUB=my-hub
 ```
 
@@ -44,27 +44,27 @@ client = WebPubSubServiceClient.from_connection_string(
 from azure.identity import DefaultAzureCredential
 
 client = WebPubSubServiceClient(
-    endpoint="https://<name>.webpubsub.azure.com",
+    端点="https://<name>.webpubsub.azure.com",
     hub="my-hub",
     credential=DefaultAzureCredential()
 )
 ```
 
-### Generate Client Access Token
+### Generate Client Access 令牌
 
 ```python
-# Token for anonymous user
-token = client.get_client_access_token()
-print(f"URL: {token['url']}")
+# 令牌 for anonymous user
+令牌 = client.get_client_access_token()
+print(f"URL: {令牌['url']}")
 
-# Token with user ID
-token = client.get_client_access_token(
+# 令牌 with user ID
+令牌 = client.get_client_access_token(
     user_id="user123",
     roles=["webpubsub.sendToGroup", "webpubsub.joinLeaveGroup"]
 )
 
-# Token with groups
-token = client.get_client_access_token(
+# 令牌 with groups
+令牌 = client.get_client_access_token(
     user_id="user123",
     groups=["group1", "group2"]
 )
@@ -142,7 +142,7 @@ exists = client.user_exists(user_id="user123")
 exists = client.group_exists(group="my-group")
 
 # Close connection
-client.close_connection(connection_id="abc123", reason="Session ended")
+client.close_connection(connection_id="abc123", reason="会话 ended")
 
 # Close all connections for user
 client.close_all_connections(user_id="user123")
@@ -180,7 +180,7 @@ has_permission = client.check_permission(
 ```python
 from azure.messaging.webpubsubclient import WebPubSubClient
 
-client = WebPubSubClient(credential=token["url"])
+client = WebPubSubClient(credential=令牌["url"])
 
 # Event handlers
 @client.on("connected")
@@ -209,7 +209,7 @@ from azure.identity.aio import DefaultAzureCredential
 async def broadcast():
     credential = DefaultAzureCredential()
     client = WebPubSubServiceClient(
-        endpoint="https://<name>.webpubsub.azure.com",
+        端点="https://<name>.webpubsub.azure.com",
         hub="my-hub",
         credential=credential
     )
@@ -222,7 +222,7 @@ async def broadcast():
 
 ## Client Operations
 
-| Operation | Description |
+| 操作 | Description |
 |-----------|-------------|
 | `get_client_access_token` | Generate WebSocket connection URL |
 | `send_to_all` | Broadcast to all connections |
@@ -232,7 +232,7 @@ async def broadcast():
 | `add_user_to_group` | Add user to group |
 | `remove_user_from_group` | Remove user from group |
 | `close_connection` | Disconnect client |
-| `connection_exists` | Check connection status |
+| `connection_exists` | 检查连接状态 |
 
 ## 最佳实践
 
@@ -245,7 +245,7 @@ async def broadcast():
 7. **Close connections** gracefully with reasons
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

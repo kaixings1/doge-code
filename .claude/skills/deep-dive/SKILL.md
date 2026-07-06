@@ -2,7 +2,7 @@
 name: deep-dive
 description: 深度探究 — 基于DAG查询规划的Claude原生深度研究，结合网络搜索和代码分析。
 user-invocable: true
-argument: The research question or topic to investigate deeply
+参数: The research question or topic to investigate deeply
 ---
 
 # 深度探究
@@ -75,7 +75,7 @@ follow-up questions that would strengthen the answer. If none, say "None."]
 [List each source as: Title — URL]
 ```
 
-**Citation persistence:** After each wave completes, append all sources from that wave to a file at `/tmp/deep-dive-sources-[topic-slug].json` as an array of `{"node_id", "title", "url"}` objects. This survives context compaction — if subagent results get compressed out of context, the sources file remains the source of truth. Read this file during synthesis to build the final Sources section.
+**Citation persistence:** After each wave completes, append all sources from that wave to a file at `/tmp/deep-dive-sources-[topic-标识符].json` as an array of `{"node_id", "title", "url"}` objects. This survives context compaction — if subagent results get compressed out of context, the sources file remains the source of truth. Read this file during synthesis to build the final Sources section.
 
 **Wave 2+:** Once Wave 1 completes, mark all Wave 2+ node tasks as `in_progress` and launch nodes whose dependencies are now satisfied. Mark each task `completed` as its subagent returns. Include the findings from dependency nodes in the subagent prompt:
 
@@ -134,4 +134,4 @@ Mark the "Synthesize report" task as `in_progress`. Combine all findings into a 
 - **One gap round max.** Don't spiral into infinite research loops.
 - **Synthesize, don't concatenate.** The final report should read as a coherent document, not a list of subagent outputs stapled together.
 - **Be honest about confidence.** If the research didn't produce clear answers, say so. Don't fill gaps with speculation.
-- **始终 persist the final report.** After synthesis, save the report as a markdown file in the appropriate project's `docs/deep-dive/` directory (create it if needed). Determine the project root from the current working directory or the context of the research request. Use a slugified topic name with date as the filename (e.g., `2026-04-02-jira-docs-from-microservices.md`). 绝不 write final reports only to `/tmp` — they must land in a durable location within the relevant project.
+- **始终 persist the final report.** After synthesis, save the report as a markdown file in the appropriate project's `docs/deep-dive/` directory (create it if needed). Determine the project root from the current working directory or the context of the research 请求. Use a slugified topic name with date as the filename (e.g., `2026-04-02-jira-docs-from-microservices.md`). 绝不 write final reports only to `/tmp` — they must land in a durable location within the relevant project.

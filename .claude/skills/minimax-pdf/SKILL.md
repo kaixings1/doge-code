@@ -1,7 +1,7 @@
 ---
 name: minimax-pdf
 description: "MiniMax PDF — 基于令牌设计系统的 PDF 生成、填充和重格式化"
-  Generate, fill, and reformat PDFs with a token-based design system and 15 cover styles. Useful for branded PDFs, e-guides, and reports.
+  Generate, fill, and reformat PDFs with a 令牌-based design system and 15 cover styles. Useful for branded PDFs, e-guides, and reports.
 triggers:
   - "minimax pdf"
   - "branded pdf"
@@ -20,7 +20,7 @@ od:
 
 ## What it does
 
-Generate, fill, and reformat PDFs with a token-based design system and 15 cover styles. Useful for branded PDFs, e-guides, and reports.
+Generate, fill, and reformat PDFs with a 令牌-based design system and 15 cover styles. Useful for branded PDFs, e-guides, and reports.
 
 ## Source
 
@@ -30,7 +30,7 @@ Generate, fill, and reformat PDFs with a token-based design system and 15 cover 
 ## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
+discovers it during planning. To run the full upstream 工作流 with
 its original assets, scripts, and references, install the upstream
 bundle into your active agent's skills directory:
 

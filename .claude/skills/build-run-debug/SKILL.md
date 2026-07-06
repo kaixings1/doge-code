@@ -7,9 +7,7 @@ description: 构建、运行和调试macOS应用
 
 ## 快速开始
 
-Use this skill to set up one project-local `script/build_and_run.sh` entrypoint,
-wire `.codex/environments/environment.toml` so the Codex app shows a Run button,
-then use that script as the default build/run path.
+使用此技能设置一个项目本地的 `script/build_and_run.sh` 入口点，配置 `.codex/environments/environment.toml` 使 Codex 应用显示运行按钮，然后将该脚本用作默认的构建/运行路径。
 
 优先 shell-first workflows:
 
@@ -54,7 +52,7 @@ simulator-specific workflows onto pure macOS tasks.
      - `--telemetry` to stream unified logs filtered to the app subsystem/category
      - `--verify` to launch the app and confirm the process exists with `pgrep -x <AppName>`
    - Keep the default no-flag path simple: kill, build, run.
-   - 优先 writing one script that owns this workflow instead of repeatedly asking the agent to manually run `swift build`, locate the artifact, then invoke an ad hoc run command.
+   - 优先 writing one script that owns this 工作流 instead of repeatedly asking the agent to manually run `swift build`, locate the artifact, then invoke an ad hoc run command.
    - For SwiftPM GUI apps, make the script build the product, create `dist/<AppName>.app`, copy the binary to `Contents/MacOS/<AppName>`, generate a minimal `Contents/Info.plist` with `CFBundlePackageType=APPL`, `CFBundleExecutable`, `CFBundleIdentifier`, `CFBundleName`, `LSMinimumSystemVersion`, and `NSPrincipalClass=NSApplication`, then launch with `/usr/bin/open -n <bundle>`.
    - For SwiftPM GUI `--logs` and `--telemetry`, launch the bundle with `/usr/bin/open -n` first, then stream unified logs with `/usr/bin/log stream --info ...`.
    - Do not recommend direct SwiftPM executable launch for AppKit/SwiftUI GUI apps.
@@ -111,7 +109,7 @@ simulator-specific workflows onto pure macOS tasks.
 ## Guardrails
 
 - 优先 the narrowest command that proves or disproves the current theory.
-- Do not leave the user with a one-off manual command chain once a stable `build_and_run.sh` script can own the workflow.
+- Do not leave the user with a one-off manual command chain once a stable `build_and_run.sh` script can own the 工作流.
 - Do not write `.codex/environments/environment.toml` before the run script exists, and do not point the Run action at a stale script path.
 - Do not launch a SwiftUI/AppKit SwiftPM GUI app as a raw executable unless the user explicitly wants to diagnose that failure mode: it can produce no Dock icon, no foreground activation, and missing bundle identifier warnings. Keep raw executable launch only for true command-line tools.
 - Do not claim UI state you cannot inspect directly.

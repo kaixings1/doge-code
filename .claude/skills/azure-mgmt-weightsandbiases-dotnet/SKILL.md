@@ -104,10 +104,10 @@ WeightsAndBiasesInstanceData data = new WeightsAndBiasesInstanceData(AzureLocati
     Identity = new ManagedServiceIdentity(ManagedServiceIdentityType.SystemAssigned)
 };
 
-ArmOperation<WeightsAndBiasesInstanceResource> operation = await instances
+ArmOperation<WeightsAndBiasesInstanceResource> 操作 = await instances
     .CreateOrUpdateAsync(WaitUntil.Completed, "my-wandb-instance", data);
 
-WeightsAndBiasesInstanceResource instance = operation.Value;
+WeightsAndBiasesInstanceResource instance = 操作.Value;
 
 Console.WriteLine($"W&B Instance created: {instance.Data.Name}");
 Console.WriteLine($"Provisioning state: {instance.Data.Properties.ProvisioningState}");
@@ -168,7 +168,7 @@ updateData.Properties.SingleSignOnPropertiesV2 = new WeightsAndBiasSingleSignOnP
     AadDomains = { "example.com", "contoso.com" }
 };
 
-ArmOperation<WeightsAndBiasesInstanceResource> operation = await resourceGroup
+ArmOperation<WeightsAndBiasesInstanceResource> 操作 = await resourceGroup
     .GetWeightsAndBiasesInstances()
     .CreateOrUpdateAsync(WaitUntil.Completed, "my-wandb-instance", updateData);
 ```
@@ -260,9 +260,9 @@ For Azure Marketplace integration:
 ## 最佳实践
 
 1. **Use 默认AzureCredential** — Supports multiple auth methods automatically
-2. **Enable managed identity** — For secure access to other Azure resources
+2. **Enable managed identity** — For secure access to other Azure 资源
 3. **Configure SSO** — Enable Entra ID SSO for enterprise security
-4. **Tag resources** — Use tags for cost tracking and organization
+4. **Tag 资源** — Use tags for cost tracking and organization
 5. **Check provisioning state** — Wait for `Succeeded` before using instance
 6. **Use appropriate region** — Choose region closest to your compute
 7. **Monitor with Azure** — Use Azure Monitor for resource health
@@ -274,7 +274,7 @@ using Azure;
 
 try
 {
-    ArmOperation<WeightsAndBiasesInstanceResource> operation = await instances
+    ArmOperation<WeightsAndBiasesInstanceResource> 操作 = await instances
         .CreateOrUpdateAsync(WaitUntil.Completed, "my-wandb", data);
 }
 catch (RequestFailedException ex) when (ex.Status == 409)
@@ -329,7 +329,7 @@ run.finish()
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/weightsandbiases |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

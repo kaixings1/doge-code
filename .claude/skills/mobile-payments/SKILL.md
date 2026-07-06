@@ -10,8 +10,8 @@ version: 1.0.0
 
 The user is reviewing mobile (Android/iOS) code that handles:
 
-- Card tokenization (PAN/CVV/expiry → opaque token)
-- Payment processor SDK integration (Braintree, Stripe, Adyen, FirstData-
+- Card tokenization (PAN/CVV/expiry → opaque 令牌)
+- Payment processor SDK 集成 (Braintree, Stripe, Adyen, FirstData-
   style iframe encryptors)
 - Wallets (Google Pay, Apple Pay, Cash App, Venmo)
 - Encrypted PAN encryption in WebViews
@@ -24,14 +24,14 @@ Signals: files under `**/payment/**`, `**/checkout/**`, `**/tokenize*/**`, `**/s
 Most modern card tokenization on Android follows this template:
 
 1. The app fetches an **encryption key** (RSA pubkey or symmetric salt) from a backend.
-2. The app fetches the **tokenization endpoint URL** from a backend.
-3. The app builds a **JavaScript payload** that contains:
+2. The app fetches the **tokenization 端点 URL** from a backend.
+3. The app builds a **JavaScript 载荷** that contains:
    - The key material
    - The card data (PAN/CVV/expiry) interpolated into JS literals
    - A `<script>` block that calls into an exposed `@JavascriptInterface`
 4. The app dispatches the JS into a **WebView** with `setJavaScriptEnabled(true)`.
-5. The WebView's encryption JS produces an opaque token, which the bridge returns to native code.
-6. The native code submits the token to the processor over HTTPS.
+5. The WebView's encryption JS produces an opaque 令牌, which the bridge returns to native code.
+6. The native code submits the 令牌 to the processor over HTTPS.
 
 Each step has a corresponding VulnScout detector:
 

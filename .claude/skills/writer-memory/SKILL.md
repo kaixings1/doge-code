@@ -1,7 +1,7 @@
 ---
 name: 写作者记忆
 description: "面向写作者的智能记忆系统——追踪角色、关系、场景和主题，跨会话持久化。"
-argument-hint: "init|char|rel|scene|query|validate|synopsis|status|export [args]"
+参数-hint: "init|char|rel|scene|查询|validate|synopsis|status|export [args]"
 level: 7
 triggers:
   - "writer-memory"

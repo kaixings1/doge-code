@@ -26,7 +26,7 @@ date_added: "2026-02-27"
 **Consider alternatives for:**
 - 3D visualisations - use Three.js instead
 
-## Core workflow
+## Core 工作流
 
 ### 1. Set up d3.js
 
@@ -44,7 +44,7 @@ Or use the CDN version (7.x):
 
 All modules (scales, axes, shapes, transitions, etc.) are accessible through the `d3` namespace.
 
-### 2. Choose the integration pattern
+### 2. Choose the 集成 pattern
 
 **Pattern A: Direct DOM manipulation (recommended for most cases)**
 Use d3 to select DOM elements and manipulate them imperatively. This works in any JavaScript environment:
@@ -711,8 +711,8 @@ const divScale = d3.scaleDiverging(d3.interpolateRdBu)
 Always validate and prepare data before visualisation:
 
 ```javascript
-// Filter invalid values
-const cleanData = data.filter(d => d.value != null && !isNaN(d.value));
+// 过滤器 invalid values
+const cleanData = data.过滤器(d => d.value != null && !isNaN(d.value));
 
 // Sort data if order matters
 const sortedData = [...data].sort((a, b) => b.value - a.value);

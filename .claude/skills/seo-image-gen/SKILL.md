@@ -1,7 +1,7 @@
 ---
 name: seo-image-gen
-description: "用于 SEO 资产的 AI 图像生成：OG/社交预览图、博客主图、schema 图像、产品摄影、信息图。由 Gemini 通过 nanobanana-mcp 驱动。需要安装 banana 扩展。"
-argument-hint: "[og|hero|product|infographic|custom|batch] <description>"
+description: "用于 SEO 资产的 AI 图像生成：OG/社交预览图、博客主图、架构 图像、产品摄影、信息图。由 Gemini 通过 nanobanana-mcp 驱动。需要安装 banana 扩展。"
+参数-hint: "[og|hero|product|infographic|custom|batch] <description>"
 user-invocable: true
 license: MIT
 compatibility: "需要 nanobanana MCP server"
@@ -37,5 +37,13 @@ available. If tools are not available, inform the user the extension is not inst
 and provide install instructions.
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 | Command | What it does |

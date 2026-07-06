@@ -39,7 +39,7 @@ BLOB_STORAGE_CONNECTION_STRING=<storage-connection-string>
 BLOB_CONTAINER_NAME=<checkpoint-container>
 
 # Alternative: Connection string auth (not recommended for production)
-EVENTHUB_CONNECTION_STRING=Endpoint=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=...
+EVENTHUB_CONNECTION_STRING=端点=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=...
 ```
 
 ## 认证
@@ -68,7 +68,7 @@ var producer = new EventHubProducerClient(
 
 ## Client Types
 
-| Client | Purpose | When to Use |
+| Client | Purpose | 使用场景 |
 |--------|---------|-------------|
 | `EventHubProducerClient` | Send events immediately in batches | Real-time sending, full control over batching |
 | `EventHubBufferedProducerClient` | Automatic batching with background sending | High-volume, fire-and-forget scenarios |
@@ -329,7 +329,7 @@ catch (EventHubsException ex)
 
 ## Checkpointing Strategies
 
-| Strategy | When to Use |
+| Strategy | 使用场景 |
 |----------|-------------|
 | Every event | Low volume, critical data |
 | Every N events | Balanced throughput/reliability |
@@ -363,7 +363,7 @@ processor.ProcessEventAsync += async args =>
 | `Microsoft.Azure.WebJobs.Extensions.EventHubs` | Azure Functions binding | `dotnet add package Microsoft.Azure.WebJobs.Extensions.EventHubs` |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

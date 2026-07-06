@@ -29,7 +29,7 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 
 // With DefaultAzureCredential (recommended)
 SmsClient smsClient = new SmsClientBuilder()
-    .endpoint("https://<resource>.communication.azure.com")
+    .端点("https://<resource>.communication.azure.com")
     .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 
@@ -42,7 +42,7 @@ SmsClient smsClient = new SmsClientBuilder()
 import com.azure.core.credential.AzureKeyCredential;
 
 SmsClient smsClient = new SmsClientBuilder()
-    .endpoint("https://<resource>.communication.azure.com")
+    .端点("https://<resource>.communication.azure.com")
     .credential(new AzureKeyCredential("<access-key>"))
     .buildClient();
 
@@ -120,12 +120,12 @@ options.setDeliveryReportEnabled(true);
 options.setTag("order-confirmation-12345");
 ```
 
-## Response Handling
+## 响应 Handling
 
 ```java
-import com.azure.core.http.rest.Response;
+import com.azure.core.http.rest.响应;
 
-Response<Iterable<SmsSendResult>> response = smsClient.sendWithResponse(
+响应<Iterable<SmsSendResult>> 响应 = smsClient.sendWithResponse(
     "+14255550100",
     Arrays.asList("+14255551234"),
     "Hello!",
@@ -133,12 +133,12 @@ Response<Iterable<SmsSendResult>> response = smsClient.sendWithResponse(
     Context.NONE
 );
 
-// Check HTTP response
-System.out.println("Status code: " + response.getStatusCode());
-System.out.println("Headers: " + response.getHeaders());
+// Check HTTP 响应
+System.out.println("Status code: " + 响应.getStatusCode());
+System.out.println("Headers: " + 响应.getHeaders());
 
 // Process results
-for (SmsSendResult result : response.getValue()) {
+for (SmsSendResult result : 响应.getValue()) {
     System.out.println("Message ID: " + result.getMessageId());
     System.out.println("Successful: " + result.isSuccessful());
     
@@ -174,8 +174,8 @@ asyncClient.sendWithResponse(
     Arrays.asList("+14255551111", "+14255552222"),
     "Bulk async message",
     options)
-    .subscribe(response -> {
-        for (SmsSendResult result : response.getValue()) {
+    .subscribe(响应 -> {
+        for (SmsSendResult result : 响应.getValue()) {
             System.out.println("Result: " + result.getTo() + " - " + result.isSuccessful());
         }
     });
@@ -199,8 +199,8 @@ try {
     }
     
 } catch (HttpResponseException e) {
-    // Request-level failures (auth, network, etc.)
-    System.out.println("Request failed: " + e.getMessage());
+    // 请求-level failures (auth, network, etc.)
+    System.out.println("请求 failed: " + e.getMessage());
     System.out.println("Status: " + e.getResponse().getStatusCode());
 } catch (RuntimeException e) {
     System.out.println("Unexpected error: " + e.getMessage());
@@ -225,7 +225,7 @@ private void handleMessageError(SmsSendResult result) {
 Delivery reports are sent via Azure Event Grid. Configure an Event Grid subscription for your ACS resource.
 
 ```java
-// Event Grid webhook handler (in your endpoint)
+// Event Grid webhook handler (in your 端点)
 public void handleDeliveryReport(String eventJson) {
     // Parse Event Grid event
     // Event type: Microsoft.Communication.SMSDeliveryReportReceived
@@ -256,7 +256,7 @@ public void handleDeliveryReport(String eventJson) {
 
 ```bash
 AZURE_COMMUNICATION_ENDPOINT=https://<resource>.communication.azure.com
-AZURE_COMMUNICATION_CONNECTION_STRING=endpoint=https://...;accesskey=...
+AZURE_COMMUNICATION_CONNECTION_STRING=端点=https://...;accesskey=...
 SMS_FROM_NUMBER=+14255550100
 ```
 
@@ -276,7 +276,7 @@ SMS_FROM_NUMBER=+14255550100
 - "delivery report SMS", "Azure Communication Services SMS"
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

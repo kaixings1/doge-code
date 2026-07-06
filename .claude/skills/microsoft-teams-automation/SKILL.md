@@ -18,7 +18,7 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 
 ## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client 配置. No API keys needed — just add the 端点 and it works.
 
 
 1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
@@ -30,7 +30,7 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 
 ### 1. Send Channel Messages
 
-**When to use**: User wants to post a message to a Teams channel
+**使用场景**: User wants to post a message to a Teams channel
 
 **Tool sequence**:
 1. `MICROSOFT_TEAMS_TEAMS_LIST` - List teams to find target team [Prerequisite]
@@ -53,7 +53,7 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 
 ### 2. Send Chat Messages
 
-**When to use**: User wants to send a direct or group chat message
+**使用场景**: User wants to send a direct or group chat message
 
 **Tool sequence**:
 1. `MICROSOFT_TEAMS_CHATS_GET_ALL_CHATS` - List existing chats [Optional]
@@ -73,11 +73,11 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 - oneOnOne chats return existing chat if one already exists between the two users
 - group chats require at least one member with 'owner' role
 - member user_odata_bind must use full Microsoft Graph URL format
-- Chat filter support is very limited; filter client-side when needed
+- Chat 过滤器 support is very limited; 过滤器 client-side when needed
 
 ### 3. Create Online Meetings
 
-**When to use**: User wants to schedule a Microsoft Teams meeting
+**使用场景**: User wants to schedule a Microsoft Teams meeting
 
 **Tool sequence**:
 1. `MICROSOFT_TEAMS_LIST_USERS` - Find participant user IDs [Optional]
@@ -97,7 +97,7 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 
 ### 4. Manage Teams and Channels
 
-**When to use**: User wants to list, create, or manage teams and channels
+**使用场景**: User wants to list, create, or manage teams and channels
 
 **Tool sequence**:
 1. `MICROSOFT_TEAMS_TEAMS_LIST` - List all accessible teams [Required]
@@ -111,7 +111,7 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 **Key parameters**:
 - `team_id`: Team UUID
 - `channel_id`: Channel ID in thread format
-- `filter`: OData filter string (e.g., "startsWith(displayName,'Project')")
+- `过滤器`: OData 过滤器 string (e.g., "startsWith(displayName,'Project')")
 - `select`: Comma-separated properties to return
 
 **Pitfalls**:
@@ -122,13 +122,13 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 
 ### 5. Search Messages
 
-**When to use**: User wants to find messages across Teams chats and channels
+**使用场景**: User wants to find messages across Teams chats and channels
 
 **Tool sequence**:
 1. `MICROSOFT_TEAMS_SEARCH_MESSAGES` - Search with KQL syntax [Required]
 
 **Key parameters**:
-- `query`: KQL search query (supports from:, sent:, attachments, boolean logic)
+- `查询`: KQL search 查询 (supports from:, sent:, attachments, boolean logic)
 
 **Pitfalls**:
 - Newly posted messages may take 30-60 seconds to appear in search
@@ -152,7 +152,7 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 
 ```
 1. Call MICROSOFT_TEAMS_LIST_USERS
-2. Filter by displayName or email
+2. 过滤器 by displayName or email
 3. Extract user id (UUID format)
 4. Use for meeting participants, chat members, or team operations
 ```
@@ -161,12 +161,12 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 
 - Teams/Users: Follow @odata.nextLink URL for next page
 - Chats: Auto-paginates up to limit; use top for page size (max 50)
-- Use `top` parameter to control page size
+- Use `top` 参数 to control page size
 - Continue until @odata.nextLink is absent
 
 ## 已知陷阱
 
-**Authentication and Permissions**:
+**认证 and Permissions**:
 - Different operations require different Microsoft Graph permissions
 - 403 errors indicate insufficient permissions or team access
 - Some operations require admin consent in the Azure AD tenant
@@ -182,7 +182,7 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 - Microsoft Graph enforces throttling
 - 429 responses include Retry-After header
 - Keep requests to a few per second
-- Batch operations help reduce total request count
+- Batch operations help reduce total 请求 count
 
 **Message Formatting**:
 - HTML content_type supports rich formatting
@@ -192,4 +192,12 @@ Automate Microsoft Teams operations through Composio's Microsoft Teams toolkit v
 
 ## 快速参考
 
-| Task | Tool Slug | Key Params |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
+| Task | Tool 标识符 | Key Params |

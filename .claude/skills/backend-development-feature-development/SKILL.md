@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 Orchestrate end-to-end feature development from requirements to production deployment:
 
-[Extended thinking: This workflow orchestrates specialized agents through comprehensive feature development phases - from discovery and planning through implementation, testing, and deployment. Each phase builds on previous outputs, ensuring coherent feature delivery. The workflow supports multiple development methodologies (traditional, TDD/BDD, DDD), feature complexity levels, and modern deployment strategies including feature flags, gradual rollouts, and observability-first development. Agents receive detailed context from previous phases to maintain consistency and quality throughout the development lifecycle.]
+[Extended thinking: This 工作流 orchestrates specialized agents through comprehensive feature development phases - from discovery and planning through implementation, testing, and deployment. Each phase builds on previous outputs, ensuring coherent feature delivery. The 工作流 supports multiple development methodologies (traditional, TDD/BDD, DDD), feature complexity levels, and modern deployment strategies including feature flags, gradual rollouts, and observability-first development. Agents receive detailed context from previous phases to maintain consistency and quality throughout the development lifecycle.]
 
 ## /u4f55/u65f6/u4f7f/u7528/u6b64/u6280/u80fd
 
@@ -20,7 +20,7 @@ Orchestrate end-to-end feature development from requirements to production deplo
 ## /u4e0d/u8981/u4f7f/u7528/u6b64/u6280/u80fd/u7684/u60c5/u51b5
 
 - The task is a small, isolated backend change or bug fix
-- You only need a single specialist task, not a full workflow
+- You only need a single specialist task, not a full 工作流
 - There is no deployment or cross-team coordination involved
 
 ## /u8bf4/u660e

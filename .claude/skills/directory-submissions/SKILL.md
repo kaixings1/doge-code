@@ -40,7 +40,7 @@ The full directory catalog lives in `references/directory-list.md`. The position
 - Logo assets in PNG + SVG + square 1024×1024 + favicon.
 - 5–8 real product screenshots at 1920×1080 (not marketing mockups).
 - A 60–90 second demo video — products with video on Product Hunt get **2.7× more upvotes**.
-- 常见问题 schema markup (AI engines heavily weight `常见问题Page` JSON-LD for answer extraction).
+- 常见问题 架构 markup (AI engines heavily weight `常见问题Page` JSON-LD for answer extraction).
 - Structured data: `Organization`, `Product`, `SoftwareApplication`.
 
 ### Rule 2: Destination pages before directories
@@ -76,7 +76,7 @@ Ask the user these 9 questions. If any are "no", they're not ready — help them
 3. Are privacy policy + terms live?
 4. Logo assets in PNG + SVG + square + favicon?
 5. 5–8 real screenshots + 60–90s demo video?
-6. Landing pages GEO-ready (single H1, sequential hierarchy, 常见问题 schema, structured data)?
+6. Landing pages GEO-ready (single H1, sequential hierarchy, 常见问题 架构, structured data)?
 7. At least 3 alternative pages and 3 use-case pages live and indexed?
 8. Template gallery or lead magnet asset (if applicable to category)?
 9. At least 20 beta/early users who could leave a review on G2?
@@ -87,7 +87,7 @@ A "no" on any of 1–7 is a hard block. A "no" on 8–9 is a soft block: you can
 
 Full catalog in `references/directory-list.md`. 总结:
 
-| Tier | When | Examples | Typical count |
+| Tier | When | 示例 | Typical count |
 |---|---|---|---|
 | **Tier 1 — Flagship launch** | Launch week only | Product Hunt (anchor), BetaList, HN Show HN, Fazier, DevHunt | ~15 |
 | **Tier 2 — Startup/SaaS** | Week 1 + rolling | AlternativeTo, SaaSHub, G2, Capterra, F6S, SourceForge, Slashdot | ~50 |
@@ -159,7 +159,7 @@ Product Hunt is the single highest-leverage submission but also the most easily 
 
 - Write a launch recap blog post with numbers + lessons. Honest, not bragging. Publish on day 2.
 - Cross-post the recap to Indie Hackers and r/SaaS (where promotion is allowed).
-- Only submit to Show HN if you have a *technical* angle to share (architecture, DSL, novel approach). A generic "we launched a SaaS" post will get flagged to death.
+- Only submit to Show HN if you have a *technical* angle to share (architecture, DSL, novel 方法). A generic "we launched a SaaS" post will get flagged to death.
 
 ---
 
@@ -207,7 +207,7 @@ Competitor alternative pages convert at **5–15%**, often hitting 15–30% for 
 - `/alternatives/[competitor-3]`
 - `/alternatives/[competitor-4]`
 
-Each page needs: honest feature comparison table, "when to choose X over us," "when to choose us over X," pricing comparison, 3–5 use-case examples, strong 常见问题 with schema.
+Each page needs: honest feature comparison table, "when to choose X over us," "when to choose us over X," pricing comparison, 3–5 use-case 示例, strong 常见问题 with 架构.
 
 **Critical:** Be honest. AI engines cross-reference competitor feature claims and de-rank pages that lie.
 
@@ -220,8 +220,8 @@ Every ICP gets a dedicated landing page:
 ### 3. Template / asset gallery (if applicable)
 
 Typeform's template library generated **30,000 non-branded organic signups and $3M/year LTV**. The pattern:
-- One indexable page per template at `/templates/[slug]`.
-- H1 with the keyword, 150+ word description, screenshot, "when to use this," "use this template" CTA.
+- One indexable page per template at `/templates/[标识符]`.
+- H1 with the keyword, 150+ word description, screenshot, "使用场景 this," "use this template" CTA.
 - 相关 templates at the bottom of each page (internal linking = SEO compounding).
 - 100 templates by day 30, 300 by day 90 is the realistic target.
 
@@ -231,7 +231,7 @@ Write honest roundups of your own category: `/blog/best-[category]-tools-2026`. 
 
 ### 5. 集成 pages (when integrations ship)
 
-Every integration = one landing page at `/integrations/[partner]`. Follows the Zapier playbook: Zapier gets **~2.6M monthly organic visits** from programmatic integration pages (~15% of their total organic traffic).
+Every 集成 = one landing page at `/integrations/[partner]`. Follows the Zapier playbook: Zapier gets **~2.6M monthly organic visits** from programmatic 集成 pages (~15% of their total organic traffic).
 
 ---
 
@@ -243,7 +243,7 @@ In 2026, 30–50% of "research a tool" queries happen inside ChatGPT, Claude, Pe
 
 1. **One H1 per page, sequential heading hierarchy.** 2.8× higher citation rate. 87% of cited pages use a single H1.
 2. **Dense, factual content with citable stats.** AI engines prefer specific numbers ("3× faster than X") over vague claims.
-3. **常见问题 schema on every landing page.** AI engines heavily weight `常见问题Page` JSON-LD for answer extraction.
+3. **常见问题 架构 on every landing page.** AI engines heavily weight `常见问题Page` JSON-LD for answer extraction.
 4. **Comparison tables.** Extractable, structured — exactly what an AI answer needs.
 5. **Explicit "what it is" paragraph in the first 100 words.**
 6. **Get cited on Reddit and Hacker News.** Claude and Perplexity index these heavily. Genuine mentions on r/SaaS and HN count as training fuel.
@@ -371,11 +371,11 @@ Keep the plan actionable. Every item should be something the user can do today.
 
 ## 相关 Skills
 
-- **launch** — broader launch moment, ORB framework, five-phase approach
+- **launch** — broader launch moment, ORB framework, five-phase 方法
 - **programmatic-seo** — destination pages (alternatives, integrations, templates) that backlinks should flow into
 - **competitors** — `/alternatives/[tool]` page pattern
 - **ai-seo** — GEO optimization for AI citation
 - **content-strategy** — editorial content that attracts "best of" listicle inclusions
 - **free-tools** — lead magnets for destination pages
 - **community-marketing** — Reddit, Indie Hackers, Slack community mechanics
-- **schema** — 常见问题 + Product + Organization JSON-LD for GEO
+- **架构** — 常见问题 + Product + Organization JSON-LD for GEO

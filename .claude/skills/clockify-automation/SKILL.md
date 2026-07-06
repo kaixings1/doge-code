@@ -8,7 +8,7 @@ requires:
 
 # Clockify 自动化
 
-Automate your Clockify time tracking operations directly from Claude Code. Log time entries, query historical data, manage workspaces, and audit team activity -- all without leaving your terminal.
+Automate your Clockify time tracking operations directly from Claude Code. Log time entries, 查询 historical data, manage workspaces, and audit team activity -- all without leaving your terminal.
 
 **Toolkit docs:** [composio.dev/toolkits/clockify](https://composio.dev/toolkits/clockify)
 
@@ -45,7 +45,7 @@ Key parameters:
 - `billable` -- whether the entry is billable
 - `customFieldValues` -- array of custom field entries with `customFieldId` and `value`
 
-### 2. Query Time Entries
+### 2. 查询 Time Entries
 
 Retrieve historical time entries for reporting, auditing, and invoicing.
 
@@ -56,13 +56,13 @@ Get all time entries for user abc123 in workspace xyz789 from January 2026
 ```
 
 Key parameters:
-- `workspaceId` (required) -- workspace to query
+- `workspaceId` (required) -- workspace to 查询
 - `userId` (required) -- user whose entries to retrieve
 - `start` / `end` -- ISO 8601 date range filters
-- `project` -- filter by project ID
-- `task` -- filter by task ID
+- `project` -- 过滤器 by project ID
+- `task` -- 过滤器 by task ID
 - `tags` -- comma-separated tag IDs
-- `description` -- text filter (partial match)
+- `description` -- text 过滤器 (partial match)
 - `hydrated` -- set `true` to get full project/task/tag objects instead of just IDs
 - `in-progress` -- set `true` to return only the running timer
 - `page` / `page-size` -- pagination (default 50 per page)
@@ -90,7 +90,7 @@ List all workspaces the authenticated user belongs to.
 Show me all my Clockify workspaces
 ```
 
-- Optional `roles` filter -- array of roles like `["WORKSPACE_ADMIN", "OWNER"]`
+- Optional `roles` 过滤器 -- array of roles like `["WORKSPACE_ADMIN", "OWNER"]`
 - Use this to discover workspace IDs before creating or querying entries
 
 ### 5. User Information
@@ -133,7 +133,15 @@ Start a timer on project abc in workspace xyz with description "Working on bug f
 
 ## 快速参考
 
-| Tool Slug | Description |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
+| Tool 标识符 | Description |
 |---|---|
 | `CLOCKIFY_CREATE_TIME_ENTRY` | Create a time entry or start a timer (requires `workspaceId`, `start`) |
 | `CLOCKIFY_GET_TIME_ENTRIES` | List time entries with filters (requires `workspaceId`, `userId`) |

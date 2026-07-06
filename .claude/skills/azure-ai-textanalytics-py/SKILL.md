@@ -32,10 +32,10 @@ import os
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+端点 = os.environ["AZURE_LANGUAGE_ENDPOINT"]
 key = os.environ["AZURE_LANGUAGE_KEY"]
 
-client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+client = TextAnalyticsClient(端点, AzureKeyCredential(key))
 ```
 
 ### Entra ID (Recommended)
@@ -45,7 +45,7 @@ from azure.ai.textanalytics import TextAnalyticsClient
 from azure.identity import DefaultAzureCredential
 
 client = TextAnalyticsClient(
-    endpoint=os.environ["AZURE_LANGUAGE_ENDPOINT"],
+    端点=os.environ["AZURE_LANGUAGE_ENDPOINT"],
     credential=DefaultAzureCredential()
 )
 ```
@@ -190,7 +190,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def analyze():
     async with TextAnalyticsClient(
-        endpoint=endpoint,
+        端点=端点,
         credential=DefaultAzureCredential()
     ) as client:
         result = await client.analyze_sentiment(documents)
@@ -219,7 +219,7 @@ async def analyze():
 
 ## 最佳实践
 
-1. **Use batch operations** for multiple documents (up to 10 per request)
+1. **Use batch operations** for multiple documents (up to 10 per 请求)
 2. **Enable opinion mining** for detailed aspect-based sentiment
 3. **Use async client** for high-throughput scenarios
 4. **Handle document errors** — results list may contain errors for some docs
@@ -227,7 +227,7 @@ async def analyze():
 6. **Use context manager** or close client explicitly
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

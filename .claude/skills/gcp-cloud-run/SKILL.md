@@ -31,7 +31,7 @@ cold start optimization, and event-driven architecture with Pub/Sub.
 
 Containerized web service on Cloud Run
 
-**When to use**: Web applications and APIs,Need any runtime or library,Complex services with multiple endpoints,Stateless containerized workloads
+**使用场景**: Web applications and APIs,Need any runtime or library,Complex services with multiple endpoints,Stateless containerized workloads
 
 ```dockerfile
 # Dockerfile - Multi-stage build for smaller image
@@ -65,7 +65,7 @@ const app = express();
 
 app.use(express.json());
 
-// Health check endpoint
+// Health check 端点
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
@@ -142,7 +142,7 @@ project/
 
 ### Gcloud_deploy
 
-# Direct gcloud deployment
+# Direct gcloud 部署
 gcloud run deploy my-service \
   --source . \
   --region us-central1 \
@@ -158,7 +158,7 @@ gcloud run deploy my-service \
 
 Event-driven functions (formerly Cloud Functions)
 
-**When to use**: Simple event handlers,Pub/Sub message processing,Cloud Storage triggers,HTTP webhooks
+**使用场景**: Simple event handlers,Pub/Sub message processing,Cloud Storage triggers,HTTP webhooks
 
 ```javascript
 // HTTP Function
@@ -166,7 +166,7 @@ Event-driven functions (formerly Cloud Functions)
 const functions = require('@google-cloud/functions-framework');
 
 functions.http('helloHttp', (req, res) => {
-  const name = req.query.name || req.body.name || 'World';
+  const name = req.查询.name || req.body.name || 'World';
   res.send(`Hello, ${name}!`);
 });
 ```
@@ -235,7 +235,7 @@ gcloud functions deploy process-uploads \
 
 Minimize cold start latency for Cloud Run
 
-**When to use**: Latency-sensitive applications,User-facing APIs,High-traffic services
+**使用场景**: Latency-sensitive applications,User-facing APIs,High-traffic services
 
 ## 1. Enable Startup CPU Boost
 
@@ -286,7 +286,7 @@ function getBigQueryClient() {
 // Only initialize when needed
 app.get('/api/analytics', async (req, res) => {
   const client = getBigQueryClient();
-  const results = await client.query({...});
+  const results = await client.查询({...});
   res.json(results);
 });
 ```
@@ -306,13 +306,13 @@ gcloud run deploy my-service \
 - Startup_cpu_boost: 50% faster cold starts
 - Min_instances: Eliminates cold starts for traffic spikes
 - Distroless_image: Smaller attack surface, faster pull
-- Lazy_init: Defers heavy loading to first request
+- Lazy_init: Defers heavy loading to first 请求
 
 ### Concurrency 配置 Pattern
 
 Proper concurrency settings for Cloud Run
 
-**When to use**: Need to optimize instance utilization,Handle traffic spikes efficiently,Reduce cold starts
+**使用场景**: Need to optimize instance utilization,Handle traffic spikes efficiently,Reduce cold starts
 
 ## Understanding Concurrency
 
@@ -351,7 +351,7 @@ app.get('/api/data', async (req, res) => {
   res.json({ users, products });
 });
 
-// BAD - blocking operation
+// BAD - blocking 操作
 app.get('/api/compute', (req, res) => {
   const result = heavyCpuOperation(); // Blocks other requests!
   res.json(result);
@@ -392,7 +392,7 @@ def get_data():
 
 Event-driven processing with Cloud Pub/Sub
 
-**When to use**: Asynchronous message processing,Decoupled microservices,Event-driven architecture
+**使用场景**: Asynchronous message processing,Decoupled microservices,Event-driven architecture
 
 ## Push Subscription to Cloud Run
 
@@ -403,7 +403,7 @@ gcloud pubsub topics create orders
 # Create push subscription to Cloud Run
 gcloud pubsub subscriptions create orders-push \
   --topic orders \
-  --push-endpoint https://my-service-xxx.run.app/pubsub \
+  --push-端点 https://my-service-xxx.run.app/pubsub \
   --ack-deadline 600
 ```
 
@@ -414,7 +414,7 @@ const app = express();
 app.use(express.json());
 
 app.post('/pubsub', async (req, res) => {
-  // Verify the request is from Pub/Sub
+  // Verify the 请求 is from Pub/Sub
   if (!req.body.message) {
     return res.status(400).send('Invalid Pub/Sub message');
   }
@@ -479,7 +479,7 @@ gcloud pubsub subscriptions update orders-push \
 
 Connect Cloud Run to Cloud SQL securely
 
-**When to use**: Need relational database,Migrating existing applications,Complex queries and transactions
+**使用场景**: Need relational database,Migrating existing applications,Complex queries and transactions
 
 ```bash
 # Deploy with Cloud SQL connection
@@ -508,7 +508,7 @@ const pool = new Pool({
 app.get('/api/users', async (req, res) => {
   const client = await pool.connect();
   try {
-    const result = await client.query('SELECT * FROM users LIMIT 100');
+    const result = await client.查询('SELECT * FROM users LIMIT 100');
     res.json(result.rows);
   } finally {
     client.release();
@@ -551,7 +551,7 @@ def get_engine():
 
 Securely manage secrets in Cloud Run
 
-**When to use**: API keys, database passwords,Service account keys,Any sensitive configuration
+**使用场景**: API keys, database passwords,Service account keys,Any sensitive 配置
 
 ```bash
 # Create secret
@@ -582,7 +582,7 @@ async function getSecret(name) {
   const [version] = await client.accessSecretVersion({
     name: `projects/${projectId}/secrets/${name}/versions/latest`
   });
-  return version.payload.data.toString();
+  return version.载荷.data.toString();
 }
 ```
 
@@ -683,7 +683,7 @@ def log_memory():
 
 Severity: HIGH
 
-Situation: Setting concurrency to 1 for request isolation
+Situation: Setting concurrency to 1 for 请求 isolation
 
 Symptoms:
 Auto-scaling creates many container instances.
@@ -693,7 +693,7 @@ Higher costs from more instances.
 
 Why this breaks:
 Setting concurrency to 1 means each container handles only one
-request at a time. During traffic spikes:
+请求 at a time. During traffic spikes:
 
 - 100 concurrent requests = 100 container instances
 - Each instance has cold start overhead
@@ -702,7 +702,7 @@ request at a time. During traffic spikes:
 
 This should only be used when:
 - Processing is truly single-threaded
-- Memory-heavy per-request processing
+- Memory-heavy per-请求 processing
 - Using thread-unsafe libraries
 
 Recommended fix:
@@ -756,8 +756,8 @@ app = FastAPI()
 async def get_data():
     # Async I/O allows high concurrency
     async with httpx.AsyncClient() as client:
-        response = await client.get("https://api.example.com/data")
-        return response.json()
+        响应 = await client.get("https://api.example.com/data")
+        return 响应.json()
 
 # Concurrency 80+ safe with async framework
 ```
@@ -769,7 +769,7 @@ concurrency = memory_limit / per_request_memory
 
 Example:
 - 512MB container
-- 20MB per request overhead
+- 20MB per 请求 overhead
 - Safe concurrency: ~25
 ```
 
@@ -787,14 +787,14 @@ Connection keep-alive breaks.
 
 Why this breaks:
 By default, Cloud Run throttles CPU to near-zero when not actively
-handling a request. This is "CPU only during requests" mode.
+handling a 请求. This is "CPU only during requests" mode.
 
 Affected operations:
 - Background threads
 - Connection pool maintenance
 - Metrics/telemetry emission
 - Scheduled tasks within container
-- Cleanup operations after response
+- Cleanup operations after 响应
 
 Recommended fix:
 
@@ -815,7 +815,7 @@ gcloud run deploy my-service \
 # Boost CPU during cold start only
 gcloud run deploy my-service \
   --cpu-boost \
-  --cpu-throttling=true  # Default, throttle after request
+  --cpu-throttling=true  # Default, throttle after 请求
 ```
 
 ## Move background work to Cloud Tasks
@@ -824,7 +824,7 @@ gcloud run deploy my-service \
 from google.cloud import tasks_v2
 import json
 
-def create_background_task(payload):
+def create_background_task(载荷):
     client = tasks_v2.CloudTasksClient()
     parent = client.queue_path(
         "my-project", "us-central1", "my-queue"
@@ -834,14 +834,14 @@ def create_background_task(payload):
         "http_request": {
             "http_method": tasks_v2.HttpMethod.POST,
             "url": "https://my-service.run.app/process",
-            "body": json.dumps(payload).encode(),
+            "body": json.dumps(载荷).encode(),
             "headers": {"Content-Type": "application/json"}
         }
     }
 
     client.create_task(parent=parent, task=task)
 
-# Handle response immediately, background via Cloud Tasks
+# Handle 响应 immediately, background via Cloud Tasks
 @app.post("/api/order")
 async def create_order(order: Order):
     order_id = await save_order(order)
@@ -1015,7 +1015,7 @@ model = None
 def get_model():
     global model
     if model is None:
-        # Load on first request, not at startup
+        # Load on first 请求, not at startup
         model = load_heavy_model()
     return model
 
@@ -1024,7 +1024,7 @@ async def predict(data: dict):
     model = get_model()  # Loads on first call only
     return model.predict(data)
 
-# Startup is fast - model loads on first request
+# Startup is fast - model loads on first 请求
 ```
 
 ## Start listening immediately
@@ -1138,18 +1138,18 @@ gcloud run deploy my-service \
 
 ```python
 # Second-gen doesn't auto-redirect HTTP to HTTPS
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, 请求
 from fastapi.responses import RedirectResponse
 
 app = FastAPI()
 
-@app.middleware("http")
-async def redirect_https(request: Request, call_next):
+@app.中间件("http")
+async def redirect_https(请求: 请求, call_next):
     # Check X-Forwarded-Proto header
-    if request.headers.get("X-Forwarded-Proto") == "http":
-        url = request.url.replace(scheme="https")
+    if 请求.headers.get("X-Forwarded-Proto") == "http":
+        url = 请求.url.replace(scheme="https")
         return RedirectResponse(url, status_code=301)
-    return await call_next(request)
+    return await call_next(请求)
 ```
 
 ## GPU access (second-gen only)
@@ -1179,7 +1179,7 @@ def get_execution_environment():
     return 'gen1'
 ```
 
-### Request Timeout 配置 Mismatch
+### 请求 Timeout 配置 Mismatch
 
 Severity: MEDIUM
 
@@ -1193,7 +1193,7 @@ Inconsistent timeout behavior.
 
 Why this breaks:
 Cloud Run has multiple timeout configurations that must align:
-- Request timeout (default 300s, max 3600s for HTTP, 60m for gRPC)
+- 请求 timeout (default 300s, max 3600s for HTTP, 60m for gRPC)
 - Client timeout
 - Downstream service timeouts
 - Load balancer timeout (for external access)
@@ -1203,7 +1203,7 @@ Recommended fix:
 ## Set consistent timeouts
 
 ```bash
-# Increase request timeout (max 3600s for HTTP)
+# Increase 请求 timeout (max 3600s for HTTP)
 gcloud run deploy my-service \
   --timeout=900  # 15 minutes
 ```
@@ -1234,7 +1234,7 @@ async def process(data: dict, background_tasks: BackgroundTasks):
 async def long_running_process(task_id, data, callback_url):
     result = await heavy_computation(data)
 
-    # Callback when done
+    # 回调 when done
     if callback_url:
         async with httpx.AsyncClient() as client:
             await client.post(callback_url, json={
@@ -1369,12 +1369,12 @@ Message: Singleton pattern - ensure thread safety if using concurrency > 1.
 - user needs AWS serverless -> aws-serverless (Lambda, API Gateway, SAM)
 - user needs Azure containers -> azure-functions (Azure Container Apps, Functions)
 - user needs database design -> postgres-wizard (Cloud SQL design, AlloyDB)
-- user needs authentication -> auth-specialist (Firebase Auth, Identity Platform)
-- user needs AI integration -> llm-architect (Vertex AI, Cloud Run + LLM)
-- user needs workflow orchestration -> workflow-automation (Cloud Workflows, Eventarc)
+- user needs 认证 -> auth-specialist (Firebase Auth, Identity Platform)
+- user needs AI 集成 -> llm-architect (Vertex AI, Cloud Run + LLM)
+- user needs 工作流 orchestration -> 工作流-automation (Cloud Workflows, Eventarc)
 
 ## 使用场景
-使用此技能当 the request clearly matches the capabilities and patterns described above.
+使用此技能当 the 请求 clearly matches the 能力 and patterns described above.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

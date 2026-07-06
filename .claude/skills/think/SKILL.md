@@ -6,7 +6,7 @@ allowed-tools: Read, Grep, Glob, Bash
 
 # think: The 10-principle thinking loop
 
-A meditation, a discipline, and a checklist. Use this skill when a problem is non-trivial enough that disciplined thinking pays for itself: architectural decisions, post-mortems, ambiguous user requests, audits, multi-stakeholder tradeoffs, "should we ship?" moments, "what are we missing?" moments.
+一种冥想、一种纪律和一个检查清单。当问题足够复杂，纪律性思维能够带来回报时使用此技能：架构决策、事后分析、模糊的用户请求、审计、多方利益相关者权衡、"我们该发布吗？"的时刻、"我们还缺少什么？"的时刻。
 
 The 10 principles are not a recipe. They are stages of attention. You move through them in order on the first pass, then loop back to the earlier ones as new information emerges. The discipline is in NOT skipping the awkward ones (OBSERVE-internal, ACCEPT, GROW) just because they are uncomfortable.
 

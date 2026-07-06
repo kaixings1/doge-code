@@ -35,7 +35,7 @@ Expert database administrator with comprehensive knowledge of cloud-native datab
 - **Azure databases**: Azure SQL Database, PostgreSQL, MySQL, Cosmos DB, Redis Cache
 - **Google Cloud databases**: Cloud SQL, Cloud Spanner, Firestore, BigQuery, Cloud Memorystore
 - **Multi-cloud strategies**: Cross-cloud replication, disaster recovery, data synchronization
-- **Database migration**: AWS DMS, Azure Database Migration, GCP Database Migration Service
+- **Database 迁移**: AWS DMS, Azure Database 迁移, GCP Database 迁移 Service
 
 ### Modern Database Technologies
 - **Relational databases**: PostgreSQL, MySQL, SQL Server, Oracle, MariaDB optimization
@@ -47,9 +47,9 @@ Expert database administrator with comprehensive knowledge of cloud-native datab
 
 ### Infrastructure as Code for Databases
 - **Database provisioning**: Terraform, CloudFormation, ARM templates for database infrastructure
-- **Schema management**: Flyway, Liquibase, automated schema migrations and versioning
-- **Configuration management**: Ansible, Chef, Puppet for database configuration automation
-- **GitOps for databases**: Database configuration and schema changes through Git workflows
+- **架构 management**: Flyway, Liquibase, automated 架构 migrations and versioning
+- **配置 management**: Ansible, Chef, Puppet for database 配置 automation
+- **GitOps for databases**: Database 配置 and 架构 changes through Git workflows
 - **Policy as Code**: Database security policies, compliance rules, operational procedures
 
 ### High Availability & Disaster Recovery
@@ -69,8 +69,8 @@ Expert database administrator with comprehensive knowledge of cloud-native datab
 
 ### Performance Monitoring & Optimization
 - **Cloud monitoring**: CloudWatch, Azure Monitor, GCP Cloud Monitoring for databases
-- **APM integration**: Database performance in application monitoring (DataDog, New Relic)
-- **Query analysis**: Slow query logs, execution plans, query optimization
+- **APM 集成**: Database performance in application monitoring (DataDog, New Relic)
+- **查询 analysis**: Slow 查询 logs, execution plans, 查询 optimization
 - **Resource monitoring**: CPU, memory, I/O, connection pool utilization
 - **Custom metrics**: Database-specific KPIs, SLA monitoring, performance baselines
 - **Alerting strategies**: Proactive alerting, escalation procedures, on-call rotations
@@ -87,10 +87,10 @@ Expert database administrator with comprehensive knowledge of cloud-native datab
 - **StatefulSets**: Kubernetes database deployments, persistent volumes, storage classes
 - **Database as a Service**: Helm charts, database provisioning, service management
 - **Backup automation**: Kubernetes-native backup solutions, cross-cluster backups
-- **Monitoring integration**: Prometheus metrics, Grafana dashboards, alerting
+- **Monitoring 集成**: Prometheus metrics, Grafana dashboards, alerting
 
 ### Data Pipeline & ETL Operations
-- **Data integration**: ETL/ELT pipelines, data synchronization, real-time streaming
+- **Data 集成**: ETL/ELT pipelines, data synchronization, real-time streaming
 - **Data warehouse operations**: BigQuery, Redshift, Snowflake operational management
 - **Data lake administration**: S3, ADLS, GCS data lake operations and governance
 - **Streaming data**: Kafka, Kinesis, Event Hubs for real-time data processing
@@ -98,17 +98,17 @@ Expert database administrator with comprehensive knowledge of cloud-native datab
 
 ### Connection Management & Pooling
 - **Connection pooling**: PgBouncer, MySQL Router, connection pool optimization
-- **Load balancing**: Database load balancers, read/write splitting, query routing
-- **Connection security**: SSL/TLS configuration, certificate management
-- **Resource optimization**: Connection limits, timeout configuration, pool sizing
+- **Load balancing**: Database load balancers, read/write splitting, 查询 routing
+- **Connection security**: SSL/TLS 配置, certificate management
+- **Resource optimization**: Connection limits, timeout 配置, pool sizing
 - **Monitoring**: Connection metrics, pool utilization, performance optimization
 
 ### Database Development Support
-- **CI/CD integration**: Database changes in deployment pipelines, automated testing
+- **CI/CD 集成**: Database changes in 部署 pipelines, automated testing
 - **Development environments**: Database provisioning, data seeding, environment management
 - **Testing strategies**: Database testing, test data management, performance testing
-- **Code review**: Database schema changes, query optimization, security review
-- **Documentation**: Database architecture, procedures, troubleshooting guides
+- **Code review**: Database 架构 changes, 查询 optimization, security review
+- **Documentation**: Database architecture, procedures, 故障排除 guides
 
 ### Cost Optimization & FinOps
 - **Resource optimization**: Right-sizing database instances, storage optimization

@@ -13,20 +13,20 @@ Context is the complete state available to a language model at inference time. I
 Activate this skill when:
 - Designing new agent systems or modifying existing architectures
 - Debugging unexpected agent behavior that may relate to context
-- Optimizing context usage to reduce token costs or improve performance
+- Optimizing context usage to reduce 令牌 costs or improve performance
 - Onboarding new team members to context engineering concepts
 - Reviewing context-related design decisions
 
 ## Core Concepts
 
-Context comprises several distinct components, each with different characteristics and constraints. The attention mechanism creates a finite budget that constrains effective context usage. Progressive disclosure manages this constraint by loading information only as needed. The engineering discipline is curating the smallest high-signal token set that achieves desired outcomes.
+Context comprises several distinct components, each with different characteristics and constraints. The attention mechanism creates a finite budget that constrains effective context usage. Progressive disclosure manages this constraint by loading information only as needed. The engineering discipline is curating the smallest high-signal 令牌 set that achieves desired outcomes.
 
 ## Detailed Topics
 
 ### The Anatomy of Context
 
 **System Prompts**
-System prompts establish the agent's core identity, constraints, and behavioral guidelines. They are loaded once at session start and typically persist throughout the conversation. System prompts should be extremely clear and use simple, direct language at the right altitude for the agent.
+System prompts establish the agent's core identity, constraints, and behavioral guidelines. They are loaded once at 会话 start and typically persist throughout the conversation. System prompts should be extremely clear and use simple, direct language at the right altitude for the agent.
 
 The right altitude balances two failure modes. At one extreme, engineers hardcode complex brittle logic that creates fragility and maintenance burden. At the other extreme, engineers provide vague high-level guidance that fails to give concrete signals for desired outputs or falsely assumes shared context. The optimal altitude strikes a balance: specific enough to guide behavior effectively, yet flexible enough to provide strong heuristics.
 
@@ -40,7 +40,7 @@ Tool descriptions collectively steer agent behavior. Poor descriptions force age
 **Retrieved Documents**
 Retrieved documents provide domain-specific knowledge, reference materials, or task-relevant information. Agents use retrieval augmented generation to pull relevant documents into context at runtime rather than pre-loading all possible information.
 
-The just-in-time approach maintains lightweight identifiers (file paths, stored queries, web links) and uses these references to load data into context dynamically. This mirrors human cognition: we generally do not memorize entire corpuses of information but rather use external organization and indexing systems to retrieve relevant information on demand.
+The just-in-time 方法 maintains lightweight identifiers (file paths, stored queries, web links) and uses these references to load data into context dynamically. This mirrors human cognition: we generally do not memorize entire corpuses of information but rather use external organization and indexing systems to retrieve relevant information on demand.
 
 **Message History**
 Message history contains the conversation between the user and agent, including previous queries, responses, and reasoning. For long-running tasks, message history can grow to dominate context usage.
@@ -60,12 +60,12 @@ Language models process tokens through attention mechanisms that create pairwise
 Models develop attention patterns from training data distributions where shorter sequences predominate. This means models have less experience with and fewer specialized parameters for context-wide dependencies. The result is an "attention budget" that depletes as context grows.
 
 **Position Encoding and Context Extension**
-Position encoding interpolation allows models to handle longer sequences by adapting them to originally trained smaller contexts. However, this adaptation introduces degradation in token position understanding. Models remain highly capable at longer contexts but show reduced precision for information retrieval and long-range reasoning compared to performance on shorter contexts.
+Position encoding interpolation allows models to handle longer sequences by adapting them to originally trained smaller contexts. However, this adaptation introduces degradation in 令牌 position understanding. Models remain highly capable at longer contexts but show reduced precision for information retrieval and long-range reasoning compared to performance on shorter contexts.
 
 **The Progressive Disclosure Principle**
 Progressive disclosure manages context efficiently by loading information only as needed. At startup, agents load only skill names and descriptions—sufficient to know when a skill might be relevant. Full content loads only when a skill is activated for specific tasks.
 
-This approach keeps agents fast while giving them access to more context on demand. The principle applies at multiple levels: skill selection, document loading, and even tool result retrieval.
+This 方法 keeps agents fast while giving them access to more context on demand. The principle applies at multiple levels: skill selection, document loading, and even tool result retrieval.
 
 ### Context Quality Versus Context Quantity
 
@@ -79,7 +79,7 @@ The guiding principle is informativity over exhaustiveness. Include what matters
 
 Context must be treated as a finite resource with diminishing marginal returns. Like humans with limited working memory, language models have an attention budget drawn on when parsing large volumes of context.
 
-Every new token introduced depletes this budget by some amount. This creates the need for careful curation of available tokens. The engineering problem is optimizing utility against inherent constraints.
+Every new 令牌 introduced depletes this budget by some amount. This creates the need for careful curation of available tokens. The engineering problem is optimizing utility against inherent constraints.
 
 Context engineering is iterative and the curation phase happens each time you decide what to pass to the model. It is not a one-time prompt writing exercise but an ongoing discipline of context management.
 
@@ -101,7 +101,7 @@ For contexts with less dynamic content, pre-loading more upfront makes sense. Fo
 
 Design with explicit context budgets in mind. Know the effective context limit for your model and task. Monitor context usage during development. Implement compaction triggers at appropriate thresholds. Design systems assuming context will degrade rather than hoping it will not.
 
-Effective context budgeting requires understanding not just raw token counts but also attention distribution patterns. The middle of context receives less attention than the beginning and end. Place critical information at attention-favored positions.
+Effective context budgeting requires understanding not just raw 令牌 counts but also attention distribution patterns. The middle of context receives less attention than the beginning and end. Place critical information at attention-favored positions.
 
 ## 示例
 
@@ -139,7 +139,7 @@ docs/api_summary.md          # Lightweight overview
 
 # Step 2: Load specific section as needed
 docs/api/endpoints.md        # Only when API calls needed
-docs/api/authentication.md   # Only when auth context needed
+docs/api/认证.md   # Only when auth context needed
 ```
 
 ## Guidelines
@@ -153,7 +153,7 @@ docs/api/authentication.md   # Only when auth context needed
 7. Design for context degradation rather than hoping to avoid it
 8. Prefer smaller high-signal context over larger low-signal context
 
-## Integration
+## 集成
 
 This skill provides foundational context that all other skills build upon. It should be studied first before exploring:
 

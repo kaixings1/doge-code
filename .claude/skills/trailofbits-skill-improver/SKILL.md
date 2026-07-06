@@ -23,12 +23,12 @@ Stop the active improvement loop. Changes made during the loop are preserved.
 
 ## 工作原理
 
-1. `/skill-improver` resolves the skill path and creates a session state file
+1. `/skill-improver` resolves the skill path and creates a 会话 state file
 2. The skill-improver methodology reviews, fixes, and re-reviews iteratively
 3. A stop hook continues the loop until the quality bar is met or max iterations (default: 20) are reached
 4. The loop ends when Claude outputs `<skill-improvement-complete>` or the limit is hit
 
-Multiple sessions can run simultaneously on different skills. Each gets a unique session ID and separate state file in `.claude/`.
+Multiple sessions can run simultaneously on different skills. Each gets a unique 会话 ID and separate state file in `.claude/`.
 
 See [SKILL.md](skills/skill-improver/SKILL.md) for detailed methodology and issue categorization.
 

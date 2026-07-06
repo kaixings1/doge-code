@@ -18,7 +18,7 @@ The user is reviewing a decompiled Android target. Signals to look for:
 - A previous run produced findings under `<target>/.claude/findings.json` whose
   `type` starts with `mobile-*`.
 
-## Workflow: prefer `/vuln-scout:mobile-audit`
+## 工作流: prefer `/vuln-scout:mobile-audit`
 
 For Android targets, the regular `/vuln-scout:scan` only sees one of the two
 decompilation trees (code OR resources). Use the unified driver instead:
@@ -37,6 +37,6 @@ Joern are installed (run `python3 vuln-scout/scripts/doctor.py` to confirm).
 ## High-signal detector cheatsheet
 
 VulnScout ships dedicated mobile detectors. Each produces normalized findings
-with the standard schema (`stable_key`, `kind`, `severity`, `type`, etc.).
+with the standard 架构 (`stable_key`, `kind`, `severity`, `type`, etc.).
 
-| Detector | Type slug | What it finds |
+| Detector | Type 标识符 | What it finds |

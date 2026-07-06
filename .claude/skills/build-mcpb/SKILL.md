@@ -16,7 +16,7 @@ MCPB is a local MCP server **packaged with its runtime**. The user installs one 
 
 ```
 my-server.mcpb              (zip archive)
-├── manifest.json           ← identity, entry point, config schema, compatibility
+├── manifest.json           ← identity, entry point, config 架构, compatibility
 ├── server/                 ← your MCP server code
 │   ├── index.js
 │   └── node_modules/       ← bundled dependencies (or vendored)
@@ -31,7 +31,7 @@ The host reads `manifest.json`, launches `server.mcp_config.command` as a **stdi
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/anthropics/mcpb/main/schemas/mcpb-manifest-v0.4.schema.json",
+  "$架构": "https://raw.githubusercontent.com/anthropics/mcpb/main/schemas/mcpb-manifest-v0.4.架构.json",
   "manifest_version": "0.4",
   "name": "local-files",
   "version": "0.1.0",
@@ -68,7 +68,7 @@ The host reads `manifest.json`, launches `server.mcp_config.command` as a **stdi
 
 **`server.mcp_config`** — the literal command/args/env to spawn. Use `${__dirname}` for bundle-relative paths and `${user_config.<key>}` to substitute install-time config. **There's no auto-prefix** — the env var names your server reads are exactly what you put in `env`.
 
-**`user_config`** — install-time settings surfaced in the host's UI. `type: "directory"` renders a native folder picker. `sensitive: true` stores in OS keychain. See `references/manifest-schema.md` for all fields.
+**`user_config`** — install-time settings surfaced in the host's UI. `type: "directory"` renders a native folder picker. `sensitive: true` stores in OS keychain. See `references/manifest-架构.md` for all fields.
 
 ---
 
@@ -137,7 +137,7 @@ npx esbuild src/index.ts --bundle --platform=node --outfile=server/index.js
 npx @anthropic-ai/mcpb pack
 ```
 
-`mcpb pack` zips the directory and validates `manifest.json` against the schema.
+`mcpb pack` zips the directory and validates `manifest.json` against the 架构.
 
 ### Python
 
@@ -177,7 +177,7 @@ npx @anthropic-ai/mcpb init
 # Run the server directly over stdio, poke it with the inspector
 npx @modelcontextprotocol/inspector node server/index.js
 
-# Validate manifest against schema, then pack
+# Validate manifest against 架构, then pack
 npx @anthropic-ai/mcpb validate
 npx @anthropic-ai/mcpb pack
 
@@ -193,5 +193,5 @@ Test on a machine **without** your dev toolchain before shipping. "Works on my m
 
 ## Reference files
 
-- `references/manifest-schema.md` — full `manifest.json` field reference
+- `references/manifest-架构.md` — full `manifest.json` field reference
 - `references/local-security.md` — path traversal, sandboxing, least privilege

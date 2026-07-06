@@ -9,7 +9,7 @@ source_type: community
 date_added: "2026-04-08"
 author: monte-carlo-data
 tags: [data-observability, ingestion, monte-carlo, pycarlo, metadata]
-tools: [claude, cursor, codex]
+tools: [claude, 游标, codex]
 ---
 
 # Monte Carlo 推送采集
@@ -20,9 +20,9 @@ Monte Carlo 的推送模型让客户直接将元数据、血统和查询日志�
 
 ## 使用场景
 
-使用此技能当 the user needs to collect metadata, lineage, freshness, volume, or query-log data from a warehouse or adjacent system and push it into Monte Carlo through the push-ingestion API.
+使用此技能当 the user needs to collect metadata, lineage, freshness, volume, or 查询-log data from a warehouse or adjacent system and push it into Monte Carlo through the push-ingestion API.
 
-Push data travels through the integration gateway → dedicated Kinesis streams → thin
+Push data travels through the 集成 gateway → dedicated Kinesis streams → thin
 adapter/normalizer code → the same downstream systems that power the pull model. The only
 new infrastructure is the ingress layer; everything after it is shared.
 
@@ -56,21 +56,21 @@ The following imports, classes, and method signatures are the **ONLY** correct p
 push ingestion. If your training data suggests different names, **it is wrong**. Use exactly
 what is listed here.
 
-### Imports and client setup
+### Imports and client 设置
 
 ```python
-from pycarlo.core import Client, Session
+from pycarlo.core import Client, 会话
 from pycarlo.features.ingestion import IngestionService
 from pycarlo.features.ingestion.models import (
     # Metadata
     RelationalAsset, AssetMetadata, AssetField, AssetVolume, AssetFreshness, Tag,
     # Lineage
     LineageEvent, LineageAssetRef, ColumnLineageField, ColumnLineageSourceField,
-    # Query logs
+    # 查询 logs
     QueryLogEntry,
 )
 
-client = Client(session=Session(mcd_id=key_id, mcd_token=key_token, scope="Ingestion"))
+client = Client(会话=会话(mcd_id=key_id, mcd_token=key_token, scope="Ingestion"))
 service = IngestionService(mc_client=client)
 ```
 
@@ -83,10 +83,10 @@ service.send_metadata(resource_uuid=..., resource_type=..., events=[RelationalAs
 # Lineage (table or column)
 service.send_lineage(resource_uuid=..., resource_type=..., events=[LineageEvent(...)])
 
-# Query logs — note: log_type, NOT resource_type
+# 查询 logs — note: log_type, NOT resource_type
 service.send_query_logs(resource_uuid=..., log_type=..., events=[QueryLogEntry(...)])
 
-# Extract invocation ID from any response
+# Extract invocation ID from any 响应
 service.extract_invocation_id(result)
 ```
 
@@ -98,7 +98,7 @@ RelationalAsset(
     metadata=AssetMetadata(
         name="my_table",
         database="analytics",
-        schema="public",
+        架构="public",
         description="optional description",
     ),
     fields=[
@@ -115,4 +115,4 @@ RelationalAsset(
 All generated scripts MUST use these exact variable names. 不要 invent alternatives like
 `MCD_KEY_ID`, `MC_TOKEN`, `MONTE_CARLO_KEY`, etc.
 
-| Variable | Purpose | Used by |
+| Variable | 目的 | Used by |

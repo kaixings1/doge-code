@@ -1,6 +1,6 @@
 ---
 name: design-review
-description: "Design Review — Design Review 相关功能和最佳实践"
+description: "Design Review — 设计审查相关功能和最佳实践"
   会编码的设计师：视觉审计，然后通过原子提交和前后截图进行修复。适用于在发布前收紧已交付的 UI。
 triggers:
   - "design review"
@@ -29,7 +29,7 @@ od:
 ## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
+discovers it during planning. To run the full upstream 工作流 with
 its original assets, scripts, and references, install the upstream
 bundle into your active agent's skills directory:
 

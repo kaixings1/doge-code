@@ -21,11 +21,19 @@ React 应用的实用模式。没有术语，只有能用的代码。
 
 ## 快速参考
 
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
 | 模式 | 何时使用 |
 |---------|----------|
 | `Option` | Value might be missing (user not loaded yet) |
-| `Either` | Operation might fail (form validation) |
-| `TaskEither` | Async operation might fail (API calls) |
+| `Either` | 操作 might fail (form validation) |
+| `TaskEither` | Async 操作 might fail (API calls) |
 | `RemoteData` | Need to show loading/error/success states |
 | `pipe` | Chaining multiple transformations |
 
@@ -241,7 +249,7 @@ function validateFormWithFieldErrors(form: SignupForm): E.Either<FieldErrors, Va
 
 ## 3. Data Fetching with TaskEither
 
-TaskEither = async operation that might fail. Perfect for API calls.
+TaskEither = async 操作 that might fail. Perfect for API calls.
 
 ### Basic Fetch Hook
 
@@ -498,7 +506,7 @@ function StableComponent() {
 
 Use ReaderTaskEither for testable components with injected dependencies.
 
-### Setup Dependencies
+### 设置 Dependencies
 
 ```typescript
 import * as RTE from 'fp-ts/ReaderTaskEither'
@@ -774,13 +782,13 @@ const modalProps = {
 
 ---
 
-## When to Use What
+## 使用场景 What
 
 | Situation | Use |
 |-----------|-----|
 | Value might not exist | `Option<T>` |
-| Operation might fail (sync) | `Either<E, A>` |
-| Async operation might fail | `TaskEither<E, A>` |
+| 操作 might fail (sync) | `Either<E, A>` |
+| Async 操作 might fail | `TaskEither<E, A>` |
 | Need loading/error/success UI | `RemoteData<E, A>` |
 | Form with multiple validations | `Either` with validation applicative |
 | Dependency injection | Context + `ReaderTaskEither` |
@@ -794,7 +802,7 @@ const modalProps = {
 - **[fp-ts-react-stable-hooks](https://github.com/mblink/fp-ts-react-stable-hooks)** - Stable hooks
 - **[@devexperts/remote-data-ts](https://github.com/devexperts/remote-data-ts)** - RemoteData
 - **[io-ts](https://github.com/gcanti/io-ts)** - Runtime type validation
-- **[zod](https://github.com/colinhacks/zod)** - Schema validation (works great with fp-ts)
+- **[zod](https://github.com/colinhacks/zod)** - 架构 validation (works great with fp-ts)
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

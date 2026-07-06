@@ -53,7 +53,7 @@ id: prefer-functional-style
 trigger: "when writing new functions"
 confidence: 0.7
 domain: "code-style"
-source: "session-observation"
+source: "会话-observation"
 scope: project
 project_id: "a1b2c3d4e5f6"
 project_name: "my-react-app"
@@ -72,7 +72,7 @@ project_name: "my-react-app"
 **属性：**
 - **原子性（Atomic）** —— 一个触发器，一个动作
 - **置信度加权（Confidence-weighted）** —— 0.3 = 尝试性， 0.9 = 几乎确定
-- **领域标签（Domain-tagged）** —— code-style, testing, git, debugging, workflow 等
+- **领域标签（Domain-tagged）** —— code-style, testing, git, debugging, 工作流 等
 - **证据支持（Evidence-backed）** —— 追踪哪些观察结果创建了它
 - **作用域感知（Scope-aware）** —— `project`（默认）或 `global`
 
@@ -117,7 +117,7 @@ project_name: "my-react-app"
 |  projects/<hash>/evolved/ (项目作用域)       |
 |  evolved/ (全局)                             |
 |   * commands/new-feature.md                  |
-|   * skills/testing-workflow.md               |
+|   * skills/testing-工作流.md               |
 |   * agents/refactor-specialist.md            |
 +---------------------------------------------+
 ```

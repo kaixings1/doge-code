@@ -27,12 +27,12 @@ npm install -g @linkedapi/linkedin-cli
 
 1. 前往 [app.linkedapi.io](https://app.linkedapi.io) 注册或登录
 2. 连接他们的 LinkedIn 账户
-3. 从仪表板复制 **Linked API Token** 和 **Identification Token**
+3. 从仪表板复制 **Linked API 令牌** 和 **Identification 令牌**
 
 一旦用户提供了令牌，运行：
 
 ```bash
-linkedin setup --linked-api-token=TOKEN --identification-token=TOKEN
+linkedin 设置 --linked-api-令牌=令牌 --identification-令牌=令牌
 ```
 
 ### 何时使用

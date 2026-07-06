@@ -12,23 +12,23 @@ date_added: "2026-02-27"
 
 A user may ask you to create, edit, or analyze the contents of a .docx file. A .docx file is essentially a ZIP archive containing XML files and other resources that you can read or edit. You have different tools and workflows available for different tasks.
 
-## Workflow Decision Tree
+## 工作流 Decision Tree
 
 ### Reading/Analyzing Content
 Use "Text extraction" or "Raw XML access" sections below
 
 ### Creating New Document
-Use "Creating a new Word document" workflow
+Use "Creating a new Word document" 工作流
 
 ### Editing Existing Document
 - **Your own document + simple changes**
-  Use "Basic OOXML editing" workflow
+  Use "Basic OOXML editing" 工作流
 
 - **Someone else's document**
-  Use **"Redlining workflow"** (recommended default)
+  Use **"Redlining 工作流"** (recommended default)
 
 - **Legal, academic, business, or government docs**
-  Use **"Redlining workflow"** (required)
+  Use **"Redlining 工作流"** (required)
 
 ## Reading and analyzing content
 
@@ -57,16 +57,16 @@ You need raw XML access for: comments, complex formatting, document structure, e
 
 When creating a new Word document from scratch, use **docx-js**, which allows you to create Word documents using JavaScript/TypeScript.
 
-### Workflow
-1. **MANDATORY - READ ENTIRE FILE**: Read [`docx-js.md`](docx-js.md) (~500 lines) completely from start to finish. **NEVER set any range limits when reading this file.** Read the full file content for detailed syntax, critical formatting rules, and best practices before proceeding with document creation.
+### 工作流
+1. **MANDATORY - READ ENTIRE FILE**: Read [`docx-js.md`](docx-js.md) (~500 lines) completely from start to finish. **NEVER set any range limits when reading this file.** Read the full file content for detailed syntax, critical formatting rules, and 最佳实践 before proceeding with document creation.
 2. Create a JavaScript/TypeScript file using Document, Paragraph, TextRun components (You can assume all dependencies are installed, but if not, refer to the dependencies section below)
 3. Export as .docx using Packer.toBuffer()
 
 ## Editing an existing Word document
 
-When editing an existing Word document, use the **Document library** (a Python library for OOXML manipulation). The library automatically handles infrastructure setup and provides methods for document manipulation. For complex scenarios, you can access the underlying DOM directly through the library.
+When editing an existing Word document, use the **Document library** (a Python library for OOXML manipulation). The library automatically handles infrastructure 设置 and provides methods for document manipulation. For complex scenarios, you can access the underlying DOM directly through the library.
 
-### Workflow
+### 工作流
 1. **MANDATORY - READ ENTIRE FILE**: Read [`ooxml.md`](ooxml.md) (~600 lines) completely from start to finish. **NEVER set any range limits when reading this file.** Read the full file content for the Document library API and XML patterns for directly editing document files.
 2. Unpack the document: `python ooxml/scripts/unpack.py <office_file> <output_directory>`
 3. Create and run a Python script using the Document library (see "Document Library" section in ooxml.md)
@@ -74,9 +74,9 @@ When editing an existing Word document, use the **Document library** (a Python l
 
 The Document library provides both high-level methods for common operations and direct DOM access for complex scenarios.
 
-## Redlining workflow for document review
+## Redlining 工作流 for document review
 
-This workflow allows you to plan comprehensive tracked changes using markdown before implementing them in OOXML. **CRITICAL**: For complete tracked changes, you must implement ALL changes systematically.
+This 工作流 allows you to plan comprehensive tracked changes using markdown before implementing them in OOXML. **CRITICAL**: For complete tracked changes, you must implement ALL changes systematically.
 
 **Batching Strategy**: Group related changes into batches of 3-10 changes. This makes debugging manageable while maintaining efficiency. Test each batch before moving to the next.
 
@@ -92,7 +92,7 @@ Example - Changing "30 days" to "60 days" in a sentence:
 '<w:r w:rsidR="00AB12CD"><w:t>The term is </w:t></w:r><w:del><w:r><w:delText>30</w:delText></w:r></w:del><w:ins><w:r><w:t>60</w:t></w:r></w:ins><w:r w:rsidR="00AB12CD"><w:t> days.</w:t></w:r>'
 ```
 
-### Tracked changes workflow
+### Tracked changes 工作流
 
 1. **Get markdown representation**: Convert document to markdown with tracked changes preserved:
    ```bash
@@ -119,7 +119,7 @@ Example - Changing "30 days" to "60 days" in a sentence:
    - **Unpack the document**: `python ooxml/scripts/unpack.py <file.docx> <dir>`
    - **Note the suggested RSID**: The unpack script will suggest an RSID to use for your tracked changes. Copy this RSID for use in step 4b.
 
-4. **Implement changes in batches**: Group changes logically (by section, by type, or by proximity) and implement them together in a single script. This approach:
+4. **Implement changes in batches**: Group changes logically (by section, by type, or by proximity) and implement them together in a single script. This 方法:
    - Makes debugging easier (smaller batch = easier to isolate errors)
    - Allows incremental progress
    - Maintains efficiency (batch size of 3-10 changes works well)
@@ -199,7 +199,7 @@ Required dependencies (install if not available):
 - **defusedxml**: `pip install defusedxml` (for secure XML parsing)
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the 概述.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

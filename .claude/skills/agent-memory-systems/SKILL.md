@@ -62,11 +62,11 @@ and procedural memory (how-to knowledge).
 
 ### Vector_stores
 
-- Pinecone - When: Managed, enterprise-scale (billions of vectors) 注意: Best query performance, highest cost
+- Pinecone - When: Managed, enterprise-scale (billions of vectors) 注意: Best 查询 performance, highest cost
 - Qdrant - When: Complex metadata filtering, open-source 注意: Rust-based, excellent filtering
 - Weaviate - When: Hybrid search, knowledge graph features 注意: GraphQL interface, good for relationships
 - ChromaDB - When: Prototyping, small/medium apps 注意: Developer-friendly, ~20ms p50 at 100K vectors
-- pgvector - When: Already using PostgreSQL, simpler setup 注意: Good for <1M vectors, familiar tooling
+- pgvector - When: Already using PostgreSQL, simpler 设置 注意: Good for <1M vectors, familiar tooling
 
 ### Embedding_models
 
@@ -81,7 +81,7 @@ and procedural memory (how-to knowledge).
 
 Choosing the right memory type for different information
 
-**When to use**: Designing agent memory system
+**使用场景**: Designing agent memory system
 
 # MEMORY TYPE ARCHITECTURE (CoALA Framework):
 
@@ -132,7 +132,7 @@ await memory.episodic.add(
         "timestamp": datetime.now(),
         "summary": "Helped debug authentication issue",
         "outcome": "resolved",
-        "key_insights": ["Token expiry was root cause"],
+        "key_insights": ["令牌 expiry was root cause"],
     },
     metadata={"user_id": user_id, "topic": "debugging"}
 )
@@ -142,7 +142,7 @@ await memory.procedural.add(
     namespace="skills",
     content={
         "task_type": "debug_auth",
-        "steps": ["Check token expiry", "Verify refresh flow"],
+        "steps": ["Check 令牌 expiry", "Verify refresh flow"],
         "example_interaction": few_shot_example,
     }
 )
@@ -150,7 +150,7 @@ await memory.procedural.add(
 
 ## Memory Retrieval at Runtime
 """
-async def prepare_context(user_id, query):
+async def prepare_context(user_id, 查询):
     # Get user profile (semantic)
     profile = await memory.semantic.get(
         namespace="user_profile",
@@ -160,15 +160,15 @@ async def prepare_context(user_id, query):
     # Find relevant past experiences (episodic)
     similar_experiences = await memory.episodic.search(
         namespace="conversations",
-        query=query,
-        filter={"user_id": user_id},
+        查询=查询,
+        过滤器={"user_id": user_id},
         limit=3
     )
 
     # Find relevant skills (procedural)
     relevant_skills = await memory.procedural.search(
         namespace="skills",
-        query=query,
+        查询=查询,
         limit=2
     )
 
@@ -183,7 +183,7 @@ async def prepare_context(user_id, query):
 
 Choosing the right vector database for your use case
 
-**When to use**: Setting up persistent memory storage
+**使用场景**: Setting up persistent memory storage
 
 # VECTOR STORE SELECTION:
 

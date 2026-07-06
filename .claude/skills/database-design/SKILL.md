@@ -18,7 +18,7 @@ date_added: "2026-02-27"
 |------|-------------|--------------|
 | `database-selection.md` | PostgreSQL vs Neon vs Turso vs SQLite | 选择数据库时 |
 | `orm-selection.md` | Drizzle vs Prisma vs Kysely | 选择 ORM 时 |
-| `schema-design.md` | 规范化、主键、关系 | 设计模式时 |
+| `架构-design.md` | 规范化、主键、关系 | 设计模式时 |
 | `indexing.md` | 索引类型、复合索引 | 性能调优时 |
 | `optimization.md` | N+1、EXPLAIN ANALYZE | 查询优化时 |
 | `migrations.md` | 安全迁移、无服务器数据库 | 模式变更时 |

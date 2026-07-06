@@ -8,7 +8,7 @@ source_type: community
 author: whoisabhishekadhikari
 date_added: "2026-06-13"
 tags: [lovable, cleanup, vite, react, shadcn, devtools]
-tools: [claude, cursor, codex, antigravity, gemini-cli]
+tools: [claude, 游标, codex, antigravity, gemini-cli]
 ---
 
 # lovable-cleanup

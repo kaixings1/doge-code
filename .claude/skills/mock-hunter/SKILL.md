@@ -22,13 +22,13 @@ plugin:
 
 ## 概述
 
-MockHunter is a Claude Code skill that audits a live web page and tells you, for every visible value, whether it is real, mocked, LLM-generated, hardcoded, broken, or unknown. It is built for vibe-coded apps (Lovable, Bolt, v0, Replit, AI Studio, Cursor Composer) where the UI may look complete but the data layer often is not. It uses Playwright MCP to drive a real browser, then traces each visible value through the network and DOM to its source.
+MockHunter is a Claude Code skill that audits a live web page and tells you, for every visible value, whether it is real, mocked, LLM-generated, hardcoded, broken, or unknown. It is built for vibe-coded apps (Lovable, Bolt, v0, Replit, AI Studio, 游标 Composer) where the UI may look complete but the data layer often is not. It uses Playwright MCP to drive a real browser, then traces each visible value through the network and DOM to its source.
 
 This skill adapts the upstream `CodeShuX/mockhunter` project (community source).
 
-Because this workflow drives a real browser against live pages, treat it as an interactive audit tool, not a plugin-safe read-only helper. 默认 to observation-only until the user confirms the target is theirs, identifies a safe test account or environment, and explicitly approves any click, submit, or authenticated action that can mutate state.
+Because this 工作流 drives a real browser against live pages, treat it as an interactive audit tool, not a plugin-safe read-only helper. 默认 to observation-only until the user confirms the target is theirs, identifies a safe test account or environment, and explicitly approves any click, submit, or authenticated action that can mutate state.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when auditing an AI-generated UI to find out which values are actually wired up
 - Use when reviewing a contractor or teammate's deliverable before sign-off
@@ -65,17 +65,17 @@ Because this workflow drives a real browser against live pages, treat it as an i
 For every visible value, run this decision tree:
 
 ```
-Did any network request return this value?
-├── YES — found in a response:
+Did any network 请求 return this value?
+├── YES — found in a 响应:
 │   ├── Status 4xx/5xx → BROKEN
-│   ├── Endpoint matches /ai|openai|generate|llm|chat → LLM
-│   ├── Response shape matches mock library (faker, MSW, mockoon) → MOCK
+│   ├── 端点 matches /ai|openai|generate|llm|chat → LLM
+│   ├── 响应 shape matches mock library (faker, MSW, mockoon) → MOCK
 │   ├── Uniformity flags trigger → MOCK or LLM (review)
 │   ├── DB connection provided?
 │   │   ├── Run read-only SELECT, value matches DB row → REAL
 │   │   └── Value not in DB → MOCK
 │   └── No DB → UNKNOWN (best-guess)
-└── NO — value not in any network response:
+└── NO — value not in any network 响应:
     ├── String literal in DOM source → HARDCODED
     ├── Computed from Math.random / Date.now / faker → MOCK
     └── Cannot determine → UNKNOWN
@@ -145,6 +145,6 @@ Skill: ...
 
 - The skill runs read-only DB SELECTs only, never INSERT/UPDATE/DELETE
 - Skips destructive-looking, ambiguous, icon-only, localized, or external-write controls unless the user has explicitly allowlisted the exact control and environment
-- 绝不 submits forms that look like payment, account deletion, external write operations, account changes, invites, publishing, deployment, messaging, or money movement
+- 绝不 submits forms that look like payment, account deletion, external write operations, account changes, invites, publishing, 部署, messaging, or money movement
 - Uses placeholder credentials (`mockhunter@example.com`) for any throwaway form tests, never the user's real credentials
 - All Playwright actions happen in a controlled MCP browser context — no headless escalation

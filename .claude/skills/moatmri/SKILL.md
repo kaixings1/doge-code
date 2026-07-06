@@ -10,7 +10,7 @@ date_added: "2026-05-31"
 
 *Where does intelligence pressure break this system first?*
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - "Is my business at risk from AI? Where am I most exposed?"
 - "How would an AI-native startup take over my market?"

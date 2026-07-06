@@ -1,10 +1,10 @@
 ---
 name: jigsawstack-automation
-description: "通过 Rube MCP (Composio) 自动执行 Jigsawstack 任务。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Jigsawstack 任务。使用前始终先搜索工具以获取当前 架构。"
 requires:
   mcp: [rube]
 ---
-# 通过 Rube MCP 实现 Jigsawstack 自动化
+# Jigsawstack 自动化
 通过 Composio 的 Jigsawstack 工具包和 Rube MCP 自动化 Jigsawstack 操作。
 **工具包文档**: [composio.dev/toolkits/jigsawstack](https://composio.dev/toolkits/jigsawstack)
 ## 前提条件

@@ -36,7 +36,7 @@ agent-browser close                   # 关闭浏览器
 
 # 快照
 agent-browser snapshot -i             # 带引用（@e1、@e2）的交互元素（推荐）
-agent-browser snapshot -i -C          # 包含光标交互元素（带 onclick、cursor:pointer 的 div）
+agent-browser snapshot -i -C          # 包含光标交互元素（带 onclick、游标:pointer 的 div）
 agent-browser snapshot -s "#selector" # 限定 CSS 选择器范围
 
 # 交互（使用快照中的 @refs）
@@ -113,13 +113,13 @@ agent-browser get text @e1 --json
 ### 并行会话
 
 ```bash
-agent-browser --session site1 open https://site-a.com
-agent-browser --session site2 open https://site-b.com
+agent-browser --会话 site1 open https://site-a.com
+agent-browser --会话 site2 open https://site-b.com
 
-agent-browser --session site1 snapshot -i
-agent-browser --session site2 snapshot -i
+agent-browser --会话 site1 snapshot -i
+agent-browser --会话 site2 snapshot -i
 
-agent-browser session list
+agent-browser 会话 list
 ```
 
 ### 可视化浏览器（调试）
@@ -187,7 +187,7 @@ agent-browser click @e1              # 使用新的引用
 agent-browser find text "登录" click
 agent-browser find label "邮箱" fill "user@test.com"
 agent-browser find role button click --name "提交"
-agent-browser find placeholder "搜索" type "query"
+agent-browser find placeholder "搜索" type "查询"
 agent-browser find testid "submit-btn" click
 ```
 
@@ -197,7 +197,7 @@ agent-browser find testid "submit-btn" click
 |---------|---------|
 | [references/commands.md](references/commands.md) | 带所有选项的完整命令参考 |
 | [references/snapshot-refs.md](references/snapshot-refs.md) | 引用生命周期、失效规则、故障排查 |
-| [references/session-management.md](references/session-management.md) | 并行会话、状态持久化、并发抓取 |
+| [references/会话-management.md](references/会话-management.md) | 并行会话、状态持久化、并发抓取 |
 | [references/authentication.md](references/authentication.md) | 登录流程、OAuth、2FA 处理、状态复用 |
 | [references/video-recording.md](references/video-recording.md) | 录屏工作流，用于调试和文档 |
 | [references/proxy-support.md](references/proxy-support.md) | 代理配置、地理测试、轮换代理 |
@@ -207,11 +207,11 @@ agent-browser find testid "submit-btn" click
 | 模板 | 描述 |
 |-----|------|
 | [templates/form-automation.sh](templates/form-automation.sh) | 带验证的表单填写 |
-| [templates/authenticated-session.sh](templates/authenticated-session.sh) | 一次登录，复用状态 |
-| [templates/capture-workflow.sh](templates/capture-workflow.sh) | 带截图的内容提取 |
+| [templates/authenticated-会话.sh](templates/authenticated-会话.sh) | 一次登录，复用状态 |
+| [templates/capture-工作流.sh](templates/capture-工作流.sh) | 带截图的内容提取 |
 
 ```bash
 ./templates/form-automation.sh https://example.com/form
-./templates/authenticated-session.sh https://app.example.com/login
-./templates/capture-workflow.sh https://example.com ./output
+./templates/authenticated-会话.sh https://app.example.com/login
+./templates/capture-工作流.sh https://example.com ./output
 ```

@@ -6,4 +6,4 @@ Create production-quality Semgrep rules for detecting bug patterns and security 
 
 ## Skills Included
 
-| Skill                 | Purpose                                              |
+| Skill                 | 目的                                              |

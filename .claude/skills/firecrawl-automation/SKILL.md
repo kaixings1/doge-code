@@ -41,7 +41,7 @@ requires:
 - `timeout` -- 最大等待时间（毫秒，默认30000）
 - `actions` -- 抓取前的浏览器操作（点击、写入、等待、按键、滚动）
 - `includeTags` / `excludeTags` -- 按HTML标签过滤
-- `jsonOptions` -- 使用 `schema` 和/或 `prompt` 进行结构化提取
+- `jsonOptions` -- 使用 `架构` 和/或 `prompt` 进行结构化提取
 
 示例提示：*"Scrape the main content from https://example.com/pricing as markdown"*
 
@@ -78,10 +78,10 @@ requires:
 关键参数：
 - `urls`（必需）-- 要提取的URL数组（测试版最多10个）。支持通配符，如 `https://example.com/blog/*`
 - `prompt` -- 描述要提取内容的自然语言描述
-- `schema` -- 定义所需输出结构的JSON Schema
+- `架构` -- 定义所需输出结构的JSON 架构
 - `enable_web_search` -- 允许爬取初始域名之外的链接（默认false）
 
-必须至少提供 `prompt` 或 `schema` 之一。
+必须至少提供 `prompt` 或 `架构` 之一。
 
 使用返回的作业 `id` 通过 `FIRECRAWL_EXTRACT_GET` 检查提取状态。
 
@@ -146,7 +146,7 @@ requires:
 
 - **速率限制：** Firecrawl 可能触发"Rate limit exceeded"错误（429）。优先使用 `FIRECRAWL_BATCH_SCRAPE` 替代多次单独的 `FIRECRAWL_SCRAPE` 调用，并在429/5xx响应时实施退避策略。
 - **信用消耗：** `FIRECRAWL_EXTRACT` 可能因"Insufficient credits"而失败。严格限定范围，避免使用广泛的首页URL导致稀疏字段。先在小的URL集上测试。
-- **嵌套错误响应：** 即使外部API调用成功，每个页面的失败可能嵌套在 `response.data.code` 中（例如 `SCRAPE_DNS_RESOLUTION_ERROR`）。始终验证内部状态/错误字段。
+- **嵌套错误响应：** 即使外部API调用成功，每个页面的失败可能嵌套在 `响应.data.code` 中（例如 `SCRAPE_DNS_RESOLUTION_ERROR`）。始终验证内部状态/错误字段。
 - **JS繁重页面：** 未渲染的抓取可能错过关键内容。对动态页面使用 `waitFor`（例如1000-5000ms），或配置 `scrapeOptions_actions` 在抓取前与页面交互。
 - **提取模式精度：** 模糊或变化模式/提示会产生噪音大、不一致的输出。冻结模式并在扩展到多个URL之前在小样本上测试。
 - **爬取作业是异步的：** `FIRECRAWL_CRAWL_V2` 立即返回作业ID。使用 `FIRECRAWL_CRAWL_GET` 轮询结果。使用 `FIRECRAWL_CANCEL_A_CRAWL_JOB` 取消卡住的爬取以避免浪费信用。
@@ -158,7 +158,15 @@ requires:
 
 ## 快速参考
 
-| 工具Slug | 描述 |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
+| 工具标识符 | 描述 |
 |---|---|
 | `FIRECRAWL_SCRAPE` | 使用格式/操作选项抓取单个URL |
 | `FIRECRAWL_CRAWL_V2` | 使用深度/路径控制爬取网站 |

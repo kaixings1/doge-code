@@ -8,7 +8,7 @@ source_type: self
 date_added: "2026-04-13"
 author: WHOISABHISHEKADHIKARI
 tags: [linkedin, branding, career, growth, personal-brand]
-tools: [claude, cursor, gemini, antigravity]
+tools: [claude, 游标, gemini, antigravity]
 ---
 
 # LinkedIn 档案优化器与权威建设者
@@ -19,7 +19,7 @@ tools: [claude, cursor, gemini, antigravity]
 
 此技能帮助专业人士（创始人、讲师、IT 专家和农业科技建设者）对齐其核心身份，消除品牌混淆，并通过综合来自作品集、简历和现有档案链接等多来源信息来吸引全球机会。
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when a user needs to optimize their **LinkedIn Profile** (Headline, About, Experience).
 - Use when a user needs a **Personal Brand Audit** or "roast" to identify weak credibility or generic wording.
@@ -121,7 +121,7 @@ Critically evaluate the existing profile like a global recruiter, high-level inv
 
 **Input**: `whoisabhishekadhikari`
 
-**Agent Response**:
+**Agent 响应**:
 > "I recognize the LinkedIn handle `whoisabhishekadhikari`. Before I perform an audit, I need to verify your current profile data. I have attempted to fetch your public profile [Link]. **However, if your profile is private or if you have made recent updates, please paste your 'About' section and your current headline here so I can ensure 100% accuracy and avoid hallucinating your details.**"
 
 ### Example 2: Full Profile Audit (With Provided Text)

@@ -1,7 +1,7 @@
 ---
 name: database
 description: "数据库开发和运维工作流，涵盖 SQL、NoSQL、数据库设计、迁移、优化和数据工程。"
-category: workflow-bundle
+category: 工作流-bundle
 risk: safe
 source: personal
 date_added: "2026-02-27"
@@ -23,30 +23,30 @@ date_added: "2026-02-27"
 - 管理数据库操作时
 - 实施数据质量时
 
-## Workflow Phases
+## 工作流 Phases
 
 ### Phase 1: Database Design
 
 #### Skills to Invoke
 - `database-architect` - Database architecture
-- `database-design` - Schema design
+- `database-design` - 架构 design
 - `postgresql` - PostgreSQL design
 - `nosql-expert` - NoSQL design
 
 #### Actions
 1. Gather requirements
-2. Design schema
+2. Design 架构
 3. Define relationships
 4. Plan indexing strategy
 5. Design for scalability
 
 #### Copy-Paste Prompts
 ```
-Use @database-architect to design database schema
+Use @database-architect to design database 架构
 ```
 
 ```
-Use @postgresql to design PostgreSQL schema
+Use @postgresql to design PostgreSQL 架构
 ```
 
 ### Phase 2: Database Implementation
@@ -72,7 +72,7 @@ Use @prisma-expert to set up Prisma ORM
 Use @database-migrations-sql-migrations to create migrations
 ```
 
-### Phase 3: Query Optimization
+### Phase 3: 查询 Optimization
 
 #### Skills to Invoke
 - `database-optimizer` - Database optimization
@@ -98,19 +98,19 @@ Use @sql-optimization-patterns to optimize SQL queries
 ### Phase 4: Data 迁移
 
 #### Skills to Invoke
-- `database-migration` - Database migration
-- `framework-migration-code-migrate` - Code migration
+- `database-迁移` - Database 迁移
+- `framework-迁移-code-migrate` - Code 迁移
 
 #### Actions
-1. Plan migration strategy
-2. Create migration scripts
-3. Test migration
-4. Execute migration
+1. Plan 迁移 strategy
+2. Create 迁移 scripts
+3. Test 迁移
+4. Execute 迁移
 5. Verify data integrity
 
 #### Copy-Paste Prompts
 ```
-Use @database-migration to plan database migration
+Use @database-迁移 to plan database 迁移
 ```
 
 ### Phase 5: Data Pipeline Development

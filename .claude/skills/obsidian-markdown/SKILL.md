@@ -1,6 +1,6 @@
 ---
 name: obsidian-markdown
-description: "Write correct Obsidian Flavored Markdown: wikilinks, embeds, callouts, properties, tags, highlights, math, and canvas syntax. Reference this when creating or editing any wiki page. Triggers on: write obsidian note, obsidian syntax, wikilink, callout, embed, obsidian markdown, wikilink format, callout syntax, embed syntax, obsidian formatting, how to write obsidian markdown."
+description: "编写正确的 Obsidian 风格 Markdown：wikilink、嵌入、标注、属性、标签、高亮、数学公式和画布语法。在创建或编辑任何 wiki 页面时参考此文档。触发词：write obsidian note, obsidian syntax, wikilink, callout, embed, obsidian markdown, wikilink format, callout syntax, embed syntax, obsidian formatting, how to write obsidian markdown。"
 allowed-tools: Read Write Edit
 ---
 
@@ -78,7 +78,7 @@ Callouts are blockquotes with a type keyword. They render as styled alert boxes.
 | `failure` | `fail`, `missing` | Errors or failures |
 | `danger` | `error` | Critical issues |
 | `bug` |: | Known bugs |
-| `example` |: | Examples |
+| `example` |: | 示例 |
 | `quote` | `cite` | Quotations |
 | `contradiction` |: | Conflicting information (wiki convention) |
 
@@ -241,7 +241,7 @@ When working on this skill, apply the 10-principle loop. See [`skills/think/SKIL
 | 1 | OBSERVE (ext) | Which syntax does the user need? (Wikilinks? Callouts? Embeds? Math? Mermaid?) |
 | 2 | OBSERVE (int) | Am I documenting Obsidian Flavored Markdown as I remember it or as it currently is? Check the spec. |
 | 3 | LISTEN | The user's source-of-confusion — what specific syntax did they get wrong? |
-| 4 | THINK | Minimal correct examples. "What NOT to do" is often as valuable as "what to do." |
+| 4 | THINK | Minimal correct 示例. "What NOT to do" is often as valuable as "what to do." |
 | 5 | CONNECT (lat) | How does OFM differ from CommonMark and GFM? The deltas are where users get confused. |
 | 6 | CONNECT (sys) | Substrate-defer to kepano/obsidian-skills when present — single source of truth, less drift. |
 | 7 | FEEL | A cheat sheet that's scannable in 30 seconds, not a wall of text. |

@@ -65,10 +65,10 @@ my-mcp-server/
 
 ```typescript
 server.tool("search_issues", {
-  query: z.string().describe("搜索关键词"),
+  查询: z.string().describe("搜索关键词"),
   status: z.enum(["open", "closed", "all"]).default("open").describe("状态筛选"),
   limit: z.number().min(1).max(100).default(20).describe("返回上限"),
-}, async ({ query, status, limit }) => { /* ... */ });
+}, async ({ 查询, status, limit }) => { /* ... */ });
 ```
 
 ### 描述
@@ -77,7 +77,7 @@ server.tool("search_issues", {
 ```typescript
 server.tool("search_users",
   "根据姓名或邮箱搜索用户。返回 ID、姓名、邮箱列表。模糊匹配，最多 50 条。",
-  schema, handler);
+  架构, 处理器);
 ```
 
 ### 输出
@@ -86,7 +86,7 @@ server.tool("search_users",
 
 ## 4. 输入验证和错误处理
 
-用 Zod/Pydantic 做 Schema 级校验，业务级校验放 handler 开头：
+用 Zod/Pydantic 做 架构 级校验，业务级校验放 处理器 开头：
 
 ```typescript
 server.tool("get_user", { id: z.string() }, async ({ id }) => {
@@ -136,7 +136,7 @@ process.on("SIGINT", async () => { await db.disconnect(); await server.close(); 
 ### 单元测试 — 业务逻辑与 MCP 注册分离
 ```typescript
 // tools/search.ts 导出纯函数
-export async function searchUsers(query: string, limit: number) { /* ... */ }
+export async function searchUsers(查询: string, limit: number) { /* ... */ }
 
 // search.test.ts 独立测试
 test("返回匹配结果", async () => {
@@ -151,7 +151,7 @@ const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
 await server.connect(serverTransport);
 const client = new Client({ name: "test", version: "1.0.0" });
 await client.connect(clientTransport);
-const result = await client.callTool("search_users", { query: "test" });
+const result = await client.callTool("search_users", { 查询: "test" });
 expect(result.isError).toBeFalsy();
 ```
 

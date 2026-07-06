@@ -7,7 +7,7 @@ description: "Domain Name Brainstormer — Domain Name Brainstormer 相关功能
 
 此技能帮助 you find the perfect domain name for your project by generating creative options and checking what's actually available to register.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Starting a new project or company
 - Launching a product or service
@@ -72,7 +72,7 @@ Key features: Code sharing, snippets, collaboration
    Why: Implies quick code sharing, only 8 characters
 
 3. ✓ devpaste.com - Developer-focused
-   Why: Familiar to devs (like pastebin), clear purpose
+   Why: Familiar to devs (like pastebin), clear 目的
 
 ## Available (Alternative TLDs)
 4. ✓ snippet.dev - Perfect extension for developers

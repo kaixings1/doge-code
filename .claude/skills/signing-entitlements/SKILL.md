@@ -7,9 +7,7 @@ description: macOS代码签名和授权指南
 
 ## Quick Start
 
-Use this skill when the failure smells like codesigning rather than compilation:
-launch refusal, missing entitlement, invalid signature, sandbox mismatch,
-hardened runtime confusion, or trust-policy rejection.
+当失败看起来像是代码签名问题而非编译问题时使用此技能：启动拒绝、缺少授权、签名无效、沙箱不匹配、强化运行时混淆或信任策略拒绝。
 
 ## 工作流
 

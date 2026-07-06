@@ -7,7 +7,7 @@ metadata:
 
 # Rust Development Patterns
 
-Idiomatic Rust patterns and best practices for building safe, performant, and maintainable applications.
+Idiomatic Rust patterns and 最佳实践 for building safe, performant, and maintainable applications.
 
 ## 使用场景
 
@@ -34,7 +34,7 @@ fn process(data: &[u8]) -> usize {
 
 // Good: Take ownership only when you need to store or consume
 fn store(data: Vec<u8>) -> Record {
-    Record { payload: data }
+    Record { 载荷: data }
 }
 
 // Bad: Cloning unnecessarily to avoid borrow checker
@@ -195,17 +195,17 @@ fn process<T: Display + Send + 'static>(item: T) -> String {
 
 ```rust
 // Use when you need heterogeneous collections or plugin systems
-trait Handler: Send + Sync {
-    fn handle(&self, request: &Request) -> Response;
+trait 处理器: Send + Sync {
+    fn handle(&self, 请求: &请求) -> 响应;
 }
 
 struct Router {
-    handlers: Vec<Box<dyn Handler>>,
+    handlers: Vec<Box<dyn 处理器>>,
 }
 
 // Use generics when you need performance (monomorphization)
-fn fast_process<H: Handler>(handler: &H, request: &Request) -> Response {
-    handler.handle(request)
+fn fast_process<H: 处理器>(处理器: &H, 请求: &请求) -> 响应 {
+    处理器.handle(请求)
 }
 ```
 
@@ -263,7 +263,7 @@ impl ServerConfigBuilder {
 ```rust
 // Good: Declarative, lazy, composable
 let active_emails: Vec<String> = users.iter()
-    .filter(|u| u.is_active)
+    .过滤器(|u| u.is_active)
     .map(|u| u.email.clone())
     .collect();
 
@@ -335,15 +335,15 @@ for msg in rx {
 use tokio::time::Duration;
 
 async fn fetch_with_timeout(url: &str) -> Result<String> {
-    let response = tokio::time::timeout(
+    let 响应 = tokio::time::timeout(
         Duration::from_secs(5),
         reqwest::get(url),
     )
     .await
-    .context("request timed out")?
-    .context("request failed")?;
+    .context("请求 timed out")?
+    .context("请求 failed")?;
 
-    response.text().await.context("failed to read body")
+    响应.text().await.context("failed to read body")
 }
 
 // Spawn concurrent tasks
@@ -400,8 +400,8 @@ my_app/
 │   ├── lib.rs
 │   ├── auth/          # Domain module
 │   │   ├── mod.rs
-│   │   ├── token.rs
-│   │   └── middleware.rs
+│   │   ├── 令牌.rs
+│   │   └── 中间件.rs
 │   ├── orders/        # Domain module
 │   │   ├── mod.rs
 │   │   ├── model.rs
@@ -409,7 +409,7 @@ my_app/
 │   └── db/            # Infrastructure
 │       ├── mod.rs
 │       └── pool.rs
-├── tests/             # Integration tests
+├── tests/             # 集成 tests
 ├── benches/           # Benchmarks
 └── Cargo.toml
 ```
@@ -430,7 +430,7 @@ pub use auth::AuthMiddleware;
 pub fn internal_helper() {} // Should be pub(crate) or private
 ```
 
-## Tooling Integration
+## Tooling 集成
 
 ### Essential Commands
 
@@ -445,7 +445,7 @@ cargo fmt                # Format code
 cargo test
 cargo test -- --nocapture    # Show println output
 cargo test --lib             # Unit tests only
-cargo test --test integration # Integration tests only
+cargo test --test 集成 # 集成 tests only
 
 # Dependencies
 cargo audit              # Security audit
@@ -456,6 +456,14 @@ cargo update             # Update dependencies
 cargo bench              # Run benchmarks
 ```
 
-## 快速参考: Rust Idioms
+## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |: Rust Idioms
 
 | Idiom | Description |

@@ -59,7 +59,7 @@ var client = new SearchClient(
 
 | Client | Purpose |
 |--------|---------|
-| `SearchClient` | Query indexes, upload/update/delete documents |
+| `SearchClient` | 查询 indexes, upload/update/delete documents |
 | `SearchIndexClient` | Create/manage indexes, synonym maps |
 | `SearchIndexerClient` | Manage indexers, skillsets, data sources |
 
@@ -91,7 +91,7 @@ public class Hotel
 }
 
 // Create index
-var indexClient = new SearchIndexClient(endpoint, credential);
+var indexClient = new SearchIndexClient(端点, credential);
 var fieldBuilder = new FieldBuilder();
 var fields = fieldBuilder.Build(typeof(Hotel));
 
@@ -131,7 +131,7 @@ var index = new SearchIndex("hotels")
 ## Document Operations
 
 ```csharp
-var searchClient = new SearchClient(endpoint, indexName, credential);
+var searchClient = new SearchClient(端点, indexName, credential);
 
 // Upload (add new)
 var hotels = new[] { new Hotel { HotelId = "1", HotelName = "Hotel A" } };
@@ -161,7 +161,7 @@ await searchClient.IndexDocumentsAsync(batch);
 ```csharp
 var options = new SearchOptions
 {
-    Filter = "rating ge 4",
+    过滤器 = "rating ge 4",
     OrderBy = { "rating desc" },
     Select = { "hotelId", "hotelName", "rating" },
     Size = 10,
@@ -297,7 +297,7 @@ var results = await searchClient.SearchAsync<Hotel>("luxury beachfront", options
 | `SearchableField` | Full-text searchable field |
 | `VectorSearchField` | Vector embedding field |
 | `IsKey = true` | Document key (required, one per index) |
-| `IsFilterable = true` | Enable $filter expressions |
+| `IsFilterable = true` | Enable $过滤器 expressions |
 | `IsSortable = true` | Enable $orderby |
 | `IsFacetable = true` | Enable faceted navigation |
 | `IsHidden = true` | Exclude from results |
@@ -310,7 +310,7 @@ using Azure;
 
 try
 {
-    var results = await searchClient.SearchAsync<Hotel>("query");
+    var results = await searchClient.SearchAsync<Hotel>("查询");
 }
 catch (RequestFailedException ex) when (ex.Status == 404)
 {
@@ -340,7 +340,7 @@ catch (RequestFailedException ex)
 | references/semantic-search.md | Semantic ranking, captions, answers |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

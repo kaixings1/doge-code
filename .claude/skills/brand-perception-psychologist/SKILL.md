@@ -22,14 +22,14 @@ Before auditing brand perception, establish:
 
 If the intended position is unclear, ask before proceeding.
 
-## PSYCHOLOGICAL FRAMEWORK: BRAND SCHEMA ALIGNMENT
+## PSYCHOLOGICAL FRAMEWORK: BRAND 架构 ALIGNMENT
 
 ### Mechanism
-People do not evaluate a brand only by what it says. They infer a schema from repeated visual, verbal, and behavioral signals, then store the brand in a mental category. Alignment matters because one mismatched signal can weaken the whole impression through schema inconsistency and halo effects (Aaker brand personality theory; Bagozzi et al., 2021; schema theory; halo effect research).
+People do not evaluate a brand only by what it says. They infer a 架构 from repeated visual, verbal, and behavioral signals, then store the brand in a mental category. Alignment matters because one mismatched signal can weaken the whole impression through 架构 inconsistency and halo effects (Aaker brand personality theory; Bagozzi et al., 2021; 架构 theory; halo effect research).
 
 ### Execution Steps
 
-**Step 1 - Identify the current brand schema**
+**Step 1 - Identify the current brand 架构**
 Describe the subconscious impression the audience is likely forming now.
 *Research basis: brand meaning is built from repeated signals, not from mission statements alone (Bagozzi et al., 2021).*
 
@@ -39,7 +39,7 @@ State the desired perception in the same terms.
 
 **Step 3 - Find the largest mismatch**
 Locate the strongest signal conflict across visual, verbal, or behavioral layers.
-*Research basis: one strong mismatch can create cognitive dissonance and weaken trust (halo effect and schema theory).*
+*Research basis: one strong mismatch can create cognitive dissonance and weaken trust (halo effect and 架构 theory).*
 
 **Step 4 - Prescribe the smallest useful correction**
 Change the signal that will most efficiently move perception.
@@ -79,7 +79,7 @@ Check that the new position is supported everywhere the audience interacts.
 - Instead: make the same promise everywhere.
 
 **Failure Mode 3**
-- Agents typically: ignore category schema and try to force a new meaning too quickly.
+- Agents typically: ignore category 架构 and try to force a new meaning too quickly.
 - Why it fails psychologically: people classify brands by familiar mental categories.
 - Instead: move perception through credible, repeated signals.
 
@@ -107,7 +107,7 @@ This skill's output feeds into:
 ## OUTPUT QUALITY CHECK
 
 Before finalizing output, the agent asks:
-- [ ] Did I identify the current brand schema?
+- [ ] Did I identify the current brand 架构?
 - [ ] Did I locate the biggest mismatch?
 - [ ] Did I prescribe the smallest high-leverage correction?
 - [ ] Is the new position consistent across touchpoints?

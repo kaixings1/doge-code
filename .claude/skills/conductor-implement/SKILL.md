@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # 实现轨道
 
-按照 `conductor/workflow.md` 中定义的工作流规则，从轨道的实施计划执行任务。
+按照 `conductor/工作流.md` 中定义的工作流规则，从轨道的实施计划执行任务。
 
 ## 使用此技能的场景
 
@@ -31,24 +31,24 @@ date_added: "2026-02-27"
 
 1. Verify Conductor is initialized:
    - Check `conductor/product.md` exists
-   - Check `conductor/workflow.md` exists
+   - Check `conductor/工作流.md` exists
    - Check `conductor/tracks.md` exists
-   - If missing: Display error and suggest running `/conductor:setup` first
+   - If missing: Display error and suggest running `/conductor:设置` first
 
-2. Load workflow configuration:
-   - Read `conductor/workflow.md`
+2. Load 工作流 配置:
+   - Read `conductor/工作流.md`
    - Parse TDD strictness level
    - Parse commit strategy
    - Parse verification checkpoint rules
 
 ## Track Selection
 
-### If argument provided:
+### If 参数 provided:
 
-- Validate track exists: `conductor/tracks/{argument}/plan.md`
+- Validate track exists: `conductor/tracks/{参数}/plan.md`
 - If not found: Search for partial matches, suggest corrections
 
-### If no argument:
+### If no 参数:
 
 1. Read `conductor/tracks.md`
 2. Parse for incomplete tracks (status `[ ]` or `[~]`)
@@ -58,7 +58,7 @@ date_added: "2026-02-27"
    Select a track to implement:
 
    In Progress:
-   1. [~] auth_20250115 - User Authentication (Phase 2, Task 3)
+   1. [~] auth_20250115 - User 认证 (Phase 2, Task 3)
 
    Pending:
    2. [ ] nav-fix_20250114 - Navigation Bug Fix
@@ -79,7 +79,7 @@ Load all relevant context for implementation:
 2. Project context:
    - `conductor/product.md` - Product understanding
    - `conductor/tech-stack.md` - Technical constraints
-   - `conductor/workflow.md` - Process rules
+   - `conductor/工作流.md` - Process rules
 
 3. Code style (if exists):
    - `conductor/code_styleguides/{language}.md`
@@ -113,12 +113,12 @@ Mark task as in-progress:
 - Update plan.md: Change `[ ]` to `[~]` for current task
 - Announce: "Starting Task X.Y: {description}"
 
-### 3. TDD Workflow (if TDD enabled in workflow.md)
+### 3. TDD 工作流 (if TDD enabled in 工作流.md)
 
 **Red Phase - Write Failing Test:**
 
 ```
-Following TDD workflow for Task X.Y...
+Following TDD 工作流 for Task X.Y...
 
 Step 1: Writing failing test
 ```
@@ -147,7 +147,7 @@ Step 3: Refactoring while keeping tests green
 - Clean up code
 - Run tests to ensure still passing
 
-### 4. Non-TDD Workflow (if TDD not strict)
+### 4. Non-TDD 工作流 (if TDD not strict)
 
 - Implement the task directly
 - Run any existing tests
@@ -155,7 +155,7 @@ Step 3: Refactoring while keeping tests green
 
 ### 5. Task Completion
 
-**Commit changes** (following commit strategy from workflow.md):
+**Commit changes** (following commit strategy from 工作流.md):
 
 ```bash
 git add -A
@@ -217,7 +217,7 @@ Approve to continue to Phase {N+1}?
 ERROR: {tool} failed with: {error message}
 
 Options:
-1. Retry the operation
+1. Retry the 操作
 2. Skip this task and continue
 3. Pause implementation
 4. Revert current task changes
@@ -337,7 +337,7 @@ Maintain progress in `metadata.json` throughout:
 ```json
 {
   "id": "auth_20250115",
-  "title": "User Authentication",
+  "title": "User 认证",
   "type": "feature",
   "status": "in_progress",
   "created": "2025-01-15T10:00:00Z",
@@ -383,7 +383,7 @@ If implementation is paused and resumed:
 
 1. **NEVER skip verification checkpoints** - Always wait for user approval between phases
 2. **STOP on any failure** - Do not attempt to continue past errors
-3. **Follow workflow.md strictly** - TDD, commit strategy, and verification rules are mandatory
+3. **Follow 工作流.md strictly** - TDD, commit strategy, and verification rules are mandatory
 4. **Keep plan.md updated** - Task status must reflect actual progress
 5. **Commit frequently** - Each task completion should be committed
 6. **Track all commits** - Record commit hashes in metadata.json for potential revert

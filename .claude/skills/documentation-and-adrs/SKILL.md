@@ -27,8 +27,8 @@ ADRs capture the reasoning behind significant technical decisions. They're the h
 ### When to Write an ADR
 
 - Choosing a framework, library, or major dependency
-- Designing a data model or database schema
-- Selecting an authentication strategy
+- Designing a data model or database 架构
+- Selecting an 认证 strategy
 - Deciding on an API architecture (REST vs. GraphQL vs. tRPC)
 - Choosing between build tools, hosting platforms, or infrastructure
 - Any decision that would be expensive to reverse
@@ -59,12 +59,12 @@ Use PostgreSQL with Prisma ORM.
 ## Alternatives Considered
 
 ### MongoDB
-- Pros: Flexible schema, easy to start with
+- Pros: Flexible 架构, easy to start with
 - Cons: Our data is inherently relational; would need to manage relationships manually
 - Rejected: Relational data in a document store leads to complex joins or data duplication
 
 ### SQLite
-- Pros: Zero configuration, embedded, fast for reads
+- Pros: Zero 配置, embedded, fast for reads
 - Cons: Limited concurrent write support, no managed hosting for production
 - Rejected: Not suitable for multi-user web application in production
 
@@ -74,7 +74,7 @@ Use PostgreSQL with Prisma ORM.
 - Rejected: PostgreSQL is the better fit for our feature requirements
 
 ## Consequences
-- Prisma provides type-safe database access and migration management
+- Prisma provides type-safe database access and 迁移 management
 - We can use PostgreSQL's full-text search instead of adding Elasticsearch
 - Team needs PostgreSQL knowledge (standard skill, low risk)
 - Hosting on managed service (Supabase, Neon, or RDS)
@@ -174,14 +174,14 @@ paths:
         required: true
         content:
           application/json:
-            schema:
+            架构:
               $ref: '#/components/schemas/CreateTaskInput'
       responses:
         '201':
           description: Task created
           content:
             application/json:
-              schema:
+              架构:
                 $ref: '#/components/schemas/Task'
         '422':
           description: Validation error
@@ -211,7 +211,7 @@ One-paragraph description of what this project does.
 | `npm run lint` | Run linter |
 
 ## 架构
-Brief overview of the project structure and key design decisions.
+Brief 概述 of the project structure and key design decisions.
 Link to ADRs for details.
 
 ## Contributing
@@ -271,8 +271,8 @@ Special consideration for AI agent context:
 After documenting:
 
 - [ ] ADRs exist for all significant architectural decisions
-- [ ] README covers quick start, commands, and architecture overview
-- [ ] API functions have parameter and return type documentation
+- [ ] README covers quick start, commands, and architecture 概述
+- [ ] API functions have 参数 and return type documentation
 - [ ] Known gotchas are documented inline where they matter
 - [ ] No commented-out code remains
 - [ ] Rules files (CLAUDE.md etc.) are current and accurate

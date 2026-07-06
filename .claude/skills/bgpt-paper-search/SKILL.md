@@ -12,16 +12,16 @@ metadata: {"version": "1.1", "skill-author": "BGPT", "website": "https://bgpt.pr
 
 BGPT is a remote MCP server that searches a curated database of scientific papers built from raw experimental data extracted from full-text studies. Unlike traditional literature databases that return titles and abstracts, BGPT returns structured data from the actual paper content — methods, quantitative results, sample sizes, quality assessments, and 25+ metadata fields per paper.
 
-## /u4f55/u65f6/u4f7f/u7528 This Skill
+## 何时使用此技能
 
-Use this skill when:
-- Searching for scientific papers with specific experimental details
-- Conducting systematic or scoping literature reviews
-- Finding quantitative results, sample sizes, or effect sizes across studies
-- Comparing methodologies used in different studies
-- Looking for papers with quality scores or evidence grading
-- Needing structured data from full-text papers (not just abstracts)
-- Building evidence tables for meta-analyses or clinical guidelines
+在以下情况下使用此技能：
+- 搜索具有特定实验细节的科学论文
+- 进行系统性或范围性文献综述
+- 跨研究寻找定量结果、样本量或效应量
+- 比较不同研究中使用的方法论
+- 查找具有质量评分或证据等级评定的论文
+- 需要来自全文论文的结构化数据（不仅仅是摘要）
+- 为荟萃分析或临床指南构建证据表
 
 ## 设置
 

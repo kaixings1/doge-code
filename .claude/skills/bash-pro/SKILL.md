@@ -163,10 +163,10 @@ date_added: '2026-02-27'
 - **Matrix testing**: Test across Bash 4.4, 5.0, 5.1, 5.2 on Linux and macOS
 - **Container testing**: Use official bash:5.2 Docker images for reproducible tests
 - **CodeQL**: Enable shell script scanning for security vulnerabilities
-- **Actionlint**: Validate GitHub Actions workflow files that use shell scripts
+- **Actionlint**: Validate GitHub Actions 工作流 files that use shell scripts
 - **Automated releases**: Tag versions and generate changelogs automatically
 - **Coverage reporting**: Track test coverage and fail on regressions
-- Example workflow: `shellcheck *.sh && shfmt -d *.sh && bats test/`
+- Example 工作流: `shellcheck *.sh && shfmt -d *.sh && bats test/`
 
 ## 安全性 Scanning & Hardening
 
@@ -186,7 +186,7 @@ date_added: '2026-02-27'
 - **Structured logging**: Output JSON for log aggregation systems
 - **Log levels**: Implement DEBUG, INFO, WARN, ERROR with configurable verbosity
 - **Syslog integration**: Use `logger` command for system log integration
-- **Distributed tracing**: Add trace IDs for multi-script workflow correlation
+- **Distributed tracing**: Add trace IDs for multi-script 工作流 correlation
 - **Metrics export**: Output Prometheus-format metrics for monitoring
 - **Error context**: Include stack traces, environment info in error logs
 - **Log rotation**: Configure log file rotation for long-running scripts
@@ -245,7 +245,7 @@ date_added: '2026-02-27'
 
 ### CI/CD & Automation
 - **pre-commit**: Multi-language pre-commit hook framework
-- **actionlint**: GitHub Actions workflow linter
+- **actionlint**: GitHub Actions 工作流 linter
 - **gitleaks**: Secrets scanning to prevent credential leaks
 - **Makefile**: Automation for lint, format, test, and release workflows
 

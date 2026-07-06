@@ -94,7 +94,7 @@ ResourceIdentifier mapsAccountResourceId = MapsAccountResource.CreateResourceIde
     subscriptionId, resourceGroupName, accountName);
 MapsAccountResource mapsAccount = armClient.GetMapsAccountResource(mapsAccountResourceId);
 
-// Generate SAS token
+// Generate SAS 令牌
 MapsAccountSasContent sasContent = new MapsAccountSasContent(
     MapsSigningKey.PrimaryKey, 
     principalId, 
@@ -102,9 +102,9 @@ MapsAccountSasContent sasContent = new MapsAccountSasContent(
     start: DateTime.UtcNow.ToString("O"), 
     expiry: DateTime.UtcNow.AddDays(1).ToString("O"));
 
-Response<MapsAccountSasToken> sas = mapsAccount.GetSas(sasContent);
+响应<MapsAccountSasToken> sas = mapsAccount.GetSas(sasContent);
 
-// Create client with SAS token
+// Create client with SAS 令牌
 var sasCredential = new AzureSasCredential(sas.Value.AccountSasToken);
 var client = new MapsSearchClient(sasCredential);
 ```
@@ -156,7 +156,7 @@ using Azure.Maps.Search;
 var credential = new AzureKeyCredential(subscriptionKey);
 var client = new MapsSearchClient(credential);
 
-Response<GeocodingResponse> result = client.GetGeocoding("1 Microsoft Way, Redmond, WA 98052");
+响应<GeocodingResponse> result = client.GetGeocoding("1 Microsoft Way, Redmond, WA 98052");
 
 foreach (var feature in result.Value.Features)
 {
@@ -173,12 +173,12 @@ using Azure.Maps.Search.Models.Queries;
 
 List<GeocodingQuery> queries = new List<GeocodingQuery>
 {
-    new GeocodingQuery() { Query = "400 Broad St, Seattle, WA" },
-    new GeocodingQuery() { Query = "1 Microsoft Way, Redmond, WA" },
+    new GeocodingQuery() { 查询 = "400 Broad St, Seattle, WA" },
+    new GeocodingQuery() { 查询 = "1 Microsoft Way, Redmond, WA" },
     new GeocodingQuery() { AddressLine = "Space Needle", Top = 1 },
 };
 
-Response<GeocodingBatchResponse> results = client.GetGeocodingBatch(queries);
+响应<GeocodingBatchResponse> results = client.GetGeocodingBatch(queries);
 
 foreach (var batchItem in results.Value.BatchItems)
 {
@@ -195,7 +195,7 @@ foreach (var batchItem in results.Value.BatchItems)
 using Azure.Core.GeoJson;
 
 GeoPosition coordinates = new GeoPosition(-122.138685, 47.6305637);
-Response<GeocodingResponse> result = client.GetReverseGeocoding(coordinates);
+响应<GeocodingResponse> result = client.GetReverseGeocoding(coordinates);
 
 foreach (var feature in result.Value.Features)
 {
@@ -216,7 +216,7 @@ GetPolygonOptions options = new GetPolygonOptions()
     Resolution = ResolutionEnum.Small,
 };
 
-Response<Boundary> result = client.GetPolygon(options);
+响应<Boundary> result = client.GetPolygon(options);
 
 Console.WriteLine($"Boundary copyright: {result.Value.Properties?.Copyright}");
 Console.WriteLine($"Polygon count: {result.Value.Geometry.Count}");
@@ -238,8 +238,8 @@ List<GeoPosition> routePoints = new List<GeoPosition>()
     new GeoPosition(-122.13, 47.64)   // Redmond
 };
 
-RouteDirectionQuery query = new RouteDirectionQuery(routePoints);
-Response<RouteDirections> result = client.GetDirections(query);
+RouteDirectionQuery 查询 = new RouteDirectionQuery(routePoints);
+响应<RouteDirections> result = client.GetDirections(查询);
 
 foreach (var route in result.Value.Routes)
 {
@@ -265,12 +265,12 @@ RouteDirectionOptions options = new RouteDirectionOptions()
     InstructionsType = RouteInstructionsType.Text,
 };
 
-RouteDirectionQuery query = new RouteDirectionQuery(routePoints)
+RouteDirectionQuery 查询 = new RouteDirectionQuery(routePoints)
 {
     RouteDirectionOptions = options
 };
 
-Response<RouteDirections> result = client.GetDirections(query);
+响应<RouteDirections> result = client.GetDirections(查询);
 ```
 
 ### 7. Route Matrix
@@ -291,12 +291,12 @@ RouteMatrixQuery routeMatrixQuery = new RouteMatrixQuery
 };
 
 // Synchronous (up to 100 route combinations)
-Response<RouteMatrixResult> result = client.GetImmediateRouteMatrix(routeMatrixQuery);
+响应<RouteMatrixResult> result = client.GetImmediateRouteMatrix(routeMatrixQuery);
 
 foreach (var cell in result.Value.Matrix.SelectMany(row => row))
 {
-    Console.WriteLine($"Distance: {cell.Response?.RouteSummary?.LengthInMeters}");
-    Console.WriteLine($"Duration: {cell.Response?.RouteSummary?.TravelTimeDuration}");
+    Console.WriteLine($"Distance: {cell.响应?.RouteSummary?.LengthInMeters}");
+    Console.WriteLine($"Duration: {cell.响应?.RouteSummary?.TravelTimeDuration}");
 }
 
 // Asynchronous (up to 700 route combinations)
@@ -315,7 +315,7 @@ RouteRangeOptions options = new RouteRangeOptions(-122.34, 47.61)
     TimeBudget = new TimeSpan(0, 20, 0)  // 20 minutes
 };
 
-Response<RouteRangeResult> result = client.GetRouteRange(options);
+响应<RouteRangeResult> result = client.GetRouteRange(options);
 
 // result.Value.ReachableRange contains the polygon
 Console.WriteLine($"Boundary points: {result.Value.ReachableRange.Boundary.Count}");
@@ -342,7 +342,7 @@ GetMapTileOptions options = new GetMapTileOptions(
     new MapTileIndex(tileIndex.X, tileIndex.Y, zoom)
 );
 
-Response<Stream> mapTile = client.GetMapTile(options);
+响应<Stream> mapTile = client.GetMapTile(options);
 
 // Save to file
 using (FileStream fileStream = File.Create("./MapTile.png"))
@@ -361,7 +361,7 @@ using Azure.Maps.Geolocation;
 var client = new MapsGeolocationClient(new AzureKeyCredential(subscriptionKey));
 
 IPAddress ipAddress = IPAddress.Parse("2001:4898:80e8:b::189");
-Response<CountryRegionResult> result = client.GetCountryCode(ipAddress);
+响应<CountryRegionResult> result = client.GetCountryCode(ipAddress);
 
 Console.WriteLine($"Country ISO Code: {result.Value.IsoCode}");
 ```
@@ -378,7 +378,7 @@ var client = new MapsWeatherClient(new AzureKeyCredential(subscriptionKey));
 var position = new GeoPosition(-122.13071, 47.64011);
 var options = new GetCurrentWeatherConditionsOptions(position);
 
-Response<CurrentConditionsResult> result = client.GetCurrentWeatherConditions(options);
+响应<CurrentConditionsResult> result = client.GetCurrentWeatherConditions(options);
 
 foreach (var condition in result.Value.Results)
 {
@@ -397,8 +397,8 @@ foreach (var condition in result.Value.Results)
 | `MapsSearchClient` | Main client for search operations |
 | `GeocodingResponse` | Geocoding result |
 | `GeocodingBatchResponse` | Batch geocoding result |
-| `GeocodingQuery` | Query for batch geocoding |
-| `ReverseGeocodingQuery` | Query for batch reverse geocoding |
+| `GeocodingQuery` | 查询 for batch geocoding |
+| `ReverseGeocodingQuery` | 查询 for batch reverse geocoding |
 | `GetPolygonOptions` | Options for polygon retrieval |
 | `Boundary` | Boundary polygon result |
 | `BoundaryResultTypeEnum` | Boundary type (Locality, AdminDistrict, etc.) |
@@ -409,11 +409,11 @@ foreach (var condition in result.Value.Results)
 | Type | Purpose |
 |------|---------|
 | `MapsRoutingClient` | Main client for routing operations |
-| `RouteDirectionQuery` | Query for route directions |
+| `RouteDirectionQuery` | 查询 for route directions |
 | `RouteDirectionOptions` | Route calculation options |
 | `RouteDirections` | Route directions result |
 | `RouteLeg` | Segment of a route |
-| `RouteMatrixQuery` | Query for route matrix |
+| `RouteMatrixQuery` | 查询 for route matrix |
 | `RouteMatrixResult` | Route matrix result |
 | `RouteRangeOptions` | Options for isochrone |
 | `RouteRangeResult` | Isochrone result |
@@ -451,7 +451,7 @@ foreach (var condition in result.Value.Results)
 ```csharp
 try
 {
-    Response<GeocodingResponse> result = client.GetGeocoding(address);
+    响应<GeocodingResponse> result = client.GetGeocoding(address);
 }
 catch (RequestFailedException ex)
 {
@@ -461,7 +461,7 @@ catch (RequestFailedException ex)
     switch (ex.Status)
     {
         case 400:
-            // Invalid request parameters
+            // Invalid 请求 parameters
             break;
         case 401:
             // Authentication failed
@@ -495,7 +495,7 @@ catch (RequestFailedException ex)
 | Pricing | https://azure.microsoft.com/pricing/details/azure-maps/ |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

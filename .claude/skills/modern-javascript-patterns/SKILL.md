@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # Modern JavaScript Patterns
 
-Comprehensive guide for mastering modern JavaScript (ES6+) features, functional programming patterns, and best practices for writing clean, maintainable, and performant code.
+Comprehensive guide for mastering modern JavaScript (ES6+) features, functional programming patterns, and 最佳实践 for writing clean, maintainable, and performant code.
 
 ## 使用此技能的场景
 
@@ -29,13 +29,13 @@ Comprehensive guide for mastering modern JavaScript (ES6+) features, functional 
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 资源
 
-- `resources/implementation-playbook.md` for detailed patterns and examples.
+- `resources/implementation-playbook.md` for detailed patterns and 示例.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

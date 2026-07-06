@@ -5,12 +5,12 @@ description: "Taste Taste Skill V1 — Taste Taste Skill V1 相关功能和最�
 
 # High-Agency Frontend Skill
 
-## 1. ACTIVE BASELINE CONFIGURATION
+## 1. ACTIVE BASELINE 配置
 * DESIGN_VARIANCE: 8 (1=Perfect Symmetry, 10=Artsy Chaos)
 * MOTION_INTENSITY: 6 (1=Static/No movement, 10=Cinematic/Magic Physics)
 * VISUAL_DENSITY: 4 (1=Art Gallery/Airy, 10=Pilot Cockpit/Packed Data)
 
-**AI Instruction:** The standard baseline for all generations is strictly set to these values (8, 6, 4). Do not ask the user to edit this file. Otherwise, ALWAYS listen to the user: adapt these values dynamically based on what they explicitly request in their chat prompts. Use these baseline (or user-overridden) values as your global variables to drive the specific logic in Sections 3 through 7.
+**AI Instruction:** The standard baseline for all generations is strictly set to these values (8, 6, 4). Do not ask the user to edit this file. Otherwise, ALWAYS listen to the user: adapt these values dynamically based on what they explicitly 请求 in their chat prompts. Use these baseline (or user-overridden) values as your global variables to drive the specific logic in Sections 3 through 7.
 
 ## 2. DEFAULT ARCHITECTURE & CONVENTIONS
 Unless the user explicitly specifies a different stack, adhere to these structural constraints to maintain consistency:
@@ -66,7 +66,7 @@ LLMs have statistical biases toward specific UI cliché patterns. Proactively co
 ## 4. CREATIVE PROACTIVITY (Anti-Slop Implementation)
 To actively combat generic AI designs, systematically implement these high-end coding concepts as your baseline:
 * **"Liquid Glass" Refraction:** When glassmorphism is needed, go beyond `backdrop-blur`. Add a 1px inner border (`border-white/10`) and a subtle inner shadow (`shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]`) to simulate physical edge refraction.
-* **Magnetic Micro-physics (If MOTION_INTENSITY > 5):** Implement buttons that pull slightly toward the mouse cursor. **CRITICAL:** NEVER use React `useState` for magnetic hover or continuous animations. Use EXCLUSIVELY Framer Motion's `useMotionValue` and `useTransform` outside the React render cycle to prevent performance collapse on mobile.
+* **Magnetic Micro-physics (If MOTION_INTENSITY > 5):** Implement buttons that pull slightly toward the mouse 游标. **CRITICAL:** NEVER use React `useState` for magnetic hover or continuous animations. Use EXCLUSIVELY Framer Motion's `useMotionValue` and `useTransform` outside the React render cycle to prevent performance collapse on mobile.
 * **Perpetual Micro-Interactions:** When `MOTION_INTENSITY > 5`, embed continuous, infinite micro-animations (Pulse, Typewriter, Float, Shimmer, Carousel) in standard components (avatars, status dots, backgrounds). Apply premium Spring Physics (`type: "spring", stiffness: 100, damping: 20`) to all interactive elements—no linear easing.
 * **Layout Transitions:** 始终 utilize Framer Motion's `layout` and `layoutId` props for smooth re-ordering, resizing, and shared element transitions across state changes.
 * **Staggered Orchestration:** Do not mount lists or grids instantly. Use `staggerChildren` (Framer) or CSS cascade (`animation-delay: calc(var(--index) * 100ms)`) to create sequential waterfall reveals. **CRITICAL:** For `staggerChildren`, the Parent (`variants`) and Children MUST reside in the identical Client Component tree. If data is fetched asynchronously, pass the data as props into a centralized Parent Motion wrapper.
@@ -111,7 +111,7 @@ To guarantee a premium, non-generic output, you MUST strictly avoid these common
 
 ### Layout & Spacing
 * **Align & Space Perfectly:** Ensure padding and margins are mathematically perfect. Avoid floating elements with awkward gaps.
-* **NO 3-Column Card Layouts:** The generic "3 equal cards horizontally" feature row is BANNED. Use a 2-column Zig-Zag, asymmetric grid, or horizontal scrolling approach instead.
+* **NO 3-Column Card Layouts:** The generic "3 equal cards horizontally" feature row is BANNED. Use a 2-column Zig-Zag, asymmetric grid, or horizontal scrolling 方法 instead.
 
 ### Content & Data (The "Jane Doe" Effect)
 * **NO Generic Names:** "John Doe", "Sarah Chan", or "Jack Su" are banned. Use highly creative, realistic-sounding names.
@@ -133,7 +133,7 @@ Do not default to generic UI. Pull from this library of advanced concepts to ens
 
 ### Navigation & Menüs
 * **Mac OS Dock Magnification:** Nav-bar at the edge; icons scale fluidly on hover.
-* **Magnetic Button:** Buttons that physically pull toward the cursor.
+* **Magnetic Button:** Buttons that physically pull toward the 游标.
 * **Gooey Menu:** Sub-items detach from the main button like a viscous liquid.
 * **Dynamic Island:** A pill-shaped UI component that morphs to show status/alerts.
 * **上下文ual Radial Menu:** A circular menu expanding exactly at the click coordinates.
@@ -149,7 +149,7 @@ Do not default to generic UI. Pull from this library of advanced concepts to ens
 
 ### Cards & Containers
 * **Parallax Tilt Card:** A 3D-tilting card tracking the mouse coordinates.
-* **Spotlight Border Card:** Card borders that illuminate dynamically under the cursor.
+* **Spotlight Border Card:** Card borders that illuminate dynamically under the 游标.
 * **Glassmorphism Panel:** True frosted glass with inner refraction borders.
 * **Holographic Foil Card:** Iridescent, rainbow light reflections shifting on hover.
 * **Tinder Swipe Stack:** A physical stack of cards the user can swipe away.
@@ -177,7 +177,7 @@ Do not default to generic UI. Pull from this library of advanced concepts to ens
 * **Text Scramble Effect:** Matrix-style character decoding on load or hover.
 * **Circular Text Path:** Text curved along a spinning circular path.
 * **Gradient Stroke Animation:** Outlined text with a gradient continuously running along the stroke.
-* **Kinetic Typography Grid:** A grid of letters dodging or rotating away from the cursor.
+* **Kinetic Typography Grid:** A grid of letters dodging or rotating away from the 游标.
 
 ### Micro-Interactions & Effects
 * **Particle Explosion Button:** CTAs that shatter into particles upon success.
@@ -210,13 +210,13 @@ All cards must contain **"Perpetual Micro-Interactions."** Use the following Fra
 ### C. The 5-Card Archetypes (Micro-Animation Specs)
 Implement these specific micro-animations when constructing Bento grids (e.g., Row 1: 3 cols | Row 2: 2 cols split 70/30):
 1. **The Intelligent List:** A vertical stack of items with an infinite auto-sorting loop. Items swap positions using `layoutId`, simulating an AI prioritizing tasks in real-time.
-2. **The Command Input:** A search/AI bar with a multi-step Typewriter Effect. It cycles through complex prompts, including a blinking cursor and a "processing" state with a shimmering loading gradient.
+2. **The Command Input:** A search/AI bar with a multi-step Typewriter Effect. It cycles through complex prompts, including a blinking 游标 and a "processing" state with a shimmering loading gradient.
 3. **The Live 状态:** A scheduling interface with "breathing" status indicators. Include a pop-up notification badge that emerges with an "Overshoot" spring effect, stays for 3 seconds, and vanishes.
 4. **The Wide Data Stream:** A horizontal "Infinite Carousel" of data cards or metrics. Ensure the loop is seamless (using `x: ["0%", "-100%"]`) with a speed that feels effortless.
 5. **The 上下文ual UI (Focus Mode):** A document view that animates a staggered highlight of a text block, followed by a "Float-in" of a floating action toolbar with micro-icons.
 
 ## 10. FINAL PRE-FLIGHT CHECK
-Evaluate your code against this matrix before outputting. This is the **last** filter you apply to your logic.
+Evaluate your code against this matrix before outputting. This is the **last** 过滤器 you apply to your logic.
 - [ ] Is global state used appropriately to avoid deep prop-drilling rather than arbitrarily?
 - [ ] Is mobile layout collapse (`w-full`, `px-4`, `max-w-7xl mx-auto`) guaranteed for high-variance designs?
 - [ ] Do full-height sections safely use `min-h-[100dvh]` instead of the bugged `h-screen`?

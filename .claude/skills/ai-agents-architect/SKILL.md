@@ -56,7 +56,7 @@ date_added: 2026-02-27
 
 Reason-Act-Observe cycle for step-by-step execution
 
-**When to use**: Simple tool use with clear action-observation flow
+**使用场景**: Simple tool use with clear action-observation flow
 
 - Thought: reason about what to do next
 - Action: select and invoke a tool
@@ -68,7 +68,7 @@ Reason-Act-Observe cycle for step-by-step execution
 
 Plan first, then execute steps
 
-**When to use**: Complex tasks requiring multi-step planning
+**使用场景**: Complex tasks requiring multi-step planning
 
 - Planning phase: decompose task into steps
 - Execution phase: execute each step
@@ -77,11 +77,11 @@ Plan first, then execute steps
 
 ### Tool Registry
 
-Dynamic tool discovery and management
+Dynamic 工具发现 and management
 
-**When to use**: Many tools or tools that change at runtime
+**使用场景**: Many tools or tools that change at runtime
 
-- Register tools with schema and examples
+- Register tools with 架构 and examples
 - Tool selector picks relevant tools for task
 - Lazy loading for expensive tools
 - Usage tracking for optimization
@@ -90,7 +90,7 @@ Dynamic tool discovery and management
 
 Multi-level memory for different purposes
 
-**When to use**: Long-running agents needing context
+**使用场景**: Long-running agents needing context
 
 - Working memory: current task context
 - Episodic memory: past interactions/results
@@ -101,7 +101,7 @@ Multi-level memory for different purposes
 
 Supervisor agent orchestrates specialist agents
 
-**When to use**: Complex tasks requiring multiple skills
+**使用场景**: Complex tasks requiring multiple skills
 
 - Supervisor decomposes and delegates
 - Specialists have focused capabilities
@@ -112,7 +112,7 @@ Supervisor agent orchestrates specialist agents
 
 Save state for resumption after failures
 
-**When to use**: Long-running tasks that may fail
+**使用场景**: Long-running tasks that may fail
 
 - Checkpoint after each successful step
 - Store task state, memory, and progress
@@ -154,7 +154,7 @@ Situation: Tool descriptions don't explain when/how to use
 
 Symptoms:
 - Agent picks wrong tools
-- Parameter errors
+- 参数 errors
 - Agent says it can't do things it can
 
 Why this breaks:
@@ -166,8 +166,8 @@ Recommended fix:
 
 Write complete tool specs:
 - Clear one-sentence purpose
-- When to use (and when not to)
-- Parameter descriptions with types
+- 使用场景 (and when not to)
+- 参数 descriptions with types
 - Example inputs and outputs
 - Error cases to expect
 
@@ -204,7 +204,7 @@ Situation: Appending all observations to memory without filtering
 Symptoms:
 - Context window exceeded
 - Agent references outdated info
-- High token costs
+- High 令牌 costs
 
 Why this breaks:
 Memory fills with irrelevant details, old information, and noise.
@@ -215,7 +215,7 @@ Recommended fix:
 
 Selective memory:
 - Summarize rather than store verbatim
-- Filter by relevance before storing
+- 过滤器 by relevance before storing
 - Use RAG for long-term memory
 - Clear working memory between tasks
 
@@ -288,7 +288,7 @@ Recommended fix:
 Implement tracing:
 - Log each thought/action/observation
 - Track tool calls with inputs/outputs
-- Trace token usage and latency
+- Trace 令牌 usage and latency
 - Use structured logging for analysis
 
 ### Fragile parsing of agent outputs
@@ -312,7 +312,7 @@ Recommended fix:
 Robust output handling:
 - Use structured output (JSON mode, function calling)
 - Fuzzy matching for actions
-- Retry with format instructions on parse failure
+- Retry with format 使用说明 on parse failure
 - Handle multiple output formats
 
 ## 相关技能

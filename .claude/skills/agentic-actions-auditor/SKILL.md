@@ -14,7 +14,7 @@ date_added: 2026-03-18
 
 # Agentic Actions Auditor
 
-Static security analysis guidance for GitHub Actions workflows that invoke AI coding agents. This skill teaches you how to discover workflow files locally or from remote GitHub repositories, identify AI action steps, follow cross-file references to composite actions and reusable workflows that may contain hidden AI agents, capture security-relevant configuration, and detect attack vectors where attacker-controlled input reaches an AI agent running in a CI/CD pipeline.
+Static security analysis guidance for GitHub Actions workflows that invoke AI coding agents. This skill teaches you how to discover 工作流 files locally or from remote GitHub repositories, identify AI action steps, follow cross-file references to composite actions and reusable workflows that may contain hidden AI agents, capture security-relevant configuration, and detect attack vectors where attacker-controlled input reaches an AI agent running in a CI/CD pipeline.
 
 ## 使用场景
 - Auditing a repository's GitHub Actions workflows for AI agent security
@@ -27,10 +27,10 @@ Static security analysis guidance for GitHub Actions workflows that invoke AI co
 ## When NOT to Use
 
 - Analyzing workflows that do NOT use any AI agent actions (use general Actions security tools instead)
-- Reviewing standalone composite actions or reusable workflows outside of a caller workflow context (use this skill when analyzing a workflow that references them via `uses:`)
+- Reviewing standalone composite actions or reusable workflows outside of a caller 工作流 context (use this skill when analyzing a 工作流 that references them via `uses:`)
 - Performing runtime prompt injection testing (this is static analysis guidance, not exploitation)
 - Auditing non-GitHub CI/CD systems (Jenkins, GitLab CI, CircleCI)
-- Auto-fixing or modifying workflow files (this skill reports findings, does not modify files)
+- Auto-fixing or modifying 工作流 files (this skill reports findings, does not modify files)
 
 ## Rationalizations to Reject
 

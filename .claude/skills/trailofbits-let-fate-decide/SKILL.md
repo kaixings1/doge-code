@@ -10,13 +10,13 @@ this skill shuffles a 22-card Major Arcana deck and a 56-card Minor Arcana
 deck independently using cryptographic randomness, then deals the 12 Houses of
 the Zodiac spread. Each house receives one Major Arcana card followed by two
 Minor Arcana cards, and all 36 cards may appear reversed. Claude then
-interprets the spread and uses the reading to inform its approach.
+interprets the spread and uses the reading to inform its 方法.
 
 ## Triggers
 
 - Vague or ambiguous prompts where multiple reasonable approaches exist
 - "I'm feeling lucky", "let fate decide", "dealer's choice", "surprise me", "whatever you think", "YOLO"
-- Casual delegation ("whatever", "up to you", "your call", "idk", "just do something", "wing it", "I trust you", "doesn't matter", "do what you want", "I don't care", "any approach works", "you pick")
+- Casual delegation ("whatever", "up to you", "your call", "idk", "just do something", "wing it", "I trust you", "doesn't matter", "do what you want", "I don't care", "any 方法 works", "you pick")
 - Yu-Gi-Oh references ("heart of the cards", "I believe in the heart of the cards", "you've activated my trap card", "it's time to duel")
 - Shrug-like brevity -- very short prompts that fully delegate the decision
 - About to arbitrarily pick between 2+ valid approaches (draw cards instead)
@@ -52,7 +52,7 @@ explain the house's technical meaning for building new projects, vulnerability
 discovery, correctness verification, and recurring workflows from the local
 security and engineering workflows this skill supports.
 
-`references/TECHNICAL_CONTEXT_LENSES.md` distills those workflow themes into
+`references/TECHNICAL_CONTEXT_LENSES.md` distills those 工作流 themes into
 audit-stage, evidence-mode, domain, failure-class, and human/organizational
 lenses.
 

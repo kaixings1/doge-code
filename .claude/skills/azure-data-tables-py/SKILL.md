@@ -33,13 +33,13 @@ from azure.identity import DefaultAzureCredential
 from azure.data.tables import TableServiceClient, TableClient
 
 credential = DefaultAzureCredential()
-endpoint = "https://<account>.table.core.windows.net"
+端点 = "https://<account>.table.core.windows.net"
 
 # Service client (manage tables)
-service_client = TableServiceClient(endpoint=endpoint, credential=credential)
+service_client = TableServiceClient(端点=端点, credential=credential)
 
 # Table client (work with entities)
-table_client = TableClient(endpoint=endpoint, table_name="mytable", credential=credential)
+table_client = TableClient(端点=端点, table_name="mytable", credential=credential)
 ```
 
 ## Client Types
@@ -128,12 +128,12 @@ table_client.delete_entity(
 )
 ```
 
-## Query Entities
+## 查询 Entities
 
-### Query Within Partition
+### 查询 Within Partition
 
 ```python
-# Query by partition (efficient)
+# 查询 by partition (efficient)
 entities = table_client.query_entities(
     query_filter="PartitionKey eq 'sales'"
 )
@@ -141,10 +141,10 @@ for entity in entities:
     print(entity)
 ```
 
-### Query with Filters
+### 查询 with Filters
 
 ```python
-# Filter by properties
+# 过滤器 by properties
 entities = table_client.query_entities(
     query_filter="PartitionKey eq 'sales' and quantity gt 3"
 )
@@ -201,7 +201,7 @@ async def table_operations():
     credential = DefaultAzureCredential()
     
     async with TableClient(
-        endpoint="https://<account>.table.core.windows.net",
+        端点="https://<account>.table.core.windows.net",
         table_name="mytable",
         credential=credential
     ) as client:
@@ -212,7 +212,7 @@ async def table_operations():
             "data": "test"
         })
         
-        # Query
+        # 查询
         async for entity in client.query_entities("PartitionKey eq 'async'"):
             print(entity)
 
@@ -234,8 +234,8 @@ asyncio.run(table_operations())
 
 ## 最佳实践
 
-1. **Design partition keys** for query patterns and even distribution
-2. **Query within partitions** whenever possible (cross-partition is expensive)
+1. **Design partition keys** for 查询 patterns and even distribution
+2. **查询 within partitions** whenever possible (cross-partition is expensive)
 3. **Use batch operations** for multiple entities in same partition
 4. **Use `upsert_entity`** for idempotent writes
 5. **Use parameterized queries** to prevent injection
@@ -243,7 +243,7 @@ asyncio.run(table_operations())
 7. **Use async client** for high-throughput scenarios
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

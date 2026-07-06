@@ -64,7 +64,7 @@ pipe(
 // Array chain
 pipe(
   users,
-  A.filter(u => u.active),
+  A.过滤器(u => u.active),
   A.map(u => u.name)
 )
 ```
@@ -74,7 +74,7 @@ pipe(
 ```typescript
 // /u6570/u636e/u6700/u540e/u7684/u98ce/u683c/u5b9e/u73b0/u90e8/u5206/u5e94/u7528
 const getActiveNames = flow(
-  A.filter((u: User) => u.active),
+  A.过滤器((u: User) => u.active),
   A.map(u => u.name)
 )
 

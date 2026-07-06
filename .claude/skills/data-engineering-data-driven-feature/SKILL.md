@@ -10,12 +10,12 @@ date_added: "2026-02-27"
 
 Build features guided by data insights, A/B testing, and continuous measurement using specialized agents for analysis, implementation, and experimentation.
 
-[Extended thinking: This workflow orchestrates a comprehensive data-driven development process from initial data analysis and hypothesis formulation through feature implementation with integrated analytics, A/B testing infrastructure, and post-launch analysis. Each phase leverages specialized agents to ensure features are built based on data insights, properly instrumented for measurement, and validated through controlled experiments. The workflow emphasizes modern product analytics practices, statistical rigor in testing, and continuous learning from user behavior.]
+[Extended thinking: This 工作流 orchestrates a comprehensive data-driven development process from initial data analysis and hypothesis formulation through feature implementation with integrated analytics, A/B testing infrastructure, and post-launch analysis. Each phase leverages specialized agents to ensure features are built based on data insights, properly instrumented for measurement, and validated through controlled experiments. The 工作流 emphasizes modern product analytics practices, statistical rigor in testing, and continuous learning from user behavior.]
 
 ## 使用此技能的场景
 
 - Working on data-driven feature development tasks or workflows
-- Needing guidance, best practices, or checklists for data-driven feature development
+- Needing guidance, 最佳实践, or checklists for data-driven feature development
 
 ## 不要使用此技能的场景
 
@@ -25,9 +25,9 @@ Build features guided by data insights, A/B testing, and continuous measurement 
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## Phase 1: Data Analysis and Hypothesis Formation
 
@@ -53,19 +53,19 @@ Build features guided by data insights, A/B testing, and continuous measurement 
 ### 4. Feature 架构 Planning
 - Use Task tool with subagent_type="data-engineering::backend-architect"
 - 上下文: Business requirements and experiment design
-- Prompt: "Design feature architecture for: $ARGUMENTS with A/B testing capability. Include feature flag integration (LaunchDarkly, Split.io, or Optimizely), gradual rollout strategy, circuit breakers for safety, and clean separation between control and treatment logic. Ensure architecture supports real-time configuration updates."
-- Output: 架构 diagrams, feature flag schema, rollout strategy
+- Prompt: "Design feature architecture for: $ARGUMENTS with A/B testing capability. Include feature flag 集成 (LaunchDarkly, Split.io, or Optimizely), gradual rollout strategy, circuit breakers for safety, and clean separation between control and treatment logic. Ensure architecture supports real-time 配置 updates."
+- Output: 架构 diagrams, feature flag 架构, rollout strategy
 
 ### 5. Analytics Instrumentation Design
 - Use Task tool with subagent_type="data-engineering::data-engineer"
 - 上下文: Feature architecture and success metrics
-- Prompt: "Design comprehensive analytics instrumentation for: $ARGUMENTS. Define event schemas for user interactions, specify properties for segmentation and analysis, design funnel tracking and conversion events, plan cohort analysis capabilities. Implement using modern SDKs (Segment, Amplitude, Mixpanel) with proper event taxonomy."
-- Output: Event tracking plan, analytics schema, instrumentation guide
+- Prompt: "Design comprehensive analytics instrumentation for: $ARGUMENTS. Define event schemas for user interactions, specify properties for segmentation and analysis, design funnel tracking and conversion events, plan cohort analysis 能力. Implement using modern SDKs (Segment, Amplitude, Mixpanel) with proper event taxonomy."
+- Output: Event tracking plan, analytics 架构, instrumentation guide
 
 ### 6. Data Pipeline 架构
 - Use Task tool with subagent_type="data-engineering::data-engineer"
 - 上下文: Analytics requirements and existing data infrastructure
-- Prompt: "Design data pipelines for feature: $ARGUMENTS. Include real-time streaming for live metrics (Kafka, Kinesis), batch processing for detailed analysis, data warehouse integration (Snowflake, BigQuery), and feature store for ML if applicable. Ensure proper data governance and GDPR compliance."
+- Prompt: "Design data pipelines for feature: $ARGUMENTS. Include real-time streaming for live metrics (Kafka, Kinesis), batch processing for detailed analysis, data warehouse 集成 (Snowflake, BigQuery), and feature store for ML if applicable. Ensure proper data governance and GDPR compliance."
 - Output: Pipeline architecture, ETL/ELT specifications, data flow diagrams
 
 ## Phase 3: Implementation with Instrumentation
@@ -74,39 +74,39 @@ Build features guided by data insights, A/B testing, and continuous measurement 
 - Use Task tool with subagent_type="backend-development::backend-architect"
 - 上下文: 架构 design and feature requirements
 - Prompt: "Implement backend for feature: $ARGUMENTS with full instrumentation. Include feature flag checks at decision points, comprehensive event tracking for all user actions, performance metrics collection, error tracking and monitoring. Implement proper logging for experiment analysis."
-- Output: Backend code with analytics, feature flag integration, monitoring setup
+- Output: Backend code with analytics, feature flag 集成, monitoring 设置
 
 ### 8. Frontend Implementation
 - Use Task tool with subagent_type="frontend-mobile-development::frontend-developer"
 - 上下文: Backend APIs and analytics requirements
-- Prompt: "Build frontend for feature: $ARGUMENTS with analytics tracking. Implement event tracking for all user interactions, session recording integration if applicable, performance metrics (Core Web Vitals), and proper error boundaries. Ensure consistent experience between control and treatment groups."
+- Prompt: "Build frontend for feature: $ARGUMENTS with analytics tracking. Implement event tracking for all user interactions, 会话 recording 集成 if applicable, performance metrics (Core Web Vitals), and proper error boundaries. Ensure consistent experience between control and treatment groups."
 - Output: Frontend code with analytics, A/B test variants, performance monitoring
 
 ### 9. ML Model 集成 (if applicable)
 - Use Task tool with subagent_type="machine-learning-ops::ml-engineer"
 - 上下文: Feature requirements and data pipelines
 - Prompt: "Integrate ML models for feature: $ARGUMENTS if needed. Implement online inference with low latency, A/B testing between model versions, model performance tracking, and automatic fallback mechanisms. Set up model monitoring for drift detection."
-- Output: ML pipeline, model serving infrastructure, monitoring setup
+- Output: ML pipeline, model serving infrastructure, monitoring 设置
 
 ## Phase 4: Pre-Launch Validation
 
 ### 10. Analytics Validation
 - Use Task tool with subagent_type="data-engineering::data-engineer"
 - 上下文: Implemented tracking and event schemas
-- Prompt: "Validate analytics implementation for: $ARGUMENTS. Test all event tracking in staging, verify data quality and completeness, validate funnel definitions, ensure proper user identification and session tracking. Run end-to-end tests for data pipeline."
+- Prompt: "Validate analytics implementation for: $ARGUMENTS. Test all event tracking in staging, verify data quality and completeness, validate funnel definitions, ensure proper user identification and 会话 tracking. Run end-to-end tests for data pipeline."
 - Output: Validation report, data quality metrics, tracking coverage analysis
 
 ### 11. Experiment 设置
-- Use Task tool with subagent_type="cloud-infrastructure::deployment-engineer"
+- Use Task tool with subagent_type="cloud-infrastructure::部署-engineer"
 - 上下文: Feature flags and experiment design
 - Prompt: "Configure experiment infrastructure for: $ARGUMENTS. Set up feature flags with proper targeting rules, configure traffic allocation (start with 5-10%), implement kill switches, set up monitoring alerts for key metrics. Test randomization and assignment logic."
-- Output: Experiment configuration, monitoring dashboards, rollout plan
+- Output: Experiment 配置, monitoring dashboards, rollout plan
 
 ## Phase 5: Launch and Experimentation
 
 ### 12. Gradual Rollout
-- Use Task tool with subagent_type="cloud-infrastructure::deployment-engineer"
-- 上下文: Experiment configuration and monitoring setup
+- Use Task tool with subagent_type="cloud-infrastructure::部署-engineer"
+- 上下文: Experiment 配置 and monitoring 设置
 - Prompt: "Execute gradual rollout for feature: $ARGUMENTS. Start with internal dogfooding, then beta users (1-5%), gradually increase to target traffic. Monitor error rates, performance metrics, and early indicators. Implement automated rollback on anomalies."
 - Output: Rollout execution, monitoring alerts, health metrics
 
@@ -165,7 +165,7 @@ monitoring:
 
 ## Success Criteria
 
-- **Data Coverage**: 100% of user interactions tracked with proper event schema
+- **Data Coverage**: 100% of user interactions tracked with proper event 架构
 - **Experiment Validity**: Proper randomization, sufficient statistical power, no sample ratio mismatch
 - **Statistical Rigor**: Clear significance testing, proper confidence intervals, multiple testing corrections
 - **Business Impact**: Measurable improvement in target metrics without degrading guardrail metrics
@@ -182,7 +182,7 @@ monitoring:
 - Statistical rigor balanced with business practicality and speed to market
 - Continuous learning loop feeds back into next feature development cycle
 
-Feature to develop with data-driven approach: $ARGUMENTS
+Feature to develop with data-driven 方法: $ARGUMENTS
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

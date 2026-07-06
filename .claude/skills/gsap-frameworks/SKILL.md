@@ -18,7 +18,7 @@ od:
 
 > Curated from GreenSock's official GSAP skills: https://github.com/greensock/gsap-skills
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 Apply when writing or reviewing GSAP code in Vue (or Nuxt), Svelte (or SvelteKit), or other component frameworks that use a lifecycle (mounted/unmounted). For **React** specifically, use **gsap-react** (useGSAP hook, gsap.context()).
 
@@ -32,7 +32,7 @@ Apply when writing or reviewing GSAP code in Vue (or Nuxt), Svelte (or SvelteKit
 
 ## Vue 3 (Composition API)
 
-For a runnable Vite + Vue 3 project demonstrating these patterns, see the upstream example at https://github.com/greensock/gsap-skills/tree/main/examples/vue.
+For a runnable Vite + Vue 3 project demonstrating these patterns, see the upstream example at https://github.com/greensock/gsap-skills/tree/main/示例/vue.
 
 Use **onMounted** to run GSAP after the component is in the DOM. Use **onUnmounted** to clean up.
 
@@ -43,7 +43,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger); // once per app, e.g. in main.js
 
 export default {
-  setup() {
+  设置() {
     const container = ref(null);
     let ctx;
 
@@ -64,15 +64,15 @@ export default {
 };
 ```
 
-- ✅ **gsap.context(scope)** — pass the container ref (e.g. `container.value`) as the second argument so selectors like `.item` are scoped to that root. All animations and ScrollTriggers created inside the callback are tracked and reverted when **ctx.revert()** is called.
+- ✅ **gsap.context(scope)** — pass the container ref (e.g. `container.value`) as the second 参数 so selectors like `.item` are scoped to that root. All animations and ScrollTriggers created inside the 回调 are tracked and reverted when **ctx.revert()** is called.
 - ✅ **onUnmounted** — always call **ctx.revert()** so tweens and ScrollTriggers are killed and inline styles reverted.
 
-## Vue 3 (script setup)
+## Vue 3 (script 设置)
 
-Same idea with `<script setup>` and refs:
+Same idea with `<script 设置>` and refs:
 
 ```javascript
-<script setup>
+<script 设置>
 import { onMounted, onUnmounted, ref } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -103,7 +103,7 @@ onUnmounted(() => {
 
 ## Nuxt 4
 
-> For a runnable Nuxt 4 project with plugin registration, lazy loading, and SSR-safe patterns, see https://github.com/greensock/gsap-skills/tree/main/examples/nuxt.
+> For a runnable Nuxt 4 project with plugin registration, lazy loading, and SSR-safe patterns, see https://github.com/greensock/gsap-skills/tree/main/示例/nuxt.
 
 Use a **reusable composable** to register GSAP Plugins and also to lazy load Plugins that are not extensively used in your application:
 
@@ -216,7 +216,7 @@ Use **onMount** to run GSAP after the DOM is ready. Use the **returned cleanup f
 
 ## Scoping Selectors
 
-Do not use global selectors that can match elements outside the current component. Always pass the **scope** (container element or ref) as the second argument to **gsap.context(callback, scope)** so that any selector run inside the callback is limited to that subtree.
+Do not use global selectors that can match elements outside the current component. Always pass the **scope** (container element or ref) as the second 参数 to **gsap.context(回调, scope)** so that any selector run inside the 回调 is limited to that subtree.
 
 - ✅ **gsap.context(() => { gsap.to(".box", ...) }, containerRef)** — `.box` is only searched inside `containerRef`.
 - ❌ Running **gsap.to(".box", ...)** without a context scope in a component can affect other instances or the rest of the page.
@@ -225,7 +225,7 @@ Do not use global selectors that can match elements outside the current componen
 
 ScrollTrigger instances are created when you use the `scrollTrigger` config on a tween/timeline or **ScrollTrigger.create()**. They are **included** in **gsap.context()** and reverted when you call **ctx.revert()**. So:
 
-- Create ScrollTriggers inside the same **gsap.context()** callback you use for tweens.
+- Create ScrollTriggers inside the same **gsap.context()** 回调 you use for tweens.
 - Call **ScrollTrigger.refresh()** after layout changes (e.g. after data loads) that affect trigger positions; in Vue/Svelte that often means after the DOM updates (e.g. nextTick in Vue, tick in Svelte, or after async content load).
 
 ## When to Create vs Kill
@@ -235,12 +235,12 @@ ScrollTrigger instances are created when you use the `scrollTrigger` config on a
 | **Mounted**           | Create tweens and ScrollTriggers inside **gsap.context(scope)**.                                                  |
 | **Unmount / Destroy** | Call **ctx.revert()** so all animations and ScrollTriggers in that context are killed and inline styles reverted. |
 
-Do not create GSAP animations in the component’s setup or in a synchronous top-level script that runs before the root element exists. Wait for **onMounted** / **onMount** (or equivalent) so the container ref is in the DOM.
+Do not create GSAP animations in the component’s 设置 or in a synchronous top-level script that runs before the root element exists. Wait for **onMounted** / **onMount** (or equivalent) so the container ref is in the DOM.
 
 ## Do Not
 
-- ❌ Create tweens or ScrollTriggers before the component is mounted (e.g. in setup without onMounted); the DOM nodes may not exist yet.
-- ❌ Use selector strings without a **scope** (pass the container to gsap.context() as the second argument) so selectors don’t match elements outside the component.
+- ❌ Create tweens or ScrollTriggers before the component is mounted (e.g. in 设置 without onMounted); the DOM nodes may not exist yet.
+- ❌ Use selector strings without a **scope** (pass the container to gsap.context() as the second 参数) so selectors don’t match elements outside the component.
 - ❌ Skip cleanup; always call **ctx.revert()** in onUnmounted / onMount’s return so animations and ScrollTriggers are killed when the component is destroyed.
 - ❌ Register plugins inside a component body that runs every render (it doesn't hurt anything, it's just wasteful); register once at app level.
 

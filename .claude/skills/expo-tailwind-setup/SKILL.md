@@ -1,5 +1,5 @@
 ---
-name: expo-tailwind-setup
+name: expo-tailwind-设置
 description: "Expo Tailwind CSS 配置"
 risk: safe
 source: community

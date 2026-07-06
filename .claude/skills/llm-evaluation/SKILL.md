@@ -20,7 +20,7 @@ date_added: "2026-02-27"
 - 明确目标、约束和所需输入。
 - 应用相关最佳实践并验证结果。
 - 提供可操作的步骤和验证。
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 使用此技能的场景
 
@@ -170,16 +170,16 @@ def calculate_bertscore(references, hypotheses):
 
 ### 自定义指标
 ```python
-def calculate_groundedness(response, context):
-    """Check if response is grounded in provided context."""
+def calculate_groundedness(响应, context):
+    """Check if 响应 is grounded in provided context."""
     # Use NLI model to check entailment
     from transformers import pipeline
 
     nli = pipeline("text-classification", model="microsoft/deberta-large-mnli")
 
-    result = nli(f"{context} [SEP] {response}")[0]
+    result = nli(f"{context} [SEP] {响应}")[0]
 
-    # Return confidence that response is entailed by context
+    # Return confidence that 响应 is entailed by context
     return result['score'] if result['label'] == 'ENTAILMENT' else 0.0
 
 def calculate_toxicity(text):
@@ -200,15 +200,15 @@ def calculate_factuality(claim, knowledge_base):
 
 ### 单输出评估
 ```python
-def llm_judge_quality(response, question):
-    """Use GPT-5 to judge response quality."""
-    prompt = f"""Rate the following response on a scale of 1-10 for:
+def llm_judge_quality(响应, question):
+    """Use GPT-5 to judge 响应 quality."""
+    prompt = f"""Rate the following 响应 on a scale of 1-10 for:
 1. Accuracy (factually correct)
 2. Helpfulness (answers the question)
 3. Clarity (well-written and understandable)
 
 Question: {question}
-Response: {response}
+响应: {响应}
 
 Provide ratings in JSON format:
 {{
@@ -236,11 +236,11 @@ def compare_responses(question, response_a, response_b):
 
 Question: {question}
 
-Response A: {response_a}
+响应 A: {response_a}
 
-Response B: {response_b}
+响应 B: {response_b}
 
-Which response is better and why? Consider accuracy, helpfulness, and clarity.
+Which 响应 is better and why? Consider accuracy, helpfulness, and clarity.
 
 Answer with JSON:
 {{
@@ -266,8 +266,8 @@ Answer with JSON:
 class AnnotationTask:
     """Structure for human annotation task."""
 
-    def __init__(self, response, question, context=None):
-        self.response = response
+    def __init__(self, 响应, question, context=None):
+        self.响应 = 响应
         self.question = question
         self.context = context
 
@@ -275,11 +275,11 @@ class AnnotationTask:
         return {
             "question": self.question,
             "context": self.context,
-            "response": self.response,
+            "响应": self.响应,
             "ratings": {
                 "accuracy": {
                     "scale": "1-5",
-                    "description": "Is the response factually correct?"
+                    "description": "Is the 响应 factually correct?"
                 },
                 "relevance": {
                     "scale": "1-5",
@@ -458,10 +458,10 @@ class BenchmarkRunner:
 ## 资源
 
 - **references/metrics.md**: Comprehensive metric guide
-- **references/human-evaluation.md**: Annotation best practices
+- **references/human-evaluation.md**: Annotation 最佳实践
 - **references/benchmarking.md**: Standard benchmarks
 - **references/a-b-testing.md**: Statistical testing guide
-- **references/regression-testing.md**: CI/CD integration
+- **references/regression-testing.md**: CI/CD 集成
 - **assets/evaluation-framework.py**: Complete evaluation harness
 - **assets/benchmark-dataset.jsonl**: Example datasets
 - **scripts/evaluate-model.py**: Automated evaluation runner
@@ -469,7 +469,7 @@ class BenchmarkRunner:
 ## 最佳实践
 
 1. **Multiple Metrics**: Use diverse metrics for comprehensive view
-2. **Representative Data**: Test on real-world, diverse examples
+2. **Representative Data**: Test on real-world, diverse 示例
 3. **Baselines**: 始终 compare against baseline performance
 4. **Statistical Rigor**: Use proper statistical tests for comparisons
 5. **Continuous Evaluation**: Integrate into CI/CD pipeline
@@ -480,7 +480,7 @@ class BenchmarkRunner:
 ## 常见陷阱
 
 - **Single Metric Obsession**: Optimizing for one metric at the expense of others
-- **Small Sample Size**: Drawing conclusions from too few examples
+- **Small Sample Size**: Drawing conclusions from too few 示例
 - **Data Contamination**: Testing on training data
 - **Ignoring Variance**: Not accounting for statistical uncertainty
 - **Metric Mismatch**: Using metrics not aligned with business goals

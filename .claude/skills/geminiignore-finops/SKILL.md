@@ -1,6 +1,6 @@
 ---
 name: geminiignore-finops
-description: "配置和优化 .geminiignore 文件以提高 AI 上下文窗口效率和降低 Token 成本（FinOps）。"
+description: "配置和优化 .geminiignore 文件以提高 AI 上下文窗口效率和降低 令牌 成本（FinOps）。"
 category: context-optimization
 risk: safe
 source: community
@@ -8,8 +8,8 @@ source_repo: iradoweck/antigravity-awesome-skills
 source_type: community
 date_added: "2026-05-25"
 author: iradoweck
-tags: [finops, context-management, token-optimization, geminiignore]
-tools: [gemini, claude, cursor]
+tags: [finops, context-management, 令牌-optimization, geminiignore]
+tools: [gemini, claude, 游标]
 license: "MIT"
 license_source: "https://github.com/iradoweck/antigravity-awesome-skills/blob/main/LICENSE"
 ---
@@ -18,9 +18,9 @@ license_source: "https://github.com/iradoweck/antigravity-awesome-skills/blob/ma
 
 ## 概述
 
-A skill to construct, refine, and maintain high-performance `.geminiignore` files across diverse tech stacks. By filtering out machine-generated code, heavy logs, package locks, and binary assets, this skill optimizes the AI agent's context window, accelerates processing speed, and reduces token consumption costs (FinOps).
+A skill to construct, refine, and maintain high-performance `.geminiignore` files across diverse tech stacks. By filtering out machine-generated code, heavy logs, package locks, and binary assets, this skill optimizes the AI agent's context window, accelerates processing speed, and reduces 令牌 consumption costs (FinOps).
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when initializing a new repository or workspace for pair-programming with AI agents.
 - Use when the AI context window is reaching its limits or when billing optimization (FinOps) is a priority.
@@ -35,7 +35,7 @@ Detect the languages, frameworks, and dependency managers present in the project
 Create a `.geminiignore` file at the root of the active workspace. If one already exists, review it to add missing categories.
 
 ### 步骤 3: Implement the 7 Core Rules
-Add rules divided into the following categories to filter out unnecessary machine noise while keeping human-written code visible:
+Add rules divided into the following categories to 过滤器 out unnecessary machine noise while keeping human-written code visible:
 
 1. **System & Editor Noise**: Block OS temp files (`.DS_Store`, `Thumbs.db`) and user-specific IDE caches (`.idea/`, `.vscode/*`, Xcode user data).
 2. **Dependency Folders & Lock Files**: Ignore third-party package directories (`node_modules/`, `vendor/`) and giant machine-generated lock files (`package-lock.json`, `yarn.lock`, `Cargo.lock`, `composer.lock`).
@@ -46,13 +46,13 @@ Add rules divided into the following categories to filter out unnecessary machin
 7. **Compiled Binaries & Mobile Builds**: Block mobile package files (`*.apk`, `*.ipa`) and compiled binaries (`*.class`, `*.pyc`, `*.dll`).
 
 ### 步骤 4: Validate Exclusions
-Verify that the AI can still see critical configuration blueprints (like `.env.example`, `package.json`, `composer.json`, `pyproject.toml`) but ignores the actual `.env` files and compilation artifacts.
+Verify that the AI can still see critical 配置 blueprints (like `.env.example`, `package.json`, `composer.json`, `pyproject.toml`) but ignores the actual `.env` files and compilation artifacts.
 
 ## 示例
 
 ### Example 1: Standard Universal `.geminiignore` Template
 
-Here is a recommended baseline configuration for a multi-language project:
+Here is a recommended baseline 配置 for a multi-language project:
 
 ```ini
 # ==============================================================================
@@ -159,7 +159,7 @@ __pycache__/
 
 - ✅ **Ignore dependency lock files**: Standard lock files (e.g., `package-lock.json`, `yarn.lock`) contain thousands of lines of redundant package resolution trees. Ignoring them is the single largest FinOps win.
 - ✅ **Keep configurations visible**: Ensure manifests like `package.json`, `composer.json`, `Cargo.toml`, and `pyproject.toml` are NEVER ignored, as the AI needs them to understand dependencies.
-- ✅ **Whitelist config examples**: Use rules like `!.env.example` alongside `.env` ignores so the AI understands configuration structure without exposing credentials.
+- ✅ **Whitelist config 示例**: Use rules like `!.env.example` alongside `.env` ignores so the AI understands 配置 structure without exposing credentials.
 - ❌ **Do not ignore source code**: Avoid overly broad folder patterns like `lib/` or `app/` if they contain primary source code. Be specific (e.g., block `vendor/bundle/` but not your actual code).
 
 ## 局限性

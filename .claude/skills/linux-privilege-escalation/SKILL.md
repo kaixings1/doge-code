@@ -21,7 +21,7 @@ date_added: "2026-02-27"
 - 目标 Linux 系统的低权限 shell 访问
 - 执行命令的能力（交互式或半交互式 shell）
 - 用于反向 shell 连接的网络访问（如果需要）
-- 用于托管 payload 和接收 shell 的攻击机
+- 用于托管 载荷 和接收 shell 的攻击机
 
 ### 技术要求
 - 了解 Linux 文件系统权限和所有权
@@ -313,7 +313,7 @@ openssl passwd -1 -salt new newpassword
 newuser:$1$new$p7ptkEKU1HnaHpRtzNizS1:0:0:root:/root:/bin/bash
 ```
 
-### 阶段 6：能力（Capabilities）利用
+### 阶段 6：能力（能力）利用
 
 #### 枚举能力
 
@@ -397,6 +397,14 @@ gcc /tmp/nfs/shell.c -o /tmp/nfs/shell && chmod +s /tmp/nfs/shell
 ```
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 ### 枚举命令汇总
 | 目的 | 命令 |
@@ -505,7 +513,7 @@ uid=1000(user) gid=1000(user) euid=0(root)
 | 问题 | 解决方案 |
 |-------|-----------|
 | 漏洞利用编译失败 | 检查 gcc：`which gcc`；在攻击机上为相同架构编译；使用 `gcc -static` |
-| 反向 shell 无法连接 | 检查防火墙；尝试端口 443/80；使用分段 payload；检查出口过滤 |
+| 反向 shell 无法连接 | 检查防火墙；尝试端口 443/80；使用分段 载荷；检查出口过滤 |
 | SUID 二进制不可利用 | 验证版本是否匹配 GTFOBins；检查 AppArmor/SELinux；有些二进制会丢弃权限 |
 | Cron 作业未执行 | 验证 cron 运行：`service cron status`；检查 +x 权限；验证 crontab 中的 PATH |
 

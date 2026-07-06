@@ -103,18 +103,18 @@ class MarketService {
 // Request/response processing pipeline
 export function withAuth(handler: NextApiHandler): NextApiHandler {
   return async (req, res) => {
-    const token = req.headers.authorization?.replace('Bearer ', '')
+    const 令牌 = req.headers.authorization?.replace('Bearer ', '')
 
-    if (!token) {
+    if (!令牌) {
       return res.status(401).json({ error: 'Unauthorized' })
     }
 
     try {
-      const user = await verifyToken(token)
+      const user = await verifyToken(令牌)
       req.user = user
       return handler(req, res)
     } catch (error) {
-      return res.status(401).json({ error: 'Invalid token' })
+      return res.status(401).json({ error: 'Invalid 令牌' })
     }
   }
 }
@@ -344,7 +344,7 @@ const data = await fetchWithRetry(() => fetchFromAPI())
 
 ## Authentication & Authorization
 
-### JWT Token Validation
+### JWT 令牌 Validation
 
 ```typescript
 import jwt from 'jsonwebtoken'
@@ -355,23 +355,23 @@ interface JWTPayload {
   role: 'admin' | 'user'
 }
 
-export function verifyToken(token: string): JWTPayload {
+export function verifyToken(令牌: string): JWTPayload {
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload
+    const payload = jwt.verify(令牌, process.env.JWT_SECRET!) as JWTPayload
     return payload
   } catch (error) {
-    throw new ApiError(401, 'Invalid token')
+    throw new ApiError(401, 'Invalid 令牌')
   }
 }
 
 export async function requireAuth(request: Request) {
-  const token = request.headers.get('authorization')?.replace('Bearer ', '')
+  const 令牌 = request.headers.get('authorization')?.replace('Bearer ', '')
 
-  if (!token) {
-    throw new ApiError(401, 'Missing authorization token')
+  if (!令牌) {
+    throw new ApiError(401, 'Missing authorization 令牌')
   }
 
-  return verifyToken(token)
+  return verifyToken(令牌)
 }
 
 // Usage in API route

@@ -47,6 +47,6 @@ This Skill is not needed in the following situations:
 
 ## Rule Categories by Priority
 
-*For human/AI reference: follow priority 1→10 to decide which rule category to focus on first; use `--domain <Domain>` to query details when needed. Scripts do not read this table.*
+*For human/AI reference: follow priority 1→10 to decide which rule category to focus on first; use `--domain <Domain>` to 查询 details when needed. Scripts do not read this table.*
 
 | 优先级 | 类别 | 影响 | 领域 | 关键检查（必须有） | 反模式（避免） |

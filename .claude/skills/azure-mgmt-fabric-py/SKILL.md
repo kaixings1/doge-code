@@ -8,7 +8,7 @@ date_added: '2026-02-27'
 
 # Azure Fabric Management SDK for Python
 
-Manage Microsoft Fabric capacities and resources programmatically.
+Manage Microsoft Fabric capacities and 资源 programmatically.
 
 ## 安装
 
@@ -199,7 +199,7 @@ for sku in skus:
 
 ## Client Operations
 
-| Operation | Method |
+| 操作 | Method |
 |-----------|--------|
 | `client.fabric_capacities` | Capacity CRUD operations |
 | `client.operations` | List available operations |
@@ -229,7 +229,7 @@ for sku in skus:
 | `Provisioning` | Being created |
 | `Updating` | Being modified |
 | `Deleting` | Being removed |
-| `Failed` | Operation failed |
+| `Failed` | 操作 failed |
 
 ## Long-Running Operations
 
@@ -259,7 +259,7 @@ capacity = poller.result()
 8. **Monitor capacity usage** via Azure Monitor metrics
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。
