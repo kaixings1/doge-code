@@ -28,7 +28,7 @@ date_added: "2026-06-19"
 
 ## 授权
 
-以下所有端点都需要在路径中包含 `Authorization: Bearer $MAILTRAP_API_TOKEN` 和 `$MAILTRAP_ACCOUNT_ID`。从 `GET https://mailtrap.io/api/accounts` 解析 `$MAILTRAP_ACCOUNT_ID`，并将令牌存储在环境变量或机密管理器中。
+以下所有端点都需要在路径中包含 `授权: Bearer $MAILTRAP_API_TOKEN` 和 `$MAILTRAP_ACCOUNT_ID`。从 `GET https://mailtrap.io/api/accounts` 解析 `$MAILTRAP_ACCOUNT_ID`，并将令牌存储在环境变量或机密管理器中。
 
 ## 端点（替换占位符）
 

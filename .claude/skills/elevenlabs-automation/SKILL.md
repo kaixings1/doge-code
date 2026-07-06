@@ -17,7 +17,7 @@ Automate your ElevenLabs text-to-speech workflows -- convert text to natural spe
 ## 设置
 
 1. Add the Composio MCP server to your client: `https://rube.app/mcp`
-2. Connect your ElevenLabs account when prompted (API key authentication)
+2. Connect your ElevenLabs account when prompted (API key 认证)
 3. Start using the workflows below
 
 ---
@@ -80,7 +80,7 @@ Inputs: (none)
 
 ### 5. List Available TTS Models
 
-Use `ELEVENLABS_GET_MODELS` to discover compatible models and filter by `can_do_text_to_speech: true`.
+Use `ELEVENLABS_GET_MODELS` to discover compatible models and 过滤器 by `can_do_text_to_speech: true`.
 
 ```
 Tool: ELEVENLABS_GET_MODELS
@@ -105,24 +105,32 @@ Tool: ELEVENLABS_GET_AUDIO_FROM_HISTORY_ITEM
 
 | Pitfall | Detail |
 |---------|--------|
-| Text length limits | Most models cap at ~10,000-20,000 chars per request. Oversized input returns HTTP 400. Split long text into chunks (~5000 chars) and generate per chunk. |
+| Text length limits | Most models cap at ~10,000-20,000 chars per 请求. Oversized input returns HTTP 400. Split long text into chunks (~5000 chars) and generate per chunk. |
 | Output is a presigned URL | `ELEVENLABS_TEXT_TO_SPEECH` returns `data.file.s3url` with a ~1 hour expiry (X-Amz-Expires=3600). Download the audio file promptly. |
 | Quota and credit errors | HTTP 401 with `quota_exceeded` or HTTP 402 `payment_required` means insufficient credits or tier restrictions. Check with `ELEVENLABS_GET_USER_SUBSCRIPTION_INFO` before bulk jobs. |
 | Voice permissions | HTTP 401 with `missing_permissions` means the API key lacks `voices_read` scope. Verify key permissions. |
-| Model compatibility | Not all models support TTS. Use `ELEVENLABS_GET_MODELS` and filter by `can_do_text_to_speech: true`. The `optimize_streaming_latency` parameter is NOT supported with `eleven_v3`. |
-| Large voice list truncation | `ELEVENLABS_GET_VOICES` may return a large list. Select from the full `data.voices[]` payload -- previews may appear truncated. |
+| Model compatibility | Not all models support TTS. Use `ELEVENLABS_GET_MODELS` and 过滤器 by `can_do_text_to_speech: true`. The `optimize_streaming_latency` 参数 is NOT supported with `eleven_v3`. |
+| Large voice list truncation | `ELEVENLABS_GET_VOICES` may return a large list. Select from the full `data.voices[]` 载荷 -- previews may appear truncated. |
 
 ---
 
 ## 快速参考
 
-| Tool Slug | Description |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
+| Tool 标识符 | Description |
 |-----------|-------------|
 | `ELEVENLABS_TEXT_TO_SPEECH` | Convert text to speech, returns downloadable audio file |
 | `ELEVENLABS_GET_VOICES` | List all available voices with attributes |
 | `ELEVENLABS_GET_VOICE` | Get detailed info for a specific voice |
 | `ELEVENLABS_GET_USER_SUBSCRIPTION_INFO` | Check subscription plan and remaining credits |
-| `ELEVENLABS_GET_MODELS` | List available TTS models and capabilities |
+| `ELEVENLABS_GET_MODELS` | List available TTS models and 能力 |
 | `ELEVENLABS_TEXT_TO_SPEECH_STREAM` | Stream audio for low-latency delivery |
 | `ELEVENLABS_GET_AUDIO_FROM_HISTORY_ITEM` | Re-download audio from generation history |
 

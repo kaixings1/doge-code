@@ -22,7 +22,7 @@ date_added: "2026-03-07"
 - Implementing "Easter Eggs" or personality-driven design choices to differentiate the product.
 - Looking to break away from generic, template-driven development.
 
-## Execution Workflow
+## Execution 工作流
 
 1. **Identify Opportunity**: Target the "boring" or "standard" parts of the interface (e.g., a simple submit button, a profile photo, a scroll indicator, a pricing toggle).
 2. **Research Spells**: Browse Design Spells for highly creative patterns (e.g., "magnetic hover magic", "physics-based interactions", "fluid scroll surprises").

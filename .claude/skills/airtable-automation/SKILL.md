@@ -6,19 +6,19 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# 通过 Rube MCP 实现 Airtable 自动化
+# Airtable 自动化
 
 Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 
 ## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
+- Rube MCP 必须已连接 (RUBE_SEARCH_TOOLS available)
 - Active Airtable connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `airtable`
 - Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
 ## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the 端点 and it works.
 
 1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
 2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `airtable`
@@ -29,12 +29,12 @@ Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 
 ### 1. Create and Manage Records
 
-**When to use**: User wants to create, read, update, or delete records
+**使用场景**: User wants to create, read, update, or delete records
 
 **Tool sequence**:
 1. `AIRTABLE_LIST_BASES` - Discover available bases [Prerequisite]
 2. `AIRTABLE_GET_BASE_SCHEMA` - Inspect table structure [Prerequisite]
-3. `AIRTABLE_LIST_RECORDS` - List/filter records [Optional]
+3. `AIRTABLE_LIST_RECORDS` - List/过滤器 records [Optional]
 4. `AIRTABLE_CREATE_RECORD` / `AIRTABLE_CREATE_RECORDS` - Create records [Optional]
 5. `AIRTABLE_UPDATE_RECORD` / `AIRTABLE_UPDATE_MULTIPLE_RECORDS` - Update records [Optional]
 6. `AIRTABLE_DELETE_RECORD` / `AIRTABLE_DELETE_MULTIPLE_RECORDS` - Delete records [Optional]
@@ -49,18 +49,18 @@ Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 
 **Pitfalls**:
 - pageSize capped at 100; uses offset pagination; changing filters between pages can skip/duplicate rows
-- CREATE_RECORDS hard limit of 10 records per request; chunk larger imports
-- Field names are CASE-SENSITIVE and must match schema exactly
+- CREATE_RECORDS hard limit of 10 records per 请求; chunk larger imports
+- Field names are CASE-SENSITIVE and must match 架构 exactly
 - 422 UNKNOWN_FIELD_NAME when field names are wrong; 403 for permission issues
 - INVALID_MULTIPLE_CHOICE_OPTIONS may require typecast=true
 
-### 2. Search and Filter Records
+### 2. Search and 过滤器 Records
 
-**When to use**: User wants to find specific records using formulas
+**使用场景**: User wants to find specific records using formulas
 
 **Tool sequence**:
 1. `AIRTABLE_GET_BASE_SCHEMA` - Verify field names and types [Prerequisite]
-2. `AIRTABLE_LIST_RECORDS` - Query with filterByFormula [Required]
+2. `AIRTABLE_LIST_RECORDS` - 查询 with filterByFormula [Required]
 3. `AIRTABLE_GET_RECORD` - Get full record details [Optional]
 
 **Key parameters**:
@@ -68,20 +68,20 @@ Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 - `sort`: Array of sort objects
 - `fields`: Array of field names to return
 - `maxRecords`: Max total records across all pages
-- `offset`: Pagination cursor from previous response
+- `offset`: Pagination 游标 from previous 响应
 
 **Pitfalls**:
-- Field names in formulas must be wrapped in `{}` and match schema exactly
+- Field names in formulas must be wrapped in `{}` and match 架构 exactly
 - String values must be quoted: `{Status}='Active'` not `{Status}=Active`
 - 422 INVALID_FILTER_BY_FORMULA for bad syntax or non-existent fields
 - Airtable rate limit: ~5 requests/second per base; handle 429 with Retry-After
 
-### 3. Manage Fields and Schema
+### 3. Manage Fields and 架构
 
-**When to use**: User wants to create or modify table fields
+**使用场景**: User wants to create or modify table fields
 
 **Tool sequence**:
-1. `AIRTABLE_GET_BASE_SCHEMA` - Inspect current schema [Prerequisite]
+1. `AIRTABLE_GET_BASE_SCHEMA` - Inspect current 架构 [Prerequisite]
 2. `AIRTABLE_CREATE_FIELD` - Create a new field [Optional]
 3. `AIRTABLE_UPDATE_FIELD` - Rename/describe a field [Optional]
 4. `AIRTABLE_UPDATE_TABLE` - Update table metadata [Optional]
@@ -99,7 +99,7 @@ Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 
 ### 4. Manage Comments
 
-**When to use**: User wants to view or add comments on records
+**使用场景**: User wants to view or add comments on records
 
 **Tool sequence**:
 1. `AIRTABLE_LIST_COMMENTS` - List comments on a record [Required]
@@ -134,8 +134,8 @@ Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 ### Pagination
 
 - Set `pageSize` (max 100)
-- Check response for `offset` string
-- Pass `offset` to next request unchanged
+- Check 响应 for `offset` string
+- Pass `offset` to next 请求 unchanged
 - Keep filters/sorts/view stable between pages
 
 ## 已知陷阱
@@ -147,10 +147,17 @@ Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 - Field IDs: `fldXXXXXXXXXXXXXX` (17 chars)
 
 **Batch Limits**:
-- CREATE_RECORDS: max 10 per request
-- UPDATE_MULTIPLE_RECORDS: max 10 per request
-- DELETE_MULTIPLE_RECORDS: max 10 per request
+- CREATE_RECORDS: max 10 per 请求
+- UPDATE_MULTIPLE_RECORDS: max 10 per 请求
+- DELETE_MULTIPLE_RECORDS: max 10 per 请求
 
 ## 快速参考
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
-| Task | Tool Slug | Key Params |
+| Task | Tool 标识符 | Key Params |

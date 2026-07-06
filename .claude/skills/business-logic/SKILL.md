@@ -66,13 +66,13 @@ Multi-step processes have states. Vulnerabilities arise from:
 | IDOR | Direct object reference without ownership check | Access other users' data |
 | Horizontal Privilege Escalation | Role check missing on specific action | Act as peer user |
 | Vertical Privilege Escalation | Admin function callable by regular user | Gain admin access |
-| Function-Level Access Control | Endpoint has no auth check | Bypass authentication |
+| Function-Level Access Control | 端点 has no auth check | Bypass authentication |
 
-### Workflow Bypass
+### 工作流 Bypass
 
 | Flaw | Pattern | Impact |
 |------|---------|--------|
-| Step Skipping | No enforcement of workflow sequence | Bypass verification steps |
+| Step Skipping | No enforcement of 工作流 sequence | Bypass verification steps |
 | State Manipulation | Direct modification of state parameters | Change order/payment status |
 | Race Conditions | Non-atomic check-then-use | Double-spend, over-redeem |
 | Replay Attacks | Action can be repeated without limit | Free resources, repeated discounts |
@@ -114,7 +114,7 @@ Multi-step processes have states. Vulnerabilities arise from:
 
 ### Phase 2: Model State Machines
 
-For each critical workflow:
+For each critical 工作流:
 ```
 [State A] --action--> [State B] --action--> [State C]
                             ^
@@ -221,7 +221,7 @@ grep -rniE "type=['\"]hidden['\"].*name=['\"].*id" --include="*.html" --include=
 # Status/state transitions
 grep -rniE "(status|state|step)\s*=\s*(request|req|params)" --include="*.py" --include="*.java" --include="*.php" --include="*.js"
 
-# Workflow step handling
+# 工作流 step handling
 grep -rniE "(step|stage|phase)\s*(==|!=|>=|<=)" --include="*.py" --include="*.java" --include="*.php" --include="*.js"
 ```
 
@@ -255,6 +255,6 @@ grep -rniE "@(app\.|router\.)(route|post).*register" --include="*.py" --include=
 ## 参考文件
 
 For detailed patterns and examples:
-- **`references/workflow-patterns.md`** - Multi-step process bypass techniques
+- **`references/工作流-patterns.md`** - Multi-step process bypass techniques
 - **`references/trust-boundaries.md`** - Trust boundary analysis and common flaws
 - **`references/state-machine-bugs.md`** - State transition vulnerabilities

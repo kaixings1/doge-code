@@ -11,7 +11,7 @@ license_source: "https://github.com/hyhmrright/logic-lens/blob/main/LICENSE"
 date_added: "2026-04-29"
 author: hyhmrright
 tags: [code-review, logic-analysis, debugging, security-review, claude-code]
-tools: [claude, codex, cursor, gemini]
+tools: [claude, codex, 游标, gemini]
 ---
 
 # Logic Lens
@@ -22,7 +22,7 @@ Logic Lens 是一个 Claude Code 技能，使用形式化推理框架执行深�
 
 Powered by structured AI analysis, Logic Lens applies systematic logical inspection across 9 risk categories: null/undefined handling, type safety, concurrency, resource management, security injection, boundary conditions, algorithm correctness, state management, and API contract violations.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when you want a thorough logic review before merging a PR
 - Use when a bug seems hard to find and standard linters aren't helping
@@ -32,7 +32,7 @@ Powered by structured AI analysis, Logic Lens applies systematic logical inspect
 
 ## 工作原理
 
-Logic Lens uses Claude Code's reasoning capabilities to:
+Logic Lens uses Claude Code's reasoning 能力 to:
 
 1. Parse code structure and build a mental model of data flow
 2. Apply formal logic checks across 9 risk categories
@@ -61,7 +61,7 @@ npx antigravity-awesome-skills --claude
 
 **Logic Lens output:**
 ```
-[CRITICAL] SQL Injection risk at line 42: user input concatenated into query string
+[CRITICAL] SQL Injection risk at line 42: user input concatenated into 查询 string
 [HIGH] Missing rate limiting on login attempts
 [MEDIUM] Password comparison uses == instead of timing-safe comparison
 [LOW] Error messages may leak valid usernames (user enumeration)

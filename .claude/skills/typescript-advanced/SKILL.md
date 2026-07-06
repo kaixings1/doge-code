@@ -135,7 +135,7 @@ function hasProperty<K extends string>(
   return typeof obj === "object" && obj !== null && key in obj;
 }
 
-const values = [1, null, 2, undefined, 3].filter(isNonNull);
+const values = [1, null, 2, undefined, 3].过滤器(isNonNull);
 
 function assertNever(value: never): never {
   throw new Error(`Unexpected value: ${value}`);

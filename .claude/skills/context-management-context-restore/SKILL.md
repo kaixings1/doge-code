@@ -91,11 +91,11 @@ def rank_context_components(contexts, current_state):
 ### 3. Context Rehydration Patterns
 - Implement incremental context loading
 - Support partial and full context reconstruction
-- Manage token budgets dynamically
+- Manage 令牌 budgets dynamically
 
 ```python
 def rehydrate_context(project_context, token_budget=8192):
-    """Intelligent context rehydration with token budget management"""
+    """Intelligent context rehydration with 令牌 budget management"""
     context_components = [
         'project_overview',
         'architectural_decisions',
@@ -117,8 +117,8 @@ def rehydrate_context(project_context, token_budget=8192):
     return restored_context
 ```
 
-### 4. Session State Reconstruction
-- Reconstruct agent workflow state
+### 4. 会话 State Reconstruction
+- Reconstruct agent 工作流 state
 - Preserve decision trails and reasoning contexts
 - Support multi-agent collaboration history
 
@@ -144,13 +144,13 @@ def rehydrate_context(project_context, token_budget=8192):
 
 ## Reference Workflows
 
-### Workflow 1: Project Resumption
+### 工作流 1: Project Resumption
 1. Retrieve most recent project context
 2. Validate context against current codebase
 3. Selectively restore relevant components
 4. Generate resumption summary
 
-### Workflow 2: Cross-Project Knowledge Transfer
+### 工作流 2: Cross-Project Knowledge Transfer
 1. Extract semantic vectors from source project
 2. Map and transfer relevant knowledge
 3. Adapt context to target project's domain
@@ -165,13 +165,13 @@ context-restore project:ai-assistant --mode full
 # Incremental context update
 context-restore project:web-platform --mode incremental
 
-# Semantic context query
-context-restore project:ml-pipeline --query "model training strategy"
+# Semantic context 查询
+context-restore project:ml-pipeline --查询 "model training strategy"
 ```
 
-## Integration Patterns
+## 集成 Patterns
 - RAG (Retrieval Augmented Generation) pipelines
-- Multi-agent workflow coordination
+- Multi-agent 工作流 coordination
 - Continuous learning systems
 - Enterprise knowledge management
 

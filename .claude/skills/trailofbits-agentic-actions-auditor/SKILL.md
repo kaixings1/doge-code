@@ -4,7 +4,7 @@ Audits GitHub Actions workflows for security vulnerabilities in AI agent integra
 
 ## What It Does
 
-This plugin provides a security audit skill that analyzes GitHub Actions workflow YAML files for vulnerabilities arising from AI agent integrations. It focuses on scenarios where attacker-controlled input (pull request titles, branch names, issue bodies, comments, commit messages, file contents, environment variables) can reach an AI agent running with elevated permissions in CI.
+This plugin provides a security audit skill that analyzes GitHub Actions 工作流 YAML files for vulnerabilities arising from AI agent integrations. It focuses on scenarios where attacker-controlled input (pull 请求 titles, branch names, issue bodies, comments, commit messages, file contents, environment variables) can reach an AI agent running with elevated permissions in CI.
 
 ## Attack Vectors Detected
 
@@ -16,7 +16,7 @@ The skill checks for nine categories of security issues:
 - **D. PR Target + Checkout** -- `pull_request_target` trigger combined with checkout of PR head code
 - **E. Error Log Injection** -- CI error output or build logs fed to AI prompts carry attacker payloads
 - **F. Subshell Expansion** -- Restricted tools like `echo` allow subshell expansion (`echo $(env)`) bypass
-- **G. Eval of AI Output** -- AI response flows to `eval`, `exec`, or unquoted `$()` in subsequent steps
+- **G. Eval of AI Output** -- AI 响应 flows to `eval`, `exec`, or unquoted `$()` in subsequent steps
 - **H. Dangerous Sandbox Configs** -- `danger-full-access`, `Bash(*)`, `--yolo` disable safety protections
 - **I. Wildcard Allowlists** -- `allowed_non_write_users: "*"` or `allow-users: "*"` permit any user to trigger
 

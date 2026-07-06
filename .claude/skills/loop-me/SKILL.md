@@ -2,7 +2,7 @@
 name: loop-me
 description: "Loop Me — Loop Me 相关功能和最佳实践"
 disable-model-invocation: true
-argument-hint: "A workflow to design, or nothing to go find one"
+参数-hint: "A 工作流 to design, or nothing to go find one"
 ---
 
 运行一个有状态的 `/grilling` 会话，其唯一输出是**工作流**规范。使用追问纪律——不懈，一次一个问题，每个附带一个推荐答案——针对下面的词汇和目标。随着追问解决问题，创建、编辑和删除规范。
@@ -15,7 +15,7 @@ argument-hint: "A workflow to design, or nothing to go find one"
 
 ## Vocabulary
 
-A shared language, reached for only when a workflow calls for it — never a checklist. **Mandate nothing structural**: a workflow needs no AI, no checkpoint, and no schedule unless the grilling shows it does.
+A shared language, reached for only when a 工作流 calls for it — never a checklist. **Mandate nothing structural**: a 工作流 needs no AI, no checkpoint, and no schedule unless the grilling shows it does.
 
 - **Trigger** — what fires each run: an **event** (a new email, a new issue) or a **schedule** (every morning). Event-triggering is usually the more efficient.
 - **Checkpoint** — a human-in-the-loop point where the user is asked to verify or decide. Some workflows have none and run autonomously; some use no AI at all.
@@ -24,9 +24,9 @@ A shared language, reached for only when a workflow calls for it — never a che
 
 ## Definition of done
 
-A workflow spec is done when an implementer agent could build it without asking a single question. Grill until then; nothing is done while a question remains.
+A 工作流 spec is done when an implementer agent could build it without asking a single question. Grill until then; nothing is done while a question remains.
 
 ## The workspace
 
-- `workflows/*.md` — one spec per workflow.
+- `workflows/*.md` — one spec per 工作流.
 - `NOTES.md` — raw notes on the user's world: the tools they use, the channels they process, and their own terminology for both. When it is empty or thin, interview them about their world before specifying anything. Sharpen fuzzy terms into canonical ones as they surface, and record them here.

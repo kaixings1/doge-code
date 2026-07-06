@@ -67,7 +67,7 @@ const credential = new DefaultAzureCredential();
 //   managedIdentityClientId: process.env.AZURE_POSTGRESQL_CLIENTID
 // });
 
-// Acquire access token for Azure PostgreSQL
+// Acquire access 令牌 for Azure PostgreSQL
 const tokenResponse = await credential.getToken(
   "https://ossrdbms-aad.database.windows.net/.default"
 );
@@ -76,7 +76,7 @@ const client = new Client({
   host: process.env.AZURE_POSTGRESQL_HOST,
   database: process.env.AZURE_POSTGRESQL_DATABASE,
   user: process.env.AZURE_POSTGRESQL_USER,  // Entra ID user
-  password: tokenResponse.token,             // Token as password
+  password: tokenResponse.令牌,             // 令牌 as password
   port: Number(process.env.AZURE_POSTGRESQL_PORT) || 5432,
   ssl: { rejectUnauthorized: true }
 });
@@ -103,7 +103,7 @@ const client = new Client({
 try {
   await client.connect();
   
-  const result = await client.query("SELECT NOW() as current_time");
+  const result = await client.查询("SELECT NOW() as current_time");
   console.log(result.rows[0].current_time);
 } finally {
   await client.end();  // Always close connection
@@ -129,14 +129,14 @@ const pool = new Pool({
   connectionTimeoutMillis: 10000  // Timeout for new connections
 });
 
-// Query using pool (automatically acquires and releases connection)
-const result = await pool.query("SELECT * FROM users WHERE id = $1", [userId]);
+// 查询 using pool (automatically acquires and releases connection)
+const result = await pool.查询("SELECT * FROM users WHERE id = $1", [userId]);
 
 // Explicit checkout for multiple queries
 const client = await pool.connect();
 try {
-  const res1 = await client.query("SELECT * FROM users");
-  const res2 = await client.query("SELECT * FROM orders");
+  const res1 = await client.查询("SELECT * FROM users");
+  const res2 = await client.查询("SELECT * FROM orders");
 } finally {
   client.release();  // Return connection to pool
 }
@@ -152,21 +152,21 @@ await pool.end();
 const userId = 123;
 const email = "user@example.com";
 
-// Single parameter
-const result = await pool.query(
+// Single 参数
+const result = await pool.查询(
   "SELECT * FROM users WHERE id = $1",
   [userId]
 );
 
 // Multiple parameters
-const result = await pool.query(
+const result = await pool.查询(
   "INSERT INTO users (email, name, created_at) VALUES ($1, $2, NOW()) RETURNING *",
   [email, "John Doe"]
 );
 
-// Array parameter
+// Array 参数
 const ids = [1, 2, 3, 4, 5];
-const result = await pool.query(
+const result = await pool.查询(
   "SELECT * FROM users WHERE id = ANY($1::int[])",
   [ids]
 );
@@ -178,22 +178,22 @@ const result = await pool.query(
 const client = await pool.connect();
 
 try {
-  await client.query("BEGIN");
+  await client.查询("BEGIN");
   
-  const userResult = await client.query(
+  const userResult = await client.查询(
     "INSERT INTO users (email) VALUES ($1) RETURNING id",
     ["user@example.com"]
   );
   const userId = userResult.rows[0].id;
   
-  await client.query(
+  await client.查询(
     "INSERT INTO orders (user_id, total) VALUES ($1, $2)",
     [userId, 99.99]
   );
   
-  await client.query("COMMIT");
+  await client.查询("COMMIT");
 } catch (error) {
-  await client.query("ROLLBACK");
+  await client.查询("ROLLBACK");
   throw error;
 } finally {
   client.release();
@@ -209,12 +209,12 @@ async function withTransaction<T>(
 ): Promise<T> {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
+    await client.查询("BEGIN");
     const result = await fn(client);
-    await client.query("COMMIT");
+    await client.查询("COMMIT");
     return result;
   } catch (error) {
-    await client.query("ROLLBACK");
+    await client.查询("ROLLBACK");
     throw error;
   } finally {
     client.release();
@@ -223,11 +223,11 @@ async function withTransaction<T>(
 
 // Usage
 const order = await withTransaction(pool, async (client) => {
-  const user = await client.query(
+  const user = await client.查询(
     "INSERT INTO users (email) VALUES ($1) RETURNING *",
     ["user@example.com"]
   );
-  const order = await client.query(
+  const order = await client.查询(
     "INSERT INTO orders (user_id, total) VALUES ($1, $2) RETURNING *",
     [user.rows[0].id, 99.99]
   );
@@ -247,8 +247,8 @@ interface User {
   created_at: Date;
 }
 
-// Type the query result
-const result: QueryResult<User> = await pool.query<User>(
+// Type the 查询 result
+const result: QueryResult<User> = await pool.查询<User>(
   "SELECT * FROM users WHERE id = $1",
   [userId]
 );
@@ -261,7 +261,7 @@ async function createUser(
   email: string,
   name: string
 ): Promise<User> {
-  const result = await pool.query<User>(
+  const result = await pool.查询<User>(
     "INSERT INTO users (email, name) VALUES ($1, $2) RETURNING *",
     [email, name]
   );
@@ -269,7 +269,7 @@ async function createUser(
 }
 ```
 
-## Pool with Entra ID Token Refresh
+## Pool with Entra ID 令牌 Refresh
 
 For long-running applications, tokens expire and need refresh:
 
@@ -293,7 +293,7 @@ class AzurePostgresPool {
       "https://ossrdbms-aad.database.windows.net/.default"
     );
     this.tokenExpiry = new Date(tokenResponse.expiresOnTimestamp);
-    return tokenResponse.token;
+    return tokenResponse.令牌;
   }
 
   private isTokenExpired(): boolean {
@@ -307,23 +307,23 @@ class AzurePostgresPool {
       return this.pool;
     }
 
-    // Close existing pool if token expired
+    // Close existing pool if 令牌 expired
     if (this.pool) {
       await this.pool.end();
     }
 
-    const token = await this.getToken();
+    const 令牌 = await this.getToken();
     this.pool = new Pool({
       ...this.config,
-      password: token
+      password: 令牌
     });
 
     return this.pool;
   }
 
-  async query<T>(text: string, params?: any[]): Promise<QueryResult<T>> {
+  async 查询<T>(text: string, params?: any[]): Promise<QueryResult<T>> {
     const pool = await this.getPool();
-    return pool.query<T>(text, params);
+    return pool.查询<T>(text, params);
   }
 
   async end(): Promise<void> {
@@ -344,7 +344,7 @@ const azurePool = new AzurePostgresPool({
   max: 20
 });
 
-const result = await azurePool.query("SELECT NOW()");
+const result = await azurePool.查询("SELECT NOW()");
 ```
 
 ## 错误处理
@@ -353,7 +353,7 @@ const result = await azurePool.query("SELECT NOW()");
 import { DatabaseError } from "pg";
 
 try {
-  await pool.query("INSERT INTO users (email) VALUES ($1)", [email]);
+  await pool.查询("INSERT INTO users (email) VALUES ($1)", [email]);
 } catch (error) {
   if (error instanceof DatabaseError) {
     switch (error.code) {
@@ -426,8 +426,8 @@ pool.on("error", (err, client) => {
 | `ssl.rejectUnauthorized` | `true` | 始终 use SSL for Azure |
 | 默认 port | `5432` | Standard PostgreSQL port |
 | PgBouncer port | `6432` | Use when PgBouncer enabled |
-| Token scope | `https://ossrdbms-aad.database.windows.net/.default` | Entra ID token scope |
-| Token lifetime | ~1 hour | Refresh before expiry |
+| 令牌 scope | `https://ossrdbms-aad.database.windows.net/.default` | Entra ID 令牌 scope |
+| 令牌 lifetime | ~1 hour | Refresh before expiry |
 
 ## Pool Sizing Guidelines
 
@@ -445,12 +445,12 @@ pool.on("error", (err, client) => {
 2. **Use parameterized queries** - 绝不 concatenate user input
 3. **始终 close connections** - Use `try/finally` or connection pools
 4. **Enable SSL** - 必需 for Azure (`ssl: { rejectUnauthorized: true }`)
-5. **Handle token refresh** - Entra ID tokens expire after ~1 hour
+5. **Handle 令牌 refresh** - Entra ID tokens expire after ~1 hour
 6. **Set connection timeouts** - Avoid hanging on network issues
 7. **Use transactions** - For multi-statement operations
 8. **Monitor pool metrics** - Track `pool.totalCount`, `pool.idleCount`, `pool.waitingCount`
 9. **Graceful shutdown** - Call `pool.end()` on application termination
-10. **Use TypeScript generics** - Type your query results for safety
+10. **Use TypeScript generics** - Type your 查询 results for safety
 
 ## Key Types
 
@@ -478,7 +478,7 @@ import {
 | Passwordless Connection | https://learn.microsoft.com/azure/postgresql/flexible-server/how-to-connect-with-managed-identity |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

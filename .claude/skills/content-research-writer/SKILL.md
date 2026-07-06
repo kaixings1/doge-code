@@ -30,7 +30,7 @@ This skill acts as your writing partner, helping you research, outline, draft, a
 
 ## How to Use
 
-### Setup Your Writing Environment
+### 设置 Your Writing Environment
 
 Create a dedicated folder for your article:
 ```
@@ -45,7 +45,7 @@ touch article-draft.md
 
 Open Claude Code from this directory and start writing.
 
-### Basic Workflow
+### Basic 工作流
 
 1. **Start with an outline**:
 ```
@@ -79,7 +79,7 @@ When a user requests writing assistance:
 1. **Understand the Writing Project**
    
    Ask clarifying questions:
-   - What's the topic and main argument?
+   - What's the topic and main 参数?
    - Who's the target audience?
    - What's the desired length/format?
    - What's your goal? (educate, persuade, entertain, explain)
@@ -315,7 +315,7 @@ When a user requests writing assistance:
    - [Pacing assessment]
    
    ## Content Quality
-   - [Argument strength]
+   - [参数 strength]
    - [Evidence sufficiency]
    - [Example effectiveness]
    
@@ -349,7 +349,7 @@ When a user requests writing assistance:
 
 ## 示例
 
-### Example 1: Teresa Torres's Workflow
+### Example 1: Teresa Torres's 工作流
 
 **User**: "I'm writing an article about continuous discovery. Help me create an outline."
 
@@ -415,7 +415,7 @@ All added to your outline with proper citations.
 
 **User**: "Just finished my 'Common Mistakes' section. Thoughts?"
 
-**Response**:
+**响应**:
 ```markdown
 # Feedback: Common Mistakes Section
 
@@ -448,7 +448,7 @@ Ready for the next section!
 
 ## Writing Workflows
 
-### Blog Post Workflow
+### Blog Post 工作流
 1. Outline together
 2. Research key points
 3. Write introduction → get feedback
@@ -456,14 +456,14 @@ Ready for the next section!
 5. Write conclusion → final review
 6. Polish and edit
 
-### Newsletter Workflow
+### Newsletter 工作流
 1. Discuss hook ideas
 2. Quick outline (shorter format)
-3. Draft in one session
+3. Draft in one 会话
 4. Review for clarity and links
 5. Quick polish
 
-### Technical Tutorial Workflow
+### Technical Tutorial 工作流
 1. Outline steps
 2. Write code examples
 3. Add explanations
@@ -471,7 +471,7 @@ Ready for the next section!
 5. Add troubleshooting section
 6. Final review for accuracy
 
-### Thought Leadership Workflow
+### Thought Leadership 工作流
 1. Brainstorm unique angle
 2. Research existing perspectives
 3. Develop your thesis
@@ -518,7 +518,7 @@ Recommended structure for writing projects:
 - Be specific about what you want: "Is this too technical?"
 - Share your concerns: "I'm worried this section drags"
 - Ask questions: "Does this flow logically?"
-- Request alternatives: "What's another way to explain this?"
+- 请求 alternatives: "What's another way to explain this?"
 
 ### For Voice
 - Share examples of your writing

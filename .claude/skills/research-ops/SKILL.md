@@ -7,13 +7,13 @@ metadata:
 
 # Research Ops
 
-Use this when the user asks to research something current, compare options, enrich people or companies, or turn repeated lookups into a monitored workflow.
+Use this when the user asks to research something current, compare options, enrich people or companies, or turn repeated lookups into a monitored 工作流.
 
 This is the operator wrapper around the repo's research stack. It is not a replacement for `deep-research`, `exa-search`, or `market-research`; it tells you when and how to use them together.
 
 ## Skill Stack
 
-Pull these ECC-native skills into the workflow when relevant:
+Pull these ECC-native skills into the 工作流 when relevant:
 
 - `exa-search` for fast current-web discovery
 - `deep-research` for multi-source synthesis with citations
@@ -79,7 +79,7 @@ Freshness-sensitive answers should include concrete dates.
 
 ### 5. Decide whether the task should stay manual
 
-If the user is likely to ask the same research question repeatedly, say so explicitly and recommend a monitoring or workflow layer instead of repeating the same manual search forever.
+If the user is likely to ask the same research question repeatedly, say so explicitly and recommend a monitoring or 工作流 layer instead of repeating the same manual search forever.
 
 ## 输出格式
 

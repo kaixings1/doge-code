@@ -8,7 +8,7 @@ A behavior-driven skill for authoring high-quality YARA-X detection rules, teach
 
 This skill doesn't dump YARA syntax at you. Instead, it teaches:
 
-- **Decision trees** for common judgment calls (Is this string good enough? When to abandon an approach?)
+- **Decision trees** for common judgment calls (Is this string good enough? When to abandon an 方法?)
 - **Expert heuristics** (mutex names are gold, API names are garbage)
 - **Rationalizations to reject** (the shortcuts that cause production failures)
 
@@ -39,7 +39,7 @@ uv pip install yara-x
 
 ### Plugin
 
-Add this plugin to your Claude Code configuration:
+Add this plugin to your Claude Code 配置:
 
 ```bash
 claude mcp add-plugin /path/to/yara-authoring
@@ -57,8 +57,8 @@ Guides authoring of YARA-X rules for malware detection with expert judgment.
 - Rationalizations to reject (common shortcuts that fail)
 - Naming conventions (CATEGORY_PLATFORM_FAMILY_DATE format)
 - Performance optimization (atom quality, short-circuit conditions)
-- Testing workflow (goodware corpus validation)
-- **YARA-X migration guide** for converting legacy rules
+- Testing 工作流 (goodware corpus validation)
+- **YARA-X 迁移 guide** for converting legacy rules
 - **Chrome extension analysis** with `crx` module
 - **Android DEX analysis** with `dex` module
 
@@ -89,4 +89,4 @@ uv run atom_analyzer.py --verbose rule.yar
 
 ## Reference Documentation
 
-| Document | Purpose |
+| Document | 目的 |

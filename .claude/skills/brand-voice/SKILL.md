@@ -25,7 +25,7 @@ Use the strongest real source set available, in this order:
 
 Do not use generic platform exemplars as source material.
 
-## Collection Workflow
+## Collection 工作流
 
 1. Gather 5 to 20 representative samples when available.
 2. 优先 recent material over old material unless the user says the older writing is more canonical.
@@ -47,9 +47,9 @@ Do not use generic platform exemplars as source material.
 
 ## Output Contract
 
-Produce a reusable `VOICE PROFILE` block that downstream skills can consume directly. Use the schema in [references/voice-profile-schema.md](references/voice-profile-schema.md).
+Produce a reusable `VOICE PROFILE` block that downstream skills can consume directly. Use the 架构 in [references/voice-profile-架构.md](references/voice-profile-架构.md).
 
-Keep the profile structured and short enough to reuse in session context. The point is not literary criticism. The point is operational reuse.
+Keep the profile structured and short enough to reuse in 会话 context. The point is not literary criticism. The point is operational reuse.
 
 ## Affaan / ECC 默认s
 
@@ -79,13 +79,13 @@ Delete and rewrite any of these:
 
 ## Persistence Rules
 
-- Reuse the latest confirmed `VOICE PROFILE` across related tasks in the same session.
+- Reuse the latest confirmed `VOICE PROFILE` across related tasks in the same 会话.
 - If the user asks for a durable artifact, save the profile in the requested workspace location or memory surface.
 - Do not create repo-tracked files that store personal voice fingerprints unless the user explicitly asks for that.
 
-## Downstream Use
+## 下游使用
 
-Use this skill before or inside:
+在此技能之前或之内使用：
 
 - `content-engine`
 - `crosspost`

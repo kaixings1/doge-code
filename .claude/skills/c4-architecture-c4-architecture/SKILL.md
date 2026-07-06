@@ -6,20 +6,20 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# C4 Architecture Documentation Workflow
+# C4 Architecture Documentation 工作流
 
-Generate comprehensive C4 architecture documentation for an existing repository/codebase using a bottom-up analysis approach.
+Generate comprehensive C4 architecture documentation for an existing repository/codebase using a bottom-up analysis 方法.
 
-[Extended thinking: This workflow implements a complete C4 architecture documentation process following the C4 model (Context, Container, Component, Code). It uses a bottom-up approach, starting from the deepest code directories and working upward, ensuring every code element is documented before synthesizing into higher-level abstractions. The workflow coordinates four specialized C4 agents (Code, Component, Container, Context) to create a complete architectural documentation set that serves both technical and non-technical stakeholders.]
+[Extended thinking: This 工作流 implements a complete C4 architecture documentation process following the C4 model (Context, Container, Component, Code). It uses a bottom-up 方法, starting from the deepest code directories and working upward, ensuring every code element is documented before synthesizing into higher-level abstractions. The 工作流 coordinates four specialized C4 agents (Code, Component, Container, Context) to create a complete architectural documentation set that serves both technical and non-technical stakeholders.]
 
 ## 使用此技能的场景
 
-- Working on c4 architecture documentation workflow tasks or workflows
-- Needing guidance, best practices, or checklists for c4 architecture documentation workflow
+- Working on c4 architecture documentation 工作流 tasks or workflows
+- Needing guidance, best practices, or checklists for c4 architecture documentation 工作流
 
 ## 不要使用此技能的场景
 
-- The task is unrelated to c4 architecture documentation workflow
+- The task is unrelated to c4 architecture documentation 工作流
 - You need a different domain or tool outside this scope
 
 ## 使用说明
@@ -31,14 +31,14 @@ Generate comprehensive C4 architecture documentation for an existing repository/
 
 ## 概述
 
-This workflow creates comprehensive C4 architecture documentation following the [official C4 model](https://c4model.com/diagrams) by:
+This 工作流 creates comprehensive C4 architecture documentation following the [official C4 model](https://c4model.com/diagrams) by:
 
 1. **Code Level**: Analyzing every subdirectory bottom-up to create code-level documentation
 2. **Component Level**: Synthesizing code documentation into logical components within containers
-3. **Container Level**: Mapping components to deployment containers with API documentation (shows high-level technology choices)
+3. **Container Level**: Mapping components to 部署 containers with API documentation (shows high-level technology choices)
 4. **Context Level**: Creating high-level system context with personas and user journeys (focuses on people and software systems, not technologies)
 
-**Note**: According to the [C4 model](https://c4model.com/diagrams), you don't need to use all 4 levels of diagram - the system context and container diagrams are sufficient for most software development teams. This workflow generates all levels for completeness, but teams can choose which levels to use.
+**Note**: According to the [C4 model](https://c4model.com/diagrams), you don't need to use all 4 levels of diagram - the system context and container diagrams are sufficient for most software development teams. This 工作流 generates all levels for completeness, but teams can choose which levels to use.
 
 All documentation is written to a new `C4-Documentation/` directory in the repository root.
 
@@ -48,7 +48,7 @@ All documentation is written to a new `C4-Documentation/` directory in the repos
 
 - Use codebase search to identify all subdirectories in the repository
 - Sort directories by depth (deepest first) for bottom-up processing
-- Filter out common non-code directories (node_modules, .git, build, dist, etc.)
+- 过滤器 out common non-code directories (node_modules, .git, build, dist, etc.)
 - Create list of directories to process
 
 ### 1.2 Process Each Directory (Bottom-Up)
@@ -176,10 +176,10 @@ For each identified component:
 
 ## Phase 3: Container-Level Synthesis
 
-### 3.1 Analyze Components and Deployment Definitions
+### 3.1 Analyze Components and 部署 Definitions
 
 - Review all c4-component-\*.md files
-- Search for deployment/infrastructure definitions:
+- Search for 部署/infrastructure definitions:
   - Dockerfiles
   - Kubernetes manifests (deployments, services, etc.)
   - Docker Compose files
@@ -191,21 +191,21 @@ For each identified component:
 
 - Use Task tool with subagent_type="c4-architecture::c4-container"
 - Prompt: |
-  Synthesize components into containers based on deployment definitions.
+  Synthesize components into containers based on 部署 definitions.
 
   Component documentation:
   [List of all c4-component-*.md file paths]
 
-  Deployment definitions found:
-  [List of deployment config files: Dockerfiles, K8s manifests, etc.]
+  部署 definitions found:
+  [List of 部署 config files: Dockerfiles, K8s manifests, etc.]
 
   Create comprehensive C4 Container-level documentation following this structure:
   1. **Containers Section** (for each container):
      - Name: [Container name]
-     - Description: [Short description of container purpose and deployment]
+     - Description: [Short description of container purpose and 部署]
      - Type: [Web Application, API, Database, Message Queue, etc.]
      - Technology: [Primary technologies: Node.js, Python, PostgreSQL, etc.]
-     - Deployment: [Docker, Kubernetes, Cloud Service, etc.]
+     - 部署: [Docker, Kubernetes, Cloud Service, etc.]
   2. **Purpose Section** (for each container):
      - Detailed description of what this container does
      - How it's deployed
@@ -225,15 +225,15 @@ For each identified component:
      - Save as: C4-Documentation/apis/[container-name]-api.yaml
      - Include:
        - All endpoints with methods (GET, POST, etc.)
-       - Request/response schemas
-       - Authentication requirements
+       - 请求/响应 schemas
+       - 认证 requirements
        - Error responses
   6. **Dependencies Section** (for each container):
      - Containers used (other containers this depends on)
      - External systems (databases, third-party APIs, etc.)
      - Communication protocols
   7. **Infrastructure Section** (for each container):
-     - Link to deployment config (Dockerfile, K8s manifest, etc.)
+     - Link to 部署 config (Dockerfile, K8s manifest, etc.)
      - Scaling strategy
      - Resource requirements (CPU, memory, storage)
   8. **Container Diagram**:
@@ -244,7 +244,7 @@ For each identified component:
   Save the output as: C4-Documentation/c4-container.md
 
 - Expected output: c4-container.md with all containers and API specifications
-- Context: All component documentation and deployment definitions
+- Context: All component documentation and 部署 definitions
 
 ## Phase 4: Context-Level Documentation
 
@@ -297,13 +297,13 @@ For each identified component:
             ...
        - Include all system touchpoints
      - For programmatic users (external systems, APIs):
-       - Integration journey with step-by-step process
+       - 集成 journey with step-by-step process
   5. **External Systems and Dependencies Section**:
      - For each external system:
        - System name
        - Type (Database, API, Service, Message Queue, etc.)
        - Description (what it provides)
-       - Integration type (API, Events, File Transfer, etc.)
+       - 集成 type (API, Events, File Transfer, etc.)
        - Purpose (why the system depends on this)
   6. **System Context Diagram**:
      - Mermaid C4Context diagram showing:
@@ -327,7 +327,7 @@ For each identified component:
 - Expected output: c4-context.md with complete system context
 - Context: All container, component, and system documentation
 
-## Configuration Options
+## 配置 Options
 
 - `target_directory`: Root directory to analyze (default: current repository root)
 - `exclude_patterns`: Patterns to exclude (default: node_modules, .git, build, dist, etc.)
@@ -342,9 +342,9 @@ For each identified component:
 - ✅ Components are logically grouped with clear boundaries
 - ✅ All components have interface documentation
 - ✅ Master component index created with relationship diagram
-- ✅ Containers map to actual deployment units
+- ✅ Containers map to actual 部署 units
 - ✅ All container APIs documented with OpenAPI/Swagger specs
-- ✅ Container diagram shows deployment architecture
+- ✅ Container diagram shows 部署 architecture
 - ✅ System context includes all personas (human and programmatic)
 - ✅ User journeys documented for all key features
 - ✅ All external systems and dependencies identified

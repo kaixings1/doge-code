@@ -2,7 +2,7 @@
 name: seo-drift
 description: "Seo Drift — SEO 漂移监控相关功能和最佳实践：捕获 SEO 关键要素基线、检测变化并跟踪回归。"
 user-invocable: true
-argument-hint: "baseline|compare|history <url>"
+参数-hint: "baseline|compare|history <url>"
 license: MIT
 metadata:
   author: AgriciDaniel

@@ -10,9 +10,9 @@ date_added: "2026-03-14"
 
 ## 概述
 
-This skill automates the tedious and recurring process of converting an academic paper written in LaTeX from one publisher's template to another. Different journals (e.g., Springer, MDPI, IEEE) have vastly different structural requirements, document classes, margin settings, and bibliography styles. This skill streamlines these conversions by executing a structured multi-stage workflow, extracting content, mapping it to a new template, and resolving common compilation errors.
+This skill automates the tedious and recurring process of converting an academic paper written in LaTeX from one publisher's template to another. Different journals (e.g., Springer, MDPI, IEEE) have vastly different structural requirements, document classes, margin settings, and bibliography styles. This skill streamlines these conversions by executing a structured multi-stage 工作流, extracting content, mapping it to a new template, and resolving common compilation errors.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when the user requests to port an existing LaTeX paper to a new journal's format.
 - Use when the user provides an existing `.tex` file and a new template directory.

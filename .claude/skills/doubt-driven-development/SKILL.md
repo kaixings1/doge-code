@@ -19,7 +19,7 @@ A decision is **non-trivial** when at least one of these is true:
 - It crosses a module or service boundary
 - It asserts a property the type system or compiler cannot verify (thread safety, idempotence, ordering, invariants)
 - Its correctness depends on context the future reader cannot see
-- Its blast radius is irreversible (production deploy, data migration, public API change)
+- Its blast radius is irreversible (production deploy, data 迁移, public API change)
 
 Apply the skill when:
 
@@ -41,10 +41,10 @@ If you doubt every keystroke, you ship nothing. The skill applies only to non-tr
 
 ## Loading Constraints
 
-This skill is designed for the **main-session orchestrator**, where Step 3 (DOUBT, detailed below) can spawn a fresh-context reviewer.
+This skill is designed for the **main-会话 orchestrator**, where Step 3 (DOUBT, detailed below) can spawn a fresh-context reviewer.
 
 - **Do NOT add this skill to a persona's `skills:` frontmatter.** A persona that follows Step 3 would spawn another persona — the orchestration anti-pattern explicitly forbidden by `references/orchestration-patterns.md` ("personas do not invoke other personas").
-- **If you find yourself applying this skill from inside a subagent context** (where Claude Code prevents nested subagent spawn): the preferred path is to surface to the user that doubt-driven cannot run nested and let the main session handle it. As a last resort only, a degraded self-questioning fallback exists — rewrite ARTIFACT + CONTRACT as a fresh self-prompt with a hard mental separator from your prior reasoning, and walk Steps 1–5. This is **not fresh-context review** (you carry your own context with you), so flag the result as degraded and prefer escalation whenever the user is reachable.
+- **If you find yourself applying this skill from inside a subagent context** (where Claude Code prevents nested subagent spawn): the preferred path is to surface to the user that doubt-driven cannot run nested and let the main 会话 handle it. As a last resort only, a degraded self-questioning fallback exists — rewrite ARTIFACT + CONTRACT as a fresh self-prompt with a hard mental separator from your prior reasoning, and walk Steps 1–5. This is **not fresh-context review** (you carry your own context with you), so flag the result as degraded and prefer escalation whenever the user is reachable.
 
 ## The Process
 
@@ -107,7 +107,7 @@ CONTRACT: <paste contract>
 
 In Claude Code, the role-based reviewers in `agents/` start with isolated context by design and are usable here — see `agents/` for the roster and per-domain match.
 
-**The adversarial prompt above takes precedence over the persona's default response shape.** Personas like `code-reviewer` are written to produce balanced verdicts with both strengths and weaknesses; doubt-driven needs issues-only output. Paste the adversarial prompt verbatim into the invocation so it overrides the persona's default. If a persona's response shape can't be overridden cleanly, fall back to a generic subagent with the adversarial prompt.
+**The adversarial prompt above takes precedence over the persona's default 响应 shape.** Personas like `code-reviewer` are written to produce balanced verdicts with both strengths and weaknesses; doubt-driven needs issues-only output. Paste the adversarial prompt verbatim into the invocation so it overrides the persona's default. If a persona's 响应 shape can't be overridden cleanly, fall back to a generic subagent with the adversarial prompt.
 
 #### Cross-model escalation
 
@@ -128,11 +128,11 @@ This question is mandatory in every interactive doubt cycle — even on artifact
 1. Check the tool is in PATH (`which gemini`, `which codex`).
 2. Test it works (`gemini --version` or equivalent) before passing the full prompt — a stale or broken binary may pass `which` but fail on real input.
 3. Confirm the exact invocation with the user, including required flags, auth, and env vars (e.g., API keys). Implementations vary; never assume.
-4. Pass ARTIFACT + CONTRACT + the adversarial prompt **only**. No session context, no CLAIM.
+4. Pass ARTIFACT + CONTRACT + the adversarial prompt **only**. No 会话 context, no CLAIM.
 5. Mind shell escaping. If the artifact contains quotes, `$(...)`, or backticks, prefer stdin (`echo … | gemini`) or a heredoc over inline `-p "…"`. When in doubt, ask the user to confirm the invocation before running it.
 6. Take the output into Step 4 (RECONCILE).
 
-**Never interpolate the artifact into a shell-quoted argument.** Code, markdown, and review prompts routinely contain backticks, `$(...)`, and quote characters that will either truncate the prompt or execute embedded shell. Write the full prompt to a file and pipe it through stdin.
+**Never interpolate the artifact into a shell-quoted 参数.** Code, markdown, and review prompts routinely contain backticks, `$(...)`, and quote characters that will either truncate the prompt or execute embedded shell. Write the full prompt to a file and pipe it through stdin.
 
 Example shapes (verify flags against your installed tool — syntax differs across implementations and versions):
 
@@ -161,7 +161,7 @@ Acknowledge the skip in the output (*"Proceeding with single-model findings only
 **Non-interactive contexts** (CI, `/loop`, autonomous-loop, scheduled runs):
 
 - Cross-model is **skipped**, and the skip must be **announced** in the output: *"Cross-model skipped: non-interactive context."*
-- **Never invoke an external CLI without explicit user authorization** — this is a load-bearing safety property.
+- **Never invoke an external CLI without explicit user 授权** — this is a load-bearing safety property.
 
 Cross-model adds cost, latency, and tool fragility. The agent surfaces the choice every cycle; the user decides whether this artifact warrants it.
 
@@ -202,7 +202,7 @@ If 3 cycles is "obviously insufficient" because the artifact is large: the artif
 | "Two opinions are always better than one" | Not when the second has less context and produces noise. Reconcile, don't defer. |
 | "The reviewer disagreed so I was wrong" | The reviewer lacks your context — disagreement is information, not verdict. Re-read the artifact, classify, then decide. |
 | "Cross-model is always better" | Cross-model catches blind spots a single model shares with itself, but it adds cost and tool fragility. Offer it every interactive doubt cycle — the user decides whether the artifact warrants it. The agent's job is to surface the choice, not to gate it. |
-| "User said yes once, so I can keep invoking the CLI" | Each invocation is its own authorization. The artifact, the prompt, and the flags change between calls — re-confirm the exact command with the user before every run. |
+| "User said yes once, so I can keep invoking the CLI" | Each invocation is its own 授权. The artifact, the prompt, and the flags change between calls — re-confirm the exact command with the user before every run. |
 
 ## Red Flags
 
@@ -226,7 +226,7 @@ If 3 cycles is "obviously insufficient" because the artifact is large: the artif
 - **`source-driven-development`**: SDD verifies *facts about frameworks* against official docs. Doubt-driven verifies *your reasoning about the artifact*. SDD checks the API exists; doubt-driven checks you used it correctly under the contract.
 - **`test-driven-development`**: TDD's RED step is doubt made concrete — a failing test is a disproof attempt. When TDD applies, that failing test *is* the doubt step for behavioral claims.
 - **`debugging-and-error-recovery`**: when the reviewer surfaces a real failure mode, drop into the debugging skill to localize and fix.
-- **Repo orchestration rules** (`references/orchestration-patterns.md`): this skill orchestrates from the main session. A persona calling another persona is anti-pattern B — see Loading Constraints above.
+- **Repo orchestration rules** (`references/orchestration-patterns.md`): this skill orchestrates from the main 会话. A persona calling another persona is anti-pattern B — see Loading Constraints above.
 
 ## Verification
 
@@ -238,6 +238,6 @@ After applying doubt-driven development:
 - [ ] The reviewer's prompt was adversarial ("find issues"), not validating ("is it good")
 - [ ] Findings were classified against the artifact text (not rubber-stamped) using the precedence: contract misread / actionable / trade-off / noise
 - [ ] A stop condition was met (trivial findings, 3 cycles, or user override)
-- [ ] In interactive mode, cross-model was **explicitly offered** to the user (regardless of artifact stakes) and the response was acknowledged in the output
+- [ ] In interactive mode, cross-model was **explicitly offered** to the user (regardless of artifact stakes) and the 响应 was acknowledged in the output
 - [ ] In non-interactive mode, cross-model was skipped and the skip was announced
-- [ ] Any external CLI invocation was preceded by a PATH check, a working-binary test, syntax confirmation with the user, and explicit authorization to run
+- [ ] Any external CLI invocation was preceded by a PATH check, a working-binary test, syntax confirmation with the user, and explicit 授权 to run

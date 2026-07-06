@@ -73,10 +73,10 @@ ApiCenterServiceData data = new ApiCenterServiceData(AzureLocation.EastUS)
     Identity = new ManagedServiceIdentity(ManagedServiceIdentityType.SystemAssigned)
 };
 
-ArmOperation<ApiCenterServiceResource> operation = await services
+ArmOperation<ApiCenterServiceResource> 操作 = await services
     .CreateOrUpdateAsync(WaitUntil.Completed, "my-api-center", data);
 
-ApiCenterServiceResource service = operation.Value;
+ApiCenterServiceResource service = 操作.Value;
 ```
 
 ### 2. Create Workspace
@@ -90,10 +90,10 @@ ApiCenterWorkspaceData workspaceData = new ApiCenterWorkspaceData
     Description = "APIs owned by the engineering team"
 };
 
-ArmOperation<ApiCenterWorkspaceResource> operation = await workspaces
+ArmOperation<ApiCenterWorkspaceResource> 操作 = await workspaces
     .CreateOrUpdateAsync(WaitUntil.Completed, "engineering", workspaceData);
 
-ApiCenterWorkspaceResource workspace = operation.Value;
+ApiCenterWorkspaceResource workspace = 操作.Value;
 ```
 
 ### 3. Create API
@@ -136,10 +136,10 @@ apiData.CustomProperties = BinaryData.FromObjectAsJson(new
     costCenter = "CC-1234"
 });
 
-ArmOperation<ApiCenterApiResource> operation = await apis
+ArmOperation<ApiCenterApiResource> 操作 = await apis
     .CreateOrUpdateAsync(WaitUntil.Completed, "orders-api", apiData);
 
-ApiCenterApiResource api = operation.Value;
+ApiCenterApiResource api = 操作.Value;
 ```
 
 ### 4. Create API Version
@@ -153,10 +153,10 @@ ApiCenterApiVersionData versionData = new ApiCenterApiVersionData
     LifecycleStage = ApiLifecycleStage.Production
 };
 
-ArmOperation<ApiCenterApiVersionResource> operation = await versions
+ArmOperation<ApiCenterApiVersionResource> 操作 = await versions
     .CreateOrUpdateAsync(WaitUntil.Completed, "v1-0-0", versionData);
 
-ApiCenterApiVersionResource version = operation.Value;
+ApiCenterApiVersionResource version = 操作.Value;
 ```
 
 ### 5. Create API Definition (Upload OpenAPI Spec)
@@ -170,10 +170,10 @@ ApiCenterApiDefinitionData definitionData = new ApiCenterApiDefinitionData
     Description = "Orders API OpenAPI 3.0 definition"
 };
 
-ArmOperation<ApiCenterApiDefinitionResource> operation = await definitions
+ArmOperation<ApiCenterApiDefinitionResource> 操作 = await definitions
     .CreateOrUpdateAsync(WaitUntil.Completed, "openapi", definitionData);
 
-ApiCenterApiDefinitionResource definition = operation.Value;
+ApiCenterApiDefinitionResource definition = 操作.Value;
 
 // Import specification
 string openApiSpec = await File.ReadAllTextAsync("orders-api.yaml");
@@ -199,10 +199,10 @@ ApiCenterApiDefinitionResource definition = await client
     .GetApiCenterApiDefinitionResource(definitionResourceId)
     .GetAsync();
 
-ArmOperation<ApiSpecExportResult> operation = await definition
+ArmOperation<ApiSpecExportResult> 操作 = await definition
     .ExportSpecificationAsync(WaitUntil.Completed);
 
-ApiSpecExportResult result = operation.Value;
+ApiSpecExportResult result = 操作.Value;
 
 // result.Format - e.g., "inline"
 // result.Value - the specification content
@@ -224,12 +224,12 @@ ApiCenterEnvironmentData envData = new ApiCenterEnvironmentData
     },
     Onboarding = new EnvironmentOnboardingModel
     {
-        Instructions = "Contact platform team for access",
+        使用说明 = "Contact platform team for access",
         DeveloperPortalUris = { new Uri("https://developer.example.com") }
     }
 };
 
-ArmOperation<ApiCenterEnvironmentResource> operation = await environments
+ArmOperation<ApiCenterEnvironmentResource> 操作 = await environments
     .CreateOrUpdateAsync(WaitUntil.Completed, "production", envData);
 ```
 
@@ -260,11 +260,11 @@ ApiCenterDeploymentData deploymentData = new ApiCenterDeploymentData
     }
 };
 
-ArmOperation<ApiCenterDeploymentResource> operation = await deployments
+ArmOperation<ApiCenterDeploymentResource> 操作 = await deployments
     .CreateOrUpdateAsync(WaitUntil.Completed, "orders-api-prod", deploymentData);
 ```
 
-### 9. Create Metadata Schema
+### 9. Create Metadata 架构
 
 ```csharp
 ApiCenterMetadataSchemaCollection schemas = service.GetApiCenterMetadataSchemas();
@@ -293,7 +293,7 @@ string jsonSchema = """
 
 ApiCenterMetadataSchemaData schemaData = new ApiCenterMetadataSchemaData
 {
-    Schema = jsonSchema,
+    架构 = jsonSchema,
     AssignedTo =
     {
         new MetadataAssignment
@@ -304,7 +304,7 @@ ApiCenterMetadataSchemaData schemaData = new ApiCenterMetadataSchemaData
     }
 };
 
-ArmOperation<ApiCenterMetadataSchemaResource> operation = await schemas
+ArmOperation<ApiCenterMetadataSchemaResource> 操作 = await schemas
     .CreateOrUpdateAsync(WaitUntil.Completed, "api-metadata", schemaData);
 ```
 
@@ -354,7 +354,7 @@ await foreach (ApiCenterDeploymentResource deployment in workspace.GetApiCenterD
 | `ApiCenterApiDefinitionResource` | API specification (OpenAPI, etc.) |
 | `ApiCenterEnvironmentResource` | Deployment environment |
 | `ApiCenterDeploymentResource` | API deployment to environment |
-| `ApiCenterMetadataSchemaResource` | Custom metadata schema |
+| `ApiCenterMetadataSchemaResource` | Custom metadata 架构 |
 | `ApiKind` | rest, graphql, grpc, soap, webhook, websocket, mcp |
 | `ApiLifecycleStage` | design, development, testing, preview, production, deprecated, retired |
 | `ApiCenterEnvironmentKind` | development, testing, staging, production |
@@ -365,7 +365,7 @@ await foreach (ApiCenterDeploymentResource deployment in workspace.GetApiCenterD
 1. **Organize with workspaces** — Group APIs by team, domain, or product
 2. **Use metadata schemas** — Define custom properties for governance
 3. **Track lifecycle stages** — Keep API status current (design → production → deprecated)
-4. **Document environments** — Include onboarding instructions and portal URIs
+4. **Document environments** — Include onboarding 使用说明 and portal URIs
 5. **Version consistently** — Use semantic versioning for API versions
 6. **Import specifications** — Upload OpenAPI/GraphQL specs for discovery
 7. **Link deployments** — Connect APIs to their runtime environments
@@ -378,7 +378,7 @@ using Azure;
 
 try
 {
-    ArmOperation<ApiCenterApiResource> operation = await apis
+    ArmOperation<ApiCenterApiResource> 操作 = await apis
         .CreateOrUpdateAsync(WaitUntil.Completed, "my-api", apiData);
 }
 catch (RequestFailedException ex) when (ex.Status == 409)
@@ -387,7 +387,7 @@ catch (RequestFailedException ex) when (ex.Status == 409)
 }
 catch (RequestFailedException ex) when (ex.Status == 400)
 {
-    Console.WriteLine($"Invalid request: {ex.Message}");
+    Console.WriteLine($"Invalid 请求: {ex.Message}");
 }
 catch (RequestFailedException ex)
 {
@@ -412,7 +412,7 @@ catch (RequestFailedException ex)
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/apicenter/Azure.ResourceManager.ApiCenter |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

@@ -244,7 +244,7 @@ Users can explicitly request a mode:
 ```
 
 ## /u4f55/u65f6/u4f7f/u7528
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## /u9650/u5236
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

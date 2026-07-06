@@ -113,7 +113,7 @@ date_added: "2026-02-27"
 
 **Best for**: Checking if something works
 
-**Examples**:
+**示例**:
 - Meta tag preview
 - Email rendering test
 - Accessibility checker
@@ -130,7 +130,7 @@ date_added: "2026-02-27"
 
 **Best for**: Reference material
 
-**Examples**:
+**示例**:
 - Icon library
 - Template library
 - Code snippet library
@@ -147,7 +147,7 @@ date_added: "2026-02-27"
 
 **Best for**: Learning/understanding
 
-**Examples**:
+**示例**:
 - Interactive tutorials
 - Code playgrounds
 - Visual explainers
@@ -167,7 +167,7 @@ date_added: "2026-02-27"
 ### Start with Pain Points
 
 1. **What problems does your audience Google?**
-   - Search query research
+   - Search 查询 research
    - Common questions
    - "How to" searches
 
@@ -244,7 +244,7 @@ Free tools attract links because:
 - Mobile-friendly essential
 - Crawlable content (not just JS app)
 - Proper meta tags
-- Schema markup if applicable
+- 架构 markup if applicable
 
 ---
 
@@ -272,7 +272,7 @@ Free tools attract links because:
 - No direct leads
 - Maximum reach
 
-### Lead Capture Best Practices
+### Lead Capture 最佳实践
 
 - Value exchange clear: "Get your full report"
 - Minimal friction: Email only
@@ -325,7 +325,7 @@ Free tools attract links because:
 - Not core differentiator
 
 **考虑:**
-- Branding limitations
+- Branding 限制
 - Dependency on third party
 - Cost vs. build
 
@@ -392,10 +392,10 @@ Free tools attract links because:
 
 **Social:**
 - Share interesting results (anonymized)
-- Use case examples
+- Use case 示例
 - Tips for using the tool
 
-**Product integration:**
+**Product 集成:**
 - Mention in sales process
 - Link from related product features
 - Include in email sequences
@@ -493,13 +493,13 @@ Payback period: Build cost / (Monthly value - Monthly maintenance)
 - Search volume: [estimate]
 - Competition: [assessment]
 
-## Build Approach
+## Build 方法
 - Custom / No-code / Embed
 - MVP scope: [core features]
 - Estimated effort: [time/cost]
 
 ## Lead Capture Strategy
-- Gating approach: [Full/Partial/Ungated]
+- Gating 方法: [Full/Partial/Ungated]
 - Capture mechanism: [description]
 - Follow-up sequence: [outline]
 
@@ -579,7 +579,7 @@ If you need more context:
 - **programmatic-seo**: For building tool-based pages at scale
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the 概述.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

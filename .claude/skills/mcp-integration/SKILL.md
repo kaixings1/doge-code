@@ -1,5 +1,5 @@
 ---
-name: mcp-integration
+name: mcp-集成
 description: "Mcp 集成 — Mcp 集成 相关功能和最佳实践"
 version: 0.1.0
 ---
@@ -8,13 +8,13 @@ version: 0.1.0
 
 ## 概述
 
-Model 上下文 Protocol (MCP) enables Claude Code plugins to integrate with external services and APIs by providing structured tool access. Use MCP integration to expose external service capabilities as tools within Claude Code.
+Model 上下文 Protocol (MCP) enables Claude Code plugins to integrate with external services and APIs by providing structured tool access. Use MCP 集成 to expose external service 能力 as tools within Claude Code.
 
-**Key capabilities:**
+**Key 能力:**
 - Connect to external services (databases, APIs, file systems)
 - Provide 10+ related tools from a single service
-- Handle OAuth and complex authentication flows
-- Bundle MCP servers with plugins for automatic setup
+- Handle OAuth and complex 认证 flows
+- Bundle MCP servers with plugins for automatic 设置
 
 ## MCP Server 配置 方法
 
@@ -59,7 +59,7 @@ Add `mcpServers` field to plugin.json:
 ```
 
 **Benefits:**
-- Single configuration file
+- Single 配置 file
 - Good for simple single-server plugins
 
 ## MCP Server Types
@@ -109,17 +109,17 @@ Connect to hosted MCP servers with OAuth support. Best for cloud services.
 **Use cases:**
 - Official hosted MCP servers (Asana, GitHub, etc.)
 - Cloud services with MCP endpoints
-- OAuth-based authentication
+- OAuth-based 认证
 - No local installation needed
 
-**Authentication:**
+**认证:**
 - OAuth flows handled automatically
 - User prompted on first use
 - Tokens managed by Claude Code
 
 ### HTTP (REST API)
 
-Connect to RESTful MCP servers with token authentication.
+Connect to RESTful MCP servers with 令牌 认证.
 
 **配置:**
 ```json
@@ -128,7 +128,7 @@ Connect to RESTful MCP servers with token authentication.
     "type": "http",
     "url": "https://api.example.com/mcp",
     "headers": {
-      "Authorization": "Bearer ${API_TOKEN}",
+      "授权": "Bearer ${API_TOKEN}",
       "X-Custom-Header": "value"
     }
   }
@@ -137,7 +137,7 @@ Connect to RESTful MCP servers with token authentication.
 
 **Use cases:**
 - REST API-based MCP servers
-- Token-based authentication
+- 令牌-based 认证
 - Custom API backends
 - Stateless interactions
 
@@ -152,7 +152,7 @@ Connect to WebSocket MCP servers for real-time bidirectional communication.
     "type": "ws",
     "url": "wss://mcp.example.com/ws",
     "headers": {
-      "Authorization": "Bearer ${TOKEN}"
+      "授权": "Bearer ${令牌}"
     }
   }
 }

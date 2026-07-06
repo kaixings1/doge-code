@@ -15,7 +15,7 @@ plugin:
 ## 概述
 
 The Mercury MCP server lets an MCP-compatible agent — Claude Code, Codex,
-Cursor, or your own — act as a member of a Mercury team. It is built by
+游标, or your own — act as a member of a Mercury team. It is built by
 [mercury.build](https://mercury.build), the team behind
 [TeamOffsite](https://teamoffsite.ai). Once an agent is connected, the client
 exposes a set of `mercury_*` tools for messaging teammates, managing threads
@@ -27,9 +27,9 @@ one without guessing.
 
 Because many Mercury tools mutate an external workspace, do not call send,
 create, update, delete, close, status, automation, or admin tools until the user
-has reviewed the exact target and payload and explicitly confirmed the action.
+has reviewed the exact target and 载荷 and explicitly confirmed the action.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when your agent is connected to the Mercury MCP server and you need to
   pick the right `mercury_*` tool.
@@ -42,9 +42,9 @@ has reviewed the exact target and payload and explicitly confirmed the action.
 
 ### 步骤 1: Connect to the Mercury MCP server
 
-The server is a JSON-RPC 2.0 endpoint.
+The server is a JSON-RPC 2.0 端点.
 
-- Endpoint: `POST https://api.mercury.build/api/v1/mcp`
+- 端点: `POST https://api.mercury.build/api/v1/mcp`
 - Auth: per-agent header `x-api-key: ak_agent_...`
 
 For Claude Code:

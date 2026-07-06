@@ -83,7 +83,7 @@ ChatClient client = new(
     authenticationPolicy: tokenPolicy,
     options: new OpenAIClientOptions()
     {
-        Endpoint = new Uri("https://YOUR-RESOURCE.openai.azure.com/openai/v1")
+        端点 = new Uri("https://YOUR-RESOURCE.openai.azure.com/openai/v1")
     });
 ```
 
@@ -96,7 +96,7 @@ using Azure.AI.OpenAI;
 using OpenAI.Chat;
 
 AzureOpenAIClient azureClient = new(
-    new Uri(endpoint),
+    new Uri(端点),
     new DefaultAzureCredential());
 
 ChatClient chatClient = azureClient.GetChatClient("gpt-4o-mini");
@@ -119,7 +119,7 @@ ChatCompletion completion = await chatClient.CompleteChatAsync(
     new UserChatMessage("Explain cloud computing in simple terms.")
 ]);
 
-Console.WriteLine($"Response: {completion.Content[0].Text}");
+Console.WriteLine($"响应: {completion.Content[0].Text}");
 Console.WriteLine($"Tokens used: {completion.Usage.TotalTokenCount}");
 ```
 
@@ -166,7 +166,7 @@ ChatCompletion completion = await chatClient.CompleteChatAsync(messages);
 messages.Add(new AssistantChatMessage(completion.Content[0].Text));
 ```
 
-## Structured Outputs (JSON Schema)
+## Structured Outputs (JSON 架构)
 
 ```csharp
 using System.Text.Json;
@@ -234,7 +234,7 @@ using Azure.AI.OpenAI.Chat;
 ChatCompletionOptions options = new();
 options.AddDataSource(new AzureSearchChatDataSource()
 {
-    Endpoint = new Uri(searchEndpoint),
+    端点 = new Uri(searchEndpoint),
     IndexName = searchIndex,
     Authentication = DataSourceAuthentication.FromApiKey(searchKey)
 });
@@ -390,16 +390,16 @@ if (completion.FinishReason == ChatFinishReason.ToolCalls)
 | `EmbeddingClient` | Text embeddings |
 | `ImageClient` | Image generation (DALL-E) |
 | `AudioClient` | Audio transcription/TTS |
-| `ChatCompletion` | Chat response |
-| `ChatCompletionOptions` | Request configuration |
-| `StreamingChatCompletionUpdate` | Streaming response chunk |
+| `ChatCompletion` | Chat 响应 |
+| `ChatCompletionOptions` | 请求 configuration |
+| `StreamingChatCompletionUpdate` | Streaming 响应 chunk |
 | `ChatMessage` | Base message type |
 | `SystemChatMessage` | System prompt |
 | `UserChatMessage` | User input |
-| `AssistantChatMessage` | Assistant response |
+| `AssistantChatMessage` | Assistant 响应 |
 | `DeveloperChatMessage` | Developer message (reasoning models) |
 | `ChatTool` | Function/tool definition |
-| `ChatToolCall` | Tool invocation request |
+| `ChatToolCall` | Tool invocation 请求 |
 
 ## 最佳实践
 
@@ -408,8 +408,8 @@ if (completion.FinishReason == ChatFinishReason.ToolCalls)
 3. **Handle rate limits** — Implement exponential backoff for 429 errors
 4. **Stream for long responses** — Use `CompleteChatStreamingAsync` for better UX
 5. **Set appropriate timeouts** — Long completions may need extended timeouts
-6. **Use structured outputs** — JSON schema ensures consistent response format
-7. **Monitor token usage** — Track `completion.Usage` for cost management
+6. **Use structured outputs** — JSON 架构 ensures consistent 响应 format
+7. **Monitor 令牌 usage** — Track `completion.Usage` for cost management
 8. **Validate tool calls** — Always validate function arguments before execution
 
 ## 错误处理
@@ -428,7 +428,7 @@ catch (RequestFailedException ex) when (ex.Status == 429)
 }
 catch (RequestFailedException ex) when (ex.Status == 400)
 {
-    Console.WriteLine($"Bad request: {ex.Message}");
+    Console.WriteLine($"Bad 请求: {ex.Message}");
 }
 catch (RequestFailedException ex)
 {
@@ -456,7 +456,7 @@ catch (RequestFailedException ex)
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

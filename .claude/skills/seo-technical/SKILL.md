@@ -2,7 +2,7 @@
 name: seo-technical
 description: "技术性SEO审计 — 涵盖9个类别的技术SEO审计：可爬取性、可索引性、安全性、URL结构、移动端、核心Web指标、结构化数据、JavaScript渲染和IndexNow协议。当用户提到'技术性SEO'、'爬取问题'、'robots.txt'、'核心Web指标'、'网站速度'或'安全头'时使用。"
 user-invocable: true
-argument-hint: "[url]"
+参数-hint: "[url]"
 license: MIT
 metadata:
   author: AgriciDaniel
@@ -67,7 +67,7 @@ metadata:
 - 性能优化建议
 
 ### 7. 结构化数据
-- Schema.org标记实施
+- 架构.org标记实施
 - 丰富网页摘要测试
 - 结构化数据验证
 - 标记覆盖率和准确性
@@ -132,7 +132,7 @@ metadata:
 
 ### 结构化数据工具
 - Google Rich Results Test
-- Schema Markup Validator
+- 架构 Markup Validator
 - JSON-LD Playground
 - Structured Data Testing Tool
 

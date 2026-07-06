@@ -1,6 +1,6 @@
 ---
-name: gemini-api-integration
-description: "适用于integrating google gemini api into projects. covers model selection, multimodal inputs, streaming, function calling, and production best practices.的情况。"
+name: gemini-api-集成
+description: "适用于integrating google gemini api into projects. covers model selection, multimodal inputs, streaming, function calling, and production 最佳实践.的情况。"
 risk: safe
 source: community
 date_added: "2026-03-04"
@@ -12,7 +12,7 @@ date_added: "2026-03-04"
 
 This skill guides AI agents through integrating Google Gemini API into applications — from basic text generation to advanced multimodal, function calling, and streaming use cases. It covers the full Gemini SDK lifecycle with production-grade patterns.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when setting up Gemini API for the first time in a Node.js, Python, or browser project
 - Use when implementing multimodal inputs (text + image/audio/video)
@@ -50,7 +50,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const result = await model.generateContent("Explain async/await in JavaScript");
-console.log(result.response.text());
+console.log(result.响应.text());
 ```
 
 **Python:**
@@ -61,8 +61,8 @@ import os
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-1.5-flash")
 
-response = model.generate_content("Explain async/await in JavaScript")
-print(response.text)
+响应 = model.generate_content("Explain async/await in JavaScript")
+print(响应.text)
 ```
 
 ### 3. Streaming Responses
@@ -89,7 +89,7 @@ const imagePart = {
 };
 
 const result = await model.generateContent(["Describe this image:", imagePart]);
-console.log(result.response.text());
+console.log(result.响应.text());
 ```
 
 ### 5. Function Calling / Tool Use
@@ -112,7 +112,7 @@ const tools = [{
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro", tools });
 const result = await model.generateContent("What's the weather in Mumbai?");
 
-const call = result.response.functionCalls()?.[0];
+const call = result.响应.functionCalls()?.[0];
 if (call) {
   // Execute the actual function
   const weatherData = await getWeather(call.args.city);
@@ -130,8 +130,8 @@ const chat = model.startChat({
   ],
 });
 
-const response = await chat.sendMessage("How do I reverse a string in Python?");
-console.log(response.response.text());
+const 响应 = await chat.sendMessage("How do I reverse a string in Python?");
+console.log(响应.响应.text());
 ```
 
 ### 7. Model Selection Guide
@@ -159,14 +159,14 @@ console.log(response.response.text());
 ```javascript
 try {
   const result = await model.generateContent(prompt);
-  return result.response.text();
+  return result.响应.text();
 } catch (error) {
   if (error.status === 429) {
     // Rate limited — wait and retry with exponential backoff
     await new Promise(r => setTimeout(r, 2 ** retryCount * 1000));
   } else if (error.status === 400) {
-    // Invalid request — check prompt or parameters
-    console.error("Invalid request:", error.message);
+    // Invalid 请求 — check prompt or parameters
+    console.error("Invalid 请求:", error.message);
   } else {
     throw error;
   }
@@ -178,14 +178,14 @@ try {
 **Problem:** `API_KEY_INVALID` error
 **Solution:** Ensure `GEMINI_API_KEY` environment variable is set and the key is active in Google AI Studio.
 
-**Problem:** Response blocked by safety filters
-**Solution:** Check `result.response.promptFeedback.blockReason` and adjust your prompt or safety settings.
+**Problem:** 响应 blocked by safety filters
+**Solution:** Check `result.响应.promptFeedback.blockReason` and adjust your prompt or safety settings.
 
-**Problem:** Slow response times
+**Problem:** Slow 响应 times
 **Solution:** Switch to `gemini-1.5-flash` and enable streaming. 考虑 caching repeated prompts.
 
 **Problem:** `RESOURCE_EXHAUSTED` (quota exceeded)
-**Solution:** Check your quota in Google Cloud Console. Implement request queuing and exponential backoff.
+**Solution:** Check your quota in Google Cloud Console. Implement 请求 queuing and exponential backoff.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

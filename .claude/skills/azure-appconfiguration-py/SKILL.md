@@ -19,7 +19,7 @@ pip install azure-appconfiguration
 ## 环境变量
 
 ```bash
-AZURE_APPCONFIGURATION_CONNECTION_STRING=Endpoint=https://<name>.azconfig.io;Id=...;Secret=...
+AZURE_APPCONFIGURATION_CONNECTION_STRING=端点=https://<name>.azconfig.io;Id=...;Secret=...
 # Or for Entra ID:
 AZURE_APPCONFIGURATION_ENDPOINT=https://<name>.azconfig.io
 ```
@@ -102,7 +102,7 @@ for setting in settings:
     print(f"{setting.key} [{setting.label}] = {setting.value}")
 ```
 
-### Filter by Key Prefix
+### 过滤器 by Key Prefix
 
 ```python
 settings = client.list_configuration_settings(
@@ -110,7 +110,7 @@ settings = client.list_configuration_settings(
 )
 ```
 
-### Filter by Label
+### 过滤器 by Label
 
 ```python
 settings = client.list_configuration_settings(
@@ -215,7 +215,7 @@ from azure.identity.aio import DefaultAzureCredential
 async def main():
     credential = DefaultAzureCredential()
     client = AzureAppConfigurationClient(
-        base_url=endpoint,
+        base_url=端点,
         credential=credential
     )
     
@@ -228,7 +228,7 @@ async def main():
 
 ## Client Operations
 
-| Operation | Description |
+| 操作 | Description |
 |-----------|-------------|
 | `get_configuration_setting` | Get single setting |
 | `set_configuration_setting` | Create or update setting |
@@ -249,7 +249,7 @@ async def main():
 7. **Use feature flags** for gradual rollouts and A/B testing
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

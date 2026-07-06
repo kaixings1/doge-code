@@ -1,11 +1,11 @@
 ---
 name: seo-page
-description: "Seo Page — 深度单页 SEO 分析相关功能和最佳实践：页面元素、内容质量、技术元标记、schema、图像和性能。"
-  technical meta tags, schema, images, and performance. Use when user says
+description: "Seo Page — 深度单页 SEO 分析相关功能和最佳实践：页面元素、内容质量、技术元标记、架构、图像和性能。"
+  technical meta tags, 架构, images, and performance. Use when user says
   "analyze this page", "check page SEO", "single URL", "check this page",
   "page analysis", or provides a single URL for review.
 user-invocable: true
-argument-hint: "[url]"
+参数-hint: "[url]"
 license: MIT
 metadata:
   author: AgriciDaniel
@@ -40,7 +40,7 @@ metadata:
 - Twitter Card: twitter:card, twitter:title, twitter:description
 - Hreflang: if multi-language, correct implementation
 
-### Schema Markup
+### 架构 Markup
 - Detect all types (JSON-LD preferred)
 - Validate required properties
 - Identify missing opportunities
@@ -67,7 +67,7 @@ Overall Score: XX/100
 On-Page SEO:     XX/100  ████████░░
 Content Quality: XX/100  ██████████
 Technical:       XX/100  ███████░░░
-Schema:          XX/100  █████░░░░░
+架构:          XX/100  █████░░░░░
 Images:          XX/100  ████████░░
 ```
 
@@ -77,7 +77,7 @@ Organized by priority: Critical -> High -> Medium -> Low
 ### Recommendations
 Specific, actionable improvements with expected impact
 
-### Schema Suggestions
+### 架构 Suggestions
 Ready-to-use JSON-LD code for detected opportunities
 
 ## DataForSEO 集成 (可选)

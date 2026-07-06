@@ -13,7 +13,7 @@ Comprehensive market sizing methodologies for calculating Total Addressable Mark
 ## 使用此技能的场景
 
 - Working on market sizing analysis tasks or workflows
-- Needing guidance, best practices, or checklists for market sizing analysis
+- Needing guidance, 最佳实践, or checklists for market sizing analysis
 
 ## 不要使用此技能的场景
 
@@ -23,9 +23,9 @@ Comprehensive market sizing methodologies for calculating Total Addressable Mark
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 概述
 
@@ -53,7 +53,7 @@ Market sizing provides the foundation for startup strategy, fundraising, and bus
 - Used for financial projections and fundraising
 - Example: 2-5% of SAM based on competitive landscape
 
-### When to Use Each Methodology
+### 使用场景 Each Methodology
 
 **Top-Down Analysis**
 - Use when established market research exists
@@ -92,7 +92,7 @@ SAM = TAM × Geographic % × Segment %
 SOM = SAM × Realistic Capture Rate (2-5%)
 ```
 
-**When to use:** Established markets with available research (e.g., SaaS, fintech, e-commerce)
+**使用场景:** Established markets with available research (e.g., SaaS, fintech, e-commerce)
 
 **Strengths:** Quick, uses credible data, validates market existence
 
@@ -115,7 +115,7 @@ SAM = TAM × (Segments You Can Serve / Total Segments)
 SOM = SAM × Realistic Penetration Rate (Year 3-5)
 ```
 
-**When to use:** B2B, niche markets, specific customer segments
+**使用场景:** B2B, niche markets, specific customer segments
 
 **Strengths:** Most credible for investors, granular, defensible
 
@@ -141,7 +141,7 @@ SAM = TAM × % Meeting Buy Criteria
 SOM = SAM × Realistic Adoption Rate
 ```
 
-**When to use:** New categories, disruptive innovations, unclear existing markets
+**使用场景:** New categories, disruptive innovations, unclear existing markets
 
 **Strengths:** Shows value creation, works for new markets
 
@@ -218,7 +218,7 @@ Narrow TAM to serviceable addressable market.
 
 **Apply Filters:**
 - Geographic constraints (regions you can serve)
-- Product limitations (features you currently have)
+- Product 限制 (features you currently have)
 - Customer requirements (size, industry, use case)
 - Distribution channel access
 - Regulatory or compliance restrictions
@@ -230,9 +230,9 @@ SAM = TAM × (% matching all filters)
 
 **Example:**
 - TAM: $10B global email marketing
-- Geographic filter: 40% (North America)
-- Product filter: 30% (e-commerce focus)
-- Feature filter: 60% (need AI capabilities)
+- Geographic 过滤器: 40% (North America)
+- Product 过滤器: 30% (e-commerce focus)
+- Feature 过滤器: 60% (need AI 能力)
 - SAM = $10B × 0.40 × 0.30 × 0.60 = $720M
 
 ### 步骤 5: Calculate SOM
@@ -247,7 +247,7 @@ Determine realistic obtainable market share.
 - Competitive advantages
 - Time to achieve (3-5 years typically)
 
-**Conservative Approach:**
+**Conservative 方法:**
 ```
 SOM (Year 3) = SAM × 2%
 SOM (Year 5) = SAM × 5%
@@ -399,12 +399,12 @@ For detailed methodologies and frameworks:
 
 ### Example Files
 
-Working examples with complete calculations:
-- **`examples/saas-market-sizing.md`** - Complete TAM/SAM/SOM for a B2B SaaS product
-- **`examples/marketplace-sizing.md`** - Marketplace platform market opportunity calculation
-- **`examples/value-theory-example.md`** - Value-based market sizing for disruptive innovation
+Working 示例 with complete calculations:
+- **`示例/saas-market-sizing.md`** - Complete TAM/SAM/SOM for a B2B SaaS product
+- **`示例/marketplace-sizing.md`** - Marketplace platform market opportunity calculation
+- **`示例/value-theory-example.md`** - Value-based market sizing for disruptive innovation
 
-Use these examples as templates for your own market sizing analysis. Each includes real numbers, data sources, and assumptions documented clearly.
+Use these 示例 as templates for your own market sizing analysis. Each includes real numbers, data sources, and assumptions documented clearly.
 
 ## 快速开始
 
@@ -420,7 +420,7 @@ To perform market sizing analysis:
 8. **Document** - Show methodology, sources, assumptions
 9. **Present** - Structure for audience (investors, strategy, operations)
 
-For detailed step-by-step guidance on each methodology, reference the files in `references/` directory. For complete worked examples, see `examples/` directory.
+For detailed step-by-step guidance on each methodology, reference the files in `references/` directory. For complete worked 示例, see `示例/` directory.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

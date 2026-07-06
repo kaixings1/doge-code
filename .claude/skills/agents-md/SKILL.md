@@ -11,7 +11,7 @@ AGENTS.md is the canonical agent-facing documentation. Keep it minimal—agents 
 
 ## 使用场景
 - The user asks to create, update, or audit `AGENTS.md` or `CLAUDE.md`.
-- The project needs concise, high-signal agent instructions derived from the actual toolchain and repo layout.
+- The project needs concise, high-signal agent 使用说明 derived from the actual toolchain and repo layout.
 - Existing agent documentation is too long, duplicated, or drifting away from real project conventions.
 
 ## File 设置
@@ -33,7 +33,7 @@ Analyze the project to understand what belongs in the file:
 
 - **Headers + bullets** — No paragraphs
 - **Code blocks** — For commands and templates
-- **Reference, don't embed** — Point to existing docs: "See `CONTRIBUTING.md` for setup" or "Follow patterns in `src/api/routes/`"
+- **Reference, don't embed** — Point to existing docs: "See `CONTRIBUTING.md` for 设置" or "Follow patterns in `src/api/routes/`"
 - **No filler** — No intros, conclusions, or pleasantries
 - **Trust capabilities** — Omit obvious context
 - **优先 file-scoped commands** — Per-file test/lint/typecheck commands over project-wide builds

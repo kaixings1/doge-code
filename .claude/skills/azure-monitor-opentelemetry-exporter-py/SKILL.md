@@ -25,7 +25,7 @@ APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=xxx;IngestionEndpoint=h
 ## 使用场景
 | Scenario | Use |
 |----------|-----|
-| Quick setup, auto-instrumentation | `azure-monitor-opentelemetry` (distro) |
+| Quick 设置, auto-instrumentation | `azure-monitor-opentelemetry` (distro) |
 | Custom OpenTelemetry pipeline | `azure-monitor-opentelemetry-exporter` (this) |
 | Fine-grained control over telemetry | `azure-monitor-opentelemetry-exporter` (this) |
 
@@ -189,7 +189,7 @@ exporter = AzureMonitorTraceExporter(
 
 ## Configuration Options
 
-| Parameter | Description | Default |
+| 参数 | Description | Default |
 |-----------|-------------|---------|
 | `connection_string` | Application Insights connection string | From env var |
 | `credential` | Azure credential for AAD auth | None |

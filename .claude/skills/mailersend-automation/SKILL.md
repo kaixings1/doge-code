@@ -1,11 +1,11 @@
 ---
 name: mailersend-automation
-description: "通过 Rube MCP (Composio) 自动执行 Mailersend 任务。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Mailersend 任务。使用前始终先搜索工具以获取当前 架构。"
 requires:
   mcp: [rube]
 ---
 
-# 通过 Rube MCP 实现 Mailersend 自动化
+# Mailersend 自动化
 
 通过 Rube MCP 经 Composio 的 Mailersend 工具包自动化 Mailersend 操作。
 
@@ -15,7 +15,7 @@ requires:
 
 - 必须连接 Rube MCP（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 使用 `mailersend` 工具包激活 Mailersend 连接
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前 tool schema
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前 tool 架构
 
 ## 设置
 
@@ -33,10 +33,10 @@ requires:
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "Mailersend operations", known_fields: ""}]
-session: {generate_id: true}
+会话: {generate_id: true}
 ```
 
-这将返回可用的工具标识、输入 schema、推荐的执行计划和已知陷阱。
+这将返回可用的工具标识、输入 架构、推荐的执行计划和已知陷阱。
 
 ## 核心工作流模式
 
@@ -45,7 +45,7 @@ session: {generate_id: true}
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "your specific Mailersend task"}]
-session: {id: "existing_session_id"}
+会话: {id: "existing_session_id"}
 ```
 
 ### 第 2 步：检查连接
@@ -62,7 +62,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
+  arguments: {/* 架构-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"
@@ -70,9 +70,9 @@ session_id: "your_session_id"
 
 ## 已知陷阱
 
-- **始终先搜索**：工具 schema 会变化。未经调用 `RUBE_SEARCH_TOOLS` 切勿硬编码工具标识或参数
+- **始终先搜索**：工具 架构 会变化。未经调用 `RUBE_SEARCH_TOOLS` 切勿硬编码工具标识或参数
 - **检查连接**：在执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
-- **Schema 合规**：使用搜索结果中的确切字段名称和类型
+- **架构 合规**：使用搜索结果中的确切字段名称和类型
 - **Memory 参数**：始终在 `RUBE_MULTI_EXECUTE_TOOL` 调用中包含 `memory`，即使为空（`{}`）
 - **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的会话 ID
 - **分页**：检查响应中的分页标记，并持续获取直到完成

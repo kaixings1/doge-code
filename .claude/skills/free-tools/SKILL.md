@@ -46,9 +46,9 @@ metadata:
 
 ---
 
-## Tool Types Overview
+## Tool Types 概述
 
-| Type | Examples | Best For |
+| Type | 示例 | Best For |
 |------|----------|----------|
 | Calculators | ROI, savings, pricing estimators | Decisions involving numbers |
 | Generators | Templates, policies, names | Creating something quickly |
@@ -57,7 +57,7 @@ metadata:
 | Libraries | Icon sets, templates, snippets | Reference material |
 | Interactive | Tutorials, playgrounds, quizzes | Learning/understanding |
 
-**For detailed tool types and examples**: See [references/tool-types.md](references/tool-types.md)
+**For detailed tool types and 示例**: See [references/tool-types.md](references/tool-types.md)
 
 ---
 
@@ -65,7 +65,7 @@ metadata:
 
 ### Start with Pain Points
 
-1. **What problems does your audience Google?** - Search query research, common questions
+1. **What problems does your audience Google?** - Search 查询 research, common questions
 
 2. **What manual processes are tedious?** - Spreadsheet tasks, repetitive calculations
 
@@ -86,14 +86,14 @@ metadata:
 
 ### Gating Options
 
-| Approach | Pros | Cons |
+| 方法 | Pros | Cons |
 |----------|------|------|
 | Fully gated | Maximum capture | Lower usage |
 | Partially gated | Balance of both | Common pattern |
 | Ungated + optional | Maximum reach | Lower capture |
 | Ungated entirely | Pure SEO/brand | No direct leads |
 
-### Lead Capture Best Practices
+### Lead Capture 最佳实践
 - Value exchange clear: "Get your full report"
 - Minimal friction: Email only
 - Show preview of what they'll get

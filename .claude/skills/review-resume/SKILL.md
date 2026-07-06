@@ -5,14 +5,14 @@ description: "对照行业最佳实践审查数据科学简历：量化影响（
 # Review Resume
 
 ## 目的
-Review and improve data science resumes using proven best practices.
+Review and improve data science resumes using proven 最佳实践.
 
 ## 工作原理
 
 ### Assessment Criteria
 1. **Impact quantification**: Use XYZ formula (Accomplished [X], as measured by [Y], by doing [Z])
 2. **Technical skills**: Relevant tools, languages, frameworks prominently listed
-3. **Project descriptions**: Problem → approach → result, not just tool usage
+3. **Project descriptions**: Problem → 方法 → result, not just tool usage
 4. **Structure**: Clean format, scannable, 1-2 pages
 5. **Keywords**: ATS-optimized for target role
 6. **Consistency**: Tense, formatting, date format

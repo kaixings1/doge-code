@@ -35,7 +35,7 @@ firecrawl interact --prompt "Extract the pricing table"
 firecrawl interact --code "agent-browser click @e5" --language bash
 firecrawl interact --code "agent-browser snapshot -i" --language bash
 
-# 4. Stop the session when done
+# 4. Stop the 会话 when done
 firecrawl interact stop
 ```
 
@@ -44,7 +44,7 @@ firecrawl interact stop
 | Option                | Description                                       |
 | --------------------- | ------------------------------------------------- |
 | `--prompt <text>`     | Natural language instruction (use this OR --code) |
-| `--code <code>`       | Code to execute in the browser session            |
+| `--code <code>`       | Code to execute in the browser 会话            |
 | `--language <lang>`   | Language for code: bash, python, node             |
 | `--timeout <seconds>` | Execution timeout (default: 30, max: 300)         |
 | `--scrape-id <id>`    | Target a specific scrape (default: last scrape)   |
@@ -55,11 +55,11 @@ firecrawl interact stop
 Use `--profile` on the scrape to persist browser state (cookies, localStorage) across scrapes:
 
 ```bash
-# Session 1: Login and save state
+# 会话 1: Login and save state
 firecrawl scrape "https://app.example.com/login" --profile my-app
 firecrawl interact --prompt "Fill in email with user@example.com and click login"
 
-# Session 2: Come back authenticated
+# 会话 2: Come back authenticated
 firecrawl scrape "https://app.example.com/dashboard" --profile my-app
 firecrawl interact --prompt "Extract the dashboard data"
 ```

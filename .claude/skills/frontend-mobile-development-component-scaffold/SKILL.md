@@ -246,7 +246,7 @@ import { ${spec.name} } from './${spec.name}';
 
 describe('${spec.name}', () => {
   const defaultProps = {
-${spec.props.filter(p => p.required).map(p => `    ${p.name}: ${this.getMockValue(p.type)},`).join('\n')}
+${spec.props.过滤器(p => p.required).map(p => `    ${p.name}: ${this.getMockValue(p.type)},`).join('\n')}
   };
 
   it('renders without crashing', () => {
@@ -259,7 +259,7 @@ ${spec.props.filter(p => p.required).map(p => `    ${p.name}: ${this.getMockValu
     expect(screen.getByText(/content/i)).toBeVisible();
   });
 
-${spec.props.filter(p => p.type.includes('()') || p.name.startsWith('on')).map(p => `
+${spec.props.过滤器(p => p.type.includes('()') || p.name.startsWith('on')).map(p => `
   it('calls ${p.name} when triggered', () => {
     const mock${this.capitalize(p.name)} = jest.fn();
     render(<${spec.name} {...defaultProps} ${p.name}={mock${this.capitalize(p.name)}} />);

@@ -51,7 +51,7 @@ od:
 - 屏幕内 UI 用 Tailwind, 字号要按 mobile 真实尺寸 (text-sm / text-base, 不要 text-9xl)。
 
 【可选附加元素】
-- 右下角 "product slug" 角标: 大 logo + 一行 tagline + 副标 hairline。
+- 右下角 "product 标识符" 角标: 大 logo + 一行 tagline + 副标 hairline。
 - 顶部一行 caption (英文 sans, 字号小, 透明 0.6): 产品 codename / 日期 / 版本。
 - 加 8s 自动 CSS 转盘: `@keyframes turntable` rotateY -12 ↔ 12, ease-in-out infinite alternate; 可被 `prefers-reduced-motion` 关闭。
 

@@ -38,7 +38,7 @@ and output a complete optimized prompt the user can paste and run.
 
 - User wants the task done directly (just execute it)
 - User says "优化代码", "优化性能", "optimize this code", "optimize performance" — these are refactoring tasks, not prompt optimization
-- User is asking about ECC configuration (use `configure-ecc` instead)
+- User is asking about ECC 配置 (use `configure-ecc` instead)
 - User wants a skill inventory (use `skill-stocktake` instead)
 - User says "just do it" or "直接做"
 
@@ -52,7 +52,7 @@ action. Your ONLY output is an analysis plus an optimized prompt.
 If the user says "just do it", "直接做", or "don't optimize, just execute",
 do not switch into implementation mode inside this skill. Tell the user this
 skill only produces optimized prompts, and instruct them to make a normal
-task request if they want execution instead.
+task 请求 if they want execution instead.
 
 Run this 6-phase pipeline sequentially. Present results using the Output 格式 below.
 

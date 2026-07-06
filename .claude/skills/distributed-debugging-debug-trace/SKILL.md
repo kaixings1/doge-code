@@ -24,7 +24,7 @@ date_added: "2026-02-27"
 - The task is unrelated to debugging or observability
 
 ## 上下文
-The user needs to set up debugging and tracing capabilities to efficiently diagnose issues, track down bugs, and understand system behavior. Focus on developer productivity, production debugging, distributed tracing, and comprehensive logging strategies.
+The user needs to set up debugging and tracing 能力 to efficiently diagnose issues, track down bugs, and understand system behavior. Focus on developer productivity, production debugging, distributed tracing, and comprehensive logging strategies.
 
 ## 需求
 $ARGUMENTS
@@ -44,7 +44,7 @@ $ARGUMENTS
 
 ## 资源
 
-- `resources/implementation-playbook.md` for detailed tooling and configuration patterns.
+- `resources/implementation-playbook.md` for detailed tooling and 配置 patterns.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

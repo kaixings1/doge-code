@@ -20,7 +20,7 @@ LangGraph 专家——构建有状态多 actor AI 应用的生产级框架。涵
 ### 专长
 
 - 图拓扑设计
-- 状态 schema 模式
+- 状态 架构 模式
 - 条件分支
 - 持久化策略
 - 人在回路
@@ -96,10 +96,10 @@ class AgentState(TypedDict):
 
 # 2. Define Tools
 @tool
-def search(query: str) -> str:
+def search(查询: str) -> str:
     """Search the web for information."""
     # Implementation here
-    return f"Results for: {query}"
+    return f"Results for: {查询}"
 
 @tool
 def calculator(expression: str) -> str:
@@ -114,8 +114,8 @@ llm = ChatOpenAI(model="gpt-4o").bind_tools(tools)
 # 4. Define Nodes
 def agent(state: AgentState) -> dict:
     """The agent node - calls LLM."""
-    response = llm.invoke(state["messages"])
-    return {"messages": [response]}
+    响应 = llm.invoke(state["messages"])
+    return {"messages": [响应]}
 
 # Tool node handles tool execution
 tool_node = ToolNode(tools)
@@ -213,16 +213,16 @@ graph.add_node("writer", writer)
 from langgraph.graph import StateGraph, START, END
 
 class RouterState(TypedDict):
-    query: str
+    查询: str
     query_type: str
     result: str
 
 def classifier(state: RouterState) -> dict:
-    """Classify the query type."""
-    query = state["query"].lower()
-    if "code" in query or "program" in query:
+    """Classify the 查询 type."""
+    查询 = state["查询"].lower()
+    if "code" in 查询 or "program" in 查询:
         return {"query_type": "coding"}
-    elif "search" in query or "find" in query:
+    elif "search" in 查询 or "find" in 查询:
         return {"query_type": "search"}
     else:
         return {"query_type": "chat"}
@@ -292,7 +292,7 @@ memory = SqliteSaver.from_conn_string("agent_state.db")
 app = graph.compile(checkpointer=memory)
 
 # Run with thread_id for conversation continuity
-config = {"configurable": {"thread_id": "user-123-session-1"}}
+config = {"configurable": {"thread_id": "user-123-会话-1"}}
 
 # First message
 result1 = app.invoke(
@@ -434,9 +434,9 @@ result = app.invoke({
 
 ### 委派触发器
 
-- crewai|role-based|crew -> crewai (Need role-based multi-agent approach)
+- crewai|role-based|crew -> crewai (Need role-based multi-agent 方法)
 - observability|tracing|langsmith -> langfuse (Need LLM observability)
-- structured output|json schema -> structured-output (Need structured LLM responses)
+- structured output|json 架构 -> structured-output (Need structured LLM responses)
 - evaluate|benchmark|test agent -> agent-evaluation (Need to evaluate agent performance)
 
 ### 生产级代理栈

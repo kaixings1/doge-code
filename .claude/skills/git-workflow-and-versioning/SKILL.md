@@ -1,5 +1,5 @@
 ---
-name: git-workflow-and-versioning
+name: git-工作流-and-versioning
 description: Git工作流与版本控制 — 规范Git工作流实践。在提交代码更改时使用。
 ---
 
@@ -17,7 +17,7 @@ Git 是你的安全网。将提交视为存档点，分支视为沙箱，历史�
 
 ### Trunk-Based Development (Recommended)
 
-Keep `main` always deployable. Work in short-lived feature branches that merge back within 1-3 days. Long-lived development branches are hidden costs — they diverge, create merge conflicts, and delay integration. DORA research consistently shows trunk-based development correlates with high-performing engineering teams.
+Keep `main` always deployable. Work in short-lived feature branches that merge back within 1-3 days. Long-lived development branches are hidden costs — they diverge, create merge conflicts, and delay 集成. DORA research consistently shows trunk-based development correlates with high-performing engineering teams.
 
 ```
 main ──●──●──●──●──●──●──●──●──●──  (always deployable)
@@ -52,10 +52,10 @@ Each commit does one logical thing:
 ```
 # Good: Each commit is self-contained
 git log --oneline
-a1b2c3d Add task creation endpoint with validation
+a1b2c3d Add task creation 端点 with validation
 d4e5f6g Add task creation form component
 h7i8j9k Connect form to API and add loading state
-m1n2o3p Add task creation tests (unit + integration)
+m1n2o3p Add task creation tests (unit + 集成)
 
 # Bad: Everything mixed together
 git log --oneline
@@ -68,10 +68,10 @@ Commit messages explain the *why*, not just the *what*:
 
 ```
 # Good: Explains intent
-feat: add email validation to registration endpoint
+feat: add email validation to registration 端点
 
 Prevents invalid email formats from reaching the database.
-Uses Zod schema validation at the route handler level,
+Uses Zod 架构 validation at the route 处理器 level,
 consistent with existing validation patterns in auth.ts.
 
 # Bad: Describes what's obvious from the diff
@@ -194,15 +194,15 @@ After any modification, provide a structured summary. This makes review easier, 
 
 ```
 CHANGES MADE:
-- src/routes/tasks.ts: Added validation middleware to POST endpoint
+- src/routes/tasks.ts: Added validation 中间件 to POST 端点
 - src/lib/validation.ts: Added TaskCreateSchema using Zod
 
 THINGS I DIDN'T TOUCH (intentionally):
 - src/routes/auth.ts: Has similar validation gap but out of scope
-- src/middleware/error.ts: Error format could be improved (separate task)
+- src/中间件/error.ts: Error format could be improved (separate task)
 
 POTENTIAL CONCERNS:
-- The Zod schema is strict — rejects extra fields. Confirm this is desired.
+- The Zod 架构 is strict — rejects extra fields. Confirm this is desired.
 - Added zod as a dependency (72KB gzipped) — already in package.json
 ```
 
@@ -217,7 +217,7 @@ Before every commit:
 git diff --staged
 
 # 2. Ensure no secrets
-git diff --staged | grep -i "password\|secret\|api_key\|token"
+git diff --staged | grep -i "password\|secret\|api_key\|令牌"
 
 # 3. Run tests
 npm test

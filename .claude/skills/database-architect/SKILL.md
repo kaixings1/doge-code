@@ -1,6 +1,6 @@
 ---
 name: database-architect
-description: 从头设计数据层、技术选型、Schema 建模和可扩展数据库架构的专家数据库架构师。
+description: 从头设计数据层、技术选型、架构 建模和可扩展数据库架构的专家数据库架构师。
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -54,28 +54,28 @@ date_added: '2026-02-27'
 - **技术评估**: 性能特征、操作复杂性、成本影响
 - **混合架构**: 多语言持久化、多数据库策略、数据同步
 
-### Data Modeling & Schema Design
+### Data Modeling & 架构 Design
 - **Conceptual modeling**: Entity-relationship diagrams, domain modeling, business requirement mapping
 - **Logical modeling**: Normalization (1NF-5NF), denormalization strategies, dimensional modeling
 - **Physical modeling**: Storage optimization, data type selection, partitioning strategies
 - **Relational design**: Table relationships, foreign keys, constraints, referential integrity
 - **NoSQL design patterns**: Document embedding vs referencing, data duplication strategies
-- **Schema evolution**: Versioning strategies, backward/forward compatibility, migration patterns
+- **架构 evolution**: Versioning strategies, backward/forward compatibility, 迁移 patterns
 - **Data integrity**: 约束条件, triggers, check constraints, application-level validation
 - **Temporal data**: Slowly changing dimensions, event sourcing, audit trails, time-travel queries
 - **Hierarchical data**: Adjacency lists, nested sets, materialized paths, closure tables
-- **JSON/semi-structured**: JSONB indexes, schema-on-read vs schema-on-write
-- **Multi-tenancy**: Shared schema, database per tenant, schema per tenant trade-offs
+- **JSON/semi-structured**: JSONB indexes, 架构-on-read vs 架构-on-write
+- **Multi-tenancy**: Shared 架构, database per tenant, 架构 per tenant trade-offs
 - **Data archival**: Historical data strategies, cold storage, compliance requirements
 
 ### Normalization vs Denormalization
 - **Normalization benefits**: Data consistency, update efficiency, storage optimization
 - **Denormalization strategies**: Read performance optimization, reduced JOIN complexity
-- **Trade-off analysis**: Write vs read patterns, consistency requirements, query complexity
+- **Trade-off analysis**: Write vs read patterns, consistency requirements, 查询 complexity
 - **Hybrid approaches**: Selective denormalization, materialized views, derived columns
 - **OLTP vs OLAP**: Transaction processing vs analytical workload optimization
 - **Aggregate patterns**: Pre-computed aggregations, incremental updates, refresh strategies
-- **Dimensional modeling**: Star schema, snowflake schema, fact and dimension tables
+- **Dimensional modeling**: Star 架构, snowflake 架构, fact and dimension tables
 
 ### Indexing Strategy & Design
 - **Index types**: B-tree, Hash, GiST, GIN, BRIN, bitmap, spatial indexes
@@ -84,18 +84,18 @@ date_added: '2026-02-27'
 - **Full-text search**: Text search indexes, ranking strategies, language-specific optimization
 - **JSON indexing**: JSONB GIN indexes, expression indexes, path-based indexes
 - **Unique constraints**: Primary keys, unique indexes, compound uniqueness
-- **Index planning**: Query pattern analysis, index selectivity, cardinality considerations
+- **Index planning**: 查询 pattern analysis, index selectivity, cardinality considerations
 - **Index maintenance**: Bloat management, statistics updates, rebuild strategies
 - **Cloud-specific**: Aurora indexing, Azure SQL intelligent indexing, managed index recommendations
 - **NoSQL indexing**: MongoDB compound indexes, DynamoDB secondary indexes (GSI/LSI)
 
-### Query Design & Optimization
-- **Query patterns**: Read-heavy, write-heavy, analytical, transactional patterns
+### 查询 Design & Optimization
+- **查询 patterns**: Read-heavy, write-heavy, analytical, transactional patterns
 - **JOIN strategies**: INNER, LEFT, RIGHT, FULL joins, cross joins, semi/anti joins
 - **Subquery optimization**: Correlated subqueries, derived tables, CTEs, materialization
 - **Window functions**: Ranking, running totals, moving averages, partition-based analysis
 - **Aggregation patterns**: GROUP BY optimization, HAVING clauses, cube/rollup operations
-- **Query hints**: Optimizer hints, index hints, join hints (when appropriate)
+- **查询 hints**: Optimizer hints, index hints, join hints (when appropriate)
 - **Prepared statements**: Parameterized queries, plan caching, SQL injection prevention
 - **Batch operations**: Bulk inserts, batch updates, upsert patterns, merge operations
 

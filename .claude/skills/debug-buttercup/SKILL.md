@@ -20,7 +20,7 @@ source: community
 
 ## When NOT to Use
 
-- Deploying or upgrading Buttercup (use Helm and deployment guides)
+- Deploying or upgrading Buttercup (use Helm and 部署 guides)
 - Debugging issues outside the `crs` Kubernetes namespace
 - Performance tuning that doesn't involve a failure symptom
 
@@ -36,7 +36,7 @@ All pods run in namespace `crs`. Key services:
 | Analysis | patcher, seed-gen, program-model, pov-reproducer |
 | Interface | competition-api, ui |
 
-## Triage Workflow
+## Triage 工作流
 
 Always start with triage. Run these three commands first:
 
@@ -47,7 +47,7 @@ kubectl get pods -n crs -o wide
 # 2. Events - the timeline of what went wrong
 kubectl get events -n crs --sort-by='.lastTimestamp'
 
-# 3. Warnings only - filter the noise
+# 3. Warnings only - 过滤器 the noise
 kubectl get events -n crs --field-selector type=Warning --sort-by='.lastTimestamp'
 ```
 
@@ -88,7 +88,7 @@ kubectl logs -n crs -l app=fuzzer-bot --tail=100 --prefix
 kubectl logs -n crs -l app.kubernetes.io/name=redis -f
 
 # Collect all logs to disk (existing script)
-bash deployment/collect-logs.sh
+bash 部署/collect-logs.sh
 ```
 
 ## Resource Pressure
@@ -133,7 +133,7 @@ INFO stats           # total_connections_received, rejected_connections
 CLIENT LIST          # see who's connected
 DBSIZE               # total keys
 
-# AOF configuration
+# AOF 配置
 CONFIG GET appendonly     # is AOF enabled?
 CONFIG GET appendfsync   # fsync policy: everysec, always, or no
 
@@ -231,7 +231,7 @@ kubectl exec -n crs <pod> -- df -h
 
 `CORPUS_TMPFS_PATH` is set when `global.volumes.corpusTmpfs.enabled: true`. This affects fuzzer-bot, coverage-bot, seed-gen, and merger-bot.
 
-### Deployment Config Verification
+### 部署 Config Verification
 
 When behavior doesn't match expectations, verify Helm values actually took effect:
 
@@ -249,7 +249,7 @@ Helm values template typos (e.g. wrong key names) silently fall back to chart de
 
 For detailed per-service symptoms, root causes, and fixes, see references/failure-patterns.md.
 
-Quick reference:
+快速参考:
 
 - **DinD**: `kubectl logs -n crs -l app=dind --tail=100` -- look for docker daemon crashes, storage driver errors
 - **Build-bot**: check build queue depth, DinD connectivity, OOM during compilation

@@ -1,5 +1,5 @@
 ---
-name: environment-setup-guide
+name: environment-设置-guide
 description: "开发环境配置"
 risk: safe
 source: community

@@ -7,7 +7,7 @@ source: community
 date_added: "2026-03-27"
 author: digitamaz
 tags: [mcp, aeo, tool-quality, agent-readiness, api-scoring, clarvia]
-tools: [claude, cursor, windsurf, cline]
+tools: [claude, 游标, windsurf, cline]
 ---
 
 # Clarvia AEO 检查
@@ -69,7 +69,7 @@ Returns side-by-side score breakdown with a recommendation.
 ### 步骤 4: Check leaderboard
 
 ```
-Show me the top 10 MCP servers for authentication using Clarvia
+Show me the top 10 MCP servers for 认证 using Clarvia
 ```
 
 ## 示例

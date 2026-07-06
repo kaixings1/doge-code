@@ -1,5 +1,5 @@
 ---
-name: deprecation-and-migration
+name: deprecation-and-迁移
 description: 弃用与迁移 — 管理弃用和迁移。在移除旧系统或升级依赖时使用。
 ---
 
@@ -18,7 +18,7 @@ description: 弃用与迁移 — 管理弃用和迁移。在移除旧系统或�
 - 合并重复实现
 - 移除无人拥有但所有人都依赖的死代码
 - 规划新系统的生命周期（弃用规划从设计时开始）
-- Deciding whether to maintain a legacy system or invest in migration
+- Deciding whether to maintain a legacy system or invest in 迁移
 
 ## Core Principles
 
@@ -28,7 +28,7 @@ Every line of code has ongoing cost: it needs tests, documentation, security pat
 
 ### Hyrum's Law Makes Removal Hard
 
-With enough users, every observable behavior becomes depended on — including bugs, timing quirks, and undocumented side effects. This is why deprecation requires active migration, not just announcement. Users can't "just switch" when they depend on behaviors the replacement doesn't replicate.
+With enough users, every observable behavior becomes depended on — including bugs, timing quirks, and undocumented side effects. This is why deprecation requires active 迁移, not just announcement. Users can't "just switch" when they depend on behaviors the replacement doesn't replicate.
 
 ### Deprecation Planning Starts at Design Time
 
@@ -43,12 +43,12 @@ Before deprecating anything, answer these questions:
    → If yes, maintain it. If no, proceed.
 
 2. How many users/consumers depend on it?
-   → Quantify the migration scope.
+   → Quantify the 迁移 scope.
 
 3. Does a replacement exist?
    → If no, build the replacement first. Don't deprecate without an alternative.
 
-4. What's the migration cost for each consumer?
+4. What's the 迁移 cost for each consumer?
    → If trivially automated, do it. If manual and high-effort, weigh against maintenance cost.
 
 5. What's the ongoing maintenance cost of NOT deprecating?
@@ -57,12 +57,12 @@ Before deprecating anything, answer these questions:
 
 ## Compulsory vs Advisory Deprecation
 
-| Type | When to Use | Mechanism |
+| Type | 使用场景 | Mechanism |
 |------|-------------|-----------|
 | **Advisory** | 迁移 is optional, old system is stable | Warnings, documentation, nudges. Users migrate on their own timeline. |
-| **Compulsory** | Old system has security issues, blocks progress, or maintenance cost is unsustainable | Hard deadline. Old system will be removed by date X. Provide migration tooling. |
+| **Compulsory** | Old system has security issues, blocks progress, or maintenance cost is unsustainable | Hard deadline. Old system will be removed by date X. Provide 迁移 tooling. |
 
-**默认 to advisory.** Use compulsory only when the maintenance cost or risk justifies forcing migration. Compulsory deprecation requires providing migration tooling, documentation, and support — you can't just announce a deadline.
+**默认 to advisory.** Use compulsory only when the maintenance cost or risk justifies forcing 迁移. Compulsory deprecation requires providing 迁移 tooling, documentation, and support — you can't just announce a deadline.
 
 ## The 迁移 Process
 
@@ -71,7 +71,7 @@ Before deprecating anything, answer these questions:
 Don't deprecate without a working alternative. The replacement must:
 
 - Cover all critical use cases of the old system
-- Have documentation and migration guides
+- Have documentation and 迁移 guides
 - Be proven in production (not just "theoretically better")
 
 ### 步骤 2: Announce and Document
@@ -80,15 +80,15 @@ Don't deprecate without a working alternative. The replacement must:
 ## Deprecation Notice: OldService
 
 **Status:** Deprecated as of 2025-03-01
-**Replacement:** NewService (see migration guide below)
+**Replacement:** NewService (see 迁移 guide below)
 **Removal date:** Advisory — no hard deadline yet
 **Reason:** OldService requires manual scaling and lacks observability.
             NewService handles both automatically.
 
-### Migration Guide
+### 迁移 Guide
 1. Replace `import { client } from 'old-service'` with `import { client } from 'new-service'`
-2. Update configuration (see examples below)
-3. Run the migration verification script: `npx migrate-check`
+2. Update 配置 (see 示例 below)
+3. Run the 迁移 verification script: `npx migrate-check`
 ```
 
 ### 步骤 3: Migrate Incrementally
@@ -98,12 +98,12 @@ Migrate consumers one at a time, not all at once. For each consumer:
 ```
 1. Identify all touchpoints with the deprecated system
 2. Update to use the replacement
-3. Verify behavior matches (tests, integration checks)
+3. Verify behavior matches (tests, 集成 checks)
 4. Remove references to the old system
 5. Confirm no regressions
 ```
 
-**The Churn Rule:** If you own the infrastructure being deprecated, you are responsible for migrating your users — or providing backward-compatible updates that require no migration. Don't announce deprecation and leave users to figure it out.
+**The Churn Rule:** If you own the infrastructure being deprecated, you are responsible for migrating your users — or providing backward-compatible updates that require no 迁移. Don't announce deprecation and leave users to figure it out.
 
 ### 步骤 4: Remove the Old System
 
@@ -112,7 +112,7 @@ Only after all consumers have migrated:
 ```
 1. Verify zero active usage (metrics, logs, dependency analysis)
 2. Remove the code
-3. Remove associated tests, documentation, and configuration
+3. Remove associated tests, documentation, and 配置
 4. Remove the deprecation notices
 5. Celebrate — removing code is an achievement
 ```
@@ -171,7 +171,7 @@ Zombie code is code that nobody owns but everybody depends on. It's not actively
 - 依赖项 with known vulnerabilities that nobody updates
 - Documentation that references systems that no longer exist
 
-**Response:** Either assign an owner and maintain it properly, or deprecate it with a concrete migration plan. Zombie code cannot stay in limbo — it either gets investment or removal.
+**响应:** Either assign an owner and maintain it properly, or deprecate it with a concrete 迁移 plan. Zombie code cannot stay in limbo — it either gets investment or removal.
 
 ## Common Rationalizations
 
@@ -179,15 +179,15 @@ Zombie code is code that nobody owns but everybody depends on. It's not actively
 |---|---|
 | "It still works, why remove it?" | Working code that nobody maintains accumulates security debt and complexity. Maintenance cost grows silently. |
 | "Someone might need it later" | If it's needed later, it can be rebuilt. Keeping unused code "just in case" costs more than rebuilding. |
-| "The migration is too expensive" | Compare migration cost to ongoing maintenance cost over 2-3 years. 迁移 is usually cheaper long-term. |
+| "The 迁移 is too expensive" | Compare 迁移 cost to ongoing maintenance cost over 2-3 years. 迁移 is usually cheaper long-term. |
 | "We'll deprecate it after we finish the new system" | Deprecation planning starts at design time. By the time the new system is done, you'll have new priorities. Plan now. |
-| "Users will migrate on their own" | They won't. Provide tooling, documentation, and incentives — or do the migration yourself (the Churn Rule). |
+| "Users will migrate on their own" | They won't. Provide tooling, documentation, and incentives — or do the 迁移 yourself (the Churn Rule). |
 | "We can maintain both systems indefinitely" | Two systems doing the same thing is double the maintenance, testing, documentation, and onboarding cost. |
 
 ## Red Flags
 
 - Deprecated systems with no replacement available
-- Deprecation announcements with no migration tooling or documentation
+- Deprecation announcements with no 迁移 tooling or documentation
 - "Soft" deprecation that's been advisory for years with no progress
 - Zombie code with no owner and active consumers
 - New features added to a deprecated system (invest in the replacement instead)
@@ -199,8 +199,8 @@ Zombie code is code that nobody owns but everybody depends on. It's not actively
 After completing a deprecation:
 
 - [ ] Replacement is production-proven and covers all critical use cases
-- [ ] 迁移 guide exists with concrete steps and examples
+- [ ] 迁移 guide exists with concrete steps and 示例
 - [ ] All active consumers have been migrated (verified by metrics/logs)
-- [ ] Old code, tests, documentation, and configuration are fully removed
+- [ ] Old code, tests, documentation, and 配置 are fully removed
 - [ ] No references to the deprecated system remain in the codebase
-- [ ] Deprecation notices are removed (they served their purpose)
+- [ ] Deprecation notices are removed (they served their 目的)

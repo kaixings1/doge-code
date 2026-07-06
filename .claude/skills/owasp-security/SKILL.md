@@ -12,7 +12,15 @@ allowed-tools: Read Grep Glob
 - [`reference/languages.md`](reference/languages.md) — 每种语言的安全特性，包含 20+ 种语言的不安全/安全示例。
 - [`reference/owasp-report.md`](reference/owasp-report.md) — 关于每个 OWASP 2025-2026 标准的全面深入探讨。
 
-## 快速参考: OWASP Top 10:2025
+## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |: OWASP Top 10:2025
 
 | # | 漏洞 | 关键预防措施 |
 |---|---------------|----------------|
@@ -22,7 +30,7 @@ allowed-tools: Read Grep Glob
 | A04 | Cryptographic Failures | TLS 1.2+, AES-256-GCM, Argon2/bcrypt for passwords |
 | A05 | Injection | Parameterized queries, input validation, safe APIs |
 | A06 | Insecure Design | Threat model, rate limit, design security controls |
-| A07 | Authentication Failures | MFA, check breached passwords, secure sessions |
+| A07 | 认证 Failures | MFA, check breached passwords, secure sessions |
 | A08 | Software or Data Integrity Failures | Sign packages, SRI for CDN, safe serialization |
 | A09 | 安全性 Logging and Alerting Failures | Log security events, structured format, alerting |
 | A10 | Mishandling of Exceptional Conditions | Fail-closed, hide internals, log with context |
@@ -37,15 +45,15 @@ When reviewing code, check for these issues:
 - [ ] Input length limits enforced
 - [ ] Allowlist validation preferred over denylist
 
-### Authentication & Sessions
+### 认证 & Sessions
 - [ ] Passwords hashed with Argon2/bcrypt (not MD5/SHA1)
-- [ ] Session tokens have sufficient entropy (128+ bits)
+- [ ] 会话 tokens have sufficient entropy (128+ bits)
 - [ ] Sessions invalidated on logout
 - [ ] MFA available for sensitive operations
 
 ### Access Control
-- [ ] Check for framework-level auth middleware (e.g., Next.js middleware.ts, proxy.ts, Express middleware) before flagging missing per-route auth
-- [ ] Authorization checked on every request
+- [ ] Check for framework-level auth 中间件 (e.g., Next.js 中间件.ts, proxy.ts, Express 中间件) before flagging missing per-route auth
+- [ ] 授权 checked on every 请求
 - [ ] Using object references user cannot manipulate
 - [ ] Deny by default policy
 - [ ] Privilege escalation paths reviewed
@@ -67,10 +75,10 @@ When reviewing code, check for these issues:
 ### SQL Injection Prevention
 ```python
 # UNSAFE
-cursor.execute(f"SELECT * FROM users WHERE id = {user_id}")
+游标.execute(f"SELECT * FROM users WHERE id = {user_id}")
 
 # SAFE
-cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+游标.execute("SELECT * FROM users WHERE id = %s", (user_id,))
 ```
 
 ### Command Injection Prevention
@@ -94,12 +102,12 @@ PasswordHasher().hash(password)
 
 ### Access Control
 ```python
-# UNSAFE - No authorization check
+# UNSAFE - No 授权 check
 @app.route('/api/user/<user_id>')
 def get_user(user_id):
     return db.get_user(user_id)
 
-# SAFE - Authorization enforced
+# SAFE - 授权 enforced
 @app.route('/api/user/<user_id>')
 @login_required
 def get_user(user_id):
@@ -177,7 +185,7 @@ When building or reviewing applications that call LLMs (chatbots, RAG, copilots,
 
 | # | Risk | Key Mitigation |
 |---|------|----------------|
-| LLM01 | Prompt Injection | Separate trusted instructions from untrusted data, filter outputs, isolate privileges between user/tool/system context |
+| LLM01 | Prompt Injection | Separate trusted instructions from untrusted data, 过滤器 outputs, isolate privileges between user/tool/system context |
 | LLM02 | Sensitive Information Disclosure | Sanitize training/RAG data, strip PII from context, restrict what the model can retrieve per user |
 | LLM03 | Supply Chain | Verify model provenance and signatures, vet third-party model hubs, lock model + adapter versions |
 | LLM04 | Data and Model Poisoning | Validate training/fine-tuning sources, anomaly-detect on data ingestion, hold-out integrity tests |
@@ -186,7 +194,7 @@ When building or reviewing applications that call LLMs (chatbots, RAG, copilots,
 | LLM07 | System Prompt Leakage | 绝不 put secrets, keys, or auth logic in the system prompt; assume the prompt is extractable |
 | LLM08 | Vector and Embedding Weaknesses | Tenant-isolate vector stores, access-control on retrieval, sign or hash chunks against indirect prompt injection |
 | LLM09 | Misinformation | Cite sources, surface confidence, require grounding for high-stakes answers, disclose AI provenance |
-| LLM10 | Unbounded Consumption | Rate-limit per user/key, cap tokens and tool calls per request, monitor cost, set hard timeouts |
+| LLM10 | Unbounded Consumption | Rate-limit per user/key, cap tokens and tool calls per 请求, monitor cost, set hard timeouts |
 
 ### LLM Application 安全性 Checklist
 
@@ -194,9 +202,9 @@ When building or reviewing applications that call LLMs (chatbots, RAG, copilots,
 - [ ] LLM output treated as untrusted before reaching a tool, DOM, shell, SQL, or `eval`
 - [ ] Tool/function-calling surface is minimal and least-privilege
 - [ ] Destructive or external-effect tools require explicit human approval
-- [ ] System prompt contains no secrets, keys, or authorization rules
+- [ ] System prompt contains no secrets, keys, or 授权 rules
 - [ ] RAG sources are trusted, signed, or quarantined by trust level (defends against indirect prompt injection)
-- [ ] Per-user token / request / cost budgets enforced
+- [ ] Per-user 令牌 / 请求 / cost budgets enforced
 - [ ] Hard timeouts on completions and tool calls
 - [ ] PII and customer data redacted before being sent to the model or logged
 - [ ] Model, embedding model, and adapter versions pinned and verifiable
@@ -205,7 +213,7 @@ When building or reviewing applications that call LLMs (chatbots, RAG, copilots,
 ```python
 # UNSAFE - user input concatenated into instructions
 prompt = f"You are a support agent. Answer this: {user_input}"
-response = llm.complete(prompt)
+响应 = llm.complete(prompt)
 
 # SAFE - mark untrusted data with clear boundaries, instruct model to treat it as data
 SYSTEM = (
@@ -218,13 +226,13 @@ prompt = f"{SYSTEM}\n<user_data>{user_input}</user_data>"
 ### Improper Output Handling (LLM05)
 ```python
 # UNSAFE - LLM output handed straight to a sink that executes or renders it
-sql = llm.complete("Write a query for: " + user_request)
+sql = llm.complete("Write a 查询 for: " + user_request)
 db.execute(sql)
 
 # SAFE - constrain output, validate, and use parameterized execution
-spec = llm.complete_json(user_request, schema=QuerySpec)  # structured output
-query, params = build_query(spec)                          # allow-listed columns/ops
-db.execute(query, params)
+spec = llm.complete_json(user_request, 架构=QuerySpec)  # structured output
+查询, params = build_query(spec)                          # allow-listed columns/ops
+db.execute(查询, params)
 ```
 
 ### Excessive Agency (LLM06)
@@ -232,7 +240,7 @@ db.execute(query, params)
 # UNSAFE - broad tool surface, admin creds, no approval gate
 agent = Agent(tools=ALL_TOOLS, credentials=admin_token)
 
-# SAFE - minimum tools, scoped short-lived token, approval for side effects
+# SAFE - minimum tools, scoped short-lived 令牌, approval for side effects
 agent = Agent(
     tools=[search_docs, read_ticket],
     credentials=mint_scoped_token(user, ttl_minutes=10, scopes=["read"]),
@@ -247,7 +255,7 @@ agent = Agent(
 def chat(msg: str):
     return llm.complete(msg)
 
-# SAFE - per-user rate limit, token cap, timeout, budget check
+# SAFE - per-user rate limit, 令牌 cap, timeout, budget check
 @app.post("/chat")
 @rate_limit("20/min", key="user_id")
 def chat(msg: str, user: User):
@@ -261,8 +269,8 @@ def chat(msg: str, user: User):
 ### Level 1 (All Applications)
 - Passwords minimum 12 characters
 - Check against breached password lists
-- Rate limiting on authentication
-- Session tokens 128+ bits entropy
+- Rate limiting on 认证
+- 会话 tokens 128+ bits entropy
 - HTTPS everywhere
 
 ### Level 2 (Sensitive Data)
@@ -281,7 +289,7 @@ def chat(msg: str, user: User):
 
 ## Language-Specific 安全性 Quirks
 
-Every language has unique security pitfalls. For per-language unsafe/safe examples and
+Every language has unique security pitfalls. For per-language unsafe/safe 示例 and
 the key functions to watch for across 20+ languages (JavaScript/TypeScript, Python, Java,
 C#, PHP, Go, Ruby, Rust, Swift, Kotlin, C/C++, Scala, R, Perl, Shell, Lua, Elixir,
 Dart/Flutter, PowerShell, SQL), see [`reference/languages.md`](reference/languages.md).
@@ -303,12 +311,12 @@ When reviewing any language, think like a senior security researcher:
 9. **Runtime Behavior:** Debug vs release differences (Rust overflow, C++ assertions).
 10. **Error Handling:** How does the language fail? Silently? With stack traces? Fail-open?
 
-**For any language not listed:** Research its specific CWE patterns, CVE history, and known footguns. The examples above are entry points, not complete coverage.
+**For any language not listed:** Research its specific CWE patterns, CVE history, and known footguns. The 示例 above are entry points, not complete coverage.
 
 ## When to Apply This Skill
 
 使用此技能当:
-- Writing authentication or authorization code
+- Writing 认证 or 授权 code
 - Handling user input or external data
 - Implementing cryptography or password storage
 - Reviewing code for security vulnerabilities

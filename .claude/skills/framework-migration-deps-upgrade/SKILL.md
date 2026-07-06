@@ -1,5 +1,5 @@
 ---
-name: framework-migration-deps-upgrade
+name: framework-迁移-deps-upgrade
 description: "您是专门进行安全、增量式项目依赖升级的依赖管理专家。以最小风险、适当测试和清晰迁移路径规划和执行依赖更新。"
 risk: critical
 source: community

@@ -65,17 +65,13 @@ research-decision-room/
 Read `references/evidence-model.md` before synthesis and run
 `references/checklist.md` before emitting the artifact.
 
-## When to use this skill
+## 使用场景
 
-Use this skill when the user has any mix of:
+当用户有以下任意组合时使用此技能：
 
-- Interview notes, usability-test observations, support tickets, sales call notes,
-  app-store reviews, NPS comments, survey open text, analytics snippets, or
-  product-decision context.
-- A decision that needs evidence: "Should we build X?", "Which onboarding path
-  should we try?", "Why are users dropping off?", "What do customers actually
-  mean by slow?"
-- A need to share findings with stakeholders who will not read a long research
+- 访谈笔记、可用性测试观察、支持工单、销售通话记录、应用商店评论、NPS 评论、调查开放文本、分析片段或产品决策上下文。
+- 需要证据的决策："我们应该构建 X 吗？"、"我们应该尝试哪个入门路径？"、"为什么用户会流失？"、"客户说的慢到底是什么意思？"
+- 需要与不会阅读长篇研究报告的利益相关者分享发现
   report.
 
 Do not use it for pure visual inspiration, campaign ideation, or brand moodboards.
@@ -112,7 +108,7 @@ Each ledger row must include:
 - `signal`: one-sentence observation.
 - `quote_or_metric`: direct quote, metric, or "not provided".
 - `strength`: strong, medium, or weak.
-- `limitations`: why this evidence may be biased or incomplete.
+- `限制`: why this evidence may be biased or incomplete.
 
 Never invent quotes, participant counts, dates, revenue impact, or metrics. If
 the user did not provide a number, use "not provided" and explain what evidence
@@ -128,7 +124,7 @@ Cluster evidence into 4 to 6 themes. For each theme:
 - Mark confidence as high, medium, or low.
 - Note contradictions or segment differences.
 
-Prefer verbs over nouns: "Teams abandon setup when the first blank state asks
+Prefer verbs over nouns: "Teams abandon 设置 when the first blank state asks
 for too much" is better than "Onboarding problem".
 
 ### Step 4 - Score opportunities
@@ -165,12 +161,12 @@ stable:
 
 1. Header with decision question, confidence, and last-updated label.
 2. Executive readout with recommendation, risk, and next experiment.
-3. Evidence ledger with filter chips.
+3. Evidence ledger with 过滤器 chips.
 4. Theme map with evidence ids and confidence.
 5. Opportunity matrix.
 6. Decision memo.
 7. Experiment queue with owner, metric, and success threshold.
-8. Assumptions and limitations.
+8. Assumptions and 限制.
 
 The artifact should be interactive but durable. Simple vanilla JavaScript is
 allowed for filtering evidence, switching views, or highlighting related ids.

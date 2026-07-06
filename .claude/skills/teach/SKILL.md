@@ -2,17 +2,17 @@
 name: teach
 description: "Teach — 教学技能。用户要求你教他们某个主题。创建一个教学工作区，包含课程、学习记录和参考资料。有状态请求——用户意图通过多个会话学习该主题。"
 disable-model-invocation: true
-argument-hint: "你想学习什么？"
+参数-hint: "你想学习什么？"
 ---
 
-The user has asked you to teach them something. This is a stateful request - they intend to learn the topic over multiple sessions.
+The user has asked you to teach them something. This is a stateful 请求 - they intend to learn the topic over multiple sessions.
 
 ## Teaching Workspace
 
 Treat the current directory as a teaching workspace. The state of their learning is captured in this directory in several files:
 
 - `MISSION.md`: A document capturing the _reason_ the user is interested in the topic. This should be used to ground all teaching. Use the format in [MISSION-FORMAT.md](./MISSION-FORMAT.md).
-- `./reference/*.html`: A directory of reference materials. These are the compressed learnings from the lessons - cheat sheets, reference algorithms, syntax, yoga poses, glossaries. They are the raw units of learning. They should be beautiful documents which print out well, and are designed for quick reference.
+- `./reference/*.html`: A directory of reference materials. These are the compressed learnings from the lessons - cheat sheets, reference algorithms, syntax, yoga poses, glossaries. They are the raw units of learning. They should be beautiful documents which print out well, and are designed for 快速参考.
 - `RESOURCES.md`: A list of resources which can be explored to ground your teaching in contextual knowledge, or to acquire knowledge and wisdom. Use the format in [RESOURCES-FORMAT.md](./RESOURCES-FORMAT.md).
 - `./learning-records/*.md`: A directory of learning records, which capture what the user has learned. These are loosely equivalent to architectural decision records in software development - they capture non-obvious lessons and key insights that may need to be revised later, or drive future sessions. These should be used to calculate the zone of proximal development. They are titled `0001-<dash-case-name>.md`, where the number increments each time. Use the format in [LEARNING-RECORD-FORMAT.md](./LEARNING-RECORD-FORMAT.md).
 - `./lessons/*.html`: A directory of lessons. A **lesson** is a single, self-contained HTML output that teaches one tightly-scoped thing tied to the mission. This is the primary unit of teaching in this workspace.
@@ -123,7 +123,7 @@ You should attempt to find high-reputation communities the user can join. If the
 
 While creating lessons, you should also create reference documents. Lessons can reference these documents - they are useful for tracking raw units of knowledge useful across lessons.
 
-Lessons will rarely be revisited later - reference documents will be. They should be the compressed essence of the lesson, in a format designed for quick reference.
+Lessons will rarely be revisited later - reference documents will be. They should be the compressed essence of the lesson, in a format designed for 快速参考.
 
 Some learning topics lend themselves to reference:
 

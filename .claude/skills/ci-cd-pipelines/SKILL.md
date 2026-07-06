@@ -16,7 +16,7 @@ on:
     branches: [main]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.工作流 }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/设置-node@v4
         with:
           node-version: 22
           cache: npm
@@ -50,7 +50,7 @@ jobs:
           --health-retries 5
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/设置-node@v4
         with:
           node-version: 22
           cache: npm
@@ -139,8 +139,8 @@ deploy:
 ## Reusable GitHub Action
 
 ```yaml
-# .github/actions/setup/action.yml
-name: Setup
+# .github/actions/设置/action.yml
+name: 设置
 description: Install dependencies and cache
 inputs:
   node-version:
@@ -148,7 +148,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/setup-node@v4
+    - uses: actions/设置-node@v4
       with:
         node-version: ${{ inputs.node-version }}
         cache: npm
@@ -157,10 +157,10 @@ runs:
 ```
 
 ```yaml
-# Usage in workflow
+# Usage in 工作流
 steps:
   - uses: actions/checkout@v4
-  - uses: ./.github/actions/setup
+  - uses: ./.github/actions/设置
   - run: npm test
 ```
 
@@ -176,7 +176,7 @@ test:
   runs-on: ${{ matrix.os }}
   steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/设置-node@v4
       with:
         node-version: ${{ matrix.node }}
     - run: npm ci && npm test
@@ -186,7 +186,7 @@ test:
 
 - Not caching dependencies (npm, pip, cargo) between runs
 - Running all jobs sequentially when lint and test can parallelize
-- Storing secrets in workflow files instead of repository/environment secrets
+- Storing secrets in 工作流 files instead of repository/environment secrets
 - Missing `concurrency` groups causing redundant CI runs on rapid pushes
 - Not using `fail-fast: false` in matrix builds (one failure cancels others)
 - Deploying without an approval gate or environment protection rule
@@ -199,5 +199,5 @@ test:
 - [ ] Database services use health checks before tests start
 - [ ] Coverage reports uploaded and tracked
 - [ ] Deploy job requires approval for production
-- [ ] Reusable actions/templates extract common setup steps
+- [ ] Reusable actions/templates extract common 设置 steps
 - [ ] Secrets stored in CI platform, never in code

@@ -3,7 +3,7 @@ name: ddd-context-mapping
 description: "使用 DDD 上下文映射模式映射限界上下文之间的关系并定义集成契约。"
 risk: safe
 source: self
-tags: "[ddd, context-map, anti-corruption-layer, integration]"
+tags: "[ddd, context-map, anti-corruption-layer, 集成]"
 date_added: "2026-02-27"
 ---
 
@@ -47,6 +47,6 @@ Inventory, and Fraud contexts, including ACL and contract ownership.
 
 ## 局限性
 
-- This skill does not replace API-level schema design.
+- This skill does not replace API-level 架构 design.
 - It does not guarantee organizational alignment by itself.
 - It should be revisited when team ownership changes.

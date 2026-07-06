@@ -60,7 +60,7 @@ When the user invokes this skill:
    "summarize focusing on pricing", "list action items"), pass it via `--prompt "..."`.
 2. If the user provides a **prompt file path**, pass it via `--prompt-file path/to/file.txt`.
 3. If the user gives **no specific instructions**, run without `--prompt` to use the default format.
-4. If the user specifies a **directory**, pass it as the first positional argument.
+4. If the user specifies a **directory**, pass it as the first positional 参数.
 
 ### 4. 默认 output format (when no custom prompt is given)
 

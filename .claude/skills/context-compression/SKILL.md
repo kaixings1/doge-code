@@ -1,27 +1,27 @@
 ---
 name: context-compression
-description: "当代理会话生成数百万 token 的对话历史时，压缩变得必要。天真的方法是激进压缩以最小化每请求 token 数。"
+description: "当代理会话生成数百万 令牌 的对话历史时，压缩变得必要。天真的方法是激进压缩以最小化每请求 令牌 数。"
 risk: unknown
 source: community
 ---
 
 # Context Compression Strategies
 
-When agent sessions generate millions of tokens of conversation history, compression becomes mandatory. The naive approach is aggressive compression to minimize tokens per request. The correct optimization target is tokens per task: total tokens consumed to complete a task, including re-fetching costs when compression loses critical information.
+When agent sessions generate millions of tokens of conversation history, compression becomes mandatory. The naive 方法 is aggressive compression to minimize tokens per 请求. The correct optimization target is tokens per task: total tokens consumed to complete a task, including re-fetching costs when compression loses critical information.
 
 ## 何时使用
 Activate this skill when:
 - Agent sessions exceed context window limits
-- Codebases exceed context windows (5M+ token systems)
+- Codebases exceed context windows (5M+ 令牌 systems)
 - Designing conversation summarization strategies
 - Debugging cases where agents "forget" what files they modified
 - Building evaluation frameworks for compression quality
 
 ## Core Concepts
 
-Context compression trades token savings against information loss. Three production-ready approaches exist:
+Context compression trades 令牌 savings against information loss. Three production-ready approaches exist:
 
-1. **Anchored Iterative Summarization**: Maintain structured, persistent summaries with explicit sections for session intent, file modifications, decisions, and next steps. When compression triggers, summarize only the newly-truncated span and merge with the existing summary. Structure forces preservation by dedicating sections to specific information types.
+1. **Anchored Iterative Summarization**: Maintain structured, persistent summaries with explicit sections for 会话 intent, file modifications, decisions, and next steps. When compression triggers, summarize only the newly-truncated span and merge with the existing summary. Structure forces preservation by dedicating sections to specific information types.
 
 2. **Opaque Compression**: Produce compressed representations optimized for reconstruction fidelity. Achieves highest compression ratios (99%+) but sacrifices interpretability. Cannot verify what was preserved.
 
@@ -33,7 +33,7 @@ The critical insight: structure forces preservation. Dedicated sections act as c
 
 ### Why Tokens-Per-Task Matters
 
-Traditional compression metrics target tokens-per-request. This is the wrong optimization. When compression loses critical details like file paths or error messages, the agent must re-fetch information, re-explore approaches, and waste tokens recovering context.
+Traditional compression metrics target tokens-per-请求. This is the wrong optimization. When compression loses critical details like file paths or error messages, the agent must re-fetch information, re-explore approaches, and waste tokens recovering context.
 
 The right metric is tokens-per-task: total tokens consumed from task start to completion. A compression strategy saving 0.5% more tokens but causing 20% more re-fetching costs more overall.
 
@@ -54,21 +54,21 @@ This problem likely requires specialized handling beyond general summarization: 
 Effective structured summaries include explicit sections:
 
 ```markdown
-## Session Intent
+## 会话 Intent
 [What the user is trying to accomplish]
 
 ## Files Modified
-- auth.controller.ts: Fixed JWT token generation
+- auth.controller.ts: Fixed JWT 令牌 generation
 - config/redis.ts: Updated connection pooling
-- tests/auth.test.ts: Added mock setup for new config
+- tests/auth.test.ts: Added mock 设置 for new config
 
 ## Decisions Made
-- Using Redis connection pool instead of per-request connections
+- Using Redis connection pool instead of per-请求 connections
 - Retry logic with exponential backoff for transient failures
 
 ## Current State
 - 14 tests passing, 2 failing
-- Remaining: mock setup for session service tests
+- Remaining: mock 设置 for 会话 service tests
 
 ## 后续步骤
 1. Fix remaining test failures
@@ -89,7 +89,7 @@ When to trigger compression matters as much as how to compress:
 | Importance-based | Compress low-relevance sections first | Complex but preserves signal |
 | Task-boundary | Compress at logical task completions | Clean summaries but unpredictable timing |
 
-The sliding window approach with structured summaries provides the best balance of predictability and quality for most coding agent use cases.
+The sliding window 方法 with structured summaries provides the best balance of predictability and quality for most coding agent use cases.
 
 ### Probe-Based Evaluation
 
@@ -111,29 +111,29 @@ If compression preserved the right information, the agent answers correctly. If 
 Six dimensions capture compression quality for coding agents:
 
 1. **Accuracy**: Are technical details correct? File paths, function names, error codes.
-2. **Context Awareness**: Does the response reflect current conversation state?
+2. **Context Awareness**: Does the 响应 reflect current conversation state?
 3. **Artifact Trail**: Does the agent know which files were read or modified?
-4. **Completeness**: Does the response address all parts of the question?
+4. **Completeness**: Does the 响应 address all parts of the question?
 5. **Continuity**: Can work continue without re-fetching information?
-6. **Instruction Following**: Does the response respect stated constraints?
+6. **Instruction Following**: Does the 响应 respect stated constraints?
 
 Accuracy shows the largest variation between compression methods (0.6 point gap). Artifact trail is universally weak (2.2-2.5 range).
 
 ## Practical Guidance
 
-### Three-Phase Compression Workflow
+### Three-Phase Compression 工作流
 
 For large codebases or agent systems exceeding context windows, apply compression through three phases:
 
 1. **Research Phase**: Produce a research document from architecture diagrams, documentation, and key interfaces. Compress exploration into a structured analysis of components and dependencies. Output: single research document.
 
-2. **Planning Phase**: Convert research into implementation specification with function signatures, type definitions, and data flow. A 5M token codebase compresses to approximately 2,000 words of specification.
+2. **Planning Phase**: Convert research into implementation specification with function signatures, type definitions, and data flow. A 5M 令牌 codebase compresses to approximately 2,000 words of specification.
 
 3. **Implementation Phase**: Execute against the specification. Context remains focused on the spec rather than raw codebase exploration.
 
 ### Using Example Artifacts as Seeds
 
-When provided with a manual migration example or reference PR, use it as a template to understand the target pattern. The example reveals constraints that static analysis cannot surface: which invariants must hold, which services break on changes, and what a clean migration looks like.
+When provided with a manual 迁移 example or reference PR, use it as a template to understand the target pattern. The example reveals constraints that static analysis cannot surface: which invariants must hold, which services break on changes, and what a clean 迁移 looks like.
 
 This is particularly important when the agent cannot distinguish essential complexity (business requirements) from accidental complexity (legacy workarounds). The example artifact encodes that distinction.
 
@@ -145,7 +145,7 @@ This is particularly important when the agent cannot distinguish essential compl
 4. Merge new summary into existing sections rather than regenerating
 5. Track which information came from which compression cycle for debugging
 
-### 何时使用 Each Approach
+### 何时使用 Each 方法
 
 **Use anchored iterative summarization when:**
 - Sessions are long-running (100+ messages)
@@ -153,7 +153,7 @@ This is particularly important when the agent cannot distinguish essential compl
 - You need to verify what was preserved
 
 **Use opaque compression when:**
-- Maximum token savings required
+- Maximum 令牌 savings required
 - Sessions are relatively short
 - Re-fetching costs are low
 
@@ -174,11 +174,11 @@ The 0.7% additional tokens retained by structured summarization buys 0.35 qualit
 
 ## 示例
 
-**Example 1: Debugging Session Compression**
+**Example 1: Debugging 会话 Compression**
 
 Original context (89,000 tokens, 178 messages):
-- 401 error on /api/auth/login endpoint
-- Traced through auth controller, middleware, session store
+- 401 error on /api/auth/login 端点
+- Traced through auth controller, 中间件, 会话 store
 - Found stale Redis connection
 - Fixed connection pooling, added retry logic
 - 14 tests passing, 2 failing
@@ -186,43 +186,43 @@ Original context (89,000 tokens, 178 messages):
 Structured summary after compression:
 
 ```markdown
-## Session Intent
+## 会话 Intent
 Debug 401 Unauthorized error on /api/auth/login despite valid credentials.
 
 ## Root Cause
-Stale Redis connection in session store. JWT generated correctly but session could not be persisted.
+Stale Redis connection in 会话 store. JWT generated correctly but 会话 could not be persisted.
 
 ## Files Modified
 - auth.controller.ts: No changes (read only)
-- middleware/cors.ts: No changes (examined)
-- config/redis.ts: Fixed connection pooling configuration
-- services/session.service.ts: Added retry logic for transient failures
-- tests/auth.test.ts: Updated mock setup
+- 中间件/cors.ts: No changes (examined)
+- config/redis.ts: Fixed connection pooling 配置
+- services/会话.service.ts: Added retry logic for transient failures
+- tests/auth.test.ts: Updated mock 设置
 
 ## Test Status
-14 passing, 2 failing (mock setup issues)
+14 passing, 2 failing (mock 设置 issues)
 
 ## 后续步骤
-1. Fix remaining test failures (mock session service)
+1. Fix remaining test failures (mock 会话 service)
 2. Run full test suite
 3. Deploy to staging
 ```
 
-**Example 2: Probe Response Quality**
+**Example 2: Probe 响应 Quality**
 
 After compression, asking "What was the original error?":
 
-Good response (structured summarization):
-> "The original error was a 401 Unauthorized response from the /api/auth/login endpoint. Users received this error with valid credentials. Root cause was stale Redis connection in session store."
+Good 响应 (structured summarization):
+> "The original error was a 401 Unauthorized 响应 from the /api/auth/login 端点. Users received this error with valid credentials. Root cause was stale Redis connection in 会话 store."
 
-Poor response (aggressive compression):
-> "We were debugging an authentication issue. The login was failing. We fixed some configuration problems."
+Poor 响应 (aggressive compression):
+> "We were debugging an 认证 issue. The login was failing. We fixed some 配置 problems."
 
-The structured response preserves endpoint, error code, and root cause. The aggressive response loses all technical detail.
+The structured 响应 preserves 端点, error code, and root cause. The aggressive 响应 loses all technical detail.
 
 ## Guidelines
 
-1. Optimize for tokens-per-task, not tokens-per-request
+1. Optimize for tokens-per-task, not tokens-per-请求
 2. Use structured summaries with explicit sections for file tracking
 3. Trigger compression at 70-80% context utilization
 4. Implement incremental merging rather than full regeneration
@@ -231,7 +231,7 @@ The structured response preserves endpoint, error code, and root cause. The aggr
 7. Accept slightly lower compression ratios for better quality retention
 8. Monitor re-fetching frequency as a compression quality signal
 
-## Integration
+## 集成
 
 This skill connects to several others in the collection:
 
@@ -253,7 +253,7 @@ Related skills in this collection:
 External resources:
 - Factory Research: Evaluating Context Compression for AI Agents (December 2025)
 - Research on LLM-as-judge evaluation methodology (Zheng et al., 2023)
-- Netflix Engineering: "The Infinite Software Crisis" - Three-phase workflow and context compression at scale (AI Summit 2025)
+- Netflix Engineering: "The Infinite Software Crisis" - Three-phase 工作流 and context compression at scale (AI Summit 2025)
 
 ---
 

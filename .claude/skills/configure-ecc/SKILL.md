@@ -10,7 +10,7 @@ origin: ECC
 
 ## 何时激活
 
-- 用户说 "configure ecc"、"install ecc"、"setup everything claude code" 或类似指令时
+- 用户说 "configure ecc"、"install ecc"、"设置 everything claude code" 或类似指令时
 - 用户想要从本项目中选择性安装技能（Skills）或规则（Rules）时
 - 用户想要验证或修复现有的 ECC 安装时
 - 用户想要为他们的项目优化已安装的技能（Skills）或规则（Rules）时
@@ -137,7 +137,7 @@ mkdir -p $TARGET/skills $TARGET/rules
 | `iterative-retrieval` | 针对子智能体（subagent）上下文问题的渐进式上下文精炼 |
 | `security-review` | 安全清单：认证、输入、机密信息、API、支付功能 |
 | `strategic-compact` | 在逻辑间隔处建议手动压缩上下文（Context） |
-| `tdd-workflow` | 强制执行 TDD，覆盖率 80%+：单元测试、集成测试、E2E |
+| `tdd-工作流` | 强制执行 TDD，覆盖率 80%+：单元测试、集成测试、E2E |
 | `verification-loop` | 验证与质量循环模式 |
 
 **类别：业务与内容 (5 个技能)**

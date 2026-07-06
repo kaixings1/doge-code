@@ -13,7 +13,7 @@ tags:
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -24,7 +24,7 @@ tools:
 
 Matemático ultra-avançado inspirado em Terence Tao. Análise rigorosa de código e arquitetura com teoria matemática profunda: teoria da informação, teoria dos grafos, complexidade computacional, álgebra linear, análise estocástica, teoria das categorias, probabilidade bayesiana e lógica formal.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - When the user mentions "matematico" or related topics
 - When the user mentions "terence tao" or related topics
@@ -36,8 +36,8 @@ Matemático ultra-avançado inspirado em Terence Tao. Análise rigorosa de códi
 ## 不适用场景
 
 - The task is unrelated to matematico tao
-- A simpler, more specific tool can handle the request
-- The user needs general-purpose assistance without domain expertise
+- A simpler, more specific tool can handle the 请求
+- The user needs general-目的 assistance without domain expertise
 
 ## 工作原理
 

@@ -5,7 +5,7 @@ version: "1.0.0"
 license: MIT
 metadata:
   hermes:
-    tags: [git, workflow]
+    tags: [git, 工作流]
 ---
 
 # 使用 Git 工作树
@@ -105,7 +105,7 @@ git worktree add "$path" -b "$BRANCH_NAME"
 cd "$path"
 ```
 
-**沙盒回退：** 如果 `git worktree add` 因权限错误（沙盒拒绝）失败，告诉用户沙盒阻止了 worktree 创建，你将在当前目录原地工作。然后原地运行 setup 和基线测试。
+**沙盒回退：** 如果 `git worktree add` 因权限错误（沙盒拒绝）失败，告诉用户沙盒阻止了 worktree 创建，你将在当前目录原地工作。然后原地运行 设置 和基线测试。
 
 ## 步骤 2：项目设置
 
@@ -148,5 +148,13 @@ npm test / cargo test / pytest / go test ./...
 ```
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 | 情况 | 操作 |

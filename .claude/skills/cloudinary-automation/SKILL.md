@@ -35,10 +35,10 @@ Key parameters:
 
 Supporting tools:
 - `CLOUDINARY_SEARCH_FOLDERS` -- search folders by name, path, or creation date using Lucene-like expressions
-  - `expression` -- search filter (e.g., `name:sample AND path:events`)
+  - `expression` -- search 过滤器 (e.g., `name:sample AND path:events`)
   - `max_results` -- 1-500 results (default 50)
   - `sort_by` -- list of sort objects (e.g., `[{"created_at": "desc"}]`)
-  - `next_cursor` -- pagination cursor
+  - `next_cursor` -- pagination 游标
 - `CLOUDINARY_GET_RESOURCES_BY_ASSET_FOLDER` -- list assets within a specific folder
 
 Example prompt:
@@ -104,7 +104,7 @@ List existing transformations, apply eager transformations to uploaded assets, a
 **Tools:**
 - `CLOUDINARY_GET_TRANSFORMATIONS` -- list all named and unnamed transformations
   - `max_results` -- 1-500 (default 10)
-  - `next_cursor` -- pagination cursor
+  - `next_cursor` -- pagination 游标
 - `CLOUDINARY_EXPLICIT_RESOURCE` -- update an existing asset: pre-generate transformations, update metadata, move to new folders, or modify tags
   - `public_id` -- target asset (required)
   - `eager` -- list of transformation strings to pre-generate (e.g., `["c_fill,w_300,h_200", "c_thumb,w_100,h_100,g_face"]`)
@@ -121,14 +121,14 @@ Example prompt:
 
 ---
 
-### 5. Monitor Usage and Configuration
+### 5. Monitor Usage and 配置
 
-Check account-level usage limits, environment configuration, and tag inventory.
+Check account-level usage limits, environment 配置, and tag inventory.
 
 **Tools:**
 - `CLOUDINARY_GET_USAGE` -- monitor storage, bandwidth, requests, and quota limits
 - `CLOUDINARY_GET_CONFIG` -- fetch environment config details
-  - `settings` -- set to `true` to include configuration settings like `folder_mode`
+  - `settings` -- set to `true` to include 配置 settings like `folder_mode`
 - `CLOUDINARY_GET_TAGS` -- list all tags for a resource type
 
 Example prompt:
@@ -165,7 +165,15 @@ Example prompt:
 
 ## 快速参考
 
-| Action | Tool Slug | Key Params |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
+| Action | Tool 标识符 | Key Params |
 |--------|-----------|------------|
 | Create folder | `CLOUDINARY_CREATE_FOLDER` | `folder` |
 | Search folders | `CLOUDINARY_SEARCH_FOLDERS` | `expression`, `max_results` |

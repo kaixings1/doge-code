@@ -27,13 +27,13 @@ Cross-language patterns for memory-safe programming including RAII, ownership, s
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 资源
 
-- `resources/implementation-playbook.md` for detailed patterns and examples.
+- `resources/implementation-playbook.md` for detailed patterns and 示例.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

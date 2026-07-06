@@ -1,6 +1,6 @@
 ---
 name: wiki-retrieve
-description: "Compound Vault 的混合检索原语。用上下文前缀 + BM25 + 余弦重排序替换 v1.6 的静态热→索引→深度读取顺序，基于 Anthropic 2024 年 9 月的上下文检索研究（检索失败率降低 35-49-67%）。通过 `bash bin/setup-retrieve.sh` 选择加入；由 wiki-query 和 autoresearch 进行特征检测。"
+description: "Compound Vault 的混合检索原语。用上下文前缀 + BM25 + 余弦重排序替换 v1.6 的静态热→索引→深度读取顺序，基于 Anthropic 2024 年 9 月的上下文检索研究（检索失败率降低 35-49-67%）。通过 `bash bin/设置-retrieve.sh` 选择加入；由 wiki-查询 和 autoresearch 进行特征检测。"
 allowed-tools: Read Bash
 ---
 

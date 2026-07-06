@@ -41,7 +41,7 @@ Analyzes StarkNet/Cairo smart contracts for 6 vulnerability patterns:
 - Arithmetic overflow/underflow
 - Reentrancy
 - Uninitialized storage
-- Authorization bypass
+- 授权 bypass
 - And 2 more patterns
 
 ### Cosmos Vulnerability Scanner
@@ -61,7 +61,7 @@ Scans Solana/Anchor programs for 6 critical vulnerabilities:
 - Arbitrary CPI
 - Improper PDA validation
 - Missing ownership checks
-- Signer authorization
+- Signer 授权
 - And 2 more patterns
 
 ### Substrate Vulnerability Scanner

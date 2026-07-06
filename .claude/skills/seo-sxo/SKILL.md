@@ -2,7 +2,7 @@
 name: seo-sxo
 description: "Seo Sxo — 搜索体验优化（SXO）相关功能和最佳实践：反向读取 Google SERP 检测页面类型不匹配，从搜索意图信号推导用户故事，从多角色视角评分页面。"
 user-invocable: true
-argument-hint: "<url> [keyword]"
+参数-hint: "<url> [keyword]"
 license: MIT
 metadata:
   author: AgriciDaniel
@@ -26,4 +26,4 @@ well-optimized it is.
 
 ## Commands
 
-| Command | Purpose |
+| Command | 目的 |

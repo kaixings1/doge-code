@@ -1,8 +1,8 @@
 ---
 name: seo-competitor-pages
-description: "Seo Competitor Pages — 生成 SEO 优化的竞争对手对比和替代方案页面相关功能和最佳实践。涵盖'X vs Y'布局、'替代 X'页面、功能矩阵、schema 标记和转化优化。"
+description: "Seo Competitor Pages — 生成 SEO 优化的竞争对手对比和替代方案页面相关功能和最佳实践。涵盖'X vs Y'布局、'替代 X'页面、功能矩阵、架构 标记和转化优化。"
 user-invocable: true
-argument-hint: "[url or generate] [competitor]"
+参数-hint: "[url or generate] [competitor]"
 license: MIT
 metadata:
   author: AgriciDaniel

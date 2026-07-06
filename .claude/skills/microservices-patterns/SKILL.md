@@ -30,12 +30,12 @@ Master microservices architecture patterns including service boundaries, inter-s
 
 1. Identify domain boundaries and ownership for each service.
 2. Define contracts, data ownership, and communication patterns.
-3. Plan resilience, observability, and deployment strategy.
-4. Provide migration steps and operational guardrails.
+3. Plan resilience, observability, and 部署 strategy.
+4. Provide 迁移 steps and operational guardrails.
 
 ## 资源
 
-- `resources/implementation-playbook.md` for detailed patterns and examples.
+- `resources/implementation-playbook.md` for detailed patterns and 示例.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

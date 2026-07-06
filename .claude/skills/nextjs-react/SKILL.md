@@ -17,7 +17,7 @@ description: "用于审计 Next.js/React 应用安全的技能。涵盖 SSR 漏�
 ```bash
 grep -rn '"use server"' --include=*.ts --include=*.tsx
 find . -path */app/api/* -name route.ts -o -name route.js
-find . -name middleware.ts
+find . -name 中间件.ts
 ```
 
 ## 常见漏洞模式

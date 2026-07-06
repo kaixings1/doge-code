@@ -31,7 +31,7 @@ This plugin provides a skill that helps Claude Code proactively suggest and writ
 - **Validators**: is_valid, validate, check_*
 - **Data structures**: Custom collections with add/remove/get operations
 - **Mathematical/algorithmic**: Pure functions, sorting, ordering
-- **Smart contracts**: Solidity/Vyper contracts, token operations, state invariants
+- **Smart contracts**: Solidity/Vyper contracts, 令牌 operations, state invariants
 
 ## Supported Languages
 

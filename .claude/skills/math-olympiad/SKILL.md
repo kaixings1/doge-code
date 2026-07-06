@@ -24,7 +24,7 @@ version: 0.1.0
 3. **Short proof → extract the general lemma** — try 2×2 counterexamples. If
    general form is false, find what's special about THIS instance.
 4. **Same gap twice → step back** — the case split may be obscuring a unified
-   argument. Three lines sometimes does what twelve pages couldn't.
+   参数. Three lines sometimes does what twelve pages couldn't.
 5. **Say "no confident solution"** — wrong-and-confident is worse than honest
    abstain.
 

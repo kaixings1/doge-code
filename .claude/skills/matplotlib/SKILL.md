@@ -12,9 +12,9 @@ source: community
 
 ## 概述
 
-Matplotlib is Python's foundational visualization library for creating static, animated, and interactive plots. 此技能提供 guidance on using matplotlib effectively, covering both the pyplot interface (MATLAB-style) and the object-oriented API (Figure/Axes), along with best practices for creating publication-quality visualizations.
+Matplotlib is Python's foundational visualization library for creating static, animated, and interactive plots. 此技能提供 guidance on using matplotlib effectively, covering both the pyplot interface (MATLAB-style) and the object-oriented API (Figure/Axes), along with 最佳实践 for creating publication-quality visualizations.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 This skill should be used when:
 - Creating any type of plot or chart (line, scatter, bar, histogram, heatmap, contour, etc.)
@@ -69,7 +69,7 @@ plt.show()
 
 ### 1. Basic Plot Creation
 
-**Single plot workflow:**
+**Single plot 工作流:**
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
@@ -168,7 +168,7 @@ ax.boxplot([data1, data2, data3], labels=['A', 'B', 'C'])
 ax.violinplot([data1, data2, data3], positions=[1, 2, 3])
 ```
 
-For comprehensive plot type examples and variations, refer to `references/plot_types.md`.
+For comprehensive plot type 示例 and variations, refer to `references/plot_types.md`.
 
 ### 4. Styling and Customization
 
@@ -307,12 +307,20 @@ fig, ax = create_analysis_plot(my_data, 'My Analysis')
 plt.savefig('analysis.png', dpi=300, bbox_inches='tight')
 ```
 
-## 快速参考 Scripts
+## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 | Scripts
 
 This skill includes helper scripts in the `scripts/` directory:
 
 ### `plot_template.py`
-Template script demonstrating various plot types with best practices. Use this as a starting point for creating new visualizations.
+Template script demonstrating various plot types with 最佳实践. Use this as a starting point for creating new visualizations.
 
 **用法:**
 ```bash
@@ -331,10 +339,10 @@ python scripts/style_configurator.py
 
 For comprehensive information, consult the reference documents:
 
-- **`references/plot_types.md`** - Complete catalog of plot types with code examples and use cases
+- **`references/plot_types.md`** - Complete catalog of plot types with code 示例 and use cases
 - **`references/styling_guide.md`** - Detailed styling options, colormaps, and customization
 - **`references/api_reference.md`** - Core classes and methods reference
-- **`references/common_issues.md`** - Troubleshooting guide for common problems
+- **`references/common_issues.md`** - 故障排除 guide for common problems
 
 ## 集成 with Other Tools
 

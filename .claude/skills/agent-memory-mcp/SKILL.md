@@ -48,10 +48,10 @@ This skill provides a persistent, searchable memory bank that automatically sync
 
 ### `memory_search`
 
-Search for memories by query, type, or tags.
+Search for memories by 查询, type, or tags.
 
-- **Args**: `query` (string), `type?` (string), `tags?` (string[])
-- **Usage**: "Find all authentication patterns" -> `memory_search({ query: "authentication", type: "pattern" })`
+- **Args**: `查询` (string), `type?` (string), `tags?` (string[])
+- **Usage**: "Find all authentication patterns" -> `memory_search({ 查询: "authentication", type: "pattern" })`
 
 ### `memory_write`
 
@@ -84,7 +84,7 @@ npm run start-dashboard <absolute_path_to_target_workspace>
 Access at: `http://localhost:3333`
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

@@ -8,7 +8,7 @@ date_added: "2026-03-25"
 
 # macos-menubar-tuist-app
 
-Build and maintain macOS menubar apps with a Tuist-first workflow and stable launch scripts. Preserve strict architecture boundaries so networking, state, and UI remain testable and predictable.
+Build and maintain macOS menubar apps with a Tuist-first 工作流 and stable launch scripts. Preserve strict architecture boundaries so networking, state, and UI remain testable and predictable.
 
 ## 使用场景
 - When working on LSUIElement menubar utilities built with Tuist and SwiftUI.
@@ -30,7 +30,7 @@ Use this placement by default:
 
 - `Project.swift`: app target, settings, resources, `Info.plist` keys
 - `Sources/*Model*.swift`: API/domain models and decoding
-- `Sources/*Client*.swift`: requests, response mapping, transport concerns
+- `Sources/*Client*.swift`: requests, 响应 mapping, transport concerns
 - `Sources/*Store*.swift`: observable state, refresh policy, filtering, caching
 - `Sources/*Menu*View*.swift`: menu composition and top-level UI state
 - `Sources/*Row*View*.swift`: row rendering and lightweight interactions
@@ -44,12 +44,12 @@ Use this placement by default:
 - Read existing run scripts before changing launch behavior.
 
 2. Probe backend behavior before coding assumptions
-- Use `curl` to verify endpoint shape, auth requirements, and pagination behavior.
-- If endpoint ignores `limit/page`, implement full-list handling with local trimming in the store.
+- Use `curl` to verify 端点 shape, auth requirements, and pagination behavior.
+- If 端点 ignores `limit/page`, implement full-list handling with local trimming in the store.
 
 3. Implement layers from bottom to top
 - Define/adjust models first.
-- Add or update client request/decoding logic.
+- Add or update client 请求/decoding logic.
 - Update store refresh, filtering, and cache policy.
 - Wire views last.
 
@@ -68,10 +68,10 @@ Use this placement by default:
 Run validations after edits:
 
 ```bash
-TUIST_SKIP_UPDATE_CHECK=1 tuist xcodebuild build -scheme <TargetName> -configuration Debug
+TUIST_SKIP_UPDATE_CHECK=1 tuist xcodebuild build -scheme <TargetName> -配置 Debug
 ```
 
-If launch workflow changed:
+If launch 工作流 changed:
 
 ```bash
 ./run-menubar.sh
@@ -93,7 +93,7 @@ Use run/stop scripts as canonical local run path.
 - Menu UI is laggy or inconsistent after refresh:
 Move derived state and filtering into the store; keep views render-only.
 
-- API payload changes break decode:
+- API 载荷 changes break decode:
 Relax model decoding with optional fields and defaults, then surface missing data safely in UI.
 
 - Feature asks for quick UI patch:

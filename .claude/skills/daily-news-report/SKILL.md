@@ -20,7 +20,7 @@ date_added: "2026-02-27"
 │                                                                      │
 │   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐     │
 │   │ 1. Init     │ → │ 2. Dispatch │ → │ 3. Monitor  │ → │ 4. Evaluate │     │
-│   │ Read Config │    │ Assign Tasks│    │ Collect Res │    │ Filter/Sort │     │
+│   │ Read Config │    │ Assign Tasks│    │ Collect Res │    │ 过滤器/Sort │     │
 │   └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘     │
 │         │                  │                  │                  │           │
 │         ▼                  ▼                  ▼                  ▼           │
@@ -64,7 +64,7 @@ date_added: "2026-02-27"
 
 ```yaml
 Steps:
-  1. Determine date (user argument or current date)
+  1. Determine date (user 参数 or current date)
   2. Read sources.json for source configurations
   3. Read cache.json for historical data
   4. Create output directory NewsReport/
@@ -117,7 +117,7 @@ output_schema:
       quality_score: 1-5     # Quality Score
 
 constraints:
-  filter: "Cutting-edge Tech/Deep Tech/Productivity/Practical Info"
+  过滤器: "Cutting-edge Tech/Deep Tech/Productivity/Practical Info"
   exclude: "General Science/Marketing Puff/Overly Academic/Job Posts"
   max_items_per_source: 10
   skip_on_error: true
@@ -217,7 +217,7 @@ Update cache.json:
 
 ```
 Task Call:
-  subagent_type: general-purpose
+  subagent_type: general-目的
   model: haiku
   prompt: |
     You are a stateless execution unit. Only do the assigned task and return structured JSON.
@@ -246,7 +246,7 @@ Task Call:
       "metadata": { "processed": 2, "failed": 0 }
     }
 
-    Filter Criteria:
+    过滤器 Criteria:
     - Keep: Cutting-edge Tech/Deep Tech/Productivity/Practical Info
     - Exclude: General Science/Marketing Puff/Overly Academic/Job Posts
 
@@ -273,7 +273,7 @@ Task Call:
       - keywords: string[]
       - quality_score: 1-5
     constraints:
-      filter: Cutting-edge Tech/Deep Tech/Productivity/Practical Info
+      过滤器: Cutting-edge Tech/Deep Tech/Productivity/Practical Info
       exclude: General Science/Marketing Puff/Overly Academic
 ```
 
@@ -291,7 +291,7 @@ Task Call:
 
 ## 1. Title
 
-- **Summary**: 2-4 lines overview
+- **Summary**: 2-4 lines 概述
 - **Key Points**:
   1. Point one
   2. Point two

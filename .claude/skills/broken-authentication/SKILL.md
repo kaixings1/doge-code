@@ -11,14 +11,14 @@ date_added: "2026-02-27"
 
 ## 目的
 
-Identify and exploit authentication and session management vulnerabilities in web applications. Broken authentication consistently ranks in the OWASP Top 10 and can lead to account takeover, identity theft, and unauthorized access to sensitive systems. This skill covers testing methodologies for password policies, session handling, multi-factor authentication, and credential management.
+Identify and exploit authentication and 会话 management vulnerabilities in web applications. Broken authentication consistently ranks in the OWASP Top 10 and can lead to account takeover, identity theft, and unauthorized access to sensitive systems. This skill covers testing methodologies for password policies, 会话 handling, multi-factor authentication, and credential management.
 
 ## 前提条件
 
 ### 必需 Knowledge
-- HTTP protocol and session mechanisms
+- HTTP protocol and 会话 mechanisms
 - Authentication types (SFA, 2FA, MFA)
-- Cookie and token handling
+- Cookie and 令牌 handling
 - Common authentication frameworks
 
 ### 必需 Tools
@@ -36,7 +36,7 @@ Identify and exploit authentication and session management vulnerabilities in we
 
 1. **Authentication Assessment Report** - Document all identified vulnerabilities
 2. **Credential Testing Results** - Brute-force and dictionary attack outcomes
-3. **Session 安全性 Analysis** - Token randomness and timeout evaluation
+3. **会话 安全性 Analysis** - 令牌 randomness and timeout evaluation
 4. **Remediation Recommendations** - 安全性 hardening guidance
 
 ## 核心工作流
@@ -48,7 +48,7 @@ Understand the application's authentication architecture:
 ```
 # Identify authentication type
 - Password-based (forms, basic auth, digest)
-- Token-based (JWT, OAuth, API keys)
+- 令牌-based (JWT, OAuth, API keys)
 - Certificate-based (mutual TLS)
 - Multi-factor (SMS, TOTP, hardware tokens)
 
@@ -160,34 +160,34 @@ Test with known breached credentials:
 - Add delays between attempts
 ```
 
-### Phase 6: Session Management Testing
+### Phase 6: 会话 Management Testing
 
-Analyze session token security:
+Analyze 会话 令牌 security:
 
 ```bash
-# Capture session cookie
+# Capture 会话 cookie
 Cookie: SESSIONID=abc123def456
 
-# Test token characteristics
+# Test 令牌 characteristics
 1. Entropy - Is it random enough?
 2. Length - Sufficient length (128+ bits)?
 3. Predictability - Sequential patterns?
 4. Secure flags - HttpOnly, Secure, SameSite?
 ```
 
-Session token analysis:
+会话 令牌 analysis:
 
 ```python
 #!/usr/bin/env python3
 import requests
 import hashlib
 
-# Collect multiple session tokens
+# Collect multiple 会话 tokens
 tokens = []
 for i in range(100):
     response = requests.get("https://target.com/login")
-    token = response.cookies.get("SESSIONID")
-    tokens.append(token)
+    令牌 = response.cookies.get("SESSIONID")
+    tokens.append(令牌)
 
 # Analyze for patterns
 # Check for sequential increments
@@ -195,56 +195,56 @@ for i in range(100):
 # Look for timestamp components
 ```
 
-### Phase 7: Session Fixation Testing
+### Phase 7: 会话 Fixation Testing
 
-Test if session is regenerated after authentication:
+Test if 会话 is regenerated after authentication:
 
 ```bash
-# Step 1: Get session before login
+# Step 1: Get 会话 before login
 GET /login HTTP/1.1
 Response: Set-Cookie: SESSIONID=abc123
 
-# Step 2: Login with same session
+# Step 2: Login with same 会话
 POST /login HTTP/1.1
 Cookie: SESSIONID=abc123
 username=valid&password=valid
 
-# Step 3: Check if session changed
+# Step 3: Check if 会话 changed
 # VULNERABLE if SESSIONID remains abc123
-# SECURE if new session assigned after login
+# SECURE if new 会话 assigned after login
 ```
 
 Attack scenario:
 
 ```bash
-# Attacker workflow:
-1. Attacker visits site, gets session: SESSIONID=attacker_session
-2. Attacker sends link to victim with fixed session:
+# Attacker 工作流:
+1. Attacker visits site, gets 会话: SESSIONID=attacker_session
+2. Attacker sends link to victim with fixed 会话:
    https://target.com/login?SESSIONID=attacker_session
-3. Victim logs in with attacker's session
-4. Attacker now has authenticated session
+3. Victim logs in with attacker's 会话
+4. Attacker now has authenticated 会话
 ```
 
-### Phase 8: Session Timeout Testing
+### Phase 8: 会话 Timeout Testing
 
-Verify session expiration policies:
+Verify 会话 expiration policies:
 
 ```bash
 # Test idle timeout
-1. Login and note session cookie
+1. Login and note 会话 cookie
 2. Wait without activity (15, 30, 60 minutes)
-3. Attempt to use session
-4. Check if session is still valid
+3. Attempt to use 会话
+4. Check if 会话 is still valid
 
 # Test absolute timeout
-1. Login and continuously use session
+1. Login and continuously use 会话
 2. Check if forced logout after set period (8 hours, 24 hours)
 
 # Test logout functionality
-1. Login and note session
+1. Login and note 会话
 2. Click logout
-3. Attempt to reuse old session cookie
-4. Session should be invalidated server-side
+3. Attempt to reuse old 会话 cookie
+4. 会话 should be invalidated server-side
 ```
 
 ### Phase 9: Multi-Factor Authentication Testing
@@ -255,7 +255,7 @@ Assess MFA implementation security:
 # OTP brute force
 - 4-digit OTP = 10,000 combinations
 - 6-digit OTP = 1,000,000 combinations
-- Test rate limiting on OTP endpoint
+- Test rate limiting on OTP 端点
 
 # OTP bypass techniques
 - Skip MFA step by direct URL access
@@ -294,18 +294,18 @@ Test MFA enrollment:
 Analyze password reset security:
 
 ```bash
-# Token security
+# 令牌 security
 1. Request password reset
 2. Capture reset link
-3. Analyze token:
+3. Analyze 令牌:
    - Length and randomness
    - Expiration time
    - Single-use enforcement
    - Account binding
 
-# Token manipulation
-https://target.com/reset?token=abc123&user=victim
-# Try changing user parameter while using valid token
+# 令牌 manipulation
+https://target.com/reset?令牌=abc123&user=victim
+# Try changing user parameter while using valid 令牌
 
 # Host header injection
 POST /forgot-password HTTP/1.1
@@ -316,6 +316,14 @@ email=victim@email.com
 
 ## 快速参考
 
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
 ### Common Vulnerability Types
 
 | Vulnerability | Risk | Test Method |
@@ -323,10 +331,10 @@ email=victim@email.com
 | Weak passwords | High | Policy testing, dictionary attack |
 | No lockout | High | Brute force testing |
 | Username enumeration | Medium | Differential response analysis |
-| Session fixation | High | Pre/post-login session comparison |
-| Weak session tokens | High | Entropy analysis |
-| No session timeout | Medium | Long-duration session testing |
-| Insecure password reset | High | Token analysis, workflow bypass |
+| 会话 fixation | High | Pre/post-login 会话 comparison |
+| Weak 会话 tokens | High | Entropy analysis |
+| No 会话 timeout | Medium | Long-duration 会话 testing |
+| Insecure password reset | High | 令牌 analysis, 工作流 bypass |
 | MFA bypass | Critical | Direct access, response manipulation |
 
 ### Credential Testing Payloads
@@ -355,11 +363,11 @@ admin123
 - Custom targeted lists
 ```
 
-### Session Cookie Flags
+### 会话 Cookie Flags
 
 | Flag | Purpose | Vulnerability if Missing |
 |------|---------|------------------------|
-| HttpOnly | Prevent JS access | XSS can steal session |
+| HttpOnly | Prevent JS access | XSS can steal 会话 |
 | Secure | HTTPS only | Sent over HTTP |
 | SameSite | CSRF protection | Cross-site requests allowed |
 | Path | URL scope | Broader exposure |
@@ -424,12 +432,12 @@ username=ADMIN
 # Some systems treat these as different accounts
 ```
 
-### Example 2: JWT Token Attack
+### Example 2: JWT 令牌 Attack
 
 **Scenario:** Exploit weak JWT implementation
 
 ```bash
-# Step 1: Capture JWT token
+# Step 1: Capture JWT 令牌
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidGVzdCJ9.signature
 
 # Step 2: Decode and analyze
@@ -441,11 +449,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidGVzdCJ9.
 # Remove signature
 eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJ1c2VyIjoiYWRtaW4iLCJyb2xlIjoiYWRtaW4ifQ.
 
-# Step 4: Submit modified token
+# Step 4: Submit modified 令牌
 Authorization: Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJ1c2VyIjoiYWRtaW4ifQ.
 ```
 
-### Example 3: Password Reset Token Exploitation
+### Example 3: Password Reset 令牌 Exploitation
 
 **Scenario:** Test password reset functionality
 
@@ -455,16 +463,16 @@ POST /forgot-password
 email=test@example.com
 
 # Step 2: Capture reset link
-https://target.com/reset?token=a1b2c3d4e5f6
+https://target.com/reset?令牌=a1b2c3d4e5f6
 
-# Step 3: Test token properties
-# Reuse: Try using same token twice
+# Step 3: Test 令牌 properties
+# Reuse: Try using same 令牌 twice
 # Expiration: Wait 24+ hours and retry
-# Modification: Change characters in token
+# Modification: Change characters in 令牌
 
 # Step 4: Test for user parameter manipulation
-https://target.com/reset?token=a1b2c3d4e5f6&email=admin@example.com
-# Check if admin's password can be reset with test user's token
+https://target.com/reset?令牌=a1b2c3d4e5f6&email=admin@example.com
+# Check if admin's password can be reset with test user's 令牌
 ```
 
 ## 故障排除
@@ -472,9 +480,9 @@ https://target.com/reset?token=a1b2c3d4e5f6&email=admin@example.com
 | Issue | Solutions |
 |-------|-----------|
 | Brute force too slow | Identify rate limit scope; IP rotation; add delays; use targeted wordlists |
-| Session analysis inconclusive | Collect 1000+ tokens; use statistical tools; check for timestamps; compare accounts |
+| 会话 analysis inconclusive | Collect 1000+ tokens; use statistical tools; check for timestamps; compare accounts |
 | MFA cannot be bypassed | Document as secure; test backup/recovery mechanisms; check MFA fatigue; verify enrollment |
 | Account lockout prevents testing | Request multiple test accounts; test threshold first; use slower timing |
 
 ## /u4f55/u65f6/u4f7f/u7528
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.

@@ -1,0 +1,13 @@
+测试命令输出
+1. 测试简单任务创建:
+ /task '测试任务'
+
+2. 测试完整任务创建:
+ /task-create '重要bug修复' high
+
+3. 测试任务列表:
+ /task-create list
+
+4. 测试帮助信息:
+ /task
+ /task-create

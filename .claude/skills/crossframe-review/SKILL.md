@@ -1,7 +1,7 @@
 ---
 name: crossframe-review
 description: "适用于需要审查 CrossFrame 输出的推理保真度、证据边界、源锚点、概念漂移、文章坍缩或修复步骤的场景。"
-category: workflow
+category: 工作流
 risk: safe
 source: community
 source_repo: xi-kari/crossframe-skill
@@ -55,7 +55,7 @@ tags:
 6. 若评审对象是文章、长文、评论、思想文章、报刊答复或“现代编辑同志口吻”输出，按需读取 `../crossframe-essay/SKILL.md`。
 7. 读取本目录的 `protocols/review-protocol.md` 和 `templates/review-report.md`。
 8. 若涉及文章底稿、引用、检索材料或声口，追加读取 `protocols/article-review-protocol.md`。
-9. 若涉及公共事实、真实机构、平台、政策、人物、公司、最新事实、AI/过程性产物、批判文章或来源使用，读取 `../crossframe/references/source-ledger-workflow.md`，检查来源台账字段是否完整。
+9. 若涉及公共事实、真实机构、平台、政策、人物、公司、最新事实、AI/过程性产物、批判文章或来源使用，读取 `../crossframe/references/source-ledger-工作流.md`，检查来源台账字段是否完整。
 10. 按需读取本目录 `references/` 中的评分表、失败类型表和证据边界清单。
 
 不要把 CrossFrame 主 skill、文章 skill、eval、examples 或完整案例复制到本 skill 输出中。评审时只引用必要规则名、触发点和证据位置。若 `v5-read-state-capsule` 已存在，下游默认复用胶囊，不得为了评审而重复整块读取源索引。

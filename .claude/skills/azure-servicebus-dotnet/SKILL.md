@@ -24,7 +24,7 @@ dotnet add package Azure.Identity
 ```bash
 AZURE_SERVICEBUS_FULLY_QUALIFIED_NAMESPACE=<namespace>.servicebus.windows.net
 # Or connection string (less secure)
-AZURE_SERVICEBUS_CONNECTION_STRING=Endpoint=sb://...
+AZURE_SERVICEBUS_CONNECTION_STRING=端点=sb://...
 ```
 
 ## 认证
@@ -173,24 +173,24 @@ await processor.StopProcessingAsync();
 ### 5. Sessions (Ordered Processing)
 
 ```csharp
-// Send session message
+// Send 会话 message
 ServiceBusMessage message = new("Hello")
 {
     SessionId = "order-123"
 };
 await sender.SendMessageAsync(message);
 
-// Receive from next available session
+// Receive from next available 会话
 ServiceBusSessionReceiver receiver = await client.AcceptNextSessionAsync("my-queue");
 
-// Or receive from specific session
+// Or receive from specific 会话
 ServiceBusSessionReceiver receiver = await client.AcceptSessionAsync("my-queue", "order-123");
 
-// Session state management
+// 会话 state management
 await receiver.SetSessionStateAsync(new BinaryData("processing"));
 BinaryData state = await receiver.GetSessionStateAsync();
 
-// Renew session lock
+// Renew 会话 lock
 await receiver.RenewSessionLockAsync();
 ```
 
@@ -278,9 +278,9 @@ using (var ts = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
 | `ServiceBusClient` | Main entry point, manages connection |
 | `ServiceBusSender` | Sends messages to queues/topics |
 | `ServiceBusReceiver` | Receives messages from queues/subscriptions |
-| `ServiceBusSessionReceiver` | Receives session messages |
+| `ServiceBusSessionReceiver` | Receives 会话 messages |
 | `ServiceBusProcessor` | Background message processing |
-| `ServiceBusSessionProcessor` | Background session processing |
+| `ServiceBusSessionProcessor` | Background 会话 processing |
 | `ServiceBusAdministrationClient` | CRUD for queues/topics/subscriptions |
 | `ServiceBusMessage` | Message to send |
 | `ServiceBusReceivedMessage` | Received message with metadata |
@@ -297,7 +297,7 @@ using (var ts = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
 7. **Handle transient errors** — Use `ServiceBusException.Reason`
 8. **Configure transport** — Use `AmqpWebSockets` if ports 5671/5672 are blocked
 9. **Set appropriate lock duration** — 默认 is 30 seconds
-10. **Use sessions for ordering** — FIFO within a session
+10. **Use sessions for ordering** — FIFO within a 会话
 
 ## 错误处理
 
@@ -334,7 +334,7 @@ catch (ServiceBusException ex)
 | Troubleshooting | https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/servicebus/Azure.Messaging.ServiceBus/TROUBLESHOOTING.md |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

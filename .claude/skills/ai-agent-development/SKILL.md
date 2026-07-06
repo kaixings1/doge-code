@@ -1,7 +1,7 @@
 ---
 name: ai-agent-development
 description: "用于构建自主代理、多代理系统和代理编排的 AI 代理开发工作流，支持 CrewAI、LangGraph 和自定义代理。"
-category: granular-workflow-bundle
+category: granular-工作流-bundle
 risk: safe
 source: personal
 date_added: "2026-02-27"
@@ -82,7 +82,7 @@ date_added: "2026-02-27"
 
 #### 要调用的技能
 - `langgraph` - LangGraph 编排
-- `workflow-orchestration-patterns` - 编排
+- `工作流-orchestration-patterns` - 编排
 
 #### 操作
 1. 设计工作流图
@@ -153,7 +153,7 @@ date_added: "2026-02-27"
 ## Agent 架构
 
 ```
-User Input -> Planner -> Agent -> Tools -> Memory -> Response
+User Input -> Planner -> Agent -> Tools -> Memory -> 响应
               |          |        |        |
          Decompose   LLM Core  Actions  Short/Long-term
 ```
@@ -170,7 +170,7 @@ User Input -> Planner -> Agent -> Tools -> Memory -> Response
 
 - `ai-ml` - AI/ML 开发
 - `rag-implementation` - RAG 系统
-- `workflow-automation` - 工作流模式
+- `工作流-automation` - 工作流模式
 
 ## 局限性
 - 仅当任务明确匹配上述范围时才使用此技能。

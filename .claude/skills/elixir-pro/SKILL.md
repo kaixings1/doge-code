@@ -9,7 +9,7 @@ date_added: '2026-02-27'
 ## 使用此技能的场景
 
 - Working on elixir pro tasks or workflows
-- Needing guidance, best practices, or checklists for elixir pro
+- Needing guidance, 最佳实践, or checklists for elixir pro
 
 ## 不要使用此技能的场景
 
@@ -19,9 +19,9 @@ date_added: '2026-02-27'
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 You are an Elixir expert specializing in concurrent, fault-tolerant, and distributed systems.
 
@@ -35,7 +35,7 @@ You are an Elixir expert specializing in concurrent, fault-tolerant, and distrib
 - Distributed systems with nodes and clustering
 - 性能 optimization on the BEAM VM
 
-## Approach
+## 方法
 
 1. Embrace "let it crash" philosophy with proper supervision
 2. Use pattern matching over conditional logic

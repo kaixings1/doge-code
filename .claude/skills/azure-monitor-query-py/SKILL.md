@@ -1,19 +1,19 @@
 ---
-name: azure-monitor-query-py
-description: "Azure Monitor Query Py — Azure Monitor Query Py 相关功能和最佳实践"
+name: azure-monitor-查询-py
+description: "Azure Monitor 查询 Py — Azure Monitor 查询 Py 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
 
-# Azure Monitor Query SDK for Python
+# Azure Monitor 查询 SDK for Python
 
-Query logs and metrics from Azure Monitor and Log Analytics workspaces.
+查询 logs and metrics from Azure Monitor and Log Analytics workspaces.
 
 ## 安装
 
 ```bash
-pip install azure-monitor-query
+pip install azure-monitor-查询
 ```
 
 ## 环境变量
@@ -34,42 +34,42 @@ from azure.identity import DefaultAzureCredential
 credential = DefaultAzureCredential()
 ```
 
-## Logs Query Client
+## Logs 查询 Client
 
-### Basic Query
+### Basic 查询
 
 ```python
-from azure.monitor.query import LogsQueryClient
+from azure.monitor.查询 import LogsQueryClient
 from datetime import timedelta
 
 client = LogsQueryClient(credential)
 
-query = """
+查询 = """
 AppRequests
 | where TimeGenerated > ago(1h)
 | summarize count() by bin(TimeGenerated, 5m), ResultCode
 | order by TimeGenerated desc
 """
 
-response = client.query_workspace(
+响应 = client.query_workspace(
     workspace_id=os.environ["AZURE_LOG_ANALYTICS_WORKSPACE_ID"],
-    query=query,
+    查询=查询,
     timespan=timedelta(hours=1)
 )
 
-for table in response.tables:
+for table in 响应.tables:
     for row in table.rows:
         print(row)
 ```
 
-### Query with Time Range
+### 查询 with Time Range
 
 ```python
 from datetime import datetime, timezone
 
-response = client.query_workspace(
+响应 = client.query_workspace(
     workspace_id=workspace_id,
-    query="AppRequests | take 10",
+    查询="AppRequests | take 10",
     timespan=(
         datetime(2024, 1, 1, tzinfo=timezone.utc),
         datetime(2024, 1, 2, tzinfo=timezone.utc)
@@ -82,62 +82,62 @@ response = client.query_workspace(
 ```python
 import pandas as pd
 
-response = client.query_workspace(workspace_id, query, timespan=timedelta(hours=1))
+响应 = client.query_workspace(workspace_id, 查询, timespan=timedelta(hours=1))
 
-if response.tables:
-    table = response.tables[0]
+if 响应.tables:
+    table = 响应.tables[0]
     df = pd.DataFrame(data=table.rows, columns=[col.name for col in table.columns])
     print(df.head())
 ```
 
-### Batch Query
+### Batch 查询
 
 ```python
-from azure.monitor.query import LogsBatchQuery
+from azure.monitor.查询 import LogsBatchQuery
 
 queries = [
-    LogsBatchQuery(workspace_id=workspace_id, query="AppRequests | take 5", timespan=timedelta(hours=1)),
-    LogsBatchQuery(workspace_id=workspace_id, query="AppExceptions | take 5", timespan=timedelta(hours=1))
+    LogsBatchQuery(workspace_id=workspace_id, 查询="AppRequests | take 5", timespan=timedelta(hours=1)),
+    LogsBatchQuery(workspace_id=workspace_id, 查询="AppExceptions | take 5", timespan=timedelta(hours=1))
 ]
 
 responses = client.query_batch(queries)
 
-for response in responses:
-    if response.tables:
-        print(f"Rows: {len(response.tables[0].rows)}")
+for 响应 in responses:
+    if 响应.tables:
+        print(f"Rows: {len(响应.tables[0].rows)}")
 ```
 
 ### Handle Partial Results
 
 ```python
-from azure.monitor.query import LogsQueryStatus
+from azure.monitor.查询 import LogsQueryStatus
 
-response = client.query_workspace(workspace_id, query, timespan=timedelta(hours=24))
+响应 = client.query_workspace(workspace_id, 查询, timespan=timedelta(hours=24))
 
-if response.status == LogsQueryStatus.PARTIAL:
-    print(f"Partial results: {response.partial_error}")
-elif response.status == LogsQueryStatus.FAILURE:
-    print(f"Query failed: {response.partial_error}")
+if 响应.status == LogsQueryStatus.PARTIAL:
+    print(f"Partial results: {响应.partial_error}")
+elif 响应.status == LogsQueryStatus.FAILURE:
+    print(f"查询 failed: {响应.partial_error}")
 ```
 
-## Metrics Query Client
+## Metrics 查询 Client
 
-### Query Resource Metrics
+### 查询 Resource Metrics
 
 ```python
-from azure.monitor.query import MetricsQueryClient
+from azure.monitor.查询 import MetricsQueryClient
 from datetime import timedelta
 
 metrics_client = MetricsQueryClient(credential)
 
-response = metrics_client.query_resource(
+响应 = metrics_client.query_resource(
     resource_uri=os.environ["AZURE_METRICS_RESOURCE_URI"],
     metric_names=["Percentage CPU", "Network In Total"],
     timespan=timedelta(hours=1),
     granularity=timedelta(minutes=5)
 )
 
-for metric in response.metrics:
+for metric in 响应.metrics:
     print(f"{metric.name}:")
     for time_series in metric.timeseries:
         for data in time_series.data:
@@ -147,9 +147,9 @@ for metric in response.metrics:
 ### Aggregations
 
 ```python
-from azure.monitor.query import MetricAggregationType
+from azure.monitor.查询 import MetricAggregationType
 
-response = metrics_client.query_resource(
+响应 = metrics_client.query_resource(
     resource_uri=resource_uri,
     metric_names=["Requests"],
     timespan=timedelta(hours=1),
@@ -162,14 +162,14 @@ response = metrics_client.query_resource(
 )
 ```
 
-### Filter by Dimension
+### 过滤器 by Dimension
 
 ```python
-response = metrics_client.query_resource(
+响应 = metrics_client.query_resource(
     resource_uri=resource_uri,
     metric_names=["Requests"],
     timespan=timedelta(hours=1),
-    filter="ApiName eq 'GetBlob'"
+    过滤器="ApiName eq 'GetBlob'"
 )
 ```
 
@@ -192,22 +192,22 @@ for ns in namespaces:
 ## Async Clients
 
 ```python
-from azure.monitor.query.aio import LogsQueryClient, MetricsQueryClient
+from azure.monitor.查询.aio import LogsQueryClient, MetricsQueryClient
 from azure.identity.aio import DefaultAzureCredential
 
 async def query_logs():
     credential = DefaultAzureCredential()
     client = LogsQueryClient(credential)
     
-    response = await client.query_workspace(
+    响应 = await client.query_workspace(
         workspace_id=workspace_id,
-        query="AppRequests | take 10",
+        查询="AppRequests | take 10",
         timespan=timedelta(hours=1)
     )
     
     await client.close()
     await credential.close()
-    return response
+    return 响应
 ```
 
 ## Common Kusto Queries
@@ -238,8 +238,8 @@ AppExceptions
 
 | Client | Purpose |
 |--------|---------|
-| `LogsQueryClient` | Query Log Analytics workspaces |
-| `MetricsQueryClient` | Query Azure Monitor metrics |
+| `LogsQueryClient` | 查询 Log Analytics workspaces |
+| `MetricsQueryClient` | 查询 Azure Monitor metrics |
 
 ## 最佳实践
 
@@ -249,10 +249,10 @@ AppExceptions
 4. **Set appropriate granularity** for metrics to reduce data points
 5. **Convert to DataFrame** for easier data analysis
 6. **Use aggregations** to summarize metric data
-7. **Filter by dimensions** to narrow metric results
+7. **过滤器 by dimensions** to narrow metric results
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

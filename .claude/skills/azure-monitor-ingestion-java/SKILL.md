@@ -45,7 +45,7 @@ Or use Azure SDK BOM:
 
 ## 前提条件
 
-- Data Collection Endpoint (DCE)
+- Data Collection 端点 (DCE)
 - Data Collection Rule (DCR)
 - Log Analytics workspace
 - Target table (custom or built-in: Common安全性Log, 安全性Events, Syslog, WindowsEvents)
@@ -71,7 +71,7 @@ import com.azure.monitor.ingestion.LogsIngestionClientBuilder;
 DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 
 LogsIngestionClient client = new LogsIngestionClientBuilder()
-    .endpoint("<data-collection-endpoint>")
+    .端点("<data-collection-端点>")
     .credential(credential)
     .buildClient();
 ```
@@ -82,7 +82,7 @@ LogsIngestionClient client = new LogsIngestionClientBuilder()
 import com.azure.monitor.ingestion.LogsIngestionAsyncClient;
 
 LogsIngestionAsyncClient asyncClient = new LogsIngestionClientBuilder()
-    .endpoint("<data-collection-endpoint>")
+    .端点("<data-collection-端点>")
     .credential(new DefaultAzureCredentialBuilder().build())
     .buildAsyncClient();
 ```
@@ -91,7 +91,7 @@ LogsIngestionAsyncClient asyncClient = new LogsIngestionClientBuilder()
 
 | Concept | Description |
 |---------|-------------|
-| Data Collection Endpoint (DCE) | Ingestion endpoint URL for your region |
+| Data Collection 端点 (DCE) | Ingestion 端点 URL for your region |
 | Data Collection Rule (DCR) | Defines data transformation and routing to tables |
 | Stream Name | Target stream in the DCR (e.g., `Custom-MyTable_CL`) |
 | Log Analytics Workspace | Destination for ingested logs |
@@ -106,7 +106,7 @@ import java.util.ArrayList;
 
 List<Object> logs = new ArrayList<>();
 logs.add(new MyLogEntry("2024-01-15T10:30:00Z", "INFO", "Application started"));
-logs.add(new MyLogEntry("2024-01-15T10:30:05Z", "DEBUG", "Processing request"));
+logs.add(new MyLogEntry("2024-01-15T10:30:05Z", "DEBUG", "Processing 请求"));
 
 client.upload("<data-collection-rule-id>", "<stream-name>", logs);
 System.out.println("Logs uploaded successfully");
@@ -194,7 +194,7 @@ try {
     if (e.getResponse().getStatusCode() == 403) {
         System.err.println("Check DCR permissions and managed identity");
     } else if (e.getResponse().getStatusCode() == 404) {
-        System.err.println("Verify DCE endpoint and DCR ID");
+        System.err.println("Verify DCE 端点 and DCR ID");
     }
 }
 ```
@@ -204,18 +204,18 @@ try {
 1. **Batch logs** — Upload in batches rather than one at a time
 2. **Use concurrency** — Set `maxConcurrency` for large uploads
 3. **Handle partial failures** — Use error consumer to log failed entries
-4. **Match DCR schema** — Log entry fields must match DCR transformation expectations
+4. **Match DCR 架构** — Log entry fields must match DCR transformation expectations
 5. **Include TimeGenerated** — Most tables require a timestamp field
 6. **Reuse client** — Create once, reuse throughout application
 7. **Use async for high throughput** — `LogsIngestionAsyncClient` for reactive patterns
 
 ## Querying Uploaded Logs
 
-Use azure-monitor-query to query ingested logs:
+Use azure-monitor-查询 to 查询 ingested logs:
 
 ```java
-// See azure-monitor-query skill for LogsQueryClient usage
-String query = "MyTable_CL | where TimeGenerated > ago(1h) | limit 10";
+// See azure-monitor-查询 skill for LogsQueryClient usage
+String 查询 = "MyTable_CL | where TimeGenerated > ago(1h) | limit 10";
 ```
 
 ## 参考链接
@@ -225,12 +225,12 @@ String query = "MyTable_CL | where TimeGenerated > ago(1h) | limit 10";
 | Maven Package | https://central.sonatype.com/artifact/com.azure/azure-monitor-ingestion |
 | GitHub | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/monitor/azure-monitor-ingestion |
 | Product Docs | https://learn.microsoft.com/azure/azure-monitor/logs/logs-ingestion-api-overview |
-| DCE 概述 | https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-endpoint-overview |
+| DCE 概述 | https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-端点-overview |
 | DCR 概述 | https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-rule-overview |
 | Troubleshooting | https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-ingestion/TROUBLESHOOTING.md |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

@@ -7,7 +7,7 @@ source: community
 
 ---
 name: django-access-review
-description: Django access control and IDOR security review. Use when reviewing Django views, DRF viewsets, ORM queries, or any Python/Django code handling user authorization. Trigger keywords: "IDOR", "access control", "authorization", "Django permissions", "object permissions", "tenant...
+description: Django access control and IDOR security review. Use when reviewing Django views, DRF viewsets, ORM queries, or any Python/Django code handling user 授权. Trigger keywords: "IDOR", "access control", "授权", "Django permissions", "object permissions", "tenant...
 --- LICENSE
 ---
 
@@ -23,35 +23,35 @@ Find access control vulnerabilities by investigating how the codebase answers on
 **Can User A access, modify, or delete User B's data?**
 
 ## 使用场景
-- You need to review Django or DRF code for access control gaps, IDOR risk, or object-level authorization failures.
+- You need to review Django or DRF code for access control gaps, IDOR risk, or object-level 授权 failures.
 - The task involves confirming whether one user can access, modify, or delete another user's data.
-- You want an investigation-driven authorization review instead of generic pattern matching.
+- You want an investigation-driven 授权 review instead of generic pattern matching.
 
 ## Philosophy: Investigation Over Pattern Matching
 
 Do NOT scan for predefined vulnerable patterns. Instead:
 
-1. **Understand** how authorization works in THIS codebase
+1. **Understand** how 授权 works in THIS codebase
 2. **Ask questions** about specific data flows
 3. **Trace code** to find where (or if) access checks happen
 4. **Report** only what you've confirmed through investigation
 
-Every codebase implements authorization differently. Your job is to understand this specific implementation, then find gaps.
+Every codebase implements 授权 differently. Your job is to understand this specific implementation, then find gaps.
 
 ---
 
-## Phase 1: Understand the Authorization Model
+## Phase 1: Understand the 授权 Model
 
 Before looking for bugs, answer these questions about the codebase:
 
-### How is authorization enforced?
+### How is 授权 enforced?
 
 Research the codebase to find:
 
 ```
 □ Where are permission checks implemented?
   - Decorators? (@login_required, @permission_required, custom?)
-  - Middleware? (TenantMiddleware, AuthorizationMiddleware?)
+  - 中间件? (TenantMiddleware, AuthorizationMiddleware?)
   - Base classes? (BaseAPIView, TenantScopedViewSet?)
   - Permission classes? (DRF permission_classes?)
   - Custom mixins? (OwnershipMixin, TenantMixin?)
@@ -59,7 +59,7 @@ Research the codebase to find:
 □ How are queries scoped?
   - Custom managers? (TenantManager, UserScopedManager?)
   - get_queryset() overrides?
-  - Middleware that sets query context?
+  - 中间件 that sets 查询 context?
 
 □ What's the ownership model?
   - Single user ownership? (document.owner_id)
@@ -84,7 +84,7 @@ grep -rn "class.*Manager\|def get_queryset" --include="*.py" | head -20
 grep -rn "owner\|user_id\|organization\|tenant" --include="models.py" | head -30
 ```
 
-**Do not proceed until you understand the authorization model.**
+**Do not proceed until you understand the 授权 model.**
 
 ---
 
@@ -97,7 +97,7 @@ Identify endpoints that handle user-specific data:
 ```
 □ What models contain user data?
 □ Which have ownership fields (owner_id, user_id, organization_id)?
-□ Which are accessed via ID in URLs or request bodies?
+□ Which are accessed via ID in URLs or 请求 bodies?
 ```
 
 ### What operations are exposed?
@@ -114,7 +114,7 @@ For each resource, map:
 
 ## Phase 3: Ask Questions and Investigate
 
-For each endpoint that handles user data, ask:
+For each 端点 that handles user data, ask:
 
 ### The Core Question
 
@@ -125,21 +125,21 @@ Trace the code to answer this:
 ```
 1. Where does the resource ID enter the system?
    - URL path: /api/documents/{id}/
-   - Query param: ?document_id=123
-   - Request body: {"document_id": 123}
+   - 查询 param: ?document_id=123
+   - 请求 body: {"document_id": 123}
 
 2. Where is that ID used to fetch data?
-   - Find the ORM query or database call
+   - Find the ORM 查询 or database call
 
 3. Between (1) and (2), what checks exist?
-   - Is the query scoped to current user?
+   - Is the 查询 scoped to current user?
    - Is there an explicit ownership check?
    - Is there a permission check on the object?
    - Does a base class or mixin enforce access?
 
 4. If you can't find a check, is there one you missed?
    - Check parent classes
-   - Check middleware
+   - Check 中间件
    - Check managers
    - Check decorators at URL level
 ```
@@ -147,9 +147,9 @@ Trace the code to answer this:
 ### Follow-Up Questions
 
 ```
-□ For list endpoints: Does the query filter to user's data, or return everything?
+□ For list endpoints: Does the 查询 过滤器 to user's data, or return everything?
 
-□ For create endpoints: Who sets the owner - the server or the request?
+□ For create endpoints: Who sets the owner - the server or the 请求?
 
 □ For bulk operations: Are they scoped to user's data?
 
@@ -164,19 +164,19 @@ Trace the code to answer this:
 
 ## Phase 4: Trace Specific Flows
 
-Pick a concrete endpoint and trace it completely.
+Pick a concrete 端点 and trace it completely.
 
 ### Example Investigation
 
 ```
-Endpoint: GET /api/documents/{pk}/
+端点: GET /api/documents/{pk}/
 
 1. Find the view handling this URL
    → DocumentViewSet.retrieve() in api/views.py
 
 2. Check what DocumentViewSet inherits from
    → class DocumentViewSet(viewsets.ModelViewSet)
-   → No custom base class with authorization
+   → No custom base class with 授权
 
 3. Check permission_classes
    → permission_classes = [IsAuthenticated]
@@ -202,13 +202,13 @@ Endpoint: GET /api/documents/{pk}/
 ```
 Potential gap indicators (investigate further, don't auto-flag):
 - get_queryset() returns .all() or filters without user
-- Direct Model.objects.get(pk=pk) without ownership in query
-- ID comes from request body for sensitive operations
+- Direct Model.objects.get(pk=pk) without ownership in 查询
+- ID comes from 请求 body for sensitive operations
 - Permission class checks auth but not ownership
 - No has_object_permission() and queryset isn't scoped
 
 Likely safe patterns (but verify the implementation):
-- get_queryset() filters by request.user or user's org
+- get_queryset() filters by 请求.user or user's org
 - Custom permission class with has_object_permission()
 - Base class that enforces scoping
 - Manager that auto-filters
@@ -233,7 +233,7 @@ Only report issues you've confirmed through investigation.
 **Bad fix**: Adding a comment saying "caller must validate permissions"
 **Good fix**: Adding code that actually validates permissions
 
-A comment or docstring does not enforce authorization. Your suggested fix must include actual code that:
+A comment or docstring does not enforce 授权. Your suggested fix must include actual code that:
 - Validates the user has permission before proceeding
 - Raises an exception or returns an error if unauthorized
 - Makes unauthorized access impossible, not just discouraged
@@ -261,8 +261,8 @@ If you can't determine the right enforcement mechanism, say so - but never sugge
 ```markdown
 ## Access Control Review: [Component]
 
-### Authorization Model
-[Brief description of how this codebase handles authorization]
+### 授权 Model
+[Brief description of how this codebase handles 授权]
 
 ### Findings
 
@@ -275,13 +275,13 @@ If you can't determine the right enforcement mechanism, say so - but never sugge
   2. Checked get_queryset() - returns Document.objects.all()
   3. Checked permission_classes - only IsAuthenticated
   4. Checked for has_object_permission() - not implemented
-  5. Verified no relevant middleware or base class checks
+  5. Verified no relevant 中间件 or base class checks
 - **Evidence**: [Code snippet showing the gap]
 - **Impact**: Any authenticated user can read any document by ID
-- **Suggested Fix**: [Code that enforces authorization - NOT a comment]
+- **Suggested Fix**: [Code that enforces 授权 - NOT a comment]
 
 ### Needs Manual Verification
-[Issues where authorization exists but couldn't confirm effectiveness]
+[Issues where 授权 exists but couldn't confirm effectiveness]
 
 ### Areas Not Reviewed
 [Endpoints or flows not covered in this review]
@@ -289,20 +289,20 @@ If you can't determine the right enforcement mechanism, say so - but never sugge
 
 ---
 
-## Common Django Authorization Patterns
+## Common Django 授权 Patterns
 
 These are patterns you might find - not a checklist to match against.
 
-### Query Scoping
+### 查询 Scoping
 ```python
 # Scoped to user
-Document.objects.filter(owner=request.user)
+Document.objects.过滤器(owner=请求.user)
 
 # Scoped to organization
-Document.objects.filter(organization=request.user.organization)
+Document.objects.过滤器(organization=请求.user.organization)
 
 # Using a custom manager
-Document.objects.for_user(request.user)  # Investigate what this does
+Document.objects.for_user(请求.user)  # Investigate what this does
 ```
 
 ### Permission Enforcement
@@ -311,14 +311,14 @@ Document.objects.for_user(request.user)  # Investigate what this does
 permission_classes = [IsAuthenticated, IsOwner]
 
 # Custom has_object_permission
-def has_object_permission(self, request, view, obj):
-    return obj.owner == request.user
+def has_object_permission(self, 请求, view, obj):
+    return obj.owner == 请求.user
 
 # Django decorators
 @permission_required('app.view_document')
 
 # Manual checks
-if document.owner != request.user:
+if document.owner != 请求.user:
     raise PermissionDenied()
 ```
 
@@ -326,10 +326,10 @@ if document.owner != request.user:
 ```python
 # Server-side (safe)
 def perform_create(self, serializer):
-    serializer.save(owner=self.request.user)
+    serializer.save(owner=self.请求.user)
 
-# From request (investigate)
-serializer.save(**request.data)  # Does request.data include owner?
+# From 请求 (investigate)
+serializer.save(**请求.data)  # Does 请求.data include owner?
 ```
 
 ---
@@ -339,14 +339,14 @@ serializer.save(**request.data)  # Does request.data include owner?
 Use this to guide your review, not as a pass/fail checklist:
 
 ```
-□ I understand how authorization is typically implemented in this codebase
+□ I understand how 授权 is typically implemented in this codebase
 □ I've identified the ownership model (user, org, tenant, etc.)
 □ I've mapped the key endpoints that handle user data
-□ For each sensitive endpoint, I've traced the flow and asked:
+□ For each sensitive 端点, I've traced the flow and asked:
   - Where does the ID come from?
   - Where is data fetched?
   - What checks exist between input and data access?
-□ I've verified my findings by checking parent classes and middleware
+□ I've verified my findings by checking parent classes and 中间件
 □ I've only reported issues I've confirmed through investigation
 ```
 

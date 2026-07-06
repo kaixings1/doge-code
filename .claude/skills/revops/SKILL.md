@@ -1,6 +1,6 @@
 ---
 name: revops
-description: "当用户wants help with revenue operations, lead lifecycle management, or marketing-to-sales handoff processes. Also use when the user mentions 'RevOps,' 'revenue operations,' 'lead scoring,' 'lead routing,' 'MQL,' 'SQL,' 'pipeline stages,' 'deal desk,' 'CRM automation,' 'marketing-to-sales handoff,' 'data hygiene,' 'leads aren't getting to sales,' 'pipeline management,' 'lead qualification,' or 'when should marketing hand off to sales.' Use this for anything involving the systems and processes that connect marketing to revenue. For cold outreach emails, see cold-email. For email drip campaigns, see emails. For pricing decisions, see pricing.时使用此技能。"
+description: "当用户需要收入运营、线索生命周期管理或市场到销售交接流程方面的帮助时使用。当用户提到 'RevOps'、'revenue operations'、'lead scoring'、'lead routing'、'MQL'、'SQL'、'pipeline stages'、'deal desk'、'CRM automation'、'marketing-to-sales handoff'、'data hygiene'、'leads aren\'t getting to sales'、'pipeline management'、'lead qualification' 或 'when should marketing hand off to sales' 时也使用。用于涉及连接市场与收入的系统和流程。关于冷外联邮件，请参阅 cold-email。关于邮件滴灌活动，请参阅 emails。关于定价决策，请参阅 pricing。"
 metadata:
   version: 2.0.0
 ---

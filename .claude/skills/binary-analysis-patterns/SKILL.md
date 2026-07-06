@@ -434,7 +434,7 @@ def auto_rename():
 
 ## 最佳实践
 
-### Analysis Workflow
+### Analysis 工作流
 
 1. **Initial triage**: File type, architecture, imports/exports
 2. **String analysis**: Identify interesting strings, error messages

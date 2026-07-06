@@ -72,34 +72,34 @@ date_added: "2026-02-27"
 ## 示例
 
 **Input (voice dictation)**:
-> so I was trying to deploy the agent and it just failed silently no error nothing the workflow ran but then poof gone from the list had to refresh and try again three times
+> so I was trying to deploy the agent and it just failed silently no error nothing the 工作流 ran but then poof gone from the list had to refresh and try again three times
 
 **Output**:
 ```markdown
 ## 摘要
-Agent deployment fails silently - no error displayed, agent disappears from list
+Agent 部署 fails silently - no error displayed, agent disappears from list
 
 ## 环境
 - **Product/Service**: Azure AI Foundry
 - **Region/Version**: westus2
 
 ## 复现步骤
-1. Navigate to agent deployment
+1. Navigate to agent 部署
 2. Configure and deploy agent
-3. Observe workflow completes
+3. Observe 工作流 completes
 4. Check agent list
 
 ## 预期行为
-Agent appears in list with deployment status, errors shown if deployment fails
+Agent appears in list with 部署 status, errors shown if 部署 fails
 
 ## 实际行为
 Agent disappears from list. No error message. Requires page refresh and retry.
 
 ## 影响
-**High** - Blocks agent deployment workflow, no feedback on failure cause
+**High** - Blocks agent 部署 工作流, no feedback on failure cause
 
 ## 附加上下文
-Required 3 retry attempts before successful deployment
+Required 3 retry attempts before successful 部署
 ```
 
 ---
@@ -113,7 +113,7 @@ Required 3 retry attempts before successful deployment
 403 PERMISSION_DENIED error when publishing to Teams channel
 
 ## 环境
-- **Product/Service**: Copilot Studio → Teams integration
+- **Product/Service**: Copilot Studio → Teams 集成
 - **Region/Version**: [REGION]
 
 ## 复现步骤
@@ -133,14 +133,14 @@ Code: 403
 ```
 
 ## 影响
-**High** - Blocks Teams integration, regression from previous working state
+**High** - Blocks Teams 集成, regression from previous working state
 
 ## 附加上下文
 Was working yesterday - possible permission/[Issue 的一行描述/]onfig change or service regression
 ```
 
 ## 何时使用
-Use this skill when you have unstructured bug input such as pasted errors, support notes, screenshots, or voice dictation and need to turn it into a clean GitHub issue with a summary, reproduction steps, expected vs actual behavior, impact, and attachment references.
+当您有非结构化的错误输入（如粘贴的错误、支持说明、截图或语音听写）并需要将其转化为干净的 GitHub 议题（包含摘要、复现步骤、预期与实际行为、影响和附件引用）时使用此技能。
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

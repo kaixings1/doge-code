@@ -135,9 +135,9 @@ Streams provide durable, consumer-group-based event processing with acknowledgme
 ```typescript
 const acquireLock = `
   local key = KEYS[1]
-  local token = ARGV[1]
+  local 令牌 = ARGV[1]
   local ttl = ARGV[2]
-  if redis.call("SET", key, token, "NX", "EX", ttl) then
+  if redis.call("SET", key, 令牌, "NX", "EX", ttl) then
     return 1
   end
   return 0
@@ -145,8 +145,8 @@ const acquireLock = `
 
 const releaseLock = `
   local key = KEYS[1]
-  local token = ARGV[1]
-  if redis.call("GET", key) == token then
+  local 令牌 = ARGV[1]
+  if redis.call("GET", key) == 令牌 then
     return redis.call("DEL", key)
   end
   return 0
@@ -157,13 +157,13 @@ async function withLock<T>(
   ttl: number,
   fn: () => Promise<T>
 ): Promise<T> {
-  const token = crypto.randomUUID();
-  const acquired = await redis.eval(acquireLock, 1, `lock:${resource}`, token, ttl);
+  const 令牌 = crypto.randomUUID();
+  const acquired = await redis.eval(acquireLock, 1, `lock:${resource}`, 令牌, ttl);
   if (!acquired) throw new Error("Failed to acquire lock");
   try {
     return await fn();
   } finally {
-    await redis.eval(releaseLock, 1, `lock:${resource}`, token);
+    await redis.eval(releaseLock, 1, `lock:${resource}`, 令牌);
   }
 }
 ```

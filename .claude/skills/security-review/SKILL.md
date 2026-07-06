@@ -51,7 +51,7 @@ if (!apiKey) {
 ```typescript
 import { z } from 'zod'
 
-// Define validation schema
+// Define validation 架构
 const CreateUserSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1).max(100),
@@ -99,7 +99,7 @@ function validateFileUpload(file: File) {
 ```
 
 #### 验证步骤
-- [ ] 所有用户输入通过 schema 验证
+- [ ] 所有用户输入通过 架构 验证
 - [ ] 文件上传受限（大小、类型、扩展名）
 - [ ] 查询中不直接使用用户输入
 - [ ] 白名单验证（非黑名单）
@@ -110,20 +110,20 @@ function validateFileUpload(file: File) {
 #### FAIL: NEVER Concatenate SQL
 ```typescript
 // DANGEROUS - SQL Injection vulnerability
-const query = `SELECT * FROM users WHERE email = '${userEmail}'`
-await db.query(query)
+const 查询 = `SELECT * FROM users WHERE email = '${userEmail}'`
+await db.查询(查询)
 ```
 
 #### PASS: ALWAYS Use Parameterized Queries
 ```typescript
-// Safe - parameterized query
+// Safe - parameterized 查询
 const { data } = await supabase
   .from('users')
   .select('*')
   .eq('email', userEmail)
 
 // Or with raw SQL
-await db.query(
+await db.查询(
   'SELECT * FROM users WHERE email = $1',
   [userEmail]
 )
@@ -140,17 +140,17 @@ await db.query(
 #### JWT 令牌处理
 ```typescript
 // FAIL: WRONG: localStorage (vulnerable to XSS)
-localStorage.setItem('token', token)
+localStorage.setItem('令牌', 令牌)
 
 // PASS: CORRECT: httpOnly cookies
 res.setHeader('Set-Cookie',
-  `token=${token}; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`)
+  `令牌=${令牌}; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`)
 ```
 
-#### Authorization Checks
+#### 授权 Checks
 ```typescript
 export async function deleteUser(userId: string, requesterId: string) {
-  // ALWAYS verify authorization first
+  // ALWAYS verify 授权 first
   const requester = await db.users.findUnique({
     where: { id: requesterId }
   })
@@ -236,24 +236,24 @@ const securityHeaders = [
 ```typescript
 import { csrf } from '@/lib/csrf'
 
-export async function POST(request: Request) {
-  const token = request.headers.get('X-CSRF-Token')
+export async function POST(请求: 请求) {
+  const 令牌 = 请求.headers.get('X-CSRF-令牌')
 
-  if (!csrf.verify(token)) {
+  if (!csrf.verify(令牌)) {
     return NextResponse.json(
-      { error: 'Invalid CSRF token' },
+      { error: 'Invalid CSRF 令牌' },
       { status: 403 }
     )
   }
 
-  // Process request
+  // Process 请求
 }
 ```
 
 #### SameSite Cookies
 ```typescript
 res.setHeader('Set-Cookie',
-  `session=${sessionId}; HttpOnly; Secure; SameSite=Strict`)
+  `会话=${sessionId}; HttpOnly; Secure; SameSite=Strict`)
 ```
 
 #### 验证步骤
@@ -424,37 +424,37 @@ npm ci  # Instead of npm install
 
 ### 自动化安全测试
 ```typescript
-// Test authentication
-test('requires authentication', async () => {
-  const response = await fetch('/api/protected')
-  expect(response.status).toBe(401)
+// Test 认证
+test('requires 认证', async () => {
+  const 响应 = await fetch('/api/protected')
+  expect(响应.status).toBe(401)
 })
 
-// Test authorization
+// Test 授权
 test('requires admin role', async () => {
-  const response = await fetch('/api/admin', {
-    headers: { Authorization: `Bearer ${userToken}` }
+  const 响应 = await fetch('/api/admin', {
+    headers: { 授权: `Bearer ${userToken}` }
   })
-  expect(response.status).toBe(403)
+  expect(响应.status).toBe(403)
 })
 
 // Test input validation
 test('rejects invalid input', async () => {
-  const response = await fetch('/api/users', {
+  const 响应 = await fetch('/api/users', {
     method: 'POST',
     body: JSON.stringify({ email: 'not-an-email' })
   })
-  expect(response.status).toBe(400)
+  expect(响应.status).toBe(400)
 })
 
 // Test rate limiting
 test('enforces rate limits', async () => {
   const requests = Array(101).fill(null).map(() =>
-    fetch('/api/endpoint')
+    fetch('/api/端点')
   )
 
   const responses = await Promise.all(requests)
-  const tooManyRequests = responses.filter(r => r.status === 429)
+  const tooManyRequests = responses.过滤器(r => r.status === 429)
 
   expect(tooManyRequests.length).toBeGreaterThan(0)
 })

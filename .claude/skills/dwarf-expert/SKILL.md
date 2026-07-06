@@ -11,9 +11,9 @@ risk: unknown
 source: community
 ---
 # 概述
-此技能提供 technical knowledge and expertise about the DWARF standard and how to interact with DWARF files. Tasks include answering questions about the DWARF standard, providing examples of various DWARF features, parsing and/or creating DWARF files, and writing/modifying/analyzing code that interacts with DWARF data.
+此技能提供 technical knowledge and expertise about the DWARF standard and how to interact with DWARF files. Tasks include answering questions about the DWARF standard, providing 示例 of various DWARF features, parsing and/or creating DWARF files, and writing/modifying/analyzing code that interacts with DWARF data.
 
-## When to Use This Skill
+## 使用场景 This Skill
 - Understanding or parsing DWARF debug information from compiled binaries
 - Answering questions about the DWARF standard (v3, v4, v5)
 - Writing or reviewing code that interacts with DWARF data
@@ -80,7 +80,7 @@ DWARF files can be parsed via the `dwarfdump` command, which is more effective a
 # Working With Code
 This skill supports writing, modifying, and reviewing code that interacts with DWARF data. This may involve code that parses DWARF debug data from scratch or code that leverages libraries to parse and interact with DWARF data ({baseDir}/reference/coding.md).
 
-# Choosing Your Approach
+# Choosing Your 方法
 ```
 ┌─ Need to verify DWARF data integrity?
 │   └─ Use `llvm-dwarfdump --verify` (see Verification Workflows above)

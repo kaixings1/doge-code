@@ -408,9 +408,9 @@ type DbError =
 
 // Wrap Prisma operations
 const wrapPrisma = <A>(
-  operation: () => Promise<A>
+  操作: () => Promise<A>
 ): TE.TaskEither<DbError, A> =>
-  TE.tryCatch(operation, (error): DbError => {
+  TE.tryCatch(操作, (error): DbError => {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       switch (error.code) {
         case 'P2002':
@@ -581,23 +581,23 @@ const debitAccount = (
 ### Express 中间件
 
 ```typescript
-// src/middleware/fp-express.ts
-import { Request, Response, NextFunction, RequestHandler } from 'express'
+// src/中间件/fp-express.ts
+import { 请求, 响应, NextFunction, RequestHandler } from 'express'
 import * as TE from 'fp-ts/TaskEither'
 import * as RTE from 'fp-ts/ReaderTaskEither'
 import * as E from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
 
-// Convert RTE handler to Express middleware
+// Convert RTE 处理器 to Express 中间件
 export const toHandler =
   <R, E, A>(
-    getDeps: (req: Request) => R,
-    handler: (req: Request) => RTE.ReaderTaskEither<R, E, A>,
-    onError: (error: E, res: Response) => void
+    getDeps: (req: 请求) => R,
+    处理器: (req: 请求) => RTE.ReaderTaskEither<R, E, A>,
+    onError: (error: E, res: 响应) => void
   ): RequestHandler =>
   async (req, res, next) => {
     const deps = getDeps(req)
-    const result = await handler(req)(deps)()
+    const result = await 处理器(req)(deps)()
 
     pipe(
       result,
@@ -608,8 +608,8 @@ export const toHandler =
     )
   }
 
-// Error handler
-const handleError = (error: AppError, res: Response): void => {
+// Error 处理器
+const handleError = (error: AppError, res: 响应): void => {
   switch (error._tag) {
     case 'NotFound':
       res.status(404).json({ error: error.resource + ' not found' })
@@ -638,7 +638,7 @@ app.get('/users/:id', getUserHandler)
 ### Hono 中间件
 
 ```typescript
-// src/middleware/fp-hono.ts
+// src/中间件/fp-hono.ts
 import { Hono, Context, MiddlewareHandler } from 'hono'
 import * as RTE from 'fp-ts/ReaderTaskEither'
 import * as E from 'fp-ts/Either'
@@ -651,22 +651,22 @@ declare module 'hono' {
   }
 }
 
-// Dependency injection middleware
+// Dependency injection 中间件
 export const withDeps = (deps: AppDeps): MiddlewareHandler =>
   async (c, next) => {
     c.set('deps', deps)
     await next()
   }
 
-// Convert RTE to Hono handler
+// Convert RTE to Hono 处理器
 export const toHonoHandler =
   <E, A>(
-    handler: (c: Context) => RTE.ReaderTaskEither<AppDeps, E, A>,
-    onError: (error: E, c: Context) => Response
+    处理器: (c: Context) => RTE.ReaderTaskEither<AppDeps, E, A>,
+    onError: (error: E, c: Context) => 响应
   ) =>
-  async (c: Context): Promise<Response> => {
+  async (c: Context): Promise<响应> => {
     const deps = c.get('deps')
-    const result = await handler(c)(deps)()
+    const result = await 处理器(c)(deps)()
 
     return pipe(
       result,
@@ -677,12 +677,12 @@ export const toHonoHandler =
     )
   }
 
-// Validation middleware
+// Validation 中间件
 export const validate =
-  <T>(schema: z.ZodSchema<T>): MiddlewareHandler =>
+  <T>(架构: z.ZodSchema<T>): MiddlewareHandler =>
   async (c, next) => {
     const body = await c.req.json()
-    const result = schema.safeParse(body)
+    const result = 架构.safeParse(body)
 
     if (!result.success) {
       return c.json(
@@ -695,18 +695,18 @@ export const validate =
     await next()
   }
 
-// Auth middleware using RTE
+// Auth 中间件 using RTE
 export const requireAuth: MiddlewareHandler = async (c, next) => {
   const deps = c.get('deps')
-  const token = c.req.header('Authorization')?.replace('Bearer ', '')
+  const 令牌 = c.req.header('授权')?.replace('Bearer ', '')
 
-  if (!token) {
-    return c.json({ error: 'No token provided' }, 401)
+  if (!令牌) {
+    return c.json({ error: 'No 令牌 provided' }, 401)
   }
 
   const result = await pipe(
-    deps.jwt.verify(token),
-    TE.mapLeft(() => ({ _tag: 'Unauthorized' as const, reason: 'Invalid token' }))
+    deps.jwt.verify(令牌),
+    TE.mapLeft(() => ({ _tag: 'Unauthorized' as const, reason: 'Invalid 令牌' }))
   )()
 
   if (E.isLeft(result)) {
@@ -744,7 +744,7 @@ app.get(
 import * as RTE from 'fp-ts/ReaderTaskEither'
 import { pipe } from 'fp-ts/function'
 
-// Request-scoped context
+// 请求-scoped context
 type RequestContext = {
   requestId: string
   userId: O.Option<string>
@@ -774,7 +774,7 @@ export const log = {
   error: logWithContext('error'),
 }
 
-// Middleware to create context
+// 中间件 to create context
 export const withContext: MiddlewareHandler = async (c, next) => {
   const deps = c.get('deps')
   const ctx: RequestContext = {
@@ -785,8 +785,8 @@ export const withContext: MiddlewareHandler = async (c, next) => {
 
   c.set('deps', { ...deps, ctx })
 
-  // Log request start
-  deps.logger.info('Request started', {
+  // Log 请求 start
+  deps.logger.info('请求 started', {
     requestId: ctx.requestId,
     method: c.req.method,
     path: c.req.path,
@@ -794,8 +794,8 @@ export const withContext: MiddlewareHandler = async (c, next) => {
 
   await next()
 
-  // Log request end
-  deps.logger.info('Request completed', {
+  // Log 请求 end
+  deps.logger.info('请求 completed', {
     requestId: ctx.requestId,
     status: c.res.status,
     elapsed: Date.now() - ctx.startTime,
@@ -902,7 +902,7 @@ export const toHttpStatus = (error: DomainError): number => {
   }
 }
 
-// Error to response body
+// Error to 响应 body
 export const toResponseBody = (
   error: DomainError
 ): { error: string; details?: unknown } => {
@@ -919,11 +919,11 @@ export const toResponseBody = (
         error: `${error.resource} with ${error.field} already exists`,
       }
     case 'Unauthenticated':
-      return { error: 'Authentication required' }
+      return { error: '认证 required' }
     case 'Unauthorized':
       return { error: `Permission denied: ${error.required}` }
     case 'TokenExpired':
-      return { error: 'Token expired' }
+      return { error: '令牌 expired' }
     case 'InfrastructureError':
       return { error: 'Service temporarily unavailable' }
   }
@@ -946,7 +946,7 @@ export const withRetry =
     shouldRetry: (error: E) => boolean
   ) =>
   (
-    operation: RTE.ReaderTaskEither<R, E, A>
+    操作: RTE.ReaderTaskEither<R, E, A>
   ): RTE.ReaderTaskEither<R, E, A> =>
     pipe(
       RTE.ask<R>(),
@@ -956,7 +956,7 @@ export const withRetry =
           delay: number
         ): TE.TaskEither<E, A> =>
           pipe(
-            operation(deps),
+            操作(deps),
             TE.orElse(error => {
               if (remaining <= 0 || !shouldRetry(error)) {
                 return TE.left(error)
@@ -979,13 +979,13 @@ export const withFallback =
     ttlSeconds: number
   ) =>
   (
-    operation: RTE.ReaderTaskEither<R, E, A>
+    操作: RTE.ReaderTaskEither<R, E, A>
   ): RTE.ReaderTaskEither<R, E, A> =>
     pipe(
       RTE.ask<R>(),
       RTE.flatMap(({ cache, ...rest }) =>
         pipe(
-          operation,
+          操作,
           // On success, cache the result
           RTE.tap(result =>
             RTE.fromTaskEither(cache.set(cacheKey, result, ttlSeconds))
@@ -1016,7 +1016,7 @@ export const createCircuitBreaker = <E>(
   let lastFailure = 0
 
   return <R, A>(
-    operation: RTE.ReaderTaskEither<R, E, A>
+    操作: RTE.ReaderTaskEither<R, E, A>
   ): RTE.ReaderTaskEither<R, E | { _tag: 'CircuitOpen' }, A> =>
     pipe(
       RTE.ask<R>(),
@@ -1034,7 +1034,7 @@ export const createCircuitBreaker = <E>(
         }
 
         return pipe(
-          operation,
+          操作,
           RTE.tap(() => {
             if (state === 'half-open') {
               state = 'closed'
@@ -1169,7 +1169,7 @@ describe('UserService', () => {
 ### 使用测试容器的集成测试
 
 ```typescript
-// src/__tests__/integration/user.integration.test.ts
+// src/__tests__/集成/user.集成.test.ts
 import { PostgreSqlContainer } from '@testcontainers/postgresql'
 import { PrismaClient } from '@prisma/client'
 import * as TE from 'fp-ts/TaskEither'
@@ -1179,7 +1179,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { buildDeps, destroyDeps, AppDeps } from '../../deps'
 import * as UserService from '../../services/user.service'
 
-describe('UserService Integration', () => {
+describe('UserService 集成', () => {
   let container: PostgreSqlContainer
   let deps: AppDeps
 
@@ -1209,9 +1209,9 @@ describe('UserService Integration', () => {
   it('should create and retrieve a user', async () => {
     // Create user
     const createResult = await UserService.create({
-      email: 'integration@test.com',
+      email: '集成@test.com',
       password: 'password123',
-      name: 'Integration Test',
+      name: '集成 Test',
     })(deps)()
 
     expect(E.isRight(createResult)).toBe(true)
@@ -1224,7 +1224,7 @@ describe('UserService Integration', () => {
 
     expect(E.isRight(findResult)).toBe(true)
     if (E.isRight(findResult)) {
-      expect(findResult.right.email).toBe('integration@test.com')
+      expect(findResult.right.email).toBe('集成@test.com')
     }
   })
 })
@@ -1280,6 +1280,14 @@ describe('Validation Properties', () => {
 
 ## 快速参考
 
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
 ### Common Imports
 
 ```typescript
@@ -1294,7 +1302,7 @@ import { pipe, flow } from 'fp-ts/function'
 
 ### RTE Cheat Sheet
 
-| Operation | Description |
+| 操作 | Description |
 |-----------|-------------|
 | `RTE.right(a)` | Lift value into success |
 | `RTE.left(e)` | Create error |

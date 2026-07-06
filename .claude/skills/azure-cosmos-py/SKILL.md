@@ -31,9 +31,9 @@ from azure.identity import DefaultAzureCredential
 from azure.cosmos import CosmosClient
 
 credential = DefaultAzureCredential()
-endpoint = "https://<account>.documents.azure.com:443/"
+端点 = "https://<account>.documents.azure.com:443/"
 
-client = CosmosClient(url=endpoint, credential=credential)
+client = CosmosClient(url=端点, credential=credential)
 ```
 
 ## Client Hierarchy
@@ -46,7 +46,7 @@ client = CosmosClient(url=endpoint, credential=credential)
 
 ## 核心工作流
 
-### Setup Database and Container
+### 设置 Database and Container
 
 ```python
 # Get or create database
@@ -124,13 +124,13 @@ container.delete_item(
 
 ## Queries
 
-### Basic Query
+### Basic 查询
 
 ```python
-# Query within a partition (efficient)
-query = "SELECT * FROM c WHERE c.price < @max_price"
+# 查询 within a partition (efficient)
+查询 = "SELECT * FROM c WHERE c.price < @max_price"
 items = container.query_items(
-    query=query,
+    查询=查询,
     parameters=[{"name": "@max_price", "value": 500}],
     partition_key="electronics"
 )
@@ -139,13 +139,13 @@ for item in items:
     print(f"{item['name']}: ${item['price']}")
 ```
 
-### Cross-Partition Query
+### Cross-Partition 查询
 
 ```python
 # Cross-partition (more expensive, use sparingly)
-query = "SELECT * FROM c WHERE c.price < @max_price"
+查询 = "SELECT * FROM c WHERE c.price < @max_price"
 items = container.query_items(
-    query=query,
+    查询=查询,
     parameters=[{"name": "@max_price", "value": 500}],
     enable_cross_partition_query=True
 )
@@ -154,12 +154,12 @@ for item in items:
     print(item)
 ```
 
-### Query with Projection
+### 查询 with Projection
 
 ```python
-query = "SELECT c.id, c.name, c.price FROM c WHERE c.category = @category"
+查询 = "SELECT c.id, c.name, c.price FROM c WHERE c.category = @category"
 items = container.query_items(
-    query=query,
+    查询=查询,
     parameters=[{"name": "@category", "value": "electronics"}],
     partition_key="electronics"
 )
@@ -172,7 +172,7 @@ items = container.query_items(
 items = container.read_all_items()  # Cross-partition
 # Or with partition key
 items = container.query_items(
-    query="SELECT * FROM c",
+    查询="SELECT * FROM c",
     partition_key="electronics"
 )
 ```
@@ -224,7 +224,7 @@ from azure.identity.aio import DefaultAzureCredential
 async def cosmos_operations():
     credential = DefaultAzureCredential()
     
-    async with CosmosClient(endpoint, credential=credential) as client:
+    async with CosmosClient(端点, credential=credential) as client:
         database = client.get_database_client("mydb")
         container = database.get_container_client("mycontainer")
         
@@ -234,9 +234,9 @@ async def cosmos_operations():
         # Read
         item = await container.read_item(item="1", partition_key="test")
         
-        # Query
+        # 查询
         async for item in container.query_items(
-            query="SELECT * FROM c",
+            查询="SELECT * FROM c",
             partition_key="test"
         ):
             print(item)
@@ -269,18 +269,18 @@ except CosmosHttpResponseError as e:
 4. **Use `upsert_item`** for idempotent writes
 5. **Use async client** for high-throughput scenarios
 6. **Design partition key** for even data distribution
-7. **Use `read_item`** instead of query for single document retrieval
+7. **Use `read_item`** instead of 查询 for single document retrieval
 
 ## 参考文件
 
 | File | Contents |
 |------|----------|
 | references/partitioning.md | Partition key strategies, hierarchical keys, hot partition detection and mitigation |
-| references/query-patterns.md | Query optimization, aggregations, pagination, transactions, change feed |
+| references/查询-patterns.md | 查询 optimization, aggregations, pagination, transactions, change feed |
 | scripts/setup_cosmos_container.py | CLI tool for creating containers with partitioning, throughput, and indexing |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

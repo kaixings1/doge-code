@@ -10,7 +10,7 @@ Create realistic synthetic datasets that mirror real-world data characteristics.
 
 ## 工作原理
 
-### 步骤 1: Define the Schema
+### 步骤 1: Define the 架构
 - Column names, data types, and descriptions
 - Relationships between columns (foreign keys, correlations)
 - Business constraints (e.g., revenue > 0, age between 18-100)
@@ -36,7 +36,7 @@ Create realistic synthetic datasets that mirror real-world data characteristics.
 - Check constraint satisfaction
 - Visual comparison: distribution plots, correlation heatmaps
 
-## 用法 Examples
+## 用法 示例
 
 **Example 1: E-commerce dataset**
 ```
@@ -45,9 +45,9 @@ product_category, price, quantity, date, and a 5% return rate.
 Include seasonal trends in Q4."
 ```
 
-**Example 2: From schema**
+**Example 2: From 架构**
 ```
-"Here's my database schema [upload]. Generate 5,000 realistic records
+"Here's my database 架构 [upload]. Generate 5,000 realistic records
 with proper foreign key relationships between tables."
 ```
 
@@ -60,6 +60,6 @@ with proper foreign key relationships between tables."
 ## 输出格式
 
 - **Dataset**: Generated data in requested format (CSV, JSON, SQL, DataFrame code)
-- **Schema Documentation**: Column descriptions and data generation rules
+- **架构 Documentation**: Column descriptions and data generation rules
 - **Statistics 总结**: Descriptive stats confirming the data meets specifications
 - **Python Code**: Reproducible generation script for regenerating with different seeds/sizes

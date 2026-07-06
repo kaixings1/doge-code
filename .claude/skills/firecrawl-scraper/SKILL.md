@@ -28,13 +28,13 @@ npx skills add -g BenedictKing/firecrawl-scraper
 3. Use naturally in Claude Code conversations
 
 ## 示例
-See [GitHub Repository](https://github.com/BenedictKing/firecrawl-scraper) for examples.
+See [GitHub Repository](https://github.com/BenedictKing/firecrawl-scraper) for 示例.
 
 ## 最佳实践
 - Configure API keys via environment variables
 
 ## 故障排除
-See the GitHub repository for troubleshooting guides.
+See the GitHub repository for 故障排除 guides.
 
 ## 相关技能
 - context7-auto-research, tavily-web, exa-search, codex-review

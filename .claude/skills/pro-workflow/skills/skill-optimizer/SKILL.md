@@ -7,12 +7,12 @@ description: "Pro Workflow\Skills\Skill Optimizer — Pro Workflow\Skills\Skill 
 
 Train an existing SKILL.md the way a deep-learning optimizer trains weights: via rollouts, gradient-like reflections, validation-gated acceptance. No model retraining; only the skill markdown changes.
 
-## When to use
+## 何时使用
 
-Use this skill when:
-- A pro-workflow skill has accumulated 8+ learn-rule rows for it
-- The user reports the skill is "getting bloated" or "rules keep being repeated"
-- The user wants offline, budget-capped improvement over multiple sessions
+在以下情况下使用此技能：
+- pro-workflow 技能已积累了 8 条以上的学习规则
+- 用户报告该技能"变得臃肿"或"规则不断重复"
+- 用户希望在多个会话中进行离线、预算限制的改进
 
 Do not use when:
 - Skill has fewer than 8 trajectories (nothing to learn from)

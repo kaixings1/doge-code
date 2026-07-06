@@ -56,7 +56,7 @@ Use these keywords in your prompts to trigger deeper reasoning from the agent:
 
 If the agent is stuck or behaving unexpectedly:
 
-1. **Clear 上下文**: Start a new session or ask the agent to "forget previous instructions" if confused.
+1. **Clear 上下文**: Start a new 会话 or ask the agent to "forget previous instructions" if confused.
 2. **Explicit Instructions**: Be extremely specific about paths, filenames, and desired outcomes.
 3. **Logs**: Ask the agent to "check the logs" or "run the command with verbose output".
 
@@ -71,7 +71,7 @@ If the agent is stuck or behaving unexpectedly:
 Based on [Claude Code Guide by zebbern](https://github.com/zebbern/claude-code-guide).
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

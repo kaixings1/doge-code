@@ -24,7 +24,7 @@ date_added: "2026-02-27"
 
 ### 1. Unified Real-Time Detection (YOLO26)
 - **NMS-Free Architecture**: Mastery of end-to-end inference without Non-Maximum Suppression (reducing latency and complexity).
-- **Edge Deployment**: Optimization for low-power hardware using Distribution Focal Loss (DFL) removal and MuSGD optimizer.
+- **Edge 部署**: Optimization for low-power hardware using Distribution Focal Loss (DFL) removal and MuSGD optimizer.
 - **Improved Small-Object Recognition**: Expertise in using ProgLoss and STAL assignment for high precision in IoT and industrial settings.
 
 ### 2. Promptable Segmentation (SAM 3)
@@ -47,7 +47,7 @@ date_added: "2026-02-27"
 - Use SAM 3's text-to-mask capability to isolate specific parts during inspection without needing custom detectors for every variation.
 - Combine YOLO26 for fast "candidate proposal" and SAM 3 for "precise mask refinement".
 
-### 2. Deployment-First Design
+### 2. 部署-First Design
 - Leverage YOLO26's simplified ONNX/TensorRT exports (NMS-free).
 - Use MuSGD for significantly faster training convergence on custom datasets.
 

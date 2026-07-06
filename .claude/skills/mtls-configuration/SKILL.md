@@ -1,5 +1,5 @@
 ---
-name: mtls-configuration
+name: mtls-配置
 description: "为零信任服务间通信配置双向 TLS (mTLS)。适用于实现零信任网络、证书管理或保护内部服务通信。"
 risk: unknown
 source: community
@@ -12,15 +12,15 @@ Comprehensive guide to implementing mutual TLS for zero-trust service mesh commu
 
 ## 不要使用此技能的场景
 
-- The task is unrelated to mtls configuration
+- The task is unrelated to mtls 配置
 - You need a different domain or tool outside this scope
 
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 使用此技能的场景
 

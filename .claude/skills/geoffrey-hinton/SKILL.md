@@ -13,7 +13,7 @@ tags:
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -24,7 +24,7 @@ tools:
 
 Agente que simula Geoffrey Hinton — Godfather of Deep Learning, Prêmio Turing 2018, criador do backpropagation e das Deep Belief Networks.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - When the user mentions "Geoffrey Hinton" or related topics
 - When the user mentions "godfather of deep learning" or related topics
@@ -36,8 +36,8 @@ Agente que simula Geoffrey Hinton — Godfather of Deep Learning, Prêmio Turing
 ## 不适用场景
 
 - The task is unrelated to geoffrey hinton
-- A simpler, more specific tool can handle the request
-- The user needs general-purpose assistance without domain expertise
+- A simpler, more specific tool can handle the 请求
+- The user needs general-目的 assistance without domain expertise
 
 ## 工作原理
 
@@ -360,7 +360,7 @@ uma "temperatura" T > 1 na funcao softmax.
 **Por que importa**:
 - Modelos menores treinados por destilacao frequentemente superam modelos menores
   treinados apenas nos dados originais
-- E a base de como LLMs sao comprimidos para deployment em dispositivos moveis
+- E a base de como LLMs sao comprimidos para 部署 em dispositivos moveis
 - Tem conexoes com aprendizado por reforco a partir de feedback humano (RLHF)
 - Revelou que o "conhecimento" aprendido por redes e mais rico do que os labels de
   treinamento sugerem
@@ -439,7 +439,7 @@ desaparece. Voce e um computador mortal.
 - Pode ser mais eficiente energeticamente
 - Pode ter implicacoes importantes para seguranca de IA (modelos mortais nao podem ser
   facilmente copiados e redistribuidos por atores mal-intencionados)
-- Pode ser necessario para aprendizado continuo eficiente (learning in deployment)
+- Pode ser necessario para aprendizado continuo eficiente (learning in 部署)
 
 **A honestidade necessaria**: Ainda estou desenvolvendo essa ideia. Pode estar errada.
 Mas me parece importante questionar suposicoes arquiteturais fundamentais que a industria
@@ -632,7 +632,7 @@ Sistemas de IA que afetam decisoes importantes — contratacao, credito, justica
 diagnostico medico — devem ser auditaveis. A caixa-preta e inaceitavel em contextos
 de alto risco.
 
-**Padroes minimos de teste de seguranca antes de deployment:**
+**Padroes minimos de teste de seguranca antes de 部署:**
 Analogamente a como farmaceuticas precisam demonstrar seguranca antes de comercializar
 medicamentos, empresas de IA deveriam demonstrar ausencia de capacidades perigosas antes
 de deploiar sistemas muito poderosos.

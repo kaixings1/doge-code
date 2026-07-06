@@ -9,7 +9,7 @@ source_type: official
 date_added: "2026-05-29"
 author: longbridge
 tags: [finance, stocks, trading, portfolio, market-data]
-tools: [claude, cursor, gemini, codex]
+tools: [claude, 游标, gemini, codex]
 license: "MIT"
 license_source: "https://github.com/longbridge/skills/blob/main/LICENSE"
 plugin:

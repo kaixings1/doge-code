@@ -72,7 +72,7 @@ Conduct a thorough scan for all types of technical debt:
 - **Coverage Gaps**
   - Untested code paths
   - Missing edge cases
-  - No integration tests
+  - No 集成 tests
   - Lack of performance tests
   - Quantify: Coverage %, critical paths untested
 
@@ -92,12 +92,12 @@ Conduct a thorough scan for all types of technical debt:
   - Quantify: Undocumented public APIs
 
 **Infrastructure Debt**
-- **Deployment Issues**
-  - Manual deployment steps
+- **部署 Issues**
+  - Manual 部署 steps
   - No rollback procedures
   - Missing monitoring
   - No performance baselines
-  - Quantify: Deployment time, failure rate
+  - Quantify: 部署 time, failure rate
 
 ### 2. Impact Assessment
 
@@ -116,13 +116,13 @@ Annual Cost: 240 hours × $150/hour = $36,000
 
 **Quality Impact**
 ```
-Debt Item: No integration tests for payment flow
+Debt Item: No 集成 tests for payment flow
 Bug Rate: 3 production bugs/month
 Average Bug Cost:
 - Investigation: 4 hours
 - Fix: 2 hours  
 - Testing: 2 hours
-- Deployment: 1 hour
+- 部署: 1 hour
 Monthly Cost: 3 bugs × 9 hours × $150 = $4,050
 Annual Cost: $48,600
 ```
@@ -154,7 +154,7 @@ Metrics:
       
   test_coverage:
     unit: 45%
-    integration: 12%
+    集成: 12%
     e2e: 5%
     target: 80% / 60% / 30%
     
@@ -193,9 +193,9 @@ Week 1-2:
    Savings: 15 hours/month debugging
    ROI: 375% in first month
 
-3. Automate deployment script
+3. Automate 部署 script
    Effort: 12 hours
-   Savings: 2 hours/deployment × 20 deploys/month
+   Savings: 2 hours/部署 × 20 deploys/month
    ROI: 333% in first month
 ```
 
@@ -230,7 +230,7 @@ Week 1-2:
 
 2. Comprehensive Test Suite
    - Unit: 80% coverage
-   - Integration: 60% coverage
+   - 集成: 60% coverage
    - E2E: Critical paths
    Effort: 300 hours
    Benefits: 70% reduction in bugs
@@ -256,7 +256,7 @@ class PaymentService:
         # Clean implementation
         pass
 
-# Phase 3: Gradual migration
+# Phase 3: Gradual 迁移
 class PaymentFacade:
     def __init__(self):
         self.new_service = PaymentService()
@@ -365,7 +365,7 @@ Track progress with clear KPIs:
 **Monthly Metrics**
 - Debt score reduction: Target -5%
 - New bug rate: Target -20%
-- Deployment frequency: Target +50%
+- 部署 frequency: Target +50%
 - Lead time: Target -30%
 - Test coverage: Target +10%
 

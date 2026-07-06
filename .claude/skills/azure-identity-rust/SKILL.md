@@ -67,7 +67,7 @@ let client = SecretClient::new(
 
 ## ManagedIdentityCredential
 
-For Azure-hosted resources:
+For Azure-hosted 资源:
 
 ```rust
 use azure_identity::ManagedIdentityCredential;
@@ -115,7 +115,7 @@ let credential = ClientSecretCredential::new(
 | crates.io | https://crates.io/crates/azure_identity |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

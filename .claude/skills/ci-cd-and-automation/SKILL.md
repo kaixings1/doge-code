@@ -26,7 +26,7 @@ description: CI/CD与自动化 — 自动化CI/CD管道设置。在设置或修�
 Every change goes through these gates before merge:
 
 ```
-Pull Request Opened
+Pull 请求 Opened
     │
     ▼
 ┌─────────────────┐
@@ -38,7 +38,7 @@ Pull Request Opened
 │   ↓ pass         │
 │   BUILD          │  npm run build
 │   ↓ pass         │
-│   INTEGRATION    │  API/DB tests
+│   集成    │  API/DB tests
 │   ↓ pass         │
 │   E2E (optional) │  Playwright/Cypress
 │   ↓ pass         │
@@ -53,7 +53,7 @@ Pull Request Opened
 
 **No gate can be skipped.** If lint fails, fix lint — don't disable the rule. If a test fails, fix the code — don't skip the test.
 
-## GitHub Actions Configuration
+## GitHub Actions 配置
 
 ### Basic CI Pipeline
 
@@ -73,7 +73,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/设置-node@v4
         with:
           node-version: '22'
           cache: 'npm'
@@ -97,10 +97,10 @@ jobs:
         run: npm audit --audit-level=high
 ```
 
-### With Database Integration Tests
+### With Database 集成 Tests
 
 ```yaml
-  integration:
+  集成:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -119,7 +119,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/设置-node@v4
         with:
           node-version: '22'
           cache: 'npm'
@@ -128,8 +128,8 @@ jobs:
         run: npx prisma migrate deploy
         env:
           DATABASE_URL: postgresql://ci_user:${{ secrets.CI_DB_PASSWORD }}@localhost:5432/testdb
-      - name: Integration tests
-        run: npm run test:integration
+      - name: 集成 tests
+        run: npm run test:集成
         env:
           DATABASE_URL: postgresql://ci_user:${{ secrets.CI_DB_PASSWORD }}@localhost:5432/testdb
 ```
@@ -143,7 +143,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/设置-node@v4
         with:
           node-version: '22'
           cache: 'npm'
@@ -190,11 +190,11 @@ Test failure → Agent follows debugging-and-error-recovery skill
 Build error → Agent checks config and dependencies
 ```
 
-## Deployment Strategies
+## 部署 Strategies
 
 ### Preview Deployments
 
-Every PR gets a preview deployment for manual testing:
+Every PR gets a preview 部署 for manual testing:
 
 ```yaml
 # Deploy preview on PR (Vercel/Netlify/etc.)
@@ -204,12 +204,12 @@ deploy-preview:
   steps:
     - uses: actions/checkout@v4
     - name: Deploy preview
-      run: npx vercel --token=${{ secrets.VERCEL_TOKEN }}
+      run: npx vercel --令牌=${{ secrets.VERCEL_TOKEN }}
 ```
 
 ### Feature Flags
 
-Feature flags decouple deployment from release. Deploy incomplete or risky features behind flags so you can:
+Feature flags decouple 部署 from release. Deploy incomplete or risky features behind flags so you can:
 
 - **Ship code without enabling it.** Merge to main early, enable when ready.
 - **Roll back without redeploying.** Disable the flag instead of reverting code.
@@ -232,10 +232,10 @@ return renderLegacyCheckout();
 PR merged to main
     │
     ▼
-  Staging deployment (auto)
+  Staging 部署 (auto)
     │ Manual verification
     ▼
-  Production deployment (manual trigger or auto after staging)
+  Production 部署 (manual trigger or auto after staging)
     │
     ▼
   Monitor for errors (15-minute window)
@@ -246,10 +246,10 @@ PR merged to main
 
 ### Rollback Plan
 
-Every deployment should be reversible:
+Every 部署 should be reversible:
 
 ```yaml
-# Manual rollback workflow
+# Manual rollback 工作流
 name: Rollback
 on:
   workflow_dispatch:
@@ -262,7 +262,7 @@ jobs:
   rollback:
     runs-on: ubuntu-latest
     steps:
-      - name: Rollback deployment
+      - name: Rollback 部署
         run: |
           # Deploy the specified previous version
           npx vercel rollback ${{ inputs.version }}
@@ -275,7 +275,7 @@ jobs:
 .env                → NOT committed (local development)
 .env.test           → Committed (test environment, no real secrets)
 CI secrets          → Stored in GitHub Secrets / vault
-Production secrets  → Stored in deployment platform / vault
+Production secrets  → Stored in 部署 platform / vault
 ```
 
 CI should never have production secrets. Use separate secrets for CI testing.
@@ -313,7 +313,7 @@ When the pipeline exceeds 10 minutes, apply these strategies in order of impact:
 ```
 Slow CI pipeline?
 ├── Cache dependencies
-│   └── Use actions/cache or setup-node cache option for node_modules
+│   └── Use actions/cache or 设置-node cache option for node_modules
 ├── Run jobs in parallel
 │   └── Split lint, typecheck, test, build into separate parallel jobs
 ├── Only run what changed
@@ -333,7 +333,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/设置-node@v4
         with: { node-version: '22', cache: 'npm' }
       - run: npm ci
       - run: npm run lint
@@ -342,7 +342,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/设置-node@v4
         with: { node-version: '22', cache: 'npm' }
       - run: npm ci
       - run: npx tsc --noEmit
@@ -351,7 +351,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/设置-node@v4
         with: { node-version: '22', cache: 'npm' }
       - run: npm ci
       - run: npm test -- --coverage
@@ -386,5 +386,5 @@ After setting up or modifying CI:
 - [ ] Failures block merge (branch protection configured)
 - [ ] CI results feed back into the development loop
 - [ ] Secrets are stored in the secrets manager, not in code
-- [ ] Deployment has a rollback mechanism
+- [ ] 部署 has a rollback mechanism
 - [ ] Pipeline runs in under 10 minutes for the test suite

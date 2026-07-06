@@ -6,23 +6,23 @@ description: "Skillify — Skillify 相关功能和最佳实践"
 
 # Skillify
 
-Use this skill when the current session uncovered a repeatable workflow that should become a reusable OMC skill.
+当当前会话发现了一个可重复的工作流，应该成为可复用的 OMC 技能时使用此技能。
 
 > Compatibility: `/oh-my-claudecode:learner` is a deprecated alias for this skill. Prefer `/oh-my-claudecode:skillify` in docs, prompts, and new workflows. Internal implementation modules may still use the learner name.
 
 ## Goal
-Capture a successful multi-step workflow as a concrete skill draft instead of rediscovering it later.
+Capture a successful multi-step 工作流 as a concrete skill draft instead of rediscovering it later.
 
 ## Quality Gate
 Before extracting a skill, all three should be true:
 - "Could someone Google this in 5 minutes?" → No.
-- "Is this specific to this codebase, project, or workflow?" → Yes.
+- "Is this specific to this codebase, project, or 工作流?" → Yes.
 - "Did this take real debugging, design, or operational effort to discover?" → Yes.
 
-Prefer skills that encode decision-making heuristics, constraints, pitfalls, and verification steps. Avoid generic snippets, boilerplate, or library usage examples that belong in normal documentation.
+Prefer skills that encode decision-making heuristics, constraints, pitfalls, and verification steps. Avoid generic snippets, boilerplate, or library usage 示例 that belong in normal documentation.
 
 ## 工作流
-1. Identify the repeatable task the session accomplished.
+1. Identify the repeatable task the 会话 accomplished.
 2. Extract:
    - inputs
    - ordered steps
@@ -30,7 +30,7 @@ Prefer skills that encode decision-making heuristics, constraints, pitfalls, and
    - constraints / pitfalls
    - verification evidence
    - best target location for the skill
-3. Decide whether the workflow belongs as:
+3. Decide whether the 工作流 belongs as:
    - a repo built-in skill
    - a user/project learned skill
    - documentation only

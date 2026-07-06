@@ -7,7 +7,7 @@ description: "Seo Images — 图像优化分析相关功能和最佳实践：替
   "alt text", "image SEO", "image size", "image audit", "optimize images",
   "image metadata", "image SERP", "convert to webp", or "image file optimize".
 user-invocable: true
-argument-hint: "[url]"
+参数-hint: "[url]"
 license: MIT
 metadata:
   author: AgriciDaniel
@@ -25,12 +25,12 @@ metadata:
 - Includes relevant keywords where natural, not keyword-stuffed
 - Length: 10-125 characters
 
-**Good examples:**
+**Good 示例:**
 - "Professional plumber repairing kitchen sink faucet"
 - "Red 2024 Toyota Camry sedan front view"
 - "Team meeting in modern office conference room"
 
-**Bad examples:**
+**Bad 示例:**
 - "image.jpg" (filename, not description)
 - "plumber plumbing plumber services" (keyword stuffing)
 - "Click here" (not descriptive)

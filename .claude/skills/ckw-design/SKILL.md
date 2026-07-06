@@ -18,7 +18,7 @@ tags:
 tools:
   - claude-code
   - antigravity
-  - cursor
+  - 游标
   - gemini-cli
   - codex-cli
 ---
@@ -30,7 +30,7 @@ _Source: [connerkward/ckw-design-skill](https://github.com/connerkward/ckw-desig
 
 # Design (entry)
 
-Use this skill when the user asks to build or style web UIs: components, pages, dashboards, landing pages, React/Vue/HTML-CSS layouts, or any frontend interface. Goal: distinctive, production-grade output that avoids generic AI aesthetics.
+当用户要求构建或设计 Web UI 时使用此技能：组件、页面、仪表板、着陆页、React/Vue/HTML-CSS 布局或任何前端界面。目标：独特的生产级输出，避免通用的 AI 美学。
 
 **Before reporting any design "done": render it and have a *separate* judge critique the image** (not the code, not self-grading) — see design-spatial §1. Blind generation can't see its own collisions; this applies to all design output, not just spatial work.
 
@@ -66,7 +66,7 @@ When design work involves running an LLM (generative assets, VLM analysis, layou
 
 - **Before running:** state which model will be used and the estimated cost (e.g., "gpt-4o-mini · ~$0.005/image" or "FLUX v1 · ~$0.006 per gen").
 - **After results:** annotate the output with the model used, actual cost if different from estimate, and any key params (seed, prompt, settings). Cost goes *visible to the user* (in the message, contact sheet header, or asset caption), not buried in logs.
-- **Why:** the user is deciding whether the cost-to-quality trade-off is worth it. Unlabeled or hidden costs hide the most important lever. This rule mirrors `media-attribution-rule` for generative assets and extends it to any LLM operation in the design workflow.
+- **Why:** the user is deciding whether the cost-to-quality trade-off is worth it. Unlabeled or hidden costs hide the most important lever. This rule mirrors `media-attribution-rule` for generative assets and extends it to any LLM 操作 in the design 工作流.
 
 **Examples:**
 - "Running gpt-4o-mini layout critique on 8 designs · est. ~$0.04 total" (before).

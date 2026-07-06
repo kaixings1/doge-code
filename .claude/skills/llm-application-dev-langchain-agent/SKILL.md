@@ -63,7 +63,7 @@ class AgentState(TypedDict):
 
 1. **ReAct Agents**: Multi-step reasoning with tool usage
    - Use `create_react_agent(llm, tools, state_modifier)`
-   - Best for general-purpose tasks
+   - Best for general-目的 tasks
 
 2. **Plan-and-Execute**: Complex tasks requiring upfront planning
    - Separate planning and execution nodes
@@ -75,7 +75,7 @@ class AgentState(TypedDict):
 
 ## 记忆系统
 
-- **Short-term**: `ConversationTokenBufferMemory` (token-based windowing)
+- **Short-term**: `ConversationTokenBufferMemory` (令牌-based windowing)
 - **Summarization**: `ConversationSummaryMemory` (compress long histories)
 - **Entity Tracking**: `ConversationEntityMemory` (track people, places, facts)
 - **Vector Memory**: `VectorStoreRetrieverMemory` with semantic search
@@ -87,7 +87,7 @@ class AgentState(TypedDict):
 from langchain_voyageai import VoyageAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
 
-# Setup embeddings (voyage-3-large recommended for Claude)
+# 设置 embeddings (voyage-3-large recommended for Claude)
 embeddings = VoyageAIEmbeddings(model="voyage-3-large")
 
 # Vector store with hybrid search
@@ -105,7 +105,7 @@ base_retriever = vectorstore.as_retriever(
 
 ### 高级 RAG 模式
 - **HyDE**: Generate hypothetical documents for better retrieval
-- **RAG Fusion**: Multiple query perspectives for comprehensive results
+- **RAG Fusion**: Multiple 查询 perspectives for comprehensive results
 - **Reranking**: Use Cohere Rerank for relevance optimization
 
 ## 工具与集成
@@ -115,12 +115,12 @@ from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, Field
 
 class ToolInput(BaseModel):
-    query: str = Field(description="Query to process")
+    查询: str = Field(description="查询 to process")
 
-async def tool_function(query: str) -> str:
+async def tool_function(查询: str) -> str:
     # Implement with error handling
     try:
-        result = await external_call(query)
+        result = await external_call(查询)
         return result
     except Exception as e:
         return f"Error: {str(e)}"
@@ -142,10 +142,10 @@ from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 
 @app.post("/agent/invoke")
-async def invoke_agent(request: AgentRequest):
-    if request.stream:
+async def invoke_agent(请求: AgentRequest):
+    if 请求.stream:
         return StreamingResponse(
-            stream_response(request),
+            stream_response(请求),
             media_type="text/event-stream"
         )
     return await agent.ainvoke({"messages": [...]})
@@ -158,7 +158,7 @@ async def invoke_agent(request: AgentRequest):
 - **Health Checks**: Validate LLM, tools, memory, and external services
 
 ### 优化策略
-- **Caching**: Redis for response caching with TTL
+- **Caching**: Redis for 响应 caching with TTL
 - **Connection Pooling**: Reuse vector DB connections
 - **Load Balancing**: Multiple agent workers with round-robin routing
 - **Timeout Handling**: Set timeouts on all async operations
@@ -221,13 +221,13 @@ async def call_with_retry():
 ## 实施检查清单
 
 - [ ] Initialize LLM with Claude Sonnet 4.5
-- [ ] Setup Voyage AI embeddings (voyage-3-large)
+- [ ] 设置 Voyage AI embeddings (voyage-3-large)
 - [ ] Create tools with async support and error handling
 - [ ] Implement memory system (choose type based on use case)
 - [ ] Build state graph with LangGraph
 - [ ] Add LangSmith tracing
 - [ ] Implement streaming responses
-- [ ] Setup health checks and monitoring
+- [ ] 设置 health checks and monitoring
 - [ ] Add caching layer (Redis)
 - [ ] Configure retry logic and timeouts
 - [ ] Write evaluation tests
@@ -238,9 +238,9 @@ async def call_with_retry():
 1. **Always use async**: `ainvoke`, `astream`, `aget_relevant_documents`
 2. **Handle errors gracefully**: Try/except with fallbacks
 3. **Monitor everything**: Trace, log, and metric all operations
-4. **Optimize costs**: Cache responses, use token limits, compress memory
+4. **Optimize costs**: Cache responses, use 令牌 limits, compress memory
 5. **Secure secrets**: Environment variables, never hardcode
-6. **Test thoroughly**: Unit tests, integration tests, evaluation suites
+6. **Test thoroughly**: Unit tests, 集成 tests, evaluation suites
 7. **Document extensively**: API docs, architecture diagrams, runbooks
 8. **Version control state**: Use checkpointers for reproducibility
 

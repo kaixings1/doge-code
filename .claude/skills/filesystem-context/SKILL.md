@@ -32,19 +32,19 @@ source: community
 ### /u9759/u6001/u4e0e/u52a8/u6001/u4e0a/u4e0b/u6587/u7684/u6743/u8861
 
 **Static Context**
-Static context is always included in the prompt: system instructions, tool definitions, and critical rules. Static context consumes tokens regardless of task relevance. As agents accumulate more capabilities (tools, skills, instructions), static context grows and crowds out space for dynamic information.
+Static context is always included in the prompt: system instructions, tool definitions, and critical rules. Static context consumes tokens regardless of task relevance. As agents accumulate more 能力 (tools, skills, instructions), static context grows and crowds out space for dynamic information.
 
 **Dynamic Context Discovery**
 Dynamic context is loaded on-demand when relevant to the current task. The agent receives minimal static pointers (names, descriptions, file paths) and uses search tools to load full content when needed.
 
-Dynamic discovery is more token-efficient because only necessary data enters the context window. It can also improve response quality by reducing potentially confusing or contradictory information.
+Dynamic discovery is more 令牌-efficient because only necessary data enters the context window. It can also improve 响应 quality by reducing potentially confusing or contradictory information.
 
 The trade-off: dynamic discovery requires the model to correctly identify when to load additional context. This works well with current frontier models but may fail with less capable models that do not recognize when they need more information.
 
 ### /u6a21/u5f0f 1/uff1a/u6587/u4ef6/u7cfb/u7edf/u4f5c/u4e3a/u8349/u7a3f/u677f
 
 **The Problem**
-Tool calls can return massive outputs. A web search may return 10k tokens of raw content. A database query may return hundreds of rows. If this content enters the message history, it remains for the entire conversation, inflating token costs and potentially degrading attention to more relevant information.
+Tool calls can return massive outputs. A web search may return 10k tokens of raw content. A database 查询 may return hundreds of rows. If this content enters the message history, it remains for the entire conversation, inflating 令牌 costs and potentially degrading attention to more relevant information.
 
 **The Solution**
 Write large tool outputs to files instead of returning them directly to the context. The agent then uses targeted retrieval (grep, line-specific reads) to extract only the relevant portions.
@@ -67,7 +67,7 @@ def handle_tool_output(output: str, threshold: int = 2000) -> str:
 The agent can then use `grep` to search for specific patterns or `read_file` with line ranges to retrieve targeted sections.
 
 **Benefits**
-- Reduces token accumulation over long conversations
+- Reduces 令牌 accumulation over long conversations
 - Preserves full output for later reference
 - Enables targeted retrieval instead of carrying everything
 
@@ -83,14 +83,14 @@ Write plans to the filesystem. The agent can re-read its plan at any point, remi
 Store plans in structured format:
 ```yaml
 # scratch/current_plan.yaml
-objective: "Refactor authentication module"
+objective: "Refactor 认证 module"
 status: in_progress
 steps:
   - id: 1
     description: "Audit current auth endpoints"
     status: completed
   - id: 2
-    description: "Design new token validation flow"
+    description: "Design new 令牌 validation flow"
     status: in_progress
   - id: 3
     description: "Implement and test changes"
@@ -135,9 +135,9 @@ Store skills as files. Include only skill names and brief descriptions in static
 Static context includes:
 ```
 Available skills (load with read_file when relevant):
-- database-optimization: Query tuning and indexing strategies
-- api-design: REST/GraphQL best practices
-- testing-strategies: Unit, integration, and e2e testing patterns
+- database-optimization: 查询 tuning and indexing strategies
+- api-design: REST/GraphQL 最佳实践
+- testing-strategies: Unit, 集成, and e2e testing patterns
 ```
 
 Agent loads `skills/database-optimization/SKILL.md` only when working on database tasks.
@@ -154,11 +154,11 @@ Sync terminal output to files automatically. The agent can then grep for relevan
 Terminal sessions are persisted as files:
 ```
 terminals/
-  1.txt    # Terminal session 1 output
-  2.txt    # Terminal session 2 output
+  1.txt    # Terminal 会话 1 output
+  2.txt    # Terminal 会话 2 output
 ```
 
-Agents query with targeted grep:
+Agents 查询 with targeted grep:
 ```bash
 grep -A 5 "error" terminals/1.txt
 ```
@@ -201,7 +201,7 @@ Semantic search and filesystem search work well together: semantic search for co
 
 ## /u5b9e/u7528/u6307/u5357
 
-### When to Use Filesystem Context
+### 使用场景 Filesystem Context
 
 **Use filesystem patterns when:**
 - Tool outputs exceed 2000 tokens
@@ -233,7 +233,7 @@ project/
 
 Use consistent naming conventions. Include timestamps or IDs in scratch files for disambiguation.
 
-### Token Accounting
+### 令牌 Accounting
 
 Track where tokens originate:
 - Measure static vs dynamic context ratio
@@ -258,7 +258,7 @@ Result: ~100 tokens in context, 8000 tokens accessible on demand
 **Example 2: Dynamic Skill Loading**
 ```
 Input: User asks about database indexing
-Static context: "database-optimization: Query tuning and indexing"
+Static context: "database-optimization: 查询 tuning and indexing"
 Agent action: read_file("skills/database-optimization/SKILL.md")
 Result: Full skill loaded only when relevant
 ```
@@ -282,7 +282,7 @@ Result: Agent can search history file to recover details lost in summarization
 5. Persist terminal and log output as searchable files
 6. Combine grep/glob with semantic search for comprehensive discovery
 7. Organize files for agent discoverability with clear naming
-8. Measure token savings to validate filesystem patterns are effective
+8. Measure 令牌 savings to validate filesystem patterns are effective
 9. Implement cleanup for scratch files to prevent unbounded growth
 10. Guard self-modification patterns with validation
 
@@ -302,13 +302,13 @@ Internal reference:
 - Implementation Patterns - Detailed pattern implementations
 
 Related skills in this collection:
-- context-optimization - Token reduction techniques
+- context-optimization - 令牌 reduction techniques
 - memory-systems - Persistent storage patterns
 - multi-agent-patterns - Agent coordination
 
 External resources:
 - LangChain Deep Agents: How agents can use filesystems for context engineering
-- Cursor: Dynamic context discovery patterns
+- 游标: Dynamic context discovery patterns
 - Anthropic: Agent Skills specification
 
 ---

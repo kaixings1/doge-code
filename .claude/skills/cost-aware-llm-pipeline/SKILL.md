@@ -139,7 +139,7 @@ def process(text: str, config: Config, tracker: CostTracker) -> tuple[Result, Co
         raise BudgetExceededError(tracker.total_cost, tracker.budget_limit)
 
     # 3. 带重试与缓存的调用
-    response = call_with_retry(lambda: client.messages.create(
+    响应 = call_with_retry(lambda: client.messages.create(
         model=model,
         messages=build_cached_messages(system_prompt, text),
     ))
@@ -148,7 +148,7 @@ def process(text: str, config: Config, tracker: CostTracker) -> tuple[Result, Co
     record = CostRecord(model=model, input_tokens=..., output_tokens=..., cost_usd=...)
     tracker = tracker.add(record)
 
-    return parse_result(response), tracker
+    return parse_result(响应), tracker
 ```
 
 ## 价格参考 (2025-2026)

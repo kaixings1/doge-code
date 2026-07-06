@@ -52,7 +52,7 @@ describe("UserService contract", () => {
     await provider
       .addInteraction()
       .given("user with id user-1 exists")
-      .uponReceiving("a request for user user-1")
+      .uponReceiving("a 请求 for user user-1")
       .withRequest("GET", "/api/users/user-1")
       .willRespondWith(200, (builder) => {
         builder.jsonBody({
@@ -70,7 +70,7 @@ describe("UserService contract", () => {
 });
 ```
 
-Contract tests verify that consumer expectations match provider capabilities without requiring both services to be running.
+Contract tests verify that consumer expectations match provider 能力 without requiring both services to be running.
 
 ## Snapshot Testing
 
@@ -183,7 +183,7 @@ expect(emailService.getSent()[0].subject).toBe("Welcome");
 - Testing implementation details instead of behavior
 - Sharing mutable state between tests (no `beforeEach` reset)
 - Writing tests that depend on execution order
-- Mocking everything instead of using real dependencies for integration tests
+- Mocking everything instead of using real dependencies for 集成 tests
 - Ignoring flaky tests instead of fixing the root cause
 - Testing trivial getters/setters while missing edge cases
 

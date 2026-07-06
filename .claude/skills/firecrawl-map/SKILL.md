@@ -20,7 +20,7 @@ allowed-tools:
 
 ```bash
 # Find a specific page on a large site
-firecrawl map "<url>" --search "authentication" -o .firecrawl/filtered.txt
+firecrawl map "<url>" --search "认证" -o .firecrawl/filtered.txt
 
 # Get all URLs
 firecrawl map "<url>" --limit 500 --json -o .firecrawl/urls.json
@@ -31,7 +31,7 @@ firecrawl map "<url>" --limit 500 --json -o .firecrawl/urls.json
 | Option                            | Description                  |
 | --------------------------------- | ---------------------------- |
 | `--limit <n>`                     | Max number of URLs to return |
-| `--search <query>`                | Filter URLs by search query  |
+| `--search <查询>`                | 过滤器 URLs by search 查询  |
 | `--sitemap <include\|skip\|only>` | Sitemap handling strategy    |
 | `--include-subdomains`            | Include subdomain URLs       |
 | `--json`                          | Output as JSON               |
@@ -40,7 +40,7 @@ firecrawl map "<url>" --limit 500 --json -o .firecrawl/urls.json
 ## 提示
 
 - **Map + scrape is a common pattern**: use `map --search` to find the right URL, then `scrape` it.
-- Example: `map https://docs.example.com --search "auth"` → found `/docs/api/authentication` → `scrape` that URL.
+- Example: `map https://docs.example.com --search "auth"` → found `/docs/api/认证` → `scrape` that URL.
 
 ## See also
 

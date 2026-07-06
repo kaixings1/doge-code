@@ -246,7 +246,7 @@ DFII = (影响 + 契合度 + 可行性 + 性能) − 一致性风险
 * **copywriting** → 排版和消息节奏
 * **marketing-psychology** → 视觉说服和偏见对齐
 * **branding** → 视觉身份一致性
-* **ab-test-setup** → 变体安全的设计系统
+* **ab-test-设置** → 变体安全的设计系统
 
 ---
 

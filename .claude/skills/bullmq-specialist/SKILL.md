@@ -40,7 +40,7 @@ reliable async execution in Node.js/TypeScript applications.
 
 - redis-infrastructure -> redis-specialist
 - serverless-queues -> upstash-qstash
-- workflow-orchestration -> temporal-craftsman
+- 工作流-orchestration -> temporal-craftsman
 - event-sourcing -> event-architect
 - email-delivery -> email-systems
 
@@ -314,7 +314,7 @@ Message: Worker concurrency is high. Ensure downstream services can handle this 
 
 - redis infrastructure|redis cluster|memory tuning -> redis-specialist (Queue needs Redis infrastructure)
 - serverless queue|edge queue|no redis -> upstash-qstash (Need queues without managing Redis)
-- complex workflow|saga|compensation|long-running -> temporal-craftsman (Need workflow orchestration beyond simple jobs)
+- complex 工作流|saga|compensation|long-running -> temporal-craftsman (Need 工作流 orchestration beyond simple jobs)
 - event sourcing|CQRS|event streaming -> event-architect (Need event-driven architecture)
 - deploy|kubernetes|scaling|infrastructure -> devops (Queue needs infrastructure)
 - monitor|metrics|alerting|dashboard -> performance-hunter (Queue needs monitoring)
@@ -323,7 +323,7 @@ Message: Worker concurrency is high. Ensure downstream services can handle this 
 
 Skills: bullmq-specialist, email-systems, redis-specialist
 
-Workflow:
+工作流:
 
 ```
 1. Email request received (API)
@@ -337,7 +337,7 @@ Workflow:
 
 Skills: bullmq-specialist, backend, devops
 
-Workflow:
+工作流:
 
 ```
 1. API receives request (backend)
@@ -349,23 +349,23 @@ Workflow:
 
 ### AI Processing Pipeline
 
-Skills: bullmq-specialist, ai-workflow-automation, performance-hunter
+Skills: bullmq-specialist, ai-工作流-automation, performance-hunter
 
-Workflow:
+工作流:
 
 ```
-1. AI task submitted (ai-workflow-automation)
+1. AI task submitted (ai-工作流-automation)
 2. Job flow created with dependencies (bullmq-specialist)
 3. Workers process stages (bullmq-specialist)
 4. Performance monitored (performance-hunter)
-5. Results aggregated (ai-workflow-automation)
+5. Results aggregated (ai-工作流-automation)
 ```
 
 ### Scheduled Tasks Stack
 
 Skills: bullmq-specialist, backend, redis-specialist
 
-Workflow:
+工作流:
 
 ```
 1. Repeatable jobs defined (bullmq-specialist)
@@ -377,7 +377,7 @@ Workflow:
 
 ## 相关 Skills
 
-Works well with: `redis-specialist`, `backend`, `nextjs-app-router`, `email-systems`, `ai-workflow-automation`, `performance-hunter`
+Works well with: `redis-specialist`, `backend`, `nextjs-app-router`, `email-systems`, `ai-工作流-automation`, `performance-hunter`
 
 ## 使用场景
 - User mentions or implies: bullmq

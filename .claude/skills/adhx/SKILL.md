@@ -20,7 +20,7 @@ ADHX 提供一个免费 API，为任何 X 帖子返回干净的 JSON，包括完
 - 当您需要来自 X/Twitter 帖子的结构化数据（作者、互动、内容）时使用
 - 当处理需要完整内容提取的长篇 X 文章时使用
 
-## API Endpoint
+## API 端点
 
 ```
 https://adhx.com/api/share/tweet/{username}/{statusId}

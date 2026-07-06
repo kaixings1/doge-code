@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 此技能获取当前对话上下文和代码库理解，生成 PRD。不要询问用户——只需综合你已经知道的内容。
 
-议题追踪器和分类标签词汇应已提供给你——如果没有，请运行 `/setup-matt-pocock-skills`。
+议题追踪器和分类标签词汇应已提供给你——如果没有，请运行 `/设置-matt-pocock-skills`。
 
 ## Process
 
@@ -48,13 +48,13 @@ A list of implementation decisions that were made. This can include:
 - The interfaces of those modules that will be modified
 - Technical clarifications from the developer
 - Architectural decisions
-- Schema changes
+- 架构 changes
 - API contracts
 - Specific interactions
 
 Do NOT include specific file paths or code snippets. They may end up being outdated very quickly.
 
-Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it within the relevant decision and note briefly that it came from a prototype. Trim to the decision-rich parts — not a working demo, just the important bits.
+Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, 架构, type shape), inline it within the relevant decision and note briefly that it came from a prototype. Trim to the decision-rich parts — not a working demo, just the important bits.
 
 ## Testing Decisions
 

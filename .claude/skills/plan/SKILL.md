@@ -1,16 +1,16 @@
 ---
 name: omc-plan
 description: "Plan — Plan 相关功能和最佳实践"
-argument-hint: "[--direct|--consensus|--review] [--interactive] [--deliberate] <task description>"
+参数-hint: "[--direct|--consensus|--review] [--interactive] [--deliberate] <task description>"
 pipeline: [deep-interview]
 handoff-policy: approval-required
 handoff: .omc/plans/ralplan-*.md
 level: 4
 ---
 
-<Purpose>
+<目的>
 Plan 通过智能交互创建全面、可执行的工作计划。它自动检测是否需要面试用户（宽泛请求）或直接规划（详细请求），并支持共识模式（Planner/Architect/Critic 迭代循环与 RALPLAN-DR 结构化审议）和审查模式（Critic 评估现有计划）。
-</Purpose>
+</目的>
 
 <Use_When>
 
@@ -43,7 +43,7 @@ Plan 通过智能交互创建全面、可执行的工作计划。它自动检测
 - 共识模式默认使用 RALPLAN-DR 简短模式；当请求明确标记高风险（认证/安全、数据迁移、破坏性/不可逆变更、生产事故、合规/PII、公共 API 破坏）时，使用 `--deliberate` 切换到深思模式
 - **规划/执行边界：** 规划模式仅检查上下文并生成计划/规格/提案。除非用户在当前轮次或通过结构化批准 UI 明确选择执行，否则它们必须将产物标记为 `pending approval`。在获得明确执行批准前，规划模式不得运行变更性的 shell 命令、编辑源文件、提交、推送、打开 PR、调用执行技能或委派实现任务。
 - **Goal 工作流边界：** 当计划比较 Claude Code `/goal`、Ralph、Team、UltraQA 或仅产物的 Ultragoal 时，必须确定一个主循环权威，并使用确定性冲突策略 `refuse`、`adopt_existing` 和 `artifact_only`，而非非确定性警告处理。`/goal` 事实必须仅引用 Claude Code/Anthropic 来源（Claude Code `/goal` 文档：https://code.claude.com/docs/en/goal；Anthropic Claude Code 更新日志：https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md），且计划不得声称 `/goal` 评估器独立运行命令或读取文件；在声明完成前需要展示已呈现的证明证据。
-- **Goal 工作流文档目标：** 面向用户的比较，保持示例与 `docs/shared/mode-selection-guide.md#goal-oriented-workflow-selection` 和 `docs/REFERENCE.md#goal-workflow-ux-goal-ralph-team-ultraqa-ultragoal` 一致。
+- **Goal 工作流文档目标：** 面向用户的比较，保持示例与 `docs/shared/mode-selection-guide.md#goal-oriented-工作流-selection` 和 `docs/REFERENCE.md#goal-工作流-ux-goal-ralph-team-ultraqa-ultragoal` 一致。
   </Execution_Policy>
 
 <Steps>

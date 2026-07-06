@@ -43,9 +43,9 @@ import { DefaultAzureCredential } from "@azure/identity";
 import { VoiceLiveClient } from "@azure/ai-voicelive";
 
 const credential = new DefaultAzureCredential();
-const endpoint = "https://your-resource.cognitiveservices.azure.com";
+const 端点 = "https://your-resource.cognitiveservices.azure.com";
 
-const client = new VoiceLiveClient(endpoint, credential);
+const client = new VoiceLiveClient(端点, credential);
 ```
 
 ### API Key
@@ -54,10 +54,10 @@ const client = new VoiceLiveClient(endpoint, credential);
 import { AzureKeyCredential } from "@azure/core-auth";
 import { VoiceLiveClient } from "@azure/ai-voicelive";
 
-const endpoint = "https://your-resource.cognitiveservices.azure.com";
+const 端点 = "https://your-resource.cognitiveservices.azure.com";
 const credential = new AzureKeyCredential("your-api-key");
 
-const client = new VoiceLiveClient(endpoint, credential);
+const client = new VoiceLiveClient(端点, credential);
 ```
 
 ## Client Hierarchy
@@ -65,7 +65,7 @@ const client = new VoiceLiveClient(endpoint, credential);
 ```
 VoiceLiveClient
 └── VoiceLiveSession (WebSocket connection)
-    ├── updateSession()      → Configure session options
+    ├── updateSession()      → Configure 会话 options
     ├── subscribe()          → Event handlers (Azure SDK pattern)
     ├── sendAudio()          → Stream audio input
     ├── addConversationItem() → Add messages/function outputs
@@ -79,16 +79,16 @@ import { DefaultAzureCredential } from "@azure/identity";
 import { VoiceLiveClient } from "@azure/ai-voicelive";
 
 const credential = new DefaultAzureCredential();
-const endpoint = process.env.AZURE_VOICELIVE_ENDPOINT!;
+const 端点 = process.env.AZURE_VOICELIVE_ENDPOINT!;
 
-// Create client and start session
-const client = new VoiceLiveClient(endpoint, credential);
-const session = await client.startSession("gpt-4o-mini-realtime-preview");
+// Create client and start 会话
+const client = new VoiceLiveClient(端点, credential);
+const 会话 = await client.startSession("gpt-4o-mini-realtime-preview");
 
-// Configure session
-await session.updateSession({
+// Configure 会话
+await 会话.updateSession({
   modalities: ["text", "audio"],
-  instructions: "You are a helpful AI assistant. Respond naturally.",
+  使用说明: "You are a helpful AI assistant. Respond naturally.",
   voice: {
     type: "azure-standard",
     name: "en-US-AvaNeural",
@@ -104,7 +104,7 @@ await session.updateSession({
 });
 
 // Subscribe to events
-const subscription = session.subscribe({
+const subscription = 会话.subscribe({
   onResponseAudioDelta: async (event, context) => {
     // Handle streaming audio output
     const audioData = event.delta;
@@ -121,19 +121,19 @@ const subscription = session.subscribe({
 
 // Send audio from microphone
 function sendAudioChunk(audioBuffer: ArrayBuffer) {
-  session.sendAudio(audioBuffer);
+  会话.sendAudio(audioBuffer);
 }
 ```
 
-## Session 配置
+## 会话 配置
 
 ```typescript
-await session.updateSession({
+await 会话.updateSession({
   // Modalities
   modalities: ["audio", "text"],
   
-  // System instructions
-  instructions: "You are a customer service representative.",
+  // System 使用说明
+  使用说明: "You are a customer service representative.",
   
   // Voice selection
   voice: {
@@ -177,7 +177,7 @@ await session.updateSession({
 The SDK uses a subscription-based event handling pattern:
 
 ```typescript
-const subscription = session.subscribe({
+const subscription = 会话.subscribe({
   // Connection lifecycle
   onConnected: async (args, context) => {
     console.log("Connected:", args.connectionId);
@@ -189,12 +189,12 @@ const subscription = session.subscribe({
     console.error("Error:", args.error.message);
   },
   
-  // Session events
+  // 会话 events
   onSessionCreated: async (event, context) => {
-    console.log("Session created:", context.sessionId);
+    console.log("会话 created:", context.sessionId);
   },
   onSessionUpdated: async (event, context) => {
-    console.log("Session updated");
+    console.log("会话 updated");
   },
   
   // Audio input events (VAD)
@@ -213,12 +213,12 @@ const subscription = session.subscribe({
     process.stdout.write(event.delta);
   },
   
-  // Response events
+  // 响应 events
   onResponseCreated: async (event, context) => {
-    console.log("Response started");
+    console.log("响应 started");
   },
   onResponseDone: async (event, context) => {
-    console.log("Response complete");
+    console.log("响应 complete");
   },
   
   // Streaming text
@@ -249,13 +249,13 @@ const subscription = session.subscribe({
       const args = JSON.parse(event.arguments);
       const result = await getWeather(args.location);
       
-      await session.addConversationItem({
+      await 会话.addConversationItem({
         type: "function_call_output",
         callId: event.callId,
         output: JSON.stringify(result),
       });
       
-      await session.sendEvent({ type: "response.create" });
+      await 会话.sendEvent({ type: "响应.create" });
     }
   },
   
@@ -272,10 +272,10 @@ await subscription.close();
 ## Function Calling
 
 ```typescript
-// Define tools in session config
-await session.updateSession({
+// Define tools in 会话 config
+await 会话.updateSession({
   modalities: ["audio", "text"],
-  instructions: "Help users with weather information.",
+  使用说明: "Help users with weather information.",
   tools: [
     {
       type: "function",
@@ -297,21 +297,21 @@ await session.updateSession({
 });
 
 // Handle function calls
-const subscription = session.subscribe({
+const subscription = 会话.subscribe({
   onResponseFunctionCallArgumentsDone: async (event, context) => {
     if (event.name === "get_weather") {
       const args = JSON.parse(event.arguments);
       const weatherData = await fetchWeather(args.location);
       
       // Send function result
-      await session.addConversationItem({
+      await 会话.addConversationItem({
         type: "function_call_output",
         callId: event.callId,
         output: JSON.stringify(weatherData),
       });
       
-      // Trigger response generation
-      await session.sendEvent({ type: "response.create" });
+      // Trigger 响应 generation
+      await 会话.sendEvent({ type: "响应.create" });
     }
   },
 });
@@ -322,7 +322,7 @@ const subscription = session.subscribe({
 | Voice Type | Config | Example |
 |------------|--------|---------|
 | Azure Standard | `{ type: "azure-standard", name: "..." }` | `"en-US-AvaNeural"` |
-| Azure Custom | `{ type: "azure-custom", name: "...", endpointId: "..." }` | Custom voice endpoint |
+| Azure Custom | `{ type: "azure-custom", name: "...", endpointId: "..." }` | Custom voice 端点 |
 | Azure Personal | `{ type: "azure-personal", speakerProfileId: "..." }` | Personal voice clone |
 | OpenAI | `{ type: "openai", name: "..." }` | `"alloy"`, `"echo"`, `"shimmer"` |
 
@@ -376,11 +376,11 @@ turnDetection: {
 | Type | Purpose |
 |------|---------|
 | `VoiceLiveClient` | Main client for creating sessions |
-| `VoiceLiveSession` | Active WebSocket session |
+| `VoiceLiveSession` | Active WebSocket 会话 |
 | `VoiceLiveSessionHandlers` | Event handler interface |
 | `VoiceLiveSubscription` | Active event subscription |
 | `Connection上下文` | 上下文 for connection events |
-| `Session上下文` | 上下文 for session events |
+| `会话上下文` | 上下文 for 会话 events |
 | `ServerEventUnion` | Union of all server events |
 
 ## 错误处理
@@ -393,7 +393,7 @@ import {
   VoiceLiveProtocolError,
 } from "@azure/ai-voicelive";
 
-const subscription = session.subscribe({
+const subscription = 会话.subscribe({
   onError: async (args, context) => {
     const { error } = args;
     
@@ -437,13 +437,13 @@ const credential = new InteractiveBrowserCredential({
   tenantId: "your-tenant-id",
 });
 
-const client = new VoiceLiveClient(endpoint, credential);
+const client = new VoiceLiveClient(端点, credential);
 
-// Request microphone access
+// 请求 microphone access
 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 const audioContext = new AudioContext({ sampleRate: 24000 });
 
-// Process audio and send to session
+// Process audio and send to 会话
 // ... (see samples for full implementation)
 ```
 
@@ -466,7 +466,7 @@ const audioContext = new AudioContext({ sampleRate: 24000 });
 | API Reference | https://learn.microsoft.com/javascript/api/@azure/ai-voicelive |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

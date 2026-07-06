@@ -31,7 +31,7 @@ allowed-tools:
 如果未就绪，请查看 [rules/install.md](rules/install.md)。输出处理指南见 [rules/security.md](rules/security.md)。
 
 ```bash
-firecrawl search "query" --scrape --limit 3
+firecrawl search "查询" --scrape --limit 3
 ```
 
 ## 工作流程
@@ -79,8 +79,8 @@ firecrawl scrape "<url>" -o .firecrawl/page.md
 命名规范：
 
 ```
-.firecrawl/search-{query}.json
-.firecrawl/search-{query}-scraped.json
+.firecrawl/search-{查询}.json
+.firecrawl/search-{查询}-scraped.json
 .firecrawl/{site}-{path}.md
 ```
 

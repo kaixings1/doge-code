@@ -18,7 +18,7 @@ od:
 
 > Curated from GreenSock's official GSAP skills: https://github.com/greensock/gsap-skills
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 Apply when writing or reviewing code that uses **gsap.utils** for math, array/collection handling, unit parsing, or value mapping in animations (e.g. mapping scroll to a value, randomizing, snapping to a grid, or normalizing inputs).
 
@@ -28,7 +28,7 @@ Apply when writing or reviewing code that uses **gsap.utils** for math, array/co
 
 **gsap.utils** provides pure helpers; no need to register. Use in tween vars (e.g. function-based values), in ScrollTrigger or Observer callbacks, or in any JS that drives GSAP. All are on **gsap.utils** (e.g. `gsap.utils.clamp()`).
 
-**Omitting the value: function form.** Many utils accept the value to transform as the **last** argument. If you omit that argument, the util returns a **function** that accepts the value later. Use the function form when you need to clamp, map, normalize, or snap many values with the same config (e.g. in a mousemove handler or tween callback). **Exception: random()** — pass **true** as the last argument to get a reusable function (do not omit the value); see [random()](https://gsap.com/docs/v3/GSAP/UtilityMethods/random()).
+**Omitting the value: function form.** Many utils accept the value to transform as the **last** 参数. If you omit that 参数, the util returns a **function** that accepts the value later. Use the function form when you need to clamp, map, normalize, or snap many values with the same config (e.g. in a mousemove 处理器 or tween 回调). **Exception: random()** — pass **true** as the last 参数 to get a reusable function (do not omit the value); see [random()](https://gsap.com/docs/v3/GSAP/UtilityMethods/random()).
 
 ```javascript
 // With value: returns the result
@@ -95,14 +95,14 @@ lerp(0.5); // 50
 
 ### random(minimum, maximum[, snapIncrement, returnFunction]) / random(array[, returnFunction])
 
-Returns a random number in the range **minimum**–**maximum**, or a random element from an **array**. Optional **snapIncrement** snaps the result to the nearest multiple (e.g. `5` → multiples of 5). **To get a reusable function**, pass **true** as the last argument (**returnFunction**); the returned function takes no args and returns a new random value each time. This is the only util that uses `true` for the function form instead of omitting the value.
+Returns a random number in the range **minimum**–**maximum**, or a random element from an **array**. Optional **snapIncrement** snaps the result to the nearest multiple (e.g. `5` → multiples of 5). **To get a reusable function**, pass **true** as the last 参数 (**returnFunction**); the returned function takes no args and returns a new random value each time. This is the only util that uses `true` for the function form instead of omitting the value.
 
 ```javascript
 // immediate value: number in range
 gsap.utils.random(-100, 100);        // e.g. 42.7
 gsap.utils.random(0, 500, 5);        // 0–500, snapped to nearest 5
 
-// reusable function: pass true as last argument
+// reusable function: pass true as last 参数
 let randomFn = gsap.utils.random(-200, 500, 10, true);
 randomFn();  // random value in range, snapped to 10
 randomFn();  // another random value
@@ -214,7 +214,7 @@ gsap.utils.unitize("2rem", "px"); // "2rem" (unchanged)
 
 ### splitColor(color, returnHSL?)
 
-Converts a color string into an array: **[red, green, blue]** (0–255), or **[red, green, blue, alpha]** (4 elements for RGBA when alpha is present or required). Pass **true** as the second argument (**returnHSL**) to get **[hue, saturation, lightness]** or **[hue, saturation, lightness, alpha]** (HSL/HSLA) instead. Works with `"rgb()"`, `"rgba()"`, `"hsl()"`, `"hsla()"`, hex, and named colors (e.g. `"red"`). Use when animating color components or building gradients. See [splitColor()](https://gsap.com/docs/v3/GSAP/UtilityMethods/splitColor/).
+Converts a color string into an array: **[red, green, blue]** (0–255), or **[red, green, blue, alpha]** (4 elements for RGBA when alpha is present or required). Pass **true** as the second 参数 (**returnHSL**) to get **[hue, saturation, lightness]** or **[hue, saturation, lightness, alpha]** (HSL/HSLA) instead. Works with `"rgb()"`, `"rgba()"`, `"hsl()"`, `"hsla()"`, hex, and named colors (e.g. `"red"`). Use when animating color components or building gradients. See [splitColor()](https://gsap.com/docs/v3/GSAP/UtilityMethods/splitColor/).
 
 ```javascript
 gsap.utils.splitColor("red");                    // [255, 0, 0]
@@ -247,7 +247,7 @@ gsap.utils.toArray(nodeList);          // [ ... ] from NodeList
 
 ### pipe(...functions)
 
-Composes functions: **pipe(f1, f2, f3)(value)** returns f3(f2(f1(value))). Use when applying a chain of transforms (e.g. normalize → mapRange → snap) in a tween or callback.
+Composes functions: **pipe(f1, f2, f3)(value)** returns f3(f2(f1(value))). Use when applying a chain of transforms (e.g. normalize → mapRange → snap) in a tween or 回调.
 
 ```javascript
 const fn = gsap.utils.pipe(
@@ -280,9 +280,9 @@ let wrapY = gsap.utils.wrapYoyo(0, 100);
 wrapY(150); // 50
 ```
 
-## Best practices
+## 最佳实践
 
-- ✅ Omit the value argument to get a reusable function when the same range/config is used many times (e.g. scroll handler, tween callback): `let mapFn = gsap.utils.mapRange(0, 1, 0, 360); mapFn(progress)`.
+- ✅ Omit the value 参数 to get a reusable function when the same range/config is used many times (e.g. scroll 处理器, tween 回调): `let mapFn = gsap.utils.mapRange(0, 1, 0, 360); mapFn(progress)`.
 - ✅ Use **snap** for grid-aligned or step-based values; use **toArray** when GSAP or your code needs a real array from a selector or NodeList.
 - ✅ Use **gsap.utils.selector(scope)** in components so selectors are scoped to a container or ref.
 

@@ -15,7 +15,7 @@ Clerk 认证实施、中间件、组织、webhooks 和用户同步的专家模�
 
 ### Next.js App Router 设置
 
-Complete Clerk setup for Next.js 14/15 App Router.
+Complete Clerk 设置 for Next.js 14/15 App Router.
 
 Includes ClerkProvider, environment variables, and basic
 sign-in/sign-up components.
@@ -23,7 +23,7 @@ sign-in/sign-up components.
 Key components:
 - ClerkProvider: Wraps app for auth context
 - <SignIn />, <SignUp />: Pre-built auth forms
-- <UserButton />: User menu with session management
+- <UserButton />: User menu with 会话 management
 
 ### Code_example
 
@@ -94,25 +94,25 @@ export function Header() {
 ### Anti_patterns
 
 - Pattern: ClerkProvider inside page component | Why: Provider must wrap entire app in root layout | Fix: Move ClerkProvider to app/layout.tsx
-- Pattern: Using auth() without middleware | Why: auth() requires clerkMiddleware to be configured | Fix: Set up middleware.ts with clerkMiddleware
+- Pattern: Using auth() without 中间件 | Why: auth() requires clerkMiddleware to be configured | Fix: Set up 中间件.ts with clerkMiddleware
 
 ### 参考资料
 
 - https://clerk.com/docs/nextjs/getting-started/quickstart
 
-### Middleware Route Protection
+### 中间件 Route Protection
 
 Protect routes using clerkMiddleware and createRouteMatcher.
 
 Best practices:
-- Single middleware.ts file at project root
+- Single 中间件.ts file at project root
 - Use createRouteMatcher for route groups
 - auth.protect() for explicit protection
-- Centralize all auth logic in middleware
+- Centralize all auth logic in 中间件
 
 ### Code_example
 
-// middleware.ts
+// 中间件.ts
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 // Define protected route patterns
@@ -169,15 +169,15 @@ export default clerkMiddleware(async (auth, req) => {
 
 ### Anti_patterns
 
-- Pattern: Multiple middleware.ts files | Why: Causes conflicts and redirect loops | Fix: Use single middleware.ts with route matchers
-- Pattern: Manual redirects in components | Why: Double redirects, missed routes | Fix: Handle all redirects in middleware
-- Pattern: Missing matcher config | Why: Middleware won't run on all routes | Fix: Add comprehensive matcher pattern
+- Pattern: Multiple 中间件.ts files | Why: Causes conflicts and redirect loops | Fix: Use single 中间件.ts with route matchers
+- Pattern: Manual redirects in components | Why: Double redirects, missed routes | Fix: Handle all redirects in 中间件
+- Pattern: Missing matcher config | Why: 中间件 won't run on all routes | Fix: Add comprehensive matcher pattern
 
 ### 参考资料
 
-- https://clerk.com/docs/reference/nextjs/clerk-middleware
+- https://clerk.com/docs/reference/nextjs/clerk-中间件
 
-### Server Component Authentication
+### Server Component 认证
 
 Access auth state in Server Components using auth() and currentUser().
 
@@ -276,7 +276,7 @@ Access auth state in Client Components using hooks.
 Key hooks:
 - useUser(): User object and loading state
 - useAuth(): Auth state, signOut, etc.
-- useSession(): Session object
+- useSession(): 会话 object
 - useOrganization(): Current organization
 
 ### Code_example
@@ -472,7 +472,7 @@ export function AdminPanel() {
 
 ### Anti_patterns
 
-- Pattern: Not scoping data by orgId | Why: Data leaks between organizations | Fix: 始终 filter queries by orgId from auth()
+- Pattern: Not scoping data by orgId | Why: Data leaks between organizations | Fix: 始终 过滤器 queries by orgId from auth()
 - Pattern: Hardcoding role strings | Why: Typos cause access issues | Fix: Define role constants or use TypeScript enums
 
 ### 参考资料
@@ -499,7 +499,7 @@ import { headers } from 'next/headers';
 import { WebhookEvent } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 
-export async function POST(req: Request) {
+export async function POST(req: 请求) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
   if (!WEBHOOK_SECRET) {
@@ -513,12 +513,12 @@ export async function POST(req: Request) {
   const svix_signature = headerPayload.get('svix-signature');
 
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return new Response('Missing svix headers', { status: 400 });
+    return new 响应('Missing svix headers', { status: 400 });
   }
 
   // Get body
-  const payload = await req.json();
-  const body = JSON.stringify(payload);
+  const 载荷 = await req.json();
+  const body = JSON.stringify(载荷);
 
   // Verify webhook
   const wh = new Webhook(WEBHOOK_SECRET);
@@ -532,7 +532,7 @@ export async function POST(req: Request) {
     }) as WebhookEvent;
   } catch (err) {
     console.error('Webhook verification failed:', err);
-    return new Response('Verification failed', { status: 400 });
+    return new 响应('Verification failed', { status: 400 });
   }
 
   // Handle events
@@ -574,11 +574,11 @@ export async function POST(req: Request) {
     });
   }
 
-  return new Response('Webhook processed', { status: 200 });
+  return new 响应('Webhook processed', { status: 200 });
 }
 
-// Prisma schema
-// prisma/schema.prisma
+// Prisma 架构
+// prisma/架构.prisma
 model User {
   id        String   @id @default(cuid())
   clerkId   String   @unique
@@ -595,8 +595,8 @@ model User {
 
 ### Anti_patterns
 
-- Pattern: Not verifying webhook signature | Why: Anyone can hit your endpoint with fake data | Fix: 始终 verify with svix
-- Pattern: Blocking middleware for webhook routes | Why: Webhooks come from Clerk, not authenticated users | Fix: Add /api/webhooks(.*)' to public routes
+- Pattern: Not verifying webhook signature | Why: Anyone can hit your 端点 with fake data | Fix: 始终 verify with svix
+- Pattern: Blocking 中间件 for webhook routes | Why: Webhooks come from Clerk, not authenticated users | Fix: Add /api/webhooks(.*)' to public routes
 - Pattern: Not handling race conditions | Why: user.created might arrive after user.updated | Fix: Use upsert instead of create, handle missing records
 
 ### 参考资料
@@ -608,8 +608,8 @@ model User {
 
 Protect API routes using auth() from Clerk.
 
-Route Handlers in App Router use auth() for authentication.
-Middleware provides initial protection, auth() provides in-handler verification.
+Route Handlers in App Router use auth() for 认证.
+中间件 provides initial protection, auth() provides in-处理器 verification.
 
 ### Code_example
 
@@ -635,7 +635,7 @@ export async function GET() {
   return NextResponse.json(projects);
 }
 
-export async function POST(req: Request) {
+export async function POST(req: 请求) {
   const { userId, orgId } = await auth();
 
   if (!userId) {
@@ -677,15 +677,15 @@ export async function GET() {
 // For backwards compatibility only
 import { getAuth } from '@clerk/nextjs/server';
 
-export async function GET(req: Request) {
+export async function GET(req: 请求) {
   const { userId } = getAuth(req);
   // ...
 }
 
 ### Anti_patterns
 
-- Pattern: Trusting middleware alone | Why: Middleware can be bypassed (CVE-2025-29927) | Fix: 始终 verify auth in route handler too
-- Pattern: Not checking orgId for multi-tenant | Why: Users might access other org's data | Fix: 始终 filter by orgId from auth()
+- Pattern: Trusting 中间件 alone | Why: 中间件 can be bypassed (CVE-2025-29927) | Fix: 始终 verify auth in route 处理器 too
+- Pattern: Not checking orgId for multi-tenant | Why: Users might access other org's data | Fix: 始终 过滤器 by orgId from auth()
 
 ### 参考资料
 
@@ -693,15 +693,15 @@ export async function GET(req: Request) {
 
 ## Sharp Edges
 
-### CVE-2025-29927 Middleware Bypass Vulnerability
+### CVE-2025-29927 中间件 Bypass Vulnerability
 
 Severity: CRITICAL
 
-### Multiple Middleware Files Cause Conflicts
+### Multiple 中间件 Files Cause Conflicts
 
 Severity: HIGH
 
-### 4KB Session Token Cookie Limit
+### 4KB 会话 令牌 Cookie Limit
 
 Severity: HIGH
 
@@ -717,7 +717,7 @@ Severity: MEDIUM
 
 Severity: MEDIUM
 
-### Middleware Blocks Webhook Endpoints
+### 中间件 Blocks Webhook Endpoints
 
 Severity: MEDIUM
 
@@ -743,13 +743,13 @@ CLERK_SECRET_KEY must only be used server-side
 
 Message: Clerk secret key exposed to client. Use CLERK_SECRET_KEY without NEXT_PUBLIC prefix.
 
-### Protected Route Without Middleware
+### Protected Route Without 中间件
 
 Severity: ERROR
 
-API routes should have middleware protection
+API routes should have 中间件 protection
 
-Message: API route without auth check. Add middleware protection or auth() check.
+Message: API route without auth check. Add 中间件 protection or auth() check.
 
 ### Hardcoded Clerk API Keys
 
@@ -767,13 +767,13 @@ auth() is async in App Router and must be awaited
 
 Message: auth() not awaited. Use 'await auth()' in App Router.
 
-### Multiple Middleware Files
+### Multiple 中间件 Files
 
 Severity: WARNING
 
-Only one middleware.ts file should exist
+Only one 中间件.ts file should exist
 
-Message: Multiple middleware files detected. Use single middleware.ts.
+Message: Multiple 中间件 files detected. Use single 中间件.ts.
 
 ### Webhook Route Not Excluded from Protection
 
@@ -781,7 +781,7 @@ Severity: WARNING
 
 Webhook routes should be public
 
-Message: Webhook route may be blocked by middleware. Add to public routes.
+Message: Webhook route may be blocked by 中间件. Add to public routes.
 
 ### Accessing Auth Without isLoaded Check
 
@@ -799,13 +799,13 @@ Clerk hooks only work in Client Components
 
 Message: Clerk hooks in Server Component. Add 'use client' or use auth().
 
-### Multi-Tenant Query Without orgId
+### Multi-Tenant 查询 Without orgId
 
 Severity: WARNING
 
 Organization data should be scoped by orgId
 
-Message: Query without organization scope. Filter by orgId for multi-tenancy.
+Message: 查询 without organization scope. 过滤器 by orgId for multi-tenancy.
 
 ### Webhook Without Signature Verification
 
@@ -820,15 +820,15 @@ Message: Webhook without signature verification. Use svix to verify.
 ### Delegation Triggers
 
 - user needs database -> postgres-wizard (User table with clerkId)
-- user needs payments -> stripe-integration (Customer linked to Clerk user)
+- user needs payments -> stripe-集成 (Customer linked to Clerk user)
 - user needs search -> algolia-search (Secured API keys per user)
 - user needs analytics -> segment-cdp (User identification)
 - user needs email -> resend-email (Transactional emails)
 
 ## 使用场景
-- User mentions or implies: adding authentication
+- User mentions or implies: adding 认证
 - User mentions or implies: clerk auth
-- User mentions or implies: user authentication
+- User mentions or implies: user 认证
 - User mentions or implies: sign in
 - User mentions or implies: sign up
 - User mentions or implies: user management

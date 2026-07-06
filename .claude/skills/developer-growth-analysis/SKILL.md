@@ -25,7 +25,7 @@ description: "Developer Growth Analysis — Developer Growth Analysis 相关功�
 
 1. **Reads Your Chat History**: Accesses your local Claude Code chat history from the past 24-48 hours to understand what you've been working on.
 
-2. **Identifies Development Patterns**: Analyzes the types of problems you're solving, technologies you're using, challenges you encounter, and how you approach different kinds of tasks.
+2. **Identifies Development Patterns**: Analyzes the types of problems you're solving, technologies you're using, challenges you encounter, and how you 方法 different kinds of tasks.
 
 3. **Detects Improvement Areas**: Recognizes patterns that suggest skill gaps, repeated struggles, inefficient approaches, or areas where you might benefit from deeper knowledge.
 
@@ -63,25 +63,25 @@ When a user requests analysis of their developer growth or coding patterns from 
 1. **Access Chat History**
 
    Read the chat history from `~/.claude/history.jsonl`. This file is a JSONL format where each line contains:
-   - `display`: The user's message/request
+   - `display`: The user's message/请求
    - `project`: The project being worked on
    - `timestamp`: Unix timestamp (in milliseconds)
    - `pastedContents`: Any code or content pasted
 
-   Filter for entries from the past 24-48 hours based on the current timestamp.
+   过滤器 for entries from the past 24-48 hours based on the current timestamp.
 
 2. **Analyze Work Patterns**
 
    Extract and analyze the following from the filtered chats:
    - **Projects and Domains**: What types of projects was the user working on? (e.g., backend, frontend, DevOps, data, etc.)
    - **Technologies Used**: What languages, frameworks, and tools appear in the conversations?
-   - **Problem Types**: What categories of problems are being solved? (e.g., performance optimization, debugging, feature implementation, refactoring, setup/configuration)
+   - **Problem Types**: What categories of problems are being solved? (e.g., performance optimization, debugging, feature implementation, refactoring, 设置/配置)
    - **Challenges Encountered**: What problems did the user struggle with? Look for:
      - Repeated questions about similar topics
      - Problems that took multiple attempts to solve
      - Questions indicating knowledge gaps
      - Complex architectural decisions
-   - **Approach Patterns**: How does the user solve problems? (e.g., methodical, exploratory, experimental)
+   - **方法 Patterns**: How does the user solve problems? (e.g., methodical, exploratory, experimental)
 
 3. **Identify Improvement Areas**
 
@@ -91,11 +91,11 @@ When a user requests analysis of their developer growth or coding patterns from 
    - **Actionable** (practical improvements that can be made)
    - **Prioritized** (most impactful first)
 
-   Examples of good improvement areas:
+   示例 of good improvement areas:
    - "Advanced TypeScript patterns (generics, utility types, type guards) - you struggled with type safety in [specific project]"
    - "Error handling and validation - I noticed you patched several bugs related to missing null checks"
    - "Async/await patterns - your recent work shows some race conditions and timing issues"
-   - "Database query optimization - you rewrote the same query multiple times"
+   - "Database 查询 optimization - you rewrote the same 查询 multiple times"
 
 4. **Generate Report**
 
@@ -112,7 +112,7 @@ When a user requests analysis of their developer growth or coding patterns from 
    [2-3 paragraphs summarizing what the user worked on, projects touched, technologies used, and overall focus areas]
 
    Example:
-   "Over the past 24 hours, you focused primarily on backend development with three distinct projects. Your work involved TypeScript, React, and deployment infrastructure. You tackled a mix of feature implementation, debugging, and architectural decisions, with a particular focus on API design and database optimization."
+   "Over the past 24 hours, you focused primarily on backend development with three distinct projects. Your work involved TypeScript, React, and 部署 infrastructure. You tackled a mix of feature implementation, debugging, and architectural decisions, with a particular focus on API design and database optimization."
 
    ## Improvement Areas (Prioritized)
 
@@ -150,9 +150,9 @@ When a user requests analysis of their developer growth or coding patterns from 
 
    Use Rube MCP to search HackerNews for articles related to each improvement area:
 
-   - For each improvement area, construct a search query targeting high-quality resources
+   - For each improvement area, construct a search 查询 targeting high-quality resources
    - Search HackerNews using RUBE_SEARCH_TOOLS with queries like:
-     - "Learn [Technology/Pattern] best practices"
+     - "Learn [Technology/Pattern] 最佳实践"
      - "[Technology] advanced patterns and techniques"
      - "Debugging [specific problem type] in [language]"
    - Prioritize posts with high engagement (comments, upvotes)
@@ -221,7 +221,7 @@ Analyze my developer growth from my recent chats
 
 ## Work Summary
 
-Over the past two days, you focused on backend infrastructure and API development. Your primary project was an open-source showcase application, where you made significant progress on connections management, UI improvements, and deployment configuration. You worked with TypeScript, React, and Node.js, tackling challenges ranging from data security to responsive design. Your work shows a balance between implementing features and addressing technical debt.
+Over the past two days, you focused on backend infrastructure and API development. Your primary project was an open-source showcase application, where you made significant progress on connections management, UI improvements, and 部署 配置. You worked with TypeScript, React, and Node.js, tackling challenges ranging from data security to responsive design. Your work shows a balance between implementing features and addressing technical debt.
 
 ## Improvement Areas (Prioritized)
 
@@ -231,7 +231,7 @@ Over the past two days, you focused on backend infrastructure and API developmen
 
 **What I Observed**: In your recent chats, you were working with connection data structures and struggled a few times with typing auth configurations properly. You also had to iterate on union types for different connection states. There's an opportunity to use discriminated unions and type guards more effectively.
 
-**Recommendation**: Study TypeScript's advanced type system, particularly utility types (Omit, Pick, Record), conditional types, and discriminated unions. Apply these patterns to your connection configuration handling and auth state management.
+**Recommendation**: Study TypeScript's advanced type system, particularly utility types (Omit, Pick, Record), conditional types, and discriminated unions. Apply these patterns to your connection 配置 handling and auth state management.
 
 **Time to Skill Up**: 5-8 hours of focused learning and practice
 
@@ -241,7 +241,7 @@ Over the past two days, you focused on backend infrastructure and API developmen
 
 **What I Observed**: You caught that your "Your Apps" page was showing full connection data including auth configs. This shows good security instincts, and the next step is building this into your default thinking when handling sensitive information.
 
-**Recommendation**: Review security best practices for handling sensitive data in frontend applications. Create reusable patterns for filtering/masking sensitive information before displaying it. Consider implementing a secure data layer that explicitly whitelist what can be shown in the UI.
+**Recommendation**: Review security 最佳实践 for handling sensitive data in frontend applications. Create reusable patterns for filtering/masking sensitive information before displaying it. Consider implementing a secure data layer that explicitly whitelist what can be shown in the UI.
 
 **Time to Skill Up**: 3-4 hours
 
@@ -251,7 +251,7 @@ Over the past two days, you focused on backend infrastructure and API developmen
 
 **What I Observed**: You worked on the "Marketplace" UI (formerly Browse Tools), recreating it from a design image. You also identified and fixed scrolling issues where content was overflowing containers. There's an opportunity to strengthen your understanding of layout containment and responsive design patterns.
 
-**Recommendation**: Study React component composition patterns and CSS layout best practices (especially flexbox and grid). Focus on container queries and responsive patterns that prevent overflow issues. Look into component composition libraries and design system approaches.
+**Recommendation**: Study React component composition patterns and CSS layout 最佳实践 (especially flexbox and grid). Focus on container queries and responsive patterns that prevent overflow issues. Look into component composition libraries and design system approaches.
 
 **Time to Skill Up**: 6-10 hours (depending on depth)
 
@@ -259,8 +259,8 @@ Over the past two days, you focused on backend infrastructure and API developmen
 
 - **Security Awareness**: You proactively identified data leakage issues before they became problems
 - **Iterative Refinement**: You worked through UI requirements methodically, asking clarifying questions and improving designs
-- **Full-Stack Capability**: You comfortably work across backend APIs, frontend UI, and deployment concerns
-- **Problem-Solving Approach**: You break down complex tasks into manageable steps
+- **Full-Stack Capability**: You comfortably work across backend APIs, frontend UI, and 部署 concerns
+- **Problem-Solving 方法**: You break down complex tasks into manageable steps
 
 ## Action Items
 
@@ -275,11 +275,11 @@ Priority order:
 ### For: Advanced TypeScript Patterns
 
 1. **TypeScript's Advanced Types: Generics, Utility Types, and Conditional Types** - HackerNews, October 2024
-   Deep dive into TypeScript's type system with practical examples and real-world applications. Covers discriminated unions, type guards, and patterns for ensuring compile-time safety in complex applications.
+   Deep dive into TypeScript's type system with practical 示例 and real-world applications. Covers discriminated unions, type guards, and patterns for ensuring compile-time safety in complex applications.
    [Link to discussion]
 
 2. **Building Type-Safe APIs in TypeScript** - HackerNews, September 2024
-   Practical guide to designing APIs with TypeScript that catch errors early. Particularly relevant for your connection configuration work.
+   Practical guide to designing APIs with TypeScript that catch errors early. Particularly relevant for your connection 配置 work.
    [Link to discussion]
 
 ### For: Secure Data Handling in Frontend
@@ -288,14 +288,14 @@ Priority order:
    Comprehensive guide to data security in frontend applications, including filtering sensitive information, secure logging, and audit trails.
    [Link to discussion]
 
-2. **OAuth and API Key Management Best Practices** - HackerNews, July 2024
-   How to safely handle authentication tokens and API keys in applications, with examples for different frameworks.
+2. **OAuth and API Key Management 最佳实践** - HackerNews, July 2024
+   How to safely handle 认证 tokens and API keys in applications, with 示例 for different frameworks.
    [Link to discussion]
 
 ### For: Component Architecture and Responsive Design
 
-1. **Advanced React Patterns: Composition Over Configuration** - HackerNews
-   Explores component composition strategies that scale, with examples using modern React patterns.
+1. **Advanced React Patterns: Composition Over 配置** - HackerNews
+   Explores component composition strategies that scale, with 示例 using modern React patterns.
    [Link to discussion]
 
 2. **CSS Layout Mastery: Flexbox, Grid, and Container Queries** - HackerNews, October 2024
@@ -303,7 +303,7 @@ Priority order:
    [Link to discussion]
 ```
 
-## Tips and Best Practices
+## Tips and 最佳实践
 
 - Run this analysis once a week to track your improvement trajectory over time
 - Pick one improvement area at a time and focus on it for a few days before moving to the next

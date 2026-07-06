@@ -28,7 +28,7 @@ hierarchical processes.
 - Task decomposition
 - Crew orchestration
 - Process selection
-- Memory configuration
+- Memory 配置
 - Flow design
 
 ## 能力
@@ -37,8 +37,8 @@ hierarchical processes.
 - Task design and dependencies
 - Crew orchestration
 - Process types (sequential, hierarchical)
-- Memory configuration
-- Tool integration
+- Memory 配置
+- Tool 集成
 - Flows for complex workflows
 
 ## 前提条件
@@ -365,24 +365,24 @@ from pydantic import BaseModel, Field
 
 # Method 1: Class-based tool
 class SearchInput(BaseModel):
-    query: str = Field(..., description="Search query")
+    查询: str = Field(..., description="Search 查询")
 
 class WebSearchTool(BaseTool):
     name: str = "web_search"
     description: str = "Search the web for information"
     args_schema: type[BaseModel] = SearchInput
 
-    def _run(self, query: str) -> str:
+    def _run(self, 查询: str) -> str:
         # Implementation
-        results = search_api.search(query)
+        results = search_api.search(查询)
         return format_results(results)
 
 # Method 2: Function decorator
 from crewai import tool
 
-@tool("Database Query")
+@tool("Database 查询")
 def query_database(sql: str) -> str:
-    """Execute SQL query and return results."""
+    """Execute SQL 查询 and return results."""
     return db.execute(sql)
 
 # Assign tools to agents
@@ -399,13 +399,13 @@ researcher = Agent(
 
 - langgraph|state machine|graph -> langgraph (Need explicit state management)
 - observability|tracing -> langfuse (Need LLM observability)
-- structured output|json schema -> structured-output (Need structured responses)
+- structured output|json 架构 -> structured-output (Need structured responses)
 
 ### 研究与写作团队
 
 Skills: crewai, structured-output
 
-Workflow:
+工作流:
 
 ```
 1. Define researcher and writer agents
@@ -418,11 +418,11 @@ Workflow:
 
 Skills: crewai, langfuse
 
-Workflow:
+工作流:
 
 ```
 1. Build crew with agents and tasks
-2. Add Langfuse callback handler
+2. Add Langfuse 回调 处理器
 3. Monitor agent interactions
 4. Evaluate output quality
 ```
@@ -431,10 +431,10 @@ Workflow:
 
 Skills: crewai, langgraph
 
-Workflow:
+工作流:
 
 ```
-1. Design workflow with CrewAI Flows
+1. Design 工作流 with CrewAI Flows
 2. Use LangGraph patterns for state
 3. Combine crews in flow steps
 4. Handle branching and routing

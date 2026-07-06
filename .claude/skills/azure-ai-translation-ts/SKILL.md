@@ -42,7 +42,7 @@ const credential: TranslatorCredential = {
 };
 const client = TextTranslationClient(process.env.TRANSLATOR_ENDPOINT!, credential);
 
-// Or just credential (uses global endpoint)
+// Or just credential (uses global 端点)
 const client2 = TextTranslationClient(credential);
 ```
 
@@ -51,7 +51,7 @@ const client2 = TextTranslationClient(credential);
 ```typescript
 import TextTranslationClient, { isUnexpected } from "@azure-rest/ai-translation-text";
 
-const response = await client.path("/translate").post({
+const 响应 = await client.path("/translate").post({
   body: {
     inputs: [
       {
@@ -66,11 +66,11 @@ const response = await client.path("/translate").post({
   },
 });
 
-if (isUnexpected(response)) {
-  throw response.body.error;
+if (isUnexpected(响应)) {
+  throw 响应.body.error;
 }
 
-for (const result of response.body.value) {
+for (const result of 响应.body.value) {
   for (const translation of result.translations) {
     console.log(`${translation.language}: ${translation.text}`);
   }
@@ -80,7 +80,7 @@ for (const result of response.body.value) {
 ### Translate with Options
 
 ```typescript
-const response = await client.path("/translate").post({
+const 响应 = await client.path("/translate").post({
   body: {
     inputs: [
       {
@@ -103,14 +103,14 @@ const response = await client.path("/translate").post({
 ### Get Supported Languages
 
 ```typescript
-const response = await client.path("/languages").get();
+const 响应 = await client.path("/languages").get();
 
-if (isUnexpected(response)) {
-  throw response.body.error;
+if (isUnexpected(响应)) {
+  throw 响应.body.error;
 }
 
 // Translation languages
-for (const [code, lang] of Object.entries(response.body.translation || {})) {
+for (const [code, lang] of Object.entries(响应.body.translation || {})) {
   console.log(`${code}: ${lang.name} (${lang.nativeName})`);
 }
 ```
@@ -118,7 +118,7 @@ for (const [code, lang] of Object.entries(response.body.translation || {})) {
 ### Transliterate
 
 ```typescript
-const response = await client.path("/transliterate").post({
+const 响应 = await client.path("/transliterate").post({
   body: { inputs: [{ text: "这是个测试" }] },
   queryParameters: {
     language: "zh-Hans",
@@ -127,8 +127,8 @@ const response = await client.path("/transliterate").post({
   },
 });
 
-if (!isUnexpected(response)) {
-  for (const t of response.body.value) {
+if (!isUnexpected(响应)) {
+  for (const t of 响应.body.value) {
     console.log(`${t.script}: ${t.text}`);  // Latn: zhè shì gè cè shì
   }
 }
@@ -137,12 +137,12 @@ if (!isUnexpected(response)) {
 ### Detect Language
 
 ```typescript
-const response = await client.path("/detect").post({
+const 响应 = await client.path("/detect").post({
   body: { inputs: [{ text: "Bonjour le monde" }] },
 });
 
-if (!isUnexpected(response)) {
-  for (const result of response.body.value) {
+if (!isUnexpected(响应)) {
+  for (const result of 响应.body.value) {
     console.log(`Language: ${result.language}, Score: ${result.score}`);
   }
 }
@@ -156,13 +156,13 @@ if (!isUnexpected(response)) {
 import DocumentTranslationClient from "@azure-rest/ai-translation-document";
 import { DefaultAzureCredential } from "@azure/identity";
 
-const endpoint = "https://<translator>.cognitiveservices.azure.com";
+const 端点 = "https://<translator>.cognitiveservices.azure.com";
 
 // TokenCredential
-const client = DocumentTranslationClient(endpoint, new DefaultAzureCredential());
+const client = DocumentTranslationClient(端点, new DefaultAzureCredential());
 
 // API Key
-const client2 = DocumentTranslationClient(endpoint, { key: "<api-key>" });
+const client2 = DocumentTranslationClient(端点, { key: "<api-key>" });
 ```
 
 ### Single Document Translation
@@ -171,7 +171,7 @@ const client2 = DocumentTranslationClient(endpoint, { key: "<api-key>" });
 import DocumentTranslationClient from "@azure-rest/ai-translation-document";
 import { writeFile } from "node:fs/promises";
 
-const response = await client.path("/document:translate").post({
+const 响应 = await client.path("/document:translate").post({
   queryParameters: {
     targetLanguage: "es",
     sourceLanguage: "en",  // optional
@@ -187,8 +187,8 @@ const response = await client.path("/document:translate").post({
   ],
 }).asNodeStream();
 
-if (response.status === "200") {
-  await writeFile("translated.txt", response.body);
+if (响应.status === "200") {
+  await writeFile("translated.txt", 响应.body);
 }
 ```
 
@@ -209,7 +209,7 @@ const targetSas = await targetContainer.generateSasUrl({
 });
 
 // Start batch translation
-const response = await client.path("/document/batches").post({
+const 响应 = await client.path("/document/batches").post({
   body: {
     inputs: [
       {
@@ -222,8 +222,8 @@ const response = await client.path("/document/batches").post({
   },
 });
 
-// Get operation ID from header
-const operationId = new URL(response.headers["operation-location"])
+// Get 操作 ID from header
+const operationId = new URL(响应.headers["操作-location"])
   .pathname.split("/").pop();
 ```
 
@@ -253,10 +253,10 @@ for await (const doc of documents) {
 ### Get Supported Formats
 
 ```typescript
-const response = await client.path("/document/formats").get();
+const 响应 = await client.path("/document/formats").get();
 
-if (!isUnexpected(response)) {
-  for (const format of response.body.value) {
+if (!isUnexpected(响应)) {
+  for (const format of 响应.body.value) {
     console.log(`${format.format}: ${format.fileExtensions.join(", ")}`);
   }
 }
@@ -281,14 +281,14 @@ import type {
 
 ## 最佳实践
 
-1. **Auto-detect source** - Omit `language` parameter to auto-detect
+1. **Auto-detect source** - Omit `language` 参数 to auto-detect
 2. **Batch requests** - Translate multiple texts in one call for efficiency
 3. **Use SAS tokens** - For document translation, use time-limited SAS URLs
-4. **Handle errors** - 始终 check `isUnexpected(response)` before accessing body
+4. **Handle errors** - 始终 check `isUnexpected(响应)` before accessing body
 5. **Regional endpoints** - Use regional endpoints for lower latency
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

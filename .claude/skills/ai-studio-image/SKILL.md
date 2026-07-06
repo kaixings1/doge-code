@@ -13,7 +13,7 @@ tags:
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -24,7 +24,7 @@ tools:
 
 Geracao de imagens humanizadas via Google AI Studio (Gemini). Fotos realistas estilo influencer ou educacional com iluminacao natural e imperfeicoes sutis.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - When the user mentions "gera imagem" or related topics
 - When the user mentions "gerar foto" or related topics
@@ -36,7 +36,7 @@ Geracao de imagens humanizadas via Google AI Studio (Gemini). Fotos realistas es
 ## 不适用场景
 
 - The task is unrelated to ai studio image
-- A simpler, more specific tool can handle the request
+- A simpler, more specific tool can handle the 请求
 - The user needs general-purpose assistance without domain expertise
 
 ## 工作原理
@@ -87,7 +87,7 @@ pip install -r C:\Users\renat\skills\ai-studio-image\scripts\requirements.txt
 python C:\Users\renat\skills\ai-studio-image\scripts\generate.py --prompt "mulher jovem tomando cafe em cafeteria" --mode influencer --format square
 ```
 
-## Workflow Principal
+## 工作流 Principal
 
 Quando o usuario pedir para gerar uma imagem, siga este fluxo:
 

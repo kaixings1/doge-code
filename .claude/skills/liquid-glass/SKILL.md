@@ -92,7 +92,7 @@ description: Liquid Glass设计系统指南
   consistently placed on the leading edge across platforms.
 - For custom shapes that must align concentrically with a sheet, card, or
   window corner, use a concentric rectangle shape with the
-  `containerConcentric` corner configuration instead of guessing a radius.
+  `containerConcentric` corner 配置 instead of guessing a radius.
 
 ## 自定义灵动玻璃
 

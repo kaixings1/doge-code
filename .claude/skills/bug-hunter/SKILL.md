@@ -72,7 +72,7 @@ journalctl -u myapp -f
 Based on evidence, guess what's wrong:
 
 ```
-"The login times out because the session cookie 
+"The login times out because the 会话 cookie 
 expires before the auth check completes"
 
 "The form fails because email validation regex 
@@ -132,7 +132,7 @@ Why: API didn't return profile
 ↓
 Why: User ID was null
 ↓
-Root cause: Login didn't set user ID in session
+Root cause: Login didn't set user ID in 会话
 ```
 
 ### 6. Implement Fix
@@ -151,7 +151,7 @@ const name = user?.profile?.name || 'Unknown';
 const login = async (credentials) => {
   const user = await authenticate(credentials);
   if (user) {
-    session.userId = user.id; // Fix: Set user ID
+    会话.userId = user.id; // Fix: Set user ID
     return user;
   }
   throw new Error('Invalid credentials');
@@ -176,11 +176,11 @@ Verify it actually works:
 Add a test so it doesn't come back:
 
 ```javascript
-test('login sets user ID in session', async () => {
+test('login sets user ID in 会话', async () => {
   const user = await login({ email: 'test@example.com', password: 'pass' });
   
-  expect(session.userId).toBe(user.id);
-  expect(session.userId).not.toBeNull();
+  expect(会话.userId).toBe(user.id);
+  expect(会话.userId).not.toBeNull();
 });
 ```
 
@@ -351,16 +351,16 @@ After fixing, document it:
 
 **Symptom:** Users get logged out immediately after login
 
-**Root Cause:** Session cookie expires before auth check completes
+**Root Cause:** 会话 cookie expires before auth check completes
 
-**Fix:** Increased session timeout from 30s to 3600s in config
+**Fix:** Increased 会话 timeout from 30s to 3600s in config
 
 **Files Changed:**
-- config/session.js (line 12)
+- config/会话.js (line 12)
 
 **Testing:** Verified login persists for 1 hour
 
-**Prevention:** Added test for session persistence
+**Prevention:** Added test for 会话 persistence
 ```
 
 ## Key Principles

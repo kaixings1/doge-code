@@ -1,14 +1,14 @@
 ---
 name: trace
 description: "Trace — Trace 相关功能和最佳实践"
-argument-hint: "<要追踪的观察>"
+参数-hint: "<要追踪的观察>"
 agent: tracer
 level: 2
 ---
 
 # Trace Skill
 
-Use this skill for ambiguous, causal, evidence-heavy questions where the goal is to explain **why** an observed result happened, not to jump directly into fixing or rewriting code.
+使用此技能处理模糊、因果、证据密集型问题，目标是解释观察到的结果**为什么**发生，而不是直接跳入修复或重写代码。
 
 This is the orchestration layer on top of the built-in `tracer` agent. The goal is to make tracing feel like a reusable OMC operating lane: restate the observation, generate competing explanations, gather evidence in parallel, rank the explanations, and propose the next probe that would collapse uncertainty fastest.
 
@@ -21,7 +21,7 @@ Use `/oh-my-claudecode:trace` when the problem is:
 - evidence-heavy
 - best answered by exploring competing explanations in parallel
 
-Examples:
+示例:
 - runtime bugs and regressions
 - performance / latency / resource behavior
 - architecture / premortem / postmortem analysis
@@ -106,7 +106,7 @@ Unless the prompt strongly suggests a better partition, use these 3 default lane
 
 1. **Code-path / implementation cause**
 2. **Config / environment / orchestration cause**
-3. **Measurement / artifact / assumption mismatch cause** — covers verification-method defects, not just system defects. Examples: the verification query reuses a single dimensional key across distinct entities, tenants, streams, or groups; the comparison filter shape does not match the schema grain; or the catalog or column name was assumed portable across runtimes without enumeration. This includes multi-entity premise/key-assumption mismatches.
+3. **Measurement / artifact / assumption mismatch cause** — covers verification-method defects, not just system defects. 示例: the verification 查询 reuses a single dimensional key across distinct entities, tenants, streams, or groups; the comparison 过滤器 shape does not match the 架构 grain; or the catalog or column name was assumed portable across runtimes without enumeration. This includes multi-entity premise/key-assumption mismatches.
 
 For lane 3, cross-entity discrepancies need a premise audit before escalation: enumerate entity dimensions and check whether a zero-row or mismatch result came from applying one key across multiple entities rather than from a system defect; the result may be a verification-methodology defect.
 

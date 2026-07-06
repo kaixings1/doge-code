@@ -51,7 +51,7 @@ Use:
 Collect:
 - how it works
 - trade-offs and adoption signals
-- integration complexity
+- 集成 complexity
 - lock-in, security, compliance, and operational risk
 
 ## 输出格式

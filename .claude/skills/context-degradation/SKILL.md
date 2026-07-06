@@ -33,7 +33,7 @@ The most well-documented degradation pattern is the "lost-in-middle" effect, whe
 **Empirical Evidence**
 Research demonstrates that relevant information placed in the middle of context experiences 10-40% lower recall accuracy compared to the same information at the beginning or end. This is not a failure of the model but a consequence of attention mechanics and training data distributions.
 
-Models allocate massive attention to the first token (often the BOS token) to stabilize internal states. This creates an "attention sink" that soaks up attention budget. As context grows, the limited budget is stretched thinner, and middle tokens fail to garner sufficient attention weight for reliable retrieval.
+Models allocate massive attention to the first 令牌 (often the BOS 令牌) to stabilize internal states. This creates an "attention sink" that soaks up attention budget. As context grows, the limited budget is stretched thinner, and middle tokens fail to garner sufficient attention weight for reliable retrieval.
 
 **Practical Implications**
 Design context placement with attention patterns in mind. Place critical information at the beginning or end of context. 考虑 whether information will be queried directly or needs to support reasoning—if the latter, placement matters less but overall signal quality matters more.
@@ -70,10 +70,10 @@ Mitigate distraction through careful curation of what enters context. Apply rele
 
 上下文 confusion arises when irrelevant information influences responses in ways that degrade quality. This is related to distraction but distinct—confusion concerns the influence of context on model behavior rather than attention allocation.
 
-If you put something in context, the model has to pay attention to it. The model may incorporate irrelevant information, use inappropriate tool definitions, or apply constraints that came from different contexts. Confusion is especially problematic when context contains multiple task types or when switching between tasks within a single session.
+If you put something in context, the model has to pay attention to it. The model may incorporate irrelevant information, use inappropriate tool definitions, or apply constraints that came from different contexts. Confusion is especially problematic when context contains multiple task types or when switching between tasks within a single 会话.
 
 **Signs of Confusion**
-Watch for responses that address the wrong aspect of a query, tool calls that seem appropriate for a different task, or outputs that mix requirements from multiple sources. These indicate confusion about what context applies to the current situation.
+Watch for responses that address the wrong aspect of a 查询, tool calls that seem appropriate for a different task, or outputs that mix requirements from multiple sources. These indicate confusion about what context applies to the current situation.
 
 **Architectural Solutions**
 Architectural solutions include explicit task segmentation where different tasks get different context windows, clear transitions between task contexts, and state management that isolates context for different objectives.
@@ -111,7 +111,7 @@ Different models exhibit distinct failure modes under context pressure:
 - **GPT-5.2**: Two modes available - instant (fast) and thinking (reasoning). Thinking mode reduces hallucination through step-by-step verification but increases latency.
 - **Gemini 3 Pro/Flash**: Native multimodality with 1M context window. Gemini 3 Flash offers 3x speed improvement over previous generation. Strong at multi-modal reasoning across text, code, images, audio, and video.
 
-These patterns inform model selection for different use cases. High-stakes tasks benefit from Claude 4.5's conservative approach or GPT-5.2's thinking mode; speed-critical tasks may use instant modes.
+These patterns inform model selection for different use cases. High-stakes tasks benefit from Claude 4.5's conservative 方法 or GPT-5.2's thinking mode; speed-critical tasks may use instant modes.
 
 ### Counterintuitive Findings
 
@@ -134,14 +134,14 @@ Larger context windows do not uniformly improve performance. In many cases, larg
 Models exhibit non-linear degradation with context length. 性能 remains stable up to a threshold, then degrades rapidly. The threshold varies by model and task complexity. For many models, meaningful degradation begins around 8,000-16,000 tokens even when context windows support much larger sizes.
 
 **Cost Implications**
-Processing cost grows disproportionately with context length. The cost to process a 400K token context is not double the cost of 200K—it increases exponentially in both time and computing resources. For many applications, this makes large-context processing economically impractical.
+Processing cost grows disproportionately with context length. The cost to process a 400K 令牌 context is not double the cost of 200K—it increases exponentially in both time and computing resources. For many applications, this makes large-context processing economically impractical.
 
 **Cognitive Load Metaphor**
 Even with an infinite context, asking a single model to maintain consistent quality across dozens of independent tasks creates a cognitive bottleneck. The model must constantly switch context between items, maintain a comparative framework, and ensure stylistic consistency. This is not a problem that more context solves.
 
 ## Practical Guidance
 
-### The Four-Bucket Approach
+### The Four-Bucket 方法
 
 Four strategies address different aspects of context degradation:
 

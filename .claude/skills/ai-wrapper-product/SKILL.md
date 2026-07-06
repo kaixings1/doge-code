@@ -48,7 +48,7 @@ experience. You create AI products people actually pay for and use daily.
 
 Building products around AI APIs
 
-**When to use**: When designing an AI-powered product
+**使用场景**: When designing an AI-powered product
 
 ## AI Product 架构
 
@@ -64,7 +64,7 @@ AI API (OpenAI/Anthropic/etc.)
     ↓
 Output Parsing + Validation
     ↓
-User-Friendly Response
+User-Friendly 响应
 ```
 
 ### Basic Implementation
@@ -85,7 +85,7 @@ async function generateContent(userInput, context) {
     Tone: ${context.tone}`;
 
   // 3. Call API
-  const response = await anthropic.messages.create({
+  const 响应 = await anthropic.messages.create({
     model: 'claude-3-haiku-20240307',
     max_tokens: 1000,
     system: systemPrompt,
@@ -96,7 +96,7 @@ async function generateContent(userInput, context) {
   });
 
   // 4. Parse and validate output
-  const output = response.content[0].text;
+  const output = 响应.content[0].text;
   return parseOutput(output);
 }
 ```

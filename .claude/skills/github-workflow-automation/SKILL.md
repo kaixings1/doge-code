@@ -1,12 +1,12 @@
 ---
-name: github-workflow-automation
+name: github-工作流-automation
 description: "使用 AI 辅助自动化 GitHub 工作流的模式。"
 risk: critical
 source: community
 date_added: "2026-02-27"
 ---
 
-# 🔧 GitHub Workflow Automation
+# 🔧 GitHub 工作流 Automation
 
 > 使用 AI 辅助自动化 GitHub 工作流的模式, inspired by [Gemini CLI](https://github.com/google-gemini/gemini-cli) and modern DevOps practices.
 
@@ -69,7 +69,7 @@ jobs:
             const { Anthropic } = require('@anthropic-ai/sdk');
             const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-            const response = await client.messages.create({
+            const 响应 = await client.messages.create({
               model: "claude-3-sonnet-20240229",
               max_tokens: 4096,
               messages: [{
@@ -95,7 +95,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.issue.number,
-              body: response.content[0].text,
+              body: 响应.content[0].text,
               event: 'COMMENT'
             });
         env:
@@ -149,7 +149,7 @@ Brief description of what this PR does.
 
 ```yaml
 # Review only specific file types
-- name: Filter code files
+- name: 过滤器 code files
   run: |
     files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | \
             grep -E '\.(ts|tsx|js|jsx|py|go)$' || true)
@@ -194,7 +194,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const issue = context.payload.issue;
+            const issue = context.载荷.issue;
 
             // Call AI to analyze
             const analysis = await analyzeIssue(issue.title, issue.body);
@@ -222,7 +222,7 @@ jobs:
               labels: labels
             });
 
-            // Add initial response
+            // Add initial 响应
             if (analysis.type === 'bug' && !analysis.hasReproSteps) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -304,7 +304,7 @@ jobs:
 
 ---
 
-## 3. CI/CD Integration
+## 3. CI/CD 集成
 
 ### 3.1 Smart Test Selection
 
@@ -373,7 +373,7 @@ jobs:
           fi
 ```
 
-### 3.2 Deployment with AI Validation
+### 3.2 部署 with AI Validation
 
 ```yaml
 # .github/workflows/deploy.yml
@@ -389,10 +389,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get deployment changes
+      - name: Get 部署 changes
         id: changes
         run: |
-          # Get commits since last deployment
+          # Get commits since last 部署
           last_deploy=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           if [ -n "$last_deploy" ]; then
             changes=$(git log --oneline $last_deploy..HEAD)
@@ -408,9 +408,9 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // Analyze changes for deployment risk
+            // Analyze changes for 部署 risk
             const prompt = `
-            Analyze these changes for deployment risk:
+            Analyze these changes for 部署 risk:
 
             ${process.env.CHANGES}
 
@@ -423,11 +423,11 @@ jobs:
             }
             `;
 
-            // Call AI and parse response
+            // Call AI and parse 响应
             const analysis = await callAI(prompt);
 
             if (analysis.riskLevel === 'high') {
-              core.setFailed('High-risk deployment detected. Manual review required.');
+              core.setFailed('High-risk 部署 detected. Manual review required.');
             }
 
             return analysis;
@@ -442,7 +442,7 @@ jobs:
       - name: Deploy
         run: |
           echo "Deploying to production..."
-          # Deployment commands here
+          # 部署 commands here
 ```
 
 ### 3.3 Rollback Automation
@@ -469,7 +469,7 @@ jobs:
       - name: Find last stable version
         id: stable
         run: |
-          # Find last successful deployment
+          # Find last successful 部署
           stable=$(git tag -l 'v*' --sort=-version:refname | head -1)
           echo "version=$stable" >> $GITHUB_OUTPUT
 
@@ -482,7 +482,7 @@ jobs:
       - name: Notify team
         uses: slackapi/slack-github-action@v1
         with:
-          payload: |
+          载荷: |
             {
               "text": "🔄 Production rolled back to ${{ steps.stable.outputs.version }}",
               "blocks": [
@@ -520,9 +520,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          令牌: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Git
+      - name: 设置 Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -640,7 +640,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const branches = `${{ steps.stale.outputs.branches }}`.split('\n').filter(Boolean);
+            const branches = `${{ steps.stale.outputs.branches }}`.split('\n').过滤器(Boolean);
 
             const body = `## 🧹 Stale Branch Cleanup
 
@@ -708,23 +708,23 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: AI Response
+      - name: AI 响应
         uses: actions/github-script@v7
         with:
           script: |
-            const response = await ai.chat(`
+            const 响应 = await ai.chat(`
               Context: ${process.env.CONTEXT}
               
               Question: ${process.env.QUESTION}
               
-              Provide a helpful, specific answer. Include code examples if relevant.
+              Provide a helpful, specific answer. Include code 示例 if relevant.
             `);
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: response
+              body: 响应
             });
         env:
           CONTEXT: ${{ steps.context.outputs.context }}
@@ -739,7 +739,7 @@ jobs:
 | Command              | Description                 |
 | :------------------- | :-------------------------- |
 | `@ai-helper explain` | Explain the code in this PR |
-| `@ai-helper review`  | Request AI code review      |
+| `@ai-helper review`  | 请求 AI code review      |
 | `@ai-helper fix`     | Suggest fixes for issues    |
 | `@ai-helper test`    | Generate test cases         |
 | `@ai-helper docs`    | Generate documentation      |
@@ -752,7 +752,7 @@ jobs:
 
 ---
 
-## 6. Repository Configuration
+## 6. Repository 配置
 
 ### 6.1 CODEOWNERS
 

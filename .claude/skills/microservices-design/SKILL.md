@@ -7,7 +7,7 @@ description: 微服务设计 — 包括服务网格、事件驱动架构、API�
 
 ## Service Boundaries
 
-Define services around business capabilities, not technical layers. Each service owns its data store and exposes a clear API contract.
+Define services around business 能力, not technical layers. Each service owns its data store and exposes a clear API contract.
 
 ```
 order-service/       -> owns orders table, publishes OrderCreated events
@@ -25,7 +25,7 @@ interface DomainEvent {
   aggregateId: string;
   timestamp: string;
   version: number;
-  payload: Record<string, unknown>;
+  载荷: Record<string, unknown>;
 }
 
 const orderCreatedEvent: DomainEvent = {
@@ -34,7 +34,7 @@ const orderCreatedEvent: DomainEvent = {
   aggregateId: orderId,
   timestamp: new Date().toISOString(),
   version: 1,
-  payload: { customerId, items, totalAmount },
+  载荷: { customerId, items, totalAmount },
 };
 
 await broker.publish("orders", orderCreatedEvent);
@@ -42,7 +42,7 @@ await broker.publish("orders", orderCreatedEvent);
 
 ```typescript
 async function handleOrderCreated(event: DomainEvent) {
-  const { items } = event.payload as OrderPayload;
+  const { items } = event.载荷 as OrderPayload;
 
   for (const item of items) {
     await db.inventory.update({
@@ -161,7 +161,7 @@ app.get("/health", async (req, res) => {
 - [ ] Services communicate via events for async workflows
 - [ ] Saga pattern used for multi-service transactions with compensation
 - [ ] Circuit breakers protect against cascading failures
-- [ ] API gateway handles routing, rate limiting, and authentication
+- [ ] API gateway handles routing, rate limiting, and 认证
 - [ ] Health check endpoints report dependency status
 - [ ] Event handlers are idempotent (safe to process duplicates)
 - [ ] Services can be deployed and scaled independently

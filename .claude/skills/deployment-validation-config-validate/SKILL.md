@@ -1,6 +1,6 @@
 ---
-name: deployment-validation-config-validate
-description: "您是专门验证、测试和确保应用配置正确性的配置管理专家。创建全面验证 schema，实施配置测试和验证 pipeline。"
+name: 部署-validation-config-validate
+description: "您是专门验证、测试和确保应用配置正确性的配置管理专家。创建全面验证 架构，实施配置测试和验证 pipeline。"
 risk: critical
 source: community
 date_added: "2026-02-27"
@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # 配置验证
 
-您是专门验证、测试和确保应用配置正确性的配置管理专家。创建全面验证 schema，实施配置测试策略，并确保配置在所有环境中安全、一致且无错误。
+您是专门验证、测试和确保应用配置正确性的配置管理专家。创建全面验证 架构，实施配置测试策略，并确保配置在所有环境中安全、一致且无错误。
 
 ## 使用此技能的场景
 
@@ -21,7 +21,7 @@ date_added: "2026-02-27"
 - You need a different domain or tool outside this scope
 
 ## 上下文
-The user needs to validate configuration files, implement configuration schemas, ensure consistency across environments, and prevent configuration-related errors. Focus on creating robust validation rules, type safety, security checks, and automated validation processes.
+The user needs to validate 配置 files, implement 配置 schemas, ensure consistency across environments, and prevent 配置-related errors. Focus on creating robust validation rules, type safety, security checks, and automated validation processes.
 
 ## 需求
 $ARGUMENTS
@@ -30,7 +30,7 @@ $ARGUMENTS
 
 ### 1. 配置 Analysis
 
-Analyze existing configuration structure and identify validation needs:
+Analyze existing 配置 structure and identify validation needs:
 
 ```python
 import os
@@ -71,7 +71,7 @@ class ConfigurationAnalyzer:
         secret_patterns = [
             r'(api[_-]?key|apikey)',
             r'(secret|password|passwd)',
-            r'(token|auth)',
+            r'(令牌|auth)',
             r'(aws[_-]?access)'
         ]
 
@@ -88,14 +88,14 @@ class ConfigurationAnalyzer:
         return issues
 ```
 
-### 2. Schema Validation
+### 2. 架构 Validation
 
-Implement configuration schema validation with JSON Schema:
+Implement 配置 架构 validation with JSON 架构:
 
 ```typescript
 import Ajv from 'ajv';
 import ajvFormats from 'ajv-formats';
-import { JSONSchema7 } from 'json-schema';
+import { JSONSchema7 } from 'json-架构';
 
 interface ValidationResult {
   valid: boolean;
@@ -142,7 +142,7 @@ export class ConfigValidator {
 
   validate(configData: any, schemaName: string): ValidationResult {
     const validate = this.ajv.getSchema(schemaName);
-    if (!validate) throw new Error(`Schema '${schemaName}' not found`);
+    if (!validate) throw new Error(`架构 '${schemaName}' not found`);
 
     const valid = validate(configData);
 
@@ -160,7 +160,7 @@ export class ConfigValidator {
   }
 }
 
-// Example schema
+// Example 架构
 export const schemas = {
   database: {
     type: 'object',
@@ -238,7 +238,7 @@ class EnvironmentValidator:
 import { describe, it, expect } from '@jest/globals';
 import { ConfigValidator } from './config-validator';
 
-describe('Configuration Validation', () => {
+describe('配置 Validation', () => {
   let validator: ConfigValidator;
 
   beforeEach(() => {
@@ -303,7 +303,7 @@ export class RuntimeConfigValidator extends EventEmitter {
       });
 
       if (!this.isDevelopment()) {
-        throw new Error('Configuration validation failed');
+        throw new Error('配置 validation failed');
       }
     }
 
@@ -367,11 +367,11 @@ class ConfigMigrator:
             return config
 
         result = config.copy()
-        for migration in self.migrations:
-            if (semver.compare(migration.version, current_version) > 0 and
-                semver.compare(migration.version, target_version) <= 0):
-                result = migration.up(result)
-                result['_version'] = migration.version
+        for 迁移 in self.migrations:
+            if (semver.compare(迁移.version, current_version) > 0 and
+                semver.compare(迁移.version, target_version) <= 0):
+                result = 迁移.up(result)
+                result['_version'] = 迁移.version
 
         return result
 ```
@@ -455,16 +455,16 @@ from typing import Dict, List
 import yaml
 
 class ConfigDocGenerator:
-    def generate_docs(self, schema: Dict, examples: Dict) -> str:
-        docs = ["# Configuration Reference\n"]
+    def generate_docs(self, 架构: Dict, 示例: Dict) -> str:
+        docs = ["# 配置 Reference\n"]
 
-        docs.append("## Configuration Options\n")
-        sections = self._generate_sections(schema.get('properties', {}), examples)
+        docs.append("## 配置 Options\n")
+        sections = self._generate_sections(架构.get('properties', {}), 示例)
         docs.extend(sections)
 
         return '\n'.join(docs)
 
-    def _generate_sections(self, properties: Dict, examples: Dict, level: int = 3) -> List[str]:
+    def _generate_sections(self, properties: Dict, 示例: Dict, level: int = 3) -> List[str]:
         sections = []
 
         for prop_name, prop_schema in properties.items():
@@ -478,9 +478,9 @@ class ConfigDocGenerator:
             if 'default' in prop_schema:
                 sections.append(f"**Default:** `{prop_schema['default']}`\n")
 
-            if prop_name in examples:
+            if prop_name in 示例:
                 sections.append("**Example:**\n```yaml")
-                sections.append(yaml.dump({prop_name: examples[prop_name]}))
+                sections.append(yaml.dump({prop_name: 示例[prop_name]}))
                 sections.append("```\n")
 
         return sections
@@ -488,15 +488,15 @@ class ConfigDocGenerator:
 
 ## 输出格式
 
-1. **配置 Analysis**: Current configuration assessment
-2. **Validation Schemas**: JSON Schema definitions
+1. **配置 Analysis**: Current 配置 assessment
+2. **Validation Schemas**: JSON 架构 definitions
 3. **Environment Rules**: Environment-specific validation
 4. **Test Suite**: 配置 tests
 5. **迁移 Scripts**: Version migrations
 6. **安全性 Report**: Issues and recommendations
 7. **Documentation**: Auto-generated reference
 
-Focus on preventing configuration errors, ensuring consistency, and maintaining security best practices.
+Focus on preventing 配置 errors, ensuring consistency, and maintaining security 最佳实践.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

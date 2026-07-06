@@ -16,12 +16,12 @@ date_added: "2026-02-27"
 
 ### Essential Sections (Priority Order)
 
-| Section | Purpose |
+| Section | 目的 |
 |---------|---------|
 | **Title + One-liner** | What is this? |
 | **Quick Start** | Running in <5 min |
 | **Features** | What can I do? |
-| **Configuration** | How to customize |
+| **配置** | How to customize |
 | **API Reference** | Link to detailed docs |
 | **Contributing** | How to help |
 | **License** | Legal |
@@ -62,7 +62,7 @@ MIT
 
 ## 2. API Documentation Structure
 
-### Per-Endpoint Template
+### Per-端点 Template
 
 ```markdown
 ## GET /users/:id
@@ -74,12 +74,12 @@ Get a user by ID.
 |------|------|----------|-------------|
 | id | string | Yes | User ID |
 
-**Response:**
+**响应:**
 - 200: User object
 - 404: User not found
 
 **Example:**
-[Request and response example]
+[请求 and 响应 example]
 ```
 
 ---
@@ -92,7 +92,7 @@ Get a user by ID.
 /**
  * Brief description of what the function does.
  * 
- * @param paramName - Description of parameter
+ * @param paramName - Description of 参数
  * @returns Description of return value
  * @throws ErrorType - When this error occurs
  * 
@@ -176,7 +176,7 @@ For AI crawlers and agents:
 
 For RAG indexing:
 - Clear H1-H3 hierarchy
-- JSON/YAML examples for data structures
+- JSON/YAML 示例 for data structures
 - Mermaid diagrams for flows
 - Self-contained sections
 
@@ -187,7 +187,7 @@ For RAG indexing:
 | Principle | Why |
 |-----------|-----|
 | **Scannable** | Headers, lists, tables |
-| **Examples first** | Show, don't just tell |
+| **示例 first** | Show, don't just tell |
 | **Progressive detail** | Simple → Complex |
 | **Up to date** | Outdated = misleading |
 
@@ -196,7 +196,7 @@ For RAG indexing:
 > **Remember:** Templates are starting points. Adapt to your project's needs.
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the 概述.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

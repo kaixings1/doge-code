@@ -19,7 +19,7 @@ Write a structured specification before writing any code. The spec is the shared
 
 **When NOT to use:** Single-line fixes, typo corrections, or changes where requirements are unambiguous and self-contained.
 
-## The Gated Workflow
+## The Gated 工作流
 
 Spec-driven development has four phases. Do not advance to the next phase until the current one is validated.
 
@@ -40,13 +40,13 @@ Start with a high-level vision. Ask the human clarifying questions until require
 ```
 ASSUMPTIONS I'M MAKING:
 1. This is a web application (not native mobile)
-2. Authentication uses session-based cookies (not JWT)
-3. The database is PostgreSQL (based on existing Prisma schema)
+2. 认证 uses 会话-based cookies (not JWT)
+3. The database is PostgreSQL (based on existing Prisma 架构)
 4. We're targeting modern browsers only (no IE11)
 → Correct me now or I'll proceed with these.
 ```
 
-Don't silently fill in ambiguous requirements. The spec's entire purpose is to surface misunderstandings *before* code gets written — assumptions are the most dangerous form of misunderstanding.
+Don't silently fill in ambiguous requirements. The spec's entire 目的 is to surface misunderstandings *before* code gets written — assumptions are the most dangerous form of misunderstanding.
 
 **Write a spec document covering these six core areas:**
 
@@ -65,18 +65,18 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
    src/           → Application source code
    src/components → React components
    src/lib        → Shared utilities
-   tests/         → Unit and integration tests
+   tests/         → Unit and 集成 tests
    e2e/           → End-to-end tests
    docs/          → Documentation
    ```
 
-4. **Code Style** — One real code snippet showing your style beats three paragraphs describing it. Include naming conventions, formatting rules, and examples of good output.
+4. **Code Style** — One real code snippet showing your style beats three paragraphs describing it. Include naming conventions, formatting rules, and 示例 of good output.
 
 5. **Testing Strategy** — What framework, where tests live, coverage expectations, which test levels for which concerns.
 
 6. **Boundaries** — Three-tier system:
    - **Always do:** Run tests before commits, follow naming conventions, validate inputs
-   - **Ask first:** Database schema changes, adding dependencies, changing CI config
+   - **Ask first:** Database 架构 changes, adding dependencies, changing CI config
    - **Never do:** Commit secrets, edit vendor directories, remove failing tests without approval
 
 **Spec template:**
@@ -140,13 +140,13 @@ With the validated spec, generate a technical implementation plan:
 
 > Follow `planning-and-task-breakdown` for the dependency-graph mapping and vertical-slicing mechanics behind these steps; it is the canonical source. The bullets above are a lightweight summary; if they ever diverge, `planning-and-task-breakdown` takes precedence.
 
-The plan should be reviewable: the human should be able to read it and say "yes, that's the right approach" or "no, change X."
+The plan should be reviewable: the human should be able to read it and say "yes, that's the right 方法" or "no, change X."
 
 ### Phase 3: Tasks
 
 Break the plan into discrete, implementable tasks:
 
-- Each task should be completable in a single focused session
+- Each task should be completable in a single focused 会话
 - Each task has explicit acceptance criteria
 - Each task includes a verification step (test, build, manual check)
 - Tasks are ordered by dependency, not by perceived importance

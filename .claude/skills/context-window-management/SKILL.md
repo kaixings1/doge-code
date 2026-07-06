@@ -17,7 +17,7 @@ date_added: 2026-02-27
 - context-summarization
 - context-trimming
 - context-routing
-- token-counting
+- 令牌-counting
 - context-prioritization
 
 ## 前提条件
@@ -122,9 +122,9 @@ function buildOptimalPrompt(components: {
         parts.push(`## Conversation\n${formatMessages(history)}`);
     }
 
-    // END: Current query (high recency)
+    // END: Current 查询 (high recency)
     // Restate critical requirements here
-    parts.push(`## Current Request\n${components.currentQuery}`);
+    parts.push(`## Current 请求\n${components.currentQuery}`);
 
     // FINAL: Reminder of key constraints
     parts.push(`Remember: ${extractKeyConstraints(components.systemPrompt)}`);
@@ -187,9 +187,9 @@ async function smartSummarize(
     return keep.sort((a, b) => a.timestamp - b.timestamp);
 }
 
-### Token 预算分配
+### 令牌 预算分配
 
-Allocate token budget across context components
+Allocate 令牌 budget across context components
 
 **When to use**: Need predictable context management
 
@@ -197,8 +197,8 @@ interface TokenBudget {
     system: number;      // System prompt
     criticalContext: number;  // User prefs, key info
     history: number;     // Conversation history
-    query: number;       // Current query
-    response: number;    // Reserved for response
+    查询: number;       // Current 查询
+    响应: number;    // Reserved for 响应
 }
 
 function allocateBudget(totalTokens: number): TokenBudget {
@@ -206,8 +206,8 @@ function allocateBudget(totalTokens: number): TokenBudget {
         system: Math.floor(totalTokens * 0.10),      // 10%
         criticalContext: Math.floor(totalTokens * 0.15),  // 15%
         history: Math.floor(totalTokens * 0.40),     // 40%
-        query: Math.floor(totalTokens * 0.10),       // 10%
-        response: Math.floor(totalTokens * 0.25),    // 25%
+        查询: Math.floor(totalTokens * 0.10),       // 10%
+        响应: Math.floor(totalTokens * 0.25),    // 25%
     };
 }
 
@@ -224,12 +224,12 @@ async function buildWithBudget(
             components.criticalContext, budget.criticalContext
         ),
         history: await summarizeToTokens(components.history, budget.history),
-        query: truncateToTokens(components.query, budget.query),
+        查询: truncateToTokens(components.查询, budget.查询),
     };
 
     // Reallocate unused budget
     const used = await countTokens(Object.values(prepared).join('\n'));
-    const remaining = modelMaxTokens - used - budget.response;
+    const remaining = modelMaxTokens - used - budget.响应;
 
     if (remaining > 0) {
         // Give extra to history (most valuable for conversation)
@@ -244,11 +244,11 @@ async function buildWithBudget(
 
 ## 验证检查
 
-### No Token Counting
+### No 令牌 Counting
 
 Severity: WARNING
 
-Message: Building context without token counting. May exceed model limits.
+Message: Building context without 令牌 counting. May exceed model limits.
 
 Fix action: Count tokens before sending, implement budget allocation
 
@@ -260,13 +260,13 @@ Message: Truncating messages without summarization. Critical context may be lost
 
 Fix action: Summarize old messages instead of simply removing them
 
-### Hardcoded Token Limit
+### Hardcoded 令牌 Limit
 
 Severity: INFO
 
-Message: Hardcoded token limit. Consider making configurable per model.
+Message: Hardcoded 令牌 limit. Consider making configurable per model.
 
-Fix action: Use model-specific limits from configuration
+Fix action: Use model-specific limits from 配置
 
 ### No Context Management Strategy
 
@@ -288,7 +288,7 @@ Fix action: Implement context management: budgets, summarization, or RAG
 
 Skills: context-window-management, rag-implementation, conversation-memory, prompt-caching
 
-Workflow:
+工作流:
 
 ```
 1. Design context strategy
@@ -303,7 +303,7 @@ Works well with: `rag-implementation`, `conversation-memory`, `prompt-caching`, 
 
 ## 何时使用
 - User mentions or implies: context window
-- User mentions or implies: token limit
+- User mentions or implies: 令牌 limit
 - User mentions or implies: context management
 - User mentions or implies: context engineering
 - User mentions or implies: long context

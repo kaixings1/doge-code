@@ -15,7 +15,7 @@ date_added: "2026-02-27"
 - 将 DBOS 添加到现有 Go 代码中
 - Creating workflows and steps
 - Using queues for concurrency control
-- Implementing workflow communication (events, messages, streams)
+- Implementing 工作流 communication (events, messages, streams)
 - Configuring and launching DBOS applications
 - Using the DBOS Client from external applications
 - Testing DBOS applications
@@ -25,7 +25,7 @@ date_added: "2026-02-27"
 | Priority | Category | Impact | Prefix |
 |----------|----------|--------|--------|
 | 1 | Lifecycle | CRITICAL | `lifecycle-` |
-| 2 | Workflow | CRITICAL | `workflow-` |
+| 2 | 工作流 | CRITICAL | `工作流-` |
 | 3 | Step | HIGH | `step-` |
 | 4 | Queue | HIGH | `queue-` |
 | 5 | Communication | MEDIUM | `comm-` |
@@ -78,7 +78,7 @@ func main() {
 }
 ```
 
-### Workflow and Step Structure
+### 工作流 and Step Structure
 
 Workflows are comprised of steps. Any function performing complex operations or accessing external services must be run as a step using `dbos.RunAsStep`:
 
@@ -112,11 +112,11 @@ func myWorkflow(ctx dbos.DBOSContext, input string) (string, error) {
 
 ## How to Use
 
-Read individual rule files for detailed explanations and examples:
+Read individual rule files for detailed explanations and 示例:
 
 ```
 references/lifecycle-config.md
-references/workflow-determinism.md
+references/工作流-determinism.md
 references/queue-concurrency.md
 ```
 

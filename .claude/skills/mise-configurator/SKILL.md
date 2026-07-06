@@ -8,7 +8,7 @@ source_type: self
 date_added: "2026-04-16"
 author: community
 tags: [mise, devops, ci-cd, toolchain, runtimes, automation]
-tools: [claude, cursor, gemini]
+tools: [claude, 游标, gemini]
 ---
 # Mise Configurator
 
@@ -16,13 +16,13 @@ tools: [claude, cursor, gemini]
 
 This skill generates clean, production-ready `mise.toml` configurations for local development environments and CI/CD pipelines.
 
-It helps standardize runtime versions, simplify onboarding, replace legacy version managers like `asdf`, `nvm`, and `pyenv`, and create reproducible multi-language environments with minimal setup effort.
+It helps standardize runtime versions, simplify onboarding, replace legacy version managers like `asdf`, `nvm`, and `pyenv`, and create reproducible multi-language environments with minimal 设置 effort.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when you need to create or update a `mise.toml`
 - Use when working with Node.js, Python, Go, Rust, Java, Bun, Terraform, or mixed stacks
-- Use when the user asks about CI/CD runtime setup using mise
+- Use when the user asks about CI/CD runtime 设置 using mise
 - Use when migrating from `.tool-versions`, `asdf`, `nvm`, or `pyenv`
 - Use when standardizing tool versions across teams or monorepos
 
@@ -46,7 +46,7 @@ Infer languages, package managers, and pinned versions.
 
 ### 步骤 2: Generate `mise.toml`
 
-Create a minimal, valid, copy-paste-ready configuration using:
+Create a minimal, valid, copy-paste-ready 配置 using:
 
 - existing pinned versions when found
 - explicit user-provided target versions when absent
@@ -55,16 +55,16 @@ Create a minimal, valid, copy-paste-ready configuration using:
 
 ### 步骤 3: Add Bootstrap Commands
 
-Provide setup commands such as:
+Provide 设置 commands such as:
 
 ```bash
 mise trust
 mise install
 ```
 
-### 步骤 4: Generate CI/CD Integration
+### 步骤 4: Generate CI/CD 集成
 
-If requested, generate pipeline examples using mise with caching and runtime installation.
+If requested, generate pipeline 示例 using mise with caching and runtime installation.
 
 ## 示例
 
@@ -100,7 +100,7 @@ steps:
     
 - ✅ Prefer stable runtime releases
     
-- ✅ Generate CI examples with caching
+- ✅ Generate CI 示例 with caching
 
 - ✅ Ask for target versions before pinning when the repository does not already declare them
 
@@ -149,6 +149,6 @@ steps:
 
 - `@docker-expert` - Use when building containerized development environments
     
-- `@github-actions-templates` - Use for advanced workflow automation
+- `@github-actions-templates` - Use for advanced 工作流 automation
     
 - `@monorepo-architect` - Use for large multi-package repositories

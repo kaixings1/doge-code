@@ -208,7 +208,7 @@ metadata = client.metadata_schemas.create_or_update(
     service_name="my-api-center",
     metadata_schema_name="data-classification",
     resource=MetadataSchema(
-        schema='{"type": "string", "title": "Data Classification", "enum": ["public", "internal", "confidential"]}'
+        架构='{"type": "string", "title": "Data Classification", "enum": ["public", "internal", "confidential"]}'
     )
 )
 ```
@@ -221,7 +221,7 @@ metadata = client.metadata_schemas.create_or_update(
 
 ## Operations
 
-| Operation Group | Purpose |
+| 操作 Group | Purpose |
 |----------------|---------|
 | `services` | API Center service management |
 | `workspaces` | Workspace management |
@@ -242,7 +242,7 @@ metadata = client.metadata_schemas.create_or_update(
 6. **Add contacts** for API ownership and support
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

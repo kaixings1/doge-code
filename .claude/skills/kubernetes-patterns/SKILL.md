@@ -27,7 +27,7 @@ metadata:
 
 此技能提供按任务组织的**可复制粘贴的生产级 YAML 模式**和 **kubectl 调试命令**：
 
-1. **部署模板** — 完全配置的生产 `Deployment`，包含安全上下文、滚动更新策略、所有三种探针类型、资源限制以及来自 ConfigMap/Secret 的环境注入。
+1. **部署模板** — 完全配置的生产 `部署`，包含安全上下文、滚动更新策略、所有三种探针类型、资源限制以及来自 ConfigMap/Secret 的环境注入。
 2. **探针** — 启动、存活和就绪探针的决策表，包含正确的 `failureThreshold × periodSeconds` 计算。
 3. **服务与入口** — 带有 cert-manager 注解的 ClusterIP、LoadBalancer 和 TLS 入口模式。
 4. **ConfigMap 与 Secret** — `envFrom`、文件挂载和外部密钥指导。

@@ -53,7 +53,7 @@ const result = pipe(
 )
 ```
 
-**When to use pipe:**
+**使用场景 pipe:**
 - 3+ transformations on the same data
 - You find yourself naming throwaway variables
 - Logic reads better top-to-bottom
@@ -262,9 +262,9 @@ If you're the only one who can read the code, it's not good code.
 // If your team knows this pattern
 async function getUser(id: string): Promise<User | null> {
   try {
-    const response = await fetch(`/api/users/${id}`)
-    if (!response.ok) return null
-    return await response.json()
+    const 响应 = await fetch(`/api/users/${id}`)
+    if (!响应.ok) return null
+    return await 响应.json()
   } catch {
     return null
   }
@@ -384,7 +384,7 @@ const handleError = (error: AppError): string => {
 
 ## Common Refactors: Before and After
 
-### Callback Hell to Pipe
+### 回调 Hell to Pipe
 
 ```typescript
 // Before
@@ -529,7 +529,7 @@ Before using any FP pattern, ask: **"Would a junior developer understand this?"*
 ```typescript
 const result = pipe(
   data,
-  A.filter(flow(prop('status'), equals('active'))),
+  A.过滤器(flow(prop('status'), equals('active'))),
   A.map(flow(prop('value'), multiply(2))),
   A.reduce(monoid.concat, monoid.empty),
   O.fromPredicate(gt(threshold))
@@ -539,7 +539,7 @@ const result = pipe(
 ### Just Right (优先)
 
 ```typescript
-const activeItems = data.filter(item => item.status === 'active')
+const activeItems = data.过滤器(item => item.status === 'active')
 const doubledValues = activeItems.map(item => item.value * 2)
 const total = doubledValues.reduce((sum, val) => sum + val, 0)
 const result = total > threshold ? O.some(total) : O.none
@@ -550,7 +550,7 @@ const result = total > threshold ? O.some(total) : O.none
 ```typescript
 const result = pipe(
   data,
-  A.filter(item => item.status === 'active'),
+  A.过滤器(item => item.status === 'active'),
   A.map(item => item.value * 2),
   A.reduce(0, (sum, val) => sum + val),
   total => total > threshold ? O.some(total) : O.none

@@ -1,21 +1,21 @@
 ---
 name: cloud-devops
 description: "云基础设施和 DevOps 工作流，涵盖 AWS、Azure、GCP、Kubernetes、Terraform 和 CI/CD。"
-category: workflow-bundle
+category: 工作流-bundle
 risk: safe
 source: personal
 date_added: "2026-02-27"
 ---
 
-# Cloud/DevOps Workflow Bundle
+# Cloud/DevOps 工作流 Bundle
 
 ## 概述
 
-Comprehensive cloud and DevOps workflow for infrastructure provisioning, container orchestration, CI/CD pipelines, monitoring, and cloud-native application development.
+Comprehensive cloud and DevOps 工作流 for infrastructure provisioning, container orchestration, CI/CD pipelines, monitoring, and cloud-native application development.
 
-## When to Use This Workflow
+## When to Use This 工作流
 
-Use this workflow when:
+Use this 工作流 when:
 - Setting up cloud infrastructure
 - Implementing CI/CD pipelines
 - Deploying Kubernetes applications
@@ -23,9 +23,9 @@ Use this workflow when:
 - Managing cloud costs
 - Implementing DevOps practices
 
-## Workflow Phases
+## 工作流 Phases
 
-### Phase 1: Cloud Infrastructure Setup
+### Phase 1: Cloud Infrastructure 设置
 
 #### Skills to Invoke
 - `cloud-architect` - Cloud architecture
@@ -84,27 +84,27 @@ Use @helm-chart-scaffolding to create Helm chart
 ### Phase 3: CI/CD Implementation
 
 #### Skills to Invoke
-- `deployment-engineer` - Deployment engineering
-- `cicd-automation-workflow-automate` - CI/CD automation
+- `部署-engineer` - 部署 engineering
+- `cicd-automation-工作流-automate` - CI/CD automation
 - `github-actions-templates` - GitHub Actions
 - `gitlab-ci-patterns` - GitLab CI
-- `deployment-pipeline-design` - Pipeline design
+- `部署-pipeline-design` - Pipeline design
 
 #### Actions
-1. Design deployment pipeline
+1. Design 部署 pipeline
 2. Configure build automation
 3. Set up test automation
-4. Configure deployment stages
+4. Configure 部署 stages
 5. Implement rollback strategies
 6. Set up notifications
 
 #### Copy-Paste Prompts
 ```
-Use @cicd-automation-workflow-automate to set up CI/CD pipeline
+Use @cicd-automation-工作流-automate to set up CI/CD pipeline
 ```
 
 ```
-Use @github-actions-templates to create GitHub Actions workflow
+Use @github-actions-templates to create GitHub Actions 工作流
 ```
 
 ### Phase 4: Monitoring and Observability
@@ -112,8 +112,8 @@ Use @github-actions-templates to create GitHub Actions workflow
 #### Skills to Invoke
 - `observability-engineer` - Observability engineering
 - `grafana-dashboards` - Grafana dashboards
-- `prometheus-configuration` - Prometheus setup
-- `datadog-automation` - Datadog integration
+- `prometheus-配置` - Prometheus 设置
+- `datadog-automation` - Datadog 集成
 - `sentry-automation` - Sentry error tracking
 
 #### Actions
@@ -140,7 +140,7 @@ Use @grafana-dashboards to create monitoring dashboards
 - `aws-penetration-testing` - AWS security
 - `k8s-security-policies` - K8s security
 - `secrets-management` - Secrets management
-- `mtls-configuration` - mTLS setup
+- `mtls-配置` - mTLS 设置
 
 #### Actions
 1. Assess cloud security
@@ -181,7 +181,7 @@ Use @cost-optimization to reduce cloud costs
 ### Phase 7: Disaster Recovery
 
 #### Skills to Invoke
-- `incident-responder` - Incident response
+- `incident-responder` - Incident 响应
 - `incident-runbook-templates` - Runbook creation
 - `postmortem-writing` - Postmortem documentation
 
@@ -227,7 +227,7 @@ Services: Cloud Run, GKE, Cloud Functions, BigQuery
 - [ ] Cost optimization applied
 - [ ] DR procedures documented
 
-## Related Workflow Bundles
+## Related 工作流 Bundles
 
 - `development` - Application development
 - `security-audit` - Security testing

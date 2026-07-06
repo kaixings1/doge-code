@@ -25,13 +25,13 @@ class OrderPipeline:
         self.warehouse = warehouse_db
 
     def extract(self, since: datetime) -> list[dict]:
-        query = """
+        查询 = """
             SELECT o.*, c.name as customer_name, c.segment
             FROM orders o
             JOIN customers c ON o.customer_id = c.id
             WHERE o.updated_at > %s
         """
-        return self.source.fetch_all(query, [since])
+        return self.source.fetch_all(查询, [since])
 
     def transform(self, records: list[dict]) -> list[dict]:
         transformed = []
@@ -88,7 +88,7 @@ customers = spark.read.parquet("s3://data-lake/customers/")
 
 daily_revenue = (
     orders
-    .filter(F.col("status") == "completed")
+    .过滤器(F.col("status") == "completed")
     .withColumn("order_date", F.to_date("created_at"))
     .groupBy("order_date", "product_category")
     .agg(
@@ -120,32 +120,32 @@ from dataclasses import dataclass
 @dataclass
 class QualityCheck:
     name: str
-    query: str
+    查询: str
     threshold: float
     severity: str
 
 CHECKS = [
     QualityCheck(
         name="null_customer_ids",
-        query="SELECT COUNT(*) FROM fact_orders WHERE customer_id IS NULL",
+        查询="SELECT COUNT(*) FROM fact_orders WHERE customer_id IS NULL",
         threshold=0,
         severity="critical",
     ),
     QualityCheck(
         name="negative_amounts",
-        query="SELECT COUNT(*) FROM fact_orders WHERE total_amount < 0",
+        查询="SELECT COUNT(*) FROM fact_orders WHERE total_amount < 0",
         threshold=0,
         severity="critical",
     ),
     QualityCheck(
         name="duplicate_orders",
-        query="SELECT COUNT(*) - COUNT(DISTINCT order_id) FROM fact_orders",
+        查询="SELECT COUNT(*) - COUNT(DISTINCT order_id) FROM fact_orders",
         threshold=0,
         severity="warning",
     ),
     QualityCheck(
         name="freshness",
-        query="SELECT EXTRACT(EPOCH FROM NOW() - MAX(loaded_at))/3600 FROM fact_orders",
+        查询="SELECT EXTRACT(EPOCH FROM NOW() - MAX(loaded_at))/3600 FROM fact_orders",
         threshold=2.0,
         severity="warning",
     ),
@@ -154,7 +154,7 @@ CHECKS = [
 def run_quality_checks(db, checks: list[QualityCheck]) -> list[dict]:
     results = []
     for check in checks:
-        value = db.fetch_scalar(check.query)
+        value = db.fetch_scalar(check.查询)
         passed = value <= check.threshold
         results.append({
             "name": check.name,
@@ -168,7 +168,7 @@ def run_quality_checks(db, checks: list[QualityCheck]) -> list[dict]:
     return results
 ```
 
-## Data Warehouse Schema (Star Schema)
+## Data Warehouse 架构 (Star 架构)
 
 ```sql
 CREATE TABLE dim_customers (
@@ -217,8 +217,8 @@ CREATE TABLE fact_orders (
 - [ ] Pipelines follow Extract-Transform-Load with clear stage separation
 - [ ] Incremental processing based on watermarks or change data capture
 - [ ] Data quality checks run after each pipeline stage
-- [ ] Warehouse uses star or snowflake schema with dimension and fact tables
-- [ ] Spark jobs use adaptive query execution and appropriate partitioning
+- [ ] Warehouse uses star or snowflake 架构 with dimension and fact tables
+- [ ] Spark jobs use adaptive 查询 execution and appropriate partitioning
 - [ ] Idempotent loads (re-running produces the same result)
 - [ ] Data freshness monitored with automated alerts
-- [ ] Schema evolution handled gracefully (additive changes preferred)
+- [ ] 架构 evolution handled gracefully (additive changes preferred)

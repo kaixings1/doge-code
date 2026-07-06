@@ -78,7 +78,7 @@ ao compose "我是一个程序员，想用AI做自媒体副业，目标月入2�
 
 ```bash
 ao compose "帮我分析做一个AI记账工具的可行性" --run             # 创业可行性分析
-ao compose "对比 Cursor、Windsurf 和 Copilot，给出选择建议" --run  # 技术选型报告
+ao compose "对比 游标、Windsurf 和 Copilot，给出选择建议" --run  # 技术选型报告
 ao compose "写一篇关于 AI Agent 趋势的深度文章" --run             # 深度长文写作
 ao compose "用 10 万块启动一个 AI 教育项目" --run                 # 商业计划书
 ao compose "PR 代码审查，覆盖安全和性能" --run                    # 代码审查报告
@@ -138,7 +138,7 @@ ao run workflows/dev/pr-review.yaml --input code=@src/main.ts
 ao run workflows/story-creation.yaml -i premise="一个程序员发现AI开始回复不该知道的事情"
 ```
 
-也可以在 Cursor / Claude Code 中直接说"帮我跑一个工作流"——支持 **14 个 AI 编程工具**（[集成指南](./integrations/)）。
+也可以在 游标 / Claude Code 中直接说"帮我跑一个工作流"——支持 **14 个 AI 编程工具**（[集成指南](./integrations/)）。
 
 ## 更多真实演示
 
@@ -277,21 +277,21 @@ OPENAI_API_KEY=你的key
 ao demo                              # 零配置体验多智能体协作
 ao init                              # （可选）复制 216 个中文角色到本地以便编辑
 ao init --lang en                    # （可选）复制 184 个英文角色到本地以便编辑
-ao init --workflow                    # 交互式创建工作流
+ao init --工作流                    # 交互式创建工作流
 ao compose "一句话描述"                # AI 智能编排工作流
 ao compose "一句话描述" --run          # 编排并立即执行
-ao team save <workflow.yaml>          # 把角色阵容存成可复用团队 (Loadout)
+ao team save <工作流.yaml>          # 把角色阵容存成可复用团队 (Loadout)
 ao team list / show / rm              # 管理已保存的团队
 ao run --team <名字> "新任务"          # 用已保存的团队跑新任务（锁定阵容）
 ao prompt optimize "提示词"           # AI 优化提示词（--save 存为可复用资产）
 ao prompt test / list / garden        # 测试 / 管理 / 起手模板（提示词沉淀）
 ao skills [名字]                       # 列出/查看可挂到步骤的方法论 skill
-ao run <workflow.yaml> [选项]          # 执行工作流
-ao validate <workflow.yaml>           # 校验（不执行）
-ao plan <workflow.yaml>               # 查看执行计划（DAG）
-ao explain <workflow.yaml>            # 用自然语言解释执行计划
+ao run <工作流.yaml> [选项]          # 执行工作流
+ao validate <工作流.yaml>           # 校验（不执行）
+ao plan <工作流.yaml>               # 查看执行计划（DAG）
+ao explain <工作流.yaml>            # 用自然语言解释执行计划
 ao roles                             # 列出所有角色
-ao serve                             # 启动 MCP Server（供 Claude Code / Cursor 调用）
+ao serve                             # 启动 MCP Server（供 Claude Code / 游标 调用）
 ```
 
 | 参数 | 说明 |
@@ -307,7 +307,7 @@ ao serve                             # 启动 MCP Server（供 Claude Code / Cur
 
 ### AI 智能编排（Compose）
 
-一句话描述需求，AI 自动从 216 个角色中选角色、设计 DAG、生成完整 workflow YAML：
+一句话描述需求，AI 自动从 216 个角色中选角色、设计 DAG、生成完整 工作流 YAML：
 
 ```bash
 ao compose "PR 代码审查，要覆盖安全和性能"
@@ -393,10 +393,10 @@ ao run workflows/一人公司全员大会.yaml --resume last --from launch_decis
 
 | 场景 | 命令 |
 |------|------|
-| 第一次运行 | `ao run workflow.yaml -i key=value` |
-| 从某步重跑 | `ao run workflow.yaml --resume last --from <步骤ID>` |
-| 只重跑失败的步骤 | `ao run workflow.yaml --resume last` |
-| 基于指定版本重跑 | `ao run workflow.yaml --resume ao-output/具体目录/ --from <步骤ID>` |
+| 第一次运行 | `ao run 工作流.yaml -i key=value` |
+| 从某步重跑 | `ao run 工作流.yaml --resume last --from <步骤ID>` |
+| 只重跑失败的步骤 | `ao run 工作流.yaml --resume last` |
+| 基于指定版本重跑 | `ao run 工作流.yaml --resume ao-output/具体目录/ --from <步骤ID>` |
 
 ### 对话式返工（Feedback）
 
@@ -419,7 +419,7 @@ ao run workflows/一人公司全员大会.yaml --from marketing_plan \
 ```typescript
 import { run } from 'agency-orchestrator';
 
-const result = await run('workflow.yaml', {
+const result = await run('工作流.yaml', {
   prd_content: '你的 PRD 内容...',
 });
 
@@ -429,7 +429,7 @@ console.log(result.totalTokens); // { input: 1234, output: 5678 }
 
 ## MCP Server 模式
 
-AI 编程工具（Claude Code、Cursor 等）可通过 MCP 协议直接调用工作流操作，无需手动集成：
+AI 编程工具（Claude Code、游标 等）可通过 MCP 协议直接调用工作流操作，无需手动集成：
 
 ```bash
 ao serve              # 启动 MCP stdio 服务器
@@ -449,7 +449,7 @@ ao serve --verbose    # 带调试日志
 }
 ```
 
-配置 Cursor（`.cursor/mcp.json`）：
+配置 游标（`.游标/mcp.json`）：
 
 ```json
 {
@@ -464,7 +464,7 @@ ao serve --verbose    # 带调试日志
 
 提供 6 个工具：`run_workflow`、`validate_workflow`、`list_workflows`、`plan_workflow`、`compose_workflow`、`list_roles`。
 
-## YAML Schema
+## YAML 架构
 
 ### 工作流
 
@@ -511,7 +511,7 @@ ao-output/产品需求评审-2026-03-22/
 │   ├── 2-tech_review.md
 │   ├── 3-design_review.md
 │   └── 4-summary.md
-└── metadata.json       # 耗时、token 用量、步骤状态
+└── metadata.json       # 耗时、令牌 用量、步骤状态
 ```
 
 ## 内置工作流模板（32 个）
@@ -567,7 +567,7 @@ ao-output/产品需求评审-2026-03-22/
 | `department-collab/code-review.yaml` | 代码审查员、安全工程师 | 代码评审（循环） |
 | `department-collab/hiring-pipeline.yaml` | HR、技术面试官、业务面试官 | 招聘流程 |
 | `department-collab/content-publish.yaml` | 内容创作者、品牌守护者 | 内容发布（循环） |
-| `department-collab/incident-response.yaml` | SRE、安全工程师、后端架构师 | 事故响应 |
+| `department-collab/incident-响应.yaml` | SRE、安全工程师、后端架构师 | 事故响应 |
 | `department-collab/marketing-campaign.yaml` | 策略师、创作者、审批人 | 营销活动（人工审批） |
 | `department-collab/ceo-org-delegation.yaml` | CEO、工程/市场/产品/HR 部门负责人 | **CEO 组织架构协作**（决策→部门并行→汇总） |
 | `一人公司全员大会.yaml` | CEO、市场调研员、用户研究员、产品经理、市场负责人、CFO | **一人公司全员大会**（CEO→6 部门并行→决策） |
@@ -581,8 +581,8 @@ ao-output/产品需求评审-2026-03-22/
     ┌────────────────┼────────────────┐
     ▼                ▼                ▼
   14 个 AI 编程工具    CLI 模式         MCP Server
-  (Cursor/Claude     (自动化/CI/CD)   (Claude Code/
-   Code/Copilot...)                   Cursor 直接调用)
+  (游标/Claude     (自动化/CI/CD)   (Claude Code/
+   Code/Copilot...)                   游标 直接调用)
 ```
 
 | 项目 | 定位 | 一句话 |
@@ -621,7 +621,7 @@ ao-output/产品需求评审-2026-03-22/
 
 - [x] **v0.1** — YAML 工作流、DAG 引擎、4 个 LLM 连接器、CLI、实时输出
 - [x] **v0.2** — 条件分支、循环迭代、人工审批、Resume 断点续跑、5 个部门协作模板
-- [x] **v0.3** — 9 个 AI 工具集成、20+ 工作流模板、`ao explain`、`ao init --workflow`、`--watch` 模式
+- [x] **v0.3** — 9 个 AI 工具集成、20+ 工作流模板、`ao explain`、`ao init --工作流`、`--watch` 模式
 - [x] **v0.4** — MCP Server 模式（`ao serve`）、14 个 AI 工具集成、一键安装脚本、32 个工作流模板、**10 种 LLM（7 种免 API key：Claude Code / Gemini / Copilot / Codex / OpenClaw / Hermes / Ollama）**
 - [x] **v0.5** — `ao compose --run` 一句话出结果、实时流式输出、智能重试（指数退避）、步骤级模型覆盖、Agent 身份标识
 - [ ] **v0.6** — Web UI、可视化 DAG 编辑器、英文工作流模板、工作流市场

@@ -7,24 +7,24 @@ description: Claude Code技能查找工具
 
 This skill helps you discover and install skills from the open agent skills ecosystem.
 
-## /u4f55/u65f6/u4f7f/u7528/u6b64/u6280/u80fd
+## 何时使用此技能
 
-Use this skill when the user:
+当用户以下情况时使用此技能：
 
-- Asks "how do I do X" where X might be a common task with an existing skill
-- Says "find a skill for X" or "is there a skill for X"
-- Asks "can you do X" where X is a specialized capability
-- Expresses interest in extending agent capabilities
+- 问"如何做 X"，其中 X 可能是已有技能的常见任务
+- 说"找 X 的技能"或"有没有 X 的技能"
+- 问"你能做 X 吗"，其中 X 是专业化能力
+- 表达对扩展代理能力的兴趣
 - Wants to search for tools, templates, or workflows
-- Mentions they wish they had help with a specific domain (design, testing, deployment, etc.)
+- Mentions they wish they had help with a specific domain (design, testing, 部署, etc.)
 
 ## /u4ec0/u4e48/u662f Skills CLI/uff1f
 
-The Skills CLI (`npx skills`) is the package manager for the open agent skills ecosystem. Skills are modular packages that extend agent capabilities with specialized knowledge, workflows, and tools.
+The Skills CLI (`npx skills`) is the package manager for the open agent skills ecosystem. Skills are modular packages that extend agent 能力 with specialized knowledge, workflows, and tools.
 
 **Key commands:**
 
-- `npx skills find [query]` - Search for skills interactively or by keyword
+- `npx skills find [查询]` - Search for skills interactively or by keyword
 - `npx skills add <package>` - Install a skill from GitHub or other sources
 - `npx skills check` - Check for skill updates
 - `npx skills update` - Update all installed skills
@@ -37,16 +37,16 @@ The Skills CLI (`npx skills`) is the package manager for the open agent skills e
 
 When a user asks for help with something, identify:
 
-1. The domain (e.g., React, testing, design, deployment)
+1. The domain (e.g., React, testing, design, 部署)
 2. The specific task (e.g., writing tests, creating animations, reviewing PRs)
 3. Whether this is a common enough task that a skill likely exists
 
 ### /u6b65/u9aa4 2/uff1a/u641c/u7d22/u6280/u80fd
 
-Run the find command with a relevant query:
+Run the find command with a relevant 查询:
 
 ```bash
-npx skills find [query]
+npx skills find [查询]
 ```
 
 For example:
@@ -72,7 +72,7 @@ When you find relevant skills, present them to the user with:
 2. The install command they can run
 3. A link to learn more at skills.sh
 
-Example response:
+Example 响应:
 
 ```
 I found a skill that might help! The "vercel-react-best-practices" skill provides
@@ -106,12 +106,12 @@ When searching, consider these common categories:
 | Documentation   | docs, readme, changelog, api-docs        |
 | Code Quality    | review, lint, refactor, best-practices   |
 | Design          | ui, ux, design-system, accessibility     |
-| Productivity    | workflow, automation, git                |
+| Productivity    | 工作流, automation, git                |
 
 ## /u6709/u6548/u641c/u7d22/u7684/u6280/u5de7
 
 1. **Use specific keywords**: "react testing" is better than just "testing"
-2. **Try alternative terms**: If "deploy" doesn't work, try "deployment" or "ci-cd"
+2. **Try alternative terms**: If "deploy" doesn't work, try "部署" or "ci-cd"
 3. **Check popular sources**: Many skills come from `vercel-labs/agent-skills` or `ComposioHQ/awesome-claude-skills`
 
 ## /u5f53/u672a/u627e/u5230/u6280/u80fd/u65f6
@@ -119,7 +119,7 @@ When searching, consider these common categories:
 If no relevant skills exist:
 
 1. Acknowledge that no existing skill was found
-2. Offer to help with the task directly using your general capabilities
+2. Offer to help with the task directly using your general 能力
 3. Suggest the user could create their own skill with `npx skills init`
 
 Example:

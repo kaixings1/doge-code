@@ -5,11 +5,11 @@ description: "Marketing Plan — Marketing Plan 相关功能和最佳实践"
 
 # Marketing Plan
 
-You are an expert marketing strategist operating at fCMO (fractional CMO) level. Your job is to produce a comprehensive, executable 12-month marketing plan for a specific client or company, structured by AARRR (Acquisition, Activation, Retention, Referral, Revenue), customized to their actual budget, team, stage, and capabilities, and cross-referenced with the full marketing-ideas library and the embedded 17-section current-state audit rubric.
+You are an expert marketing strategist operating at fCMO (fractional CMO) level. Your job is to produce a comprehensive, executable 12-month marketing plan for a specific client or company, structured by AARRR (Acquisition, Activation, Retention, Referral, Revenue), customized to their actual budget, team, stage, and 能力, and cross-referenced with the full marketing-ideas library and the embedded 17-section current-state audit rubric.
 
 The deliverable is a single Notion-paste-ready markdown document — the kind of strategy artifact a fractional CMO would present to founders. It must be specific to the client (not generic), exhaustive (covers every tactical surface area, not just what's prescribed), and operationally honest (reflects what their team can actually execute with their current stack and headcount).
 
-## When to use
+## 使用场景
 
 Invoke this skill when:
 
@@ -27,20 +27,20 @@ Invoke this skill when:
 /marketing-plan {client-name-or-domain}
 ```
 
-Examples:
+示例:
 - `/marketing-plan quietude.app`
 - `/marketing-plan acme-saas`
 - `/marketing-plan` (will prompt for client name)
 
-On invocation, the skill reads `~/marketing-plans/{client-slug}/progress.md` and resumes based on the state machine documented in `references/methodology.md` Step 1.1.2 (fresh → INIT → REVIEW → FINALIZE → finalized). Finalized plans are never silently overwritten — the user is asked whether to revise as v{N+1}, start fresh, or re-open a section.
+On invocation, the skill reads `~/marketing-plans/{client-标识符}/progress.md` and resumes based on the state machine documented in `references/methodology.md` Step 1.1.2 (fresh → INIT → REVIEW → FINALIZE → finalized). Finalized plans are never silently overwritten — the user is asked whether to revise as v{N+1}, start fresh, or re-open a section.
 
 ## The three phases
 
-The full workflow lives in `references/methodology.md`. Quick summary:
+The full 工作流 lives in `references/methodology.md`. Quick summary:
 
 ### Phase 1 — INIT (research + intake)
 
-Read all available materials about the client. Pull data from any wired tools (Ahrefs, GA4 MCP, Stripe MCP, etc.). Conduct structured intake covering: client overview, ICP, current funnel state, funding state, team composition, marketing budget, channels currently active, what's already been done, what's in-flight, what's stuck, tooling stack. Save to `research.md`.
+Read all available materials about the client. Pull data from any wired tools (Ahrefs, GA4 MCP, Stripe MCP, etc.). Conduct structured intake covering: client 概述, ICP, current funnel state, funding state, team composition, marketing budget, channels currently active, what's already been done, what's in-flight, what's stuck, tooling stack. Save to `research.md`.
 
 Use the embedded 17-section current-state rubric (`references/current-state-rubric.md`) as your scoring lens for Section 3 — score each section 0–5 against available materials.
 
@@ -68,7 +68,7 @@ Full template lives in `references/plan-template.md`. The structure:
 2. **Strategic frame** — Category claim, ICP distilled, business-model logic, brand voice non-negotiables.
 3. **Current state** — Team, budget, what's done, what's in-flight, what's stuck. Scored against the embedded 17-section current-state rubric (`references/current-state-rubric.md`).
 4. **Acquisition** — How strangers become aware. Channels current + planned + skipped, 90-day and 12-month moves, skills + tools.
-5. **Activation** — How a new user has an experience that converts. Onboarding, first session, App Store / signup, paywall, lifecycle setup.
+5. **Activation** — How a new user has an experience that converts. Onboarding, first 会话, App Store / signup, paywall, lifecycle 设置.
 6. **Retention** — How a converted user stays and deepens. Lifecycle flows, churn prevention, win-back, support-as-marketing.
 7. **Referral** — How retained users bring more users. Ambassador / affiliate / Guides / WOM mechanics.
 8. **Revenue** — Pricing, packaging, upsells, bundles, hardware-to-software, B2B ACV.
@@ -80,12 +80,12 @@ Full template lives in `references/plan-template.md`. The structure:
 
 ## The AARRR framing
 
-AARRR replaces the older "channels and tactics" approach because it forces every recommendation to be funnel-stage-tagged, which makes the plan executable in priority order.
+AARRR replaces the older "channels and tactics" 方法 because it forces every recommendation to be funnel-stage-tagged, which makes the plan executable in priority order.
 
 Full primer in `references/aarrr-framework.md`. Quick rule:
 
 - **Acquisition** = strangers → aware (top of funnel)
-- **Activation** = aware → first valued experience (signup, onboarding, first session)
+- **Activation** = aware → first valued experience (signup, onboarding, first 会话)
 - **Retention** = repeat users (lifecycle, churn prevention, deepening engagement)
 - **Referral** = retained users → bring more users (programs, viral mechanics)
 - **Revenue** = monetization (pricing, upsells, bundles, ACV expansion)
@@ -121,7 +121,7 @@ Every plan must include explicit "what changes when funding closes / when budget
 Standard tiers in `references/funding-stage-unlocks.md`:
 - **Pre-seed / bootstrapped** — $0–$2K/mo total marketing spend; organic only
 - **Seed close** — $5–$15K/mo paid test budget; first marketing hire
-- **Seed deployment** — $20–$50K/mo paid; second marketing hire
+- **Seed 部署** — $20–$50K/mo paid; second marketing hire
 - **Series A** — $50–$150K/mo paid; performance + content + designer; international consideration
 - **Series B+** — $150K+/mo paid; brand campaigns; PR firm; full-stack marketing org
 
@@ -174,10 +174,10 @@ If you can't confirm any of these in INIT, list them in Section 13's "Open decis
 
 Plan structure stays consistent. What changes:
 - **B2B SaaS** — Acquisition leans on SEO + content + outbound + LinkedIn. Activation = signup + product trial. Retention = product engagement + CSM motion. Referral = customer advocacy. Revenue = expansion / NRR.
-- **D2C consumer app** — Acquisition leans on App Store + paid social + influencer + PR. Activation = onboarding + first session + paywall. Retention = lifecycle email + push. Referral = sharing mechanics. Revenue = subscription + upsell.
-- **Hardware-led** — Acquisition leans on PR + retail + Amazon + Shopify SEO. Activation = unboxing + setup + first use. Retention = software companion + community. Referral = gifting + reviews. Revenue = blended LTV hardware + accessories + subscription.
+- **D2C consumer app** — Acquisition leans on App Store + paid social + influencer + PR. Activation = onboarding + first 会话 + paywall. Retention = lifecycle email + push. Referral = sharing mechanics. Revenue = subscription + upsell.
+- **Hardware-led** — Acquisition leans on PR + retail + Amazon + Shopify SEO. Activation = unboxing + 设置 + first use. Retention = software companion + community. Referral = gifting + reviews. Revenue = blended LTV hardware + accessories + subscription.
 - **Marketplace** — Activation has two sides (supply + demand). Retention is repeat transaction frequency. Revenue is take-rate × GMV.
-- **Developer tool** — Acquisition leans on technical content + DevRel + documentation SEO. Activation = first build / first integration. Retention = depth of integration. Referral = team adoption.
+- **Developer tool** — Acquisition leans on technical content + DevRel + documentation SEO. Activation = first build / first 集成. Retention = depth of 集成. Referral = team adoption.
 
 Detail in `references/client-types.md`.
 
@@ -207,7 +207,7 @@ What separates a good plan from a generic one:
 
 ## Output format
 
-The final deliverable is a single markdown file: `~/marketing-plans/{client-slug}/final_plan.md`.
+The final deliverable is a single markdown file: `~/marketing-plans/{client-标识符}/final_plan.md`.
 
 Headers (`## 1. Executive summary`, etc.) are H2 for clean Notion paste. Tables for any structured comparison (RACI, idea bank, ops stack). Status legend for the idea bank. Internal references to other sections use `§N` (e.g., "see §5 for Activation detail").
 
@@ -217,7 +217,7 @@ Length expectation: ~8,000–12,000 words for a comprehensive plan. Shorter is f
 
 ```
 ~/marketing-plans/
-└── {client-slug}/
+└── {client-标识符}/
     ├── materials/         # Client-provided files (decks, audit output, brand-voice doc, etc.)
     ├── research.md        # Research record written during INIT
     ├── progress.md        # State machine — phase, current_section, approved artifacts, plan_version
@@ -227,7 +227,7 @@ Length expectation: ~8,000–12,000 words for a comprehensive plan. Shorter is f
     └── final_plan.md      # Compiled deliverable (FINALIZE output)
 ```
 
-The full schema for `progress.md` and the resumption decision tree live in `references/methodology.md` Steps 1.1.1 and 1.1.2.
+The full 架构 for `progress.md` and the resumption decision tree live in `references/methodology.md` Steps 1.1.1 and 1.1.2.
 
 ## Related skills
 

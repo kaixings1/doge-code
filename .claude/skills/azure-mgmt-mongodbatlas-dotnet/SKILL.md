@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # Azure.ResourceManager.MongoDBAtlas SDK
 
-Manage MongoDB Atlas Organizations as Azure ARM resources with unified billing through Azure Marketplace.
+Manage MongoDB Atlas Organizations as Azure ARM 资源 with unified billing through Azure Marketplace.
 
 ## Package Information
 
@@ -30,7 +30,7 @@ dotnet add package Azure.ResourceManager
 
 ## Important Scope Limitation
 
-This SDK manages **MongoDB Atlas Organizations as Azure ARM resources** for marketplace integration. It does NOT directly manage:
+This SDK manages **MongoDB Atlas Organizations as Azure ARM 资源** for marketplace integration. It does NOT directly manage:
 - Atlas clusters
 - Databases
 - Collections
@@ -117,14 +117,14 @@ var organizationData = new MongoDBAtlasOrganizationData(location)
     Tags = { ["Environment"] = "Production" }
 };
 
-// Create the organization (long-running operation)
-var operation = await organizations.CreateOrUpdateAsync(
+// Create the organization (long-running 操作)
+var 操作 = await organizations.CreateOrUpdateAsync(
     WaitUntil.Completed,
     organizationName,
     organizationData
 );
 
-MongoDBAtlasOrganizationResource organization = operation.Value;
+MongoDBAtlasOrganizationResource organization = 操作.Value;
 Console.WriteLine($"Created: {organization.Id}");
 ```
 
@@ -206,7 +206,7 @@ var updateOperation = await organization.UpdateAsync(
 ### Delete Organization
 
 ```csharp
-// Delete (long-running operation)
+// Delete (long-running 操作)
 await organization.DeleteAsync(WaitUntil.Completed);
 ```
 
@@ -266,7 +266,7 @@ await organization.DeleteAsync(WaitUntil.Completed);
 | `Provisioning` | Resource is being provisioned |
 | `Updating` | Resource is being updated |
 | `Deleting` | Resource is being deleted |
-| `Accepted` | Request accepted, provisioning starting |
+| `Accepted` | 请求 accepted, provisioning starting |
 
 ## Marketplace Subscription Status
 
@@ -291,24 +291,24 @@ await org.Value.AddTagAsync("key", "value");
 
 ```csharp
 // Wait for completion
-var operation = await organizations.CreateOrUpdateAsync(
+var 操作 = await organizations.CreateOrUpdateAsync(
     WaitUntil.Completed,  // Blocks until done
     name,
     data
 );
 
 // Or start and poll later
-var operation = await organizations.CreateOrUpdateAsync(
+var 操作 = await organizations.CreateOrUpdateAsync(
     WaitUntil.Started,  // Returns immediately
     name,
     data
 );
 
 // Poll for completion
-while (!operation.HasCompleted)
+while (!操作.HasCompleted)
 {
     await Task.Delay(TimeSpan.FromSeconds(5));
-    await operation.UpdateStatusAsync();
+    await 操作.UpdateStatusAsync();
 }
 ```
 
@@ -337,7 +337,7 @@ var resourceId = MongoDBAtlasOrganizationResource.CreateResourceIdentifier(
 var orgResource = armClient.GetMongoDBAtlasOrganizationResource(resourceId);
 
 // Fetch data when needed
-var response = await orgResource.GetAsync();
+var 响应 = await orgResource.GetAsync();
 ```
 
 ## Common Errors
@@ -349,14 +349,14 @@ var response = await orgResource.GetAsync();
 | `InvalidParameter` | Missing required properties | Ensure all required fields are set |
 | `MarketplaceError` | Marketplace subscription issue | Verify offer details and subscription |
 
-## Related Resources
+## Related 资源
 
 - [Microsoft Learn: MongoDB Atlas on Azure](https://learn.microsoft.com/en-us/azure/partner-solutions/mongodb-atlas/)
 - [API Reference](https://learn.microsoft.com/en-us/dotnet/api/azure.resourcemanager.mongodbatlas)
 - [Azure SDK for .NET](https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/mongodbatlas)
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

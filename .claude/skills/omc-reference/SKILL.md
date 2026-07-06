@@ -86,7 +86,7 @@ user-invocable: false
 - `ai-slop-cleaner` — 回归安全的清理工作流
 
 ### 工具技能
-- `ask`, `cancel`, `note`, `skillify`, `learner` (已弃用别名), `omc-setup`, `mcp-setup`, `hud`, `omc-doctor`, `trace`, `release`, `project-session-manager`, `skill`, `writer-memory`, `configure-notifications`
+- `ask`, `cancel`, `note`, `skillify`, `learner` (已弃用别名), `omc-设置`, `mcp-设置`, `hud`, `omc-doctor`, `trace`, `release`, `project-会话-manager`, `skill`, `writer-memory`, `configure-notifications`
 
 ### CLAUDE.md 中的关键词触发器
 - `"autopilot"→autopilot`
@@ -133,7 +133,7 @@ user-invocable: false
 feat(docs): reduce always-loaded OMC instruction footprint
 
 Move reference-only orchestration content into a native Claude skill so
-session-start guidance stays small while detailed OMC reference remains available.
+会话-start guidance stays small while detailed OMC reference remains available.
 
 Constraint: Preserve CLAUDE.md marker-based installation flow
 Rejected: Sync all built-in skills in legacy install | broader behavior change than issue requires

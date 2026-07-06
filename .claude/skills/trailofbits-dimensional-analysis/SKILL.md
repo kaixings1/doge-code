@@ -4,7 +4,7 @@ Add dimensional annotations to codebases and detect dimensional bugs. Uses an an
 
 ## 概述
 
-This plugin runs one automatic workflow:
+This plugin runs one automatic 工作流:
 1. **Discover** the dimensional vocabulary in your codebase (tokens, shares, prices, etc.)
 2. **Annotate** your code with dimensional comments like `D18{tok}`, `D27{UoA/tok}`
 3. **Propagate** dimensions through arithmetic and call paths
@@ -28,7 +28,7 @@ struct RebalanceLimits {
 
 // Function parameters (NatSpec)
 /// @param weights D27{tok/BU} Basket weight ranges
-/// @param prices D27{UoA/tok} Prices for each token
+/// @param prices D27{UoA/tok} Prices for each 令牌
 /// @return price D27{buyTok/sellTok}
 
 // Inline arithmetic
@@ -38,9 +38,9 @@ uint256 startPrice = Math.mulDiv(sellPrices.high, D27, buyPrices.low);
 
 ## 用法
 
-The skill always executes in `full-auto` mode. Any supplied mode argument is ignored.
+The skill always executes in `full-auto` mode. Any supplied mode 参数 is ignored.
 
-Workflow orchestration for all four phases lives in `skills/dimensional-analysis/SKILL.md`.
+工作流 orchestration for all four phases lives in `skills/dimensional-analysis/SKILL.md`.
 
 ## Automatic Behavior
 
@@ -58,4 +58,4 @@ Workflow orchestration for all four phases lives in `skills/dimensional-analysis
 
 ## Agents
 
-| Agent | Purpose |
+| Agent | 目的 |

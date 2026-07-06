@@ -91,7 +91,7 @@ Execution workflows (for example `closed-loop-delivery`) may start only when:
 - issue status is `ready`
 - execution gate is `allowed`
 
-If issue is `draft`, stop and request user-provided acceptance criteria.
+If issue is `draft`, stop and 请求 user-provided acceptance criteria.
 
 ## 限制
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

@@ -43,7 +43,7 @@ od:
 
 【横幅结构】
 - 外框: 圆角 14px (macOS Big Sur 标准), 480×120 (或更长 480×180 含正文), 12-16px 内边距。
-- 背景: **frosted glass** 效果 — `background: rgba(245,245,247,0.78)` + `backdrop-filter: blur(40px) saturate(180%)`; 暗色版 `rgba(28,28,30,0.78)`。
+- 背景: **frosted glass** 效果 — `background: rgba(245,245,247,0.78)` + `backdrop-过滤器: blur(40px) saturate(180%)`; 暗色版 `rgba(28,28,30,0.78)`。
 - 边框: 1px `rgba(0,0,0,0.06)` (light) / `rgba(255,255,255,0.08)` (dark); 顶部加 1px 亮 highlight `rgba(255,255,255,0.5)`。
 - 阴影: `0 10px 40px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.08)`。
 
@@ -67,4 +67,4 @@ od:
 - light mode 背景白磨砂, dark mode (推荐 video) 几乎黑磨砂。
 - icon 不能用外链 emoji 图片, 用 unicode emoji 或 CSS 绘制几何。
 - 必须用用户提供的内容; 标题 + 正文清晰来自用户输入。
-- 单文件 HTML, 注意 `backdrop-filter` Safari 需要 `-webkit-` 前缀。
+- 单文件 HTML, 注意 `backdrop-过滤器` Safari 需要 `-webkit-` 前缀。

@@ -26,17 +26,17 @@ date_added: "2026-02-27"
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
 ## Role and Purpose
-An elite context engineering specialist focused on comprehensive, semantic, and dynamically adaptable context preservation across AI workflows. This tool orchestrates advanced context capture, serialization, and retrieval strategies to maintain institutional knowledge and enable seamless multi-session collaboration.
+An elite context engineering specialist focused on comprehensive, semantic, and dynamically adaptable context preservation across AI workflows. This tool orchestrates advanced context capture, serialization, and retrieval strategies to maintain institutional knowledge and enable seamless multi-会话 collaboration.
 
 ## 上下文 Management 概述
 The 上下文 Save Tool is a sophisticated context engineering solution designed to:
 - Capture comprehensive project state and knowledge
 - Enable semantic context retrieval
-- Support multi-agent workflow coordination
+- Support multi-agent 工作流 coordination
 - Preserve architectural decisions and project evolution
 - Facilitate intelligent knowledge transfer
 
-## 需求 and Argument Handling
+## 需求 and 参数 Handling
 
 ### Input 参数
 - `$PROJECT_ROOT`: Absolute path to project root
@@ -53,12 +53,12 @@ The 上下文 Save Tool is a sophisticated context engineering solution designed
 - Map implicit knowledge structures
 
 ### 2. State Serialization Patterns
-- Use JSON Schema for structured representation
+- Use JSON 架构 for structured representation
 - Support nested, hierarchical context models
 - Implement type-safe serialization
 - Enable lossless context reconstruction
 
-### 3. Multi-Session 上下文 Management
+### 3. Multi-会话 上下文 Management
 - Generate unique context fingerprints
 - Support version control for context artifacts
 - Implement context drift detection
@@ -67,7 +67,7 @@ The 上下文 Save Tool is a sophisticated context engineering solution designed
 ### 4. 上下文 Compression Techniques
 - Use advanced compression algorithms
 - Support lossy and lossless compression modes
-- Implement semantic token reduction
+- Implement semantic 令牌 reduction
 - Optimize storage efficiency
 
 ### 5. Vector Database 集成
@@ -110,10 +110,10 @@ def extract_project_context(project_root, context_type='standard'):
     return context
 ```
 
-### 2. State Serialization Schema
+### 2. State Serialization 架构
 ```json
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$架构": "http://json-架构.org/draft-07/架构#",
   "type": "object",
   "properties": {
     "project_name": {"type": "string"},
@@ -149,14 +149,14 @@ def compress_context(context, compression_level='standard'):
 
 ## Reference Workflows
 
-### Workflow 1: Project Onboarding 上下文 Capture
+### 工作流 1: Project Onboarding 上下文 Capture
 1. Analyze project structure
 2. Extract architectural decisions
 3. Generate semantic embeddings
 4. Store in vector database
 5. Create markdown summary
 
-### Workflow 2: Long-Running Session 上下文 Management
+### 工作流 2: Long-Running 会话 上下文 Management
 1. Periodically capture context snapshots
 2. Detect significant architectural changes
 3. Version and archive context
@@ -171,7 +171,7 @@ def compress_context(context, compression_level='standard'):
 ## 限制 and 考虑ations
 - Sensitive information must be explicitly excluded
 - 上下文 capture has computational overhead
-- 需要 careful configuration for optimal performance
+- 需要 careful 配置 for optimal performance
 
 ## Future Roadmap
 - Improved ML-driven context compression

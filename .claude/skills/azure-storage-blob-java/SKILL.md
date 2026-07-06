@@ -28,10 +28,10 @@ Build blob storage applications using the Azure Storage Blob SDK for Java.
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 
-// With SAS token
+// With SAS 令牌
 BlobServiceClient serviceClient = new BlobServiceClientBuilder()
-    .endpoint("<storage-account-url>")
-    .sasToken("<sas-token>")
+    .端点("<storage-account-url>")
+    .sasToken("<sas-令牌>")
     .buildClient();
 
 // With connection string
@@ -46,7 +46,7 @@ BlobServiceClient serviceClient = new BlobServiceClientBuilder()
 import com.azure.identity.DefaultAzureCredentialBuilder;
 
 BlobServiceClient serviceClient = new BlobServiceClientBuilder()
-    .endpoint("<storage-account-url>")
+    .端点("<storage-account-url>")
     .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
@@ -276,7 +276,7 @@ poller.waitForCompletion();
 blobClient.copyFromUrl("<source-blob-url>");
 ```
 
-### Generate SAS Token
+### Generate SAS 令牌
 
 ```java
 import com.azure.storage.blob.sas.*;
@@ -367,8 +367,8 @@ ProxyOptions proxyOptions = new ProxyOptions(
     new InetSocketAddress("localhost", 8888));
 
 BlobServiceClient client = new BlobServiceClientBuilder()
-    .endpoint("<endpoint>")
-    .sasToken("<sas-token>")
+    .端点("<端点>")
+    .sasToken("<sas-令牌>")
     .httpClient(new NettyAsyncHttpClientBuilder().proxy(proxyOptions).build())
     .buildClient();
 ```
@@ -386,11 +386,11 @@ AZURE_STORAGE_ACCOUNT_URL=https://<account>.blob.core.windows.net
 - "upload download blob"
 - "blob container SDK"
 - "storage streaming"
-- "SAS token generation"
+- "SAS 令牌 generation"
 - "blob metadata properties"
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

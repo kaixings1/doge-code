@@ -20,7 +20,7 @@ dbt（数据构建工具）的生产就绪模式，包括模型组织、测试�
 
 ## 不要使用此技能的场景
 
-- The project is not using dbt or a warehouse-backed workflow
+- The project is not using dbt or a warehouse-backed 工作流
 - You only need ad-hoc SQL queries
 - There is no access to source data or schemas
 
@@ -34,7 +34,7 @@ dbt（数据构建工具）的生产就绪模式，包括模型组织、测试�
 
 ## 资源
 
-- `resources/implementation-playbook.md` for detailed dbt patterns and examples.
+- `resources/implementation-playbook.md` for detailed dbt patterns and 示例.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

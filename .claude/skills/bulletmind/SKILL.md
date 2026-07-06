@@ -34,9 +34,9 @@ Transform input into a structured bullet hierarchy when the user asks for:
 - Structured study material that is easier to scan and memorize
 - Consistent formatting for messy or mixed bullet lists
 
-Use this skill to enforce:
+使用此技能强制执行：
 
-- No paragraphs or long prose
+- 没有段落或长篇散文
 - Only bullets with clean indentation
 
 This improves readability, memorization, and structured thinking for note-taking and review workflows.

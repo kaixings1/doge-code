@@ -1,7 +1,7 @@
 ---
 name: graphql
 description: "Graphql — Graphql 相关功能和最佳实践"
-  less. One endpoint, typed schema, introspection. But the flexibility that
+  less. One 端点, typed 架构, introspection. But the flexibility that
   makes it powerful also makes it dangerous. Without proper controls, clients
   can craft queries that bring down your server.
 risk: safe
@@ -12,13 +12,13 @@ date_added: 2026-02-27
 # GraphQL
 
 GraphQL 为客户端提供恰好所需的数据——不多不少。一个
-端点，类型化 schema，内省。但使其强大的灵活性
+端点，类型化 架构，内省。但使其强大的灵活性
 同时也使其危险。如果没有适当的控制，客户端可以
 构造出击垮您服务器的查询。
 
-本技能涵盖 schema 设计、解析器、用于 N+1 预防的 DataLoader、
+本技能涵盖 架构 设计、解析器、用于 N+1 预防的 DataLoader、
 微服务联邦以及与 Apollo/urql 的客户端集成。
-关键洞察：GraphQL 是一个契约。schema 就是 API 文档。
+关键洞察：GraphQL 是一个契约。架构 就是 API 文档。
 请仔细设计。
 
 2025 年的教训：GraphQL 并不总是答案。对于简单的 CRUD，REST
@@ -27,7 +27,7 @@ GraphQL 为客户端提供恰好所需的数据——不多不少。一个
 
 ## 原则
 
-- Schema 优先设计——schema 即契约
+- 架构 优先设计——架构 即契约
 - 使用 DataLoader 预防 N+1 查询
 - 限制查询深度和复杂度
 - 使用片段实现可复用的选择
@@ -37,7 +37,7 @@ GraphQL 为客户端提供恰好所需的数据——不多不少。一个
 
 ## 能力
 
-- graphql-schema-design
+- graphql-架构-design
 - graphql-resolvers
 - graphql-federation
 - graphql-subscriptions
@@ -50,7 +50,7 @@ GraphQL 为客户端提供恰好所需的数据——不多不少。一个
 ## 范围
 
 - database-queries -> postgres-wizard
-- authentication -> authentication-oauth
+- 认证 -> 认证-oauth
 - rest-api-design -> backend
 - websocket-infrastructure -> backend
 
@@ -66,7 +66,7 @@ GraphQL 为客户端提供恰好所需的数据——不多不少。一个
 
 - @apollo/client - 何时使用：功能完整的客户端 注意：缓存，状态管理
 - urql - 何时使用：轻量级替代方案 注意：更小，更简单
-- graphql-request - 何时使用：简单请求 注意：最小化，无缓存
+- graphql-请求 - 何时使用：简单请求 注意：最小化，无缓存
 
 ### 工具
 
@@ -75,20 +75,20 @@ GraphQL 为客户端提供恰好所需的数据——不多不少。一个
 
 ## 模式
 
-### Schema 设计
+### 架构 设计
 
-具有适当可空性的类型安全 schema
+具有适当可空性的类型安全 架构
 
 **何时使用**：设计任何 GraphQL API
 
-# SCHEMA DESIGN:
+# 架构 DESIGN:
 
 """
-The schema is your API contract. Design nullability
+The 架构 is your API contract. Design nullability
 intentionally - non-null fields must always resolve.
 """
 
-type Query {
+type 查询 {
   # Non-null - will always return user or throw
   user(id: ID!): User!
 
@@ -100,7 +100,7 @@ type Query {
 
   # Search with pagination
   searchUsers(
-    query: String!
+    查询: String!
     first: Int
     after: String
   ): UserConnection!
@@ -131,7 +131,7 @@ input UpdateUserInput {
   role: Role
 }
 
-# Payload types (for errors as data)
+# 载荷 types (for errors as data)
 type CreateUserPayload {
   user: User
   errors: [Error!]!
@@ -178,7 +178,7 @@ type UserConnection {
 
 type UserEdge {
   node: User!
-  cursor: String!
+  游标: String!
 }
 
 type PageInfo {
@@ -204,11 +204,11 @@ DataLoader 将其批量化为 2 次查询。
 
 import DataLoader from 'dataloader';
 
-// Create loaders per request
+// Create loaders per 请求
 function createLoaders(db) {
   return {
     userLoader: new DataLoader(async (ids) => {
-      // Single query for all users
+      // Single 查询 for all users
       const users = await db.user.findMany({
         where: { id: { in: ids } }
       });
@@ -280,11 +280,11 @@ import { ApolloClient, InMemoryCache } from '@apollo/client';
 
 const cache = new InMemoryCache({
   typePolicies: {
-    Query: {
+    查询: {
       fields: {
         // Paginated field
         users: {
-          keyArgs: ['query'],  // Cache separately per query
+          keyArgs: ['查询'],  // Cache separately per 查询
           merge(existing = { edges: [] }, incoming, { args }) {
             // Append for infinite scroll
             if (args?.after) {
@@ -326,7 +326,7 @@ const client = new ApolloClient({
 import { useQuery, useMutation } from '@apollo/client';
 
 const GET_USER = gql`
-  query GetUser($id: ID!) {
+  查询 GetUser($id: ID!) {
     user(id: $id) {
       id
       name
@@ -392,14 +392,14 @@ function CreateUserForm() {
 
 ### 代码生成
 
-从 schema 生成类型安全操作
+从 架构 生成类型安全操作
 
 **何时使用**：TypeScript 项目
 
 # GRAPHQL CODEGEN：
 
 """
-从您的 schema 和操作生成 TypeScript 类型。
+从您的 架构 和操作生成 TypeScript 类型。
 不再需要手动输入查询响应。
 """
 
@@ -413,7 +413,7 @@ npm install -D @graphql-codegen/typescript-react-apollo
 import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
-  schema: 'http://localhost:4000/graphql',
+  架构: 'http://localhost:4000/graphql',
   documents: ['src/**/*.graphql', 'src/**/*.tsx'],
   generates: {
     './src/generated/graphql.ts': {
@@ -460,7 +460,7 @@ function UserProfile({ userId }: { userId: string }) {
 GraphQL 错误用于意外失败。
 """
 
-# Schema
+# 架构
 type Mutation {
   login(email: String!, password: String!): LoginResult!
 }
@@ -469,7 +469,7 @@ union LoginResult = LoginSuccess | InvalidCredentials | AccountLocked
 
 type LoginSuccess {
   user: User!
-  token: String!
+  令牌: String!
 }
 
 type InvalidCredentials {
@@ -505,7 +505,7 @@ const resolvers = {
       return {
         __typename: 'LoginSuccess',
         user,
-        token: generateToken(user)
+        令牌: generateToken(user)
       };
     }
   },
@@ -517,13 +517,13 @@ const resolvers = {
   }
 };
 
-# Client query
+# Client 查询
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       ... on LoginSuccess {
         user { id name }
-        token
+        令牌
       }
       ... on InvalidCredentials {
         message
@@ -540,7 +540,7 @@ const LOGIN = gql`
 const result = data.login;
 switch (result.__typename) {
   case 'LoginSuccess':
-    setToken(result.token);
+    setToken(result.令牌);
     redirect('/dashboard');
     break;
   case 'InvalidCredentials':
@@ -577,7 +577,7 @@ GraphQL 解析器独立运行。没有批处理，作者
 
 import DataLoader from 'dataloader';
 
-// Create loader per request
+// Create loader per 请求
 const userLoader = new DataLoader(async (ids) => {
   const users = await db.user.findMany({
     where: { id: { in: ids } }
@@ -596,7 +596,7 @@ const resolvers = {
 };
 
 # Key points:
-# 1. Create new loaders per request (for caching scope)
+# 1. Create new loaders per 请求 (for caching scope)
 # 2. Return results in same order as input IDs
 # 3. Handle missing items (return null, not skip)
 
@@ -604,7 +604,7 @@ const resolvers = {
 
 严重性：严重
 
-情境：您的 schema 具有循环关系（user.posts.author.posts...）。
+情境：您的 架构 具有循环关系（user.posts.author.posts...）。
 客户端发送一个深度达 20 层的查询。您的服务器尝试解析
 它，结果要么超时要么崩溃。
 
@@ -620,7 +620,7 @@ GraphQL 允许客户端请求任何有效的查询形状。没有
 
 推荐的修复方案：
 
-# LIMIT QUERY DEPTH AND COMPLEXITY
+# LIMIT 查询 DEPTH AND COMPLEXITY
 
 import depthLimit from 'graphql-depth-limit';
 import { createComplexityLimitRule } from 'graphql-validation-complexity';
@@ -632,7 +632,7 @@ const server = new ApolloServer({
     // Limit nesting depth
     depthLimit(10),
 
-    // Limit query complexity
+    // Limit 查询 complexity
     createComplexityLimitRule(1000, {
       scalarCost: 1,
       objectCost: 2,
@@ -642,20 +642,20 @@ const server = new ApolloServer({
 });
 
 # Also consider:
-# - Query timeout limits
+# - 查询 timeout limits
 # - Rate limiting per client
 # - Persisted queries (only allow pre-registered queries)
 
-### 生产环境启用内省会暴露您的 schema
+### 生产环境启用内省会暴露您的 架构
 
 严重性：高
 
 情境：您在生产环境部署时启用了内省。任何人都可以
-查询您的 schema，发现所有类型、变更操作和字段名称。
+查询您的 架构，发现所有类型、变更操作和字段名称。
 攻击者确切知道要攻击什么。
 
 症状：
-- 通过内省查询可见 schema
+- 通过内省查询可见 架构
 - 生产环境可访问 GraphQL Playground
 - 完整的类型信息暴露
 
@@ -689,7 +689,7 @@ const server = new ApolloServer({
   }
 });
 
-### 仅在 schema 指令中做授权，不在解析器中
+### 仅在 架构 指令中做授权，不在解析器中
 
 严重性：高
 
@@ -724,7 +724,7 @@ Mutation: {
       throw new NotFoundError('Post not found');
     }
 
-    // Business logic authorization
+    // Business logic 授权
     const canDelete =
       post.authorId === user.id ||
       user.role === 'ADMIN' ||
@@ -738,7 +738,7 @@ Mutation: {
   }
 }
 
-// Helper for field-level authorization
+// Helper for field-level 授权
 User: {
   email: (user, _, { currentUser }) => {
     // Only show email to self or admin
@@ -769,7 +769,7 @@ User: {
 
 推荐的修复方案：
 
-# FIELD-LEVEL AUTHORIZATION
+# FIELD-LEVEL 授权
 
 const resolvers = {
   User: {
@@ -847,8 +847,8 @@ type User {
 # [User]   - Nullable list of nullable users (avoid)
 
 # Rule of thumb:
-# - Non-null if always present and failure should fail query
-# - Nullable if optional or failure shouldn't break response
+# - Non-null if always present and failure should fail 查询
+# - Nullable if optional or failure shouldn't break 响应
 
 ### 昂贵查询与廉价查询同等对待
 
@@ -870,7 +870,7 @@ type User {
 
 推荐的修复方案：
 
-# QUERY COST ANALYSIS
+# 查询 COST ANALYSIS
 
 import { createComplexityLimitRule } from 'graphql-validation-complexity';
 
@@ -881,8 +881,8 @@ const complexityRules = createComplexityLimitRule(1000, {
   listFactor: 10,
   // Custom field costs
   fieldCost: {
-    'Query.searchUsers': 100,
-    'Query.analytics': 500,
+    '查询.searchUsers': 100,
+    '查询.analytics': 500,
     'User.posts': ({ args }) => args.limit || 10
   }
 });
@@ -891,13 +891,13 @@ const complexityRules = createComplexityLimitRule(1000, {
 const costPlugin = {
   requestDidStart() {
     return {
-      didResolveOperation({ request, document }) {
+      didResolveOperation({ 请求, document }) {
         const cost = calculateQueryCost(document);
         if (cost > 1000) {
-          throw new Error(`Query too expensive: ${cost}`);
+          throw new Error(`查询 too expensive: ${cost}`);
         }
         // Track cost for rate limiting
-        rateLimiter.consume(request.userId, cost);
+        rateLimiter.consume(请求.userId, cost);
       }
     };
   }
@@ -940,7 +940,7 @@ const wsServer = new WebSocketServer({
 });
 
 useServer({
-  schema,
+  架构,
   context: (ctx) => ({
     pubsub,
     userId: ctx.connectionParams?.userId
@@ -964,8 +964,8 @@ Subscription: {
         activeSubscriptions.set(userId, roomId);
         return pubsub.asyncIterator(`ROOM_${roomId}`);
       },
-      (payload, { roomId }) => {
-        return payload.roomId === roomId;
+      (载荷, { roomId }) => {
+        return 载荷.roomId === roomId;
       }
     )
   }
@@ -981,15 +981,15 @@ Message: Introspection should be disabled in production
 
 Fix action: Set introspection: process.env.NODE_ENV !== 'production'
 
-### Direct database query in resolver
+### Direct database 查询 in resolver
 
 Severity: WARNING
 
 Message: 考虑 using DataLoader to batch and cache queries
 
-Fix action: Create DataLoader and use .load() instead of direct query
+Fix action: Create DataLoader and use .load() instead of direct 查询
 
-### No query depth limiting
+### No 查询 depth limiting
 
 Severity: WARNING
 
@@ -1005,7 +1005,7 @@ Message: 考虑 wrapping resolver logic in try-catch
 
 Fix action: Add error handling to provide better error messages
 
-### JSON or Any type in schema
+### JSON or Any type in 架构
 
 Severity: INFO
 
@@ -1013,11 +1013,11 @@ Message: Avoid JSON/Any types - they bypass GraphQL's type safety
 
 Fix action: Define proper input/output types
 
-### Mutation returns bare type instead of payload
+### Mutation returns bare type instead of 载荷
 
 Severity: INFO
 
-Message: 考虑 using payload types for mutations (includes errors)
+Message: 考虑 using 载荷 types for mutations (includes errors)
 
 Fix action: Create CreateUserPayload type with user and errors fields
 
@@ -1029,11 +1029,11 @@ Message: List fields should have pagination (limit, first, after)
 
 Fix action: Add arguments: field(limit: Int, offset: Int): [Type!]!
 
-### Query hook without error handling
+### 查询 hook without error handling
 
 Severity: INFO
 
-Message: Handle query errors in UI
+Message: Handle 查询 errors in UI
 
 Fix action: Destructure and handle error: const { error } = useQuery(...)
 
@@ -1050,9 +1050,9 @@ Fix action: Use update function to modify cache directly
 ### Delegation Triggers
 
 - user needs database optimization -> postgres-wizard (Optimize queries for GraphQL resolvers)
-- user needs authentication system -> authentication-oauth (Auth for GraphQL context)
-- user needs caching layer -> caching-strategies (Response caching, DataLoader caching)
-- user needs real-time infrastructure -> backend (WebSocket setup for subscriptions)
+- user needs 认证 system -> 认证-oauth (Auth for GraphQL context)
+- user needs caching layer -> caching-strategies (响应 caching, DataLoader caching)
+- user needs real-time infrastructure -> backend (WebSocket 设置 for subscriptions)
 
 ## 相关 Skills
 
@@ -1060,14 +1060,14 @@ Works well with: `backend`, `postgres-wizard`, `nextjs-app-router`, `react-patte
 
 ## 使用场景
 - User mentions or implies: graphql
-- User mentions or implies: graphql schema
+- User mentions or implies: graphql 架构
 - User mentions or implies: graphql resolver
 - User mentions or implies: apollo server
 - User mentions or implies: apollo client
 - User mentions or implies: graphql federation
 - User mentions or implies: dataloader
 - User mentions or implies: graphql codegen
-- User mentions or implies: graphql query
+- User mentions or implies: graphql 查询
 - User mentions or implies: graphql mutation
 
 ## 局限性

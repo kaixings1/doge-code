@@ -40,9 +40,17 @@ source: community
 
 ## 快速参考
 
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
 ### Codebase Size Strategy
 
-| Codebase Size | Strategy | Approach |
+| Codebase Size | Strategy | 方法 |
 |---------------|----------|----------|
 | SMALL (<20 files) | DEEP | Read all deps, full git blame |
 | MEDIUM (20-200) | FOCUSED | 1-hop deps, priority files |
@@ -58,7 +66,7 @@ source: community
 
 ---
 
-## Workflow Overview
+## 工作流 概述
 
 ```
 Pre-Analysis → Phase 0: Triage → Phase 1: Code Analysis → Phase 2: Test Coverage
@@ -90,7 +98,7 @@ Phase 3: Blast Radius → Phase 4: Deep Context → Phase 5: Adversarial → Pha
 │     (Regressions, reentrancy, access control, overflow, etc.)
 │
 └─ Quick triage only?
-   └─ Use Quick Reference above, skip detailed docs
+   └─ Use 快速参考 above, skip detailed docs
 ```
 
 ---
@@ -109,7 +117,7 @@ Before delivering:
 
 ---
 
-## Integration
+## 集成
 
 **audit-context-building skill:**
 - Pre-Analysis: Build baseline context
@@ -126,7 +134,7 @@ Before delivering:
 ### Quick Triage (Small PR)
 ```
 Input: 5 file PR, 2 HIGH RISK files
-Strategy: Use Quick Reference
+Strategy: Use 快速参考
 1. Classify risk level per file (2 HIGH, 3 LOW)
 2. Focus on 2 HIGH files only
 3. Git blame removed code
@@ -138,7 +146,7 @@ Time: ~30 minutes
 ```
 Input: 80 files, 12 HIGH RISK changes
 Strategy: FOCUSED (see methodology.md)
-1. Full workflow on HIGH RISK files
+1. Full 工作流 on HIGH RISK files
 2. Surface scan on MEDIUM
 3. Skip LOW risk files
 4. Complete report with all sections
@@ -190,7 +198,7 @@ These patterns require adversarial analysis even in quick triage.
 - Calculate blast radius early to prioritize
 - Generate concrete attack scenarios
 - Reference specific line numbers and commits
-- Be honest about coverage limitations
+- Be honest about coverage 限制
 - Always generate the output file
 
 **Don't:**
@@ -205,16 +213,16 @@ These patterns require adversarial analysis even in quick triage.
 
 ## Supporting Documentation
 
-- **methodology.md** - Detailed phase-by-phase workflow (Phases 0-4)
+- **methodology.md** - Detailed phase-by-phase 工作流 (Phases 0-4)
 - **adversarial.md** - Attacker modeling and exploit scenarios (Phase 5)
 - **reporting.md** - Report structure and formatting (Phase 6)
 - **patterns.md** - Common vulnerability patterns reference
 
 ---
 
-**For first-time users:** Start with methodology.md to understand the complete workflow.
+**For first-time users:** Start with methodology.md to understand the complete 工作流.
 
-**For experienced users:** Use this page's Quick Reference and Decision Tree to navigate directly to needed content.
+**For experienced users:** Use this page's 快速参考 and Decision Tree to navigate directly to needed content.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

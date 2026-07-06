@@ -23,7 +23,7 @@ Build platform-native content without flattening the author's real voice into pl
 4. Specificity beats adjectives.
 5. No engagement bait unless the user explicitly asks for it.
 
-## Source-First Workflow
+## Source-First 工作流
 
 Before drafting, identify the source set:
 - published articles
@@ -35,7 +35,7 @@ Before drafting, identify the source set:
 - prior posts from the same author
 
 If the user wants a specific voice, build a voice profile from real examples before writing.
-Use `brand-voice` as the canonical workflow when voice consistency matters across more than one output.
+Use `brand-voice` as the canonical 工作流 when voice consistency matters across more than one output.
 
 ## Voice Handling
 
@@ -66,7 +66,7 @@ Delete and rewrite any of these:
 
 - open with the strongest claim, artifact, or tension
 - keep the compression if the source voice is compressed
-- if writing a thread, each post must advance the argument
+- if writing a thread, each post must advance the 参数
 - do not pad with context the audience does not need
 
 ### LinkedIn
@@ -85,7 +85,7 @@ Delete and rewrite any of these:
 ### YouTube
 
 - show the result or tension early
-- organize by argument or progression, not filler sections
+- organize by 参数 or progression, not filler sections
 - use chaptering only when it helps clarity
 
 ### Newsletter

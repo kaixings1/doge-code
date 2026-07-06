@@ -27,7 +27,7 @@ This skill should be used when:
 - Querying gene ontology terms (QuickGO, GO annotations)
 - Accessing protein-protein interaction data (PSICQUIC, IntactComplex)
 - Mining genomic data (BioMart, ArrayExpress, ENA)
-- Integrating data from multiple bioinformatics resources in a single workflow
+- Integrating data from multiple bioinformatics resources in a single 工作流
 
 ## Core Capabilities
 
@@ -116,7 +116,7 @@ u = UniChem()
 chembl_id = u.get_compound_id_from_kegg("C11222")  # Returns CHEMBL278315
 ```
 
-**Common workflow:**
+**Common 工作流:**
 1. Search compound by name in KEGG
 2. Extract KEGG compound ID
 3. Use UniChem for KEGG → ChEMBL mapping
@@ -222,7 +222,7 @@ BioServices excels at combining multiple services for comprehensive analysis. Co
 
 ### Complete Protein Analysis Pipeline
 
-Execute a full protein characterization workflow:
+Execute a full protein characterization 工作流:
 
 ```bash
 export NCBI_EMAIL=your.email@example.com
@@ -326,7 +326,7 @@ BioServices works well with:
 - **Pandas**: Tabular data manipulation
 - **PyMOL**: 3D structure visualization (retrieve PDB IDs)
 - **NetworkX**: Network analysis of pathway interactions
-- **Galaxy**: Custom tool wrappers for workflow platforms
+- **Galaxy**: Custom tool wrappers for 工作流 platforms
 
 ## 资源
 
@@ -368,7 +368,7 @@ Most services need no API key. Exceptions:
 | NCBI BLAST | Contact email via `NCBI_EMAIL` or `email=` in `NCBIblast.run()` |
 | Some EBI services | Optional; check service docs if rate-limited |
 
-Set once per shell session:
+Set once per shell 会话:
 
 ```bash
 export NCBI_EMAIL=your.email@example.com

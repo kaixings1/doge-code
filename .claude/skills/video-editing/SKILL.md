@@ -14,7 +14,7 @@ AI-assisted editing for real footage. Not generation from prompts. Editing exist
 - Building vlogs, tutorials, or demo videos from raw capture
 - Adding overlays, subtitles, music, or voiceover to existing video
 - Reframing video for different platforms (YouTube, TikTok, Instagram)
-- User says "edit video", "cut this footage", "make a vlog", or "video workflow"
+- User says "edit video", "cut this footage", "make a vlog", or "video 工作流"
 
 ## Core Thesis
 
@@ -38,7 +38,7 @@ Each layer has a specific job. Do not skip layers. Do not try to make one tool d
 Collect the source material:
 - **Screen Studio**: polished screen recordings for app demos, coding sessions, browser workflows
 - **Raw camera footage**: vlog footage, interviews, event recordings
-- **Desktop capture via VideoDB**: session recording with real-time context (see `videodb` skill)
+- **Desktop capture via VideoDB**: 会话 recording with real-time context (see `videodb` skill)
 
 Output: raw files ready for organization.
 
@@ -109,7 +109,7 @@ ffmpeg -i segment.mp4 -af loudnorm=I=-16:TP=-1.5:LRA=11 -c:v copy normalized.mp4
 
 Remotion turns editing problems into composable code. Use it for things that traditional editors make painful:
 
-### When to use Remotion
+### 使用场景 Remotion
 
 - Overlays: text, images, branding, lower thirds
 - Data visualizations: charts, stats, animated numbers

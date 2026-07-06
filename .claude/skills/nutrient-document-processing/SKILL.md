@@ -19,27 +19,27 @@ export NUTRIENT_API_KEY="pdf_live_..."
 ### 转换文档
 ```bash
 # DOCX -> PDF
-curl -X POST https://api.nutrient.io/build -H "Authorization: Bearer $NUTRIENT_API_KEY" -F "document.docx=@document.docx" -F 'instructions={parts:[{"file":"document.docx"}]}' -o output.pdf
+curl -X POST https://api.nutrient.io/build -H "授权: Bearer $NUTRIENT_API_KEY" -F "document.docx=@document.docx" -F 'instructions={parts:[{"file":"document.docx"}]}' -o output.pdf
 
 # PDF -> DOCX
-curl -X POST https://api.nutrient.io/build -H "Authorization: Bearer $NUTRIENT_API_KEY" -F "document.pdf=@document.pdf" -F 'instructions={parts:[{"file":"document.pdf"}],"output":{"type":"docx"}}' -o output.docx
+curl -X POST https://api.nutrient.io/build -H "授权: Bearer $NUTRIENT_API_KEY" -F "document.pdf=@document.pdf" -F 'instructions={parts:[{"file":"document.pdf"}],"output":{"type":"docx"}}' -o output.docx
 ```
 支持的输入格式：PDF, DOCX, XLSX, PPTX, DOC, XLS, PPT, PPS, PPSX, ODT, RTF, HTML, JPG, PNG, TIFF, HEIC, GIF, WebP, SVG, TGA, EPS。
 
 ### 提取文本和数据
 ```bash
-curl -X POST https://api.nutrient.io/build -H "Authorization: Bearer $NUTRIENT_API_KEY" -F "document.pdf=@document.pdf" -F 'instructions={parts:[{"file":"document.pdf"}],"output":{"type":"text"}}' -o output.txt
+curl -X POST https://api.nutrient.io/build -H "授权: Bearer $NUTRIENT_API_KEY" -F "document.pdf=@document.pdf" -F 'instructions={parts:[{"file":"document.pdf"}],"output":{"type":"text"}}' -o output.txt
 ```
 
 ### OCR 扫描文档
 ```bash
-curl -X POST https://api.nutrient.io/build -H "Authorization: Bearer $NUTRIENT_API_KEY" -F "scanned.pdf=@scanned.pdf" -F 'instructions={parts:[{"file":"scanned.pdf"}],actions:[{"type":"ocr","language":"english"}]}' -o searchable.pdf
+curl -X POST https://api.nutrient.io/build -H "授权: Bearer $NUTRIENT_API_KEY" -F "scanned.pdf=@scanned.pdf" -F 'instructions={parts:[{"file":"scanned.pdf"}],actions:[{"type":"ocr","language":"english"}]}' -o searchable.pdf
 ```
 支持 100 多种语言，通过 ISO 639-2 代码指定（如 eng, deu, fra, spa, jpn, kor, chi_sim 等）。
 
 ### 脱敏敏感信息
 ```bash
-curl -X POST https://api.nutrient.io/build -H "Authorization: Bearer $NUTRIENT_API_KEY" -F "document.pdf=@document.pdf" -F 'instructions={parts:[{"file":"document.pdf"}],actions:[{"type":"redaction","strategy":"preset","strategyOptions":{"preset":"social-security-number"}}]}' -o redacted.pdf
+curl -X POST https://api.nutrient.io/build -H "授权: Bearer $NUTRIENT_API_KEY" -F "document.pdf=@document.pdf" -F 'instructions={parts:[{"file":"document.pdf"}],actions:[{"type":"redaction","strategy":"preset","strategyOptions":{"preset":"social-security-number"}}]}' -o redacted.pdf
 ```
 预设：social-security-number, email-address, credit-card-number, ipv4, ipv6 等。
 

@@ -13,7 +13,7 @@ tags:
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---

@@ -1,12 +1,12 @@
 ---
 name: monday-automation
-description: "通过 Rube MCP (Composio) 自动执行 Monday.com 工作管理，包括面板、项目、列、组、子项目和更新。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Monday.com 工作管理，包括面板、项目、列、组、子项目和更新。使用前始终先搜索工具以获取当前 架构。"
 risk: critical
 source: community
 date_added: "2026-02-27"
 ---
 
-# 通过 Rube MCP 实现 Monday.com 自动化
+# Monday.com 自动化
 
 通过 Composio 的 Monday 工具包自动执行 Monday.com 工作管理工作流，包括面板创建、项目管理、列值更新、组组织、子项目和更新/评论线程。
 
@@ -18,7 +18,7 @@ date_added: "2026-02-27"
 
 ## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client 配置. No API keys needed — just add the 端点 and it works.
 
 1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
 2. Call `RUBE_MANAGE_CONNECTIONS` with toolkit `monday`
@@ -29,7 +29,7 @@ date_added: "2026-02-27"
 
 ### 1. Create and Manage Boards
 
-**When to use**: User wants to create a new board, list existing boards, or set up workspace structure.
+**使用场景**: User wants to create a new board, list existing boards, or set up workspace structure.
 
 **Tool sequence**:
 1. `MONDAY_GET_WORKSPACES` - List available workspaces and resolve workspace ID [Prerequisite]
@@ -54,7 +54,7 @@ date_added: "2026-02-27"
 
 ### 2. Create and Manage Items
 
-**When to use**: User wants to add tasks/items to a board, list existing items, or move items between groups.
+**使用场景**: User wants to add tasks/items to a board, list existing items, or move items between groups.
 
 **Tool sequence**:
 1. `MONDAY_LIST_BOARDS` - Resolve board name to board ID [Prerequisite]
@@ -79,7 +79,7 @@ date_added: "2026-02-27"
 
 ### 3. Update Item Column Values
 
-**When to use**: User wants to change status, date, text, or other column values on existing items.
+**使用场景**: User wants to change status, date, text, or other column values on existing items.
 
 **Tool sequence**:
 1. `MONDAY_LIST_COLUMNS` or `MONDAY_COLUMNS` - Get column IDs and types [Prerequisite]
@@ -98,7 +98,7 @@ date_added: "2026-02-27"
 - `board_id`: Board ID (integer, required)
 - `item_id`: Item ID (integer, required)
 - `column_id`: Column ID string (required)
-- `value`: JSON object matching the column type schema
+- `value`: JSON object matching the column type 架构
 - `create_labels_if_missing`: false by default; set true for status/dropdown
 
 **Pitfalls**:
@@ -110,7 +110,7 @@ date_added: "2026-02-27"
 
 ### 4. Work with Groups and Board Structure
 
-**When to use**: User wants to organize items into groups, add columns, or inspect board structure.
+**使用场景**: User wants to organize items into groups, add columns, or inspect board structure.
 
 **Tool sequence**:
 1. `MONDAY_LIST_BOARDS` - Resolve board ID [Prerequisite]
@@ -123,7 +123,7 @@ date_added: "2026-02-27"
 **Key parameters**:
 - `board_id`: Board ID (required for all group/column operations)
 - `group_name`: Name for new group (CREATE_GROUP)
-- `column_type`: Must be a valid GraphQL enum token in snake_case (e.g., "status", "text", "long_text", "numbers", "date", "dropdown", "people")
+- `column_type`: Must be a valid GraphQL enum 令牌 in snake_case (e.g., "status", "text", "long_text", "numbers", "date", "dropdown", "people")
 - `title`: Column display title
 - `defaults`: JSON string for status/dropdown labels, e.g., `'{"labels": ["To Do", "In Progress", "Done"]}'`
 
@@ -135,7 +135,7 @@ date_added: "2026-02-27"
 
 ### 5. Manage Subitems and Updates
 
-**When to use**: User wants to view subitems of a task or add comments/updates to items.
+**使用场景**: User wants to view subitems of a task or add comments/updates to items.
 
 **Tool sequence**:
 1. `MONDAY_LIST_BOARD_ITEMS` - Find parent item IDs [Prerequisite]
@@ -149,14 +149,14 @@ date_added: "2026-02-27"
 - `include_parent_fields`: true to include parent item info (default true)
 
 **Key parameters for MONDAY_CREATE_OBJECT** (GraphQL):
-- `query`: Full GraphQL mutation string
+- `查询`: Full GraphQL mutation string
 - `variables`: 可选 variables object
 
 **Pitfalls**:
 - Subitems can only be queried through their parent items
 - To create subitems, use `MONDAY_CREATE_OBJECT` with a `create_subitem` GraphQL mutation
 - `MONDAY_CREATE_UPDATE` is for adding comments/updates to items (Monday's "updates" feature), not for modifying item values
-- `MONDAY_CREATE_OBJECT` is a raw GraphQL endpoint; ensure correct mutation syntax
+- `MONDAY_CREATE_OBJECT` is a raw GraphQL 端点; ensure correct mutation syntax
 
 ## 常见模式
 
@@ -169,9 +169,9 @@ date_added: "2026-02-27"
 - **Item name -> item_id**: `MONDAY_LIST_BOARD_ITEMS` or `MONDAY_ITEMS_PAGE`
 
 ### Pagination
-Monday.com uses cursor-based pagination for items:
-- `MONDAY_ITEMS_PAGE` returns a `cursor` in the response for the next page
-- Pass the `cursor` to the next call; `board_id` and `query_params` are ignored when cursor is provided
+Monday.com uses 游标-based pagination for items:
+- `MONDAY_ITEMS_PAGE` returns a `游标` in the 响应 for the next page
+- Pass the `游标` to the next call; `board_id` and `query_params` are ignored when 游标 is provided
 - Cursors are cached for 60 minutes
 - Maximum `limit` is 500 per page
 - `MONDAY_LIST_BOARDS` and `MONDAY_GET_WORKSPACES` use page-based pagination with `page` and `limit`
@@ -194,20 +194,28 @@ Different column types require different value formats:
 
 ### Rate Limits
 - Monday.com GraphQL API has complexity-based rate limits
-- Large boards with many columns increase query complexity
-- Use `limit` parameter to reduce items per request if hitting limits
+- Large boards with many columns increase 查询 complexity
+- Use `limit` 参数 to reduce items per 请求 if hitting limits
 
-### Parameter Quirks
+### 参数 Quirks
 - `column_type` for CREATE_COLUMN must be exact snake_case enum values; "people" not "person"
 - `column_values` in CREATE_ITEM accepts both JSON string and object formats
 - `MONDAY_CHANGE_SIMPLE_COLUMN_VALUE` auto-creates missing labels by default; `MONDAY_UPDATE_ITEM` does not
 - `MONDAY_CREATE_OBJECT` is a raw GraphQL interface; use it for operations without dedicated tools (e.g., create_subitem, delete_item, archive_board)
 
-### Response Structure
+### 响应 Structure
 - Board items are returned as arrays with `id`, `name`, and `state` fields
 - Column values include both raw `value` (JSON) and rendered `text` (display string)
 - Subitems are nested under parent items and cannot be queried independently
 
 ## 快速参考
 
-| Task | Tool Slug | Key Params |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
+| Task | Tool 标识符 | Key Params |

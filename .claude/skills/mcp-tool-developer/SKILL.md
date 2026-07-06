@@ -9,40 +9,40 @@ source_type: community
 date_added: "2026-05-13"
 author: yundu-ai
 tags: [mcp, ai-agent, tool-development, typescript, python, llm, model-context-protocol]
-tools: [claude, cursor, gemini]
+tools: [claude, 游标, gemini]
 ---
 
 # MCP Tool Developer
 
 ## 概述
 
-Expert at building Model Context Protocol (MCP) servers that give AI agents new capabilities. Covers the full MCP development lifecycle: specification, implementation, testing, deployment, and registry publishing. Supports both TypeScript and Python with production-ready patterns.
+Expert at building Model Context Protocol (MCP) servers that give AI agents new 能力. Covers the full MCP development lifecycle: specification, implementation, testing, 部署, and registry publishing. Supports both TypeScript and Python with production-ready patterns.
 
 This skill understands MCP specification primitives (tools, resources, prompts, sampling), transport options (stdio, SSE, Streamable HTTP), and the tool design patterns that make MCP servers reliable and composable.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when building a new MCP server from scratch
 - Use when wrapping an existing API as an MCP tool
 - Use when debugging MCP server issues
-- Use when designing the tool schema for an MCP server
+- Use when designing the tool 架构 for an MCP server
 - Use when publishing an MCP server to a registry
 
 ## 工作原理
 
 ### 步骤 1: Define the MCP Server Scope
 
-Identify what capabilities the server should expose:
+Identify what 能力 the server should expose:
 - **Tools** - Functions the LLM can call (primary use case)
 - **Resources** - Data the LLM can read (files, APIs, databases)
 - **Prompts** - Reusable prompt templates
 
 Choose the transport:
-- **stdio** - For local CLI tools (Claude Code, Cursor)
+- **stdio** - For local CLI tools (Claude Code, 游标)
 - **SSE (Server-Sent Events)** - For remote/hosted tools
 - **Streamable HTTP** - New in MCP spec for modern deployments
 
-### 步骤 2: Design the Tool Schema
+### 步骤 2: Design the Tool 架构
 
 Define input/output schemas before writing implementation:
 
@@ -100,7 +100,7 @@ Wrap an external API as an MCP tool with auth, rate limiting, and error handling
 - Return structured errors, not crashes - tools should fail gracefully
 - Define schemas before implementation
 - Include descriptions that help the LLM understand when and how to use each tool
-- Validate all inputs against the schema
+- Validate all inputs against the 架构
 - Add rate limiting for external API calls
 - Use environment variables for secrets, never hardcode credentials
 
@@ -113,7 +113,7 @@ Wrap an external API as an MCP tool with auth, rate limiting, and error handling
 ## Security and Safety Notes
 
 - Never hardcode API keys or credentials in tool implementations
-- Use environment variables or secret managers for all authentication
+- Use environment variables or secret managers for all 认证
 - Validate and sanitize all inputs to prevent injection attacks
 - Rate limit external API calls to prevent abuse
 - Review tool permissions carefully - tools can access files, networks, and execute code
@@ -121,12 +121,12 @@ Wrap an external API as an MCP tool with auth, rate limiting, and error handling
 ## 常见陷阱
 
 - **Problem:** LLM calls tools with wrong parameters
-  **Solution:** Improve tool descriptions and add examples in the description field. The LLM reads descriptions to decide how to call tools.
+  **Solution:** Improve tool descriptions and add 示例 in the description field. The LLM reads descriptions to decide how to call tools.
 
 - **Problem:** Tool times out on large inputs
   **Solution:** Add input size validation and pagination. Stream large responses instead of buffering.
 
 ## 相关技能
 
-- `api-integration-architect` - For API design patterns used in MCP tools
+- `api-集成-architect` - For API design patterns used in MCP tools
 - `security-audit-code-reviewer` - For reviewing MCP server code security

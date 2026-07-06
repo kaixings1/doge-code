@@ -112,4 +112,4 @@ Phase 7: Wave 7:  6-test-generator            (optional)
 Phase 8: Orchestrator — Return final-report.md
 ```
 
-| Agent | Phase | Purpose | Output Directory |
+| Agent | Phase | 目的 | Output Directory |

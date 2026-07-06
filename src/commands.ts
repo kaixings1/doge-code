@@ -268,6 +268,7 @@ import performanceProfiler from './commands/performance-profiler/index.js'
 import codeReviewAssistant from './commands/code-review-assistant/index.js'
 import dependencyAnalyzer from './commands/dependency-analyzer/index.js'
 import skillsI18n from './commands/skills-i18n/index.js'
+import notebook from './commands/notebook/index.js'
 import { getSettingSourceName } from './utils/settings/constants.js'
 import {
   type Command,
@@ -466,6 +467,7 @@ const COMMANDS = memoize((): Command[] => [
   codeReviewAssistant,
   dependencyAnalyzer,
   skillsI18n,
+  notebook,
   ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO
     ? INTERNAL_ONLY_COMMANDS
     : []),

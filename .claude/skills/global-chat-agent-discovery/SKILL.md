@@ -9,18 +9,18 @@ source_type: community
 date_added: "2026-04-06"
 author: pumanitro
 tags: [mcp, ai-agents, agent-discovery, agents-txt, a2a, developer-tools]
-tools: [claude, cursor, gemini, codex]
+tools: [claude, 游标, gemini, codex]
 ---
 
 # Global Chat Agent Discovery
 
 ## 概述
 
-Global Chat is a cross-protocol AI agent discovery platform that aggregates MCP servers and AI agents from 6+ registries into a single searchable directory. 此技能帮助 you find the right MCP server, A2A agent, or agents.txt endpoint for any task by searching across 18,000+ indexed entries. It also provides an MCP server (`@global-chat/mcp-server`) for programmatic access to the directory from any MCP-compatible client.
+Global Chat is a cross-protocol AI agent discovery platform that aggregates MCP servers and AI agents from 6+ registries into a single searchable directory. 此技能帮助 you find the right MCP server, A2A agent, or agents.txt 端点 for any task by searching across 18,000+ indexed entries. It also provides an MCP server (`@global-chat/mcp-server`) for programmatic access to the directory from any MCP-compatible client.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
-- Use when you need to find an MCP server for a specific capability (e.g., database access, file conversion, API integration)
+- Use when you need to find an MCP server for a specific capability (e.g., database access, file conversion, API 集成)
 - Use when evaluating which agent registries carry tools for your use case
 - Use when you want to search across multiple protocols (MCP, A2A, agents.txt) simultaneously
 - Use when setting up agent-to-agent communication and need to discover available endpoints
@@ -29,13 +29,13 @@ Global Chat is a cross-protocol AI agent discovery platform that aggregates MCP 
 
 ### Option 1: Use the MCP Server (Recommended for Agents)
 
-Install the Global Chat MCP server to search the directory programmatically from Claude Code, Cursor, or any MCP client.
+Install the Global Chat MCP server to search the directory programmatically from Claude Code, 游标, or any MCP client.
 
 ```bash
 npm install -g @global-chat/mcp-server
 ```
 
-Add to your MCP client configuration:
+Add to your MCP client 配置:
 
 ```json
 {
@@ -58,10 +58,10 @@ Search Global Chat for MCP servers that handle PostgreSQL database queries.
 
 Browse the full directory at [https://global-chat.io](https://global-chat.io):
 
-1. Visit the search page and enter your query
-2. Filter by protocol (MCP, A2A, agents.txt)
-3. Filter by registry source
-4. View server details, capabilities, and installation instructions
+1. Visit the search page and enter your 查询
+2. 过滤器 by protocol (MCP, A2A, agents.txt)
+3. 过滤器 by registry source
+4. View server details, 能力, and installation instructions
 
 ### Option 3: Validate Your agents.txt
 
@@ -114,7 +114,7 @@ Agent (via Global Chat MCP): 4 registries carry Kubernetes-related agents (23 to
 
 ## 相关 Skills
 
-- `@mcp-client` - For general MCP client setup and configuration
+- `@mcp-client` - For general MCP client 设置 and 配置
 - `@agent-orchestration-multi-agent-optimize` - For orchestrating multiple discovered agents
 - `@agent-memory-mcp` - For persisting discovered agent information across sessions
 

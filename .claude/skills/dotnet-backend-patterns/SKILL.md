@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # .NET Backend Development Patterns
 
-Master C#/.NET patterns for building production-grade APIs, MCP servers, and enterprise backends with modern best practices (2024/2025).
+Master C#/.NET patterns for building production-grade APIs, MCP servers, and enterprise backends with modern 最佳实践 (2024/2025).
 
 ## 使用此技能的场景
 
@@ -16,7 +16,7 @@ Master C#/.NET patterns for building production-grade APIs, MCP servers, and ent
 - Reviewing C# code for quality and performance
 - Designing service architectures with dependency injection
 - Implementing caching strategies with Redis
-- Writing unit and integration tests
+- Writing unit and 集成 tests
 - Optimizing database access with EF Core or Dapper
 - Configuring applications with IOptions pattern
 - Handling errors and implementing resilience patterns
@@ -37,7 +37,7 @@ Master C#/.NET patterns for building production-grade APIs, MCP servers, and ent
 
 ## 资源
 
-- `resources/implementation-playbook.md` for detailed .NET patterns and examples.
+- `resources/implementation-playbook.md` for detailed .NET patterns and 示例.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

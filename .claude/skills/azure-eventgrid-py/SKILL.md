@@ -30,9 +30,9 @@ from azure.identity import DefaultAzureCredential
 from azure.eventgrid import EventGridPublisherClient
 
 credential = DefaultAzureCredential()
-endpoint = "https://<topic-name>.<region>.eventgrid.azure.net/api/events"
+端点 = "https://<topic-name>.<region>.eventgrid.azure.net/api/events"
 
-client = EventGridPublisherClient(endpoint, credential)
+client = EventGridPublisherClient(端点, credential)
 ```
 
 ## Event Types
@@ -40,7 +40,7 @@ client = EventGridPublisherClient(endpoint, credential)
 | Format | Class | Use Case |
 |--------|-------|----------|
 | Cloud Events 1.0 | `CloudEvent` | Standard, interoperable (recommended) |
-| Event Grid Schema | `EventGridEvent` | Azure-native format |
+| Event Grid 架构 | `EventGridEvent` | Azure-native format |
 
 ## Publish CloudEvents
 
@@ -48,7 +48,7 @@ client = EventGridPublisherClient(endpoint, credential)
 from azure.eventgrid import EventGridPublisherClient, CloudEvent
 from azure.identity import DefaultAzureCredential
 
-client = EventGridPublisherClient(endpoint, DefaultAzureCredential())
+client = EventGridPublisherClient(端点, DefaultAzureCredential())
 
 # Single event
 event = CloudEvent(
@@ -97,7 +97,7 @@ event = CloudEvent(
     data={"key": "value"},                 # Event payload
     subject="items/123",                   # Optional: subject/path
     datacontenttype="application/json",   # Optional: content type
-    dataschema="https://schema.example",  # Optional: schema URL
+    dataschema="https://架构.example",  # Optional: 架构 URL
     time=datetime.now(timezone.utc),      # Optional: timestamp
     extensions={"custom": "value"}         # Optional: custom attributes
 )
@@ -110,7 +110,7 @@ event = EventGridEvent(
     subject="/myapp/items/123",            # Required: subject
     event_type="MyApp.ItemCreated",        # Required: event type
     data={"key": "value"},                 # Required: event payload
-    data_version="1.0",                    # Required: schema version
+    data_version="1.0",                    # Required: 架构 version
     topic="/subscriptions/.../topics/...", # Optional: auto-set
     event_time=datetime.now(timezone.utc)  # Optional: timestamp
 )
@@ -125,7 +125,7 @@ from azure.identity.aio import DefaultAzureCredential
 async def publish_events():
     credential = DefaultAzureCredential()
     
-    async with EventGridPublisherClient(endpoint, credential) as client:
+    async with EventGridPublisherClient(端点, credential) as client:
         event = CloudEvent(
             type="MyApp.Events.Test",
             source="/myapp",
@@ -144,12 +144,12 @@ For Event Grid Namespaces (pull delivery):
 ```python
 from azure.eventgrid.aio import EventGridPublisherClient
 
-# Namespace endpoint (different from custom topic)
+# Namespace 端点 (different from custom topic)
 namespace_endpoint = "https://<namespace>.<region>.eventgrid.azure.net"
 topic_name = "my-topic"
 
 async with EventGridPublisherClient(
-    endpoint=namespace_endpoint,
+    端点=namespace_endpoint,
     credential=DefaultAzureCredential()
 ) as client:
     await client.send(
@@ -168,7 +168,7 @@ async with EventGridPublisherClient(
 6. **Set appropriate event types** for routing and filtering
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

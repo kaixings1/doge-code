@@ -3,9 +3,9 @@ name: agent-builder
 description: "Agent Builder — 设计和构建适用于任何领域的 AI 代理。当用户要求"创建代理""构建助手"或"设计 AI 系统"时使用。"
   (2) want to understand agent architecture, agentic patterns, or autonomous AI
   (3) need help with capabilities, subagents, planning, or skill mechanisms
-  (4) ask about Claude Code, Cursor, or similar agent internals
+  (4) ask about Claude Code, 游标, or similar agent internals
   (5) want to build agents for business, research, creative, or operational tasks
-  Keywords: agent, assistant, autonomous, workflow, tool use, multi-step, orchestration
+  Keywords: agent, assistant, autonomous, 工作流, tool use, multi-step, orchestration
 ---
 
 # Agent Builder
@@ -32,7 +32,7 @@ LOOP:
 
 ### 1. Capabilities (What can it DO?)
 
-Atomic actions the agent can perform: search, read, create, send, query, modify.
+Atomic actions the agent can perform: search, read, create, send, 查询, modify.
 
 **Design principle**: Start with 3-5 capabilities. Add more only when the agent consistently fails because a capability is missing.
 

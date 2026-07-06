@@ -45,7 +45,7 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 
 BatchClient batchClient = new BatchClientBuilder()
     .credential(new DefaultAzureCredentialBuilder().build())
-    .endpoint(System.getenv("AZURE_BATCH_ENDPOINT"))
+    .端点(System.getenv("AZURE_BATCH_ENDPOINT"))
     .buildClient();
 ```
 
@@ -56,7 +56,7 @@ import com.azure.compute.batch.BatchAsyncClient;
 
 BatchAsyncClient batchAsyncClient = new BatchClientBuilder()
     .credential(new DefaultAzureCredentialBuilder().build())
-    .endpoint(System.getenv("AZURE_BATCH_ENDPOINT"))
+    .端点(System.getenv("AZURE_BATCH_ENDPOINT"))
     .buildAsyncClient();
 ```
 
@@ -71,7 +71,7 @@ AzureNamedKeyCredential sharedKeyCreds = new AzureNamedKeyCredential(accountName
 
 BatchClient batchClient = new BatchClientBuilder()
     .credential(sharedKeyCreds)
-    .endpoint(System.getenv("AZURE_BATCH_ENDPOINT"))
+    .端点(System.getenv("AZURE_BATCH_ENDPOINT"))
     .buildClient();
 ```
 
@@ -380,7 +380,7 @@ try {
 | Samples | https://github.com/azure/azure-batch-samples |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

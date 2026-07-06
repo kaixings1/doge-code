@@ -1,21 +1,21 @@
 ---
 name: ai-ml
 description: "涵盖 LLM 应用开发、RAG 实现、代理架构、ML 流水线和 AI 驱动功能的 AI 和机器学习工作流。"
-category: workflow-bundle
+category: 工作流-bundle
 risk: safe
 source: personal
 date_added: "2026-02-27"
 ---
 
-# AI/ML Workflow Bundle
+# AI/ML 工作流 Bundle
 
 ## 概述
 
-Comprehensive AI/ML workflow for building LLM applications, implementing RAG systems, creating AI agents, and developing machine learning pipelines. This bundle orchestrates skills for production AI development.
+Comprehensive AI/ML 工作流 for building LLM applications, implementing RAG systems, creating AI agents, and developing machine learning pipelines. This bundle orchestrates skills for production AI development.
 
-## When to Use This Workflow
+## 使用场景 This 工作流
 
-Use this workflow when:
+Use this 工作流 when:
 - Building LLM-powered applications
 - Implementing RAG (Retrieval-Augmented Generation)
 - Creating AI agents
@@ -23,7 +23,7 @@ Use this workflow when:
 - Adding AI features to applications
 - Setting up AI observability
 
-## Workflow Phases
+## 工作流 Phases
 
 ### Phase 1: AI Application Design
 
@@ -147,7 +147,7 @@ Use @autonomous-agents to design autonomous agent
 - `ml-engineer` - ML engineering
 - `mlops-engineer` - MLOps
 - `machine-learning-ops-ml-pipeline` - ML pipelines
-- `ml-pipeline-workflow` - ML workflows
+- `ml-pipeline-工作流` - ML workflows
 - `data-engineer` - Data engineering
 
 #### Actions
@@ -213,7 +213,7 @@ Use @evaluation to create evaluation framework
 - [ ] Rate limiting configured
 - [ ] Error handling implemented
 - [ ] Streaming enabled
-- [ ] Token usage tracked
+- [ ] 令牌 usage tracked
 
 ### RAG System
 - [ ] Data pipeline working
@@ -244,7 +244,7 @@ Use @evaluation to create evaluation framework
 - [ ] Observability configured
 - [ ] Documentation complete
 
-## 相关 Workflow Bundles
+## 相关 工作流 Bundles
 
 - `development` - Application development
 - `database` - Data management

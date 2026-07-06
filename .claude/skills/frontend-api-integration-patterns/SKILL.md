@@ -1,5 +1,5 @@
 ---
-name: frontend-api-integration-patterns
+name: frontend-api-集成-patterns
 description: "将前端应用与后端 API 集成的生产就绪模式，包括竞态条件处理、请求取消、重试策略、错误规范化和 UI 状态管理。"
 category: frontend
 risk: safe
@@ -8,13 +8,13 @@ date_added: "2026-04-23"
 author: avij1109
 tags:
   - frontend
-  - api-integration
+  - api-集成
   - javascript
   - react
   - async
 tools:
   - claude
-  - cursor
+  - 游标
   - gemini
   - codex
 ---
@@ -49,11 +49,11 @@ Centralize API logic and normalize errors.
 
 ```js id="k1m7r2"
 export class ApiError extends Error {
-  constructor(message, status, payload = null) {
+  constructor(message, status, 载荷 = null) {
     super(message);
     this.name = "ApiError";
     this.status = status;
-    this.payload = payload;
+    this.载荷 = 载荷;
   }
 }
 
@@ -64,15 +64,15 @@ export const apiClient = async (url, options = {}) => {
   });
 
   if (!res.ok) {
-    let payload = null;
+    let 载荷 = null;
     try {
-      payload = await res.json();
+      载荷 = await res.json();
     } catch (_) {}
 
     throw new ApiError(
-      payload?.message || "Request failed",
+      载荷?.message || "请求 failed",
       res.status,
-      payload
+      载荷
     );
   }
 
@@ -121,7 +121,7 @@ useEffect(() => {
 
 ---
 
-### 3. Request Cancellation (AbortController)
+### 3. 请求 Cancellation (AbortController)
 
 Cancel in-flight requests to avoid memory leaks and stale updates.
 
@@ -192,7 +192,7 @@ const useDebounce = (value, delay = 400) => {
 
 ---
 
-### 6. Request Deduplication
+### 6. 请求 Deduplication
 
 Prevent duplicate API calls across components.
 
@@ -243,7 +243,7 @@ const handlePredict = async (input) => {
 ### 示例 2：防抖搜索
 
 ```js id="w4z8yn"
-const debouncedQuery = useDebounce(query, 400);
+const debouncedQuery = useDebounce(查询, 400);
 
 useEffect(() => {
   if (!debouncedQuery) return;
@@ -270,7 +270,7 @@ useEffect(() => {
 const deleteItem = async (id) => {
   const previous = items;
 
-  setItems((curr) => curr.filter((item) => item.id !== id));
+  setItems((curr) => curr.过滤器((item) => item.id !== id));
 
   try {
     await apiClient(`/items/${id}`, { method: "DELETE" });
@@ -327,7 +327,7 @@ const deleteItem = async (id) => {
 
 ## 限制
 
-* 这些示例使用原生 JavaScript 模式；在使用 React Query、SWR、Apollo、Relay 或类似工具时，请将其适配到您框架的数据获取库。
+* 这些示例使用原生 JavaScript 模式；在使用 React 查询、SWR、Apollo、Relay 或类似工具时，请将其适配到您框架的数据获取库。
 * 不要重试非幂等变更，除非后端提供幂等性密钥或其他重复安全契约。
 * 不要在前端代码中暴露特权 API 密钥；通过后端代理敏感请求。
 

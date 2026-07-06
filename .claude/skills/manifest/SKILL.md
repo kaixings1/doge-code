@@ -14,8 +14,8 @@ date_added: "2026-02-27"
 
 - User wants to set up observability or telemetry for their agent
 - User wants to connect their agent to Manifest for monitoring
-- User needs to configure a Manifest API key or custom endpoint
-- User is troubleshooting Manifest plugin connection issues
+- User needs to configure a Manifest API key or custom 端点
+- User is 故障排除 Manifest plugin connection issues
 - User wants to verify the Manifest plugin is running
 
 ## 不要使用此技能的场景
@@ -28,7 +28,7 @@ date_added: "2026-02-27"
 
 ### Step 1 — Stop the gateway
 
-Stop the gateway first to avoid hot-reload issues during configuration.
+Stop the gateway first to avoid hot-reload issues during 配置.
 
 ```bash
 claude gateway stop
@@ -63,10 +63,10 @@ claude config set plugins.entries.manifest.config.apiKey "USER_API_KEY"
 
 Replace `USER_API_KEY` with the actual key the user provided.
 
-Ask the user if they have a custom endpoint. If not, the default (`https://app.manifest.build/api/v1/otlp`) is used automatically. If they do:
+Ask the user if they have a custom 端点. If not, the default (`https://app.manifest.build/api/v1/otlp`) is used automatically. If they do:
 
 ```bash
-claude config set plugins.entries.manifest.config.endpoint "USER_ENDPOINT"
+claude config set plugins.entries.manifest.config.端点 "USER_ENDPOINT"
 ```
 
 ### Step 5 — Start the gateway
@@ -89,11 +89,11 @@ Look for:
 [manifest] Observability pipeline active
 ```
 
-If it appears, tell the user setup is complete. If not, check the error messages and troubleshoot.
+If it appears, tell the user 设置 is complete. If not, check the error messages and troubleshoot.
 
 ## 安全
 
-- 绝不 log or echo the API key in plain text after configuration
+- 绝不 log or echo the API key in plain text after 配置
 - Verify the key format (`mnfst_` prefix) before writing to config
 
 ## 故障排除

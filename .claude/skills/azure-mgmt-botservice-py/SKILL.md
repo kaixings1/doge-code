@@ -8,7 +8,7 @@ date_added: '2026-02-27'
 
 # Azure Bot Service Management SDK for Python
 
-Manage Azure Bot Service resources including bots, channels, and connections.
+Manage Azure Bot Service 资源 including bots, channels, and connections.
 
 ## 安装
 
@@ -65,7 +65,7 @@ bot = client.bots.create(
         properties=BotProperties(
             display_name="My Chat Bot",
             description="A conversational AI bot",
-            endpoint="https://my-bot-app.azurewebsites.net/api/messages",
+            端点="https://my-bot-app.azurewebsites.net/api/messages",
             msa_app_id="<your-app-id>",
             msa_app_type="MultiTenant"
         )
@@ -84,7 +84,7 @@ bot = client.bots.get(
 )
 
 print(f"Bot: {bot.properties.display_name}")
-print(f"Endpoint: {bot.properties.endpoint}")
+print(f"端点: {bot.properties.端点}")
 print(f"SKU: {bot.sku.name}")
 ```
 
@@ -282,7 +282,7 @@ for conn in connections:
 
 ## Client Operations
 
-| Operation | Method |
+| 操作 | Method |
 |-----------|--------|
 | `client.bots` | Bot CRUD operations |
 | `client.channels` | Channel configuration |
@@ -321,7 +321,7 @@ for conn in connections:
 7. **Configure proper CORS** for Web Chat channel
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

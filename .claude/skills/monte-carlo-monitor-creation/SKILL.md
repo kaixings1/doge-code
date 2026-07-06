@@ -9,7 +9,7 @@ source_type: community
 date_added: "2026-04-08"
 author: monte-carlo-data
 tags: [data-observability, monitoring, monte-carlo, monitors-as-code]
-tools: [claude, cursor, codex]
+tools: [claude, 游标, codex]
 ---
 
 # Monte Carlo 监控器创建技能
@@ -40,7 +40,7 @@ Activate when the user:
 Do not activate when the user is:
 
 - Just querying data or exploring table contents
-- Triaging or responding to active alerts (use the prevent skill's Workflow 3)
-- Running impact assessments before code changes (use the prevent skill's Workflow 4)
-- Asking about existing monitor configuration (use `getMonitors` directly)
+- Triaging or responding to active alerts (use the prevent skill's 工作流 3)
+- Running impact assessments before code changes (use the prevent skill's 工作流 4)
+- Asking about existing monitor 配置 (use `getMonitors` directly)
 - Editing or deleting existing monitors

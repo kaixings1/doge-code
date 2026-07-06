@@ -1,7 +1,7 @@
 ---
 name: langfuse
 description: LangFuse 专家：开源 LLM 可观测性平台。
-  Covers tracing, prompt management, evaluation, datasets, and integration with
+  Covers tracing, prompt management, evaluation, datasets, and 集成 with
   LangChain, LlamaIndex, and OpenAI. Essential for debugging, monitoring, and
   improving LLM applications in production.
 risk: unknown
@@ -89,18 +89,18 @@ langfuse = Langfuse(
     host="https://cloud.langfuse.com"  # or self-hosted URL
 )
 
-# Create a trace for a user request
+# Create a trace for a user 请求
 trace = langfuse.trace(
     name="chat-completion",
     user_id="user-123",
-    session_id="session-456",  # Groups related traces
+    session_id="会话-456",  # Groups related traces
     metadata={"feature": "customer-support"},
     tags=["production", "v2"]
 )
 
 # Log a generation (LLM call)
 generation = trace.generation(
-    name="gpt-4o-response",
+    name="gpt-4o-响应",
     model="gpt-4o",
     model_parameters={"temperature": 0.7},
     input={"messages": [{"role": "user", "content": "Hello"}]},
@@ -108,17 +108,17 @@ generation = trace.generation(
 )
 
 # Make actual LLM call
-response = openai.chat.completions.create(
+响应 = openai.chat.completions.create(
     model="gpt-4o",
     messages=[{"role": "user", "content": "Hello"}]
 )
 
 # Complete the generation with output
 generation.end(
-    output=response.choices[0].message.content,
+    output=响应.choices[0].message.content,
     usage={
-        "input": response.usage.prompt_tokens,
-        "output": response.usage.completion_tokens
+        "input": 响应.usage.prompt_tokens,
+        "output": 响应.usage.completion_tokens
     }
 )
 
@@ -143,12 +143,12 @@ from langfuse.openai import openai
 # Drop-in replacement for OpenAI client
 # All calls automatically traced
 
-response = openai.chat.completions.create(
+响应 = openai.chat.completions.create(
     model="gpt-4o",
     messages=[{"role": "user", "content": "Hello"}],
     # Langfuse-specific parameters
     name="greeting",  # Trace name
-    session_id="session-123",
+    session_id="会话-123",
     user_id="user-456",
     tags=["test"],
     metadata={"feature": "chat"}
@@ -172,7 +172,7 @@ from langfuse.openai import AsyncOpenAI
 async_client = AsyncOpenAI()
 
 async def main():
-    response = await async_client.chat.completions.create(
+    响应 = await async_client.chat.completions.create(
         model="gpt-4o",
         messages=[{"role": "user", "content": "Hello"}],
         name="async-greeting"
@@ -186,14 +186,14 @@ async def main():
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
-from langfuse.callback import CallbackHandler
+from langfuse.回调 import CallbackHandler
 
-# Create Langfuse callback handler
+# Create Langfuse 回调 处理器
 langfuse_handler = CallbackHandler(
     public_key="pk-...",
     secret_key="sk-...",
     host="https://cloud.langfuse.com",
-    session_id="session-123",
+    session_id="会话-123",
     user_id="user-456"
 )
 
@@ -207,8 +207,8 @@ prompt = ChatPromptTemplate.from_messages([
 
 chain = prompt | llm
 
-# Pass handler to invoke
-response = chain.invoke(
+# Pass 处理器 to invoke
+响应 = chain.invoke(
     {"input": "Hello"},
     config={"callbacks": [langfuse_handler]}
 )
@@ -218,7 +218,7 @@ import langchain
 langchain.callbacks.manager.set_handler(langfuse_handler)
 
 # Then all calls are traced
-response = chain.invoke({"input": "Hello"})
+响应 = chain.invoke({"input": "Hello"})
 
 # Works with agents, retrievers, etc.
 from langchain.agents import create_openai_tools_agent
@@ -252,7 +252,7 @@ compiled = prompt.compile(
 )
 
 # Use with OpenAI
-response = openai.chat.completions.create(
+响应 = openai.chat.completions.create(
     model=prompt.config.get("model", "gpt-4o"),
     messages=compiled,
     temperature=prompt.config.get("temperature", 0.7)
@@ -261,7 +261,7 @@ response = openai.chat.completions.create(
 # Link generation to prompt version
 trace = langfuse.trace(name="support-chat")
 generation = trace.generation(
-    name="response",
+    name="响应",
     model="gpt-4o",
     prompt=prompt  # Links to specific version
 )
@@ -299,11 +299,11 @@ langfuse = Langfuse()
 # Manual scoring in code
 trace = langfuse.trace(name="qa-flow")
 
-# After getting response
+# After getting 响应
 trace.score(
     name="relevance",
     value=0.85,  # 0-1 scale
-    comment="Response addressed the question"
+    comment="响应 addressed the question"
 )
 
 trace.score(
@@ -313,12 +313,12 @@ trace.score(
 )
 
 # LLM-as-judge evaluation
-def evaluate_response(question: str, response: str) -> float:
+def evaluate_response(question: str, 响应: str) -> float:
     eval_prompt = f"""
-    Rate the response quality from 0 to 1.
+    Rate the 响应 quality from 0 to 1.
 
     Question: {question}
-    Response: {response}
+    响应: {响应}
 
     Output only a number between 0 and 1.
     """
@@ -331,7 +331,7 @@ def evaluate_response(question: str, response: str) -> float:
     return float(result.choices[0].message.content.strip())
 
 # Score asynchronously
-score = evaluate_response(question, response)
+score = evaluate_response(question, 响应)
 trace.score(
     name="quality-llm-judge",
     value=score
@@ -351,19 +351,19 @@ langfuse.create_dataset_item(
 dataset = langfuse.get_dataset("support-qa-v1")
 
 for item in dataset.items:
-    # Generate response
-    response = generate_response(item.input["question"])
+    # Generate 响应
+    响应 = generate_response(item.input["question"])
 
     # Link to dataset item
     trace = langfuse.trace(name="eval-run")
     trace.generation(
-        name="response",
+        name="响应",
         input=item.input,
-        output=response
+        output=响应
     )
 
     # Score against expected
-    similarity = calculate_similarity(response, item.expected_output)
+    similarity = calculate_similarity(响应, item.expected_output)
     trace.score(name="similarity", value=similarity)
 
     # Link trace to dataset item
@@ -381,8 +381,8 @@ from langfuse.decorators import observe, langfuse_context
 def chat_handler(user_id: str, message: str) -> str:
     # All nested @observe calls become spans
     context = get_context(message)
-    response = generate_response(message, context)
-    return response
+    响应 = generate_response(message, context)
+    return 响应
 
 @observe()  # Becomes a span under parent trace
 def get_context(message: str) -> str:
@@ -392,14 +392,14 @@ def get_context(message: str) -> str:
 
 @observe(as_type="generation")  # LLM generation span
 def generate_response(message: str, context: str) -> str:
-    response = openai.chat.completions.create(
+    响应 = openai.chat.completions.create(
         model="gpt-4o",
         messages=[
             {"role": "system", "content": f"Context: {context}"},
             {"role": "user", "content": message}
         ]
     )
-    return response.choices[0].message.content
+    return 响应.choices[0].message.content
 
 # Add metadata and scores
 @observe()
@@ -407,7 +407,7 @@ def main_flow(user_input: str):
     # Update current trace
     langfuse_context.update_current_trace(
         user_id="user-123",
-        session_id="session-456",
+        session_id="会话-456",
         tags=["production"]
     )
 
@@ -443,7 +443,7 @@ async def async_handler(message: str):
 
 ```
 1. Build agent with LangGraph
-2. Add Langfuse callback handler
+2. Add Langfuse 回调 处理器
 3. Trace all LLM calls and tool uses
 4. Score outputs for quality
 5. Monitor and iterate

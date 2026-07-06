@@ -28,11 +28,11 @@ dotnet add package Microsoft.Azure.Messaging.EventGrid.CloudNativeCloudEvents
 ## 环境变量
 
 ```bash
-# Topic/Domain endpoint
+# Topic/Domain 端点
 EVENT_GRID_TOPIC_ENDPOINT=https://<topic-name>.<region>.eventgrid.azure.net/api/events
 EVENT_GRID_TOPIC_KEY=<access-key>
 
-# Namespace endpoint (for pull delivery)
+# Namespace 端点 (for pull delivery)
 EVENT_GRID_NAMESPACE_ENDPOINT=https://<namespace>.<region>.eventgrid.azure.net
 EVENT_GRID_TOPIC_NAME=<topic-name>
 EVENT_GRID_SUBSCRIPTION_NAME=<subscription-name>
@@ -82,7 +82,7 @@ EventGridPublisherClient client = new(
     new DefaultAzureCredential());
 ```
 
-### SAS Token Authentication
+### SAS 令牌 Authentication
 
 ```csharp
 string sasToken = EventGridPublisherClient.BuildSharedAccessSignature(
@@ -98,7 +98,7 @@ EventGridPublisherClient client = new(
 
 ## Publishing Events
 
-### EventGridEvent Schema
+### EventGridEvent 架构
 
 ```csharp
 EventGridPublisherClient client = new(
@@ -132,7 +132,7 @@ List<EventGridEvent> events = new()
 await client.SendEventsAsync(events);
 ```
 
-### CloudEvent Schema
+### CloudEvent 架构
 
 ```csharp
 CloudEvent cloudEvent = new(
@@ -400,11 +400,11 @@ IotHubDeviceCreatedEventData deviceCreated;
 | `EventGridPublisherClient` | Publish to topics/domains |
 | `EventGridSenderClient` | Send to namespace topics |
 | `EventGridReceiverClient` | Receive from namespace subscriptions |
-| `EventGridEvent` | Event Grid native schema |
-| `CloudEvent` | CloudEvents 1.0 schema |
-| `ReceiveResult` | Pull delivery response |
+| `EventGridEvent` | Event Grid native 架构 |
+| `CloudEvent` | CloudEvents 1.0 架构 |
+| `ReceiveResult` | Pull delivery 响应 |
 | `ReceiveDetails` | Event with broker properties |
-| `Broker属性` | Lock token, delivery count |
+| `Broker属性` | Lock 令牌, delivery count |
 
 ## Event Schemas Comparison
 
@@ -489,7 +489,7 @@ catch (RequestFailedException)
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/eventgrid/Azure.Messaging.EventGrid |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

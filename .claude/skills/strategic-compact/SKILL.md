@@ -5,13 +5,13 @@ description: 战略契约工作流
 
 # Strategic Compact Skill
 
-Suggests manual `/compact` at strategic points in your workflow rather than relying on arbitrary auto-compaction.
+Suggests manual `/compact` at strategic points in your 工作流 rather than relying on arbitrary auto-compaction.
 
 ## When to Activate
 
-- Running long sessions that approach context limits (200K+ tokens)
+- Running long sessions that 方法 context limits (200K+ tokens)
 - Working on multi-phase tasks (research → plan → implement → test)
-- Switching between unrelated tasks within the same session
+- Switching between unrelated tasks within the same 会话
 - After completing a major milestone and starting new work
 - When responses slow down or become less coherent (context pressure)
 
@@ -31,7 +31,7 @@ Strategic compaction at logical boundaries:
 
 The `suggest-compact.js` script runs on PreToolUse (Edit/Write) and:
 
-1. **Tracks tool calls** — Counts tool invocations in session
+1. **Tracks tool calls** — Counts tool invocations in 会话
 2. **Threshold detection** — Suggests at configurable threshold (default: 50 calls)
 3. **Periodic reminders** — Reminds every 25 calls after threshold
 

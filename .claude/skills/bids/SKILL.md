@@ -14,7 +14,7 @@ metadata: {"version": "1.0", "skill-author": "Yaroslav Halchenko"}
 
 ## 概述
 
-The Brain Imaging Data Structure (BIDS) is a community standard for organizing and describing neuroscience and biomedical research datasets. It defines a consistent file naming convention, directory hierarchy, and metadata schema so that datasets are immediately understandable by humans and software tools alike. BIDS is governed by the BIDS Specification (currently v1.11.x) and is maintained by the community via the BIDS-Standard GitHub organization.
+The Brain Imaging Data Structure (BIDS) is a community standard for organizing and describing neuroscience and biomedical research datasets. It defines a consistent file naming convention, directory hierarchy, and metadata 架构 so that datasets are immediately understandable by humans and software tools alike. BIDS is governed by the BIDS Specification (currently v1.11.x) and is maintained by the community via the BIDS-Standard GitHub organization.
 
 While BIDS originated for MRI, it has grown well beyond neuroimaging. The specification now covers 11 modalities spanning imaging, electrophysiology, and behavioral data:
 
@@ -32,13 +32,13 @@ The Python ecosystem for BIDS centers on **PyBIDS** (`pybids`) for querying and 
 
 Apply this skill when:
 - Organizing raw neuroscience data (imaging, electrophysiology, behavioral) into BIDS-compliant directory structures
-- Querying an existing BIDS dataset to find specific files by subject, session, task, run, or modality
+- Querying an existing BIDS dataset to find specific files by subject, 会话, task, run, or modality
 - Validating a dataset against the BIDS specification before sharing or submission
 - Converting DICOM data from scanners into BIDS format
 - Writing or editing JSON sidecar metadata files
 - Creating BIDS-compliant derivatives (preprocessed data, analysis outputs)
 - Setting up a `dataset_description.json` for a new dataset
-- Working with BIDS entities (subject, session, task, acquisition, run, etc.)
+- Working with BIDS entities (subject, 会话, task, acquisition, run, etc.)
 - Configuring `.bidsignore` to exclude files from validation
 - Preparing data for upload to OpenNeuro, DANDI, or other BIDS-aware repositories
 
@@ -181,7 +181,7 @@ bold_files = layout.get(
     return_type="filename"
 )
 
-# Filter by subject, task, session
+# Filter by subject, task, 会话
 nback_sub01 = layout.get(
     subject="01",
     task="nback",
@@ -256,18 +256,18 @@ extra_data/
 
 ### 5. BIDS Entities and File Naming
 
-The authoritative, machine-readable source of truth for entities, their ordering, allowed suffixes, and all filename rules is the **BIDS Schema** — a structured YAML/JSON representation of the specification. A JSON export is shipped with this skill at `references/bids_schema.json`. The schema is defined in the [bids-specification `src/schema/`](https://github.com/bids-standard/bids-specification/tree/master/src/schema) directory and published at https://bids-specification.readthedocs.io/en/stable/schema.json. BEP-specific schema previews are available at https://github.com/bids-standard/bids-schema/tree/main/BEPs.
+The authoritative, machine-readable source of truth for entities, their ordering, allowed suffixes, and all filename rules is the **BIDS 架构** — a structured YAML/JSON representation of the specification. A JSON export is shipped with this skill at `references/bids_schema.json`. The 架构 is defined in the [bids-specification `src/架构/`](https://github.com/bids-standard/bids-specification/tree/master/src/架构) directory and published at https://bids-specification.readthedocs.io/en/stable/架构.json. BEP-specific 架构 previews are available at https://github.com/bids-standard/bids-架构/tree/main/BEPs.
 
-Run `scripts/update_schema.py` to refresh the schema and BEPs list from upstream (no dependencies beyond stdlib).
+Run `scripts/update_schema.py` to refresh the 架构 and BEPs list from upstream (no dependencies beyond stdlib).
 
-The tables below are a convenient summary; when in doubt, consult the schema.
+The tables below are a convenient summary; when in doubt, consult the 架构.
 
 BIDS filenames are built from ordered key-value entity pairs:
 
 | Entity | Key | Example | 必需 for |
 |--------|-----|---------|--------------|
 | Subject | `sub-` | `sub-01` | All files |
-| Session | `ses-` | `ses-pre` | Multi-session studies |
+| 会话 | `ses-` | `ses-pre` | Multi-会话 studies |
 | Task | `task-` | `task-rest` | func (bold, cbv, phase), eeg, meg |
 | Acquisition | `acq-` | `acq-highres` | Distinguishing acquisition parameters |
 | Contrast enhancing agent | `ce-` | `ce-gadolinium` | Contrast-enhanced images |
@@ -317,7 +317,7 @@ ReproIn protocol names encode BIDS entities directly:
 - `dwi_dir-AP` → `sub-XX/dwi/sub-XX_dir-AP_dwi.nii.gz`
 - `fmap_dir-PA` → `sub-XX/fmap/sub-XX_dir-PA_epi.nii.gz`
 
-Session can be set once on the localizer (e.g., `anat-scout_ses-pre`) and ReproIn propagates it to all sequences in that Program. Subject ID is extracted from DICOM metadata. Duplicate runs are numbered automatically.
+会话 can be set once on the localizer (e.g., `anat-scout_ses-pre`) and ReproIn propagates it to all sequences in that Program. Subject ID is extracted from DICOM metadata. Duplicate runs are numbered automatically.
 
 **Mode 2: Custom heuristic mapping into ReproIn (for existing data)**
 
@@ -350,7 +350,7 @@ See `references/conversion_tools.md` for complete heuristic file examples.
 - **`.heudiconv/` directory**: created alongside output, stores provenance (heuristic used, dicominfo.tsv, conversion records). Keep it with your data for reproducibility
 - **`sourcedata/`**: HeuDiConv archives original DICOMs as `.tgz` files under `sourcedata/` for reproducibility
 - **`is_motion_corrected` filter**: use in heuristics to exclude scanner-generated MOCO series (e.g., `if not s.is_motion_corrected`)
-- Both `--files` (explicit paths) and `-d` (template with `{subject}`, `{session}` placeholders) are supported for specifying DICOM input
+- Both `--files` (explicit paths) and `-d` (template with `{subject}`, `{会话}` placeholders) are supported for specifying DICOM input
 
 #### dcm2bids (配置-file-based)
 
@@ -562,7 +562,7 @@ layout = BIDSLayout("/path/to/dataset")
 path = layout.build_path(
     {
         "subject": "01",
-        "session": "pre",
+        "会话": "pre",
         "task": "rest",
         "suffix": "bold",
         "extension": ".nii.gz",
@@ -612,13 +612,13 @@ bids-app input_dataset output_dir {participant|group} [options]
 
 This skill includes detailed reference documentation:
 
-- **bids_schema.json**: Machine-readable BIDS schema (from https://bids-specification.readthedocs.io/en/stable/schema.json). This is the authoritative source for entity definitions, ordering rules, filename templates, allowed suffixes per datatype, and metadata field requirements. BEP-specific schemas are at https://github.com/bids-standard/bids-schema/tree/main/BEPs.
+- **bids_schema.json**: Machine-readable BIDS 架构 (from https://bids-specification.readthedocs.io/en/stable/架构.json). This is the authoritative source for entity definitions, ordering rules, filename templates, allowed suffixes per datatype, and metadata field requirements. BEP-specific schemas are at https://github.com/bids-standard/bids-架构/tree/main/BEPs.
 - **beps.yml**: Current list of all BIDS Extension Proposals with titles, leads, status, and links (from [bids-website](https://github.com/bids-standard/bids-website/blob/main/data/beps/beps.yml))
 - **bids_specification.md**: Human-readable summary of the entity table, datatype reference, directory structure rules, template spaces, and specification changelog
 - **metadata_fields.md**: 必需 and recommended JSON sidecar fields for every BIDS modality (anat, func, dwi, fmap, eeg, meg, pet, etc.)
 - **conversion_tools.md**: Detailed workflows for HeuDiConv, dcm2bids, and BIDScoin including heuristic/config examples and troubleshooting
 
-Update schema and BEPs with: `python scripts/update_schema.py`
+Update 架构 and BEPs with: `python scripts/update_schema.py`
 
 ## Common Issues and Solutions
 
@@ -687,18 +687,18 @@ layout = BIDSLayout("/data", database_path="/data/.pybids_cache.db")
 
 ## BIDS Extension Proposals (BEPs)
 
-BEPs are community-driven proposals to extend BIDS to new modalities, derivatives, or metadata. The full list with status, leads, and links is in `references/beps.yml` (fetched from the [bids-website](https://github.com/bids-standard/bids-website/blob/main/data/beps/beps.yml)). BEP-specific schema previews are rendered at https://github.com/bids-standard/bids-schema/tree/main/BEPs.
+BEPs are community-driven proposals to extend BIDS to new modalities, derivatives, or metadata. The full list with status, leads, and links is in `references/beps.yml` (fetched from the [bids-website](https://github.com/bids-standard/bids-website/blob/main/data/beps/beps.yml)). BEP-specific 架构 previews are rendered at https://github.com/bids-standard/bids-架构/tree/main/BEPs.
 
-**Current BEPs** (as of schema update):
+**Current BEPs** (as of 架构 update):
 
 | BEP | Title | Content | 状态 |
 |-----|-------|---------|--------|
 | 004 | Susceptibility Weighted Imaging | raw | Seeking new leader |
 | 011 | Structural preprocessing derivatives | derivative | Has PR (#518) |
-| 012 | Functional preprocessing derivatives | derivative | Has PR (#519), schema implemented |
+| 012 | Functional preprocessing derivatives | derivative | Has PR (#519), 架构 implemented |
 | 014 | Affine transforms and nonlinear field warps | derivative | X5 format development |
 | 016 | Diffusion weighted imaging derivatives | derivative | Has PR (#2211) |
-| 017 | Generic BIDS connectivity data schema | derivative | In development |
+| 017 | Generic BIDS connectivity data 架构 | derivative | In development |
 | 021 | Common Electrophysiological Derivatives | derivative | In development |
 | 023 | PET Preprocessing derivatives | derivative | In development |
 | 024 | Computed Tomography scan | raw | Seeking contributors |

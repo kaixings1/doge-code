@@ -94,7 +94,7 @@ requires:
 
 | 陷阱 | 详情 |
 |---------|---------|
-| **嵌套模型列表** | `GROQCLOUD_LIST_MODELS` 响应可能嵌套在 `response['data']['data']` 中——不要假定是扁平顶层数组 |
+| **嵌套模型列表** | `GROQCLOUD_LIST_MODELS` 响应可能嵌套在 `响应['data']['data']` 中——不要假定是扁平顶层数组 |
 | **硬编码模型 ID 会失效** | 始终通过 `GROQCLOUD_LIST_MODELS` 动态获取模型 ID；当模型被弃用或重命名时，硬编码名称可能失效 |
 | **音频格式验证** | `GROQCLOUD_GROQ_CREATE_AUDIO_TRANSLATION` 静默拒绝无效或不支持的音频格式——调用前请验证输入 |
 | **模型元数据变化** | 来自 `GROQCLOUD_GROQ_RETRIEVE_MODEL` 的数据（上下文窗口、功能）可能随模型更新而变化——不要视为静态 |
@@ -103,6 +103,14 @@ requires:
 ---
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 | 工具标识 | 用途 |
 |-----------|---------|

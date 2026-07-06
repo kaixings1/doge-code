@@ -16,7 +16,7 @@ on:
     branches: [main]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.工作流 }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/设置-node@v4
         with:
           node-version: 22
           cache: 'npm'
@@ -39,7 +39,7 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/设置-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -62,7 +62,7 @@ jobs:
 
 Key patterns:
 - Use `concurrency` to cancel outdated runs
-- Cache dependencies with setup action's `cache` option
+- Cache dependencies with 设置 action's `cache` option
 - Use `needs` for job dependencies
 - Gate deploys with `environment` protection rules
 - Use matrix for cross-version testing
@@ -98,14 +98,14 @@ Rules:
 - Use specific image tags, never `latest`
 - Run as non-root user
 - Copy only necessary files into final stage
-- Add `HEALTHCHECK` for orchestrator integration
+- Add `HEALTHCHECK` for orchestrator 集成
 - Use `.dockerignore` to exclude `node_modules`, `.git`, tests
 
 ## Kubernetes 部署 Manifest
 
 ```yaml
 apiVersion: apps/v1
-kind: Deployment
+kind: 部署
 metadata:
   name: api-server
   labels:
@@ -168,7 +168,7 @@ chart/
   values-staging.yaml
   values-production.yaml
   templates/
-    deployment.yaml
+    部署.yaml
     service.yaml
     ingress.yaml
     hpa.yaml
@@ -231,7 +231,7 @@ GitOps principles:
 - All changes go through PRs (no `kubectl apply` in production)
 - ArgoCD auto-syncs from Git to cluster
 - Enable `selfHeal` to revert manual cluster changes
-- Separate app code repos from deployment manifest repos
+- Separate app code repos from 部署 manifest repos
 
 ## Monitoring Stack
 
@@ -252,20 +252,20 @@ spec:
 ```
 
 Key metrics to expose:
-- `http_request_duration_seconds` (histogram) - request latency by route and status
-- `http_requests_total` (counter) - request count by route and status
+- `http_request_duration_seconds` (histogram) - 请求 latency by route and status
+- `http_requests_total` (counter) - 请求 count by route and status
 - `process_resident_memory_bytes` (gauge) - memory usage
-- `db_query_duration_seconds` (histogram) - database query latency
+- `db_query_duration_seconds` (histogram) - database 查询 latency
 
 Alert on: error rate >1%, P99 latency >2s, memory >80% of limit, pod restarts >3 in 10 minutes.
 
-## Pipeline Best Practices
+## Pipeline 最佳实践
 
 1. Keep CI under 10 minutes (parallelize jobs, cache aggressively)
 2. Run linting and type checking before tests
 3. Use ephemeral environments for PR previews
 4. Pin all action versions to SHA, not tags
-5. Store secrets in GitHub Secrets, never in workflow files
-6. Use OIDC for cloud provider authentication (no long-lived keys)
+5. Store secrets in GitHub Secrets, never in 工作流 files
+6. Use OIDC for cloud provider 认证 (no long-lived keys)
 7. Tag images with git SHA, not `latest`
 8. Run security scans (Trivy, Snyk) on container images in CI

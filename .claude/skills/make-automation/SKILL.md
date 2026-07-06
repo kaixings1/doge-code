@@ -1,12 +1,12 @@
 ---
 name: make-automation
-description: "通过 Rube MCP (Composio) 自动执行 Make (Integromat) 任务：操作、枚举、语言和时区查询。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Make (Integromat) 任务：操作、枚举、语言和时区查询。使用前始终先搜索工具以获取当前 架构。"
 risk: critical
 source: community
 date_added: "2026-02-27"
 ---
 
-# 通过 Rube MCP 实现 Make 自动化
+# Make 自动化
 
 通过 Rube MCP 经 Composio 的 Make 工具包自动化 Make（原 Integromat）操作。
 
@@ -14,7 +14,7 @@ date_added: "2026-02-27"
 
 - 必须连接 Rube MCP（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 使用 `make` 工具包激活 Make 连接
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前 tool schema
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前 tool 架构
 
 ## 设置
 
@@ -35,12 +35,12 @@ date_added: "2026-02-27"
 1. `MAKE_GET_OPERATIONS` - 检索操作记录 [必需]
 
 **关键参数**：
-- 通过 RUBE_SEARCH_TOOLS 检查当前 schema 以获取可用过滤器
+- 通过 RUBE_SEARCH_TOOLS 检查当前 架构 以获取可用过滤器
 - 可能包含日期范围、场景 ID 或状态过滤器
 
 **陷阱**：
 - 操作数据可能分页；检查分页标记
-- 日期过滤器必须与 schema 中的预期格式匹配
+- 日期过滤器必须与 架构 中的预期格式匹配
 - 大型结果集应按日期范围或场景进行过滤
 
 ### 2. 列出可用语言
@@ -170,6 +170,14 @@ Make 工作流通常连接到其他应用。组合多工具工作流：
 - 检查认证用户是否有权访问目标组织
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 | 任务 | 工具标识 | 关键参数 |
 |------|----------|----------|

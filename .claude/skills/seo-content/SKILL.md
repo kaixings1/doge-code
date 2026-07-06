@@ -2,7 +2,7 @@
 name: seo-content
 description: "Seo Content — 内容质量与 E-E-A-T 分析相关功能和最佳实践，含 AI 引用就绪度评估。"
 user-invocable: true
-argument-hint: "[url]"
+参数-hint: "[url]"
 license: MIT
 metadata:
   author: AgriciDaniel

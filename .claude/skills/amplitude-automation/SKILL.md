@@ -1,24 +1,24 @@
 ---
 name: amplitude-automation
-description: "通过 Rube MCP (Composio) 自动执行 Amplitude 任务：事件、用户活动、群组、用户识别。始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Amplitude 任务：事件、用户活动、群组、用户识别。始终先搜索工具以获取当前 架构。"
 risk: critical
 source: community
 date_added: "2026-02-27"
 ---
 
-# 通过 Rube MCP 实现 Amplitude 自动化
+# Amplitude 自动化
 
 Automate Amplitude product analytics through Composio's Amplitude toolkit via Rube MCP.
 
 ## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
+- Rube MCP 必须已连接 (RUBE_SEARCH_TOOLS available)
 - Active Amplitude connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `amplitude`
 - 始终 call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 
 ## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the 端点 and it works.
 
 
 1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
@@ -30,7 +30,7 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 
 ### 1. Send Events
 
-**When to use**: User wants to track events or send event data to Amplitude
+**使用场景**: User wants to track events or send event data to Amplitude
 
 **Tool sequence**:
 1. `AMPLITUDE_SEND_EVENTS` - Send one or more events to Amplitude [必需]
@@ -48,12 +48,12 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 - At least one of `user_id` or `device_id` is required per event
 - `event_type` is required for every event; cannot be empty
 - `time` must be in milliseconds (13-digit epoch), not seconds
-- Batch limit applies; check schema for maximum events per request
-- 事件 are processed asynchronously; successful API response does not mean data is immediately queryable
+- Batch limit applies; check 架构 for maximum events per 请求
+- 事件 are processed asynchronously; successful API 响应 does not mean data is immediately queryable
 
 ### 2. Get User Activity
 
-**When to use**: User wants to view event history for a specific user
+**使用场景**: User wants to view event history for a specific user
 
 **Tool sequence**:
 1. `AMPLITUDE_FIND_USER` - Find user by ID or property [Prerequisite]
@@ -65,14 +65,14 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 - `limit`: Maximum number of events to return
 
 **Pitfalls**:
-- `user` parameter requires Amplitude's internal user ID, NOT your application's user_id
+- `user` 参数 requires Amplitude's internal user ID, NOT your application's user_id
 - Must call FIND_USER first to resolve your user_id to Amplitude's internal ID
 - Activity is returned in reverse chronological order by default
 - Large activity histories require pagination via `offset`
 
 ### 3. Find and Identify Users
 
-**When to use**: User wants to look up users or set user properties
+**使用场景**: User wants to look up users or set user properties
 
 **Tool sequence**:
 1. `AMPLITUDE_FIND_USER` - Search for a user by various identifiers [必需]
@@ -95,13 +95,13 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 
 ### 4. Manage Cohorts
 
-**When to use**: User wants to list cohorts, view cohort details, or update cohort membership
+**使用场景**: User wants to list cohorts, view cohort details, or update cohort membership
 
 **Tool sequence**:
 1. `AMPLITUDE_LIST_COHORTS` - List all saved cohorts [必需]
 2. `AMPLITUDE_GET_COHORT` - Get detailed cohort information [可选]
 3. `AMPLITUDE_UPDATE_COHORT_MEMBERSHIP` - Add/remove users from a cohort [可选]
-4. `AMPLITUDE_CHECK_COHORT_STATUS` - Check async cohort operation status [可选]
+4. `AMPLITUDE_CHECK_COHORT_STATUS` - Check async cohort 操作 status [可选]
 
 **Key parameters**:
 - For LIST_COHORTS: No required parameters
@@ -109,18 +109,18 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 - For UPDATE_COHORT_MEMBERSHIP:
   - `cohort_id`: Target cohort ID
   - `memberships`: Object with `add` and/or `remove` arrays of user IDs
-- For CHECK_COHORT_STATUS: `request_id` from update response
+- For CHECK_COHORT_STATUS: `request_id` from update 响应
 
 **Pitfalls**:
 - Cohort IDs are required for all cohort-specific operations
 - UPDATE_COHORT_MEMBERSHIP is asynchronous; use CHECK_COHORT_STATUS to verify
-- `request_id` from the update response is needed for status checking
-- Maximum membership changes per request may be limited; chunk large updates
+- `request_id` from the update 响应 is needed for status checking
+- Maximum membership changes per 请求 may be limited; chunk large updates
 - Only behavioral cohorts support API membership updates
 
 ### 5. Browse Event Categories
 
-**When to use**: User wants to discover available event types and categories in Amplitude
+**使用场景**: User wants to discover available event types and categories in Amplitude
 
 **Tool sequence**:
 1. `AMPLITUDE_GET_EVENT_CATEGORIES` - List all event categories [必需]
@@ -140,7 +140,7 @@ Automate Amplitude product analytics through Composio's Amplitude toolkit via Ru
 **Application user_id -> Amplitude internal ID**:
 ```
 1. Call AMPLITUDE_FIND_USER with user=your_user_id
-2. Extract Amplitude's internal user ID from response
+2. Extract Amplitude's internal user ID from 响应
 3. Use internal ID for GET_USER_ACTIVITY
 ```
 
@@ -170,7 +170,7 @@ Example structure:
 }
 ```
 
-### Async Operation Pattern
+### Async 操作 Pattern
 
 For cohort membership updates:
 ```
@@ -196,12 +196,19 @@ For cohort membership updates:
 - Batch events where possible to reduce API calls
 - Cohort membership updates have async processing limits
 
-**Response Parsing**:
-- Response data may be nested under `data` key
+**响应 Parsing**:
+- 响应 data may be nested under `data` key
 - User activity returns events in reverse chronological order
 - Cohort lists may include archived cohorts; check status field
 - Parse defensively with fallbacks for optional fields
 
 ## 快速参考
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
-| Task | Tool Slug | Key Params |
+| Task | Tool 标识符 | Key Params |

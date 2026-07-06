@@ -6,11 +6,11 @@ Security-focused differential review of code changes with git history analysis a
 
 ## 使用场景
 
-Use this skill when you need to:
-- Review PRs, commits, or diffs for security vulnerabilities
-- Detect security regressions (re-introduced vulnerabilities)
-- Analyze the blast radius of code changes
-- Check test coverage gaps for modified code
+当您需要以下操作时使用此技能：
+- 审查 PR、提交或差异以发现安全漏洞
+- 检测安全回归（重新引入的漏洞）
+- 分析代码更改的影响范围
+- 检查修改代码的测试覆盖差距
 
 ## What It Does
 
@@ -30,17 +30,17 @@ This skill performs comprehensive security review of code changes:
 
 ## Documentation Structure
 
-This skill uses a **modular documentation architecture** for token efficiency and progressive disclosure:
+This skill uses a **modular documentation architecture** for 令牌 efficiency and progressive disclosure:
 
 ### Core Entry Point
 - **[SKILL.md](skills/differential-review/SKILL.md)** - Main entry point (217 lines)
-  - Quick reference tables for triage
+  - 快速参考 tables for triage
   - Decision tree routing to detailed docs
   - Quality checklist and red flags
-  - Integration with other skills
+  - 集成 with other skills
 
 ### Supporting Documentation
-- **[methodology.md](skills/differential-review/methodology.md)** - Detailed phase-by-phase workflow (~200 lines)
+- **[methodology.md](skills/differential-review/methodology.md)** - Detailed phase-by-phase 工作流 (~200 lines)
   - Pre-Analysis: Baseline context building
   - Phase 0: Intake & Triage
   - Phase 1: Changed Code Analysis
@@ -66,14 +66,14 @@ This skill uses a **modular documentation architecture** for token efficiency an
   - Quick detection bash commands
 
 ### Benefits of This Structure
-- **Token Efficient** - Load only the documentation you need
-- **Progressive Disclosure** - Quick reference for triage, detailed docs for deep analysis
+- **令牌 Efficient** - Load only the documentation you need
+- **Progressive Disclosure** - 快速参考 for triage, detailed docs for deep analysis
 - **Maintainable** - Each concern separated into its own file
 - **Navigable** - Decision tree routes you to the right document
 
 ## 工作流
 
-The complete workflow spans Pre-Analysis + Phases 0-6:
+The complete 工作流 spans Pre-Analysis + Phases 0-6:
 
 1. **Pre-Analysis** - Build baseline context with `audit-context-building` skill (if available)
 2. **Phase 0: Intake** - Extract changes, assess size, risk-score files

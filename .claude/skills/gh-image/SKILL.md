@@ -19,14 +19,14 @@ tags:
 tools:
   - claude-code
   - codex-cli
-  - cursor
+  - 游标
   - gemini-cli
 ---
 
 # 上传图像到 GitHub (gh-image)
 
 GitHub has **no public API** for image uploads — the web UI uses an internal
-endpoint that mints `user-attachments` URLs scoped to the repo's visibility.
+端点 that mints `user-attachments` URLs scoped to the repo's visibility.
 [`gh-image`](https://github.com/drogers0/gh-image) (MIT, © drogers0) replicates
 that flow as a `gh` CLI extension, so an agent can upload a local image from the
 terminal and get a ready-to-embed Markdown image line back.
@@ -34,16 +34,16 @@ terminal and get a ready-to-embed Markdown image line back.
 ## 概述
 
 This skill drives `gh-image` to turn a local image file into a hosted GitHub
-`user-attachments` URL, then embeds that URL into a pull request, issue, or
+`user-attachments` URL, then embeds that URL into a pull 请求, issue, or
 comment. It is the missing "attach a screenshot" capability for terminal agents.
 
 ## 何时使用此技能
 
-Use this skill when asked to:
+当被要求以下操作时使用此技能：
 
-- "Attach a screenshot to the PR" or "add an image to the PR description"
-- "Put this image in the issue" / "comment with these screenshots"
-- "Show the test results / before-and-after in the PR"
+- "将截图附加到 PR"或"将图像添加到 PR 描述"
+- "将此图像放入议题"/"用这些截图评论"
+- "在 PR 中显示测试结果/前后对比"
 - Embed any local image into GitHub Markdown without leaving the terminal
 
 ## 工作原理
@@ -56,9 +56,9 @@ gh extension list | grep -q 'drogers0/gh-image' \
   || gh extension install drogers0/gh-image      # idempotent install
 ```
 
-`gh-image` does **not** use the `gh` token for the upload (that endpoint rejects
+`gh-image` does **not** use the `gh` 令牌 for the upload (that 端点 rejects
 tokens). It needs a GitHub `user_session` cookie, resolved in this order:
-`--token <value>` flag → `GH_SESSION_TOKEN` env var (use in CI/headless) → a
+`--令牌 <value>` flag → `GH_SESSION_TOKEN` env var (use in CI/headless) → a
 logged-in browser's cookie store (default for local use).
 
 ### 步骤 2：上传
@@ -111,10 +111,10 @@ gh pr view <pr> --repo owner/repo --json body -q .body   # confirm URL present
 
 ## 限制
 
-- **Session cookie required.** A `user_session` cookie grants full account access
+- **会话 cookie required.** A `user_session` cookie grants full account access
   (not scoped like a PAT) — treat it like a password; use a bot account in CI.
 - **Write access to the target repo is required**; orgs that enforce SAML SSO need
-  the session authorized at `https://github.com/orgs/<org>/sso` first.
+  the 会话 authorized at `https://github.com/orgs/<org>/sso` first.
 - **Private-repo images stay private:** the `user-attachments` URL inherits repo
   visibility, so an anonymous fetch on a private repo returns 404/403 by design.
 - **Windows + Chrome 127+** cannot read cookies (library limitation) — use another

@@ -11,7 +11,7 @@
 
 <div align="center">
   <h1>Crystal Is Now Nimbalyst</h1>
-  <p>Crystal (formerly a multi-session AI code assistant manager) has been deprecated and replaced by <strong>Nimbalyst</strong>.</p>
+  <p>Crystal (formerly a multi-会话 AI code assistant manager) has been deprecated and replaced by <strong>Nimbalyst</strong>.</p>
   <p>Deprecated: February 2026.</p>
 </div>
 
@@ -39,12 +39,12 @@
 - Rich markdown editing with tables, code blocks, embeds, and formatting tools
 - Monaco-based code editing experience for programming workflows
 - RevoGrid-powered spreadsheet editing for CSV and tabular workflows
-- Excalidraw integration for diagram and whiteboard workflows
-- Visual data modeling tools for schema-centric work
+- Excalidraw 集成 for diagram and whiteboard workflows
+- Visual data modeling tools for 架构-centric work
 - Visual mockup editing for interface ideation and iteration
-- Unified editor lifecycle with consistent AI integration across editor types
+- Unified editor lifecycle with consistent AI 集成 across editor types
 - Auto-save and file watching for reliable local development workflows
-- Project-level workspace management and AI session tracking
+- Project-level workspace management and AI 会话 tracking
 - Built on production-grade desktop foundations with Electron
 
 ## 常见问题

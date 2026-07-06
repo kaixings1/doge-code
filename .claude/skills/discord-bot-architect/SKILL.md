@@ -17,7 +17,7 @@ date_added: 2026-02-27
 
 - 斜杠命令优先于消息解析（消息内容意图已弃用）
 - 始终在 3 秒内确认交互
-- Request only required intents (minimize privileged intents)
+- 请求 only required intents (minimize privileged intents)
 - Handle rate limits gracefully with exponential backoff
 - Plan for sharding from the start (required at 2500+ guilds)
 - Use components (buttons, selects, modals) for rich UX
@@ -27,9 +27,9 @@ date_added: 2026-02-27
 
 ### Discord.js v14 Foundation
 
-Modern Discord bot setup with Discord.js v14 and slash commands
+Modern Discord bot 设置 with Discord.js v14 and slash commands
 
-**When to use**: Building Discord bots with JavaScript/TypeScript,Need full gateway connection with events,Building bots with complex interactions
+**使用场景**: Building Discord bots with JavaScript/TypeScript,Need full gateway connection with events,Building bots with complex interactions
 
 ```javascript
 // src/index.js
@@ -51,7 +51,7 @@ const client = new Client({
 // Load commands
 client.commands = new Collection();
 const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(f => f.endsWith('.js'));
+const commandFiles = fs.readdirSync(commandsPath).过滤器(f => f.endsWith('.js'));
 
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
@@ -63,7 +63,7 @@ for (const file of commandFiles) {
 
 // Load events
 const eventsPath = path.join(__dirname, 'events');
-const eventFiles = fs.readdirSync(eventsPath).filter(f => f.endsWith('.js'));
+const eventFiles = fs.readdirSync(eventsPath).过滤器(f => f.endsWith('.js'));
 
 for (const file of eventFiles) {
   const filePath = path.join(eventsPath, file);
@@ -142,7 +142,7 @@ require('dotenv').config();
 
 const commands = [];
 const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(f => f.endsWith('.js'));
+const commandFiles = fs.readdirSync(commandsPath).过滤器(f => f.endsWith('.js'));
 
 for (const file of commandFiles) {
   const command = require(path.join(commandsPath, file));
@@ -192,7 +192,7 @@ discord-bot/
 
 Discord bot with Pycord (Python) and application commands
 
-**When to use**: Building Discord bots with Python,优先 async/await patterns,Need good slash command support
+**使用场景**: Building Discord bots with Python,优先 async/await patterns,Need good slash command support
 
 ```python
 # main.py
@@ -270,7 +270,7 @@ class General(commands.Cog):
         if channel:
             await channel.send(f"Welcome {member.mention}!")
 
-def setup(bot):
+def 设置(bot):
     bot.add_cog(General(bot))
 ```
 
@@ -287,7 +287,7 @@ discord-bot/
 
 Using buttons, select menus, and modals for rich UX
 
-**When to use**: Need interactive user interfaces,Collecting user input beyond slash command options,Building menus, confirmations, or forms
+**使用场景**: Need interactive user interfaces,Collecting user input beyond slash command options,Building menus, confirmations, or forms
 
 ```javascript
 // Discord.js - Buttons and Select Menus
@@ -347,7 +347,7 @@ module.exports = {
 
     // Collect responses
     const collector = interaction.channel.createMessageComponentCollector({
-      filter: i => i.user.id === interaction.user.id,
+      过滤器: i => i.user.id === interaction.user.id,
       time: 60_000  // 60 seconds timeout
     });
 
@@ -398,7 +398,7 @@ module.exports = {
       new ActionRowBuilder().addComponents(bodyInput)
     );
 
-    // Show modal - MUST be first response
+    // Show modal - MUST be first 响应
     await interaction.showModal(modal);
   }
 };
@@ -429,13 +429,13 @@ class ConfirmView(discord.ui.View):
     @discord.ui.button(label="Confirm", style=discord.ButtonStyle.green)
     async def confirm(self, button, interaction):
         self.value = True
-        await interaction.response.edit_message(content="Confirmed!", view=None)
+        await interaction.响应.edit_message(content="Confirmed!", view=None)
         self.stop()
 
     @discord.ui.button(label="Cancel", style=discord.ButtonStyle.red)
     async def cancel(self, button, interaction):
         self.value = False
-        await interaction.response.edit_message(content="Cancelled", view=None)
+        await interaction.响应.edit_message(content="Cancelled", view=None)
         self.stop()
 
 @bot.slash_command(name="confirm")
@@ -461,8 +461,8 @@ class RoleSelect(discord.ui.Select):
             options=options
         )
 
-    async def callback(self, interaction):
-        await interaction.response.send_message(
+    async def 回调(self, interaction):
+        await interaction.响应.send_message(
             f"You selected: {', '.join(self.values)}",
             ephemeral=True
         )
@@ -490,10 +490,10 @@ class FeedbackModal(discord.ui.Modal):
             max_length=1000
         ))
 
-    async def callback(self, interaction):
+    async def 回调(self, interaction):
         title = self.children[0].value
         body = self.children[1].value
-        await interaction.response.send_message(
+        await interaction.响应.send_message(
             f"Thanks!\n**{title}**\n{body}",
             ephemeral=True
         )
@@ -510,20 +510,20 @@ async def feedback(ctx: discord.ApplicationContext):
 - 1 select menu per ActionRow (takes all 5 slots)
 - 5 select menus max per message
 - 25 options per select menu
-- Modal must be first response (cannot defer first)
+- Modal must be first 响应 (cannot defer first)
 
-### Deferred Response Pattern
+### Deferred 响应 Pattern
 
 Handle slow operations without timing out
 
-**When to use**: Operation takes more than 3 seconds,Database queries, API calls, LLM responses,File processing or generation
+**使用场景**: 操作 takes more than 3 seconds,Database queries, API calls, LLM responses,File processing or generation
 
 ```javascript
-// Discord.js - Deferred response
+// Discord.js - Deferred 响应
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('slow-task')
-    .setDescription('Performs a slow operation'),
+    .setDescription('Performs a slow 操作'),
 
   async execute(interaction) {
     // Defer immediately - you have 3 seconds!
@@ -542,7 +542,7 @@ module.exports = {
       });
     } catch (error) {
       await interaction.editReply({
-        content: 'An error occurred while processing your request.'
+        content: 'An error occurred while processing your 请求.'
       });
     }
   }
@@ -559,7 +559,7 @@ collector.on('collect', async i => {
 ```
 
 ```python
-# Pycord - Deferred response
+# Pycord - Deferred 响应
 @bot.slash_command(name="slow-task")
 async def slow_task(ctx: discord.ApplicationContext):
     # Defer immediately
@@ -579,13 +579,13 @@ async def slow_task(ctx: discord.ApplicationContext):
 
 - Initial_response: 3 seconds
 - Deferred_followup: 15 minutes
-- Ephemeral_note: Can only be set on initial response, not changed later
+- Ephemeral_note: Can only be set on initial 响应, not changed later
 
 ### Embed Builder Pattern
 
 Rich embedded messages for professional-looking content
 
-**When to use**: Displaying formatted information,状态 updates, help menus, logs,Data with structure (fields, images)
+**使用场景**: Displaying formatted information,状态 updates, help menus, logs,Data with structure (fields, images)
 
 ```javascript
 const { EmbedBuilder, Colors } = require('discord.js');
@@ -655,7 +655,7 @@ await ctx.respond(embed=embed)
 
 Gracefully handle Discord API rate limits
 
-**When to use**: High-volume operations,Bulk messaging or role assignments,Any repeated API calls
+**使用场景**: High-volume operations,Bulk messaging or role assignments,Any repeated API calls
 
 ```javascript
 // Discord.js handles rate limits automatically, but for custom handling:
@@ -678,9 +678,9 @@ class RateLimitQueue {
     this.requestsPerSecond = 40; // Safe margin below 50
   }
 
-  async add(operation) {
+  async add(操作) {
     return new Promise((resolve, reject) => {
-      this.queue.push({ operation, resolve, reject });
+      this.queue.push({ 操作, resolve, reject });
       this.process();
     });
   }
@@ -690,10 +690,10 @@ class RateLimitQueue {
     this.processing = true;
 
     while (this.queue.length > 0) {
-      const { operation, resolve, reject } = this.queue.shift();
+      const { 操作, resolve, reject } = this.queue.shift();
 
       try {
-        const result = await operation();
+        const result = await 操作();
         resolve(result);
       } catch (error) {
         reject(error);
@@ -763,7 +763,7 @@ for member in guild.members:
 
 Scale bots to 2500+ servers with sharding
 
-**When to use**: Bot approaching 2500 guilds (required),Want horizontal scaling,Memory optimization for large bots
+**使用场景**: Bot approaching 2500 guilds (required),Want horizontal scaling,Memory optimization for large bots
 
 ```javascript
 // Discord.js Sharding Manager
@@ -771,7 +771,7 @@ Scale bots to 2500+ servers with sharding
 const { ShardingManager } = require('discord.js');
 
 const manager = new ShardingManager('./bot.js', {
-  token: process.env.DISCORD_TOKEN,
+  令牌: process.env.DISCORD_TOKEN,
   totalShards: 'auto',  // Discord determines optimal count
   // Or specify: totalShards: 4
 });
@@ -872,9 +872,9 @@ Discord requires ALL interactions to be acknowledged within 3 seconds:
 - Select menu selections
 - 上下文 menu commands
 
-If you do ANY slow operation (database, API, file I/O) before responding,
+If you do ANY slow 操作 (database, API, file I/O) before responding,
 you'll miss the window. Discord shows an error even if your bot processes
-the request correctly afterward.
+the 请求 correctly afterward.
 
 After acknowledgment, you have 15 minutes for follow-up responses.
 
@@ -886,7 +886,7 @@ Recommended fix:
 // Discord.js - Defer for slow operations
 module.exports = {
   async execute(interaction) {
-    // DEFER IMMEDIATELY - before any slow operation
+    // DEFER IMMEDIATELY - before any slow 操作
     await interaction.deferReply();
     // For ephemeral: await interaction.deferReply({ ephemeral: true });
 
@@ -905,7 +905,7 @@ module.exports = {
 @bot.slash_command()
 async def slow_command(ctx):
     await ctx.defer()  # Acknowledge immediately
-    # await ctx.defer(ephemeral=True)  # For private response
+    # await ctx.defer(ephemeral=True)  # For private 响应
 
     result = await slow_operation()
     await ctx.followup.send(f"Result: {result}")
@@ -917,7 +917,7 @@ async def slow_command(ctx):
 // If you're updating the message
 await interaction.deferUpdate();
 
-// If you're sending a new response
+// If you're sending a new 响应
 await interaction.deferReply({ ephemeral: true });
 ```
 
@@ -956,7 +956,7 @@ Recommended fix:
 5. Toggle ON the intents you need
 ```
 
-## 步骤 2: Request in code
+## 步骤 2: 请求 in code
 
 ```javascript
 // Discord.js
@@ -1058,29 +1058,29 @@ if __name__ == "__main__":
     if "--sync" in sys.argv:
         # Only sync when explicitly requested
         bot.sync_commands_on_start = True
-    bot.run(token)
+    bot.run(令牌)
 ```
 
-## Testing workflow
+## Testing 工作流
 
 1. Use guild commands during development (instant updates)
 2. Only deploy global commands when ready for production
 3. Run deploy script manually, not on every restart
 
-### Bot Token Exposed
+### Bot 令牌 Exposed
 
 Severity: CRITICAL
 
-Situation: Storing or sharing bot token
+Situation: Storing or sharing bot 令牌
 
 Symptoms:
 Unauthorized actions from your bot.
 Bot joins random servers.
 Bot sends spam or malicious content.
-"Invalid token" after Discord invalidates it.
+"Invalid 令牌" after Discord invalidates it.
 
 Why this breaks:
-Your bot token provides FULL control over your bot. Attackers can:
+Your bot 令牌 provides FULL control over your bot. Attackers can:
 - Send messages as your bot
 - Join servers, create invites
 - Access all data your bot can access
@@ -1099,7 +1099,7 @@ Recommended fix:
 
 ```javascript
 // BAD - never do this
-const token = 'MTIzNDU2Nzg5MDEyMzQ1Njc4.ABCDEF.xyz...';
+const 令牌 = 'MTIzNDU2Nzg5MDEyMzQ1Njc4.ABCDEF.xyz...';
 
 // GOOD - environment variables
 require('dotenv').config();
@@ -1115,10 +1115,10 @@ client.login(process.env.DISCORD_TOKEN);
 config.json
 ```
 
-## If token is exposed
+## If 令牌 is exposed
 
 1. Go to Developer Portal immediately
-2. Regenerate the token
+2. Regenerate the 令牌
 3. Update all deployments
 4. Review bot activity for unauthorized actions
 5. Check git history and force push to remove if needed
@@ -1134,7 +1134,7 @@ CLIENT_ID=your_client_id
 ```javascript
 // Load with dotenv
 require('dotenv').config();
-const token = process.env.DISCORD_TOKEN;
+const 令牌 = process.env.DISCORD_TOKEN;
 ```
 
 ### Bot Missing applications.commands 范围
@@ -1200,7 +1200,7 @@ Severity: MEDIUM
 Situation: Deploying global slash commands
 
 Symptoms:
-Commands don't appear after deployment.
+Commands don't appear after 部署.
 Guild commands work but global commands don't.
 Commands appear after an hour.
 
@@ -1290,13 +1290,13 @@ client.on('shardReconnecting', (id) => {
 ```javascript
 // Required at 2500+ guilds
 const manager = new ShardingManager('./bot.js', {
-  token: process.env.DISCORD_TOKEN,
+  令牌: process.env.DISCORD_TOKEN,
   totalShards: 'auto'
 });
 manager.spawn();
 ```
 
-### Modal Must Be First Response
+### Modal Must Be First 响应
 
 Severity: MEDIUM
 
@@ -1309,7 +1309,7 @@ Works sometimes but not others.
 
 Why this breaks:
 Modals have a special requirement: showing a modal MUST be the first
-response to an interaction. You cannot:
+响应 to an interaction. You cannot:
 - defer() then showModal()
 - reply() then showModal()
 - Think for more than 3 seconds then showModal()
@@ -1319,7 +1319,7 @@ Recommended fix:
 ## Show modal immediately
 
 ```javascript
-// CORRECT - modal is first response
+// CORRECT - modal is first 响应
 async execute(interaction) {
   const modal = new ModalBuilder()
     .setCustomId('my-modal')
@@ -1350,30 +1350,30 @@ async execute(interaction) {
     });
   }
 
-  // Show modal (still first interaction response for this path)
+  // Show modal (still first interaction 响应 for this path)
   await interaction.showModal(modal);
 }
 ```
 
 ## Validation Checks
 
-### Hardcoded Discord Token
+### Hardcoded Discord 令牌
 
 Severity: ERROR
 
 Discord tokens must never be hardcoded
 
-Message: Hardcoded Discord token detected. Use environment variables.
+Message: Hardcoded Discord 令牌 detected. Use environment variables.
 
-### Token Variable Assignment
+### 令牌 Variable Assignment
 
 Severity: ERROR
 
 Tokens should come from environment, not strings
 
-Message: Token assigned from string literal. Use environment variable.
+Message: 令牌 assigned from string literal. Use environment variable.
 
-### Token in Client-Side Code
+### 令牌 in Client-Side Code
 
 Severity: ERROR
 
@@ -1381,13 +1381,13 @@ Severity: ERROR
 
 Message: Discord credentials exposed client-side. Only use server-side.
 
-### Slow Operation Without Defer
+### Slow 操作 Without Defer
 
 Severity: WARNING
 
 Slow operations should be deferred to avoid timeout
 
-Message: Slow operation without defer. Interaction may timeout.
+Message: Slow 操作 without defer. Interaction may timeout.
 
 ### Interaction Without Error Handling
 
@@ -1409,7 +1409,7 @@ Message: Using Message Content intent. 考虑 slash commands instead.
 
 Severity: WARNING
 
-Only request intents you actually need
+Only 请求 intents you actually need
 
 Message: Requesting all intents. Only enable what you need.
 
@@ -1435,22 +1435,22 @@ Severity: INFO
 
 考虑 handling rate limits for bulk operations
 
-Message: Bulk operation without rate limit handling.
+Message: Bulk 操作 without rate limit handling.
 
 ## Collaboration
 
 ### Delegation Triggers
 
 - user needs AI-powered Discord bot -> llm-architect (Integrate LLM for conversational Discord bot)
-- user needs Slack integration too -> slack-bot-builder (Cross-platform bot architecture)
-- user needs voice features -> voice-agents (Discord voice channel integration)
+- user needs Slack 集成 too -> slack-bot-builder (Cross-platform bot architecture)
+- user needs voice features -> voice-agents (Discord voice channel 集成)
 - user needs database for bot data -> postgres-wizard (Store user data, server configs, moderation logs)
-- user needs workflow automation -> workflow-automation (Discord events trigger workflows)
+- user needs 工作流 automation -> 工作流-automation (Discord events trigger workflows)
 - user needs high availability -> devops (Sharding, scaling, monitoring for large bots)
-- user needs payment integration -> stripe-specialist (Premium bot features, subscription management)
+- user needs payment 集成 -> stripe-specialist (Premium bot features, subscription management)
 
 ## 使用场景
-使用此技能当 the request clearly matches the capabilities and patterns described above.
+使用此技能当 the 请求 clearly matches the 能力 and patterns described above.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

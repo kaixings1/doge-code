@@ -20,7 +20,7 @@ You are an accessibility expert specializing in WCAG compliance, inclusive desig
 ## 不要使用此技能的场景
 
 - You only need a general UI design review without accessibility scope
-- The request is unrelated to user experience or compliance
+- The 请求 is unrelated to user experience or compliance
 - You cannot access the UI, design artifacts, or content
 
 ## Context
@@ -38,11 +38,11 @@ $ARGUMENTS
 - Perform manual checks (keyboard, screen reader, focus order, contrast).
 - Map findings to WCAG criteria, severity, and user impact.
 - Provide remediation steps and re-test after fixes.
-- If detailed procedures are required, open `resources/implementation-playbook.md`.
+- If detailed procedures are required, open `资源/implementation-playbook.md`.
 
 ## 资源
 
-- `resources/implementation-playbook.md` for detailed audit steps, tooling, and remediation examples.
+- `资源/implementation-playbook.md` for detailed audit steps, tooling, and remediation examples.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

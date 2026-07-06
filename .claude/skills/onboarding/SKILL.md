@@ -1,6 +1,6 @@
 ---
 name: onboarding
-description: When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value. Also use when the user mentions "onboarding flow," "activation rate," "user activation," "first-run experience," "empty states," "onboarding checklist," "aha moment," "new user experience," "users aren't activating," "nobody completes setup," "low activation rate," "users sign up but don't use the product," "time to value," or "first session experience." Use this whenever users are signing up but not sticking around. For signup/registration optimization, see signup. For ongoing email sequences, see emails.
+description: "当用户想要优化注册后的新手引导、用户激活、首次使用体验或价值实现时间时使用。当用户提到 'onboarding flow'、'activation rate'、'user activation'、'first-run experience'、'empty states'、'onboarding checklist'、'aha moment'、'new user experience'、'users aren\'t activating'、'nobody completes setup'、'low activation rate'、'users sign up but don\'t use the product'、'time to value' 或 'first session experience' 时也使用。当用户注册但没有留存时使用此技能。关于注册/注册优化，请参阅 signup。关于持续邮件序列，请参阅 emails。"
 metadata:
   version: 2.0.0
 ---
@@ -27,8 +27,8 @@ metadata:
 ### 1. Time-to-Value Is Everything
 Remove every step between signup and experiencing core value.
 
-### 2. One Goal Per Session
-Focus first session on one successful outcome. Save advanced features for later.
+### 2. One Goal Per 会话
+Focus first 会话 on one successful outcome. Save advanced features for later.
 
 ### 3. Do, Don't Show
 Interactive > Tutorial. Doing the thing > Learning about the thing.
@@ -46,7 +46,7 @@ The action that correlates most strongly with retention:
 - What do retained users do that churned users don't?
 - What's the earliest indicator of future engagement?
 
-**Examples by product type:**
+**示例 by product type:**
 - Project management: Create first project + add team member
 - Analytics: Install tracking + see first report
 - Design tool: Create first design + export/share
@@ -64,10 +64,10 @@ The action that correlates most strongly with retention:
 
 ### Immediate Post-Signup (First 30 Seconds)
 
-| Approach | Best For | Risk |
+| 方法 | Best For | Risk |
 |----------|----------|------|
 | Product-first | Simple products, B2C, mobile | Blank slate overwhelm |
-| Guided setup | Products needing personalization | Adds friction before value |
+| Guided 设置 | Products needing personalization | Adds friction before value |
 | Value-first | Products with demo data | May not feel "real" |
 
 **Whatever you choose:**
@@ -77,12 +77,12 @@ The action that correlates most strongly with retention:
 
 ### Onboarding Checklist Pattern
 
-**When to use:**
-- Multiple setup steps required
+**使用场景:**
+- Multiple 设置 steps required
 - Product has several features to discover
 - Self-serve B2B products
 
-**Best practices:**
+**最佳实践:**
 - 3-7 items (not overwhelming)
 - Order by value (most impactful first)
 - Start with quick wins
@@ -102,9 +102,9 @@ Empty states are onboarding opportunities, not dead ends.
 
 ### Tooltips and Guided Tours
 
-**When to use:** Complex UI, features that aren't self-evident, power features users might miss
+**使用场景:** Complex UI, features that aren't self-evident, power features users might miss
 
-**Best practices:**
+**最佳实践:**
 - Max 3-5 steps per tour
 - Dismissable at any time
 - Don't repeat for returning users
@@ -131,7 +131,7 @@ Empty states are onboarding opportunities, not dead ends.
 ## Handling Stalled Users
 
 ### Detection
-Define "stalled" criteria (X days inactive, incomplete setup)
+Define "stalled" criteria (X days inactive, incomplete 设置)
 
 ### Re-engagement Tactics
 
@@ -149,7 +149,7 @@ Define "stalled" criteria (X days inactive, incomplete setup)
 |--------|-------------|
 | Activation rate | % reaching activation event |
 | Time to activation | How long to first value |
-| Onboarding completion | % completing setup |
+| Onboarding completion | % completing 设置 |
 | Day 1/7/30 retention | Return rate by timeframe |
 
 ### Funnel Analysis
@@ -183,9 +183,9 @@ For each issue: Finding → Impact → Recommendation → Priority
 
 | Product Type | Key Steps |
 |--------------|-----------|
-| B2B SaaS | Setup wizard → First value action → Team invite → Deep setup |
+| B2B SaaS | 设置 wizard → First value action → Team invite → Deep 设置 |
 | Marketplace | Complete profile → Browse → First transaction → Repeat loop |
-| Mobile App | Permissions → Quick win → Push setup → Habit loop |
+| Mobile App | Permissions → Quick win → Push 设置 → Habit loop |
 | Content Platform | Follow/customize → Consume → Create → Engage |
 
 ---

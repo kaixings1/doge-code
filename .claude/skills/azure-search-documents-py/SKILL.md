@@ -33,7 +33,7 @@ from azure.search.documents import SearchClient
 from azure.core.credentials import AzureKeyCredential
 
 client = SearchClient(
-    endpoint=os.environ["AZURE_SEARCH_ENDPOINT"],
+    端点=os.environ["AZURE_SEARCH_ENDPOINT"],
     index_name=os.environ["AZURE_SEARCH_INDEX_NAME"],
     credential=AzureKeyCredential(os.environ["AZURE_SEARCH_API_KEY"])
 )
@@ -46,7 +46,7 @@ from azure.search.documents import SearchClient
 from azure.identity import DefaultAzureCredential
 
 client = SearchClient(
-    endpoint=os.environ["AZURE_SEARCH_ENDPOINT"],
+    端点=os.environ["AZURE_SEARCH_ENDPOINT"],
     index_name=os.environ["AZURE_SEARCH_INDEX_NAME"],
     credential=DefaultAzureCredential()
 )
@@ -75,7 +75,7 @@ from azure.search.documents.indexes.models import (
     SimpleField
 )
 
-index_client = SearchIndexClient(endpoint, AzureKeyCredential(key))
+index_client = SearchIndexClient(端点, AzureKeyCredential(key))
 
 fields = [
     SimpleField(name="id", type=SearchFieldDataType.String, key=True),
@@ -116,7 +116,7 @@ index_client.create_or_update_index(index)
 ```python
 from azure.search.documents import SearchClient
 
-client = SearchClient(endpoint, "my-index", AzureKeyCredential(key))
+client = SearchClient(端点, "my-index", AzureKeyCredential(key))
 
 documents = [
     {
@@ -149,7 +149,7 @@ for result in results:
 ```python
 from azure.search.documents.models import VectorizedQuery
 
-# Your query embedding (1536 dimensions)
+# Your 查询 embedding (1536 dimensions)
 query_vector = get_embedding("semantic search capabilities")
 
 vector_query = VectorizedQuery(
@@ -210,7 +210,7 @@ for result in results:
 ```python
 results = client.search(
     search_text="*",
-    filter="category eq 'Technology' and rating gt 4",
+    过滤器="category eq 'Technology' and rating gt 4",
     order_by=["rating desc"],
     select=["id", "title", "category", "rating"]
 )
@@ -262,7 +262,7 @@ from azure.search.documents.indexes.models import (
     OutputFieldMappingEntry
 )
 
-indexer_client = SearchIndexerClient(endpoint, AzureKeyCredential(key))
+indexer_client = SearchIndexerClient(端点, AzureKeyCredential(key))
 
 # Create data source
 data_source = SearchIndexerDataSourceConnection(
@@ -345,7 +345,7 @@ from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
 
 credential = DefaultAzureCredential()
-client = SearchClient(endpoint, index_name, credential)
+client = SearchClient(端点, index_name, credential)
 ```
 
 **API Key**:
@@ -353,14 +353,14 @@ client = SearchClient(endpoint, index_name, credential)
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 
-client = SearchClient(endpoint, index_name, AzureKeyCredential(api_key))
+client = SearchClient(端点, index_name, AzureKeyCredential(api_key))
 ```
 
 ## Client Selection
 
 | Client | Purpose |
 |--------|---------|
-| `SearchClient` | Query indexes, upload/update/delete documents |
+| `SearchClient` | 查询 indexes, upload/update/delete documents |
 | `SearchIndexClient` | Create/manage indexes, knowledge sources, knowledge bases |
 | `SearchIndexerClient` | Manage indexers, skillsets, data sources |
 | `KnowledgeBaseRetrievalClient` | Agentic retrieval with LLM-powered Q&A |
@@ -412,7 +412,7 @@ index = SearchIndex(
     )
 )
 
-index_client = SearchIndexClient(endpoint, credential)
+index_client = SearchIndexClient(端点, credential)
 index_client.create_or_update_index(index)
 ```
 
@@ -422,11 +422,11 @@ index_client.create_or_update_index(index)
 from azure.search.documents import SearchIndexingBufferedSender
 
 # Batch upload with automatic batching
-with SearchIndexingBufferedSender(endpoint, index_name, credential) as sender:
+with SearchIndexingBufferedSender(端点, index_name, credential) as sender:
     sender.upload_documents(documents)
 
 # Direct operations via SearchClient
-search_client = SearchClient(endpoint, index_name, credential)
+search_client = SearchClient(端点, index_name, credential)
 search_client.upload_documents(documents)      # Add new
 search_client.merge_documents(documents)       # Update existing
 search_client.merge_or_upload_documents(documents)  # Upsert
@@ -437,7 +437,7 @@ search_client.delete_documents(documents)      # Remove
 
 ```python
 # Basic search
-results = search_client.search(search_text="query")
+results = search_client.search(search_text="查询")
 
 # Vector search
 from azure.search.documents.models import VectorizedQuery
@@ -453,7 +453,7 @@ results = search_client.search(
 
 # Hybrid search (vector + keyword)
 results = search_client.search(
-    search_text="query",
+    search_text="查询",
     vector_queries=[VectorizedQuery(vector=embedding, k_nearest_neighbors=5, fields="embedding")],
     query_type="semantic",
     semantic_configuration_name="semantic-config"
@@ -461,8 +461,8 @@ results = search_client.search(
 
 # With filters
 results = search_client.search(
-    search_text="query",
-    filter="category eq 'technology'",
+    search_text="查询",
+    过滤器="category eq 'technology'",
     select=["id", "title", "content"],
     top=10
 )
@@ -474,7 +474,7 @@ For LLM-powered Q&A with answer synthesis, see references/agentic-retrieval.md.
 
 Key concepts:
 - **Knowledge Source**: Points to a search index
-- **Knowledge Base**: Wraps knowledge sources + LLM for query planning and synthesis
+- **Knowledge Base**: Wraps knowledge sources + LLM for 查询 planning and synthesis
 - **Output modes**: `EXTRACTIVE_DATA` (raw chunks) or `ANSWER_SYNTHESIS` (LLM-generated answers)
 
 ## Async Pattern
@@ -482,8 +482,8 @@ Key concepts:
 ```python
 from azure.search.documents.aio import SearchClient
 
-async with SearchClient(endpoint, index_name, credential) as client:
-    results = await client.search(search_text="query")
+async with SearchClient(端点, index_name, credential) as client:
+    results = await client.search(search_text="查询")
     async for result in results:
         print(result["title"])
 ```
@@ -528,7 +528,7 @@ except HttpResponseError as e:
 ```
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

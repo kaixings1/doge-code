@@ -20,7 +20,7 @@ cargo add azure_storage_blob azure_identity
 
 ```bash
 AZURE_STORAGE_ACCOUNT_NAME=<storage-account-name>
-# Endpoint: https://<account>.blob.core.windows.net/
+# 端点: https://<account>.blob.core.windows.net/
 ```
 
 ## 认证
@@ -68,8 +68,8 @@ blob_client
 ### Download Blob
 
 ```rust
-let response = blob_client.download(None).await?;
-let content = response.into_body().collect_bytes().await?;
+let 响应 = blob_client.download(None).await?;
+let content = 响应.into_body().collect_bytes().await?;
 println!("Content: {:?}", content);
 ```
 
@@ -132,7 +132,7 @@ For Entra ID auth, assign one of these roles:
 | crates.io | https://crates.io/crates/azure_storage_blob |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

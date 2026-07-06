@@ -18,7 +18,7 @@ This skill is designed for the high-fidelity conversion of static or React-based
 - Use when converting a React (CRA/Vite/Next.js) or HTML project into a WordPress theme.
 - Use when the client demands a 100% pixel-perfect match with the original source.
 - Use when auditing an existing WordPress conversion for structural or SEO flaws.
-- Use when you need to ensure technical SEO (Schema, Meta tags, Heading hierarchy) is preserved exactly.
+- Use when you need to ensure technical SEO (架构, Meta tags, Heading hierarchy) is preserved exactly.
 
 ## Core Capabilities
 
@@ -85,7 +85,7 @@ wp_nav_menu([
 
 - ✅ **Do:** Use `get_page_by_path()` for robust internal linking.
 - ✅ **Do:** Implement ACF (Advanced Custom Fields) fallbacks in `functions.php`.
-- ✅ **Do:** Keep the Tailwind configuration in the `header.php` to ensure global styles are active.
+- ✅ **Do:** Keep the Tailwind 配置 in the `header.php` to ensure global styles are active.
 - ❌ **Don't:** Add "div" wrappers or rename classes to "clean up" the code.
 - ❌ **Don't:** Use standard WordPress default styles if they conflict with the original design.
 

@@ -1,6 +1,6 @@
 ---
-name: conductor-setup
-description: "Conductor Setup — Conductor Setup 相关功能和最佳实践"
+name: conductor-设置
+description: "Conductor 设置 — Conductor 设置 相关功能和最佳实践"
 allowed-tools: Bash(chmod *), Bash(bundle *), Bash(npm *), Bash(script/server)
 context: fork
 risk: unknown
@@ -15,7 +15,7 @@ metadata:
 ## 何时使用
 - 你需要配置 Rails 项目使其在 Conductor 工作区中正确运行。
 - 项目应支持具有隔离端口、Redis 设置和共享密钥的并行编码代理。
-- 你需要 Rails 仓库的标准 `conductor.json`、`bin/conductor-setup` 和 `script/server` 脚手架。
+- 你需要 Rails 仓库的标准 `conductor.json`、`bin/conductor-设置` 和 `script/server` 脚手架。
 
 # What to Create
 
@@ -26,15 +26,15 @@ Create `conductor.json` in the project root if it doesn't already exist:
 ```json
 {
   "scripts": {
-    "setup": "bin/conductor-setup",
+    "设置": "bin/conductor-设置",
     "run": "script/server"
   }
 }
 ```
 
-## 2. bin/conductor-setup (executable)
+## 2. bin/conductor-设置 (executable)
 
-Create `bin/conductor-setup` if it doesn't already exist:
+Create `bin/conductor-设置` if it doesn't already exist:
 
 ```bash
 #!/bin/bash
@@ -51,7 +51,7 @@ bundle install
 npm install
 ```
 
-Make it executable with `chmod +x bin/conductor-setup`.
+Make it executable with `chmod +x bin/conductor-设置`.
 
 ## 3. script/server (executable)
 
@@ -60,7 +60,7 @@ Create the `script` directory if needed, then create `script/server` if it doesn
 ```bash
 #!/bin/bash
 
-# === Port Configuration ===
+# === Port 配置 ===
 export PORT=${CONDUCTOR_PORT:-3000}
 export VITE_RUBY_PORT=$((PORT + 1000))
 
@@ -78,7 +78,7 @@ Make it executable with `chmod +x script/server`.
 
 ## 4. Update Rails Config Files
 
-For each of the following files, if they exist and contain Redis configuration, update them to use `ENV.fetch('REDIS_URL', ...)` or `ENV['REDIS_URL']` with a fallback:
+For each of the following files, if they exist and contain Redis 配置, update them to use `ENV.fetch('REDIS_URL', ...)` or `ENV['REDIS_URL']` with a fallback:
 
 ### config/initializers/sidekiq.rb
 If this file exists and configures Redis, update it to use:
@@ -108,8 +108,8 @@ Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(url: ENV.fe
 
 # Implementation Notes
 
-- **Don't overwrite existing files**: Check if conductor.json, bin/conductor-setup, and script/server exist before creating them. If they exist, skip creation and inform the user.
-- **Rails config updates**: Only modify Redis-related configuration. If a file doesn't exist or doesn't use Redis, skip it gracefully.
+- **Don't overwrite existing files**: Check if conductor.json, bin/conductor-设置, and script/server exist before creating them. If they exist, skip creation and inform the user.
+- **Rails config updates**: Only modify Redis-related 配置. If a file doesn't exist or doesn't use Redis, skip it gracefully.
 - **Create directories as needed**: Create `script/` directory if it doesn't exist.
 
 # Verification

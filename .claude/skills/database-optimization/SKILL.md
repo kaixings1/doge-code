@@ -66,12 +66,12 @@ CREATE INDEX idx_users_email_name ON users (email, name);
 
 ```python
 # 糟糕：N+1
-users = db.query(User).all()
+users = db.查询(User).all()
 for user in users:
     print(user.orders)  # 每个用户触发一次查询
 
 # 良好：预加载
-users = db.query(User).options(joinedload(User.orders)).all()
+users = db.查询(User).options(joinedload(User.orders)).all()
 ```
 
 ```javascript
@@ -114,7 +114,7 @@ MySQL：
 
 ```python
 # SQLAlchemy 读取副本路由
-class RoutingSession(Session):
+class RoutingSession(会话):
     def get_bind(self, mapper=None, clause=None):
         if self._flushing or self.is_modified():
             return engines["primary"]

@@ -1,14 +1,14 @@
 ---
 name: team
 description: "Team — 团队协作技能。生成 N 个协调的代理，在共享任务列表上协作。支持执行器、调试器、设计者、Codex、Gemini 等代理类型。包含团队计划→PRD→执行→验证→修复的流水线。"
-argument-hint: "[N:代理类型] [ralph] <任务描述>"
+参数-hint: "[N:代理类型] [ralph] <任务描述>"
 aliases: []
 level: 4
 ---
 
 # Team Skill
 
-Spawn N coordinated agents working on a shared task list using Claude Code's implicit agent team. Claude Code 2.1.178+ removed native `TeamCreate`/`TeamDelete`; with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, each session has one implicit team and teammates are spawned directly with the Agent/Task tool using distinct `name` values. This skill still preserves OMC's legacy tmux/CLI worker orchestration where documented (`omc team` / `/omc-teams`).
+Spawn N coordinated agents working on a shared task list using Claude Code's implicit agent team. Claude Code 2.1.178+ removed native `TeamCreate`/`TeamDelete`; with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, each 会话 has one implicit team and teammates are spawned directly with the Agent/Task tool using distinct `name` values. This skill still preserves OMC's legacy tmux/CLI worker orchestration where documented (`omc team` / `/omc-teams`).
 
 The `swarm` compatibility alias was removed in #1131.
 
@@ -27,7 +27,7 @@ The `swarm` compatibility alias was removed in #1131.
 - **task** - High-level task to decompose and distribute among teammates
 - **ralph** - Optional modifier. When present, wraps the team pipeline in Ralph's persistence loop (retry on failure, architect verification before completion). See Team + Ralph Composition below.
 
-### Examples
+### 示例
 
 ```bash
 /team 5:executor "fix all TypeScript errors across the project"
@@ -52,8 +52,8 @@ User: "/team 3:executor fix all TypeScript errors"
               v
       [TEAM ORCHESTRATOR (Lead)]
               |
-              +-- Use the session's implicit Claude Code team
-              |       -> no TeamCreate call; lead remains current session
+              +-- Use the 会话's implicit Claude Code team
+              |       -> no TeamCreate call; lead remains current 会话
               |
               +-- Analyze & decompose task into subtasks
               |       -> explore/architect produces subtask list
@@ -73,7 +73,7 @@ User: "/team 3:executor fix all TypeScript errors"
               |       -> message teammates through the active team surface to unblock/coordinate
               |
               +-- Completion
-                      -> request shutdown from each teammate through the active team surface
+                      -> 请求 shutdown from each teammate through the active team surface
                       <- shutdown acknowledgement from teammates
                       -> clear OMC team state (no TeamDelete call)
                       -> rm .omc/state/team-state.json
@@ -88,9 +88,9 @@ User: "/team 3:executor fix all TypeScript errors"
 - Spawn teammates directly via Agent/Task with `name="worker-N"`.
 ```
 
-## Goal Workflow Relationship
+## Goal 工作流 Relationship
 
-Team is the OMC authority for parallel, staged execution. Use the deterministic conflict policies `refuse`, `adopt_existing`, and `artifact_only` rather than non-deterministic warning handling. If a task mentions Claude Code `/goal`, Ralph, UltraQA, or artifact-only Ultragoal, keep Team as the primary loop authority unless the leader explicitly hands off. Use `/goal` only as a documented native Claude Code handoff target or as visible evidence from the lead session; do not claim the `/goal` evaluator independently runs commands, reads files, or replaces `team-verify` / `team-fix`. Artifact-only Ultragoal references should be treated as durable goal ledger/checkpoint/evidence artifacts, not as worker execution by themselves.
+Team is the OMC authority for parallel, staged execution. Use the deterministic conflict policies `refuse`, `adopt_existing`, and `artifact_only` rather than non-deterministic warning handling. If a task mentions Claude Code `/goal`, Ralph, UltraQA, or artifact-only Ultragoal, keep Team as the primary loop authority unless the leader explicitly hands off. Use `/goal` only as a documented native Claude Code handoff target or as visible evidence from the lead 会话; do not claim the `/goal` evaluator independently runs commands, reads files, or replaces `team-verify` / `team-fix`. Artifact-only Ultragoal references should be treated as durable goal ledger/checkpoint/evidence artifacts, not as worker execution by themselves.
 
 ## Staged Pipeline (Canonical Team Runtime)
 

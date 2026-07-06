@@ -20,7 +20,7 @@ pip install azure-identity
 ## 环境变量
 
 ```bash
-# Data Collection Endpoint (DCE)
+# Data Collection 端点 (DCE)
 AZURE_DCE_ENDPOINT=https://<dce-name>.<region>.ingest.monitor.azure.com
 
 # Data Collection Rule (DCR) immutable ID
@@ -35,8 +35,8 @@ AZURE_DCR_STREAM_NAME=Custom-MyTable_CL
 Before using this SDK, you need:
 
 1. **Log Analytics Workspace** — Target for your logs
-2. **Data Collection Endpoint (DCE)** — Ingestion endpoint
-3. **Data Collection Rule (DCR)** — Defines schema and destination
+2. **Data Collection 端点 (DCE)** — Ingestion 端点
+3. **Data Collection Rule (DCR)** — Defines 架构 and destination
 4. **Custom Table** — In Log Analytics (created via DCR or manually)
 
 ## 认证
@@ -47,7 +47,7 @@ from azure.identity import DefaultAzureCredential
 import os
 
 client = LogsIngestionClient(
-    endpoint=os.environ["AZURE_DCE_ENDPOINT"],
+    端点=os.environ["AZURE_DCE_ENDPOINT"],
     credential=DefaultAzureCredential()
 )
 ```
@@ -60,7 +60,7 @@ from azure.identity import DefaultAzureCredential
 import os
 
 client = LogsIngestionClient(
-    endpoint=os.environ["AZURE_DCE_ENDPOINT"],
+    端点=os.environ["AZURE_DCE_ENDPOINT"],
     credential=DefaultAzureCredential()
 )
 
@@ -69,7 +69,7 @@ stream_name = os.environ["AZURE_DCR_STREAM_NAME"]
 
 logs = [
     {"TimeGenerated": "2024-01-15T10:00:00Z", "Computer": "server1", "Message": "Application started"},
-    {"TimeGenerated": "2024-01-15T10:01:00Z", "Computer": "server1", "Message": "Processing request"},
+    {"TimeGenerated": "2024-01-15T10:01:00Z", "Computer": "server1", "Message": "Processing 请求"},
     {"TimeGenerated": "2024-01-15T10:02:00Z", "Computer": "server2", "Message": "Connection established"}
 ]
 
@@ -134,7 +134,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def upload_logs():
     async with LogsIngestionClient(
-        endpoint=endpoint,
+        端点=端点,
         credential=DefaultAzureCredential()
     ) as client:
         await client.upload(
@@ -155,7 +155,7 @@ from azure.monitor.ingestion import LogsIngestionClient
 # Azure Government
 credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT)
 client = LogsIngestionClient(
-    endpoint="https://example.ingest.monitor.azure.us",
+    端点="https://example.ingest.monitor.azure.us",
     credential=credential,
     credential_scopes=["https://monitor.azure.us/.default"]
 )
@@ -181,8 +181,8 @@ No manual batching needed for large log sets.
 
 | Concept | Description |
 |---------|-------------|
-| **DCE** | Data Collection Endpoint — ingestion URL |
-| **DCR** | Data Collection Rule — defines schema, transformations, destination |
+| **DCE** | Data Collection 端点 — ingestion URL |
+| **DCR** | Data Collection Rule — defines 架构, transformations, destination |
 | **Stream** | Named data flow within a DCR |
 | **Custom Table** | Target table in Log Analytics (ends with `_CL`) |
 
@@ -197,14 +197,14 @@ Stream names follow patterns:
 1. **Use DefaultAzureCredential** for authentication
 2. **Handle errors gracefully** — use `on_error` callback for partial failures
 3. **Include TimeGenerated** — Required field for all logs
-4. **Match DCR schema** — Log fields must match DCR column definitions
+4. **Match DCR 架构** — Log fields must match DCR column definitions
 5. **Use async client** for high-throughput scenarios
 6. **Batch uploads** — SDK handles batching, but send reasonable chunks
 7. **Monitor ingestion** — Check Log Analytics for ingestion status
 8. **Use context manager** — Ensures proper client cleanup
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

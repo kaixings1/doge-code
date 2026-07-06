@@ -1,5 +1,5 @@
 ---
-name: setup-pre-commit
+name: 设置-pre-commit
 description: "设置预提交钩子 — 配置 Husky、lint-staged 和 Prettier 的预提交钩子"
 ---
 

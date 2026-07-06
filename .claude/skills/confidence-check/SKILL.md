@@ -92,7 +92,7 @@ Total = Check1 (25%) + Check2 (25%) + Check3 (20%) + Check4 (15%) + Check5 (15%)
 
 If Total >= 0.90:  ✅ Proceed with implementation
 If Total >= 0.70:  ⚠️  Present alternatives, ask questions
-If Total < 0.70:   ❌ STOP - Request more context
+If Total < 0.70:   ❌ STOP - 请求 more context
 ```
 
 ## 输出格式
@@ -119,6 +119,6 @@ The TypeScript implementation is available in `confidence.ts` for reference, con
 
 ## ROI
 
-**Token Savings**: Spend 100-200 tokens on confidence check to save 5,000-50,000 tokens on wrong-direction work.
+**令牌 Savings**: Spend 100-200 tokens on confidence check to save 5,000-50,000 tokens on wrong-direction work.
 
 **Success Rate**: 100% precision and recall in production testing.

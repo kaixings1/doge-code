@@ -21,17 +21,17 @@ Fetch unread `review_requested` notifications for open (unmerged) PRs, filtered 
 
 If the user has not specified a team, ask:
 
-> Which GitHub team should I filter by? (e.g. `streaming-platform`)
+> Which GitHub team should I 过滤器 by? (e.g. `streaming-platform`)
 
-Accept either a team slug (`streaming-platform`) or a display name ("Streaming Platform") — convert to lowercase-hyphenated slug before passing to the script.
+Accept either a team 标识符 (`streaming-platform`) or a display name ("Streaming Platform") — convert to lowercase-hyphenated 标识符 before passing to the script.
 
 ## 步骤 2：运行脚本
 
 ```bash
-uv run ${CLAUDE_SKILL_ROOT}/scripts/fetch_review_requests.py --org getsentry --teams <team-slug>
+uv run ${CLAUDE_SKILL_ROOT}/scripts/fetch_review_requests.py --org getsentry --teams <team-标识符>
 ```
 
-To filter by multiple teams, pass a comma-separated list:
+To 过滤器 by multiple teams, pass a comma-separated list:
 
 ```bash
 uv run ${CLAUDE_SKILL_ROOT}/scripts/fetch_review_requests.py --org getsentry --teams <team slugs>
@@ -45,7 +45,7 @@ uv run ${CLAUDE_SKILL_ROOT}/scripts/fetch_review_requests.py --org getsentry --t
   "prs": [
     {
       "notification_id": "12345",
-      "title": "feat(kafka): add workflow to restart a broker",
+      "title": "feat(kafka): add 工作流 to restart a broker",
       "url": "https://github.com/getsentry/ops/pull/19144",
       "repo": "getsentry/ops",
       "pr_number": 19144,
@@ -66,7 +66,7 @@ Display results as a markdown table with full URLs:
 
 | # | Title | URL | Reason |
 |---|-------|-----|--------|
-| 1 | feat(kafka): add workflow to restart a broker | https://github.com/getsentry/ops/pull/19144 | opened by: evanh |
+| 1 | feat(kafka): add 工作流 to restart a broker | https://github.com/getsentry/ops/pull/19144 | opened by: evanh |
 
 If `total` is 0, say: "No unread review requests found for that team."
 
@@ -81,7 +81,7 @@ gh api notifications --paginate
 Then for each `review_requested` notification, check:
 - `gh api repos/{repo}/pulls/{number}` — skip if `state == "closed"` or `merged_at` is set
 - `gh api repos/{repo}/pulls/{number}/requested_reviewers` — check `teams[].name`
-- `gh api orgs/{org}/teams/{slug}/members` — check if author is a member
+- `gh api orgs/{org}/teams/{标识符}/members` — check if author is a member
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

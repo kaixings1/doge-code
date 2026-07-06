@@ -48,7 +48,7 @@ Retrieved documents: Preserve key facts and claims. Remove supporting evidence a
 ### Observation Masking
 
 **The Observation Problem**
-Tool outputs can comprise 80%+ of token usage in agent trajectories. Much of this is verbose output that has already served its purpose. Once an agent has used a tool output to make a decision, keeping the full output provides diminishing value while consuming significant context.
+Tool outputs can comprise 80%+ of 令牌 usage in agent trajectories. Much of this is verbose output that has already served its purpose. Once an agent has used a tool output to make a decision, keeping the full output provides diminishing value while consuming significant context.
 
 Observation masking replaces verbose tool outputs with compact references. The information remains accessible if needed but does not consume context continuously.
 
@@ -78,7 +78,7 @@ Design prompts to maximize cache stability: avoid dynamic content like timestamp
 **Sub-Agent Partitioning**
 The most aggressive form of context optimization is partitioning work across sub-agents with isolated contexts. Each sub-agent operates in a clean context focused on its subtask without carrying accumulated context from other subtasks.
 
-This approach achieves separation of concerns—the detailed search context remains isolated within sub-agents while the coordinator focuses on synthesis and analysis.
+This 方法 achieves separation of concerns—the detailed search context remains isolated within sub-agents while the coordinator focuses on synthesis and analysis.
 
 **Result Aggregation**
 Aggregate results from partitioned subtasks by validating all partitions completed, merging compatible results, and summarizing if still too large.
@@ -89,7 +89,7 @@ Aggregate results from partitioned subtasks by validating all partitions complet
 Design explicit context budgets. Allocate tokens to categories: system prompt, tool definitions, retrieved docs, message history, and reserved buffer. Monitor usage against budget and trigger optimization when approaching limits.
 
 **Trigger-Based Optimization**
-Monitor signals for optimization triggers: token utilization above 80%, degradation indicators, and performance drops. Apply appropriate optimization techniques based on context composition.
+Monitor signals for optimization triggers: 令牌 utilization above 80%, degradation indicators, and performance drops. Apply appropriate optimization techniques based on context composition.
 
 ## Practical Guidance
 
@@ -97,7 +97,7 @@ Monitor signals for optimization triggers: token utilization above 80%, degradat
 
 When to optimize:
 - 上下文 utilization exceeds 70%
-- Response quality degrades as conversations extend
+- 响应 quality degrades as conversations extend
 - Costs increase due to long contexts
 - Latency increases with conversation length
 
@@ -109,7 +109,7 @@ What to apply:
 
 ### 性能 考虑ations
 
-Compaction should achieve 50-70% token reduction with less than 5% quality degradation. Masking should achieve 60-80% reduction in masked observations. Cache optimization should achieve 70%+ hit rate for stable workloads.
+Compaction should achieve 50-70% 令牌 reduction with less than 5% quality degradation. Masking should achieve 60-80% reduction in masked observations. Cache optimization should achieve 70%+ hit rate for stable workloads.
 
 Monitor and iterate on optimization strategies based on measured effectiveness.
 
@@ -143,7 +143,7 @@ context += [unique_content]  # Unique
 3. Design for cache stability with consistent prompts
 4. Partition before context becomes problematic
 5. Monitor optimization effectiveness over time
-6. Balance token savings against quality preservation
+6. Balance 令牌 savings against quality preservation
 7. Test optimization at production scale
 8. Implement graceful degradation for edge cases
 

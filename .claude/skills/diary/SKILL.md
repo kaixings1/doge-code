@@ -10,12 +10,12 @@ source: self
 ## 何时使用此技能
 当您想要总结进度、编写每日开发日志或执行每日回顾，同时保持项目上下文隔离并同步到 Notion/Obsidian 时使用此技能。
 
-> 🚨 **Agent One-Shot Integrity Constraint (Highest Priority)**: Steps 1-4 are an **indivisible atomic workflow**. The AI **MUST use Continuous Tool Calling** to complete all actions in one breath.
+> 🚨 **Agent One-Shot Integrity Constraint (Highest Priority)**: Steps 1-4 are an **indivisible atomic 工作流**. The AI **MUST use Continuous Tool Calling** to complete all actions in one breath.
 > - **ABSOLUTELY FORBIDDEN** to output conversational text and wait for the user after completing Step 1, 2, or 3.
 > - Example: Immediately after saving the file in Step 1, you must **automatically and instantly** call the terminal tool to execute the script in Step 2. Stopping to chat or asking "Should I continue?" is considered a critical error. Only inform the user explicitly if you are stuck due to a technical error.
 
 > ⚠️ **Ironclad Rule 1**: The local project diary in Step 1 **must NEVER be polluted with global data**. It only records the current project.
-> ⚠️ **Ironclad Rule 2**: When using tools like `run_command` to execute predefined python scripts (Step 2, Step 4), you must set them to `SafeToAutoRun: true` to avoid getting stuck waiting for user authorization.
+> ⚠️ **Ironclad Rule 2**: When using tools like `run_command` to execute predefined python scripts (Step 2, Step 4), you must set them to `SafeToAutoRun: true` to avoid getting stuck waiting for user 授权.
 > ⚠️ **Ironclad Rule 3**: **绝不 guess the project name**. The AI must confirm the current directory name as the project identifier using a terminal command BEFORE taking any action in Step 1.
 
 ---
@@ -36,7 +36,7 @@ source: self
   ```powershell
   python {diary_system_path}/scripts/prepare_context.py "<Project_Root_Path>"
   ```
-- **SafeToAutoRun**: true (Safe operation; purely reading and writing local files).
+- **SafeToAutoRun**: true (Safe 操作; purely reading and writing local files).
 - **Result**: `AGENT_CONTEXT.md` in the project directory is refreshed to the latest state.
 - **After Completion**: Force continue to Step 2; do not wait for user confirmation.
 
@@ -109,7 +109,7 @@ Strictly apply the following Markdown templates to ensure clarity during Step 1 
 * **Technical Implementation**:
   * (Record key logic or architecture structural changes)
 
-### 🚨 Troubleshooting
+### 🚨 故障排除
 > 🐛 **Problem Encountered**: (e.g., API error, package conflict)
 > 💡 **Solution**: (Final fix, leave key commands)
 
@@ -123,7 +123,7 @@ Strictly apply the following Markdown templates to ensure clarity during Step 1 
 ### 🌍 Template 2: Global Diary (Step 3 Exclusive)
 
 ```markdown
-# 📔 YYYY-MM-DD Global Progress Overview
+# 📔 YYYY-MM-DD Global Progress 概述
 
 > 🌟 **Daily Highlight**
 > (1-2 sentences summarizing all project progress for the day, synthesized by AI)

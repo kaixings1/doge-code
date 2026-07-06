@@ -7,9 +7,7 @@ description: 为 macOS 应用添加轻量级运行时遥测和调试工具，然
 
 ## Quick Start
 
-Use this skill to add lightweight app instrumentation that helps debug behavior
-without turning the codebase into a logging landfill. Prefer Apple's unified
-logging APIs and verify the events after a build/run loop.
+使用此技能添加轻量级应用仪表化，帮助调试行为，同时避免将代码库变成日志垃圾场。优先使用 Apple 的统一日志 API，并在构建/运行循环后验证事件。
 
 ## Core Guidelines
 
@@ -61,7 +59,7 @@ Use feature-specific categories like `Windowing`, `Commands`, `MenuBar`, `Sideba
    - Exercise the UI or command path that should emit telemetry.
 
 4. Read runtime logs and verify the event fired.
-   - Use Console.app with a process/subsystem filter when that is the fastest manual check.
+   - Use Console.app with a process/subsystem 过滤器 when that is the fastest manual check.
    - Use `log stream --style compact --predicate 'process == "AppName"'` for live terminal verification.
    - Prefer tighter predicates when you know the subsystem/category:
      `log stream --style compact --predicate 'subsystem == "com.example.app" && category == "Sidebar"'`

@@ -81,13 +81,13 @@ digraph tdd_cycle {
 ```typescript
 test('retries failed operations 3 times', async () => {
   let attempts = 0;
-  const operation = () => {
+  const 操作 = () => {
     attempts++;
     if (attempts < 3) throw new Error('fail');
     return 'success';
   };
 
-  const result = await retryOperation(operation);
+  const result = await retryOperation(操作);
 
   expect(result).toBe('success');
   expect(attempts).toBe(3);

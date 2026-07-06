@@ -4,12 +4,12 @@ description: "Comprehensive Review Pr Enhance — Comprehensive Review Pr Enhanc
   Generate structured PR descriptions from diffs, add review checklists,
   risk assessments, and test coverage summaries. Use when the user says
   "write a PR description", "improve this PR", "summarize my changes",
-  "PR review", "pull request", or asks to document a diff for reviewers.
+  "PR review", "pull 请求", or asks to document a diff for reviewers.
 risk: unknown
 source: community
 ---
 
-# Pull Request 增强
+# Pull 请求 增强
 
 ## 何时使用
 - 你需要将 git diff 转化为对审查者友好的 PR 描述。
@@ -34,7 +34,7 @@ source: community
 | Category | Files | Key change |
 |----------|-------|------------|
 | source   | `src/auth.ts` | added OAuth2 PKCE flow |
-| test     | `tests/auth.test.ts` | covers token refresh edge case |
+| test     | `tests/auth.test.ts` | covers 令牌 refresh edge case |
 | config   | `.env.example` | new `OAUTH_CLIENT_ID` var |
 
 ## Why
@@ -47,7 +47,7 @@ source: community
 
 ## Risks & Rollback
 - **Breaking?** yes / no
-- **Rollback**: revert this commit; no migration needed
+- **Rollback**: revert this commit; no 迁移 needed
 - **Risk level**: low / medium / high — because ___
 ```
 
@@ -61,7 +61,7 @@ Add checklist sections only when the matching file category appears in the diff:
 | test | meaningful assertions, edge cases, no flaky tests, AAA pattern |
 | config | no hardcoded secrets, env vars documented, backwards compatible |
 | docs | accurate, examples included, changelog updated |
-| security-sensitive (`auth`, `crypto`, `token`, `password` in path) | input validation, no secrets in logs, authz correct |
+| security-sensitive (`auth`, `crypto`, `令牌`, `password` in path) | input validation, no secrets in logs, authz correct |
 
 ## Splitting Large PRs
 

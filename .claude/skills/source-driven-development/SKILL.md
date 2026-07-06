@@ -7,14 +7,14 @@ description: 源码驱动开发 — 将每个实现决策建立在官方文档�
 
 ## 概述
 
-Every framework-specific code decision must be backed by official documentation. Don't implement from memory — verify, cite, and let the user see your sources. Training data goes stale, APIs get deprecated, best practices evolve. This skill ensures the user gets code they can trust because every pattern traces back to an authoritative source they can check.
+Every framework-specific code decision must be backed by official documentation. Don't implement from memory — verify, cite, and let the user see your sources. Training data goes stale, APIs get deprecated, 最佳实践 evolve. This skill ensures the user gets code they can trust because every pattern traces back to an authoritative source they can check.
 
 ## 使用场景
 
-- The user wants code that follows current best practices for a given framework
+- The user wants code that follows current 最佳实践 for a given framework
 - Building boilerplate, starter code, or patterns that will be copied across a project
 - The user explicitly asks for documented, verified, or "correct" implementation
-- Implementing features where the framework's recommended approach matters (forms, routing, data fetching, state management, auth)
+- Implementing features where the framework's recommended 方法 matters (forms, routing, data fetching, state management, auth)
 - Reviewing or improving code that uses framework-specific patterns
 - Any time you are about to write framework-specific code from memory
 

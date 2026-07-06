@@ -14,7 +14,7 @@ origin: ECC
 - 设计多容器架构
 - 排查容器网络或卷（Volume）问题
 - 审查 Dockerfile 的安全性与镜像大小
-- 从本地开发迁移到容器化工作流（Workflow）
+- 从本地开发迁移到容器化工作流（工作流）
 
 ## 用于本地开发的 Docker Compose
 

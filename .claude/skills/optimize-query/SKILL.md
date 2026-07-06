@@ -1,5 +1,5 @@
 ---
-name: optimize-query
+name: optimize-查询
 description: "查询优化 — 优化数据库查询和搜索性能"
 ---
 # 查询优化

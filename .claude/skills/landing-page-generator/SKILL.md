@@ -7,7 +7,7 @@ source: "community"
 date_added: "2026-03-18"
 author: "alirezarezvani"
 tags: ["nextjs", "react", "tailwind", "landing-page", "marketing", "seo", "cro"]
-tools: ["claude", "cursor", "gemini"]
+tools: ["claude", "游标", "gemini"]
 ---
 
 # 着陆页生成器
@@ -27,7 +27,7 @@ tools: ["claude", "cursor", "gemini"]
 - 5 种 Hero 区块变体（居中、分割、渐变、视频背景、极简）
 - 功能区块（网格、交替、带图标的卡片）
 - 定价表（2-4 层级，含功能列表和切换）
-- FAQ 手风琴（含 schema 标记）
+- FAQ 手风琴（含 架构 标记）
 - 客户评价（网格、轮播、单条引用）
 - CTA 区块（横幅、全页、内联）
 - 页脚（简单、大型、极简）

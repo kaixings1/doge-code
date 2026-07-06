@@ -141,7 +141,7 @@ Tokens automatically refresh when expired using Google's cloud function.
 
 
 ## 使用场景
-Use this skill when tackling tasks related to its primary domain or functionality as described above.
+在处理与其主要领域或功能相关的任务时使用此技能，如上所述。
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

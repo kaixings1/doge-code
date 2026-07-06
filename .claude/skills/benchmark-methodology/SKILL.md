@@ -8,11 +8,9 @@ description: 基准测试方法论
   and a tension-plot. Precedes competitive-report-structure.
 ---
 
-# /u57fa/u51c6/u6d4b/u8bd5/u65b9/u6cd5/u8bba
+# 基准测试方法论
 
-Use this skill to turn a scoped competitor set into **comparable, defensible
-scores**. Each competitor is assessed on the same nine dimensions, with
-explicit 1–5 rubrics, then captured in a uniform profile card. Consistency is
+使用此技能将限定的竞争对手集转化为**可比较、可辩护的分数**。每个竞争对手在同一九个维度上进行评估，使用明确的 1-5 级评分标准，然后捕获到统一的画像卡片中。一致性是
 the point: scores are only useful if the same evidence would earn the same
 number for any competitor.
 

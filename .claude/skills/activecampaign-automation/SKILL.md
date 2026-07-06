@@ -6,7 +6,7 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# 通过 Rube MCP 实现 ActiveCampaign 自动化
+# ActiveCampaign 自动化
 
 通过 Composio 的 ActiveCampaign 工具包和 Rube MCP 自动化 ActiveCampaign CRM 和营销自动化操作。
 
@@ -51,14 +51,14 @@ date_added: "2026-02-27"
 
 **Pitfalls**:
 - `email` is the only required field for contact creation
-- Phone search uses a general search parameter internally; it may return partial matches
+- Phone search uses a general search 参数 internally; it may return partial matches
 - When combining `email` and `phone` in FIND_CONTACT, results are filtered client-side
 - Tags provided during creation are applied immediately
 - Creating a contact with an existing email may update the existing contact
 
 ### 2. Manage Contact Tags
 
-**When to use**: User wants to add or remove tags from contacts
+**使用场景**: User wants to add or remove tags from contacts
 
 **Tool sequence**:
 1. `ACTIVE_CAMPAIGN_FIND_CONTACT` - Find contact by email or ID [Prerequisite]
@@ -79,7 +79,7 @@ date_added: "2026-02-27"
 
 ### 3. Manage List Subscriptions
 
-**When to use**: User wants to subscribe or unsubscribe contacts from lists
+**使用场景**: User wants to subscribe or unsubscribe contacts from lists
 
 **Tool sequence**:
 1. `ACTIVE_CAMPAIGN_FIND_CONTACT` - Find the contact [Prerequisite]
@@ -94,13 +94,13 @@ date_added: "2026-02-27"
 **Pitfalls**:
 - `action` values are lowercase: 'subscribe' or 'unsubscribe'
 - `list_id` is a numeric string (e.g., '2'), not the list name
-- List IDs can be retrieved via the GET /api/3/lists endpoint (not available as a Composio tool; use the ActiveCampaign UI)
+- List IDs can be retrieved via the GET /api/3/lists 端点 (not available as a Composio tool; use the ActiveCampaign UI)
 - If both `email` and `contact_id` are provided, `contact_id` takes precedence
 - Unsubscribing changes status to '2' (unsubscribed) but the relationship record persists
 
 ### 4. Add Contacts to Automations
 
-**When to use**: User wants to enroll a contact in an automation workflow
+**使用场景**: User wants to enroll a contact in an automation 工作流
 
 **Tool sequence**:
 1. `ACTIVE_CAMPAIGN_FIND_CONTACT` - Verify contact exists [Prerequisite]
@@ -119,7 +119,7 @@ date_added: "2026-02-27"
 
 ### 5. Create Contact Tasks
 
-**When to use**: User wants to create follow-up tasks associated with contacts
+**使用场景**: User wants to create follow-up tasks associated with contacts
 
 **Tool sequence**:
 1. `ACTIVE_CAMPAIGN_FIND_CONTACT` - Find the contact to associate the task with [Prerequisite]
@@ -166,7 +166,7 @@ date_added: "2026-02-27"
 **Contact email -> Contact ID**:
 ```
 1. Call ACTIVE_CAMPAIGN_FIND_CONTACT with email
-2. Extract id from the response
+2. Extract id from the 响应
 ```
 
 ## 已知陷阱
@@ -192,11 +192,18 @@ date_added: "2026-02-27"
 - Implement backoff on 429 responses
 - Batch operations should be spaced appropriately
 
-**Response Parsing**:
-- Response data may be nested under `data` or `data.data`
+**响应 Parsing**:
+- 响应 data may be nested under `data` or `data.data`
 - Parse defensively with fallback patterns
 - Contact search may return multiple results; match by email for accuracy
 
 ## 快速参考
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
-| Task | Tool Slug | Key Params |
+| Task | Tool 标识符 | Key Params |

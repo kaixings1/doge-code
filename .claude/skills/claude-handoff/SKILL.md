@@ -1,7 +1,7 @@
 ---
 name: claude-handoff
 description: 将当前对话移交给一个立刻接管工作的新后台代理。
-argument-hint: "下一个会话将用于什么？"
+参数-hint: "下一个会话将用于什么？"
 disable-model-invocation: true
 ---
 

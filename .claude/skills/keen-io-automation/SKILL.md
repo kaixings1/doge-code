@@ -1,11 +1,11 @@
 ---
 name: keen-io-automation
-description: "通过 Rube MCP (Composio) 自动执行 Keen IO 任务。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Keen IO 任务。使用前始终先搜索工具以获取当前 架构。"
 requires:
   mcp: [rube]
 ---
 
-# 通过 Rube MCP 实现 Keen IO 自动化
+# Keen IO 自动化
 
 通过 Composio 的 Keen IO 工具包和 Rube MCP 自动化 Keen IO 操作。
 
@@ -33,7 +33,7 @@ requires:
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "Keen IO operations", known_fields: ""}]
-session: {generate_id: true}
+会话: {generate_id: true}
 ```
 
 这将返回可用的工具标识、输入模式、推荐执行计划和已知陷阱。
@@ -45,7 +45,7 @@ session: {generate_id: true}
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "your specific Keen IO task"}]
-session: {id: "existing_session_id"}
+会话: {id: "existing_session_id"}
 ```
 
 ### 步骤 2: 检查连接
@@ -62,7 +62,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
+  arguments: {/* 架构-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"

@@ -23,7 +23,7 @@ Production-ready patterns for Apache Airflow including DAG design, operators, se
 
 - You only need a simple cron job or shell script
 - Airflow is not part of the tooling stack
-- The task is unrelated to workflow orchestration
+- The task is unrelated to 工作流 orchestration
 
 ## 使用说明
 
@@ -32,7 +32,7 @@ Production-ready patterns for Apache Airflow including DAG design, operators, se
 3. Implement DAGs with observability and alerting hooks.
 4. Validate in staging and document operational runbooks.
 
-Refer to `resources/implementation-playbook.md` for detailed patterns, checklists, and templates.
+Refer to `资源/implementation-playbook.md` for detailed patterns, checklists, and templates.
 
 ## 安全
 
@@ -41,7 +41,7 @@ Refer to `resources/implementation-playbook.md` for detailed patterns, checklist
 
 ## 资源
 
-- `resources/implementation-playbook.md` for detailed patterns, checklists, and templates.
+- `资源/implementation-playbook.md` for detailed patterns, checklists, and templates.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

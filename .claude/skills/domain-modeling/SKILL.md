@@ -12,19 +12,19 @@ license: "MIT"
 license_source: "https://github.com/mattpocock/skills/blob/main/LICENSE"
 tags:
   - architecture
-  - workflow
+  - 工作流
   - coding-agents
 tools:
   - claude-code
   - codex-cli
-  - cursor
+  - 游标
 ---
 
 # Domain Modeling
 
 ## 使用场景
 
-Use when this workflow matches the user request: Build and sharpen a project's domain model. Use when the user wants to pin down domain terminology or a ubiquitous language, record an architectural decision, or when another skill needs to maintain the domain model.
+Use when this 工作流 matches the user 请求: Build and sharpen a project's domain model. Use when the user wants to pin down domain terminology or a ubiquitous language, record an architectural decision, or when another skill needs to maintain the domain model.
 
 
 _Source: [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)._
@@ -63,7 +63,7 @@ If a `CONTEXT-MAP.md` exists at the root, the repo has multiple contexts. The ma
 
 Create files lazily — only when you have something to write. If no `CONTEXT.md` exists, create one when the first term is resolved. If no `docs/adr/` exists, create it when the first ADR is needed.
 
-## During the session
+## During the 会话
 
 ### Challenge against the glossary
 
@@ -100,6 +100,6 @@ If any of the three is missing, skip the ADR. Use the format in [ADR-FORMAT.md](
 
 ## 局限性
 
-- Requires the upstream tool, account, API key, or local setup when the workflow names one.
+- Requires the upstream tool, account, API key, or local 设置 when the 工作流 names one.
 - Does not authorize destructive, production, paid, or external-message actions without explicit user approval.
 - Validate generated artifacts or recommendations against the user's real sources before treating them as final.

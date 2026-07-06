@@ -15,7 +15,7 @@ date_added: "2026-02-27"
 - 将 DBOS 添加到现有 Python 代码中
 - Creating workflows and steps
 - Using queues for concurrency control
-- Implementing workflow communication (events, messages, streams)
+- Implementing 工作流 communication (events, messages, streams)
 - Configuring and launching DBOS applications
 - Using DBOSClient from external applications
 - Testing DBOS applications
@@ -25,7 +25,7 @@ date_added: "2026-02-27"
 | Priority | Category | Impact | Prefix |
 |----------|----------|--------|--------|
 | 1 | Lifecycle | CRITICAL | `lifecycle-` |
-| 2 | Workflow | CRITICAL | `workflow-` |
+| 2 | 工作流 | CRITICAL | `工作流-` |
 | 3 | Step | HIGH | `step-` |
 | 4 | Queue | HIGH | `queue-` |
 | 5 | Communication | MEDIUM | `comm-` |
@@ -36,7 +36,7 @@ date_added: "2026-02-27"
 
 ## Critical Rules
 
-### DBOS Configuration and Launch
+### DBOS 配置 and Launch
 
 A DBOS application MUST configure and launch DBOS inside its main function:
 
@@ -44,7 +44,7 @@ A DBOS application MUST configure and launch DBOS inside its main function:
 import os
 from dbos import DBOS, DBOSConfig
 
-@DBOS.workflow()
+@DBOS.工作流()
 def my_workflow():
     pass
 
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     DBOS.launch()
 ```
 
-### Workflow and Step Structure
+### 工作流 and Step Structure
 
 Workflows are comprised of steps. Any function performing complex operations or accessing external services must be a step:
 
@@ -66,7 +66,7 @@ Workflows are comprised of steps. Any function performing complex operations or 
 def call_external_api():
     return requests.get("https://api.example.com").json()
 
-@DBOS.workflow()
+@DBOS.工作流()
 def my_workflow():
     result = call_external_api()
     return result
@@ -81,11 +81,11 @@ def my_workflow():
 
 ## How to Use
 
-Read individual rule files for detailed explanations and examples:
+Read individual rule files for detailed explanations and 示例:
 
 ```
 references/lifecycle-config.md
-references/workflow-determinism.md
+references/工作流-determinism.md
 references/queue-concurrency.md
 ```
 

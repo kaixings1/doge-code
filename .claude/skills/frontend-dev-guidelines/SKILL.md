@@ -283,7 +283,7 @@ src/
 ```ts
 import React, { useState, useCallback } from 'react';
 import { Box, Paper } from '@mui/material';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-查询';
 import { featureApi } from '../api/featureApi';
 import type { FeatureData } from '~types/feature';
 

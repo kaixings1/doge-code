@@ -1,6 +1,6 @@
 ---
 name: Zoho库存自动化
-description: "通过 Rube MCP (Composio) 自动执行 Zoho Inventory 任务：物品、订单、仓库、发货和库存管理。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Zoho Inventory 任务：物品、订单、仓库、发货和库存管理。使用前始终先搜索工具以获取当前 架构。"
 requires:
   mcp: [rube]
 ---
@@ -47,7 +47,7 @@ RUBE_SEARCH_TOOLS: queries=[{"use_case": "items, orders, warehouses, shipments, 
 ```
 RUBE_SEARCH_TOOLS:
   queries:
-    - use_case: "list all available Zoho Inventory tools and capabilities"
+    - use_case: "list all available Zoho Inventory tools and 能力"
 ```
 
 在继续之前，查看返回的工具、它们的描述和输入 schemas。
@@ -60,7 +60,7 @@ RUBE_SEARCH_TOOLS:
 RUBE_MULTI_EXECUTE_TOOL:
   tools:
     - tool_slug: "<discovered_tool_slug>"
-      arguments: {<schema-compliant arguments>}
+      arguments: {<架构-compliant arguments>}
   memory: {}
   sync_response_to_workbench: false
 ```
@@ -95,7 +95,7 @@ RUBE_MULTI_EXECUTE_TOOL:
 - **始终先搜索工具**：工具 schemas 和可用操作可能更改。永远不要硬编码工具 slugs——始终先通过 `RUBE_SEARCH_TOOLS` 发现它们。
 - **检查连接状态**：在执行任何工具之前，确保 Zoho Inventory 连接为 ACTIVE。过期的 OAuth tokens 需要重新认证。
 - **尊重速率限制**：如果收到速率限制错误，降低请求频率并实施退避。
-- **验证 schemas**：始终传递严格符合 schema 的参数。当返回 `schemaRef` 而非 `input_schema` 时，使用 `RUBE_GET_TOOL_SCHEMAS` 加载完整输入 schemas。
+- **验证 schemas**：始终传递严格符合 架构 的参数。当返回 `schemaRef` 而非 `input_schema` 时，使用 `RUBE_GET_TOOL_SCHEMAS` 加载完整输入 schemas。
 
 ## 快速参考
 

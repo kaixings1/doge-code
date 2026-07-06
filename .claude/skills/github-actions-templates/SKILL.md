@@ -18,25 +18,25 @@ date_added: "2026-02-27"
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 目的
 
-Create efficient, secure GitHub Actions workflows for continuous integration and deployment across various tech stacks.
+Create efficient, secure GitHub Actions workflows for continuous 集成 and 部署 across various tech stacks.
 
 ## 使用此技能的场景
 
-- Automate testing and deployment
+- Automate testing and 部署
 - Build Docker images and push to registries
 - Deploy to Kubernetes clusters
 - Run security scans
 - Implement matrix builds for multiple environments
 
-## Common Workflow Patterns
+## Common 工作流 Patterns
 
-### Pattern 1: Test Workflow
+### Pattern 1: Test 工作流
 
 ```yaml
 name: Test
@@ -59,7 +59,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/设置-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
@@ -79,7 +79,7 @@ jobs:
         files: ./coverage/lcov.info
 ```
 
-**Reference:** See `assets/test-workflow.yml`
+**Reference:** See `assets/test-工作流.yml`
 
 ### Pattern 2: Build and Push Docker Image
 
@@ -134,7 +134,7 @@ jobs:
         cache-to: type=gha,mode=max
 ```
 
-**Reference:** See `assets/deploy-workflow.yml`
+**Reference:** See `assets/deploy-工作流.yml`
 
 ### Pattern 3: Deploy to Kubernetes
 
@@ -166,13 +166,13 @@ jobs:
     - name: Deploy to Kubernetes
       run: |
         kubectl apply -f k8s/
-        kubectl rollout status deployment/my-app -n production
+        kubectl rollout status 部署/my-app -n production
         kubectl get services -n production
 
-    - name: Verify deployment
+    - name: Verify 部署
       run: |
         kubectl get pods -n production
-        kubectl describe deployment my-app -n production
+        kubectl describe 部署 my-app -n production
 ```
 
 ### Pattern 4: Matrix Build
@@ -195,7 +195,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/设置-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -210,7 +210,7 @@ jobs:
 
 **Reference:** See `assets/matrix-build.yml`
 
-## Workflow Best Practices
+## 工作流 最佳实践
 
 1. **Use specific action versions** (@v4, not @latest)
 2. **Cache dependencies** to speed up builds
@@ -227,7 +227,7 @@ jobs:
 
 ```yaml
 # .github/workflows/reusable-test.yml
-name: Reusable Test Workflow
+name: Reusable Test 工作流
 
 on:
   workflow_call:
@@ -244,14 +244,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/设置-node@v4
       with:
         node-version: ${{ inputs.node-version }}
     - run: npm ci
     - run: npm test
 ```
 
-**Use reusable workflow:**
+**Use reusable 工作流:**
 ```yaml
 jobs:
   call-test:
@@ -299,7 +299,7 @@ jobs:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 ```
 
-## Deployment with Approvals
+## 部署 with Approvals
 
 ```yaml
 name: Deploy to Production
@@ -321,30 +321,30 @@ jobs:
     - name: Deploy application
       run: |
         echo "Deploying to production..."
-        # Deployment commands here
+        # 部署 commands here
 
     - name: Notify Slack
       if: success()
       uses: slackapi/slack-github-action@v1
       with:
         webhook-url: ${{ secrets.SLACK_WEBHOOK }}
-        payload: |
+        载荷: |
           {
-            "text": "Deployment to production completed successfully!"
+            "text": "部署 to production completed successfully!"
           }
 ```
 
 ## 参考文件
 
-- `assets/test-workflow.yml` - Testing workflow template
-- `assets/deploy-workflow.yml` - Deployment workflow template
+- `assets/test-工作流.yml` - Testing 工作流 template
+- `assets/deploy-工作流.yml` - 部署 工作流 template
 - `assets/matrix-build.yml` - Matrix build template
-- `references/common-workflows.md` - Common workflow patterns
+- `references/common-workflows.md` - Common 工作流 patterns
 
 ## 相关技能
 
 - `gitlab-ci-patterns` - For GitLab CI workflows
-- `deployment-pipeline-design` - For pipeline architecture
+- `部署-pipeline-design` - For pipeline architecture
 - `secrets-management` - For secrets handling
 
 ## 局限性

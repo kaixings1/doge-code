@@ -28,7 +28,7 @@ date_added: "2026-02-27"
 ## 使用说明
 
 - Identify read/write workloads and consistency needs.
-- Define command and query models with clear boundaries.
+- Define command and 查询 models with clear boundaries.
 - Implement read model projections and synchronization.
 - Validate performance, recovery, and failure modes.
 - If detailed patterns are required, open `resources/implementation-playbook.md`.

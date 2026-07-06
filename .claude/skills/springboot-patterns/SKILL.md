@@ -9,13 +9,13 @@ description: Spring Boot模式 — 包括JPA仓库、REST控制器、异常处�
 
 ```
 src/main/java/com/example/app/
-  config/          # @Configuration beans
+  config/          # @配置 beans
   controller/      # @RestController (thin, delegates to service)
   service/         # @Service (business logic)
   repository/      # @Repository (data access via JPA)
   model/
     entity/        # @Entity JPA classes
-    dto/           # Request/response DTOs
+    dto/           # 请求/响应 DTOs
     mapper/        # MapStruct or manual mapping
   exception/       # @ControllerAdvice, custom exceptions
   security/        # SecurityFilterChain, JWT filters
@@ -42,8 +42,8 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderResponse create(@Valid @RequestBody CreateOrderRequest request) {
-        return orderService.create(request);
+    public OrderResponse create(@Valid @RequestBody CreateOrderRequest 请求) {
+        return orderService.create(请求);
     }
 
     @GetMapping("/{id}")
@@ -79,7 +79,7 @@ public class Order {
 }
 
 public interface OrderRepository extends JpaRepository<Order, UUID> {
-    @Query("SELECT o FROM Order o JOIN FETCH o.items WHERE o.customer.id = :customerId")
+    @查询("SELECT o FROM Order o JOIN FETCH o.items WHERE o.customer.id = :customerId")
     List<Order> findByCustomerWithItems(@Param("customerId") UUID customerId);
 
     @EntityGraph(attributePaths = {"customer", "items"})
@@ -106,8 +106,8 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse create(CreateOrderRequest request) {
-        Order order = orderMapper.toEntity(request);
+    public OrderResponse create(CreateOrderRequest 请求) {
+        Order order = orderMapper.toEntity(请求);
         order = orderRepository.save(order);
         eventPublisher.publish(new OrderCreatedEvent(order.getId()));
         return orderMapper.toResponse(order);
@@ -115,7 +115,7 @@ public class OrderService {
 }
 ```
 
-## Global Exception Handler
+## Global Exception 处理器
 
 ```java
 @RestControllerAdvice
@@ -146,15 +146,15 @@ public class GlobalExceptionHandler {
 - Returning JPA entities directly from controllers instead of DTOs
 - Missing `@Transactional(readOnly = true)` on read-only service methods
 - Catching generic `Exception` instead of specific types
-- Hardcoding configuration values instead of using `@Value` or `@ConfigurationProperties`
+- Hardcoding 配置 values instead of using `@Value` or `@ConfigurationProperties`
 
 ## Checklist
 
 - [ ] Controllers are thin and delegate to services
 - [ ] All JPA relationships use `FetchType.LAZY` by default
-- [ ] DTOs used for request/response, never raw entities
+- [ ] DTOs used for 请求/响应, never raw entities
 - [ ] `@Transactional` applied at service level with correct read/write scoping
-- [ ] Validation annotations (`@Valid`, `@NotNull`, `@Size`) on request DTOs
-- [ ] Global exception handler returns `ProblemDetail` (RFC 7807)
+- [ ] Validation annotations (`@Valid`, `@NotNull`, `@Size`) on 请求 DTOs
+- [ ] Global exception 处理器 returns `ProblemDetail` (RFC 7807)
 - [ ] Entity graphs or `JOIN FETCH` used to avoid N+1 queries
-- [ ] Integration tests use `@SpringBootTest` with test containers
+- [ ] 集成 tests use `@SpringBootTest` with test containers

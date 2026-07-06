@@ -79,7 +79,7 @@ date_added: "2026-02-27"
 
 **用例：**
 - 请求/响应日志记录
-- Token 使用跟踪
+- 令牌 使用跟踪
 - 延迟监控
 - 错误处理
 - 自定义指标收集
@@ -142,8 +142,8 @@ qa_chain = RetrievalQA.from_chain_type(
     return_source_documents=True
 )
 
-# Query
-result = qa_chain({"query": "What is the main topic?"})
+# 查询
+result = qa_chain({"查询": "What is the main topic?"})
 ```
 
 ### 模式 2：自定义代理与工具
@@ -153,10 +153,10 @@ from langchain.agents.react.base import ReActDocstoreAgent
 from langchain.tools import tool
 
 @tool
-def search_database(query: str) -> str:
+def search_database(查询: str) -> str:
     """Search internal database for information."""
     # Your database search logic
-    return f"Results for: {query}"
+    return f"Results for: {查询}"
 
 @tool
 def send_email(recipient: str, content: str) -> str:
@@ -244,8 +244,8 @@ class CustomCallbackHandler(BaseCallbackHandler):
     def on_llm_start(self, serialized, prompts, **kwargs):
         print(f"LLM started with prompts: {prompts}")
 
-    def on_llm_end(self, response, **kwargs):
-        print(f"LLM ended with response: {response}")
+    def on_llm_end(self, 响应, **kwargs):
+        print(f"LLM ended with 响应: {响应}")
 
     def on_llm_error(self, error, **kwargs):
         print(f"LLM error: {error}")
@@ -256,8 +256,8 @@ class CustomCallbackHandler(BaseCallbackHandler):
     def on_agent_action(self, action, **kwargs):
         print(f"Agent taking action: {action}")
 
-# Use callback
-agent.run("query", callbacks=[CustomCallbackHandler()])
+# Use 回调
+agent.run("查询", callbacks=[CustomCallbackHandler()])
 ```
 
 ## 测试策略
@@ -269,11 +269,11 @@ from unittest.mock import Mock
 def test_agent_tool_selection():
     # Mock LLM to return specific tool selection
     mock_llm = Mock()
-    mock_llm.predict.return_value = "Action: search_database\nAction Input: test query"
+    mock_llm.predict.return_value = "Action: search_database\nAction Input: test 查询"
 
     agent = initialize_agent(tools, mock_llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION)
 
-    result = agent.run("test query")
+    result = agent.run("test 查询")
 
     # Verify correct tool was selected
     assert "search_database" in str(mock_llm.predict.call_args)
@@ -328,14 +328,14 @@ llm = OpenAI(streaming=True, callbacks=[StreamingStdOutCallbackHandler()])
 - **references/document-processing.md**: Document loading and indexing
 - **references/callbacks.md**: Monitoring and observability
 - **assets/agent-template.py**: Production-ready agent template
-- **assets/memory-config.yaml**: Memory configuration examples
-- **assets/chain-example.py**: Complex chain examples
+- **assets/memory-config.yaml**: Memory 配置 示例
+- **assets/chain-example.py**: Complex chain 示例
 
 ## 常见陷阱
 
 1. **记忆溢出**：未管理对话历史长度
 2. **工具选择错误**：工具描述不佳导致代理混淆
-3. **超出上下文窗口**：超过 LLM token 限制
+3. **超出上下文窗口**：超过 LLM 令牌 限制
 4. **无错误处理**：未捕获和处理代理故障
 5. **检索效率低**：未优化向量存储查询
 
@@ -343,7 +343,7 @@ llm = OpenAI(streaming=True, callbacks=[StreamingStdOutCallbackHandler()])
 
 - [ ] 实现适当的错误处理
 - [ ] 添加请求/响应日志记录
-- [ ] 监控 token 使用量和成本
+- [ ] 监控 令牌 使用量和成本
 - [ ] 设置代理执行超时限制
 - [ ] 实现速率限制
 - [ ] 添加输入验证

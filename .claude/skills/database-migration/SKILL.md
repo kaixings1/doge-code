@@ -1,5 +1,5 @@
 ---
-name: database-migration
+name: database-迁移
 description: "数据库迁移策略：模式变更、数据迁移、回滚计划、零停机迁移和迁移工具。适用于更改数据库模式。"
 risk: unknown
 source: community
@@ -102,28 +102,28 @@ export class CreateUsers1701234567 implements MigrationInterface {
   }
 }
 
-// Run: npm run typeorm migration:run
-// Rollback: npm run typeorm migration:revert
+// Run: npm run typeorm 迁移:run
+// Rollback: npm run typeorm 迁移:revert
 ```
 
 ### Prisma Migrations
 ```prisma
-// schema.prisma
+// 架构.prisma
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   createdAt DateTime @default(now())
 }
 
-// Generate migration: npx prisma migrate dev --name create_users
+// Generate 迁移: npx prisma migrate dev --name create_users
 // Apply: npx prisma migrate deploy
 ```
 
-## Schema Transformations
+## 架构 Transformations
 
 ### Adding Columns with Defaults
 ```javascript
-// Safe migration: add column with default
+// Safe 迁移: add column with default
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.addColumn('users', 'status', {
@@ -149,7 +149,7 @@ module.exports = {
     });
 
     // Copy data from old column
-    await queryInterface.sequelize.query(
+    await queryInterface.sequelize.查询(
       'UPDATE users SET full_name = name'
     );
   },
@@ -179,7 +179,7 @@ module.exports = {
 ```javascript
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    // For large tables, use multi-step approach
+    // For large tables, use multi-step 方法
 
     // 1. Add new column
     await queryInterface.addColumn('users', 'age_new', {
@@ -187,7 +187,7 @@ module.exports = {
     });
 
     // 2. Copy and transform data
-    await queryInterface.sequelize.query(`
+    await queryInterface.sequelize.查询(`
       UPDATE users
       SET age_new = CAST(age AS INTEGER)
       WHERE age IS NOT NULL
@@ -210,12 +210,12 @@ module.exports = {
 
 ## Data Transformations
 
-### Complex Data Migration
+### Complex Data 迁移
 ```javascript
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     // Get all records
-    const [users] = await queryInterface.sequelize.query(
+    const [users] = await queryInterface.sequelize.查询(
       'SELECT id, address_string FROM users'
     );
 
@@ -223,7 +223,7 @@ module.exports = {
     for (const user of users) {
       const addressParts = user.address_string.split(',');
 
-      await queryInterface.sequelize.query(
+      await queryInterface.sequelize.查询(
         `UPDATE users
          SET street = :street,
              city = :city,
@@ -250,7 +250,7 @@ module.exports = {
       type: Sequelize.STRING
     });
 
-    await queryInterface.sequelize.query(`
+    await queryInterface.sequelize.查询(`
       UPDATE users
       SET address_string = CONCAT(street, ', ', city, ', ', state)
     `);
@@ -278,7 +278,7 @@ module.exports = {
         { transaction }
       );
 
-      await queryInterface.sequelize.query(
+      await queryInterface.sequelize.查询(
         'UPDATE users SET verified = true WHERE email_verified_at IS NOT NULL',
         { transaction }
       );
@@ -301,31 +301,31 @@ module.exports = {
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     // Create backup table
-    await queryInterface.sequelize.query(
+    await queryInterface.sequelize.查询(
       'CREATE TABLE users_backup AS SELECT * FROM users'
     );
 
     try {
-      // Perform migration
+      // Perform 迁移
       await queryInterface.addColumn('users', 'new_field', {
         type: Sequelize.STRING
       });
 
-      // Verify migration
-      const [result] = await queryInterface.sequelize.query(
+      // Verify 迁移
+      const [result] = await queryInterface.sequelize.查询(
         "SELECT COUNT(*) as count FROM users WHERE new_field IS NULL"
       );
 
       if (result[0].count > 0) {
-        throw new Error('Migration verification failed');
+        throw new Error('迁移 verification failed');
       }
 
       // Drop backup
       await queryInterface.dropTable('users_backup');
     } catch (error) {
       // Restore from backup
-      await queryInterface.sequelize.query('DROP TABLE users');
-      await queryInterface.sequelize.query(
+      await queryInterface.sequelize.查询('DROP TABLE users');
+      await queryInterface.sequelize.查询(
         'CREATE TABLE users AS SELECT * FROM users_backup'
       );
       await queryInterface.dropTable('users_backup');
@@ -337,7 +337,7 @@ module.exports = {
 
 ## Zero-Downtime Migrations
 
-### Blue-Green Deployment Strategy
+### Blue-Green 部署 Strategy
 ```javascript
 // Phase 1: Make changes backward compatible
 module.exports = {
@@ -354,7 +354,7 @@ module.exports = {
 // Phase 3: Backfill data
 module.exports = {
   up: async (queryInterface) => {
-    await queryInterface.sequelize.query(`
+    await queryInterface.sequelize.查询(`
       UPDATE users
       SET email_new = email
       WHERE email_new IS NULL
@@ -411,12 +411,12 @@ module.exports = {
 ## 资源
 
 - **references/orm-switching.md**: ORM 迁移指南
-- **references/schema-migration.md**: 模式转换模式
+- **references/架构-迁移.md**: 模式转换模式
 - **references/data-transformation.md**: 数据迁移脚本
 - **references/rollback-strategies.md**: 回滚程序
-- **assets/schema-migration-template.sql**: SQL 迁移模板
-- **assets/data-migration-script.py**: 数据迁移实用工具
-- **scripts/test-migration.sh**: 迁移测试脚本
+- **assets/架构-迁移-template.sql**: SQL 迁移模板
+- **assets/data-迁移-script.py**: 数据迁移实用工具
+- **scripts/test-迁移.sh**: 迁移测试脚本
 
 ## 最佳实践
 

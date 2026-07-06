@@ -74,13 +74,13 @@ src/api/         → API route handlers
 src/lib/         → Shared utilities
 src/db/          → Database models and migrations
 tests/           → Test suites
-scripts/         → Build and deployment scripts
+scripts/         → Build and 部署 scripts
 ```
 
 **Data Flow**
-Trace one request from entry to response:
-- Where does a request enter? (router, handler, controller)
-- How is it validated? (middleware, schemas, guards)
+Trace one 请求 from entry to 响应:
+- Where does a 请求 enter? (router, 处理器, controller)
+- How is it validated? (中间件, schemas, guards)
 - Where is business logic? (services, models, use cases)
 - How does it reach the database? (ORM, raw queries, repositories)
 
@@ -96,13 +96,13 @@ Identify patterns the codebase already follows:
 **Code Patterns**
 - Error handling style: try/catch, Result types, error codes
 - Dependency injection or direct imports
-- State management approach
+- State management 方法
 - Async patterns: callbacks, promises, async/await, channels
 
 **Git Conventions**
 - Branch naming from recent branches
 - Commit message style from recent commits
-- PR workflow (squash, merge, rebase)
+- PR 工作流 (squash, merge, rebase)
 - If the repo has no commits yet or only a shallow history (e.g. `git clone --depth 1`), skip this section and note "Git history unavailable or too shallow to detect conventions"
 
 ### Phase 4: Generate Onboarding Artifacts
@@ -134,20 +134,20 @@ Produce two outputs:
 <!-- Example for a Next.js project — replace with detected paths -->
 - **API routes**: `src/app/api/` — Next.js route handlers
 - **UI pages**: `src/app/(dashboard)/` — authenticated pages
-- **Database**: `prisma/schema.prisma` — data model source of truth
+- **Database**: `prisma/架构.prisma` — data model source of truth
 - **Config**: `next.config.ts` — build and runtime config
 
 ## Directory Map
 [Top-level directory → purpose mapping]
 
-## Request Lifecycle
-[Trace one API request from entry to response]
+## 请求 Lifecycle
+[Trace one API 请求 from entry to 响应]
 
 ## Conventions
 - [File naming pattern]
-- [Error handling approach]
+- [Error handling 方法]
 - [Testing patterns]
-- [Git workflow]
+- [Git 工作流]
 
 ## Common Tasks
 <!-- Example for a Node.js project — replace with detected commands -->
@@ -161,9 +161,9 @@ Produce two outputs:
 <!-- Example for a Next.js project — replace with detected paths -->
 | I want to... | Look at... |
 |--------------|-----------|
-| Add an API endpoint | `src/app/api/` |
+| Add an API 端点 | `src/app/api/` |
 | Add a UI page | `src/app/(dashboard)/` |
-| Add a database table | `prisma/schema.prisma` |
+| Add a database table | `prisma/架构.prisma` |
 | Add a test | `tests/` matching the source path |
 | Change build config | `next.config.ts` |
 ```
@@ -197,7 +197,7 @@ Generate or update a project-specific CLAUDE.md based on detected conventions. I
 
 ## Conventions
 - [Commit style if detectable]
-- [PR workflow if detectable]
+- [PR 工作流 if detectable]
 - [Error handling patterns]
 ```
 
@@ -220,7 +220,7 @@ Generate or update a project-specific CLAUDE.md based on detected conventions. I
 
 ### Example 1: First time in a new repo
 **User**: "Onboard me to this codebase"
-**Action**: Run full 4-phase workflow → produce Onboarding Guide + Starter CLAUDE.md
+**Action**: Run full 4-phase 工作流 → produce Onboarding Guide + Starter CLAUDE.md
 **Output**: Onboarding Guide printed directly to the conversation, plus a `CLAUDE.md` written to the project root
 
 ### Example 2: Generate CLAUDE.md for existing project

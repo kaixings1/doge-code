@@ -18,9 +18,9 @@ date_added: "2026-02-27"
 ## 说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 目的
 
@@ -32,13 +32,13 @@ Track requests across distributed systems to understand latency, dependencies, a
 - Understand service dependencies
 - Identify bottlenecks
 - Trace error propagation
-- Analyze request paths
+- Analyze 请求 paths
 
 ## Distributed Tracing Concepts
 
 ### Trace Structure
 ```
-Trace (Request ID: abc123)
+Trace (请求 ID: abc123)
   ↓
 Span (frontend) [100ms]
   ↓
@@ -49,15 +49,15 @@ Span (api-gateway) [80ms]
 ```
 
 ### Key Components
-- **Trace** - End-to-end request journey
-- **Span** - Single operation within a trace
+- **Trace** - End-to-end 请求 journey
+- **Span** - Single 操作 within a trace
 - **Context** - Metadata propagated between services
 - **Tags** - Key-value pairs for filtering
 - **Logs** - Timestamped events within a span
 
-## Jaeger Setup
+## Jaeger 设置
 
-### Kubernetes Deployment
+### Kubernetes 部署
 
 ```bash
 # Deploy Jaeger Operator
@@ -103,7 +103,7 @@ services:
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
 ```
 
-**Reference:** See `references/jaeger-setup.md`
+**Reference:** See `references/jaeger-设置.md`
 
 ## Application Instrumentation
 
@@ -149,7 +149,7 @@ def fetch_users_from_db():
     with tracer.start_as_current_span("database_query") as span:
         span.set_attribute("db.system", "postgresql")
         span.set_attribute("db.statement", "SELECT * FROM users")
-        # Database query
+        # Database 查询
         return query_database()
 ```
 
@@ -168,7 +168,7 @@ const provider = new NodeTracerProvider({
 });
 
 const exporter = new JaegerExporter({
-  endpoint: 'http://jaeger:14268/api/traces'
+  端点: 'http://jaeger:14268/api/traces'
 });
 
 provider.addSpanProcessor(new BatchSpanProcessor(exporter));
@@ -237,7 +237,7 @@ func getUsers(ctx context.Context) ([]User, error) {
     ctx, span := tracer.Start(ctx, "get_users")
     defer span.End()
 
-    span.SetAttributes(attribute.String("user.filter", "active"))
+    span.SetAttributes(attribute.String("user.过滤器", "active"))
 
     users, err := fetchUsersFromDB(ctx)
     if err != nil {
@@ -269,7 +269,7 @@ from opentelemetry.propagate import inject
 headers = {}
 inject(headers)  # Injects trace context
 
-response = requests.get('http://downstream-service/api', headers=headers)
+响应 = requests.get('http://downstream-service/api', headers=headers)
 ```
 
 #### Node.js
@@ -282,9 +282,9 @@ propagation.inject(context.active(), headers);
 axios.get('http://downstream-service/api', { headers });
 ```
 
-## Tempo Setup (Grafana)
+## Tempo 设置 (Grafana)
 
-### Kubernetes Deployment
+### Kubernetes 部署
 
 ```yaml
 apiVersion: v1
@@ -312,14 +312,14 @@ data:
         backend: s3
         s3:
           bucket: tempo-traces
-          endpoint: s3.amazonaws.com
+          端点: s3.amazonaws.com
 
     querier:
       frontend_worker:
-        frontend_address: tempo-query-frontend:9095
+        frontend_address: tempo-查询-frontend:9095
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: 部署
 metadata:
   name: tempo
 spec:
@@ -372,7 +372,7 @@ sampler = ParentBased(root=TraceIdRatioBased(0.01))
 
 ### Finding Slow Requests
 
-**Jaeger Query:**
+**Jaeger 查询:**
 ```
 service=my-service
 duration > 1s
@@ -380,7 +380,7 @@ duration > 1s
 
 ### Finding Errors
 
-**Jaeger Query:**
+**Jaeger 查询:**
 ```
 service=my-service
 error=true
@@ -391,7 +391,7 @@ tags.http.status_code >= 500
 
 Jaeger automatically generates service dependency graphs showing:
 - Service relationships
-- Request rates
+- 请求 rates
 - Error rates
 - Average latencies
 
@@ -408,7 +408,7 @@ Jaeger automatically generates service dependency graphs showing:
 9. **Use span events** for important milestones
 10. **Document instrumentation** standards
 
-## Integration with Logging
+## 集成 with Logging
 
 ### Correlated Logs
 ```python
@@ -422,7 +422,7 @@ def process_request():
     trace_id = span.get_span_context().trace_id
 
     logger.info(
-        "Processing request",
+        "Processing 请求",
         extra={"trace_id": format(trace_id, '032x')}
     )
 ```
@@ -430,25 +430,25 @@ def process_request():
 ## 故障排除
 
 **No traces appearing:**
-- Check collector endpoint
+- Check collector 端点
 - Verify network connectivity
-- Check sampling configuration
+- Check sampling 配置
 - Review application logs
 
 **High latency overhead:**
 - Reduce sampling rate
 - Use batch span processor
-- Check exporter configuration
+- Check exporter 配置
 
 ## 参考文件
 
-- `references/jaeger-setup.md` - Jaeger installation
+- `references/jaeger-设置.md` - Jaeger installation
 - `references/instrumentation.md` - Instrumentation patterns
-- `assets/jaeger-config.yaml.template` - Jaeger configuration
+- `assets/jaeger-config.yaml.template` - Jaeger 配置
 
 ## 相关技能
 
-- `prometheus-configuration` - For metrics
+- `prometheus-配置` - For metrics
 - `grafana-dashboards` - For visualization
 - `slo-implementation` - For latency SLOs
 

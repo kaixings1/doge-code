@@ -61,7 +61,7 @@ Apply professional, accessible, publication-ready styling to any data visualizat
 
 ## 输出格式
 
-- **Style Configuration**: matplotlib rcParams / seaborn theme / plotly template
+- **Style 配置**: matplotlib rcParams / seaborn theme / plotly template
 - **Python Code**: Theme application code
 - **Before/After**: Visual comparison showing improvements
 - **Checklist**: Accessibility and quality checks passed

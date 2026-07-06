@@ -29,7 +29,7 @@ curl -X POST https://api.theagentmail.net/v1/accounts \
   -d '{"address": "my-agent@theagentmail.net"}'
 ```
 
-Response: `{"data": {"id": "...", "address": "my-agent@theagentmail.net", "displayName": null, "createdAt": 123}}`
+响应: `{"data": {"id": "...", "address": "my-agent@theagentmail.net", "displayName": null, "createdAt": 123}}`
 
 ### Send email (-1 karma)
 
@@ -66,7 +66,7 @@ curl https://api.theagentmail.net/v1/karma \
   -H "Authorization: Bearer am_..."
 ```
 
-Response: `{"data": {"balance": 90, "events": [...]}}`
+响应: `{"data": {"balance": 90, "events": [...]}}`
 
 ### Register webhook (real-time inbound)
 
@@ -78,7 +78,7 @@ curl -X POST https://api.theagentmail.net/v1/accounts/{accountId}/webhooks \
 ```
 
 Webhook deliveries include two security headers:
-- `X-AgentMail-Signature` -- HMAC-SHA256 hex digest of the request body, signed with the webhook secret
+- `X-AgentMail-Signature` -- HMAC-SHA256 hex digest of the 请求 body, signed with the webhook secret
 - `X-AgentMail-Timestamp` -- millisecond timestamp of when the delivery was sent
 
 Verify the signature and reject requests with timestamps older than 5 minutes to prevent replay attacks:

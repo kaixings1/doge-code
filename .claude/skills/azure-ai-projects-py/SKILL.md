@@ -32,14 +32,14 @@ from azure.ai.projects import AIProjectClient
 
 credential = DefaultAzureCredential()
 client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
+    端点=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
     credential=credential,
 )
 ```
 
 ## Client Operations 概述
 
-| Operation | Access | Purpose |
+| 操作 | Access | Purpose |
 |-----------|--------|---------|
 | `client.agents` | `.agents.*` | Agent CRUD, versions, threads, runs |
 | `client.connections` | `.connections.*` | List/get project connections |
@@ -57,7 +57,7 @@ client = AIProjectClient(
 from azure.ai.projects import AIProjectClient
 
 client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
+    端点=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
@@ -65,7 +65,7 @@ client = AIProjectClient(
 agent = client.agents.create_agent(
     model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
     name="my-agent",
-    instructions="You are helpful.",
+    使用说明="You are helpful.",
 )
 ```
 
@@ -76,7 +76,7 @@ agent = client.agents.create_agent(
 openai_client = client.get_openai_client()
 
 # Use standard OpenAI API
-response = openai_client.chat.completions.create(
+响应 = openai_client.chat.completions.create(
     model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
     messages=[{"role": "user", "content": "Hello!"}],
 )
@@ -90,7 +90,7 @@ response = openai_client.chat.completions.create(
 agent = client.agents.create_agent(
     model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
     name="my-agent",
-    instructions="You are a helpful assistant.",
+    使用说明="You are a helpful assistant.",
 )
 ```
 
@@ -102,7 +102,7 @@ from azure.ai.agents import CodeInterpreterTool, FileSearchTool
 agent = client.agents.create_agent(
     model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
     name="tool-agent",
-    instructions="You can execute code and search files.",
+    使用说明="You can execute code and search files.",
     tools=[CodeInterpreterTool(), FileSearchTool()],
 )
 ```
@@ -117,7 +117,7 @@ agent_version = client.agents.create_version(
     agent_name="customer-support-agent",
     definition=PromptAgentDefinition(
         model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-        instructions="You are a customer support specialist.",
+        使用说明="You are a customer support specialist.",
         tools=[],  # Add tools as needed
     ),
     version_label="v1.0",
@@ -161,7 +161,7 @@ run = client.agents.runs.create_and_process(
     agent_id=agent.id,
 )
 
-# 4. Get response
+# 4. Get 响应
 if run.status == "completed":
     messages = client.agents.messages.list(thread_id=thread.id)
     for msg in messages:
@@ -235,7 +235,7 @@ See references/evaluation.md for evaluation patterns.
 from azure.ai.projects.aio import AIProjectClient
 
 async with AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
+    端点=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 ) as client:
     agent = await client.agents.create_agent(...)
@@ -280,7 +280,7 @@ agent = client.agents.create_agent(
 | 部署s | Yes | No |
 | Datasets/Indexes | Yes | No |
 | Evaluation | Via OpenAI client | No |
-| When to use | Full Foundry integration | Standalone agent apps |
+| 使用场景 | Full Foundry integration | Standalone agent apps |
 
 ## 参考文件
 
@@ -297,7 +297,7 @@ agent = client.agents.create_agent(
 - scripts/run_batch_evaluation.py: CLI tool for batch evaluations
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

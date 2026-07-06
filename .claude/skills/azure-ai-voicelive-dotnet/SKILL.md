@@ -38,9 +38,9 @@ AZURE_VOICELIVE_API_KEY=<your-api-key>
 using Azure.Identity;
 using Azure.AI.VoiceLive;
 
-Uri endpoint = new Uri("https://your-resource.cognitiveservices.azure.com");
+Uri 端点 = new Uri("https://your-resource.cognitiveservices.azure.com");
 DefaultAzureCredential credential = new DefaultAzureCredential();
-VoiceLiveClient client = new VoiceLiveClient(endpoint, credential);
+VoiceLiveClient client = new VoiceLiveClient(端点, credential);
 ```
 
 **Required Role**: `Cognitive Services User` (assign in Azure Portal → Access control)
@@ -48,9 +48,9 @@ VoiceLiveClient client = new VoiceLiveClient(endpoint, credential);
 ### API Key
 
 ```csharp
-Uri endpoint = new Uri("https://your-resource.cognitiveservices.azure.com");
+Uri 端点 = new Uri("https://your-resource.cognitiveservices.azure.com");
 AzureKeyCredential credential = new AzureKeyCredential("your-api-key");
-VoiceLiveClient client = new VoiceLiveClient(endpoint, credential);
+VoiceLiveClient client = new VoiceLiveClient(端点, credential);
 ```
 
 ## Client Hierarchy
@@ -67,25 +67,25 @@ VoiceLiveClient
 
 ## 核心工作流
 
-### 1. Start Session and Configure
+### 1. Start 会话 and Configure
 
 ```csharp
 using Azure.Identity;
 using Azure.AI.VoiceLive;
 
-var endpoint = new Uri(Environment.GetEnvironmentVariable("AZURE_VOICELIVE_ENDPOINT"));
-var client = new VoiceLiveClient(endpoint, new DefaultAzureCredential());
+var 端点 = new Uri(Environment.GetEnvironmentVariable("AZURE_VOICELIVE_ENDPOINT"));
+var client = new VoiceLiveClient(端点, new DefaultAzureCredential());
 
 var model = "gpt-4o-mini-realtime-preview";
 
-// Start session
-using VoiceLiveSession session = await client.StartSessionAsync(model);
+// Start 会话
+using VoiceLiveSession 会话 = await client.StartSessionAsync(model);
 
-// Configure session
+// Configure 会话
 VoiceLiveSessionOptions sessionOptions = new()
 {
     Model = model,
-    Instructions = "You are a helpful AI assistant. Respond naturally.",
+    使用说明 = "You are a helpful AI assistant. Respond naturally.",
     Voice = new AzureStandardVoice("en-US-AvaNeural"),
     TurnDetection = new AzureSemanticVadTurnDetection()
     {
@@ -102,13 +102,13 @@ sessionOptions.Modalities.Clear();
 sessionOptions.Modalities.Add(InteractionModality.Text);
 sessionOptions.Modalities.Add(InteractionModality.Audio);
 
-await session.ConfigureSessionAsync(sessionOptions);
+await 会话.ConfigureSessionAsync(sessionOptions);
 ```
 
 ### 2. Process Events
 
 ```csharp
-await foreach (SessionUpdate serverEvent in session.GetUpdatesAsync())
+await foreach (SessionUpdate serverEvent in 会话.GetUpdatesAsync())
 {
     switch (serverEvent)
     {
@@ -130,7 +130,7 @@ await foreach (SessionUpdate serverEvent in session.GetUpdatesAsync())
             break;
             
         case SessionUpdateResponseDone:
-            Console.WriteLine("\n--- Response complete ---");
+            Console.WriteLine("\n--- 响应 complete ---");
             break;
     }
 }
@@ -139,8 +139,8 @@ await foreach (SessionUpdate serverEvent in session.GetUpdatesAsync())
 ### 3. Send User Message
 
 ```csharp
-await session.AddItemAsync(new UserMessageItem("Hello, can you help me?"));
-await session.StartResponseAsync();
+await 会话.AddItemAsync(new UserMessageItem("Hello, can you help me?"));
+await 会话.StartResponseAsync();
 ```
 
 ### 4. Function Calling
@@ -164,7 +164,7 @@ var weatherFunction = new VoiceLiveFunctionDefinition("get_current_weather")
         """)
 };
 
-// Add to session options
+// Add to 会话 options
 sessionOptions.Tools.Add(weatherFunction);
 
 // Handle function call in event loop
@@ -178,9 +178,9 @@ if (serverEvent is SessionUpdateResponseFunctionCallArgumentsDone functionCall)
         // Call external service
         string weatherInfo = $"The weather in {location} is sunny, 75°F.";
         
-        // Send response
-        await session.AddItemAsync(new FunctionCallOutputItem(functionCall.CallId, weatherInfo));
-        await session.StartResponseAsync();
+        // Send 响应
+        await 会话.AddItemAsync(new FunctionCallOutputItem(functionCall.CallId, weatherInfo));
+        await 会话.StartResponseAsync();
     }
 }
 ```
@@ -191,7 +191,7 @@ if (serverEvent is SessionUpdateResponseFunctionCallArgumentsDone functionCall)
 |------------|-------|---------|
 | Azure Standard | `AzureStandardVoice` | `"en-US-AvaNeural"` |
 | Azure HD | `AzureStandardVoice` | `"en-US-Ava:DragonHDLatestNeural"` |
-| Azure Custom | `AzureCustomVoice` | Custom voice with endpoint ID |
+| Azure Custom | `AzureCustomVoice` | Custom voice with 端点 ID |
 
 ## Supported Models
 
@@ -206,13 +206,13 @@ if (serverEvent is SessionUpdateResponseFunctionCallArgumentsDone functionCall)
 | Type | Purpose |
 |------|---------|
 | `VoiceLiveClient` | Main client for creating sessions |
-| `VoiceLiveSession` | Active WebSocket session |
-| `VoiceLiveSessionOptions` | Session configuration |
+| `VoiceLiveSession` | Active WebSocket 会话 |
+| `VoiceLiveSessionOptions` | 会话 configuration |
 | `AzureStandardVoice` | Standard Azure voice provider |
 | `AzureSemanticVadTurnDetection` | Voice activity detection |
 | `VoiceLiveFunctionDefinition` | Function tool definition |
 | `UserMessageItem` | User text message |
-| `FunctionCallOutputItem` | Function call response |
+| `FunctionCallOutputItem` | Function call 响应 |
 | `SessionUpdateResponseAudioDelta` | Audio chunk event |
 | `SessionUpdateResponseTextDelta` | Text chunk event |
 
@@ -221,7 +221,7 @@ if (serverEvent is SessionUpdateResponseFunctionCallArgumentsDone functionCall)
 1. **Always set both modalities** — Include `Text` and `Audio` for voice assistants
 2. **Use `AzureSemanticVadTurnDetection`** — Provides natural conversation flow
 3. **Configure appropriate silence duration** — 500ms typical to avoid premature cutoffs
-4. **Use `using` statement** — Ensures proper session disposal
+4. **Use `using` statement** — Ensures proper 会话 disposal
 5. **Handle all event types** — Check for errors, audio, text, and function calls
 6. **Use DefaultAzureCredential** — Never hardcode API keys
 
@@ -230,7 +230,7 @@ if (serverEvent is SessionUpdateResponseFunctionCallArgumentsDone functionCall)
 ```csharp
 if (serverEvent is SessionUpdateError error)
 {
-    if (error.Error.Message.Contains("Cancellation failed: no active response"))
+    if (error.Error.Message.Contains("Cancellation failed: no active 响应"))
     {
         // Benign error, can ignore
     }
@@ -266,7 +266,7 @@ if (serverEvent is SessionUpdateError error)
 | Quickstart | https://learn.microsoft.com/azure/ai-services/speech-service/voice-live-quickstart |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

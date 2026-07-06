@@ -17,7 +17,7 @@ od:
 
 > Curated from GreenSock's official GSAP skills: https://github.com/greensock/gsap-skills
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 Apply when building multi-step animations, coordinating several tweens in sequence or parallel, or when the user asks about timelines, sequencing, or keyframe-style animation in GSAP.
 
@@ -32,18 +32,18 @@ tl.to(".a", { x: 100, duration: 1 })
   .to(".c", { opacity: 0, duration: 0.3 });
 ```
 
-By default, tweens are **appended** one after another. Use the **position parameter** to place tweens at specific times or relative to other tweens.
+By default, tweens are **appended** one after another. Use the **position 参数** to place tweens at specific times or relative to other tweens.
 
-## Position Parameter
+## Position 参数
 
-Third argument (or position property in vars) controls placement:
+Third 参数 (or position property in vars) controls placement:
 
 - **Absolute**: `1` — start at 1 second.
 - **Relative (default)**: `"+=0.5"` — 0.5s after end; `"-=0.2"` — 0.2s before end.
 - **Label**: `"labelName"` — at that label; `"labelName+=0.3"` — 0.3s after label.
 - **Placement**: `"<"` — start when recently-added animation starts; `">"` — start when recently-added animation ends (default); `"<0.2"` — 0.2s after recently-added animation start.
 
-Examples:
+示例:
 
 ```javascript
 tl.to(".a", { x: 100 }, 0);           // at 0
@@ -102,17 +102,17 @@ master.to(".c", { opacity: 0 }, "+=0.2");
 - **tl.progress(0.5)** — seek to 50%.
 - **tl.kill()** — kill timeline and (by default) its children.
 
-## Official GSAP Best practices
+## Official GSAP 最佳实践
 
 - ✅ 优先 timelines for sequencing
-- ✅ Use the **position parameter** (third argument) to place tweens at specific times or relative to labels.
+- ✅ Use the **position 参数** (third 参数) to place tweens at specific times or relative to labels.
 - ✅ Add **labels** with `addLabel()` for readable, maintainable sequencing.
 - ✅ Pass **defaults** into the timeline constructor so child tweens inherit duration, ease, etc.
 - ✅ Put ScrollTrigger on the timeline (or top-level tween), not on tweens inside a timeline.
 
 ## Do Not
 
-- ❌ Chain animations with **delay** when a **timeline** can sequence them; prefer `gsap.timeline()` and the position parameter for multi-step animation.
+- ❌ Chain animations with **delay** when a **timeline** can sequence them; prefer `gsap.timeline()` and the position 参数 for multi-step animation.
 - ❌ Forget to pass **defaults** (e.g. `defaults: { duration: 0.5, ease: "power2.out" }`) when many child tweens share the same duration or ease.
 - ❌ Forget that **duration** on the timeline constructor is not the same as tween duration; timeline “duration” is determined by its children.
 - ❌ Nest animations that contain a ScrollTrigger; ScrollTriggers should only be on top-level Tweens/Timelines.

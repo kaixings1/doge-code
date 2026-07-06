@@ -46,8 +46,8 @@ The canonical tooling is **SharpDPAPI** (GhostPack, a C# port of Mimikatz DPAPI 
 
 ## 前提条件
 
-- An authorized foothold (interactive session, beacon, or remote admin) on the target Windows host.
-- Knowledge of the target user's SID, and one of: the user's session, password, NTLM hash, or Domain Admin rights for the backup key.
+- An authorized foothold (interactive 会话, beacon, or remote admin) on the target Windows host.
+- Knowledge of the target user's SID, and one of: the user's 会话, password, NTLM hash, or Domain Admin rights for the backup key.
 - Tooling (compile from source or use release binaries; obtain only from official upstreams):
 
 ```bash

@@ -12,7 +12,7 @@ tools: [claude, cursor, codex, copilot]
 
 # Knowledge Extraction
 
-Extract structured, quality-scored domain knowledge from any AI model — in-session from closed models (no API key) or locally from open-source models via Ollama.
+Extract structured, quality-scored domain knowledge from any AI model — in-会话 from closed models (no API key) or locally from open-source models via Ollama.
 
 ## 概述
 
@@ -36,7 +36,7 @@ pip install bdistill
 claude mcp add bdistill -- bdistill-mcp   # Claude Code
 ```
 
-### 步骤 2: Extract knowledge in-session
+### 步骤 2: Extract knowledge in-会话
 
 ```
 /distill medical cardiology                    # Preset domain
@@ -76,7 +76,7 @@ Structured reference JSONL — not training data:
 Generate structured training data for traditional ML models:
 
 ```
-/schema sepsis | hr:float, bp:float, temp:float, wbc:float | risk:category[low,moderate,high,critical]
+/架构 sepsis | hr:float, bp:float, temp:float, wbc:float | risk:category[low,moderate,high,critical]
 ```
 
 Exports as CSV ready for pandas/sklearn. Each row tracks source_model for cross-model analysis.
@@ -95,7 +95,7 @@ bdistill extract --domain medical --model qwen3:4b
 
 ## Security & Safety Notes
 
-- In-session extraction uses your existing subscription — no additional API keys
+- In-会话 extraction uses your existing subscription — no additional API keys
 - Local extraction runs entirely on your machine via Ollama
 - No data is sent to external services
 - Output is reference data, not LLM training format

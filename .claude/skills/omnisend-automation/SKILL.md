@@ -17,7 +17,7 @@ requires:
 ## 设置
 
 1. Connect your Omnisend account through the Composio MCP server at `https://rube.app/mcp`
-2. The agent will prompt you with an authentication link if no active connection exists
+2. The agent will prompt you with an 认证 link if no active connection exists
 3. Once connected, all `OMNISEND_*` tools become available for execution
 
 ---
@@ -29,7 +29,7 @@ Upsert a contact by email identifier with subscription status, profile fields, a
 
 **Tool:** `OMNISEND_CREATE_OR_UPDATE_CONTACT`
 
-| Parameter | Type | 必需 | Description |
+| 参数 | Type | 必需 | Description |
 |-----------|------|----------|-------------|
 | `identifiers` | array | Yes | At least one identifier object with `id` (email), `type` (`email`), optional `channels.email.status` (`subscribed`, `nonSubscribed`, `unsubscribed`), and `sendWelcomeMessage` (boolean) |
 | `firstName` | string | No | Contact's first name |
@@ -49,16 +49,16 @@ Retrieve contacts in batches with optional filters for email, phone, status, seg
 
 **Tool:** `OMNISEND_LIST_CONTACTS`
 
-| Parameter | Type | 必需 | Description |
+| 参数 | Type | 必需 | Description |
 |-----------|------|----------|-------------|
 | `limit` | integer | No | Results per page (default: 100, max: 250) |
-| `after` | string | No | Cursor for next page (base64-encoded ContactID) |
-| `before` | string | No | Cursor for previous page |
-| `email` | string | No | Filter by exact email address |
-| `phone` | string | No | Filter by full phone number with country code |
-| `status` | string | No | Filter by: `subscribed`, `nonSubscribed`, `unsubscribed` |
-| `segmentID` | integer | No | Filter by segment ID |
-| `tag` | string | No | Filter by tag (e.g., `VIP`) |
+| `after` | string | No | 游标 for next page (base64-encoded ContactID) |
+| `before` | string | No | 游标 for previous page |
+| `email` | string | No | 过滤器 by exact email address |
+| `phone` | string | No | 过滤器 by full phone number with country code |
+| `status` | string | No | 过滤器 by: `subscribed`, `nonSubscribed`, `unsubscribed` |
+| `segmentID` | integer | No | 过滤器 by segment ID |
+| `tag` | string | No | 过滤器 by tag (e.g., `VIP`) |
 
 ---
 
@@ -67,7 +67,7 @@ Retrieve the full profile for a single contact when you already have their conta
 
 **Tool:** `OMNISEND_GET_CONTACT`
 
-| Parameter | Type | 必需 | Description |
+| 参数 | Type | 必需 | Description |
 |-----------|------|----------|-------------|
 | `contactId` | string | Yes | Unique contact identifier (e.g., `60e7412b1234567890abcdef`) |
 
@@ -87,12 +87,12 @@ Process many records asynchronously in a single call -- contacts, products, orde
 
 **Tool:** `OMNISEND_CREATE_BATCH`
 
-| Parameter | Type | 必需 | Description |
+| 参数 | Type | 必需 | Description |
 |-----------|------|----------|-------------|
 | `method` | string | Yes | `POST` or `PUT` |
-| `endpoint` | string | Yes | Target: `contacts`, `orders`, `products`, `events`, `categories` |
-| `items` | array | Yes | Array of payload objects for each operation |
-| `eventID` | string | Conditional | 必需 when endpoint is `events` |
+| `端点` | string | Yes | Target: `contacts`, `orders`, `products`, `events`, `categories` |
+| `items` | array | Yes | Array of 载荷 objects for each 操作 |
+| `eventID` | string | Conditional | 必需 when 端点 is `events` |
 
 Use batch operations to avoid rate limits when processing large data sets.
 
@@ -103,19 +103,27 @@ Use batch operations to avoid rate limits when processing large data sets.
 | Pitfall | Details |
 |---------|---------|
 | **Identifier required** | `OMNISEND_CREATE_OR_UPDATE_CONTACT` requires at least one identifier in the `identifiers` array -- only `email` type is supported |
-| **Cursor-based pagination** | `OMNISEND_LIST_CONTACTS` uses base64-encoded `after`/`before` cursors, not page numbers -- follow cursors to avoid incomplete data |
+| **游标-based pagination** | `OMNISEND_LIST_CONTACTS` uses base64-encoded `after`/`before` cursors, not page numbers -- follow cursors to avoid incomplete data |
 | **Contact ID resolution** | `OMNISEND_UPDATE_CONTACT` requires a `contactId` -- always resolve it first via list or get operations |
 | **Batch method constraints** | `OMNISEND_CREATE_BATCH` only accepts `POST` or `PUT` methods -- no `DELETE` or `PATCH` |
-| **Event ID dependency** | When batching events, the `eventID` parameter is mandatory -- omitting it causes the batch to fail |
+| **Event ID dependency** | When batching events, the `eventID` 参数 is mandatory -- omitting it causes the batch to fail |
 
 ---
 
 ## 快速参考
 
-| Tool Slug | Purpose |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
+| Tool 标识符 | 目的 |
 |-----------|---------|
 | `OMNISEND_CREATE_OR_UPDATE_CONTACT` | Create or upsert a contact by email |
-| `OMNISEND_LIST_CONTACTS` | List contacts with filtering and cursor pagination |
+| `OMNISEND_LIST_CONTACTS` | List contacts with filtering and 游标 pagination |
 | `OMNISEND_GET_CONTACT` | Get full profile for a single contact by ID |
 | `OMNISEND_UPDATE_CONTACT` | Patch specific fields on an existing contact |
 | `OMNISEND_CREATE_BATCH` | Bulk async operations for contacts, products, orders, events |

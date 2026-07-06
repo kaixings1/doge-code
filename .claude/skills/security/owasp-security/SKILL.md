@@ -307,12 +307,12 @@ When reviewing any language, think like a senior security researcher:
 
 ## When to Apply This Skill
 
-Use this skill when:
-- Writing authentication or authorization code
-- Handling user input or external data
-- Implementing cryptography or password storage
-- Reviewing code for security vulnerabilities
-- Designing API endpoints
+在以下情况下使用此技能：
+- 编写认证或授权代码时
+- 处理用户输入或外部数据时
+- 实施加密或密码存储时
+- 审查代码中的安全漏洞时
+- 设计 API 端点时
 - Building AI agent systems
 - Integrating LLMs, RAG pipelines, or function-calling tools
 - Configuring application security settings

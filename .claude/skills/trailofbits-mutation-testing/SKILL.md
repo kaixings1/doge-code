@@ -2,11 +2,11 @@
 
 Helps configure [mewt](https://github.com/trailofbits/mewt) or [muton](https://github.com/trailofbits/muton) mutation testing campaigns — scoping targets, tuning timeouts, and optimizing long-running runs so you can execute `mewt run` or `muton run` with confidence.
 
-> **注意**: muton and mewt share identical interfaces but target different languages — mewt for general-purpose languages, muton for TON smart contracts (Tact, Tolk, FunC). All commands and configuration patterns in this plugin apply to both tools. File names change accordingly: `mewt.toml` → `muton.toml`, `mewt.sqlite` → `muton.sqlite`.
+> **注意**: muton and mewt share identical interfaces but target different languages — mewt for general-目的 languages, muton for TON smart contracts (Tact, Tolk, FunC). All commands and 配置 patterns in this plugin apply to both tools. File names change accordingly: `mewt.toml` → `muton.toml`, `mewt.sqlite` → `muton.sqlite`.
 
 ## What It Does
 
-Walks through a 5-phase configuration workflow:
+Walks through a 5-phase 配置 工作流:
 
 1. **Initialize and validate targets** — run `mewt init`, review auto-generated config, fix include/ignore patterns
 2. **Generate mutants and assess scope** — count mutants, time the test command, estimate campaign duration
@@ -34,7 +34,7 @@ Walks through a 5-phase configuration workflow:
 User: "Help me set up mewt for this Solidity project"
 User: "Configure muton for this FunC codebase"
 User: "My mewt campaign would take 30 hours — how do I optimize it?"
-→ Guides through configuration, scope assessment, and optimization
+→ Guides through 配置, scope assessment, and optimization
 ```
 
 ## 参考资料

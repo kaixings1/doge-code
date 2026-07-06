@@ -26,14 +26,14 @@ od:
 
 ## 工具（工具令牌方式）
 
-两个端点都使用运行的 tool token（`OD_TOOL_TOKEN`，由守护进程注入）进行认证，并对运行所属的项目进行操作。
+两个端点都使用运行的 tool 令牌（`OD_TOOL_TOKEN`，由守护进程注入）进行认证，并对运行所属的项目进行操作。
 
 ### 搜索
 
 `POST /api/tools/library/search`
 
 ```json
-{ "query": "蓝色主图背景", "kind": "image", "limit": 20 }
+{ "查询": "蓝色主图背景", "kind": "image", "limit": 20 }
 ```
 
 返回 `{ "results": [{ "asset": { "id": "...", "kind": "image", "sourceTitle": "...", "width": 1600, "height": 900, "sources": [...] }, "score": 0 }], "semantic": false }`。

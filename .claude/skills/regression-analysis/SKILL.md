@@ -6,7 +6,7 @@ description: "构建和诊断回归模型：线性、逻辑、多项式、岭回
 # Regression Analysis
 
 ## 目的
-Build, diagnose, and interpret regression models. Covers the full workflow from model specification through diagnostics to interpretation.
+Build, diagnose, and interpret regression models. Covers the full 工作流 from model specification through diagnostics to interpretation.
 
 ## 工作原理
 

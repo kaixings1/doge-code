@@ -13,7 +13,7 @@ tags:
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -36,7 +36,7 @@ Monitor de performance do Claude Code e sistema local. Diagnostica lentidao, med
 ## 不适用场景
 
 - The task is unrelated to claude monitor
-- A simpler, more specific tool can handle the request
+- A simpler, more specific tool can handle the 请求
 - The user needs general-purpose assistance without domain expertise
 
 ## 工作原理
@@ -66,7 +66,7 @@ O script analisa em ~3 segundos:
 - **Browsers**: Processos e RAM por browser. >5GB total = excesso de abas
 - **Claude Code**: Processos e RAM consumida
 - **Disco**: Espaço livre. <10% = impacto em swap/performance
-- **Rede**: Latência ao endpoint da API Claude
+- **Rede**: Latência ao 端点 da API Claude
 - **Diagnóstico**: Classificação automática do problema com sugestões
 
 ## 2. Interpretar O Resultado

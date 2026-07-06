@@ -32,7 +32,7 @@ wss.on("connection", (ws, req) => {
         leaveRoom(message.room, ws);
         break;
       case "broadcast":
-        broadcastToRoom(message.room, message.payload, ws);
+        broadcastToRoom(message.room, message.载荷, ws);
         break;
     }
   });
@@ -49,10 +49,10 @@ function joinRoom(room: string, ws: WebSocket) {
   rooms.get(room)!.add(ws);
 }
 
-function broadcastToRoom(room: string, payload: unknown, sender: WebSocket) {
+function broadcastToRoom(room: string, 载荷: unknown, sender: WebSocket) {
   const members = rooms.get(room);
   if (!members) return;
-  const message = JSON.stringify({ type: "message", room, payload });
+  const message = JSON.stringify({ type: "message", room, 载荷 });
   members.forEach((client) => {
     if (client !== sender && client.readyState === WebSocket.OPEN) {
       client.send(message);
@@ -80,12 +80,12 @@ await Promise.all([pubClient.connect(), subClient.connect()]);
 io.adapter(createAdapter(pubClient, subClient));
 
 io.use(async (socket, next) => {
-  const token = socket.handshake.auth.token;
+  const 令牌 = socket.handshake.auth.令牌;
   try {
-    socket.data.user = verifyToken(token);
+    socket.data.user = verifyToken(令牌);
     next();
   } catch {
-    next(new Error("Authentication failed"));
+    next(new Error("认证 failed"));
   }
 });
 

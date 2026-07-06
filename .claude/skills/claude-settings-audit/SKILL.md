@@ -27,7 +27,7 @@ Check for these indicator files:
 
 | Category     | Files to Check                                                                        |
 | ------------ | ------------------------------------------------------------------------------------- |
-| **Python**   | `pyproject.toml`, `setup.py`, `requirements.txt`, `Pipfile`, `poetry.lock`, `uv.lock` |
+| **Python**   | `pyproject.toml`, `设置.py`, `requirements.txt`, `Pipfile`, `poetry.lock`, `uv.lock` |
 | **Node.js**  | `package.json`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`                    |
 | **Go**       | `go.mod`, `go.sum`                                                                    |
 | **Rust**     | `Cargo.toml`, `Cargo.lock`                                                            |
@@ -216,14 +216,14 @@ cat .mcp.json 2>/dev/null || echo "No existing .mcp.json"
 
 #### Sentry MCP (if Sentry SDK detected)
 
-Add to `.mcp.json` (replace `{org-slug}` and `{project-slug}` with your Sentry organization and project slugs):
+Add to `.mcp.json` (replace `{org-标识符}` and `{project-标识符}` with your Sentry organization and project slugs):
 
 ```json
 {
   "mcpServers": {
     "sentry": {
       "type": "http",
-      "url": "https://mcp.sentry.dev/mcp/{org-slug}/{project-slug}"
+      "url": "https://mcp.sentry.dev/mcp/{org-标识符}/{project-标识符}"
     }
   }
 }

@@ -58,7 +58,7 @@ find . -name "*.yaml" -path "*/k8s/*" -o -name "*.yaml" -path "*/manifests/*" | 
 Then adapt recommendations to:
 - The tech stack (Node, Python, Go, Java — affects base image choice)
 - Whether this is Docker-only or Kubernetes-deployed
-- The CI platform in use (for scanner integration)
+- The CI platform in use (for scanner 集成)
 - The existing base images and how far they are from best practice
 
 ---
@@ -200,21 +200,21 @@ docker inspect node:20-slim --format='{{index .RepoDigests 0}}'
 ```dockerfile
 # ❌ NEVER — secret in ENV or RUN; visible in `docker history` and layer cache
 ENV AWS_SECRET_ACCESS_KEY=supersecret
-RUN curl -H "Authorization: Bearer $TOKEN" https://api.example.com > config.json
+RUN curl -H "授权: Bearer $令牌" https://api.example.com > config.json
 ARG API_KEY                         # Also unsafe — visible in build args history
 
 # ✅ CORRECT — BuildKit secret mount (never persisted in any layer)
 # syntax=docker/dockerfile:1
 RUN --mount=type=secret,id=api_token \
-    curl -H "Authorization: Bearer $(cat /run/secrets/api_token)" \
+    curl -H "授权: Bearer $(cat /run/secrets/api_token)" \
     https://api.example.com/config > config.json
 ```
 
-Build with: `docker build --secret id=api_token,src=./token.txt .`
+Build with: `docker build --secret id=api_token,src=./令牌.txt .`
 
 **Check your image for leaked secrets:**
 ```bash
-docker history --no-trunc myapp:latest | grep -iE "secret|key|password|token"
+docker history --no-trunc myapp:latest | grep -iE "secret|key|password|令牌"
 trivy image --scanners secret myapp:latest
 ```
 
@@ -575,13 +575,13 @@ cosign sign ghcr.io/org/myapp:latest
 # Verify before deploy
 cosign verify ghcr.io/org/myapp:latest \
   --certificate-identity-regexp="https://github.com/org/repo" \
-  --certificate-oidc-issuer="https://token.actions.githubusercontent.com"
+  --certificate-oidc-issuer="https://令牌.actions.githubusercontent.com"
 ```
 
 **GitHub Actions — Sign & Verify Pipeline:**
 ```yaml
 permissions:
-  id-token: write     # Required for OIDC keyless signing
+  id-令牌: write     # Required for OIDC keyless signing
   packages: write
 
 steps:
@@ -612,11 +612,11 @@ syft myapp:latest -o spdx-json > sbom.spdx.json
 # Attach to image as attestation
 cosign attest --predicate sbom.json --type cyclonedx ghcr.io/org/myapp:latest
 
-# Verify SBOM attestation before deployment
+# Verify SBOM attestation before 部署
 cosign verify-attestation \
   --type cyclonedx \
   --certificate-identity-regexp="https://github.com/org/repo" \
-  --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
+  --certificate-oidc-issuer="https://令牌.actions.githubusercontent.com" \
   ghcr.io/org/myapp:latest
 ```
 
@@ -632,9 +632,9 @@ cosign verify-attestation \
 
 ```bash
 # Enable ECR enhanced scanning
-aws ecr put-registry-scanning-configuration \
+aws ecr put-registry-scanning-配置 \
   --scan-type ENHANCED \
-  --rules '[{"repositoryFilters":[{"filter":"*","filterType":"WILDCARD"}],"scanFrequency":"CONTINUOUS_SCAN"}]'
+  --rules '[{"repositoryFilters":[{"过滤器":"*","filterType":"WILDCARD"}],"scanFrequency":"CONTINUOUS_SCAN"}]'
 ```
 
 ### 4.4 Admission Control — Block Unsigned/Unscanned Images
@@ -659,7 +659,7 @@ spec:
             - entries:
                 - keyless:
                     subject: "https://github.com/org/repo/.github/workflows/*"
-                    issuer: "https://token.actions.githubusercontent.com"
+                    issuer: "https://令牌.actions.githubusercontent.com"
 ```
 
 ---
@@ -672,7 +672,7 @@ spec:
 
 ```yaml
 apiVersion: apps/v1
-kind: Deployment
+kind: 部署
 metadata:
   name: myapp
   namespace: production
@@ -818,7 +818,7 @@ spec:
 
 ```yaml
 # Create minimal role — never use wildcards
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.授权.k8s.io/v1
 kind: Role
 metadata:
   name: app-reader
@@ -830,7 +830,7 @@ rules:
     verbs: ["get"]                     # Never ["*"]
 
 ---
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.授权.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: app-reader-binding
@@ -842,7 +842,7 @@ subjects:
 roleRef:
   kind: Role
   name: app-reader
-  apiGroup: rbac.authorization.k8s.io
+  apiGroup: rbac.授权.k8s.io
 ```
 
 ```bash
@@ -926,7 +926,7 @@ spec:
 | Problem | Root Cause | Fix |
 |---|---|---|
 | Image runs as root | No `USER` directive | Add `RUN useradd ...` and `USER appuser` |
-| Secret in `docker history` | `ENV` or `RUN curl -H "Bearer $TOKEN"` | Use `RUN --mount=type=secret` |
+| Secret in `docker history` | `ENV` or `RUN curl -H "Bearer $令牌"` | Use `RUN --mount=type=secret` |
 | Large image with many CVEs | Full base image (`node:20`, `ubuntu`) | Switch to `node:20-slim` or `distroless` |
 | App crashes with `--read-only` | Writes to `/tmp` or app directory | Add `--tmpfs /tmp` for writable temp space |
 | Trivy scan blocks CI on unfixable CVEs | No ignore file | Add `.trivyignore` with justified entries |
@@ -988,7 +988,7 @@ spec:
 
 - `docker-expert` — General Docker usage, Compose orchestration, image optimization
 - `gha-security-review` — 安全性 audit of GitHub Actions workflows
-- `github-actions-advanced` — CI pipeline patterns including scanner integration
+- `github-actions-advanced` — CI pipeline patterns including scanner 集成
 - `kubernetes-architect` — Full Kubernetes architecture, not just security
 - `api-security-best-practices` — Application-level security (injection, auth, OWASP)
 - `k8s-security-policies` — Extended Kubernetes security policies

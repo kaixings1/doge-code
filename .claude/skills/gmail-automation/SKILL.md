@@ -44,13 +44,13 @@ All operations via `scripts/gmail.py`. Auto-authenticates on first use if not lo
 ### Search Emails
 
 ```bash
-# Search with Gmail query syntax
+# Search with Gmail 查询 syntax
 python scripts/gmail.py search "from:someone@example.com is:unread"
 
-# Search recent emails (no query returns all)
+# Search recent emails (no 查询 returns all)
 python scripts/gmail.py search --limit 20
 
-# Filter by label
+# 过滤器 by label
 python scripts/gmail.py search --label INBOX --limit 10
 
 # Include spam and trash
@@ -66,7 +66,7 @@ python scripts/gmail.py get MESSAGE_ID
 # Get just metadata (headers)
 python scripts/gmail.py get MESSAGE_ID --format metadata
 
-# Get minimal response (IDs only)
+# Get minimal 响应 (IDs only)
 python scripts/gmail.py get MESSAGE_ID --format minimal
 ```
 
@@ -132,11 +132,11 @@ python scripts/gmail.py modify MESSAGE_ID --remove-label UNREAD --add-label STAR
 python scripts/gmail.py list-labels
 ```
 
-## Gmail Query 语法
+## Gmail 查询 语法
 
 Gmail supports powerful search operators:
 
-| Query | Description |
+| 查询 | Description |
 |-------|-------------|
 | `from:user@example.com` | Emails from a specific sender |
 | `to:user@example.com` | Emails to a specific recipient |
@@ -174,7 +174,7 @@ python scripts/gmail.py search "from:newsletter@example.com -is:starred"
 | Important | `IMPORTANT` |
 | Unread | `UNREAD` |
 
-## Token Management
+## 令牌 Management
 
 Tokens stored securely using the system keyring:
 - **macOS**: Keychain

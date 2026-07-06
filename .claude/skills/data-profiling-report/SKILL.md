@@ -11,11 +11,11 @@ Generate a complete, stakeholder-ready data profiling report that serves as docu
 ## 工作原理
 
 ### 步骤 1: Executive Summary
-- Dataset overview: source, size, date range, purpose
+- Dataset 概述: source, size, date range, 目的
 - Key quality metrics at a glance
 - Top 3 findings that need attention
 
-### 步骤 2: Schema Documentation
+### 步骤 2: 架构 Documentation
 - Complete column inventory with types, descriptions, and example values
 - Primary keys, foreign keys, and relationships
 - Business glossary for domain-specific columns
@@ -23,7 +23,7 @@ Generate a complete, stakeholder-ready data profiling report that serves as docu
 ### 步骤 3: Quality Assessment
 - Completeness, accuracy, consistency scores per column
 - Data freshness and update frequency
-- Known limitations and caveats
+- Known 限制 and caveats
 
 ### 步骤 4: Statistical Profile
 - Descriptive statistics for all columns

@@ -18,14 +18,14 @@ date_added: "2026-02-27"
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 能力
 
 - Monorepo tool selection (Nx, Turborepo, Bazel, Lerna)
-- Workspace configuration and project structure
+- Workspace 配置 and project structure
 - Build caching (local and remote)
 - Dependency graph management
 - Affected/changed detection for CI optimization

@@ -8,7 +8,7 @@ date_added: '2026-02-27'
 
 # Azure.ResourceManager.ApiManagement (.NET)
 
-Management plane SDK for provisioning and managing Azure API Management resources via Azure Resource Manager.
+Management plane SDK for provisioning and managing Azure API Management 资源 via Azure Resource Manager.
 
 > **⚠️ Management vs Data Plane**
 > - **This SDK (Azure.ResourceManager.ApiManagement)**: Create services, APIs, products, subscriptions, policies, users, groups
@@ -99,14 +99,14 @@ var serviceData = new ApiManagementServiceData(
     publisherEmail: "admin@contoso.com",
     publisherName: "Contoso");
 
-// Create service (long-running operation - can take 30+ minutes)
+// Create service (long-running 操作 - can take 30+ minutes)
 var serviceCollection = resourceGroup.Value.GetApiManagementServices();
-var operation = await serviceCollection.CreateOrUpdateAsync(
+var 操作 = await serviceCollection.CreateOrUpdateAsync(
     WaitUntil.Completed,
     "my-apim-service",
     serviceData);
 
-ApiManagementServiceResource service = operation.Value;
+ApiManagementServiceResource service = 操作.Value;
 ```
 
 ### 2. Create an API
@@ -276,7 +276,7 @@ using Azure;
 
 try
 {
-    var operation = await serviceCollection.CreateOrUpdateAsync(
+    var 操作 = await serviceCollection.CreateOrUpdateAsync(
         WaitUntil.Completed, serviceName, serviceData);
 }
 catch (RequestFailedException ex) when (ex.Status == 409)
@@ -285,7 +285,7 @@ catch (RequestFailedException ex) when (ex.Status == 409)
 }
 catch (RequestFailedException ex) when (ex.Status == 400)
 {
-    Console.WriteLine($"Bad request: {ex.Message}");
+    Console.WriteLine($"Bad 请求: {ex.Message}");
 }
 catch (RequestFailedException ex)
 {
@@ -302,7 +302,7 @@ catch (RequestFailedException ex)
 | references/products-subscriptions.md | Products, subscriptions, access control |
 | references/policies.md | Policy XML patterns, scopes, common policies |
 
-## Related Resources
+## Related 资源
 
 | Resource | Purpose |
 |----------|---------|
@@ -311,7 +311,7 @@ catch (RequestFailedException ex)
 | [SDK Reference](https://learn.microsoft.com/en-us/dotnet/api/azure.resourcemanager.apimanagement) | .NET API reference |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

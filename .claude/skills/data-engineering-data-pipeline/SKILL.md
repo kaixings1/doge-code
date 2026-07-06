@@ -13,7 +13,7 @@ You are a data pipeline architecture expert specializing in scalable, reliable, 
 ## 使用此技能的场景
 
 - Working on data pipeline architecture tasks or workflows
-- Needing guidance, best practices, or checklists for data pipeline architecture
+- Needing guidance, 最佳实践, or checklists for data pipeline architecture
 
 ## 不要使用此技能的场景
 
@@ -24,11 +24,11 @@ You are a data pipeline architecture expert specializing in scalable, reliable, 
 
 $ARGUMENTS
 
-## Core Capabilities
+## Core 能力
 
 - Design ETL/ELT, Lambda, Kappa, and Lakehouse architectures
 - Implement batch and streaming data ingestion
-- Build workflow orchestration with Airflow/Prefect
+- Build 工作流 orchestration with Airflow/Prefect
 - Transform data using dbt and Spark
 - Manage Delta Lake/Iceberg storage with ACID transactions
 - Implement data quality frameworks (Great Expectations, dbt tests)
@@ -47,7 +47,7 @@ $ARGUMENTS
 **Batch**
 - Incremental loading with watermark columns
 - Retry logic with exponential backoff
-- Schema validation and dead letter queue for invalid records
+- 架构 validation and dead letter queue for invalid records
 - Metadata tracking (_extracted_at, _source)
 
 **Streaming**
@@ -86,7 +86,7 @@ $ARGUMENTS
 - Failure notifications
 
 **dbt Tests**
-- Schema tests in YAML
+- 架构 tests in YAML
 - Custom data quality tests with dbt-expectations
 - Test results tracked in metadata
 
@@ -118,7 +118,7 @@ $ARGUMENTS
 - File sizes: 512MB-1GB for Parquet
 - Lifecycle policies: hot (Standard) → warm (IA) → cold (Glacier)
 - Compute: spot instances for batch, on-demand for streaming, serverless for adhoc
-- Query optimization: partition pruning, clustering, predicate pushdown
+- 查询 optimization: partition pruning, clustering, predicate pushdown
 
 ## Example: Minimal Batch Pipeline
 
@@ -133,14 +133,14 @@ ingester = BatchDataIngester(config={})
 # Extract with incremental loading
 df = ingester.extract_from_database(
     connection_string='postgresql://host:5432/db',
-    query='SELECT * FROM orders',
+    查询='SELECT * FROM orders',
     watermark_column='updated_at',
     last_watermark=last_run_timestamp
 )
 
 # Validate
-schema = {'required_fields': ['id', 'user_id'], 'dtypes': {'id': 'int64'}}
-df = ingester.validate_and_clean(df, schema)
+架构 = {'required_fields': ['id', 'user_id'], 'dtypes': {'id': 'int64'}}
+df = ingester.validate_and_clean(df, 架构)
 
 # Data quality checks
 dq = DataQualityFramework()
@@ -174,7 +174,7 @@ ingester.save_dead_letter_queue('s3://lake/dlq/orders')
 - Storage: Delta/Iceberg table management
 - Data quality: Great Expectations suites and dbt tests
 
-### 3. Configuration Files
+### 3. 配置 Files
 - Orchestration: DAG definitions, schedules, retry policies
 - dbt: models, sources, tests, project config
 - Infrastructure: Docker Compose, K8s manifests, Terraform
@@ -187,8 +187,8 @@ ingester.save_dead_letter_queue('s3://lake/dlq/orders')
 - Logging: structured logs with correlation IDs
 
 ### 5. Operations Guide
-- Deployment procedures and rollback strategy
-- Troubleshooting guide for common issues
+- 部署 procedures and rollback strategy
+- 故障排除 guide for common issues
 - Scaling guide for increased volume
 - Cost optimization strategies and savings
 - Disaster recovery and backup procedures
@@ -200,7 +200,7 @@ ingester.save_dead_letter_queue('s3://lake/dlq/orders')
 - Comprehensive monitoring shows health and performance
 - Documentation enables team maintenance
 - Cost optimization reduces infrastructure costs by 30-50%
-- Schema evolution without downtime
+- 架构 evolution without downtime
 - End-to-end data lineage tracked
 
 ## 局限性

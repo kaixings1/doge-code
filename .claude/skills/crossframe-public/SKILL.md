@@ -1,7 +1,7 @@
 ---
 name: crossframe-public
 description: "适用于 CrossFrame Suite 路由到中文公共议题分析、平台治理、政策、制度责任、申诉或合规证据的场景。"
-category: workflow
+category: 工作流
 risk: safe
 source: community
 source_repo: xi-kari/crossframe-skill
@@ -55,7 +55,7 @@ CrossFrame Public 是 `crossframe` 的公共议题/制度评论专项轻入口�
 4. 复用 `../crossframe/templates/read-state-capsule.md` 规定的 `v5-read-state-capsule`，并在高责任、公共、AI/过程性产物、生命周期、无法退出主体或文章输出场景执行 `../crossframe/worksheets/source-anchor-integrity-check.md`。如果胶囊缺失，回到 `../crossframe/SKILL.md` 补齐；本 skill 不重新发明源路由。
 5. `protocols/public-issue-protocol.md`
 6. `references/source-and-evidence-rules.md`
-7. `../crossframe/references/source-ledger-workflow.md`，用于统一记录来源、时间、来源类型、支持命题、不能证明什么、证据档位、使用位置、降档理由和仍需补证处。
+7. `../crossframe/references/source-ledger-工作流.md`，用于统一记录来源、时间、来源类型、支持命题、不能证明什么、证据档位、使用位置、降档理由和仍需补证处。
 
 公共评论、平台治理、机构合规、公共强判断默认触发 `v5-public-power-institution-pack`、`v5-low-power-protection-pack`、`v5-evidence-downgrade-action-ceiling-pack`；AI 报告或合规材料追加 `v5-ai-process-artifact-boundary-pack`。
 
@@ -69,7 +69,7 @@ CrossFrame Public 是 `crossframe` 的公共议题/制度评论专项轻入口�
 
 ## 默认查源
 
-真实公共议题默认需要查源，并按 `../crossframe/references/source-ledger-workflow.md` 建来源台账。优先找原始材料、官方文本、平台规则、政策原文、监管/司法/审计文件、当事方一手声明、可信媒体交叉报道和可复核数据。
+真实公共议题默认需要查源，并按 `../crossframe/references/source-ledger-工作流.md` 建来源台账。优先找原始材料、官方文本、平台规则、政策原文、监管/司法/审计文件、当事方一手声明、可信媒体交叉报道和可复核数据。
 
 如果用户明确禁止联网或当前无法查源：
 

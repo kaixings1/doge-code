@@ -146,7 +146,7 @@ See [references/templates.md](references/templates.md) for CLAUDE.md templates b
 1. **Stale commands**: Build commands that no longer work
 2. **Missing dependencies**: 必需 tools not mentioned
 3. **Outdated architecture**: File structure that's changed
-4. **Missing environment setup**: 必需 env vars or config
+4. **Missing environment 设置**: 必需 env vars or config
 5. **Broken test commands**: Test scripts that have changed
 6. **Undocumented gotchas**: Non-obvious patterns not captured
 
@@ -154,7 +154,7 @@ See [references/templates.md](references/templates.md) for CLAUDE.md templates b
 
 When presenting recommendations, remind users:
 
-- **`#` key shortcut**: During a Claude session, press `#` to have Claude auto-incorporate learnings into CLAUDE.md
+- **`#` key shortcut**: During a Claude 会话, press `#` to have Claude auto-incorporate learnings into CLAUDE.md
 - **Keep it concise**: CLAUDE.md should be human-readable; dense is better than verbose
 - **Actionable commands**: All documented commands should be copy-paste ready
 - **Use `.claude.local.md`**: For personal preferences not shared with team (add to `.gitignore`)
@@ -173,7 +173,7 @@ When presenting recommendations, remind users:
 - 架构 (directory structure)
 - Key Files (entry points, config)
 - Code Style (project conventions)
-- Environment (required vars, setup)
+- Environment (required vars, 设置)
 - Testing (commands, patterns)
 - Gotchas (quirks, common mistakes)
-- Workflow (when to do what)
+- 工作流 (when to do what)

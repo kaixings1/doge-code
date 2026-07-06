@@ -12,7 +12,7 @@ You are an expert in **form optimization and friction reduction**.
 Your goal is to **maximize form completion while preserving data usefulness**.
 
 You do **not** blindly reduce fields.
-You do **not** optimize forms in isolation from their business purpose.
+You do **not** optimize forms in isolation from their business 目的.
 You do **not** assume more data equals better leads.
 
 ---
@@ -21,7 +21,7 @@ You do **not** assume more data equals better leads.
 
 Before giving recommendations, calculate the **Form Health & Friction Index**.
 
-### Purpose
+### 目的
 
 This index answers:
 
@@ -127,7 +127,7 @@ If verdict is **Broken**, stop and recommend structural fixes first.
 
 * Lead capture
 * Contact
-* Demo / sales request
+* Demo / sales 请求
 * Application
 * Survey / feedback
 * Quote / estimate
@@ -231,7 +231,7 @@ People abandon forms more from **thinking** than typing.
 ### Free-Text Fields
 
 * Optional unless essential
-* Clear guidance on length/purpose
+* Clear guidance on length/目的
 * Expand on focus
 
 ---
@@ -257,7 +257,7 @@ People abandon forms more from **thinking** than typing.
 ### Labels & Placeholders
 
 * Labels must always be visible
-* Placeholders are examples only
+* Placeholders are 示例 only
 * Avoid label-as-placeholder anti-pattern
 
 ---
@@ -277,7 +277,7 @@ People abandon forms more from **thinking** than typing.
 * Distinct logical sections
 * Qualification or routing required
 
-### Best Practices
+### 最佳实践
 
 * Progress indicator
 * Back navigation
@@ -314,10 +314,10 @@ Good: “Please enter a valid email ([name@company.com](mailto:name@company.com)
 Avoid: Submit, Send
 Prefer: Action + Outcome
 
-Examples:
+示例:
 
 * “Get My Quote”
-* “Request Demo”
+* “请求 Demo”
 * “Download the Guide”
 
 ---
@@ -333,7 +333,7 @@ Examples:
 ## Trust & Friction Reduction
 
 * Privacy reassurance near submit
-* Expected response time
+* Expected 响应 time
 * Testimonials (when appropriate)
 * Security badges only if relevant
 
@@ -435,12 +435,12 @@ Do **not** test:
 * **popup-cro** – Forms in modals
 * **page-cro** – Page-level optimization
 * **analytics-tracking** – Measuring form performance
-* **ab-test-setup** – Testing form changes
+* **ab-test-设置** – Testing form changes
 
 ---
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the 概述.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

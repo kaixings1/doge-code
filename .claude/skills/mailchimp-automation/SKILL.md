@@ -1,12 +1,12 @@
 ---
 name: mailchimp-automation
-description: "通过 Rube MCP (Composio) 自动执行 Mailchimp 电子邮件营销，包括活动、受众、订阅者、细分和分析。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Mailchimp 电子邮件营销，包括活动、受众、订阅者、细分和分析。使用前始终先搜索工具以获取当前 架构。"
 risk: critical
 source: community
 date_added: "2026-02-27"
 ---
 
-# 通过 Rube MCP 实现 Mailchimp 自动化
+# Mailchimp 自动化
 
 通过 Composio 的 Mailchimp 工具包自动化 Mailchimp 电子邮件营销工作流，包括活动创建与发送、受众/列表管理、订阅者操作、细分和性能分析。
 
@@ -14,7 +14,7 @@ date_added: "2026-02-27"
 
 - 必须连接 Rube MCP（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 使用 `mailchimp` 工具包激活 Mailchimp 连接
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 架构
 
 ## 设置
 
@@ -85,7 +85,7 @@ date_added: "2026-02-27"
 - `stats.avg_open_rate` 和 `stats.avg_click_rate` 是 0-1 的小数，不是 0-100 的百分比
 - 始终使用 `status="subscribed"` 过滤活跃订阅者；省略将返回所有状态
 - 必须使用 `count` 和 `offset` 进行分页，直到收集的成员数与 `total_items` 匹配
-- 大型列表响应可能被截断；数据位于 `response.data.members` 下
+- 大型列表响应可能被截断；数据位于 `响应.data.members` 下
 
 ### 3. 添加和更新订阅者
 
@@ -202,6 +202,14 @@ subscriber_hash = hashlib.md5(email.lower().encode()).hexdigest()
 - 测试邮件要求活动已设置内容
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 | 任务 | 工具标识 | 关键参数 |
 |------|----------|----------|

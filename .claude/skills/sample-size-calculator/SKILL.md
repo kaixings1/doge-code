@@ -39,7 +39,7 @@ n = (Z_{α/2} + Z_β)² × 2σ² / δ²
 - Impact on required sample size
 - Sequential testing alternatives (always-valid p-values)
 
-## 用法 Examples
+## 用法 示例
 
 ```
 "How many users do I need per group for an A/B test?

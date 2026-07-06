@@ -8,8 +8,8 @@ source_repo: maxbaluev/accreted-intelligence
 source_type: community
 date_added: "2026-06-15"
 author: maxbaluev
-tags: [mcp, memory, ai-agents, coding-agents, workflow]
-tools: [claude, codex, cursor, gemini, opencode]
+tags: [mcp, memory, ai-agents, coding-agents, 工作流]
+tools: [claude, codex, 游标, gemini, opencode]
 license: "Apache-2.0"
 license_source: "https://github.com/maxbaluev/accreted-intelligence/blob/main/LICENSE-APACHE-2.0.txt"
 ---
@@ -24,7 +24,7 @@ AccInt 是一个面向编程代理的本地优先 MCP 记忆服务器。它保�
 
 当 AccInt 已在主机上配置为 MCP 服务器时使用此技能。
 该技能将 AccInt 公开的 `solve` Claude 技能适配为主机无关的工作流，
-适用于 Claude Code、Codex CLI、Cursor、Gemini CLI、OpenCode 及其他
+适用于 Claude Code、Codex CLI、游标、Gemini CLI、OpenCode 及其他
 能够调用 MCP 工具的代理运行时。
 
 ## 何时使用此技能
@@ -44,7 +44,7 @@ AccInt 是一个面向编程代理的本地优先 MCP 记忆服务器。它保�
 使用主机可用的 MCP/工具列表确认 AccInt 服务器暴露了两个动词：
 
 ```text
-acc_retrieve(query)
+acc_retrieve(查询)
 acc_act(runtime, input)
 ```
 
@@ -56,7 +56,7 @@ acc_act(runtime, input)
 Before a non-trivial step, retrieve relevant prior work:
 
 ```json
-{"query": "the concrete task or subtask you are about to perform"}
+{"查询": "the concrete task or subtask you are about to perform"}
 ```
 
 阅读返回的记忆并引用你实际构建的 `[ids]`。将检索到的记忆视为要考虑的证据，
@@ -116,7 +116,7 @@ AccInt 存储学习循环；它不会取代工作或证据。
 }
 ```
 
-Use `good: false` when the approach failed. Do not tag an outcome as external
+Use `good: false` when the 方法 failed. Do not tag an outcome as external
 or owner-validated unless a real external system or the owner actually supplied
 that verdict.
 
@@ -125,7 +125,7 @@ that verdict.
 ### Example 1: Start a repository fix with memory
 
 ```text
-1. acc_retrieve({"query":"fix failing parser tests in this repo"})
+1. acc_retrieve({"查询":"fix failing parser tests in this repo"})
 2. Read the returned memories; cite only the relevant [ids].
 3. acc_act(runtime="solve", input="Fix the failing parser tests and verify them")
 4. Inspect the repo, edit files, run the parser tests.
@@ -136,9 +136,9 @@ that verdict.
 
 ```text
 AccInt returns frame bf_123 asking for a judgment about whether to patch the
-schema or the caller.
+架构 or the caller.
 
-1. Inspect the schema and caller in the current repo.
+1. Inspect the 架构 and caller in the current repo.
 2. Decide from code evidence, not memory alone.
 3. acc_act(runtime="continue", input={"frame_id":"bf_123", "proposal_text":"Patch the caller because..."})
 4. Continue implementation and verification.

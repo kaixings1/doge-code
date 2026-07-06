@@ -60,7 +60,7 @@ Do not skip image generation when image generation is available.
 Do not begin with freeform coding first.
 The generated image(s) are the primary visual source of truth.
 
-The required workflow is:
+The required 工作流 is:
 
 image generation first  
 deep image analysis second  
@@ -70,7 +70,7 @@ If the task is mainly visual, this order is mandatory.
 
 ---
 
-## 1. ACTIVE BASELINE CONFIGURATION
+## 1. ACTIVE BASELINE 配置
 
 - DESIGN_VARIANCE: 8  
   `(1 = rigid / conventional, 10 = highly art-directed / asymmetric)`
@@ -260,7 +260,7 @@ It is a cleaner, more analyzable section-specific render of the same design syst
 
 If a section image still does not expose the necessary detail clearly enough, generate an additional detail image for that same section.
 
-Examples of useful secondary images:
+示例 of useful secondary images:
 - a closer hero render to read headline, subheadline, CTA, and typography
 - a detail image for pricing cards
 - a closer render for testimonials
@@ -365,9 +365,9 @@ Only after this deep analysis should you implement the frontend.
 
 ---
 
-## 10. IMAGE-FIRST CODEX WEBSITE WORKFLOW
+## 10. IMAGE-FIRST CODEX WEBSITE 工作流
 
-When this skill is used inside Codex or any environment that supports image generation plus implementation, default to an image-first workflow for website design tasks.
+When this skill is used inside Codex or any environment that supports image generation plus implementation, default to an image-first 工作流 for website design tasks.
 
 Preferred execution order:
 1. infer the section count
@@ -389,9 +389,9 @@ The code is the implementation layer.
 
 ## 11. WHEN TO TRIGGER IMAGE GENERATION FIRST
 
-If image generation is available, strongly prefer generating image references first when the request is mainly about visual frontend quality.
+If image generation is available, strongly prefer generating image references first when the 请求 is mainly about visual frontend quality.
 
-Trigger image-first workflow when the user asks for:
+Trigger image-first 工作流 when the user asks for:
 - a beautiful hero section
 - a premium landing page
 - a creative website
@@ -502,7 +502,7 @@ Every generated website section image must clearly communicate:
 
 A developer or coding model should be able to look at the image(s) and understand how to build the website.
 
-Do not produce vague abstract artwork when the request is for frontend.
+Do not produce vague abstract artwork when the 请求 is for frontend.
 Default to real section comps.
 
 ---
@@ -592,7 +592,7 @@ Avoid:
 - nested boxed UI that makes the layout feel trapped
 - sections that are just one big bordered panel containing more bordered panels containing more bordered panels
 
-Use boxes only when they have a clear purpose.
+Use boxes only when they have a clear 目的.
 
 Prefer:
 - open layouts
@@ -622,7 +622,7 @@ Avoid:
 - fake dashboard jargon
 - overdesigned labels that distract from the main layout
 
-Examples of things to avoid unless they are truly necessary:
+示例 of things to avoid unless they are truly necessary:
 - “00 orchestration layer”
 - tiny technical status pills
 - decorative runtime markers
@@ -699,7 +699,7 @@ Prefer:
 - consistent corner radius logic
 - stable visual proportions across similar sections
 
-Examples:
+示例:
 - hero image in a clearly bounded large frame
 - editorial crops using repeatable portrait or landscape ratios
 - card images with consistent proportions
@@ -904,7 +904,7 @@ Strictly avoid these patterns unless explicitly requested.
 - identical card rows repeated section after section
 - cloned left-text/right-image blocks
 - fake complexity without hierarchy
-- decorative empty space with no purpose
+- decorative empty space with no 目的
 - cards-inside-cards-inside-cards
 - giant rounded wrapper sections around everything
 - overcompartmentalized dashboard framing
@@ -1053,8 +1053,8 @@ Not:
 4. Product preview
 5. Problem / solution
 6. Benefits
-7. Workflow
-8. Metrics / proof / integration
+7. 工作流
+8. Metrics / proof / 集成
 9. Testimonials
 10. Pricing
 11. FAQ
@@ -1110,9 +1110,9 @@ If not, refine internally before output.
 
 ---
 
-## 36. RESPONSE BEHAVIOR
+## 36. 响应 BEHAVIOR
 
-When the user asks for a website design in an image-to-code workflow:
+When the user asks for a website design in an image-to-code 工作流:
 1. infer site type
 2. infer number of sections
 3. if image generation is available and visual quality is central, generate the design image(s) first

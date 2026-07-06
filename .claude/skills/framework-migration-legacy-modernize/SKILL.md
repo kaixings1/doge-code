@@ -1,5 +1,5 @@
 ---
-name: framework-migration-legacy-modernize
+name: framework-迁移-legacy-modernize
 description: "使用 strangler fig 模式编排全面遗留系统现代化，逐步替换过时组件，同时通过明确的迁移阶段维持持续业务运营。"
 risk: unknown
 source: community
@@ -93,7 +93,7 @@ date_added: "2026-02-27"
 - 预期输出：性能测试结果和优化建议
 
 ### 2. 渐进式推出与监控
-- 使用 Task 工具，subagent_type="deployment-strategies::deployment-engineer"
+- 使用 Task 工具，subagent_type="部署-strategies::部署-engineer"
 - 提示："使用特性标记实施渐进式推出策略。从 5% 流量流向现代化组件开始，监控错误率、延迟和业务指标。定义自动回滚触发器：错误率 >1%、延迟 >2 倍基准或业务指标恶化。创建流量迁移运行手册：5% → 25% → 50% → 100%，每个阶段 24 小时观察期。"
 - 上下文：之前的特性标记配置、监控仪表板
 - 预期输出：带自动化保障的推出计划

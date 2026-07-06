@@ -31,7 +31,7 @@ Create, update, retrieve, and list lead records.
 - `DYNAMICS365_DYNAMICSCRM_CREATE_LEAD` -- Create a new lead
 - `DYNAMICS365_DYNAMICSCRM_UPDATE_LEAD` -- Update an existing lead
 - `DYNAMICS365_DYNAMICSCRM_GET_A_LEAD` -- Retrieve a lead by GUID
-- `DYNAMICS365_DYNAMICSCRM_GET_ALL_LEADS` -- List/filter all leads
+- `DYNAMICS365_DYNAMICSCRM_GET_ALL_LEADS` -- List/过滤器 all leads
 
 **Key 参数 for `DYNAMICS365_DYNAMICSCRM_CREATE_LEAD`:**
 - `firstname` -- First name of the lead
@@ -42,7 +42,7 @@ Create, update, retrieve, and list lead records.
 - `subject` -- Brief title/description
 
 **Key 参数 for `DYNAMICS365_DYNAMICSCRM_GET_ALL_LEADS`:**
-- `filter` -- OData filter, e.g., `"contains(fullname,'John')"`
+- `过滤器` -- OData 过滤器, e.g., `"contains(fullname,'John')"`
 - `select` -- Fields to return, e.g., `"fullname,emailaddress1"`
 - `orderby` -- Sort expression, e.g., `"createdon desc"`
 - `top` -- Max number of results
@@ -138,10 +138,10 @@ Create and update sales opportunities with estimated values and close dates.
 ```
 Tool: DYNAMICS365_DYNAMICSCRM_CREATE_OPPORTUNITY
 Arguments:
-  name: "Enterprise Cloud Migration"
+  name: "Enterprise Cloud 迁移"
   estimatedvalue: 250000
   estimatedclosedate: "2026-06-30"
-  description: "Full cloud migration project for Contoso"
+  description: "Full cloud 迁移 project for Contoso"
 ```
 
 ---
@@ -209,7 +209,7 @@ Arguments:
 |---------|--------|
 | **GUID format** | All entity IDs are GUIDs (e.g., `"00000000-0000-0000-0000-000000000000"`). Do not include curly braces for opportunity/contact references. |
 | **Reference format** | 相关 entity references use the format `"/entityset(GUID)"` (e.g., `"/accounts(abc-123)"`). Missing the leading slash or parentheses causes errors. |
-| **OData filter syntax** | Use Dynamics 365 OData syntax for `filter` (e.g., `contains(fullname,'John')`). Incorrect syntax returns empty or error responses. |
+| **OData 过滤器 syntax** | Use Dynamics 365 OData syntax for `过滤器` (e.g., `contains(fullname,'John')`). Incorrect syntax returns empty or error responses. |
 | **user_id default** | Most tools default `user_id` to `"me"` for the authenticated user. Override only when acting on behalf of another user. |
 | **必需 fields** | `CREATE_OPPORTUNITY` requires `name`. Other create tools have no strict required fields but will create empty records without data. |
 
@@ -217,12 +217,20 @@ Arguments:
 
 ## 快速参考
 
-| Tool Slug | Description |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
+| Tool 标识符 | Description |
 |-----------|-------------|
 | `DYNAMICS365_DYNAMICSCRM_CREATE_LEAD` | Create a new lead record |
 | `DYNAMICS365_DYNAMICSCRM_UPDATE_LEAD` | Update an existing lead |
 | `DYNAMICS365_DYNAMICSCRM_GET_A_LEAD` | Retrieve a lead by GUID |
-| `DYNAMICS365_DYNAMICSCRM_GET_ALL_LEADS` | List/filter all leads |
+| `DYNAMICS365_DYNAMICSCRM_GET_ALL_LEADS` | List/过滤器 all leads |
 | `DYNAMICS365_DYNAMICSCRM_CREATE_ACCOUNT` | Create a new account |
 | `DYNAMICS365_DYNAMICSCRM_CREATE_CONTACT` | Create a new contact |
 | `DYNAMICS365_DYNAMICSCRM_CREATE_OPPORTUNITY` | Create a new opportunity |

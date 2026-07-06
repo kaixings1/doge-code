@@ -15,7 +15,7 @@ Aeon is a scikit-learn compatible Python toolkit for time series machine learnin
 
 **Version note:** Examples target **aeon 1.x** (stable docs: v1.4.0, March 2026). The v1.0 release reworked forecasting and transformations; import paths differ from aeon 0.x/sktime-era code.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 Apply this skill when:
 - Classifying or predicting from time series data
@@ -354,7 +354,7 @@ plt.show()
 1. **Start Simple**: Begin with ROCKET variants before deep learning
 2. **Use Validation**: Split training data for hyperparameter tuning
 3. **Compare Baselines**: Test against simple methods (1-NN Euclidean, Naive)
-4. **Consider Resources**: ROCKET for speed, deep learning if GPU available
+4. **Consider 资源**: ROCKET for speed, deep learning if GPU available
 
 ### Algorithm Selection Guide
 
@@ -391,7 +391,7 @@ Detailed information available in `references/`:
 - `networks.md` - Deep learning architectures
 - `datasets_benchmarking.md` - Data loading and evaluation tools
 
-## Additional Resources
+## Additional 资源
 
 - Documentation: https://www.aeon-toolkit.org/
 - GitHub: https://github.com/aeon-toolkit/aeon

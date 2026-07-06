@@ -29,7 +29,7 @@ Generate spoken audio from text using OpenAI's API with built-in voices. Useful 
 ## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
+discovers it during planning. To run the full upstream 工作流 with
 its original assets, scripts, and references, install the upstream
 bundle into your active agent's skills directory:
 

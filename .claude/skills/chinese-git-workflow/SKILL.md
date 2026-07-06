@@ -1,5 +1,5 @@
 ---
-name: chinese-git-workflow
+name: chinese-git-工作流
 description: "中文 Git 工作流"
 risk: safe
 source: community

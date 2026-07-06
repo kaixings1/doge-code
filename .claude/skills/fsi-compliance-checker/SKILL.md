@@ -9,7 +9,7 @@ source_type: community
 date_added: "2026-06-12"
 author: timwukp
 tags: [compliance, pci-dss, mas-trm, fintech, banking, security-review, audit, financial-services]
-tools: [claude, cursor, gemini, codex, antigravity]
+tools: [claude, 游标, gemini, codex, antigravity]
 license: "MIT"
 license_source: "https://github.com/timwukp/agent-skills-best-practice/blob/main/LICENSE"
 ---
@@ -20,7 +20,7 @@ license_source: "https://github.com/timwukp/agent-skills-best-practice/blob/main
 
 Maps a concrete change (code diff, architecture design, IaC, pipeline config) to the specific controls it touches in financial services compliance frameworks — PCI-DSS v4.0 for payment card data and MAS TRM for Singapore-regulated institutions — and reports gaps with actionable remediation. This is engineering-level compliance triage: it helps teams catch violations before audit, but it does not replace a qualified assessor (QSA) or the institution's compliance function. Say so in every report.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when a change touches payment card data (PAN, CVV, track data) and needs a PCI-DSS check
 - Use when reviewing changes at a Singapore-regulated financial institution against MAS TRM expectations
@@ -84,11 +84,11 @@ Offer to turn findings into backlog items with the control ID in each story for 
 
 ### Example 1: Logging review
 
-**User**: "Is this PCI-DSS compliant: we log the full request body of card authorization calls for debugging?"
+**User**: "Is this PCI-DSS compliant: we log the full 请求 body of card 授权 calls for debugging?"
 
-**Skill**: Loads pci-dss.md → Critical findings against 3.3.1 (CVV must never be stored post-authorization — logs are storage), 3.4.1 (PAN display masking), 3.5.1 (PAN unreadable at rest); remediation: remove the log line or apply a field-allowlist redaction filter; flags downstream log-pipeline scoping (10.3.x); QSA disclaimer included.
+**Skill**: Loads pci-dss.md → Critical findings against 3.3.1 (CVV must never be stored post-授权 — logs are storage), 3.4.1 (PAN display masking), 3.5.1 (PAN unreadable at rest); remediation: remove the log line or apply a field-allowlist redaction 过滤器; flags downstream log-pipeline scoping (10.3.x); QSA disclaimer included.
 
-### Example 2: Cloud migration
+### Example 2: Cloud 迁移
 
 **User**: "Our Singapore bank is moving the customer notification service to a cloud region in another country. MAS TRM implications?"
 
@@ -98,9 +98,9 @@ Offer to turn findings into backlog items with the control ID in each story for 
 
 Changes that almost always have compliance impact — check proactively when they appear in a diff:
 
-- Logging statements near payment or authentication flows (PAN/CVV must never be logged; MAS TRM requires security event logging — both directions matter)
+- Logging statements near payment or 认证 flows (PAN/CVV must never be logged; MAS TRM requires security event logging — both directions matter)
 - New data stores or caches receiving customer or card data (encryption at rest, retention, residency)
-- Authentication/session changes (MFA requirements, session timeout, credential storage)
+- 认证/会话 changes (MFA requirements, 会话 timeout, credential storage)
 - New third-party SDKs or API integrations (outsourcing/vendor controls, data flows leaving the boundary)
 - Infrastructure changes touching network segmentation, security groups, or public exposure
 - CI/CD changes that alter who/what can deploy to production (change management, segregation of duties)
@@ -110,8 +110,8 @@ Changes that almost always have compliance impact — check proactively when the
 - Cite control IDs precisely (e.g. "PCI-DSS 8.3.6", "MAS TRM 9.1.1") so findings are traceable in audit tooling; the bundled reference files carry the ID schemes.
 - Severity discipline: don't inflate. A missing comment is not a Critical; unencrypted PAN at rest is.
 - When the change is compliant, say so affirmatively per control — "no findings" plus the checked-control list is a useful audit artifact.
-- Never output real card numbers, even as examples; use the standard test PANs (e.g. 4111 1111 1111 1111) when illustrating.
-- Read-only: this skill reviews and reports; it never modifies code, infrastructure, or configuration.
+- Never output real card numbers, even as 示例; use the standard test PANs (e.g. 4111 1111 1111 1111) when illustrating.
+- Read-only: this skill reviews and reports; it never modifies code, infrastructure, or 配置.
 
 ## 局限性
 

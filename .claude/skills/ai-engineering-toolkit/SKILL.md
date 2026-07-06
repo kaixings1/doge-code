@@ -7,7 +7,7 @@ source: community
 date_added: "2026-03-15"
 author: viliawang-pm
 tags: [prompt-engineering, rag, security, evaluation, ai-engineering, llm]
-tools: [claude, cursor, gemini, copilot]
+tools: [claude, 游标, gemini, copilot]
 ---
 
 # AI Engineering Toolkit
@@ -16,13 +16,13 @@ tools: [claude, cursor, gemini, copilot]
 
 A collection of 6 structured, expert-level workflows that turn your AI coding assistant into a senior AI engineering partner. Each skill encodes a repeatable methodology — not just "ask AI to help," but a step-by-step decision framework with quantitative scoring, checklists, and decision trees.
 
-The key difference from ad-hoc AI assistance: **every workflow produces consistent, reproducible results** regardless of who runs it or when. You can use the scoring systems as team baselines and write them into CI/CD pipelines.
+The key difference from ad-hoc AI assistance: **every 工作流 produces consistent, reproducible results** regardless of who runs it or when. You can use the scoring systems as team baselines and write them into CI/CD pipelines.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when evaluating or optimizing LLM system prompts before production deployment
 - Use when designing a RAG pipeline and need structured architecture decisions (not just boilerplate code)
-- Use when planning token budget allocation across context window zones
+- Use when planning 令牌 budget allocation across context window zones
 - Use when running pre-launch security audits on AI agents
 - Use when building evaluation frameworks for LLM applications
 - Use when thinking through product strategy before writing code
@@ -35,11 +35,11 @@ Scores prompts across 8 dimensions (Clarity, Specificity, Completeness, Concisen
 
 ### Skill 2: Context Budget Planner
 
-Analyzes token distribution across 5 context zones (System, Few-shot, User input, Retrieval, Output) and produces an optimized allocation plan. Includes a compression strategy decision tree for each zone. Common finding: output zone squeezed to under 6% — this skill catches that before truncation happens.
+Analyzes 令牌 distribution across 5 context zones (System, Few-shot, User input, Retrieval, Output) and produces an optimized allocation plan. Includes a compression strategy decision tree for each zone. Common finding: output zone squeezed to under 6% — this skill catches that before truncation happens.
 
 ### Skill 3: RAG Pipeline Architect
 
-Walks through a complete architecture decision tree: document format → parsing strategy → chunking approach (fixed/semantic/recursive) → embedding model selection → retrieval method (vector/keyword/hybrid) → evaluation metrics (Faithfulness, Relevancy, Context Precision). Covers Naive RAG, Advanced RAG, and Modular RAG patterns.
+Walks through a complete architecture decision tree: document format → parsing strategy → chunking 方法 (fixed/semantic/recursive) → embedding model selection → retrieval method (vector/keyword/hybrid) → evaluation metrics (Faithfulness, Relevancy, Context Precision). Covers Naive RAG, Advanced RAG, and Modular RAG patterns.
 
 ### Skill 4: Agent Safety Guard
 
@@ -68,7 +68,7 @@ Ask: "Evaluate this system prompt"
 You are a customer support agent. Help users with their questions. Be nice and helpful.
 ```
 
-Result: Overall score **28/100**. Weakest dimensions: Safety (1/10, zero injection protection), Specificity (2/10, no output format), Structure (2/10, no sections). Auto-rewrite scores **82/100** with added scope boundaries, response format, escalation rules, and safety guardrails.
+Result: Overall score **28/100**. Weakest dimensions: Safety (1/10, zero injection protection), Specificity (2/10, no output format), Structure (2/10, no sections). Auto-rewrite scores **82/100** with added scope boundaries, 响应 format, escalation rules, and safety guardrails.
 
 ### Example 2: Security Audit
 
@@ -81,7 +81,7 @@ Result: 65 tests executed. 3 critical failures found: Base64-encoded instruction
 - ✅ Run prompt-evaluator before any production deployment — set a team baseline (e.g., ≥70/100)
 - ✅ Use context-budget-planner early in development, not after hitting truncation issues
 - ✅ Run agent-safety-guard as a pre-launch gate, not post-incident
-- ✅ Combine skills in sequence: RAG design → context optimization → prompt polish → security audit → eval setup
+- ✅ Combine skills in sequence: RAG design → context optimization → prompt polish → security audit → eval 设置
 - ❌ Don't rely on a single dimension score — look at the full profile
 - ❌ Don't skip the security audit because "it's just an internal tool"
 
@@ -95,7 +95,7 @@ Result: 65 tests executed. 3 critical failures found: Base64-encoded instruction
 ## 安装
 
 ```bash
-# Via skill install command (Claude Code / WorkBuddy / Cursor)
+# Via skill install command (Claude Code / WorkBuddy / 游标)
 /skill install -g viliawang-pm/ai-engineering-toolkit
 
 # Manual

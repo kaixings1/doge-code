@@ -1,11 +1,11 @@
 ---
 name: zoho-mail-automation
-description: "通过 Rube MCP (Composio) 自动执行 Zoho Mail 任务。使用前始终先搜索工具以获取当前 schema。""
+description: "通过 Rube MCP (Composio) 自动执行 Zoho Mail 任务。使用前始终先搜索工具以获取当前 架构。""
 requires:
   mcp: [rube]
 ---
 
-# 通过 Rube MCP 实现 Zoho Mail 自动化
+# Zoho Mail 自动化
 
 通过 Rube MCP 使用 Composio 的 Zoho Mail 工具包实现 Zoho Mail 操作自动化。
 
@@ -33,10 +33,10 @@ requires:
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "Zoho Mail operations", known_fields: ""}]
-session: {generate_id: true}
+会话: {generate_id: true}
 ```
 
-This returns available tool slugs, input schemas, recommended execution plans, and known pitfalls.
+This returns available tool slugs, input schemas, recommended execution plans, and 已知陷阱.
 
 ## 核心工作流模式
 
@@ -45,7 +45,7 @@ This returns available tool slugs, input schemas, recommended execution plans, a
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "your specific Zoho Mail task"}]
-session: {id: "existing_session_id"}
+会话: {id: "existing_session_id"}
 ```
 
 ### 步骤 2: Check Connection
@@ -62,7 +62,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
+  arguments: {/* 架构-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"
@@ -72,11 +72,11 @@ session_id: "your_session_id"
 
 - **始终 search first**: Tool schemas change. 绝不 hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
 - **检查连接**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **Schema 合规**: Use exact field names and types from the search results
+- **架构 合规**: Use exact field names and types from the search results
 - **Memory 参数**: 始终 include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
-- **会话复用**: Reuse session IDs within a workflow. Generate new ones for new workflows
+- **会话复用**: Reuse 会话 IDs within a 工作流. Generate new ones for new workflows
 - **分页**: Check responses for pagination tokens and continue fetching until complete
 
 ## 快速参考
 
-| Operation | Approach |
+| 操作 | 方法 |

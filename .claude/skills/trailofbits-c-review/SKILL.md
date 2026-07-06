@@ -8,7 +8,7 @@ Invoke with `/c-review:c-review`. The skill will prompt for:
 
 - **Threat model** (`REMOTE` / `LOCAL_UNPRIVILEGED` / `BOTH`)
 - **Worker model** (`haiku` / `sonnet` / `opus`)
-- **Severity filter** (`all` / `medium` / `high`)
+- **Severity 过滤器** (`all` / `medium` / `high`)
 - **Scope subpath** (optional — defaults to whole repo)
 
 Findings + SARIF are written to `$(pwd)/.c-review-results/<iso-timestamp>/`.
@@ -20,7 +20,7 @@ The skill takes the following inputs (collected via `AskUserQuestion`):
 - **Threat model** — `REMOTE`, `LOCAL_UNPRIVILEGED`, or `BOTH`. Drives which passes are in scope (e.g. `privilege-drop` is skipped under `REMOTE`).
 - **Scope subpath** — optional path under the repo root; defaults to the whole repo. Ambiguous scope requests are clarified.
 - **Worker model** — `haiku` / `sonnet` / `opus` for the parallel worker agents.
-- **Severity filter** — `all` / `medium` / `high`; controls what lands in `REPORT.md` and `REPORT.sarif`.
+- **Severity 过滤器** — `all` / `medium` / `high`; controls what lands in `REPORT.md` and `REPORT.sarif`.
 
 From these inputs the orchestrator detects platform/language flags (`is_cpp`, `is_posix`, `is_windows`) over the scope and selects clusters from `prompts/clusters/manifest.json`. Each cluster groups related bug classes — based on C/C++ chapters of [appsec.guide](https://appsec.guide/) — and runs as one parallel worker.
 
@@ -30,14 +30,14 @@ Always-on clusters:
 - **object-lifecycle** — uninitialized data, NULL deref, use-after-free, memory leaks.
 - **arithmetic-type** — operator precedence, integer overflow, OOB comparisons, NULL/zero conflation, type confusion, undefined behavior, compiler bugs.
 - **syscall-retval** — error / `errno` / `EINTR` handling, negative retval, `open()` issues, socket disconnect, half-closed sockets.
-- **concurrency** — spinlock init, thread safety, race conditions, signal-handler safety.
+- **concurrency** — spinlock init, thread safety, race conditions, signal-处理器 safety.
 - **ambient-state** — filesystem issues, access control, privilege drop, env vars, time-of-check, DoS.
 - **static-hygiene** — exploit mitigations, `printf` attribute, `va_start`/`va_end`, regex, `inet_aton`, `qsort`.
 
 Conditional clusters:
 
 - **cpp-semantics** (`is_cpp`) — init order, virtual functions, smart pointers, move semantics, iterator invalidation, lambda captures, exception safety.
-- **windows-process** (`is_windows`) — `CreateProcess`, cross-process access, token privileges, service security.
+- **windows-process** (`is_windows`) — `CreateProcess`, cross-process access, 令牌 privileges, service security.
 - **windows-fs-path** (`is_windows`) — DLL planting, Windows path handling, installer races.
 - **windows-ipc-crypto** (`is_windows`) — named pipes, Windows crypto, Windows allocators.
 

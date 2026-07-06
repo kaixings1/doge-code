@@ -94,7 +94,7 @@ metadata:
    **示例（多层系统）：**
    ```bash
    # 第 1 层：工作流
-   echo "=== Secrets available in workflow: ==="
+   echo "=== Secrets available in 工作流: ==="
    echo "IDENTITY: ${IDENTITY:+SET}${IDENTITY:-UNSET}"
 
    # 第 2 层：构建脚本
@@ -110,7 +110,7 @@ metadata:
    codesign --sign "$IDENTITY" --verbose=4 "$APP"
    ```
 
-   **由此可以看出：** 哪一层出了问题（secrets → workflow ✓, workflow → build ✗）
+   **由此可以看出：** 哪一层出了问题（secrets → 工作流 ✓, 工作流 → build ✗）
 
 5. **跟踪数据流**
 

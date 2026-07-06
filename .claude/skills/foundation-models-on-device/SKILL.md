@@ -18,7 +18,7 @@ description: Apple FoundationModels 框架，用于设备端大语言模型（LL
 
 ## 核心模式 —— 可用性检查
 
-在创建会话（Session）之前，请务必检查模型的可用性：
+在创建会话（会话）之前，请务必检查模型的可用性：
 
 ```swift
 struct GenerativeView: View {
@@ -45,19 +45,19 @@ struct GenerativeView: View {
 
 ```swift
 // 单轮：每次创建一个新会话
-let session = LanguageModelSession()
-let response = try await session.respond(to: "去巴黎旅游哪个月份比较好？")
-print(response.content)
+let 会话 = LanguageModelSession()
+let 响应 = try await 会话.respond(to: "去巴黎旅游哪个月份比较好？")
+print(响应.content)
 
 // 多轮：复用会话以保留对话上下文
-let session = LanguageModelSession(instructions: """
+let 会话 = LanguageModelSession(instructions: """
     你是一个烹饪助手。
     请根据食材提供食谱建议。
     建议要保持简短且实用。
     """)
 
-let first = try await session.respond(to: "我有鸡肉和米饭")
-let followUp = try await session.respond(to: "那素食选择呢？")
+let first = try await 会话.respond(to: "我有鸡肉和米饭")
+let followUp = try await 会话.respond(to: "那素食选择呢？")
 ```
 
 提示词指令（Instructions）的关键点：
@@ -88,15 +88,15 @@ struct CatProfile {
 ### 2. 请求结构化输出
 
 ```swift
-let response = try await session.respond(
+let 响应 = try await 会话.respond(
     to: "生成一只可爱的待领养小猫",
     generating: CatProfile.self
 )
 
 // 直接访问结构化字段
-print("名字: \(response.content.name)")
-print("年龄: \(response.content.age)")
-print("简介: \(response.content.profile)")
+print("名字: \(响应.content.name)")
+print("年龄: \(响应.content.age)")
+print("简介: \(响应.content.profile)")
 ```
 
 ### 支持的 @Guide 约束
@@ -135,15 +135,15 @@ struct RecipeSearchTool: Tool {
 ### 2. 创建带有工具的会话
 
 ```swift
-let session = LanguageModelSession(tools: [RecipeSearchTool()])
-let response = try await session.respond(to: "帮我找一些意面食谱")
+let 会话 = LanguageModelSession(tools: [RecipeSearchTool()])
+let 响应 = try await 会话.respond(to: "帮我找一些意面食谱")
 ```
 
 ### 3. 处理工具错误
 
 ```swift
 do {
-    let answer = try await session.respond(to: "寻找番茄汤的食谱。")
+    let answer = try await 会话.respond(to: "寻找番茄汤的食谱。")
 } catch let error as LanguageModelSession.ToolCallError {
     print(error.tool.name)
     if case .databaseIsEmpty = error.underlyingError as? RecipeSearchToolError {
@@ -163,7 +163,7 @@ struct TripIdeas {
     var ideas: [String]
 }
 
-let stream = session.streamResponse(
+let stream = 会话.streamResponse(
     to: "有哪些令人兴奋的旅行点子？",
     generating: TripIdeas.self
 )
@@ -191,7 +191,7 @@ var body: some View {
     }
     .task {
         do {
-            let stream = session.streamResponse(to: prompt, generating: TripIdeas.self)
+            let stream = 会话.streamResponse(to: prompt, generating: TripIdeas.self)
             for try await partial in stream {
                 partialResult = partial
             }
@@ -207,19 +207,19 @@ var body: some View {
 | 决策 | 原理 |
 |----------|-----------|
 | 设备端执行 | 隐私性 —— 数据不离开设备；支持离线工作 |
-| 4,096 Token 限制 | 设备端模型约束；跨会话分块处理大数据 |
+| 4,096 令牌 限制 | 设备端模型约束；跨会话分块处理大数据 |
 | 快照流式传输（而非增量） | 对结构化输出友好；每个快照都是一个完整的局部状态 |
 | `@Generable` 宏 | 结构化生成的编译时安全性；自动生成 `PartiallyGenerated` 类型 |
 | 每个会话单次请求 | `isResponding` 防止并发请求；如果需要，创建多个会话 |
-| `response.content`（而非 `.output`） | 正确的 API —— 始终通过 `.content` 属性访问结果 |
+| `响应.content`（而非 `.output`） | 正确的 API —— 始终通过 `.content` 属性访问结果 |
 
 ## 最佳实践
 
 - **始终在创建会话前检查 `model.availability`** —— 处理所有不可用的情况
 - **使用 `instructions`** 来引导模型行为 —— 它们的优先级高于提示词（Prompts）
 - **在发送新请求前检查 `isResponding`** —— 会话每次处理一个请求
-- **访问 `response.content`** 获取结果 —— 而非 `.output`
-- **将大型输入分成块** —— 4,096 Token 限制适用于指令 + 提示词 + 输出的总和
+- **访问 `响应.content`** 获取结果 —— 而非 `.output`
+- **将大型输入分成块** —— 4,096 令牌 限制适用于指令 + 提示词 + 输出的总和
 - **使用 `@Generable`** 进行结构化输出 —— 比解析原始字符串具有更强的保证
 - **使用 `GenerationOptions(temperature:)`** 来调整创意程度（越高越有创意）
 - **使用 Instruments 进行监控** —— 使用 Xcode Instruments 分析请求性能
@@ -227,7 +227,7 @@ var body: some View {
 ## 应避免的反模式
 
 - 在未先检查 `model.availability` 的情况下创建会话
-- 发送超过 4,096 Token 上下文窗口的输入
+- 发送超过 4,096 令牌 上下文窗口的输入
 - 尝试在单个会话上进行并发请求
 - 使用 `.output` 而非 `.content` 来访问响应数据
 - 在 `@Generable` 结构化输出可行时解析原始字符串响应

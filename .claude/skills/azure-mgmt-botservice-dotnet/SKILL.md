@@ -8,7 +8,7 @@ date_added: '2026-02-27'
 
 # Azure.ResourceManager.BotService (.NET)
 
-Management plane SDK for provisioning and managing Azure Bot Service resources via Azure Resource Manager.
+Management plane SDK for provisioning and managing Azure Bot Service 资源 via Azure Resource Manager.
 
 ## 安装
 
@@ -75,7 +75,7 @@ var botData = new BotData(AzureLocation.WestUS2)
     Sku = new BotServiceSku(BotServiceSkuName.F0),
     Properties = new BotProperties(
         displayName: "MyBot",
-        endpoint: new Uri("https://mybot.azurewebsites.net/api/messages"),
+        端点: new Uri("https://mybot.azurewebsites.net/api/messages"),
         msaAppId: "<your-msa-app-id>")
     {
         Description = "My Azure Bot",
@@ -84,12 +84,12 @@ var botData = new BotData(AzureLocation.WestUS2)
 };
 
 // Create or update the bot
-ArmOperation<BotResource> operation = await botCollection.CreateOrUpdateAsync(
+ArmOperation<BotResource> 操作 = await botCollection.CreateOrUpdateAsync(
     WaitUntil.Completed, 
     "myBotName", 
     botData);
     
-BotResource bot = operation.Value;
+BotResource bot = 操作.Value;
 Console.WriteLine($"Bot created: {bot.Data.Name}");
 ```
 
@@ -185,7 +185,7 @@ await channels.CreateOrUpdateAsync(
 // Get bot
 BotResource bot = await botCollection.GetAsync("myBotName");
 Console.WriteLine($"Bot: {bot.Data.Properties.DisplayName}");
-Console.WriteLine($"Endpoint: {bot.Data.Properties.Endpoint}");
+Console.WriteLine($"端点: {bot.Data.Properties.端点}");
 
 // List channels
 await foreach (BotChannelResource channel in bot.GetBotChannels().GetAllAsync())
@@ -215,7 +215,7 @@ var updateData = new BotData(bot.Data.Location)
 {
     Properties = new BotProperties(
         displayName: "Updated Bot Name",
-        endpoint: bot.Data.Properties.Endpoint,
+        端点: bot.Data.Properties.端点,
         msaAppId: bot.Data.Properties.MsaAppId)
     {
         Description = "Updated description"
@@ -302,7 +302,7 @@ using Azure;
 
 try
 {
-    var operation = await botCollection.CreateOrUpdateAsync(
+    var 操作 = await botCollection.CreateOrUpdateAsync(
         WaitUntil.Completed, 
         botName, 
         botData);
@@ -335,7 +335,7 @@ catch (RequestFailedException ex)
 | Azure Bot Service Docs | https://learn.microsoft.com/azure/bot-service/ |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

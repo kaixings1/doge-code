@@ -68,7 +68,7 @@ const client = new ShareServiceClient(
 );
 ```
 
-### SAS Token
+### SAS 令牌
 
 ```typescript
 import { ShareServiceClient } from "@azure/storage-file-share";
@@ -109,7 +109,7 @@ for await (const share of client.listShares()) {
   console.log(share.name, share.properties.quota);
 }
 
-// With prefix filter
+// With prefix 过滤器
 for await (const share of client.listShares({ prefix: "logs-" })) {
   console.log(share.name);
 }
@@ -283,7 +283,7 @@ await fileClient.deleteIfExists();
 const sourceUrl = "https://account.file.core.windows.net/share/source.txt";
 const destFileClient = shareClient.rootDirectoryClient.getFileClient("destination.txt");
 
-// Start copy operation
+// Start copy 操作
 const copyPoller = await destFileClient.startCopyFromURL(sourceUrl);
 await copyPoller.pollUntilDone();
 ```
@@ -365,7 +365,7 @@ const content = await snapshotFileClient.downloadToBuffer();
 await shareClient.delete({ deleteSnapshots: "include" });
 ```
 
-## SAS Token Generation (Node.js only)
+## SAS 令牌 Generation (Node.js only)
 
 ### Generate File SAS
 
@@ -471,7 +471,7 @@ import {
 
 ## 最佳实践
 
-1. **Use connection strings for simplicity** — Easiest setup for development
+1. **Use connection strings for simplicity** — Easiest 设置 for development
 2. **Use 默认AzureCredential for production** — Enable managed identity in Azure
 3. **Set quotas on shares** — Prevent unexpected storage costs
 4. **Use streaming for large files** — `uploadStream`/`downloadToFile` for files > 256MB
@@ -494,7 +494,7 @@ import {
 | Anonymous/SAS access | ✅ | ✅ |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

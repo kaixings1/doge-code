@@ -44,17 +44,17 @@ AzureNamedKeyCredential credential = new AzureNamedKeyCredential(
     "<account-key>");
 
 TableServiceClient serviceClient = new TableServiceClientBuilder()
-    .endpoint("<your-table-account-url>")
+    .端点("<your-table-account-url>")
     .credential(credential)
     .buildClient();
 ```
 
-### With SAS Token
+### With SAS 令牌
 
 ```java
 TableServiceClient serviceClient = new TableServiceClientBuilder()
-    .endpoint("<your-table-account-url>")
-    .sasToken("<sas-token>")
+    .端点("<your-table-account-url>")
+    .sasToken("<sas-令牌>")
     .buildClient();
 ```
 
@@ -64,7 +64,7 @@ TableServiceClient serviceClient = new TableServiceClientBuilder()
 import com.azure.identity.DefaultAzureCredentialBuilder;
 
 TableServiceClient serviceClient = new TableServiceClientBuilder()
-    .endpoint("<your-table-account-url>")
+    .端点("<your-table-account-url>")
     .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
@@ -184,17 +184,17 @@ for (TableEntity entity : tableClient.listEntities(options, null, null)) {
 }
 ```
 
-### Query with OData Filter
+### 查询 with OData 过滤器
 
 ```java
-// Filter by partition key
+// 过滤器 by partition key
 ListEntitiesOptions options = new ListEntitiesOptions()
     .setFilter("PartitionKey eq 'electronics'");
 
-// Filter with multiple conditions
+// 过滤器 with multiple conditions
 options.setFilter("PartitionKey eq 'electronics' and Price gt 100");
 
-// Filter with comparison operators
+// 过滤器 with comparison operators
 options.setFilter("Quantity ge 10 and Quantity le 100");
 
 // Top N results
@@ -239,7 +239,7 @@ for (TableItem table : serviceClient.listTables()) {
     System.out.println(table.getName());
 }
 
-// Filter tables
+// 过滤器 tables
 ListTablesOptions options = new ListTablesOptions()
     .setFilter("TableName eq 'mytable'");
 
@@ -322,7 +322,7 @@ COSMOS_TABLE_ENDPOINT=https://<account>.table.cosmosdb.azure.com
 
 1. **Partition Key Design**: Choose keys that distribute load evenly
 2. **Batch Operations**: Use transactions for atomic multi-entity updates
-3. **Query Optimization**: 始终 filter by PartitionKey when possible
+3. **查询 Optimization**: 始终 过滤器 by PartitionKey when possible
 4. **Select Projection**: Only select needed properties for performance
 5. **Entity Size**: Keep entities under 1MB (Storage) or 2MB (Cosmos)
 
@@ -336,7 +336,7 @@ COSMOS_TABLE_ENDPOINT=https://<account>.table.cosmosdb.azure.com
 - "table entity CRUD"
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

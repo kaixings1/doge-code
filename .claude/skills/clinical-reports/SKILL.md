@@ -34,7 +34,7 @@ This skill should be used when:
 **⚠️ MANDATORY: Every clinical report MUST include at least 1 AI-generated figure using the scientific-schematics skill.**
 
 This is not optional. Clinical reports benefit greatly from visual elements. Before finalizing any document:
-1. Generate at minimum ONE schematic or diagram (e.g., patient timeline, diagnostic algorithm, or treatment workflow)
+1. Generate at minimum ONE schematic or diagram (e.g., patient timeline, diagnostic algorithm, or treatment 工作流)
 2. For case reports: include clinical progression timeline
 3. For trial reports: include CONSORT flow diagram
 
@@ -246,7 +246,7 @@ Radiology reports follow a standardized structure to ensure clarity and complete
 
 **5. Findings**
 - Systematic description of imaging findings
-- Organ-by-organ or region-by-region approach
+- Organ-by-organ or region-by-region 方法
 - Positive findings first, then pertinent negatives
 - Measurements of lesions or abnormalities
 - Use of standardized terminology (ACR lexicon, RadLex)
@@ -309,7 +309,7 @@ Pathology reports document microscopic findings from tissue specimens and provid
 - Macroscopic appearance of specimen
 - Size, weight, color, consistency
 - Orientation markers if present
-- Sectioning and sampling approach
+- Sectioning and sampling 方法
 - Example: "The specimen consists of an ellipse of skin measuring 2.5 x 1.0 x 0.5 cm. A pigmented lesion measuring 0.6 cm in diameter is present on the surface. The specimen is serially sectioned and entirely submitted in cassettes A1-A3."
 
 **5. Microscopic Description**
@@ -650,7 +650,7 @@ SOAP notes are the most common format for progress notes in clinical practice.
 - Sign and date all notes
 - Avoid speculation or judgment
 - Document medical necessity for billing
-- Include patient's response to treatment
+- Include patient's 响应 to treatment
 
 For SOAP note templates and examples, see `assets/soap_note_template.md`.
 
@@ -750,7 +750,7 @@ Discharge summaries document the hospital stay and communicate care plan to outp
 **3. Hospital Course**
 - Chronological narrative of key events
 - Significant findings and procedures
-- Response to treatment
+- 响应 to treatment
 - Complications
 - Consultations obtained
 - Organized by problem or chronologically
@@ -810,7 +810,7 @@ The Health Insurance Portability and Accountability Act (HIPAA) mandates protect
 
 **Key 需求:**
 - Minimum necessary disclosure
-- Patient authorization for use beyond treatment/payment/operations
+- Patient 授权 for use beyond treatment/payment/operations
 - Secure storage and transmission
 - Audit trails for electronic records
 - Breach notification procedures
@@ -959,9 +959,9 @@ This clinical reports skill integrates with:
 - **Research Grants**: For clinical trial protocol development
 - **Literature Review**: For background sections in case reports
 
-## Workflow for Clinical Report Writing
+## 工作流 for Clinical Report Writing
 
-### Case Report Workflow
+### Case Report 工作流
 
 **Phase 1: Case Identification and Consent (Week 1)**
 - Identify novel or educational case
@@ -998,9 +998,9 @@ This clinical reports skill integrates with:
 - Revise manuscript
 - Resubmit
 
-### Diagnostic Report Workflow
+### Diagnostic Report 工作流
 
-**Real-time Workflow:**
+**Real-time 工作流:**
 - Review clinical indication and prior studies
 - Interpret imaging, pathology, or laboratory findings
 - Dictate or type report using structured format
@@ -1014,7 +1014,7 @@ This clinical reports skill integrates with:
 - Complex cases: 2-5 days
 - Pending additional studies: documented delay
 
-### Clinical Trial Report Workflow
+### Clinical Trial Report 工作流
 
 **SAE Report: 24 hours to 15 days**
 - Event identified by site

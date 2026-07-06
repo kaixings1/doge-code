@@ -14,13 +14,13 @@ AgentFlow turns your existing Kanban board into a fully autonomous AI developmen
 
 The result is complete pipeline observability from your phone, free crash recovery (state lives in your PM tool, not in memory), and human override at any point by dragging a card.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when you need to orchestrate multiple Claude Code workers across a full development lifecycle (build, review, test, integrate)
 - Use when you want deterministic quality gates (tsc/eslint/tests) before AI review on AI-generated code
 - Use when you want full pipeline visibility from your Kanban board or phone
 - Use when running a solo or team project that needs autonomous task dispatch with cost tracking
-- Use when you need crash-proof orchestration that survives session restarts
+- Use when you need crash-proof orchestration that survives 会话 restarts
 
 ## 核心概念
 
@@ -30,7 +30,7 @@ Tasks flow through: Backlog, Research, Build, Review, Test, Integrate, Done. Eac
 
 ### Stateless Orchestrator
 
-A crontab-driven one-shot sweep runs every 15 minutes. No daemon, no session dependency. If it crashes, the next sweep picks up where it left off because all state lives in your PM tool.
+A crontab-driven one-shot sweep runs every 15 minutes. No daemon, no 会话 dependency. If it crashes, the next sweep picks up where it left off because all state lives in your PM tool.
 
 ### Deterministic Before Probabilistic
 
@@ -189,9 +189,9 @@ Or install as a Claude Code plugin:
 - `@brainstorming` - Use before AgentFlow to design your SPEC.md
 - `@writing-plans` - Complements spec writing for task decomposition
 - `@test-driven-development` - Works well with AgentFlow's quality gates
-- `@subagent-driven-development` - Alternative approach to multi-agent coordination
+- `@subagent-driven-development` - Alternative 方法 to multi-agent coordination
 
-## Additional Resources
+## Additional 资源
 
 - [AgentFlow Repository](https://github.com/UrRhb/agentflow)
 - [架构 Documentation](https://github.com/UrRhb/agentflow/blob/main/docs/architecture.md)

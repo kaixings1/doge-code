@@ -49,12 +49,12 @@ This creates a navigable hierarchy:
 
 | File | Description |
 |------|-------------|
-| `file.ts` | Brief description of purpose |
+| `file.ts` | Brief description of 目的 |
 
 ## Subdirectories
-{List each subdirectory with brief purpose}
+{List each subdirectory with brief 目的}
 
-| Directory | Purpose |
+| Directory | 目的 |
 |-----------|---------|
 | `subdir/` | What it contains (see `subdir/AGENTS.md`) |
 
@@ -80,7 +80,7 @@ This creates a navigable hierarchy:
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
 ```
 
-## Execution Workflow
+## Execution 工作流
 
 ### 步骤 1: Map Directory Structure
 
@@ -106,7 +106,7 @@ Level 2: /src/components, /src/utils, /docs/api
 
 For each directory:
 1. Read all files in the directory
-2. Analyze purpose and relationships
+2. Analyze 目的 and relationships
 3. Generate AGENTS.md content
 4. Write file with proper parent reference
 
@@ -165,7 +165,7 @@ When encountering empty or near-empty directories:
 | No files, no subdirectories | **Skip** - do not create AGENTS.md |
 | No files, has subdirectories | Create minimal AGENTS.md with subdirectory listing only |
 | Has only generated files (*.min.js, *.map) | Skip or minimal AGENTS.md |
-| Has only config files | Create AGENTS.md describing configuration purpose |
+| Has only config files | Create AGENTS.md describing 配置 目的 |
 
 Example minimal AGENTS.md for directory-only containers:
 ```markdown
@@ -176,7 +176,7 @@ Example minimal AGENTS.md for directory-only containers:
 Container directory for organizing related modules.
 
 ## Subdirectories
-| Directory | Purpose |
+| Directory | 目的 |
 |-----------|---------|
 | `subdir/` | Description (see `subdir/AGENTS.md`) |
 ```
@@ -217,11 +217,11 @@ A web application for managing user tasks with real-time collaboration features.
 | File | Description |
 |------|-------------|
 | `package.json` | Project dependencies and scripts |
-| `tsconfig.json` | TypeScript configuration |
+| `tsconfig.json` | TypeScript 配置 |
 | `.env.example` | Environment variable template |
 
 ## Subdirectories
-| Directory | Purpose |
+| Directory | 目的 |
 |-----------|---------|
 | `src/` | Application source code (see `src/AGENTS.md`) |
 | `docs/` | Documentation (see `docs/AGENTS.md`) |
@@ -270,7 +270,7 @@ Reusable React components organized by feature and complexity.
 | `Modal.tsx` | Modal dialog component |
 
 ## Subdirectories
-| Directory | Purpose |
+| Directory | 目的 |
 |-----------|---------|
 | `forms/` | Form-related components (see `forms/AGENTS.md`) |
 | `layout/` | Layout components (see `layout/AGENTS.md`) |

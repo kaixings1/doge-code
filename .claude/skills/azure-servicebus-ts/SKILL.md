@@ -112,18 +112,18 @@ const messages = await subscriptionReceiver.receiveMessages(10);
 ## Message Sessions
 
 ```typescript
-// Send session message
-const sender = client.createSender("session-queue");
+// Send 会话 message
+const sender = client.createSender("会话-queue");
 await sender.sendMessages({
   body: { step: 1, data: "First step" },
-  sessionId: "workflow-123",
+  sessionId: "工作流-123",
 });
 
-// Receive session messages
-const sessionReceiver = await client.acceptSession("session-queue", "workflow-123");
+// Receive 会话 messages
+const sessionReceiver = await client.acceptSession("会话-queue", "工作流-123");
 const messages = await sessionReceiver.receiveMessages(10);
 
-// Get/set session state
+// Get/set 会话 state
 const state = await sessionReceiver.getSessionState();
 await sessionReceiver.setSessionState(Buffer.from(JSON.stringify({ progress: 50 })));
 
@@ -221,7 +221,7 @@ const receiver = client.createReceiver("my-queue", { receiveMode: "receiveAndDel
 
 1. **Use Entra ID auth** - Avoid connection strings in production
 2. **Reuse clients** - Create `ServiceBusClient` once, share across senders/receivers
-3. **Close resources** - 始终 close senders/receivers when done
+3. **Close 资源** - 始终 close senders/receivers when done
 4. **Handle errors** - Implement `processError` callback for subscription receivers
 5. **Use sessions for ordering** - When message order matters within a group
 6. **Configure dead-letter** - 始终 handle DLQ messages
@@ -235,7 +235,7 @@ For detailed patterns, see:
 - Error Handling and Reliability - ServiceBusError codes, DLQ handling, lock renewal, graceful shutdown
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

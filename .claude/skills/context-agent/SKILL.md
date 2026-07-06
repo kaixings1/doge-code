@@ -7,13 +7,13 @@ date_added: '2026-03-06'
 author: renat
 tags:
 - context
-- session-management
+- 会话-management
 - continuity
 - memory
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -36,7 +36,7 @@ Agente de contexto para continuidade entre sessoes. Salva resumos, decisoes, tar
 ## 不适用场景
 
 - The task is unrelated to context agent
-- A simpler, more specific tool can handle the request
+- A simpler, more specific tool can handle the 请求
 - The user needs general-purpose assistance without domain expertise
 
 ## 工作原理
@@ -65,7 +65,7 @@ C:\Users\renat\skills\context-agent\
 │   ├── context-format.md       # Especificação de formatos
 │   └── compression-rules.md    # Regras de compressão
 └── data/
-    ├── sessions/               # session-001.md, session-002.md, ...
+    ├── sessions/               # 会话-001.md, 会话-002.md, ...
     ├── archive/                # Sessões arquivadas
     ├── ACTIVE_CONTEXT.md       # Contexto consolidado (max 150 linhas)
     ├── PROJECT_REGISTRY.md     # Status de todos os projetos
@@ -89,7 +89,7 @@ python C:\Users\renat\skills\context-agent\scripts\context_manager.py save
 O que faz:
 1. Encontra o arquivo JSONL mais recente da sessão
 2. Analisa todas as mensagens, tool calls e resultados
-3. Gera resumo estruturado (session-NNN.md)
+3. Gera resumo estruturado (会话-NNN.md)
 4. Atualiza ACTIVE_CONTEXT.md com novas informações
 5. Sincroniza com MEMORY.md (carregado no system prompt)
 6. Indexa para busca full-text
@@ -135,7 +135,7 @@ reconstrói índice de busca.
 
 ```
 [Sessão termina]
-  → save → session-NNN.md + ACTIVE_CONTEXT.md + MEMORY.md
+  → save → 会话-NNN.md + ACTIVE_CONTEXT.md + MEMORY.md
 
 [Nova sessão começa]
   → MEMORY.md já está no system prompt (automático)

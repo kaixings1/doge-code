@@ -32,7 +32,7 @@ import os
 from azure.ai.transcription import TranscriptionClient
 
 client = TranscriptionClient(
-    endpoint=os.environ["TRANSCRIPTION_ENDPOINT"],
+    端点=os.environ["TRANSCRIPTION_ENDPOINT"],
     credential=os.environ["TRANSCRIPTION_KEY"]
 )
 ```
@@ -69,7 +69,7 @@ for event in stream:
 6. **Close transcription sessions** when complete
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

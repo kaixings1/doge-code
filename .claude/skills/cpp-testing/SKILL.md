@@ -28,7 +28,7 @@ origin: ECC
 
 - **TDD 循环**：红（Red）→ 绿（Green）→ 重构（Refactor）（测试先行，最小化修复，然后清理）。
 - **隔离性**：优先选择依赖注入和伪造对象（Fakes），而非全局状态。
-- **测试布局**：`tests/unit`、`tests/integration`、`tests/testdata`。
+- **测试布局**：`tests/unit`、`tests/集成`、`tests/testdata`。
 - **Mocks vs Fakes**：Mock 用于交互验证，Fake 用于有状态的行为模拟。
 - **CTest 发现**：使用 `gtest_discover_tests()` 进行稳定的测试发现。
 - **CI 信号**：先运行子集，然后使用 `--output-on-failure` 运行完整套件。
@@ -94,7 +94,7 @@ public:
 
 class UserStoreTest : public ::testing::Test {
 protected:
-    void SetUp() override {
+    void 设置() override {
         store = std::make_unique<UserStore>(":memory:");
         store->Seed({{"alice"}, {"bob"}});
     }

@@ -14,7 +14,7 @@ tags:
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -25,14 +25,14 @@ tools:
 
 Integracao completa com Amazon Alexa para criar skills de voz inteligentes, transformar Alexa em assistente com Claude como cerebro (projeto Auri) e integrar com AWS ecosystem (Lambda, DynamoDB, Polly, Transcribe, Lex, Smart Home).
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - When you need specialized assistance with this domain
 
 ## 不适用场景
 
 - The task is unrelated to amazon alexa
-- A simpler, more specific tool can handle the request
+- A simpler, more specific tool can handle the 请求
 - The user needs general-purpose assistance without domain expertise
 
 ## 工作原理

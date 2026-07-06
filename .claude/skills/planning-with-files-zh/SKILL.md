@@ -47,12 +47,12 @@ metadata:
 ```bash
 # Linux/macOS
 SKILL_DIR="${CLAUDE_PLUGIN_ROOT:-$HOME/.claude/skills/planning-with-files-zh}"
-$(command -v python3 || command -v python) "${SKILL_DIR}/scripts/session-catchup.py" "$(pwd)"
+$(command -v python3 || command -v python) "${SKILL_DIR}/scripts/会话-catchup.py" "$(pwd)"
 ```
 
 ```powershell
 # Windows PowerShell
-& (Get-Command python -ErrorAction SilentlyContinue).Source "$env:USERPROFILE\.claude\skills\planning-with-files-zh\scripts\session-catchup.py" (Get-Location)
+& (Get-Command python -ErrorAction SilentlyContinue).Source "$env:USERPROFILE\.claude\skills\planning-with-files-zh\scripts\会话-catchup.py" (Get-Location)
 ```
 
 如果恢复报告显示有未同步的上下文：
@@ -112,7 +112,7 @@ $(command -v python3 || command -v python) "${SKILL_DIR}/scripts/session-catchup
 
 ```
 ## 认证策略
-- 使用 JWT + refresh token
+- 使用 JWT + refresh 令牌
 - 过期时间：access 15min, refresh 7d
 
 ## API 设计

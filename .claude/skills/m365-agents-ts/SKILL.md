@@ -34,12 +34,12 @@ CLIENT_ID=<client-id>
 CLIENT_SECRET=<client-secret>
 
 COPILOT_ENVIRONMENT_ID=<environment-id>
-COPILOT_SCHEMA_NAME=<schema-name>
+COPILOT_SCHEMA_NAME=<架构-name>
 COPILOT_CLIENT_ID=<copilot-app-client-id>
 COPILOT_BEARER_TOKEN=<copilot-jwt>
 ```
 
-## Core Workflow: Express-hosted AgentApplication
+## Core 工作流: Express-hosted AgentApplication
 
 ```typescript
 import { AgentApplication, TurnContext, TurnState } from "@microsoft/agents-hosting";
@@ -72,7 +72,7 @@ agent.onMessage("poem", async (context: TurnContext) => {
   context.streamingResponse.setFeedbackLoop(true);
   context.streamingResponse.setGeneratedByAILabel(true);
   context.streamingResponse.setSensitivityLabel({
-    type: "https://schema.org/Message",
+    type: "https://架构.org/Message",
     "@type": "CreativeWork",
     name: "Internal",
   });
@@ -143,7 +143,7 @@ const reply = await client.askQuestionAsync("Hello!", conversation.id);
 console.log(reply);
 ```
 
-## Copilot Studio WebChat integration
+## Copilot Studio WebChat 集成
 
 ```typescript
 import { CopilotStudioWebChat } from "@microsoft/agents-copilotstudio-client";
@@ -162,7 +162,7 @@ window.WebChat.renderWebChat({
 1. Use AgentApplication for routing and keep handlers focused on one responsibility.
 2. 优先 streamingResponse for long-running completions and call endStream in finally blocks.
 3. Keep secrets out of source code; load tokens from environment variables or secure stores.
-4. Reuse CopilotStudioClient instances and cache tokens in your token provider.
+4. Reuse CopilotStudioClient instances and cache tokens in your 令牌 provider.
 5. Validate invoke payloads before logging or persisting feedback.
 
 ## 参考文件

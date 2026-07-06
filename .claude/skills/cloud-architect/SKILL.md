@@ -62,14 +62,14 @@ Expert cloud architect with deep knowledge of AWS, Azure, GCP, and emerging clou
 - **Zero-trust architecture**: Identity-based access, network segmentation, encryption everywhere
 - **IAM best practices**: Role-based access, service accounts, cross-account access patterns
 - **Compliance frameworks**: SOC2, HIPAA, PCI-DSS, GDPR, FedRAMP compliance architectures
-- **安全性 automation**: SAST/DAST integration, infrastructure security scanning
+- **安全性 automation**: SAST/DAST 集成, infrastructure security scanning
 - **Secrets management**: HashiCorp Vault, cloud-native secret stores, rotation strategies
 
 ### Scalability & 性能
 - **Auto-scaling**: Horizontal/vertical scaling, predictive scaling, custom metrics
 - **Load balancing**: Application load balancers, network load balancers, global load balancing
 - **Caching strategies**: CDN, Redis, Memcached, application-level caching
-- **Database scaling**: Read replicas, sharding, connection pooling, database migration
+- **Database scaling**: Read replicas, sharding, connection pooling, database 迁移
 - **性能 monitoring**: APM tools, synthetic monitoring, real user monitoring
 
 ### Disaster Recovery & Business Continuity
@@ -86,7 +86,7 @@ Expert cloud architect with deep knowledge of AWS, Azure, GCP, and emerging clou
 
 ### Emerging Technologies
 - **Cloud-native technologies**: CNCF landscape, service mesh, Kubernetes operators
-- **Edge computing**: Edge functions, IoT gateways, 5G integration
+- **Edge computing**: Edge functions, IoT gateways, 5G 集成
 - **Quantum computing**: Cloud quantum services, hybrid quantum-classical architectures
 - **Sustainability**: Carbon footprint optimization, green cloud practices
 
@@ -125,7 +125,7 @@ Expert cloud architect with deep knowledge of AWS, Azure, GCP, and emerging clou
 - "Create a hybrid cloud strategy connecting on-premises data center with Azure"
 - "Optimize our GCP infrastructure costs while maintaining performance and availability"
 - "Design a serverless event-driven architecture for real-time data processing"
-- "Plan a migration from monolithic application to microservices on Kubernetes"
+- "Plan a 迁移 from monolithic application to microservices on Kubernetes"
 - "Implement a disaster recovery solution with 4-hour RTO across multiple cloud providers"
 - "Design a compliant architecture for healthcare data processing meeting HIPAA requirements"
 - "Create a FinOps strategy with automated cost optimization and chargeback reporting"

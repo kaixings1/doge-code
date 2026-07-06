@@ -13,7 +13,7 @@ date_added: "2026-02-27"
 ## 架构
 
 ```
-User Query → AzureAIAgentsProvider → Azure AI Agent Service (Persistent)
+User 查询 → AzureAIAgentsProvider → Azure AI Agent Service (Persistent)
                     ↓
               Agent.run() / Agent.run_stream()
                     ↓
@@ -68,7 +68,7 @@ async def main():
     ):
         agent = await provider.create_agent(
             name="MyAgent",
-            instructions="You are a helpful assistant.",
+            使用说明="You are a helpful assistant.",
         )
         
         result = await agent.run("Hello!")
@@ -103,7 +103,7 @@ async def main():
     ):
         agent = await provider.create_agent(
             name="WeatherAgent",
-            instructions="You help with weather and time queries.",
+            使用说明="You help with weather and time queries.",
             tools=[get_weather, get_current_time],  # Pass functions directly
         )
         
@@ -129,7 +129,7 @@ async def main():
     ):
         agent = await provider.create_agent(
             name="MultiToolAgent",
-            instructions="You can execute code, search files, and search the web.",
+            使用说明="You can execute code, search files, and search the web.",
             tools=[
                 HostedCodeInterpreterTool(),
                 HostedWebSearchTool(name="Bing"),
@@ -150,7 +150,7 @@ async def main():
     ):
         agent = await provider.create_agent(
             name="StreamingAgent",
-            instructions="You are a helpful assistant.",
+            使用说明="You are a helpful assistant.",
         )
         
         print("Agent: ", end="", flush=True)
@@ -173,7 +173,7 @@ async def main():
     ):
         agent = await provider.create_agent(
             name="ChatAgent",
-            instructions="You are a helpful assistant.",
+            使用说明="You are a helpful assistant.",
             tools=[get_weather],
         )
         
@@ -214,7 +214,7 @@ async def main():
     ):
         agent = await provider.create_agent(
             name="StructuredAgent",
-            instructions="Provide weather information in structured format.",
+            使用说明="Provide weather information in structured format.",
             response_format=WeatherResponse,
         )
         

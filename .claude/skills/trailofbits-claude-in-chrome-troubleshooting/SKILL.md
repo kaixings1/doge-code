@@ -1,4 +1,4 @@
-# Claude in Chrome Troubleshooting
+# Claude in Chrome 故障排除
 
 Diagnose and fix Claude in Chrome MCP extension connectivity issues.
 
@@ -23,7 +23,7 @@ Diagnose and fix Claude in Chrome MCP extension connectivity issues.
 ## 安装
 
 ```
-/plugin install trailofbits/skills/plugins/claude-in-chrome-troubleshooting
+/plugin install trailofbits/skills/plugins/claude-in-chrome-故障排除
 ```
 
 ## License

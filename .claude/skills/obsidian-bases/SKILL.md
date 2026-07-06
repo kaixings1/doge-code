@@ -1,6 +1,6 @@
 ---
 name: obsidian-bases
-description: "Create and edit Obsidian Bases (.base files): Obsidian's native database layer for dynamic tables, card views, list views, filters, formulas, and summaries over vault notes. Triggers on: create a base, add a base file, obsidian bases, base view, filter notes, formula, database view, dynamic table, task tracker base, reading list base."
+description: "Create and edit Obsidian Bases (.base files): Obsidian's native database layer for dynamic tables, card views, list views, filters, formulas, and summaries over vault notes. Triggers on: create a base, add a base file, obsidian bases, base view, 过滤器 notes, formula, database view, dynamic table, task tracker base, reading list base."
 allowed-tools: Read Write
 ---
 
@@ -54,7 +54,7 @@ views:
 Filters select which notes appear. Applied globally or per-view.
 
 ```yaml
-# Single string filter
+# Single string 过滤器
 filters: 'status == "current"'
 
 # AND: all must be true
@@ -83,11 +83,11 @@ filters:
         - 'type == "entity"'
 ```
 
-### Filter operators
+### 过滤器 operators
 
 `==` `!=` `>` `<` `>=` `<=`
 
-### Useful filter functions
+### Useful 过滤器 functions
 
 | Function | Example |
 |----------|---------|
@@ -302,11 +302,11 @@ When working on this skill, apply the 10-principle loop. See [`skills/think/SKIL
 |---|-----------|-------------------|
 | 1 | OBSERVE (ext) | The `.base` YAML the user is composing — read it carefully before suggesting changes. |
 | 2 | OBSERVE (int) | Am I documenting yesterday's spec or today's? Bases evolves fast post-GA. |
-| 3 | LISTEN | The user's specific Bases use-case (dashboard, filter chain, computed property). |
-| 4 | THINK | Which filter operators, formula syntax, view types apply? Validate against the current spec. |
+| 3 | LISTEN | The user's specific Bases use-case (dashboard, 过滤器 chain, computed property). |
+| 4 | THINK | Which 过滤器 operators, formula syntax, view types apply? Validate against the current spec. |
 | 5 | CONNECT (lat) | How do Bases relate to Dataview queries? Properties? Canvas overlays? Map the deltas. |
 | 6 | CONNECT (sys) | Obsidian Bases is post-1.10 GA; substrate-defer to kepano/obsidian-skills when present. |
-| 7 | FEEL | Examples that actually parse and render. Pseudo-syntax wastes the user. |
+| 7 | FEEL | 示例 that actually parse and render. Pseudo-syntax wastes the user. |
 | 8 | ACCEPT | Bases spec evolves; some features in this doc may have changed. Keep the version note current. |
-| 9 | CREATE | Schema docs + worked examples that render in the user's actual Obsidian version. |
+| 9 | CREATE | 架构 docs + worked 示例 that render in the user's actual Obsidian version. |
 | 10 | GROW | As Bases features ship, refresh the reference. Track upstream releases. |

@@ -14,7 +14,7 @@ tags:
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -25,7 +25,7 @@ tools:
 
 Build, maintain, and extend the EarLLM One Android project — a Kotlin/Compose app that connects Bluetooth earbuds to an LLM via voice pipeline.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - When the user mentions "earllm" or related topics
 - When the user mentions "earbudllm" or related topics
@@ -37,12 +37,12 @@ Build, maintain, and extend the EarLLM One Android project — a Kotlin/Compose 
 ## 不适用场景
 
 - The task is unrelated to earllm build
-- A simpler, more specific tool can handle the request
-- The user needs general-purpose assistance without domain expertise
+- A simpler, more specific tool can handle the 请求
+- The user needs general-目的 assistance without domain expertise
 
 ## 工作原理
 
-EarLLM One is a multi-module Android app (Kotlin + Jetpack Compose) that captures voice from Bluetooth earbuds, transcribes it, sends it to an LLM, and speaks the response back.
+EarLLM One is a multi-module Android app (Kotlin + Jetpack Compose) that captures voice from Bluetooth earbuds, transcribes it, sends it to an LLM, and speaks the 响应 back.
 
 ## Project Location
 
@@ -59,7 +59,7 @@ app ──→ voice ──→ audio ──→ core-logging
 
 ## Modules And Key Files
 
-| Module | Purpose | Key Files |
+| Module | 目的 | Key Files |
 |--------|---------|-----------|
 | **core-logging** | Structured logging, performance tracking | `EarLogger.kt`, `PerformanceTracker.kt` |
 | **bluetooth** | BT discovery, pairing, A2DP/HFP profiles | `BluetoothController.kt`, `BluetoothState.kt`, `BluetoothPermissions.kt` |
@@ -68,7 +68,7 @@ app ──→ voice ──→ audio ──→ core-logging
 | **llm** | LLM interface, stub, OpenAI-compatible client | `LlmClient.kt`, `StubLlmClient.kt`, `RealLlmClient.kt`, `SecureTokenStore.kt` |
 | **app** | UI, ViewModel, Service, Settings, all screens | `MainViewModel.kt`, `EarLlmForegroundService.kt`, 6 Compose screens |
 
-## Build Configuration
+## Build 配置
 
 - **SDK**: minSdk 26, targetSdk 34, compileSdk 34
 - **Build tools**: AGP 8.2.2, Kotlin 1.9.22, Gradle 8.5
@@ -98,7 +98,7 @@ These are verified facts from official documentation and device testing. Treat t
 
 6. **`VOICE_COMMUNICATION` audio source enables AEC** (Acoustic Echo Cancellation), which is critical to prevent TTS audio output from feeding back into the STT microphone input. Never change this source without understanding the echo implications.
 
-7. **Never play TTS (A2DP) while simultaneously recording via SCO.** The correct sequence is: stop playback → switch to HFP → record → switch to A2DP → play response.
+7. **Never play TTS (A2DP) while simultaneously recording via SCO.** The correct sequence is: stop playback → switch to HFP → record → switch to A2DP → play 响应.
 
 ## Data Flow
 
@@ -111,7 +111,7 @@ Headset button tap
   → stopRecording() returns ByteArray
   → SpeechToTextController.transcribe(pcmData)
   → LlmClient.chat(messages)
-  → TextToSpeechController.speak(response)
+  → TextToSpeechController.speak(响应)
   → Audio output via A2DP to earbuds
 ```
 
@@ -120,7 +120,7 @@ Headset button tap
 1. Identify which module(s) are affected
 2. Read existing code in those modules first
 3. Follow the StateFlow pattern — expose state via `MutableStateFlow` / `StateFlow`
-4. Update `MainViewModel.kt` if the feature needs UI integration
+4. Update `MainViewModel.kt` if the feature needs UI 集成
 5. Add unit tests in the module's `src/test/` directory
 6. Update docs if the feature changes behavior
 
@@ -137,7 +137,7 @@ Headset button tap
 - Earbuds detection uses name heuristics: "buds", "earbuds", "tws", "pods", "ear"
 - Always handle both Bluetooth Classic and BLE Audio paths
 
-## Modifying The Llm Integration
+## Modifying The Llm 集成
 
 - `LlmClient.kt` defines the interface — keep it generic
 - `StubLlmClient.kt` for offline testing (500ms simulated delay)
@@ -165,7 +165,7 @@ powershell -Command "Remove-Item 'EarLLM_One_v1.0.zip' -Force -ErrorAction Silen
 
 - Real-time streaming voice conversation with LLM through earbuds
 - Smart assistant: categorize speech into meetings, shopping lists, memos, emails
-- Vosk offline STT integration (currently stubbed)
+- Vosk offline STT 集成 (currently stubbed)
 - Wake-word detection to avoid keeping SCO open continuously
 - Streaming TTS (Android built-in TTS does NOT support streaming)
 

@@ -8,7 +8,7 @@ date_added: '2026-02-27'
 
 # Azure.ResourceManager.Sql (.NET)
 
-Management plane SDK for provisioning and managing Azure SQL resources via Azure Resource Manager.
+Management plane SDK for provisioning and managing Azure SQL 资源 via Azure Resource Manager.
 
 > **⚠️ Management vs Data Plane**
 > - **This SDK (Azure.ResourceManager.Sql)**: Create servers, databases, elastic pools, configure firewall rules, manage failover groups
@@ -89,14 +89,14 @@ var serverData = new SqlServerData(AzureLocation.EastUS)
     PublicNetworkAccess = ServerNetworkAccessFlag.Enabled
 };
 
-// Create server (long-running operation)
+// Create server (long-running 操作)
 var serverCollection = resourceGroup.Value.GetSqlServers();
-var operation = await serverCollection.CreateOrUpdateAsync(
+var 操作 = await serverCollection.CreateOrUpdateAsync(
     WaitUntil.Completed,
     "my-sql-server",
     serverData);
 
-SqlServerResource server = operation.Value;
+SqlServerResource server = 操作.Value;
 ```
 
 ### 2. Create SQL Database
@@ -188,7 +188,7 @@ await firewallCollection.CreateOrUpdateAsync(
     clientRule);
 ```
 
-### 6. List Resources
+### 6. List 资源
 
 ```csharp
 // List all servers in subscription
@@ -286,7 +286,7 @@ using Azure;
 
 try
 {
-    var operation = await serverCollection.CreateOrUpdateAsync(
+    var 操作 = await serverCollection.CreateOrUpdateAsync(
         WaitUntil.Completed, serverName, serverData);
 }
 catch (RequestFailedException ex) when (ex.Status == 409)
@@ -295,7 +295,7 @@ catch (RequestFailedException ex) when (ex.Status == 409)
 }
 catch (RequestFailedException ex) when (ex.Status == 400)
 {
-    Console.WriteLine($"Invalid request: {ex.Message}");
+    Console.WriteLine($"Invalid 请求: {ex.Message}");
 }
 catch (RequestFailedException ex)
 {
@@ -320,7 +320,7 @@ catch (RequestFailedException ex)
 | `Microsoft.EntityFrameworkCore.SqlServer` | ORM for SQL Server | `dotnet add package Microsoft.EntityFrameworkCore.SqlServer` |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

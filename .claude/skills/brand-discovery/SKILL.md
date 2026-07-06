@@ -2,22 +2,21 @@
 name: brand-discovery
 description: 品牌发现工作流
   Use when a brand needs to discover or articulate its identity through
-  structured multi-session interviews. Covers purpose, positioning, audience,
+  structured multi-会话 interviews. Covers purpose, positioning, audience,
   personality, voice, narrative, and founder-brand tension across 8 modules
   using laddering, 5 Whys, and projective techniques. Produces a resumable
-  session with disk-persisted state and a master brandbook (90_SYNTHESIS.md).
+  会话 with disk-persisted state and a master brandbook (90_SYNTHESIS.md).
 ---
 
-# /u54c1/u724c/u53d1/u73b0
+# 品牌发现
 
-Use this skill to conduct a structured, adaptive brand identity interview.
-The goal is a complete `90_SYNTHESIS.md` — a master brandbook the
-organization can use to brief designers, writers, and external
+使用此技能进行结构化、自适应的品牌身份访谈。
+目标是生成完整的 `90_SYNTHESIS.md` — 一份主品牌手册，组织可以用它来向设计师、文案和外部
 collaborators.
 
 The interview runs across multiple sessions. Capture answers to disk as you
 go so that no elicited knowledge is lost when a conversation ends, and so a
-later session can resume from where the last one stopped.
+later 会话 can resume from where the last one stopped.
 
 ## When to Activate
 
@@ -27,7 +26,7 @@ later session can resume from where the last one stopped.
 - The user wants a structured, repeatable method rather than an ad-hoc chat.
 - Existing brand documentation is scattered, implicit, or founder-dependent and needs to be made explicit.
 
-## Session start protocol
+## 会话 start protocol
 
 On every activation, perform these steps **before** asking any interview
 question:
@@ -93,13 +92,13 @@ After each module reaches saturation or done status, write two files:
 
 **Module file** at `modules/{moduleFile}` — full Raw and Synthesis content.
 
-**`state.json`** — a lightweight checkpoint so a later session can resume.
+**`state.json`** — a lightweight checkpoint so a later 会话 can resume.
 Update `completedModules`, `inProgressModule`, `nextModule`, `lastUpdated`.
-Schema:
+架构:
 
 ```json
 {
-  "session": "{brand_name}-brand-{YYYY-MM}",
+  "会话": "{brand_name}-brand-{YYYY-MM}",
   "outputPath": "{path_to_brand_identity_directory}",
   "completedModules": [],
   "inProgressModule": "10_purpose-why.md",
@@ -133,11 +132,11 @@ the module file, flag "productive tensions" for the group alignment workshop.
 
 ## 反模式
 
-- **Starting without reading state first.** Every session must open by checking for existing module files and `state.json`. Skipping this loses all continuity from prior sessions.
+- **Starting without reading state first.** Every 会话 must open by checking for existing module files and `state.json`. Skipping this loses all continuity from prior sessions.
 - **Asking multiple questions at once.** One question at a time is not optional — lists produce checklist answers, not real insight.
 - **Moving to Synthesis before saturation.** If the last two probes produced no new information, the module is done. If they did — it isn't.
 - **Skipping multi-founder reconciliation.** When multiple stakeholders are involved, individual interviews must complete before reconciliation. Discussing the brand collectively first introduces anchoring bias.
-- **Treating this as a one-shot session.** This skill is designed for multiple sessions. Rushing to `90_SYNTHESIS.md` in one conversation produces shallow output.
+- **Treating this as a one-shot 会话.** This skill is designed for multiple sessions. Rushing to `90_SYNTHESIS.md` in one conversation produces shallow output.
 
 ## 相关技能
 

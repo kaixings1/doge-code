@@ -18,7 +18,7 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 
 ## 设置
 
-**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client configuration. No API keys needed — just add the endpoint and it works.
+**Get Rube MCP**: Add `https://rube.app/mcp` as an MCP server in your client 配置. No API keys needed — just add the 端点 and it works.
 
 
 1. Verify Rube MCP is available by confirming `RUBE_SEARCH_TOOLS` responds
@@ -30,27 +30,27 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 
 ### 1. List and Browse Boards
 
-**When to use**: User wants to find boards or get board details
+**使用场景**: User wants to find boards or get board details
 
 **Tool sequence**:
 1. `MIRO_GET_BOARDS2` - List all accessible boards [必需]
 2. `MIRO_GET_BOARD` - Get detailed info for a specific board [可选]
 
 **Key parameters**:
-- `query`: Search term to filter boards by name
+- `查询`: Search term to 过滤器 boards by name
 - `sort`: Sort by 'default', 'last_modified', 'last_opened', 'last_created', 'alphabetically'
 - `limit`: Number of results per page (max 50)
 - `offset`: Pagination offset
 - `board_id`: Specific board ID for detailed retrieval
 
 **Pitfalls**:
-- Pagination uses offset-based approach, not cursor-based
+- Pagination uses offset-based 方法, not 游标-based
 - Maximum 50 boards per page; iterate with offset for full list
 - Board IDs are long alphanumeric strings; always resolve by search first
 
 ### 2. Create Boards and Items
 
-**When to use**: User wants to create a new board or add items to an existing board
+**使用场景**: User wants to create a new board or add items to an existing board
 
 **Tool sequence**:
 1. `MIRO_CREATE_BOARD` - Create a new empty board [可选]
@@ -70,12 +70,12 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 - `board_id` is required for ALL item operations; resolve via GET_BOARDS2 first
 - Sticky note colors use hex codes (e.g., '#FF0000') in the `fillColor` field
 - Position coordinates use the board's coordinate system (origin at center)
-- BULK create has a maximum items-per-request limit; check current schema
+- BULK create has a maximum items-per-请求 limit; check current 架构
 - Frame items require `geometry` with both width and height
 
 ### 3. Browse and Manage Board Items
 
-**When to use**: User wants to view, find, or organize items on a board
+**使用场景**: User wants to view, find, or organize items on a board
 
 **Tool sequence**:
 1. `MIRO_GET_BOARD_ITEMS` - List all items on a board [必需]
@@ -83,19 +83,19 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 
 **Key parameters**:
 - `board_id`: Target board ID (required)
-- `type`: Filter by item type ('sticky_note', 'shape', 'text', 'frame', 'image', 'card')
+- `type`: 过滤器 by item type ('sticky_note', 'shape', 'text', 'frame', 'image', 'card')
 - `limit`: Number of items per page
-- `cursor`: Pagination cursor from previous response
+- `游标`: Pagination 游标 from previous 响应
 
 **Pitfalls**:
-- Results are paginated; follow `cursor` until absent for complete item list
+- Results are paginated; follow `游标` until absent for complete item list
 - Item types must match Miro's predefined types exactly
 - Large boards may have thousands of items; use type filtering to narrow results
 - Connectors are separate from items; use GET_CONNECTORS2 for relationship data
 
 ### 4. Share and Collaborate on Boards
 
-**When to use**: User wants to share a board with team members or manage access
+**使用场景**: User wants to share a board with team members or manage access
 
 **Tool sequence**:
 1. `MIRO_GET_BOARDS2` - Find the board to share [Prerequisite]
@@ -109,14 +109,14 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 - `message`: 可选 invitation message
 
 **Pitfalls**:
-- Email addresses must be valid; invalid emails cause the entire request to fail
+- Email addresses must be valid; invalid emails cause the entire 请求 to fail
 - Role must be one of the predefined values; case-sensitive
 - Sharing with users outside the organization may require admin approval
 - GET_BOARD_MEMBERS returns all members including the owner
 
 ### 5. Create Visual Connections
 
-**When to use**: User wants to connect items on a board with lines or arrows
+**使用场景**: User wants to connect items on a board with lines or arrows
 
 **Tool sequence**:
 1. `MIRO_GET_BOARD_ITEMS` - Find items to connect [Prerequisite]
@@ -131,7 +131,7 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 **Pitfalls**:
 - Both start and end items must exist on the same board
 - Item IDs are required for connections; resolve via GET_BOARD_ITEMS first
-- Connector styles vary; check available options in schema
+- Connector styles vary; check available options in 架构
 - Self-referencing connections (same start and end) are not allowed
 
 ## 常见模式
@@ -140,14 +140,14 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 
 **Board name -> Board ID**:
 ```
-1. Call MIRO_GET_BOARDS2 with query=board_name
+1. Call MIRO_GET_BOARDS2 with 查询=board_name
 2. Find board by name in results
 3. Extract id field
 ```
 
 **Item lookup on board**:
 ```
-1. Call MIRO_GET_BOARD_ITEMS with board_id and optional type filter
+1. Call MIRO_GET_BOARD_ITEMS with board_id and optional type 过滤器
 2. Find item by content or position
 3. Extract item id for further operations
 ```
@@ -155,9 +155,9 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 ### Pagination
 
 - Boards: Use `offset` and `limit` (offset-based)
-- Board items: Use `cursor` and `limit` (cursor-based)
-- Continue until no more results or cursor is absent
-- 默认 page sizes vary by endpoint
+- Board items: Use `游标` and `limit` (游标-based)
+- Continue until no more results or 游标 is absent
+- 默认 page sizes vary by 端点
 
 ### Coordinate System
 
@@ -181,15 +181,23 @@ Automate Miro whiteboard operations through Composio's Miro toolkit via Rube MCP
 - Position defaults to (0,0) if not specified; items may overlap
 
 **Rate Limits**:
-- Miro API has rate limits per token
+- Miro API has rate limits per 令牌
 - Bulk operations preferred over individual item creation
 - Use MIRO_CREATE_ITEMS_IN_BULK for multiple items
 
-**Response Parsing**:
-- Response data may be nested under `data` key
-- Item types determine which fields are present in response
+**响应 Parsing**:
+- 响应 data may be nested under `data` key
+- Item types determine which fields are present in 响应
 - Parse defensively; optional fields may be absent
 
 ## 快速参考
 
-| Task | Tool Slug | Key Params |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
+| Task | Tool 标识符 | Key Params |

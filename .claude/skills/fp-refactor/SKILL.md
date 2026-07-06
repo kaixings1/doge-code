@@ -10,7 +10,7 @@ tags:
   - refactoring
   - functional-programming
   - typescript
-  - migration
+  - 迁移
   - either
   - option
   - task
@@ -161,11 +161,11 @@ pipe(
 ```typescript
 async function fetchUser(id: string): Promise<User> {
   try {
-    const response = await fetch(`/api/users/${id}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`);
+    const 响应 = await fetch(`/api/users/${id}`);
+    if (!响应.ok) {
+      throw new Error(`HTTP error: ${响应.status}`);
     }
-    const data = await response.json();
+    const data = await 响应.json();
     return validateUser(data);
   } catch (error) {
     throw new Error(`Failed to fetch user: ${error}`);
@@ -174,11 +174,11 @@ async function fetchUser(id: string): Promise<User> {
 
 async function fetchUserPosts(userId: string): Promise<Post[]> {
   try {
-    const response = await fetch(`/api/users/${userId}/posts`);
-    if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`);
+    const 响应 = await fetch(`/api/users/${userId}/posts`);
+    if (!响应.ok) {
+      throw new Error(`HTTP error: ${响应.status}`);
     }
-    return await response.json();
+    return await 响应.json();
   } catch (error) {
     throw new Error(`Failed to fetch posts: ${error}`);
   }
@@ -211,14 +211,14 @@ const fetchUser = (id: string): TE.TaskEither<Error, User> =>
       () => fetch(`/api/users/${id}`),
       (reason) => new Error(`Network error: ${reason}`)
     ),
-    TE.flatMap((response) =>
-      response.ok
-        ? TE.right(response)
-        : TE.left(new Error(`HTTP error: ${response.status}`))
+    TE.flatMap((响应) =>
+      响应.ok
+        ? TE.right(响应)
+        : TE.left(new Error(`HTTP error: ${响应.status}`))
     ),
-    TE.flatMap((response) =>
+    TE.flatMap((响应) =>
       TE.tryCatch(
-        () => response.json(),
+        () => 响应.json(),
         (reason) => new Error(`JSON parse error: ${reason}`)
       )
     ),
@@ -231,14 +231,14 @@ const fetchUserPosts = (userId: string): TE.TaskEither<Error, Post[]> =>
       () => fetch(`/api/users/${userId}/posts`),
       (reason) => new Error(`Network error: ${reason}`)
     ),
-    TE.flatMap((response) =>
-      response.ok
-        ? TE.right(response)
-        : TE.left(new Error(`HTTP error: ${response.status}`))
+    TE.flatMap((响应) =>
+      响应.ok
+        ? TE.right(响应)
+        : TE.left(new Error(`HTTP error: ${响应.status}`))
     ),
-    TE.flatMap((response) =>
+    TE.flatMap((响应) =>
       TE.tryCatch(
-        () => response.json(),
+        () => 响应.json(),
         (reason) => new Error(`JSON parse error: ${reason}`)
       )
     )
@@ -449,7 +449,7 @@ const getManagerEmail = (
 1. **Identify nullable values**: Find all `T | null`, `T | undefined`, or optional properties
 2. **Wrap with fromNullable**: Convert nullable values to Option at system boundaries
 3. **Change return types**: From `T | null` to `Option<T>`
-4. **Replace null checks**: Use `O.map`, `O.flatMap`, `O.filter` instead of if statements
+4. **Replace null checks**: Use `O.map`, `O.flatMap`, `O.过滤器` instead of if statements
 5. **Handle at boundaries**: Use `O.getOrElse`, `O.match`, or `O.toNullable` when interfacing with non-fp code
 
 ### Converting Between Option and Either
@@ -484,7 +484,7 @@ const getUser = (id: string): E.Either<Error, User> =>
 
 ### The Problem with Callbacks
 
-- Callback hell makes code hard to read
+- 回调 hell makes code hard to read
 - Error handling is inconsistent
 - Difficult to compose and sequence
 - No standard way to handle async operations
@@ -498,13 +498,13 @@ import * as fs from 'fs';
 
 function readFileCallback(
   path: string,
-  callback: (error: Error | null, data: string | null) => void
+  回调: (error: Error | null, data: string | null) => void
 ): void {
   fs.readFile(path, 'utf-8', (err, data) => {
     if (err) {
-      callback(err, null);
+      回调(err, null);
     } else {
-      callback(null, data);
+      回调(null, data);
     }
   });
 }
@@ -512,28 +512,28 @@ function readFileCallback(
 function processFile(
   inputPath: string,
   outputPath: string,
-  callback: (error: Error | null) => void
+  回调: (error: Error | null) => void
 ): void {
   readFileCallback(inputPath, (err, data) => {
     if (err) {
-      callback(err);
+      回调(err);
       return;
     }
     const processed = data!.toUpperCase();
     fs.writeFile(outputPath, processed, (writeErr) => {
       if (writeErr) {
-        callback(writeErr);
+        回调(writeErr);
       } else {
-        callback(null);
+        回调(null);
       }
     });
   });
 }
 
-// Callback hell
+// 回调 hell
 function processMultipleFiles(
   files: Array<{ input: string; output: string }>,
-  callback: (error: Error | null) => void
+  回调: (error: Error | null) => void
 ): void {
   let completed = 0;
   let hasError = false;
@@ -544,12 +544,12 @@ function processMultipleFiles(
       if (hasError) return;
       if (err) {
         hasError = true;
-        callback(err);
+        回调(err);
         return;
       }
       completed++;
       if (completed === files.length) {
-        callback(null);
+        回调(null);
       }
     });
   });
@@ -610,14 +610,14 @@ const processMultipleFilesSequential = (
   );
 ```
 
-### Pattern: Converting callback-based APIs
+### Pattern: Converting 回调-based APIs
 
 ```typescript
 import * as TE from 'fp-ts/TaskEither';
 
-// Generic callback-to-TaskEither converter
+// Generic 回调-to-TaskEither converter
 const fromCallback = <A>(
-  f: (callback: (error: Error | null, result: A | null) => void) => void
+  f: (回调: (error: Error | null, result: A | null) => void) => void
 ): TE.TaskEither<Error, A> =>
   () =>
     new Promise((resolve) => {
@@ -651,7 +651,7 @@ const readFileLegacy = (path: string): TE.TaskEither<Error, string> =>
 #### Before (Imperative with Classes)
 
 ```typescript
-// Traditional class-based approach
+// Traditional class-based 方法
 interface Logger {
   log(message: string): void;
   error(message: string): void;
@@ -697,7 +697,7 @@ class UserService {
   }
 }
 
-// Manual DI setup
+// Manual DI 设置
 const logger = new ConsoleLogger();
 const userRepo = new PostgresUserRepository(dbConnection);
 const emailService = new SmtpEmailService(smtpConfig);
@@ -805,11 +805,11 @@ const createAppEnv = (): AppEnv => ({
   },
   userRepo: {
     findById: (id) => TE.tryCatch(
-      () => postgresClient.query('SELECT * FROM users WHERE id = $1', [id]),
+      () => postgresClient.查询('SELECT * FROM users WHERE id = $1', [id]),
       (e) => new Error(String(e))
     ),
     save: (user) => TE.tryCatch(
-      () => postgresClient.query('UPDATE users SET email = $1 WHERE id = $2', [user.email, user.id]),
+      () => postgresClient.查询('UPDATE users SET email = $1 WHERE id = $2', [user.email, user.id]),
       (e) => new Error(String(e))
     ),
   },
@@ -883,7 +883,7 @@ describe('updateEmail', () => {
 
 ## 5. Converting imperative loops to functional operations
 
-### Pattern: for loops to map/filter/reduce
+### Pattern: for loops to map/过滤器/reduce
 
 #### Before (Imperative)
 
@@ -944,7 +944,7 @@ import * as Monoid from 'fp-ts/Monoid';
 const processProducts = (products: Product[]) => {
   const inStockProducts = pipe(
     products,
-    A.filter((p) => p.inStock)
+    A.过滤器((p) => p.inStock)
   );
 
   const totalValue = pipe(
@@ -963,7 +963,7 @@ const processProducts = (products: Product[]) => {
 
   const expensiveProducts = pipe(
     inStockProducts,
-    A.filter((p) => p.price > 100),
+    A.过滤器((p) => p.price > 100),
     A.map((p) => p.name)
   );
 
@@ -994,7 +994,7 @@ const productStatsMonoid: M<ProductStats> = {
 const processProductsSinglePass = (products: Product[]): ProductStats =>
   pipe(
     products,
-    A.filter((p) => p.inStock),
+    A.过滤器((p) => p.inStock),
     A.foldMap(productStatsMonoid)((product) => ({
       totalValue: product.price,
       categoryCounts: { [product.category]: 1 },
@@ -1065,19 +1065,19 @@ const getAllProductIdsSet = (orders: Order[]): Set<string> =>
 
 ```typescript
 function paginate<T>(
-  fetchPage: (cursor: string | null) => Promise<{ items: T[]; nextCursor: string | null }>
+  fetchPage: (游标: string | null) => Promise<{ items: T[]; nextCursor: string | null }>
 ): Promise<T[]> {
   const allItems: T[] = [];
-  let cursor: string | null = null;
+  let 游标: string | null = null;
 
   while (true) {
-    const { items, nextCursor } = await fetchPage(cursor);
+    const { items, nextCursor } = await fetchPage(游标);
     allItems.push(...items);
 
     if (nextCursor === null) {
       break;
     }
-    cursor = nextCursor;
+    游标 = nextCursor;
   }
 
   return allItems;
@@ -1097,14 +1097,14 @@ interface Page<T> {
 }
 
 const paginate = <T>(
-  fetchPage: (cursor: string | null) => TE.TaskEither<Error, Page<T>>
+  fetchPage: (游标: string | null) => TE.TaskEither<Error, Page<T>>
 ): TE.TaskEither<Error, T[]> => {
   const go = (
-    cursor: string | null,
+    游标: string | null,
     accumulated: T[]
   ): TE.TaskEither<Error, T[]> =>
     pipe(
-      fetchPage(cursor),
+      fetchPage(游标),
       TE.flatMap(({ items, nextCursor }) => {
         const newAccumulated = [...accumulated, ...items];
         return nextCursor === null
@@ -1134,11 +1134,11 @@ const range = (start: number, end: number): readonly number[] =>
 ```typescript
 function fetchUserData(userId: string): Promise<UserProfile> {
   return fetch(`/api/users/${userId}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+    .then((响应) => {
+      if (!响应.ok) {
+        throw new Error(`HTTP ${响应.status}`);
       }
-      return response.json();
+      return 响应.json();
     })
     .then((data) => validateUserData(data))
     .then((validData) => enrichUserProfile(validData))
@@ -1180,13 +1180,13 @@ const fetchUserData = (userId: string): TE.TaskEither<Error, UserProfile> =>
       () => fetch(`/api/users/${userId}`),
       (e) => new Error(`Network error: ${e}`)
     ),
-    TE.flatMap((response) =>
-      response.ok
+    TE.flatMap((响应) =>
+      响应.ok
         ? TE.tryCatch(
-            () => response.json(),
+            () => 响应.json(),
             (e) => new Error(`Parse error: ${e}`)
           )
-        : TE.left(new Error(`HTTP ${response.status}`))
+        : TE.left(new Error(`HTTP ${响应.status}`))
     ),
     TE.flatMap((data) => TE.fromEither(validateUserData(data))),
     TE.flatMap((validData) => enrichUserProfile(validData))
@@ -1393,7 +1393,7 @@ const fetchData = (): TE.TaskEither<Error, Data> =>
   pipe(
     TE.tryCatch(
       () => fetch('/api/data'),
-      (reason) => new Error(`Network request failed: ${reason}`)
+      (reason) => new Error(`Network 请求 failed: ${reason}`)
     )
   );
 
@@ -1409,9 +1409,9 @@ const fetchData = (): TE.TaskEither<FetchError, Data> =>
       () => fetch('/api/data'),
       (cause): FetchError => ({ _tag: 'NetworkError', cause })
     ),
-    TE.flatMap((response) =>
+    TE.flatMap((响应) =>
       TE.tryCatch(
-        () => response.json(),
+        () => 响应.json(),
         (cause): FetchError => ({ _tag: 'ParseError', cause })
       )
     )
@@ -1467,8 +1467,8 @@ const processUser = (input: string): User =>
 ### Strategy 1: Start at the Boundaries
 
 Begin by converting functions at the edges of your system:
-- API response handlers
-- Database query results
+- API 响应 handlers
+- Database 查询 results
 - File system operations
 - User input validation
 
@@ -1521,7 +1521,7 @@ const toPromise = <E, A>(te: TE.TaskEither<E, A>): Promise<A> =>
   te().then(E.getOrElseW((e) => { throw e; }));
 ```
 
-### Strategy 3: Module-by-Module Migration
+### Strategy 3: Module-by-Module 迁移
 
 1. **Pick a module** with clear boundaries
 2. **Add fp-ts types** to internal functions
@@ -1561,7 +1561,7 @@ export const getUser = (id: string): TE.TaskEither<UserError, User> =>
 
 ### Strategy 4: Type-Driven Development
 
-Use TypeScript's type system to guide the migration:
+Use TypeScript's type system to guide the 迁移:
 
 ```typescript
 // Step 1: Change type signature first
@@ -1647,7 +1647,7 @@ const sumWithFpts = (numbers: number[]): number =>
 When working with libraries that expect specific patterns:
 
 ```typescript
-// Express middleware must match Express's interface
+// Express 中间件 must match Express's interface
 app.get('/users/:id', async (req, res) => {
   // Keep imperative here, convert at boundaries
   const result = await getUser(req.params.id)();
@@ -1749,7 +1749,15 @@ describe('UserService', () => {
 
 ---
 
-## 快速参考: Imperative to fp-ts Mapping
+## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |: Imperative to fp-ts Mapping
 
 | Imperative Pattern | fp-ts Equivalent |
 |-------------------|------------------|
@@ -1760,7 +1768,7 @@ describe('UserService', () => {
 | `x ?? defaultValue` | `O.getOrElse()` |
 | `x?.property` | `O.map()`, `O.flatMap()` |
 | `array.map()` | `A.map()` |
-| `array.filter()` | `A.filter()` |
+| `array.过滤器()` | `A.过滤器()` |
 | `array.reduce()` | `A.reduce()`, `A.foldMap()` |
 | `array.find()` | `A.findFirst()` |
 | `array.flatMap()` | `A.flatMap()` |

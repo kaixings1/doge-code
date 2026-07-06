@@ -17,7 +17,7 @@ Write clear documentation for analyses and models that enables reproducibility a
 
 ### Model Card
 - Model details (type, version, training data)
-- Intended use and limitations
+- Intended use and 限制
 - Evaluation results and fairness assessment
 - How to use for inference
 

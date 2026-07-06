@@ -17,7 +17,7 @@ tags:
 tools:
   - claude-code
   - antigravity
-  - cursor
+  - 游标
   - gemini-cli
   - codex-cli
 ---
@@ -36,7 +36,7 @@ a tight optimize loop. Worked reference: the `screenstudio-alternative` skill (`
 
 ## The loop
 
-1. **Render N labeled variants into ONE artifact.** Vary the parameter(s) across a
+1. **Render N labeled variants into ONE artifact.** Vary the 参数(s) across a
    small spread. **Annotate each variant's params ON the artifact** (burn the label in:
    "A · 2.2Hz · ζ0.5"). Images → a labeled grid/contact sheet. Video/motion → a
    labeled *sequence* (label card or burned-in overlay before/over each clip) so the
@@ -50,7 +50,7 @@ a tight optimize loop. Worked reference: the `screenstudio-alternative` skill (`
    the single best**. Usually converges in **2 rounds**.
 4. **Stop when sufficient** — best rates high and suggestions cluster. Apply the winner.
 
-## Token / quality / step reductions (do these)
+## 令牌 / quality / step reductions (do these)
 
 - **One artifact per round, not one call per variant.** The biggest saver — a 6-variant
   round is 1 upload + 1 inference, not 6. Montage/grid beats a loop of single calls.
@@ -62,7 +62,7 @@ a tight optimize loop. Worked reference: the `screenstudio-alternative` skill (`
   the whole asset. Cheaper render, smaller upload, faster inference. Apply the found
   params to the full render once.
 - **Cap variants at ~5-6.** More doesn't improve the model's discrimination and multiplies
-  render + token cost. Wide-but-sparse round 1, narrow round 2.
+  render + 令牌 cost. Wide-but-sparse round 1, narrow round 2.
 - **Calibration anchors.** Include one deliberately-bad and one safe-default variant as
   fixed anchors each round — gives the model a reference scale and exposes when its
   "best" is worse than the safe default (catch a bad recommendation early).

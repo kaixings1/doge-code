@@ -237,10 +237,10 @@ with producer:
 |------|----------|
 | references/checkpointing.md | Checkpoint store patterns, blob checkpointing, checkpoint strategies |
 | references/partitions.md | Partition management, load balancing, starting positions |
-| scripts/setup_consumer.py | CLI for Event Hub info, consumer setup, and event sending/receiving |
+| scripts/setup_consumer.py | CLI for Event Hub info, consumer 设置, and event sending/receiving |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

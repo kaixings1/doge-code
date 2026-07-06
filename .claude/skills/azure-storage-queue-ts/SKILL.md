@@ -68,7 +68,7 @@ const client = new QueueServiceClient(
 );
 ```
 
-### SAS Token
+### SAS 令牌
 
 ```typescript
 import { QueueServiceClient } from "@azure/storage-queue";
@@ -108,7 +108,7 @@ for await (const queue of client.listQueues()) {
   console.log(queue.name);
 }
 
-// With prefix filter
+// With prefix 过滤器
 for await (const queue of client.listQueues({ prefix: "task-" })) {
   console.log(queue.name);
 }
@@ -165,12 +165,12 @@ await queueClient.sendMessage(JSON.stringify(task));
 
 ```typescript
 // Receive up to 32 messages (default: 1)
-const response = await queueClient.receiveMessages({
+const 响应 = await queueClient.receiveMessages({
   numberOfMessages: 10,
   visibilityTimeout: 30, // 30 seconds to process
 });
 
-for (const message of response.receivedMessageItems) {
+for (const message of 响应.receivedMessageItems) {
   console.log("Message ID:", message.messageId);
   console.log("Content:", message.messageText);
   console.log("Dequeue Count:", message.dequeueCount);
@@ -188,11 +188,11 @@ for (const message of response.receivedMessageItems) {
 Peek without removing from queue (no visibility timeout).
 
 ```typescript
-const response = await queueClient.peekMessages({
+const 响应 = await queueClient.peekMessages({
   numberOfMessages: 5,
 });
 
-for (const message of response.peekedMessageItems) {
+for (const message of 响应.peekedMessageItems) {
   console.log("Message ID:", message.messageId);
   console.log("Content:", message.messageText);
   // Note: No popReceipt - cannot delete peeked messages
@@ -205,8 +205,8 @@ Extend visibility timeout or update content.
 
 ```typescript
 // Receive a message
-const response = await queueClient.receiveMessages();
-const message = response.receivedMessageItems[0];
+const 响应 = await queueClient.receiveMessages();
+const message = 响应.receivedMessageItems[0];
 
 if (message) {
   // Update content and extend visibility
@@ -226,8 +226,8 @@ if (message) {
 
 ```typescript
 // After receiving
-const response = await queueClient.receiveMessages();
-const message = response.receivedMessageItems[0];
+const 响应 = await queueClient.receiveMessages();
+const message = 响应.receivedMessageItems[0];
 
 if (message) {
   await queueClient.deleteMessage(message.messageId, message.popReceipt);
@@ -247,18 +247,18 @@ await queueClient.clearMessages();
 ```typescript
 async function processQueue(queueClient: QueueClient): Promise<void> {
   while (true) {
-    const response = await queueClient.receiveMessages({
+    const 响应 = await queueClient.receiveMessages({
       numberOfMessages: 10,
       visibilityTimeout: 30,
     });
 
-    if (response.receivedMessageItems.length === 0) {
+    if (响应.receivedMessageItems.length === 0) {
       // No messages, wait before polling again
       await sleep(5000);
       continue;
     }
 
-    for (const message of response.receivedMessageItems) {
+    for (const message of 响应.receivedMessageItems) {
       try {
         await processMessage(message.messageText);
         await queueClient.deleteMessage(message.messageId, message.popReceipt);
@@ -289,12 +289,12 @@ async function processWithPoisonHandling(
   queueClient: QueueClient,
   poisonQueueClient: QueueClient
 ): Promise<void> {
-  const response = await queueClient.receiveMessages({
+  const 响应 = await queueClient.receiveMessages({
     numberOfMessages: 10,
     visibilityTimeout: 30,
   });
 
-  for (const message of response.receivedMessageItems) {
+  for (const message of 响应.receivedMessageItems) {
     if (message.dequeueCount > MAX_DEQUEUE_COUNT) {
       // Move to poison queue
       await poisonQueueClient.sendMessage(message.messageText);
@@ -317,12 +317,12 @@ async function processWithPoisonHandling(
 
 ```typescript
 async function processBatchWithExtension(queueClient: QueueClient): Promise<void> {
-  const response = await queueClient.receiveMessages({
+  const 响应 = await queueClient.receiveMessages({
     numberOfMessages: 1,
     visibilityTimeout: 60,
   });
 
-  const message = response.receivedMessageItems[0];
+  const message = 响应.receivedMessageItems[0];
   if (!message) return;
 
   let popReceipt = message.popReceipt;
@@ -380,7 +380,7 @@ const customQueueClient = new QueueClient(
 );
 ```
 
-## SAS Token Generation (Node.js only)
+## SAS 令牌 Generation (Node.js only)
 
 ### Generate Queue SAS
 
@@ -441,7 +441,7 @@ try {
         console.log("Queue not found");
         break;
       case 400:
-        console.log("Bad request - message too large or invalid");
+        console.log("Bad 请求 - message too large or invalid");
         break;
       case 403:
         console.log("Access denied");
@@ -525,7 +525,7 @@ import {
 | All message operations | ✅ | ✅ |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

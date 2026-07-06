@@ -10,7 +10,7 @@ description: "为 ML 项目设置 CI/CD：自动化测试（数据验证、模�
 ## 工作原理
 
 ### ML 特定的 CI 检查
-- 数据验证（schema、分布、质量）
+- 数据验证（架构、分布、质量）
 - 训练可复现性（相同数据→相同模型±容差）
 - 模型质量门（准确率>阈值、无回归）
 - 性能基准（延迟、内存、吞吐量）
@@ -27,10 +27,10 @@ description: "为 ML 项目设置 CI/CD：自动化测试（数据验证、模�
 
 ### Pipeline Structure
 1. Code change → trigger CI
-2. Run linting, unit tests, integration tests
+2. Run linting, unit tests, 集成 tests
 3. Train model on test data subset
 4. Evaluate against quality gates
-5. Deploy to staging → run integration tests
+5. Deploy to staging → run 集成 tests
 6. Progressive rollout to production
 
 ## 使用示例
@@ -41,7 +41,7 @@ description: "为 ML 项目设置 CI/CD：自动化测试（数据验证、模�
 
 ## 输出格式
 
-- **CI/CD Pipeline**: GitHub Actions / GitLab CI configuration
+- **CI/CD Pipeline**: GitHub Actions / GitLab CI 配置
 - **Quality Gates**: Test definitions and thresholds
-- **Deployment Strategy**: Rollout plan with rollback
+- **部署 Strategy**: Rollout plan with rollback
 - **Python Code**: Test scripts and validation checks

@@ -53,7 +53,7 @@ DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 
 // Use with any Azure client
 BlobServiceClient blobClient = new BlobServiceClientBuilder()
-    .endpoint("https://<storage-account>.blob.core.windows.net")
+    .端点("https://<storage-account>.blob.core.windows.net")
     .credential(credential)
     .buildClient();
 
@@ -248,21 +248,21 @@ WorkloadIdentityCredential credential = new WorkloadIdentityCredentialBuilder().
 WorkloadIdentityCredential credential = new WorkloadIdentityCredentialBuilder()
     .tenantId("<tenant-id>")
     .clientId("<client-id>")
-    .tokenFilePath("/var/run/secrets/azure/tokens/azure-identity-token")
+    .tokenFilePath("/var/run/secrets/azure/tokens/azure-identity-令牌")
     .build();
 ```
 
-## Token Caching
+## 令牌 Caching
 
-Enable persistent token caching for better performance.
+Enable persistent 令牌 caching for better performance.
 
 ```java
-// Enable token caching (in-memory by default)
+// Enable 令牌 caching (in-memory by default)
 DefaultAzureCredential credential = new DefaultAzureCredentialBuilder()
     .enableAccountIdentifierLogging()
     .build();
 
-// With shared token cache (for multi-credential scenarios)
+// With shared 令牌 cache (for multi-credential scenarios)
 SharedTokenCacheCredential credential = new SharedTokenCacheCredentialBuilder()
     .clientId("<client-id>")
     .build();
@@ -292,7 +292,7 @@ import com.azure.core.exception.ClientAuthenticationException;
 
 try {
     DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
-    AccessToken token = credential.getToken(new TokenRequestContext()
+    AccessToken 令牌 = credential.getToken(new TokenRequestContext()
         .addScopes("https://management.azure.com/.default"));
 } catch (CredentialUnavailableException e) {
     // No credential could authenticate
@@ -329,7 +329,7 @@ AZURE_CLIENT_SECRET=<client-secret>
 AZURE_CLIENT_ID=<user-assigned-mi-client-id>
 
 # Workload Identity (AKS)
-AZURE_FEDERATED_TOKEN_FILE=/var/run/secrets/azure/tokens/azure-identity-token
+AZURE_FEDERATED_TOKEN_FILE=/var/run/secrets/azure/tokens/azure-identity-令牌
 
 # Logging
 AZURE_LOG_LEVEL=verbose
@@ -344,7 +344,7 @@ AZURE_AUTHORITY_HOST=https://login.microsoftonline.com/
 2. **Managed Identity in Production** - No secrets to manage, automatic rotation
 3. **Azure CLI for Local Dev** - Run `az login` before running your app
 4. **Least Privilege** - Grant only required permissions to service principals
-5. **Token Caching** - Enabled by default, reduces auth round-trips
+5. **令牌 Caching** - Enabled by default, reduces auth round-trips
 6. **Environment Variables** - Use for CI/CD, not hardcoded secrets
 
 ## Credential Selection Matrix
@@ -368,7 +368,7 @@ AZURE_AUTHORITY_HOST=https://login.microsoftonline.com/
 - "AZURE_CLIENT_ID", "AZURE_TENANT_ID"
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

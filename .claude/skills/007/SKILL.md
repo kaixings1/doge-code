@@ -15,7 +15,7 @@ tags:
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -93,7 +93,7 @@ tools:
 
 ## 模式 6：事件响应
 
-**触发词**："事件"、"我被黑了"、"token泄露"、"我正在遭受攻击"
+**触发词**："事件"、"我被黑了"、"令牌泄露"、"我正在遭受攻击"
 激活事件响应手册，执行即时处置流程。
 
 ## 分析流程 — 6 个阶段
@@ -150,10 +150,10 @@ python C:\Users\renat\skills\007\scripts\surface_mapper.py --target <路径>
 
 | 威胁 | 问题 | 示例 |
 |--------|----------|---------|
-| **S**poofing（欺骗） | 有人能冒充他人吗？ | 被盗的 token、伪造的 webhook |
+| **S**poofing（欺骗） | 有人能冒充他人吗？ | 被盗的 令牌、伪造的 webhook |
 | **T**ampering（篡改） | 有人能在传输中更改数据/代码吗？ | 中间人攻击、SQL 注入 |
 | **R**epudiation（抵赖） | 有日志和操作可追溯性吗？ | 操作无审计追踪 |
-| **I**nformation Disclosure（信息泄露） | 数据、token、提示词可能泄露吗？ | 日志中的机密信息、URL 中的 PII |
+| **I**nformation Disclosure（信息泄露） | 数据、令牌、提示词可能泄露吗？ | 日志中的机密信息、URL 中的 PII |
 | **D**enial of Service（拒绝服务） | 会导致崩溃或产生无限成本吗？ | 代理循环、API 洪水攻击 |
 | **E**levation of Privilege（权限提升） | 能提升权限吗？ | IDOR、代理访问被禁止的工具 |
 
@@ -216,7 +216,7 @@ python C:\Users\renat\skills\007\scripts\threat_modeler.py --target <路径> --f
 #### API 专项
 - [ ] 所有端点都要求认证（health check 除外）
 - [ ] 按资源授权（RBAC/ABAC）
-- [ ] Payload 验证（schema、类型、大小）
+- [ ] 载荷 验证（架构、类型、大小）
 - [ ] 写入操作支持幂等性
 - [ ] 防重放保护（nonce、timestamp）
 - [ ] Webhook 签名已验证
@@ -226,7 +226,7 @@ python C:\Users\renat\skills\007\scripts\threat_modeler.py --target <路径> --f
 
 #### AI/代理
 - [ ] 防护提示词注入（robust system prompt）
-- [ ] 防护越狱（guardrails、content filter）
+- [ ] 防护越狱（guardrails、content 过滤器）
 - [ ] 代理间隔离（无交叉上下文访问）
 - [ ] 每个代理的工具数量受限（最小权限原则）
 - [ ] 每次执行的迭代/成本限制
@@ -273,7 +273,7 @@ python C:\Users\renat\skills\007\scripts\threat_modeler.py --target <路径> --f
 
 2. **技术护栏** — 编码实现的限制，防止滥用
    - 按用户/IP/代理限流
-   - Payload 最大大小限制
+   - 载荷 最大大小限制
    - 所有操作超时
    - 每次执行的预算上限（成本、tokens、时间）
 
@@ -312,7 +312,7 @@ python C:\Users\renat\skills\007\scripts\hardening_advisor.py --target <路径> 
 |---------|------|-----------|
 | 机密与凭证 | 20% | 机密管理、轮换、存储 |
 | 输入验证 | 15% | 清理、类型/大小验证 |
-| 认证与授权 | 15% | AuthN、AuthZ、RBAC、session management |
+| 认证与授权 | 15% | AuthN、AuthZ、RBAC、会话 management |
 | 数据防护 | 15% | 加密、PII 处理、数据分类 |
 | 韧性 | 10% | 错误处理、超时、熔断、备份 |
 | 监控 | 10% | 日志、告警、审计追踪、可观测性 |
@@ -412,14 +412,14 @@ python C:\Users\renat\skills\007\scripts\score_calculator.py --target <路径>
 
 激活 playbook：说 "incidente: [类型]" 或 "playbook: [类型]"
 
-## Playbook：Token/机密泄露
+## Playbook：令牌/机密泄露
 
 ```
 严重程度：严重
 响应时间：立即
 
 1. 遏制
-   - 立即撤销 token/密钥
+   - 立即撤销 令牌/密钥
    - 如果暴露在公开仓库：立即撤销，之后再恢复 commit
    - 检查同一 commit/文件中是否还有其他机密
 
@@ -514,7 +514,7 @@ python C:\Users\renat\skills\007\scripts\score_calculator.py --target <路径>
 2. 评估
    - 哪些 webhook 被错误接受？
    - 是否有基于伪造 webhook 的财务操作？
-   - 攻击者是否知道 endpoint 和格式？
+   - 攻击者是否知道 端点 和格式？
 
 3. 修复
    - 实现签名验证（HMAC）

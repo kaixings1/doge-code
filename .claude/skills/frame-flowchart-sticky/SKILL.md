@@ -29,7 +29,7 @@ od:
     reload: debounce-100
   design_system:
     requires: false
-  example_prompt: "Use the Sticky Flowchart Frame template to turn my content into a whiteboard-brainstorm frame with SVG curve connectors, sticky-note nodes, and cursor interaction. Preserve the template's visual signature, use real content and data, and avoid lorem ipsum or placeholder images."
+  example_prompt: "Use the Sticky Flowchart Frame template to turn my content into a whiteboard-brainstorm frame with SVG curve connectors, sticky-note nodes, and 游标 interaction. Preserve the template's visual signature, use real content and data, and avoid lorem ipsum or placeholder images."
   example_prompt_i18n:
     zh-CN: "用「便利贴流程图帧」模板把我的内容做成一段「SVG 曲线连接 + 便利贴节点 + 光标交互, 像白板 brainstorm」。保持模板的视觉签名，使用真实内容和数据，避免 lorem ipsum 和占位图片。"
 ---
@@ -51,7 +51,7 @@ od:
 - 复杂节点可有循环或分支: 同一节点连出 2 条 (分叉) 或 2 条进入一节点 (合并)。
 
 【可选交互】
-- 顶部 caption (sans, 12px uppercase): "FLOW · MIGRATION · 2026"。
+- 顶部 caption (sans, 12px uppercase): "FLOW · 迁移 · 2026"。
 - 鼠标 hover 节点: 抬起阴影 + scale 1.05, 用 CSS transition。
 - 一个"光标"装饰 (`<svg>` arrow + name tag), 浮在某节点旁, 模拟 figma 协作光标。
 

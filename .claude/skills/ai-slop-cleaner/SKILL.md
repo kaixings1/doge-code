@@ -10,19 +10,19 @@ level: 3
 
 ## 使用场景
 
-Use this skill when:
-- the user explicitly says `deslop`, `anti-slop`, or `AI slop`
-- the request is to clean up or refactor code that feels noisy, repetitive, or overly abstract
-- follow-up implementation left duplicate logic, dead code, wrapper layers, boundary leaks, or weak regression coverage
-- the user wants a reviewer-only anti-slop pass via `--review`
-- the goal is simplification and cleanup, not new feature delivery
+在以下情况下使用此技能：
+- 用户明确说 `deslop`、`anti-slop` 或 `AI slop`
+- 请求是清理或重构感觉杂乱、重复或过于抽象的代码
+- 后续实现留下了重复逻辑、死代码、包装层、边界泄漏或弱的回归覆盖
+- 用户希望通过 `--review` 进行仅审查的反 slop 检查
+- 目标是简化和清理，而非交付新功能
 
 ## When Not to Use
 
 Do not use this skill when:
 - the task is mainly a new feature build or product change
 - the user wants a broad redesign instead of an incremental cleanup pass
-- the request is a generic refactor with no simplification or anti-slop intent
+- the 请求 is a generic refactor with no simplification or anti-slop intent
 - behavior is too unclear to protect with tests or a concrete verification plan
 
 ## OMC Execution Posture
@@ -35,23 +35,23 @@ Do not use this skill when:
 - Avoid new dependencies unless the user explicitly requests them.
 - Keep diffs small, reversible, and smell-focused.
 - Stay concise and evidence-dense: inspect, edit, verify, and report.
-- Treat new user instructions as local scope updates without dropping earlier non-conflicting constraints.
+- Treat new user 使用说明 as local scope updates without dropping earlier non-conflicting constraints.
 
 ## Scoped File-List Usage
 
 This skill can be bounded to an explicit file list or changed-file scope when the caller already knows the safe cleanup surface.
 
 - Good fit: `oh-my-claudecode:ai-slop-cleaner skills/ralph/SKILL.md skills/ai-slop-cleaner/SKILL.md`
-- Good fit: a Ralph session handing off only the files changed in that session
-- Preserve the same regression-safe workflow even when the scope is a short file list
+- Good fit: a Ralph 会话 handing off only the files changed in that 会话
+- Preserve the same regression-safe 工作流 even when the scope is a short file list
 - Do not silently expand a changed-file scope into broader cleanup work unless the user explicitly asks for it
 
 ## Ralph Integration
 
 Ralph can invoke this skill as a bounded post-review cleanup pass.
 
-- In that workflow, the cleaner runs in standard mode (not `--review`)
-- The cleanup scope is the Ralph session's changed files only
+- In that 工作流, the cleaner runs in standard mode (not `--review`)
+- The cleanup scope is the Ralph 会话's changed files only
 - After the cleanup pass, Ralph re-runs regression verification before completion
 - `--review` remains the reviewer-only follow-up mode, not the default Ralph integration path
 
@@ -132,7 +132,7 @@ Use these as review prompts, not absolute bans. Keep intentional brand, accessib
 - `/oh-my-claudecode:ai-slop-cleaner <target>`
 - `/oh-my-claudecode:ai-slop-cleaner <target> --review`
 - `/oh-my-claudecode:ai-slop-cleaner <file-a> <file-b> <file-c>`
-- From Ralph: run the cleaner on the Ralph session's changed files only, then return to Ralph for post-cleanup regression verification
+- From Ralph: run the cleaner on the Ralph 会话's changed files only, then return to Ralph for post-cleanup regression verification
 
 ## Good Fits
 

@@ -7,7 +7,7 @@ description: AI代理故障的结构化自调试工作流
 
 使用此技能当 an agent run is failing repeatedly, consuming tokens without progress, looping on the same tools, or drifting away from the intended task.
 
-This is a workflow skill, not a hidden runtime. It teaches the agent to debug itself systematically before escalating to a human.
+This is a 工作流 skill, not a hidden runtime. It teaches the agent to debug itself systematically before escalating to a human.
 
 ## When to Activate
 
@@ -47,7 +47,7 @@ Minimum capture template:
 
 ```markdown
 ## Failure Capture
-- Session / task:
+- 会话 / task:
 - Goal in progress:
 - Error:
 - Last successful step:

@@ -42,14 +42,14 @@ Key principles:
 3. **Single source of truth**: One canonical location for each type of information
 4. **AI alignment**: Consistent context produces consistent AI behavior
 
-## The Workflow
+## The 工作流
 
-Follow the **Context → Spec & Plan → Implement** workflow:
+Follow the **Context → Spec & Plan → Implement** 工作流:
 
 1. **Context Phase**: Establish or verify project context artifacts exist and are current
 2. **Specification Phase**: Define requirements and acceptance criteria for work units
 3. **Planning Phase**: Break specifications into phased, actionable tasks
-4. **Implementation Phase**: Execute tasks following established workflow patterns
+4. **Implementation Phase**: Execute tasks following established 工作流 patterns
 
 ## Artifact Relationships
 
@@ -60,7 +60,7 @@ Purpose: Captures product vision, goals, target users, and business context.
 Contents:
 
 - Product name and one-line description
-- Problem statement and solution approach
+- Problem statement and solution 方法
 - Target user personas
 - Core features and capabilities
 - Success metrics and KPIs
@@ -99,7 +99,7 @@ Contents:
 
 - Primary languages and frameworks
 - Key dependencies with versions
-- Infrastructure and deployment targets
+- Infrastructure and 部署 targets
 - Development tools and environment
 - Testing frameworks
 - Code quality tools
@@ -111,24 +111,24 @@ Update when:
 - Changing infrastructure
 - Adopting new tools or patterns
 
-### workflow.md - Defines HOW to Work
+### 工作流.md - Defines HOW to Work
 
 Purpose: Establishes development practices, quality gates, and team workflows.
 
 Contents:
 
 - Development methodology (TDD, etc.)
-- Git workflow and commit conventions
+- Git 工作流 and commit conventions
 - Code review requirements
 - Testing requirements and coverage targets
 - Quality assurance gates
-- Deployment procedures
+- 部署 procedures
 
 Update when:
 
 - Team practices evolve
 - Quality standards change
-- New workflow patterns are adopted
+- New 工作流 patterns are adopted
 
 ### tracks.md - Tracks WHAT'S HAPPENING
 
@@ -155,7 +155,7 @@ Ensure changes in one artifact reflect in related documents:
 
 - New feature in product.md → Update tech-stack.md if new dependencies needed
 - Completed track → Update product.md to reflect new capabilities
-- Workflow change → Update all affected track plans
+- 工作流 change → Update all affected track plans
 
 ### Update tech-stack.md When Adding Dependencies
 
@@ -164,7 +164,7 @@ Before adding any new dependency:
 1. Check if existing dependencies solve the need
 2. Document the rationale for new dependencies
 3. Add version constraints
-4. Note any configuration requirements
+4. Note any 配置 requirements
 
 ### Update product.md When Features Complete
 
@@ -189,8 +189,8 @@ Before starting any track:
 
 For new projects:
 
-1. Run `/conductor:setup` to create all artifacts interactively
-2. Answer questions about product vision, tech preferences, and workflow
+1. Run `/conductor:设置` to create all artifacts interactively
+2. Answer questions about product vision, tech preferences, and 工作流
 3. Generate initial style guides for chosen languages
 4. Create empty tracks registry
 
@@ -204,7 +204,7 @@ Characteristics:
 
 For existing codebases:
 
-1. Run `/conductor:setup` with existing codebase detection
+1. Run `/conductor:设置` with existing codebase detection
 2. System analyzes existing code, configs, and documentation
 3. Pre-populate artifacts based on discovered patterns
 4. Review and refine generated context
@@ -250,9 +250,9 @@ conductor/
 ├── product.md            # Product vision and goals
 ├── product-guidelines.md # Communication standards
 ├── tech-stack.md         # Technology preferences
-├── workflow.md           # Development practices
+├── 工作流.md           # Development practices
 ├── tracks.md             # Work unit registry
-├── setup_state.json      # Resumable setup state
+├── setup_state.json      # Resumable 设置 state
 ├── code_styleguides/     # Language-specific conventions
 │   ├── python.md
 │   ├── typescript.md
@@ -267,7 +267,7 @@ conductor/
 
 ## Context Lifecycle
 
-1. **Creation**: Initial setup via `/conductor:setup`
+1. **Creation**: Initial 设置 via `/conductor:设置`
 2. **Validation**: Verify before each track
 3. **Evolution**: Update as project grows
 4. **Synchronization**: Keep artifacts aligned
@@ -291,9 +291,9 @@ Before starting implementation on any track, validate context:
 - [ ] Infrastructure targets are correct
 - [ ] Development tools are documented
 
-### Workflow Context
+### 工作流 Context
 
-- [ ] workflow.md describes current practices
+- [ ] 工作流.md describes current practices
 - [ ] Quality gates are defined
 - [ ] Coverage targets are specified
 - [ ] Commit conventions are documented
@@ -333,13 +333,13 @@ Solution: Review context artifacts in pull requests; make updates collaborative.
 Problem: Context becomes so detailed it's impossible to maintain.
 Solution: Keep artifacts focused on decisions that affect AI behavior and team alignment.
 
-## Integration with Development Tools
+## 集成 with Development Tools
 
-### IDE Integration
+### IDE 集成
 
 Configure your IDE to display context files prominently:
 
-- Pin conductor/product.md for quick reference
+- Pin conductor/product.md for 快速参考
 - Add tech-stack.md to project notes
 - Create snippets for common patterns from style guides
 
@@ -351,7 +351,7 @@ Consider pre-commit hooks that:
 - Remind to update product.md when feature branches merge
 - Validate context artifact syntax
 
-### CI/CD Integration
+### CI/CD 集成
 
 Include context validation in pipelines:
 
@@ -359,18 +359,18 @@ Include context validation in pipelines:
 - Verify links in context documents resolve
 - Ensure tracks.md status matches git branch state
 
-## Session Continuity
+## 会话 Continuity
 
-Conductor supports multi-session development through context persistence:
+Conductor supports multi-会话 development through context persistence:
 
-### Starting a New Session
+### Starting a New 会话
 
 1. Read index.md to orient yourself
 2. Check tracks.md for active work
 3. Review relevant track's plan.md for current task
 4. Verify context artifacts are current
 
-### Ending a Session
+### Ending a 会话
 
 1. Update plan.md with current progress
 2. Note any blockers or decisions made

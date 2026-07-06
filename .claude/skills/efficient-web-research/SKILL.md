@@ -2,12 +2,12 @@
 name: efficient-web-research
 risk: safe
 description: "Efficient Web Research — Efficient Web Research 相关功能和最佳实践"
-  Protocol for token-efficient web research. Use when accessing URLs, GitHub repos, or running search queries. Prevents full-page fetching waste.
+  Protocol for 令牌-efficient web research. Use when accessing URLs, GitHub repos, or running search queries. Prevents full-page fetching waste.
 ---
 
 # Efficient Web Research Skill
 
-A protocol for accessing web content in the most token-efficient, accurate, and structured way —
+A protocol for accessing web content in the most 令牌-efficient, accurate, and structured way —
 using the right tool at the right depth, and stopping as soon as the question is answerable.
 
 ---
@@ -16,7 +16,7 @@ using the right tool at the right depth, and stopping as soon as the question is
 
 > **Fetch the minimum needed to answer. Skim before you dive. Stop when you can answer.**
 
-Every unnecessary fetch wastes tokens and adds noise. This skill enforces a layered approach
+Every unnecessary fetch wastes tokens and adds noise. This skill enforces a layered 方法
 where you escalate fetch depth only when shallower layers fail.
 
 ---
@@ -29,7 +29,7 @@ Before fetching anything, identify what kind of input you received:
 |---|---|---|
 | GitHub repo URL | `github.com/user/repo` | [GitHub Protocol](#github-protocol) |
 | Specific page URL | `docs.python.org/3/library/os` | [URL Protocol](#url-protocol) |
-| Topic / query (no URL) | "how does RAFT consensus work" | [Search Protocol](#search-protocol) |
+| Topic / 查询 (no URL) | "how does RAFT consensus work" | [Search Protocol](#search-protocol) |
 | Multiple URLs | List of links | [Multi-URL Protocol](#multi-url-protocol) |
 | PDF / file link | `.pdf`, `.txt`, `.md` URL | [File Protocol](#file-protocol) |
 
@@ -46,7 +46,7 @@ github.com/{owner}/{repo}                → Repo root
 github.com/{owner}/{repo}/tree/{branch}  → Directory
 github.com/{owner}/{repo}/blob/{branch}/{path} → Single file
 github.com/{owner}/{repo}/issues/{n}     → Issue
-github.com/{owner}/{repo}/pull/{n}       → Pull request
+github.com/{owner}/{repo}/pull/{n}       → Pull 请求
 ```
 
 ### Step 2 — Use GitHub API (preferred over scraping)
@@ -84,7 +84,7 @@ Layer 3 (last resort):
   → Prioritize: main entry point, config files, key modules
 ```
 
-### Token Rules for GitHub
+### 令牌 Rules for GitHub
 
 - README alone answers ~70% of "what does this repo do" questions — always try it first
 - Never fetch more than 3 files in a single research turn
@@ -150,24 +150,24 @@ Extract and keep:
 
 ## Search Protocol
 
-Use when the user gives a topic, question, or query — not a specific URL.
+Use when the user gives a topic, question, or 查询 — not a specific URL.
 
-### Step 1 — Sharpen the Query Before Searching
+### Step 1 — Sharpen the 查询 Before Searching
 
-Do NOT search the raw user query. Transform it first:
+Do NOT search the raw user 查询. Transform it first:
 
 ```
 Raw: "how to deploy fastapi on aws"
-Sharpened: "fastapi AWS deployment tutorial 2024"
+Sharpened: "fastapi AWS 部署 tutorial 2024"
 
 Raw: "python async vs threads"
 Sharpened: "Python asyncio vs threading performance comparison"
 
 Raw: "best way to structure react project"
-Sharpened: "React project folder structure best practices"
+Sharpened: "React project folder structure 最佳实践"
 ```
 
-**Query sharpening rules:**
+**查询 sharpening rules:**
 - Add specificity: version numbers, technology names, "tutorial" / "guide" / "comparison"
 - Add recency if relevant: current year
 - Remove filler words: "how do I", "what is the", "can you explain"
@@ -176,7 +176,7 @@ Sharpened: "React project folder structure best practices"
 ### Step 2 — Search and Select
 
 ```
-1. Run search_web with the sharpened query
+1. Run search_web with the sharpened 查询
 2. Get results (titles + snippets)
 3. Scan titles + snippets ONLY — do not fetch yet
 4. Pick the TOP 1-2 most relevant results (max 3 in complex cases)
@@ -189,9 +189,9 @@ Sharpened: "React project folder structure best practices"
 Apply the URL Protocol (above) to each selected URL.
 Process results one at a time — only fetch the second URL if the first didn't answer the question.
 
-### Token Rules for Search
+### 令牌 Rules for Search
 
-- Never read more than 3 URLs per search query
+- Never read more than 3 URLs per search 查询
 - If the snippet already contains the answer → do NOT fetch the full page, use the snippet
 - For factual questions (dates, names, simple facts) → snippet is usually enough
 - For procedural questions (how to do X) → fetch 1 relevant page, targeted section only
@@ -218,7 +218,7 @@ Use when URL points directly to a file (PDF, .txt, .md, .csv, etc.)
 
 - `.md` / `.txt` / `.csv` → `read_url_content` works directly, read full content
 - `.pdf` → Use browser_subagent or a PDF extraction tool; extract text only
-- `.json` / `.yaml` → `read_url_content`, parse structure, summarize schema + key values
+- `.json` / `.yaml` → `read_url_content`, parse structure, summarize 架构 + key values
 - Large files (>500 lines) → Read first 100 lines + last 20 lines + search for relevant sections
 
 ---
@@ -229,8 +229,8 @@ Use when URL points directly to a file (PDF, .txt, .md, .csv, etc.)
 |---|---|---|
 | Fetching full page for a simple fact | Wastes 1000s of tokens | Use snippet or targeted anchor |
 | Using browser_subagent for static sites | Very expensive | Use read_url_content first |
-| Searching with the raw user query | Vague results | Sharpen query first |
-| Fetching 5+ search results | Token explosion | Max 3, stop when answered |
+| Searching with the raw user 查询 | Vague results | Sharpen 查询 first |
+| Fetching 5+ search results | 令牌 explosion | Max 3, stop when answered |
 | Dumping raw HTML into context | Noisy, wasteful | Always strip to Markdown |
 | Fetching "just in case" | Unnecessary tokens | Only fetch what's needed to answer |
 | Re-fetching the same URL | Redundant | Cache result in context, reuse |
@@ -238,7 +238,7 @@ Use when URL points directly to a file (PDF, .txt, .md, .csv, etc.)
 
 ---
 
-## Decision Flowchart (Quick Reference)
+## Decision Flowchart (快速参考)
 
 ```
 Input received
@@ -256,8 +256,8 @@ Input received
 │   ├─ Still need more? → Full fetch, stripped
 │   └─ JS-rendered / broken? → browser_subagent (last resort)
 │
-├─ Topic/query?
-│   ├─ Sharpen query
+├─ Topic/查询?
+│   ├─ Sharpen 查询
 │   ├─ search_web → scan snippets
 │   ├─ Snippet enough? → Answer from snippet, STOP
 │   ├─ Need more? → Fetch top 1 result (targeted)
@@ -273,10 +273,10 @@ Input received
 
 ## Output Format Rules
 
-After fetching, structure your response as:
+After fetching, structure your 响应 as:
 
 ```
-Source: [URL or "Web search for: query"]
+Source: [URL or "Web search for: 查询"]
 Summary: [2-5 sentences of what was found]
 Answer: [Direct answer to user's question]
 Confidence: [High / Medium / Low — based on source quality]
@@ -297,9 +297,9 @@ Never output:
 
 ---
 
-## Token Budget Guide
+## 令牌 Budget Guide
 
-| Operation | Approximate token cost | When to use |
+| 操作 | Approximate 令牌 cost | 使用场景 |
 |---|---|---|
 | GitHub README fetch | ~300–800 tokens | Always first for repos |
 | GitHub API metadata | ~200 tokens | Always for repos |
@@ -317,4 +317,4 @@ Never output:
 
 - **JavaScript Reliance**: Standard fetching may not fully render Single Page Applications (SPAs). You must fallback to `browser_subagent` for these, which is slower and more expensive.
 - **Paywalls & Protections**: This skill cannot bypass CAPTCHAs, bot protections (e.g., strict Cloudflare rules), or hard paywalls.
-- **GitHub API Limits**: Frequent GitHub API requests without authentication may hit rate limits.
+- **GitHub API Limits**: Frequent GitHub API requests without 认证 may hit rate limits.

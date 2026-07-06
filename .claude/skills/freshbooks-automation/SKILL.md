@@ -130,7 +130,15 @@ requires:
 
 ## 快速参考
 
-| 工具 Slug | 描述 |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
+| 工具 标识符 | 描述 |
 |-----------|-------------|
 | `FRESHBOOKS_LIST_BUSINESSES` | 列出已认证用户的所有业务 |
 | `FRESHBOOKS_LIST_PROJECTS` | 列出业务的项目，支持筛选和排序 |

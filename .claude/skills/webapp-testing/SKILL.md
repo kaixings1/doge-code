@@ -90,7 +90,7 @@ with sync_playwright() as p:
 
 ## 参考文件
 
-- **examples/** - 展示常见模式的示例：
+- **示例/** - 展示常见模式的示例：
   - `element_discovery.py` - 发现页面上的按钮、链接和输入框
   - `static_html_automation.py` - 使用 file:// URL 处理本地 HTML
   - `console_logging.py` - 在自动化过程中捕获控制台日志

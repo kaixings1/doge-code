@@ -1,5 +1,5 @@
 ---
-name: tdd-workflow
+name: tdd-工作流
 description: 在编写新功能、修复 Bug 或重构代码时使用。强制执行测试驱动开发，要求 80%+ 覆盖率，包括单元测试、集成测试和 E2E 测试。
 ---
 
@@ -62,11 +62,11 @@ For each user journey, create comprehensive test cases:
 
 ```typescript
 describe('Semantic Search', () => {
-  it('returns relevant markets for query', async () => {
+  it('returns relevant markets for 查询', async () => {
     // Test implementation
   })
 
-  it('handles empty query gracefully', async () => {
+  it('handles empty 查询 gracefully', async () => {
     // Test edge case
   })
 
@@ -91,7 +91,7 @@ Write minimal code to make tests pass:
 
 ```typescript
 // Implementation guided by tests
-export async function searchMarkets(query: string) {
+export async function searchMarkets(查询: string) {
   // Implementation here
 }
 ```
@@ -151,25 +151,25 @@ import { GET } from './route'
 
 describe('GET /api/markets', () => {
   it('returns markets successfully', async () => {
-    const request = new NextRequest('http://localhost/api/markets')
-    const response = await GET(request)
-    const data = await response.json()
+    const 请求 = new NextRequest('http://localhost/api/markets')
+    const 响应 = await GET(请求)
+    const data = await 响应.json()
 
-    expect(response.status).toBe(200)
+    expect(响应.status).toBe(200)
     expect(data.success).toBe(true)
     expect(Array.isArray(data.data)).toBe(true)
   })
 
-  it('validates query parameters', async () => {
-    const request = new NextRequest('http://localhost/api/markets?limit=invalid')
-    const response = await GET(request)
+  it('validates 查询 parameters', async () => {
+    const 请求 = new NextRequest('http://localhost/api/markets?limit=invalid')
+    const 响应 = await GET(请求)
 
-    expect(response.status).toBe(400)
+    expect(响应.status).toBe(400)
   })
 
   it('handles database errors gracefully', async () => {
     // Mock database failure
-    const request = new NextRequest('http://localhost/api/markets')
+    const 请求 = new NextRequest('http://localhost/api/markets')
     // Test error handling
   })
 })
@@ -179,7 +179,7 @@ describe('GET /api/markets', () => {
 ```typescript
 import { test, expect } from '@playwright/test'
 
-test('user can search and filter markets', async ({ page }) => {
+test('user can search and 过滤器 markets', async ({ page }) => {
   // Navigate to markets page
   await page.goto('/')
   await page.click('a[href="/markets"]')
@@ -201,7 +201,7 @@ test('user can search and filter markets', async ({ page }) => {
   const firstResult = results.first()
   await expect(firstResult).toContainText('election', { ignoreCase: true })
 
-  // Filter by status
+  // 过滤器 by status
   await page.click('button:has-text("Active")')
 
   // Verify filtered results
@@ -244,7 +244,7 @@ src/
 │   └── api/
 │       └── markets/
 │           ├── route.ts
-│           └── route.test.ts         # Integration tests
+│           └── route.test.ts         # 集成 tests
 └── e2e/
     ├── markets.spec.ts               # E2E tests
     ├── trading.spec.ts
@@ -273,7 +273,7 @@ jest.mock('@/lib/supabase', () => ({
 ```typescript
 jest.mock('@/lib/redis', () => ({
   searchMarketsByVector: jest.fn(() => Promise.resolve([
-    { slug: 'test-market', similarity_score: 0.95 }
+    { 标识符: 'test-market', similarity_score: 0.95 }
   ])),
   checkRedisHealth: jest.fn(() => Promise.resolve({ connected: true }))
 }))

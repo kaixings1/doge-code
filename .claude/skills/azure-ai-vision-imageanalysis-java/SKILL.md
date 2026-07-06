@@ -29,11 +29,11 @@ import com.azure.ai.vision.imageanalysis.ImageAnalysisClient;
 import com.azure.ai.vision.imageanalysis.ImageAnalysisClientBuilder;
 import com.azure.core.credential.KeyCredential;
 
-String endpoint = System.getenv("VISION_ENDPOINT");
+String 端点 = System.getenv("VISION_ENDPOINT");
 String key = System.getenv("VISION_KEY");
 
 ImageAnalysisClient client = new ImageAnalysisClientBuilder()
-    .endpoint(endpoint)
+    .端点(端点)
     .credential(new KeyCredential(key))
     .buildClient();
 ```
@@ -44,7 +44,7 @@ ImageAnalysisClient client = new ImageAnalysisClientBuilder()
 import com.azure.ai.vision.imageanalysis.ImageAnalysisAsyncClient;
 
 ImageAnalysisAsyncClient asyncClient = new ImageAnalysisClientBuilder()
-    .endpoint(endpoint)
+    .端点(端点)
     .credential(new KeyCredential(key))
     .buildAsyncClient();
 ```
@@ -55,7 +55,7 @@ ImageAnalysisAsyncClient asyncClient = new ImageAnalysisClientBuilder()
 import com.azure.identity.DefaultAzureCredentialBuilder;
 
 ImageAnalysisClient client = new ImageAnalysisClientBuilder()
-    .endpoint(endpoint)
+    .端点(端点)
     .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
@@ -291,7 +291,7 @@ Caption and Dense Captions require GPU-supported regions. Check [supported regio
 - "detect people image"
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

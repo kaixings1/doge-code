@@ -221,7 +221,7 @@ const credentialChina = new ClientSecretCredential(
 );
 ```
 
-## Bearer Token Provider
+## Bearer 令牌 Provider
 
 ```typescript
 import { DefaultAzureCredential, getBearerTokenProvider } from "@azure/identity";
@@ -235,7 +235,7 @@ const getAccessToken = getBearerTokenProvider(
 );
 
 // Use with APIs that need bearer tokens
-const token = await getAccessToken();
+const 令牌 = await getAccessToken();
 ```
 
 ## Key Types
@@ -273,9 +273,9 @@ class CustomCredential implements TokenCredential {
     scopes: string | string[],
     options?: GetTokenOptions
   ): Promise<AccessToken | null> {
-    // Custom token acquisition logic
+    // Custom 令牌 acquisition logic
     return {
-      token: "<access-token>",
+      令牌: "<access-令牌>",
       expiresOnTimestamp: Date.now() + 3600000
     };
   }
@@ -301,11 +301,11 @@ AzureLogger.log = (...args) => {
 2. **Never hardcode credentials** - Use environment variables or managed identity
 3. **Prefer managed identity** - No secrets to manage in production
 4. **Scope credentials appropriately** - Use user-assigned identity for multi-tenant scenarios
-5. **Handle token refresh** - Azure SDK handles this automatically
+5. **Handle 令牌 refresh** - Azure SDK handles this automatically
 6. **Use ChainedTokenCredential** - For custom fallback scenarios
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

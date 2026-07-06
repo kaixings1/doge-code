@@ -4,7 +4,7 @@ description: Antigravity 会话的取证根因分析器：范围偏差、返工�
 risk: unknown
 source: community
 version: "1.0"
-tags: [analysis, diagnostics, meta, root-cause, project-health, session-review]
+tags: [analysis, diagnostics, meta, root-cause, project-health, 会话-review]
 ---
 
 # /analyze-project — 根因分析工作流
@@ -13,7 +13,7 @@ Analyze AI-assisted coding sessions in `~/.gemini/antigravity/brain/` and produc
 
 ## Goal
 
-For each session, determine:
+For each 会话, determine:
 
 1. What changed from the initial ask to the final executed work
 2. Whether the main cause was:

@@ -103,7 +103,7 @@ Run a quality gate (10+ test cases) before promoting any new model.
 
 ---
 
-## 2. Token Scoring (100 Points)
+## 2. 令牌 Scoring (100 Points)
 
 ### Base Criteria
 
@@ -113,7 +113,7 @@ Run a quality gate (10+ test cases) before promoting any new model.
 | Market Cap | 20% | >$10M excellent, $1-10M good, $500K-1M acceptable |
 | 24h Volume | 20% | >$1M excellent, $500K-1M good, $100-500K acceptable |
 | Social Metrics | 15% | Multi-platform active, 2+ platforms, 1 platform |
-| Token Age | 10% | Established >6mo, moderate 1-6mo, new <1mo |
+| 令牌 Age | 10% | Established >6mo, moderate 1-6mo, new <1mo |
 | Team Transparency | 10% | Doxxed + active, partial, anonymous |
 
 ### Catalyst Adjustments
@@ -139,7 +139,7 @@ team controversy -10, deployer dump >50% in 7 days -10 to -15.
 
 ## 3. Wallet Forensics
 
-Run on every token scoring 70+. This differentiates serious BD agents from
+Run on every 令牌 scoring 70+. This differentiates serious BD agents from
 simple scanners.
 
 ### 5-Step Deployer Analysis
@@ -191,9 +191,9 @@ tracking + code verification scores + agent verification systems.
 → 6. Human Approved → 7. Sent → 8. Responded → 9. Negotiating → 10. Listed
 
 ### 必需 Data for Entry
-- Contract address (verified — NEVER rely on token name alone)
+- Contract address (verified — NEVER rely on 令牌 name alone)
 - Pair address from DEX aggregator
-- Token age from pair creation date
+- 令牌 age from pair creation date
 - Current liquidity
 - Working social links
 - Team contact method

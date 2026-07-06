@@ -11,7 +11,7 @@ Analyzes your local git repository and categorizes branches/worktrees into:
 - **Theme-related**: Groups of branches working on similar functionality
 - **Keep**: Active work with unpushed commits or untracked local branches
 
-The skill uses a gated workflow requiring explicit user confirmation before any deletions.
+The skill uses a gated 工作流 requiring explicit user confirmation before any deletions.
 
 ## 使用场景
 

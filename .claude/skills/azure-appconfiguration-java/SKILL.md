@@ -51,7 +51,7 @@ Or use Azure SDK BOM:
 ## 环境变量
 
 ```bash
-AZURE_APPCONFIG_CONNECTION_STRING=Endpoint=https://<store>.azconfig.io;Id=<id>;Secret=<secret>
+AZURE_APPCONFIG_CONNECTION_STRING=端点=https://<store>.azconfig.io;Id=<id>;Secret=<secret>
 AZURE_APPCONFIG_ENDPOINT=https://<store>.azconfig.io
 ```
 
@@ -85,7 +85,7 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 
 ConfigurationClient configClient = new ConfigurationClientBuilder()
     .credential(new DefaultAzureCredentialBuilder().build())
-    .endpoint(System.getenv("AZURE_APPCONFIG_ENDPOINT"))
+    .端点(System.getenv("AZURE_APPCONFIG_ENDPOINT"))
     .buildClient();
 ```
 
@@ -142,20 +142,20 @@ System.out.println("Last Modified: " + setting.getLastModified());
 ### Conditional Get (If Changed)
 
 ```java
-import com.azure.core.http.rest.Response;
+import com.azure.core.http.rest.响应;
 import com.azure.core.util.Context;
 
-Response<ConfigurationSetting> response = configClient.getConfigurationSettingWithResponse(
+响应<ConfigurationSetting> 响应 = configClient.getConfigurationSettingWithResponse(
     setting,      // Setting with ETag
     null,         // Accept datetime
     true,         // ifChanged - only fetch if modified
     Context.NONE
 );
 
-if (response.getStatusCode() == 304) {
+if (响应.getStatusCode() == 304) {
     System.out.println("Setting not modified");
 } else {
-    ConfigurationSetting updated = response.getValue();
+    ConfigurationSetting updated = 响应.getValue();
 }
 ```
 
@@ -173,7 +173,7 @@ ConfigurationSetting updated = configClient.setConfigurationSetting(
 
 ```java
 // Only update if ETag matches (no concurrent modifications)
-Response<ConfigurationSetting> response = configClient.setConfigurationSettingWithResponse(
+响应<ConfigurationSetting> 响应 = configClient.setConfigurationSettingWithResponse(
     setting,     // Setting with current ETag
     true,        // ifUnchanged
     Context.NONE
@@ -192,14 +192,14 @@ ConfigurationSetting deleted = configClient.deleteConfigurationSetting(
 ### Conditional Delete
 
 ```java
-Response<ConfigurationSetting> response = configClient.deleteConfigurationSettingWithResponse(
+响应<ConfigurationSetting> 响应 = configClient.deleteConfigurationSettingWithResponse(
     setting,     // Setting with ETag
     true,        // ifUnchanged
     Context.NONE
 );
 ```
 
-## List and Filter Settings
+## List and 过滤器 Settings
 
 ### List by Key Pattern
 
@@ -470,7 +470,7 @@ try {
 | Troubleshooting | https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/appconfiguration/azure-data-appconfiguration/TROUBLESHOOTING.md |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

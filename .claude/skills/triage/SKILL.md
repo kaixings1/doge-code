@@ -40,7 +40,7 @@ disable-model-invocation: true
 
 每个分类的问题应恰好携带一个类别角色和一个状态角色。如果状态角色冲突，请标记并询问维护者后再执行任何操作。
 
-这些是规范的角色名称 — 问题跟踪器中使用的实际标签字符串可能不同。映射应该已提供给您 - 如果没有，请运行`/setup-matt-pocock-skills`。
+这些是规范的角色名称 — 问题跟踪器中使用的实际标签字符串可能不同。映射应该已提供给您 - 如果没有，请运行`/设置-matt-pocock-skills`。
 
 状态转换：未标记的问题通常首先转到`needs-triage`；从那里移动到`needs-info`、`ready-for-agent`、`ready-for-human`或`wontfix`。`needs-info`在报告者回复后返回到`needs-triage`。维护者可以随时覆盖 — 标记看起来不寻常的转换并在继续之前询问。
 

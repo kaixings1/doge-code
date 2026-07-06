@@ -23,7 +23,7 @@ You have a wallet. When you need a capability you lack, you pay for it autonomou
 | Second opinion | GPT-5.2 | $1.75/M input, $14/M output |
 | Cheaper processing | DeepSeek | $0.14/M input, $0.28/M output |
 
-**How it works:** BlockRun uses x402 micropayments to route your requests to OpenAI, xAI, Google, and other providers. No API keys needed - your wallet pays per token.
+**How it works:** BlockRun uses x402 micropayments to route your requests to OpenAI, xAI, Google, and other providers. No API keys needed - your wallet pays per 令牌.
 
 ## Budget Control (Optional)
 
@@ -256,7 +256,7 @@ All LLM costs are per million tokens (M = 1,000,000 tokens).
 
 ## 设置 & Funding
 
-**Wallet location:** `$HOME/.blockrun/.session` (e.g., `/Users/username/.blockrun/.session`)
+**Wallet location:** `$HOME/.blockrun/.会话` (e.g., `/Users/username/.blockrun/.会话`)
 
 **First-time setup:**
 1. Wallet auto-creates when `setup_agent_wallet()` is called

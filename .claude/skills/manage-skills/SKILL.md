@@ -13,7 +13,7 @@ You can manage skills and rules for all major AI coding tools directly from the 
 
 ## 使用场景
 
-Use this skill when the user wants to inspect, create, edit, enable, disable, copy, move, or delete local AI-agent skills or rule files across supported coding tools.
+当用户想要检查、创建、编辑、启用、禁用、复制、移动或删除跨支持编码工具的本地 AI 代理技能或规则文件时使用此技能。
 
 ## Supported Tools & Paths
 

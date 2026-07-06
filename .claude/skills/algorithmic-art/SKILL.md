@@ -23,11 +23,11 @@ To begin, create an ALGORITHMIC PHILOSOPHY (not static images or templates) that
 - Parametric variation and controlled chaos
 
 ### THE CRITICAL UNDERSTANDING
-- What is received: Some subtle input or instructions by the user to take into account, but use as a foundation; it should not constrain creative freedom.
+- What is received: Some subtle input or 使用说明 by the user to take into account, but use as a foundation; it should not constrain creative freedom.
 - What is created: An algorithmic philosophy/generative aesthetic movement.
 - What happens next: The same version receives the philosophy and EXPRESSES IT IN CODE - creating p5.js sketches that are 90% algorithmic generation, 10% essential parameters.
 
-考虑 this approach:
+考虑 this 方法:
 - Write a manifesto for a generative art movement
 - The next phase involves writing the algorithm that brings it to life
 
@@ -57,7 +57,7 @@ The philosophy must guide the next version to express ideas ALGORITHMICALLY, not
 
 **"Organic Turbulence"**
 Philosophy: Chaos constrained by natural law, order emerging from disorder.
-Algorithmic expression: Flow fields driven by layered Perlin noise. Thousands of particles following vector forces, their trails accumulating into organic density maps. Multiple noise octaves create turbulent regions and calm zones. Color emerges from velocity and density - fast particles burn bright, slow ones fade to shadow. The algorithm runs until equilibrium - a meticulously tuned balance where every parameter was refined through countless iterations by a master of computational aesthetics.
+Algorithmic expression: Flow fields driven by layered Perlin noise. Thousands of particles following vector forces, their trails accumulating into organic density maps. Multiple noise octaves create turbulent regions and calm zones. Color emerges from velocity and density - fast particles burn bright, slow ones fade to shadow. The algorithm runs until equilibrium - a meticulously tuned balance where every 参数 was refined through countless iterations by a master of computational aesthetics.
 
 **"Quantum Harmonics"**
 Philosophy: Discrete entities exhibiting wave-like interference patterns.

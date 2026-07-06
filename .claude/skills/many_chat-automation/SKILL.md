@@ -5,7 +5,7 @@ requires:
   mcp: [rube]
 ---
 
-# 通过 Rube MCP 实现 ManyChat 自动化
+# ManyChat 自动化
 
 通过 Rube MCP 经 Composio 的 ManyChat 工具包自动化 ManyChat 操作。
 
@@ -15,7 +15,7 @@ requires:
 
 - 必须连接 Rube MCP（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 使用 `many_chat` 工具包激活 ManyChat 连接
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前 tool schema
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前 tool 架构
 
 ## 设置
 
@@ -38,7 +38,7 @@ RUBE_SEARCH_TOOLS: queries=[{"use_case": "chatbot flows, subscribers, broadcasts
 - ManyChat 的可用工具标识
 - 推荐的执行计划步骤
 - 已知陷阱和边界情况
-- 每个工具的输入 schema
+- 每个工具的输入 架构
 
 ## 核心工作流
 
@@ -47,10 +47,10 @@ RUBE_SEARCH_TOOLS: queries=[{"use_case": "chatbot flows, subscribers, broadcasts
 ```
 RUBE_SEARCH_TOOLS:
   queries:
-    - use_case: "list all available ManyChat tools and capabilities"
+    - use_case: "list all available ManyChat tools and 能力"
 ```
 
-在继续之前审查返回的工具、其描述和输入 schema。
+在继续之前审查返回的工具、其描述和输入 架构。
 
 ### 2. 执行 ManyChat 操作
 
@@ -60,7 +60,7 @@ RUBE_SEARCH_TOOLS:
 RUBE_MULTI_EXECUTE_TOOL:
   tools:
     - tool_slug: "<discovered_tool_slug>"
-      arguments: {<schema-compliant arguments>}
+      arguments: {<架构-compliant arguments>}
   memory: {}
   sync_response_to_workbench: false
 ```
@@ -92,10 +92,10 @@ RUBE_MULTI_EXECUTE_TOOL:
 
 ## 已知陷阱
 
-- **始终先搜索工具**：工具 schema 和可用操作可能变化。未经通过 `RUBE_SEARCH_TOOLS` 发现，切勿硬编码工具标识。
+- **始终先搜索工具**：工具 架构 和可用操作可能变化。未经通过 `RUBE_SEARCH_TOOLS` 发现，切勿硬编码工具标识。
 - **检查连接状态**：在执行任何工具之前确保 ManyChat 连接处于 ACTIVE 状态。过期的 OAuth 令牌需要重新认证。
 - **遵守速率限制**：如果收到速率限制错误，降低请求频率并实现退避策略。
-- **验证 Schema**：始终传递严格符合 schema 的参数。当返回 `schemaRef` 而非 `input_schema` 时，使用 `RUBE_GET_TOOL_SCHEMAS` 加载完整的输入 schema。
+- **验证 架构**：始终传递严格符合 架构 的参数。当返回 `schemaRef` 而非 `input_schema` 时，使用 `RUBE_GET_TOOL_SCHEMAS` 加载完整的输入 架构。
 
 ## 快速参考
 

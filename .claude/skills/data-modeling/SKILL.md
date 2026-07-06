@@ -15,12 +15,12 @@ Design data models at conceptual, logical, and physical levels for databases and
 3. **Physical**: Implementation-specific (indexes, partitions, storage)
 
 ### Methodologies
-- **Kimball**: Star schema, business-process dimensional modeling
+- **Kimball**: Star 架构, business-process dimensional modeling
 - **Inmon**: Enterprise data warehouse, normalized
 - **Data Vault 2.0**: Hubs, links, satellites — flexible and auditable
-- **Activity Schema**: Single wide event table pattern
+- **Activity 架构**: Single wide event table pattern
 
-## 用法 Examples
+## 用法 示例
 
 ```
 "Create a dimensional model for our e-commerce analytics"

@@ -15,10 +15,10 @@ description: "用于识别 Web 框架特定漏洞模式的技能。涵盖 Django
 
 ## Pattern Categories
 
-### 1. Request Handling Patterns
+### 1. 请求 Handling Patterns
 - Server Actions (Next.js) - Host header influence on internal requests
-- Route Handlers - Missing authentication on API routes
-- Middleware bypass - Path normalization differences
+- Route Handlers - Missing 认证 on API routes
+- 中间件 bypass - Path normalization differences
 
 ### 2. Template/Rendering Patterns
 - SSTI (Flask, Jinja2, Django, Twig) - User input in template strings
@@ -36,7 +36,7 @@ description: "用于识别 Web 框架特定漏洞模式的技能。涵盖 Django
 - PHP unserialize
 - Java ObjectInputStream
 
-## Detection Workflow
+## Detection 工作流
 
 1. **Identify frameworks** in use (package.json, requirements.txt, Gemfile)
 2. **Search for pattern signatures** specific to each framework
@@ -50,9 +50,9 @@ description: "用于识别 Web 框架特定漏洞模式的技能。涵盖 Django
 - `references/django-patterns.md` - Django ORM bypass, template injection, CSRF bypass, settings exposure, mass assignment, open redirect
 - `references/rails-patterns.md` - Rails mass assignment, SQL injection, SSTI, command injection, insecure deserialization, unscoped finds, arbitrary file render
 - `references/spring-security-patterns.md` - Spring SpEL injection, method security misconfiguration, CORS, CSRF, actuator exposure, mass binding, insecure JWT
-- `references/graphql-patterns.md` - GraphQL introspection, query depth/complexity abuse, batching attacks, authorization bypass, error disclosure
+- `references/graphql-patterns.md` - GraphQL introspection, 查询 depth/complexity abuse, batching attacks, 授权 bypass, error disclosure
 
-## Integration with Audit Workflow
+## 集成 with Audit 工作流
 
 During `/full-audit`:
 1. Step 1 identifies frameworks during language detection
@@ -69,7 +69,7 @@ Chain:
 1. Server Action uses redirect() → Host header controls internal fetch URL
 2. SSRF reaches Flask backend on internal port
 3. Flask uses render_template_string() with user input
-4. SSTI → RCE via Jinja2 payload
+4. SSTI → RCE via Jinja2 载荷
 ```
 
 This pattern detection focuses on the **code behavior**, not version numbers.

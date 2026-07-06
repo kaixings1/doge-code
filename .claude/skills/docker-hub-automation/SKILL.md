@@ -46,7 +46,7 @@ Inputs:
   - company: string (optional) -- company name associated with the org
 ```
 
-**Note:** 需要 JWT authentication obtained via `/v2/users/login` and may have restricted access.
+**Note:** 需要 JWT 认证 obtained via `/v2/users/login` and may have restricted access.
 
 ### 3. Get Organization Details and Repositories
 
@@ -110,7 +110,7 @@ Tool: DOCKER_HUB_CREATE_WEBHOOK
 
 | /u9677/u9631 | /u8be6/u60c5 |
 |---------|--------|
-| JWT authentication | `DOCKER_HUB_CREATE_ORGANIZATION` requires JWT auth from `/v2/users/login` -- standard API tokens may not suffice. |
+| JWT 认证 | `DOCKER_HUB_CREATE_ORGANIZATION` requires JWT auth from `/v2/users/login` -- standard API tokens may not suffice. |
 | Private repo limits | Creating private repos (`is_private: true`) requires a paid Docker Hub plan. |
 | Org name constraints | Organization names must be lowercase, at least 2 characters, containing only letters, numbers, `.`, `_`, or `-`. |
 | Webhook two-step | `DOCKER_HUB_CREATE_WEBHOOK` is a two-step process: first create the webhook with a name, then add a hook URL to it. |
@@ -120,7 +120,7 @@ Tool: DOCKER_HUB_CREATE_WEBHOOK
 
 ## /u5feb/u901f/u53c2/u8003
 
-| /u5de5/u5177 Slug | /u63cf/u8ff0 |
+| /u5de5/u5177 标识符 | /u63cf/u8ff0 |
 |-----------|-------------|
 | `DOCKER_HUB_LIST_ORGANIZATIONS` | List orgs the user belongs to |
 | `DOCKER_HUB_CREATE_ORGANIZATION` | Create a new Docker Hub organization |

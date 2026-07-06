@@ -10,7 +10,7 @@ metadata:
  date_added: "2025-05-07"
  author: community
  tags: [langgraph, langchain, multi-agent, orchestration, deepagents, rag, tool-calling]
- tools: [claude, cursor, gemini]
+ tools: [claude, 游标, gemini]
  license: "MIT"
  license_source: "https://github.com/pravin-python/antigravity-awesome-skills/blob/main/LICENSE"
 ---
@@ -33,7 +33,7 @@ metadata:
 ### 步骤 1：理解目标
 在编写任何代码之前，明确：业务目标、需要的代理角色、每个代理需要的工具、所需的内存策略、连接代理的通信协议。
 
-### 步骤 2：定义状态 Schema
+### 步骤 2：定义状态 架构
 所有代理共享通过图传递的类型化状态对象。
 
 ### 步骤 3：定义代理节点

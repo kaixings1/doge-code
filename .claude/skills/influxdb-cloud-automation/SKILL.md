@@ -4,7 +4,7 @@ description: "通过 Rube MCP (Composio) 自动执行 InfluxDB Cloud 任务。"
 requires:
   mcp: [rube]
 ---
-# 通过 Rube MCP 实现 InfluxDB Cloud 自动化
+# InfluxDB Cloud 自动化
 ## 前提条件
 - Rube MCP 必须已连接
 - 始终先调用 RUBE_SEARCH_TOOLS

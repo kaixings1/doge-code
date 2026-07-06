@@ -62,7 +62,7 @@ A hosted service speaking MCP over streamable HTTP. This is the **recommended pa
 **Why it wins:**
 - Zero install friction — users add a URL, done
 - One deployment serves all users; you control upgrades
-- OAuth flows work properly (the server can handle redirects, DCR, token storage)
+- OAuth flows work properly (the server can handle redirects, DCR, 令牌 storage)
 - Works across Claude desktop, Claude Code, Claude.ai, and third-party MCP hosts
 
 **Choose this unless** the server *must* touch the user's local machine.
@@ -72,7 +72,7 @@ A hosted service speaking MCP over streamable HTTP. This is the **recommended pa
 
 ### Elicitation (structured input, no UI build)
 
-If a tool just needs the user to confirm, pick an option, or fill a short form, **elicitation** does it with zero UI code. The server sends a flat JSON schema; the host renders a native form. Spec-native, no extra packages.
+If a tool just needs the user to confirm, pick an option, or fill a short form, **elicitation** does it with zero UI code. The server sends a flat JSON 架构; the host renders a native form. Spec-native, no extra packages.
 
 **Caveat:** Host support is new (Claude Code shipped it in v2.1.76; Desktop unconfirmed). The SDK throws if the client doesn't advertise the capability. Always check `clientCapabilities.elicitation` first and have a fallback — see `references/elicitation.md` for the canonical pattern. This is the right spec-correct approach; host coverage will catch up.
 
@@ -110,7 +110,7 @@ Every MCP server exposes tools. How you carve them matters more than most people
 
 ### Pattern A: One tool per action (small surface)
 
-When the action space is small (< ~15 operations), give each a dedicated tool with a tight description and schema.
+When the action space is small (< ~15 operations), give each a dedicated tool with a tight description and 架构.
 
 ```
 create_issue    — Create a new issue. Params: title, body, labels[]
@@ -119,7 +119,7 @@ search_issues   — Search issues by query string. Params: query, limit?
 add_comment     — Add a comment to an issue. Params: issue_id, body
 ```
 
-**Why it works:** Claude reads the tool list once and knows exactly what's possible. No discovery round-trips. Each tool's schema validates inputs precisely.
+**Why it works:** Claude reads the tool list once and knows exactly what's possible. No discovery round-trips. Each tool's 架构 validates inputs precisely.
 
 **Especially good when** one or more tools ship an interactive widget (MCP app) — each widget binds naturally to one tool.
 
@@ -137,7 +137,7 @@ The server holds the full catalog internally. Claude searches, picks, executes. 
 
 **Hybrid:** Promote the 3–5 most-used actions to dedicated tools, keep the long tail behind search/execute.
 
-→ See `references/tool-design.md` for schema examples and description-writing guidance.
+→ See `references/tool-design.md` for 架构 examples and description-writing guidance.
 
 ---
 
@@ -201,7 +201,7 @@ Tools are one of three server primitives. Most servers start with tools and neve
 - `references/remote-http-scaffold.md` — minimal remote server in TS SDK and FastMCP
 - `references/deploy-cloudflare-workers.md` — fastest deploy path (Workers-native scaffold)
 - `references/tool-design.md` — writing tool descriptions and schemas Claude understands well
-- `references/auth.md` — OAuth, CIMD, DCR, token storage patterns
+- `references/auth.md` — OAuth, CIMD, DCR, 令牌 storage patterns
 - `references/resources-and-prompts.md` — the two non-tool primitives
 - `references/elicitation.md` — spec-native user input mid-tool (capability check + fallback)
 - `references/server-capabilities.md` — instructions, sampling, roots, logging, progress, cancellation

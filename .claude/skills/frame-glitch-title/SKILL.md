@@ -47,7 +47,7 @@ od:
   - cyan `#00f0ff` translate(`-3px`, `1px`)。
   - magenta `#ff2bd6` translate(`3px`, `-1px`)。
 - 整层加 clip-path 切片 5-8 段, 每段 `@keyframes` 随机 translateX -10px → 10px, 持续 80-160ms, 错峰播放, 营造 "data corruption" 像散。
-- 每隔 1.5s 触发一次"重故障" — 整个标题被 horizontal smear 1 frame, 用 `filter: url(#displacementFilter)` 或简单 CSS 平移。
+- 每隔 1.5s 触发一次"重故障" — 整个标题被 horizontal smear 1 frame, 用 `过滤器: url(#displacementFilter)` 或简单 CSS 平移。
 
 【附加层】
 - 顶部一行 caption (uppercase mono, 11px, opacity 0.6): `>> SIGNAL_LOST · CH-04 · 14:32:08`。
@@ -57,7 +57,7 @@ od:
 - 整画面叠 noise grain 层 `background-image: url("data:image/svg+xml,...turbulence...")`, opacity 6%, mix-blend-mode overlay。
 
 【SVG 滤镜 (可选)】
-- 定义 `<filter id="rgbShift">` 用 `feColorMatrix` + `feOffset` + `feMerge` 把 R/G/B 三通道偏移; 整层 `filter: url(#rgbShift)` 在故障瞬间应用。
+- 定义 `<过滤器 id="rgbShift">` 用 `feColorMatrix` + `feOffset` + `feMerge` 把 R/G/B 三通道偏移; 整层 `过滤器: url(#rgbShift)` 在故障瞬间应用。
 
 【设计细节】
 - 颜色仅用: 黑 / 白 / cyan / magenta / 一点 amber 警告色; 严禁全彩虹。

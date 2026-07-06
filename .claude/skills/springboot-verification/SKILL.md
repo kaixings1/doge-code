@@ -10,9 +10,9 @@ origin: ECC
 
 ## 触发时机
 
-- 在为 Spring Boot 服务开启合并请求 (Pull Request) 之前
+- 在为 Spring Boot 服务开启合并请求 (Pull 请求) 之前
 - 在重大重构 (Refactoring) 或依赖 (Dependency) 升级之后
-- 预发布或生产环境部署 (Deployment) 前的验证
+- 预发布或生产环境部署 (部署) 前的验证
 - 运行完整的 构建 (Build) → 代码检查 (Lint) → 测试 (Test) → 安全扫描 (Security Scan) 流水线 (Pipeline)
 - 验证测试覆盖率 (Test Coverage) 是否达到阈值
 
@@ -85,7 +85,7 @@ class UserServiceTest {
 }
 ```
 
-### 使用 Testcontainers 进行集成测试 (Integration Tests)
+### 使用 Testcontainers 进行集成测试 (集成 Tests)
 
 针对真实数据库而非 H2 进行测试：
 

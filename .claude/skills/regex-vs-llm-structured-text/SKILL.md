@@ -134,7 +134,7 @@ def validate_with_llm(
     client,
 ) -> ParsedItem:
     """使用 LLM 修复低置信度的提取结果。"""
-    response = client.messages.create(
+    响应 = client.messages.create(
         model="claude-haiku-4-5-20251001",  # 使用最便宜的模型进行验证
         max_tokens=500,
         messages=[{

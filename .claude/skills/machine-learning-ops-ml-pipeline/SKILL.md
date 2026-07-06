@@ -13,7 +13,7 @@ Design and implement a complete ML pipeline for: $ARGUMENTS
 ## 使用此技能的场景
 
 - Working on machine learning pipeline - multi-agent mlops orchestration tasks or workflows
-- Needing guidance, best practices, or checklists for machine learning pipeline - multi-agent mlops orchestration
+- Needing guidance, 最佳实践, or checklists for machine learning pipeline - multi-agent mlops orchestration
 
 ## 不要使用此技能的场景
 
@@ -23,25 +23,25 @@ Design and implement a complete ML pipeline for: $ARGUMENTS
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## Thinking
 
-This workflow orchestrates multiple specialized agents to build a production-ready ML pipeline following modern MLOps best practices. The approach emphasizes:
+This 工作流 orchestrates multiple specialized agents to build a production-ready ML pipeline following modern MLOps 最佳实践. The 方法 emphasizes:
 
 - **Phase-based coordination**: Each phase builds upon previous outputs, with clear handoffs between agents
-- **Modern tooling integration**: MLflow/W&B for experiments, Feast/Tecton for features, KServe/Seldon for serving
+- **Modern tooling 集成**: MLflow/W&B for experiments, Feast/Tecton for features, KServe/Seldon for serving
 - **Production-first mindset**: Every component designed for scale, monitoring, and reliability
 - **Reproducibility**: Version control for data, models, and infrastructure
 - **Continuous improvement**: Automated retraining, A/B testing, and drift detection
 
-The multi-agent approach ensures each aspect is handled by domain experts:
+The multi-agent 方法 ensures each aspect is handled by domain experts:
 - Data engineers handle ingestion and quality
 - Data scientists design features and experiments
 - ML engineers implement training pipelines
-- MLOps engineers handle production deployment
+- MLOps engineers handle production 部署
 - Observability engineers ensure monitoring
 
 ## Phase 1: Data & Requirements Analysis
@@ -54,7 +54,7 @@ prompt: |
   Deliverables:
   1. Data source audit and ingestion strategy:
      - Source systems and connection patterns
-     - Schema validation using Pydantic/Great Expectations
+     - 架构 validation using Pydantic/Great Expectations
      - Data versioning with DVC or lakeFS
      - Incremental loading and CDC strategies
 
@@ -70,7 +70,7 @@ prompt: |
      - Retention policies
      - Cost optimization
 
-  Provide implementation code for critical components and integration patterns.
+  Provide implementation code for critical components and 集成 patterns.
 </Task>
 
 <Task>
@@ -82,7 +82,7 @@ prompt: |
   Deliverables:
   1. Feature engineering pipeline:
      - Transformation specifications
-     - Feature store schema (Feast/Tecton)
+     - Feature store 架构 (Feast/Tecton)
      - Statistical validation rules
      - Handling strategies for missing data/outliers
 
@@ -96,7 +96,7 @@ prompt: |
      - Hypothesis and success metrics
      - A/B testing methodology
      - Sample size calculations
-     - Bias detection approach
+     - Bias detection 方法
 
   Include feature transformation code and statistical validation logic.
 </Task>
@@ -116,19 +116,19 @@ prompt: |
      - Distributed training support (Horovod/PyTorch DDP)
      - Cross-validation and ensemble strategies
 
-  2. Experiment tracking setup:
-     - MLflow/Weights & Biases integration
+  2. Experiment tracking 设置:
+     - MLflow/Weights & Biases 集成
      - Metric logging and visualization
      - Artifact management (models, plots, data samples)
      - Experiment comparison and analysis tools
 
-  3. Model registry integration:
+  3. Model registry 集成:
      - Version control and tagging strategy
      - Model metadata and lineage
      - Promotion workflows (dev -> staging -> prod)
      - Rollback procedures
 
-  Provide complete training code with configuration management.
+  Provide complete training code with 配置 management.
 </Task>
 
 <Task>
@@ -151,29 +151,29 @@ prompt: |
 
   3. Testing framework:
      - Unit tests for data transformations
-     - Integration tests for pipeline components
+     - 集成 tests for pipeline components
      - Model quality tests (invariance, directional)
      - Performance regression tests
 
   Deliver production-ready, maintainable code with full test coverage.
 </Task>
 
-## Phase 3: Production Deployment & Serving
+## Phase 3: Production 部署 & Serving
 
 <Task>
 subagent_type: mlops-engineer
 prompt: |
-  Design production deployment for models from: {phase2.ml-engineer.output}
+  Design production 部署 for models from: {phase2.ml-engineer.output}
   With optimized code from: {phase2.python-pro.output}
 
   Implementation requirements:
   1. Model serving infrastructure:
      - REST/gRPC APIs with FastAPI/TorchServe
      - Batch prediction pipelines (Airflow/Kubeflow)
-     - Stream processing (Kafka/Kinesis integration)
+     - Stream processing (Kafka/Kinesis 集成)
      - Model serving platforms (KServe/Seldon Core)
 
-  2. Deployment strategies:
+  2. 部署 strategies:
      - Blue-green deployments for zero downtime
      - Canary releases with traffic splitting
      - Shadow deployments for validation
@@ -182,8 +182,8 @@ prompt: |
   3. CI/CD pipeline:
      - GitHub Actions/GitLab CI workflows
      - Automated testing gates
-     - Model validation before deployment
-     - ArgoCD for GitOps deployment
+     - Model validation before 部署
+     - ArgoCD for GitOps 部署
 
   4. Infrastructure as Code:
      - Terraform modules for cloud resources
@@ -191,7 +191,7 @@ prompt: |
      - Docker multi-stage builds for optimization
      - Secret management with Vault/Secrets Manager
 
-  Provide complete deployment configuration and automation scripts.
+  Provide complete 部署 配置 and automation scripts.
 </Task>
 
 <Task>
@@ -203,7 +203,7 @@ prompt: |
   1. Workload orchestration:
      - Training job scheduling with Kubeflow
      - GPU resource allocation and sharing
-     - Spot/preemptible instance integration
+     - Spot/preemptible instance 集成
      - Priority classes and resource quotas
 
   2. Serving infrastructure:
@@ -249,10 +249,10 @@ prompt: |
      - Log aggregation with ELK/Loki
 
   4. Alerting and automation:
-     - PagerDuty/Opsgenie integration
+     - PagerDuty/Opsgenie 集成
      - Automated retraining triggers
      - Performance degradation workflows
-     - Incident response runbooks
+     - Incident 响应 runbooks
 
   5. Cost tracking:
      - Resource utilization metrics
@@ -260,10 +260,10 @@ prompt: |
      - Optimization recommendations
      - Budget alerts and controls
 
-  Deliver monitoring configuration, dashboards, and alert rules.
+  Deliver monitoring 配置, dashboards, and alert rules.
 </Task>
 
-## Configuration Options
+## 配置 Options
 
 - **experiment_tracking**: mlflow | wandb | neptune | clearml
 - **feature_store**: feast | tecton | databricks | custom
@@ -297,7 +297,7 @@ prompt: |
    - < 1 hour from commit to production
    - Parallel experiment execution
    - Reproducible training runs
-   - Self-service model deployment
+   - Self-service model 部署
 
 5. **Cost Efficiency**:
    - < 20% infrastructure waste

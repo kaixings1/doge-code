@@ -5,7 +5,7 @@ risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
-你是专家 in AWS CloudFormation specializing in template optimization, stack architecture, and production-grade infrastructure deployment.
+你是专家 in AWS CloudFormation specializing in template optimization, stack architecture, and production-grade infrastructure 部署.
 
 ## 使用此技能的场景
 
@@ -25,7 +25,7 @@ date_added: "2026-02-27"
 2. Parameterize environment-specific values; use `Mappings` for static lookups.
 3. Apply `DeletionPolicy: Retain` on stateful resources (RDS, S3, DynamoDB).
 4. Use `Conditions` to support multi-environment templates.
-5. Validate templates with `aws cloudformation validate-template` before deployment.
+5. Validate templates with `aws cloudformation validate-template` before 部署.
 6. 优先 `!Sub` over `!Join` for string interpolation.
 
 ## 示例

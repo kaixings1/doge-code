@@ -8,7 +8,7 @@ date_added: '2026-02-27'
 
 # Azure.ResourceManager.CosmosDB (.NET)
 
-Management plane SDK for provisioning and managing Azure Cosmos DB resources via Azure Resource Manager.
+Management plane SDK for provisioning and managing Azure Cosmos DB 资源 via Azure Resource Manager.
 
 > **⚠️ Management vs Data Plane**
 > - **This SDK (Azure.ResourceManager.CosmosDB)**: Create accounts, databases, containers, configure throughput, manage RBAC
@@ -94,18 +94,18 @@ var accountData = new CosmosDBAccountCreateOrUpdateContent(
     })
 {
     Kind = CosmosDBAccountKind.GlobalDocumentDB,
-    ConsistencyPolicy = new ConsistencyPolicy(DefaultConsistencyLevel.Session),
+    ConsistencyPolicy = new ConsistencyPolicy(DefaultConsistencyLevel.会话),
     EnableAutomaticFailover = true
 };
 
-// Create account (long-running operation)
+// Create account (long-running 操作)
 var accountCollection = resourceGroup.Value.GetCosmosDBAccounts();
-var operation = await accountCollection.CreateOrUpdateAsync(
+var 操作 = await accountCollection.CreateOrUpdateAsync(
     WaitUntil.Completed,
     "my-cosmos-account",
     accountData);
 
-CosmosDBAccountResource account = operation.Value;
+CosmosDBAccountResource account = 操作.Value;
 ```
 
 ### 2. Create SQL Database
@@ -222,7 +222,7 @@ using Azure;
 
 try
 {
-    var operation = await accountCollection.CreateOrUpdateAsync(
+    var 操作 = await accountCollection.CreateOrUpdateAsync(
         WaitUntil.Completed, accountName, accountData);
 }
 catch (RequestFailedException ex) when (ex.Status == 409)
@@ -240,7 +240,7 @@ catch (RequestFailedException ex)
 | File | When to Read |
 |------|--------------|
 | references/account-management.md | Account CRUD, failover, keys, connection strings, networking |
-| references/sql-resources.md | SQL databases, containers, stored procedures, triggers, UDFs |
+| references/sql-资源.md | SQL databases, containers, stored procedures, triggers, UDFs |
 | references/throughput.md | Manual/autoscale throughput, migration between modes |
 
 ## Related SDKs
@@ -251,7 +251,7 @@ catch (RequestFailedException ex)
 | `Azure.ResourceManager.CosmosDB` | Management plane (this SDK) | `dotnet add package Azure.ResourceManager.CosmosDB` |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

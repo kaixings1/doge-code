@@ -47,7 +47,7 @@ When a user asks for marketing ideas:
    * Call out execution risk
 
 > ❌ Do not dump long lists
-> ✅ Act as a decision filter
+> ✅ Act as a decision 过滤器
 
 ---
 
@@ -220,11 +220,11 @@ Use these biases when scoring:
 * **page-cro** – Convert acquired traffic
 * **pricing-strategy** – Monetize demand
 * **programmatic-seo** – Scale SEO ideas
-* **ab-test-setup** – Test ideas rigorously
+* **ab-test-设置** – Test ideas rigorously
 
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the 概述.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

@@ -2,21 +2,21 @@
 name: agentkit-seo
 description: AgentKit SEO — 将宽泛或模糊的AgentKit SEO工作引导到正确的模块。
 user-invocable: true
-argument: The specific SEO optimization task or platform to focus on (e.g., GitHub, LinkedIn, CV, etc.)
+参数: The specific SEO optimization task or platform to focus on (e.g., GitHub, LinkedIn, CV, etc.)
 ---
 
 # AgentKit SEO
 
 ## 概述
 
-Use this skill as the orchestrator for the whole repository. Its main job is to select the right module skill, avoid loading irrelevant platform rules, and sequence cross-platform work in a sane order.
+将此技能用作整个仓库的编排器。其主要工作是选择正确的模块技能，避免加载不相关的平台规则，并以合理的顺序安排跨平台工作。
 
-## Routing workflow
+## Routing 工作流
 
-1. Identify the target surface from the request.
+1. Identify the target surface from the 请求.
 2. Load only the matching module skill unless the user explicitly asks for a cross-platform pass.
-3. If the request spans multiple surfaces, start with `agentkit-seo-agent-context-optimization` so the factual source of truth is stable before editing platform outputs.
-4. If the request involves technical issues with the skill system, consult the main repository documentation.
+3. If the 请求 spans multiple surfaces, start with `agentkit-seo-agent-context-optimization` so the factual source of truth is stable before editing platform outputs.
+4. If the 请求 involves technical issues with the skill system, consult the main repository documentation.
 
 For broad requests with no clear surface:
 
@@ -26,7 +26,7 @@ For broad requests with no clear surface:
 - Audience building, posting strategy, or public conversation loops: route to `agentkit-seo-x-twitter`.
 - Conflicting, scattered, or cross-platform facts: route to `agentkit-seo-agent-context-optimization` first.
 
-## Token discipline
+## 令牌 discipline
 
 - Route to one module by default.
 - Load the agent context file before platform references only when facts, consistency, or cross-surface rewriting matter.
@@ -34,7 +34,7 @@ For broad requests with no clear surface:
 - Summarize inspected inputs and ask for the smallest missing input set.
 - Do not expand into algorithm explanation unless the user asks why.
 
-## Intake workflow
+## Intake 工作流
 
 - If the user already has an agent context file, ask for or use its explicit path before rewriting platform assets.
 - If the task spans multiple surfaces, or the user's facts are scattered, recommend creating or repairing the agent context file first.

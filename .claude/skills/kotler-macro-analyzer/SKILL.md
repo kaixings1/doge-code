@@ -8,7 +8,7 @@ source_type: self
 date_added: "2026-04-17"
 author: justmiroslav
 tags: [marketing, economics, strategy, kotler, pestel]
-tools: [claude, cursor]
+tools: [claude, 游标]
 ---
 
 # Kotler 宏观环境分析器

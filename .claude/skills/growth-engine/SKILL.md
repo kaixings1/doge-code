@@ -14,7 +14,7 @@ tags:
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -78,7 +78,7 @@ tools:
 
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
+      "@context": "https://架构.org",
       "@type": "SoftwareApplication",
       "name": "Auri",
       "operatingSystem": "Amazon Alexa",

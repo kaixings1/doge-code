@@ -95,10 +95,10 @@ MySqlFlexibleServerData data = new MySqlFlexibleServerData(AzureLocation.EastUS)
     AvailabilityZone = "1"
 };
 
-ArmOperation<MySqlFlexibleServerResource> operation = await servers
+ArmOperation<MySqlFlexibleServerResource> 操作 = await servers
     .CreateOrUpdateAsync(WaitUntil.Completed, "my-mysql-server", data);
 
-MySqlFlexibleServerResource server = operation.Value;
+MySqlFlexibleServerResource server = 操作.Value;
 Console.WriteLine($"Server created: {server.Data.FullyQualifiedDomainName}");
 ```
 
@@ -116,10 +116,10 @@ MySqlFlexibleServerDatabaseData dbData = new MySqlFlexibleServerDatabaseData
     Collation = "utf8mb4_unicode_ci"
 };
 
-ArmOperation<MySqlFlexibleServerDatabaseResource> operation = await databases
+ArmOperation<MySqlFlexibleServerDatabaseResource> 操作 = await databases
     .CreateOrUpdateAsync(WaitUntil.Completed, "myappdb", dbData);
 
-MySqlFlexibleServerDatabaseResource database = operation.Value;
+MySqlFlexibleServerDatabaseResource database = 操作.Value;
 Console.WriteLine($"Database created: {database.Data.Name}");
 ```
 
@@ -135,7 +135,7 @@ MySqlFlexibleServerFirewallRuleData ruleData = new MySqlFlexibleServerFirewallRu
     EndIPAddress = System.Net.IPAddress.Parse("10.0.0.255")
 };
 
-ArmOperation<MySqlFlexibleServerFirewallRuleResource> operation = await firewallRules
+ArmOperation<MySqlFlexibleServerFirewallRuleResource> 操作 = await firewallRules
     .CreateOrUpdateAsync(WaitUntil.Completed, "allow-internal", ruleData);
 
 // Allow Azure services
@@ -164,7 +164,7 @@ MySqlFlexibleServerConfigurationData configData = new MySqlFlexibleServerConfigu
     Source = MySqlFlexibleServerConfigurationSource.UserOverride
 };
 
-ArmOperation<MySqlFlexibleServerConfigurationResource> operation = await configurations
+ArmOperation<MySqlFlexibleServerConfigurationResource> 操作 = await configurations
     .CreateOrUpdateAsync(WaitUntil.Completed, "max_connections", configData);
 
 // Common configurations to tune
@@ -185,7 +185,7 @@ MySqlFlexibleServerAadAdministratorData adminData = new MySqlFlexibleServerAadAd
     IdentityResourceId = new ResourceIdentifier("/subscriptions/.../userAssignedIdentities/mysql-identity")
 };
 
-ArmOperation<MySqlFlexibleServerAadAdministratorResource> operation = await admins
+ArmOperation<MySqlFlexibleServerAadAdministratorResource> 操作 = await admins
     .CreateOrUpdateAsync(WaitUntil.Completed, "ActiveDirectory", adminData);
 ```
 
@@ -228,7 +228,7 @@ MySqlFlexibleServerData restoreData = new MySqlFlexibleServerData(AzureLocation.
     RestorePointInTime = DateTimeOffset.UtcNow.AddHours(-2)
 };
 
-ArmOperation<MySqlFlexibleServerResource> operation = await servers
+ArmOperation<MySqlFlexibleServerResource> 操作 = await servers
     .CreateOrUpdateAsync(WaitUntil.Completed, "my-mysql-restored", restoreData);
 ```
 
@@ -268,7 +268,7 @@ MySqlFlexibleServerPatch patch = new MySqlFlexibleServerPatch
     }
 };
 
-ArmOperation<MySqlFlexibleServerResource> operation = await server
+ArmOperation<MySqlFlexibleServerResource> 操作 = await server
     .UpdateAsync(WaitUntil.Completed, patch);
 ```
 
@@ -290,7 +290,7 @@ await server.DeleteAsync(WaitUntil.Completed);
 | `MySqlFlexibleServerCollection` | Collection of servers |
 | `MySqlFlexibleServerDatabaseResource` | Database within server |
 | `MySqlFlexibleServerFirewallRuleResource` | IP firewall rule |
-| `MySqlFlexibleServerConfigurationResource` | Server parameter |
+| `MySqlFlexibleServerConfigurationResource` | Server 参数 |
 | `MySqlFlexibleServerBackupResource` | Backup metadata |
 | `MySqlFlexibleServerAadAdministratorResource` | Entra ID admin |
 | `MySqlFlexibleServerSku` | SKU (compute tier + size) |
@@ -334,7 +334,7 @@ using Azure;
 
 try
 {
-    ArmOperation<MySqlFlexibleServerResource> operation = await servers
+    ArmOperation<MySqlFlexibleServerResource> 操作 = await servers
         .CreateOrUpdateAsync(WaitUntil.Completed, "my-mysql", data);
 }
 catch (RequestFailedException ex) when (ex.Status == 409)
@@ -363,15 +363,15 @@ string connectionString = $"Server={server.Data.FullyQualifiedDomainName};" +
     "Password=YourSecurePassword123!;" +
     "SslMode=Required;";
 
-// With Entra ID token (recommended)
+// With Entra ID 令牌 (recommended)
 var credential = new DefaultAzureCredential();
-var token = await credential.GetTokenAsync(
+var 令牌 = await credential.GetTokenAsync(
     new TokenRequestContext(new[] { "https://ossrdbms-aad.database.windows.net/.default" }));
 
 string connectionString = $"Server={server.Data.FullyQualifiedDomainName};" +
     "Database=myappdb;" +
     $"User Id=aad-admin@contoso.com;" +
-    $"Password={token.Token};" +
+    $"Password={令牌.令牌};" +
     "SslMode=Required;";
 ```
 
@@ -393,7 +393,7 @@ string connectionString = $"Server={server.Data.FullyQualifiedDomainName};" +
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/mysql/Azure.ResourceManager.MySql |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

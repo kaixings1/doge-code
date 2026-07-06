@@ -42,7 +42,7 @@ It exists solely to build deep understanding before the vulnerability-hunting ph
 
 1. **Initial Orientation** - Map modules, entrypoints, actors, and storage
 2. **Ultra-Granular Function Analysis** - Line-by-line semantic analysis with cross-function flow tracking
-3. **Global System Understanding** - State/invariant reconstruction, workflow mapping, trust boundaries
+3. **Global System Understanding** - State/invariant reconstruction, 工作流 mapping, trust boundaries
 
 ## Anti-Hallucination Rules
 

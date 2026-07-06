@@ -1,6 +1,6 @@
 # Modern Python
 
-Modern Python tooling and best practices using uv, ruff, ty, and pytest. Based on patterns from [trailofbits/cookiecutter-python](https://github.com/trailofbits/cookiecutter-python).
+Modern Python tooling and 最佳实践 using uv, ruff, ty, and pytest. Based on patterns from [trailofbits/cookiecutter-python](https://github.com/trailofbits/cookiecutter-python).
 
 **Author:** William Tan
 
@@ -30,7 +30,7 @@ Modern Python tooling and best practices using uv, ruff, ty, and pytest. Based o
 - **Dependabot** - Automated dependency updates with supply chain protection
 
 **Standards:**
-- **pyproject.toml** - Single configuration file with dependency groups (PEP 735)
+- **pyproject.toml** - Single 配置 file with dependency groups (PEP 735)
 - **PEP 723** - Inline script metadata for single-file scripts
 - **src/ layout** - Standard package structure
 - **Python 3.11+** - Minimum version requirement

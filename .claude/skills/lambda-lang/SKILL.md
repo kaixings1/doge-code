@@ -27,7 +27,7 @@ tools:
 ## 何时使用此技能
 
 - 在 A2A 协议、编排器、任务委派或交接管道中用于代理间消息传递。
-- 在记录结构化协调信号时使用，每 token 都有成本（心跳、确认、错误类别、会话状态）。
+- 在记录结构化协调信号时使用，每 令牌 都有成本（心跳、确认、错误类别、会话状态）。
 - 当通信双方都说 Λ 时使用——不要对人类或任何需要法律级/精确自然语言的界面使用。
 
 ## 工作原理
@@ -64,7 +64,7 @@ Lambda 提供跨 7 个领域的 340+ 原子。从适合你通道的领域中选�
 
 ```
 !Nd/hb#ok  (node heartbeat: ok)
-?Nd/hb     (query: is the node alive?)
+?Nd/hb     (查询: is the node alive?)
 !Nd/hb#fl  (node heartbeat: failed)
 ```
 
@@ -72,7 +72,7 @@ Lambda 提供跨 7 个领域的 340+ 原子。从适合你通道的领域中选�
 
 ```
 !Tk>Ag2#rd   (task routed to agent 2, ready)
-?Tk/st       (query task status)
+?Tk/st       (查询 task status)
 !Tk#dn       (task done)
 ```
 
@@ -104,7 +104,7 @@ Lambda 提供跨 7 个领域的 340+ 原子。从适合你通道的领域中选�
 
 ## 相关技能
 
-- `@session-memory` — 跨代理重启的补充持久内存；Lambda 是消息格式，session-memory 是状态存储。
+- `@会话-memory` — 跨代理重启的补充持久内存；Lambda 是消息格式，会话-memory 是状态存储。
 - `@humanize-chinese` — 中文文本的兄弟项目；Lambda 是代理间通信，humanize-chinese 面向人类。
 
 ## 参考

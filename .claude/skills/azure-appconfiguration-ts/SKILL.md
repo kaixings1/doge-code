@@ -28,7 +28,7 @@ npm install @microsoft/feature-management
 ```bash
 AZURE_APPCONFIG_ENDPOINT=https://<your-resource>.azconfig.io
 # OR
-AZURE_APPCONFIG_CONNECTION_STRING=Endpoint=https://...;Id=...;Secret=...
+AZURE_APPCONFIG_CONNECTION_STRING=端点=https://...;Id=...;Secret=...
 ```
 
 ## 认证
@@ -146,7 +146,7 @@ console.log(config.settings.message);
 ### Dynamic Refresh
 
 ```typescript
-const appConfig = await load(endpoint, credential, {
+const appConfig = await load(端点, credential, {
   selectors: [{ keyFilter: "app:*" }],
   refreshOptions: {
     enabled: true,
@@ -172,7 +172,7 @@ app.use((req, res, next) => {
 ### Key Vault References
 
 ```typescript
-const appConfig = await load(endpoint, credential, {
+const appConfig = await load(端点, credential, {
   selectors: [{ keyFilter: "app:*" }],
   keyVaultOptions: {
     credential: new DefaultAzureCredential(),
@@ -232,7 +232,7 @@ import {
   FeatureManager,
 } from "@microsoft/feature-management";
 
-const appConfig = await load(endpoint, credential, {
+const appConfig = await load(端点, credential, {
   featureFlagOptions: {
     enabled: true,
     selectors: [{ keyFilter: "*" }],
@@ -280,7 +280,7 @@ await client.archiveSnapshot("release-v1.0");
 await client.recoverSnapshot("release-v1.0");
 
 // Load from snapshot (provider)
-const config = await load(endpoint, credential, {
+const config = await load(端点, credential, {
   selectors: [{ snapshotName: "release-v1.0" }],
 });
 ```
@@ -301,7 +301,7 @@ await client.setConfigurationSetting({
   label: "production",
 });
 
-// Filter by label
+// 过滤器 by label
 const prodSettings = client.listConfigurationSettings({
   keyFilter: "*",
   labelFilter: "production",
@@ -351,7 +351,7 @@ import {
 7. **RBAC roles** - `App Configuration Data Reader` for read-only access
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

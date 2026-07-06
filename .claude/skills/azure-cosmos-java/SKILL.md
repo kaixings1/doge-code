@@ -59,7 +59,7 @@ import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 
 CosmosClient client = new CosmosClientBuilder()
-    .endpoint(System.getenv("COSMOS_ENDPOINT"))
+    .端点(System.getenv("COSMOS_ENDPOINT"))
     .key(System.getenv("COSMOS_KEY"))
     .buildClient();
 ```
@@ -70,7 +70,7 @@ CosmosClient client = new CosmosClientBuilder()
 import com.azure.cosmos.CosmosAsyncClient;
 
 CosmosAsyncClient asyncClient = new CosmosClientBuilder()
-    .endpoint(serviceEndpoint)
+    .端点(serviceEndpoint)
     .key(key)
     .buildAsyncClient();
 ```
@@ -82,10 +82,10 @@ import com.azure.cosmos.ConsistencyLevel;
 import java.util.Arrays;
 
 CosmosClient client = new CosmosClientBuilder()
-    .endpoint(serviceEndpoint)
+    .端点(serviceEndpoint)
     .key(key)
     .directMode(directConnectionConfig, gatewayConnectionConfig)
-    .consistencyLevel(ConsistencyLevel.SESSION)
+    .consistencyLevel(ConsistencyLevel.会话)
     .connectionSharingAcrossClientsEnabled(true)
     .contentResponseOnWriteEnabled(true)
     .userAgentSuffix("my-application")
@@ -108,11 +108,11 @@ CosmosClient client = new CosmosClientBuilder()
 ```java
 // Sync
 client.createDatabaseIfNotExists("myDatabase")
-    .map(response -> client.getDatabase(response.getProperties().getId()));
+    .map(响应 -> client.getDatabase(响应.getProperties().getId()));
 
 // Async with chaining
 asyncClient.createDatabaseIfNotExists("myDatabase")
-    .map(response -> asyncClient.getDatabase(response.getProperties().getId()))
+    .map(响应 -> asyncClient.getDatabase(响应.getProperties().getId()))
     .subscribe(database -> System.out.println("Created: " + database.getId()));
 ```
 
@@ -141,34 +141,34 @@ CosmosAsyncContainer container = asyncClient
 
 // Create
 container.createItem(new User("1", "John Doe", "john@example.com"))
-    .flatMap(response -> {
-        System.out.println("Created: " + response.getItem());
+    .flatMap(响应 -> {
+        System.out.println("Created: " + 响应.getItem());
         // Read
         return container.readItem(
-            response.getItem().getId(),
-            new PartitionKey(response.getItem().getId()),
+            响应.getItem().getId(),
+            new PartitionKey(响应.getItem().getId()),
             User.class);
     })
-    .flatMap(response -> {
-        System.out.println("Read: " + response.getItem());
+    .flatMap(响应 -> {
+        System.out.println("Read: " + 响应.getItem());
         // Update
-        User user = response.getItem();
+        User user = 响应.getItem();
         user.setEmail("john.doe@example.com");
         return container.replaceItem(
             user,
             user.getId(),
             new PartitionKey(user.getId()));
     })
-    .flatMap(response -> {
+    .flatMap(响应 -> {
         // Delete
         return container.deleteItem(
-            response.getItem().getId(),
-            new PartitionKey(response.getItem().getId()));
+            响应.getItem().getId(),
+            new PartitionKey(响应.getItem().getId()));
     })
     .block();
 ```
 
-### Query Documents
+### 查询 Documents
 
 ```java
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
@@ -176,11 +176,11 @@ import com.azure.cosmos.util.CosmosPagedIterable;
 
 CosmosContainer container = client.getDatabase("myDatabase").getContainer("myContainer");
 
-String query = "SELECT * FROM c WHERE c.status = @status";
+String 查询 = "SELECT * FROM c WHERE c.status = @status";
 CosmosQueryRequestOptions options = new CosmosQueryRequestOptions();
 
 CosmosPagedIterable<User> results = container.queryItems(
-    query,
+    查询,
     options,
     User.class
 );
@@ -203,17 +203,17 @@ Choose a partition key with:
 |-------|-----------|
 | Strong | Linearizability |
 | Bounded Staleness | Consistent prefix with bounded lag |
-| Session | Consistent prefix within session |
+| 会话 | Consistent prefix within 会话 |
 | Consistent Prefix | Reads never see out-of-order writes |
 | Eventual | No ordering guarantee |
 
-### Request Units (RUs)
+### 请求 Units (RUs)
 
-All operations consume RUs. Check response headers:
+All operations consume RUs. Check 响应 headers:
 
 ```java
-CosmosItemResponse<User> response = container.createItem(user);
-System.out.println("RU charge: " + response.getRequestCharge());
+CosmosItemResponse<User> 响应 = container.createItem(user);
+System.out.println("RU charge: " + 响应.getRequestCharge());
 ```
 
 ## 最佳实践
@@ -221,7 +221,7 @@ System.out.println("RU charge: " + response.getRequestCharge());
 1. **Reuse CosmosClient** — Create once, reuse throughout application
 2. **Use async client** for high-throughput scenarios
 3. **Choose partition key carefully** — Affects performance and scalability
-4. **Enable content response on write** for immediate access to created items
+4. **Enable content 响应 on write** for immediate access to created items
 5. **Configure preferred regions** for geo-distributed applications
 6. **Handle 429 errors** with retry policies (built-in by default)
 7. **Use direct mode** for lowest latency in production
@@ -236,7 +236,7 @@ try {
 } catch (CosmosException e) {
     System.err.println("Status: " + e.getStatusCode());
     System.err.println("Message: " + e.getMessage());
-    System.err.println("Request charge: " + e.getRequestCharge());
+    System.err.println("请求 charge: " + e.getRequestCharge());
     
     if (e.getStatusCode() == 409) {
         System.err.println("Item already exists");
@@ -258,7 +258,7 @@ try {
 | Troubleshooting | https://learn.microsoft.com/azure/cosmos-db/troubleshoot-java-sdk-v4-sql |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

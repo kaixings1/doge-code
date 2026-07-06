@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # 数据结构协议 (DSP)
 
-LLM 编码代理在任务之间会丢失上下文。在大型代码库上，它们将大部分 token 花在"定向"上——弄清文件在哪里、什么依赖什么、以及什么可以安全更改。DSP 通过将项目的结构映射外化到一个持久的、可查询的图中来解决这个问题，该图存储在代码旁边的 `.dsp/` 目录中。
+LLM 编码代理在任务之间会丢失上下文。在大型代码库上，它们将大部分 令牌 花在"定向"上——弄清文件在哪里、什么依赖什么、以及什么可以安全更改。DSP 通过将项目的结构映射外化到一个持久的、可查询的图中来解决这个问题，该图存储在代码旁边的 `.dsp/` 目录中。
 
 DSP 不是给人看的文档，也不是 AST 转储。它捕获三样东西：**含义**（实体存在的原因）、**边界**（它导入和暴露的内容）和**原因**（每个连接存在的原因）。这足以让代理导航、重构和生成代码，而无需将整个源代码树加载到上下文窗口中。
 
@@ -29,7 +29,7 @@ DSP models the codebase as a directed graph. Nodes are **entities**, edges are *
 
 Two entity kinds exist:
 - **Object**: any "thing" that isn't a function (module/file/class/config/resource/external dependency)
-- **Function**: an exported function/method/handler/pipeline
+- **Function**: an exported function/method/处理器/pipeline
 
 ### Identity by UID, not by file path
 
@@ -59,7 +59,7 @@ Each entity gets a small directory under `.dsp/`:
 .dsp/
 ├── TOC                        # ordered list of all entity UIDs from root
 ├── obj-a1b2c3d4/
-│   ├── description            # source path, kind, purpose (1-3 sentences)
+│   ├── description            # source path, kind, 目的 (1-3 sentences)
 │   ├── imports                # UIDs this entity depends on (one per line)
 │   ├── shared                 # UIDs of public API / exported entities
 │   └── exports/               # reverse index: who imports this and why
@@ -101,14 +101,14 @@ If `.dsp/` is empty, traverse the project from root entrypoint(s) via DFS on imp
 4. Backtrack when no unvisited local imports remain; continue until all reachable files are documented
 5. External dependencies: `create-object --kind external`, add to TOC, but never descend into `node_modules`/`site-packages`/etc.
 
-### Workflow Rules
+### 工作流 Rules
 
 - **Before changing code**: Find affected entities via `search`, `find-by-source`, or `read-toc`. Read their `description` and `imports` to understand context.
 - **When creating a file/module**: Call `create-object`. For each exported function — `create-function` (with `--owner`). Register exports via `create-shared`.
 - **When adding an import**: Call `add-import` with a brief `why`. For external deps — first `create-object --kind external` if the entity doesn't exist.
 - **When removing import/export/file**: Call `remove-import`, `remove-shared`, `remove-entity`. Cascade cleanup is automatic.
 - **When renaming/moving a file**: Call `move-entity`. UID does not change.
-- **Don't touch DSP** if only internal implementation changed without affecting purpose or dependencies.
+- **Don't touch DSP** if only internal implementation changed without affecting 目的 or dependencies.
 
 ### Key Commands
 
@@ -118,7 +118,7 @@ If `.dsp/` is empty, traverse the project from root entrypoint(s) via DFS on imp
 | **Update** | `update-description`, `update-import-why`, `move-entity` |
 | **Delete** | `remove-import`, `remove-shared`, `remove-entity` |
 | **Navigate** | `get-entity`, `get-children --depth N`, `get-parents --depth N`, `get-path`, `get-recipients`, `read-toc` |
-| **Search** | `search <query>`, `find-by-source <path>` |
+| **Search** | `search <查询>`, `find-by-source <path>` |
 | **Diagnostics** | `detect-cycles`, `get-orphans`, `get-stats` |
 
 ### When to Update DSP
@@ -132,7 +132,7 @@ If `.dsp/` is empty, traverse the project from root entrypoint(s) via DFS on imp
 | Export removed | `remove-shared` |
 | File renamed/moved | `move-entity` |
 | File deleted | `remove-entity` |
-| Purpose changed | `update-description` |
+| 目的 changed | `update-description` |
 | Internal-only change | **No DSP update needed** |
 
 ## 示例
@@ -156,7 +156,7 @@ python dsp-cli.py --root . add-import obj-a1b2c3d4 obj-deadbeef "HTTP routing"
 ### Example 2: Navigating the graph before making changes
 
 ```bash
-python dsp-cli.py --root . search "authentication"
+python dsp-cli.py --root . search "认证"
 python dsp-cli.py --root . get-entity obj-a1b2c3d4
 python dsp-cli.py --root . get-children obj-a1b2c3d4 --depth 2
 python dsp-cli.py --root . get-recipients obj-a1b2c3d4
@@ -178,9 +178,9 @@ python dsp-cli.py --root . get-recipients obj-11223344
 - ✅ **Do:** Update DSP immediately when creating new files, adding imports, or changing public APIs
 - ✅ **Do:** 始终 add a meaningful `why` reason when recording an import — this is where most of DSP's value lives
 - ✅ **Do:** Use `kind: external` for third-party libraries without analyzing their internals
-- ✅ **Do:** Keep descriptions minimal (1-3 sentences about purpose, not implementation)
+- ✅ **Do:** Keep descriptions minimal (1-3 sentences about 目的, not implementation)
 - ✅ **Do:** Treat `.dsp/` diffs like code diffs — review them, keep them accurate
-- ❌ **Don't:** Touch `.dsp/` for internal-only changes that don't affect purpose or dependencies
+- ❌ **Don't:** Touch `.dsp/` for internal-only changes that don't affect 目的 or dependencies
 - ❌ **Don't:** Change an entity's UID on rename/move (use `move-entity` instead)
 - ❌ **Don't:** Create UIDs for every local variable or helper — only file-level Objects and public/shared entities
 

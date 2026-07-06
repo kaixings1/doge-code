@@ -19,7 +19,7 @@ You are a code education expert specializing in explaining complex code through 
 
 ## 不要使用此技能的场景
 
-- The request is to implement new features or refactors
+- The 请求 is to implement new features or refactors
 - You only need API docs or user documentation
 - There is no code or design to analyze
 

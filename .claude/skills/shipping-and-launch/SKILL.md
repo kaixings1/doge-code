@@ -21,7 +21,7 @@ description: 发布与上线 — 准备生产发布。在部署到生产环境�
 
 ### Code Quality
 
-- [ ] All tests pass (unit, integration, e2e)
+- [ ] All tests pass (unit, 集成, e2e)
 - [ ] Build succeeds with no warnings
 - [ ] Lint and type checking pass
 - [ ] Code reviewed and approved
@@ -34,9 +34,9 @@ description: 发布与上线 — 准备生产发布。在部署到生产环境�
 - [ ] No secrets in code or version control
 - [ ] `npm audit` shows no critical or high vulnerabilities
 - [ ] Input validation on all user-facing endpoints
-- [ ] Authentication and authorization checks in place
+- [ ] 认证 and 授权 checks in place
 - [ ] Security headers configured (CSP, HSTS, etc.)
-- [ ] Rate limiting on authentication endpoints
+- [ ] Rate limiting on 认证 endpoints
 - [ ] CORS configured to specific origins (not wildcard)
 
 ### Performance
@@ -64,11 +64,11 @@ description: 发布与上线 — 准备生产发布。在部署到生产环境�
 - [ ] DNS and SSL configured
 - [ ] CDN configured for static assets
 - [ ] Logging and error reporting configured
-- [ ] Health check endpoint exists and responds
+- [ ] Health check 端点 exists and responds
 
 ### Documentation
 
-- [ ] README updated with any new setup requirements
+- [ ] README updated with any new 设置 requirements
 - [ ] API documentation current
 - [ ] ADRs written for any architectural decisions
 - [ ] Changelog updated
@@ -76,7 +76,7 @@ description: 发布与上线 — 准备生产发布。在部署到生产环境�
 
 ## Feature Flag Strategy
 
-Ship behind feature flags to decouple deployment from release:
+Ship behind feature flags to decouple 部署 from release:
 
 ```typescript
 // Feature flag check
@@ -117,7 +117,7 @@ return null;
    └── Manual smoke test of critical flows
 
 2. DEPLOY to production (feature flag OFF)
-   └── Verify deployment succeeded (health check)
+   └── Verify 部署 succeeded (health check)
    └── Check error monitoring (no new errors)
 
 3. ENABLE for team (flag ON for internal users)

@@ -8,8 +8,8 @@ source_repo: heyneuron/flowhunt-skill
 source_type: community
 date_added: "2026-05-23"
 author: heyneuron
-tags: [automation, discovery, audit, gmail, calendar, slack, productivity, workflow]
-tools: [claude, codex, gemini, cursor]
+tags: [automation, discovery, audit, gmail, calendar, slack, productivity, 工作流]
+tools: [claude, codex, gemini, 游标]
 license: "MIT"
 license_source: "https://github.com/heyneuron/flowhunt-skill/blob/main/LICENSE"
 ---
@@ -24,16 +24,16 @@ The skill is cross-agent: it works with Claude Code, Codex CLI, Gemini CLI, Open
 
 Install: `npx skills add heyneuron/flowhunt-skill`
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when the user asks "what can I automate in my business?"
-- Use when the user wants a workflow audit across Gmail, Calendar, Slack, or task tools
+- Use when the user wants a 工作流 audit across Gmail, Calendar, Slack, or task tools
 - Use when starting an automation engagement and need structured discovery before recommending solutions
 - Use when the user says "show me automation opportunities" or "FlowHunt"
 
 ## 工作原理
 
-### 步骤 1: Intake — 5-Question Workflow Questionnaire
+### 步骤 1: Intake — 5-Question 工作流 Questionnaire
 
 Ask the user exactly these five questions, one at a time:
 

@@ -28,14 +28,11 @@ This skill drives a single Bumblebee scan from start to finish:
 
 Communicate with the user in the language they used (German for Stefan). Code, commit messages, and on-disk file contents stay in English to match existing project conventions.
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when an advisory, incident report, or exposure catalog names compromised packages,
-developer tools, browser/editor extensions, or MCP host configuration that may exist on a local
-macOS or Linux developer endpoint.
+当公告、事件报告或暴露目录中列出的受损包、开发者工具、浏览器/编辑器扩展或 MCP 主机配置可能存在于本地 macOS 或 Linux 开发者端点时使用此技能。
 
-Use it for read-only inventory and exposure checks. Do not use it to patch, uninstall, quarantine,
-or otherwise mutate the scanned machine.
+用于只读清单和暴露检查。不要用于修补、卸载、隔离或以其他方式更改扫描的机器。
 
 ## Step 1 — Clarify the scan request
 
@@ -82,7 +79,7 @@ Output filenames (use the user's workspace path; the example below assumes `$OUT
 - `bumblebee-<profile>-<UTC-timestamp>.ndjson` — raw records.
 - `bumblebee-<profile>-<UTC-timestamp>.report.md` — Markdown report (generated in Step 5).
 
-Pick a sensible `--max-duration` so a runaway scan does not hang the session. Reasonable defaults:
+Pick a sensible `--max-duration` so a runaway scan does not hang the 会话. Reasonable defaults:
 
 - `baseline`: 5m
 - `project`: 10m

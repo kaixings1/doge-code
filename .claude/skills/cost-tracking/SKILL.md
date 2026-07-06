@@ -13,27 +13,27 @@ metadata:
 
 追踪器每次停止会话时向 `~/.claude/metrics/costs.jsonl` 追加一个 JSON 对象。每行是该会话的**累积快照**，因此要计算总支出，你需要取每个 `session_id` 的**最新行**并在会话间求和——对每行求和会重复计算。
 
-行 schema：
+行 架构：
 
 | Field | Meaning |
 | --- | --- |
 | `timestamp` | ISO timestamp of the snapshot |
-| `session_id` | Claude Code session identifier |
-| `transcript_path` | Path to the session transcript |
+| `session_id` | Claude Code 会话 identifier |
+| `transcript_path` | Path to the 会话 transcript |
 | `model` | Model used |
-| `input_tokens` / `output_tokens` | Token counts |
-| `cache_write_tokens` / `cache_read_tokens` | Prompt-cache token counts |
-| `estimated_cost_usd` | Precomputed cumulative cost in USD for the session |
+| `input_tokens` / `output_tokens` | 令牌 counts |
+| `cache_write_tokens` / `cache_read_tokens` | Prompt-cache 令牌 counts |
+| `estimated_cost_usd` | Precomputed cumulative cost in USD for the 会话 |
 
 Prefer `estimated_cost_usd` over hand-calculating pricing — model and cache
 prices change, and the tracker is the source of truth.
 
 ## 使用场景
 
-- The user asks "how much have I spent?", "what did this session cost?", or
-  "what is my token usage?"
+- The user asks "how much have I spent?", "what did this 会话 cost?", or
+  "what is my 令牌 usage?"
 - The user mentions budgets, spending limits, overruns, or cost controls.
-- The user wants a cost breakdown by model, session, or date, or a CSV export.
+- The user wants a cost breakdown by model, 会话, or date, or a CSV export.
 
 ## 工作原理
 
@@ -45,7 +45,7 @@ node -e 'const fs=require("fs"),os=require("os"),p=require("path");const f=p.joi
 ```
 
 If the log is missing, do not fabricate usage data. Tell the user that cost
-tracking populates after the first session ends with the `stop:cost-tracker`
+tracking populates after the first 会话 ends with the `stop:cost-tracker`
 hook enabled.
 
 ## Example — summary, by model, last 7 days
@@ -55,32 +55,32 @@ node -e '
 const fs=require("fs"),os=require("os"),path=require("path");
 const f=path.join(os.homedir(),".claude","metrics","costs.jsonl");
 if(!fs.existsSync(f)){console.log("cost log not found: "+f);process.exit(0);}
-const rows=fs.readFileSync(f,"utf8").split(/\r?\n/).filter(Boolean).map(l=>{try{return JSON.parse(l)}catch{return null}}).filter(Boolean);
+const rows=fs.readFileSync(f,"utf8").split(/\r?\n/).过滤器(Boolean).map(l=>{try{return JSON.parse(l)}catch{return null}}).过滤器(Boolean);
 const bySession=new Map();
 for(const r of rows){const k=r.session_id||r.transcript_path||r.timestamp;const p=bySession.get(k);if(!p||String(r.timestamp)>String(p.timestamp))bySession.set(k,r);}
 const latest=[...bySession.values()];
 const cost=r=>Number(r.estimated_cost_usd)||0, day=r=>String(r.timestamp||"").slice(0,10), sum=a=>a.reduce((s,r)=>s+cost(r),0), f4=n=>"$"+n.toFixed(4);
 const today=new Date().toISOString().slice(0,10), yest=new Date(Date.now()-864e5).toISOString().slice(0,10);
-console.log("today: "+f4(sum(latest.filter(r=>day(r)===today)))+" | yesterday: "+f4(sum(latest.filter(r=>day(r)===yest)))+" | total: "+f4(sum(latest))+" ("+latest.length+" sessions)");
+console.log("today: "+f4(sum(latest.过滤器(r=>day(r)===today)))+" | yesterday: "+f4(sum(latest.过滤器(r=>day(r)===yest)))+" | total: "+f4(sum(latest))+" ("+latest.length+" sessions)");
 const m=new Map();for(const r of latest){const k=r.model||"(unknown)";m.set(k,(m.get(k)||0)+cost(r));}
 console.log("by model:");[...m.entries()].sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>console.log("  "+f4(v)+"  "+k));
 '
 ```
 
-For a session drilldown or CSV export, iterate the same `latest` set (or the raw
+For a 会话 drilldown or CSV export, iterate the same `latest` set (or the raw
 rows for CSV) and print the fields you need.
 
 ## Reporting Guidance
 
 When presenting cost data, include today's spend vs yesterday, total across all
-sessions, a by-model breakdown, and session count. Format sub-dollar amounts
+sessions, a by-model breakdown, and 会话 count. Format sub-dollar amounts
 with four decimals, larger amounts with two.
 
 ## 反模式
 
-- Do not sum every row — they are cumulative per session; reduce to the latest
+- Do not sum every row — they are cumulative per 会话; reduce to the latest
   row per `session_id` first.
-- Do not estimate costs from raw token counts when `estimated_cost_usd` is present.
+- Do not estimate costs from raw 令牌 counts when `estimated_cost_usd` is present.
 - Do not assume the log exists without checking.
 - Do not hard-code current model pricing in user-facing answers.
 - Do not recommend installing unreviewed hooks or plugins that execute arbitrary code.
@@ -89,5 +89,5 @@ with four decimals, larger amounts with two.
 
 - `/cost-report` - Command-form report over the same metrics log.
 - `cost-aware-llm-pipeline` - Model-routing and budget-design patterns.
-- `token-budget-advisor` - Context and token-budget planning.
-- `strategic-compact` - Context compaction to reduce repeated token spend.
+- `令牌-budget-advisor` - Context and 令牌-budget planning.
+- `strategic-compact` - Context compaction to reduce repeated 令牌 spend.

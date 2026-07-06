@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # GitLab CI 模式
 
-Comprehensive GitLab CI/CD pipeline patterns for automated testing, building, and deployment.
+Comprehensive GitLab CI/CD pipeline patterns for automated testing, building, and 部署.
 
 ## 不要使用此技能的场景
 
@@ -18,13 +18,13 @@ Comprehensive GitLab CI/CD pipeline patterns for automated testing, building, an
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 目的
 
-Create efficient GitLab CI pipelines with proper stage organization, caching, and deployment strategies.
+Create efficient GitLab CI pipelines with proper stage organization, caching, and 部署 strategies.
 
 ## 使用此技能的场景
 
@@ -80,7 +80,7 @@ deploy:
   image: bitnami/kubectl:latest
   script:
     - kubectl apply -f k8s/
-    - kubectl rollout status deployment/my-app
+    - kubectl rollout status 部署/my-app
   only:
     - main
   environment:
@@ -108,14 +108,14 @@ build-docker:
     - tags
 ```
 
-## Multi-Environment Deployment
+## Multi-Environment 部署
 
 ```yaml
 .deploy_template: &deploy_template
   image: bitnami/kubectl:latest
   before_script:
     - kubectl config set-cluster k8s --server="$KUBE_URL" --insecure-skip-tls-verify=true
-    - kubectl config set-credentials admin --token="$KUBE_TOKEN"
+    - kubectl config set-credentials admin --令牌="$KUBE_TOKEN"
     - kubectl config set-context default --cluster=k8s --user=admin
     - kubectl config use-context default
 
@@ -124,7 +124,7 @@ deploy:staging:
   stage: deploy
   script:
     - kubectl apply -f k8s/ -n staging
-    - kubectl rollout status deployment/my-app -n staging
+    - kubectl rollout status 部署/my-app -n staging
   environment:
     name: staging
     url: https://staging.example.com
@@ -136,7 +136,7 @@ deploy:production:
   stage: deploy
   script:
     - kubectl apply -f k8s/ -n production
-    - kubectl rollout status deployment/my-app -n production
+    - kubectl rollout status 部署/my-app -n production
   environment:
     name: production
     url: https://app.example.com
@@ -272,8 +272,8 @@ trigger-child:
 2. **Cache dependencies** appropriately
 3. **Use artifacts** for build outputs
 4. **Implement manual gates** for production
-5. **Use environments** for deployment tracking
-6. **Enable merge request pipelines**
+5. **Use environments** for 部署 tracking
+6. **Enable merge 请求 pipelines**
 7. **Use pipeline schedules** for recurring jobs
 8. **Implement security scanning**
 9. **Use CI/CD variables** for secrets
@@ -282,7 +282,7 @@ trigger-child:
 ## 相关技能
 
 - `github-actions-templates` - For GitHub Actions
-- `deployment-pipeline-design` - For architecture
+- `部署-pipeline-design` - For architecture
 - `secrets-management` - For secrets handling
 
 ## 局限性

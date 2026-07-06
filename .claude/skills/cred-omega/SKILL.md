@@ -14,7 +14,7 @@ tags:
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -32,7 +32,7 @@ CISO operacional enterprise para gestao total de credenciais e segredos. Descobr
 ## 不适用场景
 
 - The task is unrelated to cred omega
-- A simpler, more specific tool can handle the request
+- A simpler, more specific tool can handle the 请求
 - The user needs general-purpose assistance without domain expertise
 
 ## 工作原理
@@ -58,7 +58,7 @@ CISO operacional enterprise para gestao total de credenciais e segredos. Descobr
 - Se o usuario colar uma chave por engano: tratar como INCIDENTE — orientar revogacao imediata e rotacao
 - Todo segredo deve existir APENAS em Secret Manager/Vault/env seguro e ser injetado em runtime
 - NENHUM client-side (browser/mobile) pode conter chave de API — zero excecoes
-- Todo token/key deve ter: owner, finalidade, ambiente, TTL/expiracao, restricoes e plano de rotacao
+- Todo 令牌/key deve ter: owner, finalidade, ambiente, TTL/expiracao, restricoes e plano de rotacao
 - Logs NUNCA contem segredos — aplicar redaction em toda saida
 - Principio do menor privilegio: se nao precisa, nao tem acesso
 
@@ -84,11 +84,11 @@ Pense como um atacante para defender como um profissional:
 | JWT Signing Keys | private keys para assinatura | CRITICA |
 | SSH/TLS Keys | .pem, .p12, .key, id_rsa | CRITICA |
 | DB Credentials | connection strings, passwords | CRITICA |
-| Bot Tokens | Telegram bot token, Discord bot token | ALTA |
+| Bot Tokens | Telegram bot 令牌, Discord bot 令牌 | ALTA |
 | App Secrets | Meta App Secret, Twitter API Secret | CRITICA |
-| Conversion/Pixel Tokens | Meta CAPI token, GA measurement secret | MEDIA |
+| Conversion/Pixel Tokens | Meta CAPI 令牌, GA measurement secret | MEDIA |
 | Encryption Keys | AES keys, master keys | CRITICA |
-| Session Cookies | cookies de sessao privilegiada | MEDIA |
+| 会话 Cookies | cookies de sessao privilegiada | MEDIA |
 | CI/CD Tokens | GitHub PAT, GitLab tokens, deploy keys | ALTA |
 | Cloud Provider Keys | AWS_ACCESS_KEY_ID, AZURE_CLIENT_SECRET | CRITICA |
 
@@ -153,7 +153,7 @@ CHECKLIST FASE 0:
 ## Scanner Principal — Padroes Regex De Alta Cobertura
 
 rg -n --hidden --no-ignore -S \
-  "(api[_-]?key|secret|token|bearer|authorization|x-api-key|client_secret|private_key|BEGIN PRIVATE KEY|BEGIN RSA|service_account|refresh_token|password\s*=|passwd|credential)" \
+  "(api[_-]?key|secret|令牌|bearer|授权|x-api-key|client_secret|private_key|BEGIN PRIVATE KEY|BEGIN RSA|service_account|refresh_token|password\s*=|passwd|credential)" \
   . --glob '!node_modules' --glob '!.git' --glob '!*.lock'
 ```
 
@@ -192,11 +192,11 @@ rg -n "AKIA[A-Z0-9]{16}" . --glob '!node_modules' --glob '!.git'
 
 rg -n "sk_live_[a-zA-Z0-9]{20,}" . --glob '!node_modules' --glob '!.git'
 
-## Meta/Facebook (Token Longo Numerico)
+## Meta/Facebook (令牌 Longo Numerico)
 
 rg -n "EAA[a-zA-Z0-9]{50,}" . --glob '!node_modules' --glob '!.git'
 
-## Telegram Bot Token
+## Telegram Bot 令牌
 
 rg -n "[0-9]{8,10}:[a-zA-Z0-9_-]{35}" . --glob '!node_modules' --glob '!.git'
 
@@ -231,7 +231,7 @@ git grep -n "password" $(git rev-list --all) 2>/dev/null | head -20
 
 ## Diffs Que Removeram Segredos (Sinal De Vazamento Anterior)
 
-git log --all -p --diff-filter=D -- "*.env" "*.pem" "*.key" 2>/dev/null | head -50
+git log --all -p --diff-过滤器=D -- "*.env" "*.pem" "*.key" 2>/dev/null | head -50
 ```
 
 #### 1E. Docker e Containers
@@ -244,7 +244,7 @@ docker images --format "{{.Repository}}:{{.Tag}}" 2>/dev/null | head -20
 
 ## Checar Docker-Compose Por Segredos Inline
 
-rg -n "(password|secret|token|key)" docker-compose*.yml 2>/dev/null
+rg -n "(password|secret|令牌|key)" docker-compose*.yml 2>/dev/null
 ```
 
 #### 1F. Variaveis de Ambiente (sem expor valores)
@@ -253,7 +253,7 @@ rg -n "(password|secret|token|key)" docker-compose*.yml 2>/dev/null
 
 ## Listar Nomes De Variaveis Suspeitas (Sem Valores!)
 
-env | rg -i "(openai|gcp|google|meta|facebook|whatsapp|telegram|token|secret|key|password|credential|api)" | sed 's/=.*/=***REDACTED***/'
+env | rg -i "(openai|gcp|google|meta|facebook|whatsapp|telegram|令牌|secret|key|password|credential|api)" | sed 's/=.*/=***REDACTED***/'
 ```
 
 #### 1G. CI/CD e Pipelines
@@ -294,15 +294,15 @@ Criticidade = (Exposicao x Privilegio x Blast_Radius) / Tempo_Deteccao
 
 Para P0 e P1, executar imediatamente:
 
-1. **Revogar** — invalidar a chave/token no painel do provedor
+1. **Revogar** — invalidar a chave/令牌 no painel do provedor
 2. **Rotacionar** — gerar nova credencial com escopo minimo
 3. **Substituir** — atualizar em todos os locais que usam a credencial antiga
 4. **Verificar** — confirmar que servicos voltaram a funcionar com nova credencial
 5. **Limpar** — remover do historico git se necessario:
    ```bash
-   # BFG Repo-Cleaner (mais seguro que filter-branch)
+   # BFG Repo-Cleaner (mais seguro que 过滤器-branch)
    # java -jar bfg.jar --replace-text passwords.txt repo.git
-   # Ou git filter-repo para remover arquivos
+   # Ou git 过滤器-repo para remover arquivos
    ```
 
 ## Fase 4 — Hardening (Protecao Profunda)
@@ -312,7 +312,7 @@ Para P0 e P1, executar imediatamente:
 **Regra 1: Chave NUNCA no front-end**
 - Browser/mobile = ambiente hostil. Se a chave aparece no JS entregue ao usuario, ja era.
 - Solucao padrao-ouro: API Gateway/Proxy na VPS
-- O front chama SEU endpoint → sua VPS chama o provedor com segredo em Secret Store
+- O front chama SEU 端点 → sua VPS chama o provedor com segredo em Secret Store
 
 **Regra 2: Separacao por ambiente**
 - DEV, STAGING, PROD com chaves DIFERENTES e contas diferentes quando possivel
@@ -347,7 +347,7 @@ Para P0 e P1, executar imediatamente:
 [Cliente/Browser]
        |
        v
-[Seu Proxy (VPS)] ← autenticacao do usuario (JWT/session)
+[Seu Proxy (VPS)] ← autenticacao do usuario (JWT/会话)
        |             rate limiting por usuario/rota
        |             logging (sem segredos)
        |             quota por ambiente
@@ -361,8 +361,8 @@ Estrutura de pastas na VPS:
 /opt/api-gateway/
   /src/
     server.js          # Express/Fastify proxy
-    middleware/
-      auth.js          # JWT/session validation
+    中间件/
+      auth.js          # JWT/会话 validation
       rateLimit.js     # Rate limiting por rota/usuario
       quota.js         # Quotas por ambiente/usuario
     
@@ -501,7 +501,7 @@ jobs:
 
 ### 4.3 Meta (Whatsapp / Facebook / Instagram)
 
-**Risco tipico:** App Secret/token vazado + webhooks mal validados = controle da integracao.
+**Risco tipico:** App Secret/令牌 vazado + webhooks mal validados = controle da integracao.
 
 **Hardening:**
 - App Secret e tokens SO no backend
@@ -518,17 +518,17 @@ jobs:
 [ ] Webhook com validacao HMAC-SHA256
 [ ] Permissoes minimas no Business Manager
 [ ] System User tokens (nao pessoais)
-[ ] Dominios de callback restritos
+[ ] Dominios de 回调 restritos
 [ ] Tokens por ambiente
 [ ] Revisao trimestral de apps ativos
 ```
 
 ### 4.4 Telegram (Bots)
 
-**Risco tipico:** Token do bot vazou = controle total do bot (ler mensagens, enviar spam).
+**Risco tipico:** 令牌 do bot vazou = controle total do bot (ler mensagens, enviar spam).
 
 **Hardening:**
-- Token do bot SO no backend
+- 令牌 do bot SO no backend
 - Webhook com secret_token e validacao
 - Rate limiting e anti-spam
 - Logs SEM expor update completo (pode conter dados sensiveis de usuarios)
@@ -537,7 +537,7 @@ jobs:
 
 **Checklist Telegram:**
 ```
-[ ] Token so server-side
+[ ] 令牌 so server-side
 [ ] Webhook com secret_token
 [ ] Validacao de IP (Telegram IPs: 149.154.160.0/20, 91.108.4.0/22)
 [ ] Rate limiting ativo
@@ -574,7 +574,7 @@ jobs:
 
 **Hardening:**
 - Restricted keys com permissoes minimas
-- Webhook signing secret validado em TODA request
+- Webhook signing secret validado em TODA 请求
 - Modo teste (sk_test_) para dev — NUNCA sk_live_ em dev
 - IP restriction quando possivel
 - Logs de auditoria do Stripe dashboard
@@ -617,7 +617,7 @@ Plano e execucao guiada de rotacao:
 ## /Incident (Incident_Mode)
 
 Resposta imediata a vazamento/abuso:
-1. **CONTER** — Revogar chave/token, desativar webhooks, travar proxy (kill switch)
+1. **CONTER** — Revogar chave/令牌, desativar webhooks, travar proxy (kill switch)
 2. **ERRADICAR** — Remover do codigo, reescrever historico git, scan amplo
 3. **RECUPERAR** — Gerar novas credenciais com escopo minimo, reimplantar
 4. **APRENDER** — Adicionar regra anti-regressao, post-mortem, atualizar playbook
@@ -684,7 +684,7 @@ F) SECRET REGISTRY
 | Severidade | Descricao | SLA | Quem |
 |-----------|-----------|-----|------|
 | SEV-1 | Chave admin/root vazada publicamente | < 15 min | Toda equipe |
-| SEV-2 | Token de producao exposto em repo privado | < 1 hora | Dev + Ops |
+| SEV-2 | 令牌 de producao exposto em repo privado | < 1 hora | Dev + Ops |
 | SEV-3 | Chave de dev exposta, permissoes limitadas | < 4 horas | Dev responsavel |
 | SEV-4 | Potencial exposicao, nao confirmada | < 24 horas | Dev responsavel |
 
@@ -790,7 +790,7 @@ Localizado em: `scripts/audit_report.py`
 
 4. Proxy:
    - Rate limit por rota
-   - Auth JWT/session obrigatorio
+   - Auth JWT/会话 obrigatorio
    - Logs sem segredos
    - Kill switch (desligar proxy rapidamente)
 

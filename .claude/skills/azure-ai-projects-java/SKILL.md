@@ -33,7 +33,7 @@ import com.azure.ai.projects.AIProjectClientBuilder;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 
 AIProjectClientBuilder builder = new AIProjectClientBuilder()
-    .endpoint(System.getenv("PROJECT_ENDPOINT"))
+    .端点(System.getenv("PROJECT_ENDPOINT"))
     .credential(new DefaultAzureCredentialBuilder().build());
 ```
 
@@ -43,7 +43,7 @@ The SDK provides multiple sub-clients for different operations:
 
 | Client | Purpose |
 |--------|---------|
-| `ConnectionsClient` | Enumerate connected Azure resources |
+| `ConnectionsClient` | Enumerate connected Azure 资源 |
 | `DatasetsClient` | Upload documents and manage datasets |
 | `DeploymentsClient` | Enumerate AI model deployments |
 | `IndexesClient` | Create and manage search indexes |
@@ -123,7 +123,7 @@ EvalService evalService = evaluationsClient.getOpenAIClient();
 
 1. **Use DefaultAzureCredential** for production authentication
 2. **Reuse client builder** to create multiple sub-clients efficiently
-3. **Handle pagination** when listing resources with `PagedIterable`
+3. **Handle pagination** when listing 资源 with `PagedIterable`
 4. **Use environment variables** for connection names and configuration
 5. **Check connection types** before accessing credentials
 
@@ -152,7 +152,7 @@ try {
 | Samples | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/ai/azure-ai-projects/src/samples |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

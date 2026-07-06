@@ -32,7 +32,7 @@ Gather this context (ask if not provided):
 ### 2. Content & Domain
 - What type of content do you produce? (Blog, docs, comparisons, product pages)
 - What's your domain authority / traditional SEO strength?
-- Do you have existing structured data (schema markup)?
+- Do you have existing structured data (架构 markup)?
 
 ### 3. Goals
 - Get cited as a source in AI answers?

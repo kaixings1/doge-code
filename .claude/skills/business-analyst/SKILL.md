@@ -113,7 +113,7 @@ Expert business analyst focused on transforming complex business data into actio
 
 ### Business Process Optimization
 
-- Process mining and workflow analysis
+- Process mining and 工作流 analysis
 - Operational efficiency measurement and improvement
 - Supply chain analytics and optimization
 - Resource allocation and capacity planning

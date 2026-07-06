@@ -8,7 +8,7 @@ date_added: '2026-02-27'
 
 # Azure.ResourceManager.ArizeAIObservabilityEval
 
-.NET SDK for managing Arize AI Observability and Evaluation resources on Azure.
+.NET SDK for managing Arize AI Observability and Evaluation 资源 on Azure.
 
 ## 安装
 
@@ -53,7 +53,7 @@ var armClient = new ArmClient(credential);
 
 ```csharp
 using Azure.Core;
-using Azure.ResourceManager.Resources;
+using Azure.ResourceManager.资源;
 using Azure.ResourceManager.ArizeAIObservabilityEval;
 using Azure.ResourceManager.ArizeAIObservabilityEval.Models;
 
@@ -94,13 +94,13 @@ var data = new ArizeAIObservabilityEvalOrganizationData(AzureLocation.EastUS)
     Tags = { ["environment"] = "production" }
 };
 
-// Create (long-running operation)
-var operation = await collection.CreateOrUpdateAsync(
+// Create (long-running 操作)
+var 操作 = await collection.CreateOrUpdateAsync(
     WaitUntil.Completed,
     "my-arize-org",
     data);
 
-var organization = operation.Value;
+var organization = 操作.Value;
 Console.WriteLine($"Created: {organization.Data.Name}");
 ```
 
@@ -118,10 +118,10 @@ if (exists.Value)
 }
 
 // Option 3: GetIfExists (returns null if not found)
-var response = await collection.GetIfExistsAsync("my-arize-org");
-if (response.HasValue)
+var 响应 = await collection.GetIfExistsAsync("my-arize-org");
+if (响应.HasValue)
 {
-    var org = response.Value;
+    var org = 响应.Value;
 }
 ```
 
@@ -229,7 +229,7 @@ var data = await org.GetAsync();
 - [Arize AI](https://arize.com/)
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

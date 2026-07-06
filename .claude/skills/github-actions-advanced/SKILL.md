@@ -2,7 +2,7 @@
 name: github-actions-advanced
 description: "Github Actions Advanced — Github Actions Advanced 相关功能和最佳实践"
   Design, debug, and harden GitHub Actions CI/CD workflows, including reusable
-  workflows, matrix builds, self-hosted runners, OIDC authentication, caching,
+  workflows, matrix builds, self-hosted runners, OIDC 认证, caching,
   environments, secrets, and release automation.
 category: devops
 risk: safe
@@ -21,16 +21,16 @@ Expert guidance for designing, writing, debugging, and securing **production-gra
 - User mentions GitHub Actions, `.github/workflows`, CI/CD pipelines, runners, jobs, steps, or actions
 - User wants to automate builds, tests, deployments, or releases via GitHub
 - User asks about matrix builds, reusable workflows, composite actions, or self-hosted runners
-- User needs help with OIDC authentication, caching strategies, or secrets management
+- User needs help with OIDC 认证, caching strategies, or secrets management
 - User says "my GitHub pipeline is failing" or "set up CI for my repo"
-- User asks about workflow security, hardening, or environment protection rules
+- User asks about 工作流 security, hardening, or environment protection rules
 
 ## When NOT to Use This Skill
 
 - The user is working with GitLab CI/CD → recommend `gitlab-ci-patterns`
 - The user is working with CircleCI, Jenkins, or other CI platforms
 - The task is purely about Docker image building without GitHub context → recommend `docker-expert`
-- The task is about Kubernetes deployment configuration → recommend `kubernetes-architect`
+- The task is about Kubernetes 部署 配置 → recommend `kubernetes-architect`
 
 ---
 
@@ -45,22 +45,22 @@ find .github/workflows -name "*.yml" -o -name "*.yaml" 2>/dev/null | head -20
 # Check for composite actions
 find .github/actions -name "action.yml" 2>/dev/null
 
-# Detect tech stack (influences runner OS, language setup actions)
+# Detect tech stack (influences runner OS, language 设置 actions)
 ls package.json requirements.txt Gemfile go.mod Cargo.toml pom.xml 2>/dev/null
 ```
 
 Then adapt recommendations to:
-- Existing workflow patterns in the repo
+- Existing 工作流 patterns in the repo
 - The tech stack and language runtime
 - Whether this is a monorepo or single-project repo
 - Whether self-hosted or GitHub-hosted runners are in use
 
 ---
 
-## Workflow Structure Reference
+## 工作流 Structure Reference
 
 ```yaml
-name: Workflow Name
+name: 工作流 Name
 
 on:                          # Triggers (see Triggers section)
   push:
@@ -69,11 +69,11 @@ on:                          # Triggers (see Triggers section)
 permissions:                 # Always declare — principle of least privilege
   contents: read
 
-env:                         # Workflow-level env vars
+env:                         # 工作流-level env vars
   NODE_VERSION: '20'
 
 concurrency:                 # Prevent duplicate runs
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.工作流 }}-${{ github.ref }}
   cancel-in-progress: true   # Cancel older runs for same branch
 
 jobs:
@@ -126,7 +126,7 @@ on:
         type: string
         required: true
     secrets:
-      deploy-token:
+      deploy-令牌:
         required: true
 
   release:
@@ -165,7 +165,7 @@ jobs:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}       # Explicit secret passing
 ```
 
-### Reusable Workflow (`.github/workflows/_build.yml`)
+### Reusable 工作流 (`.github/workflows/_build.yml`)
 
 ```yaml
 on:
@@ -178,7 +178,7 @@ on:
         type: boolean
         default: false
     secrets:
-      registry-token:
+      registry-令牌:
         required: false
     outputs:
       digest:
@@ -226,7 +226,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
+      - uses: actions/设置-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
         with:
           node-version: ${{ matrix.node }}
           cache: 'npm'
@@ -265,29 +265,29 @@ jobs:
 
 ## Caching Strategies
 
-### Language Setup Actions (Preferred — No Extra Step Needed)
+### Language 设置 Actions (Preferred — No Extra Step Needed)
 
 ```yaml
 # Node.js
-- uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
+- uses: actions/设置-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
   with:
     node-version: '20'
     cache: 'npm'           # or 'yarn' or 'pnpm'
 
 # Python
-- uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+- uses: actions/设置-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
   with:
     python-version: '3.12'
     cache: 'pip'
 
 # Go
-- uses: actions/setup-go@3041bf56c941b39c61721a86cd11f3bb1338122a  # v5.2.0
+- uses: actions/设置-go@3041bf56c941b39c61721a86cd11f3bb1338122a  # v5.2.0
   with:
     go-version: '1.23'
     cache: true
 
 # Java / Gradle / Maven
-- uses: actions/setup-java@7a6d8a8234af8eb26422e24052f73b12b0e46a27  # v4.6.0
+- uses: actions/设置-java@7a6d8a8234af8eb26422e24052f73b12b0e46a27  # v4.6.0
   with:
     distribution: 'temurin'
     java-version: '21'
@@ -327,7 +327,7 @@ jobs:
 
 ---
 
-## OIDC Authentication (Keyless Cloud Auth)
+## OIDC 认证 (Keyless Cloud Auth)
 
 **Never store long-lived cloud credentials as secrets.** Use OIDC to get short-lived tokens that expire automatically.
 
@@ -335,7 +335,7 @@ jobs:
 
 ```yaml
 permissions:
-  id-token: write
+  id-令牌: write
   contents: read
 
 steps:
@@ -343,10 +343,10 @@ steps:
     with:
       role-to-assume: arn:aws:iam::123456789012:role/GitHubActionsRole
       aws-region: us-east-1
-      role-session-name: GitHubActions-${{ github.run_id }}
+      role-会话-name: GitHubActions-${{ github.run_id }}
 
   # Trust policy on the IAM role must include:
-  # "token.actions.githubusercontent.com" as OIDC provider
+  # "令牌.actions.githubusercontent.com" as OIDC provider
   # Condition: "repo:org/repo:ref:refs/heads/main" (restrict to branch)
 ```
 
@@ -354,7 +354,7 @@ steps:
 
 ```yaml
 permissions:
-  id-token: write
+  id-令牌: write
   contents: read
 
 steps:
@@ -369,7 +369,7 @@ steps:
 
 ```yaml
 permissions:
-  id-token: write
+  id-令牌: write
   contents: read
 
 steps:
@@ -383,7 +383,7 @@ steps:
 
 ---
 
-## Environments & Deployment Protection
+## Environments & 部署 Protection
 
 ```yaml
 jobs:
@@ -400,7 +400,7 @@ jobs:
     needs: deploy-staging
     environment:
       name: production
-      url: https://myapp.com      # Shown in the GitHub UI deployment panel
+      url: https://myapp.com      # Shown in the GitHub UI 部署 panel
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -412,7 +412,7 @@ jobs:
 - **Wait timer** — delay after approval (e.g., 10-minute buffer)
 - **Branch/tag restrictions** — only `main` or `v*` tags can deploy to prod
 - **Environment-specific secrets** — override repo-level secrets per environment
-- **Deployment branches** — whitelist which branches can target this environment
+- **部署 branches** — whitelist which branches can target this environment
 
 ---
 
@@ -423,10 +423,10 @@ jobs:
 env:
   DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
-# Auto-provided token — no setup needed
+# Auto-provided 令牌 — no 设置 needed
 - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
   with:
-    github-token: ${{ secrets.GITHUB_TOKEN }}
+    github-令牌: ${{ secrets.GITHUB_TOKEN }}
 
 # Hierarchy (most specific wins):
 # environment secret > repo secret > org secret
@@ -435,11 +435,11 @@ env:
 ### Masking Dynamic Values
 
 ```yaml
-- name: Generate and mask dynamic token
+- name: Generate and mask dynamic 令牌
   run: |
-    TOKEN=$(./scripts/generate-token.sh)
-    echo "::add-mask::$TOKEN"          # Mask in all subsequent logs
-    echo "DEPLOY_TOKEN=$TOKEN" >> $GITHUB_ENV
+    令牌=$(./scripts/generate-令牌.sh)
+    echo "::add-mask::$令牌"          # Mask in all subsequent logs
+    echo "DEPLOY_TOKEN=$令牌" >> $GITHUB_ENV
 ```
 
 ### Secrets in Composite Actions
@@ -456,12 +456,12 @@ env:
 
 ## Composite Actions
 
-Package reusable step sequences into local actions. No container spin-up, no separate workflow file needed.
+Package reusable step sequences into local actions. No container spin-up, no separate 工作流 file needed.
 
-### Action Definition (`.github/actions/setup-app/action.yml`)
+### Action Definition (`.github/actions/设置-app/action.yml`)
 
 ```yaml
-name: Setup App
+name: 设置 App
 description: Install and configure application dependencies
 
 inputs:
@@ -482,7 +482,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
+    - uses: actions/设置-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
       with:
         node-version: ${{ inputs.node-version }}
         cache: npm
@@ -512,12 +512,12 @@ runs:
       run: npm run build
 ```
 
-### Usage in a Workflow
+### Usage in a 工作流
 
 ```yaml
 steps:
   - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-  - uses: ./.github/actions/setup-app
+  - uses: ./.github/actions/设置-app
     with:
       node-version: '22'
       install-flags: '--ignore-scripts'
@@ -537,7 +537,7 @@ jobs:
     runs-on: [self-hosted, linux, arm64]
 ```
 
-### Runner Best Practices
+### Runner 最佳实践
 
 | Practice | Details |
 |---|---|
@@ -636,7 +636,7 @@ jobs:
 ### 1. Always Declare Permissions (Least Privilege)
 
 ```yaml
-# Workflow-level default — restrict everything
+# 工作流-level default — restrict everything
 permissions:
   contents: read
 
@@ -647,7 +647,7 @@ jobs:
       contents: write        # Only for release/publish jobs
       packages: write        # Only for container push jobs
       pull-requests: write   # Only for PR comment jobs
-      id-token: write        # Only for OIDC auth jobs
+      id-令牌: write        # Only for OIDC auth jobs
 ```
 
 ### 2. Pin Third-Party Actions to Full Commit SHA
@@ -681,7 +681,7 @@ jobs:
 ```
 
 Never place `${{ ... }}` directly inside `run:` when the value can come from
-PR metadata, workflow inputs, repository files, matrix JSON, or earlier job
+PR metadata, 工作流 inputs, repository files, matrix JSON, or earlier job
 outputs. Put it in `env:` first, validate allowlisted values where possible, and
 reference the shell variable with quotes.
 
@@ -706,7 +706,7 @@ jobs:
 ### 5. Harden with StepSecurity
 
 ```yaml
-# Add to every workflow — hardens runner, monitors outbound traffic
+# Add to every 工作流 — hardens runner, monitors outbound traffic
 - uses: step-security/harden-runner@4d991eb9995541a0b71d1b66f1f98a5f1bef422c  # v2.11.0
   with:
     egress-policy: audit          # Start with 'audit', move to 'block' after confirming allowlist
@@ -745,7 +745,7 @@ jobs:
 - uses: mxschmitt/action-tmate@7b04f3521e6b0a9fc56fa8f9f50da4bcfb5fc7b5  # v3.19.0
   if: failure() && runner.debug == '1'
   with:
-    limit-access-to-actor: true    # Only the workflow triggerer can SSH in
+    limit-access-to-actor: true    # Only the 工作流 triggerer can SSH in
     timeout-minutes: 30
 
 # Check what's pre-installed on GitHub-hosted runners
@@ -777,7 +777,7 @@ on:
     branches: [main]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.工作流 }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 permissions:
@@ -795,7 +795,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
+      - uses: actions/设置-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
         with:
           node-version: '20'
           cache: 'npm'
@@ -820,14 +820,14 @@ jobs:
     permissions:
       contents: read
       packages: write
-      id-token: write      # For OIDC
+      id-令牌: write      # For OIDC
     outputs:
       image-digest: ${{ steps.push.outputs.digest }}
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349  # v3.7.1
+      - uses: docker/设置-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349  # v3.7.1
 
       - uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567  # v3.3.0
         with:
@@ -937,21 +937,21 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
+      - uses: actions/设置-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
         with:
           node-version: '20'
 
       - run: npx npm-check-updates -u
       - run: npm install
 
-      - uses: peter-evans/create-pull-request@5e914681df9dc83aa4e4905692ca88beb2f9e91f  # v7.0.5
+      - uses: peter-evans/create-pull-请求@5e914681df9dc83aa4e4905692ca88beb2f9e91f  # v7.0.5
         with:
           commit-message: 'chore: update npm dependencies'
           title: 'chore: update npm dependencies'
           branch: 'chore/npm-updates'
           delete-branch: true
           body: |
-            Automated dependency updates generated by the dependency update workflow.
+            Automated dependency updates generated by the dependency update 工作流.
             Please review and test before merging.
 ```
 
@@ -1010,14 +1010,14 @@ jobs:
 
 | Problem | Cause | Fix |
 |---|---|---|
-| Workflow doesn't trigger on PR from fork | Fork PRs use restricted `GITHUB_TOKEN` | Use `pull_request` not `pull_request_target`; avoid repo secrets in fork context |
+| 工作流 doesn't trigger on PR from fork | Fork PRs use restricted `GITHUB_TOKEN` | Use `pull_request` not `pull_request_target`; avoid repo secrets in fork context |
 | Secret is `***` in logs but exposed | Dynamic value not masked | Use `echo "::add-mask::$VALUE"` before using it |
 | Cache never hits across branches | Cache key too specific | Add `restore-keys` fallback without branch or hash segment |
 | Matrix job fails silently | `fail-fast: true` (default) cancels siblings | Set `fail-fast: false` during debugging |
 | Job hangs indefinitely | No `timeout-minutes` set | Always set `timeout-minutes` on every job |
 | `$GITHUB_OUTPUT` not set | Old `set-output` command used | Use `echo "key=value" >> $GITHUB_OUTPUT` |
-| OIDC token request fails | Missing `id-token: write` permission | Add to job-level `permissions` block |
-| Reusable workflow can't access caller secrets | No `secrets: inherit` | Add `secrets: inherit` or explicitly pass secrets |
+| OIDC 令牌 请求 fails | Missing `id-令牌: write` permission | Add to job-level `permissions` block |
+| Reusable 工作流 can't access caller secrets | No `secrets: inherit` | Add `secrets: inherit` or explicitly pass secrets |
 
 ---
 
@@ -1044,7 +1044,7 @@ ${{ join(matrix.items, ',') }}              # Join array
 # Status functions (use in if: conditions)
 ${{ success() }}    # All previous steps succeeded
 ${{ failure() }}    # Any previous step failed
-${{ cancelled() }}  # Workflow was cancelled
+${{ cancelled() }}  # 工作流 was cancelled
 ${{ always() }}     # Always runs (success OR failure OR cancelled)
 ```
 
@@ -1052,11 +1052,11 @@ ${{ always() }}     # Always runs (success OR failure OR cancelled)
 
 ## Production Readiness Checklist
 
-Before merging any workflow to `main`, verify:
+Before merging any 工作流 to `main`, verify:
 
 ### Security
 - [ ] All third-party actions pinned to full commit SHA
-- [ ] `permissions:` declared at workflow and job level (least privilege)
+- [ ] `permissions:` declared at 工作流 and job level (least privilege)
 - [ ] No `${{ }}` expressions directly in `run:` blocks (use env vars)
 - [ ] OIDC used for cloud credentials (no long-lived secrets stored)
 - [ ] `pull_request_target` gated with label check + author_association guard
@@ -1070,7 +1070,7 @@ Before merging any workflow to `main`, verify:
 - [ ] Artifact retention policy set appropriately
 
 ### Performance
-- [ ] Dependency caching configured (setup-* cache or actions/cache)
+- [ ] Dependency caching configured (设置-* cache or actions/cache)
 - [ ] Docker layer caching enabled (`type=gha`)
 - [ ] Path filters on `push`/`pull_request` to skip unrelated changes
 - [ ] Matrix parallelism appropriate (not exhausting runner pool)
@@ -1078,17 +1078,17 @@ Before merging any workflow to `main`, verify:
 ### Maintainability
 - [ ] Reusable workflows used for repeated patterns
 - [ ] Composite actions used for repeated step sequences
-- [ ] Workflow names and step names are human-readable
-- [ ] `_` prefix on internal/reusable workflow files
+- [ ] 工作流 names and step names are human-readable
+- [ ] `_` prefix on internal/reusable 工作流 files
 - [ ] Environment protection rules configured for `production`
 
 ---
 
 ## 相关技能
 
-- `gha-security-review` — Deep security audit of existing workflow files
-- `github-actions-templates` — Copy-paste ready workflow templates
-- `docker-expert` — Container build optimization and Dockerfile best practices
+- `gha-security-review` — Deep security audit of existing 工作流 files
+- `github-actions-templates` — Copy-paste ready 工作流 templates
+- `docker-expert` — Container build optimization and Dockerfile 最佳实践
 - `kubernetes-architect` — Deploying to Kubernetes from GitHub Actions
 - `gitlab-ci-patterns` — GitLab CI/CD equivalent patterns
 

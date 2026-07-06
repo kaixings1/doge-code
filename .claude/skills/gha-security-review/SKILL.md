@@ -7,7 +7,7 @@ date_added: 2026-03-16
 ---
 
 <!--
-Attack patterns and real-world examples sourced from the HackerBot Claw campaign analysis
+Attack patterns and real-world 示例 sourced from the HackerBot Claw campaign analysis
 by StepSecurity (2025): https://www.stepsecurity.io/blog/hackerbot-claw-github-actions-exploitation
 -->
 
@@ -19,8 +19,8 @@ This skill encodes attack patterns from real GitHub Actions exploits — not gen
 
 ## 使用场景
 - You are reviewing GitHub Actions workflows for exploitable security issues.
-- The task requires tracing a concrete attack path from an external attacker to workflow execution or secret exposure.
-- You need a security review of workflow files, composite actions, or workflow-related scripts with evidence-based findings only.
+- The task requires tracing a concrete attack path from an external attacker to 工作流 execution or secret exposure.
+- You need a security review of 工作流 files, composite actions, or 工作流-related scripts with evidence-based findings only.
 
 ## Scope
 
@@ -28,7 +28,7 @@ Review the workflows provided (file, diff, or repo). Research the codebase as ne
 
 ### Files to Review
 
-- `.github/workflows/*.yml` — all workflow definitions
+- `.github/workflows/*.yml` — all 工作流 definitions
 - `action.yml` / `action.yaml` — composite actions in the repo
 - `.github/actions/*/action.yml` — local reusable actions
 - Config files loaded by workflows: `CLAUDE.md`, `AGENTS.md`, `Makefile`, shell scripts under `.github/`
@@ -61,9 +61,9 @@ Report only **HIGH** and **MEDIUM** confidence findings. Do not report theoretic
 For each HIGH finding, provide all five elements:
 
 1. **Entry point** — How does the attacker get in? (fork PR, issue comment, branch name, etc.)
-2. **Payload** — What does the attacker send? (actual code/YAML/input)
-3. **Execution mechanism** — How does the payload run? (expression expansion, checkout + script, etc.)
-4. **Impact** — What does the attacker gain? (token theft, code execution, repo write access)
+2. **载荷** — What does the attacker send? (actual code/YAML/input)
+3. **Execution mechanism** — How does the 载荷 run? (expression expansion, checkout + script, etc.)
+4. **Impact** — What does the attacker gain? (令牌 theft, code execution, repo write access)
 5. **PoC sketch** — Concrete steps an attacker would follow
 
 If you cannot construct all five, report as MEDIUM (needs verification).
@@ -72,11 +72,11 @@ If you cannot construct all five, report as MEDIUM (needs verification).
 
 ## 步骤 1: Classify Triggers and Load References
 
-For each workflow, identify triggers and load the appropriate reference:
+For each 工作流, identify triggers and load the appropriate reference:
 
 | Trigger / Pattern | Load Reference |
 |---|---|
-| `pull_request_target` | `references/pwn-request.md` |
+| `pull_request_target` | `references/pwn-请求.md` |
 | `issue_comment` with command parsing | `references/comment-triggered-commands.md` |
 | `${{ }}` in `run:` blocks | `references/expression-injection.md` |
 | PATs / deploy keys / elevated credentials | `references/credential-escalation.md` |
@@ -90,9 +90,9 @@ Load references selectively — only what's relevant to the triggers found.
 
 ## 步骤 2: Check for Vulnerability Classes
 
-### Check 1: Pwn Request
+### Check 1: Pwn 请求
 
-Does the workflow use `pull_request_target` AND check out fork code?
+Does the 工作流 use `pull_request_target` AND check out fork code?
 - Look for `actions/checkout` with `ref:` pointing to PR head
 - Look for local actions (`./.github/actions/`) that would come from the fork
 - Check if any `run:` step executes code from the checked-out PR
@@ -106,22 +106,22 @@ Are `${{ }}` expressions used inside `run:` blocks in externally-triggerable wor
 
 ### Check 3: Unauthorized Command Execution
 
-Does an `issue_comment`-triggered workflow execute commands without authorization?
+Does an `issue_comment`-triggered 工作流 execute commands without 授权?
 - Is there an `author_association` check?
 - Can any GitHub user trigger the command?
-- Does the command handler also use injectable expressions?
+- Does the command 处理器 also use injectable expressions?
 
 ### Check 4: Credential Escalation
 
 Are elevated credentials (PATs, deploy keys) accessible to untrusted code?
 - What's the blast radius of each secret?
-- Could a compromised workflow steal long-lived tokens?
+- Could a compromised 工作流 steal long-lived tokens?
 
 ### Check 5: Config File Poisoning
 
-Does the workflow load configuration from PR-supplied files?
+Does the 工作流 load 配置 from PR-supplied files?
 - AI agent instructions: `CLAUDE.md`, `AGENTS.md`, `.cursorrules`
-- Build configuration: `Makefile`, shell scripts
+- Build 配置: `Makefile`, shell scripts
 
 ### Check 6: Supply Chain
 
@@ -129,7 +129,7 @@ Are third-party actions securely pinned?
 
 ### Check 7: Permissions and Secrets
 
-Are workflow permissions minimal? Are secrets properly scoped?
+Are 工作流 permissions minimal? Are secrets properly scoped?
 
 ### Check 8: Runner Infrastructure
 
@@ -148,16 +148,16 @@ Before reporting, check if the pattern is actually safe:
 | `${{ }}` in `if:` conditions | Evaluated by Actions runtime, not shell |
 | `${{ }}` in `with:` inputs | Passed as string parameters, not shell-evaluated |
 | Actions pinned to full SHA | Immutable reference |
-| `pull_request` trigger (not `_target`) | Runs in fork context with read-only token |
+| `pull_request` trigger (not `_target`) | Runs in fork context with read-only 令牌 |
 | Any expression in `workflow_dispatch`/`schedule`/`push` to protected branches | Requires write access — outside threat model |
 
 **Key distinction:** `${{ }}` is dangerous in `run:` blocks (shell expansion) but safe in `if:`, `with:`, and `env:` at the job/step level (Actions runtime evaluation).
 
 ## 步骤 3: Validate Before Reporting
 
-Before including any finding, read the actual workflow YAML and trace the complete attack path:
+Before including any finding, read the actual 工作流 YAML and trace the complete attack path:
 
-1. **Read the full workflow** — don't rely on grep output alone
+1. **Read the full 工作流** — don't rely on grep output alone
 2. **Trace the trigger** — confirm the event and check `if:` conditions that gate execution
 3. **Trace the expression/checkout** — confirm it's in a `run:` block or actually references fork code
 4. **Confirm attacker control** — verify the value maps to something an external attacker sets
@@ -175,7 +175,7 @@ If any link is broken, mark MEDIUM (needs verification) or drop the finding.
 ### Findings
 
 #### [GHA-001] [Title] (Severity: Critical/High/Medium)
-- **Workflow**: `.github/workflows/release.yml:15`
+- **工作流**: `.github/workflows/release.yml:15`
 - **Trigger**: `pull_request_target`
 - **Confidence**: HIGH — confirmed through attack path tracing
 - **Exploitation Scenario**:

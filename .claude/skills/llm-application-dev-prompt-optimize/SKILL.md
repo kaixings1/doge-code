@@ -22,7 +22,7 @@ date_added: "2026-02-27"
 
 ## 上下文
 
-将基本指令转化为生产级提示。有效的提示工程可将准确率提高 40%，将幻觉减少 30%，并通过 token 优化将成本降低 50-80%。
+将基本指令转化为生产级提示。有效的提示工程可将准确率提高 40%，将幻觉减少 30%，并通过 令牌 优化将成本降低 50-80%。
 
 ## 需求
 
@@ -33,11 +33,11 @@ $ARGUMENTS
 - 明确目标、约束和所需输入。
 - 应用相关最佳实践并验证结果。
 - 提供可操作的步骤和验证。
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 资源
 
-- `resources/implementation-playbook.md` for detailed patterns and examples.
+- `resources/implementation-playbook.md` for detailed patterns and 示例.
 
 ## 限制
 - 仅当任务明确匹配上述范围时使用此技能。

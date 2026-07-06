@@ -1,11 +1,11 @@
 ---
 name: wit-ai-automation
-description: "通过 Rube MCP (Composio) 自动执行 Wit AI 任务。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Wit AI 任务。使用前始终先搜索工具以获取当前 架构。"
 requires:
   mcp: [rube]
 ---
 
-# 通过 Rube MCP 实现 Wit AI 自动化
+# Wit AI 自动化
 
 通过 Composio 的 Wit AI 工具包，经由 Rube MCP 自动化 Wit AI 操作。
 
@@ -33,7 +33,7 @@ requires:
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "Wit AI 操作", known_fields: ""}]
-session: {generate_id: true}
+会话: {generate_id: true}
 ```
 
 这会返回可用的工具标识符、输入模式、推荐执行计划和已知陷阱。
@@ -45,7 +45,7 @@ session: {generate_id: true}
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "你特定的 Wit AI 任务"}]
-session: {id: "existing_session_id"}
+会话: {id: "existing_session_id"}
 ```
 
 ### 第 2 步：检查连接
@@ -79,4 +79,4 @@ session_id: "你的会话 ID"
 
 ## 快速参考
 
-| Operation | Approach |
+| 操作 | 方法 |

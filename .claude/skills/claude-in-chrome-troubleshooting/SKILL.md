@@ -124,7 +124,7 @@ ls ~/Library/Application\ Support/Google/Chrome/NativeMessagingHosts/com.anthrop
 
 ## Critical Insight
 
-**MCP connects at startup.** If the browser bridge wasn't ready when Claude Code started, the connection will fail for the entire session. The fix is usually: ensure Chrome + extension are running with correct config, THEN restart Claude Code.
+**MCP connects at startup.** If the browser bridge wasn't ready when Claude Code started, the connection will fail for the entire 会话. The fix is usually: ensure Chrome + extension are running with correct config, THEN restart Claude Code.
 
 ## Full Reset Procedure (Claude Code CLI)
 
@@ -173,7 +173,7 @@ If you have the Claude extension installed in multiple Chrome profiles, each spa
 
 Running multiple Claude Code instances can cause socket conflicts.
 
-**Fix:** Only run one Claude Code session at a time, or use `/mcp` to reconnect after closing other sessions.
+**Fix:** Only run one Claude Code 会话 at a time, or use `/mcp` to reconnect after closing other sessions.
 
 ### Hardcoded Version in Wrapper
 
@@ -245,7 +245,7 @@ echo "Expected: $(getconf DARWIN_USER_TEMP_DIR)"
 2. **Fix:** Disable the native messaging config for whichever one you're NOT using
 3. **After any fix:** Must restart Chrome AND Claude Code (MCP connects at startup)
 4. **One profile:** Only have Claude extension in one Chrome profile
-5. **One session:** Only run one Claude Code instance
+5. **One 会话:** Only run one Claude Code instance
 
 ---
 

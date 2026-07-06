@@ -2,7 +2,7 @@
 name: seo-dataforseo
 description: "Seo Dataforseo — 通过 DataForSEO MCP 服务器获取实时 SEO 数据的相关功能和最佳实践。"
 user-invocable: true
-argument-hint: "[command] [query]"
+参数-hint: "[command] [查询]"
 license: MIT
 compatibility: "Requires DataForSEO MCP server"
 metadata:
@@ -35,14 +35,14 @@ installed and provide install instructions.
 DataForSEO charges per API call. Be efficient:
 - Prefer bulk endpoints over multiple single calls
 - Use default parameters (US, English) unless user specifies otherwise
-- Cache results mentally within a session; don't re-fetch the same data
+- Cache results mentally within a 会话; don't re-fetch the same data
 - Warn user before running expensive operations (full backlink crawls, large keyword lists)
 
 ## Cost Guardrails
 
 **Before every DataForSEO MCP call**, run cost estimation:
 ```
-python3 scripts/dataforseo_costs.py check <endpoint> [--count N]
+python3 scripts/dataforseo_costs.py check <端点> [--count N]
 ```
 
 - If `"status": "approved"` → proceed with the API call
@@ -51,7 +51,7 @@ python3 scripts/dataforseo_costs.py check <endpoint> [--count N]
 
 **After each API call completes**, log the cost:
 ```
-python3 scripts/dataforseo_costs.py log <endpoint> <actual_cost>
+python3 scripts/dataforseo_costs.py log <端点> <actual_cost>
 ```
 
 **User commands for cost management:**
@@ -62,5 +62,13 @@ python3 scripts/dataforseo_costs.py log <endpoint> <actual_cost>
 Load `references/cost-tiers.md` for the full pricing table, budget presets, and cost reduction tips.
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 | Command | What it does |

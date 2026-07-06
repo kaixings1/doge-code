@@ -1,5 +1,5 @@
 ---
-name: request-refactor-plan
+name: 请求-refactor-plan
 description: 通过用户访谈创建详细的逐步重构计划，然后将其提交为 GitHub issue。当用户想要规划重构、创建重构 RFC，或将重构分解为安全的增量步骤时使用。
 ---
 
@@ -43,7 +43,7 @@ description: 通过用户访谈创建详细的逐步重构计划，然后将其�
 - 将被修改的模块的接口
 - 开发者的技术澄清
 - 架构决策
-- Schema 变更
+- 架构 变更
 - API 契约
 - 特定交互
 

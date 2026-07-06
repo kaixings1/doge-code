@@ -1,5 +1,5 @@
 ---
-name: gitops-workflow
+name: gitops-工作流
 description: "使用 ArgoCD 和 Flux 实施 GitOps 工作流以实现自动化 Kubernetes 部署的完整指南。"
 risk: critical
 source: community
@@ -25,7 +25,7 @@ Implement declarative, Git-based continuous delivery for Kubernetes using ArgoCD
 
 ## 不要使用此技能的场景
 
-- You need a one-off manual deployment
+- You need a one-off manual 部署
 - You cannot manage cluster access or repo permissions
 - You are not deploying to Kubernetes
 
@@ -63,7 +63,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 ```
 
-**Reference:** See `references/argocd-setup.md` for detailed setup
+**Reference:** See `references/argocd-设置.md` for detailed 设置
 
 ### 2. Repository Structure
 
@@ -73,7 +73,7 @@ gitops-repo/
 │   ├── production/
 │   │   ├── app1/
 │   │   │   ├── kustomization.yaml
-│   │   │   └── deployment.yaml
+│   │   │   └── 部署.yaml
 │   │   └── app2/
 │   └── staging/
 ├── infrastructure/

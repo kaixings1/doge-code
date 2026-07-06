@@ -23,7 +23,7 @@ If the repo has a durable product-context file such as `PRODUCT.md`, `docs/produ
 
 If no capability manifest exists yet, create one using the template at:
 
-- `docs/examples/product-capability-template.md`
+- `docs/示例/product-capability-template.md`
 
 The goal is not to create another planning stack. The goal is to make hidden capability constraints durable and reusable.
 
@@ -32,7 +32,7 @@ The goal is not to create another planning stack. The goal is to make hidden cap
 - Do not invent product truth. Mark unresolved questions explicitly.
 - Separate user-visible promises from implementation details.
 - Call out what is fixed policy, what is architecture preference, and what is still open.
-- If the request conflicts with existing repo constraints, say so clearly instead of smoothing it over.
+- If the 请求 conflicts with existing repo constraints, say so clearly instead of smoothing it over.
 - Prefer one reusable capability artifact over scattered ad hoc notes.
 
 ## Inputs
@@ -44,7 +44,7 @@ Read only what is needed:
 2. Current architecture
    - relevant repo docs, contracts, schemas, routes, existing workflows
 3. Existing capability context
-   - `PRODUCT.md`, design docs, RFCs, migration notes, operating-model docs
+   - `PRODUCT.md`, design docs, RFCs, 迁移 notes, operating-model docs
 4. Delivery constraints
    - auth, billing, compliance, rollout, backwards compatibility, performance, review policy
 
@@ -70,7 +70,7 @@ Extract the constraints that must hold before implementation:
 - trust boundaries
 - data ownership
 - lifecycle transitions
-- rollout / migration requirements
+- rollout / 迁移 requirements
 - failure and recovery expectations
 
 These are the things that often live only in senior-engineer memory.
@@ -103,7 +103,7 @@ If useful, point to the next ECC-native lane:
 - `workspace-surface-audit`
 - `api-connector-builder`
 - `dashboard-builder`
-- `tdd-workflow`
+- `tdd-工作流`
 - `verification-loop`
 
 ## 输出格式
@@ -137,4 +137,4 @@ HANDOFF
 
 - Product intent is now concrete enough to implement without rediscovering hidden constraints mid-PR.
 - Engineering review has a durable artifact instead of relying on memory or Slack context.
-- The resulting plan is reusable across Claude Code, Codex, Cursor, OpenCode, and ECC 2.0 planning surfaces.
+- The resulting plan is reusable across Claude Code, Codex, 游标, OpenCode, and ECC 2.0 planning surfaces.

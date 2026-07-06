@@ -1,17 +1,17 @@
 ---
 name: 2slides-ppt-generator
 description: "基于 AI 的演示文稿生成 — 通过 2slides API 从文本创建幻灯片、匹配参考图片样式、将文档总结为演示文稿、添加 AI 语音旁白并导出页面/音频。适用于"制作幻灯片"、"创建演示文稿"或"从此文档生成幻灯片"的请求。"
-category: api-integration
+category: api-集成
 risk: safe
 source: community
 source_repo: 2slides/slides-generation-2slides-skills
 source_type: community
 date_added: "2026-06-05"
 author: 2slides
-tags: [presentations, slides, powerpoint, ai, api-integration, pdf, narration, document-summarization]
-tools: [claude, cursor, gemini, codex, antigravity]
+tags: [presentations, slides, powerpoint, ai, api-集成, pdf, narration, document-summarization]
+tools: [claude, 游标, gemini, codex, antigravity]
 plugin:
-  setup:
+  设置:
     type: manual
     summary: "Install Python requirements and configure a 2slides API key before running generation scripts."
     docs: SKILL.md
@@ -130,9 +130,9 @@ python -m pip install -r requirements.txt
 搜索适当的主题（themeId是必需的）：
 
 ```bash
-python scripts/search_themes.py --query "business"
-python scripts/search_themes.py --query "professional"
-python scripts/search_themes.py --query "creative"
+python scripts/search_themes.py --查询 "business"
+python scripts/search_themes.py --查询 "professional"
+python scripts/search_themes.py --查询 "creative"
 ```
 
 从结果中选择主题ID。
@@ -352,7 +352,7 @@ Use appropriate tool to read the document content:
 Analyze the document and extract:
 - Main topics and themes
 - Key points for each section
-- Important data, quotes, or examples
+- Important data, quotes, or 示例
 - Logical flow and structure
 
 **Step 3: Structure Content**
@@ -364,8 +364,8 @@ Title: [Document Main Topic]
 
 Introduction
 - Context
-- Purpose
-- Overview
+- 目的
+- 概述
 
 [Section 1 from document]
 - Key point 1
@@ -385,11 +385,11 @@ Conclusion
 
 **Step 4: Generate Slides**
 
-Use content-based generation workflow (Section 1). First search for a theme, then generate:
+Use content-based generation 工作流 (Section 1). First search for a theme, then generate:
 
 ```bash
 # Search for appropriate theme
-python scripts/search_themes.py --query "business"
+python scripts/search_themes.py --查询 "business"
 
 # Generate with theme ID
 python scripts/generate_slides.py --content "[Structured content from step 3]" --theme-id "theme123"
@@ -472,7 +472,7 @@ python scripts/get_job_status.py --job-id "abc-123-def-456"
 
 **Step 4: Handle Results**
 
-Once completed, the job will include narration files. Use download endpoint (Section 6) to get audio files.
+Once completed, the job will include narration files. Use download 端点 (Section 6) to get audio files.
 
 **Notes:**
 - **Cost:** 210 credits per page (10 for text, 200 for audio)
@@ -543,21 +543,21 @@ Find appropriate themes for presentations.
 **Search themes:**
 
 ```bash
-# Search for specific style (query is required)
-python scripts/search_themes.py --query "business"
-python scripts/search_themes.py --query "creative"
-python scripts/search_themes.py --query "education"
-python scripts/search_themes.py --query "professional"
+# Search for specific style (查询 is required)
+python scripts/search_themes.py --查询 "business"
+python scripts/search_themes.py --查询 "creative"
+python scripts/search_themes.py --查询 "education"
+python scripts/search_themes.py --查询 "professional"
 
 # Get more results
-python scripts/search_themes.py --query "modern" --limit 50
+python scripts/search_themes.py --查询 "modern" --limit 50
 ```
 
 **Theme selection:**
 
 1. Show user available themes with names and descriptions
 2. Ask user to choose or let them use default
-3. Use the theme ID in generation request
+3. Use the theme ID in generation 请求
 
 ---
 
@@ -565,10 +565,10 @@ python scripts/search_themes.py --query "modern" --limit 50
 
 If the 2slides MCP server is configured in Claude Desktop, use the integrated tools instead of scripts.
 
-**Two Configuration Modes:**
+**Two 配置 Modes:**
 
 1. **Streamable HTTP Protocol (Recommended)**
-   - Simplest setup, no local installation
+   - Simplest 设置, no local installation
    - Configure: `"url": "https://2slides.com/api/mcp?apikey=YOUR_API_KEY"`
 
 2. **NPM Package (stdio)**
@@ -581,9 +581,9 @@ If the 2slides MCP server is configured in Claude Desktop, use the integrated to
 - `themes_search` - Search themes
 - `jobs_get` - Check job status
 
-See [mcp-integration.md](references/mcp-integration.md) for complete setup instructions and detailed tool documentation.
+See [mcp-集成.md](references/mcp-集成.md) for complete 设置 instructions and detailed tool documentation.
 
-**When to use MCP vs scripts:**
+**使用场景 MCP vs scripts:**
 - **Use MCP** in Claude Desktop when configured
 - **Use scripts** in Claude Code CLI or when MCP not available
 
@@ -615,7 +615,7 @@ If rate limited, wait before retrying or check plan limits.
 
 ### 积分成本
 
-- **Fast PPT (generate endpoint):** 10 credits per page
+- **Fast PPT (generate 端点):** 10 credits per page
 - **Nano Banana 1K/2K (create-like-this, create-pdf-slides):** 100 credits per page
 - **Nano Banana 4K:** 200 credits per page
 - **Voice Narration:** 210 credits per page (10 for text, 200 for audio)
@@ -691,7 +691,7 @@ And more: Arabic, Portuguese, Indonesian, Russian, Hindi, Vietnamese, Turkish, P
 
 5. **Invalid content**
    ```
-   Error: 400 Bad Request
+   Error: 400 Bad 请求
    Solution: Verify content format and parameters
    ```
 
@@ -712,7 +712,7 @@ All scripts accept parameters that match [2slides API](https://2slides.com/api.m
 | `generate_narration.py` | `--voice` | 30 voices (Puck, Aoede, Charon, …); use `--list-voices` |
 | | `--language` | Auto, English, Spanish, Arabic, Portuguese, Indonesian, Japanese, Russian, Hindi, French, German, Vietnamese, Turkish, Polish, Italian, Korean, Simplified Chinese, Traditional Chinese |
 | | `--multi-speaker` | enabled when present |
-| `search_themes.py` | `--query` (required), `--limit` (1–100) | |
+| `search_themes.py` | `--查询` (required), `--limit` (1–100) | |
 | `get_job_status.py` | `--job-id` (required) | |
 | `download_slides_pages_voices.py` | `--job-id` (required), `--output` (path) | |
 
@@ -723,15 +723,15 @@ All scripts accept parameters that match [2slides API](https://2slides.com/api.m
 ### API Reference
 See [api-reference.md](references/api-reference.md) for:
 - All endpoints and parameters
-- Request/response formats
-- Authentication details
-- Rate limits and best practices
+- 请求/响应 formats
+- 认证 details
+- Rate limits and 最佳实践
 - Error codes and handling
 
 ### Pricing Information
 See [pricing.md](references/pricing.md) for:
 - Credit packages and pricing
-- Cost examples and calculations
+- Cost 示例 and calculations
 - Free trial details
 - Refund policy
 - Enterprise options
@@ -744,11 +744,11 @@ See [pricing.md](references/pricing.md) for:
 - Use clear headings and subheadings
 - Keep bullet points concise
 - Limit to 3-5 points per section
-- Include relevant examples or data
+- Include relevant 示例 or data
 
 **Theme Selection:**
 - Theme ID is required for standard generation
-- Search with keywords matching presentation purpose
+- Search with keywords matching presentation 目的
 - Common searches: "business", "professional", "creative", "education", "modern"
 - Each theme has unique styling and layout
 
@@ -770,7 +770,7 @@ See [pricing.md](references/pricing.md) for:
 ## 安全注意事项
 
 - **Credentials:** This skill reads the API key from the `SLIDES_2SLIDES_API_KEY` environment variable. Never hard-code the key in commands, commit it, or echo it back to the user. The scripts send it as a bearer/`apikey` value to `https://2slides.com` over HTTPS only.
-- **Network + paid mutations:** Every generation call makes an outbound network request to the 2slides API and **spends the user's credits** (10–210 credits/page depending on mode). Treat generation, reference-image, custom-PDF, and narration calls as billable actions — confirm intent before generating large or high-resolution (4K) decks, and surface the expected page count/cost when it is non-trivial.
+- **Network + paid mutations:** Every generation call makes an outbound network 请求 to the 2slides API and **spends the user's credits** (10–210 credits/page depending on mode). Treat generation, reference-image, custom-PDF, and narration calls as billable actions — confirm intent before generating large or high-resolution (4K) decks, and surface the expected page count/cost when it is non-trivial.
 - **No destructive local actions:** The scripts only read content/files the user points to and write generated output (e.g. a downloaded ZIP) to the path the user specifies. They do not modify or delete unrelated files.
 - **Input handling:** Reference-image and document inputs are sent to the 2slides service for processing. Do not submit confidential material the user has not authorized for third-party processing.
 - **Download URLs expire in 1 hour** — fetch artifacts promptly and do not treat the URLs as durable storage.

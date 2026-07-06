@@ -53,11 +53,7 @@ od:
 
 # Reference Design Contract
 
-Use this skill when the user has taste signals, references, or a rough "like
-this" request and needs a reusable design contract before generation. The goal
-is not to write a longer prompt. The goal is to make design decisions explicit
-enough that a later prototype, deck, redesign, or image-remix run can execute
-without guessing.
+当用户有品味信号、参考或粗略的"像这样"请求，并需要在生成之前有一个可复用的设计合同时使用此技能。目标不是写更长的提示词，而是使设计决策足够明确，以便后续的原型、幻灯片、重新设计或图像混音运行可以无需猜测地执行。
 
 ## What this skill produces
 
@@ -88,7 +84,7 @@ contract preview. Do not make it the main deliverable.
    - `Change`: subject matter, copy, brand marks, exact layout, protected
      assets, and anything the user wants adapted.
    - `Do not copy`: literal screenshots, logos, claims, pricing, proprietary
-     UI, or exact prompt wording from examples.
+     UI, or exact prompt wording from 示例.
 4. **Freeze the direction.** Choose one coherent visual stance. Do not provide
    five unrelated moodboards. If there are genuinely competing directions,
    name them briefly, pick the recommended one, and continue.
@@ -111,7 +107,7 @@ contract preview. Do not make it the main deliverable.
    - quality gate checklist
 7. **Write `implementation-handoff.md`.** Keep it short and operational:
    - files to read
-   - token/palette/type/layout constraints
+   - 令牌/palette/type/layout constraints
    - asset rules
    - responsive requirements
    - "first artifact should prove..." acceptance notes

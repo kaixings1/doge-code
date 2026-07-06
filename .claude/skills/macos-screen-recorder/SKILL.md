@@ -18,14 +18,14 @@ tags:
 tools:
   - claude-code
   - antigravity
-  - cursor
+  - 游标
   - gemini-cli
   - codex-cli
 plugin:
   targets:
     codex: blocked
     claude: blocked
-  setup:
+  设置:
     type: manual
     summary: "Screen/audio/input capture requires sensitive macOS permissions; keep out of plugin-safe bundles."
     docs: SKILL.md
@@ -38,7 +38,7 @@ _Source: [connerkward/macos-screen-recorder-system-audio](https://github.com/con
 
 # macos-screen-recorder (sck-record)
 
-`sck-record.swift` → compiled `sck-record` (binary gitignored; built by `setup-machine`, or
+`sck-record.swift` → compiled `sck-record` (binary gitignored; built by `设置-machine`, or
 `swiftc -O sck-record.swift -o sck-record`). Records the main display + system audio via
 ScreenCaptureKit.
 
@@ -52,13 +52,13 @@ BlackHole / loopback virtual device, no sudo; only the standard Screen Recording
 Studio" tool — it fills exactly the headless-CLI-with-system-audio gap.
 
 `sck-record` is the raw capture primitive — it records, nothing more. To polish a
-recording afterward (idle speed-up, auto-zoom, keystroke chips, smoothed cursor,
+recording afterward (idle speed-up, auto-zoom, keystroke chips, smoothed 游标,
 vertical export), pair it with
 [screenstudio-alternative-skill](https://github.com/connerkward/screenstudio-alternative-skill):
-record with `sck-record --no-cursor <out.mp4> <seconds>`, then run its post-production
+record with `sck-record --no-游标 <out.mp4> <seconds>`, then run its post-production
 pass on the resulting mp4. (Auto-zoom and keystroke overlays additionally need an
 input-event log captured *during* recording, which that skill supplies; `sck-record`'s
-pixels alone cover idle speed-up, cursor smoothing, and vertical export.)
+pixels alone cover idle speed-up, 游标 smoothing, and vertical export.)
 
 ## 局限性
 

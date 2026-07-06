@@ -19,7 +19,7 @@ od:
 
 > Curated from GreenSock's official GSAP skills: https://github.com/greensock/gsap-skills
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 Apply when using or reviewing code that uses GSAP plugins: registering plugins, scroll-to, flip/FLIP animations, draggable elements, SVG (DrawSVG, MorphSVG, MotionPath), text (SplitText, ScrambleText), physics, easing plugins (CustomEase, EasePack, CustomWiggle, CustomBounce), or GSDevTools. ScrollTrigger has its own skill (gsap-scrolltrigger).
 
@@ -27,10 +27,10 @@ Apply when using or reviewing code that uses GSAP plugins: registering plugins, 
 
 ## Licensing & Install (important)
 
-Every GSAP plugin is **free**, including for commercial use. Since [Webflow's acquisition of GSAP](https://gsap.com/blog/webflow-GSAP/), Club GSAP is no longer a paid tier and **no plugin requires a membership, license key, or auth token** — this includes formerly Club-only plugins (**SplitText**, **MorphSVG**, etc.).
+Every GSAP plugin is **free**, including for commercial use. Since [Webflow's acquisition of GSAP](https://gsap.com/blog/webflow-GSAP/), Club GSAP is no longer a paid tier and **no plugin requires a membership, license key, or auth 令牌** — this includes formerly Club-only plugins (**SplitText**, **MorphSVG**, etc.).
 
 - ✅ Install everything from the public `gsap` npm package: `npm install gsap`. All plugins are included — import them as `gsap/SplitText`, `gsap/MorphSVGPlugin`, etc.
-- ❌ Do **not** generate an `.npmrc` with a GreenSock auth token, suggest the private `npm.greensock.com` registry, or tell users to sign up for Club GSAP to access a plugin. Those instructions are outdated.
+- ❌ Do **not** generate an `.npmrc` with a GreenSock auth 令牌, suggest the private `npm.greensock.com` registry, or tell users to sign up for Club GSAP to access a plugin. Those instructions are outdated.
 
 ## Registering Plugins
 
@@ -72,7 +72,7 @@ gsap.to(scrollContainer, { duration: 1, scrollTo: { x: "max" } });
 
 ### ScrollSmoother
 
-Smooth scroll wrapper (smooths native scroll). Requires ScrollTrigger and a specific DOM structure (content wrapper + smooth wrapper). Use when smooth, momentum-style scroll is needed. See GSAP docs for setup; register after ScrollTrigger. DOM structure would look like: 
+Smooth scroll wrapper (smooths native scroll). Requires ScrollTrigger and a specific DOM structure (content wrapper + smooth wrapper). Use when smooth, momentum-style scroll is needed. See GSAP docs for 设置; register after ScrollTrigger. DOM structure would look like: 
 
 ```html
 <body>
@@ -132,7 +132,7 @@ Draggable.create(".knob", { type: "rotation" });
 | `bounds` | Element, selector, or `{ minX, maxX, minY, maxY }` to constrain drag |
 | `inertia` | `true` to enable throw/momentum (requires InertiaPlugin) |
 | `edgeResistance` | 0–1; resistance when dragging past bounds |
-| `cursor` | CSS cursor during drag |
+| `游标` | CSS 游标 during drag |
 | `onDragStart`, `onDrag`, `onDragEnd` | Callbacks; receive event and target |
 | `onThrowUpdate`, `onThrowComplete` | Callbacks when inertia is active |
 
@@ -216,7 +216,7 @@ SplitText.create(".split", {
 | **charsClass**, **wordsClass**, **linesClass** | CSS class on each split element. Append `"++"` to add an incremented class (e.g. `linesClass: "line++"` → `line1`, `line2`, …). |
 | **aria** | `"auto"` (default), `"hidden"`, or `"none"`. Accessibility: `"auto"` adds `aria-label` on the split element and `aria-hidden` on line/word/char elements so screen readers read the label; `"hidden"` hides all from readers; `"none"` leaves aria unchanged. Use `"none"` plus a screen-reader-only duplicate if nested links/semantics must be exposed. |
 | **autoSplit** | When `true`, reverts and re-splits when fonts finish loading or when the element width changes (and lines are split), avoiding wrong line breaks. **Animations must be created inside onSplit()** so they target the newly split elements; **return** the animation from **onSplit()** for automatic cleanup and time-sync on re-split. |
-| **onSplit(self)** | Callback when split completes (and on each re-split if **autoSplit** is `true`). Receives the SplitText instance. Returning a GSAP tween or timeline enables automatic revert/sync of that animation when re-splitting. |
+| **onSplit(self)** | 回调 when split completes (and on each re-split if **autoSplit** is `true`). Receives the SplitText instance. Returning a GSAP tween or timeline enables automatic revert/sync of that animation when re-splitting. |
 | **mask** | `"lines"`, `"words"`, or `"chars"`. Wraps each unit in an extra element with `overflow: clip` for mask/reveal effects. Only one type; access wrappers on the instance’s **masks** array (or use class `-mask` if a class is set). |
 | **tag** | Wrapper element tag; default `"div"`. Use `"span"` for inline (note: transforms like rotation/scale may not render on inline elements in some browsers). |
 | **deepSlice** | When `true` (default), nested elements (e.g. `<strong>`) that span multiple lines are subdivided so lines don’t stretch vertically. Only applies when splitting lines. |
@@ -226,7 +226,7 @@ SplitText.create(".split", {
 | **prepareText(text, parent)** | Function that receives raw text and parent element; return modified text before splitting (e.g. to insert break markers for languages without spaces). |
 | **propIndex** | When `true`, adds a CSS variable with index on each split element (e.g. `--word: 1`, `--char: 2`). |
 | **reduceWhiteSpace** | Collapse consecutive spaces; default `true`. From v3.13.0 also honors line breaks and can insert `<br>` for `<pre>`. |
-| **onRevert** | Callback when the instance is reverted. |
+| **onRevert** | 回调 when the instance is reverted. |
 
 **Tips:** Split only what is animated (e.g. skip chars if only animating words). For custom fonts, split after they load (e.g. `document.fonts.ready.then(...)`) or use **autoSplit: true** with **onSplit()**. To avoid kerning shift when splitting chars, use CSS `font-kerning: none; text-rendering: optimizeSpeed;`. Avoid `text-wrap: balance`; it can interfere with splitting. SplitText does not support SVG `<text>`.
 
@@ -251,7 +251,7 @@ gsap.to(".text", {
 
 Reveals or hides the stroke of SVG elements by animating `stroke-dashoffset` / `stroke-dasharray`. Works on `<path>`, `<line>`, `<polyline>`, `<polygon>`, `<rect>`, `<ellipse>`. Use when “drawing” or “erasing” strokes.
 
-**drawSVG value:** Describes the **visible segment** of the stroke along the path (start and end positions), not “animate from A to B over time.” Format: `"start end"` in percent or length. Examples: `"0% 100%"` = full stroke; `"20% 80%"` = stroke only between 20% and 80% (gaps at both ends). The tween animates from the element’s **current** segment to the **target** segment — e.g. `gsap.to("#path", { drawSVG: "0% 100%" })` goes from whatever it is now to full stroke. Single value (e.g. `0`, `"100%"`) means start is 0: `"100%"` is equivalent to `"0% 100%"`. 
+**drawSVG value:** Describes the **visible segment** of the stroke along the path (start and end positions), not “animate from A to B over time.” Format: `"start end"` in percent or length. 示例: `"0% 100%"` = full stroke; `"20% 80%"` = stroke only between 20% and 80% (gaps at both ends). The tween animates from the element’s **current** segment to the **target** segment — e.g. `gsap.to("#path", { drawSVG: "0% 100%" })` goes from whatever it is now to full stroke. Single value (e.g. `0`, `"100%"`) means start is 0: `"100%"` is equivalent to `"0% 100%"`. 
 
 **Required:** The element must have a visible stroke — set `stroke` and `stroke-width` in CSS or as SVG attributes; otherwise nothing is drawn.
 
@@ -430,7 +430,7 @@ const sprite = new PIXI.Sprite(texture);
 gsap.to(sprite, { pixi: { x: 200, y: 100, scale: 1.5 }, duration: 1 });
 ```
 
-## Best practices
+## 最佳实践
 
 - ✅ Register every plugin used with **gsap.registerPlugin()** before first use.
 - ✅ Use **Flip.getState()** → DOM change → **Flip.from()** for layout transitions; use **Draggable** + **InertiaPlugin** for drag with momentum.

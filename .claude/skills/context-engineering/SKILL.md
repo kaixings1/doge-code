@@ -11,7 +11,7 @@ Feed agents the right information at the right time. 上下文 is the single big
 
 ## 何时使用
 
-- Starting a new coding session
+- Starting a new coding 会话
 - Agent output quality is declining (wrong patterns, hallucinated APIs, ignoring conventions)
 - Switching between different parts of a codebase
 - Setting up a new project for AI-assisted development
@@ -25,7 +25,7 @@ Structure context from most persistent to most transient:
 ┌─────────────────────────────────────┐
 │  1. Rules Files (CLAUDE.md, etc.)   │ ← Always loaded, project-wide
 ├─────────────────────────────────────┤
-│  2. Spec / Architecture Docs        │ ← Loaded per feature/session
+│  2. Spec / Architecture Docs        │ ← Loaded per feature/会话
 ├─────────────────────────────────────┤
 │  3. Relevant Source Files            │ ← Loaded per task
 ├─────────────────────────────────────┤
@@ -64,7 +64,7 @@ Create a rules file that persists across sessions. This is the highest-leverage 
 ## Boundaries
 - Never commit .env files or secrets
 - Never add dependencies without checking bundle size impact
-- Ask before modifying database schema
+- Ask before modifying database 架构
 - Always run tests before committing
 
 ## 模式
@@ -72,7 +72,7 @@ Create a rules file that persists across sessions. This is the highest-leverage 
 ```
 
 **Equivalent files for other tools:**
-- `.cursorrules` or `.cursor/rules/*.md` (Cursor)
+- `.cursorrules` or `.游标/rules/*.md` (游标)
 - `.windsurfrules` (Windsurf)
 - `.github/copilot-instructions.md` (GitHub Copilot)
 - `AGENTS.md` (OpenAI Codex)
@@ -81,7 +81,7 @@ Create a rules file that persists across sessions. This is the highest-leverage 
 
 Load the relevant spec section when starting a feature. Don't load the entire spec if only one section applies.
 
-**Effective:** "Here's the authentication section of our spec: [auth spec content]"
+**Effective:** "Here's the 认证 section of our spec: [auth spec content]"
 
 **Wasteful:** "Here's our entire 5000-word spec: [full spec]" (when only working on auth)
 
@@ -122,7 +122,7 @@ Long conversations accumulate stale context. Manage this:
 
 ### The Brain Dump
 
-At session start, provide everything the agent needs in a structured block:
+At 会话 start, provide everything the agent needs in a structured block:
 
 ```
 PROJECT CONTEXT:
@@ -139,10 +139,10 @@ PROJECT CONTEXT:
 Only include what's relevant to the current task:
 
 ```
-TASK: Add email validation to the registration endpoint
+TASK: Add email validation to the registration 端点
 
 RELEVANT FILES:
-- src/routes/auth.ts (the endpoint to modify)
+- src/routes/auth.ts (the 端点 to modify)
 - src/lib/validation.ts (existing validation utilities)
 - tests/routes/auth.test.ts (existing tests to extend)
 
@@ -160,9 +160,9 @@ For large projects, maintain a summary index:
 ```markdown
 # Project Map
 
-## Authentication (src/auth/)
+## 认证 (src/auth/)
 Handles registration, login, password reset.
-Key files: auth.routes.ts, auth.service.ts, auth.middleware.ts
+Key files: auth.routes.ts, auth.service.ts, auth.中间件.ts
 Pattern: All routes use authMiddleware, errors use AuthError class
 
 ## Tasks (src/tasks/)
@@ -185,7 +185,7 @@ For richer context, use Model 上下文 Protocol servers:
 |-----------|-----------------|
 | **上下文7** | Auto-fetches relevant documentation for libraries |
 | **Chrome DevTools** | Live browser state, DOM, console, network |
-| **PostgreSQL** | Direct database schema and query results |
+| **PostgreSQL** | Direct database 架构 and 查询 results |
 | **Filesystem** | Project file access and search |
 | **GitHub** | Issue, PR, and repository context |
 
@@ -197,7 +197,7 @@ Even with good context, you will encounter ambiguity. How you handle it determin
 
 ```
 Spec says:         "Use REST for all endpoints"
-Existing code has: GraphQL for the user profile query
+Existing code has: GraphQL for the user profile 查询
 ```
 
 **不要** silently pick one interpretation. Surface it:
@@ -208,11 +208,11 @@ The spec calls for REST endpoints, but the existing codebase uses GraphQL
 for user queries (src/graphql/user.ts).
 
 Options:
-A) Follow the spec — add REST endpoint, potentially deprecate GraphQL later
+A) Follow the spec — add REST 端点, potentially deprecate GraphQL later
 B) Follow existing patterns — use GraphQL, update the spec
 C) Ask — this seems like an intentional decision I shouldn't override
 
-→ Which approach should I take?
+→ Which 方法 should I take?
 ```
 
 ### When 需求 Are Incomplete
@@ -242,9 +242,9 @@ For multi-step tasks, emit a lightweight plan before executing:
 
 ```
 PLAN:
-1. Add Zod schema for task creation — validates title (required) and description (optional)
-2. Wire schema into POST /api/tasks route handler
-3. Add test for validation error response
+1. Add Zod 架构 for task creation — validates title (required) and description (optional)
+2. Wire 架构 into POST /api/tasks route 处理器
+3. Add test for validation error 响应
 → Executing unless you redirect.
 ```
 

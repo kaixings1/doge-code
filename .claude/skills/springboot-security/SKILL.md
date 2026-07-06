@@ -10,7 +10,7 @@ origin: ECC
 
 ## 何时激活（When to Activate）
 
-- 添加身份验证（JWT、OAuth2、基于 Session 的认证）
+- 添加身份验证（JWT、OAuth2、基于 会话 的认证）
 - 实现授权（`@PreAuthorize`、基于角色的访问控制）
 - 校验用户输入（Bean Validation、自定义校验器）
 - 配置 CORS、CSRF 或安全响应头
@@ -18,10 +18,10 @@ origin: ECC
 - 添加速率限制（Rate Limiting）或暴力破解防护
 - 扫描依赖项的 CVE 漏洞
 
-## 身份验证（Authentication）
+## 身份验证（认证）
 
 - 优先使用无状态 JWT 或带撤回列表的模糊令牌（Opaque Tokens）
-- 为 Session 使用 `httpOnly`、`Secure`、`SameSite=Strict` 属性的 Cookie
+- 为 会话 使用 `httpOnly`、`Secure`、`SameSite=Strict` 属性的 Cookie
 - 使用 `OncePerRequestFilter` 或资源服务器校验令牌
 
 ```java
@@ -34,20 +34,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
   }
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+  protected void doFilterInternal(HttpServletRequest 请求, HttpServletResponse 响应,
       FilterChain chain) throws ServletException, IOException {
-    String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+    String header = 请求.getHeader(HttpHeaders.授权);
     if (header != null && header.startsWith("Bearer ")) {
-      String token = header.substring(7);
-      Authentication auth = jwtService.authenticate(token);
+      String 令牌 = header.substring(7);
+      认证 auth = jwtService.authenticate(令牌);
       SecurityContextHolder.getContext().setAuthentication(auth);
     }
-    chain.doFilter(request, response);
+    chain.doFilter(请求, 响应);
   }
 }
 ```
 
-## 授权（Authorization）
+## 授权（授权）
 
 - 启用方法安全：`@EnableMethodSecurity`
 - 使用 `@PreAuthorize("hasRole('ADMIN')")` 或 `@PreAuthorize("@authz.canEdit(#id)")`
@@ -64,7 +64,7 @@ public class AdminController {
     return userService.findAll();
   }
 
-  @PreAuthorize("@authz.isOwner(#id, authentication)")
+  @PreAuthorize("@authz.isOwner(#id, 认证)")
   @DeleteMapping("/users/{id}")
   public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
     userService.delete(id);
@@ -107,10 +107,10 @@ public ResponseEntity<UserDto> createUser(@Valid @RequestBody CreateUserDto dto)
 
 ```java
 // 差（BAD）：在原生查询中直接拼接字符串
-@Query(value = "SELECT * FROM users WHERE name = '" + name + "'", nativeQuery = true)
+@查询(value = "SELECT * FROM users WHERE name = '" + name + "'", nativeQuery = true)
 
 // 好（GOOD）：参数化原生查询
-@Query(value = "SELECT * FROM users WHERE name = :name", nativeQuery = true)
+@查询(value = "SELECT * FROM users WHERE name = :name", nativeQuery = true)
 List<User> findByName(@Param("name") String name);
 
 // 好（GOOD）：Spring Data 衍生查询（自动参数化）
@@ -137,7 +137,7 @@ public User register(CreateUserDto dto) {
 
 ## CSRF 防护（CSRF Protection）
 
-- 对于基于浏览器会话（Session）的应用，保持 CSRF 启用；在表单/请求头中包含令牌
+- 对于基于浏览器会话（会话）的应用，保持 CSRF 启用；在表单/请求头中包含令牌
 - 对于使用 Bearer 令牌的纯 API，禁用 CSRF 并依赖无状态身份验证
 
 ```java
@@ -168,7 +168,7 @@ spring:
   cloud:
     vault:
       uri: https://vault.example.com
-      token: ${VAULT_TOKEN}
+      令牌: ${VAULT_TOKEN}
 ```
 
 ## 安全响应头（Security Headers）
@@ -185,7 +185,7 @@ http
 
 ## CORS 配置
 
-- 在安全过滤器（Security Filter）级别配置 CORS，而不是按控制器配置
+- 在安全过滤器（Security 过滤器）级别配置 CORS，而不是按控制器配置
 - 限制允许的源（Origins） —— 在生产环境中严禁使用 `*`
 
 ```java
@@ -194,7 +194,7 @@ public CorsConfigurationSource corsConfigurationSource() {
   CorsConfiguration config = new CorsConfiguration();
   config.setAllowedOrigins(List.of("https://app.example.com"));
   config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-  config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+  config.setAllowedHeaders(List.of("授权", "Content-Type"));
   config.setAllowCredentials(true);
   config.setMaxAge(3600L);
 
@@ -225,16 +225,16 @@ public class RateLimitFilter extends OncePerRequestFilter {
   }
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+  protected void doFilterInternal(HttpServletRequest 请求, HttpServletResponse 响应,
       FilterChain chain) throws ServletException, IOException {
-    String clientIp = request.getRemoteAddr();
+    String clientIp = 请求.getRemoteAddr();
     Bucket bucket = buckets.computeIfAbsent(clientIp, k -> createBucket());
 
     if (bucket.tryConsume(1)) {
-      chain.doFilter(request, response);
+      chain.doFilter(请求, 响应);
     } else {
-      response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-      response.getWriter().write("{\"error\": \"Rate limit exceeded\"}");
+      响应.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+      响应.getWriter().write("{\"error\": \"Rate limit exceeded\"}");
     }
   }
 }

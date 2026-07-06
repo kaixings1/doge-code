@@ -1,18 +1,18 @@
 ---
-name: azure-monitor-query-java
-description: "Azure Monitor Query Java — Azure Monitor Query Java 相关功能和最佳实践"
+name: azure-monitor-查询-java
+description: "Azure Monitor 查询 Java — Azure Monitor 查询 Java 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-02-27'
 ---
 
-# Azure Monitor Query SDK for Java
+# Azure Monitor 查询 SDK for Java
 
 > **DEPRECATION NOTICE**: This package is deprecated in favor of:
-> - `azure-monitor-query-logs` — For Log Analytics queries
-> - `azure-monitor-query-metrics` — For metrics queries
+> - `azure-monitor-查询-logs` — For Log Analytics queries
+> - `azure-monitor-查询-metrics` — For metrics queries
 >
-> See migration guides: [Logs 迁移](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-query-logs/migration-guide.md) | [Metrics 迁移](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-query-metrics/migration-guide.md)
+> See migration guides: [Logs 迁移](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-查询-logs/migration-guide.md) | [Metrics 迁移](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-查询-metrics/migration-guide.md)
 
 Client library for querying Azure Monitor Logs and Metrics.
 
@@ -21,7 +21,7 @@ Client library for querying Azure Monitor Logs and Metrics.
 ```xml
 <dependency>
     <groupId>com.azure</groupId>
-    <artifactId>azure-monitor-query</artifactId>
+    <artifactId>azure-monitor-查询</artifactId>
     <version>1.5.9</version>
 </dependency>
 ```
@@ -44,7 +44,7 @@ Or use Azure SDK BOM:
 <dependencies>
     <dependency>
         <groupId>com.azure</groupId>
-        <artifactId>azure-monitor-query</artifactId>
+        <artifactId>azure-monitor-查询</artifactId>
     </dependency>
 </dependencies>
 ```
@@ -68,8 +68,8 @@ AZURE_RESOURCE_ID=/subscriptions/{sub}/resourceGroups/{rg}/providers/{provider}/
 
 ```java
 import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.azure.monitor.query.LogsQueryClient;
-import com.azure.monitor.query.LogsQueryClientBuilder;
+import com.azure.monitor.查询.LogsQueryClient;
+import com.azure.monitor.查询.LogsQueryClientBuilder;
 
 LogsQueryClient logsClient = new LogsQueryClientBuilder()
     .credential(new DefaultAzureCredentialBuilder().build())
@@ -79,7 +79,7 @@ LogsQueryClient logsClient = new LogsQueryClientBuilder()
 ### LogsQueryAsyncClient
 
 ```java
-import com.azure.monitor.query.LogsQueryAsyncClient;
+import com.azure.monitor.查询.LogsQueryAsyncClient;
 
 LogsQueryAsyncClient logsAsyncClient = new LogsQueryClientBuilder()
     .credential(new DefaultAzureCredentialBuilder().build())
@@ -89,8 +89,8 @@ LogsQueryAsyncClient logsAsyncClient = new LogsQueryClientBuilder()
 ### MetricsQueryClient (Sync)
 
 ```java
-import com.azure.monitor.query.MetricsQueryClient;
-import com.azure.monitor.query.MetricsQueryClientBuilder;
+import com.azure.monitor.查询.MetricsQueryClient;
+import com.azure.monitor.查询.MetricsQueryClientBuilder;
 
 MetricsQueryClient metricsClient = new MetricsQueryClientBuilder()
     .credential(new DefaultAzureCredentialBuilder().build())
@@ -100,7 +100,7 @@ MetricsQueryClient metricsClient = new MetricsQueryClientBuilder()
 ### MetricsQueryAsyncClient
 
 ```java
-import com.azure.monitor.query.MetricsQueryAsyncClient;
+import com.azure.monitor.查询.MetricsQueryAsyncClient;
 
 MetricsQueryAsyncClient metricsAsyncClient = new MetricsQueryClientBuilder()
     .credential(new DefaultAzureCredentialBuilder().build())
@@ -113,13 +113,13 @@ MetricsQueryAsyncClient metricsAsyncClient = new MetricsQueryClientBuilder()
 // Azure China Cloud - Logs
 LogsQueryClient logsClient = new LogsQueryClientBuilder()
     .credential(new DefaultAzureCredentialBuilder().build())
-    .endpoint("https://api.loganalytics.azure.cn/v1")
+    .端点("https://api.loganalytics.azure.cn/v1")
     .buildClient();
 
 // Azure China Cloud - Metrics
 MetricsQueryClient metricsClient = new MetricsQueryClientBuilder()
     .credential(new DefaultAzureCredentialBuilder().build())
-    .endpoint("https://management.chinacloudapi.cn")
+    .端点("https://management.chinacloudapi.cn")
     .buildClient();
 ```
 
@@ -127,20 +127,20 @@ MetricsQueryClient metricsClient = new MetricsQueryClientBuilder()
 
 | Concept | Description |
 |---------|-------------|
-| Logs | Log and performance data from Azure resources via Kusto Query Language |
+| Logs | Log and performance data from Azure 资源 via Kusto 查询 Language |
 | Metrics | Numeric time-series data collected at regular intervals |
 | Workspace ID | Log Analytics workspace identifier |
 | Resource ID | Azure resource URI for metrics queries |
-| QueryTimeInterval | Time range for the query |
+| QueryTimeInterval | Time range for the 查询 |
 
-## Logs Query Operations
+## Logs 查询 Operations
 
-### Basic Query
+### Basic 查询
 
 ```java
-import com.azure.monitor.query.models.LogsQueryResult;
-import com.azure.monitor.query.models.LogsTableRow;
-import com.azure.monitor.query.models.QueryTimeInterval;
+import com.azure.monitor.查询.models.LogsQueryResult;
+import com.azure.monitor.查询.models.LogsTableRow;
+import com.azure.monitor.查询.models.QueryTimeInterval;
 import java.time.Duration;
 
 LogsQueryResult result = logsClient.queryWorkspace(
@@ -154,7 +154,7 @@ for (LogsTableRow row : result.getTable().getRows()) {
 }
 ```
 
-### Query by Resource ID
+### 查询 by Resource ID
 
 ```java
 LogsQueryResult result = logsClient.queryResource(
@@ -180,7 +180,7 @@ public class ActivityLog {
     public String getOperationName() { return operationName; }
 }
 
-// Query with model mapping
+// 查询 with model mapping
 List<ActivityLog> logs = logsClient.queryWorkspace(
     "{workspace-id}",
     "AzureActivity | project ResourceGroup, OperationName | take 100",
@@ -193,12 +193,12 @@ for (ActivityLog log : logs) {
 }
 ```
 
-### Batch Query
+### Batch 查询
 
 ```java
-import com.azure.monitor.query.models.LogsBatchQuery;
-import com.azure.monitor.query.models.LogsBatchQueryResult;
-import com.azure.monitor.query.models.LogsBatchQueryResultCollection;
+import com.azure.monitor.查询.models.LogsBatchQuery;
+import com.azure.monitor.查询.models.LogsBatchQueryResult;
+import com.azure.monitor.查询.models.LogsBatchQueryResultCollection;
 import com.azure.core.util.Context;
 
 LogsBatchQuery batchQuery = new LogsBatchQuery();
@@ -216,22 +216,22 @@ LogsBatchQueryResult result3 = results.getResult(q3);
 
 // Check for failures
 if (result3.getQueryResultStatus() == LogsQueryResultStatus.FAILURE) {
-    System.err.println("Query failed: " + result3.getError().getMessage());
+    System.err.println("查询 failed: " + result3.getError().getMessage());
 }
 ```
 
-### Query with Options
+### 查询 with Options
 
 ```java
-import com.azure.monitor.query.models.LogsQueryOptions;
-import com.azure.core.http.rest.Response;
+import com.azure.monitor.查询.models.LogsQueryOptions;
+import com.azure.core.http.rest.响应;
 
 LogsQueryOptions options = new LogsQueryOptions()
     .setServerTimeout(Duration.ofMinutes(10))
     .setIncludeStatistics(true)
     .setIncludeVisualization(true);
 
-Response<LogsQueryResult> response = logsClient.queryWorkspaceWithResponse(
+响应<LogsQueryResult> 响应 = logsClient.queryWorkspaceWithResponse(
     "{workspace-id}",
     "AzureActivity | summarize count() by bin(TimeGenerated, 1h)",
     new QueryTimeInterval(Duration.ofDays(7)),
@@ -239,7 +239,7 @@ Response<LogsQueryResult> response = logsClient.queryWorkspaceWithResponse(
     Context.NONE
 );
 
-LogsQueryResult result = response.getValue();
+LogsQueryResult result = 响应.getValue();
 
 // Access statistics
 BinaryData statistics = result.getStatistics();
@@ -247,7 +247,7 @@ BinaryData statistics = result.getStatistics();
 BinaryData visualization = result.getVisualization();
 ```
 
-### Query Multiple Workspaces
+### 查询 Multiple Workspaces
 
 ```java
 import java.util.Arrays;
@@ -255,7 +255,7 @@ import java.util.Arrays;
 LogsQueryOptions options = new LogsQueryOptions()
     .setAdditionalWorkspaces(Arrays.asList("{workspace-id-2}", "{workspace-id-3}"));
 
-Response<LogsQueryResult> response = logsClient.queryWorkspaceWithResponse(
+响应<LogsQueryResult> 响应 = logsClient.queryWorkspaceWithResponse(
     "{workspace-id-1}",
     "AzureActivity | summarize count() by TenantId",
     new QueryTimeInterval(Duration.ofDays(1)),
@@ -264,15 +264,15 @@ Response<LogsQueryResult> response = logsClient.queryWorkspaceWithResponse(
 );
 ```
 
-## Metrics Query Operations
+## Metrics 查询 Operations
 
-### Basic Metrics Query
+### Basic Metrics 查询
 
 ```java
-import com.azure.monitor.query.models.MetricsQueryResult;
-import com.azure.monitor.query.models.MetricResult;
-import com.azure.monitor.query.models.TimeSeriesElement;
-import com.azure.monitor.query.models.MetricValue;
+import com.azure.monitor.查询.models.MetricsQueryResult;
+import com.azure.monitor.查询.models.MetricResult;
+import com.azure.monitor.查询.models.TimeSeriesElement;
+import com.azure.monitor.查询.models.MetricValue;
 import java.util.Arrays;
 
 MetricsQueryResult result = metricsClient.queryResource(
@@ -294,10 +294,10 @@ for (MetricResult metric : result.getMetrics()) {
 ### Metrics with Aggregations
 
 ```java
-import com.azure.monitor.query.models.MetricsQueryOptions;
-import com.azure.monitor.query.models.AggregationType;
+import com.azure.monitor.查询.models.MetricsQueryOptions;
+import com.azure.monitor.查询.models.AggregationType;
 
-Response<MetricsQueryResult> response = metricsClient.queryResourceWithResponse(
+响应<MetricsQueryResult> 响应 = metricsClient.queryResourceWithResponse(
     "{resource-id}",
     Arrays.asList("SuccessfulCalls", "TotalCalls"),
     new MetricsQueryOptions()
@@ -306,19 +306,19 @@ Response<MetricsQueryResult> response = metricsClient.queryResourceWithResponse(
     Context.NONE
 );
 
-MetricsQueryResult result = response.getValue();
+MetricsQueryResult result = 响应.getValue();
 ```
 
-### Query Multiple Resources (MetricsClient)
+### 查询 Multiple 资源 (MetricsClient)
 
 ```java
-import com.azure.monitor.query.MetricsClient;
-import com.azure.monitor.query.MetricsClientBuilder;
-import com.azure.monitor.query.models.MetricsQueryResourcesResult;
+import com.azure.monitor.查询.MetricsClient;
+import com.azure.monitor.查询.MetricsClientBuilder;
+import com.azure.monitor.查询.models.MetricsQueryResourcesResult;
 
 MetricsClient metricsClient = new MetricsClientBuilder()
     .credential(new DefaultAzureCredentialBuilder().build())
-    .endpoint("{endpoint}")
+    .端点("{端点}")
     .buildClient();
 
 MetricsQueryResourcesResult result = metricsClient.queryResources(
@@ -338,9 +338,9 @@ for (MetricsQueryResult queryResult : result.getMetricsQueryResults()) {
 }
 ```
 
-## Response Structure
+## 响应 Structure
 
-### Logs Response Hierarchy
+### Logs 响应 Hierarchy
 
 ```
 LogsQueryResult
@@ -357,7 +357,7 @@ LogsQueryResult
         └── rowCells (List<LogsTableCell>)
 ```
 
-### Metrics Response Hierarchy
+### Metrics 响应 Hierarchy
 
 ```
 MetricsQueryResult
@@ -379,44 +379,44 @@ MetricsQueryResult
 
 ```java
 import com.azure.core.exception.HttpResponseException;
-import com.azure.monitor.query.models.LogsQueryResultStatus;
+import com.azure.monitor.查询.models.LogsQueryResultStatus;
 
 try {
-    LogsQueryResult result = logsClient.queryWorkspace(workspaceId, query, timeInterval);
+    LogsQueryResult result = logsClient.queryWorkspace(workspaceId, 查询, timeInterval);
     
     // Check partial failure
     if (result.getStatus() == LogsQueryResultStatus.PARTIAL_FAILURE) {
         System.err.println("Partial failure: " + result.getError().getMessage());
     }
 } catch (HttpResponseException e) {
-    System.err.println("Query failed: " + e.getMessage());
+    System.err.println("查询 failed: " + e.getMessage());
     System.err.println("Status: " + e.getResponse().getStatusCode());
 }
 ```
 
 ## 最佳实践
 
-1. **Use batch queries** — Combine multiple queries into a single request
+1. **Use batch queries** — Combine multiple queries into a single 请求
 2. **Set appropriate timeouts** — Long queries may need extended server timeout
 3. **Limit result size** — Use `top` or `take` in Kusto queries
 4. **Use projections** — Select only needed columns with `project`
-5. **Check query status** — Handle PARTIAL_FAILURE results gracefully
+5. **Check 查询 status** — Handle PARTIAL_FAILURE results gracefully
 6. **Cache results** — Metrics don't change frequently; cache when appropriate
-7. **Migrate to new packages** — Plan migration to `azure-monitor-query-logs` and `azure-monitor-query-metrics`
+7. **Migrate to new packages** — Plan migration to `azure-monitor-查询-logs` and `azure-monitor-查询-metrics`
 
 ## 参考链接
 
 | Resource | URL |
 |----------|-----|
-| Maven Package | https://central.sonatype.com/artifact/com.azure/azure-monitor-query |
-| GitHub | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/monitor/azure-monitor-query |
-| API Reference | https://learn.microsoft.com/java/api/com.azure.monitor.query |
-| Kusto Query Language | https://learn.microsoft.com/azure/data-explorer/kusto/query/ |
-| Log Analytics Limits | https://learn.microsoft.com/azure/azure-monitor/service-limits#la-query-api |
-| Troubleshooting | https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-query/TROUBLESHOOTING.md |
+| Maven Package | https://central.sonatype.com/artifact/com.azure/azure-monitor-查询 |
+| GitHub | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/monitor/azure-monitor-查询 |
+| API Reference | https://learn.microsoft.com/java/api/com.azure.monitor.查询 |
+| Kusto 查询 Language | https://learn.microsoft.com/azure/data-explorer/kusto/查询/ |
+| Log Analytics Limits | https://learn.microsoft.com/azure/azure-monitor/service-limits#la-查询-api |
+| Troubleshooting | https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-查询/TROUBLESHOOTING.md |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

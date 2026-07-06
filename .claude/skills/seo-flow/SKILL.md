@@ -2,7 +2,7 @@
 name: seo-flow
 description: "Seo Flow — FLOW 框架集成相关功能和最佳实践——使用 Find → Leverage → Optimize → Win 循环的证据驱动型 SEO。"
 user-invocable: true
-argument-hint: "[stage] [url|topic]"
+参数-hint: "[stage] [url|topic]"
 license: MIT
 metadata:
   author: AgriciDaniel

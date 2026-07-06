@@ -6,11 +6,11 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# Agent Performance Optimization Workflow
+# Agent Performance Optimization 工作流
 
 Systematic improvement of existing agents through performance analysis, prompt engineering, and continuous iteration.
 
-[Extended thinking: Agent optimization requires a data-driven approach combining performance metrics, user feedback analysis, and advanced prompt engineering techniques. Success depends on systematic evaluation, targeted improvements, and rigorous testing with rollback capabilities for production safety.]
+[Extended thinking: Agent optimization requires a data-driven 方法 combining performance metrics, user feedback analysis, and advanced prompt engineering techniques. Success depends on systematic evaluation, targeted improvements, and rigorous testing with rollback capabilities for production safety.]
 
 ## 使用此技能的场景
 
@@ -29,7 +29,7 @@ Systematic improvement of existing agents through performance analysis, prompt e
 
 1. Establish baseline metrics and collect representative examples.
 2. Identify failure modes and prioritize high-impact fixes.
-3. Apply prompt and workflow improvements with measurable goals.
+3. Apply prompt and 工作流 improvements with measurable goals.
 4. Validate with tests and roll out changes in controlled stages.
 
 ## 安全
@@ -51,9 +51,9 @@ Command: analyze-agent-performance $ARGUMENTS --days 30
 Collect metrics including:
 
 - Task completion rate (successful vs failed tasks)
-- Response accuracy and factual correctness
+- 响应 accuracy and factual correctness
 - Tool usage efficiency (correct tools, call frequency)
-- Average response time and token consumption
+- Average 响应 time and 令牌 consumption
 - User satisfaction indicators (corrections, retries)
 - Hallucination incidents and error patterns
 
@@ -88,8 +88,8 @@ Performance Baseline:
 - Average Corrections per Task: [Y]
 - Tool Call Efficiency: [Z%]
 - User Satisfaction Score: [1-10]
-- Average Response Latency: [Xms]
-- Token Efficiency Ratio: [X:Y]
+- Average 响应 Latency: [Xms]
+- 令牌 Efficiency Ratio: [X:Y]
 ```
 
 ## Phase 2: Prompt Engineering Improvements
@@ -105,7 +105,7 @@ Use: prompt-engineer
 Technique: chain-of-thought-optimization
 ```
 
-- Add explicit reasoning steps: "Let's approach this step-by-step..."
+- Add explicit reasoning steps: "Let's 方法 this step-by-step..."
 - Include self-verification checkpoints: "Before proceeding, verify that..."
 - Implement recursive decomposition for complex tasks
 - Add reasoning trace visibility for debugging
@@ -124,16 +124,16 @@ Example structure:
 
 ```
 Good Example:
-Input: [User request]
+Input: [User 请求]
 Reasoning: [Step-by-step thought process]
-Output: [Successful response]
+Output: [Successful 响应]
 Why this works: [Key success factors]
 
 Bad Example:
-Input: [Similar request]
-Output: [Failed response]
+Input: [Similar 请求]
+Output: [Failed 响应]
 Why this fails: [Specific issues]
-Correct approach: [Fixed version]
+Correct 方法: [Fixed version]
 ```
 
 ### 2.3 Role Definition Refinement
@@ -143,7 +143,7 @@ Strengthen agent identity and capabilities:
 - **Core purpose**: Clear, single-sentence mission
 - **Expertise domains**: Specific knowledge areas
 - **Behavioral traits**: Personality and interaction style
-- **Tool proficiency**: Available tools and when to use them
+- **Tool proficiency**: Available tools and 使用场景 them
 - **Constraints**: What the agent should NOT do
 - **Success criteria**: How to measure task completion
 
@@ -156,20 +156,20 @@ Constitutional Principles:
 1. Verify factual accuracy before responding
 2. Self-check for potential biases or harmful content
 3. Validate output format matches requirements
-4. Ensure response completeness
+4. Ensure 响应 completeness
 5. Maintain consistency with previous responses
 ```
 
 Add critique-and-revise loops:
 
-- Initial response generation
+- Initial 响应 generation
 - Self-critique against principles
 - Automatic revision if issues detected
 - Final validation before output
 
 ### 2.5 Output Format Tuning
 
-Optimize response structure:
+Optimize 响应 structure:
 
 - **Structured templates** for common tasks
 - **Dynamic formatting** based on complexity
@@ -206,7 +206,7 @@ Config:
   - Agent A: Original version
   - Agent B: Improved version
   - Test set: 100 representative tasks
-  - Metrics: Success rate, speed, token usage
+  - Metrics: Success rate, speed, 令牌 usage
   - Evaluation: Blind human review + automated scoring
 ```
 
@@ -227,11 +227,11 @@ Comprehensive scoring framework:
 - Correctness score (0-100% accuracy)
 - Efficiency score (steps taken vs optimal)
 - Tool usage appropriateness
-- Response relevance and completeness
+- 响应 relevance and completeness
 
 **Quality Metrics:**
 
-- Hallucination rate (factual errors per response)
+- Hallucination rate (factual errors per 响应)
 - Consistency score (alignment with previous responses)
 - Format compliance (matches specified structure)
 - Safety score (constraint adherence)
@@ -239,9 +239,9 @@ Comprehensive scoring framework:
 
 **Performance Metrics:**
 
-- Response latency (time to first token)
+- 响应 latency (time to first 令牌)
 - Total generation time
-- Token consumption (input + output)
+- 令牌 consumption (input + output)
 - Cost per task (API usage fees)
 - Memory/context efficiency
 
@@ -326,7 +326,7 @@ Agent improvement is successful when:
 - Task success rate improves by ≥15%
 - User corrections decrease by ≥25%
 - No increase in safety violations
-- Response time remains within 10% of baseline
+- 响应 time remains within 10% of baseline
 - Cost per task doesn't increase >5%
 - Positive user feedback increases
 

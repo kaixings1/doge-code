@@ -26,10 +26,10 @@ Activate this skill when:
 | Language | Common Sources |
 |----------|----------------|
 | PHP | `$_GET`, `$_POST`, `$_REQUEST`, `$_COOKIE`, `$_FILES`, `$_SERVER` |
-| Java | `request.getParameter()`, `request.getHeader()`, `@RequestParam` |
-| Python | `request.args`, `request.form`, `request.data`, `request.json` |
-| Node.js | `req.query`, `req.body`, `req.params`, `req.headers` |
-| .NET | `Request.QueryString`, `Request.Form`, `Request["param"]` |
+| Java | `请求.getParameter()`, `请求.getHeader()`, `@RequestParam` |
+| Python | `请求.args`, `请求.form`, `请求.data`, `请求.json` |
+| Node.js | `req.查询`, `req.body`, `req.params`, `req.headers` |
+| .NET | `请求.QueryString`, `请求.Form`, `请求["param"]` |
 
 **Other Sources**:
 - Database queries (stored user data)
@@ -60,11 +60,11 @@ Identify what variables/parameters are passed to the sink.
 
 ```
 Example: system($cmd);
-Direct parameter: $cmd
+Direct 参数: $cmd
 ```
 
 ### 步骤 3: Trace Backwards
-Follow each parameter to its origin:
+Follow each 参数 to its origin:
 
 1. Check function parameters
 2. Check variable assignments
@@ -150,7 +150,7 @@ system($input);  // Vulnerable
 $db->insert(['cmd' => $_POST['cmd']]);
 
 // Later, retrieve and execute
-$row = $db->query("SELECT cmd FROM jobs")->fetch();
+$row = $db->查询("SELECT cmd FROM jobs")->fetch();
 system($row['cmd']);  // Vulnerable if original input wasn't sanitized
 ```
 
@@ -227,7 +227,7 @@ When tracing, document findings:
 
 ### Exploitability
 - Confirmed exploitable
-- Payload: `valid_command%0awhoami`
+- 载荷: `valid_command%0awhoami`
 ```
 
 ## 集成 with Other Skills

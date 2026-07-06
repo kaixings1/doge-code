@@ -152,12 +152,12 @@ KeyVaultKey updatedKey = await client.UpdateKeyPropertiesAsync(key.Properties);
 ### Delete and Purge Keys
 
 ```csharp
-// Start delete operation
-DeleteKeyOperation operation = await client.StartDeleteKeyAsync("my-rsa-key");
+// Start delete 操作
+DeleteKeyOperation 操作 = await client.StartDeleteKeyAsync("my-rsa-key");
 
 // Wait for deletion to complete (required before purge)
-await operation.WaitForCompletionAsync();
-Console.WriteLine($"Deleted key scheduled purge date: {operation.Value.ScheduledPurgeDate}");
+await 操作.WaitForCompletionAsync();
+Console.WriteLine($"Deleted key scheduled purge date: {操作.Value.ScheduledPurgeDate}");
 
 // Purge immediately (if soft-delete is enabled)
 await client.PurgeDeletedKeyAsync("my-rsa-key");
@@ -407,7 +407,7 @@ catch (RequestFailedException ex)
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/keyvault/Azure.Security.KeyVault.Keys |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

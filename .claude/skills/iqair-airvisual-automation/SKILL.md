@@ -1,10 +1,10 @@
 ---
 name: iqair-airvisual-automation
-description: "通过 Rube MCP (Composio) 自动执行 Iqair Airvisual 任务。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Iqair Airvisual 任务。使用前始终先搜索工具以获取当前 架构。"
 requires:
   mcp: [rube]
 ---
-# 通过 Rube MCP 实现 Iqair Airvisual 自动化
+# Iqair Airvisual 自动化
 通过 Composio 的 Iqair Airvisual 工具包和 Rube MCP 自动化 Iqair Airvisual 操作。
 **工具包文档**: [composio.dev/toolkits/iqair_airvisual](https://composio.dev/toolkits/iqair_airvisual)
 ## 前提条件
@@ -21,14 +21,14 @@ requires:
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "Iqair Airvisual operations", known_fields: ""}]
-session: {generate_id: true}
+会话: {generate_id: true}
 ```
 ## 核心工作流模式
 ### 步骤 1: 发现可用工具
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "your specific Iqair Airvisual task"}]
-session: {id: "existing_session_id"}
+会话: {id: "existing_session_id"}
 ```
 ### 步骤 2: 检查连接
 ```

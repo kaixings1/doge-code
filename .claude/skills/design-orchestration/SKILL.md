@@ -149,7 +149,7 @@ Possible exits:
 - “Proceed to implementation planning”
 - “Run multi-agent-brainstorming”
 - “Return to brainstorming for clarification”
-- "If a reviewed design reports a final disposition of APPROVED, REVISE, or REJECT, you MUST route the workflow accordingly and state the chosen next step explicitly."
+- "If a reviewed design reports a final disposition of APPROVED, REVISE, or REJECT, you MUST route the 工作流 accordingly and state the chosen next step explicitly."
 ---
 
 ## Design Philosophy
@@ -165,7 +165,7 @@ Bad systems fail in production.
 This meta-skill exists to enforce the former.
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the 概述.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

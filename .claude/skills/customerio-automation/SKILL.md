@@ -137,7 +137,15 @@ requires:
 
 ## 快速参考
 
-| 工具 Slug | 用途 |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
+| 工具 标识符 | 用途 |
 |-----------|---------|
 | `CUSTOMERIO_TRIGGER_BROADCAST` | 向指定受众触发广播 |
 | `CUSTOMERIO_GET_MESSAGES` | 获取带筛选的消息送达指标 |

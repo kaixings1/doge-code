@@ -48,64 +48,64 @@ date_added: "2026-02-27"
 
 ## 核心工作流
 
-### Phase 1: Intercepting HTTP Traffic
+### 阶段 1: 拦截 HTTP 流量
 
-#### Launch Burp's Browser
-Navigate to integrated browser for seamless proxy integration:
+#### 启动 Burp 的浏览器
+浏览到集成浏览器以实现无缝代理集成：
 
-1. Open Burp Suite and create/open project
-2. Go to **Proxy > Intercept** tab
-3. Click **Open Browser** to launch preconfigured browser
-4. Position windows to view both Burp and browser simultaneously
+1. 打开 Burp Suite 并创建/打开项目
+2. 转到 **Proxy > Intercept** 标签
+3. 点击 **Open Browser** 启动预配置的浏览器
+4. 调整窗口位置以便同时查看 Burp 和浏览器
 
-#### Configure Interception
-Control which requests are captured:
+#### 配置拦截
+控制捕获哪些请求：
 
 ```
-Proxy > Intercept > Intercept is on/off toggle
+Proxy > Intercept > 拦截开关切换
 
-When ON: Requests pause for review/modification
-When OFF: Requests pass through, logged to history
+当开启：请求暂停以供审查/修改
+当关闭：请求通过，记录到历史
 ```
 
-#### Intercept and Forward Requests
-Process intercepted traffic:
+#### 拦截和转发请求
+处理拦截的流量：
 
-1. Set intercept toggle to **Intercept on**
-2. Navigate to target URL in browser
-3. Observe request held in Proxy > Intercept tab
-4. Review request contents (headers, parameters, body)
-5. Click **Forward** to send request to server
-6. Continue forwarding subsequent requests until page loads
+1. 将拦截开关设置为 **Intercept on**
+2. 在浏览器中导航到目标 URL
+3. 观察请求保持在 Proxy > Intercept 标签中
+4. 审查请求内容（标头、参数、主体）
+5. 点击 **Forward** 将请求发送到服务器
+6. 继续转发后续请求直到页面加载完成
 
-#### View HTTP History
-Access complete traffic log:
+#### 查看 HTTP 历史
+访问完整的流量日志：
 
-1. Go to **Proxy > HTTP history** tab
-2. Click any entry to view full request/response
-3. Sort by clicking column headers (# for chronological order)
-4. Use filters to focus on relevant traffic
+1. 转到 **Proxy > HTTP history** 标签
+2. 点击任何条目查看完整的请求/响应
+3. 通过点击列标题排序（# 表示时间顺序）
+4. 使用过滤器关注相关流量
 
-### Phase 2: Modifying Requests
+### 阶段 2: 修改请求
 
-#### Intercept and Modify
-Change request parameters before forwarding:
+#### 拦截和修改
+在转发前更改请求参数：
 
-1. Enable interception: **Intercept on**
-2. Trigger target request in browser
-3. Locate parameter to modify in intercepted request
-4. Edit value directly in request editor
-5. Click **Forward** to send modified request
+1. 启用拦截：**Intercept on**
+2. 在浏览器中触发目标请求
+3. 在拦截的请求中找到要修改的参数
+4. 直接在请求编辑器中编辑值
+5. 点击 **Forward** 发送修改后的请求
 
-#### Common Modification Targets
-| Target | Example | Purpose |
+#### 常见修改目标
+| 目标 | 示例 | 目的 |
 |--------|---------|---------|
-| Price parameters | `price=1` | Test business logic |
-| User IDs | `userId=admin` | Test access control |
-| Quantity values | `qty=-1` | Test input validation |
-| Hidden fields | `isAdmin=true` | Test privilege escalation |
+| 价格参数 | `price=1` | 测试业务逻辑 |
+| 用户 ID | `userId=admin` | 测试访问控制 |
+| 数量值 | `qty=-1` | 测试输入验证 |
+| 隐藏字段 | `isAdmin=true` | 测试权限提升 |
 
-#### Example: Price Manipulation
+#### 示例：价格篡改
 
 ```http
 POST /cart HTTP/1.1
@@ -114,130 +114,130 @@ Content-Type: application/x-www-form-urlencoded
 
 productId=1&quantity=1&price=100
 
-# Modify to:
+# 修改为：
 productId=1&quantity=1&price=1
 ```
 
-Result: Item added to cart at modified price.
+结果：商品以修改后的价格加入购物车。
 
-### Phase 3: Setting Target 范围
+### 阶段 3: 设置目标范围
 
-#### Define 范围
-Focus testing on specific target:
+#### 定义范围
+将测试集中在特定目标上：
 
-1. Go to **Target > Site map**
-2. Right-click target host in left panel
-3. Select **Add to scope**
-4. When prompted, click **Yes** to exclude out-of-scope traffic
+1. 转到 **Target > Site map**
+2. 右键单击左侧面板中的目标主机
+3. 选择 **Add to scope**
+4. 系统提示时，点击 **Yes** 以排除范围外的流量
 
-#### Filter by 范围
-Remove noise from HTTP history:
+#### 按范围过滤
+从 HTTP 历史中移除噪音：
 
-1. Click display filter above HTTP history
-2. Select **Show only in-scope items**
-3. History now shows only target site traffic
+1. 点击 HTTP 历史上方的显示过滤器
+2. 选择 **Show only in-scope items**
+3. 历史现在只显示目标站点流量
 
-#### 范围 Benefits
-- Reduces clutter from third-party requests
-- Prevents accidental testing of out-of-scope sites
-- Improves scanning efficiency
-- Creates cleaner reports
+#### 范围的好处
+- 减少第三方请求的杂乱
+- 防止意外测试范围外的站点
+- 提高扫描效率
+- 生成更清晰的报告
 
-### Phase 4: Using Burp Repeater
+### 阶段 4: 使用 Burp Repeater
 
-#### Send Request to Repeater
-Prepare request for manual testing:
+#### 发送请求到 Repeater
+准备用于手动测试的请求：
 
-1. Identify interesting request in HTTP history
-2. Right-click request and select **Send to Repeater**
-3. Go to **Repeater** tab to access request
+1. 在 HTTP 历史中识别感兴趣的请求
+2. 右键单击请求并选择 **Send to Repeater**
+3. 转到 **Repeater** 标签以访问请求
 
-#### Modify and Resend
-Test different inputs efficiently:
-
-```
-1. View request in Repeater tab
-2. Modify parameter values
-3. Click Send to submit request
-4. Review response in right panel
-5. Use navigation arrows to review request history
-```
-
-#### Repeater Testing Workflow
+#### 修改和重新发送
+高效测试不同输入：
 
 ```
-Original Request:
+1. 在 Repeater 标签中查看请求
+2. 修改参数值
+3. 点击 Send 提交请求
+4. 查看右侧面板中的响应
+5. 使用导航箭头查看请求历史
+```
+
+#### Repeater 测试工作流
+
+```
+原始请求：
 GET /product?productId=1 HTTP/1.1
 
-Test 1: productId=2    → Valid product response
-Test 2: productId=999  → Not Found response  
-Test 3: productId='    → Error/exception response
-Test 4: productId=1 OR 1=1 → SQL injection test
+测试 1: productId=2    → 有效的产品响应
+测试 2: productId=999  → 未找到响应  
+测试 3: productId='    → 错误/异常响应
+测试 4: productId=1 OR 1=1 → SQL 注入测试
 ```
 
-#### Analyze Responses
-Look for indicators of vulnerabilities:
+#### 分析响应
+寻找漏洞指标：
 
-- Error messages revealing stack traces
-- Framework/version information disclosure
-- Different response lengths indicating logic flaws
-- Timing differences suggesting blind injection
-- Unexpected data in responses
+- 显示堆栈跟踪的错误消息
+- 框架/版本信息披露
+- 指示逻辑缺陷的不同响应长度
+- 指示盲注的时间差异
+- 响应中的意外数据
 
-### Phase 5: Running Automated Scans
+### 阶段 5: 运行自动扫描
 
-#### Launch New Scan
-Initiate vulnerability scanning (Professional only):
+#### 启动新扫描
+发起漏洞扫描（仅专业版）：
 
-1. Go to **Dashboard** tab
-2. Click **New scan**
-3. Enter target URL in **URLs to scan** field
-4. Configure scan settings
+1. 转到 **Dashboard** 标签
+2. 点击 **New scan**
+3. 在 **URLs to scan** 字段中输入目标 URL
+4. 配置扫描设置
 
-#### Scan 配置 Options
+#### 扫描配置选项
 
-| Mode | Description | Duration |
+| 模式 | 描述 | 持续时间 |
 |------|-------------|----------|
-| Lightweight | High-level overview | ~15 minutes |
-| Fast | Quick vulnerability check | ~30 minutes |
-| Balanced | Standard comprehensive scan | ~1-2 hours |
-| Deep | Thorough testing | Several hours |
+| 轻量 | 高级概览 | 约 15 分钟 |
+| 快速 | 快速漏洞检查 | 约 30 分钟 |
+| 平衡 | 标准全面扫描 | 约 1-2 小时 |
+| 深入 | 彻底测试 | 数小时 |
 
-#### Monitor Scan Progress
-Track scanning activity:
+#### 监控扫描进度
+跟踪扫描活动：
 
-1. View task status in **Dashboard**
-2. Watch **Target > Site map** update in real-time
-3. Check **Issues** tab for discovered vulnerabilities
+1. 在 **Dashboard** 中查看任务状态
+2. 实时观察 **Target > Site map** 更新
+3. 检查 **Issues** 标签以查看已发现的漏洞
 
-#### Review Identified Issues
-Analyze scan findings:
+#### 审查已识别的问题
+分析扫描结果：
 
-1. Select scan task in Dashboard
-2. Go to **Issues** tab
-3. Click issue to view:
-   - **Advisory**: Description and remediation
-   - **Request**: Triggering HTTP request
-   - **Response**: Server response showing vulnerability
+1. 在 Dashboard 中选择扫描任务
+2. 转到 **Issues** 标签
+3. 点击问题以查看：
+   - **Advisory**: 描述和修复建议
+   - **Request**: 触发的 HTTP 请求
+   - **Response**: 显示漏洞的服务器响应
 
-### Phase 6: Intruder Attacks
+### 阶段 6: Intruder 攻击
 
-#### Configure Intruder
-Set up automated attack:
+#### 配置 Intruder
+设置自动攻击：
 
-1. Send request to Intruder (right-click > Send to Intruder)
-2. Go to **Intruder** tab
-3. Define payload positions using § markers
-4. Select attack type
+1. 发送请求到 Intruder（右键点击 > Send to Intruder）
+2. 转到 **Intruder** 标签
+3. 使用 § 标记定义有效载荷位置
+4. 选择攻击类型
 
-#### Attack Types
+#### 攻击类型
 
-| Type | Description | Use Case |
+| 类型 | 描述 | 用例 |
 |------|-------------|----------|
-| Sniper | Single position, iterate payloads | Fuzzing one parameter |
-| Battering ram | Same payload all positions | Credential testing |
-| Pitchfork | Parallel payload iteration | Username:password pairs |
-| Cluster bomb | All payload combinations | Full brute force |
+| Sniper | 单个位置，迭代有效载荷 | 模糊测试一个参数 |
+| Battering ram | 所有位置相同有效载荷 | 凭据测试 |
+| Pitchfork | 并行有效载荷迭代 | 用户名:密码对 |
+| Cluster bomb | 所有有效载荷组合 | 完全暴力破解 |
 
 #### Configure Payloads
 
@@ -252,29 +252,37 @@ Set 1: admin, user, test, guest
 Set 2: password, 123456, admin, letmein
 ```
 
-#### Analyze Results
-Review attack output:
+#### 分析结果
+审查攻击输出：
 
-- Sort by response length to find anomalies
-- Filter by status code for successful attempts
-- Use grep to search for specific strings
-- Export results for documentation
+- 按响应长度排序以发现异常
+- 按状态码过滤以查找成功尝试
+- 使用 grep 搜索特定字符串
+- 导出结果用于文档记录
 
 ## 快速参考
 
-### Keyboard Shortcuts
-| Action | Windows/Linux | macOS |
-|--------|---------------|-------|
-| Forward request | Ctrl+F | Cmd+F |
-| Drop request | Ctrl+D | Cmd+D |
-| Send to Repeater | Ctrl+R | Cmd+R |
-| Send to Intruder | Ctrl+I | Cmd+I |
-| Toggle intercept | Ctrl+T | Cmd+T |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
-### Common Testing Payloads
+### 键盘快捷键
+| 操作 | Windows/Linux | macOS |
+|--------|---------------|-------|
+| 转发请求 | Ctrl+F | Cmd+F |
+| 丢弃请求 | Ctrl+D | Cmd+D |
+| 发送到 Repeater | Ctrl+R | Cmd+R |
+| 发送到 Intruder | Ctrl+I | Cmd+I |
+| 切换拦截 | Ctrl+T | Cmd+T |
+
+### 常见测试载荷
 
 ```
-# SQL Injection
+# SQL 注入
 ' OR '1'='1
 ' OR '1'='1'--
 1 UNION SELECT NULL--
@@ -284,103 +292,103 @@ Review attack output:
 "><img src=x onerror=alert(1)>
 javascript:alert(1)
 
-# Path Traversal
+# 路径遍历
 ../../../etc/passwd
 ..\..\..\..\windows\win.ini
 
-# Command Injection
+# 命令注入
 ; ls -la
 | cat /etc/passwd
 `whoami`
 ```
 
-### Request Modification Tips
-- Right-click for context menu options
-- Use decoder for encoding/decoding
-- Compare requests using Comparer tool
-- Save interesting requests to project
+### 请求修改提示
+- 右键单击查看上下文菜单选项
+- 使用解码器进行编码/解码
+- 使用 Comparer 工具比较请求
+- 将感兴趣的请求保存到项目
 
-## 约束条件 and Guardrails
+## 约束条件和防护
 
-### Operational Boundaries
-- Test only authorized applications
-- Configure scope to prevent accidental out-of-scope testing
-- Rate-limit scans to avoid denial of service
-- Document all findings and actions
+### 操作边界
+- 仅测试授权的应用程序
+- 配置范围以防止意外测试范围外站点
+- 限制扫描速率以避免拒绝服务
+- 记录所有发现和操作
 
-### Technical 限制
-- Community Edition lacks automated scanner
-- Some sites may block proxy traffic
-- HSTS/certificate pinning may require additional configuration
-- Heavy scanning may trigger WAF blocks
+### 技术限制
+- 社区版缺少自动扫描器
+- 某些站点可能阻止代理流量
+- HSTS/证书绑定可能需要额外配置
+- 大量扫描可能触发 WAF 拦截
 
-### Best Practices
-- 始终 set target scope before extensive testing
-- Use Burp's browser for reliable interception
-- Save project regularly to preserve work
-- Review scan results manually for false positives
+### 最佳实践
+- 在广泛测试之前始终设置目标范围
+- 使用 Burp 的浏览器以获得可靠拦截
+- 定期保存项目以保留工作
+- 手动审查扫描结果以发现误报
 
 ## 示例
 
-### Example 1: Business Logic Testing
+### 示例 1: 业务逻辑测试
 
-**Scenario**: E-commerce price manipulation
+**场景**: 电子商务价格篡改
 
-1. Add item to cart normally, intercept request
-2. Identify `price=9999` parameter in POST body
-3. Modify to `price=1`
-4. Forward request
-5. Complete checkout at manipulated price
+1. 正常将商品添加到购物车，拦截请求
+2. 识别 POST 主体中的 `price=9999` 参数
+3. 修改为 `price=1`
+4. 转发请求
+5. 以篡改的价格完成结账
 
-**Finding**: Server trusts client-provided price values.
+**发现**: 服务器信任客户端提供的价格值。
 
-### Example 2: Authentication Bypass
+### 示例 2: 认证绕过
 
-**Scenario**: Testing login form
+**场景**: 测试登录表单
 
-1. Submit valid credentials, capture request in Repeater
-2. Send to Repeater for testing
-3. Try: `username=admin' OR '1'='1'--`
-4. Observe successful login response
+1. 提交有效凭据，在 Repeater 中捕获请求
+2. 发送到 Repeater 进行测试
+3. 尝试：`username=admin' OR '1'='1'--`
+4. 观察成功登录响应
 
-**Finding**: SQL injection in authentication.
+**发现**: 认证中的 SQL 注入。
 
-### Example 3: Information Disclosure
+### 示例 3: 信息披露
 
-**Scenario**: Error-based information gathering
+**场景**: 基于错误的信息收集
 
-1. Navigate to product page, observe `productId` parameter
-2. Send request to Repeater
-3. Change `productId=1` to `productId=test`
-4. Observe verbose error revealing framework version
+1. 导航到产品页面，观察 `productId` 参数
+2. 将请求发送到 Repeater
+3. 将 `productId=1` 改为 `productId=test`
+4. 观察显示框架版本的详细错误
 
-**Finding**: Apache Struts 2.5.12 disclosed in stack trace.
+**发现**: 在堆栈跟踪中泄露了 Apache Struts 2.5.12。
 
 ## 故障排除
 
-### Browser Not Connecting Through Proxy
-- Verify proxy listener is active (Proxy > Options)
-- Check browser proxy settings point to 127.0.0.1:8080
-- Ensure no firewall blocking local connections
-- Use Burp's embedded browser for reliable setup
+### 浏览器无法通过代理连接
+- 验证代理监听器是否激活（Proxy > Options）
+- 检查浏览器代理设置是否指向 127.0.0.1:8080
+- 确保没有防火墙阻止本地连接
+- 使用 Burp 的内置浏览器以获得可靠设置
 
-### HTTPS Interception Failing
-- Install Burp CA certificate in browser/system
-- Navigate to http://burp to download certificate
-- Add certificate to trusted roots
-- Restart browser after installation
+### HTTPS 拦截失败
+- 在浏览器/系统中安装 Burp CA 证书
+- 访问 http://burp 下载证书
+- 将证书添加到受信任根
+- 安装后重启浏览器
 
-### Slow 性能
-- Limit scope to reduce processing
-- Disable unnecessary extensions
-- Increase Java heap size in startup options
-- Close unused Burp tabs and features
+### 性能缓慢
+- 限制范围以减少处理量
+- 禁用不必要的扩展
+- 在启动选项中增加 Java 堆大小
+- 关闭未使用的 Burp 标签和功能
 
-### Requests Not Being Intercepted
-- Verify "Intercept on" is enabled
-- Check intercept rules aren't filtering target
-- Ensure browser is using Burp proxy
-- Verify target isn't using unsupported protocol
+### 请求未被拦截
+- 验证 "Intercept on" 已启用
+- 检查拦截规则未过滤目标
+- 确保浏览器正在使用 Burp 代理
+- 验证目标未使用不支持的协议
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+此技能适用于执行概述中描述的工作流或操作。
