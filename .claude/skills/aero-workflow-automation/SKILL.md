@@ -1,6 +1,6 @@
 ---
 name: aero-工作流-自动化
-description: "通过 Rube MCP (Composio) 自动化 Aero 工作流 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+description: "通过 Rube MCP (Composio) 自动化 Aero 工作流 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具 schema。"
 requires:
   mcp: [rube]
 ---
@@ -62,7 +62,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* 架构-compliant args from search results */}
+  arguments: {/* schema-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"
@@ -72,7 +72,7 @@ session_id: "your_session_id"
 
 - **始终先搜索**: 工具模式会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 标识符 或参数
 - **检查连接**: 执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
-- **架构 合规**: 使用搜索结果中的确切字段名和类型
+- **schema 合规**: 使用搜索结果中的确切字段名和类型
 - **Memory 参数**: 在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
 - **会话复用**: 在同一工作流中复用会话 ID。为新工作流生成新的
 - **分页**: 检查响应中的分页令牌并继续获取直到完成
