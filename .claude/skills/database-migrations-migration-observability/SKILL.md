@@ -1,5 +1,5 @@
 ---
-name: database-migrations-migration-observability
+name: database-migrations-迁移-observability
 description: "迁移监控、CDC 和可观察性基础设施"
 risk: unknown
 source: community
@@ -67,7 +67,7 @@ class ObservableAtlasMigration {
             }),
             migrationErrors: new prometheus.Counter({
                 name: 'mongodb_migration_errors_total',
-                help: 'Total migration errors',
+                help: 'Total 迁移 errors',
                 labelNames: ['version', 'error_type'],
                 registers: [register]
             }),
@@ -79,20 +79,20 @@ class ObservableAtlasMigration {
         await this.client.connect();
         const db = this.client.db();
 
-        for (const [version, migration] of this.migrations) {
-            await this.executeMigrationWithObservability(db, version, migration);
+        for (const [version, 迁移] of this.migrations) {
+            await this.executeMigrationWithObservability(db, version, 迁移);
         }
     }
 
-    async executeMigrationWithObservability(db, version, migration) {
+    async executeMigrationWithObservability(db, version, 迁移) {
         const timer = this.metrics.migrationDuration.startTimer({ version });
-        const session = this.client.startSession();
+        const 会话 = this.client.startSession();
 
         try {
-            this.logger.info(`Starting migration ${version}`);
+            this.logger.info(`Starting 迁移 ${version}`);
 
-            await session.withTransaction(async () => {
-                await migration.up(db, session, (collection, count) => {
+            await 会话.withTransaction(async () => {
+                await 迁移.up(db, 会话, (collection, count) => {
                     this.metrics.documentsProcessed.inc({
                         version,
                         collection
@@ -101,7 +101,7 @@ class ObservableAtlasMigration {
             });
 
             timer({ status: 'success' });
-            this.logger.info(`Migration ${version} completed`);
+            this.logger.info(`迁移 ${version} completed`);
 
         } catch (error) {
             this.metrics.migrationErrors.inc({
@@ -111,7 +111,7 @@ class ObservableAtlasMigration {
             timer({ status: 'failed' });
             throw error;
         } finally {
-            await session.endSession();
+            await 会话.endSession();
         }
     }
 }
@@ -136,7 +136,7 @@ class CDCObservabilityManager:
             'events_processed': Counter(
                 'cdc_events_processed_total',
                 'Total CDC events processed',
-                ['source', 'table', 'operation']
+                ['source', 'table', '操作']
             ),
             'consumer_lag': Gauge(
                 'cdc_consumer_lag_messages',
@@ -154,7 +154,7 @@ class CDCObservabilityManager:
         self.consumer = KafkaConsumer(
             'database.changes',
             bootstrap_servers=self.config['kafka_brokers'],
-            group_id='migration-consumer',
+            group_id='迁移-consumer',
             value_deserializer=lambda m: json.loads(m.decode('utf-8'))
         )
 
@@ -170,19 +170,19 @@ class CDCObservabilityManager:
             self.metrics['events_processed'].labels(
                 source=event.source_db,
                 table=event.table,
-                operation=event.operation
+                操作=event.操作
             ).inc()
 
             await self.apply_to_target(
                 event.table,
-                event.operation,
+                event.操作,
                 event.data,
                 event.timestamp
             )
 
     async def setup_debezium_connector(self, source_config):
         connector_config = {
-            "name": f"migration-connector-{source_config['name']}",
+            "name": f"迁移-connector-{source_config['name']}",
             "config": {
                 "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
                 "database.hostname": source_config['host'],
@@ -193,7 +193,7 @@ class CDCObservabilityManager:
             }
         }
 
-        response = requests.post(
+        响应 = requests.post(
             f"{self.config['kafka_connect_url']}/connectors",
             json=connector_config
         )
@@ -216,7 +216,7 @@ class EnterpriseMigrationMonitor:
         return {
             'migration_duration': Histogram(
                 'migration_duration_seconds',
-                'Migration duration',
+                '迁移 duration',
                 ['migration_id'],
                 buckets=[60, 300, 600, 1800, 3600],
                 registry=self.registry
@@ -236,12 +236,12 @@ class EnterpriseMigrationMonitor:
         }
 
     async def track_migration_progress(self, migration_id):
-        while migration.status == 'running':
-            stats = await self.calculate_progress_stats(migration)
+        while 迁移.status == 'running':
+            stats = await self.calculate_progress_stats(迁移)
 
             self.metrics['rows_migrated'].labels(
                 migration_id=migration_id,
-                table_name=migration.table
+                table_name=迁移.table
             ).inc(stats.rows_processed)
 
             anomalies = await self.detect_anomalies(migration_id, stats)
@@ -272,10 +272,10 @@ class EnterpriseMigrationMonitor:
     async def setup_migration_dashboard(self):
         dashboard_config = {
             "dashboard": {
-                "title": "Database Migration Monitoring",
+                "title": "Database 迁移 Monitoring",
                 "panels": [
                     {
-                        "title": "Migration Progress",
+                        "title": "迁移 Progress",
                         "targets": [{
                             "expr": "rate(migration_rows_total[5m])"
                         }]
@@ -290,10 +290,10 @@ class EnterpriseMigrationMonitor:
             }
         }
 
-        response = requests.post(
+        响应 = requests.post(
             f"{self.config['grafana_url']}/api/dashboards/db",
             json=dashboard_config,
-            headers={'Authorization': f"Bearer {self.config['grafana_token']}"}
+            headers={'授权': f"Bearer {self.config['grafana_token']}"}
         )
 
 class AlertingSystem:
@@ -314,7 +314,7 @@ class AlertingSystem:
             'info': 'good'
         }.get(severity, 'warning')
 
-        payload = {
+        载荷 = {
             'text': title,
             'attachments': [{
                 'color': color,
@@ -322,16 +322,16 @@ class AlertingSystem:
             }]
         }
 
-        requests.post(self.config['slack']['webhook_url'], json=payload)
+        requests.post(self.config['slack']['webhook_url'], json=载荷)
 ```
 
-### 4. Grafana Dashboard Configuration
+### 4. Grafana Dashboard 配置
 
 ```python
 dashboard_panels = [
     {
         "id": 1,
-        "title": "Migration Progress",
+        "title": "迁移 Progress",
         "type": "graph",
         "targets": [{
             "expr": "rate(migration_rows_total[5m])",
@@ -366,17 +366,17 @@ dashboard_panels = [
 ]
 ```
 
-### 5. CI/CD Integration
+### 5. CI/CD 集成
 
 ```yaml
-name: Migration Monitoring
+name: 迁移 Monitoring
 
 on:
   push:
     branches: [main]
 
 jobs:
-  monitor-migration:
+  monitor-迁移:
     runs-on: ubuntu-latest
 
     steps:
@@ -385,17 +385,17 @@ jobs:
       - name: Start Monitoring
         run: |
           python migration_monitor.py start \
-            --migration-id ${{ github.sha }} \
+            --迁移-id ${{ github.sha }} \
             --prometheus-url ${{ secrets.PROMETHEUS_URL }}
 
-      - name: Run Migration
+      - name: Run 迁移
         run: |
           python migrate.py --environment production
 
-      - name: Check Migration Health
+      - name: Check 迁移 Health
         run: |
           python migration_monitor.py check \
-            --migration-id ${{ github.sha }} \
+            --迁移-id ${{ github.sha }} \
             --max-lag 300
 ```
 
@@ -417,7 +417,7 @@ jobs:
 此插件与以下集成：
 - **sql-migrations**: 为 SQL 迁移提供可观察性
 - **nosql-migrations**: 监控 NoSQL 转换
-- **migration-integration**: 协调跨工作流的监控
+- **迁移-集成**: 协调跨工作流的监控
 
 ## 限制
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

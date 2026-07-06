@@ -1,33 +1,33 @@
 ---
 name: e2e-testing
 description: "端到端测试策略和实现：Playwright、Cypress、Selenium。涵盖测试设计、页面对象、视觉测试和 CI 集成。适用于自动化浏览器测试。"
-category: granular-workflow-bundle
+category: granular-工作流-bundle
 risk: safe
 source: personal
 date_added: "2026-02-27"
 ---
 
-# E2E Testing Workflow
+# E2E Testing 工作流
 
 ## 概述
 
-Specialized workflow for end-to-end testing using Playwright including browser automation, visual regression testing, cross-browser testing, and CI/CD integration.
+Specialized 工作流 for end-to-end testing using Playwright including browser automation, visual regression testing, cross-browser testing, and CI/CD 集成.
 
-## When to Use This Workflow
+## 使用场景 This 工作流
 
-Use this workflow when:
+Use this 工作流 when:
 - Setting up E2E testing
 - Automating browser tests
 - Implementing visual regression
 - Testing across browsers
 - Integrating tests with CI/CD
 
-## Workflow Phases
+## 工作流 Phases
 
-### Phase 1: Test Setup
+### Phase 1: Test 设置
 
 #### Skills to Invoke
-- `playwright-skill` - Playwright setup
+- `playwright-skill` - Playwright 设置
 - `e2e-testing-patterns` - E2E patterns
 
 #### Actions
@@ -35,7 +35,7 @@ Use this workflow when:
 2. Configure test framework
 3. Set up test directory
 4. Configure browsers
-5. Create base test setup
+5. Create base test 设置
 
 #### Copy-Paste Prompts
 ```
@@ -132,14 +132,14 @@ Use @playwright-skill to implement visual regression testing
 Use @playwright-skill to run cross-browser tests
 ```
 
-### Phase 7: CI/CD Integration
+### Phase 7: CI/CD 集成
 
 #### Skills to Invoke
 - `github-actions-templates` - GitHub Actions
-- `cicd-automation-workflow-automate` - CI/CD
+- `cicd-automation-工作流-automate` - CI/CD
 
 #### Actions
-1. Create CI workflow
+1. Create CI 工作流
 2. Configure parallel execution
 3. Set up artifacts
 4. Add reporting
@@ -156,11 +156,11 @@ Use @github-actions-templates to integrate E2E tests with CI
 - [ ] Coverage adequate
 - [ ] Visual tests stable
 - [ ] Cross-browser verified
-- [ ] CI integration working
+- [ ] CI 集成 working
 
-## Related Workflow Bundles
+## Related 工作流 Bundles
 
-- `testing-qa` - Testing workflow
+- `testing-qa` - Testing 工作流
 - `development` - Development
 - `web-performance-optimization` - Performance
 

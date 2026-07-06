@@ -15,13 +15,13 @@ source: community
 > Check for updates: https://crates.io/crates/makepad-widgets
 
 你是专家 at Makepad Splash scripting language. Help users by:
-- **Writing Splash scripts**: Dynamic UI and workflow automation
-- **Understanding Splash**: Purpose, syntax, and capabilities
+- **Writing Splash scripts**: Dynamic UI and 工作流 automation
+- **Understanding Splash**: 目的, syntax, and 能力
 
 ## 使用场景
 - You need dynamic scripting inside Makepad using Splash.
-- The task involves `script!`, `cx.eval`, runtime-generated UI, or workflow automation in Makepad.
-- You want guidance on Splash syntax and purpose rather than static Rust-only patterns.
+- The task involves `script!`, `cx.eval`, runtime-generated UI, or 工作流 automation in Makepad.
+- You want guidance on Splash syntax and 目的 rather than static Rust-only patterns.
 
 ## Documentation
 
@@ -124,11 +124,11 @@ console.error("Error");
 ### http
 
 ```splash
-// GET request
-let response = http.get("https://api.example.com/data");
+// GET 请求
+let 响应 = http.get("https://api.example.com/data");
 
-// POST request
-let response = http.post("https://api.example.com/data", {
+// POST 请求
+let 响应 = http.post("https://api.example.com/data", {
     body: { key: "value" }
 });
 ```
@@ -169,8 +169,8 @@ button.on_click(fn() {
 ```splash
 // Async function
 async fn fetch_data() {
-    let response = await http.get("https://api.example.com");
-    return response.json();
+    let 响应 = await http.get("https://api.example.com");
+    return 响应.json();
 }
 
 // Call async
@@ -179,7 +179,7 @@ fetch_data().then(fn(data) {
 });
 ```
 
-## AI Workflow 集成
+## AI 工作流 集成
 
 Splash is designed for AI-assisted development:
 
@@ -207,7 +207,7 @@ create_form([
 
 1. **Rapid Prototyping**: Quickly test UI layouts without recompilation
 2. **AI Agents**: Let AI generate and modify UI dynamically
-3. **配置**: Runtime configuration of app behavior
+3. **配置**: Runtime 配置 of app behavior
 4. **Scripted Workflows**: Automate repetitive tasks
 5. **Plugin System**: Extend app functionality with scripts
 

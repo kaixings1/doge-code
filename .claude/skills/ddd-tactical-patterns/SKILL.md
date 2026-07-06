@@ -48,6 +48,6 @@ class Order {
 
 ## 局限性
 
-- This skill does not define deployment architecture.
+- This skill does not define 部署 architecture.
 - It does not choose databases or transport protocols.
 - It should be paired with testing patterns for invariant coverage.

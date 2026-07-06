@@ -25,7 +25,7 @@ Shared authentication utilities and data structures for Azure Communication Serv
 | Class | Purpose |
 |-------|---------|
 | `CommunicationTokenCredential` | Authenticate users with ACS services |
-| `CommunicationTokenRefreshOptions` | Configure automatic token refresh |
+| `CommunicationTokenRefreshOptions` | Configure automatic 令牌 refresh |
 | `CommunicationUserIdentifier` | Identify ACS users |
 | `PhoneNumberIdentifier` | Identify PSTN phone numbers |
 | `MicrosoftTeamsUserIdentifier` | Identify Teams users |
@@ -33,51 +33,51 @@ Shared authentication utilities and data structures for Azure Communication Serv
 
 ## CommunicationTokenCredential
 
-### Static Token (Short-lived Clients)
+### Static 令牌 (Short-lived Clients)
 
 ```java
 import com.azure.communication.common.CommunicationTokenCredential;
 
-// Simple static token - no refresh
-String userToken = "<user-access-token>";
+// Simple static 令牌 - no refresh
+String userToken = "<user-access-令牌>";
 CommunicationTokenCredential credential = new CommunicationTokenCredential(userToken);
 
 // Use with Chat, Calling, etc.
 ChatClient chatClient = new ChatClientBuilder()
-    .endpoint("https://<resource>.communication.azure.com")
+    .端点("https://<resource>.communication.azure.com")
     .credential(credential)
     .buildClient();
 ```
 
-### Proactive Token Refresh (Long-lived Clients)
+### Proactive 令牌 Refresh (Long-lived Clients)
 
 ```java
 import com.azure.communication.common.CommunicationTokenRefreshOptions;
 import java.util.concurrent.Callable;
 
-// Token refresher callback - called when token is about to expire
+// 令牌 refresher callback - called when 令牌 is about to expire
 Callable<String> tokenRefresher = () -> {
-    // Call your server to get a fresh token
+    // Call your server to get a fresh 令牌
     return fetchNewTokenFromServer();
 };
 
 // With proactive refresh
 CommunicationTokenRefreshOptions refreshOptions = new CommunicationTokenRefreshOptions(tokenRefresher)
     .setRefreshProactively(true)      // Refresh before expiry
-    .setInitialToken(currentToken);    // Optional initial token
+    .setInitialToken(currentToken);    // Optional initial 令牌
 
 CommunicationTokenCredential credential = new CommunicationTokenCredential(refreshOptions);
 ```
 
-### Async Token Refresh
+### Async 令牌 Refresh
 
 ```java
 import java.util.concurrent.CompletableFuture;
 
-// Async token fetcher
+// Async 令牌 fetcher
 Callable<String> asyncRefresher = () -> {
     CompletableFuture<String> future = fetchTokenAsync();
-    return future.get();  // Block until token is available
+    return future.get();  // Block until 令牌 is available
 };
 
 CommunicationTokenRefreshOptions options = new CommunicationTokenRefreshOptions(asyncRefresher)
@@ -210,23 +210,23 @@ public void processIdentifier(CommunicationIdentifier identifier) {
 }
 ```
 
-## Token Access
+## 令牌 Access
 
 ```java
 import com.azure.core.credential.AccessToken;
 
-// Get current token (for debugging/logging - don't expose!)
-CommunicationTokenCredential credential = new CommunicationTokenCredential(token);
+// Get current 令牌 (for debugging/logging - don't expose!)
+CommunicationTokenCredential credential = new CommunicationTokenCredential(令牌);
 
 // Sync access
 AccessToken accessToken = credential.getToken();
-System.out.println("Token expires: " + accessToken.getExpiresAt());
+System.out.println("令牌 expires: " + accessToken.getExpiresAt());
 
 // Async access
 credential.getTokenAsync()
-    .subscribe(token -> {
-        System.out.println("Token: " + token.getToken().substring(0, 20) + "...");
-        System.out.println("Expires: " + token.getExpiresAt());
+    .subscribe(令牌 -> {
+        System.out.println("令牌: " + 令牌.getToken().substring(0, 20) + "...");
+        System.out.println("Expires: " + 令牌.getExpiresAt());
     });
 ```
 
@@ -236,7 +236,7 @@ credential.getTokenAsync()
 // Clean up when done
 credential.close();
 
-// Or use try-with-resources
+// Or use try-with-资源
 try (CommunicationTokenCredential cred = new CommunicationTokenCredential(options)) {
     // Use credential
     chatClient.doSomething();
@@ -262,51 +262,51 @@ MicrosoftTeamsUserIdentifier teamsUser = new MicrosoftTeamsUserIdentifier("<user
 
 ```bash
 AZURE_COMMUNICATION_ENDPOINT=https://<resource>.communication.azure.com
-AZURE_COMMUNICATION_USER_TOKEN=<user-access-token>
+AZURE_COMMUNICATION_USER_TOKEN=<user-access-令牌>
 ```
 
 ## 最佳实践
 
 1. **Proactive Refresh** - Always use `setRefreshProactively(true)` for long-lived clients
-2. **Token Security** - Never log or expose full tokens
+2. **令牌 Security** - Never log or expose full tokens
 3. **Close Credentials** - Dispose of credentials when no longer needed
-4. **Error Handling** - Handle token refresh failures gracefully
+4. **Error Handling** - Handle 令牌 refresh failures gracefully
 5. **Identifier Types** - Use specific identifier types, not raw strings
 
 ## Common Usage Patterns
 
 ```java
 // Pattern: Create credential for Chat/Calling client
-public ChatClient createChatClient(String token, String endpoint) {
+public ChatClient createChatClient(String 令牌, String 端点) {
     CommunicationTokenRefreshOptions refreshOptions = 
         new CommunicationTokenRefreshOptions(this::refreshToken)
             .setRefreshProactively(true)
-            .setInitialToken(token);
+            .setInitialToken(令牌);
     
     CommunicationTokenCredential credential = 
         new CommunicationTokenCredential(refreshOptions);
     
     return new ChatClientBuilder()
-        .endpoint(endpoint)
+        .端点(端点)
         .credential(credential)
         .buildClient();
 }
 
 private String refreshToken() {
-    // Call your token endpoint
+    // Call your 令牌 端点
     return tokenService.getNewToken();
 }
 ```
 
 ## Trigger Phrases
 
-- "ACS authentication", "communication token credential"
-- "user access token", "token refresh"
+- "ACS authentication", "communication 令牌 credential"
+- "user access 令牌", "令牌 refresh"
 - "CommunicationUserIdentifier", "PhoneNumberIdentifier"
 - "Azure Communication Services authentication"
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

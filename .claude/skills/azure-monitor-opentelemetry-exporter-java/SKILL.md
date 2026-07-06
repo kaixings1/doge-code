@@ -10,7 +10,7 @@ date_added: '2026-02-27'
 
 > **⚠️ DEPRECATION NOTICE**: This package is deprecated. Migrate to `azure-monitor-opentelemetry-autoconfigure`.
 >
-> See [迁移 Guide](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/MIGRATION.md) for detailed instructions.
+> See [迁移 Guide](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/MIGRATION.md) for detailed 使用说明.
 
 Export OpenTelemetry telemetry data to Azure Monitor / Application Insights.
 
@@ -215,7 +215,7 @@ requestCounter.add(1, Attributes.of(
 
 // Histogram
 LongHistogram latencyHistogram = meter.histogramBuilder("http.latency")
-    .setDescription("Request latency")
+    .setDescription("请求 latency")
     .setUnit("ms")
     .ofLongs()
     .build();
@@ -264,12 +264,12 @@ The `azure-monitor-opentelemetry-autoconfigure` package provides:
 ## 最佳实践
 
 1. **Use autoconfigure** — Migrate to `azure-monitor-opentelemetry-autoconfigure`
-2. **Set meaningful span names** — Use descriptive operation names
+2. **Set meaningful span names** — Use descriptive 操作 names
 3. **Add relevant attributes** — Include contextual data for debugging
 4. **Handle exceptions** — 始终 record exceptions on spans
 5. **Use semantic conventions** — Follow OpenTelemetry semantic conventions
 6. **End spans in finally** — Ensure spans are always ended
-7. **Use try-with-resources** — 范围 management with try-with-resources pattern
+7. **Use try-with-资源** — 范围 management with try-with-资源 pattern
 
 ## 参考链接
 
@@ -283,7 +283,7 @@ The `azure-monitor-opentelemetry-autoconfigure` package provides:
 | Application Insights | https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

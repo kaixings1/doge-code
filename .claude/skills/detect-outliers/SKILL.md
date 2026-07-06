@@ -43,7 +43,7 @@ description: "统计和基于 ML 的异常值检测：IQR 方法、Z-score、修
 - Visualization: box plots, scatter plots with outliers highlighted
 - Before/after comparison with impact on summary statistics
 
-## 用法 Examples
+## 用法 示例
 
 **Example 1: Sales data**
 ```

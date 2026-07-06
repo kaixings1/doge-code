@@ -9,16 +9,16 @@ source_type: community
 date_added: "2026-06-12"
 author: anthony-chaudhary
 tags: [verification, git, ai-agents, trust, quality-gate]
-tools: [claude, cursor, gemini]
+tools: [claude, 游标, gemini]
 license: "MIT"
 license_source: "https://github.com/anthony-chaudhary/dos-kernel/blob/master/LICENSE"
 plugin:
   targets:
     codex: blocked
     claude: blocked
-  setup:
+  设置:
     type: manual
-    summary: "Setup installs and executes an external PyPI CLI; keep out of plugin-safe bundles."
+    summary: "设置 installs and executes an external PyPI CLI; keep out of plugin-safe bundles."
     docs: SKILL.md
 ---
 
@@ -39,7 +39,7 @@ Safety Notes).
 This skill adapts the DOS reference "witness-claim" pattern
 (`anthony-chaudhary/dos-kernel`) into a host-agnostic screenplay.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when an agent reports a task/phase/feature as **complete** and you want
   that "done" confirmed from evidence before building on it.
@@ -101,7 +101,7 @@ distrust:
 - `registry` or `grep-artifact` — **non-forgeable** (a registry row, or an
   artefact/diff rung). This closes the claim.
 - `grep-subject` (or bare `grep`) — **forgeable**: a commit *subject* or body
-  carried the phase token, which an agent can write without doing the work (even
+  carried the phase 令牌, which an agent can write without doing the work (even
   on an empty commit). Treat this as *shipped-per-the-subject*, not confirmed —
   corroborate it (run `dos commit-audit` on that commit, below) before you close.
 - `none` — no positive evidence; accept as "not shipped", not as a tool failure.
@@ -161,12 +161,12 @@ dos verify --workspace . AUTH AUTH2 --json --no-ci
   tree (no network). `dos verify` is also git-only **unless** the workspace has
   wired a CI oracle (`[verify] non_git_oracle` in its `dos.toml`), in which case
   it may shell a network check (e.g. `gh api`) for the verdict — pass `--no-ci`
-  (as the examples above do) to force the git-only path and guarantee no network.
+  (as the 示例 above do) to force the git-only path and guarantee no network.
 - `pip install dos-kernel` installs from PyPI. The distribution name is
   `dos-kernel` (the bare `dos` on PyPI is an unrelated package — do not install
   it). Pin a reviewed version; do not install an unpinned latest release into a
   global Python environment.
-- Run in the repository you intend to adjudicate; the `--workspace .` argument
+- Run in the repository you intend to adjudicate; the `--workspace .` 参数
   scopes every verdict to that repo.
 
 ## 常见陷阱

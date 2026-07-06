@@ -31,7 +31,7 @@ from azure.containerregistry import ContainerRegistryClient
 from azure.identity import DefaultAzureCredential
 
 client = ContainerRegistryClient(
-    endpoint=os.environ["AZURE_CONTAINERREGISTRY_ENDPOINT"],
+    端点=os.environ["AZURE_CONTAINERREGISTRY_ENDPOINT"],
     credential=DefaultAzureCredential()
 )
 ```
@@ -42,7 +42,7 @@ client = ContainerRegistryClient(
 from azure.containerregistry import ContainerRegistryClient
 
 client = ContainerRegistryClient(
-    endpoint="https://mcr.microsoft.com",
+    端点="https://mcr.microsoft.com",
     credential=None,
     audience="https://mcr.microsoft.com"
 )
@@ -51,7 +51,7 @@ client = ContainerRegistryClient(
 ## List Repositories
 
 ```python
-client = ContainerRegistryClient(endpoint, DefaultAzureCredential())
+client = ContainerRegistryClient(端点, DefaultAzureCredential())
 
 for repository in client.list_repository_names():
     print(repository)
@@ -96,7 +96,7 @@ for tag in client.list_tag_properties("my-image"):
     print(f"{tag.name}: {tag.created_on}")
 ```
 
-### Filter by Order
+### 过滤器 by Order
 
 ```python
 from azure.containerregistry import ArtifactTagOrder
@@ -181,7 +181,7 @@ client.delete_tag("my-image", "old-tag")
 ```python
 from azure.containerregistry import ContainerRegistryClient
 
-client = ContainerRegistryClient(endpoint, DefaultAzureCredential())
+client = ContainerRegistryClient(端点, DefaultAzureCredential())
 
 # Download manifest
 manifest = client.download_manifest("my-image", "latest")
@@ -203,7 +203,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def list_repos():
     credential = DefaultAzureCredential()
-    client = ContainerRegistryClient(endpoint, credential)
+    client = ContainerRegistryClient(端点, credential)
     
     async for repo in client.list_repository_names():
         print(repo)
@@ -227,7 +227,7 @@ for manifest in client.list_manifest_properties("my-image"):
 
 ## Client Operations
 
-| Operation | Description |
+| 操作 | Description |
 |-----------|-------------|
 | `list_repository_names` | List all repositories |
 | `get_repository_properties` | Get repository metadata |
@@ -252,7 +252,7 @@ for manifest in client.list_manifest_properties("my-image"):
 7. **Check manifest.tags** before deleting to avoid removing tagged images
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

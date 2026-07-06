@@ -11,4 +11,4 @@ triggers: - "writing-fragments" - "写作片段" - "片段挖掘" - "素材探�
 - 一组相关观察，只是因为感觉相关而已。
 - 一句吐槽、一段自白、一句点睛之笔。
 - 一个 **引导词**：一个简短的隐喻或新造词，能让整篇文章围绕它展开（像 tracer bullets 或 fog of war 那样的一个词命中一个模式）。 其中，引导词是最有价值的片段。它是 load-bearing：命中一个好的引导词，会塑造结构、过渡和标题，在整个 **利用阶段**持续产生红利。当对话反复指向某个浮现中的概念时，要 push 为你所讨论的东西造一个词。 小说家的日记就是模型：多年非结构化的 noticing，后来被挖成原文素材。片段就是 noticing。 ## 文件格式 ```markdown
-# Working Title 第一个片段放在这里。 它可以是一到多段。可以包含列表、代码、引用——片段自然呈现的任何形式。 MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN 20 HOURS 41 MINUTES 34 SECONDS VISIT HTTPS://MYMEMORY.TRANSLATED.NET/DOC/USAGELIMITS.PHP TO TRANSLATE MORE
+# Working Title 第一个片段放在这里。 它可以是一到多段。可以包含列表、代码、引用——片段自然呈现的任何形式。 

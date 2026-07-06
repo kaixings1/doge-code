@@ -35,7 +35,7 @@ $ARGUMENTS
 
 ## 资源
 
-- `resources/implementation-playbook.md` for detailed patterns and examples.
+- `resources/implementation-playbook.md` for detailed patterns and 示例.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

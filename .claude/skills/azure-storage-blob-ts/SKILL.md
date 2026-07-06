@@ -68,7 +68,7 @@ const client = new BlobServiceClient(
 );
 ```
 
-### SAS Token
+### SAS 令牌
 
 ```typescript
 import { BlobServiceClient } from "@azure/storage-blob";
@@ -111,7 +111,7 @@ for await (const container of client.listContainers()) {
   console.log(container.name);
 }
 
-// With prefix filter
+// With prefix 过滤器
 for await (const container of client.listContainers({ prefix: "logs-" })) {
   console.log(container.name);
 }
@@ -252,7 +252,7 @@ await blobClient.delete({ deleteSnapshots: "include" });
 const sourceBlobClient = containerClient.getBlobClient("source.txt");
 const destBlobClient = containerClient.getBlobClient("destination.txt");
 
-// Start copy operation
+// Start copy 操作
 const copyPoller = await destBlobClient.beginCopyFromURL(sourceBlobClient.url);
 await copyPoller.pollUntilDone();
 ```
@@ -290,7 +290,7 @@ await blobClient.setHTTPHeaders({
 });
 ```
 
-## SAS Token Generation (Node.js only)
+## SAS 令牌 Generation (Node.js only)
 
 ### Generate Blob SAS
 
@@ -483,7 +483,7 @@ import {
 | Anonymous/SAS access | ✅ | ✅ |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

@@ -1,21 +1,21 @@
 ---
 name: documentation
 description: "文档生成工作流，涵盖 API 文档、架构文档、README 文件、代码注释和技术写作。"
-category: workflow-bundle
+category: 工作流-bundle
 risk: safe
 source: personal
 date_added: "2026-02-27"
 ---
 
-# Documentation Workflow Bundle
+# Documentation 工作流 Bundle
 
 ## 概述
 
-Comprehensive documentation workflow for generating API documentation, architecture documentation, README files, code comments, and technical content from codebases.
+Comprehensive documentation 工作流 for generating API documentation, architecture documentation, README files, code comments, and technical content from codebases.
 
-## When to Use This Workflow
+## 使用场景 This 工作流
 
-Use this workflow when:
+Use this 工作流 when:
 - Creating project documentation
 - Generating API documentation
 - Writing architecture docs
@@ -23,7 +23,7 @@ Use this workflow when:
 - Creating user guides
 - Maintaining wikis
 
-## Workflow Phases
+## 工作流 Phases
 
 ### Phase 1: Documentation Planning
 
@@ -58,7 +58,7 @@ Use @documentation-templates to set up documentation
 1. Extract API endpoints
 2. Generate OpenAPI specs
 3. Create API reference
-4. Add usage examples
+4. Add usage 示例
 5. Set up auto-generation
 
 #### Copy-Paste Prompts
@@ -85,7 +85,7 @@ Use @openapi-spec-generation to create OpenAPI specs
 2. Document architecture
 3. Generate sequence diagrams
 4. Document data flows
-5. Create deployment docs
+5. Create 部署 docs
 
 #### Copy-Paste Prompts
 ```
@@ -108,7 +108,7 @@ Use @mermaid-expert to create architecture diagrams
 2. Generate JSDoc/TSDoc
 3. Create type documentation
 4. Document functions
-5. Add usage examples
+5. Add usage 示例
 
 #### Copy-Paste Prompts
 ```
@@ -123,15 +123,15 @@ Use @code-documentation-doc-generate to generate docs
 
 #### Skills to Invoke
 - `readme` - README generation
-- `environment-setup-guide` - Setup guides
+- `environment-设置-guide` - 设置 guides
 - `tutorial-engineer` - Tutorial creation
 
 #### Actions
 1. Create README
 2. Write getting started guide
 3. Document installation
-4. Add usage examples
-5. Create troubleshooting guide
+4. Add usage 示例
+5. Create 故障排除 guide
 
 #### Copy-Paste Prompts
 ```
@@ -221,16 +221,16 @@ Use @doc-coauthoring to collaborate on docs
 - Example code
 
 ### API Documentation
-- Endpoint reference
-- Request/response schemas
-- Authentication guides
+- 端点 reference
+- 请求/响应 schemas
+- 认证 guides
 - SDK documentation
 
 ### Architecture Documentation
-- System overview
+- System 概述
 - Component diagrams
 - Data flow diagrams
-- Deployment architecture
+- 部署 architecture
 
 ### User Documentation
 - Getting started guides
@@ -250,12 +250,12 @@ Use @doc-coauthoring to collaborate on docs
 - [ ] Architecture diagrams current
 - [ ] README up to date
 - [ ] Code comments helpful
-- [ ] Examples working
+- [ ] 示例 working
 - [ ] Links valid
 
-## Related Workflow Bundles
+## Related 工作流 Bundles
 
-- `development` - Development workflow
+- `development` - Development 工作流
 - `testing-qa` - Documentation testing
 - `ai-ml` - AI documentation
 

@@ -15,7 +15,7 @@ Bootstrap a complete SwiftPM macOS app folder, then build, package, and run it w
 - When the user needs a SwiftPM-based macOS app without relying on an Xcode project.
 - When you need packaging, signing, notarization, or appcast guidance for a SwiftPM app.
 
-## Two-Step Workflow
+## Two-Step 工作流
 1) Bootstrap the project folder
    - Copy `assets/templates/bootstrap/` into a new repo.
    - Rename `MyApp` in `Package.swift`, `Sources/MyApp/`, and `version.env`.

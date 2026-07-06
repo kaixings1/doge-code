@@ -75,7 +75,7 @@ pipeline = Pipeline([
 - 用于实时输出的流式响应生成
 - 用于外部 API 集成的函数调用（工具使用）
 - 具有自动消息历史跟踪的上下文管理
-- Token 使用监控和成本跟踪
+- 令牌 使用监控和成本跟踪
 - 支持视觉模型和多模态输入
 
 ### 函数调用与工具集成
@@ -108,7 +108,7 @@ llm.register_function("get_current_weather", fetch_weather)
 
 - 从转录和 TTS 输出自动聚合上下文
 - 通过 `LLMMessagesAppendFrame` 和 `LLMMessagesUpdateFrame` 手动操作上下文
-- 为长对话自动汇总上下文以减少 token 使用
+- 为长对话自动汇总上下文以减少 令牌 使用
 - 工具定义和函数调用结果存储在上下文中
 - 词级精度确保中断期间的上下文准确性
 
@@ -139,7 +139,7 @@ llm.register_function("get_current_weather", fetch_weather)
 代理可以构建结合多种模态的应用：
 
 - Video input processing with vision models (Moondream)
-- Image generation integration (DALL-E, Gemini, Fal)
+- Image generation 集成 (DALL-E, Gemini, Fal)
 - Video synthesis (HeyGen, Tavus, Simli)
 - Simultaneous audio, video, and text processing
 - Screen sharing and video frame analysis
@@ -176,7 +176,7 @@ class CustomProcessor(FrameProcessor):
 代理可以监控管道性能和使用情况：
 
 - 实时延迟指标（TTFB、往返时间）
-- LLM 和 TTS 服务的 Token 使用跟踪
+- LLM 和 TTS 服务的 令牌 使用跟踪
 - 帧处理指标和管道吞吐量
 - 用于应用特定监控的自定义观察者模式
 - 用于分布式追踪的 OpenTelemetry 集成
@@ -256,9 +256,9 @@ class CustomProcessor(FrameProcessor):
 ### 管理长对话
 
 1. 在助手聚合器参数中启用上下文摘要
-2. 配置摘要触发器（token 计数、消息计数）
+2. 配置摘要触发器（令牌 计数、消息计数）
 3. 设置 preserve_recent_messages 以保留最近上下文
-4. 使用指标监控 token 使用情况
+4. 使用指标监控 令牌 使用情况
 5. 为上下文窗口限制实现备用策略
 6. 使用 context.messages 检查当前状态
 7. 在需要时使用 LLMMessagesAppendFrame 手动添加消息
@@ -297,7 +297,7 @@ Pipecat integrates with:
 
 **服务灵活性**：Pipecat 通过适配器抽象服务差异。定义一次的函数模式适用于所有 LLM 提供商。上下文格式在 OpenAI 和提供商特定格式之间自动转换。
 
-**生产考虑**：对于生产部署，使用 WebRTC 而不是 WebSocket 以获得更好的媒体传输。在 Docker 镜像中预缓存大型模型。监控延迟和 token 使用指标。使用 Pipecat Cloud 进行托管扩展，或使用适当的资源分配自托管。
+**生产考虑**：对于生产部署，使用 WebRTC 而不是 WebSocket 以获得更好的媒体传输。在 Docker 镜像中预缓存大型模型。监控延迟和 令牌 使用指标。使用 Pipecat Cloud 进行托管扩展，或使用适当的资源分配自托管。
 
 **话轮转换复杂性**：自然对话需要协调 VAD（检测语音）、话轮检测（理解完成）和中断处理。Silero VAD 提供低延迟的本地处理。智能话轮检测使用 AI 理解对话上下文。调整这些参数对用户体验至关重要。
 

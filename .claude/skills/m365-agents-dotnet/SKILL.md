@@ -9,17 +9,17 @@ date_added: '2026-02-27'
 # Microsoft 365 Agents SDK (.NET)
 
 ## 概述
-Build enterprise agents for Microsoft 365, Teams, and Copilot Studio using the Microsoft.Agents SDK with ASP.NET Core hosting, agent routing, and MSAL-based authentication.
+Build enterprise agents for Microsoft 365, Teams, and Copilot Studio using the Microsoft.Agents SDK with ASP.NET Core hosting, agent routing, and MSAL-based 认证.
 
 ## Before implementation
-- Use the microsoft-docs MCP to verify the latest APIs for AddAgent, AgentApplication, and authentication options.
+- Use the microsoft-docs MCP to verify the latest APIs for AddAgent, AgentApplication, and 认证 options.
 - Confirm package versions in NuGet for the Microsoft.Agents.* packages you plan to use.
 
 ## 安装
 
 ```bash
 dotnet add package Microsoft.Agents.Hosting.AspNetCore
-dotnet add package Microsoft.Agents.Authentication.Msal
+dotnet add package Microsoft.Agents.认证.Msal
 dotnet add package Microsoft.Agents.Storage
 dotnet add package Microsoft.Agents.CopilotStudio.Client
 dotnet add package Microsoft.Identity.Client.Extensions.Msal
@@ -71,7 +71,7 @@ dotnet add package Microsoft.Identity.Client.Extensions.Msal
 }
 ```
 
-## Core Workflow: ASP.NET Core agent host
+## Core 工作流: ASP.NET Core agent host
 
 ```csharp
 using Microsoft.Agents.Builder;
@@ -90,7 +90,7 @@ builder.AddAgent<MyAgent>();
 builder.Services.AddSingleton<IStorage, MemoryStorage>();
 
 builder.Services.AddControllers();
-builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
+builder.Services.AddAgentAspNetAuthentication(builder.配置);
 
 WebApplication app = builder.Build();
 
@@ -100,9 +100,9 @@ app.UseAuthorization();
 app.MapGet("/", () => "Microsoft Agents SDK Sample");
 
 var incomingRoute = app.MapPost("/api/messages",
-    async (HttpRequest request, HttpResponse response, IAgentHttpAdapter adapter, IAgent agent, CancellationToken ct) =>
+    async (HttpRequest 请求, HttpResponse 响应, IAgentHttpAdapter adapter, IAgent agent, CancellationToken ct) =>
     {
-        await adapter.ProcessAsync(request, response, agent, ct);
+        await adapter.ProcessAsync(请求, 响应, agent, ct);
     });
 
 if (!app.Environment.IsDevelopment())
@@ -175,7 +175,7 @@ public sealed class MyAgent : AgentApplication
 
 ## Copilot Studio direct-to-engine client
 
-### DelegatingHandler for token acquisition (interactive flow)
+### DelegatingHandler for 令牌 acquisition (interactive flow)
 
 ```csharp
 using System.Net.Http.Headers;
@@ -192,10 +192,10 @@ internal sealed class AddTokenHandler : DelegatingHandler
     }
 
     protected override async Task<HttpResponseMessage> SendAsync(
-        HttpRequestMessage request,
+        HttpRequestMessage 请求,
         CancellationToken cancellationToken)
     {
-        if (request.Headers.Authorization is null)
+        if (请求.Headers.授权 is null)
         {
             string[] scopes = [CopilotClient.ScopeFromSettings(_settings)];
 
@@ -217,10 +217,10 @@ internal sealed class AddTokenHandler : DelegatingHandler
                 authResponse = await app.AcquireTokenInteractive(scopes).ExecuteAsync(cancellationToken);
             }
 
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authResponse.AccessToken);
+            请求.Headers.授权 = new AuthenticationHeaderValue("Bearer", authResponse.AccessToken);
         }
 
-        return await base.SendAsync(request, cancellationToken);
+        return await base.SendAsync(请求, cancellationToken);
     }
 }
 ```
@@ -235,7 +235,7 @@ using Microsoft.Extensions.Hosting;
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
 var settings = new SampleConnectionSettings(
-    builder.Configuration.GetSection("CopilotStudioClientSettings"));
+    builder.配置.GetSection("CopilotStudioClientSettings"));
 
 builder.Services.AddHttpClient("mcs").ConfigurePrimaryHttpMessageHandler(() =>
 {
@@ -268,8 +268,8 @@ await foreach (var activity in client.AskQuestionAsync("Hello!", null))
 
 1. Use AgentApplication subclasses to centralize routing and error handling.
 2. Use MemoryStorage only for development; use persisted storage in production.
-3. Enable TokenValidation in production and require authorization on /api/messages.
-4. Keep auth secrets in configuration providers (Key Vault, managed identity, env vars).
+3. Enable TokenValidation in production and require 授权 on /api/messages.
+4. Keep auth secrets in 配置 providers (Key Vault, managed identity, env vars).
 5. Reuse HttpClient from IHttpClientFactory and cache MSAL tokens.
 6. 优先 async handlers and pass CancellationToken to SDK calls.
 

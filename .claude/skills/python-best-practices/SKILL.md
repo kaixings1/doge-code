@@ -3,7 +3,7 @@ name: python-best-practices
 description: Python最佳实践 — 使用类型提示、数据类、异步模式、装饰器和PEP 8标准。
 ---
 
-# Python Best Practices
+# Python 最佳实践
 
 ## Type Hints (3.12+ Syntax)
 
@@ -16,7 +16,7 @@ def process_items(items: list[str]) -> dict[str, int]:
 def find_user(user_id: int) -> User | None:
     ...
 
-# Type parameter syntax (3.12+)
+# Type 参数 syntax (3.12+)
 type Vector[T] = list[T]
 type Matrix[T] = list[Vector[T]]
 
@@ -86,9 +86,9 @@ import asyncio
 import httpx
 
 async def fetch_user(client: httpx.AsyncClient, user_id: int) -> User:
-    response = await client.get(f"/users/{user_id}")
-    response.raise_for_status()
-    return User(**response.json())
+    响应 = await client.get(f"/users/{user_id}")
+    响应.raise_for_status()
+    return User(**响应.json())
 
 async def fetch_all_users(user_ids: list[int]) -> list[User]:
     async with httpx.AsyncClient(base_url="https://api.example.com") as client:
@@ -177,7 +177,7 @@ asyncio_mode = "auto"
 testpaths = ["tests"]
 ```
 
-Use `pyproject.toml` for all tool configuration. Use Ruff instead of flake8 + isort + black (single tool, 10-100x faster).
+Use `pyproject.toml` for all tool 配置. Use Ruff instead of flake8 + isort + black (single tool, 10-100x faster).
 
 ## Virtual Environments
 
@@ -202,7 +202,7 @@ from unittest.mock import AsyncMock, patch
 
 @pytest.fixture
 def user_service(db_session):
-    return UserService(session=db_session)
+    return UserService(会话=db_session)
 
 async def test_create_user_returns_user_with_hashed_password(user_service):
     user = await user_service.create(email="test@example.com", password="secret")
@@ -217,7 +217,7 @@ async def test_create_user_rejects_duplicate_email(user_service):
 @pytest.fixture
 def mock_http_client():
     client = AsyncMock(spec=httpx.AsyncClient)
-    client.get.return_value = httpx.Response(200, json={"id": 1, "name": "Alice"})
+    client.get.return_value = httpx.响应(200, json={"id": 1, "name": "Alice"})
     return client
 
 async def test_fetch_user_parses_response(mock_http_client):
@@ -235,7 +235,7 @@ Use `conftest.py` for shared fixtures. Use `pytest.mark.parametrize` for test va
 first, *rest = items
 x, y = point
 
-# Comprehensions over map/filter
+# Comprehensions over map/过滤器
 squares = [x**2 for x in numbers if x > 0]
 lookup = {u.id: u for u in users}
 

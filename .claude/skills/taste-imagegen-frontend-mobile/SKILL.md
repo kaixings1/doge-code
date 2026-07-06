@@ -307,7 +307,7 @@ Variation is allowed in:
 - composition
 - feature emphasis
 - image placement
-- screen purpose
+- screen 目的
 - visual tempo
 
 But not in:
@@ -328,7 +328,7 @@ Do not generate random unrelated screens.
 
 The screen order should make sense.
 
-Examples:
+示例:
 - onboarding → auth → home
 - home → browse → detail
 - profile → settings → edit profile
@@ -717,7 +717,7 @@ Strictly avoid these unless explicitly requested.
 ### Visual AI tells
 - purple-blue fintech gradients everywhere
 - random glass cards
-- ambient blobs with no purpose
+- ambient blobs with no 目的
 - fake neon premium look
 - generic dribbble-style floating widgets
 - oversized corner radii on everything
@@ -785,7 +785,7 @@ Choose 1:
 Choose 1:
 1. list-led utility
 2. card-led modular
-3. dashboard-led overview
+3. dashboard-led 概述
 4. media-led storytelling
 5. profile-led identity
 6. commerce-led browse and detail flow
@@ -965,7 +965,7 @@ Allowed:
 - controlled visual depth
 - richer compositions
 - stronger image presence
-- decorative accents with purpose
+- decorative accents with 目的
 - multiple visual zones within a screen
 - more character when the brand needs it
 
@@ -1039,7 +1039,7 @@ Prefer:
 - clear radius logic
 - clean framing
 
-Examples:
+示例:
 - onboarding hero in a bounded visual block
 - product cards with consistent proportions
 - editorial shelves with repeatable crops
@@ -1325,7 +1325,7 @@ If not, refine before output.
 
 ---
 
-## 36. RESPONSE BEHAVIOR
+## 36. 响应 BEHAVIOR
 
 When the user asks for a mobile app image concept:
 1. infer app category

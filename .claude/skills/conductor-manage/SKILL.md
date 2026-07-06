@@ -25,7 +25,7 @@ date_added: "2026-02-27"
 ## 说明
 
 - Verify `conductor/` structure and required files before proceeding.
-- Determine the operation mode from arguments or interactive prompts.
+- Determine the 操作 mode from arguments or interactive prompts.
 - Confirm destructive actions (delete/cleanup) before applying.
 - Update `tracks.md` and metadata consistently.
 - If detailed steps are required, open `resources/implementation-playbook.md`.

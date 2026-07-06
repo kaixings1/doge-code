@@ -231,7 +231,7 @@ print(f"GC content: {gc_fraction(seq):.2%}")
 print(f"Molecular weight: {molecular_weight(seq, seq_type='DNA'):.2f} g/mol")
 ```
 
-## General Workflow Guidelines
+## General 工作流 Guidelines
 
 ### Reading Documentation
 
@@ -415,6 +415,14 @@ Phylo.draw_ascii(tree)
 - **Mailing List**: biopython@biopython.org
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 To locate information in reference files, use these search patterns:
 

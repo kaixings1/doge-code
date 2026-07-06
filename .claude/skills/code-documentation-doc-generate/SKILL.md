@@ -43,7 +43,7 @@ $ARGUMENTS
 ## 输出格式
 
 - Documentation plan and artifacts to generate
-- File paths and tooling configuration
+- File paths and tooling 配置
 - Assumptions, gaps, and follow-up tasks
 
 ## 资源

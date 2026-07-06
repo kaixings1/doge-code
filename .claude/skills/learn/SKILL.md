@@ -13,11 +13,11 @@ license_source: "https://github.com/dair-ai/dair-academy-plugins/blob/main/READM
 tags:
   - dair-academy
   - ai
-  - workflow
+  - 工作流
 tools:
   - claude-code
   - codex-cli
-  - cursor
+  - 游标
 ---
 
 ## 使用场景

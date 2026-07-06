@@ -1,10 +1,10 @@
 ---
 name: SQL编写
-description: "从自然语言描述生成 SQL 查询。支持 BigQuery、PostgreSQL、MySQL、Snowflake 和其他方言。从上传的图表或文档读取数据库 schema。适用于编写 SQL、构建数据报告或将业务问题转化为查询。"
-triggers: - "write sql" - "write-sql" - "SQL 生成" - "生成 SQL" - "写 SQL" - "SQL query" - "数据查询"
+description: "从自然语言描述生成 SQL 查询。支持 BigQuery、PostgreSQL、MySQL、Snowflake 和其他方言。从上传的图表或文档读取数据库 架构。适用于编写 SQL、构建数据报告或将业务问题转化为查询。"
+triggers: - "write sql" - "write-sql" - "SQL 生成" - "生成 SQL" - "写 SQL" - "SQL 查询" - "数据查询"
 --- # SQL 查询生成器 ## 目标
 将自然语言需求转换为多数据库平台的高效 SQL 查询。 ## 工作流程 ### 步骤 1：理解数据库结构
-- 如果提供了 schema 文件，读取并分析它
+- 如果提供了 架构 文件，读取并分析它
 - 提取表名、列定义、关系信息
 - 识别主键、外键和索引 ### 步骤 2：处理需求
 - 明确所需的确切数据
@@ -19,4 +19,4 @@ triggers: - "write sql" - "write-sql" - "SQL 生成" - "生成 SQL" - "写 SQL" 
 - 提供替代方案 ## 使用示例 "生成一个查询：找出过去 30 天注册且至少有 5 次活跃会话的用户" "创建一个按地区统计并按同比增长率排序收入的 BigQuery 查询" ## 输出格式 - **SQL 查询**：生产就绪的代码，带注释
 - **说明**：查询功能和原理
 - **性能建议**：优化提示
-- **假设说明**：基于 schema 的假设
+- **假设说明**：基于 架构 的假设

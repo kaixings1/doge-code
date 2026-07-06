@@ -206,7 +206,7 @@ const allergies = exists('data/allergies.json') ? readFile('data/allergies.json'
 
 - `/ai analyze` - AI综合分析
 - `/ai predict [risk_type]` - 健康风险预测
-- `/ai chat [query]` - 自然语言问答
+- `/ai chat [查询]` - 自然语言问答
 - `/ai report generate [type]` - 生成AI健康报告
 - `/ai status` - 查看AI功能状态
 

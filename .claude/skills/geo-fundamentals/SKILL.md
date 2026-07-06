@@ -84,9 +84,9 @@ How AI engines select content to cite:
 
 ### Technical Elements
 
-- [ ] Article schema with dates
-- [ ] Person schema for author
-- [ ] FAQPage schema
+- [ ] Article 架构 with dates
+- [ ] Person 架构 for author
+- [ ] FAQPage 架构
 - [ ] Fast loading (< 2.5s)
 - [ ] Clean HTML structure
 
@@ -94,7 +94,7 @@ How AI engines select content to cite:
 
 ## 6. Entity Building
 
-| Action | Purpose |
+| Action | 目的 |
 |--------|---------|
 | Google Knowledge Panel | Entity recognition |
 | Wikipedia (if notable) | Authority source |
@@ -152,12 +152,12 @@ How AI engines select content to cite:
 
 ## Script
 
-| Script | Purpose | Command |
+| Script | 目的 | Command |
 |--------|---------|---------|
 | `scripts/geo_checker.py` | GEO audit (AI citation readiness) | `python scripts/geo_checker.py <project_path>` |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the 概述.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

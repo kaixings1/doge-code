@@ -151,13 +151,13 @@ When a restricted party screening tool returns a match, do not block the transac
 
 ## Key Edge Cases
 
-These are situations where the obvious approach is wrong. Brief summaries here — see [edge-cases.md](references/edge-cases.md) for full analysis.
+These are situations where the obvious 方法 is wrong. Brief summaries here — see [edge-cases.md](references/edge-cases.md) for full analysis.
 
 1. **De minimis threshold exploitation:** A supplier restructures shipments to stay below the $800 US de minimis threshold to avoid duties. Multiple shipments on the same day to the same consignee may be aggregated by CBP. Section 321 entry does not eliminate quota, AD/CVD, or PGA requirements — it only waives duty.
 
 2. **Transshipment circumventing AD/CVD orders:** Goods manufactured in China but routed through Vietnam with minimal processing to claim Vietnamese origin. CBP uses evasion investigations (EAPA) with subpoena power. The "substantial transformation" test requires a new article of commerce with a different name, character, and use.
 
-3. **Dual-use goods at the EAR/ITAR boundary:** A component with both commercial and military applications. ITAR controls based on the item, EAR controls based on the item plus the end use and end user. Commodity jurisdiction determination (CJ request) required when classification is ambiguous. Filing under the wrong regime is a violation of both.
+3. **Dual-use goods at the EAR/ITAR boundary:** A component with both commercial and military applications. ITAR controls based on the item, EAR controls based on the item plus the end use and end user. Commodity jurisdiction determination (CJ 请求) required when classification is ambiguous. Filing under the wrong regime is a violation of both.
 
 4. **Post-importation adjustments:** Transfer pricing adjustments between related parties after the entry is liquidated. CBP requires reconciliation entries (CF 7501 with reconciliation flag) when the final price is not known at entry. Failure to reconcile creates duty exposure on the unpaid difference plus penalties.
 
@@ -177,8 +177,8 @@ Match communication tone to the counterparty, regulatory context, and risk level
 
 - **Customs broker (routine):** Collaborative and precise. Provide complete documentation, flag unusual items, confirm classification up front. "HS 8471.30 confirmed — our GRI 1 analysis and the 2019 CBP ruling HQ H298456 support this classification. Packed 3 of 4 required docs, C/O follows by EOD."
 - **Customs broker (urgent hold/exam):** Direct, factual, time-sensitive. "Shipment held at LA/LB — CBP requesting manufacturer documentation. Sending MID verification and production records now. Need your filing within 2 hours to avoid demurrage."
-- **Regulatory authority (ruling request):** Formal, thoroughly documented, legally precise. Follow the agency's prescribed format exactly. Provide samples if requested. 绝不 overstate certainty — use "it is our position that" rather than "this product is classified as."
-- **Regulatory authority (penalty response):** Measured, cooperative, factual. Acknowledge the error if it exists. Present mitigation factors systematically. 绝不 admit fraud when the facts support negligence.
+- **Regulatory authority (ruling 请求):** Formal, thoroughly documented, legally precise. Follow the agency's prescribed format exactly. Provide samples if requested. 绝不 overstate certainty — use "it is our position that" rather than "this product is classified as."
+- **Regulatory authority (penalty 响应):** Measured, cooperative, factual. Acknowledge the error if it exists. Present mitigation factors systematically. 绝不 admit fraud when the facts support negligence.
 - **Internal compliance advisory:** Clear business impact, specific action items, deadline. Translate regulatory requirements into operational language. "Effective March 1, all lithium battery imports require UN 38.3 test summaries at entry. Operations must collect these from suppliers before booking. Non-compliance: $10K+ per shipment in fines and cargo holds."
 - **Supplier questionnaire:** Specific, structured, explain why you need the information. Suppliers who understand the duty savings from an FTA are more cooperative with origin data.
 

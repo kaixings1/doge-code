@@ -51,6 +51,6 @@ Optimize neural network training for faster convergence, better generalization, 
 ## 输出格式
 
 - **Optimization Plan**: Recommended changes with rationale
-- **Training Configuration**: Complete config (optimizer, scheduler, regularization)
+- **Training 配置**: Complete config (optimizer, scheduler, regularization)
 - **PyTorch Code**: Training loop with all optimizations
-- **Monitoring Setup**: W&B / TensorBoard configuration
+- **Monitoring 设置**: W&B / TensorBoard 配置

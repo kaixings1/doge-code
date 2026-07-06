@@ -10,7 +10,7 @@ Generate a comprehensive exploratory data analysis profile in a single pass. Pro
 
 ## 工作原理
 
-### 步骤 1: Structure Overview
+### 步骤 1: Structure 概述
 - Shape (rows × columns), memory usage
 - Column names, data types, and inferred semantic types
 - Identify: numeric, categorical, datetime, boolean, text, ID columns

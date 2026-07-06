@@ -5,7 +5,7 @@ version: "1.0.0"
 license: MIT
 metadata:
   hermes:
-    tags: [git, workflow]
+    tags: [git, 工作流]
 ---
 
 # 完成开发分支
@@ -77,7 +77,7 @@ git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 实现已完成。你想怎么做？
 
 1. 在本地合并回 <base-branch>
-2. 推送并创建 Pull Request
+2. 推送并创建 Pull 请求
 3. 保持分支现状（我稍后处理）
 4. 丢弃这项工作
 
@@ -89,7 +89,7 @@ git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 ```
 实现已完成。你在分离 HEAD 上（由外部管理的工作区）。
 
-1. 作为新分支推送并创建 Pull Request
+1. 作为新分支推送并创建 Pull 请求
 2. 保持现状（我稍后处理）
 3. 丢弃这项工作
 
@@ -201,6 +201,14 @@ git worktree prune  # 自愈：清理任何过期的注册记录
 **否则：** 这个工作区由宿主环境（harness）管理。**不要**移除它。如果你的平台提供了工作区退出工具，用它。否则原样保留工作区。
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 | 选项 | 合并 | 推送 | 保留工作树 | 清理分支 |
 |------|------|------|-----------|---------|

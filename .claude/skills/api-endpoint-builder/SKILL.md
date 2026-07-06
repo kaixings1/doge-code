@@ -1,5 +1,5 @@
 ---
-name: api-endpoint-builder
+name: api-端点-builder
 description: "API 端点构建器"
 risk: safe
 source: community

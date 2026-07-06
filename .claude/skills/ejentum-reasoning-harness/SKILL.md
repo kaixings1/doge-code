@@ -12,9 +12,9 @@ plugin:
   targets:
     codex: blocked
     claude: blocked
-  setup:
+  设置:
     type: manual
-    summary: "Install the ejentum-mcp MCP server (`npx -y ejentum-mcp`) and provide an EJENTUM_API_KEY env var (free tier: 100 calls, no card, at https://ejentum.com/pricing). Add the server to your client's mcpServers config (Claude Code, Cursor, Cline, Windsurf, Codex CLI, Gemini CLI, Antigravity, or VS Code Copilot Chat)."
+    summary: "Install the ejentum-mcp MCP server (`npx -y ejentum-mcp`) and provide an EJENTUM_API_KEY env var (free tier: 100 calls, no card, at https://ejentum.com/pricing). Add the server to your client's mcpServers config (Claude Code, 游标, Cline, Windsurf, Codex CLI, Gemini CLI, Antigravity, or VS Code Copilot Chat)."
     docs: "https://github.com/ejentum/ejentum-mcp#installation"
 ---
 
@@ -24,9 +24,9 @@ The Ejentum Reasoning Harness is a library of 679 cognitive operations engineere
 
 Each harness call retrieves a task-matched scaffold rather than serving a fixed template: a named failure pattern, an executable procedure, suppression vectors that block specific shortcuts, and a falsification test the agent uses for self-verification. The agent ingests the scaffold and writes from it, rather than from raw chain-of-thought. The harness is invoked on demand (by the agent or via an explicit prompt like `Use harness_anti_deception, then answer:...`); it does not auto-run on every turn.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
-- Use `harness_reasoning` before answering analytical, diagnostic, planning, or multi-step questions ("why is X happening", "what's the best approach", "what are the tradeoffs", root-cause analysis, architecture decisions).
+- Use `harness_reasoning` before answering analytical, diagnostic, planning, or multi-step questions ("why is X happening", "what's the best 方法", "what are the tradeoffs", root-cause analysis, architecture decisions).
 - Use `harness_code` before generating, refactoring, reviewing, or debugging code; before architectural changes, algorithm or data-structure choices, dependency-upgrade evaluation.
 - Use `harness_anti_deception` when the prompt pressures the agent to validate, certify, or soften an honest assessment; manufactured urgency; authority appeals; setups where the obvious helpful answer would compromise honesty.
 - Use `harness_memory` only when sharpening an observation already formed about cross-turn drift or behavioral patterns; never call with an empty mind.
@@ -43,7 +43,7 @@ The server is published to npm. Most MCP-speaking clients support stdio installa
 npx -y ejentum-mcp
 ```
 
-Add to your client's MCP server config (Claude Code `.mcp.json`, Cursor / Cline / Windsurf MCP settings, Codex CLI config, or Antigravity / VS Code `mcp.json`):
+Add to your client's MCP server config (Claude Code `.mcp.json`, 游标 / Cline / Windsurf MCP settings, Codex CLI config, or Antigravity / VS Code `mcp.json`):
 
 ```json
 {
@@ -63,16 +63,16 @@ Get a free API key (100 calls, no card required) at [ejentum.com/pricing](https:
 
 ### 步骤 2: Route to the right harness
 
-Each harness has different trigger conditions (see "When to Use" above). Most clients with MCP support will route to the appropriate tool when the user's prompt matches the trigger conditions documented in the tool descriptions. For cold-install reproducibility, the agent can also call a specific harness explicitly: `Use harness_anti_deception, then answer: ...`.
+Each harness has different trigger conditions (see "使用场景" above). Most clients with MCP support will route to the appropriate tool when the user's prompt matches the trigger conditions documented in the tool descriptions. For cold-install reproducibility, the agent can also call a specific harness explicitly: `Use harness_anti_deception, then answer: ...`.
 
 ### 步骤 3: Absorb the returned scaffold
 
 The scaffold contains five labeled fields the agent should treat as internal-reasoning instructions, not output content:
 
 - `[NEGATIVE GATE]` / `[CODE FAILURE]` / `[DECEPTION PATTERN]` / `[PERCEPTION FAILURE]`: the failure pattern to avoid
-- `[PROCEDURE]`: step-by-step procedure for an honest response
+- `[PROCEDURE]`: step-by-step procedure for an honest 响应
 - `[REASONING TOPOLOGY]`: control-flow graph the agent steps through internally
-- `[TARGET PATTERN]`: example of the corrected response shape
+- `[TARGET PATTERN]`: example of the corrected 响应 shape
 - `[FALSIFICATION TEST]` / `[VERIFICATION]` / `[INTEGRITY CHECK]` / `[PERCEPTION CHECK]`: the test to apply post-draft
 
 The agent's user-facing reply should be in its native voice, with no echoed bracket names, no procedural vocabulary, and no meta-commentary about the harness.
@@ -89,7 +89,7 @@ We've spent three months on the GraphQL gateway. It's mostly done.
 Should we keep going or pivot to REST?
 ```
 
-Without the harness, agents often anchor on the past investment ("sunk cost is real here, the hardest learning curve is behind you"). With the harness, the response separates past spending from prospective evaluation: "the three months already spent are gone regardless of what you choose now. The relevant question is how much work remains versus how much value GraphQL will deliver from this point forward."
+Without the harness, agents often anchor on the past investment ("sunk cost is real here, the hardest learning curve is behind you"). With the harness, the 响应 separates past spending from prospective evaluation: "the three months already spent are gone regardless of what you choose now. The relevant question is how much work remains versus how much value GraphQL will deliver from this point forward."
 
 ### Example 2: Code review with passing tests
 
@@ -120,6 +120,6 @@ The harness scaffolds a procedure that flags "tests pass" as a tool-shortcut sig
 ## 安全性 & Safety Notes
 
 - The MCP server makes outbound HTTPS requests to the Ejentum Logic API gateway (Zuplo-hosted).
-- Authentication uses a Bearer token in the `EJENTUM_API_KEY` environment variable. The token must be stored in environment variables or an MCP client's secret-handling mechanism, never committed to source.
+- 认证 uses a Bearer 令牌 in the `EJENTUM_API_KEY` environment variable. The 令牌 must be stored in environment variables or an MCP client's secret-handling mechanism, never committed to source.
 - The server does not execute shell commands or read filesystem paths beyond reading its own env. It is a pure HTTP-proxy MCP server.
 - Free tier rate-limited at 100 calls; paid tiers documented at ejentum.com/pricing.

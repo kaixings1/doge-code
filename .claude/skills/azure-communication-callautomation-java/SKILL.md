@@ -29,7 +29,7 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 
 // With DefaultAzureCredential
 CallAutomationClient client = new CallAutomationClientBuilder()
-    .endpoint("https://<resource>.communication.azure.com")
+    .端点("https://<resource>.communication.azure.com")
     .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 
@@ -188,7 +188,7 @@ TransferCallToParticipantResult result = callConnection.transferCallToParticipan
 import com.azure.communication.callautomation.CallAutomationEventParser;
 import com.azure.communication.callautomation.models.events.*;
 
-// In your webhook endpoint
+// In your webhook 端点
 public void handleCallback(String requestBody) {
     List<CallAutomationEventBase> events = CallAutomationEventParser.parseEvents(requestBody);
     
@@ -234,7 +234,7 @@ try {
     if (e.getResponse().getStatusCode() == 404) {
         System.out.println("Call not found or already ended");
     } else if (e.getResponse().getStatusCode() == 400) {
-        System.out.println("Invalid request: " + e.getMessage());
+        System.out.println("Invalid 请求: " + e.getMessage());
     }
 }
 ```
@@ -243,20 +243,20 @@ try {
 
 ```bash
 AZURE_COMMUNICATION_ENDPOINT=https://<resource>.communication.azure.com
-AZURE_COMMUNICATION_CONNECTION_STRING=endpoint=https://...;accesskey=...
+AZURE_COMMUNICATION_CONNECTION_STRING=端点=https://...;accesskey=...
 CALLBACK_BASE_URL=https://your-app.com/api/callbacks
 ```
 
 ## Trigger Phrases
 
-- "call automation Java", "IVR Java", "interactive voice response"
+- "call automation Java", "IVR Java", "interactive voice 响应"
 - "call recording Java", "DTMF recognition Java"
 - "text to speech call", "speech recognition call"
 - "answer incoming call", "transfer call Java"
 - "Azure Communication Services call automation"
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

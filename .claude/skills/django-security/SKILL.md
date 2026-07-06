@@ -4,13 +4,13 @@ description: Django 安全最佳实践，涵盖身份验证、授权、CSRF 防�
 origin: ECC
 ---
 
-# Django 安全最佳实践 (Django Security Best Practices)
+# Django 安全最佳实践 (Django Security 最佳实践)
 
 针对 Django 应用程序的全面安全指南，旨在防范常见漏洞。
 
 ## 何时启用
 
-- 设置 Django 身份验证 (Authentication) 和授权 (Authorization) 时
+- 设置 Django 身份验证 (认证) 和授权 (授权) 时
 - 实现用户权限和角色时
 - 配置生产环境安全设置时
 - 审查 Django 应用程序的安全问题时
@@ -70,7 +70,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 ```
 
-## 身份验证 (Authentication)
+## 身份验证 (认证)
 
 ### 自定义用户模型
 
@@ -112,7 +112,7 @@ PASSWORD_HASHERS = [
 ]
 ```
 
-### 会话管理 (Session Management)
+### 会话管理 (会话 Management)
 
 ```python
 # 会话配置
@@ -123,7 +123,7 @@ SESSION_SAVE_EVERY_REQUEST = False
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # 更好的用户体验，但安全性略低
 ```
 
-## 授权 (Authorization)
+## 授权 (授权)
 
 ### 权限
 
@@ -158,7 +158,7 @@ class PostUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 
     def get_queryset(self):
         """仅允许用户编辑自己的帖子。"""
-        return Post.objects.filter(author=self.request.user)
+        return Post.objects.过滤器(author=self.请求.user)
 ```
 
 ### 自定义权限
@@ -170,27 +170,27 @@ from rest_framework import permissions
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """仅允许所有者编辑对象。"""
 
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, 请求, view, obj):
         # 允许任何请求的只读权限
-        if request.method in permissions.SAFE_METHODS:
+        if 请求.method in permissions.SAFE_METHODS:
             return True
 
         # 写入权限仅限所有者
-        return obj.author == request.user
+        return obj.author == 请求.user
 
 class IsAdminOrReadOnly(permissions.BasePermission):
     """允许管理员进行任何操作，其他人仅限只读。"""
 
-    def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
+    def has_permission(self, 请求, view):
+        if 请求.method in permissions.SAFE_METHODS:
             return True
-        return request.user and request.user.is_staff
+        return 请求.user and 请求.user.is_staff
 
 class IsVerifiedUser(permissions.BasePermission):
     """仅允许已验证的用户。"""
 
-    def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and request.user.is_verified
+    def has_permission(self, 请求, view):
+        return 请求.user and 请求.user.is_authenticated and 请求.user.is_verified
 ```
 
 ### 基于角色的访问控制 (RBAC)
@@ -217,11 +217,11 @@ class User(AbstractUser):
 class AdminRequiredMixin:
     """要求管理员角色的 Mixin。"""
 
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated or not request.user.is_admin():
+    def dispatch(self, 请求, *args, **kwargs):
+        if not 请求.user.is_authenticated or not 请求.user.is_admin():
             from django.core.exceptions import PermissionDenied
             raise PermissionDenied
-        return super().dispatch(request, *args, **kwargs)
+        return super().dispatch(请求, *args, **kwargs)
 ```
 
 ## SQL 注入预防
@@ -234,23 +234,23 @@ def get_user(username):
     return User.objects.get(username=username)  # 安全
 
 # 正确：在 raw() 中使用参数
-def search_users(query):
-    return User.objects.raw('SELECT * FROM users WHERE username = %s', [query])
+def search_users(查询):
+    return User.objects.raw('SELECT * FROM users WHERE username = %s', [查询])
 
 # 错误：严禁直接插值用户输入
 def get_user_bad(username):
     return User.objects.raw(f'SELECT * FROM users WHERE username = {username}')  # 存在漏洞！
 
-# 正确：使用带有适当转义的 filter
+# 正确：使用带有适当转义的 过滤器
 def get_users_by_email(email):
-    return User.objects.filter(email__iexact=email)  # 安全
+    return User.objects.过滤器(email__iexact=email)  # 安全
 
 # 正确：对复杂查询使用 Q 对象
 from django.db.models import Q
-def search_users_complex(query):
-    return User.objects.filter(
-        Q(username__icontains=query) |
-        Q(email__icontains=query)
+def search_users_complex(查询):
+    return User.objects.过滤器(
+        Q(username__icontains=查询) |
+        Q(email__icontains=查询)
     )  # 安全
 ```
 
@@ -321,13 +321,13 @@ class SecurityHeaderMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
-    def __call__(self, request):
-        response = self.get_response(request)
-        response['X-Content-Type-Options'] = 'nosniff'
-        response['X-Frame-Options'] = 'DENY'
-        response['X-XSS-Protection'] = '1; mode=block'
-        response['Content-Security-Policy'] = "default-src 'self'"
-        return response
+    def __call__(self, 请求):
+        响应 = self.get_response(请求)
+        响应['X-Content-Type-Options'] = 'nosniff'
+        响应['X-Frame-Options'] = 'DENY'
+        响应['X-XSS-Protection'] = '1; mode=block'
+        响应['Content-Security-Policy'] = "default-src 'self'"
+        return 响应
 ```
 
 ## CSRF 防护
@@ -364,7 +364,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
-fetch('/api/endpoint/', {
+fetch('/api/端点/', {
     method: 'POST',
     headers: {
         'X-CSRFToken': getCookie('csrftoken'),
@@ -380,7 +380,7 @@ fetch('/api/endpoint/', {
 from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt  # 仅在绝对必要时使用！
-def webhook_view(request):
+def webhook_view(请求):
     # 来自外部服务的 Webhook
     pass
 ```
@@ -465,9 +465,9 @@ class SustainedRateThrottle(UserRateThrottle):
 # settings.py
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.认证.TokenAuthentication',
+        'rest_framework.认证.SessionAuthentication',
+        'rest_framework_simplejwt.认证.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -480,8 +480,8 @@ from rest_framework.permissions import IsAuthenticated
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def protected_view(request):
-    return Response({'message': 'You are authenticated'})
+def protected_view(请求):
+    return 响应({'message': 'You are authenticated'})
 ```
 
 ## 安全响应头
@@ -501,16 +501,16 @@ class CSPMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
-    def __call__(self, request):
-        response = self.get_response(request)
-        response['Content-Security-Policy'] = (
+    def __call__(self, 请求):
+        响应 = self.get_response(请求)
+        响应['Content-Security-Policy'] = (
             f"default-src {CSP_DEFAULT_SRC}; "
             f"script-src {CSP_SCRIPT_SRC}; "
             f"style-src {CSP_STYLE_SRC}; "
             f"img-src {CSP_IMG_SRC}; "
             f"connect-src {CSP_CONNECT_SRC}"
         )
-        return response
+        return 响应
 ```
 
 ## 环境变量
@@ -564,7 +564,7 @@ LOGGING = {
             'level': 'WARNING',
             'propagate': True,
         },
-        'django.request': {
+        'django.请求': {
             'handlers': ['file'],
             'level': 'ERROR',
             'propagate': False,

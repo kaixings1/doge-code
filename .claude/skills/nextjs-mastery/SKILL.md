@@ -76,14 +76,14 @@ export async function createPost(formData: FormData) {
 ```typescript
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-export function middleware(request: NextRequest) {
- const token = request.cookies.get("session")?.value;
- if (request.nextUrl.pathname.startsWith("/dashboard") && !token) {
- return NextResponse.redirect(new URL("/login", request.url));
+export function 中间件(请求: NextRequest) {
+ const 令牌 = 请求.cookies.get("会话")?.value;
+ if (请求.nextUrl.pathname.startsWith("/dashboard") && !令牌) {
+ return NextResponse.redirect(new URL("/login", 请求.url));
  }
- const response = NextResponse.next();
- response.headers.set("x-request-id", crypto.randomUUID());
- return response;
+ const 响应 = NextResponse.next();
+ 响应.headers.set("x-请求-id", crypto.randomUUID());
+ return 响应;
 }
 export const config = {
  matcher: ["/dashboard/:path*", "/api/:path*"],
@@ -95,12 +95,12 @@ export const config = {
 ```tsx
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-const schema = z.object({
+const 架构 = z.object({
  email: z.string().email(),
  name: z.string().min(2).max(100),
 });
 export async function updateProfile(prevState: any, formData: FormData) {
- const parsed = schema.safeParse(Object.fromEntries(formData));
+ const parsed = 架构.safeParse(Object.fromEntries(formData));
  if (!parsed.success) { return { errors: parsed.error.flatten().fieldErrors }; }
  await db.user.update({ where: { email: parsed.data.email }, data: { name: parsed.data.name } });
  revalidatePath("/profile");

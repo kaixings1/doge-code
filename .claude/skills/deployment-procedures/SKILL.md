@@ -1,5 +1,5 @@
 ---
-name: deployment-procedures
+name: 部署-procedures
 description: "生产部署原则和决策。安全部署工作流、回滚策略和验证。教授思维而非脚本。"
 risk: critical
 source: community
@@ -46,7 +46,7 @@ What are you deploying?
 
 ### Each Platform Has Different Procedures
 
-| Platform | Deployment Method |
+| Platform | 部署 Method |
 |----------|------------------|
 | **Vercel/Netlify** | Git push, auto-deploy |
 | **Railway/Render** | Git push or CLI |
@@ -56,7 +56,7 @@ What are you deploying?
 
 ---
 
-## 2. Pre-Deployment Principles
+## 2. Pre-部署 Principles
 
 ### The 4 Verification Categories
 
@@ -67,7 +67,7 @@ What are you deploying?
 | **Environment** | Env vars set, secrets current |
 | **Safety** | Backup done, rollback plan ready |
 
-### Pre-Deployment Checklist
+### Pre-部署 Checklist
 
 - [ ] All tests passing
 - [ ] Code reviewed and approved
@@ -80,7 +80,7 @@ What are you deploying?
 
 ---
 
-## 3. Deployment Workflow Principles
+## 3. 部署 工作流 Principles
 
 ### The 5-Phase Process
 
@@ -113,16 +113,16 @@ What are you deploying?
 
 ---
 
-## 4. Post-Deployment Verification
+## 4. Post-部署 Verification
 
 ### What to Verify
 
 | Check | Why |
 |-------|-----|
-| **Health endpoint** | Service is running |
+| **Health 端点** | Service is running |
 | **Error logs** | No new errors |
 | **Key user flows** | Critical features work |
-| **Performance** | Response times acceptable |
+| **Performance** | 响应 times acceptable |
 
 ### Verification Window
 
@@ -163,7 +163,7 @@ What are you deploying?
 
 ---
 
-## 6. Zero-Downtime Deployment
+## 6. Zero-Downtime 部署
 
 ### Strategies
 
@@ -208,7 +208,7 @@ What are you deploying?
 | ❌ Don't | ✅ Do |
 |----------|-------|
 | Deploy on Friday | Deploy early in week |
-| Rush deployment | Follow the process |
+| Rush 部署 | Follow the process |
 | Skip staging | Always test first |
 | Deploy without backup | Backup before deploy |
 | Walk away after deploy | Monitor for 15+ min |
@@ -229,21 +229,21 @@ Before deploying:
 
 ---
 
-## 10. Best Practices
+## 10. 最佳实践
 
 1. **Small, frequent deploys** over big releases
 2. **Feature flags** for risky changes
 3. **Automate** repetitive steps
-4. **Document** every deployment
+4. **Document** every 部署
 5. **Review** what went wrong after issues
 6. **Test rollback** before you need it
 
 ---
 
-> **Remember:** Every deployment is a risk. Minimize risk through preparation, not speed.
+> **Remember:** Every 部署 is a risk. Minimize risk through preparation, not speed.
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the 概述.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

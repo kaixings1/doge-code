@@ -61,7 +61,7 @@ CrossFrame Org 是 `crossframe` 的平行组织修复 skill，不替代 canonica
    - 复盘失真、复盘形式化：`protocols/retrospective-redesign-protocol.md`
    - 需要行动、试点、改造计划：`protocols/low-risk-pilot-protocol.md`
 8. 按需读取本地引用：
-   - 责任链与授权链：`references/responsibility-authorization-chain.md`
+   - 责任链与授权链：`references/responsibility-授权-chain.md`
    - 中层承接耗竭：`references/middle-manager-depletion.md`
    - 项目失败与复盘失真信号：`references/org-failure-signals.md`
    - 反管理鸡汤与反甩锅护栏：`references/anti-chicken-soup-guardrails.md`

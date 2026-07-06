@@ -9,7 +9,7 @@ source_type: community
 date_added: "2026-04-08"
 author: monte-carlo-data
 tags: [data-observability, validation, dbt, monte-carlo, sql-notebook]
-tools: [claude, cursor, codex]
+tools: [claude, 游标, codex]
 ---
 
 > **Tip:** This skill works well with Sonnet. Run `/model sonnet` before invoking for faster generation.
@@ -20,10 +20,10 @@ Generate a SQL Notebook with validation queries for dbt changes.
 
 ## 使用场景
 
-Use this skill when the user wants to validate dbt model or snapshot changes with Monte Carlo SQL Notebook queries, either from a GitHub PR or a local dbt repository.
+当用户想要通过 Monte Carlo SQL Notebook 查询验证 dbt 模型或快照更改时使用此技能，无论是来自 GitHub PR 还是本地 dbt 仓库。
 
 Parse the arguments:
-- **Target** (required): first argument — a GitHub PR URL or local dbt repo path
+- **Target** (required): first 参数 — a GitHub PR URL or local dbt repo path
 - **MC Base URL** (optional): `--mc-base-url <URL>` — defaults to `https://getmontecarlo.com`
 - **Models** (optional): `--models <model1,model2,...>` — comma-separated list of model filenames (without `.sql` extension) to generate queries for. Only these models will be included. By default, all changed models are included up to a maximum of 10.
 

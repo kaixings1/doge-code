@@ -39,23 +39,23 @@ date_added: "2026-02-27"
 
 ### Start a research task
 ```bash
-python3 scripts/research.py --query "Research the history of Kubernetes"
+python3 scripts/research.py --查询 "Research the history of Kubernetes"
 ```
 
 ### With structured output format
 ```bash
-python3 scripts/research.py --query "Compare Python web frameworks" \
+python3 scripts/research.py --查询 "Compare Python web frameworks" \
   --format "1. Executive Summary\n2. Comparison Table\n3. Recommendations"
 ```
 
 ### Stream progress in real-time
 ```bash
-python3 scripts/research.py --query "Analyze EV battery market" --stream
+python3 scripts/research.py --查询 "Analyze EV battery market" --stream
 ```
 
 ### Start without waiting
 ```bash
-python3 scripts/research.py --query "Research topic" --no-wait
+python3 scripts/research.py --查询 "Research topic" --no-wait
 ```
 
 ### Check status of running research
@@ -70,7 +70,7 @@ python3 scripts/research.py --wait <interaction_id>
 
 ### Continue from previous research
 ```bash
-python3 scripts/research.py --query "Elaborate on point 2" --continue <interaction_id>
+python3 scripts/research.py --查询 "Elaborate on point 2" --continue <interaction_id>
 ```
 
 ### List recent research
@@ -82,7 +82,7 @@ python3 scripts/research.py --list
 
 - **默认**: Human-readable markdown report
 - **JSON** (`--json`): Structured data for programmatic use
-- **Raw** (`--raw`): Unprocessed API response
+- **Raw** (`--raw`): Unprocessed API 响应
 
 ## Cost & Time
 
@@ -90,7 +90,7 @@ python3 scripts/research.py --list
 |--------|-------|
 | Time | 2-10 minutes per task |
 | Cost | $2-5 per task (varies by complexity) |
-| Token usage | ~250k-900k input, ~60k-80k output |
+| 令牌 usage | ~250k-900k input, ~60k-80k output |
 
 ## Best Use Cases
 
@@ -102,7 +102,7 @@ python3 scripts/research.py --list
 
 ## 工作流
 
-1. User requests research → Run `--query "..."`
+1. User requests research → Run `--查询 "..."`
 2. Inform user of estimated time (2-10 minutes)
 3. Monitor with `--stream` or poll with `--status`
 4. Return formatted results

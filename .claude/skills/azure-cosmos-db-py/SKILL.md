@@ -76,7 +76,7 @@ client = CosmosClient(
 
 ## Quick Start
 
-### 1. Client Module Setup
+### 1. Client Module 设置
 
 Create a singleton Cosmos client with dual authentication:
 
@@ -88,8 +88,8 @@ from starlette.concurrency import run_in_threadpool
 
 _cosmos_container = None
 
-def _is_emulator_endpoint(endpoint: str) -> bool:
-    return "localhost" in endpoint or "127.0.0.1" in endpoint
+def _is_emulator_endpoint(端点: str) -> bool:
+    return "localhost" in 端点 or "127.0.0.1" in 端点
 
 async def get_container():
     global _cosmos_container
@@ -110,7 +110,7 @@ async def get_container():
     return _cosmos_container
 ```
 
-**Full implementation**: See references/client-setup.md
+**Full implementation**: See references/client-设置.md
 
 ### 2. Pydantic Model Hierarchy
 
@@ -120,13 +120,13 @@ Use five-tier model pattern for clean separation:
 class ProjectBase(BaseModel):           # Shared fields
     name: str = Field(..., min_length=1, max_length=200)
 
-class ProjectCreate(ProjectBase):       # Creation request
+class ProjectCreate(ProjectBase):       # Creation 请求
     workspace_id: str = Field(..., alias="workspaceId")
 
 class ProjectUpdate(BaseModel):         # Partial updates (all optional)
     name: Optional[str] = Field(None, min_length=1)
 
-class Project(ProjectBase):             # API response
+class Project(ProjectBase):             # API 响应
     id: str
     created_at: datetime = Field(..., alias="createdAt")
 
@@ -158,7 +158,7 @@ class ProjectService:
 
 1. **RBAC Authentication**: Use `DefaultAzureCredential` in Azure — never store keys in code
 2. **Emulator-Only Keys**: Hardcode the well-known emulator key only for local development
-3. **Parameterized Queries**: Always use `@parameter` syntax — never string concatenation
+3. **Parameterized Queries**: Always use `@参数` syntax — never string concatenation
 4. **Partition Key Validation**: Validate partition key access matches user authorization
 
 ### Clean Code Conventions
@@ -199,9 +199,9 @@ async def test_get_project_by_id_returns_project(mock_cosmos_container):
 
 | File | When to Read |
 |------|--------------|
-| references/client-setup.md | Setting up Cosmos client with dual auth, SSL config, singleton pattern |
+| references/client-设置.md | Setting up Cosmos client with dual auth, SSL config, singleton pattern |
 | references/service-layer.md | Implementing full service class with CRUD, conversions, graceful degradation |
-| references/testing.md | Writing pytest tests, mocking Cosmos, integration test setup |
+| references/testing.md | Writing pytest tests, mocking Cosmos, integration test 设置 |
 | references/partitioning.md | Choosing partition keys, cross-partition queries, move operations |
 | references/error-handling.md | Handling CosmosResourceNotFoundError, logging, HTTP error mapping |
 
@@ -226,7 +226,7 @@ async def test_get_project_by_id_returns_project(mock_cosmos_container):
 - Partition key isolation enforces data boundaries
 
 ### Maintainability
-- Five-tier model pattern enables schema evolution
+- Five-tier model pattern enables 架构 evolution
 - Service layer decouples business logic from storage
 - Consistent patterns across all entity services
 
@@ -241,7 +241,7 @@ async def test_get_project_by_id_returns_project(mock_cosmos_container):
 - Minimal document conversion overhead
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

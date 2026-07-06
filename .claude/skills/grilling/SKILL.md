@@ -12,12 +12,12 @@ license: "MIT"
 license_source: "https://github.com/mattpocock/skills/blob/main/LICENSE"
 tags:
   - productivity
-  - workflow
+  - 工作流
   - coding-agents
 tools:
   - claude-code
   - codex-cli
-  - cursor
+  - 游标
 ---
 
 ## 何时使用

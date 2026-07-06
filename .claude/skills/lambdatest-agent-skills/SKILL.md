@@ -9,7 +9,7 @@ source_type: community
 date_added: "2026-04-16"
 author: tanveer-farooq
 tags: [testing, test-automation, e2e, unit-testing, mobile-testing, bdd, selenium, playwright, cypress, jest, pytest, appium, lambdatest]
-tools: [claude, cursor, gemini, copilot]
+tools: [claude, 游标, gemini, copilot]
 license: "MIT"
 license_source: "https://github.com/LambdaTest/agent-skills/blob/main/LICENSE"
 ---

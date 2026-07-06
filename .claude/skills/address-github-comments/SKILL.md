@@ -1,6 +1,6 @@
 ---
 name: address-github-comments
-description: "适用于需要使用 gh cli 处理开放的 GitHub pull request 上的审查或 issue 评论的场景。"
+description: "适用于需要使用 gh cli 处理开放的 GitHub pull 请求 上的审查或 issue 评论的场景。"
 risk: unknown
 source: community
 date_added: "2026-02-27"

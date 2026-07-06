@@ -18,10 +18,10 @@ version: 1.0.0
 
 ## 何时使用 CPG 与模式匹配
 
-| Approach | Use When | Example |
+| 方法 | Use When | Example |
 |----------|----------|---------|
 | **Pattern Matching** (Semgrep) | Known vulnerability patterns, syntax-level issues | Finding dynamic code execution calls |
-| **CPG Analysis** (Joern) | Data flow tracking, cross-function analysis | Proving request input reaches database query through 5 functions |
+| **CPG Analysis** (Joern) | Data flow tracking, cross-function analysis | Proving 请求 input reaches database 查询 through 5 functions |
 
 **Rule of thumb**: Use CPG when you need to prove data flows between points, especially across function boundaries.
 
@@ -29,10 +29,10 @@ version: 1.0.0
 
 Joern is the primary tool for CPG analysis. It:
 - Parses source code into CPG representation
-- Provides CPGQL (Scala-based) query language
+- Provides CPGQL (Scala-based) 查询 language
 - Supports JavaScript, TypeScript, Python, Java, C/C++, Go, PHP
 
-### Basic Joern Workflow
+### Basic Joern 工作流
 
 ```bash
 # 1. Parse codebase into CPG
@@ -47,7 +47,7 @@ joern
 > cpg.method.name(".*login.*").l
 ```
 
-## CPGQL Query Language
+## CPGQL 查询 Language
 
 CPGQL uses Scala syntax with CPG-specific operations.
 
@@ -56,14 +56,14 @@ CPGQL uses Scala syntax with CPG-specific operations.
 **Nodes**: Represent code elements
 - `cpg.method` - All methods/functions
 - `cpg.call` - All function calls
-- `cpg.parameter` - Function parameters
+- `cpg.参数` - Function parameters
 - `cpg.literal` - Literal values
 - `cpg.identifier` - Variable references
 
 **Traversals**: Navigate the graph
-- `.name("pattern")` - Filter by name (regex)
-- `.code("pattern")` - Filter by code content
-- `.argument` - Get call arguments
+- `.name("pattern")` - 过滤器 by name (regex)
+- `.code("pattern")` - 过滤器 by code content
+- `.参数` - Get call arguments
 - `.caller` - Get calling methods
 - `.callee` - Get called methods
 
@@ -71,25 +71,25 @@ CPGQL uses Scala syntax with CPG-specific operations.
 - `.reachableBy(source)` - Find if source reaches this point
 - `.reachableByFlows(source)` - Get full paths
 
-### Common Query Patterns
+### Common 查询 Patterns
 
 **Find all calls to a function:**
 ```scala
-cpg.call.name("query").l
+cpg.call.name("查询").l
 ```
 
 **Find parameters that reach dangerous sinks:**
 ```scala
-val sources = cpg.parameter.name("req.*|request.*")
-val sinks = cpg.call.name("query|execute|run")
-sinks.argument.reachableBy(sources).l
+val sources = cpg.参数.name("req.*|请求.*")
+val sinks = cpg.call.name("查询|execute|run")
+sinks.参数.reachableBy(sources).l
 ```
 
 **Get full data flow paths:**
 ```scala
-val sources = cpg.parameter.name("userInput")
+val sources = cpg.参数.name("userInput")
 val sinks = cpg.call.name("executeQuery")
-sinks.argument.reachableByFlows(sources).p
+sinks.参数.reachableByFlows(sources).p
 ```
 
 ## Confidence Scoring
@@ -101,11 +101,11 @@ After CPG verification:
 | Data flow confirmed | HIGH (0.9+) | CPG proves exploitability |
 | Partial flow found | MEDIUM (0.6-0.9) | Some path exists, manual review needed |
 | No flow found | LOW (0.3-0.6) | May be false positive or complex flow |
-| Verification failed | UNKNOWN | Query error, manual analysis required |
+| Verification failed | UNKNOWN | 查询 error, manual analysis required |
 
 ## Skill 参考资料
 
-- `references/cpgql-patterns.md` - Common vulnerability query patterns
+- `references/cpgql-patterns.md` - Common vulnerability 查询 patterns
 - `references/joern-cheatsheet.md` - Quick Joern/CPGQL reference
 
 ## 相关 Skills

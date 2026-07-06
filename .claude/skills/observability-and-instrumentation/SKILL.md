@@ -44,8 +44,8 @@ If you can't name the questions, you're not ready to instrument — you'll log e
 | Signal | Answers | Cost profile | Example |
 |---|---|---|---|
 | **Structured log** | "What happened in this specific case?" | Per-event; grows with traffic | `payment_failed` with provider error code |
-| **Metric** | "How often / how fast, in aggregate?" | Fixed per series; cheap to query | p99 latency of provider calls |
-| **Trace** | "Where did time go across services?" | Per-request; usually sampled | One slow checkout, broken down by hop |
+| **Metric** | "How often / how fast, in aggregate?" | Fixed per series; cheap to 查询 | p99 latency of provider calls |
+| **Trace** | "Where did time go across services?" | Per-请求; usually sampled | One slow checkout, broken down by hop |
 
 Rule of thumb: metrics tell you **that** something is wrong, traces tell you **where**, logs tell you **why**.
 
@@ -76,23 +76,23 @@ logger.warn({
 | `info` | Significant business event (order placed, job finished) | None |
 | `debug` | Diagnostic detail | Off in production by default |
 
-**Correlation IDs are mandatory.** Generate (or accept) a request ID at the system boundary and attach it to every log line, span, and outbound call. Without it, you cannot reconstruct a single request from interleaved logs:
+**Correlation IDs are mandatory.** Generate (or accept) a 请求 ID at the system boundary and attach it to every log line, span, and outbound call. Without it, you cannot reconstruct a single 请求 from interleaved logs:
 
 ```typescript
-// Express: child logger per request, ID propagated downstream
+// Express: child logger per 请求, ID propagated downstream
 app.use((req, res, next) => {
-  req.id = req.headers['x-request-id'] ?? crypto.randomUUID();
+  req.id = req.headers['x-请求-id'] ?? crypto.randomUUID();
   req.log = logger.child({ requestId: req.id });
-  res.setHeader('x-request-id', req.id);
+  res.setHeader('x-请求-id', req.id);
   next();
 });
 ```
 
-**绝不 log secrets, tokens, passwords, or full PII.** This is a hard rule from the `security-and-hardening` skill — telemetry pipelines are a classic data-leak path. Allowlist fields; don't log whole request bodies.
+**绝不 log secrets, tokens, passwords, or full PII.** This is a hard rule from the `security-and-hardening` skill — telemetry pipelines are a classic data-leak path. Allowlist fields; don't log whole 请求 bodies.
 
 ### 4. Metrics
 
-For request-driven services, instrument **RED** on every endpoint and every external dependency: **R**ate (requests/sec), **E**rrors (failure rate), **D**uration (latency histogram, not average). For resources (queues, pools, hosts), use **USE**: **U**tilization, **S**aturation, **E**rrors.
+For 请求-driven services, instrument **RED** on every 端点 and every external dependency: **R**ate (requests/sec), **E**rrors (failure rate), **D**uration (latency histogram, not average). For resources (queues, pools, hosts), use **USE**: **U**tilization, **S**aturation, **E**rrors.
 
 As with tracing, the vendor-neutral path is the OpenTelemetry metrics API (same SDK and context as step 5). The example below uses Prometheus' `prom-client` — one common backend choice, not the only one; the RED/USE and cardinality rules are identical either way.
 
@@ -101,7 +101,7 @@ import { Histogram } from 'prom-client';
 
 const httpDuration = new Histogram({
   name: 'http_request_duration_seconds',
-  help: 'HTTP request duration',
+  help: 'HTTP 请求 duration',
   labelNames: ['method', 'route', 'status_class'],  // '2xx', not '200'
   buckets: [0.05, 0.1, 0.25, 0.5, 1, 2.5, 5],
 });
@@ -132,7 +132,7 @@ const sdk = new NodeSDK({
 sdk.start();
 ```
 
-Add manual spans only around meaningful internal units of work (e.g., `applyDiscounts`, `chargeProvider`) and attach the attributes on-call will filter by. Propagate context across every async boundary — HTTP headers, queue message metadata — or the trace dies at the gap. Sample head-based at a low rate by default; keep 100% of errors if your backend supports tail sampling.
+Add manual spans only around meaningful internal units of work (e.g., `applyDiscounts`, `chargeProvider`) and attach the attributes on-call will 过滤器 by. Propagate context across every async boundary — HTTP headers, queue message metadata — or the trace dies at the gap. Sample head-based at a low rate by default; keep 100% of errors if your backend supports tail sampling.
 
 ### 6. Alerting
 
@@ -149,8 +149,8 @@ Cause-based alerts fire when nothing is wrong and miss failures you didn't predi
 
 Rules for every alert you create:
 
-1. **It must be actionable.** If the response is "ignore it, it self-heals", delete the alert.
-2. **It links to a runbook** — even three lines: what it means, first query to run, escalation path.
+1. **It must be actionable.** If the 响应 is "ignore it, it self-heals", delete the alert.
+2. **It links to a runbook** — even three lines: what it means, first 查询 to run, escalation path.
 3. **It has a threshold and duration** justified by the SLO or by historical data, not by a guess.
 4. Use two severities only: **page** (user-facing, act now) and **ticket** (degradation, act this week). A third tier becomes noise that trains people to ignore everything.
 
@@ -160,7 +160,7 @@ Instrumentation is code; it can be wrong. Before calling the work done, trigger 
 
 - Force an error in staging → find it in the logs by `requestId`, confirm fields are structured (not `[object Object]`)
 - Send test traffic → confirm metric series appear with the expected labels and sane values
-- Follow one request across services in the tracing UI → no broken spans
+- Follow one 请求 across services in the tracing UI → no broken spans
 - Fire each new alert once (lower the threshold temporarily) → confirm it reaches the right channel and the runbook link works
 
 ## Common Rationalizations
@@ -179,12 +179,12 @@ Instrumentation is code; it can be wrong. Before calling the work done, trigger 
 
 - A feature PR with retries, queues, or external calls and zero new telemetry
 - Log lines built by string interpolation instead of structured fields
-- No correlation/request ID — each log line is an orphan
+- No correlation/请求 ID — each log line is an orphan
 - Metrics labeled with user IDs, raw URLs, or error message text (cardinality bomb)
 - Latency tracked as an average with no percentiles
 - Alerts that fire daily and get acknowledged without action
 - Alerts on causes (CPU, memory) paging humans while user-facing error rate is unmonitored
-- Secrets, tokens, or full request bodies appearing in logs
+- Secrets, tokens, or full 请求 bodies appearing in logs
 - "It works on my machine" as the only evidence a production feature is healthy
 
 ## Verification
@@ -194,9 +194,9 @@ After instrumenting a feature, confirm:
 - [ ] The on-call questions for this feature are written down, and each signal maps to one
 - [ ] All log output is structured (JSON), with stable event names and a correlation ID on every line
 - [ ] No secrets, tokens, or unredacted PII in any log line (spot-check actual output)
-- [ ] RED metrics exist for every new endpoint and every external dependency, with bounded label sets
+- [ ] RED metrics exist for every new 端点 and every external dependency, with bounded label sets
 - [ ] Latency is a histogram; p95/p99 are queryable
-- [ ] A single request can be followed end-to-end in the tracing UI without broken spans
+- [ ] A single 请求 can be followed end-to-end in the tracing UI without broken spans
 - [ ] Every new alert is symptom-based, has a runbook link, and was test-fired once
 - [ ] An induced failure in staging was located via telemetry alone, without reading the source
 

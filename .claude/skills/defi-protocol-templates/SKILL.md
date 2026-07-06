@@ -18,15 +18,15 @@ date_added: "2026-02-27"
 ## 说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 使用此技能的场景
 
 - Building staking platforms with reward distribution
 - Implementing AMM (Automated Market Maker) protocols
-- Creating governance token systems
+- Creating governance 令牌 systems
 - Developing lending/borrowing protocols
 - Integrating flash loan functionality
 - Launching yield farming platforms
@@ -37,7 +37,7 @@ date_added: "2026-02-27"
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/令牌/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -127,7 +127,7 @@ contract StakingRewards is ReentrancyGuard, Ownable {
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/令牌/ERC20/IERC20.sol";
 
 contract SimpleAMM {
     IERC20 public token0;
@@ -190,7 +190,7 @@ contract SimpleAMM {
     }
 
     function swap(address tokenIn, uint256 amountIn) external returns (uint256 amountOut) {
-        require(tokenIn == address(token0) || tokenIn == address(token1), "Invalid token");
+        require(tokenIn == address(token0) || tokenIn == address(token1), "Invalid 令牌");
 
         bool isToken0 = tokenIn == address(token0);
         (IERC20 tokenIn_, IERC20 tokenOut, uint256 resIn, uint256 resOut) = isToken0
@@ -247,17 +247,17 @@ contract SimpleAMM {
 }
 ```
 
-## Governance Token
+## Governance 令牌
 
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import "@openzeppelin/contracts/令牌/ERC20/extensions/ERC20Votes.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract GovernanceToken is ERC20Votes, Ownable {
-    constructor() ERC20("Governance Token", "GOV") ERC20Permit("Governance Token") {
+    constructor() ERC20("Governance 令牌", "GOV") ERC20Permit("Governance 令牌") {
         _mint(msg.sender, 1000000 * 10**decimals());
     }
 
@@ -366,7 +366,7 @@ contract Governor is Ownable {
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/令牌/ERC20/IERC20.sol";
 
 interface IFlashLoanReceiver {
     function executeOperation(
@@ -378,13 +378,13 @@ interface IFlashLoanReceiver {
 }
 
 contract FlashLoanProvider {
-    IERC20 public token;
+    IERC20 public 令牌;
     uint256 public feePercentage = 9; // 0.09% fee
 
     event FlashLoan(address indexed borrower, uint256 amount, uint256 fee);
 
     constructor(address _token) {
-        token = IERC20(_token);
+        令牌 = IERC20(_token);
     }
 
     function flashLoan(
@@ -392,18 +392,18 @@ contract FlashLoanProvider {
         uint256 amount,
         bytes calldata params
     ) external {
-        uint256 balanceBefore = token.balanceOf(address(this));
+        uint256 balanceBefore = 令牌.balanceOf(address(this));
         require(balanceBefore >= amount, "Insufficient liquidity");
 
         uint256 fee = (amount * feePercentage) / 10000;
 
         // Send tokens to receiver
-        token.transfer(receiver, amount);
+        令牌.transfer(receiver, amount);
 
-        // Execute callback
+        // Execute 回调
         require(
             IFlashLoanReceiver(receiver).executeOperation(
-                address(token),
+                address(令牌),
                 amount,
                 fee,
                 params
@@ -412,7 +412,7 @@ contract FlashLoanProvider {
         );
 
         // Verify repayment
-        uint256 balanceAfter = token.balanceOf(address(this));
+        uint256 balanceAfter = 令牌.balanceOf(address(this));
         require(balanceAfter >= balanceBefore + fee, "Flash loan not repaid");
 
         emit FlashLoan(receiver, amount, fee);
@@ -447,13 +447,13 @@ contract FlashLoanReceiver is IFlashLoanReceiver {
 - **references/flash-loans.md**: Flash loan security and use cases
 - **assets/staking-contract.sol**: Production staking template
 - **assets/amm-contract.sol**: Full AMM implementation
-- **assets/governance-token.sol**: Governance system
+- **assets/governance-令牌.sol**: Governance system
 - **assets/lending-protocol.sol**: Lending platform template
 
 ## 最佳实践
 
 1. **Use Established Libraries**: OpenZeppelin, Solmate
-2. **Test Thoroughly**: Unit tests, integration tests, fuzzing
+2. **Test Thoroughly**: Unit tests, 集成 tests, fuzzing
 3. **Audit Before Launch**: Professional security audits
 4. **Start Simple**: MVP first, add features incrementally
 5. **Monitor**: Track contract health and user activity

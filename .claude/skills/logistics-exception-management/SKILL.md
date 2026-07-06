@@ -19,7 +19,7 @@ date_added: '2026-02-27'
 
 ### 异常分类法
 
-Every exception falls into a classification that determines the resolution workflow, documentation requirements, and urgency:
+Every exception falls into a classification that determines the resolution 工作流, documentation requirements, and urgency:
 
 - **Delay (transit):** Shipment not delivered by promised date. Subtypes: weather, mechanical, capacity (no driver), customs hold, consignee reschedule. Most common exception type (~40% of all exceptions). Resolution hinges on whether delay is carrier-fault or force majeure.
 - **Damage (visible):** 注意d on POD at delivery. Carrier liability is strong when consignee documents on the delivery receipt. Photograph immediately. 绝不 accept "driver left before we could inspect."
@@ -49,7 +49,7 @@ Understanding how different carrier types operate changes your resolution strate
 - **Carmack Amendment (US domestic surface):** Carrier is liable for actual loss or damage with limited exceptions (act of God, act of public enemy, act of shipper, public authority, inherent vice). Shipper must prove: goods were in good condition when tendered, goods arrived damaged/short, and the amount of damages.
 - **Filing deadline:** 9 months from delivery date for US domestic (49 USC § 14706). Miss this and the claim is time-barred regardless of merit.
 - **Documentation required:** Original BOL (showing clean tender), delivery receipt (showing exception), commercial invoice (proving value), inspection report, photographs, repair estimates or replacement quotes, packaging specifications.
-- **Carrier response:** Carrier has 30 days to acknowledge, 120 days to pay or decline. If they decline, you have 2 years from the decline date to file suit.
+- **Carrier 响应:** Carrier has 30 days to acknowledge, 120 days to pay or decline. If they decline, you have 2 years from the decline date to file suit.
 
 ### Seasonal and Cyclical Patterns
 
@@ -100,7 +100,7 @@ This is the most common judgment call. Thresholds:
 - **< $500 and carrier relationship is strong:** Absorb. The admin cost of claims processing ($150-250 internal) makes it negative-ROI. Log for carrier scorecard.
 - **$500 - $2,500:** File claim but don't escalate aggressively. This is the "standard process" zone. Accept partial settlements above 70% of value.
 - **$2,500 - $10,000:** Full claims process. Escalate at 30-day mark if no resolution. Involve carrier account manager. Reject settlements below 80%.
-- **> $10,000:** VP-level awareness. Dedicated claims handler. Independent inspection if damage. Reject settlements below 90%. Legal review if denied.
+- **> $10,000:** VP-level awareness. Dedicated claims 处理器. Independent inspection if damage. Reject settlements below 90%. Legal review if denied.
 - **Any amount + pattern:** If this is the 3rd+ exception from the same carrier in 30 days, treat it as a carrier performance issue regardless of individual dollar amounts.
 
 ### Priority Sequencing
@@ -115,7 +115,7 @@ When multiple exceptions are active simultaneously (common during peak season or
 
 ## Key Edge Cases
 
-These are situations where the obvious approach is wrong. Brief summaries here — see [edge-cases.md](references/edge-cases.md) for full analysis.
+These are situations where the obvious 方法 is wrong. Brief summaries here — see [edge-cases.md](references/edge-cases.md) for full analysis.
 
 1. **Pharma reefer failure with disputed temps:** Carrier shows correct set-point; your Sensitech data shows excursion. The dispute is about sensor placement and pre-cooling. 绝不 accept carrier's single-point reading — demand continuous data logger download.
 
@@ -141,7 +141,7 @@ Match communication tone to situation severity and relationship:
 
 - **Routine exception, good carrier relationship:** Collaborative. "We've got a delay on PRO# X — can you get me an updated ETA? Customer is asking."
 - **Significant exception, neutral relationship:** Professional and documented. State facts, reference BOL/PRO, specify what you need and by when.
-- **Major exception or pattern, strained relationship:** Formal. CC management. Reference contract terms. Set response deadlines. "Per Section 4.2 of our transportation agreement dated..."
+- **Major exception or pattern, strained relationship:** Formal. CC management. Reference contract terms. Set 响应 deadlines. "Per Section 4.2 of our transportation agreement dated..."
 - **Customer-facing (delay):** Proactive, honest, solution-oriented. 绝不 blame the carrier by name. "Your shipment has experienced a transit delay. Here's what we're doing and your updated timeline."
 - **Customer-facing (damage/loss):** Empathetic, action-oriented. Lead with the resolution, not the problem. "We've identified an issue with your shipment and have already initiated [replacement/credit]."
 

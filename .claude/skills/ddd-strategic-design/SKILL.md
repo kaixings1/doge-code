@@ -24,7 +24,7 @@ date_added: "2026-02-27"
 
 ## 使用说明
 
-1. Extract domain capabilities and classify subdomains.
+1. Extract domain 能力 and classify subdomains.
 2. Define bounded contexts around consistency and ownership.
 3. Establish a ubiquitous language glossary and anti-terms.
 4. Capture context boundaries in ADRs before implementation.

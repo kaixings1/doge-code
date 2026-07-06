@@ -10,12 +10,12 @@ date_added: '2026-02-27'
 
 ## 使用此技能的场景
 
-- Working on c4 container level: system deployment tasks or workflows
-- Needing guidance, best practices, or checklists for c4 container level: system deployment
+- Working on c4 container level: system 部署 tasks or workflows
+- Needing guidance, best practices, or checklists for c4 container level: system 部署
 
 ## 不要使用此技能的场景
 
-- The task is unrelated to c4 container level: system deployment
+- The task is unrelated to c4 container level: system 部署
 - You need a different domain or tool outside this scope
 
 ## 使用说明
@@ -30,7 +30,7 @@ date_added: '2026-02-27'
 ### [Container Name]
 
 - **Name**: [Container name]
-- **Description**: [Short description of container purpose and deployment]
+- **Description**: [Short description of container purpose and 部署]
 - **Type**: [Web Application, API, Database, Message Queue, etc.]
 - **Technology**: [Primary technologies: Node.js, Python, PostgreSQL, Redis, etc.]
 - **部署**: [Docker, Kubernetes, Cloud Service, etc.]
@@ -65,7 +65,7 @@ This container deploys the following components:
 
 ### External Systems
 
-- [External System]: [How it's used, integration type]
+- [External System]: [How it's used, 集成 type]
 
 ## Infrastructure
 
@@ -124,25 +124,25 @@ servers:
 paths:
   /api/resource:
     get:
-      summary: [Operation summary]
-      description: [Operation description]
+      summary: [操作 summary]
+      description: [操作 description]
       parameters:
         - name: param1
-          in: query
-          schema:
+          in: 查询
+          架构:
             type: string
       responses:
         '200':
-          description: [Response description]
+          description: [响应 description]
           content:
             application/json:
-              schema:
+              架构:
                 type: object
 ````
 
 ## 交互示例
 
-- "Synthesize all components into containers based on deployment definitions"
+- "Synthesize all components into containers based on 部署 definitions"
 - "Map the API components to containers and document their APIs as OpenAPI specs"
 - "Create container-level documentation for the microservices architecture"
 - "Document container interfaces as Swagger/OpenAPI specifications"
@@ -150,20 +150,20 @@ paths:
 
 ## Key Distinctions
 
-- **vs C4-Component agent**: Maps components to deployment units; Component agent focuses on logical grouping
+- **vs C4-Component agent**: Maps components to 部署 units; Component agent focuses on logical grouping
 - **vs C4-上下文 agent**: Provides container-level detail; 上下文 agent creates high-level system diagrams
-- **vs C4-Code agent**: Focuses on deployment architecture; Code agent documents individual code elements
+- **vs C4-Code agent**: Focuses on 部署 architecture; Code agent documents individual code elements
 
 ## Output Examples
 
 When synthesizing containers, provide:
 
-- Clear container boundaries with deployment rationale
-- Descriptive container names and deployment characteristics
+- Clear container boundaries with 部署 rationale
+- Descriptive container names and 部署 characteristics
 - Complete API documentation with OpenAPI/Swagger specifications
 - Links to all contained components
-- Mermaid container diagrams showing deployment architecture
-- Links to deployment configurations (Dockerfiles, K8s manifests, etc.)
+- Mermaid container diagrams showing 部署 architecture
+- Links to 部署 configurations (Dockerfiles, K8s manifests, etc.)
 - Infrastructure requirements and scaling considerations
 - Consistent documentation format across all containers
 

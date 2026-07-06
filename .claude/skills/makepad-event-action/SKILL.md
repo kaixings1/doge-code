@@ -237,7 +237,7 @@ if let Event::Timer(te) = event {
     }
 }
 
-// Request next frame callback
+// 请求 next frame 回调
 let next_frame = cx.new_next_frame();
 
 // In handle_event

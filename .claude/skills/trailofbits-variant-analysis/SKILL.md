@@ -6,12 +6,12 @@ Find similar vulnerabilities and bugs across codebases using pattern-based analy
 
 ## 使用场景
 
-Use this skill when you need to:
-- Hunt for bug variants after finding an initial vulnerability
-- Build CodeQL or Semgrep queries from a known bug pattern
-- Perform systematic code audits across large codebases
-- Analyze security vulnerabilities and find similar instances
-- Create reusable patterns for recurring vulnerability classes
+当您需要以下操作时使用此技能：
+- 在发现初始漏洞后寻找漏洞变体
+- 从已知漏洞模式构建 CodeQL 或 Semgrep 查询
+- 跨大型代码库执行系统化代码审计
+- 分析安全漏洞并查找类似实例
+- 为重复出现的漏洞类别创建可复用模式
 
 ## What It Does
 

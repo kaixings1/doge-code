@@ -6,7 +6,7 @@ description: "Seo Plan — 战略性 SEO 规划相关功能和最佳实践：为
   "content strategy", "keyword strategy", "content calendar",
   "site architecture", or "SEO roadmap".
 user-invocable: true
-argument-hint: "[business-type]"
+参数-hint: "[business-type]"
 license: MIT
 metadata:
   author: AgriciDaniel
@@ -26,7 +26,7 @@ metadata:
 
 ### 2. Competitive Analysis
 - Identify top 5 competitors
-- Analyze their content strategy, schema usage, technical setup
+- Analyze their content strategy, 架构 usage, technical 设置
 - Identify keyword gaps and content opportunities
 - Assess their E-E-A-T signals
 - Estimate their domain authority
@@ -47,7 +47,7 @@ metadata:
 
 ### 5. Technical Foundation
 - Hosting and performance requirements
-- Schema markup plan per page type
+- 架构 markup plan per page type
 - Core Web Vitals baseline targets
 - AI search readiness requirements
 - Mobile-first considerations
@@ -55,16 +55,16 @@ metadata:
 ### 6. Implementation Roadmap (4 phases)
 
 #### Phase 1: Foundation (weeks 1-4)
-- Technical setup and infrastructure
+- Technical 设置 and infrastructure
 - Core pages (home, about, contact, main services)
-- Essential schema implementation
-- Analytics and tracking setup
+- Essential 架构 implementation
+- Analytics and tracking 设置
 
 #### Phase 2: Expansion (weeks 5-12)
 - Content creation for primary pages
 - Blog launch with initial posts
 - Internal linking structure
-- Local SEO setup (if applicable)
+- Local SEO 设置 (if applicable)
 
 #### Phase 3: Scale (weeks 13-24)
 - Advanced content development
@@ -75,7 +75,7 @@ metadata:
 #### Phase 4: Authority (months 7-12)
 - Thought leadership content
 - PR and media mentions
-- Advanced schema implementation
+- Advanced 架构 implementation
 - Continuous optimization
 
 ## Industry Templates

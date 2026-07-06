@@ -18,9 +18,9 @@ date_added: "2026-02-27"
 ## 说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 使用此技能的场景
 
@@ -115,7 +115,7 @@ function checkCompatibility(packages) {
 npm list --depth=0
 
 # 2. Check for breaking changes
-# Read CHANGELOG.md and MIGRATION.md
+# Read CHANGELOG.md and 迁移.md
 
 # 3. Create upgrade plan
 echo "Upgrade order:
@@ -189,9 +189,9 @@ npx react-codeshift \
   src/
 ```
 
-### Custom Migration Script
+### Custom 迁移 Script
 ```javascript
-// migration-script.js
+// 迁移-script.js
 const fs = require('fs');
 const glob = require('glob');
 
@@ -227,10 +227,10 @@ npm run test
 npm install @testing-library/react@latest
 ```
 
-### Integration Tests
+### 集成 Tests
 ```javascript
-// tests/integration/app.test.js
-describe('App Integration', () => {
+// tests/集成/app.test.js
+describe('App 集成', () => {
   it('should render without crashing', () => {
     render(<App />);
   });
@@ -270,7 +270,7 @@ describe('E2E Tests', () => {
 
 ## Automated Dependency Updates
 
-### Renovate Configuration
+### Renovate 配置
 ```json
 // renovate.json
 {
@@ -291,7 +291,7 @@ describe('E2E Tests', () => {
 }
 ```
 
-### Dependabot Configuration
+### Dependabot 配置
 ```yaml
 # .github/dependabot.yml
 version: 2
@@ -379,7 +379,7 @@ npm install package@latest --workspace=packages/app
 
 1. **Read Changelogs**: Understand what changed
 2. **Upgrade Incrementally**: One major version at a time
-3. **Test Thoroughly**: Unit, integration, E2E tests
+3. **Test Thoroughly**: Unit, 集成, E2E tests
 4. **Check Peer Dependencies**: Resolve conflicts early
 5. **Use Lock Files**: Ensure reproducible installs
 6. **Automate Updates**: Use Renovate or Dependabot

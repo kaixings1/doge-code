@@ -72,162 +72,162 @@ These invariants apply to EVERY slide in EVERY presentation:
 
 ---
 
-## Phase 0: Detect Mode
+## 阶段 0：检测模式
 
-Determine what the user wants:
+确定用户想要什么：
 
-- **Mode A: New Presentation** — Create from scratch. Go to Phase 1.
-- **Mode B: PPT Conversion** — Convert a .pptx file. Go to Phase 4.
-- **Mode C: Enhancement** — Improve an existing HTML presentation. Read it, understand it, enhance. **Follow Mode C modification rules below.**
+- **模式 A：新演示文稿** — 从头开始创建。转到阶段 1。
+- **模式 B：PPT 转换** — 转换 .pptx 文件。转到阶段 4。
+- **模式 C：增强** — 改进现有的 HTML 演示文稿。阅读它，理解它，增强。**遵循下面的模式 C 修改规则。**
 
-### Mode C: Modification Rules
+### 模式 C：修改规则
 
-When enhancing existing presentations, viewport fitting is the biggest risk:
+增强现有演示文稿时，视口适配是最大的风险：
 
-1. **Before adding content:** Count existing elements, check against density limits
-2. **Adding images:** Must have `max-height: min(50vh, 400px)`. If slide already has max content, split into two slides
-3. **Adding text:** Max 4-6 bullets per slide. Exceeds limits? Split into continuation slides
-4. **After ANY modification, verify:** `.slide` has `overflow: hidden`, new elements use `clamp()`, images have viewport-relative max-height, content fits at 1280x720
-5. **Proactively reorganize:** If modifications will cause overflow, automatically split content and inform the user. Don't wait to be asked
+1. **在添加内容之前：** 计算现有元素，对照密度限制检查
+2. **添加图像：** 必须具有 `max-height: min(50vh, 400px)`。如果幻灯片已有最大内容，分割成两张幻灯片
+3. **添加文本：** 每张幻灯片最多 4-6 个要点。超出限制？分割成延续幻灯片
+4. **任何修改后，验证：** `.slide` 有 `overflow: hidden`，新元素使用 `clamp()`，图像具有相对于视口的最大高度，内容在 1280x720 下适配
+5. **主动重组：** 如果修改将导致溢出，自动分割内容并通知用户。不要等待被询问
 
-**When adding images to existing slides:** Move image to new slide or reduce other content first. 绝不 add images without checking if existing content already fills the viewport.
-
----
-
-## Phase 1: Content Discovery (New Presentations)
-
-**Ask ALL questions in a single AskUserQuestion call** so the user fills everything out at once:
-
-**Question 1 — Purpose** (header: "Purpose"):
-What is this presentation for? Options: Pitch deck / Teaching-Tutorial / Conference talk / Internal presentation
-
-**Question 2 — Length** (header: "Length"):
-Approximately how many slides? Options: Short 5-10 / Medium 10-20 / Long 20+
-
-**Question 3 — Content** (header: "Content"):
-Do you have content ready? Options: All content ready / Rough notes / Topic only
-
-**Question 4 — Inline Editing** (header: "Editing"):
-Do you need to edit text directly in the browser after generation? Options:
-
-- "Yes (Recommended)" — Can edit text in-browser, auto-save to localStorage, export file
-- "No" — Presentation only, keeps file smaller
-
-**Remember the user's editing choice — it determines whether edit-related code is included in Phase 3.**
-
-If user has content, ask them to share it.
-
-### Step 1.2: Image Evaluation (if images provided)
-
-If user selected "No images" → skip to Phase 2.
-
-If user provides an image folder:
-
-1. **Scan** — List all image files (.png, .jpg, .svg, .webp, etc.)
-2. **View each image** — Use the Read tool (Claude is multimodal)
-3. **Evaluate** — For each: what it shows, USABLE or NOT USABLE (with reason), what concept it represents, dominant colors
-4. **Co-design the outline** — Curated images inform slide structure alongside text. This is NOT "plan slides then add images" — design around both from the start (e.g., 3 screenshots → 3 feature slides, 1 logo → title/closing slide)
-5. **Confirm via AskUserQuestion** (header: "Outline"): "Does this slide outline and image selection look right?" Options: Looks good / Adjust images / Adjust outline
-
-**Logo in previews:** If a usable logo was identified, embed it (base64) into each style preview in Phase 2 — the user sees their brand styled three different ways.
+**向现有幻灯片添加图像时：** 首先将图像移动到新幻灯片或减少其他内容。绝不添加图像而不检查现有内容是否已填满视口。
 
 ---
 
-## Phase 2: Style Discovery
+## 阶段 1：内容发现（新演示文稿）
 
-**This is the "show, don't tell" phase.** Most people can't articulate design preferences in words.
+**在单个 AskUserQuestion 调用中提出所有问题**，以便用户一次性填写所有内容：
 
-### Step 2.0: Style Path
+**问题 1 — 目的** (标题: "目的"):
+这个演示文稿是用于什么？选项：推介稿 / 教学教程 / 会议演讲 / 内部演示
 
-Ask how they want to choose (header: "Style"):
+**问题 2 — 长度** (标题: "长度"):
+大约多少张幻灯片？选项：短 5-10 / 中 10-20 / 长 20+
 
-- "Show me options" (recommended) — Generate 3 previews based on mood
-- "I know what I want" — Pick from preset list directly
+**问题 3 — 内容** (标题: "内容"):
+您有准备好的内容吗？选项：所有内容已准备好 / 粗略笔记 / 仅主题
 
-**If direct selection:** Show preset picker and skip to Phase 3. Available presets are defined in [STYLE_PRESETS.md](STYLE_PRESETS.md).
+**问题 4 — 内联编辑** (标题: "编辑"):
+生成后需要在浏览器中直接编辑文本吗？选项：
 
-### Step 2.1: Mood Selection (Guided Discovery)
+- "是（推荐）" — 可以在浏览器中编辑文本，自动保存到 localStorage，导出文件
+- "否" — 仅演示文稿，保持文件较小
 
-Ask (header: "Vibe", multiSelect: true, max 2):
-What feeling should the audience have? Options:
+**记住用户的编辑选择 — 这决定了阶段 3 中是否包含编辑相关代码。**
 
-- Impressed/Confident — Professional, trustworthy
-- Excited/Energized — Innovative, bold
-- Calm/Focused — Clear, thoughtful
-- Inspired/Moved — Emotional, memorable
+如果用户有内容，请他们分享。
 
-### Step 2.2: Generate 3 Style Previews
+### 步骤 1.2：图像评估（如果提供图像）
 
-Based on mood, generate 3 distinct single-slide HTML previews showing typography, colors, animation, and overall aesthetic. Read [STYLE_PRESETS.md](STYLE_PRESETS.md) for available presets and their specifications.
+如果用户选择"无图像" → 跳转到阶段 2。
 
-| Mood                | Suggested Presets                                  |
+如果用户提供图像文件夹：
+
+1. **扫描** — 列出所有图像文件（.png、.jpg、.svg、.webp 等）
+2. **查看每个图像** — 使用 Read 工具（Claude 是多模态的）
+3. **评估** — 对于每个：它显示什么，可用或不可用（附原因），它代表什么概念，主导颜色
+4. **共同设计大纲** — 策划的图像与文本一起告知幻灯片结构。这不是"先计划幻灯片然后添加图像" — 从一开始就围绕两者设计（例如，3 个截图 → 3 个功能幻灯片，1 个徽标 → 标题/结束幻灯片）
+5. **通过 AskUserQuestion 确认** (标题: "大纲"): "这个幻灯片大纲和图像选择看起来正确吗？" 选项：看起来不错 / 调整图像 / 调整大纲
+
+**预览中的徽标：** 如果识别出可用的徽标，将其嵌入（base64）到阶段 2 的每个样式预览中 — 用户看到他们的品牌以三种不同的方式呈现。
+
+---
+
+## 阶段 2：样式发现
+
+**这是"展示而非讲述"阶段。** 大多数人无法用语言表达设计偏好。
+
+### 步骤 2.0：样式路径
+
+询问他们想要如何选择（标题: "样式"）：
+
+- "给我看选项"（推荐）— 根据情绪生成 3 个预览
+- "我知道我想要什么" — 直接从预设列表中选择
+
+**如果直接选择：** 显示预设选择器并跳转到阶段 3。可用预设定义在 [STYLE_PRESETS.md](STYLE_PRESETS.md) 中。
+
+### 步骤 2.1：情绪选择（引导发现）
+
+询问（标题: "氛围", 多选: true, 最多 2）：
+观众应该有什么感觉？选项：
+
+- 印象深刻/自信 — 专业、可信赖
+- 兴奋/充满活力 — 创新、大胆
+- 冷静/专注 — 清晰、周到
+- 受启发/感动 — 情感化、难忘
+
+### 步骤 2.2：生成 3 个样式预览
+
+根据情绪，生成 3 个不同的单幻灯片 HTML 预览，展示排版、颜色、动画和整体美学。阅读 [STYLE_PRESETS.md](STYLE_PRESETS.md) 了解可用预设及其规格。
+
+| 情绪                | 建议的预设                                  |
 | ------------------- | -------------------------------------------------- |
-| Impressed/Confident | Bold Signal, Electric Studio, Dark Botanical       |
-| Excited/Energized   | Creative Voltage, Neon Cyber, Split Pastel         |
-| Calm/Focused        | Notebook Tabs, Paper & Ink, Swiss Modern           |
-| Inspired/Moved      | Dark Botanical, Vintage Editorial, Pastel Geometry |
+| 印象深刻/自信 | Bold Signal, Electric Studio, Dark Botanical       |
+| 兴奋/充满活力   | Creative Voltage, Neon Cyber, Split Pastel         |
+| 冷静/专注        | Notebook Tabs, Paper & Ink, Swiss Modern           |
+| 受启发/感动      | Dark Botanical, Vintage Editorial, Pastel Geometry |
 
-Save previews to `.claude-design/slide-previews/` (style-a.html, style-b.html, style-c.html). Each should be self-contained, ~50-100 lines, showing one animated title slide.
+将预览保存到 `.claude-design/slide-previews/`（style-a.html、style-b.html、style-c.html）。每个应该是独立的，约 50-100 行，显示一个动画标题幻灯片。
 
-Open each preview automatically for the user.
+自动为每个用户打开预览。
 
-### Step 2.3: User Picks
+### 步骤 2.3：用户选择
 
-Ask (header: "Style"):
-Which style preview do you prefer? Options: Style A: [Name] / Style B: [Name] / Style C: [Name] / Mix elements
+询问（标题: "样式"）：
+您更喜欢哪个样式预览？选项：样式 A: [名称] / 样式 B: [名称] / 样式 C: [名称] / 混合元素
 
-If "Mix elements", ask for specifics.
-
----
-
-## Phase 3: Generate Presentation
-
-Generate the full presentation using content from Phase 1 (text, or text + curated images) and style from Phase 2.
-
-If images were provided, the slide outline already incorporates them from Step 1.2. If not, CSS-generated visuals (gradients, shapes, patterns) provide visual interest — this is a fully supported first-class path.
-
-**Before generating, read these supporting files:**
-
-- [html-template.md](html-template.md) — HTML architecture and JS features
-- [viewport-base.css](viewport-base.css) — Mandatory CSS (include in full)
-- [animation-patterns.md](animation-patterns.md) — Animation reference for the chosen feeling
-
-**Key requirements:**
-
-- Single self-contained HTML file, all CSS/JS inline
-- Include the FULL contents of viewport-base.css in the `<style>` block
-- Use fonts from Fontshare or Google Fonts — never system fonts
-- Add detailed comments explaining each section
-- Every section needs a clear `/* === SECTION NAME === */` comment block
+如果选择"混合元素"，询问具体要求。
 
 ---
 
-## Phase 4: PPT Conversion
+## 阶段 3：生成演示文稿
 
-When converting PowerPoint files:
+使用阶段 1（文本，或文本 + 策划的图像）和阶段 2 的样式生成完整的演示文稿。
 
-1. **Extract content** — Run `python scripts/extract-pptx.py <input.pptx> <output_dir>` (install python-pptx if needed: `pip install python-pptx`)
-2. **Confirm with user** — Present extracted slide titles, content summaries, and image counts
-3. **Style selection** — Proceed to Phase 2 for style discovery
-4. **Generate HTML** — Convert to chosen style, preserving all text, images (from assets/), slide order, and speaker notes (as HTML comments)
+如果提供了图像，幻灯片大纲已经在步骤 1.2 中包含了它们。如果没有，CSS 生成的视觉效果（渐变、形状、图案）提供视觉兴趣 — 这是一个完全支持的一流路径。
+
+**生成之前，阅读这些支持文件：**
+
+- [html-template.md](html-template.md) — HTML 架构和 JS 功能
+- [viewport-base.css](viewport-base.css) — 强制 CSS（完整包含）
+- [animation-patterns.md](animation-patterns.md) — 所选感觉的动画参考
+
+**关键要求：**
+
+- 单个自包含的 HTML 文件，所有 CSS/JS 内联
+- 在 `<style>` 块中包含 viewport-base.css 的全部内容
+- 使用 Fontshare 或 Google Fonts 的字体 — 绝不使用系统字体
+- 添加详细注释解释每个部分
+- 每个部分都需要一个清晰的 `/* === SECTION NAME === */` 注释块
 
 ---
 
-## Phase 5: Delivery
+## 阶段 4：PPT 转换
 
-1. **Clean up** — Delete `.claude-design/slide-previews/` if it exists
-2. **Open** — Use `open [filename].html` to launch in browser
-3. **Summarize** — Tell the user:
-   - File location, style name, slide count
-   - Navigation: Arrow keys, Space, scroll/swipe, click nav dots
-   - How to customize: `:root` CSS variables for colors, font link for typography, `.reveal` class for animations
-   - If inline editing was enabled: Hover top-left corner or press E to enter edit mode, click any text to edit, Ctrl+S to save
+转换 PowerPoint 文件时：
+
+1. **提取内容** — 运行 `python scripts/extract-pptx.py <input.pptx> <output_dir>`（如果需要，安装 python-pptx：`pip install python-pptx`）
+2. **与用户确认** — 展示提取的幻灯片标题、内容摘要和图像数量
+3. **样式选择** — 进入阶段 2 进行样式发现
+4. **生成 HTML** — 转换为所选样式，保留所有文本、图像（来自 assets/）、幻灯片顺序和演讲者备注（作为 HTML 注释）
+
+---
+
+## 阶段 5：交付
+
+1. **清理** — 如果存在，删除 `.claude-design/slide-previews/`
+2. **打开** — 使用 `open [filename].html` 在浏览器中启动
+3. **总结** — 告诉用户：
+   - 文件位置、样式名称、幻灯片数量
+   - 导航：箭头键、空格键、滚动/滑动、点击导航点
+   - 如何自定义：用于颜色的 `:root` CSS 变量、用于排版的字体链接、用于动画的 `.reveal` 类
+   - 如果启用了内联编辑：悬停在左上角或按 E 进入编辑模式，点击任何文本进行编辑，Ctrl+S 保存
 
 ---
 
 ## Supporting Files
 
-| File                                               | Purpose                                                              | When to Read              |
+| File                                               | 目的                                                              | When to Read              |
 | -------------------------------------------------- | -------------------------------------------------------------------- | ------------------------- |
 | [STYLE_PRESETS.md](STYLE_PRESETS.md)               | 12 curated visual presets with colors, fonts, and signature elements | Phase 2 (style selection) |
 | [viewport-base.css](viewport-base.css)             | Mandatory responsive CSS — copy into every presentation              | Phase 3 (generation)      |

@@ -1,9 +1,9 @@
 ---
-name: session-report
-description: "Session Report — Session Report 相关功能和最佳实践"
+name: 会话-report
+description: "会话 Report — 会话 Report 相关功能和最佳实践"
 ---
 
-# Session Report
+# 会话 Report
 
 Produce a self-contained HTML report of Claude Code usage and save it to the current working directory.
 
@@ -11,15 +11,15 @@ Produce a self-contained HTML report of Claude Code usage and save it to the cur
 
 1. **Get data.** Run the bundled analyzer (default window: last 7 days; honor a different range if the user passed one, e.g. `24h`, `30d`, or `all`). The script `analyze-sessions.mjs` lives in the same directory as this SKILL.md — use its absolute path:
    ```sh
-   node <skill-dir>/analyze-sessions.mjs --json --since 7d > /tmp/session-report.json
+   node <skill-dir>/analyze-sessions.mjs --json --since 7d > /tmp/会话-report.json
    ```
    For all-time, omit `--since`.
 
-2. **Read** `/tmp/session-report.json`. Skim `overall`, `by_project`, `by_subagent_type`, `by_skill`, `cache_breaks`, `top_prompts`.
+2. **Read** `/tmp/会话-report.json`. Skim `overall`, `by_project`, `by_subagent_type`, `by_skill`, `cache_breaks`, `top_prompts`.
 
 3. **Copy the template** (also bundled alongside this SKILL.md) to the output path in the current working directory:
    ```sh
-   cp <skill-dir>/template.html ./session-report-$(date +%Y%m%d-%H%M).html
+   cp <skill-dir>/template.html ./会话-report-$(date +%Y%m%d-%H%M).html
    ```
 
 4. **Edit the output file** (use Edit, not Write — preserve the template's JS/CSS):

@@ -1,6 +1,6 @@
 ---
-name: devcontainer-setup
-description: "Devcontainer Setup — Devcontainer Setup 相关功能和最佳实践"
+name: devcontainer-设置
+description: "Devcontainer 设置 — Devcontainer 设置 相关功能和最佳实践"
 risk: safe
 source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-03-06
@@ -28,7 +28,7 @@ flowchart TB
     start([User requests devcontainer])
     recon[1. Project Reconnaissance]
     detect[2. Detect Languages]
-    generate[3. Generate Configuration]
+    generate[3. Generate 配置]
     write[4. Write files to .devcontainer/]
     done([Done])
 
@@ -51,7 +51,7 @@ Check in order (use first match):
 4. `go.mod` → module path (last segment after `/`)
 5. Directory name as fallback
 
-Convert to slug: lowercase, replace spaces/underscores with hyphens.
+Convert to 标识符: lowercase, replace spaces/underscores with hyphens.
 
 ### Detect Language Stack
 
@@ -71,19 +71,19 @@ If multiple languages are detected, configure all of them in the following prior
 3. **Rust** - Uses devcontainer feature
 4. **Go** - Uses devcontainer feature
 
-For multi-language `postCreateCommand`, chain all setup commands:
+For multi-language `postCreateCommand`, chain all 设置 commands:
 ```
 uv run /opt/post_install.py && uv sync && npm ci
 ```
 
-Extensions and settings from all detected languages should be merged into the configuration.
+Extensions and settings from all detected languages should be merged into the 配置.
 
-## Phase 2: Generate Configuration
+## Phase 2: Generate 配置
 
 Start with base templates from `resources/` directory. Substitute:
 
 - `{{PROJECT_NAME}}` → Human-readable name (e.g., "My Project")
-- `{{PROJECT_SLUG}}` → Slug for volumes (e.g., "my-project")
+- `{{PROJECT_SLUG}}` → 标识符 for volumes (e.g., "my-project")
 
 Then apply language-specific modifications below.
 
@@ -104,7 +104,7 @@ The base template includes:
 
 ### Python Projects
 
-**Detection:** `pyproject.toml`, `requirements.txt`, `setup.py`, or `*.py` files
+**Detection:** `pyproject.toml`, `requirements.txt`, `设置.py`, or `*.py` files
 
 **Dockerfile additions:**
 
@@ -249,7 +249,7 @@ uv run /opt/post_install.py && go mod download
 
 For additional guidance, see:
 - `references/dockerfile-best-practices.md` - Layer optimization, multi-stage builds, architecture support
-- `references/features-vs-dockerfile.md` - When to use devcontainer features vs custom Dockerfile
+- `references/features-vs-dockerfile.md` - 使用场景 devcontainer features vs custom Dockerfile
 
 ---
 
@@ -259,7 +259,7 @@ Pattern for new mounts in `devcontainer.json`:
 
 ```json
 "mounts": [
-  "source={{PROJECT_SLUG}}-<purpose>-${devcontainerId},target=<container-path>,type=volume"
+  "source={{PROJECT_SLUG}}-<目的>-${devcontainerId},target=<container-path>,type=volume"
 ]
 ```
 
@@ -274,9 +274,9 @@ Common additions:
 Generate these files in the project's `.devcontainer/` directory:
 
 1. `Dockerfile` - Container build instructions
-2. `devcontainer.json` - VS Code/devcontainer configuration
-3. `post_install.py` - Post-creation setup script
-4. `.zshrc` - Shell configuration
+2. `devcontainer.json` - VS Code/devcontainer 配置
+3. `post_install.py` - Post-creation 设置 script
+4. `.zshrc` - Shell 配置
 5. `install.sh` - CLI helper for managing the devcontainer (`devc` command)
 
 ---
@@ -289,7 +289,7 @@ Before presenting files to the user, verify:
 2. All `{{PROJECT_SLUG}}` placeholders are replaced with the slugified name
 3. JSON syntax is valid in `devcontainer.json` (no trailing commas, proper nesting)
 4. Language-specific extensions are added for all detected languages
-5. `postCreateCommand` includes all required setup commands (chained with `&&`)
+5. `postCreateCommand` includes all required 设置 commands (chained with `&&`)
 
 ---
 

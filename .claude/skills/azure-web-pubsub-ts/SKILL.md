@@ -26,7 +26,7 @@ npm install @azure/web-pubsub-express
 ## 环境变量
 
 ```bash
-WEBPUBSUB_CONNECTION_STRING=Endpoint=https://<resource>.webpubsub.azure.com;AccessKey=<key>;Version=1.0;
+WEBPUBSUB_CONNECTION_STRING=端点=https://<resource>.webpubsub.azure.com;AccessKey=<key>;Version=1.0;
 WEBPUBSUB_ENDPOINT=https://<resource>.webpubsub.azure.com
 ```
 
@@ -59,19 +59,19 @@ const client3 = new WebPubSubServiceClient(
 );
 ```
 
-### Generate Client Access Token
+### Generate Client Access 令牌
 
 ```typescript
-// Basic token
-const token = await client.getClientAccessToken();
-console.log(token.url);  // wss://...?access_token=...
+// Basic 令牌
+const 令牌 = await client.getClientAccessToken();
+console.log(令牌.url);  // wss://...?access_token=...
 
-// Token with user ID
+// 令牌 with user ID
 const userToken = await client.getClientAccessToken({
   userId: "user123",
 });
 
-// Token with permissions
+// 令牌 with permissions
 const permToken = await client.getClientAccessToken({
   userId: "user123",
   roles: [
@@ -97,9 +97,9 @@ await client.sendToUser("user123", { message: "Hello!" });
 // Send to specific connection
 await client.sendToConnection("connectionId", { data: "Direct message" });
 
-// Send with filter (OData syntax)
+// Send with 过滤器 (OData syntax)
 await client.sendToAll({ message: "Filtered" }, {
-  filter: "userId ne 'admin'",
+  过滤器: "userId ne 'admin'",
 });
 ```
 
@@ -149,11 +149,11 @@ import { WebPubSubClient } from "@azure/web-pubsub-client";
 // Direct URL
 const client = new WebPubSubClient("<client-access-url>");
 
-// Dynamic URL from negotiate endpoint
+// Dynamic URL from negotiate 端点
 const client2 = new WebPubSubClient({
   getClientAccessUrl: async () => {
-    const response = await fetch("/negotiate");
-    const { url } = await response.json();
+    const 响应 = await fetch("/negotiate");
+    const { url } = await 响应.json();
     return url;
   },
 });
@@ -263,12 +263,12 @@ const handler = new WebPubSubEventHandler("chat", {
 
 app.use(handler.getMiddleware());
 
-// Negotiate endpoint
+// Negotiate 端点
 app.get("/negotiate", async (req, res) => {
-  const token = await serviceClient.getClientAccessToken({
+  const 令牌 = await serviceClient.getClientAccessToken({
     userId: req.user?.id,
   });
-  res.json({ url: token.url });
+  res.json({ url: 令牌.url });
 });
 
 app.listen(8080);
@@ -312,7 +312,7 @@ import {
 6. **Use noEcho** - Prevent message echo back to sender when needed
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

@@ -5,7 +5,7 @@ description: AI代理驱动的代码排序和重构工具
 
 # Agent Sort
 
-Use this skill when a repo needs a project-specific ECC surface instead of the default full install.
+当仓库需要项目特定的 ECC 表面而非默认完整安装时使用此技能。
 
 The goal is not to guess what "feels useful." The goal is to classify ECC components with evidence from the actual codebase.
 
@@ -14,7 +14,7 @@ The goal is not to guess what "feels useful." The goal is to classify ECC compon
 - A project only needs a subset of ECC and full installs are too noisy
 - The repo stack is clear, but nobody wants to hand-curate skills one by one
 - A team wants a repeatable install decision backed by grep evidence instead of opinion
-- You need to separate always-loaded daily workflow surfaces from searchable library/reference surfaces
+- You need to separate always-loaded daily 工作流 surfaces from searchable library/reference surfaces
 - A repo has drifted into the wrong language, rule, or hook set and needs cleanup
 
 ## Non-Negotiable Rules
@@ -40,8 +40,8 @@ Produce these artifacts in order:
 Use two buckets only:
 
 - `DAILY`
-  - should load every session for this repo
-  - strongly matched to the repo's language, framework, workflow, or operator surface
+  - should load every 会话 for this repo
+  - strongly matched to the repo's language, framework, 工作流, or operator surface
 - `LIBRARY`
   - useful to retain, but not worth loading by default
   - should remain reachable through search, router skill, or selective manual use
@@ -127,8 +127,8 @@ rules/python/*           | rules | LIBRARY | zero Python source files           
 Promote to `DAILY` when:
 
 - the repo clearly uses the matching stack
-- the component is general enough to help every session
-- the repo already depends on the corresponding runtime or workflow
+- the component is general enough to help every 会话
+- the repo already depends on the corresponding runtime or 工作流
 
 Demote to `LIBRARY` when:
 

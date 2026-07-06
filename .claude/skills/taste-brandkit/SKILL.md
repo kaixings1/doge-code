@@ -58,7 +58,7 @@ They define the quality bar, restraint, and presentation logic.
 
 A premium brand kit is not decoration.
 
-It is a visual argument for why the brand exists.
+It is a visual 参数 for why the brand exists.
 
 Every generated board must answer:
 
@@ -74,7 +74,7 @@ Every generated board must answer:
 
 Unless the user specifies otherwise:
 
-- Generate one brand-kit overview image
+- Generate one brand-kit 概述 image
 - 默认 layout: `3 × 3`
 - 默认 aspect ratio: `4:3` or `16:10`
 - Use a clean presentation grid
@@ -84,7 +84,7 @@ Unless the user specifies otherwise:
 
 Allowed layouts:
 - `3 × 3` full identity system
-- `2 × 3` cinematic brand deck overview
+- `2 × 3` cinematic brand deck 概述
 - `2 × 2` compact concept board
 - `1 × 3` horizontal brand strip
 - `4 × 2` wide contact-sheet layout
@@ -112,11 +112,11 @@ Think through:
 
 The visual system must be based on meaning.
 
-Examples:
+示例:
 
 | Category | Core Ideas | Possible Symbol Logic |
 |---|---|---|
-| Developer tool | building, speed, precision, control | cursor, frame, bolt, scaffold, grid |
+| Developer tool | building, speed, precision, control | 游标, frame, bolt, scaffold, grid |
 | AI assistant | delegation, intelligence, clarity | spark, orbit, signal, path, node |
 | 安全性 | protection, vigilance, boundary | shield, eye, seal, protected core |
 | Gaming / betting | chance, reward, tension, speed | dice, gem, card, signal, trophy |
@@ -166,7 +166,7 @@ Use one or combine two maximum.
 
 Combine the brand initial with a metaphor.
 
-Examples:
+示例:
 - `K` + kite / frame / direction
 - `N` + path / folded system
 - `S` + sound wave / speech flow
@@ -181,8 +181,8 @@ Use negative space, cuts, folds, or geometry.
 
 Turn the product's main action into a symbol.
 
-Examples:
-- build → frame, scaffold, block, cursor
+示例:
+- build → frame, scaffold, block, 游标
 - protect → shield, boundary, watch mark
 - convert → switch, arrow, transformation shape
 - speak → waveform, mic, pulse
@@ -197,13 +197,13 @@ Make it abstract and premium, not literal.
 
 Combine two meaningful ideas into one reduced mark.
 
-Examples:
+示例:
 - owl + drone vision
 - shield + mountain
 - moon + waveform
 - dog + compliance seal
 - dice + mobile game economy
-- cursor + lightning speed
+- 游标 + lightning speed
 - kite + product frame
 
 The fusion should be subtle and readable.
@@ -214,7 +214,7 @@ The fusion should be subtle and readable.
 
 Use empty space to create intelligence.
 
-Examples:
+示例:
 - hidden arrow
 - protected center
 - cutout initial
@@ -356,7 +356,7 @@ Visual cues:
 - pixel or CRT texture if appropriate
 
 Logo logic:
-- cursor + frame
+- 游标 + frame
 - bolt + build speed
 - scaffold + monogram
 - terminal glyph + symbol
@@ -737,7 +737,7 @@ Use references as quality training, not as templates.
 
 Use this structure internally:
 
-Create a premium brand-kit overview image for "[BRAND NAME]".
+Create a premium brand-kit 概述 image for "[BRAND NAME]".
 
 Brand strategy:
 - category: [category]
@@ -773,7 +773,7 @@ Typography:
 readable, minimal, high hierarchy, no tiny fake text.
 
 Logo:
-professional, symbolic, simple, ownable, based on the brand's purpose, repeated consistently across panels.
+professional, symbolic, simple, ownable, based on the brand's 目的, repeated consistently across panels.
 
 ---
 

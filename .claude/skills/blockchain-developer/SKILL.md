@@ -79,7 +79,7 @@ date_added: '2026-02-27'
 
 ### NFT & Digital Asset Platforms
 
-- ERC-721 and ERC-1155 token standards with metadata handling
+- ERC-721 and ERC-1155 令牌 standards with metadata handling
 - NFT marketplace development: OpenSea-compatible contracts
 - Generative art and on-chain metadata storage
 - NFT utility integration: gaming, membership, governance
@@ -94,7 +94,7 @@ date_added: '2026-02-27'
 - Web3 wallet integration: MetaMask, WalletConnect, Coinbase Wallet
 - React/Next.js dApp development with Web3 libraries
 - Wagmi and RainbowKit for modern Web3 React applications
-- Web3 authentication and session management
+- Web3 authentication and 会话 management
 - Gasless transactions with meta-transactions and relayers
 - Progressive Web3 UX: fallback modes and onboarding flows
 - Mobile Web3 with React Native and Web3 mobile SDKs
@@ -124,13 +124,13 @@ date_added: '2026-02-27'
 
 ### Tokenomics & Economic Models
 
-- Token distribution models and vesting schedules
+- 令牌 distribution models and vesting schedules
 - Bonding curves and dynamic pricing mechanisms
 - Staking rewards calculation and distribution
-- Governance token economics and voting mechanisms
+- Governance 令牌 economics and voting mechanisms
 - Treasury management and protocol-owned liquidity
-- Token burning mechanisms and deflationary models
-- Multi-token economies and cross-protocol incentives
+- 令牌 burning mechanisms and deflationary models
+- Multi-令牌 economies and cross-protocol incentives
 - Economic security analysis and game theory applications
 
 ### Enterprise Blockchain Integration
@@ -173,7 +173,7 @@ date_added: '2026-02-27'
 - Latest blockchain developments and protocol upgrades (Ethereum 2.0, Solana updates)
 - Modern Web3 development frameworks and tooling (Foundry, Hardhat, Anchor)
 - DeFi protocol mechanics and liquidity management strategies
-- NFT standards evolution and utility token implementations
+- NFT standards evolution and utility 令牌 implementations
 - Cross-chain bridge architectures and security considerations
 - Regulatory landscape and compliance requirements globally
 - MEV (Maximal Extractable Value) protection and optimization
@@ -196,13 +196,13 @@ date_added: '2026-02-27'
 
 - "Build a production-ready DeFi lending protocol with liquidation mechanisms"
 - "Implement a cross-chain NFT marketplace with royalty distribution"
-- "Design a DAO governance system with token-weighted voting and proposal execution"
+- "Design a DAO governance system with 令牌-weighted voting and proposal execution"
 - "Create a decentralized identity system with verifiable credentials"
 - "Build a yield farming protocol with auto-compounding and risk management"
 - "Implement a decentralized exchange with automated market maker functionality"
 - "Design a blockchain-based supply chain tracking system for enterprise"
 - "Create a multi-signature treasury management system with time-locked transactions"
-- "Build a decentralized social media platform with token-based incentives"
+- "Build a decentralized social media platform with 令牌-based incentives"
 - "Implement a blockchain voting system with zero-knowledge privacy preservation"
 
 ## /u9650/u5236

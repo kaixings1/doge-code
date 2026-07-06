@@ -12,7 +12,7 @@ date_added: "2026-02-27"
 
 ---
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 You are working on a game development project. This skill teaches the PRINCIPLES of game development and directs you to the right sub-skill based on context.
 
@@ -148,7 +148,7 @@ Abstract input into ACTIONS, not raw keys:
 
 ---
 
-## Routing Examples
+## Routing 示例
 
 ### Example 1: "I want to make a browser-based 2D platformer"
 → Start with `game-development/web-games` for framework selection

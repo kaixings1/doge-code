@@ -19,7 +19,7 @@ tags:
 tools:
   - claude-code
   - antigravity
-  - cursor
+  - 游标
   - gemini-cli
   - codex-cli
 ---
@@ -33,14 +33,14 @@ autonomy.
 
 ## 使用场景
 
-Use when the user asks for a loop, recurring agent workflow, automation cadence,
+Use when the user asks for a loop, recurring agent 工作流, automation cadence,
 iterative improvement process, existing Loop Library recommendation, or help
 turning an outcome into a bounded copy-ready loop through a short question-led
-design session.
+design 会话.
 
 _Source: [Forward-Future/loop-library](https://github.com/Forward-Future/loop-library) (MIT)._
 
-## Route the request
+## Route the 请求
 
 Choose the smallest useful path:
 
@@ -52,7 +52,7 @@ Choose the smallest useful path:
 - **Find, then design:** Search first. Use the nearest published loop as a
   scaffold and ask only about the missing decisions.
 
-Do not ask for information the user already supplied. If the request is vague,
+Do not ask for information the user already supplied. If the 请求 is vague,
 begin with: "What would you like the agent to get done?"
 
 ## Find a published loop
@@ -88,11 +88,11 @@ catalog.
 ## Keep adaptations grounded
 
 Use only details the user supplied or facts found in the systems and files they
-put in scope. A published loop's tools and examples are not facts about the
-user's setup.
+put in scope. A published loop's tools and 示例 are not facts about the
+user's 设置.
 
 Do not invent a technology stack, tool, metric, test method, file, page or item
-count, environment, schedule, budget, permission, or deployment target. When a
+count, environment, schedule, budget, permission, or 部署 target. When a
 detail is unknown, use neutral wording such as "the existing test" or "the
 relevant items," omit it when it is not needed, or ask one short question when
 the answer is necessary for safety or success. Never present a guess as a
@@ -155,7 +155,7 @@ Apply these rules:
   prompt, model, ranking, or other artifact that could overfit its own metric.
 - Use independent verification when the same actor should not both create and
   approve high-impact output.
-- Recommend a one-shot workflow instead of manufacturing a loop when no new
+- Recommend a one-shot 工作流 instead of manufacturing a loop when no new
   feedback can change the next action.
 
 Designing a loop does not authorize enabling a schedule, changing production,
@@ -172,12 +172,12 @@ or sending external messages. Implement or activate it only when the user asks.
 
 ## Deliver the loop
 
-For a Find-only request, return the concise recommendations required by the
+For a Find-only 请求, return the concise recommendations required by the
 Find section and stop. Use the format below only for an adapted or newly
 designed loop.
 
 Keep its internal design private unless the user asks for the detailed
-breakdown. Do not print the six-step cycle, field-by-field schema, assumptions
+breakdown. Do not print the six-step cycle, field-by-field 架构, assumptions
 list, or related loops by default. Do not repeat the same information in both
 the explanation and prompt.
 

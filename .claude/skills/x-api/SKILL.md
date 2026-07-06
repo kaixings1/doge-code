@@ -18,13 +18,13 @@ Programmatic interaction with X (Twitter) for posting, reading, searching, and a
 
 ## 认证
 
-### OAuth 2.0 Bearer Token (App-Only)
+### OAuth 2.0 Bearer 令牌 (App-Only)
 
 Best for: read-heavy operations, search, public data.
 
 ```bash
-# Environment setup
-export X_BEARER_TOKEN="your-bearer-token"
+# Environment 设置
+export X_BEARER_TOKEN="your-bearer-令牌"
 ```
 
 ```python
@@ -32,13 +32,13 @@ import os
 import requests
 
 bearer = os.environ["X_BEARER_TOKEN"]
-headers = {"Authorization": f"Bearer {bearer}"}
+headers = {"授权": f"Bearer {bearer}"}
 
 # Search recent tweets
 resp = requests.get(
     "https://api.x.com/2/tweets/search/recent",
     headers=headers,
-    params={"query": "claude code", "max_results": 10}
+    params={"查询": "claude code", "max_results": 10}
 )
 tweets = resp.json()
 ```
@@ -48,11 +48,11 @@ tweets = resp.json()
 Required for: posting tweets, managing account, DMs, and any write flow.
 
 ```bash
-# Environment setup — source before use
+# Environment 设置 — source before use
 export X_CONSUMER_KEY="your-consumer-key"
 export X_CONSUMER_SECRET="your-consumer-secret"
-export X_ACCESS_TOKEN="your-access-token"
-export X_ACCESS_TOKEN_SECRET="your-access-token-secret"
+export X_ACCESS_TOKEN="your-access-令牌"
+export X_ACCESS_TOKEN_SECRET="your-access-令牌-secret"
 ```
 
 Legacy aliases such as `X_API_KEY`, `X_API_SECRET`, and `X_ACCESS_SECRET` may exist in older setups. Prefer the `X_CONSUMER_*` and `X_ACCESS_TOKEN_SECRET` names when documenting or wiring new flows.
@@ -89,10 +89,10 @@ def post_thread(oauth, tweets: list[str]) -> list[str]:
     ids = []
     reply_to = None
     for text in tweets:
-        payload = {"text": text}
+        载荷 = {"text": text}
         if reply_to:
-            payload["reply"] = {"in_reply_to_tweet_id": reply_to}
-        resp = oauth.post("https://api.x.com/2/tweets", json=payload)
+            载荷["reply"] = {"in_reply_to_tweet_id": reply_to}
+        resp = oauth.post("https://api.x.com/2/tweets", json=载荷)
         tweet_id = resp.json()["data"]["id"]
         ids.append(tweet_id)
         reply_to = tweet_id
@@ -119,7 +119,7 @@ resp = requests.get(
     "https://api.x.com/2/tweets/search/recent",
     headers=headers,
     params={
-        "query": "from:affaanmustafa -is:retweet",
+        "查询": "from:affaanmustafa -is:retweet",
         "max_results": 10,
         "tweet.fields": "public_metrics,created_at",
     }
@@ -133,7 +133,7 @@ resp = requests.get(
     "https://api.x.com/2/tweets/search/recent",
     headers=headers,
     params={
-        "query": "from:affaanmustafa -is:retweet -is:reply",
+        "查询": "from:affaanmustafa -is:retweet -is:reply",
         "max_results": 25,
         "tweet.fields": "created_at,public_metrics",
     }
@@ -154,7 +154,7 @@ resp = requests.get(
 ### Upload Media and Post
 
 ```python
-# Media upload uses v1.1 endpoint
+# Media upload uses v1.1 端点
 
 # Step 1: Upload media
 media_resp = oauth.post(
@@ -172,7 +172,7 @@ resp = oauth.post(
 
 ## Rate Limits
 
-X API rate limits vary by endpoint, auth method, and account tier, and they change over time. Always:
+X API rate limits vary by 端点, auth method, and account tier, and they change over time. Always:
 - Check the current X developer docs before hardcoding assumptions
 - Read `x-rate-limit-remaining` and `x-rate-limit-reset` headers at runtime
 - Back off automatically instead of relying on static tables in code
@@ -210,7 +210,7 @@ else:
 - **Use read-only tokens** when write access is not needed.
 - **Store OAuth secrets securely** — not in source code or logs.
 
-## Integration with Content Engine
+## 集成 with Content Engine
 
 Use `brand-voice` plus `content-engine` to generate platform-native content, then post via X API:
 1. Pull recent original posts when voice matching matters

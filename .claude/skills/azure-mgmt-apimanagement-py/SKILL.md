@@ -181,7 +181,7 @@ policy_xml = """
         </set-header>
     </inbound>
     <backend>
-        <forward-request />
+        <forward-请求 />
     </backend>
     <outbound />
     <on-error />
@@ -251,13 +251,13 @@ user = client.user.create_or_update(
 )
 ```
 
-## Operation Groups
+## 操作 Groups
 
 | Group | Purpose |
 |-------|---------|
 | `api_management_service` | APIM instance management |
 | `api` | API operations |
-| `api_operation` | API operation details |
+| `api_operation` | API 操作 details |
 | `api_policy` | API-level policies |
 | `product` | Product management |
 | `product_api` | Product-API associations |
@@ -271,14 +271,14 @@ user = client.user.create_or_update(
 ## 最佳实践
 
 1. **Use named values** for secrets and configuration
-2. **Apply policies** at appropriate scopes (global, product, API, operation)
+2. **Apply policies** at appropriate scopes (global, product, API, 操作)
 3. **Use products** to bundle APIs and manage access
 4. **Enable Application Insights** for monitoring
 5. **Use backends** to abstract backend services
 6. **Version your APIs** using APIM's versioning features
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

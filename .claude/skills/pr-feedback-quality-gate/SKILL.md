@@ -1,7 +1,7 @@
 ---
 name: pr-feedback-quality-gate
 description: "Pr Feedback Quality Gate — Pr Feedback Quality Gate 相关功能和最佳实践"
-  Safely track pull request feedback, resolve review comments or merge conflicts, validate fixes, and use a read-only cross-review before committing or pushing follow-up changes.
+  Safely track pull 请求 feedback, resolve review comments or merge conflicts, validate fixes, and use a read-only cross-review before committing or pushing follow-up changes.
 triggers:
   - "PR feedback"
   - "review comments"

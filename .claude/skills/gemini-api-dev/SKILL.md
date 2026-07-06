@@ -10,11 +10,11 @@ date_added: "2026-02-27"
 
 ## 概述
 
-The Gemini API provides access to Google's most advanced AI models. Key capabilities include:
+The Gemini API provides access to Google's most advanced AI models. Key 能力 include:
 - **Text generation** - Chat, completion, summarization
 - **Multimodal understanding** - Process images, audio, video, and documents
 - **Function calling** - Let the model invoke your functions
-- **Structured output** - Generate valid JSON matching your schema
+- **Structured output** - Generate valid JSON matching your 架构
 - **Code execution** - Run Python code in a sandboxed environment
 - **Context caching** - Cache large contexts for efficiency
 - **Embeddings** - Generate text embeddings for semantic search
@@ -36,7 +36,7 @@ The Gemini API provides access to Google's most advanced AI models. Key capabili
 - **Go**: `google.golang.org/genai` install with `go get google.golang.org/genai`
 
 > [!WARNING]
-> Legacy SDKs `google-generativeai` (Python) and `@google/generative-ai` (JS) are deprecated. Migrate to the new SDKs above urgently by following the Migration Guide.
+> Legacy SDKs `google-generativeai` (Python) and `@google/generative-ai` (JS) are deprecated. Migrate to the new SDKs above urgently by following the 迁移 Guide.
 
 ## Quick Start
 
@@ -45,11 +45,11 @@ The Gemini API provides access to Google's most advanced AI models. Key capabili
 from google import genai
 
 client = genai.Client()
-response = client.models.generate_content(
+响应 = client.models.generate_content(
     model="gemini-3-flash-preview",
     contents="Explain quantum computing"
 )
-print(response.text)
+print(响应.text)
 ```
 
 ### JavaScript/TypeScript
@@ -57,11 +57,11 @@ print(response.text)
 import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({});
-const response = await ai.models.generateContent({
+const 响应 = await ai.models.generateContent({
   model: "gemini-3-flash-preview",
   contents: "Explain quantum computing"
 });
-console.log(response.text);
+console.log(响应.text);
 ```
 
 ### Go
@@ -93,12 +93,12 @@ func main() {
 
 ## API spec (source of truth)
 
-**Always use the latest REST API discovery spec as the source of truth for API definitions** (request/response schemas, parameters, methods). Fetch the spec when implementing or debugging API integration:
+**Always use the latest REST API discovery spec as the source of truth for API definitions** (请求/响应 schemas, parameters, methods). Fetch the spec when implementing or debugging API 集成:
 
 - **v1beta** (default): `https://generativelanguage.googleapis.com/$discovery/rest?version=v1beta`  
-  Use this unless the integration is explicitly pinned to v1. The official SDKs (google-genai, @google/genai, google.golang.org/genai) target v1beta.
+  Use this unless the 集成 is explicitly pinned to v1. The official SDKs (google-genai, @google/genai, google.golang.org/genai) target v1beta.
 - **v1**: `https://generativelanguage.googleapis.com/$discovery/rest?version=v1`  
-  Use only when the integration is specifically set to v1.
+  Use only when the 集成 is specifically set to v1.
 
 When in doubt, use v1beta. Refer to the spec for exact field names, types, and supported operations.
 
@@ -127,10 +127,10 @@ This index contains links to all documentation pages in `.md.txt` format. Use we
 - [Image understanding](https://ai.google.dev/gemini-api/docs/image-understanding.md.txt)
 - [Embeddings](https://ai.google.dev/gemini-api/docs/embeddings.md.txt)
 - [Interactions API](https://ai.google.dev/gemini-api/docs/interactions.md.txt)
-- [SDK migration guide](https://ai.google.dev/gemini-api/docs/migrate.md.txt)
+- [SDK 迁移 guide](https://ai.google.dev/gemini-api/docs/migrate.md.txt)
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the 概述.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

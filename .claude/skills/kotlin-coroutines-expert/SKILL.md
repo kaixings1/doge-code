@@ -42,11 +42,11 @@ suspend fun loadDashboardData(): DashboardData = coroutineScope {
 对顶级作用域使用 `CoroutineExceptionHandler`，但在挂起函数内依赖 `try-catch` 进行细粒度控制。
 
 ```kotlin
-val handler = CoroutineExceptionHandler { _, exception ->
+val 处理器 = CoroutineExceptionHandler { _, exception ->
     println("Caught $exception")
 }
 
-viewModelScope.launch(handler) {
+viewModelScope.launch(处理器) {
     try {
         riskyOperation()
     } catch (e: IOException) {
@@ -63,7 +63,7 @@ viewModelScope.launch(handler) {
 // Cold Flow (惰性)
 val searchResults: Flow<List<Item>> = searchQuery
     .debounce(300)
-    .flatMapLatest { query -> searchRepo.search(query) }
+    .flatMapLatest { 查询 -> searchRepo.search(查询) }
     .flowOn(Dispatchers.IO)
 
 // Hot Flow (状态)

@@ -33,7 +33,7 @@ Logic analyzer     - Protocol capture and analysis
 ## 使用此技能的场景
 
 - Working on download from vendor tasks or workflows
-- Needing guidance, best practices, or checklists for download from vendor
+- Needing guidance, 最佳实践, or checklists for download from vendor
 
 ## 不要使用此技能的场景
 
@@ -43,11 +43,11 @@ Logic analyzer     - Protocol capture and analysis
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
-## Firmware Analysis Workflow
+## Firmware Analysis 工作流
 
 ### Phase 1: Identification
 ```bash
@@ -135,13 +135,13 @@ mipsel-linux-gnu-gcc exploit.c -o exploit
 
 ## Common Vulnerability Classes
 
-### Authentication Issues
+### 认证 Issues
 ```
 Hardcoded credentials     - Default passwords in firmware
 Backdoor accounts         - Hidden admin accounts
 Weak password hashing     - MD5, no salt
-Authentication bypass     - Logic flaws in login
-Session management        - Predictable tokens
+认证 bypass     - Logic flaws in login
+会话 management        - Predictable tokens
 ```
 
 ### Command Injection
@@ -171,7 +171,7 @@ Use-after-free          - Improper memory management
 ```
 Debug interfaces        - UART, JTAG left enabled
 Verbose errors          - Stack traces, paths
-Configuration files     - Exposed credentials
+配置 files     - Exposed credentials
 Firmware updates        - Unencrypted downloads
 ```
 
@@ -214,7 +214,7 @@ Flashrom             - Flash chip programmer
 ChipWhisperer        - Side-channel analysis
 ```
 
-## Emulation Setup
+## Emulation 设置
 
 ### QEMU User-Mode Emulation
 ```bash
@@ -241,7 +241,7 @@ sudo chroot squashfs-root /usr/bin/qemu-arm-static /bin/httpd
 ./scripts/getArch.sh ./images/1.tar.gz
 ./scripts/makeImage.sh 1
 
-# Infer network configuration
+# Infer network 配置
 ./scripts/inferNetwork.sh 1
 
 # Run emulation
@@ -294,7 +294,7 @@ sudo chroot squashfs-root /usr/bin/qemu-arm-static /bin/httpd
 ## Ethical Guidelines
 
 ### Appropriate Use
-- Security audits with device owner authorization
+- Security audits with device owner 授权
 - Bug bounty programs
 - Academic research
 - CTF competitions
@@ -309,10 +309,10 @@ sudo chroot squashfs-root /usr/bin/qemu-arm-static /bin/httpd
 
 ## 响应方式
 
-1. **Verify authorization**: Ensure legitimate research context
+1. **Verify 授权**: Ensure legitimate research context
 2. **Assess device**: Understand target device type and architecture
 3. **Guide acquisition**: Appropriate firmware extraction method
-4. **Analyze systematically**: Follow structured analysis workflow
+4. **Analyze systematically**: Follow structured analysis 工作流
 5. **Identify issues**: Security vulnerabilities and misconfigurations
 6. **Document findings**: Clear reporting with remediation guidance
 

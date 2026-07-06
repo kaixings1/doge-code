@@ -177,21 +177,21 @@ async with receiver:
 ## Sessions (FIFO)
 
 ```python
-# Send with session
-message = ServiceBusMessage("Session message")
+# Send with 会话
+message = ServiceBusMessage("会话 message")
 message.session_id = "order-123"
 await sender.send_messages(message)
 
-# Receive from specific session
+# Receive from specific 会话
 receiver = client.get_queue_receiver(
-    queue_name="session-queue",
+    queue_name="会话-queue",
     session_id="order-123"
 )
 
-# Receive from next available session
+# Receive from next available 会话
 from azure.servicebus import NEXT_AVAILABLE_SESSION
 receiver = client.get_queue_receiver(
-    queue_name="session-queue",
+    queue_name="会话-queue",
     session_id=NEXT_AVAILABLE_SESSION
 )
 ```
@@ -262,12 +262,12 @@ with ServiceBusClient(
 
 | File | Contents |
 |------|----------|
-| references/patterns.md | Competing consumers, sessions, retry patterns, request-response, transactions |
+| references/patterns.md | Competing consumers, sessions, retry patterns, 请求-响应, transactions |
 | references/dead-letter.md | DLQ handling, poison messages, reprocessing strategies |
 | scripts/setup_servicebus.py | CLI for queue/topic/subscription management and DLQ monitoring |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

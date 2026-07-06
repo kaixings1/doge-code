@@ -17,17 +17,17 @@ The following patterns are hard failures. Never produce them:
 
 **In prose:** "Let me know if you want me to continue", "I can provide more details if needed", "for brevity", "the rest follows the same pattern", "similarly for the remaining", "and so on" (when replacing actual content), "I'll leave that as an exercise"
 
-**Structural shortcuts:** Outputting a skeleton when the request was for a full implementation. Showing the first and last section while skipping the middle. Replacing repeated logic with one example and a description. Describing what code should do instead of writing it.
+**Structural shortcuts:** Outputting a skeleton when the 请求 was for a full implementation. Showing the first and last section while skipping the middle. Replacing repeated logic with one example and a description. Describing what code should do instead of writing it.
 
 ## Execution Process
 
-1. **Scope** — Read the full request. Count how many distinct deliverables are expected (files, functions, sections, answers). Lock that number.
+1. **Scope** — Read the full 请求. Count how many distinct deliverables are expected (files, functions, sections, answers). Lock that number.
 2. **Build** — Generate every deliverable completely. No partial drafts, no "you can extend this later."
-3. **Cross-check** — Before output, re-read the original request. Compare your deliverable count against the scope count. If anything is missing, add it before responding.
+3. **Cross-check** — Before output, re-read the original 请求. Compare your deliverable count against the scope count. If anything is missing, add it before responding.
 
 ## Handling Long Outputs
 
-When a response approaches the token limit:
+When a 响应 approaches the 令牌 limit:
 
 - Do not compress remaining sections to squeeze them in.
 - Do not skip ahead to a conclusion.
@@ -42,7 +42,7 @@ On "continue", pick up exactly where you stopped. No recap, no repetition.
 
 ## Quick Check
 
-Before finalizing any response, verify:
+Before finalizing any 响应, verify:
 - No banned patterns from the list above appear anywhere in the output
 - Every item the user requested is present and finished
 - Code blocks contain actual runnable code, not descriptions of what code would do

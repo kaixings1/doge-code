@@ -6,7 +6,7 @@ source: community
 date_added: "2026-02-27"
 ---
 
-# 通过 Rube MCP 实现 LinkedIn 自动化
+# LinkedIn 自动化
 
 通过 Rube MCP 使用 Composio 的 LinkedIn 工具包自动执行 LinkedIn 操作。
 
@@ -14,11 +14,11 @@ date_added: "2026-02-27"
 
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 LinkedIn 连接，工具包为 `linkedin`
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 架构
 
 ## 设置
 
-**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 端点 即可使用。
 
 1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
 2. 使用工具包 `linkedin` 调用 `RUBE_MANAGE_CONNECTIONS`
@@ -164,4 +164,12 @@ date_added: "2026-02-27"
 
 ## 快速参考
 
-| Task | Tool Slug | Key Params |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
+| Task | Tool 标识符 | Key Params |

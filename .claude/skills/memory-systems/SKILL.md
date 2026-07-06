@@ -6,7 +6,7 @@ source: "https://github.com/muratcankoylan/Agent-Skills-for-上下文-Engineerin
 date_added: "2026-02-27"
 ---
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 Design short-term, long-term, and graph-based memory architectures
 
@@ -28,7 +28,7 @@ Activate this skill when:
 
 Memory exists on a spectrum from immediate context to permanent storage. At one extreme, working memory in the context window provides zero-latency access but vanishes when sessions end. At the other extreme, permanent storage persists indefinitely but requires retrieval to enter context.
 
-Simple vector stores lack relationship and temporal structure. Knowledge graphs preserve relationships for reasoning. Temporal knowledge graphs add validity periods for time-aware queries. 实现 choices depend on query complexity, infrastructure constraints, and accuracy requirements.
+Simple vector stores lack relationship and temporal structure. Knowledge graphs preserve relationships for reasoning. Temporal knowledge graphs add validity periods for time-aware queries. 实现 choices depend on 查询 complexity, infrastructure constraints, and accuracy requirements.
 
 ## Detailed Topics
 
@@ -37,7 +37,7 @@ Simple vector stores lack relationship and temporal structure. Knowledge graphs 
 **The 上下文-Memory Spectrum**
 Memory exists on a spectrum from immediate context to permanent storage. At one extreme, working memory in the context window provides zero-latency access but vanishes when sessions end. At the other extreme, permanent storage persists indefinitely but requires retrieval to enter context. Effective architectures use multiple layers along this spectrum.
 
-The spectrum includes working memory (context window, zero latency, volatile), short-term memory (session-persistent, searchable, volatile), long-term memory (cross-session persistent, structured, semi-permanent), and permanent memory (archival, queryable, permanent). Each layer has different latency, capacity, and persistence characteristics.
+The spectrum includes working memory (context window, zero latency, volatile), short-term memory (会话-persistent, searchable, volatile), long-term memory (cross-会话 persistent, structured, semi-permanent), and permanent memory (archival, queryable, permanent). Each layer has different latency, capacity, and persistence characteristics.
 
 **Why Simple Vector Stores Fall Short**
 Vector RAG provides semantic retrieval by embedding queries and documents in a shared embedding space. Similarity search retrieves the most semantically similar documents. This works well for document retrieval but lacks structure for agent memory.

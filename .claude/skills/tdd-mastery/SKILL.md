@@ -49,9 +49,9 @@ describe("OrderService", () => {
 ```python
 @pytest.fixture
 def db_session():
-    session = create_test_session()
-    yield session
-    session.rollback()
+    会话 = create_test_session()
+    yield 会话
+    会话.rollback()
 
 def test_create_user_stores_hashed_password(db_session):
     user = UserService(db_session).create(email="a@b.com", password="secret")

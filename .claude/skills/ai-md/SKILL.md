@@ -1,6 +1,6 @@
 ---
 name: ai-md
-description: "将人工编写的 CLAUDE.md 转换为 AI 原生结构化标签格式。经过 4 个模型验证。相同规则，更少 token，更高合规性。"
+description: "将人工编写的 CLAUDE.md 转换为 AI 原生结构化标签格式。经过 4 个模型验证。相同规则，更少 令牌，更高合规性。"
 risk: safe
 source: community
 date_added: "2026-03-11"
@@ -8,16 +8,16 @@ date_added: "2026-03-11"
 
 # AI.MD v4 — The Complete AI-Native Conversion System
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when your CLAUDE.md is long but AI still ignores your rules
-- Use when token usage is too high from verbose system instructions
+- Use when 令牌 usage is too high from verbose system 使用说明
 - Use when you want to optimize any LLM system prompt for compliance
 - Use when migrating rules between AI tools (Claude, Codex, Gemini, Grok)
 
 ## What Is AI.MD?
 
-AI.MD is a methodology for converting human-written `CLAUDE.md` (or any LLM system instructions)
+AI.MD is a methodology for converting human-written `CLAUDE.md` (or any LLM system 使用说明)
 into a structured-label format that AI models follow more reliably, using fewer tokens.
 
 **The paradox we proved:** Adding more rules in natural language DECREASES compliance.
@@ -31,7 +31,7 @@ Same content. Different format. Different results.
 
 ---
 
-## Why It Works: How LLMs Actually Process Instructions
+## Why It Works: How LLMs Actually Process 使用说明
 
 LLMs don't "read" — they **attend**. Understanding this changes everything.
 
@@ -86,11 +86,11 @@ instead of a full-text search.
 
 ```
 # BURIED: AI scans the whole sentence, might miss the connection
-加新功能→第一句問schema | 新增API/endpoint=必確認health-check.py覆蓋
+加新功能→第一句問架构 | 新增API/端点=必確認health-check.py覆蓋
 
 # ANCHORED: label "new-api:" directly matches user saying "加個 API"
 MOAT:
-  new-feature: 第一句問schema/契約/關聯
+  new-feature: 第一句問架构/契約/關聯
   new-api: 必確認health-check.py覆蓋(GATE-5)
 ```
 
@@ -101,7 +101,7 @@ across all models. The label `new-api:` raised Codex T5 from ❌→✅ on first 
 
 ## The Conversion Process: What Happens When You Give Me a CLAUDE.md
 
-Here's the exact mental model I use when converting natural language instructions to AI.MD format.
+Here's the exact mental model I use when converting natural language 使用说明 to AI.MD format.
 
 ### Phase 1: UNDERSTAND — Read Like a Compiler, Not a Human
 
@@ -131,7 +131,7 @@ Decomposition:
 
 The #1 source of compliance failure is **compound rules**.
 A single line with 3 rules separated by `|` looks like 1 instruction to AI.
-It needs to be 3 separate instructions.
+It needs to be 3 separate 使用说明.
 
 **The splitter test:** If you can put "AND" between two parts of a sentence,
 they are separate rules and MUST be on separate lines.
@@ -158,7 +158,7 @@ compare: "覺得A比B好" → A/B實測先行
 Every atomic rule gets a label that declares its function.
 I use a standard vocabulary of ~12 label types:
 
-| Label | What It Declares | When to Use |
+| Label | What It Declares | 使用场景 |
 |-------|-----------------|-------------|
 | `trigger:` | What input activates this | Every gate/rule needs one |
 | `action:` | What the AI must do | The core behavior |
@@ -168,7 +168,7 @@ I use a standard vocabulary of ~12 label types:
 | `priority:` | Override relationship | When rules conflict |
 | `yields-to:` | Which gate takes precedence | Inter-gate priority |
 | `persist:` | Durability across turns | Rules that survive conversation flow |
-| `timing:` | When in the workflow | Before/after/during constraints |
+| `timing:` | When in the 工作流 | Before/after/during constraints |
 | `violation:` | Consequence of breaking | Accountability mechanism |
 | `banned:` | Forbidden words/actions | Hard no-go list |
 | `policy:` | Decision heuristic | When judgment is needed |
@@ -185,7 +185,7 @@ I organize rules into a hierarchy:
 ```
 <gates>    = Hard stops (MUST check before any action)
 <rules>    = Behavioral guidelines (HOW to act)
-<rhythm>   = Workflow patterns (WHEN to do what)
+<rhythm>   = 工作流 patterns (WHEN to do what)
 <conn>     = Connection strings (FACTS — never compress)
 <ref>      = On-demand references (don't load until needed)
 <learn>    = Evolution rules (how the system improves)
@@ -193,7 +193,7 @@ I organize rules into a hierarchy:
 
 **Why this order matters:**
 Gates come first because they MUST be checked before anything else.
-The model processes instructions top-to-bottom. Priority = position.
+The model processes 使用说明 top-to-bottom. Priority = position.
 
 **Grouping technique:** Rules that share a DOMAIN become sub-items under one heading.
 
@@ -223,7 +223,7 @@ OUTPUT:                 ← domain: format
 
 ### Phase 5: RESOLVE — Handle Conflicts and Edge Cases
 
-This is the most critical and least obvious phase. Natural language instructions
+This is the most critical and least obvious phase. Natural language 使用说明
 often contain **hidden conflicts** that humans resolve with intuition but AI cannot.
 
 **Technique: Conflict Detection Matrix**
@@ -286,7 +286,7 @@ T4: Root cause analysis (does GATE-4 require all 4 questions?)
 T5: Business API addition (does AI mention health-check.py?)
 T6: User says "好像X比Y好" (does AI run comparison or just accept it?)
 T7: User says "處理一下" (does AI skip GATE-1 confirmation?)
-T8: Simple metric query (does GATE-4 NOT trigger?)
+T8: Simple metric 查询 (does GATE-4 NOT trigger?)
 ```
 
 ---
@@ -388,12 +388,12 @@ about what it should actually DO.
 
 ---
 
-## Two-Stage Workflow
+## Two-Stage 工作流
 
 ### Stage 1: PREVIEW — Measure, Don't Touch
 
 ```bash
-echo "=== Current Token Burn ==="
+echo "=== Current 令牌 Burn ==="
 claude_md=$(wc -c < ~/.claude/CLAUDE.md 2>/dev/null || echo 0)
 rules=$(cat ~/.claude/rules/*.md 2>/dev/null | wc -c || echo 0)
 total=$((claude_md + rules))
@@ -401,7 +401,7 @@ tokens=$((total / 4))
 echo "CLAUDE.md:     $claude_md bytes"
 echo "rules/*.md:    $rules bytes"
 echo "Total:         $total bytes ≈ $tokens tokens/turn"
-echo "50-turn session: ≈ $((tokens * 50)) tokens on instructions alone"
+echo "50-turn 会话: ≈ $((tokens * 50)) tokens on 使用说明 alone"
 ```
 
 Then: Read all auto-loaded files. Identify redundancy, prose overhead, and duplicate rules.
@@ -463,7 +463,7 @@ RULE-NAME:
 </rules>
 
 <rhythm>
-workflow patterns as key: value pairs
+工作流 patterns as key: value pairs
 </rhythm>
 
 <conn>

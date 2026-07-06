@@ -59,10 +59,10 @@ linear issues list
 varlock load 2>&1 | grep LINEAR
 
 # 运行注入密钥的命令
-varlock run -- npx tsx scripts/query.ts "query { viewer { name } }"
+varlock run -- npx tsx scripts/查询.ts "查询 { viewer { name } }"
 
-# 检查 schema（安全—无值）
-cat .env.schema | grep LINEAR
+# 检查 架构（安全—无值）
+cat .env.架构 | grep LINEAR
 ```
 
 ### 不安全命令（绝不使用）
@@ -77,7 +77,7 @@ cat .env
 
 ### 新项目设置
 
-1. 使用 `@sensitive` 注释创建 `.env.schema`：
+1. 使用 `@sensitive` 注释创建 `.env.架构`：
    ```bash
    # @type=string(startsWith=lin_api_) @required @sensitive
    LINEAR_API_KEY=
@@ -107,7 +107,7 @@ cat .env
 运行设置检查以验证你的配置：
 
 ```bash
-npx tsx ~/.claude/skills/linear/scripts/setup.ts
+npx tsx ~/.claude/skills/linear/scripts/设置.ts
 ```
 
 这将检查：
@@ -140,7 +140,7 @@ echo 'LINEAR_API_KEY=lin_api_your_key_here' >> ~/.claude/.env
 验证一切正常：
 
 ```bash
-npx tsx ~/.claude/skills/linear/scripts/query.ts "query { viewer { name } }"
+npx tsx ~/.claude/skills/linear/scripts/查询.ts "查询 { viewer { name } }"
 ```
 
 你应该能看到你的 Linear 用户名。
@@ -341,7 +341,7 @@ npx tsx scripts/linear-ops.ts link-initiative "阶段 11" "Q2 目标"
 }
 ```
 
-> **警告**：不要使用已废弃的社区服务器。详情请参阅 troubleshooting.md。
+> **警告**：不要使用已废弃的社区服务器。详情请参阅 故障排除.md。
 
 ### MCP 可靠性（官方服务器）
 
@@ -364,7 +364,7 @@ node scripts/linear-helpers.mjs update-status Done 123 124 125
 
 ### 辅助脚本参考
 
-有关辅助脚本的详细用法，请参阅 **troubleshooting.md**。
+有关辅助脚本的详细用法，请参阅 **故障排除.md**。
 
 ### 并行代理执行
 
@@ -454,7 +454,7 @@ npx tsx scripts/linear-ops.ts labels suggest "修复 XSS 漏洞"
 **快速临时查询：**
 
 ```bash
-npx tsx ~/.claude/skills/linear/scripts/query.ts "query { viewer { name } }"
+npx tsx ~/.claude/skills/linear/scripts/查询.ts "查询 { viewer { name } }"
 ```
 
 ## 项目与计划
@@ -511,7 +511,7 @@ npx tsx scripts/linear-ops.ts project-status "我的项目" completed
 | sdk.md | SDK 自动化模式 |
 | sync.md | 批量同步模式 |
 | projects.md | 项目和计划管理 |
-| troubleshooting.md | 常见问题、MCP 调试 |
+| 故障排除.md | 常见问题、MCP 调试 |
 | docs/labels.md | 标签分类法 |
 
 **外部：**[Linear MCP 文档](https://linear.app/docs/mcp.md)

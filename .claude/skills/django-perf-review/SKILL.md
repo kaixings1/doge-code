@@ -16,7 +16,7 @@ source: community
 - The code likely has N+1 queries, unbounded querysets, missing indexes, or other database-driven bottlenecks.
 - You want only provable performance findings, not speculative optimization advice.
 
-## Review Approach
+## Review 方法
 
 1. **Research first** - Trace data flow, check for existing optimizations, verify data volume
 2. **Validate before reporting** - Pattern matching is not validation
@@ -47,19 +47,19 @@ Validate by tracing: View → Queryset → Template/Serializer → Loop access
 
 ```python
 # PROBLEM: N+1 - each iteration queries profile
-def user_list(request):
+def user_list(请求):
     users = User.objects.all()
-    return render(request, 'users.html', {'users': users})
+    return render(请求, 'users.html', {'users': users})
 
 # Template:
 # {% for user in users %}
-#     {{ user.profile.bio }}  ← triggers query per user
+#     {{ user.profile.bio }}  ← triggers 查询 per user
 # {% endfor %}
 
 # SOLUTION: Prefetch in view
-def user_list(request):
+def user_list(请求):
     users = User.objects.select_related('profile')
-    return render(request, 'users.html', {'users': users})
+    return render(请求, 'users.html', {'users': users})
 ```
 
 ### Rule: Prefetch in serializers, not just views
@@ -72,7 +72,7 @@ class UserSerializer(serializers.ModelSerializer):
     order_count = serializers.SerializerMethodField()
 
     def get_order_count(self, obj):
-        return obj.orders.count()  # ← query per user
+        return obj.orders.count()  # ← 查询 per user
 
 # SOLUTION: Annotate in viewset, access in serializer
 class UserViewSet(viewsets.ModelViewSet):
@@ -83,14 +83,14 @@ class UserSerializer(serializers.ModelSerializer):
     order_count = serializers.IntegerField(read_only=True)
 ```
 
-### Rule: Model properties that query are dangerous in loops
+### Rule: Model properties that 查询 are dangerous in loops
 
 ```python
-# PROBLEM: Property triggers query when accessed
+# PROBLEM: Property triggers 查询 when accessed
 class User(models.Model):
     @property
     def recent_orders(self):
-        return self.orders.filter(created__gte=last_week)[:5]
+        return self.orders.过滤器(created__gte=last_week)[:5]
 
 # Used in template loop = N+1
 
@@ -150,7 +150,7 @@ users = User.objects.all()[:100]
 ### Validation Checklist for Unbounded Querysets
 - [ ] Table is large (10k+ rows) or will grow unbounded
 - [ ] No pagination class, paginate_by, or slicing
-- [ ] This runs on user-facing request (not background job with chunking)
+- [ ] This runs on user-facing 请求 (not background job with chunking)
 
 ---
 
@@ -162,7 +162,7 @@ users = User.objects.all()[:100]
 
 ```python
 # PROBLEM: Filtering on unindexed field
-# User.objects.filter(email=email)  # full scan if no index
+# User.objects.过滤器(email=email)  # full scan if no index
 
 class User(models.Model):
     email = models.EmailField()  # ← no db_index
@@ -183,7 +183,7 @@ class Order(models.Model):
     created = models.DateTimeField(db_index=True)
 ```
 
-### Rule: Use composite indexes for common query patterns
+### Rule: Use composite indexes for common 查询 patterns
 
 ```python
 class Order(models.Model):
@@ -193,14 +193,14 @@ class Order(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['user', 'status']),  # for filter(user=x, status=y)
-            models.Index(fields=['status', '-created']),  # for filter(status=x).order_by('-created')
+            models.Index(fields=['user', 'status']),  # for 过滤器(user=x, status=y)
+            models.Index(fields=['status', '-created']),  # for 过滤器(status=x).order_by('-created')
         ]
 ```
 
 ### Validation Checklist for Missing Indexes
 - [ ] Table has 10k+ rows
-- [ ] Field is used in filter() or order_by() on hot path
+- [ ] Field is used in 过滤器() or order_by() on hot path
 - [ ] Checked model - no db_index=True or Meta.indexes entry
 - [ ] Not a foreign key (already indexed automatically)
 
@@ -254,7 +254,7 @@ queryset.delete()
 ### Validation Checklist for Write Loops
 - [ ] Loop iterates over 100+ items (or unbounded)
 - [ ] Each iteration calls create(), save(), or delete()
-- [ ] This runs on user-facing request (not one-time migration script)
+- [ ] This runs on user-facing 请求 (not one-time 迁移 script)
 
 ---
 
@@ -282,7 +282,7 @@ if queryset.exists():
 # Fetches all rows to count
 if len(queryset) > 0:  # bad if queryset not yet evaluated
 
-# Single COUNT query
+# Single COUNT 查询
 if queryset.count() > 0:
 ```
 
@@ -324,7 +324,7 @@ Validated issues: X (Y Critical, Z High)
 
 ### Findings
 
-#### [PERF-001] N+1 Query in UserListView (CRITICAL)
+#### [PERF-001] N+1 查询 in UserListView (CRITICAL)
 **Location:** `views.py:45`
 
 **Issue:** Related field `profile` accessed in template loop without prefetch.
@@ -338,13 +338,13 @@ Validated issues: X (Y Critical, Z High)
 **Evidence:**
 ```python
 def get_queryset(self):
-    return User.objects.filter(active=True)  # no select_related
+    return User.objects.过滤器(active=True)  # no select_related
 ```
 
 **Fix:**
 ```python
 def get_queryset(self):
-    return User.objects.filter(active=True).select_related('profile')
+    return User.objects.过滤器(active=True).select_related('profile')
 ```
 ```
 
@@ -364,7 +364,7 @@ If the answer to any is "no" - remove the finding.
 - Test files
 - Admin-only views
 - Management commands
-- Migration files
+- 迁移 files
 - One-time scripts
 - Code behind disabled feature flags
 - Tables with <1000 rows that won't grow
@@ -376,26 +376,26 @@ If the answer to any is "no" - remove the finding.
 **Queryset variable assignment is not an issue:**
 ```python
 # This is FINE - no performance difference
-projects_qs = Project.objects.filter(org=org)
+projects_qs = Project.objects.过滤器(org=org)
 projects = list(projects_qs)
 
 # vs this - identical performance
-projects = list(Project.objects.filter(org=org))
+projects = list(Project.objects.过滤器(org=org))
 ```
 Querysets are lazy. Assigning to a variable doesn't execute anything.
 
-**Single query patterns are not N+1:**
+**Single 查询 patterns are not N+1:**
 ```python
-# This is ONE query, not N+1
-projects = list(Project.objects.filter(org=org))
+# This is ONE 查询, not N+1
+projects = list(Project.objects.过滤器(org=org))
 ```
 N+1 requires a loop that triggers additional queries. A single `list()` call is fine.
 
 **Missing select_related on single object fetch is not N+1:**
 ```python
 # This is 2 queries, not N+1 - report as LOW at most
-state = AutofixState.objects.filter(pr_id=pr_id).first()
-project_id = state.request.project_id  # second query
+state = AutofixState.objects.过滤器(pr_id=pr_id).first()
+project_id = state.请求.project_id  # second 查询
 ```
 N+1 requires a loop. A single object doing 2 queries instead of 1 can be reported as LOW if relevant, but never as CRITICAL/HIGH.
 

@@ -75,7 +75,7 @@ Clarity Gate defines validation codes for structural and semantic checks per FOR
 |------|-------|----------|
 | **W-HC01** | Partial `confirmed-by`/`confirmed-date` fields | WARNING |
 | **W-HC02** | Vague source (e.g., "industry reports", "TBD") | WARNING |
-| **E-SC06** | Schema error in `hitl-claims` structure | ERROR |
+| **E-SC06** | 架构 error in `hitl-claims` structure | ERROR |
 
 ### Body Structure (§1.2.1)
 | Code | Check | Severity |
@@ -245,7 +245,7 @@ Implicit assumptions that affect interpretation must be explicit.
 | Fails | Passes |
 |-------|--------|
 | "The system scales linearly" | "The system scales linearly [assuming <1000 concurrent users]" |
-| "Response time is 50ms" | "Response time is 50ms [under standard load conditions]" |
+| "响应 time is 50ms" | "响应 time is 50ms [under standard load conditions]" |
 
 **Fix:** Add bracketed conditions: "[assuming X]", "[under conditions Y]", "[when Z]"
 
@@ -274,9 +274,9 @@ Scan for conflicting numbers, dates, or facts within the document.
 **6. IMPLICIT CAUSATION**
 Claims that imply causation without evidence.
 
-**Red flag:** "Shorter prompts improve response quality" (plausible but unproven)
+**Red flag:** "Shorter prompts improve 响应 quality" (plausible but unproven)
 
-**Fix:** Reframe as hypothesis: "Shorter prompts MAY improve response quality (hypothesis, not validated)"
+**Fix:** Reframe as hypothesis: "Shorter prompts MAY improve 响应 quality (hypothesis, not validated)"
 
 ---
 
@@ -355,7 +355,7 @@ Claim Extracted --> Does Source of Truth Exist?
 ### Tier 2: Two-Round HITL Verification — MANDATORY
 
 **Round A: Derived Data Confirmation**
-- Claims from sources found in session
+- Claims from sources found in 会话
 - Human confirms interpretation, not truth
 
 **Round B: True HITL Verification**
@@ -465,7 +465,7 @@ The `source` field meaning changes based on claim state:
 
 **General pattern:** `claim-[a-z0-9._-]{1,64}` (alphanumeric, dots, underscores, hyphens)
 
-| Approach | Pattern | Example | Use Case |
+| 方法 | Pattern | Example | Use Case |
 |----------|---------|---------|----------|
 | **Hash-based** (preferred) | `claim-[a-f0-9]{8,}` | `claim-75fb137a` | Deterministic, collision-resistant |
 | **Sequential** | `claim-[0-9]+` | `claim-1`, `claim-2` | Simple documents |
@@ -483,7 +483,7 @@ When content cannot be resolved (no SME available, legacy prose, etc.), mark it 
 
 ```markdown
 <!-- CG-EXCLUSION:BEGIN id=auth-legacy-1 -->
-Legacy authentication details that require SME review...
+Legacy 认证 details that require SME review...
 <!-- CG-EXCLUSION:END id=auth-legacy-1 -->
 ```
 
@@ -651,7 +651,7 @@ Reply "confirmed" or flag any I misread.
 ### v2.1.3 (2026-03-02)
 - **FIXED:** `document_hash.py` now implements full FORMAT_SPEC §2.1-2.4 compliance
 - **FIXED:** Fence-aware end marker detection (Quine Protection per §2.3/§8.5)
-- **FIXED:** All 4 deployment copies converged to single canonical implementation
+- **FIXED:** All 4 部署 copies converged to single canonical implementation
 - **ADDED:** `canonicalize()` function: trailing whitespace stripping, newline collapsing, NFC normalization
 - **ADDED:** YAML-aware `document-sha256` removal with multiline continuation support (§2.2)
 - **ADDED:** Fence-tracking test vectors (7 new tests, 15 total)
@@ -674,7 +674,7 @@ Reply "confirmed" or flag any I misread.
 - **ADDED:** CGD output format template with `<!-- CLARITY_GATE_END -->` markers
 - **ADDED:** Quine Protection note (§2.3 fence-aware marker detection)
 - **ADDED:** Redacted Export feature (§8.11)
-- **UPDATED:** `hitl-claims` format to v2.0 schema (id, text, value, source, location, round)
+- **UPDATED:** `hitl-claims` format to v2.0 架构 (id, text, value, source, location, round)
 - **UPDATED:** End marker format to HTML comment style
 - **UPDATED:** Unified format spec v2.0 (single `.cgd.md` extension)
 - **RESTRUCTURED:** For multi-platform skill discovery
@@ -695,7 +695,7 @@ Reply "confirmed" or flag any I misread.
 - Restructured points into Epistemic (1-4) and Data Quality (5-7)
 
 ### v1.2 (2025-12-21)
-- Added Source of Truth request step
+- Added Source of Truth 请求 step
 
 ### v1.1 (2025-12-21)
 - Added HITL Fact Verification (mandatory)

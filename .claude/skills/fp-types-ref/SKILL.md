@@ -17,7 +17,7 @@ tags: [fp-ts, typescript, quick-reference, option, either, task]
 ## /u5e94/u8be5/u4f7f/u7528/u54ea/u4e2a/u7c7b/u578b/uff1f
 
 ```
-Is the operation async?
+Is the 操作 async?
 ├─ NO: Does it involve errors?
 │   ├─ YES → Either<Error, Value>
 │   └─ NO: Might value be missing?

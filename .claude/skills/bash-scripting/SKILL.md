@@ -1,28 +1,28 @@
 ---
 name: bash-scripting
 description: "Bash 脚本编写工作流，使用防御性模式、错误处理和测试创建生产就绪的 shell 脚本。"
-category: granular-workflow-bundle
+category: granular-工作流-bundle
 risk: safe
 source: personal
 date_added: "2026-02-27"
 ---
 
-# Bash Scripting Workflow
+# Bash Scripting 工作流
 
 ## 概述
 
-Specialized workflow for creating robust, production-ready bash scripts with defensive programming patterns, comprehensive error handling, and automated testing.
+Specialized 工作流 for creating robust, production-ready bash scripts with defensive programming patterns, comprehensive error handling, and automated testing.
 
-## When to Use This Workflow
+## When to Use This 工作流
 
-Use this workflow when:
+Use this 工作流 when:
 - Creating automation scripts
 - Writing system administration tools
 - Building deployment scripts
 - Developing backup solutions
 - Creating CI/CD scripts
 
-## Workflow Phases
+## 工作流 Phases
 
 ### Phase 1: Script Design
 
@@ -189,7 +189,7 @@ main "$@"
 - [ ] Logging functional
 - [ ] Documentation complete
 
-## Related Workflow Bundles
+## Related 工作流 Bundles
 
 - `os-scripting` - OS scripting
 - `linux-troubleshooting` - Linux troubleshooting

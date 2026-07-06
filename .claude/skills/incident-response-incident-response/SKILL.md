@@ -1,5 +1,5 @@
 ---
-name: incident-response-incident-response
+name: incident-响应-incident-响应
 description: "事件响应 — 事件响应流程和最佳实践"
 risk: unknown
 source: community

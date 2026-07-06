@@ -4,14 +4,14 @@ description: "Visual Verdict — Visual Verdict 相关功能和最佳实践"
 level: 2
 ---
 
-<Purpose>
-Use this skill to compare generated UI screenshots against one or more reference images and return a strict JSON verdict that can drive the next edit iteration.
-</Purpose>
+<目的>
+使用此技能将生成的 UI 截图与一个或多个参考图像进行比较，并返回严格的 JSON 裁决，以驱动下一次编辑迭代。
+</目的>
 
 <Use_When>
-- The task includes visual fidelity requirements (layout, spacing, typography, component styling)
-- You have a generated screenshot and at least one reference image
-- You need deterministic pass/fail guidance before continuing edits
+- 任务包括视觉保真度要求（布局、间距、排版、组件样式）
+- 您有生成的截图和至少一个参考图像
+- 在继续编辑之前需要确定性的通过/失败指导
 </Use_When>
 
 <Inputs>

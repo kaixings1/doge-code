@@ -8,7 +8,7 @@ source_type: self
 date_added: "2026-06-17"
 author: community
 tags: [design, ui, frontend]
-tools: [claude, cursor, gemini]
+tools: [claude, 游标, gemini]
 ---
 
 # Design-It：精致 UI 风格路由器
@@ -21,7 +21,7 @@ tools: [claude, cursor, gemini]
 ## How to Use This Skill
 
 When a user asks you to build a frontend interface (web or app):
-1. **Identify the Style (Fuzzy Matching)**: Look for keywords in their prompt (e.g., "minimal", "glass", "retro"). You do not need an exact match. Use your semantic understanding to map their request to one of the 48 styles. For example:
+1. **Identify the Style (Fuzzy Matching)**: Look for keywords in their prompt (e.g., "minimal", "glass", "retro"). You do not need an exact match. Use your semantic understanding to map their 请求 to one of the 48 styles. For example:
    - "Apple style" or "VisionOS" -> `spatial-design`, `bento-ui`, or `glassmorphism`
    - "Windows 8" or "Metro" -> `tile-design`
    - "Terminal" or "Hacker" -> `sci-fi-interface` or `brutalist-typography`

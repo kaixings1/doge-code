@@ -20,7 +20,7 @@ Covers .NET, Python, and Node.js programming models.
 
 Modern .NET execution model with process isolation
 
-**When to use**: Building new .NET Azure Functions apps
+**使用场景**: Building new .NET Azure Functions apps
 
 ### 模板
 
@@ -69,22 +69,22 @@ public class HttpTriggerFunction
     public async Task<HttpResponseData> Run(
         [HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestData req)
     {
-        _logger.LogInformation("Processing request");
+        _logger.LogInformation("Processing 请求");
 
         try
         {
             var result = await _service.ProcessAsync(req);
 
-            var response = req.CreateResponse(Http状态Code.OK);
-            await response.WriteAsJsonAsync(result);
-            return response;
+            var 响应 = req.CreateResponse(Http状态Code.OK);
+            await 响应.WriteAsJsonAsync(result);
+            return 响应;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing request");
-            var response = req.CreateResponse(Http状态Code.InternalServerError);
-            await response.WriteAsJsonAsync(new { error = "Internal server error" });
-            return response;
+            _logger.LogError(ex, "Error processing 请求");
+            var 响应 = req.CreateResponse(Http状态Code.InternalServerError);
+            await 响应.WriteAsJsonAsync(new { error = "Internal server error" });
+            return 响应;
         }
     }
 }
@@ -98,9 +98,9 @@ public class HttpTriggerFunction
 
 ### Node.js v4 编程模型
 
-Modern code-centric approach for TypeScript/JavaScript
+Modern code-centric 方法 for TypeScript/JavaScript
 
-**When to use**: Building Node.js Azure Functions
+**使用场景**: Building Node.js Azure Functions
 
 ### 模板
 
@@ -108,20 +108,20 @@ Modern code-centric approach for TypeScript/JavaScript
 import { app, HttpRequest, HttpResponseInit, Invocation上下文 } from "@azure/functions";
 
 export async function httpTrigger(
-  request: HttpRequest,
+  请求: HttpRequest,
   context: Invocation上下文
 ): Promise<HttpResponseInit> {
-  context.log(`Http function processed request for url "${request.url}"`);
+  context.log(`Http function processed 请求 for url "${请求.url}"`);
 
   try {
-    const name = request.query.get("name") || (await request.text()) || "world";
+    const name = 请求.查询.get("name") || (await 请求.text()) || "world";
 
     return {
       status: 200,
       jsonBody: { message: `Hello, ${name}!` }
     };
   } catch (error) {
-    context.error("Error processing request:", error);
+    context.error("Error processing 请求:", error);
     return {
       status: 500,
       jsonBody: { error: "Internal server error" }
@@ -163,9 +163,9 @@ app.storageBlob("blobTrigger", {
 
 ### Python v2 编程模型
 
-Decorator-based approach for Python functions
+Decorator-based 方法 for Python functions
 
-**When to use**: Building Python Azure Functions
+**使用场景**: Building Python Azure Functions
 
 ### 模板
 
@@ -178,7 +178,7 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
 @app.route(route="hello", methods=["GET", "POST"])
 async def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info("Python HTTP trigger function processed a request.")
+    logging.info("Python HTTP trigger function processed a 请求.")
 
     try:
         name = req.params.get("name")
@@ -200,7 +200,7 @@ async def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
                 mimetype="application/json"
             )
     except Exception as e:
-        logging.error(f"Error processing request: {str(e)}")
+        logging.error(f"Error processing 请求: {str(e)}")
         return func.HttpResponse(
             json.dumps({"error": "Internal server error"}),
             status_code=500,
@@ -232,7 +232,7 @@ def queue_trigger(msg: func.QueueMessage) -> None:
 
 Sequential execution with state persistence
 
-**When to use**: Need sequential workflow with automatic retry
+**使用场景**: Need sequential 工作流 with automatic retry
 
 ### 模板
 
@@ -299,7 +299,7 @@ public class OrderWorkflow
         string instanceId = await client.ScheduleNewOrchestrationInstanceAsync(
             "OrderOrchestrator", order);
 
-        return client.CreateCheck状态Response(req, instanceId);
+        return client.CreateCheck状态响应(req, instanceId);
     }
 }
 
@@ -308,13 +308,13 @@ public class OrderWorkflow
 - State automatically persisted between activities
 - Automatic retry on transient failures
 - Survives process restarts
-- Built-in status endpoint for monitoring
+- Built-in status 端点 for monitoring
 
 ### Durable Functions - Fan-Out/Fan-In
 
 Parallel execution with result aggregation
 
-**When to use**: Processing multiple items in parallel
+**使用场景**: Processing multiple items in parallel
 
 ### 模板
 
@@ -401,7 +401,7 @@ public class ParallelProcessing
 
 Minimize cold start latency in production
 
-**When to use**: Need fast response times in production
+**使用场景**: Need fast 响应 times in production
 
 ### 模板
 
@@ -426,7 +426,7 @@ public static void Warmup(
     var logger = context.GetLogger("Warmup");
     logger.LogInformation("Warmup trigger executed - initializing dependencies");
 
-    // Pre-initialize expensive resources
+    // Pre-initialize expensive 资源
     // Database connections, HttpClients, etc.
 }
 
@@ -477,7 +477,7 @@ public class Startup
 
 Reliable message processing with poison queue
 
-**When to use**: Processing messages from Azure Storage Queue
+**使用场景**: Processing messages from Azure Storage Queue
 
 ### 模板
 
@@ -557,7 +557,7 @@ public class QueueProcessor
 
 Handle work exceeding 230-second HTTP limit
 
-**When to use**: HTTP request triggers long-running work
+**使用场景**: HTTP 请求 triggers long-running work
 
 ### 模板
 
@@ -575,10 +575,10 @@ public static async Task<HttpResponseData> StartLongRunning(
         "LongRunningOrchestrator", input);
 
     // Return status URLs for polling
-    return client.CreateCheck状态Response(req, instanceId);
+    return client.CreateCheck状态响应(req, instanceId);
 }
 
-// Response includes:
+// 响应 includes:
 // {
 //   "id": "abc123",
 //   "statusQueryGetUri": "https://.../instances/abc123",
@@ -600,12 +600,12 @@ public static async Task<WorkItem> StartWork(
     var workItem = new WorkItem
     {
         Id = workId,
-        Request = input
+        请求 = input
     };
 
     // Return work ID for status checking
-    var response = req.CreateResponse(Http状态Code.Accepted);
-    await response.WriteAsJsonAsync(new
+    var 响应 = req.CreateResponse(Http状态Code.Accepted);
+    await 响应.WriteAsJsonAsync(new
     {
         workId = workId,
         statusUrl = $"/api/status/{workId}"
@@ -627,7 +627,7 @@ public static async Task ProcessWork(
 
 - HTTP timeout is 230 seconds regardless of plan
 - Use Durable Functions for async patterns
-- Return immediately with status endpoint
+- Return immediately with status 端点
 - Client polls for completion
 
 ## 尖锐边缘
@@ -640,7 +640,7 @@ Situation: HTTP-triggered functions with long processing time
 
 Symptoms:
 504 Gateway Timeout after ~4 minutes.
-Request terminates before function completes.
+请求 terminates before function completes.
 Client receives timeout even though function continues.
 host.json timeout setting has no effect for HTTP.
 
@@ -652,7 +652,7 @@ Even if you set functionTimeout to 30 minutes in host.json, HTTP triggers
 will timeout after 230 seconds from the client's perspective.
 
 The function may continue running after timeout, but the client won't
-receive the response.
+receive the 响应.
 
 Recommended fix:
 
@@ -689,12 +689,12 @@ public static async Task<HttpResponseData> StartWork(
 
     workItem = new WorkItem { Id = workId, /* ... */ };
 
-    var response = req.CreateResponse(HttpStatusCode.Accepted);
-    await response.WriteAsJsonAsync(new {
+    var 响应 = req.CreateResponse(HttpStatusCode.Accepted);
+    await 响应.WriteAsJsonAsync(new {
         id = workId,
         statusUrl = $"/api/status/{workId}"
     });
-    return response;
+    return 响应;
 }
 ```
 
@@ -719,13 +719,13 @@ Sporadic connection failures under load.
 Works locally but fails in production.
 
 Why this breaks:
-Creating a new HttpClient for each request creates a new socket connection.
+Creating a new HttpClient for each 请求 creates a new socket connection.
 Sockets linger in TIME_WAIT state for 240 seconds after closing.
 
 In a serverless environment with high throughput, you quickly exhaust
 available sockets. This affects all network clients, not just HttpClient.
 
-Azure Functions shares network resources among multiple customers,
+Azure Functions shares network 资源 among multiple customers,
 making this even more critical.
 
 Recommended fix:
@@ -910,7 +910,7 @@ public static async Task<string> RunOrchestrator(
     [OrchestrationTrigger] TaskOrchestrationContext context)
 {
     // Each activity has its own timeout
-    // Workflow can run for days
+    // 工作流 can run for days
     await context.CallActivityAsync("Step1", input);
     await context.CallActivityAsync("Step2", input);
     await context.CallActivityAsync("Step3", input);
@@ -1065,7 +1065,7 @@ var host = new HostBuilder()
     "applicationInsights": {
       "samplingSettings": {
         "isEnabled": true,
-        "excludedTypes": "Request"
+        "excludedTypes": "请求"
       }
     },
     "logLevel": {
@@ -1088,7 +1088,7 @@ public async Task Run(
 {
     // This logger always works
     var logger = context.GetLogger<MyFunction>();
-    logger.LogInformation("Processing request");
+    logger.LogInformation("Processing 请求");
 }
 ```
 
@@ -1179,7 +1179,7 @@ Situation: Using Premium plan expecting zero cold start
 
 Symptoms:
 Still experiencing cold starts despite Premium plan.
-First request to new instance is slow.
+First 请求 to new instance is slow.
 Latency spikes during scale-out events.
 Pre-warmed instances not being used.
 
@@ -1205,7 +1205,7 @@ public void Warmup(
     var logger = context.GetLogger("Warmup");
     logger.LogInformation("Warmup trigger fired");
 
-    // Initialize expensive resources
+    // Initialize expensive 资源
     _cosmosClient.GetContainer("db", "container");
     _httpClient.GetAsync("https://api.example.com/health").Wait();
 }
@@ -1224,7 +1224,7 @@ az functionapp config set \
 ## Optimize application initialization
 
 ```csharp
-// Lazy initialize heavy resources
+// Lazy initialize heavy 资源
 private static readonly Lazy<ExpensiveClient> _client =
     new Lazy<ExpensiveClient>(() => new ExpensiveClient());
 
@@ -1298,9 +1298,9 @@ Message: Thread.Sleep blocks threads. Use await Task.Delay() instead.
 
 Severity: WARNING
 
-Creating HttpClient per request causes socket exhaustion
+Creating HttpClient per 请求 causes socket exhaustion
 
-Message: New HttpClient per request. Use IHttpClientFactory or static client.
+Message: New HttpClient per 请求. Use IHttpClientFactory or static client.
 
 ### HttpClient in Using Statement
 
@@ -1335,7 +1335,7 @@ Message: HttpTrigger without [Function] attribute (isolated worker requires it).
 - user needs container-based deployment -> gcp-cloud-run (Azure Container Apps or Cloud Run)
 - user needs database design -> postgres-wizard (Azure SQL, Cosmos DB data modeling)
 - user needs authentication -> auth-specialist (Azure AD, Easy Auth, managed identity)
-- user needs complex orchestration -> workflow-automation (Logic Apps, Power Automate)
+- user needs complex orchestration -> 工作流-automation (Logic Apps, Power Automate)
 
 ## 使用场景
 - User mentions or implies: azure function

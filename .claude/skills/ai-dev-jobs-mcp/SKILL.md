@@ -8,7 +8,7 @@ source_type: community
 date_added: "2026-04-16"
 author: unitedideas
 tags: [mcp, jobs, ai-jobs, ml-jobs, recruiting, job-search, career]
-tools: [claude, cursor, gemini]
+tools: [claude, 游标, gemini]
 ---
 
 # AI Dev Jobs MCP
@@ -17,7 +17,7 @@ tools: [claude, cursor, gemini]
 
 AI Dev Jobs is a remote MCP server that gives AI agents access to a live index of AI and ML job listings. As of April 17, 2026, the live MCP stats report 8,405 active roles across 489 companies, a $213,500 median salary, and 600 new jobs this week. Agents can search jobs by role, location, or company, retrieve full job details, list hiring companies, match roles to a profile, and get salary or aggregate market statistics. It is designed for AI agents that assist with job searching, recruiting, or labor market analysis.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when helping a user search for AI or ML engineering jobs
 - Use when an agent needs to look up which companies are hiring for specific AI roles
@@ -26,9 +26,9 @@ AI Dev Jobs is a remote MCP server that gives AI agents access to a live index o
 
 ## MCP Configuration
 
-Add the AI Dev Jobs MCP server to your client configuration. The endpoint uses streamable HTTP and requires no authentication.
+Add the AI Dev Jobs MCP server to your client configuration. The 端点 uses streamable HTTP and requires no authentication.
 
-### Claude Desktop / Cursor / Windsurf
+### Claude Desktop / 游标 / Windsurf
 
 ```json
 {
@@ -49,7 +49,7 @@ No API key or authentication is required.
 Search the job index by keyword, location, company, or work arrangement. Returns matching listings with title, company, location, and salary information.
 
 ```
-search_jobs({ query: "machine learning engineer", location: "remote" })
+search_jobs({ 查询: "machine learning engineer", location: "remote" })
 ```
 
 ### `get_job`
@@ -70,7 +70,7 @@ list_companies({})
 
 ### `get_company`
 
-Retrieve details for a specific company, including available AI roles when exposed by the endpoint.
+Retrieve details for a specific company, including available AI roles when exposed by the 端点.
 
 ```
 get_company({ id: "openai" })
@@ -102,7 +102,7 @@ get_salary_data({ tag: "llm", level: "senior" })
 
 ### `list_tags`
 
-List indexed tags that can be used to filter searches or salary analysis.
+List indexed tags that can be used to 过滤器 searches or salary analysis.
 
 ```
 list_tags({})
@@ -116,7 +116,7 @@ list_tags({})
 Use @ai-dev-jobs-mcp to find remote machine learning engineer positions.
 ```
 
-The agent will call `search_jobs({ query: "machine learning engineer", location: "remote" })` and return matching listings.
+The agent will call `search_jobs({ 查询: "machine learning engineer", location: "remote" })` and return matching listings.
 
 ### Example 2: Check Which Companies Are Hiring
 

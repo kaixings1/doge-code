@@ -75,10 +75,10 @@ Better to have 100 great pages than 10,000 thin ones.
 | Curation | "best [category]" | "best website builders" |
 | Conversions | "[X] to [Y]" | "$10 USD to GBP" |
 | Comparisons | "[X] vs [Y]" | "webflow vs wordpress" |
-| Examples | "[type] examples" | "landing page examples" |
+| 示例 | "[type] 示例" | "landing page 示例" |
 | Locations | "[service] in [location]" | "dentists in austin" |
 | Personas | "[product] for [audience]" | "crm for real estate" |
-| 集成s | "[product A] [product B] integration" | "slack asana integration" |
+| 集成s | "[product A] [product B] 集成" | "slack asana 集成" |
 | Glossary | "what is [term]" | "what is pSEO" |
 | Translations | Content in multiple languages | Localized content |
 | Directory | "[category] tools" | "ai copywriting tools" |
@@ -94,7 +94,7 @@ Better to have 100 great pages than 10,000 thin ones.
 |----------------|-------------|
 | Proprietary data | Directories, Profiles |
 | Product with integrations | 集成s |
-| Design/creative product | Templates, Examples |
+| Design/creative product | Templates, 示例 |
 | Multi-segment audience | Personas |
 | Local presence | Locations |
 | Tool or utility product | Conversions |
@@ -173,7 +173,7 @@ You can layer multiple playbooks (e.g., "Best coworking spaces in San Diego").
 **Technical SEO:**
 - [ ] Unique titles and meta descriptions
 - [ ] Proper heading structure
-- [ ] Schema markup implemented
+- [ ] 架构 markup implemented
 - [ ] Page speed acceptable
 
 **Internal linking:**
@@ -215,7 +215,7 @@ Watch for: Thin content warnings, Ranking drops, Manual actions, Crawl errors
 - URL structure
 - Title/meta templates
 - Content outline
-- Schema markup
+- 架构 markup
 
 ---
 
@@ -233,6 +233,6 @@ Watch for: Thin content warnings, Ranking drops, Manual actions, Crawl errors
 ## 相关 Skills
 
 - **seo-audit**: For auditing programmatic pages after launch
-- **schema**: For adding structured data
+- **架构**: For adding structured data
 - **site-architecture**: For page hierarchy, URL structure, and internal linking
 - **competitors**: For comparison page frameworks

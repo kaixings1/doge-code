@@ -23,7 +23,7 @@ Build reliable, fast, and maintainable end-to-end test suites that provide confi
 
 ## 不要使用此技能的场景
 
-- You only need unit or integration tests
+- You only need unit or 集成 tests
 - The environment cannot support stable UI automation
 - You cannot provision safe test accounts or data
 

@@ -52,7 +52,7 @@ class ComputerUseAgent:
     def capture_screenshot(self) -> str:
         """Capture screen and return base64 encoded image."""
         screenshot = pyautogui.screenshot()
-        # Resize for token efficiency (1280x800 is good balance)
+        # Resize for 令牌 efficiency (1280x800 is good balance)
         screenshot = screenshot.resize((1280, 800), Image.LANCZOS)
 
         import io
@@ -102,7 +102,7 @@ class ComputerUseAgent:
         The loop:
         1. Screenshot current state
         2. Send to vision model with task context
-        3. Parse action from response
+        3. Parse action from 响应
         4. Execute action
         5. Repeat until done or max steps
         """
@@ -142,22 +142,22 @@ class ComputerUseAgent:
 
             messages.append({"role": "user", "content": user_content})
 
-            response = self.client.messages.create(
+            响应 = self.client.messages.create(
                 model=self.model,
                 max_tokens=1024,
                 system=system_prompt,
                 messages=messages
             )
 
-            assistant_message = response.content[0].text
+            assistant_message = 响应.content[0].text
             messages.append({"role": "assistant", "content": assistant_message})
 
-            # 3. Parse action from response
+            # 3. Parse action from 响应
             import json
             try:
                 action = json.loads(assistant_message)
             except json.JSONDecodeError:
-                # Try to extract JSON from response
+                # Try to extract JSON from 响应
                 import re
                 match = re.search(r'\{[^}]+\}', assistant_message)
                 if match:
@@ -193,7 +193,7 @@ result = agent.run("Open Chrome and search for 'weather today'")
 
 - Running without step limits (infinite loops)
 - No delay between actions (UI can't keep up)
-- Screenshots at full resolution (token explosion)
+- Screenshots at full resolution (令牌 explosion)
 - Ignoring action failures (no recovery)
 
 ### Sandboxed Environment Pattern
@@ -206,7 +206,7 @@ Key isolation requirements:
 1. NETWORK: Restrict to necessary endpoints only
 2. FILESYSTEM: Read-only or scoped to temp directories
 3. CREDENTIALS: No access to host credentials
-4. SYSCALLS: Filter dangerous system calls
+4. SYSCALLS: 过滤器 dangerous system calls
 5. RESOURCES: Limit CPU, memory, time
 
 The goal is "blast radius minimization" - if the agent goes wrong,
@@ -321,7 +321,7 @@ from typing import Optional
 
 @dataclass
 class SandboxConfig:
-    """Configuration for agent sandbox."""
+    """配置 for agent sandbox."""
     network_allowed: list[str] = None  # Allowed domains
     max_runtime_seconds: int = 300
     max_memory_mb: int = 2048
@@ -378,13 +378,13 @@ class SandboxedAgent:
 
         # Send task to agent via API
         import requests
-        response = requests.post(
+        响应 = requests.post(
             f"http://localhost:8080/task",
             json={"task": task},
             timeout=self.config.max_runtime_seconds
         )
 
-        return response.json()
+        return 响应.json()
 
     def stop(self):
         """Stop and remove sandbox."""
@@ -615,7 +615,7 @@ class AnthropicComputerUse:
         tools = self.get_tools()
 
         for step in range(max_steps):
-            response = self.client.beta.messages.create(
+            响应 = self.client.beta.messages.create(
                 model=self.model,
                 max_tokens=4096,
                 tools=tools,
@@ -624,19 +624,19 @@ class AnthropicComputerUse:
             )
 
             # Check for completion
-            if response.stop_reason == "end_turn":
+            if 响应.stop_reason == "end_turn":
                 return {
                     "success": True,
-                    "result": response.content[0].text if response.content else "",
+                    "result": 响应.content[0].text if 响应.content else "",
                     "steps": step + 1
                 }
 
             # Handle tool use
-            if response.stop_reason == "tool_use":
-                messages.append({"role": "assistant", "content": response.content})
+            if 响应.stop_reason == "tool_use":
+                messages.append({"role": "assistant", "content": 响应.content})
 
                 tool_results = []
-                for block in response.content:
+                for block in 响应.content:
                     if block.type == "tool_use":
                         result = self.execute_tool(block.name, block.input)
                         tool_results.append({
@@ -698,7 +698,7 @@ class BrowserUseAgent:
         self.page = None
 
     async def start(self, headless: bool = True):
-        """Start browser session."""
+        """Start browser 会话."""
         self.playwright = await async_playwright().start()
         self.browser = await self.playwright.chromium.launch(headless=headless)
         self.page = await self.browser.new_page()
@@ -737,7 +737,7 @@ class BrowserUseAgent:
             "url": self.page.url,
             "title": await self.page.title(),
             "accessibility_tree": snapshot,
-            "interactable_elements": elements[:50]  # Limit for token efficiency
+            "interactable_elements": elements[:50]  # Limit for 令牌 efficiency
         }
 
     async def execute_action(self, action: BrowserAction) -> dict:
@@ -826,14 +826,14 @@ class BrowserUseAgent:
             messages.append({"role": "user", "content": user_message})
 
             # Get LLM decision
-            response = llm_client.messages.create(
+            响应 = llm_client.messages.create(
                 model="claude-sonnet-4-20250514",
                 max_tokens=1024,
                 system=system_prompt,
                 messages=messages
             )
 
-            assistant_text = response.content[0].text
+            assistant_text = 响应.content[0].text
             messages.append({"role": "assistant", "content": assistant_text})
 
             # Parse and execute
@@ -895,10 +895,10 @@ sensitive steps such as completing a purchase."
 Sensitivity levels:
 1. LOW: Navigation, reading (auto-approve)
 2. MEDIUM: Form filling, clicking (log, maybe confirm)
-3. HIGH: Purchases, authentication, file operations (always confirm)
+3. HIGH: Purchases, 认证, file operations (always confirm)
 4. CRITICAL: Credential entry, financial transactions (confirm + review)
 
-**When to use**: Actions with real-world consequences,Financial transactions,Authentication flows,File modifications
+**When to use**: Actions with real-world consequences,Financial transactions,认证 flows,File modifications
 
 from enum import Enum
 from dataclasses import dataclass
@@ -974,10 +974,10 @@ class ConfirmationGate:
         print(f"{'='*60}")
 
         while True:
-            response = input("Allow this action? [y/n]: ").lower().strip()
-            if response in ['y', 'yes']:
+            响应 = input("Allow this action? [y/n]: ").lower().strip()
+            if 响应 in ['y', 'yes']:
                 return True
-            elif response in ['n', 'no']:
+            elif 响应 in ['n', 'no']:
                 return False
 
     def classify_action(self, action_type: str, context: dict) -> ActionSeverity:
@@ -1028,7 +1028,7 @@ class ConfirmationGate:
         if severity == ActionSeverity.MEDIUM and self.auto_confirm_medium:
             return True, "auto-approved (medium severity)"
 
-        # Request confirmation
+        # 请求 confirmation
         approved = self.confirm_callback(action)
 
         if approved:
@@ -1094,7 +1094,7 @@ class ConfirmedComputerUseAgent:
             r'password',
             r'secret',
             r'api.?key',
-            r'token'
+            r'令牌'
         ]
         import re
         return any(re.search(p, text.lower()) for p in patterns)
@@ -1177,7 +1177,7 @@ class ActionLogEntry:
     def _sanitize_params(self, params: dict) -> dict:
         """Remove sensitive data from params."""
         sanitized = {}
-        sensitive_keys = ['password', 'secret', 'token', 'key', 'credit_card']
+        sensitive_keys = ['password', 'secret', '令牌', 'key', 'credit_card']
 
         for k, v in params.items():
             if any(s in k.lower() for s in sensitive_keys):
@@ -1191,7 +1191,7 @@ class ActionLogEntry:
 
 @dataclass
 class TaskSession:
-    """A complete task execution session."""
+    """A complete task execution 会话."""
     session_id: str
     task: str
     start_time: datetime
@@ -1213,7 +1213,7 @@ class ActionLogger:
         self.current_session: Optional[TaskSession] = None
 
     def start_session(self, task: str) -> str:
-        """Start a new task session."""
+        """Start a new task 会话."""
         import uuid
         session_id = str(uuid.uuid4())[:8]
 
@@ -1238,7 +1238,7 @@ class ActionLogger:
     ):
         """Log a single action."""
         if not self.current_session:
-            raise RuntimeError("No active session")
+            raise RuntimeError("No active 会话")
 
         # Save screenshots if provided
         screenshot_paths = {}
@@ -1291,7 +1291,7 @@ class ActionLogger:
             f.write(json.dumps(entry.to_dict()) + "\n")
 
     def end_session(self, success: bool, result: str = None):
-        """End current session."""
+        """End current 会话."""
         if not self.current_session:
             return
 
@@ -1299,7 +1299,7 @@ class ActionLogger:
         self.current_session.success = success
         self.current_session.final_result = result
 
-        # Write session summary
+        # Write 会话 summary
         summary_file = os.path.join(
             self.log_dir,
             f"session_{self.current_session.session_id}_summary.json"
@@ -1331,7 +1331,7 @@ class ActionLogger:
         self.current_session = None
 
     def get_session_replay(self, session_id: str) -> list[dict]:
-        """Get all actions from a session for replay/debugging."""
+        """Get all actions from a 会话 for replay/debugging."""
         log_file = os.path.join(self.log_dir, f"session_{session_id}.jsonl")
 
         actions = []
@@ -1341,7 +1341,7 @@ class ActionLogger:
 
         return actions
 
-# Integration with agent
+# 集成 with agent
 class LoggedComputerUseAgent:
     """Computer use agent with comprehensive logging."""
 
@@ -1614,7 +1614,7 @@ async def reliable_drag(page, source, target):
 # If vision fails, try direct DOM manipulation
 async def robust_select(page, select_selector, value):
     try:
-        # Try vision approach first
+        # Try vision 方法 first
         await vision_agent.select(select_selector, value)
     except Exception:
         # Fall back to direct DOM
@@ -1732,7 +1732,7 @@ Claude's context window is finite. When full:
 
 "Getting agents to make consistent progress across multiple context
 windows remains an open problem. The core challenge is that they must
-work in discrete sessions, and each new session begins with no memory
+work in discrete sessions, and each new 会话 begins with no memory
 of what came before." - Anthropic engineering blog
 
 Recommended fix:
@@ -2125,7 +2125,7 @@ Severity: WARNING
 
 Computer use should track API costs
 
-Message: No cost tracking. Monitor token usage to prevent bill surprises.
+Message: No cost tracking. Monitor 令牌 usage to prevent bill surprises.
 
 ### No Maximum Cost Limit
 

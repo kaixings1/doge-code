@@ -31,13 +31,13 @@ import com.azure.core.credential.AzureKeyCredential;
 
 // With API Key
 EventGridPublisherClient<EventGridEvent> client = new EventGridPublisherClientBuilder()
-    .endpoint("<topic-endpoint>")
+    .端点("<topic-端点>")
     .credential(new AzureKeyCredential("<access-key>"))
     .buildEventGridEventPublisherClient();
 
 // For CloudEvents
 EventGridPublisherClient<CloudEvent> cloudClient = new EventGridPublisherClientBuilder()
-    .endpoint("<topic-endpoint>")
+    .端点("<topic-端点>")
     .credential(new AzureKeyCredential("<access-key>"))
     .buildCloudEventPublisherClient();
 ```
@@ -48,7 +48,7 @@ EventGridPublisherClient<CloudEvent> cloudClient = new EventGridPublisherClientB
 import com.azure.identity.DefaultAzureCredentialBuilder;
 
 EventGridPublisherClient<EventGridEvent> client = new EventGridPublisherClientBuilder()
-    .endpoint("<topic-endpoint>")
+    .端点("<topic-端点>")
     .credential(new DefaultAzureCredentialBuilder().build())
     .buildEventGridEventPublisherClient();
 ```
@@ -59,7 +59,7 @@ EventGridPublisherClient<EventGridEvent> client = new EventGridPublisherClientBu
 import com.azure.messaging.eventgrid.EventGridPublisherAsyncClient;
 
 EventGridPublisherAsyncClient<EventGridEvent> asyncClient = new EventGridPublisherClientBuilder()
-    .endpoint("<topic-endpoint>")
+    .端点("<topic-端点>")
     .credential(new AzureKeyCredential("<access-key>"))
     .buildEventGridEventPublisherAsyncClient();
 ```
@@ -68,9 +68,9 @@ EventGridPublisherAsyncClient<EventGridEvent> asyncClient = new EventGridPublish
 
 | Type | Description |
 |------|-------------|
-| `EventGridEvent` | Azure Event Grid native schema |
+| `EventGridEvent` | Azure Event Grid native 架构 |
 | `CloudEvent` | CNCF CloudEvents 1.0 specification |
-| `BinaryData` | Custom schema events |
+| `BinaryData` | Custom 架构 events |
 
 ## Core Patterns
 
@@ -237,7 +237,7 @@ import com.azure.messaging.eventgrid.namespaces.EventGridReceiverClientBuilder;
 import com.azure.messaging.eventgrid.namespaces.models.*;
 
 EventGridReceiverClient receiverClient = new EventGridReceiverClientBuilder()
-    .endpoint("<namespace-endpoint>")
+    .端点("<namespace-端点>")
     .credential(new AzureKeyCredential("<key>"))
     .topicName("my-topic")
     .subscriptionName("my-subscription")
@@ -293,7 +293,7 @@ EVENT_GRID_ACCESS_KEY=<your-access-key>
 
 1. **Batch Events**: Send multiple events in one call when possible
 2. **Idempotency**: Include unique event IDs for deduplication
-3. **Schema Validation**: Use strongly-typed event data classes
+3. **架构 Validation**: Use strongly-typed event data classes
 4. **Retry Logic**: Built-in, but consider dead-letter for failures
 5. **Event Size**: Keep events under 1MB (64KB for basic tier)
 
@@ -307,7 +307,7 @@ EVENT_GRID_ACCESS_KEY=<your-access-key>
 - "webhook events"
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

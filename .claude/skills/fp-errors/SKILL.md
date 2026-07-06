@@ -419,7 +419,7 @@ For async operations that can fail, use `TaskEither`. It's like `Either` but for
 import * as TE from 'fp-ts/TaskEither'
 import { pipe } from 'fp-ts/function'
 
-// Wrap any async operation
+// Wrap any async 操作
 const fetchUser = (id: string): TE.TaskEither<Error, User> =>
   TE.tryCatch(
     () => fetch(`/api/users/${id}`).then(r => r.json()),
@@ -568,9 +568,9 @@ const eitherUser = pipe(
 
 ```typescript
 // Wrap at the boundary
-const safeParse = <T>(schema: ZodSchema<T>) => (data: unknown): E.Either<ZodError, T> =>
+const safeParse = <T>(架构: ZodSchema<T>) => (data: unknown): E.Either<ZodError, T> =>
   E.tryCatch(
-    () => schema.parse(data),
+    () => 架构.parse(data),
     (e) => e as ZodError
   )
 
@@ -693,16 +693,16 @@ const fetchWithErrorHandling = <T>(url: string): TE.TaskEither<ApiError, T> =>
       () => fetch(url),
       () => createApiError('Network error', 'NETWORK')
     ),
-    TE.chain(response =>
-      response.ok
+    TE.chain(响应 =>
+      响应.ok
         ? TE.tryCatch(
-            () => response.json() as Promise<T>,
+            () => 响应.json() as Promise<T>,
             () => createApiError('Invalid JSON', 'PARSE')
           )
         : TE.left(createApiError(
-            `HTTP ${response.status}`,
-            response.status === 404 ? 'NOT_FOUND' : 'HTTP_ERROR',
-            response.status
+            `HTTP ${响应.status}`,
+            响应.status === 404 ? 'NOT_FOUND' : 'HTTP_ERROR',
+            响应.status
           ))
     )
   )
@@ -804,10 +804,10 @@ const bulkProcess = <T>(
     T.sequenceArray,
     T.map(results => ({
       succeeded: results
-        .filter((r): r is { type: 'succeeded'; result: T } => r.type === 'succeeded')
+        .过滤器((r): r is { type: 'succeeded'; result: T } => r.type === 'succeeded')
         .map(r => r.result),
       failed: results
-        .filter((r): r is { type: 'failed'; id: string; error: string } => r.type === 'failed')
+        .过滤器((r): r is { type: 'failed'; id: string; error: string } => r.type === 'failed')
         .map(({ id, error }) => ({ id, error }))
     }))
   )
@@ -827,6 +827,14 @@ const deleteUsers = (userIds: string[]) =>
 ---
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 | Pattern | Use When | Example |
 |---------|----------|---------|

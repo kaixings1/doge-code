@@ -1,6 +1,6 @@
 ---
 name: git-pr-review
-description: 从提交历史生成简洁结构化的 PR 描述，最小化 token 用量。
+description: 从提交历史生成简洁结构化的 PR 描述，最小化 令牌 用量。
 risk: safe
 source: community
 source_type: community
@@ -10,17 +10,17 @@ author: community
 
 ## Objective
 
-Create a clean, objective pull request description by analyzing commit history between base and current branch.
+Create a clean, objective pull 请求 description by analyzing commit history between base and current branch.
 
 ---
 
 ## 使用场景
 
-Use this skill when you need to generate a structured pull request description based on commit history, especially for maintaining consistency and reducing manual effort.
+当您需要根据提交历史生成结构化的拉取请求描述时使用此技能，特别是为了保持一致性并减少手动工作。
 
 ---
 
-## Strategy (Token Efficient)
+## Strategy (令牌 Efficient)
 
 1. DO NOT scan full diffs initially
 2. START with commit messages only
@@ -86,7 +86,7 @@ Heuristic:
 - Same folder/file pattern → same group
 
 Example:
-- auth.service + auth.controller → "authentication"
+- auth.service + auth.controller → "认证"
 - payment + checkout → "payment flow"
 
 ---
@@ -122,7 +122,7 @@ Rules:
 ## Description Format (STRICT)
 
 ## 总结
-1–2 lines explaining the purpose
+1–2 lines explaining the 目的
 
 ## Changes
 Grouped bullet points:
@@ -163,16 +163,16 @@ Only if relevant:
 ## Example Output
 
 Title:
-feat(auth): implement JWT authentication and session handling
+feat(auth): implement JWT 认证 and 会话 handling
 
 ---
 
 ## 总结
-Adds authentication flow and resolves session persistence issues.
+Adds 认证 flow and resolves 会话 persistence issues.
 
 ## Changes
-- authentication: added JWT middleware and login flow
-- session: fixed expiration handling
+- 认证: added JWT 中间件 and login flow
+- 会话: fixed expiration handling
 - user: refactored user service logic
 
 ## Impact

@@ -8,10 +8,10 @@ date_added: '2026-02-27'
 
 # Azure.ResourceManager.Fabric (.NET)
 
-Management plane SDK for provisioning and managing Microsoft Fabric capacity resources via Azure Resource Manager.
+Management plane SDK for provisioning and managing Microsoft Fabric capacity 资源 via Azure Resource Manager.
 
 > **Management Plane Only**
-> This SDK manages Fabric *capacities* (compute resources). For working with Fabric workspaces, lakehouses, warehouses, and data items, use the Microsoft Fabric REST API or data plane SDKs.
+> This SDK manages Fabric *capacities* (compute 资源). For working with Fabric workspaces, lakehouses, warehouses, and data items, use the Microsoft Fabric REST API or data plane SDKs.
 
 ## 安装
 
@@ -87,14 +87,14 @@ var capacityData = new FabricCapacityData(
     Tags = { ["Environment"] = "Production" }
 };
 
-// Create capacity (long-running operation)
+// Create capacity (long-running 操作)
 var capacityCollection = resourceGroup.Value.GetFabricCapacities();
-var operation = await capacityCollection.CreateOrUpdateAsync(
+var 操作 = await capacityCollection.CreateOrUpdateAsync(
     WaitUntil.Completed,
     "my-fabric-capacity",
     capacityData);
 
-FabricCapacityResource capacity = operation.Value;
+FabricCapacityResource capacity = 操作.Value;
 Console.WriteLine($"Created capacity: {capacity.Data.Name}");
 Console.WriteLine($"State: {capacity.Data.Properties.State}");
 ```
@@ -247,18 +247,18 @@ await foreach (var skuDetails in capacity.Value.GetSkusForCapacityAsync())
 | `FabricSkuTier` | Pricing tier (currently only "Fabric") |
 | `FabricProvisioningState` | Provisioning states (Succeeded, Failed, etc.) |
 | `FabricResourceState` | Resource states (Active, Suspended, etc.) |
-| `FabricNameAvailabilityContent` | Name availability check request |
-| `FabricNameAvailabilityResult` | Name availability check response |
+| `FabricNameAvailabilityContent` | Name availability check 请求 |
+| `FabricNameAvailabilityResult` | Name availability check 响应 |
 
 ## Provisioning and Resource States
 
 ### Provisioning States (`FabricProvisioningState`)
-- `Succeeded` - Operation completed successfully
-- `Failed` - Operation failed
-- `Canceled` - Operation was canceled
+- `Succeeded` - 操作 completed successfully
+- `Failed` - 操作 failed
+- `Canceled` - 操作 was canceled
 - `Deleting` - Capacity is being deleted
 - `Provisioning` - Initial provisioning in progress
-- `Updating` - Update operation in progress
+- `Updating` - Update 操作 in progress
 
 ### Resource States (`FabricResourceState`)
 - `Active` - Capacity is running and available
@@ -272,7 +272,7 @@ await foreach (var skuDetails in capacity.Value.GetSkusForCapacityAsync())
 - `Paused` - Paused
 - `Resuming` - Resuming from suspended/paused
 - `Scaling` - Scaling to different SKU
-- `Preparing` - Preparing resources
+- `Preparing` - Preparing 资源
 
 ## 最佳实践
 
@@ -292,7 +292,7 @@ using Azure;
 
 try
 {
-    var operation = await capacityCollection.CreateOrUpdateAsync(
+    var 操作 = await capacityCollection.CreateOrUpdateAsync(
         WaitUntil.Completed, capacityName, capacityData);
 }
 catch (RequestFailedException ex) when (ex.Status == 409)
@@ -339,7 +339,7 @@ catch (RequestFailedException ex)
 - [Fabric Capacity Management](https://learn.microsoft.com/fabric/admin/service-admin-portal-capacity-settings)
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

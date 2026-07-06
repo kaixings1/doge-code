@@ -1,5 +1,5 @@
 ---
-name: fal-workflow
+name: fal-工作流
 description: "FAL 工作流 — FAL AI 工作流编排"
 risk: unknown
 source: community

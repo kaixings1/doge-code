@@ -45,12 +45,12 @@ metadata:
 ```bash
 # Linux/macOS — 自动检测技能目录
 SKILL_DIR="${CLAUDE_PLUGIN_ROOT:-$HOME/.claude/skills/planning-with-files}"
-$(command -v python3 || command -v python) "${SKILL_DIR}/scripts/session-catchup.py" "$(pwd)"
+$(command -v python3 || command -v python) "${SKILL_DIR}/scripts/会话-catchup.py" "$(pwd)"
 ```
 
 ```powershell
 # Windows PowerShell
-& (Get-Command python -ErrorAction SilentlyContinue).Source "$env:USERPROFILE\.claude\skills\planning-with-files\scripts\session-catchup.py" (Get-Location)
+& (Get-Command python -ErrorAction SilentlyContinue).Source "$env:USERPROFILE\.claude\skills\planning-with-files\scripts\会话-catchup.py" (Get-Location)
 ```
 
 如果恢复报告显示有未同步的上下文：

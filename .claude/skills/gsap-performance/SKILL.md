@@ -18,9 +18,9 @@ od:
 
 > Curated from GreenSock's official GSAP skills: https://github.com/greensock/gsap-skills
 
-## When to Use This Skill
+## 使用场景 This Skill
 
-Apply when optimizing GSAP animations for smooth 60fps, reducing layout/paint cost, or when the user asks about performance, jank, or best practices for fast animations.
+Apply when optimizing GSAP animations for smooth 60fps, reducing layout/paint cost, or when the user asks about performance, jank, or 最佳实践 for fast animations.
 
 **相关 skills:** Build animations with **gsap-core** (transforms, autoAlpha) and **gsap-timeline**; for ScrollTrigger performance see **gsap-scrolltrigger**.
 
@@ -76,7 +76,7 @@ document.querySelector("#container").addEventListener("mousemove", (e) => {
 - Pause or kill off-screen or inactive animations when they’re not visible (e.g. when the user navigates away).
 - Avoid animating huge numbers of properties on many elements at once; simplify or sequence if needed.
 
-## Best practices
+## 最佳实践
 
 - ✅ Animate **transform** and **opacity**; use **will-change** in CSS only on elements that animate.
 - ✅ Use **stagger** instead of many separate tweens with manual delays when the animation is the same.

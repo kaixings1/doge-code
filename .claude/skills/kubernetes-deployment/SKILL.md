@@ -1,13 +1,13 @@
 ---
-name: kubernetes-deployment
+name: kubernetes-部署
 description: "用于容器编排、Helm chart、服务网格和生产就绪 K8s 配置的 Kubernetes 部署工作流。"
-category: granular-workflow-bundle
+category: granular-工作流-bundle
 risk: safe
 source: personal
 date_added: "2026-02-27"
 ---
 
-# Kubernetes Deployment Workflow
+# Kubernetes 部署 工作流
 
 ## 概述
 
@@ -22,7 +22,7 @@ date_added: "2026-02-27"
 - 设置 K8s 网络时
 - 实施 K8s 安全时
 
-## Workflow Phases
+## 工作流 Phases
 
 ### Phase 1: Container Preparation
 
@@ -49,7 +49,7 @@ Use @docker-expert to containerize application for K8s
 - `kubernetes-architect` - K8s architecture
 
 #### Actions
-1. Create Deployment
+1. Create 部署
 2. Configure Service
 3. Set up ConfigMap
 4. Create Secrets
@@ -100,7 +100,7 @@ Use @istio-traffic-management to configure Istio
 
 #### Skills to Invoke
 - `k8s-security-policies` - K8s security
-- `mtls-configuration` - mTLS
+- `mtls-配置` - mTLS
 
 #### Actions
 1. Configure RBAC
@@ -118,7 +118,7 @@ Use @k8s-security-policies to secure Kubernetes cluster
 
 #### Skills to Invoke
 - `grafana-dashboards` - Grafana
-- `prometheus-configuration` - Prometheus
+- `prometheus-配置` - Prometheus
 
 #### Actions
 1. Install monitoring stack
@@ -129,25 +129,25 @@ Use @k8s-security-policies to secure Kubernetes cluster
 
 #### Copy-Paste Prompts
 ```
-Use @prometheus-configuration to set up K8s monitoring
+Use @prometheus-配置 to set up K8s monitoring
 ```
 
-### Phase 7: Deployment
+### Phase 7: 部署
 
 #### Skills to Invoke
-- `deployment-engineer` - Deployment
-- `gitops-workflow` - GitOps
+- `部署-engineer` - 部署
+- `gitops-工作流` - GitOps
 
 #### Actions
 1. Configure CI/CD
 2. Set up GitOps
 3. Deploy to cluster
-4. Verify deployment
+4. Verify 部署
 5. Monitor rollout
 
 #### Copy-Paste Prompts
 ```
-Use @gitops-workflow to implement GitOps deployment
+Use @gitops-工作流 to implement GitOps 部署
 ```
 
 ## Quality Gates
@@ -157,9 +157,9 @@ Use @gitops-workflow to implement GitOps deployment
 - [ ] Helm chart installs
 - [ ] Security configured
 - [ ] Monitoring active
-- [ ] Deployment successful
+- [ ] 部署 successful
 
-## Related Workflow Bundles
+## Related 工作流 Bundles
 
 - `cloud-devops` - Cloud/DevOps
 - `terraform-infrastructure` - Infrastructure
