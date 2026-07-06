@@ -128,3 +128,46 @@ export function handleExport(id: string): NotebookResult {
   const md = exportNoteToMarkdown(note)
   return { success: true, message: '笔记已导出:\n\n' + md, data: note }
 }
+
+// ====== 格式化工具（给 notebook-ui.tsx 调用） ======
+
+export function formatTagList(tags: string[]): string {
+  const lines: string[] = ['标签:']
+  for (const t of tags) {
+    lines.push('  #' + t)
+  }
+  return lines.join('\n')
+}
+
+export function formatPaginated(paginated: PaginatedResult<Note>): string {
+  if (paginated.items.length === 0) return '没有笔记'
+  const lines: string[] = ['共 ' + paginated.total + ' 条笔记:']
+  for (const note of paginated.items) {
+    const d = new Date(note.updatedAt)
+    const ds = (d.getMonth() + 1) + '/' + d.getDate()
+    const tags = note.tags.length > 0 ? ' [' + note.tags.join(', ') + ']' : ''
+    const pin = note.isPinned ? '📌 ' : ''
+    lines.push('  ' + pin + note.title + ' (' + ds + ')' + tags + ' ID:' + note.id.slice(0, 8))
+  }
+  lines.push('')
+  lines.push('第 ' + paginated.page + '/' + paginated.totalPages + ' 页 (共 ' + paginated.total + ' 条)')
+  return lines.join('\n')
+}
+
+export function formatSingleNote(note: Note): string {
+  const lines: string[] = [
+    note.isPinned ? '📌 ' : '' + note.title,
+    '  ID: ' + note.id,
+    '  创建: ' + note.createdAt,
+    '  更新: ' + note.updatedAt,
+  ]
+  if (note.tags.length > 0) {
+    lines.push('  标签: ' + note.tags.join(', '))
+  }
+  if (note.content) {
+    const preview = note.content.slice(0, 200)
+    lines.push('')
+    lines.push(preview + (note.content.length > 200 ? '...' : ''))
+  }
+  return lines.join('\n')
+}

@@ -1,6 +1,6 @@
 ---
 name: winston-ai-automation
-description: "通过 Rube MCP (Composio) 自动执行 Winston AI 任务。使用前始终先搜索工具以获取当前 架构。"
+description: "通过 Rube MCP (Composio) 自动执行 Winston AI 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
