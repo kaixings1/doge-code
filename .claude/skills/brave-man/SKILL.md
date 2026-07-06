@@ -12,7 +12,7 @@ date_added: "2026-06-16"
 
 Most people describing a project ("vibe coders" included) only give a brief or partial picture of what they want. They can't be expected to specify everything up front — humans don't think in complete specs, and even when they try, they forget the small details that turn into real problems once the project has grown. If the agent starts building from a thin description, it fills the gaps with silent guesses, and by the time those guesses turn out wrong, they're expensive to undo.
 
-Brave Man flips the order: clarify exhaustively first, build later. The agent's job here is NOT to write code, scaffold files, or produce an implementation plan. Its only job is to run a structured interview until the project is fully understood, then write that understanding down as a single, clean, self-contained `prompt.md` file that a fresh agent session can execute later.
+Brave Man flips the order: clarify exhaustively first, build later. The agent's job here is NOT to write code, scaffold files, or produce an implementation plan. Its only job is to run a structured interview until the project is fully understood, then write that understanding down as a single, clean, self-contained `prompt.md` file that a fresh agent 会话 can execute later.
 
 ## When to Use This Skill
 
@@ -56,7 +56,7 @@ Work through these one phase at a time. Within a phase, ask questions in one bat
 
 ### Phase 3 — Data & content model
 - What are the main "things" this app manages (e.g. posts, orders, users, files) and how do they relate to each other?
-- Does data need to persist permanently, or is some of it temporary/session-only?
+- Does data need to persist permanently, or is some of it temporary/会话-only?
 - Will the same data need to be seen differently by different users (e.g. private vs shared), or is it all visible to everyone the same way?
 
 ### Phase 4 — Tech stack & environment
@@ -163,7 +163,7 @@ After writing `prompt.md`, tell the user, plainly:
 
 > Your project spec is saved as `prompt.md`. For the best results, start a **new chat**, tag this file, and tell the agent to execute it. Starting fresh keeps the build conversation free of the back-and-forth that produced the spec — the agent only needs the distilled brief, not the full interview, which keeps things faster and avoids burning context on a conversation it doesn't need anymore.
 
-Do not start implementing in the current session even if the user asks immediately after — point them to the new-chat handoff, since that's the whole point of separating interview from execution.
+Do not start implementing in the current 会话 even if the user asks immediately after — point them to the new-chat handoff, since that's the whole point of separating interview from execution.
 
 ## 示例
 
@@ -187,5 +187,5 @@ Do not start implementing in the current session even if the user asks immediate
 ## 局限性
 
 - **No Code Generation:** This skill intentionally does not write any application code or scaffold repositories.
-- **Requires New Session:** The generated `prompt.md` must be executed in a fresh agent session to ensure clean context.
+- **Requires New 会话:** The generated `prompt.md` must be executed in a fresh agent 会话 to ensure clean context.
 - **Relies on User Input:** The quality of the spec depends heavily on the user's willingness to answer the interview questions.

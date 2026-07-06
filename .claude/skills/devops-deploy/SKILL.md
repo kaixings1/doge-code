@@ -15,7 +15,7 @@ tags:
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -26,15 +26,15 @@ tools:
 
 DevOps e deploy de aplicacoes — Docker, CI/CD com GitHub Actions, AWS Lambda, SAM, Terraform, infraestrutura como codigo e monitoramento. Ativar para: dockerizar aplicacao, configurar pipeline CI/CD, deploy na AWS, Lambda, ECS, configurar GitHub Actions, Terraform, rollback, blue-green deploy, health checks, alertas.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - When you need specialized assistance with this domain
 
 ## 不适用场景
 
 - The task is unrelated to devops deploy
-- A simpler, more specific tool can handle the request
-- The user needs general-purpose assistance without domain expertise
+- A simpler, more specific tool can handle the 请求
+- The user needs general-目的 assistance without domain expertise
 
 ## 工作原理
 
@@ -114,7 +114,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
-      Handler: lambda_function.handler
+      处理器: lambda_function.处理器
       MemorySize: 512
       Policies:
         - DynamoDBCrudPolicy:
@@ -176,7 +176,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/设置-python@v5
         with: { python-version: "3.11" }
       - run: pip install -r requirements.txt
       - run: pytest tests/ -v --cov=src --cov-report=xml
@@ -196,7 +196,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/设置-sam@v2
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -213,7 +213,7 @@ jobs:
 
 ---
 
-## Health Check Endpoint
+## Health Check 端点
 
 ```python
 from fastapi import FastAPI
@@ -258,7 +258,7 @@ def create_error_alarm(function_name: str, sns_topic_arn: str):
 ## 5. Checklist De Producao
 
 - [ ] Variaveis de ambiente via Secrets Manager (nunca hardcoded)
-- [ ] Health check endpoint respondendo
+- [ ] Health check 端点 respondendo
 - [ ] Logs estruturados (JSON) com request_id
 - [ ] Rate limiting configurado
 - [ ] CORS restrito a dominios autorizados
@@ -274,10 +274,10 @@ def create_error_alarm(function_name: str, sns_topic_arn: str):
 
 | Comando | Acao |
 |---------|------|
-| `/docker-setup` | Dockeriza a aplicacao |
+| `/docker-设置` | Dockeriza a aplicacao |
 | `/sam-deploy` | Deploy completo na AWS Lambda |
-| `/ci-cd-setup` | Configura GitHub Actions pipeline |
-| `/monitoring-setup` | Configura CloudWatch e alertas |
+| `/ci-cd-设置` | Configura GitHub Actions pipeline |
+| `/monitoring-设置` | Configura CloudWatch e alertas |
 | `/production-checklist` | Roda checklist pre-lancamento |
 | `/rollback` | Plano de rollback para versao anterior |
 

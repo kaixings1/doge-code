@@ -1,5 +1,5 @@
 ---
-name: hubspot-integration
+name: hubspot-集成
 description: "HubSpot 集成 — HubSpot CRM 集成"
 risk: safe
 source: community

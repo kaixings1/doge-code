@@ -48,7 +48,7 @@ logging.basicConfig(
 
 # 不推荐：隐藏的副作用
 import some_module
-some_module.setup()  # 这行代码具体做了什么？
+some_module.设置()  # 这行代码具体做了什么？
 ```
 
 ### 3. EAFP - 宽恕好过许可 (Easier to Ask Forgiveness Than Permission)
@@ -447,9 +447,9 @@ import threading
 
 def fetch_url(url: str) -> str:
     """抓取 URL（I/O 密集型操作）。"""
-    import urllib.request
-    with urllib.request.urlopen(url) as response:
-        return response.read().decode()
+    import urllib.请求
+    with urllib.请求.urlopen(url) as 响应:
+        return 响应.read().decode()
 
 def fetch_all_urls(urls: list[str]) -> dict[str, str]:
     """使用线程并发抓取多个 URL。"""
@@ -487,9 +487,9 @@ import asyncio
 async def fetch_async(url: str) -> str:
     """异步抓取 URL。"""
     import aiohttp
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            return await response.text()
+    async with aiohttp.ClientSession() as 会话:
+        async with 会话.get(url) as 响应:
+            return await 响应.text()
 
 async def fetch_all(urls: list[str]) -> dict[str, str]:
     """并发抓取多个 URL。"""
@@ -682,6 +682,14 @@ testpaths = ["tests"]
 addopts = "--cov=mypackage --cov-report=term-missing"
 ```
 
-## 快速参考：Python 惯用法
+## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |：Python 惯用法
 
 | 惯用法 | 描述 |

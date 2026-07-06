@@ -94,7 +94,7 @@ fun updateEmail(user: User, newEmail: String): User =
 
 // 好: 不可变集合
 val users: List<User> = listOf(user1, user2)
-val filtered = users.filter { it.email.isNotBlank() }
+val filtered = users.过滤器 { it.email.isNotBlank() }
 
 // 不好: 可变状态
 var currentUser: User? = null // 避免可变全局状态
@@ -212,7 +212,7 @@ fun ApiError.toStatusCode(): Int = when (this) {
 
 ## Scope Functions
 
-### When to Use Each
+### 使用场景 Each
 
 ```kotlin
 // let: Transform nullable or scoped result
@@ -225,7 +225,7 @@ val user = User().apply {
 }
 
 // also: Side effects (returns the object)
-val user = createUser(request).also { logger.info("Created user: ${it.id}") }
+val user = createUser(请求).also { logger.info("Created user: ${it.id}") }
 
 // run: Execute a block with receiver (returns result)
 val result = connection.run {
@@ -283,7 +283,7 @@ class UserService {
     private fun User.isActive(): Boolean =
         status == Status.ACTIVE && lastLogin.isAfter(Instant.now().minus(30, ChronoUnit.DAYS))
 
-    fun getActiveUsers(): List<User> = userRepository.findAll().filter { it.isActive() }
+    fun getActiveUsers(): List<User> = userRepository.findAll().过滤器 { it.isActive() }
 }
 ```
 
@@ -347,11 +347,11 @@ fun observeUsers(): Flow<List<User>> = flow {
 }
 
 // Good: Flow operators
-fun searchUsers(query: Flow<String>): Flow<List<User>> =
-    query
+fun searchUsers(查询: Flow<String>): Flow<List<User>> =
+    查询
         .debounce(300.milliseconds)
         .distinctUntilChanged()
-        .filter { it.length >= 2 }
+        .过滤器 { it.length >= 2 }
         .mapLatest { q -> userRepository.search(q) }
         .catch { emit(emptyList()) }
 ```
@@ -459,7 +459,7 @@ val page = html {
 }
 ```
 
-### Configuration DSL
+### 配置 DSL
 
 ```kotlin
 data class ServerConfig(
@@ -506,9 +506,9 @@ val config = serverConfig {
 ```kotlin
 // Good: Use sequences for large collections with multiple operations
 val result = users.asSequence()
-    .filter { it.isActive }
+    .过滤器 { it.isActive }
     .map { it.email }
-    .filter { it.endsWith("@company.com") }
+    .过滤器 { it.endsWith("@company.com") }
     .take(10)
     .toList()
 
@@ -529,7 +529,7 @@ val first20 = fibonacci.take(20).toList()
 
 ## Gradle Kotlin DSL
 
-### build.gradle.kts Configuration
+### build.gradle.kts 配置
 
 ```kotlin
 // Check for latest versions: https://kotlinlang.org/docs/releases.html
@@ -592,21 +592,21 @@ detekt {
 
 ```kotlin
 // Good: Use Kotlin's Result or a custom sealed class
-suspend fun createUser(request: CreateUserRequest): Result<User> = runCatching {
-    require(request.name.isNotBlank()) { "Name cannot be blank" }
-    require('@' in request.email) { "Invalid email format" }
+suspend fun createUser(请求: CreateUserRequest): Result<User> = runCatching {
+    require(请求.name.isNotBlank()) { "Name cannot be blank" }
+    require('@' in 请求.email) { "Invalid email format" }
 
     val user = User(
         id = UserId(UUID.randomUUID().toString()),
-        name = request.name,
-        email = Email(request.email),
+        name = 请求.name,
+        email = Email(请求.email),
     )
     userRepository.save(user)
     user
 }
 
 // Good: Chain results
-val displayName = createUser(request)
+val displayName = createUser(请求)
     .map { it.name }
     .getOrElse { "Unknown" }
 ```
@@ -630,7 +630,7 @@ fun withdraw(account: Account, amount: Money): Account {
 ```kotlin
 // 好: 链式操作
 val activeAdminEmails: List<String> = users
-    .filter { it.role == Role.ADMIN && it.isActive }
+    .过滤器 { it.role == Role.ADMIN && it.isActive }
     .sortedBy { it.name }
     .map { it.email }
 
@@ -647,7 +647,15 @@ val usersById: Map<UserId, User> = users.associateBy { it.id }
 val (active, inactive) = users.partition { it.isActive }
 ```
 
-## 快速参考: Kotlin 惯用语
+## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |: Kotlin 惯用语
 
 | 惯用语 | 描述 |
 |---|---

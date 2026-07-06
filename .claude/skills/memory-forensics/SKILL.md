@@ -8,12 +8,12 @@ date_added: "2026-02-27"
 
 # Memory Forensics
 
-Comprehensive techniques for acquiring, analyzing, and extracting artifacts from memory dumps for incident response and malware analysis.
+Comprehensive techniques for acquiring, analyzing, and extracting artifacts from memory dumps for incident 响应 and malware analysis.
 
 ## 使用此技能的场景
 
 - Working on memory forensics tasks or workflows
-- Needing guidance, best practices, or checklists for memory forensics
+- Needing guidance, 最佳实践, or checklists for memory forensics
 
 ## 不要使用此技能的场景
 
@@ -23,9 +23,9 @@ Comprehensive techniques for acquiring, analyzing, and extracting artifacts from
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## Memory Acquisition
 
@@ -226,7 +226,7 @@ vol -f memory.raw mac.lsmod
 
 ## Analysis Workflows
 
-### Malware Analysis Workflow
+### Malware Analysis 工作流
 
 ```bash
 # 1. Initial process survey
@@ -253,7 +253,7 @@ strings -a pid.<PID>.exe > strings.txt
 vol -f memory.raw windows.yarascan --yara-rules malware.yar
 ```
 
-### Incident Response Workflow
+### Incident 响应 工作流
 
 ```bash
 # 1. Timeline of events
@@ -470,16 +470,16 @@ floss pid.1234.dmp
 
 ## 最佳实践
 
-### Acquisition Best Practices
+### Acquisition 最佳实践
 
 1. **Minimize footprint**: Use lightweight acquisition tools
 2. **Document everything**: Record time, tool, and hash of capture
 3. **Verify integrity**: Hash memory dump immediately after capture
 4. **Chain of custody**: Maintain proper forensic handling
 
-### Analysis Best Practices
+### Analysis 最佳实践
 
-1. **Start broad**: Get overview before deep diving
+1. **Start broad**: Get 概述 before deep diving
 2. **Cross-reference**: Use multiple plugins for same data
 3. **Timeline correlation**: Correlate memory findings with disk/network
 4. **Document findings**: Keep detailed notes and screenshots

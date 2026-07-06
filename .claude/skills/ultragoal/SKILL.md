@@ -1,7 +1,7 @@
 ---
 name: ultragoal
 description: "超级目标 — 将大型任务分解为有序目标集，持久跟踪执行进度"
-argument-hint: "<brief or subcommand>"
+参数-hint: "<brief or subcommand>"
 level: 3
 ---
 
@@ -34,8 +34,8 @@ Claude Code `/goal`是会话范围的停止钩子：它阻止会话停止直到�
    ```
    或使用明确的故事：
    ```
-   omc ultragoal create-goals --brief "ship the migration" \
-     --goal "Schema::Add new columns" \
+   omc ultragoal create-goals --brief "ship the 迁移" \
+     --goal "架构::Add new columns" \
      --goal "Backfill::Backfill rows in batches" \
      --goal "Cutover::Drop old columns and switch reads"
    ```
@@ -44,7 +44,7 @@ Claude Code `/goal`是会话范围的停止钩子：它阻止会话停止直到�
 
    **多仓库工作空间/并行会话：** 当同一工作空间中的多个Claude会话需要同时运行`/ultragoal`时，传递`--plan-id <stable-id>`或`--auto-plan-id`，以便计划写入`.omc/ultragoal/plans/{planId}/`而不是共享的单计划路径。
    没有此标志，两个创建目标的会话会相互覆盖。
-   `--auto-plan-id`从简报标题派生`{epochMs}-{slug}`。然后在同一会话的每个后续子命令中传递相同的`--plan-id <id>`。
+   `--auto-plan-id`从简报标题派生`{epochMs}-{标识符}`。然后在同一会话的每个后续子命令中传递相同的`--plan-id <id>`。
    需要时使用`omc ultragoal list-plans`枚举可用planId。
 
 2. 开始（或恢复）下一个故事：

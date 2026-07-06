@@ -40,7 +40,7 @@ To analyze a Stitch project, you must retrieve screen metadata and design assets
 1. **Namespace discovery**: Run `list_tools` to find the Stitch MCP prefix. Use this prefix (e.g., `mcp_stitch:`) for all subsequent calls.
 
 2. **Project lookup** (if Project ID is not provided):
-   - Call `[prefix]:list_projects` with `filter: "view=owned"` to retrieve all user projects
+   - Call `[prefix]:list_projects` with `过滤器: "view=owned"` to retrieve all user projects
    - Identify the target project by title or URL pattern
    - Extract the Project ID from the `name` field (e.g., `projects/13534454087919359824`)
 
@@ -137,7 +137,7 @@ To use this skill for the Furniture Collection project:
    Retrieve the Home page screen's code, image, and screen object information
    ```
 
-3. **Reference best practices:**
+3. **Reference 最佳实践:**
    ```
    Review the Stitch Effective Prompting Guide at:
    https://stitch.withgoogle.com/docs/learn/prompting/
@@ -166,7 +166,7 @@ To use this skill for the Furniture Collection project:
 
 1. **Start with the big picture:** Understand the overall aesthetic before diving into details
 2. **Look for patterns:** Identify consistent spacing, sizing, and styling patterns
-3. **Think semantically:** Name colors by their purpose, not just their appearance
+3. **Think semantically:** Name colors by their 目的, not just their appearance
 4. **Consider hierarchy:** Document how visual weight and importance are communicated
 5. **Reference the guide:** Use language and patterns from the Stitch Effective Prompting Guide
 

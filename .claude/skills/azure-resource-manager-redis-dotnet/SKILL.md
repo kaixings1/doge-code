@@ -8,7 +8,7 @@ date_added: '2026-02-27'
 
 # Azure.ResourceManager.Redis (.NET)
 
-Management plane SDK for provisioning and managing Azure Cache for Redis resources via Azure Resource Manager.
+Management plane SDK for provisioning and managing Azure Cache for Redis 资源 via Azure Resource Manager.
 
 > **⚠️ Management vs Data Plane**
 > - **This SDK (Azure.ResourceManager.Redis)**: Create caches, configure firewall rules, manage access keys, set up geo-replication
@@ -95,14 +95,14 @@ var cacheData = new RedisCreateOrUpdateContent(
     }
 };
 
-// Create cache (long-running operation)
+// Create cache (long-running 操作)
 var cacheCollection = resourceGroup.Value.GetAllRedis();
-var operation = await cacheCollection.CreateOrUpdateAsync(
+var 操作 = await cacheCollection.CreateOrUpdateAsync(
     WaitUntil.Completed,
     "my-redis-cache",
     cacheData);
 
-RedisResource cache = operation.Value;
+RedisResource cache = 操作.Value;
 Console.WriteLine($"Cache created: {cache.Data.HostName}");
 ```
 
@@ -272,13 +272,13 @@ await cache.Value.ForceRebootAsync(rebootContent);
 | `RedisFirewallRuleResource` | Firewall rule for IP filtering |
 | `RedisPatchScheduleResource` | Maintenance window configuration |
 | `RedisLinkedServerWithPropertyResource` | Geo-replication linked server |
-| `RedisPrivateEndpointConnectionResource` | Private endpoint connection |
+| `RedisPrivateEndpointConnectionResource` | Private 端点 connection |
 | `RedisCacheAccessPolicyResource` | RBAC access policy |
 | `RedisCreateOrUpdateContent` | Cache creation payload |
 | `RedisPatch` | Cache update payload |
 | `RedisSku` | SKU configuration (name, family, capacity) |
 | `RedisAccessKeys` | Primary and secondary access keys |
-| `RedisRegenerateKeyContent` | Key regeneration request |
+| `RedisRegenerateKeyContent` | Key regeneration 请求 |
 
 ## 最佳实践
 
@@ -300,7 +300,7 @@ using Azure;
 
 try
 {
-    var operation = await cacheCollection.CreateOrUpdateAsync(
+    var 操作 = await cacheCollection.CreateOrUpdateAsync(
         WaitUntil.Completed, cacheName, cacheData);
 }
 catch (RequestFailedException ex) when (ex.Status == 409)
@@ -357,7 +357,7 @@ var value = await db.StringGetAsync("key");
 | `Microsoft.Azure.StackExchangeRedis` | Azure-specific Redis extensions | `dotnet add package Microsoft.Azure.StackExchangeRedis` |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

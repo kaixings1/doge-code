@@ -12,4 +12,4 @@ Rigorously evaluate model performance using appropriate metrics, cross-validatio
 
 ### Classification Metrics
 
-| Metric | When to Use | Formula |
+| Metric | 使用场景 | Formula |

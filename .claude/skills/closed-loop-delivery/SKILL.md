@@ -15,10 +15,10 @@ Treat each task as incomplete until acceptance criteria are verified in evidence
 Core rule: **deliver against DoD (Definition of Done), not against code diff size.**
 
 ## 何时使用
-Use this skill when:
-- user gives a coding/fix task and expects end-to-end completion
-- task spans code + tests + PR comments + dev deploy + runtime checks
-- repeated manual prompts like "now test", "now deploy", "now re-check PR" should be avoided
+在以下情况下使用此技能：
+- 用户给出编码/修复任务并期望端到端完成
+- 任务涵盖代码 + 测试 + PR 评论 + 开发部署 + 运行时检查
+- 应避免重复的手动提示，如"现在测试"、"现在部署"、"现在重新检查 PR"
 
 Do not use this skill for:
 - pure Q&A/explanations
@@ -33,7 +33,7 @@ Before execution, define these once:
 - target environment (`dev` by default)
 - max iteration rounds (default `2`)
 
-If acceptance criteria are missing, request them once. If user does not provide, propose a concrete default and proceed.
+If acceptance criteria are missing, 请求 them once. If user does not provide, propose a concrete default and proceed.
 
 ## Issue Gate Dependency
 
@@ -43,11 +43,11 @@ Before execution, prefer using `create-issue-gate`.
 - If issue status is `draft`, do not execute implementation/deploy/review loops.
 - Require user-provided, testable acceptance criteria before starting execution.
 
-## Default Workflow
+## Default 工作流
 
 1. **Define DoD**
-   - Convert request into testable criteria.
-   - Example: checkout task DoD = "checkout endpoint returns a valid, openable third-party payment URL in dev".
+   - Convert 请求 into testable criteria.
+   - Example: checkout task DoD = "checkout 端点 returns a valid, openable third-party payment URL in dev".
 
 2. **Implement minimal change**
    - Keep scope tight to task goal.
@@ -110,7 +110,7 @@ Escalation report must include:
 When claiming completion, always include:
 - acceptance criteria checklist with pass/fail
 - commands/tests run
-- runtime evidence (endpoint/Lambda/log key lines)
+- runtime evidence (端点/Lambda/log key lines)
 - PR status (new actionable comments count)
 
 Do not claim success without evidence.

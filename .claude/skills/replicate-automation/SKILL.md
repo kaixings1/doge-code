@@ -1,6 +1,6 @@
 ---
 name: Replicate Automation
-description: "通过 Composio MCP 集成自动执行 Replicate AI 模型操作——运行预测、上传文件、检查模型 schema、列出版本和管理预测历史。"
+description: "通过 Composio MCP 集成自动执行 Replicate AI 模型操作——运行预测、上传文件、检查模型 架构、列出版本和管理预测历史。"
 requires:
   mcp:
     - rube

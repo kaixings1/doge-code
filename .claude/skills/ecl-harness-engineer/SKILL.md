@@ -8,8 +8,8 @@ source_repo: qinghui316/ecl-harness-engineer
 source_type: community
 date_added: "2026-06-13"
 author: qinghui316
-tags: [codex, agent-harness, ecl, workflow, ci]
-tools: [codex, claude, cursor, gemini, antigravity]
+tags: [codex, agent-harness, ecl, 工作流, ci]
+tools: [codex, claude, 游标, gemini, antigravity]
 license: MIT
 license_source: "https://github.com/qinghui316/ecl-harness-engineer/blob/main/LICENSE"
 ---
@@ -19,27 +19,27 @@ Design and create Harness Engineering infrastructure so AI agents can work relia
 
 > **Core Philosophy**: "Intelligence without infrastructure is just a demo." The Agent Harness is the Operating System — the LLM is just the CPU. The repository becomes the single source of truth — if an agent can't see it in context, it doesn't exist.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when a repository needs AI-agent collaboration infrastructure such as `AGENTS.md`, `docs/ECL.md`, `docs/STATUS.md`, harness change tracking, or mechanical validation gates.
-- Use when auditing an existing Agent Harness for missing ECL lifecycle docs, change templates, lint checks, environment contracts, or CI integration.
-- Use when converting repeated agent workflow failures into repository-local documentation, tests, lint rules, or lightweight auto-evolution checks.
+- Use when auditing an existing Agent Harness for missing ECL lifecycle docs, change templates, lint checks, environment contracts, or CI 集成.
+- Use when converting repeated agent 工作流 failures into repository-local documentation, tests, lint rules, or lightweight auto-evolution checks.
 - Do not use for ordinary business feature implementation unless the requested work is specifically about creating or improving the repository harness.
 
 ## 局限性
 
 - This skill creates or audits harness infrastructure; it does not replace product requirements, implementation planning, code review, or release approval for the target project.
-- The generated ECL docs, linters, scripts, and CI examples must be adapted to the repository's actual stack, security model, and existing contributor workflow before enforcement.
+- The generated ECL docs, linters, scripts, and CI 示例 must be adapted to the repository's actual stack, security model, and existing contributor 工作流 before enforcement.
 - Auto-evolve recommendations are guidance only. Apply harness changes through normal review, validation, and rollback discipline instead of accepting them as autonomous policy changes.
 
-## Unified Workflow
+## Unified 工作流
 
-This skill follows a single unified workflow regardless of project state (empty, existing code, or existing harness). The core idea: **detect the gap between current state and target state, then fill it**.
+This skill follows a single unified 工作流 regardless of project state (empty, existing code, or existing harness). The core idea: **detect the gap between current state and target state, then fill it**.
 
 Default to a **core ECL harness**. Core includes lightweight auto-evolve threshold checking:
 closed changes are counted, a pending evolution note is generated when the threshold is reached,
 and Codex applies harness improvements only through evidence, validation, scoring, and rollback.
-Advanced agent-platform capabilities such as eval datasets, execution traces, durable state,
+Advanced agent-platform 能力 such as eval datasets, execution traces, durable state,
 checkpoints, long-term memory, and metrics remain optional profiles only when the user explicitly
 asks for agent evaluation, observability, resumable execution, or long-term memory.
 
@@ -110,7 +110,7 @@ Also classify ECL readiness:
 |-----------|----------|--------|
 | **ECL Missing** | has_ecl_doc = "no" OR has_changes_dir = "no" | Create ECL docs, change templates, and scripts |
 | **ECL Partial** | ECL doc exists but scripts/templates missing | Fill ECL automation gaps |
-| **ECL Ready** | docs/ECL.md, harness/changes, templates, harness-change, harness-evolve, lint-ecl, lint-encoding exist | Audit index freshness and workflow quality |
+| **ECL Ready** | docs/ECL.md, harness/changes, templates, harness-change, harness-evolve, lint-ecl, lint-encoding exist | Audit index freshness and 工作流 quality |
 
 ### 1.3 Baseline Verification Snapshot
 
@@ -147,7 +147,7 @@ detected context and record assumptions.
 
 ```json
 {
-  "question": "What's your priority for this harness setup?",
+  "question": "What's your priority for this harness 设置?",
   "header": "Scope",
   "multiSelect": false,
   "options": [
@@ -202,7 +202,7 @@ When generating ECL guidance for a target project, keep the process small enough
 
 | Intake type | Criteria | Required ECL handling |
 |-------------|----------|-----------------------|
-| **Small Change** | Local, low-risk edits such as copy, comments, style-only tweaks, or single-file bug fixes with no interface, data, permission, architecture, or release impact | Active change optional; still record the verification command in the final response or existing task notes |
+| **Small Change** | Local, low-risk edits such as copy, comments, style-only tweaks, or single-file bug fixes with no interface, data, permission, architecture, or release impact | Active change optional; still record the verification command in the final 响应 or existing task notes |
 | **Structured Change** | Cross-file/module behavior, APIs, data model, permissions, architecture, validation chain, unclear requirements, or work likely to exceed 20 minutes | Use active change files and require intake/spec/plan review before implementation |
 
 Decision tree:
@@ -264,7 +264,7 @@ If working inline, produce the same three analysis artifacts or equivalent in-me
 
 For existing projects, extract target-project meaning before writing docs:
 - One-sentence project identity: what it does and for whom.
-- Core workflow or domain model: user/system flow, key entities, API resources, jobs, or commands.
+- Core 工作流 or domain model: user/system flow, key entities, API resources, jobs, or commands.
 - Primary source entrypoints and where common changes belong.
 
 Use `README.md`, manifests, entrypoints, routes/controllers, schemas/models, and key source
@@ -491,7 +491,7 @@ go build ./... || npm run build || python -m compileall .
 wc -l AGENTS.md  # Should be 80-120 lines
 
 # 4b. AGENTS.md content gate
-# Confirm it explains project identity, core workflow/domain model, source entrypoints,
+# Confirm it explains project identity, core 工作流/domain model, source entrypoints,
 # task-based verification, active-change-before-STATUS loading, and contains no
 # ECL Harness Engineer internal boundary language.
 
@@ -523,7 +523,7 @@ Classify every verification result:
 
 AGENTS.md content gate:
 - A new agent can tell what the project does within 30 seconds.
-- The core product/system workflow or domain model is visible.
+- The core product/system 工作流 or domain model is visible.
 - Main source entrypoints and task-to-directory mapping are visible.
 - Verification guidance maps to task type.
 - Context loading reads `docs/ECL.md` first, then active change when present.
@@ -577,9 +577,9 @@ on the pending evidence. Once started, finish with a proposal, one `harness/evol
 row, and `harness-evolve mark-complete`; otherwise park or close blocked, not completed.
 
 Apply only the smallest evidence-backed delta that passes review. No independent scorer =
-no auto-apply: user approval to handle pending implies permission to request an independent
+no auto-apply: user approval to handle pending implies permission to 请求 an independent
 auditor/subagent when the environment supports it. If the environment still requires explicit
-authorization, ask once. If scoring is unavailable, declined, or still unauthorized after asking,
+授权, ask once. If scoring is unavailable, declined, or still unauthorized after asking,
 record `noop` with `eval_mode=dry_run`, keep the proposal, run `mark-complete`, and stop.
 Machinery repair
 (`harness-evolve`, pending templates, lint) does not complete pending evolution by itself; after
@@ -666,13 +666,13 @@ Linter errors must be agent-actionable:
 
          Fix options:
          1. Move config-dependent logic to a higher layer
-         2. Pass the config value as a parameter
+         2. Pass the config value as a 参数
          3. Use dependency injection via an interface"
 ```
 
 ### 4. Build to Delete
 
-Every component should be replaceable. Capabilities that required complex pipelines yesterday may be single prompts tomorrow.
+Every component should be replaceable. 能力 that required complex pipelines yesterday may be single prompts tomorrow.
 
 ### 5. Start Simple
 

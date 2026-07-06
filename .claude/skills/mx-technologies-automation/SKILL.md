@@ -1,6 +1,6 @@
 ---
 name: mx-technologies-automation
-description: "通过 Rube MCP (Composio) 自动执行 MX Technologies 任务。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 MX Technologies 任务。使用前始终先搜索工具以获取当前 架构。"
 requires:
  mcp: [rube]
 ---
@@ -14,7 +14,7 @@ requires:
 ## 前提条件
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 RUBE_MANAGE_CONNECTIONS 使用工具包 mx_technologies 建立活跃连接
-- 始终先调用 RUBE_SEARCH_TOOLS 获取当前工具 schema
+- 始终先调用 RUBE_SEARCH_TOOLS 获取当前工具 架构
 
 ## 设置
 **获取 Rube MCP**: 在客户端配置中添加 https://rube.app/mcp 作为 MCP 服务器。
@@ -27,16 +27,16 @@ requires:
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "MX Technologies operations", known_fields: ""}]
-session: {generate_id: true}
+会话: {generate_id: true}
 ```
 
 ## 核心工作流模式
 ### 步骤 1：发现工具 -> 步骤 2：检查连接 -> 步骤 3：执行工具
 
 ## 已知陷阱
-- 始终先搜索工具 schema
+- 始终先搜索工具 架构
 - 检查连接状态为 ACTIVE
-- 使用 schema 合规的参数
+- 使用 架构 合规的参数
 - 始终包含 memory 参数
 - 复用或生成会话 ID
 - 检查分页

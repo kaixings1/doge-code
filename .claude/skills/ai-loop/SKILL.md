@@ -1,12 +1,12 @@
 ---
 name: ai-loop
 description: "AI Loop — AI 开发反馈循环：构建、测试、学习、迭代的持续改进工作流。"
-category: workflow
+category: 工作流
 risk: safe
 source: community
 date_added: "2026-06-27"
-tags: [agent-workflow, specification, implementation, review, verification, feedback-loop]
-tools: [claude, cursor, codex, gemini]
+tags: [agent-工作流, specification, implementation, review, verification, feedback-loop]
+tools: [claude, 游标, codex, gemini]
 ---
 
 # AI-Loop Skill
@@ -15,9 +15,9 @@ tools: [claude, cursor, codex, gemini]
 
 The `ai-loop` skill structures a bounded development cycle for agentic workflows. By dividing the process into distinct planning (Spec), implementation (Build), and validation (Review) phases, it helps an agent build and correct scoped code changes while keeping requirements, risk gates, and stop conditions explicit.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
-- Use when you need a feature built from scratch or heavily modified, and you want the agent to handle the lifecycle (specification, implementation, and verification) inside one clearly bounded workflow.
+- Use when you need a feature built from scratch or heavily modified, and you want the agent to handle the lifecycle (specification, implementation, and verification) inside one clearly bounded 工作流.
 - Use when working with isolated components, modules, or features that have well-defined scopes and constraints.
 - Use when the user asks for a complete development pass but the work still has clear success criteria, a reasonable verification path, and no unresolved safety or product decisions.
 
@@ -84,12 +84,12 @@ Before starting, define:
 > - Requirement: median calculation -> PASS
 > - Requirement: mode calculation -> PASS
 > - Requirement: empty array returns null -> PASS
-> - Requirement: non-numbers are ignored -> FAIL (I noticed `mode` doesn't filter out non-numbers).
+> - Requirement: non-numbers are ignored -> FAIL (I noticed `mode` doesn't 过滤器 out non-numbers).
 >
 > I will now loop back to Phase 2 to fix the `mode` function.
 
 **Agent (Phase 2 - Build Loop-Back):**
-> *(Fixes `mode` to filter out non-numbers)*
+> *(Fixes `mode` to 过滤器 out non-numbers)*
 > I have updated the implementation. Let's re-verify.
 
 **Agent (Phase 3 - Review):**
@@ -106,7 +106,7 @@ Before starting, define:
 - ✅ Do pause for explicit approval before destructive, production, credentialed, or externally visible actions.
 - ❌ Don't implement extra features or perform unrelated refactorings that aren't specified.
 - ❌ Don't skip the review phase or pass it without verifying every single requirement.
-- ❌ Don't keep retrying the same failing fix without new evidence or a changed approach.
+- ❌ Don't keep retrying the same failing fix without new evidence or a changed 方法.
 
 ## 局限性
 

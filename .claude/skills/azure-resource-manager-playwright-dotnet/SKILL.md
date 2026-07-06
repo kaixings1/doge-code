@@ -86,14 +86,14 @@ var workspaceData = new PlaywrightWorkspaceData(AzureLocation.WestUS3)
     }
 };
 
-// Create workspace (long-running operation)
+// Create workspace (long-running 操作)
 var workspaceCollection = resourceGroup.Value.GetPlaywrightWorkspaces();
-var operation = await workspaceCollection.CreateOrUpdateAsync(
+var 操作 = await workspaceCollection.CreateOrUpdateAsync(
     WaitUntil.Completed,
     "my-playwright-workspace",
     workspaceData);
 
-PlaywrightWorkspaceResource workspace = operation.Value;
+PlaywrightWorkspaceResource workspace = 操作.Value;
 
 // Get the data plane URI for running tests
 Console.WriteLine($"Data Plane URI: {workspace.Data.DataplaneUri}");
@@ -196,7 +196,7 @@ await foreach (var quota in workspaceQuotas.GetAllAsync())
 ### 7. Delete Workspace
 
 ```csharp
-// Delete (long-running operation)
+// Delete (long-running 操作)
 await workspace.Value.DeleteAsync(WaitUntil.Completed);
 ```
 
@@ -207,12 +207,12 @@ await workspace.Value.DeleteAsync(WaitUntil.Completed);
 | `ArmClient` | Entry point for all ARM operations |
 | `PlaywrightWorkspaceResource` | Represents a Playwright Testing workspace |
 | `PlaywrightWorkspaceCollection` | Collection for workspace CRUD |
-| `PlaywrightWorkspaceData` | Workspace creation/response payload |
+| `PlaywrightWorkspaceData` | Workspace creation/响应 payload |
 | `PlaywrightWorkspacePatch` | Workspace update payload |
 | `PlaywrightQuotaResource` | Subscription-level quota information |
 | `PlaywrightWorkspaceQuotaResource` | Workspace-level quota information |
-| `PlaywrightExtensions` | Extension methods for ARM resources |
-| `PlaywrightCheckNameAvailabilityContent` | Name availability check request |
+| `PlaywrightExtensions` | Extension methods for ARM 资源 |
+| `PlaywrightCheckNameAvailabilityContent` | Name availability check 请求 |
 
 ## Workspace 属性
 
@@ -241,7 +241,7 @@ using Azure;
 
 try
 {
-    var operation = await workspaceCollection.CreateOrUpdateAsync(
+    var 操作 = await workspaceCollection.CreateOrUpdateAsync(
         WaitUntil.Completed, workspaceName, workspaceData);
 }
 catch (RequestFailedException ex) when (ex.Status == 409)
@@ -250,7 +250,7 @@ catch (RequestFailedException ex) when (ex.Status == 409)
 }
 catch (RequestFailedException ex) when (ex.Status == 400)
 {
-    Console.WriteLine($"Bad request: {ex.Message}");
+    Console.WriteLine($"Bad 请求: {ex.Message}");
 }
 catch (RequestFailedException ex)
 {
@@ -298,7 +298,7 @@ Environment.SetEnvironmentVariable("PLAYWRIGHT_SERVICE_URL", serviceUrl.ToString
 - [Quickstart: Run Playwright Tests at Scale](https://learn.microsoft.com/en-us/azure/playwright-testing/quickstart-run-end-to-end-tests)
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

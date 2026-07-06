@@ -8,19 +8,19 @@ description: "当用户要求调试或修复 GitHub Actions 中运行的 GitHub 
 
 ## 概述
 
-使用此技能当 the task is specifically about failing GitHub Actions checks on a pull request. This workflow is hybrid by design:
+使用此技能当 the task is specifically about failing GitHub Actions checks on a pull 请求. This 工作流 is hybrid by design:
 
 - Use the GitHub app from this plugin for PR metadata, changed files, and review context.
-- Use `gh` for GitHub Actions checks and logs because the connector does not expose that workflow end to end.
+- Use `gh` for GitHub Actions checks and logs because the connector does not expose that 工作流 end to end.
 - Summarize the root cause first, propose a focused fix plan, and implement only after explicit approval.
 
-Prereq: authenticate with GitHub CLI once, then confirm with `gh auth status`. Repo and workflow scopes are typically required for Actions inspection.
+Prereq: authenticate with GitHub CLI once, then confirm with `gh auth status`. Repo and 工作流 scopes are typically required for Actions inspection.
 
 ## Inputs
 
 - `repo`: path inside the repo (default `.`)
 - `pr`: PR number or URL (optional; defaults to current branch PR)
-- `gh` authentication for the repo host
+- `gh` 认证 for the repo host
 
 ## Quick start
 
@@ -29,9 +29,9 @@ Prereq: authenticate with GitHub CLI once, then confirm with `gh auth status`. R
 
 ## 工作流
 
-1. Verify gh authentication.
+1. Verify gh 认证.
    - Run `gh auth status` in the repo.
-   - If unauthenticated, ask the user to run `gh auth login` (ensuring repo + workflow scopes) before proceeding.
+   - If unauthenticated, ask the user to run `gh auth login` (ensuring repo + 工作流 scopes) before proceeding.
 2. Resolve the PR.
    - If the user provides a PR number or URL, use that directly.
    - Otherwise prefer the current branch PR with `gh pr view --json number,url`.
@@ -41,7 +41,7 @@ Prereq: authenticate with GitHub CLI once, then confirm with `gh auth status`. R
      - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "<number-or-url>"`
      - Add `--json` for machine-friendly output.
    - Manual fallback:
-     - `gh pr checks <pr> --json name,state,bucket,link,startedAt,completedAt,workflow`
+     - `gh pr checks <pr> --json name,state,bucket,link,startedAt,completedAt,工作流`
        - If a field is rejected, rerun with the available fields reported by `gh`.
      - For each failing check, extract the run id from `detailsUrl` and run:
        - `gh run view <run_id> --json name,workflowName,conclusion,status,url,event,headBranch,headSha`
@@ -50,7 +50,7 @@ Prereq: authenticate with GitHub CLI once, then confirm with `gh auth status`. R
        - `gh api "/repos/<owner>/<repo>/actions/jobs/<job_id>/logs" > "<path>"`
 4. 范围 non-GitHub Actions checks.
    - If `detailsUrl` is not a GitHub Actions run, label it as external and only report the URL.
-   - Do not attempt Buildkite or other providers; keep the workflow lean.
+   - Do not attempt Buildkite or other providers; keep the 工作流 lean.
 5. Summarize failures for the user.
    - Provide the failing check name, run URL (if any), and a concise log snippet.
    - Call out missing logs explicitly and do not over-claim certainty.
@@ -69,7 +69,7 @@ Prereq: authenticate with GitHub CLI once, then confirm with `gh auth status`. R
 
 Fetch failing PR checks, pull GitHub Actions logs, and extract a failure snippet. Exits non-zero when failures remain so it can be used in automation.
 
-用法 examples:
+用法 示例:
 - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "123"`
 - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "https://github.com/org/repo/pull/123" --json`
 - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --max-lines 200 --context 40`

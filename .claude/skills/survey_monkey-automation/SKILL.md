@@ -15,7 +15,7 @@ requires:
 
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 使用工具包 `survey_monkey` 建立活动的 SurveyMonkey 连接
-- 始终先调用 `RUBE_SEARCH_TOOLS` 以获取当前工具 schema
+- 始终先调用 `RUBE_SEARCH_TOOLS` 以获取当前工具 架构
 
 ## 设置
 
@@ -37,7 +37,7 @@ RUBE_SEARCH_TOOLS: queries=[{"use_case": "surveys, responses, collectors, and su
 This returns:
 - Available tool slugs for SurveyMonkey
 - Recommended execution plan steps
-- Known pitfalls and edge cases
+- 已知陷阱 and edge cases
 - Input schemas for each tool
 
 ## 核心工作流
@@ -47,7 +47,7 @@ This returns:
 ```
 RUBE_SEARCH_TOOLS:
   queries:
-    - use_case: "list all available SurveyMonkey tools and capabilities"
+    - use_case: "list all available SurveyMonkey tools and 能力"
 ```
 
 Review the returned tools, their descriptions, and input schemas before proceeding.
@@ -60,7 +60,7 @@ After discovering tools, execute them via:
 RUBE_MULTI_EXECUTE_TOOL:
   tools:
     - tool_slug: "<discovered_tool_slug>"
-      arguments: {<schema-compliant arguments>}
+      arguments: {<架构-compliant arguments>}
   memory: {}
   sync_response_to_workbench: false
 ```
@@ -93,10 +93,10 @@ For bulk operations, use `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` in a
 ## 已知陷阱
 
 - **Always search tools first**: Tool schemas and available operations may change. Never hardcode tool slugs without first discovering them via `RUBE_SEARCH_TOOLS`.
-- **Check connection status**: Ensure the SurveyMonkey connection is ACTIVE before executing any tools. Expired OAuth tokens require re-authentication.
-- **Respect rate limits**: If you receive rate limit errors, reduce request frequency and implement backoff.
-- **Validate schemas**: Always pass strictly schema-compliant arguments. Use `RUBE_GET_TOOL_SCHEMAS` to load full input schemas when `schemaRef` is returned instead of `input_schema`.
+- **Check connection status**: Ensure the SurveyMonkey connection is ACTIVE before executing any tools. Expired OAuth tokens require re-认证.
+- **Respect rate limits**: If you receive rate limit errors, reduce 请求 frequency and implement backoff.
+- **Validate schemas**: Always pass strictly 架构-compliant arguments. Use `RUBE_GET_TOOL_SCHEMAS` to load full input schemas when `schemaRef` is returned instead of `input_schema`.
 
 ## 快速参考
 
-| Operation | Approach |
+| 操作 | 方法 |

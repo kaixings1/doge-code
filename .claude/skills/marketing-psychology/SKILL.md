@@ -230,7 +230,7 @@ If ethical risk > leverage → **do not recommend**
 * **copywriting / copy-editing** → Translate models into language
 * **popup-cro** → Triggers, urgency, interruption ethics
 * **pricing-strategy** → Anchoring, relativity, loss framing
-* **ab-test-setup** → Validate psychological hypotheses
+* **ab-test-设置** → Validate psychological hypotheses
 
 ---
 
@@ -258,7 +258,7 @@ Before responding, confirm:
 
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the 概述.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

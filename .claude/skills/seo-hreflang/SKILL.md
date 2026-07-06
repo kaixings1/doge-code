@@ -5,7 +5,7 @@ description: "Seo Hreflang — Hreflang 和国际 SEO 审计、验证和生成�
   hreflang implementations. Use when user says "hreflang", "i18n SEO",
   "international SEO", "multi-language", "multi-region", or "language tags".
 user-invocable: true
-argument-hint: "[url]"
+参数-hint: "[url]"
 license: MIT
 metadata:
   author: AgriciDaniel
@@ -62,7 +62,7 @@ XML sitemap implementations.
 ### 7. Protocol Consistency
 - All URLs in an hreflang set must use the same protocol (HTTPS or HTTP)
 - Mixed HTTP/HTTPS in hreflang sets causes validation failures
-- After HTTPS migration, update all hreflang tags to HTTPS
+- After HTTPS 迁移, update all hreflang tags to HTTPS
 
 ### 8. Cross-Domain Support
 - Hreflang works across different domains (e.g., example.com and example.de)

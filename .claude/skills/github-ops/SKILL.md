@@ -28,16 +28,16 @@ metadata:
 
 Classify each issue by type and priority:
 
-**Types:** bug, feature-request, question, documentation, enhancement, duplicate, invalid, good-first-issue
+**Types:** bug, feature-请求, question, documentation, enhancement, duplicate, invalid, good-first-issue
 
 **Priority:** critical (breaking/security), high (significant impact), medium (nice to have), low (cosmetic)
 
-### Triage Workflow
+### Triage 工作流
 
 1. Read the issue title, body, and comments
 2. Check if it duplicates an existing issue (search by keywords)
 3. Apply appropriate labels via `gh issue edit --add-label`
-4. For questions: draft and post a helpful response
+4. For questions: draft and post a helpful 响应
 5. For bugs needing more info: ask for reproduction steps
 6. For good first issues: add `good-first-issue` label
 7. For duplicates: comment with link to original, add `duplicate` label
@@ -67,7 +67,7 @@ gh issue comment <number> --body "Thanks for reporting. Could you share reproduc
 
 - Issues with no activity in 14+ days: add `stale` label, comment asking for update
 - PRs with no activity in 7+ days: comment asking if still active
-- Auto-close stale issues after 30 days with no response (add `closed-stale` label)
+- Auto-close stale issues after 30 days with no 响应 (add `closed-stale` label)
 
 ```bash
 # Find stale issues (no activity in 14+ days)
@@ -81,7 +81,7 @@ gh pr list --json number,title,updatedAt --jq '.[] | select(.updatedAt < "2026-0
 
 When CI fails:
 
-1. Check the workflow run: `gh run view <run-id> --log-failed`
+1. Check the 工作流 run: `gh run view <run-id> --log-failed`
 2. Identify the failing step
 3. Check if it is a flaky test vs real failure
 4. For real failures: identify the root cause and suggest a fix
@@ -94,7 +94,7 @@ gh run list --status failure --limit 10
 # View failed run logs
 gh run view <run-id> --log-failed
 
-# Re-run a failed workflow
+# Re-run a failed 工作流
 gh run rerun <run-id> --failed
 ```
 

@@ -1,5 +1,5 @@
 ---
-name: framework-migration-code-migrate
+name: framework-迁移-code-migrate
 description: "您是专门在框架、语言、版本和平台之间转换代码库的代码迁移专家。生成全面迁移计划、自动化迁移脚本和实施策略。"
 risk: safe
 source: community

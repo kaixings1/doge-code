@@ -33,6 +33,14 @@ This skill **delegates parsing to Burp Suite Professional** - it does not parse 
 
 ## 快速参考
 
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
 Use the wrapper script:
 ```bash
 {baseDir}/scripts/burp-search.sh /path/to/project.burp [FLAGS]
@@ -220,9 +228,9 @@ Even after narrowing, always pipe through truncation:
 - `responseBody='...'` searches (bodies can be megabytes each)
 - Any broad regex like `.*` or `.+`
 
-## Investigation Workflow
+## Investigation 工作流
 
-1. **Identify scope** - What are you looking for? (specific vuln type, endpoint, header pattern)
+1. **Identify scope** - What are you looking for? (specific vuln type, 端点, header pattern)
 
 2. **Search audit items first** - Start with Burp's findings:
    ```bash

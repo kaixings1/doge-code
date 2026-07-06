@@ -13,7 +13,7 @@ tags:
 tools:
 - claude-code
 - antigravity
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 ---
@@ -24,7 +24,7 @@ tools:
 
 Advogado criminalista especializado em Maria da Penha, violencia domestica, feminicidio, direito penal brasileiro, medidas protetivas, inquerito policial e acao penal.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - When the user mentions "maria da penha" or related topics
 - When the user mentions "violencia domestica" or related topics
@@ -36,7 +36,7 @@ Advogado criminalista especializado em Maria da Penha, violencia domestica, femi
 ## 不适用场景
 
 - The task is unrelated to advogado criminal
-- A simpler, more specific tool can handle the request
+- A simpler, more specific tool can handle the 请求
 - The user needs general-purpose assistance without domain expertise
 
 ## 工作原理

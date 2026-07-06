@@ -41,7 +41,7 @@ import com.azure.core.credential.AzureKeyCredential;
 
 WebPubSubServiceClient client = new WebPubSubServiceClientBuilder()
     .credential(new AzureKeyCredential("<access-key>"))
-    .endpoint("<endpoint>")
+    .端点("<端点>")
     .hub("chat")
     .buildClient();
 ```
@@ -53,7 +53,7 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 
 WebPubSubServiceClient client = new WebPubSubServiceClientBuilder()
     .credential(new DefaultAzureCredentialBuilder().build())
-    .endpoint("<endpoint>")
+    .端点("<端点>")
     .hub("chat")
     .buildClient();
 ```
@@ -91,7 +91,7 @@ String jsonMessage = "{\"type\": \"notification\", \"message\": \"New update!\"}
 client.sendToAll(jsonMessage, WebPubSubContentType.APPLICATION_JSON);
 ```
 
-### Send to All with Filter
+### Send to All with 过滤器
 
 ```java
 import com.azure.core.http.rest.RequestOptions;
@@ -99,19 +99,19 @@ import com.azure.core.util.BinaryData;
 
 BinaryData message = BinaryData.fromString("Hello filtered users!");
 
-// Filter by userId
+// 过滤器 by userId
 client.sendToAllWithResponse(
     message,
     WebPubSubContentType.TEXT_PLAIN,
     message.getLength(),
-    new RequestOptions().addQueryParam("filter", "userId ne 'user1'"));
+    new RequestOptions().addQueryParam("过滤器", "userId ne 'user1'"));
 
-// Filter by groups
+// 过滤器 by groups
 client.sendToAllWithResponse(
     message,
     WebPubSubContentType.TEXT_PLAIN,
     message.getLength(),
-    new RequestOptions().addQueryParam("filter", "'GroupA' in groups and not('GroupB' in groups)"));
+    new RequestOptions().addQueryParam("过滤器", "'GroupA' in groups and not('GroupB' in groups)"));
 ```
 
 ### Send to Group
@@ -168,7 +168,7 @@ boolean connected = client.connectionExists("connectionId123");
 client.closeConnection("connectionId123");
 
 // Close with reason
-client.closeConnection("connectionId123", "Session expired");
+client.closeConnection("connectionId123", "会话 expired");
 
 // Check if user exists (has any connections)
 boolean userOnline = client.userExists("userId456");
@@ -180,16 +180,16 @@ client.closeUserConnections("userId456");
 client.closeGroupConnections("inactive-group");
 ```
 
-### Generate Client Access Token
+### Generate Client Access 令牌
 
 ```java
 import com.azure.messaging.webpubsub.models.GetClientAccessTokenOptions;
 import com.azure.messaging.webpubsub.models.WebPubSubClientAccessToken;
 
-// Basic token
-WebPubSubClientAccessToken token = client.getClientAccessToken(
+// Basic 令牌
+WebPubSubClientAccessToken 令牌 = client.getClientAccessToken(
     new GetClientAccessTokenOptions());
-System.out.println("URL: " + token.getUrl());
+System.out.println("URL: " + 令牌.getUrl());
 
 // With user ID
 WebPubSubClientAccessToken userToken = client.getClientAccessToken(
@@ -271,7 +271,7 @@ try {
 ## 环境变量
 
 ```bash
-WEB_PUBSUB_CONNECTION_STRING=Endpoint=https://<resource>.webpubsub.azure.com;AccessKey=...
+WEB_PUBSUB_CONNECTION_STRING=端点=https://<resource>.webpubsub.azure.com;AccessKey=...
 WEB_PUBSUB_ENDPOINT=https://<resource>.webpubsub.azure.com
 WEB_PUBSUB_ACCESS_KEY=<your-access-key>
 ```
@@ -289,7 +289,7 @@ WEB_PUBSUB_ACCESS_KEY=<your-access-key>
 
 1. **Use Groups**: Organize connections into groups for targeted messaging
 2. **User IDs**: Associate connections with user IDs for user-level messaging
-3. **Token Expiration**: Set appropriate token expiration for security
+3. **令牌 Expiration**: Set appropriate 令牌 expiration for security
 4. **Roles**: Grant minimal required permissions via roles
 5. **Hub Isolation**: Use separate hubs for different application features
 6. **Connection Management**: Clean up inactive connections
@@ -304,7 +304,7 @@ WEB_PUBSUB_ACCESS_KEY=<your-access-key>
 - "live updates broadcasting"
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

@@ -6,7 +6,7 @@ description: "Seo Programmatic — Seo Programmatic 相关功能和最佳实践"
   当用户提到"程序化 SEO"、"大规模页面"、"动态页面"、"模板页面"、
   "生成页面"或"数据驱动 SEO"时使用。
 user-invocable: true
-argument-hint: "[url or plan]"
+参数-hint: "[url or plan]"
 license: MIT
 metadata:
   author: AgriciDaniel
@@ -22,7 +22,7 @@ metadata:
 
 Evaluate the data powering programmatic pages:
 - **CSV/JSON files**: Row count, column uniqueness, missing values
-- **API endpoints**: Response structure, data freshness, rate limits
+- **API endpoints**: 响应 structure, data freshness, rate limits
 - **Database queries**: Record count, field completeness, update frequency
 - Data quality checks:
   - Each record must have enough unique attributes to generate distinct content
@@ -32,7 +32,7 @@ Evaluate the data powering programmatic pages:
 ## Template Engine Planning
 
 Design templates that produce unique, valuable pages:
-- **Variable injection points**: Title, H1, body sections, meta description, schema
+- **Variable injection points**: Title, H1, body sections, meta description, 架构
 - **Content blocks**: Static (shared across pages) vs dynamic (unique per page)
 - **Conditional logic**: Show/hide sections based on data availability
 - **Supplementary content**: 相关 items, contextual tips, user-generated content
@@ -55,14 +55,14 @@ Design templates that produce unique, valuable pages:
 - Logical hierarchy reflecting site architecture
 - No duplicate slugs; enforce uniqueness at generation time
 - Keep URLs under 100 characters
-- No query parameters for primary content URLs
+- No 查询 parameters for primary content URLs
 - Consistent trailing slash usage (match existing site pattern)
 
 ## Internal Linking Automation
 
 - **Hub/spoke model**: Category hub pages linking to individual programmatic pages
 - **相关 items**: Auto-link to 3-5 related pages based on data attributes
-- **Breadcrumbs**: Generate BreadcrumbList schema from URL hierarchy
+- **Breadcrumbs**: Generate BreadcrumbList 架构 from URL hierarchy
 - **Cross-linking**: Link between programmatic pages sharing attributes (same category, same city, same feature)
 - **Anchor text**: Use descriptive, varied anchor text. Avoid exact-match keyword repetition
 - Link density: 3-5 internal links per 1000 words (match seo-content guidelines)

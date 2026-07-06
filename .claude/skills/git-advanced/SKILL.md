@@ -43,7 +43,7 @@ git bisect run npm test
 git bisect reset
 ```
 
-Bisect performs binary search across commits to find which commit introduced a bug. Automated bisect with `run` is the fastest approach.
+Bisect performs binary search across commits to find which commit introduced a bug. Automated bisect with `run` is the fastest 方法.
 
 ## Interactive Rebase
 
@@ -77,7 +77,7 @@ git rebase --abort
 # .git/hooks/pre-commit
 
 # Run linter on staged files only
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=d | grep -E '\.(ts|tsx|js|jsx)$')
+STAGED_FILES=$(git diff --cached --name-only --diff-过滤器=d | grep -E '\.(ts|tsx|js|jsx)$')
 if [ -n "$STAGED_FILES" ]; then
   npx eslint $STAGED_FILES --fix
   git add $STAGED_FILES
@@ -145,7 +145,7 @@ git reset --hard HEAD@{5}  # point before rebase started
   last = log -1 HEAD --stat
   branches = branch -a --sort=-committerdate
   stash-all = stash push --include-untracked
-  conflicts = diff --name-only --diff-filter=U
+  conflicts = diff --name-only --diff-过滤器=U
 ```
 
 ## 反模式
@@ -165,5 +165,5 @@ git reset --hard HEAD@{5}  # point before rebase started
 - [ ] Pre-commit hooks run linting on staged files
 - [ ] Commit message format enforced via commit-msg hook
 - [ ] `--force-with-lease` used instead of `--force` when force-pushing
-- [ ] Reflog consulted before any destructive operation
+- [ ] Reflog consulted before any destructive 操作
 - [ ] `.gitignore` covers build outputs, dependencies, and environment files

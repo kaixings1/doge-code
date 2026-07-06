@@ -78,7 +78,7 @@ credential = DefaultAzureCredential(
 
 ### ManagedIdentityCredential
 
-For Azure-hosted resources (VMs, App Service, Functions, AKS):
+For Azure-hosted 资源 (VMs, App Service, Functions, AKS):
 
 ```python
 from azure.identity import ManagedIdentityCredential
@@ -154,12 +154,12 @@ from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
 
-# Get token for a specific scope
-token = credential.get_token("https://management.azure.com/.default")
-print(f"Token expires: {token.expires_on}")
+# Get 令牌 for a specific scope
+令牌 = credential.get_token("https://management.azure.com/.default")
+print(f"令牌 expires: {令牌.expires_on}")
 
 # For Azure Database for PostgreSQL
-token = credential.get_token("https://ossrdbms-aad.database.windows.net/.default")
+令牌 = credential.get_token("https://ossrdbms-aad.database.windows.net/.default")
 ```
 
 ## Async Client
@@ -192,7 +192,7 @@ async def main():
 7. **Exclude unused credentials** to speed up authentication
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

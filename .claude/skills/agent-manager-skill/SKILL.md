@@ -32,7 +32,7 @@ python3 agent-manager/scripts/main.py list
 python3 agent-manager/scripts/main.py start EMP_0001
 python3 agent-manager/scripts/main.py monitor EMP_0001 --follow
 python3 agent-manager/scripts/main.py assign EMP_0002 <<'EOF'
-Follow teams/fractalmind-ai-maintenance.md Workflow
+Follow teams/fractalmind-ai-maintenance.md 工作流
 EOF
 ```
 

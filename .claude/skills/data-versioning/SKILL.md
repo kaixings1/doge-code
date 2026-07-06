@@ -18,14 +18,14 @@ description: "数据集和模型版本管理：DVC、LakeFS、Delta Lake 用于�
 | Delta Lake | Spark/Databricks | 云存储 |
 | Git LFS | 小二进制文件 | Git 远程 |
 
-### DVC Workflow
+### DVC 工作流
 1. Initialize DVC in your git repo
 2. Track data files with `dvc add`
 3. Push data to remote storage
 4. Version with git commits
 5. Reproduce with `dvc repro`
 
-### Best Practices
+### 最佳实践
 - Never commit large data to git
 - Tag important data versions (training sets, releases)
 - Document data changes in commit messages
@@ -39,6 +39,6 @@ description: "数据集和模型版本管理：DVC、LakeFS、Delta Lake 用于�
 
 ## 输出格式
 
-- **Setup Guide**: Tool installation and configuration
-- **Workflow**: How to version, retrieve, and compare data
-- **Python Code**: Programmatic versioning integration
+- **设置 Guide**: Tool installation and 配置
+- **工作流**: How to version, retrieve, and compare data
+- **Python Code**: Programmatic versioning 集成

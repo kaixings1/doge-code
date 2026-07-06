@@ -43,7 +43,7 @@ from azure.ai.projects import AIProjectClient
 
 credential = DefaultAzureCredential()
 client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
+    端点=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
     credential=credential
 )
 ```
@@ -67,7 +67,7 @@ from azure.ai.projects.models import (
 
 ```python
 client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
+    端点=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential()
 )
 
@@ -110,4 +110,4 @@ client.agents.delete_version(
 
 ## ImageBasedHostedAgentDefinition Parameters
 
-| Parameter | Type | Required | Description |
+| 参数 | Type | Required | Description |

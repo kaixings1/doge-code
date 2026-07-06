@@ -1,6 +1,6 @@
 ---
 name: decision-mapping
-description: "Decision Mapping — Decision Mapping 相关功能和最佳实践"
+description: "Decision Mapping — 决策映射相关功能和最佳实践"
 disable-model-invocation: true
 ---
 
@@ -31,7 +31,7 @@ disable-model-invocation: true
 <answer-here>
 ```
 
-Each ticket must be sized to one 100K token agent session.
+Each ticket must be sized to one 100K 令牌 agent 会话.
 
 ## Ticket Types
 
@@ -55,17 +55,17 @@ There are two ways this skill can be invoked: **bootstrap** and **resume**.
 
 User invokes with a loose idea.
 
-1. Run a /grilling + /domain-modeling session to surface the open decisions. Ask one question at a time.
+1. Run a /grilling + /domain-modeling 会话 to surface the open decisions. Ask one question at a time.
 2. Write a new decision map — mostly fog, frontier identified, trivially-decidable entries resolved inline.
-3. Stop. Map-building is one session's work; do not also resolve tickets.
+3. Stop. Map-building is one 会话's work; do not also resolve tickets.
 
 ### Resume
 
 User invokes with a path to an existing map and a ticket number.
 
 1. Load the **whole map** as context.
-2. Run a session to resolve the ticket, invoking skills as needed. If in doubt, use `/grilling` and `/domain-modeling`.
-3. Record what the session resolved in the ticket's body.
+2. Run a 会话 to resolve the ticket, invoking skills as needed. If in doubt, use `/grilling` and `/domain-modeling`.
+3. Record what the 会话 resolved in the ticket's body.
 4. Add newly-discovered tickets (with correct `blocked_by` edges).
 5. Stop.
 
@@ -79,6 +79,6 @@ The user may choose to run tickets in parallel, so expect other agents to make c
 
 Many times, the initial grilling will result in no fog of war. No unresolved tickets. Nothing to do, except implement.
 
-In those situations, you should offer the user the chance to skip the decision map - since the decision map is only needed if multi-session decisions need to be made.
+In those situations, you should offer the user the chance to skip the decision map - since the decision map is only needed if multi-会话 decisions need to be made.
 
-If they skip it, you should recommend either implementing directly or using `/to-prd` to schedule a multi-session implementation.
+If they skip it, you should recommend either implementing directly or using `/to-prd` to schedule a multi-会话 implementation.

@@ -5,11 +5,11 @@ description: "Seo Google — Google SEO API 相关功能和最佳实践：Search
   and GA4 organic traffic. Provides real Google field data for Core Web Vitals,
   indexation status, search performance, and organic traffic trends. Use when
   user says "search console", "GSC", "PageSpeed", "CrUX", "field data",
-  "indexing API", "GA4 organic", "URL inspection", "google api setup",
+  "indexing API", "GA4 organic", "URL inspection", "google api 设置",
   "real CWV data", "impressions", "clicks", "CTR", "position data",
   "LCP", "INP", "CLS", "FCP", "TTFB", or "Lighthouse scores".
 user-invocable: true
-argument-hint: "[command] [url|property]"
+参数-hint: "[command] [url|property]"
 license: MIT
 metadata:
   author: AgriciDaniel
@@ -24,7 +24,7 @@ analysis (existing claude-seo skills) and Google's real-time field data: actual
 Chrome user metrics, real indexation status, search performance, and organic traffic.
 
 All APIs are free. 设置 requires a Google Cloud project with API key and/or
-service account -- run `/seo google setup` for step-by-step instructions.
+service account -- run `/seo google 设置` for step-by-step instructions.
 
 ## 前提条件
 
@@ -43,7 +43,7 @@ Config file: `~/.config/claude-seo/google-api.json`
 }
 ```
 
-If missing, read `references/auth-setup.md` and walk the user through setup.
+If missing, read `references/auth-设置.md` and walk the user through 设置.
 
 ### Credential Tiers
 

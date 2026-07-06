@@ -1,15 +1,15 @@
 ---
-name: ecommerce-image-workflow
-en_name: "Ecommerce Image Workflow"
-description: "Ecommerce Image Workflow — Ecommerce Image Workflow 相关功能和最佳实践"
-  Reference-product ecommerce image workflow for generating a compact set
+name: ecommerce-image-工作流
+en_name: "Ecommerce Image 工作流"
+description: "Ecommerce Image 工作流 — Ecommerce Image 工作流 相关功能和最佳实践"
+  Reference-product ecommerce image 工作流 for generating a compact set
   of product-faithful main, feature, and lifestyle images from real product
   reference photos. V1 requires uploaded product imagery and intentionally
   defers brief-only concept generation and platform-specific batch exports.
 triggers:
   - "ecommerce product images"
   - "product image set"
-  - "product photography workflow"
+  - "product photography 工作流"
   - "product main image"
   - "product feature shot"
   - "reference product commerce images"
@@ -28,13 +28,13 @@ od:
   design_system:
     requires: false
   example_prompt: |
-    Use the Ecommerce Image Workflow to turn my uploaded product reference
+    Use the Ecommerce Image 工作流 to turn my uploaded product reference
     photo into a compact ecommerce image set: one main packshot, one feature
     highlight image, and one lifestyle scene. Preserve the exact product
     identity, color, material, logo placement, structure, and proportions.
 ---
 
-# Ecommerce Image Workflow
+# Ecommerce Image 工作流
 
 Create a compact ecommerce image set from real product reference imagery.
 This V1 skill is intentionally narrow: it supports **reference-product mode
@@ -45,7 +45,7 @@ this version.
 ## Resource map
 
 ```text
-ecommerce-image-workflow/
+ecommerce-image-工作流/
 |-- SKILL.md
 |-- example.html
 `-- references/
@@ -83,7 +83,7 @@ Ask only for missing essentials:
 - Target marketplace or aspect only if the user asks for platform-specific
   framing.
 
-Do not ask broad discovery questions. Keep the workflow moving.
+Do not ask broad discovery questions. Keep the 工作流 moving.
 
 ## 工作流
 
@@ -94,7 +94,7 @@ reference image.
 
 If no product image is available, reply:
 
-> Please upload at least one product reference image first. This V1 workflow
+> Please upload at least one product reference image first. This V1 工作流
 > preserves a real product from reference photos; brief-only concept generation
 > is deferred to a later version.
 
@@ -182,7 +182,7 @@ out=$("$OD_NODE_BIN" "$OD_BIN" media generate \
   --model "<imageModel from metadata>" \
   --aspect "<slot aspect or imageAspect from metadata>" \
   --image "<project-relative product reference image>" \
-  --output "<product-slug>-<slot>.png" \
+  --output "<product-标识符>-<slot>.png" \
   --prompt "<full slot prompt>")
 ec=$?
 if [ "$ec" -ne 0 ]; then echo "$out" >&2; exit "$ec"; fi
@@ -216,7 +216,7 @@ The final line must be JSON with `{"file": {"name": "...", ...}}`.
 Record each final returned filename in `image-manifest.json`.
 
 If the active image model or provider cannot use `--image`, stop and tell the
-user that this workflow needs a reference-capable image generation path for
+user that this 工作流 needs a reference-capable image generation path for
 product fidelity.
 
 ### Step 5 - Write `image-manifest.json`
@@ -225,7 +225,7 @@ After generation, create a project file named `image-manifest.json`:
 
 ```json
 {
-  "workflow": "ecommerce-image-workflow",
+  "工作流": "ecommerce-image-工作流",
   "mode": "reference-product",
   "productName": "Example product",
   "referenceImages": ["reference-product.png"],

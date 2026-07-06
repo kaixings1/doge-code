@@ -123,6 +123,14 @@ requires:
 
 ## 快速参考
 
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
 | 工具标识 | 描述 |
 |---|---|
 | `GORGIAS_LIST_TICKETS` | 带筛选条件列出工单（状态、渠道、日期、负责人） |

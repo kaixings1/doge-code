@@ -7,7 +7,7 @@ source: community
 date_added: "2026-03-10"
 author: Svobikl
 tags: [legal, context, cross-jurisdictional, compliance, scaffolding]
-tools: [claude, cursor, gemini]
+tools: [claude, 游标, gemini]
 ---
 
 # LEX：法律实体交叉引用
@@ -29,7 +29,7 @@ LEX 是一个结构化真相引擎，旨在通过将代理锚定在 29+ 司法�
 
 ### 第 2 步：搜索并获取上下文
 使用 CLI 快捷键查找相关的法律模式和模板。
-- 运行 `lex search <query>` 查找匹配模板。
+- 运行 `lex search <查询>` 查找匹配模板。
 - 运行 `lex get <path>` 读取详细的元数据和要求。
 
 ### 第 3 步：框架起草

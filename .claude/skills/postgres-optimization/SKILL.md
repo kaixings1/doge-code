@@ -58,7 +58,7 @@ LIMIT 20;
 CREATE TABLE events (
     id          BIGINT GENERATED ALWAYS AS IDENTITY,
     event_type  TEXT NOT NULL,
-    payload     JSONB NOT NULL,
+    载荷     JSONB NOT NULL,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 ) PARTITION BY RANGE (created_at);
 
@@ -76,7 +76,7 @@ CREATE INDEX ON events (created_at, event_type);
 ## JSONB 操作
 
 ```sql
--- Query nested JSONB fields
+-- 查询 nested JSONB fields
 SELECT * FROM products
 WHERE metadata @> '{"category": "electronics"}'
   AND (metadata ->> 'price')::numeric < 500;
@@ -114,7 +114,7 @@ Web 应用使用事务级连接池。使用预处理语句或临时表的应用�
 
 ```sql
 -- Check for slow queries
-SELECT query, calls, mean_exec_time, total_exec_time
+SELECT 查询, calls, mean_exec_time, total_exec_time
 FROM pg_stat_statements
 ORDER BY total_exec_time DESC
 LIMIT 10;

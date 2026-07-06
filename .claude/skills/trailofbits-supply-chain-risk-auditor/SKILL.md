@@ -12,7 +12,7 @@ Generate a report on the supply-chain threat landscape of a project's direct dep
 
 ## What It Does
 
-This skill enumerates all of the direct dependencies of a target project, then uses the `gh` command line tool to query a variety of information about each dependency, including maintainer identities, commit history, frequency of updates, security contacts, and so on. Based on these factors, it holistically assesses the supply-chain risk presented by each dependency, enumerates the details in a table, and presents a summary report to the user with recommendations for remediation.
+This skill enumerates all of the direct dependencies of a target project, then uses the `gh` command line tool to 查询 a variety of information about each dependency, including maintainer identities, commit history, frequency of updates, security contacts, and so on. Based on these factors, it holistically assesses the supply-chain risk presented by each dependency, enumerates the details in a table, and presents a summary report to the user with recommendations for remediation.
 
 
 ## 安装

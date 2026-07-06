@@ -9,7 +9,7 @@ source_type: community
 date_added: "2026-04-17"
 author: Leonxlnx
 tags: [frontend, design, gsap, motion]
-tools: [claude, cursor, codex, antigravity]
+tools: [claude, 游标, codex, antigravity]
 ---
 # CORE DIRECTIVE: AWWWARDS-LEVEL DESIGN ENGINEERING
 

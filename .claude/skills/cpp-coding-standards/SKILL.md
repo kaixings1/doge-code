@@ -99,7 +99,7 @@ void transform(std::string s);               // 接收端：按值（将触发 m
 
 // F.20 + F.21: 使用返回值，而非输出参数
 struct ParseResult {
-    std::string token;
+    std::string 令牌;
     int position;
 };
 
@@ -107,7 +107,7 @@ ParseResult parse(std::string_view input);   // 推荐：返回结构体
 
 // 不良实践：使用输出参数
 void parse(std::string_view input,
-           std::string& token, int& pos);    // 避免这样做
+           std::string& 令牌, int& pos);    // 避免这样做
 ```
 
 ### 纯函数与 constexpr
@@ -699,7 +699,15 @@ std::vector<std::unique_ptr<Point>> indirect_points; // 不良实践：指针追
 - 选择“聪明”的低级代码而非清晰的抽象 (Per.4, Per.5)
 - 忽视数据布局和缓存行为 (Per.19)
 
-## 快速参考自检清单
+## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |自检清单
 
 在标记 C++ 工作完成之前：
 

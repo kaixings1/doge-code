@@ -1,18 +1,18 @@
 # Insecure Defaults Detection
 
-Security skill for detecting insecure default configurations that create vulnerabilities when applications run with missing or incomplete configuration.
+Security skill for detecting insecure default configurations that create vulnerabilities when applications run with missing or incomplete 配置.
 
 ## 概述
 
 The `insecure-defaults` skill helps identify security vulnerabilities caused by:
 
-- **Hardcoded fallback secrets** (JWT keys, API keys, session secrets)
+- **Hardcoded fallback secrets** (JWT keys, API keys, 会话 secrets)
 - **Default credentials** (admin/admin, root/password)
 - **Weak cryptographic defaults** (MD5, DES, ECB mode)
 - **Permissive access control** (CORS *, public by default)
-- **Missing security configuration** that causes fail-open behavior
+- **Missing security 配置** that causes fail-open behavior
 
-**Critical Distinction:** This skill emphasizes **fail-secure vs. fail-open** behavior. Applications that crash without proper configuration are safe; applications that run with insecure defaults are vulnerable.
+**Critical Distinction:** This skill emphasizes **fail-secure vs. fail-open** behavior. Applications that crash without proper 配置 are safe; applications that run with insecure defaults are vulnerable.
 
 ## 安装
 
@@ -28,18 +28,18 @@ Or from the plugin marketplace:
 
 ## 使用场景
 
-Use this skill when:
+在以下情况下使用此技能：
 
-- **Security auditing** production applications or services
-- **Configuration review** of deployment manifests (Docker, Kubernetes, IaC)
-- **Pre-production checks** before deploying new services
-- **Code review** of authentication, authorization, or cryptographic code
+- **安全审计**生产应用或服务
+- **配置审查**部署清单（Docker、Kubernetes、IaC）
+- **投产前检查**部署新服务之前
+- **代码审查**认证、授权或加密代码
 - **Environment variable handling** analysis for secrets management
-- **API security review** checking CORS, rate limiting, authentication
-- **Third-party integration** review for hardcoded test credentials
+- **API security review** checking CORS, rate limiting, 认证
+- **Third-party 集成** review for hardcoded test credentials
 
 ## 用法
 
 ```
-Audit this codebase for insecure defaults—focus on environment variable fallbacks and authentication configuration
+Audit this codebase for insecure defaults—focus on environment variable fallbacks and 认证 配置
 ```

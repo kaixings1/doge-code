@@ -19,7 +19,7 @@ date_added: "2026-02-27"
 
 **不要**在以下情况下使用此技能：
 - 您需要在任何细分领域进行通用 SEO 健康检查（使用 `seo-audit`）。
-- 您正在调查突然的流量或排名暴跌（使用 `seo-forensic-incident-response`）。
+- 您正在调查突然的流量或排名暴跌（使用 `seo-forensic-incident-响应`）。
 
 ---
 
@@ -151,7 +151,7 @@ Each major practice area or service should have a dedicated, optimized page.
 - Unique, expert-written content per page
 - Internal links to and from the homepage and other related pages
 - Clear calls to action (phone number, WhatsApp button, contact form)
-- Schema markup for LegalService or ProfessionalService (see schema-markup skill)
+- 架构 markup for LegalService or ProfessionalService (see 架构-markup skill)
 
 **Common issues:**
 - All services crammed onto a single page
@@ -220,7 +220,7 @@ Focus on issues most common in legal site CMS platforms (WordPress, Wix, Squares
 
 **URL Structure**
 - Clean, readable URLs: `/advogado-criminal-belo-horizonte/`
-- No session IDs or unnecessary parameters
+- No 会话 IDs or unnecessary parameters
 - Consistent trailing slash handling
 
 ---
@@ -262,7 +262,7 @@ Legal 常见问题 pages rank well for long-tail queries and build trust.
 
 - Create 常见问题 pages per practice area
 - Target "question" queries: "o que fazer quando", "quanto tempo demora", "qual a diferença entre"
-- Use 常见问题 schema markup for rich results
+- Use 常见问题 架构 markup for rich results
 - Keep answers accurate, brief, and written in plain language
 
 ### Blog / Legal Articles
@@ -322,7 +322,7 @@ Same format
 **Prioritized Action Plan**
 1. Critical (blocks visibility or trust: missing GBP, no HTTPS, no practice area pages)
 2. High impact (E-E-A-T improvements, location pages, review strategy)
-3. Quick wins (title tags, meta descriptions, GBP photos, 常见问题 schema)
+3. Quick wins (title tags, meta descriptions, GBP photos, 常见问题 架构)
 4. Long-term (content strategy, link building, academic publications)
 
 ---
@@ -341,8 +341,8 @@ Same format
 ## 相关 Skills
 
 - **seo-audit**: For general SEO health checks outside the legal/local context.
-- **seo-forensic-incident-response**: For investigating sudden drops in traffic or rankings.
-- **schema-markup**: For implementing LegalService, Attorney, and 常见问题 structured data.
+- **seo-forensic-incident-响应**: For investigating sudden drops in traffic or rankings.
+- **架构-markup**: For implementing LegalService, Attorney, and 常见问题 structured data.
 - **ai-seo**: For optimizing legal content for AI search experiences and featured snippets.
 - **page-cro**: For improving conversion rate on practice area pages and contact forms.
 

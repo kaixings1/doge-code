@@ -1,7 +1,7 @@
 ---
 name: agent-tool-builder
-description: "工具是 AI 代理与外界交互的桥梁；设计良好的工具能提升代理执行力。工具是工作代理与产生幻觉、静默失败或消耗 10 倍 token 的代理之间的区别。"
-  tool design from schema to error handling.
+description: "工具是 AI 代理与外界交互的桥梁；设计良好的工具能提升代理执行力。工具是工作代理与产生幻觉、静默失败或消耗 10 倍 令牌 的代理之间的区别。"
+  tool design from 架构 to error handling.
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
@@ -13,12 +13,12 @@ Tools are how AI agents interact with the world. A well-designed tool is the
 difference between an agent that works and one that hallucinates, fails
 silently, or costs 10x more tokens than necessary.
 
-This skill covers tool design from schema to error handling. JSON Schema
+This skill covers tool design from 架构 to error handling. JSON 架构
 best practices, description writing that actually helps the LLM, validation,
 and the emerging MCP standard that's becoming the lingua franca for AI tools.
 
 Key insight: Tool descriptions are more important than tool implementations.
-The LLM never sees your code - it only sees the schema and description.
+The LLM never sees your code - it only sees the 架构 and description.
 
 ## Principles
 
@@ -33,7 +33,7 @@ The LLM never sees your code - it only sees the schema and description.
 
 - agent-tools
 - function-calling
-- tool-schema-design
+- tool-架构-design
 - mcp-tools
 - tool-validation
 - tool-error-handling
@@ -49,25 +49,25 @@ The LLM never sees your code - it only sees the schema and description.
 
 ### Standards
 
-- JSON Schema - When: All tool definitions Note: The universal format for tool schemas
+- JSON 架构 - When: All tool definitions Note: The universal format for tool schemas
 - MCP (Model 上下文 Protocol) - When: Building reusable, cross-platform tools Note: Anthropic's open standard, widely adopted
 
 ### Frameworks
 
 - Anthropic SDK - When: Claude-based agents Note: Beta tool runner handles most complexity
-- OpenAI Functions - When: OpenAI-based agents Note: Use strict mode for guaranteed schema compliance
+- OpenAI Functions - When: OpenAI-based agents Note: Use strict mode for guaranteed 架构 compliance
 - Vercel AI SDK - When: Multi-provider tool handling Note: Abstracts differences between providers
 - LangChain Tools - When: LangChain-based agents Note: Converts MCP tools to LangChain format
 
 ## 模式
 
-### Tool Schema Design
+### Tool 架构 Design
 
-Creating clear, unambiguous JSON Schema for tools
+Creating clear, unambiguous JSON 架构 for tools
 
-**When to use**: Defining any new tool for an agent
+**使用场景**: Defining any new tool for an agent
 
-# TOOL SCHEMA BEST PRACTICES:
+# TOOL 架构 BEST PRACTICES:
 
 ## 1. Detailed Descriptions (Most Important)
 """
@@ -105,13 +105,13 @@ GOOD - Comprehensive:
 }
 """
 
-## 2. Parameter Descriptions
+## 2. 参数 Descriptions
 """
-Every parameter needs:
+Every 参数 needs:
 - What it is
 - Format expected
 - Example value
-- Edge cases/limitations
+- Edge cases/限制
 
 {
   "location": {
@@ -142,7 +142,7 @@ Enums constrain the LLM to valid values:
 "action": {
   "type": "string",
   "enum": ["create", "read", "update", "delete"],
-  "description": "The CRUD operation to perform"
+  "description": "The CRUD 操作 to perform"
 }
 """
 
@@ -153,11 +153,11 @@ Be explicit about what's required:
 {
   "type": "object",
   "properties": {
-    "query": {...},      // 必需
+    "查询": {...},      // 必需
     "limit": {...},      // 可选 with default
     "offset": {...}      // 可选
   },
-  "required": ["query"],
+  "required": ["查询"],
   "additional属性": false  // Strict mode
 }
 """
@@ -166,7 +166,7 @@ Be explicit about what's required:
 
 Using examples to guide LLM tool usage
 
-**When to use**: Complex tools with nested objects or format-sensitive inputs
+**使用场景**: Complex tools with nested objects or format-sensitive inputs
 
 # TOOL USE EXAMPLES (Anthropic Beta Feature):
 
@@ -226,7 +226,7 @@ Improves accuracy from 72% to 90% on complex operations.
 
 Returning errors that help the LLM recover
 
-**When to use**: Any tool that can fail
+**使用场景**: Any tool that can fail
 
 # ERROR HANDLING BEST PRACTICES:
 
@@ -339,7 +339,7 @@ def get_weather(location: str) -> ToolResult:
 
 Building tools using Model 上下文 Protocol
 
-**When to use**: Creating reusable, cross-platform tools
+**使用场景**: Creating reusable, cross-platform tools
 
 # MCP TOOL IMPLEMENTATION:
 
@@ -386,8 +386,8 @@ server.setRequestHandler("tools/list", async () => ({
 }));
 
 // Handle tool calls
-server.setRequestHandler("tools/call", async (request) => {
-  const { name, arguments: args } = request.params;
+server.setRequestHandler("tools/call", async (请求) => {
+  const { name, arguments: args } = 请求.params;
 
   if (name === "get_weather") {
     try {
@@ -434,7 +434,7 @@ await server.connect(transport);
 
 Using SDK tool runners for automatic handling
 
-**When to use**: Building tool loops without manual management
+**使用场景**: Building tool loops without manual management
 
 # TOOL RUNNER (Anthropic SDK Beta):
 
@@ -465,11 +465,11 @@ def get_weather(location: str, unit: str = "fahrenheit") -> str:
     return json.dumps({"temperature": "72°F", "conditions": "Sunny"})
 
 @beta_tool
-def search_web(query: str) -> str:
+def search_web(查询: str) -> str:
     '''Search the web for information.
 
     Args:
-        query: The search query
+        查询: The search 查询
     '''
     # Implementation
     return json.dumps({"results": [...]})
@@ -529,19 +529,19 @@ for await (const message of runner) {
 
 Running multiple tools simultaneously
 
-**When to use**: Independent tool calls that can run in parallel
+**使用场景**: Independent tool calls that can run in parallel
 
 # PARALLEL TOOL EXECUTION:
 
 """
-By default, Claude can call multiple tools in one response.
+By default, Claude can call multiple tools in one 响应.
 This dramatically reduces latency for independent operations.
 """
 
 ## Handling Parallel Results
 """
 # Claude returns multiple tool_use blocks:
-response.content = [
+响应.content = [
     {"type": "text", "text": "I'll check both locations..."},
     {"type": "tool_use", "id": "toolu_01", "name": "get_weather",
      "input": {"location": "San Francisco, CA"}},
@@ -588,7 +588,7 @@ rather than sequentially."
 
 ## Disabling Parallel (When Needed)
 """
-response = client.messages.create(
+响应 = client.messages.create(
     model="claude-sonnet-4-5",
     tools=tools,
     tool_choice={"type": "auto", "disable_parallel_tool_use": True},
@@ -604,23 +604,23 @@ Severity: WARNING
 
 Tool descriptions should be at least 100 characters
 
-Message: Tool description is too short. Add details about when to use it, parameters, and return values.
+Message: Tool description is too short. Add details about 使用场景 it, parameters, and return values.
 
-### Parameter Descriptions 必需
+### 参数 Descriptions 必需
 
 Severity: WARNING
 
-Every parameter should have a description
+Every 参数 should have a description
 
-Message: Parameter missing description. Describe what it is and the expected format.
+Message: 参数 missing description. Describe what it is and the expected format.
 
-### Schema Should Specify 必需 Fields
+### 架构 Should Specify 必需 Fields
 
 Severity: INFO
 
 Explicitly define which fields are required
 
-Message: Schema doesn't specify required fields. Add 'required' array.
+Message: 架构 doesn't specify required fields. Add 'required' array.
 
 ### Tool Implementation Needs Error Handling
 
@@ -660,7 +660,7 @@ Severity: ERROR
 
 绝不 concatenate user input into SQL
 
-Message: SQL query appears to use string concatenation. Use parameterized queries.
+Message: SQL 查询 appears to use string concatenation. Use parameterized queries.
 
 ### External Calls Need Timeouts
 
@@ -668,9 +668,9 @@ Severity: WARNING
 
 HTTP requests and external calls should have timeouts
 
-Message: External API call without timeout. Add timeout parameter.
+Message: External API call without timeout. Add timeout 参数.
 
-### MCP Tools Must Have Input Schema
+### MCP Tools Must Have Input 架构
 
 Severity: ERROR
 
@@ -695,7 +695,7 @@ Works well with: `multi-agent-orchestration`, `api-designer`, `llm-architect`, `
 ## 使用场景
 - User mentions or implies: agent tool
 - User mentions or implies: function calling
-- User mentions or implies: tool schema
+- User mentions or implies: tool 架构
 - User mentions or implies: tool design
 - User mentions or implies: mcp server
 - User mentions or implies: mcp tool

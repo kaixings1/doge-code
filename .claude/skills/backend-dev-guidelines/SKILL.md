@@ -175,11 +175,11 @@ config.auth.jwtSecret;
 * Webhook payloads
 
 ```ts
-const schema = z.object({
+const 架构 = z.object({
   email: z.string().email(),
 });
 
-const input = schema.parse(req.body);
+const input = 架构.parse(req.body);
 ```
 
 No validation = bug.
@@ -215,7 +215,7 @@ src/
 | Service    | `camelCaseService.ts`     |
 | Repository | `PascalCaseRepository.ts` |
 | Routes     | `camelCaseRoutes.ts`      |
-| Validators | `camelCase.schema.ts`     |
+| Validators | `camelCase.架构.ts`     |
 
 ---
 
@@ -317,7 +317,7 @@ No tests → no merge.
 
 * **frontend-dev-guidelines** → API contract alignment
 * **error-tracking** → Sentry standards
-* **database-verification** → Schema correctness
+* **database-verification** → 架构 correctness
 * **analytics-tracking** → Event pipelines
 * **skill-developer** → Skill governance
 
@@ -344,7 +344,7 @@ Before finalizing backend work:
 ---
 
 ### When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## /u9650/u5236
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

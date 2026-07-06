@@ -1,7 +1,7 @@
 ---
 name: ultrawork
 description: "超级工作 — 独立任务的并行执行引擎和协议"
-argument-hint: "<task description with parallel work items>"
+参数-hint: "<task description with parallel work items>"
 level: 4
 ---
 
@@ -55,7 +55,7 @@ Ultrawork是独立任务的并行执行引擎和执行协议。它强调意图�
    - Standard implementation: MEDIUM tier (Sonnet)
    - Complex analysis/refactoring: HIGH tier (Opus)
 7. **Fire independent tasks simultaneously**: Launch all parallel-safe tasks at once
-8. **Run dependent tasks sequentially**: Wait for prerequisites before launching dependent work
+8. **Run dependent tasks sequentially**: Wait for 前提条件 before launching dependent work
 9. **Background long operations**: Builds, installs, and test suites use `run_in_background: true`
 10. **Verify when all tasks complete** (lightweight):
    - Build/typecheck passes
@@ -72,13 +72,13 @@ Ultrawork是独立任务的并行执行引擎和执行协议。它强调意图�
 - Use foreground execution for quick status checks and file operations
 </Tool_用法>
 
-<Examples>
+<示例>
 <Good>
 Three independent tasks fired simultaneously:
 ```
 Task(subagent_type="oh-my-claudecode:executor", model="haiku", prompt="Add missing type export for Config interface")
-Task(subagent_type="oh-my-claudecode:executor", model="sonnet", prompt="Implement the /api/users endpoint with validation")
-Task(subagent_type="oh-my-claudecode:executor", model="sonnet", prompt="Add integration tests for the auth middleware")
+Task(subagent_type="oh-my-claudecode:executor", model="sonnet", prompt="Implement the /api/users 端点 with validation")
+Task(subagent_type="oh-my-claudecode:executor", model="sonnet", prompt="Add 集成 tests for the auth 中间件")
 ```
 Why good: Independent tasks at appropriate tiers, all fired at once.
 </Good>
@@ -96,7 +96,7 @@ Why good: Long build runs in background while short task runs in foreground.
 Sequential execution of independent work:
 ```
 result1 = Task(executor, "Add type export")  # wait...
-result2 = Task(executor, "Implement endpoint")     # wait...
+result2 = Task(executor, "Implement 端点")     # wait...
 result3 = Task(executor, "Add tests")              # wait...
 ```
 Why bad: These tasks are independent. Running them sequentially wastes time.
@@ -109,7 +109,7 @@ Task(subagent_type="oh-my-claudecode:executor", model="opus", prompt="Add a miss
 ```
 Why bad: Opus is expensive overkill for a trivial fix. Use executor with Haiku instead.
 </Bad>
-</Examples>
+</示例>
 
 <Escalation_And_Stop_Conditions>
 - When ultrawork is invoked directly (not via ralph), apply lightweight verification only -- build passes, tests pass, no new errors
@@ -125,10 +125,10 @@ Why bad: Opus is expensive overkill for a trivial fix. Use executor with Haiku i
 - [ ] No new errors introduced
 </Final_Checklist>
 
-## Parallel session caveats
+## Parallel 会话 caveats
 
 - **Multi-repo workspace anchor:** drop a `.omc-workspace` marker at the parent directory so multiple sessions across sub-repos share one `.omc/`. Resolution order: `OMC_STATE_DIR > .omc-workspace > git > cwd`. See `docs/REFERENCE.md`.
-- **Session id source:** OMC_SESSION_ID env var wins in CLI contexts; hook payload data.session_id wins in hook contexts.
+- **会话 id source:** OMC_SESSION_ID env var wins in CLI contexts; hook 载荷 data.session_id wins in hook contexts.
 - **Plan id (when applicable):** Ultrawork has no persistent state; two concurrent runs are independent by design. No plan-id needed.
 - **Parallel verdict:** supported (stateless component)
 

@@ -124,9 +124,9 @@ The key insight: **match the offer to the reason.** A discount won't save someon
 | Cancel Reason | Primary Offer | Fallback Offer |
 |---------------|---------------|----------------|
 | Too expensive | Discount (20-30% for 2-3 months) | Downgrade to lower plan |
-| Not using it enough | Pause (1-3 months) | Free onboarding session |
+| Not using it enough | Pause (1-3 months) | Free onboarding 会话 |
 | Missing feature | Roadmap preview + timeline | Workaround guide |
-| Switching to competitor | Competitive comparison + discount | Feedback session |
+| Switching to competitor | Competitive comparison + discount | Feedback 会话 |
 | Technical issues | Escalate to support immediately | Credit + priority fix |
 | Temporary / seasonal | Pause subscription | Downgrade temporarily |
 | Business closed | Skip offer (respect the situation) | — |
@@ -293,7 +293,7 @@ Not all failures are the same. Retry strategy by decline type:
 |-------------|----------|----------------|
 | Soft decline (temporary) | Insufficient funds, processor timeout | Retry 3-5 times over 7-10 days |
 | Hard decline (permanent) | Card stolen, account closed | Don't retry — ask for new card |
-| Authentication required | 3D Secure, SCA | Send customer to update payment |
+| 认证 required | 3D Secure, SCA | Send customer to update payment |
 
 **Retry timing best practices:**
 - Retry 1: 24 hours after failure
@@ -329,7 +329,7 @@ Not all failures are the same. Retry strategy by decline type:
 | Overall payment recovery | <30% | 40-50% | 60%+ |
 | Pre-dunning prevention | None | 10-15% | 20-30% |
 
-For the complete dunning playbook with provider-specific setup, see [references/dunning-playbook.md](references/dunning-playbook.md).
+For the complete dunning playbook with provider-specific 设置, see [references/dunning-playbook.md](references/dunning-playbook.md).
 
 ---
 
@@ -368,7 +368,7 @@ Test one variable at a time:
 | Offer presentation (modal vs full page) | Full page gets more attention | Save rate |
 | Copy tone (empathetic vs direct) | Empathetic reduces friction | Save rate |
 
-**How to run cancel flow experiments:** Use the **ab-test-setup** skill to design statistically rigorous tests. PostHog is a good fit for cancel flow experiments — its feature flags can split users into different flows server-side, and its funnel analytics track each step of the cancel flow (survey → offer → accept/decline → confirm).
+**How to run cancel flow experiments:** Use the **ab-test-设置** skill to design statistically rigorous tests. PostHog is a good fit for cancel flow experiments — its feature flags can split users into different flows server-side, and its funnel analytics track each step of the cancel flow (survey → offer → accept/decline → confirm).
 
 ---
 
@@ -396,9 +396,9 @@ For implementation, use the billing, analytics, and experimentation tools availa
 | Tool | Best For | Key Feature |
 |------|----------|-------------|
 | **Churnkey** | Full cancel flow + dunning | AI-powered adaptive offers, 34% avg save rate |
-| **ProsperStack** | Cancel flows with analytics | Advanced rules engine, Stripe/Chargebee integration |
-| **Raaft** | Simple cancel flow builder | Easy setup, good for early-stage |
-| **Chargebee Retention** | Chargebee customers | Native integration, was Brightback |
+| **ProsperStack** | Cancel flows with analytics | Advanced rules engine, Stripe/Chargebee 集成 |
+| **Raaft** | Simple cancel flow builder | Easy 设置, good for early-stage |
+| **Chargebee Retention** | Chargebee customers | Native 集成, was Brightback |
 
 ### Billing Providers (Dunning)
 
@@ -429,7 +429,7 @@ For implementation, use the billing, analytics, and experimentation tools availa
 - **pricing-strategy**: For plan structure and annual discount strategy
 - **onboarding-cro**: For activation to prevent early churn
 - **analytics-tracking**: For setting up churn signal events
-- **ab-test-setup**: For testing cancel flow variations with statistical rigor
+- **ab-test-设置**: For testing cancel flow variations with statistical rigor
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

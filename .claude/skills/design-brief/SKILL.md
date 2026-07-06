@@ -34,7 +34,7 @@ od:
 
 # Design Brief Skill
 
-Parse a structured design brief into a concrete DESIGN.md and optional visual preview. Agent, follow this workflow exactly.
+Parse a structured design brief into a concrete DESIGN.md and optional visual preview. Agent, follow this 工作流 exactly.
 
 ## Background
 
@@ -100,7 +100,7 @@ When a phrase maps to multiple dimensions (e.g. "clean dark landing page" → mo
 
 Every design brief must resolve these 8 dimensions. If any are missing from the input, select sensible defaults using the rules in Section 2.2.
 
-The values listed below form a closed vocabulary. Only values in this table have concrete token mappings in Section 2.1. If the user provides a value not listed here, the agent must prompt for clarification rather than guessing.
+The values listed below form a closed vocabulary. Only values in this table have concrete 令牌 mappings in Section 2.1. If the user provides a value not listed here, the agent must prompt for clarification rather than guessing.
 
 | # | Dimension | Key | Example values |
 |---|-----------|-----|---------------|
@@ -113,7 +113,7 @@ The values listed below form a closed vocabulary. Only values in this table have
 | 7 | Density | `density` | compact, balanced, spacious |
 | 8 | 约束条件 | `exclude` | animations, gradients, stock_photos, carousel |
 
-### 2.1 Symbolic → concrete token resolution
+### 2.1 Symbolic → concrete 令牌 resolution
 
 Each symbolic value maps to concrete design tokens. The agent must resolve these before writing DESIGN.md:
 

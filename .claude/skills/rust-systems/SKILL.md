@@ -94,7 +94,7 @@ impl Repository for PgUserRepo {
     }
 
     async fn save(&self, user: &User) -> Result<()> {
-        sqlx::query("INSERT INTO users (id, name, email) VALUES ($1, $2, $3)")
+        sqlx::查询("INSERT INTO users (id, name, email) VALUES ($1, $2, $3)")
             .bind(&user.id)
             .bind(&user.name)
             .bind(&user.email)
@@ -184,5 +184,5 @@ impl ServerConfigBuilder {
 - [ ] Async code uses bounded concurrency (semaphores or `buffer_unordered`)
 - [ ] Traits used for abstraction and testability
 - [ ] `unsafe` blocks have documented safety invariants
-- [ ] Builder pattern used for complex configuration structs
+- [ ] Builder pattern used for complex 配置 structs
 - [ ] Clippy lints enabled and warnings addressed

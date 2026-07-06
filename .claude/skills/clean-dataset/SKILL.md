@@ -56,7 +56,7 @@ and the date columns are in different formats"
 
 **Example 2: Automated pipeline**
 ```
-"Generate a reusable Python cleaning script for this data schema
+"Generate a reusable Python cleaning script for this data 架构
 that I can run on new data batches"
 ```
 
@@ -68,7 +68,7 @@ don't touch anything else"
 
 ## Key Capabilities
 
-- **Multi-format support**: CSV, Excel, Parquet, JSON, SQL query results
+- **Multi-format support**: CSV, Excel, Parquet, JSON, SQL 查询 results
 - **Automated detection**: Finds issues without manual inspection
 - **Code generation**: Produces pandas/polars code for reproducibility
 - **Logging**: Documents every change for audit trails

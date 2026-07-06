@@ -18,13 +18,13 @@ tags:
 tools:
   - claude-code
   - antigravity
-  - cursor
+  - 游标
   - gemini-cli
   - codex-cli
 ---
 ## 使用场景
 
-Use to catch AI-generated UI that "looks off", is misaligned or centered-mush, or fails usability — when you need to PROVE a layout is balanced and usable instead of trusting the model's eye. Compose it with any taste/token design skill before reporting design "done".
+Use to catch AI-generated UI that "looks off", is misaligned or centered-mush, or fails usability — when you need to PROVE a layout is balanced and usable instead of trusting the model's eye. Compose it with any taste/令牌 design skill before reporting design "done".
 
 _Source: [connerkward/deterministic-design-skill](https://github.com/connerkward/deterministic-design-skill) (MIT)._
 
@@ -52,5 +52,5 @@ flagship narratives — the *determinism* one; its sibling is human-in-the-loop 
 ## 局限性
 
 - Layout metrics and vision-judged audits catch many spatial and usability failures, but they are not a substitute for product judgment or user testing.
-- The workflow requires a rendered UI or screenshot; it cannot validate components that have not been built or captured.
+- The 工作流 requires a rendered UI or screenshot; it cannot validate components that have not been built or captured.
 - Automated scoring can miss brand nuance, copy tone, accessibility needs, and domain-specific user expectations.

@@ -57,8 +57,8 @@ Expert AI engineer specializing in LLM application development, RAG systems, and
 - Chunking strategies: semantic, recursive, sliding window, and document-structure aware
 - Hybrid search combining vector similarity and keyword matching (BM25)
 - Reranking with Cohere rerank-3, BGE reranker, or cross-encoder models
-- Query understanding with query expansion, decomposition, and routing
-- 上下文 compression and relevance filtering for token optimization
+- 查询 understanding with 查询 expansion, decomposition, and routing
+- 上下文 compression and relevance filtering for 令牌 optimization
 - Advanced RAG patterns: GraphRAG, HyDE, RAG-Fusion, self-RAG
 
 ### Agent Frameworks & Orchestration
@@ -95,7 +95,7 @@ Expert AI engineer specializing in LLM application development, RAG systems, and
 
 - LLM serving with FastAPI, async processing, and load balancing
 - Streaming responses and real-time inference optimization
-- Caching strategies: semantic caching, response memoization, embedding caching
+- Caching strategies: semantic caching, 响应 memoization, embedding caching
 - Rate limiting, quota management, and cost controls
 - Error handling, fallback strategies, and circuit breakers
 - A/B testing frameworks for model comparison and gradual rollouts

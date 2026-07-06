@@ -11,7 +11,7 @@ metadata:
 
 Access 20+ years of global financial data: equities, options, forex, crypto, commodities, economic indicators, and 50+ technical indicators.
 
-## API Key Setup (Required)
+## API Key 设置 (Required)
 
 1. Get a free key at https://www.alphavantage.co/support/#api-key (premium plans available for higher rate limits)
 2. Set as environment variable:
@@ -26,12 +26,12 @@ export ALPHAVANTAGE_API_KEY="your_key_here"
 uv pip install requests pandas
 ```
 
-## Base URL & Request Pattern
+## Base URL & 请求 Pattern
 
 All requests go to:
 
 ```
-https://www.alphavantage.co/query?function=FUNCTION_NAME&apikey=YOUR_KEY&...params
+https://www.alphavantage.co/查询?function=FUNCTION_NAME&apikey=YOUR_KEY&...params
 ```
 
 ```python
@@ -39,11 +39,11 @@ import requests
 import os
 
 API_KEY = os.environ.get("ALPHAVANTAGE_API_KEY")
-BASE_URL = "https://www.alphavantage.co/query"
+BASE_URL = "https://www.alphavantage.co/查询"
 
 def av_get(function, **params):
-    response = requests.get(BASE_URL, params={"function": function, "apikey": API_KEY, **params})
-    return response.json()
+    响应 = requests.get(BASE_URL, params={"function": function, "apikey": API_KEY, **params})
+    return 响应.json()
 ```
 
 ## Quick Start Examples

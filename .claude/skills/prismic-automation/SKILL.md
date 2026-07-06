@@ -7,5 +7,5 @@ requires:
 ---
 
 # Prismic Automation
-Manage your Prismic headless CMS directly from Claude Code. Query documents by type, full-text search content, inspect custom types, and work with repository refs for content versioning.
+Manage your Prismic headless CMS directly from Claude Code. 查询 documents by type, full-text search content, inspect custom types, and work with repository refs for content versioning.
 \n*Toolkit docs:*Z [composio.dev/toolkits/prismic](https://composio.dev/toolkits/prismic)

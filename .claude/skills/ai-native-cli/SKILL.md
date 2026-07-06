@@ -19,7 +19,7 @@ with prioritized requirements (P0/P1/P2). The spec covers structured JSON output
 error handling, input contracts, safety guardrails, exit codes, self-description,
 and a feedback loop via a built-in issue system.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Use when building a new CLI tool that AI agents will invoke
 - Use when retrofitting an existing CLI to be agent-friendly
@@ -78,7 +78,7 @@ agent/
   brief.md          # One paragraph: who am I, what can I do
   rules/            # Behavior constraints (auto-registered)
     trigger.md      # When should an agent use this tool
-    workflow.md     # Step-by-step usage flow
+    工作流.md     # Step-by-step usage flow
     writeback.md    # How to write feedback back
   skills/           # Extended capabilities (auto-registered)
     getting-started.md
@@ -87,7 +87,7 @@ agent/
 ### 步骤 3: Four Levels of Self-Description
 
 1. **--brief** (business card, injected into agent config)
-2. **Every Command Response** (always-on context: data + rules + skills + issue)
+2. **Every Command 响应** (always-on context: data + rules + skills + issue)
 3. **--help** (full self-description: brief + commands + rules + skills + issue)
 4. **skills \<name\>** (on-demand deep dive into a specific skill)
 
@@ -100,10 +100,10 @@ Priority tag `[P0]`=agent breaks without it, `[P1]`=agent works but poorly, `[P2
 
 Goal: CLI is a stable, callable API. Agent can invoke, parse, and handle errors.
 
-**Output** -- default is JSON, stable schema
+**Output** -- default is JSON, stable 架构
 - `[P0]` O1: 默认 output is JSON. No `--json` flag needed
 - `[P0]` O2: JSON MUST pass `jq .` validation
-- `[P0]` O3: JSON schema MUST NOT change within same version
+- `[P0]` O3: JSON 架构 MUST NOT change within same version
 
 **Error** -- structured, to stderr, never interactive
 - `[P0]` E1: Errors -> `{"error":true, "code":"...", "message":"...", "suggestion":"..."}` to stderr
@@ -113,7 +113,7 @@ Goal: CLI is a stable, callable API. Agent can invoke, parse, and handle errors.
 - `[P0]` E8: Error codes are API contracts -- MUST NOT rename across versions
 
 **Exit Code** -- predictable failure signals
-- `[P0]` X3: Parameter/usage errors MUST exit 2
+- `[P0]` X3: 参数/usage errors MUST exit 2
 - `[P0]` X9: Failures MUST exit non-zero -- never exit 0 then report error in stdout
 
 **Composability** -- clean pipe semantics
@@ -130,7 +130,7 @@ Goal: CLI is a stable, callable API. Agent can invoke, parse, and handle errors.
 
 **Guardrails** -- runtime input protection
 - `[P1]` G1: Unknown flags rejected with exit 2
-- `[P1]` G2: Detect API key / token patterns in args, reject execution
+- `[P1]` G2: Detect API key / 令牌 patterns in args, reject execution
 - `[P1]` G3: Reject sensitive file paths (*.env, *.key, *.pem)
 - `[P1]` G8: Reject shell metacharacters in arguments (; | && $())
 
@@ -140,18 +140,18 @@ Goal: CLI is self-describing, well-named, and pipe-friendly. Agent discovers cap
 
 **Self-Description** -- agent discovers what CLI can do
 - `[P1]` D1: `--help` outputs structured JSON with `commands[]`
-- `[P1]` D3: Schema has required fields (help, commands)
+- `[P1]` D3: 架构 has required fields (help, commands)
 - `[P1]` D4: All parameters have type declarations
 - `[P1]` D7: 参数 annotated as required/optional
 - `[P1]` D9: Every command has a description
 - `[P1]` D11: `--help` outputs JSON with help, rules, skills, commands
 - `[P1]` D15: `--brief` outputs `agent/brief.md` content
 - `[P1]` D16: 默认 JSON (agent mode), `--human` for human-friendly
-- `[P2]` D2/D5/D6/D8/D10: per-command help, enums, defaults, output schema, version
+- `[P2]` D2/D5/D6/D8/D10: per-command help, enums, defaults, output 架构, version
 
 **Input** -- unambiguous calling convention
 - `[P1]` I1: All flags use `--long-name` format
-- `[P1]` I2: No positional argument ambiguity
+- `[P1]` I2: No positional 参数 ambiguity
 - `[P2]` I3/I6/I7: --json-input, boolean --no-X, array params
 
 **Error**

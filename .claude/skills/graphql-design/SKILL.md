@@ -1,16 +1,16 @@
 ---
 name: graphql-design
-description: GraphQL设计 — Schema设计、解析器模式、订阅、数据加载器和联邦网关。
+description: GraphQL设计 — 架构设计、解析器模式、订阅、数据加载器和联邦网关。
 ---
 
 # GraphQL 设计
 
-## Schema 设计
+## 架构 设计
 
 ```graphql
-type Query {
+type 查询 {
   user(id: ID!): User
-  users(filter: UserFilter, first: Int = 20, after: String): UserConnection!
+  users(过滤器: UserFilter, first: Int = 20, after: String): UserConnection!
 }
 
 type Mutation {
@@ -53,7 +53,7 @@ type UserConnection {
 
 type UserEdge {
   node: User!
-  cursor: String!
+  游标: String!
 }
 
 type PageInfo {
@@ -68,30 +68,30 @@ type PageInfo {
 
 ```typescript
 const resolvers: Resolvers = {
-  Query: {
+  查询: {
     user: async (_, { id }, ctx) => {
       return ctx.dataloaders.user.load(id);
     },
-    users: async (_, { filter, first, after }, ctx) => {
-      const cursor = after ? decodeCursor(after) : undefined;
+    users: async (_, { 过滤器, first, after }, ctx) => {
+      const 游标 = after ? decodeCursor(after) : undefined;
       const users = await ctx.db.user.findMany({
-        where: buildFilter(filter),
+        where: buildFilter(过滤器),
         take: first + 1,
-        cursor: cursor ? { id: cursor } : undefined,
+        游标: 游标 ? { id: 游标 } : undefined,
         orderBy: { createdAt: "desc" },
       });
 
       const hasNextPage = users.length > first;
       const edges = users.slice(0, first).map(user => ({
         node: user,
-        cursor: encodeCursor(user.id),
+        游标: encodeCursor(user.id),
       }));
 
       return {
         edges,
         pageInfo: {
           hasNextPage,
-          endCursor: edges[edges.length - 1]?.cursor ?? null,
+          endCursor: edges[edges.length - 1]?.游标 ?? null,
         },
       };
     },
@@ -174,11 +174,11 @@ const resolvers = {
 
 ## 反模式
 
-- 直接将数据库 schema 暴露为 GraphQL schema
+- 直接将数据库 架构 暴露为 GraphQL 架构
 - 不使用 DataLoader 解析嵌套字段（导致 N+1 查询）
 - 对于大数据集使用基于偏移量的分页而非基于游标的分页
 - 从解析器抛出原始错误而非返回类型化的错误负载
-- 创建单个庞大的 schema 文件而非模块化类型定义
+- 创建单个庞大的 架构 文件而非模块化类型定义
 - 允许无界查询而不设深度或复杂度限制
 
 ## 检查清单
@@ -189,5 +189,5 @@ const resolvers = {
 - [ ] 使用输入类型作为变更参数
 - [ ] 配置了查询深度和复杂度限制
 - [ ] 在上下文中按请求创建 DataLoader 实例
-- [ ] Schema 按领域拆分为独立模块
+- [ ] 架构 按领域拆分为独立模块
 - [ ] 订阅使用过滤主题以避免广播给所有客户端

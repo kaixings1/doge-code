@@ -8,7 +8,7 @@ date_added: "2026-03-12"
 
 # Electron Development
 
-You are a senior Electron engineer specializing in secure, production-grade desktop application architecture. You have deep expertise in Electron's multi-process model, IPC security patterns, native OS integration, application packaging, code signing, and auto-update strategies.
+You are a senior Electron engineer specializing in secure, production-grade desktop application architecture. You have deep expertise in Electron's multi-process model, IPC security patterns, native OS 集成, application packaging, code signing, and auto-update strategies.
 
 ## 使用此技能的场景
 
@@ -76,7 +76,7 @@ my-electron-app/
 ```
 
 **Key architectural principles:**
-- **Separate entry points**: Main, preload, and renderer each have their own build configuration.
+- **Separate entry points**: Main, preload, and renderer each have their own build 配置.
 - **Shared types, not shared modules**: The `shared/` directory contains only types, constants, and enums — never executable code imported across process boundaries.
 - **Keep main process lean**: Main should orchestrate windows, handle IPC, and manage app lifecycle. Business logic belongs in the renderer or dedicated worker processes.
 
@@ -119,8 +119,8 @@ function createMainWindow(): BrowserWindow {
   });
 
   // Content Security Policy
-  win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-    callback({
+  win.webContents.会话.webRequest.onHeadersReceived((details, 回调) => {
+    回调({
       responseHeaders: {
         ...details.responseHeaders,
         'Content-Security-Policy': [
@@ -176,7 +176,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     }
   },
 
-  // Two-way: renderer → main → renderer (request/response)
+  // Two-way: renderer → main → renderer (请求/响应)
   invoke: (channel: SendChannel, ...args: unknown[]) => {
     if (ALLOWED_SEND_CHANNELS.includes(channel)) {
       return ipcRenderer.invoke(channel, ...args);
@@ -185,9 +185,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
 
   // One-way: main → renderer (subscriptions)
-  on: (channel: ReceiveChannel, callback: (...args: unknown[]) => void) => {
+  on: (channel: ReceiveChannel, 回调: (...args: unknown[]) => void) => {
     if (ALLOWED_RECEIVE_CHANNELS.includes(channel)) {
-      const listener = (_event: Electron.IpcRendererEvent, ...args: unknown[]) => callback(...args);
+      const listener = (_event: Electron.IpcRendererEvent, ...args: unknown[]) => 回调(...args);
       ipcRenderer.on(channel, listener);
       return () => ipcRenderer.removeListener(channel, listener);
     }
@@ -241,7 +241,7 @@ declare global {
     electronAPI: {
       send: (channel: string, ...args: unknown[]) => void;
       invoke: (channel: string, ...args: unknown[]) => Promise<unknown>;
-      on: (channel: string, callback: (...args: unknown[]) => void) => () => void;
+      on: (channel: string, 回调: (...args: unknown[]) => void) => () => void;
     };
   }
 }
@@ -268,7 +268,7 @@ const unsubscribe = window.electronAPI.on('update:available', (version) => {
 | Pattern | Method | Use Case |
 |---------|--------|----------|
 | **Fire-and-forget** | `ipcRenderer.send()` → `ipcMain.on()` | Logging, telemetry, non-critical notifications |
-| **Request/Response** | `ipcRenderer.invoke()` → `ipcMain.handle()` | File operations, dialogs, data queries |
+| **请求/响应** | `ipcRenderer.invoke()` → `ipcMain.handle()` | File operations, dialogs, data queries |
 | **Push to renderer** | `webContents.send()` → `ipcRenderer.on()` | Progress updates, download status, auto-update |
 
 > ⚠️ **绝不** use `ipcRenderer.sendSync()` in production — it blocks the renderer's event loop and freezes the UI.
@@ -357,19 +357,19 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 app.whenReady().then(() => {
-  protocol.handle('app', async (request) => {
-    const url = new URL(request.url);
+  protocol.handle('app', async (请求) => {
+    const url = new URL(请求.url);
     const baseDir = path.resolve(__dirname, '../renderer');
     // Strip the leading slash so path.resolve keeps baseDir as the root.
     const relativePath = path.normalize(decodeURIComponent(url.pathname).replace(/^[/\\]+/, ''));
     const filePath = path.resolve(baseDir, relativePath);
 
     if (!filePath.startsWith(baseDir)) {
-      return new Response('Forbidden', { status: 403 });
+      return new 响应('Forbidden', { status: 403 });
     }
 
     const data = await readFile(filePath);
-    return new Response(data);
+    return new 响应(data);
   });
 });
 ```
@@ -433,7 +433,7 @@ export const store = new Store();
 import Store from 'electron-store';
 
 const store = new Store({
-  schema: {
+  架构: {
     theme: { type: 'string', enum: ['light', 'dark'], default: 'light' },
     windowBounds: {
       type: 'object',
@@ -639,7 +639,7 @@ ipcMain.handle('update:install', () => autoUpdater.quitAndInstall());
     {
       "name": "Debug Main Process",
       "type": "node",
-      "request": "launch",
+      "请求": "launch",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
       "args": [".", "--remote-debugging-port=9223"],
@@ -824,7 +824,7 @@ app.on('web-contents-created', (_event, contents) => {
 - ✅ **始终** set `contextIsolation: true` and `node集成: false`
 - ✅ **始终** use `contextBridge` in preload with an explicit channel whitelist
 - ✅ **始终** validate IPC inputs in the main process — treat renderer as untrusted
-- ✅ **始终** use `ipcMain.handle()` / `ipcRenderer.invoke()` for request/response IPC
+- ✅ **始终** use `ipcMain.handle()` / `ipcRenderer.invoke()` for 请求/响应 IPC
 - ✅ **始终** configure Content 安全性 Policy headers
 - ✅ **始终** sanitize URLs before passing to `shell.openExternal()`
 - ✅ **始终** code-sign your production builds

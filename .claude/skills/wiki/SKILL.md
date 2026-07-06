@@ -1,7 +1,7 @@
 ---
 name: wiki
 description: "Wiki — Wiki 相关功能和最佳实践"
-triggers: ["wiki", "wiki this", "wiki add", "wiki lint", "wiki query"]
+triggers: ["wiki", "wiki this", "wiki add", "wiki lint", "wiki 查询"]
 ---
 
 # Wiki
@@ -17,11 +17,11 @@ triggers: ["wiki", "wiki this", "wiki add", "wiki lint", "wiki query"]
 wiki_ingest({ title: "认证架构", content: "...", tags: ["auth", "architecture"], category: "architecture" })
 ```
 
-### 查询（Query）
+### 查询（查询）
 通过关键词和标签搜索所有 Wiki 页面。返回匹配页面及摘要片段——你（LLM）根据结果综合回答并附上引用。
 
 ```
-wiki_query({ query: "authentication", tags: ["auth"], category: "architecture" })
+wiki_query({ 查询: "认证", tags: ["auth"], category: "architecture" })
 ```
 
 ### 检查（Lint）
@@ -49,7 +49,7 @@ wiki_delete({ page: "outdated-page" })    # 删除页面
 通过读取 `.omc/wiki/log.md` 查看 Wiki 操作历史。
 
 ## 分类
-页面按类别组织：`architecture`（架构）、`decision`（决策）、`pattern`（模式）、`debugging`（调试）、`environment`（环境）、`session-log`（会话日志）
+页面按类别组织：`architecture`（架构）、`decision`（决策）、`pattern`（模式）、`debugging`（调试）、`environment`（环境）、`会话-log`（会话日志）
 
 ## 存储
 - 页面：`.omc/wiki/*.md`（带 YAML 前置元数据的 Markdown）

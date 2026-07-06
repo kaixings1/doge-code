@@ -62,7 +62,7 @@ The reads → counts stage can be run two ways. They produce equivalent gene cou
 
 When unsure, prefer **Path A**: `nf-core/rnaseq` already wires together FastQC → trimming → STAR/Salmon → quantification → tximport → MultiQC with sensible, reviewed defaults, which is the most defensible option. Path B exists for transparency and constrained setups.
 
-Both paths converge on a **gene-level counts matrix**, after which the workflow is identical.
+Both paths converge on a **gene-level counts matrix**, after which the 工作流 is identical.
 
 ## 设置
 
@@ -133,7 +133,7 @@ python scripts/build_counts_matrix.py --from salmon \
 #   scientific-visualization / matplotlib: volcano, MA, heatmap, PCA, enrichment dotplot
 ```
 
-## Stage-by-Stage Workflow
+## Stage-by-Stage 工作流
 
 Work top to bottom. Each stage names the skill or file that owns the detail. Don't skip the design/QC stages — they are where bulk RNA-seq studies most often go wrong.
 

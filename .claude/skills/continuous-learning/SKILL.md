@@ -7,7 +7,7 @@ description: 从编码会话中自动提取模式、跟踪修正，并使用置�
 
 ## 模式提取框架
 
-After every significant coding session, extract and categorize learnings into three buckets:
+After every significant coding 会话, extract and categorize learnings into three buckets:
 
 1. **Corrections** - Mistakes caught during review or by the user
 2. **Successful Approaches** - Patterns that worked well and should be repeated
@@ -50,24 +50,24 @@ Update confidence based on:
 
 ## 会话结束协议
 
-At the end of each session or before context compaction:
+At the end of each 会话 or before context compaction:
 
 1. **Review changes made** - Scan diffs for patterns
 2. **Identify corrections** - What was changed after initial implementation?
 3. **Note successful first-attempts** - What worked without revision?
 4. **Record environment details** - Framework versions, config specifics
-5. **Update confidence scores** - Adjust based on session outcomes
+5. **Update confidence scores** - Adjust based on 会话 outcomes
 6. **Write to knowledge base** - Append new entries to CLAUDE.md or LEARNED.md
 
 ```markdown
-## Session Learnings (2025-06-15)
+## 会话 Learnings (2025-06-15)
 
 ### Corrections Applied
 - [0.85] TypeScript: Use `satisfies` instead of `as` for type narrowing with object literals
 - [0.90] Next.js: Server Actions must be async functions, even for synchronous operations
 
 ### Successful Patterns
-- [0.80] PostgreSQL: Partial indexes on status columns reduced query time by 60%
+- [0.80] PostgreSQL: Partial indexes on status columns reduced 查询 time by 60%
 - [0.75] React: Extracting data fetching into Server Components eliminated 3 useEffect hooks
 
 ### Anti-Patterns Identified
@@ -85,7 +85,7 @@ knowledge/
   testing.md             # Test patterns and anti-patterns
   performance.md         # Optimization learnings
   api-design.md          # API design decisions
-  deployment.md          # Infrastructure learnings
+  部署.md          # Infrastructure learnings
   project-specific.md    # Current project conventions
 ```
 
@@ -93,7 +93,7 @@ Each file follows the same entry format. Deduplicate entries with matching `obse
 
 ## 修正跟踪
 
-When a user corrects code or approach:
+When a user corrects code or 方法:
 
 1. Record what was originally produced
 2. Record what the correction was
@@ -127,7 +127,7 @@ Pattern: "Use zod for API input validation"
 - **EMERGING** (frequency < 3) - New pattern, needs validation
 - **GROWING** (frequency 3-7) - Building evidence, apply with mention
 - **ESTABLISHED** (frequency 8+, confidence > 0.85) - Apply automatically
-- **DEPRECATED** - Once valid, now superseded by a better approach
+- **DEPRECATED** - Once valid, now superseded by a better 方法
 
 ## 与记忆文件集成
 
@@ -135,7 +135,7 @@ Store learnings in the project's memory file (CLAUDE.md or equivalent):
 
 - High-confidence learnings (>0.85) go in the main instructions section
 - Medium-confidence (0.60-0.84) go in a dedicated "Learnings" section
-- Low-confidence (<0.60) stay in session notes until validated
+- Low-confidence (<0.60) stay in 会话 notes until validated
 - Deprecated patterns move to an archive section with reason for deprecation
 
 Review and prune the knowledge base monthly. Remove entries that have not been referenced in 90 days and have confidence below 0.70.

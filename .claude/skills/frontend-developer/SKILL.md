@@ -61,7 +61,7 @@ date_added: '2026-02-27'
 
 ### 状态管理和数据获取
 - 使用 Zustand、Jotai 和 Valtio 进行现代状态管理
-- 用于服务器状态管理的 React Query/TanStack Query
+- 用于服务器状态管理的 React 查询/TanStack 查询
 - 用于数据获取和缓存的 SWR
 - Context API 优化和提供者模式
 - 用于复杂状态场景的 Redux Toolkit
@@ -165,7 +165,7 @@ date_added: '2026-02-27'
 - "优化此 React 组件以获得更好的渲染性能"
 - "设置用于身份验证和路由的 Next.js 中间件"
 - "创建具有排序和筛选功能的可访问数据表"
-- "使用 WebSocket 和 React Query 实现实时更新"
+- "使用 WebSocket 和 React 查询 实现实时更新"
 - "构建具有离线功能和推送通知的 PWA"
 
 ## 限制

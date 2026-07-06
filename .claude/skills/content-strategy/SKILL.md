@@ -200,7 +200,7 @@ Example: If pricing comes up in sales calls:
 - "[Product] Reviews"
 
 ### Implementation Stage
-Modifiers: "templates," "examples," "tutorial," "how to use," "setup"
+Modifiers: "templates," "examples," "tutorial," "how to use," "设置"
 
 Example: If support tickets show implementation struggles:
 - "Project Template Library"

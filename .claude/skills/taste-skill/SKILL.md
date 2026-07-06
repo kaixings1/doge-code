@@ -40,7 +40,7 @@ Do not default to: AI-purple gradients, centered hero over dark mesh, three equa
 
 ---
 
-## 1. THE THREE DIALS (Core Configuration)
+## 1. THE THREE DIALS (Core 配置)
 
 After the design read, set three dials. Every layout, motion, and density decision below is gated by these.
 
@@ -108,14 +108,14 @@ For these directions, there is **no single official package**. Build with native
 
 | Aesthetic | Honest implementation |
 |---|---|
-| Glassmorphism / "frosted glass" | `backdrop-filter`, layered borders, highlight overlays. Provide solid-fill fallback for `prefers-reduced-transparency`. |
+| Glassmorphism / "frosted glass" | `backdrop-过滤器`, layered borders, highlight overlays. Provide solid-fill fallback for `prefers-reduced-transparency`. |
 | Bento (Apple-style tile grids) | CSS Grid with mixed cell sizes. No single library owns this. |
 | Brutalism | Native CSS, monospace, raw borders. No library. |
 | Editorial / magazine | Serif type, asymmetric grid, generous whitespace. No library. |
 | Dark tech / hacker | Mono + accent neon, terminal motifs. No library. |
 | Aurora / mesh gradients | SVG or layered radial gradients. No library. |
 | Kinetic typography | Native CSS animations, scroll-driven animations, GSAP for hijacks. No library. |
-| **Apple Liquid Glass** | Apple documents this for Apple platforms only. **There is no official `liquid-glass.css`.** Web implementations are approximations using `backdrop-filter` + layered borders + highlights. Label clearly as approximation. |
+| **Apple Liquid Glass** | Apple documents this for Apple platforms only. **There is no official `liquid-glass.css`.** Web implementations are approximations using `backdrop-过滤器` + layered borders + highlights. Label clearly as approximation. |
 
 ---
 
@@ -224,7 +224,7 @@ LLMs default to "static successful state only." Always implement full cycles:
 * **Tactile Feedback:** On `:active`, use `-translate-y-[1px]` or `scale-[0.98]` to simulate a physical push.
 * **BUTTON CONTRAST CHECK (mandatory, a11y):** Before shipping any button, verify the button text is readable against the button background. White button + white text, `bg-white` CTA with `text-white` label, transparent button against the page background with no border → all banned. Audit every CTA: contrast ratio WCAG AA min (4.5:1 for body, 3:1 for large text 18px+). Same rule applies to ghost buttons over photographic backgrounds (use a backdrop, scrim, or stroke).
 * **CTA BUTTON WRAP BAN (mandatory):** Button text MUST fit on one line at desktop. If a label like "VIEW SELECTED WORK" wraps to 2 or 3 lines, the button is broken. Fix by EITHER shortening the label (3 words max for primary CTAs, ideally 1-2) OR widening the button (do not artificially constrain `max-width` on CTAs). Wrapped CTAs at desktop are a Pre-Flight Fail.
-* **NO DUPLICATE CTA INTENT (mandatory):** Two CTAs with the same intent on one page is a Pre-Flight Fail. Examples of same intent: "Get in touch" + "Contact us" + "Let's talk" + "Start a project" + "Start something" + "Reach out" = all "contact" intent → pick ONE label and use it everywhere on the page (nav, hero, footer). Same for "Try free" + "Get started" + "Sign up free" (all "signup" intent) and "View work" + "See selected work" + "Browse projects" (all "portfolio" intent). One label per intent.
+* **NO DUPLICATE CTA INTENT (mandatory):** Two CTAs with the same intent on one page is a Pre-Flight Fail. 示例 of same intent: "Get in touch" + "Contact us" + "Let's talk" + "Start a project" + "Start something" + "Reach out" = all "contact" intent → pick ONE label and use it everywhere on the page (nav, hero, footer). Same for "Try free" + "Get started" + "Sign up free" (all "signup" intent) and "View work" + "See selected work" + "Browse projects" (all "portfolio" intent). One label per intent.
 * **FORM CONTRAST CHECK (mandatory, a11y):** Form inputs, placeholder text, focus rings, helper text, and error text all pass WCAG AA contrast against the section background. Light placeholders on a near-white form, white form on white page section, form labels grayer than 4.5:1 contrast → all banned. Audit every form before shipping.
 
 ### 4.6 Data & Form Patterns
@@ -269,12 +269,12 @@ Landing pages and portfolios are **visual products**. Text-only pages with fake-
    * `https://picsum.photos/seed/{descriptive-seed}/{w}/{h}` for placeholder photography (seed should describe the section, e.g. `marrow-cookware-kitchen`)
    * Actual stock or brand URLs when the brief provides them
    * Open-license sources (Unsplash via direct URL, Pexels) if explicitly allowed
-3. **Last resort: tell the user.** If neither is possible, do NOT fill the page with hand-rolled SVG illustrations or div-based "fake screenshots." Instead, leave clearly-labeled placeholder slots (`<!-- TODO: hero product photo, 1600x1200 -->`) and at the end of the response say: *"This page needs real images at: \[list of placements\]. Please generate or provide them."*
+3. **Last resort: tell the user.** If neither is possible, do NOT fill the page with hand-rolled SVG illustrations or div-based "fake screenshots." Instead, leave clearly-labeled placeholder slots (`<!-- TODO: hero product photo, 1600x1200 -->`) and at the end of the 响应 say: *"This page needs real images at: \[list of placements\]. Please generate or provide them."*
 
 **Even minimalist sites need real images.** A pure-text page is not minimalism. It is incomplete work. Even an editorial Linear-style site needs at least 2-3 real images (hero, one product/lifestyle shot, one supporting image). Generate B&W minimalist photography if the brief is restrained; do not skip images entirely because the dial is low.
 
 **Real company logos for social proof.** When the brief calls for a "Trusted by / Used by / Customers" logo wall, do NOT default to plain text wordmarks (`<span>Acme Co</span>` styled in a row). Use real SVG logos:
-* **Source: Simple Icons** (`https://cdn.simpleicons.org/{slug}/ffffff` for any color, or `simple-icons` npm package). Covers most known brands.
+* **Source: Simple Icons** (`https://cdn.simpleicons.org/{标识符}/ffffff` for any color, or `simple-icons` npm package). Covers most known brands.
 * **Alternative: devicon** for tech-stack logos (`@svgr/cli` or CDN).
 * **Make-up the brand name? Then make-up an SVG mark too.** Generate a simple monogram (one letter in a circle, two-letter ligature, abstract glyph) rendered as an inline `<svg>` matching the page style. Plain text wordmarks for invented brand names look generic.
 * **Always** ensure logos render in both light and dark mode (white-on-dark, black-on-light, or single-color theme variable).
@@ -309,7 +309,7 @@ Landing pages live on the **first impression**, not the full read. Cut ruthlessl
   - Card grid with image + label per item
   - Tabs / accordion if items are categorisable
   - Horizontal scroll-snap pills
-  - Carousel for breadth-heavy lists (testimonials, logos, capabilities)
+  - Carousel for breadth-heavy lists (testimonials, logos, 能力)
   - Marquee for "lots-of-things-that-don't-need-individual-attention"
   A spec sheet with 10 rows + a hairline under every row is the WORST default. Either group rows into 2-3 chunks with sparse dividers, or move to a card-per-spec layout.
 * **Spec sheets specifically (the Marrow-cookware pattern).** A long product specification table with `border-b` on every row is the AI default for cookware / hardware / apparel / artisan-goods briefs. Banned. Concrete alternatives:
@@ -573,7 +573,7 @@ NEVER spam arbitrary `z-50` or `z-10`. Use z-index strictly for systemic layer c
 
 Dual-mode by default. Never assume light-only unless the brief is print-emulating editorial.
 
-### 8.A Token Strategy (pick one, stick to it)
+### 8.A 令牌 Strategy (pick one, stick to it)
 * **Tailwind `dark:` variant** (default for utility-first projects): every color utility paired with its dark variant (`bg-white dark:bg-zinc-950`, `text-gray-900 dark:text-gray-100`).
 * **CSS variables** (for shadcn/ui, Radix Themes, or component libraries with theming): define semantic tokens (`--surface`, `--surface-elevated`, `--text-primary`, `--accent`) and swap values under `[data-theme="dark"]` or `@media (prefers-color-scheme: dark)`.
 
@@ -620,7 +620,7 @@ Avoid these signatures unless the brief explicitly asks for them.
 * **NO filler verbs.** "Elevate", "Seamless", "Unleash", "Next-Gen", "Revolutionize" → concrete verbs only.
 
 ### 9.E External Resources & Components
-* **NO hand-rolled SVG icons.** Use Phosphor / HugeIcons / Radix / Tabler. Lucide on explicit request only.
+* **NO hand-rolled SVG icons.** Use Phosphor / HugeIcons / Radix / Tabler. Lucide on explicit 请求 only.
 * **Hand-rolled decorative SVGs strongly discouraged** as default (see Section 4.8).
 * **NO div-based fake screenshots.** Never build a fake product UI out of `<div>` rectangles to simulate a screenshot. Use real images, generated images, or skip the preview.
 * **NO broken Unsplash links.** Use `https://picsum.photos/seed/{descriptive-string}/{w}/{h}`, or generated photo placeholders, or actual assets.
@@ -636,9 +636,9 @@ These patterns came out of real LLM-generated landing-page tests. They are the s
 * **NO "Brand · No. 01"-style sub-eyebrows.** "Marrow · No. 01 · The 6-quart" type micro-meta lines. Skip them.
 
 **Section numbering & micro-labels**
-* **NO section-number eyebrows.** `00 / INDEX`, `001 · Capabilities`, `002 · Featured commission`, `06 · how it works`, `05 · The honest table` - banned. Eyebrows should name the topic in plain language, not enumerate.
+* **NO section-number eyebrows.** `00 / INDEX`, `001 · 能力`, `002 · Featured commission`, `06 · how it works`, `05 · The honest table` - banned. Eyebrows should name the topic in plain language, not enumerate.
 * **NO `01 / 4`-style pagination on images or bento tiles.** If the user can count, they don't need the label.
-* **NO `Scroll · 001 Capabilities`-style scroll cues.** A simple arrow or "Scroll" is enough; no section-number prefix.
+* **NO `Scroll · 001 能力`-style scroll cues.** A simple arrow or "Scroll" is enough; no section-number prefix.
 * **NO "Index of Work, 2018 - 2026"-style range labels** as eyebrows. Just say what the section is.
 
 **Separators & dots**
@@ -648,7 +648,7 @@ These patterns came out of real LLM-generated landing-page tests. They are the s
 **Em-dashes & typography flourishes**
 * **NO em-dash (`—`) as a design element OR anywhere else.** See Section 9.G below for the complete, non-negotiable ban. The em-dash character is forbidden in headlines, eyebrows, pills, body copy, quotes, attribution, captions, button text, and alt text. Use the regular hyphen (`-`).
 * **NO `<br>`-broken-and-italicized headlines** as a default "design move." "for thirty\<br\>*years.*" type splits. Headlines should read naturally first, get clever only when the brief demands it.
-* **NO vertical rotated text** ("INDEX OF WORK, 2018 - 2026" rotated 90°). Agency-portfolio cliché. Use it only when the brief is explicitly agency / Awwwards / experimental AND it serves a real composition purpose.
+* **NO vertical rotated text** ("INDEX OF WORK, 2018 - 2026" rotated 90°). Agency-portfolio cliché. Use it only when the brief is explicitly agency / Awwwards / experimental AND it serves a real composition 目的.
 * **NO crosshair / hairline grid lines as decoration.** Vertical and horizontal lines drawn just to make the page "feel designed" - banned. Use them only when they organize real content.
 
 **Fake product previews**
@@ -660,7 +660,7 @@ These patterns came out of real LLM-generated landing-page tests. They are the s
 * **NO "From the field" / "Field notes" / "Currently on the bench" / "On our desks" / "Loose plates" style poetic labels** on quote, blog, or sidebar sections. Reads as performative-craftsman. Use plain functional labels ("Testimonials", "Latest writing", "Now working on") or skip the label.
 * **NO "We respect the French ones"-style** mock-humble industry-references in body copy. Cute and AI-y.
 * **NO weather / locale strips** ("LIS 14:23 · 18°C") in headers/footers unless the brief is explicitly about a place / time-zone-distributed studio.
-* **NO micro-meta-sentences under eyebrows.** Sentences like *"Each of these is a feature we ship today, not a roadmap promise. The list will stay short on purpose."* sitting under a section heading are clutter. Eyebrow + Headline + Body is enough.
+* **NO micro-meta-sentences under eyebrows.** Sentences like *"Each of these is a feature we ship today, not a roadmap promise. The list will stay short on 目的."* sitting under a section heading are clutter. Eyebrow + Headline + Body is enough.
 * **NO generic step labels.** "Stage 1 / Stage 2 / Stage 3", "Step 1 / Step 2 / Step 3", "Phase 01 / Phase 02 / Phase 03", "Pass One / Pass Two / Pass Three". Banned. The actual step content is the label. If you must show progression, use the verb-noun directly ("Install", "Configure", "Ship") not "Stage 1: Install".
 
 **Pills, labels and version stamps**
@@ -716,7 +716,7 @@ This is a vocabulary, not a library. The agent should KNOW these pattern names t
 
 ### Navigation & Menus
 * **Mac OS Dock Magnification** - Edge nav, icons scale fluidly on hover.
-* **Magnetic Button** - Pulls toward cursor.
+* **Magnetic Button** - Pulls toward 游标.
 * **Gooey Menu** - Sub-items detach like viscous liquid.
 * **Dynamic Island** - Morphing pill for status / alerts.
 * **Contextual Radial Menu** - Circular menu expanding at click point.
@@ -732,7 +732,7 @@ This is a vocabulary, not a library. The agent should KNOW these pattern names t
 
 ### Cards & Containers
 * **Parallax Tilt Card** - 3D tilt tracking mouse coordinates.
-* **Spotlight Border Card** - Borders illuminate under cursor.
+* **Spotlight Border Card** - Borders illuminate under 游标.
 * **Glassmorphism Panel** - Frosted glass with inner refraction.
 * **Holographic Foil Card** - Iridescent rainbow shift on hover.
 * **Tinder Swipe Stack** - Physical card stack, swipe-away.
@@ -760,13 +760,13 @@ This is a vocabulary, not a library. The agent should KNOW these pattern names t
 * **Text Scramble Effect** - Matrix-style decoding on load / hover.
 * **Circular Text Path** - Text curving along spinning circle.
 * **Gradient Stroke Animation** - Outlined text with running gradient.
-* **Kinetic Typography Grid** - Letters dodging the cursor.
+* **Kinetic Typography Grid** - Letters dodging the 游标.
 
 ### Micro-Interactions & Effects
 * **Particle Explosion Button** - CTA shatters into particles on success.
 * **Liquid Pull-to-Refresh** - Reload indicator like detaching droplets.
 * **Skeleton Shimmer** - Shifting light reflection across placeholders.
-* **Directional Hover-Aware Button** - Fill enters from cursor's exact side.
+* **Directional Hover-Aware Button** - Fill enters from 游标's exact side.
 * **Ripple Click Effect** - Wave from click coordinates.
 * **Animated SVG Line Drawing** - Vectors drawing themselves in real time.
 * **Mesh Gradient Background** - Organic lava-lamp blobs.
@@ -799,7 +799,7 @@ Document the current state before proposing changes:
 * **Patterns to preserve** - signature interactions, recognisable hero, copy voice.
 * **Patterns to retire** - AI-slop tells, broken layouts, dead links, generic stock imagery, perf traps.
 * **Dial reading of the existing site** - infer current `DESIGN_VARIANCE` / `MOTION_INTENSITY` / `VISUAL_DENSITY`. That's your starting point, not the baseline.
-* **SEO baseline** - current ranking pages, meta titles, structured data, OG cards. **SEO migration is the #1 redesign risk.**
+* **SEO baseline** - current ranking pages, meta titles, structured data, OG cards. **SEO 迁移 is the #1 redesign risk.**
 
 ### 11.C Preservation Rules
 * **Do not change information architecture** unless asked. Keep page slugs, anchor IDs, primary nav labels stable for SEO and muscle memory.
@@ -836,7 +836,7 @@ Never modify without explicit user approval:
 
 The Reference Vocabulary (Section 10) names patterns. The Block Library implements them with real props, real motion specs, and real code sketches.
 
-**Status:** schema defined here. Blocks will be added iteratively. Do not freelance new blocks without following this schema.
+**Status:** 架构 defined here. Blocks will be added iteratively. Do not freelance new blocks without following this 架构.
 
 ### 12.A File Location
 ```
@@ -881,9 +881,9 @@ stack: ["react", "next", "tailwind", "motion"]
 3. **Code sketch** - minimal working implementation (Server Component default, Client island for motion).
 4. **Mobile fallback** - explicit collapse rules for `< 768px`.
 5. **Motion variants** - one variant per `MOTION_INTENSITY` band (1-3, 4-7, 8-10). Reduced-motion fallback explicit.
-6. **Dark-mode notes** - token strategy specific to this block.
+6. **Dark-mode notes** - 令牌 strategy specific to this block.
 7. **Anti-patterns** - common ways this block goes wrong.
-8. **References** - links to real examples in production.
+8. **References** - links to real 示例 in production.
 
 ### 12.D Block-Library Discipline
 * One block per file. No multi-block files.
@@ -909,7 +909,7 @@ If the brief is one of the above, **say so explicitly**, point to the right tool
 
 ## 14. FINAL PRE-FLIGHT CHECK
 
-Run this matrix before outputting code. This is the last filter.
+Run this matrix before outputting code. This is the last 过滤器.
 
 **THIS IS NOT OPTIONAL. Run every box. If any box fails, the output is not done.**
 
@@ -955,7 +955,7 @@ Run this matrix before outputting code. This is the last filter.
 - [ ] **No locale / city-name / time / weather strips** unless brief is genuinely globally-distributed or place-focused?
 - [ ] **No scroll cues** (`Scroll`, `↓ scroll`, `Scroll to explore`)?
 - [ ] **No version labels in hero** (V0.6, BETA, INVITE-ONLY) unless the brief is a launch?
-- [ ] **No section-numbering eyebrows** (`00 / INDEX`, `001 · Capabilities`, `06 · how it works`)?
+- [ ] **No section-numbering eyebrows** (`00 / INDEX`, `001 · 能力`, `06 · how it works`)?
 - [ ] **No decorative dots** (zero by default, only for real semantic state)?
 - [ ] **No `border-t` + `border-b` on every row** of long lists / spec tables?
 - [ ] **Content density** sane: no 20-row data tables, no fake-precise specs without justification, ≤ 25-word sub-paragraphs by default?
@@ -1046,8 +1046,8 @@ npm install bootstrap
 ### Carbon
 - https://carbondesignsystem.com/
 - https://github.com/carbon-design-system/carbon
-- https://carbondesignsystem.com/developing/react-tutorial/overview/
-- https://carbondesignsystem.com/developing/web-components-tutorial/overview/
+- https://carbondesignsystem.com/developing/react-tutorial/概述/
+- https://carbondesignsystem.com/developing/web-components-tutorial/概述/
 
 ### Shopify Polaris
 - https://shopify.dev/docs/api/app-home/web-components
@@ -1056,7 +1056,7 @@ npm install bootstrap
 
 ### Atlassian
 - https://atlassian.design/get-started/develop
-- https://atlassian.design/components/button/examples
+- https://atlassian.design/components/button/示例
 - https://atlaskit.atlassian.com/packages/design-system/button/example/disabled
 - https://atlassian.design/tokens/design-tokens
 
@@ -1095,7 +1095,7 @@ npm install bootstrap
 - https://github.com/shadcn-ui/ui
 
 ### Native CSS / W3C standards
-- https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/backdrop-filter
+- https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/backdrop-过滤器
 - https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme
 - https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion
 - https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Grid_layout
@@ -1127,7 +1127,7 @@ Relevant official docs:
 There is no `liquid-glass.css` from Apple for normal websites.
 
 A web approximation can use:
-- `backdrop-filter`
+- `backdrop-过滤器`
 - transparent backgrounds
 - layered borders
 - highlight overlays
@@ -1149,8 +1149,8 @@ But that is **web glassmorphism / frosted-glass approximation**, not official Ap
   background:
     linear-gradient(135deg, rgb(255 255 255 / .30), rgb(255 255 255 / .08)),
     rgb(255 255 255 / .12);
-  backdrop-filter: blur(24px) saturate(180%) contrast(1.05);
-  -webkit-backdrop-filter: blur(24px) saturate(180%) contrast(1.05);
+  backdrop-过滤器: blur(24px) saturate(180%) contrast(1.05);
+  -webkit-backdrop-过滤器: blur(24px) saturate(180%) contrast(1.05);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / .48),
     inset 0 -1px 0 rgb(255 255 255 / .12),
@@ -1193,8 +1193,8 @@ But that is **web glassmorphism / frosted-glass approximation**, not official Ap
 @media (prefers-reduced-transparency: reduce) {
   .liquid-glass-web-approx {
     background: rgb(255 255 255 / .96);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    backdrop-过滤器: none;
+    -webkit-backdrop-过滤器: none;
   }
 }
 ```

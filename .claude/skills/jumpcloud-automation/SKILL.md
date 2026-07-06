@@ -1,10 +1,10 @@
 ---
 name: jumpcloud-automation
-description: "通过 Rube MCP (Composio) 自动执行 Jumpcloud 任务。使用前始终先搜索工具以获取当前 schema。"
+description: "通过 Rube MCP (Composio) 自动执行 Jumpcloud 任务。使用前始终先搜索工具以获取当前 架构。"
 requires:
   mcp: [rube]
 ---
-# 通过 Rube MCP 实现 Jumpcloud 自动化
+# Jumpcloud 自动化
 通过 Composio 的 Jumpcloud 工具包和 Rube MCP 自动化 Jumpcloud 操作。
 **工具包文档**: [composio.dev/toolkits/jumpcloud](https://composio.dev/toolkits/jumpcloud)
 ## 前提条件

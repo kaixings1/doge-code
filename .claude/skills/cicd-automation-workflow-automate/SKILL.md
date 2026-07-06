@@ -1,5 +1,5 @@
 ---
-name: cicd-automation-workflow-automate
+name: cicd-automation-工作流-automate
 description: "您是专门创建高效 CI/CD 流水线、GitHub Actions 工作流和自动化开发流程的工作流自动化专家。设计和实现减少手动工作、提高一致性并加速交付的自动化。"
 risk: unknown
 source: community
@@ -20,16 +20,16 @@ date_added: "2026-02-27"
 ## 不要使用此技能的场景
 
 - You only need a one-off command or quick troubleshooting
-- There is no workflow or automation context
+- There is no 工作流 or automation context
 - The task is strictly product or UI design
 
 ## 安全
 
-- Avoid running deployment steps without approvals and rollback plans.
-- Treat secrets and environment configuration changes as high risk.
+- Avoid running 部署 steps without approvals and rollback plans.
+- Treat secrets and environment 配置 changes as high risk.
 
 ## 上下文
-The user needs to automate development workflows, deployment processes, or operational tasks. Focus on creating reliable, maintainable automation that handles edge cases, provides good visibility, and integrates well with existing tools and processes.
+The user needs to automate development workflows, 部署 processes, or operational tasks. Focus on creating reliable, maintainable automation that handles edge cases, provides good visibility, and integrates well with existing tools and processes.
 
 ## 需求
 $ARGUMENTS
@@ -40,18 +40,18 @@ $ARGUMENTS
 - Define pipeline stages with caching, artifacts, and quality gates.
 - Add security scans, secret handling, and approvals for risky steps.
 - Document rollout, rollback, and notification strategy.
-- If detailed workflow patterns are required, open `resources/implementation-playbook.md`.
+- If detailed 工作流 patterns are required, open `resources/implementation-playbook.md`.
 
 ## 输出格式
 
 - 总结 of pipeline stages and triggers
-- Proposed workflow files or step list
+- Proposed 工作流 files or step list
 - 必需 secrets, env vars, and service integrations
 - Risks, assumptions, and rollback notes
 
 ## 资源
 
-- `resources/implementation-playbook.md` for detailed workflow patterns and examples.
+- `resources/implementation-playbook.md` for detailed 工作流 patterns and examples.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

@@ -2,7 +2,7 @@
 name: seo-content-brief
 description: "Seo Content Brief — 生成竞争性 SEO 内容简报的相关功能和最佳实践，含分节字数、竞争对手评分、关键词密度指导和页面类型模板。"
 user-invocable: true
-argument-hint: "[url-or-keyword] [page-type]"
+参数-hint: "[url-or-keyword] [page-type]"
 license: MIT
 metadata:
   author: puneetindersingh
@@ -40,7 +40,7 @@ metadata:
 ### 3. Analyse SERPs
 
 - Identify the top 5 ranking pages for the target keyword
-- Filter out non-competitors (Wikipedia, Reddit, Pinterest, Amazon, YouTube, government sites, SEO tool pages, job boards, directories, news aggregators, social platforms). See `references/excluded-domains.md` for the full list.
+- 过滤器 out non-competitors (Wikipedia, Reddit, Pinterest, Amazon, YouTube, government sites, SEO tool pages, job boards, directories, news aggregators, social platforms). See `references/excluded-domains.md` for the full list.
 - Score each real competitor: Depth (1-10), 格式ting (1-10), SEO (1-10), UX (1-10)
 - Identify three gap types:
   - **Topic gaps:** subtopics competitors miss entirely
@@ -55,7 +55,7 @@ metadata:
 - **Transactional:** user is ready to act (buy, book, enquire, sign up)
 - **Navigational:** user is looking for a specific site or page
 
-Identify what SERP format Google rewards for this query: long-form guide, listicle, comparison table, landing page, 常见问题, video, local pack.
+Identify what SERP format Google rewards for this 查询: long-form guide, listicle, comparison table, landing page, 常见问题, video, local pack.
 
 ### 5. Build the Brief
 
@@ -73,7 +73,7 @@ Every heading, subtopic, keyword, and 常见问题 you suggest MUST be something
 
 ### Site Structure Coverage Rule
 
-When briefing a hub, overview, category, or "types of" page:
+When briefing a hub, 概述, category, or "types of" page:
 - The outline MUST reference every relevant product category, service, or sub-page that exists on the site
 - Do not invent categories that don't exist, do not leave out categories that do exist
 - Each category should appear as its own section with an internal link suggestion
@@ -99,7 +99,7 @@ Read `references/keyword-density.md` for the full rules. 总结:
 **Primary keyword MUST appear in:**
 1. Title tag (near the front)
 2. H1 tag (near the front)
-3. URL slug
+3. URL 标识符
 4. Meta description
 5. First paragraph / first 100 words
 6. At least one image alt text

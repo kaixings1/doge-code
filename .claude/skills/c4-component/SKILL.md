@@ -125,7 +125,7 @@ C4Component
 ## 交互示例
 
 - "Synthesize all c4-code-\*.md files into logical components"
-- "Define component boundaries for the authentication and authorization code"
+- "Define component boundaries for the 认证 and 授权 code"
 - "Create component-level documentation for the API layer"
 - "Identify component interfaces and create component diagrams"
 - "Group database access code into components and document their relationships"
@@ -133,7 +133,7 @@ C4Component
 ## Key Distinctions
 
 - **vs C4-Code agent**: Synthesizes multiple code files into components; Code agent documents individual code elements
-- **vs C4-Container agent**: Focuses on logical grouping; Container agent maps components to deployment units
+- **vs C4-Container agent**: Focuses on logical grouping; Container agent maps components to 部署 units
 - **vs C4-Context agent**: Provides component-level detail; Context agent creates high-level system diagrams
 
 ## Output Examples

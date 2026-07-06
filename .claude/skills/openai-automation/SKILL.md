@@ -17,14 +17,14 @@ requires:
 ## 设置
 
 1. Add the Composio MCP server to your client: `https://rube.app/mcp`
-2. Connect your OpenAI account when prompted (API key authentication)
+2. Connect your OpenAI account when prompted (API key 认证)
 3. Start using the workflows below
 
 ---
 
 ## 核心工作流
 
-### 1. Generate a Response (Text, Multimodal, Structured)
+### 1. Generate a 响应 (Text, Multimodal, Structured)
 
 Use `OPENAI_CREATE_RESPONSE` for one-shot model responses including text, image analysis, OCR, and structured JSON outputs.
 
@@ -44,14 +44,14 @@ Inputs:
   - max_output_tokens: integer (optional)
   - reasoning: { effort: "none" | "minimal" | "low" | "medium" | "high" }
   - text: object (structured output config)
-    - format: { type: "json_schema", name: "...", schema: {...}, strict: true }
+    - format: { type: "json_schema", name: "...", 架构: {...}, strict: true }
   - tools: array (function, code_interpreter, file_search, web_search)
   - tool_choice: "auto" | "none" | "required" | { type: "function", function: { name: "..." } }
   - store: boolean (false to opt out of model distillation)
   - stream: boolean
 ```
 
-**Structured output example:** Set `text.format` to `{ type: "json_schema", name: "person", schema: { type: "object", properties: { name: { type: "string" }, age: { type: "integer" } }, required: ["name", "age"], additionalProperties: false }, strict: true }`.
+**Structured output example:** Set `text.format` to `{ type: "json_schema", name: "person", 架构: { type: "object", properties: { name: { type: "string" }, age: { type: "integer" } }, required: ["name", "age"], additionalProperties: false }, strict: true }`.
 
 ### 2. Create Embeddings
 
@@ -101,16 +101,24 @@ Inputs: (none)
 |---------|--------|
 | DALL-E deprecation | DALL-E 2 and DALL-E 3 are deprecated and will stop being supported on 05/12/2026. Prefer GPT Image models. |
 | DALL-E 3 single image only | `OPENAI_CREATE_IMAGE` with DALL-E 3 only supports `n=1`. Use GPT Image models or DALL-E 2 for multiple images. |
-| Token limits for embeddings | Input must not exceed 8192 tokens per item and 2048 items per batch for embedding models. |
+| 令牌 limits for embeddings | Input must not exceed 8192 tokens per item and 2048 items per batch for embedding models. |
 | Reasoning model restrictions | `temperature` and `top_p` are not supported with reasoning models (o3-mini, etc.). Use `reasoning.effort` instead. |
-| Structured output strict mode | When `strict: true` in json_schema format, ALL schema properties must be listed in the `required` array. |
+| Structured output strict mode | When `strict: true` in json_schema format, ALL 架构 properties must be listed in the `required` array. |
 | Prompt length varies by model | Image prompt max lengths differ: 32000 (GPT Image), 4000 (DALL-E 3), 1000 (DALL-E 2). |
 
 ---
 
 ## 快速参考
 
-| Tool Slug | Description |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
+
+| Tool 标识符 | Description |
 |-----------|-------------|
 | `OPENAI_CREATE_RESPONSE` | Generate text/multimodal responses with structured output support |
 | `OPENAI_CREATE_EMBEDDINGS` | Create text embeddings for search, clustering, and RAG |

@@ -15,7 +15,7 @@ tags:
 - c
 tools:
 - claude-code
-- cursor
+- 游标
 - gemini-cli
 - codex-cli
 - antigravity
@@ -27,7 +27,7 @@ tools:
 
 A GDB debugging skill designed for AI agents. Combines **source code analysis** with **runtime state inspection** using gdb-cli to provide intelligent debugging assistance for C/C++ programs.
 
-## When to Use This Skill
+## 使用场景 This Skill
 
 - Analyze core dumps or crash dumps
 - Debug running processes with GDB attach
@@ -38,7 +38,7 @@ A GDB debugging skill designed for AI agents. Combines **source code analysis** 
 ## 不适用场景
 
 - The task is unrelated to C/C++ debugging
-- The user needs general-purpose assistance without debugging
+- The user needs general-目的 assistance without debugging
 - No GDB is available (GDB 9.0+ with Python support required)
 
 ## 前提条件
@@ -61,7 +61,7 @@ gdb -nx -q -batch -ex "python print('OK')"
 
 ## 工作原理
 
-### 步骤 1: Initialize Debug Session
+### 步骤 1: Initialize Debug 会话
 
 **For core dump analysis:**
 ```bash
@@ -78,16 +78,16 @@ gdb-cli attach --pid <pid> [--binary <binary_path>]
 ### 步骤 2: Gather Initial Information
 
 ```bash
-SESSION="<session_id>"
+会话="<session_id>"
 
 # List all threads
-gdb-cli threads -s $SESSION
+gdb-cli threads -s $会话
 
 # Get backtrace (with local variables)
-gdb-cli bt -s $SESSION --full
+gdb-cli bt -s $会话 --full
 
 # Get registers
-gdb-cli registers -s $SESSION
+gdb-cli registers -s $会话
 ```
 
 ### 步骤 3: Correlate Source Code (CRITICAL)
@@ -95,7 +95,7 @@ gdb-cli registers -s $SESSION
 For each frame in the backtrace:
 1. **Extract frame info**: `{file}:{line} in {function}`
 2. **Read source context**: Get ±20 lines around the crash point
-3. **Get local variables**: `gdb-cli locals-cmd -s $SESSION --frame <N>`
+3. **Get local variables**: `gdb-cli locals-cmd -s $会话 --frame <N>`
 4. **Analyze**: Correlate code logic with variable values
 
 **Example correlation:**
@@ -116,34 +116,34 @@ Analysis: The NULL check on line 86 didn't catch the issue.
 
 ```bash
 # Examine variables
-gdb-cli eval-cmd -s $SESSION "variable_name"
-gdb-cli eval-cmd -s $SESSION "ptr->field"
-gdb-cli ptype -s $SESSION "struct_name"
+gdb-cli eval-cmd -s $会话 "variable_name"
+gdb-cli eval-cmd -s $会话 "ptr->field"
+gdb-cli ptype -s $会话 "struct_name"
 
 # Memory inspection
-gdb-cli memory -s $SESSION "0x7fffffffe000" --size 64
+gdb-cli memory -s $会话 "0x7fffffffe000" --size 64
 
 # Disassembly
-gdb-cli disasm -s $SESSION --count 20
+gdb-cli disasm -s $会话 --count 20
 
 # Check all threads (for deadlock analysis)
-gdb-cli thread-apply -s $SESSION bt --all
+gdb-cli thread-apply -s $会话 bt --all
 
 # View shared libraries
-gdb-cli sharedlibs -s $SESSION
+gdb-cli sharedlibs -s $会话
 ```
 
-### 步骤 5: Session Management
+### 步骤 5: 会话 Management
 
 ```bash
 # List active sessions
 gdb-cli sessions
 
-# Check session status
-gdb-cli status -s $SESSION
+# Check 会话 status
+gdb-cli status -s $会话
 
-# Stop session (cleanup)
-gdb-cli stop -s $SESSION
+# Stop 会话 (cleanup)
+gdb-cli stop -s $会话
 ```
 
 ## Common Debugging Patterns
@@ -156,8 +156,8 @@ gdb-cli stop -s $SESSION
 
 **Investigation:**
 ```bash
-gdb-cli registers -s $SESSION  # Check RIP
-gdb-cli eval-cmd -s $SESSION "ptr"  # Check pointer value
+gdb-cli registers -s $会话  # Check RIP
+gdb-cli eval-cmd -s $会话 "ptr"  # Check pointer value
 ```
 
 ### Pattern: Deadlock
@@ -168,7 +168,7 @@ gdb-cli eval-cmd -s $SESSION "ptr"  # Check pointer value
 
 **Investigation:**
 ```bash
-gdb-cli thread-apply -s $SESSION bt --all
+gdb-cli thread-apply -s $会话 bt --all
 # Look for circular wait patterns
 ```
 
@@ -180,8 +180,8 @@ gdb-cli thread-apply -s $SESSION bt --all
 
 **Investigation:**
 ```bash
-gdb-cli memory -s $SESSION "&variable" --size 128
-gdb-cli registers -s $SESSION
+gdb-cli memory -s $会话 "&variable" --size 128
+gdb-cli registers -s $会话
 ```
 
 ## 示例
@@ -225,7 +225,7 @@ gdb-cli thread-apply -s b2c3d4 bt --all
 - This skill requires GDB access to processes and core dumps
 - Attaching to processes may require appropriate permissions (sudo, ptrace_scope)
 - Core dumps may contain sensitive data - handle with care
-- Only debug processes you have authorization to analyze
+- Only debug processes you have 授权 to analyze
 
 ## 相关技能
 

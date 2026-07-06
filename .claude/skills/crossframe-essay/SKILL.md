@@ -62,7 +62,7 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 5. 用 `../crossframe/worksheets/source-continuity-check.md` 检查是否只读了孤立概念卡；深度文章只在源锚点不足、用户要求源审计或高责任核验时，定向读取 `../crossframe/references/v5-source-spine.md`、`../crossframe/references/v5-section-digest-index.md`、`../crossframe/references/v5-material-selection-map.md` 或 `../crossframe/references/v5-term-fidelity.md` 的相关局部。
 6. 复用 `../crossframe/templates/read-state-capsule.md` 规定的 `v5-read-state-capsule`；若上游未生成，回到 `../crossframe/SKILL.md` 补齐，不在 essay 内重新发明源路由。
 7. 用 `../crossframe/worksheets/source-anchor-integrity-check.md` 检查文章中心命题、机制候选、高风险概念、行动边界和文章转译是否能回指胶囊源锚点；不能回指的内容必须标为“本文推断 / 表达转译 / 外部思想映射”。
-8. 读取 `references/evidence-and-search-rules.md` 和 `../crossframe/references/source-ledger-workflow.md`，决定本次是否需要联网或查源，并统一写入来源台账。
+8. 读取 `references/evidence-and-search-rules.md` 和 `../crossframe/references/source-ledger-工作流.md`，决定本次是否需要联网或查源，并统一写入来源台账。
 9. 按需读取 `references/critical-insight-principles.md`。
 10. 如果主题是思想文章、公共议题、复杂关系/组织文章，或用户要求深度、概念上升、引经据典，读取 `protocols/concept-elevation-protocol.md`、`references/reference-and-allusion-rules.md` 和 `references/concept-reference-map.md`。
 11. 按 suite 传入的 `voice_mode` 判断是否读取 `protocols/editorial-comrade-voice-protocol.md` 和 `references/editorial-voice-principles.md`，并在底稿中写出 `正文声口方案`。如果用户明确要求中性报告、备忘录、表格、纯诊断或学术摘要，才可关闭文章声口，并说明关闭原因。
@@ -76,8 +76,8 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 
 - 默认遵守 `../crossframe/references/runtime-read-policy.md`：正常成文不读取 evals、examples、完整成功/失败案例、全量 v5 大索引或全量 50 技法卡。
 - 自动成文：读取 `templates/insight-dossier-template.md` 和 `templates/essay-output-template.md`；默认执行 `full-visible-v5-longform`。
-- 互动打磨：读取 `templates/interactive-session-template.md`。
-- 如果主题涉及公共议题、最新事实、真实组织、平台、政策、公司、人物、法律、技术标准或数据，必须查源并按 `../crossframe/references/source-ledger-workflow.md` 写来源台账；来源只进入证据边界、反例、现实案例和事实限制，不接管文章命题。
+- 互动打磨：读取 `templates/interactive-会话-template.md`。
+- 如果主题涉及公共议题、最新事实、真实组织、平台、政策、公司、人物、法律、技术标准或数据，必须查源并按 `../crossframe/references/source-ledger-工作流.md` 写来源台账；来源只进入证据边界、反例、现实案例和事实限制，不接管文章命题。
 - 如果主题是私人关系、泛论随笔、哲学概念或用户给出的虚构/概括性材料，默认不联网，除非用户要求或文章需要现实来源来避免误导。
 - 如果启用概念上升，先从 CrossFrame 机制抽象上位概念，再选择中西经典、历史经验、理论或文学互文，最后回落到现实判断。
 - 自动成文先写 `正文声口方案`，再成文。声口由 suite 传入的 `voice_mode` 决定：`neutral-analysis` / `neutral-decisive` / `editorial-reply` / `editorial-commentary`。只有显式短答/中性报告/备忘录/表格/纯诊断/学术摘要才关闭声口或长文档位。

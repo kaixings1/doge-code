@@ -1,6 +1,6 @@
 ---
 name: nerdzao-elite-gemini-high
-description: "为 Gemini 3.1 Pro High 特别优化的精英编码器 + UX 像素完美模式。专注于最高质量和 token 效率的完整工作流。"
+description: "为 Gemini 3.1 Pro High 特别优化的精英编码器 + UX 像素完美模式。专注于最高质量和 令牌 效率的完整工作流。"
 risk: safe
 source: community
 date_added: "2026-02-27"
@@ -34,7 +34,7 @@ date_added: "2026-02-27"
 - 优先考虑：像素完美 + 整洁代码 + 性能 + 安全性。
 
 ## 使用场景
-当您需要 Gemini 3.1 Pro High 的最高质量输出、像素完美 UI 和 token 高效工作流时使用。
+当您需要 Gemini 3.1 Pro High 的最高质量输出、像素完美 UI 和 令牌 高效工作流时使用。
 
 ## 局限性
 - 仅当任务明确符合上述描述范围时使用此技能。

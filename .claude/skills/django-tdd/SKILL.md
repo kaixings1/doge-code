@@ -54,7 +54,7 @@ addopts =
     --strict-markers
 markers =
     slow: 标记为慢速测试
-    integration: 标记为集成测试
+    集成: 标记为集成测试
 ```
 
 ### 测试设置（Settings）
@@ -180,7 +180,7 @@ class CategoryFactory(factory.django.DjangoModelFactory):
         model = Category
 
     name = factory.Faker('word')
-    slug = factory.LazyAttribute(lambda obj: obj.name.lower())
+    标识符 = factory.LazyAttribute(lambda obj: obj.name.lower())
     description = factory.Faker('text')
 
 class ProductFactory(factory.django.DjangoModelFactory):
@@ -190,7 +190,7 @@ class ProductFactory(factory.django.DjangoModelFactory):
         model = Product
 
     name = factory.Faker('sentence', nb_words=3)
-    slug = factory.LazyAttribute(lambda obj: obj.name.lower().replace(' ', '-'))
+    标识符 = factory.LazyAttribute(lambda obj: obj.name.lower().replace(' ', '-'))
     description = factory.Faker('text')
     price = fuzzy.FuzzyDecimal(10.00, 1000.00, 2)
     stock = fuzzy.FuzzyInteger(0, 100)
@@ -281,9 +281,9 @@ class TestProductModel:
         assert product.created_at is not None
 
     def test_product_slug_generation(self, db):
-        """测试自动生成 slug。"""
+        """测试自动生成 标识符。"""
         product = ProductFactory(name='Test Product')
-        assert product.slug == 'test-product'
+        assert product.标识符 == 'test-product'
 
     def test_product_price_validation(self, db):
         """测试价格不能为负数。"""
@@ -327,32 +327,32 @@ class TestProductViews:
         """测试产品列表视图。"""
         ProductFactory.create_batch(10)
 
-        response = client.get(reverse('products:list'))
+        响应 = client.get(reverse('products:list'))
 
-        assert response.status_code == 200
-        assert len(response.context['products']) == 10
+        assert 响应.status_code == 200
+        assert len(响应.context['products']) == 10
 
     def test_product_detail(self, client, db):
         """测试产品详情视图。"""
         product = ProductFactory()
 
-        response = client.get(reverse('products:detail', kwargs={'slug': product.slug}))
+        响应 = client.get(reverse('products:detail', kwargs={'标识符': product.标识符}))
 
-        assert response.status_code == 200
-        assert response.context['product'] == product
+        assert 响应.status_code == 200
+        assert 响应.context['product'] == product
 
     def test_product_create_requires_login(self, client, db):
         """测试创建产品需要身份认证。"""
-        response = client.get(reverse('products:create'))
+        响应 = client.get(reverse('products:create'))
 
-        assert response.status_code == 302
-        assert response.url.startswith('/accounts/login/')
+        assert 响应.status_code == 302
+        assert 响应.url.startswith('/accounts/login/')
 
     def test_product_create_authenticated(self, authenticated_client, db):
         """测试已认证用户创建产品。"""
-        response = authenticated_client.get(reverse('products:create'))
+        响应 = authenticated_client.get(reverse('products:create'))
 
-        assert response.status_code == 200
+        assert 响应.status_code == 200
 
     def test_product_create_post(self, authenticated_client, db, category):
         """测试通过 POST 创建产品。"""
@@ -364,10 +364,10 @@ class TestProductViews:
             'category': category.id,
         }
 
-        response = authenticated_client.post(reverse('products:create'), data)
+        响应 = authenticated_client.post(reverse('products:create'), data)
 
-        assert response.status_code == 302
-        assert Product.objects.filter(name='Test Product').exists()
+        assert 响应.status_code == 302
+        assert Product.objects.过滤器(name='Test Product').exists()
 ```
 
 ## DRF API 测试
@@ -463,29 +463,29 @@ class TestProductAPI:
         ProductFactory.create_batch(10)
 
         url = reverse('api:product-list')
-        response = api_client.get(url)
+        响应 = api_client.get(url)
 
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data['count'] == 10
+        assert 响应.status_code == status.HTTP_200_OK
+        assert 响应.data['count'] == 10
 
     def test_retrieve_product(self, api_client, db):
         """测试获取单个产品。"""
         product = ProductFactory()
 
         url = reverse('api:product-detail', kwargs={'pk': product.id})
-        response = api_client.get(url)
+        响应 = api_client.get(url)
 
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data['id'] == product.id
+        assert 响应.status_code == status.HTTP_200_OK
+        assert 响应.data['id'] == product.id
 
     def test_create_product_unauthorized(self, api_client, db):
         """测试未授权创建产品。"""
         url = reverse('api:product-list')
         data = {'name': 'Test Product', 'price': '99.99'}
 
-        response = api_client.post(url, data)
+        响应 = api_client.post(url, data)
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert 响应.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_create_product_authorized(self, authenticated_api_client, db):
         """测试已认证用户创建产品。"""
@@ -497,10 +497,10 @@ class TestProductAPI:
             'stock': 10,
         }
 
-        response = authenticated_api_client.post(url, data)
+        响应 = authenticated_api_client.post(url, data)
 
-        assert response.status_code == status.HTTP_201_CREATED
-        assert response.data['name'] == 'Test Product'
+        assert 响应.status_code == status.HTTP_201_CREATED
+        assert 响应.data['name'] == 'Test Product'
 
     def test_update_product(self, authenticated_api_client, db):
         """测试更新产品。"""
@@ -509,19 +509,19 @@ class TestProductAPI:
         url = reverse('api:product-detail', kwargs={'pk': product.id})
         data = {'name': 'Updated Product'}
 
-        response = authenticated_api_client.patch(url, data)
+        响应 = authenticated_api_client.patch(url, data)
 
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data['name'] == 'Updated Product'
+        assert 响应.status_code == status.HTTP_200_OK
+        assert 响应.data['name'] == 'Updated Product'
 
     def test_delete_product(self, authenticated_api_client, db):
         """测试删除产品。"""
         product = ProductFactory(created_by=authenticated_api_client.user)
 
         url = reverse('api:product-detail', kwargs={'pk': product.id})
-        response = authenticated_api_client.delete(url)
+        响应 = authenticated_api_client.delete(url)
 
-        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert 响应.status_code == status.HTTP_204_NO_CONTENT
 
     def test_filter_products_by_price(self, api_client, db):
         """测试按价格过滤产品。"""
@@ -529,10 +529,10 @@ class TestProductAPI:
         ProductFactory(price=150)
 
         url = reverse('api:product-list')
-        response = api_client.get(url, {'price_min': 100})
+        响应 = api_client.get(url, {'price_min': 100})
 
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data['count'] == 1
+        assert 响应.status_code == status.HTTP_200_OK
+        assert 响应.data['count'] == 1
 
     def test_search_products(self, api_client, db):
         """测试搜索产品。"""
@@ -540,10 +540,10 @@ class TestProductAPI:
         ProductFactory(name='Samsung Galaxy')
 
         url = reverse('api:product-list')
-        response = api_client.get(url, {'search': 'Apple'})
+        响应 = api_client.get(url, {'search': 'Apple'})
 
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data['count'] == 1
+        assert 响应.status_code == status.HTTP_200_OK
+        assert 响应.data['count'] == 1
 ```
 
 ## Mock 模拟与打补丁（Patching）
@@ -569,12 +569,12 @@ class TestPaymentView:
         }
 
         client.force_login(user)
-        response = client.post(reverse('payments:process'), {
+        响应 = client.post(reverse('payments:process'), {
             'product_id': product.id,
-            'token': 'tok_visa',
+            '令牌': 'tok_visa',
         })
 
-        assert response.status_code == 302
+        assert 响应.status_code == 302
         mock_stripe.Charge.create.assert_called_once()
 
     @patch('apps.payments.services.stripe')
@@ -583,13 +583,13 @@ class TestPaymentView:
         mock_stripe.Charge.create.side_effect = Exception('Card declined')
 
         client.force_login(user)
-        response = client.post(reverse('payments:process'), {
+        响应 = client.post(reverse('payments:process'), {
             'product_id': product.id,
-            'token': 'tok_visa',
+            '令牌': 'tok_visa',
         })
 
-        assert response.status_code == 302
-        assert 'error' in response.url
+        assert 响应.status_code == 302
+        assert 'error' in 响应.url
 ```
 
 ### 模拟邮件发送
@@ -625,44 +625,44 @@ class TestCheckoutFlow:
     def test_guest_to_purchase_flow(self, client, db):
         """测试从游客到购买的完整流程。"""
         # 步骤 1: 注册
-        response = client.post(reverse('users:register'), {
+        响应 = client.post(reverse('users:register'), {
             'email': 'test@example.com',
             'password': 'testpass123',
             'password_confirm': 'testpass123',
         })
-        assert response.status_code == 302
+        assert 响应.status_code == 302
 
         # 步骤 2: 登录
-        response = client.post(reverse('users:login'), {
+        响应 = client.post(reverse('users:login'), {
             'email': 'test@example.com',
             'password': 'testpass123',
         })
-        assert response.status_code == 302
+        assert 响应.status_code == 302
 
         # 步骤 3: 浏览产品
         product = ProductFactory(price=100)
-        response = client.get(reverse('products:detail', kwargs={'slug': product.slug}))
-        assert response.status_code == 200
+        响应 = client.get(reverse('products:detail', kwargs={'标识符': product.标识符}))
+        assert 响应.status_code == 200
 
         # 步骤 4: 添加到购物车
-        response = client.post(reverse('cart:add'), {
+        响应 = client.post(reverse('cart:add'), {
             'product_id': product.id,
             'quantity': 1,
         })
-        assert response.status_code == 302
+        assert 响应.status_code == 302
 
         # 步骤 5: 结账
-        response = client.get(reverse('checkout:review'))
-        assert response.status_code == 200
-        assert product.name in response.content.decode()
+        响应 = client.get(reverse('checkout:review'))
+        assert 响应.status_code == 200
+        assert product.name in 响应.content.decode()
 
         # 步骤 6: 完成购买
         with patch('apps.checkout.services.process_payment') as mock_payment:
             mock_payment.return_value = True
-            response = client.post(reverse('checkout:complete'))
+            响应 = client.post(reverse('checkout:complete'))
 
-        assert response.status_code == 302
-        assert Order.objects.filter(user__email='test@example.com').exists()
+        assert 响应.status_code == 302
+        assert Order.objects.过滤器(user__email='test@example.com').exists()
 ```
 
 ## 测试最佳实践
@@ -712,6 +712,14 @@ open htmlcov/index.html
 | 整体 | 80%+ |
 
 ## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |
 
 | 模式 | 用法 |
 |---------|-------|

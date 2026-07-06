@@ -8,13 +8,13 @@ disable-model-invocation: true
 
 使用垂直切片（追踪子弹）将计划分解为可独立处理的议题。
 
-议题追踪器和分类标签词汇应已提供给你——如果没有，请运行 `/setup-matt-pocock-skills`。
+议题追踪器和分类标签词汇应已提供给你——如果没有，请运行 `/设置-matt-pocock-skills`。
 
 ## Process
 
 ### 1. Gather context
 
-Work from whatever is already in the conversation context. If the user passes an issue reference (issue number, URL, or path) as an argument, fetch it from the issue tracker and read its full body and comments.
+Work from whatever is already in the conversation context. If the user passes an issue reference (issue number, URL, or path) as an 参数, fetch it from the issue tracker and read its full body and comments.
 
 ### 2. Explore the codebase (optional)
 
@@ -24,11 +24,11 @@ Look for opportunities to prefactor the code to make the implementation easier. 
 
 ### 3. Draft vertical slices
 
-Break the plan into **tracer bullet** issues. Each issue is a thin vertical slice that cuts through ALL integration layers end-to-end, NOT a horizontal slice of one layer.
+Break the plan into **tracer bullet** issues. Each issue is a thin vertical slice that cuts through ALL 集成 layers end-to-end, NOT a horizontal slice of one layer.
 
 <vertical-slice-rules>
 
-- Each slice delivers a narrow but COMPLETE path through every layer (schema, API, UI, tests)
+- Each slice delivers a narrow but COMPLETE path through every layer (架构, API, UI, tests)
 - A completed slice is demoable or verifiable on its own
 - Any prefactoring should be done first
 
@@ -65,7 +65,7 @@ A reference to the parent issue on the issue tracker (if the source was an exist
 
 A concise description of this vertical slice. Describe the end-to-end behavior, not layer-by-layer implementation.
 
-Avoid specific file paths or code snippets — they go stale fast. Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it here and note briefly that it came from a prototype. Trim to the decision-rich parts — not a working demo, just the important bits.
+Avoid specific file paths or code snippets — they go stale fast. Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, 架构, type shape), inline it here and note briefly that it came from a prototype. Trim to the decision-rich parts — not a working demo, just the important bits.
 
 ## Acceptance criteria
 

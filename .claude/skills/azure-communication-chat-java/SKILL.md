@@ -28,20 +28,20 @@ import com.azure.communication.chat.ChatClientBuilder;
 import com.azure.communication.chat.ChatThreadClient;
 import com.azure.communication.common.CommunicationTokenCredential;
 
-// ChatClient requires a CommunicationTokenCredential (user access token)
-String endpoint = "https://<resource>.communication.azure.com";
-String userAccessToken = "<user-access-token>";
+// ChatClient requires a CommunicationTokenCredential (user access 令牌)
+String 端点 = "https://<resource>.communication.azure.com";
+String userAccessToken = "<user-access-令牌>";
 
 CommunicationTokenCredential credential = new CommunicationTokenCredential(userAccessToken);
 
 ChatClient chatClient = new ChatClientBuilder()
-    .endpoint(endpoint)
+    .端点(端点)
     .credential(credential)
     .buildClient();
 
 // Async client
 ChatAsyncClient chatAsyncClient = new ChatClientBuilder()
-    .endpoint(endpoint)
+    .端点(端点)
     .credential(credential)
     .buildAsyncClient();
 ```
@@ -265,7 +265,7 @@ try {
 } catch (HttpResponseException e) {
     switch (e.getResponse().getStatusCode()) {
         case 401:
-            System.out.println("Unauthorized - check token");
+            System.out.println("Unauthorized - check 令牌");
             break;
         case 403:
             System.out.println("Forbidden - user not in thread");
@@ -293,15 +293,15 @@ try {
 
 ```bash
 AZURE_COMMUNICATION_ENDPOINT=https://<resource>.communication.azure.com
-AZURE_COMMUNICATION_USER_TOKEN=<user-access-token>
+AZURE_COMMUNICATION_USER_TOKEN=<user-access-令牌>
 ```
 
 ## 最佳实践
 
-1. **Token Management** - User tokens expire; implement refresh logic with `CommunicationTokenRefreshOptions`
+1. **令牌 Management** - User tokens expire; implement refresh logic with `CommunicationTokenRefreshOptions`
 2. **分页** - Use `listMessages(options)` with `maxPageSize` for large threads
 3. **Share History** - Set `shareHistoryTime` when adding participants to control message visibility
-4. **Message Types** - Filter system messages (`PARTICIPANT_ADDED`, etc.) from user messages
+4. **Message Types** - 过滤器 system messages (`PARTICIPANT_ADDED`, etc.) from user messages
 5. **Read Receipts** - Send receipts only when messages are actually viewed by user
 
 ## Trigger Phrases
@@ -312,7 +312,7 @@ AZURE_COMMUNICATION_USER_TOKEN=<user-access-token>
 - "Azure Communication Services chat"
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

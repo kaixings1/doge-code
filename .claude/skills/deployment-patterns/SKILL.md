@@ -1,10 +1,10 @@
 ---
-name: deployment-patterns
+name: 部署-patterns
 description: Web应用的部署工作流、CI/CD管道模式、Docker容器化、健康检查和回滚策略。
 origin: ECC
 ---
 
-# 部署模式 (Deployment Patterns)
+# 部署模式 (部署 Patterns)
 
 生产部署工作流与 CI/CD 最佳实践。
 
@@ -17,9 +17,9 @@ origin: ECC
 - 准备生产发布
 - 配置环境特定的设置
 
-## 部署策略 (Deployment Strategies)
+## 部署策略 (部署 Strategies)
 
-### 滚动部署 (Rolling Deployment) - 默认
+### 滚动部署 (Rolling 部署) - 默认
 
 逐渐替换实例 —— 在滚动更新期间，旧版本和新版本同时运行。
 
@@ -41,7 +41,7 @@ origin: ECC
 **缺点：** 两个版本同时运行 —— 要求变更必须向后兼容
 **适用场景：** 标准部署，向后兼容的变更
 
-### 蓝绿部署 (Blue-Green Deployment)
+### 蓝绿部署 (Blue-Green 部署)
 
 运行两个完全相同的环境。原子化地切换流量。
 
@@ -58,7 +58,7 @@ origin: ECC
 **缺点：** 部署期间需要 2 倍的基础设施资源
 **适用场景：** 关键服务，对问题零容忍
 
-### 金丝雀部署 (Canary Deployment)
+### 金丝雀部署 (Canary 部署)
 
 首先将小部分比例的流量路由到新版本。
 
@@ -161,7 +161,7 @@ COPY . .
 ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 
-HEALTHCHECK --interval=30s --timeout=3s CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/')" || exit 1
+HEALTHCHECK --interval=30s --timeout=3s CMD python -c "import urllib.请求; urllib.请求.urlopen('http://localhost:8000/health/')" || exit 1
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "4"]
 ```
 
@@ -203,7 +203,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/设置-node@v4
         with:
           node-version: 22
           cache: npm
@@ -223,7 +223,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/设置-buildx-action@v3
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -247,7 +247,7 @@ jobs:
           # 平台特定的部署命令
           # Railway: railway up
           # Vercel: vercel --prod
-          # K8s: kubectl set image deployment/app app=ghcr.io/${{ github.repository }}:${{ github.sha }}
+          # K8s: kubectl set image 部署/app app=ghcr.io/${{ github.repository }}:${{ github.sha }}
           echo "Deploying ${{ github.sha }}"
 ```
 
@@ -292,7 +292,7 @@ app.get("/health/detailed", async (req, res) => {
 
 async function checkDatabase(): Promise<HealthCheck> {
   try {
-    await db.query("SELECT 1");
+    await db.查询("SELECT 1");
     return { status: "ok", latency_ms: 2 };
   } catch (err) {
     return { status: "error", message: "Database unreachable" };
@@ -328,7 +328,7 @@ startupProbe:
   failureThreshold: 30    # 30 * 5s = 150s 最大启动时间
 ```
 
-## 环境配置 (Environment Configuration)
+## 环境配置 (Environment 配置)
 
 ### 云原生应用 (Twelve-Factor App) 模式
 
@@ -369,7 +369,7 @@ export const env = envSchema.parse(process.env);
 
 ```bash
 # Docker/Kubernetes: 指向之前的镜像
-kubectl rollout undo deployment/app
+kubectl rollout undo 部署/app
 
 # Vercel: 提升之前的部署版本
 vercel rollback
@@ -378,7 +378,7 @@ vercel rollback
 railway up --commit <previous-sha>
 
 # 数据库: 回滚迁移 (如果可逆)
-npx prisma migrate resolve --rolled-back <migration-name>
+npx prisma migrate resolve --rolled-back <迁移-name>
 ```
 
 ### 回滚自检清单
@@ -417,7 +417,7 @@ npx prisma migrate resolve --rolled-back <migration-name>
 - [ ] 已对依赖项进行 CVE 漏洞扫描
 - [ ] 已针对允许的源配置 CORS
 - [ ] 公共接口已启用速率限制 (Rate limiting)
-- [ ] 身份验证 (Authentication) 和授权 (Authorization) 已验证
+- [ ] 身份验证 (认证) 和授权 (授权) 已验证
 - [ ] 已设置安全响应头 (CSP, HSTS, X-Frame-Options)
 
 ### 运维

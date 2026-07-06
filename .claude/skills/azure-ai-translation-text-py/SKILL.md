@@ -21,7 +21,7 @@ pip install azure-ai-translation-text
 ```bash
 AZURE_TRANSLATOR_KEY=<your-api-key>
 AZURE_TRANSLATOR_REGION=<your-region>  # e.g., eastus, westus2
-# Or use custom endpoint
+# Or use custom 端点
 AZURE_TRANSLATOR_ENDPOINT=https://<resource>.cognitiveservices.azure.com
 ```
 
@@ -42,14 +42,14 @@ credential = AzureKeyCredential(key)
 client = TextTranslationClient(credential=credential, region=region)
 ```
 
-### API Key with Custom Endpoint
+### API Key with Custom 端点
 
 ```python
-endpoint = os.environ["AZURE_TRANSLATOR_ENDPOINT"]
+端点 = os.environ["AZURE_TRANSLATOR_ENDPOINT"]
 
 client = TextTranslationClient(
     credential=AzureKeyCredential(key),
-    endpoint=endpoint
+    端点=端点
 )
 ```
 
@@ -61,7 +61,7 @@ from azure.identity import DefaultAzureCredential
 
 client = TextTranslationClient(
     credential=DefaultAzureCredential(),
-    endpoint=os.environ["AZURE_TRANSLATOR_ENDPOINT"]
+    端点=os.environ["AZURE_TRANSLATOR_ENDPOINT"]
 )
 ```
 
@@ -265,7 +265,7 @@ async def translate_text():
 
 ## 最佳实践
 
-1. **Batch translations** — Send multiple texts in one request (up to 100)
+1. **Batch translations** — Send multiple texts in one 请求 (up to 100)
 2. **Specify source language** when known to improve accuracy
 3. **Use async client** for high-throughput scenarios
 4. **Cache language list** — Supported languages don't change frequently
@@ -274,7 +274,7 @@ async def translate_text():
 7. **Include alignment** for applications needing word mapping
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

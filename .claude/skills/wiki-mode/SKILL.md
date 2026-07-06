@@ -1,6 +1,6 @@
 ---
 name: wiki-mode
-description: "知识库方法模式。让知识库声明一种组织风格（LYT / PARA / 卡片盒笔记法 / 通用模式），wiki-ingest、save 和 autoresearch 在归档新内容前会参考此模式。读取 `.vault-meta/mode.json`；当文件不存在时默认为 `generic` 模式（保持 v1.6/v1.7 行为）。根据 2026 年 5 月指南文档，方法论支持曾是等级 5 的优先差距——没有其他 Claude+Obsidian 竞争对手将其作为一级技能提供。触发词：set vault mode, switch to PARA, use LYT, what's my vault mode, zettelkasten setup, wiki mode, methodology mode, change mode, configure mode。"
+description: "知识库方法模式。让知识库声明一种组织风格（LYT / PARA / 卡片盒笔记法 / 通用模式），wiki-ingest、save 和 autoresearch 在归档新内容前会参考此模式。读取 `.vault-meta/mode.json`；当文件不存在时默认为 `generic` 模式（保持 v1.6/v1.7 行为）。根据 2026 年 5 月指南文档，方法论支持曾是等级 5 的优先差距——没有其他 Claude+Obsidian 竞争对手将其作为一级技能提供。触发词：set vault mode, switch to PARA, use LYT, what's my vault mode, zettelkasten 设置, wiki mode, methodology mode, change mode, configure mode。"
 allowed-tools: Read, Write, Bash
 ---
 

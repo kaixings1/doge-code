@@ -5,7 +5,7 @@ requires:
   mcp: [rube]
 ---
 
-# 通过 Rube MCP 实现 Dripcel 自动化
+# Dripcel 自动化
 
 通过 Rube MCP 使用 Composio 的 Dripcel 工具包自动化 Dripcel 操作。
 
@@ -15,11 +15,11 @@ requires:
 
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Dripcel 连接，工具包为 `dripcel`
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 架构
 
 ## 设置
 
-**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 endpoint 即可使用。
+**获取 Rube MCP**：在客户端配置中将 `https://rube.app/mcp` 添加为 MCP 服务器。无需 API 密钥 — 只需添加 端点 即可使用。
 
 1. 通过确认 `RUBE_SEARCH_TOOLS` 响应来验证 Rube MCP 可用
 2. 使用工具包 `dripcel` 调用 `RUBE_MANAGE_CONNECTIONS`
@@ -33,10 +33,10 @@ requires:
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "Dripcel operations", known_fields: ""}]
-session: {generate_id: true}
+会话: {generate_id: true}
 ```
 
-这将返回可用的工具 slug、输入 schema、推荐的执行计划和已知陷阱。
+这将返回可用的工具 标识符、输入 架构、推荐的执行计划和已知陷阱。
 
 ## 核心工作流模式
 
@@ -45,7 +45,7 @@ session: {generate_id: true}
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "your specific Dripcel task"}]
-session: {id: "existing_session_id"}
+会话: {id: "existing_session_id"}
 ```
 
 ### 步骤 2：检查连接
@@ -62,7 +62,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* schema-compliant args from search results */}
+  arguments: {/* 架构-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"
@@ -70,11 +70,11 @@ session_id: "your_session_id"
 
 ## 已知陷阱
 
-- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 slug 或参数
+- **始终先搜索**：工具 架构 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 标识符 或参数
 - **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
-- **Schema 合规**：使用搜索结果中的确切字段名和类型
+- **架构 合规**：使用搜索结果中的确切字段名和类型
 - **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
 - **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
-- **分页**：检查响应中的分页 token 并继续获取直到完成
+- **分页**：检查响应中的分页 令牌 并继续获取直到完成
 
-## /u5feb/u901f/u53c2/u8003/n/n| /u64cd/u4f5c | /u65b9/u6cd5 |/n|---|---|/n| /u641c/u7d22/u5de5/u5177 | /u4f7f/u7528 RUBE_SEARCH_TOOLS /u67e5/u8be2/n| /u68c0/u67e5/u8fde/u63a5 | /u4f7f/u7528 RUBE_MANAGE_CONNECTIONS |/n| /u6267/u884c/u5de5/u5177 | /u4f7f/u7528 RUBE_MULTI_EXECUTE_TOOL |/n| /u5904/u7406/u5206/u9875 | /u68c0/u67e5/u54cd/u5e94/u4e2d/u7684/u5206/u9875 token |/n| /u4f1a/u8bdd/u7ba1/u7406 | /u590d/u7528/u73b0/u6709/u4f1a/u8bdd ID |/n/n*/u7531 [Composio](https://composio.dev) /u63d0/u4f9b/u652f/u6301*/n
+## /u5feb/u901f/u53c2/u8003/n/n| /u64cd/u4f5c | /u65b9/u6cd5 |/n|---|---|/n| /u641c/u7d22/u5de5/u5177 | /u4f7f/u7528 RUBE_SEARCH_TOOLS /u67e5/u8be2/n| /u68c0/u67e5/u8fde/u63a5 | /u4f7f/u7528 RUBE_MANAGE_CONNECTIONS |/n| /u6267/u884c/u5de5/u5177 | /u4f7f/u7528 RUBE_MULTI_EXECUTE_TOOL |/n| /u5904/u7406/u5206/u9875 | /u68c0/u67e5/u54cd/u5e94/u4e2d/u7684/u5206/u9875 令牌 |/n| /u4f1a/u8bdd/u7ba1/u7406 | /u590d/u7528/u73b0/u6709/u4f1a/u8bdd ID |/n/n*/u7531 [Composio](https://composio.dev) /u63d0/u4f9b/u652f/u6301*/n

@@ -1,6 +1,6 @@
 ---
 name: native-data-fetching
-description: 实现或调试网络请求、API 调用和数据获取。涵盖 Fetch API、React Query、SWR、错误处理、缓存、离线支持和 Expo Router 数据加载器。
+description: 实现或调试网络请求、API 调用和数据获取。涵盖 Fetch API、React 查询、SWR、错误处理、缓存、离线支持和 Expo Router 数据加载器。
 risk: unknown
 source: community
 version: 1.0.0
@@ -22,7 +22,7 @@ references/
 ## 使用时机
 在以下情况下使用此技能：
 - 实现 API 请求
-- 设置数据获取（React Query、SWR）
+- 设置数据获取（React 查询、SWR）
 - 使用 Expo Router 数据加载器（useLoaderData，web SDK 55+）
 - 调试网络故障
 - 实现缓存策略
@@ -39,29 +39,29 @@ references/
 **简单 GET 请求**：
 ```tsx
 const fetchUser = async (userId: string) => {
- const response = await fetch(`https://api.example.com/users/${userId}`);
- if (!response.ok) {
- throw new Error(`HTTP error! status: ${response.status}`);
+ const 响应 = await fetch(`https://api.example.com/users/${userId}`);
+ if (!响应.ok) {
+ throw new Error(`HTTP error! status: ${响应.status}`);
  }
- return response.json();
+ return 响应.json();
 };
 ```
 **带请求体的 POST 请求**：
 ```tsx
 const createUser = async (userData: UserData) => {
- const response = await fetch("https://api.example.com/users", {
+ const 响应 = await fetch("https://api.example.com/users", {
  method: "POST",
  headers: {
  "Content-Type": "application/json",
- Authorization: `Bearer ${token}`,
+ 授权: `Bearer ${令牌}`,
  },
  body: JSON.stringify(userData),
  });
- if (!response.ok) {
- const error = await response.json();
+ if (!响应.ok) {
+ const error = await 响应.json();
  throw new Error(error.message);
  }
- return response.json();
+ return 响应.json();
 };
 ```
 

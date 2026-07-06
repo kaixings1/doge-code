@@ -29,7 +29,7 @@ tags:
 
 ```typescript
 // TaskEither<Error, User> means:
-// "An async operation that either fails with Error or succeeds with User"
+// "An async 操作 that either fails with Error or succeeds with User"
 ```
 
 ---
@@ -42,11 +42,11 @@ tags:
 // BEFORE: Try/catch hell
 async function getUserData(userId: string) {
   try {
-    const response = await fetch(`/api/users/${userId}`)
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`)
+    const 响应 = await fetch(`/api/users/${userId}`)
+    if (!响应.ok) {
+      throw new Error(`HTTP ${响应.status}`)
     }
-    const user = await response.json()
+    const user = await 响应.json()
 
     try {
       const posts = await fetch(`/api/users/${userId}/posts`)
@@ -79,11 +79,11 @@ import { pipe } from 'fp-ts/function'
 const fetchJson = <T>(url: string): TE.TaskEither<Error, T> =>
   TE.tryCatch(
     async () => {
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      const 响应 = await fetch(url)
+      if (!响应.ok) {
+        throw new Error(`HTTP ${响应.status}: ${响应.statusText}`)
       }
-      return response.json()
+      return 响应.json()
     },
     (error) => error instanceof Error ? error : new Error(String(error))
   )
@@ -255,10 +255,10 @@ const processOrder = (orderId: string) =>
 
 ## 3. 并行执行与顺序执行
 
-### When to Use Each
+### 使用场景 Each
 
 **Sequential** (one after another):
-- When each operation depends on the previous result
+- When each 操作 depends on the previous result
 - When you need to respect rate limits
 - When order matters
 
@@ -304,7 +304,7 @@ const getDashboard = (userId: string) =>
       user,
       notifications,
       activities,
-      unreadCount: notifications.filter(n => !n.read).length
+      unreadCount: notifications.过滤器(n => !n.read).length
     }))
   )
 ```
@@ -321,7 +321,7 @@ const fetchAllUsers = pipe(
   TE.traverseArray(fetchUser)
 ) // TaskEither<Error, readonly User[]>
 
-// Note: Fails fast - if ANY request fails, the whole thing fails
+// Note: Fails fast - if ANY 请求 fails, the whole thing fails
 // All errors after the first are lost
 ```
 
@@ -464,13 +464,13 @@ const wait = (ms: number): T.Task<void> =>
   () => new Promise(resolve => setTimeout(resolve, ms))
 
 const retry = <E, A>(
-  operation: TE.TaskEither<E, A>,
+  操作: TE.TaskEither<E, A>,
   maxAttempts: number,
   baseDelayMs: number = 1000
 ): TE.TaskEither<E, A> => {
   const attempt = (remaining: number, delay: number): TE.TaskEither<E, A> =>
     pipe(
-      operation,
+      操作,
       TE.orElse(error =>
         remaining <= 1
           ? TE.left(error)
@@ -532,13 +532,13 @@ const createApiError = (
   details?: unknown
 ): ApiError => ({ code, message, status, details })
 
-const request = <T>(
+const 请求 = <T>(
   url: string,
   options: RequestInit = {}
 ): TE.TaskEither<ApiError, T> =>
   TE.tryCatch(
     async () => {
-      const response = await fetch(url, {
+      const 响应 = await fetch(url, {
         headers: {
           'Content-Type': 'application/json',
           ...options.headers,
@@ -546,22 +546,22 @@ const request = <T>(
         ...options,
       })
 
-      if (!response.ok) {
-        const body = await response.json().catch(() => ({}))
+      if (!响应.ok) {
+        const body = await 响应.json().catch(() => ({}))
         throw createApiError(
           body.code || 'HTTP_ERROR',
-          body.message || response.statusText,
-          response.status,
+          body.message || 响应.statusText,
+          响应.status,
           body
         )
       }
 
       // Handle 204 No Content
-      if (response.status === 204) {
+      if (响应.status === 204) {
         return undefined as T
       }
 
-      return response.json()
+      return 响应.json()
     },
     (error): ApiError => {
       if (typeof error === 'object' && error !== null && 'code' in error) {
@@ -569,7 +569,7 @@ const request = <T>(
       }
       return createApiError(
         'NETWORK_ERROR',
-        error instanceof Error ? error.message : 'Request failed',
+        error instanceof Error ? error.message : '请求 failed',
         0
       )
     }
@@ -577,22 +577,22 @@ const request = <T>(
 
 // API client
 const api = {
-  get: <T>(url: string) => request<T>(url),
+  get: <T>(url: string) => 请求<T>(url),
 
   post: <T>(url: string, body: unknown) =>
-    request<T>(url, {
+    请求<T>(url, {
       method: 'POST',
       body: JSON.stringify(body)
     }),
 
   put: <T>(url: string, body: unknown) =>
-    request<T>(url, {
+    请求<T>(url, {
       method: 'PUT',
       body: JSON.stringify(body)
     }),
 
   delete: (url: string) =>
-    request<void>(url, { method: 'DELETE' }),
+    请求<void>(url, { method: 'DELETE' }),
 }
 
 // Usage
@@ -615,10 +615,10 @@ type DbError =
 const prisma = new PrismaClient()
 
 const wrapPrisma = <T>(
-  operation: () => Promise<T>
+  操作: () => Promise<T>
 ): TE.TaskEither<DbError, T> =>
   TE.tryCatch(
-    operation,
+    操作,
     (error): DbError => {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -780,7 +780,7 @@ app.get('/users/:id', async (req, res) => {
 
 // Cleaner with a helper
 const sendResult = <E, A>(
-  res: Response,
+  res: 响应,
   te: TE.TaskEither<E, A>,
   errorStatus: number = 500
 ) =>
@@ -872,7 +872,15 @@ const fromBoolean = TE.fromPredicate(
 
 ---
 
-## 快速参考 Card
+## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 | Card
 
 | What you want | How to do it |
 |---------------|--------------|
@@ -889,7 +897,7 @@ const fromBoolean = TE.fromPredicate(
 | Handle both cases | `TE.fold(onError, onSuccess)` |
 | Build up context | `TE.Do` + `TE.bind('name', () => te)` |
 | Log without changing | `TE.tap(fn)` |
-| Filter with error | `TE.filterOrElse(pred, toError)` |
+| 过滤器 with error | `TE.filterOrElse(pred, toError)` |
 
 ---
 

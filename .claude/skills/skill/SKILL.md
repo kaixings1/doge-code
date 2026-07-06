@@ -1,7 +1,7 @@
 ---
 name: skill
 description: "Skill — Skill 相关功能和最佳实践"
-argument-hint: "<command> [args]"
+参数-hint: "<command> [args]"
 level: 2
 ---
 

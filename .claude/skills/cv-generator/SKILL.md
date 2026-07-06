@@ -418,8 +418,8 @@ AFTER:  "Managed a cross-functional team of 8 engineers, delivering the product 
 BEFORE: "Helped with developing new features"
 AFTER:  "Developed four customer-facing features in React, reducing support tickets by 25%"
 
-BEFORE: "Was involved in the migration project"
-AFTER:  "Led migration from monolith to microservices, cutting deployment time from
+BEFORE: "Was involved in the 迁移 project"
+AFTER:  "Led 迁移 from monolith to microservices, cutting 部署 time from
          45 minutes to under 4 minutes"
 ```
 
@@ -522,7 +522,7 @@ This is a hard gate — output is blocked until tense is correct:
 
 ---
 
-## Job description integration
+## Job description 集成
 
 When a JD is provided, run four steps:
 
@@ -792,14 +792,14 @@ Rules:
 
 | Market | Length | Photo | DOB | Marital status | 参考资料 |
 |--------|--------|-------|-----|----------------|------------|
-| USA | 1–2 pages | No | No | No | "Available on request" |
-| Canada | 1–2 pages | No | No | No | "Available on request" |
-| UK | 2 pages | No | No | No | "Available on request" |
-| Ireland | 2 pages | No | No | No | "Available on request" |
-| Australia / NZ | 2–3 pages | No | No | No | "Available on request" |
-| Germany / Austria / Switzerland | 2–3 pages | Yes (expected) | Yes | Sometimes | Listed or on request |
-| France | 1–2 pages | 可选 | No (illegal to require) | No | On request |
-| Netherlands / Scandinavia | 1–2 pages | 可选 | No | No | On request |
+| USA | 1–2 pages | No | No | No | "Available on 请求" |
+| Canada | 1–2 pages | No | No | No | "Available on 请求" |
+| UK | 2 pages | No | No | No | "Available on 请求" |
+| Ireland | 2 pages | No | No | No | "Available on 请求" |
+| Australia / NZ | 2–3 pages | No | No | No | "Available on 请求" |
+| Germany / Austria / Switzerland | 2–3 pages | Yes (expected) | Yes | Sometimes | Listed or on 请求 |
+| France | 1–2 pages | 可选 | No (illegal to require) | No | On 请求 |
+| Netherlands / Scandinavia | 1–2 pages | 可选 | No | No | On 请求 |
 | Japan | 1–2 pages (rirekisho) | Yes | Yes | Yes | Listed |
 | South Korea | 1–2 pages | Yes | Yes | Yes | Listed |
 | China | 1–2 pages | Yes | Yes | Yes | Listed |
@@ -809,12 +809,12 @@ Rules:
 | UAE / Gulf (GCC) | 2–3 pages | Yes (common) | Yes | Yes (sometimes) | Listed |
 | Nigeria / East Africa | 2–3 pages | Yes (common) | Yes | Sometimes | Listed |
 | South Africa | 3–5 pages | 可选 | Yes (common) | No | Listed |
-| Brazil | 1–2 pages | 可选 | Yes (common) | No | On request |
+| Brazil | 1–2 pages | 可选 | Yes (common) | No | On 请求 |
 | Academic (global) | No limit | Varies | Varies | No | Full list required |
-| Executive / board (global) | 2–3 pages | No | No | No | On request |
+| Executive / board (global) | 2–3 pages | No | No | No | On 请求 |
 
 默认 when market is unknown: UK / international conventions (no photo, no DOB, 2 pages,
-"Available on request").
+"Available on 请求").
 
 ---
 

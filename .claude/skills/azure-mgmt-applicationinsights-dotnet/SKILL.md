@@ -8,7 +8,7 @@ date_added: '2026-02-27'
 
 # Azure.ResourceManager.ApplicationInsights (.NET)
 
-Azure Resource Manager SDK for managing Application Insights resources for application performance monitoring.
+Azure Resource Manager SDK for managing Application Insights 资源 for application performance monitoring.
 
 ## 安装
 
@@ -90,10 +90,10 @@ ApplicationInsightsComponentData data = new ApplicationInsightsComponentData(
     }
 };
 
-ArmOperation<ApplicationInsightsComponentResource> operation = await components
+ArmOperation<ApplicationInsightsComponentResource> 操作 = await components
     .CreateOrUpdateAsync(WaitUntil.Completed, "my-appinsights", data);
 
-ApplicationInsightsComponentResource component = operation.Value;
+ApplicationInsightsComponentResource component = 操作.Value;
 
 Console.WriteLine($"Component created: {component.Data.Name}");
 Console.WriteLine($"Instrumentation Key: {component.Data.InstrumentationKey}");
@@ -173,7 +173,7 @@ WebTestData urlPingTest = new WebTestData(AzureLocation.EastUS)
             <WebTest Name="Homepage" Enabled="True" Timeout="120" 
                      xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
                 <Items>
-                    <Request Method="GET" Version="1.1" Url="https://myapp.example.com" 
+                    <请求 Method="GET" Version="1.1" Url="https://myapp.example.com" 
                              ThinkTime="0" Timeout="120" ParseDependentRequests="False" 
                              FollowRedirects="True" RecordResult="True" Cache="False" 
                              ResponseTimeGoal="0" Encoding="utf-8" ExpectedHttpStatusCode="200" />
@@ -187,10 +187,10 @@ WebTestData urlPingTest = new WebTestData(AzureLocation.EastUS)
     }
 };
 
-ArmOperation<WebTestResource> operation = await webTests
+ArmOperation<WebTestResource> 操作 = await webTests
     .CreateOrUpdateAsync(WaitUntil.Completed, "webtest-homepage", urlPingTest);
 
-WebTestResource webTest = operation.Value;
+WebTestResource webTest = 操作.Value;
 Console.WriteLine($"Web test created: {webTest.Data.Name}");
 ```
 
@@ -218,15 +218,15 @@ WebTestData multiStepTest = new WebTestData(AzureLocation.EastUS)
             <WebTest Name="LoginFlow" Enabled="True" Timeout="300"
                      xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
                 <Items>
-                    <Request Method="GET" Version="1.1" Url="https://myapp.example.com/login" 
+                    <请求 Method="GET" Version="1.1" Url="https://myapp.example.com/login" 
                              ThinkTime="0" Timeout="60" />
-                    <Request Method="POST" Version="1.1" Url="https://myapp.example.com/api/auth" 
+                    <请求 Method="POST" Version="1.1" Url="https://myapp.example.com/api/auth" 
                              ThinkTime="0" Timeout="60">
                         <Headers>
                             <Header Name="Content-Type" Value="application/json" />
                         </Headers>
                         <Body>{"username":"testuser","password":"{{TestPassword}}"}</Body>
-                    </Request>
+                    </请求>
                 </Items>
             </WebTest>
         """
@@ -265,7 +265,7 @@ WorkbookData workbookData = new WorkbookData(AzureLocation.EastUS)
                 "type": 3,
                 "content": {
                     "version": "KqlItem/1.0",
-                    "query": "requests\n| summarize count() by bin(timestamp, 1h)\n| render timechart",
+                    "查询": "requests\n| summarize count() by bin(timestamp, 1h)\n| render timechart",
                     "size": 0,
                     "title": "Requests per Hour",
                     "timeContext": {
@@ -290,10 +290,10 @@ WorkbookData workbookData = new WorkbookData(AzureLocation.EastUS)
 // Note: Workbook ID should be a new GUID
 string workbookId = Guid.NewGuid().ToString();
 
-ArmOperation<WorkbookResource> operation = await workbooks
+ArmOperation<WorkbookResource> 操作 = await workbooks
     .CreateOrUpdateAsync(WaitUntil.Completed, workbookId, workbookData);
 
-WorkbookResource workbook = operation.Value;
+WorkbookResource workbook = 操作.Value;
 Console.WriteLine($"Workbook created: {workbook.Data.DisplayName}");
 ```
 
@@ -311,7 +311,7 @@ ComponentLinkedStorageAccountData storageData = new ComponentLinkedStorageAccoun
         "/subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<storage-account>")
 };
 
-ArmOperation<ComponentLinkedStorageAccountResource> operation = await linkedStorage
+ArmOperation<ComponentLinkedStorageAccountResource> 操作 = await linkedStorage
     .CreateOrUpdateAsync(WaitUntil.Completed, StorageType.ServiceProfiler, storageData);
 ```
 
@@ -350,18 +350,18 @@ await foreach (WorkbookResource workbook in resourceGroup.GetWorkbooks())
 ApplicationInsightsComponentResource component = await resourceGroup
     .GetApplicationInsightsComponentAsync("my-appinsights");
 
-// Update using full data (PUT operation)
+// Update using full data (PUT 操作)
 ApplicationInsightsComponentData updateData = component.Data;
 updateData.RetentionInDays = 180;
 updateData.SamplingPercentage = 50;
 updateData.Tags["updated"] = "true";
 
-ArmOperation<ApplicationInsightsComponentResource> operation = await resourceGroup
+ArmOperation<ApplicationInsightsComponentResource> 操作 = await resourceGroup
     .GetApplicationInsightsComponents()
     .CreateOrUpdateAsync(WaitUntil.Completed, "my-appinsights", updateData);
 ```
 
-### 10. Delete Resources
+### 10. Delete 资源
 
 ```csharp
 // Delete Application Insights component
@@ -426,7 +426,7 @@ await webTest.DeleteAsync(WaitUntil.Completed);
 6. **Enable multiple test locations** — For accurate availability monitoring
 7. **Use workbooks** — For custom dashboards and analysis
 8. **Set up alerts** — Based on availability tests and metrics
-9. **Tag resources** — For cost allocation and organization
+9. **Tag 资源** — For cost allocation and organization
 10. **Use private endpoints** — For secure data ingestion
 
 ## 错误处理
@@ -436,7 +436,7 @@ using Azure;
 
 try
 {
-    ArmOperation<ApplicationInsightsComponentResource> operation = await components
+    ArmOperation<ApplicationInsightsComponentResource> 操作 = await components
         .CreateOrUpdateAsync(WaitUntil.Completed, "my-appinsights", data);
 }
 catch (RequestFailedException ex) when (ex.Status == 409)
@@ -487,7 +487,7 @@ builder.Services.AddApplicationInsightsTelemetry(options =>
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/applicationinsights/Azure.ResourceManager.ApplicationInsights |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

@@ -12,19 +12,19 @@ license: "MIT"
 license_source: "https://github.com/mattpocock/skills/blob/main/LICENSE"
 tags:
   - engineering
-  - workflow
+  - 工作流
   - coding-agents
 tools:
   - claude-code
   - codex-cli
-  - cursor
+  - 游标
 ---
 
 # Diagnosing Bugs
 
 ## 使用场景
 
-Use when this workflow matches the user request: Use this skill for its documented workflow.
+当此工作流匹配用户请求时使用：为其文档化的工作流使用此技能。
 
 
 _Source: [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)._
@@ -41,11 +41,11 @@ Spend disproportionate effort here. **Be aggressive. Be creative. Refuse to give
 
 ### Ways to construct one — try them in roughly this order
 
-1. **Failing test** at whatever seam reaches the bug — unit, integration, e2e.
+1. **Failing test** at whatever seam reaches the bug — unit, 集成, e2e.
 2. **Curl / HTTP script** against a running dev server.
 3. **CLI invocation** with a fixture input, diffing stdout against a known-good snapshot.
 4. **Headless browser script** (Playwright / Puppeteer) — drives the UI, asserts on DOM/console/network.
-5. **Replay a captured trace.** Save a real network request / payload / event log to disk; replay it through the code path in isolation.
+5. **Replay a captured trace.** Save a real network 请求 / 载荷 / event log to disk; replay it through the code path in isolation.
 6. **Throwaway harness.** Spin up a minimal subset of the system (one service, mocked deps) that exercises the bug code path with a single function call.
 7. **Property / fuzz loop.** If the bug is "sometimes wrong output", run 1000 random inputs and look for the failure mode.
 8. **Bisection harness.** If the bug appeared between two known states (commit, dataset, version), automate "boot at state X, check, repeat" so you can `git bisect run` it.
@@ -58,7 +58,7 @@ Build the right feedback loop, and the bug is 90% fixed.
 
 Treat the loop as a product. Once you have _a_ loop, **tighten** it:
 
-- Can I make it faster? (Cache setup, skip unrelated init, narrow the test scope.)
+- Can I make it faster? (Cache 设置, skip unrelated init, narrow the test scope.)
 - Can I make the signal sharper? (Assert on the specific symptom, not "didn't crash".)
 - Can I make it more deterministic? (Pin time, seed RNG, isolate filesystem, freeze network.)
 
@@ -127,7 +127,7 @@ Tool preference:
 
 **Tag every debug log** with a unique prefix, e.g. `[DEBUG-a4f2]`. Cleanup at the end becomes a single grep. Untagged logs survive; tagged logs die.
 
-**Perf branch.** For performance regressions, logs are usually wrong. Instead: establish a baseline measurement (timing harness, `performance.now()`, profiler, query plan), then bisect. Measure first, fix second.
+**Perf branch.** For performance regressions, logs are usually wrong. Instead: establish a baseline measurement (timing harness, `performance.now()`, profiler, 查询 plan), then bisect. Measure first, fix second.
 
 ## Phase 5 — Fix + regression test
 
@@ -160,6 +160,6 @@ Required before declaring done:
 
 ## 局限性
 
-- Requires the upstream tool, account, API key, or local setup when the workflow names one.
+- Requires the upstream tool, account, API key, or local 设置 when the 工作流 names one.
 - Does not authorize destructive, production, paid, or external-message actions without explicit user approval.
 - Validate generated artifacts or recommendations against the user's real sources before treating them as final.

@@ -25,5 +25,5 @@ Check whether `.omc/RELEASE_RULE.md` exists.
 
 **If it does NOT exist (or `--refresh` was passed):** Run the full repo analysis below and write the file.
 
-**If it DOES exist:** Read the file. Then do a quick delta check — scan `.github/workflows/` (or equivalent CI dirs: `.circleci/`, `.travis.yml`, `Jenkinsfile`, `bitbucket-pipelines.yml`, `gitlab-ci.yml`) for any modifications newer than the `last-analyzed` timestamp in the rule file. If relevant workflow files changed, re-run the analysis for those sections and update the file. Report what changed.
+**If it DOES exist:** Read the file. Then do a quick delta check — scan `.github/workflows/` (or equivalent CI dirs: `.circleci/`, `.travis.yml`, `Jenkinsfile`, `bitbucket-pipelines.yml`, `gitlab-ci.yml`) for any modifications newer than the `last-analyzed` timestamp in the rule file. If relevant 工作流 files changed, re-run the analysis for those sections and update the file. Report what changed.
 

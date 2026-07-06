@@ -31,7 +31,7 @@ date_added: "2026-02-27"
 
 1. Verify Conductor is initialized:
    - Check `conductor/tracks.md` exists
-   - If missing: Display error and suggest running `/conductor:setup` first
+   - If missing: Display error and suggest running `/conductor:设置` first
 
 2. Verify git repository:
    - Run `git status` to confirm git repo
@@ -57,9 +57,9 @@ date_added: "2026-02-27"
 
 ## Target Selection
 
-### If argument provided:
+### If 参数 provided:
 
-Parse the argument format:
+Parse the 参数 format:
 
 **Full track:** `{trackId}`
 
@@ -76,7 +76,7 @@ Parse the argument format:
 - Example: `auth_20250115:task2.3`
 - Reverts commits for task X.Y only
 
-### If no argument:
+### If no 参数:
 
 Display guided selection menu:
 
@@ -175,7 +175,7 @@ Plan updates:
                               !! WARNING !!
 ================================================================================
 
-This operation will:
+This 操作 will:
 - Create {N} revert commits
 - Modify {M} files
 - Reset {P} tasks to pending status
@@ -254,7 +254,7 @@ After successful git reverts, update plan.md:
    - Update `status` if needed
    - Update `updated` timestamp
 
-**不要 commit plan.md changes** - they are part of the revert operation
+**不要 commit plan.md changes** - they are part of the revert 操作
 
 ## Track 状态 Updates
 
@@ -349,7 +349,7 @@ Commits on remote:
   - def5678 (origin/main)
 
 Reverting will create new revert commits that you'll need to push.
-This is the safe approach (no force push required).
+This is the safe 方法 (no force push required).
 
 Continue with revert? (YES/no):
 ```
@@ -359,7 +359,7 @@ Continue with revert? (YES/no):
 If user needs to undo the revert itself:
 
 ```
-To undo this revert operation:
+To undo this revert 操作:
 
   git revert HEAD~{N}..HEAD
 

@@ -36,15 +36,15 @@ director, not as a single polish checklist.
 3. Search across every available Open Design resource, not only this skill:
    skills, plugins, MCP servers and templates, connected connectors, design
    files, active browser/context, and user-provided assets.
-4. Match resources into a staged workflow. Typical lanes are critique,
+4. Match resources into a staged 工作流. Typical lanes are critique,
    style-direction selection, visual asset generation, motion, data/proof
    grounding, implementation polish, responsive/accessibility hardening, and
    final verification.
 5. When the design target or aesthetic bar is ambiguous, present a small
    guided UI-style choice set or form with a recommended default. Continue the
-   workflow after the choice instead of stopping at a generic question.
+   工作流 after the choice instead of stopping at a generic question.
 6. If the best resource is not configured yet, explain why it is needed and
-   guide setup; otherwise use the closest configured alternative and mark the
+   guide 设置; otherwise use the closest configured alternative and mark the
    tradeoff.
 
 ## 来源
@@ -55,7 +55,7 @@ director, not as a single polish checklist.
 ## 使用方法
 
 This catalogue entry advertises the skill in Open Design so the agent
-discovers it during planning. To run the full upstream workflow with
+discovers it during planning. To run the full upstream 工作流 with
 its original assets, scripts, and references, install the upstream
 bundle into your active agent's skills directory:
 

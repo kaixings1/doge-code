@@ -23,7 +23,7 @@ This skill should be used when:
 - Managing biological sequences (DNA, RNA, proteins) and registry entities
 - Automating inventory operations (samples, containers, locations, transfers)
 - Creating or querying electronic lab notebook entries
-- Building workflow automations or Benchling Apps
+- Building 工作流 automations or Benchling Apps
 - Syncing data between Benchling and external systems
 - Querying the Benchling Data Warehouse for analytics
 - Setting up event-driven integrations with AWS EventBridge
@@ -253,9 +253,9 @@ entry_link = benchling.entry_links.create(
 
 ### 5. Workflows & Automation
 
-Automate laboratory processes using Benchling's workflow system.
+Automate laboratory processes using Benchling's 工作流 system.
 
-**Creating Workflow Tasks:**
+**Creating 工作流 Tasks:**
 ```python
 from benchling_sdk.models import WorkflowTaskCreate
 
@@ -296,8 +296,8 @@ result = wait_for_task(
 )
 ```
 
-**Key Workflow Operations:**
-- Create and manage workflow tasks
+**Key 工作流 Operations:**
+- Create and manage 工作流 tasks
 - Update task statuses and assignments
 - Execute bulk operations asynchronously
 - Monitor task progress
@@ -313,13 +313,13 @@ Subscribe to Benchling changes via **AWS EventBridge** (customer-owned bus) or *
 - `v2.workflowTask.updated.status`
 - `v2.request.created`
 
-**Minimal EventBridge rule** (filter request creation by schema name):
+**Minimal EventBridge rule** (filter request creation by 架构 name):
 
 ```json
 {
   "detail-type": ["v2.request.created"],
   "detail": {
-    "schema": {
+    "架构": {
       "name": ["Validated Request"]
     }
   }
@@ -358,7 +358,7 @@ def handler(event, context):
 
 **Recovery:** EventBridge deliveries are not replayed. Use the [List Events API](https://benchling.com/api/reference#/Events/listEvents) for events up to ~2 weeks old after outages.
 
-For payload schema, CloudFormation templates, SDK list/recovery examples, and validation steps, see `references/eventbridge.md`.
+For payload 架构, CloudFormation templates, SDK list/recovery examples, and validation steps, see `references/eventbridge.md`.
 
 ### 7. Data Warehouse & Analytics
 
@@ -409,9 +409,9 @@ for page in benchling.dna_sequences.list():
 total = benchling.dna_sequences.list().estimated_count()
 ```
 
-### Schema Fields Helper
+### 架构 Fields Helper
 
-Use the `fields()` helper for custom schema fields:
+Use the `fields()` helper for custom 架构 fields:
 ```python
 # Convert dict to Fields object
 custom_fields = benchling.models.fields({
@@ -444,8 +444,8 @@ Detailed reference documentation for in-depth information:
 
 - **authentication.md** - Comprehensive authentication guide including OIDC, security best practices, and credential management
 - **sdk_reference.md** - Detailed Python SDK reference with advanced patterns, examples, and all entity types
-- **api_endpoints.md** - REST API endpoint reference for direct HTTP calls without the SDK
-- **eventbridge.md** - EventBridge setup, event payload schema, rule examples, Lambda handler, validation, and recovery
+- **api_endpoints.md** - REST API 端点 reference for direct HTTP calls without the SDK
+- **eventbridge.md** - EventBridge setup, event payload 架构, rule examples, Lambda handler, validation, and recovery
 
 Load these references as needed for specific integration requirements.
 
@@ -479,9 +479,9 @@ for page in containers:
         print(f"{container.name}: {container.barcode}")
 ```
 
-**3. Workflow Automation:**
+**3. 工作流 Automation:**
 ```python
-# Update all pending tasks for a workflow
+# Update all pending tasks for a 工作流
 tasks = benchling.workflow_tasks.list(
     workflow_id="wf_abc123",
     status="pending"

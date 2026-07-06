@@ -10,7 +10,7 @@ origin: ECC
 
 ## 何时启用
 
-- 在为 Django 项目提交 Pull Request 前
+- 在为 Django 项目提交 Pull 请求 前
 - 在重大模型变更、迁移更新或依赖升级后
 - 预发布（Staging）或生产环境部署前的验证
 - 运行完整的 环境检查 → 代码检查 → 测试 → 安全扫描 → 部署就绪流水线
@@ -94,7 +94,7 @@ pytest apps/users/tests/
 
 # 运行带有标记的测试
 pytest -m "not slow"  # 跳过慢速测试
-pytest -m integration  # 仅运行集成测试
+pytest -m 集成  # 仅运行集成测试
 
 # 查看覆盖率报告
 open htmlcov/index.html
@@ -173,9 +173,9 @@ django-admin debugsqlshell  # 如果安装了 django-debug-sqlshell
 # 检查缺失的索引
 python manage.py shell << EOF
 from django.db import connection
-with connection.cursor() as cursor:
-    cursor.execute("SELECT table_name, index_name FROM information_schema.statistics WHERE table_schema = 'public'")
-    print(cursor.fetchall())
+with connection.游标() as 游标:
+    游标.execute("SELECT table_name, index_name FROM information_schema.statistics WHERE table_schema = 'public'")
+    print(游标.fetchall())
 EOF
 ```
 
@@ -199,7 +199,7 @@ ls -la staticfiles/
 python manage.py findstatic css/style.css
 ```
 
-## 阶段 9：配置审查 (Configuration Review)
+## 阶段 9：配置审查 (配置 Review)
 
 ```python
 # 在 Python shell 中运行以验证设置
@@ -223,7 +223,7 @@ for check, result in checks.items():
 EOF
 ```
 
-## 阶段 10：日志配置 (Logging Configuration)
+## 阶段 10：日志配置 (Logging 配置)
 
 ```bash
 # 测试日志输出
@@ -241,12 +241,12 @@ tail -f /var/log/django/django.log
 ## 阶段 11：API 文档 (API Documentation, 如果使用 DRF)
 
 ```bash
-# 生成 Schema
-python manage.py generateschema --format openapi-json > schema.json
+# 生成 架构
+python manage.py generateschema --format openapi-json > 架构.json
 
-# 验证 Schema
-# 检查 schema.json 是否为有效的 JSON
-python -c "import json; json.load(open('schema.json'))"
+# 验证 架构
+# 检查 架构.json 是否为有效的 JSON
+python -c "import json; json.load(open('架构.json'))"
 
 # 访问 Swagger UI (如果使用 drf-yasg)
 # 在浏览器访问 http://localhost:8000/swagger/
@@ -347,7 +347,7 @@ DJANGO 验证报告
   ✓ 日志文件可写
 
 阶段 11：API 文档
-  ✓ Schema 已生成
+  ✓ 架构 已生成
   ✓ Swagger UI 可访问
 
 阶段 12：差异审查
@@ -365,7 +365,7 @@ DJANGO 验证报告
 3. 部署到预发布环境进行最终测试
 ```
 
-## 部署前检查清单 (Pre-Deployment Checklist)
+## 部署前检查清单 (Pre-部署 Checklist)
 
 - [ ] 所有测试均已通过
 - [ ] 覆盖率 ≥ 80%
@@ -384,7 +384,7 @@ DJANGO 验证报告
 - [ ] HTTPS/SSL 已配置
 - [ ] 环境变量已记录文档
 
-## 持续集成 (Continuous Integration)
+## 持续集成 (Continuous 集成)
 
 ### GitHub Actions 示例
 
@@ -412,7 +412,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/设置-python@v4
         with:
           python-version: '3.11'
 
@@ -451,7 +451,15 @@ jobs:
         uses: codecov/codecov-action@v3
 ```
 
-## 快速参考 (Quick Reference)
+## 快速参考
+
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 | (快速参考)
 
 | 检查项 | 命令 |
 |-------|---------|

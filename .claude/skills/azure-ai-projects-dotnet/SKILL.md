@@ -40,9 +40,9 @@ AI_SEARCH_CONNECTION_NAME=<ai-search-connection>
 using Azure.Identity;
 using Azure.AI.Projects;
 
-var endpoint = Environment.GetEnvironmentVariable("PROJECT_ENDPOINT");
+var 端点 = Environment.GetEnvironmentVariable("PROJECT_ENDPOINT");
 AIProjectClient projectClient = new AIProjectClient(
-    new Uri(endpoint), 
+    new Uri(端点), 
     new DefaultAzureCredential());
 ```
 
@@ -74,7 +74,7 @@ PersistentAgentsClient agentsClient = projectClient.GetPersistentAgentsClient();
 PersistentAgent agent = await agentsClient.Administration.CreateAgentAsync(
     model: "gpt-4o-mini",
     name: "Math Tutor",
-    instructions: "You are a personal math tutor.");
+    使用说明: "You are a personal math tutor.");
 
 // Create thread and run
 PersistentAgentThread thread = await agentsClient.Threads.CreateThreadAsync();
@@ -112,7 +112,7 @@ using Azure.AI.Projects.OpenAI;
 // Create agent with web search tool
 PromptAgentDefinition agentDefinition = new(model: "gpt-4o-mini")
 {
-    Instructions = "You are a helpful assistant that can search the web",
+    使用说明 = "You are a helpful assistant that can search the web",
     Tools = {
         ResponseTool.CreateWebSearchTool(
             userLocation: WebSearchToolLocation.CreateApproximateLocation(
@@ -128,12 +128,12 @@ AgentVersion agentVersion = await projectClient.Agents.CreateAgentVersionAsync(
     agentName: "myAgent",
     options: new(agentDefinition));
 
-// Get response client
+// Get 响应 client
 ProjectResponsesClient responseClient = projectClient.OpenAI.GetProjectResponsesClientForAgent(agentVersion.Name);
 
-// Create response
-ResponseResult response = responseClient.CreateResponse("What's the weather in Seattle?");
-Console.WriteLine(response.GetOutputText());
+// Create 响应
+ResponseResult 响应 = responseClient.CreateResponse("What's the weather in Seattle?");
+Console.WriteLine(响应.GetOutputText());
 
 // Cleanup
 projectClient.Agents.DeleteAgentVersion(agentName: agentVersion.Name, agentVersion: agentVersion.Version);
@@ -167,7 +167,7 @@ foreach (AIProjectDeployment deployment in projectClient.Deployments.GetDeployme
     Console.WriteLine($"{deployment.Name}: {deployment.ModelName}");
 }
 
-// Filter by publisher
+// 过滤器 by publisher
 foreach (var deployment in projectClient.Deployments.GetDeployments(modelPublisher: "Microsoft"))
 {
     Console.WriteLine(deployment.Name);
@@ -310,7 +310,7 @@ Console.WriteLine(result.Content[0].Text);
 1. **Use `默认AzureCredential`** for production authentication
 2. **Use async methods** (`*Async`) for all I/O operations
 3. **Poll with appropriate delays** (500ms recommended) when waiting for runs
-4. **Clean up resources** — delete threads, agents, and files when done
+4. **Clean up 资源** — delete threads, agents, and files when done
 5. **Use versioned agents** (via `Azure.AI.Projects.OpenAI`) for production scenarios
 6. **Store connection IDs** rather than names for tool configurations
 7. **Use `includeCredentials: true`** only when credentials are needed
@@ -349,7 +349,7 @@ catch (RequestFailedException ex)
 | Samples | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/ai/Azure.AI.Projects/samples |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

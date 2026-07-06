@@ -53,11 +53,11 @@ The AI will automatically:
 - Save outputs in the figures/ directory
 
 **When to add schematics:**
-- Citation workflow diagrams
+- Citation 工作流 diagrams
 - Literature search methodology flowcharts
 - Reference management system architectures
 - Citation style decision trees
-- Database integration diagrams
+- Database 集成 diagrams
 - Any complex concept that benefits from visualization
 
 For detailed guidance on creating schematics, refer to the scientific-schematics skill documentation.
@@ -83,7 +83,7 @@ python scripts/search_google_scholar.py "CRISPR gene editing" \
   --limit 50 \
   --output results.json
 
-# Search with year filter
+# Search with year 过滤器
 python scripts/search_google_scholar.py "machine learning protein folding" \
   --year-start 2020 \
   --year-end 2024 \
@@ -97,12 +97,12 @@ python scripts/search_google_scholar.py "machine learning protein folding" \
 - Search in title: `intitle:"neural networks"`
 - Exclude terms: `machine learning -survey`
 - Find highly cited papers using sort options
-- Filter by date ranges to get recent work
+- 过滤器 by date ranges to get recent work
 
 **Best Practices**:
 - Use specific, targeted search terms
 - Include key technical terms and acronyms
-- Filter by recent years for fast-moving fields
+- 过滤器 by recent years for fast-moving fields
 - Check "Cited by" to find seminal papers
 - Export top results for further analysis
 
@@ -119,7 +119,7 @@ python scripts/search_pubmed.py "Alzheimer's disease treatment" \
 
 # Search with MeSH terms and filters
 python scripts/search_pubmed.py \
-  --query '"Alzheimer Disease"[MeSH] AND "Drug Therapy"[MeSH]' \
+  --查询 '"Alzheimer Disease"[MeSH] AND "Drug Therapy"[MeSH]' \
   --date-start 2020 \
   --date-end 2024 \
   --publication-types "Clinical Trial,Review" \
@@ -380,11 +380,11 @@ python scripts/validate_citations.py references.bib \
 }
 ```
 
-### Phase 5: 集成 with Writing Workflow
+### Phase 5: 集成 with Writing 工作流
 
 #### Building 参考资料 for Manuscripts
 
-Complete workflow for creating a bibliography:
+Complete 工作流 for creating a bibliography:
 
 ```bash
 # 1. Search for papers on your topic
@@ -430,7 +430,7 @@ This skill complements the `literature-review` skill:
 **Literature Review Skill** → Systematic search and synthesis
 **Citation Management Skill** → Technical citation handling
 
-**Combined Workflow**:
+**Combined 工作流**:
 1. Use `literature-review` for comprehensive multi-database search
 2. Use `citation-management` to extract and validate all citations
 3. Use `literature-review` to synthesize findings thematically
@@ -482,7 +482,7 @@ python scripts/format_bibtex.py my_review_references.bib \
 - Look for review articles from Tier-1 journals for overview
 - Check "Cited by" for impact assessment and recent follow-up work
 - Use citation alerts for tracking new citations to key papers
-- Filter by top venues using `source:Nature` or `source:Science`
+- 过滤器 by top venues using `source:Nature` or `source:Science`
 - Search for papers by known field leaders using `author:LastName`
 
 **Advanced Operators** (full list in `references/google_scholar_search.md`):
@@ -591,7 +591,7 @@ python scripts/search_google_scholar.py "machine learning" \
 Search PubMed using E-utilities API.
 
 **Features**:
-- Complex query support (MeSH, field tags, Boolean)
+- Complex 查询 support (MeSH, field tags, Boolean)
 - Date range filtering
 - Publication type filtering
 - Batch retrieval with metadata
@@ -602,9 +602,9 @@ Search PubMed using E-utilities API.
 # Simple keyword search
 python scripts/search_pubmed.py "CRISPR gene editing"
 
-# Complex query with filters
+# Complex 查询 with filters
 python scripts/search_pubmed.py \
-  --query '"CRISPR-Cas Systems"[MeSH] AND "therapeutic"[Title/Abstract]' \
+  --查询 '"CRISPR-Cas Systems"[MeSH] AND "therapeutic"[Title/Abstract]' \
   --date-start 2020-01-01 \
   --date-end 2024-12-31 \
   --publication-types "Clinical Trial,Review" \
@@ -1006,7 +1006,7 @@ python scripts/extract_metadata.py \
 - **Literature Review**: Multi-database systematic search and synthesis
 - **Citation Management**: Metadata extraction and validation
 
-**Combined workflow**:
+**Combined 工作流**:
 1. Use literature-review for systematic search methodology
 2. Use citation-management to extract and validate citations
 3. Use literature-review to synthesize findings
@@ -1106,10 +1106,10 @@ The citation-management skill provides:
 3. **Citation validation** with DOI verification and completeness checking
 4. **BibTeX formatting** with standardization and cleaning tools
 5. **Quality assurance** through validation and reporting
-6. **集成** with scientific writing workflow
+6. **集成** with scientific writing 工作流
 7. **Reproducibility** through documented search and extraction methods
 
-Use this skill to maintain accurate, complete citations throughout your research and ensure publication-ready bibliographies.
+使用此技能在整个研究过程中维护准确、完整的引用，并确保出版就绪的参考书目。
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

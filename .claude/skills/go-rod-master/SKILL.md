@@ -145,7 +145,7 @@ el.MustWaitStable().MustClick()
 
 // 等待直到页面没有待处理的网络请求
 wait := page.MustWaitRequestIdle()
-page.MustElement("#search").MustInput("query")
+page.MustElement("#search").MustInput("查询")
 wait()
 ```
 
@@ -303,19 +303,19 @@ defer router.MustStop()
 
 // 阻止所有图片请求
 router.MustAdd("*.png", func(ctx *rod.Hijack) {
-    ctx.Response.Fail(proto.NetworkErrorReasonBlockedByClient)
+    ctx.响应.Fail(proto.NetworkErrorReasonBlockedByClient)
 })
 
 // 修改请求头
 router.MustAdd("*api.example.com*", func(ctx *rod.Hijack) {
-    ctx.Request.Req().Header.Set("Authorization", "Bearer token123")
+    ctx.请求.Req().Header.Set("授权", "Bearer token123")
     ctx.MustLoadResponse()
 })
 
 // 修改响应体
 router.MustAdd("*.js", func(ctx *rod.Hijack) {
     ctx.MustLoadResponse()
-    ctx.Response.SetBody(ctx.Response.Body() + "\n// 已注入")
+    ctx.响应.SetBody(ctx.响应.Body() + "\n// 已注入")
 })
 
 go router.Run()
@@ -329,7 +329,7 @@ page.MustWaitLoad()
 
 // 等待无待处理网络请求（AJAX 空闲）
 wait := page.MustWaitRequestIdle()
-page.MustElement("#search").MustInput("query")
+page.MustElement("#search").MustInput("查询")
 wait()
 
 // 等待元素稳定（不再动画）
@@ -479,11 +479,11 @@ browser := rod.New().ControlURL(u).MustConnect()
 
 ## 示例
 
-查看 `examples/` 目录获取完整的可运行 Go 文件：
-- `examples/basic_scrape.go` — 最小抓取示例
-- `examples/stealth_page.go` — 使用 go-rod/stealth 进行反检测
-- `examples/request_hijacking.go` — 拦截和修改网络请求
-- `examples/concurrent_pages.go` — 用于并发抓取的页面池
+查看 `示例/` 目录获取完整的可运行 Go 文件：
+- `示例/basic_scrape.go` — 最小抓取示例
+- `示例/stealth_page.go` — 使用 go-rod/stealth 进行反检测
+- `示例/request_hijacking.go` — 拦截和修改网络请求
+- `示例/concurrent_pages.go` — 用于并发抓取的页面池
 
 ---
 
@@ -539,7 +539,7 @@ browser := rod.New().ControlURL(u).MustConnect()
 - [Go API 参考](https://pkg.go.dev/github.com/go-rod/rod) — 完整的类型和方法文档
 - [go-rod/stealth](https://github.com/go-rod/stealth) — 反机器人检测插件
 - [示例（源码）](https://github.com/go-rod/rod/blob/main/examples_test.go) — 官方示例测试
-- [Rod vs Chromedp 比较](https://github.com/nichochar/go-rod.github.io/blob/main/lib/examples/compare-chromedp) — 迁移参考
+- [Rod vs Chromedp 比较](https://github.com/nichochar/go-rod.github.io/blob/main/lib/示例/compare-chromedp) — 迁移参考
 - [Chrome DevTools 协议文档](https://chromedevtools.github.io/devtools-protocol/) — 底层协议参考
 - [Chrome CLI 标志参考](https://peter.sh/experiments/chromium-command-line-switches) — 启动器标志文档
 - `references/api-reference.md` — 快速参考速查表

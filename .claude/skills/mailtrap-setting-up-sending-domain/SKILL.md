@@ -14,7 +14,7 @@ date_added: "2026-06-19"
 
 **子域名 vs 根域名：** 添加您在发件人地址中将使用的**确切**主机名。如果您从 `notifications.mycompany.com` 发送，请将该**子域名**添加为发送域名——而不仅仅是 `mycompany.com`，除非您确实从根域名发送。
 
-如需常见主机上的分步点击操作，请打开 [Sending domain setup](https://docs.mailtrap.io/email-api-smtp/setup/sending-domain.md)（Cloudflare、Route 53 等）上的匹配指南，并配合实时的 **UI** 值进行操作。
+如需常见主机上的分步点击操作，请打开 [Sending domain 设置](https://docs.mailtrap.io/email-api-smtp/设置/sending-domain.md)（Cloudflare、Route 53 等）上的匹配指南，并配合实时的 **UI** 值进行操作。
 
 **相关技能：** `mailtrap-sending-emails`（域名就绪后使用）。
 
@@ -29,7 +29,7 @@ date_added: "2026-06-19"
 
 ## 授权
 
-下面的发送域名 API 调用需要在路径中包含 `Authorization: Bearer $MAILTRAP_API_TOKEN` 和 `$MAILTRAP_ACCOUNT_ID`。从 `GET https://mailtrap.io/api/accounts` 解析 `$MAILTRAP_ACCOUNT_ID`，并将令牌存储在环境变量或机密管理器中。
+下面的发送域名 API 调用需要在路径中包含 `授权: Bearer $MAILTRAP_API_TOKEN` 和 `$MAILTRAP_ACCOUNT_ID`。从 `GET https://mailtrap.io/api/accounts` 解析 `$MAILTRAP_ACCOUNT_ID`，并将令牌存储在环境变量或机密管理器中。
 
 ## 自动化设置（API 和 DNS 提供商）
 
@@ -52,19 +52,19 @@ date_added: "2026-06-19"
 3. 等待 DNS 传播。**如果验证仍处于待处理状态**，使用 `dig`、`nslookup` 或在线 DNS 查询确认每条记录公开可见，然后再点击**验证**。
 4. 在提示时完成**合规**流程。
 
-产品逐步说明：[Sending domain setup](https://docs.mailtrap.io/email-api-smtp/setup/sending-domain.md)。
+产品逐步说明：[Sending domain 设置](https://docs.mailtrap.io/email-api-smtp/设置/sending-domain.md)。
 
 ## DNS 提供商指南（文档）
 
 Mailtrap 为常用提供商发布了点击路径指南。打开与用户 DNS 主机匹配的页面，并配合实时的 **UI** 记录进行操作：
 
-- [Cloudflare](https://docs.mailtrap.io/email-api-smtp/setup/sending-domain/cloudflare.md)
-- [AWS Route 53](https://docs.mailtrap.io/email-api-smtp/setup/sending-domain/aws-route-53.md)
-- [Google Cloud DNS](https://docs.mailtrap.io/email-api-smtp/setup/sending-domain/google-cloud-dns.md)
-- [Squarespace](https://docs.mailtrap.io/email-api-smtp/setup/sending-domain/squarespace.md)（在适用处包括前 Google Domains 迁移说明）
-- [GoDaddy](https://docs.mailtrap.io/email-api-smtp/setup/sending-domain/godaddy.md)
-- [Namecheap](https://docs.mailtrap.io/email-api-smtp/setup/sending-domain/namecheap.md)
-- [DigitalOcean](https://docs.mailtrap.io/email-api-smtp/setup/sending-domain/digitalocean.md)
+- [Cloudflare](https://docs.mailtrap.io/email-api-smtp/设置/sending-domain/cloudflare.md)
+- [AWS Route 53](https://docs.mailtrap.io/email-api-smtp/设置/sending-domain/aws-route-53.md)
+- [Google Cloud DNS](https://docs.mailtrap.io/email-api-smtp/设置/sending-domain/google-cloud-dns.md)
+- [Squarespace](https://docs.mailtrap.io/email-api-smtp/设置/sending-domain/squarespace.md)（在适用处包括前 Google Domains 迁移说明）
+- [GoDaddy](https://docs.mailtrap.io/email-api-smtp/设置/sending-domain/godaddy.md)
+- [Namecheap](https://docs.mailtrap.io/email-api-smtp/设置/sending-domain/namecheap.md)
+- [DigitalOcean](https://docs.mailtrap.io/email-api-smtp/设置/sending-domain/digitalocean.md)
 
 如果用户的提供商未列出，同样适用：**复制每条记录**从 Mailtrap 到承载 From 域名的 DNS 区域。
 

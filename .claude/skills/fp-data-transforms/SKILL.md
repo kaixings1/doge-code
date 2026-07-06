@@ -48,7 +48,7 @@ tags:
 
 **The Task**: Convert an array of prices from cents to dollars.
 
-#### Imperative Approach
+#### Imperative 方法
 
 ```typescript
 const pricesInCents = [999, 1499, 2999, 4999];
@@ -65,7 +65,7 @@ const dollars = convertToDollars(pricesInCents);
 // [9.99, 14.99, 29.99, 49.99]
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 const pricesInCents = [999, 1499, 2999, 4999];
@@ -78,11 +78,11 @@ const dollars = pricesInCents.map(toDollars);
 
 **Why functional is better here**: The intent is immediately clear. `map` says "transform each element." The transformation logic (`toDollars`) is named and reusable. No index management, no manual array building.
 
-### Filter：保留匹配项
+### 过滤器：保留匹配项
 
 **The Task**: Get all active users from a list.
 
-#### Imperative Approach
+#### Imperative 方法
 
 ```typescript
 interface User {
@@ -102,15 +102,15 @@ function getActiveUsers(users: User[]): User[] {
 }
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 const isActive = (user: User): boolean => user.isActive;
 
-const activeUsers = users.filter(isActive);
+const activeUsers = users.过滤器(isActive);
 
 // Or inline for simple predicates
-const activeUsers = users.filter(user => user.isActive);
+const activeUsers = users.过滤器(user => user.isActive);
 ```
 
 **Why functional is better here**: The predicate (`isActive`) is separated from the iteration logic. You can reuse, test, and compose predicates independently.
@@ -119,7 +119,7 @@ const activeUsers = users.filter(user => user.isActive);
 
 **The Task**: Calculate the total price of items in a cart.
 
-#### Imperative Approach
+#### Imperative 方法
 
 ```typescript
 interface CartItem {
@@ -137,7 +137,7 @@ function calculateTotal(items: CartItem[]): number {
 }
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 const calculateTotal = (items: CartItem[]): number =>
@@ -159,7 +159,7 @@ const calculateTotal = (items: CartItem[]): number =>
 
 **The Task**: Get the names of all active premium users, sorted alphabetically.
 
-#### Imperative Approach
+#### Imperative 方法
 
 ```typescript
 interface User {
@@ -181,13 +181,13 @@ function getActivePremiumNames(users: User[]): string[] {
 }
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 const getActivePremiumNames = (users: User[]): string[] =>
   users
-    .filter(user => user.isActive)
-    .filter(user => user.tier === 'premium')
+    .过滤器(user => user.isActive)
+    .过滤器(user => user.tier === 'premium')
     .map(user => user.name)
     .sort((a, b) => a.localeCompare(b));
 
@@ -199,13 +199,13 @@ const alphabetically = (a: string, b: string): number => a.localeCompare(b);
 
 const getActivePremiumNames = (users: User[]): string[] =>
   users
-    .filter(isActive)
-    .filter(isPremium)
+    .过滤器(isActive)
+    .过滤器(isPremium)
     .map(getName)
     .sort(alphabetically);
 ```
 
-**Why functional is better here**: Each step in the chain has a single responsibility. You can read the transformation as a series of steps: "filter active, filter premium, get names, sort." Adding or removing a step is trivial.
+**Why functional is better here**: Each step in the chain has a single responsibility. You can read the transformation as a series of steps: "过滤器 active, 过滤器 premium, get names, sort." Adding or removing a step is trivial.
 
 ### 使用 fp-ts 数组模块
 
@@ -268,7 +268,7 @@ Objects need reshaping constantly: picking fields, omitting sensitive data, merg
 
 **The Task**: Extract only the public fields from a user object.
 
-#### Imperative Approach
+#### Imperative 方法
 
 ```typescript
 interface User {
@@ -288,7 +288,7 @@ function getPublicUser(user: User): { id: string; name: string; email: string } 
 }
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 // Generic pick utility
@@ -314,7 +314,7 @@ const publicUser = getPublicUser(user);
 
 **The Task**: Remove sensitive fields before logging.
 
-#### Imperative Approach
+#### Imperative 方法
 
 ```typescript
 function sanitizeForLogging(user: User): Omit<User, 'passwordHash' | 'internalNotes'> {
@@ -323,7 +323,7 @@ function sanitizeForLogging(user: User): Omit<User, 'passwordHash' | 'internalNo
 }
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 // Generic omit utility
@@ -343,13 +343,13 @@ const sanitizeForLogging = omit<User, 'passwordHash' | 'internalNotes'>([
 ]);
 ```
 
-**Honest assessment**: For one-off omits, destructuring (the imperative approach) is perfectly fine and very readable. The functional `omit` utility pays off when you have many such transformations or need to compose them.
+**Honest assessment**: For one-off omits, destructuring (the imperative 方法) is perfectly fine and very readable. The functional `omit` utility pays off when you have many such transformations or need to compose them.
 
 ### Merge：合并对象
 
 **The Task**: Merge user settings with defaults.
 
-#### Imperative Approach
+#### Imperative 方法
 
 ```typescript
 interface Settings {
@@ -374,7 +374,7 @@ function mergeSettings(
 }
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 const mergeSettings = (
@@ -406,9 +406,9 @@ const finalSettings = mergeSettings(defaults, userPrefs);
 
 ### 深合并：嵌套对象组合
 
-**The Task**: Merge nested configuration objects.
+**The Task**: Merge nested 配置 objects.
 
-#### Imperative Approach
+#### Imperative 方法
 
 ```typescript
 interface Config {
@@ -440,7 +440,7 @@ function deepMerge(
 }
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 // Generic deep merge for one level of nesting
@@ -477,7 +477,7 @@ const customConfig = deepMerge(defaultConfig, {
 
 **The Task**: Update a deeply nested value without mutation.
 
-#### Imperative (Mutating) Approach
+#### Imperative (Mutating) 方法
 
 ```typescript
 interface State {
@@ -495,7 +495,7 @@ function updateTheme(state: State, newTheme: string): void {
 }
 ```
 
-#### Functional (Immutable) Approach
+#### Functional (Immutable) 方法
 
 ```typescript
 // Manual spread nesting
@@ -531,7 +531,7 @@ const updatePath = <T, V>(
 const newState = updatePath(state, ['user', 'profile', 'settings', 'theme'], 'dark');
 ```
 
-**Honest assessment**: The spread nesting is verbose but explicit. For deeply nested updates, consider using a library like `immer` or fp-ts lenses. The verbosity of the functional approach is the price of immutability.
+**Honest assessment**: The spread nesting is verbose but explicit. For deeply nested updates, consider using a library like `immer` or fp-ts lenses. The verbosity of the functional 方法 is the price of immutability.
 
 ---
 
@@ -541,9 +541,9 @@ API 响应很少与应用需要的形状匹配。归一化将嵌套的非规范�
 
 ### API 响应到应用状态
 
-**The Task**: Transform a nested API response into a normalized state.
+**The Task**: Transform a nested API 响应 into a normalized state.
 
-#### API Response (What You Get)
+#### API 响应 (What You Get)
 
 ```typescript
 interface ApiResponse {
@@ -603,17 +603,17 @@ interface Product {
 }
 ```
 
-#### Imperative Approach
+#### Imperative 方法
 
 ```typescript
-function normalizeApiResponse(response: ApiResponse): NormalizedState {
+function normalizeApiResponse(响应: ApiResponse): NormalizedState {
   const state: NormalizedState = {
     orders: { byId: {}, allIds: [] },
     customers: { byId: {}, allIds: [] },
     products: { byId: {}, allIds: [] },
   };
 
-  for (const order of response.orders) {
+  for (const order of 响应.orders) {
     // Extract customer
     if (!state.customers.byId[order.customerId]) {
       state.customers.byId[order.customerId] = {
@@ -653,7 +653,7 @@ function normalizeApiResponse(response: ApiResponse): NormalizedState {
 }
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 import { pipe } from 'fp-ts/function';
@@ -713,10 +713,10 @@ const extractOrders = (orders: ApiResponse['orders']): Order[] =>
   }));
 
 // Compose into final normalization
-const normalizeApiResponse = (response: ApiResponse): NormalizedState => ({
-  orders: createNormalizedCollection(extractOrders(response.orders)),
-  customers: createNormalizedCollection(extractCustomers(response.orders)),
-  products: createNormalizedCollection(extractProducts(response.orders)),
+const normalizeApiResponse = (响应: ApiResponse): NormalizedState => ({
+  orders: createNormalizedCollection(extractOrders(响应.orders)),
+  customers: createNormalizedCollection(extractCustomers(响应.orders)),
+  products: createNormalizedCollection(extractProducts(响应.orders)),
 });
 ```
 
@@ -747,7 +747,7 @@ interface DisplayUser {
 }
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 const formatDate = (isoString: string): string => {
@@ -780,7 +780,7 @@ const toDisplayUsers = (apiUsers: ApiUser[]): DisplayUser[] =>
 
 **The Task**: Group orders by customer.
 
-#### Imperative Approach
+#### Imperative 方法
 
 ```typescript
 interface Order {
@@ -804,7 +804,7 @@ function groupByCustomer(orders: Order[]): Record<string, Order[]> {
 }
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 // Generic groupBy utility
@@ -847,7 +847,7 @@ const ordersByCustomer = pipe(
 
 **The Task**: Count orders by status.
 
-#### Imperative Approach
+#### Imperative 方法
 
 ```typescript
 function countByStatus(orders: Order[]): Record<string, number> {
@@ -861,7 +861,7 @@ function countByStatus(orders: Order[]): Record<string, number> {
 }
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 // Generic countBy utility
@@ -888,7 +888,7 @@ const orderCountByStatus = countBy((order: Order) => order.status)(orders);
 
 **The Task**: Calculate total revenue per product category.
 
-#### Imperative Approach
+#### Imperative 方法
 
 ```typescript
 interface Sale {
@@ -908,7 +908,7 @@ function sumByCategory(sales: Sale[]): Record<string, number> {
 }
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 // Generic sumBy utility
@@ -954,7 +954,7 @@ interface Invoice {
 }
 ```
 
-#### Functional Approach
+#### Functional 方法
 
 ```typescript
 const lineTotal = (item: LineItem): number =>
@@ -1026,7 +1026,7 @@ interface Config {
 }
 ```
 
-#### Imperative (Verbose) Approach
+#### Imperative (Verbose) 方法
 
 ```typescript
 function getDatabaseHost(config: Config): string {
@@ -1188,7 +1188,7 @@ const getDisplayName = (profile: Profile): string =>
 ### 示例 1：转换 API 响应为 UI 就绪数据
 
 ```typescript
-// API response
+// API 响应
 interface ApiOrder {
   order_id: string;
   customer: {
@@ -1374,7 +1374,7 @@ interface AppConfig {
       };
       auth?: {
         type?: 'bearer' | 'basic' | 'oauth';
-        token?: string;
+        令牌?: string;
       };
     };
     database?: {
@@ -1428,7 +1428,7 @@ const getDbConfig = (config: AppConfig) => ({
 
 ### 使用原生方法的情况：
 
-- **Simple transformations**: `.map()`, `.filter()`, `.reduce()` are perfectly good
+- **Simple transformations**: `.map()`, `.过滤器()`, `.reduce()` are perfectly good
 - **No composition needed**: You're doing a one-off transformation
 - **Team familiarity**: Everyone knows native methods
 - **可选 chaining suffices**: `obj?.prop?.value ?? default` handles your null-safety needs
@@ -1436,7 +1436,7 @@ const getDbConfig = (config: AppConfig) => ({
 ```typescript
 // Native is fine here
 const activeUserNames = users
-  .filter(u => u.isActive)
+  .过滤器(u => u.isActive)
   .map(u => u.name);
 ```
 
@@ -1475,7 +1475,7 @@ const revenueByRegion = sumBy(
 
 ### 性能考虑
 
-- **Chaining creates intermediate arrays**: `arr.filter().map()` creates one array, then another
+- **Chaining creates intermediate arrays**: `arr.过滤器().map()` creates one array, then another
 - **For hot paths, consider `reduce`**: One pass through the data
 - **Measure before optimizing**: The readability cost of optimization is often not worth it
 
@@ -1490,7 +1490,7 @@ const result = items.reduce((acc, item) => {
 
 // vs the more readable (but 2-pass) version
 const result = items
-  .filter(item => item.isActive)
+  .过滤器(item => item.isActive)
   .map(item => item.name.toUpperCase());
 ```
 
@@ -1501,7 +1501,7 @@ const result = items
 | Task | Imperative | Functional | Recommendation |
 |------|-----------|------------|----------------|
 | Transform array elements | for loop with push | `.map()` | Use map |
-| Filter array | for loop with condition | `.filter()` | Use filter |
+| 过滤器 array | for loop with condition | `.过滤器()` | Use 过滤器 |
 | Accumulate values | for loop with accumulator | `.reduce()` | Use reduce for complex, loop for simple |
 | Group by key | for loop with object | `groupBy` utility | Create reusable utility |
 | Pick object fields | manual property copy | `pick` utility | Use spread for one-off, utility for repeated |
@@ -1510,13 +1510,13 @@ const result = items
 | Null-safe access | `if (x && x.y)` | `?.` or Option | Use `?.` for simple, Option for composition |
 | Normalize API data | nested loops | extraction functions | Break into composable functions |
 
-**The functional approach is better when:**
+**The functional 方法 is better when:**
 - You need to compose operations
 - You want reusable transformations
 - You value explicit data flow over implicit state
 - Type safety for missing values matters
 
-**The imperative approach is acceptable when:**
+**The imperative 方法 is acceptable when:**
 - The transformation is a one-off
 - The logic is simple and linear
 - 性能 is critical and you've measured

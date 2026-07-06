@@ -2,7 +2,7 @@
 name: conductor-validator
 description: "Conductor Validator — Conductor Validator 相关功能和最佳实践"
 
-  consistency, and correctness. Use after setup, when diagnosing issues, or
+  consistency, and correctness. Use after 设置, when diagnosing issues, or
 
   before implementation to verify project context.
 
@@ -19,7 +19,7 @@ ls -la conductor/
 ls -la conductor/tracks/
 
 # Check for required files
-ls conductor/index.md conductor/product.md conductor/tech-stack.md conductor/workflow.md conductor/tracks.md
+ls conductor/index.md conductor/product.md conductor/tech-stack.md conductor/工作流.md conductor/tracks.md
 ```
 
 ## 使用此技能的场景

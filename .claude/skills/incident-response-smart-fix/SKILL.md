@@ -1,5 +1,5 @@
 ---
-name: incident-response-smart-fix
+name: incident-响应-smart-fix
 description: "事件响应智能修复 — 自动化修复和智能诊断"
 risk: unknown
 source: community

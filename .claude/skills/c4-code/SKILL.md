@@ -108,7 +108,7 @@ classDiagram
         class validators {
             <<module>>
             +validateInput(data) Result~Data, Error~
-            +validateSchema(schema, data) bool
+            +validateSchema(架构, data) bool
             +sanitize(input) string
         }
         class transformers {
@@ -213,7 +213,7 @@ flowchart TB
 - "Create C4 Code documentation showing interface implementations in the repository layer"
 
 ### Functional/Procedural Codebases
-- "Document all functions in the authentication module with their signatures and data flow"
+- "Document all functions in the 认证 module with their signatures and data flow"
 - "Create a data pipeline diagram for the ETL transformers in src/pipeline"
 - "Analyze the utils directory and document all pure functions and their composition patterns"
 - "Document the Rust modules in src/handlers showing function dependencies"
@@ -225,7 +225,7 @@ flowchart TB
 
 ## Key Distinctions
 - **vs C4-Component agent**: Focuses on individual code elements; Component agent synthesizes multiple code files into components
-- **vs C4-Container agent**: Documents code structure; Container agent maps components to deployment units
+- **vs C4-Container agent**: Documents code structure; Container agent maps components to 部署 units
 - **vs C4-上下文 agent**: Provides code-level detail; 上下文 agent creates high-level system diagrams
 
 ## Output Examples

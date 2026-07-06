@@ -37,7 +37,7 @@ date_added: "2026-02-27"
 
 ### 上下文
 
-The Multi-Agent Optimization Tool is an advanced AI-driven framework designed to holistically improve system performance through intelligent, coordinated agent-based optimization. Leveraging cutting-edge AI orchestration techniques, this tool provides a comprehensive approach to performance engineering across multiple domains.
+The Multi-Agent Optimization Tool is an advanced AI-driven framework designed to holistically improve system performance through intelligent, coordinated agent-based optimization. Leveraging cutting-edge AI orchestration techniques, this tool provides a comprehensive 方法 to performance engineering across multiple domains.
 
 ### Core Capabilities
 
@@ -54,7 +54,7 @@ The tool processes optimization arguments with flexible input parameters:
 - `$TARGET`: Primary system/application to optimize
 - `$PERFORMANCE_GOALS`: Specific performance metrics and objectives
 - `$OPTIMIZATION_SCOPE`: Depth of optimization (quick-win, comprehensive)
-- `$BUDGET_CONSTRAINTS`: Cost and resource limitations
+- `$BUDGET_CONSTRAINTS`: Cost and resource 限制
 - `$QUALITY_METRICS`: 性能 quality thresholds
 
 ## 1. Multi-Agent 性能 Profiling
@@ -68,18 +68,18 @@ The tool processes optimization arguments with flexible input parameters:
 #### Profiling Agents
 
 1. **Database 性能 Agent**
-   - Query execution time analysis
+   - 查询 execution time analysis
    - Index utilization tracking
    - Resource consumption monitoring
 
 2. **Application 性能 Agent**
    - CPU and memory profiling
    - Algorithmic complexity assessment
-   - Concurrency and async operation analysis
+   - Concurrency and async 操作 analysis
 
 3. **Frontend 性能 Agent**
    - Rendering performance metrics
-   - Network request optimization
+   - Network 请求 optimization
    - Core Web Vitals monitoring
 
 ### Profiling Code Example
@@ -106,7 +106,7 @@ def multi_agent_profiler(target_system):
 - Intelligent context compression
 - Semantic relevance filtering
 - Dynamic context window resizing
-- Token budget management
+- 令牌 budget management
 
 ### 上下文 Compression Algorithm
 
@@ -166,7 +166,7 @@ class MultiAgentOrchestrator:
 
 ### LLM Cost Management
 
-- Token usage tracking
+- 令牌 usage tracking
 - Adaptive model selection
 - Caching and result reuse
 - Efficient prompt engineering
@@ -218,14 +218,14 @@ class CostOptimizer:
 
 ## Reference Workflows
 
-### Workflow 1: E-Commerce Platform Optimization
+### 工作流 1: E-Commerce Platform Optimization
 
 1. Initial performance profiling
 2. Agent-based optimization
 3. Cost and performance tracking
 4. Continuous improvement cycle
 
-### Workflow 2: Enterprise API 性能 Enhancement
+### 工作流 2: Enterprise API 性能 Enhancement
 
 1. Comprehensive system analysis
 2. Multi-layered agent optimization

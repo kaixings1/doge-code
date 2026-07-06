@@ -185,7 +185,7 @@ name: playwright-ts
 on: [push, pull_request]
 
 permissions:
-  id-token: write
+  id-令牌: write
   contents: read
 
 jobs:
@@ -252,7 +252,7 @@ import type {
 | `runId` option | `runName` option |
 | `useCloudHostedBrowsers` option | Removed (always enabled) |
 | `@azure/microsoft-playwright-testing/reporter` | `@azure/playwright/reporter` |
-| Implicit credential | Explicit `credential` parameter |
+| Implicit credential | Explicit `credential` 参数 |
 
 ### Before (Old)
 
@@ -304,7 +304,7 @@ export default defineConfig(
 6. **HTML reporter first** — When using Azure reporter, list HTML reporter before Azure reporter
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

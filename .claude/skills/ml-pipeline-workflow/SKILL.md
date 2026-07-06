@@ -1,46 +1,46 @@
 ---
-name: ml-pipeline-workflow
+name: ml-pipeline-工作流
 description: "从数据准备到模型部署的完整端到端 MLOps 流水线编排。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# ML Pipeline Workflow
+# ML Pipeline 工作流
 
-Complete end-to-end MLOps pipeline orchestration from data preparation through model deployment.
+Complete end-to-end MLOps pipeline orchestration from data preparation through model 部署.
 
 ## 不要使用此技能的场景
 
-- The task is unrelated to ml pipeline workflow
+- The task is unrelated to ml pipeline 工作流
 - You need a different domain or tool outside this scope
 
 ## 使用说明
 
 - Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- Apply relevant 最佳实践 and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed 示例 are required, open `resources/implementation-playbook.md`.
 
 ## 概述
 
-This skill provides comprehensive guidance for building production ML pipelines that handle the full lifecycle: data ingestion → preparation → training → validation → deployment → monitoring.
+This skill provides comprehensive guidance for building production ML pipelines that handle the full lifecycle: data ingestion → preparation → training → validation → 部署 → monitoring.
 
 ## 使用此技能的场景
 
 - Building new ML pipelines from scratch
-- Designing workflow orchestration for ML systems
-- Implementing data → model → deployment automation
+- Designing 工作流 orchestration for ML systems
+- Implementing data → model → 部署 automation
 - Setting up reproducible training workflows
 - Creating DAG-based ML orchestration
 - Integrating ML components into production systems
 
 ## What This Skill Provides
 
-### Core Capabilities
+### Core 能力
 
 1. **Pipeline Architecture**
-   - End-to-end workflow design
+   - End-to-end 工作流 design
    - DAG orchestration patterns (Airflow, Dagster, Kubeflow)
    - Component dependencies and data flow
    - Error handling and retry strategies
@@ -54,7 +54,7 @@ This skill provides comprehensive guidance for building production ML pipelines 
 3. **Model Training**
    - Training job orchestration
    - Hyperparameter management
-   - Experiment tracking integration
+   - Experiment tracking 集成
    - Distributed training patterns
 
 4. **Model Validation**
@@ -63,30 +63,30 @@ This skill provides comprehensive guidance for building production ML pipelines 
    - Performance regression detection
    - Model comparison workflows
 
-5. **Deployment Automation**
+5. **部署 Automation**
    - Model serving patterns
    - Canary deployments
-   - Blue-green deployment strategies
+   - Blue-green 部署 strategies
    - Rollback mechanisms
 
 ### Reference Documentation
 
 See the `references/` directory for detailed guides:
 - **data-preparation.md** - Data cleaning, validation, and feature engineering
-- **model-training.md** - Training workflows and best practices
+- **model-training.md** - Training workflows and 最佳实践
 - **model-validation.md** - Validation strategies and metrics
-- **model-deployment.md** - Deployment patterns and serving architectures
+- **model-部署.md** - 部署 patterns and serving architectures
 
 ### Assets and Templates
 
 The `assets/` directory contains:
-- **pipeline-dag.yaml.template** - DAG template for workflow orchestration
-- **training-config.yaml** - Training configuration template
-- **validation-checklist.md** - Pre-deployment validation checklist
+- **pipeline-dag.yaml.template** - DAG template for 工作流 orchestration
+- **training-config.yaml** - Training 配置 template
+- **validation-checklist.md** - Pre-部署 validation checklist
 
 ## Usage Patterns
 
-### Basic Pipeline Setup
+### Basic Pipeline 设置
 
 ```python
 # 1. Define pipeline stages
@@ -103,7 +103,7 @@ stages = [
 # See assets/pipeline-dag.yaml.template for full example
 ```
 
-### Production Workflow
+### Production 工作流
 
 1. **Data Preparation Phase**
    - Ingest raw data from sources
@@ -121,9 +121,9 @@ stages = [
    - Run validation test suite
    - Compare against baseline
    - Generate performance reports
-   - Approve for deployment
+   - Approve for 部署
 
-4. **Deployment Phase**
+4. **部署 Phase**
    - Package model artifacts
    - Deploy to serving infrastructure
    - Configure monitoring
@@ -152,9 +152,9 @@ stages = [
 - Use model registries (MLflow, Weights & Biases)
 - Implement gradual rollouts for new models
 - Monitor model performance drift
-- Maintain rollback capabilities
+- Maintain rollback 能力
 
-### Deployment Strategies
+### 部署 Strategies
 
 - Start with shadow deployments
 - Use canary releases for validation
@@ -162,11 +162,11 @@ stages = [
 - Set up automated rollback triggers
 - Monitor latency and throughput
 
-## Integration Points
+## 集成 Points
 
 ### Orchestration Tools
 
-- **Apache Airflow**: DAG-based workflow orchestration
+- **Apache Airflow**: DAG-based 工作流 orchestration
 - **Dagster**: Asset-based pipeline orchestration
 - **Kubeflow Pipelines**: Kubernetes-native ML workflows
 - **Prefect**: Modern dataflow automation
@@ -177,7 +177,7 @@ stages = [
 - Weights & Biases for visualization and collaboration
 - TensorBoard for training metrics
 
-### Deployment Platforms
+### 部署 Platforms
 
 - AWS SageMaker for managed ML infrastructure
 - Google Vertex AI for GCP deployments
@@ -233,7 +233,7 @@ stages:
 
 - **Pipeline failures**: Check dependencies and data availability
 - **Training instability**: Review hyperparameters and data quality
-- **Deployment issues**: Validate model artifacts and serving config
+- **部署 issues**: Validate model artifacts and serving config
 - **Performance degradation**: Monitor data drift and model metrics
 
 ### Debugging Steps
@@ -249,15 +249,15 @@ stages:
 After setting up your pipeline:
 
 1. Explore **hyperparameter-tuning** skill for optimization
-2. Learn **experiment-tracking-setup** for MLflow/W&B
-3. Review **model-deployment-patterns** for serving strategies
+2. Learn **experiment-tracking-设置** for MLflow/W&B
+3. Review **model-部署-patterns** for serving strategies
 4. Implement monitoring with observability tools
 
 ## 相关技能
 
-- **experiment-tracking-setup**: MLflow and Weights & Biases integration
+- **experiment-tracking-设置**: MLflow and Weights & Biases 集成
 - **hyperparameter-tuning**: Automated hyperparameter optimization
-- **model-deployment-patterns**: Advanced deployment strategies
+- **model-部署-patterns**: Advanced 部署 strategies
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

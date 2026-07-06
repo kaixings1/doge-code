@@ -1,6 +1,6 @@
 ---
 name: convex
-description: "Convex 响应式后端专家：schema 设计、TypeScript 函数、实时订阅、认证、文件存储、调度和部署。"
+description: "Convex 响应式后端专家：架构 设计、TypeScript 函数、实时订阅、认证、文件存储、调度和部署。"
 risk: safe
 source: "https://docs.convex.dev"
 date_added: "2026-02-27"
@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # Convex
 
-You are an expert in Convex — the open-source, reactive backend platform where queries are TypeScript code. You have deep knowledge of schema design, function authoring (queries, mutations, actions), real-time data subscriptions, authentication, file storage, scheduling, and deployment workflows across React, Next.js, Angular, Vue, Svelte, React Native, and server-side environments.
+You are an expert in Convex — the open-source, reactive backend platform where queries are TypeScript code. You have deep knowledge of 架构 design, function authoring (queries, mutations, actions), real-time data subscriptions, 认证, file storage, scheduling, and 部署 workflows across React, Next.js, Angular, Vue, Svelte, React Native, and server-side environments.
 
 ## 何时使用
 - Use when building a new project with Convex as the backend
@@ -16,7 +16,7 @@ You are an expert in Convex — the open-source, reactive backend platform where
 - Use when designing schemas for a Convex document-relational database
 - Use when writing or debugging Convex functions (queries, mutations, actions)
 - Use when implementing real-time/reactive data patterns
-- Use when setting up authentication with Convex Auth or third-party providers (Clerk, Auth0, etc.)
+- Use when setting up 认证 with Convex Auth or third-party providers (Clerk, Auth0, etc.)
 - Use when working with Convex file storage, scheduled functions, or cron jobs
 - Use when deploying or managing Convex projects
 
@@ -28,13 +28,13 @@ Convex is a **document-relational** database with a fully managed backend. Key d
 - **TypeScript-first**: All backend logic — queries, mutations, actions, schemas — is written in TypeScript
 - **ACID transactions**: Serializable isolation with optimistic concurrency control
 - **No infrastructure to manage**: Serverless, scales automatically, zero config
-- **End-to-end type safety**: Types flow from schema → backend functions → client hooks
+- **End-to-end type safety**: Types flow from 架构 → backend functions → client hooks
 
 ### Function Types
 
 | Type            | Purpose                   | Can Read DB    | Can Write DB      | Can Call External APIs | Cached/Reactive |
 | :-------------- | :------------------------ | :------------- | :---------------- | :--------------------- | :-------------- |
-| **Query**       | Read data                 | ✅             | ❌                | ❌                     | ✅              |
+| **查询**       | Read data                 | ✅             | ❌                | ❌                     | ✅              |
 | **Mutation**    | Write data                | ✅             | ✅                | ❌                     | ❌              |
 | **Action**      | Side effects              | via `runQuery` | via `runMutation` | ✅                     | ❌              |
 | **HTTP Action** | Webhooks/custom endpoints | via `runQuery` | via `runMutation` | ✅                     | ❌              |
@@ -59,9 +59,9 @@ npx convex dev
 The `npx convex dev` command:
 
 1. Prompts you to log in (GitHub)
-2. Creates a project and deployment
+2. Creates a project and 部署
 3. Generates `convex/` folder for backend functions
-4. Syncs functions to your dev deployment in real-time
+4. Syncs functions to your dev 部署 in real-time
 5. Creates `.env.local` with `CONVEX_DEPLOYMENT` and `NEXT_PUBLIC_CONVEX_URL`
 
 ### Folder Structure
@@ -73,16 +73,16 @@ my-app/
 │   │   ├── api.d.ts
 │   │   ├── dataModel.d.ts
 │   │   └── server.d.ts
-│   ├── schema.ts          ← Database schema definition
-│   ├── tasks.ts           ← Query/mutation functions
+│   ├── 架构.ts          ← Database 架构 definition
+│   ├── tasks.ts           ← 查询/mutation functions
 │   └── http.ts            ← HTTP actions (optional)
 ├── .env.local             ← CONVEX_DEPLOYMENT, NEXT_PUBLIC_CONVEX_URL
 └── convex.json            ← Project config (optional)
 ```
 
-## Schema 设计
+## 架构 设计
 
-Define your schema in `convex/schema.ts` using the validator library:
+Define your 架构 in `convex/架构.ts` using the validator library:
 
 ```typescript
 import { defineSchema, defineTable } from "convex/server";
@@ -172,38 +172,38 @@ defineTable({ embedding: v.array(v.float64()), text: v.string() }).vectorIndex(
 Queries are reactive — clients automatically get updates when data changes.
 
 ````typescript
-import { query } from "./_generated/server";
+import { 查询 } from "./_generated/server";
 import { v } from "convex/values";
 
-// Simple query — list all tasks
-export const list = query({
+// Simple 查询 — list all tasks
+export const list = 查询({
   args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query("tasks").collect();
+  处理器: async (ctx) => {
+    return await ctx.db.查询("tasks").collect();
   },
 });
 
-// Query with arguments and filtering
-export const getByChannel = query({
+// 查询 with arguments and filtering
+export const getByChannel = 查询({
   args: { channelId: v.id("channels") },
-  handler: async (ctx, args) => {
+  处理器: async (ctx, args) => {
     return await ctx.db
-      .query("messages")
+      .查询("messages")
       .withIndex("by_channel", (q) => q.eq("channelId", args.channelId))
       .order("desc")
       .take(50);
   },
 });
 
-// Query with auth check
-export const getMyProfile = query({
+// 查询 with auth check
+export const getMyProfile = 查询({
   args: {},
-  handler: async (ctx) => {
+  处理器: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) return null;
 
     return await ctx.db
-      .query("users")
+      .查询("users")
       .withIndex("by_token", (q) =>
         q.eq("tokenIdentifier", identity.tokenIdentifier),
       )
@@ -213,19 +213,19 @@ export const getMyProfile = query({
 
 ### 分页查询
 
-Use cursor-based pagination for lists or infinite scroll UIs.
+Use 游标-based pagination for lists or infinite scroll UIs.
 
 ```typescript
-import { query } from "./_generated/server";
+import { 查询 } from "./_generated/server";
 import { paginationOptsValidator } from "convex/server";
 
-export const listPaginated = query({
+export const listPaginated = 查询({
   args: {
     paginationOpts: paginationOptsValidator
   },
-  handler: async (ctx, args) => {
+  处理器: async (ctx, args) => {
     return await ctx.db
-      .query("messages")
+      .查询("messages")
       .order("desc")
       .paginate(args.paginationOpts);
   },
@@ -243,7 +243,7 @@ import { v } from "convex/values";
 // Insert a document
 export const create = mutation({
   args: { text: v.string(), isCompleted: v.boolean() },
-  handler: async (ctx, args) => {
+  处理器: async (ctx, args) => {
     const taskId = await ctx.db.insert("tasks", {
       text: args.text,
       isCompleted: args.isCompleted,
@@ -255,7 +255,7 @@ export const create = mutation({
 // Update a document
 export const update = mutation({
   args: { id: v.id("tasks"), isCompleted: v.boolean() },
-  handler: async (ctx, args) => {
+  处理器: async (ctx, args) => {
     await ctx.db.patch(args.id, { isCompleted: args.isCompleted });
   },
 });
@@ -263,7 +263,7 @@ export const update = mutation({
 // Delete a document
 export const remove = mutation({
   args: { id: v.id("tasks") },
-  handler: async (ctx, args) => {
+  处理器: async (ctx, args) => {
     await ctx.db.delete(args.id);
   },
 });
@@ -275,7 +275,7 @@ export const transferCredits = mutation({
     toUserId: v.id("users"),
     amount: v.number(),
   },
-  handler: async (ctx, args) => {
+  处理器: async (ctx, args) => {
     const fromUser = await ctx.db.get(args.fromUserId);
     const toUser = await ctx.db.get(args.toUserId);
     if (!fromUser || !toUser) throw new Error("User not found");
@@ -302,12 +302,12 @@ import { api } from "./_generated/api";
 
 export const sendEmail = action({
   args: { to: v.string(), subject: v.string(), body: v.string() },
-  handler: async (ctx, args) => {
+  处理器: async (ctx, args) => {
     // Call external API
-    const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+    const 响应 = await fetch("https://api.sendgrid.com/v3/mail/send", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.SENDGRID_API_KEY}`,
+        授权: `Bearer ${process.env.SENDGRID_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -318,7 +318,7 @@ export const sendEmail = action({
       }),
     });
 
-    if (!response.ok) throw new Error("Failed to send email");
+    if (!响应.ok) throw new Error("Failed to send email");
 
     // Write result back to database via mutation
     await ctx.runMutation(api.emails.recordSent, {
@@ -332,11 +332,11 @@ export const sendEmail = action({
 // Generate AI embeddings
 export const generateEmbedding = action({
   args: { text: v.string(), documentId: v.id("documents") },
-  handler: async (ctx, args) => {
-    const response = await fetch("https://api.openai.com/v1/embeddings", {
+  处理器: async (ctx, args) => {
+    const 响应 = await fetch("https://api.openai.com/v1/embeddings", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        授权: `Bearer ${process.env.OPENAI_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -345,7 +345,7 @@ export const generateEmbedding = action({
       }),
     });
 
-    const { data } = await response.json();
+    const { data } = await 响应.json();
     await ctx.runMutation(api.documents.saveEmbedding, {
       documentId: args.documentId,
       embedding: data[0].embedding,
@@ -366,16 +366,16 @@ const http = httpRouter();
 http.route({
   path: "/webhooks/stripe",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
-    const body = await request.text();
-    const signature = request.headers.get("stripe-signature");
+  处理器: httpAction(async (ctx, 请求) => {
+    const body = await 请求.text();
+    const signature = 请求.headers.get("stripe-signature");
 
     // Verify webhook signature here...
 
     const event = JSON.parse(body);
     await ctx.runMutation(api.payments.handleWebhook, { event });
 
-    return new Response("OK", { status: 200 });
+    return new 响应("OK", { status: 200 });
   }),
 });
 
@@ -421,7 +421,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 export function TaskList() {
-  // Reactive query — auto-updates when data changes
+  // Reactive 查询 — auto-updates when data changes
   const tasks = useQuery(api.tasks.list);
   const addTask = useMutation(api.tasks.create);
   const toggleTask = useMutation(api.tasks.update);
@@ -481,7 +481,7 @@ export function MessageLog() {
 
 ### 认证（第一方 Convex Auth）
 
-Convex provides a robust, native authentication library (`@convex-dev/auth`) featuring Magic Links, Passwords, and 80+ OAuth providers without needing a third-party service.
+Convex provides a robust, native 认证 library (`@convex-dev/auth`) featuring Magic Links, Passwords, and 80+ OAuth providers without needing a third-party service.
 
 ```typescript
 // app/ConvexClientProvider.tsx
@@ -545,7 +545,7 @@ npx convex env set BETTER_AUTH_SECRET your-secret-here
 npx convex env set SITE_URL http://localhost:3000
 ```
 
-Better Auth provides email/password, social logins, two-factor authentication, and session management — all running inside Convex functions rather than an external auth server.
+Better Auth provides email/password, social logins, two-factor 认证, and 会话 management — all running inside Convex functions rather than an external auth server.
 
 ### Angular 集成
 
@@ -568,7 +568,7 @@ export class ConvexService implements OnDestroy {
   );
 
   constructor() {
-    // Subscribe to a reactive query
+    // Subscribe to a reactive 查询
     this.client.onUpdate(api.tasks.list, {}, (result) => {
       this.tasks.set(result);
     });
@@ -622,7 +622,7 @@ import { api } from "./_generated/api";
 
 export const sendReminder = mutation({
   args: { userId: v.id("users"), message: v.string(), delayMs: v.number() },
-  handler: async (ctx, args) => {
+  处理器: async (ctx, args) => {
     await ctx.scheduler.runAfter(args.delayMs, api.notifications.send, {
       userId: args.userId,
       message: args.message,
@@ -657,7 +657,7 @@ export default crons;
 // Generate an upload URL (mutation)
 export const generateUploadUrl = mutation({
   args: {},
-  handler: async (ctx) => {
+  处理器: async (ctx) => {
     return await ctx.storage.generateUploadUrl();
   },
 });
@@ -665,7 +665,7 @@ export const generateUploadUrl = mutation({
 // Save file reference after upload (mutation)
 export const saveFile = mutation({
   args: { storageId: v.id("_storage"), name: v.string() },
-  handler: async (ctx, args) => {
+  处理器: async (ctx, args) => {
     await ctx.db.insert("files", {
       storageId: args.storageId,
       name: args.name,
@@ -673,10 +673,10 @@ export const saveFile = mutation({
   },
 });
 
-// Get a URL to serve a file (query)
-export const getFileUrl = query({
+// Get a URL to serve a file (查询)
+export const getFileUrl = 查询({
   args: { storageId: v.id("_storage") },
-  handler: async (ctx, args) => {
+  处理器: async (ctx, args) => {
     return await ctx.storage.getUrl(args.storageId);
   },
 });
@@ -685,7 +685,7 @@ export const getFileUrl = query({
 ## 环境变量
 
 ```bash
-# Set environment variables for your deployment
+# Set environment variables for your 部署
 npx convex env set OPENAI_API_KEY sk-...
 npx convex env set SENDGRID_API_KEY SG...
 
@@ -706,7 +706,7 @@ const apiKey = process.env.OPENAI_API_KEY;
 ## 部署与 CLI
 
 ```bash
-# Development (watches for changes, syncs to dev deployment)
+# Development (watches for changes, syncs to dev 部署)
 npx convex dev
 
 # Deploy to production
@@ -732,51 +732,51 @@ npx convex logs
 
 - ✅ Define schemas — adds type safety across your entire stack
 - ✅ Use indexes for queries — avoids full table scans
-- ✅ Use compound indexes with equality filters first, range filter last
+- ✅ Use compound indexes with equality filters first, range 过滤器 last
 - ✅ Rely on native determinism — `Date.now()` and `Math.random()` are 100% safe to use in queries and mutations because Convex freezes time at the start of every function execution!
 - ✅ Use `v.id("tableName")` for document references instead of plain strings
 - ✅ Use actions for external API calls (never call external APIs from queries or mutations)
 - ✅ Use `ctx.runQuery` / `ctx.runMutation` from actions — never access `ctx.db` directly in actions
-- ✅ Add argument validators to all functions — they enforce runtime type safety
+- ✅ Add 参数 validators to all functions — they enforce runtime type safety
 - ✅ Return `null` when a document isn't found instead of throwing an error unless missing is exceptional
-- ✅ Prefer `withIndex` over `.filter()` for query performance
+- ✅ Prefer `withIndex` over `.过滤器()` for 查询 performance
 
 ## 应避免的反模式
 
 1. **❌ External API calls in queries/mutations**: Only actions can call external services. Queries and mutations run in the Convex transaction engine.
 2. **❌ Doing slow CPU-bound work in mutations**: Mutations block database commits; offload heavy processing to actions.
 3. **❌ Using `.collect()` on large tables without limits**: Fetches all documents into memory. Use `.take(N)` or `.paginate()`.
-4. **❌ Skipping schema definition**: Without a schema you lose end-to-end type safety, the main Convex advantage.
-5. **❌ Using `.filter()` instead of indexes**: `.filter()` does a full table scan. Define an index and use `.withIndex()`.
+4. **❌ Skipping 架构 definition**: Without a 架构 you lose end-to-end type safety, the main Convex advantage.
+5. **❌ Using `.过滤器()` instead of indexes**: `.过滤器()` does a full table scan. Define an index and use `.withIndex()`.
 6. **❌ Storing large blobs in documents**: Use Convex file storage (`_storage`) for files; keep documents lean.
 7. **❌ Circular `runQuery`/`runMutation` chains**: Actions calling mutations that schedule actions can create infinite loops.
 
 ## 常见陷阱
 
-- **Problem:** "Query returns `undefined` on first render"
+- **Problem:** "查询 returns `undefined` on first render"
   **Solution:** This is expected — Convex queries are async. Check for `undefined` before rendering (this means loading, not empty).
 
 - **Problem:** "Mutation throws `Document not found`"
   **Solution:** Documents may have been deleted between your read and write due to optimistic concurrency. Re-read inside the mutation.
 
-- **Problem:** "`process.env` is undefined in query/mutation"
+- **Problem:** "`process.env` is undefined in 查询/mutation"
   **Solution:** Environment variables are only accessible in **actions** (not queries or mutations) because queries/mutations run in the deterministic transaction engine.
 
-- **Problem:** "Function handler is too slow"
-  **Solution:** Add indexes for your query patterns. Use `withIndex()` instead of `.filter()`. For complex operations, break into smaller mutations.
+- **Problem:** "Function 处理器 is too slow"
+  **Solution:** Add indexes for your 查询 patterns. Use `withIndex()` instead of `.过滤器()`. For complex operations, break into smaller mutations.
 
-- **Problem:** "Schema push fails with existing data"
+- **Problem:** "架构 push fails with existing data"
   **Solution:** Convex validates existing data against new schemas. Either migrate existing documents first, or use `v.optional()` for new fields.
 
 ## 限制
 
 - Queries and mutations cannot call external HTTP APIs (use actions instead)
-- No raw SQL — you work with the Convex query builder API
+- No raw SQL — you work with the Convex 查询 builder API
 - Environment variables only available in actions, not in queries or mutations
 - Document size limit of 1MB
 - Maximum function execution time limits apply
 - No server-side rendering of Convex data without specific SSR patterns (use preloading)
-- Schemas are enforced at write-time; changing schemas requires data migration for existing documents
+- Schemas are enforced at write-time; changing schemas requires data 迁移 for existing documents
 
 ## 相关技能
 
@@ -784,9 +784,9 @@ npx convex logs
 - `@supabase-automation` — Alternative with PostgreSQL backend (compare: Convex is document-relational with built-in reactivity)
 - `@prisma-expert` — ORM for traditional databases (Convex replaces both ORM and database)
 - `@react-patterns` — Frontend patterns that pair well with Convex React hooks
-- `@nextjs-app-router` — Next.js App Router integration patterns
-- `@authentication-oauth` — Auth patterns (Convex supports Clerk, Auth0, Convex Auth)
-- `@stripe` — Payment integration via Convex actions and HTTP webhooks
+- `@nextjs-app-router` — Next.js App Router 集成 patterns
+- `@认证-oauth` — Auth patterns (Convex supports Clerk, Auth0, Convex Auth)
+- `@stripe` — Payment 集成 via Convex actions and HTTP webhooks
 
 ## 资源
 

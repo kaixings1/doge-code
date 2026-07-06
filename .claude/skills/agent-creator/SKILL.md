@@ -17,9 +17,9 @@ handles the entire flow: gathering requirements, generating a rich persona from
 even a one-line description, scaffolding the correct folder structure, and
 optionally creating a companion skill that auto-routes tasks to the new agent.
 
-## When to use
+## 使用场景
 
-Use this skill whenever you need a dedicated, isolated "brain" to handle a specific repetitive task, or when you find yourself repeatedly pasting the same massive system prompt or constraints into the main chat. Creating a dedicated subagent keeps the main conversation lightweight and focused.
+当您需要一个专用、隔离的"大脑"来处理特定的重复性任务，或当您发现自己反复将相同的庞大系统提示或约束粘贴到主聊天中时使用此技能。创建专用的子代理可以保持主对话轻量和专注。
 
 ## Why this exists
 
@@ -90,7 +90,7 @@ A good persona includes:
 For example, if the user says "for reviewing code", generate a persona like:
 
 > You are a senior code reviewer with 15+ years of experience across multiple
-> languages and paradigms. You approach every review with three priorities:
+> languages and paradigms. You 方法 every review with three priorities:
 > correctness first, maintainability second, performance third. You never
 > approve code you haven't fully understood. You flag security vulnerabilities
 > with high urgency. You distinguish between blocking issues (must fix),
@@ -129,6 +129,6 @@ If adding to an existing plugin, do NOT modify the existing `plugin.json`.
 
 ### 步骤 5: Write the agent file
 
-Write the `<agent-name>.md` file in the `agents/` folder following this exact structure. Ensure you include the YAML frontmatter and the Prompt Defense Baseline verbatim. For the `model` field in the frontmatter, dynamically insert the name of the model currently powering the session you are running in (e.g., `gemini-3.1-pro`, `opus`, `sonnet`).
+Write the `<agent-name>.md` file in the `agents/` folder following this exact structure. Ensure you include the YAML frontmatter and the Prompt Defense Baseline verbatim. For the `model` field in the frontmatter, dynamically insert the name of the model currently powering the 会话 you are running in (e.g., `gemini-3.1-pro`, `opus`, `sonnet`).
 
 ```markdown

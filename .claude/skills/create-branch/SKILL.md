@@ -1,7 +1,7 @@
 ---
 name: create-branch
 description: "Create Branch — Create Branch 相关功能和最佳实践"
-argument-hint: '[optional description of the work]'
+参数-hint: '[optional description of the work]'
 risk: critical
 source: community
 ---

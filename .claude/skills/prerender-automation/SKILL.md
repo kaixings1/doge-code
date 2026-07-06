@@ -30,9 +30,9 @@ description: "辛行 Rube MCP (Composio) 口辐用人Prerender任务。你用前
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "Prerender operations", known_fields: ""}]
-session: {generate_id: true}
+会话: {generate_id: true}
 ```
-这律將可用的工养克箱值＂不计确讥Tool Slug、输入 scheme、指导执行记整、可输出平透等
+这律將可用的工养克箱值＂不计确讥Tool 标识符、输入 scheme、指导执行记整、可输出平透等
 
 ## 后废工作模式模看
 
@@ -41,7 +41,7 @@ session: {generate_id: true}
 ```
 RUBE_SEARCH_TOOLS
 queries: [{use_case: "your specific Prerender task"}]
-session: {id: "existing_session_id"}
+会话: {id: "existing_session_id"}
 ```
 
 ### 精理2：检查信部�

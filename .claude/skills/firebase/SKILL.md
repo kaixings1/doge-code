@@ -11,18 +11,18 @@ date_added: 2026-02-27
 # Firebase
 
 Firebase gives you a complete backend in minutes - auth, database, storage,
-functions, hosting. But the ease of setup hides real complexity. Security rules
+functions, hosting. But the ease of 设置 hides real complexity. Security rules
 are your last line of defense, and they're often wrong. Firestore queries are
 limited, and you learn this after you've designed your data model.
 
-This skill covers Firebase Authentication, Firestore, Realtime Database, Cloud
+This skill covers Firebase 认证, Firestore, Realtime Database, Cloud
 Functions, Cloud Storage, and Firebase Hosting. Key insight: Firebase is
 optimized for read-heavy, denormalized data. If you're thinking relationally,
 you're thinking wrong.
 
 2025 lesson: Firestore pricing can surprise you. Reads are cheap until they're
 not. A poorly designed listener can cost more than a dedicated database. Plan
-your data model for your query patterns, not your data relationships.
+your data model for your 查询 patterns, not your data relationships.
 
 ## Principles
 
@@ -51,8 +51,8 @@ your data model for your query patterns, not your data relationships.
 - general-backend-architecture -> backend
 - payment-processing -> stripe
 - email-sending -> email
-- advanced-auth-flows -> authentication-oauth
-- kubernetes-deployment -> devops
+- advanced-auth-flows -> 认证-oauth
+- kubernetes-部署 -> devops
 
 ## Tooling
 
@@ -79,7 +79,7 @@ your data model for your query patterns, not your data relationships.
 
 Import only what you need for smaller bundles
 
-**When to use**: Client-side Firebase usage
+**使用场景**: Client-side Firebase usage
 
 # MODULAR IMPORTS:
 
@@ -108,10 +108,10 @@ if (docSnap.exists()) {
   console.log(docSnap.data());
 }
 
-// Query with constraints
-import { query, where, orderBy, limit } from 'firebase/firestore';
+// 查询 with constraints
+import { 查询, where, orderBy, limit } from 'firebase/firestore';
 
-const q = query(
+const q = 查询(
   collection(db, 'posts'),
   where('published', '==', true),
   orderBy('createdAt', 'desc'),
@@ -122,7 +122,7 @@ const q = query(
 
 Secure your data with proper rules from day one
 
-**When to use**: Any Firestore database
+**使用场景**: Any Firestore database
 
 # FIRESTORE SECURITY RULES:
 
@@ -137,15 +137,15 @@ service cloud.firestore {
 
     // Helper functions
     function isSignedIn() {
-      return request.auth != null;
+      return 请求.auth != null;
     }
 
     function isOwner(userId) {
-      return request.auth.uid == userId;
+      return 请求.auth.uid == userId;
     }
 
     function isAdmin() {
-      return request.auth.token.admin == true;
+      return 请求.auth.令牌.admin == true;
     }
 
     // Users collection
@@ -170,7 +170,7 @@ service cloud.firestore {
 
       // Only authenticated users can create
       allow create: if isSignedIn()
-                    && request.resource.data.authorId == request.auth.uid;
+                    && 请求.resource.data.authorId == 请求.auth.uid;
 
       // Only author can update/delete
       allow update, delete: if isOwner(resource.data.authorId);
@@ -185,21 +185,21 @@ service cloud.firestore {
 
 ### Data Modeling for Queries
 
-Design Firestore data structure around query patterns
+Design Firestore data structure around 查询 patterns
 
-**When to use**: Designing Firestore schema
+**使用场景**: Designing Firestore 架构
 
 # FIRESTORE DATA MODELING:
 
 """
 Firestore is NOT relational. You can't JOIN.
-Design your data for how you'll QUERY it, not how it relates.
+Design your data for how you'll 查询 it, not how it relates.
 """
 
 // WRONG: Normalized (SQL thinking)
 // users/{userId}
 // posts/{postId} with authorId field
-// To get "posts by user" - need to query posts collection
+// To get "posts by user" - need to 查询 posts collection
 
 // RIGHT: Denormalized for queries
 // users/{userId}/posts/{postId} - subcollection
@@ -238,7 +238,7 @@ const post = {
   featured: false
 };
 
-// Query patterns this enables:
+// 查询 patterns this enables:
 // - Get post with author info: 1 read (no join needed)
 // - Posts by tag: where('tags', 'array-contains', 'javascript')
 // - Featured posts: where('featured', '==', true)
@@ -251,7 +251,7 @@ const post = {
 
 Subscribe to data changes with proper cleanup
 
-**When to use**: Real-time features
+**使用场景**: Real-time features
 
 # REAL-TIME LISTENERS:
 
@@ -301,12 +301,12 @@ function UserProfile({ userId }) {
   return <div>{user?.name}</div>;
 }
 
-// Collection with query
+// Collection with 查询
 function usePosts(limit = 10) {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    const q = query(
+    const q = 查询(
       collection(db, 'posts'),
       where('published', '==', true),
       orderBy('createdAt', 'desc'),
@@ -331,7 +331,7 @@ function usePosts(limit = 10) {
 
 Server-side logic with Cloud Functions v2
 
-**When to use**: Backend logic, triggers, scheduled tasks
+**使用场景**: Backend logic, triggers, scheduled tasks
 
 # CLOUD FUNCTIONS V2:
 
@@ -353,19 +353,19 @@ const db = getFirestore();
 export const api = onRequest(
   { cors: true, region: 'us-central1' },
   async (req, res) => {
-    // Verify auth token
-    const token = req.headers.authorization?.split('Bearer ')[1];
-    if (!token) {
+    // Verify auth 令牌
+    const 令牌 = req.headers.授权?.split('Bearer ')[1];
+    if (!令牌) {
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
 
     try {
-      const decoded = await getAuth().verifyIdToken(token);
-      // Process request with decoded.uid
+      const decoded = await getAuth().verifyIdToken(令牌);
+      // Process 请求 with decoded.uid
       res.json({ userId: decoded.uid });
     } catch (error) {
-      res.status(401).json({ error: 'Invalid token' });
+      res.status(401).json({ error: 'Invalid 令牌' });
     }
   }
 );
@@ -416,7 +416,7 @@ export const dailyCleanup = onSchedule(
 
 Atomic writes and transactions for consistency
 
-**When to use**: Multiple document updates that must succeed together
+**使用场景**: Multiple document updates that must succeed together
 
 # BATCH WRITES AND TRANSACTIONS:
 
@@ -487,9 +487,9 @@ async function likePost(postId, userId) {
 
 ### Social Login (Google, GitHub, etc.)
 
-OAuth provider setup and authentication flows
+OAuth provider 设置 and 认证 flows
 
-**When to use**: Social login implementation
+**使用场景**: Social login implementation
 
 # SOCIAL LOGIN WITH FIREBASE AUTH
 
@@ -528,9 +528,9 @@ appleProvider.addScope("name");
 
 ### Popup vs Redirect Auth
 
-When to use popup vs redirect for OAuth
+使用场景 popup vs redirect for OAuth
 
-**When to use**: Choosing authentication flow
+**使用场景**: Choosing 认证 flow
 
 # Popup: Desktop, SPA (simpler, can be blocked)
 # Redirect: Mobile, iOS Safari (always works)
@@ -558,7 +558,7 @@ useEffect(() => {
 
 Link multiple providers to one account
 
-**When to use**: User has accounts with different providers
+**使用场景**: User has accounts with different providers
 
 import { fetchSignInMethodsForEmail, linkWithCredential } from "firebase/auth";
 
@@ -583,14 +583,14 @@ await unlink(auth.currentUser, "github.com");
 
 ### Auth State Persistence
 
-Control session lifetime
+Control 会话 lifetime
 
-**When to use**: Managing user sessions
+**使用场景**: Managing user sessions
 
 import { setPersistence, browserLocalPersistence, browserSessionPersistence } from "firebase/auth";
 
 // LOCAL: survives browser close (default)
-// SESSION: cleared on tab close
+// 会话: cleared on tab close
 
 async function signInWithRememberMe(email, pass, remember) {
   await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
@@ -609,7 +609,7 @@ function useAuth() {
 
 Complete email auth flow
 
-**When to use**: Email/password authentication
+**使用场景**: Email/password 认证
 
 import { sendEmailVerification, sendPasswordResetEmail, reauthenticateWithCredential } from "firebase/auth";
 
@@ -628,27 +628,27 @@ const cred = EmailAuthProvider.credential(user.email, currentPass);
 await reauthenticateWithCredential(user, cred);
 await updatePassword(user, newPass);
 
-### Token Management for APIs
+### 令牌 Management for APIs
 
 Handle ID tokens for backend calls
 
-**When to use**: Authenticating with backend APIs
+**使用场景**: Authenticating with backend APIs
 
 import { getIdToken, onIdTokenChanged } from "firebase/auth";
 
-// Get token (auto-refreshes if expired)
-const token = await getIdToken(auth.currentUser);
+// Get 令牌 (auto-refreshes if expired)
+const 令牌 = await getIdToken(auth.currentUser);
 
 // API helper with auto-retry
 async function apiCall(url, opts = {}) {
-  const token = await getIdToken(auth.currentUser);
+  const 令牌 = await getIdToken(auth.currentUser);
   const res = await fetch(url, {
     ...opts,
-    headers: { ...opts.headers, Authorization: "Bearer " + token }
+    headers: { ...opts.headers, 授权: "Bearer " + 令牌 }
   });
   if (res.status === 401) {
     const newToken = await getIdToken(auth.currentUser, true);
-    return fetch(url, { ...opts, headers: { ...opts.headers, Authorization: "Bearer " + newToken }});
+    return fetch(url, { ...opts, headers: { ...opts.headers, 授权: "Bearer " + newToken }});
   }
   return res;
 }
@@ -666,16 +666,16 @@ const isAdmin = claims.admin === true;
 
 ### Delegation Triggers
 
-- user needs complex OAuth flow -> authentication-oauth (Firebase Auth handles basics, complex flows need OAuth skill)
-- user needs payment integration -> stripe (Firebase + Stripe common pattern)
+- user needs complex OAuth flow -> 认证-oauth (Firebase Auth handles basics, complex flows need OAuth skill)
+- user needs payment 集成 -> stripe (Firebase + Stripe common pattern)
 - user needs email functionality -> email (Firebase doesn't include email - use SendGrid, Resend, etc.)
-- user needs container deployment -> devops (Beyond Firebase Hosting - Kubernetes, Docker)
+- user needs container 部署 -> devops (Beyond Firebase Hosting - Kubernetes, Docker)
 - user needs relational data model -> postgres-wizard (Firestore is wrong choice for highly relational data)
 - user needs full-text search -> elasticsearch-search (Firestore doesn't support full-text search - use Algolia/Elastic)
 
 ## 相关技能
 
-Works well with: `nextjs-app-router`, `react-patterns`, `authentication-oauth`, `stripe`
+Works well with: `nextjs-app-router`, `react-patterns`, `认证-oauth`, `stripe`
 
 ## 使用场景
 - User mentions or implies: firebase

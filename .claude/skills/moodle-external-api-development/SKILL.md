@@ -22,7 +22,7 @@ date_added: "2026-02-27"
 
 Moodle external APIs follow a strict three-method pattern:
 
-1. **`execute_parameters()`** - Defines input parameter structure
+1. **`execute_parameters()`** - Defines input 参数 structure
 2. **`execute()`** - Contains business logic
 3. **`execute_returns()`** - Defines return structure
 
@@ -72,7 +72,7 @@ public static function execute_parameters() {
 }
 ```
 
-**Common Parameter Types**:
+**Common 参数 Types**:
 - `PARAM_INT` - Integers
 - `PARAM_TEXT` - Plain text (HTML stripped)
 - `PARAM_RAW` - Raw text (no cleaning)
@@ -86,8 +86,8 @@ public static function execute_parameters() {
 - `external_multiple_structure` - Array of items
 
 **Value Flags**:
-- `VALUE_REQUIRED` - Parameter must be provided
-- `VALUE_OPTIONAL` - Parameter is optional
+- `VALUE_REQUIRED` - 参数 must be provided
+- `VALUE_OPTIONAL` - 参数 is optional
 - `VALUE_DEFAULT, defaultvalue` - 可选 with default
 
 ### 步骤 3: Implement Business Logic
@@ -103,7 +103,7 @@ public static function execute($userid, $courseid, $options = []) {
         'options' => $options
     ]);
 
-    // 2. Check permissions/capabilities
+    // 2. Check permissions/能力
     $context = \context_course::instance($params['courseid']);
     self::validate_context($context);
     require_capability('moodle/course:view', $context);
@@ -146,7 +146,7 @@ public static function execute($userid, $courseid, $options = []) {
 **Critical Steps**:
 1. **始终 validate parameters** using `validate_parameters()`
 2. **Check context** using `validate_context()`
-3. **Verify capabilities** using `require_capability()`
+3. **Verify 能力** using `require_capability()`
 4. **Use parameterized queries** to prevent SQL injection
 5. **Return structured data** matching return definition
 
@@ -169,7 +169,7 @@ public static function execute_returns() {
 
 **Return Structure Rules**:
 - Must match exactly what `execute()` returns
-- Use appropriate parameter types
+- Use appropriate 参数 types
 - Document each field with description
 - Nested structures allowed
 
@@ -189,7 +189,7 @@ $functions = [
         'description' => 'Brief description of what this API does',
         'type'        => 'read',  // or 'write'
         'ajax'        => true,
-        'capabilities'=> 'moodle/course:view', // comma-separated if multiple
+        '能力'=> 'moodle/course:view', // comma-separated if multiple
         'services'    => [MOODLE_OFFICIAL_MOBILE_SERVICE] // Optional
     ],
 ];
@@ -210,7 +210,7 @@ $services = [
 - `methodname` - 始终 'execute'
 - `type` - 'read' (SELECT) or 'write' (INSERT/UPDATE/DELETE)
 - `ajax` - Set true for AJAX/REST access
-- `capabilities` - 必需 Moodle capabilities
+- `能力` - 必需 Moodle 能力
 - `services` - 可选 service bundles
 
 ### Step 6: Implement Error Handling & Logging
@@ -245,7 +245,7 @@ public static function execute($userid, $courseid) {
         return $result;
 
     } catch (\invalid_parameter_exception $e) {
-        self::log_debug("Parameter validation failed: " . $e->getMessage());
+        self::log_debug("参数 validation failed: " . $e->getMessage());
         throw $e;
     } catch (\moodle_exception $e) {
         self::log_debug("Moodle exception: " . $e->getMessage());
@@ -401,8 +401,8 @@ private static function get_random_questions($categoryid, $tagname, $limit) {
 ### 2. Via curl
 
 ```bash
-# Get token first
-curl -X POST "https://yourmoodle.com/login/token.php" \
+# Get 令牌 first
+curl -X POST "https://yourmoodle.com/login/令牌.php" \
   -d "username=admin" \
   -d "password=yourpassword" \
   -d "service=moodle_mobile_app"
@@ -428,8 +428,8 @@ require(['core/ajax'], function(ajax) {
         }
     }]);
 
-    promises[0].done(function(response) {
-        console.log('Success:', response);
+    promises[0].done(function(响应) {
+        console.log('Success:', 响应);
     }).fail(function(error) {
         console.error('Error:', error);
     });
@@ -444,9 +444,9 @@ require(['core/ajax'], function(ajax) {
 - Verify function name in services.php matches exactly
 - Check namespace and class name are correct
 
-### 2. "Invalid parameter value detected"
+### 2. "Invalid 参数 value detected"
 **Solution**:
-- Ensure parameter types match between definition and usage
+- Ensure 参数 types match between definition and usage
 - Check required vs optional parameters
 - Validate nested structure definitions
 
@@ -459,7 +459,7 @@ require(['core/ajax'], function(ajax) {
 ### 4. Permission Denied Errors
 **Solution**:
 - Call `self::validate_context($context)` early in execute()
-- Check required capabilities match user's permissions
+- Check required 能力 match user's permissions
 - Verify user has role assignments in the context
 
 ### 5. Transaction Deadlocks
@@ -555,12 +555,20 @@ class get_quiz_attempts extends external_api {
 See attached `create_quiz_from_categories.php` for a comprehensive example including:
 - Multiple database insertions
 - Course module creation
-- Quiz instance configuration
+- Quiz instance 配置
 - Random question selection with tags
 - Group-based access restrictions
 - Extensive error logging
 - Transaction management
 
-## 快速参考: Common Moodle Tables
+## 快速参考
 
-| Table | Purpose |
+| 操作 | 方法 |
+|---|---|
+| 发现工具 | 调用 `RUBE_SEARCH_TOOLS` |
+| 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
+| 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
+| 处理分页 | 检查响应中的 `cursor` 字段 |
+| 错误处理 | 验证连接状态和架构合规性 |: Common Moodle Tables
+
+| Table | 目的 |

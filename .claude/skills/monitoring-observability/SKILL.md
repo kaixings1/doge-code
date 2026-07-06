@@ -106,7 +106,7 @@ collectDefaultMetrics({ register: registry });
 
 const httpRequestDuration = new Histogram({
   name: "http_request_duration_seconds",
-  help: "HTTP request duration in seconds",
+  help: "HTTP 请求 duration in seconds",
   labelNames: ["method", "route", "status"],
   buckets: [0.01, 0.05, 0.1, 0.5, 1, 5],
   registers: [registry],
@@ -136,7 +136,7 @@ const logger = pino({
   formatters: {
     level: (label) => ({ level: label }),
   },
-  redact: ["req.headers.authorization", "password", "token"],
+  redact: ["req.headers.授权", "password", "令牌"],
 });
 
 function requestLogger(req, res, next) {

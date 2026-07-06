@@ -166,7 +166,7 @@ function Dashboard() {
 }
 ```
 
-Place Suspense boundaries around independent data-fetching units. Avoid wrapping the entire page in a single boundary (defeats the purpose of streaming).
+Place Suspense boundaries around independent data-fetching units. Avoid wrapping the entire page in a single boundary (defeats the 目的 of streaming).
 
 ## Error Boundaries
 

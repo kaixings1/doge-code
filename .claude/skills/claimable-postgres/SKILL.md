@@ -24,7 +24,7 @@ curl -s -X POST "https://pg.new/api/v1/database" \
 ## 哪个方法？
 
 - **REST API**: Returns structured JSON. No runtime dependency beyond `curl`. Preferred when the agent needs predictable output and error handling.
-- **CLI** (`npx get-db@latest --yes`): Provisions and writes `.env` in one command. Convenient when Node.js is available and the user wants a simple setup.
+- **CLI** (`npx get-db@latest --yes`): Provisions and writes `.env` in one command. Convenient when Node.js is available and the user wants a simple 设置.
 - **SDK** (`get-db/sdk`): Scripts or programmatic provisioning in Node.js.
 - **Vite plugin** (`vite-plugin-db`): Auto-provisions on `vite dev` if `DATABASE_URL` is missing. Use when the user has a Vite project.
 - **Browser**: User cannot run CLI or API. Direct to https://pg.new.
@@ -41,14 +41,14 @@ curl -s -X POST "https://pg.new/api/v1/database" \
   -d '{"ref": "agent-skills"}'
 ```
 
-| Parameter | Required | Description |
+| 参数 | Required | Description |
 |-----------|----------|-------------|
 | `ref` | Yes | Tracking tag that identifies who provisioned the database. Use `"agent-skills"` when provisioning through this skill. |
 | `enable_logical_replication` | No | Enable logical replication (default: false, cannot be disabled once enabled) |
 
 The `connection_string` returned by the API is a pooled connection URL. For a direct (non-pooled) connection (e.g. Prisma migrations), remove `-pooler` from the hostname. The CLI writes both pooled and direct URLs automatically.
 
-**Response:**
+**响应:**
 
 ```json
 {
@@ -69,7 +69,7 @@ The `connection_string` returned by the API is a pooled connection URL. For a di
 curl -s "https://pg.new/api/v1/database/{id}"
 ```
 
-Returns the same response shape. Status transitions: `UNCLAIMED` -> `CLAIMING` -> `CLAIMED`. After the database is claimed, `connection_string` returns `null`.
+Returns the same 响应 shape. Status transitions: `UNCLAIMED` -> `CLAIMING` -> `CLAIMED`. After the database is claimed, `connection_string` returns `null`.
 
 ### Error responses
 
@@ -136,19 +136,19 @@ const { databaseUrl, databaseUrlDirect, claimUrl, claimExpiresAt } = await insta
 });
 ```
 
-Returns `databaseUrl` (pooled), `databaseUrlDirect` (direct, for migrations), `claimUrl`, and `claimExpiresAt` (Date object). The `referrer` parameter is required.
+Returns `databaseUrl` (pooled), `databaseUrlDirect` (direct, for migrations), `claimUrl`, and `claimExpiresAt` (Date object). The `referrer` 参数 is required.
 
 ## Vite Plugin
 
-For Vite projects, `vite-plugin-db` auto-provisions a database on `vite dev` if `DATABASE_URL` is missing. Install with `npm install -D vite-plugin-db`. See the [Claimable Postgres docs](https://neon.com/docs/reference/claimable-postgres#vite-plugin) for configuration.
+For Vite projects, `vite-plugin-db` auto-provisions a database on `vite dev` if `DATABASE_URL` is missing. Install with `npm install -D vite-plugin-db`. See the [Claimable Postgres docs](https://neon.com/docs/reference/claimable-postgres#vite-plugin) for 配置.
 
-## Agent Workflow
+## Agent 工作流
 
 ### API path
 
-1. **Confirm intent:** If the request is ambiguous, confirm the user wants a temporary, no-signup database. Skip this if they explicitly asked for a quick or temporary database.
+1. **Confirm intent:** If the 请求 is ambiguous, confirm the user wants a temporary, no-signup database. Skip this if they explicitly asked for a quick or temporary database.
 2. **Provision:** POST to `https://pg.new/api/v1/database` with `{"ref": "agent-skills"}`.
-3. **Parse response:** Extract `connection_string`, `claim_url`, and `expires_at` from the JSON response.
+3. **Parse 响应:** Extract `connection_string`, `claim_url`, and `expires_at` from the JSON 响应.
 4. **Write .env:** Write `DATABASE_URL=<connection_string>` to the project's `.env` (or the user's preferred file and key). Do not overwrite an existing key without confirmation.
 5. **Seed (if needed):** If the user has a seed SQL file, run it against the new database:
    ```bash
@@ -160,11 +160,11 @@ For Vite projects, `vite-plugin-db` auto-provisions a database on `vite dev` if 
 ### CLI path
 
 1. **Check .env:** Check the target `.env` for an existing `DATABASE_URL` (or chosen key). If present, do not run. Offer remove, `--env`, or `--key` and get confirmation.
-2. **Confirm intent:** If the request is ambiguous, confirm the user wants a temporary, no-signup database. Skip this if they explicitly asked for a quick or temporary database.
+2. **Confirm intent:** If the 请求 is ambiguous, confirm the user wants a temporary, no-signup database. Skip this if they explicitly asked for a quick or temporary database.
 3. **Gather options:** Use defaults unless context suggests otherwise (e.g., user mentions a custom env file, seed SQL, or logical replication).
 4. **Run:** Execute with `@latest --yes` plus the confirmed options. Always use `@latest` to avoid stale cached versions. `--yes` skips interactive prompts that would stall the agent.
    ```bash
-   npx get-db@latest --yes --ref agent-skills --env .env.local --seed ./schema.sql
+   npx get-db@latest --yes --ref agent-skills --env .env.local --seed ./架构.sql
    ```
 5. **Verify:** Confirm the connection string was written to the intended file.
 6. **Report:** Tell the user where the connection string was written, which key was used, and that a claim URL is in the env file. Remind them: the database works now; claim within 72 hours to keep it permanently.
@@ -176,21 +176,21 @@ Always report:
 
 - Where the connection string was written (e.g. `.env`)
 - Which variable key was used (`DATABASE_URL` or custom key)
-- The claim URL (from `.env` or API response)
+- The claim URL (from `.env` or API 响应)
 - That unclaimed databases are temporary (72 hours)
 
 ## Claiming
 
 Claiming is optional. The database works immediately without it. To optionally claim, the user opens the claim URL in a browser, where they sign in or create a Neon account to claim the database.
 
-- **API/SDK:** Give the user the `claim_url` from the create response.
+- **API/SDK:** Give the user the `claim_url` from the create 响应.
 - **CLI:** `npx get-db@latest claim` reads the claim URL from `.env` and opens the browser automatically.
 
 Users cannot claim into Vercel-linked orgs; they must choose another Neon org.
 
 ## Defaults and Limits
 
-| Parameter | Value |
+| 参数 | Value |
 |-----------|-------|
 | Provider | AWS |
 | Region | us-east-2 |
@@ -219,7 +219,7 @@ If the agent needs a database to fulfill a task (e.g. "build me a todo app with 
 
 
 ## 使用场景
-Use this skill when tackling tasks related to its primary domain or functionality as described above.
+在处理与其主要领域或功能相关的任务时使用此技能，如上所述。
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

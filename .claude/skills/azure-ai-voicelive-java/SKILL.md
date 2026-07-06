@@ -37,7 +37,7 @@ import com.azure.ai.voicelive.VoiceLiveClientBuilder;
 import com.azure.core.credential.AzureKeyCredential;
 
 VoiceLiveAsyncClient client = new VoiceLiveClientBuilder()
-    .endpoint(System.getenv("AZURE_VOICELIVE_ENDPOINT"))
+    .端点(System.getenv("AZURE_VOICELIVE_ENDPOINT"))
     .credential(new AzureKeyCredential(System.getenv("AZURE_VOICELIVE_API_KEY")))
     .buildAsyncClient();
 ```
@@ -48,7 +48,7 @@ VoiceLiveAsyncClient client = new VoiceLiveClientBuilder()
 import com.azure.identity.DefaultAzureCredentialBuilder;
 
 VoiceLiveAsyncClient client = new VoiceLiveClientBuilder()
-    .endpoint(System.getenv("AZURE_VOICELIVE_ENDPOINT"))
+    .端点(System.getenv("AZURE_VOICELIVE_ENDPOINT"))
     .credential(new DefaultAzureCredentialBuilder().build())
     .buildAsyncClient();
 ```
@@ -59,7 +59,7 @@ VoiceLiveAsyncClient client = new VoiceLiveClientBuilder()
 |---------|-------------|
 | `VoiceLiveAsyncClient` | Main entry point for voice sessions |
 | `VoiceLiveSessionAsyncClient` | Active WebSocket connection for streaming |
-| `VoiceLiveSessionOptions` | 配置 for session behavior |
+| `VoiceLiveSessionOptions` | 配置 for 会话 behavior |
 
 ### Audio 需求
 
@@ -70,28 +70,28 @@ VoiceLiveAsyncClient client = new VoiceLiveClientBuilder()
 
 ## 核心工作流
 
-### 1. Start Session
+### 1. Start 会话
 
 ```java
 import reactor.core.publisher.Mono;
 
 client.startSession("gpt-4o-realtime-preview")
-    .flatMap(session -> {
-        System.out.println("Session started");
+    .flatMap(会话 -> {
+        System.out.println("会话 started");
         
         // Subscribe to events
-        session.receiveEvents()
+        会话.receiveEvents()
             .subscribe(
                 event -> System.out.println("Event: " + event.getType()),
                 error -> System.err.println("Error: " + error.getMessage())
             );
         
-        return Mono.just(session);
+        return Mono.just(会话);
     })
     .block();
 ```
 
-### 2. Configure Session Options
+### 2. Configure 会话 Options
 
 ```java
 import com.azure.ai.voicelive.models.*;
@@ -122,24 +122,24 @@ VoiceLiveSessionOptions options = new VoiceLiveSessionOptions()
 
 // Send configuration
 ClientEventSessionUpdate updateEvent = new ClientEventSessionUpdate(options);
-session.sendEvent(updateEvent).subscribe();
+会话.sendEvent(updateEvent).subscribe();
 ```
 
 ### 3. Send Audio Input
 
 ```java
 byte[] audioData = readAudioChunk(); // Your PCM16 audio data
-session.sendInputAudio(BinaryData.fromBytes(audioData)).subscribe();
+会话.sendInputAudio(BinaryData.fromBytes(audioData)).subscribe();
 ```
 
 ### 4. Handle Events
 
 ```java
-session.receiveEvents().subscribe(event -> {
+会话.receiveEvents().subscribe(event -> {
     ServerEventType eventType = event.getType();
     
     if (ServerEventType.SESSION_CREATED.equals(eventType)) {
-        System.out.println("Session created");
+        System.out.println("会话 created");
     } else if (ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED.equals(eventType)) {
         System.out.println("User started speaking");
     } else if (ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED.equals(eventType)) {
@@ -150,7 +150,7 @@ session.receiveEvents().subscribe(event -> {
             playAudioChunk(audioEvent.getDelta());
         }
     } else if (ServerEventType.RESPONSE_DONE.equals(eventType)) {
-        System.out.println("Response complete");
+        System.out.println("响应 complete");
     } else if (ServerEventType.ERROR.equals(eventType)) {
         if (event instanceof SessionUpdateError) {
             SessionUpdateError errorEvent = (SessionUpdateError) event;
@@ -208,7 +208,7 @@ VoiceLiveSessionOptions options = new VoiceLiveSessionOptions()
 ## 错误处理
 
 ```java
-session.receiveEvents()
+会话.receiveEvents()
     .doOnError(error -> System.err.println("Connection error: " + error.getMessage()))
     .onErrorResume(error -> {
         // Attempt reconnection or cleanup
@@ -225,7 +225,7 @@ session.receiveEvents()
 | Samples | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/ai/azure-ai-voicelive/src/samples |
 
 ## 使用场景
-This skill is applicable to execute the workflow or actions described in the overview.
+This skill is applicable to execute the 工作流 or actions described in the overview.
 
 ## 局限性
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

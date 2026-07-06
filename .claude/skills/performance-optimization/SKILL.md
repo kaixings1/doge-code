@@ -87,7 +87,7 @@ function ProductImage({ src, alt }: { src: string; alt: string }) {
 ## 缓存头配置
 
 ```typescript
-function setCacheHeaders(res: Response, options: CacheOptions) {
+function setCacheHeaders(res: 响应, options: CacheOptions) {
   if (options.immutable) {
     res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
     return;

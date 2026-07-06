@@ -21,13 +21,13 @@ description: "降维：PCA、t-SNE、UMAP、SVD 和自编码器。适用于高�
 | LDA | Class separation | Supervised dimensionality reduction | Yes |
 | Autoencoder | Learned representation | Complex non-linear compression | No |
 
-### PCA Workflow
+### PCA 工作流
 1. Standardize features
 2. Compute covariance matrix and eigenvalues
 3. Choose components: explained variance ≥ 85-95%
 4. Transform and validate (scree plot, biplot)
 
-### t-SNE / UMAP Workflow
+### t-SNE / UMAP 工作流
 1. Apply PCA first if >50 features (speed)
 2. Tune perplexity (t-SNE) or n_neighbors (UMAP)
 3. Generate 2D/3D embedding
@@ -47,7 +47,7 @@ before training a model"
 
 ## 输出格式
 
-- **Method Choice**: Rationale for selected approach
+- **Method Choice**: Rationale for selected 方法
 - **Explained Variance**: Scree plot, cumulative variance
 - **Visualization**: 2D/3D scatter plot of reduced space
 - **Python Code**: sklearn / umap-learn implementation

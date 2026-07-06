@@ -5,7 +5,7 @@ risk: critical
 source: community
 date_added: "2026-02-27"
 ---
-# 通过 Rube MCP 实现 Jira 自动化
+# Jira 自动化
 通过 Composio 的 Jira 工具包和 Rube MCP 自动化 Jira 操作。
 ## 前提条件
 - Rube MCP 必须已连接
