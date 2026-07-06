@@ -1,6 +1,6 @@
 ---
 name: docker-hub-自动化
-description: "自动化 Docker Hub 操作——管理组织、仓库、团队、成员和 webhook。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+description: "自动化 Docker Hub 操作——管理组织、仓库、团队、成员和 webhook。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具 schema。"
 requires:
   mcp:
     - rube

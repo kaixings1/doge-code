@@ -1,6 +1,6 @@
 ---
 name: Writer自动化
-description: "通过 Rube MCP (Composio) 自动执行 Writer 任务。使用前始终先搜索工具以获取当前 架构。"
+description: "通过 Rube MCP (Composio) 自动执行 Writer 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 triggers:
@@ -20,7 +20,7 @@ triggers:
 
 - Rube MCP 已连接（`RUBE_SEARCH_TOOLS` 可用）
 - Writer 连接已通过 `RUBE_MANAGE_CONNECTIONS` 激活（toolkit: `writer`）
-- 执行工作流前始终先调用 `RUBE_SEARCH_TOOLS` 获取最新工具 架构
+- 执行工作流前始终先调用 `RUBE_SEARCH_TOOLS` 获取最新工具 schema
 
 ## 配置步骤
 
@@ -41,7 +41,7 @@ queries: [{use_case: "Writer operations", known_fields: ""}]
 会话: {generate_id: true}
 ```
 
-该调用返回可用工具标识、输入 架构、推荐执行方案和已知陷阱。
+该调用返回可用工具标识、输入 schema、推荐执行方案和已知陷阱。
 
 ## 核心工作流
 
@@ -67,7 +67,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* 架构-compliant args from search results */}
+  arguments: {/* schema-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"
@@ -75,7 +75,7 @@ session_id: "your_session_id"
 
 ## 常见陷阱
 
-- **始终先搜索**：工具 架构 会变更，不要在不调用 `RUBE_SEARCH_TOOLS` 的情况下硬编码工具标识或参数
+- **始终先搜索**：工具 schema 会变更，不要在不调用 `RUBE_SEARCH_TOOLS` 的情况下硬编码工具标识或参数
 - **检查连接**：执行前确认 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE
 - **遵循 架构**：使用搜索结果中的精确字段名和类型
 - **memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 中始终包含 `memory`，即使为空（`{}`）
@@ -90,6 +90,6 @@ session_id: "your_session_id"
 | 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
 | 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
 | 处理分页 | 检查响应中的 `cursor` 字段 |
-| 错误处理 | 验证连接状态和架构合规性 |
+| 错误处理 | 验证连接状态和schema合规性 |
 
 | 操作 | 建议 |

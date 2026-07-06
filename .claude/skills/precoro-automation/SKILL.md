@@ -33,7 +33,7 @@ queries: [{use_case: "Precoro operations", known_fields: ""}]
 会话: {generate_id: true}
 ```
 
-这尻型返取可用的工养光记符、输入 架构、招能批行�"�整中放常平透等。
+这尻型返取可用的工养光记符、输入 schema、招能批行�"�整中放常平透等。
 
 ## 后废工作模式模式
 
@@ -80,4 +80,4 @@ session_id: "your_session_id"
 | 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
 | 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
 | 处理分页 | 检查响应中的 `cursor` 字段 |
-| 错误处理 | 验证连接状态和架构合规性 |
+| 错误处理 | 验证连接状态和schema合规性 |

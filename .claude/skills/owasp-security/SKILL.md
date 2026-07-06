@@ -20,7 +20,7 @@ allowed-tools: Read Grep Glob
 | 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
 | 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
 | 处理分页 | 检查响应中的 `cursor` 字段 |
-| 错误处理 | 验证连接状态和架构合规性 |: OWASP Top 10:2025
+| 错误处理 | 验证连接状态和schema合规性 |: OWASP Top 10:2025
 
 | # | 漏洞 | 关键预防措施 |
 |---|---------------|----------------|

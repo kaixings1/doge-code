@@ -1,6 +1,6 @@
 ---
 name: leadfeeder-automation
-description: "通过 Rube MCP (Composio) 自动执行 Leadfeeder 任务。使用前始终先搜索工具以获取当前 架构。"
+description: "通过 Rube MCP (Composio) 自动执行 Leadfeeder 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
@@ -15,7 +15,7 @@ requires:
 
 - Rube MCP 必须已连接 (RUBE_SEARCH_TOOLS 可用)
 - Active Leadfeeder connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `leadfeeder`
-- Always call `RUBE_SEARCH_TOOLS` first to get 当前工具 架构
+- Always call `RUBE_SEARCH_TOOLS` first to get 当前工具 schema
 
 ## 设置
 
@@ -36,7 +36,7 @@ queries: [{use_case: "Leadfeeder operations", known_fields: ""}]
 会话: {generate_id: true}
 ```
 
-这将返回可用的工具 标识符、输入 架构、推荐的执行计划和已知陷阱。
+这将返回可用的工具 标识符、输入 schema、推荐的执行计划和已知陷阱。
 
 ## 核心工作流模式
 
@@ -62,7 +62,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* 架构-compliant args from search results */}
+  arguments: {/* schema-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"
@@ -70,9 +70,9 @@ session_id: "your_session_id"
 
 ## 已知陷阱
 
-- **始终先搜索**: 工具 架构 会变化。不调用 `RUBE_SEARCH_TOOLS`
+- **始终先搜索**: 工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS`
 - **检查连接**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **架构 合规**: 使用搜索结果中的确切字段名和类型
+- **schema 合规**: 使用搜索结果中的确切字段名和类型
 - **Memory 参数**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
 - **会话复用**: 在同一工作流中复用会话 ID。为新工作流生成新的
 - **分页**: 检查响应中的分页 令牌 并继续获取直到完成

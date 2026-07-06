@@ -16,7 +16,7 @@ requires:
 
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 与工具集 `phantombuster` 建立活跃的连接
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 架构
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
 ## 设置
 
@@ -51,7 +51,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* 架构-compliant args from search results */}
+  arguments: {/* schema-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"
@@ -59,9 +59,9 @@ session_id: "your_session_id"
 
 ## 已知陷阱
 
-- **始终先搜索**: 工具 架构 会变化。未调用 `RUBE_SEARCH_TOOLS` 时绝不要硬编码工具 标识符 或参数
+- **始终先搜索**: 工具 schema 会变化。未调用 `RUBE_SEARCH_TOOLS` 时绝不要硬编码工具 标识符 或参数
 - **检查连接**: 执行工具前确认 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
-- **架构 合规**: 使用搜索结果中的精确字段名和类型
+- **schema 合规**: 使用搜索结果中的精确字段名和类型
 - **Memory 参数**: 始终在 `RUBE_MULTI_EXECUTE_TOOL` 调用中包含 `memory`，即使为空（`{}`）
 - **会话复用**: 在工作流中复用会话 ID。新工作流生成新 ID
 - **分页**: 检查响应中的分页令牌，持续获取直到完成

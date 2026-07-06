@@ -1,18 +1,4 @@
-import React from 'react'
 import type { Command } from '../../commands.js'
-import type { LocalJSXCommandContext, LocalJSXCommandOnDone } from '../../types/command.js'
-import { getIsNonInteractiveSession } from '../../bootstrap/state.js'
-import NotebookList from './notebook-list.js'
-import NotebookView from './notebook-view.js'
-import {
-  handleCreate,
-  handleList,
-  handleSearch,
-  handleTags,
-  formatSingleNote,
-  formatPaginated,
-  formatTagList,
-} from './notebook.js'
 
 // ====== 命令定义（local-jsx 类型） ======
 

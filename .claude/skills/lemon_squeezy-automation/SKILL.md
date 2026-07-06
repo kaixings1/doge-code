@@ -15,7 +15,7 @@ requires:
 
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Lemon Squeezy 连接，工具包为 `lemon_squeezy`
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 架构
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
 ## 设置
 
@@ -38,7 +38,7 @@ RUBE_SEARCH_TOOLS: queries=[{"use_case": "产品、订单、订阅、结账和�
 - Lemon Squeezy 的可用工具 标识符
 - 推荐的执行计划步骤
 - 已知陷阱和边缘情况
-- 每个工具的输入 架构
+- 每个工具的输入 schema
 
 ## 核心工作流
 
@@ -50,7 +50,7 @@ RUBE_SEARCH_TOOLS:
     - use_case: "列出所有可用的 Lemon Squeezy 工具和功能"
 ```
 
-在继续之前审查返回的工具、其描述和输入 架构。
+在继续之前审查返回的工具、其描述和输入 schema。
 
 ### 2. 执行 Lemon Squeezy 操作
 
@@ -92,10 +92,10 @@ RUBE_MULTI_EXECUTE_TOOL:
 
 ## 已知陷阱
 
-- **始终先搜索工具**：工具 架构 和可用操作可能会变化。在通过 `RUBE_SEARCH_TOOLS` 发现之前，切勿硬编码工具 标识符。
+- **始终先搜索工具**：工具 schema 和可用操作可能会变化。在通过 `RUBE_SEARCH_TOOLS` 发现之前，切勿硬编码工具 标识符。
 - **检查连接状态**：在执行任何工具之前确保 Lemon Squeezy 连接为 ACTIVE。过期的 OAuth 令牌需要重新认证。
 - **遵守速率限制**：如果收到速率限制错误，降低请求频率并实现退避策略。
-- **验证 架构**：始终传递严格符合 架构 的参数。当返回 `schemaRef` 而非 `input_schema` 时，使用 `RUBE_GET_TOOL_SCHEMAS` 加载完整输入 架构。
+- **验证 架构**：始终传递严格符合 架构 的参数。当返回 `schemaRef` 而非 `input_schema` 时，使用 `RUBE_GET_TOOL_SCHEMAS` 加载完整输入 schema。
 
 ## 快速参考
 

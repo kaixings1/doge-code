@@ -1,6 +1,6 @@
 ---
 name: airtable-自动化
-description: "通过 Rube MCP (Composio) 自动化 Airtable 操作：记录、数据库、表格、字段、视图。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+description: "通过 Rube MCP (Composio) 自动化 Airtable 操作：记录、数据库、表格、字段、视图。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具 schema。"
 risk: critical
 source: community
 date_added: "2026-02-27"
@@ -158,6 +158,6 @@ Automate Airtable operations through Composio's Airtable toolkit via Rube MCP.
 | 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
 | 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
 | 处理分页 | 检查响应中的 `cursor` 字段 |
-| 错误处理 | 验证连接状态和架构合规性 |
+| 错误处理 | 验证连接状态和schema合规性 |
 
 | Task | Tool 标识符 | Key Params |

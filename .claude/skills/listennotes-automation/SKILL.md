@@ -1,6 +1,6 @@
 ---
 name: listennotes-automation
-description: "通过 Rube MCP (Composio) 自动执行 Listennotes 任务。使用前始终先搜索工具以获取当前 架构。"
+description: "通过 Rube MCP (Composio) 自动执行 Listennotes 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
@@ -15,7 +15,7 @@ requires:
 
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Listennotes 连接，工具包为 `listennotes`
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 架构
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
 ## 设置
 
@@ -36,7 +36,7 @@ queries: [{use_case: "Listennotes 操作", known_fields: ""}]
 会话: {generate_id: true}
 ```
 
-这将返回可用的工具 标识符、输入 架构、推荐的执行计划和已知陷阱。
+这将返回可用的工具 标识符、输入 schema、推荐的执行计划和已知陷阱。
 
 ## 核心工作流模式
 
@@ -70,9 +70,9 @@ session_id: "your_session_id"
 
 ## 已知陷阱
 
-- **始终先搜索**：工具 架构 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 标识符 或参数
+- **始终先搜索**：工具 schema 会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具 标识符 或参数
 - **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
-- **架构 合规**：使用搜索结果中的确切字段名和类型
+- **schema 合规**：使用搜索结果中的确切字段名和类型
 - **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
 - **会话复用**: 在同一工作流中复用会话 ID。为新工作流生成新的
 - **分页**：检查响应中的分页令牌并继续获取直到完成

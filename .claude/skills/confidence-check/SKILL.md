@@ -20,7 +20,7 @@ description: "Confidence Check — Confidence Check 相关功能和最佳实践"
 
 在实现任何任务**之前**使用此技能，以确保：
 - 不存在重复实现
-- 架构合规性已验证
+- schema合规性已验证
 - 官方文档已审阅
 - 找到可用的 OSS 实现
 - 根本原因已正确识别

@@ -1,6 +1,6 @@
 ---
 name: googleadmin-自动化
-description: "通过 Rube MCP (Composio) 自动化 Google_admin 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+description: "通过 Rube MCP (Composio) 自动化 Google_admin 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具 schema。"
 requires:
   mcp: [rube]
 ---
@@ -85,4 +85,4 @@ session_id: "your_session_id"
 | 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
 | 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
 | 处理分页 | 检查响应中的 `cursor` 字段 |
-| 错误处理 | 验证连接状态和架构合规性 |
+| 错误处理 | 验证连接状态和schema合规性 |

@@ -1,6 +1,6 @@
 ---
 name: contentful-自动化
-description: "自动化 Contentful 无头 CMS 操作——列出空间、检索空间元数据、更新空间配置。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+description: "自动化 Contentful 无头 CMS 操作——列出空间、检索空间元数据、更新空间配置。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具 schema。"
 requires:
   mcp:
     - rube
@@ -101,7 +101,7 @@ Example prompt: *"Audit all Contentful spaces -- list them with their creation d
 | 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
 | 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
 | 处理分页 | 检查响应中的 `cursor` 字段 |
-| 错误处理 | 验证连接状态和架构合规性 |
+| 错误处理 | 验证连接状态和schema合规性 |
 
 | Tool 标识符 | Description |
 |---|---|

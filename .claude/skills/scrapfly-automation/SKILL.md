@@ -1,6 +1,6 @@
 ---
 name: scrapfly-automation
-description: "通过 Rube MCP (Composio) 自动执行 Scrapfly 任务。使用前始终先搜索工具以获取当前 架构。"
+description: "通过 Rube MCP (Composio) 自动执行 Scrapfly 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
@@ -15,7 +15,7 @@ requires:
 
 - 必须连接 Rube MCP（`RUBE_SEARCH_TOOLS` 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 使用 `scrapfly` 工具包建立活跃的 Scrapfly 连接
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 架构
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
 ## 设置
 
@@ -36,7 +36,7 @@ queries: [{use_case: "Scrapfly operations", known_fields: ""}]
 会话: {generate_id: true}
 ```
 
-这将返回可用的工具 标识符、输入 架构、推荐的执行计划以及已知陷阱。
+这将返回可用的工具 标识符、输入 schema、推荐的执行计划以及已知陷阱。
 
 ## 核心工作流模式
 
@@ -70,7 +70,7 @@ session_id: "your_session_id"
 
 ## 已知陷阱
 
-- **始终先搜索**：工具 架构 会变化。未经调用 `RUBE_SEARCH_TOOLS` 切勿硬编码工具 标识符 或参数
+- **始终先搜索**：工具 schema 会变化。未经调用 `RUBE_SEARCH_TOOLS` 切勿硬编码工具 标识符 或参数
 - **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
 - **符合 架构**：使用搜索结果中的准确字段名和类型
 - **memory 参数**：`RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使为空（`{}`）
