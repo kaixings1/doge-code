@@ -1,6 +1,6 @@
 ---
 name: mural-automation
-description: "通过 Rube MCP (Composio) 自动执行 Mural 任务。使用前始终先搜索工具以获取当前 架构。"
+description: "通过 Rube MCP (Composio) 自动执行 Mural 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
  mcp: [rube]
 ---
@@ -14,7 +14,7 @@ requires:
 ## 前提条件
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 RUBE_MANAGE_CONNECTIONS 使用工具包 mural 建立活跃的 Mural 连接
-- 始终先调用 RUBE_SEARCH_TOOLS 获取当前工具 架构
+- 始终先调用 RUBE_SEARCH_TOOLS 获取当前工具 schema
 
 ## 设置
 **获取 Rube MCP**: 在客户端配置中添加 https://rube.app/mcp 作为 MCP 服务器。无需 API 密钥。
@@ -30,7 +30,7 @@ RUBE_SEARCH_TOOLS
 queries: [{use_case: "Mural operations", known_fields: ""}]
 会话: {generate_id: true}
 ```
-这将返回可用工具 标识符、输入 架构、推荐的执行计划和已知陷阱。
+这将返回可用工具 标识符、输入 schema、推荐的执行计划和已知陷阱。
 
 ## 核心工作流模式
 ### 步骤 1：发现可用工具
@@ -54,9 +54,9 @@ session_id: "your_session_id"
 ```
 
 ## 已知陷阱
-- **始终先搜索**：工具 架构 会变化。
+- **始终先搜索**：工具 schema 会变化。
 - **检查连接**：执行前确认 ACTIVE 状态。
-- **架构 合规性**：使用搜索结果中的确切字段名和类型。
+- **schema 合规性**：使用搜索结果中的确切字段名和类型。
 - **Memory 参数**：始终传入 memory，即使为空（{}）。
 - **会话复用**：工作流中复用 ID，新工作流用新 ID。
 - **分页**：持续获取直到完成。

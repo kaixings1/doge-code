@@ -1,6 +1,6 @@
 ---
 name: nano-nets-automation
-description: "通过 Rube MCP (Composio) 自动执行 Nano Nets 任务。使用前始终先搜索工具以获取当前 架构。"
+description: "通过 Rube MCP (Composio) 自动执行 Nano Nets 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
  mcp: [rube]
 ---
@@ -15,7 +15,7 @@ requires:
 
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 RUBE_MANAGE_CONNECTIONS 使用工具包 nano_nets 建立活跃的 Nano Nets 连接
-- 始终先调用 RUBE_SEARCH_TOOLS 获取当前工具 架构
+- 始终先调用 RUBE_SEARCH_TOOLS 获取当前工具 schema
 
 ## 设置
 
@@ -36,7 +36,7 @@ queries: [{use_case: "Nano Nets operations", known_fields: ""}]
 会话: {generate_id: true}
 ```
 
-这将返回可用工具 标识符、输入 架构、推荐的执行计划和已知陷阱。
+这将返回可用工具 标识符、输入 schema、推荐的执行计划和已知陷阱。
 
 ## 核心工作流模式
 
@@ -70,9 +70,9 @@ session_id: "your_session_id"
 
 ## 已知陷阱
 
-- **始终先搜索**：工具 架构 会变化。未调用 RUBE_SEARCH_TOOLS 时切勿硬编码工具 标识符 或参数。
+- **始终先搜索**：工具 schema 会变化。未调用 RUBE_SEARCH_TOOLS 时切勿硬编码工具 标识符 或参数。
 - **检查连接**：在执行工具前确认 RUBE_MANAGE_CONNECTIONS 显示 ACTIVE 状态。
-- **架构 合规性**：使用搜索结果中的确切字段名和类型。
+- **schema 合规性**：使用搜索结果中的确切字段名和类型。
 - **Memory 参数**：始终在 RUBE_MULTI_EXECUTE_TOOL 调用中包含 memory，即使为空（{}）。
 - **会话复用**：在工作流中复用会话 ID。为新的工作流生成新的会话 ID。
 - **分页**：检查响应中的分页令牌，持续获取直到完成。

@@ -1,6 +1,6 @@
 ---
 name: visme-automation
-description: "通过 Rube MCP (Composio) 自动执行 Visme 任务。使用前始终先搜索工具以获取当前 架构。""
+description: "通过 Rube MCP (Composio) 自动执行 Visme 任务。使用前始终先搜索工具以获取当前 schema。""
 requires:
   mcp: [rube]
 ---
@@ -15,7 +15,7 @@ requires:
 
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Visme 连接，工具包为 `visme`
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 架构
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
 ## 设置
 
@@ -36,7 +36,7 @@ queries: [{use_case: "Visme operations", known_fields: ""}]
 会话: {generate_id: true}
 ```
 
-这将返回可用的工具 标识符、输入 架构、推荐的执行计划和已知陷阱。
+这将返回可用的工具 标识符、输入 schema、推荐的执行计划和已知陷阱。
 
 ## 核心工作流模式
 
@@ -62,7 +62,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* 架构-compliant args from search results */}
+  arguments: {/* schema-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"
@@ -70,9 +70,9 @@ session_id: "your_session_id"
 
 ## 已知陷阱
 
-- **始终先搜索**：工具 架构 会变化。切勿在不调用 `RUBE_SEARCH_TOOLS` 的情况下硬编码工具 标识符 或参数
+- **始终先搜索**：工具 schema 会变化。切勿在不调用 `RUBE_SEARCH_TOOLS` 的情况下硬编码工具 标识符 或参数
 - **检查连接**：在执行工具之前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
-- **架构 合规性**：使用搜索结果中的确切字段名称和类型
+- **schema 合规性**：使用搜索结果中的确切字段名称和类型
 - **内存参数**：始终在 `RUBE_MULTI_EXECUTE_TOOL` 调用中包含 `memory` 参数，即使为空（`{}`）
 - **会话重用**：在工作流内重用会话 ID。为新工作流生成新的会话 ID
 - **分页**：检查响应中的分页令牌，并持续获取直到完成

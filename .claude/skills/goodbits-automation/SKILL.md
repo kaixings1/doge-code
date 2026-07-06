@@ -1,6 +1,6 @@
 ---
 name: goodbits-自动化
-description: "通过 Rube MCP (Composio) 自动化 Goodbits 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+description: "通过 Rube MCP (Composio) 自动化 Goodbits 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具 schema。"
 requires:
   mcp: [rube]
 ---
@@ -15,7 +15,7 @@ requires:
 
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Goodbits 连接，工具包为 `goodbits`
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具架构
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
 ## 设置
 
@@ -70,9 +70,9 @@ session_id: "your_session_id"
 
 ## 已知陷阱
 
-- **始终先搜索**：工具架构会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具标识符或参数
+- **始终先搜索**：工具 schema会变化。不调用 `RUBE_SEARCH_TOOLS` 就不要硬编码工具标识符或参数
 - **检查连接**：执行工具前验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
-- **架构合规**：使用搜索结果中的确切字段名和类型
+- **schema合规**：使用搜索结果中的确切字段名和类型
 - **内存参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使是空的（`{}`）
 - **会话复用**：在同一工作流中复用会话 ID。为新工作流生成新的
 - **分页**：检查响应中的分页令牌并继续获取直到完成
@@ -85,4 +85,4 @@ session_id: "your_session_id"
 | 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
 | 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
 | 处理分页 | 检查响应中的 `cursor` 字段 |
-| 错误处理 | 验证连接状态和架构合规性 |
+| 错误处理 | 验证连接状态和schema合规性 |
