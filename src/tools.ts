@@ -224,8 +224,8 @@ export function getAllBaseTools(): Tools {
     AgentTool,
     TaskOutputTool,
     BashTool,
-    // Ant 原生构建在 bun 二进制文件中内嵌了 bfs/ugrep（与 ripgrep 相同的 ARGV0 技巧）。
-    // 当可用时，Claude 的 shell 中的 find/grep 将别名为这些快速工具，因此专用的 Glob/Grep 工具是不必要的。
+    // Doge Code 始终包含 Glob/Grep 工具，除非通过 DISABLE_GLOB_GREP_TOOLS=1 显式禁用。
+    //（原 Ant 原生构建通过 EMBEDDED_SEARCH_TOOLS 内嵌 bfs/ugrep 来替代，Doge Code 不适用）
     ...(hasEmbeddedSearchTools() ? [] : [GlobTool, GrepTool]),
     ExitPlanModeV2Tool,
     FileReadTool,
