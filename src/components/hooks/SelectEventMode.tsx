@@ -42,7 +42,7 @@ export function SelectEventMode(t0) {
   } else {
     t1 = $[1];
   }
-  const subtitle = `${totalHooksCount} ${t1} configured`;
+  const subtitle = `已配置 ${totalHooksCount} 个${t1}`;
   let t2;
   if ($[2] !== restrictedByPolicy) {
     t2 = restrictedByPolicy && <Box flexDirection="column"><Text color="suggestion">{figures.info} 钩子被策略限制</Text><Text dimColor={true}>只有受管设置中的钩子可以运行。来自 ~/.claude/settings.json、.claude/settings.json 和 .claude/settings.local.json 的用户自定义钩子已被阻止。</Text></Box>;

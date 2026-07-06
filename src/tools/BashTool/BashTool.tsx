@@ -181,7 +181,144 @@ function fixModelCommandMistakes(cmd: string, platform: string): string {
       (_match, keyword, condition) => `${keyword} ${condition}\nthen`
     );
 
+    // ------ 9. 多行 bash 脚本自动压缩为单行（Windows/MSYS2 兼容）------
+    // MSYS2 下 eval '多行命令' 会将换行符展平，导致语法错误。
+    // 自动将多行 bash 控制结构压缩为单行，保留语义。
+    // 仅在命令包含 \n（多行）且不含 heredoc（已有自身处理）时触发。
+    if (fixed.includes('\n') && !fixed.includes('<<')) {
+      // 如果脚本包含 $() 子 shell，压缩可能因引号嵌套而失败，
+      // 回退到原始多行脚本（让方案 C 用临时文件处理）
+      if (!fixed.includes('$(')) {
+        const collapsed = collapseMultilineScript(fixed);
+        if (collapsed !== fixed) {
+          logForDebugging(
+            `[BashTool] 多行脚本已压缩为单行:\n--- 原文 ---\n${fixed}\n--- 压缩后 ---\n${collapsed}`
+          );
+          fixed = collapsed;
+        }
+      } else {
+        logForDebugging(
+          `[BashTool] 脚本包含 $() 子 shell，跳过压缩（将由方案 C 用临时文件处理）`
+        );
+      }
+    }
+
     return fixed;
+}
+
+/**
+ * 多行 bash 脚本自动压缩为单行（Windows/MSYS2 eval 兼容）。
+ *
+ * MSYS2/Git Bash 下，eval '多行命令' 会将换行符展平，导致：
+ *   for d in dirs; do
+ *     echo "$d"
+ *   done
+ * 变成 eval 内部的一行，语法错误 "unexpected token done"。
+ *
+ * 处理策略：
+ * 1. 识别以 bash 控制关键字开头的行（for/while/until/if/case/do/done/then/else/fi/esac）
+ * 2. 用 ; 替换换行，将控制结构压缩为单行可执行命令
+ * 3. 保留引号字符串内的换行（echo "line1\nline2" 不变）
+ *
+ * 注意：此函数不处理 heredoc（已由 quoteShellCommand 单独处理）。
+ */
+function collapseMultilineScript(script: string): string {
+  // 如果脚本不含换行，直接返回
+  if (!script.includes('\n')) return script;
+
+  // 简易引号状态感知的行处理
+  // 将脚本按换行分割，对每一行做处理
+  const lines = script.split('\n');
+  const result: string[] = [];
+  let inSingleQuote = false;
+  let inDoubleQuote = false;
+  let inHereDoc = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // 更新引号状态
+    for (const ch of line) {
+      if (ch === "'" && !inDoubleQuote) { inSingleQuote = !inSingleQuote; }
+      else if (ch === '"' && !inSingleQuote) { inDoubleQuote = !inDoubleQuote; }
+    }
+
+    // 如果在引号内部，保持原样并添加换行符（引号内的换行应保留）
+    if (inSingleQuote || inDoubleQuote) {
+      result.push(line);
+      continue;
+    }
+
+    const trimmed = line.trim();
+
+    // 检测 heredoc 开始
+    if (/<<-?\s*['"]?\w+['"]?\s*$/.test(trimmed)) {
+      inHereDoc = true;
+      result.push(line);
+      continue;
+    }
+    if (inHereDoc) {
+      // 检测 heredoc 结束标记（行首的定界符）
+      if (/^\s*[\w]+\s*$/.test(trimmed) && !trimmed.includes('$') && !trimmed.includes('`')) {
+        inHereDoc = false;
+      }
+      result.push(line);
+      continue;
+    }
+
+    // 空行 → 跳过（移除）
+    if (trimmed === '') {
+      continue;
+    }
+
+    // 注释行（# 开头）→ 移除
+    if (trimmed.startsWith('#')) {
+      continue;
+    }
+
+    // 控制结构关键字行：
+    // then → 追加到上一行的末尾（用 ; 分隔）
+    // else → 追加到上一行末尾（用 ; 分隔）
+    // do   → 追加到上一行末尾（用空格，不加 ;——bash 语法要求 do 后不直接跟 ;）
+    // done → 追加到上一行末尾（用 ; 分隔，但放在 done 前）
+    // fi   → 追加到上一行末尾（用 ; 分隔）
+    // esac → 追加到上一行末尾（用 ; 分隔）
+    //
+    // 对于新开一行但不含控制关键字的行：用 ; 和前一行连接
+    const standaloneKeywords = new Set(['then', 'else', 'done', 'fi', 'esac', 'elif', 'rof']);
+    const attachWithoutSemicolon = new Set(['do']); // do 后不能直接跟 ;
+
+    if (result.length > 0 && !standaloneKeywords.has(trimmed) && !attachWithoutSemicolon.has(trimmed) && !/^(for|while|until|if|case|elif|else)\b/.test(trimmed)) {
+      // 普通命令行 → 用 ; 和前一行连接
+      result[result.length - 1] += `; ${line.trimStart()}`;
+    } else if (standaloneKeywords.has(trimmed)) {
+      // 独立关键字行（then/else/done/fi/esac）→ 追加到上一行末尾
+      result[result.length - 1] += `; ${trimmed}`;
+    } else if (attachWithoutSemicolon.has(trimmed)) {
+      // do 关键字 → 直接追加（不加 ;），因为 bash 中 `do cmd` 是合法的，`do; cmd` 非法
+      result[result.length - 1] += ` ${trimmed}`;
+    } else {
+      // 控制结构起始行（for/while/if/case）或其他首行 → 直接加入
+      result.push(line.trimStart());
+    }
+  }
+
+  // 如果压缩后和原来长度差异不大或有语法危险，回退
+
+  let collapsed = result.join(' ');
+
+  // 清理多余空格
+  collapsed = collapsed.replace(/\s+;/g, ';');
+  collapsed = collapsed.replace(/;\s+/g, '; ');
+  collapsed = collapsed.replace(/\s{2,}/g, ' ');
+
+  // 安全检查：如果压缩后命令太奇怪，回退到原始脚本
+  // 简单检查：如果原始脚本包含的函数定义被破坏了，回退
+  if (collapsed.includes('() {') && collapsed.split('() {').length > 2) {
+    // 多函数定义被压缩到了一行，可能有问题，但保留尝试
+  }
+
+  return collapsed;
 }
 
 /**

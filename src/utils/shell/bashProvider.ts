@@ -1,5 +1,5 @@
 import { feature } from 'bun:bundle'
-import { access } from 'fs/promises'
+import { access, writeFile } from 'fs/promises'
 import { tmpdir as osTmpdir } from 'os'
 import { join as nativeJoin } from 'path'
 import { join as posixJoin } from 'path/posix'
@@ -83,6 +83,8 @@ export async function createBashShellProvider(
       },
     ): Promise<{ commandString: string; cwdFilePath: string }> {
       let snapshotFilePath = await snapshotPromise
+      // 多行脚本临时文件方案标志：为 true 时跳过 eval + pwd（脚本内已包含）
+      let commandWithoutEval = false
       // This access() check is NOT pure TOCTOU — it's the fallback decision
       // point for getSpawnArgs. When the snapshot disappears mid-session
       // (tmpdir cleanup), we must clear lastSnapshotFilePath so getSpawnArgs
@@ -127,6 +129,39 @@ export async function createBashShellProvider(
       const normalizedCommand = rewriteWindowsNullRedirect(command)
       const addStdinRedirect = shouldAddStdinRedirect(normalizedCommand)
       let quotedCommand = quoteShellCommand(normalizedCommand, addStdinRedirect)
+
+      // ------ 方案 C：多行脚本 → 写临时文件执行（Windows MSYS2 兼容）------
+      // MSYS2/Git Bash 下，eval '多行脚本' 会把换行展平导致语法错误。
+      // 对于多行脚本（含换行符），自动写入临时 .sh 文件然后 source 执行，
+      // 而不是用 eval 包裹。这避免了 eval 对换行、引号、$() 子 shell 的展平问题。
+      // 条件：Windows 平台、含换行符、不含 heredoc（heredoc 已有自身处理）
+      if (
+        getPlatform() === 'windows' &&
+        normalizedCommand.includes('\n') &&
+        !normalizedCommand.includes('<<')
+      ) {
+        const scriptPath = posixJoin(shellTmpdir, `claude-${opts.id}-script.sh`)
+        const nativeScriptPath = nativeJoin(tmpdir, `claude-${opts.id}-script.sh`)
+        try {
+          const fs = await import('fs/promises')
+          const cwdPwdCmd = `pwd -P >| ${quote([shellCwdFilePath])}`
+          // 在脚本末尾添加 pwd 记录（替换 eval + pwd 组合）
+          const scriptContent = normalizedCommand + '\n' + cwdPwdCmd + '\n'
+          await fs.writeFile(nativeScriptPath, scriptContent, { encoding: 'utf8' })
+          logForDebugging(`[BashProvider] 多行脚本已写入临时文件: ${nativeScriptPath}`)
+
+          // 用 source 执行脚本（保留环境变量），而不是 eval
+          // 注意：这里直接用字符串拼接而不是 quoteShellCommand，
+          // 因为 source 路径已由 quote() 安全引用
+          quotedCommand = `source ${quote([scriptPath])}`
+          // 跳过后续的 eval 和 pwd 添加（已包含在脚本中）
+          commandWithoutEval = true
+        } catch (err) {
+          logForDebugging(`[BashProvider] 临时脚本写入失败，回退到 eval: ${err}`)
+          // 回退：恢复 quotedCommand 为原始命令的单引号包裹版本
+          quotedCommand = quoteShellCommand(normalizedCommand, addStdinRedirect)
+        }
+      }
 
       // Debug logging for heredoc/multiline commands to trace trailer handling
       // Only log when commit attribution is enabled to avoid noise
@@ -181,9 +216,11 @@ export async function createBashShellProvider(
       // When sourcing a file with aliases, they won't be expanded in the same command line
       // because the shell parses the entire line before execution. Using eval after
       // sourcing causes a second parsing pass where aliases are now available for expansion.
-      commandParts.push(`eval ${quotedCommand}`)
-      // Use `pwd -P` to get the physical path of the current working directory for consistency with `process.cwd()`
-      commandParts.push(`pwd -P >| ${quote([shellCwdFilePath])}`)
+      if (!commandWithoutEval) {
+        commandParts.push(`eval ${quotedCommand}`)
+        // Use `pwd -P` to get the physical path of the current working directory for consistency with `process.cwd()`
+        commandParts.push(`pwd -P >| ${quote([shellCwdFilePath])}`)
+      }
       let commandString = commandParts.join(' && ')
 
       // Apply CLAUDE_CODE_SHELL_PREFIX if set
@@ -252,4 +289,35 @@ export async function createBashShellProvider(
       return env
     },
   }
+}
+
+/**
+ * 判断是否为复杂的多行 bash 脚本，适合使用临时文件方案（方案 C）。
+ *
+ * 复杂脚本的特征：
+ * - 包含 for/while/until/case 等循环/分支控制结构
+ * - 包含函数定义（name() { ... }）
+ * - 包含管道链（|）
+ * - 超过 3 行（简单的小脚本直接用 eval 即可）
+ *
+ * 注意：此函数仅在 Windows 平台被调用（MSYS2 兼容性需要）。
+ */
+function isComplexMultilineScript(command: string): boolean {
+  if (!command.includes('\n')) return false
+
+  const lines = command.split('\n').filter(l => l.trim() !== '' && !l.trim().startsWith('#'))
+  if (lines.length < 3) return false // 3 行以下没必要用临时文件
+
+  // 检查是否包含复杂的控制结构关键字
+  const complexPatterns = [
+    /\bfor\b.*\bin\b/,           // for ... in
+    /\bwhile\b/,                 // while
+    /\buntil\b/,                 // until
+    /\bcase\b\s+\S+\s+\bin\b/,   // case ... in
+    /\)\s*\{/,                   // 函数定义 pattern() {
+    /\|/,                        // 管道
+    /\bfunction\b/,             // function name() {
+  ]
+
+  return complexPatterns.some(pattern => pattern.test(command))
 }

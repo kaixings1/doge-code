@@ -35,7 +35,7 @@ export function SelectHookMode(t0) {
   if (hooksForSelectedMatcher.length === 0) {
     let t1;
     if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-      t1 = <Box flexDirection="column" gap={1}><Text dimColor={true}>No hooks configured for this event.</Text><Text dimColor={true}>To add hooks, edit settings.json directly or ask Claude.</Text></Box>;
+      t1 = <Box flexDirection="column" gap={1}><Text dimColor={true}>此事件未配置任何钩子。</Text><Text dimColor={true}>要添加钩子，请直接编辑 settings.json 或询问 Claude。</Text></Box>;
       $[0] = t1;
     } else {
       t1 = $[0];
