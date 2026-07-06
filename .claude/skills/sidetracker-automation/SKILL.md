@@ -1,6 +1,6 @@
 ---
 name: sidetracker-automation
-description: "通过 Rube MCP (Composio) 自动执行 Sidetracker 任务。使用前始终先搜索工具以获取当前 架构。""
+description: "通过 Rube MCP (Composio) 自动执行 Sidetracker 任务。使用前始终先搜索工具以获取当前 schema。""
 requires:
   mcp: [rube]
 ---
@@ -62,7 +62,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* 架构-compliant args from search results */}
+  arguments: {/* schema-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"
@@ -72,7 +72,7 @@ session_id: "your_session_id"
 
 - **始终先搜索**: Tool schemas change. Never hardcode tool slugs or arguments without calling `RUBE_SEARCH_TOOLS`
 - **检查连接**: Verify `RUBE_MANAGE_CONNECTIONS` shows ACTIVE status before executing tools
-- **架构 合规**: Use exact field names and types from the search results
+- **schema 合规**: Use exact field names and types from the search results
 - **Memory 参数**: Always include `memory` in `RUBE_MULTI_EXECUTE_TOOL` calls, even if empty (`{}`)
 - **会话复用**: Reuse 会话 IDs within a 工作流. Generate new ones for new workflows
 - **分页**: Check responses for pagination tokens and continue fetching until complete

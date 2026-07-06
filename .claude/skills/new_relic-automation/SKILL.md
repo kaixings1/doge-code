@@ -15,7 +15,7 @@ requires:
 
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 RUBE_MANAGE_CONNECTIONS 使用工具包 new_relic 建立活跃的 New Relic 连接
-- 始终先调用 RUBE_SEARCH_TOOLS 获取当前工具 架构
+- 始终先调用 RUBE_SEARCH_TOOLS 获取当前工具 schema
 
 ## 设置
 **获取 Rube MCP**: 在客户端配置中添加 https://rube.app/mcp 作为 MCP 服务器。无需 API 密钥 — 只需添加端点即可使用。
@@ -35,7 +35,7 @@ RUBE_SEARCH_TOOLS: queries=[{"use_case": "APM, alerts, dashboards, NRQL queries,
 - 可用的 New Relic 工具 标识符
 - 推荐的执行计划步骤
 - 已知陷阱和边界情况
-- 每个工具的输入 架构
+- 每个工具的输入 schema
 
 ## 核心工作流
 ### 1. 发现可用的 New Relic 工具
@@ -44,7 +44,7 @@ RUBE_SEARCH_TOOLS:
  queries:
  - use_case: "list all available New Relic tools and 能力"
 ```
-在继续之前，查看返回的工具、描述和输入 架构。
+在继续之前，查看返回的工具、描述和输入 schema。
 
 ### 2. 执行 New Relic 操作
 发现工具后，通过以下方式执行：
@@ -52,7 +52,7 @@ RUBE_SEARCH_TOOLS:
 RUBE_MULTI_EXECUTE_TOOL:
  tools:
  - tool_slug: "<discovered_tool_slug>",
- arguments: {<架构-compliant arguments>}
+ arguments: {<schema-compliant arguments>}
  memory: {}
  sync_response_to_workbench: false
 ```
@@ -80,10 +80,10 @@ RUBE_MULTI_EXECUTE_TOOL:
 对于批量操作，使用 RUBE_REMOTE_WORKBENCH 配合循环中的 run_composio_tool() 和 ThreadPoolExecutor 进行并行执行。
 
 ## 已知陷阱
-- **始终先搜索工具**：工具 架构 和可用操作可能会变化。未先通过 RUBE_SEARCH_TOOLS 发现之前切勿硬编码工具 标识符。
+- **始终先搜索工具**：工具 schema 和可用操作可能会变化。未先通过 RUBE_SEARCH_TOOLS 发现之前切勿硬编码工具 标识符。
 - **检查连接状态**：在执行任何工具之前确保 New Relic 连接为 ACTIVE。过期的 OAuth 令牌需要重新认证。
 - **遵守速率限制**：如果收到速率限制错误，降低请求频率并实现退避。
-- **验证 架构**：始终传递严格符合 架构 的参数。当返回 schemaRef 而非 input_schema 时，使用 RUBE_GET_TOOL_SCHEMAS 加载完整的输入 架构。
+- **验证 架构**：始终传递严格符合 架构 的参数。当返回 schemaRef 而非 input_schema 时，使用 RUBE_GET_TOOL_SCHEMAS 加载完整的输入 schema。
 
 ## 快速参考
 | 操作 | 方法 |

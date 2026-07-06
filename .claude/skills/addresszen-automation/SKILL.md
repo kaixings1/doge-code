@@ -1,6 +1,6 @@
 ---
 name: addresszen-自动化
-description: "通过 Rube MCP (Composio) 自动化 Addresszen 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具架构。"
+description: "通过 Rube MCP (Composio) 自动化 Addresszen 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具 schema。"
 requires:
   mcp: [rube]
 ---
@@ -62,7 +62,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* 架构-compliant args from search results */}
+  arguments: {/* schema-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"

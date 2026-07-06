@@ -1,6 +1,6 @@
 ---
 name: zoho_desk-automation
-description: "通过 Rube MCP (Composio) 自动执行 Zoho Desk 任务：工单、联系人、代理、部门和帮助台操作。使用前始终先搜索工具以获取当前 架构。"
+description: "通过 Rube MCP (Composio) 自动执行 Zoho Desk 任务：工单、联系人、代理、部门和帮助台操作。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
@@ -60,7 +60,7 @@ RUBE_SEARCH_TOOLS:
 RUBE_MULTI_EXECUTE_TOOL:
   tools:
     - tool_slug: "<discovered_tool_slug>"
-      arguments: {<架构-compliant arguments>}
+      arguments: {<schema-compliant arguments>}
   memory: {}
   sync_response_to_workbench: false
 ```

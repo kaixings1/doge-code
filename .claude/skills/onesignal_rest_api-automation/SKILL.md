@@ -1,6 +1,6 @@
 ---
 name: onesignal_rest_api-automation
-description: "通过 Rube MCP (Composio) 自动执行 OneSignal 任务：推送通知、细分、模板和消息。使用前始终先搜索工具以获取当前 架构。"
+description: "通过 Rube MCP (Composio) 自动执行 OneSignal 任务：推送通知、细分、模板和消息。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
@@ -15,7 +15,7 @@ requires:
 
 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 OneSignal 连接，工具包为 `onesignal_rest_api`
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 架构
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
 ## 设置
 
@@ -60,7 +60,7 @@ After discovering tools, execute them via:
 RUBE_MULTI_EXECUTE_TOOL:
   tools:
     - tool_slug: "<discovered_tool_slug>"
-      arguments: {<架构-compliant arguments>}
+      arguments: {<schema-compliant arguments>}
   memory: {}
   sync_response_to_workbench: false
 ```
@@ -95,7 +95,7 @@ For bulk operations, use `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` in a
 - **始终 search tools first**: Tool schemas and available operations may change. 绝不 hardcode tool slugs without first discovering them via `RUBE_SEARCH_TOOLS`.
 - **Check connection status**: Ensure the OneSignal connection is ACTIVE before executing any tools. Expired OAuth tokens require re-认证.
 - **Respect rate limits**: If you receive rate limit errors, reduce 请求 frequency and implement backoff.
-- **Validate schemas**: 始终 pass strictly 架构-compliant arguments. Use `RUBE_GET_TOOL_SCHEMAS` to load full input schemas when `schemaRef` is returned instead of `input_schema`.
+- **Validate schemas**: 始终 pass strictly schema-compliant arguments. Use `RUBE_GET_TOOL_SCHEMAS` to load full input schemas when `schemaRef` is returned instead of `input_schema`.
 
 ## 快速参考
 

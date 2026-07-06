@@ -1,6 +1,6 @@
 ---
 name: mailchimp-automation
-description: "通过 Rube MCP (Composio) 自动执行 Mailchimp 电子邮件营销，包括活动、受众、订阅者、细分和分析。使用前始终先搜索工具以获取当前 架构。"
+description: "通过 Rube MCP (Composio) 自动执行 Mailchimp 电子邮件营销，包括活动、受众、订阅者、细分和分析。使用前始终先搜索工具以获取当前 schema。"
 risk: critical
 source: community
 date_added: "2026-02-27"
@@ -14,7 +14,7 @@ date_added: "2026-02-27"
 
 - 必须连接 Rube MCP（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 使用 `mailchimp` 工具包激活 Mailchimp 连接
-- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 架构
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema
 
 ## 设置
 
@@ -209,7 +209,7 @@ subscriber_hash = hashlib.md5(email.lower().encode()).hexdigest()
 | 检查连接 | 调用 `RUBE_MANAGE_CONNECTIONS` |
 | 执行工具 | 调用 `RUBE_MULTI_EXECUTE_TOOL` |
 | 处理分页 | 检查响应中的 `cursor` 字段 |
-| 错误处理 | 验证连接状态和架构合规性 |
+| 错误处理 | 验证连接状态和schema合规性 |
 
 | 任务 | 工具标识 | 关键参数 |
 |------|----------|----------|

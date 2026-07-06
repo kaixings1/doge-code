@@ -1,6 +1,6 @@
 ---
 name: Wati自动化
-description: "通过 Rube MCP (Composio) 自动执行 Wati 任务。使用前始终先搜索工具以获取当前 架构。"
+description: "通过 Rube MCP (Composio) 自动执行 Wati 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
@@ -62,7 +62,7 @@ session_id: "your_session_id"
 RUBE_MULTI_EXECUTE_TOOL
 tools: [{
   tool_slug: "TOOL_SLUG_FROM_SEARCH",
-  arguments: {/* 架构-compliant args from search results */}
+  arguments: {/* schema-compliant args from search results */}
 }]
 memory: {}
 session_id: "your_session_id"
@@ -72,7 +72,7 @@ session_id: "your_session_id"
 
 - **始终先搜索**：工具 schemas 会变化。永远不要硬编码工具 slugs 或参数——始终先调用 `RUBE_SEARCH_TOOLS`
 - **检查连接**：在执行任何工具之前，验证 `RUBE_MANAGE_CONNECTIONS` 显示 ACTIVE 状态
-- **架构 合规**：使用搜索结果中的确切字段名称和类型
+- **schema 合规**：使用搜索结果中的确切字段名称和类型
 - **Memory 参数**：在 `RUBE_MULTI_EXECUTE_TOOL` 调用中始终包含 `memory`，即使为空（`{}`）
 - **会话复用**：在工作流内复用会话 ID。为新工作流生成新的会话 ID
 - **分页**：检查响应中的分页标记，并继续获取直到完成

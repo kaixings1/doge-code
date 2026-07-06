@@ -1,6 +1,6 @@
 ---
 name: Zoho库存自动化
-description: "通过 Rube MCP (Composio) 自动执行 Zoho Inventory 任务：物品、订单、仓库、发货和库存管理。使用前始终先搜索工具以获取当前 架构。"
+description: "通过 Rube MCP (Composio) 自动执行 Zoho Inventory 任务：物品、订单、仓库、发货和库存管理。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---
@@ -60,7 +60,7 @@ RUBE_SEARCH_TOOLS:
 RUBE_MULTI_EXECUTE_TOOL:
   tools:
     - tool_slug: "<discovered_tool_slug>"
-      arguments: {<架构-compliant arguments>}
+      arguments: {<schema-compliant arguments>}
   memory: {}
   sync_response_to_workbench: false
 ```
