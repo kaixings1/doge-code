@@ -2,6 +2,12 @@ import { ensureBootstrapMacro } from './bootstrapMacro'
 import * as fs from 'fs'
 import * as path from 'path'
 process.env.CLAUDE_CODE_SIMPLE=1
+// Shell 配置：默认使用 Windows 原生 cmd.exe 避免 MSYS2 多行参数转义问题
+// 如需切回 MSYS2 bash，注释掉下面两行并取消注释 bash 版本:
+process.env.CLAUDE_CODE_SHELL="cmd"
+process.env.SHELL="cmd"
+//process.env.CLAUDE_CODE_SHELL="C:/Program Files/Git/bin/bash.exe"
+//process.env.SHELL="C:/Program Files/Git/bin/bash.exe"
 ensureBootstrapMacro();
 
 // 优先使用环境变量 DOGE_API_JSON 指定自定义配置路径（进程隔离用）
