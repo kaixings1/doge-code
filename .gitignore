@@ -151,3 +151,6 @@ src/commands/database/*.backup
 # 备份文件
 *.orig
 *.original
+src/commands/updateskills/index.js
+src/commands/updateskills/updateskills.js
+updateskills.exe
