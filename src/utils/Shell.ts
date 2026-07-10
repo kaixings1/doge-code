@@ -120,17 +120,34 @@ export async function findSuitableShell(): Promise<string> {
   // Check for explicit shell override first
   const shellOverride = process.env.CLAUDE_CODE_SHELL
   if (shellOverride) {
-    // Validate it's a supported shell type
-    const isSupported =
-      shellOverride.includes('bash') || shellOverride.includes('zsh')
-    if (isSupported && isExecutable(shellOverride)) {
+    // Validate it's a supported shell type (bash/zsh/cmd/powershell)
+    const shim = shellOverride.toLowerCase()
+    const isBashOrZsh = shim.includes('bash') || shim.includes('zsh')
+    const isWindowsShell = shim.includes('cmd') || shim.includes('powershell') || shim.includes('pwsh')
+    if (isBashOrZsh && isExecutable(shellOverride)) {
       logForDebugging(`Using shell override: ${shellOverride}`)
       return shellOverride
-    } else {
-      // Note, if we ever want to add support for new shells here we'll need to update or Bash tool parsing to account for this
+    }
+    if (isWindowsShell) {
+      logForDebugging(`Using Windows shell override: ${shellOverride}`)
+      return shellOverride
+    }
+    if (!isBashOrZsh && !isWindowsShell) {
       logForDebugging(
-        `CLAUDE_CODE_SHELL="${shellOverride}" is not a valid bash/zsh path, falling back to detection`,
+        `CLAUDE_CODE_SHELL="${shellOverride}" 不是支持的 shell (bash/zsh/cmd/powershell/pwsh)，回退到自动检测`,
       )
+    }
+  }
+
+  // On Windows, check for Windows-native shells first
+  const isWindows = process.platform === 'win32'
+  if (isWindows) {
+    const envShell = process.env.SHELL
+    // If SHELL is cmd or powershell, use it directly
+    const shim = (envShell || '').toLowerCase()
+    if (shim.includes('cmd') || shim.includes('powershell') || shim.includes('pwsh')) {
+      logForDebugging(`Using Windows native shell from SHELL: ${envShell}`)
+      return envShell!
     }
   }
 
@@ -182,6 +199,13 @@ export async function findSuitableShell(): Promise<string> {
 
   const shellPath = supportedShells.find(shell => shell && isExecutable(shell))
 
+  // If no valid bash/zsh found on Windows, fall back to cmd.exe
+  if (!shellPath && isWindows) {
+    const cmdPath = 'C:/Windows/System32/cmd.exe'
+    logForDebugging(`No bash/zsh found, falling back to cmd.exe: ${cmdPath}`)
+    return cmdPath
+  }
+
   // If no valid shell found, throw a helpful error
   if (!shellPath) {
     const errorMsg =
@@ -196,6 +220,18 @@ export async function findSuitableShell(): Promise<string> {
 
 async function getShellConfigImpl(): Promise<ShellConfig> {
   const binShell = await findSuitableShell()
+  // 当 shellPath 是 cmd.exe 或 powershell 时，使用对应的 provider
+  const shim = binShell.toLowerCase()
+  if (shim.includes('cmd')) {
+    // cmd.exe 使用简单的 shell provider，直接执行命令
+    const { createCmdShellProvider } = await import('./shell/cmdProvider.js')
+    const provider = createCmdShellProvider(binShell)
+    return { provider }
+  }
+  if (shim.includes('powershell') || shim.includes('pwsh')) {
+    const provider = createPowerShellProvider(binShell)
+    return { provider }
+  }
   const provider = await createBashShellProvider(binShell)
   return { provider }
 }
