@@ -2,13 +2,12 @@
 description: 为就绪规格的最高优先级 Linear 工单创建实施计划
 ---
 
-## PART I - IF A TICKET IS MENTIONED
+## 第一部分 - 如果提到了工单
 
-0c. use `linear` cli to fetch the selected item into thoughts with the ticket number - ./thoughts/shared/tickets/ENG-xxxx.md
-0d. read the ticket and all comments to learn about past implementations and research, and any questions or concerns about them
+0c. 使用 `linear` CLI 将选中的项目以工单号获取到 thoughts 中 - ./thoughts/shared/tickets/ENG-xxxx.md
+0d. 读取工单及其所有评论，了解过去的实施方案和研究内容，以及任何相关问题或关注点
 
-
-### PART I - IF NO TICKET IS MENTIONED
+### 第一部分 - 如果未提到工单
 
 0.  read .claude/commands/linear.md
 0a. fetch the top 10 priority items from linear in status "ready for spec" using the MCP tools, noting all items in the `links` section

@@ -1,5 +1,5 @@
 ---
-name: writing-skills
+name: 当创建新技能、编辑现有技能或在部署前验证技能是否有效时使用
 description: 当创建新技能、编辑现有技能或在部署前验证技能是否有效时使用
 version: "1.0.0"
 license: MIT

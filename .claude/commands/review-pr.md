@@ -3,7 +3,7 @@ allowed-tools: Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)
 description: 审查拉取请求（Pull Request）
 ---
 
-Perform a comprehensive code review using subagents for key areas:
+使用子智能体对关键领域进行全面代码审查：
 
 - code-quality-reviewer
 - performance-reviewer

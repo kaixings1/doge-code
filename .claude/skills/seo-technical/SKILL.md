@@ -1,5 +1,5 @@
 ---
-name: seo-technical
+name: 技术性SEO审计
 description: "技术性SEO审计 — 涵盖9个类别的技术SEO审计：可爬取性、可索引性、安全性、URL结构、移动端、核心Web指标、结构化数据、JavaScript渲染和IndexNow协议。当用户提到'技术性SEO'、'爬取问题'、'robots.txt'、'核心Web指标'、'网站速度'或'安全头'时使用。"
 user-invocable: true
 参数-hint: "[url]"

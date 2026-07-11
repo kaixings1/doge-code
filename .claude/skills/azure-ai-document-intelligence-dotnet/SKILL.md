@@ -1,5 +1,5 @@
 ---
-name: azure-ai-document-intelligence-dotnet
+name: Azure AI 文档智能 (.NET)
 description: "Azure AI 文档智能 (.NET)"
 risk: safe
 source: community

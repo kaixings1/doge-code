@@ -1,5 +1,5 @@
 ---
-name: eventee-automation
+name: Eventee 自动化
 description: "Eventee 自动化"
 risk: safe
 source: community

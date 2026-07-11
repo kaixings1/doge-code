@@ -1,5 +1,5 @@
 ---
-name: seo-cluster
+name: 基于 SERP 的语义主题聚类相关功能和最佳实践，用于内容架构规划。按
 description: "Seo Cluster — 基于 SERP 的语义主题聚类相关功能和最佳实践，用于内容架构规划。按实际 Google SERP 重叠（而非文本相似度）对关键词分组，设计中心辐射式内容集群与内链矩阵，并生成交互式可视化。可选择在安装 claude-blog 后执行内容创建。"
 user-invocable: true
 参数-hint: "<seed-keyword or url>"

@@ -1,5 +1,5 @@
 ---
-name: frame-glitch-title
+name: 数字故障、色差偏移和数据损坏标题帧，用于视频过渡或赛博朋克英雄。
 zh_name: "故障艺术标题帧"
 en_name: "Glitch Title Frame"
 emoji: "⚡"

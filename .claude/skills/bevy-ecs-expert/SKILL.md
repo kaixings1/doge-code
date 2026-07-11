@@ -1,5 +1,5 @@
 ---
-name: bevy-ecs-expert
+name: Bevy ECS 专家指导
 description: "Bevy ECS 专家指导——数据驱动架构、系统编排、查询、命令和 Rust 游戏引擎的性能优化。"
 risk: safe
 source: community
@@ -19,7 +19,7 @@ A guide to building high-performance game logic using Bevy's data-oriented ECS a
 - Use when optimizing game performance by minimizing cache misses.
 - Use when refactoring object-oriented logic into data-oriented ECS patterns.
 
-## Step-by-Step Guide
+## 分步指南
 
 ### 1. Defining Components
 

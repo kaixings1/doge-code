@@ -1,8 +1,6 @@
 ---
-name: browser-extension-builder
-description: "Browser Extension Builder — Browser Extension Builder 相关功能和最佳实践"
-  Chrome, Firefox, and cross-browser extensions. Covers extension architecture,
-  manifest v3, content scripts, popup UIs, monetization strategies, and Chrome
+name: 浏览器扩展构建器
+description: "浏览器扩展构建器 — 浏览器扩展构建相关功能和最佳实践，涵盖 Chrome、Firefox 和跨浏览器扩展。包括扩展架构、manifest v3、内容脚本、弹出 UI、变现策略和 Chrome Web Store 发布。"
   Web Store publishing.
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)
@@ -287,7 +285,7 @@ async function usePremiumFeature() {
 - Use your own payment system
 - Link to external checkout page
 
-## Validation Checks
+## 验证检查
 
 ### Using Deprecated Manifest V2
 
@@ -329,7 +327,7 @@ Message: Missing extension icons - affects store listing.
 
 Fix action: Add icons in 16, 48, and 128 pixel sizes
 
-## Collaboration
+## 协作
 
 ### Delegation Triggers
 

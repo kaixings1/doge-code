@@ -1,5 +1,5 @@
 ---
-name: copywriting
+name: 文案写作
 description: "文案写作"
 risk: safe
 source: community

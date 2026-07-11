@@ -1,5 +1,5 @@
 ---
-name: crossframe-teach
+name: 适用于 CrossFrame Suite 路由到中文 CrossFrame 概念
 description: "适用于 CrossFrame Suite 路由到中文 CrossFrame 概念教学、误读边界、白话示例、信号识别或练习题的场景。"
 category: content
 risk: safe

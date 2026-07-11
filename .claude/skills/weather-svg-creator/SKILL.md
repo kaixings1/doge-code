@@ -1,5 +1,5 @@
 ---
-name: weather-svg-creator
+name: 天气SVG创建工具
 description: 天气SVG创建工具
 ---
 

@@ -1,6 +1,6 @@
 ---
-name: azure-messaging-webpubsubservice-py
-description: "Azure Messaging Webpubsubservice Py — Azure Messaging Webpubsubservice Py 相关功能和最佳实践"
+name: Azure Messaging WebPubSub Service (Python)
+description: "Azure Messaging WebPubSub Service Python — Azure Messaging WebPubSub Service Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -220,7 +220,7 @@ async def broadcast():
     await credential.close()
 ```
 
-## Client Operations
+## 客户端操作
 
 | 操作 | Description |
 |-----------|-------------|

@@ -1,5 +1,5 @@
 ---
-name: mockup-device-3d
+name: 静态 iPhone 和 MacBook 3D 风格展示，屏幕上嵌入真实 HTML、玻璃透镜折射和 360 度旋转合成。
 zh_name: "iPhone × MacBook 立体展架"
 en_name: "Device 3D Showcase"
 emoji: "📱"

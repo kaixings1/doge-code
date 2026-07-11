@@ -1,5 +1,5 @@
 ---
-name: ffuf-web-fuzzing
+name: FFUF Web 模糊测试
 description: "FFUF Web 模糊测试 — Web 应用模糊测试"
 risk: unknown
 source: community

@@ -1,6 +1,6 @@
 ---
-name: precoro-automation
-description: "辛行 Rube MCP (Composio) 口辐用为Precoro任务。你用前叶先等套已断缓开服，可输出现当务，否删匕现信明。"
+name: Precoro 自动化
+description: "通过 Rube MCP (Composio) 自动执行 Precoro 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
 ---

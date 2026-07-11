@@ -1,5 +1,5 @@
 ---
-name: agent-creator
+name: 子代理创建器
 description: "使用正确的插件结构、角色生成和配套路由技能创建自定义 AI 子代理。"
 risk: critical
 source: community
@@ -10,7 +10,7 @@ plugin:
     claude: blocked
 ---
 
-# Agent Creator
+# 代理创建器 (Agent Creator)
 
 A skill for creating custom subagents packaged inside proper plugins. This skill
 handles the entire flow: gathering requirements, generating a rich persona from

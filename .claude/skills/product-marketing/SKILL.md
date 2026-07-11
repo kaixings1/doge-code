@@ -1,5 +1,5 @@
 ---
-name: product-marketing
+name: 当用户想要创建或更新产品营销上下文文档时使用
 description: "当用户想要创建或更新产品营销上下文文档时使用。当用户提到 'product context'、'marketing context'、'set up context'、'positioning'、'who is my target audience'、'describe my product'、'ICP'、'ideal customer profile' 或希望在营销任务中避免重复基本信息时也使用。在任何新项目开始时，在使用其他营销技能之前使用此技能——它会创建 `.agents/product-marketing.md`，所有其他技能会引用该文件获取产品、受众和定位上下文。"
 metadata:
   version: 2.0.0

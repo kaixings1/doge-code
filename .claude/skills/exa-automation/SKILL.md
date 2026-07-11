@@ -1,5 +1,5 @@
 ---
-name: exa-automation
+name: Exa 自动化
 description: "Exa 自动化"
 risk: safe
 source: community

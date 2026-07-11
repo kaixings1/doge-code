@@ -1,5 +1,5 @@
 ---
-name: cpp-build
+name: C++ 构建系统指南，支持 CMake、xmake、Conan、vcpkg、Pr
 description: C++ 构建系统指南，支持 CMake、xmake、Conan、vcpkg、Premake5 等。当用户需要配置 C++ 项目构建、依赖管理、跨平台编译时使用。包含 CMakeLists.txt 模板、xmake.lua 示例和 MSVC/GCC/Clang 编译器标志。
 ---
 # C++ 构建系统

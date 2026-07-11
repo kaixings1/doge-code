@@ -1,3 +1,8 @@
+---
+name: 差异审查
+description: 安全聚焦的代码变更差异审查，包含 git 历史分析和影响半径评估。
+---
+
 # Differential Review
 
 Security-focused differential review of code changes with git history analysis and blast radius estimation.
@@ -12,7 +17,7 @@ Security-focused differential review of code changes with git history analysis a
 - 分析代码更改的影响范围
 - 检查修改代码的测试覆盖差距
 
-## What It Does
+## 功能说明
 
 This skill performs comprehensive security review of code changes:
 

@@ -10,14 +10,14 @@ requires: [phase, progress]
 ---
 
 <objective>
-Create `.continue-here.md` handoff file to preserve complete work state across sessions.
+创建 `.continue-here.md` 交接文件以在会话间保留完整的工作状态。
 
-Routes to the pause-work workflow which handles:
-- Current phase detection from recent files
-- Complete state gathering (position, completed work, remaining work, decisions, blockers)
-- Handoff file creation with all context sections
-- Git commit as WIP
-- Resume instructions
+路由到 pause-work 工作流，它处理：
+- 从最近的文件检测当前阶段
+- 完整状态收集（位置、已完成工作、剩余工作、决策、阻塞项）
+- 创建包含所有上下文部分的交接文件
+- 作为 WIP 的 Git 提交
+- 恢复说明
 </objective>
 
 <execution_context>

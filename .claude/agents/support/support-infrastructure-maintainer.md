@@ -409,7 +409,8 @@ verify_backup() {
     log "正在验证备份完整性: $backup_file"
 
     if ! gpg --quiet --batch --passphrase-file "$ENCRYPTION_KEY" \
-             --decrypt "$backup_file" > /dev/null 2>&1; then
+             --decrypt "$backup_file" > /dev
+ull 2>&1; then
         handle_error "备份完整性验证失败: $backup_file"
     fi
 

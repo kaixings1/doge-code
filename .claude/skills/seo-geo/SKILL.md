@@ -1,5 +1,5 @@
 ---
-name: seo-geo
+name: AI 搜索/GEO 优化相关功能和最佳实践：优化内容以适应 AI Ov
 description: "Seo Geo — AI 搜索/GEO 优化相关功能和最佳实践：优化内容以适应 AI Overviews、ChatGPT 搜索、Perplexity 等 AI 驱动搜索体验。"
 user-invocable: true
 参数-hint: "[url]"

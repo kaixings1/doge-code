@@ -1,5 +1,5 @@
 ---
-name: liquid-glass-design
+name: iOS 26 灵动玻璃（Liquid Glass）设计系统
 description: iOS 26 灵动玻璃（Liquid Glass）设计系统 — 适用于 SwiftUI、UIKit 和 WidgetKit 的具有模糊、反射和交互式变形效果的动态玻璃材质。
 ---
 

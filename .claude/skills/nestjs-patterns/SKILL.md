@@ -1,5 +1,5 @@
 ---
-name: nestjs-patterns
+name: NestJS 开发模式
 description: "NestJS 开发模式 — 模块化 TypeScript 后端的生产级 NestJS 模式。"
 metadata:
  origin: ECC

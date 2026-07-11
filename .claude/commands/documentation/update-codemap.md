@@ -1,58 +1,58 @@
 更新项目代码地图以反映代码库的当前状态。
 
-## Steps
+## 步骤
 
-### 1. Scan Project Structure
-- Run `find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' -not -path '*/dist/*' -not -path '*/__pycache__/*'` to get the file tree.
-- Identify the top-level directories and their purposes.
-- Note the primary language(s) and framework(s) from config files (package.json, pyproject.toml, go.mod, Cargo.toml).
+### 1. 扫描项目结构
+- 运行 `find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' -not -path '*/dist/*' -not -path '*/__pycache__/*'` 以获取文件树。
+- 识别顶层目录及其用途。
+- 从配置文件（package.json、pyproject.toml、go.mod、Cargo.toml）中记录主要语言和框架。
 
-### 2. Identify Key Modules
-For each major directory:
-- **Purpose**: What this module is responsible for.
-- **Entry point**: The main file that exports or bootstraps the module.
-- **Key files**: The 3-5 most important files and what they contain.
-- **Dependencies**: Which other modules this one depends on.
+### 2. 识别关键模块
+对每个主要目录：
+- **用途**：此模块负责什么。
+- **入口点**：导出或引导模块的主文件。
+- **关键文件**：3-5 个最重要的文件及其内容。
+- **依赖**：此模块依赖的其他模块。
 
-### 3. Map Data Flow
-- Trace the request lifecycle: entry point -> routing -> business logic -> data access -> response.
-- Identify shared state: databases, caches, message queues, shared config.
-- Note async boundaries: background jobs, event handlers, webhooks.
+### 3. 映射数据流
+- 追踪请求生命周期：入口点 → 路由 → 业务逻辑 → 数据访问 → 响应。
+- 识别共享状态：数据库、缓存、消息队列、共享配置。
+- 注意异步边界：后台任务、事件处理程序、webhook。
 
-### 4. Document Key Patterns
-- Architecture pattern (MVC, layered, hexagonal, microservices).
-- State management approach.
-- Error handling strategy.
-- Testing strategy and test location conventions.
+### 4. 记录关键模式
+- 架构模式（MVC、分层、六边形、微服务）。
+- 状态管理方法。
+- 错误处理策略。
+- 测试策略和测试位置约定。
 
-### 5. Output Format
+### 5. 输出格式
 ```markdown
-# Project Codemap
+# 项目代码地图
 
-## Structure
+## 结构
 src/
-  api/        - REST API handlers and middleware
-  services/   - Business logic layer
-  models/     - Database models and schemas
-  utils/      - Shared utilities
+  api/        - REST API 处理程序和中间件
+  services/   - 业务逻辑层
+  models/     - 数据库模型和 schema
+  utils/      - 共享工具函数
 
-## Key Files
-- src/api/server.ts    - Express app setup, middleware chain
-- src/services/auth.ts - Authentication and JWT handling
-- src/models/user.ts   - User model with validation
+## 关键文件
+- src/api/server.ts    - Express 应用设置、中间件链
+- src/services/auth.ts - 认证和 JWT 处理
+- src/models/user.ts   - 带有验证的用户模型
 
-## Data Flow
-Request -> Middleware (auth, validation) -> Handler -> Service -> Repository -> Database
+## 数据流
+请求 → 中间件（认证、验证）→ 处理程序 → 服务 → 仓库 → 数据库
 
-## Patterns
-- Dependency injection via constructor parameters
-- Repository pattern for data access
-- Result type for error handling (no thrown exceptions in services)
+## 模式
+- 通过构造函数参数进行依赖注入
+- 用于数据访问的仓库模式
+- 用于错误处理的 Result 类型（服务中不抛出异常）
 ```
 
-## Rules
+## 规则
 
-- Keep the codemap concise. It should fit in one screen for small projects, two for large ones.
-- Focus on orientation, not exhaustive listing. A new developer should understand the project structure in 2 minutes.
-- Update the codemap in CLAUDE.md or a dedicated CODEMAP.md at the project root.
-- Include the build and test commands.
+- 保持代码地图简洁。小项目应适配一屏，大项目两屏。
+- 专注于定位，而非详尽列举。新开发人员应在 2 分钟内理解项目结构。
+- 在 CLAUDE.md 或项目根目录的专用 CODEMAP.md 中更新代码地图。
+- 包含构建和测试命令。

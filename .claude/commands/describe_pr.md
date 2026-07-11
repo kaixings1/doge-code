@@ -2,9 +2,9 @@
 description: 为设计评审生成符合仓库模板的完整 PR 描述
 ---
 
-# Generate PR Description
+# 生成 PR 描述
 
-You are tasked with generating a comprehensive pull request description following the repository's standard template.
+你的任务是按照仓库的标准模板生成全面的拉取请求描述。
 
 ## Steps to follow:
 

@@ -1,6 +1,6 @@
 ---
 name: 用户故事
-description: "Generate user stories with acceptance criteria and sprint planning. Usage: /user-story <generate|sprint> [options]"
+description: "生成包含验收标准和迭代计划的用户故事。用法: /user-story <generate|sprint> [options]"
 argument-hint: "<generate|sprint> [options]"
 ---
 

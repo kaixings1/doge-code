@@ -3,72 +3,72 @@ description: 完整数据清洗管道 — 检测问题、修复、验证结果
 argument-hint: "<describe your dataset or upload a file>"
 ---
 
-# /clean — Data Cleaning Pipeline
+# /clean — 数据清洗管道
 
-Detect, fix, and validate data quality issues in a single workflow. Chains cleaning skills into an end-to-end pipeline.
+在单个工作流中检测、修复和验证数据质量问题。将清洗技能串联成端到端管道。
 
-## Invocation
-
-```
-/clean This CSV has customer records with messy dates and missing emails
-/clean [upload file] Prepare this dataset for a churn prediction model
-/clean Fix duplicates and missing values in the attached sales data
-```
-
-## Workflow
-
-### Step 1: Load & Assess
-
-Load the dataset and run a comprehensive quality scan:
-- Shape, dtypes, memory usage
-- Missing values per column (count and percentage)
-- Duplicate rows (exact and near-duplicates)
-- Type inconsistencies and encoding issues
-- Basic descriptive statistics
-
-Present a summary table of all detected issues ranked by severity.
-
-### Step 2: Create Cleaning Plan
-
-For each detected issue, propose a fix:
-- Missing values → imputation strategy (apply **handle-missing-data** skill)
-- Duplicates → deduplication strategy
-- Type errors → conversion logic
-- Outliers → flag using **detect-outliers** skill (optional if user requests)
-- Text issues → apply **parse-dates-text** skill
-
-Present the plan and ask for confirmation before proceeding.
-
-### Step 3: Execute Fixes
-
-Apply **clean-dataset** skill to generate and execute cleaning code:
-- Apply fixes in dependency order (types before imputations)
-- Log every transformation
-- Generate reproducible Python code
-
-### Step 4: Validate & Report
-
-Apply **validate-data-quality** skill:
-- Before/after comparison
-- Data quality scorecard
-- Remaining issues (if any)
+## 调用
 
 ```
-## Cleaning Report: [Dataset Name]
+/clean 这个 CSV 包含日期混乱和缺少电子邮件地址的客户记录
+/clean [上传文件] 为此数据集准备流失预测模型
+/clean 修复所附销售数据中的重复值和缺失值
+```
 
-**Before**: [rows] rows × [cols] columns | [N] issues detected
-**After**: [rows] rows × [cols] columns | [N] issues remaining
+## 工作流
 
-| Issue Type | Count Before | Count After | Action Taken |
+### 步骤 1：加载与评估
+
+加载数据集并运行全面的质量扫描：
+- 形状、数据类型、内存使用
+- 每列缺失值（数量和百分比）
+- 重复行（精确和近似重复）
+- 类型不一致和编码问题
+- 基本描述性统计
+
+以严重程度排序的摘要表格展示所有检测到的问题。
+
+### 步骤 2：创建清洗计划
+
+对每个检测到的问题，提出修复方案：
+- 缺失值 → 插补策略（应用 **handle-missing-data** 技能）
+- 重复值 → 去重策略
+- 类型错误 → 转换逻辑
+- 异常值 → 使用 **detect-outliers** 技能标记（用户请求时可选）
+- 文本问题 → 应用 **parse-dates-text** 技能
+
+展示计划并在继续前请求确认。
+
+### 步骤 3：执行修复
+
+应用 **clean-dataset** 技能生成并执行清洗代码：
+- 按依赖顺序应用修复（类型先于插补）
+- 记录每次转换
+- 生成可重现的 Python 代码
+
+### 步骤 4：验证与报告
+
+应用 **validate-data-quality** 技能：
+- 前后对比
+- 数据质量评分卡
+- 剩余问题（如有）
+
+```
+## 清洗报告：[数据集名称]
+
+**清洗前**：[行数] 行 × [列数] 列 | [N] 个问题检测到
+**清洗后**：[行数] 行 × [列数] 列 | [N] 个问题剩余
+
+| 问题类型 | 清洗前数量 | 清洗后数量 | 采取的操作 |
 |------------|-------------|-------------|--------------|
-| Missing values | ... | ... | ... |
-| Duplicates | ... | ... | ... |
-| Type errors | ... | ... | ... |
+| 缺失值 | ... | ... | ... |
+| 重复值 | ... | ... | ... |
+| 类型错误 | ... | ... | ... |
 
-**Quality Score**: [X]% → [Y]%
+**质量评分**：[X]% → [Y]%
 ```
 
-Offer follow-up:
-- "Want to **explore the clean data** with /eda?"
-- "Ready to **engineer features** with /engineer-features?"
-- "Need to **save the cleaning script** for reuse on new batches?"
+提供后续选项：
+- "想要使用 /eda **探索清洗后的数据**吗？"
+- "准备好使用 /engineer-features **进行特征工程**了吗？"
+- "需要**保存清洗脚本**以便在新的批次上重用吗？"

@@ -1,35 +1,35 @@
 为请求的功能或函数启动测试驱动开发（TDD）循环。
 
-## Process
+## 流程
 
-### 1. Red Phase - Write a Failing Test
-- Ask what behavior to implement if not specified.
-- Identify the test framework in use (Jest, Vitest, pytest, Go testing).
-- Write a single focused test that describes the desired behavior.
-- Run the test to confirm it fails for the right reason.
-- The test should fail because the feature does not exist yet, not because of a syntax error.
+### 1. 红阶段 - 编写一个会失败的测试
+- 如果未指定，询问要实现什么行为。
+- 确定正在使用的测试框架（Jest、Vitest、pytest、Go testing）。
+- 编写一个描述期望行为的聚焦测试。
+- 运行测试以确认它因正确原因而失败。
+- 测试失败应因为功能尚不存在，而非语法错误。
 
-### 2. Green Phase - Make It Pass
-- Write the minimum code necessary to make the test pass.
-- Do not optimize or generalize yet. Just make it work.
-- Run the test to confirm it passes.
-- If it fails, fix the implementation, not the test.
+### 2. 绿阶段 - 使其通过
+- 编写使测试通过所需的最小代码。
+- 尚未优化或泛化。只需使其工作。
+- 运行测试以确认它通过。
+- 如果失败，修复实现，而非测试。
 
-### 3. Refactor Phase - Clean Up
-- Look for duplication, unclear naming, or unnecessary complexity.
-- Extract helper functions if logic is repeated.
-- Improve variable and function names for clarity.
-- Run the full test suite to verify nothing broke.
+### 3. 重构阶段 - 清理
+- 查找重复、命名不清晰或不必要的复杂性。
+- 如果逻辑重复，提取辅助函数。
+- 改进变量和函数名以提高清晰度。
+- 运行完整的测试套件以验证未破坏任何内容。
 
-### 4. Repeat
-- Ask what the next behavior to implement is.
-- Start another Red-Green-Refactor cycle.
+### 4. 重复
+- 询问下一个要实现的行为是什么。
+- 开始另一个红-绿-重构循环。
 
-## Rules
+## 规则
 
-- Each cycle targets exactly one behavior. Do not batch multiple behaviors.
-- Tests must be independent and not depend on execution order.
-- Use descriptive test names: `should <expected behavior> when <condition>`.
-- Mock external dependencies (HTTP, database, filesystem) at boundaries.
-- Keep each cycle under 5 minutes of implementation time.
-- If a cycle takes longer, the scope is too large. Break it down.
+- 每个循环恰好针对一个行为。不要批处理多个行为。
+- 测试必须独立，不依赖于执行顺序。
+- 使用描述性测试名称：`should <期望行为> when <条件>`。
+- 在边界处模拟外部依赖（HTTP、数据库、文件系统）。
+- 保持每个循环在 5 分钟实现时间内。
+- 如果一个循环耗时更长，则范围过大。请分解它。

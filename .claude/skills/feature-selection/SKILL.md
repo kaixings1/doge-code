@@ -1,5 +1,5 @@
 ---
-name: feature-selection
+name: 特征选择
 description: "特征选择 — 机器学习特征选择方法"
 risk: safe
 source: community

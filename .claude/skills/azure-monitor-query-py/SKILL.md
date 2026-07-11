@@ -234,7 +234,7 @@ AppExceptions
 | top 10 by count_
 ```
 
-## Client Types
+## 客户端类型
 
 | Client | Purpose |
 |--------|---------|

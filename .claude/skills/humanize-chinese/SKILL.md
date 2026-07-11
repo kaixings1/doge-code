@@ -1,5 +1,5 @@
 ---
-name: humanize-chinese
+name: 中文人性化
 description: "中文人性化 — 中文文本人性化处理"
 risk: safe
 source: community

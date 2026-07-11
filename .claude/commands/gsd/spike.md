@@ -17,7 +17,7 @@ allowed-tools:
 requires: []
 ---
 <objective>
-Spike an idea through experiential exploration — build focused experiments to feel the pieces
+通过体验式探索来探针一个想法——构建聚焦的实验来感受各个部分
 of a future app, validate feasibility, and produce verified knowledge for the real build.
 Spikes live in `.planning/spikes/` and integrate with GSD commit patterns, state tracking,
 and handoff workflows.

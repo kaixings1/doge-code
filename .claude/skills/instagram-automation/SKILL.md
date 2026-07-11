@@ -1,5 +1,5 @@
 ---
-name: instagram-automation
+name: Instagram 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Instagram 任务。"
 requires:
   mcp: [rube]

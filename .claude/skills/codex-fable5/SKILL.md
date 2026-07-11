@@ -1,9 +1,9 @@
 ---
-name: codex-fable5
-description: "Codex Fable5"
+name: Codex Fable5 寓言生成
+description: Codex Fable5 — 基于 AI 的寓言故事生成器，用于创意写作和叙事设计。
 risk: safe
 source: community
 ---
-# Codex Fable5
-## 功能
-## 限制
+# Codex Fable5 寓言生成
+
+Codex Fable5 — 基于 AI 的寓言故事生成器，用于创意写作和叙事设计。

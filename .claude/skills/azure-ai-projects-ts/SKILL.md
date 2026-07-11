@@ -1,5 +1,5 @@
 ---
-name: azure-ai-projects-ts
+name: 指导 TypeScript 开发者使用 Azure AI Projects 客户
 description: "指导 TypeScript 开发者使用 Azure AI Projects 客户端库管理 AI Foundry 中的项目和代理。"
 risk: unknown
 source: community
@@ -269,7 +269,7 @@ for await (const idx of client.indexes.list()) {
 await client.indexes.delete("my-index", "1");
 ```
 
-## Key Types
+## 关键类型
 
 ```typescript
 import {

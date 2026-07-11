@@ -2,7 +2,7 @@
 description: 推送前运行安全扫描关卡。
 ---
 
-1. Ensure dependencies are installed:
+1. 确保依赖项已安装：
    ```bash
    pip install safety==3.2.4
    brew install gitleaks  # or appropriate package manager

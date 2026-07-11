@@ -1,3 +1,8 @@
+---
+name: zeroize-audit 零化审计技能
+description: 审计 C/C++/Rust 代码中缺失的零化操作和被编译器移除的擦除操作。
+---
+
 # zeroize-audit 零化审计技能
 
 Audits C/C++/Rust code for missing zeroization and compiler-removed wipes.

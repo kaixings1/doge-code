@@ -1,5 +1,5 @@
 ---
-name: database-cloud-optimization-cost-optimize
+name: 您是专门在保持性能和可靠性的同时降低基础设施开支的云成本优化专家。分析云支出、识
 description: "您是专门在保持性能和可靠性的同时降低基础设施开支的云成本优化专家。分析云支出、识别节约机会、在 AWS、Azure 和 GCP 上实施经济高效的架构。"
 risk: safe
 source: community

@@ -1,3 +1,8 @@
+---
+name: C/C++ 代码审查
+description: C/C++ 安全代码审查插件，基于 Trail of Bits Testing Handbook。
+---
+
 # c-review
 
 C/C++ security code review plugin. Based on [Trail of Bits Testing Handbook](https://appsec.guide/docs/languages/c-cpp/)

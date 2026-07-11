@@ -1,5 +1,5 @@
 ---
-name: continuous-learning
+name: 持续学习知识库
 description: 从编码会话中自动提取模式、跟踪修正，并使用置信度评分构建可复用的知识库。
 ---
 

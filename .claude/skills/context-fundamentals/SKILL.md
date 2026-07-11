@@ -1,5 +1,5 @@
 ---
-name: context-fundamentals
+name: 上下文是语言模型在推理时可用的完整状态。它包括模型生成响应时能关注的一切：系统指
 description: "上下文是语言模型在推理时可用的完整状态。它包括模型生成响应时能关注的一切：系统指令、工具定义、检索到的文档、消息历史和执行输出。"
 risk: unknown
 source: community
@@ -17,11 +17,11 @@ Activate this skill when:
 - Onboarding new team members to context engineering concepts
 - Reviewing context-related design decisions
 
-## Core Concepts
+## 核心概念
 
 Context comprises several distinct components, each with different characteristics and constraints. The attention mechanism creates a finite budget that constrains effective context usage. Progressive disclosure manages this constraint by loading information only as needed. The engineering discipline is curating the smallest high-signal 令牌 set that achieves desired outcomes.
 
-## Detailed Topics
+## 详细主题
 
 ### The Anatomy of Context
 

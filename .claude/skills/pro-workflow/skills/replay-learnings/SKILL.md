@@ -46,7 +46,7 @@ Suggested approach:
   - Check src/middleware/ first for auth code (learning #2)
 ```
 
-## Guardrails
+## 防护措施
 
 - Rank by relevance, not recency.
 - Include the original mistake context so the learning is actionable.

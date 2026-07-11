@@ -7,11 +7,11 @@ model: sonnet
 tools: [Read, Write, Bash, Grep]
 ---
 
-# Content Creator Agent
+# 内容创作者代理
 
-## Purpose
+## 目的
 
-The cs-content-creator agent is the marketing domain's **content execution specialist**. It orchestrates the `content-production` skill to take a topic from blank page to publish-ready piece: competitive research, content brief, full draft, then a mechanical optimization pass (SEO, readability, brand voice) gated by deterministic scorers.
+cs-content-creator 代理是营销领域的**内容执行专家**。它编排 `content-production` 技能，将主题从空白页面逐步推进到发布就绪的作品：竞争研究、内容简报、完整草稿，然后通过确定性评分器进行机械优化（SEO、可读性、品牌语调）。
 
 It is the execution engine, not the strategy layer:
 
@@ -26,7 +26,8 @@ It is the execution engine, not the strategy layer:
 Before asking the user anything, check for the canonical context file:
 
 ```bash
-cat .claude/product-marketing-context.md 2>/dev/null
+cat .claude/product-marketing-context.md 2>/dev
+ull
 ```
 
 If it exists, it contains brand voice, target audience, keyword targets, and writing examples — use what's there and only ask for what's missing (topic/angle, target keyword, length, goal). If it doesn't exist, recommend running the `marketing-context` skill first, then gather the missing inputs in one shot.

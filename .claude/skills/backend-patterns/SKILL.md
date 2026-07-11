@@ -1,13 +1,13 @@
 ---
-name: backend-patterns
+name: 后端开发模式和最佳实践
 description: "后端开发模式和最佳实践 — 涵盖分层架构、依赖注入、仓储模式、CQRS 等后端设计模式。"
 ---
 
-# Backend Development Patterns
+# 后端开发模式
 
-Backend architecture patterns and best practices for scalable server-side applications.
+面向可扩展服务器端应用的后端架构模式和最佳实践。
 
-## When to Activate
+## 激活时机
 
 - Designing REST or GraphQL API endpoints
 - Implementing repository, service, or controller layers

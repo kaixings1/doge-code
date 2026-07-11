@@ -1,5 +1,5 @@
 ---
-name: market-sizing-analysis
+name: 计算总可用市场 (TAM)、可服务可用市场 (SAM) 和可服务可获得市场 (SOM)
 description: "计算总可用市场 (TAM)、可服务可用市场 (SAM) 和可服务可获得市场 (SOM) 的全面市场估算方法。"
 risk: safe
 source: community

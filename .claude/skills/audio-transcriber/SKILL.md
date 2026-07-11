@@ -1,5 +1,5 @@
 ---
-name: audio-transcriber
+name: 音频转录
 description: "音频转录"
 risk: safe
 source: community

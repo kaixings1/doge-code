@@ -1,5 +1,5 @@
 ---
-name: blog-writing-guide
+name: 博客写作指南
 description: "博客写作指南——SEO、读者参与、内容结构和编辑标准。"
 risk: unknown
 source: community

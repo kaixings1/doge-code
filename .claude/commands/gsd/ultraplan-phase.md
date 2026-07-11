@@ -11,13 +11,13 @@ requires: [import, phase, plan-phase]
 ---
 
 <objective>
-Offload GSD's plan phase to Claude Code's ultraplan cloud infrastructure.
+将 GSD 的规划阶段卸载到 Claude Code 的 ultraplan 云端基础设施。
 
-Ultraplan drafts the plan in a remote cloud session while your terminal stays free.
-Review and comment on the plan in your browser, then import it back via /gsd:import --from.
+Ultraplan 在远程云会话中起草计划，你的终端保持空闲。
+在浏览器中审查和评论计划，然后通过 /gsd:import --from 将其导入回来。
 
-⚠ BETA: ultraplan is in research preview. Use /gsd:plan-phase for stable local planning.
-Requirements: Claude Code v2.1.91+, claude.ai account, GitHub repository.
+⚠ BETA：ultraplan 处于研究预览阶段。对于稳定的本地规划，使用 /gsd:plan-phase。
+要求：Claude Code v2.1.91+、claude.ai 账户、GitHub 仓库。
 </objective>
 
 <execution_context>

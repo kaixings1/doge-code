@@ -1,5 +1,5 @@
 ---
-name: akf-trust-metadata
+name: AKF 信任元数据
 description: "AI 原生文件格式。AI 的 EXIF — 为每个文件打上信任评分、来源溯源和合规性元数据。嵌入 20+ 种格式（DOCX、PDF、图片、代码）。符合 EU AI Act、SOX、HIPAA 审计要求。"
 risk: safe
 source: community
@@ -21,7 +21,7 @@ Every photo has EXIF. Every song has ID3. AKF is the native metadata format for 
 ## 使用场景
 当您需要对 AI 生成或 AI 修改的文件进行来源和信任元数据的标记、检查或审计，用于合规、审查或交接工作流时使用此技能。
 
-## After creating or modifying files
+## 创建或修改文件后
 
 ```bash
 akf stamp <file> --agent <agent-name> --evidence "<what you did>"
@@ -33,14 +33,14 @@ Evidence examples:
 - "tests pass"
 - "docs reviewed"
 
-## Before modifying existing files
+## 修改现有文件前
 
 ```bash
 akf read <file>          # Check existing trust metadata
 akf inspect <file>       # See detailed trust scores
 ```
 
-## Compliance auditing
+## 合规审计
 
 ```bash
 akf audit <file> --regulation eu_ai_act    # EU AI Act Article 50
@@ -49,19 +49,19 @@ akf audit <file> --regulation sox           # SOX
 akf audit <file> --regulation nist_ai       # NIST AI RMF
 ```
 
-## Classification
+## 分类
 
 - `--label confidential` for finance/secret/internal paths
 - `--label public` for README, docs, examples
 - Default: `internal`
 
-## Install
+## 安装
 
 ```bash
 pip install akf
 ```
 
-## Links
+## 链接
 
 - https://akf.dev
 - https://github.com/HMAKT99/AKF

@@ -1,5 +1,5 @@
 ---
-name: apiverve-automation
+name: APIVerve 自动化
 description: "APIVerve 自动化"
 risk: safe
 source: community

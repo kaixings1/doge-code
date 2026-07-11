@@ -10,8 +10,7 @@ requires: [phase, review]
 ---
 
 <objective>
-Review all 999.x backlog items and optionally promote them into the active
-milestone sequence or remove stale entries.
+审查所有 999.x 积压工作项，并可选地将其提升到活跃里程碑序列中或移除过时条目。
 </objective>
 
 <process>

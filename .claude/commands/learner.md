@@ -1,13 +1,10 @@
 ---
-description: ""
+description: "OMC learner 兼容别名——兼容别名，转发到skillify"
 ---
 
 # OMC learner
 
-`/oh-my-claudecode:learner` is a compatibility alias for `/oh-my-claudecode:skillify`.
+`/oh-my-claudecode:learner` 是 `/oh-my-claudecode:skillify` 的兼容别名。
 
-Read `skills/skillify/SKILL.md`, follow its full instructions, and pass through the user's arguments:
+读取 `skills/skillify/SKILL.md`，遵循其完整说明，并传递用户的参数：
 
-```text
-$ARGUMENTS
-```

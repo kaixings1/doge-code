@@ -1,6 +1,6 @@
 ---
-name: azure-containerregistry-py
-description: "Azure Containerregistry Py — Azure Containerregistry Py 相关功能和最佳实践"
+name: Azure Container Registry (Python)
+description: "Azure Container Registry Python — Azure Container Registry Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -195,7 +195,7 @@ with open("layer.tar.gz", "wb") as f:
         f.write(chunk)
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.containerregistry.aio import ContainerRegistryClient
@@ -225,7 +225,7 @@ for manifest in client.list_manifest_properties("my-image"):
         client.delete_manifest("my-image", manifest.digest)
 ```
 
-## Client Operations
+## 客户端操作
 
 | 操作 | Description |
 |-----------|-------------|

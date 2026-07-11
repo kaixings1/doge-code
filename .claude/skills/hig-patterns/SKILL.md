@@ -1,5 +1,5 @@
 ---
-name: hig-patterns
+name: HIG 模式
 description: "HIG 模式 — Human Interface Guidelines 设计模式"
 risk: safe
 source: community

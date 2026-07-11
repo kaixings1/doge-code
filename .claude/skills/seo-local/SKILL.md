@@ -1,5 +1,5 @@
 ---
-name: seo-local
+name: 本地 SEO 分析相关功能和最佳实践：Google Business
 description: "Seo Local — 本地 SEO 分析相关功能和最佳实践：Google Business Profile 优化、NAP 一致性、引证健康度、评论信号、本地 架构 标记等。"
   consistency, citation health, review signals, local 架构 markup,
   location page quality, multi-location SEO, and industry-specific
@@ -18,7 +18,7 @@ metadata:
   category: seo
 ---
 
-# Local SEO Analysis (March 2026)
+# SEO 本地化
 
 ## Key Statistics
 

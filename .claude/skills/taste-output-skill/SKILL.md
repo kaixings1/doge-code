@@ -1,6 +1,6 @@
 ---
-name: full-output-enforcement
-description: "Taste Output Skill — Taste Output Skill 相关功能和最佳实践"
+name: 完整输出强制
+description: "完整输出强制 — 输出质量控制和强制执行相关功能和最佳实践"
 ---
 
 # Full-Output Enforcement

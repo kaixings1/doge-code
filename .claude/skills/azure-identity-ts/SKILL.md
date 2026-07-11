@@ -1,5 +1,5 @@
 ---
-name: azure-identity-ts
+name: 指导 TypeScript 开发者使用 Azure Identity 客户端库进
 description: "指导 TypeScript 开发者使用 Azure Identity 客户端库进行 Microsoft Entra ID 认证。"
 risk: unknown
 source: community
@@ -203,7 +203,7 @@ const credential = new AzurePowerShellCredential();
 // Uses: Connect-AzAccount
 ```
 
-## Sovereign Clouds
+## 主权云
 
 ```typescript
 import { ClientSecretCredential, AzureAuthorityHosts } from "@azure/identity";
@@ -238,7 +238,7 @@ const getAccessToken = getBearerTokenProvider(
 const 令牌 = await getAccessToken();
 ```
 
-## Key Types
+## 关键类型
 
 ```typescript
 import type { 

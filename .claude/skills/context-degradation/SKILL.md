@@ -1,5 +1,5 @@
 ---
-name: context-degradation
+name: 语言模型随上下文长度增加表现出可预测的退化模式。理解这些模式对于诊断故障和设计弹性系统至关重要。
 description: "语言模型随上下文长度增加表现出可预测的退化模式。理解这些模式对于诊断故障和设计弹性系统至关重要。"
 risk: unknown
 source: community
@@ -24,7 +24,7 @@ Activate this skill when:
 
 These patterns are predictable and can be mitigated through architectural patterns like compaction, masking, partitioning, and isolation.
 
-## Detailed Topics
+## 详细主题
 
 ### The Lost-in-Middle Phenomenon
 

@@ -1,3 +1,8 @@
+---
+name: 恒定时间分析器
+description: 检测编译后密码学代码中时序侧信道漏洞的可移植工具，分析多编译器/架构的汇编输出。
+---
+
 # 恒定时间分析器
 
 A portable tool for detecting timing side-channel vulnerabilities in compiled cryptographic code. Analyzes assembly output from multiple compilers and architectures to detect instructions that could leak secret data through execution timing.

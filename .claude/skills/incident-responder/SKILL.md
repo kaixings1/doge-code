@@ -1,5 +1,5 @@
 ---
-name: incident-responder
+name: 事件响应者
 description: "事件响应者 — 安全事件响应和处理"
 risk: unknown
 source: community

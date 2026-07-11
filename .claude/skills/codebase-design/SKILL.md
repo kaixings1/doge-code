@@ -1,5 +1,5 @@
 ---
-name: codebase-design
+name: Codebase Design 相关功能和最佳实践
 description: "Codebase Design — Codebase Design 相关功能和最佳实践"
 category: "architecture"
 risk: "safe"
@@ -81,7 +81,7 @@ When designing an interface, ask:
 - Can I simplify the parameters?
 - Can I hide more complexity inside?
 
-## Principles
+## 原则
 
 - **Depth is a property of the interface, not the implementation.** A deep module can be internally composed of small, mockable, swappable parts — they just aren't part of the interface. A module can have **internal seams** (private to its implementation, used by its own tests) as well as the **external seam** at its interface.
 - **The deletion test.** Imagine deleting the module. If complexity vanishes, it was a pass-through. If complexity reappears across N callers, it was earning its keep.

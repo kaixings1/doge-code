@@ -1,5 +1,5 @@
 ---
-name: New Relic Automation
+name: —管理告警策略、通知渠道、告警条件以及监控应用和浏览器应用。
 description: "通过 Composio MCP 集成自动执行 New Relic 可观察性工作流——管理告警策略、通知渠道、告警条件以及监控应用和浏览器应用。"
 requires:
  mcp:

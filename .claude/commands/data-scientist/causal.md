@@ -3,26 +3,26 @@ description: 因果推断分析 — 从观测数据估计处理效应
 argument-hint: "<describe the treatment, outcome, and available data>"
 ---
 
-# /causal — Causal Inference
+# /causal — 因果推断
 
-Estimate causal effects when A/B tests aren't possible.
+在无法进行 A/B 测试时估计因果效应。
 
-## Invocation
+## 调用
 
 ```
-/causal Did our pricing change cause revenue to increase or was it seasonal?
-/causal Estimate the causal impact of the loyalty program on retention
-/causal [upload file] Use propensity score matching to estimate treatment effect
+/causal 我们的价格变化导致收入增加还是季节性因素？
+/causal 估计忠诚度计划对留存率的因果影响
+/causal [上传文件] 使用倾向评分匹配估计处理效应
 ```
 
-## Workflow
+## 工作流
 
-Apply **causal-inference** skill:
-1. Frame the causal question and draw a DAG
-2. Choose the appropriate method (DiD, PSM, RD, IV)
-3. Check identifying assumptions
-4. Estimate treatment effect with sensitivity analysis
+应用 **causal-inference** 技能：
+1. 构建因果问题并绘制有向无环图
+2. 选择适当的方法（双重差分、倾向评分匹配、断点回归、工具变量）
+3. 检查识别假设
+4. 使用敏感性分析估计处理效应
 
-Offer follow-up:
-- "Want to **run a formal A/B test** instead? Use /calculate-sample for sizing."
-- "Need to **estimate with different methods** for robustness?"
+提供后续选项：
+- "想要**运行正式的 A/B 测试**吗？使用 /calculate-sample 进行规模估算。"
+- "需要使用**不同方法估算**以增强稳健性吗？"

@@ -1,5 +1,5 @@
 ---
-name: Zoho Books Automation
+name: 作流，包括发票创建、账单管理
 description: "通过自然语言命令自动执行 Zoho Books 会计工作流，包括发票创建、账单管理、联系人查找、付款跟踪和多组织支持"
 requires:
   mcp:

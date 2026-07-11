@@ -1,5 +1,5 @@
 ---
-name: fastapi-pro
+name: FastAPI 专业版
 description: "FastAPI 专业版 — FastAPI 高级开发"
 risk: unknown
 source: community

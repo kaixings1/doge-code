@@ -1,5 +1,5 @@
 ---
-name: gsap-utils
+name: GSAP 工具函数：clamp、mapRange、normalize、
 description: "GSAP Utils — GSAP 工具函数：clamp、mapRange、normalize、interpolate、random、snap、toArray、wrap、pipe。当用户需要 GSAP 数学工具或辅助函数时使用。"
 triggers:
   - "gsap utils"

@@ -13,11 +13,11 @@ requires: [config, new-project, plan-phase]
 ---
 
 <objective>
-Analyze existing codebase using parallel gsd-codebase-mapper agents to produce structured codebase documents.
+使用并行的 gsd-codebase-mapper 智能体分析现有代码库，生成结构化的代码库文档。
 
-Each mapper agent explores a focus area and **writes documents directly** to `.planning/codebase/`. The orchestrator only receives confirmations, keeping context usage minimal.
+每个映射器智能体探索一个关注区域并**直接将文档写入** `.planning/codebase/`。编排器仅接收确认，保持上下文使用最小化。
 
-Output: .planning/codebase/ folder with 7 structured documents about the codebase state.
+输出：包含 7 个关于代码库状态的结构化文档的 .planning/codebase/ 文件夹。
 </objective>
 
 <execution_context>
@@ -25,9 +25,9 @@ Output: .planning/codebase/ folder with 7 structured documents about the codebas
 </execution_context>
 
 <flags>
-- **--fast**: Lightweight scan mode — spawns one mapper agent instead of four. Accepts an optional `--focus` value: `tech`, `arch`, `quality`, `concerns`, or `tech+arch` (default). Faster and lower-context than the full map.
-- **--query**: Codebase intelligence query mode. Sub-commands: `query <term>`, `status`, `diff`, `refresh`. Requires intel to be enabled in config (`intel.enabled: true`). Runs inline for query/status/diff; spawns an agent for refresh.
-- **(no flag)**: Full parallel map — spawns 4 mapper agents to produce all 7 codebase documents.
+- **--fast**：轻量级扫描模式——生成一个映射器智能体而非四个。接受可选的 `--focus` 值：`tech`、`arch`、`quality`、`concerns` 或 `tech+arch`（默认）。比完整映射更快且上下文消耗更低。
+- **--query**：代码库智能查询模式。子命令：`query <term>`、`status`、`diff`、`refresh`。需要在配置中启用 intel（`intel.enabled: true`）。query/status/diff 内联运行；refresh 生成智能体。
+- **（无标志）**：完整并行映射——生成 4 个映射器智能体以生成全部 7 个代码库文档。
 </flags>
 
 <context>

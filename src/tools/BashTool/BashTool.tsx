@@ -31,6 +31,7 @@ import { maybeRecordPluginHint } from '../../utils/plugins/hintRecommendation.js
 import { exec } from '../../utils/Shell.js';
 import type { ExecResult } from '../../utils/ShellCommand.js';
 import { SandboxManager } from '../../utils/sandbox/sandbox-adapter.js';
+import { logForDebugging } from '../../utils/debug.js';
 import { semanticBoolean } from '../../utils/semanticBoolean.js';
 import { semanticNumber } from '../../utils/semanticNumber.js';
 import { EndTruncatingAccumulator } from '../../utils/stringUtils.js';
@@ -1444,7 +1445,12 @@ async function* runShellCommand({
 
   // 确定是否应启用自动后台
   const shouldAutoBackground = !isBackgroundTasksDisabled && isAutobackgroundingAllowed(command);
-  const shellCommand = await exec(command, abortController.signal, 'bash', {
+  // 根据环境变量判断 shell 类型：优先 CLAUDE_CODE_SHELL，其次 SHELL
+  const shellEnv = (process.env.CLAUDE_CODE_SHELL || process.env.SHELL || '').toLowerCase()
+  const resolvedShellType = shellEnv.includes('powershell') || shellEnv.includes('pwsh')
+    ? 'powershell' as const
+    : 'bash' as const
+  const shellCommand = await exec(command, abortController.signal, resolvedShellType, {
     timeout: timeoutMs,
     onProgress(lastLines, allLines, totalLines, totalBytes, isIncomplete) {
       lastProgressOutput = lastLines;

@@ -1,5 +1,5 @@
 ---
-name: anndata
+name: AnnData 分析
 description: "AnnData"
 risk: safe
 source: community

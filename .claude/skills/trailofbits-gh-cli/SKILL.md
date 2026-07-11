@@ -1,3 +1,8 @@
+---
+name: gh CLI 重定向
+description: 拦截 GitHub URL 获取并重定向 Claude 使用已认证的 gh CLI 的插件。
+---
+
 # gh-cli
 
 A Claude Code plugin that intercepts GitHub URL fetches and redirects Claude to use the authenticated `gh` CLI instead.

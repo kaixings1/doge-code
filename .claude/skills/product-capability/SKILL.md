@@ -1,5 +1,5 @@
 ---
-name: product-capability
+name: 产品能力文档模板
 description: 产品能力文档模板
 ---
 

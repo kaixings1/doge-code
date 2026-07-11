@@ -1,5 +1,5 @@
 ---
-name: it-manager-pro
+name: IT 经理专业版
 description: "IT 经理专业版 — IT 管理高级功能和最佳实践"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: deep-research
+name: 运行自主研究任务，规划、搜索、阅读和综合信息为全面报告。
 description: "运行自主研究任务，规划、搜索、阅读和综合信息为全面报告。"
 risk: safe
 source: "https://github.com/sanjay3290/ai-skills/tree/main/skills/deep-research"

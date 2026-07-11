@@ -1,5 +1,5 @@
 ---
-name: minimalist-ui
+name: 适用于creating clean editorial interfaces w
 description: "适用于creating clean editorial interfaces with warm monochrome palettes, crisp borders, restrained motion, and flat bento layouts.的情况。"
 category: frontend
 risk: safe

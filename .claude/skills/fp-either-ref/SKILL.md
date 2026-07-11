@@ -1,5 +1,5 @@
 ---
-name: fp-either-ref
+name: fp-ts Either 快速参考：类型安全的同步错误处理模式，包括创建、转换、提取和验证链。
 description: "fp-ts Either 快速参考：类型安全的同步错误处理模式，包括创建、转换、提取和验证链。"
 risk: unknown
 source: community

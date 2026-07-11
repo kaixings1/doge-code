@@ -1,5 +1,5 @@
 ---
-name: stannp-automation
+name: Stannp 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Stannp 任务。使用前始终先搜索工具以获取当前 schema。""
 requires:
   mcp: [rube]
@@ -13,7 +13,7 @@ Automate Stannp operations through Composio's Stannp toolkit via Rube MCP.
 
 ## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
+- Rube MCP 必须已连接 (RUBE_SEARCH_TOOLS available)
 - Active Stannp connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `stannp`
 - Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 

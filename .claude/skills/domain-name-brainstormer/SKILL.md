@@ -1,9 +1,9 @@
 ---
-name: domain-name-brainstormer
-description: "Domain Name Brainstormer — Domain Name Brainstormer 相关功能和最佳实践"
+name: 域名头脑风暴
+description: "域名头脑风暴 — 域名头脑风暴相关功能和最佳实践"
 ---
 
-# Domain Name Brainstormer
+# 域名头脑风暴 (Domain Name Brainstormer)
 
 此技能帮助 you find the perfect domain name for your project by generating creative options and checking what's actually available to register.
 
@@ -16,7 +16,7 @@ description: "Domain Name Brainstormer — Domain Name Brainstormer 相关功能
 - Registering a domain for a side project
 - Finding available alternatives when your first choice is taken
 
-## What This Skill Does
+## 此技能的功能
 
 1. **Understands Your Project**: Analyzes what you're building and who it's for
 2. **Generates Creative Names**: Creates relevant, memorable domain options
@@ -25,7 +25,7 @@ description: "Domain Name Brainstormer — Domain Name Brainstormer 相关功能
 5. **Provides Alternatives**: Offers variations if top choices are taken
 6. **Branding Insights**: Explains why certain names work well
 
-## How to Use
+## 使用方法
 
 ### Basic Brainstorming
 

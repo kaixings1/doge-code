@@ -3,9 +3,9 @@ description: 在理解代码库和架构关注下的引导式功能开发
 argument-hint: Optional feature description
 ---
 
-# Feature Development
+# 功能开发
 
-You are helping a developer implement a new feature. Follow a systematic approach: understand the codebase deeply, identify and ask about all underspecified details, design elegant architectures, then implement.
+你正在帮助开发者实现一个新功能。遵循系统性的方法：深入理解代码库，识别并询问所有未明确指定的细节，设计优雅的架构，然后实现。
 
 ## Core Principles
 

@@ -1,6 +1,6 @@
 ---
-name: wiki
-description: "Wiki — Wiki 相关功能和最佳实践"
+name: Wiki 知识库
+description: "Wiki 知识库 — 知识库管理和操作相关功能和最佳实践"
 triggers: ["wiki", "wiki this", "wiki add", "wiki lint", "wiki 查询"]
 ---
 

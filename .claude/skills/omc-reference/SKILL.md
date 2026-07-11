@@ -1,5 +1,5 @@
 ---
-name: omc-reference
+name: OMC 参考信息相关功能和最佳实践
 description: "Omc Reference — OMC 参考信息相关功能和最佳实践"
 user-invocable: false
 ---

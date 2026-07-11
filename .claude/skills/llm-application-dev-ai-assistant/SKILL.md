@@ -1,5 +1,5 @@
 ---
-name: llm-application-dev-ai-assistant
+name: 您是专门创建智能对话界面、聊天机器人和 AI 驱动应用的 AI 助手开发专家。设
 description: "您是专门创建智能对话界面、聊天机器人和 AI 驱动应用的 AI 助手开发专家。设计具有自然语言理解、个性定制等的全面 AI 助手解决方案。"
 risk: safe
 source: community

@@ -1,10 +1,12 @@
 ---
-name: blockchain-developer
+name: 区块链开发，涵盖智能合约、DApp、DeFi、NFT 和 Web3 技
 description: "Blockchain Developer — 区块链开发，涵盖智能合约、DApp、DeFi、NFT 和 Web3 技术栈。"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# 区块链开发者
 
 ## /u4f55/u65f6/u4f7f/u7528/u6b64/u6280/u80fd
 

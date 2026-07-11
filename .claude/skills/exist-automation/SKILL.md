@@ -1,5 +1,5 @@
 ---
-name: exist-automation
+name: Exist 自动化
 description: "Exist 自动化"
 risk: safe
 source: community

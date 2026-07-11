@@ -124,7 +124,8 @@ DevOps 自动化师部署基础设施变更。
 
 | 文档 | 用途 | 路径 |
 |------|------|------|
-| **主策略文档** | NEXUS 完整纲领 | `strategy/nexus-strategy.md` |
+| **主策略文档** | NEXUS 完整纲领 | `strategy
+exus-strategy.md` |
 | **第 0 阶段手册** | 发现与情报收集 | `strategy/playbooks/phase-0-discovery.md` |
 | **第 1 阶段手册** | 策略与架构 | `strategy/playbooks/phase-1-strategy.md` |
 | **第 2 阶段手册** | 基础与脚手架 | `strategy/playbooks/phase-2-foundation.md` |
@@ -187,4 +188,5 @@ Sprint 排序师      │ 工作室制片人       │ 证据收集者
 
 **选一个模式，跟着手册走，相信流水线。**
 
-`strategy/nexus-strategy.md` — 完整纲领文档
+`strategy
+exus-strategy.md` — 完整纲领文档

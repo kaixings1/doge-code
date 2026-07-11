@@ -1,5 +1,5 @@
 ---
-name: rust-systems
+name: Rust系统编程
 description: Rust系统编程 — 包括所有权、trait、生命周期、异步、FFI和宏的Rust编程模式。
 ---
 

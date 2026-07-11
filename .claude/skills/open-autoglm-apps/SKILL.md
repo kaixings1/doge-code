@@ -1,5 +1,5 @@
 ---
-name: open-autoglm-apps
+name: Open-AutoGLM Android 应用配置与操作映射
 description: Open-AutoGLM Android 应用配置与操作映射
 ---
 

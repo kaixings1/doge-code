@@ -1,5 +1,5 @@
 ---
-name: database-migrations-sql-migrations
+name: 使用零停机策略为 PostgreSQL、MySQL 和 SQL Server 进
 description: "使用零停机策略为 PostgreSQL、MySQL 和 SQL Server 进行 SQL 数据库迁移。关注数据完整性和回滚计划。"
 risk: unknown
 source: community

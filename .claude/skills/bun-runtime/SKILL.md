@@ -1,11 +1,11 @@
 ---
-name: bun-runtime
+name: Bun运行时技能
 description: Bun运行时技能
 ---
 
-# Bun Runtime
+# Bun 运行时
 
-Bun is a fast all-in-one JavaScript runtime and toolkit: runtime, package manager, bundler, and test runner.
+Bun 是一个快速的全能 JavaScript 运行时和工具包：运行时、包管理器、打包器和测试运行器。
 
 ## 使用场景
 

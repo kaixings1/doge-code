@@ -1,5 +1,5 @@
 ---
-name: excel-automation
+name: Excel 自动化
 description: "Excel 自动化"
 risk: safe
 source: community

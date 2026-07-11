@@ -1,5 +1,5 @@
 ---
-name: fastapi-patterns
+name: FastAPI 模式
 description: "FastAPI 模式 — FastAPI 开发模式和最佳实践"
 risk: unknown
 source: community

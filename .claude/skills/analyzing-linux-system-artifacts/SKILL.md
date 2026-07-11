@@ -1,5 +1,5 @@
 ---
-name: analyzing-linux-system-artifacts
+name: Linux 系统痕迹分析
 description: "分析 Linux 系统痕迹"
 risk: safe
 source: community

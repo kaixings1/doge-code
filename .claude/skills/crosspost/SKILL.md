@@ -1,5 +1,5 @@
 ---
-name: crosspost
+name: 跨平台内容发布技能
 description: 跨平台内容发布技能
 ---
 

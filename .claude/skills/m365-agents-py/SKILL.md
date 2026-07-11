@@ -1,5 +1,5 @@
 ---
-name: m365-agents-py
+name: M365 Agents Py 相关功能和最佳实践
 description: "M365 Agents Py — M365 Agents Py 相关功能和最佳实践"
 risk: unknown
 source: community

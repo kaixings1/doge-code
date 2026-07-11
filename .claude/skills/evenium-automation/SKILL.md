@@ -1,5 +1,5 @@
 ---
-name: evenium-automation
+name: Evenium 自动化
 description: "Evenium 自动化"
 risk: safe
 source: community

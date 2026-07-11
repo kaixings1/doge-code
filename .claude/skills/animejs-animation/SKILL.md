@@ -1,5 +1,5 @@
 ---
-name: animejs-animation
+name: AnimeJS 动画
 description: "AnimeJS 动画"
 risk: safe
 source: community

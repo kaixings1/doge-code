@@ -1,5 +1,5 @@
 ---
-name: analyzing-windows-shellbag-artifacts
+name: Windows ShellBag 痕迹分析
 description: "分析 Windows ShellBag 痕迹"
 risk: safe
 source: community

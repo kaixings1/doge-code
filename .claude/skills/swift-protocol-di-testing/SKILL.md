@@ -1,5 +1,5 @@
 ---
-name: swift-protocol-di-testing
+name: 基于协议的依赖注入（Protocol-based Dependency Inje
 description: 基于协议的依赖注入（Protocol-based Dependency Injection），通过精简的协议和 Swift 测试框架（Swift Testing）来模拟文件系统、网络和外部 API，编写可测试的 Swift 代码。
 origin: ECC
 ---

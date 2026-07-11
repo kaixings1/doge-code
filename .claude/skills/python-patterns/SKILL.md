@@ -1,5 +1,5 @@
 ---
-name: python-patterns
+name: 构建健壮、高效且易于维护的 Python 应用程序的 Python 惯用法（Py
 description: 构建健壮、高效且易于维护的 Python 应用程序的 Python 惯用法（Pythonic idioms）、PEP 8 标准、类型提示（Type hints）以及最佳实践。
 origin: ECC
 ---

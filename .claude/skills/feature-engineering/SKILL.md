@@ -1,5 +1,5 @@
 ---
-name: feature-engineering
+name: 特征工程
 description: "特征工程 — 机器学习特征工程"
 risk: safe
 source: community

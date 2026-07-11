@@ -1,5 +1,5 @@
 ---
-name: ce-compound
+name: 复合
 description: "复合"
 risk: safe
 source: community

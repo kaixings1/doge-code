@@ -1,5 +1,5 @@
 ---
-name: cron-doctor
+name: Cron 表达式诊断器
 description: "在部署前诊断和验证 cron 表达式。捕获五个静默陷阱：永不触发的无效日期、触发过于频繁的 OR 语义、午夜峰值、不均匀步进漂移和闰年 2 月 29 日。"
 category: devops
 risk: safe
@@ -14,7 +14,7 @@ license: "MIT"
 license_source: "https://github.com/takeaseatventure/devops-skills/blob/main/LICENSE"
 ---
 
-# cron-doctor
+# cron-doctor — Cron 表达式诊断工具
 
 ## 概述
 
@@ -28,7 +28,7 @@ This skill teaches an agent to catch those before they reach production. It come
 with a zero-dependency validation engine (`scripts/cron-engine.js`, no install
 needed) that parses, describes, deep-validates, and computes next fire times.
 
-## When to Use This Skill
+## 何时使用此技能
 
 - Use when a user writes, edits, reviews, or deploys a cron expression — in a
   crontab, a Kubernetes `CronJob`, a GitHub Actions `schedule`, an Airflow DAG,
@@ -237,7 +237,7 @@ node scripts/cli.js next "0 9 * * 1-5" 5
 - `kubernetes-部署` — when validating a `CronJob` manifest's `spec.schedule`
   field alongside the broader resource config.
 
-## Security & Safety Notes
+## 安全与安全注意事项
 
 This skill is read-only and `risk: safe`. The validation script performs no file
 writes, network calls, or mutations — it only parses and computes. It is safe to

@@ -1,5 +1,5 @@
 ---
-name: hig-components-content
+name: HIG 内容组件
 description: "HIG 内容组件 — Human Interface Guidelines 内容组件"
 risk: safe
 source: community

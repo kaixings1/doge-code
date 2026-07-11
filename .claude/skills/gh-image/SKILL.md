@@ -1,5 +1,5 @@
 ---
-name: gh-image
+name: GitHub 图像上传
 description: "将本地图像上传到 GitHub 并获取规范的 user-attachments 嵌入 URL；当被要求将截图附加到 PR、Issue 或评论，或想在 README 中嵌入前后对比图时使用。"
 category: developer-tools
 risk: safe

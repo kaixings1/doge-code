@@ -1,5 +1,5 @@
 ---
-name: azure-ai-contentunderstanding-py
+name: Azure AI 内容理解 (Python)
 description: "Azure AI 内容理解 (Python)"
 risk: safe
 source: community

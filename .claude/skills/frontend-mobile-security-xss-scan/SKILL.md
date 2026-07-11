@@ -1,5 +1,5 @@
 ---
-name: frontend-mobile-security-xss-scan
+name: 专注于跨站脚本 (XSS) 漏洞检测和预防的前端安全专家。分析 React、Vu
 description: "专注于跨站脚本 (XSS) 漏洞检测和预防的前端安全专家。分析 React、Vue、Angular 和纯 JavaScript 代码以识别注入点。"
 risk: unknown
 source: community

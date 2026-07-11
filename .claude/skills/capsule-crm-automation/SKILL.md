@@ -1,5 +1,5 @@
 ---
-name: capsule-crm-automation
+name: Capsule CRM 自动化
 description: "Capsule CRM 自动化"
 risk: safe
 source: community

@@ -15,18 +15,18 @@ allowed-tools:
 requires: [discuss-phase, phase, review, update]
 ---
 <objective>
-Create executable phase prompts (PLAN.md files) for a roadmap phase with integrated research and verification.
+为路线图阶段创建带有集成研究和验证的可执行阶段提示（PLAN.md 文件）。
 
-**Default flow:** Research (if needed) → Plan → Verify → Done
+**默认流程：** 研究（如果需要）→ 规划 → 验证 → 完成
 
-**Research-only mode (`--research-phase <N>`):** Spawn `gsd-phase-researcher` for phase `N`, write `RESEARCH.md`, then exit before the planner runs. Useful for cross-phase research, doc review before committing to a planning approach, and correction-without-replanning loops where iterating on research alone is dramatically cheaper than re-spawning the planner. Replaces the deleted research-phase command (#3042).
+**仅研究模式（`--research-phase <N>`）：** 为阶段 `N` 生成 `gsd-phase-researcher`，写入 `RESEARCH.md`，然后在规划器运行前退出。适用于跨阶段研究、在承诺规划方法前的文档审查，以及仅迭代研究比重启规划器成本更低的无需重新规划的修正循环。替代已删除的 research-phase 命令（#3042）。
 
-**Research-only modifiers:**
-- **No flag** — when `RESEARCH.md` already exists, prompt the user to choose `update / view / skip`.
-- **`--research`** — force-refresh: re-spawn the researcher unconditionally, no prompt. Skips the existing-RESEARCH.md menu.
-- **`--view`** — view-only: print existing `RESEARCH.md` to stdout. Does not spawn the researcher. Cheapest mode for the correction-without-replanning loop. If no `RESEARCH.md` exists yet, errors with a hint to drop `--view`.
+**仅研究修饰符：**
+- **无标志**——当 `RESEARCH.md` 已存在时，提示用户选择 `update / view / skip`。
+- **`--research`**——强制刷新：无条件重新生成研究员，不提示。跳过现有的 RESEARCH.md 菜单。
+- **`--view`**——仅查看：将现有的 `RESEARCH.md` 打印到标准输出。不生成研究员。对于无需重新规划的修正循环来说是最便宜的模式。如果 `RESEARCH.md` 尚不存在，则报错并提示去掉 `--view`。
 
-**Orchestrator role:** Parse arguments, validate phase, research domain (unless skipped), spawn gsd-planner, verify with gsd-plan-checker, iterate until pass or max iterations, present results.
+**编排器角色：** 解析参数、验证阶段、研究领域（除非跳过）、生成 gsd-planner、使用 gsd-plan-checker 验证、迭代直到通过或达到最大迭代次数、展示结果。
 </objective>
 
 <execution_context>

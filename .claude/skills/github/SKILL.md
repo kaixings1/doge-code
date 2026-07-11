@@ -1,5 +1,5 @@
 ---
-name: github
+name: 使用 `gh` CLI 处理 Issues、Pull Requests、Acti
 description: "使用 `gh` CLI 处理 Issues、Pull Requests、Actions 运行和 GitHub API 查询。"
 risk: safe
 source: "Dimillian/Skills (MIT)"

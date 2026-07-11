@@ -1,5 +1,5 @@
 ---
-name: angular-migration
+name: Angular 迁移
 description: "Angular 迁移"
 risk: safe
 source: community

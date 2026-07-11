@@ -1,5 +1,5 @@
 ---
-name: competitive-ads-extractor
+name: 竞争广告提取
 description: "竞争广告提取"
 risk: safe
 source: community

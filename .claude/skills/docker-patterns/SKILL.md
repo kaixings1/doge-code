@@ -1,5 +1,5 @@
 ---
-name: docker-patterns
+name: Docker 与 Docker Compose 模式
 description: 用于本地开发、容器安全、网络、卷策略和多服务编排的 Docker 与 Docker Compose 模式。
 origin: ECC
 ---

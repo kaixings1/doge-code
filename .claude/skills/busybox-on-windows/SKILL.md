@@ -1,10 +1,12 @@
 ---
-name: busybox-on-windows
+name: 如何使用 Win32 版 BusyBox 在 Windows 上运行许多标准 UNIX 命令行工具。
 description: "如何使用 Win32 版 BusyBox 在 Windows 上运行许多标准 UNIX 命令行工具。"
 risk: safe
 source: community
 date_added: "2026-02-27"
 ---
+
+# Windows 上的 BusyBox
 
 BusyBox 是一个实现许多常见 Unix 工具的单一二进制文件。
 

@@ -1,5 +1,5 @@
 ---
-name: idea-os
+name: 创意操作系统和方法论
 description: "Idea OS — 创意操作系统和方法论"
 risk: safe
 source: community

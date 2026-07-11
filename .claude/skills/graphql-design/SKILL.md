@@ -1,5 +1,5 @@
 ---
-name: graphql-design
+name: GraphQL设计
 description: GraphQL设计 — 架构设计、解析器模式、订阅、数据加载器和联邦网关。
 ---
 

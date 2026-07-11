@@ -1,6 +1,6 @@
 ---
-name: avalonia-viewmodels-zafiro
-description: "Avalonia Zafiro ViewModel"
+name: Avalonia Zafiro ViewModel 框架相关功能和最佳
+description: "Avalonia Zafiro ViewModel — Avalonia Zafiro ViewModel 框架相关功能和最佳实践"
 risk: safe
 source: community
 ---

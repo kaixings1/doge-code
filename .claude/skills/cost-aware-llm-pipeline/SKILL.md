@@ -1,5 +1,5 @@
 ---
-name: cost-aware-llm-pipeline
+name: LLM API 使用成本优化模式
 description: LLM API 使用成本优化模式——基于任务复杂度的模型路由、预算跟踪、重试逻辑和提示词缓存。
 origin: ECC
 ---

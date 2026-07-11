@@ -1,6 +1,6 @@
 ---
-name: programmatic-seo
-description: "Programmatic Seo — Programmatic Seo 相关功能和最佳实践"
+name: 程序化 SEO
+description: "程序化 SEO — 程序化 SEO 相关功能和最佳实践"
 metadata:
   version: 2.0.0
 ---
@@ -33,7 +33,7 @@ Before designing a programmatic SEO strategy, understand:
 
 ---
 
-## Core Principles
+## 核心原则
 
 ### 1. Unique Value Per Page
 - Every page must provide value specific to that page
@@ -219,7 +219,7 @@ Watch for: Thin content warnings, Ranking drops, Manual actions, Crawl errors
 
 ---
 
-## Task-Specific Questions
+## 任务相关问题
 
 1. What keyword patterns are you targeting?
 2. What data do you have (or can acquire)?

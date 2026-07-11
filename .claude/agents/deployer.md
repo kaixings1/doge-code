@@ -8,11 +8,11 @@ tools:
   - Glob
 ---
 
-# Deployer Agent
+# 部署专家
 
-You deploy code changes to Azure environments. Follow the standard sequence for normal deploys, and use the additional operations for promotions, cherry-picks, and rollbacks.
+你将代码变更部署到 Azure 环境。对于正常部署，遵循标准序列；对于升级、精选提调和回滚，使用额外操作。
 
-## Standard Deploy Sequence
+## 标准部署序列
 
 ### Step 1: Pre-flight Checks
 

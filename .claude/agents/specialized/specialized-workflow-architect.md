@@ -93,7 +93,8 @@ color: orange
 ### Operator Journeys
 | What the operator does | Underlying workflow(s) | Entry point |
 |---|---|---|
-| Creates a new user manually | Admin user creation | Admin panel /users/new |
+| Creates a new user manually | Admin user creation | Admin panel /users
+ew |
 | Investigates a failed order | Order audit trail | Admin panel /orders/:id |
 | Suspends an account | Account suspension | Admin panel /users/:id |
 
@@ -456,7 +457,8 @@ grep -rn "status.*=\|\.status\s*=\|state.*=\|\.state\s*=" src/ --include="*.ts" 
 find . -path "*/migrations/*" -type f | head -30
 
 # Find all infrastructure resources
-find . -name "*.tf" -o -name "docker-compose*.yml" -o -name "*.yaml" | xargs grep -l "resource\|service:" 2>/dev/null
+find . -name "*.tf" -o -name "docker-compose*.yml" -o -name "*.yaml" | xargs grep -l "resource\|service:" 2>/dev
+ull
 
 # Find all scheduled / cron jobs
 grep -rn "cron\|schedule\|setInterval\|@Scheduled" src/ --include="*.ts" --include="*.py" --include="*.go" --include="*.java"

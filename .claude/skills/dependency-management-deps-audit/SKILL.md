@@ -1,5 +1,5 @@
 ---
-name: dependency-management-deps-audit
+name: 您是专门进行漏洞扫描、许可证合规和供应链安全的依赖安全专家。分析项目依赖中的已知
 description: "您是专门进行漏洞扫描、许可证合规和供应链安全的依赖安全专家。分析项目依赖中的已知漏洞、许可问题、过时包并提供可操作修复策略。"
 risk: unknown
 source: community

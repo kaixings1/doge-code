@@ -1,5 +1,5 @@
 ---
-name: extracta-ai-automation
+name: Extracta AI 自动化
 description: "Extracta AI 自动化"
 risk: safe
 source: community

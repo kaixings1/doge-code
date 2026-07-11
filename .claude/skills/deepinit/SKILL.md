@@ -1,5 +1,5 @@
 ---
-name: deepinit
+name: Deepinit 相关功能和最佳实践
 description: "Deepinit — Deepinit 相关功能和最佳实践"
 level: 4
 ---

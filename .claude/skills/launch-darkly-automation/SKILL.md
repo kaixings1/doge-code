@@ -1,5 +1,5 @@
 ---
-name: LaunchDarkly Automation
+name: hDarkly 功能标志管理
 description: "通过 Composio MCP 集成自动执行 LaunchDarkly 功能标志管理--列出项目和环境、创建和删除触发器工作流以及跟踪代码引用。"
 requires:
  mcp:

@@ -1,5 +1,5 @@
 ---
-name: address-github-comments
+name: GitHub 评论回复
 description: "适用于需要使用 gh cli 处理开放的 GitHub pull 请求 上的审查或 issue 评论的场景。"
 risk: unknown
 source: community

@@ -1,5 +1,5 @@
 ---
-name: monorepo-management
+name: 构建高效、可扩展的单体仓库，实现跨多个包和应用的代码共享、一致工具链和原子更改。
 description: "构建高效、可扩展的单体仓库，实现跨多个包和应用的代码共享、一致工具链和原子更改。"
 risk: safe
 source: community

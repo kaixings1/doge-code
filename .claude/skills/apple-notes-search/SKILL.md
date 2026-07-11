@@ -1,5 +1,5 @@
 ---
-name: apple-notes-search
+name: Apple 笔记搜索
 description: "Apple 笔记搜索"
 risk: safe
 source: community

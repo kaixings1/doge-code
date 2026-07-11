@@ -6,13 +6,13 @@ allowed_tools: ["Bash", "Read", "Write", "Grep", "Glob"]
 
 # /add-language-rules
 
-Use this workflow when working on **add-language-rules** in `everything-claude-code`.
+在处理 `everything-claude-code` 中的 **add-language-rules** 时使用此工作流。
 
-## Goal
+## 目标
 
-Adds a new programming language to the rules system, including coding style, hooks, patterns, security, and testing guidelines.
+向规则系统中添加新的编程语言，包括编码风格、钩子、模式、安全和测试指南。
 
-## Common Files
+## 常见文件
 
 - `rules/*/coding-style.md`
 - `rules/*/hooks.md`
@@ -20,20 +20,20 @@ Adds a new programming language to the rules system, including coding style, hoo
 - `rules/*/security.md`
 - `rules/*/testing.md`
 
-## Suggested Sequence
+## 建议顺序
 
-1. Understand the current state and failure mode before editing.
-2. Make the smallest coherent change that satisfies the workflow goal.
-3. Run the most relevant verification for touched files.
-4. Summarize what changed and what still needs review.
+1. 在编辑前了解当前状态和失败模式。
+2. 做出满足工作流目标的最小一致性更改。
+3. 对涉及的文件的运行最相关的验证。
+4. 总结变更内容以及仍需审查的部分。
 
-## Typical Commit Signals
+## 典型提交信号
 
-- Create a new directory under rules/{language}/
-- Add coding-style.md, hooks.md, patterns.md, security.md, and testing.md files with language-specific content
-- Optionally reference or link to related skills
+- 在 rules/{language}/ 下创建新目录
+- 添加特定于语言的 coding-style.md、hooks.md、patterns.md、security.md 和 testing.md 文件
+- 可选地引用或链接到相关技能
 
-## Notes
+## 备注
 
-- Treat this as a scaffold, not a hard-coded script.
-- Update the command if the workflow evolves materially.
+- 将其视为脚手架，而非硬编码脚本。
+- 如果工作流发生重大演变，请更新此命令。

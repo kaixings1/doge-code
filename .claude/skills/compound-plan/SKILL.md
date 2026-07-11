@@ -1,1 +1,8 @@
----/nname: compound-plan/ndescription: compound-plan/n---/n/n# compound-plan/n/n复合工程规划 — 将大功能拆分为可并行执行的小任务、依赖分析、工作量估算/n
+---
+name: 复合工程规划
+description: 复合工程规划 — 将大功能拆分为可并行执行的小任务、依赖分析、工作量估算
+---
+
+# compound-plan
+
+复合工程规划 — 将大功能拆分为可并行执行的小任务、依赖分析、工作量估算

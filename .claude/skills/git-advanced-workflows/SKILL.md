@@ -1,5 +1,5 @@
 ---
-name: git-advanced-workflows
+name: 掌握高级 Git 技术以维护干净的历史、有效协作并有信心从任何情况恢复。
 description: "掌握高级 Git 技术以维护干净的历史、有效协作并有信心从任何情况恢复。"
 risk: critical
 source: community

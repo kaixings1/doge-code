@@ -1,5 +1,5 @@
 ---
-name: html-ppt-retro-quarterly-review
+name: HTML PPT 季度回顾
 description: "HTML PPT 季度回顾 — HTML 演示文稿季度回顾"
 risk: safe
 source: community

@@ -1,6 +1,6 @@
 ---
-name: linkedin-cli
-description: "适用于automating linkedin via cli: fetch profiles, search people/companies, send messages, manage connections, create posts, and sales navigator.的情况。"
+name: 适用于通过 CLI 自动化 LinkedIn
+description: "适用于通过 CLI 自动化 LinkedIn：获取个人资料、搜索人/公司、发送消息、管理连接、创建帖子和销售导航器。"
 risk: safe
 source: community
 date_added: "2026-02-27"

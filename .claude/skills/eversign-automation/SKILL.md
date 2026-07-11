@@ -1,5 +1,5 @@
 ---
-name: eversign-automation
+name: Eversign 自动化
 description: "Eversign 自动化"
 risk: safe
 source: community

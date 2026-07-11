@@ -5,14 +5,14 @@ argument-hint: "<describe what you want to forecast>"
 
 # /forecast-demand
 
-Demand forecasting with seasonality and external factors.
+考虑季节性和外部因素的需求预测。
 
-## Invocation
+## 调用
 
 ```
-/forecast-demand [describe your requirements]
+/forecast-demand [描述你的需求]
 ```
 
-## Workflow
+## 工作流
 
-Apply relevant **ds-business-analytics** skills to guide you through the process step by step.
+应用相关的 **ds-business-analytics** 技能逐步指导你完成整个过程。

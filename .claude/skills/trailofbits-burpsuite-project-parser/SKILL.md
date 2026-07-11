@@ -1,6 +1,11 @@
+---
+name: Burp Suite 项目解析器
+description: 从 Burp Suite 项目文件 (.burp) 中搜索和提取数据，用于 Claude 安全审计。
+---
+
 # Burp Suite 项目解析器
 
-Search and extract data from Burp Suite project files (.burp) for use in Claude
+从 Burp Suite 项目文件 (.burp) 中搜索和提取数据，用于 Claude
 
 **Author:** Will Vandevanter
 
@@ -20,7 +25,7 @@ Search and extract data from Burp Suite project files (.burp) for use in Claude
 
 Trigger phrases: "search the burp project", "find in burp file", "what vulnerabilities in the burp", "get audit items from burp"
 
-## What It Does
+## 功能说明
 
 此技能提供 CLI access to Burp Suite project files through the burpsuite-project-file-parser extension:
 

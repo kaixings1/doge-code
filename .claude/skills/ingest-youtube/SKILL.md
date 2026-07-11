@@ -1,5 +1,5 @@
 ---
-name: ingest-youtube
+name: YouTube 内容摄取
 description: "YouTube 内容摄取 — 从 YouTube 摄取和处理视频内容"
 risk: unknown
 source: community

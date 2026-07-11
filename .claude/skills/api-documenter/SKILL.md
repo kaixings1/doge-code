@@ -1,5 +1,5 @@
 ---
-name: api-documenter
+name: API 文档编写器
 description: "API 文档编写器"
 risk: safe
 source: community

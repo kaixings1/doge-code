@@ -1,6 +1,6 @@
 ---
-name: azure-cosmos-rust
-description: "Azure Cosmos Rust — Azure Cosmos Rust 相关功能和最佳实践"
+name: Azure Cosmos DB Rust SDK 相关功能和最佳实践
+description: "Azure Cosmos DB Rust — Azure Cosmos DB Rust SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -38,7 +38,7 @@ let client = CosmosClient::new(
 )?;
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 | Client | Purpose | Get From |
 |--------|---------|----------|

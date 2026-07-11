@@ -1,5 +1,5 @@
 ---
-name: multi-agent-architect
+name: 使用 LangGraph、LangChain 和 DeepAgents 设计和优化生产级多代理系统
 description: "使用 LangGraph、LangChain 和 DeepAgents 设计和优化生产级多代理系统。"
 risk: safe
 source: community

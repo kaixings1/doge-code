@@ -1,5 +1,5 @@
 ---
-name: customer-research
+name: 客户研究：开展、分析或综合客户研究。触发词：客户研究、ICP 研究、客户访谈、调
 description: 客户研究：开展、分析或综合客户研究。触发词：客户研究、ICP 研究、客户访谈、调查分析、客户反馈分析、VOC、用户画像、JTBD、Reddit 挖掘、G2 评论、社区研究、竞品评论、客户流失/转化原因。
 metadata:
   version: 2.0.0

@@ -1,12 +1,12 @@
 ---
-name: gemini-api-dev
+name: Gemini API 提供对 Google 最先进 AI 模型的访问。关键能力包括：
 description: "Gemini API 提供对 Google 最先进 AI 模型的访问。关键能力包括："
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# Gemini API Development Skill
+# Gemini API 开发技能
 
 ## 概述
 

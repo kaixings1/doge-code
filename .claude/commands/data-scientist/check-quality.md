@@ -3,34 +3,34 @@ description: 数据质量审计评分卡 — 评估完整性、准确性、一�
 argument-hint: "<describe your dataset or upload a file>"
 ---
 
-# /check-quality — Data Quality Audit
+# /check-quality — 数据质量审计
 
-Assess data quality across six dimensions and produce a quality scorecard.
+跨六个维度评估数据质量并生成质量评分卡。
 
-## Invocation
+## 调用
 
 ```
-/check-quality Audit this customer dataset before we use it for segmentation
-/check-quality [upload file] How trustworthy is this data for financial reporting?
-/check-quality Check the quality of our event tracking data
+/check-quality 在我们用于客户分群之前审计此数据集
+/check-quality [上传文件] 此数据用于财务报告的可靠性如何？
+/check-quality 检查我们事件跟踪数据的质量
 ```
 
-## Workflow
+## 工作流
 
-### Step 1: Load & Profile
-Load the dataset and run initial profiling — shape, types, basic statistics.
+### 步骤 1：加载与剖析
+加载数据集并运行初始剖析——形状、类型、基本统计。
 
-### Step 2: Assess Quality Dimensions
-Apply **validate-data-quality** skill across all six dimensions:
-- Completeness, Accuracy, Consistency, Timeliness, Uniqueness, Validity
+### 步骤 2：评估质量维度
+在所有六个维度上应用 **validate-data-quality** 技能：
+- 完整性、准确性、一致性、及时性、唯一性、有效性
 
-### Step 3: Generate Scorecard
-Produce a color-coded scorecard with per-column and overall scores.
+### 步骤 3：生成评分卡
+生成按列和总体评分的颜色编码评分卡。
 
-### Step 4: Remediation Plan
-Prioritized fixes with Python code and effort estimates.
+### 步骤 4：修复计划
+按优先级排序的修复方案，附带 Python 代码和工作量估算。
 
-Offer follow-up:
-- "Want to **fix these issues** with /clean?"
-- "Should I **generate monitoring checks** (Great Expectations / Pandera)?"
-- "Ready to **proceed to analysis** despite these issues?"
+提供后续选项：
+- "想要使用 /clean **修复这些问题**吗？"
+- "需要我**生成监控检查**（Great Expectations / Pandera）吗？"
+- "尽管存在这些问题，是否**继续进行下一步分析**？"

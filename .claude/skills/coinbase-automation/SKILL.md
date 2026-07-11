@@ -1,5 +1,5 @@
 ---
-name: coinbase-automation
+name: Coinbase 自动化
 description: "Coinbase 自动化"
 risk: safe
 source: community

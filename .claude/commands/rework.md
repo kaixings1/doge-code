@@ -2,7 +2,7 @@
 description: 根据上次拉取请求的反馈重新处理工作项
 ---
 
-Rework work item AB#$ARGUMENTS based on feedback received after the last pull request. Follow this workflow:
+基于上次拉取请求后收到的反馈，重新处理工作项 AB#$ARGUMENTS。遵循此工作流：
 
 ## Step 1: Find the Latest Pull Request
 

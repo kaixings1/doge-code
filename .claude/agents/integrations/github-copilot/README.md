@@ -1,32 +1,30 @@
-# GitHub Copilot Integration
+# GitHub Copilot 集成
 
-The Agency works with GitHub Copilot out of the box. No conversion needed —
-agents use the existing `.md` + YAML frontmatter format.
+Agency 开箱即用地支持 GitHub Copilot。无需转换——Agent 使用现有的 `.md` + YAML 前置元数据格式。
 
-## Install
+## 安装
 
 ```bash
-# Copy all agents to your GitHub Copilot agents directories
+# 将所有 Agent 复制到您的 GitHub Copilot Agent 目录
 ./scripts/install.sh --tool copilot
 
-# Or manually copy a category
+# 或手动复制某个类别
 cp engineering/*.md ~/.github/agents/
 cp engineering/*.md ~/.copilot/agents/
 ```
 
-## Activate an Agent
+## 激活 Agent
 
-In any GitHub Copilot session, reference an agent by name:
-
-```
-Activate Frontend Developer and help me build a React component.
-```
+在任何 GitHub Copilot 会话中，通过名称引用 Agent：
 
 ```
-Use the Reality Checker agent to verify this feature is production-ready.
+激活前端开发 Agent，帮我构建一个 React 组件。
 ```
 
-## Agent Directory
+```
+使用 Reality Checker Agent 验证此功能是否已准备好投入生产。
+```
 
-Agents are organized into divisions. See the [main README](../../README.md) for
-the full current roster.
+## Agent 目录
+
+Agent 按部门组织。请参阅[主 README](../../README.md) 获取完整当前列表。

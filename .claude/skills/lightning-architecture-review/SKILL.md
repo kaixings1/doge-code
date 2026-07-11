@@ -1,10 +1,12 @@
 ---
-name: lightning-architecture-review
-description: "Lightning Architecture Review — Lightning Architecture Review 相关功能和最佳实践"
+name: 闪电架构审查
+description: "闪电架构审查 — 闪电架构审查相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-03'
 ---
+
+# 闪电架构评审
 
 ## 使用此技能的场景
 

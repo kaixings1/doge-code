@@ -1,5 +1,5 @@
 ---
-name: linkedin-profile-optimizer
+name: LinkedIn 档案检查、权威建设和 SEO 优化的高意向专家
 description: "LinkedIn 档案检查、权威建设和 SEO 优化的高意向专家。调用以审计、重写和增强档案以获取前 1% 的定位。"
 category: growth
 risk: safe

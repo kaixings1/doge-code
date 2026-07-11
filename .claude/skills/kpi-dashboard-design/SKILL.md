@@ -1,5 +1,5 @@
 ---
-name: kpi-dashboard-design
+name: 设计驱动业务决策的有效 KPI 仪表板的全面模式。
 description: "设计驱动业务决策的有效 KPI 仪表板的全面模式。"
 risk: unknown
 source: community
@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # KPI 仪表板设计
 
-设计驱动业务决策的有效关键绩效指标 (KPI) 仪表板的全面模式。
+设计驱动业务决策的有效 KPI 仪表板的全面模式。
 
 ## 不要在以下情况下使用此技能
 

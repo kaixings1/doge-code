@@ -1,7 +1,6 @@
 ---
-name: video-downloader
-description: "Video Downloader — Video Downloader 相关功能和最佳实践"
-  Download videos from YouTube and other platforms for offline viewing, editing, or archival with support for various formats and quality options.
+name: 视频下载器
+description: "视频下载器 — 从 YouTube 和其他平台下载视频以供离线观看、编辑或存档，支持多种格式和质量选项。"
 triggers:
   - "download video"
   - "youtube download"
@@ -17,11 +16,11 @@ od:
 
 > Curated from ComposioHQ awesome-claude-skills.
 
-## What it does
+## 功能说明
 
 Download videos from YouTube and other platforms for offline viewing, editing, or archival with support for various formats and quality options.
 
-## Source
+## 来源
 
 - Upstream: https://github.com/ComposioHQ/awesome-claude-skills/tree/master/video-downloader
 - Category: `video-generation`

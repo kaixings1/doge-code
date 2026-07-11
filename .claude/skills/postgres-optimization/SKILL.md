@@ -1,5 +1,5 @@
 ---
-name: postgres-optimization
+name: PostgreSQL优化
 description: PostgreSQL优化 — 包括索引、查询计划、分区、连接池和性能调优。
 ---
 

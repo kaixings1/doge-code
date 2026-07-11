@@ -1,5 +1,5 @@
 ---
-name: castingwords-automation
+name: CastingWords 自动化
 description: "CastingWords 自动化"
 risk: safe
 source: community

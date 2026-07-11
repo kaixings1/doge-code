@@ -1,6 +1,6 @@
 ---
-name: gh-review-requests
-description: "Gh Review Requests — Gh Review Requests 相关功能和最佳实践"
+name: GitHub 审查请求
+description: "GitHub 审查请求 — GitHub 审查请求相关功能和最佳实践"
 allowed-tools: Bash
 risk: safe
 source: community

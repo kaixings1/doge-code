@@ -1,6 +1,6 @@
 ---
-name: azure-resource-manager-cosmosdb-dotnet
-description: "Azure Resource Manager Cosmosdb Dotnet — Azure Resource Manager Cosmosdb Dotnet 相关功能和最佳实践"
+name: Azure Resource Manager Cosmos DB (.NET)
+description: "Azure Resource Manager Cosmos DB .NET — Azure Resource Manager Cosmos DB .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -50,7 +50,7 @@ var subscription = armClient.GetSubscriptionResource(
     new ResourceIdentifier($"/subscriptions/{subscriptionId}"));
 ```
 
-## Resource Hierarchy
+## 资源层次结构
 
 ```
 ArmClient

@@ -1,5 +1,5 @@
 ---
-name: cdr-platform-automation
+name: CDR 平台自动化
 description: "CDR 平台自动化"
 risk: safe
 source: community

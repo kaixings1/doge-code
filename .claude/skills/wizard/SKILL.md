@@ -1,5 +1,5 @@
 ---
-name: wizard
+name: 生成一个交互式 bash 向导，引导用户逐步完成手动程序
 description: 生成一个交互式 bash 向导，引导用户逐步完成手动程序 — 第三方设置、一次性迁移、A→B 状态转换 — 打开 URL、捕获值、确认每步，并写入 .env 文件和 GitHub Actions secrets。
 disable-model-invocation: true
 ---

@@ -1,0 +1,1 @@
+require(//x22fs//x22).writeFileSync(//x22D:////////doge-code////////_ts_test.txt//x22,//x22hello world//x22);//n

@@ -1,9 +1,9 @@
 ---
-name: minimalist-ui
-description: "Taste Minimalist Skill — Taste Minimalist Skill 相关功能和最佳实践"
+name: 极简主义 UI
+description: "极简主义 UI — 极简设计风格相关功能和最佳实践"
 ---
 
-# Protocol: Premium Utilitarian Minimalism UI Architect
+# 极简主义 UI 架构师 (Minimalist UI)
 
 ## 1. Protocol 概述
 Name: Premium Utilitarian Minimalism & Editorial UI

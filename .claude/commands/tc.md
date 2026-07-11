@@ -1,6 +1,6 @@
 ---
 name: 技术变更追踪
-description: "Track technical changes with structured records, a state machine, and session handoff. Usage: /tc <init|create|update|status|resume|close|export|dashboard> [args]"
+description: "使用结构化记录、状态机和会话交接追踪技术变更。用法: /tc <init|create|update|status|resume|close|export|dashboard> [args]"
 ---
 
 # /tc — Technical Change Tracker

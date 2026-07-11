@@ -1,6 +1,6 @@
 ---
-name: azure-monitor-opentelemetry-py
-description: "Azure Monitor Opentelemetry Py — Azure Monitor Opentelemetry Py 相关功能和最佳实践"
+name: Azure Monitor OpenTelemetry (Python)
+description: "Azure Monitor OpenTelemetry Python — Azure Monitor OpenTelemetry Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

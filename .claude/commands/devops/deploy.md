@@ -1,53 +1,53 @@
 将应用部署到目标环境并执行前置/后置检查。
 
-## Steps
+## 步骤
 
-1. Determine the target environment from the argument (staging, production, preview).
-2. Run pre-deployment checks:
-   - All tests pass: run the test suite.
-   - No uncommitted changes: `git status --porcelain`.
-   - Branch is up to date: `git fetch && git status -uno`.
-   - Build succeeds: run the build command.
-   - No critical vulnerabilities: run dependency audit.
-3. Detect the deployment method:
-   - **Vercel/Netlify**: `vercel --prod` or `netlify deploy --prod`.
-   - **Docker**: Build image, push to registry, update deployment.
-   - **Kubernetes**: Apply manifests with `kubectl apply`.
-   - **SSH**: rsync build artifacts and restart service.
-   - **GitHub Pages**: Push to `gh-pages` branch.
-4. Execute the deployment:
-   - Tag the deployment: `git tag deploy-<env>-<timestamp>`.
-   - Run the deployment command.
-   - Wait for health check confirmation.
-5. Run post-deployment verification:
-   - Hit the health endpoint and verify 200 response.
-   - Run smoke tests if available.
-   - Check error rates in monitoring if accessible.
-6. Report deployment status with rollback instructions.
+1. 从参数中确定目标环境（staging、production、preview）。
+2. 运行部署前检查：
+   - 所有测试通过：运行测试套件。
+   - 无未提交的更改：`git status --porcelain`。
+   - 分支是最新的：`git fetch && git status -uno`。
+   - 构建成功：运行构建命令。
+   - 无严重漏洞：运行依赖审计。
+3. 检测部署方法：
+   - **Vercel/Netlify**：`vercel --prod` 或 `netlify deploy --prod`。
+   - **Docker**：构建镜像，推送到 registry，更新部署。
+   - **Kubernetes**：使用 `kubectl apply` 应用清单。
+   - **SSH**：rsync 构建产物并重启服务。
+   - **GitHub Pages**：推送到 `gh-pages` 分支。
+4. 执行部署：
+   - 标记部署：`git tag deploy-<env>-<timestamp>`。
+   - 运行部署命令。
+   - 等待健康检查确认。
+5. 运行部署后验证：
+   - 访问健康端点并验证 200 响应。
+   - 如果可用，运行冒烟测试。
+   - 如果可访问，检查监控中的错误率。
+6. 报告部署状态并附带回滚说明。
 
-## Format
+## 格式
 
 ```
-Deployment: <environment>
-Version: <git-sha-short>
-Status: <success/failed>
+部署：<environment>
+版本：<git-sha-short>
+状态：<success/failed>
 
-Pre-checks:
-  - [x] Tests passing
-  - [x] Build successful
-  - [x] No uncommitted changes
+前置检查：
+  - [x] 测试通过
+  - [x] 构建成功
+  - [x] 无未提交的更改
 
-Deployed at: <timestamp>
-URL: <deployment-url>
-Health: <healthy/unhealthy>
+部署时间：<timestamp>
+URL：<deployment-url>
+健康状态：<healthy/unhealthy>
 
-Rollback: <rollback-command>
+回滚：<rollback-command>
 ```
 
-## Rules
+## 规则
 
-- Never deploy to production from a non-default branch without explicit confirmation.
-- Always run pre-deployment checks; abort on any failure.
-- Create a deployment tag for every production deployment.
-- Include rollback instructions in every deployment output.
-- Verify the health endpoint responds within 60 seconds after deployment.
+- 未经明确确认，绝不从非默认分支部署到生产环境。
+- 始终运行部署前检查；任何失败则中止。
+- 为每个生产部署创建部署标签。
+- 在每次部署输出中包含回滚说明。
+- 验证健康端点在部署后 60 秒内响应。

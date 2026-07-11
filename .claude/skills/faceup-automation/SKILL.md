@@ -1,5 +1,5 @@
 ---
-name: faceup-automation
+name: FaceUp 自动化
 description: "FaceUp 自动化"
 risk: safe
 source: community

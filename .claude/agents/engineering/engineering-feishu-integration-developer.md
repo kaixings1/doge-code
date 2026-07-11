@@ -129,7 +129,8 @@ feishu-integration/
 
 ```typescript
 // src/auth/token-manager.ts
-import * as lark from '@larksuiteoapi/node-sdk';
+import * as lark from '@larksuiteoapi
+ode-sdk';
 
 const client = new lark.Client({
   appId: process.env.FEISHU_APP_ID!,
@@ -274,7 +275,8 @@ async function sendCardMessage(
 
 ```typescript
 // src/webhook/event-dispatcher.ts
-import * as lark from '@larksuiteoapi/node-sdk';
+import * as lark from '@larksuiteoapi
+ode-sdk';
 import express from 'express';
 
 const app = express();

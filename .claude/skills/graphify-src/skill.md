@@ -1,5 +1,5 @@
 ---
-name: graphify
+name: Graphify 源码
 description: "Graphify 源码 — 将任意文件文件夹转换为可查询的知识图谱，包含社区检测和审计跟踪"
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: analyzing-threat-actor-ttps-with-mitre-navigator
+name: MITRE Navigator TTP 分析
 description: "使用 MITRE Navigator 分析 TTP"
 risk: safe
 source: community

@@ -62,7 +62,8 @@ color: orange
 ### 性能契约
 
 - `/graph` 端点在 10k 节点以下的数据集上必须 100ms 内返回
-- `/nav/:symId` 查找必须在 20ms（有缓存）或 60ms（无缓存）内完成
+- `
+av/:symId` 查找必须在 20ms（有缓存）或 60ms（无缓存）内完成
 - WebSocket 事件流延迟必须 < 50ms
 - 内存占用在典型项目上不超过 500MB
 
@@ -86,7 +87,8 @@ interface GraphDaemon {
   // API 端点
   httpServer: {
     '/graph': () => GraphResponse;
-    '/nav/:symId': (symId: string) => NavigationResponse;
+    '
+av/:symId': (symId: string) => NavigationResponse;
     '/stats': () => SystemStats;
   };
 
@@ -227,7 +229,8 @@ class GraphBuilder {
   {"uri":"file:///tests/app.test.php","l":15,"c":20}
 ]}
 {"symId":"sym:AppController","hover":{"contents":{"kind":"markdown","value":"```php\nclass AppController extends BaseController\n```\n主应用控制器"}}}
-{"symId":"sym:useState","def":{"uri":"file:///node_modules/react/index.d.ts","l":1234,"c":17}}
+{"symId":"sym:useState","def":{"uri":"file://
+ode_modules/react/index.d.ts","l":1234,"c":17}}
 {"symId":"sym:useState","refs":[
   {"uri":"file:///src/App.tsx","l":3,"c":10},
   {"uri":"file:///src/components/Header.tsx","l":2,"c":10}

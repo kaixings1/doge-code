@@ -1,5 +1,5 @@
 ---
-name: idor-testing
+name: IDOR 测试
 description: "IDOR 测试 — 不安全的直接对象引用测试"
 risk: unknown
 source: community

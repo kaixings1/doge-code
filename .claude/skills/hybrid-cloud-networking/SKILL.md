@@ -1,5 +1,5 @@
 ---
-name: hybrid-cloud-networking
+name: 混合云网络
 description: "混合云网络 — 混合云网络架构"
 risk: unknown
 source: community

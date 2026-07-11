@@ -1,5 +1,5 @@
 ---
-name: RingCentral Automation
+name: Ring Central 自动化
 description: "通过 Rube MCP 实现 RingCentral 自动化——工具包目前在 Composio 中不可用；未找到 RING_CENTRAL_ 工具"
 requires:
   mcp:

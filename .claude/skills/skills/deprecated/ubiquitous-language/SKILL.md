@@ -4,11 +4,11 @@ description: 从当前对话中提取 DDD 风格的通用语言词汇表，标�
 disable-model-invocation: true
 ---
 
-# Ubiquitous Language
+# 通用语言
 
-Extract and formalize domain terminology from the current conversation into a consistent glossary, saved to a local file.
+从当前对话中提取领域术语并将其形式化为一致的词汇表，保存到本地文件。
 
-## Process
+## 流程
 
 1. **Scan the conversation** for domain-relevant nouns, verbs, and concepts
 2. **Identify problems**:
@@ -57,7 +57,7 @@ Write a `UBIQUITOUS_LANGUAGE.md` file with this structure:
 - "account" was used to mean both **Customer** and **User** — these are distinct concepts: a **Customer** places orders, while a **User** is an authentication identity that may or may not represent a **Customer**.
 ```
 
-## Rules
+## 规则
 
 - **Be opinionated.** When multiple words exist for the same concept, pick the best one and list the others as aliases to avoid.
 - **Flag conflicts explicitly.** If a term is used ambiguously in the conversation, call it out in the "Flagged ambiguities" section with a clear recommendation.

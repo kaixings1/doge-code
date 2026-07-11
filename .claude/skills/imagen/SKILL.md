@@ -1,5 +1,5 @@
 ---
-name: imagen
+name: Google 的 AI 图像生成模型
 description: "Imagen — Google 的 AI 图像生成模型"
 risk: unknown
 source: community

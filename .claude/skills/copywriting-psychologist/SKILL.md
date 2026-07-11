@@ -1,5 +1,5 @@
 ---
-name: copywriting-psychologist
+name: 文案心理学
 description: "文案心理学"
 risk: safe
 source: community

@@ -1,9 +1,11 @@
 ---
-name: review
+name: Review 相关功能和最佳实践
 description: "Review — Review 相关功能和最佳实践"
 ---
 
-Two-axis review of the diff between `HEAD` and a fixed point the user supplies:
+# 审查
+
+对 `HEAD` 和用户提供的固定点之间的差异进行双轴审查：
 
 - **Standards** — does the code conform to this repo's documented coding standards?
 - **Spec** — does the code faithfully implement the originating issue / PRD / spec?
@@ -12,7 +14,7 @@ Both axes run as **parallel sub-agents** so they don't pollute each other's cont
 
 The issue tracker should have been provided to you — run `/设置-matt-pocock-skills` if `docs/agents/issue-tracker.md` is missing.
 
-## Process
+## 流程
 
 ### 1. Pin the fixed point
 

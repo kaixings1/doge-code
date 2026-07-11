@@ -1,5 +1,5 @@
 ---
-name: GroqCloud Automation
+name: 音频翻译和 TTS 语音管理
 description: "通过 Composio 自动执行 GroqCloud 高性能 API 的 AI 推理、聊天补全、音频翻译和 TTS 语音管理"
 requires:
   mcp:

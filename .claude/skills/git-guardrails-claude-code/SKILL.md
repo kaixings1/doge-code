@@ -1,6 +1,6 @@
 ---
-name: git-guardrails-claude-code
-description: "Git Guardrails Claude Code — Git Guardrails Claude Code 相关功能和最佳实践"
+name: Git 护栏 Claude Code
+description: "Git 护栏 Claude Code — Git 护栏 Claude Code 相关功能和最佳实践"
 ---
 
 # 设置 Git 安全护栏

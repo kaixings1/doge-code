@@ -1,6 +1,6 @@
 ---
 name: Wiki检查
-description: Run a health check on the LLM Wiki vault — mechanical checks (orphans, broken links, stale pages, missing frontmatter, log gap, duplicates) plus semantic checks (contradictions, cross-reference gaps, concepts missing their own page). Outputs a markdown report with suggested actions. Usage /wiki-lint [--stale-days N] [--log-gap-days N]
+description: 对 LLM Wiki 仓库运行健康检查——机械检查（孤立页面、失效链接、过期页面、缺少 frontmatter、日志空缺、重复）以及语义检查（矛盾、交叉引用缺失、缺少独立页面的概念）。输出带建议措施的 Markdown 报告。用法: /wiki-lint [--stale-days N] [--log-gap-days N]
 ---
 <!-- canonical copy: engineering/llm-wiki/commands/wiki-lint.md — keep in sync (root copy uses repo-root-relative script paths) -->
 

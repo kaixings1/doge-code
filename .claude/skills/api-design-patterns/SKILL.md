@@ -1,5 +1,5 @@
 ---
-name: api-design-patterns
+name: API 设计模式
 description: "API 设计模式"
 risk: safe
 source: community

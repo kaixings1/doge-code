@@ -1,5 +1,5 @@
 ---
-name: domain-driven-design
+name: 领域驱动设计模式：实体、值对象、聚合、仓储、领域事件和限界上下文。适用于复杂业务领域建模。
 description: "领域驱动设计模式：实体、值对象、聚合、仓储、领域事件和限界上下文。适用于复杂业务领域建模。"
 risk: safe
 source: self
@@ -7,7 +7,7 @@ tags: "[ddd, domain, bounded-context, architecture]"
 date_added: "2026-02-27"
 ---
 
-# Domain-Driven Design
+# 领域驱动设计 (Domain-Driven Design)
 
 ## 使用此技能的场景
 

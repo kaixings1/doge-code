@@ -1,5 +1,5 @@
 ---
-name: crossframe-suite
+name: 当用户明确调用 CrossFrame Suite 进行中文结构性诊断工作流时使用
 description: "当用户明确调用 CrossFrame Suite 进行中文结构性诊断工作流时使用，涵盖关系、组织、公共议题、哲学、研究或文章输出。"
 category: 工作流
 risk: safe

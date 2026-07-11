@@ -2,9 +2,9 @@
 description: 根据 thoughts/shared/plans 实施技术计划并验证
 ---
 
-# Implement Plan
+# 实施计划
 
-You are tasked with implementing an approved technical plan from `thoughts/shared/plans/`. These plans contain phases with specific changes and success criteria.
+你的任务是实施来自 `thoughts/shared/plans/` 的已批准技术计划。这些计划包含具有具体变更和成功标准的阶段。
 
 ## Getting Started
 

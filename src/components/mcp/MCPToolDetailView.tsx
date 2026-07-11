@@ -133,7 +133,7 @@ export function MCPToolDetailView(t0) {
   const titleContent = t10;
   let t11;
   if ($[24] === Symbol.for("react.memo_cache_sentinel")) {
-    t11 = <Text bold={true}>Tool name: </Text>;
+    t11 = <Text bold={true}>工具名称: </Text>;
     $[24] = t11;
   } else {
     t11 = $[24];
@@ -148,7 +148,7 @@ export function MCPToolDetailView(t0) {
   }
   let t13;
   if ($[27] === Symbol.for("react.memo_cache_sentinel")) {
-    t13 = <Text bold={true}>Full name: </Text>;
+    t13 = <Text bold={true}>完整名称: </Text>;
     $[27] = t13;
   } else {
     t13 = $[27];
@@ -163,7 +163,7 @@ export function MCPToolDetailView(t0) {
   }
   let t15;
   if ($[30] !== toolDescription) {
-    t15 = toolDescription && <Box flexDirection="column" marginTop={1}><Text bold={true}>Description:</Text><Text wrap="wrap">{toolDescription}</Text></Box>;
+    t15 = toolDescription && <Box flexDirection="column" marginTop={1}><Text bold={true}>描述:</Text><Text wrap="wrap">{toolDescription}</Text></Box>;
     $[30] = toolDescription;
     $[31] = t15;
   } else {
@@ -171,11 +171,11 @@ export function MCPToolDetailView(t0) {
   }
   let t16;
   if ($[32] !== tool.inputJSONSchema) {
-    t16 = tool.inputJSONSchema && tool.inputJSONSchema.properties && Object.keys(tool.inputJSONSchema.properties).length > 0 && <Box flexDirection="column" marginTop={1}><Text bold={true}>Parameters:</Text><Box marginLeft={2} flexDirection="column">{Object.entries(tool.inputJSONSchema.properties).map(t17 => {
+    t16 = tool.inputJSONSchema && tool.inputJSONSchema.properties && Object.keys(tool.inputJSONSchema.properties).length > 0 && <Box flexDirection="column" marginTop={1}><Text bold={true}>参数:</Text><Box marginLeft={2} flexDirection="column">{Object.entries(tool.inputJSONSchema.properties).map(t17 => {
           const [key, value] = t17;
           const required = tool.inputJSONSchema?.required as string[] | undefined;
           const isRequired = required?.includes(key);
-          return <Text key={key}>• {key}{isRequired && <Text dimColor={true}> (required)</Text>}:{" "}<Text dimColor={true}>{typeof value === "object" && value && "type" in value ? String(value.type) : "unknown"}</Text>{typeof value === "object" && value && "description" in value && <Text dimColor={true}> - {String(value.description)}</Text>}</Text>;
+          return <Text key={key}>• {key}{isRequired && <Text dimColor={true}> (必填)</Text>}:{" "}<Text dimColor={true}>{typeof value === "object" && value && "type" in value ? String(value.type) : "unknown"}</Text>{typeof value === "object" && value && "description" in value && <Text dimColor={true}> - {String(value.description)}</Text>}</Text>;
         })}</Box></Box>;
     $[32] = tool.inputJSONSchema;
     $[33] = t16;

@@ -444,7 +444,7 @@ export function prependUserContext(
       )
         .map(([key, value]) => `# ${key}\n${value}`)
         .join('\n')}
-- 使用工具完成任务，不要空谈。\n- 优先使用专用工具（Read/Edit/Write/Glob/Grep）而非Bash。\n- 输出简洁，直奔主题。返回内容的要求是:可以在本地计算机直接执行的命令。\n      重要提示：如果有需要执行的命令，则直接将windows下相应的命令反馈回来，由本地计算机执行，你不得进行其他询问及任何模拟结果的输出。此上下文可能与你的任务相关，也可能不相关。除非与你的任务高度相关，否则你不应回应此上下文。\n</system-reminder>\n`,
+- 使用工具完成任务，不要空谈。\n- 优先使用专用工具（Read/Edit/Write/Glob/Grep）而非Bash。\n- 输出简洁，直奔主题。返回内容的要求是:可以在本地计算机直接执行的命令。\n      重要提示：本软件运行在 Windows 系统下（cmd.exe 命令行）。如果有需要执行的命令，则直接将 Windows cmd 下对应的命令反馈回来（使用 dir、type、del、findstr 等 Windows 原生命令，避免 bash/zsh 特有语法），由本地计算机执行。你不得进行其他询问及任何模拟结果的输出。此上下文可能与你的任务相关，也可能不相关。除非与你的任务高度相关，否则你不应回应此上下文。\n</system-reminder>\n`,
       isMeta: true,// 
     }),
     ...messages,

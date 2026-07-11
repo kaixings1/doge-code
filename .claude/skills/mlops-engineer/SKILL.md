@@ -1,10 +1,12 @@
 ---
-name: mlops-engineer
-description: "MLOps 工程师 — MLOps Engineer 相关功能和最佳实践"
+name: MLOps 工程师
+description: "MLOps 工程师 — MLOps 工程师相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# MLOps 工程师
 
 ## 使用此技能的场景
 

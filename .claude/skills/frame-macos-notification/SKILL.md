@@ -1,5 +1,5 @@
 ---
-name: frame-macos-notification
+name: 逼真的 macOS 通知横幅，带应用图标、标题和正文，适用于视频覆盖或产品预告。
 zh_name: "macOS 通知横幅"
 en_name: "macOS Notification Banner"
 emoji: "🔔"

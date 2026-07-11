@@ -1,5 +1,5 @@
 ---
-name: Microsoft Clarity Automation
+name: —按浏览器、设备、国家、来源等导出热图数据、会话指标和参与分析。
 description: "通过 Composio Microsoft Clarity 集成自动执行用户行为分析——按浏览器、设备、国家、来源等导出热图数据、会话指标和参与分析。"
 requires:
   mcp:

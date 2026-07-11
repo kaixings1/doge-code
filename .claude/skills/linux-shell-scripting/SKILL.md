@@ -1,5 +1,5 @@
 ---
-name: linux-shell-scripting
+name: 为常见 Linux 系统管理任务提供生产就绪的 shell 脚本模板，包括备份、监控、用户
 description: "为常见 Linux 系统管理任务提供生产就绪的 shell 脚本模板，包括备份、监控、用户管理、日志分析和自动化。这些脚本作为安全操作和渗透测试环境的构建块。"
 risk: unknown
 source: community

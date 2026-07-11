@@ -1,5 +1,5 @@
 ---
-name: hugging-face-vision-trainer
+name: Hugging Face 视觉训练器
 description: "Hugging Face 视觉训练器 — 计算机视觉模型训练"
 risk: safe
 source: community
