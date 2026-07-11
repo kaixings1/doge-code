@@ -1,6 +1,6 @@
 ---
-name: customs-trade-compliance
-description: "Customs Trade Compliance — Customs Trade Compliance 相关功能和最佳实践"
+name: 海关贸易合规
+description: "海关贸易合规 — 海关贸易合规相关功能和最佳实践"
 risk: safe
 source: https://github.com/ai-evos/agent-skills
 date_added: '2026-02-27'

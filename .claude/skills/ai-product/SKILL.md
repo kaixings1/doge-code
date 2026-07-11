@@ -1,5 +1,5 @@
 ---
-name: ai-product
+name: AI 产品开发
 description: "AI 产品开发 — 构建正确的 AI 产品，而非在生产环境中崩溃的演示版本。"
 risk: safe
 source: vibeship-spawner-skills (Apache 2.0)
@@ -15,7 +15,7 @@ This skill covers LLM integration patterns, RAG architecture, prompt
 engineering that scales, AI UX that users trust, and cost optimization
 that doesn't bankrupt you.
 
-## Principles
+## 原则
 
 - LLMs are probabilistic, not deterministic | Description: The same input can give different outputs. Design for variance.
 Add validation layers. Never trust output blindly. Build for the
@@ -152,7 +152,7 @@ const topChunks = combined.slice(0, 5);
 // 4. Add to prompt
 const context = topChunks.map(c => c.text).join('\n\n');
 
-## Sharp Edges
+## 注意事项
 
 ### Trusting LLM output without validation
 
@@ -626,7 +626,7 @@ Recommended fix:
 - Clear evaluation metrics
 - Budget for iteration
 
-## Validation Checks
+## 验证检查
 
 ### LLM output used without validation
 
@@ -708,7 +708,7 @@ Consider fallback provider for reliability
 
 Message: Single LLM provider without fallback. Consider backup provider for outages.
 
-## Collaboration
+## 协作
 
 ### Delegation Triggers
 

@@ -1,10 +1,12 @@
 ---
-name: debugging-toolkit-smart-debug
+name: 适用于working with debugging toolkit smart debug的情况。
 description: "适用于working with debugging toolkit smart debug的情况。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
+
+# 智能调试工具包
 
 ## 使用此技能的场景
 

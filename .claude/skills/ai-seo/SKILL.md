@@ -1,5 +1,5 @@
 ---
-name: ai-seo
+name: AI SEO 优化
 description: "优化内容以适应 AI 搜索和 LLM 引用，覆盖 AI Overviews、ChatGPT、Perplexity、Claude、Gemini 等系统。适用于提高 AI 可见性、答案引擎优化或引用准备。"
 risk: unknown
 source: "https://github.com/coreyhaines31/marketingskills"
@@ -17,7 +17,7 @@ metadata:
 - Use when the user asks about AI SEO, AEO, GEO, LLM visibility, or AI citations.
 - Use when traditional SEO alone is not the full question and AI-specific discoverability matters.
 
-## Before Starting
+## 开始之前
 
 **Check for product marketing context first:**
 If `.agents/product-marketing-context.md` exists (or `.claude/product-marketing-context.md` in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.

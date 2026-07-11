@@ -1,5 +1,5 @@
 ---
-name: springboot-patterns
+name: Spring Boot模式
 description: Spring Boot模式 — 包括JPA仓库、REST控制器、异常处理和测试。
 ---
 
@@ -148,7 +148,7 @@ public class GlobalExceptionHandler {
 - Catching generic `Exception` instead of specific types
 - Hardcoding 配置 values instead of using `@Value` or `@ConfigurationProperties`
 
-## Checklist
+## 检查清单
 
 - [ ] Controllers are thin and delegate to services
 - [ ] All JPA relationships use `FetchType.LAZY` by default

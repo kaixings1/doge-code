@@ -1,5 +1,5 @@
 ---
-name: clerk-auth
+name: Clerk 认证实施专家模式：中间件、受保护路由和会话管理。
 description: Clerk 认证实施专家模式：中间件、受保护路由和会话管理。
   organizations, webhooks, and user sync
 risk: safe
@@ -691,7 +691,7 @@ export async function GET(req: 请求) {
 
 - https://clerk.com/docs/guides/protecting-pages
 
-## Sharp Edges
+## 注意事项
 
 ### CVE-2025-29927 中间件 Bypass Vulnerability
 
@@ -733,7 +733,7 @@ Severity: MEDIUM
 
 Severity: HIGH
 
-## Validation Checks
+## 验证检查
 
 ### Clerk Secret Key in Client Code
 
@@ -815,7 +815,7 @@ Clerk webhooks must verify svix signature
 
 Message: Webhook without signature verification. Use svix to verify.
 
-## Collaboration
+## 协作
 
 ### Delegation Triggers
 

@@ -1,6 +1,6 @@
 ---
-name: macos-screen-recorder
-description: "Macos Screen Recorder — Macos Screen Recorder 相关功能和最佳实践"
+name: macOS 屏幕录制器
+description: "macOS 屏幕录制器 — macOS 屏幕录制器相关功能和最佳实践"
 risk: critical
 source: community
 source_type: community

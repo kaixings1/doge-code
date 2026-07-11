@@ -1,29 +1,29 @@
 ---
-name: efficient-web-research
+name: 高效网络研究相关功能和最佳实践
 risk: safe
-description: "Efficient Web Research — Efficient Web Research 相关功能和最佳实践"
-  Protocol for 令牌-efficient web research. Use when accessing URLs, GitHub repos, or running search queries. Prevents full-page fetching waste.
+description: "Efficient Web Research — 高效网络研究相关功能和最佳实践"
+  面向 token 高效网络研究的协议。访问 URL、GitHub 仓库或运行搜索查询时使用。防止整页获取浪费。
 ---
 
-# Efficient Web Research Skill
+# 高效网络研究技能
 
-A protocol for accessing web content in the most 令牌-efficient, accurate, and structured way —
-using the right tool at the right depth, and stopping as soon as the question is answerable.
-
----
-
-## Core Principle
-
-> **Fetch the minimum needed to answer. Skim before you dive. Stop when you can answer.**
-
-Every unnecessary fetch wastes tokens and adds noise. This skill enforces a layered 方法
-where you escalate fetch depth only when shallower layers fail.
+以最 token 高效、准确和结构化的方式访问 Web 内容的协议——
+在适当的深度使用正确的工具，并在问题可回答时立即停止。
 
 ---
 
-## Step 1 — Classify the Input
+## 核心原则
 
-Before fetching anything, identify what kind of input you received:
+> **只获取回答问题所需的最少内容。先略读再深入。能回答时就停止。**
+
+每次不必要的获取都会浪费 token 并增加噪音。此技能强制执行分层方法，
+仅在较浅层失败时才加深获取深度。
+
+---
+
+## 步骤 1 — 分类输入
+
+在获取任何内容之前，先识别收到的输入类型：
 
 | Input Type | Example | Go To |
 |---|---|---|
@@ -35,11 +35,11 @@ Before fetching anything, identify what kind of input you received:
 
 ---
 
-## GitHub Protocol
+## GitHub 协议
 
-Use when input is a GitHub URL (repo, file, PR, issue, etc.)
+当输入是 GitHub URL（仓库、文件、PR、议题等）时使用
 
-### Step 1 — Parse the URL
+### 步骤 1 — 解析 URL
 
 ```
 github.com/{owner}/{repo}                → Repo root
@@ -49,112 +49,112 @@ github.com/{owner}/{repo}/issues/{n}     → Issue
 github.com/{owner}/{repo}/pull/{n}       → Pull 请求
 ```
 
-### Step 2 — Use GitHub API (preferred over scraping)
+### 步骤 2 — 使用 GitHub API（优先于爬取）
 
-Always prefer the GitHub API. It returns clean JSON — no HTML parsing needed.
+始终优先使用 GitHub API。它返回干净的 JSON — 无需 HTML 解析。
 
 ```
-# Repo metadata (name, description, language, stars, topics)
+# 仓库元数据（名称、描述、语言、星标、主题）
 GET https://api.github.com/repos/{owner}/{repo}
 
-# File tree (see what files exist — very cheap)
+# 文件树（查看存在哪些文件 — 非常廉价）
 GET https://api.github.com/repos/{owner}/{repo}/git/trees/{ref}?recursive=1
 
-# Single file content (base64 encoded)
+# 单个文件内容（base64 编码）
 GET https://api.github.com/repos/{owner}/{repo}/contents/{path}?ref={ref}
 
-# README only (usually enough to understand the repo)
+# 仅 README（通常足以理解仓库）
 GET https://api.github.com/repos/{owner}/{repo}/readme
 ```
 
-### Step 3 — Layered Fetch for Repos
+### 步骤 3 — 仓库分层获取
 
 ```
-Layer 1 (always do first):
-  → Fetch repo metadata + README only
-  → Can you answer the user's question now? YES → STOP. NO → continue.
+第 1 层（始终先做）：
+  → 仅获取仓库元数据 + README
+  → 现在可以回答用户的问题了吗？是 → 停止。否 → 继续。
 
-Layer 2 (only if needed):
-  → Fetch file tree to understand structure
-  → Identify the 1-3 most relevant files based on the question
-  → Can you answer now? YES → STOP. NO → continue.
+第 2 层（仅在需要时）：
+  → 获取文件树以了解结构
+  → 根据问题识别最相关的 1-3 个文件
+  → 现在可以回答了吗？是 → 停止。否 → 继续。
 
-Layer 3 (last resort):
-  → Fetch specific relevant files only (never fetch all files)
-  → Prioritize: main entry point, config files, key modules
+第 3 层（最后手段）：
+  → 仅获取特定的相关文件（绝不获取所有文件）
+  → 优先级：主入口点、配置文件、关键模块
 ```
 
-### 令牌 Rules for GitHub
+### GitHub 的 Token 规则
 
-- README alone answers ~70% of "what does this repo do" questions — always try it first
-- Never fetch more than 3 files in a single research turn
-- If a file exceeds ~300 lines, read only the top (imports + class/function signatures)
-- Decode base64 content from API before passing to context
+- 仅 README 即可回答约 70% 的"此仓库做什么"问题 — 始终先尝试
+- 单次研究轮次中绝不获取超过 3 个文件
+- 如果文件超过约 300 行，只读取顶部（导入 + 类/函数签名）
+- 在传递给上下文之前解码 API 返回的 base64 内容
 
 ---
 
-## URL Protocol
+## URL 协议
 
-Use when the user gives a specific non-GitHub URL (docs, articles, blogs, etc.)
+当用户给出特定的非 GitHub URL（文档、文章、博客等）时使用
 
-### Step 1 — Assess the URL type
+### 步骤 1 — 评估 URL 类型
 
-| Site type | Likely works with | Notes |
+| 站点类型 | 适用工具 | 备注 |
 |---|---|---|
-| Static docs / MDN / ReadTheDocs | `read_url_content` | Fast, clean, cheap |
-| News articles / blogs | `read_url_content` | Usually fine |
-| SPAs / React/Next.js apps | `browser_subagent` | JS-rendered |
-| Auth-gated pages | `browser_subagent` | Needs login |
-| Raw GitHub files (raw.githubusercontent) | `read_url_content` | Direct text |
+| 静态文档 / MDN / ReadTheDocs | `read_url_content` | 快速、干净、廉价 |
+| 新闻文章 / 博客 | `read_url_content` | 通常可用 |
+| SPA / React/Next.js 应用 | `browser_subagent` | JS 渲染 |
+| 需要认证的页面 | `browser_subagent` | 需要登录 |
+| 原始 GitHub 文件 (raw.githubusercontent) | `read_url_content` | 直接文本 |
 
-### Step 2 — Layered Fetch
+### 步骤 2 — 分层获取
 
 ```
-Layer 1 — Skim
-  → Fetch the URL with read_url_content
-  → Read only headings (H1, H2, H3) and first paragraph
-  → Does this page contain what the user needs? NO → try a different URL or search. YES → continue.
+第 1 层 — 略读
+  → 使用 read_url_content 获取 URL
+  → 只读取标题（H1、H2、H3）和第一段
+  → 此页面包含用户需要的内容吗？否 → 尝试不同的 URL 或搜索。是 → 继续。
 
-Layer 2 — Targeted Extract
-  → If the page has anchor links (e.g. /docs/page#section), fetch with the anchor
-  → Extract only the relevant section (200–500 tokens max)
-  → Can you answer? YES → STOP.
+第 2 层 — 定向提取
+  → 如果页面有锚点链接（例如 /docs/page#section），附带锚点获取
+  → 仅提取相关部分（最多 200-500 token）
+  → 可以回答了吗？是 → 停止。
 
-Layer 3 — Full Fetch
-  → Fetch full page, strip boilerplate (nav, footer, ads, cookie banners, sidebars)
-  → Cap at 2000 tokens. Summarize before passing to answer.
+第 3 层 — 完整获取
+  → 获取整页，去除样板内容（导航、页脚、广告、Cookie 横幅、侧边栏）
+  → 上限 2000 token。在传递给答案之前先总结。
 
-Layer 4 — Browser Subagent (last resort only)
-  → Use ONLY if read_url_content returns empty, garbled, or JS-placeholder content
-  → Instruct subagent: "Navigate to [URL], wait for content to load, extract [specific section]"
-  → Do NOT use browser_subagent for static pages — it's expensive
+第 4 层 — 浏览器子代理（仅最后手段）
+  → 仅在 read_url_content 返回空、乱码或 JS 占位符内容时使用
+  → 指示子代理："导航到 [URL]，等待内容加载，提取 [特定部分]"
+  → 不要对静态页面使用 browser_subagent — 很昂贵
 ```
 
-### What to Strip from Fetched Pages
+### 从获取页面中去除的内容
 
-Always remove before using fetched content:
-- Navigation menus and breadcrumbs
-- Cookie banners and GDPR notices
-- "Related articles" / "You might also like" blocks
-- Footer content (copyright, links)
-- Social share buttons
-- Ads and sponsored content
+在使用获取的内容之前始终移除：
+- 导航菜单和面包屑
+- Cookie 横幅和 GDPR 通知
+- "相关文章"/"你可能也喜欢"块
+- 页脚内容（版权、链接）
+- 社交分享按钮
+- 广告和赞助内容
 
-Extract and keep:
-- Main article / documentation body
-- Code blocks
-- Tables with data
-- Numbered steps or procedures
+提取并保留：
+- 主要文章/文档正文
+- 代码块
+- 数据表格
+- 编号步骤或流程
 
 ---
 
-## Search Protocol
+## 搜索协议
 
-Use when the user gives a topic, question, or 查询 — not a specific URL.
+当用户给出主题、问题或查询 — 而非特定 URL 时使用
 
-### Step 1 — Sharpen the 查询 Before Searching
+### 步骤 1 — 在搜索前优化查询
 
-Do NOT search the raw user 查询. Transform it first:
+不要搜索用户的原始查询。先转换它：
 
 ```
 Raw: "how to deploy fastapi on aws"
@@ -167,74 +167,74 @@ Raw: "best way to structure react project"
 Sharpened: "React project folder structure 最佳实践"
 ```
 
-**查询 sharpening rules:**
-- Add specificity: version numbers, technology names, "tutorial" / "guide" / "comparison"
-- Add recency if relevant: current year
-- Remove filler words: "how do I", "what is the", "can you explain"
-- For code questions: add the language + framework name explicitly
+**查询优化规则：**
+- 增加具体性：版本号、技术名称、"教程"/"指南"/"比较"
+- 如果相关则增加时效性：当前年份
+- 移除填充词："如何做"、"什么是"、"你能解释"
+- 对于代码问题：明确添加语言 + 框架名称
 
-### Step 2 — Search and Select
+### 步骤 2 — 搜索和选择
 
 ```
-1. Run search_web with the sharpened 查询
-2. Get results (titles + snippets)
-3. Scan titles + snippets ONLY — do not fetch yet
-4. Pick the TOP 1-2 most relevant results (max 3 in complex cases)
-5. Skip results from: forums (if docs exist), aggregator blogs, paywalled sites
-6. Prefer: official docs, GitHub repos, well-known tech blogs, academic sources
+1. 使用优化后的查询运行 search_web
+2. 获取结果（标题 + 片段）
+3. 仅扫描标题 + 片段 — 暂不获取
+4. 选择最相关的前 1-2 个结果（复杂情况最多 3 个）
+5. 跳过以下来源：论坛（如果有文档）、聚合博客、付费站点
+6. 优先选择：官方文档、GitHub 仓库、知名技术博客、学术来源
 ```
 
-### Step 3 — Fetch Selected Results
+### 步骤 3 — 获取选中的结果
 
-Apply the URL Protocol (above) to each selected URL.
-Process results one at a time — only fetch the second URL if the first didn't answer the question.
+对每个选中的 URL 应用 URL 协议（上文）。
+一次处理一个结果 — 仅当第一个未能回答问题时才获取第二个 URL。
 
-### 令牌 Rules for Search
+### 搜索的 Token 规则
 
-- Never read more than 3 URLs per search 查询
-- If the snippet already contains the answer → do NOT fetch the full page, use the snippet
-- For factual questions (dates, names, simple facts) → snippet is usually enough
-- For procedural questions (how to do X) → fetch 1 relevant page, targeted section only
+- 每次搜索查询最多读取 3 个 URL
+- 如果摘要已包含答案 → 不要获取整页，使用摘要
+- 对于事实性问题（日期、名称、简单事实）→ 摘要通常就足够了
+- 对于流程性问题（如何做 X）→ 获取 1 个相关页面，仅定向部分
 
 ---
 
-## Multi-URL Protocol
+## 多 URL 协议
 
-Use when the user provides a list of URLs to compare or summarize.
+当用户提供要比较或总结的 URL 列表时使用。
 
 ```
-1. Skim all URLs first (Layer 1 fetch for each)
-2. Group by relevance to the user's question
-3. Deep-fetch only the most relevant 1-3 URLs
-4. Summarize each in 3-5 sentences before combining
-5. Never dump raw content from multiple pages — always summarize per-source first
+1. 先略读所有 URL（每个进行第 1 层获取）
+2. 按与用户问题的相关性分组
+3. 仅深度获取最相关的 1-3 个 URL
+4. 在合并之前每个总结 3-5 句话
+5. 绝不转储来自多个页面的原始内容 — 始终先按来源总结
 ```
 
 ---
 
-## File Protocol
+## 文件协议
 
-Use when URL points directly to a file (PDF, .txt, .md, .csv, etc.)
+当 URL 直接指向文件（PDF、.txt、.md、.csv 等）时使用
 
-- `.md` / `.txt` / `.csv` → `read_url_content` works directly, read full content
-- `.pdf` → Use browser_subagent or a PDF extraction tool; extract text only
-- `.json` / `.yaml` → `read_url_content`, parse structure, summarize 架构 + key values
-- Large files (>500 lines) → Read first 100 lines + last 20 lines + search for relevant sections
+- `.md` / `.txt` / `.csv` → `read_url_content` 直接工作，读取完整内容
+- `.pdf` → 使用 browser_subagent 或 PDF 提取工具；仅提取文本
+- `.json` / `.yaml` → `read_url_content`，解析结构，总结架构 + 关键值
+- 大文件（>500 行）→ 读取前 100 行 + 最后 20 行 + 搜索相关部分
 
 ---
 
-## Anti-Patterns (Never Do These)
+## 反模式（绝不要这样做）
 
-| Anti-pattern | Why it's bad | Do this instead |
+| 反模式 | 为什么不好 | 应该这样做 |
 |---|---|---|
-| Fetching full page for a simple fact | Wastes 1000s of tokens | Use snippet or targeted anchor |
-| Using browser_subagent for static sites | Very expensive | Use read_url_content first |
-| Searching with the raw user 查询 | Vague results | Sharpen 查询 first |
-| Fetching 5+ search results | 令牌 explosion | Max 3, stop when answered |
-| Dumping raw HTML into context | Noisy, wasteful | Always strip to Markdown |
-| Fetching "just in case" | Unnecessary tokens | Only fetch what's needed to answer |
-| Re-fetching the same URL | Redundant | Cache result in context, reuse |
-| Fetching entire GitHub repo | Extremely wasteful | README + targeted files only |
+| 为简单事实获取整页 | 浪费数千 token | 使用摘要或定向锚点 |
+| 对静态站点使用 browser_subagent | 非常昂贵 | 先使用 read_url_content |
+| 使用用户原始查询搜索 | 结果模糊 | 先优化查询 |
+| 获取 5+ 个搜索结果 | token 爆炸 | 最多 3 个，能回答就停止 |
+| 将原始 HTML 转储到上下文 | 嘈杂且浪费 | 始终简化为 Markdown |
+| "以防万一"获取 | 不必要的 token | 只获取回答问题所需的内容 |
+| 重复获取相同 URL | 冗余 | 在上下文中缓存结果，复用 |
+| 获取整个 GitHub 仓库 | 极其浪费 | 仅 README + 定向文件 |
 
 ---
 

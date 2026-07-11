@@ -1,5 +1,5 @@
 ---
-name: agentphone
+name: AgentPhone 电话代理
 version: 0.3.0
 description: "通过 AgentPhone API 构建 AI 电话代理：拨打电话、收发短信、管理号码和语音代理。"
 risk: critical

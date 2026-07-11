@@ -1,9 +1,9 @@
 ---
-name: type-testing
+name: TypeScript 类型测试
 description: TypeScript 类型测试 — Expect 工具、类型断言、类型体操验证、测试框架集成
 ---
 
-# type-testing
+# 类型测试
 
 ## 概述
 

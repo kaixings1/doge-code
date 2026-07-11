@@ -1,5 +1,5 @@
 ---
-name: crossframe-public
+name: 适用于 CrossFrame Suite 路由到中文公共议题分析、平台治理、政策、制度责任、申诉或合规证据的场景。
 description: "适用于 CrossFrame Suite 路由到中文公共议题分析、平台治理、政策、制度责任、申诉或合规证据的场景。"
 category: 工作流
 risk: safe

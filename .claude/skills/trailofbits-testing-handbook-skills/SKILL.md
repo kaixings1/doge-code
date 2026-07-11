@@ -1,3 +1,8 @@
+---
+name: 测试手册技能生成器
+description: 从 Trail of Bits 应用安全测试手册生成 Claude Code 技能的元技能。
+---
+
 # Testing Handbook Skills
 
 Meta-skill that generates Claude Code skills from the [Trail of Bits Application Security Testing Handbook](https://appsec.guide).

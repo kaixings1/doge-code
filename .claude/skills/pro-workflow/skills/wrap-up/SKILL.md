@@ -3,9 +3,9 @@ name: wrap-up
 description: "Pro Workflow\Skills\Wrap Up — Pro Workflow\Skills\Wrap Up 相关功能和最佳实践"
 ---
 
-# Wrap-Up Ritual
+# 收尾仪式
 
-End your coding session with intention.
+有意识地结束您的编码会话。
 
 ## Trigger
 
@@ -19,7 +19,7 @@ Use when ending a session, saying "wrap up", "done for now", or before closing t
 4. **Next Session Context** — What's the next logical task? Any blockers? Context to preserve?
 5. **Summary** — One paragraph: what was accomplished, current state, what's next.
 
-## Commands
+## 命令
 
 ```bash
 git status

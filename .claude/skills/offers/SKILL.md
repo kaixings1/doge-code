@@ -1,5 +1,5 @@
 ---
-name: offers
+name: 当用户想要设计、构建或改进产品方案（他们实际销售
 description: "当用户想要设计、构建或改进产品方案（他们实际销售的东西）时，包括价值框架、奖励堆叠、担保设计、稀缺性/紧迫性、命名和支付结构。当用户提到 'offer'、'offer design'、'build an offer'、'grand slam offer'、'irresistible offer'、'value stack'、'bonus stack'、'guarantee'、'risk reversal'、'money-back guarantee'、'scarcity'、'urgency'、'high-ticket offer'、'productize a service'、'naming an offer'、'payment plan'、'down-sell'、'upsell offer' 或 'why isn't my offer converting' 时也使用此技能。最适合服务、代理机构、课程、教练、信息产品、高客单价 B2B 和直接响应式营销。如果你运营纯自助式 SaaS，请先阅读定价——层级和打包在此处作用更大。对于价格水平本身（层级、免费增值、价值指标），请参阅 pricing。对于展示方案的页面，请参阅 copywriting。对于发布时刻，请参阅 launch。对于销售资料，请参阅 sales-enablement。"
 metadata:
   version: 1.0.0

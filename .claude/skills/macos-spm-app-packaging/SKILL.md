@@ -1,6 +1,6 @@
 ---
-name: macos-spm-app-packaging
-description: "Macos Spm App Packaging — Macos Spm App Packaging 相关功能和最佳实践"
+name: macOS SPM 应用打包
+description: "macOS SPM 应用打包 — macOS SPM 应用打包相关功能和最佳实践"
 risk: safe
 source: "Dimillian/Skills (MIT)"
 date_added: "2026-03-25"

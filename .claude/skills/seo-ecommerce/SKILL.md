@@ -1,5 +1,5 @@
 ---
-name: seo-ecommerce
+name: 电商 SEO 分析相关功能和最佳实践：Google Shopping
 description: "Seo Ecommerce — 电商 SEO 分析相关功能和最佳实践：Google Shopping 可见性、Amazon 市场情报、产品 架构 验证、竞争对手定价分析和市场关键词空白。"
 user-invocable: true
 参数-hint: "<url or keyword>"

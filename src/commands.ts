@@ -268,7 +268,13 @@ import performanceProfiler from './commands/performance-profiler/index.js'
 import codeReviewAssistant from './commands/code-review-assistant/index.js'
 import dependencyAnalyzer from './commands/dependency-analyzer/index.js'
 import skillsI18n from './commands/skills-i18n/index.js'
+import updateskills from './commands/updateskills/index.js'
 import notebook from './commands/notebook/index.js'
+import todo from './commands/todo/index.js'
+import benchmark from './commands/benchmark/index.js'
+import scaffold from './commands/scaffold/index.js'
+import translate from './commands/translate/index.js'
+import securityAudit from './commands/security-audit/index.js'
 import { getSettingSourceName } from './utils/settings/constants.js'
 import {
   type Command,
@@ -468,6 +474,12 @@ const COMMANDS = memoize((): Command[] => [
   dependencyAnalyzer,
   skillsI18n,
   notebook,
+  todo,
+  benchmark,
+  scaffold,
+  translate,
+  securityAudit,
+  updateskills,
   ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO
     ? INTERNAL_ONLY_COMMANDS
     : []),

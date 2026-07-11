@@ -1,5 +1,5 @@
 ---
-name: conductor-manage
+name: 管理轨道生命周期：归档、恢复、删除、重命名和清理
 description: "管理轨道生命周期：归档、恢复、删除、重命名和清理"
 risk: unknown
 source: community

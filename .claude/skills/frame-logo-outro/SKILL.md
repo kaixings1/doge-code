@@ -1,5 +1,5 @@
 ---
-name: frame-logo-outro
+name: 分段标志组装、光芒绽放和标语揭示，用于视频结尾或品牌关闭帧。
 zh_name: "品牌 Logo 收尾帧"
 en_name: "Logo Outro Frame"
 emoji: "🎬"

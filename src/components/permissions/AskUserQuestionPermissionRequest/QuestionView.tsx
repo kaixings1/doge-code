@@ -261,7 +261,7 @@ export function QuestionView(t0) {
   }
   let t8;
   if ($[47] !== isInPlanMode || $[48] !== planFilePath) {
-    t8 = isInPlanMode && planFilePath && <Box flexDirection="column" gap={0}><Divider color="inactive" /><Text color="inactive">Planning: <FilePathLink filePath={planFilePath} /></Text></Box>;
+    t8 = isInPlanMode && planFilePath && <Box flexDirection="column" gap={0}><Divider color="inactive" /><Text color="inactive">计划中: <FilePathLink filePath={planFilePath} /></Text></Box>;
     $[47] = isInPlanMode;
     $[48] = planFilePath;
     $[49] = t8;

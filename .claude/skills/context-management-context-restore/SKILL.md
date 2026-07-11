@@ -1,60 +1,60 @@
 ---
-name: context-management-context-restore
+name: 适用于working with context management context restore的情况。
 description: "适用于working with context management context restore的情况。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# Context Restoration: Advanced Semantic Memory Rehydration
+# 上下文恢复：高级语义记忆再水合
 
 ## 使用此技能的场景
 
-- Working on context restoration: advanced semantic memory rehydration tasks or workflows
-- Needing guidance, best practices, or checklists for context restoration: advanced semantic memory rehydration
+- 处理上下文恢复：高级语义记忆再水合任务或工作流时
+- 需要上下文恢复的指导、最佳实践或检查清单时
 
 ## 不要使用此技能的场景
 
-- The task is unrelated to context restoration: advanced semantic memory rehydration
-- You need a different domain or tool outside this scope
+- 任务与上下文恢复无关时
+- 需要此范围之外的领域或工具时
 
 ## 说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证方法。
+- 如需详细示例，请打开 `resources/implementation-playbook.md`。
 
-## Role Statement
+## 角色说明
 
-Expert Context Restoration Specialist focused on intelligent, semantic-aware context retrieval and reconstruction across complex multi-agent AI workflows. Specializes in preserving and reconstructing project knowledge with high fidelity and minimal information loss.
+专注于跨复杂多代理 AI 工作流的智能语义感知上下文检索和重构的专家级上下文恢复专家。擅长以高保真度和最小信息损失保留和重构项目知识。
 
-## Context Overview
+## 上下文概述
 
-The Context Restoration tool is a sophisticated memory management system designed to:
-- Recover and reconstruct project context across distributed AI workflows
-- Enable seamless continuity in complex, long-running projects
-- Provide intelligent, semantically-aware context rehydration
-- Maintain historical knowledge integrity and decision traceability
+上下文恢复工具是一个复杂的记忆管理系统，旨在：
+- 跨分布式 AI 工作流恢复和重构项目上下文
+- 在复杂的长期运行项目中实现无缝连续性
+- 提供智能、语义感知的上下文再水合
+- 维护历史知识完整性和决策可追溯性
 
-## Core Requirements and Arguments
+## 核心要求与参数
 
-### Input Parameters
-- `context_source`: Primary context storage location (vector database, file system)
-- `project_identifier`: Unique project namespace
-- `restoration_mode`:
-  - `full`: Complete context restoration
-  - `incremental`: Partial context update
-  - `diff`: Compare and merge context versions
-- `token_budget`: Maximum context tokens to restore (default: 8192)
-- `relevance_threshold`: Semantic similarity cutoff for context components (default: 0.75)
+### 输入参数
+- `context_source`：主要上下文存储位置（向量数据库、文件系统）
+- `project_identifier`：唯一项目命名空间
+- `restoration_mode`：
+  - `full`：完整上下文恢复
+  - `incremental`：部分上下文更新
+  - `diff`：比较和合并上下文版本
+- `token_budget`：要恢复的最大上下文 token（默认：8192）
+- `relevance_threshold`：上下文组件的语义相似度截止值（默认：0.75）
 
-## Advanced Context Retrieval Strategies
+## 高级上下文检索策略
 
-### 1. Semantic Vector Search
-- Utilize multi-dimensional embedding models for context retrieval
-- Employ cosine similarity and vector clustering techniques
-- Support multi-modal embedding (text, code, architectural diagrams)
+### 1. 语义向量搜索
+- 利用多维嵌入模型进行上下文检索
+- 采用余弦相似度和向量聚类技术
+- 支持多模态嵌入（文本、代码、架构图）
 
 ```python
 def semantic_context_retrieve(project_id, query_vector, top_k=5):
@@ -68,10 +68,10 @@ def semantic_context_retrieve(project_id, query_vector, top_k=5):
     return rank_and_filter_contexts(matching_contexts)
 ```
 
-### 2. Relevance Filtering and Ranking
-- Implement multi-stage relevance scoring
-- Consider temporal decay, semantic similarity, and historical impact
-- Dynamic weighting of context components
+### 2. 相关性过滤与排序
+- 实现多阶段相关性评分
+- 考虑时间衰减、语义相似度和历史影响
+- 上下文组件的动态加权
 
 ```python
 def rank_context_components(contexts, current_state):
@@ -88,10 +88,10 @@ def rank_context_components(contexts, current_state):
     return sorted(ranked_contexts, key=lambda x: x[1], reverse=True)
 ```
 
-### 3. Context Rehydration Patterns
-- Implement incremental context loading
-- Support partial and full context reconstruction
-- Manage 令牌 budgets dynamically
+### 3. 上下文再水合模式
+- 实现增量上下文加载
+- 支持部分和完整上下文重构
+- 动态管理令牌预算
 
 ```python
 def rehydrate_context(project_context, token_budget=8192):
@@ -117,44 +117,44 @@ def rehydrate_context(project_context, token_budget=8192):
     return restored_context
 ```
 
-### 4. 会话 State Reconstruction
-- Reconstruct agent 工作流 state
-- Preserve decision trails and reasoning contexts
-- Support multi-agent collaboration history
+### 4. 会话状态重构
+- 重构代理工作流状态
+- 保留决策轨迹和推理上下文
+- 支持多代理协作历史
 
-### 5. Context Merging and Conflict Resolution
-- Implement three-way merge strategies
-- Detect and resolve semantic conflicts
-- Maintain provenance and decision traceability
+### 5. 上下文合并与冲突解决
+- 实现三方合并策略
+- 检测和解决语义冲突
+- 维护来源和决策可追溯性
 
-### 6. Incremental Context Loading
-- Support lazy loading of context components
-- Implement context streaming for large projects
-- Enable dynamic context expansion
+### 6. 增量上下文加载
+- 支持上下文的惰性加载
+- 为大型项目实现上下文流式传输
+- 启用动态上下文扩展
 
-### 7. Context Validation and Integrity Checks
-- Cryptographic context signatures
-- Semantic consistency verification
-- Version compatibility checks
+### 7. 上下文验证与完整性检查
+- 加密上下文签名
+- 语义一致性验证
+- 版本兼容性检查
 
-### 8. Performance Optimization
-- Implement efficient caching mechanisms
-- Use probabilistic data structures for context indexing
-- Optimize vector search algorithms
+### 8. 性能优化
+- 实现高效缓存机制
+- 使用概率数据结构进行上下文索引
+- 优化向量搜索算法
 
-## Reference Workflows
+## 参考工作流
 
-### 工作流 1: Project Resumption
-1. Retrieve most recent project context
-2. Validate context against current codebase
-3. Selectively restore relevant components
-4. Generate resumption summary
+### 工作流 1：项目恢复
+1. 检索最近的项目上下文
+2. 验证上下文与当前代码库的一致性
+3. 选择性恢复相关组件
+4. 生成恢复摘要
 
-### 工作流 2: Cross-Project Knowledge Transfer
-1. Extract semantic vectors from source project
-2. Map and transfer relevant knowledge
-3. Adapt context to target project's domain
-4. Validate knowledge transferability
+### 工作流 2：跨项目知识迁移
+1. 从源项目提取语义向量
+2. 映射和迁移相关知识
+3. 将上下文适应到目标项目领域
+4. 验证知识可迁移性
 
 ## 使用示例
 
@@ -169,17 +169,17 @@ context-restore project:web-platform --mode incremental
 context-restore project:ml-pipeline --查询 "model training strategy"
 ```
 
-## 集成 Patterns
-- RAG (Retrieval Augmented Generation) pipelines
-- Multi-agent 工作流 coordination
-- Continuous learning systems
-- Enterprise knowledge management
+## 集成模式
+- RAG（检索增强生成）管道
+- 多代理工作流协调
+- 持续学习系统
+- 企业知识管理
 
-## Future Roadmap
-- Enhanced multi-modal embedding support
-- Quantum-inspired vector search algorithms
-- Self-healing context reconstruction
-- Adaptive learning context strategies
+## 未来路线图
+- 增强的多模态嵌入支持
+- 量子启发的向量搜索算法
+- 自修复上下文重构
+- 自适应学习上下文策略
 
 ## 限制
 - 仅当任务明确匹配上述描述的范围时才使用此技能。

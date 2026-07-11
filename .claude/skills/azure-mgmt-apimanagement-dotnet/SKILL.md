@@ -1,12 +1,12 @@
 ---
-name: azure-mgmt-apimanagement-dotnet
-description: "Azure Mgmt Apimanagement Dotnet — Azure Mgmt Apimanagement Dotnet 相关功能和最佳实践"
+name: Azure API 管理 .NET 管理 SDK 相关功能和最佳实践
+description: "Azure Mgmt Apimanagement Dotnet — Azure API 管理 .NET 管理 SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
 
-# Azure.ResourceManager.ApiManagement (.NET)
+# Azure API 管理 .NET SDK
 
 Management plane SDK for provisioning and managing Azure API Management 资源 via Azure Resource Manager.
 
@@ -50,7 +50,7 @@ var subscription = armClient.GetSubscriptionResource(
     new ResourceIdentifier($"/subscriptions/{subscriptionId}"));
 ```
 
-## Resource Hierarchy
+## 资源层次结构
 
 ```
 ArmClient

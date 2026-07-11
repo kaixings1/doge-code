@@ -1,14 +1,14 @@
 ---
-name: memory-forensics
+name: 获取、分析和提取内存转储中用于事件响应和恶意软件分析的工件的全面技术。
 description: "获取、分析和提取内存转储中用于事件响应和恶意软件分析的工件的全面技术。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# Memory Forensics
+# 内存取证
 
-Comprehensive techniques for acquiring, analyzing, and extracting artifacts from memory dumps for incident 响应 and malware analysis.
+用于事件响应和恶意软件分析的内存转储获取、分析和工件提取的全面技术。
 
 ## 使用此技能的场景
 

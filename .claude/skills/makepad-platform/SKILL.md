@@ -1,6 +1,6 @@
 ---
-name: makepad-platform
-description: "Makepad Platform — Makepad Platform 相关功能和最佳实践"
+name: Makepad 平台
+description: "Makepad 平台 — Makepad 跨平台支持相关功能和最佳实践"
   CRITICAL: Use for Makepad cross-platform support. Triggers on:
   makepad platform, makepad os, makepad macos, makepad windows, makepad linux,
   makepad android, makepad ios, makepad web, makepad wasm, makepad metal,

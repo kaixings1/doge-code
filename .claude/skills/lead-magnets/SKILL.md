@@ -1,5 +1,5 @@
 ---
-name: lead-magnets
+name: 规划和优化用于电子邮件捕获和潜在客户生成的引流磁石。适用于设计门控内容、检查清单
 description: "规划和优化用于电子邮件捕获和潜在客户生成的引流磁石。适用于设计门控内容、检查清单、模板、可下载资源或其他将访问者转化为订阅者的优惠。"
 risk: unknown
 source: "https://github.com/coreyhaines31/marketingskills"

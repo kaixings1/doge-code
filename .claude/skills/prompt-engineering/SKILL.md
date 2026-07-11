@@ -1,5 +1,5 @@
 ---
-name: prompt-engineering
+name: 提示工程
 description: 提示工程 — 包括结构化提示、链式思考、少样本示例和角色提示的提示工程模式。
 ---
 
@@ -129,7 +129,7 @@ Each finding: {{"severity": "critical|warning|info", "line": number, "message": 
 - Using negations ("don't do X") without saying what to do instead
 - Not testing prompts with adversarial or edge-case inputs
 
-## Checklist
+## 检查清单
 
 - [ ] System prompt defines role, scope, format, and constraints
 - [ ] Chain-of-thought used for multi-step reasoning tasks

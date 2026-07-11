@@ -1,0 +1,630 @@
+import { APIError } from '@anthropic-ai/sdk';
+// 引入调试日志工具（实际写入文件或控制台，取决于项目配置）
+import { logForDebugging } from "../../utils/debug.js";
+/**
+ * 将 Anthropic 的消息内容（可能是字符串或内容块数组）转换为纯文本
+ * 用于构建 OpenAI 消息时需要提取的用户/助手文本
+ */
+function contentToText(content) {
+    if (typeof content === 'string')
+        return content;
+    return content
+        .map(block => {
+        if (block.type === 'text')
+            return typeof block.text === 'string' ? block.text : '';
+        if (block.type === 'tool_result') {
+            return typeof block.content === 'string'
+                ? block.content
+                : JSON.stringify(block.content);
+        }
+        return '';
+    })
+        .filter(Boolean)
+        .join('\n');
+}
+/**
+ * 确保 content 以内容块数组的形式返回（若为字符串则包装为 text 块）
+ */
+function toBlocks(content) {
+    return Array.isArray(content)
+        ? content
+        : [{ type: 'text', text: content }];
+}
+/**
+ * 将 Anthropic 工具定义转换为 OpenAI 工具定义格式
+ * 如果无工具或转换后为空，返回 undefined
+ */
+function getToolDefinitions(tools) {
+    if (!tools || tools.length === 0)
+        return undefined;
+    const mapped = tools.flatMap(tool => {
+        const record = tool;
+        const name = typeof record.name === 'string' ? record.name : undefined;
+        if (!name)
+            return [];
+        return [{
+                type: 'function',
+                function: {
+                    name,
+                    description: typeof record.description === 'string' ? record.description : undefined,
+                    parameters: record.input_schema,
+                },
+            }];
+    });
+    return mapped.length > 0 ? mapped : undefined;
+}
+/**
+ * 将 Anthropic 格式的请求转换为 OpenAI 兼容的请求体
+ * 会处理 system prompt、多模态内容、工具调用等字段的映射
+ */
+export function convertAnthropicRequestToOpenAI(input) {
+    logForDebugging('[openaiCompat] 开始将 Anthropic 请求转换为 OpenAI 格式', { level: 'debug' });
+    // 支持通过环境变量覆盖模型名称
+    const configuredModel = process.env.ANTHROPIC_MODEL?.trim();
+    const targetModel = configuredModel || input.model;
+    logForDebugging(`[openaiCompat] 目标模型: ${targetModel} (原始: ${input.model}, 环境覆盖: ${configuredModel ?? '无'})`, { level: 'debug' });
+    const messages = [];
+    // 处理 system prompt（可能是字符串或内容块数组）
+    if (input.system) {
+        const systemText = Array.isArray(input.system)
+            ? input.system.map(block => block.text ?? '').join('\n')
+            : input.system;
+        if (systemText) {
+            messages.push({ role: 'system', content: systemText });
+            logForDebugging(`[openaiCompat] 添加 system 消息 (长度: ${systemText.length})`, { level: 'debug' });
+        }
+    }
+    // 逐条转换消息
+    for (const message of input.messages) {
+        logForDebugging(`[openaiCompat] 处理消息 role=${message.role}`, { level: 'debug' });
+        if (message.role === 'user') {
+            const blocks = toBlocks(message.content);
+            // 提取 tool_result 块，转换为 OpenAI 的 tool 消息
+            const toolResults = blocks.filter(block => block.type === 'tool_result');
+            for (const result of toolResults) {
+                const toolUseId = typeof result.tool_use_id === 'string' ? result.tool_use_id : undefined;
+                const content = result.content;
+                messages.push({
+                    role: 'tool',
+                    tool_call_id: toolUseId,
+                    content: typeof content === 'string' ? content : JSON.stringify(content),
+                });
+                logForDebugging(`[openaiCompat] 添加 tool 消息 (tool_use_id=${toolUseId}, content长度=${typeof content === 'string' ? content.length : 'object'})`, { level: 'debug' });
+            }
+            // 将剩余的非工具结果内容拼接为用户消息
+            const text = contentToText(blocks.filter(block => block.type !== 'tool_result'));
+            if (text) {
+                messages.push({ role: 'user', content: text });
+                logForDebugging(`[openaiCompat] 添加 user 消息 (长度: ${text.length})`, { level: 'debug' });
+            }
+            continue;
+        }
+        if (message.role === 'assistant') {
+            const blocks = Array.isArray(message.content)
+                ? message.content
+                : [];
+            const text = blocks
+                .filter(block => block.type === 'text')
+                .map(block => (typeof block.text === 'string' ? block.text : ''))
+                .join('');
+            // 提取 reasoning_content：优先从内容块中找 thinking/ reasoning 类型的块，
+            // 其次从 message 的附加字段中读取（桥接层流解析时可能已在顶层保存）
+            let reasoningContent = null;
+            const thinkingBlock = blocks.find(b => b.type === 'thinking' || b.type === 'reasoning');
+            if (thinkingBlock && typeof thinkingBlock.thinking === 'string') {
+                reasoningContent = thinkingBlock.thinking;
+            }
+            else if (thinkingBlock && typeof thinkingBlock.reasoning === 'string') {
+                reasoningContent = thinkingBlock.reasoning;
+            }
+            else if (thinkingBlock && typeof thinkingBlock.text === 'string') {
+                reasoningContent = thinkingBlock.text;
+            }
+            // 兜底：如果 message 顶层有 reasoning_content 字段（来自 OpenAI 原生消息直传）
+            if (!reasoningContent) {
+                const msg = message;
+                if (typeof msg.reasoning_content === 'string') {
+                    reasoningContent = msg.reasoning_content;
+                }
+            }
+            const toolCalls = blocks
+                .filter(block => block.type === 'tool_use')
+                .map(block => ({
+                id: String(block.id),
+                type: 'function',
+                function: {
+                    name: String(block.name),
+                    arguments: typeof block.input === 'string'
+                        ? block.input
+                        : JSON.stringify(block.input ?? {}),
+                },
+            }));
+            // 注意：不保留 reasoning_content。
+            // 某些 thinking 模式 API（如 DeepSeek）要求 assistant 消息中如果带 reasoning_content，
+            // 必须伴随实际的 thinking 令牌一起返回，但历史消息中的 reasoning_content 只是上次推理结果，
+            // 再次发送会触发 "The reasoning_content in the thinking mode must be passed back" 错误。
+            messages.push({
+                role: 'assistant',
+                content: text || null,
+                ...(toolCalls.length > 0 ? { tool_calls: toolCalls } : {}),
+            });
+            logForDebugging(`[openaiCompat] 添加 assistant 消息 (text长度=${text.length}, toolCalls数量=${toolCalls.length}, reasoning_content=${reasoningContent ? '有' : '无'})`, { level: 'debug' });
+        }
+    }
+    const result = {
+        model: targetModel,
+        messages,
+        temperature: input.temperature,
+        max_tokens: input.max_tokens,
+        ...(getToolDefinitions(input.tools)
+            ? { tools: getToolDefinitions(input.tools) }
+            : {}),
+        ...(input.tool_choice?.type === 'tool'
+            ? {
+                tool_choice: {
+                    type: 'function',
+                    function: { name: input.tool_choice.name },
+                },
+            }
+            : input.tool_choice?.type === 'auto'
+                ? { tool_choice: 'auto' }
+                : {}),
+    };
+    logForDebugging(`[openaiCompat] 转换完成: 模型: ${targetModel}，总消息数=${messages.length}, 工具数=${result.tools?.length ?? 0}`, { level: 'debug' });
+    return result;
+}
+/**
+ * 向 OpenAI 兼容端点发起流式 POST 请求，返回可读流读取器
+ * 内置了错误处理，对 429/529/5xx 抛出 APIError，以便上游进行重试
+ */
+export async function createOpenAICompatStream(config, request, signal) {
+    const url = config.baseURL;
+    console.error('[DEBUG] 请求 URL:', url);
+    logForDebugging('[openaiCompat] 准备请求 URL: ' + url, { level: 'debug' });
+    logForDebugging(`[openaiCompat] 请求体: ${JSON.stringify({ ...request, stream: true })}`, { level: 'debug' });
+    const response = await (config.fetch ?? globalThis.fetch)(url, {
+        method: 'POST',
+        signal,
+        headers: {
+            'content-type': 'application/json',
+            authorization: `Bearer ${config.apiKey}`,
+            ...config.headers,
+        },
+        body: JSON.stringify({ ...request, stream: true }),
+    });
+    if (!response.ok || !response.body) {
+        let responseText = '';
+        try {
+            responseText = await response.text();
+        }
+        catch {
+            responseText = '';
+        }
+        logForDebugging(`[openaiCompat] 响应错误: status=${response.status}, body=${responseText}`, { level: 'debug' });
+        // 对可重试的状态码（429/529/5xx）抛出 APIError，以便 withRetry 能识别并进行指数退避重试
+        if (response.status === 429 || response.status === 529 || response.status >= 500) {
+            let errorBody;
+            try {
+                errorBody = JSON.parse(responseText);
+            }
+            catch {
+                errorBody = { message: responseText };
+            }
+            const respHeaders = new Headers(response.headers);
+            throw new APIError(response.status, errorBody, 'OpenAI compat request failed with status ' + response.status + (responseText ? ': ' + responseText : ''), respHeaders);
+        }
+        throw new Error('OpenAI compat request failed with status ' + response.status + (responseText ? ': ' + responseText : ''));
+    }
+    logForDebugging(`[openaiCompat] 请求成功, 状态码=${response.status}, 准备读取流`, { level: 'debug' });
+    return response.body.getReader();
+}
+/**
+ * 解析 SSE 流缓冲区，返回完整的事件数组和未完成的部分
+ * 按双换行分隔，最后一个不完整的块存入 remainder
+ */
+function parseSSEChunk(buffer) {
+    const normalized = buffer.replace(/\r\n/g, '\n');
+    const parts = normalized.split('\n\n');
+    const remainder = parts.pop() ?? '';
+    return { events: parts, remainder };
+}
+/**
+ * 将 OpenAI 的 finish_reason 映射为 Anthropic 的 stop_reason
+ */
+function mapFinishReason(reason) {
+    if (reason === 'tool_calls')
+        return 'tool_use';
+    if (reason === 'length')
+        return 'max_tokens';
+    return 'end_turn';
+}
+export async function* createAnthropicStreamFromOpenAI(input) {
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let started = false; // 是否已收到 message_start
+    let nextContentIndex = 0; // 下一个 Anthropic 内容块索引
+    let promptTokens = 0;
+    let completionTokens = 0;
+    let responseBytes = 0;
+    // 原生事件路径的索引映射：上游 index -> Anthropic index，以及块类型
+    const nativeIdxMap = new Map();
+    const nativeBlockType = new Map();
+    const nativeToolUseInfo = new Map();
+    let nativeMessageDeltaSent = false;
+    // choices 路径的状态
+    let activeBlockType = null;
+    let activeBlockIndex = null;
+    const toolIdxMap = new Map(); // 上游 tool_calls index -> Anthropic index
+    const toolState = new Map();
+    logForDebugging(`[openaiCompat] 开始将 OpenAI 流转换为 Anthropic 事件, model=${input.model}`, { level: 'debug' });
+    /**
+     * 关闭当前活动的文本块（如有）
+     */
+    async function* closeActiveBlock() {
+        if (activeBlockType && activeBlockIndex !== null) {
+            logForDebugging(`[openaiCompat] 关闭文本块 index=${activeBlockIndex}`, { level: 'debug' });
+            yield { type: 'content_block_stop', index: activeBlockIndex };
+            activeBlockType = null;
+            activeBlockIndex = null;
+        }
+    }
+    /**
+     * 关闭所有原生路径中尚未关闭的内容块
+     */
+    async function* closeAllNativeBlocks() {
+        for (const [idx] of nativeBlockType) {
+            logForDebugging(`[openaiCompat] 关闭原生块 index=${idx}`, { level: 'debug' });
+            yield { type: 'content_block_stop', index: idx };
+        }
+        nativeBlockType.clear();
+        nativeIdxMap.clear();
+    }
+    logForDebugging('[openaiCompat] 开始将 OpenAI 流转换为 Anthropic 事件', { level: 'debug' });
+    while (true) {
+        const { done, value } = await input.reader.read();
+        if (done) {
+            logForDebugging(`[openaiCompat] 流读取完成, 总响应字节数=${responseBytes}`, { level: 'debug' });
+            break;
+        }
+        if (value?.byteLength) {
+            responseBytes += value.byteLength;
+            const partialText = decoder.decode(value, { stream: true });
+            logForDebugging(`[openaiCompat] 读取到 chunk, 字节长度=${value.byteLength}, 部分文本预览: ${partialText.slice(0, 200)}${partialText.length > 200 ? '...' : ''}`, { level: 'debug' });
+        }
+        buffer += decoder.decode(value, { stream: true });
+        const sse = parseSSEChunk(buffer);
+        if (sse.events.length) {
+            logForDebugging(`[openaiCompat] 解析出 ${sse.events.length} 个完整 SSE 事件`, { level: 'debug' });
+        }
+        buffer = sse.remainder;
+        for (const rawEvent of sse.events) {
+            const dataLines = rawEvent
+                .split('\n')
+                .filter(line => line.startsWith('data:'))
+                .map(line => line.slice(5).trim());
+            for (const data of dataLines) {
+                if (!data || data === '[DONE]') {
+                    if (data === '[DONE]') {
+                        logForDebugging('[openaiCompat] 收到 [DONE] 事件，开始收尾', { level: 'debug' });
+                        await closeActiveBlock();
+                        for (const ai of toolIdxMap.values()) {
+                            logForDebugging(`[openaiCompat] 关闭工具块 index=${ai}`, { level: 'debug' });
+                            yield { type: 'content_block_stop', index: ai };
+                        }
+                        if (!nativeMessageDeltaSent && started) {
+                            logForDebugging('[openaiCompat] 发送 message_delta (end_turn)', { level: 'debug' });
+                            yield { type: 'message_delta', delta: { stop_reason: 'end_turn', stop_sequence: null }, usage: { output_tokens: completionTokens } };
+                        }
+                        yield { type: 'message_stop' };
+                        _lastResponseBytes = responseBytes;
+                        logForDebugging(`[openaiCompat] 流结束, 最终 token 用量: input=${promptTokens}, output=${completionTokens}, 字节=${responseBytes}`, { level: 'debug' });
+                        return {
+                            id: 'openai-compat',
+                            type: 'message',
+                            role: 'assistant',
+                            model: input.model,
+                            content: [],
+                            stop_reason: 'end_turn',
+                            stop_sequence: null,
+                            usage: { input_tokens: promptTokens, output_tokens: completionTokens }
+                        };
+                    }
+                    continue;
+                }
+                let event;
+                try {
+                    event = JSON.parse(data);
+                }
+                catch (e) {
+                    logForDebugging(`[openaiCompat] 无法解析事件数据: ${data.slice(0, 200)}`, { level: 'debug' });
+                    continue;
+                }
+                if (!event || typeof event !== 'object')
+                    continue;
+                logForDebugging(`[openaiCompat] 收到事件: ${JSON.stringify(event).slice(0, 500)}`, { level: 'debug' });
+                const hasChoices = Array.isArray(event.choices) && event.choices.length > 0;
+                // ===============================
+                // 原生 Anthropic 事件路径（无 choices 字段）
+                // ===============================
+                if (!hasChoices) {
+                    const evType = event.type;
+                    if (!evType) {
+                        logForDebugging(`[openaiCompat] 事件缺少 type 字段, 原始内容: ${JSON.stringify(event).slice(0, 200)}`, { level: 'debug' });
+                        continue;
+                    }
+                    logForDebugging(`[openaiCompat] 原生事件类型: ${evType}`, { level: 'debug' });
+                    switch (evType) {
+                        case 'message_start': {
+                            started = true;
+                            const msg = event.message;
+                            if (msg && !msg.model)
+                                msg.model = input.model;
+                            const u = event.usage;
+                            if (u?.input_tokens)
+                                promptTokens = u.input_tokens;
+                            logForDebugging(`[openaiCompat] message_start, 输入 token 数=${promptTokens}`, { level: 'debug' });
+                            yield { type: 'message_start', message: msg ?? { id: 'anthropic-native', type: 'message', role: 'assistant', model: input.model, content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: 0, output_tokens: 0 } } };
+                            break;
+                        }
+                        case 'content_block_start': {
+                            const upstreamIdx = Number(event.index) || 0;
+                            let anthropicIdx = nativeIdxMap.get(upstreamIdx);
+                            if (anthropicIdx === undefined) {
+                                anthropicIdx = nextContentIndex++;
+                                nativeIdxMap.set(upstreamIdx, anthropicIdx);
+                                logForDebugging(`[openaiCompat] 分配原生块索引: upstream ${upstreamIdx} -> Anthropic ${anthropicIdx}`, { level: 'debug' });
+                            }
+                            const block = event.content_block;
+                            if (block?.type === 'tool_use') {
+                                nativeBlockType.set(anthropicIdx, 'tool_use');
+                                nativeToolUseInfo.set(anthropicIdx, {
+                                    id: block.id || '',
+                                    name: block.name || '',
+                                });
+                                logForDebugging(`[openaiCompat] 原生 tool_use 开始: index=${anthropicIdx}, name=${block.name}, id=${block.id}`, { level: 'debug' });
+                                yield { type: 'content_block_start', index: anthropicIdx, content_block: block };
+                            }
+                            else {
+                                // thinking / text 一律视为 text 块
+                                nativeBlockType.set(anthropicIdx, 'text');
+                                logForDebugging(`[openaiCompat] 原生文本块开始: index=${anthropicIdx}`, { level: 'debug' });
+                                yield { type: 'content_block_start', index: anthropicIdx, content_block: { type: 'text', text: '' } };
+                            }
+                            break;
+                        }
+                        case 'content_block_delta': {
+                            const upstreamIdx = Number(event.index) || 0;
+                            let anthropicIdx = nativeIdxMap.get(upstreamIdx);
+                            const delta = event.delta;
+                            const originalType = delta?.type;
+                            // 跳过签名增量
+                            if (originalType === 'signature_delta') {
+                                logForDebugging(`[openaiCompat] 跳过 signature_delta (index=${upstreamIdx})`, { level: 'debug' });
+                                continue;
+                            }
+                            // thinking_delta -> text_delta
+                            let outputDelta = delta;
+                            if (originalType === 'thinking_delta') {
+                                outputDelta = { type: 'text_delta', text: delta.thinking };
+                                logForDebugging(`[openaiCompat] 转换 thinking_delta 为 text_delta, 文本长度=${String(delta.thinking).length}`, { level: 'debug' });
+                            }
+                            if (anthropicIdx === undefined) {
+                                // 缺失 content_block_start，自动合成一个（默认为 text）
+                                anthropicIdx = nextContentIndex++;
+                                nativeIdxMap.set(upstreamIdx, anthropicIdx);
+                                const guessType = originalType === 'input_json_delta' ? 'tool_use' : 'text';
+                                nativeBlockType.set(anthropicIdx, guessType);
+                                logForDebugging(`[openaiCompat] 自动合成 ${guessType} 块 (upstream ${upstreamIdx} -> Anthropic ${anthropicIdx})`, { level: 'debug' });
+                                if (guessType === 'tool_use') {
+                                    const id = delta?.id || `toolu_${anthropicIdx}`;
+                                    const name = delta?.name || '';
+                                    nativeToolUseInfo.set(anthropicIdx, { id, name });
+                                    yield { type: 'content_block_start', index: anthropicIdx, content_block: { type: 'tool_use', id, name, input: '' } };
+                                }
+                                else {
+                                    yield { type: 'content_block_start', index: anthropicIdx, content_block: { type: 'text', text: '' } };
+                                }
+                            }
+                            // 更新 tool_use 的 id/name
+                            if (nativeBlockType.get(anthropicIdx) === 'tool_use') {
+                                if (delta?.id || delta?.name) {
+                                    const info = nativeToolUseInfo.get(anthropicIdx) ?? { id: '', name: '' };
+                                    if (delta.id)
+                                        info.id = delta.id;
+                                    if (delta.name)
+                                        info.name = delta.name;
+                                    nativeToolUseInfo.set(anthropicIdx, info);
+                                    logForDebugging(`[openaiCompat] 更新 tool_use 元数据: index=${anthropicIdx}, id=${info.id}, name=${info.name}`, { level: 'debug' });
+                                }
+                            }
+                            logForDebugging(`[openaiCompat] content_block_delta: index=${anthropicIdx}, delta类型=${outputDelta.type}`, { level: 'debug' });
+                            yield { type: 'content_block_delta', index: anthropicIdx, delta: outputDelta };
+                            break;
+                        }
+                        case 'content_block_stop': {
+                            const upstreamIdx = Number(event.index) || 0;
+                            const anthropicIdx = nativeIdxMap.get(upstreamIdx);
+                            if (anthropicIdx !== undefined) {
+                                logForDebugging(`[openaiCompat] content_block_stop: upstream ${upstreamIdx} -> Anthropic ${anthropicIdx}`, { level: 'debug' });
+                                nativeBlockType.delete(anthropicIdx);
+                                nativeIdxMap.delete(upstreamIdx);
+                                yield { type: 'content_block_stop', index: anthropicIdx };
+                            }
+                            else {
+                                logForDebugging(`[openaiCompat] 警告: content_block_stop 找不到映射 upstream ${upstreamIdx}`, { level: 'debug' });
+                            }
+                            break;
+                        }
+                        case 'message_delta': {
+                            const u = event.usage;
+                            if (u?.output_tokens)
+                                completionTokens = u.output_tokens;
+                            nativeMessageDeltaSent = true;
+                            logForDebugging(`[openaiCompat] message_delta: stop_reason=${event.delta?.stop_reason}, output_tokens=${completionTokens}`, { level: 'debug' });
+                            yield { type: 'message_delta', delta: event.delta, usage: { output_tokens: completionTokens } };
+                            break;
+                        }
+                        case 'message_stop': {
+                            logForDebugging('[openaiCompat] 原生 message_stop, 清理并返回', { level: 'debug' });
+                            yield* closeAllNativeBlocks();
+                            if (!nativeMessageDeltaSent) {
+                                logForDebugging('[openaiCompat] 发送补充的 message_delta (原生路径)', { level: 'debug' });
+                                yield { type: 'message_delta', delta: { stop_reason: 'end_turn', stop_sequence: null }, usage: { output_tokens: completionTokens } };
+                            }
+                            _lastResponseBytes = responseBytes;
+                            yield { type: 'message_stop' };
+                            return { id: 'anthropic-native', type: 'message', role: 'assistant', model: input.model, content: [], stop_reason: 'end_turn', stop_sequence: null, usage: { input_tokens: promptTokens, output_tokens: completionTokens } };
+                        }
+                    }
+                    continue;
+                }
+                // ===============================
+                // OpenAI choices 路径
+                // ===============================
+                //logForDebugging('[openaiCompat] 进入 OpenAI choices 路径处理', { level: 'debug' })
+                const chunk = event;
+                const choice = chunk.choices[0];
+                const delta = choice ? choice.delta : void 0;
+                // 如果尚未开始，发送 message_start
+                if (!started) {
+                    started = true;
+                    promptTokens = chunk.usage?.prompt_tokens ?? 0;
+                    logForDebugging(`[openaiCompat] 自动发送 message_start, 输入 token 数=${promptTokens}, chunk.id=${chunk.id}`, { level: 'debug' });
+                    yield { type: 'message_start', message: { id: chunk.id ?? 'openai-compat', type: 'message', role: 'assistant', model: input.model, content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: promptTokens, output_tokens: 0 } } };
+                }
+                // 将 thinking 增量当作文本增量处理
+                if (delta && delta.thinking !== undefined) {
+                    const t = delta.thinking;
+                    logForDebugging(`[openaiCompat] 检测到 thinking 增量, 长度=${t.length}`, { level: 'debug' });
+                    if (activeBlockType !== 'text') {
+                        yield* closeActiveBlock();
+                        activeBlockIndex = nextContentIndex++;
+                        logForDebugging(`[openaiCompat] 创建新文本块 index=${activeBlockIndex} 用于 thinking`, { level: 'debug' });
+                        yield { type: 'content_block_start', index: activeBlockIndex, content_block: { type: 'text', text: '' } };
+                        activeBlockType = 'text';
+                    }
+                    if (activeBlockIndex !== null) {
+                        yield { type: 'content_block_delta', index: activeBlockIndex, delta: { type: 'text_delta', text: t } };
+                    }
+                }
+                // 文本增量
+                if (delta?.content) {
+                    const text = delta.content;
+                    //logForDebugging(`[openaiCompat] 文本增量, 长度=${text.length}`, { level: 'debug' })
+                    if (activeBlockType !== 'text') {
+                        yield* closeActiveBlock();
+                        activeBlockIndex = nextContentIndex++;
+                        logForDebugging(`[openaiCompat] 创建新文本块 index=${activeBlockIndex} 用于普通文本`, { level: 'debug' });
+                        yield { type: 'content_block_start', index: activeBlockIndex, content_block: { type: 'text', text: '' } };
+                        activeBlockType = 'text';
+                    }
+                    if (activeBlockIndex !== null) {
+                        yield { type: 'content_block_delta', index: activeBlockIndex, delta: { type: 'text_delta', text } };
+                    }
+                }
+                // 工具调用增量
+                if (delta && Array.isArray(delta.tool_calls)) {
+                    logForDebugging(`[openaiCompat] 检测到 ${delta.tool_calls.length} 个工具调用增量`, { level: 'debug' });
+                    yield* closeActiveBlock();
+                    for (const tc of delta.tool_calls) {
+                        const oi = tc.index ?? 0;
+                        let ai = toolIdxMap.get(oi);
+                        if (ai === undefined) {
+                            ai = nextContentIndex++;
+                            toolIdxMap.set(oi, ai);
+                            const state = { id: tc.id ?? `toolu_${oi}`, name: tc.function?.name ?? '', arguments: '' };
+                            toolState.set(oi, state);
+                            logForDebugging(`[openaiCompat] 新工具块: upstream index=${oi} -> Anthropic index=${ai}, name=${state.name}, id=${state.id}`, { level: 'debug' });
+                            yield { type: 'content_block_start', index: ai, content_block: { type: 'tool_use', id: state.id, name: state.name, input: '' } };
+                        }
+                        const state = toolState.get(oi);
+                        if (state) {
+                            if (tc.id)
+                                state.id = tc.id;
+                            if (tc.function?.name)
+                                state.name = tc.function.name;
+                            if (tc.function?.arguments) {
+                                state.arguments += tc.function.arguments;
+                                logForDebugging(`[openaiCompat] 工具参数增量: index=${oi}, 累积参数长度=${state.arguments.length}`, { level: 'debug' });
+                                yield { type: 'content_block_delta', index: ai, delta: { type: 'input_json_delta', partial_json: tc.function.arguments } };
+                            }
+                        }
+                    }
+                }
+                // finish_reason 出现时，结束消息
+                //if (choice && Object.prototype.hasOwnProperty.call(choice, 'finish_reason')) {
+                if (choice?.finish_reason) {
+                    logForDebugging(`[openaiCompat] 收到 finish_reason=${choice.finish_reason}, 准备结束消息`, { level: 'debug' });
+                    yield* closeActiveBlock();
+                    for (const ai of toolIdxMap.values()) {
+                        logForDebugging(`[openaiCompat] 关闭工具块 index=${ai}`, { level: 'debug' });
+                        yield { type: 'content_block_stop', index: ai };
+                    }
+                    completionTokens = chunk.usage?.completion_tokens ?? completionTokens;
+                    _lastResponseBytes = responseBytes;
+                    yield { type: 'message_delta', delta: { stop_reason: mapFinishReason(choice.finish_reason), stop_sequence: null }, usage: { output_tokens: completionTokens } };
+                    yield { type: 'message_stop' };
+                    logForDebugging(`[openaiCompat] 消息结束, 最终 output_tokens=${completionTokens}`, { level: 'debug' });
+                    return {
+                        id: chunk.id ?? 'openai-compat', type: 'message', role: 'assistant', model: input.model, content: [],
+                        stop_reason: mapFinishReason(choice.finish_reason), stop_sequence: null,
+                        usage: { input_tokens: promptTokens, output_tokens: completionTokens }
+                    };
+                }
+            }
+        }
+    }
+    // ================================================================
+    // 非流式响应兜底：当服务端返回完整 JSON（非 SSE 流式格式）时，
+    // 从 buffer 中解析并合成为 Anthropic 流事件。
+    // 这解决了非流式服务器（如 open-claw-zero-token）的兼容问题。
+    // ================================================================
+    if (!started && buffer.trim()) {
+        const maybeParsed = tryParseNonStreamingResponse(buffer.trim(), input.model);
+        if (maybeParsed) {
+            started = true;
+            promptTokens = maybeParsed.promptTokens;
+            completionTokens = maybeParsed.completionTokens;
+            for (const ev of maybeParsed.events) {
+                yield ev;
+            }
+            _lastResponseBytes = responseBytes;
+            yield { type: 'message_stop' };
+            return maybeParsed.resultMessage;
+        }
+    }
+    // 流意外结束时的清理
+    logForDebugging(`[openaiCompat] 流意外结束 - started=${started}, promptTokens=${promptTokens}, completionTokens=${completionTokens}, responseBytes=${responseBytes}, buffer=${buffer.slice(0, 200)}`, { level: 'debug' });
+    logForDebugging(`[openaiCompat] nativeIdxMap size=${nativeIdxMap.size}, nativeBlockType size=${nativeBlockType.size}`, { level: 'debug' });
+    yield* closeActiveBlock();
+    for (const ai of toolIdxMap.values()) {
+        logForDebugging(`[openaiCompat] 清理工具块 index=${ai}`, { level: 'debug' });
+        yield { type: 'content_block_stop', index: ai };
+    }
+    yield* closeAllNativeBlocks();
+    _lastResponseBytes = responseBytes;
+    throw new Error(`[openaiCompat] stream ended unexpectedly before message_stop for model=${input.model}`);
+    if (!started) {
+        logForDebugging(`[openaiCompat] 致命错误: 未收到 message_start 事件`, { level: 'error' });
+        throw new Error(`[openaiCompat] 流式响应格式错误: 未收到 message_start 事件。请确认服务端返回的是 Anthropic 格式的流式响应，而不是 OpenAI 格式。当前模型: ${input.model}`);
+    }
+    throw new Error(`[openaiCompat] 流式响应格式错误: 在收到 message_stop 之前流已结束。请确认服务端返回的是完整的 Anthropic 格式流式响应。当前模型: ${input.model}`);
+}
+// 记录最近一次 OpenAI 兼容请求的响应字节数（供外部监控使用）
+let _lastResponseBytes = 0;
+export function getLastResponseBytes() {
+    return _lastResponseBytes;
+}
+/**
+ * 将 OpenAI 的 usage 信息映射为 Anthropic 的 BetaUsage 结构
+ */
+export function mapOpenAIUsageToAnthropic(usage) {
+    if (!usage)
+        return undefined;
+    return {
+        input_tokens: usage.prompt_tokens ?? 0,
+        output_tokens: usage.completion_tokens ?? 0,
+        cache_creation_input_tokens: 0,
+        cache_read_input_tokens: 0,
+    };
+}

@@ -1,5 +1,5 @@
 ---
-name: launch_darkly-automation
+name: Launch_darkly 自动化
 description: "通过 Rube MCP (Composio) 自动执行 LaunchDarkly 任务：功能标志、环境、分段和发布管理。始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]

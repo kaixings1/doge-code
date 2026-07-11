@@ -1,5 +1,5 @@
 ---
-name: build-mcpb
+name: Build Mcpb 相关功能和最佳实践
 description: "Build Mcpb — Build Mcpb 相关功能和最佳实践"
 version: 0.1.0
 ---

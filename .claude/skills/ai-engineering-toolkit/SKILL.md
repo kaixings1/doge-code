@@ -1,5 +1,5 @@
 ---
-name: ai-engineering-toolkit
+name: AI 工程工具包
 description: "AI 工程工具包 — 构建生产级 AI 应用的工程工具和实践集合。"
 category: data-ai
 risk: offensive
@@ -85,7 +85,7 @@ Result: 65 tests executed. 3 critical failures found: Base64-encoded instruction
 - ❌ Don't rely on a single dimension score — look at the full profile
 - ❌ Don't skip the security audit because "it's just an internal tool"
 
-## Security & Safety Notes
+## 安全与安全注意事项
 
 - All skills are read-only analysis and advisory workflows. No skills modify files or make network requests.
 - The agent-safety-guard skill constructs adversarial test prompts for evaluation purposes only — these are contained within the evaluation context and do not interact with external systems.

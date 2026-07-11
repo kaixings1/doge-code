@@ -1,5 +1,5 @@
 ---
-name: itil-expert
+name: ITIL 4 和 ITIL 5（2026 数字产品范式）专家顾问
 description: ITIL 4 和 ITIL 5（2026 数字产品范式）专家顾问：AI 原生治理、可持续性和价值共创。
 risk: safe
 source: community

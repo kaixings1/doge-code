@@ -1,5 +1,5 @@
 ---
-name: brand-guidelines-anthropic
+name: Anthropic 品牌指南
 description: "Anthropic 品牌指南——标志使用、调色板、排版、语调以及品牌资产使用规则。"
 risk: unknown
 source: community

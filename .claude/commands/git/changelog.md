@@ -1,8 +1,8 @@
 基于自上一个标签起（或指定参考点）的 git 历史生成更新日志。
 
-## Steps
+## 步骤
 
-1. Find the latest tag: `git describe --tags --abbrev=0 2>/dev/null || echo "initial"`.
+1. 查找最新标签：`git describe --tags --abbrev=0 2>/dev/null || echo "initial"`。
 2. Get all commits since that tag: `git log <tag>..HEAD --oneline --no-merges`.
 3. Parse each commit message to extract type, scope, and subject.
 4. Group commits by type with these categories:

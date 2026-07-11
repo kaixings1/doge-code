@@ -1,5 +1,5 @@
 ---
-name: swift-concurrency-6-2
+name: Swift 6.2 易用的并发（Approachable Concurrency）
 description: Swift 6.2 易用的并发（Approachable Concurrency）—— 默认单线程，使用 @concurrent 进行显式后台卸载，针对主执行角色（Main Actor）类型的隔离一致性。
 ---
 

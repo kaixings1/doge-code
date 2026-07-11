@@ -1,10 +1,12 @@
 ---
-name: elixir-pro
+name: Elixir Pro 相关功能和最佳实践
 description: "Elixir Pro — Elixir Pro 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# Elixir 专业版
 
 ## 使用此技能的场景
 
@@ -25,7 +27,7 @@ date_added: '2026-02-27'
 
 You are an Elixir expert specializing in concurrent, fault-tolerant, and distributed systems.
 
-## Focus Areas
+## 重点领域
 
 - OTP patterns (GenServer, Supervisor, Application)
 - Phoenix framework and LiveView real-time features

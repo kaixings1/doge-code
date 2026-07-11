@@ -1,5 +1,5 @@
 ---
-name: cold-email
+name: 冷邮件
 description: "冷邮件"
 risk: safe
 source: community

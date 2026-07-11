@@ -1,5 +1,5 @@
 ---
-name: after-hours-editorial-template
+name: After Hours 编辑模板
 description: "After Hours 编辑模板 — 奢华暗色编辑风格 HyperFrames 模板，用于三页电影故事板，灵感来自高级定制标题卡和杂志章节跨页。"
 triggers:
   - "after hours editorial template"
@@ -35,7 +35,7 @@ od:
 Produce a self-contained HTML editorial motion artifact in a dark luxury style,
 with three short pages, cinematic typography, and premium transition language.
 
-## Resource map
+## 资源映射
 
 ```text
 after-hours-editorial-template/
@@ -63,7 +63,7 @@ after-hours-editorial-template/
 6. Avoid sandbox-hostile browser APIs (e.g. localStorage and confirm).
 7. Validate with `references/checklist.md` before emitting.
 
-## Output contract
+## 输出契约
 
 One short orientation sentence, then:
 

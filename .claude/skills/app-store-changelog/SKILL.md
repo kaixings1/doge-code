@@ -1,5 +1,5 @@
 ---
-name: app-store-changelog
+name: App Store 更新日志
 description: "App Store 更新日志"
 risk: safe
 source: community

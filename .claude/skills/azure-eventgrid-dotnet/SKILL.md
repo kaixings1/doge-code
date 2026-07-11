@@ -1,12 +1,12 @@
 ---
-name: azure-eventgrid-dotnet
-description: "Azure Eventgrid Dotnet — Azure Eventgrid Dotnet 相关功能和最佳实践"
+name: Azure Event Grid .NET SDK 相关功能和最佳实践
+description: "Azure Event Grid .NET — Azure Event Grid .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
 
-# Azure.Messaging.EventGrid (.NET)
+# Azure EventGrid .NET SDK
 
 Client library for publishing events to Azure Event Grid topics, domains, and namespaces.
 
@@ -38,7 +38,7 @@ EVENT_GRID_TOPIC_NAME=<topic-name>
 EVENT_GRID_SUBSCRIPTION_NAME=<subscription-name>
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 ```
 Push Delivery (Topics/Domains)

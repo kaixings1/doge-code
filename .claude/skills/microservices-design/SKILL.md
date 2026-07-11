@@ -1,13 +1,13 @@
 ---
-name: microservices-design
+name: 微服务设计
 description: 微服务设计 — 包括服务网格、事件驱动架构、API网关、CQRS和Saga模式。
 ---
 
-# Microservices Design
+# 微服务设计
 
-## Service Boundaries
+## 服务边界
 
-Define services around business 能力, not technical layers. Each service owns its data store and exposes a clear API contract.
+围绕业务能力定义服务，而非技术层。每个服务拥有自己的数据存储并暴露清晰的 API 契约。
 
 ```
 order-service/       -> owns orders table, publishes OrderCreated events
@@ -155,7 +155,7 @@ app.get("/health", async (req, res) => {
 - Not implementing idempotency for event handlers
 - Using distributed transactions instead of sagas
 
-## Checklist
+## 检查清单
 
 - [ ] Each service owns its own data store
 - [ ] Services communicate via events for async workflows

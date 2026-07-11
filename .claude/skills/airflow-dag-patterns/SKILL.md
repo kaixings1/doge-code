@@ -1,5 +1,5 @@
 ---
-name: airflow-dag-patterns
+name: Airflow DAG 模式
 description: "使用操作器、传感器、测试和部署的最佳实践构建生产级 Apache Airflow DAG。适用于创建数据流水线、编排工作流或调度批处理作业。"
 risk: safe
 source: community

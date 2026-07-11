@@ -1,5 +1,5 @@
 ---
-name: azure-ai-anomalydetector-java
+name: Azure AI 异常检测 (Java)
 description: "Azure AI 异常检测 (Java)"
 risk: safe
 source: community

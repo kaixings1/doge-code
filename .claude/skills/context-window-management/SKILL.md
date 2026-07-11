@@ -1,7 +1,6 @@
 ---
-name: context-window-management
-description: "Context Window Management — Context Window Management 相关功能和最佳实践"
-  summarization, trimming, routing, and avoiding context rot
+name: 上下文窗口管理
+description: "上下文窗口管理 — 上下文窗口管理相关功能和最佳实践，包括摘要、修剪、路由和避免上下文腐化"
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27

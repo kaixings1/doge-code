@@ -13,9 +13,9 @@ allowed-tools:
 ---
 
 <objective>
-Generate a developer behavioral profile from session analysis (or questionnaire) and produce artifacts (USER-PROFILE.md, `gsd-dev-preferences` skill config, CLAUDE.md section) that personalize Claude's responses.
+从会话分析（或问卷）生成开发者行为画像，并生成个性化 Claude 回复的工件（USER-PROFILE.md、`gsd-dev-preferences` 技能配置、CLAUDE.md 部分）。
 
-Routes to the profile-user workflow which orchestrates the full flow: consent gate, session analysis or questionnaire fallback, profile generation, result display, and artifact selection.
+路由到 profile-user 工作流，它编排完整流程：同意关卡、会话分析或问卷回退、画像生成、结果展示和工件选择。
 </objective>
 
 <execution_context>

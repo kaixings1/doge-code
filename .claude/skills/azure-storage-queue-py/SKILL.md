@@ -1,6 +1,6 @@
 ---
-name: azure-storage-queue-py
-description: "Azure Storage Queue Py — Azure Storage Queue Py 相关功能和最佳实践"
+name: Azure Storage Queue Python SDK 相关功能
+description: "Azure Storage Queue Python — Azure Storage Queue Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -158,7 +158,7 @@ properties = queue_client.get_queue_properties()
 print(properties.metadata)
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.storage.queue.aio import QueueServiceClient, QueueClient

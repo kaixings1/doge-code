@@ -16,9 +16,9 @@ allowed-tools:
 requires: [phase]
 ---
 <objective>
-Create an AI design contract (AI-SPEC.md) for a phase involving AI system development.
-Orchestrates gsd-framework-selector → gsd-ai-researcher → gsd-domain-researcher → gsd-eval-planner.
-Flow: Select Framework → Research Docs → Research Domain → Design Eval Strategy → Done
+为涉及 AI 系统开发的阶段创建 AI 设计合约（AI-SPEC.md）。
+编排 gsd-framework-selector → gsd-ai-researcher → gsd-domain-researcher → gsd-eval-planner。
+流程：选择框架 → 研究文档 → 研究领域 → 设计评估策略 → 完成
 </objective>
 
 <execution_context>
@@ -28,10 +28,10 @@ Flow: Select Framework → Research Docs → Research Domain → Design Eval Str
 </execution_context>
 
 <context>
-Phase number: $ARGUMENTS — optional, auto-detects next unplanned phase if omitted.
+阶段编号：$ARGUMENTS — 可选，如果省略则自动检测下一个未规划的阶段。
 </context>
 
 <process>
-Execute end-to-end.
-Preserve all workflow gates.
+端到端执行。
+保留所有工作流关卡。
 </process>

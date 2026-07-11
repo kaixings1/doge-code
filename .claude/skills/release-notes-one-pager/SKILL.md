@@ -1,6 +1,6 @@
 ---
-name: release-notes-one-pager
-description: "Release Notes One Pager — Release Notes One Pager 相关功能和最佳实践"
+name: 发布说明一页纸
+description: "发布说明一页纸 — 生成带有亮点、新增、修复、破坏性变更、已知问题和升级说明的 HTML 发布说明页面。当用户未提供详情时写入显式 'None' 章节。"
   Release notes one-page HTML with highlights, Added, Fixed, Breaking changes,
   Known issues, and Upgrade note. Writes explicit "None" style sections
   whenever the user does not provide details.
@@ -28,7 +28,7 @@ od:
 
 Produce a single-page release notes document in HTML.
 
-## Resource map
+## 资源映射
 
 ```
 release-notes-one-pager/

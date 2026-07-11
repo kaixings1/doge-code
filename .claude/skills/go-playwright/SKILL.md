@@ -1,5 +1,5 @@
 ---
-name: go-playwright
+name: 使用 Playwright Go 进行健壮、隐蔽和高效的浏览器自动化的专家能力
 description: "使用 Playwright Go 进行健壮、隐蔽和高效的浏览器自动化的专家能力。"
 risk: safe
 source: "https://github.com/playwright-community/playwright-go"

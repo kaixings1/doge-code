@@ -1,5 +1,5 @@
 ---
-name: frontend-patterns
+name: 前端开发模式和最佳实践
 description: 前端开发模式和最佳实践
 ---
 

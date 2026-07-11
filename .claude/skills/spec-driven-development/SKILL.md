@@ -1,9 +1,9 @@
 ---
-name: spec-driven-development
+name: 规范驱动开发
 description: 规范驱动开发 — 在编码前创建规范。在开始新项目或大型功能时使用。
 ---
 
-# Spec-Driven Development
+# 规范驱动开发
 
 ## 概述
 
@@ -90,7 +90,7 @@ Don't silently fill in ambiguous requirements. The spec's entire 目的 is to su
 ## Tech Stack
 [Framework, language, key dependencies with versions]
 
-## Commands
+## 命令
 [Build, test, lint, dev — full commands]
 
 ## Project Structure
@@ -107,7 +107,7 @@ Don't silently fill in ambiguous requirements. The spec's entire 目的 is to su
 - Ask first: [...]
 - Never: [...]
 
-## Success Criteria
+## 成功标准
 [How we'll know this is done — specific, testable conditions]
 
 ## Open Questions
@@ -175,6 +175,6 @@ The spec is a living document, not a one-time artifact:
 - **Commit the spec** — The spec belongs in version control alongside the code.
 - **Reference the spec in PRs** — Link back to the spec section that each PR implements.
 
-## Common Rationalizations
+## 常见理由
 
 | Rationalization | Reality |

@@ -1,5 +1,5 @@
 ---
-name: ios-developer
+name: iOS 开发者
 description: "iOS 开发者 — iOS 应用开发和最佳实践"
 risk: unknown
 source: community

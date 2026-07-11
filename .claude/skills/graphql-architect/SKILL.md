@@ -1,10 +1,12 @@
 ---
-name: graphql-architect
+name: Graphql Architect 相关功能和最佳实践
 description: "Graphql Architect — Graphql Architect 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# GraphQL 架构师
 
 ## 何时使用本技能
 

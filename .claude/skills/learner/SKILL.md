@@ -1,6 +1,6 @@
 ---
-name: learner
-description: "Learner — Learner 相关功能和最佳实践"
+name: 学习者
+description: "学习者 — 学习者相关功能和最佳实践"
 level: 7
 ---
 

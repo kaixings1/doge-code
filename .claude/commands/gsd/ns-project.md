@@ -7,16 +7,16 @@ allowed-tools:
   - Skill
 ---
 
-Route to the appropriate project / milestone skill based on the user's intent.
-`gsd-plan-milestone-gaps` was deleted by #2790 — gap planning now happens
-inline as part of `gsd-audit-milestone`'s output.
+根据用户意图路由到适当的项目/里程碑技能。
+`gsd-plan-milestone-gaps` 已通过 #2790 删除——差距规划现在内联发生，
+作为 `gsd-audit-milestone` 输出的一部分。
 
-| User wants | Invoke |
+| 用户想要 | 调用 |
 |---|---|
-| Start a new project | gsd-new-project |
-| Create a new milestone | gsd-new-milestone |
-| Complete the current milestone | gsd-complete-milestone |
-| Audit a milestone for issues | gsd-audit-milestone |
-| Summarize milestone status | gsd-milestone-summary |
+| 启动新项目 | gsd-new-project |
+| 创建新里程碑 | gsd-new-milestone |
+| 完成当前里程碑 | gsd-complete-milestone |
+| 审计里程碑问题 | gsd-audit-milestone |
+| 总结里程碑状态 | gsd-milestone-summary |
 
 Invoke the matched skill directly using the Skill tool.

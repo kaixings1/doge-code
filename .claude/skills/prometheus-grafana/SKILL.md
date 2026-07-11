@@ -1,5 +1,5 @@
 ---
-name: prometheus-grafana
+name: Prometheus 目接 + Grafana 可口化 接格
 description: Prometheus 目接 + Grafana 可口化 接格潡隆，否欺视反前，导宗名访务，PromQL 查询
 ---
 # prometheus-grafana

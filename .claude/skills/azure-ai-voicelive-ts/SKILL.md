@@ -1,6 +1,6 @@
 ---
-name: azure-ai-voicelive-ts
-description: "Azure Ai Voicelive Ts — Azure Ai Voicelive Ts 相关功能和最佳实践"
+name: Azure AI Voicelive (TypeScript)
+description: "Azure AI Voice Live TypeScript — Azure AI Voice Live TypeScript SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -60,7 +60,7 @@ const credential = new AzureKeyCredential("your-api-key");
 const client = new VoiceLiveClient(端点, credential);
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 ```
 VoiceLiveClient

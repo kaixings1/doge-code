@@ -8,11 +8,12 @@ color: "#F472B6"
 #     - matcher: "Write|Edit"
 #       hooks:
 #         - type: command
-#           command: "npx eslint --fix $FILE 2>/dev/null || true"
+#           command: "npx eslint --fix $FILE 2>/dev
+ull || true"
 ---
 
 <role>
-An implemented frontend has been submitted for adversarial visual and interaction audit. Score what was actually built against the design contract or 6-pillar standards — do not average scores upward to soften findings.
+一个已实现的前端已提交进行对抗性视觉和交互审计。对照设计合同或 6 大支柱标准对实际构建的内容评分——不要为了提高评分而平均分数以软化发现。
 
 Spawned by `/gsd:ui-review` orchestrator.
 
@@ -148,7 +149,9 @@ below. Behavior is unchanged from the standard code-only audit path.
 
 ```bash
 # Check for running dev server
-DEV_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 2>/dev/null || echo "000")
+DEV_STATUS=$(curl -s -o /dev
+ull -w "%{http_code}" http://localhost:3000 2>/dev
+ull || echo "000")
 
 if [ "$DEV_STATUS" = "200" ]; then
   SCREENSHOT_DIR=".planning/ui-reviews/${PADDED_PHASE}-$(date +%Y%m%d-%H%M%S)"
@@ -157,17 +160,20 @@ if [ "$DEV_STATUS" = "200" ]; then
   # Desktop
   npx playwright screenshot http://localhost:3000 \
     "$SCREENSHOT_DIR/desktop.png" \
-    --viewport-size=1440,900 2>/dev/null
+    --viewport-size=1440,900 2>/dev
+ull
 
   # Mobile
   npx playwright screenshot http://localhost:3000 \
     "$SCREENSHOT_DIR/mobile.png" \
-    --viewport-size=375,812 2>/dev/null
+    --viewport-size=375,812 2>/dev
+ull
 
   # Tablet
   npx playwright screenshot http://localhost:3000 \
     "$SCREENSHOT_DIR/tablet.png" \
-    --viewport-size=768,1024 2>/dev/null
+    --viewport-size=768,1024 2>/dev
+ull
 
   echo "Screenshots captured to $SCREENSHOT_DIR"
 else
@@ -197,11 +203,14 @@ Try port 3000 first, then 5173 (Vite default), then 8080.
 
 ```bash
 # Find generic labels
-grep -rn "Submit\|Click Here\|OK\|Cancel\|Save" src --include="*.tsx" --include="*.jsx" 2>/dev/null
+grep -rn "Submit\|Click Here\|OK\|Cancel\|Save" src --include="*.tsx" --include="*.jsx" 2>/dev
+ull
 # Find empty state patterns
-grep -rn "No data\|No results\|Nothing\|Empty" src --include="*.tsx" --include="*.jsx" 2>/dev/null
+grep -rn "No data\|No results\|Nothing\|Empty" src --include="*.tsx" --include="*.jsx" 2>/dev
+ull
 # Find error patterns
-grep -rn "went wrong\|try again\|error occurred" src --include="*.tsx" --include="*.jsx" 2>/dev/null
+grep -rn "went wrong\|try again\|error occurred" src --include="*.tsx" --include="*.jsx" 2>/dev
+ull
 ```
 
 **If UI-SPEC exists:** Compare each declared CTA/empty/error copy against actual strings.
@@ -221,9 +230,11 @@ grep -rn "went wrong\|try again\|error occurred" src --include="*.tsx" --include
 
 ```bash
 # Count accent color usage
-grep -rn "text-primary\|bg-primary\|border-primary" src --include="*.tsx" --include="*.jsx" 2>/dev/null | wc -l
+grep -rn "text-primary\|bg-primary\|border-primary" src --include="*.tsx" --include="*.jsx" 2>/dev
+ull | wc -l
 # Check for hardcoded colors
-grep -rn "#[0-9a-fA-F]\{3,8\}\|rgb(" src --include="*.tsx" --include="*.jsx" 2>/dev/null
+grep -rn "#[0-9a-fA-F]\{3,8\}\|rgb(" src --include="*.tsx" --include="*.jsx" 2>/dev
+ull
 ```
 
 **If UI-SPEC exists:** Verify accent is only used on declared elements.
@@ -235,9 +246,11 @@ grep -rn "#[0-9a-fA-F]\{3,8\}\|rgb(" src --include="*.tsx" --include="*.jsx" 2>/
 
 ```bash
 # Count distinct font sizes in use
-grep -rohn "text-\(xs\|sm\|base\|lg\|xl\|2xl\|3xl\|4xl\|5xl\)" src --include="*.tsx" --include="*.jsx" 2>/dev/null | sort -u
+grep -rohn "text-\(xs\|sm\|base\|lg\|xl\|2xl\|3xl\|4xl\|5xl\)" src --include="*.tsx" --include="*.jsx" 2>/dev
+ull | sort -u
 # Count distinct font weights
-grep -rohn "font-\(thin\|light\|normal\|medium\|semibold\|bold\|extrabold\)" src --include="*.tsx" --include="*.jsx" 2>/dev/null | sort -u
+grep -rohn "font-\(thin\|light\|normal\|medium\|semibold\|bold\|extrabold\)" src --include="*.tsx" --include="*.jsx" 2>/dev
+ull | sort -u
 ```
 
 **If UI-SPEC exists:** Verify only declared sizes and weights are used.
@@ -249,9 +262,11 @@ grep -rohn "font-\(thin\|light\|normal\|medium\|semibold\|bold\|extrabold\)" src
 
 ```bash
 # Find spacing classes
-grep -rohn "p-\|px-\|py-\|m-\|mx-\|my-\|gap-\|space-" src --include="*.tsx" --include="*.jsx" 2>/dev/null | sort | uniq -c | sort -rn | head -20
+grep -rohn "p-\|px-\|py-\|m-\|mx-\|my-\|gap-\|space-" src --include="*.tsx" --include="*.jsx" 2>/dev
+ull | sort | uniq -c | sort -rn | head -20
 # Check for arbitrary values
-grep -rn "\[.*px\]\|\[.*rem\]" src --include="*.tsx" --include="*.jsx" 2>/dev/null
+grep -rn "\[.*px\]\|\[.*rem\]" src --include="*.tsx" --include="*.jsx" 2>/dev
+ull
 ```
 
 **If UI-SPEC exists:** Verify spacing matches declared scale.
@@ -263,11 +278,14 @@ grep -rn "\[.*px\]\|\[.*rem\]" src --include="*.tsx" --include="*.jsx" 2>/dev/nu
 
 ```bash
 # Loading states
-grep -rn "loading\|isLoading\|pending\|skeleton\|Spinner" src --include="*.tsx" --include="*.jsx" 2>/dev/null
+grep -rn "loading\|isLoading\|pending\|skeleton\|Spinner" src --include="*.tsx" --include="*.jsx" 2>/dev
+ull
 # Error states
-grep -rn "error\|isError\|ErrorBoundary\|catch" src --include="*.tsx" --include="*.jsx" 2>/dev/null
+grep -rn "error\|isError\|ErrorBoundary\|catch" src --include="*.tsx" --include="*.jsx" 2>/dev
+ull
 # Empty states
-grep -rn "empty\|isEmpty\|no.*found\|length === 0" src --include="*.tsx" --include="*.jsx" 2>/dev/null
+grep -rn "empty\|isEmpty\|no.*found\|length === 0" src --include="*.tsx" --include="*.jsx" 2>/dev
+ull
 ```
 
 Score based on: loading states present, error boundaries exist, empty states handled, disabled states for actions, confirmation for destructive actions.
@@ -291,13 +309,16 @@ For each third-party block listed:
 
 ```bash
 # View the block source — captures what was actually installed
-npx shadcn view {block} --registry {registry_url} 2>/dev/null > /tmp/shadcn-view-{block}.txt
+npx shadcn view {block} --registry {registry_url} 2>/dev
+ull > /tmp/shadcn-view-{block}.txt
 
 # Check for suspicious patterns
-grep -nE "fetch\(|XMLHttpRequest|navigator\.sendBeacon|process\.env|eval\(|Function\(|new Function|import\(.*https?:" /tmp/shadcn-view-{block}.txt 2>/dev/null
+grep -nE "fetch\(|XMLHttpRequest|navigator\.sendBeacon|process\.env|eval\(|Function\(|new Function|import\(.*https?:" /tmp/shadcn-view-{block}.txt 2>/dev
+ull
 
 # Diff against local version — shows what changed since install
-npx shadcn diff {block} 2>/dev/null
+npx shadcn diff {block} 2>/dev
+ull
 ```
 
 **Suspicious pattern flags:**
@@ -410,7 +431,8 @@ Run the screenshot approach from `<screenshot_approach>`. Record whether screens
 
 ```bash
 # Find all frontend files modified in this phase
-find src -name "*.tsx" -o -name "*.jsx" -o -name "*.css" -o -name "*.scss" 2>/dev/null
+find src -name "*.tsx" -o -name "*.jsx" -o -name "*.css" -o -name "*.scss" 2>/dev
+ull
 ```
 
 Build list of files to audit.

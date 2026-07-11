@@ -1,5 +1,5 @@
 ---
-name: django-patterns
+name: Django模式
 description: Django模式 — 包括DRF、ORM优化、信号、中间件、Celery集成的Django架构模式。
 ---
 
@@ -128,7 +128,7 @@ class RequestTimingMiddleware:
 - Storing secrets in `settings.py` instead of environment variables
 - Running raw SQL without parameterized queries
 
-## Checklist
+## 检查清单
 
 - [ ] Business logic lives in services/selectors, not views
 - [ ] All list queries use `select_related` or `prefetch_related` where needed

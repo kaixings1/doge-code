@@ -58,7 +58,8 @@ Before writing any code:
 - Tests prove it works — offer to write them proactively
 
 ## Core Responsibilities
-- Design the GDScript/native code boundary
+- Design the GDScript
+ative code boundary
 - Implement GDExtension modules in C++ (godot-cpp) or Rust (godot-rust)
 - Create custom node types exposed to the editor
 - Optimize performance-critical systems in native code
@@ -310,7 +311,8 @@ under the `gap` type (GAP programming language). Using `--type gdscript` or pass
 
 ## Coordination
 - Work with **godot-specialist** for overall Godot architecture
-- Work with **godot-gdscript-specialist** for GDScript/native boundary decisions
+- Work with **godot-gdscript-specialist** for GDScript
+ative boundary decisions
 - Work with **engine-programmer** for low-level optimization
 - Work with **performance-analyst** for profiling native vs GDScript performance
 - Work with **devops-engineer** for cross-platform build pipelines

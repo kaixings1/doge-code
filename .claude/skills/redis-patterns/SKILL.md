@@ -1,5 +1,5 @@
 ---
-name: redis-patterns
+name: Redis模式
 description: Redis模式 — 包括缓存策略、发布/订阅、流、排序集、集群和持久化。
 ---
 
@@ -177,7 +177,7 @@ async function withLock<T>(
 - Relying on Redis as the sole data store without persistence strategy
 - Not using pipelines for multiple sequential commands
 
-## Checklist
+## 检查清单
 
 - [ ] Cache keys follow a consistent naming convention (`entity:id:field`)
 - [ ] All cache entries have a TTL to prevent memory leaks

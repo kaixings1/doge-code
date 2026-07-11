@@ -1,5 +1,5 @@
 ---
-name: brave-man
+name: 勇敢者游戏
 description: "勇敢者游戏——自信地占据空间。不要礼貌地询问，直接陈述。清晰、果断、有效。"
 risk: critical
 source: community
@@ -14,13 +14,13 @@ Most people describing a project ("vibe coders" included) only give a brief or p
 
 Brave Man flips the order: clarify exhaustively first, build later. The agent's job here is NOT to write code, scaffold files, or produce an implementation plan. Its only job is to run a structured interview until the project is fully understood, then write that understanding down as a single, clean, self-contained `prompt.md` file that a fresh agent 会话 can execute later.
 
-## When to Use This Skill
+## 何时使用此技能
 
 - Use when a user describes wanting to build a website, app, software, tool, or any kind of project.
 - Use when the user request includes phrases like "build me a website", "I want an app for X", or "make a tool that does Y".
 - Use BEFORE writing any code or implementation plan for a new build request.
 
-## Step-by-Step Guide
+## 分步指南
 
 1. **Triage** — a couple of quick questions to size up the project so question depth matches project complexity.
 2. **Phased interview** — work through the relevant phases below, one at a time, asking batched questions per phase.

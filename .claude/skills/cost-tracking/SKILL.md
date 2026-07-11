@@ -1,5 +1,5 @@
 ---
-name: cost-tracking
+name: Cost Tracking 相关功能和最佳实践
 description: "Cost Tracking — Cost Tracking 相关功能和最佳实践"
 metadata:
   origin: community
@@ -48,7 +48,7 @@ If the log is missing, do not fabricate usage data. Tell the user that cost
 tracking populates after the first 会话 ends with the `stop:cost-tracker`
 hook enabled.
 
-## Example — summary, by model, last 7 days
+## 示例 — 按模型的最近7天摘要
 
 ```bash
 node -e '
@@ -70,7 +70,7 @@ console.log("by model:");[...m.entries()].sort((a,b)=>b[1]-a[1]).forEach(([k,v])
 For a 会话 drilldown or CSV export, iterate the same `latest` set (or the raw
 rows for CSV) and print the fields you need.
 
-## Reporting Guidance
+## 报告指导
 
 When presenting cost data, include today's spend vs yesterday, total across all
 sessions, a by-model breakdown, and 会话 count. Format sub-dollar amounts
@@ -85,7 +85,7 @@ with four decimals, larger amounts with two.
 - Do not hard-code current model pricing in user-facing answers.
 - Do not recommend installing unreviewed hooks or plugins that execute arbitrary code.
 
-## Related
+## 相关
 
 - `/cost-report` - Command-form report over the same metrics log.
 - `cost-aware-llm-pipeline` - Model-routing and budget-design patterns.

@@ -1,5 +1,5 @@
 ---
-name: analytics
+name: 分析追踪优化
 description: 分析追踪与度量设置改进或审计。触发词：设置追踪、GA4、Google Analytics、转化追踪、事件追踪、UTM、GTM、Mixpanel、Segment、归因。
 metadata:
   version: 2.0.0

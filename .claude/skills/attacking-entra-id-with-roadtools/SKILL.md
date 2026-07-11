@@ -1,5 +1,5 @@
 ---
-name: attacking-entra-id-with-roadtools
+name: 使用 RoadTools 攻击 Entra ID
 description: "使用 RoadTools 攻击 Entra ID"
 risk: safe
 source: community

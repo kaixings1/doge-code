@@ -11,15 +11,15 @@ isolation: worktree
 
 ## 目的
 
-The **vertical slice** answers a different question from the concept prototype:
-*"Can we build this full game loop at production quality, on schedule?"*
+**垂直切片**回答了一个与概念原型不同的问题：
+*"我们能否按计划以生产质量构建完整的游戏循环？"*
 
-**Default use** — run late in Pre-Production, after GDDs, architecture, and UX
-specs are complete. It is a near-production-quality build demonstrating one complete
-[start → challenge → resolution] cycle.
+**默认用途** — 在前期制作后期运行，在 GDD、架构和 UX
+规范完成后。它是一个接近生产质量的构建，演示一个完整的
+[开始 → 挑战 → 解决] 循环。
 
-**Post-pivot?** If a PIVOT verdict from an earlier vertical slice sent you back to
-revise GDDs and architecture, run this again after revisions to re-validate. It can
+**转型后？** 如果早期垂直切片的 PIVOT 判定将您送回
+修改 GDD 和架构，则在修改后再次运行以重新验证。它可以
 be run as many times as needed until a PROCEED or KILL verdict is reached.
 
 It validates:

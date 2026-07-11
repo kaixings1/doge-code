@@ -1,5 +1,5 @@
 ---
-name: ai-slop-cleaner
+name: AI 代码垃圾清理
 description: "AI 垃圾清理器 — 清理 AI 生成的代码垃圾，不改变意图或增加范围漂移。"
 level: 3
 ---

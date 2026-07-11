@@ -1,13 +1,13 @@
 ---
-name: clinical-reports
-description: "Clinical Reports — Clinical Reports 相关功能和最佳实践"
+name: 临床报告编写相关功能和最佳实践
+description: "Clinical Reports — 临床报告编写相关功能和最佳实践"
 allowed-tools: Read Write Edit Bash
 license: MIT 许可证
 required_environment_variables: [{"name": "OPENROUTER_API_KEY", "prompt": "OpenRouter API key for the skill's LLM-powered steps.", "required_for": "optional features"}]
 metadata: {"version": "1.1", "skill-author": "K-Dense Inc.", "openclaw": {"primaryEnv": "OPENROUTER_API_KEY", "envVars": [{"name": "OPENROUTER_API_KEY", "required": false, "description": "OpenRouter API key for the skill's LLM-powered steps."}]}}
 ---
 
-# Clinical Report Writing
+# 临床报告编写
 
 ## 概述
 
@@ -15,7 +15,7 @@ Clinical report writing is the process of documenting medical information with p
 
 **Critical Principle: Clinical reports must be accurate, complete, objective, and compliant with applicable regulations (HIPAA, FDA, ICH-GCP).** Patient privacy and data integrity are paramount. All clinical documentation must support evidence-based decision-making and meet professional standards.
 
-## When to Use This Skill
+## 何时使用此技能
 
 This skill should be used when:
 - Writing clinical case reports for journal submission (CARE guidelines)
@@ -67,7 +67,7 @@ For detailed guidance on creating schematics, refer to the scientific-schematics
 
 ---
 
-## Core Capabilities
+## 核心能力
 
 ### 1. Clinical Case Reports for Journal Publication
 
@@ -1075,7 +1075,7 @@ This skill includes comprehensive reference files and templates:
 
 Load these resources as needed when working on specific clinical reports.
 
-## Common Pitfalls to Avoid
+## 应避免的常见陷阱
 
 ### Case Reports
 - **Privacy violations**: Inadequate de-identification or missing consent

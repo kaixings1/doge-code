@@ -1,5 +1,5 @@
 ---
-name: angular-architect
+name: Angular 架构师
 description: "Angular 架构"
 risk: safe
 source: community

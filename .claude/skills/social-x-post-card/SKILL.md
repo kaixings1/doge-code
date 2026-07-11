@@ -1,5 +1,5 @@
 ---
-name: social-x-post-card
+name: 逼真的 X 帖子卡片，带有互动指标（点赞、转发、浏览），适用于视频覆盖或可分享的图片卡片。
 zh_name: "X (Twitter) 帖子卡"
 en_name: "X / Twitter Post Card"
 emoji: "𝕏"

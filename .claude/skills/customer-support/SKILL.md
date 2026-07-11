@@ -1,10 +1,12 @@
 ---
-name: customer-support
+name: Customer Support 相关功能和最佳实践
 description: "Customer Support — Customer Support 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# 客户支持
 
 ## 何时使用此技能
 

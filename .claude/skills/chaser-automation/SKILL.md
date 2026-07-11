@@ -1,5 +1,5 @@
 ---
-name: chaser-automation
+name: Chaser 自动化
 description: "Chaser 自动化"
 risk: safe
 source: community

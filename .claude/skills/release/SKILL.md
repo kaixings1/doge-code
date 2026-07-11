@@ -1,6 +1,6 @@
 ---
-name: release
-description: "Release — Release 相关功能和最佳实践"
+name: 发布
+description: "发布 — 软件发布管理和版本发布相关功能"
 level: 3
 ---
 

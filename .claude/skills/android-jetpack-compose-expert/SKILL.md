@@ -1,5 +1,5 @@
 ---
-name: android-jetpack-compose-expert
+name: Jetpack Compose 专家
 description: "Android Jetpack Compose 专家"
 risk: safe
 source: community

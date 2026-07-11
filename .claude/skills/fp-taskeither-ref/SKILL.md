@@ -1,5 +1,5 @@
 ---
-name: fp-taskeither-ref
+name: fp-ts TaskEither 快速参考：异步操作错误处理模式，涵盖 API
 description: "fp-ts TaskEither 快速参考：异步操作错误处理模式，涵盖 API 调用、Promise 封装和异步管道组合。"
 risk: unknown
 source: community

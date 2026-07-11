@@ -1,5 +1,5 @@
 ---
-name: n8n-mcp-tools-expert
+name: n8n-mcp MCP 工具使用专家
 description: n8n-mcp MCP 工具使用专家：节点搜索、配置验证、模板访问、工作流管理。提供工具选择指导、参数格式和常见模式。
 risk: unknown
 source: community

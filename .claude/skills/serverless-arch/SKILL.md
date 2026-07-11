@@ -1,5 +1,5 @@
 ---
-name: serverless-arch
+name: Serverless 架构
 description: "Serverless 架构 — AWS Lambda/Fargate、函数编排、冷启动优化、BFF、成本模型"
 ---
 

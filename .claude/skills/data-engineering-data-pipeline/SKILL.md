@@ -1,12 +1,12 @@
 ---
-name: data-engineering-data-pipeline
+name: 您是专门设计可扩展、可靠且经济高效的数据流水线的数据管道架构专家，支持批处理和流式数据处理。
 description: "您是专门设计可扩展、可靠且经济高效的数据流水线的数据管道架构专家，支持批处理和流式数据处理。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# Data Pipeline Architecture
+# 数据管道架构
 
 You are a data pipeline architecture expert specializing in scalable, reliable, and cost-effective data pipelines for batch and streaming data processing.
 
@@ -20,7 +20,7 @@ You are a data pipeline architecture expert specializing in scalable, reliable, 
 - The task is unrelated to data pipeline architecture
 - You need a different domain or tool outside this scope
 
-## Requirements
+## 要求
 
 $ARGUMENTS
 
@@ -193,7 +193,7 @@ ingester.save_dead_letter_queue('s3://lake/dlq/orders')
 - Cost optimization strategies and savings
 - Disaster recovery and backup procedures
 
-## Success Criteria
+## 成功标准
 - Pipeline meets defined SLA (latency, throughput)
 - Data quality checks pass with >99% success rate
 - Automatic retry and alerting on failures

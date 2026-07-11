@@ -1,5 +1,5 @@
 ---
-name: azure-mgmt-mongodbatlas-dotnet
+name: 指导 .NET 开发者使用 Azure Management SDK for M
 description: "指导 .NET 开发者使用 Azure Management SDK for MongoDB Atlas 管理 Atlas 资源。"
 risk: unknown
 source: community

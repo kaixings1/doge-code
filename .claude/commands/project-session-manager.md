@@ -1,18 +1,10 @@
 ---
-description: ""
+description: "OMC project-session-manager 兼容命令——在不加载完整技能描述的情况下提供 /oh-my-claudecode:project-session-manager 命令"
 ---
 
 # OMC project-session-manager
 
-This compatibility command keeps `/oh-my-claudecode:project-session-manager` available without loading the full `project-session-manager` skill description in every Claude Code session.
+此兼容命令确保 `/oh-my-claudecode:project-session-manager` 可用，而无需在每个 Claude Code 会话中加载完整的 `project-session-manager` 技能描述。
 
-## Dispatch
+## 分发
 
-1. Read the full bundled skill instructions from the active OMC plugin/install: `skills/project-session-manager/SKILL.md`.
-2. Follow that SKILL.md exactly, treating the user's arguments as:
-
-```text
-$ARGUMENTS
-```
-
-If the file is not directly readable from the current working directory, locate it under the active `CLAUDE_PLUGIN_ROOT`/`OMC_PLUGIN_ROOT`, package root, or installed OMC plugin directory, then continue.

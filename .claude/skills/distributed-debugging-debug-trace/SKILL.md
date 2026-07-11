@@ -1,5 +1,5 @@
 ---
-name: distributed-debugging-debug-trace
+name: 您是专门设置全面调试环境、分布式追踪和诊断工具的调试专家。配置调试工作流，实现追
 description: "您是专门设置全面调试环境、分布式追踪和诊断工具的调试专家。配置调试工作流，实现追踪解决方案，为开发和运维环境建立故障排除实践。"
 risk: unknown
 source: community

@@ -1,5 +1,5 @@
 ---
-name: minimax-pdf
+name: 基于令牌设计系统的 PDF 生成、填充和重格式化
 description: "MiniMax PDF — 基于令牌设计系统的 PDF 生成、填充和重格式化"
   Generate, fill, and reformat PDFs with a 令牌-based design system and 15 cover styles. Useful for branded PDFs, e-guides, and reports.
 triggers:
@@ -18,11 +18,11 @@ od:
 
 > Curated from the MiniMax AI team.
 
-## What it does
+## 功能说明
 
 Generate, fill, and reformat PDFs with a 令牌-based design system and 15 cover styles. Useful for branded PDFs, e-guides, and reports.
 
-## Source
+## 来源
 
 - Upstream: https://github.com/MiniMax-AI/skills
 - Category: `documents`

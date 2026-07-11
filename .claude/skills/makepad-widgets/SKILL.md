@@ -1,5 +1,5 @@
 ---
-name: makepad-widgets
+name: 版本：makepad-widgets（开发分支）| 最后更新：2026-01-1
 description: "版本：makepad-widgets（开发分支）| 最后更新：2026-01-19 | 检查更新：https://crates.io/crates/makepad-widgets"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: azure-eventgrid-java
+name: 指导 Java 开发者使用 Azure Event Grid 客户端库实现事件驱动架构。
 description: "指导 Java 开发者使用 Azure Event Grid 客户端库实现事件驱动架构。"
 risk: unknown
 source: community
@@ -20,7 +20,7 @@ Build event-driven applications using the Azure Event Grid SDK for Java.
 </dependency>
 ```
 
-## Client Creation
+## 客户端创建
 
 ### EventGridPublisherClient
 
@@ -72,7 +72,7 @@ EventGridPublisherAsyncClient<EventGridEvent> asyncClient = new EventGridPublish
 | `CloudEvent` | CNCF CloudEvents 1.0 specification |
 | `BinaryData` | Custom 架构 events |
 
-## Core Patterns
+## 核心模式
 
 ### Publish EventGridEvent
 
@@ -297,7 +297,7 @@ EVENT_GRID_ACCESS_KEY=<your-access-key>
 4. **Retry Logic**: Built-in, but consider dead-letter for failures
 5. **Event Size**: Keep events under 1MB (64KB for basic tier)
 
-## Trigger Phrases
+## 触发短语
 
 - "Event Grid Java"
 - "publish events Azure"

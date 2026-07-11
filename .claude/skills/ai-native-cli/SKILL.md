@@ -1,5 +1,5 @@
 ---
-name: ai-native-cli
+name: AI 原生 CLI 规范
 description: "包含 98 条规则的设计规范，用于构建 AI 代理可以安全使用的 CLI 工具。涵盖结构化 JSON 输出、错误处理、输入契约、安全护栏、退出码和代理自描述。"
 risk: safe
 source: https://github.com/ChaosRealmsAI/agent-cli-spec

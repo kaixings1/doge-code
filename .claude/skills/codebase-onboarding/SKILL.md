@@ -1,5 +1,5 @@
 ---
-name: codebase-onboarding
+name: Codebase Onboarding 相关功能和最佳实践
 description: "Codebase Onboarding — Codebase Onboarding 相关功能和最佳实践"
 metadata:
   origin: ECC

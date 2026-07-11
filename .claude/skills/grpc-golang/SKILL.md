@@ -1,5 +1,5 @@
 ---
-name: grpc-golang
+name: Go gRPC 服务开发
 description: "在 Go 中构建带 mTLS、流式传输和可观察性的生产就绪 gRPC 服务。适用于使用 Buf 设计 Protobuf 契约或实现安全的服务间通信。"
 risk: safe
 source: self

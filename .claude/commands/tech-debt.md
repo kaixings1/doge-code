@@ -1,6 +1,6 @@
 ---
 name: 技术债
-description: "Scan, prioritize, and report technical debt. Usage: /tech-debt <scan|prioritize|report> [options]"
+description: "扫描、优先级排序和报告技术债务。用法: /tech-debt <scan|prioritize|report> [options]"
 argument-hint: "<scan|prioritize|report> [options]"
 ---
 

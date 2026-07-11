@@ -1,6 +1,6 @@
 ---
-name: azure-resource-manager-mysql-dotnet
-description: "Azure Resource Manager Mysql Dotnet — Azure Resource Manager Mysql Dotnet 相关功能和最佳实践"
+name: Azure Resource Manager MySQL (.NET)
+description: "Azure Resource Manager MySQL .NET — Azure Resource Manager MySQL .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

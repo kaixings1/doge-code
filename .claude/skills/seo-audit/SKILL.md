@@ -1,5 +1,5 @@
 ---
-name: seo-audit
+name: SEO 审计相关功能和最佳实践
 description: "Seo Audit — SEO 审计相关功能和最佳实践"
 metadata:
   version: 2.0.0

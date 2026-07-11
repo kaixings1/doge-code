@@ -13,15 +13,15 @@ allowed-tools:
 ---
 
 <objective>
-Check for GSD updates, install if available, and display what changed.
+检查 GSD 更新，如果可用则安装，并显示更改内容。
 
-Routes to the update workflow which handles:
-- Version detection (local vs global installation)
-- npm version checking
-- Changelog fetching and display
-- User confirmation with clean install warning
-- Update execution and cache clearing
-- Restart reminder
+路由到 update 工作流，它处理：
+- 版本检测（本地 vs 全局安装）
+- npm 版本检查
+- 更新日志获取和展示
+- 带有干净安装警告的用户确认
+- 更新执行和缓存清理
+- 重启提醒
 </objective>
 
 <execution_context>
@@ -29,9 +29,9 @@ Routes to the update workflow which handles:
 </execution_context>
 
 <flags>
-- **--sync**: Sync managed GSD skills across runtime roots so multi-runtime users stay aligned after an update. Runs the sync-skills workflow (--from, --to, --dry-run, --apply flags supported).
-- **--reapply**: Reapply local modifications after a GSD update. Uses three-way comparison (pristine baseline, user-modified backup, newly installed version) to merge user customizations back. Runs the reapply-patches workflow.
-- **(no flag)**: Standard update — check for new version, show changelog, install.
+- **--sync**：跨运行时根同步托管的 GSD 技能，使多运行时用户在更新后保持一致。运行 sync-skills 工作流（支持 --from、--to、--dry-run、--apply 标志）。
+- **--reapply**：在 GSD 更新后重新应用本地修改。使用三方比较（原始基线、用户修改的备份、新安装的版本）合并用户自定义内容。运行 reapply-patches 工作流。
+- **（无标志）**：标准更新——检查新版本、显示更新日志、安装。
 </flags>
 
 <process>

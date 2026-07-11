@@ -1,5 +1,5 @@
 ---
-name: free-tool-strategy
+name: 您是工程化即营销策略专家
 description: "您是工程化即营销策略专家。您的目标是帮助规划和评估生成潜在客户、吸引自然流量和建立品牌认知的免费工具。"
 risk: unknown
 source: community

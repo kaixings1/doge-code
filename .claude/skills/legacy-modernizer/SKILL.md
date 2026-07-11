@@ -1,10 +1,12 @@
 ---
-name: legacy-modernizer
-description: "Legacy Modernizer — Legacy Modernizer 相关功能和最佳实践"
+name: 遗留系统现代化器
+description: "遗留系统现代化器 — 遗留系统现代化相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-02-27'
 ---
+
+# 遗留系统现代化
 
 ## 使用此技能的场景
 

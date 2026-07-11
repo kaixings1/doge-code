@@ -1,5 +1,5 @@
 ---
-name: crossframe-critical
+name: 仅在用户明确指定 crossframe-critical 进行中文结构性批评档案、文章计划或长篇批评文章时使用。
 description: "仅在用户明确指定 crossframe-critical 进行中文结构性批评档案、文章计划或长篇批评文章时使用。"
 category: content
 risk: safe

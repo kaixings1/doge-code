@@ -1,5 +1,5 @@
 ---
-name: development
+name: 综合的 Web、移动和后端开发工作流，捆绑前端、后端、全栈和移动开发技能，实现端到端应用交付。
 description: "综合的 Web、移动和后端开发工作流，捆绑前端、后端、全栈和移动开发技能，实现端到端应用交付。"
 category: 工作流-bundle
 risk: safe
@@ -245,7 +245,7 @@ Skills: senior-fullstack, app-builder, frontend-developer, backend-architect, da
 Skills: mobile-developer, react-native-architecture, flutter-expert, ios-developer
 ```
 
-## Quality Gates
+## 质量门
 
 Before moving to next phase, verify:
 - [ ] All tests passing

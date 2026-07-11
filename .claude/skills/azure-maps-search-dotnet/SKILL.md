@@ -1,6 +1,6 @@
 ---
-name: azure-maps-search-dotnet
-description: "Azure Maps Search Dotnet — Azure Maps Search Dotnet 相关功能和最佳实践"
+name: Azure Maps Search .NET SDK 相关功能和最佳实
+description: "Azure Maps Search .NET — Azure Maps Search .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -109,7 +109,7 @@ var sasCredential = new AzureSasCredential(sas.Value.AccountSasToken);
 var client = new MapsSearchClient(sasCredential);
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 ```
 Azure.Maps.Search

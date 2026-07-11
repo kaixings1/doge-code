@@ -1,5 +1,5 @@
 ---
-name: project-guidelines-example
+name: 基于真实生产应用程序的项目特定技能（Skill）模板示例。
 description: "基于真实生产应用程序的项目特定技能（Skill）模板示例。"
 origin: ECC
 ---

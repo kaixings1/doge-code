@@ -1,10 +1,14 @@
-# Nexus Spatial: Full Agency Discovery Exercise
+---
+description: Nexus空间发现——空间计算领域的代理驱动探索工作流
+---
 
-> **Exercise type:** Multi-agent product discovery
-> **Date:** March 5, 2026
-> **Agents deployed:** 8 (in parallel)
-> **Duration:** ~10 minutes wall-clock time
-> **Purpose:** Demonstrate full-agency orchestration from opportunity identification through comprehensive planning
+# Nexus Spatial：全代理发现练习
+
+> **练习类型：** 多代理产品发现
+> **日期：** 2026年3月5日
+> **部署代理数：** 8个（并行）
+> **持续时间：** 约10分钟（实际时间）
+> **目的：** 演示从机会识别到全面规划的全代理编排
 
 ---
 
@@ -45,7 +49,8 @@ The agency has deep spatial computing expertise (XR developers, VisionOS enginee
 
 - [Profitable SaaS Ideas 2026 (273K+ Reviews)](https://bigideasdb.com/profitable-saas-micro-saas-ideas-2026)
 - [2026 SaaS and AI Revolution: 20 Top Trends](https://fungies.io/the-2026-saas-and-ai-revolution-20-top-trends/)
-- [Top 21 Underserved Markets 2026](https://mktclarity.com/blogs/news/list-underserved-niches)
+- [Top 21 Underserved Markets 2026](https://mktclarity.com/blogs
+ews/list-underserved-niches)
 - [Fastest Growing Products 2026 - G2](https://www.g2.com/best-software-companies/fastest-growing)
 - [PwC 2026 AI Business Predictions](https://www.pwc.com/us/en/tech-effect/ai-analytics/ai-predictions.html)
 
@@ -131,7 +136,8 @@ The agency has deep spatial computing expertise (XR developers, VisionOS enginee
 - [MarketsandMarkets - AI Orchestration Market](https://www.marketsandmarkets.com/Market-Reports/ai-orchestration-market-148121911.html)
 - [Deloitte - AI Agent Orchestration Predictions 2026](https://www.deloitte.com/us/en/insights/industry/technology/technology-media-and-telecom-predictions/2026/ai-agent-orchestration.html)
 - [Mordor Intelligence - Extended Reality Market](https://www.mordorintelligence.com/industry-reports/extended-reality-xr-market)
-- [Fintool - Vision Pro Production Halted](https://fintool.com/news/apple-vision-pro-production-halt)
+- [Fintool - Vision Pro Production Halted](https://fintool.com
+ews/apple-vision-pro-production-halt)
 - [MadXR - WebXR Browser-Based Experiences 2026](https://www.madxr.io/webxr-browser-immersive-experiences-2026.html)
 
 ---
@@ -564,7 +570,8 @@ Spatial adds value for **structural** tasks (placing, connecting, rearranging no
 
 1. **Spatial Earns Its Place** -- If 2D is clearer, use 2D. Every review should ask: "Would this be better flat?"
 2. **Glanceable Before Inspectable** -- Critical info perceivable in under 2 seconds via color, size, motion, position
-3. **Hands-Free Is the Baseline** -- Gaze + voice covers all read/navigate operations; hands add precision but aren't required
+3. **Hands-Free Is the Baseline** -- Gaze + voice covers all read
+avigate operations; hands add precision but aren't required
 4. **Respect Cognitive Gravity** -- Extend 2D mental models (left-to-right flow), don't replace them; z-axis adds layering
 5. **Progressive Spatial Complexity** -- New users start nearly-2D; spatial capabilities reveal as confidence grows
 6. **Physical Metaphors, Digital Capabilities** -- Nodes are "picked up" (physical) but also duplicated and versioned (digital)

@@ -1,5 +1,5 @@
 ---
-name: linkerd-patterns
+name: Linkerd 服务网格的生产模式
 description: "Linkerd 服务网格的生产模式——轻量级、安全优先的 Kubernetes 服务网格。"
 risk: critical
 source: community

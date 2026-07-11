@@ -1,6 +1,6 @@
 ---
-name: makepad-dsl
-description: "Makepad Dsl — Makepad Dsl 相关功能和最佳实践"
+name: Makepad DSL 语法和继承相关功能和最佳实践
+description: "Makepad DSL — Makepad DSL 语法和继承相关功能和最佳实践"
   CRITICAL: Use for Makepad DSL syntax and inheritance. Triggers on:
   makepad dsl, live_design, makepad inheritance, makepad prototype,
   "<Widget>", "Foo = { }", makepad object, makepad property,

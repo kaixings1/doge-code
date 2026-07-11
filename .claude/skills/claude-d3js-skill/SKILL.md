@@ -1,5 +1,5 @@
 ---
-name: claude-d3js-skill
+name: 此技能为使用 d3.js 创建复杂的交互式数据可视化提供指导。
 description: "此技能为使用 d3.js 创建复杂的交互式数据可视化提供指导。"
 risk: unknown
 source: community

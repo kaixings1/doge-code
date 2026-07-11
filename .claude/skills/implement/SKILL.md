@@ -1,5 +1,5 @@
 ---
-name: implement
+name: 实现
 description: "实现 — 实现功能和最佳实践"
 risk: unknown
 source: community

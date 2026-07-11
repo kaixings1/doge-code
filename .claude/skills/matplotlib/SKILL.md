@@ -1,5 +1,5 @@
 ---
-name: matplotlib
+name: Matplotlib 是 Python 的基础可视化库，用于创建静态、动画和交互式图表。
 description: "Matplotlib 是 Python 的基础可视化库，用于创建静态、动画和交互式图表。"
 license: https://github.com/matplotlib/matplotlib/tree/main/LICENSE
 metadata:
@@ -360,7 +360,7 @@ Matplotlib integrates well with:
 4. **Font warnings**: Install fonts or suppress warnings with `plt.rcParams['font.sans-serif']`
 5. **DPI confusion**: Remember that figsize is in inches, not pixels: `pixels = dpi * inches`
 
-## Additional Resources
+## 其他资源
 
 - Official documentation: https://matplotlib.org/
 - Gallery: https://matplotlib.org/stable/gallery/index.html

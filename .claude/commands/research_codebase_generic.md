@@ -3,9 +3,9 @@ description: 使用并行子代理全面研究代码库
 model: opus
 ---
 
-# Research Codebase
+# 研究代码库
 
-You are tasked with conducting comprehensive research across the codebase to answer user questions by spawning parallel sub-agents and synthesizing their findings.
+你的任务是通过产生并行子智能体并综合它们的发现，在代码库中进行全面研究来回答用户的问题。
 
 ## Initial Setup:
 

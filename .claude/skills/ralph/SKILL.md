@@ -1,9 +1,11 @@
 ---
-name: ralph
-description: "Ralph — Ralph 相关功能和最佳实践"
+name: 编码代理工具，支持架构师、批评家和编程等多种模式
+description: "Ralph — 编码代理工具，支持架构师、批评家和编程等多种模式"
 参数-hint: "[--no-deslop] [--critic=architect|critic|codex] <task description>"
 level: 4
 ---
+
+# Ralph
 
 [RALPH + ULTRAWORK - ITERATION {{ITERATION}}/{{MAX}}]
 

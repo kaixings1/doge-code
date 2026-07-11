@@ -1,53 +1,53 @@
 以结构化总结和记忆更新结束当前会话。
 
-## Steps
+## 步骤
 
-1. Review all changes made during this session:
-   - Run `git diff --stat` for uncommitted changes.
-   - Run `git log --oneline --since="4 hours ago"` for recent commits.
-   - Scan for TODO/FIXME comments added during the session.
-2. Compile a session summary:
-   - What was the original goal or task?
-   - What was actually accomplished?
-   - What is remaining or deferred?
-3. Extract learnings to save:
-   - New patterns or conventions established.
-   - Gotchas or bugs discovered and how they were resolved.
-   - Useful commands or techniques discovered.
-   - Performance insights or optimization findings.
-4. Update project CLAUDE.md with relevant learnings.
-5. Commit any outstanding changes if appropriate.
-6. Create a brief handoff note for the next session.
-7. List any blocking issues that need external resolution.
+1. 审查本次会话中所有做出的更改：
+   - 运行 `git diff --stat` 查看未提交的更改。
+   - 运行 `git log --oneline --since="4 hours ago"` 查看最近的提交。
+   - 扫描会话期间添加的 TODO/FIXME 注释。
+2. 编写会话摘要：
+   - 最初的目标或任务是什么？
+   - 实际完成了什么？
+   - 剩余或延期了什么？
+3. 提取要保存的学习内容：
+   - 建立的新模式或约定。
+   - 发现的陷阱或 bug 以及解决方式。
+   - 发现的有用命令或技巧。
+   - 性能洞察或优化发现。
+4. 用相关的学习内容更新项目 CLAUDE.md。
+5. 如果合适，提交任何未完成的更改。
+6. 为下一个会话创建简短的交接记录。
+7. 列出需要外部解决的阻塞问题。
 
-## Format
+## 格式
 
 ```
-## Session Wrap-Up (<date>)
+## 会话总结（<日期>）
 
-### Goal
-<what was the objective>
+### 目标
+<目标是什么>
 
-### Accomplished
-- <completed item>
+### 已完成
+- <完成项>
 
-### Deferred
-- <item not completed and why>
+### 延期
+- <未完成的项及其原因>
 
-### Learnings
-- <insight saved to CLAUDE.md>
+### 学习内容
+- <保存到 CLAUDE.md 的洞察>
 
-### Blockers
-- <issue needing resolution>
+### 阻塞项
+- <需要解决的问题>
 
-### Next Session
-Start with: <specific instruction for next session>
+### 下次会话
+从以下开始：<对下次会话的具体指示>
 ```
 
-## Rules
+## 规则
 
-- Always commit or stash changes before wrapping up; do not leave a dirty tree.
-- Keep the summary actionable, not narrative.
-- Save learnings to CLAUDE.md so they persist across sessions.
-- Flag any time-sensitive items (expiring tokens, pending reviews).
-- Do not wrap up with failing tests unless the failure is documented.
+- 在结束前始终提交或暂存更改；不要留下脏工作树。
+- 保持摘要可操作，而非叙述性。
+- 将学习内容保存到 CLAUDE.md 以便跨会话持久化。
+- 标记任何有时效性的项（即将过期的令牌、待处理的审查）。
+- 除非失败已被记录，否则不要在测试失败的情况下结束。

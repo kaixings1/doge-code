@@ -1,6 +1,6 @@
 ---
-name: imagegen-frontend-mobile
-description: "Taste Imagegen Frontend Mobile — Taste Imagegen Frontend Mobile 相关功能和最佳实践"
+name: 图像生成前端移动端
+description: "图像生成前端移动端 — 移动端图像生成前端相关功能和最佳实践"
 ---
 
 # 核心指令：高级移动应用图像方向

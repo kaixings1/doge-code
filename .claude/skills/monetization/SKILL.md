@@ -1,5 +1,5 @@
 ---
-name: monetization
+name: 数字产品货币化策略和实施
 description: "数字产品货币化策略和实施——Stripe、订阅、定价实验、免费增值、升级流程、流失预防、收入优化和 SaaS 商业模式。"
 risk: none
 source: community

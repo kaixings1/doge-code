@@ -1,5 +1,5 @@
 ---
-name: code-review-excellence
+name: 卓越代码审查
 description: "卓越代码审查"
 risk: safe
 source: community

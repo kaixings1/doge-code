@@ -1,6 +1,6 @@
 ---
-name: azure-monitor-ingestion-py
-description: "Azure Monitor Ingestion Py — Azure Monitor Ingestion Py 相关功能和最佳实践"
+name: Azure Monitor Ingestion (Python)
+description: "Azure Monitor Ingestion Python — Azure Monitor Ingestion Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -125,7 +125,7 @@ client.upload(
 )
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 import asyncio
@@ -146,7 +146,7 @@ async def upload_logs():
 asyncio.run(upload_logs())
 ```
 
-## Sovereign Clouds
+## 主权云
 
 ```python
 from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
@@ -170,7 +170,7 @@ The SDK automatically:
 
 No manual batching needed for large log sets.
 
-## Client Types
+## 客户端类型
 
 | Client | Purpose |
 |--------|---------|

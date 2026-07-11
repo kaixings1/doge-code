@@ -5,7 +5,7 @@ description: 创建新代理技能，包含适当的结构、渐进式披露和�
 
 # Writing Skills
 
-## Process
+## 流程
 
 1. **Gather requirements** - ask user about:
    - What task/domain does the skill cover?
@@ -44,7 +44,7 @@ description: Brief description of capability. Use when [specific triggers].
 
 # Skill Name
 
-## Quick start
+## 快速入门
 
 [Minimal working example]
 

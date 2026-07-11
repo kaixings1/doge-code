@@ -181,7 +181,7 @@ ServiceAuth.ACCESS_TOKEN  // Use PLAYWRIGHT_SERVICE_ACCESS_TOKEN env var
 ### GitHub Actions
 
 ```yaml
-name: playwright-ts
+name: 指导 TypeScript 开发者使用 Microsoft Playwright
 on: [push, pull_request]
 
 permissions:
@@ -224,7 +224,7 @@ jobs:
     addSpnToEnvironment: true
 ```
 
-## Key Types
+## 关键类型
 
 ```typescript
 import {

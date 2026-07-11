@@ -1,5 +1,5 @@
 ---
-name: cli-developer
+name: 构建 CLI 工具、实现参数解析或添加交互提示。涵盖标志和子命令解析、进度条和旋
 description: 构建 CLI 工具、实现参数解析或添加交互提示。涵盖标志和子命令解析、进度条和旋转器、bash/zsh/fish 补全脚本生成，使用 commander、click、typer 或 cobra。
 license: MIT
 metadata:
@@ -13,7 +13,7 @@ metadata:
   related-skills: devops-engineer
 ---
 
-# CLI Developer
+# CLI 开发者工具
 
 ## 核心工作流
 

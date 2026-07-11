@@ -1,5 +1,5 @@
 ---
-name: embeddings-vectors
+name: 向量嵌入和相似度搜索
 description: "向量嵌入和相似度搜索"
 risk: safe
 source: community

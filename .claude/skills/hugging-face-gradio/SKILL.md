@@ -1,5 +1,5 @@
 ---
-name: hugging-face-gradio
+name: Gradio 演示
 description: "Hugging Face Gradio — Gradio 演示"
 risk: safe
 source: community

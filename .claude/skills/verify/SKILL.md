@@ -1,6 +1,6 @@
 ---
-name: verify
-description: "Verify — Verify 相关功能和最佳实践"
+name: 验证
+description: "验证 — 验证功能和结论的相关功能和最佳实践"
 ---
 
 # 验证

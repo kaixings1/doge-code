@@ -1,5 +1,5 @@
 ---
-name: fal-audio
+name: FAL 音频
 description: "FAL 音频 — 基于 FAL AI 的音频生成和处理"
 risk: unknown
 source: community

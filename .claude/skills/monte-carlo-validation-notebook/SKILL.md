@@ -1,5 +1,5 @@
 ---
-name: monte-carlo-validation-notebook
+name: 为 dbt PR 变更生成 SQL 验证 notebook，包含前后对比查询
 description: "为 dbt PR 变更生成 SQL 验证 notebook，包含前后对比查询。"
 category: data
 risk: safe
@@ -11,6 +11,8 @@ author: monte-carlo-data
 tags: [data-observability, validation, dbt, monte-carlo, sql-notebook]
 tools: [claude, 游标, codex]
 ---
+
+# Monte Carlo 验证笔记本
 
 > **Tip:** This skill works well with Sonnet. Run `/model sonnet` before invoking for faster generation.
 

@@ -119,7 +119,8 @@ $shadow/devices/{device_id}/state/reported
 $shadow/devices/{device_id}/state/desired
 
 # OTA
-devices/{device_id}/ota/notify
+devices/{device_id}/ota
+otify
 devices/{device_id}/ota/progress
 
 # 分组广播

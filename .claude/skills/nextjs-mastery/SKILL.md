@@ -1,5 +1,5 @@
 ---
-name: nextjs-mastery
+name: Next.js 精通
 description: Next.js 精通 — App Router 模式，包括 RSC、ISR、中间件、服务端操作和流式渲染。
 ---
 

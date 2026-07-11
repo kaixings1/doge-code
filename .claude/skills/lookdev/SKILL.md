@@ -1,5 +1,5 @@
 ---
-name: lookdev
+name: 人机协作的 Web 工作室，通过视觉调整 AI 生成输出。搭建本地交互式工作室（
 description: "人机协作的 Web 工作室，通过视觉调整 AI 生成输出。搭建本地交互式工作室（滑块、选择器、拖拽手柄）或用于散文和媒体的内联编辑/高亮/评注工作室，而不是猜测数值或提交静态比较网格。"
 risk: safe
 source: community
@@ -25,59 +25,67 @@ tools:
 ---
 ## 使用场景
 
-Use when the user says "lookdev", or asks to tune / dial in / iterate on the look of something, compare variations by feel, or review / edit / annotate a blog post, doc, copy, or media set. Use whenever "show me, I'll pick" beats asking the user to specify a number, and whenever you'd otherwise hand back a static grid or a wall of prose for review.
+当用户说"lookdev"，或要求调节/调试/迭代调整某物的外观、凭感觉比较变体，
+或审阅/编辑/批注博客文章、文档、文案或媒体集时使用。每当"给我看，我来选"
+比让用户指定一个数字更好，以及每当你本来要交回一个静态网格或一大段文本
+供审阅时使用。
 
 _Source: [connerkward/lookdev-studio-skill](https://github.com/connerkward/lookdev-studio-skill) (MIT)._
 
 # Lookdev
 
-When the user says **"lookdev"** — or any of: *tune*, *dial in*, *iterate on the look of*, *compare variations of*, *let me adjust*, *let me edit/annotate/mark up*, *review this post/doc/copy* — they mean **build an interactive in-browser tool the user directly manipulates**. Not a static grid of N variations. Not a Q&A where they specify numbers. Not a wall of prose they're asked to read and reply to in chat. A real-time studio where they act on the artifact and the change is captured.
+当用户说 **"lookdev"** —— 或任何如下词语：*调试*、*调节*、*迭代外观*、
+*比较变体*、*让我调整*、*让我编辑/批注/标记*、*审阅这篇帖子/文档/文案*
+—— 他们的意思是 **构建一个用户可以直接操作的交互式浏览器内工具**。
+不是 N 个变体的静态网格。不是让他们指定数字的问答。不是要求他们阅读
+并在聊天中回复的一堵文本墙。而是一个实时工作室，在此他们直接操作工件
+并捕获更改。
 
-**Two studio shapes — pick by what's being tuned:**
+**两种工作室形态 —— 根据要调试的内容选择：**
 
-- **Visual-参数 lookdev** — the artifact's *look* is set by numbers/choices (color, type, layout, image treatment, animation, 3D). Controls = sliders, pickers, drag handles. This is the bulk of this skill (below).
-- **Text & media lookdev** — the artifact is a *document, blog post, copy, or media set* and the user is editing/curating it: rewriting sentences, cutting boring paragraphs, highlighting, leaving margin comments, flagging "diagram goes here" / "wrong image, replace." Controls = **direct inline editing + selection highlight + anchored comments + media annotation**. See the dedicated section below. **A blog post / doc / script review IS this mode — never hand back a long markdown file and ask the user to react in chat. Stand up the annotation studio.**
+- **视觉参数 lookdev** —— 工件的*外观*由数字/选择设置（颜色、字体、布局、图像处理、动画、3D）。控件 = 滑块、选择器、拖拽手柄。这是此技能的主要内容（见下文）。
+- **文本与媒体 lookdev** —— 工件是*文档、博客文章、文案或媒体集*，用户正在编辑/策展它：重写句子、删减无聊段落、高亮、留边注、标记"此处放图"/"图片错了，替换。" 控件 = **直接内联编辑 + 选择高亮 + 锚定评论 + 媒体批注**。见下方的专门章节。**博客文章/文档/脚本审阅就是这种模式 —— 绝不要交回一个长 markdown 文件让用户在聊天中反馈。搭建批注工作室。**
 
-## What it covers
+## 涵盖内容
 
-Any visual decision the user picks by feel, not by spec. Expand this list as needed:
+任何用户凭感觉而非规格书选择的视觉决策。按需扩展此列表：
 
-- **Image processing** — dither, halftone, posterize, ASCII, blur, edge, quantize, mosaic, color-grade
-- **Color** — palette extraction (show coverage %), per-band pickers, saturation / contrast / gamma curves, harmony presets, theme tokens
-- **Typography** — font selector, size / weight / leading / tracking / measure, live sample text, fallback stack
-- **Layout, positioning, framing, spacing** — draggable & selectable elements; resize handles; margin / padding rulers; alignment guides; snap-to-grid; aspect-lock toggles
-- **Crop & framing** — draggable crop rectangle with aspect lock; live cropped preview at production size
-- **Animation / transitions** — easing curve editor, duration sliders, scrubber, replay
-- **Component variants** — render hover / focus / disabled / loading / dark side by side on one page
-- **Iconography** — stroke weight, corner radius, glyph on canvas
-- **AI-generated content** — prompt input + param sliders + side-by-side regeneration grid
-- **Anything else where "show me, I'll pick"** beats "ask me to specify a number"
+- **图像处理** — 抖动、半色调、海报化、ASCII、模糊、边缘检测、量化、马赛克、调色
+- **颜色** — 调色板提取（显示覆盖百分比）、逐波段选择器、饱和度/对比度/伽马曲线、和谐预设、主题令牌
+- **排版** — 字体选择器、字号/字重/行距/字距/度量、实时示例文本、备选堆栈
+- **布局、定位、取景、间距** — 可拖拽和可选元素；调整大小手柄；外边距/内边距标尺；对齐指南；对齐网格；宽高比锁定开关
+- **裁剪与取景** — 带宽高比锁定的可拖拽裁剪矩形；生产尺寸的实时裁剪预览
+- **动画/过渡** — 缓动曲线编辑器、持续时间滑块、拖拽条、回放
+- **组件变体** — 在同一页面并排渲染悬停/聚焦/禁用/加载/暗色状态
+- **图标学** — 描边粗细、圆角半径、画布上的字形
+- **AI 生成内容** — 提示输入 + 参数滑块 + 并排重新生成网格
+- **任何其他"给我看，我来选"优于"让我指定数字"的情况**
 
-## Controls must stay reachable while inspecting
+## 控件在浏览时必须保持可触及
 
-If the studio shows a list, grid, or scroll-long set of variations, **controls must be visible from every scroll position**. The user has to be able to drag a slider while looking at row 14, not scroll back to the top each time.
+如果工作室显示列表、网格或一长串变体，**控件必须从每个滚动位置都可见**。用户必须能在看着第 14 行时拖动滑块，而不是每次都滚回顶部。
 
-Two approaches, pick by layout:
+两种方法，根据布局选择：
 
-- **Sticky bar** (`position: sticky; top: 0`) at the top of the scroll container. Keep the bar visually distinct — paper background + blur backdrop + bottom border — so it doesn't muddy the specimens scrolling behind it. Sticky pins relative to the *nearest scrolling ancestor with a defined boundary*; if you nest it inside a sized parent (a `<header>` with `margin-bottom`, a `<div>` with a fixed height), it stops sticking at that parent's bottom edge. Lift it to be a direct child of `<body>` (or the page-wrap) so stickiness spans the whole page.
-- **Floating overlay** (`position: fixed`) for hotkey-toggled controls — e.g. press `d` to reveal. The portfolio's `.debug-ctl` pattern is this: pinned top-left, transparent until summoned. Use when the controls shouldn't occupy permanent screen real estate (final viewers shouldn't see them; the author can summon on demand).
+- **粘性栏**（`position: sticky; top: 0`）位于滚动容器顶部。保持栏在视觉上独特——纸张背景 + 模糊背景 + 底部边框——这样它不会与后面滚动的样本混在一起。粘性固定的位置相对于*最近的具有定义边界的滚动父元素*；如果你将它嵌套在固定尺寸的父元素内（带 `margin-bottom` 的 `<header>`，固定高度的 `<div>`），它会在该父元素的底部边缘停止粘性。将其提升为 `<body>`（或页面包装器）的直接子元素，使粘性跨越整个页面。
+- **浮动叠加层**（`position: fixed`）用于热键切换的控件——例如按 `d` 键显示。作品集的 `.debug-ctl` 模式就是这个：固定在左上角，召唤前透明。当控件不应占用永久屏幕空间时使用（最终观众不应看到它们；作者可按需召唤）。
 
-Anti-pattern: a top-of-page control panel that the user scrolls past and never sees again. They will tune blindly, give up, or guess. Either keep the controls in view *or* duplicate a compact control bar next to each variation row.
+反模式：页面顶部的控制面板，用户滚动经过后再也看不到。他们将盲目调节、放弃或猜测。要么让控件保持在视野内，*要么*在每个变体行旁复制一个紧凑控制栏。
 
-## Text & media lookdev — direct edit, highlight, comment, annotate
+## 文本与媒体 lookdev — 直接编辑、高亮、评论、批注
 
-When the artifact is a **blog post, doc, copy deck, script, or media set**, the user is not turning knobs — they're *marking up the work the way an editor marks a manuscript*. The studio renders the **real artifact WYSIWYG** (the actual rendered blog with its real components/media, not a raw-markdown textarea) and lets the user act on it directly. Building this for a doc review is mandatory: **do not paste a long file into chat and ask "what do you think?" — that's the boring wall of text the user is rejecting.** Stand up the annotation studio and let them edit in place.
+当工件是**博客文章、文档、文案集、脚本或媒体集**时，用户不是在调节旋钮——他们在*以编辑标注手稿的方式标记作品*。工作室渲染**所见即所得的真正工件**（实际渲染的博客及其真实组件/媒体，而非原始 markdown 文本框），让用户直接操作它。为文档审阅构建此功能是强制性的：**不要将长文件粘贴到聊天中问"你觉得怎么样？"——那是用户拒绝的无聊文本墙。**搭建批注工作室，让他们原地编辑。
 
-### The four affordances (build all that apply)
+### 四种交互能力（构建所有适用的）
 
-1. **Direct inline editing.** Every text block is editable in place — click a paragraph/heading and type. Use `contentEditable` per block (or click-to-swap-to-`<textarea>`), each block carrying a stable `data-block-id` that maps back to a source location (markdown/MDX line range, JSX node, or content key). Capture the *edited* text per block; the agent applies the diff to source. Don't make them retype in a separate field — they edit the rendered sentence.
-2. **Selection highlight.** Select text → toolbar (or hotkey) applies a colored highlight (`<mark>`). Multiple colors = a legend the user defines (e.g. yellow "cut this", green "love it", red "wrong/fact-check"). Each highlight stores `{blockId, startOffset, endOffset, color, optional note}`.
-3. **Anchored comments / margin notes.** Select text or click a media region → attach a comment shown in a **margin rail** (pin in the gutter, expand on hover/click) or as a numbered superscript. Comment = `{anchor, text}` where anchor is a block+range or a media region. This is how the user says "diagram goes here", "too long, cut to two sentences", "needs a real screenshot".
-4. **Media annotation.** For images/figures: draw a box / drop a pin / arrow on the image and attach a note (`{mediaId, x, y, w, h, note}`); plus a per-media **flag menu** — "replace", "wrong model", "regenerate", "missing — generate one here". Placeholders ("DIAGRAM HERE", "MEDIA?") render as visible drop-zones the user clicks to specify what they want, directly addressing "where are the diagrams / where is the media."
+1. **直接内联编辑。** 每个文本块都可以就地编辑——单击段落/标题并输入。对每个块使用 `contentEditable`（或点击切换到 `<textarea>`），每个块携带一个稳定的 `data-block-id`，映射回源位置（markdown/MDX 行范围、JSX 节点或内容键）。捕获每个块的*已编辑*文本；代理将差异应用到源文件。不要让他们在单独的字段中重新输入——他们直接编辑渲染后的句子。
+2. **选择高亮。** 选择文本 → 工具栏（或热键）应用彩色高亮（`<mark>`）。多种颜色 = 用户定义的图例（例如黄色"删掉这个"、绿色"喜欢"、红色"错了/事实核查"）。每个高亮存储 `{blockId, startOffset, endOffset, color, optional note}`。
+3. **锚定评论 / 边注。** 选择文本或单击媒体区域 → 附加一条评论，显示在**边距轨**中（固定在装订线中，悬停/点击展开）或作为编号上标。评论 = `{anchor, text}`，其中 anchor 是块+范围或媒体区域。这就是用户说"此处放图"、"太长了，删减到两句话"、"需要真实截图"的方式。
+4. **媒体批注。** 对于图片/图表：在图像上画框/放针/箭头并附加注释（`{mediaId, x, y, w, h, note}`）；加上每个媒体的**标记菜单**——"替换"、"错误模型"、"重新生成"、"缺失——在此生成"。占位符（"此处放图"、"媒体？"）渲染为可见的拖放区，用户点击指定他们想要的内容，直接解决了"图在哪里/媒体在哪里"的问题。
 
-### Round-trip is MANDATORY (same rule as the settings JSON)
+### 往返是强制性的（与 settings JSON 规则相同）
 
-The studio is worthless if the agent can't read the markup back out. Every edit, highlight, comment, and media-flag must export as **one machine-readable patch** with a single **Copy** button (and persist to `localStorage`/URL so a refresh doesn't lose work — this is human-labeled data; see `human-labeled-data-rule`). Shape:
+如果代理无法读回标记，工作室就毫无价值。每次编辑、高亮、评论和媒体标记必须导出为**一个机器可读的补丁**，带有一个**复制**按钮（并持久化到 `localStorage`/URL，以便刷新不会丢失工作——这是人工标注数据；参见 `human-labeled-data-rule`）。格式：
 
 ```json
 {
@@ -88,18 +96,18 @@ The studio is worthless if the agent can't read the markup back out. Every edit,
 }
 ```
 
-The agent ingests this and bakes: applies the inline edits to the source file, acts on every comment/flag, swaps/generates the flagged media, resolves the highlights (cut the "cut" spans, etc.). Then re-serve the updated artifact for another pass. **No markup may exist that isn't in the export blob** — otherwise you're back to the user narrating changes by hand.
+代理接收并处理：将内联编辑应用到源文件，处理每条评论/标记，替换/生成标记的媒体，解决高亮（删除"删掉"的跨度等）。然后重新提供更新的工件进行新一轮。**不允许存在不在导出 blob 中的标记**——否则你就回到了用户手动叙述更改的状态。
 
-### Mechanics
+### 技术细节
 
-- **Render the real thing.** MDX/React blog → mount the actual components; static page → render the real HTML/CSS. WYSIWYG per 架构 #5. An annotation layer over a fake-looking preview lies about the result.
-- **Selection → offsets.** Use the `Selection`/`Range` API; store character offsets relative to the block's text content (not DOM node paths, which break on re-render). Re-apply highlights/comments on load by walking each block's text to the stored offsets.
-- **Editing toolbar floats with the selection** (a small popover at the selection rect) or a sticky top bar — controls stay reachable (see section above). Hotkeys: highlight on a key (e.g. `h`), comment on `c`.
-- **Keep edit/annotate modes distinct** so a stray click doesn't garble text while they meant to highlight — a mode toggle (Edit · Highlight · Comment) or modifier key.
-- Everything else — serve locally on a free port, verify headless, tear down after baking — is identical to the visual-参数 工作流 below.
+- **渲染真实内容。** MDX/React 博客 → 挂载实际组件；静态页面 → 渲染真实 HTML/CSS。根据架构 #5 的所见即所得。在虚假预览上的批注层会误导结果。
+- **选择 → 偏移量。** 使用 `Selection`/`Range` API；存储相对于块文本内容的字符偏移量（而非 DOM 节点路径，后者在重新渲染时会失效）。通过遍历每个块的文本到存储的偏移量，在加载时重新应用高亮/评论。
+- **编辑工具栏与选择浮动**（在选择矩形处的小弹出框）或粘性顶部栏——控件保持可触及（见上文章节）。热键：按某键高亮（例如 `h`），按 `c` 评论。
+- **保持编辑/批注模式区分**，这样在用户意图高亮时不会因为误点击而破坏文本——使用模式切换（编辑·高亮·评论）或修饰键。
+- 所有其他内容——在空闲端口上本地服务、无头验证、处理完成后拆除——与下面的视觉参数工作流相同。
 
-## Control patterns
+## 控制模式
 
-Pick controls by what the decision actually is.
+根据实际决策类型选择控件。
 
-| Decision type | Control |
+| 决策类型 | 控件 |

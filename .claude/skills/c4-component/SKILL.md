@@ -1,27 +1,27 @@
 ---
-name: c4-component
+name: C4 组件级文档专家：将 C4 Code 级文档综合为组件级架构，定义组件边界、接口和关系。
 description: C4 组件级文档专家：将 C4 Code 级文档综合为组件级架构，定义组件边界、接口和关系。
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
 
-# C4 Component Level: [Component Name]
+# C4 组件层级：[组件名称]
 
 ## 使用此技能的场景
 
-- Working on c4 component level: [component name] tasks or workflows
-- Needing guidance, best practices, or checklists for c4 component level: [component name]
+- 处理 c4 组件层级：[组件名称] 任务或工作流时
+- 需要 c4 组件层级：[组件名称] 的指导、最佳实践或检查清单时
 
 ## 不要使用此技能的场景
 
-- The task is unrelated to c4 component level: [component name]
-- You need a different domain or tool outside this scope
+- 任务与 c4 组件层级：[组件名称] 无关时
+- 您需要此范围之外的不同领域或工具时
 
 ## 使用说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
 - Provide actionable steps and verification.
 - If detailed examples are required, open `resources/implementation-playbook.md`.
 
@@ -130,13 +130,13 @@ C4Component
 - "Identify component interfaces and create component diagrams"
 - "Group database access code into components and document their relationships"
 
-## Key Distinctions
+## 关键区别
 
 - **vs C4-Code agent**: Synthesizes multiple code files into components; Code agent documents individual code elements
 - **vs C4-Container agent**: Focuses on logical grouping; Container agent maps components to 部署 units
 - **vs C4-Context agent**: Provides component-level detail; Context agent creates high-level system diagrams
 
-## Output Examples
+## 输出示例
 
 When synthesizing components, provide:
 

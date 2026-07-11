@@ -1,5 +1,5 @@
 ---
-name: choose-model
+name: 模型选择
 description: "模型选择"
 risk: safe
 source: community

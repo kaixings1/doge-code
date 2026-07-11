@@ -1,49 +1,49 @@
 扫描代码库，查找泄露的密钥、API Key、令牌和凭证。
 
-## Steps
+## 步骤
 
-1. Define patterns to search for:
-   - AWS keys: `AKIA[0-9A-Z]{16}`, `aws_secret_access_key`.
-   - API keys: `sk-[a-zA-Z0-9]{32,}`, `api[_-]?key\s*[:=]`.
-   - Tokens: `ghp_`, `gho_`, `github_pat_`, `xoxb-`, `xoxp-`.
-   - Private keys: `-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----`.
-   - Database URLs: `(postgres|mysql|mongodb)://[^:]+:[^@]+@`.
-   - Generic secrets: `password\s*[:=]\s*["'][^"']+["']`, `secret\s*[:=]`.
-2. Scan all tracked files: `git ls-files` (skip binary files).
-3. Also scan `.env` files that may not be tracked.
-4. Exclude known false positives (test fixtures, documentation examples, `.env.example`).
-5. For each finding, determine severity:
-   - **CRITICAL**: Real credentials with high entropy that appear functional.
-   - **WARNING**: Patterns that look like secrets but may be placeholders.
-   - **INFO**: References to secret names without values.
-6. Check if `.gitignore` properly excludes sensitive files (`.env`, `*.pem`, `*.key`).
-7. Suggest remediation for each finding.
+1. 定义要搜索的模式：
+   - AWS 密钥：`AKIA[0-9A-Z]{16}`、`aws_secret_access_key`
+   - API 密钥：`sk-[a-zA-Z0-9]{32,}`、`api[_-]?key\s*[:=]`
+   - 令牌：`ghp_`、`gho_`、`github_pat_`、`xoxb-`、`xoxp-`
+   - 私钥：`-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----`
+   - 数据库 URL：`(postgres|mysql|mongodb)://[^:]+:[^@]+@`
+   - 通用密钥：`password\s*[:=]\s*["'][^"']+["']`、`secret\s*[:=]`
+2. 扫描所有跟踪的文件：`git ls-files`（跳过二进制文件）
+3. 同时扫描可能未跟踪的 `.env` 文件
+4. 排除已知的误报（测试夹具、文档示例、`.env.example`）
+5. 对每个发现，确定严重程度：
+   - **严重**：具有高熵且看起来可用的真实凭据
+   - **警告**：看起来像密钥但可能是占位符的模式
+   - **信息**：引用密钥名称但无值
+6. 检查 `.gitignore` 是否正确排除了敏感文件（`.env`、`*.pem`、`*.key`）
+7. 为每个发现建议修复措施
 
-## Format
+## 格式
 
 ```
-Secrets Scan Results
+密钥扫描结果
 ====================
 
-CRITICAL (immediate action required):
-  - <file>:<line> - <type>: <masked-value>
+严重（需要立即处理）：
+  - <文件>:<行> - <类型>: <掩码值>
 
-WARNING (review needed):
-  - <file>:<line> - <type>: <description>
+警告（需要审查）：
+  - <文件>:<行> - <类型>: <描述>
 
-.gitignore check:
-  - [ ] .env files excluded
-  - [ ] Key files excluded
+.gitignore 检查：
+  - [ ] .env 文件已排除
+  - [ ] 密钥文件已排除
 
-Remediation:
-  1. Rotate <credential type>
-  2. Add <pattern> to .gitignore
+修复措施：
+  1. 轮换 <凭据类型>
+  2. 将 <模式> 添加到 .gitignore
 ```
 
-## Rules
+## 规则
 
-- Never print full secret values; mask all but the first 4 characters.
-- Scan both tracked and untracked files.
-- Check git history for secrets in past commits using `git log -p --all -S`.
-- Suggest `.gitignore` additions for any unprotected secret file patterns.
-- Recommend using environment variables or secret managers for all findings.
+- 绝不打印完整的密钥值；仅保留前 4 个字符，其余掩码
+- 同时扫描跟踪和未跟踪的文件
+- 使用 `git log -p --all -S` 检查 git 历史中的密钥
+- 对任何未受保护的密钥文件模式建议添加到 `.gitignore`
+- 建议对所有发现使用环境变量或密钥管理器

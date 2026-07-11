@@ -1,3 +1,8 @@
+---
+name: Semgrep 规则变体创建器
+description: 将现有 Semgrep 规则移植到新目标语言的技能，包含适用性分析和测试驱动验证。
+---
+
 # Semgrep Rule Variant Creator
 
 A Claude Code skill for porting existing Semgrep rules to new target languages with proper applicability analysis and test-driven validation.

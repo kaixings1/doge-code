@@ -14,14 +14,14 @@ requires: [phase, review]
 ---
 
 <objective>
-Cross-AI plan convergence loop — an outer revision gate around gsd-review and gsd-planner.
-Repeatedly: review plans with external AI CLIs → if HIGH concerns found → replan with --reviews feedback → re-review. Stops when no HIGH concerns remain or max cycles reached.
+跨 AI 规划融合循环——gsd-review 和 gsd-planner 的外部修订关卡。
+重复操作：使用外部 AI CLI 审查计划 → 如果发现 HIGH 级别的顾虑 → 使用 --reviews 反馈重新规划 → 重新审查。当没有剩余的 HIGH 级别顾虑或达到最大循环次数时停止。
 
-**Flow:** Agent→Skill("gsd-plan-phase") → Agent→Skill("gsd-review") → check HIGHs → Agent→Skill("gsd-plan-phase --reviews") → Agent→Skill("gsd-review") → ... → Converge or escalate
+**流程：** Agent→Skill("gsd-plan-phase") → Agent→Skill("gsd-review") → 检查 HIGH → Agent→Skill("gsd-plan-phase --reviews") → Agent→Skill("gsd-review") → ... → 融合或升级
 
-Replaces gsd-plan-phase's internal gsd-plan-checker with external AI reviewers (codex, gemini, etc.). Each step runs inside an isolated Agent that calls the corresponding existing Skill — orchestrator only does loop control.
+用外部 AI 审查员（codex、gemini 等）替换 gsd-plan-phase 的内部 gsd-plan-checker。每个步骤在调用相应现有技能的隔离 Agent 内运行——编排器仅进行循环控制。
 
-**Orchestrator role:** Parse arguments, validate phase, spawn Agents for existing Skills, check HIGHs, stall detection, escalation gate.
+**编排器角色：** 解析参数、验证阶段、为现有技能生成 Agent、检查 HIGH、停滞检测、升级关卡。
 </objective>
 
 <execution_context>

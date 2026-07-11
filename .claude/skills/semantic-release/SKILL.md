@@ -1,9 +1,9 @@
 ---
-name: semantic-release
+name: 语义化版本发布
 description: "语义化版本发布 — conventional commits、自动版本号、CHANGELOG 生成、npm/GitHub 发布"
 ---
 
-# semantic-release
+# 语义化发布
 
 ## 概述
 语义化版本发布 — conventional commits、自动版本号、CHANGELOG 生成、npm/GitHub 发布。

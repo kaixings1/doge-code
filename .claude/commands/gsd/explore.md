@@ -11,11 +11,11 @@ allowed-tools:
   - AskUserQuestion
 ---
 <objective>
-Open-ended Socratic ideation session. Guides the developer through exploring an idea via
-probing questions, optionally spawns research, then routes outputs to the appropriate GSD
-artifacts (notes, todos, seeds, research questions, requirements, or new phases).
+开放式的苏格拉底式构思会话。通过探究性问题引导开发者探索想法，
+可选择性地生成研究，然后将输出路由到适当的 GSD 工件
+（笔记、待办事项、种子、研究问题、需求或新阶段）。
 
-Accepts an optional topic argument: `/gsd:explore authentication strategy`
+接受可选的主题参数：`/gsd:explore authentication strategy`
 </objective>
 
 <execution_context>

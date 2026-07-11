@@ -1,5 +1,5 @@
 ---
-name: adaptyv
+name: Adaptyv 生物实验
 author: "K-Dense, Inc."
 description: "如何使用 Adaptyv Bio Foundry API 和 Python SDK 进行蛋白质实验设计、提交和结果检索。当用户提到 Adaptyv、Foundry API、蛋白质结合实验、蛋白质筛选实验、BLI/SPR 实验、热稳定性实验或想要提交蛋白质序列进行实验表征时使用此技能。当代码导入 adaptyv、adaptyv_sdk 或 FoundryClient，或引用 foundry-api-public.adaptyvbio.com 时也触发。"
 license: MIT

@@ -1,5 +1,5 @@
 ---
-name: emblemai-crypto-wallet
+name: AI 驱动的加密钱包
 description: "AI 驱动的加密钱包"
 risk: safe
 source: community

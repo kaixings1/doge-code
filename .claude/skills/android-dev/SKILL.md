@@ -1,5 +1,5 @@
 ---
-name: android-dev
+name: Android 开发
 description: "Android 开发"
 risk: safe
 source: community

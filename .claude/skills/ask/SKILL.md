@@ -1,5 +1,5 @@
 ---
-name: ask
+name: 询问
 description: "询问"
 risk: safe
 source: community

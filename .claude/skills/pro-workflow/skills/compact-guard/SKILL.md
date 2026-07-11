@@ -66,7 +66,7 @@ COMPACT GUARD
   Ready to compact. Run /compact now.
 ```
 
-## Rules
+## 规则
 
 - Always save state before compacting — never compact blind
 - Prioritize the file you're actively editing as #1 to restore

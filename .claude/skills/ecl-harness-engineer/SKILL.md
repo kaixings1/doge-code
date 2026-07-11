@@ -1,5 +1,5 @@
 ---
-name: ecl-harness-engineer
+name: 创建或审计 ECL Agent Harness 基础设施：AGENTS.md、变
 description: "创建或审计 ECL Agent Harness 基础设施：AGENTS.md、变更跟踪、仓库指导、lint 检查、CI 门和代理交接文档。"
 category: development
 risk: safe
@@ -645,7 +645,7 @@ With context: "Implement the bootstrap exec-plan at docs/exec-plans/active/boots
 
 ---
 
-## Core Principles
+## 核心原则
 
 ### 1. Repository as Single Source of Truth
 

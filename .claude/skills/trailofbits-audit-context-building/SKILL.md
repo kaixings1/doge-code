@@ -1,3 +1,8 @@
+---
+name: 审计上下文构建
+description: 通过超细粒度代码分析构建深层架构上下文，为漏洞挖掘做准备。
+---
+
 # 审计上下文构建
 
 Build deep architectural context through ultra-granular code analysis before vulnerability hunting.
@@ -12,7 +17,7 @@ Build deep architectural context through ultra-granular code analysis before vul
 - Reduce hallucinations and context loss during complex analysis
 - Prepare for threat modeling or architecture review
 
-## What It Does
+## 功能说明
 
 This skill governs how Claude thinks during the context-building phase of an audit. When active, Claude will:
 

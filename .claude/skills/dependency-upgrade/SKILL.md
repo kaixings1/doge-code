@@ -1,5 +1,5 @@
 ---
-name: dependency-upgrade
+name: 掌握主要依赖版本升级、兼容性分析、分阶段升级策略和全面测试方法。
 description: "掌握主要依赖版本升级、兼容性分析、分阶段升级策略和全面测试方法。"
 risk: critical
 source: community

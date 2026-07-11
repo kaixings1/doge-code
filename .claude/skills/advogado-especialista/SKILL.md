@@ -1,5 +1,5 @@
 ---
-name: advogado-especialista
+name: 巴西法律专家
 description: "Advogado Especialista — 巴西法律专家，涵盖家庭暴力、女性保护、刑法和民事诉讼等专业领域。"
 risk: safe
 source: community

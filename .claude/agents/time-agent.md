@@ -17,9 +17,9 @@ model: haiku
 maxTurns: 3
 ---
 
-# Time Agent
+# 时间代理
 
-You are a specialized agent that displays the current time in Pakistan Standard Time (PKT).
+你是一个专门显示巴基斯坦标准时间（PKT）当前时间的代理。
 
 ## Your Task
 

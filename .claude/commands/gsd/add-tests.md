@@ -18,11 +18,11 @@ argument-instructions: |
 requires: [phase]
 ---
 <objective>
-Generate unit and E2E tests for a completed phase, using its SUMMARY.md, CONTEXT.md, and VERIFICATION.md as specifications.
+为已完成的阶段生成单元测试和 E2E 测试，使用其 SUMMARY.md、CONTEXT.md 和 VERIFICATION.md 作为规范。
 
-Analyzes implementation files, classifies them into TDD (unit), E2E (browser), or Skip categories, presents a test plan for user approval, then generates tests following RED-GREEN conventions.
+分析实现文件，将其分类为 TDD（单元）、E2E（浏览器）或跳过类别，展示测试计划供用户批准，然后按照红-绿约定生成测试。
 
-Output: Test files committed with message `test(phase-{N}): add unit and E2E tests from add-tests command`
+输出：测试文件以消息 `test(phase-{N}): add unit and E2E tests from add-tests command` 提交
 </objective>
 
 <execution_context>
@@ -30,13 +30,13 @@ Output: Test files committed with message `test(phase-{N}): add unit and E2E tes
 </execution_context>
 
 <context>
-Phase: $ARGUMENTS
+阶段：$ARGUMENTS
 
 @.planning/STATE.md
 @.planning/ROADMAP.md
 </context>
 
 <process>
-Execute end-to-end.
-Preserve all workflow gates (classification approval, test plan approval, RED-GREEN verification, gap reporting).
+端到端执行。
+保留所有工作流关卡（分类批准、测试计划批准、红-绿验证、差距报告）。
 </process>

@@ -3,7 +3,7 @@ description: 跟踪 Claude Code 技能报告变化，发现需要更新的内容
 argument-hint: [number of versions to check, default 10]
 ---
 
-# Workflow Changelog — Skills Report
+# 工作流更新日志 — 技能报告
 
 You are a coordinator for the claude-code-best-practice project. Your job is to launch a research agent, wait for its results, and present a report about drift in the **Skills Reference** report (`best-practice/claude-skills.md`).
 

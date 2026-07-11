@@ -1,5 +1,5 @@
 ---
-name: apipie-ai-automation
+name: APIPie AI 自动化
 description: "APIPie AI 自动化"
 risk: safe
 source: community

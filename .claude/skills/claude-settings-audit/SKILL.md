@@ -1,6 +1,6 @@
 ---
-name: claude-settings-audit
-description: "Claude Settings Audit — Claude Settings Audit 相关功能和最佳实践"
+name: Claude 设置审计
+description: "Claude 设置审计 — Claude 设置审计相关功能和最佳实践"
 risk: unknown
 source: community
 ---
@@ -37,7 +37,7 @@ Check for these indicator files:
 | **Infra**    | `*.tf` files, `kubernetes/`, `helm/`                                                  |
 | **Monorepo** | `lerna.json`, `nx.json`, `turbo.json`, `pnpm-workspace.yaml`                          |
 
-## Phase 2: Detect Services
+## 阶段 2：检测服务
 
 Check for service integrations:
 
@@ -53,17 +53,17 @@ Read dependency files to identify frameworks:
 - `Gemfile` → check gem names
 - `Cargo.toml` → check `[dependencies]`
 
-## Phase 3: Check Existing Settings
+## 阶段 3：检查现有设置
 
 ```bash
 cat .claude/settings.json 2>/dev/null || echo "No existing settings"
 ```
 
-## Phase 4: Generate Recommendations
+## 阶段 4：生成建议
 
-Build the allow list by combining:
+通过组合以下内容构建允许列表：
 
-### Baseline Commands (始终 Include)
+### 基础命令（始终包含）
 
 ```json
 [
@@ -100,11 +100,11 @@ Build the allow list by combining:
 ]
 ```
 
-### Stack-Specific Commands
+### 技术栈特定命令
 
-Only include commands for tools actually detected in the project.
+仅包含项目中检测到的工具的命令。
 
-#### Python (if any Python files or config detected)
+#### Python（如果检测到 Python 文件或配置）
 
 | If Detected                        | Add These Commands                      |
 | ---------------------------------- | --------------------------------------- |
@@ -114,7 +114,7 @@ Only include commands for tools actually detected in the project.
 | `Pipfile.lock`                     | `pipenv graph`                          |
 | `requirements.txt` (no other lock) | `pip list`, `pip show`, `pip freeze`    |
 
-#### Node.js (if package.json detected)
+#### Node.js（如果检测到 package.json）
 
 | If Detected                  | Add These Commands                     |
 | ---------------------------- | -------------------------------------- |
@@ -124,7 +124,7 @@ Only include commands for tools actually detected in the project.
 | `package-lock.json`          | `npm list`, `npm view`, `npm outdated` |
 | TypeScript (`tsconfig.json`) | `tsc --version`                        |
 
-#### Other Languages
+#### 其他语言
 
 | If Detected    | Add These Commands                                                   |
 | -------------- | -------------------------------------------------------------------- |
@@ -134,7 +134,7 @@ Only include commands for tools actually detected in the project.
 | `pom.xml`      | `java --version`, `mvn --version`, `mvn dependency:tree`             |
 | `build.gradle` | `java --version`, `gradle --version`, `gradle dependencies`          |
 
-#### Build Tools
+#### 构建工具
 
 | If Detected          | Add These Commands                                                   |
 | -------------------- | -------------------------------------------------------------------- |
@@ -143,9 +143,9 @@ Only include commands for tools actually detected in the project.
 | `*.tf` files         | `terraform --version`, `terraform providers`, `terraform state list` |
 | `Makefile`           | `make --version`, `make -n`                                          |
 
-### Skills (for Sentry Projects)
+### 技能（Sentry 项目）
 
-If this is a Sentry project (or sentry-skills plugin is installed), include:
+如果是 Sentry 项目（或安装了 sentry-skills 插件），请包含：
 
 ```json
 [
@@ -175,9 +175,9 @@ If this is a Sentry project (or sentry-skills plugin is installed), include:
 ]
 ```
 
-### WebFetch Domains
+### WebFetch 域名
 
-#### 始终 Include (Sentry Projects)
+#### Sentry 项目始终包含
 
 ```json
 [
@@ -188,7 +188,7 @@ If this is a Sentry project (or sentry-skills plugin is installed), include:
 ]
 ```
 
-#### Framework-Specific
+#### 框架特定
 
 | If Detected    | Add Domains                                     |
 | -------------- | ----------------------------------------------- |
@@ -206,7 +206,7 @@ If this is a Sentry project (or sentry-skills plugin is installed), include:
 | **Kubernetes** | `kubernetes.io`                                 |
 | **Terraform**  | `registry.terraform.io`                         |
 
-### MCP 服务器 Suggestions
+### MCP 服务器建议
 
 MCP servers are configured in `.mcp.json` (not `settings.json`). Check for existing config:
 
@@ -214,7 +214,7 @@ MCP servers are configured in `.mcp.json` (not `settings.json`). Check for exist
 cat .mcp.json 2>/dev/null || echo "No existing .mcp.json"
 ```
 
-#### Sentry MCP (if Sentry SDK detected)
+#### Sentry MCP（如果检测到 Sentry SDK）
 
 Add to `.mcp.json` (replace `{org-标识符}` and `{project-标识符}` with your Sentry organization and project slugs):
 
@@ -229,7 +229,7 @@ Add to `.mcp.json` (replace `{org-标识符}` and `{project-标识符}` with you
 }
 ```
 
-#### Linear MCP (if Linear usage detected)
+#### Linear MCP（如果检测到 Linear 使用）
 
 Add to `.mcp.json`:
 
@@ -247,11 +247,11 @@ Add to `.mcp.json`:
 }
 ```
 
-**Note**: 绝不 suggest GitHub MCP. 始终 use `gh` CLI commands for GitHub.
+**注意**: 绝不建议使用 GitHub MCP。始终使用 `gh` CLI 命令进行 GitHub 操作。
 
 ## 输出格式
 
-Present your findings as:
+按以下方式呈现发现结果：
 
 1. **总结 Table** - What was detected
 2. **Recommended settings.json** - Complete JSON ready to copy
@@ -289,23 +289,23 @@ Example output structure:
 If you use Sentry or Linear, add the MCP config to `.mcp.json`...
 ```
 
-## Important Rules
+## 重要规则
 
-### What to Include
+### 应包含的内容
 
 - Only READ-ONLY commands that cannot modify state
 - Only tools that are actually used by the project (detected via lock files)
 - Standard system commands (ls, cat, find, etc.)
 - The `:*` suffix allows any arguments to the base command
 
-### What to NEVER Include
+### 绝不包含的内容
 
 - **Absolute paths** - 绝不 include user-specific paths like `/home/user/scripts/foo` or `/Users/name/bin/bar`
 - **Custom scripts** - 绝不 include project scripts that may have side effects (e.g., `./scripts/deploy.sh`)
 - **Alternative package managers** - If the project uses pnpm, do NOT include npm/yarn commands
 - **Commands that modify state** - No install, build, run, write, or delete commands
 
-### Package Manager Rules
+### 包管理器规则
 
 Only include the package manager actually used by the project:
 

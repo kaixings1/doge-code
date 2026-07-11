@@ -1,5 +1,5 @@
 ---
-name: brandkit
+name: Brandkit 相关功能和最佳实践
 description: "Brandkit — Brandkit 相关功能和最佳实践"
 ---
 

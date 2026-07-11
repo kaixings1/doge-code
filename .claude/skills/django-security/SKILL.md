@@ -1,5 +1,5 @@
 ---
-name: django-security
+name: Django 安全最佳实践，涵盖身份验证、授权、CSRF 防护、SQL 注入预防、XSS 预防以及安全部署配置。
 description: Django 安全最佳实践，涵盖身份验证、授权、CSRF 防护、SQL 注入预防、XSS 预防以及安全部署配置。
 origin: ECC
 ---

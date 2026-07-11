@@ -1,8 +1,6 @@
 ---
-name: research-decision-room
-description: "Research Decision Room — Research Decision Room 相关功能和最佳实践"
-  Turn messy user research notes, interviews, support tickets, surveys, and product
-  context into an evidence-backed decision room: a single HTML artifact with an
+name: 研究决策室
+description: "研究决策室 — 研究决策室相关功能和最佳实践，将杂乱用户研究笔记、访谈、支持工单、调查和产品上下文转化为基于证据的决策室"
   evidence ledger, theme map, confidence heatmap, opportunity matrix, decision
   memo, and experiment queue. Use when teams need to move from qualitative
   signals to product or design decisions without fabricating certainty.

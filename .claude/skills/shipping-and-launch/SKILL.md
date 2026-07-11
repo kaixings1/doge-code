@@ -1,5 +1,5 @@
 ---
-name: shipping-and-launch
+name: 发布与上线
 description: 发布与上线 — 准备生产发布。在部署到生产环境时使用。
 ---
 

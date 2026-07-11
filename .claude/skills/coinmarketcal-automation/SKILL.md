@@ -1,5 +1,5 @@
 ---
-name: coinmarketcal-automation
+name: CoinMarketCal 自动化
 description: "CoinMarketCal 自动化"
 risk: safe
 source: community

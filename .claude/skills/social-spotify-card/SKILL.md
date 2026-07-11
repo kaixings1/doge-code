@@ -1,5 +1,5 @@
 ---
-name: social-spotify-card
+name: Spotify 正在播放风格卡片，带有专辑封面、进度条和播放控制，适用于视频覆盖或个人主页。
 zh_name: "Spotify 正在播放卡"
 en_name: "Spotify Now-Playing Card"
 emoji: "🎵"

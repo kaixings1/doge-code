@@ -1,5 +1,5 @@
 ---
-name: faf-wizard
+name: FAF 向导工具
 description: "FAF 向导工具"
 risk: safe
 source: community

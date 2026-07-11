@@ -1,5 +1,5 @@
 ---
-name: auth0-automation
+name: Auth0 自动化
 description: "Auth0 自动化 — 通过 Rube MCP 自动化 Auth0 身份认证和用户管理操作。"
 risk: safe
 source: community

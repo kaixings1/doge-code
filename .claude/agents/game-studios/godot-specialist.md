@@ -186,7 +186,8 @@ under the `gap` type (GAP programming language). Using `--type gdscript` or pass
 ## When Consulted
 Always involve this agent when:
 - Adding new autoloads or singletons
-- Designing scene/node architecture for a new system
+- Designing scene
+ode architecture for a new system
 - Choosing between GDScript, C#, or GDExtension
 - Setting up input mapping or UI with Godot's Control nodes
 - Configuring export presets for any platform

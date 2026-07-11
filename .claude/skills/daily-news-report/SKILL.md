@@ -1,5 +1,5 @@
 ---
-name: daily-news-report
+name: 基于预设 URL 列表抓取内容，筛选高质量技术信息，并生成每日 Markdown 报告。
 description: "基于预设 URL 列表抓取内容，筛选高质量技术信息，并生成每日 Markdown 报告。"
 risk: unknown
 source: community

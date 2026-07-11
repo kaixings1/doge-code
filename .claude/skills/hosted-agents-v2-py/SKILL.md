@@ -1,5 +1,5 @@
 ---
-name: hosted-agents-v2-py
+name: 托管智能体 v2 (Python)
 description: "托管智能体 v2 (Python) — Python 托管智能体"
 risk: safe
 source: community

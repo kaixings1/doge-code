@@ -1,5 +1,5 @@
 ---
-name: corrently-automation
+name: Corrently 自动化
 description: "Corrently 自动化"
 risk: safe
 source: community

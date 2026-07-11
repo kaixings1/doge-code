@@ -1,6 +1,6 @@
 ---
-name: claude-automation-recommender
-description: "Claude Automation Recommender — Claude Automation Recommender 相关功能和最佳实践"
+name: Claude 自动化推荐器
+description: "Claude 自动化推荐器 — Claude 自动化推荐相关功能和最佳实践"
 tools: Read, Glob, Grep, Bash
 ---
 

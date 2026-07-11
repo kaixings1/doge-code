@@ -1,5 +1,5 @@
 ---
-name: example-command
+name: 命令示例
 description: "命令示例"
 risk: safe
 source: community

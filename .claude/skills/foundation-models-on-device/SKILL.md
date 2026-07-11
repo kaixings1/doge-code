@@ -1,5 +1,5 @@
 ---
-name: foundation-models-on-device
+name: Apple FoundationModels 框架，用于设备端大语言模型（LLM）
 description: Apple FoundationModels 框架，用于设备端大语言模型（LLM）—— iOS 26+ 中的文本生成、配合 @Generable 的引导式生成、工具调用以及快照流式传输。
 ---
 

@@ -53,7 +53,7 @@ function McpConfigErrorSection(t0) {
   }
   let t5;
   if ($[10] === Symbol.for("react.memo_cache_sentinel")) {
-    t5 = <Text dimColor={true}>Location: </Text>;
+    t5 = <Text dimColor={true}>位置: </Text>;
     $[10] = t5;
   } else {
     t5 = $[10];
@@ -181,7 +181,7 @@ export function McpParsingWarnings() {
   }
   let t5;
   if ($[5] === Symbol.for("react.memo_cache_sentinel")) {
-    t5 = <Box flexDirection="column" marginTop={1} marginBottom={1}>{t4}<Box marginTop={1}><Text dimColor={true}>For help configuring MCP servers, see:{" "}<Link url="https://code.claude.com/docs/en/mcp">https://code.claude.com/docs/en/mcp</Link></Text></Box>{scopes.map(_temp5)}</Box>;
+    t5 = <Box flexDirection="column" marginTop={1} marginBottom={1}>{t4}<Box marginTop={1}><Text dimColor={true}>有关配置 MCP 服务器的帮助，请参阅:{" "}<Link url="https://code.claude.com/docs/en/mcp">https://code.claude.com/docs/en/mcp</Link></Text></Box>{scopes.map(_temp5)}</Box>;
     $[5] = t5;
   } else {
     t5 = $[5];

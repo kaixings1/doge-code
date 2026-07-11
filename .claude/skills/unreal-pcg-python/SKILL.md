@@ -1,8 +1,6 @@
 ---
-name: unreal-pcg-python
-description: "Unreal PCG Python — Unreal Engine PCG Python 集成指南"
-  Guide for Unreal Engine 5.x PCG (Procedural Content Generation) Python 集成.
-  Covers the PCGPythonInterop plugin, the Execute Python Script node, PCG Python API
+name: Unreal Engine PCG Python 集成指南，涵盖 PC
+description: "Unreal PCG Python — Unreal Engine PCG Python 集成指南，涵盖 PCGPythonInterop 插件、Execute Python Script 节点和 PCG Python API"
   (PCGComponent, PCGBlueprintElement, PCGSpatialData, PCGPointData), editor automation,
   custom PCG nodes via Python, and known 限制.
   Use when the user asks about PCG Python, PCGPythonInterop, Execute Python Script node,

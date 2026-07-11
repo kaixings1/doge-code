@@ -1,5 +1,5 @@
 ---
-name: context-compression
+name: 当代理会话生成数百万 令牌 的对话历史时，压缩变得必要
 description: "当代理会话生成数百万 令牌 的对话历史时，压缩变得必要。天真的方法是激进压缩以最小化每请求 令牌 数。"
 risk: unknown
 source: community
@@ -17,7 +17,7 @@ Activate this skill when:
 - Debugging cases where agents "forget" what files they modified
 - Building evaluation frameworks for compression quality
 
-## Core Concepts
+## 核心概念
 
 Context compression trades 令牌 savings against information loss. Three production-ready approaches exist:
 
@@ -29,7 +29,7 @@ Context compression trades 令牌 savings against information loss. Three produc
 
 The critical insight: structure forces preservation. Dedicated sections act as checklists that the summarizer must populate, preventing silent information drift.
 
-## Detailed Topics
+## 详细主题
 
 ### Why Tokens-Per-Task Matters
 

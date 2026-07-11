@@ -1,7 +1,7 @@
 ---
-name: javascript-mastery
-description: "JavaScript 精通 — JavaScript 核心概念和最佳实践"
-risk: unknown
+name: JavaScript 精通
+description: "JavaScript 精通 — 掌握 33+ 个核心 JS 概念、类型系统、异步编程和最佳实践"
+risk: safe
 source: community
 date_added: "2026-02-27"
 ---

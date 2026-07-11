@@ -1,5 +1,5 @@
 ---
-name: error-diagnostics-error-trace
+name: 错误诊断追踪
 description: "错误诊断追踪"
 risk: safe
 source: community

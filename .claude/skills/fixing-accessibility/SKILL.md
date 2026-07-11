@@ -1,5 +1,5 @@
 ---
-name: fixing-accessibility
+name: Fixing Accessibility 相关功能和最佳实践
 description: "Fixing Accessibility — Fixing Accessibility 相关功能和最佳实践"
 risk: unknown
 source: community

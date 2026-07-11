@@ -1,5 +1,5 @@
 ---
-name: translate-zh
+name: 简体中文翻译器
 description: 将代码注释、文档或字符串资源翻译为简体中文，保持markdown/code格式不变。
 ---
 # 中文翻译技能

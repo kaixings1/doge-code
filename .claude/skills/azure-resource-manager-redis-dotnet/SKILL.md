@@ -1,6 +1,6 @@
 ---
-name: azure-resource-manager-redis-dotnet
-description: "Azure Resource Manager Redis Dotnet — Azure Resource Manager Redis Dotnet 相关功能和最佳实践"
+name: Azure Resource Manager Redis (.NET)
+description: "Azure Resource Manager Redis .NET — Azure Resource Manager Redis .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

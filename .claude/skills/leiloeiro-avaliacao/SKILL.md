@@ -1,6 +1,6 @@
 ---
-name: leiloeiro-avaliacao
-description: "Leiloeiro Avaliacao — Leiloeiro Avaliacao 相关功能和最佳实践"
+name: 拍卖师评估
+description: "拍卖师评估 — 拍卖师评估相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-06'

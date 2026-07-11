@@ -1,5 +1,5 @@
 ---
-name: ip2location-io-automation
+name: Ip2location-io 自动化
 description: "通过 Rube MCP (Composio) 自动执行 IP2Location.io 任务。"
 requires:
   mcp: [rube]

@@ -324,7 +324,7 @@ export function MemoryFileSelector(t0) {
   const t15 = autoMemoryOn ? "on" : "off";
   let t16;
   if ($[30] !== t15) {
-    t16 = <Text>Auto-memory: {t15}</Text>;
+    t16 = <Text>自动记忆: {t15}</Text>;
     $[30] = t15;
     $[31] = t16;
   } else {

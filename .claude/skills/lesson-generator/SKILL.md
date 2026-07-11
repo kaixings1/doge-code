@@ -1,5 +1,5 @@
 ---
-name: lesson-generator
+name: 构建紧凑独立的课程产物：课程导航、学习目标、闪卡、测验和源链接。
 description: 构建紧凑独立的课程产物：课程导航、学习目标、闪卡、测验和源链接。
 category: "education"
 risk: "safe"
@@ -19,6 +19,8 @@ tools:
   - codex-cli
   - 游标
 ---
+
+# 课程生成器
 
 ## 何时使用
 

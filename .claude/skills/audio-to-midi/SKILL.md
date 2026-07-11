@@ -1,5 +1,5 @@
 ---
-name: audio-to-midi
+name: 音频转 MIDI
 description: "音频转 MIDI"
 risk: safe
 source: community

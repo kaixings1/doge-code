@@ -1,173 +1,218 @@
 ---
-description: 实现指定的工作项
+description: 通过处理和执行 tasks.md 中定义的所有任务来执行实施计划
+scripts:
+  sh: scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
+  ps: scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks
 ---
 
-实现工作项 AB#$ARGUMENTS。遵循以下工作流：
+## User Input
 
-## 第 1 步：读取工作项
-
-通过 MCP 从 Azure DevOps 读取工作项。提取：
-- **System.WorkItemType** —— 决定分支前缀
-- **System.Title** —— 决定分支后缀
-- **验收标准 / 描述** —— 实现所需
-
-处理 `$ARGUMENTS`，接受 `1234` 或 `AB#1234` 格式 —— 调用 MCP API 时去掉 `AB#` 前缀。
-
-### 嵌入图片
-
-描述和验收标准字段可能包含嵌入图片（截图、原型图、图表）。这些通常是带有指向 Azure DevOps 附件的 `src` URL 的 `<img>` 标签。**使用 WebFetch 下载并查看每张嵌入图片** —— 它们通常包含文本中未描述的关键视觉需求（UI 布局、预期行为、错误状态）。
-
-### 评论
-
-通过 `wit_list_work_item_comments` 读取工作项评论。评论通常包含创建工作项后添加的澄清、范围变更或额外需求。将评论中的相关信息整合到你对该工作项的理解中。
-
-## 第 2 步：总结与确认
-
-向用户呈现工作项摘要：
-
-```
-## AB#{id}：{title}
-
-**类型：** {工作项类型}
-**状态：** {状态}
-**分配给：** {分配给}
-
-### 描述
-{描述摘要}
-
-### 验收标准
-{验收标准 —— 编号列表}
-
-以上信息是否正确？你还有其他上下文或需求吗？
+```text
+$ARGUMENTS
 ```
 
-**等待用户回复。** 在用户确认或提供额外上下文之前不要继续。如果他们补充了内容，将其纳入计划。
+在继续之前，你**必须**考虑用户输入（如果不为空）。
 
-## 第 3 步：探索与规划
+## Pre-Execution Checks
 
-1. **探索** 代码库，梳理相关文件
-2. **规划** 实现方案
+**Check for extension hooks (before implementation)**:
+- Check if `.specify/extensions.yml` exists in the project root.
+- If it exists, read it and look for entries under the `hooks.before_implement` key
+- If the YAML cannot be parsed or is invalid, skip hook checking silently and continue normally
+- Filter out hooks where `enabled` is explicitly `false`. Treat hooks without an `enabled` field as enabled by default.
+- For each remaining hook, do **not** attempt to interpret or evaluate hook `condition` expressions:
+  - If the hook has no `condition` field, or it is null/empty, treat the hook as executable
+  - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor implementation
+- For each executable hook, output the following based on its `optional` flag:
+  - **Optional hook** (`optional: true`):
+    ```
+    ## Extension Hooks
 
-向用户呈现计划：
+    **Optional Pre-Hook**: {extension}
+    Command: `/{command}`
+    Description: {description}
 
-```
-## AB#{id} 的实现计划
+    Prompt: {prompt}
+    To execute: `/{command}`
+    ```
+  - **Mandatory hook** (`optional: false`):
+    ```
+    ## Extension Hooks
 
-### 方案
-{简要描述你将如何实现}
+    **Automatic Pre-Hook**: {extension}
+    Executing: `/{command}`
+    EXECUTE_COMMAND: {command}
+    
+    Wait for the result of the hook command before proceeding to the Outline.
+    ```
+    After emitting the block above you MUST actually invoke the hook and wait for it to finish before continuing. Run it the same way you would run the command yourself in this agent/session (the invocation may differ from the literal `{command}` id shown above, e.g. a skills-mode agent runs it as `/skill:speckit-...` or `$speckit-...`). Emitting the block alone does not run the hook.
+- If no hooks are registered or `.specify/extensions.yml` does not exist, skip silently
 
-### 需要创建的文件
-- `path/to/new/file.cs` —— {用途}
-- `path/to/new/file.tsx` —— {用途}
+## Outline
 
-### 需要修改的文件
-- `path/to/existing/file.cs` —— {修改内容及原因}
-- `path/to/existing/file.tsx` —— {修改内容及原因}
+1. Run `{SCRIPT}` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
-### 需要删除的文件（如有）
-- `path/to/old/file.cs` —— {删除原因}
+2. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
+   - Scan all checklist files in the checklists/ directory
+   - For each checklist, count:
+     - Total items: All lines matching `- [ ]` or `- [X]` or `- [x]`
+     - Completed items: Lines matching `- [X]` or `- [x]`
+     - Incomplete items: Lines matching `- [ ]`
+   - Create a status table:
 
-### 代理
-- **后端**：{将执行的操作}
-- **前端**：{将执行的操作}
+     ```text
+     | Checklist | Total | Completed | Incomplete | Status |
+     |-----------|-------|-----------|------------|--------|
+     | ux.md     | 12    | 12        | 0          | ✓ PASS |
+     | test.md   | 8     | 5         | 3          | ✗ FAIL |
+     | security.md | 6   | 6         | 0          | ✓ PASS |
+     ```
 
-### 风险 / 注意事项
-- {任何潜在问题或权衡}
+   - Calculate overall status:
+     - **PASS**: All checklists have 0 incomplete items
+     - **FAIL**: One or more checklists have incomplete items
 
-批准此计划？（是 / 否 / 建议修改）
-```
+   - **If any checklist is incomplete**:
+     - Display the table with incomplete item counts
+     - **STOP** and ask: "Some checklists are incomplete. Do you want to proceed with implementation anyway? (yes/no)"
+     - Wait for user response before continuing
+     - If user says "no" or "wait" or "stop", halt execution
+     - If user says "yes" or "proceed" or "continue", proceed to step 3
 
-**等待用户批准计划。** 在用户批准之前不要开始实现。如果用户提出修改建议，修订计划并重新呈现。
+   - **If all checklists are complete**:
+     - Display the table showing all checklists passed
+     - Automatically proceed to step 3
 
-## 第 4 步：创建功能分支
+3. Load and analyze the implementation context:
+   - **REQUIRED**: Read tasks.md for the complete task list and execution plan
+   - **REQUIRED**: Read plan.md for tech stack, architecture, and file structure
+   - **IF EXISTS**: Read data-model.md for entities and relationships
+   - **IF EXISTS**: Read contracts/ for API specifications and test requirements
+   - **IF EXISTS**: Read research.md for technical decisions and constraints
+   - **IF EXISTS**: Read /memory/constitution.md for governance constraints
+   - **IF EXISTS**: Read quickstart.md for integration scenarios
 
-仅在计划批准后创建分支。
+4. **Project Setup Verification**:
+   - **REQUIRED**: Create/verify ignore files based on actual project setup:
 
-将当前分支记录为 PR 目标 —— 不要硬编码任何分支名：
+   **Detection & Creation Logic**:
+   - Check if the following command succeeds to determine if the repository is a git repo (create/verify .gitignore if so):
 
-```bash
-BASE_BRANCH=$(git symbolic-ref --short HEAD)
-```
+     ```sh
+     git rev-parse --git-dir 2>/dev/null
+     ```
 
-根据工作项类型确定分支前缀：
+   - Check if Dockerfile* exists or Docker in plan.md → create/verify .dockerignore
+   - Check if .eslintrc* exists → create/verify .eslintignore
+   - Check if eslint.config.* exists → ensure the config's `ignores` entries cover required patterns
+   - Check if .prettierrc* exists → create/verify .prettierignore
+   - Check if .npmrc or package.json exists → create/verify .npmignore (if publishing)
+   - Check if terraform files (*.tf) exist → create/verify .terraformignore
+   - Check if .helmignore needed (helm charts present) → create/verify .helmignore
 
-| 工作项类型 | 分支前缀 |
-|---|---|
-| Feature（功能） | `feature/` |
-| User Story（用户故事） | `story/` |
-| Bug（缺陷） | `bugfix/` |
-| Hot Fix（热修复） | `hotfix/` |
-| （其他） | `work/` |
+   **If ignore file already exists**: Verify it contains essential patterns, append missing critical patterns only
+   **If ignore file missing**: Create with full pattern set for detected technology
 
-构建分支名 `{prefix}AB#{id}-{清理后的标题}`：
-- 清理标题：转小写，将非字母数字字符（连字符除外）替换为连字符，合并连续连字符，截断至 50 个字符，去掉首尾连字符
-- 示例：Feature AB#1234 "Add Payment History Export" → `feature/AB#1234-add-payment-history-export`
+   **Common Patterns by Technology** (from plan.md tech stack):
+   - **Node.js/JavaScript/TypeScript**: `node_modules/`, `dist/`, `build/`, `*.log`, `.env*`
+   - **Python**: `__pycache__/`, `*.pyc`, `.venv/`, `venv/`, `dist/`, `*.egg-info/`
+   - **Java**: `target/`, `*.class`, `*.jar`, `.gradle/`, `build/`
+   - **C#/.NET**: `bin/`, `obj/`, `*.user`, `*.suo`, `packages/`
+   - **Go**: `*.exe`, `*.test`, `vendor/`, `*.out`
+   - **Ruby**: `.bundle/`, `log/`, `tmp/`, `*.gem`, `vendor/bundle/`
+   - **PHP**: `vendor/`, `*.log`, `*.cache`, `*.env`
+   - **Rust**: `target/`, `debug/`, `release/`, `*.rs.bk`, `*.rlib`, `*.prof*`, `.idea/`, `*.log`, `.env*`
+   - **Kotlin**: `build/`, `out/`, `.gradle/`, `.idea/`, `*.class`, `*.jar`, `*.iml`, `*.log`, `.env*`
+   - **C++**: `build/`, `bin/`, `obj/`, `out/`, `*.o`, `*.so`, `*.a`, `*.exe`, `*.dll`, `.idea/`, `*.log`, `.env*`
+   - **C**: `build/`, `bin/`, `obj/`, `out/`, `*.o`, `*.a`, `*.so`, `*.exe`, `*.dll`, `autom4te.cache/`, `config.status`, `config.log`, `.idea/`, `*.log`, `.env*`
+   - **Swift**: `.build/`, `DerivedData/`, `*.swiftpm/`, `Packages/`
+   - **R**: `.Rproj.user/`, `.Rhistory`, `.RData`, `.Ruserdata`, `*.Rproj`, `packrat/`, `renv/`
+   - **Universal**: `.DS_Store`, `Thumbs.db`, `*.tmp`, `*.swp`, `.vscode/`, `.idea/`
 
-创建并切换到分支：
-```bash
-git checkout -b <branch-name>
-```
+   **Tool-Specific Patterns**:
+   - **Docker**: `node_modules/`, `.git/`, `Dockerfile*`, `.dockerignore`, `*.log*`, `.env*`, `coverage/`
+   - **ESLint**: `node_modules/`, `dist/`, `build/`, `coverage/`, `*.min.js`
+   - **Prettier**: `node_modules/`, `dist/`, `build/`, `coverage/`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`
+   - **Terraform**: `.terraform/`, `*.tfstate*`, `*.tfvars`, `.terraform.lock.hcl`
+   - **Kubernetes/k8s**: `*.secret.yaml`, `secrets/`, `.kube/`, `kubeconfig*`, `*.key`, `*.crt`
 
-如果分支已存在，用 `git checkout <branch-name>` 切换过去，而不是报错。
+5. Parse tasks.md structure and extract:
+   - **Task phases**: Setup, Tests, Core, Integration, Polish
+   - **Task dependencies**: Sequential vs parallel execution rules
+   - **Task details**: ID, description, file paths, parallel markers [P]
+   - **Execution flow**: Order and dependency requirements
 
-记住 `BASE_BRANCH` —— PR 步骤中需要用到。
+6. Execute implementation following the task plan:
+   - **Phase-by-phase execution**: Complete each phase before moving to the next
+   - **Respect dependencies**: Run sequential tasks in order, parallel tasks [P] can run together  
+   - **Follow TDD approach**: Execute test tasks before their corresponding implementation tasks
+   - **File-based coordination**: Tasks affecting the same files must run sequentially
+   - **Validation checkpoints**: Verify each phase completion before proceeding
 
-## 第 5 步：实现
+7. Implementation execution rules:
+   - **Setup first**: Initialize project structure, dependencies, configuration
+   - **Tests before code**: If you need to write tests for contracts, entities, and integration scenarios
+   - **Core development**: Implement models, services, CLI commands, endpoints
+   - **Integration work**: Database connections, middleware, logging, external services
+   - **Polish and validation**: Unit tests, performance optimization, documentation
 
-1. 根据批准的计划，使用后端和/或前端代理 **实现**
-2. 如果有 UI 变更，**生成原型图**
+8. Progress tracking and error handling:
+   - Report progress after each completed task
+   - Halt execution if any non-parallel task fails
+   - For parallel tasks [P], continue with successful tasks, report failed ones
+   - Provide clear error messages with context for debugging
+   - Suggest next steps if implementation cannot proceed
+   - **IMPORTANT** For completed tasks, make sure to mark the task off as [X] in the tasks file.
 
-## 第 6 步：构建验证
+9. Completion validation:
+   - Verify all required tasks are completed
+   - Check that implemented features match the original specification
+   - Validate that tests pass and coverage meets requirements
+   - Confirm the implementation follows the technical plan
 
-在任何其他质量检查**之前**运行构建检查。使用 `build-validator` 代理验证所有项目编译成功。
+Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `__SPECKIT_COMMAND_TASKS__` first to regenerate the task list.
 
-- 如果构建失败，**立即修复错误**并重新运行，直到构建通过
-- 在构建干净之前，**不要**进行审查、测试或 lint
+## Mandatory Post-Execution Hooks
 
-## 第 7 步：质量检查
+**You MUST complete this section before reporting completion to the user.**
 
-1. **审查** 代码质量、安全性和整洁架构合规性
-2. **运行测试** —— 单元测试、集成测试和构建验证
-3. **运行 lint** —— ESLint 和 dotnet format
+Check if `.specify/extensions.yml` exists in the project root.
+- If it does not exist, or no hooks are registered under `hooks.after_implement`, skip to the Completion Report.
+- If it exists, read it and look for entries under the `hooks.after_implement` key.
+- If the YAML cannot be parsed or is invalid, skip hook checking silently and continue to the Completion Report.
+- Filter out hooks where `enabled` is explicitly `false`. Treat hooks without an `enabled` field as enabled by default.
+- For each remaining hook, do **not** attempt to interpret or evaluate hook `condition` expressions:
+  - If the hook has no `condition` field, or it is null/empty, treat the hook as executable
+  - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor implementation
+- For each executable hook, output the following based on its `optional` flag:
+  - **Mandatory hook** (`optional: false`) — **You MUST emit `EXECUTE_COMMAND:` for each mandatory hook**:
+    ```
+    ## Extension Hooks
 
-## 第 8 步：UAT 门禁
+    **Automatic Hook**: {extension}
+    Executing: `/{command}`
+    EXECUTE_COMMAND: {command}
+    ```
+    After emitting the block above you MUST actually invoke the hook and wait for it to finish before continuing. Run it the same way you would run the command yourself in this agent/session (the invocation may differ from the literal `{command}` id shown above, e.g. a skills-mode agent runs it as `/skill:speckit-...` or `$speckit-...`). Emitting the block alone does not run the hook.
+  - **Optional hook** (`optional: true`):
+    ```
+    ## Extension Hooks
 
-### 热修复：
-跳过手动 UAT。呈现简化的确认信息：
+    **Optional Hook**: {extension}
+    Command: `/{command}`
+    Description: {description}
 
-```
-热修复已就绪。所有自动化检查通过。
+    Prompt: {prompt}
+    To execute: `/{command}`
+    ```
 
-创建 PR？（是/否）
-```
+## Completion Report
 
-等待确认后再继续。
+Report final status with summary of completed work.
 
-### 功能、用户故事、缺陷或其他：
-根据验收标准生成 UAT 清单并呈现：
+## Done When
 
-```
-自动化检查已通过，UAT 清单已就绪。
-
-## UAT 清单
-[在此生成清单]
-
-请使用以上清单手动测试功能。
-
-手动测试通过了吗？
-- 如果通过 → 回复"testing passed"，我将创建 PR
-- 如果未通过 → 描述失败或异常行为，我将调查修复后再次询问
-```
-
-等待用户回复后再继续。确认前不要创建 PR。
-
-## 第 9 步：推送、创建 PR 和更新工作项
-
-1. 推送分支：`git push -u origin HEAD`
-2. 通过 Azure DevOps MCP 创建 PR：
-   - **sourceRefName**：`refs/heads/{branch-name}`
-   - **targetRefName**：`refs/heads/{BASE_BRANCH}`（第 4 步记录的分支）
-   - **title**：`AB#{id}：{工作项标题}`
-   - **labels**：如果是热修复类型则为 `["hotfix"]`
-3. 通过 `wit_link_work_item_to_pull_request` 将 PR 链接到工作项
-4. 更新 Azure DevOps 中的工作项状态
+- [ ] All tasks in tasks.md completed and marked `[X]`
+- [ ] Implementation validated against specification, plan, and test coverage
+- [ ] Extension hooks dispatched or skipped according to the rules in Mandatory Post-Execution Hooks above
+- [ ] Completion reported to user with summary of completed work

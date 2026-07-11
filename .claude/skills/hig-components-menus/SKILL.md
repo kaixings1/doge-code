@@ -1,5 +1,5 @@
 ---
-name: hig-components-menus
+name: HIG 菜单组件
 description: "HIG 菜单组件 — Human Interface Guidelines 菜单组件"
 risk: safe
 source: community

@@ -1,9 +1,9 @@
 ---
-name: documentation-and-adrs
+name: 文档与ADR
 description: 文档与ADR — 记录决策和文档。在做出架构决策时使用。
 ---
 
-# Documentation and ADRs
+# 文档与架构决策记录 (Documentation and ADRs)
 
 ## 概述
 
@@ -46,7 +46,7 @@ Accepted | Superseded by ADR-XXX | Deprecated
 ## Date
 2025-01-15
 
-## Context
+## 上下文
 We need a primary database for the task management application. Key requirements:
 - Relational data model (users, tasks, teams with relationships)
 - ACID transactions for task state changes
@@ -196,7 +196,7 @@ Every project should have a README that covers:
 
 One-paragraph description of what this project does.
 
-## Quick Start
+## 快速入门
 1. Clone the repo
 2. Install dependencies: `npm install`
 3. Set up environment: `cp .env.example .env`
@@ -246,7 +246,7 @@ Special consideration for AI agent context:
 - **ADRs** — Help agents understand why past decisions were made (prevents re-deciding)
 - **Inline gotchas** — Prevent agents from falling into known traps
 
-## Common Rationalizations
+## 常见理由
 
 | Rationalization | Reality |
 |---|---|
@@ -256,7 +256,7 @@ Special consideration for AI agent context:
 | "ADRs are overhead" | A 10-minute ADR prevents a 2-hour debate about the same decision six months later. |
 | "Comments get outdated" | Comments on *why* are stable. Comments on *what* get outdated — that's why you only write the former. |
 
-## Red Flags
+## 危险信号
 
 - Architectural decisions with no written rationale
 - Public APIs with no documentation or types
@@ -266,7 +266,7 @@ Special consideration for AI agent context:
 - No ADRs in a project with significant architectural choices
 - Documentation that restates the code instead of explaining intent
 
-## Verification
+## 验证
 
 After documenting:
 

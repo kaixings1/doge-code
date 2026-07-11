@@ -1,5 +1,5 @@
 ---
-name: pptx-generator
+name: PPTX 生成器
 description: "PPTX 生成器 — 使用 PptxGenJS 创建和编辑 PowerPoint 演示文稿。自动生成幻灯片、添加文本块、图像和图表。"
 triggers:
   - "pptx generator"

@@ -1,6 +1,6 @@
 ---
-name: azure-keyvault-py
-description: "Azure Keyvault Py — Azure Keyvault Py 相关功能和最佳实践"
+name: Azure Key Vault Python SDK 相关功能和最佳实
+description: "Azure Key Vault Python — Azure Key Vault Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

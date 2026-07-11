@@ -1,6 +1,6 @@
 ---
-name: bdi-mental-states
-description: "Bdi Mental States — Bdi Mental States 相关功能和最佳实践"
+name: BDI 心理状态
+description: "BDI 心理状态 — BDI 心理状态相关功能和最佳实践"
 risk: unknown
 source: community
 ---
@@ -20,7 +20,7 @@ Activate this skill when:
 - Tracking temporal evolution of beliefs, desires, and intentions
 - Linking motivational states to action plans
 
-## Core Concepts
+## 核心概念
 
 ### Mental Reality Architecture
 
@@ -211,7 +211,7 @@ Map BDI ontology to executable production rules:
 [TAIL: commit_intention(agent_a, buy_groceries)].
 ```
 
-## Guidelines
+## 指南
 
 1. Model world states as configurations independent of agent perspectives, providing referential substrate for mental states.
 
@@ -272,7 +272,7 @@ SELECT ?task ?nextTask WHERE {
 
 5. **Direct intention-to-action mapping**: Intentions specify plans which contain tasks; actions execute tasks.
 
-## Integration
+## 集成
 
 - **RDF Processing**: Apply after parsing external RDF context to construct cognitive representations
 - **Semantic Reasoning**: Combine with ontology reasoning to infer implicit mental state relationships

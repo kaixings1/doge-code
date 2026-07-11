@@ -93,7 +93,7 @@ For complex verification, use `type: "agent"` (runs a full agent):
 4. Set timeout (15s for prompts, 60s for agents)
 5. Add to hooks.json under the appropriate event
 
-## Rules
+## 规则
 
 - Use Haiku for simple checks (fast, cheap)
 - Use Sonnet only for complex analysis

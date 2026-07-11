@@ -1,5 +1,5 @@
 ---
-name: triage
+name: 问题分类
 description: "问题分类 — 问题分类相关功能和最佳实践"
 disable-model-invocation: true
 ---

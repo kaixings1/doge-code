@@ -1,5 +1,5 @@
 ---
-name: ddd-context-mapping
+name: 使用 DDD 上下文映射模式映射限界上下文之间的关系并定义集成契约
 description: "使用 DDD 上下文映射模式映射限界上下文之间的关系并定义集成契约。"
 risk: safe
 source: self

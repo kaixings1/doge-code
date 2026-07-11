@@ -1,5 +1,5 @@
 ---
-name: ui-skills
+name: UI技能
 description: "UI技能 — 构建界面时的指导性约束，用于保持多个小UI组件输出的一致性"
 triggers:
   - "ui constraints"

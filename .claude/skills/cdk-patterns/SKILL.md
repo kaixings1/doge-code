@@ -1,5 +1,5 @@
 ---
-name: cdk-patterns
+name: CDK 模式
 description: "CDK 模式"
 risk: safe
 source: community

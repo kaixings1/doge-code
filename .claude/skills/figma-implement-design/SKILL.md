@@ -1,6 +1,6 @@
 ---
-name: figma-implement-design
-description: "Figma Implement Design — Figma Implement Design 相关功能和最佳实践"
+name: Figma 实现设计
+description: "Figma 实现设计 — 在 Figma 中实现设计相关功能和最佳实践"
   将 Figma 设计转换为具有 1:1 视觉保真度的生产就绪代码。用于将 Figma 框架直接交给前端代理。
 triggers:
   - "figma to code"

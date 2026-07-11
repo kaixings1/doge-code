@@ -5,14 +5,14 @@ argument-hint: "<paste your slow query or describe the problem>"
 
 # /optimize-sql
 
-Analyze and optimize slow SQL queries.
+分析并优化慢 SQL 查询。
 
-## Invocation
+## 调用
 
 ```
-/optimize-sql [describe your requirements]
+/optimize-sql [描述你的需求]
 ```
 
-## Workflow
+## 工作流
 
-Apply relevant **ds-sql-databases** skills to guide you through the process step by step.
+应用相关的 **ds-sql-databases** 技能逐步指导你完成整个过程。

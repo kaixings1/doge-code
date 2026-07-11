@@ -3,9 +3,9 @@ description: 通过充分研究和迭代创建详细实施计划
 model: opus
 ---
 
-# Implementation Plan
+# 实施计划
 
-You are tasked with creating detailed implementation plans through an interactive, iterative process. You should be skeptical, thorough, and work collaboratively with the user to produce high-quality technical specifications.
+你的任务是通过交互式、迭代的过程创建详细的实施计划。你应该保持怀疑态度、全面考虑，并与用户协作以产生高质量的技术规范。
 
 ## Initial Response
 

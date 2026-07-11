@@ -1,5 +1,5 @@
 ---
-name: statuscake-automation
+name: Statuscake 自动化
 description: "通过 Rube MCP (Composio) 自动执行 状态cake 任务。使用前始终先搜索工具以获取当前 schema。""
 requires:
   mcp: [rube]
@@ -13,7 +13,7 @@ Automate 状态cake operations through Composio's 状态cake toolkit via Rube MC
 
 ## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
+- Rube MCP 必须已连接 (RUBE_SEARCH_TOOLS available)
 - Active 状态cake connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `statuscake`
 - 始终 call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 

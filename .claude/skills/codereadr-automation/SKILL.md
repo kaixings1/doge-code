@@ -1,5 +1,5 @@
 ---
-name: codereadr-automation
+name: CodeReadr 自动化
 description: "CodeReadr 自动化"
 risk: safe
 source: community

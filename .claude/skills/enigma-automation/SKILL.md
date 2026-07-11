@@ -1,5 +1,5 @@
 ---
-name: enigma-automation
+name: Enigma 自动化
 description: "Enigma 自动化"
 risk: safe
 source: community

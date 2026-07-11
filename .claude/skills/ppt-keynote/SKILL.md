@@ -1,5 +1,5 @@
 ---
-name: ppt-keynote
+name: Apple Keynote 质量幻灯片，每屏幕一张卡片，支持键盘左右导航。
 zh_name: "Keynote 风格 PPT"
 en_name: "Keynote-style Slides"
 emoji: "🎬"

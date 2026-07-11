@@ -1,5 +1,5 @@
 ---
-name: fal-vision
+name: FAL 视觉
 description: "FAL 视觉 — 基于 FAL AI 的计算机视觉"
 risk: unknown
 source: community

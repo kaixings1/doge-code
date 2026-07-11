@@ -1,5 +1,5 @@
 ---
-name: binary-analysis-patterns
+name: 使用 Ghidra、IDA Pro、Radare2 和 Binary Ninja
 description: "使用 Ghidra、IDA Pro、Radare2 和 Binary Ninja 进行二进制分析和逆向工程的系统模式。"
 risk: unknown
 source: community

@@ -1,5 +1,5 @@
 ---
-name: ce-brainstorm
+name: 头脑风暴
 description: "头脑风暴"
 risk: safe
 source: community

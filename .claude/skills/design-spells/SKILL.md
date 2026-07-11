@@ -1,12 +1,12 @@
 --- 
-name: design-spells
+name: Design Spells 相关功能和最佳实践
 description: "Design Spells — Design Spells 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: "2026-03-07"
 ---
 
-# Design Spells 技能
+# 设计魔法 (Design Spells)
 
 [Design Spells](https://www.designspells.com/) 是一个卓越设计细节的集合——微交互、彩蛋和巧妙的 UX 模式——将标准界面转变为令人难忘的数字体验。
 

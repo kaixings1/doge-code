@@ -1,8 +1,13 @@
+---
+name: git-cleanup Git 清理工具
+description: 安全清理累积的 git worktrees 和本地分支的 Claude Code 技能。
+---
+
 # git-cleanup Git 清理工具
 
 A Claude Code skill for safely cleaning up accumulated git worktrees and local branches.
 
-## What It Does
+## 功能说明
 
 Analyzes your local git repository and categorizes branches/worktrees into:
 

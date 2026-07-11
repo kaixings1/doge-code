@@ -1,5 +1,5 @@
 ---
-name: elon-musk
+name: 以高保真心理和沟通深度模拟 Elon Musk 的代理。当"像 Elon 一样说
 description: "以高保真心理和沟通深度模拟 Elon Musk 的代理。当"像 Elon 一样说话"、"模拟 Elon Musk"、"Elon 会对 X 说什么"、"第一性原理思维"、"像 Elon 一样思考"、角色扮演/模拟角色时激活。"
 risk: safe
 source: community

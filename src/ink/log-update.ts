@@ -8,7 +8,6 @@ import type { Diff, FlickerReason, Frame } from './frame.js'
 import type { Point } from './layout/geometry.js'
 import {
   type Cell,
-  CellWidth,
   cellAt,
   charInCellAt,
   diffEach,
@@ -39,6 +38,12 @@ type Options = {
 
 const CARRIAGE_RETURN = { type: 'carriageReturn' } as const
 const NEWLINE = { type: 'stdout', content: '\n' } as const
+
+// 内联 CellWidth 枚举值（const enum 在 ESM 下可能无法正确导出）
+const CELL_WIDTH_NARROW = 0
+const CELL_WIDTH_WIDE = 1
+const CELL_WIDTH_SPACER_TAIL = 2
+const CELL_WIDTH_SPACER_HEAD = 3
 
 export class LogUpdate {
   private state: State
@@ -71,7 +76,7 @@ export class LogUpdate {
       let line = ''
       for (let x = 0; x < screen.width; x++) {
         const cell = cellAt(screen, x, y)
-        if (cell && cell.width !== CellWidth.SpacerTail) {
+        if (cell && cell.width !== CELL_WIDTH_SPACER_TAIL) {
           // Handle hyperlink transitions
           if (cell.hyperlink !== currentHyperlink) {
             if (currentHyperlink !== undefined) {
@@ -317,16 +322,16 @@ export class LogUpdate {
       // SpacerHead: Marks line-end position where wide char wraps to next line
       if (
         added &&
-        (added.width === CellWidth.SpacerTail ||
-          added.width === CellWidth.SpacerHead)
+        (added.width === CELL_WIDTH_SPACER_TAIL ||
+          added.width === CELL_WIDTH_SPACER_HEAD)
       ) {
         return
       }
 
       if (
         removed &&
-        (removed.width === CellWidth.SpacerTail ||
-          removed.width === CellWidth.SpacerHead) &&
+        (removed.width === CELL_WIDTH_SPACER_TAIL ||
+          removed.width === CELL_WIDTH_SPACER_HEAD) &&
         !added
       ) {
         return
@@ -640,7 +645,7 @@ function writeCellWithStyleStr(
   cell: Cell,
   styleStr: string,
 ): boolean {
-  const cellWidth = cell.width === CellWidth.Wide ? 2 : 1
+  const cellWidth = cell.width === CELL_WIDTH_WIDE ? 2 : 1
   const px = screen.cursor.x
   const vw = screen.viewportWidth
 

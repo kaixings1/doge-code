@@ -1,3 +1,8 @@
+---
+name: 变体分析
+description: 使用基于模式的分析跨代码库发现相似漏洞和错误。
+---
+
 # Variant Analysis
 
 Find similar vulnerabilities and bugs across codebases using pattern-based analysis.
@@ -13,7 +18,7 @@ Find similar vulnerabilities and bugs across codebases using pattern-based analy
 - 分析安全漏洞并查找类似实例
 - 为重复出现的漏洞类别创建可复用模式
 
-## What It Does
+## 功能说明
 
 This skill provides a systematic five-step process for variant analysis:
 1. **Understand the original issue** - Identify root cause, conditions, and exploitability

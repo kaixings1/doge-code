@@ -1,5 +1,5 @@
 ---
-name: frame-light-leak-cinema
+name: 胶片光泄漏、颗粒感、16:9 宽银幕和大号衬线字体，用于电影开场或章节卡片。
 zh_name: "胶片漏光电影帧"
 en_name: "Light-Leak Cinematic Frame"
 emoji: "🎞️"

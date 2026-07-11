@@ -1,5 +1,5 @@
 ---
-name: buywhere-product-catalog
+name: 使用 BuyWhere 的 MCP 和 API 接口为 AI 购物代理添加产品搜
 description: "使用 BuyWhere 的 MCP 和 API 接口为 AI 购物代理添加产品搜索、价格比较和优惠发现功能。"
 category: ecommerce
 risk: safe
@@ -22,7 +22,7 @@ BuyWhere gives AI agents a product-catalog surface for shopping flows, price com
 
 The safest public starting points are the live developer portal, API key signup flow, MCP guide, and the official Cursor plugin repository.
 
-## When to Use This Skill
+## 何时使用此技能
 
 - Use when you want to add structured product search to an AI shopping or recommendation agent.
 - Use when the user asks for BuyWhere MCP setup in Cursor, Claude Desktop, or a custom agent runtime.

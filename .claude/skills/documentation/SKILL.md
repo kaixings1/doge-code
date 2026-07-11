@@ -1,5 +1,5 @@
 ---
-name: documentation
+name: 文档生成工作流，涵盖 API 文档、架构文档、README 文件、代码注释和技术写作。
 description: "文档生成工作流，涵盖 API 文档、架构文档、README 文件、代码注释和技术写作。"
 category: 工作流-bundle
 risk: safe
@@ -7,7 +7,7 @@ source: personal
 date_added: "2026-02-27"
 ---
 
-# Documentation 工作流 Bundle
+# 文档工作流包 (Documentation Bundle)
 
 ## 概述
 
@@ -244,7 +244,7 @@ Use @doc-coauthoring to collaborate on docs
 - SOPs
 - Decision records
 
-## Quality Gates
+## 质量门
 
 - [ ] All APIs documented
 - [ ] Architecture diagrams current

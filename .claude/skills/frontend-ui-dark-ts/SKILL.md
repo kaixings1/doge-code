@@ -1,5 +1,5 @@
 ---
-name: frontend-ui-dark-ts
+name: 使用 Tailwind CSS 和 Framer Motion 的现代暗色主题
 description: "使用 Tailwind CSS 和 Framer Motion 的现代暗色主题 React UI 系统。专为仪表板、管理面板和数据密集型应用设计，具有玻璃态效果和精致动画。"
 risk: unknown
 source: community

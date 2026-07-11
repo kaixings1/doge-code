@@ -1,5 +1,5 @@
 ---
-name: emilkowalski-motion
+name: Web 动效设计
 description: "Web 动效设计"
 risk: safe
 source: community

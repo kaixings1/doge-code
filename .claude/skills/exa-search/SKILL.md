@@ -1,5 +1,5 @@
 ---
-name: exa-search
+name: 语义搜索引擎
 description: "语义搜索引擎"
 risk: safe
 source: community

@@ -3,26 +3,26 @@ description: 超参数优化工作流 — 网格、随机或贝叶斯搜索
 argument-hint: "<describe your model and optimization goal>"
 ---
 
-# /tune — Hyperparameter Tuning
+# /tune — 超参数调优
 
-Optimize model hyperparameters for better performance.
+优化模型超参数以获得更好的性能。
 
-## Invocation
+## 调用
 
 ```
-/tune Optimize my XGBoost model for AUC-ROC
-/tune Find the best hyperparameters for this random forest classifier
-/tune Bayesian optimization with 100 trials on my LightGBM model
+/tune 优化我的 XGBoost 模型的 AUC-ROC
+/tune 为此随机森林分类器找到最佳超参数
+/tune 对我的 LightGBM 模型进行 100 次试验的贝叶斯优化
 ```
 
-## Workflow
+## 工作流
 
-Apply **hyperparameter-tuning** skill:
-1. Define search space
-2. Choose search strategy
-3. Run optimization with cross-validation
-4. Report best parameters and improvement
+应用 **hyperparameter-tuning** 技能：
+1. 定义搜索空间
+2. 选择搜索策略
+3. 使用交叉验证运行优化
+4. 报告最佳参数和改进
 
-Offer follow-up:
-- "Want to **evaluate the tuned model** in detail with /explain-model?"
-- "Ready to **deploy** the final model with /deploy?"
+提供后续选项：
+- "想要使用 /explain-model **详细评估调优后的模型**吗？"
+- "准备好使用 /deploy **部署**最终模型了吗？"

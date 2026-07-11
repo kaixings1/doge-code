@@ -1,5 +1,5 @@
 ---
-name: grpc-development
+name: gRPC 开发
 description: "gRPC 开发 — Protocol Buffers、服务定义、拦截器、流式 RPC、TLS 认证、负载均衡"
 ---
 

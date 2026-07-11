@@ -1,5 +1,5 @@
 ---
-name: expo-dev-client
+name: Expo 开发客户端配置
 description: "Expo 开发客户端配置"
 risk: safe
 source: community

@@ -5,14 +5,14 @@ argument-hint: "<what you want to know, in plain English>"
 
 # /query
 
-Generate SQL queries from natural language.
+从自然语言生成 SQL 查询。
 
-## Invocation
+## 调用
 
 ```
-/query [describe your requirements]
+/query [描述你的需求]
 ```
 
-## Workflow
+## 工作流
 
-Apply relevant **ds-sql-databases** skills to guide you through the process step by step.
+应用相关的 **ds-sql-databases** 技能逐步指导你完成整个过程。

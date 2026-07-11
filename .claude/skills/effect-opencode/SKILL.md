@@ -1,22 +1,22 @@
 ---
-name: effect
-description: "Effect Opencode — Effect Opencode 相关功能和最佳实践"
+name: Effect Opencode 相关功能和最佳实践。使用 Effect
+description: "Effect Opencode — Effect Opencode 相关功能和最佳实践。使用 Effect 进行类型化、可组合的 TypeScript 服务、模式和工作流。"
 ---
 
 # Effect
 
-This codebase uses Effect for typed, composable TypeScript services, schemas, and workflows.
+此代码库使用 Effect 进行类型化、可组合的 TypeScript 服务、模式和工作流。
 
-## Source Of Truth
+## 真相来源
 
-Use the current Effect v4 / effect-smol source, not memory or older Effect v2/v3 示例.
+使用当前的 Effect v4 / effect-smol 源代码，而非内存或旧的 Effect v2/v3 示例。
 
-1. If `.opencode/references/effect-smol` is missing, clone `https://github.com/Effect-TS/effect-smol` there. Do this in the project, not in the skill folder.
-2. Search `.opencode/references/effect-smol` for exact APIs, 示例, tests, and naming patterns before answering or implementing Effect-specific code.
+1. 如果缺少 `.opencode/references/effect-smol`，克隆 `https://github.com/Effect-TS/effect-smol` 到此位置。请在项目中执行此操作，而非在技能文件夹中。
+2. 在回答或实现 Effect 特定代码之前，先在 `.opencode/references/effect-smol` 中搜索确切的 API、示例、测试和命名模式。
 3. Also inspect existing repo code for local house style before introducing new patterns.
 4. 优先 answers and implementations backed by specific source files or nearby repo 示例.
 
-## Guidelines
+## 指南
 
 - 优先 current Effect v4 APIs and project-local patterns over old blog posts, 示例, or package-memory guesses.
 - Use `Effect.gen(function* () { ... })` for multi-step workflows.

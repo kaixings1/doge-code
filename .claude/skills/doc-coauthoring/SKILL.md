@@ -1,16 +1,13 @@
 ---
 name: doc-coauthoring
-description: "此技能提供引导用户完成协作文档创建的结构化工作流。作为主动引导，带领用户经历三个阶段：上下文收集、优化与结构、以及读者测试。"
-risk: unknown
-source: community
-date_added: "2026-02-27"
+description: Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation, proposals, technical specs, decision docs, or similar structured content. This workflow helps users efficiently transfer context, refine content through iteration, and verify the doc works for readers. Trigger when user mentions writing docs, creating proposals, drafting specs, or similar documentation tasks.
 ---
 
-# /u6587/u6863/u534f/u540c/u521b/u4f5c/u5de5/u4f5c/u6d41
+# Doc Co-Authoring Workflow
 
-此技能提供 a structured 工作流 for guiding users through collaborative document creation. Act as an active guide, walking users through three stages: 上下文 Gathering, Refinement & Structure, and Reader Testing.
+This skill provides a structured workflow for guiding users through collaborative document creation. Act as an active guide, walking users through three stages: Context Gathering, Refinement & Structure, and Reader Testing.
 
-## /u4f55/u65f6/u63d0/u4f9b/u6b64/u5de5/u4f5c/u6d41
+## When to Offer This Workflow
 
 **Trigger conditions:**
 - User mentions writing documentation: "write a doc", "draft a proposal", "create a spec", "write up"
@@ -18,17 +15,17 @@ date_added: "2026-02-27"
 - User seems to be starting a substantial writing task
 
 **Initial offer:**
-Offer the user a structured 工作流 for co-authoring the document. Explain the three stages:
+Offer the user a structured workflow for co-authoring the document. Explain the three stages:
 
-1. **上下文 Gathering**: User provides all relevant context while Claude asks clarifying questions
+1. **Context Gathering**: User provides all relevant context while Claude asks clarifying questions
 2. **Refinement & Structure**: Iteratively build each section through brainstorming and editing
 3. **Reader Testing**: Test the doc with a fresh Claude (no context) to catch blind spots before others read it
 
-Explain that this 方法 helps ensure the doc works well when others read it (including when they paste it into Claude). Ask if they want to try this 工作流 or prefer to work freeform.
+Explain that this approach helps ensure the doc works well when others read it (including when they paste it into Claude). Ask if they want to try this workflow or prefer to work freeform.
 
 If user declines, work freeform. If user accepts, proceed to Stage 1.
 
-## /u9636/u6bb5 1/uff1a/u4e0a/u4e0b/u6587/u6536/u96c6
+## Stage 1: Context Gathering
 
 **Goal:** Close the gap between what the user knows and what Claude knows, enabling smart guidance later.
 
@@ -46,19 +43,19 @@ Inform them they can answer in shorthand or dump information however works best 
 
 **If user provides a template or mentions a doc type:**
 - Ask if they have a template document to share
-- If they provide a link to a shared document, use the appropriate 集成 to fetch it
+- If they provide a link to a shared document, use the appropriate integration to fetch it
 - If they provide a file, read it
 
 **If user mentions editing an existing shared document:**
-- Use the appropriate 集成 to read the current state
+- Use the appropriate integration to read the current state
 - Check for images without alt-text
-- If images exist without alt-text, explain that when others use Claude to understand the doc, Claude won't be able to see them. Ask if they want alt-text generated. If so, 请求 they paste each image into chat for descriptive alt-text generation.
+- If images exist without alt-text, explain that when others use Claude to understand the doc, Claude won't be able to see them. Ask if they want alt-text generated. If so, request they paste each image into chat for descriptive alt-text generation.
 
 ### Info Dumping
 
-Once initial questions are answered, encourage the user to dump all the context they have. 请求 information such as:
+Once initial questions are answered, encourage the user to dump all the context they have. Request information such as:
 - Background on the project/problem
-- 相关 team discussions or shared documents
+- Related team discussions or shared documents
 - Why alternative solutions aren't being used
 - Organizational context (team dynamics, past incidents, politics)
 - Timeline pressures or constraints
@@ -79,7 +76,7 @@ Inform them clarifying questions will be asked once they've done their initial d
 **During context gathering:**
 
 - If user mentions team channels or shared documents:
-  - If integrations available: Inform them the content will be read now, then use the appropriate 集成
+  - If integrations available: Inform them the content will be read now, then use the appropriate integration
   - If integrations not available: Explain lack of access. Suggest they enable connectors in Claude settings, or paste the relevant content directly.
 
 - If user mentions entities/projects that are unknown:
@@ -104,7 +101,7 @@ Ask if there's any more context they want to provide at this stage, or if it's t
 
 If user wants to add more, let them. When ready, proceed to Stage 2.
 
-## /u9636/u6bb5 2/uff1a/u4f18/u5316/u4e0e/u7ed3/u6784
+## Stage 2: Refinement & Structure
 
 **Goal:** Build the document section by section through brainstorming, curation, and iterative refinement.
 
@@ -123,7 +120,7 @@ Start with whichever section has the most unknowns (usually the core decision/pr
 If the document structure is clear:
 Ask which section they'd like to start with.
 
-Suggest starting with whichever section has the most unknowns. For decision docs, that's usually the core proposal. For specs, it's typically the technical 方法. 总结 sections are best left for last.
+Suggest starting with whichever section has the most unknowns. For decision docs, that's usually the core proposal. For specs, it's typically the technical approach. Summary sections are best left for last.
 
 If user doesn't know what sections they need:
 Based on the type of document and template, suggest 3-5 sections appropriate for the doc type.
@@ -154,27 +151,27 @@ Confirm the filename has been created and indicate it's time to fill in each sec
 
 **For each section:**
 
-### 步骤 1: Clarifying Questions
+### Step 1: Clarifying Questions
 
 Announce work will begin on the [SECTION NAME] section. Ask 5-10 clarifying questions about what should be included:
 
-Generate 5-10 specific questions based on context and section 目的.
+Generate 5-10 specific questions based on context and section purpose.
 
 Inform them they can answer in shorthand or just indicate what's important to cover.
 
-### 步骤 2: Brainstorming
+### Step 2: Brainstorming
 
 For the [SECTION NAME] section, brainstorm [5-20] things that might be included, depending on the section's complexity. Look for:
-- 上下文 shared that might have been forgotten
+- Context shared that might have been forgotten
 - Angles or considerations not yet mentioned
 
 Generate 5-20 numbered options based on section complexity. At the end, offer to brainstorm more if they want additional options.
 
-### 步骤 3: Curation
+### Step 3: Curation
 
-Ask which points should be kept, removed, or combined. 请求 brief justifications to help learn priorities for the next sections.
+Ask which points should be kept, removed, or combined. Request brief justifications to help learn priorities for the next sections.
 
-Provide 示例:
+Provide examples:
 - "Keep 1,4,7,9"
 - "Remove 3 (duplicates 1)"
 - "Remove 6 (audience already knows this)"
@@ -182,11 +179,11 @@ Provide 示例:
 
 **If user gives freeform feedback** (e.g., "looks good" or "I like most of it but...") instead of numbered selections, extract their preferences and proceed. Parse what they want kept/removed/changed and apply it.
 
-### 步骤 4: Gap Check
+### Step 4: Gap Check
 
 Based on what they've selected, ask if there's anything important missing for the [SECTION NAME] section.
 
-### 步骤 5: Drafting
+### Step 5: Drafting
 
 Use `str_replace` to replace the placeholder text for this section with the actual drafted content.
 
@@ -242,26 +239,26 @@ Provide any final suggestions.
 
 Ask if ready to move to Reader Testing, or if they want to refine anything else.
 
-## /u9636/u6bb5 3/uff1a/u8bfb/u8005/u6d4b/u8bd5
+## Stage 3: Reader Testing
 
 **Goal:** Test the document with a fresh Claude (no context bleed) to verify it works for readers.
 
 **Instructions to user:**
 Explain that testing will now occur to see if the document actually works for readers. This catches blind spots - things that make sense to the authors but might confuse others.
 
-### Testing 方法
+### Testing Approach
 
 **If access to sub-agents is available (e.g., in Claude Code):**
 
 Perform the testing directly without user involvement.
 
-### 步骤 1: Predict Reader Questions
+### Step 1: Predict Reader Questions
 
 Announce intention to predict what questions readers might ask when trying to discover this document.
 
 Generate 5-10 questions that readers would realistically ask.
 
-### 步骤 2: Test with Sub-Agent
+### Step 2: Test with Sub-Agent
 
 Announce that these questions will be tested with a fresh Claude instance (no context from this conversation).
 
@@ -269,7 +266,7 @@ For each question, invoke a sub-agent with just the document content and the que
 
 Summarize what Reader Claude got right/wrong for each question.
 
-### 步骤 3: Run Additional Checks
+### Step 3: Run Additional Checks
 
 Announce additional checks will be performed.
 
@@ -277,7 +274,7 @@ Invoke sub-agent to check for ambiguity, false assumptions, contradictions.
 
 Summarize any issues found.
 
-### 步骤 4: Report and Fix
+### Step 4: Report and Fix
 
 If issues found:
 Report that Reader Claude struggled with specific issues.
@@ -294,13 +291,13 @@ Loop back to refinement for problematic sections.
 
 The user will need to do the testing manually.
 
-### 步骤 1: Predict Reader Questions
+### Step 1: Predict Reader Questions
 
 Ask what questions people might ask when trying to discover this document. What would they type into Claude.ai?
 
 Generate 5-10 questions that readers would realistically ask.
 
-### 步骤 2: 设置 Testing
+### Step 2: Setup Testing
 
 Provide testing instructions:
 1. Open a fresh Claude conversation: https://claude.ai
@@ -314,14 +311,14 @@ For each question, instruct Reader Claude to provide:
 
 Check if Reader Claude gives correct answers or misinterprets anything.
 
-### 步骤 3: Additional Checks
+### Step 3: Additional Checks
 
 Also ask Reader Claude:
 - "What in this doc might be ambiguous or unclear to readers?"
 - "What knowledge or context does this doc assume readers already have?"
 - "Are there any internal contradictions or inconsistencies?"
 
-### 步骤 4: Iterate Based on Results
+### Step 4: Iterate Based on Results
 
 Ask what Reader Claude got wrong or struggled with. Indicate intention to fix those gaps.
 
@@ -333,7 +330,7 @@ Loop back to refinement for any problematic sections.
 
 When Reader Claude consistently answers questions correctly and doesn't surface new gaps or ambiguities, the doc is ready.
 
-## /u6700/u7ec8/u5ba1/u67e5
+## Final Review
 
 When Reader Testing passes:
 Announce the doc has passed Reader Claude testing. Before completion:
@@ -346,23 +343,23 @@ Ask if they want one more review, or if the work is done.
 
 **If user wants final review, provide it. Otherwise:**
 Announce document completion. Provide a few final tips:
-- 考虑 linking this conversation in an appendix so readers can see how the doc was developed
+- Consider linking this conversation in an appendix so readers can see how the doc was developed
 - Use appendices to provide depth without bloating the main doc
 - Update the doc as feedback is received from real readers
 
-## /u6709/u6548/u5f15/u5bfc/u6280/u5de7
+## Tips for Effective Guidance
 
 **Tone:**
 - Be direct and procedural
 - Explain rationale briefly when it affects user behavior
-- Don't try to "sell" the 方法 - just execute it
+- Don't try to "sell" the approach - just execute it
 
 **Handling Deviations:**
 - If user wants to skip a stage: Ask if they want to skip this and write freeform
 - If user seems frustrated: Acknowledge this is taking longer than expected. Suggest ways to move faster
-- 始终 give user agency to adjust the process
+- Always give user agency to adjust the process
 
-**上下文 Management:**
+**Context Management:**
 - Throughout, if context is missing on something mentioned, proactively ask
 - Don't let gaps accumulate - address them as they come up
 
@@ -370,17 +367,9 @@ Announce document completion. Provide a few final tips:
 - Use `create_file` for drafting full sections
 - Use `str_replace` for all edits
 - Provide artifact link after every change
-- 绝不 use artifacts for brainstorming lists - that's just conversation
+- Never use artifacts for brainstorming lists - that's just conversation
 
 **Quality over Speed:**
 - Don't rush through stages
 - Each iteration should make meaningful improvements
 - The goal is a document that actually works for readers
-
-## /u4f55/u65f6/u4f7f/u7528
-This skill is applicable to execute the 工作流 or actions described in the 概述.
-
-## /u9650/u5236
-- 仅当任务明确匹配上述描述的范围时才使用此技能。
-- 不要将输出视为特定环境验证、测试或专家评审的替代品。
-- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。

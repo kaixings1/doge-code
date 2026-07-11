@@ -1,37 +1,37 @@
 ---
-name: c4-code
-description: "C4 Code — C4 Code 相关功能和最佳实践"
+name: C4 代码层级相关功能和最佳实践
+description: "C4 Code — C4 代码层级相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
 
-# C4 Code Level: [Directory Name]
+# C4 代码层级：[目录名称]
 
 ## 使用此技能的场景
 
-- Working on c4 code level: [directory name] tasks or workflows
-- Needing guidance, best practices, or checklists for c4 code level: [directory name]
+- 处理 c4 代码层级：[目录名称] 任务或工作流时
+- 需要 c4 代码层级：[目录名称] 的指导、最佳实践或检查清单时
 
 ## 不要使用此技能的场景
 
-- The task is unrelated to c4 code level: [directory name]
-- You need a different domain or tool outside this scope
+- 任务与 c4 代码层级：[目录名称] 无关时
+- 您需要此范围之外的不同领域或工具时
 
 ## 使用说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证方法。
+- 如果需要详细示例，请打开 `resources/implementation-playbook.md`。
 
 ## 概述
 
-- **Name**: [Descriptive name for this code directory]
-- **Description**: [Short description of what this code does]
-- **Location**: [Link to actual directory path]
-- **Language**: [Primary programming language(s)]
-- **Purpose**: [What this code accomplishes]
+- **名称**：[此代码目录的描述性名称]
+- **描述**：[此代码功能的简短描述]
+- **位置**：[实际目录路径的链接]
+- **语言**：[主要编程语言]
+- **目的**：[此代码实现的功能]
 
 ## Code Elements
 
@@ -223,12 +223,12 @@ flowchart TB
 - "Document the Go handlers package showing structs and their associated functions"
 - "Analyze the TypeScript codebase that mixes classes with functional utilities"
 
-## Key Distinctions
+## 关键区别
 - **vs C4-Component agent**: Focuses on individual code elements; Component agent synthesizes multiple code files into components
 - **vs C4-Container agent**: Documents code structure; Container agent maps components to 部署 units
 - **vs C4-上下文 agent**: Provides code-level detail; 上下文 agent creates high-level system diagrams
 
-## Output Examples
+## 输出示例
 When analyzing code, provide:
 - Complete function/method signatures with all parameters and return types
 - Clear descriptions of what each code element does

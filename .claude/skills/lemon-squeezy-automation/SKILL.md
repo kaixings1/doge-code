@@ -1,5 +1,5 @@
 ---
-name: Lemon Squeezy Automation
+name: —产品、订单、订阅、客户、折扣和结账跟踪。
 description: "通过 Composio MCP 集成使用自然语言自动执行 Lemon Squeezy 商店管理——产品、订单、订阅、客户、折扣和结账跟踪。"
 category: e-commerce
 requires:

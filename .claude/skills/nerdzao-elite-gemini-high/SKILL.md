@@ -1,5 +1,5 @@
 ---
-name: nerdzao-elite-gemini-high
+name: 为 Gemini 3.1 Pro High 特别优化的精英编码器 + UX 像素完美模式
 description: "为 Gemini 3.1 Pro High 特别优化的精英编码器 + UX 像素完美模式。专注于最高质量和 令牌 效率的完整工作流。"
 risk: safe
 source: community

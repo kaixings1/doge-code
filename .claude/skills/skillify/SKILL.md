@@ -1,19 +1,19 @@
 ---
-name: skillify
+name: Skillify 相关功能和最佳实践
 aliases: [learner]
 description: "Skillify — Skillify 相关功能和最佳实践"
 ---
 
-# Skillify
+# 技能化
 
 当当前会话发现了一个可重复的工作流，应该成为可复用的 OMC 技能时使用此技能。
 
 > Compatibility: `/oh-my-claudecode:learner` is a deprecated alias for this skill. Prefer `/oh-my-claudecode:skillify` in docs, prompts, and new workflows. Internal implementation modules may still use the learner name.
 
-## Goal
+## 目标
 Capture a successful multi-step 工作流 as a concrete skill draft instead of rediscovering it later.
 
-## Quality Gate
+## 质量门禁
 Before extracting a skill, all three should be true:
 - "Could someone Google this in 5 minutes?" → No.
 - "Is this specific to this codebase, project, or 工作流?" → Yes.

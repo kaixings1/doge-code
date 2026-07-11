@@ -2,9 +2,9 @@
 description: 在技能目录上运行完整 8 阶段插件审计流程。
 ---
 
-Run the comprehensive plugin audit pipeline on the skill at `$ARGUMENTS`. If no argument provided, ask the user for the skill path.
+对 `$ARGUMENTS` 处的技能运行全面的插件审计流水线。如果未提供参数，请用户提供技能路径。
 
-Execute all 8 phases sequentially. Auto-fix non-critical issues. Only prompt the user for critical decisions (external dependencies, security findings, breaking changes).
+按顺序执行全部 8 个阶段。自动修复非关键问题。仅在关键决策时提示用户（外部依赖、安全问题、破坏性变更）。
 
 ## Phase 1: Discovery
 

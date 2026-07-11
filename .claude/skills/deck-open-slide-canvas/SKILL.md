@@ -1,5 +1,5 @@
 ---
-name: deck-open-slide-canvas
+name: 锁定 1920x1080 画布幻灯片，React 组件级自由组合，不受固定模板限制。
 zh_name: "1920 画布自由 Deck"
 en_name: "Open-Slide 1920 Canvas Deck"
 emoji: "🎨"

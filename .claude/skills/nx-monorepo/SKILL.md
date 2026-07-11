@@ -1,5 +1,5 @@
 ---
-name: nx-monorepo
+name: Nx 单体仓库
 description: Nx 单体仓库 — 项目图、增量构建、任务编排、affected 命令、模块边界
 ---
 

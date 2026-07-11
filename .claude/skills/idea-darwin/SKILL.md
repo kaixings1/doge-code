@@ -1,5 +1,5 @@
 ---
-name: idea-darwin
+name: 达尔文想法
 description: "达尔文想法 — 基于进化论的创意生成"
 risk: safe
 source: community

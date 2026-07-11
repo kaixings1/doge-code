@@ -1,5 +1,5 @@
 ---
-name: auditing-kubernetes-cluster-rbac
+name: 审计 Kubernetes 集群 RBAC
 description: "审计 Kubernetes 集群 RBAC"
 risk: safe
 source: community

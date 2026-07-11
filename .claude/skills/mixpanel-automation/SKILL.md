@@ -1,5 +1,5 @@
 ---
-name: mixpanel-automation
+name: Mixpanel 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Mixpanel 任务：events, segmentation, funnels, cohorts, user profiles, JQL queries. 始终 search tools first for current schemas."
 risk: critical
 source: community

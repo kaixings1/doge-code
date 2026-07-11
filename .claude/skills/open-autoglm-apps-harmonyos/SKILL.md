@@ -1,5 +1,5 @@
 ---
-name: open-autoglm-apps-harmonyos
+name: Open-AutoGLM 鸿蒙应用配置
 description: Open-AutoGLM 鸿蒙应用配置
 ---
 

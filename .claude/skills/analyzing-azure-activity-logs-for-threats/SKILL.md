@@ -1,5 +1,5 @@
 ---
-name: analyzing-azure-activity-logs-for-threats
+name: Azure 活动日志威胁分析
 description: "分析 Azure 活动日志威胁"
 risk: safe
 source: community

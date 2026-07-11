@@ -3,84 +3,84 @@ description: "跨角色工程 grill — 每个角色 7 个 Matt Pocock 问题 ×
 argument-hint: "<plan or architecture to grill> [--lane fullstack|frontend|backend|all]"
 ---
 
-# /cs:engineer-grill — Cross-role engineering forcing-question grill
+# /cs:engineer-grill — 跨角色工程强制问题审查
 
-Walk the user through the Matt Pocock forcing-question discipline before they lock any engineering decision. This is the **grill-with-docs** pattern (canon-anchored, recommended answers, kill criteria) applied across the three engineering role lanes.
+在用户锁定任何工程决策之前，引导他们通过 Matt Pocock 强制问题纪律。这是应用于三个工程角色领域的**带文档审查**模式（基于规范、推荐答案、终止条件）。
 
 **$ARGUMENTS**
 
-## Routing protocol
+## 路由协议
 
-1. **Detect lane signals** in the user's prompt:
-   - **Fullstack signals:** "scaffold", "stack", "Next.js + Postgres", "monorepo", "deploy", "team size", "budget", "cadence"
-   - **Frontend signals:** "React", "Next", "Remix", "Vite", "Astro", "bundle", "LCP", "INP", "CLS", "a11y", "WCAG", "Tailwind", "design system"
-   - **Backend signals:** "API", "REST", "GraphQL", "database", "Postgres", "MongoDB", "schema", "migration", "QPS", "tenancy", "SLO", "Kafka", "queue", "microservice", "monolith"
+1. **检测用户提示中的领域信号：**
+   - **全栈信号：** "scaffold"、"stack"、"Next.js + Postgres"、"monorepo"、"deploy"、"team size"、"budget"、"cadence"
+   - **前端信号：** "React"、"Next"、"Remix"、"Vite"、"Astro"、"bundle"、"LCP"、"INP"、"CLS"、"a11y"、"WCAG"、"Tailwind"、"design system"
+   - **后端信号：** "API"、"REST"、"GraphQL"、"database"、"Postgres"、"MongoDB"、"schema"、"migration"、"QPS"、"tenancy"、"SLO"、"Kafka"、"queue"、"microservice"、"monolith"
 
-2. **If `--lane <name>` is supplied:** walk only that lane's 7 questions.
-3. **If lane signals score ≥ 3 hits for one lane:** confirm with the user, then walk that lane's 7 questions.
-4. **If lane signals are ambiguous OR `--lane all`:** ask the user: "Fullstack (7 Qs about team / stack / scale), Frontend (7 Qs about device / rendering / bundle / a11y), or Backend (7 Qs about QPS / tenancy / pattern / SLO)? Or `all` for all 21."
+2. **如果提供了 `--lane <name>`：** 仅走该领域的 7 个问题。
+3. **如果领域信号对一个领域得分 ≥ 3：** 与用户确认，然后走该领域的 7 个问题。
+4. **如果领域信号模糊或 `--lane all`：** 询问用户："全栈（7 个关于团队/技术栈/规模的问题）、前端（7 个关于设备/渲染/包/无障碍的问题）还是后端（7 个关于 QPS/租户/模式/SLO 的问题）？或者 `all` 全部 21 个。"
 
-## Lane: fullstack
+## 领域：全栈
 
-Questions live in `engineering-team/skills/senior-fullstack/references/forcing_questions.md`. Summary:
+问题位于 `engineering-team/skills/senior-fullstack/references/forcing_questions.md`。摘要：
 
-1. Team size today + 12-month headcount?
-2. Deployment cadence — per-PR, daily, weekly, quarterly?
-3. Customer-facing, internal tool, or marketing site?
-4. One-year p50 / p99 traffic forecast?
-5. Hiring against the stack or training the team?
-6. Year-one monthly cloud + SaaS ceiling?
-7. Three verifiable success criteria with numeric targets?
+1. 当前团队规模 + 12 个月人员编制？
+2. 部署节奏——每 PR、每日、每周、每季度？
+3. 面向客户、内部工具还是营销站点？
+4. 一年 p50 / p99 流量预测？
+5. 根据技术栈招聘还是培训团队？
+6. 第一年月度云 + SaaS 上限？
+7. 三个带有数字目标的可验证成功标准？
 
-## Lane: frontend
+## 领域：前端
 
-Questions live in `engineering-team/skills/senior-frontend/references/forcing_questions.md`. Summary:
+问题位于 `engineering-team/skills/senior-frontend/references/forcing_questions.md`。摘要：
 
-1. Primary device + network (mobile-4G / desktop-fiber / low-end Android / corporate)?
-2. LCP target in ms (and INP, CLS)?
-3. RSC / SPA / SSR / SSG — pick and defend?
-4. JS bundle budget per route in KB-gzip?
-5. SEO-dependent or auth-walled?
-6. Design-system source of truth?
-7. WCAG target + named a11y owner?
+1. 主要设备 + 网络（移动 4G / 桌面光纤 / 低端安卓 / 企业）？
+2. LCP 目标（毫秒）以及 INP、CLS？
+3. RSC / SPA / SSR / SSG — 选择并辩护？
+4. 每条路由的 JS 包预算（KB-gzip）？
+5. 依赖 SEO 还是需要认证？
+6. 设计系统事实来源？
+7. WCAG 目标 + 命名的无障碍负责人？
 
-## Lane: backend
+## 领域：后端
 
-Questions live in `engineering-team/skills/senior-backend/references/forcing_questions.md`. Summary:
+问题位于 `engineering-team/skills/senior-backend/references/forcing_questions.md`。摘要：
 
-1. Read/write ratio + p99 QPS forecast?
-2. Tenancy model — single / shared / isolated?
-3. Sync / async / event-driven — default + exceptions?
-4. Data sensitivity tier — PII / PHI / PCI?
-5. Monolith / modular monolith / microservices — team-size justification?
-6. RPO + RTO?
-7. SLO + named error-budget consumer?
+1. 读写比 + p99 QPS 预测？
+2. 租户模型——单租户 / 共享 / 隔离？
+3. 同步 / 异步 / 事件驱动——默认 + 例外？
+4. 数据敏感等级——PII / PHI / PCI？
+5. 单体 / 模块化单体 / 微服务——团队规模论证？
+6. RPO + RTO？
+7. SLO + 命名的错误预算消费者？
 
-## Discipline (Matt Pocock, MIT, preserved verbatim from `engineering/grill-me`)
+## 纪律（Matt Pocock，MIT，逐字保留自 `engineering/grill-me`）
 
-1. **One question per turn.** Never bundle. Never default to "what do you think?".
-2. **Always recommend an answer.** Format: "Recommended: <answer>, because <one-sentence rationale from cited canon>".
-3. **Walk depth-first.** Finish a lane before opening another.
-4. **Surface the kill criterion.** If the user's answer trips it, STOP and resolve before continuing.
-5. **Track answers.** Write to `/tmp/engineer-grill-<lane>-<date>.md` so the conversation survives compaction.
+1. **每轮一个问题。** 绝不捆绑。绝不默认为"你怎么看？"。
+2. **始终推荐一个答案。** 格式："推荐：<答案>，因为<来自引用规范的一句话理由>"。
+3. **深度优先遍历。** 在打开另一个领域之前完成一个领域。
+4. **暴露终止条件。** 如果用户的答案触发了它，停止并在继续前解决。
+5. **记录答案。** 写入 `/tmp/engineer-grill-<lane>-<date>.md`，以便对话在压缩后仍然保留。
 
-## After the grill
+## 审查之后
 
-1. **Run the lane's decision engine** with the seven answers:
-   - Fullstack → `python engineering-team/skills/senior-fullstack/scripts/fullstack_decision_engine.py ...`
-   - Frontend → `python engineering-team/skills/senior-frontend/scripts/frontend_decision_engine.py ...`
-   - Backend → `python engineering-team/skills/senior-backend/scripts/backend_decision_engine.py ...`
-2. **Surface the matched profile + named approvers.**
-3. **Recommend the next sub-skill chain** based on the composition map.
+1. **运行该领域的决策引擎**，使用七个答案：
+   - 全栈 → `python engineering-team/skills/senior-fullstack/scripts/fullstack_decision_engine.py ...`
+   - 前端 → `python engineering-team/skills/senior-frontend/scripts/frontend_decision_engine.py ...`
+   - 后端 → `python engineering-team/skills/senior-backend/scripts/backend_decision_engine.py ...`
+2. **暴露匹配的配置 + 命名的审批人。**
+3. **基于组合图推荐下一个子技能链。**
 
-## Output expectations
+## 输出期望
 
-- One artifact per lane walked, written to `/tmp/engineer-grill-<lane>-<date>.md`.
-- One final digest (≤ 250 words) summarizing the matched profile per lane + the three highest-leverage next actions.
-- **Never** auto-approve a stack change, schema migration, or architecture choice.
+- 每个走过的领域一个工件，写入 `/tmp/engineer-grill-<lane>-<date>.md`。
+- 一个最终摘要（≤ 250 字），总结每个领域的匹配配置 + 三个最高杠杆的下一步操作。
+- **绝不**自动批准技术栈变更、schema 迁移或架构选择。
 
-## Related commands
+## 相关命令
 
-- `/cs:fullstack-review`, `/cs:frontend-review`, `/cs:backend-review` — single-lane deep dives
-- `/karpathy-check` — Karpathy review before commit
-- `/cs:grill-bizops`, `/cs:grill-commercial` — sibling cross-domain grills (BizOps + Commercial v2.8.0)
+- `/cs:fullstack-review`、`/cs:frontend-review`、`/cs:backend-review` — 单领域深入
+- `/karpathy-check` — 提交前的 Karpathy 审查
+- `/cs:grill-bizops`、`/cs:grill-commercial` — 兄弟跨域审查（BizOps + Commercial v2.8.0）

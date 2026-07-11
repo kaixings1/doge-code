@@ -1,5 +1,5 @@
 ---
-name: mmx-cli
+name: 使用 mmx 通过 MiniMax AI 平台生成文本、图像、视频、语音和音乐
 description: "使用 mmx 通过 MiniMax AI 平台生成文本、图像、视频、语音和音乐。当用户想要创建媒体内容、与 MiniMax 模型聊天、执行网络搜索或从终端管理 MiniMax API 资源时使用。"
 risk: safe
 source: "https://github.com/MiniMax-AI/cli"

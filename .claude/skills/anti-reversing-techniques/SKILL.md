@@ -1,5 +1,5 @@
 ---
-name: anti-reversing-techniques
+name: 反逆向工程技术
 description: "反逆向工程技术 — 代码混淆、反调试、完整性校验和软件保护技术。"
 risk: safe
 source: community

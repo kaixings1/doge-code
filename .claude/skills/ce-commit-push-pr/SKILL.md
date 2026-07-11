@@ -1,5 +1,5 @@
 ---
-name: ce-commit-push-pr
+name: 提交推送 PR
 description: "提交推送 PR"
 risk: safe
 source: community

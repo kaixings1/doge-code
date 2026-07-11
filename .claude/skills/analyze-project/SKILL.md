@@ -1,5 +1,5 @@
 ---
-name: analyze-project
+name: 项目根因分析
 description: Antigravity 会话的取证根因分析器：范围偏差、返工模式、热点分析和提示改进。
 risk: unknown
 source: community
@@ -11,7 +11,7 @@ tags: [analysis, diagnostics, meta, root-cause, project-health, 会话-review]
 
 Analyze AI-assisted coding sessions in `~/.gemini/antigravity/brain/` and produce a report that explains not just **what happened**, but **why it happened**, **who/what caused it**, and **what should change next time**.
 
-## Goal
+## 目标
 
 For each 会话, determine:
 

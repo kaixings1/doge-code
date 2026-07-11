@@ -1,6 +1,6 @@
 ---
-name: high-end-visual-design
-description: "Taste Soft Skill — Taste Soft Skill 相关功能和最佳实践"
+name: 高端视觉设计
+description: "高端视觉设计 — 高端视觉设计风格相关功能和最佳实践"
 ---
 
 # Agent Skill: Principal UI/UX Architect & Motion Choreographer (Awwwards-Tier)

@@ -1,5 +1,5 @@
 ---
-name: window-management
+name: 窗口管理技能
 description: 窗口管理技能
 ---
 

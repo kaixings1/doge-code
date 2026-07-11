@@ -17,7 +17,7 @@ allowed-tools:
 requires: [spike]
 ---
 <objective>
-Explore design directions through throwaway HTML mockups before committing to implementation.
+在承诺实现之前，通过一次性 HTML 模型探索设计方向。
 Each sketch produces 2-3 variants for comparison. Sketches live in `.planning/sketches/` and
 integrate with GSD commit patterns, state tracking, and handoff workflows. Loads spike
 findings to ground mockups in real data shapes and validated interaction patterns.

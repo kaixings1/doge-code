@@ -1,5 +1,5 @@
 ---
-name: fal-tryon
+name: FAL 试穿
 description: "FAL 试穿 — 基于 FAL AI 的虚拟试穿"
 risk: unknown
 source: community

@@ -192,7 +192,7 @@ For each story, write `production/epics/[epic-slug]/story-[NNN]-[slug].md`:
 > **Manifest Version**: [date from control-manifest.md header]
 > **Last Updated**: [set by /dev-story when implementation begins]
 
-## Context
+## 上下文
 
 **GDD**: `design/gdd/[filename].md`
 **Requirement**: `TR-[system]-NNN`

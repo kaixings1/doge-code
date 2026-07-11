@@ -1,5 +1,5 @@
 ---
-name: error-diagnostics-smart-debug
+name: AI 辅助智能调试
 description: "AI 辅助智能调试"
 risk: safe
 source: community

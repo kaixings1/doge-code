@@ -116,14 +116,14 @@ export function DiffDetailView(t0) {
     }
     let t6;
     if ($[13] === Symbol.for("react.memo_cache_sentinel")) {
-      t6 = <Text dimColor={true} italic={true}>New file not yet staged.</Text>;
+      t6 = <Text dimColor={true} italic={true}>新文件尚未暂存。</Text>;
       $[13] = t6;
     } else {
       t6 = $[13];
     }
     let t7;
     if ($[14] !== filePath) {
-      t7 = <Box flexDirection="column">{t6}<Text dimColor={true} italic={true}>Run `git add {filePath}` to see line counts.</Text></Box>;
+      t7 = <Box flexDirection="column">{t6}<Text dimColor={true} italic={true}>运行 `git add {filePath}` 以查看行数统计。</Text></Box>;
       $[14] = filePath;
       $[15] = t7;
     } else {
@@ -240,7 +240,7 @@ export function DiffDetailView(t0) {
   }
   let t6;
   if ($[39] !== columns || $[40] !== fileContent || $[41] !== filePath || $[42] !== firstLine || $[43] !== hunks) {
-    t6 = hunks.length === 0 ? <Text dimColor={true}>No diff content</Text> : hunks.map((hunk, index) => <StructuredDiff key={index} patch={hunk} filePath={filePath} firstLine={firstLine} fileContent={fileContent} dim={false} width={columns - 2 - 2} />);
+    t6 = hunks.length === 0 ? <Text dimColor={true}>没有差异内容</Text> : hunks.map((hunk, index) => <StructuredDiff key={index} patch={hunk} filePath={filePath} firstLine={firstLine} fileContent={fileContent} dim={false} width={columns - 2 - 2} />);
     $[39] = columns;
     $[40] = fileContent;
     $[41] = filePath;

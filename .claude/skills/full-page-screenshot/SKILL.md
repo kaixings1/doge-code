@@ -1,6 +1,6 @@
 ---
-name: full-page-screenshot
-description: "Full Page Screenshot — Full Page Screenshot 相关功能和最佳实践"
+name: 全页截图
+description: "全页截图 — 全页截图相关功能和最佳实践"
   Capture full-page screenshots of web pages via Chrome DevTools Protocol with zero dependencies. Useful for portfolios, case studies, and audit reports.
 triggers:
   - "full page screenshot"
@@ -17,11 +17,11 @@ od:
 
 > Curated from @LewisLiu007.
 
-## What it does
+## 功能说明
 
 Capture full-page screenshots of web pages via Chrome DevTools Protocol with zero dependencies. Useful for portfolios, case studies, and audit reports.
 
-## Source
+## 来源
 
 - Upstream: https://github.com/LewisLiu007/full-page-screenshot
 - Category: `screenshots`

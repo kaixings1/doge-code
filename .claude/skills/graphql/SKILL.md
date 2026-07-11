@@ -1,5 +1,5 @@
 ---
-name: graphql
+name: Graphql 相关功能和最佳实践
 description: "Graphql — Graphql 相关功能和最佳实践"
   less. One 端点, typed 架构, introspection. But the flexibility that
   makes it powerful also makes it dangerous. Without proper controls, clients

@@ -1,5 +1,5 @@
 ---
-name: heyzine-automation
+name: Heyzine 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Heyzine 任务。"
 requires:
   mcp: [rube]

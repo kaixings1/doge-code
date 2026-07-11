@@ -1,5 +1,5 @@
 ---
-name: core-components
+name: 核心组件
 description: "核心组件"
 risk: safe
 source: community

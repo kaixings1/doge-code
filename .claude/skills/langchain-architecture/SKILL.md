@@ -1,5 +1,5 @@
 ---
-name: langchain-architecture
+name: 掌握 LangChain 框架，使用代理、链、记忆和工具集成构建复杂的 LLM 应用。
 description: "掌握 LangChain 框架，使用代理、链、记忆和工具集成构建复杂的 LLM 应用。"
 risk: unknown
 source: community

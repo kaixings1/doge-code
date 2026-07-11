@@ -1,5 +1,5 @@
 ---
-name: referrals
+name: 当用户想要创建、优化或分析推荐计划、联盟计划或口碑营销策略时使用。当用户提到 '
 description: "当用户想要创建、优化或分析推荐计划、联盟计划或口碑营销策略时使用。当用户提到 'referral'、'affiliate'、'ambassador'、'word of mouth'、'viral loop'、'refer a friend'、'partner program'、'referral incentive'、'how to get referrals'、'customers referring customers' 或 'affiliate payout' 时也使用。每当有人希望现有用户或合作伙伴带来新客户时使用此技能。关于发布特定病毒式传播，请参阅 launch。"
 metadata:
   version: 2.0.0

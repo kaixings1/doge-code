@@ -1,14 +1,6 @@
 ---
-name: video-download
-description: "Video Download — Video Download 相关功能和最佳实践"
-  Download videos from Instagram, YouTube, TikTok, Twitter/X, Facebook, and
-  1000+ other platforms as MP4 files using yt-dlp. Auto-recovers from YouTube
-  bot detection ("Sign in to confirm you're not a bot", LOGIN_REQUIRED) by
-  rotating through browser cookies and cookie files without manual
-  intervention. 使用此技能当 the user wants to download, save, or grab
-  one or more videos from any social media or video platform URL. Supports
-  single videos or full playlists, configurable resolution, and saving to a
-  specified target folder.
+name: 视频下载
+description: "视频下载 — 使用 yt-dlp 从 Instagram、YouTube、TikTok、Twitter/X、Facebook 和 1000+ 其他平台下载视频为 MP4 文件。通过自动轮换浏览器 cookies 自动恢复 YouTube 机器人检测。当用户想要从任何社交媒体或视频平台 URL 下载、保存或获取一个或多个视频时使用此技能。支持单个视频或完整播放列表、可配置分辨率和保存到指定目标文件夹。"
 ---
 
 # 视频下载技能

@@ -1,5 +1,5 @@
 ---
-name: javascript-pro
+name: JavaScript 专业版
 description: "JavaScript 专业版 — JavaScript 专业开发相关功能和最佳实践"
 risk: safe
 source: community
@@ -34,4 +34,10 @@ date_added: "2026-02-27"
 4. 使用现代模式避免回调地狱
 5. 考虑浏览器代码的包大小
 ## 输出
+- 清晰的代码方案和实现示例
+- 异步流程设计和错误处理建议
+- 迁移路径和兼容性说明
 ## 限制
+- 不涉及 TypeScript 深度架构决策
+- 性能建议需结合具体 Node 版本
+- 复杂 DOM 性能问题需结合浏览器 DevTools 实测

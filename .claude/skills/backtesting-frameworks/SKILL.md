@@ -1,5 +1,5 @@
 ---
-name: backtesting-frameworks
+name: 构建健壮的生产级回测系统，避免常见陷阱并产生可靠的策略性能评估。
 description: "构建健壮的生产级回测系统，避免常见陷阱并产生可靠的策略性能评估。"
 risk: safe
 source: community

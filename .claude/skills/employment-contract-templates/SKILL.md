@@ -1,5 +1,5 @@
 ---
-name: employment-contract-templates
+name: 雇佣合同模板
 description: "雇佣合同模板"
 risk: safe
 source: community

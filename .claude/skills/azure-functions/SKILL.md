@@ -1,5 +1,5 @@
 ---
-name: azure-functions
+name: Azure Functions 无服务器计算开发，涵盖触发器、绑定、D
 description: "Azure Functions — Azure Functions 无服务器计算开发，涵盖触发器、绑定、Durable Functions 和最佳实践。"
   worker model, Durable Functions orchestration, cold start optimization, and
   production patterns. Covers .NET, Python, and Node.js programming models.
@@ -1244,7 +1244,7 @@ az functionapp config set \
   --minimum-elastic-instance-count 2
 ```
 
-## Validation Checks
+## 验证检查
 
 ### Hardcoded Connection String
 
@@ -1326,7 +1326,7 @@ Isolated worker requires [Function] attribute
 
 Message: HttpTrigger without [Function] attribute (isolated worker requires it).
 
-## Collaboration
+## 协作
 
 ### Delegation Triggers
 

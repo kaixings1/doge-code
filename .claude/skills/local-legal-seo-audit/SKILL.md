@@ -1,5 +1,5 @@
 ---
-name: local-legal-seo-audit
+name: 审计和改进律师事务所、律师、法医专家和法律/专业服务网站的本地 SEO，关注 G
 description: "审计和改进律师事务所、律师、法医专家和法律/专业服务网站的本地 SEO，关注 GBP、目录、E-E-A-T 和实践/位置页面。"
 risk: safe
 source: original
@@ -327,7 +327,7 @@ Same format
 
 ---
 
-## Task-Specific Questions
+## 任务相关问题
 
 1. What is the primary practice area and geographic target market?
 2. Do you have a Google Business Profile? Is it verified?

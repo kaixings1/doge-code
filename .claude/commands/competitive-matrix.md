@@ -6,16 +6,16 @@ argument-hint: "<analyze> [options]"
 
 # /competitive-matrix
 
-Build competitive matrices with weighted scoring, gap analysis, and market positioning insights.
+构建带有加权评分、差距分析和市场定位洞察的竞品对比矩阵。
 
-## Usage
+## 用法
 
 ```
-/competitive-matrix analyze <competitors.json>                    Full analysis
-/competitive-matrix analyze <competitors.json> --weights pricing=2,ux=1.5    Custom weights
+/competitive-matrix analyze <competitors.json>                    完整分析
+/competitive-matrix analyze <competitors.json> --weights pricing=2,ux=1.5    自定义权重
 ```
 
-## Input Format
+## 输入格式
 
 ```json
 {
@@ -27,15 +27,15 @@ Build competitive matrices with weighted scoring, gap analysis, and market posit
 }
 ```
 
-## Examples
+## 示例
 
 ```
 /competitive-matrix analyze competitors.json
 /competitive-matrix analyze competitors.json --format json --output matrix.json
 ```
 
-## Scripts
-- `product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py` — Matrix builder
+## 脚本
+- `product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py` — 矩阵构建器
 
-## Skill Reference
+## 技能参考
 → `product-team/skills/competitive-teardown/SKILL.md`

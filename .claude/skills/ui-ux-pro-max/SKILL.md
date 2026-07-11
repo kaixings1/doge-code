@@ -1,5 +1,5 @@
 ---
-name: ui-ux-pro-max
+name: Web和移动端的UI/UX设计智能。包含50+风格、161种调色板、57种字体配
 description: Web和移动端的UI/UX设计智能。包含50+风格、161种调色板、57种字体配对、161种产品类型和99条UX指南，覆盖10个技术栈。
 ---
 
@@ -45,7 +45,7 @@ This Skill is not needed in the following situations:
 
 **Decision criteria**: If the task will change how a feature **looks, feels, moves, or is interacted with**, this Skill should be used.
 
-## Rule Categories by Priority
+## 按优先级排序的规则类别
 
 *For human/AI reference: follow priority 1→10 to decide which rule category to focus on first; use `--domain <Domain>` to 查询 details when needed. Scripts do not read this table.*
 

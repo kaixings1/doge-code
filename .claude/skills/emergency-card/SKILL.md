@@ -1,5 +1,5 @@
 ---
-name: emergency-card
+name: 紧急情况信息卡
 description: "紧急情况信息卡"
 risk: safe
 source: community

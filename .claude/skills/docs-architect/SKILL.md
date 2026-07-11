@@ -1,10 +1,12 @@
 ---
-name: docs-architect
+name: Docs Architect 相关功能和最佳实践
 description: "Docs Architect — Docs Architect 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# 文档架构师
 
 ## /u4f55/u65f6/u4f7f/u7528/u6b64/u6280/u80fd
 

@@ -1,5 +1,5 @@
 ---
-name: evaluation
+name: AI 模型和系统评估
 description: "AI 模型和系统评估"
 risk: safe
 source: community

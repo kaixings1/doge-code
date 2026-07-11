@@ -1,5 +1,5 @@
 ---
-name: local-build-reminder
+name: 本地构建提醒
 description: "本地构建提醒 — OMC Fork 开发时提醒编译 TypeScript 更改"
 level: 1
 ---

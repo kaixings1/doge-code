@@ -1,3 +1,8 @@
+---
+name: Second Opinion 代码审查
+description: 使用外部 LLM CLI（OpenAI Codex、Google Gemini）对未提交更改、分支 diff 或特定提交运行代码审查。
+---
+
 # second-opinion
 
 Run code reviews using external LLM CLIs (OpenAI Codex, Google Gemini) on uncommitted changes, branch diffs, or specific commits.

@@ -1,5 +1,5 @@
 ---
-name: multi-agent-patterns
+name: 多代理系统设计：实现监督者模式、创建 swarm 架构、协调多个代理。触发词：多
 description: 多代理系统设计：实现监督者模式、创建 swarm 架构、协调多个代理。触发词：多代理、上下文隔离、代理交接、子代理、并行代理执行。
 risk: unknown
 source: community

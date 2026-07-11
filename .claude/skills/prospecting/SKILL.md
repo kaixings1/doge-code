@@ -1,3 +1,6 @@
 ---
-name: prospecting
+name: 潜在客户开发
 description: "潜在客户开发 — 创建目标公司名单、定义理想客户画像、搜索潜在客户。帮助您找到并列出适合您服务的公司。"
+---
+
+# 潜在客户开发 (Prospecting)

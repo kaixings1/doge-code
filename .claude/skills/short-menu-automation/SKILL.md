@@ -1,21 +1,21 @@
 ---
-name: short-menu-automation
+name: Short Menu 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Short Menu 任务。使用前始终先搜索工具以获取当前 schema。""
 requires:
   mcp: [rube]
 ---
 
-# Short Menu 自动化（通过 Rube MCP）
+# Short Menu 自动化
 
-Automate Short Menu operations through Composio's Short Menu toolkit via Rube MCP.
+通过 Rube MCP 使用 Composio 的 Short Menu 工具包自动化 Short Menu 操作。
 
-**Toolkit docs**: [composio.dev/toolkits/short_menu](https://composio.dev/toolkits/short_menu)
+**工具包文档**: [composio.dev/toolkits/short_menu](https://composio.dev/toolkits/short_menu)
 
 ## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
-- Active Short Menu connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `short_menu`
-- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+- Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+- 通过 `RUBE_MANAGE_CONNECTIONS` 建立活跃的 Short Menu 连接，工具包为 `short_menu`
+- 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具架构
 
 ## 设置
 
