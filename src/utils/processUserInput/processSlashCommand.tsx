@@ -306,6 +306,105 @@ export function looksLikeCommand(commandName: string): boolean {
   // If it contains other characters, it's probably a file path or other input
   return !/[^a-zA-Z0-9:\-_]/.test(commandName);
 }
+
+/**
+ * Fuzzy-search all prompt-type commands (skills) by name and description.
+ * Used as a fallback when exact command match fails.
+ * This allows users to type things like "Windows C++ project generator"
+ * and match a skill named "Windows:cpp-project-generator".
+ */
+function searchSkillByNameOrDescription(
+  query: string,
+  commands: Command[],
+): Command | void {
+  const promptCommands = commands.filter(
+    (cmd): cmd is Command & PromptCommand =>
+      cmd.type === 'prompt' && cmd.userInvocable !== false,
+  )
+  if (promptCommands.length === 0) return
+
+  const lowerQuery = query.toLowerCase().trim()
+  if (!lowerQuery) return
+
+  const queryWords = lowerQuery
+    .split(/[\s\-_:]+/)
+    .filter((w: string) => w.length > 0)
+
+  function tokenize(name: string): string[] {
+    return name
+      .toLowerCase()
+      .split(/[\s\-_:]+/)
+      .filter((w: string) => w.length > 0)
+  }
+
+  interface ScoredMatch {
+    cmd: Command
+    score: number
+  }
+
+  const scored: ScoredMatch[] = []
+
+  for (const cmd of promptCommands) {
+    const nameTokens = tokenize(cmd.name)
+    const fullName = cmd.name.toLowerCase()
+
+    if (fullName === lowerQuery) {
+      return cmd
+    }
+
+    let score = 0
+
+    if (fullName.startsWith(lowerQuery)) {
+      score += 100
+    }
+
+    const nameMatchCount = queryWords.filter((w: string) =>
+      nameTokens.some((t: string) => t === w || t.startsWith(w)),
+    ).length
+    score += nameMatchCount * 20
+
+    const lastPart = nameTokens[nameTokens.length - 1]
+    if (lastPart) {
+      const exactLastMatch = queryWords.filter((w: string) =>
+        lastPart === w || lastPart.startsWith(w),
+      ).length
+      score += exactLastMatch * 15
+    }
+
+    const firstPart = nameTokens[0]
+    if (firstPart && firstPart !== lastPart) {
+      const nsMatch = queryWords.filter((w: string) =>
+        firstPart === w || firstPart.startsWith(w),
+      ).length
+      score += nsMatch * 10
+    }
+
+    const descTokens = cmd.description
+      ? cmd.description
+          .toLowerCase()
+          .split(/[\s\-_:]+/)
+          .filter((w: string) => w.length > 0)
+      : []
+
+    const descMatchCount = queryWords.filter((w: string) =>
+      descTokens.some((t: string) => t === w || t.startsWith(w)),
+    ).length
+    if (nameMatchCount > 0 && descMatchCount > 0) {
+      score += descMatchCount * 5
+    }
+
+    if (nameMatchCount > 0 || descMatchCount > 0) {
+      scored.push({ cmd, score })
+    }
+  }
+
+  scored.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score
+    return a.cmd.name.length - b.cmd.name.length
+  })
+
+  return scored[0]?.cmd
+}
 export async function processSlashCommand(inputString: string, precedingInputBlocks: ContentBlockParam[], imageContentBlocks: ContentBlockParam[], attachmentMessages: AttachmentMessage[], context: ProcessUserInputContext, setToolJSX: SetToolJSXFn, uuid?: string, isAlreadyProcessing?: boolean, canUseTool?: CanUseToolFn): Promise<ProcessUserInputBaseResult> {
   const parsed = parseSlashCommand(inputString);
   if (!parsed) {
@@ -343,6 +442,21 @@ export async function processSlashCommand(inputString: string, precedingInputBlo
 
   // Check if it's a real command before processing
   if (!hasCommand(commandName, context.options.commands)) {
+    // Try fuzzy search: combine commandName + args to search across all
+    // skill names and descriptions. This lets users type things like:
+    //   "Windows C++ 项目生成器"
+    // and match an existing skill like "Windows:cpp-project-generator".
+    const searchQuery = parsedArgs ? `${commandName} ${parsedArgs}`.trim() : commandName
+    const matchedSkill = searchSkillByNameOrDescription(searchQuery, context.options.commands)
+
+    if (matchedSkill && matchedSkill.type === 'prompt') {
+      // Found a matching skill — execute it directly
+      logForDebugging(`[slash] Fuzzy-matched "${searchQuery}" to skill "${matchedSkill.name}"`)
+      const { getMessagesForPromptSlashCommand, processPromptSlashCommand } =
+        await import('./processSlashCommand.js')
+      return getMessagesForPromptSlashCommand(matchedSkill, parsedArgs, context, precedingInputBlocks, imageContentBlocks, uuid)
+    }
+
     // Check if this looks like a command name vs a file path or other input
     // Also check if it's an actual file path that exists
     let isFilePath = false;
