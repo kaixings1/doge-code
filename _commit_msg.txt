@@ -1,0 +1,12 @@
+fix: Windows Shell system refactor - default to cmd.exe + MSYS2 safety protection 
+  
+Core changes:  
+1. Shell.ts: exec refactored - Windows defaults to cmd.exe, CLAUDE_CODE_SHELL_WANT_BASH=1 opt-in. getResolveProvider switch-case. Timeout 5min.  
+2. cmdProvider.ts: fixed spawn args (removed /s), fixed pwd tracking.  
+3. BashTool.tsx: skip normalizeWindowsCommand for cmd.exe.  
+4. bootstrap-entry.ts: full path for SHELL vars.  
+5. CLAUDE.md: MSYS2 protection tools, .bashrc guide, more failure cases.  
+6. prompts/BashTool.prompt: MSYS2 ban notice.  
+7. prompts.ts: MSYS2 ban notice.  
+8. shellProvider.ts: SHELL_TYPES extended with cmd.  
+  
