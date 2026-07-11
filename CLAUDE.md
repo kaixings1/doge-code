@@ -20,11 +20,21 @@
 - **全局命令名**: `doge`（`bun link` 注册 `@doge-code/cli`）
 - **代码检查**: Biome（`biome.json` — 宽松规则，大部分检查已关闭）
 
-## ⚠️ DANGER：本项目运行在 Windows Git Bash 下，禁止用 Bash 写 TS/JS 文件
+## 🔴 DANGER：本项目运行在 Windows Git Bash 下——禁止使用 Bash 做任何文件操作
 
-**🔴 最高优先级规则：写文件必须用 Write、FileWriteTool 或 MultiFileEditTool 工具；文件搜索必须用 Glob、Grep 或 Read 工具**
+**🔴 绝对禁止：任何写文件、读文件、搜文件的操作，都不得通过 Bash（MSYS2）执行**
 
-本项目所有写文件和搜索操作**必须**使用内置工具，禁止通过 Bash 写入或搜索文件。
+MSYS2 bash 会破坏以下字符：`"` `[` `]` `&` `(` `)` `'` `\` 等，导致所有内联脚本（`python3 -c`、`node -e`、PowerShell 单行命令）均不可靠。
+
+**强制规则（违反后果自负）：**
+1. **文件写入** → 只能用 `Write` / `FileWriteTool` / `MultiFileEditTool` / `Edit`
+2. **文件读取** → 只能用 `Read`
+3. **文件搜索** → 只能用 `Glob` / `Grep`
+4. **创建 Python/JS/PowerShell 脚本** → 只能用 `Write` 工具，**绝不用** `python3 -c "..."`、`node -e "..."`、`powershell -Command "..."`、`cat > file`、`echo > file`
+5. **Bash 的唯一合法用途**：运行 git 命令、项目开发命令（`bun run`、`bun install`、`bun run build`、`bun run lint`）、查看目录结构（`dir`）、执行已存在的脚本
+
+**🔴 特别禁令：禁止用 Bash 执行任何包含以下字符的内联代码：** `"` `'` `[` `]` `&` `(` `)` `\`  
+如果在 bash 命令中看到这些字符，立即改用 Write 工具写入文件后执行。
 
 ### ✅ 可用工具清单（直接调用即可，无需导入）
 
@@ -49,6 +59,11 @@
 - `printf '%b' '\n'` → MSYS2 printf 的 `\n` 解析与非 POSIX 实现不一致
 - `find . -name "*.ts"` → 应用 Glob 替代（更准确且不会阻塞）
 - `grep -r "keyword" src/` → 应用 Grep 替代（更高效且跨平台）
+- `findstr /n "pattern\|with\|pipe" file` → MSYS2 把 `\|` 解释为管道符，报错 `command not found`
+- `cmd.exe /c "echo ... > file"` → MSYS2 拦截 `>` 重定向，无法创建文件
+- `cmd.exe /c "..." & "..."` → MSYS2 把 `&` 解释为后台执行，cmd 命令被截断
+- `powershell -Command "..."` → 参数中的 `"` `\` `$` 等全被 MSYS2 转义破坏
+- 在 MSYS2 bash 下，**任何包含 `%` `>` `<` `&` `|` `\` 字符的内联命令都无法正确传递给子进程**
 
 **正确的操作方式（按优先级）：**
 1. **`Write`/`FileWriteTool`** — 创建/覆盖文件，传入完整内容字符串
@@ -73,6 +88,56 @@
 ```
 
 **⚠️ 如果 Write/FileWriteTool/FileEditTool/Glob/Grep/Read 等工具均不可用：请立即停止操作，告知用户「写文件/搜索工具不可用，无法继续」，不要尝试用任何 bash 命令替代。**
+
+### 🛡️ MSYS2 防护工具（项目根目录下的 .bat 封装）
+
+项目提供了两个批处理封装脚本，用于在 Git Bash 中绕过 MSYS2 的转义问题：
+
+| 文件 | 作用 | 用法示例 |
+|------|------|----------|
+| `_grep.bat` | 封装 `findstr /n /s /p`，支持搜索子目录 | `cmd.exe /c _grep.bat "pattern1\|pattern2" file` |
+| `_findstr.bat` | 封装 `findstr`，不递归 | `cmd.exe /c _findstr.bat "pattern" file` |
+
+**为什么不直接用 Bash 的 `findstr` / `grep`？**
+- MSYS2 bash 会把 `\|`（findstr 的正则 OR）解释为 Unix 管道
+- MSYS2 会破坏 `"` `[` `]` 等字符
+- 这些 `.bat` 由 cmd.exe 直接执行，完全避开 MSYS2 转义
+
+**最佳实践（在 Git Bash 终端中）：**
+```bash
+# 方式1：显式通过 cmd.exe 调用 .bat（推荐用于 `\|` 模式）
+cmd.exe /c _grep.bat "findSuitableShell|cmdProvider" src/utils/Shell.ts
+
+# 方式2：直接 cmd /c 调用 findstr（不需要 .bat 文件）
+cmd.exe /c findstr /n "findSuitableShell|cmdProvider" src/utils/Shell.ts
+
+# 方式3：简单单关键词搜索，Bash 自带的 findstr 够用
+findstr /n "findSuitableShell" src/utils/Shell.ts
+```
+
+### ⚙️ ~/.bashrc 防护配置（推荐）
+
+在 `~/.bashrc`（即 `C:\Users\<用户名>\.bashrc`）中配置以下内容，可在 Git Bash 中直接使用 `findstr` 而不遇到转义问题：
+
+```bash
+# ===== MSYS2 防护规则 =====
+# 禁止 MSYS2 自动转换命令参数中的 Windows 路径
+export MSYS2_ENV_CONV_EXCL="*"
+# 别名：findstr 走 cmd.exe，避免 | \ 被 MSYS2 破坏
+alias findstr="cmd.exe /c findstr"
+# 快捷搜索命令
+alias _f="cmd.exe /c findstr /n"
+alias _g="cmd.exe /c findstr /n /s /p"
+```
+
+配置后重启 Git Bash，搜索命令变简洁：
+```bash
+# 多关键词搜索（\| 语法不会被 MSYS2 破坏）
+_f "findSuitableShell|cmdProvider" src/utils/Shell.ts
+_g "findSuitableShell|cmdProvider" src/utils/Shell.ts
+```
+
+> ⚠️ **注意**：`.bat` 文件和 `.bashrc` 修改都是**已加入 git 管理的文件**，`git clean` 等清理操作不会删除它们。`.bashrc` 在用户目录下需手动备份。
 
 ## 开发命令
 
