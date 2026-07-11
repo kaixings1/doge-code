@@ -41,7 +41,14 @@ import type { ShellProvider, ShellType } from './shell/shellProvider.js'
 import { subprocessEnv } from './subprocessEnv.js'
 import { posixPathToWindowsPath } from './windowsPaths.js'
 
-const DEFAULT_TIMEOUT = 30 * 60 * 1000 // 30 minutes
+// Windows cmd.exe 下执行命令通常很快（< 1 秒）。
+// 30 分钟超时对 cmd.exe 来说太长——如果命令出错（如命令不存在），
+// 用户会卡死 30 分钟。使用更短默认值，同时保留环境变量覆盖能力。
+const DEFAULT_TIMEOUT = process.env.BASH_DEFAULT_TIMEOUT_MS
+  ? parseInt(process.env.BASH_DEFAULT_TIMEOUT_MS, 10)
+  : process.platform === 'win32'
+    ? 5 * 60 * 1000 // Windows 默认 5 分钟
+    : 30 * 60 * 1000 // 其他平台 30 分钟
 
 export type ShellConfig = {
   provider: ShellProvider
@@ -117,10 +124,9 @@ function isExecutable(shellPath: string): boolean {
  * Determines the best available shell to use.
  */
 export async function findSuitableShell(): Promise<string> {
-  // Check for explicit shell override first
+  // 检查 CLAUDE_CODE_SHELL 显式覆盖
   const shellOverride = process.env.CLAUDE_CODE_SHELL
   if (shellOverride) {
-    // Validate it's a supported shell type (bash/zsh/cmd/powershell)
     const shim = shellOverride.toLowerCase()
     const isBashOrZsh = shim.includes('bash') || shim.includes('zsh')
     const isWindowsShell = shim.includes('cmd') || shim.includes('powershell') || shim.includes('pwsh')
@@ -139,51 +145,60 @@ export async function findSuitableShell(): Promise<string> {
     }
   }
 
-  // On Windows, check for Windows-native shells first
   const isWindows = process.platform === 'win32'
+
+  // 🔴 Windows 默认行为：除非用户显式指定 bash/zsh，否则使用 cmd.exe
+  // MSYS2/Git Bash 在多行内联代码（python3 -c、node -e 等）中会破坏
+  // "、[、]、&、(、)、'、\ 等字符，导致所有文件创建操作不可靠。
   if (isWindows) {
     const envShell = process.env.SHELL
-    // If SHELL is cmd or powershell, use it directly
-    const shim = (envShell || '').toLowerCase()
-    if (shim.includes('cmd') || shim.includes('powershell') || shim.includes('pwsh')) {
-      logForDebugging(`Using Windows native shell from SHELL: ${envShell}`)
-      return envShell!
+    const shellShim = (envShell || '').toLowerCase()
+
+    // 检查用户是否通过 CLAUDE_CODE_SHELL_WANT_BASH 显式要求 bash
+    // Git bash/MSYS2 在多行内联代码（python3 -c、node -e 等）中会破坏
+    // "、[、]、&、(、)、'、\ 等字符，除非用户明确选择，默认禁止 bash
+    if (process.env.CLAUDE_CODE_SHELL_WANT_BASH === '1') {
+      if (shellShim.includes('bash') || shellShim.includes('zsh')) {
+        if (envShell && isExecutable(envShell)) {
+          logForDebugging(`Using bash/zsh from SHELL as explicitly requested via CLAUDE_CODE_SHELL_WANT_BASH: ${envShell}`)
+          return envShell
+        }
+        const found = await which(shellShim.includes('bash') ? 'bash' : 'zsh')
+        if (found && isExecutable(found)) {
+          logForDebugging(`Using ${shellShim.includes('bash') ? 'bash' : 'zsh'} from which() via CLAUDE_CODE_SHELL_WANT_BASH: ${found}`)
+          return found
+        }
+      }
+      logForDebugging('CLAUDE_CODE_SHELL_WANT_BASH=1 but no bash/zsh found, falling back to cmd.exe')
     }
+
+    // 默认使用 cmd.exe（无论是 SHELL 未设置、SHELL 为 cmd/powershell、还是找不到 bash）
+    const cmdPath = 'C:\\Windows\\System32\\cmd.exe'
+    logForDebugging(`Windows 默认使用 cmd.exe (SHELL=${envShell || '(未设置)'})`)
+    return cmdPath
   }
 
-  // Check user's preferred shell from environment
+  // ====== Linux / macOS 路径（原逻辑保持不变）======
+
   const env_shell = process.env.SHELL
-  // Only consider SHELL if it's bash or zsh
   const isEnvShellSupported =
     env_shell && (env_shell.includes('bash') || env_shell.includes('zsh'))
   const preferBash = env_shell?.includes('bash')
 
-  // Try to locate shells using which (uses Bun.which when available)
   const [zshPath, bashPath] = await Promise.all([which('zsh'), which('bash')])
 
-  // Populate shell paths from which results and fallback locations
   const shellPaths = [
     '/bin',
     '/usr/bin',
     '/usr/local/bin',
     '/opt/homebrew/bin',
-    // Windows 下 Git Bash / MSYS2 的常见安装路径
-    'C:/Program Files/Git/bin',
-    'C:/Program Files (x86)/Git/bin',
-    'C:/msys64/usr/bin',
-    'C:/tools/msys64/usr/bin',
-    'C:/Program Files/Git/usr/bin',
-    'C:/Program Files (x86)/Git/usr/bin',
   ]
 
-  // Order shells based on user preference
   const shellOrder = preferBash ? ['bash', 'zsh'] : ['zsh', 'bash']
   const supportedShells = shellOrder.flatMap(shell =>
     shellPaths.map(path => `${path}/${shell}`),
   )
 
-  // Add discovered paths to the beginning of our search list
-  // Put the user's preferred shell type first
   if (preferBash) {
     if (bashPath) supportedShells.unshift(bashPath)
     if (zshPath) supportedShells.push(zshPath)
@@ -192,21 +207,12 @@ export async function findSuitableShell(): Promise<string> {
     if (bashPath) supportedShells.push(bashPath)
   }
 
-  // Always prioritize SHELL env variable if it's a supported shell type
   if (isEnvShellSupported && isExecutable(env_shell)) {
     supportedShells.unshift(env_shell)
   }
 
   const shellPath = supportedShells.find(shell => shell && isExecutable(shell))
 
-  // If no valid bash/zsh found on Windows, fall back to cmd.exe
-  if (!shellPath && isWindows) {
-    const cmdPath = 'C:/Windows/System32/cmd.exe'
-    logForDebugging(`No bash/zsh found, falling back to cmd.exe: ${cmdPath}`)
-    return cmdPath
-  }
-
-  // If no valid shell found, throw a helpful error
   if (!shellPath) {
     const errorMsg =
       '未找到合适的 shell。Claude CLI 需要 Posix shell 环境。' +
@@ -247,10 +253,36 @@ export const getPsProvider = memoize(async (): Promise<ShellProvider> => {
   return createPowerShellProvider(psPath)
 })
 
-const resolveProvider: Record<ShellType, () => Promise<ShellProvider>> = {
-  bash: async () => (await getShellConfig()).provider,
-  powershell: getPsProvider,
+let _cmdProvider: ShellProvider | null = null
+async function getCmdProvider(): Promise<ShellProvider> {
+  if (!_cmdProvider) {
+    const { createCmdShellProvider } = await import('./shell/cmdProvider.js')
+    _cmdProvider = createCmdShellProvider('C:\\Windows\\System32\\cmd.exe')
+  }
+  return _cmdProvider
 }
+
+// getResolveProvider：根据 shellType 字符串安全返回对应的 ShellProvider
+// 使用 switch-case（而非对象映射），避免打包后对象键缺失导致的 "is not a function" 错误
+async function getResolveProvider(shellType: string): Promise<ShellProvider> {
+  const shim = (shellType || '').toLowerCase()
+  switch (shim) {
+    case 'cmd':
+      return getCmdProvider()
+    case 'powershell':
+    case 'pwsh':
+      return getPsProvider()
+    case 'bash':
+    case 'zsh':
+      return (await getShellConfig()).provider
+    default:
+      logForDebugging(`[resolveProvider] 未知 shellType="${shellType}"，回退到 cmdProvider`)
+      return getCmdProvider()
+  }
+}
+
+// 扩展 ShellType 以支持 'cmd'
+type ShellTypeInternal = ShellType | 'cmd'
 
 export type ExecOptions = {
   timeout?: number
@@ -278,6 +310,41 @@ export async function exec(
   shellType: ShellType,
   options?: ExecOptions,
 ): Promise<ShellCommand> {
+  // 🔴 Windows 安全保护：禁止 bashProvider 被调用（MSYS2 破坏内联代码）
+  // 除非用户显式通过 CLAUDE_CODE_SHELL=xxx 或 CLAUDE_CODE_SHELL_WANT_BASH=1 授权
+  // BashTool.tsx 中的命令归一化层会检查此逻辑的镜像版本，以确保方向正确。
+  if (process.platform === 'win32' && !process.env.CLAUDE_CODE_SHELL_WANT_BASH) {
+    const shim = (process.env.CLAUDE_CODE_SHELL || '').toLowerCase()
+    if (!shim.includes('cmd') && !shim.includes('powershell') && !shim.includes('pwsh')) {
+      // 强制降级到 cmd.exe
+      const { createCmdShellProvider } = await import('./shell/cmdProvider.js')
+      const cmdPath = 'C:\\Windows\\System32\\cmd.exe'
+      logForDebugging(`[exec] Windows 安全保护：强制使用 cmd.exe (shellType=${shellType}, CLAUDE_CODE_SHELL=${process.env.CLAUDE_CODE_SHELL || '(未设置)'})`)
+      return execWithProvider(command, abortSignal, createCmdShellProvider(cmdPath), options)
+    }
+  }
+
+  // 如果 shellType 为 'cmd'，直接使用 cmdProvider
+  if (shellType === 'cmd') {
+    logForDebugging('[exec] shellType=cmd，使用 cmdProvider')
+    const provider = await getCmdProvider()
+    return execWithProvider(command, abortSignal, provider, options)
+  }
+
+  logForDebugging(`[exec] 通过 getResolveProvider 解析 shellType="${shellType}"`)
+  const provider = await getResolveProvider(shellType)
+  return execWithProvider(command, abortSignal, provider, options)
+}
+
+/**
+ * 使用指定的 ShellProvider 执行命令（内部函数，供 exec 和 Windows 安全保护使用）
+ */
+async function execWithProvider(
+  command: string,
+  abortSignal: AbortSignal,
+  provider: ShellProvider,
+  options?: ExecOptions,
+): Promise<ShellCommand> {
   const {
     timeout,
     onProgress,
@@ -287,8 +354,6 @@ export async function exec(
     onStdout,
   } = options ?? {}
   const commandTimeout = timeout || DEFAULT_TIMEOUT
-
-  const provider = await resolveProvider[shellType]()
 
   const id = Math.floor(Math.random() * 0x10000)
     .toString(16)
