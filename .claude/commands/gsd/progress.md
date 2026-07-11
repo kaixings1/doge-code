@@ -12,13 +12,13 @@ allowed-tools:
 requires: [phase]
 ---
 <objective>
-Check project progress, summarize recent work and what's ahead, then intelligently route to the next action.
+检查项目进度，总结最近的工作和后续计划，然后智能路由到下一个操作。
 
-Three modes:
-- **default**: Show progress report + intelligently route to the next action (execute or plan). Provides situational awareness before continuing work.
-- **--next**: Automatically advance to the next logical step without manual route selection. Reads STATE.md, ROADMAP.md, and phase directories. Supports `--force` to bypass safety gates.
-- **--do "task description"**: Analyze freeform natural language and dispatch to the most appropriate GSD command. Never does the work itself — matches intent, confirms, hands off.
-- **--forensic**: Append a 6-check integrity audit after the standard progress report.
+三种模式：
+- **默认**：显示进度报告 + 智能路由到下一个操作（执行或规划）。在继续工作前提供态势感知。
+- **--next**：无需手动路由选择，自动前进到下一个逻辑步骤。读取 STATE.md、ROADMAP.md 和阶段目录。支持 `--force` 绕过安全关卡。
+- **--do "task description"**：分析自由格式的自然语言并分派到最合适的 GSD 命令。绝不自行完成工作——匹配意图、确认、移交。
+- **--forensic**：在标准进度报告后附加 6 项完整性审计。
 </objective>
 
 <flags>

@@ -11,7 +11,7 @@ Zero dead time. While one session runs tests, work on something else.
 
 Use when waiting on tests, long builds, exploring approaches, or needing to review and develop simultaneously.
 
-## Quick Start
+## 快速入门
 
 **Claude Code:**
 ```bash
@@ -42,7 +42,7 @@ These features are Claude Code-specific (skip if using Cursor):
 3. Open a new editor/terminal session in the worktree.
 4. When done, clean up the worktree.
 
-## Commands
+## 命令
 
 ```bash
 git worktree list

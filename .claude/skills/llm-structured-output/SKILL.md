@@ -1,5 +1,5 @@
 ---
-name: llm-structured-output
+name: LLM 结构化输出
 description: "LLM 结构化输出 — 使用 response_format、tool_use 和 架构 约束解码从 OpenAI、Anthropic 和 Google API 获取可靠的 JSON、枚举和类型化对象。"
 risk: safe
 source: community

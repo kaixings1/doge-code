@@ -1,5 +1,5 @@
 ---
-name: crossframe-review
+name: 适用于需要审查 CrossFrame 输出
 description: "适用于需要审查 CrossFrame 输出的推理保真度、证据边界、源锚点、概念漂移、文章坍缩或修复步骤的场景。"
 category: 工作流
 risk: safe

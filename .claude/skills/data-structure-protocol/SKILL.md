@@ -1,5 +1,5 @@
 ---
-name: data-structure-protocol
+name: —导航依赖关系、跟踪公共 API、理解连接存在的原因，无需重读整个仓库。
 description: "为代理提供代码库的持久化结构性记忆——导航依赖关系、跟踪公共 API、理解连接存在的原因，无需重读整个仓库。"
 risk: safe
 source: "https://github.com/k-kolomeitsev/data-structure-protocol"

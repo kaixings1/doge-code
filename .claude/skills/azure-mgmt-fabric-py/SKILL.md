@@ -1,6 +1,6 @@
 ---
-name: azure-mgmt-fabric-py
-description: "Azure Mgmt Fabric Py — Azure Mgmt Fabric Py 相关功能和最佳实践"
+name: Azure Fabric 管理 Python SDK 相关功能和最佳实
+description: "Azure Management Fabric Python — Azure Fabric 管理 Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -197,7 +197,7 @@ for sku in skus:
     print(f"SKU: {sku.name} - Tier: {sku.tier}")
 ```
 
-## Client Operations
+## 客户端操作
 
 | 操作 | Method |
 |-----------|--------|

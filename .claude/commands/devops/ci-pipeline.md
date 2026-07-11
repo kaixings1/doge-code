@@ -1,36 +1,36 @@
 为 GitHub Actions 生成 CI 流水线配置。
 
-## Steps
+## 步骤
 
-### 1. Detect Project Requirements
-- Identify language, package manager, and test framework from config files.
-- Determine required services (database, Redis, etc.) from the project setup.
-- Check for existing CI configuration to update rather than replace.
+### 1. 检测项目需求
+- 从配置文件中识别语言、包管理器和测试框架。
+- 从项目设置中确定所需服务（数据库、Redis 等）。
+- 检查现有的 CI 配置以进行更新而非替换。
 
-### 2. Pipeline Stages
+### 2. 流水线阶段
 
-#### Lint
-- Run linter: ESLint, Ruff, golangci-lint, clippy.
-- Run formatter check: Prettier, Black, gofmt, rustfmt.
-- Run type checker: tsc --noEmit, mypy, go vet.
+#### 代码检查
+- 运行 linter：ESLint、Ruff、golangci-lint、clippy。
+- 运行格式化检查：Prettier、Black、gofmt、rustfmt。
+- 运行类型检查器：tsc --noEmit、mypy、go vet。
 
-#### Test
-- Run unit tests with coverage reporting.
-- Run integration tests with required services.
-- Upload coverage reports as artifacts.
-- Fail if coverage drops below threshold.
+#### 测试
+- 运行单元测试并生成覆盖率报告。
+- 运行集成测试（含所需服务）。
+- 上传覆盖率报告作为构建产物。
+- 如果覆盖率低于阈值则失败。
 
-#### Build
-- Build the application.
-- Build Docker image if applicable.
-- Upload build artifacts.
+#### 构建
+- 构建应用程序。
+- 如果适用，构建 Docker 镜像。
+- 上传构建产物。
 
-#### Deploy (on main branch only)
-- Deploy to staging environment.
-- Run smoke tests against staging.
-- Deploy to production (manual approval gate).
+#### 部署（仅在 main 分支上）
+- 部署到预发布环境。
+- 对预发布环境运行冒烟测试。
+- 部署到生产环境（需要手动批准关卡）。
 
-### 3. Generate Workflow File
+### 3. 生成工作流文件
 ```yaml
 name: CI
 on:
@@ -81,17 +81,17 @@ jobs:
       - run: npm run build
 ```
 
-### 4. Add Caching
-- Cache package manager dependencies (npm, pip, go modules).
-- Cache build outputs where possible.
-- Use `hashFiles` for cache keys based on lock files.
+### 4. 添加缓存
+- 缓存包管理器依赖（npm、pip、go modules）。
+- 尽可能缓存构建输出。
+- 基于锁定文件使用 `hashFiles` 作为缓存键。
 
-## Rules
+## 规则
 
-- Use specific action versions (v4, not latest) for reproducibility.
-- Cache aggressively: dependencies, build outputs, Docker layers.
-- Run lint before tests (fail fast on style issues).
-- Use matrix builds for multiple language versions only if the project supports them.
-- Keep secrets in GitHub repository settings, never in workflow files.
-- Add timeout limits to prevent hung jobs: `timeout-minutes: 15`.
-- Use `concurrency` to cancel superseded runs on the same branch.
+- 为可重现性使用特定的操作版本（v4，而非 latest）。
+- 积极缓存：依赖、构建输出、Docker 层。
+- 在测试前运行代码检查（在样式问题上快速失败）。
+- 仅当项目支持时才使用矩阵构建来处理多种语言版本。
+- 将密钥保存在 GitHub 仓库设置中，绝不在工作流文件中保存。
+- 添加超时限制以防止作业挂起：`timeout-minutes: 15`。
+- 使用 `concurrency` 取消同一分支上被取代的运行。

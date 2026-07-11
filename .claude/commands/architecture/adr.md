@@ -1,48 +1,48 @@
 撰写架构决策记录（ADR），记录重要的技术决策。
 
-## Steps
+## 步骤
 
-1. Ask for or infer the decision topic from the argument (e.g., "use PostgreSQL over MongoDB").
-2. Scan the codebase for existing ADRs in `docs/adr/`, `docs/decisions/`, or `adr/` directories.
-3. Determine the next ADR number by counting existing records.
-4. Research the current codebase to gather context:
-   - What technologies are currently used.
-   - What constraints exist (team size, performance requirements, existing integrations).
-5. Draft the ADR with all required sections.
-6. Create the file as `docs/adr/NNNN-<slug>.md`.
-7. If a `docs/adr/README.md` index exists, add an entry for the new ADR.
+1. 从参数中询问或推断决策主题（例如"使用 PostgreSQL 而非 MongoDB"）。
+2. 在 `docs/adr/`、`docs/decisions/` 或 `adr/` 目录中扫描现有的 ADR。
+3. 通过计数现有记录确定下一个 ADR 编号。
+4. 研究当前代码库以收集上下文：
+   - 当前使用的技术。
+   - 存在的约束条件（团队规模、性能要求、现有集成）。
+5. 起草包含所有必需部分的 ADR。
+6. 创建文件为 `docs/adr/NNNN-<slug>.md`。
+7. 如果存在 `docs/adr/README.md` 索引，为新 ADR 添加条目。
 
-## Format
+## 格式
 
 ```markdown
-# ADR-NNNN: <Title>
+# ADR-NNNN：<标题>
 
-## Status
-Proposed | Accepted | Deprecated | Superseded by ADR-XXXX
+## 状态
+已提议 | 已接受 | 已弃用 | 被 ADR-XXXX 取代
 
-## Context
-What is the issue that we are seeing that motivates this decision?
+## 背景
+我们看到的促使此决策的问题是什么？
 
-## Decision
-What is the change that we are proposing and/or doing?
+## 决策
+我们提议和/或正在做的变更是什么？
 
-## Consequences
-What becomes easier or harder as a result of this decision?
+## 影响
+此决策使什么变得更容易或更困难？
 
-### Positive
-- Benefit 1
+### 积极影响
+- 好处 1
 
-### Negative
-- Tradeoff 1
+### 消极影响
+- 权衡 1
 
-### Risks
-- Risk 1 with mitigation strategy
+### 风险
+- 风险 1（附缓解策略）
 ```
 
-## Rules
+## 规则
 
-- ADRs are immutable once accepted; create a new ADR to supersede an old one.
-- Keep the context section factual and free of opinion.
-- List at least one positive, one negative, and one risk consequence.
-- Use the project's existing ADR format if one already exists.
-- Date the ADR with the current date in the status section.
+- ADR 一旦被接受即不可变；创建新的 ADR 以取代旧的 ADR。
+- 保持背景部分实事求是，不带观点。
+- 至少列出一条积极影响、一条消极影响和一条风险影响。
+- 如果项目已有 ADR 格式，使用项目现有格式。
+- 在状态部分使用当前日期为 ADR 标注日期。

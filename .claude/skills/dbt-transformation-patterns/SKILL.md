@@ -1,5 +1,5 @@
 ---
-name: dbt-transformation-patterns
+name: dbt（数据构建工具）的生产就绪模式，包括模型组织、测试策略、文档和增量处理。
 description: "dbt（数据构建工具）的生产就绪模式，包括模型组织、测试策略、文档和增量处理。"
 risk: none
 source: community

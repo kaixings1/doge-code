@@ -1,5 +1,5 @@
 ---
-name: MailerLite Automation
+name: 流，包括订阅者管理、活动分析
 description: "通过 Composio 自动执行 MailerLite 的电子邮件营销工作流，包括订阅者管理、活动分析、群组细分和账户监控"
 requires:
   mcp:

@@ -1,5 +1,5 @@
 ---
-name: amazon-alexa
+name: Amazon Alexa 集成
 description: "与 Amazon Alexa 的完整集成，用于创建智能语音技能、将 Alexa 转变为以 Claude 为大脑的助手（Auri 项目）并与 AWS 生态系统（Lambda、DynamoDB、Polly、Transcribe、Lex、Smart Home）集成。"
 risk: safe
 source: community

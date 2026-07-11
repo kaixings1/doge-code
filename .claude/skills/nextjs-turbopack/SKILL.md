@@ -1,5 +1,5 @@
 ---
-name: nextjs-turbopack
+name: Next.js + Turbopack 开发指南
 description: Next.js + Turbopack 开发指南
 ---
 

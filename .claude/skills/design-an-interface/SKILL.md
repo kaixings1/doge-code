@@ -1,5 +1,5 @@
 ---
-name: design-an-interface
+name: 使用并行子代理为一个模块生成多种截然不同的接口设计
 description: 使用并行子代理为一个模块生成多种截然不同的接口设计。当用户想要设计 API、探索接口选项、比较模块形状，或提到 "design it twice" 时使用。
 ---
 

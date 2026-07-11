@@ -1,14 +1,16 @@
 ---
-name: to-prd
+name: To Prd 相关功能和最佳实践
 description: "To Prd — To Prd 相关功能和最佳实践"
 disable-model-invocation: true
 ---
+
+# PRD 生成 (To PRD)
 
 此技能获取当前对话上下文和代码库理解，生成 PRD。不要询问用户——只需综合你已经知道的内容。
 
 议题追踪器和分类标签词汇应已提供给你——如果没有，请运行 `/设置-matt-pocock-skills`。
 
-## Process
+## 流程
 
 1. Explore the repo to understand the current state of the codebase, if you haven't already. Use the project's domain glossary vocabulary throughout the PRD, and respect any ADRs in the area you're touching.
 

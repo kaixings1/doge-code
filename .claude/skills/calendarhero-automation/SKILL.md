@@ -1,5 +1,5 @@
 ---
-name: calendarhero-automation
+name: CalendarHero 自动化
 description: "CalendarHero 自动化"
 risk: safe
 source: community

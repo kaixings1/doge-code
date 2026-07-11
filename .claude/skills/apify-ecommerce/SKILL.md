@@ -1,5 +1,5 @@
 ---
-name: apify-ecommerce
+name: Apify 电子商务
 description: "Apify 电子商务"
 risk: safe
 source: community

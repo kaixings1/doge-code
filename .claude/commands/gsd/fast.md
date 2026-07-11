@@ -13,13 +13,10 @@ requires: [config, quick]
 ---
 
 <objective>
-Execute a trivial task directly in the current context without spawning subagents
-or generating PLAN.md files. For tasks too small to justify planning overhead:
-typo fixes, config changes, small refactors, forgotten commits, simple additions.
+在当前上下文中直接执行琐碎任务，无需生成子智能体或生成 PLAN.md 文件。
+适用于太小而不值得规划开销的任务：拼写错误修复、配置更改、小型重构、遗漏的提交、简单的添加。
 
-This is NOT a replacement for /gsd:quick — use /gsd:quick for anything that
-needs research, multi-step planning, or verification. /gsd:fast is for tasks
-you could describe in one sentence and execute in under 2 minutes.
+这不是 /gsd:quick 的替代品——对于需要研究、多步骤规划或验证的任何事项，使用 /gsd:quick。/gsd:fast 适用于你可以用一句话描述并在 2 分钟内执行的任务。
 </objective>
 
 <execution_context>

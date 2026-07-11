@@ -1,5 +1,5 @@
 ---
-name: seo
+name: 任何网站或业务类型的全面 SEO 分析。完整网站审计、单页分析、技术 SEO（可
 description: "任何网站或业务类型的全面 SEO 分析。完整网站审计、单页分析、技术 SEO（可爬取性、可索引性、Core Web Vitals with INP）、架构 标记、内容质量 (E-E-A-T)、图片优化、网站地图分析和面向 AI Overviews/ChatGPT/Perplexity 的 GEO。支持 SaaS、电商、本地服务、发布商、机构的行业检测。"
 user-invocable: true
 参数-hint: "[command] [url]"

@@ -1,6 +1,6 @@
 ---
-name: azure-ai-openai-dotnet
-description: "Azure Ai Openai Dotnet — Azure Ai Openai Dotnet 相关功能和最佳实践"
+name: Azure AI OpenAI .NET SDK 相关功能和最佳实践
+description: "Azure AI OpenAI .NET — Azure AI OpenAI .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -29,7 +29,7 @@ AZURE_OPENAI_API_KEY=<api-key>                    # For key-based auth
 AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4o-mini          # Your deployment name
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 ```
 AzureOpenAIClient (top-level)
@@ -436,7 +436,7 @@ catch (RequestFailedException ex)
 }
 ```
 
-## Related SDKs
+## 相关 SDK
 
 | SDK | Purpose | Install |
 |-----|---------|---------|

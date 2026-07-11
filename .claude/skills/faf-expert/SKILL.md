@@ -1,5 +1,5 @@
 ---
-name: faf-expert
+name: FAF 专家系统
 description: "FAF 专家系统"
 risk: safe
 source: community

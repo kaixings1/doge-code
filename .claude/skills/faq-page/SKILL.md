@@ -1,5 +1,5 @@
 ---
-name: faq-page
+name: FAQ 页面
 description: "FAQ 页面 — 常见问题页面创建"
 risk: safe
 source: community

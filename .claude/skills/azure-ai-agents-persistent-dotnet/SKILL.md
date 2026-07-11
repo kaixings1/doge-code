@@ -1,5 +1,5 @@
 ---
-name: azure-ai-agents-persistent-dotnet
+name: Azure AI 持久智能体 (.NET)
 description: "Azure AI 持久智能体 (.NET)"
 risk: safe
 source: community

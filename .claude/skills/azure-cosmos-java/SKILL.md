@@ -1,6 +1,6 @@
 ---
-name: azure-cosmos-java
-description: "Azure Cosmos Java — Azure Cosmos Java 相关功能和最佳实践"
+name: Azure Cosmos DB Java SDK 相关功能和最佳实践
+description: "Azure Cosmos DB Java — Azure Cosmos DB Java SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -93,7 +93,7 @@ CosmosClient client = new CosmosClientBuilder()
     .buildClient();
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 | Class | Purpose |
 |-------|---------|

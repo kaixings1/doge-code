@@ -1,5 +1,5 @@
 ---
-name: artifacts-builder
+name: Artifacts 构建器
 description: "Artifacts 构建器"
 risk: safe
 source: community

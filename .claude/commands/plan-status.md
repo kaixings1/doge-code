@@ -2,114 +2,114 @@
 description: 检查发布、流水线或工作项的状态
 ---
 
-Check the status of a release, pipeline, or work item. Usage: `/status <target>`
+检查发布、流水线或工作项的状态。用法: `/status <target>`
 
-Parse `$ARGUMENTS` to determine what to check:
-- **Release**: "release 24" or "r24" → show release status
-- **Pipeline**: "pipeline" or "build" → show recent pipeline runs
-- **Work item**: "AB#1234" or "1234" → show work item status
-- **Environment**: "staging" or "production" → show what's deployed
-- **No argument**: show an overview of everything
+解析 `$ARGUMENTS` 以确定检查内容：
+- **发布**："release 24" 或 "r24" → 显示发布状态
+- **流水线**："pipeline" 或 "build" → 显示最近的流水线运行
+- **工作项**："AB#1234" 或 "1234" → 显示工作项状态
+- **环境**："staging" 或 "production" → 显示已部署的内容
+- **无参数**：显示所有内容的概览
 
-## If Release (e.g., `/status release 24`):
+## 如果是发布（例如 `/status release 24`）：
 
-Query all work items tagged `release-{N}` or in the `Release #{N}` iteration.
+查询标记为 `release-{N}` 或在 `Release #{N}` 迭代中的所有工作项。
 
 ```
-## Release #24 Status
+## 发布 #24 状态
 
-| ID | Type | Title | State | Environment |
+| ID | 类型 | 标题 | 状态 | 环境 |
 |----|------|-------|-------|-------------|
-| AB#4521 | User Story | Add payment export | Closed | Production |
-| AB#4522 | User Story | Bulk approval workflow | Ready for Testing | Staging |
-| AB#4530 | User Story | Dashboard trends | Ready for Testing | Staging |
-| AB#4589 | Bug | Login plus sign fix | Closed | Production |
+| AB#4521 | 用户故事 | 添加支付导出 | 已关闭 | 生产 |
+| AB#4522 | 用户故事 | 批量审批工作流 | 准备测试 | 预发布 |
+| AB#4530 | 用户故事 | 仪表盘趋势 | 准备测试 | 预发布 |
+| AB#4589 | Bug | 登录加号修复 | 已关闭 | 生产 |
 
-Deployed to:
-- Dev: All 4 items
-- Staging: All 4 items
-- Production: 2 of 4 items (AB#4521, AB#4589)
+已部署到：
+- 开发：全部 4 项
+- 预发布：全部 4 项
+- 生产：4 项中的 2 项（AB#4521, AB#4589）
 ```
 
-## If Pipeline (e.g., `/status pipeline` or `/status build`):
+## 如果是流水线（例如 `/status pipeline` 或 `/status build`）：
 
-Check the project's CLAUDE.md for pipeline configuration. Query recent builds for each pipeline.
+检查项目的 CLAUDE.md 中的流水线配置。查询每条流水线的最近构建。
 
 ```
-## Recent Pipeline Runs
+## 最近的流水线运行
 
-| Pipeline | Branch | Status | Time | Build # |
+| 流水线 | 分支 | 状态 | 时间 | 构建 # |
 |----------|--------|--------|------|---------|
-| Compass API | main | Succeeded | 2026-03-22 14:26 | 20260322.1 |
-| Compass Client | main | Succeeded | 2026-03-22 14:27 | 20260322.1 |
-| Compass API | develop | Succeeded | 2026-03-21 10:15 | 20260321.3 |
+| Compass API | main | 成功 | 2026-03-22 14:26 | 20260322.1 |
+| Compass Client | main | 成功 | 2026-03-22 14:27 | 20260322.1 |
+| Compass API | develop | 成功 | 2026-03-21 10:15 | 20260321.3 |
 ```
 
-## If Work Item (e.g., `/status AB#4521`):
+## 如果是工作项（例如 `/status AB#4521`）：
 
-Read the work item from Azure DevOps and show its full status.
+从 Azure DevOps 读取工作项并显示其完整状态。
 
 ```
-## AB#4521: Admin Can Export Payment History to CSV
+## AB#4521：管理员可导出付款历史为 CSV
 
-**Type:** User Story
-**State:** Ready for Testing
-**Assigned To:** Chris Waters
-**Release:** Release #24
-**Branch:** story/AB#4521-admin-can-export-payment-history
-**PR:** #287 (merged to develop)
+**类型：** 用户故事
+**状态：** 准备测试
+**分配给：** Chris Waters
+**发布：** 发布 #24
+**分支：** story/AB#4521-admin-can-export-payment-history
+**PR：** #287（已合并到 develop）
 
-### Linked PRs
-- PR #287 → develop (merged 2026-03-20)
-- PR #291 → staging (merged 2026-03-21)
+### 关联的 PR
+- PR #287 → develop（合并于 2026-03-20）
+- PR #291 → staging（合并于 2026-03-21）
 
-### Child Tasks
-| ID | Title | State |
+### 子任务
+| ID | 标题 | 状态 |
 |----|-------|-------|
-| AB#4525 | Add export API endpoint | Closed |
-| AB#4526 | Add CSV service | Closed |
-| AB#4527 | Add export button UI | Closed |
+| AB#4525 | 添加导出 API 端点 | 已关闭 |
+| AB#4526 | 添加 CSV 服务 | 已关闭 |
+| AB#4527 | 添加导出按钮 UI | 已关闭 |
 ```
 
-## If Environment (e.g., `/status staging`):
+## 如果是环境（例如 `/status staging`）：
 
-Check the project's CLAUDE.md for the environment branch mapping. Show the last deployment and what's currently deployed.
+检查项目的 CLAUDE.md 中的环境分支映射。显示上次部署和当前部署内容。
 
 ```
-## Staging Environment
+## 预发布环境
 
-**Branch:** staging
-**Last deployment:** 2026-03-21 15:30 (Build #20260321.2)
-**Pipeline:** Compass API — Succeeded
+**分支：** staging
+**上次部署：** 2026-03-21 15:30（构建 #20260321.2）
+**流水线：** Compass API — 成功
 
-### Recent merges to staging:
-| Commit | Message | Date |
+### 最近合并到 staging：
+| 提交 | 消息 | 日期 |
 |--------|---------|------|
-| a1b2c3d | Release #24 → Staging | 2026-03-21 |
-| d4e5f6a | Cherry-pick AB#4601 | 2026-03-22 |
+| a1b2c3d | 发布 #24 → 预发布 | 2026-03-21 |
+| d4e5f6a | 挑选 AB#4601 | 2026-03-22 |
 ```
 
-## If No Argument (e.g., `/status`):
+## 如果无参数（例如 `/status`）：
 
-Show a high-level overview.
+显示高级概览。
 
 ```
-## Project Status
+## 项目状态
 
-### Active Releases
-| Release | Work Items | Latest Environment |
+### 活跃发布
+| 发布 | 工作项 | 最新环境 |
 |---------|-----------|-------------------|
-| Release #24 | 6 items | Staging |
-| Release #23 | 4 items | Production |
+| 发布 #24 | 6 项 | 预发布 |
+| 发布 #23 | 4 项 | 生产 |
 
-### Recent Pipelines
-| Pipeline | Last Run | Status |
+### 最近流水线
+| 流水线 | 上次运行 | 状态 |
 |----------|----------|--------|
-| Compass API | 20260322.1 | Succeeded |
-| Compass Client | 20260322.1 | Succeeded |
+| Compass API | 20260322.1 | 成功 |
+| Compass Client | 20260322.1 | 成功 |
 
-### Open PRs
-| PR # | Title | Target |
+### 开放的 PR
+| PR # | 标题 | 目标 |
 |------|-------|--------|
-| #292 | AB#4601: Fix bulk approval | develop |
+| #292 | AB#4601：修复批量审批 | develop |
 ```

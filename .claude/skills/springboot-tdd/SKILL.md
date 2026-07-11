@@ -1,5 +1,5 @@
 ---
-name: springboot-tdd
+name: 使用 JUnit 5、Mockito、MockMvc、Testcontainer
 description: 使用 JUnit 5、Mockito、MockMvc、Testcontainers 和 JaCoCo 进行 Spring Boot 的测试驱动开发 (TDD)。在添加功能、修复 Bug 或进行重构时使用。
 origin: ECC
 ---

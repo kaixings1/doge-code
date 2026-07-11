@@ -6,14 +6,14 @@ color: blue
 ---
 
 <role>
-A set of completed phases has been submitted for cross-phase integration audit. Verify that phases actually wire together — not that each phase individually looks complete.
+一组已完成的阶段已提交进行跨阶段集成审计。验证阶段是否真正连接在一起——而不是每个阶段单独看起来完整。
 
-Check cross-phase wiring (exports used, APIs called, data flows) and verify E2E user flows complete without breaks.
+检查跨阶段连接（使用的导出、调用的 API、数据流）并验证端到端用户流程完整无断裂。
 
-**CRITICAL: Mandatory Initial Read**
-If the prompt contains a `<required_reading>` block, you MUST use the `Read` tool to load every file listed there before performing any other actions. This is your primary context.
+**关键：强制初始读取**
+如果提示包含 `<required_reading>` 块，在执行任何其他操作之前，你必须使用 `Read` 工具加载其中列出的每个文件。这是你的主要上下文。
 
-**Critical mindset:** Individual phases can pass while the system fails. A component can exist without being imported. An API can exist without being called. Focus on connections, not existence.
+**关键心态：** 单个阶段可以通过而系统失败。组件可以存在而不被导入。API 可以存在而不被调用。关注连接，而非存在性。
 </role>
 
 <adversarial_stance>
@@ -95,7 +95,8 @@ For each phase, extract what it provides and what it should consume.
 # Key exports from each phase
 for summary in .planning/phases/*/*-SUMMARY.md; do
   echo "=== $summary ==="
-  grep -A 10 "Key Files\|Exports\|Provides" "$summary" 2>/dev/null
+  grep -A 10 "Key Files\|Exports\|Provides" "$summary" 2>/dev
+ull
 done
 ```
 
@@ -129,12 +130,14 @@ check_export_used() {
 
   # Find imports
   local imports=$(grep -r "import.*$export_name" "$search_path" \
-    --include="*.ts" --include="*.tsx" 2>/dev/null | \
+    --include="*.ts" --include="*.tsx" 2>/dev
+ull | \
     grep -v "$source_phase" | wc -l)
 
   # Find usage (not just import)
   local uses=$(grep -r "$export_name" "$search_path" \
-    --include="*.ts" --include="*.tsx" 2>/dev/null | \
+    --include="*.ts" --include="*.tsx" 2>/dev
+ull | \
     grep -v "import" | grep -v "$source_phase" | wc -l)
 
   if [ "$imports" -gt 0 ] && [ "$uses" -gt 0 ]; then
@@ -162,14 +165,16 @@ Check that API routes have consumers.
 
 ```bash
 # Next.js App Router
-find src/app/api -name "route.ts" 2>/dev/null | while read route; do
+find src/app/api -name "route.ts" 2>/dev
+ull | while read route; do
   # Extract route path from file path
   path=$(echo "$route" | sed 's|src/app/api||' | sed 's|/route.ts||')
   echo "/api$path"
 done
 
 # Next.js Pages Router
-find src/pages/api -name "*.ts" 2>/dev/null | while read route; do
+find src/pages/api -name "*.ts" 2>/dev
+ull | while read route; do
   path=$(echo "$route" | sed 's|src/pages/api||' | sed 's|\.ts||')
   echo "/api$path"
 done
@@ -184,12 +189,14 @@ check_api_consumed() {
 
   # Search for fetch/axios calls to this route
   local fetches=$(grep -r "fetch.*['\"]$route\|axios.*['\"]$route" "$search_path" \
-    --include="*.ts" --include="*.tsx" 2>/dev/null | wc -l)
+    --include="*.ts" --include="*.tsx" 2>/dev
+ull | wc -l)
 
   # Also check for dynamic routes (replace [id] with pattern)
   local dynamic_route=$(echo "$route" | sed 's/\[.*\]/.*/g')
   local dynamic_fetches=$(grep -r "fetch.*['\"]$dynamic_route\|axios.*['\"]$dynamic_route" "$search_path" \
-    --include="*.ts" --include="*.tsx" 2>/dev/null | wc -l)
+    --include="*.ts" --include="*.tsx" 2>/dev
+ull | wc -l)
 
   local total=$((fetches + dynamic_fetches))
 
@@ -212,7 +219,8 @@ Check that routes requiring auth actually check auth.
 protected_patterns="dashboard|settings|profile|account|user"
 
 # Find components/pages matching these patterns
-grep -r -l "$protected_patterns" src/ --include="*.tsx" 2>/dev/null
+grep -r -l "$protected_patterns" src/ --include="*.tsx" 2>/dev
+ull
 ```
 
 **Check auth usage in protected areas:**
@@ -222,10 +230,12 @@ check_auth_protection() {
   local file="$1"
 
   # Check for auth hooks/context usage
-  local has_auth=$(grep -E "useAuth|useSession|getCurrentUser|isAuthenticated" "$file" 2>/dev/null)
+  local has_auth=$(grep -E "useAuth|useSession|getCurrentUser|isAuthenticated" "$file" 2>/dev
+ull)
 
   # Check for redirect on no auth
-  local has_redirect=$(grep -E "redirect.*login|router.push.*login|navigate.*login" "$file" 2>/dev/null)
+  local has_redirect=$(grep -E "redirect.*login|router.push.*login|navigate.*login" "$file" 2>/dev
+ull)
 
   if [ -n "$has_auth" ] || [ -n "$has_redirect" ]; then
     echo "PROTECTED"
@@ -248,22 +258,26 @@ verify_auth_flow() {
   echo "=== Auth Flow ==="
 
   # Step 1: Login form exists
-  local login_form=$(grep -r -l "login\|Login" src/ --include="*.tsx" 2>/dev/null | head -1)
+  local login_form=$(grep -r -l "login\|Login" src/ --include="*.tsx" 2>/dev
+ull | head -1)
   [ -n "$login_form" ] && echo "✓ Login form: $login_form" || echo "✗ Login form: MISSING"
 
   # Step 2: Form submits to API
   if [ -n "$login_form" ]; then
-    local submits=$(grep -E "fetch.*auth|axios.*auth|/api/auth" "$login_form" 2>/dev/null)
+    local submits=$(grep -E "fetch.*auth|axios.*auth|/api/auth" "$login_form" 2>/dev
+ull)
     [ -n "$submits" ] && echo "✓ Submits to API" || echo "✗ Form doesn't submit to API"
   fi
 
   # Step 3: API route exists
-  local api_route=$(find src -path "*api/auth*" -name "*.ts" 2>/dev/null | head -1)
+  local api_route=$(find src -path "*api/auth*" -name "*.ts" 2>/dev
+ull | head -1)
   [ -n "$api_route" ] && echo "✓ API route: $api_route" || echo "✗ API route: MISSING"
 
   # Step 4: Redirect after success
   if [ -n "$login_form" ]; then
-    local redirect=$(grep -E "redirect|router.push|navigate" "$login_form" 2>/dev/null)
+    local redirect=$(grep -E "redirect|router.push|navigate" "$login_form" 2>/dev
+ull)
     [ -n "$redirect" ] && echo "✓ Redirects after login" || echo "✗ No redirect after login"
   fi
 }
@@ -280,29 +294,35 @@ verify_data_flow() {
   echo "=== Data Flow: $component → $api_route ==="
 
   # Step 1: Component exists
-  local comp_file=$(find src -name "*$component*" -name "*.tsx" 2>/dev/null | head -1)
+  local comp_file=$(find src -name "*$component*" -name "*.tsx" 2>/dev
+ull | head -1)
   [ -n "$comp_file" ] && echo "✓ Component: $comp_file" || echo "✗ Component: MISSING"
 
   if [ -n "$comp_file" ]; then
     # Step 2: Fetches data
-    local fetches=$(grep -E "fetch|axios|useSWR|useQuery" "$comp_file" 2>/dev/null)
+    local fetches=$(grep -E "fetch|axios|useSWR|useQuery" "$comp_file" 2>/dev
+ull)
     [ -n "$fetches" ] && echo "✓ Has fetch call" || echo "✗ No fetch call"
 
     # Step 3: Has state for data
-    local has_state=$(grep -E "useState|useQuery|useSWR" "$comp_file" 2>/dev/null)
+    local has_state=$(grep -E "useState|useQuery|useSWR" "$comp_file" 2>/dev
+ull)
     [ -n "$has_state" ] && echo "✓ Has state" || echo "✗ No state for data"
 
     # Step 4: Renders data
-    local renders=$(grep -E "\{.*$data_var.*\}|\{$data_var\." "$comp_file" 2>/dev/null)
+    local renders=$(grep -E "\{.*$data_var.*\}|\{$data_var\." "$comp_file" 2>/dev
+ull)
     [ -n "$renders" ] && echo "✓ Renders data" || echo "✗ Doesn't render data"
   fi
 
   # Step 5: API route exists and returns data
-  local route_file=$(find src -path "*$api_route*" -name "*.ts" 2>/dev/null | head -1)
+  local route_file=$(find src -path "*$api_route*" -name "*.ts" 2>/dev
+ull | head -1)
   [ -n "$route_file" ] && echo "✓ API route: $route_file" || echo "✗ API route: MISSING"
 
   if [ -n "$route_file" ]; then
-    local returns_data=$(grep -E "return.*json|res.json" "$route_file" 2>/dev/null)
+    local returns_data=$(grep -E "return.*json|res.json" "$route_file" 2>/dev
+ull)
     [ -n "$returns_data" ] && echo "✓ API returns data" || echo "✗ API doesn't return data"
   fi
 }
@@ -317,23 +337,28 @@ verify_form_flow() {
 
   echo "=== Form Flow: $form_component → $api_route ==="
 
-  local form_file=$(find src -name "*$form_component*" -name "*.tsx" 2>/dev/null | head -1)
+  local form_file=$(find src -name "*$form_component*" -name "*.tsx" 2>/dev
+ull | head -1)
 
   if [ -n "$form_file" ]; then
     # Step 1: Has form element
-    local has_form=$(grep -E "<form|onSubmit" "$form_file" 2>/dev/null)
+    local has_form=$(grep -E "<form|onSubmit" "$form_file" 2>/dev
+ull)
     [ -n "$has_form" ] && echo "✓ Has form" || echo "✗ No form element"
 
     # Step 2: Handler calls API
-    local calls_api=$(grep -E "fetch.*$api_route|axios.*$api_route" "$form_file" 2>/dev/null)
+    local calls_api=$(grep -E "fetch.*$api_route|axios.*$api_route" "$form_file" 2>/dev
+ull)
     [ -n "$calls_api" ] && echo "✓ Calls API" || echo "✗ Doesn't call API"
 
     # Step 3: Handles response
-    local handles_response=$(grep -E "\.then|await.*fetch|setError|setSuccess" "$form_file" 2>/dev/null)
+    local handles_response=$(grep -E "\.then|await.*fetch|setError|setSuccess" "$form_file" 2>/dev
+ull)
     [ -n "$handles_response" ] && echo "✓ Handles response" || echo "✗ Doesn't handle response"
 
     # Step 4: Shows feedback
-    local shows_feedback=$(grep -E "error|success|loading|isLoading" "$form_file" 2>/dev/null)
+    local shows_feedback=$(grep -E "error|success|loading|isLoading" "$form_file" 2>/dev
+ull)
     [ -n "$shows_feedback" ] && echo "✓ Shows feedback" || echo "✗ No user feedback"
   fi
 }

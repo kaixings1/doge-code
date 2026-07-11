@@ -1,5 +1,5 @@
 ---
-name: azure-storage-blob-java
+name: 指导 Java 开发者使用 Azure Storage Blob 客户端库管理大规模非结构化数据。
 description: "指导 Java 开发者使用 Azure Storage Blob 客户端库管理大规模非结构化数据。"
 risk: unknown
 source: community
@@ -20,7 +20,7 @@ Build blob storage applications using the Azure Storage Blob SDK for Java.
 </dependency>
 ```
 
-## Client Creation
+## 客户端创建
 
 ### BlobServiceClient
 
@@ -85,7 +85,7 @@ BlobClient blobClient = new BlobClientBuilder()
     .buildClient();
 ```
 
-## Core Patterns
+## 核心模式
 
 ### Create Container
 
@@ -380,7 +380,7 @@ AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=...
 AZURE_STORAGE_ACCOUNT_URL=https://<account>.blob.core.windows.net
 ```
 
-## Trigger Phrases
+## 触发短语
 
 - "Azure Blob Storage Java"
 - "upload download blob"

@@ -1,5 +1,5 @@
 ---
-name: react-patterns
+name: React模式
 description: React模式 — React 19模式，包括服务器组件、Actions、Suspense和hooks。
 ---
 

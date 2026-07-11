@@ -3,46 +3,46 @@ description: 设计与构建推荐系统 — 召回、排序、重排
 argument-hint: "<describe your recommendation scenario, data, and business goals>"
 ---
 
-# /recommend — Recommendation System Builder
+# /recommend — 推荐系统构建器
 
-Design a multi-stage recommendation system with industrial-grade models.
+使用工业级模型设计多阶段推荐系统。
 
-## Invocation
+## 调用
 
 ```
-/recommend Build a video recommendation system for 10M videos and 50M users
-/recommend Add deep ranking to our e-commerce product recommendations
-/recommend Design recall + ranking pipeline for our news feed
-/recommend Our recommendations have a filter bubble problem — improve diversity
+/recommend 为 1000 万视频和 5000 万用户构建视频推荐系统
+/recommend 为我们的电商产品推荐添加深度排序
+/recommend 为我们的新闻订阅设计召回+排序管道
+/recommend 我们的推荐存在过滤气泡问题——提高多样性
 ```
 
-## Workflow
+## 工作流
 
-### Step 1: Define the Problem
-- Scenario: e-commerce, content, ads, social, news
-- Signals: clicks, purchases, watch time, likes, shares
-- Scale: item catalog size, user base, QPS requirements
+### 步骤 1：定义问题
+- 场景：电商、内容、广告、社交、新闻
+- 信号：点击、购买、观看时间、点赞、分享
+- 规模：物品目录大小、用户基数、QPS 要求
 
-### Step 2: Recall Design
-Apply **recommendation-systems** skill — DSSM, SASRec, MIND for candidate generation.
-Design ANN index (FAISS/Milvus) and multi-channel recall strategy.
+### 步骤 2：召回设计
+应用 **recommendation-systems** 技能——DSSM、SASRec、MIND 用于候选生成。
+设计 ANN 索引（FAISS/Milvus）和多通道召回策略。
 
-### Step 3: Ranking Design
-Select ranking model based on scenario:
-- **Baseline**: DeepFM or DCN V2
-- **With behavior sequence**: DIN → DIEN → BST (progressive complexity)
-- **Multi-task**: MMOE or PLE for CTR + CVR + engagement
+### 步骤 3：排序设计
+基于场景选择排序模型：
+- **基线**：DeepFM 或 DCN V2
+- **带行为序列**：DIN → DIEN → BST（渐进复杂度）
+- **多任务**：MMOE 或 PLE 用于 CTR + CVR + 参与度
 
-### Step 4: Re-Ranking
-Multi-objective optimization with diversity (DPP) and business rules.
+### 步骤 4：重排
+带有多样性（DPP）和业务规则的多目标优化。
 
-### Step 5: Evaluation & Serving
-- Offline: AUC, GAUC, NDCG, HitRate@K
-- Online: A/B test on CTR, CVR, GMV, user engagement
-- Serving architecture with latency budgets
+### 步骤 5：评估与服务
+- 离线：AUC、GAUC、NDCG、HitRate@K
+- 在线：CTR、CVR、GMV、用户参与度的 A/B 测试
+- 带有延迟预算的服务架构
 
-Offer follow-up:
-- "Want to **add real-time features** via a feature store?"
-- "Should I **implement the recall model** in PyTorch?"
-- "Need to **deploy** the ranking model with TensorRT?"
-- "Want to **design A/B testing** for the new model with /analyze-test?"
+提供后续选项：
+- "想要通过特征存储**添加实时特征**吗？"
+- "需要我在 PyTorch 中**实现召回模型**吗？"
+- "需要使用 TensorRT **部署**排序模型吗？"
+- "想要使用 /analyze-test **为新模型设计 A/B 测试**吗？"

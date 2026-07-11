@@ -1,5 +1,5 @@
 ---
-name: article-magazine
+name: 文章杂志
 description: "文章杂志"
 risk: safe
 source: community

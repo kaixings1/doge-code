@@ -3,7 +3,7 @@ name: 数据画像报告
 description: "生成全面、可共享的数据画像报告，涵盖结构、质量、统计和建议。专为利益相关者沟通和数据文档设计。适用于接入新数据集或创建数据文档时。"
 ---
 
-# Data Profiling Report
+# 数据画像报告
 
 ## 目的
 Generate a complete, stakeholder-ready data profiling report that serves as documentation and a starting point for analysis.

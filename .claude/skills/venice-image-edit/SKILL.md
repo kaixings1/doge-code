@@ -1,7 +1,6 @@
 ---
-name: venice-image-edit
-description: "Venice Image Edit — Venice Image Edit 相关功能和最佳实践"
-  Image edits, upscaling, and background removal via the Venice.ai API.
+name: Venice 图像编辑
+description: "Venice 图像编辑 — 通过 Venice.ai API 进行图像编辑、放大和背景移除。"
 triggers:
   - "venice image edit"
   - "venice upscale"

@@ -1,5 +1,5 @@
 ---
-name: database-optimization
+name: 数据库优化
 description: 数据库优化 — 查询优化、索引策略和数据库性能调优。
 ---
 

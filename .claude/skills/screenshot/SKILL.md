@@ -1,5 +1,5 @@
 ---
-name: screenshot
+name: 跨平台捕获桌面、应用窗口或像素区域相关功能和最佳实践。适用于营销截屏、
 description: "Screenshot — 跨平台捕获桌面、应用窗口或像素区域相关功能和最佳实践。适用于营销截屏、设计审查和错误报告。"
 triggers:
   - "screenshot"
@@ -12,7 +12,7 @@ od:
   upstream: "https://github.com/openai/skills"
 ---
 
-# screenshot
+# 截图工具
 
 > 来自 OpenAI 技能仓库的策选集。
 

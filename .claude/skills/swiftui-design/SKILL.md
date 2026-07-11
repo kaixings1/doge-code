@@ -1,5 +1,5 @@
 ---
-name: swiftui-design
+name: Swiftui Design 相关功能和最佳实践
 description: "Swiftui Design — Swiftui Design 相关功能和最佳实践"
   SwiftUI 前端设计 skill — anti AI-slop rules, design direction advisor, brand asset protocol, and five-dimension review. Works with Claude Code, 游标, Codex, and OpenCode.
 triggers:
@@ -14,15 +14,15 @@ od:
   upstream: "https://github.com/wholiver/swiftui-design-skill"
 ---
 
-# swiftui-design
+# SwiftUI 设计
 
 > Curated from @wholiver.
 
-## What it does
+## 功能说明
 
 SwiftUI 前端设计 skill — anti AI-slop rules, design direction advisor, brand asset protocol, and five-dimension review. Works with Claude Code, 游标, Codex, and OpenCode.
 
-## Source
+## 来源
 
 - Upstream: https://github.com/wholiver/swiftui-design-skill
 - Category: `design-systems`

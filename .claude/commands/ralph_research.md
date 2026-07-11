@@ -2,12 +2,12 @@
 description: 研究需要调查的最高优先级 Linear 工单
 ---
 
-## PART I - IF A LINEAR TICKET IS MENTIONED
+## 第一部分 - 如果提到了 Linear 工单
 
-0c. use `linear` cli to fetch the selected item into thoughts with the ticket number - ./thoughts/shared/tickets/ENG-xxxx.md
-0d. read the ticket and all comments to understand what research is needed and any previous attempts
+0c. 使用 `linear` CLI 将选中的项目以工单号获取到 thoughts 中 - ./thoughts/shared/tickets/ENG-xxxx.md
+0d. 读取工单及其所有评论，了解需要哪些研究以及之前的尝试
 
-## PART I - IF NO TICKET IS MENTIONED
+## 第一部分 - 如果未提到工单
 
 0.  read .claude/commands/linear.md
 0a. fetch the top 10 priority items from linear in status "research needed" using the MCP tools, noting all items in the `links` section

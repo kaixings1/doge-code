@@ -1,5 +1,5 @@
 ---
-name: endorsal-automation
+name: Endorsal 自动化
 description: "Endorsal 自动化"
 risk: safe
 source: community

@@ -1,6 +1,10 @@
-# Multi-Agent Workflow: Startup MVP
+---
+description: 多Agent工作流：创业MVP——从想法到发布MVP的逐步示例
+---
 
-> A step-by-step example of how to coordinate multiple agents to go from idea to shipped MVP.
+# 多代理工作流：创业 MVP
+
+> 一个逐步示例，展示如何协调多个代理从想法到发布 MVP。
 
 ## The Scenario
 

@@ -1,5 +1,5 @@
 ---
-name: search-first
+name: 定义代码前，先搜索已有的工具
 description: 在编写自定义代码前，先搜索已有的工具、库和模式。调用研究者智能体进行预研。
 origin: ECC
 ---

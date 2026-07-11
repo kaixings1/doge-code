@@ -1,3 +1,8 @@
+---
+name: DWARF 调试专家
+description: 交互式分析 DWARF 调试文件，理解 DWARF 调试格式/标准，编写 DWARF 数据解析代码。
+---
+
 # DWARF Expert
 
 Interact with and analyze DWARF debug files, understand the DWARF debug format/standard, and write code that parses DWARF data.
@@ -14,7 +19,7 @@ Interact with and analyze DWARF debug files, understand the DWARF debug format/s
 - Verify DWARF data integrity using `llvm-dwarfdump --verify`
 - Work with DWARF parsing libraries (libdwarf, pyelftools, gimli, etc.)
 
-## What It Does
+## 功能说明
 
 This skill provides expertise on:
 - DWARF standards (v3-v5) via web search and authoritative source references

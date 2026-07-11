@@ -1,5 +1,5 @@
 ---
-name: fp-errors
+name: 使用 fp-ts Either 和 TaskEither 将错误作为值处理，编写
 description: "使用 fp-ts Either 和 TaskEither 将错误作为值处理，编写更清晰、更可预测的 TypeScript 代码。适用于使用 fp-ts 实现错误处理模式。"
 risk: unknown
 source: community

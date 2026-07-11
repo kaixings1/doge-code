@@ -1,5 +1,5 @@
 ---
-name: azure-ai-translation-ts
+name: 指导 TypeScript 开发者使用 Azure AI Translation 客户端库翻译文本。
 description: "指导 TypeScript 开发者使用 Azure AI Translation 客户端库翻译文本。"
 risk: unknown
 source: community
@@ -262,7 +262,7 @@ if (!isUnexpected(响应)) {
 }
 ```
 
-## Key Types
+## 关键类型
 
 ```typescript
 // Text Translation

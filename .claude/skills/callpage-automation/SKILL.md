@@ -1,5 +1,5 @@
 ---
-name: callpage-automation
+name: CallPage 自动化
 description: "CallPage 自动化"
 risk: safe
 source: community

@@ -15,9 +15,9 @@ allowed-tools:
 requires: [phase, verify-work]
 ---
 <objective>
-Execute all plans in a phase using wave-based parallel execution.
+使用基于波次的并行执行执行阶段中的所有计划。
 
-Orchestrator stays lean: discover plans, analyze dependencies, group into waves, spawn subagents, collect results. Each subagent loads the full execute-plan context and handles its own plan.
+编排器保持精简：发现计划、分析依赖关系、分组为波次、生成子智能体、收集结果。每个子智能体加载完整的执行计划上下文并处理自己的计划。
 
 Optional wave filter:
 - `--wave N` executes only Wave `N` for pacing, quota management, or staged rollout
@@ -37,7 +37,7 @@ Context budget: ~15% orchestrator, 100% fresh per subagent.
 </execution_context>
 
 <runtime_note>
-**Copilot (VS Code):** Use `vscode_askquestions` wherever this workflow calls `AskUserQuestion`. They are equivalent — `vscode_askquestions` is the VS Code Copilot implementation of the same interactive question API.
+**Copilot (VS Code)：** 在此工作流调用 `AskUserQuestion` 的任何地方使用 `vscode_askquestions`。它们是等效的。
 </runtime_note>
 
 <context>
@@ -59,6 +59,6 @@ Context files are resolved inside the workflow via `gsd-sdk query init.execute-p
 </context>
 
 <process>
-Execute end-to-end.
-Preserve all workflow gates (wave execution, checkpoint handling, verification, state updates, routing).
+端到端执行。
+保留所有工作流关卡（波次执行、检查点处理、验证、状态更新、路由）。
 </process>

@@ -1,6 +1,6 @@
 ---
-name: azure-appconfiguration-py
-description: "Azure Appconfiguration Py — Azure Appconfiguration Py 相关功能和最佳实践"
+name: Azure App Configuration (Python)
+description: "Azure App Configuration Python — Azure App Configuration Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -206,7 +206,7 @@ settings = client.list_configuration_settings(
 )
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.appconfiguration.aio import AzureAppConfigurationClient
@@ -226,7 +226,7 @@ async def main():
     await credential.close()
 ```
 
-## Client Operations
+## 客户端操作
 
 | 操作 | Description |
 |-----------|-------------|

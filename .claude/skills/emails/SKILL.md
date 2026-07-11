@@ -1,5 +1,5 @@
 ---
-name: emails
+name: 邮件管理
 description: "邮件管理"
 risk: safe
 source: community

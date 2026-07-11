@@ -1,5 +1,5 @@
 ---
-name: weather-fetcher
+name: 天气获取技能
 description: 天气获取技能
 user-invocable: false
 allowed-tools:

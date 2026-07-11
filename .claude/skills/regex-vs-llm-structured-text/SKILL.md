@@ -1,5 +1,5 @@
 ---
-name: regex-vs-llm-structured-text
+name: —优先使用正则表达式，仅针对低置信度的边界情况引入 LLM。
 description: 在解析结构化文本时，用于在正则表达式（Regex）和大型语言模型（LLM）之间进行选择的决策框架——优先使用正则表达式，仅针对低置信度的边界情况引入 LLM。
 origin: ECC
 ---

@@ -1,6 +1,6 @@
 ---
-name: llm-prompt-optimizer
-description: "适用于improving prompts for any llm. applies proven prompt engineering techniques to boost output quality, reduce hallucinations, and cut 令牌 usage.的情况。"
+name: 适用于改进任何 LLM 的提示
+description: "适用于改进任何 LLM 的提示。应用经过验证的提示工程技术以提高输出质量、减少幻觉并降低 Token 使用量。"
 risk: safe
 source: community
 date_added: "2026-03-04"

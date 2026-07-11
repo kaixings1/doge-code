@@ -1,5 +1,5 @@
 ---
-name: epic-games-automation
+name: Epic Games 自动化
 description: "Epic Games 自动化"
 risk: safe
 source: community

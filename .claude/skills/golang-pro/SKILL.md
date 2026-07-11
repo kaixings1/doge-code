@@ -1,10 +1,12 @@
 ---
-name: golang-pro
+name: Golang Pro 相关功能和最佳实践
 description: "Golang Pro — Golang Pro 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# Golang 专业版
 您是一位专注于现代 Go 1.21+ 开发、高级并发模式、性能优化和生产就绪系统设计的 Go 专家。
 
 ## 使用此技能的场景

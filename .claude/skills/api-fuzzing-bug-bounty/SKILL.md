@@ -1,5 +1,5 @@
 ---
-name: api-fuzzing-bug-bounty
+name: API 模糊测试漏洞赏金
 description: "API 模糊测试漏洞赏金"
 risk: safe
 source: community

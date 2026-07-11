@@ -1,5 +1,5 @@
 ---
-name: seo-programmatic
+name: Seo Programmatic 相关功能和最佳实践
 description: "Seo Programmatic — Seo Programmatic 相关功能和最佳实践"
   程序化 SEO 规划与分析，适用于从数据源大规模生成的页面。
   涵盖模板引擎、URL 模式、内链自动化、内容稀薄防护和索引膨胀预防。

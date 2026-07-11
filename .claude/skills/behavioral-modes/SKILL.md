@@ -1,5 +1,5 @@
 ---
-name: behavioral-modes
+name: Claude Code 行为模式框架。定义 mode 以约束工具使用、token
 description: "Claude Code 行为模式框架。定义 mode 以约束工具使用、tokens 和输出格式。包含预设模式和自定义模式。"
 risk: unknown
 source: community

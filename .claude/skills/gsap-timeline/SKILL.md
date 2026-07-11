@@ -1,5 +1,5 @@
 ---
-name: gsap-timeline
+name: GSAP 时间线：gsap.timeline()、位置参数、嵌套、播放
 description: "GSAP Timeline — GSAP 时间线：gsap.timeline()、位置参数、嵌套、播放控制。当编排多步动画序列或用户询问动画顺序时使用。"
 triggers:
   - "gsap timeline"

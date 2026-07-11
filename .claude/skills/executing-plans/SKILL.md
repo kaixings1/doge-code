@@ -1,5 +1,5 @@
 ---
-name: executing-plans
+name: 计划和任务执行
 description: "计划和任务执行"
 risk: safe
 source: community

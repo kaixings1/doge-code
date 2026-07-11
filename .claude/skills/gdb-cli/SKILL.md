@@ -1,5 +1,5 @@
 ---
-name: gdb-cli
+name: 面向 AI 代理的 GDB 调试助手
 description: "面向 AI 代理的 GDB 调试助手——分析核心转储、调试实时进程、结合源代码调查崩溃和死锁"
 category: development
 risk: critical
@@ -21,7 +21,7 @@ tools:
 - antigravity
 ---
 
-# GDB Debugging Assistant
+# GDB 调试助手
 
 ## 概述
 

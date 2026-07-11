@@ -1,5 +1,5 @@
 ---
-name: native-data-fetching
+name: 实现或调试网络请求、API 调用和数据获取。涵盖 Fetch API、React
 description: 实现或调试网络请求、API 调用和数据获取。涵盖 Fetch API、React 查询、SWR、错误处理、缓存、离线支持和 Expo Router 数据加载器。
 risk: unknown
 source: community

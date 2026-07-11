@@ -1,5 +1,5 @@
 ---
-name: azure-ai-voicelive-py
+name: 使用 Azure AI Voice Live 技能创建 Python 实时语音应用
 description: "使用 Azure AI Voice Live 技能创建 Python 实时语音应用：语音转文本、文本转语音和 LLM 驱动的对话代理。"
 risk: unknown
 source: community
@@ -53,7 +53,7 @@ async with connect(
     ...
 ```
 
-## Quick Start
+## 快速入门
 
 ```python
 import asyncio

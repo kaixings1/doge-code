@@ -1,5 +1,5 @@
 ---
-name: auth-implementation-patterns
+name: 认证实现模式
 description: "认证实现模式"
 risk: safe
 source: community

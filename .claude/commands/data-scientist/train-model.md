@@ -3,36 +3,36 @@ description: 端到端ML管道 — 选择模型、训练、评估、解释
 argument-hint: "<describe prediction target and available data>"
 ---
 
-# /train-model — ML Training Pipeline
+# /train-model — ML 训练管道
 
-Build a machine learning model from scratch to production-ready.
+从零开始构建一个可投入生产的机器学习模型。
 
-## Invocation
+## 调用
 
 ```
-/train-model Predict customer churn from usage and demographic data
-/train-model [upload file] Build the best model for predicting house prices
-/train-model Classify support tickets into categories
+/train-model 从使用情况和人口统计数据预测客户流失
+/train-model [上传文件] 构建预测房价的最佳模型
+/train-model 将支持工单分类到不同类别
 ```
 
-## Workflow
+## 工作流
 
-### Step 1: Explore & Prepare
-Quick EDA, handle missing values, engineer features.
+### 步骤 1：探索与准备
+快速 EDA、处理缺失值、特征工程。
 
-### Step 2: Select Model
-Apply **choose-model** skill — recommend algorithms based on problem type and data.
+### 步骤 2：选择模型
+应用 **choose-model** 技能——根据问题类型和数据推荐算法。
 
-### Step 3: Train & Tune
-Apply **classification** or **regression-ml** skill, then **hyperparameter-tuning**.
+### 步骤 3：训练与调优
+应用 **classification** 或 **regression-ml** 技能，然后进行**超参数调优**。
 
-### Step 4: Evaluate
-Apply **model-evaluation** skill — metrics, diagnostics, cross-validation.
+### 步骤 4：评估
+应用 **model-evaluation** 技能——指标、诊断、交叉验证。
 
-### Step 5: Interpret
-Apply **model-interpretation** skill — SHAP values, feature importance.
+### 步骤 5：解释
+应用 **model-interpretation** 技能——SHAP 值、特征重要性。
 
-Offer follow-up:
-- "Want to **tune hyperparameters further** with /tune?"
-- "Should I **explain specific predictions** with /explain-model?"
-- "Ready to **deploy** this model with /deploy?"
+提供后续选项：
+- "想要使用 /tune **进一步调优超参数**吗？"
+- "需要我使用 /explain-model **解释特定预测**吗？"
+- "准备好使用 /deploy **部署**此模型了吗？"

@@ -1,6 +1,6 @@
 ---
-name: azure-storage-blob-ts
-description: "Azure Storage Blob Ts — Azure Storage Blob Ts 相关功能和最佳实践"
+name: Azure Storage Blob TypeScript SDK 相
+description: "Azure Storage Blob TypeScript — Azure Storage Blob TypeScript SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -81,7 +81,7 @@ const client = new BlobServiceClient(
 );
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 ```
 BlobServiceClient (account level)

@@ -1,5 +1,5 @@
-# HOOKS-README
-contains all the details, scripts, and instructions for the hooks
+# Hook 系统参考指南
+包含钩子的所有细节、脚本和说明。
 
 ## Hook Events Overview - [Official 27 Hooks](https://code.claude.com/docs/en/hooks)
 Claude Code provides several hook events that run at different points in the workflow:

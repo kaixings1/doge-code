@@ -1,5 +1,5 @@
 ---
-name: api-design-principles
+name: API 设计原则
 description: "API 设计原则"
 risk: safe
 source: community

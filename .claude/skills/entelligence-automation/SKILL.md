@@ -1,5 +1,5 @@
 ---
-name: entelligence-automation
+name: Entelligence 自动化
 description: "Entelligence 自动化"
 risk: safe
 source: community

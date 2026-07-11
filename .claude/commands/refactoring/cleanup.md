@@ -1,53 +1,53 @@
 查找并删除死代码、未使用的导入和不可达分支。
 
-## Steps
+## 步骤
 
-1. Detect the language and available tooling:
-   - TypeScript/JavaScript: Use `tsc --noEmit` for unused locals, `eslint` with `no-unused-vars`.
-   - Python: Use `vulture` or `pyflakes` for dead code detection.
-   - Go: `go vet` reports unused variables; `staticcheck` finds dead code.
-   - Rust: Compiler warnings for dead code with `#[warn(dead_code)]`.
-2. Scan for unused exports:
-   - Find all exported symbols.
-   - Search the codebase for imports of each symbol.
-   - Flag exports with zero import references (excluding entry points).
-3. Detect unreachable code:
-   - Code after unconditional return/throw/break statements.
-   - Branches with impossible conditions (always true/false guards).
-   - Feature flags that are permanently enabled or disabled.
-4. Find unused dependencies:
-   - Compare `package.json` dependencies against actual imports.
-   - Check for packages used only in removed code.
-5. Present findings grouped by category with confidence levels.
-6. Apply removals only for high-confidence dead code (no dynamic references).
-7. Run tests after each removal batch to catch false positives.
+1. 检测语言和可用的工具：
+   - TypeScript/JavaScript：使用 `tsc --noEmit` 检查未使用的局部变量，`eslint` 加 `no-unused-vars`。
+   - Python：使用 `vulture` 或 `pyflakes` 进行死代码检测。
+   - Go：`go vet` 报告未使用的变量；`staticcheck` 查找死代码。
+   - Rust：编译器通过 `#[warn(dead_code)]` 警告死代码。
+2. 扫描未使用的导出：
+   - 查找所有导出符号。
+   - 在代码库中搜索每个符号的导入。
+   - 标记零导入引用的导出（入口点除外）。
+3. 检测不可达代码：
+   - 无条件 return/throw/break 语句后的代码。
+   - 条件不可能满足的分支（始终为 true/false 的守卫）。
+   - 永久启用或禁用的功能开关。
+4. 查找未使用的依赖项：
+   - 将 `package.json` 依赖与实际导入进行比较。
+   - 检查仅在被移除代码中使用的包。
+5. 按类别和置信度分组展示发现。
+6. 仅对高置信度的死代码（无动态引用）应用移除。
+7. 每次移除批次后运行测试以捕获误报。
 
-## Format
+## 格式
 
 ```
-Dead Code Analysis
+死代码分析
 ==================
 
-Unused imports: <N>
-  - <file>:<line> - import { <symbol> } from '<module>'
+未使用的导入：<N>
+  - <文件>:<行> - import { <符号> } from '<模块>'
 
-Unused exports: <N>
-  - <file>:<line> - export <symbol> (0 references)
+未使用的导出：<N>
+  - <文件>:<行> - export <符号>（0 次引用）
 
-Unreachable code: <N>
-  - <file>:<lines> - <reason>
+不可达代码：<N>
+  - <文件>:<行> - <原因>
 
-Unused dependencies: <N>
-  - <package> (last used: never / removed in <commit>)
+未使用的依赖项：<N>
+  - <包>（上次使用：从未 / 在 <提交> 中移除）
 
-Safe to remove: <N> items
-Needs review: <N> items
+安全可移除：<N> 项
+需要审查：<N> 项
 ```
 
-## Rules
+## 规则
 
-- Never remove code that might be used via dynamic imports, reflection, or string references.
-- Preserve exports that are part of a public API or SDK.
-- Skip test utilities, fixtures, and development-only code.
-- Run the full test suite after removing each batch to catch false positives.
-- Log removed code with git commit messages for easy reversal.
+- 绝不移除可能通过动态导入、反射或字符串引用使用的代码。
+- 保留作为公共 API 或 SDK 一部分的导出。
+- 跳过测试工具、测试夹具和仅开发代码。
+- 每次移除批次后运行完整测试套件以捕获误报。
+- 通过 git 提交消息记录已移除的代码以便轻松恢复。

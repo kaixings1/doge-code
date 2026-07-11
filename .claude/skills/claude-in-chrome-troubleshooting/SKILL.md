@@ -1,6 +1,6 @@
 ---
-name: claude-in-chrome-troubleshooting
-description: "Claude In Chrome Troubleshooting — Claude In Chrome Troubleshooting 相关功能和最佳实践"
+name: Claude Chrome 扩展故障排除
+description: "Claude Chrome 扩展故障排除 — Claude Chrome 扩展故障排除相关功能和最佳实践"
 risk: critical
 source: community
 ---
@@ -16,7 +16,7 @@ source: community
 - 在 Claude Code CLI 和 Claude.app (Cowork) 之间切换时
 - 本机主机进程正在运行，但 MCP 工具仍然失败
 
-## When NOT to Use
+## 不适用场景
 
 - **Linux or Windows users** - This skill covers macOS-specific paths and tools (`~/Library/Application Support/`, `osascript`)
 - General Chrome automation issues unrelated to the Claude extension

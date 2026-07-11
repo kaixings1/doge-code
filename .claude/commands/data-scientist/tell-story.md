@@ -3,33 +3,33 @@ description: 使用SCR框架构建数据驱动的叙事演示
 argument-hint: "<describe your findings and target audience>"
 ---
 
-# /tell-story — Data Storytelling
+# /tell-story — 数据叙事
 
-Transform analysis results into a compelling narrative presentation.
+将分析结果转化为引人入胜的叙事演示。
 
-## Invocation
+## 调用
 
 ```
-/tell-story Present churn analysis to the VP of Product — key finding is that onboarding speed matters
-/tell-story Build a board-ready presentation from our Q4 revenue analysis
-/tell-story Turn this A/B test result into a recommendation for the team
+/tell-story 向产品 VP 呈现流失分析——关键发现是新用户引导速度很重要
+/tell-story 基于 Q4 收入分析构建董事会就绪的演示文稿
+/tell-story 将此 A/B 测试结果转化为给团队的建议
 ```
 
-## Workflow
+## 工作流
 
-### Step 1: Understand Findings
-What did you discover? What's the recommendation?
+### 步骤 1：理解发现
+你发现了什么？建议是什么？
 
-### Step 2: Structure Narrative
-Apply **data-storytelling** skill — SCR framework, audience tailoring.
+### 步骤 2：构建叙事
+应用 **data-storytelling** 技能——SCR 框架、受众定制。
 
-### Step 3: Design Visuals
-Select and generate supporting charts with insight-driven titles.
+### 步骤 3：设计视觉
+选择并生成带有洞察驱动标题的支持性图表。
 
-### Step 4: Deliver
-Complete narrative outline with slide text, charts, and speaker notes.
+### 步骤 4：交付
+带有幻灯片文本、图表和演讲者备注的完整叙事大纲。
 
-Offer follow-up:
-- "Want to **adjust for a different audience**?"
-- "Should I **create the actual slides** (Google Slides / PowerPoint)?"
-- "Need to **add more supporting evidence**?"
+提供后续选项：
+- "想要**针对不同受众调整**吗？"
+- "需要我**创建实际幻灯片**（Google Slides / PowerPoint）吗？"
+- "需要**添加更多支持性证据**吗？"

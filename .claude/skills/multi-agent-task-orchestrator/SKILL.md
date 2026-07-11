@@ -1,5 +1,5 @@
 ---
-name: multi-agent-task-orchestrator
+name: 质量门和 30 分钟心跳监控
 description: "将任务路由到专门的 AI 代理，具有反重复、质量门和 30 分钟心跳监控"
 category: agent-orchestration
 risk: safe

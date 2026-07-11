@@ -1,5 +1,5 @@
 ---
-name: istio-traffic-management
+name: 部署的 Istio 流量管理
 description: "用于生产服务网格部署的 Istio 流量管理全面指南。"
 risk: unknown
 source: community

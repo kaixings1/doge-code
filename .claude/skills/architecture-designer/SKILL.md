@@ -1,5 +1,5 @@
 ---
-name: architecture-designer
+name: 架构设计器
 description: "架构设计器"
 risk: safe
 source: community

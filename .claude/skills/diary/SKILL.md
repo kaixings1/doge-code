@@ -1,5 +1,5 @@
 ---
-name: diary
+name: 统一日记系统：面向多项目开发的上下文保留自动记录器。
 description: "统一日记系统：面向多项目开发的上下文保留自动记录器。"
 risk: safe
 source: self

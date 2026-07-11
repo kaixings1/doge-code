@@ -1,5 +1,5 @@
 ---
-name: fastapi-templates
+name: FastAPI 模板
 description: "FastAPI 模板 — FastAPI 项目模板"
 risk: unknown
 source: community

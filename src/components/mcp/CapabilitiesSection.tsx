@@ -35,7 +35,7 @@ export function CapabilitiesSection(t0) {
   }
   let t1;
   if ($[4] === Symbol.for("react.memo_cache_sentinel")) {
-    t1 = <Text bold={true}>Capabilities: </Text>;
+    t1 = <Text bold={true}>能力: </Text>;
     $[4] = t1;
   } else {
     t1 = $[4];

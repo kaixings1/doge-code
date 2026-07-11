@@ -1,0 +1,21 @@
+count 19978
+ 49744 hesreallyhim/awesome-claude-code A hand-picked collection of the finest of resources for the 
+ 42818 sickn33/agentic-awesome-skills Installable GitHub library of 1,900+ agentic skills for Clau
+ 37767 wshobson/agents Multi-harness agentic plugin marketplace for Claude Code, Co
+ 31958 anthropics/claude-plugins-official Official, Anthropic-managed directory of high quality Claude
+ 27448 openai/codex-plugin-cc Use Codex from Claude Code to review code or delegate tasks.
+ 26318 jarrodwatts/claude-hud A Claude Code plugin that shows what's happening - context u
+ 23022 EveryInc/compound-engineering-plugin Official Compound Engineering plugin for Claude Code, Codex,
+ 22084 alirezarezvani/claude-skills 345 Claude Code skills & agent skills & plugins (30+ Agents,
+ 14875 wasp-lang/open-saas A 100% free modern JS SaaS boilerplate (React, NodeJS, Prism
+ 13828 YishenTu/claudian An Obsidian plugin that embeds Claude Code/Codex as an AI co
+  9169 ykdojo/claude-code-tips 40+ tips for getting the most out of Claude Code, from basic
+  4477 zhukunpenglinyutong/jetbrains-cc-gui Jetbrains Claude Code and Codex GUI Plugin
+  3481 0xNyk/council-of-high-intelligence 18 AI personas deliberate your hardest decisions across mult
+  3441 agenticnotetaking/arscontexta Claude Code plugin that generates individualized knowledge s
+  3161 davepoon/buildwithclaude A single hub to find Claude Skills, Agents, Commands, Hooks,
+  3112 giancarloerra/SocratiCode Enterprise-grade (40m+ LOC) codebase intelligence, zero-setu
+  2600 ZeframLou/call-me Minimal plugin that lets Claude Code call you on the phone.
+  2495 jeremylongshore/claude-code-plugins-plus-skills 425 plugins, 2,810 skills, 200 agents for Claude Code. Open-
+  2495 samber/cc-skills-golang 🧑‍🎨 A collection of Golang agentic skills that works
+  2293 rohitg00/awesome-claude-code-toolkit The most comprehensive toolkit for Claude Code -- 135 agents

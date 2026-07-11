@@ -1,51 +1,51 @@
 审计项目依赖项，检查已知漏洞和过时的软件包。
 
-## Steps
+## 步骤
 
-1. Detect the package manager and run the native audit command:
-   - npm: `npm audit --json`
-   - pnpm: `pnpm audit --json`
-   - yarn: `yarn audit --json`
-   - pip: `pip-audit --format json` or `safety check --json`
-   - cargo: `cargo audit --json`
-   - go: `govulncheck ./...`
-2. Parse audit results and categorize by severity (critical, high, moderate, low).
-3. For each vulnerability:
-   - Identify the affected package and version range.
-   - Check if a patched version is available.
-   - Determine if it is a direct or transitive dependency.
-   - Assess actual exploitability in the project context.
-4. Check for outdated dependencies: `npm outdated`, `pip list --outdated`.
-5. Generate an upgrade plan prioritized by:
-   - Critical vulnerabilities first.
-   - Direct dependencies over transitive.
-   - Minimal version bumps (patch > minor > major).
-6. Test compatibility of recommended upgrades if possible.
-7. Offer to apply safe upgrades automatically.
+1. 检测包管理器并运行原生审计命令：
+   - npm：`npm audit --json`
+   - pnpm：`pnpm audit --json`
+   - yarn：`yarn audit --json`
+   - pip：`pip-audit --format json` 或 `safety check --json`
+   - cargo：`cargo audit --json`
+   - go：`govulncheck ./...`
+2. 解析审计结果并按严重程度分类（严重、高、中、低）。
+3. 对每个漏洞：
+   - 识别受影响的软件包和版本范围。
+   - 检查是否存在修补版本。
+   - 确定是直接依赖还是传递依赖。
+   - 评估在项目上下文中的实际可利用性。
+4. 检查过时的依赖：`npm outdated`、`pip list --outdated`。
+5. 按优先级生成升级计划：
+   - 严重漏洞优先。
+   - 直接依赖优先于传递依赖。
+   - 最小版本升级（补丁 > 次要 > 主要）。
+6. 如果可能，测试推荐升级的兼容性。
+7. 提供自动应用安全升级的选项。
 
-## Format
+## 格式
 
 ```
-Dependency Audit Report
+依赖审计报告
 =======================
 
-Vulnerabilities: <critical>C / <high>H / <moderate>M / <low>L
+漏洞：<严重>C / <高>H / <中>M / <低>L
 
-| Package | Current | Patched | Severity | Type | CVE |
+| 软件包 | 当前版本 | 修补版本 | 严重程度 | 类型 | CVE |
 |---------|---------|---------|----------|------|-----|
 
-Outdated (no vulnerabilities):
-| Package | Current | Latest | Type |
+过时（无漏洞）：
+| 软件包 | 当前版本 | 最新版本 | 类型 |
 |---------|---------|--------|------|
 
-Recommended actions:
-1. <action with command>
+建议操作：
+1. <带命令的操作>
 ```
 
-## Rules
+## 规则
 
-- Always distinguish between direct and transitive dependencies.
-- Do not auto-upgrade major versions without user confirmation.
-- Report vulnerabilities even if no fix is available yet.
-- Check that lock files are committed and up to date.
-- Verify upgrades do not break the test suite before recommending them.
+- 始终区分直接依赖和传递依赖。
+- 未经用户确认，不要自动升级主版本。
+- 即使尚无修复可用，也要报告漏洞。
+- 检查锁定文件是否已提交且是最新的。
+- 在推荐升级之前，验证升级不会破坏测试套件。

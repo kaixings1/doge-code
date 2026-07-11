@@ -1,5 +1,5 @@
 ---
-name: molykit
+name: 的 AI 聊天界面构建工具
 description: "Molykit — 用于 Makepad 的 AI 聊天界面构建工具包 MolyKit 相关功能和最佳实践。跨平台 AI 聊天应用的工具包。"
   CRITICAL: Use for MolyKit AI chat toolkit. Triggers on:
   BotClient, OpenAI, SSE streaming, AI chat, molykit,

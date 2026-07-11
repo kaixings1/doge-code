@@ -1,5 +1,5 @@
 ---
-name: self-improve
+name: 自我改进系统的循环控制器相关功能和最佳实践
 description: "Self Improve — 自我改进系统的循环控制器相关功能和最佳实践"
 level: 4
 ---

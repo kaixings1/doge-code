@@ -1,12 +1,12 @@
 ---
-name: docx-official
+name: 用户可能要求您创建、编辑或分析 .docx 文件的内容。.docx 文件本质上是
 description: "用户可能要求您创建、编辑或分析 .docx 文件的内容。.docx 文件本质上是包含 XML 文件和其他资源的 ZIP 存档，您可以读取或编辑。您有不同工具和工作流可用于不同任务。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# DOCX creation, editing, and analysis
+# DOCX 官方
 
 ## 概述
 

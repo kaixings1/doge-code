@@ -1,5 +1,5 @@
 ---
-name: analyzing-ransomware-encryption-mechanisms
+name: 勒索软件加密机制分析
 description: "分析勒索软件加密机制"
 risk: safe
 source: community

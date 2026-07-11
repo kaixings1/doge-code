@@ -9,7 +9,7 @@ Break a plan into independently-grabbable issues using vertical slices (tracer b
 
 The issue tracker and triage label vocabulary should have been provided to you — run `/setup-matt-pocock-skills` if not.
 
-## Process
+## 流程
 
 ### 1. Gather context
 

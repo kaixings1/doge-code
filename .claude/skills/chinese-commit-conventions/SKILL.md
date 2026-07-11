@@ -1,5 +1,5 @@
 ---
-name: chinese-commit-conventions
+name: 中文提交规范
 description: "中文提交规范"
 risk: safe
 source: community

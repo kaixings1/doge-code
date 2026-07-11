@@ -7,9 +7,8 @@ import { Markdown } from '../../components/Markdown.js';
 import { SpinnerGlyph } from '../../components/Spinner/SpinnerGlyph.js';
 import { DOWN_ARROW, UP_ARROW } from '../../constants/figures.js';
 import { getSystemPrompt } from '../../constants/prompts.js';
-import { useModalOrTerminalSize } from '../../context/modalContext.js';
 import { getSystemContext, getUserContext } from '../../context.js';
-import { useTerminalSize } from '../../hooks/useTerminalSize.js';
+import { useSafeTerminalSize } from '../../hooks/useTerminalSize.js';
 import ScrollBox, { type ScrollBoxHandle } from '../../ink/components/ScrollBox.js';
 import type { KeyboardEvent } from '../../ink/events/keyboard-event.js';
 import { Box, Text } from '../../ink.js';
@@ -46,7 +45,7 @@ function BtwSideQuestion(t0) {
   const scrollRef = useRef(null);
   const {
     rows
-  } = useModalOrTerminalSize(useTerminalSize());
+  } = useSafeTerminalSize();
   let t1;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = () => setFrame(_temp);

@@ -12,12 +12,11 @@ allowed-tools:
 requires: [review]
 ---
 <objective>
-One-command triage of the project's GitHub inbox. Fetches all open issues and PRs,
-reviews each against the corresponding template requirements (feature, enhancement,
-bug, chore, fix PR, enhancement PR, feature PR), reports completeness and compliance,
-and optionally applies labels or closes non-compliant submissions.
+一键分类项目的 GitHub 收件箱。获取所有开放的议题和 PR，
+根据相应的模板要求（功能、增强、错误、杂务、修复 PR、增强 PR、功能 PR）审查每个议题/PR，
+报告完整性和合规性，并可选择应用标签或关闭不合规的提交。
 
-**Flow:** Detect repo → Fetch open issues + PRs → Classify each by type → Review against template → Report findings → Optionally act (label, comment, close)
+**流程：** 检测仓库 → 获取开放的议题 + PR → 按类型分类 → 对照模板审查 → 报告发现 → 可选操作（标签、评论、关闭）
 </objective>
 
 <execution_context>

@@ -1,6 +1,6 @@
 ---
-name: leiloeiro-mercado
-description: "Leiloeiro Mercado — Leiloeiro Mercado 相关功能和最佳实践"
+name: 拍卖师市场
+description: "拍卖师市场 — 拍卖师市场相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-06'

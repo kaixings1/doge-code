@@ -6,13 +6,13 @@ allowed-tools:
   - Read
 ---
 <objective>
-Display GSD help at the tier the user asked for: brief (one-line refresher), default (one-page tour), full (complete reference), a single topic section, or a compact scoped lookup of one topic (`--brief <topic>`: signature + one-line summary).
+按用户要求的级别显示 GSD 帮助：简要（一行刷新）、默认（一页概览）、完整（完整参考）、单个主题部分，或一个主题的紧凑范围查找（`--brief <topic>`：签名 + 一行摘要）。
 
-Output ONLY the reference content of the chosen tier. Do NOT add:
-- Project-specific analysis
-- Git status or file context
-- Next-step suggestions
-- Any commentary beyond the reference
+仅输出所选级别的参考内容。不要添加：
+- 项目特定的分析
+- Git 状态或文件上下文
+- 下一步建议
+- 超出参考范围的任何评论
 </objective>
 
 <execution_context>

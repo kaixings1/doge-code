@@ -1,5 +1,5 @@
 ---
-name: design-brief
+name: Design Brief 相关功能和最佳实践
 description: "Design Brief — Design Brief 相关功能和最佳实践"
   将以 I-Lang 协议格式编写的结构化设计简报解析为具体的设计规范。通过要求明确的维度（调色板、排版、布局、氛围、密度和约束），消除"看起来专业"等模糊请求中的歧义。
   触发关键词："设计简报"、"创建设计简报"、"ilang brief"、"结构化简报"。
@@ -32,7 +32,7 @@ od:
     - file_write
 ---
 
-# Design Brief Skill
+# 设计简报 (Design Brief)
 
 Parse a structured design brief into a concrete DESIGN.md and optional visual preview. Agent, follow this 工作流 exactly.
 

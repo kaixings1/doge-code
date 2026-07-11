@@ -1,14 +1,9 @@
 ---
-name: expo-ui-swift-ui
-description: "Expo SwiftUI"
+name: Expo SwiftUI 原生界面
+description: Expo SwiftUI 原生界面开发 — React Native 与 SwiftUI 桥接、原生组件封装和跨平台 UI 渲染。
 risk: safe
 source: community
 ---
-# Expo SwiftUI
-## 简介
-Expo SwiftUI。
-## 功能
-- 功能 1
-- 功能 2
-## 限制
-- 此技能仅用于指导
+# Expo SwiftUI 原生界面
+
+Expo SwiftUI 原生界面开发 — React Native 与 SwiftUI 桥接、原生组件封装和跨平台 UI 渲染。

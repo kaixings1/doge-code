@@ -1,5 +1,5 @@
 ---
-name: hig-components-controls
+name: HIG 控制组件
 description: "HIG 控制组件 — Human Interface Guidelines 控制组件"
 risk: safe
 source: community

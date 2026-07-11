@@ -160,7 +160,7 @@ touch plugin-name/skills/skill-name/SKILL.md
 
 ```yaml
 ---
-name: skill-name
+name: 当用户需要帮助完成特定任务时使用此技能。当用户提到'特定关键词'、'相关术语'或
 description: "当用户需要帮助完成特定任务时使用此技能。当用户提到'特定关键词'、'相关术语'或'相关短语'时使用。用于任务描述和上下文。"
 ---
 ```

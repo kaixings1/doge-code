@@ -1,5 +1,5 @@
 ---
-name: earllm-build
+name: 构建、维护和扩展 EarLLM One Android 项目
 description: "构建、维护和扩展 EarLLM One Android 项目——一个通过语音管道将蓝牙耳机连接到 LLM 的 Kotlin/Compose 应用。"
 risk: safe
 source: community

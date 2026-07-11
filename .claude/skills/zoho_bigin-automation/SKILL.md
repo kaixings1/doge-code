@@ -1,5 +1,5 @@
 ---
-name: zoho_bigin-automation
+name: Zoho_bigin 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Zoho Bigin 任务：管道、联系人、公司、产品和小型企业 CRM。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]

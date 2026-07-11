@@ -1,5 +1,5 @@
 ---
-name: error-debugging-error-analysis
+name: 错误根因分析
 description: "错误根因分析"
 risk: safe
 source: community

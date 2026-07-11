@@ -1,5 +1,5 @@
 ---
-name: n8n-validation-expert
+name: 解释和修复 n8n 验证错误的专家指南。
 description: "解释和修复 n8n 验证错误的专家指南。"
 risk: unknown
 source: community

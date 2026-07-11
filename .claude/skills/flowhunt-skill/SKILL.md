@@ -1,5 +1,5 @@
 ---
-name: flowhunt-skill
+name: 自动化发现审计技能。通过 5 问题工作流引导，然后审计 Gmail/Calend
 description: "自动化发现审计技能。通过 5 问题工作流引导，然后审计 Gmail/Calendar/Slack/任务跟踪器以识别自动化机会。当用户想要发现其业务中可以自动化的流程时使用。"
 category: automation
 risk: safe
@@ -97,22 +97,22 @@ Deliver a structured Automation Opportunity Report in markdown:
 ```
 # Automation Opportunity Report
 
-## Business Context
+## 业务上下文
 [Summary from intake]
 
-## Top 3 Quick Wins
+## 前三快速胜利
 1. [Name] — [What it does] — [Tools] — [~X hrs/week saved]
 2. ...
 3. ...
 
-## Full Opportunity List
+## 完整机会列表
 [All identified automations, ranked]
 
-## Recommended Next Step
+## 推荐下一步
 [Single clearest action the user can take today]
 ```
 
-## Common Rationalizations to Reject
+## 常见拒绝理由
 
 | Excuse | Why it's wrong |
 |--------|----------------|
@@ -120,7 +120,7 @@ Deliver a structured Automation Opportunity Report in markdown:
 | "I'll list every possible automation" | Overwhelming output kills adoption — prioritize ruthlessly |
 | "I'll recommend complex custom code first" | Start with no-code/low-code quick wins; earn the right to build |
 
-## Red Flags
+## 危险信号
 
 - User has no clear repetitive task → dig deeper, they always exist
 - Recommending automations for tools the user didn't mention → stay scoped
@@ -132,7 +132,7 @@ Deliver a structured Automation Opportunity Report in markdown:
 - Tool audits depend on the user's stated stack and any explicitly connected data sources; do not assume access to Gmail, Calendar, Slack, CRMs, or task trackers.
 - Time-saved estimates are directional planning aids, not guaranteed outcomes.
 
-## Verification
+## 验证
 
 The skill is complete when the user has:
 - [ ] Answered all 5 intake questions

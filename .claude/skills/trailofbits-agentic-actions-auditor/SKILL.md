@@ -1,8 +1,13 @@
+---
+name: Agentic Actions 审计器
+description: 审计 GitHub Actions 工作流中 AI 代理集成的安全漏洞，检测 CI/CD 流水线中的错误配置和攻击向量。
+---
+
 # Agentic Actions 审计器
 
 Audits GitHub Actions workflows for security vulnerabilities in AI agent integrations. Detects misconfigurations and attack vectors specific to Claude Code Action, Gemini CLI, OpenAI Codex, and GitHub AI Inference when used in CI/CD pipelines.
 
-## What It Does
+## 功能说明
 
 This plugin provides a security audit skill that analyzes GitHub Actions 工作流 YAML files for vulnerabilities arising from AI agent integrations. It focuses on scenarios where attacker-controlled input (pull 请求 titles, branch names, issue bodies, comments, commit messages, file contents, environment variables) can reach an AI agent running with elevated permissions in CI.
 

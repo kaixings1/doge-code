@@ -1,5 +1,5 @@
 ---
-name: gsap-core
+name: 核心 GSAP API：gsap.to()、from()、fromTo
 description: "GSAP Core — 核心 GSAP API：gsap.to()、from()、fromTo()、缓动、持续时间、交错、默认值、gsap.matchMedia()（响应式、减少运动偏好）。当用户需要 JavaScript 动画库、GSAP 补间动画或 DOM/SVG 动画时使用。"
 triggers:
   - "gsap"

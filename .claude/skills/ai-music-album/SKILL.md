@@ -1,5 +1,5 @@
 ---
-name: ai-music-album
+name: AI 音乐专辑制作
 description: "AI 音乐专辑 — 全生命周期 AI 音乐专辑制作 — 概念、歌词草稿、曲目排序和导出的完整流程。适用于独立专辑实验和品牌配乐。"
 triggers:
   - "ai music"
@@ -17,11 +17,11 @@ od:
 
 > Curated from bitwize-music-studio.
 
-## What it does
+## 功能说明
 
 Full-lifecycle AI music album production — concept, lyric drafting, track sequencing, and export. Useful for indie album experiments and brand soundtracks.
 
-## Source
+## 来源
 
 - Upstream: https://github.com/bitwize-music-studio/claude-ai-music-skills
 - Category: `audio-music`

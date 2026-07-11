@@ -1,5 +1,5 @@
 ---
-name: appdrag-automation
+name: AppDrag 自动化
 description: "AppDrag 自动化"
 risk: safe
 source: community

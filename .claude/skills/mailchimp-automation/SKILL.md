@@ -1,5 +1,5 @@
 ---
-name: mailchimp-automation
+name: Mailchimp 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Mailchimp 电子邮件营销，包括活动、受众、订阅者、细分和分析。使用前始终先搜索工具以获取当前 schema。"
 risk: critical
 source: community

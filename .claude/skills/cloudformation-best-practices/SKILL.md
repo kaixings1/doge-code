@@ -1,10 +1,12 @@
 ---
-name: cloudformation-best-practices
+name: CloudFormation 模板优化、嵌套栈、漂移检测和生产部署最佳实践。
 description: "CloudFormation 模板优化、嵌套栈、漂移检测和生产部署最佳实践。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
+
+# CloudFormation 最佳实践
 你是专家 in AWS CloudFormation specializing in template optimization, stack architecture, and production-grade infrastructure 部署.
 
 ## 使用此技能的场景

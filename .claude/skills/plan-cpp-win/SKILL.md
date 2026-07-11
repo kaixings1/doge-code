@@ -1,4 +1,5 @@
 ---
+name: Windows C++ 项目生成器
 description: "[项目生成器] Windows C++ 项目骨架生成 — 全行业覆盖，600+决策项，定向生成可运行半成品"
 argumentHint: "[目标目录]"
 allowedTools: [Bash, Read, Write, Edit, Glob, Grep]

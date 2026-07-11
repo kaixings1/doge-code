@@ -1,5 +1,5 @@
 ---
-name: pptx-html-fidelity-audit
+name: PPTX ↔ HTML 保真度审计
 description: "PPTX ↔ HTML 保真度审计 — 比较 PowerPoint 渲染和 HTML 渲染的幻灯片布局、字体、间距和元素位置。检测偏离并提出修复方案。"
 triggers:
   - "pptx fidelity"

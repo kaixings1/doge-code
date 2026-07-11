@@ -1,5 +1,5 @@
 ---
-name: llm-app-patterns
+name: 构建 LLM 应用的生产就绪模式。
 description: "构建 LLM 应用的生产就绪模式。"
 risk: unknown
 source: community

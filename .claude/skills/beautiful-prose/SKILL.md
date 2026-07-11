@@ -1,5 +1,5 @@
 ---
-name: beautiful-prose
+name: 优美中文写作，涵盖修辞技巧、句式变化、节奏控制和风格塑造。
 description: "Beautiful Prose — 优美中文写作，涵盖修辞技巧、句式变化、节奏控制和风格塑造。"
 risk: unknown
 source: community

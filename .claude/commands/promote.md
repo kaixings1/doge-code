@@ -2,74 +2,74 @@
 description: 将代码从一个环境升级到下一个环境
 ---
 
-Promote all code from one environment to the next. Usage: `/promote [source] [target]`
+将所有代码从一个环境升级到下一个环境。用法: `/promote [source] [target]`
 
-Parse `$ARGUMENTS` to extract:
-- **Source environment**: optional (e.g., "develop", "staging"). If omitted, auto-detect.
-- **Target environment**: optional. If omitted, use the next environment in the promotion flow.
+解析 `$ARGUMENTS` 以提取：
+- **源环境**：可选（例如 "develop", "staging"）。如果省略，自动检测。
+- **目标环境**：可选。如果省略，使用提升流程中的下一个环境。
 
-## Step 1: Determine Source and Target
+## 步骤 1：确定源和目标
 
-If not specified, auto-detect based on the current branch:
+如果未指定，基于当前分支自动检测：
 
-| Current Branch | Source | Target |
+| 当前分支 | 源 | 目标 |
 |---|---|---|
 | `develop` | develop | staging |
-| `staging` | staging | production branch |
+| `staging` | staging | production 分支 |
 
-If both are specified (e.g., `/promote staging production`), use those directly.
+如果同时指定了两个参数（例如 `/promote staging production`），直接使用它们。
 
-Determine the actual branch names — do NOT hardcode. Check the project's CLAUDE.md or use `git branch -r` to find matching environment branches.
+确定实际的分支名称——不要硬编码。检查项目的 CLAUDE.md 或使用 `git branch -r` 查找匹配的环境分支。
 
-## Step 2: Show What Will Be Promoted
+## 步骤 2：显示将要升级的内容
 
-Compare the source and target branches to show what's new:
+比较源分支和目标分支以显示新内容：
 
 ```bash
 git log <target-branch>..<source-branch> --oneline
 ```
 
-Present the changes:
+展示变更：
 
 ```
-## Promote {source} → {target}
+## 升级 {source} → {target}
 
-Commits to promote:
-| Commit | Message | Work Item |
+要升级的提交：
+| 提交 | 消息 | 工作项 |
 |--------|---------|-----------|
-| abc1234 | Add payment export | AB#1234 |
-| def5678 | Fix login redirect | AB#1235 |
-| ghi9012 | Update dashboard | AB#1236 |
+| abc1234 | 添加支付导出 | AB#1234 |
+| def5678 | 修复登录重定向 | AB#1235 |
+| ghi9012 | 更新仪表盘 | AB#1236 |
 
-{count} commits will be promoted from {source} to {target}.
-Promote? (yes/no)
+{count} 个提交将从 {source} 升级到 {target}。
+是否升级？（是/否）
 ```
 
-If there are no new commits, report that the environments are already in sync.
+如果没有新提交，报告环境已经同步。
 
-Wait for confirmation.
+等待确认。
 
-## Step 3: Create PR
+## 步骤 3：创建 PR
 
-Create a PR directly from the source branch to the target branch via Azure DevOps MCP:
+通过 Azure DevOps MCP 直接从源分支向目标分支创建 PR：
 
-- **sourceRefName**: `refs/heads/<source-branch>`
-- **targetRefName**: `refs/heads/<target-branch>`
-- **title**: `Promote {source} → {target}`
-- **description**: List all commits and associated work items being promoted
+- **sourceRefName**: `refs/heads/<源分支>`
+- **targetRefName**: `refs/heads/<目标分支>`
+- **title**: `升级 {source} → {target}`
+- **description**: 列出所有正在升级的提交和关联工作项
 
-Link any associated work items to the PR.
+将所有关联的工作项链接到 PR。
 
-## Step 4: Present Summary
+## 步骤 4：展示摘要
 
 ```
-Promotion PR created: {source} → {target}
+升级 PR 已创建：{source} → {target}
 
 PR: {pr-url}
 
-{count} commits included.
-Merge the PR to trigger the CD pipeline for {target}.
-Remember to update work item states in Azure DevOps after merge.
+包含 {count} 个提交。
+合并 PR 以触发 {target} 的 CD 流水线。
+合并后记得在 Azure DevOps 中更新工作项状态。
 ```
 
-Do NOT merge the PR automatically — the user or a reviewer must approve and merge.
+不要自动合并 PR——用户或审查者必须批准并合并。

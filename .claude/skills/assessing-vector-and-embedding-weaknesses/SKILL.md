@@ -1,5 +1,5 @@
 ---
-name: assessing-vector-and-embedding-weaknesses
+name: 向量和嵌入弱点评估
 description: "向量和嵌入弱点评估"
 risk: safe
 source: community

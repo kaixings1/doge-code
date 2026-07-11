@@ -1,50 +1,50 @@
 使用当前会话的学习内容更新项目的 CLAUDE.md 记忆库。
 
-## Steps
+## 步骤
 
-1. Read the existing `CLAUDE.md` (project root) or create one if it does not exist.
-2. Analyze the current session to extract:
-   - **Decisions made**: Architecture choices, library selections, pattern adoptions.
-   - **Problems solved**: Bugs fixed, workarounds discovered, gotchas identified.
-   - **Patterns established**: Naming conventions, file organization, coding standards.
-   - **Commands discovered**: Useful CLI commands, build steps, debug techniques.
-   - **Dependencies**: New packages added and why, version constraints.
-3. Categorize learnings into the appropriate CLAUDE.md sections:
-   - Project overview and key paths.
-   - Build and test commands.
-   - Architecture notes.
-   - Known issues and workarounds.
-   - Session-specific notes.
-4. Merge new information without duplicating existing entries.
-5. Update the "Last updated" timestamp.
-6. Keep the file concise: each entry should be one to two lines.
+1. 读取现有的 `CLAUDE.md`（项目根目录），如果不存在则创建一个。
+2. 分析当前会话以提取：
+   - **所做的决策**：架构选择、库选择、模式采纳。
+   - **解决的问题**：已修复的 bug、发现的变通方案、识别的陷阱。
+   - **建立的模式**：命名约定、文件组织、编码标准。
+   - **发现的命令**：有用的 CLI 命令、构建步骤、调试技巧。
+   - **依赖项**：新增的包及其原因、版本约束。
+3. 将学习内容分类到适当的 CLAUDE.md 部分：
+   - 项目概览和关键路径。
+   - 构建和测试命令。
+   - 架构说明。
+   - 已知问题和变通方案。
+   - 会话特定笔记。
+4. 合并新信息而不重复现有条目。
+5. 更新"最后更新"时间戳。
+6. 保持文件简洁：每个条目应为 1-2 行。
 
-## Format
+## 格式
 
 ```markdown
-# Project Memory
+# 项目记忆
 
-## Overview
-- Description, key paths, tech stack
+## 概览
+- 描述、关键路径、技术栈
 
-## Commands
-- `<command>` - what it does
+## 命令
+- `<命令>` - 功能说明
 
-## Architecture
-- Key design decisions and patterns
+## 架构
+- 关键设计决策和模式
 
-## Known Issues
-- Issue description and workaround
+## 已知问题
+- 问题描述和变通方案
 
-## Session Notes
-- Last updated: YYYY-MM-DD
-- <new learnings from this session>
+## 会话笔记
+- 最后更新：YYYY-MM-DD
+- <本次会话的新学习内容>
 ```
 
-## Rules
+## 规则
 
-- Never remove existing entries unless they are explicitly outdated.
-- Keep each entry factual and actionable, not narrative.
-- Limit the file to 200 lines; archive old session notes if it grows beyond that.
-- Use bullet points for scanability, not paragraphs.
-- Store project-specific memory in project root, personal memory in `~/.claude/CLAUDE.md`.
+- 除非条目明确过时，否则绝不移除。
+- 保持每个条目事实性和可操作性，而非叙述性。
+- 将文件限制在 200 行以内；如果超出，归档旧会话笔记。
+- 使用项目符号以便扫描，而非段落。
+- 项目特定记忆存储在项目根目录，个人记忆存储在 `~/.claude/CLAUDE.md`。

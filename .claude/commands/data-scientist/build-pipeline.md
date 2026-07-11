@@ -5,14 +5,14 @@ argument-hint: "<describe your ML workflow to automate>"
 
 # /build-pipeline
 
-Design an end-to-end ML pipeline with orchestration.
+设计带有编排的端到端 ML 管道。
 
-## Invocation
+## 调用
 
 ```
-/build-pipeline [describe your requirements]
+/build-pipeline [描述你的需求]
 ```
 
-## Workflow
+## 工作流
 
-Apply relevant **ds-mlops** skills to guide you through the process step by step.
+应用相关的 **ds-mlops** 技能逐步指导你完成整个过程。

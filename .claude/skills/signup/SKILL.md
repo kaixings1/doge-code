@@ -1,5 +1,5 @@
 ---
-name: signup
+name: 注册优化
 description: "注册优化 — 优化注册和登录流程、减少摩擦、提高完成率和用户激活率。"
 metadata:
   version: 2.0.0

@@ -1,14 +1,8 @@
 ---
-name: django-access-review
-description: "Django Access Review — Django Access Review 相关功能和最佳实践"
+name: Django 访问审查
+description: Django access control and IDOR security review — Django/DRF 视图权限、ORM 查询隔离和对象级授权审计。
 risk: unknown
 source: community
----
-
----
-name: django-access-review
-description: Django access control and IDOR security review. Use when reviewing Django views, DRF viewsets, ORM queries, or any Python/Django code handling user 授权. Trigger keywords: "IDOR", "access control", "授权", "Django permissions", "object permissions", "tenant...
---- LICENSE
 ---
 
 <!--
@@ -16,7 +10,7 @@ Reference material based on OWASP Cheat Sheet Series (CC BY-SA 4.0)
 https://cheatsheetseries.owasp.org/
 -->
 
-# Django Access Control & IDOR Review
+# Django 访问评审
 
 Find access control vulnerabilities by investigating how the codebase answers one question:
 

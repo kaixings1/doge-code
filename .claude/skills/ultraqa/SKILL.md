@@ -1,5 +1,5 @@
 ---
-name: ultraqa
+name: 超级质量保证
 description: "超级质量保证 — 自动QA循环工作流，直到达到质量目标"
 参数-hint: "[--tests|--build|--lint|--typecheck|--custom <pattern>] [--interactive]"
 level: 3

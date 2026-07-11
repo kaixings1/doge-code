@@ -80,7 +80,8 @@ resolved before proceeding.
 
 - **Console certification**: Follow each platform holder's Technical
   Requirements Checklist (TRC/TCR/Lotcheck). Track every requirement
-  individually with pass/fail/not-applicable status.
+  individually with pass/fail
+ot-applicable status.
 - **Store guidelines**: Ensure compliance with each storefront's content
   policies, metadata requirements, screenshot specifications, and age rating
   obligations.

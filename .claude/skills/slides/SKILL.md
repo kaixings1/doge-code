@@ -1,5 +1,5 @@
 ---
-name: slides
+name: Slides 相关功能和最佳实践
 description: "Slides — Slides 相关功能和最佳实践"
   Create and edit .pptx presentation decks with PptxGenJS. Useful for sales decks, kickoff briefs, and design-system showcases.
 triggers:
@@ -13,15 +13,15 @@ od:
   upstream: "https://github.com/openai/skills"
 ---
 
-# slides
+# 幻灯片
 
 > Curated from OpenAI's skills repository.
 
-## What it does
+## 功能说明
 
 Create and edit .pptx presentation decks with PptxGenJS. Useful for sales decks, kickoff briefs, and design-system showcases.
 
-## Source
+## 来源
 
 - Upstream: https://github.com/openai/skills
 - Category: `slides`

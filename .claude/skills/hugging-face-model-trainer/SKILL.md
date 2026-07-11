@@ -1,5 +1,5 @@
 ---
-name: hugging-face-model-trainer
+name: Hugging Face 模型训练器
 description: "Hugging Face 模型训练器 — 模型训练"
 risk: safe
 source: community

@@ -1,41 +1,41 @@
 对指定代码区域进行系统性重构。
 
-## Steps
+## 步骤
 
-### 1. Identify Code Smells
-Read the target code and identify issues:
-- **Long functions** (>40 lines): break into smaller functions with descriptive names.
-- **Deep nesting** (>3 levels): use early returns, guard clauses, or extract functions.
-- **Duplicate logic**: extract shared functions or use parameterization.
-- **God objects/modules**: split into focused, single-responsibility units.
-- **Primitive obsession**: introduce domain types or value objects.
-- **Feature envy**: move logic to the class/module that owns the data.
-- **Unclear naming**: rename variables, functions, and files to reveal intent.
+### 1. 识别代码坏味道
+读取目标代码并识别问题：
+- **过长函数**（>40 行）：拆分为具有描述性名称的较小函数。
+- **深层嵌套**（>3 层）：使用提前返回、守卫子句或提取函数。
+- **重复逻辑**：提取共享函数或使用参数化。
+- **上帝对象/模块**：拆分为专注的、单一职责的单元。
+- **基本类型偏执**：引入领域类型或值对象。
+- **依恋情结**：将逻辑移动到拥有数据的类/模块中。
+- **命名不清晰**：重命名变量、函数和文件以揭示意图。
 
-### 2. Verify Test Coverage
-- Run existing tests to establish the green baseline.
-- If coverage is insufficient, write characterization tests that capture current behavior before changing anything.
-- Every refactored path must have a test that would catch a regression.
+### 2. 验证测试覆盖
+- 运行现有测试以建立绿色基线。
+- 如果覆盖率不足，在更改任何内容之前编写刻画当前行为的特征测试。
+- 每个重构路径必须有一个能够捕获回归的测试。
 
-### 3. Plan Changes
-- List each refactoring step in order.
-- Each step should be a single, atomic change (one rename, one extract, one move).
-- Order steps to minimize risk: rename before restructure, restructure before optimize.
+### 3. 规划变更
+- 按顺序列出每个重构步骤。
+- 每一步应为单一的原子变更（一次重命名、一次提取、一次移动）。
+- 对步骤排序以最小化风险：先重命名再重构，先重构再优化。
 
-### 4. Execute
-- Apply one refactoring at a time.
-- Run tests after each step to confirm behavior is preserved.
-- Commit after each successful step if the changes are significant.
+### 4. 执行
+- 一次应用一个重构。
+- 每一步后运行测试以确认行为保持不变。
+- 如果变更显著，在每一步成功后提交。
 
-### 5. Verify
-- Run the full test suite.
-- Check that type checking passes.
-- Compare behavior before and after (same inputs produce same outputs).
+### 5. 验证
+- 运行完整的测试套件。
+- 检查类型检查是否通过。
+- 比较前后的行为（相同输入产生相同输出）。
 
-## Rules
+## 规则
 
-- Refactoring changes structure, not behavior. If behavior changes, that is a feature or a fix.
-- Never refactor and add features in the same step.
-- If tests are missing, add them before refactoring, not after.
-- Keep diffs reviewable: prefer multiple small commits over one massive change.
-- If a refactoring reveals a bug, note it and fix it in a separate commit.
+- 重构改变结构，而非行为。如果行为改变，那是功能或修复。
+- 绝不在同一步骤中重构和添加功能。
+- 如果缺少测试，在重构之前添加，而非之后。
+- 保持 diff 可审查：偏好多个小提交而非一个巨大变更。
+- 如果重构暴露了 bug，记录下来并在单独的提交中修复。

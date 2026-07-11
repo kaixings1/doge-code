@@ -1,5 +1,5 @@
 ---
-name: analyzing-prefetch-files-for-execution-history
+name: Prefetch 执行历史分析
 description: "分析 Prefetch 执行历史"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: acquiring-disk-image-with-dd-and-dcfldd
+name: dd/dcfldd 磁盘镜像取证
 description: "使用 dd 和 dcfldd 创建取证级逐位磁盘镜像，通过哈希验证确保证据完整性。"
 domain: cybersecurity
 subdomain: digital-forensics

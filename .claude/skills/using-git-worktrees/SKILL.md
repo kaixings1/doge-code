@@ -1,5 +1,5 @@
 ---
-name: using-git-worktrees
+name: 当需要开始与当前工作区隔离的功能开发，或在执行实现计划之前使用
 description: 当需要开始与当前工作区隔离的功能开发，或在执行实现计划之前使用——通过原生工具或 git worktree 回退机制确保隔离工作区存在
 version: "1.0.0"
 license: MIT

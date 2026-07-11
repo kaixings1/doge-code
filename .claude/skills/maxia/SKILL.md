@@ -1,5 +1,5 @@
 ---
-name: maxia
+name: Maxia 相关功能和最佳实践
 description: "Maxia — Maxia 相关功能和最佳实践"
 risk: unknown
 source: community

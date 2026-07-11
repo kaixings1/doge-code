@@ -1,5 +1,5 @@
 ---
-name: gsap-performance
+name: GSAP 性能
 description: "GSAP 性能 — GSAP 性能优化：优先使用变换、避免布局抖动、will-change、批量处理。当优化 GSAP 动画、减少卡顿或用户询问动画性能时使用。"
 triggers:
   - "gsap performance"

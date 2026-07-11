@@ -1,5 +1,5 @@
 ---
-name: avalonia-zafiro-development
+name: Avalonia Zafiro 开发
 description: "Avalonia Zafiro 开发"
 risk: safe
 source: community

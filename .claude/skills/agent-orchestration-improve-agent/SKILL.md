@@ -1,5 +1,5 @@
 ---
-name: agent-orchestration-improve-agent
+name: 代理编排改进
 description: "通过性能分析、提示工程和持续迭代来系统性地改进现有代理。"
 risk: unknown
 source: community

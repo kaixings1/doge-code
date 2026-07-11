@@ -1,5 +1,5 @@
 ---
-name: chrome-extension-developer
+name: Chrome 扩展开发
 description: "Chrome 扩展开发"
 risk: safe
 source: community

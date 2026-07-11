@@ -1,6 +1,7 @@
 ---
-name: quaderno-automation
-description: "辛行 Rube MCP (Composio) 口辐用11Quaderno任务。你用前叶先等套巶断缓开服，可输出等当务，否删匕现信明。"*requires:
+name: Quaderno 自动化
+description: "通过 Rube MCP (Composio) 自动执行 Quaderno 任务。使用前始终先搜索工具以获取当前 schema。"
+requires:
   mcp: [rube]
 ---
-# 通过 Rube MCP 的 Quaderno 病宺化
+# 通过 Rube MCP 自动执行 Quaderno 操作

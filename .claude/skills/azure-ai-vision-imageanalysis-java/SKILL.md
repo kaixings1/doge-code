@@ -1,5 +1,5 @@
 ---
-name: azure-ai-vision-imageanalysis-java
+name: 指导 Java 开发者使用 Azure AI Vision Image Anal
 description: "指导 Java 开发者使用 Azure AI Vision Image Analysis 客户端库从图像中提取描述、标签和文本。"
 risk: unknown
 source: community
@@ -20,7 +20,7 @@ Build image analysis applications using the Azure AI Vision Image Analysis SDK f
 </dependency>
 ```
 
-## Client Creation
+## 客户端创建
 
 ### With API Key
 
@@ -72,7 +72,7 @@ ImageAnalysisClient client = new ImageAnalysisClientBuilder()
 | `SMART_CROPS` | Smart thumbnail regions |
 | `PEOPLE` | Detect people with locations |
 
-## Core Patterns
+## 核心模式
 
 ### Generate Caption
 
@@ -280,7 +280,7 @@ VISION_KEY=<your-api-key>
 
 Caption and Dense Captions require GPU-supported regions. Check [supported regions](https://learn.microsoft.com/azure/ai-services/computer-vision/concept-describe-images-40) before deployment.
 
-## Trigger Phrases
+## 触发短语
 
 - "image analysis Java"
 - "Azure Vision SDK"

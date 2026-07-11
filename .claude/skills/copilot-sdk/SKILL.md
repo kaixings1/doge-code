@@ -1,14 +1,9 @@
 ---
-name: copilot-sdk
-description: "Copilot SDK"
+name: GitHub Copilot SDK 开发指南
+description: GitHub Copilot SDK 开发指南 — 扩展开发、API 集成、自定义提示词和 Agent 模式配置。
 risk: safe
 source: community
 ---
-# Copilot SDK
-## 简介
-Copilot SDK。
-## 功能
-- 功能 1
-- 功能 2
-## 限制
-- 此技能仅用于指导
+# GitHub Copilot SDK
+
+GitHub Copilot SDK 开发指南 — 扩展开发、API 集成、自定义提示词和 Agent 模式配置。

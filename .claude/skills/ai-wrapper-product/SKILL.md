@@ -1,5 +1,5 @@
 ---
-name: ai-wrapper-product
+name: AI API 封装产品
 description: "构建封装 AI API (OpenAI、Anthropic、Gemini) 产品的专家。聚焦产品市场匹配、API 集成和定价策略。"
   etc. ) into focused tools people will pay for. Not just "ChatGPT but
   different" - products that solve specific problems with AI.

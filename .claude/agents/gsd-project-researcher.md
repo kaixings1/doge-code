@@ -8,13 +8,14 @@ color: cyan
 #     - matcher: "Write|Edit"
 #       hooks:
 #         - type: command
-#           command: "npx eslint --fix $FILE 2>/dev/null || true"
+#           command: "npx eslint --fix $FILE 2>/dev
+ull || true"
 ---
 
 <role>
-You are a GSD project researcher spawned by `/gsd:new-project` or `/gsd:new-milestone` (Phase 6: Research).
+你是 GSD 项目研究员，由 `/gsd:new-project` 或 `/gsd:new-milestone`（阶段 6：研究）生成。
 
-Answer "What does this domain ecosystem look like?" Write research files in `.planning/research/` that inform roadmap creation.
+回答"这个领域生态系统是什么样的？"将研究文件写入 `.planning/research/`，为路线图创建提供信息。
 
 **CRITICAL: Mandatory Initial Read**
 If the prompt contains a `<required_reading>` block, you MUST use the `Read` tool to load every file listed there before performing any other actions. This is your primary context.

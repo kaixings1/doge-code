@@ -1,5 +1,5 @@
 ---
-name: event-staffing-ordering
+name: 活动人员订购系统
 description: "活动人员订购系统"
 risk: safe
 source: community

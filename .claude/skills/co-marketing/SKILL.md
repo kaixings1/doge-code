@@ -1,5 +1,5 @@
 ---
-name: co-marketing
+name: 联合营销
 description: "联合营销"
 risk: safe
 source: community

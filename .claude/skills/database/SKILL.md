@@ -1,5 +1,5 @@
 ---
-name: database
+name: 数据库开发和运维工作流，涵盖 SQL、NoSQL、数据库设计、迁移、优化和数据工程。
 description: "数据库开发和运维工作流，涵盖 SQL、NoSQL、数据库设计、迁移、优化和数据工程。"
 category: 工作流-bundle
 risk: safe

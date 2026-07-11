@@ -1,7 +1,6 @@
 ---
-name: flutter-animating-apps
-description: "Flutter Animating Apps — Flutter Animating Apps 相关功能和最佳实践"
-  /u5728 Flutter /u5e94/u7528/u4e2d/u5b9e/u73b0/u52a8/u753b/u6548/u679c/u3001/u8fc7/u6e21/u548c/u8fd0/u52a8/u8bbe/u8ba1/u3002/u9002/u7528/u4e8e/u539f/u751f iOS/Android /u8fd0/u52a8/u8bbe/u8ba1/u3002
+name: Flutter 动画应用
+description: "Flutter 动画应用 — Flutter 动画应用相关功能和最佳实践，在 Flutter 应用中实现动画效果、过渡和运动设计"
 triggers:
   - "flutter animation"
   - "flutter motion"

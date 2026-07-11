@@ -1,5 +1,5 @@
 ---
-name: copy-editing
+name: 文案编辑
 description: "文案编辑"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: latex-paper-conversion
+name: 当用户要求将 LaTeX 格式的学术论文从一种格式（如 Springer、IPO
 description: "当用户要求将 LaTeX 格式的学术论文从一种格式（如 Springer、IPOL）转换为另一种格式（如 MDPI、IEEE、Nature）时使用此技能。它自动化提取、注入、修复格式和编译。"
 risk: safe
 source: community
@@ -63,7 +63,7 @@ AGENT: *Triggers latex-paper-conversion skill*
 - **Problem:** Undefined control sequence errors during compilation.
   **Solution:** Search the `Paper.log` and include the missing `\usepackage{}` in the converted template.
 
-## Additional Resources
+## 其他资源
 
 - [Overleaf LaTeX Documentation](https://www.overleaf.com/learn)
 

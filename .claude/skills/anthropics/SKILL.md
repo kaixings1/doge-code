@@ -1,5 +1,5 @@
 ---
-name: anthropics
+name: Anthropics 研究
 description: "Anthropics"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: emelia-automation
+name: Emelia 自动化
 description: "Emelia 自动化"
 risk: safe
 source: community

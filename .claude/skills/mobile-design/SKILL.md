@@ -1,5 +1,5 @@
 ---
-name: mobile-design
+name: 移动端设计
 description: "移动端设计 — 触控优先、平台尊重、移动端体验设计规范"
 risk: unknown
 source: community

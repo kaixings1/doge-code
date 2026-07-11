@@ -1,5 +1,5 @@
 ---
-name: analytics-tracking
+name: 分析追踪审计
 description:  设计、审计和改进产生可靠、可决策数据的分析追踪系统。
 risk: unknown
 source: community

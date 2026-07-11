@@ -1,10 +1,12 @@
 ---
-name: accesslint-scan
+name: AccessLint 无障碍扫描
 description: "审计实时页面的无障碍问题，精确定位每个 WCAG 违规，并返回基于选择器的修复工作清单，不进行编辑。"
 risk: safe
 source: "https://github.com/AccessLint/skills"
 date_added: "2026-06-02"
 ---
+
+# AccessLint 扫描
 
 审计实时页面并报告哪些地方有问题以及在哪里。定位问题；不要修复。如果 `$ARGUMENTS` 中没有 URL，请询问。
 

@@ -1,5 +1,5 @@
 ---
-name: c4-architecture-c4-architecture
+name: 使用自底向上分析方法为现有仓库/代码库生成全面的 C4 架构文档
 description: "使用自底向上分析方法为现有仓库/代码库生成全面的 C4 架构文档。"
 risk: unknown
 source: community
@@ -335,7 +335,7 @@ For each identified component:
 - `include_tests`: Whether to analyze test files for context (default: true)
 - `api_format`: Format for API specs (default: openapi)
 
-## Success Criteria
+## 成功标准
 
 - ✅ Every subdirectory has a corresponding c4-code-\*.md file
 - ✅ All code-level documentation includes complete function signatures

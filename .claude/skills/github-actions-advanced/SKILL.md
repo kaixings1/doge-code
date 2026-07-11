@@ -1,8 +1,6 @@
 ---
-name: github-actions-advanced
-description: "Github Actions Advanced — Github Actions Advanced 相关功能和最佳实践"
-  Design, debug, and harden GitHub Actions CI/CD workflows, including reusable
-  workflows, matrix builds, self-hosted runners, OIDC 认证, caching,
+name: GitHub Actions 高级
+description: "GitHub Actions 高级 — GitHub Actions 高级相关功能和最佳实践，涉及设计、调试和加固 GitHub Actions CI/CD 工作流，包括可复用工作流、矩阵构建、自托管运行器、OIDC 认证、缓存等"
   environments, secrets, and release automation.
 category: devops
 risk: safe
@@ -25,7 +23,7 @@ Expert guidance for designing, writing, debugging, and securing **production-gra
 - User says "my GitHub pipeline is failing" or "set up CI for my repo"
 - User asks about 工作流 security, hardening, or environment protection rules
 
-## When NOT to Use This Skill
+## 不使用此技能的场景
 
 - The user is working with GitLab CI/CD → recommend `gitlab-ci-patterns`
 - The user is working with CircleCI, Jenkins, or other CI platforms

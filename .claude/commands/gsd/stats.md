@@ -7,7 +7,7 @@ allowed-tools:
 requires: [phase, progress]
 ---
 <objective>
-Display comprehensive project statistics including phase progress, plan execution metrics, requirements completion, git history stats, and project timeline.
+显示全面的项目统计信息，包括阶段进度、计划执行指标、需求完成度、git 历史统计和项目时间线。
 </objective>
 
 <execution_context>
@@ -15,5 +15,5 @@ Display comprehensive project statistics including phase progress, plan executio
 </execution_context>
 
 <process>
-Execute end-to-end.
+端到端执行。
 </process>

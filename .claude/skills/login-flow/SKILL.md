@@ -1,6 +1,6 @@
 ---
-name: login-flow
-description: "Login Flow — Login Flow 相关功能和最佳实践"
+name: 登录流程
+description: "登录流程 — 登录流程相关功能和最佳实践"
 od:
   mode: prototype
   platform: mobile

@@ -10,7 +10,6 @@ import renderNodeToOutput, {
   resetLayoutShifted,
 } from './render-node-to-output.js'
 import {
-  CellWidth,
   CharPool,
   cellAtIndex,
   createScreen,
@@ -19,6 +18,12 @@ import {
   StylePool,
   setCellStyleId,
 } from './screen.js'
+
+// 内联 CellWidth 枚举值（const enum 在 ESM 下可能无法正确导出）
+const CELL_WIDTH_NARROW = 0
+const CELL_WIDTH_WIDE = 1
+const CELL_WIDTH_SPACER_TAIL = 2
+const CELL_WIDTH_SPACER_HEAD = 3
 
 /** Position of a match within a rendered message, relative to the message's
  *  own bounding box (row 0 = message top). Stable across scroll — to
@@ -170,8 +175,8 @@ export function scanPositions(screen: Screen, query: string): MatchPosition[] {
       const idx = rowOff + col
       const cell = cellAtIndex(screen, idx)
       if (
-        cell.width === CellWidth.SpacerTail ||
-        cell.width === CellWidth.SpacerHead ||
+        cell.width === CELL_WIDTH_SPACER_TAIL ||
+        cell.width === CELL_WIDTH_SPACER_HEAD ||
         noSelect[idx] === 1
       ) {
         continue

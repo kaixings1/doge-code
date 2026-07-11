@@ -1,5 +1,5 @@
 ---
-name: onboarding
+name: 当用户想要优化注册后的新手引导、用户激活、首次使用体验或价值实现时间时使用。当用
 description: "当用户想要优化注册后的新手引导、用户激活、首次使用体验或价值实现时间时使用。当用户提到 'onboarding flow'、'activation rate'、'user activation'、'first-run experience'、'empty states'、'onboarding checklist'、'aha moment'、'new user experience'、'users aren\'t activating'、'nobody completes setup'、'low activation rate'、'users sign up but don\'t use the product'、'time to value' 或 'first session experience' 时也使用。当用户注册但没有留存时使用此技能。关于注册/注册优化，请参阅 signup。关于持续邮件序列，请参阅 emails。"
 metadata:
   version: 2.0.0
@@ -202,7 +202,7 @@ When recommending experiments, consider tests for:
 
 ---
 
-## Task-Specific Questions
+## 任务相关问题
 
 1. What action most correlates with retention?
 2. What happens immediately after signup?

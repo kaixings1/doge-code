@@ -1,5 +1,5 @@
 ---
-name: azure-communication-callautomation-java
+name: 指导 Java 开发者使用 Azure Communication Call A
 description: "指导 Java 开发者使用 Azure Communication Call Automation 客户端库构建通话应用。"
 risk: unknown
 source: community
@@ -20,7 +20,7 @@ Build server-side call automation workflows including IVR systems, call routing,
 </dependency>
 ```
 
-## Client Creation
+## 客户端创建
 
 ```java
 import com.azure.communication.callautomation.CallAutomationClient;
@@ -247,7 +247,7 @@ AZURE_COMMUNICATION_CONNECTION_STRING=端点=https://...;accesskey=...
 CALLBACK_BASE_URL=https://your-app.com/api/callbacks
 ```
 
-## Trigger Phrases
+## 触发短语
 
 - "call automation Java", "IVR Java", "interactive voice 响应"
 - "call recording Java", "DTMF recognition Java"

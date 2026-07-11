@@ -1,5 +1,5 @@
 ---
-name: lex
+name: 跨司法管辖区法律上下文（美国、欧盟、加拿大）和合同框架的集中化"真相引擎"。
 description: "跨司法管辖区法律上下文（美国、欧盟、加拿大）和合同框架的集中化"真相引擎"。"
 category: business
 risk: safe

@@ -1,55 +1,55 @@
 根据代码库为指定范围生成文档。
 
-## Steps
+## 步骤
 
-### 1. Determine Scope
-- If a specific file or module is provided, document that.
-- If no scope is given, identify the most important public-facing modules.
-- Focus on: exported functions, public classes, API endpoints, configuration options.
+### 1. 确定范围
+- 如果提供了具体的文件或模块，为其编写文档。
+- 如果未指定范围，识别最重要的面向公众的模块。
+- 关注：导出的函数、公共类、API 端点、配置选项。
 
-### 2. Read the Code
-- Read source files to understand function signatures, types, and behavior.
-- Look at existing tests for usage examples.
-- Check for existing doc comments or README sections to update rather than replace.
+### 2. 读取代码
+- 读取源文件以了解函数签名、类型和行为。
+- 查看现有测试以获取使用示例。
+- 检查现有文档注释或 README 部分以进行更新而非替换。
 
-### 3. Generate API Documentation
-For each public function/method:
+### 3. 生成 API 文档
+对每个公共函数/方法：
 ```
 ### functionName(param1: Type, param2: Type): ReturnType
 
-Brief description of what it does.
+简要描述其功能。
 
-**Parameters:**
-- `param1` - Description and constraints.
-- `param2` - Description and defaults.
+**参数：**
+- `param1` - 描述和约束。
+- `param2` - 描述和默认值。
 
-**Returns:** Description of return value.
+**返回：** 返回值的说明。
 
-**Throws:** Error conditions.
+**抛出：** 错误条件。
 
-**Example:**
+**示例：**
 ```code
 const result = functionName("value", { option: true });
 ```
 ```
 
-### 4. Generate README Sections
-- **Installation**: How to install and configure.
-- **Quick Start**: Minimal example to get started.
-- **Configuration**: Available options with defaults.
-- **API Reference**: Link to or inline the API docs.
+### 4. 生成 README 部分
+- **安装**：如何安装和配置。
+- **快速开始**：入门的最小示例。
+- **配置**：可用选项及其默认值。
+- **API 参考**：链接或内联 API 文档。
 
-### 5. Add Inline Documentation
-For complex logic (non-obvious algorithms, business rules, workarounds):
-- Add a brief comment explaining **why**, not what.
-- Document preconditions and postconditions for critical functions.
-- Note any gotchas or non-obvious behavior.
+### 5. 添加内联文档
+对于复杂逻辑（不明显的算法、业务规则、变通方案）：
+- 添加简要注释解释**为什么**，而非是什么。
+- 记录关键函数的前置条件和后置条件。
+- 注意任何陷阱或不明显的行为。
 
-## Rules
+## 规则
 
-- Document behavior, not implementation. Describe what a function does, not how.
-- Use concrete examples, not abstract descriptions.
-- Keep docs close to code: inline comments for complex logic, JSDoc/docstrings for public APIs.
-- Do not document obvious code (getters, setters, simple wrappers).
-- If a function is too complex to document clearly, that is a signal to refactor it.
-- Update existing documentation rather than creating duplicate files.
+- 记录行为，而非实现。描述函数做什么，而非如何做。
+- 使用具体示例，而非抽象描述。
+- 保持文档靠近代码：复杂逻辑使用内联注释，公共 API 使用 JSDoc/docstrings。
+- 不要为显而易见的代码编写文档（getter、setter、简单包装器）。
+- 如果某个函数复杂到无法清晰记录，这是需要重构的信号。
+- 更新现有文档而非创建重复文件。

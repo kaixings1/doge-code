@@ -1,5 +1,5 @@
 ---
-name: agents-md
+name: AGENTS.md 文档管理
 description: "创建和维护 AGENTS.md：保持代理描述、工具配置、触发条件和简洁高密度文档。"
 risk: unknown
 source: community

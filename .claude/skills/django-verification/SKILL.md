@@ -390,7 +390,7 @@ DJANGO 验证报告
 
 ```yaml
 # .github/workflows/django-verification.yml
-name: Django Verification
+name: 针对 Django 项目的验证循环：包含数据库迁移、代码检查、带覆盖率的测试、安
 
 on: [push, pull_request]
 

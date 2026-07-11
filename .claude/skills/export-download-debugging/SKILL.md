@@ -1,5 +1,5 @@
 ---
-name: export-download-debugging
+name: 导出下载问题调试
 description: "导出下载问题调试"
 risk: safe
 source: community

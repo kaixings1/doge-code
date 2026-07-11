@@ -1,5 +1,5 @@
 ---
-name: churn-prevention
+name: 流失预防策略
 description: "通过取消流程、挽留优惠、催款、赢回策略和留存策略减少自愿和非自愿流失。适用于用户正在取消、付款失败上升或订阅留存需要改进时。"
 risk: unknown
 source: "https://github.com/coreyhaines31/marketingskills"
@@ -17,7 +17,7 @@ metadata:
 - 当设计取消流程、挽留优惠、催款或留存计划时使用。
 - 当用户想要减少自愿或非自愿流失时使用。
 
-## Before Starting
+## 开始之前
 
 **Check for product marketing context first:**
 If `.agents/product-marketing-context.md` exists (or `.claude/product-marketing-context.md` in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.

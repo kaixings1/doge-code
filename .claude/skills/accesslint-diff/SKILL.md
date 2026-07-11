@@ -1,5 +1,5 @@
 ---
-name: accesslint-diff
+name: AccessLint 无障碍差异对比
 description: "将实时页面的无障碍违规与基线进行差异比较 — 默认比较未提交的更改（基于 stash），或传递 --branch [名称] 来比较分支。仅报告新增的违规、已修复的违规和预先存在的计数。使用 `scan` 进行无差异比较的完整审计。"
 risk: safe
 source: "https://github.com/AccessLint/skills"

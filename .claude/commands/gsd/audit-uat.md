@@ -8,7 +8,7 @@ allowed-tools:
   - Bash
 ---
 <objective>
-Scan all phases for pending, skipped, blocked, and human_needed UAT items. Cross-reference against codebase to detect stale documentation. Produce prioritized human test plan.
+扫描所有阶段中的待处理、跳过、阻塞和需要人工处理的 UAT 项。对照代码库交叉引用以检测过时的文档。生成按优先级排序的人工测试计划。
 </objective>
 
 <execution_context>
@@ -16,9 +16,9 @@ Scan all phases for pending, skipped, blocked, and human_needed UAT items. Cross
 </execution_context>
 
 <context>
-Core planning files are loaded in-workflow via CLI.
+核心规划文件通过 CLI 在工作流中加载。
 
-**Scope:**
-Glob: .planning/phases/*/*-UAT.md
-Glob: .planning/phases/*/*-VERIFICATION.md
+**范围：**
+Glob：.planning/phases/*/*-UAT.md
+Glob：.planning/phases/*/*-VERIFICATION.md
 </context>

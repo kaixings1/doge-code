@@ -1,6 +1,6 @@
 ---
-name: leiloeiro-edital
-description: "Leiloeiro Edital — Leiloeiro Edital 相关功能和最佳实践"
+name: 拍卖师招标
+description: "拍卖师招标 — 拍卖师招标相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-06'

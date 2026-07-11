@@ -1,5 +1,5 @@
 ---
-name: everhour-automation
+name: Everhour 自动化
 description: "Everhour 自动化"
 risk: safe
 source: community

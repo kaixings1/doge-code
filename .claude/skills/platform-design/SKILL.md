@@ -1,7 +1,6 @@
 ---
-name: platform-design
-description: "Platform Design — 平台设计相关功能和最佳实践"
-  来自 Apple HIG、Material Design 3 和 WCAG 2.2 的 300+ 跨平台应用设计规则。适用于在 iOS、Android 和 Web 之间发布统一设计。
+name: 平台设计
+description: "平台设计 — 平台设计相关功能和最佳实践，来自 Apple HIG、Material Design 3 和 WCAG 2.2 的 300+ 跨平台应用设计规则"
 triggers:
   - "platform design"
   - "cross platform design"

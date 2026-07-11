@@ -1,6 +1,6 @@
 ---
-name: azure-monitor-ingestion-java
-description: "Azure Monitor Ingestion Java — Azure Monitor Ingestion Java 相关功能和最佳实践"
+name: Azure Monitor Ingestion Java SDK 相关
+description: "Azure Monitor Ingestion Java — Azure Monitor Ingestion Java SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -58,7 +58,7 @@ DATA_COLLECTION_RULE_ID=dcr-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 STREAM_NAME=Custom-MyTable_CL
 ```
 
-## Client Creation
+## 客户端创建
 
 ### Synchronous Client
 
@@ -96,7 +96,7 @@ LogsIngestionAsyncClient asyncClient = new LogsIngestionClientBuilder()
 | Stream Name | Target stream in the DCR (e.g., `Custom-MyTable_CL`) |
 | Log Analytics Workspace | Destination for ingested logs |
 
-## Core Operations
+## 核心操作
 
 ### Upload Custom Logs
 

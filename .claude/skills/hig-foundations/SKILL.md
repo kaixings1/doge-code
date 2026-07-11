@@ -1,5 +1,5 @@
 ---
-name: hig-foundations
+name: HIG 基础
 description: "HIG 基础 — Human Interface Guidelines 基础"
 risk: safe
 source: community

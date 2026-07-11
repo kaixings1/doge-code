@@ -1,5 +1,5 @@
 ---
-name: abusing-shadow-credentials-for-privesc
+name: Shadow Credentials 权限提升
 description: "利用 pyWhisker、Whisker 和 Certipy 将备用证书密钥写入 msDS-KeyCredentialLink（Shadow Credentials），接管 Active Directory 用户和计算机账户，并通过 PKINIT 进行身份验证。"
 domain: cybersecurity
 subdomain: red-teaming
@@ -55,7 +55,7 @@ The technique was published by Elad Shamir (*"Shadow Credentials: Abusing Key Tr
   git clone https://github.com/dirkjanm/PKINITtools
   ```
 
-## Objectives
+## 目标
 
 - Confirm write access over a target's `msDS-KeyCredentialLink`
 - Generate a key pair and append a Key Credential to the target object

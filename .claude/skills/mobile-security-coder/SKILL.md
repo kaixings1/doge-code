@@ -1,5 +1,5 @@
 ---
-name: mobile-security-coder
+name: 移动安全编程
 description: "移动安全编程 — Mobile 安全性 Coder 相关功能和最佳实践"
 risk: unknown
 source: community

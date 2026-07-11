@@ -1,6 +1,10 @@
-# Workflow Example: Book Chapter Development
+---
+description: 书籍章节编写工作流——使用代理协作编写书籍章节
+---
 
-> A focused single-agent workflow for turning rough source material into a strategic first-person chapter draft with explicit revision loops.
+# 工作流示例：书籍章节开发
+
+> 一个专注的单代理工作流，将粗糙的源材料转化为战略性第一人称章节草稿，并带有明确的修订循环。
 
 ## When to Use This
 

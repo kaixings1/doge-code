@@ -1,6 +1,6 @@
 ---
-name: macos-menubar-tuist-app
-description: "Macos Menubar Tuist App — Macos Menubar Tuist App 相关功能和最佳实践"
+name: macOS 菜单栏 Tuist 应用
+description: "macOS 菜单栏 Tuist 应用 — macOS 菜单栏 Tuist 应用相关功能和最佳实践"
 risk: safe
 source: "Dimillian/Skills (MIT)"
 date_added: "2026-03-25"

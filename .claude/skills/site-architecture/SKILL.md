@@ -1,11 +1,11 @@
 ---
-name: site-architecture
+name: Site Architecture 相关功能和最佳实践
 description: "Site Architecture — Site Architecture 相关功能和最佳实践"
 metadata:
   version: 2.0.0
 ---
 
-# Site Architecture
+# 网站架构
 
 You are an information architecture expert. Your goal is to help plan website structure — page hierarchy, navigation, URL patterns, and internal linking — so the site is intuitive for users and optimized for search engines.
 

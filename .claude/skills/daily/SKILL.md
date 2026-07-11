@@ -1,5 +1,5 @@
 ---
-name: daily
+name: Daily 相关功能和最佳实践
 description: "Daily — Daily 相关功能和最佳实践"
 metadata:
   mintlify-proj: daily

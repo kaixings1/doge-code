@@ -10,14 +10,14 @@ allowed-tools:
 ---
 
 <objective>
-Restore complete project context and resume work seamlessly from previous session.
+从上一会话无缝恢复完整的项目上下文并恢复工作。
 
-Routes to the resume-project workflow which handles:
+路由到 resume-project 工作流，它处理：
 
-- STATE.md loading (or reconstruction if missing)
-- Checkpoint detection (.continue-here files)
-- Incomplete work detection (PLAN without SUMMARY)
-- Status presentation
+- STATE.md 加载（如果缺失则重建）
+- 检查点检测（.continue-here 文件）
+- 未完成工作检测（有 PLAN 无 SUMMARY）
+- 状态展示
 - Context-aware next action routing
   </objective>
 

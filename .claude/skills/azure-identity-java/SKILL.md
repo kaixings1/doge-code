@@ -1,5 +1,5 @@
 ---
-name: azure-identity-java
+name: 指导 Java 开发者使用 Azure Identity 客户端库进行 Microsoft Entra ID 认证。
 description: "指导 Java 开发者使用 Azure Identity 客户端库进行 Microsoft Entra ID 认证。"
 risk: unknown
 source: community
@@ -268,7 +268,7 @@ SharedTokenCacheCredential credential = new SharedTokenCacheCredentialBuilder()
     .build();
 ```
 
-## Sovereign Clouds
+## 主权云
 
 ```java
 import com.azure.identity.AzureAuthorityHosts;
@@ -360,7 +360,7 @@ AZURE_AUTHORITY_HOST=https://login.microsoftonline.com/
 | Desktop App | `InteractiveBrowserCredential` |
 | CLI Tool | `DeviceCodeCredential` |
 
-## Trigger Phrases
+## 触发短语
 
 - "Azure authentication Java", "默认AzureCredential Java"
 - "managed identity Java", "service principal Java"

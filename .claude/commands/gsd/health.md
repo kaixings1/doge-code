@@ -10,15 +10,15 @@ allowed-tools:
 requires: [thread]
 ---
 <objective>
-Validate `.planning/` directory integrity and report actionable issues. Checks for missing files, invalid configurations, inconsistent state, and orphaned plans.
+验证 `.planning/` 目录完整性并报告可操作的问题。检查缺失文件、无效配置、不一致状态和孤立计划。
 
-`--context` runs an orthogonal check: the running session's context utilization. The workflow asks for the model's tokensUsed + contextWindow, calls `gsd-sdk query validate.context`, and renders one of three states:
+`--context` 运行一个正交检查：运行中会话的上下文利用率。工作流要求模型的 tokensUsed + contextWindow，调用 `gsd-sdk query validate.context`，并呈现三种状态之一：
 
-| Utilization | State    | Action                                                |
+| 利用率 | 状态 | 操作 |
 |-------------|----------|-------------------------------------------------------|
-| < 60%       | healthy  | no action — context is comfortable                    |
-| 60% – 70%   | warning  | recommend `/gsd:thread` to start fresh                |
-| ≥ 70%       | critical | reasoning quality may degrade past the fracture point |
+| < 60% | 健康 | 无需操作——上下文舒适 |
+| 60% – 70% | 警告 | 建议 `/gsd:thread` 重新开始 |
+| ≥ 70% | 严重 | 推理质量可能超过断裂点而下降 |
 </objective>
 
 <execution_context>

@@ -1,5 +1,5 @@
 ---
-name: fal-restore
+name: FAL 修复
 description: "FAL 修复 — 基于 FAL AI 的图像修复"
 risk: unknown
 source: community

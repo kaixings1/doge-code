@@ -1,6 +1,6 @@
 ---
 name: expo-tailwind-设置
-description: "Expo Tailwind CSS 配置"
+description: "Expo Tailwind CSS 配置 — Expo 项目中使用 Tailwind CSS 的配置指南"
 risk: safe
 source: community
 ---

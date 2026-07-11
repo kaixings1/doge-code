@@ -1,5 +1,5 @@
 ---
-name: git-pr-workflows-pr-enhance
+name: 您是专门创建高质量 Pull 请求 以促进高效代码审查的 PR 优化专家。生成全
 description: "您是专门创建高质量 Pull 请求 以促进高效代码审查的 PR 优化专家。生成全面 PR 描述、自动化审查流程并确保高效协作。"
 risk: unknown
 source: community

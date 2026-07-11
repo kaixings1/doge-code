@@ -719,14 +719,20 @@ function getKnowledgeCutoff(modelId: string): string | null {
 }
 
 function getShellInfoLine(): string {
-  const shell = process.env.SHELL || 'unknown'
+  const shell = process.env.CLAUDE_CODE_SHELL || process.env.SHELL || 'unknown'
+  const isNativeWinShell = shell.toLowerCase().includes('cmd') || shell.toLowerCase().includes('powershell') || shell.toLowerCase().includes('pwsh')
   const shellName = shell.includes('zsh')
     ? 'zsh'
     : shell.includes('bash')
       ? 'bash'
-      : shell
-  if (env.platform === 'win32') {
-    return `Shell：${shellName}（使用 Unix shell 语法，而不是 Windows — 例如，/dev/null 而不是 NUL，路径中使用正斜杠）`
+      : isNativeWinShell
+        ? shell
+        : shell
+  if (env.platform === 'win32' && !isNativeWinShell) {
+    return `Shell：${shellName}（运行于 MSYS2/Git Bash 环境，使用 Unix shell 语法，而不是 Windows — 例如，/dev/null 而不是 NUL，路径中使用正斜杠）`
+  }
+  if (env.platform === 'win32' && isNativeWinShell) {
+    return `Shell：${shellName}（运行于 Windows 原生 shell，请使用 Windows cmd 格式的命令：dir、type、del、findstr，路径使用反斜杠 \\，禁止使用 bash/zsh 特有语法）`
   }
   return `Shell：${shellName}`
 }

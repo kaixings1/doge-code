@@ -1,5 +1,5 @@
 ---
-name: ilya-sutskever
+name: AI 研究和思想
 description: "Ilya Sutskever — AI 研究和思想"
 risk: safe
 source: community

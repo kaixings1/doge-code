@@ -1,5 +1,5 @@
 ---
-name: agentflow
+name: AgentFlow 开发流水线
 description: "通过你的看板（Asana、GitHub Projects、Linear）编排自主 AI 开发流水线。管理多工作节点 Claude Code 调度、确定性质量门、对抗性审查、每任务成本跟踪和防崩溃流水线执行。"
 risk: safe
 source: community
@@ -61,7 +61,7 @@ Real-time pipeline status dashboard showing current stage, assigned agent, retry
 ### `/sdlc-stop`
 Graceful shutdown: active workers finish their current task, unstarted tasks return to Backlog.
 
-## Step-by-Step Guide
+## 分步指南
 
 ### 1. Write Your Spec
 
@@ -111,7 +111,7 @@ Open your Kanban board on your phone. Watch tasks flow through the pipeline. Dra
 claude -p "/sdlc-stop"
 ```
 
-## Quality Gates
+## 质量门
 
 Each stage enforces specific gates before promotion:
 

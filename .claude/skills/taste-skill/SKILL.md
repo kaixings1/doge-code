@@ -1,6 +1,6 @@
 ---
 name: design-taste-frontend
-description: "Taste Skill — Taste Skill 相关功能和最佳实践"
+description: "设计品味前端 — 前端设计品味和视觉质量相关功能和最佳实践"
 ---
 
 # tasteskill: Anti-Slop Frontend Skill
@@ -863,7 +863,7 @@ skills/taste-skill/blocks/
 ### 12.B Required Frontmatter
 ```yaml
 ---
-name: asymmetric-split-hero
+name: 设计品味前端
 category: hero
 dial_compatibility:
   variance: [6, 10]

@@ -1,5 +1,5 @@
 ---
-name: kotlin-coroutines-expert
+name: Kotlin Coroutines 和 Flow 的专家模式，涵盖结构化并发、错误处理和测试。
 description: "Kotlin Coroutines 和 Flow 的专家模式，涵盖结构化并发、错误处理和测试。"
 risk: safe
 source: community

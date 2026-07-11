@@ -1,6 +1,6 @@
 ---
-name: azure-storage-blob-rust
-description: "Azure Storage Blob Rust — Azure Storage Blob Rust 相关功能和最佳实践"
+name: Azure Storage Blob Rust SDK 相关功能和最佳
+description: "Azure Storage Blob Rust — Azure Storage Blob Rust SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -39,7 +39,7 @@ let blob_client = BlobClient::new(
 )?;
 ```
 
-## Client Types
+## 客户端类型
 
 | Client | Purpose |
 |--------|---------|
@@ -47,7 +47,7 @@ let blob_client = BlobClient::new(
 | `BlobContainerClient` | Container operations, list blobs |
 | `BlobClient` | Individual blob operations |
 
-## Core Operations
+## 核心操作
 
 ### Upload Blob
 

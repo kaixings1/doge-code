@@ -1,5 +1,5 @@
 ---
-name: azure-security-keyvault-keys-java
+name: 指导 Java 开发者使用 Azure Key Vault Keys 客户端库管理加密密钥。
 description: "指导 Java 开发者使用 Azure Key Vault Keys 客户端库管理加密密钥。"
 risk: unknown
 source: community
@@ -20,7 +20,7 @@ Manage cryptographic keys and perform cryptographic operations in Azure Key Vaul
 </dependency>
 ```
 
-## Client Creation
+## 客户端创建
 
 ```java
 import com.azure.security.keyvault.keys.KeyClient;
@@ -187,7 +187,7 @@ SyncPoller<KeyVaultKey, Void> recoverPoller = keyClient.beginRecoverDeletedKey("
 recoverPoller.waitForCompletion();
 ```
 
-## Cryptographic Operations
+## 加密操作
 
 ### Encrypt/Decrypt
 
@@ -356,7 +356,7 @@ AZURE_KEYVAULT_URL=https://<vault-name>.vault.azure.net
 4. **Least Privilege** - Use separate keys for different operations
 5. **Local Crypto When Possible** - Use `CryptographyClient` with local key material to reduce round-trips
 
-## Trigger Phrases
+## 触发短语
 
 - "Key Vault keys Java", "cryptographic keys Java"
 - "encrypt decrypt Java", "sign verify Java"

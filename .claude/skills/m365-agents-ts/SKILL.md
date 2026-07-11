@@ -1,5 +1,5 @@
 ---
-name: m365-agents-ts
+name: M365 Agents Ts 相关功能和最佳实践
 description: "M365 Agents Ts — M365 Agents Ts 相关功能和最佳实践"
 risk: unknown
 source: community

@@ -1,5 +1,5 @@
 ---
-name: testing-strategies
+name: 测试策略
 description: 测试策略 — 包括契约测试、快照测试、混沌工程和端到端测试。
 ---
 
@@ -187,7 +187,7 @@ expect(emailService.getSent()[0].subject).toBe("Welcome");
 - Ignoring flaky tests instead of fixing the root cause
 - Testing trivial getters/setters while missing edge cases
 
-## Checklist
+## 检查清单
 
 - [ ] Tests organized by behavior, not by method or file
 - [ ] Each test follows Arrange-Act-Assert structure

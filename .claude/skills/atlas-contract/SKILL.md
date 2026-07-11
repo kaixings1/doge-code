@@ -1,5 +1,5 @@
 ---
-name: atlas-contract
+name: Atlas 合约
 description: "Atlas 合约"
 risk: safe
 source: community

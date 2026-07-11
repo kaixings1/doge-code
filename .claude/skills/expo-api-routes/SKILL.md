@@ -1,5 +1,5 @@
 ---
-name: expo-api-routes
+name: Expo API 路由
 description: "Expo API 路由"
 risk: safe
 source: community

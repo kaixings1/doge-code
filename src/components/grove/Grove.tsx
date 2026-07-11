@@ -28,7 +28,7 @@ function GracePeriodContentBody() {
   const $ = _c(9);
   let t0;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-    t0 = <Text>我们的消费者条款和隐私政策更新将于{" "}<Text bold={true}>October 8, 2025</Text> 生效。您今天即可接受更新后的条款。</Text>;
+    t0 = <Text>我们的消费者条款和隐私政策更新将于{" "}<Text bold={true}>2025 年 10 月 8 日</Text> 生效。您今天即可接受更新后的条款。</Text>;
     $[0] = t0;
   } else {
     t0 = $[0];
@@ -81,7 +81,7 @@ function GracePeriodContentBody() {
   }
   let t8;
   if ($[8] === Symbol.for("react.memo_cache_sentinel")) {
-    t8 = <>{t0}{t5}<Text>Learn more ({t6}) or read the updated Consumer Terms ({t7}) and Privacy Policy (<Link url="https://anthropic.com/legal/privacy" />)</Text></>;
+    t8 = <>{t0}{t5}<Text>了解更多 ({t6}) 或阅读更新的消费者条款 ({t7}) 和隐私政策 (<Link url="https://anthropic.com/legal/privacy" />)</Text></>;
     $[8] = t8;
   } else {
     t8 = $[8];
@@ -425,14 +425,14 @@ export function PrivacySettingsDialog(t0) {
   }
   let t5;
   if ($[9] === Symbol.for("react.memo_cache_sentinel")) {
-    t5 = <Text>Review and manage your privacy settings at{" "}<Link url="https://claude.ai/settings/data-privacy-controls" /></Text>;
+    t5 = <Text>在以下位置查看和管理您的隐私设置{" "}<Link url="https://claude.ai/settings/data-privacy-controls" /></Text>;
     $[9] = t5;
   } else {
     t5 = $[9];
   }
   let t6;
   if ($[10] === Symbol.for("react.memo_cache_sentinel")) {
-    t6 = <Box width={44}><Text bold={true}>Help improve Claude</Text></Box>;
+    t6 = <Box width={44}><Text bold={true}>帮助改进 Claude</Text></Box>;
     $[10] = t6;
   } else {
     t6 = $[10];

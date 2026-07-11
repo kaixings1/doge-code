@@ -1,5 +1,5 @@
 ---
-name: dispatching-parallel-agents
+name: 当面对 2 个以上可以独立进行、无共享状态或顺序依赖的任务时使用
 description: 当面对 2 个以上可以独立进行、无共享状态或顺序依赖的任务时使用
 version: "1.0.0"
 license: MIT

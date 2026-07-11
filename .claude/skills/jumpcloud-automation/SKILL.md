@@ -1,5 +1,5 @@
 ---
-name: jumpcloud-automation
+name: Jumpcloud 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Jumpcloud 任务。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]
@@ -9,7 +9,7 @@ requires:
 **工具包文档**: [composio.dev/toolkits/jumpcloud](https://composio.dev/toolkits/jumpcloud)
 ## 前提条件
 - Rube MCP 必须已连接
-- 通过 RUBE_MANAGE_CONNECTIONS 使用 jumpcloud 连接
+- 通过相关连接工具建立 Jumpcloud 连接
 - 始终先调用 RUBE_SEARCH_TOOLS
 ## 核心工作流模式
 ### 步骤 1: 发现可用工具

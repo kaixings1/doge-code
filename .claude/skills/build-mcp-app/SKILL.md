@@ -1,6 +1,6 @@
 ---
-name: build-mcp-app
-description: "Build Mcp App — Build Mcp App 相关功能和最佳实践"
+name: 构建 MCP 应用
+description: "构建 MCP 应用 — 构建 MCP 应用相关功能和最佳实践"
 version: 0.1.0
 ---
 

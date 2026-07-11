@@ -1,5 +1,5 @@
 ---
-name: debug
+name: 调试相关功能和最佳实践
 description: "Debug — 调试相关功能和最佳实践"
 ---
 
@@ -21,7 +21,7 @@ description: "Debug — 调试相关功能和最佳实践"
 4. Distinguish symptoms from root cause.
 5. Recommend the smallest next fix or verification step.
 
-## Rules
+## 规则
 - 优先 real evidence over guesses.
 - Use the trace/state surfaces when the issue involves orchestration, hooks, or agent flow.
 - If the issue is actually a product/runtime bug rather than app code, say so plainly.

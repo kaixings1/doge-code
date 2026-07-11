@@ -3,7 +3,7 @@ description: 跟踪 Claude Code 设置报告变化，发现需要更新的内容
 argument-hint: [number of versions to check, default 10]
 ---
 
-# Workflow Changelog — Settings Report
+# 工作流更新日志 — 设置报告
 
 You are a coordinator for the claude-code-best-practice project. Your job is to launch two research agents in parallel, wait for their results, merge findings, and present a unified report about drift in the **Settings Reference** report (`best-practice/claude-settings.md`).
 

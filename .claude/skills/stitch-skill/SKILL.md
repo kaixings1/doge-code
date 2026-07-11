@@ -1,5 +1,5 @@
 ---
-name: stitch-design-taste
+name: 适用于 Google Stitch 的语义化设计系统技能
 description: 适用于 Google Stitch 的语义化设计系统技能。生成对代理友好的 DESIGN.md 文件，强制执行高品质、反通用 UI 标准——严格的排版、校准的色彩、不对称布局、持续微动效和硬件加速性能。
 ---
 
@@ -175,7 +175,7 @@ no generic placeholder names, no broken image links.)
 4. 考虑 hierarchy — document how visual weight communicates importance
 5. Encode the bans — anti-patterns are as important as the rules themselves
 
-## Common Pitfalls to Avoid
+## 应避免的常见陷阱
 - Using technical jargon without translation ("rounded-xl" instead of "generously rounded corners")
 - Omitting hex codes or using only descriptive names
 - Forgetting functional roles of design elements

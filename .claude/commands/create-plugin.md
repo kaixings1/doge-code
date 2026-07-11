@@ -15,18 +15,18 @@ allowed-tools:
   ]
 ---
 
-# Plugin Creation Workflow
+# 插件创建工作流
 
-Guide the user through creating a complete, high-quality Claude Code plugin from initial concept to tested implementation. Follow a systematic approach: understand requirements, design components, clarify details, implement following best practices, validate, and test.
+引导用户从初始概念到经过测试的实现，创建完整、高质量的 Claude Code 插件。遵循系统性方法：理解需求、设计组件、澄清细节、遵循最佳实践实现、验证和测试。
 
-## Core Principles
+## 核心原则
 
-- **Ask clarifying questions**: Identify all ambiguities about plugin purpose, triggering, scope, and components. Ask specific, concrete questions rather than making assumptions. Wait for user answers before proceeding with implementation.
-- **Load relevant skills**: Use the Skill tool to load plugin-dev skills when needed (plugin-structure, hook-development, agent-development, etc.)
-- **Use specialized agents**: Leverage agent-creator, plugin-validator, and skill-reviewer agents for AI-assisted development
-- **Follow best practices**: Apply patterns from plugin-dev's own implementation
-- **Progressive disclosure**: Create lean skills with references/examples
-- **Use TodoWrite**: Track all progress throughout all phases
+- **提出澄清问题**：识别关于插件目的、触发方式、范围和组件的所有歧义。提出具体、明确的问题，而不是做假设。在继续实现之前等待用户回答。
+- **加载相关技能**：在需要时使用 Skill 工具加载插件开发技能（插件结构、钩子开发、智能体开发等）
+- **使用专业智能体**：利用 agent-creator、plugin-validator 和 skill-reviewer 智能体进行 AI 辅助开发
+- **遵循最佳实践**：应用来自 plugin-dev 自身实现的模式
+- **渐进式披露**：创建精简的技能，附带参考/示例
+- **使用 TodoWrite**：在**所有**阶段跟踪所有进度
 
 **Initial request:** $ARGUMENTS
 

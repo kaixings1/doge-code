@@ -1,5 +1,5 @@
 ---
-name: bilig-workpaper
+name: 比丽格审计工作底稿系统
 description: "比丽格审计工作底稿系统——在规划和执行阶段创建和管理审计工作底稿。"
 risk: critical
 source: community

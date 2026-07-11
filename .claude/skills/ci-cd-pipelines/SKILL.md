@@ -1,6 +1,6 @@
 ---
 name: ci-cd-pipelines
-description: "Ci Cd Pipelines — Ci Cd Pipelines 相关功能和最佳实践"
+description: "CI/CD 流水线 — CI/CD 流水线相关功能和最佳实践"
 ---
 
 # CI/CD 流水线
@@ -191,7 +191,7 @@ test:
 - Not using `fail-fast: false` in matrix builds (one failure cancels others)
 - Deploying without an approval gate or environment protection rule
 
-## Checklist
+## 检查清单
 
 - [ ] 依赖项 cached between CI runs
 - [ ] Concurrency groups cancel stale pipeline runs

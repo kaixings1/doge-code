@@ -1,7 +1,7 @@
 ---
-name: speech
-description: "Speech — Speech 相关功能和最佳实践"
-  Generate spoken audio from text using OpenAI's API with built-in voices. Useful for narrated explainers, lecture audio, and quick voiceover tracks.
+name: 语音合成相关功能和最佳实践
+description: "Speech — 语音合成相关功能和最佳实践"
+  使用 OpenAI API 的内置语音从文本生成语音音频。适用于解说视频、讲座音频和快速配音。
 triggers:
   - "openai speech"
   - "tts openai"
@@ -13,15 +13,15 @@ od:
   upstream: "https://github.com/openai/skills"
 ---
 
-# speech
+# 语音
 
 > Curated from OpenAI's skills repository.
 
-## What it does
+## 功能说明
 
 Generate spoken audio from text using OpenAI's API with built-in voices. Useful for narrated explainers, lecture audio, and quick voiceover tracks.
 
-## Source
+## 来源
 
 - Upstream: https://github.com/openai/skills
 - Category: `audio-music`

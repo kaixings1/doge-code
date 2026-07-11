@@ -1,5 +1,5 @@
 ---
-name: fal-ai-media
+name: FAL AI 媒体
 description: "FAL AI 媒体 — 基于 FAL AI 的媒体内容生成"
 risk: unknown
 source: community

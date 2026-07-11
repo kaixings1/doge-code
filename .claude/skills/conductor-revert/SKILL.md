@@ -1,5 +1,5 @@
 ---
-name: conductor-revert
+name: 按逻辑工作单元（轨道、阶段或任务）进行 Git 感知的撤销
 description: "按逻辑工作单元（轨道、阶段或任务）进行 Git 感知的撤销"
 risk: critical
 source: community
@@ -22,128 +22,113 @@ date_added: "2026-02-27"
 
 ## 说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证方法。
+- 如需详细示例，请打开 `resources/implementation-playbook.md`。
 
-## Pre-flight Checks
+## 预检检查
 
-1. Verify Conductor is initialized:
-   - Check `conductor/tracks.md` exists
-   - If missing: Display error and suggest running `/conductor:设置` first
+1. 验证 Conductor 是否已初始化：
+   - 检查 `conductor/tracks.md` 是否存在
+   - 如果缺失：显示错误并建议先运行 `/conductor:设置`
 
-2. Verify git repository:
-   - Run `git status` to confirm git repo
-   - Check for uncommitted changes
-   - If uncommitted changes exist:
+2. 验证 git 仓库：
+   - 运行 `git status` 确认是 git 仓库
+   - 检查未提交的更改
+   - 如果存在未提交的更改：
 
      ```
-     WARNING: Uncommitted changes detected
+     警告：检测到未提交的更改
 
-     Files with changes:
-     {list of files}
+     有更改的文件：
+     {文件列表}
 
-     Options:
-     1. Stash changes and continue
-     2. Commit changes first
-     3. Cancel revert
+     选项：
+     1. 暂存更改并继续
+     2. 先提交更改
+     3. 取消回滚
      ```
 
-3. Verify git is clean enough to revert:
-   - No merge in progress
-   - No rebase in progress
-   - If issues found: Halt and explain resolution steps
+3. 验证 git 状态足够干净以进行回滚：
+   - 没有进行中的合并
+   - 没有进行中的变基
+   - 如果发现问题：停止并说明解决步骤
 
-## Target Selection
+## 目标选择
 
-### If 参数 provided:
+### 如果提供了参数：
 
-Parse the 参数 format:
+解析参数格式：
 
-**Full track:** `{trackId}`
+**完整轨道：** `{trackId}`
 
-- Example: `auth_20250115`
-- Reverts all commits for the entire track
+- 示例：`auth_20250115`
+- 回滚整个轨道的所有提交
 
-**Specific phase:** `{trackId}:phase{N}`
+**特定阶段：** `{trackId}:phase{N}`
 
-- Example: `auth_20250115:phase2`
-- Reverts commits for phase N and all subsequent phases
+- 示例：`auth_20250115:phase2`
+- 回滚阶段 N 及之后所有阶段的提交
 
-**Specific task:** `{trackId}:task{X.Y}`
+**特定任务：** `{trackId}:task{X.Y}`
 
-- Example: `auth_20250115:task2.3`
-- Reverts commits for task X.Y only
+- 示例：`auth_20250115:task2.3`
+- 仅回滚任务 X.Y 的提交
 
-### If no 参数:
+### 如果无参数：
 
-Display guided selection menu:
+显示引导式选择菜单：
 
 ```
-What would you like to revert?
+您想要回滚什么？
 
-Currently In Progress:
-1. [~] Task 2.3 in dashboard_20250112 (most recent)
+当前进行中：
+1. [~] dashboard_20250112 中的任务 2.3（最近）
 
-Recently Completed:
-2. [x] Task 2.2 in dashboard_20250112 (1 hour ago)
-3. [x] Phase 1 in dashboard_20250112 (3 hours ago)
-4. [x] Full track: auth_20250115 (yesterday)
+最近完成：
+2. [x] dashboard_20250112 中的任务 2.2（1 小时前）
+3. [x] dashboard_20250112 中的阶段 1（3 小时前）
+4. [x] 完整轨道：auth_20250115（昨天）
 
-Options:
-5. Enter specific reference (track:phase or track:task)
-6. Cancel
+选项：
+5. 输入特定引用（track:phase 或 track:task）
+6. 取消
 
-Select option:
+选择选项：
 ```
 
-## Commit Discovery
+## 提交发现
 
-### For Task Revert
+### 任务回滚
 
-1. Search git log for task-specific commits:
+1. 搜索 git 日志查找任务特定提交：
 
    ```bash
    git log --oneline --grep="{trackId}" --grep="Task {X.Y}" --all-match
    ```
 
-2. Also find the plan.md update commit:
+2. 同时查找 plan.md 更新提交：
 
    ```bash
    git log --oneline --grep="mark task {X.Y} complete" --grep="{trackId}" --all-match
    ```
 
-3. Collect all matching commit SHAs
+3. 收集所有匹配的提交 SHA
 
-### For Phase Revert
+### 阶段回滚
 
-1. Determine task range for the phase by reading plan.md
-2. Search for all task commits in that phase:
+1. 通过读取 plan.md 确定阶段的任范围
+2. 搜索该阶段的所有任务提交
+3. 查找阶段验证提交（如果存在）
+4. 查找阶段任务的所有 plan.md 更新提交
+5. 按时间顺序收集所有匹配的提交 SHA
 
-   ```bash
-   git log --oneline --grep="{trackId}" | grep -E "Task {N}\.[0-9]"
-   ```
+### 完整轨道回滚
 
-3. Find phase verification commit if exists
-4. Find all plan.md update commits for phase tasks
-5. Collect all matching commit SHAs in chronological order
-
-### For Full Track Revert
-
-1. Find ALL commits mentioning the track:
-
-   ```bash
-   git log --oneline --grep="{trackId}"
-   ```
-
-2. Find track creation commits:
-
-   ```bash
-   git log --oneline -- "conductor/tracks/{trackId}/"
-   ```
-
-3. Collect all matching commit SHAs in chronological order
+1. 查找提及该轨道的所有提交
+2. 查找轨道创建提交
+3. 按时间顺序收集所有匹配的提交 SHA
 
 ## Execution Plan Display
 
@@ -267,7 +252,7 @@ After successful git reverts, update plan.md:
 
 - In tracks.md: Ensure marked as `[~]` if partially complete, `[ ]` if fully reverted
 
-## Verification
+## 验证
 
 After revert completion:
 
@@ -302,74 +287,74 @@ If issues are found, you may need to:
 ================================================================================
 ```
 
-## Safety Rules
+## 安全规则
 
-1. **NEVER use `git reset --hard`** - Only use `git revert`
-2. **NEVER use `git push --force`** - Only safe push operations
-3. **NEVER auto-resolve conflicts** - 始终 halt for human intervention
-4. **ALWAYS show full plan** - User must see exactly what will happen
-5. **REQUIRE explicit 'YES'** - Not 'y', not enter, only 'YES'
-6. **HALT on ANY error** - Do not attempt to continue past failures
-7. **PRESERVE history** - Revert commits are preferred over history rewriting
+1. **绝不使用 `git reset --hard`** - 只使用 `git revert`
+2. **绝不使用 `git push --force`** - 只使用安全的推送操作
+3. **绝不自动解决冲突** - 始终暂停等待人工干预
+4. **始终显示完整计划** - 用户必须确切看到将要发生什么
+5. **要求明确的 'YES'** - 不是 'y'，不是回车，只能是 'YES'
+6. **任何错误都停止** - 不要尝试越过失败继续
+7. **保留历史** - 优先使用 revert 提交而非重写历史
 
-## Edge Cases
+## 边界情况
 
-### Track 绝不 Committed
-
-```
-No commits found for track: {trackId}
-
-The track exists but has no associated commits. This may mean:
-- Implementation never started
-- Commits used different format
-
-Options:
-1. Delete track directory only
-2. Cancel
-```
-
-### Commits Already Reverted
+### 轨道从未提交
 
 ```
-Some commits appear to already be reverted:
-  - abc1234 was reverted by xyz9876
+未找到轨道关联的提交：{trackId}
 
-Options:
-1. Skip already-reverted commits
-2. Cancel and investigate
+轨道存在但没有关联的提交。这可能意味着：
+- 实现从未开始
+- 提交使用了不同格式
+
+选项：
+1. 仅删除轨道目录
+2. 取消
 ```
 
-### Remote Already Pushed
+### 提交已被回滚
 
 ```
-WARNING: Some commits have been pushed to remote
+某些提交似乎已被回滚：
+  - abc1234 已被 xyz9876 回滚
 
-Commits on remote:
+选项：
+1. 跳过已回滚的提交
+2. 取消并调查
+```
+
+### 远程已推送
+
+```
+警告：某些提交已推送到远程
+
+远程上的提交：
   - abc1234 (origin/main)
   - def5678 (origin/main)
 
-Reverting will create new revert commits that you'll need to push.
-This is the safe 方法 (no force push required).
+回滚将创建新的 revert 提交，需要推送。
+这是安全的方法（不需要强制推送）。
 
-Continue with revert? (YES/no):
+继续回滚？（YES/否）：
 ```
 
-## Undo the Revert
+## 撤销回滚
 
-If user needs to undo the revert itself:
+如果用户需要撤销回滚本身：
 
 ```
-To undo this revert 操作:
+要撤销此回滚操作：
 
   git revert HEAD~{N}..HEAD
 
-This will create new commits that restore the reverted changes.
+这将创建恢复已回滚更改的新提交。
 
-Alternatively, if not yet pushed:
+或者，如果尚未推送：
   git reset --soft HEAD~{N}
   git checkout -- .
 
-(Use with caution - this discards the revert commits)
+（谨慎使用 - 这会丢弃回滚提交）
 ```
 
 ## 局限性

@@ -1,5 +1,5 @@
 ---
-name: seo-page
+name: 深度单页 SEO 分析相关功能和最佳实践：页面元素、内容质量、技术元标
 description: "Seo Page — 深度单页 SEO 分析相关功能和最佳实践：页面元素、内容质量、技术元标记、架构、图像和性能。"
   technical meta tags, 架构, images, and performance. Use when user says
   "analyze this page", "check page SEO", "single URL", "check this page",
@@ -13,7 +13,7 @@ metadata:
   category: seo
 ---
 
-# Single Page Analysis
+# SEO 页面
 
 ## What to Analyze
 

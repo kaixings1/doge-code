@@ -1,5 +1,5 @@
 ---
-name: canva-automation
+name: Canva 自动化
 description: "Canva 自动化"
 risk: safe
 source: community

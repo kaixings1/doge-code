@@ -1,5 +1,5 @@
 ---
-name: sales-enablement
+name: 当用户需要创建销售资料、推介文稿、一页纸、异议处理文档或演示脚本时使用此技能。也
 description: "当用户需要创建销售资料、推介文稿、一页纸、异议处理文档或演示脚本时使用此技能。也适用于用户提到'sales deck'、'pitch deck'、'one-pager'、'leave-behind'、'objection handling'、'deal-specific ROI analysis'、'demo script'、'talk track'、'sales playbook'、'proposal template'、'buyer persona card'、'help my sales team'、'sales materials'或'what should I give my sales reps'。用于帮助销售团队达成交易的任何文档或资产。对于竞争对手对比页面和战斗卡，参见competitors。对于营销网站文案，参见copywriting。对于冷启动邮件，参见cold-email。对于所售产品的报价（奖金、保障、定价结构），参见offers。"
 metadata:
   version: 2.0.1

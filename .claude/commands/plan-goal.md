@@ -4,26 +4,26 @@ disable-model-invocation: true
 allowed-tools: "Read Bash"
 ---
 
-Bridge the active plan to Claude Code's `/goal` primitive.
+将当前计划桥接到 Claude Code 的 `/goal` 原语。
 
-Steps:
+步骤：
 
-1. Resolve the active plan: prefer `${PLAN_ID}` env var, then `.planning/.active_plan`, then newest `.planning/<dir>/`, then legacy `./task_plan.md`.
-2. Read the resolved `task_plan.md`.
-3. Derive a goal condition from the plan content:
-   - Default: "all phases in task_plan.md report Status: complete and check-complete.sh reports ALL PHASES COMPLETE"
-   - If user passed an argument: use that as an additional clause (e.g., `/plan-goal until all tests pass`)
-4. Issue Claude Code's `/goal <condition>` with the derived text.
-5. Confirm to the user: print the goal condition + the active plan ID + remind that `/goal clear` cancels.
+1. 解析当前计划：优先使用 `${PLAN_ID}` 环境变量，然后是 `.planning/.active_plan`，然后是最新的 `.planning/<dir>/`，最后是 `./task_plan.md`。
+2. 读取已解析的 `task_plan.md`。
+3. 从计划内容推导目标条件：
+   - 默认："task_plan.md 中的所有阶段报告状态：完成且 check-complete.sh 报告所有阶段完成"
+   - 如果用户传递了参数：将其作为附加条件（例如 `/plan-goal until all tests pass`）
+4. 使用推导出的文本发出 Claude Code 的 `/goal <condition>`。
+5. 向用户确认：打印目标条件 + 当前计划 ID + 提醒 `/goal clear` 可取消。
 
-If `task_plan.md` does not exist, refuse and direct user to run `/plan` first.
+如果 `task_plan.md` 不存在，拒绝并指示用户先运行 `/plan`。
 
-Why this exists:
+为什么存在：
 
-`/goal` runs the agent until a small fast model confirms the condition is met. It evaluates the transcript only, not files. By deriving the condition from the plan file, this command turns the file-based plan into a measurable termination criterion for `/goal`, so the loop terminates when the plan is actually done, not when the conversation looks done.
+`/goal` 运行智能体直到一个小型快速模型确认条件已满足。它仅评估对话记录，不评估文件。通过从计划文件推导条件，此命令将基于文件的计划转换为 `/goal` 的可衡量终止条件，因此循环在实际计划完成时终止，而非对话看起来完成时。
 
-Notes:
+注意事项：
 
-- `/plan-goal` does not replace `/goal`. It composes with it. Users can still run `/goal "any text"` directly.
-- The derived condition stays under the 4000-char limit `/goal` enforces by quoting only phase headers + acceptance criteria, not full task body.
-- Combine with `/plan-loop` for a "babysit until done" workflow: `/plan-loop` cadence + `/plan-goal` termination.
+- `/plan-goal` 不替代 `/goal`。它与 `/goal` 组合使用。用户仍然可以直接运行 `/goal "any text"`。
+- 推导出的条件保持在 `/goal` 强制执行的 4000 字符限制内，仅引用阶段标题 + 验收标准，而非完整任务正文。
+- 与 `/plan-loop` 组合使用可实现"保姆式直到完成"工作流：`/plan-loop` 节奏 + `/plan-goal` 终止。

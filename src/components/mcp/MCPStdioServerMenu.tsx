@@ -105,25 +105,25 @@ export function MCPStdioServerMenu({
 
         <Box flexDirection="column" gap={0}>
           <Box>
-            <Text bold>Status: </Text>
-            {server.client.type === 'disabled' ? <Text>{color('inactive', theme)(figures.radioOff)} disabled</Text> : server.client.type === 'connected' ? <Text>{color('success', theme)(figures.tick)} connected</Text> : server.client.type === 'pending' ? <>
+            <Text bold>状态: </Text>
+            {server.client.type === 'disabled' ? <Text>{color('inactive', theme)(figures.radioOff)} 已禁用</Text> : server.client.type === 'connected' ? <Text>{color('success', theme)(figures.tick)} 已连接</Text> : server.client.type === 'pending' ? <>
                 <Text dimColor>{figures.radioOff}</Text>
-                <Text> connecting…</Text>
-              </> : <Text>{color('error', theme)(figures.cross)} failed</Text>}
+                <Text> 连接中…</Text>
+              </> : <Text>{color('error', theme)(figures.cross)} 失败</Text>}
           </Box>
 
           <Box>
-            <Text bold>Command: </Text>
+            <Text bold>命令: </Text>
             <Text dimColor>{server.config.command}</Text>
           </Box>
 
           {server.config.args && server.config.args.length > 0 && <Box>
-              <Text bold>Args: </Text>
+              <Text bold>参数: </Text>
               <Text dimColor>{server.config.args.join(' ')}</Text>
             </Box>}
 
           <Box>
-            <Text bold>Config location: </Text>
+            <Text bold>配置位置: </Text>
             <Text dimColor>
               {describeMcpConfigFilePath(getMcpConfigByName(server.name)?.scope ?? 'dynamic')}
             </Text>
@@ -132,8 +132,8 @@ export function MCPStdioServerMenu({
           {server.client.type === 'connected' && <CapabilitiesSection serverToolsCount={serverToolsCount} serverPromptsCount={serverCommandsCount} serverResourcesCount={mcp.resources[server.name]?.length || 0} />}
 
           {server.client.type === 'connected' && serverToolsCount > 0 && <Box>
-              <Text bold>Tools: </Text>
-              <Text dimColor>{serverToolsCount} tools</Text>
+              <Text bold>工具: </Text>
+              <Text dimColor>{serverToolsCount} 个工具</Text>
             </Box>}
         </Box>
 

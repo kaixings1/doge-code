@@ -1,5 +1,5 @@
 ---
-name: claimable-postgres
+name: Claimable Postgres 相关功能和最佳实践
 description: "Claimable Postgres — Claimable Postgres 相关功能和最佳实践"
 risk: unknown
 source: community

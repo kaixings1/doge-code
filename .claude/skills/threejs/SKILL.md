@@ -1,5 +1,5 @@
 ---
-name: threejs
+name: Three.js 技能，用于在浏览器中创建 3D 元素和交互体验——场
 description: "Threejs — Three.js 技能，用于在浏览器中创建 3D 元素和交互体验——场景、材质、控件和后处理。"
 triggers:
   - "threejs"
@@ -13,7 +13,7 @@ od:
   upstream: "https://github.com/CloudAI-X/threejs-skills"
 ---
 
-# threejs
+# Three.js
 
 > 来自 CloudAI-X。
 

@@ -5,14 +5,14 @@ argument-hint: "<describe the application and data requirements>"
 
 # /design-db
 
-Database schema design workflow.
+数据库模式设计工作流。
 
-## Invocation
+## 调用
 
 ```
-/design-db [describe your requirements]
+/design-db [描述你的需求]
 ```
 
-## Workflow
+## 工作流
 
-Apply relevant **ds-sql-databases** skills to guide you through the process step by step.
+应用相关的 **ds-sql-databases** 技能逐步指导你完成整个过程。

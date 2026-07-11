@@ -1,5 +1,5 @@
 ---
-name: obsidian-markdown
+name: 编写正确的 Obsidian 风格 Markdown：wikilink、嵌入、标
 description: "编写正确的 Obsidian 风格 Markdown：wikilink、嵌入、标注、属性、标签、高亮、数学公式和画布语法。在创建或编辑任何 wiki 页面时参考此文档。触发词：write obsidian note, obsidian syntax, wikilink, callout, embed, obsidian markdown, wikilink format, callout syntax, embed syntax, obsidian formatting, how to write obsidian markdown。"
 allowed-tools: Read Write Edit
 ---

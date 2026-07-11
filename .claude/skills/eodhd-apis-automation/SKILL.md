@@ -1,5 +1,5 @@
 ---
-name: eodhd-apis-automation
+name: EODHD APIs 自动化
 description: "EODHD APIs 自动化"
 risk: safe
 source: community

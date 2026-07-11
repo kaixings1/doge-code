@@ -1,5 +1,5 @@
 ---
-name: investor-outreach
+name: 投资者外展
 description: "投资者外展 — 投资者关系和融资沟通"
 risk: safe
 source: community

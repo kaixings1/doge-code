@@ -1,5 +1,5 @@
 ---
-name: image-to-code-skill
+name: 图像转代码
 description: "图像转代码 — 从图像生成代码"
 risk: unknown
 source: community

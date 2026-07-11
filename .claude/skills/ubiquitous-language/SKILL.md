@@ -1,5 +1,5 @@
 ---
-name: ubiquitous-language
+name: 通用语言词汇表提取
 description: 从当前对话中提取 DDD 风格的通用语言词汇表，标记歧义并提议标准术语。保存到 UBIQUITOUS_LANGUAGE.md。当用户想要定义领域术语、构建词汇表、强化术语、创建通用语言，或提到 "domain model" 或 "DDD" 时使用。
 disable-model-invocation: true
 ---

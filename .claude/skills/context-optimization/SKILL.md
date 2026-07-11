@@ -1,5 +1,5 @@
 ---
-name: context-optimization
+name: 上下文优化通过策略性压缩、掩码、缓存和分区来扩展有限上下文窗口的有效容量。目标不
 description: "上下文优化通过策略性压缩、掩码、缓存和分区来扩展有限上下文窗口的有效容量。目标不是神奇地增加上下文窗口，而是更好地利用可用容量。"
 risk: unknown
 source: community
@@ -24,7 +24,7 @@ Activate this skill when:
 
 The key insight is that context quality matters more than quantity. Optimization preserves signal while reducing noise. The art lies in selecting what to keep versus what to discard, and when to apply each technique.
 
-## Detailed Topics
+## 详细主题
 
 ### Compaction Strategies
 
@@ -136,7 +136,7 @@ context += [reused_templates]  # Reusable
 context += [unique_content]  # Unique
 ```
 
-## Guidelines
+## 指南
 
 1. Measure before optimizing—know your current state
 2. Apply compaction before masking when possible

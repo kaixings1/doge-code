@@ -1,5 +1,5 @@
 ---
-name: remember
+name: Remember 相关功能和最佳实践
 description: "Remember — Remember 相关功能和最佳实践"
 ---
 
@@ -7,7 +7,7 @@ description: "Remember — Remember 相关功能和最佳实践"
 
 使用此技能当 the user wants to preserve or organize useful knowledge discovered during a 会话.
 
-## Goal
+## 目标
 Promote durable, reusable knowledge into the right memory surface instead of leaving it buried in chat history.
 
 ## Memory surfaces

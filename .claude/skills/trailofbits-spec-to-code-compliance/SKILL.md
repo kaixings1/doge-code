@@ -1,3 +1,8 @@
+---
+name: 规格到代码一致性检查
+description: 区块链审计的规格到代码一致性检查器，提供基于证据的对齐分析。
+---
+
 # 规格到代码一致性检查
 
 Specification-to-code compliance checker for blockchain audits with evidence-based alignment analysis.
@@ -12,7 +17,7 @@ Specification-to-code compliance checker for blockchain audits with evidence-bas
 - Audit smart contracts against whitepapers or design documents
 - Identify undocumented code behavior or unimplemented spec claims
 
-## What It Does
+## 功能说明
 
 此技能执行 deterministic, evidence-based alignment between specifications and code:
 

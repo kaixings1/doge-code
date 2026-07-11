@@ -1,5 +1,5 @@
 ---
-name: bdistill-knowledge-extraction
+name: 结构化知识提取
 description: "从 AI 模型中提取结构化领域知识，可在会话中或通过 Ollama 从本地开源模型中提取。无需 API 密钥。"
 category: ai-research
 risk: safe
@@ -93,7 +93,7 @@ ollama pull qwen3:4b
 bdistill extract --domain medical --model qwen3:4b
 ```
 
-## Security & Safety Notes
+## 安全与安全注意事项
 
 - In-会话 extraction uses your existing subscription — no additional API keys
 - Local extraction runs entirely on your machine via Ollama

@@ -1,5 +1,5 @@
 ---
-name: competitive-landscape
+name: 竞争格局
 description: "竞争格局"
 risk: safe
 source: community

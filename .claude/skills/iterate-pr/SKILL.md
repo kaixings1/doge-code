@@ -1,6 +1,6 @@
 ---
-name: iterate-pr
-description: "Iterate Pr — Iterate Pr 相关功能和最佳实践"
+name: PR 迭代
+description: "PR 迭代 — Pull Request 审查和迭代优化相关功能"
 risk: critical
 source: community
 ---

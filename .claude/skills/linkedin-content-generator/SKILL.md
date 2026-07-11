@@ -1,5 +1,5 @@
 ---
-name: linkedin-content-generator
+name: AI 驱动的 LinkedIn 内容套件：生成帖子、轮播、通讯和 30 天日历，
 description: "AI 驱动的 LinkedIn 内容套件：生成帖子、轮播、通讯和 30 天日历，包含利基特定 SEO 规则和强化学习个人记忆系统。"
 category: marketing
 risk: safe

@@ -1,5 +1,5 @@
 ---
-name: agentfolio
+name: AgentFolio 代理目录
 description: "使用 AgentFolio 目录发现和研究自主 AI 代理、工具和生态系统的技能。"
 risk: safe
 source: agentfolio.io

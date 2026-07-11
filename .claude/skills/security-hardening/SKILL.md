@@ -1,5 +1,5 @@
 ---
-name: security-hardening
+name: 安全加固
 description: 安全加固 — 涵盖输入验证、认证、标头安全、CSRF和SQL注入防护。
 ---
 

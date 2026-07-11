@@ -1,5 +1,5 @@
 ---
-name: apify-market-research
+name: Apify 市场研究
 description: "Apify 市场研究"
 risk: safe
 source: community

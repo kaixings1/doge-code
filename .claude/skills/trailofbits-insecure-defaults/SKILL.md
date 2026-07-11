@@ -1,3 +1,8 @@
+---
+name: 不安全默认配置检测
+description: 检测不安全默认配置的安全技能，这些配置在应用运行时会因缺失或不完整配置而创建漏洞。
+---
+
 # Insecure Defaults Detection
 
 Security skill for detecting insecure default configurations that create vulnerabilities when applications run with missing or incomplete 配置.

@@ -1,18 +1,8 @@
 ---
-description: ""
+description: 记住重要的用户偏好和上下文信息
 ---
 
-# OMC remember
+# 记住
 
-This compatibility command keeps `/oh-my-claudecode:remember` available without loading the full `remember` skill description in every Claude Code session.
+在对话过程中记住用户的偏好、重要上下文和关键决策。使用记忆系统存储和检索信息以便将来参考。
 
-## Dispatch
-
-1. Read the full bundled skill instructions from the active OMC plugin/install: `skills/remember/SKILL.md`.
-2. Follow that SKILL.md exactly, treating the user's arguments as:
-
-```text
-$ARGUMENTS
-```
-
-If the file is not directly readable from the current working directory, locate it under the active `CLAUDE_PLUGIN_ROOT`/`OMC_PLUGIN_ROOT`, package root, or installed OMC plugin directory, then continue.

@@ -1,3 +1,8 @@
+---
+name: 入口点分析器
+description: 系统性识别智能合约代码库中改变状态的入口点，指导安全审计。
+---
+
 # 入口点分析器
 
 A Claude skill for systematically identifying **state-changing** entry points in smart contract codebases to guide security audits.

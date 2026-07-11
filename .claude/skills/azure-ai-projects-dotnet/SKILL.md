@@ -1,6 +1,6 @@
 ---
-name: azure-ai-projects-dotnet
-description: "Azure Ai Projects Dotnet — Azure Ai Projects Dotnet 相关功能和最佳实践"
+name: Azure AI Projects .NET SDK 相关功能和最佳实
+description: "Azure AI Projects .NET — Azure AI Projects .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -46,7 +46,7 @@ AIProjectClient projectClient = new AIProjectClient(
     new DefaultAzureCredential());
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 ```
 AIProjectClient
@@ -278,7 +278,7 @@ ChatCompletion result = chatClient.CompleteChat("List all rainbow colors");
 Console.WriteLine(result.Content[0].Text);
 ```
 
-## Available Agent Tools
+## 可用代理工具
 
 | Tool | Class | Purpose |
 |------|-------|---------|

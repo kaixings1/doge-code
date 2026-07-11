@@ -213,7 +213,7 @@ else:
 ### Multi-Stage Pipeline Example
 
 ```yaml
-name: Production Pipeline
+name: 具有审批门和部署策略的多阶段 CI/CD 流水线架构模式
 
 on:
   push:

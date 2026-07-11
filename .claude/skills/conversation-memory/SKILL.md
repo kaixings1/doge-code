@@ -1,5 +1,5 @@
 ---
-name: conversation-memory
+name: Conversation Memory 相关功能和最佳实践
 description: "Conversation Memory — Conversation Memory 相关功能和最佳实践"
   short-term, long-term, and entity-based memory
 risk: unknown
@@ -214,7 +214,7 @@ async function promptWithMemory(
     const prompt = `
 ${systemPrompt}
 
-## User Context
+## 用户上下文
 ${entities.length ? `Known about user:\n${entities.map(e =>
     `- ${e.name}: ${e.facts.map(f => f.content).join('; ')}`
 ).join('\n')}` : ''}
@@ -223,10 +223,10 @@ ${relevantMemories.length ? `Relevant past interactions:\n${relevantMemories.map
     `- [${formatDate(m.timestamp)}] ${m.content}`
 ).join('\n')}` : ''}
 
-## Recent Conversation
+## 最近对话
 ${formatMessages(recentContext)}
 
-## Current 查询
+## 当前查询
 ${查询}
     `.trim();
 

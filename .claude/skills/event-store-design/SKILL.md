@@ -1,5 +1,5 @@
 ---
-name: event-store-design
+name: 事件存储系统设计
 description: "事件存储系统设计"
 risk: safe
 source: community

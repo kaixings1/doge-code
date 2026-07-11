@@ -1,3 +1,8 @@
+---
+name: Firebase APK 安全扫描器
+description: 扫描 Android APK 的 Firebase 安全错误配置，包括开放数据库、暴露的存储桶和认证绕过。
+---
+
 # Firebase APK Security Scanner
 
 Scan Android APKs for Firebase security misconfigurations including open databases, exposed storage buckets, and 认证 bypasses.
@@ -11,7 +16,7 @@ Scan Android APKs for Firebase security misconfigurations including open databas
 - 枚举云函数并测试未认证访问
 - 执行涉及 Firebase 后端的移动应用安全评估
 
-## When NOT to Use
+## 不适用场景
 
 - Scanning apps you do not have explicit 授权 to test
 - Testing production Firebase projects without written permission
@@ -19,7 +24,7 @@ Scan Android APKs for Firebase security misconfigurations including open databas
 - For non-Android targets (iOS, web apps) - this skill is APK-specific
 - When the target app does not use Firebase
 
-## What It Does
+## 功能说明
 
 This skill automates Firebase security testing for Android applications. When invoked, Claude will:
 

@@ -1,5 +1,5 @@
 ---
-name: it-manager-hospital
+name: 医院 IT 经理
 description: "医院 IT 经理 — 医院 IT 管理相关功能和最佳实践"
 risk: safe
 source: community

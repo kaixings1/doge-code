@@ -1,6 +1,6 @@
 ---
-name: azure-eventhub-py
-description: "Azure Eventhub Py — Azure Eventhub Py 相关功能和最佳实践"
+name: Azure Event Hub Python SDK 相关功能和最佳实
+description: "Azure Event Hub Python — Azure Event Hub Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -53,7 +53,7 @@ consumer = EventHubConsumerClient(
 )
 ```
 
-## Client Types
+## 客户端类型
 
 | Client | Purpose |
 |--------|---------|
@@ -156,7 +156,7 @@ with consumer:
     consumer.receive(on_event=on_event)
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient

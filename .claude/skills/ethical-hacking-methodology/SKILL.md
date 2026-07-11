@@ -1,5 +1,5 @@
 ---
-name: ethical-hacking-methodology
+name: 渗透测试方法论
 description: "渗透测试方法论"
 risk: safe
 source: community

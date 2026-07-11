@@ -1,5 +1,5 @@
 ---
-name: fp-refactor
+name: 检查、回调、DI、循环等转换
 description: "将命令式 TypeScript 代码迁移到 fp-ts 函数式编程模式的全面策略：try/catch、空检查、回调、DI、循环等转换。"
 risk: unknown
 source: community

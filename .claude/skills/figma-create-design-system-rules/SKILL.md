@@ -1,6 +1,6 @@
 ---
-name: figma-create-design-system-rules
-description: "Figma Create Design System Rules — Figma Create Design System Rules 相关功能和最佳实践"
+name: Figma 创建设计系统规则
+description: "Figma 创建设计系统规则 — 在 Figma 中创建设计系统规则相关功能和最佳实践"
   为 Figma 到代码的工作流生成项目特定的设计系统规则。用于在一个源中捕获令牌、命名和代码检查规则。
 triggers:
   - "figma rules"

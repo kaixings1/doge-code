@@ -1,5 +1,5 @@
 ---
-name: handoff
+name: 交接
 description: "交接 — 项目交接和知识转移"
 risk: safe
 source: community

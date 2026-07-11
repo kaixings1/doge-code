@@ -1,12 +1,12 @@
 ---
-name: azure-cosmos-db-py
+name: 指导 Python 开发者使用 Azure Cosmos DB 客户端库处理 NoSQL 数据。
 description: "指导 Python 开发者使用 Azure Cosmos DB 客户端库处理 NoSQL 数据。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# Cosmos DB Service Implementation
+# Azure Cosmos DB (Python) 服务实现
 
 Build production-grade Azure Cosmos DB NoSQL services following clean code, security best practices, and TDD principles.
 
@@ -74,7 +74,7 @@ client = CosmosClient(
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Quick Start
+## 快速入门
 
 ### 1. Client Module 设置
 
@@ -152,7 +152,7 @@ class ProjectService:
 
 **Full patterns**: See references/service-layer.md
 
-## Core Principles
+## 核心原则
 
 ### Security Requirements
 

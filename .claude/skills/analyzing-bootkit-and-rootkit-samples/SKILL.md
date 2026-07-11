@@ -1,5 +1,5 @@
 ---
-name: analyzing-bootkit-and-rootkit-samples
+name: Bootkit/Rootkit 样本分析
 description: "分析 Bootkit 和 Rootkit 样本"
 risk: safe
 source: community

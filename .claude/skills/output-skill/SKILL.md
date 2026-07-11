@@ -1,5 +1,5 @@
 ---
-name: output-skill
+name: 输出技能
 description: "输出技能 — 生成结构化输出和格式化内容"
 ---
 # 输出技能

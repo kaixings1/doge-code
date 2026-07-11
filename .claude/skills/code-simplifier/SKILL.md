@@ -1,5 +1,5 @@
 ---
-name: code-simplifier
+name: 代码简化器
 description: "代码简化器"
 risk: safe
 source: community

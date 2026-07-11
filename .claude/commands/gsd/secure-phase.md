@@ -14,12 +14,12 @@ allowed-tools:
 requires: [phase]
 ---
 <objective>
-Verify threat mitigations for a completed phase. Three states:
-- (A) SECURITY.md exists — audit and verify mitigations
-- (B) No SECURITY.md, PLAN.md with threat model exists — run from artifacts
-- (C) Phase not executed — exit with guidance
+验证已完成阶段的威胁缓解措施。三种状态：
+- (A) SECURITY.md 存在——审计并验证缓解措施
+- (B) 无 SECURITY.md，但存在带有威胁模型的 PLAN.md——从工件运行
+- (C) 阶段未执行——带指导退出
 
-Output: updated SECURITY.md.
+输出：更新后的 SECURITY.md。
 </objective>
 
 <execution_context>

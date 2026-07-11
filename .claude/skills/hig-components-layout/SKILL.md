@@ -1,5 +1,5 @@
 ---
-name: hig-components-layout
+name: HIG 布局组件
 description: "HIG 布局组件 — Human Interface Guidelines 布局组件"
 risk: safe
 source: community

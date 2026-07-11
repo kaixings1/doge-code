@@ -42,7 +42,7 @@ only**. If the user only describes a product and does not provide a product
 photo, ask for one and stop. Do not create a brief-only concept product in
 this version.
 
-## Resource map
+## 资源映射
 
 ```text
 ecommerce-image-工作流/

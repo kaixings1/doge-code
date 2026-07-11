@@ -1,12 +1,51 @@
 ---
-name: keyword-extractor
-description: "Keyword Extractor — Keyword Extractor 相关功能和最佳实践"
-  Extracts up to 50 highly relevant SEO keywords from text. Use when user wants to generate or extract keywords for given text.
+name: SEO 关键词提取器
+description: "从文本中提取最多 50 个高度相关的 SEO 关键词，并以机器可读结构输出。当用户需要为给定文本提取关键词时使用。"
 risk: safe
 source: original
 date_added: "2026-03-11"
 ---
 
-# Keyword Extractor
+# 关键词提取器
 
-Extracts **max 50 relevant keywords** from text and formats them in a strict machine-ready structure.
+从文本中提取最多 50 个高度相关的 SEO 关键词，并以机器可读结构输出。
+
+## 何时使用此技能
+
+- 为文章、博客、落地页提取 SEO 关键词
+- 分析竞争对手内容的主题分布
+- 内容策略规划和主题聚类
+- 为搜索引擎优化提供关键词建议
+
+## 使用方式
+
+### 输入格式
+
+```
+请从以下文本提取关键词：
+[用户提供的文本]
+```
+
+### 输出格式
+
+```
+## 关键词提取结果
+
+### 主要关键词（Top 10）
+
+| 排名 | 关键词 | 搜索意图 | 竞争度 |
+|------|--------|---------|--------|
+| 1 | 关键词 A | 信息型 | 高 |
+| 2 | 关键词 B | 交易型 | 中 |
+
+### 长尾关键词
+
+- 关键词 C 相关变体 1
+- 关键词 C 相关变体 2
+```
+
+## 限制
+
+- 最多提取 50 个关键词
+- 非实时搜索量数据，仅基于文本分析
+- 需要用户自行验证关键词搜索量

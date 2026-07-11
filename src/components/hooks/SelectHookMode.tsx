@@ -31,7 +31,7 @@ export function SelectHookMode(t0) {
     onSelect,
     onCancel
   } = t0;
-  const title = hookEventMetadata.matcherMetadata !== undefined ? `${selectedEvent} - Matcher: ${selectedMatcher || "(all)"}` : selectedEvent;
+  const title = hookEventMetadata.matcherMetadata !== undefined ? `${selectedEvent} - 匹配器: ${selectedMatcher || "(全部)"}` : selectedEvent;
   if (hooksForSelectedMatcher.length === 0) {
     let t1;
     if ($[0] === Symbol.for("react.memo_cache_sentinel")) {

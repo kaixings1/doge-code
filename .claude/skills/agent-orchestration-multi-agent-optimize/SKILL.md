@@ -1,5 +1,5 @@
 ---
-name: agent-orchestration-multi-agent-optimize
+name: 多代理系统优化
 description: "通过协作分析、工作负载分配和成本感知编排来优化多代理系统。适用于改进代理性能、吞吐量或可靠性。"
 risk: unknown
 source: community

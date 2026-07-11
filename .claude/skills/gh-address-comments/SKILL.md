@@ -1,11 +1,11 @@
 ---
-name: gh-address-comments
+name: GitHub评论批量处理工具
 description: GitHub评论批量处理工具
 ---
 
 # GitHub PR Comment 处理器
 
-使用此技能当 the user wants to work through requested changes on a GitHub pull 请求. Use the GitHub app from this plugin for PR metadata and patch context, but treat thread-aware review data as a `gh api graphql` problem because the connector comment surface is flat and does not preserve full review-thread state.
+当用户想要处理 GitHub 拉取请求上的请求变更时使用此技能。使用此插件的 GitHub 应用获取 PR 元数据和补丁上下文，但将线程感知的审查数据视为 `gh api graphql` 问题，因为连接器评论表面是扁平的且不保留完整的审查线程状态。
 
 Run all `gh` commands with elevated network access. If CLI auth is required, confirm `gh auth status` first and ask the user to authenticate with `gh auth login` if it fails.
 

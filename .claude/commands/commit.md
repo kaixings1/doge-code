@@ -3,15 +3,15 @@ allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*)
 description: 创建一个 Git 提交
 ---
 
-## Context
+## 上下文
 
-- Current git status: !`git status`
-- Current git diff (staged and unstaged changes): !`git diff HEAD`
-- Current branch: !`git branch --show-current`
-- Recent commits: !`git log --oneline -10`
+- 当前 git 状态：!`git status`
+- 当前 git diff（暂存和未暂存更改）：!`git diff HEAD`
+- 当前分支：!`git branch --show-current`
+- 最近的提交：!`git log --oneline -10`
 
-## Your task
+## 你的任务
 
-Based on the above changes, create a single git commit.
+基于以上更改，创建一个单独的 git 提交。
 
-You have the capability to call multiple tools in a single response. Stage and create the commit using a single message. Do not use any other tools or do anything else. Do not send any other text or messages besides these tool calls.
+你可以在单个响应中调用多个工具。使用单条消息暂存并创建提交。不要使用任何其他工具或做任何其他事情。除了这些工具调用外，不要发送任何其他文本或消息。

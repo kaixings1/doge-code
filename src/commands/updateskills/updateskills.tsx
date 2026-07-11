@@ -168,22 +168,24 @@ function ConflictList({
 
 export async function call(
  onDone: LocalJSXCommandOnDone,
- context: LocalJSXCommandContext
+ context: LocalJSXCommandContext,
+ args?: string
 ): Promise<React.ReactNode> {
- const args = context.options.args?.[0] || "";
+ // 优先使用第三个参数（processSlashCommand 传入），回退到 context 中的 args
+ const input = args || (context.options as any).args?.[0] || "";
  const sources = getAllSources();
 
- if (args === "all") {
+ if (input === "all") {
  const results = installAllSources();
  return <InstallResult results={results} onDone={() => onDone()} />;
  }
 
- if (args === "conflict" || args === "冲突") {
+ if (input === "conflict" || input === "冲突") {
  return <ConflictList sources={sources} onDone={() => onDone()} />;
  }
 
- if (args.startsWith("source:") || args.startsWith("来源:")) {
- const sourceName = args.replace(/^(source:|来源:)/, "");
+ if (input.startsWith("source:") || input.startsWith("来源:")) {
+ const sourceName = input.replace(/^(source:|来源:)/, "");
  const src = sources.find((s) => s.name === sourceName);
  if (!src) {
  return (

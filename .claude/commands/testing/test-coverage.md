@@ -1,38 +1,38 @@
 分析测试覆盖率缺口，为未覆盖的代码路径生成测试用例。
 
-## Steps
+## 步骤
 
-### 1. Run Coverage Analysis
-- Detect the test framework and run coverage:
-  - **JS/TS**: `npx vitest run --coverage` or `npx jest --coverage`
-  - **Python**: `pytest --cov=src --cov-report=term-missing`
-  - **Go**: `go test -coverprofile=cover.out ./... && go tool cover -func=cover.out`
-  - **Rust**: `cargo tarpaulin --out Stdout`
+### 1. 运行覆盖率分析
+- 检测测试框架并运行覆盖率：
+  - **JS/TS**：`npx vitest run --coverage` 或 `npx jest --coverage`
+  - **Python**：`pytest --cov=src --cov-report=term-missing`
+  - **Go**：`go test -coverprofile=cover.out ./... && go tool cover -func=cover.out`
+  - **Rust**：`cargo tarpaulin --out Stdout`
 
-### 2. Identify Gaps
-- List files below 80% line coverage.
-- For each low-coverage file, identify:
-  - Uncovered branches (if/else, switch cases, error paths).
-  - Uncovered functions or methods.
-  - Edge cases not exercised (null inputs, empty collections, boundary values).
+### 2. 识别缺口
+- 列出低于 80% 行覆盖率的文件。
+- 对每个低覆盖率文件，识别：
+  - 未覆盖的分支（if/else、switch case、错误路径）。
+  - 未覆盖的函数或方法。
+  - 未测试的边界情况（空输入、空集合、边界值）。
 
-### 3. Prioritize
-- Rank gaps by risk: business logic > data access > utilities > configuration.
-- Focus on branches where bugs are most likely to hide: error handling, boundary conditions, type coercion.
+### 3. 优先级排序
+- 按风险对缺口排序：业务逻辑 > 数据访问 > 工具函数 > 配置。
+- 聚焦于错误最容易隐藏的分支：错误处理、边界条件、类型强制转换。
 
-### 4. Generate Tests
-- Write tests for the highest-priority uncovered paths.
-- Each test targets a specific uncovered branch or function.
-- Use existing test patterns and conventions from the codebase.
-- Follow the Arrange-Act-Assert structure.
+### 4. 生成测试
+- 为最高优先级的未覆盖路径编写测试。
+- 每个测试针对一个特定的未覆盖分支或函数。
+- 使用代码库中现有的测试模式和约定。
+- 遵循 Arrange-Act-Assert 结构。
 
-### 5. Verify
-- Re-run coverage to confirm the gaps are filled.
-- Ensure no existing tests broke.
+### 5. 验证
+- 重新运行覆盖率以确认缺口已填补。
+- 确保没有破坏现有测试。
 
-## Rules
+## 规则
 
-- Do not write tests purely to increase numbers. Every test must assert meaningful behavior.
-- Exclude generated code, type definitions, and configuration from coverage targets.
-- Target 80% line coverage and 75% branch coverage as minimums.
-- If a function is genuinely untestable (e.g., thin wrappers), document why rather than writing a meaningless test.
+- 不要纯粹为了增加数字而编写测试。每个测试必须断言有意义的行为。
+- 从覆盖率目标中排除生成的代码、类型定义和配置。
+- 目标为最低 80% 行覆盖率和 75% 分支覆盖率。
+- 如果某个函数确实无法测试（例如薄包装器），记录原因而非编写无意义的测试。

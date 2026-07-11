@@ -1,5 +1,5 @@
 ---
-name: handle-missing-data
+name: 缺失数据处理
 description: "缺失数据处理 — 数据集中缺失值的处理策略"
 risk: safe
 source: community

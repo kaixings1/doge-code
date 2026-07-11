@@ -1,5 +1,5 @@
 ---
-name: color-expert
+name: 色彩专家
 description: "色彩专家"
 risk: safe
 source: community

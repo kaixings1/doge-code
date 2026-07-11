@@ -1,5 +1,5 @@
 ---
-name: code-refactoring-tech-debt
+name: 代码重构技术债务
 description: "代码重构技术债务"
 risk: safe
 source: community

@@ -1,19 +1,19 @@
 ---
-name: math-olympiad
-description: "Math Olympiad — Math Olympiad 相关功能和最佳实践"
-  verification that catches the errors self-verification misses. Activates when
-  asked to 'solve this IMO problem', 'prove this olympiad inequality', 'verify
-  this competition proof', 'find a counterexample', 'is this proof correct', or
-  for any problem with 'IMO', 'Putnam', 'USAMO', 'olympiad', or 'competition
-  math' in it. Uses pure reasoning (no tools) — then a fresh-context adversarial
-  verifier attacks the proof using specific failure patterns, not generic 'check
-  logic'. Outputs calibrated confidence — will say 'no confident solution'
+name: 数学奥林匹克
+description: "数学奥林匹克 — 数学奥林匹克相关功能和最佳实践"
+  通过自我验证难以发现的错误检测来验证数学竞赛解答。当被要求
+  '解决这个 IMO 问题'、'证明这个奥林匹克不等式'、'验证
+  这个竞赛证明'、'找反例'、'这个证明正确吗'，或任何包含
+  'IMO'、'Putnam'、'USAMO'、'奥林匹克'或'竞赛数学'的
+  问题时激活。使用纯推理（无工具）——然后一个全新的上下文对抗
+  验证器使用特定的失败模式攻击证明，而非通用的'检查逻辑'。
+  输出校准的置信度——如果不能自信解决会明确说明
   rather than bluff. If LaTeX is available, produces a clean PDF after
   verification passes."
 version: 0.1.0
 ---
 
-# Math Olympiad Solver
+# 数学奥林匹克解题器
 
 ## The five things that change outcomes
 

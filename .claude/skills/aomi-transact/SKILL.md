@@ -1,9 +1,9 @@
 ---
-name: aomi-transact
-description: "Aomi Transact"
+name: Aomi Transact 支付
+description: Aomi Transact 支付集成 — 交易处理、支付网关对接、订单管理和财务对账。
 risk: safe
 source: community
 ---
-# Aomi Transact
-## 功能
-## 限制
+# Aomi Transact 支付
+
+Aomi Transact 支付集成 — 交易处理、支付网关对接、订单管理和财务对账。

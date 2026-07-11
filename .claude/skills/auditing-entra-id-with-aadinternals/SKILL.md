@@ -1,5 +1,5 @@
 ---
-name: auditing-entra-id-with-aadinternals
+name: 使用 AADInternals 审计 Entra ID
 description: "使用 AADInternals 审计 Entra ID"
 risk: safe
 source: community

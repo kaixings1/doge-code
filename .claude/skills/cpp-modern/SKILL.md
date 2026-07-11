@@ -1,5 +1,5 @@
 ---
-name: cpp-modern
+name: 现代 C++（C++11/14/17/20/23）核心特性指南，包括智能指针、移
 description: 现代 C++（C++11/14/17/20/23）核心特性指南，包括智能指针、移动语义、lambda、concepts、ranges、coroutines、modules。当用户使用现代 C++ 语法、STL 容器或要求 C++ 最佳实践时使用。
 ---
 # 现代 C++ 开发

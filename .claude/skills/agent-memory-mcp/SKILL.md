@@ -1,5 +1,5 @@
 ---
-name: agent-memory-mcp
+name: 代理记忆 MCP
 description: "为 AI 代理提供持久化、可搜索的知识管理混合记忆系统（架构、模式、决策）。"
 risk: unknown
 source: community

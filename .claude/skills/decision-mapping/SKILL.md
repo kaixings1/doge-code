@@ -1,8 +1,10 @@
 ---
-name: decision-mapping
+name: 决策映射相关功能和最佳实践
 description: "Decision Mapping — 决策映射相关功能和最佳实践"
 disable-model-invocation: true
 ---
+
+# 决策映射
 
 当一个不成熟的想法需要一个以上的代理会话才能转化为计划时，调用此技能。它在 markdown 文件中创建一个有状态的决策图，并通过一系列工单驱动用户解决未解决的问题——这可能涉及原型制作、研究或讨论。
 

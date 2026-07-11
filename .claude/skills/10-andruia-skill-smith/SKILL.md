@@ -1,6 +1,6 @@
 ---
 id: 10-andruia-skill-smith
-name: 10-andruia-skill-smith
+name: Andru.ia 技能工匠
 description: "Andru.ia 系统工程师。按照钻石标准设计、编写和部署仓库中的新技能。"
 category: andruia
 risk: safe

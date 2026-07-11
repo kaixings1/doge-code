@@ -1,5 +1,5 @@
 ---
-name: infinite-gratitude
+name: 无限感恩
 description: "无限感恩 — 感恩练习和正念指导"
 risk: safe
 source: community

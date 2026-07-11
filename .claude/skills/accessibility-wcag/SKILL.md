@@ -1,5 +1,5 @@
 ---
-name: accessibility-wcag
+name: WCAG 无障碍标准
 description: 无障碍设计及 WCAG 标准实现与审计。
 ---
 
@@ -204,7 +204,7 @@ WCAG AA requires 4.5:1 contrast for normal text, 3:1 for large text (18px bold o
 - Auto-playing media without a pause mechanism
 - Missing skip navigation link for keyboard users
 
-## Checklist
+## 检查清单
 
 - [ ] All interactive elements keyboard-accessible (Tab, Enter, Escape, Arrows)
 - [ ] Semantic HTML landmarks used (`nav`, `main`, `article`, `section`)

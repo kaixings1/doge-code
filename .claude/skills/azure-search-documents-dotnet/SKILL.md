@@ -1,6 +1,6 @@
 ---
-name: azure-search-documents-dotnet
-description: "Azure Search Documents Dotnet — Azure Search Documents Dotnet 相关功能和最佳实践"
+name: Azure Search Documents .NET SDK 相关功
+description: "Azure Search Documents .NET — Azure Search Documents .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

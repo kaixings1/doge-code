@@ -10,12 +10,12 @@ allowed-tools:
 ---
 
 <objective>
-Manage GSD workspaces with a single consolidated command.
+使用单一统一命令管理 GSD 工作区。
 
-Mode routing:
-- **--new**: Create an isolated workspace with repo copies and independent .planning/ → new-workspace workflow
-- **--list**: List active GSD workspaces and their status → list-workspaces workflow
-- **--remove**: Remove a GSD workspace and clean up worktrees → remove-workspace workflow
+模式路由：
+- **--new**：创建带有仓库副本和独立 .planning/ 的隔离工作区 → new-workspace 工作流
+- **--list**：列出活跃的 GSD 工作区及其状态 → list-workspaces 工作流
+- **--remove**：移除 GSD 工作区并清理 worktree → remove-workspace 工作流
 </objective>
 
 <routing>

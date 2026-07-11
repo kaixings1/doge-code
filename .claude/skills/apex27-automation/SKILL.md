@@ -1,5 +1,5 @@
 ---
-name: apex27-automation
+name: Apex27 自动化
 description: "Apex27 自动化"
 risk: safe
 source: community

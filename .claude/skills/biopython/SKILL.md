@@ -1,5 +1,5 @@
 ---
-name: biopython
+name: Biopython 库
 description: "Biopython 库——序列操作、BLAST、PDB 解析和生物信息学数据分析。"
 license: Unknown
 metadata:
@@ -14,7 +14,7 @@ source: "https://github.com/biopython/biopython"
 
 Biopython is a comprehensive set of freely available Python tools for biological computation. It provides functionality for sequence manipulation, file I/O, database access, structural bioinformatics, phylogenetics, and many other bioinformatics tasks. The current version is **Biopython 1.85** (released January 2025), which supports Python 3 and requires NumPy.
 
-## When to Use This Skill
+## 何时使用此技能
 
 使用此技能当:
 
@@ -31,7 +31,7 @@ Biopython is a comprehensive set of freely available Python tools for biological
 - Working with population genetics data
 - Any other computational molecular biology task
 
-## Core Capabilities
+## 核心能力
 
 Biopython is organized into modular sub-packages, each addressing specific bioinformatics domains:
 

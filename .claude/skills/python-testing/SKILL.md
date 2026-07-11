@@ -1,5 +1,5 @@
 ---
-name: python-testing
+name: 使用 pytest、TDD 方法论、测试夹具（Fixtures）、模拟（Mock
 description: 使用 pytest、TDD 方法论、测试夹具（Fixtures）、模拟（Mocking）、参数化（Parametrization）以及覆盖率要求的 Python 测试策略。
 origin: ECC
 ---

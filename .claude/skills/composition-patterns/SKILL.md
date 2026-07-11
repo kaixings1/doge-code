@@ -1,5 +1,5 @@
 ---
-name: composition-patterns
+name: 适用于working with composition-patterns tasks or workflows的情况。
 description: "适用于working with composition-patterns tasks or workflows的情况。"
 risk: safe
 source: "https://github.com/vercel-labs/agent-skills"
@@ -19,7 +19,7 @@ date_added: "2026-06-02"
 - Reviewing component architecture
 - Working with compound components or context providers
 
-## Rule Categories by Priority
+## 按优先级排序的规则类别
 
 | Priority | Category                | Impact | Prefix          |
 | -------- | ----------------------- | ------ | --------------- |
@@ -66,7 +66,7 @@ date_added: "2026-06-02"
 
 - `react19-no-forwardref` - Don't use `forwardRef`; use `use()` instead of `useContext()`
 
-## How to Use
+## 使用方法
 
 Read individual rule files for detailed explanations and code examples:
 

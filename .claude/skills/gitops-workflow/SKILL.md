@@ -8,7 +8,7 @@ date_added: "2026-02-27"
 
 # GitOps 工作流
 
-Complete guide to implementing GitOps workflows with ArgoCD and Flux for automated Kubernetes deployments.
+使用 ArgoCD 和 Flux 实施 GitOps 工作流以实现自动化 Kubernetes 部署的完整指南。
 
 ## 目的
 

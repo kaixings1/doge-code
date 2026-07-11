@@ -1,5 +1,5 @@
 ---
-name: esputnik-automation
+name: eSputnik 自动化
 description: "eSputnik 自动化"
 risk: safe
 source: community

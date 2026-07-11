@@ -302,7 +302,7 @@ jobs:
 ## 部署 with Approvals
 
 ```yaml
-name: Deploy to Production
+name: 用于测试、构建和部署应用的生产就绪 GitHub Actions 工作流模式
 
 on:
   push:

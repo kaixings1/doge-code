@@ -1,5 +1,5 @@
 ---
-name: gsap-frameworks
+name: Vue、Svelte 等框架
 description: "GSAP Frameworks — 在 Vue、Svelte 等框架中使用 GSAP：生命周期、选择器作用域、卸载时清理。当用户在 Vue、Nuxt、Svelte 中需要动画时使用。React 请使用 gsap-react。"
 triggers:
   - "gsap vue"

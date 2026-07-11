@@ -6,7 +6,7 @@ argument-hint: "<ratios|dcf|budget|forecast> <data.json>"
 
 # /financial-health
 
-Analyze financial statements, build valuation models, assess budget variances, and construct forecasts.
+分析财务报表、建立估值模型、评估预算差异并构建预测。
 
 ## Usage
 

@@ -1,6 +1,6 @@
 ---
 name: 设计评审规划
-description: "Plan Design Review — Plan Design Review 相关功能和最佳实践"
+description: "设计评审规划 — 设计评审规划相关功能和最佳实践"
   资深设计师评审：对每个设计维度打分 0-10，解释满分标准，并标记 AI 生成内容痕迹。适合在合并 UI 工作前作为关卡。
 triggers:
   - "plan design review"

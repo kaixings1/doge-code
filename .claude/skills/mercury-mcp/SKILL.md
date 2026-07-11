@@ -1,5 +1,5 @@
 ---
-name: mercury-mcp
+name: Mercury (proton) MCP 工具的备忘单。当连接到 Mercury
 description: "Mercury (proton) MCP 工具的备忘单。当连接到 Mercury MCP 服务器时使用，查找调用哪个 mercury_* 工具来给队友发消息、处理线程、任务、自动化或管理团队图编辑。"
 risk: critical
 source: community

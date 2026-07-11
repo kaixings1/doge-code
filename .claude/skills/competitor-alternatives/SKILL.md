@@ -1,5 +1,5 @@
 ---
-name: competitor-alternatives
+name: 竞争对手替代方案
 description: "竞争对手替代方案"
 risk: safe
 source: community

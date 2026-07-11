@@ -1,1 +1,12 @@
-# SpecKit 规划/n/n使用规范驱动开发：分析需求、编写规范、生成验收测试。/n/n## 用法/nspeckit-plan <requirement>/n/n## 产出/n- 功能规范/n- 接口定义/n- 验收测试/n- 实施计划/n
+# SpecKit 规划
+
+使用规范驱动开发：分析需求、编写规范、生成验收测试。
+
+## 用法
+`speckit-plan <requirement>`
+
+## 产出
+- 功能规范
+- 接口定义
+- 验收测试
+- 实施计划

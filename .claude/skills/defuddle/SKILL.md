@@ -1,12 +1,12 @@
 ---
-name: defuddle
+name: Defuddle 相关功能和最佳实践
 description: "Defuddle — Defuddle 相关功能和最佳实践"
 risk: unknown
 source: "https://github.com/kepano/obsidian-skills"
 date_added: "2026-03-21"
 ---
 
-# Defuddle
+# Defuddle 工具
 
 使用 Defuddle CLI 从网页中提取干净可读的内容。对于标准网页，优先于 WebFetch —— 它移除导航、广告和杂乱内容，减少 令牌 使用。
 

@@ -2,27 +2,26 @@
 description: 创建交接文档以将工作转移到另一个会话
 ---
 
-# Create Handoff
+# 创建交接文档
 
-You are tasked with writing a handoff document to hand off your work to another agent in a new session. You will create a handoff document that is thorough, but also **concise**. The goal is to compact and summarize your context without losing any of the key details of what you're working on.
+你的任务是编写一份交接文档，将你的工作交接给新会话中的另一个智能体。创建的交接文档需要全面，但也要**简洁**。目标是在不丢失关键工作细节的情况下压缩和总结你的上下文。
 
+## 流程
+### 1. 文件路径和元数据
+使用以下信息了解如何创建文档：
+    - 在 `thoughts/shared/handoffs/ENG-XXXX/YYYY-MM-DD_HH-MM-SS_ENG-ZZZZ_description.md` 下创建文件，其中：
+        - YYYY-MM-DD 是今天的日期
+        - HH-MM-SS 是基于当前时间的时、分、秒，采用 24 小时制
+        - ENG-XXXX 是工单编号（如果没有工单，替换为 `general`）
+        - ENG-ZZZZ 是工单编号（如果没有工单，省略）
+        - description 是简短的中划线连接式描述
+    - 运行 `scripts/spec_metadata.sh` 脚本生成所有相关元数据
+    - 示例：
+        - 有工单：`2025-01-08_13-55-22_ENG-2166_create-context-compaction.md`
+        - 无工单：`2025-01-08_13-55-22_create-context-compaction.md`
 
-## Process
-### 1. Filepath & Metadata
-Use the following information to understand how to create your document:
-    - create your file under `thoughts/shared/handoffs/ENG-XXXX/YYYY-MM-DD_HH-MM-SS_ENG-ZZZZ_description.md`, where:
-        - YYYY-MM-DD is today's date
-        - HH-MM-SS is the hours, minutes and seconds based on the current time, in 24-hour format (i.e. use `13:00` for `1:00 pm`)
-        - ENG-XXXX is the ticket number (replace with `general` if no ticket)
-        - ENG-ZZZZ is the ticket number (omit if no ticket)
-        - description is a brief kebab-case description
-    - Run the `scripts/spec_metadata.sh` script to generate all relevant metadata
-    - Examples:
-        - With ticket: `2025-01-08_13-55-22_ENG-2166_create-context-compaction.md`
-        - Without ticket: `2025-01-08_13-55-22_create-context-compaction.md`
-
-### 2. Handoff writing.
-using the above conventions, write your document. use the defined filepath, and the following YAML frontmatter pattern. Use the metadata gathered in step 1, Structure the document with YAML frontmatter followed by content:
+### 2. 编写交接文档
+按照上述约定编写文档。使用定义的文件路径和以下 YAML frontmatter 模式。使用步骤 1 中收集的元数据，使用 YAML frontmatter 后跟内容的结构：
 
 Use the following template structure:
 ```markdown
@@ -65,23 +64,23 @@ type: implementation_strategy
 ```
 ---
 
-### 3. Approve and Sync
-Run `humanlayer thoughts sync` to save the document.
+### 3. 确认并同步
+运行 `humanlayer thoughts sync` 保存文档。
 
-Once this is completed, you should respond to the user with the template between <template_response></template_response> XML tags. do NOT include the tags in your response.
+完成后，应在 `<template_response></template_response>` XML 标签之间向用户回复模板。不要在回复中包含标签本身。
 
 <template_response>
-Handoff created and synced! You can resume from this handoff in a new session with the following command:
+交接文档已创建并同步！你可以使用以下命令在新会话中从此交接处恢复：
 
 ```bash
 /resume_handoff path/to/handoff.md
 ```
 </template_response>
 
-for example (between <example_response></example_response> XML tags - do NOT include these tags in your actual response to the user)
+例如（在 `<example_response></example_response>` XML 标签之间——不要在给用户的实际回复中包含这些标签）：
 
 <example_response>
-Handoff created and synced! You can resume from this handoff in a new session with the following command:
+交接文档已创建并同步！你可以使用以下命令在新会话中从此交接处恢复：
 
 ```bash
 /resume_handoff thoughts/shared/handoffs/ENG-2166/2025-01-08_13-44-55_ENG-2166_create-context-compaction.md
@@ -89,7 +88,7 @@ Handoff created and synced! You can resume from this handoff in a new session wi
 </example_response>
 
 ---
-##.  Additional Notes & Instructions
-- **more information, not less**. This is a guideline that defines the minimum of what a handoff should be. Always feel free to include more information if necessary.
-- **be thorough and precise**. include both top-level objectives, and lower-level details as necessary.
-- **avoid excessive code snippets**. While a brief snippet to describe some key change is important, avoid large code blocks or diffs; do not include one unless it's necessary (e.g. pertains to an error you're debugging). Prefer using `/path/to/file.ext:line` references that an agent can follow later when it's ready, e.g. `packages/dashboard/src/app/dashboard/page.tsx:12-24`
+## 附加说明和指引
+- **信息多比少好**。这是定义交接文档最低要求的指南。如果需要，随时可以包含更多信息。
+- **要全面和精确**。包括顶层目标和必要的底层细节。
+- **避免过多的代码片段**。虽然简短的代码片段来描述关键变更很重要，但要避免大量的代码块或 diff；除非必要（例如涉及正在调试的错误），否则不要包含。优先使用 `/path/to/file.ext:line` 引用，智能体稍后可以在准备就绪时跟进，例如 `packages/dashboard/src/app/dashboard/page.tsx:12-24`

@@ -1,6 +1,6 @@
 ---
-name: azure-keyvault-keys-rust
-description: "Azure Keyvault Keys Rust — Azure Keyvault Keys Rust 相关功能和最佳实践"
+name: Azure Key Vault Keys Rust SDK 相关功能和
+description: "Azure Key Vault Keys Rust — Azure Key Vault Keys Rust SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -36,7 +36,7 @@ let client = KeyClient::new(
 )?;
 ```
 
-## Key Types
+## 关键类型
 
 | Type | Description |
 |------|-------------|
@@ -45,7 +45,7 @@ let client = KeyClient::new(
 | RSA-HSM | HSM-protected RSA keys |
 | EC-HSM | HSM-protected EC keys |
 
-## Core Operations
+## 核心操作
 
 ### Get Key
 
@@ -130,7 +130,7 @@ let params = RestoreKeyParameters {
 client.restore_key(params.try_into()?, None).await?;
 ```
 
-## Cryptographic Operations
+## 加密操作
 
 Key Vault can perform crypto operations without exposing the private key:
 

@@ -1,5 +1,5 @@
 ---
-name: conductor-validator
+name: Conductor Validator 相关功能和最佳实践
 description: "Conductor Validator — Conductor Validator 相关功能和最佳实践"
 
   consistency, and correctness. Use after 设置, when diagnosing issues, or

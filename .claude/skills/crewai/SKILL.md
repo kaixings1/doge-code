@@ -1,5 +1,5 @@
 ---
-name: crewai
+name: CrewAI 专家：领先的角色化多代理框架。
 description: CrewAI 专家：领先的角色化多代理框架。
   used by 60% of Fortune 500 companies.
 risk: unknown
@@ -9,7 +9,7 @@ date_added: 2026-02-27
 
 # CrewAI
 
-Expert in CrewAI - the leading role-based multi-agent framework used by 60% of Fortune 500
+CrewAI 专家——领先的角色化多代理框架，被 60% 的财富 500 强企业使用
 companies. Covers agent design with roles and goals, task definition, crew orchestration,
 process types (sequential, hierarchical, parallel), memory systems, and flows for complex
 workflows. Essential for building collaborative AI agent teams.

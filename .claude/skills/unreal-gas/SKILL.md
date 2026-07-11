@@ -1,5 +1,5 @@
 ---
-name: unreal-gas
+name: Unreal Engine 游戏技能系统 C++ 开发指南
 description: "Unreal GAS — Unreal Engine 游戏技能系统 C++ 开发指南"
   Expert guide for Unreal Engine 5.x Gameplay Ability System (GAS) C++ development.
   Covers AbilitySystemComponent, GameplayAbilities, GameplayEffects, Attributes/AttributeSets,

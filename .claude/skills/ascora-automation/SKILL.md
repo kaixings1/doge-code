@@ -1,5 +1,5 @@
 ---
-name: ascora-automation
+name: Ascora 自动化
 description: "Ascora 自动化"
 risk: safe
 source: community

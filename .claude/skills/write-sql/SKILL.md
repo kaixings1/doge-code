@@ -1,3 +1,5 @@
+# 写 SQL
+
 ---
 name: SQL编写
 description: "从自然语言描述生成 SQL 查询。支持 BigQuery、PostgreSQL、MySQL、Snowflake 和其他方言。从上传的图表或文档读取数据库 架构。适用于编写 SQL、构建数据报告或将业务问题转化为查询。"

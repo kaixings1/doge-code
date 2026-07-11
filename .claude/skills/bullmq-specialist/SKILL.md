@@ -1,5 +1,5 @@
 ---
-name: bullmq-specialist
+name: BullMQ 专家：Redis 支持的作业队列、后台任务处理和可靠的异步流水线。
 description: BullMQ 专家：Redis 支持的作业队列、后台任务处理和可靠的异步流水线。
   and reliable async execution in Node.js/TypeScript applications.
 risk: none
@@ -12,7 +12,7 @@ date_added: 2026-02-27
 BullMQ expert for Redis-backed job queues, background processing, and
 reliable async execution in Node.js/TypeScript applications.
 
-## Principles
+## 原则
 
 - Jobs are fire-and-forget from the producer side - let the queue handle delivery
 - 始终 set explicit job options - defaults rarely match your use case
@@ -44,7 +44,7 @@ reliable async execution in Node.js/TypeScript applications.
 - event-sourcing -> event-architect
 - email-delivery -> email-systems
 
-## Tooling
+## 工具
 
 ### Core
 
@@ -226,7 +226,7 @@ createBullBoard({
 
 app.use('/admin/queues', serverAdapter.getRouter());
 
-## Validation Checks
+## 验证检查
 
 ### Redis connection missing maxRetriesPerRequest
 
@@ -308,7 +308,7 @@ High concurrency can overwhelm downstream services
 
 Message: Worker concurrency is high. Ensure downstream services can handle this load (DB connections, API rate limits).
 
-## Collaboration
+## 协作
 
 ### Delegation Triggers
 

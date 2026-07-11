@@ -1,6 +1,6 @@
 ---
-name: azure-monitor-opentelemetry-exporter-java
-description: "Azure Monitor Opentelemetry Exporter Java — Azure Monitor Opentelemetry Exporter Java 相关功能和最佳实践"
+name: Azure Monitor OpenTelemetry Exporter (Java)
+description: "Azure Monitor OpenTelemetry Exporter Java — Azure Monitor OpenTelemetry Exporter Java SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

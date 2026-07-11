@@ -1,5 +1,5 @@
 ---
-name: hasdata
+name: 数据收集和分析平台
 description: "HasData — 数据收集和分析平台"
 risk: safe
 source: community

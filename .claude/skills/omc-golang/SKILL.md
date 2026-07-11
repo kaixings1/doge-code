@@ -1,5 +1,5 @@
 ---
-name: omc-golang
+name: Go 高效开发
 description: Go 高效开发 — 并发模式、接口设计、错误处理、项目布局
 ---
 

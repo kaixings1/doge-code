@@ -1,5 +1,5 @@
 ---
-name: go-rod-master
+name: 使用 go-rod（Chrome DevTools 协议）进行浏览器自动化和网页
 description: "使用 go-rod（Chrome DevTools 协议）进行浏览器自动化和网页抓取的全面指南，包含隐身反机器人检测模式。"
 risk: safe
 source: "https://github.com/go-rod/rod"

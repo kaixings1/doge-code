@@ -1,5 +1,5 @@
 ---
-name: advogado-criminal
+name: 巴西刑事律师
 description: 巴西刑法专家：家庭暴力、Feminicídio、保护措施、警察调查和刑事诉讼。
 risk: safe
 source: community

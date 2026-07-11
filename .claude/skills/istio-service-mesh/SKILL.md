@@ -1,5 +1,5 @@
 ---
-name: istio-service-mesh
+name: Istio 服务网格
 description: Istio 服务网格 — 流量管理、安全策略、可观测性、Envoy 代理、mTLS、金丝雀发布
 ---
 # Istio 服务网格

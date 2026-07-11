@@ -1,5 +1,5 @@
 ---
-name: Lemlist Automation
+name: —管理活动、注册潜在客户、添加个性化变量、导出活动数据和处理退订。
 description: "通过 Composio MCP 集成自动执行 Lemlist 多渠道外展——管理活动、注册潜在客户、添加个性化变量、导出活动数据和处理退订。"
 requires:
   mcp:

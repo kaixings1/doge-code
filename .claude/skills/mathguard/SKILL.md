@@ -1,5 +1,5 @@
 ---
-name: mathguard
+name: n >= 10^6 时的数学密集型升级
 description: "n >= 10^6 时的数学密集型升级——Bloom、HyperLogLog、Count-Min、MinHash/LSH、FFT、JL 投影、扫描线。当经典 O(n log n) 是下限且需要近似或数学胜出时使用。"
 risk: safe
 source: community

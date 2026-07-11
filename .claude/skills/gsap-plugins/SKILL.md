@@ -1,5 +1,5 @@
 ---
-name: gsap-plugins
+name: GSAP 插件：注册、ScrollToPlugin、Flip、Drag
 description: "GSAP Plugins — GSAP 插件：注册、ScrollToPlugin、Flip、Draggable、SplitText、CustomEase 等。当用户询问 GSAP 插件、滚动、Flip 动画、拖拽、SVG 绘制时使用。"
 triggers:
   - "gsap plugins"

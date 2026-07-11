@@ -1,37 +1,37 @@
 ---
-name: data-engineering-data-driven-feature
+name: 指导功能构建，使用专门的分析
 description: "通过数据洞察、A/B 测试和持续测量指导功能构建，使用专门的分析、实施和实验代理。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# Data-Driven Feature Development
+# 数据驱动功能开发
 
-Build features guided by data insights, A/B testing, and continuous measurement using specialized agents for analysis, implementation, and experimentation.
+通过数据洞察、A/B 测试和持续测量指导功能构建，使用专门的分析、实施和实验代理。
 
-[Extended thinking: This 工作流 orchestrates a comprehensive data-driven development process from initial data analysis and hypothesis formulation through feature implementation with integrated analytics, A/B testing infrastructure, and post-launch analysis. Each phase leverages specialized agents to ensure features are built based on data insights, properly instrumented for measurement, and validated through controlled experiments. The 工作流 emphasizes modern product analytics practices, statistical rigor in testing, and continuous learning from user behavior.]
+[扩展思考：此工作流编排了一个全面的数据驱动开发过程，从初始数据分析和假设形成，到功能实现（集成分析、A/B 测试基础设施和发布后分析）。每个阶段都利用专门的代理，确保功能基于数据洞察构建、为测量正确部署，并通过受控实验验证。该工作流强调现代产品分析实践、测试的统计严谨性以及从用户行为中持续学习。]
 
 ## 使用此技能的场景
 
-- Working on data-driven feature development tasks or workflows
-- Needing guidance, 最佳实践, or checklists for data-driven feature development
+- 处理数据驱动功能开发任务或工作流
+- 需要有关数据驱动功能开发的指导、最佳实践或检查清单
 
 ## 不要使用此技能的场景
 
-- The task is unrelated to data-driven feature development
-- You need a different domain or tool outside this scope
+- 任务与数据驱动功能开发无关
+- 需要此范围之外的不同领域或工具
 
 ## 使用说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant 最佳实践 and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed 示例 are required, open `resources/implementation-playbook.md`.
+- 明确目标、约束条件和所需输入
+- 应用相关最佳实践并验证结果
+- 提供可操作的步骤和验证方法
+- 如需详细示例，请打开 `resources/implementation-playbook.md`
 
-## Phase 1: Data Analysis and Hypothesis Formation
+## 阶段 1：数据分析和假设形成
 
-### 1. Exploratory Data Analysis
+### 1. 探索性数据分析
 - Use Task tool with subagent_type="machine-learning-ops::data-scientist"
 - Prompt: "Perform exploratory data analysis for feature: $ARGUMENTS. Analyze existing user behavior data, identify patterns and opportunities, segment users by behavior, and calculate baseline metrics. Use modern analytics tools (Amplitude, Mixpanel, Segment) to understand current user journeys, conversion funnels, and engagement patterns."
 - Output: EDA report with visualizations, user segments, behavioral patterns, baseline metrics
@@ -163,7 +163,7 @@ monitoring:
   - automatic_rollback: true
 ```
 
-## Success Criteria
+## 成功标准
 
 - **Data Coverage**: 100% of user interactions tracked with proper event 架构
 - **Experiment Validity**: Proper randomization, sufficient statistical power, no sample ratio mismatch

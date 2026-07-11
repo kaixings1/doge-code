@@ -1,5 +1,5 @@
 ---
-name: campaign-cleaner-automation
+name: Campaign Cleaner 自动化
 description: "Campaign Cleaner 自动化"
 risk: safe
 source: community

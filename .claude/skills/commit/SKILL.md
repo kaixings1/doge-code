@@ -1,5 +1,5 @@
 ---
-name: commit
+name: 提交
 description: "提交"
 risk: safe
 source: community

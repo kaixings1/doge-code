@@ -1,6 +1,6 @@
 ---
-name: azure-mgmt-arizeaiobservabilityeval-dotnet
-description: "Azure Mgmt Arizeaiobservabilityeval Dotnet — Azure Mgmt Arizeaiobservabilityeval Dotnet 相关功能和最佳实践"
+name: Azure Arize AI 可观测性评估管理 .NET SDK 相关
+description: "Azure Management Arize AI Observability Eval .NET — Azure Arize AI 可观测性评估管理 .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -160,7 +160,7 @@ var org = await collection.GetAsync("my-arize-org");
 await org.Value.DeleteAsync(WaitUntil.Completed);
 ```
 
-## Key Types
+## 关键类型
 
 | Type | Purpose |
 |------|---------|
@@ -222,7 +222,7 @@ var org = armClient.GetArizeAIObservabilityEvalOrganizationResource(resourceId);
 var data = await org.GetAsync();
 ```
 
-## Links
+## 链接
 
 - [NuGet Package](https://www.nuget.org/packages/Azure.ResourceManager.ArizeAIObservabilityEval)
 - [Azure SDK for .NET](https://github.com/Azure/azure-sdk-for-net)

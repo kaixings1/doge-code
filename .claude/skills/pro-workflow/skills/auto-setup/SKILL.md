@@ -94,7 +94,7 @@ AUTO SETUP
   Settings written to: .claude/settings.json
 ```
 
-## Rules
+## 规则
 
 - Never overwrite existing settings without asking
 - Detect, don't assume — check for tool presence

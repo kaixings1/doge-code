@@ -62,7 +62,7 @@ LOG_ANALYTICS_WORKSPACE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 AZURE_RESOURCE_ID=/subscriptions/{sub}/resourceGroups/{rg}/providers/{provider}/{resource}
 ```
 
-## Client Creation
+## 客户端创建
 
 ### LogsQueryClient (Sync)
 

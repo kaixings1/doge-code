@@ -1,11 +1,11 @@
 ---
-name: swiftui-patterns
+name: SwiftUI模式和最佳实践
 description: SwiftUI模式和最佳实践
 ---
 
-# SwiftUI Patterns
+# SwiftUI 模式
 
-## Quick Start
+## 快速入门
 
 Choose a track based on your goal:
 

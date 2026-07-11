@@ -1,5 +1,5 @@
 ---
-name: Kommo Automation
+name: Kommo CRM 自动化
 description: "通过 Composio MCP 集成使用自然语言自动执行 Kommo CRM 操作——管理潜在客户、管道、管道阶段、任务和自定义字段。"
 category: crm
 requires:

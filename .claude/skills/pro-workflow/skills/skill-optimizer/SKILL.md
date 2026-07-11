@@ -73,7 +73,7 @@ Inspect after:
 sqlite3 ~/.pro-workflow/data.db "SELECT id, skill_slug, initial_score, best_score, accepted_steps, rejected_steps, spent_usd FROM optimization_runs ORDER BY id DESC LIMIT 5"
 ```
 
-## Rules
+## 规则
 
 - Validation set is frozen at run start. Never re-derive from new corrections mid-run.
 - One candidate per step. No parallel branches.

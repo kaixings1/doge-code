@@ -1,7 +1,6 @@
 ---
-name: agent-memory-systems
-description: "Agent Memory Systems — AI 代理记忆系统架构：短期（上下文窗口）、长期（向量存储）以及两者之间的互动。"
-  cognitive architectures that organize them."
+name: 代理记忆系统
+description: "Agent 记忆系统 — AI 代理记忆系统架构：短期（上下文窗口）、长期（向量存储）以及组织它们的认知架构之间的互动。"
 risk: safe
 source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
@@ -22,7 +21,7 @@ The field is fragmented with inconsistent terminology. We use the CoALA cognitiv
 architecture framework: semantic memory (facts), episodic memory (experiences),
 and procedural memory (how-to knowledge).
 
-## Principles
+## 原则
 
 - Memory quality = retrieval quality, not storage quantity
 - Chunk for retrieval, not for storage
@@ -52,7 +51,7 @@ and procedural memory (how-to knowledge).
 - embedding-model-selection → ml-engineer
 - knowledge-graph-design → knowledge-engineer
 
-## Tooling
+## 工具
 
 ### Memory_frameworks
 

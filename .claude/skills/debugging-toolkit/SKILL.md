@@ -1,5 +1,5 @@
 ---
-name: debugging-toolkit
+name: 适用于working with debugging toolkit smart
 description: "适用于working with debugging toolkit smart debug (alias for debugging-toolkit-smart-debug)的情况。"
 risk: unknown
 source: "alias"

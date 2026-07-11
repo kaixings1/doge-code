@@ -1,5 +1,5 @@
 ---
-name: advanced-evaluation
+name: 高级评估框架
 description: "LLM-as-judge 评估框架：比较模型输出、创建评估标准、缓解评估偏差。"
 risk: safe
 source: community

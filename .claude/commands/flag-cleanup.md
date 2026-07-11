@@ -4,10 +4,10 @@ description: 在当前仓库运行季度功能开关清理工作流
 
 # /flag-cleanup
 
-Run the full feature-flag cleanup workflow:
+运行完整的功能开关清理工作流：
 
-1. Scan for stale flags (older than 90 days, used in ≤2 places)
-2. For each candidate, identify the introducing PR/issue and current owner
+1. 扫描过期开关（超过 90 天，使用次数 ≤ 2 处）
+2. 对每个候选者，识别引入时的 PR/议题和当前所有者
 3. Generate a removal plan grouped by owner
 4. Run kill-switch audit against the flag-doc registry
 5. Output a markdown report ready to share with the team

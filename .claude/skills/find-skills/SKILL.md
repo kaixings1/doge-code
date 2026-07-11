@@ -1,5 +1,5 @@
 ---
-name: find-skills
+name: Claude Code技能查找工具
 description: Claude Code技能查找工具
 ---
 

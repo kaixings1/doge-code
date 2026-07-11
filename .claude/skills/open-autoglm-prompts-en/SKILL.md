@@ -1,5 +1,5 @@
 ---
-name: open-autoglm-prompts-en
+name: Open-AutoGLM 手机自动化提示词（英文版）
 description: Open-AutoGLM 手机自动化提示词（英文版）
 ---
 

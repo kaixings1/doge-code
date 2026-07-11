@@ -1,5 +1,5 @@
 ---
-name: seo-plan
+name: 战略性 SEO 规划相关功能和最佳实践：为新网站或现有网站制定行业特定
 description: "Seo Plan — 战略性 SEO 规划相关功能和最佳实践：为新网站或现有网站制定行业特定模板、竞争分析、内容策略和实施路线图。"
   templates, competitive analysis, content strategy, and implementation
   roadmap. Use when user says "SEO plan", "SEO strategy", "SEO planning",
@@ -14,9 +14,9 @@ metadata:
   category: seo
 ---
 
-# Strategic SEO Planning
+# SEO 计划
 
-## Process
+## 流程
 
 ### 1. Discovery
 - Business type, target audience, competitors, goals

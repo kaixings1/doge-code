@@ -68,7 +68,7 @@ File without asking the user to review the draft. Send back the URLs.
 2. <step>
 3. <step>
 
-## Context
+## 上下文
 <anything that narrows where the bug lives, in domain terms — e.g.
 "only affects the import path, not the export path">
 ```
@@ -91,7 +91,7 @@ File without asking the user to review the draft. Send back the URLs.
 ## Blocked by
 <#issue or "none — independent">
 
-## Context
+## 上下文
 <notes that apply only to this slice>
 ```
 

@@ -1,6 +1,6 @@
 ---
 name: RICE优先级
-description: "RICE feature prioritization with scoring and capacity planning. Usage: /rice prioritize <features.csv> [options]"
+description: "RICE 功能优先级排序，含评分和容量规划。用法: /rice prioritize <features.csv> [options]"
 ---
 
 # /rice

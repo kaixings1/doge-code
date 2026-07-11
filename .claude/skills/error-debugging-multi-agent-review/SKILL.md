@@ -1,5 +1,5 @@
 ---
-name: error-debugging-multi-agent-review
+name: 多智能体协作错误审查
 description: "多智能体协作错误审查"
 risk: safe
 source: community

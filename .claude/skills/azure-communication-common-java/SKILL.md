@@ -1,5 +1,5 @@
 ---
-name: azure-communication-common-java
+name: 指导 Java 开发者使用 Azure Communication Common 客户端库处理通信服务。
 description: "指导 Java 开发者使用 Azure Communication Common 客户端库处理通信服务。"
 risk: unknown
 source: community
@@ -298,7 +298,7 @@ private String refreshToken() {
 }
 ```
 
-## Trigger Phrases
+## 触发短语
 
 - "ACS authentication", "communication 令牌 credential"
 - "user access 令牌", "令牌 refresh"

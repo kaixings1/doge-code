@@ -1,6 +1,6 @@
 ---
-name: azure-ai-projects-java
-description: "Azure Ai Projects Java — Azure Ai Projects Java 相关功能和最佳实践"
+name: Azure AI Projects Java SDK 相关功能和最佳实
+description: "Azure AI Projects Java — Azure AI Projects Java SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -37,7 +37,7 @@ AIProjectClientBuilder builder = new AIProjectClientBuilder()
     .credential(new DefaultAzureCredentialBuilder().build());
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 The SDK provides multiple sub-clients for different operations:
 
@@ -60,7 +60,7 @@ IndexesClient indexesClient = builder.buildIndexesClient();
 EvaluationsClient evaluationsClient = builder.buildEvaluationsClient();
 ```
 
-## Core Operations
+## 核心操作
 
 ### List Connections
 

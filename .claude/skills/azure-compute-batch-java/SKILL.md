@@ -1,6 +1,6 @@
 ---
-name: azure-compute-batch-java
-description: "Azure Compute Batch Java — Azure Compute Batch Java 相关功能和最佳实践"
+name: Azure Compute Batch Java SDK 相关功能和最
+description: "Azure Compute Batch Java — Azure Compute Batch Java SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -34,7 +34,7 @@ AZURE_BATCH_ACCOUNT=<account-name>
 AZURE_BATCH_ACCESS_KEY=<account-key>
 ```
 
-## Client Creation
+## 客户端创建
 
 ### With Microsoft Entra ID (Recommended)
 

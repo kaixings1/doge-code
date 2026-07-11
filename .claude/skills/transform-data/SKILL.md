@@ -3,7 +3,7 @@ name: 数据转换
 description: "使用 pandas、polars 或 SQL 重塑、透视、融合、合并、聚合和转换表格数据。适用于重构数据集、组合多个表、创建聚合或在宽格式和长格式之间转换。"
 ---
 
-# Transform Data
+# 数据转换
 
 ## 目的
 Reshape and restructure datasets to match the format required for analysis, visualization, or modeling. Covers all common transformation patterns in pandas, polars, and SQL.

@@ -1,6 +1,6 @@
 ---
-name: bugs-are-annoying
-description: "Bugs Are Annoying — Bugs Are Annoying 相关功能和最佳实践"
+name: Bug 修复
+description: "Bug 修复 — Bug 修复相关功能和最佳实践"
 risk: critical
 source: community
 date_added: "2026-06-19"

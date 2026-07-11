@@ -1,5 +1,5 @@
 ---
-name: makepad-skills
+name: Rust 应用的 Makepad UI 开发技能：设置、模式、着色器、打包和故障排除。
 description: "Rust 应用的 Makepad UI 开发技能：设置、模式、着色器、打包和故障排除。"
 risk: safe
 source: "https://github.com/ZhangHanDong/makepad-skills"

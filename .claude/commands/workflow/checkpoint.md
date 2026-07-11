@@ -1,8 +1,8 @@
 保存会话检查点，记录当前进度、决策和后续步骤。
 
-## Steps
+## 步骤
 
-1. Gather current session state:
+1. 收集当前会话状态：
    - Run `git diff --stat` to see uncommitted changes.
    - Run `git log --oneline -5` to see recent commits.
    - Check for any running background processes or servers.

@@ -1,5 +1,5 @@
 ---
-name: ii-commons
+name: 通用工具和库集合
 description: "II Commons — 通用工具和库集合"
 risk: safe
 source: community

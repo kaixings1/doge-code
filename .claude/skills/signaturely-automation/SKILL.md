@@ -1,5 +1,5 @@
 ---
-name: signaturely-automation
+name: Signaturely 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Signaturely 任务。使用前始终先搜索工具以获取当前 schema。""
 requires:
   mcp: [rube]
@@ -13,7 +13,7 @@ Automate Signaturely operations through Composio's Signaturely toolkit via Rube 
 
 ## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
+- Rube MCP 必须已连接 (RUBE_SEARCH_TOOLS available)
 - Active Signaturely connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `signaturely`
 - 始终 call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 

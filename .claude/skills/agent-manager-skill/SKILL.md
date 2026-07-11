@@ -1,5 +1,5 @@
 ---
-name: agent-manager-skill
+name: 代理管理器
 description: "通过 tmux 会话管理多个本地 CLI 代理（启动/停止/监控/分配），支持 cron 友好的调度。"
 risk: unknown
 source: community

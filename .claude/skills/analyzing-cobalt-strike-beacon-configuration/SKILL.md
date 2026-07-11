@@ -1,5 +1,5 @@
 ---
-name: analyzing-cobalt-strike-beacon-configuration
+name: Cobalt Strike Beacon 分析
 description: "分析 Cobalt Strike Beacon 配置"
 risk: safe
 source: community

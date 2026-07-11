@@ -1,5 +1,5 @@
 ---
-name: computer-vision-expert
+name: SOTA 计算机视觉专家（2026）。专注于 YOLO26、Segment An
 description: "SOTA 计算机视觉专家（2026）。专注于 YOLO26、Segment Anything 3 (SAM 3)、Depth Anything V2、3D Gaussian Splatting 和 Neural Radiance Fields。"
 risk: unknown
 source: community

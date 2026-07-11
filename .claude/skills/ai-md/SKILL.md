@@ -1,5 +1,5 @@
 ---
-name: ai-md
+name: AI 原生 CLAUDE.md
 description: "将人工编写的 CLAUDE.md 转换为 AI 原生结构化标签格式。经过 4 个模型验证。相同规则，更少 令牌，更高合规性。"
 risk: safe
 source: community

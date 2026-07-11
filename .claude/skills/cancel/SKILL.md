@@ -1,5 +1,5 @@
 ---
-name: cancel
+name: 取消
 description: "取消"
 risk: safe
 source: community

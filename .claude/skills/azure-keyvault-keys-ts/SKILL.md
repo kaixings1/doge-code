@@ -1,5 +1,5 @@
 ---
-name: azure-keyvault-keys-ts
+name: 指导 TypeScript 开发者使用 Azure Key Vault Keys 客户端库管理加密密钥。
 description: "指导 TypeScript 开发者使用 Azure Key Vault Keys 客户端库管理加密密钥。"
 risk: unknown
 source: community
@@ -156,7 +156,7 @@ await deletePoller.pollUntilDone();
 await keyClient.purgeDeletedKey("MyKey");
 ```
 
-## Cryptographic Operations
+## 加密操作
 
 ### Create CryptographyClient
 
@@ -226,7 +226,7 @@ const restoredKey = await keyClient.restoreKeyBackup(keyBackup!);
 const restoredSecret = await secretClient.restoreSecretBackup(secretBackup!);
 ```
 
-## Key Types
+## 关键类型
 
 ```typescript
 import {

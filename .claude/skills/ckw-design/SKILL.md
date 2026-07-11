@@ -1,5 +1,5 @@
 ---
-name: ckw-design
+name: 前端设计入口：方向、设计系统、视觉理念。适用于构建或接触任何 Web UI（组件
 description: "前端设计入口：方向、设计系统、视觉理念。适用于构建或接触任何 Web UI（组件、页面、仪表板、React/Vue/HTML-CSS）的外观时，或当用户说"让它看起来更好"、"修复间距/布局"或提到样式、颜色、字体或润色时。"
 risk: safe
 source: community
@@ -43,7 +43,7 @@ _Source: [connerkward/ckw-design-skill](https://github.com/connerkward/ckw-desig
 > element to a horizontal row.** Full procedure + recurrence cases: design-spatial §4.
 > If you haven't measured narrow, you are not done — don't claim it.
 
-## Sub-skills (load when relevant)
+## 子技能（按需加载）
 
 - **design-thinking** — Load for every design task. Defines purpose, tone, domain, color world, review bar, and cross-domain lens (cinema, architecture, marketing, UX, automotive, industrial design). See [design-thinking/SKILL.md](https://github.com/connerkward/ckw-design-skill/blob/main/design-thinking/SKILL.md).
 - **design-system** — Load when implementing: tokens, typography, motion, color semantics, backgrounds. Use when building components, pages, or design systems. See [design-system/SKILL.md](https://github.com/connerkward/ckw-design-skill/blob/main/design-system/SKILL.md).
@@ -51,7 +51,7 @@ _Source: [connerkward/ckw-design-skill](https://github.com/connerkward/ckw-desig
 - **design-ux** — Load when auditing USABILITY (not just looks): a UI that "feels off"/"sucks to use", is hard to learn, needs an instruction wall, or any interactive tool/editor/app before shipping. Scores the rendered UI against Nielsen's 10 + interaction heuristics via a SEPARATE fresh-eyes judge → prioritized fix list. Usability ≠ aesthetics. See [design-ux/SKILL.md](https://github.com/connerkward/ckw-design-skill/blob/main/deterministic-design/design-ux/SKILL.md).
 - **design-philosophy** — Load for high-concept work, campaigns, or when the user asks for a visual philosophy, manifesto, or unmistakable art-like aesthetic. See [design-philosophy/SKILL.md](https://github.com/connerkward/ckw-design-skill/blob/main/design-philosophy/SKILL.md).
 
-## Visual assets — generate or source
+## 视觉资源 — 生成或获取
 
 When design-thinking identifies a need for visual assets (logos, icons, hero images, textures, backgrounds):
 
@@ -60,7 +60,7 @@ When design-thinking identifies a need for visual assets (logos, icons, hero ima
 3. Use design-thinking output (tone, domain, color world) to craft prompts / queries.
 4. Evaluate against the design philosophy, refine, integrate into the build.
 
-## LLM-assisted work — always annotate model + cost
+## LLM 辅助工作 — 始终标注模型和成本
 
 When design work involves running an LLM (generative assets, VLM analysis, layout critique, prompt generation, etc.):
 
@@ -74,7 +74,7 @@ When design work involves running an LLM (generative assets, VLM analysis, layou
 - Asset caption: "hero_banner_flux-dev_seed3891.jpg" (seeds enable reproducibility).
 - Uncertainty slider result: "VLM triage on 46,978 images · gpt-4o-mini · ~$9.40" (before); "✓ Completed: 12,447 images classified · gpt-4o-mini · $7.62" (after).
 
-## Algorithm / model explainers — show the equation, annotate the terms
+## 算法/模型解释 — 展示公式并标注术语
 
 Whenever a UI surfaces an algorithm or model to the user (an "ⓘ how this works"
 panel, a model breakdown, a methods note), **include the actual equation, typeset,
@@ -101,7 +101,7 @@ under the hood.
 > • **e**ₓ — the image's 768-d embedding · **w**, b — weights learned from your labels
 > · decision: personal if P ≥ 0.55, reference if P ≤ 0.40.
 
-## Select-all always has a deselect — no dead-end selections
+## 全选始终有取消选项 — 无止境选择
 
 Any **"Select all"** affordance MUST be paired with a way to **clear the selection** —
 preferably the *same button*, label-flipped when everything is already selected

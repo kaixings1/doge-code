@@ -2,7 +2,7 @@
 description: 通过并行研究所有 5 个技能集合仓库来更新技能集合表
 ---
 
-# Workflow — Skill Collections
+# 工作流 — 技能集合
 
 Update the SKILL COLLECTIONS table in `README.md` by researching 5 repos in parallel. Launch a research agent, merge results, present changes, update table if approved.
 

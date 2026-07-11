@@ -1,5 +1,5 @@
 ---
-name: brooks-lint
+name: Claude Code 规则检查器。审计 CLAUDE.md、提交消息和工具使用的一致性。
 description: "Claude Code 规则检查器。审计 CLAUDE.md、提交消息和工具使用的一致性。"
 category: development
 risk: safe

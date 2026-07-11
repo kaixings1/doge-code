@@ -1,8 +1,6 @@
 ---
-name: wiki-lint
-description: "Wiki Lint — Wiki Lint 相关功能和最佳实践"
-  Health check the Obsidian wiki vault. Finds orphan pages, dead wikilinks, stale claims,
-  missing cross-references, frontmatter gaps, and empty sections. Creates or updates
+name: Wiki 检查
+description: "Wiki 检查 — 健康检查 Obsidian wiki 知识库。查找孤立页面、失效的 wikilink、过期的声明、缺失的交叉引用、frontmatter 遗漏和空白章节。创建或更新"
   Dataview dashboards. Generates canvas maps. Triggers on: "lint", "health check",
   "clean up wiki", "check the wiki", "wiki maintenance", "find orphans", "wiki audit".
 ---

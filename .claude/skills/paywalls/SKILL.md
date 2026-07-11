@@ -1,5 +1,5 @@
 ---
-name: paywalls
+name: 创建或优化应用内付费墙、升级屏幕、追加销售弹窗或功能 gates。触发词：付费墙
 description: 创建或优化应用内付费墙、升级屏幕、追加销售弹窗或功能 gates。触发词：付费墙、升级、追加销售、功能 gate、免费转付费、freemium 转化、试用过期、定价决策。
 metadata:
   version: 2.0.0

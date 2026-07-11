@@ -1,5 +1,5 @@
 ---
-name: stormglass-io-automation
+name: Stormglass IO 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Stormglass IO 任务。使用前始终先搜索工具以获取当前 schema。""
 requires:
   mcp: [rube]

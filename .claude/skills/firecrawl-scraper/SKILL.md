@@ -1,5 +1,5 @@
 ---
-name: firecrawl-scraper
+name: 使用 Firecrawl API 进行深度网页抓取、截图、PDF 解析和网站爬取
 description: "使用 Firecrawl API 进行深度网页抓取、截图、PDF 解析和网站爬取。适用于需要从网页进行深度内容提取、需要页面交互（点击、滚动等）或需要截图或 PDF 解析时。"
 risk: unknown
 source: community
@@ -22,7 +22,7 @@ date_added: "2026-02-27"
 npx skills add -g BenedictKing/firecrawl-scraper
 ```
 
-## Step-by-Step Guide
+## 分步指南
 1. Install the skill using the command above
 2. Configure Firecrawl API key
 3. Use naturally in Claude Code conversations

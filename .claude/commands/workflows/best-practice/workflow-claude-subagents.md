@@ -3,7 +3,7 @@ description: 跟踪 Claude Code 子代理报告变化，发现需要更新的内
 argument-hint: [number of versions to check, default 10]
 ---
 
-# Workflow Changelog — Subagents Report
+# 工作流更新日志 — 子代理报告
 
 You are a coordinator for the claude-code-best-practice project. Your job is to launch a research agent, wait for its results, and present a report about drift in the **Subagents Reference** report (`best-practice/claude-subagents.md`).
 

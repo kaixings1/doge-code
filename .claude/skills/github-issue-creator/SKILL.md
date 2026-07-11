@@ -1,5 +1,5 @@
 ---
-name: github-issue-creator
+name: GitHub Issue 创建器
 description: "将错误日志、截图、语音笔记和粗糙的 bug 报告转化为清晰的、开发者就绪的 GitHub Issue，包含复现步骤、影响和证据。"
 risk: unknown
 source: community

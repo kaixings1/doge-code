@@ -1,5 +1,5 @@
 ---
-name: grafana-dashboards
+name: 创建和管理生产就绪的 Grafana 仪表板以实现全面的系统可观察性。
 description: "创建和管理生产就绪的 Grafana 仪表板以实现全面的系统可观察性。"
 risk: unknown
 source: community

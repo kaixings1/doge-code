@@ -1,5 +1,5 @@
 ---
-name: complexity-cuts
+name: Big-O 复杂度优化
 description: "通过一次一个转换的操作手册降低现有代码的 Big-O，并通过验证器确保正确性。"
 risk: safe
 source: community
@@ -19,7 +19,7 @@ license_source: "https://github.com/morsechimwai/lemmaly/blob/main/LICENSE"
 
 **违反这些规则的字面意思就是违反此技能的精神。** "稍微调整"是快速但错误的改写出货的方式。
 
-## When to Use This Skill
+## 何时使用此技能
 
 Use **complexity-cuts** when refactoring existing code that has poor Big-O:
 

@@ -1,5 +1,5 @@
 ---
-name: neon-postgres
+name: Neon 无服务器 Postgres 专家模式：分支、连接池和无服务器架构。po
 description: Neon 无服务器 Postgres 专家模式：分支、连接池和无服务器架构。pooling, and Prisma/Drizzle 集成
 risk: safe
 source: vibeship-spawner-skills (Apache 2.0)

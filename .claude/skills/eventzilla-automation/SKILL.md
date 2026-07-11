@@ -1,5 +1,5 @@
 ---
-name: eventzilla-automation
+name: Eventzilla 自动化
 description: "Eventzilla 自动化"
 risk: safe
 source: community

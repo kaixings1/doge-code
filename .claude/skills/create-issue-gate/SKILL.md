@@ -1,6 +1,6 @@
 ---
-name: create-issue-gate
-description: "Create Issue Gate — Create Issue Gate 相关功能和最佳实践"
+name: 创建 Issue 关卡
+description: "创建 Issue 关卡 — 创建 Issue 关卡相关功能和最佳实践"
 risk: safe
 source: community
 date_added: "2026-03-12"
@@ -54,10 +54,10 @@ Use a body template like:
 ## Problem
 <what is broken or missing>
 
-## Goal
+## 目标
 <what outcome is expected>
 
-## Scope
+## 范围
 - <in scope item>
 
 ## Non-Goals

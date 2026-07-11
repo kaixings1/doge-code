@@ -382,7 +382,7 @@ export function MCPRemoteServerMenu({
   }
   if (isClaudeAIAuthenticating) {
     return <Box flexDirection="column" gap={1} padding={1}>
-        <Text color="claude">Authenticating with {server.name}…</Text>
+        <Text color="claude">正在与 {server.name} 进行身份验证…</Text>
         <Box>
           <Spinner />
           <Text> 浏览器窗口将打开进行认证</Text>
@@ -459,9 +459,9 @@ export function MCPRemoteServerMenu({
         </Text>
         <Box>
           <Spinner />
-          <Text> Establishing connection to MCP server</Text>
+          <Text> 正在建立与 MCP 服务器的连接</Text>
         </Box>
-        <Text dimColor>This may take a few moments.</Text>
+        <Text dimColor>这可能需要几秒钟。</Text>
       </Box>;
   }
   const menuOptions = [];
@@ -532,27 +532,27 @@ export function MCPRemoteServerMenu({
   return <Box flexDirection="column">
       <Box flexDirection="column" paddingX={1} borderStyle={borderless ? undefined : 'round'}>
         <Box marginBottom={1}>
-          <Text bold>{capitalizedServerName} MCP Server</Text>
+          <Text bold>{capitalizedServerName} MCP 服务器</Text>
         </Box>
 
         <Box flexDirection="column" gap={0}>
           <Box>
-            <Text bold>Status: </Text>
-            {server.client.type === 'disabled' ? <Text>{color('inactive', theme)(figures.radioOff)} disabled</Text> : server.client.type === 'connected' ? <Text>{color('success', theme)(figures.tick)} connected</Text> : server.client.type === 'pending' ? <>
+            <Text bold>状态: </Text>
+            {server.client.type === 'disabled' ? <Text>{color('inactive', theme)(figures.radioOff)} 已禁用</Text> : server.client.type === 'connected' ? <Text>{color('success', theme)(figures.tick)} 已连接</Text> : server.client.type === 'pending' ? <>
                 <Text dimColor>{figures.radioOff}</Text>
-                <Text> connecting…</Text>
+                <Text> 连接中…</Text>
               </> : server.client.type === 'needs-auth' ? <Text>
-                {color('warning', theme)(figures.triangleUpOutline)} needs
-                authentication
-              </Text> : <Text>{color('error', theme)(figures.cross)} failed</Text>}
+                {color('warning', theme)(figures.triangleUpOutline)} 需要
+                认证
+              </Text> : <Text>{color('error', theme)(figures.cross)} 失败</Text>}
           </Box>
 
           {server.transport !== 'claudeai-proxy' && <Box>
-              <Text bold>Auth: </Text>
+              <Text bold>认证: </Text>
               {isEffectivelyAuthenticated ? <Text>
-                  {color('success', theme)(figures.tick)} authenticated
+                  {color('success', theme)(figures.tick)} 已认证
                 </Text> : <Text>
-                  {color('error', theme)(figures.cross)} not authenticated
+                  {color('error', theme)(figures.cross)} 未认证
                 </Text>}
             </Box>}
 
@@ -562,15 +562,15 @@ export function MCPRemoteServerMenu({
           </Box>
 
           <Box>
-            <Text bold>Config location: </Text>
+            <Text bold>配置位置: </Text>
             <Text dimColor>{describeMcpConfigFilePath(server.scope)}</Text>
           </Box>
 
           {server.client.type === 'connected' && <CapabilitiesSection serverToolsCount={serverToolsCount} serverPromptsCount={serverCommandsCount} serverResourcesCount={mcp.resources[server.name]?.length || 0} />}
 
           {server.client.type === 'connected' && serverToolsCount > 0 && <Box>
-              <Text bold>Tools: </Text>
-              <Text dimColor>{serverToolsCount} tools</Text>
+              <Text bold>工具: </Text>
+              <Text dimColor>{serverToolsCount} 个工具</Text>
             </Box>}
         </Box>
 

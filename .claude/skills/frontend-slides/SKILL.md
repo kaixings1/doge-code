@@ -1,6 +1,6 @@
 ---
-name: frontend-slides
-description: 从零开始或通过转换 PowerPoint 文件创建 stunning 的动画丰富 HTML 演示文稿。
+name: HTML 演示文稿生成器
+description: 从零开始或通过转换 PowerPoint 文件创建令人惊艳的动画丰富 HTML 演示文稿。
 risk: safe
 source: https://github.com/zarazhangrui/frontend-slides
 date_added: "2026-03-07"

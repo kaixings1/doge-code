@@ -1,5 +1,5 @@
 ---
-name: context-guardian
+name: 上下文 Guardian
 description: "上下文 Guardian — 上下文 Guardian 相关功能和最佳实践"
 risk: safe
 source: community

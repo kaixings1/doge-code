@@ -1,47 +1,47 @@
 在整个代码库中重命名符号（变量、函数、类、文件）。
 
-## Steps
+## 步骤
 
-1. Accept the old name and new name from the argument.
-2. Determine the symbol type:
-   - Variable, function, or class name.
-   - File or directory name.
-   - Database column or table name.
-   - CSS class or ID.
-3. Find all references to the symbol:
-   - Source code: imports, exports, usages, type references.
-   - Tests: test descriptions, assertions, mocks.
-   - Configuration: env vars, config files, CI pipelines.
-   - Documentation: README, comments, API docs.
-4. If renaming a file:
-   - Update all import paths referencing the old filename.
-   - Update any dynamic imports or require statements.
-   - Update references in configuration files (tsconfig paths, webpack aliases).
-5. Preview all changes before applying:
-   - Show each file that will be modified with the specific line changes.
-   - Highlight any ambiguous matches that might be false positives.
-6. Apply changes across all files simultaneously.
-7. Run the test suite and type checker to verify nothing broke.
+1. 从参数中接受旧名称和新名称。
+2. 确定符号类型：
+   - 变量、函数或类名。
+   - 文件或目录名。
+   - 数据库列或表名。
+   - CSS 类或 ID。
+3. 查找符号的所有引用：
+   - 源代码：导入、导出、使用、类型引用。
+   - 测试：测试描述、断言、模拟。
+   - 配置：环境变量、配置文件、CI 流水线。
+   - 文档：README、注释、API 文档。
+4. 如果重命名文件：
+   - 更新引用旧文件名的所有导入路径。
+   - 更新任何动态导入或 require 语句。
+   - 更新配置文件中的引用（tsconfig 路径、webpack 别名）。
+5. 在应用前预览所有更改：
+   - 显示每个将修改的文件及其具体行变更。
+   - 高亮任何可能是误报的歧义匹配。
+6. 同时对所有文件应用更改。
+7. 运行测试套件和类型检查器以验证未破坏任何内容。
 
-## Format
+## 格式
 
 ```
-Rename: <old-name> -> <new-name>
-Type: <function|variable|class|file>
+重命名：<旧名称> -> <新名称>
+类型：<函数|变量|类|文件>
 
-Files affected: <N>
-  - <file>:<line> - <context of change>
+受影响的文件：<N>
+  - <文件>:<行> - <变更上下文>
 
-Verification:
-  - Type check: <pass/fail>
-  - Tests: <pass/fail>
+验证：
+  - 类型检查：<通过/失败>
+  - 测试：<通过/失败>
 ```
 
-## Rules
+## 规则
 
-- Show a preview of all changes and get confirmation before applying.
-- Handle case sensitivity: distinguish `myFunc`, `MyFunc`, `MY_FUNC`.
-- Do not rename symbols in `node_modules`, `vendor`, or other dependency directories.
-- Preserve casing conventions (camelCase, PascalCase, snake_case, UPPER_CASE).
-- Check for string literals that reference the symbol name (API routes, error messages).
-- Update both the symbol and related names (e.g., renaming `User` should also update `UserProps`, `UserSchema`).
+- 在应用前显示所有更改的预览并获得确认。
+- 处理大小写敏感：区分 `myFunc`、`MyFunc`、`MY_FUNC`。
+- 不要重命名 `node_modules`、`vendor` 或其他依赖目录中的符号。
+- 保留大小写约定（camelCase、PascalCase、snake_case、UPPER_CASE）。
+- 检查引用符号名称的字符串字面量（API 路由、错误消息）。
+- 同时更新符号和相关名称（例如，重命名 `User` 也应更新 `UserProps`、`UserSchema`）。

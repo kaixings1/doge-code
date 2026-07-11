@@ -1,5 +1,5 @@
 ---
-name: schema
+name: 结构化数据标记相关功能和最佳实践
 description: "Schema — 结构化数据标记相关功能和最佳实践"
 metadata:
   version: 2.0.0

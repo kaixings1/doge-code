@@ -1,15 +1,15 @@
 ---
-name: manage-skills
-description: "Manage Skills — Manage Skills 相关功能和最佳实践"
+name: 管理技能
+description: "管理技能 — 管理技能相关功能和最佳实践"
 risk: critical
 source: community
 source_repo: umutbozdag/agent-skills-manager
 source_type: community
 ---
 
-# Manage AI Agent Skills
+# 管理 AI 代理技能
 
-You can manage skills and rules for all major AI coding tools directly from the terminal. This skill teaches you the directory layout, file format, and operations for each tool.
+您可以直接从终端管理所有主要 AI 编码工具的技能和规则。此技能教您每种工具的目录布局、文件格式和操作。
 
 ## 使用场景
 

@@ -1,12 +1,12 @@
 ---
-name: azure-mgmt-weightsandbiases-dotnet
-description: "Azure Mgmt Weightsandbiases Dotnet — Azure Mgmt Weightsandbiases Dotnet 相关功能和最佳实践"
+name: Azure Weights and Biases 管理 .NET SD
+description: "Azure Management Weights and Biases .NET — Azure Weights and Biases 管理 .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
 
-# Azure.ResourceManager.WeightsAndBiases (.NET)
+# Azure Weights and Biases 管理 .NET SDK
 
 Azure Resource Manager SDK for deploying and managing Weights & Biases ML experiment tracking instances via Azure Marketplace.
 
@@ -38,7 +38,7 @@ using Azure.ResourceManager.WeightsAndBiases;
 ArmClient client = new ArmClient(new DefaultAzureCredential());
 ```
 
-## Resource Hierarchy
+## 资源层次结构
 
 ```
 Subscription

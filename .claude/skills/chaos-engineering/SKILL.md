@@ -1,5 +1,5 @@
 ---
-name: chaos-engineering
+name: 混沌工程
 description: "混沌工程"
 risk: safe
 source: community

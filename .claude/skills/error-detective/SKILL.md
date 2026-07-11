@@ -1,5 +1,5 @@
 ---
-name: error-detective
+name: 错误检测和诊断
 description: "错误检测和诊断"
 risk: safe
 source: community

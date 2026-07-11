@@ -1,5 +1,5 @@
 ---
-name: sora
+name: OpenAI 视频生成 API，用于创建、混剪和管理短视频片段，适用于
 description: "Sora — OpenAI 视频生成 API，用于创建、混剪和管理短视频片段，适用于电影镜头、B-roll 素材和快速概念视频迭代"
 triggers:
   - "sora"

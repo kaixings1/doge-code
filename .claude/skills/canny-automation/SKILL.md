@@ -1,5 +1,5 @@
 ---
-name: canny-automation
+name: Canny 自动化
 description: "Canny 自动化"
 risk: safe
 source: community

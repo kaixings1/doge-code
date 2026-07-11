@@ -1,10 +1,10 @@
-# 测试覆盖率 (Test Coverage)
+# 测试覆盖率
 
-分析测试覆盖率（Test Coverage），识别覆盖缺口，并补全缺失的测试以达到 80% 以上的覆盖率。
+分析测试覆盖率，识别覆盖缺口，并补全缺失的测试以达到 80% 以上的覆盖率。
 
-## 步骤 1：检测测试框架 (Test Framework)
+## 步骤 1：检测测试框架
 
-| 指标 (Indicator) | 覆盖率命令 (Coverage Command) |
+| 指标 | 覆盖率命令 |
 |-----------|-----------------|
 | `jest.config.*` 或 `package.json` 中的 jest | `npx jest --coverage --coverageReporters=json-summary` |
 | `vitest.config.*` | `npx vitest run --coverage` |
@@ -13,7 +13,7 @@
 | 包含 JaCoCo 的 `pom.xml` | `mvn test jacoco:report` |
 | `go.mod` | `go test -coverprofile=coverage.out ./...` |
 
-## 步骤 2：分析覆盖率报告 (Coverage Report)
+## 步骤 2：分析覆盖率报告
 
 1. 运行覆盖率命令
 2. 解析输出结果（JSON 摘要或终端输出）
@@ -27,8 +27,8 @@
 
 针对每个覆盖不足的文件，按以下优先级生成测试：
 
-1. **正常路径 (Happy Path)** —— 使用有效输入的中心功能
-2. **错误处理 (Error Handling)** —— 无效输入、缺失数据、网络故障
+1. **正常路径** —— 使用有效输入的中心功能
+2. **错误处理** —— 无效输入、缺失数据、网络故障
 3. **边界情况 (Edge Cases)** —— 空数组、null/undefined、边界值 (0, -1, MAX_INT)
 4. **分支覆盖 (Branch Coverage)** —— 每个 if/else、switch 分支、三元运算符
 
@@ -46,7 +46,7 @@
 2. 重新运行覆盖率检查 —— 验证改进效果
 3. 如果仍低于 80%，对剩余缺口重复步骤 3
 
-## 步骤 5：报告 (Report)
+## 步骤 5：报告
 
 显示前后对比：
 

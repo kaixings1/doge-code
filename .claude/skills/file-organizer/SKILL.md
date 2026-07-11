@@ -1,6 +1,6 @@
 ---
-name: file-organizer
-description: "File Organizer — File Organizer 相关功能和最佳实践"
+name: 文件组织器
+description: "文件组织器 — 文件组织和整理相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: "2026-02-27"

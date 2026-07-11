@@ -1,5 +1,5 @@
 ---
-name: appsflyer-automation
+name: AppsFlyer 自动化
 description: "AppsFlyer 自动化"
 risk: safe
 source: community

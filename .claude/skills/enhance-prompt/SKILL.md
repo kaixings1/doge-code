@@ -1,5 +1,5 @@
 ---
-name: enhance-prompt
+name: AI 提示词优化
 description: "AI 提示词优化"
 risk: safe
 source: community

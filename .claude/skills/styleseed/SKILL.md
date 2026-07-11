@@ -1,3 +1,8 @@
+---
+name: StyleSeed 设计判断引擎
+description: StyleSeed 设计判断引擎 — 69 条视觉规则，使 AI 输出看起来经过设计而非生成，涵盖色彩、空间节奏、信息层级和阴影。
+---
+
 # StyleSeed 设计判断引擎
 
 > Teaches Claude Code design judgment, not just design data. 69 visual rules that make AI output look designed, not generated.

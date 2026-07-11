@@ -1,5 +1,5 @@
 ---
-name: inventory-demand-planning
+name: 库存需求规划
 description: "库存需求规划 — 供应链库存优化"
 risk: safe
 source: community

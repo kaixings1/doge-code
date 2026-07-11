@@ -1,5 +1,5 @@
 ---
-name: fixing-motion-performance
+name: Fixing Motion 性能
 description: "Fixing Motion 性能 — Fixing Motion 性能 相关功能和最佳实践"
 risk: safe
 source: community

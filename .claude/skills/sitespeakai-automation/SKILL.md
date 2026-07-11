@@ -1,5 +1,5 @@
 ---
-name: sitespeakai-automation
+name: Sitespeakai 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Sitespeakai 任务。使用前始终先搜索工具以获取当前 schema。""
 requires:
   mcp: [rube]
@@ -13,7 +13,7 @@ Automate Sitespeakai operations through Composio's Sitespeakai toolkit via Rube 
 
 ## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
+- Rube MCP 必须已连接 (RUBE_SEARCH_TOOLS available)
 - Active Sitespeakai connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `sitespeakai`
 - Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 

@@ -1,5 +1,5 @@
 ---
-name: Ramp Automation
+name: Ramp 自动化：通过 Ramp 平台管理公司卡交易、报销、用户和费用跟踪
 description: "Ramp 自动化：通过 Ramp 平台管理公司卡交易、报销、用户和费用跟踪"
 requires:
   mcp: [rube]

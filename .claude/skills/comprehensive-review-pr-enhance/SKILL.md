@@ -1,15 +1,13 @@
 ---
-name: comprehensive-review-pr-enhance
-description: "Comprehensive Review Pr Enhance — Comprehensive Review Pr Enhance 相关功能和最佳实践"
-  Generate structured PR descriptions from diffs, add review checklists,
-  risk assessments, and test coverage summaries. Use when the user says
+name: 全面审查 PR 增强
+description: "全面审查 PR 增强 — 从差异生成结构化 PR 描述、添加审查检查清单、风险评估和测试覆盖摘要相关功能和最佳实践"
   "write a PR description", "improve this PR", "summarize my changes",
   "PR review", "pull 请求", or asks to document a diff for reviewers.
 risk: unknown
 source: community
 ---
 
-# Pull 请求 增强
+# Pull Request 增强
 
 ## 何时使用
 - 你需要将 git diff 转化为对审查者友好的 PR 描述。

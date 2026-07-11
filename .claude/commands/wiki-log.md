@@ -1,6 +1,6 @@
 ---
 name: Wiki日志
-description: Show recent entries from the LLM Wiki log (wiki/log.md). Uses the standardized ## [YYYY-MM-DD] header format so grep + tail works. Usage /wiki-log [--last N] [--op ingest|query|lint|...]
+description: 显示 LLM Wiki 日志 (wiki/log.md) 中的最近条目。使用标准化的 ## [YYYY-MM-DD] 标题格式，以便 grep + tail 正常使用。用法: /wiki-log [--last N] [--op ingest|query|lint|...]
 ---
 <!-- canonical copy: engineering/llm-wiki/commands/wiki-log.md — keep in sync -->
 

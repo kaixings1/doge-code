@@ -1,5 +1,5 @@
 ---
-name: analyzing-threat-actor-ttps-with-mitre-attack
+name: MITRE ATT&CK TTP 分析
 description: "使用 MITRE ATT&CK 分析 TTP"
 risk: safe
 source: community

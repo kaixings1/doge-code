@@ -70,7 +70,7 @@ export function ChannelsNotice() {
     }
     let t2;
     if ($[9] === Symbol.for("react.memo_cache_sentinel")) {
-      t2 = <Text dimColor={true}>Channels require claude.ai authentication · run /login, then restart</Text>;
+      t2 = <Text dimColor={true}>渠道需要 claude.ai 认证 · 运行 /login，然后重启</Text>;
       $[9] = t2;
     } else {
       t2 = $[9];
@@ -135,7 +135,7 @@ export function ChannelsNotice() {
   }
   let t2;
   if ($[24] !== flag) {
-    t2 = <Text dimColor={true}>Experimental · inbound messages will be pushed into this session, this carries prompt injection risks. Restart Claude Code without {flag} to disable.</Text>;
+    t2 = <Text dimColor={true}>实验性 · 入站消息将被推送到此会话，这存在提示注入风险。移除 {flag} 后重启 Claude Code 以禁用。</Text>;
     $[24] = flag;
     $[25] = t2;
   } else {

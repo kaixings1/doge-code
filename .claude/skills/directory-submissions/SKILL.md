@@ -1,5 +1,5 @@
 ---
-name: directory-submissions
+name: 产品目录提交
 description: 将产品提交到创业、SaaS、AI、代理、MCP、无代码或评论目录以获取反向链接、域名权重和曝光。触发词：目录提交、反向链接、Product Hunt、BetaList、Futurepedia、G2、Capterra、AI 目录、MCP 注册、产品发布目录策略。
 metadata:
   version: 2.0.0

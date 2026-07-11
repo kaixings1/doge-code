@@ -1,5 +1,5 @@
 ---
-name: code-refactoring-refactor-clean
+name: 代码重构与清理
 description: "代码重构与清理"
 risk: safe
 source: community

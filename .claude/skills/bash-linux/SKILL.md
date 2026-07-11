@@ -1,5 +1,5 @@
 ---
-name: bash-linux
+name: Bash/Linux 终端模式
 description: "Bash/Linux 终端模式。关键命令、管道、错误处理、脚本编写。适用于在 macOS 或 Linux 系统上工作。"
 risk: unknown
 source: community

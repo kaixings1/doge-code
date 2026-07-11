@@ -1,5 +1,5 @@
 ---
-name: geminiignore-finops
+name: 配置和优化 .geminiignore 文件以提高 AI 上下文窗口效率和降低 令牌 成本（FinOps）。
 description: "配置和优化 .geminiignore 文件以提高 AI 上下文窗口效率和降低 令牌 成本（FinOps）。"
 category: context-optimization
 risk: safe

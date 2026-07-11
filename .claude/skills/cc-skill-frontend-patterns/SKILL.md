@@ -1,5 +1,5 @@
 ---
-name: cc-skill-frontend-patterns
+name: 前端模式
 description: "前端模式"
 risk: safe
 source: community

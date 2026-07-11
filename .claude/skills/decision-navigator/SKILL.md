@@ -1,5 +1,5 @@
 ---
-name: decision-navigator
+name: 决策导航器
 description: "通过有针对性的分支问题引导陷入困境或不知所措的用户，直到他们到达具体的下一步。"
 category: planning
 risk: safe

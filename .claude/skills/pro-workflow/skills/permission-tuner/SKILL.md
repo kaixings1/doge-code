@@ -110,7 +110,7 @@ Recommendations:
 Estimated prompts saved per session: ~[N]
 ```
 
-## Rules
+## 规则
 
 - Destructive operations must stay in the deny list
 - Always present rules for user approval before applying

@@ -1,5 +1,5 @@
 ---
-name: html-injection-testing
+name: HTML 注入测试
 description: "HTML 注入测试 — 跨站脚本攻击测试"
 risk: unknown
 source: community

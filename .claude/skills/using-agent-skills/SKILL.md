@@ -1,5 +1,5 @@
 ---
-name: using-agent-skills
+name: 使用代理技能
 description: 使用代理技能 — 发现并调用代理技能。在开始会话或需要专门代理时使用。
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: stitch-design-taste
+name: 适用于 Google Stitch 的语义化设计系统技能
 description: 适用于 Google Stitch 的语义化设计系统技能。生成对代理友好的 DESIGN.md 文件，强制执行高品质、反通用 UI 标准——严格的排版、校准的色彩、不对称布局、持续微动效和硬件加速性能。
 ---
 

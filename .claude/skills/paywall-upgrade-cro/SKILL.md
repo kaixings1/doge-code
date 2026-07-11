@@ -1,6 +1,6 @@
 ---
-name: paywall-upgrade-cro
-description: "Paywall Upgrade Cro — 付费墙升级 CRO 相关功能和最佳实践"
+name: 付费墙升级 CRO
+description: "付费墙升级 CRO — 付费墙升级 CRO 相关功能和最佳实践"
   设计和优化升级界面、付费墙和追加销售弹窗。适用于 SaaS 转化设计和定价页面实验。
 triggers:
   - "paywall"

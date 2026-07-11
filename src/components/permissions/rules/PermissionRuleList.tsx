@@ -48,7 +48,7 @@ function RuleSourceText(t0) {
   } else {
     t1 = $[1];
   }
-  const t2 = `From ${t1}`;
+  const t2 = `来自 ${t1}`;
   let t3;
   if ($[2] !== t2) {
     t3 = <Text dimColor={true}>{t2}</Text>;
@@ -60,15 +60,15 @@ function RuleSourceText(t0) {
   return t3;
 }
 
-// Helper function to get the appropriate label for rule behavior
+// 辅助函数：获取规则行为的适当标签
 function getRuleBehaviorLabel(ruleBehavior: PermissionBehavior): string {
   switch (ruleBehavior) {
     case 'allow':
-      return 'allowed';
+      return '已允许';
     case 'deny':
-      return 'denied';
+      return '已拒绝';
     case 'ask':
-      return 'ask';
+      return '询问';
   }
 }
 
@@ -147,14 +147,14 @@ function RuleDetails(t0) {
   if (rule.source === "policySettings") {
     let t8;
     if ($[16] === Symbol.for("react.memo_cache_sentinel")) {
-      t8 = <Text bold={true} color="permission">Rule details</Text>;
+      t8 = <Text bold={true} color="permission">规则详情</Text>;
       $[16] = t8;
     } else {
       t8 = $[16];
     }
     let t9;
     if ($[17] === Symbol.for("react.memo_cache_sentinel")) {
-      t9 = <Text italic={true}>This rule is configured by managed settings and cannot be modified.{"\n"}Contact your system administrator for more information.</Text>;
+      t9 = <Text italic={true}>此规则由受管设置配置，无法修改。{"\n"}请联系系统管理员获取更多信息。</Text>;
       $[17] = t9;
     } else {
       t9 = $[17];
@@ -188,7 +188,7 @@ function RuleDetails(t0) {
   }
   let t9;
   if ($[25] !== t8) {
-    t9 = <Text bold={true} color="error">Delete {t8} tool?</Text>;
+    t9 = <Text bold={true} color="error">删除 {t8} 工具？</Text>;
     $[25] = t8;
     $[26] = t9;
   } else {

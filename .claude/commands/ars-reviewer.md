@@ -2,7 +2,7 @@
 description: ARS 学术论文 `reviewer` 完整模式 — 模拟同行评审小组
 ---
 
-Trigger the `academic-paper-reviewer` skill in `full` mode. Honor explicit alternate modes when present: `quick`, `methodology-focus`, `re-review`, `guided`, or `calibration`. Runs on the inherited session model — the v3.7.0 `opus` frontmatter floor was retired in the 2026-06 harness pass so a stronger session model is never silently downgraded.
+以 `完整` 模式触发 `academic-paper-reviewer` 技能。当存在显式的替代模式时予以尊重：`quick`、`methodology-focus`、`re-review`、`guided` 或 `calibration`。在继承的会话模型上运行——v3.7.0 的 `opus` frontmatter 下限已在 2026-06 的 harness 传递中退役，因此更强的会话模型永远不会被静默降级。
 
-Mode reference: `MODE_REGISTRY.md` § academic-paper-reviewer.
-Skill entry: `academic-paper-reviewer/SKILL.md`.
+模式参考：`MODE_REGISTRY.md` § academic-paper-reviewer。
+技能入口：`academic-paper-reviewer/SKILL.md`。

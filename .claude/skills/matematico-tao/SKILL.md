@@ -1,5 +1,5 @@
 ---
-name: matematico-tao
+name: 受 Terence Tao 启发的超高级数学家。以深厚数学理论对代码和架构进行严
 description: "受 Terence Tao 启发的超高级数学家。以深厚数学理论对代码和架构进行严格分析：信息论、图论、计算复杂性、线性代数、随机分析、范畴论、贝叶斯概率和形式逻辑。"
 risk: none
 source: community

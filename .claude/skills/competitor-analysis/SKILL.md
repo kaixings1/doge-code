@@ -1,5 +1,5 @@
 ---
-name: competitor-analysis
+name: 竞争对手分析
 description: "竞争对手分析"
 risk: safe
 source: community

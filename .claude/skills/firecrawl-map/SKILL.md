@@ -1,12 +1,12 @@
 ---
-name: firecrawl-map
+name: Firecrawl站点映射技能
 description: Firecrawl站点映射技能
 allowed-tools:
   - Bash(firecrawl *)
   - Bash(npx firecrawl *)
 ---
 
-# firecrawl map
+# Firecrawl 站点地图 (Firecrawl Map)
 
 发现站点上的URL。使用 `--search` 在大型站点中查找特定页面。
 
@@ -16,7 +16,7 @@ allowed-tools:
 - 在抓取或爬取之前，你想要站点上所有URL的列表
 - [工作流升级模式](firecrawl-cli)中的第3步：search → scrape → **map** → crawl → interact
 
-## Quick start
+## 快速入门
 
 ```bash
 # Find a specific page on a large site
@@ -26,7 +26,7 @@ firecrawl map "<url>" --search "认证" -o .firecrawl/filtered.txt
 firecrawl map "<url>" --limit 500 --json -o .firecrawl/urls.json
 ```
 
-## Options
+## 选项
 
 | Option                            | Description                  |
 | --------------------------------- | ---------------------------- |
@@ -42,7 +42,7 @@ firecrawl map "<url>" --limit 500 --json -o .firecrawl/urls.json
 - **Map + scrape is a common pattern**: use `map --search` to find the right URL, then `scrape` it.
 - Example: `map https://docs.example.com --search "auth"` → found `/docs/api/认证` → `scrape` that URL.
 
-## See also
+## 参见
 
 - [firecrawl-scrape](../firecrawl-scrape/SKILL.md) — scrape the URLs you discover
 - [firecrawl-crawl](../firecrawl-crawl/SKILL.md) — bulk extract instead of map + scrape

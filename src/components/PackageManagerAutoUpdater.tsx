@@ -84,7 +84,7 @@ export function PackageManagerAutoUpdater(t0) {
   }
   let t5;
   if ($[5] !== updateCommand) {
-    t5 = <Text color="warning" wrap="truncate">Update available! Run: <Text bold={true}>{updateCommand}</Text></Text>;
+    t5 = <Text color="warning" wrap="truncate">有可用更新！运行: <Text bold={true}>{updateCommand}</Text></Text>;
     $[5] = updateCommand;
     $[6] = t5;
   } else {

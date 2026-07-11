@@ -1,11 +1,11 @@
 ---
-name: debug-buttercup
+name: 所有 pod 运行在 crs 命名空间中。当 crs 命名空间中的 pod 处于
 description: "所有 pod 运行在 crs 命名空间中。当 crs 命名空间中的 pod 处于 CrashLoopBackOff、OOMKilled 或重启状态，多个服务同时重启（级联故障），或 redis 无响应或显示 AOF 警告时使用。"
 risk: unknown
 source: community
 ---
 
-# Debug Buttercup
+# Debug Buttercup 调试
 
 ## 何时使用
 - `crs` 命名空间中的 Pod 处于 CrashLoopBackOff、OOMKilled 或重启状态
@@ -18,7 +18,7 @@ source: community
 - 健康检查探针意外失败
 - 部署的 Helm 值与实际的 pod 配置不匹配
 
-## When NOT to Use
+## 不适用场景
 
 - Deploying or upgrading Buttercup (use Helm and 部署 guides)
 - Debugging issues outside the `crs` Kubernetes namespace

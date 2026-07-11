@@ -3,7 +3,7 @@ description: ARS 深度研究 `三向扫描` 模式 — WHY / HOW / WHAT 论文�
 model: sonnet
 ---
 
-Trigger the `deep-research` skill in `three-way-scan` mode. Produces a compact paper shortlist compared by WHY / HOW / WHAT plus a cross-paper synthesis (common WHY, divergent HOW, strongest WHAT, unresolved gap). Lighter than `lit-review`; escalate to `lit-review` / `systematic-review` for full coverage. Fidelity spectrum, low oversight.
+以 `三向扫描` 模式触发 `deep-research` 技能。生成按 WHY / HOW / WHAT 对比的精简论文候选列表，附带跨论文综合（共同 WHY、分歧 HOW、最强 WHAT、未解决的差距）。比 `lit-review` 更轻量；可将升级到 `lit-review` / `systematic-review` 进行完整覆盖。保真度谱系，低监督需求。
 
-Mode reference: `MODE_REGISTRY.md` § deep-research.
-Skill entry: `deep-research/SKILL.md`.
+模式参考：`MODE_REGISTRY.md` § deep-research。
+技能入口：`deep-research/SKILL.md`。

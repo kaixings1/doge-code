@@ -1,5 +1,5 @@
 ---
-name: logic-lens
+name: AI 驱动的 Claude Code 技能，使用形式逻辑和推理框架执行深度代码审
 description: "AI 驱动的 Claude Code 技能，使用形式逻辑和推理框架执行深度代码审查，检测超越 linter 能力的 bug、反模式和安全风险。"
 category: development
 risk: safe

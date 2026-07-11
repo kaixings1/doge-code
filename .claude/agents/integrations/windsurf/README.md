@@ -1,25 +1,25 @@
-# Windsurf Integration
+# Windsurf 集成
 
-All 61 Agency agents are consolidated into a single `.windsurfrules` file.
-Rules are **project-scoped** — install them from your project root.
+所有 61 个 Agency Agent 已合并到单个 `.windsurfrules` 文件中。
+规则是**项目级别的**——请从项目根目录安装。
 
-## Install
+## 安装
 
 ```bash
-# Run from your project root
+# 从项目根目录运行
 cd /your/project
 /path/to/agency-agents/scripts/install.sh --tool windsurf
 ```
 
-## Activate an Agent
+## 激活 Agent
 
-In Windsurf, reference an agent by name in your prompt:
+在 Windsurf 中，通过名称在提示中引用 Agent：
 
 ```
-Use the Frontend Developer agent to build this component.
+使用前端开发 Agent 来构建此组件。
 ```
 
-## Regenerate
+## 重新生成
 
 ```bash
 ./scripts/convert.sh --tool windsurf

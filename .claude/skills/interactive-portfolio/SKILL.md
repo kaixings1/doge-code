@@ -1,5 +1,5 @@
 ---
-name: interactive-portfolio
+name: 交互式作品集
 description: "交互式作品集 — 创建交互式个人作品集网站"
 risk: unknown
 source: community

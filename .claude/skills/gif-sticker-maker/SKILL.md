@@ -1,6 +1,6 @@
 ---
-name: gif-sticker-maker
-description: "Gif Sticker Maker — Gif Sticker Maker 相关功能和最佳实践"
+name: GIF 贴纸制作器
+description: "GIF 贴纸制作器 — GIF 贴纸制作器相关功能和最佳实践"
   通过 MiniMax API 将照片转换为 Funko Pop / Pop Mart 风格的动画 GIF 贴纸。适用于个性化聊天贴纸和头像包。
 triggers:
   - "gif sticker"

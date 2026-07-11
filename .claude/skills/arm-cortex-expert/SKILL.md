@@ -1,5 +1,5 @@
 ---
-name: arm-cortex-expert
+name: ARM Cortex 专家
 description: "ARM Cortex 专家"
 risk: safe
 source: community

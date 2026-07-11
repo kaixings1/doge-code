@@ -1,5 +1,5 @@
 ---
-name: hig-platforms
+name: HIG 平台
 description: "HIG 平台 — Human Interface Guidelines 平台适配"
 risk: safe
 source: community

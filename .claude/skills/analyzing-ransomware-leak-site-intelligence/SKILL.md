@@ -1,5 +1,5 @@
 ---
-name: analyzing-ransomware-leak-site-intelligence
+name: 勒索软件泄漏站点情报
 description: "分析勒索软件泄漏站点情报"
 risk: safe
 source: community

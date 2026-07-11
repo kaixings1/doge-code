@@ -1,5 +1,5 @@
 ---
-name: azure-messaging-webpubsub-java
+name: 指导 Java 开发者使用 Azure Web PubSub 客户端库实现实时消息传递。
 description: "指导 Java 开发者使用 Azure Web PubSub 客户端库实现实时消息传递。"
 risk: unknown
 source: community
@@ -20,7 +20,7 @@ Build real-time web applications using the Azure Web PubSub SDK for Java.
 </dependency>
 ```
 
-## Client Creation
+## 客户端创建
 
 ### With Connection String
 
@@ -76,7 +76,7 @@ WebPubSubServiceAsyncClient asyncClient = new WebPubSubServiceClientBuilder()
 - **Connection**: Individual WebSocket client connection
 - **User**: Entity that can have multiple connections
 
-## Core Patterns
+## 核心模式
 
 ### Send to All Connections
 
@@ -294,7 +294,7 @@ WEB_PUBSUB_ACCESS_KEY=<your-access-key>
 5. **Hub Isolation**: Use separate hubs for different application features
 6. **Connection Management**: Clean up inactive connections
 
-## Trigger Phrases
+## 触发短语
 
 - "Web PubSub Java"
 - "WebSocket messaging Azure"

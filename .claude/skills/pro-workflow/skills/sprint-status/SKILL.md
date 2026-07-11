@@ -1,11 +1,11 @@
 ---
 name: sprint-status
-description: "Pro Workflow\Skills\Sprint Status — Pro Workflow\Skills\Sprint Status 相关功能和最佳实践"
+description: "Pro Workflow\Skills\Sprint Status — Pro Workflow 技能冲刺状态相关功能和最佳实践"
 ---
 
-# Sprint Status
+# 冲刺状态
 
-When running multiple Claude Code sessions in parallel, confusion is the enemy. This skill ensures every session identifies itself and every step reports its state.
+并行运行多个 Claude Code 会话时，混乱是最大的敌人。此技能确保每个会话标识自身，每个步骤报告其状态。
 
 ## Session Identification
 

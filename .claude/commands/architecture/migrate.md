@@ -5,48 +5,48 @@ description: 增量规划并执行框架或库迁移。
 
 增量规划并执行框架或库迁移。
 
-## Steps
+## 步骤
 
-### 1. Dependency Audit
-- List the current version and target version.
-- Read the migration guide or changelog for the target version.
-- Run `npm outdated`, `pip list --outdated`, or equivalent to see the full dependency picture.
-- Identify transitive dependencies that may also need updating.
+### 1. 依赖审计
+- 列出当前版本和目标版本。
+- 阅读目标版本的迁移指南或变更日志。
+- 运行 `npm outdated`、`pip list --outdated` 或等效命令查看完整的依赖情况。
+- 识别可能也需要更新的传递依赖。
 
-### 2. Breaking Changes Analysis
-- List every breaking change between current and target versions.
-- For each breaking change, search the codebase for affected code:
-  - Deprecated APIs that are removed.
-  - Changed function signatures or return types.
-  - Renamed or moved modules.
-  - Changed default behavior.
-- Categorize each as: trivial (find-and-replace), moderate (logic change), complex (architecture change).
+### 2. 破坏性变更分析
+- 列出当前版本和目标版本之间的每个破坏性变更。
+- 对每个破坏性变更，在代码库中搜索受影响的代码：
+  - 已移除的废弃 API。
+  - 更改的函数签名或返回类型。
+  - 重命名或移动的模块。
+  - 更改的默认行为。
+- 将每个变更分类为：微小（查找替换）、中等（逻辑变更）、复杂（架构变更）。
 
-### 3. Migration Plan
-- Order changes to minimize risk:
-  1. Update configuration and build tooling first.
-  2. Address breaking changes in shared utilities and core modules.
-  3. Update feature code from least to most complex.
-  4. Update tests last (they may need new patterns).
-- Identify code that can be made compatible with both old and new versions during transition.
-- Plan for a parallel-run period if the migration spans multiple PRs.
+### 3. 迁移计划
+- 对变更进行排序以最小化风险：
+  1. 首先更新配置和构建工具。
+  2. 处理共享工具和核心模块中的破坏性变更。
+  3. 从最简单到最复杂更新功能代码。
+  4. 最后更新测试（它们可能需要新模式）。
+- 识别在过渡期间可以与新旧版本兼容的代码。
+- 如果迁移跨越多个 PR，规划并行运行期。
 
-### 4. Execute Incrementally
-- Create a feature branch for the migration.
-- Apply changes one module at a time.
-- Run tests after each module migration.
-- Keep the build passing at every commit.
+### 4. 增量执行
+- 为迁移创建功能分支。
+- 一次一个模块地应用更改。
+- 每次模块迁移后运行测试。
+- 保持每次提交的构建通过。
 
-### 5. Verify
-- Run the full test suite with the new version.
-- Test critical user flows manually or with e2e tests.
-- Check bundle size, build time, and runtime performance for regressions.
-- Document any behavioral differences that are intentional.
+### 5. 验证
+- 使用新版本运行完整的测试套件。
+- 手动或通过 e2e 测试关键用户流程。
+- 检查包大小、构建时间和运行时性能是否存在回退。
+- 记录任何有意的行为差异。
 
-## Rules
+## 规则
 
-- Never do a big-bang migration. Each PR should be reviewable independently.
-- If a dependency has its own migration tool (codemods), use it first.
-- Pin the exact target version during migration. Do not use ranges.
-- Keep a rollback plan: know how to revert to the old version at every step.
-- Update lock files in a dedicated commit for cleaner diffs.
+- 绝不做大爆炸式迁移。每个 PR 应可独立审查。
+- 如果依赖项有自己的迁移工具（codemods），首先使用它。
+- 在迁移期间固定确切的目标版本。不要使用范围。
+- 保留回滚计划：知道在每一步如何恢复到旧版本。
+- 在专用提交中更新锁定文件以获得更清晰的 diff。

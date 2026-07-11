@@ -1,5 +1,5 @@
 ---
-name: azure-communication-sms-java
+name: 指导 Java 开发者使用 Azure Communication SMS 客户端库发送短信。
 description: "指导 Java 开发者使用 Azure Communication SMS 客户端库发送短信。"
 risk: safe
 source: community
@@ -20,7 +20,7 @@ Send SMS messages to single or multiple recipients with delivery reporting.
 </dependency>
 ```
 
-## Client Creation
+## 客户端创建
 
 ```java
 import com.azure.communication.sms.SmsClient;
@@ -269,7 +269,7 @@ SMS_FROM_NUMBER=+14255550100
 5. **Rate Limiting** - Implement retry with backoff for 429 responses
 6. **Bulk Sending** - Use batch send for multiple recipients (more efficient)
 
-## Trigger Phrases
+## 触发短语
 
 - "send SMS Java", "text message Java"
 - "SMS notification", "OTP SMS", "bulk SMS"

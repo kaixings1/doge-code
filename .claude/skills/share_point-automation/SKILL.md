@@ -1,5 +1,5 @@
 ---
-name: share_point-automation
+name: Share_point 自动化
 description: "通过 Rube MCP (Composio) 自动执行 SharePoint 任务：document libraries, sites, lists, and content management. 始终 search tools first for current schemas."
 requires:
   mcp: [rube]
@@ -13,7 +13,7 @@ Automate SharePoint operations through Composio's SharePoint toolkit via Rube MC
 
 ## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
+- Rube MCP 必须已连接 (RUBE_SEARCH_TOOLS available)
 - Active SharePoint connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `share_point`
 - 始终 call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 

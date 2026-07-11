@@ -4,34 +4,34 @@ disable-model-invocation: true
 allowed-tools: "Read Bash"
 ---
 
-Run a planning-aware cadence on top of Claude Code's `/loop` primitive.
+在 Claude Code 的 `/loop` 原语之上运行规划感知的节奏。
 
-Steps:
+步骤：
 
-1. Parse args:
-   - First arg matching `^\d+[smhd]$` is the interval (default `10m`).
-   - Remaining args are an optional task prompt.
-2. Resolve the active plan as in `/plan-attest`.
-3. Compose the loop prompt:
-   - If user passed a task prompt: use it verbatim.
-   - Else: use the default planning tick prompt:
+1. 解析参数：
+   - 第一个匹配 `^\d+[smhd]$` 的参数是间隔时间（默认 `10m`）。
+   - 剩余参数是可选的提示文本。
+2. 按照 `/plan-attest` 的方式解析当前计划。
+3. 组合循环提示：
+   - 如果用户传入了提示文本：直接使用。
+   - 否则：使用默认的计划检查提示：
      ```
-     Read task_plan.md and progress.md. Run scripts/check-complete.sh to see remaining phases.
-     If no progress.md entry has been added since the last loop tick, write one summarizing the current state.
-     If a phase finished, update its Status: line in task_plan.md.
-     Continue the next phase if work remains.
+     读取 task_plan.md 和 progress.md。运行 scripts/check-complete.sh 查看剩余阶段。
+     如果自上次循环检查以来没有添加 progress.md 条目，写一个总结当前状态的条目。
+     如果某个阶段完成，更新 task_plan.md 中的 Status：行。
+     如果还有工作，继续下一个阶段。
      ```
-4. Invoke `/loop <interval> <prompt>`.
-5. Confirm to the user: print the interval, the active plan ID, and remind that bare `/loop` invocation alone (without args) runs Claude Code's built-in maintenance prompt — `/plan-loop` differs by always grounding the tick in the planning files.
+4. 调用 `/loop <间隔> <提示>`。
+5. 向用户确认：打印间隔时间、当前计划 ID，并提醒单独的 `/loop` 调用（不带参数）运行 Claude Code 的内置维护提示 — `/plan-loop` 的区别在于始终以规划文件为基础。
 
-If `task_plan.md` does not exist, refuse and direct user to run `/plan` first.
+如果 `task_plan.md` 不存在，拒绝并指示用户先运行 `/plan`。
 
-Why this exists:
+为什么存在：
 
-`/loop` runs prompts on cron without any plan-state contract. `/plan-loop` injects a plan-aware default so the recurring tick always re-reads the planning files first, runs the completion check, and writes a progress entry. Users get "babysit my plan" UX without writing a custom loop prompt.
+`/loop` 按计划运行提示，没有任何计划状态契约。`/plan-loop` 注入了一个规划感知的默认提示，因此重复检查始终先重新读取规划文件，运行完成检查，并写入进度条目。用户无需编写自定义循环提示即可获得"保姆式计划"体验。
 
-Notes:
+注意事项：
 
-- `/plan-loop` composes with `/loop`; it does not replace it. `/loop 5m "anything"` still works.
-- For "babysit until plan is done" semantics: combine `/plan-loop 10m` (cadence) with `/plan-goal` (termination criterion). The loop runs every 10 minutes; the goal stops the loop when the plan is complete.
-- The default tick prompt is intentionally short so it stays within compaction-safe length.
+- `/plan-loop` 与 `/loop` 组合使用；它不替代 `/loop`。`/loop 5m "anything"` 仍然有效。
+- 对于"保姆式直到计划完成"语义：将 `/plan-loop 10m`（节奏）与 `/plan-goal`（终止条件）组合使用。循环每 10 分钟运行一次；当计划完成时，目标条件停止循环。
+- 默认检查提示特意保持简短，以便保持在压缩安全长度内。

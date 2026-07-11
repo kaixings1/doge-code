@@ -1,3 +1,8 @@
+---
+name: Building Secure Contracts 智能合约安全
+description: 基于 Trail of Bits' Building Secure Contracts 框架的全面智能合约安全工具包。
+---
+
 # Building Secure Contracts
 
 Comprehensive smart contract security toolkit based on Trail of Bits' [Building Secure Contracts](https://github.com/crytic/building-secure-contracts) framework.

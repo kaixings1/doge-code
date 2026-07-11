@@ -72,7 +72,8 @@ color: green
     "@prisma/client": "^5.0.0",
     "prisma": "^5.0.0",
     "@supabase/supabase-js": "^2.0.0",
-    "@clerk/nextjs": "^4.0.0",
+    "@clerk
+extjs": "^4.0.0",
     "shadcn-ui": "latest",
     "@hookform/resolvers": "^3.0.0",
     "react-hook-form": "^7.0.0",
@@ -82,8 +83,10 @@ color: green
 }
 
 // 使用 Clerk 快速设置认证
-import { ClerkProvider } from '@clerk/nextjs';
-import { SignIn, SignUp, UserButton } from '@clerk/nextjs';
+import { ClerkProvider } from '@clerk
+extjs';
+import { SignIn, SignUp, UserButton } from '@clerk
+extjs';
 
 export default function AuthLayout({ children }) {
   return (
@@ -92,7 +95,8 @@ export default function AuthLayout({ children }) {
         <nav className="flex justify-between items-center p-4">
           <h1 className="text-xl font-bold">Prototype App</h1>
           <UserButton afterSignOutUrl="/" />
-        </nav>
+        <
+av>
         {children}
       </div>
     </ClerkProvider>

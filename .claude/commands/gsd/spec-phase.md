@@ -13,16 +13,16 @@ requires: [discuss-phase, execute-phase, phase, plan-phase]
 ---
 
 <objective>
-Clarify phase requirements through structured Socratic questioning with quantitative ambiguity scoring.
+通过结构化的苏格拉底式提问和定量模糊评分来明确阶段需求。
 
-**Position in workflow:** `spec-phase → discuss-phase → plan-phase → execute-phase → verify`
+**工作流中的位置：** `spec-phase → discuss-phase → plan-phase → execute-phase → verify`
 
-**How it works:**
-1. Load phase context (PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md)
-2. Scout the codebase — understand current state before asking questions
-3. Run Socratic interview loop (up to 6 rounds, rotating perspectives)
-4. Score ambiguity across 4 weighted dimensions after each round
-5. Gate: ambiguity ≤ 0.20 AND all dimensions meet minimums → write SPEC.md
+**工作原理：**
+1. 加载阶段上下文（PROJECT.md、REQUIREMENTS.md、ROADMAP.md、STATE.md）
+2. 侦察代码库——在提问前了解当前状态
+3. 运行苏格拉底式面试循环（最多 6 轮，轮流视角）
+4. 每轮后在 4 个加权维度上评分模糊度
+5. 关卡：模糊度 ≤ 0.20 且所有维度达到最低要求 → 写入 SPEC.md
 6. Commit SPEC.md — discuss-phase picks it up automatically on next run
 
 **Output:** `{phase_dir}/{padded_phase}-SPEC.md` — falsifiable requirements that lock "what/why" before discuss-phase handles "how"

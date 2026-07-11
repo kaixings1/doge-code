@@ -1,5 +1,5 @@
 ---
-name: n8n-expression-syntax
+name: N8N 表达式语法相关功能和最佳实践
 description: "N8N Expression Syntax — N8N 表达式语法相关功能和最佳实践"
 risk: unknown
 source: community

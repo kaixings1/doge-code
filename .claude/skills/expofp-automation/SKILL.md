@@ -1,5 +1,5 @@
 ---
-name: expofp-automation
+name: ExpoFP 自动化
 description: "ExpoFP 自动化"
 risk: safe
 source: community

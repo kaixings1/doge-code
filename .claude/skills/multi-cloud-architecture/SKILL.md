@@ -1,5 +1,5 @@
 ---
-name: multi-cloud-architecture
+name: GCP 上架构应用的决策框架
 description: "在 AWS、Azure 和 GCP 上架构应用的决策框架和模式。"
 risk: safe
 source: community

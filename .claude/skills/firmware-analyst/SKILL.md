@@ -1,5 +1,5 @@
 ---
-name: firmware-analyst
+name: 固件分析专家：嵌入式系统、IoT 安全和硬件逆向工程。
 description: 固件分析专家：嵌入式系统、IoT 安全和硬件逆向工程。
 risk: unknown
 source: community

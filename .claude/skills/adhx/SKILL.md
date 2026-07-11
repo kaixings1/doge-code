@@ -1,5 +1,5 @@
 ---
-name: adhx
+name: ADHX 推文转 JSON
 description: "将任何 X/Twitter 帖子获取为干净的 LLM 友好 JSON。将 x.com、twitter.com 或 adhx.com 链接转换为结构化数据，包含完整文章内容、作者信息和互动指标。无需爬虫或浏览器。"
 risk: safe
 source: community

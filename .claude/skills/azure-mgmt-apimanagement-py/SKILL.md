@@ -1,6 +1,6 @@
 ---
-name: azure-mgmt-apimanagement-py
-description: "Azure Mgmt Apimanagement Py — Azure Mgmt Apimanagement Py 相关功能和最佳实践"
+name: Azure API Management 管理 Python SDK
+description: "Azure Management API Management Python — Azure API Management 管理 Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

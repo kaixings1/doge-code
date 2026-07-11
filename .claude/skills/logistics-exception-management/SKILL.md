@@ -1,6 +1,6 @@
 ---
-name: logistics-exception-management
-description: "Logistics Exception Management — Logistics Exception Management 相关功能和最佳实践"
+name: 物流异常管理
+description: "物流异常管理 — 物流异常管理相关功能和最佳实践"
 risk: safe
 source: https://github.com/ai-evos/agent-skills
 date_added: '2026-02-27'

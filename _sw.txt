@@ -1,0 +1,21 @@
+count 9803
+137328 anthropics/claude-code Claude Code is an agentic coding tool that lives in your ter
+ 63913 ruvnet/ruflo 🌊 The leading agent meta-harness. Deploy intelligent multi-p
+ 42818 sickn33/agentic-awesome-skills Installable GitHub library of 1,900+ agentic skills for Clau
+ 22820 Donchitos/Claude-Code-Game-Studios Turn Claude Code into a full game dev studio — 49 AI agents,
+ 22229 czlonkowski/n8n-mcp A MCP for Claude Desktop / Claude Code / Windsurf / Cursor t
+ 19403 tirth8205/code-review-graph Local-first code intelligence graph for MCP and CLI. Builds 
+ 17080 jnMetaCode/agency-agents-zh 🎭 266 个即插即用的 AI 专家角色 — 支持 Hermes Agent/Claude Code/Cursor/Co
+ 14057 travisvn/awesome-claude-skills A curated list of awesome Claude Skills, resources, and tool
+  9169 ykdojo/claude-code-tips 40+ tips for getting the most out of Claude Code, from basic
+  7427 refly-ai/refly The first open-source agent skills builder. Define skills by
+  6069 UfoMiao/zcf Zero-Config Code Flow for Claude code & Codex
+  6063 trailofbits/skills Trail of Bits Claude Code skills for security research, vuln
+  5987 ChrisWiles/claude-code-showcase Comprehensive Claude Code project configuration example with
+  5812 drona23/claude-token-efficient One CLAUDE.md file. Keeps Claude responses terse. Reduces ou
+  5757 czlonkowski/n8n-skills n8n skillset for Claude Code to build flawless n8n workflows
+  5401 FlorianBruniaux/claude-code-ultimate-guide The most comprehensive Claude Code guide: agentic workflows,
+  4735 entireio/cli 📜 Entire CLI hooks into your Git workflow to capture AI agen
+  4389 zebbern/claude-code-guide Claude Code Guide - Setup, Commands, workflows, agents, skil
+  4310 tradesdontlie/tradingview-mcp AI-assisted TradingView chart analysis — connect Claude Code
+  4235 crmne/ruby_llm One delightful Ruby framework for every major AI provider. B

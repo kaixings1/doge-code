@@ -1,5 +1,5 @@
 ---
-name: minimalist-ui
+name: 精简主义界面设计
 description: "精简主义界面设计 — 高级精简、文档风格的前端界面建议。"
 ---
 

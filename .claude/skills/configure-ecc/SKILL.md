@@ -1,5 +1,5 @@
 ---
-name: configure-ecc
+name: Everything Claude Code 的交互式安装程序
 description: Everything Claude Code 的交互式安装程序 —— 引导用户选择并将技能（Skills）和规则（Rules）安装到用户级或项目级目录，验证路径，并可选地优化已安装的文件。
 origin: ECC
 ---

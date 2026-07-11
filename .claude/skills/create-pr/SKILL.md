@@ -1,5 +1,5 @@
 ---
-name: create-pr
+name: Create Pr 相关功能和最佳实践
 description: "Create Pr — Create Pr 相关功能和最佳实践"
 risk: unknown
 source: community

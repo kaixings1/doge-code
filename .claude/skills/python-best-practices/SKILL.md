@@ -1,5 +1,5 @@
 ---
-name: python-best-practices
+name: Python最佳实践
 description: Python最佳实践 — 使用类型提示、数据类、异步模式、装饰器和PEP 8标准。
 ---
 

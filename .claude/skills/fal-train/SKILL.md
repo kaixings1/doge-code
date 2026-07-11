@@ -1,5 +1,5 @@
 ---
-name: fal-train
+name: FAL 训练
 description: "FAL 训练 — 在 FAL 平台上训练自定义模型"
 risk: unknown
 source: community

@@ -1,41 +1,41 @@
 查找并删除代码库中的死代码。
 
-## Steps
+## 步骤
 
-### 1. Unused Imports
-- Run the linter with unused import detection:
-  - **TypeScript**: `tsc --noUnusedLocals --noUnusedParameters --noEmit`
-  - **ESLint**: Check for `no-unused-vars`, `no-unused-imports` violations.
-  - **Python**: `ruff check --select F401` or `flake8 --select=F401`.
-  - **Go**: The compiler already catches unused imports.
-- Remove all unused imports.
+### 1. 未使用的导入
+- 运行带有未使用导入检测的 linter：
+  - **TypeScript**：`tsc --noUnusedLocals --noUnusedParameters --noEmit`
+  - **ESLint**：检查 `no-unused-vars`、`no-unused-imports` 违规。
+  - **Python**：`ruff check --select F401` 或 `flake8 --select=F401`。
+  - **Go**：编译器已能捕获未使用的导入。
+- 移除所有未使用的导入。
 
-### 2. Unused Exports
-- For each exported function, class, or constant, search the codebase for imports of that symbol.
-- If a symbol is exported but never imported elsewhere, check if it is part of the public API.
-- If it is internal and unused, remove the export and the code.
-- Pay attention to dynamic imports and re-exports.
+### 2. 未使用的导出
+- 对每个导出的函数、类或常量，在代码库中搜索该符号的导入。
+- 如果某个符号被导出但从未在其他地方导入，检查它是否是公共 API 的一部分。
+- 如果是内部且未使用的，移除导出和代码。
+- 注意动态导入和重新导出。
 
-### 3. Unreachable Code
-- Look for code after `return`, `throw`, `break`, or `continue` statements.
-- Find branches that can never be true based on type narrowing or constant conditions.
-- Identify functions that are defined but never called.
-- Check for commented-out code blocks and remove them.
+### 3. 不可达代码
+- 查找 `return`、`throw`、`break` 或 `continue` 语句后的代码。
+- 根据类型缩小或常量条件，找出永远不可能为 true 的分支。
+- 识别已定义但从未被调用的函数。
+- 检查注释掉的代码块并移除它们。
 
-### 4. Dead Feature Flags
-- Search for feature flags or environment variable checks.
-- Identify flags that are always true/false in all environments.
-- Remove the dead branch and the flag check.
+### 4. 废弃的功能开关
+- 搜索功能开关或环境变量检查。
+- 识别在所有环境中始终为 true/false 的开关。
+- 移除废弃的分支和开关检查。
 
-### 5. Verify
-- Run the full test suite to confirm nothing depends on the removed code.
-- Run the build to confirm compilation succeeds.
-- Check that no public API contracts were broken if this is a library.
+### 5. 验证
+- 运行完整的测试套件以确认没有依赖被移除的代码。
+- 运行构建以确认编译成功。
+- 如果是库，检查是否有公共 API 契约被破坏。
 
-## Rules
+## 规则
 
-- Remove code in small, focused commits. One category of dead code per commit.
-- If unsure whether code is used, check git blame for when it was last modified. Code untouched for 6+ months with no references is likely dead.
-- Do not remove code that is part of a public API without a deprecation period.
-- Keep test utilities and fixtures even if they seem unused; they may be needed for future tests.
-- Never remove error handling or fallback code just because it has not been triggered yet.
+- 以小而专注的提交移除代码。每次提交处理一种死代码类别。
+- 如果不确定代码是否在使用，检查 git blame 查看最后修改时间。6 个月以上未触及且无引用的代码很可能已死。
+- 在没有弃用期的情况下，不要移除以作为公共 API 一部分的代码。
+- 保留测试工具和夹具，即使它们看起来未使用；未来的测试可能需要它们。
+- 绝不要仅仅因为尚未触发就移除错误处理或备用代码。

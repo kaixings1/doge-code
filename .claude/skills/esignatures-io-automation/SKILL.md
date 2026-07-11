@@ -1,5 +1,5 @@
 ---
-name: esignatures-io-automation
+name: eSignatures.io 自动化
 description: "eSignatures.io 自动化"
 risk: safe
 source: community

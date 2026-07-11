@@ -190,7 +190,7 @@ CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers
 ### GitHub Actions (标准流水线)
 
 ```yaml
-name: CI/CD
+name: Web应用的部署工作流、CI/CD管道模式、Docker容器化、健康检查和回滚策略
 
 on:
   push:

@@ -1,6 +1,6 @@
 ---
 name: Wiki初始化
-description: Bootstrap a fresh LLM Wiki vault with the three-layer structure, schema files, and starter templates. Usage /wiki-init <path> --topic "<topic>" [--tool all|claude-code|codex|cursor|antigravity]
+description: 使用三层结构、schema 文件和启动模板引导全新的 LLM Wiki 仓库。用法: /wiki-init <path> --topic "<topic>" [--tool all|claude-code|codex|cursor|antigravity]
 ---
 <!-- canonical copy: engineering/llm-wiki/commands/wiki-init.md — keep in sync -->
 

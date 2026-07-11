@@ -1,5 +1,5 @@
 ---
-name: emil-design-eng
+name: 设计工程实践
 description: "设计工程实践"
 risk: safe
 source: community

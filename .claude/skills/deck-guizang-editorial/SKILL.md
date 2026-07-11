@@ -1,5 +1,5 @@
 ---
-name: deck-guizang-editorial
+name: 编辑杂志遇见电子墨水：10 种布局和 5 种调色板（墨水、靛蓝瓷器、森林墨水、牛皮纸、沙丘）。
 zh_name: "归藏编辑墨水 Deck"
 en_name: "Guizang Editorial E-Ink Deck"
 emoji: "🖋️"

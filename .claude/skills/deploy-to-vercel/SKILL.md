@@ -1,5 +1,5 @@
 ---
-name: deploy-to-vercel
+name: Vercel 部署
 description: "将应用和网站部署到 Vercel。当用户请求部署操作如"部署我的应用"、"部署并给我链接"、"推送到线上"或"创建预览部署"时使用。"
 risk: safe
 source: "https://github.com/vercel-labs/agent-skills"

@@ -1,5 +1,5 @@
 ---
-name: mcp-tool-developer
+name: MCP 工具开发者
 description: "从零开始构建模型上下文协议 (MCP) 服务器和工具。使用 TypeScript/Python 进行全面 MCP 开发、测试、部署和注册发布。"
 category: developer-tools
 risk: safe

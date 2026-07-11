@@ -6,24 +6,24 @@ description: 运行 Karpathy 四原则评审 — 检查暂存变更或最后提�
 
 # /karpathy-check
 
-Review your staged changes (or last commit) against Karpathy's 4 coding principles.
+根据 Karpathy 的四项编码原则审查你的暂存更改（或最后一次提交）。
 
-## Usage
+## 用法
 
 ```
-/karpathy-check                 # review staged changes
-/karpathy-check --last-commit   # review the most recent commit
+/karpathy-check                 # 审查暂存更改
+/karpathy-check --last-commit   # 审查最近的提交
 ```
 
-## What it runs
+## 运行内容
 
-1. **Principle #2 (Simplicity):** `engineering/karpathy-coder/skills/karpathy-coder/scripts/complexity_checker.py` on all changed files — detects over-engineering, premature abstractions, deep nesting, long functions
-2. **Principle #3 (Surgical):** `engineering/karpathy-coder/skills/karpathy-coder/scripts/diff_surgeon.py` on the diff — detects comment-only changes, whitespace noise, style drift, drive-by refactors
-3. **Principles #1 + #4 (Think + Goals):** The `karpathy-reviewer` agent reads the diff and applies human-judgment checks — hidden assumptions, missing verification
+1. **原则 #2（简洁性）：** 对所有更改的文件运行 `complexity_checker.py` — 检测过度工程、过早抽象、深层嵌套、过长函数
+2. **原则 #3（外科手术式）：** 对 diff 运行 `diff_surgeon.py` — 检测仅注释更改、空白噪点、风格漂移、附带重构
+3. **原则 #1 + #4（思考 + 目标）：** `karpathy-reviewer` 智能体读取 diff 并应用人工判断检查 — 隐藏假设、缺少验证
 
-## Output
+## 输出
 
-A structured report with per-principle verdicts and specific line-level fix recommendations.
+带有每个原则的判定结果和具体行级修复建议的结构化报告。
 
 ## When to run
 

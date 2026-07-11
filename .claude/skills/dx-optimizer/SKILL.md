@@ -1,10 +1,12 @@
 ---
-name: dx-optimizer
+name: Dx Optimizer 相关功能和最佳实践
 description: "Dx Optimizer — Dx Optimizer 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# DX 优化器 (DX Optimizer)
 
 ## 使用此技能的场景
 

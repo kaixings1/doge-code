@@ -6,7 +6,7 @@ argument-hint: "<dashboard|risk> [options]"
 
 # /project-health
 
-Generate portfolio health dashboards and risk matrices for project oversight.
+生成组合健康仪表盘和风险矩阵，用于项目监督。
 
 ## Usage
 

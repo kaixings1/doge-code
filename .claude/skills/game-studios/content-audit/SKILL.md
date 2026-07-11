@@ -8,11 +8,11 @@ model: sonnet
 agent: producer
 ---
 
-When this skill is invoked:
+当此技能被调用时：
 
-Parse the argument:
-- No argument → full audit across all systems
-- `[system-name]` → audit that single system only
+解析参数：
+- 无参数 → 跨所有系统进行全面审计
+- `[system-name]` → 仅审计该单个系统
 - `--summary` → summary table only, no file write
 
 ---

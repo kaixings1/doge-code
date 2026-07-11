@@ -1,29 +1,29 @@
 ---
-name: git-advanced
+name: 高级Git
 description: 高级Git ——包括工作树、二分查找、交互式变基、子模块和高级合并策略。
 ---
 
-# Git Advanced
+# Git 高级
 
-## Worktrees
+## 工作树
 
 ```bash
-# Create a worktree for a feature branch (avoids stashing)
+# 为功能分支创建工作树（避免暂存）
 git worktree add ../feature-auth feature/auth
 
-# Create a worktree with a new branch
+# 使用新分支创建工作树
 git worktree add ../hotfix-123 -b hotfix/123 origin/main
 
-# List all worktrees
+# 列出所有工作树
 git worktree list
 
-# Remove a worktree after merging
+# 合并后移除工作树
 git worktree remove ../feature-auth
 ```
 
-Worktrees let you work on multiple branches simultaneously without stashing or committing WIP. Each worktree has its own working directory but shares the same `.git` repository.
+工作树让您可以同时处理多个分支，无需暂存或提交 WIP。每个工作树有自己的工作目录，但共享同一个 `.git` 仓库。
 
-## Bisect
+## 二分查找
 
 ```bash
 # Start bisect, mark current as bad and known good commit

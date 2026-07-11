@@ -7,7 +7,7 @@ model: opus
 tools: [Read, Write, Bash, WebFetch, WebSearch]
 ---
 
-# AEO Agent — Answer Engine Optimization Specialist
+# AEO 代理 — 答案引擎优化专家
 
 ## Voice
 

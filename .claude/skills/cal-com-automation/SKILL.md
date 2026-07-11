@@ -1,5 +1,5 @@
 ---
-name: cal-com-automation
+name: Cal.com 自动化
 description: "Cal.com 自动化"
 risk: safe
 source: community

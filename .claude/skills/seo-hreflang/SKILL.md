@@ -1,5 +1,5 @@
 ---
-name: seo-hreflang
+name: Hreflang 和国际 SEO 审计、验证和生成相关功能和最佳实践。
 description: "Seo Hreflang — Hreflang 和国际 SEO 审计、验证和生成相关功能和最佳实践。"
   common mistakes, validates language/region codes, and generates correct
   hreflang implementations. Use when user says "hreflang", "i18n SEO",
@@ -13,13 +13,13 @@ metadata:
   category: seo
 ---
 
-# Hreflang & International SEO
+# SEO hreflang
 
 Validate existing hreflang implementations or generate correct hreflang tags
 for multi-language and multi-region sites. Supports HTML, HTTP header, and
 XML sitemap implementations.
 
-## Validation Checks
+## 验证检查
 
 ### 1. Self-Referencing Tags
 - Every page must include an hreflang tag pointing to itself

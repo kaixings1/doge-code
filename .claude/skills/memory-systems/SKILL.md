@@ -1,25 +1,25 @@
 ---
-name: memory-systems
+name: 设计短期、长期和基于图的记忆架构。适用于构建必须跨会话持久化的代理、需要在对话中
 description: "设计短期、长期和基于图的记忆架构。适用于构建必须跨会话持久化的代理、需要在对话中保持实体一致性或实现基于累积知识的推理。"
 risk: safe
 source: "https://github.com/muratcankoylan/Agent-Skills-for-上下文-Engineering/tree/main/skills/memory-systems"
 date_added: "2026-02-27"
 ---
 
-## 使用场景 This Skill
+## 使用场景
 
-Design short-term, long-term, and graph-based memory architectures
+设计短期、长期和基于图的记忆架构
 
-使用此技能当 working with design short-term, long-term, and graph-based memory architectures.
-# Memory System Design
+设计短期、长期和基于图的记忆架构时使用此技能。
+# 记忆系统设计
 
-Memory provides the persistence layer that allows agents to maintain continuity across sessions and reason over accumulated knowledge. Simple agents rely entirely on context for memory, losing all state when sessions end. Sophisticated agents implement layered memory architectures that balance immediate context needs with long-term knowledge retention. The evolution from vector stores to knowledge graphs to temporal knowledge graphs represents increasing investment in structured memory for improved retrieval and reasoning.
+记忆提供了持久化层，使代理能够在会话之间保持连续性并基于积累的知识进行推理。简单代理完全依赖上下文进行记忆，会话结束时所有状态都会丢失。复杂代理实现分层记忆架构，平衡即时上下文需求与长期知识保留。从向量存储到知识图谱再到时间知识图谱的演进，代表着对结构化记忆的投入增加，以改进检索和推理。
 
 ## 使用场景
-Activate this skill when:
-- Building agents that must persist across sessions
-- Needing to maintain entity consistency across conversations
-- Implementing reasoning over accumulated knowledge
+在以下情况下激活此技能：
+- 构建必须在会话之间持久化的代理时
+- 需要在对话中维护实体一致性时
+- 实现基于积累知识的推理时
 - Designing systems that learn from past interactions
 - Creating knowledge bases that grow over time
 - Building temporal-aware systems that track state changes
@@ -30,7 +30,7 @@ Memory exists on a spectrum from immediate context to permanent storage. At one 
 
 Simple vector stores lack relationship and temporal structure. Knowledge graphs preserve relationships for reasoning. Temporal knowledge graphs add validity periods for time-aware queries. 实现 choices depend on 查询 complexity, infrastructure constraints, and accuracy requirements.
 
-## Detailed Topics
+## 详细主题
 
 ### Memory 架构 Fundamentals
 

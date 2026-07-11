@@ -1,6 +1,6 @@
 ---
 name:  agent-creator
-description:   |（待汉化）
+description: Agent创建器——当用户请求创建新代理时触发
   Use this agent when the user asks to "create an agent", "generate an agent", "build a new agent", "make me an agent that...", or describes agent functionality they need. Trigger when user wants to create autonomous agents for plugins. Examples:
 
   <example>
@@ -166,7 +166,8 @@ Validate with: `scripts/validate-agent.sh agents/[identifier].md`
 
 **Edge Cases:**
 - Vague user request: Ask clarifying questions before generating
-- Conflicts with existing agents: Note conflict, suggest different scope/name
+- Conflicts with existing agents: Note conflict, suggest different scope
+ame
 - Very complex requirements: Break into multiple specialized agents
 - User wants specific tool access: Honor the request in agent configuration
 - User specifies model: Use specified model instead of inherit

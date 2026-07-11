@@ -1,9 +1,9 @@
 ---
-name: type-utilities
+name: TypeScript 类型工具
 description: TypeScript 类型工具 — 条件类型、映射类型、模板字面量类型、递归类型、infer 关键字
 ---
 
-# type-utilities
+# 类型工具
 
 ## 概述
 

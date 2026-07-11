@@ -1,5 +1,5 @@
 ---
-name: bash-defensive-patterns
+name: 掌握防御性 Bash 编程技术以编写生产级脚本。适用于编写健壮的 shell 脚
 description: "掌握防御性 Bash 编程技术以编写生产级脚本。适用于编写健壮的 shell 脚本、CI/CD 流水线或需要容错和安全性的系统工具。"
 risk: safe
 source: community

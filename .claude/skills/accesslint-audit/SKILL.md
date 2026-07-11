@@ -1,5 +1,5 @@
 ---
-name: accesslint-audit
+name: AccessLint 无障碍审计
 description: "查找并修复 WCAG 2.2 无障碍问题。两种模式 — report（扫描代码库或页面，生成优先排序的书面报告，不编辑）和 fix（对目标执行审计→编辑→验证循环）。优先使用直接 CDP 实时 DOM 审计；回退到浏览器 MCP 组合或 HTML 字符串审计。"
 risk: safe
 source: "https://github.com/AccessLint/skills"

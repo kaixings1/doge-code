@@ -3,27 +3,27 @@ description: 为特定任务微调预训练模型
 argument-hint: "<describe the task and available labeled data>"
 ---
 
-# /fine-tune — Transfer Learning
+# /fine-tune — 迁移学习
 
-Adapt a pretrained model to your specific task with minimal data.
+用最少的数据将预训练模型适配到你的特定任务。
 
-## Invocation
+## 调用
 
 ```
-/fine-tune BERT for classifying support tickets into 15 categories (3000 examples)
-/fine-tune ResNet for medical image classification (500 images, 3 classes)
-/fine-tune Llama for generating product descriptions in our brand voice
+/fine-tune BERT 将支持工单分类为 15 个类别（3000 个示例）
+/fine-tune ResNet 进行医学图像分类（500 张图像，3 个类别）
+/fine-tune Llama 以我们的品牌风格生成产品描述
 ```
 
-## Workflow
+## 工作流
 
-Apply **transfer-learning** skill:
-1. Select pretrained model
-2. Design fine-tuning strategy (freeze/unfreeze)
-3. Configure training (LR, warmup, weight decay)
-4. Train and evaluate
-5. Package for deployment
+应用 **transfer-learning** 技能：
+1. 选择预训练模型
+2. 设计微调策略（冻结/解冻）
+3. 配置训练参数（学习率、预热、权重衰减）
+4. 训练和评估
+5. 打包部署
 
-Offer follow-up:
-- "Want to **deploy** the fine-tuned model with /deploy?"
-- "Need to **evaluate** on more test cases?"
+提供后续选项：
+- "想要使用 /deploy **部署**微调后的模型吗？"
+- "需要在更多测试用例上**评估**吗？"

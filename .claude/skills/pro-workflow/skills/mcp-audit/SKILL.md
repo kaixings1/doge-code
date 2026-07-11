@@ -84,7 +84,7 @@ MCP AUDIT
 - Total tools: <80 (ideal), 80-120 (monitor), >120 (reduce)
 - Per-server: <15 tools (ok), 15-30 (filter), >30 (split or disable)
 
-## Rules
+## 规则
 
 - Never disable servers without user confirmation
 - Estimate token savings for each recommendation

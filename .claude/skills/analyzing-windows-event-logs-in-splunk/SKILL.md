@@ -1,5 +1,5 @@
 ---
-name: analyzing-windows-event-logs-in-splunk
+name: Splunk Windows 事件日志分析
 description: "Splunk 中分析 Windows 事件日志"
 risk: safe
 source: community

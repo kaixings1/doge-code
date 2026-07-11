@@ -1,5 +1,5 @@
 ---
-name: brand-voice
+name: 品牌语调指南
 description: 品牌语调指南
 ---
 
@@ -7,7 +7,7 @@ description: 品牌语调指南
 
 Build a durable voice profile from real source material, then use that profile everywhere instead of re-deriving style from scratch or defaulting to generic AI copy.
 
-## When to Activate
+## 激活时机
 
 - the user wants content or outreach in a specific voice
 - writing for X, LinkedIn, email, launch posts, threads, or product updates
@@ -63,7 +63,7 @@ If the user wants Affaan / ECC voice and live sources are thin, start here unles
 - tone can be sharp, blunt, skeptical, or dry
 - transitions should feel earned, not smoothed over
 
-## Hard Bans
+## 严格禁止
 
 Delete and rewrite any of these:
 

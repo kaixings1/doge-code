@@ -1,6 +1,6 @@
 ---
-name: azure-mgmt-applicationinsights-dotnet
-description: "Azure Mgmt Applicationinsights Dotnet — Azure Mgmt Applicationinsights Dotnet 相关功能和最佳实践"
+name: Azure Application Insights 管理 .NET
+description: "Azure Management Application Insights .NET — Azure Application Insights 管理 .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -38,7 +38,7 @@ using Azure.ResourceManager.ApplicationInsights;
 ArmClient client = new ArmClient(new DefaultAzureCredential());
 ```
 
-## Resource Hierarchy
+## 资源层次结构
 
 ```
 Subscription
@@ -468,7 +468,7 @@ builder.Services.AddApplicationInsightsTelemetry(options =>
 // APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=...;IngestionEndpoint=...
 ```
 
-## Related SDKs
+## 相关 SDK
 
 | SDK | Purpose | Install |
 |-----|---------|---------|

@@ -1,5 +1,5 @@
 ---
-name: hig-components-system
+name: HIG 系统组件
 description: "HIG 系统组件 — Human Interface Guidelines 系统组件"
 risk: safe
 source: community

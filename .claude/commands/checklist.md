@@ -5,26 +5,26 @@ scripts:
   ps: scripts/powershell/check-prerequisites.ps1 -Json
 ---
 
-## Checklist Purpose: "Unit Tests for English"
+## 检查清单目的：需求的"单元测试"
 
-**CRITICAL CONCEPT**: Checklists are **UNIT TESTS FOR REQUIREMENTS WRITING** - they validate the quality, clarity, and completeness of requirements in a given domain.
+**核心概念**：检查清单是**需求编写的单元测试**——它们验证特定领域中需求的质量、清晰度和完整性。
 
-**NOT for verification/testing**:
+**不用于验证/测试**：
 
-- ❌ NOT "Verify the button clicks correctly"
-- ❌ NOT "Test error handling works"
-- ❌ NOT "Confirm the API returns 200"
-- ❌ NOT checking if code/implementation matches the spec
+- ❌ 不是"验证按钮点击是否正确"
+- ❌ 不是"测试错误处理是否工作"
+- ❌ 不是"确认 API 返回 200"
+- ❌ 不是检查代码/实现是否匹配规范
 
-**FOR requirements quality validation**:
+**用于需求质量验证**：
 
-- ✅ "Are visual hierarchy requirements defined for all card types?" (completeness)
-- ✅ "Is 'prominent display' quantified with specific sizing/positioning?" (clarity)
-- ✅ "Are hover state requirements consistent across all interactive elements?" (consistency)
-- ✅ "Are accessibility requirements defined for keyboard navigation?" (coverage)
-- ✅ "Does the spec define what happens when logo image fails to load?" (edge cases)
+- ✅ "是否为所有卡片类型定义了视觉层级需求？"（完整性）
+- ✅ "'突出显示'是否通过具体的尺寸/定位进行了量化？"（清晰度）
+- ✅ "所有交互元素的悬停状态需求是否一致？"（一致性）
+- ✅ "是否为键盘导航定义了无障碍需求？"（覆盖度）
+- ✅ "规范是否定义了 Logo 图片加载失败时的处理？"（边界情况）
 
-**Metaphor**: If your spec is code written in English, the checklist is its unit test suite. You're testing whether the requirements are well-written, complete, unambiguous, and ready for implementation - NOT whether the implementation works.
+**比喻**：如果你的规范是用英文编写的代码，那么检查清单就是它的单元测试套件。你测试的是需求是否编写良好、完整、无歧义且准备好实施——而不是实施是否工作。
 
 ## User Input
 

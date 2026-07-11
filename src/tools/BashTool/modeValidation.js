@@ -1,0 +1,93 @@
+import { splitCommand_DEPRECATED } from '../../utils/bash/commands.js';
+const ACCEPT_EDITS_ALLOWED_COMMANDS = [
+    'mkdir',
+    'touch',
+    'rm',
+    'rmdir',
+    'mv',
+    'cp',
+    'sed',
+];
+function isFilesystemCommand(command) {
+    return ACCEPT_EDITS_ALLOWED_COMMANDS.includes(command);
+}
+function validateCommandForMode(cmd, toolPermissionContext) {
+    const trimmedCmd = cmd.trim();
+    const [baseCmd] = trimmedCmd.split(/\s+/);
+    if (!baseCmd) {
+        return {
+            behavior: 'passthrough',
+            message: '未找到基础命令',
+        };
+    }
+    // In Accept Edits mode, auto-allow filesystem operations
+    if (toolPermissionContext.mode === 'acceptEdits' &&
+        isFilesystemCommand(baseCmd)) {
+        return {
+            behavior: 'allow',
+            updatedInput: { command: cmd },
+            decisionReason: {
+                type: 'mode',
+                mode: 'acceptEdits',
+            },
+        };
+    }
+    return {
+        behavior: 'passthrough',
+        message: `在 ${toolPermissionContext.mode} 模式下未找到 '${baseCmd}' 的特定处理方式`,
+    };
+}
+/**
+ * Checks if commands should be handled differently based on the current permission mode
+ *
+ * This is the main entry point for mode-based permission logic.
+ * Currently handles Accept Edits mode for filesystem commands,
+ * but designed to be extended for other modes.
+ *
+ * @param input - The bash command input
+ * @param toolPermissionContext - Context containing mode and permissions
+ * @returns
+ * - 'allow' if the current mode permits auto-approval
+ * - 'ask' if the command needs approval in current mode
+ * - 'passthrough' if no mode-specific handling applies
+ */
+export function checkPermissionMode(input, toolPermissionContext) {
+    // DOGE: 防御性检查 —— input 或 command 无效时放行
+    if (!input || typeof input.command !== 'string' || !input.command.trim()) {
+        return {
+            behavior: 'passthrough',
+            message: '命令输入为空，无特定模式处理',
+        };
+    }
+    // Skip if in bypass mode (handled elsewhere)
+    if (toolPermissionContext.mode === 'bypassPermissions') {
+        return {
+            behavior: 'passthrough',
+            message: '绕过模式已在主权限流程中处理',
+        };
+    }
+    // Skip if in dontAsk mode (handled in main permission flow)
+    if (toolPermissionContext.mode === 'dontAsk') {
+        return {
+            behavior: 'passthrough',
+            message: '不询问模式已在主权限流程中处理',
+        };
+    }
+    const commands = splitCommand_DEPRECATED(input.command);
+    // Check each subcommand
+    for (const cmd of commands) {
+        const result = validateCommandForMode(cmd, toolPermissionContext);
+        // If any command triggers mode-specific behavior, return that result
+        if (result.behavior !== 'passthrough') {
+            return result;
+        }
+    }
+    // No mode-specific handling needed
+    return {
+        behavior: 'passthrough',
+        message: '无需特定模式的验证',
+    };
+}
+export function getAutoAllowedCommands(mode) {
+    return mode === 'acceptEdits' ? ACCEPT_EDITS_ALLOWED_COMMANDS : [];
+}

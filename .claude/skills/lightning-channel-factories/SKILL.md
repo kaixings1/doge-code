@@ -1,10 +1,12 @@
 ---
-name: lightning-channel-factories
-description: "Lightning Channel Factories — Lightning Channel Factories 相关功能和最佳实践"
+name: 闪电通道工厂
+description: "闪电通道工厂 — 闪电通道工厂相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-03'
 ---
+
+# 闪电通道工厂
 
 ## 使用此技能的场景
 

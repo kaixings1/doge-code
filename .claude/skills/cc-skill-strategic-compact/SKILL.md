@@ -1,5 +1,5 @@
 ---
-name: cc-skill-strategic-compact
+name: 战略压缩
 description: "战略压缩"
 risk: safe
 source: community

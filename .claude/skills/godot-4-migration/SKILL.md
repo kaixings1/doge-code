@@ -1,5 +1,5 @@
 ---
-name: godot-4-migration
+name: Godot 4 迁移指南
 description: "将 Godot 3.x 项目迁移到 Godot 4 (GDScript 2.0) 的专门指南，涵盖语法更改、Tweens 和导出。"
 risk: safe
 source: community

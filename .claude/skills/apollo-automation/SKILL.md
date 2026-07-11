@@ -1,5 +1,5 @@
 ---
-name: apollo-automation
+name: Apollo 自动化
 description: "Apollo 自动化"
 risk: safe
 source: community

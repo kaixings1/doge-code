@@ -1,8 +1,10 @@
 ---
-name: edit-article
+name: Edit Article 相关功能和最佳实践
 description: "Edit Article — Edit Article 相关功能和最佳实践"
 disable-model-invocation: true
 ---
+
+# 编辑文章
 
 1. First, divide the article into sections based on its headings. Think about the main points you want to make during those sections.
 

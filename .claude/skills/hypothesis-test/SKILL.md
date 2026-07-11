@@ -1,5 +1,5 @@
 ---
-name: hypothesis-test
+name: 假设检验
 description: "假设检验 — 统计假设检验和分析"
 risk: unknown
 source: community

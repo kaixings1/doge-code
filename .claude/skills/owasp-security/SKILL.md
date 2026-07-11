@@ -1,5 +1,5 @@
 ---
-name: owasp-security
+name: 审查代码安全漏洞、实现认证/授权、处理用户输入或讨论 Web 应用安全时使用。涵
 description: "审查代码安全漏洞、实现认证/授权、处理用户输入或讨论 Web 应用安全时使用。涵盖 OWASP Top 10:2025、ASVS 5.0、LLM Top 10 (2025) 和 Agentic AI 安全 (2026)。"
 allowed-tools: Read Grep Glob
 ---

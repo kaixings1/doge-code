@@ -1,5 +1,5 @@
 ---
-name: unreal-blueprint-codegen
+name: Unreal Engine 蓝图生成
 description: 从C++以编程方式生成Unreal Engine 5.x蓝图和Widget蓝图文件。用于构建市场示例或批量生成蓝图的编辑器工具。
 ---
 

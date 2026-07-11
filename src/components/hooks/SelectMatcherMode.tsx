@@ -64,7 +64,7 @@ export function SelectMatcherMode(t0) {
   }
   const matchersWithSources = t1;
   if (matchersForSelectedEvent.length === 0) {
-    const t2 = `${selectedEvent} - Matchers`;
+    const t2 = `${selectedEvent} - 匹配器`;
     let t3;
     if ($[7] === Symbol.for("react.memo_cache_sentinel")) {
       t3 = <Box flexDirection="column" gap={1}><Text dimColor={true}>此事件未配置任何钩子。</Text><Text dimColor={true}>要添加钩子，请直接编辑 settings.json 或询问 Claude。</Text></Box>;
@@ -84,7 +84,7 @@ export function SelectMatcherMode(t0) {
     }
     return t4;
   }
-  const t2 = `${selectedEvent} - Matchers`;
+  const t2 = `${selectedEvent} - 匹配器`;
   let t3;
   if ($[12] !== matchersWithSources) {
     t3 = matchersWithSources.map(_temp3);
@@ -128,7 +128,7 @@ export function SelectMatcherMode(t0) {
 }
 function _temp3(item) {
   const sourceText = item.sources.map(hookSourceInlineDisplayString).join(", ");
-  const matcherLabel = item.matcher || "(all)";
+  const matcherLabel = item.matcher || "(全部)";
   return {
     label: `[${sourceText}] ${matcherLabel}`,
     value: item.matcher,

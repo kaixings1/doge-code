@@ -3,7 +3,7 @@ description: 用本次会话的经验教训更新 CLAUDE.md
 allowed-tools: Read, Edit, Glob
 ---
 
-Review this session for learnings about working with Claude Code in this codebase. Update CLAUDE.md with context that would help future Claude sessions be more effective.
+审查本次会话中关于在此代码库中使用 Claude Code 的经验教训。使用有助于未来 Claude 会话更高效的上下文更新 CLAUDE.md。
 
 ## Step 1: Reflect
 

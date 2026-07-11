@@ -3,7 +3,7 @@ name: Emscripten 工具链
 description: Emscripten — 将 C/C++/Rust 等编译为 WebAssembly 的工具链。
 ---
 
-# Emscripten
+# WebAssembly Emscripten
 
 Emscripten 是 LLVM 到 WebAssembly 的编译器，支持 C/C++/Rust/Go 等语言。
 

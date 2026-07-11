@@ -1,6 +1,6 @@
 ---
-name: ralplan
-description: "Ralplan — Ralplan 相关功能和最佳实践"
+name: 多代理规划工具，支持交互模式、审慎思考和架构设计
+description: "Ralplan — 多代理规划工具，支持交互模式、审慎思考和架构设计"
 参数-hint: "[--interactive] [--deliberate] [--architect codex] [--critic codex] <task description>"
 level: 4
 ---

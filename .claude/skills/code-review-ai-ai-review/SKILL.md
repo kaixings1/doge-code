@@ -1,5 +1,5 @@
 ---
-name: code-review-ai-ai-review
+name: AI 代码审查
 description: "AI 代码审查"
 risk: safe
 source: community

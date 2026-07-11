@@ -1,5 +1,5 @@
 ---
-name: obsidian-vault
+name: Obsidian 知识库相关功能和最佳实践
 description: "Obsidian Vault — Obsidian 知识库相关功能和最佳实践"
 ---
 

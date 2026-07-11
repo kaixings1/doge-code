@@ -1,5 +1,5 @@
 ---
-name: everything-claude-code
+name: Claude Code 全部功能
 description: "Claude Code 全部功能"
 risk: safe
 source: community

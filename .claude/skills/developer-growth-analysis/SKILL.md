@@ -1,6 +1,6 @@
 ---
-name: developer-growth-analysis
-description: "Developer Growth Analysis — Developer Growth Analysis 相关功能和最佳实践"
+name: 开发者增长分析
+description: "开发者增长分析 — 开发者增长分析相关功能和最佳实践"
 ---
 
 # 开发者成长分析
@@ -19,7 +19,7 @@ description: "Developer Growth Analysis — Developer Growth Analysis 相关功�
 
 此技能适合那些希望获得关于其成长的结构化反馈而无需等待代码审查的开发者，以及偏好基于自身工作历史的数据驱动洞察的开发者。
 
-## What This Skill Does
+## 此技能的功能
 
 此技能执行 a six-step analysis of your development work:
 
@@ -35,7 +35,7 @@ description: "Developer Growth Analysis — Developer Growth Analysis 相关功�
 
 6. **Sends to Your Slack DMs**: Automatically delivers the complete report to your own Slack direct messages so you can reference it anytime, anywhere.
 
-## How to Use
+## 使用方法
 
 Ask Claude to analyze your recent coding work:
 

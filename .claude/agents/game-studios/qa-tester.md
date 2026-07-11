@@ -131,7 +131,8 @@ bool F[SystemName]Test::RunTest(const FString& Parameters)
 
 **What to test for every Logic story formula:**
 1. Normal case (typical inputs → expected output)
-2. Zero/null input (should not crash; minimum output)
+2. Zero
+ull input (should not crash; minimum output)
 3. Maximum values (should not overflow or produce infinity)
 4. Negative modifiers (if applicable)
 5. Edge case from GDD (any specific edge case mentioned in the GDD)

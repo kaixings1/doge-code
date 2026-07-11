@@ -410,7 +410,7 @@ export async function exec(
     const childProcess = spawn(spawnBinary, shellArgs, {
       env: {
         ...subprocessEnv(),
-        SHELL: shellType === 'bash' ? binShell : undefined,
+        SHELL: binShell,
         GIT_EDITOR: 'true',
         CLAUDECODE: '1',
         ...envOverrides,

@@ -1,5 +1,5 @@
 ---
-name: gha-security-review
+name: —如果您无法构建攻击，请不要报告它。
 description: "在 GitHub Actions 工作流中发现可被利用的漏洞。每个发现必须包含具体的利用场景——如果您无法构建攻击，请不要报告它。"
 risk: safe
 source: community
@@ -11,9 +11,9 @@ Attack patterns and real-world 示例 sourced from the HackerBot Claw campaign a
 by StepSecurity (2025): https://www.stepsecurity.io/blog/hackerbot-claw-github-actions-exploitation
 -->
 
-# GitHub Actions Security Review
+# GitHub Actions 安全审查
 
-Find exploitable vulnerabilities in GitHub Actions workflows. Every finding MUST include a concrete exploitation scenario — if you can't build the attack, don't report it.
+在 GitHub Actions 工作流中发现可被利用的漏洞。每个发现必须包含具体的利用场景——如果您无法构建攻击，请不要报告它。
 
 This skill encodes attack patterns from real GitHub Actions exploits — not generic CI/CD theory.
 

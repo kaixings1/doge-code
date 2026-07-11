@@ -3,22 +3,22 @@ description: 构建与评估分类模型
 argument-hint: "<describe what you want to classify>"
 ---
 
-# /classify — Classification
+# /classify — 分类
 
-Build a classification model with proper handling of imbalanced classes.
+构建分类模型并妥善处理不平衡类别。
 
-## Invocation
+## 调用
 
 ```
-/classify Predict customer churn — only 5% churn rate
-/classify [upload file] Classify emails as spam or not spam
-/classify Multi-class classification of product reviews into sentiment categories
+/classify 预测客户流失——仅 5% 的流失率
+/classify [上传文件] 将电子邮件分类为垃圾邮件或非垃圾邮件
+/classify 将产品评论多分类为情感类别
 ```
 
-## Workflow
+## 工作流
 
-Apply **classification** skill → **model-evaluation** skill → **model-interpretation** skill.
+应用 **classification** 技能 → **model-evaluation** 技能 → **model-interpretation** 技能。
 
-Offer follow-up:
-- "Want to **tune** for better performance with /tune?"
-- "Should I **explain predictions** with /explain-model?"
+提供后续选项：
+- "想要使用 /tune **调整**以获得更好的性能吗？"
+- "需要我使用 /explain-model **解释预测结果**吗？"

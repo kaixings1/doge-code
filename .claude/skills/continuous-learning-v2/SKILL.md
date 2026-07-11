@@ -1,5 +1,5 @@
 ---
-name: continuous-learning-v2
+name: 基于本能（Instinct）的学习系统，通过钩子（hooks）观察会话，创建带有
 description: 基于本能（Instinct）的学习系统，通过钩子（hooks）观察会话，创建带有置信度评分的原子本能，并将其演化为技能（Skills）、命令（Commands）或智能体（Agents）。v2.1 版本增加了项目作用域（project-scoped）的本能，以防止跨项目污染。
 origin: ECC
 version: 2.1.0

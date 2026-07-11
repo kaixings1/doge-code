@@ -1,5 +1,5 @@
 ---
-name: invariant-guard
+name: 不变性守卫
 description: "不变性守卫 — 运行时不变性检查和断言"
 risk: unknown
 source: community

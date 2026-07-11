@@ -1,49 +1,49 @@
 对代码库执行安全审计，覆盖常见漏洞类别。
 
-## Steps
+## 步骤
 
-### 1. Dependency Vulnerabilities
-- Run the package manager's audit: `npm audit`, `pip audit`, `cargo audit`, `govulncheck ./...`.
-- List critical and high severity vulnerabilities.
-- For each, determine if the vulnerable code path is actually reachable in this project.
-- Recommend specific version upgrades or patches.
+### 1. 依赖漏洞
+- 运行包管理器的审计：`npm audit`、`pip audit`、`cargo audit`、`govulncheck ./...`。
+- 列出严重和高严重性漏洞。
+- 对每个漏洞，确定易受攻击的代码路径在此项目中是否实际可达。
+- 建议具体的版本升级或补丁。
 
-### 2. Secrets Scan
-- Search for hardcoded secrets, API keys, tokens, and passwords:
-  - Patterns: `password\s*=`, `api[_-]?key`, `secret`, `token`, `Bearer `, base64-encoded strings.
-  - Files: `.env` files committed to git, config files, source code.
-- Check `.gitignore` for proper exclusion of sensitive files.
-- Verify environment variables are used for all secrets.
+### 2. 密钥扫描
+- 搜索硬编码的密钥、API Key、令牌和密码：
+  - 模式：`password\s*=`、`api[_-]?key`、`secret`、`token`、`Bearer `、base64 编码字符串。
+  - 文件：提交到 git 的 `.env` 文件、配置文件、源代码。
+- 检查 `.gitignore` 是否正确排除了敏感文件。
+- 验证所有密钥都使用环境变量。
 
-### 3. OWASP Top 10 Check
-- **Injection**: SQL injection, command injection, XSS. Search for string concatenation in queries, `eval()`, `innerHTML`.
-- **Broken Auth**: Weak password policies, missing rate limiting, session fixation.
-- **Sensitive Data Exposure**: Unencrypted data at rest/transit, verbose error messages, logs containing PII.
-- **Broken Access Control**: Missing authorization checks, IDOR vulnerabilities, privilege escalation paths.
-- **Security Misconfiguration**: Default credentials, unnecessary features enabled, CORS wildcards.
+### 3. OWASP 十大检查
+- **注入**：SQL 注入、命令注入、XSS。在查询中搜索字符串拼接、`eval()`、`innerHTML`。
+- **损坏的认证**：弱密码策略、缺少速率限制、会话固定。
+- **敏感数据暴露**：未加密的静态/传输中数据、详细的错误消息、包含 PII 的日志。
+- **损坏的访问控制**：缺少授权检查、IDOR 漏洞、权限提升路径。
+- **安全配置错误**：默认凭据、启用了不必要的功能、CORS 通配符。
 
-### 4. Input Validation
-- Verify all user inputs are validated before processing.
-- Check for proper type coercion and boundary checking.
-- Ensure file uploads have type, size, and name validation.
-- Verify URL and redirect validation prevents open redirects.
+### 4. 输入验证
+- 验证所有用户输入在处理前都经过验证。
+- 检查正确的类型强制和边界检查。
+- 确保文件上传具有类型、大小和名称验证。
+- 验证 URL 和重定向验证可防止开放重定向。
 
-### 5. Authentication and Authorization Review
-- Check password hashing (bcrypt/argon2, not MD5/SHA1).
-- Verify JWT token expiration and rotation.
-- Check for proper CSRF protection.
-- Verify role-based access control at the API layer, not just the UI.
+### 5. 认证和授权审查
+- 检查密码哈希（bcrypt/argon2，而非 MD5/SHA1）。
+- 验证 JWT 令牌过期和轮换。
+- 检查是否有适当的 CSRF 保护。
+- 验证 API 层而非仅 UI 层的基于角色的访问控制。
 
-### 6. Report
-Produce a findings report organized by severity (Critical, High, Medium, Low, Info) with:
-- Finding description.
-- Affected file and line.
-- Recommended fix.
-- Reference (CWE number or OWASP category).
+### 6. 报告
+按严重程度（严重、高、中、低、信息）组织生成发现报告，包含：
+- 发现描述。
+- 受影响的文件和行号。
+- 建议的修复方案。
+- 参考（CWE 编号或 OWASP 类别）。
 
-## Rules
+## 规则
 
-- Prioritize findings by exploitability and impact, not just theoretical risk.
-- Include proof-of-concept for critical findings when safe to do so.
-- Do not just list tools to run. Actually analyze the output and provide actionable recommendations.
-- Check both the application code and infrastructure configuration (Dockerfiles, CI configs, cloud configs).
+- 按可利用性和影响对发现进行优先级排序，而不仅仅是理论风险。
+- 在安全的情况下，为严重发现包含概念验证。
+- 不要仅仅列出要运行的工具。实际分析输出并提供可操作的建议。
+- 同时检查应用程序代码和基础设施配置（Dockerfile、CI 配置、云配置）。

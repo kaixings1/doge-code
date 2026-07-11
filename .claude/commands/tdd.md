@@ -1,6 +1,6 @@
 ---
 name: TDD驱动开发
-description: "Run a red-green-refactor TDD workflow — generate failing tests first, implement to green, then check coverage gaps. Usage: /tdd <generate|coverage|validate> [target]"
+description: "运行红-绿-重构 TDD 工作流——先生成失败的测试，实现到通过，然后检查覆盖率缺口。用法: /tdd <generate|coverage|validate> [target]"
 argument-hint: <generate|coverage|validate> [file-or-dir]
 ---
 

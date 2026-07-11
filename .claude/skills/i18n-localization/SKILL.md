@@ -1,5 +1,5 @@
 ---
-name: i18n-localization
+name: 国际化与本地化
 description: "国际化与本地化 — 应用国际化和本地化"
 risk: safe
 source: community

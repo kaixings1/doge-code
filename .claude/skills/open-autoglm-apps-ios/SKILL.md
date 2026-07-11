@@ -1,5 +1,5 @@
 ---
-name: open-autoglm-apps-ios
+name: Open-AutoGLM iOS 应用 Bundle ID 配置
 description: Open-AutoGLM iOS 应用 Bundle ID 配置
 ---
 

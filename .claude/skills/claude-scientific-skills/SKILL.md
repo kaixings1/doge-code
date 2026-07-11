@@ -1,5 +1,5 @@
 ---
-name: claude-scientific-skills
+name: 科学研究和分析技能
 description: "科学研究和分析技能"
 risk: safe
 source: "https://github.com/K-Dense-AI/claude-scientific-skills"

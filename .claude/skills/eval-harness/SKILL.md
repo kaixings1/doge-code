@@ -1,5 +1,5 @@
 ---
-name: eval-harness
+name: AI 模型评估框架
 description: "AI 模型评估框架"
 risk: safe
 source: community

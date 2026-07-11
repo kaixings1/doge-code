@@ -1,5 +1,5 @@
 ---
-name: analyzing-ransomware-payment-wallets
+name: 勒索软件支付钱包分析
 description: "分析勒索软件支付钱包"
 risk: safe
 source: community

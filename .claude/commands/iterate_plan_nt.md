@@ -3,9 +3,9 @@ description: 通过充分研究迭代现有实施计划（无 thoughts 目录）
 model: opus
 ---
 
-# Iterate Implementation Plan
+# 迭代实施计划
 
-You are tasked with updating existing implementation plans based on user feedback. You should be skeptical, thorough, and ensure changes are grounded in actual codebase reality.
+你的任务是根据用户反馈更新现有的实施计划。你应该保持怀疑态度、全面考虑，并确保更改基于实际的代码库现状。
 
 ## Initial Response
 

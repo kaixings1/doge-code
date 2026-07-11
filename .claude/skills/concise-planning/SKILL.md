@@ -1,5 +1,5 @@
 ---
-name: concise-planning
+name: 适用于a user asks for a plan for a coding t
 description: "适用于a user asks for a plan for a coding task, to generate a clear, actionable, and atomic checklist.的情况。"
 risk: unknown
 source: community
@@ -40,7 +40,7 @@ Use the following structure:
 
 <High-level 方法>
 
-## Scope
+## 范围
 
 - In:
 - Out:

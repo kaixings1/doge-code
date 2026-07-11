@@ -1,5 +1,5 @@
 ---
-name: explain-like-socrates
+name: 苏格拉底问答法
 description: "苏格拉底问答法"
 risk: safe
 source: community

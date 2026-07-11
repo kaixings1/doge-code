@@ -8,16 +8,16 @@ allowed-tools:
 requires: [config, workspace, workstreams, thread, pause-work, resume-work, update, ship, inbox, pr-branch, undo]
 ---
 
-Route to the appropriate management skill based on the user's intent.
-`gsd-config` (settings + advanced + integrations + profile) and `gsd-workspace`
-(new + list + remove) are post-#2790 consolidated entries.
+根据用户意图路由到适当的管理技能。
+`gsd-config`（设置 + 高级 + 集成 + 配置文件）和 `gsd-workspace`
+（新建 + 列出 + 移除）是 #2790 之后的合并条目。
 
-| User wants | Invoke |
+| 用户想要 | 调用 |
 |---|---|
-| Configure GSD settings (basic / advanced / integrations / profile) | gsd-config |
-| Manage workspaces (create / list / remove) | gsd-workspace |
-| Manage parallel workstreams | gsd-workstreams |
-| Continue work in a fresh context thread | gsd-thread |
+| 配置 GSD 设置（基础/高级/集成/配置文件） | gsd-config |
+| 管理工作区（创建/列出/移除） | gsd-workspace |
+| 管理并行工作线 | gsd-workstreams |
+| 在新上下文线程中继续工作 | gsd-thread |
 | Pause current work | gsd-pause-work |
 | Resume paused work | gsd-resume-work |
 | Update the GSD installation | gsd-update |

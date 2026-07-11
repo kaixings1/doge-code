@@ -1,5 +1,5 @@
 ---
-name: changelog-automation
+name: Changelog 自动化
 description: "Changelog 自动化"
 risk: safe
 source: community

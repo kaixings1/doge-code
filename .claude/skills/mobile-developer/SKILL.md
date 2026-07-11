@@ -1,10 +1,12 @@
 ---
-name: mobile-developer
+name: 移动端开发者
 description: "移动端开发者 — Mobile Developer 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# 移动开发者
 
 ## 使用此技能的场景
 

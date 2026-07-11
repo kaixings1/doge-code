@@ -1,6 +1,6 @@
 ---
-name: n8n-code-javascript
-description: "N8N Code JavaScript — N8N Code JavaScript 相关功能和最佳实践"
+name: n8n Code 节点 JavaScript 编程相关功能和最佳实践
+description: "n8n Code JavaScript — n8n Code 节点 JavaScript 编程相关功能和最佳实践"
 risk: unknown
 source: community
 ---

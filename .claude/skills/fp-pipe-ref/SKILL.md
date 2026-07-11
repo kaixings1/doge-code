@@ -1,5 +1,5 @@
 ---
-name: fp-pipe-ref
+name: fp-ts pipe 和 flow 快速参考
 description: "fp-ts pipe 和 flow 快速参考：函数组合模式，pipe 用于值转换，flow 用于创建可复用管道。"
 risk: unknown
 source: community

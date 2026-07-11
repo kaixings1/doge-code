@@ -150,7 +150,7 @@ Use @prometheus-配置 to set up K8s monitoring
 Use @gitops-工作流 to implement GitOps 部署
 ```
 
-## Quality Gates
+## 质量门
 
 - [ ] Containers working
 - [ ] Manifests valid

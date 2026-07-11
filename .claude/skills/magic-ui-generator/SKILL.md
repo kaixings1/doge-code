@@ -1,12 +1,12 @@
 --- 
-name: magic-ui-generator
-description: "Magic Ui Generator — Magic Ui Generator 相关功能和最佳实践"
+name: Magic UI 生成器
+description: "Magic UI 生成器 — Magic UI 生成器相关功能和最佳实践"
 risk: safe
 source: community
 date_added: "2026-03-07"
 ---
 
-# Magic UI Generator
+# Magic UI 生成器
 
 利用 [Magic by 21st.dev](https://21st.dev/magic) 以 AI 原生工作流构建现代、响应式 UI 组件，优先注重选择自由和设计卓越性。
 

@@ -1,5 +1,5 @@
 ---
-name: PhantomBuster Automation
+name: ntomBuster 云平台
 description: "通过 Composio 自动执行 PhantomBuster 云平台的潜在客户生成、网页抓取和社交媒体数据提取工作流"
 requires:
   mcp:

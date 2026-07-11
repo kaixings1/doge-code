@@ -1,5 +1,5 @@
 ---
-name: fal-video-edit
+name: FAL 视频编辑
 description: "FAL 视频编辑 — 基于 FAL AI 的视频编辑"
 risk: unknown
 source: community

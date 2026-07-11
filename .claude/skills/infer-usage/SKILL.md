@@ -1,5 +1,5 @@
 ---
-name: infer-usage
+name: 推断用法
 description: "推断用法 — 代码用法推断和模式识别"
 risk: unknown
 source: community

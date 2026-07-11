@@ -1,5 +1,5 @@
 ---
-name: migrate-to-shoehorn
+name: Shoehorn 迁移指南
 description: "Shoehorn 迁移指南 — 从 as 断言迁移到类型安全的 shoehorn 方法"
 ---
 
@@ -17,7 +17,7 @@ Problems with `as` in tests:
 - Must manually specify target type
 - Double-as (`as unknown as Type`) for intentionally wrong data
 
-## Install
+## 安装
 
 ```bash
 npm i @total-typescript/shoehorn

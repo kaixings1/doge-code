@@ -6,16 +6,16 @@ argument-hint: "<generate|lint> [options]"
 
 # /changelog
 
-Generate Keep a Changelog entries from git history and validate commit message format.
+从 Git 历史生成符合 Keep a Changelog 格式的条目，并验证提交消息格式。
 
-## Usage
+## 用法
 
 ```
-/changelog generate [--from-tag <tag>] [--to-tag <tag>]    Generate changelog entries
-/changelog lint [--from-ref <ref>] [--to-ref <ref>]       Lint commit messages
+/changelog generate [--from-tag <tag>] [--to-tag <tag>]    生成 changelog 条目
+/changelog lint [--from-ref <ref>] [--to-ref <ref>]       检查提交消息格式
 ```
 
-## Examples
+## 示例
 
 ```
 /changelog generate --from-tag v2.0.0
@@ -23,9 +23,9 @@ Generate Keep a Changelog entries from git history and validate commit message f
 /changelog generate --from-tag v2.0.0 --to-tag v2.1.0 --format markdown
 ```
 
-## Scripts
-- `engineering/skills/changelog-generator/scripts/generate_changelog.py` — Parse commits, render changelog (`--from-tag`, `--to-tag`, `--from-ref`, `--to-ref`, `--format markdown|json`)
-- `engineering/skills/changelog-generator/scripts/commit_linter.py` — Validate conventional commit format (`--from-ref`, `--to-ref`, `--strict`, `--format text|json`)
+## 脚本
+- `engineering/skills/changelog-generator/scripts/generate_changelog.py` — 解析提交，渲染 changelog（`--from-tag`, `--to-tag`, `--from-ref`, `--to-ref`, `--format markdown|json`）
+- `engineering/skills/changelog-generator/scripts/commit_linter.py` — 验证约定式提交格式（`--from-ref`, `--to-ref`, `--strict`, `--format text|json`）
 
-## Skill Reference
+## 技能参考
 → `engineering/skills/changelog-generator/SKILL.md`

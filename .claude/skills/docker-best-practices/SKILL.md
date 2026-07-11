@@ -1,5 +1,5 @@
 ---
-name: docker-best-practices
+name: Docker最佳实践
 description: Docker最佳实践 — 包括多阶段构建、Compose优化、层缓存和安全扫描。
 ---
 

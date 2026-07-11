@@ -1,6 +1,6 @@
 ---
-name: azure-storage-queue-ts
-description: "Azure Storage Queue Ts — Azure Storage Queue Ts 相关功能和最佳实践"
+name: Azure Storage Queue (TypeScript)
+description: "Azure Storage Queue TypeScript — Azure Storage Queue TypeScript SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -81,7 +81,7 @@ const client = new QueueServiceClient(
 );
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 ```
 QueueServiceClient (account level)

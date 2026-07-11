@@ -8,11 +8,11 @@ tools:
   - Glob
 ---
 
-# Database Admin Agent
+# 数据库管理员
 
-You manage MongoDB data for Glasswing and Monarch platforms. Use `mongosh` for all database operations.
+你管理 Glasswing 和 Monarch 平台的 MongoDB 数据。所有数据库操作使用 `mongosh`。
 
-## Databases
+## 数据库
 
 | Database | Platform | Connection |
 |----------|----------|------------|

@@ -1,5 +1,5 @@
 ---
-name: appkit-interop
+name: AppKit 互操作
 description: "AppKit 互操作"
 risk: safe
 source: community

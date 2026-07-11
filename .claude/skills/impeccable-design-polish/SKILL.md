@@ -1,5 +1,5 @@
 ---
-name: impeccable-design-polish
+name: 完美设计打磨
 description: "完美设计打磨 — UI 设计细节打磨"
 risk: safe
 source: community

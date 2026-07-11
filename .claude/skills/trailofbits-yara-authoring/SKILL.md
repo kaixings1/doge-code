@@ -1,3 +1,8 @@
+---
+name: YARA-X 规则编写插件
+description: 行为驱动的 YARA-X 检测规则编写技能，教你像专家一样思考和编写 YARA 规则。
+---
+
 # YARA-X Authoring Plugin
 
 A behavior-driven skill for authoring high-quality YARA-X detection rules, teaching you to think and act like an expert YARA author.

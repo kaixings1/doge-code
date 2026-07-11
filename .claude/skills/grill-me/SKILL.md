@@ -1,5 +1,5 @@
 ---
-name: grill-me
+name: 启动一次全面的计划盘问会话，以完善和验证设计决策
 description: "Grill Me — 启动一次全面的计划盘问会话，以完善和验证设计决策"
 disable-model-invocation: true
 category: "productivity"
@@ -20,6 +20,8 @@ tools:
   - codex-cli
   - 游标
 ---
+
+# Grill Me 追问
 
 ## 何时使用
 

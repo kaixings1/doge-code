@@ -1,8 +1,8 @@
 根据当前分支的更改创建具有结构化描述的拉取请求。
 
-## Steps
+## 步骤
 
-1. Run `git log main..HEAD --oneline` to see all commits on this branch.
+1. 运行 `git log main..HEAD --oneline` 查看此分支上的所有提交。
 2. Run `git diff main...HEAD --stat` to see all changed files.
 3. Run `git diff main...HEAD` to read the actual changes.
 4. Determine the base branch (main or master).

@@ -1,5 +1,5 @@
 ---
-name: influxdb-cloud-automation
+name: Influxdb-cloud 自动化
 description: "通过 Rube MCP (Composio) 自动执行 InfluxDB Cloud 任务。"
 requires:
   mcp: [rube]

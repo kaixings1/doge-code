@@ -1,5 +1,5 @@
 ---
-name: agent-development
+name: AI 代理设计
 description: 设计 AI 代理：描述、工具、触发条件和最佳实践。
 version: 0.1.0
 ---

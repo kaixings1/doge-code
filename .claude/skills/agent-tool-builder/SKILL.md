@@ -1,5 +1,5 @@
 ---
-name: agent-tool-builder
+name: 代理工具构建器
 description: "工具是 AI 代理与外界交互的桥梁；设计良好的工具能提升代理执行力。工具是工作代理与产生幻觉、静默失败或消耗 10 倍 令牌 的代理之间的区别。"
   tool design from 架构 to error handling.
 risk: unknown
@@ -20,7 +20,7 @@ and the emerging MCP standard that's becoming the lingua franca for AI tools.
 Key insight: Tool descriptions are more important than tool implementations.
 The LLM never sees your code - it only sees the 架构 and description.
 
-## Principles
+## 原则
 
 - Description quality > implementation quality for LLM accuracy
 - Aim for fewer than 20 tools - more causes confusion
@@ -45,7 +45,7 @@ The LLM never sees your code - it only sees the 架构 and description.
 - api-design → api-designer
 - llm-prompting → prompt-engineering
 
-## Tooling
+## 工具
 
 ### Standards
 
@@ -596,7 +596,7 @@ rather than sequentially."
 )
 """
 
-## Validation Checks
+## 验证检查
 
 ### Tool Description Must Be Comprehensive
 
@@ -678,7 +678,7 @@ All MCP tools require inputSchema
 
 Message: MCP tool definition missing inputSchema.
 
-## Collaboration
+## 协作
 
 ### Delegation Triggers
 

@@ -1,5 +1,5 @@
 ---
-name: baseline-ui
+name: Baseline Ui 相关功能和最佳实践
 description: "Baseline Ui — Baseline Ui 相关功能和最佳实践"
 risk: unknown
 source: community

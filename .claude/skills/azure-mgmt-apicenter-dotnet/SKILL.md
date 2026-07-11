@@ -1,6 +1,6 @@
 ---
-name: azure-mgmt-apicenter-dotnet
-description: "Azure Mgmt Apicenter Dotnet — Azure Mgmt Apicenter Dotnet 相关功能和最佳实践"
+name: Azure Management Apicenter (.NET)
+description: "Azure Management API Center .NET — Azure Management API Center .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -38,7 +38,7 @@ using Azure.ResourceManager.ApiCenter;
 ArmClient client = new ArmClient(new DefaultAzureCredential());
 ```
 
-## Resource Hierarchy
+## 资源层次结构
 
 ```
 Subscription
@@ -395,7 +395,7 @@ catch (RequestFailedException ex)
 }
 ```
 
-## Related SDKs
+## 相关 SDK
 
 | SDK | Purpose | Install |
 |-----|---------|---------|

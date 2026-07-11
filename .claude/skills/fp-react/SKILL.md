@@ -1,5 +1,5 @@
 ---
-name: fp-react
+name: —hooks、状态、表单、数据获取。适用于使用函数式编程模式构建 React 应
 description: "在 React 中使用 fp-ts 的实用模式——hooks、状态、表单、数据获取。适用于使用函数式编程模式构建 React 应用。兼容 React 18/19、Next.js 14/15。"
 risk: unknown
 source: community

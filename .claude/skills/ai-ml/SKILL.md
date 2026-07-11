@@ -1,5 +1,5 @@
 ---
-name: ai-ml
+name: AI/ML 工作流
 description: "涵盖 LLM 应用开发、RAG 实现、代理架构、ML 流水线和 AI 驱动功能的 AI 和机器学习工作流。"
 category: 工作流-bundle
 risk: safe
@@ -236,7 +236,7 @@ Use @evaluation to create evaluation framework
 - [ ] Alerts configured
 - [ ] Dashboards created
 
-## Quality Gates
+## 质量门
 
 - [ ] All AI features tested
 - [ ] 性能 benchmarks met

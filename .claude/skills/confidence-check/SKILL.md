@@ -1,5 +1,5 @@
 ---
-name: Confidence Check
+name: Confidence Check 相关功能和最佳实践
 description: "Confidence Check — Confidence Check 相关功能和最佳实践"
 ---
 

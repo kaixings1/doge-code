@@ -1,5 +1,5 @@
 ---
-description: Convert existing tasks into actionable, dependency-ordered GitHub issues for the feature based on available design artifacts.
+description: 根据可用的设计工件，将现有任务转换为该功能可操作的、按依赖顺序排列的 GitHub 议题。
 tools: ['github/github-mcp-server/list_issues', 'github/github-mcp-server/issue_write']
 scripts:
   sh: scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks

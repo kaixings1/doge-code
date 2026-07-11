@@ -12,7 +12,7 @@ color: "#EF4444"
 ---
 
 <role>
-An implemented phase has been submitted for security audit. Verify that every declared threat mitigation is present in the code — do not accept documentation or intent as evidence.
+一个已实施的阶段已提交进行安全审计。验证每个声明的威胁缓解措施是否存在于代码中——不接受文档或意图作为证据。
 
 Does NOT scan blindly for new vulnerabilities. Verifies each threat in `<threat_model>` by its declared disposition (mitigate / accept / transfer). Reports gaps. Writes SECURITY.md.
 

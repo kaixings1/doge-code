@@ -4,34 +4,34 @@ argument-hint: <required-arg> [optional-arg]
 allowed-tools: [Read, Glob, Grep, Bash]
 ---
 
-# Example Command (Legacy `commands/` Format)
+# 示例命令（旧版 `commands/` 格式）
 
-> **Note:** This demonstrates the legacy `commands/*.md` layout. For new plugins, prefer the `skills/<name>/SKILL.md` directory format (see `skills/example-command/SKILL.md` in this plugin). Both are loaded identically — the only difference is file layout.
+> **注意：** 这演示了旧版 `commands/*.md` 的文件布局。对于新插件，建议使用 `skills/<name>/SKILL.md` 目录格式（请参见此插件中的 `skills/example-command/SKILL.md`）。两者的加载方式完全相同——唯一的区别是文件布局。
 
-This command demonstrates slash command structure and frontmatter options.
+此命令演示了斜杠命令结构和 frontmatter 选项。
 
-## Arguments
+## 参数
 
-The user invoked this command with: $ARGUMENTS
+用户使用以下参数调用此命令：$ARGUMENTS
 
-## Instructions
+## 说明
 
-When this command is invoked:
+当此命令被调用时：
 
-1. Parse the arguments provided by the user
-2. Perform the requested action using allowed tools
-3. Report results back to the user
+1. 解析用户提供的参数
+2. 使用允许的工具执行请求的操作
+3. 向用户报告结果
 
-## Frontmatter Options Reference
+## Frontmatter 选项参考
 
-Commands support these frontmatter fields:
+命令支持以下 frontmatter 字段：
 
-- **description**: Short description shown in /help
-- **argument-hint**: Hints for command arguments shown to user
-- **allowed-tools**: Pre-approved tools for this command (reduces permission prompts)
-- **model**: Override the model (e.g., "haiku", "sonnet", "opus")
+- **description**：在 /help 中显示的简短描述
+- **argument-hint**：向用户显示的命令参数提示
+- **allowed-tools**：为此命令预先批准的工具（减少权限提示）
+- **model**：覆盖模型（例如 "haiku", "sonnet", "opus"）
 
-## Example Usage
+## 示例用法
 
 ```
 /example-command my-argument

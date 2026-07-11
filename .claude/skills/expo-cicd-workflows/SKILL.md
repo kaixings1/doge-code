@@ -1,5 +1,5 @@
 ---
-name: expo-cicd-workflows
+name: Expo CI/CD 工作流
 description: "Expo CI/CD 工作流"
 risk: safe
 source: community

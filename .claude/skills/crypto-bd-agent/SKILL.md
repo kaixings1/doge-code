@@ -1,5 +1,5 @@
 ---
-name: crypto-bd-agent
+name: 经过生产测试的构建 AI 代理模式，用于自主发现、评估和获取加密货币交易所的代币列表。
 description: "经过生产测试的构建 AI 代理模式，用于自主发现、评估和获取加密货币交易所的代币列表。"
 risk: safe
 source: community

@@ -1,6 +1,6 @@
 ---
-name: kubernetes-patterns
-description: "Kubernetes Patterns — Kubernetes Patterns 相关功能和最佳实践"
+name: Kubernetes 模式
+description: "Kubernetes 模式 — Kubernetes 部署模式和最佳实践"
 metadata:
   origin: ECC
 ---

@@ -2,38 +2,38 @@
 description: 回滚环境中的部署
 ---
 
-Roll back a deployment in an environment. Usage: `/rollback <work-item-ids-or-commit> <environment>`
+回滚环境中的部署。用法: `/rollback <work-item-ids-or-commit> <environment>`
 
-Parse `$ARGUMENTS` to extract:
-- **What to revert**: work item IDs (e.g., "AB#1234") or commit hashes, or "last" for the most recent deployment
-- **Target environment**: the environment to roll back (e.g., "staging", "production")
+解析 `$ARGUMENTS` 以提取：
+- **要恢复的内容**：工作项 ID（例如 "AB#1234"）或提交哈希，或 "last" 表示最近一次部署
+- **目标环境**：要回滚到的环境（例如 "staging", "production"）
 
-## Step 1: Identify What to Revert
+## 步骤 1：识别要恢复的内容
 
-Determine the target environment branch. Do NOT hardcode branch names.
+确定目标环境分支。不要硬编码分支名称。
 
-If the user specified:
-- **Work item IDs**: Find the associated commits on the environment branch using `repo_search_commits` with `includeWorkItems: true`
-- **Commit hashes**: Use those directly
-- **"last"**: Find the most recent merge commit on the environment branch via `git log --merges -1 <branch>`
+如果用户指定：
+- **工作项 ID**：使用 `repo_search_commits`（`includeWorkItems: true`）在环境分支上查找关联的提交
+- **提交哈希**：直接使用
+- **"last"**：通过 `git log --merges -1 <branch>` 查找环境分支上最近的合并提交
 
-Present the revert plan:
+展示恢复计划：
 
 ```
-## Rollback on {environment}
+## 在 {environment} 上回滚
 
-Commits to revert:
-| Commit | Message | Work Item |
+要恢复的提交：
+| 提交 | 消息 | 工作项 |
 |--------|---------|-----------|
-| abc1234 | Add payment export | AB#1234 |
-| def5678 | Fix login redirect | AB#1235 |
+| abc1234 | 添加支付导出 | AB#1234 |
+| def5678 | 修复登录重定向 | AB#1235 |
 
-This will revert {count} commit(s) on {environment}. Proceed? (yes/no)
+这将在 {environment} 上恢复 {count} 个提交。继续？（是/否）
 ```
 
-Wait for confirmation.
+等待确认。
 
-## Step 2: Create Revert Branch
+## 步骤 2：创建恢复分支
 
 ```bash
 git checkout <target-environment-branch>
@@ -41,70 +41,70 @@ git pull origin <target-environment-branch>
 git checkout -b revert/<date>-on-<environment>
 ```
 
-## Step 3: Revert Commits
+## 步骤 3：恢复提交
 
-Revert each commit in reverse chronological order (newest first):
+按时间倒序（最新的最先）恢复每个提交：
 
 ```bash
 git revert --no-commit <commit-hash>
 ```
 
-After all reverts are staged, create a single commit:
+所有恢复暂存后，创建一个单一的提交：
 
 ```bash
 git commit -m "$(cat <<'EOF'
-Revert AB#1234, AB#1235 on {environment}
+在 {environment} 上恢复 AB#1234, AB#1235
 
-Reverted commits:
-- abc1234: Add payment export
-- def5678: Fix login redirect
+已恢复的提交：
+- abc1234: 添加支付导出
+- def5678: 修复登录重定向
 
-Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
+Co-Authored-By: kaixings <30445355@qq.com>
 EOF
 )"
 ```
 
-## Step 4: Verify
+## 步骤 4：验证
 
-Run pre-flight checks on the reverted code:
-1. `dotnet build` on any .NET projects
-2. `npx tsc --noEmit` on any frontend projects
-3. If either fails, STOP and report — the revert may have introduced inconsistencies
+对恢复后的代码运行预检检查：
+1. 在任何 .NET 项目上运行 `dotnet build`
+2. 在任何前端项目上运行 `npx tsc --noEmit`
+3. 如果任一检查失败，停止并报告——恢复可能引入了不一致
 
-## Step 5: Push and Create PR
+## 步骤 5：推送并创建 PR
 
-1. Push: `git push -u origin HEAD`
-2. Create a PR via Azure DevOps MCP:
+1. 推送：`git push -u origin HEAD`
+2. 通过 Azure DevOps MCP 创建 PR：
    - **sourceRefName**: `refs/heads/revert/<date>-on-<environment>`
    - **targetRefName**: `refs/heads/<target-environment-branch>`
-   - **title**: `Rollback: Revert AB#1234, AB#1235 on {Environment}`
-   - **description**: List reverted commits and reason
-3. Link work items to the PR
+   - **title**: `回滚：在 {Environment} 上恢复 AB#1234, AB#1235`
+   - **description**: 列出已恢复的提交和原因
+3. 将工作项链接到 PR
 
-## Step 6: Present Summary
+## 步骤 6：展示摘要
 
 ```
-Rollback PR created for {environment}.
+已为 {environment} 创建回滚 PR。
 
 PR: {pr-url}
-Reverted:
-- AB#1234: Add payment export
-- AB#1235: Fix login redirect
+已恢复：
+- AB#1234: 添加支付导出
+- AB#1235: 修复登录重定向
 
-Merge the PR to trigger the CD pipeline and deploy the rollback.
+合并 PR 以触发 CD 流水线并部署回滚。
 ```
 
-For production rollbacks, flag urgency to the user.
+对于生产环境回滚，向用户标记紧急性。
 
-## Step 7: Notify Team (if Teams MCP is configured)
+## 步骤 7：通知团队（如果配置了 Teams MCP）
 
-Send a notification to the project's Teams channel via the Microsoft Teams MCP server:
+通过 Microsoft Teams MCP 服务器向项目的 Teams 频道发送通知：
 
 ```
-⚠️ Rollback PR created for {environment}
+⚠️ 已为 {environment} 创建回滚 PR
 PR: {pr-url}
-Reverting: AB#1234, AB#1235
-Awaiting review and merge.
+正在恢复：AB#1234, AB#1235
+等待审查和合并。
 ```
 
-For production rollbacks, mark the message as urgent. If the Teams MCP server is not configured, skip this step silently.
+对于生产环境回滚，将消息标记为紧急。如果未配置 Teams MCP 服务器，静默跳过此步骤。

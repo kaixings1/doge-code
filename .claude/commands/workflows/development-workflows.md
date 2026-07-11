@@ -2,7 +2,7 @@
 description: 通过并行研究所有 11 个工作流仓库来更新开发工作流表
 ---
 
-# Workflow — Development Workflows
+# 工作流 — 开发工作流
 
 Update the DEVELOPMENT WORKFLOWS table in `README.md` by researching 11 repos in parallel. Launch agents, merge results, present changes, update table if approved.
 

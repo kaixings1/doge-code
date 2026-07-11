@@ -1,42 +1,42 @@
 诊断并修复项目中的失败测试。
 
-## Steps
+## 步骤
 
-1. Run the test suite and capture output: detect the test runner from project config.
-2. Parse the failure output to extract:
-   - Test name and file location.
-   - Expected vs actual values.
-   - Stack trace and error message.
-3. For each failing test, determine the root cause category:
-   - **Stale snapshot**: Output changed intentionally; update snapshot.
-   - **Logic change**: Source code changed but test was not updated.
-   - **Environment issue**: Missing env var, port conflict, timing issue.
-   - **Flaky test**: Race condition, non-deterministic ordering.
-   - **Dependency update**: Breaking change in a library.
-4. Read the relevant source code and test code side by side.
-5. Apply the fix:
-   - Update assertions to match new behavior if the change was intentional.
-   - Fix the source code if the test caught a real bug.
-   - Add retry logic or increase timeouts for flaky tests.
-   - Update mocks if dependency interfaces changed.
-6. Re-run only the fixed tests to verify: `<runner> --testPathPattern <file>`.
-7. Run the full suite to check for regressions.
+1. 运行测试套件并捕获输出：从项目配置中检测测试运行器。
+2. 解析失败输出以提取：
+   - 测试名称和文件位置。
+   - 期望值与实际值。
+   - 堆栈跟踪和错误消息。
+3. 对每个失败的测试，确定根本原因类别：
+   - **过时的快照**：输出有意更改；更新快照。
+   - **逻辑变更**：源代码已更改但测试未更新。
+   - **环境问题**：缺少环境变量、端口冲突、时序问题。
+   - **不稳定的测试**：竞态条件、非确定性排序。
+   - **依赖更新**：库中的破坏性变更。
+4. 并排读取相关的源代码和测试代码。
+5. 应用修复：
+   - 如果变更是有意的，更新断言以匹配新行为。
+   - 如果测试捕获了真正的 bug，修复源代码。
+   - 为不稳定的测试添加重试逻辑或增加超时。
+   - 如果依赖接口发生变化，更新模拟。
+6. 仅重新运行已修复的测试以验证：`<runner> --testPathPattern <file>`。
+7. 运行完整套件以检查回归。
 
-## Format
+## 格式
 
 ```
-Failing tests: <N>
+失败的测试：<N>
 
-| Test | File | Cause | Fix |
+| 测试 | 文件 | 原因 | 修复 |
 |------|------|-------|-----|
-| test name | path | category | what was done |
+| 测试名称 | 路径 | 类别 | 所做操作 |
 
-Result: <N>/<N> now passing
+结果：<N>/<N> 现在通过
 ```
 
-## Rules
+## 规则
 
-- Never delete a failing test without understanding why it fails.
-- If a test failure reveals a real bug, fix the source code, not the test.
-- Distinguish between intentional behavior changes and regressions.
-- Run the full suite after fixes to catch cascading failures.
+- 绝不在不了解原因的情况下删除失败的测试。
+- 如果测试失败揭示了真正的 bug，修复源代码，而非测试。
+- 区分有意的行为变更和回归。
+- 修复后运行完整套件以捕获级联失败。

@@ -1,41 +1,41 @@
 为请求的功能或变更制定结构化实施计划。
 
-## Steps
+## 步骤
 
-### 1. Requirements Analysis
-- Clarify the goal: what problem does this solve and for whom?
-- List functional requirements (what the system must do).
-- List non-functional requirements (performance, security, scalability).
-- Identify constraints (timeline, tech stack, backward compatibility).
+### 1. 需求分析
+- 明确目标：此问题解决什么，为谁解决？
+- 列出功能需求（系统必须做什么）。
+- 列出非功能需求（性能、安全、可扩展性）。
+- 识别约束条件（时间线、技术栈、向后兼容性）。
 
-### 2. Architecture Review
-- Read the existing codebase structure to understand current patterns.
-- Identify which modules, services, or components are affected.
-- Determine if the change fits the existing architecture or requires structural changes.
-- Check for existing utilities, patterns, or abstractions to reuse.
+### 2. 架构审查
+- 读取现有代码库结构以了解当前模式。
+- 确定哪些模块、服务或组件受到影响。
+- 判断变更是否符合现有架构，还是需要结构性更改。
+- 检查是否有可复用的现有工具、模式或抽象。
 
-### 3. Step Breakdown
-- Break the work into ordered, independently testable steps.
-- Each step should be completable in one session and produce a working state.
-- Format each step as:
-  - **What**: The concrete deliverable.
-  - **Where**: Which files or modules to touch.
-  - **How**: Technical approach and key decisions.
-  - **Test**: How to verify this step works.
+### 3. 步骤分解
+- 将工作分解为有序、可独立测试的步骤。
+- 每一步应能在一次会话中完成并产生可工作的状态。
+- 每一步的格式：
+  - **什么**：具体的交付物。
+  - **哪里**：涉及哪些文件或模块。
+  - **如何**：技术方法和关键决策。
+  - **测试**：如何验证此步骤有效。
 
-### 4. Risk Assessment
-- Identify what could go wrong at each step.
-- Note dependencies on external systems or teams.
-- Call out areas with high uncertainty that may need spikes.
-- Suggest fallback approaches for risky steps.
+### 4. 风险评估
+- 识别每一步可能出现的问题。
+- 注意对外部系统或团队的依赖。
+- 标注不确定性较高的领域，可能需要进行研究。
+- 为风险较高的步骤建议备用方案。
 
-### 5. Output the Plan
-Present as a numbered checklist that can be executed sequentially.
+### 5. 输出计划
+呈现为一个可按顺序执行的编号检查清单。
 
-## Rules
+## 规则
 
-- Plans should target 3-10 steps. Fewer means the scope might be too narrow, more means break it into phases.
-- Each step must leave the system in a deployable state. No half-implemented features.
-- Include data migration steps if schema changes are involved.
-- Flag anything that requires coordination with other people or teams.
-- Estimate relative complexity (small/medium/large) for each step, not time.
+- 计划应针对 3-10 个步骤。更少意味着范围可能太窄，更多则意味着应拆分为阶段。
+- 每一步必须使系统处于可部署状态。不允许半实现的功能。
+- 如果涉及模式更改，包含数据迁移步骤。
+- 标记任何需要与他人或团队协调的事项。
+- 为每一步估算相对复杂度（小/中/大），而非时间。

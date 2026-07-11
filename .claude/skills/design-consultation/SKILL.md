@@ -1,5 +1,5 @@
 ---
-name: design-consultation
+name: Design Consultation 相关功能和最佳实践
 description: "Design Consultation — Design Consultation 相关功能和最佳实践"
   Build a complete design system from scratch with creative risks and realistic product mockups. Useful for kickoff workshops and brand-from-zero work.
 triggers:
@@ -21,7 +21,7 @@ od:
 
 Build a complete design system from scratch with creative risks and realistic product mockups. Useful for kickoff workshops and brand-from-zero work.
 
-## Source
+## 来源
 
 - Upstream: https://github.com/garrytan/gstack
 - Category: `creative-direction`

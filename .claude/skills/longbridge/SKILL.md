@@ -1,6 +1,6 @@
 ---
-name: longbridge
-description: "Longbridge — Longbridge 相关功能和最佳实践"
+name: Longbridge 证券交易相关功能和最佳实践
+description: "Longbridge — Longbridge 证券交易相关功能和最佳实践"
 category: finance
 risk: critical
 source: official

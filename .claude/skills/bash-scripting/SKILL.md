@@ -1,5 +1,5 @@
 ---
-name: bash-scripting
+name: Bash 脚本编写工作流，使用防御性模式、错误处理和测试创建生产就绪的 shell 脚本。
 description: "Bash 脚本编写工作流，使用防御性模式、错误处理和测试创建生产就绪的 shell 脚本。"
 category: granular-工作流-bundle
 risk: safe
@@ -181,7 +181,7 @@ main() {
 main "$@"
 ```
 
-## Quality Gates
+## 质量门
 
 - [ ] ShellCheck passes
 - [ ] Bats tests pass

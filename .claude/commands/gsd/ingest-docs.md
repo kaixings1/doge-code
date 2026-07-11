@@ -14,16 +14,16 @@ allowed-tools:
 ---
 
 <objective>
-Build the full `.planning/` setup (or merge into an existing one) from multiple pre-existing planning documents — ADRs, PRDs, SPECs, DOCs — in one pass.
+从多个预先存在的规划文档——ADR、PRD、SPEC、DOC——一次性构建完整的 `.planning/` 设置（或合并到现有设置中）。
 
-- **Net-new bootstrap** (`--mode new`, default when `.planning/` is absent): produces PROJECT.md + REQUIREMENTS.md + ROADMAP.md + STATE.md from synthesized doc content, delegating final generation to `gsd-roadmapper`.
-- **Merge into existing** (`--mode merge`, default when `.planning/` is present): appends phases and requirements derived from the ingested docs; hard-blocks any contradiction with existing locked decisions.
+- **全新引导**（`--mode new`，当 `.planning/` 不存在时的默认行为）：从综合文档内容生成 PROJECT.md + REQUIREMENTS.md + ROADMAP.md + STATE.md，将最终生成委托给 `gsd-roadmapper`。
+- **合并到现有**（`--mode merge`，当 `.planning/` 存在时的默认行为）：追加从摄入文档中推导的阶段和需求；硬阻断与现有锁定决策的任何矛盾。
 
-Auto-synthesizes most conflicts using the precedence rule `ADR > SPEC > PRD > DOC` (overridable via manifest). Surfaces unresolved cases in `.planning/INGEST-CONFLICTS.md` with three buckets: auto-resolved, competing-variants, unresolved-blockers. The BLOCKER gate from the shared conflict engine prevents any destination file from being written when unresolved contradictions exist.
+使用优先级规则 `ADR > SPEC > PRD > DOC`（可通过清单覆盖）自动综合大多数冲突。在 `.planning/INGEST-CONFLICTS.md` 中将未解决的案例分为三类：自动解决、竞争变体、未解决阻断器。当存在未解决的矛盾时，共享冲突引擎的 BLOCKER 关卡阻止任何目标文件被写入。
 
-**Inputs:** directory-convention discovery (`docs/adr/`, `docs/prd/`, `docs/specs/`, `docs/rfc/`, root-level `{ADR,PRD,SPEC,RFC}-*.md`), or an explicit `--manifest <file>` YAML listing `{path, type, precedence?}` per doc.
+**输入：** 目录约定发现（`docs/adr/`、`docs/prd/`、`docs/specs/`、`docs/rfc/`、根级别 `{ADR,PRD,SPEC,RFC}-*.md`），或显式的 `--manifest <file>` YAML，列出每个文档的 `{path, type, precedence?}`。
 
-**v1 constraints:** hard cap of 50 docs per invocation; `--resolve interactive` is reserved for a future release.
+**v1 约束：** 每次调用硬限制 50 个文档；`--resolve interactive` 保留给未来版本。
 </objective>
 
 <execution_context>

@@ -3,10 +3,10 @@ name: 合成数据生成
 description: "创建用于测试、原型设计和演示的真实合成数据集。支持表格、时间序列和关系数据，具有可配置的分布、相关性和异常。适用于需要测试数据、想原型化分析或需要共享数据而无隐私问题。"
 ---
 
-# Generate Synthetic Data
+# 生成合成数据
 
 ## 目的
-Create realistic synthetic datasets that mirror real-world data characteristics. Useful for prototyping analyses, testing pipelines, building demos, and sharing data without privacy risks.
+创建模拟真实世界数据特征的逼真合成数据集。适用于原型分析、测试管道、构建演示以及在无隐私风险的情况下共享数据。
 
 ## 工作原理
 

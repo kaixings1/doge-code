@@ -1,5 +1,5 @@
 ---
-name: azure-eventhub-java
+name: 指导 Java 开发者使用 Azure Event Hubs 客户端库处理大规模事件流。
 description: "指导 Java 开发者使用 Azure Event Hubs 客户端库处理大规模事件流。"
 risk: unknown
 source: community
@@ -27,7 +27,7 @@ Build real-time streaming applications using the Azure Event Hubs SDK for Java.
 </dependency>
 ```
 
-## Client Creation
+## 客户端创建
 
 ### EventHubProducerClient
 
@@ -85,7 +85,7 @@ EventHubConsumerAsyncClient asyncConsumer = new EventHubClientBuilder()
     .buildAsyncConsumerClient();
 ```
 
-## Core Patterns
+## 核心模式
 
 ### Send Single Event
 
@@ -274,7 +274,7 @@ System.out.println("Last sequence: " + partitionProps.getLastEnqueuedSequenceNum
 System.out.println("Last offset: " + partitionProps.getLastEnqueuedOffset());
 ```
 
-## Event Positions
+## 事件位置
 
 ```java
 // Start from beginning
@@ -313,7 +313,7 @@ import com.azure.messaging.eventhubs.models.ErrorContext;
 })
 ```
 
-## Resource Cleanup
+## 资源清理
 
 ```java
 // Always close clients
@@ -348,7 +348,7 @@ STORAGE_CONNECTION_STRING=<for-checkpointing>
 5. **Error Handling**: Handle transient errors with retries
 6. **Close Clients**: 始终 close producer/consumer when done
 
-## Trigger Phrases
+## 触发短语
 
 - "Event Hubs Java"
 - "event streaming Azure"

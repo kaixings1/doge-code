@@ -1,6 +1,6 @@
 ---
-name: imagegen-frontend-web
-description: "Taste Imagegen Frontend Web — Taste Imagegen Frontend Web 相关功能和最佳实践"
+name: 图像生成前端网页
+description: "图像生成前端网页 — 网页端图像生成前端相关功能和最佳实践"
 ---
 
 # HARD OUTPUT RULE — READ FIRST

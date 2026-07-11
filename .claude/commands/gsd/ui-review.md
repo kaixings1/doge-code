@@ -13,9 +13,9 @@ allowed-tools:
 requires: [phase]
 ---
 <objective>
-Conduct a retroactive 6-pillar visual audit. Produces UI-REVIEW.md with
-graded assessment (1-4 per pillar). Works on any project.
-Output: {phase_num}-UI-REVIEW.md
+进行事后 6 支柱视觉审计。生成带有分级评估（每支柱 1-4 分）的 UI-REVIEW.md。
+适用于任何项目。
+输出：{phase_num}-UI-REVIEW.md
 </objective>
 
 <execution_context>

@@ -1,5 +1,5 @@
 ---
-name: sonarqube-quality
+name: SonarQube/SonarCloud 代码质量
 description: "SonarQube/SonarCloud 代码质量 — 静态分析、质量门禁、技术债务、规则定制"
 ---
 

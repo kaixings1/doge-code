@@ -1,5 +1,5 @@
 ---
-name: y-gy-automation
+name: Y Gy 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Y Gy 任务。使用前始终先搜索工具以获取当前 schema。""
 requires:
   mcp: [rube]

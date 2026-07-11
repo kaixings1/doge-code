@@ -1,12 +1,12 @@
 ---
-name: geo-fundamentals
+name: 面向 AI 搜索引擎（ChatGPT、Claude、Perplexity）的生成引擎优化。
 description: "面向 AI 搜索引擎（ChatGPT、Claude、Perplexity）的生成引擎优化。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# GEO Fundamentals
+# GEO 基础
 
 > Optimization for AI-powered search engines.
 

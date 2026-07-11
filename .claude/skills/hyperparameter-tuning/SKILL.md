@@ -1,5 +1,5 @@
 ---
-name: hyperparameter-tuning
+name: 超参数调优
 description: "超参数调优 — 机器学习模型超参数优化"
 risk: unknown
 source: community

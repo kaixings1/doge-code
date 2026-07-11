@@ -1,12 +1,12 @@
 ---
-name: azure-security-keyvault-keys-dotnet
-description: "Azure Security Keyvault Keys Dotnet — Azure Security Keyvault Keys Dotnet 相关功能和最佳实践"
+name: Azure Security Key Vault Keys (.NET)
+description: "Azure Security Key Vault Keys .NET — Azure Security Key Vault Keys .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
 
-# Azure.Security.KeyVault.Keys (.NET)
+# Azure Key Vault 密钥 .NET SDK
 
 Client library for managing cryptographic keys in Azure Key Vault and Managed HSM.
 
@@ -27,7 +27,7 @@ KEY_VAULT_NAME=<your-key-vault-name>
 AZURE_KEYVAULT_URL=https://<vault-name>.vault.azure.net
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 ```
 KeyClient (key management)
@@ -178,7 +178,7 @@ byte[] backupData = await File.ReadAllBytesAsync("key-backup.bin");
 KeyVaultKey restoredKey = await client.RestoreKeyBackupAsync(backupData);
 ```
 
-## Cryptographic Operations
+## 加密操作
 
 ### Get CryptographyClient
 

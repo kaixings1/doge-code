@@ -1,5 +1,5 @@
 ---
-name: analyzing-malicious-url-with-urlscan
+name: URLScan 恶意 URL 分析
 description: "使用 URLScan 分析恶意 URL"
 risk: safe
 source: community

@@ -1,10 +1,12 @@
 ---
-name: backend-security-coder
-description: "Backend Security Coder — Backend Security Coder 相关功能和最佳实践"
+name: 后端安全编码器
+description: "后端安全编码器 — 后端安全编码相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# 后端安全编码
 
 ## /u4f55/u65f6/u4f7f/u7528/u6b64/u6280/u80fd
 

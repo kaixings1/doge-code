@@ -1,5 +1,5 @@
 ---
-name: canvas-automation
+name: Canvas 自动化
 description: "Canvas 自动化"
 risk: safe
 source: community

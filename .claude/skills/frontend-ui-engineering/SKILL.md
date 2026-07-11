@@ -1,5 +1,5 @@
 ---
-name: frontend-ui-engineering
+name: 前端UI工程
 description: 前端UI工程 — 构建生产质量的UI。在构建或修改UI组件时使用。
 ---
 

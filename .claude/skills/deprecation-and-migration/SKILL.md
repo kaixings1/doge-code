@@ -20,7 +20,7 @@ description: 弃用与迁移 — 管理弃用和迁移。在移除旧系统或�
 - 规划新系统的生命周期（弃用规划从设计时开始）
 - Deciding whether to maintain a legacy system or invest in 迁移
 
-## Core Principles
+## 核心原则
 
 ### Code Is a Liability
 
@@ -34,7 +34,7 @@ With enough users, every observable behavior becomes depended on — including b
 
 When building something new, ask: "How would we remove this in 3 years?" Systems designed with clean interfaces, feature flags, and minimal surface area are easier to deprecate than systems that leak implementation details everywhere.
 
-## The Deprecation Decision
+## 弃用决策
 
 Before deprecating anything, answer these questions:
 
@@ -55,7 +55,7 @@ Before deprecating anything, answer these questions:
    → Security risk, engineer time, opportunity cost of complexity.
 ```
 
-## Compulsory vs Advisory Deprecation
+## 强制性与建议性弃用
 
 | Type | 使用场景 | Mechanism |
 |------|-------------|-----------|
@@ -64,7 +64,7 @@ Before deprecating anything, answer these questions:
 
 **默认 to advisory.** Use compulsory only when the maintenance cost or risk justifies forcing 迁移. Compulsory deprecation requires providing 迁移 tooling, documentation, and support — you can't just announce a deadline.
 
-## The 迁移 Process
+## 迁移流程
 
 ### 步骤 1: Build the Replacement
 
@@ -77,7 +77,7 @@ Don't deprecate without a working alternative. The replacement must:
 ### 步骤 2: Announce and Document
 
 ```markdown
-## Deprecation Notice: OldService
+## 弃用通知：旧服务
 
 **Status:** Deprecated as of 2025-03-01
 **Replacement:** NewService (see 迁移 guide below)
@@ -117,7 +117,7 @@ Only after all consumers have migrated:
 5. Celebrate — removing code is an achievement
 ```
 
-## 迁移 Patterns
+## 迁移模式
 
 ### Strangler Pattern
 
@@ -173,7 +173,7 @@ Zombie code is code that nobody owns but everybody depends on. It's not actively
 
 **响应:** Either assign an owner and maintain it properly, or deprecate it with a concrete 迁移 plan. Zombie code cannot stay in limbo — it either gets investment or removal.
 
-## Common Rationalizations
+## 常见理由
 
 | Rationalization | Reality |
 |---|---|
@@ -184,7 +184,7 @@ Zombie code is code that nobody owns but everybody depends on. It's not actively
 | "Users will migrate on their own" | They won't. Provide tooling, documentation, and incentives — or do the 迁移 yourself (the Churn Rule). |
 | "We can maintain both systems indefinitely" | Two systems doing the same thing is double the maintenance, testing, documentation, and onboarding cost. |
 
-## Red Flags
+## 危险信号
 
 - Deprecated systems with no replacement available
 - Deprecation announcements with no 迁移 tooling or documentation
@@ -194,7 +194,7 @@ Zombie code is code that nobody owns but everybody depends on. It's not actively
 - Deprecation without measuring current usage
 - Removing code without verifying zero active consumers
 
-## Verification
+## 验证
 
 After completing a deprecation:
 

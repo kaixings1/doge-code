@@ -1,6 +1,6 @@
 ---
-name: brandkit
-description: "Taste Brandkit — Taste Brandkit 相关功能和最佳实践"
+name: 品牌工具包
+description: "品牌工具包 — 品牌视觉设计系统相关功能和最佳实践"
 ---
 
 # BRANDKIT IMAGE GENERATION SKILL

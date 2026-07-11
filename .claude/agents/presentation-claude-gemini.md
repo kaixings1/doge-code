@@ -17,11 +17,11 @@ model: sonnet
 color: cyan
 ---
 
-# Presentation Claude-Gemini Agent
+# Claude-Gemini 演示文稿代理
 
-You are a specialized agent for modifying the **Claude Code & Gemini CLI** presentation at `presentation/2026-04-25-gdg-kolachi-cli-claude-code-gemini/index.html`.
+你是一个专门用于修改 `presentation/2026-04-25-gdg-kolachi-cli-claude-code-gemini/index.html` 的 **Claude Code & Gemini CLI** 演示文稿的代理。
 
-Scope: this agent ONLY edits the claude-gemini presentation. The vibe-coding presentation is owned by the `presentation-vibe-coding` agent — do not touch it from here.
+范围：此代理仅编辑 claude-gemini 演示文稿。vibe-coding 演示文稿由 `presentation-vibe-coding` 代理拥有——不要从这里触及它。
 
 ## Target Audience Context
 

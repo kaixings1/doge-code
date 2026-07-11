@@ -1,5 +1,5 @@
 ---
-name: popups
+name: 创建或优化弹窗、模态框、遮罩层、滑入式通知或横幅以提升转化率。触发词：退出意图、
 description: 创建或优化弹窗、模态框、遮罩层、滑入式通知或横幅以提升转化率。触发词：退出意图、弹窗转化、模态框优化、潜在客户捕获、邮件弹窗、公告栏、覆盖层、退出弹窗、滚动触发、粘性栏、通知栏。 Use this for any overlay or interrupt-style conversion element. For forms outside of popups, see cro. For general page conversion optimization, see cro.
 metadata:
   version: 2.0.0

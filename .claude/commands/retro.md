@@ -5,7 +5,7 @@ description: "分析迭代回顾中的模式与行动事项追踪。用法: /ret
 
 # /retro
 
-Analyze retrospective data for recurring themes, sentiment trends, and action item effectiveness.
+分析回顾数据以发现重复出现的主题、情绪趋势和行动项效果。
 
 ## Usage
 

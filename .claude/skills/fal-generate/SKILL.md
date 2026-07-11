@@ -1,5 +1,5 @@
 ---
-name: fal-generate
+name: FAL 生成
 description: "FAL 生成 — 基于 FAL AI 的内容生成"
 risk: unknown
 source: community

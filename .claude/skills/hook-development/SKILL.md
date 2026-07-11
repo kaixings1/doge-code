@@ -1,5 +1,5 @@
 ---
-name: hook-development
+name: 钩子开发
 description: "钩子开发 — React Hooks 开发指南"
 risk: unknown
 source: community

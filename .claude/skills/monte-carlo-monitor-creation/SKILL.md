@@ -1,5 +1,5 @@
 ---
-name: monte-carlo-monitor-creation
+name: e Carlo 监控器，生成
 description: "通过 MCP 工具指导创建 Monte Carlo 监控器，生成用于 CI/CD 部署的 monitors-as-code YAML。"
 category: data
 risk: safe

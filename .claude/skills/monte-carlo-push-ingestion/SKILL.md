@@ -1,5 +1,5 @@
 ---
-name: monte-carlo-push-ingestion
+name: Monte Carlo 数据推送
 description: "从任何数据仓库向 Monte Carlo 推送元数据、血统和查询日志的专家指南。"
 category: data
 risk: safe

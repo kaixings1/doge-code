@@ -1,5 +1,5 @@
 ---
-name: mcp-development
+name: MCP开发
 description: MCP开发 — 包括工具设计、资源端点、提示模板、传输层和认证的MCP服务器开发。
 ---
 

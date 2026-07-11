@@ -1,3 +1,8 @@
+---
+name: fp-check 假阳性检查
+description: 在验证疑似安全漏洞时强制执行系统性假阳性验证的插件。
+---
+
 # fp-check 假阳性检查
 
 A plugin that enforces systematic false positive verification when verifying suspected security bugs.

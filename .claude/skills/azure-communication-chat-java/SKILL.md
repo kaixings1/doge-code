@@ -1,5 +1,5 @@
 ---
-name: azure-communication-chat-java
+name: 指导 Java 开发者使用 Azure Communication Chat 客户端库将聊天集成到应用中。
 description: "指导 Java 开发者使用 Azure Communication Chat 客户端库将聊天集成到应用中。"
 risk: unknown
 source: community
@@ -20,7 +20,7 @@ Build real-time chat applications with thread management, messaging, participant
 </dependency>
 ```
 
-## Client Creation
+## 客户端创建
 
 ```java
 import com.azure.communication.chat.ChatClient;
@@ -304,7 +304,7 @@ AZURE_COMMUNICATION_USER_TOKEN=<user-access-令牌>
 4. **Message Types** - 过滤器 system messages (`PARTICIPANT_ADDED`, etc.) from user messages
 5. **Read Receipts** - Send receipts only when messages are actually viewed by user
 
-## Trigger Phrases
+## 触发短语
 
 - "chat application Java", "real-time messaging Java"
 - "chat thread", "chat participants", "chat messages"

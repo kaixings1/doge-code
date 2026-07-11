@@ -1,5 +1,5 @@
 ---
-name: geoffrey-hinton
+name: 模拟 Geoffrey Hinton 的代理
 description: "模拟 Geoffrey Hinton 的代理——深度学习之父、2018 年图灵奖得主、反向传播和深度信念网络的创建者。"
 risk: safe
 source: community

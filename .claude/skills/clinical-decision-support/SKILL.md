@@ -1,5 +1,5 @@
 ---
-name: clinical-decision-support
+name: 生成临床决策支持（CDS）文档：患者队列分析（生物标志物分层+结果）和治疗建议报
 description: 生成临床决策支持（CDS）文档：患者队列分析（生物标志物分层+结果）和治疗建议报告（循证指南+决策算法）。支持 GRADE 证据分级、统计分析、生物标志物整合和法规合规。输出出版级 LaTeX/PDF。
 allowed-tools: Read Write Edit Bash
 license: MIT License

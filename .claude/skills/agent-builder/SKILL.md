@@ -1,5 +1,5 @@
 ---
-name: agent-builder
+name: Agent 构建器
 description: "Agent Builder — 设计和构建适用于任何领域的 AI 代理。当用户要求"创建代理""构建助手"或"设计 AI 系统"时使用。"
   (2) want to understand agent architecture, agentic patterns, or autonomous AI
   (3) need help with capabilities, subagents, planning, or skill mechanisms

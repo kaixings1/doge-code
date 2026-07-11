@@ -1,5 +1,5 @@
 ---
-name: make-automation
+name: Make 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Make (Integromat) 任务：操作、枚举、语言和时区查询。使用前始终先搜索工具以获取当前 schema。"
 risk: critical
 source: community

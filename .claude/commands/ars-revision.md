@@ -3,7 +3,7 @@ description: ARS 学术论文 `revision` 模式 — 修订稿 + R&R 回复
 model: sonnet
 ---
 
-Trigger the `academic-paper` skill in `revision` mode. Produces a revised draft plus point-by-point response-to-reviewers. Fidelity spectrum, high oversight.
+以 `修订` 模式触发 `academic-paper` 技能。生成修订稿加逐点回复审稿人。保真度谱系，高监督需求。
 
-Mode reference: `MODE_REGISTRY.md` § academic-paper.
-Skill entry: `academic-paper/SKILL.md`.
+模式参考：`MODE_REGISTRY.md` § academic-paper。
+技能入口：`academic-paper/SKILL.md`。

@@ -4,22 +4,22 @@ description: 交互式向导 — 设计与验证混沌工程实验
 
 # /chaos-experiment
 
-Step through the design of a chaos engineering experiment using the `chaos-engineering` skill. Produces a plan, calculates blast radius, validates abort criteria, and outputs a markdown plan ready for peer review.
+使用 `chaos-engineering` 技能逐步设计混沌工程实验。生成计划、计算爆炸半径、验证中止条件，并输出可供同行评审的 Markdown 计划。
 
-## Usage
+## 用法
 
 ```
 /chaos-experiment
 /chaos-experiment --target checkout-svc --attack latency
 ```
 
-## Implementation
+## 实现
 
 ```bash
 SKILL=engineering/chaos-engineering/skills/chaos-engineering
 
-# Step 1: gather inputs interactively (target, hypothesis, attack, magnitude, ...)
-# Step 2: run experiment_designer.py to produce the plan
+# 步骤 1：交互式收集输入（目标、假设、攻击、规模等）
+# 步骤 2：运行 experiment_designer.py 生成计划
 python "$SKILL/scripts/experiment_designer.py" \
   --target "$TARGET" --hypothesis "$HYPOTHESIS" \
   --attack "$ATTACK" --magnitude "$MAGNITUDE" \
@@ -27,7 +27,7 @@ python "$SKILL/scripts/experiment_designer.py" \
   --abort-if "$ABORT" --owner "$OWNER" \
   --format json > .chaos-plan.json
 
-# Step 3: calculate blast radius against the team's error budget
+# 步骤 3：根据团队的错误预算计算爆炸半径
 python "$SKILL/scripts/blast_radius_calculator.py" \
   --traffic-share "$TRAFFIC_SHARE" \
   --user-pop "$USER_POP" \
@@ -35,33 +35,33 @@ python "$SKILL/scripts/blast_radius_calculator.py" \
   --baseline-availability "$BASELINE_AVAIL" \
   --expected-impact-availability "$IMPACT_AVAIL"
 
-# Step 4: render the markdown plan for peer review
+# 步骤 4：渲染 Markdown 计划供同行评审
 python "$SKILL/scripts/experiment_designer.py" \
   --target "$TARGET" --hypothesis "$HYPOTHESIS" \
   --attack "$ATTACK" --abort-if "$ABORT" --owner "$OWNER"
 ```
 
-## Output
+## 输出
 
-A markdown plan with:
+包含以下内容的 Markdown 计划：
 
-- Hypothesis, steady-state metric, attack, magnitude, duration
-- Blast radius (calculated) with risk score (GREEN/YELLOW/RED)
-- Abort criteria parsed from `--abort-if`
-- Rollback procedure
-- Monitoring dashboard link
-- Learning question
+- 假设、稳态指标、攻击、规模、持续时间
+- 爆炸半径（已计算）及风险评分（绿/黄/红）
+- 从 `--abort-if` 解析的中止条件
+- 回滚流程
+- 监控仪表盘链接
+- 学习问题
 
-## Pre-conditions
+## 前置条件
 
-- `chaos-engineering` skill installed
-- Target identified
-- Steady-state metric and dashboard available
-- On-call team available
-- Error budget known (or use defaults)
+- 已安装 `chaos-engineering` 技能
+- 目标已确定
+- 稳态指标和仪表盘可用
+- 值班团队可用
+- 错误预算已知（或使用默认值）
 
-## Post-conditions
+## 后置条件
 
-- `.chaos-plan.json` written for use with `experiment_postmortem.py` later
-- Markdown plan streamed for review
-- Recommendation printed: PROCEED / REDUCE / ABORT
+- 写入 `.chaos-plan.json` 供后续与 `experiment_postmortem.py` 配合使用
+- Markdown 计划已输出供审查
+- 打印建议：继续 / 缩减 / 中止

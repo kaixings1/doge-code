@@ -1,5 +1,5 @@
 ---
-name: hatch-pet
+name: 虚拟宠物养成
 description: "Hatch Pet — 虚拟宠物养成"
 risk: safe
 source: community

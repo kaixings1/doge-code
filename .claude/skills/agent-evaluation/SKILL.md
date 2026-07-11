@@ -1,5 +1,5 @@
 ---
-name: agent-evaluation
+name: 代理评估
 description: "Agent Evaluation — AI 代理的能力评估、可靠性指标和生产监控——即使顶尖代理在真实基准测试中也实现不到 50%。"
 risk: safe
 source: vibeship-spawner-skills (Apache 2.0)
@@ -24,7 +24,7 @@ Testing and benchmarking LLM agents including behavioral testing, capability ass
 - Skills_recommended: autonomous-agents, multi-agent-orchestration
 - Required skills: testing-fundamentals, llm-fundamentals
 
-## Scope
+## 范围
 
 - Does_not_cover: Model training evaluation (loss, perplexity), Fairness and bias testing, User experience testing
 - Boundaries: Focus is agent capability and reliability, Covers functional and behavioral testing
@@ -451,7 +451,7 @@ class AdversarialTester {
             {
                 name: 'unicode_edge_cases',
                 category: 'boundary_testing',
-                input: '\u0000\u200B\uFEFF test \u202E reversed',
+                input: ' ​﻿ test ‮ reversed',
                 expectation: 'should_handle_gracefully',
                 detector: (output) => !output.error
             },
@@ -1068,7 +1068,7 @@ class LeakageDetector {
     }
 }
 
-## Collaboration
+## 协作
 
 ### Delegation Triggers
 

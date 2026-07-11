@@ -1,5 +1,5 @@
 ---
-name: sciomc
+name: 协调并行科学家代理进行全面研究工作流的相关功能和最佳实践
 description: "Sciomc — 协调并行科学家代理进行全面研究工作流的相关功能和最佳实践"
 参数-hint: <research goal>
 level: 4

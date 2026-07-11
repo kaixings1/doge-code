@@ -6,31 +6,31 @@ allowed_tools: ["Bash", "Read", "Write", "Grep", "Glob"]
 
 # /database-migration
 
-Use this workflow when working on **database-migration** in `everything-claude-code`.
+在处理 `everything-claude-code` 中的 **database-migration** 时使用此工作流。
 
-## Goal
+## 目标
 
-Database schema changes with migration files
+数据库模式变更与迁移文件
 
-## Common Files
+## 常见文件
 
 - `**/schema.*`
 - `migrations/*`
 
-## Suggested Sequence
+## 建议顺序
 
-1. Understand the current state and failure mode before editing.
-2. Make the smallest coherent change that satisfies the workflow goal.
-3. Run the most relevant verification for touched files.
-4. Summarize what changed and what still needs review.
+1. 在编辑前了解当前状态和失败模式。
+2. 做出满足工作流目标的最小一致性更改。
+3. 对涉及的文件的运行最相关的验证。
+4. 总结变更内容以及仍需审查的部分。
 
-## Typical Commit Signals
+## 典型提交信号
 
-- Create migration file
-- Update schema definitions
-- Generate/update types
+- 创建迁移文件
+- 更新模式定义
+- 生成/更新类型
 
-## Notes
+## 备注
 
-- Treat this as a scaffold, not a hard-coded script.
-- Update the command if the workflow evolves materially.
+- 将其视为脚手架，而非硬编码脚本。
+- 如果工作流发生重大演变，请更新此命令。

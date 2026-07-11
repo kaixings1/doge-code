@@ -1,5 +1,5 @@
 ---
-name: architecture-skills-and-features
+name: 架构技能和特性
 description: "架构技能和特性"
 risk: safe
 source: community

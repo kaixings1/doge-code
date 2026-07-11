@@ -1,5 +1,5 @@
 ---
-name: accint-solve
+name: AccInt 记忆求解
 description: "通过 AccInt 的 MCP 记忆循环路由代理工作：检索之前的结果、解析框架、用证据关闭承诺。"
 category: ai-agents
 risk: safe
@@ -14,7 +14,7 @@ license: "Apache-2.0"
 license_source: "https://github.com/maxbaluev/accreted-intelligence/blob/main/LICENSE-APACHE-2.0.txt"
 ---
 
-# AccInt Solve
+# AccInt 记忆求解
 
 ## 概述
 
@@ -53,10 +53,10 @@ acc_act(runtime, input)
 
 ### 步骤 2：在规划前先检索
 
-Before a non-trivial step, retrieve relevant prior work:
+在执行非平凡步骤之前，检索相关的先前工作：
 
 ```json
-{"查询": "the concrete task or subtask you are about to perform"}
+{"查询": "你即将执行的具体任务或子任务"}
 ```
 
 阅读返回的记忆并引用你实际构建的 `[ids]`。将检索到的记忆视为要考虑的证据，
@@ -71,13 +71,13 @@ Before a non-trivial step, retrieve relevant prior work:
 ```
 
 如果响应是最终结果，使用答案、承诺 ID 和引用的记忆 ID。
-如果响应是 `brain_frame`，在当前会话中保留推理：
-检查帧，从工作区解决缺失的判断或知识，
+如果响应是 `brain_frame`（思维帧），在当前会话中保留推理：
+检查思维帧，从工作区解决缺失的判断或知识，
 然后通过 `continue` 提交简洁的提案。
 
-### 步骤 4：解决延续帧
+### 步骤 4：处理延续帧
 
-对于返回的帧，除非主机明确为你管理 tokens，
+对于返回的思维帧，除非主机明确为你管理 tokens，
 否则只提交帧 ID 和你的提案文本：
 
 ```json
@@ -90,7 +90,7 @@ Before a non-trivial step, retrieve relevant prior work:
 }
 ```
 
-不要让接收到的帧保持未解决状态。如果帧过期，关闭或重新运行绑定的承诺，
+不要让接收到的思维帧保持未处理状态。如果帧过期，关闭或重新运行绑定的承诺，
 而不是假装延续成功。
 
 ### 步骤 5：在 AccInt 之外执行和验证
@@ -116,83 +116,73 @@ AccInt 存储学习循环；它不会取代工作或证据。
 }
 ```
 
-Use `good: false` when the 方法 failed. Do not tag an outcome as external
-or owner-validated unless a real external system or the owner actually supplied
-that verdict.
+当方法失败时使用 `good: false`。除非真实的外部系统或所有者实际提供了
+该判定，否则不要将结果标记为外部验证或所有者验证。
 
 ## 示例
 
-### Example 1: Start a repository fix with memory
+### 示例 1：使用记忆开始仓库修复
 
 ```text
-1. acc_retrieve({"查询":"fix failing parser tests in this repo"})
-2. Read the returned memories; cite only the relevant [ids].
-3. acc_act(runtime="solve", input="Fix the failing parser tests and verify them")
-4. Inspect the repo, edit files, run the parser tests.
-5. acc_act(runtime="outcome", input={"ref":"solved:...", "good":true, "note":"parser test command passed"})
+1. acc_retrieve({"查询":"修复此仓库中失败的解析器测试"})
+2. 阅读返回的记忆；仅引用相关的 [ids]。
+3. acc_act(runtime="solve", input="修复失败的解析器测试并验证")
+4. 检查仓库、编辑文件、运行解析器测试。
+5. acc_act(runtime="outcome", input={"ref":"solved:...", "good":true, "note":"解析器测试命令通过"})
 ```
 
-### Example 2: Handle a continuation frame
+### 示例 2：处理延续帧
 
 ```text
-AccInt returns frame bf_123 asking for a judgment about whether to patch the
-架构 or the caller.
+AccInt 返回帧 bf_123，询问是否应该修补
+架构还是调用者。
 
-1. Inspect the 架构 and caller in the current repo.
-2. Decide from code evidence, not memory alone.
-3. acc_act(runtime="continue", input={"frame_id":"bf_123", "proposal_text":"Patch the caller because..."})
-4. Continue implementation and verification.
+1. 检查当前仓库中的架构和调用者。
+2. 根据代码证据做出决定，而非仅凭记忆。
+3. acc_act(runtime="continue", input={"frame_id":"bf_123", "proposal_text":"修补调用者，因为..."})
+4. 继续实现和验证。
 ```
 
 ## 最佳实践
 
-- Cite retrieved `[ids]` whenever they shape your plan or answer.
-- Keep owner-held facts owner-held: ask instead of fabricating preferences,
-  credentials, identity, or history the repository cannot prove.
-- Use small, concrete solve goals; open a new solve for materially different
-  subproblems instead of overloading one commitment.
-- Close commitments promptly when reality answers, including failures.
-- Record evidence in outcome notes, not confidence.
-- Preserve privacy: do not store secrets, raw credentials, or unnecessary
-  sensitive user data in outcome notes.
+- 每当检索到的 `[ids]` 影响了你的计划或答案时，引用它们。
+- 保持所有者持有的事实归所有者持有：询问而不是编造仓库无法证明的
+  偏好、凭证、身份或历史。
+- 使用小而具体的目标；对于本质上不同的子问题打开新的求解，
+  而不是超载一个承诺。
+- 当现实给出答案时及时关闭承诺，包括失败的情况。
+- 在结果备注中记录证据，而不是信心。
+- 保护隐私：不要在结果备注中存储密钥、原始凭证或不必要的
+  敏感用户数据。
 
 ## 局限性
 
-- 需要 an installed and configured AccInt MCP server exposing
-  `acc_retrieve` and `acc_act`.
-- Does not replace repository inspection, tests, review, or live-state checks.
-- Retrieved memory can be stale or wrong; current evidence wins.
-- Outcome credit is only as strong as the evidence tier. Self-graded outcomes
-  are weaker than runtime, external, or owner-validated outcomes.
-- AccInt is local-first; a different machine or database may not have the same
-  memories unless the user intentionally shares the AccInt database.
+- 需要一个已安装并配置好 AccInt MCP 服务器，暴露了 `acc_retrieve` 和 `acc_act` 工具。
+- 不取代仓库检查、测试、审查或实时状态检查。
+- 检索到的记忆可能过时或错误；以当前证据为准。
+- 结果可信度仅与证据层级相当。自评结果弱于运行时、外部或所有者验证的结果。
+- AccInt 是本地优先的；不同的机器或数据库可能没有相同的记忆，
+  除非用户主动共享 AccInt 数据库。
 
-## 安全性 & Safety Notes
+## 安全性说明
 
-- This skill does not require shell commands, network fetches, or credentials.
-- AccInt MCP calls can write to the configured local AccInt database by opening
-  commitments, continuations, and outcomes. Treat those writes as project
-  memory, and avoid recording sensitive data that does not need to persist.
-- If a task involves production systems, payments, private accounts, legal or
-  medical facts, or secrets, get the required authorization and verify against
-  the appropriate external source before recording an outcome.
+- 此技能不需要 shell 命令、网络请求或凭据。
+- AccInt MCP 调用可以通过打开承诺、延续和结果来写入已配置的本地 AccInt 数据库。
+  将这些写入视为项目记忆，避免记录不需要持久化的敏感数据。
+- 如果任务涉及生产系统、支付、私人账户、法律或医疗事实或机密，
+  在记录结果之前获取所需授权并通过适当的外部来源进行验证。
 
 ## 常见陷阱
 
-- **Problem:** Using retrieved memory as if it were guaranteed current.
-  **Solution:** Use it to guide investigation, then verify in the current
-  workspace or live system.
-- **Problem:** Leaving a `brain_frame` open because implementation work started.
-  **Solution:** Submit a `continue` proposal first, or close/rerun the bound
-  commitment if the frame expires.
-- **Problem:** Marking an outcome good before tests, checks, or external state
-  prove it.
-  **Solution:** Wait for real evidence, then record the outcome with the exact
-  command, PR state, deploy state, or reviewer signal.
+- **问题：** 将检索到的记忆视为保证当前有效。
+  **解决方案：** 用它来指导调查，然后在当前工作区或实时系统中验证。
+- **问题：** 因为实现工作已经开始而让 `brain_frame` 保持打开状态。
+  **解决方案：** 先提交 `continue` 提案，如果帧过期则关闭或重新运行绑定的承诺。
+- **问题：** 在测试、检查或外部状态证明之前将结果标记为成功。
+  **解决方案：** 等待真实证据，然后用确切的命令、PR 状态、部署状态或审查者信号记录结果。
 
-## 相关 Skills
+## 相关技能
 
-- `@agent-memory-mcp` - Use when you need a broader overview of MCP-backed
-  agent memory systems.
-- `@verification-before-completion` - Use before claiming work is complete.
-- `@lint-and-validate` - Use to select and run repository validation commands.
+- `@agent-memory-mcp` — 当你需要 MCP 支持的代理记忆系统的更广泛概述时使用。
+- `@verification-before-completion` — 在声称工作完成之前使用。
+- `@lint-and-validate` — 用于选择和运行仓库验证命令。

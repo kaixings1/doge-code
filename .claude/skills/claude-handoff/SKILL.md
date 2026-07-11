@@ -1,9 +1,11 @@
 ---
-name: claude-handoff
+name: 对话移交代理
 description: 将当前对话移交给一个立刻接管工作的新后台代理。
 参数-hint: "下一个会话将用于什么？"
 disable-model-invocation: true
 ---
+
+# Claude 交接
 
 编写当前对话的移交摘要，以便新代理可以继续工作。与其保存它，不如启动一个后台代理，以摘要作为其提示：`claude --bg --name "<描述性名称>" "<handoff summary>"`。它从当前工作目录启动并立即返回；用户使用 `claude agents` 管理它。
 

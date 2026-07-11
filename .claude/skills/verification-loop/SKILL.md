@@ -1,5 +1,5 @@
 ---
-name: verification-loop
+name: 验证循环工作流
 description: 验证循环工作流
 ---
 

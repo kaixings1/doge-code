@@ -1,5 +1,5 @@
 ---
-name: authentication-patterns
+name: 认证模式
 description: "认证模式"
 risk: safe
 source: community

@@ -1,6 +1,6 @@
 ---
-name: azure-eventhub-dotnet
-description: "Azure Eventhub Dotnet — Azure Eventhub Dotnet 相关功能和最佳实践"
+name: Azure Event Hub .NET SDK 相关功能和最佳实践
+description: "Azure Event Hub .NET — Azure Event Hub .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -66,7 +66,7 @@ var producer = new EventHubProducerClient(
 - **Receiving**: `Azure Event Hubs Data Receiver`
 - **Both**: `Azure Event Hubs Data Owner`
 
-## Client Types
+## 客户端类型
 
 | Client | Purpose | 使用场景 |
 |--------|---------|-------------|
@@ -353,7 +353,7 @@ processor.ProcessEventAsync += async args =>
 };
 ```
 
-## Related SDKs
+## 相关 SDK
 
 | SDK | Purpose | Install |
 |-----|---------|---------|

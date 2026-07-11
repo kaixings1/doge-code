@@ -1,5 +1,5 @@
 ---
-name: family-health-analyzer
+name: 家庭健康分析器
 description: "家庭健康分析器 — 家庭健康数据分析"
 risk: safe
 source: community

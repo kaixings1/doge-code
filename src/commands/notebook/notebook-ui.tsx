@@ -210,5 +210,28 @@ function formatResult(r: any): string {
   if (r.data && Array.isArray(r.data)) return formatTagList(r.data)
   if (r.data && 'items' in r.data) return formatPaginated(r.data)
   if (r.data && 'id' in r.data) return formatSingleNote(r.data)
-  return r.message
+  return r.message || '操作完成'
+}
+
+function formatSingleNote(note: Note): string {
+  return [
+    '📝 ' + note.title,
+    '标签: ' + (note.tags.length ? note.tags.join(', ') : '无'),
+    '置顶: ' + (note.isPinned ? '是' : '否'),
+    '更新: ' + note.updatedAt,
+    '---',
+    note.content || '（空内容）',
+  ].join('\n')
+}
+
+function formatPaginated(data: { items: Note[]; total: number; page: number }): string {
+  const lines = ['📓 笔记列表 (' + data.items.length + '/' + data.total + ')']
+  for (const note of data.items) {
+    lines.push((note.isPinned ? '📌' : '  ') + ' ' + note.title + ' (' + note.id.substring(0, 8) + ')')
+  }
+  return lines.join('\n')
+}
+
+function formatTagList(tags: string[]): string {
+  return '标签: ' + (tags.length ? tags.join(', ') : '无标签')
 }

@@ -1,5 +1,5 @@
 ---
-name: claude-code-guide
+name: 提供配置和使用 Claude Code（AI 编码工具）的全面参考
 description: "提供配置和使用 Claude Code（AI 编码工具）的全面参考。此技能综合了最佳实践、配置模板和高级使用模式。"
 risk: unknown
 source: community
@@ -21,7 +21,7 @@ When starting a new project, create a `CLAUDE.md` file in the root directory to 
 ```markdown
 # Project Guidelines
 
-## Commands
+## 命令
 
 - Run app: `npm run dev`
 - Test: `npm test`

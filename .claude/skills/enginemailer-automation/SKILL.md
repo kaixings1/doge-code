@@ -1,5 +1,5 @@
 ---
-name: enginemailer-automation
+name: Enginemailer 自动化
 description: "Enginemailer 自动化"
 risk: safe
 source: community

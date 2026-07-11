@@ -1,6 +1,6 @@
 ---
 name: mcp-集成
-description: "Mcp 集成 — Mcp 集成 相关功能和最佳实践"
+description: "MCP 集成 — MCP 集成相关功能和最佳实践"
 version: 0.1.0
 ---
 

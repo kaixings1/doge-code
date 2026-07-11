@@ -1,5 +1,5 @@
 ---
-name: linux-privilege-escalation
+name: Linux 权限提升
 description: "在 Linux 系统上执行系统化权限提升评估，以识别和利用允许从低权限用户访问提升到 root 级控制的错误配置、脆弱服务和安全弱点。"
 risk: offensive
 source: community

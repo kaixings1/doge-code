@@ -1,5 +1,5 @@
 ---
-name: email-sequence
+name: 自动化邮件序列
 description: "自动化邮件序列"
 risk: safe
 source: community

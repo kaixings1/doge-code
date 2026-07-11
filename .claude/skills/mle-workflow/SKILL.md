@@ -8,7 +8,7 @@ allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 
 使用此技能将模型工作转化为生产级 ML 系统，具有清晰的数据契约、可重复的训练、可衡量的质量门、可部署的工件和操作监控。
 
-## When to Activate
+## 激活时机
 
 - Planning or reviewing a production ML feature, model refresh, ranking system, recommender, classifier, embedding 工作流, or forecasting pipeline
 - Converting notebook code into a reusable training, evaluation, batch inference, or online inference pipeline

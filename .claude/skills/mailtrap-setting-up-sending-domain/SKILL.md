@@ -1,6 +1,6 @@
 ---
-name: mailtrap-setting-up-sending-domain
-description: "Mailtrap Setting Up Sending Domain — Mailtrap Setting Up Sending Domain 相关功能和最佳实践"
+name: Mailtrap 发送域名设置
+description: "Mailtrap 发送域名设置 — Mailtrap 发送域名设置相关功能和最佳实践"
 risk: critical
 source: community
 date_added: "2026-06-19"

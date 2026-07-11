@@ -3,7 +3,7 @@ description: 创建并设置新的 Claude Agent SDK 应用
 argument-hint: [project-name]
 ---
 
-You are tasked with helping the user create a new Claude Agent SDK application. Follow these steps carefully:
+你的任务是帮助用户创建新的 Claude Agent SDK 应用程序。请仔细遵循以下步骤：
 
 ## Reference Documentation
 

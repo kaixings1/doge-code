@@ -1,9 +1,9 @@
 ---
-name: documentation-lookup
+name: 文档查找工具
 description: 文档查找工具
 ---
 
-# Documentation Lookup (上下文7)
+# 文档查找 (Documentation Lookup)
 
 When the user asks about libraries, frameworks, or APIs, fetch current documentation via the 上下文7 MCP (tools `resolve-library-id` and `查询-docs`) instead of relying on training data.
 

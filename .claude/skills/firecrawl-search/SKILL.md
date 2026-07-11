@@ -1,5 +1,5 @@
 ---
-name: firecrawl-search
+name: Firecrawl搜索技能
 description: Firecrawl搜索技能
 allowed-tools:
   - Bash(firecrawl *)
@@ -29,7 +29,7 @@ firecrawl search "your 查询" --scrape -o .firecrawl/scraped.json --json
 firecrawl search "your 查询" --sources news --tbs qdr:d -o .firecrawl/news.json --json
 ```
 
-## Options
+## 选项
 
 | Option                               | Description                                   |
 | ------------------------------------ | --------------------------------------------- |
@@ -51,7 +51,7 @@ firecrawl search "your 查询" --sources news --tbs qdr:d -o .firecrawl/news.jso
 - Use `jq` to extract URLs or titles: `jq -r '.data.web[].url' .firecrawl/search.json`
 - Naming convention: `.firecrawl/search-{查询}.json` or `.firecrawl/search-{查询}-scraped.json`
 
-## See also
+## 参见
 
 - [firecrawl-scrape](../firecrawl-scrape/SKILL.md) — scrape a specific URL
 - [firecrawl-map](../firecrawl-map/SKILL.md) — discover URLs within a site

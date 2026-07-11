@@ -1,5 +1,5 @@
 ---
-name: api-security-best-practices
+name: API 安全最佳实践
 description: "API 安全最佳实践"
 risk: safe
 source: community

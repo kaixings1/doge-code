@@ -1,5 +1,5 @@
 ---
-name: smtp2go-automation
+name: Smtp2go 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Smtp2go 任务。使用前始终先搜索工具以获取当前 schema。""
 requires:
   mcp: [rube]

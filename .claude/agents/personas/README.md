@@ -1,6 +1,6 @@
-# Persona-Based Agents
+# 基于角色的代理
 
-Pre-configured agent personas with curated skill loadouts, workflows, and distinct personalities.
+预配置的代理角色，包含精选的技能负载、工作流和独特个性。
 
 ## What's a Persona?
 
@@ -62,7 +62,7 @@ See [TEMPLATE.md](template.md) for the format specification. Key elements:
 ```yaml
 ---
 name:  Agent Name
-description:   What this agent does and when to activate it.（待汉化）
+description: 角色代理——不同角色视角的代理定义
 color: blue          # Agent color theme
 emoji: 🎯           # Single emoji identifier
 vibe: One sentence personality capture.

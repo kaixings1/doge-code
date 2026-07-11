@@ -1,5 +1,5 @@
 ---
-name: code-reviewer
+name: 代码审查者
 description: "代码审查者"
 risk: safe
 source: community

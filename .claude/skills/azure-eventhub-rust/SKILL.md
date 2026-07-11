@@ -1,6 +1,6 @@
 ---
-name: azure-eventhub-rust
-description: "Azure Eventhub Rust — Azure Eventhub Rust 相关功能和最佳实践"
+name: Azure Event Hub Rust SDK 相关功能和最佳实践
+description: "Azure Event Hub Rust — Azure Event Hub Rust SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

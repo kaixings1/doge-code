@@ -1,12 +1,12 @@
 ---
 name: design-taste-frontend
-description: "Taste Taste Skill — Taste Taste Skill 相关功能和最佳实践"
+description: "设计品味 — 前端设计品味相关功能和最佳实践"
 ---
 
-# tasteskill: Anti-Slop Frontend Skill
+# 品味技能：反 Slop 前端技能
 
-> Landing pages, portfolios, and redesigns. Not dashboards, not data tables, not multi-step product UI.
-> Every rule below is **contextual**. None of it fires automatically. First read the brief, then pull only what fits.
+> 着陆页、作品集和重新设计。不是仪表板、不是数据表格、不是多步骤产品 UI。
+> 下面的每条规则都是**上下文的**。没有一条会自动触发。先阅读简报，然后只提取适用的内容。
 
 ---
 
@@ -863,7 +863,7 @@ skills/taste-skill/blocks/
 ### 12.B Required Frontmatter
 ```yaml
 ---
-name: asymmetric-split-hero
+name: 设计品味
 category: hero
 dial_compatibility:
   variance: [6, 10]

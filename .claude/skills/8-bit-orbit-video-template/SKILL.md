@@ -1,7 +1,6 @@
 ---
-name: 8-bit-orbit-video-template
-description: "8位轨道视频模板 — 8位轨道视频模板相关功能和最佳实践"
-  基于 Hyperframes 的复古像素风格视频模板。用于需要高保真多场景 HTML 转视频、高级转场、交互式预览控制及即用渲染样式的场景。
+name: 8位轨道视频模板
+description: "8位轨道视频模板 — 基于 Hyperframes 的复古像素风格视频模板。用于需要高保真多场景 HTML 转视频、高级转场、交互式预览控制及即用渲染样式的场景。"
 triggers:
   - "hyperframes视频模板"
   - "视频模板"

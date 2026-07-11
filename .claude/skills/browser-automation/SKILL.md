@@ -1,5 +1,5 @@
 ---
-name: browser-automation
+name: Browser Automation 相关功能和最佳实践
 description: "Browser Automation — Browser Automation 相关功能和最佳实践"
   interactions. The difference between a flaky script and a reliable system
   comes down to understanding selectors, waiting strategies, and anti-detection
@@ -24,7 +24,7 @@ Critical distinction: Testing automation (predictable apps you control) vs
 scraping/agent automation (unpredictable sites that fight back). Different
 problems, different solutions.
 
-## Principles
+## 原则
 
 - Use user-facing locators (getByRole, getByText) over CSS/XPath
 - Never add manual waits - Playwright's auto-wait handles it
@@ -52,7 +52,7 @@ problems, different solutions.
 - accessibility-testing → accessibility-specialist
 - visual-regression-testing → ui-design
 
-## Tooling
+## 工具
 
 ### Frameworks
 
@@ -599,7 +599,7 @@ await page.goto('/dashboard');
 // apiResponses now contains all API calls
 """
 
-## Sharp Edges
+## 注意事项
 
 ### Using waitForTimeout Instead of Proper Waits
 
@@ -999,7 +999,7 @@ await page.waitForSelector('iframe#payment');
 const frame = page.frameLocator('iframe#payment');
 await frame.getByText('Secure Payment').waitFor();
 
-## Validation Checks
+## 验证检查
 
 ### Using waitForTimeout
 
@@ -1081,7 +1081,7 @@ One failure shouldn't crash entire scrape
 
 Message: Scraping loop without try/catch. One page failure will crash the entire scrape. Add error handling.
 
-## Collaboration
+## 协作
 
 ### Delegation Triggers
 

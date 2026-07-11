@@ -1,5 +1,5 @@
 ---
-name: chinese-documentation
+name: 中文文档
 description: "中文文档"
 risk: safe
 source: community

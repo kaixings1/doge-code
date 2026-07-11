@@ -1,5 +1,5 @@
 ---
-name: ejentum-reasoning-harness
+name: MCP 服务器暴露四种认知框架模式（推理、代码、反欺骗、记忆）。每次调用返回一个
 description: "MCP 服务器暴露四种认知框架模式（推理、代码、反欺骗、记忆）。每次调用返回一个工程化框架（失败模式、过程、抑制向量、证伪测试），代理在生成前摄取。"
 risk: critical
 source: community

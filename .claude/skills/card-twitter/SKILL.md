@@ -1,5 +1,5 @@
 ---
-name: card-twitter
+name: Twitter 卡片
 description: "Twitter 卡片"
 risk: safe
 source: community

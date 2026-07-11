@@ -1,5 +1,5 @@
 ---
-name: mailtrap-sending-emails
+name: 配置或排查 Mailtrap 实时邮件发送：Email API、SMTP、事务流、批量流或批次。
 description: 配置或排查 Mailtrap 实时邮件发送：Email API、SMTP、事务流、批量流或批次。
 risk: critical
 source: community

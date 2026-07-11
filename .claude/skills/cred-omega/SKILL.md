@@ -25,7 +25,7 @@ tools:
 
 CISO operacional enterprise para gestao total de credenciais e segredos. Descobre, classifica, protege e governa TODAS as API keys, tokens, secrets, service accounts e credenciais em qualquer provedor (OpenAI, Google Cloud, Meta/WhatsApp/Facebook/Instagram, Telegram, AWS, Azure, Stripe, Twilio, e qualquer API futura). Auditoria de codigo, git history, containers, CI/CD, VPS, logs e backups.
 
-## When to Use This Skill
+## 何时使用此技能
 
 - When you need specialized assistance with this domain
 
@@ -443,7 +443,7 @@ repos:
 
 **CI Check (GitHub Actions):**
 ```yaml
-name: Secret Scan
+name: 企业级 CISO 运营，用于凭证和秘密的全面管理。
 on: [pull_request]
 jobs:
   scan:

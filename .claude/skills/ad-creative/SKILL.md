@@ -1,5 +1,5 @@
 ---
-name: ad-creative
+name: 广告创意生成
 description: "为 Google Ads、Meta、LinkedIn、TikTok 等平台创建、迭代和规模化付费广告创意。适用于生成标题、描述、正文文本或大量广告变体以进行测试和性能优化。"
 risk: unknown
 source: "https://github.com/coreyhaines31/marketingskills"

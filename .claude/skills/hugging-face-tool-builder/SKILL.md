@@ -1,5 +1,5 @@
 ---
-name: hugging-face-tool-builder
+name: Hugging Face 工具构建器
 description: "Hugging Face 工具构建器 — AI 工具创建"
 risk: safe
 source: community

@@ -1,6 +1,6 @@
 ---
 # agentskills.io compliant frontmatter
-name: clarity-gate
+name: Clarity Gate 相关功能和最佳实践
 risk: unknown
 source: community
 version: 2.1.3

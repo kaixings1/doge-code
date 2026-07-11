@@ -20,17 +20,17 @@ requires: [config, phase, plan-phase]
 </context>
 
 <objective>
-Initialize a new project through unified flow: questioning → research (optional) → requirements → roadmap.
+通过统一流程初始化新项目：提问 → 研究（可选）→ 需求 → 路线图。
 
-**Creates:**
-- `.planning/PROJECT.md` — project context
-- `.planning/config.json` — workflow preferences
-- `.planning/research/` — domain research (optional)
-- `.planning/REQUIREMENTS.md` — scoped requirements
-- `.planning/ROADMAP.md` — phase structure
-- `.planning/STATE.md` — project memory
+**创建：**
+- `.planning/PROJECT.md` — 项目上下文
+- `.planning/config.json` — 工作流偏好
+- `.planning/research/` — 领域研究（可选）
+- `.planning/REQUIREMENTS.md` — 范围需求
+- `.planning/ROADMAP.md` — 阶段结构
+- `.planning/STATE.md` — 项目记忆
 
-**After this command:** Run `/gsd:plan-phase 1` to start execution.
+**此命令之后：** 运行 `/gsd:plan-phase 1` 开始执行。
 </objective>
 
 <execution_context>

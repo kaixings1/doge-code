@@ -23,7 +23,7 @@ Single-file HTML view of a pro-workflow wiki. Reads `~/.pro-workflow/data.db`, d
 - Incident review: render an `incident` wiki for a post-mortem readout
 - Periodic audits: stale-claim detection, orphan-page review
 
-## Commands
+## 命令
 
 ```
 node $SKILL_ROOT/scripts/render.js <slug> [--out <path>] [--theme dark|light]

@@ -1,61 +1,24 @@
-# OpenCode Integration
+# OpenCode 集成
 
-OpenCode agents are `.md` files with YAML frontmatter stored in
-`.opencode/agents/`. The converter maps named colors to hex codes and adds
-`mode: subagent` so agents are invoked on-demand via `@agent-name` rather
-than cluttering the primary agent picker.
+所有 61 个 Agency 代理已合并为 OpenCode 兼容格式。
 
-## Install
+## 安装
 
 ```bash
-# Run from your project root
+# 从项目根目录运行
 cd /your/project
 /path/to/agency-agents/scripts/install.sh --tool opencode
 ```
 
-This creates `.opencode/agents/<slug>.md` files in your project directory.
+## 激活代理
 
-## Activate an Agent
-
-In OpenCode, invoke a subagent with the `@` prefix:
+在 OpenCode 中引用代理：
 
 ```
-@frontend-developer help build this component.
+使用全栈工程师代理构建此功能。
 ```
 
-```
-@reality-checker review this PR.
-```
-
-You can also select agents from the OpenCode UI's agent picker.
-
-## Agent Format
-
-Each generated agent file contains:
-
-```yaml
----
-name:  Frontend Developer
-description:   开发工程师
-mode: subagent
-color: "#00FFFF"
----
-```
-
-- **mode: subagent** — agent is available on-demand, not shown in the primary Tab-cycle list
-- **color** — hex code (named colors from source files are converted automatically)
-
-## Project vs Global
-
-Agents in `.opencode/agents/` are **project-scoped**. To make them available
-globally across all projects, copy them to your OpenCode config directory:
-
-```bash
-mkdir -p ~/.config/opencode/agents
-cp integrations/opencode/agents/*.md ~/.config/opencode/agents/
-```
-
-## Regenerate
+## 重新生成
 
 ```bash
 ./scripts/convert.sh --tool opencode

@@ -1,5 +1,5 @@
 ---
-name: azure-appconfiguration-ts
+name: 指导 TypeScript 开发者使用 Azure App Configurat
 description: "指导 TypeScript 开发者使用 Azure App Configuration 客户端库管理应用设置和功能标志。"
 risk: unknown
 source: community
@@ -318,7 +318,7 @@ for await (const label of client.listLabels()) {
 }
 ```
 
-## Key Types
+## 关键类型
 
 ```typescript
 import {

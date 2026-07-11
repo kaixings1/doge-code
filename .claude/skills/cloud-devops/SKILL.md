@@ -1,5 +1,5 @@
 ---
-name: cloud-devops
+name: 云基础设施和 DevOps 工作流，涵盖 AWS、Azure、GCP、Kuber
 description: "云基础设施和 DevOps 工作流，涵盖 AWS、Azure、GCP、Kubernetes、Terraform 和 CI/CD。"
 category: 工作流-bundle
 risk: safe
@@ -218,7 +218,7 @@ Skills: gcp-cloud-run
 Services: Cloud Run, GKE, Cloud Functions, BigQuery
 ```
 
-## Quality Gates
+## 质量门
 
 - [ ] Infrastructure provisioned
 - [ ] CI/CD pipeline working

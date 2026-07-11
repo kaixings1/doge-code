@@ -2,7 +2,7 @@
 description: 扫描并优化文档 SEO — Meta 标签、可读性、关键词、失效链接、站点地图。
 ---
 
-Run the SEO auditor on documentation files. Target path: `$ARGUMENTS` (default: all docs/ and root README.md).
+对文档文件运行 SEO 审计器。目标路径：`$ARGUMENTS`（默认：所有 docs/ 和根目录 README.md）。
 
 If `$ARGUMENTS` is `--report-only`, scan without making changes.
 

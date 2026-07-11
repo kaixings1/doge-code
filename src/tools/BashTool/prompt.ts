@@ -2,6 +2,7 @@ import { feature } from 'bun:bundle'
 import { prependBullets } from '../../constants/prompts.js'
 import { getAttributionTexts } from '../../utils/attribution.js'
 import { hasEmbeddedSearchTools } from '../../utils/embeddedTools.js'
+import { env } from '../../utils/env.js'
 import { isEnvTruthy } from '../../utils/envUtils.js'
 import { shouldIncludeGitInstructions } from '../../utils/gitSettings.js'
 import { getClaudeTempDir } from '../../utils/permissions/filesystem.js'
@@ -30,6 +31,55 @@ export function getDefaultTimeoutMs(): number {
 
 export function getMaxTimeoutMs(): number {
   return getMaxBashTimeoutMs()
+}
+
+function getShellToolDescription(): string {
+  const shell = process.env.CLAUDE_CODE_SHELL || process.env.SHELL || ''
+  const shim = shell.toLowerCase()
+  const isNativeWinShell = shim.includes('cmd') || shim.includes('powershell') || shim.includes('pwsh')
+
+  // Linux / macOS：原生 Unix 环境
+  if (env.platform !== 'win32') {
+    return [
+      "工作目录在命令之间保持不变，但 shell 状态不会保留。Shell 环境从用户的配置文件（bash 或 zsh）初始化。",
+      '',
+      '关键：此工具始终使用 bash/zsh shell——绝不要使用 PowerShell 语法（Get-ChildItem、Where-Object、Select-Object 等）或 Windows CMD 命令（dir、type、del）。仅使用 Unix/bash 命令（ls、grep、cat、find 等）。',
+      '',
+      '关键：尽管此工具使用 bash，但底层文件系统是原生操作系统文件系统。对于临时文件，请使用 /tmp 目录。',
+    ].join('\n')
+  }
+
+  // Windows + MSYS2 / Git Bash
+  if (!isNativeWinShell) {
+    return [
+      "工作目录在命令之间保持不变，但 shell 状态不会保留。Shell 环境从用户的配置文件（bash 或 zsh）初始化。",
+      '',
+      '关键：此工具运行于 MSYS2/Git Bash 环境下的 bash/zsh shell。请使用 Unix/bash 命令（ls、grep、cat、find 等）。绝不要使用 PowerShell 语法（Get-ChildItem、Where-Object、Select-Object 等）或 Windows CMD 命令（dir、type、del）。',
+      '',
+      '关键：底层文件系统是 Windows 原生文件系统。请使用 Windows 路径（例如 D:/doge-code/file.txt 或 "D:\\doge-code\\file.txt"），而不是像 /tmp、/dev、/etc 这样的 Linux 路径。bash 环境在 Git Bash/MSYS2 下运行，它会转换路径——但您应始终使用实际的 Windows 路径。对于临时文件，不要使用 /tmp——请使用当前工作目录或等效的 %TEMP%。',
+    ].join('\n')
+  }
+
+  // Windows + 原生 shell（cmd / powershell / pwsh）
+  const shellDisplay = shim.includes('powershell') || shim.includes('pwsh') ? 'PowerShell' : 'cmd.exe'
+  if (shim.includes('powershell') || shim.includes('pwsh')) {
+    return [
+      "工作目录在命令之间保持不变，但 shell 状态不会保留。",
+      '',
+      `关键：此工具运行于 Windows 原生 ${shellDisplay} shell。请使用 PowerShell 命令和语法。不要使用 bash/zsh 特定语法（如 && 链接、$(...) 命令替换、重定向到 /dev/null 等）。`,
+      '',
+      '关键：底层文件系统是 Windows 原生文件系统。请使用 Windows 路径（例如 D:\\doge-code\\file.txt）。对于临时文件，请使用 $env:TEMP。',
+    ].join('\n')
+  }
+
+  // cmd.exe
+  return [
+    "工作目录在命令之间保持不变，但 shell 状态不会保留。",
+    '',
+    '关键：此工具运行于 Windows 原生 cmd.exe shell。请使用 Windows CMD 命令（dir、cd、type、del、findstr）。不要使用 bash/zsh 特定语法（如 ls、grep、cat、管道 | 在 CMD 中功能受限、$(...) 命令替换、重定向到 /dev/null 等）。CMD 的变量语法为 %VAR%，而不是 $VAR。',
+    '',
+    '关键：底层文件系统是 Windows 原生文件系统。请使用 Windows 路径（例如 D:\\doge-code\\file.txt）。对于临时文件，请使用 %TEMP%。',
+  ].join('\n')
 }
 
 function getBackgroundUsageNote(): string | null {
@@ -396,12 +446,7 @@ export function getSimplePrompt(): string {
   return [
     '执行给定的 bash 命令并返回其输出。',
     '',
-    "工作目录在命令之间保持不变，但 shell 状态不会保留。Shell 环境从用户的配置文件（bash 或 zsh）初始化。",
-    '',
-    '关键：此工具始终使用 bash/zsh shell——绝不要使用 PowerShell 语法（Get-ChildItem、Where-Object、Select-Object 等）或 Windows CMD 命令（dir、type、del）。仅使用 Unix/bash 命令（ls、grep、cat、find 等）。即使在 Windows 上，此工具也运行 bash——请编写 bash 命令。',
-    '',
-    '关键：尽管此工具使用 bash，但底层文件系统是原生操作系统文件系统。在 Windows 上，请使用 Windows 路径（例如 D:/doge-code/file.txt 或 "D:\\doge-code\\file.txt"），而不是像 /tmp、/dev、/etc 这样的 Linux 路径。bash 环境在 Git Bash/MSYS2 下运行，它会转换路径——但您应始终使用实际的 Windows 路径。对于临时文件，不要使用 /tmp——请使用当前工作目录或等效的 %TEMP%。',
-    '',
+    getShellToolDescription(),
     `重要提示：避免使用此工具运行 ${avoidCommands} 命令，除非明确指示或在您验证专用工具无法完成您的任务之后。相反，请使用相应的专用工具，这将为用户提供更好的体验：`,
     '',
     ...prependBullets(toolPreferenceItems),

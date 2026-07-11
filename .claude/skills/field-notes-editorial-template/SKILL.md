@@ -1,5 +1,5 @@
 ---
-name: field-notes-editorial-template
+name: 现场笔记编辑模板
 description: "现场笔记编辑模板 — 现场笔记和编辑模板"
 risk: safe
 source: community

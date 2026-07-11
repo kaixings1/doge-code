@@ -1,5 +1,5 @@
 ---
-name: fal-image-edit
+name: FAL 图像编辑
 description: "FAL 图像编辑 — 基于 FAL AI 的图像编辑"
 risk: unknown
 source: community

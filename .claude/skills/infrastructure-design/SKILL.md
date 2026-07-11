@@ -1,5 +1,5 @@
 ---
-name: infrastructure-design
+name: 基础设施设计
 description: "基础设施设计 — 云基础设施架构和设计模式"
 risk: unknown
 source: community

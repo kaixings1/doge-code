@@ -1,5 +1,5 @@
 ---
-name: makepad-reference
+name: 此类别提供调试、代码质量和高级布局模式的参考资料。
 description: "此类别提供调试、代码质量和高级布局模式的参考资料。"
 risk: unknown
 source: community

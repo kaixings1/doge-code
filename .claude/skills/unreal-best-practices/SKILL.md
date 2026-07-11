@@ -1,5 +1,5 @@
 ---
-name: unreal-best-practices
+name: Unreal 最佳实践
 description: "Unreal 最佳实践 — Unreal Engine 5.x 开发综合最佳实践指南"
   现代 Unreal Engine 5.x 开发的综合最佳实践指南。
   涵盖 Epic 面向现代系统的战略方向（GAS、Enhanced Input、StateTree、

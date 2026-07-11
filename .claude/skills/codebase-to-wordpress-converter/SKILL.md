@@ -1,5 +1,5 @@
 ---
-name: codebase-to-wordpress-converter
+name: TML/Next.js）转换
 description: "将任何代码库（React/HTML/Next.js）转换为像素级完美的 WordPress 主题/插件的专家技能。"
 risk: safe
 source: community
@@ -20,7 +20,7 @@ This skill is designed for the high-fidelity conversion of static or React-based
 - Use when auditing an existing WordPress conversion for structural or SEO flaws.
 - Use when you need to ensure technical SEO (架构, Meta tags, Heading hierarchy) is preserved exactly.
 
-## Core Capabilities
+## 核心能力
 
 ### Phased Conversion & Audit
 The skill follows a strict 4-phase forensic process:
@@ -89,7 +89,7 @@ wp_nav_menu([
 - ❌ **Don't:** Add "div" wrappers or rename classes to "clean up" the code.
 - ❌ **Don't:** Use standard WordPress default styles if they conflict with the original design.
 
-## Additional Resources
+## 其他资源
 
 - [ACF Documentation](https://www.advancedcustomfields.com/resources/)
 - [Tailwind CSS in WordPress](https://tailwindcss.com/docs/installation)

@@ -3,56 +3,56 @@ description: 交互式启禁用 hookify 规则
 allowed-tools: ["Glob", "Read", "Edit", "AskUserQuestion", "Skill"]
 ---
 
-# Configure Hookify Rules
+# 配置 Hookify 规则
 
-**Load hookify:writing-rules skill first** to understand rule format.
+**首先加载 hookify:writing-rules 技能**以了解规则格式。
 
-Enable or disable existing hookify rules using an interactive interface.
+使用交互式界面启用或禁用现有的 hookify 规则。
 
-## Steps
+## 步骤
 
-### 1. Find Existing Rules
+### 1. 查找现有规则
 
-Use Glob tool to find all hookify rule files:
+使用 Glob 工具查找所有 hookify 规则文件：
 ```
 pattern: ".claude/hookify.*.local.md"
 ```
 
-If no rules found, inform user:
+如果未找到规则，告知用户：
 ```
-No hookify rules configured yet. Use `/hookify` to create your first rule.
+尚未配置 hookify 规则。使用 `/hookify` 创建你的第一条规则。
 ```
 
-### 2. Read Current State
+### 2. 读取当前状态
 
-For each rule file:
-- Read the file
-- Extract `name` and `enabled` fields from frontmatter
-- Build list of rules with current state
+对于每个规则文件：
+- 读取文件内容
+- 从 frontmatter 中提取 `name` 和 `enabled` 字段
+- 构建带当前状态的规则列表
 
-### 3. Ask User Which Rules to Toggle
+### 3. 询问用户要切换哪些规则
 
-Use AskUserQuestion to let user select rules:
+使用 AskUserQuestion 让用户选择规则：
 
 ```json
 {
   "questions": [
     {
-      "question": "Which rules would you like to enable or disable?",
-      "header": "Configure",
+      "question": "您想要启用或禁用哪些规则？",
+      "header": "配置",
       "multiSelect": true,
       "options": [
         {
-          "label": "warn-dangerous-rm (currently enabled)",
-          "description": "Warns about rm -rf commands"
+          "label": "warn-dangerous-rm（当前已启用）",
+          "description": "警告 rm -rf 命令"
         },
         {
-          "label": "warn-console-log (currently disabled)",
-          "description": "Warns about console.log in code"
+          "label": "warn-console-log（当前已禁用）",
+          "description": "警告代码中的 console.log"
         },
         {
-          "label": "require-tests (currently enabled)",
-          "description": "Requires tests before stopping"
+          "label": "require-tests（当前已启用）",
+          "description": "在停止前要求测试"
         }
       ]
     }
@@ -60,69 +60,69 @@ Use AskUserQuestion to let user select rules:
 }
 ```
 
-**Option format:**
-- Label: `{rule-name} (currently {enabled|disabled})`
-- Description: Brief description from rule's message or pattern
+**选项格式：**
+- Label：`{规则名称}（当前{已启用|已禁用}）`
+- Description：来自规则 message 或 pattern 的简要描述
 
-### 4. Parse User Selection
+### 4. 解析用户选择
 
-For each selected rule:
-- Determine current state from label (enabled/disabled)
-- Toggle state: enabled → disabled, disabled → enabled
+对于每个选中的规则：
+- 从标签确定当前状态（已启用/已禁用）
+- 切换状态：已启用 → 已禁用，已禁用 → 已启用
 
-### 5. Update Rule Files
+### 5. 更新规则文件
 
-For each rule to toggle:
-- Use Read tool to read current content
-- Use Edit tool to change `enabled: true` to `enabled: false` (or vice versa)
-- Handle both with and without quotes
+对于每个要切换的规则：
+- 使用 Read 工具读取当前内容
+- 使用 Edit 工具将 `enabled: true` 改为 `enabled: false`（或相反）
+- 处理带引号和不带引号两种情况
 
-**Edit pattern for enabling:**
+**启用编辑模式：**
 ```
 old_string: "enabled: false"
 new_string: "enabled: true"
 ```
 
-**Edit pattern for disabling:**
+**禁用编辑模式：**
 ```
 old_string: "enabled: true"
 new_string: "enabled: false"
 ```
 
-### 6. Confirm Changes
+### 6. 确认更改
 
-Show user what was changed:
+向用户展示更改内容：
 
 ```
-## Hookify Rules Updated
+## Hookify 规则已更新
 
-**Enabled:**
+**已启用：**
 - warn-console-log
 
-**Disabled:**
+**已禁用：**
 - warn-dangerous-rm
 
-**Unchanged:**
+**未更改：**
 - require-tests
 
-Changes apply immediately - no restart needed
+更改立即生效 - 无需重启
 ```
 
-## Important Notes
+## 重要说明
 
-- Changes take effect immediately on next tool use
-- You can also manually edit .claude/hookify.*.local.md files
-- To permanently remove a rule, delete its .local.md file
-- Use `/hookify:list` to see all configured rules
+- 更改在下一次工具使用时立即生效
+- 你也可以手动编辑 .claude/hookify.*.local.md 文件
+- 要永久移除规则，删除其 .local.md 文件
+- 使用 `/hookify:list` 查看所有已配置的规则
 
-## Edge Cases
+## 边界情况
 
-**No rules to configure:**
-- Show message about using `/hookify` to create rules first
+**没有可配置的规则：**
+- 显示使用 `/hookify` 先创建规则的消息
 
-**User selects no rules:**
-- Inform that no changes were made
+**用户未选择任何规则：**
+- 告知未做任何更改
 
-**File read/write errors:**
-- Inform user of specific error
-- Suggest manual editing as fallback
+**文件读/写错误：**
+- 告知用户具体错误信息
+- 建议手动编辑作为后备方案

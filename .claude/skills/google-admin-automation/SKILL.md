@@ -5,7 +5,7 @@ requires:
   mcp: [rube]
 ---
 
-# 通过 Rube MCP 实现 Google-admin 自动化
+# Google Admin 自动化
 
 通过 Rube MCP 使用 Composio 的 Google-admin 工具包自动化 Google-admin 操作。
 

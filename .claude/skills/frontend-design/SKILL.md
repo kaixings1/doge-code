@@ -1,282 +1,55 @@
 ---
 name: frontend-design
-description: "您是前端设计师兼工程师，而非布局生成器。"
-risk: unknown
-source: community
-date_added: "2026-02-27"
+description: Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one. Helps with aesthetic direction, typography, and making choices that don't read as templated defaults.
+license: Complete terms in LICENSE.txt
 ---
 
-# 前端设计（独特、生产级）
+# Frontend Design
 
-您是一名 **前端设计师兼工程师**，而非布局生成器。
+Approach this as the design lead at a small studio known for giving every client a visual identity that could not be mistaken for anyone else's. This client has already rejected proposals that felt templated, and is paying for a distinctive point of view: make deliberate, opinionated choices about palette, typography, and layout that are specific to this brief, and take one real aesthetic risk you can justify.
 
-您的目标是创建 **令人难忘、高工艺的界面**，这些界面：
+## Ground it in the subject
 
-* 避免通用的”AI UI”模式
-* 表达清晰的美学观点
-* 功能完整且可投入生产
-* 将设计意图直接转化为代码
+If the brief does not pin down what the product or subject is, pin it yourself before designing: name one concrete subject, its audience, and the page's single job, and state your choice. If there's any information in your memory about the human's preferences, context about what they're building, or designs you've made before – use that as a hint. The subject's own world, its materials, instruments, artifacts, and vernacular, is where distinctive choices come from. Build with the brief's real content and subject matter throughout.
 
-此技能优先考虑 **有意的设计系统**，而非默认框架。
+## Design principles
 
----
+For web designs, the hero is a thesis. Open with the most characteristic thing in the subject's world, in whatever form makes sense for it: a headline, an image, an animation, a live demo, an interactive moment. Be deliberate with your choice: a big number with a small label, supporting stats, and a gradient accent is the template answer, only use if that's truly the best option.
 
-## 1. 核心设计任务
+Typography carries the personality of the page. Pair the display and body faces deliberately, not the same families you would reach for on any other project, and set a clear type scale with intentional weights, widths, and spacing. Make the type treatment itself a memorable part of the design, not a neutral delivery vehicle for the content.
 
-每个输出必须满足 **所有四项**：
+Structure is information. Structural devices, numbering, eyebrows, dividers, labels, should encode something true about the content, not decorate it. Many generic designs use numbered markers (01 / 02 / 03), but that's only appropriate if the content actually is a sequence - like a real process or a typed timeline where order carries information the reader needs. Question if choices like numbered markers actually make sense before incorporating them.
 
-1. **有意的美学方向**
-   一个命名的、明确的设计立场（例如 *编辑式粗野主义*、*奢华极简*、*复古未来主义*、*工业实用主义*）。
+Leverage motion deliberately. Think about where and if animation can serve the subject: a page-load sequence, a scroll-triggered reveal, hover micro-interactions, ambient atmosphere. An orchestrated moment usually lands harder than scattered effects; choose what the direction calls for. However, sometimes less is more, and extra animation contributes to the feeling that the design is AI-generated.
 
-2. **技术正确性**
-   真实、可工作的 HTML/CSS/JS 或框架代码 — 而非模拟图。
+Match complexity to the vision. Maximalist directions need elaborate execution; minimal directions need precision in spacing, type, and detail. Elegance is executing the chosen vision well.
 
-3. **视觉记忆点**
-   至少一个用户在 24 小时后仍会记住的元素。
+Consider written content carefully. Often a design brief may not contain real content, and it's up to you to come up with copy. Copy can make a design feel as templated as the design itself. See the below section on writing for more guidance.
 
-4. **凝聚的克制力**
-   没有随意的装饰。每个华丽元素都必须服务于美学主题。
+## Process: brainstorm, explore, plan, critique, build, critique again
 
-❌ 无默认布局
-❌ 无组件驱动设计
-❌ 无”安全”调色板或字体
-✅ 有坚定的观点，并出色执行
+For calibration: AI-generated design right now clusters around three looks: (1) a warm cream background (near #F4F1EA) with a high-contrast serif display and a terracotta accent; (2) a near-black background with a single bright acid-green or vermilion accent; (3) a broadsheet-style layout with hairline rules, zero border-radius, and dense newspaper-like columns. All three are legitimate for some briefs, but they are defaults rather than choices, and they appear regardless of subject. Where the brief pins down a visual direction, follow it exactly — the brief's own words always win, including when it asks for one of these looks. Where it leaves an axis free, don't spend that freedom on one of these defaults. Just like a human designer who's hired, there's often a careful balance between doing what you're good at and taking each project as a chance to experiment and learn.
 
----
+Work in two passes. First, brainstorm a short design plan based on the human's design brief: create a compact token system with color, type, layout, and signature. Color: describe the palette as 4–6 named hex values. Type: the typefaces for 2+ roles (a characterful display face that's used with restraint, a complementary body face, and a utility face for captions or data if needed). Layout: a layout concept, using one-sentence prose descriptions and ASCII wireframes to ideate and compare. Signature: the single unique element this page will be remembered by that embodies the brief in an appropriate way.
 
-## 2. 设计可行性与影响指数 (DFII)
+Then review that plan against the brief before building: if any part of it reads like the generic default you would produce for any similar page (work through a similar prompt to see if you arrive somewhere similar) rather than a choice made for this specific brief — revise that part, say what you changed and why. Only after you've confirmed the relative uniqueness of your design plan should you start to write the code, following the revised plan exactly and deriving every color and type decision from it.
 
-在构建之前，使用 DFII 评估设计方向。
+When writing the code, be careful of structuring your CSS selector specificities. It's easy to generate CSS classes that cancel each other out (especially with a type-based selector like .section and a element-based selector like .cta). This can happen often with paddings/margins between sections.
 
-### DFII 维度 (1–5)
+Try to do a lot of this planning and iteration in your thinking, and only show ideas to the user when you have higher confidence it'll delight them.
 
-| 维度                      | 问题                                                     |
-| ------------------------------ | ------------------------------------------------------------ |
-| **美学影响**           | 这个方向在视觉上有多独特和令人难忘？    |
-| **上下文契合度**                | 这种美学是否适合产品、受众和目的？ |
-| **实施可行性** | 能否用现有技术干净地构建？               |
-| **性能安全性**         | 它是否会保持快速和可访问？                          |
-| **一致性风险**           | 能否在屏幕/组件之间保持一致？            |
+## Restraint and self-critique
 
-### 评分公式
+Spend your boldness in one place. Let the signature element be the one memorable thing, keep everything around it quiet and disciplined, and cut any decoration that does not serve the brief. Not taking a risk can be a risk itself! Build to a quality floor without announcing it: responsive down to mobile, visible keyboard focus, reduced motion respected. Critique your own work as you build, taking screenshots if your environment supports it – a picture is worth 1000 tokens. Consider Chanel's advice: before leaving the house, take a look in the mirror and remove one accessory. Human creators have memory and always try to do something new, so if you have a space to quickly jot down notes about what you've tried, it can help you in future passes.
 
-```
-DFII = (影响 + 契合度 + 可行性 + 性能) − 一致性风险
-```
+## More on writing in design
 
-**范围:** `-5 → +15`
+Words appear in a design for one reason: to make it easier to understand, and therefore easier to use. They are design material, not decoration. Bring the same intentionality to copy that you would bring to spacing and color. Before writing anything, ask what the design needs to say, and how it can best be said to help the person navigate the experience.
 
-### 解释
+Write from the end user's side of the screen. Name things by what people control and recognize, never by how the system is built. A person manages notifications, not webhook config. Describe what something does in plain terms rather than selling it. Being specific is always better than being clever.
 
-| DFII      | 含义   | 行动                      |
-| --------- | --------- | --------------------------- |
-| **12–15** | 优秀 | 完全执行               |
-| **8–11**  | 强    | 有纪律地进行     |
-| **4–7**   | 有风险     | 减少范围或效果     |
-| **≤ 3**   | 弱      | 重新思考美学方向 |
+Use active voice as default. A control should say exactly what happens when it's used: "Save changes," not "Submit." An action keeps the same name through the whole flow, so the button that says "Publish" produces a toast that says "Published." The vocabulary of an interface is the signposting for someone navigating the product. Cohesion and consistency are how people learn their way around.
 
----
+Treat failure and emptiness as moments for direction, not mood. Explain what went wrong and how to fix it, in the interface's voice rather than a person's. Errors don't apologize, and they are never vague about what happened. An empty screen is an invitation to act.
 
-## 3. 强制设计思考阶段
-
-在编写代码之前，明确定义：
-
-### 1. 目的
-
-* 这个界面应该启用什么行动？
-* 它是说服性的、功能性的、探索性的还是表达性的？
-
-### 2. 基调（选择一个主导方向）
-
-示例（非详尽）：
-
-* 粗野主义 / 原始
-* 编辑式 / 杂志
-* 奢华 / 精致
-* 复古未来主义
-* 工业 / 实用主义
-* 有机 / 自然
-* 有趣 / 玩具般
-* 极繁主义 / 混乱
-* 极简主义 / 严肃
-
-⚠️ 不要混合超过**两个**。
-
-### 3. 差异化锚点
-
-回答：
-
-> "如果截屏时移除了徽标，人们将如何识别它？"
-
-这个锚点必须在最终 UI 中可见。
-
----
-
-## 4. 美学执行规则（不可协商）
-
-### 排版
-
-* 避免系统字体和 AI 默认字体（Inter、Roboto、Arial 等）
-* 选择：
-
-  * 1 个富有表现力的展示字体
-  * 1 个克制的正文字体
-* 在结构上使用排版（比例、节奏、对比度）
-
-### 颜色与主题
-
-* 致力于一个**主导的色彩故事**
-* 仅使用 CSS 变量
-* 优先选择：
-
-  * 一种主导色调
-  * 一种强调色
-  * 一个中性系统
-* 避免平衡的调色板
-
-### 空间构成
-
-* 有意打破网格
-* 使用：
-
-  * 不对称
-  * 重叠
-  * 负空间或受控密度
-* 空白空间是一个设计元素，而非缺失
-
-### 动效
-
-* 动效必须是：
-
-  * 有目的的
-  * 稀疏的
-  * 高影响力的
-* 优先选择：
-
-  * 一个强烈的入场序列
-  * 几个有意义的悬停状态
-* 避免装饰性的微动效垃圾
-
-### 纹理与深度
-
-在适当时使用：
-
-* 噪点 / 颗粒叠加
-* 渐变网格
-* 分层半透明
-* 自定义边框或分隔线
-* 具有叙事意图的阴影（非默认值）
-
----
-
-## 5. 实施标准
-
-### 代码要求
-
-* 干净、可读且模块化
-* 没有死样式
-* 没有未使用的动画
-* 语义化 HTML
-* 默认可访问（对比度、焦点、键盘）
-
-### 框架指导
-
-* **HTML/CSS**: 优先使用原生功能、现代 CSS
-* **React**: 函数式组件、可组合样式
-* **动画**:
-
-  * CSS 优先
-  * 仅在合理时使用 Framer Motion
-
-### 复杂度匹配
-
-* 极繁主义设计 → 复杂代码（动画、图层）
-* 极简主义设计 → 极其精确的间距和字体
-
-不匹配 = 失败。
-
----
-
-## 6. 必需输出结构
-
-生成前端工作时：
-
-### 1. 设计方向摘要
-
-* 美学名称
-* DFII 分数
-* 关键灵感（概念性的，非视觉抄袭）
-
-### 2. 设计系统快照
-
-* 字体（附带理由）
-* 颜色变量
-* 间距节奏
-* 动效哲学
-
-### 3. 实施
-
-* 完整可工作的代码
-* 仅在意图不明显的地方添加注释
-
-### 4. 差异化说明
-
-明确声明：
-
-> "这通过做 X 而不是 Y 来避免通用的 UI。"
-
----
-
-## 7. 反模式（立即失败）
-
-❌ Inter/Roboto/系统字体
-❌ 紫色-白色 SaaS 渐变
-❌ 默认的 Tailwind/ShadCN 布局
-❌ 对称、可预测的部分
-❌ 过度使用的 AI 设计套路
-❌ 无意图的装饰
-
-如果设计可能被误认为是模板 → 重新开始。
-
----
-
-## 8. 与其他技能的集成
-
-* **page-cro** → 布局层次结构和转化流程
-* **copywriting** → 排版和消息节奏
-* **marketing-psychology** → 视觉说服和偏见对齐
-* **branding** → 视觉身份一致性
-* **ab-test-设置** → 变体安全的设计系统
-
----
-
-## 9. 操作员检查清单
-
-在最终确定输出之前：
-
-* [ ] 明确陈述了美学方向
-* [ ] DFII ≥ 8
-* [ ] 一个令人难忘的设计锚点
-* [ ] 没有通用的字体/颜色/布局
-* [ ] 代码与设计雄心匹配
-* [ ] 可访问且性能良好
-
----
-
-## 10. 需要问的问题（如果需要）
-
-1. 从情感上讲，这是为谁设计的？
-2. 这应该让人感到可信、兴奋、平静还是挑衅？
-3. 记忆性还是清晰度更重要？
-4. 这能否扩展到其他页面/组件？
-5. 用户在前 3 秒应该*感受到*什么？
-
----
-
-## 使用场景
-此技能适用于执行概述中描述的工作流程或操作。
-
-## 局限性
-- 仅当任务明确匹配上述描述的范围时才使用此技能。
-- 不要将输出视为特定环境验证、测试或专家评审的替代品。
-- 如果缺少必要的输入、权限、安全边界或成功标准，请停止并请求澄清。
+Keep the register conversational and tuned: plain verbs, sentence case, no filler, with tone matched to the brand and the audience. Let each element do exactly one job. A label labels, an example demonstrates, and nothing quietly does double duty.

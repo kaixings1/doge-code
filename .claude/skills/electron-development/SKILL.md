@@ -1,5 +1,5 @@
 ---
-name: electron-development
+name: 掌握使用安全 IPC、contextIsolation、预加载脚本、多进程架构、
 description: "掌握使用安全 IPC、contextIsolation、预加载脚本、多进程架构、electron-builder 打包、代码签名和自动更新的 Electron 桌面应用开发。"
 risk: safe
 source: community

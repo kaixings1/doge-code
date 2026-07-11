@@ -1,6 +1,6 @@
 ---
-name: azure-postgres-ts
-description: "Azure Postgres Ts — Azure Postgres Ts 相关功能和最佳实践"
+name: Azure PostgreSQL TypeScript SDK 相关功
+description: "Azure PostgreSQL TypeScript — Azure PostgreSQL TypeScript SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -452,7 +452,7 @@ pool.on("error", (err, client) => {
 9. **Graceful shutdown** - Call `pool.end()` on application termination
 10. **Use TypeScript generics** - Type your 查询 results for safety
 
-## Key Types
+## 关键类型
 
 ```typescript
 import {

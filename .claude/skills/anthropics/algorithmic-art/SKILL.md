@@ -4,10 +4,10 @@ description: "使用 p5.js 创建算法艺术的技能，包含种子随机性�
 license: Complete terms in LICENSE.txt
 ---
 
-Algorithmic philosophies are computational aesthetic movements that are then expressed through code. Output .md files (philosophy), .html files (interactive viewer), and .js files (generative algorithms).
+算法哲学是计算美学运动，然后通过代码表达。输出 .md 文件（哲学）、.html 文件（交互式查看器）和 .js 文件（生成式算法）。
 
-This happens in two steps:
-1. Algorithmic Philosophy Creation (.md file)
+这分为两个步骤：
+1. 算法哲学创建（.md 文件）
 2. Express by creating p5.js generative art (.html + .js files)
 
 First, undertake this task:

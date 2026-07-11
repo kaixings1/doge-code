@@ -8,22 +8,22 @@ version: 1.0.0
 
 ## 目的
 
-Guide the process of tracing user-controlled input from entry points (sources) through the application to security-sensitive functions (sinks). This is essential for confirming vulnerability exploitability.
+指导追踪用户控制的输入从入口点（来源）经过应用程序到达安全敏感函数（接收器）的过程。这对于确认漏洞的可利用性至关重要。
 
 ## 使用场景
 
-Activate this skill when:
-- Confirming if identified sinks receive user input
-- Mapping the path from source to sink
-- Understanding data transformations and filters
-- Determining if sanitization can be bypassed
+在以下情况下激活此技能：
+- 确认已识别的接收器是否接收用户输入
+- 映射从来源到接收器的路径
+- 了解数据转换和过滤器
+- 确定清洗是否可以被绕过
 
 ## 核心概念
 
-### Sources (Input Entry Points)
+### 来源（输入入口点）
 
-**HTTP Sources**:
-| Language | Common Sources |
+**HTTP 来源**：
+| 语言 | 常见来源 |
 |----------|----------------|
 | PHP | `$_GET`, `$_POST`, `$_REQUEST`, `$_COOKIE`, `$_FILES`, `$_SERVER` |
 | Java | `请求.getParameter()`, `请求.getHeader()`, `@RequestParam` |
@@ -31,61 +31,61 @@ Activate this skill when:
 | Node.js | `req.查询`, `req.body`, `req.params`, `req.headers` |
 | .NET | `请求.QueryString`, `请求.Form`, `请求["param"]` |
 
-**Other Sources**:
-- Database queries (stored user data)
-- File contents (user-uploaded or modified)
-- Environment variables
-- External API responses
+**其他来源**：
+- 数据库查询（存储的用户数据）
+- 文件内容（用户上传或修改）
+- 环境变量
+- 外部 API 响应
 
-### Sinks (Dangerous Functions)
+### 接收器（危险函数）
 
-Refer to the **dangerous-functions** skill for comprehensive sink lists.
+有关完整的接收器列表，请参考 **dangerous-functions** 技能。
 
-### Data Transformations
+### 数据转换
 
-Track how data changes between source and sink:
-- Encoding/Decoding (base64, URL, HTML)
-- Concatenation with other strings
-- Array/object property access
-- Type conversions
-- String manipulations
+追踪数据在来源和接收器之间的变化：
+- 编码/解码（base64、URL、HTML）
+- 与其他字符串的拼接
+- 数组/对象属性访问
+- 类型转换
+- 字符串操作
 
-## Tracing Methodology
+## 追踪方法
 
-### 步骤 1: Identify the Sink
-Start from the dangerous function identified during code review.
+### 步骤 1：识别接收器
+从代码审查期间识别的危险函数开始。
 
-### 步骤 2: Find Direct 参数
-Identify what variables/parameters are passed to the sink.
-
-```
-Example: system($cmd);
-Direct 参数: $cmd
-```
-
-### 步骤 3: Trace Backwards
-Follow each 参数 to its origin:
-
-1. Check function parameters
-2. Check variable assignments
-3. Check conditional branches
-4. Check loop iterations
-5. Check included/required files
-
-### 步骤 4: Identify Sources
-Determine where user input enters:
+### 步骤 2：查找直接参数
+确定传递给接收器的变量/参数。
 
 ```
-$cmd = $_GET['command'];  // Direct source
-$cmd = $row['command'];   // Database (check how it was stored)
-$cmd = $config['cmd'];    // Config file (check if user-modifiable)
+示例：system($cmd);
+直接参数：$cmd
 ```
 
-### 步骤 5: Map Transformations
-Document all changes to the data:
+### 步骤 3：向后追踪
+跟踪每个参数到其来源：
+
+1. 检查函数参数
+2. 检查变量赋值
+3. 检查条件分支
+4. 检查循环迭代
+5. 检查包含/引用的文件
+
+### 步骤 4：识别来源
+确定用户输入进入的位置：
 
 ```
-Source: $_GET['input']
+$cmd = $_GET['command'];  // 直接来源
+$cmd = $row['command'];   // 数据库（检查存储方式）
+$cmd = $config['cmd'];    // 配置文件（检查用户是否可修改）
+```
+
+### 步骤 5：映射转换
+记录数据的所有更改：
+
+```
+来源：$_GET['input']
   -> urldecode()
   -> str_replace(['../', '..\\'], '', $input)
   -> escapeshellarg()

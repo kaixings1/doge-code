@@ -1,5 +1,5 @@
 ---
-name: improve-codebase-architecture
+name: 改善代码库架构
 description: "改善代码库架构 — 架构改进和重构指导"
 risk: unknown
 source: community

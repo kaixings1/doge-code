@@ -1,6 +1,6 @@
 ---
-name: claude-md-improver
-description: "Claude Md Improver — Claude Md Improver 相关功能和最佳实践"
+name: CLAUDE.md 优化器
+description: "CLAUDE.md 优化器 — CLAUDE.md 优化相关功能和最佳实践"
 tools: Read, Glob, Grep, Bash, Edit
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: aeon
+name: Aeon 时间序列 ML
 description: "时间序列机器学习任务专用技能：分类、回归、聚类、预测、异常检测、分割和相似性搜索。适用于时序数据、序列模式和时间索引观测分析。"
 license: BSD-3-Clause license
 allowed-tools: Read Write Edit Bash
@@ -46,7 +46,7 @@ On zsh, quote the extras: `uv pip install "aeon[all_extras]>=1.4,<2"`.
 
 Upstream treats **forecasting**, **anomaly_detection**, **segmentation**, **similarity_search**, and **visualisation** as experimental — interfaces may change between minor releases. Prefer stable modules (classification, regression, clustering, distances, transformations) for production pipelines unless you need these tasks.
 
-## Core Capabilities
+## 核心能力
 
 ### 1. Time Series Classification
 

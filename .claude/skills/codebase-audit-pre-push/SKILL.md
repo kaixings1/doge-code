@@ -1,5 +1,5 @@
 ---
-name: codebase-audit-pre-push
+name: GitHub 推送前的深度审计：清理垃圾文件、死代码、安全漏洞和敏感数据暴露。
 description: "GitHub 推送前的深度审计：清理垃圾文件、死代码、安全漏洞和敏感数据暴露。"
 category: development
 risk: safe
@@ -7,23 +7,23 @@ source: community
 date_added: "2026-03-05"
 ---
 
-# Pre-Push Codebase Audit
+# 推送前代码库审计 (Pre-Push Codebase Audit)
 
-As a senior engineer, you're doing the final review before pushing this code to GitHub. Check everything carefully and fix problems as you find them.  
+作为高级工程师，在推送代码到 GitHub 之前进行最终审查。仔细检查一切，并在发现问题时进行修复。
 
-## 何时使用 This Skill  
+## 使用此技能的场景
 
-- User requests "audit the codebase" or "review before push"  
-- Before making the first push to GitHub  
-- Before making a repository public  
-- Pre-production 部署 review  
-- User asks to "clean up the code" or "optimize everything"  
+- 用户请求"审计代码库"或"推送前审查"
+- 首次推送到 GitHub 之前
+- 在公开仓库之前
+- 预生产部署审查
+- 用户要求"清理代码"或"优化所有内容"
 
-## Your Job  
+## 你的任务
 
 Review the entire codebase file by file. Read the code carefully. Fix issues right away. Don't just note problems—make the necessary changes.  
 
-## Audit Process  
+## 审计流程
 
 ### 1. Clean Up Junk Files  
 
@@ -224,7 +224,7 @@ Scalability: 9/10
 Overall: 9/10  
 ```  
 
-## Key Principles  
+## 关键原则
 
 - Read the code thoroughly, don't skim  
 - Fix issues immediately, don’t just document them  

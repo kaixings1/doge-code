@@ -1,5 +1,5 @@
 ---
-name: research-ops
+name: Research Ops 相关功能和最佳实践
 description: "Research Ops — Research Ops 相关功能和最佳实践"
 metadata:
   origin: ECC
@@ -106,7 +106,7 @@ RECOMMENDATION
 - do not use a heavy research lane for a question local repo context can answer
 - do not give freshness-sensitive answers without dates
 
-## Verification
+## 验证
 
 - important claims are labeled by evidence type
 - freshness-sensitive outputs include dates

@@ -1,5 +1,5 @@
 ---
-name: constant-time-analysis
+name: 分析加密代码以检测通过执行时间变化泄露秘密数据的操作。
 description: "分析加密代码以检测通过执行时间变化泄露秘密数据的操作。"
 risk: unknown
 source: community
@@ -36,7 +36,7 @@ Skip this skill
 - User mentions "constant-time", "timing attack", "side-channel", "KyberSlash"
 - Reviewing functions named `sign`, `verify`, `encrypt`, `decrypt`, `derive_key`
 
-## When NOT to Use
+## 不适用场景
 
 - Non-cryptographic code (business logic, UI, etc.)
 - Public data processing where timing leaks don't matter
@@ -62,7 +62,7 @@ Based on the file extension or language context, refer to the appropriate guide:
 | Python     | `.py`                             | references/python.md             |
 | Ruby       | `.rb`                             | references/ruby.md                 |
 
-## Quick Start
+## 快速入门
 
 ```bash
 # Analyze any supported file type

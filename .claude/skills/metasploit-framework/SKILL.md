@@ -1,5 +1,5 @@
 ---
-name: metasploit-framework
+name: 渗透测试框架的相关功能和最佳实践。
 description: "Metasploit Framework— 渗透测试框架的相关功能和最佳实践。"
 risk: offensive
 source: community
@@ -7,9 +7,9 @@ author: zebbern
 date_added: "2026-02-27"
 ---
 
-# Metasploit Framework
+# Metasploit Framework 渗透测试
 
-> **⚠️ AUTHORIZED USE ONLY**
+> **⚠️ 仅限授权使用**
 > This skill is for educational purposes or authorized security assessments only.
 > You must have explicit, written permission from the system owner before using this tool.
 > Misuse of this tool is illegal and strictly prohibited.

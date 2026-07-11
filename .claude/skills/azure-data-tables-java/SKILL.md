@@ -1,12 +1,12 @@
 ---
-name: azure-data-tables-java
+name: 指导 Java 开发者使用 Azure Data Tables 客户端库进行结构化数据存储。
 description: "指导 Java 开发者使用 Azure Data Tables 客户端库进行结构化数据存储。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# Azure Tables SDK for Java
+# Azure Tables Java SDK
 
 Build table storage applications using the Azure Tables SDK for Java. Works with both Azure Table Storage and Cosmos DB Table API.
 
@@ -20,7 +20,7 @@ Build table storage applications using the Azure Tables SDK for Java. Works with
 </dependency>
 ```
 
-## Client Creation
+## 客户端创建
 
 ### With Connection String
 
@@ -77,7 +77,7 @@ TableServiceClient serviceClient = new TableServiceClientBuilder()
 - **Row Key**: Unique identifier within a partition
 - **Entity**: A row with up to 252 properties (1MB Storage, 2MB Cosmos)
 
-## Core Patterns
+## 核心模式
 
 ### Create Table
 
@@ -326,7 +326,7 @@ COSMOS_TABLE_ENDPOINT=https://<account>.table.cosmosdb.azure.com
 4. **Select Projection**: Only select needed properties for performance
 5. **Entity Size**: Keep entities under 1MB (Storage) or 2MB (Cosmos)
 
-## Trigger Phrases
+## 触发短语
 
 - "Azure Tables Java"
 - "table storage SDK"

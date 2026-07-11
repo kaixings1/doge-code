@@ -1,5 +1,5 @@
 ---
-name: abusing-dpapi-for-credential-access
+name: DPAPI 凭据窃取
 description: "离线或在线提取受 DPAPI 保护的敏感信息，包括凭据和浏览器数据等。"
 domain: cybersecurity
 subdomain: red-teaming
@@ -64,7 +64,7 @@ pipx install impacket            # provides dpapi.py / impacket-dpapi
 pipx install donpapi             # https://github.com/login-securite/DonPAPI
 ```
 
-## Objectives
+## 目标
 
 - Triage a host for DPAPI-protected credential, vault, RDP, and certificate blobs.
 - Decrypt user master keys online (`/unprotect`), with a password/hash, or with the domain backup key.

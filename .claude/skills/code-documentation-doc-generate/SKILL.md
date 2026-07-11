@@ -1,5 +1,5 @@
 ---
-name: code-documentation-doc-generate
+name: 您是专门从代码创建全面、可维护的文档的文档专家。生成 API 文档、架构图、用户指南和技术参考。
 description: "您是专门从代码创建全面、可维护的文档的文档专家。生成 API 文档、架构图、用户指南和技术参考。"
 risk: safe
 source: community

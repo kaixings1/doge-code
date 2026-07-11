@@ -1,5 +1,5 @@
 ---
-name: crossframe-notebook
+name: 适用于 CrossFrame Suite 路由到中文读书笔记、理论笔记、文章摘录、双向阅读、吸收或冲突映射的场景。
 description: "适用于 CrossFrame Suite 路由到中文读书笔记、理论笔记、文章摘录、双向阅读、吸收或冲突映射的场景。"
 category: content
 risk: safe

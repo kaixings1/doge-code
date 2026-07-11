@@ -1,10 +1,12 @@
 ---
-name: dotnet-architect
+name: Dotnet Architect 相关功能和最佳实践
 description: "Dotnet Architect — Dotnet Architect 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# .NET 架构师
 
 ## 使用此技能的场景
 

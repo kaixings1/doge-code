@@ -1,5 +1,5 @@
 ---
-name: plankton-code-quality
+name: 使用 Plankton 实现编写时代码质量强制执行
 description: "使用 Plankton 实现编写时代码质量强制执行 —— 通过钩子在每次文件编辑时进行自动格式化、代码检查，并由 Claude 驱动自动修复。"
 origin: community
 ---

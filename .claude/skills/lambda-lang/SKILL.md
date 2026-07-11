@@ -1,5 +1,5 @@
 ---
-name: lambda-lang
+name: Lambda 代理间语言
 description: "用于紧凑多代理消息传递的原生代理间语言。代理之间直接交流的共同语言，而非翻译层。跨 7 个领域 340+ 原子；比自然语言小 3 倍。"
 category: ai-agents
 risk: safe

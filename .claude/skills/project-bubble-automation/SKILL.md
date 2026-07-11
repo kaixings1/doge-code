@@ -1,6 +1,7 @@
 ---
-name: project-bubble-automation
-description: "辛行 Rube MCP (Composio) 口辐用6 Project Bubble任务。你用前叶先等套巶断缓开服，可输出等当务，否删匕现信明。"*requires:
+name: Project Bubble 自动化
+description: "通过 Rube MCP (Composio) 自动执行 Project Bubble 任务。使用前始终先搜索工具以获取当前 schema。"
+requires:
   mcp: [rube]
 ---
 # 通过 Rube MCP 的 Project Bubble 病宺化

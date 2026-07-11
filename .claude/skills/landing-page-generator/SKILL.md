@@ -1,5 +1,5 @@
 ---
-name: "landing-page-generator"
+name: 使用 Tailwind CSS 生成高转化率的 Next.js/React 着陆页
 description: "使用 Tailwind CSS 生成高转化率的 Next.js/React 着陆页。使用 PAS、AIDA 和 BAB 框架获取优化的文案/组件（Hero、Features、Pricing）。关注 Core Web Vitals/SEO。"
 category: "front-end"
 risk: "safe"

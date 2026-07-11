@@ -1,3 +1,8 @@
+---
+name: 维度分析插件
+description: 为代码库添加维度注释并检测维度错误，适用于任何涉及混合单位/精度/缩放因子的数值运算。
+---
+
 # 维度分析插件
 
 Add dimensional annotations to codebases and detect dimensional bugs. Uses an annotation format inspired by Reserve Protocol's Solidity conventions, but applicable to any language or protocol performing numeric arithmetic with mixed units, precisions, or scaling factors.

@@ -1,5 +1,5 @@
 ---
-name: cc-skill-backend-patterns
+name: 后端模式
 description: "后端模式"
 risk: safe
 source: community

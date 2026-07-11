@@ -1,13 +1,13 @@
 ---
-name: industrial-brutalist-ui
+name: Brutalist Skill 相关功能和最佳实践
 description: "Brutalist Skill — Brutalist Skill 相关功能和最佳实践"
 ---
 
-# SKILL: Industrial Brutalism & Tactical Telemetry UI
+# 技能：工业粗野主义与战术遥测 UI
 
-## 1. Skill Meta
-**Name:** Industrial Brutalism & Tactical Telemetry Interface Engineering
-**Description:** Advanced proficiency in architecting web interfaces that synthesize mid-century Swiss Typographic design, industrial manufacturing manuals, and retro-futuristic aerospace/military terminal interfaces. This discipline requires absolute mastery over rigid modular grids, extreme typographic scale contrast, purely utilitarian color palettes, and the programmatic simulation of analog degradation (halftones, CRT scanlines, bitmap dithering). The objective is to construct digital environments that project raw functionality, mechanical precision, and high data density, deliberately discarding conventional consumer UI patterns.
+## 1. 技能元数据
+**名称：** 工业粗野主义与战术遥测界面工程
+**描述：** 在架构融合了中世纪瑞士字体设计、工业制造手册和复古未来主义航空/军用终端界面的 Web 界面方面的高级熟练度。本学科要求对刚性模块化网格、极端字体比例对比、纯粹功利主义配色方案以及模拟退化（半色调、CRT 扫描线、位图抖动）的程序化模拟有着绝对的掌握。目标是构建展现原始功能性、机械精度和高数据密度的数字环境，有意摒弃传统消费级 UI 模式。
 
 ## 2. Visual Archetypes
 The design system operates by merging two distinct but highly compatible visual paradigms. **Pick ONE per project and commit to it. Do not alternate or mix both modes within the same interface.**

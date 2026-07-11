@@ -1,5 +1,5 @@
 ---
-name: helm-chart-scaffolding
+name: Helm Chart 脚手架
 description: "Helm Chart 脚手架 — 创建 Helm Chart 模板"
 risk: unknown
 source: community

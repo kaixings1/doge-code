@@ -1,5 +1,5 @@
 ---
-name: differential-review
+name: 面向安全的 PR、提交和差异代码审查。
 description: "面向安全的 PR、提交和差异代码审查。"
 risk: unknown
 source: community
@@ -167,7 +167,7 @@ Time: ~6-8 hours
 
 ---
 
-## When NOT to Use This Skill
+## 不使用此技能的场景
 
 - **Greenfield code** (no baseline to compare)
 - **Documentation-only changes** (no security impact)

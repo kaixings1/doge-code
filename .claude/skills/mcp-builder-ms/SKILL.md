@@ -1,5 +1,5 @@
 ---
-name: mcp-builder-ms
+name: MCP 服务器构建器
 description: "在构建 MCP 服务器以集成外部 API 或服务时使用此技能，无论是在 Python (FastMCP) 还是 Node/TypeScript (MCP SDK) 中。"
 risk: unknown
 source: community

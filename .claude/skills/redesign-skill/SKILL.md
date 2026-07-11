@@ -1,5 +1,5 @@
 ---
-name: redesign-existing-projects
+name: 标准。兼容任何 CSS 框架
 description: 将现有网站和应用升级到高品质。审计当前设计，识别通用的 AI 模式，并在不破坏功能的前提下应用高端设计标准。兼容任何 CSS 框架或原生 CSS。
 ---
 

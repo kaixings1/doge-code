@@ -1,5 +1,5 @@
 ---
-name: ddd-strategic-design
+name: 为复杂业务领域设计 DDD 战略工件，包括子域、限界上下文和通用语言
 description: "为复杂业务领域设计 DDD 战略工件，包括子域、限界上下文和通用语言。"
 risk: safe
 source: self

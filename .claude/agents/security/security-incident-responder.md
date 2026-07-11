@@ -219,29 +219,35 @@ echo "[*] Starting Linux IR triage at ${TIMESTAMP} UTC"
 # === VOLATILE DATA ===
 echo "[1/7] Capturing processes..."
 ps auxwwf > "$OUTDIR/ps-tree.txt"
-ls -la /proc/*/exe 2>/dev/null > "$OUTDIR/proc-exe-links.txt"
-cat /proc/*/cmdline 2>/dev/null | tr '\0' ' ' > "$OUTDIR/proc-cmdline.txt"
+ls -la /proc/*/exe 2>/dev
+ull > "$OUTDIR/proc-exe-links.txt"
+cat /proc/*/cmdline 2>/dev
+ull | tr '\0' ' ' > "$OUTDIR/proc-cmdline.txt"
 
 echo "[2/7] Capturing network state..."
 ss -tlnp > "$OUTDIR/listening-ports.txt"
 ss -tnp > "$OUTDIR/established-connections.txt"
 ip addr > "$OUTDIR/ip-addresses.txt"
 ip route > "$OUTDIR/routing-table.txt"
-iptables -L -n -v > "$OUTDIR/firewall-rules.txt" 2>/dev/null
+iptables -L -n -v > "$OUTDIR/firewall-rules.txt" 2>/dev
+ull
 
 echo "[3/7] Capturing user activity..."
 w > "$OUTDIR/logged-in-users.txt"
 last -50 > "$OUTDIR/last-logins.txt"
-lastb -50 > "$OUTDIR/failed-logins.txt" 2>/dev/null
+lastb -50 > "$OUTDIR/failed-logins.txt" 2>/dev
+ull
 
 # === PERSISTENCE ===
 echo "[4/7] Enumerating persistence mechanisms..."
 # Cron jobs (all users)
 for user in $(cut -f1 -d: /etc/passwd); do
-    crontab -l -u "$user" 2>/dev/null | grep -v '^#' |
+    crontab -l -u "$user" 2>/dev
+ull | grep -v '^#' |
         sed "s/^/${user}: /" >> "$OUTDIR/crontabs.txt"
 done
-ls -la /etc/cron.* > "$OUTDIR/cron-dirs.txt" 2>/dev/null
+ls -la /etc/cron.* > "$OUTDIR/cron-dirs.txt" 2>/dev
+ull
 
 # Systemd services (non-vendor)
 systemctl list-unit-files --type=service --state=enabled |
@@ -249,38 +255,51 @@ systemctl list-unit-files --type=service --state=enabled |
 
 # SSH authorized keys
 find /home /root -name "authorized_keys" -exec echo "=== {} ===" \; \
-    -exec cat {} \; > "$OUTDIR/ssh-authorized-keys.txt" 2>/dev/null
+    -exec cat {} \; > "$OUTDIR/ssh-authorized-keys.txt" 2>/dev
+ull
 
 # Shell profiles (backdoor injection point)
 cat /etc/profile /etc/bash.bashrc /root/.bashrc /root/.bash_profile \
-    > "$OUTDIR/shell-profiles.txt" 2>/dev/null
+    > "$OUTDIR/shell-profiles.txt" 2>/dev
+ull
 
 # === LOGS ===
 echo "[5/7] Collecting log snippets..."
-journalctl --since "7 days ago" -u sshd --no-pager > "$OUTDIR/sshd-logs.txt" 2>/dev/null
-tail -10000 /var/log/auth.log > "$OUTDIR/auth-log.txt" 2>/dev/null
-tail -10000 /var/log/secure > "$OUTDIR/secure-log.txt" 2>/dev/null
-tail -5000 /var/log/syslog > "$OUTDIR/syslog.txt" 2>/dev/null
+journalctl --since "7 days ago" -u sshd --no-pager > "$OUTDIR/sshd-logs.txt" 2>/dev
+ull
+tail -10000 /var/log/auth.log > "$OUTDIR/auth-log.txt" 2>/dev
+ull
+tail -10000 /var/log/secure > "$OUTDIR/secure-log.txt" 2>/dev
+ull
+tail -5000 /var/log/syslog > "$OUTDIR/syslog.txt" 2>/dev
+ull
 
 # === FILE SYSTEM ===
 echo "[6/7] Finding suspicious files..."
 # Recently modified files in sensitive directories
 find /tmp /var/tmp /dev/shm /usr/local/bin /usr/local/sbin \
-    -type f -mtime -30 -ls > "$OUTDIR/recent-suspicious-files.txt" 2>/dev/null
+    -type f -mtime -30 -ls > "$OUTDIR/recent-suspicious-files.txt" 2>/dev
+ull
 
 # SUID/SGID binaries (privilege escalation vectors)
-find / -perm /6000 -type f -ls > "$OUTDIR/suid-sgid.txt" 2>/dev/null
+find / -perm /6000 -type f -ls > "$OUTDIR/suid-sgid.txt" 2>/dev
+ull
 
 # Files with no package owner (potential implants)
-if command -v rpm &>/dev/null; then
-    rpm -Va > "$OUTDIR/rpm-verify.txt" 2>/dev/null
-elif command -v debsums &>/dev/null; then
-    debsums -c > "$OUTDIR/debsums-changed.txt" 2>/dev/null
+if command -v rpm &>/dev
+ull; then
+    rpm -Va > "$OUTDIR/rpm-verify.txt" 2>/dev
+ull
+elif command -v debsums &>/dev
+ull; then
+    debsums -c > "$OUTDIR/debsums-changed.txt" 2>/dev
+ull
 fi
 
 echo "[7/7] Computing file hashes for key binaries..."
 sha256sum /usr/bin/ssh /usr/sbin/sshd /bin/bash /usr/bin/sudo \
-    /usr/bin/curl /usr/bin/wget > "$OUTDIR/critical-binary-hashes.txt" 2>/dev/null
+    /usr/bin/curl /usr/bin/wget > "$OUTDIR/critical-binary-hashes.txt" 2>/dev
+ull
 
 echo "[+] Triage complete: $OUTDIR"
 echo "[!] NEXT: Image memory with LiME or AVML"

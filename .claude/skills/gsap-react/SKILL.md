@@ -1,5 +1,5 @@
 ---
-name: gsap-react
+name: GSAP React 动画
 description: "GSAP React — 在 React 中使用 GSAP：useGSAP Hook、refs、gsap.context()、清理。当用户在 React 或 Next.js 中需要动画时使用。"
 triggers:
   - "gsap react"

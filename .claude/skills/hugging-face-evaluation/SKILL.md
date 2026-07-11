@@ -1,5 +1,5 @@
 ---
-name: hugging-face-evaluation
+name: Hugging Face 评估
 description: "Hugging Face 评估 — 模型评估"
 risk: safe
 source: community

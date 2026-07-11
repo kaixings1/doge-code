@@ -12,12 +12,12 @@ requires: [phase]
 ---
 
 <objective>
-Safe git revert — roll back GSD phase or plan commits using the phase manifest, with dependency checks and a confirmation gate before execution.
+安全 git 回滚——使用阶段清单回滚 GSD 阶段或计划提交，在执行前进行依赖检查和确认关卡。
 
-Three modes:
-- **--last N**: Show recent GSD commits for interactive selection
-- **--phase NN**: Revert all commits for a phase (manifest + git log fallback)
-- **--plan NN-MM**: Revert all commits for a specific plan
+三种模式：
+- **--last N**：显示最近的 GSD 提交用于交互式选择
+- **--phase NN**：回滚一个阶段的所有提交（清单 + git 日志回退）
+- **--plan NN-MM**：回滚特定计划的所有提交
 </objective>
 
 <execution_context>

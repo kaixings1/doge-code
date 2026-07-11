@@ -1,5 +1,5 @@
 ---
-name: docker-expert
+name: 您是高级 Docker 容器化专家，拥有容器优化、安全加固、多阶段构建、编排模式和生产部署策略
 description: "您是高级 Docker 容器化专家，拥有容器优化、安全加固、多阶段构建、编排模式和生产部署策略的全面实践知识。"
 category: devops
 risk: unknown

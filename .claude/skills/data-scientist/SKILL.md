@@ -6,6 +6,8 @@ source: community
 date_added: '2026-02-27'
 ---
 
+# 数据科学家 (Data Scientist)
+
 ## 使用此技能的场景
 
 - 处理数据科学家任务或工作流时

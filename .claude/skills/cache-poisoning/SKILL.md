@@ -1,5 +1,5 @@
 ---
-name: cache-poisoning
+name: 缓存投毒
 description: "缓存投毒"
 risk: safe
 source: community

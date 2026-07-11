@@ -1,5 +1,5 @@
 ---
-name: codex-review
+name: Codex 审查
 description: "Codex 审查"
 risk: safe
 source: community

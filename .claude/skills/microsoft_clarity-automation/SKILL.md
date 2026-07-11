@@ -1,5 +1,5 @@
 ---
-name: microsoft_clarity-automation
+name: Microsoft_clarity 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Microsoft Clarity 任务：会话 recordings, heatmaps, and user behavior analytics. 始终 search tools first for current schemas."
 requires:
   mcp: [rube]

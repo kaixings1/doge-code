@@ -1,5 +1,5 @@
 ---
-name: minimax-docx
+name: 专业 DOCX 文档创建和编辑工具
 description: "MiniMax DOCX — 专业 DOCX 文档创建和编辑工具"
   Professional DOCX document creation and editing using OpenXML SDK. Useful for branded reports, polished proposals, and template-based authoring.
 triggers:
@@ -18,11 +18,11 @@ od:
 
 > Curated from the MiniMax AI team.
 
-## What it does
+## 功能说明
 
 Professional DOCX document creation and editing using OpenXML SDK. Useful for branded reports, polished proposals, and template-based authoring.
 
-## Source
+## 来源
 
 - Upstream: https://github.com/MiniMax-AI/skills
 - Category: `documents`

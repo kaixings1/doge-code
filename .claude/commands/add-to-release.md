@@ -2,58 +2,58 @@
 description: 将工作项添加到现有发布
 ---
 
-Add work items to an existing release. Usage: `/add-to-release <release-number> <work-item-ids>`
+将工作项添加到现有发布。用法: `/add-to-release <release-number> <work-item-ids>`
 
-Parse `$ARGUMENTS` to extract:
-- **Release number**: required (e.g., "24")
-- **Work item IDs**: one or more IDs (e.g., "AB#4599 AB#4600")
+解析 `$ARGUMENTS` 以提取：
+- **发布编号**：必填（例如 "24"）
+- **工作项 ID**：一个或多个 ID（例如 "AB#4599 AB#4600"）
 
-## Step 1: Verify the Release Exists
+## 步骤 1：验证发布是否存在
 
-Query Azure DevOps for the `Release #{N}` iteration via `work_list_iterations`. If it doesn't exist, STOP and report: "Release #{N} does not exist. Use /create-release {N} to create it."
+通过 `work_list_iterations` 查询 Azure DevOps 中的 `Release #{N}` 迭代。如果不存在，停止并报告："Release #{N} 不存在。使用 /create-release {N} 创建。"
 
-## Step 2: Show Current Release Contents
+## 步骤 2：显示当前发布内容
 
-Query work items currently in the release (tagged `release-{N}` or in the `Release #{N}` iteration).
+查询当前发布中的工作项（标记为 `release-{N}` 或在 `Release #{N}` 迭代中）。
 
-## Step 3: Fetch New Work Items
+## 步骤 3：获取新工作项
 
-Read each specified work item from Azure DevOps. Present the combined list:
+从 Azure DevOps 读取每个指定的工作项。展示合并列表：
 
 ```
-## Release #{N} — Adding Work Items
+## 发布 #{N} — 添加工作项
 
-### Currently in Release #{N}:
-| ID | Type | Title | State |
+### 当前在发布 #{N} 中：
+| ID | 类型 | 标题 | 状态 |
 |----|------|-------|-------|
-| AB#4521 | User Story | Add payment export | Ready for Testing |
-| AB#4522 | User Story | Bulk approval workflow | Ready for Testing |
+| AB#4521 | 用户故事 | 添加支付导出 | 准备测试 |
+| AB#4522 | 用户故事 | 批量审批工作流 | 准备测试 |
 
-### Adding:
-| ID | Type | Title | State |
+### 正在添加：
+| ID | 类型 | 标题 | 状态 |
 |----|------|-------|-------|
-| AB#4599 | Bug | Fix export column alignment | Ready for Testing |
-| AB#4600 | User Story | Add export date filter | Ready for Testing |
+| AB#4599 | Bug | 修复导出列对齐 | 准备测试 |
+| AB#4600 | 用户故事 | 添加导出日期筛选 | 准备测试 |
 
-Add 2 work items to Release #{N}? (yes/no)
+将 2 个工作项添加到发布 #{N}？（是/否）
 ```
 
-Wait for confirmation.
+等待确认。
 
-## Step 4: Assign and Tag
+## 步骤 4：分配和标记
 
-Use `wit_update_work_items_batch` to:
-1. Set the Iteration Path to `{project}\Release #{N}` on each new work item
-2. Append `release-{N}` to each work item's tags
+使用 `wit_update_work_items_batch`：
+1. 将每个新工作项的迭代路径设置为 `{project}\Release #{N}`
+2. 将 `release-{N}` 附加到每个工作项的标签
 
-## Step 5: Confirm
+## 步骤 5：确认
 
 ```
-2 work items added to Release #{N}.
+已将 2 个工作项添加到发布 #{N}。
 
-Release #{N} now contains 4 work items:
-- AB#4521: Add payment export
-- AB#4522: Bulk approval workflow
-- AB#4599: Fix export column alignment (added)
-- AB#4600: Add export date filter (added)
+发布 #{N} 现在包含 4 个工作项：
+- AB#4521: 添加支付导出
+- AB#4522: 批量审批工作流
+- AB#4599: 修复导出列对齐（已添加）
+- AB#4600: 添加导出日期筛选（已添加）
 ```

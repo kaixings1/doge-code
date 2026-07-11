@@ -1,5 +1,5 @@
 ---
-name: apiflash-automation
+name: APIFlash 自动化
 description: "APIFlash 自动化"
 risk: safe
 source: community

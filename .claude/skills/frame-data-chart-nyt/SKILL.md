@@ -1,5 +1,5 @@
 ---
-name: frame-data-chart-nyt
+name: 纽约时报新闻编辑室排版、交错渐显动画和编辑级图表（折线图、柱状图或范围带图）。
 zh_name: "NYT 风数据图表帧"
 en_name: "NYT-Style Data Chart Frame"
 emoji: "📈"

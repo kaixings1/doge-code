@@ -1,5 +1,5 @@
 ---
-name: anonyflow-automation
+name: AnonyFlow 自动化
 description: "AnonyFlow 自动化"
 risk: safe
 source: community

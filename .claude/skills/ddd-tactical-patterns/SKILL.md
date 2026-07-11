@@ -1,5 +1,5 @@
 ---
-name: ddd-tactical-patterns
+name: 使用实体、值对象、聚合、仓储和领域事件在代码中应用 DDD 战术模式，并带有显式不变式
 description: "使用实体、值对象、聚合、仓储和领域事件在代码中应用 DDD 战术模式，并带有显式不变式。"
 risk: safe
 source: self

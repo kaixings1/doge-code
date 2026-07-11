@@ -3,28 +3,28 @@ description: 为利益相关者生成自动化数据画像报告
 argument-hint: "<describe your dataset or upload a file>"
 ---
 
-# /profile-data — Data Profiling Report
+# /profile-data — 数据画像报告
 
-Generate a comprehensive, shareable data profiling report.
+生成全面的、可共享的数据画像报告。
 
-## Invocation
+## 调用
 
 ```
-/profile-data [upload file] Profile this dataset for our data catalog
-/profile-data Generate a profiling report for the marketing team
+/profile-data [上传文件] 为我们的数据目录剖析此数据集
+/profile-data 为营销团队生成画像报告
 ```
 
-## Workflow
+## 工作流
 
-### Step 1: Load & Profile
-Apply **data-profiling-report** and **eda-profile** skills.
+### 步骤 1：加载与剖析
+应用 **data-profiling-report** 和 **eda-profile** 技能。
 
-### Step 2: Generate Report
-Create a stakeholder-ready markdown report with schema, quality, statistics, and recommendations.
+### 步骤 2：生成报告
+创建包含模式、质量、统计和建议的利益相关者就绪的 markdown 报告。
 
-### Step 3: Deliver
-Save as markdown document in the workspace.
+### 步骤 3：交付
+在工作区中保存为 markdown 文档。
 
-Offer follow-up:
-- "Want to **dive deeper** into any specific finding?"
-- "Should I **generate quality monitoring** checks?"
+提供后续选项：
+- "想要**深入了解**任何具体发现吗？"
+- "需要我**生成质量监控**检查吗？"

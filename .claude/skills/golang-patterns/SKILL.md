@@ -1,5 +1,5 @@
 ---
-name: golang-patterns
+name: 编写稳健、高效且易于维护的 Go 应用程序的惯用模式、最佳实践和约定。
 description: 编写稳健、高效且易于维护的 Go 应用程序的惯用模式、最佳实践和约定。
 origin: ECC
 ---

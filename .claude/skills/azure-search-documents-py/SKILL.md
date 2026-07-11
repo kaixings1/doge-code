@@ -1,6 +1,6 @@
 ---
-name: azure-search-documents-py
-description: "Azure Search Documents Py — Azure Search Documents Py 相关功能和最佳实践"
+name: Azure Search Documents Python SDK 相
+description: "Azure Search Documents Python — Azure Search Documents Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -52,7 +52,7 @@ client = SearchClient(
 )
 ```
 
-## Client Types
+## 客户端类型
 
 | Client | Purpose |
 |--------|---------|

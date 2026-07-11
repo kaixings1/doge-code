@@ -3,42 +3,42 @@ description: 端到端数据转换工作流 — 重塑、合并、聚合
 argument-hint: "<describe the transformation you need>"
 ---
 
-# /wrangle — Data Transformation Workflow
+# /wrangle — 数据转换工作流
 
-Transform, reshape, and restructure your data step by step.
+逐步转换、重塑和重构数据。
 
-## Invocation
+## 调用
 
 ```
-/wrangle Convert this wide-format survey data to long format for analysis
-/wrangle Merge these three tables and create monthly aggregations
-/wrangle [upload file] Reshape this for a time-series analysis
+/wrangle 将此宽格式调查数据转换为长格式以进行分析
+/wrangle 合并这三个表并创建月度聚合
+/wrangle [上传文件] 重塑此数据以进行时间序列分析
 ```
 
-## Workflow
+## 工作流
 
-### Step 1: Understand Requirements
-- What is the current data structure?
-- What is the desired output structure?
-- What tool? (pandas, polars, SQL)
+### 步骤 1：理解需求
+- 当前数据结构是什么？
+- 期望的输出结构是什么？
+- 使用什么工具？（pandas, polars, SQL）
 
-### Step 2: Design Transformation
-Apply **transform-data** skill to design the transformation sequence:
-- Map current columns to target structure
-- Identify reshaping operations needed (pivot, melt, join, aggregate)
-- Handle edge cases (nulls from joins, duplicate keys, type conflicts)
+### 步骤 2：设计转换
+应用 **transform-data** 技能设计转换序列：
+- 将当前列映射到目标结构
+- 确定需要的重塑操作（透视、逆透视、连接、聚合）
+- 处理边界情况（连接产生的空值、重复键、类型冲突）
 
-### Step 3: Generate & Execute Code
-- Produce commented, production-ready code
-- Show intermediate results at each step
-- Validate output shape and content
+### 步骤 3：生成并执行代码
+- 生成带有注释的、可投入生产的代码
+- 在每一步显示中间结果
+- 验证输出形状和内容
 
-### Step 4: Validate
-- Confirm row counts are expected (especially after joins)
-- Check for introduced nulls
-- Verify aggregation correctness with spot checks
+### 步骤 4：验证
+- 确认行数符合预期（特别是在连接后）
+- 检查引入的空值
+- 通过抽查验证聚合正确性
 
-Offer follow-up:
-- "Want to **visualize** the transformed data?"
-- "Ready for **exploratory analysis** with /eda?"
-- "Need to **export** in a specific format?"
+提供后续选项：
+- "想要**可视化**转换后的数据吗？"
+- "准备好使用 /eda **进行探索性分析**了吗？"
+- "需要以特定格式**导出**吗？"

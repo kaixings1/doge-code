@@ -5,7 +5,7 @@ description: "为 UX 研究和产品设计生成数据驱动的用户画像。�
 
 # /persona
 
-Generate structured user personas with demographics, goals, pain points, and behavioral patterns.
+生成包含人口统计数据、目标、痛点和行为模式的结构化用户画像。
 
 ## Usage
 

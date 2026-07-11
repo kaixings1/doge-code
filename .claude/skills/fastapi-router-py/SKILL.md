@@ -1,5 +1,5 @@
 ---
-name: fastapi-router-py
+name: FastAPI 路由 (Python)
 description: "FastAPI 路由 (Python) — FastAPI 路由配置"
 risk: unknown
 source: community

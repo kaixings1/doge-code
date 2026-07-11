@@ -1,5 +1,5 @@
 ---
-name: firecrawl-scrape
+name: Firecrawl抓取技能
 description: Firecrawl抓取技能
 allowed-tools:
   - Bash(firecrawl *)
@@ -38,7 +38,7 @@ firecrawl scrape "<url>" --format markdown,links -o .firecrawl/page.json
 firecrawl scrape "https://example.com/pricing" --查询 "What is the enterprise plan price?"
 ```
 
-## Options
+## 选项
 
 | Option                   | Description                                                      |
 | ------------------------ | ---------------------------------------------------------------- |
@@ -60,7 +60,7 @@ firecrawl scrape "https://example.com/pricing" --查询 "What is the enterprise 
 - 始终 quote URLs — shell interprets `?` and `&` as special characters.
 - Naming convention: `.firecrawl/{site}-{path}.md`
 
-## See also
+## 参见
 
 - [firecrawl-search](../firecrawl-search/SKILL.md) — find pages when you don't have a URL
 - [firecrawl-browser](../firecrawl-browser/SKILL.md) — when scrape can't get the content, use `interact` to click, fill forms, etc.

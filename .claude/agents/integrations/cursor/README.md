@@ -1,7 +1,6 @@
-# Cursor Integration
+# Cursor 集成
 
-Converts all 180 Agency agents into Cursor `.mdc` rule files. Rules are
-**project-scoped** — install them from your project root.
+将所有 180 个代理转换为 Cursor `.mdc` 规则文件。规则是**项目作用域**的——从项目根目录安装。
 
 ## Install
 

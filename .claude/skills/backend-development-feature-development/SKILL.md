@@ -1,10 +1,12 @@
 ---
-name: backend-development-feature-development
+name: 编排端到端后端功能开发，从需求到部署。适用于跨团队和服务协调多阶段功能交付。
 description: "编排端到端后端功能开发，从需求到部署。适用于跨团队和服务协调多阶段功能交付。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
+
+# 后端功能开发
 
 Orchestrate end-to-end feature development from requirements to production deployment:
 
@@ -157,7 +159,7 @@ Orchestrate end-to-end feature development from requirements to production deplo
 - **--analytics-platform**: Analytics integration (segment|amplitude|mixpanel|custom)
 - **--monitoring-stack**: Observability tools (datadog|newrelic|grafana|custom)
 
-## Success Criteria
+## 成功标准
 
 - All acceptance criteria from business requirements are met
 - Test coverage exceeds minimum threshold (80% default)

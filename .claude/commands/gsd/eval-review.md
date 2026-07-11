@@ -13,9 +13,9 @@ allowed-tools:
 requires: [phase]
 ---
 <objective>
-Conduct a retroactive evaluation coverage audit of a completed AI phase.
-Checks whether the evaluation strategy from AI-SPEC.md was implemented.
-Produces EVAL-REVIEW.md with score, verdict, gaps, and remediation plan.
+对已完成的 AI 阶段进行回溯性评估覆盖审计。
+检查 AI-SPEC.md 中的评估策略是否已实施。
+生成带有评分、判定、差距和修复计划的 EVAL-REVIEW.md。
 </objective>
 
 <execution_context>
@@ -24,10 +24,10 @@ Produces EVAL-REVIEW.md with score, verdict, gaps, and remediation plan.
 </execution_context>
 
 <context>
-Phase: $ARGUMENTS — optional, defaults to last completed phase.
+阶段：$ARGUMENTS — 可选，默认为最后完成的阶段。
 </context>
 
 <process>
-Execute end-to-end.
-Preserve all workflow gates.
+端到端执行。
+保留所有工作流关卡。
 </process>

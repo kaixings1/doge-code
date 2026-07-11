@@ -1,3 +1,8 @@
+---
+name: Seatbelt 沙箱工具
+description: 生成 MacOS Seatbelt 配置，以目标正常运行所需的最小权限集对其进行沙箱化。
+---
+
 # Seatbelt 沙箱工具
 
 Generate a MacOS Seatbelt 配置 that sandboxes the target with the minimum set of permissions necessary for it to operate normally.
@@ -10,7 +15,7 @@ Generate a MacOS Seatbelt 配置 that sandboxes the target with the minimum set 
 
 This skill should NOT be used to run an untrusted process, since it requires running the target process to profile it in order to determine what permissions are actually needed.
 
-## What It Does
+## 功能说明
 
 此技能提供 a systematic four-step process for sandbox profiling:
 1. **Profile a target application** - Identify the actual set of permissions required for the application to run normally.

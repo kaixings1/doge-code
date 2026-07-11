@@ -1,3 +1,8 @@
+---
+name: Sharp Edges 锐利边缘检测
+description: 识别易出错的 API、危险配置和易导致安全问题的设计模式。
+---
+
 # Sharp Edges 锐利边缘检测
 
 Identifies error-prone APIs, dangerous configurations, and footgun designs that enable security mistakes through developer confusion, laziness, or malice.
@@ -10,7 +15,7 @@ Identifies error-prone APIs, dangerous configurations, and footgun designs that 
 - Assessing 认证/授权 APIs
 - Any code review where developers make security-critical decisions
 
-## What It Does
+## 功能说明
 
 Analyzes code and designs through the lens of three adversaries:
 

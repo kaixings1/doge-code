@@ -3,29 +3,29 @@ description: 构建RAG（检索增强生成）系统
 argument-hint: "<describe your documents and use case>"
 ---
 
-# /build-rag — RAG System Builder
+# /build-rag — RAG 系统构建器
 
-Build a Retrieval-Augmented Generation system for document Q&A.
+构建用于文档问答的检索增强生成系统。
 
-## Invocation
+## 调用
 
 ```
-/build-rag Q&A system for our internal documentation (500 docs)
-/build-rag Customer support chatbot using our knowledge base
-/build-rag Research assistant that answers questions from academic papers
+/build-rag 内部文档的问答系统（500 份文档）
+/build-rag 基于知识库的客户支持聊天机器人
+/build-rag 回答学术论文问题的研究助手
 ```
 
-## Workflow
+## 工作流
 
-Apply **llm-applications** + **embeddings-vectors** skills:
-1. Document ingestion and chunking strategy
-2. Embedding model selection
-3. Vector database setup
-4. Retrieval pipeline (hybrid search, reranking)
-5. Generation with citation tracking
-6. Evaluation (faithfulness, relevance)
+应用 **llm-applications** + **embeddings-vectors** 技能：
+1. 文档摄取和分块策略
+2. 嵌入模型选择
+3. 向量数据库设置
+4. 检索管道（混合搜索、重排序）
+5. 带引用追踪的生成
+6. 评估（忠实度、相关性）
 
-Offer follow-up:
-- "Want to **evaluate RAG quality** with test questions?"
-- "Should I **optimize retrieval** for better accuracy?"
-- "Need to **deploy** this as an API?"
+提供后续选项：
+- "想要使用测试问题**评估 RAG 质量**吗？"
+- "需要我**优化检索**以提高准确性吗？"
+- "需要将其**部署**为 API 吗？"

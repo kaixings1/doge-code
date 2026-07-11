@@ -1,12 +1,12 @@
 ---
-name: e2e-testing-patterns
+name: 构建可靠、快速且可维护的端到端测试套件，让您有信心快速发布代码并在用户之前捕获回归。
 description: "构建可靠、快速且可维护的端到端测试套件，让您有信心快速发布代码并在用户之前捕获回归。"
 risk: safe
 source: community
 date_added: "2026-02-27"
 ---
 
-# E2E Testing Patterns
+# E2E 测试模式
 
 Build reliable, fast, and maintainable end-to-end test suites that provide confidence to ship code quickly and catch regressions before users do.
 

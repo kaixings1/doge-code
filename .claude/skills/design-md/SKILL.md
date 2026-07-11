@@ -1,5 +1,5 @@
 ---
-name: design-md
+name: 分析 Stitch 项目并将语义设计系统综合到 DESIGN.md 文件中
 description: "分析 Stitch 项目并将语义设计系统综合到 DESIGN.md 文件中"
 risk: safe
 source: "https://github.com/google-labs-code/stitch-skills/tree/main/skills/design-md"
@@ -170,7 +170,7 @@ To use this skill for the Furniture Collection project:
 4. **Consider hierarchy:** Document how visual weight and importance are communicated
 5. **Reference the guide:** Use language and patterns from the Stitch Effective Prompting Guide
 
-## Common Pitfalls to Avoid
+## 应避免的常见陷阱
 
 - ❌ Using technical jargon without translation (e.g., "rounded-xl" instead of "generously rounded corners")
 - ❌ Omitting color codes or using only descriptive names

@@ -1,5 +1,5 @@
 ---
-name: database-design
+name: 使用 Erd 工具进行数据库设计和建模的数据库架构师资源
 description: "使用 Erd 工具进行数据库设计和建模的数据库架构师资源。生成模式、关联和注释。"
 risk: safe
 source: community

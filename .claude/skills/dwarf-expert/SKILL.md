@@ -1,5 +1,5 @@
 ---
-name: dwarf-expert
+name: Dwarf Expert 相关功能和最佳实践
 description: "Dwarf Expert — Dwarf Expert 相关功能和最佳实践"
 allowed-tools:
   - Read
@@ -10,7 +10,9 @@ allowed-tools:
 risk: unknown
 source: community
 ---
-# 概述
+# DWARF 专家 (Dwarf Expert)
+
+## 概述
 此技能提供 technical knowledge and expertise about the DWARF standard and how to interact with DWARF files. Tasks include answering questions about the DWARF standard, providing 示例 of various DWARF features, parsing and/or creating DWARF files, and writing/modifying/analyzing code that interacts with DWARF data.
 
 ## 使用场景 This Skill
@@ -21,7 +23,7 @@ source: community
 - Verifying DWARF data integrity with `llvm-dwarfdump --verify`
 - Working with DWARF parsing libraries (libdwarf, pyelftools, gimli, etc.)
 
-## When NOT to Use This Skill
+## 不使用此技能的场景
 - **DWARF v1/v2 Analysis**: Expertise limited to versions 3, 4, and 5.
 - **General ELF Parsing**: Use standard ELF tools if DWARF data isn't needed.
 - **Executable Debugging**: Use dedicated debugging tools (gdb, lldb, etc) for debugging executable code/runtime behavior.

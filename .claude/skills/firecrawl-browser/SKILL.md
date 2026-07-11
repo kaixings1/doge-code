@@ -1,5 +1,5 @@
 ---
-name: firecrawl-browser
+name: Firecrawl浏览器自动化
 description: Firecrawl浏览器自动化
 allowed-tools:
   - Bash(firecrawl *)
@@ -20,7 +20,7 @@ allowed-tools:
 - [工作流升级模式](firecrawl-cli)中的最后手段：search → scrape → map → crawl → **interact**
 - **绝不 use interact for web searches** — use `search` instead
 
-## Quick start
+## 快速入门
 
 ```bash
 # 1. Scrape a page (scrape ID is saved automatically)
@@ -77,7 +77,7 @@ firecrawl scrape "https://app.example.com" --profile my-app --no-save-changes
 - Use `firecrawl interact stop` to free resources when done
 - For parallel work, scrape multiple pages and interact with each using `--scrape-id`
 
-## See also
+## 参见
 
 - [firecrawl-scrape](../firecrawl-scrape/SKILL.md) — try scrape first, escalate to interact only when needed
 - [firecrawl-search](../firecrawl-search/SKILL.md) — for web searches (never use interact for searching)

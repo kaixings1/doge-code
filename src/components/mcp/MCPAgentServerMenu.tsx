@@ -121,7 +121,7 @@ export function MCPAgentServerMenu({
           </Byline>}>
       <Box flexDirection="column" gap={0}>
         <Box>
-          <Text bold>Type: </Text>
+          <Text bold>类型: </Text>
           <Text dimColor>{agentServer.transport}</Text>
         </Box>
 
@@ -131,34 +131,34 @@ export function MCPAgentServerMenu({
           </Box>}
 
         {agentServer.command && <Box>
-            <Text bold>Command: </Text>
+            <Text bold>命令: </Text>
             <Text dimColor>{agentServer.command}</Text>
           </Box>}
 
         <Box>
-          <Text bold>Used by: </Text>
+          <Text bold>使用方: </Text>
           <Text dimColor>{agentServer.sourceAgents.join(', ')}</Text>
         </Box>
 
         <Box marginTop={1}>
-          <Text bold>Status: </Text>
+          <Text bold>状态: </Text>
           <Text>
-            {color('inactive', theme)(figures.radioOff)} not connected
-            (agent-only)
+            {color('inactive', theme)(figures.radioOff)} 未连接
+            (仅代理)
           </Text>
         </Box>
 
         {agentServer.needsAuth && <Box>
-            <Text bold>Auth: </Text>
-            {agentServer.isAuthenticated ? <Text>{color('success', theme)(figures.tick)} authenticated</Text> : <Text>
-                {color('warning', theme)(figures.triangleUpOutline)} may need
-                authentication
+            <Text bold>认证: </Text>
+            {agentServer.isAuthenticated ? <Text>{color('success', theme)(figures.tick)} 已认证</Text> : <Text>
+                {color('warning', theme)(figures.triangleUpOutline)} 可能需要
+                认证
               </Text>}
           </Box>}
       </Box>
 
       <Box>
-        <Text dimColor>This server connects only when running the agent.</Text>
+        <Text dimColor>此服务器仅在运行代理时连接。</Text>
       </Box>
 
       {error && <Box>

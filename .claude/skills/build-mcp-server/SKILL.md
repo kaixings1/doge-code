@@ -1,6 +1,6 @@
 ---
-name: build-mcp-server
-description: "Build Mcp Server — Build Mcp Server 相关功能和最佳实践"
+name: 构建 MCP 服务器
+description: "构建 MCP 服务器 — 构建 MCP 服务器相关功能和最佳实践"
 version: 0.1.0
 ---
 

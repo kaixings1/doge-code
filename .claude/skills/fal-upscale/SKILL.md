@@ -1,5 +1,5 @@
 ---
-name: fal-upscale
+name: FAL 超分辨率
 description: "FAL 超分辨率 — 基于 FAL AI 的图像放大"
 risk: unknown
 source: community

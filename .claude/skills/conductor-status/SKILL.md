@@ -1,5 +1,5 @@
 ---
-name: conductor-status
+name: 显示项目状态、活动轨道和下一步行动
 description: "显示项目状态、活动轨道和下一步行动"
 risk: unknown
 source: community
@@ -22,71 +22,71 @@ date_added: "2026-02-27"
 
 ## 说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证方法。
+- 如需详细示例，请打开 `resources/implementation-playbook.md`。
 
-## Pre-flight Checks
+## 预检检查
 
-1. Verify Conductor is initialized:
-   - Check `conductor/product.md` exists
-   - Check `conductor/tracks.md` exists
-   - If missing: Display error and suggest running `/conductor:设置` first
+1. 验证 Conductor 是否已初始化：
+   - 检查 `conductor/product.md` 是否存在
+   - 检查 `conductor/tracks.md` 是否存在
+   - 如果缺失：显示错误并建议先运行 `/conductor:设置`
 
-2. Check for any tracks:
-   - Read `conductor/tracks.md`
-   - If no tracks registered: Display 设置 complete message with suggestion to create first track
+2. 检查是否有任何轨道：
+   - 读取 `conductor/tracks.md`
+   - 如果没有注册轨道：显示设置完成消息并建议创建第一个轨道
 
-## Data Collection
+## 数据收集
 
-### 1. Project Information
+### 1. 项目信息
 
-Read `conductor/product.md` and extract:
+读取 `conductor/product.md` 并提取：
 
-- Project name
-- Project description
+- 项目名称
+- 项目描述
 
-### 2. Tracks 概述
+### 2. 轨道概述
 
-Read `conductor/tracks.md` and parse:
+读取 `conductor/tracks.md` 并解析：
 
-- Total tracks count
-- Completed tracks (marked `[x]`)
-- In-progress tracks (marked `[~]`)
-- Pending tracks (marked `[ ]`)
+- 轨道总数
+- 已完成的轨道（标记为 `[x]`）
+- 进行中的轨道（标记为 `[~]`）
+- 待处理的轨道（标记为 `[ ]`）
 
-### 3. Detailed Track Analysis
+### 3. 详细轨道分析
 
-For each track in `conductor/tracks/`:
+针对 `conductor/tracks/` 中的每个轨道：
 
-Read `conductor/tracks/{trackId}/plan.md`:
+读取 `conductor/tracks/{trackId}/plan.md`：
 
-- Count total tasks (lines matching `- [x]`, `- [~]`, `- [ ]` with Task prefix)
-- Count completed tasks (`[x]`)
-- Count in-progress tasks (`[~]`)
-- Count pending tasks (`[ ]`)
-- Identify current phase (first phase with incomplete tasks)
-- Identify next pending task
+- 统计总任务数（匹配 `- [x]`、`- [~]`、`- [ ]` 且带 Task 前缀的行）
+- 统计已完成任务数（`[x]`）
+- 统计进行中任务数（`[~]`）
+- 统计待处理任务数（`[ ]`）
+- 识别当前阶段（第一个存在未完成任务的阶段）
+- 识别下一个待处理任务
 
-Read `conductor/tracks/{trackId}/metadata.json`:
+读取 `conductor/tracks/{trackId}/metadata.json`：
 
-- Track type (feature, bug, chore, refactor)
-- Created date
-- Last updated date
+- 轨道类型（功能、bug、杂务、重构）
+- 创建日期
+- 最后更新日期
 - 状态
 
-Read `conductor/tracks/{trackId}/spec.md`:
+读取 `conductor/tracks/{trackId}/spec.md`：
 
-- Check for any noted blockers or dependencies
+- 检查是否有任何标记的阻塞项或依赖
 
-### 4. Blocker Detection
+### 4. 阻塞检测
 
-Scan for potential blockers:
+扫描潜在的阻塞项：
 
-- Tasks marked with `BLOCKED:` prefix
-- 依赖项 on incomplete tracks
-- Failed verification tasks
+- 标记为 `BLOCKED:` 前缀的任务
+- 依赖未完成轨道的依赖项
+- 失败的验证任务
 
 ## 输出格式
 
@@ -222,96 +222,96 @@ Commands: /conductor:implement {trackId} | /conductor:revert {trackId}
 ================================================================================
 ```
 
-## 状态 Markers Legend
+## 状态标记图例
 
-Display at bottom if helpful:
+在底部显示（如果有助于理解）：
 
 ```
-Legend:
-  [x] = Complete
-  [~] = In Progress
-  [ ] = Pending
-  [!] = Blocked
+图例：
+  [x] = 已完成
+  [~] = 进行中
+  [ ] = 待处理
+  [!] = 已阻塞
 ```
 
-## Error States
+## 错误状态
 
-### No Tracks Found
+### 未找到轨道
 
 ```
 ================================================================================
-                        PROJECT STATUS: {Project Name}
+                        项目状态：{项目名称}
 ================================================================================
 
-Conductor is set up but no tracks have been created yet.
+Conductor 已设置但尚未创建任何轨道。
 
-To get started:
-  /conductor:new-track "your feature description"
+要开始：
+  /conductor:new-track "你的功能描述"
 
 ================================================================================
 ```
 
-### Conductor Not Initialized
+### Conductor 未初始化
 
 ```
-ERROR: Conductor not initialized
+错误：Conductor 未初始化
 
-Could not find conductor/product.md
+找不到 conductor/product.md
 
-Run /conductor:设置 to initialize Conductor for this project.
+运行 /conductor:设置 为此项目初始化 Conductor。
 ```
 
-### Track Not Found (with 参数)
+### 未找到轨道（带参数时）
 
 ```
-ERROR: Track not found: {参数}
+错误：未找到轨道：{参数}
 
-Available tracks:
+可用轨道：
   - auth_20250115
   - dashboard_20250112
   - nav-fix_20250114
 
-Usage: /conductor:status [track-id]
+用法：/conductor:status [track-id]
 ```
 
-## Calculation Logic
+## 计算逻辑
 
-### Task Counting
-
-```
-For each plan.md:
-  - Complete: count lines matching /^- \[x\] Task/
-  - In Progress: count lines matching /^- \[~\] Task/
-  - Pending: count lines matching /^- \[ \] Task/
-  - Total: Complete + In Progress + Pending
-```
-
-### Phase Detection
+### 任务计数
 
 ```
-Current phase = first phase header followed by any incomplete task ([ ] or [~])
+对于每个 plan.md：
+  - 已完成：统计匹配 /^- \[x\] Task/ 的行数
+  - 进行中：统计匹配 /^- \[~\] Task/ 的行数
+  - 待处理：统计匹配 /^- \[ \] Task/ 的行数
+  - 总计：已完成 + 进行中 + 待处理
 ```
 
-### Progress Bar
+### 阶段检测
 
 ```
-filled = floor((completed / total) * 20)
-empty = 20 - filled
-bar = "[" + "#".repeat(filled) + ".".repeat(empty) + "]"
+当前阶段 = 第一个紧跟未完成任务（[ ] 或 [~]）的阶段标题
 ```
 
-## Quick Mode
-
-If invoked with `--quick` or `-q`:
+### 进度条
 
 ```
-{Project Name}: {completed}/{total} tasks ({percentage}%)
-Active: {trackId} - Task {X.Y}
+已填充 = 向下取整((已完成 / 总计) * 20)
+空 = 20 - 已填充
+条 = "[" + "#".repeat(已填充) + ".".repeat(空) + "]"
 ```
 
-## JSON Output
+## 快速模式
 
-If invoked with `--json`:
+如果使用 `--quick` 或 `-q` 参数调用：
+
+```
+{项目名称}：{已完成}/{总数} 任务（{百分比}%）
+活跃：{trackId} - 任务 {X.Y}
+```
+
+## JSON 输出
+
+如果使用 `--json` 参数调用：
 
 ```json
 {

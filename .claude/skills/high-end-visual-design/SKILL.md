@@ -1,5 +1,5 @@
 ---
-name: high-end-visual-design
+name: 高端视觉设计
 description: "高端视觉设计 — 高级视觉设计指导"
 risk: safe
 source: community

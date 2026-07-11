@@ -1,5 +1,5 @@
 ---
-name: golang-idioms
+name: Go语言惯用法
 description: Go语言惯用法 — 错误处理、接口、并发和包设计的惯用Go模式。
 ---
 

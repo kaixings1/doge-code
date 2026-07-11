@@ -1,9 +1,9 @@
 ---
-name: swiftpm-macos
+name: SwiftPM macOS开发指南
 description: SwiftPM macOS开发指南
 ---
 
-# SwiftPM for macOS
+# SwiftPM macOS
 
 ## 快速开始
 
@@ -35,7 +35,7 @@ the fastest path to a reproducible result.
    - Runtime failure
    - Test regression
 
-## Guardrails
+## 防护措施
 
 - 优先 SwiftPM over Xcode when both exist and the package path is clearly simpler.
 - Do not assume an app bundle exists in a pure package 工作流.

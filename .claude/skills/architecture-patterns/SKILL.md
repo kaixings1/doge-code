@@ -1,5 +1,5 @@
 ---
-name: architecture-patterns
+name: 架构模式
 description: "架构模式"
 risk: safe
 source: community

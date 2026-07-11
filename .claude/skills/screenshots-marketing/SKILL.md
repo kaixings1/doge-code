@@ -1,5 +1,5 @@
 ---
-name: screenshots-marketing
+name: 使用 Playwright 生成营销截屏相关功能和最佳实践。适用于落地
 description: "Screenshots Marketing — 使用 Playwright 生成营销截屏相关功能和最佳实践。适用于落地页主图、应用商店截屏和更新日志可视化。"
 triggers:
   - "marketing screenshot"
@@ -12,7 +12,7 @@ od:
   upstream: "https://github.com/Shpigford/screenshots"
 ---
 
-# screenshots-marketing
+# 营销截图
 
 > 来自 @Shpigford 的策选集。
 

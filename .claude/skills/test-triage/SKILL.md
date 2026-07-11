@@ -1,5 +1,5 @@
 ---
-name: test-triage
+name: 测试分类工作流
 description: 测试分类工作流
 ---
 

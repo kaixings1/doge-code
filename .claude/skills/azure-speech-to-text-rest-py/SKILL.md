@@ -1,12 +1,12 @@
 ---
-name: azure-speech-to-text-rest-py
-description: "Azure Speech To Text Rest Py — Azure Speech To Text Rest Py 相关功能和最佳实践"
+name: Azure 语音转文本 REST API 相关功能和最佳实践
+description: "Azure Speech To Text Rest Py — Azure 语音转文本 REST API 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
 
-# Azure Speech to Text REST API for Short Audio
+# Azure 短音频语音转文本 REST API
 
 Simple REST API for speech-to-text transcription of short audio files (up to 60 seconds). No SDK required - just HTTP requests.
 
@@ -33,7 +33,7 @@ AZURE_SPEECH_ENDPOINT=https://<region>.stt.speech.microsoft.com
 pip install requests
 ```
 
-## Quick Start
+## 快速入门
 
 ```python
 import os

@@ -1,5 +1,5 @@
 ---
-name: identitycheck-automation
+name: Identitycheck 自动化
 description: "通过 Rube MCP (Composio) 自动执行 IdentityCheck 任务。"
 requires:
   mcp: [rube]

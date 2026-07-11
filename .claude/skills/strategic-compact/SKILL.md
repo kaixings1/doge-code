@@ -1,13 +1,13 @@
 ---
-name: strategic-compact
+name: 战略契约工作流
 description: 战略契约工作流
 ---
 
-# Strategic Compact Skill
+# 战略精简
 
 Suggests manual `/compact` at strategic points in your 工作流 rather than relying on arbitrary auto-compaction.
 
-## When to Activate
+## 激活时机
 
 - Running long sessions that 方法 context limits (200K+ tokens)
 - Working on multi-phase tasks (research → plan → implement → test)

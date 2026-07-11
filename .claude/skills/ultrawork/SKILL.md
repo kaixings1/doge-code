@@ -1,9 +1,11 @@
 ---
-name: ultrawork
+name: 超级工作
 description: "超级工作 — 独立任务的并行执行引擎和协议"
 参数-hint: "<task description with parallel work items>"
 level: 4
 ---
+
+# UltraWork
 
 <目的>
 Ultrawork是独立任务的并行执行引擎和执行协议。它强调意图基础、并行上下文收集、非平凡工作的依赖感知任务图以及简洁的基于证据的执行摘要。它是一个组件，不是独立的持久化模式 — 它提供并行性和路由指导，但不提供持久化、验证循环或长期状态管理。

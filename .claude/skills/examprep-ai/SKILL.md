@@ -1,5 +1,5 @@
 ---
-name: examprep-ai
+name: AI 驱动的考试准备
 description: "AI 驱动的考试准备"
 risk: safe
 source: community

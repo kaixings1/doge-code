@@ -1,5 +1,5 @@
 ---
-name: seo-image-gen
+name: EO 资产的 AI 图像生成
 description: "用于 SEO 资产的 AI 图像生成：OG/社交预览图、博客主图、架构 图像、产品摄影、信息图。由 Gemini 通过 nanobanana-mcp 驱动。需要安装 banana 扩展。"
 参数-hint: "[og|hero|product|infographic|custom|batch] <description>"
 user-invocable: true

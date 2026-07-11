@@ -1,8 +1,6 @@
 ---
-name: computer-use-agents
-description: "Computer Use Agents — Computer Use Agents 相关功能和最佳实践"
-  viewing screens, moving cursors, clicking buttons, and typing text. Covers
-  Anthropic's Computer Use, OpenAI's Operator/CUA, and open-source alternatives.
+name: 计算机使用代理
+description: "计算机使用代理 — 计算机使用代理相关功能和最佳实践，涵盖 Anthropic Computer Use、OpenAI Operator/CUA 和开源替代方案，包括查看屏幕、移动光标、点击按钮和输入文本。"
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
@@ -2053,7 +2051,7 @@ class SandboxedTestRunner:
             await self.destroy_container(container_id)
 ```
 
-## Validation Checks
+## 验证检查
 
 ### Computer Use Without Sandbox
 
@@ -2135,7 +2133,7 @@ Consider adding cost limits per task
 
 Message: Consider adding max_cost_per_task to prevent expensive runaway tasks.
 
-## Collaboration
+## 协作
 
 ### Delegation Triggers
 

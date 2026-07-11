@@ -1,5 +1,5 @@
 ---
-name: growth-engine
+name: 面向数字产品的增长引擎
 description: "面向数字产品的增长引擎——增长黑客、SEO、ASO、病毒循环、电子邮件营销、CRM、推荐计划和有机获取。"
 risk: none
 source: community

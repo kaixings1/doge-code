@@ -27,7 +27,7 @@ export function KeybindingWarnings() {
       }
       const errors = warnings.filter(_temp);
       const warns = warnings.filter(_temp2);
-      t0 = <Box flexDirection="column" marginTop={1} marginBottom={1}><Text bold={true} color={errors.length > 0 ? "error" : "warning"}>Keybinding Configuration Issues</Text><Box><Text dimColor={true}>Location: </Text><Text dimColor={true}>{getKeybindingsPath()}</Text></Box><Box marginLeft={1} flexDirection="column" marginTop={1}>{errors.map(_temp3)}{warns.map(_temp4)}</Box></Box>;
+      t0 = <Box flexDirection="column" marginTop={1} marginBottom={1}><Text bold={true} color={errors.length > 0 ? "error" : "warning"}>快捷键配置问题</Text><Box><Text dimColor={true}>位置: </Text><Text dimColor={true}>{getKeybindingsPath()}</Text></Box><Box marginLeft={1} flexDirection="column" marginTop={1}>{errors.map(_temp3)}{warns.map(_temp4)}</Box></Box>;
     }
     $[0] = t0;
     $[1] = t1;

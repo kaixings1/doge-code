@@ -1,5 +1,5 @@
 ---
-name: espocrm-automation
+name: EspoCRM 自动化
 description: "EspoCRM 自动化"
 risk: safe
 source: community

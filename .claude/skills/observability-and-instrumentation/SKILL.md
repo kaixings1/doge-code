@@ -1,5 +1,5 @@
 ---
-name: observability-and-instrumentation
+name: 可观测性与仪器化
 description: 可观测性与仪器化 — 为代码添加仪器化，使生产行为可见且易于诊断。
 ---
 
@@ -163,7 +163,7 @@ Instrumentation is code; it can be wrong. Before calling the work done, trigger 
 - Follow one 请求 across services in the tracing UI → no broken spans
 - Fire each new alert once (lower the threshold temporarily) → confirm it reaches the right channel and the runbook link works
 
-## Common Rationalizations
+## 常见理由
 
 | Rationalization | Reality |
 |---|---|
@@ -175,7 +175,7 @@ Instrumentation is code; it can be wrong. Before calling the work done, trigger 
 | "User ID as a metric label makes debugging easier" | It also makes your metrics backend fall over. High-cardinality lookups belong in logs and traces. |
 | "Tracing is overkill for our two services" | Two services already means cross-service latency questions logs can't answer. Auto-instrumentation makes the cost trivial. |
 
-## Red Flags
+## 危险信号
 
 - A feature PR with retries, queues, or external calls and zero new telemetry
 - Log lines built by string interpolation instead of structured fields
@@ -187,7 +187,7 @@ Instrumentation is code; it can be wrong. Before calling the work done, trigger 
 - Secrets, tokens, or full 请求 bodies appearing in logs
 - "It works on my machine" as the only evidence a production feature is healthy
 
-## Verification
+## 验证
 
 After instrumenting a feature, confirm:
 

@@ -1,5 +1,5 @@
 ---
-name: internal-comms-community
+name: 社区内部沟通
 description: "社区内部沟通 — 社区管理沟通策略"
 risk: safe
 source: community

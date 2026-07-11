@@ -3,27 +3,27 @@ description: 时间序列预测工作流 — ARIMA、Prophet或指数平滑
 argument-hint: "<describe your time series data and forecast horizon>"
 ---
 
-# /forecast — Time Series Forecasting
+# /forecast — 时间序列预测
 
-Build and evaluate a time series forecast.
+构建和评估时间序列预测。
 
-## Invocation
+## 调用
 
 ```
-/forecast Forecast monthly revenue for the next 6 months
-/forecast [upload file] Predict daily user signups with holiday effects
-/forecast Build a demand forecast with seasonal adjustments
+/forecast 预测未来 6 个月的月度收入
+/forecast [上传文件] 预测考虑节假日影响的每日用户注册量
+/forecast 构建带有季节性调整的需求预测
 ```
 
-## Workflow
+## 工作流
 
-Apply **time-series-analysis** skill:
-1. Assess stationarity and decompose into components
-2. Select and fit the best model (ARIMA, Prophet, Holt-Winters)
-3. Generate forecasts with confidence intervals
-4. Evaluate on holdout set
+应用 **time-series-analysis** 技能：
+1. 评估平稳性并分解为成分
+2. 选择并拟合最佳模型（ARIMA、Prophet、Holt-Winters）
+3. 生成带有置信区间的预测
+4. 在保持集上评估
 
-Offer follow-up:
-- "Want to **analyze trends** in more detail with /analyze-trends?"
-- "Need a **causal analysis** of what's driving the trend?"
-- "Should I **compare multiple models** side by side?"
+提供后续选项：
+- "想要使用 /analyze-trends **更详细地分析趋势**吗？"
+- "需要**因果分析**来了解是什么驱动了趋势？"
+- "需要我**并排比较多个模型**吗？"

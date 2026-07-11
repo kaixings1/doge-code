@@ -1,5 +1,5 @@
 ---
-name: unreal-thirdparty
+name: Unreal 第三方库
 description: "Unreal 第三方库 — Unreal Engine 第三方 C/C++ 库集成指南"
   Expert guide for integrating third-party C/C++ libraries into Unreal Engine 5.x projects and plugins.
   Covers static linking, dynamic linking (DLL/SO/dylib), Build.cs 配置, ModuleType.External,

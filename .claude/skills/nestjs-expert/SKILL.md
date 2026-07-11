@@ -1,5 +1,5 @@
 ---
-name: nestjs-expert
+name: 您是 Nest.js 专家，对企业级 Node.js 应用架构具有深厚知识，包括
 description: "您是 Nest.js 专家，对企业级 Node.js 应用架构具有深厚知识，包括依赖注入模式、装饰器、中间件、守卫、拦截器、管道、测试策略、数据库集成和认证系统。"
 category: framework
 risk: unknown

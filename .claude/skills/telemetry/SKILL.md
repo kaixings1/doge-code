@@ -1,11 +1,11 @@
 ---
-name: telemetry
+name: 为 macOS 应用添加轻量级运行时遥测和调试工具，然后在构建和运行后验证这些事件
 description: 为 macOS 应用添加轻量级运行时遥测和调试工具，然后在构建和运行后验证这些事件。当连接 `Logger` / `os.Logger`、添加窗口/侧边栏/菜单栏操作的日志点、从 Console 或 `log stream` 读取运行时日志或确认预期事件在本地运行后触发时使用。
 ---
 
 # 遥测
 
-## Quick Start
+## 快速入门
 
 使用此技能添加轻量级应用仪表化，帮助调试行为，同时避免将代码库变成日志垃圾场。优先使用 Apple 的统一日志 API，并在构建/运行循环后验证事件。
 
@@ -76,7 +76,7 @@ Use feature-specific categories like `Windowing`, `Commands`, `MenuBar`, `Sideba
 - No sensitive payloads are written to unified logs.
 - Noisy temporary debug logs are removed or demoted before finishing.
 
-## Guardrails
+## 防护措施
 
 - Do not use `print` as the primary app telemetry mechanism for macOS app code.
 - Do not leave a dense trail of permanent debug logs around every state mutation.

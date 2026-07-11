@@ -1,5 +1,5 @@
 ---
-name: cc-skill-security-review
+name: 安全审查
 description: "安全审查"
 risk: safe
 source: community

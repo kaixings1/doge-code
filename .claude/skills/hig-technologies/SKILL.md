@@ -1,5 +1,5 @@
 ---
-name: hig-technologies
+name: HIG 技术
 description: "HIG 技术 — Human Interface Guidelines 技术实现"
 risk: safe
 source: community

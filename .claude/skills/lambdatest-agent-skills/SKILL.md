@@ -1,5 +1,5 @@
 ---
-name: lambdatest-agent-skills
+name: 46 个框架
 description: "46 个框架的生产级测试自动化技能，涵盖 15+ 种语言的 E2E、单元、移动、BDD、视觉和云测试。"
 category: testing
 risk: safe

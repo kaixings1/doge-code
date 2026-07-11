@@ -1,5 +1,5 @@
 ---
-name: api-key-hunter-2026
+name: API 密钥猎手 2026
 description: "API 密钥猎手 2026"
 risk: safe
 source: community

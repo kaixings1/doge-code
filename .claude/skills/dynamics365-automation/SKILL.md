@@ -5,7 +5,7 @@ requires:
   mcp: [rube]
 ---
 
-# Dynamics 365 Automation
+# Dynamics 365 自动化
 
 Automate Microsoft Dynamics 365 CRM operations including creating and updating contacts, accounts, leads, opportunities, sales orders, invoices, and support cases.
 

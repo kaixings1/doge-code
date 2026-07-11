@@ -1,5 +1,5 @@
 ---
-name: code-documenter
+name: 代码文档生成
 description: "代码文档生成"
 risk: safe
 source: community

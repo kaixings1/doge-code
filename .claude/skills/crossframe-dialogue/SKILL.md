@@ -1,5 +1,5 @@
 ---
-name: crossframe-dialogue
+name: 适用于crossframe suite routes explicit chin
 description: "适用于crossframe suite routes explicit chinese reader replies, editor responses, consultation-style short answers, or boundary-aware structural advice.的情况。"
 category: content
 risk: safe

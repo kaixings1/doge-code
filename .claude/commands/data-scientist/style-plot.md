@@ -3,29 +3,29 @@ description: 为图表应用可出版的样式 — 颜色、字体、可访问�
 argument-hint: "<describe the styling you want or share existing plot code>"
 ---
 
-# /style-plot — Plot Styling
+# /style-plot — 图表样式
 
-Apply professional, accessible styling to any visualization.
+为任何可视化应用专业、可访问的样式。
 
-## Invocation
+## 调用
 
 ```
-/style-plot Apply a dark theme to this matplotlib chart for a keynote
-/style-plot Make this chart colorblind-accessible with proper annotations
-/style-plot Create a consistent style theme for all charts in my report
+/style-plot 为此 matplotlib 图表应用深色主题用于主题演讲
+/style-plot 使此图表色盲友好并带有适当的标注
+/style-plot 为我的报告中的所有图表创建一致的样式主题
 ```
 
-## Workflow
+## 工作流
 
-### Step 1: Assess Current
-Review existing chart code or description.
+### 步骤 1：评估当前状态
+审查现有图表代码或描述。
 
-### Step 2: Apply Style
-Apply **style-guide** skill — colors, typography, accessibility, layout.
+### 步骤 2：应用样式
+应用 **style-guide** 技能——颜色、排版、无障碍、布局。
 
-### Step 3: Deliver
-Styled code with before/after comparison.
+### 步骤 3：交付
+带有前后对比的样式化代码。
 
-Offer follow-up:
-- "Want to **save this as a reusable theme**?"
-- "Should I **apply this style** to other charts too?"
+提供后续选项：
+- "想要**将其保存为可复用的主题**吗？"
+- "需要我**将此样式**应用于其他图表吗？"

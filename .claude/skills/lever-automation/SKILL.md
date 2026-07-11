@@ -1,5 +1,5 @@
 ---
-name: Lever Automation
+name: —管理机会、职位发布、招聘需求、管道阶段和候选人标签。
 description: "通过 Composio Lever 集成自动执行 Lever ATS 中的招聘工作流——管理机会、职位发布、招聘需求、管道阶段和候选人标签。"
 requires:
   mcp:

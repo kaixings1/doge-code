@@ -1,10 +1,12 @@
 ---
-name: legal-advisor
-description: "Legal Advisor — Legal Advisor 相关功能和最佳实践"
+name: 法律顾问
+description: "法律顾问 — 法律顾问相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# 法律顾问
 
 ## 使用此技能的场景
 

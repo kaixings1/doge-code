@@ -1,5 +1,5 @@
 ---
-name: identity-mirror
+name: 身份镜像
 description: "身份镜像 — 数字身份管理和镜像"
 risk: safe
 source: community

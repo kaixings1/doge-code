@@ -1,5 +1,5 @@
 ---
-name: fp-backend
+name: 使用 fp-ts 构建类型安全、可测试的后端服务的函数式编程模式
 description: "使用 fp-ts 构建类型安全、可测试的后端服务的函数式编程模式。涵盖依赖注入、服务组合和 ReaderTaskEither。"
 risk: unknown
 source: community

@@ -1,3 +1,8 @@
+---
+name: Devcontainer 设置插件
+description: 创建预配置的 devcontainers，集成 Claude Code 和语言特定工具链。
+---
+
 # Devcontainer 设置插件
 
 Create pre-configured devcontainers with Claude Code and language-specific tooling.

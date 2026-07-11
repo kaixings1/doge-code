@@ -1,5 +1,5 @@
 ---
-name: instagram
+name: 内容策略和自动化发布
 description: "Instagram — 内容策略和自动化发布"
 risk: unknown
 source: community

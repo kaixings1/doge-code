@@ -1,5 +1,5 @@
 ---
-name: ai-loop
+name: AI 开发反馈循环
 description: "AI Loop — AI 开发反馈循环：构建、测试、学习、迭代的持续改进工作流。"
 category: 工作流
 risk: safe
@@ -9,7 +9,7 @@ tags: [agent-工作流, specification, implementation, review, verification, fee
 tools: [claude, 游标, codex, gemini]
 ---
 
-# AI-Loop Skill
+# AI 开发循环 (AI Loop)
 
 ## 概述
 

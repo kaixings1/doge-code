@@ -1,5 +1,5 @@
 ---
-name: dbos-typescript
+name: 使用 DBOS 持久化工作流构建可靠、容错的 TypeScript 应用指南
 description: "使用 DBOS 持久化工作流构建可靠、容错的 TypeScript 应用指南。适用于将 DBOS 添加到现有 TypeScript 代码、创建工作流和步骤或使用队列进行并发控制。"
 risk: safe
 source: "https://docs.dbos.dev/"
@@ -20,7 +20,7 @@ date_added: "2026-02-27"
 - Using DBOSClient from external applications
 - Testing DBOS applications
 
-## Rule Categories by Priority
+## 按优先级排序的规则类别
 
 | Priority | Category | Impact | Prefix |
 |----------|----------|--------|--------|
@@ -34,7 +34,7 @@ date_added: "2026-02-27"
 | 8 | Client | MEDIUM | `client-` |
 | 9 | Advanced | LOW | `advanced-` |
 
-## Critical Rules
+## 关键规则
 
 ### Installation
 
@@ -88,7 +88,7 @@ const myWorkflow = DBOS.registerWorkflow(myWorkflowFn);
 - Workflows MUST be deterministic - non-deterministic operations go in steps
 - 不要 modify global variables from workflows or steps
 
-## How to Use
+## 使用方法
 
 Read individual rule files for detailed explanations and 示例:
 

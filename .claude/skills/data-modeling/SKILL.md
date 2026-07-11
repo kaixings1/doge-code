@@ -2,32 +2,32 @@
 name: 数据建模
 description: "数据建模方法——概念、逻辑和物理模型。涵盖 ER 图、UML 和维度建模。适用于设计数据库。"
 ---
-# Data Modeling
+# 数据建模 (Data Modeling)
 
 ## 目的
-Design data models at conceptual, logical, and physical levels for databases and data warehouses.
+在概念、逻辑和物理层面为数据库和数据仓库设计数据模型。
 
 ## 工作原理
 
-### Modeling Levels
-1. **Conceptual**: Business entities and relationships (non-technical)
-2. **Logical**: Detailed attributes, data types, keys, constraints
-3. **Physical**: Implementation-specific (indexes, partitions, storage)
+### 建模层次
+1. **概念模型**：业务实体和关系（非技术层面）
+2. **逻辑模型**：详细的属性、数据类型、键、约束
+3. **物理模型**：实现相关（索引、分区、存储）
 
-### Methodologies
-- **Kimball**: Star 架构, business-process dimensional modeling
-- **Inmon**: Enterprise data warehouse, normalized
-- **Data Vault 2.0**: Hubs, links, satellites — flexible and auditable
-- **Activity 架构**: Single wide event table pattern
+### 方法论
+- **Kimball**：星型架构，面向业务流程的维度建模
+- **Inmon**：企业数据仓库，规范化
+- **Data Vault 2.0**：枢纽、链接、卫星 — 灵活且可审计
+- **活动架构**：单宽事件表模式
 
-## 用法 示例
+## 用法示例
 
 ```
-"Create a dimensional model for our e-commerce analytics"
+"为我们的电子商务分析创建维度模型"
 ```
 
 ## 输出格式
 
-- **Model Diagrams**: ERD at each level
-- **Data Dictionary**: Column descriptions and business rules
-- **Implementation SQL**: DDL scripts
+- **模型图**：ERD（实体关系图）各层次模型
+- **数据字典**：列描述和业务规则
+- **实现 SQL**：DDL 脚本

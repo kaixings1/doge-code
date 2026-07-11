@@ -4,7 +4,7 @@ description: 交互式向导 — 设计 SLO（SLI、目标、错误预算、burn
 
 # /slo-design
 
-Step through SLO design using the `slo-architect` skill. Produces an SLO definition, computes error budget + multi-window burn-rate alerts, and runs the reviewer to catch common bugs.
+使用 `slo-architect` 技能逐步设计 SLO。生成 SLO 定义，计算错误预算 + 多窗口燃烧率告警，并运行审查器以捕获常见错误。
 
 ## Usage
 

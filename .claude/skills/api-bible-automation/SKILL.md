@@ -1,5 +1,5 @@
 ---
-name: api-bible-automation
+name: API Bible 自动化
 description: "API Bible 自动化"
 risk: safe
 source: community

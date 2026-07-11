@@ -3,43 +3,43 @@ description: 特征工程引导工作流 — 从原始数据创建预测特征
 argument-hint: "<describe your data and modeling goal>"
 ---
 
-# /engineer-features — Feature Engineering Workflow
+# /engineer-features — 特征工程工作流
 
-Create powerful features from raw data for machine learning models.
+从原始数据中为机器学习模型创建强大的特征。
 
-## Invocation
+## 调用
 
 ```
-/engineer-features Build features for a churn prediction model from user activity data
-/engineer-features [upload file] Engineer features for a house price regression
-/engineer-features What features can I create from these timestamp and categorical columns?
+/engineer-features 从用户活动数据为流失预测模型构建特征
+/engineer-features [上传文件] 为房价回归构建特征
+/engineer-features 我可以从这些时间戳和分类列创建哪些特征？
 ```
 
-## Workflow
+## 工作流
 
-### Step 1: Understand the Problem
-- What is the target variable? (classification, regression, clustering)
-- What model will consume these features? (tree-based, linear, neural network)
-- What raw features are available?
+### 步骤 1：理解问题
+- 目标变量是什么？（分类、回归、聚类）
+- 哪些模型将使用这些特征？（基于树、线性、神经网络）
+- 有哪些原始特征可用？
 
-### Step 2: Analyze Raw Data
-- Profile each column's distribution and relationship to target
-- Identify high-cardinality categoricals, datetime columns, text fields
-- Check for existing features that may need transformation
+### 步骤 2：分析原始数据
+- 剖析每列的分布及其与目标的关系
+- 识别高基数分类变量、日期时间列、文本字段
+- 检查可能需要转换的现有特征
 
-### Step 3: Engineer Features
-Apply **feature-engineering** skill:
-- Create features by type (numeric, categorical, datetime, text)
-- Build interaction terms and domain-specific features
-- Apply appropriate encoding strategies
+### 步骤 3：构建特征
+应用 **feature-engineering** 技能：
+- 按类型创建特征（数值型、类别型、日期时间型、文本型）
+- 构建交互项和领域特定特征
+- 应用适当的编码策略
 
-### Step 4: Validate & Select
-- Check for target leakage
-- Quick feature importance ranking
-- Remove zero-variance and highly correlated features
-- Generate a scikit-learn Pipeline for reproducibility
+### 步骤 4：验证与选择
+- 检查目标泄漏
+- 快速特征重要性排序
+- 移除零方差和高度相关的特征
+- 生成可重现的 scikit-learn Pipeline
 
-Offer follow-up:
-- "Ready to **train a model** with /train-model?"
-- "Want to **evaluate feature importance** more deeply?"
-- "Need to **add more features** from external data?"
+提供后续选项：
+- "准备好使用 /train-model **训练模型**了吗？"
+- "想要**更深入地评估特征重要性**吗？"
+- "需要从外部数据**添加更多特征**吗？"

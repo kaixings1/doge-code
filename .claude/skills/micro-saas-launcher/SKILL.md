@@ -1,5 +1,5 @@
 ---
-name: micro-saas-launcher
+name: Micro SaaS 启动器
 description: "Micro SaaS 启动器 — 快速启动聚焦SaaS产品的独立黑客方法。"
   hacker 方法 to building profitable software. Covers idea validation, MVP
   development, pricing, launch strategies, and growing to sustainable revenue.

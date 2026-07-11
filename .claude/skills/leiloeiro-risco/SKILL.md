@@ -1,6 +1,6 @@
 ---
-name: leiloeiro-risco
-description: "Leiloeiro Risco — Leiloeiro Risco 相关功能和最佳实践"
+name: 拍卖师风险
+description: "拍卖师风险 — 拍卖师风险相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-06'

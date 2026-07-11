@@ -1,5 +1,5 @@
 ---
-name: factorial-automation
+name: Factorial 自动化
 description: "Factorial 自动化"
 risk: safe
 source: community

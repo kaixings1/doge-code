@@ -1,5 +1,5 @@
 ---
-name: analyzing-linux-kernel-rootkits
+name: Linux 内核 Rootkit 分析
 description: "分析 Linux 内核 Rootkit"
 risk: safe
 source: community

@@ -1,6 +1,6 @@
 ---
-name: azure-ai-translation-text-py
-description: "Azure Ai Translation Text Py — Azure Ai Translation Text Py 相关功能和最佳实践"
+name: Azure AI Translation Text (Python)
+description: "Azure AI Translation Text Python — Azure AI Translation Text Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -233,7 +233,7 @@ for item in result:
         print(f"Sentence lengths: {translation.sent_len.src_sent_len}")
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.ai.translation.text.aio import TextTranslationClient

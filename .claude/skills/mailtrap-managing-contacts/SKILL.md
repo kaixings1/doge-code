@@ -1,5 +1,5 @@
 ---
-name: mailtrap-managing-contacts
+name: Mailtrap 联系人管理
 description: 通过 UI 或 API 管理 Mailtrap 联系人、列表、细分、自定义字段、导入、CRM 同步和营销活动受众。
 risk: critical
 source: community

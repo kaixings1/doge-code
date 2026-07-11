@@ -1,5 +1,5 @@
 ---
-name: appveyor-automation
+name: AppVeyor 自动化
 description: "AppVeyor 自动化"
 risk: safe
 source: community

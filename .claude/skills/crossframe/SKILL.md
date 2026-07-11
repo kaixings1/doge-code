@@ -1,6 +1,6 @@
 ---
-name: crossframe
-description: "Use when the user explicitly invokes CrossFrame or 跨尺度结构诊断 for Chinese-canonical structural diagnosis of complex relationships, organizations, institutions, public disputes, or long-term evolution."
+name: 当用户明确调用 CrossFrame 或跨尺度结构诊断时使用，用于对复杂关系、组
+description: "当用户明确调用 CrossFrame 或跨尺度结构诊断时使用，用于对复杂关系、组织、机构、公共争议或长期演化进行中文规范的跨尺度结构诊断。"
 category: 工作流
 risk: safe
 source: community
@@ -24,7 +24,7 @@ tags:
 # CrossFrame
 
 
-## When to Use This Skill
+## 何时使用此技能
 
 - Use only when the user explicitly names CrossFrame, `crossframe`, `/crossframe`, `$crossframe`, or 跨尺度结构诊断.
 - Use for Chinese-canonical structural diagnosis where facts, scale, evidence, responsibility, mechanisms, and action limits must be separated.

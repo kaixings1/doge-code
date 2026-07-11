@@ -1,5 +1,5 @@
 ---
-name: poster-hero
+name: 具有强烈视觉冲击的纵向海报或 Moments 风格分享图片。
 zh_name: "营销海报"
 en_name: "Marketing Poster"
 emoji: "🖼️"

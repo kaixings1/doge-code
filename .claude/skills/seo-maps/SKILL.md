@@ -1,5 +1,5 @@
 ---
-name: seo-maps
+name: 本地 SEO 地图智能分析相关功能和最佳实践：地理网格排名跟踪、GBP
 description: "Seo Maps — 本地 SEO 地图智能分析相关功能和最佳实践：地理网格排名跟踪、GBP 画像审计、跨平台评论情报和 NAP 验证。"
   auditing via API, review intelligence across Google/Tripadvisor/Trustpilot,
   cross-platform NAP verification (Google/Bing/Apple/OSM), competitor
@@ -19,7 +19,7 @@ metadata:
   category: seo
 ---
 
-# Maps Intelligence (March 2026)
+# SEO 地图
 
 Maps platform analysis for local businesses. Works with external APIs to assess
 how a business appears on Google Maps, Bing Places, Apple Maps, and OpenStreetMap.

@@ -1,5 +1,5 @@
 ---
-name: mock-hunter
+name: 以五个阶段（编目、点击、追踪、分类、报告）审计实时网页，识别模拟数据、硬编码值、
 description: "以五个阶段（编目、点击、追踪、分类、报告）审计实时网页，识别模拟数据、硬编码值、LLM 生成指标和损坏的端点。输出每个可见值的 REAL/MOCK/LLM/HARDCODED/BROKEN/UNKNOWN 判定。"
 category: testing
 risk: critical

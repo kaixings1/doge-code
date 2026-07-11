@@ -13,11 +13,11 @@ allowed-tools:
 requires: [execute-phase, phase]
 ---
 <objective>
-Validate built features through conversational testing with persistent state.
+通过带有持久状态的对话式测试验证已构建的功能。
 
-Purpose: Confirm what Claude built actually works from user's perspective. One test at a time, plain text responses, no interrogation. When issues are found, automatically diagnose, plan fixes, and prepare for execution.
+目的：从用户角度确认 Claude 构建的内容确实有效。一次一个测试，纯文本响应，不进行盘问。当发现问题时，自动诊断、规划修复并准备执行。
 
-Output: {phase_num}-UAT.md tracking all test results. If issues found: diagnosed gaps, verified fix plans ready for /gsd:execute-phase
+输出：{phase_num}-UAT.md 跟踪所有测试结果。如果发现问题：已诊断的差距、已验证的修复计划，可用于 /gsd:execute-phase
 </objective>
 
 <execution_context>

@@ -1,5 +1,5 @@
 ---
-name: hig-components-dialogs
+name: HIG 对话框组件
 description: "HIG 对话框组件 — Human Interface Guidelines 对话框组件"
 risk: safe
 source: community

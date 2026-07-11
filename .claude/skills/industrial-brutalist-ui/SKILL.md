@@ -1,5 +1,5 @@
 ---
-name: industrial-brutalist-ui
+name: 工业粗野主义 UI
 description: "工业粗野主义 UI — 粗野主义设计风格用户界面"
 risk: unknown
 source: community

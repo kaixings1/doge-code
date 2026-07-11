@@ -3,7 +3,7 @@ description: ARS 学术论文 `plan` 模式 — Socratic 逐章规划
 model: sonnet
 ---
 
-Trigger the `academic-paper` skill in `plan` mode. Produces a Chapter Plan + INSIGHT collection through Socratic dialogue with the user. Originality-spectrum, very-high oversight.
+以 `规划` 模式触发 `academic-paper` 技能。通过与用户的苏格拉底式对话生成章节计划 + 洞察集合。原创性谱系，非常高的监督需求。
 
-Mode reference: `MODE_REGISTRY.md` § academic-paper.
-Skill entry: `academic-paper/SKILL.md`.
+模式参考：`MODE_REGISTRY.md` § academic-paper。
+技能入口：`academic-paper/SKILL.md`。

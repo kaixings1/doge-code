@@ -1,12 +1,12 @@
 ---
-name: trace
+name: Trace 相关功能和最佳实践
 description: "Trace — Trace 相关功能和最佳实践"
 参数-hint: "<要追踪的观察>"
 agent: tracer
 level: 2
 ---
 
-# Trace Skill
+# 追踪
 
 使用此技能处理模糊、因果、证据密集型问题，目标是解释观察到的结果**为什么**发生，而不是直接跳入修复或重写代码。
 

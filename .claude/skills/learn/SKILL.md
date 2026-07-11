@@ -1,6 +1,6 @@
 ---
-name: learn
-description: "Learn — Learn 相关功能和最佳实践"
+name: 学习
+description: "学习 — 学习相关功能和最佳实践"
 category: "education"
 risk: "safe"
 source: "official"
@@ -19,6 +19,8 @@ tools:
   - codex-cli
   - 游标
 ---
+
+# 学习
 
 ## 使用场景
 

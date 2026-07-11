@@ -1,5 +1,5 @@
 ---
-name: fp-data-transforms
+name: 实用的 TypeScript 数据转换模式
 description: "实用的 TypeScript 数据转换模式：数组操作、对象重塑、API 响应归一化、分组聚合和空安全嵌套值访问。"
 risk: unknown
 source: community

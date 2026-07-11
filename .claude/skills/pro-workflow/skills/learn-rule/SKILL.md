@@ -60,7 +60,7 @@ Recent mistake: Edited wrong utils.ts file
 Add to LEARNED section? (y/n)
 ```
 
-## Guardrails
+## 防护措施
 
 - Always wait for user approval before persisting.
 - Keep rules to one line — specific and actionable.

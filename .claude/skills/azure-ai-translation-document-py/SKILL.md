@@ -1,6 +1,6 @@
 ---
-name: azure-ai-translation-document-py
-description: "Azure Ai Translation Document Py — Azure Ai Translation Document Py 相关功能和最佳实践"
+name: Azure AI Translation Document (Python)
+description: "Azure AI Translation Document Python — Azure AI Translation Document Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -208,7 +208,7 @@ for lang in languages:
     print(f"Language: {lang.name} ({lang.code})")
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.ai.translation.document.aio import DocumentTranslationClient

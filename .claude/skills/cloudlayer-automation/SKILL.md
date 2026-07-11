@@ -1,5 +1,5 @@
 ---
-name: cloudlayer-自动化
+name: Cloudlayer 自动化
 description: "通过 Rube MCP (Composio) 自动化 Cloudlayer 操作。始终先调用 RUBE_SEARCH_TOOLS 获取最新工具 schema。"
 requires:
   mcp: [rube]

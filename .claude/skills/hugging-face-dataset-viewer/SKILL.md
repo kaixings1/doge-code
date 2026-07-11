@@ -1,5 +1,5 @@
 ---
-name: hugging-face-dataset-viewer
+name: Hugging Face 数据集查看器
 description: "Hugging Face 数据集查看器 — 数据集浏览"
 risk: safe
 source: community

@@ -134,7 +134,7 @@ guard against critical anomalies or unhealthy runs.
 - Healthy trace metrics do not prove the final code is correct; still run tests and review diffs.
 - CI gates should start as advisory until the team understands normal baseline behavior.
 
-## Security & Safety Notes
+## 安全与安全注意事项
 
 - Do not upload private 会话 logs to external services unless the user explicitly approves it.
 - Do not overwrite user reports unless they requested that exact output path.

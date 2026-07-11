@@ -1,8 +1,8 @@
 ---
-name: reference-design-contract
+name: 参考转设计合约
 zh_name: "参考转设计合约"
 en_name: "Reference Design Contract"
-description: "Reference Design Contract — Reference Design Contract 相关功能和最佳实践"
+description: "参考转设计合约 — 参考设计合约相关功能和最佳实践"
   Turn vague taste, screenshots, URLs, product notes, or "make it feel like this"
   references into a grounded DESIGN.md plus an implementation handoff. Use it
   before prototypes, decks, redesigns, or image remix work when the user needs

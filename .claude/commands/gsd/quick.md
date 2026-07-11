@@ -14,10 +14,10 @@ allowed-tools:
 requires: [phase]
 ---
 <objective>
-Execute small, ad-hoc tasks with GSD guarantees (atomic commits, STATE.md tracking).
+使用 GSD 保障（原子提交、STATE.md 跟踪）执行小型临时任务。
 
-Quick mode is the same system with a shorter path:
-- Spawns gsd-planner (quick mode) + gsd-executor(s)
+快速模式是同一系统的更短路径：
+- 生成 gsd-planner（快速模式）+ gsd-executor(s)
 - Quick tasks live in `.planning/quick/` separate from planned phases
 - Updates STATE.md "Quick Tasks Completed" table (NOT ROADMAP.md)
 

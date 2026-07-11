@@ -13,25 +13,25 @@ allowed-tools:
 ---
 
 <objective>
-Capture ideas, tasks, notes, and seeds to their appropriate destination in the GSD system.
+捕获想法、任务、笔记和创意种子到 GSD 系统中各自的目的地。
 
-Mode routing:
-- **default** (no flag): Capture as a structured todo for later work → add-todo workflow
-- **--note**: Zero-friction idea capture (append/list/promote) → note workflow
-- **--backlog**: Add an idea to the backlog parking lot (999.x numbering) → add-backlog workflow
-- **--seed**: Capture a forward-looking idea with trigger conditions → plant-seed workflow
-- **--list**: List pending todos and select one to work on → check-todos workflow
+模式路由：
+- **默认**（无标志）：捕获为结构化待办事项以进行后续工作 → add-todo 工作流
+- **--note**：零摩擦想法捕获（追加/列表/提升）→ note 工作流
+- **--backlog**：将想法添加到积压工作停车场（999.x 编号）→ add-backlog 工作流
+- **--seed**：捕获带有触发条件的前瞻性想法 → plant-seed 工作流
+- **--list**：列出待处理待办事项并选择一个开始处理 → check-todos 工作流
 </objective>
 
 <routing>
 
-| Flag | Destination | Workflow |
+| 标志 | 目的地 | 工作流 |
 |------|-------------|----------|
-| (none) | Structured todo in .planning/todos/ | add-todo |
-| --note | Timestamped note file, list, or promote | note |
-| --backlog | ROADMAP.md backlog section (999.x) | add-backlog |
+| (none) | .planning/todos/ 中的结构化待办事项 | add-todo |
+| --note | 带时间戳的笔记文件、列表或提升 | note |
+| --backlog | ROADMAP.md 积压工作部分（999.x） | add-backlog |
 | --seed | .planning/seeds/SEED-NNN-slug.md | plant-seed |
-| --list | Interactive todo browser + action router | check-todos |
+| --list | 交互式待办事项浏览器 + 操作路由器 | check-todos |
 
 </routing>
 
@@ -45,18 +45,18 @@ Mode routing:
 </execution_context>
 
 <context>
-Arguments: $ARGUMENTS
+参数：$ARGUMENTS
 
-Parse the first token of $ARGUMENTS:
-- If it is `--note`: strip the flag, pass remainder to note workflow
-- If it is `--backlog`: strip the flag, pass remainder to add-backlog workflow
-- If it is `--seed`: strip the flag, pass remainder to plant-seed workflow
-- If it is `--list`: pass remainder (optional area filter) to check-todos workflow
-- Otherwise: pass all of $ARGUMENTS to add-todo workflow
+解析 $ARGUMENTS 的第一个令牌：
+- 如果是 `--note`：去掉标志，将剩余部分传递给 note 工作流
+- 如果是 `--backlog`：去掉标志，将剩余部分传递给 add-backlog 工作流
+- 如果是 `--seed`：去掉标志，将剩余部分传递给 plant-seed 工作流
+- 如果是 `--list`：将剩余部分（可选区域筛选器）传递给 check-todos 工作流
+- 否则：将所有 $ARGUMENTS 传递给 add-todo 工作流
 </context>
 
 <process>
-1. Parse the leading flag (if any) from $ARGUMENTS.
-2. Load and execute the appropriate workflow end-to-end based on the routing table above.
-3. Preserve all workflow gates from the target workflow (directory structure, duplicate detection, commits, etc.).
+1. 从 $ARGUMENTS 解析前导标志（如有）。
+2. 根据上述路由表端到端加载并执行适当的工作流。
+3. 保留目标工作流的所有工作流关卡（目录结构、重复检测、提交等）。
 </process>

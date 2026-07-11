@@ -1,6 +1,6 @@
 ---
-name: n8n-code-python
-description: "N8N Code Python — N8N Code Python 相关功能和最佳实践"
+name: n8n Code 节点 Python 编程相关功能和最佳实践
+description: "n8n Code Python — n8n Code 节点 Python 编程相关功能和最佳实践"
 risk: unknown
 source: community
 ---

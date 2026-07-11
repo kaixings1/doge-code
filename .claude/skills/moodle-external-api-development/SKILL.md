@@ -1,5 +1,5 @@
 ---
-name: moodle-external-api-development
+name: 此技能指导您按照 Moodle 的外部 API 框架和编码标准为 Moodle
 description: "此技能指导您按照 Moodle 的外部 API 框架和编码标准为 Moodle LMS 创建自定义外部 Web 服务 API。"
 risk: unknown
 source: community

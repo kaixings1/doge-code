@@ -1,5 +1,5 @@
 ---
-name: embedding-strategies
+name: 向量嵌入策略
 description: "向量嵌入策略"
 risk: safe
 source: community

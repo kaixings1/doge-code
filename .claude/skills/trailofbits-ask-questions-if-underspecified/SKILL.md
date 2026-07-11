@@ -1,3 +1,8 @@
+---
+name: 追问澄清
+description: 提出最少必要澄清问题，避免方向性错误。
+---
+
 # Ask Questions If Underspecified
 
 Ask the minimum set of clarifying questions needed to avoid wrong work.
@@ -11,7 +16,7 @@ Ask the minimum set of clarifying questions needed to avoid wrong work.
 - 成功标准、范围、约束或环境细节不明确
 - 未经澄清就开始实施可能做错工作
 
-## What It Does
+## 功能说明
 
 - Asks 1–5 must-have questions in a scannable, answerable format (multiple choice + defaults)
 - Pauses before acting until required answers are provided (unless the user approves proceeding on stated assumptions)

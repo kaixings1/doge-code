@@ -1,17 +1,14 @@
 ---
-name: bash-pro
+name: 高级 Bash 脚本编写，涵盖错误处理、性能优化、安全编写和调试技巧。
 description: "Bash Pro — 高级 Bash 脚本编写，涵盖错误处理、性能优化、安全编写和调试技巧。"
-
-  pipelines, and system utilities. Expert in safe, portable, and testable shell
-
-  scripts.
-
-  '
 risk: critical
 source: community
 date_added: '2026-02-27'
 ---
-## /u4f55/u65f6/u4f7f/u7528/u6b64/u6280/u80fd
+
+# Bash 专业版 (Bash Pro)
+
+## 使用此技能的场景
 
 - Writing or reviewing Bash scripts for automation, CI/CD, or ops
 - Hardening shell scripts for safety and portability

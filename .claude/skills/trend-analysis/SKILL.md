@@ -3,7 +3,7 @@ name: 趋势分析
 description: "检测和分析基于时间的趋势：季节性、变点、分解和增长率。适用于分析指标随时间的变化、检测结构性变化或理解周期性模式。"
 ---
 
-# Trend Analysis
+# 趋势分析
 
 ## 目的
 Identify, decompose, and interpret temporal patterns in your data — trends, seasonality, cyclicality, and structural changes.

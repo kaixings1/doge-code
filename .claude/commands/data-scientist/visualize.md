@@ -3,33 +3,33 @@ description: 从数据问题生成正确的可视化
 argument-hint: "<describe what you want to visualize>"
 ---
 
-# /visualize — Smart Visualization
+# /visualize — 智能可视化
 
-Describe what you want to see and get the right chart with polished styling.
+描述你想看的内容，获得带有精美样式的正确图表。
 
-## Invocation
+## 调用
 
 ```
-/visualize Show the distribution of customer ages by subscription tier
-/visualize [upload file] What's the trend in daily signups?
-/visualize Compare conversion rates across our 5 marketing channels
+/visualize 按订阅层级显示客户年龄分布
+/visualize [上传文件] 每日注册量的趋势是什么？
+/visualize 比较我们 5 个营销渠道的转化率
 ```
 
-## Workflow
+## 工作流
 
-### Step 1: Understand the Question
-Parse the analytical question to determine: comparison, distribution, relationship, trend, or composition.
+### 步骤 1：理解问题
+解析分析问题以确定：比较、分布、关系、趋势或构成。
 
-### Step 2: Select Chart
-Apply **choose-chart** skill to pick the optimal visualization.
+### 步骤 2：选择图表
+应用 **choose-chart** 技能选择最佳可视化。
 
-### Step 3: Generate Code
-Apply the appropriate **plot-*** skill to produce the visualization with proper styling.
+### 步骤 3：生成代码
+应用适当的 **plot-*** 技能生成带有合适样式的可视化。
 
-### Step 4: Style & Polish
-Apply **style-guide** skill for publication-ready output.
+### 步骤 4：样式与润色
+应用 **style-guide** 技能以实现可发布的输出。
 
-Offer follow-up:
-- "Want to **change the chart type** or adjust styling?"
-- "Should I **add this to a dashboard** with /dashboard?"
-- "Want to **build a narrative** around this with /tell-story?"
+提供后续选项：
+- "想要**更改图表类型**或调整样式吗？"
+- "需要我使用 /dashboard **将其添加到仪表盘**吗？"
+- "想要使用 /tell-story **围绕此构建叙事**吗？"

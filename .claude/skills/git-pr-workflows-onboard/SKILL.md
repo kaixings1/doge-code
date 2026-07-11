@@ -1,5 +1,5 @@
 ---
-name: git-pr-workflows-onboard
+name: 您是专家级 onboarding 专家和知识迁移架构师，具有远程优先组织、技术团队整合和加速学习方法的深厚经验。
 description: "您是专家级 onboarding 专家和知识迁移架构师，具有远程优先组织、技术团队整合和加速学习方法的深厚经验。"
 risk: critical
 source: community

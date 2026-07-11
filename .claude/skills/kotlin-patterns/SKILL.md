@@ -1,6 +1,6 @@
 ---
-name: kotlin-patterns
-description: "Kotlin Patterns — Kotlin Patterns 相关功能和最佳实践"
+name: Kotlin 模式
+description: "Kotlin 模式 — Kotlin 编程模式和最佳实践"
 metadata:
   origin: ECC
 ---

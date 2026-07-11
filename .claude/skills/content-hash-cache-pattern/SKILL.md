@@ -1,5 +1,5 @@
 ---
-name: content-hash-cache-pattern
+name: 使用 SHA-256 内容哈希缓存高昂的文件处理结果
 description: 使用 SHA-256 内容哈希缓存高昂的文件处理结果 —— 与路径无关、自动失效且服务层分离。
 origin: ECC
 ---

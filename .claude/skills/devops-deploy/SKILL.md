@@ -163,7 +163,7 @@ sam delete
 
 ## .Github/Workflows/Deploy.Yml
 
-name: Deploy Auri
+name: DevOps 和应用部署
 
 on:
   push:

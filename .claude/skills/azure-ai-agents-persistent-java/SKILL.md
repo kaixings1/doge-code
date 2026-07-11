@@ -1,5 +1,5 @@
 ---
-name: azure-ai-agents-persistent-java
+name: Azure AI 持久智能体 (Java)
 description: "Azure AI 持久智能体 (Java)"
 risk: safe
 source: community

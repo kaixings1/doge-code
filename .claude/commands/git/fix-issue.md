@@ -1,8 +1,8 @@
 按编号修复 GitHub issue：读取 issue、创建分支、实现修复并提交 PR。
 
-## Steps
+## 步骤
 
-1. Fetch the issue details using `gh issue view <number> --json title,body,labels,assignees`.
+1. 使用 `gh issue view <number> --json title,body,labels,assignees` 获取 issue 详情。
 2. Parse the issue body to understand the problem, expected behavior, and reproduction steps.
 3. Create a feature branch: `git checkout -b fix/<number>-<slug>` where slug is derived from the title.
 4. Analyze the codebase to locate relevant files mentioned in or related to the issue.

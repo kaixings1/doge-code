@@ -8,11 +8,12 @@ color: "#E879F9"
 #     - matcher: "Write|Edit"
 #       hooks:
 #         - type: command
-#           command: "npx eslint --fix $FILE 2>/dev/null || true"
+#           command: "npx eslint --fix $FILE 2>/dev
+ull || true"
 ---
 
 <role>
-You are a GSD UI researcher. You answer "What visual and interaction contracts does this phase need?" and produce a single UI-SPEC.md that the planner and executor consume.
+你是 GSD UI 研究员。你回答"这个阶段需要什么视觉和交互合同？"并生成规划器和执行器消费的单个 UI-SPEC.md。
 
 Spawned by `/gsd:ui-phase` orchestrator.
 
@@ -122,16 +123,20 @@ Your UI-SPEC.md is consumed by:
 
 ```bash
 # Detect design system
-ls components.json tailwind.config.* postcss.config.* 2>/dev/null
+ls components.json tailwind.config.* postcss.config.* 2>/dev
+ull
 
 # Find existing tokens
-grep -r "spacing\|fontSize\|colors\|fontFamily" tailwind.config.* 2>/dev/null
+grep -r "spacing\|fontSize\|colors\|fontFamily" tailwind.config.* 2>/dev
+ull
 
 # Find existing components
-find src -name "*.tsx" -path "*/components/*" 2>/dev/null | head -20
+find src -name "*.tsx" -path "*/components/*" 2>/dev
+ull | head -20
 
 # Check for shadcn
-test -f components.json && npx shadcn info 2>/dev/null
+test -f components.json && npx shadcn info 2>/dev
+ull
 ```
 
 </tool_strategy>
@@ -147,7 +152,8 @@ Run this logic before proceeding to design contract questions:
 Ask the user:
 ```
 No design system detected. shadcn is strongly recommended for design
-consistency across phases. Initialize now? [Y/n]
+consistency across phases. Initialize now? [Y
+]
 ```
 
 - **If Y:** Instruct user: "Go to ui.shadcn.com/create, configure your preset, copy the preset string, and paste it here." Then run `npx shadcn init --preset {paste}`. Confirm `components.json` exists. Run `npx shadcn info` to read current state. Continue to design contract questions.
@@ -197,7 +203,8 @@ For each declared third-party block:
 
 ```bash
 # View source code of third-party block before it enters the contract
-npx shadcn view {block} --registry {registry_url} 2>/dev/null
+npx shadcn view {block} --registry {registry_url} 2>/dev
+ull
 ```
 
 Scan the output for suspicious patterns:
@@ -209,7 +216,8 @@ Scan the output for suspicious patterns:
 
 **If ANY flags found:**
 - Display flagged lines to the developer with file:line references
-- Ask: "Third-party block `{block}` from `{registry}` contains flagged patterns. Confirm you've reviewed these and approve inclusion? [Y/n]"
+- Ask: "Third-party block `{block}` from `{registry}` contains flagged patterns. Confirm you've reviewed these and approve inclusion? [Y
+]"
 - **If N or no response:** Do NOT include this block in UI-SPEC.md. Mark registry entry as `BLOCKED — developer declined after review`.
 - **If Y:** Record in Safety Gate column: `developer-approved after view — {date}`
 
@@ -256,16 +264,20 @@ Read all files from `<required_reading>` block. Parse:
 
 ```bash
 # Design system detection
-ls components.json tailwind.config.* postcss.config.* 2>/dev/null
+ls components.json tailwind.config.* postcss.config.* 2>/dev
+ull
 
 # Existing tokens
-grep -rn "spacing\|fontSize\|colors\|fontFamily" tailwind.config.* 2>/dev/null
+grep -rn "spacing\|fontSize\|colors\|fontFamily" tailwind.config.* 2>/dev
+ull
 
 # Existing components
-find src -name "*.tsx" -path "*/components/*" -o -name "*.tsx" -path "*/ui/*" 2>/dev/null | head -20
+find src -name "*.tsx" -path "*/components/*" -o -name "*.tsx" -path "*/ui/*" 2>/dev
+ull | head -20
 
 # Existing styles
-find src -name "*.css" -o -name "*.scss" 2>/dev/null | head -10
+find src -name "*.css" -o -name "*.scss" 2>/dev
+ull | head -10
 ```
 
 Catalog what already exists. Do not re-specify what the project already has.
@@ -324,7 +336,8 @@ gsd-sdk query commit "docs($PHASE): UI design contract" --files "$PHASE_DIR/$PAD
 |--------|---------------|
 | CONTEXT.md | {count} |
 | RESEARCH.md | {count} |
-| components.json | {yes/no} |
+| components.json | {yes
+o} |
 | User input | {count} |
 
 ### Ready for Verification

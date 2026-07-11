@@ -1,7 +1,6 @@
 ---
-name: venice-video
-description: "Venice Video — Venice Video 相关功能和最佳实践"
-  Video generation and transcription workflows via the Venice.ai API.
+name: Venice 视频
+description: "Venice 视频 — 通过 Venice.ai API 进行视频生成和转录工作流。"
 triggers:
   - "venice video"
   - "venice video gen"

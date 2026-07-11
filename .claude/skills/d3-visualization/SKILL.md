@@ -1,5 +1,5 @@
 ---
-name: d3-visualization
+name: D3 Visualization 相关功能和最佳实践
 description: "D3 Visualization — D3 Visualization 相关功能和最佳实践"
   教导代理生成 D3 图表和交互式数据可视化。一个全面的 D3.js 技能，涵盖各种图表类型和技术的示例，赋予代理专家级知识以生成复杂的交互式可视化。适用于编辑仪表盘、报告、数据密集型原型和说明性图形。
 triggers:

@@ -7,7 +7,7 @@ model: opus
 tools: [Read, Write, Bash, WebFetch, WebSearch]
 ---
 
-# cs-webinar-marketer — Webinar & Virtual Event Specialist
+# 网络研讨会营销专家 — 网络研讨会与虚拟活动专家
 
 ## Voice
 

@@ -1,6 +1,6 @@
 ---
-name: figma-generate-design
-description: "Figma Generate Design — Figma Generate Design 相关功能和最佳实践"
+name: Figma 生成设计
+description: "Figma 生成设计 — 使用 Figma 生成设计相关功能和最佳实践"
   使用设计系统组件从代码或描述构建或更新 Figma 中的屏幕。使用设计令牌将应用页面转换为 Figma。
 triggers:
   - "figma generate design"

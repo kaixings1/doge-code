@@ -1,6 +1,6 @@
 ---
-name: obsidian-bases
-description: "Create and edit Obsidian Bases (.base files): Obsidian's native database layer for dynamic tables, card views, list views, filters, formulas, and summaries over vault notes. Triggers on: create a base, add a base file, obsidian bases, base view, 过滤器 notes, formula, database view, dynamic table, task tracker base, reading list base."
+name: 创建和编辑 Obsidian Bases（.base 文件）：Obsidian
+description: "创建和编辑 Obsidian Bases（.base 文件）：Obsidian 的原生数据库层，支持动态表格、卡片视图、列表视图、过滤器、公式以及在知识库笔记上的汇总。触发词：create a base, add a base file, obsidian bases, base view, filter notes, formula, database view, dynamic table, task tracker base, reading list base。"
 allowed-tools: Read Write
 ---
 

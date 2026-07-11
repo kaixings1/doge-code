@@ -1,5 +1,5 @@
 ---
-name: api-and-interface-design
+name: API 和接口设计
 description: "API 和接口设计"
 risk: safe
 source: community

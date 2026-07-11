@@ -1,5 +1,5 @@
 ---
-name: performance-optimization
+name: 性能优化
 description: 性能优化 — 打包分析、懒加载、缓存策略、Core Web Vitals和CDN配置。
 ---
 

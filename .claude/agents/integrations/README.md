@@ -1,21 +1,232 @@
-# 🔌 Integrations
+---
+description: 集成目录——支持多种Agent工具的Agency代理集成和转换格式
+---
 
-This directory contains The Agency integrations and converted formats for
-supported agentic coding tools.
+# 🔌 集成
 
-## Supported Tools
+此目录包含Agency集成以及支持的工具转换格式。
 
-- **[Claude Code](#claude-code)** — `.md` agents, use the repo directly
-- **[GitHub Copilot](#github-copilot)** — `.md` agents, use the repo directly
-- **[Antigravity](#antigravity)** — `SKILL.md` per agent in `antigravity/`
-- **[Gemini CLI](#gemini-cli)** — extension + `SKILL.md` files in `gemini-cli/`
-- **[OpenCode](#opencode)** — `.md` agent files in `opencode/`
-- **[OpenClaw](#openclaw)** — `SOUL.md` + `AGENTS.md` + `IDENTITY.md` workspaces
-- **[Cursor](#cursor)** — `.mdc` rule files in `cursor/`
-- **[Aider](#aider)** — `CONVENTIONS.md` in `aider/`
-- **[Windsurf](#windsurf)** — `.windsurfrules` in `windsurf/`
+## 支持的工具
 
-## Quick Install
+- **[Claude Code](#claude-code)** — `.md` Agent，直接使用仓库
+- **[GitHub Copilot](#github-copilot)** — `.md` Agent，直接使用仓库
+- **[Antigravity](#antigravity)** — `antigravity/`中每个Agent一个`SKILL.md`
+- **[Gemini CLI](#gemini-cli)** — `gemini-cli/`中的扩展+`SKILL.md`文件
+- **[OpenCode](#opencode)** — `opencode/`中的`.md` Agent文件
+- **[OpenClaw](#openclaw)** — `SOUL.md`+`AGENTS.md`+`IDENTITY.md`工作空间
+- **[Cursor](#cursor)** — `cursor/`中的`.mdc`规则文件
+- **[Aider](#aider)** — `aider/`中的`CONVENTIONS.md`
+- **[Windsurf](#windsurf)** — `windsurf/`中的`.windsurfrules`
+
+## 快速安装
+
+```bash
+# 自动安装所有检测到的工具
+./scripts/install.sh
+
+# 安装特定的本地工具
+./scripts/install.sh --tool antigravity
+./scripts/install.sh --tool copilot
+./scripts/install.sh --tool openclaw
+./scripts/install.sh --tool claude-code
+
+# Gemini CLI需要在新克隆上生成集成文件
+./scripts/convert.sh --tool gemini-cli
+./scripts/install.sh --tool gemini-cli
+```
+
+对于项目级工具（如OpenCode、Cursor、Aider和Windsurf），请按各工具章节所示在目标项目根目录运行安装程序。
+---
+description: 集成目录——支持多种Agent工具的Agency代理集成和转换格式
+---
+
+# 🔌 集成
+
+此目录包含Agency集成以及支持的工具转换格式。
+
+## 支持的工具
+
+- **[Claude Code](#claude-code)** — `.md` Agent，直接使用仓库
+- **[GitHub Copilot](#github-copilot)** — `.md` Agent，直接使用仓库
+- **[Antigravity](#antigravity)** — `antigravity/`中每个Agent一个`SKILL.md`
+- **[Gemini CLI](#gemini-cli)** — `gemini-cli/`中的扩展+`SKILL.md`文件
+- **[OpenCode](#opencode)** — `opencode/`中的`.md` Agent文件
+- **[OpenClaw](#openclaw)** — `SOUL.md`+`AGENTS.md`+`IDENTITY.md`工作空间
+- **[Cursor](#cursor)** — `cursor/`中的`.mdc`规则文件
+- **[Aider](#aider)** — `aider/`中的`CONVENTIONS.md`
+- **[Windsurf](#windsurf)** — `windsurf/`中的`.windsurfrules`
+
+## 快速安装
+
+```bash
+# 自动安装所有检测到的工具
+./scripts/install.sh
+
+# 安装特定的本地工具
+./scripts/install.sh --tool antigravity
+./scripts/install.sh --tool copilot
+./scripts/install.sh --tool openclaw
+./scripts/install.sh --tool claude-code
+
+# Gemini CLI需要在新克隆上生成集成文件
+./scripts/convert.sh --tool gemini-cli
+./scripts/install.sh --tool gemini-cli
+```
+
+对于项目级工具（如OpenCode、Cursor、Aider和Windsurf），请按各工具章节所示在目标项目根目录运行安装程序。
+---
+description: 集成目录——支持多种Agent工具的Agency代理集成和转换格式
+---
+
+# 🔌 集成
+
+此目录包含Agency集成以及支持的工具转换格式。
+
+## 支持的工具
+
+- **[Claude Code](#claude-code)** — `.md` Agent，直接使用仓库
+- **[GitHub Copilot](#github-copilot)** — `.md` Agent，直接使用仓库
+- **[Antigravity](#antigravity)** — `antigravity/`中每个Agent一个`SKILL.md`
+- **[Gemini CLI](#gemini-cli)** — `gemini-cli/`中的扩展+`SKILL.md`文件
+- **[OpenCode](#opencode)** — `opencode/`中的`.md` Agent文件
+- **[OpenClaw](#openclaw)** — `SOUL.md`+`AGENTS.md`+`IDENTITY.md`工作空间
+- **[Cursor](#cursor)** — `cursor/`中的`.mdc`规则文件
+- **[Aider](#aider)** — `aider/`中的`CONVENTIONS.md`
+- **[Windsurf](#windsurf)** — `windsurf/`中的`.windsurfrules`
+
+## 快速安装
+
+```bash
+# 自动安装所有检测到的工具
+./scripts/install.sh
+
+# 安装特定的本地工具
+./scripts/install.sh --tool antigravity
+./scripts/install.sh --tool copilot
+./scripts/install.sh --tool openclaw
+./scripts/install.sh --tool claude-code
+
+# Gemini CLI需要在新克隆上生成集成文件
+./scripts/convert.sh --tool gemini-cli
+./scripts/install.sh --tool gemini-cli
+```
+
+对于项目级工具（如OpenCode、Cursor、Aider和Windsurf），请按各工具章节所示在目标项目根目录运行安装程序。
+---
+description: 集成目录——支持多种Agent工具的Agency代理集成和转换格式
+---
+
+# 🔌 集成
+
+此目录包含Agency集成以及支持的工具转换格式。
+
+## 支持的工具
+
+- **[Claude Code](#claude-code)** — `.md` Agent，直接使用仓库
+- **[GitHub Copilot](#github-copilot)** — `.md` Agent，直接使用仓库
+- **[Antigravity](#antigravity)** — `antigravity/`中每个Agent一个`SKILL.md`
+- **[Gemini CLI](#gemini-cli)** — `gemini-cli/`中的扩展+`SKILL.md`文件
+- **[OpenCode](#opencode)** — `opencode/`中的`.md` Agent文件
+- **[OpenClaw](#openclaw)** — `SOUL.md`+`AGENTS.md`+`IDENTITY.md`工作空间
+- **[Cursor](#cursor)** — `cursor/`中的`.mdc`规则文件
+- **[Aider](#aider)** — `aider/`中的`CONVENTIONS.md`
+- **[Windsurf](#windsurf)** — `windsurf/`中的`.windsurfrules`
+
+## 快速安装
+
+```bash
+# 自动安装所有检测到的工具
+./scripts/install.sh
+
+# 安装特定的本地工具
+./scripts/install.sh --tool antigravity
+./scripts/install.sh --tool copilot
+./scripts/install.sh --tool openclaw
+./scripts/install.sh --tool claude-code
+
+# Gemini CLI需要在新克隆上生成集成文件
+./scripts/convert.sh --tool gemini-cli
+./scripts/install.sh --tool gemini-cli
+```
+
+对于项目级工具（如OpenCode、Cursor、Aider和Windsurf），请按各工具章节所示在目标项目根目录运行安装程序。
+---
+description: 集成目录——支持多种Agent工具的Agency代理集成和转换格式
+---
+
+# 🔌 集成
+
+此目录包含Agency集成以及支持的工具转换格式。
+
+## 支持的工具
+
+- **[Claude Code](#claude-code)** — `.md` Agent，直接使用仓库
+- **[GitHub Copilot](#github-copilot)** — `.md` Agent，直接使用仓库
+- **[Antigravity](#antigravity)** — `antigravity/`中每个Agent一个`SKILL.md`
+- **[Gemini CLI](#gemini-cli)** — `gemini-cli/`中的扩展+`SKILL.md`文件
+- **[OpenCode](#opencode)** — `opencode/`中的`.md` Agent文件
+- **[OpenClaw](#openclaw)** — `SOUL.md`+`AGENTS.md`+`IDENTITY.md`工作空间
+- **[Cursor](#cursor)** — `cursor/`中的`.mdc`规则文件
+- **[Aider](#aider)** — `aider/`中的`CONVENTIONS.md`
+- **[Windsurf](#windsurf)** — `windsurf/`中的`.windsurfrules`
+
+## 快速安装
+
+```bash
+# 自动安装所有检测到的工具
+./scripts/install.sh
+
+# 安装特定的本地工具
+./scripts/install.sh --tool antigravity
+./scripts/install.sh --tool copilot
+./scripts/install.sh --tool openclaw
+./scripts/install.sh --tool claude-code
+
+# Gemini CLI需要在新克隆上生成集成文件
+./scripts/convert.sh --tool gemini-cli
+./scripts/install.sh --tool gemini-cli
+```
+
+对于项目级工具（如OpenCode、Cursor、Aider和Windsurf），请按各工具章节所示在目标项目根目录运行安装程序。
+---
+description: 集成目录——支持多种Agent工具的Agency代理集成和转换格式
+---
+
+# 🔌 集成
+
+此目录包含Agency集成以及支持的工具转换格式。
+
+## 支持的工具
+
+- **[Claude Code](#claude-code)** — `.md` Agent，直接使用仓库
+- **[GitHub Copilot](#github-copilot)** — `.md` Agent，直接使用仓库
+- **[Antigravity](#antigravity)** — `antigravity/`中每个Agent一个`SKILL.md`
+- **[Gemini CLI](#gemini-cli)** — `gemini-cli/`中的扩展+`SKILL.md`文件
+- **[OpenCode](#opencode)** — `opencode/`中的`.md` Agent文件
+- **[OpenClaw](#openclaw)** — `SOUL.md`+`AGENTS.md`+`IDENTITY.md`工作空间
+- **[Cursor](#cursor)** — `cursor/`中的`.mdc`规则文件
+- **[Aider](#aider)** — `aider/`中的`CONVENTIONS.md`
+- **[Windsurf](#windsurf)** — `windsurf/`中的`.windsurfrules`
+
+## 快速安装
+
+```bash
+# 自动安装所有检测到的工具
+./scripts/install.sh
+
+# 安装特定的本地工具
+./scripts/install.sh --tool antigravity
+./scripts/install.sh --tool copilot
+./scripts/install.sh --tool openclaw
+./scripts/install.sh --tool claude-code
+
+# Gemini CLI需要在新克隆上生成集成文件
+./scripts/convert.sh --tool gemini-cli
+./scripts/install.sh --tool gemini-cli
+```
+
+对于项目级工具（如OpenCode、Cursor、Aider和Windsurf），请按各工具章节所示在目标项目根目录运行安装程序。
+
 
 ```bash
 # Install for all detected tools automatically

@@ -1,5 +1,5 @@
 ---
-name: moyu
+name: 摸鱼。过度工程防护栏，当 AI 编码代理扩展范围、添加抽象层或更改用户
 description: "Moyu — 摸鱼。过度工程防护栏，当 AI 编码代理扩展范围、添加抽象层或更改用户未请求的文件时激活的相关功能和最佳实践。"
 risk: safe
 source: community

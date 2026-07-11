@@ -1,5 +1,5 @@
 ---
-name: doc2math
+name: Doc2Math 相关功能和最佳实践
 description: "Doc2Math — Doc2Math 相关功能和最佳实践"
 risk: safe
 source: community

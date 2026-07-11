@@ -1,5 +1,5 @@
 ---
-name: frame-liquid-bg-hero
+name: WebGL 风格流体位移背景搭配引用覆盖，适用于视频介绍、登陆页英雄区或海报。
 zh_name: "流体背景 Hero 帧"
 en_name: "Liquid Background Hero"
 emoji: "🌊"

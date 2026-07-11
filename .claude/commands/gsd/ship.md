@@ -12,9 +12,9 @@ allowed-tools:
 requires: [review, verify-work]
 ---
 <objective>
-Bridge local completion → merged PR. After /gsd:verify-work passes, ship the work: push branch, create PR with auto-generated body, optionally trigger review, and track the merge.
+桥接本地完成 → 合并的 PR。在 /gsd:verify-work 通过后，发布工作：推送分支、创建带有自动生成正文的 PR、可选触发审查，并跟踪合并。
 
-Closes the plan → execute → verify → ship loop.
+关闭规划 → 执行 → 验证 → 发布循环。
 </objective>
 
 <execution_context>

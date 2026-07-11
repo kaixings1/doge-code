@@ -1,5 +1,5 @@
 ---
-name: citation-management
+name: 个研究和写作过程中系统地管理
 description: "在整个研究和写作过程中系统地管理引用。"
 license: MIT 许可证
 metadata:
@@ -840,7 +840,7 @@ python scripts/doi_to_bibtex.py 10.1038/nature12345 --clipboard
    - Confirm page numbers and volume
    - Ensure URLs are current
 
-## Common Pitfalls to Avoid
+## 应避免的常见陷阱
 
 1. **Single source bias**: Only using Google Scholar or PubMed
    - **Solution**: Search multiple databases for comprehensive coverage

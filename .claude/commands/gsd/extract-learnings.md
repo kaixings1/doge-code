@@ -13,7 +13,7 @@ type: prompt
 requires: [phase]
 ---
 <objective>
-Extract structured learnings from completed phase artifacts (PLAN.md, SUMMARY.md, VERIFICATION.md, UAT.md, STATE.md) into a LEARNINGS.md file that captures decisions, lessons learned, patterns discovered, and surprises encountered.
+从已完成的阶段工件（PLAN.md、SUMMARY.md、VERIFICATION.md、UAT.md、STATE.md）中提取结构化的经验教训，写入 LEARNINGS.md 文件，捕获决策、经验教训、发现的模式和遇到的意外情况。
 </objective>
 
 <execution_context>

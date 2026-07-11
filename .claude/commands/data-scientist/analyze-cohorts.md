@@ -5,14 +5,14 @@ argument-hint: "<describe your cohort data and analysis goal>"
 
 # /analyze-cohorts
 
-Cohort retention and engagement analysis.
+同期群留存与参与度分析。
 
-## Invocation
+## 调用
 
 ```
-/analyze-cohorts [describe your requirements]
+/analyze-cohorts [描述你的需求]
 ```
 
-## Workflow
+## 工作流
 
-Apply relevant **ds-business-analytics** skills to guide you through the process step by step.
+应用相关的 **ds-business-analytics** 技能逐步指导你完成整个过程。

@@ -2,42 +2,42 @@
 description: 获取工作项并显示为格式化的引用块
 ---
 
-Fetch a work item and display it as a formatted quote block. Usage: `/quote <work-item-id>`
+获取工作项并显示为格式化的引用块。用法: `/quote <work-item-id>`
 
-Parse `$ARGUMENTS` to extract the work item ID. Accept formats like `AB#1234`, `#1234`, or just `1234`.
+解析 `$ARGUMENTS` 以提取工作项 ID。接受 `AB#1234`、`#1234` 或纯 `1234` 格式。
 
-## Step 1: Fetch the Work Item
+## 步骤 1：获取工作项
 
-Read the work item from Azure DevOps using the project from the current repo's CLAUDE.md configuration. Expand with `relations` to include child items and links.
+使用当前仓库 CLAUDE.md 配置中的项目，从 Azure DevOps 读取工作项。使用 `relations` 展开以包含子项和链接。
 
-If the work item is not found, report the error and stop.
+如果找不到工作项，报告错误并停止。
 
-## Step 2: Display the Quote
+## 步骤 2：显示引用
 
-Format the work item as a quote block:
+将工作项格式化为引用块：
 
 ```
 > **AB#{id}: {title}**
-> **Type:** {type} | **State:** {state} | **Assigned To:** {assignedTo}
+> **类型：** {type} | **状态：** {state} | **分配给：** {assignedTo}
 >
-> {description text, stripped of HTML tags, truncated to ~500 chars if long}
+> {描述文本，去除 HTML 标签，如果过长截断到约 500 字符}
 >
-> **Acceptance Criteria:**
-> {acceptance criteria, stripped of HTML tags, truncated to ~500 chars if long}
+> **验收标准：**
+> {验收标准，去除 HTML 标签，如果过长截断到约 500 字符}
 ```
 
-- Strip all HTML tags from description and acceptance criteria fields, preserving line breaks as `> ` prefixed lines
-- If description or acceptance criteria is empty, omit that section
-- If the work item has child items, append:
+- 从描述和验收标准字段中去除所有 HTML 标签，保留换行作为 `> ` 前缀的行
+- 如果描述或验收标准为空，省略该部分
+- 如果工作项有子项，附加：
 
 ```
 >
-> **Child Items:** {count}
-> | ID | Title | State |
+> **子项：** {count}
+> | ID | 标题 | 状态 |
 > |----|-------|-------|
 > | AB#{id} | {title} | {state} |
 ```
 
-- If the work item has tags, include them: `> **Tags:** {comma-separated tags}`
+- 如果工作项有标签，包含它们：`> **标签：** {逗号分隔的标签}`
 
-That's it — just display the quote. Do not modify anything.
+就这样——只显示引用。不要修改任何内容。

@@ -1,5 +1,5 @@
 ---
-name: distributed-tracing
+name: 使用 Jaeger 和 Tempo 实现分布式追踪，实现微服务间的请求流可见性
 description: "使用 Jaeger 和 Tempo 实现分布式追踪，实现微服务间的请求流可见性。"
 risk: critical
 source: community
@@ -17,43 +17,43 @@ date_added: "2026-02-27"
 
 ## 说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant 最佳实践 and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed 示例 are required, open `resources/implementation-playbook.md`.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证方法。
+- 如需详细示例，请打开 `resources/implementation-playbook.md`。
 
 ## 目的
 
-Track requests across distributed systems to understand latency, dependencies, and failure points.
+跨分布式系统追踪请求，以了解延迟、依赖关系和故障点。
 
 ## 使用此技能的场景
 
-- Debug latency issues
-- Understand service dependencies
-- Identify bottlenecks
-- Trace error propagation
-- Analyze 请求 paths
+- 调试延迟问题
+- 了解服务依赖关系
+- 识别性能瓶颈
+- 追踪错误传播
+- 分析请求路径
 
-## Distributed Tracing Concepts
+## 分布式追踪概念
 
-### Trace Structure
+### 追踪结构
 ```
-Trace (请求 ID: abc123)
+追踪（请求 ID: abc123）
   ↓
-Span (frontend) [100ms]
+跨度（前端）[100ms]
   ↓
-Span (api-gateway) [80ms]
-  ├→ Span (auth-service) [10ms]
-  └→ Span (user-service) [60ms]
-      └→ Span (database) [40ms]
+跨度（API 网关）[80ms]
+  ├→ 跨度（认证服务）[10ms]
+  └→ 跨度（用户服务）[60ms]
+      └→ 跨度（数据库）[40ms]
 ```
 
-### Key Components
-- **Trace** - End-to-end 请求 journey
-- **Span** - Single 操作 within a trace
-- **Context** - Metadata propagated between services
-- **Tags** - Key-value pairs for filtering
-- **Logs** - Timestamped events within a span
+### 关键组件
+- **追踪** - 端到端请求全过程
+- **跨度** - 追踪内的单个操作
+- **上下文** - 服务间传播的元数据
+- **标签** - 用于过滤的键值对
+- **日志** - 跨度内带时间戳的事件
 
 ## Jaeger 设置
 
@@ -342,75 +342,75 @@ spec:
 
 **Reference:** See `assets/jaeger-config.yaml.template`
 
-## Sampling Strategies
+## 采样策略
 
-### Probabilistic Sampling
+### 概率采样
 ```yaml
-# Sample 1% of traces
+# 采样 1% 的追踪
 sampler:
   type: probabilistic
   param: 0.01
 ```
 
-### Rate Limiting Sampling
+### 速率限制采样
 ```yaml
-# Sample max 100 traces per second
+# 每秒最多采样 100 个追踪
 sampler:
   type: ratelimiting
   param: 100
 ```
 
-### Adaptive Sampling
+### 自适应采样
 ```python
 from opentelemetry.sdk.trace.sampling import ParentBased, TraceIdRatioBased
 
-# Sample based on trace ID (deterministic)
+# 基于追踪 ID 采样（确定性）
 sampler = ParentBased(root=TraceIdRatioBased(0.01))
 ```
 
-## Trace Analysis
+## 追踪分析
 
-### Finding Slow Requests
+### 查找慢请求
 
-**Jaeger 查询:**
+**Jaeger 查询：**
 ```
 service=my-service
 duration > 1s
 ```
 
-### Finding Errors
+### 查找错误
 
-**Jaeger 查询:**
+**Jaeger 查询：**
 ```
 service=my-service
 error=true
 tags.http.status_code >= 500
 ```
 
-### Service Dependency Graph
+### 服务依赖关系图
 
-Jaeger automatically generates service dependency graphs showing:
-- Service relationships
-- 请求 rates
-- Error rates
-- Average latencies
+Jaeger 自动生成服务依赖关系图，显示：
+- 服务之间的关系
+- 请求速率
+- 错误率
+- 平均延迟
 
 ## 最佳实践
 
-1. **Sample appropriately** (1-10% in production)
-2. **Add meaningful tags** (user_id, request_id)
-3. **Propagate context** across all service boundaries
-4. **Log exceptions** in spans
-5. **Use consistent naming** for operations
-6. **Monitor tracing overhead** (<1% CPU impact)
-7. **Set up alerts** for trace errors
-8. **Implement distributed context** (baggage)
-9. **Use span events** for important milestones
-10. **Document instrumentation** standards
+1. **适当采样**（生产环境 1-10%）
+2. **添加有意义的标签**（user_id、request_id）
+3. **跨所有服务边界传播上下文**
+4. **在跨度中记录异常**
+5. **对操作使用一致的命名**
+6. **监控追踪开销**（<1% CPU 影响）
+7. **为追踪错误设置告警**
+8. **实现分布式上下文**（baggage）
+9. **使用跨度事件记录重要里程碑**
+10. **文档化仪表标准**
 
-## 集成 with Logging
+## 与日志集成
 
-### Correlated Logs
+### 关联日志
 ```python
 import logging
 from opentelemetry import trace
@@ -429,16 +429,16 @@ def process_request():
 
 ## 故障排除
 
-**No traces appearing:**
-- Check collector 端点
-- Verify network connectivity
-- Check sampling 配置
-- Review application logs
+**没有追踪出现：**
+- 检查收集器端点
+- 验证网络连接
+- 检查采样配置
+- 查看应用日志
 
-**High latency overhead:**
-- Reduce sampling rate
-- Use batch span processor
-- Check exporter 配置
+**高延迟开销：**
+- 降低采样率
+- 使用批处理跨度处理器
+- 检查导出器配置
 
 ## 参考文件
 

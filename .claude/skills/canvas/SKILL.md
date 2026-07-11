@@ -1,5 +1,5 @@
 ---
-name: canvas
+name: 画布
 description: "画布"
 risk: safe
 source: community

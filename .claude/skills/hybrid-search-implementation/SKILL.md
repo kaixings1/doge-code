@@ -1,5 +1,5 @@
 ---
-name: hybrid-search-implementation
+name: 混合搜索实现
 description: "混合搜索实现 — 全文搜索和向量搜索混合实现"
 risk: unknown
 source: community

@@ -1,5 +1,5 @@
 ---
-name: deterministic-design
+name: 渲染 UI 并证明其平衡且可用：确定性布局审计（质心/光学中心/像素天平，通过显
 description: "渲染 UI 并证明其平衡且可用：确定性布局审计（质心/光学中心/像素天平，通过显式数学加注释截图）加上由独立的 fresh-eyes 判断者进行的视觉判断 Nielsen 可用性审计。纯粹品味导向的设计技能缺乏的度量层。"
 risk: safe
 source: community
@@ -28,7 +28,7 @@ Use to catch AI-generated UI that "looks off", is misaligned or centered-mush, o
 
 _Source: [connerkward/deterministic-design-skill](https://github.com/connerkward/deterministic-design-skill) (MIT)._
 
-# deterministic-design
+# 确定性设计
 
 Thesis: **determinism beats AI randomness.** A model can't trust its own eye on layout — so
 don't. Render the UI and *measure* it.

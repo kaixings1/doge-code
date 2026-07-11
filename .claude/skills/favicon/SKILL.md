@@ -1,5 +1,5 @@
 ---
-name: favicon
+name: 网站图标生成
 description: "Favicon — 网站图标生成"
 risk: safe
 source: community

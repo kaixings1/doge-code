@@ -1,54 +1,54 @@
 为加入项目的新开发人员生成入职指南。
 
-## Steps
+## 步骤
 
-1. Scan the project root for configuration files to determine the tech stack:
-   - `package.json`, `tsconfig.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`.
-   - `.env.example` for required environment variables.
-   - `docker-compose.yml` for service dependencies.
-2. Read existing documentation (`README.md`, `CONTRIBUTING.md`, `docs/`).
-3. Map the project structure: key directories and their purposes.
-4. Identify setup prerequisites:
-   - Runtime versions (Node, Python, Go, Rust).
-   - Required CLI tools (docker, kubectl, terraform).
-   - Database and service dependencies.
-5. Document the development workflow:
-   - How to install dependencies.
-   - How to run the project locally.
-   - How to run tests.
-   - How to create a branch and submit a PR.
-6. List key architectural concepts a new developer needs to understand.
-7. Write the guide to `docs/onboarding.md` or the specified location.
+1. 扫描项目根目录中的配置文件以确定技术栈：
+   - `package.json`、`tsconfig.json`、`pyproject.toml`、`Cargo.toml`、`go.mod`。
+   - `.env.example` 了解所需环境变量。
+   - `docker-compose.yml` 了解服务依赖。
+2. 读取现有文档（`README.md`、`CONTRIBUTING.md`、`docs/`）。
+3. 映射项目结构：关键目录及其用途。
+4. 识别设置前提条件：
+   - 运行时版本（Node、Python、Go、Rust）。
+   - 所需的 CLI 工具（docker、kubectl、terraform）。
+   - 数据库和服务依赖。
+5. 记录开发工作流：
+   - 如何安装依赖。
+   - 如何在本地运行项目。
+   - 如何运行测试。
+   - 如何创建分支和提交 PR。
+6. 列出新开发人员需要了解的关键架构概念。
+7. 将指南写入 `docs/onboarding.md` 或指定位置。
 
-## Format
+## 格式
 
 ```markdown
-# Developer Onboarding Guide
+# 开发人员入职指南
 
-## Prerequisites
-- [ ] Install <tool> v<version>
+## 前提条件
+- [ ] 安装 <工具> v<版本>
 
-## Setup
-1. Clone the repository
-2. Install dependencies: `<command>`
-3. Configure environment: `cp .env.example .env`
-4. Start services: `<command>`
+## 设置
+1. 克隆仓库
+2. 安装依赖：`<命令>`
+3. 配置环境：`cp .env.example .env`
+4. 启动服务：`<命令>`
 
-## Project Structure
-- `src/` - Application source code
-- `tests/` - Test suite
+## 项目结构
+- `src/` - 应用程序源代码
+- `tests/` - 测试套件
 
-## Development Workflow
-<step-by-step instructions>
+## 开发工作流
+<逐步说明>
 
-## Key Concepts
-<architectural overview for newcomers>
+## 关键概念
+<面向新手的架构概述>
 ```
 
-## Rules
+## 规则
 
-- Write for someone with general programming experience but no project knowledge.
-- Include exact commands, not vague instructions like "install dependencies".
-- Test every setup command to verify it works.
-- Link to existing documentation rather than duplicating it.
-- Include common troubleshooting steps at the end.
+- 为具有一般编程经验但不了解项目的人员编写。
+- 包含确切的命令，而非像"安装依赖"这样模糊的指令。
+- 测试每个设置命令以验证其有效。
+- 链接到现有文档而非重复它。
+- 在末尾包含常见的故障排除步骤。

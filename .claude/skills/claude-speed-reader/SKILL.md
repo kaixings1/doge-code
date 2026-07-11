@@ -1,6 +1,6 @@
 ---
-name: claude-speed-reader
-description: "Claude Speed Reader — Claude Speed Reader 相关功能和最佳实践"
+name: Claude 快速阅读器
+description: "Claude 快速阅读器 — Claude 快速阅读器相关功能和最佳实践"
 risk: safe
 source: "https://github.com/SeanZoR/claude-speed-reader"
 date_added: "2026-02-27"

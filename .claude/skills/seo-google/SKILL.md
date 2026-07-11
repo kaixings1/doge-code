@@ -1,5 +1,5 @@
 ---
-name: seo-google
+name: Google SEO API 相关功能和最佳实践：Search Con
 description: "Seo Google — Google SEO API 相关功能和最佳实践：Search Console、PageSpeed Insights、CrUX、Indexing API 和 GA4 自然流量数据。"
   PageSpeed Insights v5, CrUX field data with 25-week history, Indexing API v3,
   and GA4 organic traffic. Provides real Google field data for Core Web Vitals,
@@ -17,7 +17,7 @@ metadata:
   category: seo
 ---
 
-# Google SEO APIs
+# SEO Google
 
 Direct access to Google's own SEO data. Bridges the gap between crawl-based
 analysis (existing claude-seo skills) and Google's real-time field data: actual

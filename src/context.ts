@@ -138,8 +138,14 @@ export const getSystemContext = memoize(
       has_injection: injection !== null,
     })
 
+    // 检测平台信息（Windows/Linux/Mac）
+    const platform = process.platform === 'win32' ? 'Windows' : process.platform === 'darwin' ? 'macOS' : 'Linux'
+    const shell = process.env.CLAUDE_CODE_SHELL || process.env.SHELL || (process.platform === 'win32' ? 'cmd' : 'bash')
+    const shellInfo = `运行平台: ${platform}\n默认 Shell: ${shell}\n命令格式: ${process.platform === 'win32' ? '请返回 Windows cmd 格式的命令（使用 dir、type、del、findstr 等，避免 bash 特有语法）' : '请返回 Unix shell 格式的命令'}`
+
     return {
       ...(gitStatus && { gitStatus }),
+      platformShell: shellInfo,
       ...(feature('BREAK_CACHE_COMMAND') && injection
         ? {
             cacheBreaker: `[CACHE_BREAKER: ${injection}]`,

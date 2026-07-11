@@ -1,5 +1,5 @@
 ---
-name: azure-eventhub-ts
+name: 指导 TypeScript 开发者使用 Azure Event Hubs 客户端库处理大规模事件流。
 description: "指导 TypeScript 开发者使用 Azure Event Hubs 客户端库处理大规模事件流。"
 risk: unknown
 source: community
@@ -186,7 +186,7 @@ const subscription = consumer.subscribe(
 );
 ```
 
-## Key Types
+## 关键类型
 
 ```typescript
 import {

@@ -1,5 +1,5 @@
 ---
-name: planning-and-task-breakdown
+name: 规划与任务分解
 description: 规划与任务分解 — 将工作分解为有序任务。在有了规范或需求时使用。
 ---
 

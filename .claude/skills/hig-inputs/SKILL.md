@@ -1,5 +1,5 @@
 ---
-name: hig-inputs
+name: HIG 输入组件
 description: "HIG 输入组件 — Human Interface Guidelines 输入组件"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: security-review
+name: 安全审查清单
 description: 在添加身份认证、处理用户输入、使用密钥、创建 API 端点或实现支付/敏感功能时使用。提供全面的安全清单和模式。
 ---
 

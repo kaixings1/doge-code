@@ -3,7 +3,7 @@ name: 风格指南
 description: "数据可视化风格指南：调色板、排版、可访问性 (WCAG)、出版就绪格式和一致主题。适用于在展示前润色图表、确保可访问性或为分析创建一致的视觉标识。"
 ---
 
-# Style Guide
+# 风格指南
 
 ## 目的
 Apply professional, accessible, publication-ready styling to any data visualization.

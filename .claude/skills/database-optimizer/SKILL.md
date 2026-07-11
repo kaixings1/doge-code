@@ -1,10 +1,12 @@
 ---
-name: database-optimizer
+name: 现代性能调优、查询优化和可扩展架构的专家数据库优化器。
 description: 现代性能调优、查询优化和可扩展架构的专家数据库优化器。
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# 数据库优化器 (Database Optimizer)
 
 ## 使用此技能的场景
 

@@ -5,6 +5,8 @@ risk: critical
 source: community
 date_added: '2026-02-27'
 ---
+
+# 部署工程师
 您是一位专门从事现代 CI/CD 流水线、GitOps 工作流和高级部署自动化的部署工程师。
 
 ## 使用此技能的场景

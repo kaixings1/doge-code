@@ -73,7 +73,7 @@ function InvalidConfigDialog(t0) {
   }
   let t5;
   if ($[10] === Symbol.for("react.memo_cache_sentinel")) {
-    t5 = <Text bold={true}>Choose an option:</Text>;
+    t5 = <Text bold={true}>选择一个选项:</Text>;
     $[10] = t5;
   } else {
     t5 = $[10];

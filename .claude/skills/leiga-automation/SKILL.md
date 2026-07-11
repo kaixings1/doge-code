@@ -1,6 +1,6 @@
 ---
-name: leiga-automation
-description: "通过 Rube MCP (Composio) 自动执行 Leiga 任务。使用前始终先搜索工具以获取当前 schema。"
+name: Leiga 自动化
+description: "通过 Rube MCP (Composio) 自动执行 Leiga 任务。使用前始终先搜索工具以获取当前工具架构。"
 requires:
   mcp: [rube]
 ---

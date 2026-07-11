@@ -1,9 +1,9 @@
 ---
-name: turborepo
+name: Turborepo 单体仓库
 description: Turborepo 单体仓库 — 缓存任务、并行执行、远程缓存、依赖图、管道配置
 ---
 
-# turborepo
+# Turborepo
 
 ## 概述
 

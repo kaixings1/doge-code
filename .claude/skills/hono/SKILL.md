@@ -1,5 +1,5 @@
 ---
-name: hono
+name: 轻量级 Web 框架
 description: "Hono — 轻量级 Web 框架"
 risk: unknown
 source: community

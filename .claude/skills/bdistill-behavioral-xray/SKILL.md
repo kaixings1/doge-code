@@ -1,5 +1,5 @@
 ---
-name: bdistill-behavioral-xray
+name: X 光透视任何 AI 模型的行为模式
 description: "X 光透视任何 AI 模型的行为模式——拒绝边界、幻觉倾向、推理风格、格式默认值。无需 API 密钥。"
 category: ai-testing
 risk: safe

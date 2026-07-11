@@ -1,5 +1,5 @@
 ---
-name: build-run-debug
+name: 构建、运行和调试macOS应用
 description: 构建、运行和调试macOS应用
 ---
 

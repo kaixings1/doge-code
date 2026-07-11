@@ -319,7 +319,9 @@ add_action( 'wp_enqueue_scripts', function () {
 ### Drupal：带无障碍标记的 Twig 模板
 
 ```twig
-{# templates/node/node--case-study--teaser.html.twig #}
+{# templates
+ode
+ode--case-study--teaser.html.twig #}
 {%
   set classes = [
     'node',

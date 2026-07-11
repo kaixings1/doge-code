@@ -1,5 +1,5 @@
 ---
-name: auditing-kubernetes-rbac-privilege-escalation
+name: 审计 Kubernetes RBAC 权限提升
 description: "审计 Kubernetes RBAC 权限提升"
 risk: safe
 source: community

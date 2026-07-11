@@ -3,11 +3,11 @@ name: smart-commit
 description: "Pro Workflow\Skills\Smart Commit — Pro Workflow\Skills\Smart Commit 相关功能和最佳实践"
 ---
 
-# Smart Commit
+# 智能提交
 
-## Trigger
+## 触发条件
 
-Use when saying "commit", "save changes", or ready to commit after making changes.
+当说"commit"、"保存更改"或在做出更改后准备提交时使用。
 
 ## 工作流
 
@@ -18,7 +18,7 @@ Use when saying "commit", "save changes", or ready to commit after making change
 5. Stage specific files, create the commit.
 6. Prompt for learnings from this change.
 
-## Commands
+## 命令
 
 ```bash
 git status
@@ -52,7 +52,7 @@ Flag any issues before proceeding.
 
 **Types:** feat, fix, refactor, test, docs, chore, perf, ci, style
 
-## Guardrails
+## 防护措施
 
 - Never skip quality gates unless user explicitly says to.
 - Stage specific files by name. Never `git add -A` or `git add .`.

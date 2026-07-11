@@ -1,5 +1,5 @@
 ---
-name: active-directory-attacks
+name: Active Directory 攻击
 description: "提供攻击 Microsoft Active Directory 环境的全面技术。涵盖侦察、凭证收集、Kerberos 攻击、横向移动、权限提升和域控制，适用于红队操作和渗透测试。"
 risk: offensive
 source: community

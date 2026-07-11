@@ -1,5 +1,5 @@
 ---
-name: alpha-vantage
+name: Alpha Vantage 金融数据
 description: "访问 20+ 年的全球金融数据：股票、期权、外汇、加密货币、大宗商品、经济指标和 50+ 技术指标。"
 risk: unknown
 source: community

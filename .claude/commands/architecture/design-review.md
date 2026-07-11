@@ -1,55 +1,55 @@
 执行设计评审：检查模块/特性/PR，识别设计问题、安全风险和性能瓶颈，输出评审报告。
 
-## Steps
+## 步骤
 
-1. Identify the scope of review from the argument (module path, feature name, or PR number).
-2. Map the component boundaries:
-   - Entry points (APIs, event handlers, CLI commands).
-   - Internal modules and their responsibilities.
-   - External dependencies and integration points.
-   - Data flow from input to output.
-3. Evaluate against design principles:
-   - **Single Responsibility**: Does each module have one clear purpose?
-   - **Dependency Direction**: Do dependencies flow inward (clean architecture)?
-   - **Interface Segregation**: Are interfaces minimal and focused?
-   - **Error Handling**: Are failures handled consistently and explicitly?
-   - **Testability**: Can components be tested in isolation?
-4. Check for common anti-patterns:
-   - God objects or modules with too many responsibilities.
-   - Circular dependencies between modules.
-   - Leaky abstractions exposing internal implementation.
-   - Configuration scattered across multiple locations.
-5. Assess scalability and operational concerns:
-   - Can this handle 10x current load?
-   - What are the failure modes and recovery paths?
-   - Is observability built in (logging, metrics, tracing)?
-6. Produce a structured review with actionable recommendations.
+1. 从参数中识别评审范围（模块路径、功能名称或 PR 编号）。
+2. 映射组件边界：
+   - 入口点（API、事件处理程序、CLI 命令）。
+   - 内部模块及其职责。
+   - 外部依赖和集成点。
+   - 从输入到输出的数据流。
+3. 对照设计原则评估：
+   - **单一职责**：每个模块是否只有一个清晰的目的？
+   - **依赖方向**：依赖是否向内流动（整洁架构）？
+   - **接口隔离**：接口是否最小化和专注？
+   - **错误处理**：失败是否一致且明确地处理？
+   - **可测试性**：组件是否可隔离测试？
+4. 检查常见的反模式：
+   - 上帝对象或职责过多的模块。
+   - 模块之间的循环依赖。
+   - 暴露内部实现的泄漏抽象。
+   - 配置分散在多个位置。
+5. 评估可扩展性和运维关注点：
+   - 能否处理当前 10 倍的负载？
+   - 故障模式和恢复路径是什么？
+   - 是否内置可观测性（日志、指标、追踪）？
+6. 生成带有可操作建议的结构化评审。
 
-## Format
+## 格式
 
 ```
-## Design Review: <Component Name>
+## 设计评审：<组件名称>
 
-### Architecture Score: <1-5>/5
+### 架构评分：<1-5>/5
 
-### Strengths
-- What is well designed
+### 优势
+- 设计良好的方面
 
-### Concerns
-- CRITICAL: Issues that need immediate attention
-- WARNING: Issues to address before next milestone
+### 关注点
+- 严重：需要立即处理的问题
+- 警告：下一个里程碑之前需要解决的问题
 
-### Recommendations
-1. Specific actionable improvement
-2. Specific actionable improvement
+### 建议
+1. 具体的可操作改进
+2. 具体的可操作改进
 
-### Diagram
-<Mermaid diagram of current architecture>
+### 图表
+<当前架构的 Mermaid 图>
 ```
 
-## Rules
+## 规则
 
-- Be constructive; pair every criticism with a concrete suggestion.
-- Focus on structural issues, not cosmetic ones.
-- Consider the team's current constraints and pragmatic tradeoffs.
-- Reference specific files and line numbers where applicable.
+- 保持建设性；每项批评都配以具体建议。
+- 关注结构性问题，而非表面问题。
+- 考虑团队当前的约束和务实的权衡。
+- 在适用时引用具体文件和行号。

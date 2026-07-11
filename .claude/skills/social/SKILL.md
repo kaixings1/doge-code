@@ -1,5 +1,5 @@
 ---
-name: social
+name: 当用户需要帮助创建、安排或优化社交媒体内容（LinkedIn、Twitter/X
 description: "当用户需要帮助创建、安排或优化社交媒体内容（LinkedIn、Twitter/X、Instagram、TikTok、Facebook 等平台），或需要进行社交媒体监听和互动分类时使用此技能。当用户提到'LinkedIn 帖子'、'Twitter 线程'、'社交媒体'、'内容日历'、'社交安排'、'互动'、'病毒内容'、'我应该发布什么'、'重新利用此内容'、'推文想法'、'LinkedIn 轮播'、'社交媒体策略'、'增长关注者'、'TikTok 视频'、'Reels'、'Shorts'、'视频脚本'、'视频钩子'、'短视频'、'创建 Reel'、'社交媒体监听'、'品牌提及'、'竞争对手监控'、'要评论的热门帖子'或'寻找提问者'时使用此技能。用于社交媒体内容创建、重新利用、安排、短视频脚本编写和社交媒体监听。更广泛的内容策略请参见 content-strategy。付费广告请参见 ad-creative。赢得媒体请参见 public-relations。"
 metadata:
   version: 2.1.0

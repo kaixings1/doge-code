@@ -1,6 +1,6 @@
 ---
-name: playground
-description: "Playground — 交互式沙盒相关功能和最佳实践"
+name: 沙盒
+description: "沙盒 — 交互式沙盒相关功能和最佳实践"
 ---
 
 # 沙盒构建器

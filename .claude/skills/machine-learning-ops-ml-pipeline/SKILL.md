@@ -1,14 +1,14 @@
 ---
-name: machine-learning-ops-ml-pipeline
+name: 设计和实现完整的 ML 流水线，用于：$ARGUMENTS
 description: "设计和实现完整的 ML 流水线，用于：$ARGUMENTS"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# Machine Learning Pipeline - Multi-Agent MLOps Orchestration
+# 机器学习流水线 - 多代理 MLOps 编排
 
-Design and implement a complete ML pipeline for: $ARGUMENTS
+为以下内容设计和实现完整的 ML 流水线：$ARGUMENTS
 
 ## 使用此技能的场景
 
@@ -273,7 +273,7 @@ prompt: |
 - **deployment_mode**: realtime | batch | streaming | hybrid
 - **monitoring_stack**: prometheus | datadog | newrelic | custom
 
-## Success Criteria
+## 成功标准
 
 1. **Data Pipeline Success**:
    - < 0.1% data quality issues in production

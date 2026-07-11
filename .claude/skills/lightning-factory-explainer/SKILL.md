@@ -1,10 +1,12 @@
 ---
-name: lightning-factory-explainer
-description: "Lightning Factory Explainer — Lightning Factory Explainer 相关功能和最佳实践"
+name: 闪电工厂解释器
+description: "闪电工厂解释器 — 闪电工厂解释器相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-03'
 ---
+
+# 闪电工厂解释器
 
 ## 使用此技能的场景
 

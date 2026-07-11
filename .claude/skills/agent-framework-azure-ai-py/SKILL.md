@@ -1,5 +1,5 @@
 ---
-name: agent-framework-azure-ai-py
+name: Azure AI Agent 框架
 description: "使用 Microsoft Agent Framework Python SDK 在 Azure AI Foundry 上构建持久化代理。"
 risk: unknown
 source: community

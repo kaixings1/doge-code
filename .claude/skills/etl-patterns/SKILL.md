@@ -1,5 +1,5 @@
 ---
-name: etl-patterns
+name: 数据 ETL 模式
 description: "数据 ETL 模式"
 risk: safe
 source: community

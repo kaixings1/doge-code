@@ -1,5 +1,5 @@
 ---
-name: crossframe-essay
+name: 适用于 CrossFrame 诊断后
 description: "适用于 CrossFrame 诊断后的中文批判性洞察文章、评论、概念文章、公共写作或结构到文章底稿的场景。"
 category: content
 risk: safe

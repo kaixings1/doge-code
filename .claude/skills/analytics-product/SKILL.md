@@ -1,5 +1,5 @@
 ---
-name: analytics-product
+name: 产品分析
 description: "产品分析 — PostHog、Mixpanel、事件、漏斗、群组、留存率、北极星指标、OKR 和产品仪表板。"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: aryn-automation
+name: Aryn 自动化
 description: "Aryn 自动化"
 risk: safe
 source: community

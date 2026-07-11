@@ -299,7 +299,7 @@ jobs:
 
 ```yaml
 # Validate that lint-staged would pass (catch bypassed hooks)
-name: Lint Check
+name: 掌握 Git hooks 设置，包括 Husky、lint-
 on: [pull_request]
 jobs:
   lint:

@@ -1,5 +1,5 @@
 ---
-name: correlation-analysis
+name: 相关性分析
 description: "相关性分析"
 risk: safe
 source: community

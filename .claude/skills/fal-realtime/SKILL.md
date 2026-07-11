@@ -1,5 +1,5 @@
 ---
-name: fal-realtime
+name: FAL 实时
 description: "FAL 实时 — FAL AI 实时处理"
 risk: unknown
 source: community

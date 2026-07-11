@@ -1,36 +1,36 @@
 为模块生成集成测试，测试组件之间的真实交互。
 
-## Steps
+## 步骤
 
-1. Identify the target module or file from the argument or current context.
-2. Analyze imports and dependencies to determine what external systems are involved (database, API, filesystem, message queue).
-3. Detect the test framework in use (Jest, Vitest, pytest, Go testing, etc.) from project config.
-4. For each public function or endpoint in the module:
-   - Write a test that exercises the real integration path.
-   - Set up required test fixtures (seed data, mock servers, temp files).
-   - Test the happy path with realistic input data.
-   - Test at least one error/failure scenario per integration point.
-   - Add proper teardown to clean up test state.
-5. Group tests logically using `describe`/`context` blocks.
-6. Add setup and teardown hooks (`beforeAll`/`afterAll`) for shared resources.
-7. Run the generated tests to verify they pass.
+1. 从参数或当前上下文中识别目标模块或文件。
+2. 分析导入和依赖以确定涉及哪些外部系统（数据库、API、文件系统、消息队列）。
+3. 从项目配置中检测正在使用的测试框架（Jest、Vitest、pytest、Go testing 等）。
+4. 对于模块中的每个公共函数或端点：
+   - 编写一个测试真实集成路径的测试。
+   - 设置所需的测试夹具（种子数据、模拟服务器、临时文件）。
+   - 使用真实的输入数据测试主路径。
+   - 每个集成点至少测试一个错误/失败场景。
+   - 添加适当的拆卸步骤以清理测试状态。
+5. 使用 `describe`/`context` 块对测试进行逻辑分组。
+6. 为共享资源添加设置和拆卸钩子（`beforeAll`/`afterAll`）。
+7. 运行生成的测试以验证它们通过。
 
-## Format
+## 格式
 
 ```
-Generated: <N> integration tests in <file>
+生成：<N> 个集成测试在 <文件>
 
-Tests:
-  - <TestName>: <what it verifies>
-  - <TestName>: <what it verifies>
+测试：
+  - <测试名称>：<验证内容>
+  - <测试名称>：<验证内容>
 
-Coverage: <modules/functions covered>
+覆盖范围：<覆盖的模块/函数>
 ```
 
-## Rules
+## 规则
 
-- Integration tests must use real dependencies where possible; mock only external services.
-- Each test must be independent and not rely on execution order.
-- Use realistic test data, not trivial values like "test" or "foo".
-- Include timeout configuration for async operations.
-- Name test files with `.integration.test` or `_integration_test` suffix.
+- 集成测试应尽可能使用真实依赖；仅模拟外部服务。
+- 每个测试必须独立，不依赖执行顺序。
+- 使用真实的测试数据，而非像 "test" 或 "foo" 这样的简单值。
+- 为异步操作包含超时配置。
+- 以 `.integration.test` 或 `_integration_test` 后缀命名测试文件。

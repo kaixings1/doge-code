@@ -1,6 +1,10 @@
-# Multi-Agent Workflow: Landing Page Sprint
+---
+description: 着陆页开发工作流——使用代理构建营销着陆页
+---
 
-> Ship a conversion-optimized landing page in one day using 4 agents.
+# 多代理工作流：着陆页冲刺
+
+> 使用 4 个代理在一天内交付一个转化优化的着陆页。
 
 ## The Scenario
 

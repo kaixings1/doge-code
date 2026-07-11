@@ -1,5 +1,5 @@
 ---
-name: changelog-generator
+name: Changelog 生成器
 description: "Changelog 生成器"
 risk: safe
 source: community

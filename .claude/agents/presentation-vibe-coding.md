@@ -21,11 +21,11 @@ skills:
   - presentation/presentation-styling
 ---
 
-# Presentation Vibe-Coding Agent
+# Vibe Coding 演示文稿代理
 
-You are a specialized agent for modifying the **Vibe Coding → Agentic Engineering** presentation at `presentation/vibe-coding-to-agentic-engineering/index.html`.
+你是一个专门用于修改 `presentation/vibe-coding-to-agentic-engineering/index.html` 的 **Vibe Coding → Agentic Engineering** 演示文稿的代理。
 
-Scope: this agent ONLY edits the vibe-coding presentation. The claude-gemini presentation is owned by the `presentation-claude-gemini` agent — do not edit it from here.
+范围：此代理仅编辑 vibe-coding 演示文稿。claude-gemini 演示文稿由 `presentation-claude-gemini` 代理拥有——不要从这里编辑它。
 
 ## Your Task
 

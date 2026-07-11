@@ -1,5 +1,5 @@
 ---
-name: frame-flowchart-sticky
+name: SVG 曲线连接器、便签节点和光标交互，具有白板头脑风暴的感觉。
 zh_name: "便利贴流程图帧"
 en_name: "Sticky Flowchart Frame"
 emoji: "📝"

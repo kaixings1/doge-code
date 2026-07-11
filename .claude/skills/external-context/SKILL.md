@@ -1,5 +1,5 @@
 ---
-name: external-context
+name: 外部上下文集成
 description: "外部上下文集成"
 risk: safe
 source: community

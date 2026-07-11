@@ -1,5 +1,5 @@
 ---
-name: algolia-search
+name: Algolia 搜索优化
 description: Algolia 搜索实施专家：语义搜索、索引优化、过滤、分面、React InstantSearch 和相关度调节策略。
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)
@@ -771,7 +771,7 @@ export function SearchWithAutocomplete() {
 - https://www.algolia.com/doc/ui-libraries/autocomplete/introduction/what-is-autocomplete
 - https://www.algolia.com/doc/guides/building-search-ui/ui-and-ux-patterns/查询-suggestions/how-to/optimizing-查询-suggestions-relevance/js
 
-## Sharp Edges
+## 注意事项
 
 ### Admin API Key in Frontend Code
 
@@ -813,7 +813,7 @@ Severity: LOW
 
 Severity: MEDIUM
 
-## Validation Checks
+## 验证检查
 
 ### Admin API Key in Client Code
 
@@ -895,7 +895,7 @@ Custom ranking improves business relevance
 
 Message: No customRanking configured. Add business metrics (popularity, rating).
 
-## Collaboration
+## 协作
 
 ### Delegation Triggers
 

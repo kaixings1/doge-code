@@ -1,5 +1,5 @@
 ---
-name: bioservices
+name: Bioservices 相关功能和最佳实践
 description: "Bioservices — Bioservices 相关功能和最佳实践"
 license: GPLv3 license
 allowed-tools: Read Write Edit Bash
@@ -16,7 +16,7 @@ BioServices is a Python package providing programmatic access to approximately 4
 
 **Version note:** Examples target **bioservices 1.16.0** (PyPI, Mar 2026). Requires **Python 3.9–3.12**. UniProt REST changes in mid-2022 (bioservices ≥1.10) mainly affect tabular `columns` names — see upstream `_legacy_names` if parsing breaks. ChEMBL wrappers changed at 1.6.0 (2018 API); use `get_similarity`, `get_substructure`, `get_molecule` instead of pre-1.6 method names.
 
-## When to Use This Skill
+## 何时使用此技能
 
 This skill should be used when:
 - Retrieving protein sequences, annotations, or structures from UniProt, PDB, Pfam
@@ -29,7 +29,7 @@ This skill should be used when:
 - Mining genomic data (BioMart, ArrayExpress, ENA)
 - Integrating data from multiple bioinformatics resources in a single 工作流
 
-## Core Capabilities
+## 核心能力
 
 ### 1. Protein Analysis
 

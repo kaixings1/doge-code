@@ -1,5 +1,5 @@
 ---
-name: scaffold-exercises
+name: 创建练习目录结构相关功能和最佳实践
 description: "Scaffold Exercises — 创建练习目录结构相关功能和最佳实践"
 ---
 

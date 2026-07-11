@@ -1,5 +1,5 @@
 ---
-name: angular-ui-patterns
+name: Angular UI 模式
 description: "Angular UI 模式"
 risk: safe
 source: community

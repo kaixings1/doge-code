@@ -1,5 +1,5 @@
 ---
-name: fal-platform
+name: FAL 平台
 description: "FAL 平台 — FAL AI 平台使用指南"
 risk: unknown
 source: community

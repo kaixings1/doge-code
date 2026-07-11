@@ -1,7 +1,6 @@
 ---
-name: pr-feedback-quality-gate
-description: "Pr Feedback Quality Gate — Pr Feedback Quality Gate 相关功能和最佳实践"
-  Safely track pull 请求 feedback, resolve review comments or merge conflicts, validate fixes, and use a read-only cross-review before committing or pushing follow-up changes.
+name: PR 反馈质量关卡
+description: "PR 反馈质量关卡 — PR 反馈质量关卡相关功能和最佳实践，安全跟踪 Pull Request 反馈、解决审查评论或合并冲突、验证修复，并在提交或推送后续更改前使用只读交叉审查"
 triggers:
   - "PR feedback"
   - "review comments"

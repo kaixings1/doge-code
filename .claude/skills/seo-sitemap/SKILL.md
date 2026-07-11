@@ -1,5 +1,5 @@
 ---
-name: seo-sitemap
+name: 分析现有 XML 站点地图或生成新站点地图相关功能和最佳实践。
 description: "Seo Sitemap — 分析现有 XML 站点地图或生成新站点地图相关功能和最佳实践。"
   Validates format, URLs, and structure. Use when user says "sitemap",
   "generate sitemap", "sitemap issues", or "XML sitemap".
@@ -12,7 +12,7 @@ metadata:
   category: seo
 ---
 
-# Sitemap Analysis & Generation
+# SEO 站点地图
 
 ## Mode 1: Analyze Existing Sitemap
 

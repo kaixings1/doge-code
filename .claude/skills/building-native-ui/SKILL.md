@@ -1,6 +1,6 @@
 ---
-name: building-native-ui
-description: "Building Native Ui — Building Native Ui 相关功能和最佳实践"
+name: 原生 UI 构建
+description: "原生 UI 构建 — 原生 UI 构建相关功能和最佳实践"
 risk: unknown
 source: community
 version: 1.0.1

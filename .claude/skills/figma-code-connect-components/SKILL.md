@@ -1,6 +1,6 @@
 ---
-name: figma-code-connect-components
-description: "Figma Code Connect Components — Figma Code Connect Components 相关功能和最佳实践"
+name: Figma Code Connect 组件
+description: "Figma Code Connect 组件 — 使用 Code Connect 将 Figma 设计组件连接到代码组件，使设计系统更新能自动流入代码库。"
   使用 Code Connect 将 Figma 设计组件连接到代码组件，使设计系统更新能自动流入代码库。
 triggers:
   - "figma code connect"

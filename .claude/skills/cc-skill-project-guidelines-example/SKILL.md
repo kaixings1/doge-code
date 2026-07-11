@@ -1,5 +1,5 @@
 ---
-name: cc-skill-project-guidelines-example
+name: 项目指南示例
 description: "项目指南示例"
 risk: safe
 source: community

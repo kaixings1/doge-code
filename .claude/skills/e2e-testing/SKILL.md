@@ -1,5 +1,5 @@
 ---
-name: e2e-testing
+name: 端到端测试策略和实现：Playwright、Cypress、Selenium。涵
 description: "端到端测试策略和实现：Playwright、Cypress、Selenium。涵盖测试设计、页面对象、视觉测试和 CI 集成。适用于自动化浏览器测试。"
 category: granular-工作流-bundle
 risk: safe
@@ -150,7 +150,7 @@ Use @playwright-skill to run cross-browser tests
 Use @github-actions-templates to integrate E2E tests with CI
 ```
 
-## Quality Gates
+## 质量门
 
 - [ ] Tests passing
 - [ ] Coverage adequate

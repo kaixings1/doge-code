@@ -1,5 +1,5 @@
 ---
-name: social-reddit-card
+name: 逼真的 Reddit 帖子卡片，带有投票轨道和评论计数，适用于视频覆盖或故事分享。
 zh_name: "Reddit 帖子卡"
 en_name: "Reddit Post Card"
 emoji: "🔺"

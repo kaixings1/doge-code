@@ -9,9 +9,9 @@ allowed-tools:
 requires: [phase]
 ---
 <objective>
-Archive phase directories from completed milestones into `.planning/milestones/v{X.Y}-phases/`.
+将已完成里程碑中的阶段目录归档到 `.planning/milestones/v{X.Y}-phases/`。
 
-Use when `.planning/phases/` has accumulated directories from past milestones.
+当 `.planning/phases/` 中积累了来自过去里程碑的目录时使用。
 </objective>
 
 <execution_context>
@@ -19,6 +19,6 @@ Use when `.planning/phases/` has accumulated directories from past milestones.
 </execution_context>
 
 <process>
-Execute end-to-end.
-Identify completed milestones, show a dry-run summary, and archive on confirmation.
+端到端执行。
+识别已完成的里程碑，显示预演摘要，并在确认时进行归档。
 </process>

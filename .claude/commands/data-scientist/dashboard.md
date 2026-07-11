@@ -3,33 +3,33 @@ description: 设计完整分析仪表盘 — 多图表与KPI
 argument-hint: "<describe the dashboard purpose and key metrics>"
 ---
 
-# /dashboard — Dashboard Design
+# /dashboard — 仪表盘设计
 
-Design and build a complete analytical dashboard.
+设计并构建完整的分析仪表盘。
 
-## Invocation
+## 调用
 
 ```
-/dashboard Product metrics dashboard with DAU, retention, revenue, and feature adoption
-/dashboard Marketing campaign performance dashboard for the growth team
-/dashboard Executive KPI dashboard updated weekly
+/dashboard 包含 DAU、留存率、收入和功能采用率的产品指标仪表盘
+/dashboard 增长团队的市场活动效果仪表盘
+/dashboard 每周更新的高管 KPI 仪表盘
 ```
 
-## Workflow
+## 工作流
 
-### Step 1: Requirements
-Clarify purpose, audience, update frequency, and key metrics.
+### 步骤 1：需求分析
+明确目的、受众、更新频率和关键指标。
 
-### Step 2: Design
-Apply **build-dashboard** skill — layout, chart selection, KPI placement.
+### 步骤 2：设计
+应用 **build-dashboard** 技能——布局、图表选择、KPI 放置。
 
-### Step 3: Build
-Generate implementation code (Streamlit, Plotly Dash, or Panel) with all charts, filters, and styling.
+### 步骤 3：构建
+生成实现代码（Streamlit、Plotly Dash 或 Panel），包含所有图表、筛选器和样式。
 
-### Step 4: Polish
-Apply **style-guide** for consistent, professional styling.
+### 步骤 4：优化
+应用 **style-guide** 实现一致、专业的样式。
 
-Offer follow-up:
-- "Want to **add more charts** or filters?"
-- "Should I **deploy this** as a web app?"
-- "Need to **connect to live data** sources?"
+提供后续选项：
+- "想要**添加更多图表**或筛选器吗？"
+- "需要我将其**部署为 Web 应用**吗？"
+- "需要**连接到实时数据**源吗？"

@@ -1,5 +1,5 @@
 ---
-name: imagegen-frontend-mobile
+name: 图像生成前端移动端
 description: "图像生成前端移动端 — 移动端图像生成前端"
 risk: unknown
 source: community

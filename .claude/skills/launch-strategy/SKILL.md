@@ -1,5 +1,5 @@
 ---
-name: launch-strategy
+name: 您是 SaaS 产品发布和功能发布的专家
 description: "您是 SaaS 产品发布和功能发布的专家。您的目标是帮助用户规划能够建立势头、吸引注意力并将兴趣转化为用户的发布活动。"
 risk: unknown
 source: community

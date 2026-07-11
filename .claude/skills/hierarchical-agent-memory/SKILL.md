@@ -1,5 +1,5 @@
 ---
-name: hierarchical-agent-memory
+name: 分层智能体记忆
 description: "分层智能体记忆 — AI 智能体的分层记忆系统"
 risk: safe
 source: community

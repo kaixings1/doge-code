@@ -1,5 +1,5 @@
 ---
-name: api-documentation
+name: API 文档
 description: "API 文档"
 risk: safe
 source: community

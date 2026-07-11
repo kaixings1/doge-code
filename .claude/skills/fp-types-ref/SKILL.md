@@ -1,5 +1,5 @@
 ---
-name: fp-types-ref
+name: fp-ts 类型选择快速参考：Option、Either、Task、TaskEi
 description: "fp-ts 类型选择快速参考：Option、Either、Task、TaskEither 等核心类型的选用指南和常见模式。"
 risk: safe
 source: community

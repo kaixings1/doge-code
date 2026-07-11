@@ -1,6 +1,6 @@
 ---
-name: makepad-basics
-description: "Makepad Basics — Makepad Basics 相关功能和最佳实践"
+name: Makepad 基础
+description: "Makepad 基础 — Makepad 入门和应用程序结构相关功能和最佳实践"
   CRITICAL: Use for Makepad getting started and app structure. Triggers on:
   makepad, makepad getting started, makepad tutorial, live_design!, app_main!,
   makepad project 设置, makepad hello world, "how to create makepad app",

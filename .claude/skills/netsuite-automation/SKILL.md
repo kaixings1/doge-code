@@ -1,5 +1,5 @@
 ---
-name: NetSuite Automation
+name: NetSuite 自动化：通过 Oracle NetSuite ERP 管理客户
 description: "NetSuite 自动化：通过 Oracle NetSuite ERP 管理客户、销售订单、发票、库存和记录，使用 SuiteQL 查询"
 requires:
  mcp: [rube]

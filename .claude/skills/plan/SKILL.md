@@ -1,12 +1,14 @@
 ---
-name: omc-plan
-description: "Plan — Plan 相关功能和最佳实践"
+name: 计划
+description: "计划 — 计划相关功能和最佳实践"
 参数-hint: "[--direct|--consensus|--review] [--interactive] [--deliberate] <task description>"
 pipeline: [deep-interview]
 handoff-policy: approval-required
 handoff: .omc/plans/ralplan-*.md
 level: 4
 ---
+
+# 计划
 
 <目的>
 Plan 通过智能交互创建全面、可执行的工作计划。它自动检测是否需要面试用户（宽泛请求）或直接规划（详细请求），并支持共识模式（Planner/Architect/Critic 迭代循环与 RALPLAN-DR 结构化审议）和审查模式（Critic 评估现有计划）。

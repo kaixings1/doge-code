@@ -1,6 +1,6 @@
 ---
-name: azure-ai-vision-imageanalysis-py
-description: "Azure Ai Vision Imageanalysis Py — Azure Ai Vision Imageanalysis Py 相关功能和最佳实践"
+name: Azure AI Vision Imageanalysis (Python)
+description: "Azure AI Vision Image Analysis Python — Azure AI Vision Image Analysis Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -197,7 +197,7 @@ if result.smart_crops:
         print(f"  Crop region: x={box.x}, y={box.y}, w={box.width}, h={box.height}")
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient

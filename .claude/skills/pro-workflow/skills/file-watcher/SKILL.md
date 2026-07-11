@@ -83,7 +83,7 @@ Add to hooks.json:
 }
 ```
 
-## Rules
+## 规则
 
 - Use absolute paths for watchPaths (required by Claude Code)
 - Matcher uses pipe-separated filenames

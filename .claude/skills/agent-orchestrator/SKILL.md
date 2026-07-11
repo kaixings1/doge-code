@@ -1,5 +1,5 @@
 ---
-name: agent-orchestrator
+name: 多代理编排器
 description: "Agent Orchestrator — 多代理编排器，协调多个 AI 代理协同完成复杂任务。"
 risk: safe
 source: community

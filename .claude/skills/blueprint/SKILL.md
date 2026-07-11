@@ -1,5 +1,5 @@
 ---
-name: blueprint
+name: Claude Code 通用命令蓝图
 description: "Claude Code 通用命令蓝图——模板化命令定义、参数解析和工具编排框架。"
 category: planning
 risk: safe
@@ -63,7 +63,7 @@ mkdir -p ~/.claude/skills
 git clone https://github.com/antbotlab/blueprint.git ~/.claude/skills/blueprint
 ```
 
-## Additional Resources
+## 其他资源
 
 - [GitHub Repository](https://github.com/antbotlab/blueprint)
 - [Examples: small plan](https://github.com/antbotlab/blueprint/blob/main/examples/small-plan.md)

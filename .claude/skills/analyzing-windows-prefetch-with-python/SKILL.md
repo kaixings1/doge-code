@@ -1,5 +1,5 @@
 ---
-name: analyzing-windows-prefetch-with-python
+name: Python Windows Prefetch 分析
 description: "Python 分析 Windows Prefetch"
 risk: safe
 source: community

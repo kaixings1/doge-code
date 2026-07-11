@@ -1,5 +1,5 @@
 ---
-name: onesignal_rest_api-automation
+name: OneSignal 推送自动化
 description: "通过 Rube MCP (Composio) 自动执行 OneSignal 任务：推送通知、细分、模板和消息。使用前始终先搜索工具以获取当前 schema。"
 requires:
   mcp: [rube]

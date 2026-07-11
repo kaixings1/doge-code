@@ -1,5 +1,5 @@
 ---
-name: code-review-checklist
+name: 代码审查清单
 description: "代码审查清单"
 risk: safe
 source: community

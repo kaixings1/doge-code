@@ -1,5 +1,5 @@
 ---
-name: Xero Automation
+name: Xero 自动化：在 Xero 中为云端簿记管理发票、联系人、付款、银行交易和账户
 description: Xero 自动化：在 Xero 中为云端簿记管理发票、联系人、付款、银行交易和账户
 requires:
  mcp: [rube]

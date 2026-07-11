@@ -1,5 +1,5 @@
 ---
-name: github-actions-debugger
+name: 日志和流水线定义来诊断、分析
 description: "通过解析运行日志和流水线定义来诊断、分析和修复失败的 GitHub Actions 工作流的专业技能。"
 category: devops
 risk: safe

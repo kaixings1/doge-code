@@ -1,6 +1,6 @@
 ---
-name: azure-mgmt-fabric-dotnet
-description: "Azure Mgmt Fabric Dotnet — Azure Mgmt Fabric Dotnet 相关功能和最佳实践"
+name: Azure Fabric 管理 .NET SDK 相关功能和最佳实践
+description: "Azure Management Fabric .NET — Azure Fabric 管理 .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -49,7 +49,7 @@ var armClient = new ArmClient(credential);
 var subscription = await armClient.GetDefaultSubscriptionAsync();
 ```
 
-## Resource Hierarchy
+## 资源层次结构
 
 ```
 ArmClient
@@ -322,7 +322,7 @@ catch (RequestFailedException ex)
 5. **Location constraints** — Not all SKUs are available in all regions; use `GetSkusFabricCapacitiesAsync` to check
 6. **Long provisioning times** — Capacity creation can take 5-15 minutes
 
-## Related SDKs
+## 相关 SDK
 
 | SDK | Purpose | Install |
 |-----|---------|---------|

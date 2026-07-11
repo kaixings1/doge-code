@@ -1,12 +1,17 @@
+---
+name: 技能改进插件
+description: 迭代审查和修复 Claude Code 技能质量问题直到达标，使用 skill-reviewer 代理运行自动化修复-审查循环。
+---
+
 # Skill Improver Plugin
 
 Iteratively reviews and fixes Claude Code skill quality issues until they meet standards. Runs automated fix-review cycles using the `skill-reviewer` agent from the `plugin-dev` plugin.
 
-## Requirements
+## 要求
 
 - **`plugin-dev` plugin** must be installed (provides `skill-reviewer` agent)
 
-## Commands
+## 命令
 
 ### /skill-improver \<SKILL_PATH\> [--max-iterations N]
 

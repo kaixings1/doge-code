@@ -1,6 +1,6 @@
 ---
 name: mcp-设置
-description: "Mcp 设置 — Mcp 设置 相关功能和最佳实践"
+description: "MCP 设置 — MCP 设置相关功能和最佳实践"
 level: 2
 ---
 

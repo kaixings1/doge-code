@@ -5,14 +5,14 @@ argument-hint: "<describe your funnel steps>"
 
 # /analyze-funnel
 
-Conversion funnel analysis with drop-off identification.
+转化漏斗分析与流失点识别。
 
-## Invocation
+## 调用
 
 ```
-/analyze-funnel [describe your requirements]
+/analyze-funnel [描述你的需求]
 ```
 
-## Workflow
+## 工作流
 
-Apply relevant **ds-business-analytics** skills to guide you through the process step by step.
+应用相关的 **ds-business-analytics** 技能逐步指导你完成整个过程。

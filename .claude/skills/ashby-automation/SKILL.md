@@ -1,5 +1,5 @@
 ---
-name: ashby-automation
+name: Ashby 自动化
 description: "Ashby 自动化"
 risk: safe
 source: community

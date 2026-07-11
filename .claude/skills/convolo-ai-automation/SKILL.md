@@ -1,5 +1,5 @@
 ---
-name: convolo-ai-automation
+name: Convolo AI 自动化
 description: "Convolo AI 自动化"
 risk: safe
 source: community

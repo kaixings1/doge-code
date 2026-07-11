@@ -1,10 +1,12 @@
 ---
-name: comprehensive-review-full-review
+name: 适用于working with comprehensive review full review
 description: "适用于working with comprehensive review full review的情况。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
+
+# 全面审查
 
 ## 使用此技能的场景
 
@@ -18,121 +20,121 @@ date_added: "2026-02-27"
 
 ## 说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant best practices and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证方法。
+- 如需详细示例，请打开 `resources/implementation-playbook.md`。
 
-Orchestrate comprehensive multi-dimensional code review using specialized review agents
+使用专门的审查代理编排全面的多维代码审查。
 
-[Extended thinking: This 工作流 performs an exhaustive code review by orchestrating multiple specialized agents in sequential phases. Each phase builds upon previous findings to create a comprehensive review that covers code quality, security, performance, testing, documentation, and best practices. The 工作流 integrates modern AI-assisted review tools, static analysis, security scanning, and automated quality metrics. Results are consolidated into actionable feedback with clear prioritization and remediation guidance. The phased 方法 ensures thorough coverage while maintaining efficiency through parallel agent execution where appropriate.]
+[扩展思考：此工作流通过按顺序阶段编排多个专门代理来执行详尽的代码审查。每个阶段基于先前的发现构建，创建涵盖代码质量、安全、性能、测试、文档和最佳实践的全面审查。该工作流集成现代 AI 辅助审阅工具、静态分析、安全扫描和自动化质量指标。结果整合为可操作的反馈，附带明确的优先级和修复指导。分阶段方法确保全面覆盖，同时在适当时通过并行代理执行保持效率。]
 
-## Review 配置 Options
+## 审查配置选项
 
-- **--security-focus**: Prioritize security vulnerabilities and OWASP compliance
-- **--performance-critical**: Emphasize performance bottlenecks and scalability issues
-- **--tdd-review**: Include TDD compliance and test-first verification
-- **--ai-assisted**: Enable AI-powered review tools (Copilot, Codium, Bito)
-- **--strict-mode**: Fail review on any critical issues found
-- **--metrics-report**: Generate detailed quality metrics dashboard
-- **--framework [name]**: Apply framework-specific best practices (React, Spring, Django, etc.)
+- **--security-focus**: 优先处理安全漏洞和 OWASP 合规性
+- **--performance-critical**: 侧重性能瓶颈和可扩展性问题
+- **--tdd-review**: 包括 TDD 合规性和测试优先验证
+- **--ai-assisted**: 启用 AI 支持的审查工具（Copilot、Codium、Bito）
+- **--strict-mode**: 发现任何关键问题时审查失败
+- **--metrics-report**: 生成详细的质量指标仪表盘
+- **--framework [名称]**: 应用框架特定的最佳实践（React、Spring、Django 等）
 
-## Phase 1: Code Quality & Architecture Review
+## 阶段 1：代码质量与架构审查
 
-Use Task tool to orchestrate quality and architecture agents in parallel:
+使用 Task 工具编排质量和架构代理并行执行：
 
-### 1A. Code Quality Analysis
-- Use Task tool with subagent_type="code-reviewer"
-- Prompt: "Perform comprehensive code quality review for: $ARGUMENTS. Analyze code complexity, maintainability index, technical debt, code duplication, naming conventions, and adherence to Clean Code principles. Integrate with SonarQube, CodeQL, and Semgrep for static analysis. Check for code smells, anti-patterns, and violations of SOLID principles. Generate cyclomatic complexity metrics and identify refactoring opportunities."
-- Expected output: Quality metrics, code smell inventory, refactoring recommendations
-- Context: Initial codebase analysis, no dependencies on other phases
+### 1A. 代码质量分析
+- 使用 subagent_type="code-reviewer" 的 Task 工具
+- 提示："对以下内容执行全面代码质量审查：$ARGUMENTS。分析代码复杂度、可维护性指数、技术债务、代码重复、命名约定和 Clean Code 原则遵从性。集成 SonarQube、CodeQL 和 Semgrep 进行静态分析。检查代码坏味、反模式和 SOLID 原则违规。生成圈复杂度指标并识别重构机会。"
+- 预期输出：质量指标、代码坏味清单、重构建议
+- 上下文：初始代码库分析，不依赖其他阶段
 
-### 1B. Architecture & Design Review
-- Use Task tool with subagent_type="architect-review"
-- Prompt: "Review architectural design patterns and structural integrity in: $ARGUMENTS. Evaluate microservices boundaries, API design, database 架构, dependency management, and adherence to Domain-Driven Design principles. Check for circular dependencies, inappropriate coupling, missing abstractions, and architectural drift. Verify compliance with enterprise architecture standards and cloud-native patterns."
-- Expected output: Architecture assessment, design pattern analysis, structural recommendations
-- Context: Runs parallel with code quality analysis
+### 1B. 架构与设计审查
+- 使用 subagent_type="architect-review" 的 Task 工具
+- 提示："审查以下内容的架构设计模式和结构完整性：$ARGUMENTS。评估微服务边界、API 设计、数据库架构、依赖管理和领域驱动设计原则遵从性。检查循环依赖、不恰当的耦合、缺失的抽象和架构漂移。验证是否遵从企业架构标准和云原生模式。"
+- 预期输出：架构评估、设计模式分析、结构建议
+- 上下文：与代码质量分析并行运行
 
-## Phase 2: Security & Performance Review
+## 阶段 2：安全与性能审查
 
-Use Task tool with security and performance agents, incorporating Phase 1 findings:
+使用安全与性能代理，结合阶段 1 的发现：
 
-### 2A. Security Vulnerability Assessment
-- Use Task tool with subagent_type="security-auditor"
-- Prompt: "Execute comprehensive security audit on: $ARGUMENTS. Perform OWASP Top 10 analysis, dependency vulnerability scanning with Snyk/Trivy, secrets detection with GitLeaks, input validation review, 认证/授权 assessment, and cryptographic implementation review. Include findings from Phase 1 architecture review: {phase1_architecture_context}. Check for SQL injection, XSS, CSRF, insecure deserialization, and 配置 security issues."
-- Expected output: Vulnerability report, CVE list, security risk matrix, remediation steps
-- Context: Incorporates architectural vulnerabilities identified in Phase 1B
+### 2A. 安全漏洞评估
+- 使用 subagent_type="security-auditor" 的 Task 工具
+- 提示："对以下内容执行全面安全审计：$ARGUMENTS。执行 OWASP Top 10 分析、使用 Snyk/Trivy 的依赖漏洞扫描、使用 GitLeaks 的密钥检测、输入验证审查、认证/授权评估和加密实现审查。包含阶段 1 架构审查的发现：{phase1_architecture_context}。检查 SQL 注入、XSS、CSRF、不安全的反序列化和配置安全问题。"
+- 预期输出：漏洞报告、CVE 清单、安全风险矩阵、修复步骤
+- 上下文：纳入阶段 1B 中识别的架构漏洞
 
-### 2B. Performance & Scalability Analysis
-- Use Task tool with subagent_type="application-performance::performance-engineer"
-- Prompt: "Conduct performance analysis and scalability assessment for: $ARGUMENTS. Profile code for CPU/memory hotspots, analyze database 查询 performance, review caching strategies, identify N+1 problems, assess connection pooling, and evaluate asynchronous processing patterns. Consider architectural findings from Phase 1: {phase1_architecture_context}. Check for memory leaks, resource contention, and bottlenecks under load."
-- Expected output: Performance metrics, bottleneck analysis, optimization recommendations
-- Context: Uses architecture insights to identify systemic performance issues
+### 2B. 性能与可扩展性分析
+- 使用 subagent_type="application-performance::performance-engineer" 的 Task 工具
+- 提示："对以下内容进行性能分析和可扩展性评估：$ARGUMENTS。分析代码的 CPU/内存热点、检查数据库查询性能、审查缓存策略、识别 N+1 问题、评估连接池和异步处理模式。考虑阶段 1 的架构发现：{phase1_architecture_context}。检查内存泄漏、资源争用和负载下的瓶颈。"
+- 预期输出：性能指标、瓶颈分析、优化建议
+- 上下文：利用架构洞察识别系统性性能问题
 
-## Phase 3: Testing & Documentation Review
+## 阶段 3：测试与文档审查
 
-Use Task tool for test and documentation quality assessment:
+使用 Task 工具进行测试和文档质量评估：
 
-### 3A. Test Coverage & Quality Analysis
-- Use Task tool with subagent_type="unit-testing::test-automator"
-- Prompt: "Evaluate testing strategy and implementation for: $ARGUMENTS. Analyze unit test coverage, 集成 test completeness, end-to-end test scenarios, test pyramid adherence, and test maintainability. Review test quality metrics including assertion density, test isolation, mock usage, and flakiness. Consider security and performance test requirements from Phase 2: {phase2_security_context}, {phase2_performance_context}. Verify TDD practices if --tdd-review flag is set."
-- Expected output: Coverage report, test quality metrics, testing gap analysis
-- Context: Incorporates security and performance testing requirements from Phase 2
+### 3A. 测试覆盖与质量分析
+- 使用 subagent_type="unit-testing::test-automator" 的 Task 工具
+- 提示："评估以下内容的测试策略和实现：$ARGUMENTS。分析单元测试覆盖率、集成测试完整性、端到端测试场景、测试金字塔遵从性和测试可维护性。检查测试质量指标，包括断言密度、测试隔离、mock 使用和脆弱性。考虑阶段 2 的安全和性能测试要求：{phase2_security_context}、{phase2_performance_context}。如果设置了 --tdd-review 标志，验证 TDD 实践。"
+- 预期输出：覆盖率报告、测试质量指标、测试差距分析
+- 上下文：纳入阶段 2 的安全和性能测试要求
 
-### 3B. Documentation & API Specification Review
-- Use Task tool with subagent_type="code-documentation::docs-architect"
-- Prompt: "Review documentation completeness and quality for: $ARGUMENTS. Assess inline code documentation, API documentation (OpenAPI/Swagger), architecture decision records (ADRs), README completeness, 部署 guides, and runbooks. Verify documentation reflects actual implementation based on all previous phase findings: {phase1_context}, {phase2_context}. Check for outdated documentation, missing examples, and unclear explanations."
-- Expected output: Documentation coverage report, inconsistency list, improvement recommendations
-- Context: Cross-references all previous findings to ensure documentation accuracy
+### 3B. 文档与 API 规范审查
+- 使用 subagent_type="code-documentation::docs-architect" 的 Task 工具
+- 提示："审查以下内容的文档完整性和质量：$ARGUMENTS。评估内联代码文档、API 文档（OpenAPI/Swagger）、架构决策记录（ADR）、README 完整性、部署指南和操作手册。验证文档是否反映基于所有先前阶段发现的实际实现：{phase1_context}、{phase2_context}。检查过时的文档、缺失的示例和不清晰的解释。"
+- 预期输出：文档覆盖率报告、不一致清单、改进建议
+- 上下文：交叉引用所有先前发现以确保文档准确性
 
-## Phase 4: Best Practices & Standards Compliance
+## 阶段 4：最佳实践与标准合规
 
-Use Task tool to verify framework-specific and industry best practices:
+使用 Task 工具验证框架特定和行业最佳实践：
 
-### 4A. Framework & Language Best Practices
-- Use Task tool with subagent_type="framework-迁移::legacy-modernizer"
-- Prompt: "Verify adherence to framework and language best practices for: $ARGUMENTS. Check modern JavaScript/TypeScript patterns, React hooks best practices, Python PEP compliance, Java enterprise patterns, Go idiomatic code, or framework-specific conventions (based on --framework flag). Review package management, build 配置, environment handling, and 部署 practices. Include all quality issues from previous phases: {all_previous_contexts}."
-- Expected output: Best practices compliance report, modernization recommendations
-- Context: Synthesizes all previous findings for framework-specific guidance
+### 4A. 框架与语言最佳实践
+- 使用 subagent_type="framework-迁移::legacy-modernizer" 的 Task 工具
+- 提示："验证以下内容的框架和语言最佳实践遵从性：$ARGUMENTS。检查现代 JavaScript/TypeScript 模式、React hooks 最佳实践、Python PEP 合规性、Java 企业模式、Go 惯用代码或框架特定约定（基于 --framework 标志）。审查包管理、构建配置、环境处理和部署实践。包含所有前阶段的质问题：{all_previous_contexts}。"
+- 预期输出：最佳实践合规报告、现代化建议
+- 上下文：综合所有先前发现以提供框架特定指导
 
-### 4B. CI/CD & DevOps Practices Review
-- Use Task tool with subagent_type="cicd-automation::部署-engineer"
-- Prompt: "Review CI/CD pipeline and DevOps practices for: $ARGUMENTS. Evaluate build automation, test automation 集成, 部署 strategies (blue-green, canary), infrastructure as code, monitoring/observability 设置, and incident 响应 procedures. Assess pipeline security, artifact management, and rollback capabilities. Consider all issues identified in previous phases that impact 部署: {all_critical_issues}."
-- Expected output: Pipeline assessment, DevOps maturity evaluation, automation recommendations
-- Context: Focuses on operationalizing fixes for all identified issues
+### 4B. CI/CD 与 DevOps 实践审查
+- 使用 subagent_type="cicd-automation::部署-engineer" 的 Task 工具
+- 提示："审查以下内容的 CI/CD 管道和 DevOps 实践：$ARGUMENTS。评估构建自动化、测试自动化集成、部署策略（蓝绿、金丝雀）、基础设施即代码、监控/可观测性设置和事件响应流程。评估管道安全、制品管理和回滚能力。考虑先前阶段中识别的影响部署的所有问题：{all_critical_issues}。"
+- 预期输出：管道评估、DevOps 成熟度评估、自动化建议
+- 上下文：侧重于将识别的所有问题的修复付诸实施
 
-## Consolidated Report Generation
+## 综合报告生成
 
-Compile all phase outputs into comprehensive review report:
+将所有阶段输出编译为综合审查报告：
 
-### Critical Issues (P0 - Must Fix Immediately)
-- Security vulnerabilities with CVSS > 7.0
-- Data loss or corruption risks
-- 认证/授权 bypasses
-- Production stability threats
-- Compliance violations (GDPR, PCI DSS, SOC2)
+### 关键问题（P0 - 必须立即修复）
+- CVSS > 7.0 的安全漏洞
+- 数据丢失或损坏风险
+- 认证/授权绕过
+- 生产稳定性威胁
+- 合规违规（GDPR、PCI DSS、SOC2）
 
-### High Priority (P1 - Fix Before Next Release)
-- Performance bottlenecks impacting user experience
-- Missing critical test coverage
-- Architectural anti-patterns causing technical debt
-- Outdated dependencies with known vulnerabilities
-- Code quality issues affecting maintainability
+### 高优先级（P1 - 下一个发布前修复）
+- 影响用户体验的性能瓶颈
+- 缺失关键测试覆盖率
+- 导致技术债务的架构反模式
+- 存在已知漏洞的过时依赖
+- 影响可维护性的代码质量问题
 
-### Medium Priority (P2 - Plan for Next Sprint)
-- Non-critical performance optimizations
-- Documentation gaps and inconsistencies
-- Code refactoring opportunities
-- Test quality improvements
-- DevOps automation enhancements
+### 中优先级（P2 - 规划到下一个迭代）
+- 非关键性性能优化
+- 文档差距和不一致
+- 代码重构机会
+- 测试质量改进
+- DevOps 自动化增强
 
-### Low Priority (P3 - Track in Backlog)
-- Style guide violations
-- Minor code smell issues
-- Nice-to-have documentation updates
-- Cosmetic improvements
+### 低优先级（P3 - 跟踪到待办列表）
+- 风格指南违反
+- 轻微代码坏味问题
+- 锦上添花的文档更新
+- 外观改进
 
-## Success Criteria
+## 成功标准
 
 Review is considered successful when:
 - All critical security vulnerabilities are identified and documented

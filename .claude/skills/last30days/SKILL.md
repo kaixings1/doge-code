@@ -1,5 +1,5 @@
 ---
-name: last30days
+name: 研究过去 30 天 Reddit + X + Web 上
 description: "研究过去 30 天 Reddit + X + Web 上的主题，成为专家，为用户的目标工具编写可复制粘贴的提示。"
 risk: unknown
 source: community

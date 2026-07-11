@@ -1,13 +1,13 @@
 ---
-name: market-research
+name: 市场研究技能
 description: 市场研究技能
 ---
 
-# Market Research
+# 市场研究
 
-Produce research that supports decisions, not research theater.
+产出支持决策的研究，而非研究表演。
 
-## When to Activate
+## 激活时机
 
 - researching a market, category, company, investor, or technology trend
 - building TAM/SAM/SOM estimates
@@ -64,7 +64,7 @@ Default structure:
 5. recommendation
 6. sources
 
-## Quality Gate
+## 质量门禁
 
 Before delivering:
 - all numbers are sourced or labeled as estimates

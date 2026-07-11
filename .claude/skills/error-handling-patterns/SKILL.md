@@ -1,5 +1,5 @@
 ---
-name: error-handling-patterns
+name: 错误处理最佳实践
 description: "错误处理最佳实践"
 risk: safe
 source: community

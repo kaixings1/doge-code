@@ -10,13 +10,13 @@ allowed-tools:
 ---
 
 <objective>
-Manage phases in ROADMAP.md with a single consolidated command.
+使用单一统一命令管理 ROADMAP.md 中的阶段。
 
-Mode routing:
-- **default** (no flag): Add a new integer phase to the end of the current milestone → add-phase workflow
-- **--insert**: Insert urgent work as a decimal phase (e.g., 72.1) between existing phases → insert-phase workflow
-- **--remove**: Remove a future phase and renumber subsequent phases → remove-phase workflow
-- **--edit**: Edit any field of an existing phase in place → edit-phase workflow
+模式路由：
+- **默认**（无标志）：在当前期末添加一个新的整数阶段 → add-phase 工作流
+- **--insert**：将紧急工作作为小数阶段（例如 72.1）插入到现有阶段之间 → insert-phase 工作流
+- **--remove**：移除未来阶段并重新编号后续阶段 → remove-phase 工作流
+- **--edit**：原地编辑现有阶段的任何字段 → edit-phase 工作流
 </objective>
 
 <routing>

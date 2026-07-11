@@ -1,5 +1,5 @@
 ---
-name: golang-testing
+name: Go 测试模式，包括表格驱动测试、子测试、基准测试、模糊测试和测试覆盖率
 description: Go 测试模式，包括表格驱动测试、子测试、基准测试、模糊测试和测试覆盖率。遵循具有惯用 Go 实践的 TDD 方法论。
 origin: ECC
 ---

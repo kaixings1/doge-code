@@ -6,7 +6,7 @@ argument-hint: "<detect|generate> [options]"
 
 # /pipeline
 
-Detect project stack and generate CI/CD pipeline configurations for GitHub Actions or GitLab CI.
+检测项目技术栈并为 GitHub Actions 或 GitLab CI 生成 CI/CD 流水线配置。
 
 ## Usage
 
