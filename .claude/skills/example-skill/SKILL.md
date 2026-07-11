@@ -1,5 +1,5 @@
 ---
-name: example-skill
+name: 技能示例模板
 description: "技能示例模板"
 risk: safe
 source: community

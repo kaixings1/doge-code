@@ -1,113 +1,173 @@
 ---
-description: 重述需求、评估风险并制定分步实施计划。在修改任何代码之前，必须等待用户确认（CONFIRM）。
+description: Execute the implementation planning workflow using the plan template to generate design artifacts.
+handoffs: 
+  - label: Create Tasks
+    agent: speckit.tasks
+    prompt: Break the plan into tasks
+    send: true
+  - label: Create Checklist
+    agent: speckit.checklist
+    prompt: Create a checklist for the following domain...
+scripts:
+  sh: scripts/bash/setup-plan.sh --json
+  ps: scripts/powershell/setup-plan.ps1 -Json
 ---
 
-# 计划命令（Plan Command）
+## User Input
 
-此命令调用**规划者智能体（Planner Agent）**，在编写任何代码之前创建一个全面的实施计划。
-
-## 此命令的作用
-
-1. **重述需求** - 澄清需要构建的内容
-2. **识别风险** - 发现潜在问题和阻塞因素
-3. **创建分步计划** - 将实施分解为不同阶段
-4. **等待确认** - 在继续操作之前**必须**获得用户批准
-
-## 何时使用
-
-在以下情况下使用 `/plan`：
-- 开始开发新功能
-- 进行重大的架构调整
-- 进行复杂的代码重构
-- 涉及多个文件/组件的变动
-- 需求不清晰或存在歧义
-
-## 工作原理
-
-规划者智能体（Planner Agent）将：
-
-1. **分析请求**并以清晰的术语重述需求
-2. **分解为多个阶段**，并附带具体、可操作的步骤
-3. **识别组件之间的依赖关系**
-4. **评估风险**和潜在的阻塞因素
-5. **预估复杂度**（高/中/低）
-6. **展示计划**并等待您的明确确认
-
-## 使用示例
-
-```
-用户: /plan 我需要添加市场结算时的实时通知功能
-
-智能体 (planner):
-# 实施计划：实时市场结算通知
-
-## 需求重述
-- 当用户关注的市场结算时发送通知
-- 支持多种通知渠道（应用内、电子邮件、Webhook）
-- 确保通知可靠送达
-- 包含市场结果和用户的持仓结果
-
-## 实施阶段
-
-### 阶段 1: 数据库 Schema
-- 添加 notifications 表，包含列：id, user_id, market_id, type, status, created_at
-- 添加 user_notification_preferences 表用于渠道偏好设置
-- 为 user_id 和 market_id 创建索引以优化性能
-
-### 阶段 2: 通知服务
-- 在 lib/notifications.ts 中创建通知服务
-- 使用 BullMQ/Redis 实现通知队列
-- 为发送失败的任务添加重试逻辑
-- 创建通知模板
-
-### 阶段 3: 集成点
-- 挂载到市场结算逻辑（当状态变为 "resolved" 时）
-- 查询在该市场中持有仓位的所有用户
-- 为每个用户生成通知并入队
-
-### 阶段 4: 前端组件
-- 在页头创建 NotificationBell 组件
-- 添加 NotificationList 弹窗
-- 通过 Supabase 订阅实现实时更新
-- 添加通知偏好设置页面
-
-## 依赖项
-- Redis (用于队列)
-- 邮件服务 (SendGrid/Resend)
-- Supabase 实时订阅
-
-## 风险
-- 高 (HIGH): 电子邮件可送达性（需要 SPF/DKIM）
-- 中 (MEDIUM): 每个市场超过 1000 名用户时的性能问题
-- 中 (MEDIUM): 如果市场频繁结算可能导致通知轰炸
-- 低 (LOW): 实时订阅的额外开销
-
-## 预估复杂度: 中 (MEDIUM)
-- 后端: 4-6 小时
-- 前端: 3-4 小时
-- 测试: 2-3 小时
-- 总计: 9-13 小时
-
-**等待确认**: 是否按照此计划执行？(yes/no/modify)
+```text
+$ARGUMENTS
 ```
 
-## 重要提示
+You **MUST** consider the user input before proceeding (if not empty).
 
-**关键 (CRITICAL)**: 在您通过 "yes"、"proceed" 或类似的肯定回复明确确认计划之前，规划者智能体（Planner Agent）**不会**编写任何代码。
+## Pre-Execution Checks
 
-如果您需要修改，可以回复：
-- "modify: [您的修改内容]"
-- "different approach: [替代方案]"
-- "skip phase 2 and do phase 3 first"（跳过阶段 2，先做阶段 3）
+**Check for extension hooks (before planning)**:
+- Check if `.specify/extensions.yml` exists in the project root.
+- If it exists, read it and look for entries under the `hooks.before_plan` key
+- If the YAML cannot be parsed or is invalid, skip hook checking silently and continue normally
+- Filter out hooks where `enabled` is explicitly `false`. Treat hooks without an `enabled` field as enabled by default.
+- For each remaining hook, do **not** attempt to interpret or evaluate hook `condition` expressions:
+  - If the hook has no `condition` field, or it is null/empty, treat the hook as executable
+  - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor implementation
+- For each executable hook, output the following based on its `optional` flag:
+  - **Optional hook** (`optional: true`):
+    ```
+    ## Extension Hooks
 
-## 与其他命令的集成
+    **Optional Pre-Hook**: {extension}
+    Command: `/{command}`
+    Description: {description}
 
-规划完成后：
-- 使用 `/tdd` 进行测试驱动开发实施
-- 如果出现构建错误，使用 `/build-fix`
-- 使用 `/code-review` 审查已完成的实施
+    Prompt: {prompt}
+    To execute: `/{command}`
+    ```
+  - **Mandatory hook** (`optional: false`):
+    ```
+    ## Extension Hooks
 
-## 相关智能体（Agents）
+    **Automatic Pre-Hook**: {extension}
+    Executing: `/{command}`
+    EXECUTE_COMMAND: {command}
 
-此命令调用位于以下位置的 `planner` 智能体：
-`~/.claude/agents/planner.md`
+    Wait for the result of the hook command before proceeding to the Outline.
+    ```
+    After emitting the block above you MUST actually invoke the hook and wait for it to finish before continuing. Run it the same way you would run the command yourself in this agent/session (the invocation may differ from the literal `{command}` id shown above, e.g. a skills-mode agent runs it as `/skill:speckit-...` or `$speckit-...`). Emitting the block alone does not run the hook.
+- If no hooks are registered or `.specify/extensions.yml` does not exist, skip silently
+
+## Outline
+
+1. **Setup**: Run `{SCRIPT}` from repo root and parse JSON for FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+
+2. **Load context**: Read FEATURE_SPEC and `/memory/constitution.md`. Load IMPL_PLAN template (already copied).
+
+3. **Execute plan workflow**: Follow the structure in IMPL_PLAN template to:
+   - Fill Technical Context (mark unknowns as "NEEDS CLARIFICATION")
+   - Fill Constitution Check section from constitution
+   - Evaluate gates (ERROR if violations unjustified)
+   - Phase 0: Generate research.md (resolve all NEEDS CLARIFICATION)
+   - Phase 1: Generate data-model.md, contracts/, quickstart.md
+   - Phase 1: Update agent context by running the agent script
+   - Re-evaluate Constitution Check post-design
+
+## Mandatory Post-Execution Hooks
+
+**You MUST complete this section before reporting completion to the user.**
+
+Check if `.specify/extensions.yml` exists in the project root.
+- If it does not exist, or no hooks are registered under `hooks.after_plan`, skip to the Completion Report.
+- If it exists, read it and look for entries under the `hooks.after_plan` key.
+- If the YAML cannot be parsed or is invalid, skip hook checking silently and continue to the Completion Report.
+- Filter out hooks where `enabled` is explicitly `false`. Treat hooks without an `enabled` field as enabled by default.
+- For each remaining hook, do **not** attempt to interpret or evaluate hook `condition` expressions:
+  - If the hook has no `condition` field, or it is null/empty, treat the hook as executable
+  - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor implementation
+- For each executable hook, output the following based on its `optional` flag:
+  - **Mandatory hook** (`optional: false`) — **You MUST emit `EXECUTE_COMMAND:` for each mandatory hook**:
+    ```
+    ## Extension Hooks
+
+    **Automatic Hook**: {extension}
+    Executing: `/{command}`
+    EXECUTE_COMMAND: {command}
+    ```
+    After emitting the block above you MUST actually invoke the hook and wait for it to finish before continuing. Run it the same way you would run the command yourself in this agent/session (the invocation may differ from the literal `{command}` id shown above, e.g. a skills-mode agent runs it as `/skill:speckit-...` or `$speckit-...`). Emitting the block alone does not run the hook.
+  - **Optional hook** (`optional: true`):
+    ```
+    ## Extension Hooks
+
+    **Optional Hook**: {extension}
+    Command: `/{command}`
+    Description: {description}
+
+    Prompt: {prompt}
+    To execute: `/{command}`
+    ```
+
+## Completion Report
+
+Command ends after Phase 2 planning. Report branch, IMPL_PLAN path, and generated artifacts.
+
+## Phases
+
+### Phase 0: Outline & Research
+
+1. **Extract unknowns from Technical Context** above:
+   - For each NEEDS CLARIFICATION → research task
+   - For each dependency → best practices task
+   - For each integration → patterns task
+
+2. **Generate and dispatch research agents**:
+
+   ```text
+   For each unknown in Technical Context:
+     Task: "Research {unknown} for {feature context}"
+   For each technology choice:
+     Task: "Find best practices for {tech} in {domain}"
+   ```
+
+3. **Consolidate findings** in `research.md` using format:
+   - Decision: [what was chosen]
+   - Rationale: [why chosen]
+   - Alternatives considered: [what else evaluated]
+
+**Output**: research.md with all NEEDS CLARIFICATION resolved
+
+### Phase 1: Design & Contracts
+
+**Prerequisites:** `research.md` complete
+
+1. **Extract entities from feature spec** → `data-model.md`:
+   - Entity name, fields, relationships
+   - Validation rules from requirements
+   - State transitions if applicable
+
+2. **Define interface contracts** (if project has external interfaces) → `/contracts/`:
+   - Identify what interfaces the project exposes to users or other systems
+   - Document the contract format appropriate for the project type
+   - Examples: public APIs for libraries, command schemas for CLI tools, endpoints for web services, grammars for parsers, UI contracts for applications
+   - Skip if project is purely internal (build scripts, one-off tools, etc.)
+
+3. **Create quickstart validation guide** → `quickstart.md`:
+   - Document runnable validation scenarios that prove the feature works end-to-end
+   - Include prerequisites, setup commands, test/run commands, and expected outcomes
+   - Use links or references to contracts and data model details instead of duplicating them
+   - Do not include full implementation code, model/service/controller bodies, migrations, or complete test suites
+   - Keep this artifact as a validation/run guide; implementation details belong in `tasks.md` and the implementation phase
+
+4. **Agent context update**:
+   - Update the plan reference between the `<!-- SPECKIT START -->` and `<!-- SPECKIT END -->` markers in `__CONTEXT_FILE__` to point to the plan file created in step 1 (the IMPL_PLAN path)
+
+**Output**: data-model.md, /contracts/*, quickstart.md, updated agent context file
+
+## Key rules
+
+- Use absolute paths for filesystem operations; use project-relative paths for references in documentation and agent context files
+- ERROR on gate failures or unresolved clarifications
+
+## Done When
+
+- [ ] Plan workflow executed and design artifacts generated
+- [ ] Extension hooks dispatched or skipped according to the rules in Mandatory Post-Execution Hooks above
+- [ ] Completion reported to user with branch, plan path, and generated artifacts

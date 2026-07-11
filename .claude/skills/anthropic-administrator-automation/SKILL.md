@@ -1,5 +1,5 @@
 ---
-name: anthropic-administrator-automation
+name: Anthropic 管理员自动化
 description: "Anthropic 管理员自动化"
 risk: safe
 source: community

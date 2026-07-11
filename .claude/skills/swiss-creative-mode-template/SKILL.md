@@ -1,8 +1,6 @@
 ---
-name: swiss-creative-mode-template
-description: "Swiss Creative Mode Template — Swiss Creative Mode Template 相关功能和最佳实践"
-  Swiss-inspired creative-mode presentation template skill with bold editorial
-  typography, high-contrast geometric cards, interactive slide navigation,
+name: 瑞士创意模式模板
+description: "瑞士创意模式模板 — 瑞士创意模式模板相关功能和最佳实践，受瑞士风格启发的创意模式演示模板，具有大胆编辑排版、高对比度几何卡片和交互式幻灯片导航"
   theme switching, hotspot overlays, and palette choreography in a single-file
   HTML artifact. Use when users ask for a premium presentation-style landing,
   a Swiss/brutalist deck look, or a creative launch page with rich interactions.
@@ -39,7 +37,7 @@ od:
 Produce a premium Swiss/editorial-style HTML template with strong visual rhythm
 and meaningful interactions, then emit it as a single-file artifact.
 
-## Resource map
+## 资源映射
 
 ```text
 swiss-creative-mode-template/
@@ -67,7 +65,7 @@ swiss-creative-mode-template/
 5. Keep output self-contained (`<!doctype html>`, inline CSS/JS, no external runtime dependency).
 6. Validate against `references/checklist.md` before emitting.
 
-## Output contract
+## 输出契约
 
 One short sentence before artifact, then:
 

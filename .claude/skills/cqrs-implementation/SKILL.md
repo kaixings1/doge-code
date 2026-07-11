@@ -1,5 +1,5 @@
 ---
-name: cqrs-implementation
+name: 为可扩展架构实施命令查询职责分离
 description: "为可扩展架构实施命令查询职责分离。适用于分离读写模型、优化查询性能或构建事件溯源系统。"
 risk: unknown
 source: community

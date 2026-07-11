@@ -1,5 +1,5 @@
 ---
-name: gdpr-data-handling
+name: 符合 GDPR 的数据处理、同意管理和隐私控制的实用实施指南。
 description: "符合 GDPR 的数据处理、同意管理和隐私控制的实用实施指南。"
 risk: safe
 source: community

@@ -1,6 +1,6 @@
 ---
-name: azure-mgmt-botservice-dotnet
-description: "Azure Mgmt Botservice Dotnet — Azure Mgmt Botservice Dotnet 相关功能和最佳实践"
+name: Azure Bot Service 管理 .NET SDK 相关功能和
+description: "Azure Management Bot Service .NET — Azure Bot Service 管理 .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -48,7 +48,7 @@ ResourceGroupResource resourceGroup = await subscription.GetResourceGroups().Get
 BotCollection botCollection = resourceGroup.GetBots();
 ```
 
-## Resource Hierarchy
+## 资源层次结构
 
 ```
 ArmClient
@@ -317,7 +317,7 @@ catch (RequestFailedException ex)
 }
 ```
 
-## Related SDKs
+## 相关 SDK
 
 | SDK | Purpose | Install |
 |-----|---------|---------|

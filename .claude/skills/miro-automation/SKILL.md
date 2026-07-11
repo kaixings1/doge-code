@@ -1,5 +1,5 @@
 ---
-name: miro-automation
+name: Miro 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Miro 任务：boards, items, sticky notes, frames, sharing, connectors. 始终 search tools first for current schemas."
 risk: critical
 source: community

@@ -1,5 +1,5 @@
 ---
-name: ai-studio-image
+name: AI Studio 图片生成
 description: "通过 Google AI Studio (Gemini) 生成逼真人像图片。支持影响者或教育风格、自然光照和细腻瑕疵。"
 risk: safe
 source: community

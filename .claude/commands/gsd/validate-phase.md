@@ -14,12 +14,12 @@ allowed-tools:
 requires: [phase]
 ---
 <objective>
-Audit Nyquist validation coverage for a completed phase. Three states:
-- (A) VALIDATION.md exists — audit and fill gaps
-- (B) No VALIDATION.md, SUMMARY.md exists — reconstruct from artifacts
-- (C) Phase not executed — exit with guidance
+审计已完成阶段的 Nyquist 验证覆盖范围。三种状态：
+- (A) VALIDATION.md 存在——审计并填补差距
+- (B) 无 VALIDATION.md，SUMMARY.md 存在——从工件重建
+- (C) 阶段未执行——带指导退出
 
-Output: updated VALIDATION.md + generated test files.
+输出：更新后的 VALIDATION.md + 生成的测试文件。
 </objective>
 
 <execution_context>

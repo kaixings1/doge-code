@@ -1,5 +1,5 @@
 ---
-name: daily-gift
+name: 关系感知的每日礼物引擎，包含五阶段创意流水线
 description: "关系感知的每日礼物引擎，包含五阶段创意流水线——编辑判断、综合、概念生成、视觉策略和在 H5、图片或视频中渲染"
 category: productivity
 risk: unknown
@@ -14,7 +14,7 @@ license: "MIT-0"
 license_source: "https://clawhub.ai/jiawei248/daily-gift"
 ---
 
-# Daily Gift
+# 每日礼物
 
 ## 概述
 

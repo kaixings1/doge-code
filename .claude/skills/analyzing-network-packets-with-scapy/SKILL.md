@@ -1,5 +1,5 @@
 ---
-name: analyzing-network-packets-with-scapy
+name: Scapy 网络数据包分析
 description: "使用 Scapy 分析网络数据包"
 risk: safe
 source: community

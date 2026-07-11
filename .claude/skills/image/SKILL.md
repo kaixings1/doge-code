@@ -1,5 +1,5 @@
 ---
-name: image
+name: 图像
 description: "图像 — 图像处理和分析"
 risk: unknown
 source: community

@@ -1,5 +1,5 @@
 ---
-name: ai-agents-architect
+name: AI 代理架构师
 description: "设计和构建自主 AI 代理。精通工具使用、规划、记忆和上下文管理，能构建从简单工作流到复杂多代理系统。"
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)

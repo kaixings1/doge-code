@@ -1,5 +1,5 @@
 ---
-name: iterative-retrieval
+name: 逐步优化上下文检索以解决子智能体上下文问题的模式。
 description: 逐步优化上下文检索以解决子智能体上下文问题的模式。
 origin: ECC
 ---

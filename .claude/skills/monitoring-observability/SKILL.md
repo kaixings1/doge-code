@@ -1,5 +1,5 @@
 ---
-name: monitoring-observability
+name: 监控与可观测性
 description: 监控与可观测性 — 使用OpenTelemetry、Prometheus、Grafana和日志聚合。
 ---
 
@@ -184,7 +184,7 @@ groups:
 - Alerting on symptoms (high CPU) without understanding root cause
 - Missing SLO definitions before building dashboards
 
-## Checklist
+## 检查清单
 
 - [ ] OpenTelemetry SDK initialized with auto-instrumentation for HTTP, DB, and messaging
 - [ ] Custom spans added for business-critical operations

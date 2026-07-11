@@ -1,5 +1,5 @@
 ---
-name: headline-psychologist
+name: 标题心理学家
 description: "标题心理学家 — 基于心理学的标题优化"
 risk: safe
 source: community

@@ -2,33 +2,33 @@
 description: 为本次会话变更创建 Git 提交，消息清晰且原子化
 ---
 
-# Commit Changes
+# 提交更改
 
-You are tasked with creating git commits for the changes made during this session.
+你的任务是为本次会话期间的更改创建 Git 提交。
 
-## Process:
+## 流程：
 
-1. **Think about what changed:**
-   - Review the conversation history and understand what was accomplished
-   - Run `git status` to see current changes
-   - Run `git diff` to understand the modifications
-   - Consider whether changes should be one commit or multiple logical commits
+1. **思考哪些内容发生了变化：**
+   - 回顾对话历史，了解完成了哪些工作
+   - 运行 `git status` 查看当前更改
+   - 运行 `git diff` 了解修改内容
+   - 考虑更改应作为一个提交还是多个逻辑提交
 
-2. **Plan your commit(s):**
-   - Identify which files belong together
-   - Draft clear, descriptive commit messages
-   - Use imperative mood in commit messages
-   - Focus on why the changes were made, not just what
+2. **规划你的提交：**
+   - 识别哪些文件属于同一组
+   - 起草清晰、描述性的提交消息
+   - 在提交消息中使用祈使语气
+   - 关注为什么进行更改，而不仅仅是更改了什么
 
-3. **Execute upon confirmation:**
-   - Use `git add` with specific files (never use `-A` or `.`)
-   - Never commit the `thoughts/` directory or anything inside it!
-   - Never commit dummy files, test scripts, or other files which you created or which appear to have been created but which were not part of your changes or directly caused by them (e.g. generated code)
-   - Create commits with your planned messages until all of your changes are committed with `git commit -m`
+3. **确认后执行：**
+   - 使用 `git add` 指定具体文件（绝不使用 `-A` 或 `.`）
+   - 绝不提交 `thoughts/` 目录或其内部任何内容！
+   - 绝不提交虚拟文件、测试脚本或其他你创建但不属于你的更改或由更改直接引起的文件（例如生成的代码）
+   - 使用规划好的消息创建提交，直到所有更改都通过 `git commit -m` 提交完成
 
-## Remember:
-- You have the full context of what was done in this session
-- Group related changes together
-- Keep commits focused and atomic when possible
-- The user trusts your judgment - they asked you to commit
-- **IMPORTANT**: - never stop and ask for feedback from the user. 
+## 记住：
+- 你拥有本次会话中所做工作的完整上下文
+- 将相关的更改分组在一起
+- 尽可能保持提交的聚焦和原子性
+- 用户信任你的判断——他们要求你提交
+- **重要**：绝不停下来向用户征求反馈。

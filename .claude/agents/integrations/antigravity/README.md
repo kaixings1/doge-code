@@ -1,49 +1,21 @@
-# Antigravity Integration
+# AntiGravity 集成
 
-Installs all 61 Agency agents as Antigravity skills. Each agent is prefixed
-with `agency-` to avoid conflicts with existing skills.
+所有 61 个 Agency 代理已合并到单个 `AGENTS.md` 文件中。
 
-## Install
+## 安装
 
 ```bash
-./scripts/install.sh --tool antigravity
+# 从项目根目录运行
+cd /your/project
+/path/to/agency-agents/scripts/install.sh --tool antigravity
 ```
 
-This copies files from `integrations/antigravity/` to
-`~/.gemini/antigravity/skills/`.
+## 激活代理
 
-## Activate a Skill
+在 AntiGravity 中设置您的 API 密钥，然后代理即可使用。
 
-In Antigravity, activate an agent by its slug:
-
-```
-Use the agency-frontend-developer skill to review this component.
-```
-
-Available slugs follow the pattern `agency-<agent-name>`, e.g.:
-- `agency-frontend-developer`
-- `agency-backend-architect`
-- `agency-reality-checker`
-- `agency-growth-hacker`
-
-## Regenerate
-
-After modifying agents, regenerate the skill files:
+## 重新生成
 
 ```bash
 ./scripts/convert.sh --tool antigravity
-```
-
-## File Format
-
-Each skill is a `SKILL.md` file with Antigravity-compatible frontmatter:
-
-```yaml
----
-name:  agency-frontend-developer
-description:   开发工程师
-risk: low
-source: community
-date_added: '2026-03-08'
----
 ```

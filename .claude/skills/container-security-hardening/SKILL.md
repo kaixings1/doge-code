@@ -1,5 +1,5 @@
 ---
-name: container-security-hardening
+name: Container 安全性 Hardening
 description: "Container 安全性 Hardening — Container 安全性 Hardening 相关功能和最佳实践"
   Harden Docker/container images and runtime deployments with secure base images,
   non-root users, CVE scanning, SBOM/signing, seccomp/AppArmor, and Kubernetes
@@ -28,7 +28,7 @@ A production-focused guide for building, scanning, and running containers secure
 - User asks about Kubernetes pod security, NetworkPolicy, or RBAC hardening
 - User says "fix container CVEs" or "harden my container for production"
 
-## When NOT to Use This Skill
+## 不使用此技能的场景
 
 - The user is primarily asking about GitHub Actions CI/CD → recommend `github-actions-advanced`
 - The user needs general Docker usage help (not security) → recommend `docker-expert`
@@ -63,7 +63,7 @@ Then adapt recommendations to:
 
 ---
 
-## The Five Layers of Container 安全性
+## 容器安全的五层模型
 
 ```
 1. Image Build        → Minimal base, no secrets, non-root, read-only FS
@@ -78,7 +78,7 @@ Then adapt recommendations to:
 
 ---
 
-## Layer 1: Dockerfile Hardening
+## 第一层：Dockerfile 加固
 
 ### 1.1 Use a Minimal Base Image
 
@@ -292,7 +292,7 @@ CMD ["dist/server.js"]
 
 ---
 
-## Layer 2: Image Scanning
+## 第二层：镜像扫描
 
 ### 2.1 Trivy (Recommended — Fast, Comprehensive)
 
@@ -436,7 +436,7 @@ jobs:
 
 ---
 
-## Layer 3: Runtime 安全性
+## 第三层：运行时安全
 
 ### 3.1 docker run Hardening Flags
 
@@ -560,7 +560,7 @@ aa-genprof myapp   # Interactive — run app under aa-complain mode first
 
 ---
 
-## Layer 4: Supply Chain 安全性
+## 第四层：供应链安全
 
 ### 4.1 Sign Images with Cosign (Sigstore — Keyless)
 

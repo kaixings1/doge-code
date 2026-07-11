@@ -1,5 +1,5 @@
 ---
-name: achieving-cmmc-level-2-compliance
+name: CMMC 二级合规
 description: "实现 CMMC 二级合规 — 为国防承包商环境准备 CMMC 二级认证：界定 CUI 和 FCI 范围，实施 14 个系列的 110 项 NIST SP 800-171 Rev 2 安全要求。"
   适用于以下情况：组织在 DoD 合同下处理受控非机密信息 (CUI)，合同包含 DFARS 条款 252.204-7012/7019/7020/7021，
   准备或响应 CMMC 评估，计算或改进 SPRS 分数，为 800-171 构建系统安全计划或 POA&M，

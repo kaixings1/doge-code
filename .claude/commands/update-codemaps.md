@@ -2,7 +2,7 @@
 
 分析代码库结构并生成 Token 精简（token-lean）的架构文档。
 
-## 第 1 步：扫描项目结构 (Scan Project Structure)
+## 第 1 步：扫描项目结构
 
 1. 识别项目类型（单体仓库 monorepo、单个应用 single app、库 library、微服务 microservice）
 2. 查找所有源代码目录 (src/、lib/、app/、packages/)

@@ -1,5 +1,5 @@
 ---
-name: moatmri
+name: AI 服务压力分析与竞争壁垒评估。
 description: "MoatMRI — AI 服务压力分析与竞争壁垒评估。"
 risk: safe
 source: community

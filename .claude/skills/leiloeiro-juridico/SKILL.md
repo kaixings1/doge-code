@@ -1,6 +1,6 @@
 ---
-name: leiloeiro-juridico
-description: "Leiloeiro Juridico — Leiloeiro Juridico 相关功能和最佳实践"
+name: 拍卖师法律
+description: "拍卖师法律 — 拍卖师法律相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-06'

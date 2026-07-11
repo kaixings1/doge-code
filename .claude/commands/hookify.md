@@ -4,25 +4,25 @@ argument-hint: Optional specific behavior to address
 allowed-tools: ["Read", "Write", "AskUserQuestion", "Task", "Grep", "TodoWrite", "Skill"]
 ---
 
-# Hookify - Create Hooks from Unwanted Behaviors
+# Hookify - 从不期望的行为创建钩子
 
-**FIRST: Load the hookify:writing-rules skill** using the Skill tool to understand rule file format and syntax.
+**首先：使用 Skill 工具加载 hookify:writing-rules 技能**以了解规则文件格式和语法。
 
-Create hook rules to prevent problematic behaviors by analyzing the conversation or from explicit user instructions.
+通过分析对话或根据用户的明确指令创建钩子规则以防止有问题的行为。
 
-## Your Task
+## 你的任务
 
-You will help the user create hookify rules to prevent unwanted behaviors. Follow these steps:
+你将帮助用户创建 hookify 规则以防止不期望的行为。请遵循以下步骤：
 
-### Step 1: Gather Behavior Information
+### 步骤 1：收集行为信息
 
-**If $ARGUMENTS is provided:**
-- User has given specific instructions: `$ARGUMENTS`
-- Still analyze recent conversation (last 10-15 user messages) for additional context
-- Look for examples of the behavior happening
+**如果提供了 $ARGUMENTS：**
+- 用户给出了具体指令：`$ARGUMENTS`
+- 仍需分析最近对话（最后 10-15 条用户消息）以获取额外上下文
+- 查找行为发生的示例
 
-**If $ARGUMENTS is empty:**
-- Launch the conversation-analyzer agent to find problematic behaviors
+**如果 $ARGUMENTS 为空：**
+- 启动对话分析器智能体查找有问题的行为
 - Agent will scan user prompts for frustration signals
 - Agent will return structured findings
 

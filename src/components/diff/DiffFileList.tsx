@@ -64,7 +64,7 @@ export function DiffFileList(t0) {
   if (files.length === 0) {
     let t2;
     if ($[5] === Symbol.for("react.memo_cache_sentinel")) {
-      t2 = <Text dimColor={true}>No changed files</Text>;
+      t2 = <Text dimColor={true}>没有变更的文件</Text>;
       $[5] = t2;
     } else {
       t2 = $[5];
@@ -228,7 +228,7 @@ function FileStats(t0) {
     const t1 = !isSelected;
     let t2;
     if ($[2] !== t1) {
-      t2 = <Text dimColor={t1} italic={true}>Binary file</Text>;
+      t2 = <Text dimColor={t1} italic={true}>二进制文件</Text>;
       $[2] = t1;
       $[3] = t2;
     } else {

@@ -1,5 +1,5 @@
 ---
-name: broken-authentication
+name: 识别和利用 Web 应用中的认证漏洞
 description: "识别和利用 Web 应用中的认证漏洞——会话管理、JWT 攻击、OAuth 滥用和暴力破解防御绕过。"
 risk: unknown
 source: community

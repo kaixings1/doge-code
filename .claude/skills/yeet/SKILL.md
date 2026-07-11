@@ -1,5 +1,5 @@
 ---
-name: "yeet"
+name: Yeet PR 发布器
 description: "通过确认范围、有意图地提交、推送分支并通过此插件的 GitHub 应用打开草稿 PR 来发布本地更改到 GitHub，仅在连接器覆盖不足时使用 `gh` 作为后备。"
 ---
 

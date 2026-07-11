@@ -1,5 +1,5 @@
 ---
-name: firecrawl-agent
+name: Firecrawl AI代理模式
 description: Firecrawl AI代理模式
 allowed-tools:
   - Bash(firecrawl *)
@@ -29,7 +29,7 @@ firecrawl agent "extract products" --架构 '{"type":"object","properties":{"nam
 firecrawl agent "get feature list" --urls "<url>" --wait -o .firecrawl/features.json
 ```
 
-## Options
+## 选项
 
 | Option                 | Description                               |
 | ---------------------- | ----------------------------------------- |
@@ -49,7 +49,7 @@ firecrawl agent "get feature list" --urls "<url>" --wait -o .firecrawl/features.
 - Agent runs consume more credits than simple scrapes. Use `--max-credits` to cap spending.
 - For simple single-page extraction, prefer `scrape` — it's faster and cheaper.
 
-## See also
+## 参见
 
 - [firecrawl-scrape](../firecrawl-scrape/SKILL.md) — simpler single-page extraction
 - [firecrawl-browser](../firecrawl-browser/SKILL.md) — scrape + interact for manual page interaction (more control)

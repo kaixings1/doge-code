@@ -671,7 +671,7 @@ ${branches.map(b => `- \`${b}\``).join('\n')}
 
 ```yaml
 # .github/workflows/mention-bot.yml
-name: AI Mention Bot
+name: 使用 AI 辅助自动化 GitHub 工作流的模式
 
 on:
   issue_comment:

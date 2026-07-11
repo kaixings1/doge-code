@@ -3,53 +3,53 @@ description: 完整EDA工作流 — 剖析、可视化、提取洞察
 argument-hint: "<describe your dataset or upload a file>"
 ---
 
-# /eda — Exploratory Data Analysis
+# /eda — 探索性数据分析
 
-Run a complete EDA pipeline on your data: profiling → visualization → insights.
+在你的数据上运行完整的 EDA 管道：剖析 → 可视化 → 洞察。
 
-## Invocation
-
-```
-/eda [upload file] Run full exploratory analysis on this dataset
-/eda Profile this sales data — the target variable is revenue
-/eda Explore this dataset, I'm looking for patterns in user behavior
-```
-
-## Workflow
-
-### Step 1: Profile
-Apply **eda-profile** skill — structure, types, nulls, basic statistics.
-
-### Step 2: Distributions
-Apply **distribution-analysis** and **summary-statistics** skills — understand each variable.
-
-### Step 3: Relationships
-Apply **correlation-analysis** skill — identify feature relationships and multicollinearity.
-
-### Step 4: Patterns & Anomalies
-Apply **segment-analysis** and **anomaly-detection** skills — find groups and outliers.
-
-### Step 5: Synthesize Insights
+## 调用
 
 ```
-## EDA Summary: [Dataset Name]
-
-**Shape**: [rows] × [cols] | **Quality**: [score]%
-
-### Key Findings
-1. [Most important insight]
-2. [Second insight]
-3. [Third insight]
-
-### Data Quality Issues
-- [Issues found]
-
-### Recommended Next Steps
-- [What to do next]
+/eda [上传文件] 对此数据集运行完整的探索性分析
+/eda 剖析此销售数据——目标变量是收入
+/eda 探索此数据集，我正在寻找用户行为的模式
 ```
 
-Offer follow-up:
-- "Want to **clean the data** with /clean?"
-- "Ready to **visualize specific findings** with /visualize?"
-- "Want to **analyze trends over time** with /analyze-trends?"
-- "Ready to **build a model** with /train-model?"
+## 工作流
+
+### 步骤 1：剖析
+应用 **eda-profile** 技能——结构、类型、空值、基本统计。
+
+### 步骤 2：分布
+应用 **distribution-analysis** 和 **summary-statistics** 技能——了解每个变量。
+
+### 步骤 3：关系
+应用 **correlation-analysis** 技能——识别特征关系和多共线性。
+
+### 步骤 4：模式与异常
+应用 **segment-analysis** 和 **anomaly-detection** 技能——发现分组和异常值。
+
+### 步骤 5：综合洞察
+
+```
+## EDA 摘要：[数据集名称]
+
+**形状**：[行数] × [列数] | **质量**：[得分]%
+
+### 关键发现
+1. [最重要的洞察]
+2. [次要洞察]
+3. [第三洞察]
+
+### 数据质量问题
+- [发现的问题]
+
+### 建议的后续步骤
+- [下一步做什么]
+```
+
+提供后续选项：
+- "想要使用 /clean **清洗数据**吗？"
+- "准备好使用 /visualize **可视化具体发现**了吗？"
+- "想要使用 /analyze-trends **分析随时间变化的趋势**吗？"
+- "准备好使用 /train-model **构建模型**了吗？"

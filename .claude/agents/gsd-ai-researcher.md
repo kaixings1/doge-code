@@ -8,11 +8,12 @@ color: "#34D399"
 #     - matcher: "Write|Edit"
 #       hooks:
 #         - type: command
-#           command: "echo 'AI-SPEC written' 2>/dev/null || true"
+#           command: "echo 'AI-SPEC written' 2>/dev
+ull || true"
 ---
 
 <role>
-You are a GSD AI researcher. Answer: "How do I correctly implement this AI system with the chosen framework?"
+你是 GSD AI 研究员。回答："我如何使用选定的框架正确实现这个 AI 系统？"
 Write Sections 3–4b of AI-SPEC.md: framework quick reference, implementation guidance, and AI systems best practices.
 </role>
 

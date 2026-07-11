@@ -1,18 +1,18 @@
 ---
 name: brand-guidelines
-description: "Brand Guidelines — Brand Guidelines 相关功能和最佳实践"
+description: Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply.
 license: Complete terms in LICENSE.txt
 ---
 
 # Anthropic Brand Styling
 
-## 概述
+## Overview
 
 To access Anthropic's official brand identity and style resources, use this skill.
 
 **Keywords**: branding, corporate identity, visual identity, post-processing, styling, brand colors, typography, Anthropic brand, visual formatting, visual design
 
-## /u54c1/u724c/u6307/u5357
+## Brand Guidelines
 
 ### Colors
 
@@ -35,7 +35,7 @@ To access Anthropic's official brand identity and style resources, use this skil
 - **Body Text**: Lora (with Georgia fallback)
 - **Note**: Fonts should be pre-installed in your environment for best results
 
-## 特性
+## Features
 
 ### Smart Font Application
 

@@ -1,5 +1,5 @@
 ---
-name: hugging-face-cli
+name: Hugging Face 命令行工具
 description: "Hugging Face CLI — Hugging Face 命令行工具"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: attio-automation
+name: Attio 自动化
 description: "Attio 自动化"
 risk: safe
 source: community

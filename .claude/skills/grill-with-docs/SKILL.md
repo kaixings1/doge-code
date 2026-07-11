@@ -1,5 +1,5 @@
 ---
-name: grill-with-docs
+name: 进行盘问同时创建文档（ADR 和术语表），完善计划并记录设计决策
 description: "Grill With Docs — 进行盘问同时创建文档（ADR 和术语表），完善计划并记录设计决策"
 disable-model-invocation: true
 category: "productivity"
@@ -20,6 +20,8 @@ tools:
   - codex-cli
   - 游标
 ---
+
+# 带文档追问
 
 ## 何时使用
 

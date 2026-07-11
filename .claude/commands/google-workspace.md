@@ -6,7 +6,7 @@ argument-hint: "<setup|audit|recipe|analyze> [options]"
 
 # /google-workspace
 
-Google Workspace CLI administration via the `gws` CLI. Run setup diagnostics, security audits, browse and execute recipes, and analyze command output.
+通过 `gws` CLI 进行 Google Workspace CLI 管理。运行设置诊断、安全审计、浏览和执行配方以及分析命令输出。
 
 ## Usage
 

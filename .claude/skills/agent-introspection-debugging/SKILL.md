@@ -1,5 +1,5 @@
 ---
-name: agent-introspection-debugging
+name: 代理自检调试
 description: AI代理故障的结构化自调试工作流
 ---
 
@@ -9,7 +9,7 @@ description: AI代理故障的结构化自调试工作流
 
 This is a 工作流 skill, not a hidden runtime. It teaches the agent to debug itself systematically before escalating to a human.
 
-## When to Activate
+## 激活时机
 
 - Maximum tool call / loop-limit failures
 - Repeated retries with no forward progress

@@ -1,5 +1,5 @@
 ---
-name: wiki-cli
+name: claude-obsidian v1.7+ 的默认 vault 变更传输方式
 description: "claude-obsidian v1.7+ 的默认 vault 变更传输方式。封装 Obsidian CLI (Obsidian 1.12+) 作为从 Claude 读取、写入、搜索和修改 vault 笔记的首选方式——无需 MCP 服务器、REST API 插件或 TLS 变通方案。当 CLI 不可用时回退到直接文件系统 Read/Write/Edit。"
 allowed-tools: Read Bash
 ---

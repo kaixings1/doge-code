@@ -1,5 +1,5 @@
 ---
-name: Uploadcare Automation
+name: ploadcare 文件管理
 description: "通过自然语言命令自动执行 Uploadcare 文件管理，包括列表、存储、检查、下载和组织文件组"
 requires:
   mcp:

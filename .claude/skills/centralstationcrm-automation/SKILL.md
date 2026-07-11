@@ -1,5 +1,5 @@
 ---
-name: centralstationcrm-automation
+name: CentralStationCRM 自动化
 description: "CentralStationCRM 自动化"
 risk: safe
 source: community

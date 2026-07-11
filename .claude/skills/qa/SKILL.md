@@ -1,5 +1,5 @@
 ---
-name: qa
+name: 交互式 QA 会话，用户以对话方式报告 bug 或问题，代理将问题提交为 Git
 description: 交互式 QA 会话，用户以对话方式报告 bug 或问题，代理将问题提交为 GitHub issue。在后台探索代码库以获取上下文和领域语言。当用户想要报告 bug、进行 QA、以对话方式提交 issue，或提到 "QA 会话" 时使用。
 ---
 

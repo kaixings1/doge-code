@@ -1,5 +1,5 @@
 ---
-name: chatwork-automation
+name: ChatWork 自动化
 description: "ChatWork 自动化"
 risk: safe
 source: community

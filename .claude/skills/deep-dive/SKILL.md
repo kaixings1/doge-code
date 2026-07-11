@@ -1,5 +1,5 @@
 ---
-name: deep-dive
+name: 深度探究
 description: 深度探究 — 基于DAG查询规划的Claude原生深度研究，结合网络搜索和代码分析。
 user-invocable: true
 参数: The research question or topic to investigate deeply
@@ -127,7 +127,7 @@ Mark the "Synthesize report" task as `in_progress`. Combine all findings into a 
 [Deduplicated list of all sources from all subagents]
 ```
 
-## Rules
+## 规则
 
 - **始终 show the DAG plan first.** Print it, then immediately start researching — no confirmation needed.
 - **Parallel where possible.** Independent questions should always run as concurrent subagents.

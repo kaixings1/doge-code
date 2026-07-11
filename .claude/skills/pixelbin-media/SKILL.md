@@ -1,7 +1,6 @@
 ---
-name: pixelbin-media
-description: "Pixelbin Media — Pixelbin 媒体相关功能和最佳实践"
-  使用 85+ API 组合生成和编辑图片和视频，并通过 Pixelbin 构建视觉吸引人的网站页面。
+name: Pixelbin 媒体
+description: "Pixelbin 媒体 — Pixelbin 媒体相关功能和最佳实践，使用 85+ API 组合生成和编辑图片和视频"
 triggers:
   - "pixelbin"
   - "media generation"

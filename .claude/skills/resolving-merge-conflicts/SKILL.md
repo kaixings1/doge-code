@@ -1,7 +1,9 @@
 ---
-name: resolving-merge-conflicts
+name: 适用于需要解决进行中的 git merge/rebase 冲突的情况。
 description: "适用于需要解决进行中的 git merge/rebase 冲突的情况。"
 ---
+
+# 解决合并冲突
 
 1. **查看当前状态**：检查合并/变基的状态、git 历史记录以及冲突文件。
 

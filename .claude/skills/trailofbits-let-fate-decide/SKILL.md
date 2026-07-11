@@ -1,9 +1,14 @@
+---
+name: let-fate-decide 命运决策器
+description: 通过抽取塔罗牌为模糊或不明确的规划决策注入熵的 Claude Code 技能。
+---
+
 # let-fate-decide 命运决策器
 
 A Claude Code skill that draws Tarot cards using `secrets` to inject
 entropy into vague or underspecified planning decisions.
 
-## What It Does
+## 功能说明
 
 When a prompt is sufficiently ambiguous, or the user explicitly invokes fate,
 this skill shuffles a 22-card Major Arcana deck and a 56-card Minor Arcana

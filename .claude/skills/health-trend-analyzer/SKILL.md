@@ -1,5 +1,5 @@
 ---
-name: health-trend-analyzer
+name: 健康趋势分析
 description: "健康趋势分析 — 健康数据分析"
 risk: safe
 source: community

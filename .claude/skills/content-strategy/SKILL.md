@@ -1,5 +1,5 @@
 ---
-name: content-strategy
+name: 内容策略框架：审计、差距分析、主题集群、内容日历和绩效指标。适用于制定内容策略。
 description: "内容策略框架：审计、差距分析、主题集群、内容日历和绩效指标。适用于制定内容策略。"
 risk: unknown
 source: "https://github.com/coreyhaines31/marketingskills"
@@ -346,7 +346,7 @@ Visual or structured representation of how content interconnects.
 
 ---
 
-## Task-Specific Questions
+## 任务相关问题
 
 1. What patterns emerge from your last 10 customer conversations?
 2. What questions keep coming up in sales calls?

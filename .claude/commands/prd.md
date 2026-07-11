@@ -6,7 +6,7 @@ argument-hint: <feature-or-problem>
 
 # /prd
 
-Generate a concise, evidence-gated product requirements document for `$ARGUMENTS`.
+为 `$ARGUMENTS` 生成简洁的、有证据门槛的产品需求文档。
 
 ## Usage
 

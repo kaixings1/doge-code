@@ -1,12 +1,12 @@
 ---
-name: data-quality-frameworks
+name: 使用 Great Expectations、dbt 测试和数据契约实施数据质量验证
 description: "使用 Great Expectations、dbt 测试和数据契约实施数据质量验证。适用于构建数据质量流水线、实施验证规则或建立数据契约。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# Data Quality Frameworks
+# 数据质量框架
 
 Production patterns for implementing data quality with Great Expectations, dbt tests, and data contracts to ensure reliable data pipelines.
 

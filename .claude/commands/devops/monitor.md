@@ -1,50 +1,50 @@
 为应用设置监控、告警和可观测性。
 
-## Steps
+## 步骤
 
-1. Analyze the application to determine monitoring needs:
-   - Web server: response times, error rates, request volume.
-   - Database: query performance, connection pool, replication lag.
-   - Queue: message throughput, consumer lag, dead letters.
-   - Background jobs: execution time, failure rate, queue depth.
-2. Generate monitoring configuration for the detected stack:
-   - **Prometheus**: Scrape config, recording rules, alert rules.
-   - **Grafana**: Dashboard JSON with key panels.
-   - **Datadog**: `datadog.yaml` or agent configuration.
-   - **Health endpoint**: `/health` or `/healthz` implementation.
-3. Define alerts for critical metrics:
-   - Error rate > 1% over 5 minutes.
-   - P99 latency > 2 seconds.
-   - Disk usage > 80%.
-   - Memory usage > 90%.
-   - Certificate expiry < 14 days.
-4. Add structured logging configuration:
-   - JSON log format with timestamp, level, message, trace ID.
-   - Log levels: ERROR for failures, WARN for degradation, INFO for operations.
-5. Set up distributed tracing if applicable:
-   - OpenTelemetry SDK initialization.
-   - Trace context propagation headers.
-6. Write all configuration files to `monitoring/` or `deploy/monitoring/`.
+1. 分析应用以确定监控需求：
+   - Web 服务器：响应时间、错误率、请求量。
+   - 数据库：查询性能、连接池、复制延迟。
+   - 队列：消息吞吐量、消费者延迟、死信。
+   - 后台任务：执行时间、失败率、队列深度。
+2. 为检测到的技术栈生成监控配置：
+   - **Prometheus**：抓取配置、记录规则、告警规则。
+   - **Grafana**：包含关键面板的仪表盘 JSON。
+   - **Datadog**：`datadog.yaml` 或 agent 配置。
+   - **健康端点**：`/health` 或 `/healthz` 实现。
+3. 为关键指标定义告警：
+   - 5 分钟内错误率 > 1%。
+   - P99 延迟 > 2 秒。
+   - 磁盘使用率 > 80%。
+   - 内存使用率 > 90%。
+   - 证书到期 < 14 天。
+4. 添加结构化日志配置：
+   - 带有时间戳、级别、消息、追踪 ID 的 JSON 日志格式。
+   - 日志级别：ERROR 用于故障、WARN 用于降级、INFO 用于操作。
+5. 如果适用，设置分布式追踪：
+   - OpenTelemetry SDK 初始化。
+   - 追踪上下文传播标头。
+6. 将所有配置文件写入 `monitoring/` 或 `deploy/monitoring/`。
 
-## Format
+## 格式
 
 ```yaml
 groups:
-  - name: <app-name>-alerts
+  - name: <应用名称>-告警
     rules:
-      - alert: HighErrorRate
+      - alert: 高错误率
         expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.01
         for: 5m
         labels:
           severity: critical
         annotations:
-          summary: "High error rate detected"
+          summary: "检测到高错误率"
 ```
 
-## Rules
+## 规则
 
-- Every production service must have health checks, error rate alerts, and latency monitoring.
-- Use percentile-based latency metrics (P50, P95, P99), not averages.
-- Set alert thresholds based on SLO targets, not arbitrary values.
-- Include runbook links in alert annotations.
-- Log at appropriate levels; never log sensitive data (passwords, tokens, PII).
+- 每个生产服务都必须有健康检查、错误率告警和延迟监控。
+- 使用基于百分位的延迟指标（P50、P95、P99），而非平均值。
+- 基于 SLO 目标设置告警阈值，而非任意值。
+- 在告警注释中包含运行手册链接。
+- 在适当的级别记录日志；绝不记录敏感数据（密码、令牌、PII）。

@@ -1,5 +1,5 @@
 ---
-name: defi-protocol-templates
+name: 使用生产就绪模板实施 DeFi 协议，适用于质押、AMM、治理和借贷系统
 description: "使用生产就绪模板实施 DeFi 协议，适用于质押、AMM、治理和借贷系统。适用于构建去中心化金融应用或智能合约协议。"
 risk: unknown
 source: community

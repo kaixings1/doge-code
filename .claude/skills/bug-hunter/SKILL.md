@@ -1,5 +1,5 @@
 ---
-name: bug-hunter
+name: 使用经过验证的调试技术系统性地发现和修复 bug
 description: "使用经过验证的调试技术系统性地发现和修复 bug。从症状追踪到根因，实现修复并防止回归。"
 category: development
 risk: safe
@@ -11,7 +11,7 @@ date_added: "2026-03-05"
 
 Systematically hunt down and fix bugs using proven debugging techniques. No guessing—follow the evidence.
 
-## When to Use This Skill
+## 何时使用此技能
 
 - User reports a bug or error
 - Something isn't working as expected

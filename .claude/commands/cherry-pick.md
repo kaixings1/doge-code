@@ -2,38 +2,38 @@
 description: 将特定工作项挑选到目标环境
 ---
 
-Cherry-pick specific work items to an environment. Usage: `/cherry-pick <work-item-ids> <environment>`
+将特定工作项挑选到目标环境。用法: `/cherry-pick <work-item-ids> <environment>`
 
-Parse `$ARGUMENTS` to extract:
-- **Work item IDs**: one or more IDs (e.g., "AB#1234 AB#1235" or "1234, 1235")
-- **Target environment**: the environment to deploy to (e.g., "staging", "production")
+解析 `$ARGUMENTS` 以提取：
+- **工作项 ID**：一个或多个 ID（例如 "AB#1234 AB#1235" 或 "1234, 1235"）
+- **目标环境**：要部署到的环境（例如 "staging", "production"）
 
-## Step 1: Read the Work Items
+## 步骤 1：读取工作项
 
-Fetch each work item from Azure DevOps via MCP. Present the list:
+通过 MCP 从 Azure DevOps 获取每个工作项。展示列表：
 
 ```
-## Cherry-Pick to {environment}
+## 挑选到 {environment}
 
-| ID | Type | Title | State |
+| ID | 类型 | 标题 | 状态 |
 |----|------|-------|-------|
-| AB#1234 | User Story | Add payment export | Ready for Testing |
-| AB#1235 | Bug | Fix login redirect | Ready for Testing |
+| AB#1234 | 用户故事 | 添加支付导出 | 准备测试 |
+| AB#1235 | Bug | 修复登录重定向 | 准备测试 |
 
-Cherry-pick {count} work items to {environment}? (yes/no)
+将 {count} 个工作项挑选到 {environment}？（是/否）
 ```
 
-Wait for confirmation.
+等待确认。
 
-## Step 2: Find Commits
+## 步骤 2：查找提交
 
-For each work item, find associated commits using `repo_search_commits` with `includeWorkItems: true`, or by searching for `AB#{id}` in commit messages on the source branch.
+对于每个工作项，使用 `repo_search_commits`（`includeWorkItems: true`）查找关联的提交，或在源分支的提交消息中搜索 `AB#{id}`。
 
-If no commits are found for a work item, STOP and report which work item has no associated commits.
+如果某个工作项未找到关联提交，则停止并报告哪个工作项没有关联提交。
 
-## Step 3: Create Cherry-Pick Branch
+## 步骤 3：创建挑选分支
 
-Determine the target environment branch. Do NOT hardcode branch names — check the project's CLAUDE.md or pipeline configuration.
+确定目标环境分支。不要硬编码分支名称——检查项目的 CLAUDE.md 或流水线配置。
 
 ```bash
 git checkout <target-environment-branch>
@@ -41,60 +41,60 @@ git pull origin <target-environment-branch>
 git checkout -b cherry-pick/<date>-to-<environment>
 ```
 
-## Step 4: Cherry-Pick Commits
+## 步骤 4：挑选提交
 
-Cherry-pick commits for each work item in chronological order:
+按时间顺序为每个工作项挑选提交：
 
 ```bash
 git cherry-pick <commit-hash>
 ```
 
-If conflicts arise, STOP and report them. Do not resolve automatically. Present recovery options:
+如果出现冲突，停止并报告。不要自动解决。展示恢复选项：
 
 ```
-CONFLICT while cherry-picking AB#1235 (commit def5678)
+在挑选 AB#1235（提交 def5678）时发生冲突
 
-Conflicting files:
+冲突文件：
 - src/API/Controllers/PaymentController.cs
 
-Options:
-1. Skip this work item and continue with the rest
-2. Abort the entire cherry-pick and clean up
-3. I will resolve the conflict manually — wait for me
+选项：
+1. 跳过此工作项并继续处理其余部分
+2. 中止整个挑选操作并清理
+3. 我手动解决冲突——请等待
 
-Which option? (1 / 2 / 3)
+选择哪个选项？（1 / 2 / 3）
 ```
 
-- **Option 1:** Run `git cherry-pick --skip` and continue with remaining work items. Note the skipped item in the summary.
-- **Option 2:** Run `git cherry-pick --abort`, delete the cherry-pick branch, and switch back to the original branch.
-- **Option 3:** Wait for the user to resolve conflicts and run `git cherry-pick --continue`, then proceed.
+- **选项 1：** 运行 `git cherry-pick --skip` 并继续处理剩余工作项。在摘要中注明跳过的项。
+- **选项 2：** 运行 `git cherry-pick --abort`，删除挑选分支，并切换回原始分支。
+- **选项 3：** 等待用户解决冲突并运行 `git cherry-pick --continue`，然后继续。
 
-Track progress:
+跟踪进度：
 ```
-Cherry-picking:
-[x] AB#1234: Add payment export (2 commits)
-[ ] AB#1235: Fix login redirect (1 commit) — CONFLICT
+正在挑选：
+[x] AB#1234: 添加支付导出（2 个提交）
+[ ] AB#1235: 修复登录重定向（1 个提交）— 冲突
 ```
 
-## Step 5: Push and Create PR
+## 步骤 5：推送并创建 PR
 
-1. Push: `git push -u origin HEAD`
-2. Create a PR via Azure DevOps MCP:
+1. 推送：`git push -u origin HEAD`
+2. 通过 Azure DevOps MCP 创建 PR：
    - **sourceRefName**: `refs/heads/cherry-pick/<date>-to-<environment>`
    - **targetRefName**: `refs/heads/<target-environment-branch>`
-   - **title**: `Cherry-pick AB#1234, AB#1235 → {Environment}`
-   - **description**: List all work items with IDs and titles
-3. Link all work items to the PR via `wit_link_work_item_to_pull_request`
+   - **title**: `挑选 AB#1234, AB#1235 → {Environment}`
+   - **description**: 列出所有工作项及其 ID 和标题
+3. 通过 `wit_link_work_item_to_pull_request` 将所有工作项链接到 PR
 
-## Step 6: Present Summary
+## 步骤 6：展示摘要
 
 ```
-Cherry-pick PR created for {environment}.
+已为 {environment} 创建挑选 PR。
 
 PR: {pr-url}
-Work items:
-- AB#1234: Add payment export
-- AB#1235: Fix login redirect
+工作项：
+- AB#1234: 添加支付导出
+- AB#1235: 修复登录重定向
 
-Merge the PR to trigger the CD pipeline for {environment}.
+合并 PR 以触发 {environment} 的 CD 流水线。
 ```

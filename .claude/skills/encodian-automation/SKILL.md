@@ -1,5 +1,5 @@
 ---
-name: encodian-automation
+name: Encodian 自动化
 description: "Encodian 自动化"
 risk: safe
 source: community

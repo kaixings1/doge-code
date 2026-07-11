@@ -58,7 +58,7 @@ export function DevChannelsDialog(t0) {
   }
   let t5;
   if ($[6] !== t4) {
-    t5 = <Box flexDirection="column" gap={1}>{t2}{t3}<Text dimColor={true}>Channels:{" "}{t4}</Text></Box>;
+    t5 = <Box flexDirection="column" gap={1}>{t2}{t3}<Text dimColor={true}>渠道:{" "}{t4}</Text></Box>;
     $[6] = t4;
     $[7] = t5;
   } else {

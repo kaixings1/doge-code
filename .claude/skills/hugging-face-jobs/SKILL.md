@@ -1,5 +1,5 @@
 ---
-name: hugging-face-jobs
+name: Hugging Face 职位
 description: "Hugging Face 职位 — AI 职位搜索"
 risk: safe
 source: community

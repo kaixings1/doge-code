@@ -79,6 +79,9 @@ cookbooks/
 
 # Git backup
 .git-old-backup/
+
+# Third-party mirrored repos (cloned from GitHub, not part of this repo)
+.github/
 # Temp scripts
 .tmp-*.py
 

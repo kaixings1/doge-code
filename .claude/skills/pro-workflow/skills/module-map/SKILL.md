@@ -24,7 +24,7 @@ A single response containing, in this order:
    (shared singletons, global state, implicit ordering, undocumented
    contracts between files).
 
-## Rules
+## 规则
 
 - Fifteen-second read target. If the map exceeds one screen, cut it.
 - Every claim must be backed by a file path. No remembered or inferred

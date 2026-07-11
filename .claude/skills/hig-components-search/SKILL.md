@@ -1,5 +1,5 @@
 ---
-name: hig-components-search
+name: HIG 搜索组件
 description: "HIG 搜索组件 — Human Interface Guidelines 搜索组件"
 risk: safe
 source: community

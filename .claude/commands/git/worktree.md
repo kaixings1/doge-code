@@ -1,8 +1,8 @@
 设置 git worktree 以在多分支上并行开发。
 
-## Steps
+## 步骤
 
-1. Verify the current repository is not a bare clone: `git rev-parse --is-bare-repository`.
+1. 验证当前仓库不是裸克隆：`git rev-parse --is-bare-repository`。
 2. List existing worktrees with `git worktree list` and display them.
 3. If creating a new worktree:
    - Accept a branch name argument (required) and optional base branch (defaults to `main`).

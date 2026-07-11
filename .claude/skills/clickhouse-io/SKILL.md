@@ -1,5 +1,5 @@
 ---
-name: clickhouse-io
+name: ClickHouse 数据库模式、查询优化、分析以及高性能分析负载的数据工程最佳实践。
 description: ClickHouse 数据库模式、查询优化、分析以及高性能分析负载的数据工程最佳实践。
 origin: ECC
 ---

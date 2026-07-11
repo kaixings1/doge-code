@@ -1,5 +1,5 @@
 ---
-name: multi-platform-apps-multi-platform
+name: 使用 API 优先架构和并行实现策略，跨 Web、移动和桌面平台一致地构建和部署相同功能
 description: "使用 API 优先架构和并行实现策略，跨 Web、移动和桌面平台一致地构建和部署相同功能。"
 risk: unknown
 source: community

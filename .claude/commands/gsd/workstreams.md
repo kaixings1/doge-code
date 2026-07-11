@@ -9,20 +9,20 @@ requires: [new-milestone, phase, progress, resume-work]
 
 # /gsd:workstreams
 
-Manage parallel workstreams for concurrent milestone work.
+管理并行工作线以进行并发里程碑工作。
 
-## Usage
+## 用法
 
 `/gsd:workstreams [subcommand] [args]`
 
-### Subcommands
+### 子命令
 
-| Command | Description |
+| 命令 | 描述 |
 |---------|-------------|
-| `list` | List all workstreams with status |
-| `create <name>` | Create a new workstream |
-| `status <name>` | Detailed status for one workstream |
-| `switch <name>` | Set active workstream |
+| `list` | 列出所有工作线及其状态 |
+| `create <name>` | 创建新工作线 |
+| `status <name>` | 查看一个工作线的详细状态 |
+| `switch <name>` | 设置活跃工作线 |
 | `progress` | Progress summary across all workstreams |
 | `complete <name>` | Archive a completed workstream |
 | `resume <name>` | Resume work in a workstream |

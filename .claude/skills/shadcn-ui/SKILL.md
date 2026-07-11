@@ -1,5 +1,5 @@
 ---
-name: shadcn-ui
+name: 使用 shadcn/ui 构建 UI 组件。与 Stitch 设计循环
 description: "Shadcn UI — 使用 shadcn/ui 构建 UI 组件。与 Stitch 设计循环配合，快速交付结构化、可访问的组件。"
 triggers:
   - "shadcn"

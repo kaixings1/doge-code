@@ -1,5 +1,5 @@
 ---
-name: auri-core
+name: Auri 自主 AI 代理核心功能和系统架构。
 description: "Auri Core — Auri 自主 AI 代理核心功能和系统架构。"
 risk: safe
 source: community

@@ -3,7 +3,7 @@ name: 训练优化
 description: "优化深度学习训练：学习率调度（余弦、预热、one-cycle）、正则化（dropout、权重衰减、标签平滑）、早停、混合精度、梯度累积和分布式训练。适用于改进训练速度、稳定性或模型性能。"
 ---
 
-# Training Optimization
+# 训练优化
 
 ## 目的
 Optimize neural network training for faster convergence, better generalization, and efficient resource usage.

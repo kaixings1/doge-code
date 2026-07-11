@@ -59,7 +59,7 @@ export function PermissionRuleInput(t0) {
   const handleSubmit = t2;
   let t3;
   if ($[4] !== ruleBehavior) {
-    t3 = <Text bold={true} color="permission">Add {ruleBehavior} permission rule</Text>;
+    t3 = <Text bold={true} color="permission">添加 {ruleBehavior} 权限规则</Text>;
     $[4] = ruleBehavior;
     $[5] = t3;
   } else {

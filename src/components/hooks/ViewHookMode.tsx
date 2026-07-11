@@ -23,7 +23,7 @@ export function ViewHookMode(t0) {
   } = t0;
   let t1;
   if ($[0] !== selectedHook.event) {
-    t1 = <Text>Event: <Text bold={true}>{selectedHook.event}</Text></Text>;
+    t1 = <Text>事件: <Text bold={true}>{selectedHook.event}</Text></Text>;
     $[0] = selectedHook.event;
     $[1] = t1;
   } else {
@@ -31,7 +31,7 @@ export function ViewHookMode(t0) {
   }
   let t2;
   if ($[2] !== eventSupportsMatcher || $[3] !== selectedHook.matcher) {
-    t2 = eventSupportsMatcher && <Text>Matcher: <Text bold={true}>{selectedHook.matcher || "(all)"}</Text></Text>;
+    t2 = eventSupportsMatcher && <Text>匹配器: <Text bold={true}>{selectedHook.matcher || "(全部)"}</Text></Text>;
     $[2] = eventSupportsMatcher;
     $[3] = selectedHook.matcher;
     $[4] = t2;
@@ -40,7 +40,7 @@ export function ViewHookMode(t0) {
   }
   let t3;
   if ($[5] !== selectedHook.config.type) {
-    t3 = <Text>Type: <Text bold={true}>{selectedHook.config.type}</Text></Text>;
+    t3 = <Text>类型: <Text bold={true}>{selectedHook.config.type}</Text></Text>;
     $[5] = selectedHook.config.type;
     $[6] = t3;
   } else {
@@ -56,7 +56,7 @@ export function ViewHookMode(t0) {
   }
   let t5;
   if ($[9] !== t4) {
-    t5 = <Text>Source:{" "}<Text dimColor={true}>{t4}</Text></Text>;
+    t5 = <Text>来源:{" "}<Text dimColor={true}>{t4}</Text></Text>;
     $[9] = t4;
     $[10] = t5;
   } else {
@@ -64,7 +64,7 @@ export function ViewHookMode(t0) {
   }
   let t6;
   if ($[11] !== selectedHook.pluginName) {
-    t6 = selectedHook.pluginName && <Text>Plugin: <Text dimColor={true}>{selectedHook.pluginName}</Text></Text>;
+    t6 = selectedHook.pluginName && <Text>插件: <Text dimColor={true}>{selectedHook.pluginName}</Text></Text>;
     $[11] = selectedHook.pluginName;
     $[12] = t6;
   } else {
@@ -125,7 +125,7 @@ export function ViewHookMode(t0) {
   }
   let t13;
   if ($[30] !== selectedHook.config) {
-    t13 = "statusMessage" in selectedHook.config && selectedHook.config.statusMessage && <Text>Status message:{" "}<Text dimColor={true}>{selectedHook.config.statusMessage}</Text></Text>;
+    t13 = "statusMessage" in selectedHook.config && selectedHook.config.statusMessage && <Text>状态消息:{" "}<Text dimColor={true}>{selectedHook.config.statusMessage}</Text></Text>;
     $[30] = selectedHook.config;
     $[31] = t13;
   } else {

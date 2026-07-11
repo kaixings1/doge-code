@@ -2,68 +2,68 @@
 description: 创建新发布版本
 ---
 
-Create a new release. Follow this workflow:
+创建新发布版本。遵循此工作流：
 
-## Step 1: Determine Release Number
+## 步骤 1：确定发布编号
 
-Check existing iterations in the project via Azure DevOps MCP (`work_list_iterations`) to find iterations that follow the `Release #N` naming pattern. The new release number is the next sequential number.
+通过 Azure DevOps MCP（`work_list_iterations`）检查项目中的现有迭代，查找遵循 `Release #N` 命名模式的迭代。新发布编号是下一个顺序编号。
 
-If `$ARGUMENTS` is provided, use it as the release name (e.g., `$ARGUMENTS` = "24" creates "Release #24").
+如果提供了 `$ARGUMENTS`，将其用作发布名称（例如 `$ARGUMENTS` = "24" 创建 "Release #24"）。
 
-## Step 2: Gather Work Items for the Release
+## 步骤 2：收集发布的工作项
 
-Ask the user which work items to include. They may provide:
-- A list of work item IDs (e.g., "AB#1234, AB#1235, AB#1236")
-- A query (e.g., "all completed user stories in the current sprint")
-- A state filter (e.g., "all items in Ready for Testing")
+询问用户要包含哪些工作项。他们可以提供：
+- 工作项 ID 列表（例如 "AB#1234, AB#1235, AB#1236"）
+- 查询条件（例如 "当前迭代中所有已完成的用户故事"）
+- 状态筛选条件（例如 "所有准备测试的项目"）
 
-Use the Azure DevOps MCP to search/query for the specified work items. Present the list for confirmation:
+使用 Azure DevOps MCP 搜索/查询指定的工作项。展示列表供确认：
 
 ```
-## Release #{N}
+## 发布 #{N}
 
-| ID | Type | Title | State |
+| ID | 类型 | 标题 | 状态 |
 |----|------|-------|-------|
-| AB#1234 | User Story | Add payment export | Ready for Testing |
-| AB#1235 | Bug | Fix login redirect | Ready for Testing |
-| AB#1236 | User Story | View history | Ready for Testing |
+| AB#1234 | 用户故事 | 添加支付导出 | 准备测试 |
+| AB#1235 | Bug | 修复登录重定向 | 准备测试 |
+| AB#1236 | 用户故事 | 查看历史 | 准备测试 |
 
-Create this release with {count} work items? (yes/no)
+使用 {count} 个工作项创建此发布？（是/否）
 ```
 
-Wait for confirmation before proceeding.
+等待确认后再继续。
 
-## Step 3: Create the Release Iteration
+## 步骤 3：创建发布迭代
 
-Create a new iteration in Azure DevOps via `work_create_iterations`:
-- **Name**: `Release #{N}`
-- **Start date**: today
-- No finish date (set when deployed to production)
+通过 `work_create_iterations` 在 Azure DevOps 中创建新迭代：
+- **名称**：`Release #{N}`
+- **开始日期**：今天
+- 无结束日期（部署到生产环境时设置）
 
-## Step 4: Assign Work Items to the Release
+## 步骤 4：将工作项分配给发布
 
-Use `wit_update_work_items_batch` to set the Iteration Path on each work item to the new release iteration:
-- **path**: `/fields/System.IterationPath`
-- **value**: `{project}\Release #{N}`
+使用 `wit_update_work_items_batch` 将每个工作项的迭代路径设置为新发布迭代：
+- **path**：`/fields/System.IterationPath`
+- **value**：`{project}\Release #{N}`
 
-## Step 5: Tag Work Items
+## 步骤 5：标记工作项
 
-Use `wit_update_work_items_batch` to add a release tag to each work item:
-- **path**: `/fields/System.Tags`
-- **value**: append `release-{N}` to existing tags
+使用 `wit_update_work_items_batch` 向每个工作项添加发布标签：
+- **path**：`/fields/System.Tags`
+- **value**：将 `release-{N}` 附加到现有标签
 
-## Step 6: Confirm
+## 步骤 6：确认
 
-Present the final summary:
+展示最终摘要：
 
 ```
-Release #{N} created with {count} work items.
+发布 #{N} 已创建，包含 {count} 个工作项。
 
-Work items assigned:
-- AB#1234: Add payment export
-- AB#1235: Fix login redirect
-- AB#1236: View history
+已分配的工作项：
+- AB#1234: 添加支付导出
+- AB#1235: 修复登录重定向
+- AB#1236: 查看历史
 
-To deploy this release to staging:  /deploy-release {N} staging
-To deploy this release to production: /deploy-release {N} production
+将此发布部署到 staging：  /deploy-release {N} staging
+将此发布部署到 production：/deploy-release {N} production
 ```

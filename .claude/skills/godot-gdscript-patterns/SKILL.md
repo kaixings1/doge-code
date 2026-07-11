@@ -1,5 +1,5 @@
 ---
-name: godot-gdscript-patterns
+name: 掌握 Godot 4 GDScript 模式，包括信号、场景、状态机和优化。适用
 description: "掌握 Godot 4 GDScript 模式，包括信号、场景、状态机和优化。适用于构建 Godot 游戏、实现游戏系统或学习 GDScript 最佳实践。"
 risk: safe
 source: community

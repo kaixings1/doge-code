@@ -1,9 +1,6 @@
 ---
-name: gcp-cloud-run
-description: "Gcp Cloud Run — Gcp Cloud Run 相关功能和最佳实践"
-  applications on GCP. Covers Cloud Run services (containerized), Cloud Run
-  Functions (event-driven), cold start optimization, and event-driven
-  architecture with Pub/Sub.
+name: GCP Cloud Run 相关功能和最佳实践，涵盖 Cloud Ru
+description: "GCP Cloud Run — GCP Cloud Run 相关功能和最佳实践，涵盖 Cloud Run 服务（容器化）、Cloud Run Functions（事件驱动）、冷启动优化以及基于 Pub/Sub 的事件驱动架构。"
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
@@ -11,19 +8,19 @@ date_added: 2026-02-27
 
 # GCP Cloud Run
 
-Specialized skill for building production-ready serverless applications on GCP.
-Covers Cloud Run services (containerized), Cloud Run Functions (event-driven),
-cold start optimization, and event-driven architecture with Pub/Sub.
+在 GCP 上构建生产就绪的无服务器应用的专业技能。
+涵盖 Cloud Run 服务（容器化）、Cloud Run Functions（事件驱动）、
+冷启动优化以及基于 Pub/Sub 的事件驱动架构。
 
-## Principles
+## 原则
 
-- Cloud Run for containers, Functions for simple event handlers
-- Optimize for cold starts with startup CPU boost and min instances
-- Set concurrency based on workload (start with 8, adjust)
-- Memory includes /tmp filesystem - plan accordingly
-- Use VPC Connector only when needed (adds latency)
-- Containers should start fast and be stateless
-- Handle signals gracefully for clean shutdown
+- 容器使用 Cloud Run，简单事件处理程序使用 Functions
+- 使用启动 CPU 增强和最小实例优化冷启动
+- 基于工作负载设置并发（从 8 开始，酌情调整）
+- 内存包括 /tmp 文件系统——相应规划
+- 仅在需要时使用 VPC Connector（会增加延迟）
+- 容器应快速启动且无状态
+- 优雅处理信号以确保干净关闭
 
 ## 模式
 

@@ -1,5 +1,5 @@
 ---
-name: global-chat-agent-discovery
+name: 使用 Global Chat 的跨协议目录和 MCP 服务器在 6+ 注册表中发
 description: "使用 Global Chat 的跨协议目录和 MCP 服务器在 6+ 注册表中发现和搜索 18K+ MCP 服务器和 AI 代理。"
 category: development
 risk: safe
@@ -12,7 +12,7 @@ tags: [mcp, ai-agents, agent-discovery, agents-txt, a2a, developer-tools]
 tools: [claude, 游标, gemini, codex]
 ---
 
-# Global Chat Agent Discovery
+# Global Chat 代理发现
 
 ## 概述
 

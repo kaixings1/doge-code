@@ -1,6 +1,6 @@
 ---
-name: issues
-description: "Issues — Issues 相关功能和最佳实践"
+name: Issues 管理
+description: "Issues 管理 — GitHub Issues 创建、查看和管理相关功能"
 allowed-tools: Bash(gh *)
 risk: unknown
 source: community

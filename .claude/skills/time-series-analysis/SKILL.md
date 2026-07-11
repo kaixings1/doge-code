@@ -3,7 +3,7 @@ name: 时间序列分析
 description: "SOTA 时间序列建模：基础模型（TimesFM、Chronos、Lag-Llama）、PatchTST、Temporal Fusion Transformer，以及经典 ARIMA/Prophet/指数平滑。包含零样本预测、分层调和、共形预测区间和现代评估。适用于时序数据的预测、异常检测或分类。"
 ---
 
-# Time Series Analysis
+# 时间序列分析
 
 ## 目的
 Model and forecast temporal data using the latest foundation models alongside proven classical methods.

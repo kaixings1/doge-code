@@ -1,5 +1,5 @@
 ---
-name: omc-teams
+name: OMC Teams 多代理团队
 description: 在 tmux 窗格中为 claude、codex、gemini、antigravity、grok 或 游标 工作进程提供 CLI 团队运行时，适用于需要基于进程的并行执行时
 aliases: []
 level: 4
@@ -39,7 +39,7 @@ level: 4
 /omc-teams 1:游标 "apply the implementation plan"
 ```
 
-## Requirements
+## 要求
 
 - **tmux binary** must be installed and discoverable (`command -v tmux`) when running from a plain terminal; classic tmux sessions reuse the current tmux surface.
 - **cmux surface optional** for in-place native splits (`CMUX_SURFACE_ID` set without `$TMUX`). Plain terminals still use the detached tmux fallback.

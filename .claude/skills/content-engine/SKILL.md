@@ -1,5 +1,5 @@
 ---
-name: content-engine
+name: 内容引擎工作流
 description: 内容引擎工作流
 ---
 
@@ -7,7 +7,7 @@ description: 内容引擎工作流
 
 Build platform-native content without flattening the author's real voice into platform slop.
 
-## When to Activate
+## 激活时机
 
 - writing X posts or threads
 - drafting LinkedIn posts or launch updates
@@ -15,7 +15,7 @@ Build platform-native content without flattening the author's real voice into pl
 - repurposing articles, podcasts, demos, docs, or internal notes into public content
 - building a launch sequence or ongoing content system around a product, insight, or narrative
 
-## Non-Negotiables
+## 不可妥协项
 
 1. Start from source material, not generic post formulas.
 2. Adapt the format for the platform, not the persona.
@@ -23,7 +23,7 @@ Build platform-native content without flattening the author's real voice into pl
 4. Specificity beats adjectives.
 5. No engagement bait unless the user explicitly asks for it.
 
-## Source-First 工作流
+## 源码优先工作流
 
 Before drafting, identify the source set:
 - published articles
@@ -37,7 +37,7 @@ Before drafting, identify the source set:
 If the user wants a specific voice, build a voice profile from real examples before writing.
 Use `brand-voice` as the canonical 工作流 when voice consistency matters across more than one output.
 
-## Voice Handling
+## 语音处理
 
 `brand-voice` is the canonical voice layer.
 
@@ -50,7 +50,7 @@ Run it first when:
 Reuse the resulting `VOICE PROFILE` here instead of rebuilding a second voice model.
 If the user wants Affaan / ECC voice specifically, still treat `brand-voice` as the source of truth and feed it the best live or source-derived material available.
 
-## Hard Bans
+## 严格禁止
 
 Delete and rewrite any of these:
 - "In today's rapidly evolving landscape"
@@ -113,7 +113,7 @@ When asked for a campaign, return:
 - posting order only if it helps execution
 - gaps that must be filled before publishing
 
-## Quality Gate
+## 质量门禁
 
 Before delivering:
 - every draft sounds like the intended author, not the platform stereotype

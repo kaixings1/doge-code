@@ -1,5 +1,5 @@
 ---
-name: Wave Accounting Automation
+name: Wave Accounting 自动化
 description: "Wave Accounting 工具包目前不可用为本机集成。在 Composio 平台中未找到特定于 Wave 的工具。此技能是等待未来集成的占位符。"
 category: accounting
 requires:

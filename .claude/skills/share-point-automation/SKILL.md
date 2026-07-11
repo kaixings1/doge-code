@@ -1,5 +1,5 @@
 ---
-name: SharePoint Automation
+name: SharePoint 自动化：管理站点、列表、文档、文件夹、页面以及跨 Shar
 description: "SharePoint 自动化：管理站点、列表、文档、文件夹、页面以及跨 SharePoint 和 OneDrive 搜索内容"
 requires:
   mcp: [rube]

@@ -104,7 +104,7 @@ export function MCPToolListView(t0) {
   const t6 = `${t4} ${t5}`;
   let t7;
   if ($[11] !== onBack || $[12] !== onSelectTool || $[13] !== serverTools || $[14] !== toolOptions) {
-    t7 = serverTools.length === 0 ? <Text dimColor={true}>No tools available</Text> : <Select options={toolOptions} onChange={value => {
+    t7 = serverTools.length === 0 ? <Text dimColor={true}>没有可用工具</Text> : <Select options={toolOptions} onChange={value => {
       const index_0 = parseInt(value);
       const tool_0 = serverTools[index_0];
       if (tool_0) {

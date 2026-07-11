@@ -1,6 +1,6 @@
 ---
-name: azure-storage-file-datalake-py
-description: "Azure Storage File Datalake Py — Azure Storage File Datalake Py 相关功能和最佳实践"
+name: Azure Storage File Data Lake (Python)
+description: "Azure Storage File Data Lake Python — Azure Storage File Data Lake Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -34,7 +34,7 @@ account_url = "https://<account>.dfs.core.windows.net"
 service_client = DataLakeServiceClient(account_url=account_url, credential=credential)
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 | Client | Purpose |
 |--------|---------|
@@ -175,7 +175,7 @@ directory_client.update_access_control_recursive(
 )
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.storage.filedatalake.aio import DataLakeServiceClient

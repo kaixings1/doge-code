@@ -1,5 +1,5 @@
 ---
-name: context-agent
+name: 上下文 Agent
 description: "上下文 Agent — 上下文 Agent 相关功能和最佳实践"
 risk: safe
 source: community

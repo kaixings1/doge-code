@@ -1,5 +1,5 @@
 ---
-name: inngest
+name: 事件驱动的工作流和无服务器函数编排
 description: "Inngest — 事件驱动的工作流和无服务器函数编排"
 risk: unknown
 source: community

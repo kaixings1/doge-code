@@ -1,5 +1,5 @@
 ---
-name: mise-configurator
+name: 为本地开发、CI/CD 流水线和工具链标准化生成生产就绪的 mise.toml 配置
 description: "为本地开发、CI/CD 流水线和工具链标准化生成生产就绪的 mise.toml 配置。"
 category: devops
 risk: safe
@@ -10,7 +10,7 @@ author: community
 tags: [mise, devops, ci-cd, toolchain, runtimes, automation]
 tools: [claude, 游标, gemini]
 ---
-# Mise Configurator
+# Mise 配置器
 
 ## 概述
 
@@ -122,7 +122,7 @@ steps:
 - Some plugins or niche tools may require manual adjustment.
     
 
-## Security & Safety Notes
+## 安全与安全注意事项
 
 - Review generated shell commands before execution.
     

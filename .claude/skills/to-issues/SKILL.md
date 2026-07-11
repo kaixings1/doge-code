@@ -1,5 +1,5 @@
 ---
-name: to-issues
+name: To Issues 相关功能和最佳实践
 description: "To Issues — To Issues 相关功能和最佳实践"
 disable-model-invocation: true
 ---
@@ -10,7 +10,7 @@ disable-model-invocation: true
 
 议题追踪器和分类标签词汇应已提供给你——如果没有，请运行 `/设置-matt-pocock-skills`。
 
-## Process
+## 流程
 
 ### 1. Gather context
 

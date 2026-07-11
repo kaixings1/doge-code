@@ -1,6 +1,6 @@
 ---
-name: azure-communication-callingserver-java
-description: "Azure Communication Callingserver Java — Azure Communication Callingserver Java 相关功能和最佳实践"
+name: Azure Communication Calling Server (Java)
+description: "Azure Communication Calling Server Java — Azure Communication Calling Server Java SDK 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: "2026-02-27"
@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 > **⚠️ DEPRECATED**: This SDK has been renamed to **Call Automation**. For new projects, use `azure-communication-callautomation` instead. This skill is for maintaining legacy code only.
 
-## Migration to Call Automation
+## 迁移到通话自动化
 
 ```xml
 <!-- OLD (deprecated) -->
@@ -28,7 +28,7 @@ date_added: "2026-02-27"
 </dependency>
 ```
 
-## Class Name Changes
+## 类名变更
 
 | CallingServer (Old) | Call Automation (New) |
 |---------------------|----------------------|
@@ -37,7 +37,7 @@ date_added: "2026-02-27"
 | `CallConnection` | `CallConnection` (same) |
 | `ServerCall` | Removed - use `CallConnection` |
 
-## Legacy Client Creation
+## 旧版客户端创建
 
 ```java
 // OLD WAY (deprecated)
@@ -57,7 +57,7 @@ CallAutomationClient client = new CallAutomationClientBuilder()
     .buildClient();
 ```
 
-## Legacy Recording
+## 旧版录制
 
 ```java
 // OLD WAY
@@ -74,7 +74,7 @@ client.stopRecording(recordingId);
 // NEW WAY - see azure-communication-callautomation skill
 ```
 
-## For New Development
+## 新开发建议
 
 **Do not use this SDK for new projects.** 
 
@@ -87,7 +87,7 @@ See the `azure-communication-callautomation-java` skill for:
 - Adding/removing participants
 - Call transfer
 
-## Trigger Phrases
+## 触发短语
 
 - "callingserver legacy", "deprecated calling SDK"
 - "migrate callingserver to callautomation"

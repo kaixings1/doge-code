@@ -1,5 +1,5 @@
 ---
-name: design-review
+name: 设计审查相关功能和最佳实践
 description: "Design Review — 设计审查相关功能和最佳实践"
   会编码的设计师：视觉审计，然后通过原子提交和前后截图进行修复。适用于在发布前收紧已交付的 UI。
 triggers:
@@ -21,7 +21,7 @@ od:
 
 会编码的设计师：视觉审计，然后通过原子提交和前后截图进行修复。适用于在发布前收紧已交付的 UI。
 
-## Source
+## 来源
 
 - Upstream: https://github.com/garrytan/gstack
 - Category: `creative-direction`

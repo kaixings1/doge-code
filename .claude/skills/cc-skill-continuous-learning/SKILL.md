@@ -1,5 +1,5 @@
 ---
-name: cc-skill-continuous-learning
+name: 持续学习
 description: "持续学习"
 risk: safe
 source: community

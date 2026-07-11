@@ -1,5 +1,5 @@
 ---
-name: monte-carlo-prevent
+name: Monte Carlo 数据可观察性
 description: "在 SQL/dbt 编辑之前提供 Monte Carlo 数据可观察性上下文（表健康、告警、血统、爆炸半径）。"
 category: data
 risk: safe

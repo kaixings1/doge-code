@@ -1,11 +1,11 @@
 ---
-name: skill
+name: Skill 相关功能和最佳实践
 description: "Skill — Skill 相关功能和最佳实践"
 参数-hint: "<command> [args]"
 level: 2
 ---
 
-# Skill Management CLI
+# 技能
 
 Meta-skill for managing oh-my-claudecode skills via CLI-like commands.
 

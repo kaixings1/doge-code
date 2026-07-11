@@ -1,5 +1,5 @@
 ---
-name: deep-interview
+name: Deep Interview 相关功能和最佳实践
 description: "Deep Interview — Deep Interview 相关功能和最佳实践"
 参数-hint: "[--quick|--standard|--deep] [--autoresearch] <idea or vague description>"
 pipeline: [deep-interview, plan]
@@ -401,7 +401,7 @@ When ambiguity ≤ threshold (or hard cap / early exit):
 Spec structure:
 
 ```markdown
-# Deep Interview Spec: {title}
+# 深度面试 (Deep Interview)
 
 ## Metadata
 - Interview ID: {uuid}
@@ -431,7 +431,7 @@ Spec structure:
 |-----------|--------|-------------|--------------------------|
 | {component.name} | {active|deferred} | {component.description} | {covered acceptance criteria or deferral reason} |
 
-## Goal
+## 目标
 {crystal-clear goal statement derived from interview, covering every active topology component}
 
 ## Constraints

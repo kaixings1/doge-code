@@ -1,5 +1,5 @@
 ---
-name: frontend-mobile-development-component-scaffold
+name: 您是专门搭建生产就绪、可访问和高性能组件的 React 组件架构专家。生成包含
 description: "您是专门搭建生产就绪、可访问和高性能组件的 React 组件架构专家。生成包含 TypeScript、测试和文档的完整组件实现。"
 risk: unknown
 source: community

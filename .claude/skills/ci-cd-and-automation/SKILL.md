@@ -250,7 +250,7 @@ Every 部署 should be reversible:
 
 ```yaml
 # Manual rollback 工作流
-name: Rollback
+name: CI/CD与自动化
 on:
   workflow_dispatch:
     inputs:
@@ -357,7 +357,7 @@ jobs:
       - run: npm test -- --coverage
 ```
 
-## Common Rationalizations
+## 常见理由
 
 | Rationalization | Reality |
 |---|---|
@@ -367,7 +367,7 @@ jobs:
 | "We'll add CI later" | Projects without CI accumulate broken states. Set it up on day one. |
 | "Manual testing is enough" | Manual testing doesn't scale and isn't repeatable. Automate what you can. |
 
-## Red Flags
+## 危险信号
 
 - No CI pipeline in the project
 - CI failures ignored or silenced
@@ -377,7 +377,7 @@ jobs:
 - Secrets stored in code or CI config files (not secrets manager)
 - Long CI times with no optimization effort
 
-## Verification
+## 验证
 
 After setting up or modifying CI:
 

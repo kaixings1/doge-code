@@ -1,5 +1,5 @@
 ---
-name: email-systems
+name: 邮件系统架构
 description: "邮件系统架构"
 risk: safe
 source: community

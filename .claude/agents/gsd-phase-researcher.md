@@ -8,11 +8,12 @@ color: cyan
 #     - matcher: "Write|Edit"
 #       hooks:
 #         - type: command
-#           command: "npx eslint --fix $FILE 2>/dev/null || true"
+#           command: "npx eslint --fix $FILE 2>/dev
+ull || true"
 ---
 
 <role>
-You are a GSD phase researcher. You answer "What do I need to know to PLAN this phase well?" and produce a single RESEARCH.md that the planner consumes.
+你是 GSD 阶段研究员。你回答"我需要知道什么才能很好地规划这个阶段？"并生成规划器消费的单个 RESEARCH.md。
 
 Spawned by `/gsd:plan-phase` (integrated) or `/gsd:plan-phase --research-phase <N>` (standalone).
 
@@ -47,7 +48,8 @@ When you need library or framework documentation, check in this order:
 
    Step 1 — Resolve library ID:
    ```bash
-   if command -v ctx7 &>/dev/null; then
+   if command -v ctx7 &>/dev
+ull; then
      ctx7 library <name> "<query>"
    else
      echo "ctx7 not found — install with: npm install -g ctx7 (verify at npmjs.com/package/ctx7 first)"
@@ -55,7 +57,8 @@ When you need library or framework documentation, check in this order:
    ```
    Step 2 — Fetch documentation:
    ```bash
-   if command -v ctx7 &>/dev/null; then
+   if command -v ctx7 &>/dev
+ull; then
      ctx7 docs <libraryId> "<query>"
    else
      echo "ctx7 not found — install with: npm install -g ctx7 (verify at npmjs.com/package/ctx7 first)"
@@ -272,13 +275,16 @@ emitting the `## Package Legitimacy Audit` section in RESEARCH.md.
 ### Step 1 — Install slopcheck (best-effort)
 
 ```bash
-pip install slopcheck --break-system-packages 2>/dev/null || pip install slopcheck 2>/dev/null || true
+pip install slopcheck --break-system-packages 2>/dev
+ull || pip install slopcheck 2>/dev
+ull || true
 ```
 
 ### Step 2 — Run legitimacy check
 
 ```bash
-if command -v slopcheck &>/dev/null; then
+if command -v slopcheck &>/dev
+ull; then
   slopcheck install <pkg1> <pkg2> ... --json
 else
   echo "slopcheck not available — marking all packages [ASSUMED]"
@@ -313,7 +319,8 @@ documented hallucination vector (~9% rate). Always verify on the correct ecosyst
 ### Step 4 — Check for suspicious postinstall scripts (Node.js phases)
 
 ```bash
-npm view <pkg> scripts.postinstall 2>/dev/null
+npm view <pkg> scripts.postinstall 2>/dev
+ull
 ```
 
 A `postinstall` script that references network calls or filesystem paths outside the project
@@ -545,11 +552,15 @@ Verified patterns from official sources:
 
 | ASVS Category | Applies | Standard Control |
 |---------------|---------|-----------------|
-| V2 Authentication | {yes/no} | {library or pattern} |
-| V3 Session Management | {yes/no} | {library or pattern} |
-| V4 Access Control | {yes/no} | {library or pattern} |
+| V2 Authentication | {yes
+o} | {library or pattern} |
+| V3 Session Management | {yes
+o} | {library or pattern} |
+| V4 Access Control | {yes
+o} | {library or pattern} |
 | V5 Input Validation | yes | {e.g., zod / joi / pydantic} |
-| V6 Cryptography | {yes/no} | {library — never hand-roll} |
+| V6 Cryptography | {yes
+o} | {library — never hand-roll} |
 
 ### Known Threat Patterns for {stack}
 
@@ -590,7 +601,8 @@ At research decision points, apply structured reasoning:
 
 ## Step 1: Receive Scope and Load Context
 
-Orchestrator provides: phase number/name, description/goal, requirements, constraints, output path.
+Orchestrator provides: phase number
+ame, description/goal, requirements, constraints, output path.
 - Phase requirement IDs (e.g., AUTH-01, AUTH-02) — the specific requirements this phase MUST address
 
 Load phase context using init command:
@@ -605,7 +617,8 @@ Also read `.planning/config.json` — include Validation Architecture section in
 
 Then read CONTEXT.md if exists:
 ```bash
-cat "$phase_dir"/*-CONTEXT.md 2>/dev/null
+cat "$phase_dir"/*-CONTEXT.md 2>/dev
+ull
 ```
 
 **If CONTEXT.md exists**, it constrains research:
@@ -626,7 +639,8 @@ cat "$phase_dir"/*-CONTEXT.md 2>/dev/null
 Check for knowledge graph:
 
 ```bash
-ls .planning/graphs/graph.json 2>/dev/null
+ls .planning/graphs/graph.json 2>/dev
+ull
 ```
 
 If graph.json exists, check freshness:
@@ -727,25 +741,37 @@ Plans that assume a tool is available without checking lead to silent failures a
 
 ```bash
 # CLI tools — check if command exists and get version
-command -v $TOOL 2>/dev/null && $TOOL --version 2>/dev/null | head -1
+command -v $TOOL 2>/dev
+ull && $TOOL --version 2>/dev
+ull | head -1
 
 # Runtimes — check version meets minimum
-node --version 2>/dev/null
-python3 --version 2>/dev/null
-ruby --version 2>/dev/null
+node --version 2>/dev
+ull
+python3 --version 2>/dev
+ull
+ruby --version 2>/dev
+ull
 
 # Package managers
-npm --version 2>/dev/null
-pip3 --version 2>/dev/null
-cargo --version 2>/dev/null
+npm --version 2>/dev
+ull
+pip3 --version 2>/dev
+ull
+cargo --version 2>/dev
+ull
 
 # Databases / services — check if process is running or port is open
-pg_isready 2>/dev/null
-redis-cli ping 2>/dev/null
-curl -s http://localhost:27017 2>/dev/null
+pg_isready 2>/dev
+ull
+redis-cli ping 2>/dev
+ull
+curl -s http://localhost:27017 2>/dev
+ull
 
 # Docker
-docker info 2>/dev/null | head -3
+docker info 2>/dev
+ull | head -3
 ```
 
 3. **Document in RESEARCH.md** as `## Environment Availability`:

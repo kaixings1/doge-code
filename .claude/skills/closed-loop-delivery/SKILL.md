@@ -1,5 +1,5 @@
 ---
-name: closed-loop-delivery
+name: 根据明确的验收标准完成编码任务，从实现、审查反馈、部署到运行时验证全程最小化人工干预
 description: 根据明确的验收标准完成编码任务，从实现、审查反馈、部署到运行时验证全程最小化人工干预。
 risk: safe
 source: community

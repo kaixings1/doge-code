@@ -1,8 +1,8 @@
 根据最近提交自动生成发版说明并创建带标签的版本。
 
-## Steps
+## 步骤
 
-1. Run `git log --oneline $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD` to list commits since last tag.
+1. 运行 `git log --oneline $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD` 列出自上一个标签以来的提交。
 2. Determine the next version number:
    - If `--major`, `--minor`, or `--patch` is specified, use that increment.
    - Otherwise, infer from commit types: `feat` = minor, `fix` = patch, breaking changes = major.

@@ -1,5 +1,5 @@
 ---
-name: Neon Automation
+name: —管理项目、分支、数据库、角色和连接 URI。
 description: "通过 Composio MCP 集成自动执行 Neon 无服务器 Postgres 操作——管理项目、分支、数据库、角色和连接 URI。"
 requires:
  mcp:

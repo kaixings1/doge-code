@@ -5,14 +5,14 @@ argument-hint: "<describe the analysis and target audience>"
 
 # /write-report
 
-Build a structured analytical report for stakeholders.
+为利益相关者构建结构化分析报告。
 
-## Invocation
+## 调用
 
 ```
-/write-report [describe your requirements]
+/write-report [描述你的需求]
 ```
 
-## Workflow
+## 工作流
 
-Apply relevant **ds-toolkit** skills to guide you through the process step by step.
+应用相关的 **ds-toolkit** 技能逐步指导你完成整个过程。

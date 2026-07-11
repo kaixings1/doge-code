@@ -1,5 +1,5 @@
 ---
-name: hybrid-cloud-architect
+name: 混合云架构师
 description: "混合云架构师 — 混合云基础设施设计"
 risk: unknown
 source: community

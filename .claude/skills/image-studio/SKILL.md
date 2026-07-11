@@ -1,5 +1,5 @@
 ---
-name: image-studio
+name: 图像工作室
 description: "图像工作室 — 综合图像编辑和处理"
 risk: unknown
 source: community

@@ -1,5 +1,5 @@
 ---
-name: angular-best-practices
+name: Angular 最佳实践
 description: "Angular 最佳实践"
 risk: safe
 source: community

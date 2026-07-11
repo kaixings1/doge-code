@@ -1,14 +1,14 @@
 ---
-name: game-development
+name: 游戏开发编排器。根据项目需求路由到特定平台技能。
 description: "游戏开发编排器。根据项目需求路由到特定平台技能。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# Game Development
+# 游戏开发
 
-> **Orchestrator skill** that provides core principles and routes to specialized sub-skills.
+> **编排器技能**，提供核心原则并路由到专门的子技能。
 
 ---
 

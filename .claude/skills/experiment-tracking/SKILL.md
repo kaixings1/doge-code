@@ -1,5 +1,5 @@
 ---
-name: experiment-tracking
+name: 机器学习实验跟踪
 description: "机器学习实验跟踪"
 risk: safe
 source: community

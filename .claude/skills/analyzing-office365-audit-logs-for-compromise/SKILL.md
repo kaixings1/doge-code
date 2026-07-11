@@ -1,5 +1,5 @@
 ---
-name: analyzing-office365-audit-logs-for-compromise
+name: Office365 审计日志入侵分析
 description: "分析 Office365 审计日志入侵"
 risk: safe
 source: community

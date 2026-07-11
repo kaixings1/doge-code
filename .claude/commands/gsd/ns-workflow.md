@@ -8,16 +8,16 @@ allowed-tools:
 requires: [discuss-phase, spec-phase, plan-phase, execute-phase, verify-work, phase, progress, ultraplan-phase, plan-review-convergence]
 ---
 
-Route to the appropriate phase-pipeline skill based on the user's intent.
-Sub-skill names below are post-#2790 consolidated targets — `gsd-phase`
-absorbs the former add/insert/remove/edit-phase commands and `gsd-progress`
-absorbs the former next/do commands.
+根据用户意图路由到适当的阶段管道技能。
+下面的子技能名称是 #2790 之后的合并目标——`gsd-phase`
+吸收了之前的 add/insert/remove/edit-phase 命令，`gsd-progress`
+吸收了之前的 next/do 命令。
 
-| User wants | Invoke |
+| 用户想要 | 调用 |
 |---|---|
-| Gather context before planning | gsd-discuss-phase |
-| Clarify what a phase delivers | gsd-spec-phase |
-| Create a PLAN.md | gsd-plan-phase |
+| 在规划前收集上下文 | gsd-discuss-phase |
+| 明确阶段的交付内容 | gsd-spec-phase |
+| 创建 PLAN.md | gsd-plan-phase |
 | Execute plans in a phase | gsd-execute-phase |
 | Verify built features through UAT | gsd-verify-work |
 | Add / insert / remove / edit a phase | gsd-phase |

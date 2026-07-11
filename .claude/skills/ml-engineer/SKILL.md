@@ -1,10 +1,12 @@
 ---
-name: ml-engineer
-description: "ML 工程师 — ML Engineer 相关功能和最佳实践"
+name: ML 工程师
+description: "ML 工程师 — 机器学习工程师相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# ML 工程师
 
 ## 使用此技能的场景
 

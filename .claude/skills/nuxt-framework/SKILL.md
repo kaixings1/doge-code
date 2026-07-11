@@ -1,5 +1,5 @@
 ---
-name: nuxt-framework
+name: Nuxt 3 全栈框架
 description: Nuxt 3 全栈框架 — 自动导入、文件路由、SSR/SSG/ISR、Nitro 引擎、模块生态
 ---
 

@@ -20,7 +20,7 @@ scripts:
 $ARGUMENTS
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+在继续之前，你**必须**考虑用户输入（如果不为空）。
 
 ## Pre-Execution Checks
 

@@ -1,5 +1,5 @@
 ---
-name: Snowflake Automation
+name: —列出数据库、模式和表、执行 SQL 语句和管理数据工作流。
 description: "通过 Composio MCP 集成自动执行 Snowflake 数据仓库操作——列出数据库、模式和表、执行 SQL 语句和管理数据工作流。"
 requires:
   mcp:

@@ -1,5 +1,5 @@
 ---
-name: hig-components-status
+name: HIG 状态组件
 description: "HIG 状态组件 — Human Interface Guidelines 状态组件"
 risk: safe
 source: community

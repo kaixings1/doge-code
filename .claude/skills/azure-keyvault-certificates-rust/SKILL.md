@@ -1,6 +1,6 @@
 ---
-name: azure-keyvault-certificates-rust
-description: "Azure Keyvault Certificates Rust — Azure Keyvault Certificates Rust 相关功能和最佳实践"
+name: Azure Keyvault Certificates (Rust)
+description: "Azure Key Vault Certificates Rust — Azure Key Vault Certificates Rust SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -36,7 +36,7 @@ let client = CertificateClient::new(
 )?;
 ```
 
-## Core Operations
+## 核心操作
 
 ### Get Certificate
 

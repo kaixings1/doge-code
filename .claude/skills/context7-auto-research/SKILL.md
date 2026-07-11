@@ -1,5 +1,5 @@
 ---
-name: context7-auto-research
+name: API 自动获取最新库/框架
 description: "通过 Context7 API 自动获取最新库/框架文档供 Claude Code 使用。适用于需要最新文档或有关于 React、Next.js、Prisma 或其他流行库的问题时。"
 risk: unknown
 source: community
@@ -20,7 +20,7 @@ Automatically fetch latest library/framework documentation for Claude Code via C
 npx skills add -g BenedictKing/context7-auto-research
 ```
 
-## Step-by-Step Guide
+## 分步指南
 1. Install the skill using the command above
 2. Configure API key (optional, see GitHub repo for details)
 3. Use naturally in Claude Code conversations

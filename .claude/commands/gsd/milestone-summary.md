@@ -12,10 +12,10 @@ allowed-tools:
 ---
 
 <objective>
-Generate a structured milestone summary for team onboarding and project review. Reads completed milestone artifacts (ROADMAP, REQUIREMENTS, CONTEXT, SUMMARY, VERIFICATION files) and produces a human-friendly overview of what was built, how, and why.
+为团队入职和项目审查生成结构化的里程碑摘要。读取已完成的里程碑工件（ROADMAP、REQUIREMENTS、CONTEXT、SUMMARY、VERIFICATION 文件），生成关于构建内容、方式和原因的人性化概述。
 
-Purpose: Enable new team members to understand a completed project by reading one document and asking follow-up questions.
-Output: MILESTONE_SUMMARY written to `.planning/reports/`, presented inline, optional interactive Q&A.
+目的：使新团队成员能够通过阅读一个文档并提出后续问题来理解已完成的项目。
+输出：MILESTONE_SUMMARY 写入 `.planning/reports/`，内联展示，可选的交互式问答。
 </objective>
 
 <execution_context>

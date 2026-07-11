@@ -1,5 +1,5 @@
 ---
-name: event-sourcing-architect
+name: 事件溯源架构设计
 description: "事件溯源架构设计"
 risk: safe
 source: community

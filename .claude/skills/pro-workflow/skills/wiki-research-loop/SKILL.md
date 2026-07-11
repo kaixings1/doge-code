@@ -31,7 +31,7 @@ seed-queue (pending) → next-seed
 - `wiki.config.md` `auto_research.enabled: false`
 - Wiki `private: true` AND any non-local fetcher selected
 
-## Commands
+## 命令
 
 ```
 node $SKILL_ROOT/scripts/research-loop.js run <slug> [--max-pages N] [--max-depth N] [--budget-usd 0.50] [--fetchers web,arxiv,github]

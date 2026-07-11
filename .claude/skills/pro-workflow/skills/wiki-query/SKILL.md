@@ -3,19 +3,19 @@ name: wiki-query
 description: "Pro Workflow\Skills\Wiki Query — Pro Workflow\Skills\Wiki Query 相关功能和最佳实践"
 ---
 
-# Wiki Query
+# Wiki 查询
 
-FTS5 BM25 retrieval over wiki pages indexed by `wiki-builder`.
+通过 `wiki-builder` 索引的 Wiki 页面上的 FTS5 BM25 检索。
 
-## When to use
+## 何时使用
 
-- Before writing any new wiki page → check coverage first
+- 在编写任何新的 Wiki 页面之前 → 先检查覆盖范围
 - User asks a domain question that may already live in a wiki
 - "Ask the <slug> wiki: <question>"
 - Verifying citations before quoting a claim
 - `SessionStart` auto-load when prompt matches a known wiki topic
 
-## Commands
+## 命令
 
 ```
 node $SKILL_ROOT/scripts/query.js search "<query>" [--wiki <slug>] [--limit 10] [--json]

@@ -1,6 +1,6 @@
 ---
-name: azure-keyvault-secrets-rust
-description: "Azure Keyvault Secrets Rust — Azure Keyvault Secrets Rust 相关功能和最佳实践"
+name: Azure Key Vault Secrets Rust SDK 相关
+description: "Azure Key Vault Secrets Rust — Azure Key Vault Secrets Rust SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -36,7 +36,7 @@ let client = SecretClient::new(
 )?;
 ```
 
-## Core Operations
+## 核心操作
 
 ### Get Secret
 

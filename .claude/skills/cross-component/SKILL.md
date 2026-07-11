@@ -7,7 +7,7 @@ description: "用于分析多服务架构安全问题的技能。涵盖微服务
 
 Analyze how components interact and identify vulnerabilities that span service boundaries.
 
-## Why Cross-Component Analysis Matters
+## 跨组件分析的重要性
 
 Single-component analysis misses:
 - SSRF in frontend reaching internal backend
@@ -15,7 +15,7 @@ Single-component analysis misses:
 - Data leakage through shared databases
 - Privilege escalation via service-to-service calls
 
-## 步骤 1: Map the 架构
+## 步骤 1：映射架构
 
 ### Find Orchestration Configs
 
@@ -49,7 +49,7 @@ grep -E "127\.0\.0\.1:|localhost:" docker-compose.yml supervisord.conf
 ### Generate Service Map
 
 ```markdown
-## Service Topology
+## 服务拓扑
 
 | Service | Port | Exposed | Language | Entry Points |
 |---------|------|---------|----------|--------------|
@@ -57,7 +57,7 @@ grep -E "127\.0\.0\.1:|localhost:" docker-compose.yml supervisord.conf
 | backend | 3000 | ❌ Internal | Flask | /api/* |
 | redis | 6379 | ❌ Internal | - | - |
 
-## Network Diagram
+## 网络图
 
 ```
 Internet → [1337] Next.js → [3000] Flask → [6379] Redis
@@ -66,7 +66,7 @@ Internet → [1337] Next.js → [3000] Flask → [6379] Redis
 ```
 ```
 
-## 步骤 2: Identify Trust Boundaries
+## 步骤 2：识别信任边界
 
 ### Frontend → Backend Trust
 
@@ -88,7 +88,7 @@ grep -rn "fetch\|requests\.\|http\.get" --include="*.ts" --include="*.py" | grep
 grep -rn "SERVICE_TOKEN\|INTERNAL_API_KEY\|X-Internal" --include="*.ts" --include="*.py" --include="*.env*"
 ```
 
-## 步骤 3: Find Cross-Component Attack Paths
+## 步骤 3：查找跨组件攻击路径
 
 ### SSRF → Internal Service
 
@@ -131,12 +131,12 @@ grep -rn "DATABASE_URL\|POSTGRES\|MYSQL\|MONGO" --include="*.env*"
 grep -rn "查询\|execute\|rawQuery" --include="*.ts" --include="*.py"
 ```
 
-## 步骤 4: Document Attack Chains
+## 步骤 4：记录攻击链
 
 ### Chain Template
 
 ```markdown
-## Attack Chain: [Name]
+## 攻击链：[名称]
 
 **Severity**: CRITICAL/HIGH/MEDIUM
 
@@ -215,7 +215,7 @@ Worker Service (internal)
 RCE
 ```
 
-## Checklist
+## 检查清单
 
 - [ ] Mapped all services and their exposed ports
 - [ ] Identified internal-only services (SSRF targets)

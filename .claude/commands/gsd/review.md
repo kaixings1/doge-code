@@ -12,11 +12,10 @@ requires: [config, phase, plan-phase]
 ---
 
 <objective>
-Invoke external AI CLIs (Gemini, Claude, Codex, OpenCode, Qwen Code, Cursor) to independently review phase plans.
-Produces a structured REVIEWS.md with per-reviewer feedback that can be fed back into
-planning via /gsd:plan-phase --reviews.
+调用外部 AI CLI（Gemini、Claude、Codex、OpenCode、Qwen Code、Cursor）独立审查阶段计划。
+生成结构化的 REVIEWS.md，包含每个审查员的反馈，可通过 /gsd:plan-phase --reviews 反馈到规划中。
 
-**Flow:** Detect CLIs → Build review prompt → Invoke each CLI → Collect responses → Write REVIEWS.md
+**流程：** 检测 CLI → 构建审查提示 → 调用每个 CLI → 收集响应 → 写入 REVIEWS.md
 </objective>
 
 <execution_context>

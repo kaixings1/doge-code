@@ -4,10 +4,10 @@ description: 在当前仓库运行完整 Kubernetes Operator 审计（CRD+reconc
 
 # /operator-audit
 
-Run the full audit on a Kubernetes Operator repository:
+在 Kubernetes Operator 仓库上运行完整审计：
 
-1. Validate every CRD YAML against operator-pattern best practices
-2. Lint every Go controller's reconcile function for anti-patterns
+1. 根据 operator 模式最佳实践验证每个 CRD YAML
+2. 检查每个 Go 控制器的 reconcile 函数是否存在反模式
 3. Score the operator against OperatorHub Capability Levels (1-5)
 4. Output a markdown report with pass/fail per check and concrete next steps
 

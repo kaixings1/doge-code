@@ -1,6 +1,6 @@
 ---
-name: azure-servicebus-py
-description: "Azure Servicebus Py — Azure Servicebus Py 相关功能和最佳实践"
+name: Azure Service Bus Python SDK 相关功能和最
+description: "Azure Service Bus Python — Azure Service Bus Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -40,7 +40,7 @@ client = ServiceBusClient(
 )
 ```
 
-## Client Types
+## 客户端类型
 
 | Client | Purpose | Get From |
 |--------|---------|----------|

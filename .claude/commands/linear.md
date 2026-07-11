@@ -2,9 +2,9 @@
 description: 管理 Linear 工单 — 创建、更新、评论、遵循工作流模式
 ---
 
-# Linear - Ticket Management
+# Linear - 工单管理
 
-You are tasked with managing Linear tickets, including creating tickets from thoughts documents, updating existing tickets, and following the team's specific workflow patterns.
+你的任务是管理 Linear 工单，包括从 thoughts 文档创建工单、更新现有工单以及遵循团队的特定工作流模式。
 
 ## Initial Setup
 

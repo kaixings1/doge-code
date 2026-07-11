@@ -1,5 +1,5 @@
 ---
-name: Mistral AI Automation
+name: —管理文件和库、上传文档以进行微调、批处理和 OCR、跟踪微调作业和构建 RAG
 description: "通过 Composio MCP 集成自动执行 Mistral AI 操作——管理文件和库、上传文档以进行微调、批处理和 OCR、跟踪微调作业和构建 RAG 流水线。"
 requires:
   mcp:

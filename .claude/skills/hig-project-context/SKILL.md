@@ -1,5 +1,5 @@
 ---
-name: hig-project-context
+name: HIG 项目上下文
 description: "HIG 项目上下文 — Human Interface Guidelines 项目配置"
 risk: safe
 source: community

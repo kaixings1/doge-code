@@ -1,6 +1,6 @@
 ---
-name: azure-cosmos-ts
-description: "Azure Cosmos Ts — Azure Cosmos Ts 相关功能和最佳实践"
+name: Azure Cosmos DB TypeScript SDK 相关功能
+description: "Azure Cosmos DB TypeScript — Azure Cosmos DB TypeScript SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -62,7 +62,7 @@ const client = new CosmosClient({
 const client = new CosmosClient(process.env.COSMOS_CONNECTION_STRING!);
 ```
 
-## Resource Hierarchy
+## 资源层次结构
 
 ```
 CosmosClient
@@ -73,7 +73,7 @@ CosmosClient
         └── Conflicts
 ```
 
-## Core Operations
+## 核心操作
 
 ### Database & Container 设置
 
@@ -463,7 +463,7 @@ export class ProductService {
 }
 ```
 
-## Related SDKs
+## 相关 SDK
 
 | SDK | Purpose | Install |
 |-----|---------|---------|

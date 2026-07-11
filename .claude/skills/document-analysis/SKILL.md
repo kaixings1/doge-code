@@ -2,7 +2,7 @@
 name: 文档分析
 description: "为分析和模型编写清晰的文档：README 文件、方法论文档、模型卡片、数据字典和 runbook。适用于为可复现性和知识共享记录工作。"
 ---
-# Document Analysis
+# 文档分析 (Document Analysis)
 
 ## 目的
 Write clear documentation for analyses and models that enables reproducibility and knowledge transfer.

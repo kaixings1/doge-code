@@ -1,6 +1,6 @@
 ---
-name: django-perf-review
-description: "Django Perf Review — Django Perf Review 相关功能和最佳实践"
+name: Django 性能审查
+description: "Django 性能审查 — Django 性能审查相关功能和最佳实践"
 allowed-tools: Read, Grep, Glob, Bash, Task
 license: LICENSE
 risk: unknown

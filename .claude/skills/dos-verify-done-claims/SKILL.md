@@ -1,5 +1,5 @@
 ---
-name: dos-verify-done-claims
+name: —切勿相信代理自己的叙述。
 description: "在接受代理的"完成/已推送/已修复"声明前，使用 DOS 内核的 `dos verify` 和 `dos commit-audit` 根据基准真相（git 祖先和提交自身的 diff）进行验证——切勿相信代理自己的叙述。"
 category: quality
 risk: critical
@@ -22,7 +22,7 @@ plugin:
     docs: SKILL.md
 ---
 
-# Verify done-claims against ground truth, not the agent's word
+# 验证完成声明 (Verify Done-Claims)
 
 ## 概述
 
@@ -152,7 +152,7 @@ dos verify --workspace . AUTH AUTH2 --json --no-ci
 - `dos verify` reads git history; in a repo with no commits there is nothing to witness (it will honestly report `source: none`).
 - Stop and ask for clarification if required inputs (a git repo, the `dos` CLI) are missing.
 
-## Security & Safety Notes
+## 安全与安全注意事项
 
 - This skill runs shell commands: installing `dos-kernel` into an isolated
   virtualenv and the read-only

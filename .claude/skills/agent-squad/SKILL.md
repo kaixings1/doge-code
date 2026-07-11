@@ -1,5 +1,5 @@
 ---
-name: agent-squad
+name: 多代理编排小队
 description: 协调多个专业化代理的多代理编排器。
 role: Orchestrator / Agent Panel
 phase: all

@@ -1,5 +1,5 @@
 ---
-name: kubestellar-console
+name: KubeStellar 多集群控制台
 description: "通过 MCP 服务器和 10+ 内置代理技能实现 AI 驱动的多集群 Kubernetes 仪表板"
 category: devops
 risk: critical

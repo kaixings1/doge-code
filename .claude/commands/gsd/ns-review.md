@@ -8,16 +8,16 @@ allowed-tools:
 requires: [code-review, audit-uat, secure-phase, eval-review, ui-review, validate-phase, debug, forensics]
 ---
 
-Route to the appropriate quality / review skill based on the user's intent.
-`gsd-code-review-fix` was absorbed by `gsd-code-review --fix` in #2790.
+根据用户意图路由到适当的质量/审查技能。
+`gsd-code-review-fix` 已通过 #2790 被 `gsd-code-review --fix` 吸收。
 
-| User wants | Invoke |
+| 用户想要 | 调用 |
 |---|---|
-| Review code for quality and correctness | gsd-code-review |
-| Auto-fix code review findings | gsd-code-review --fix |
-| Audit UAT / acceptance testing | gsd-audit-uat |
-| Security review of a phase | gsd-secure-phase |
-| Evaluate AI response quality | gsd-eval-review |
+| 审查代码质量和正确性 | gsd-code-review |
+| 自动修复代码审查发现 | gsd-code-review --fix |
+| 审计 UAT/验收测试 | gsd-audit-uat |
+| 阶段安全审查 | gsd-secure-phase |
+| 评估 AI 响应质量 | gsd-eval-review |
 | Review UI for design and accessibility | gsd-ui-review |
 | Validate phase outputs | gsd-validate-phase |
 | Debug a failing feature or error | gsd-debug |

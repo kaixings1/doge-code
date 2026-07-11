@@ -1,5 +1,5 @@
 ---
-name: certifier-automation
+name: Certifier 自动化
 description: "Certifier 自动化"
 risk: safe
 source: community

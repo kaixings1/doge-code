@@ -1,38 +1,38 @@
 为 UI 组件或可序列化输出生成快照测试。
 
-## Steps
+## 步骤
 
-1. Identify the target component or function from the argument.
-2. Detect the testing framework and snapshot support (Jest snapshots, Vitest, pytest-snapshot).
-3. Analyze the component props or function parameters to determine meaningful test cases.
-4. For each component or function:
-   - Create a snapshot test with default props/arguments.
-   - Create snapshot tests for each significant visual state (loading, error, empty, populated).
-   - Create snapshot tests for responsive variants if applicable.
-5. For React/Vue components, use the appropriate renderer:
-   - `@testing-library/react` with `render` for DOM snapshots.
-   - `react-test-renderer` for tree snapshots if needed.
-6. Run the tests to generate initial snapshots.
-7. List all generated snapshot files and their locations.
+1. 从参数中识别目标组件或函数。
+2. 检测测试框架和快照支持（Jest snapshots、Vitest、pytest-snapshot）。
+3. 分析组件 props 或函数参数以确定有意义的测试用例。
+4. 对于每个组件或函数：
+   - 使用默认 props/参数创建快照测试。
+   - 为每个重要的视觉状态（加载、错误、空、有数据）创建快照测试。
+   - 如果适用，为响应式变体创建快照测试。
+5. 对于 React/Vue 组件，使用适当的渲染器：
+   - 使用 `@testing-library/react` 的 `render` 进行 DOM 快照。
+   - 如果需要，使用 `react-test-renderer` 进行树快照。
+6. 运行测试以生成初始快照。
+7. 列出所有生成的快照文件及其位置。
 
-## Format
+## 格式
 
 ```
-Generated: <N> snapshot tests in <file>
+生成：<N> 个快照测试在 <文件>
 
-Snapshots:
-  - <ComponentName> default rendering
-  - <ComponentName> loading state
-  - <ComponentName> error state
-  - <ComponentName> with data
+快照：
+  - <组件名称> 默认渲染
+  - <组件名称> 加载状态
+  - <组件名称> 错误状态
+  - <组件名称> 带数据
 
-Snapshot file: <path to .snap file>
+快照文件：<.snap 文件路径>
 ```
 
-## Rules
+## 规则
 
-- Snapshot tests should capture meaningful visual states, not implementation details.
-- Avoid snapshotting entire page trees; focus on individual components.
-- Use inline snapshots (`toMatchInlineSnapshot`) for small outputs under 20 lines.
-- Add a comment explaining what each snapshot verifies.
-- Do not snapshot timestamps, random IDs, or other non-deterministic values; use serializers to strip them.
+- 快照测试应捕获有意义的视觉状态，而非实现细节。
+- 避免对整个页面树进行快照；专注于单个组件。
+- 对 20 行以下的小输出使用内联快照（`toMatchInlineSnapshot`）。
+- 添加注释说明每个快照验证的内容。
+- 不要对时间戳、随机 ID 或其他非确定性值进行快照；使用序列化器将其剥离。

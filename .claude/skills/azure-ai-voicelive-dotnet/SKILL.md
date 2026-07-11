@@ -1,6 +1,6 @@
 ---
-name: azure-ai-voicelive-dotnet
-description: "Azure Ai Voicelive Dotnet — Azure Ai Voicelive Dotnet 相关功能和最佳实践"
+name: Azure AI Voice Live .NET SDK 相关功能和最
+description: "Azure AI Voice Live .NET — Azure AI Voice Live .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -53,7 +53,7 @@ AzureKeyCredential credential = new AzureKeyCredential("your-api-key");
 VoiceLiveClient client = new VoiceLiveClient(端点, credential);
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 ```
 VoiceLiveClient
@@ -248,7 +248,7 @@ if (serverEvent is SessionUpdateError error)
 - **Sample Rate**: 24kHz recommended
 - **Channels**: Mono
 
-## Related SDKs
+## 相关 SDK
 
 | SDK | Purpose | Install |
 |-----|---------|---------|

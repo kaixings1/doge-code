@@ -1,5 +1,5 @@
 ---
-name: laravel-security-audit
+name: Laravel 应用的安全审计器。使用 OWASP 标准和 Laravel 安全
 description: "Laravel 应用的安全审计器。使用 OWASP 标准和 Laravel 安全最佳实践分析代码中的漏洞、错误配置和不安全实践。"
 risk: safe
 source: community

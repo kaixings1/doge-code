@@ -1,9 +1,11 @@
 ---
-name: loop-me
-description: "Loop Me — Loop Me 相关功能和最佳实践"
+name: 循环我
+description: "循环我 — 循环我相关功能和最佳实践"
 disable-model-invocation: true
 参数-hint: "A 工作流 to design, or nothing to go find one"
 ---
+
+# Loop Me
 
 运行一个有状态的 `/grilling` 会话，其唯一输出是**工作流**规范。使用追问纪律——不懈，一次一个问题，每个附带一个推荐答案——针对下面的词汇和目标。随着追问解决问题，创建、编辑和删除规范。
 

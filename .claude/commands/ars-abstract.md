@@ -3,7 +3,7 @@ description: ARS 学术论文 `abstract-only` 模式 — 双语摘要 + 关键�
 model: sonnet
 ---
 
-Trigger the `academic-paper` skill in `abstract-only` mode. Produces a bilingual (zh-TW + EN) abstract plus keywords. Fidelity spectrum, medium oversight. Carries the v3.6.7 `report_compiler_agent` PATTERN PROTECTION layer when invoked through the pipeline.
+以 `摘要仅` 模式触发 `academic-paper` 技能。生成双语（繁体中文 + 英文）摘要和关键词。保真度谱系，中等监督需求。通过流水线调用时携带 v3.6.7 `report_compiler_agent` 模式保护层。
 
-Mode reference: `MODE_REGISTRY.md` § academic-paper.
-Skill entry: `academic-paper/SKILL.md`.
+模式参考：`MODE_REGISTRY.md` § academic-paper。
+技能入口：`academic-paper/SKILL.md`。

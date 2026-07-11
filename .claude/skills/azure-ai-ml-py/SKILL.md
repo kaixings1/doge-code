@@ -1,5 +1,5 @@
 ---
-name: azure-ai-ml-py
+name: Azure AI 机器学习 (Python)
 description: "Azure AI 机器学习 (Python)"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: interview-coach
+name: 面试教练
 description: "面试教练 — 技术面试准备和模拟"
 risk: safe
 source: community

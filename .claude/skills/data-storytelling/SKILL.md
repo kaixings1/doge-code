@@ -1,5 +1,5 @@
 ---
-name: data-storytelling
+name: 数据讲故事
 description: "数据讲故事——将数据分析转化为引人入胜的叙述。选择正确的可视化方式、构建论证和设计仪表板。适用于向利益相关者呈现数据。"
 risk: safe
 source: community
@@ -17,54 +17,54 @@ date_added: "2026-02-27"
 
 ## 说明
 
-- Clarify goals, constraints, and required inputs.
-- Apply relevant 最佳实践 and validate outcomes.
-- Provide actionable steps and verification.
-- If detailed 示例 are required, open `resources/implementation-playbook.md`.
+- 明确目标、约束和所需输入。
+- 应用相关最佳实践并验证结果。
+- 提供可操作的步骤和验证方法。
+- 如需详细示例，请打开 `resources/implementation-playbook.md`。
 
 ## 使用此技能的场景
 
-- Presenting analytics to executives
-- Creating quarterly business reviews
-- Building investor presentations
-- Writing data-driven reports
-- Communicating insights to non-technical audiences
-- Making recommendations based on data
+- 向高管展示分析结果
+- 创建季度业务回顾
+- 构建投资者演示
+- 编写数据驱动的报告
+- 向非技术受众传达洞察
+- 基于数据提出建议
 
-## Core Concepts
+## 核心概念
 
-### 1. Story Structure
-
-```
-设置 → Conflict → Resolution
-
-设置: Context and baseline
-Conflict: The problem or opportunity
-Resolution: Insights and recommendations
-```
-
-### 2. Narrative Arc
+### 1. 故事结构
 
 ```
-1. Hook: Grab attention with surprising insight
-2. Context: Establish the baseline
-3. Rising Action: Build through data points
-4. Climax: The key insight
-5. Resolution: Recommendations
-6. Call to Action: Next steps
+设定 → 冲突 → 解决方案
+
+设定: 背景和基线
+冲突: 问题或机会
+解决方案: 洞察和建议
 ```
 
-### 3. Three Pillars
+### 2. 叙事弧线
 
-| Pillar        | 目的  | Components                       |
-| ------------- | -------- | -------------------------------- |
-| **Data**      | Evidence | Numbers, trends, comparisons     |
-| **Narrative** | Meaning  | Context, causation, implications |
-| **Visuals**   | Clarity  | Charts, diagrams, highlights     |
+```
+1. 钩子: 用令人惊讶的洞察抓住注意力
+2. 背景: 建立基线
+3. 上升动作: 通过数据点构建
+4. 高潮: 关键洞察
+5. 解决方案: 建议
+6. 行动号召: 下一步
+```
 
-## Story Frameworks
+### 3. 三大支柱
 
-### Framework 1: The Problem-Solution Story
+| 支柱    | 目的    | 构成要素                       |
+| ---------- | ------- | -------------------------------- |
+| **数据**   | 证据    | 数字、趋势、比较                 |
+| **叙事**   | 意义    | 背景、因果关系、含义             |
+| **可视化** | 清晰性  | 图表、示意图、高亮               |
+
+## 故事框架
+
+### 框架 1：问题-解决方案故事
 
 ```markdown
 # Customer Churn Analysis
@@ -110,7 +110,7 @@ are 4x more likely to churn.
 Approve $50K budget for onboarding automation.
 ```
 
-### Framework 2: The Trend Story
+### 框架 2：趋势故事
 
 ```markdown
 # Q4 Performance Analysis
@@ -149,7 +149,7 @@ Double down on hybrid model.
 Target: $1.8M MRR by Q2.
 ```
 
-### Framework 3: The Comparison Story
+### 框架 3：对比故事
 
 ```markdown
 # Market Opportunity Analysis
@@ -203,7 +203,7 @@ Enter EMEA in Year 2 with localization ready.
 - Payment: Multi-currency from day 1
 ```
 
-## Visualization Techniques
+## 可视化技巧
 
 ### Technique 1: Progressive Reveal
 
@@ -274,7 +274,7 @@ ax.set_title('Revenue Growth Story', fontsize=14, fontweight='bold')
 ax.legend()
 ```
 
-## Presentation Templates
+## 演示模板
 
 ### Template 1: Executive Summary Slide
 
@@ -388,7 +388,7 @@ CPC up 35% while conversion flat.
 - Reduce time-to-value to < 7 days
 ```
 
-## Writing Techniques
+## 写作技巧
 
 ### Headlines That Work
 

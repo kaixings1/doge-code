@@ -10,11 +10,10 @@ requires: [review]
 ---
 
 <objective>
-Create a clean branch suitable for pull requests by filtering out .planning/ commits
-from the current branch. Reviewers see only code changes, not GSD planning artifacts.
+通过从当前分支过滤掉 .planning/ 提交来创建适合拉取请求的干净分支。
+审查者只能看到代码变更，看不到 GSD 规划工件。
 
-This solves the problem of PR diffs being cluttered with PLAN.md, SUMMARY.md, STATE.md
-changes that are irrelevant to code review.
+这解决了 PR diff 被与代码审查无关的 PLAN.md、SUMMARY.md、STATE.md 变更所杂乱的问题。
 </objective>
 
 <execution_context>

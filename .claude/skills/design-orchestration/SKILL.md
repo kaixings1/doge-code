@@ -1,5 +1,5 @@
 ---
-name: design-orchestration
+name: Design Orchestration 相关功能和最佳实践
 description: "Design Orchestration — Design Orchestration 相关功能和最佳实践"
 risk: unknown
 source: community

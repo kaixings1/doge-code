@@ -1,5 +1,5 @@
 ---
-name: m365-agents-dotnet
+name: M365 Agents Dotnet 相关功能和最佳实践
 description: "M365 Agents Dotnet — M365 Agents Dotnet 相关功能和最佳实践"
 risk: unknown
 source: community

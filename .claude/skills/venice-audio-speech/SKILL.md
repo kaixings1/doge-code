@@ -1,7 +1,6 @@
 ---
-name: venice-audio-speech
-description: "Venice Audio Speech — Venice Audio Speech 相关功能和最佳实践"
-  Text-to-speech models, voices, formats, and streaming via Venice.ai. Useful for narration, voiceover, and conversational agent voices.
+name: Venice 音频语音
+description: "Venice 音频语音 — 通过 Venice.ai 进行文本转语音模型、语音、格式和流式处理。适用于旁白、配音和对话代理语音。"
 triggers:
   - "tts"
   - "venice speech"

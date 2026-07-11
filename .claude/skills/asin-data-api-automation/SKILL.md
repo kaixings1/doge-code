@@ -1,5 +1,5 @@
 ---
-name: asin-data-api-automation
+name: ASIN 数据 API 自动化
 description: "ASIN 数据 API 自动化"
 risk: safe
 source: community

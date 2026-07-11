@@ -1,6 +1,6 @@
 ---
-name: leiloeiro-ia
-description: "Leiloeiro Ia — Leiloeiro Ia 相关功能和最佳实践"
+name: 拍卖师 AI
+description: "拍卖师 AI — 拍卖师 AI 相关功能和最佳实践"
 risk: safe
 source: community
 date_added: '2026-03-06'

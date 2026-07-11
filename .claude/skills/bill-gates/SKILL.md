@@ -1,5 +1,5 @@
 ---
-name: bill-gates
+name: AI 驱动的比尔·盖茨思维模式模拟器
 description: "AI 驱动的比尔·盖茨思维模式模拟器——系统思维、深度阅读、全球健康和清洁技术创新。"
 risk: safe
 source: community

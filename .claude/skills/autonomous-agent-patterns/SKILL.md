@@ -1,5 +1,5 @@
 ---
-name: autonomous-agent-patterns
+name: 自主智能体模式
 description: "自主智能体模式"
 risk: safe
 source: community

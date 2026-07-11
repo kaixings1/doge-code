@@ -1,5 +1,5 @@
 ---
-name: find-bugs
+name: Find Bugs 相关功能和最佳实践
 description: "Find Bugs — Find Bugs 相关功能和最佳实践"
 risk: unknown
 source: community

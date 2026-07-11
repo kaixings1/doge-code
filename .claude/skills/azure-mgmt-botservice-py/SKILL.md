@@ -1,6 +1,6 @@
 ---
-name: azure-mgmt-botservice-py
-description: "Azure Mgmt Botservice Py — Azure Mgmt Botservice Py 相关功能和最佳实践"
+name: Azure Bot Service 管理 Python SDK 相关功
+description: "Azure Management Bot Service Python — Azure Bot Service 管理 Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -280,7 +280,7 @@ for conn in connections:
     print(f"Connection: {conn.name}")
 ```
 
-## Client Operations
+## 客户端操作
 
 | 操作 | Method |
 |-----------|--------|

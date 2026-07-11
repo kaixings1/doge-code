@@ -1,12 +1,12 @@
 ---
-name: team
+name: 团队协作技能。生成 N 个协调的代理，在共享任务列表上协作。支持执行器
 description: "Team — 团队协作技能。生成 N 个协调的代理，在共享任务列表上协作。支持执行器、调试器、设计者、Codex、Gemini 等代理类型。包含团队计划→PRD→执行→验证→修复的流水线。"
 参数-hint: "[N:代理类型] [ralph] <任务描述>"
 aliases: []
 level: 4
 ---
 
-# Team Skill
+# 团队
 
 Spawn N coordinated agents working on a shared task list using Claude Code's implicit agent team. Claude Code 2.1.178+ removed native `TeamCreate`/`TeamDelete`; with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, each 会话 has one implicit team and teammates are spawned directly with the Agent/Task tool using distinct `name` values. This skill still preserves OMC's legacy tmux/CLI worker orchestration where documented (`omc team` / `/omc-teams`).
 

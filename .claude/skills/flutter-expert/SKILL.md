@@ -1,10 +1,12 @@
 ---
-name: flutter-expert
+name: Flutter 专家
 description: "Flutter 专家 — Flutter 专家相关功能和最佳实践 — 专精于高性能、多平台 Flutter 应用开发，涵盖 Flutter 3.x+、Dart 3.x 及全面的多平台开发能力。"
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
+
+# Flutter 专家
 
 ## 何时使用此技能
 

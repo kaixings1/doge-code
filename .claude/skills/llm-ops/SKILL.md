@@ -1,5 +1,5 @@
 ---
-name: llm-ops
+name: LLM 运维
 description: "LLM 运维——RAG、嵌入、向量数据库、微调、高级提示工程、LLM 成本、质量评估和生产 AI 架构。"
 risk: safe
 source: community

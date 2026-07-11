@@ -1,5 +1,5 @@
 ---
-name: helpwise-automation
+name: Helpwise 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Helpwise 任务。"
 requires:
   mcp: [rube]

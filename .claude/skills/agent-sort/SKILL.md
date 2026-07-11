@@ -1,5 +1,5 @@
 ---
-name: agent-sort
+name: 代理代码排序重构
 description: AI代理驱动的代码排序和重构工具
 ---
 

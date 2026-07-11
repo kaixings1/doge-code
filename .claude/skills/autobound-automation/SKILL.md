@@ -1,5 +1,5 @@
 ---
-name: autobound-automation
+name: Autobound 自动化
 description: "Autobound 自动化"
 risk: safe
 source: community

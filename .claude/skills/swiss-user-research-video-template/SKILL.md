@@ -1,8 +1,6 @@
 ---
-name: swiss-user-research-video-template
-description: "Swiss User Research Video Template — Swiss User Research Video Template 相关功能和最佳实践"
-  Swiss-style user-research narrative template in warm-paper editorial aesthetics.
-  Use when users ask for a premium research deck or story-first live artifact with
+name: 瑞士用户研究视频模板
+description: "瑞士用户研究视频模板 — 瑞士用户研究视频模板相关功能和最佳实践，采用暖纸编辑美学的瑞士风格用户研究叙事模板"
   minimalist typography, high-clarity layout, subtle motion, donut breakdowns,
   and keyboard/click navigation across slides in a single HTML file.
 triggers:
@@ -35,13 +33,13 @@ od:
     - file_write
 ---
 
-# Swiss User Research Video Template
+# Swiss 用户研究视频模板
 
 A premium Swiss-editorial user research template for narrative-heavy live artifacts.
 The visual language is warm paper, strict spacing rhythm, thin rules, and restrained
 micro-interactions that keep attention on the story.
 
-## Resource map
+## 资源映射
 
 ```text
 swiss-user-research-video-template/
@@ -69,7 +67,7 @@ swiss-user-research-video-template/
 5. Keep HTML self-contained (inline CSS/JS), with no external framework dependencies.
 6. Validate using `references/checklist.md` before output.
 
-## Output contract
+## 输出契约
 
 Emit one concise orientation sentence and then a single HTML artifact:
 

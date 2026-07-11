@@ -1,46 +1,46 @@
 简化代码以提高可读性和可维护性。
 
-## Steps
+## 步骤
 
-### 1. Reduce Nesting
-- Convert nested if/else chains to early returns (guard clauses).
-- Replace nested loops with flatMap, reduce, or helper functions.
-- Extract deeply nested callbacks into named functions.
-- Target: maximum 3 levels of indentation in any function.
+### 1. 减少嵌套
+- 将嵌套的 if/else 链转换为提前返回（守卫子句）。
+- 用 flatMap、reduce 或辅助函数替换嵌套循环。
+- 将深度嵌套的回调提取为命名函数。
+- 目标：任何函数中最多 3 层缩进。
 
-### 2. Extract Functions
-- Identify code blocks with a comment explaining what they do. The comment is a sign the block should be a function with that name.
-- Extract repeated logic into shared functions.
-- Each function should do one thing. If you need "and" to describe it, split it.
-- Name functions to describe what they return or what side effect they perform.
+### 2. 提取函数
+- 识别带有注释解释其功能的代码块。注释表明该块应成为一个以该注释命名的函数。
+- 将重复的逻辑提取到共享函数中。
+- 每个函数应做一件事。如果你需要用"并且"来描述它，请拆分它。
+- 命名函数以描述其返回内容或执行的副作用。
 
-### 3. Improve Naming
-- Rename single-letter variables (except loop counters `i`, `j`, `k`).
-- Replace abbreviations with full words: `usr` -> `user`, `btn` -> `button`, `cfg` -> `config`.
-- Boolean variables should read as questions: `isValid`, `hasPermission`, `canEdit`.
-- Functions that return booleans should start with `is`, `has`, `can`, `should`.
+### 3. 改进命名
+- 重命名单字母变量（循环计数器 `i`、`j`、`k` 除外）。
+- 用完整单词替换缩写：`usr` -> `user`、`btn` -> `button`、`cfg` -> `config`。
+- 布尔变量应读作问题：`isValid`、`hasPermission`、`canEdit`。
+- 返回布尔值的函数应以 `is`、`has`、`can`、`should` 开头。
 
-### 4. Remove Duplication
-- Identify repeated patterns across the codebase using search.
-- Extract shared logic into utility functions, hooks, or base classes.
-- Use parameterization instead of copy-paste with minor changes.
-- Tolerate duplication across module boundaries if coupling would be worse.
+### 4. 消除重复
+- 使用搜索识别代码库中重复的模式。
+- 将共享逻辑提取到工具函数、钩子或基类中。
+- 使用参数化而不是带有微小更改的复制粘贴。
+- 如果耦合会更糟，容忍跨模块边界的重复。
 
-### 5. Simplify Conditionals
-- Replace complex boolean expressions with descriptive variables.
-- Use lookup tables or maps instead of long switch/if-else chains.
-- Replace ternary chains with if/else or early returns.
-- Use optional chaining and nullish coalescing where appropriate.
+### 5. 简化条件
+- 用描述性变量替换复杂的布尔表达式。
+- 使用查找表或映射替换长的 switch/if-else 链。
+- 用 if/else 或提前返回替换三元链。
+- 在适当的地方使用可选链和空值合并。
 
-### 6. Verify
-- Run the full test suite after each simplification.
-- Compare behavior before and after. Simplification should not change behavior.
-- Check that the code is actually more readable, not just shorter.
+### 6. 验证
+- 每次简化后运行完整的测试套件。
+- 比较前后的行为。简化不应改变行为。
+- 检查代码是否确实更易读，而不仅仅是更短。
 
-## Rules
+## 规则
 
-- Simpler means easier to understand on first read, not fewer lines.
-- Do not sacrifice clarity for cleverness. Explicit beats implicit.
-- Preserve all existing behavior. This is refactoring, not rewriting.
-- If a function is complex because the domain is complex, add documentation rather than oversimplifying.
-- Make one kind of simplification per commit for clean diffs.
+- 更简单意味着首次阅读时更容易理解，而非行数更少。
+- 不要为了巧妙而牺牲清晰度。显式优于隐式。
+- 保留所有现有行为。这是重构，而非重写。
+- 如果函数因领域复杂而复杂，请添加文档而非过度简化。
+- 每次提交做一种简化，以保持 diff 清晰。

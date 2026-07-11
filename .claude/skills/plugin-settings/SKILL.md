@@ -1,5 +1,5 @@
 ---
-name: plugin-settings
+name: 插件设置管理
 description: 插件设置管理：.local.md 配置文件、YAML frontmatter 解析、按项目插件配置和插件状态持久化。
 version: 0.1.0
 ---

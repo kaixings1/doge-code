@@ -331,7 +331,16 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
     const keys = await fetchLatestKeys()
     if (keys.length === 0) {
       log('ERROR', '全量更新失败：获取 Key 为空')
-      return { type: 'text', value: `${timeStamp} ❌ 无法从 GitHub 获取最新 Key，请检查网络连接。\n📋 详情请查看 updateapikey.log` }
+      return { type: 'text', value: `${timeStamp} ❌ 无法从 GitHub 获取最新 Key。\n\n` +
+        `可能原因:\n` +
+        `  1. 原仓库 alistaitsacle/free-llm-api-keys 已被 GitHub 封禁\n` +
+        `  2. 你的网络环境无法访问 GitHub (DNS 被劫持)\n` +
+        `  3. 项目方可能已更换仓库地址\n\n` +
+        `建议:\n` +
+        `  • 过一两天再试，项目方可能已建新仓库\n` +
+        `  • 关注官网 https://aiapiv2.pekpik.com 获取最新动态\n` +
+        `  • 关注 X/Twitter @getkeyway 获取 Key 投放通知\n` +
+        `📋 详情请查看 updateapikey.log` }
     }
 
     let output = `✅ 从 GitHub 获取到 ${keys.length} 个免费 Key，开始逐串行测试可用性...\n`
@@ -407,7 +416,16 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
     const keys = await fetchLatestKeys()
     if (keys.length === 0) {
       log('ERROR', `free${idx} 更新失败：获取 Key 为空`)
-      return { type: 'text', value: `${timeStamp} ❌ 无法从 GitHub 获取最新 Key。\n📋 详情请查看 updateapikey.log` }
+      return { type: 'text', value: `${timeStamp} ❌ 无法从 GitHub 获取最新 Key。\n\n` +
+        `可能原因:\n` +
+        `  1. 原仓库 alistaitsacle/free-llm-api-keys 已被 GitHub 封禁\n` +
+        `  2. 你的网络环境无法访问 GitHub (DNS 被劫持)\n` +
+        `  3. 项目方可能已更换仓库地址\n\n` +
+        `建议:\n` +
+        `  • 过一两天再试，项目方可能已建新仓库\n` +
+        `  • 关注官网 https://aiapiv2.pekpik.com 获取最新动态\n` +
+        `  • 关注 X/Twitter @getkeyway 获取 Key 投放通知\n` +
+        `📋 详情请查看 updateapikey.log` }
     }
 
     // free5 对应 keys[0]
@@ -468,8 +486,11 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
 
     output += '\n用法:\n'
     output += '  /updateapikey        - 查看当前状态\n'
-    output += '  /updateapikey all    - 从 GitHub 拉取最新 Key，全部覆盖更新 free1~freeN\n'
+    output += '  /updateapikey all    - 从 GitHub 拉取最新 Key，全部覆盖更新 free5~freeN\n'
     output += '  /updateapikey free5  - 仅更新指定编号的配置文件\n'
+    output += '\n⚠️ 注意: 原仓库 alistaitsacle/free-llm-api-keys 已被 GitHub 封禁\n'
+    output += '   如果拉取失败，请过一两天再试，项目方可能已建新仓库\n'
+    output += '   关注官网 https://aiapiv2.pekpik.com 或 X @getkeyway\n'
     output += '\n📋 详细日志已写入 updateapikey.log\n'
 
     return { type: 'text', value: timeStamp + '\n' + output }

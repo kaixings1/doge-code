@@ -1,6 +1,6 @@
 ---
-name: azure-appconfiguration-java
-description: "Azure Appconfiguration Java — Azure Appconfiguration Java 相关功能和最佳实践"
+name: Azure App Configuration Java SDK 相关
+description: "Azure App Configuration Java — Azure App Configuration Java SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -55,7 +55,7 @@ AZURE_APPCONFIG_CONNECTION_STRING=端点=https://<store>.azconfig.io;Id=<id>;Sec
 AZURE_APPCONFIG_ENDPOINT=https://<store>.azconfig.io
 ```
 
-## Client Creation
+## 客户端创建
 
 ### With Connection String
 

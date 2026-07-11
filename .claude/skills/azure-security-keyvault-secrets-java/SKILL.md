@@ -1,5 +1,5 @@
 ---
-name: azure-security-keyvault-secrets-java
+name: 指导 Java 开发者使用 Azure Key Vault Secrets 客户端库管理密钥。
 description: "指导 Java 开发者使用 Azure Key Vault Secrets 客户端库管理密钥。"
 risk: unknown
 source: community
@@ -20,7 +20,7 @@ Securely store and manage secrets like passwords, API keys, and connection strin
 </dependency>
 ```
 
-## Client Creation
+## 客户端创建
 
 ```java
 import com.azure.security.keyvault.secrets.SecretClient;
@@ -350,7 +350,7 @@ secretClient.setSecret(new KeyVaultSecret("cert-password", "CertP@ss!")
         .setTags(Map.of("certificate", "my-cert"))));
 ```
 
-## Trigger Phrases
+## 触发短语
 
 - "Key Vault secrets Java", "secret management Java"
 - "store password", "store API key", "connection string"

@@ -1,5 +1,5 @@
 ---
-name: clean-code
+name: 此技能体现了 Robert C. Martin（Uncle Bob）的"Clea
 description: "此技能体现了 Robert C. Martin（Uncle Bob）的"Clean Code"原则。用于将"能用的代码"转变为"干净的代码"。"
 risk: safe
 source: "ClawForge (https://github.com/jackjin1997/ClawForge)"

@@ -1,5 +1,5 @@
 ---
-name: anova-analysis
+name: 方差分析 (ANOVA)
 description: "方差分析"
 risk: safe
 source: community

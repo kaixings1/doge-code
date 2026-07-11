@@ -1,5 +1,5 @@
 ---
-name: fal-3d
+name: 基于 FAL AI 的 3D 内容生成
 description: "FAL 3D — 基于 FAL AI 的 3D 内容生成"
 risk: unknown
 source: community

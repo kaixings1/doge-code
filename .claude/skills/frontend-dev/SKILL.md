@@ -1,5 +1,5 @@
 ---
-name: frontend-dev
+name: 前端开发
 description: "前端开发 — 前端开发相关功能和最佳实践"
   使用 MiniMax API 实现具有电影级动画、AI 生成媒体和生成艺术的全栈前端。适用于英雄页面和展示站点。
 triggers:

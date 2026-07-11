@@ -1,3 +1,8 @@
+---
+name: Claude in Chrome 故障排除
+description: 诊断和修复 Claude in Chrome MCP 扩展连接问题。
+---
+
 # Claude in Chrome 故障排除
 
 Diagnose and fix Claude in Chrome MCP extension connectivity issues.
@@ -12,7 +17,7 @@ Diagnose and fix Claude in Chrome MCP extension connectivity issues.
 - After updating Claude Code or Claude.app
 - When switching between Claude Code CLI and Claude.app (Cowork)
 
-## What It Does
+## 功能说明
 
 - Explains the Claude.app vs Claude Code native host conflict
 - Provides toggle script to switch between the two

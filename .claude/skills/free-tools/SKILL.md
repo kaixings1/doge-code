@@ -1,5 +1,5 @@
 ---
-name: free-tools
+name: 为营销目的规划、评估或构建免费工具：潜在客户生成、SEO 价值或品牌曝光
 description: "为营销目的规划、评估或构建免费工具：潜在客户生成、SEO 价值或品牌曝光。触发词：工程即营销、免费工具、营销工具、计算器、生成器、互动工具、ROI 计算器、评分工具、审计工具。"
 metadata:
   version: 2.0.0
@@ -161,7 +161,7 @@ Rate each factor 1-5:
 
 ---
 
-## Task-Specific Questions
+## 任务相关问题
 
 1. What existing tools does your audience use for workarounds?
 2. How do you currently generate leads?

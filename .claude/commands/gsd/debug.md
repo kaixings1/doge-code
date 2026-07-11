@@ -11,20 +11,20 @@ allowed-tools:
 ---
 
 <objective>
-Debug issues using scientific method with subagent isolation.
+使用科学方法和子智能体隔离进行调试。
 
-**Orchestrator role:** Gather symptoms, spawn gsd-debugger agent, handle checkpoints, spawn continuations.
+**编排器角色：** 收集症状、生成 gsd-debugger 智能体、处理检查点、生成续接。
 
-**Flags:**
-- `--diagnose` — Diagnose only. Returns a Root Cause Report without applying a fix.
+**标志：**
+- `--diagnose` — 仅诊断。返回根本原因报告，不应用修复。
 
-**Subcommands:** `list` · `status <slug>` · `continue <slug>`
+**子命令：** `list` · `status <slug>` · `continue <slug>`
 </objective>
 
 <available_agent_types>
-Valid GSD subagent types (use exact names — do not fall back to 'general-purpose'):
-- gsd-debug-session-manager — manages debug checkpoint/continuation loop in isolated context
-- gsd-debugger — investigates bugs using scientific method
+有效的 GSD 子智能体类型（使用确切名称——不要回退到 'general-purpose'）：
+- gsd-debug-session-manager — 在隔离上下文中管理调试检查点/续接循环
+- gsd-debugger — 使用科学方法调查错误
 </available_agent_types>
 
 <execution_context>
@@ -32,21 +32,21 @@ Valid GSD subagent types (use exact names — do not fall back to 'general-purpo
 </execution_context>
 
 <context>
-User's input: $ARGUMENTS
+用户输入：$ARGUMENTS
 
-Parse subcommands and flags from $ARGUMENTS BEFORE the active-session check:
-- If $ARGUMENTS starts with "list": SUBCMD=list, no further args
-- If $ARGUMENTS starts with "status ": SUBCMD=status, SLUG=remainder (trim whitespace)
-- If $ARGUMENTS starts with "continue ": SUBCMD=continue, SLUG=remainder (trim whitespace)
-- If $ARGUMENTS contains `--diagnose`: SUBCMD=debug, diagnose_only=true, strip `--diagnose` from description
-- Otherwise: SUBCMD=debug, diagnose_only=false
+在活动会话检查之前从 $ARGUMENTS 解析子命令和标志：
+- 如果 $ARGUMENTS 以 "list" 开头：SUBCMD=list，无更多参数
+- 如果 $ARGUMENTS 以 "status " 开头：SUBCMD=status，SLUG=剩余部分（去除空白）
+- 如果 $ARGUMENTS 以 "continue " 开头：SUBCMD=continue，SLUG=剩余部分（去除空白）
+- 如果 $ARGUMENTS 包含 `--diagnose`：SUBCMD=debug，diagnose_only=true，从描述中移除 `--diagnose`
+- 否则：SUBCMD=debug，diagnose_only=false
 
-Check for active sessions (used for non-list/status/continue flows):
+检查活动会话（用于非 list/status/continue 流程）：
 ```bash
 ls .planning/debug/*.md 2>/dev/null | grep -v resolved | head -5
 ```
 </context>
 
 <process>
-Execute end-to-end.
+端到端执行。
 </process>

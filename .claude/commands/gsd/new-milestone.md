@@ -11,18 +11,18 @@ allowed-tools:
 requires: [new-project, phase, plan-phase]
 ---
 <objective>
-Start a new milestone: questioning → research (optional) → requirements → roadmap.
+启动新里程碑：提问 → 研究（可选）→ 需求 → 路线图。
 
-Brownfield equivalent of new-project. Project exists, PROJECT.md has history. Gathers "what's next", updates PROJECT.md, then runs requirements → roadmap cycle.
+Brownfield 版本的 new-project。项目存在，PROJECT.md 有历史记录。收集"下一步是什么"，更新 PROJECT.md，然后运行需求 → 路线图循环。
 
-**Creates/Updates:**
-- `.planning/PROJECT.md` — updated with new milestone goals
-- `.planning/research/` — domain research (optional, NEW features only)
-- `.planning/REQUIREMENTS.md` — scoped requirements for this milestone
-- `.planning/ROADMAP.md` — phase structure (continues numbering)
-- `.planning/STATE.md` — reset for new milestone
+**创建/更新：**
+- `.planning/PROJECT.md` — 以新的里程碑目标更新
+- `.planning/research/` — 领域研究（可选，仅新功能）
+- `.planning/REQUIREMENTS.md` — 此里程碑的范围需求
+- `.planning/ROADMAP.md` — 阶段结构（继续编号）
+- `.planning/STATE.md` — 为新里程碑重置
 
-**After:** `/gsd:plan-phase [N]` to start execution.
+**之后：** `/gsd:plan-phase [N]` 开始执行。
 </objective>
 
 <execution_context>

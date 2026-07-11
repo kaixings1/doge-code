@@ -1,5 +1,5 @@
 ---
-name: lookdev-auto
+name: 自动化视觉调优
 description: "自动化视觉调优：视觉或视频模型在循环中对渲染变体进行评级。将多个标记变体渲染为一个工件，要求模型评分并建议更佳值，渲染建议，要求选择最佳，重复直到良好——模型是眼睛，您运行循环。"
 risk: safe
 source: community

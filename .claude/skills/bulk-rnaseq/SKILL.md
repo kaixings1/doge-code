@@ -1,5 +1,5 @@
 ---
-name: bulk-rnaseq
+name: Bulk Rnaseq 相关功能和最佳实践
 description: "Bulk Rnaseq — Bulk Rnaseq 相关功能和最佳实践"
 license: MIT
 metadata: {"version": "1.0", "skill-author": "K-Dense Inc."}
@@ -18,7 +18,7 @@ This skill orchestrates a complete, **defensible** bulk RNA-seq differential-exp
 
 The pipeline is: **FastQC/trim → align/quant (STAR/Salmon) → counts → DE (pydeseq2) → enrichment (pathway-enrichment) → figures**.
 
-## When to Use This Skill
+## 何时使用此技能
 
 使用此技能当 the user wants to:
 - Go from FASTQ files (or a sequencing run) to differentially expressed genes and pathways.

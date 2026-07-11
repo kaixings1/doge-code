@@ -1,6 +1,6 @@
 ---
-name: azure-identity-dotnet
-description: "Azure Identity Dotnet — Azure Identity Dotnet 相关功能和最佳实践"
+name: Azure Identity .NET SDK 相关功能和最佳实践
+description: "Azure Identity .NET — Azure Identity .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -188,7 +188,7 @@ TokenCredential credential = builder.Environment.IsProduction()
     : new DefaultAzureCredential();
 ```
 
-## Sovereign Clouds
+## 主权云
 
 ```csharp
 var credential = new DefaultAzureCredential(
@@ -321,7 +321,7 @@ Supported Azure services:
 
 All credential implementations are thread-safe. A single credential instance can be safely shared across multiple clients and threads.
 
-## Related SDKs
+## 相关 SDK
 
 | SDK | Purpose | Install |
 |-----|---------|---------|

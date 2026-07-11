@@ -1,5 +1,5 @@
 ---
-name: azure-ai-formrecognizer-java
+name: Azure AI 表单识别 (Java)
 description: "Azure AI 表单识别 (Java)"
 risk: safe
 source: community

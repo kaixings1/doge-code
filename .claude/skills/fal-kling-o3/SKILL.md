@@ -1,5 +1,5 @@
 ---
-name: fal-kling-o3
+name: FAL 平台的 Kling O3 模型
 description: "FAL Kling O3 — FAL 平台的 Kling O3 模型"
 risk: unknown
 source: community

@@ -1,17 +1,17 @@
 ---
-name: c4-context
+name: C4 上下文级文档专家：创建高层系统上下文图，记录用户画像、用户旅程、系统特性和外部依赖。
 description: C4 上下文级文档专家：创建高层系统上下文图，记录用户画像、用户旅程、系统特性和外部依赖。
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
 
-# C4 Context Level: System Context
+# C4 上下文层级：系统上下文
 
 ## 使用此技能的场景
 
-- Working on c4 context level: system context tasks or workflows
-- Needing guidance, best practices, or checklists for c4 context level: system context
+- 处理 c4 上下文层级：系统上下文任务或工作流时
+- 需要 c4 上下文层级：系统上下文的指导、最佳实践或检查清单时
 
 ## 不要使用此技能的场景
 
@@ -125,13 +125,13 @@ C4Context
 - "Analyze system documentation and create comprehensive context documentation"
 - "Map user journeys for all key features including programmatic users"
 
-## Key Distinctions
+## 关键区别
 
 - **vs C4-Container agent**: Provides high-level system view; Container agent focuses on 部署 architecture
 - **vs C4-Component agent**: Focuses on system context; Component agent focuses on logical component structure
 - **vs C4-Code agent**: Provides stakeholder-friendly overview; Code agent provides technical code details
 
-## Output Examples
+## 输出示例
 
 When creating context documentation, provide:
 

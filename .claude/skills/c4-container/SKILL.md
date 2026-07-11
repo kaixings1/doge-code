@@ -1,17 +1,17 @@
 ---
-name: c4-container
+name: C4 容器级文档专家。
 description: C4 容器级文档专家。
 risk: unknown
 source: community
 date_added: '2026-02-27'
 ---
 
-# C4 Container Level: System 部署
+# C4 容器层级：系统部署
 
 ## 使用此技能的场景
 
-- Working on c4 container level: system 部署 tasks or workflows
-- Needing guidance, best practices, or checklists for c4 container level: system 部署
+- 处理 c4 容器层级：系统部署任务或工作流时
+- 需要 c4 容器层级：系统部署的指导、最佳实践或检查清单时
 
 ## 不要使用此技能的场景
 
@@ -148,13 +148,13 @@ paths:
 - "Document container interfaces as Swagger/OpenAPI specifications"
 - "Analyze Kubernetes manifests and create container documentation"
 
-## Key Distinctions
+## 关键区别
 
 - **vs C4-Component agent**: Maps components to 部署 units; Component agent focuses on logical grouping
 - **vs C4-上下文 agent**: Provides container-level detail; 上下文 agent creates high-level system diagrams
 - **vs C4-Code agent**: Focuses on 部署 architecture; Code agent documents individual code elements
 
-## Output Examples
+## 输出示例
 
 When synthesizing containers, provide:
 

@@ -1,5 +1,5 @@
 ---
-name: video-editing
+name: 视频编辑工作流
 description: 视频编辑工作流
 ---
 
@@ -7,7 +7,7 @@ description: 视频编辑工作流
 
 AI-assisted editing for real footage. Not generation from prompts. Editing existing video fast.
 
-## When to Activate
+## 激活时机
 
 - User wants to edit, cut, or structure video footage
 - Turning long recordings into short-form content

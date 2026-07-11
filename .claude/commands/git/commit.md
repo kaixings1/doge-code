@@ -1,8 +1,8 @@
 分析当前暂存的更改（`git diff --cached`）并生成符合规范的提交信息。
 
-## Steps
+## 步骤
 
-1. Run `git diff --cached --stat` to see which files changed.
+1. 运行 `git diff --cached --stat` 查看哪些文件发生了变化。
 2. Run `git diff --cached` to read the actual changes.
 3. Determine the commit type from the changes:
    - `feat` - new functionality

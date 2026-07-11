@@ -1,5 +1,5 @@
 ---
-name: error-diagnostics-error-analysis
+name: 错误诊断和分析
 description: "错误诊断和分析"
 risk: safe
 source: community

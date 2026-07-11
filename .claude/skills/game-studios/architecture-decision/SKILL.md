@@ -259,7 +259,7 @@ Following this format:
 | **Blocks** | [Epic/Story name — cannot start until this ADR is Accepted, or "None"] |
 | **Ordering Note** | [Any sequencing constraint that isn't captured above] |
 
-## Context
+## 上下文
 
 ### Problem Statement
 [What problem are we solving? Why does this decision need to be made now?]

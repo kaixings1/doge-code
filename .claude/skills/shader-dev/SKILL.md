@@ -1,5 +1,5 @@
 ---
-name: shader-dev
+name: Shader Dev 相关功能和最佳实践
 description: "Shader Dev — Shader Dev 相关功能和最佳实践"
   GLSL shader techniques for ray marching, fluid simulation, particle systems, and procedural generation. Useful for hero visuals and motion stills.
 triggers:
@@ -14,15 +14,15 @@ od:
   upstream: "https://github.com/MiniMax-AI/skills"
 ---
 
-# shader-dev
+# 着色器开发
 
 > Curated from the MiniMax AI team.
 
-## What it does
+## 功能说明
 
 GLSL shader techniques for ray marching, fluid simulation, particle systems, and procedural generation. Useful for hero visuals and motion stills.
 
-## Source
+## 来源
 
 - Upstream: https://github.com/MiniMax-AI/skills
 - Category: `3d-shaders`

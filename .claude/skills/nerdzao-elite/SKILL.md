@@ -1,5 +1,5 @@
 ---
-name: nerdzao-elite
+name: 高级精英软件工程师 (15+) 和高级产品设计师。包含规划、架构、TDD、整洁代
 description: "高级精英软件工程师 (15+) 和高级产品设计师。包含规划、架构、TDD、整洁代码和像素级完美 UX 验证的完整工作流。"
 risk: safe
 source: community

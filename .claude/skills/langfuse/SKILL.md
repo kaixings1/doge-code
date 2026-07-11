@@ -1,5 +1,5 @@
 ---
-name: langfuse
+name: LangFuse 专家：开源 LLM 可观测性平台。
 description: LangFuse 专家：开源 LLM 可观测性平台。
   Covers tracing, prompt management, evaluation, datasets, and 集成 with
   LangChain, LlamaIndex, and OpenAI. Essential for debugging, monitoring, and

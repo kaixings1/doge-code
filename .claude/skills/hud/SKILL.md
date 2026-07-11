@@ -1,5 +1,5 @@
 ---
-name: hud
+name: 平视显示器界面
 description: "HUD — 平视显示器界面"
 risk: safe
 source: community

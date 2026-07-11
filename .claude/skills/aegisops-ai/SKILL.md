@@ -1,5 +1,5 @@
 ---
-name: aegisops-ai
+name: AegisOps AI 护栏
 description: "自主 DevSecOps 和 FinOps 护栏。编排 Gemini 3 Flash 来审计 Linux 内核补丁、Terraform 成本漂移和 K8s 合规性。"
 risk: safe
 source: community

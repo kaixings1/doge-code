@@ -1,5 +1,5 @@
 ---
-name: hr-pro
+name: HR 专业版
 description: "HR 专业版 — 人力资源管理"
 risk: safe
 source: community

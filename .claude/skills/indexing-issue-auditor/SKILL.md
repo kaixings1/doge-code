@@ -1,5 +1,5 @@
 ---
-name: indexing-issue-auditor
+name: 索引问题审计
 description: "索引问题审计 — 数据库索引分析和优化"
 risk: unknown
 source: community

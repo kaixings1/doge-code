@@ -1,13 +1,13 @@
 ---
-name: content-research-writer
-description: "Content Research Writer — Content Research Writer 相关功能和最佳实践"
+name: 内容研究写作
+description: "内容研究写作 — 内容研究写作相关功能和最佳实践"
 ---
 
 # Content Research Writer
 
 This skill acts as your writing partner, helping you research, outline, draft, and refine content while maintaining your unique voice and style.
 
-## When to Use This Skill
+## 何时使用此技能
 
 - Writing blog posts, articles, or newsletters
 - Creating educational content or tutorials
@@ -18,7 +18,7 @@ This skill acts as your writing partner, helping you research, outline, draft, a
 - Improving hooks and introductions
 - Getting section-by-section feedback while writing
 
-## What This Skill Does
+## 此技能的功能
 
 1. **Collaborative Outlining**: Helps you structure ideas into coherent outlines
 2. **Research Assistance**: Finds relevant information and adds citations
@@ -28,7 +28,7 @@ This skill acts as your writing partner, helping you research, outline, draft, a
 6. **Citation Management**: Adds and formats references properly
 7. **Iterative Refinement**: Helps you improve through multiple drafts
 
-## How to Use
+## 使用方法
 
 ### 设置 Your Writing Environment
 
@@ -372,7 +372,7 @@ When a user requests writing assistance:
 
 **Output**:
 ```markdown
-## Research Compiled
+## 研究汇编
 
 ### Recent Data
 - Gartner: 80% of PMs will use AI tools by 2025 [1]
@@ -419,12 +419,12 @@ All added to your outline with proper citations.
 ```markdown
 # Feedback: Common Mistakes Section
 
-## What Works Well ✓
+## 工作良好的部分
 - Strong examples (the Slack notification story)
 - Clear structure (3 mistakes, clean layout)
 - Practical advice for each mistake
 
-## Suggestions
+## 建议
 
 ### Make It More Specific
 Your second point says "Bad prioritization" but could be stronger:

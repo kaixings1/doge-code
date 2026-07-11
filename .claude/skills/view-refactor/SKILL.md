@@ -1,5 +1,5 @@
 ---
-name: view-refactor
+name: 视图重构技能
 description: 视图重构技能
 ---
 

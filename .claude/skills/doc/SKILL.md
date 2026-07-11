@@ -1,5 +1,5 @@
 ---
-name: doc
+name: Doc 相关功能和最佳实践
 description: "Doc — Doc 相关功能和最佳实践"
   Read, create, and edit .docx documents with formatting and layout fidelity via OpenAI's document skill.
 triggers:
@@ -13,7 +13,7 @@ od:
   upstream: "https://github.com/openai/skills"
 ---
 
-# /u6587/u6863/u5904/u7406
+# 文档
 
 > Curated from OpenAI's skills repository.
 

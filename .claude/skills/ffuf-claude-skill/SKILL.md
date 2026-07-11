@@ -1,5 +1,5 @@
 ---
-name: ffuf-claude-skill
+name: Web 模糊测试工具
 description: "FFUF — Web 模糊测试工具"
 risk: unknown
 source: community

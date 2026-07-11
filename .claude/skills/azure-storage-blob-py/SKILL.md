@@ -1,6 +1,6 @@
 ---
-name: azure-storage-blob-py
-description: "Azure Storage Blob Py — Azure Storage Blob Py 相关功能和最佳实践"
+name: Azure Storage Blob Python SDK 相关功能和
+description: "Azure Storage Blob Python — Azure Storage Blob Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -36,7 +36,7 @@ account_url = "https://<account>.blob.core.windows.net"
 blob_service_client = BlobServiceClient(account_url, credential=credential)
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 | Client | Purpose | Get From |
 |--------|---------|----------|
@@ -184,7 +184,7 @@ blob_client.set_http_headers(
 )
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.identity.aio import DefaultAzureCredential

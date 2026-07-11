@@ -1,5 +1,5 @@
 ---
-name: callerapi-automation
+name: CallerAPI 自动化
 description: "CallerAPI 自动化"
 risk: safe
 source: community

@@ -2,7 +2,7 @@
 description: 推送前运行本地审查关卡。
 ---
 
-Perform a complete review pass:
+执行完整的审查关卡：
 
 1. Save work in progress and ensure the working tree is clean except for intentional changes.
 2. Install tooling (only first run):

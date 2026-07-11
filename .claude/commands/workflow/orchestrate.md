@@ -1,49 +1,49 @@
 通过将复杂任务拆分为协调的子任务，运行多步骤工作流。
 
-## Steps
+## 步骤
 
-1. Parse the workflow specification from the argument:
-   - Accept a natural language description of the end goal.
-   - Or accept a structured plan with explicit steps.
-2. Decompose into ordered sub-tasks:
-   - Identify dependencies between tasks (which must complete before others start).
-   - Determine which tasks can run in parallel.
-   - Estimate complexity of each task (small, medium, large).
-3. For each sub-task, define:
-   - Clear objective and success criteria.
-   - Input requirements (files, data, prior task outputs).
-   - Expected output (files created, changes made, results).
-   - Verification method (test, manual check, build success).
-4. Execute tasks in dependency order:
-   - Mark each task as pending, in-progress, or complete.
-   - Capture output and errors from each step.
-   - If a task fails, determine if downstream tasks should be skipped or can proceed.
-5. After all tasks complete, run a final verification:
-   - Build passes.
-   - Tests pass.
-   - No regressions introduced.
-6. Report the full execution summary.
+1. 从参数中解析工作流规范：
+   - 接受最终目标的自然语言描述。
+   - 或接受带有显式步骤的结构化计划。
+2. 分解为有序的子任务：
+   - 识别任务之间的依赖关系（哪些必须在其他任务开始前完成）。
+   - 确定哪些任务可以并行运行。
+   - 估算每个任务的复杂度（小、中、大）。
+3. 对每个子任务，定义：
+   - 明确的目标和成功标准。
+   - 输入要求（文件、数据、先前任务的输出）。
+   - 预期输出（创建的文件、所做的更改、结果）。
+   - 验证方法（测试、手动检查、构建成功）。
+4. 按依赖顺序执行任务：
+   - 将每个任务标记为待处理、进行中或已完成。
+   - 捕获每个步骤的输出和错误。
+   - 如果任务失败，确定下游任务应跳过还是可以继续。
+5. 所有任务完成后，运行最终验证：
+   - 构建通过。
+   - 测试通过。
+   - 没有引入回归。
+6. 报告完整的执行摘要。
 
-## Format
+## 格式
 
 ```
-Workflow: <description>
-Tasks: <total> (<completed>/<total>)
+工作流：<描述>
+任务：<总数>（<完成数>/<总数>）
 
-| # | Task | Status | Duration | Notes |
+| # | 任务 | 状态 | 耗时 | 备注 |
 |---|------|--------|----------|-------|
-| 1 | <task> | done | 2m | <notes> |
-| 2 | <task> | done | 5m | <notes> |
-| 3 | <task> | failed | 1m | <error> |
+| 1 | <任务> | 完成 | 2分钟 | <备注> |
+| 2 | <任务> | 完成 | 5分钟 | <备注> |
+| 3 | <任务> | 失败 | 1分钟 | <错误> |
 
-Overall: <success/partial/failed>
-Duration: <total time>
+总体：<成功/部分成功/失败>
+总耗时：<总时间>
 ```
 
-## Rules
+## 规则
 
-- Never execute destructive operations (delete, force push) without explicit confirmation.
-- If a critical task fails, stop and report rather than continuing blindly.
-- Keep each sub-task focused and independently verifiable.
-- Save progress after each completed task so work is not lost on failure.
-- Limit workflow to 10 tasks maximum; break larger workflows into phases.
+- 未经明确确认，绝不执行破坏性操作（删除、强制推送）。
+- 如果关键任务失败，停止并报告，而非盲目继续。
+- 保持每个子任务聚焦且可独立验证。
+- 在每个完成任务后保存进度，以便在失败时不会丢失工作。
+- 将工作流限制在最多 10 个任务；更大的工作流应分解为多个阶段。

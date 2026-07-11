@@ -1,17 +1,17 @@
 ---
-name: santa-method
+name: 具有收敛循环的多代理对抗性验证。两个独立审查代理必须都通过，输出才能发布。
 description: "具有收敛循环的多代理对抗性验证。两个独立审查代理必须都通过，输出才能发布。"
 metadata:
   origin: "Ronald Skelton - Founder, RapportScore.ai"
 ---
 
-# Santa Method
+# Santa 方法
 
 Multi-agent adversarial verification framework. Make a list, check it twice. If it's naughty, fix it until it's nice.
 
 The core insight: a single agent reviewing its own output shares the same biases, knowledge gaps, and systematic errors that produced the output. Two independent reviewers with no shared context break this failure mode.
 
-## When to Activate
+## 激活时机
 
 Invoke this skill when:
 - Output will be published, deployed, or consumed by end users

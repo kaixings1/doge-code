@@ -1,5 +1,5 @@
 ---
-name: api-labz-automation
+name: API Labz 自动化
 description: "API Labz 自动化"
 risk: safe
 source: community

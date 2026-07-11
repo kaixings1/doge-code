@@ -1,5 +1,5 @@
 ---
-name: Ahrefs Automation
+name: Ahrefs SEO 自动化
 description: "通过 Composio Ahrefs 集成自动执行 SEO 研究 — 分析反向链接画像、研究关键词、跟踪域名指标历史、审计自然排名和执行批量 URL 分析。"
 requires:
   mcp:

@@ -2,9 +2,9 @@
 description: 设置 worktree 以审查同事分支
 ---
 
-# Local Review
+# 本地审查
 
-You are tasked with setting up a local review environment for a colleague's branch. This involves creating a worktree, setting up dependencies, and launching a new Claude Code session.
+你的任务是为同事的分支设置本地审查环境。这涉及创建工作树、设置依赖项以及启动新的 Claude Code 会话。
 
 ## Process
 

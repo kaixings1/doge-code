@@ -1,5 +1,5 @@
 ---
-name: nutrient-document-processing
+name: 使用 Nutrient DWS API 处理、转换、OCR、提取、脱敏、签名和填充文档
 description: 使用 Nutrient DWS API 处理、转换、OCR、提取、脱敏、签名和填充文档。支持 PDF、DOCX、XLSX、PPTX、HTML 和图像。
 origin: ECC
 ---

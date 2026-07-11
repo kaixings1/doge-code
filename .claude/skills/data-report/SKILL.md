@@ -1,5 +1,5 @@
 ---
-name: data-report
+name: 数据可视化报告
 zh_name: "数据可视化报告"
 en_name: "Data Visualization Report"
 emoji: "📊"

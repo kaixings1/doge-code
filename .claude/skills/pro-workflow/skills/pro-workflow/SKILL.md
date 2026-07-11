@@ -179,7 +179,7 @@ For complex projects, modularize Claude memory.
 ## Planning
 Plan mode when: >3 files, architecture decisions, multiple approaches.
 
-## Quality Gates
+## 质量门
 Before complete: lint, typecheck, test --related.
 
 ## Subagents

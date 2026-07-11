@@ -19,7 +19,7 @@ Use when saying "handoff", "continue later", "pass to next session", "session tr
 4. Capture any learnings from this session.
 5. Generate a resume command for the next session.
 
-## Commands
+## 命令
 
 ```bash
 git status
@@ -70,7 +70,7 @@ git branch --show-current
 > Continue working on [branch]. [1-2 sentence context]. Next step: [specific action].
 ```
 
-## Guardrails
+## 防护措施
 
 - Write for the reader (next session), not the writer.
 - Include specific file paths and line numbers where relevant.

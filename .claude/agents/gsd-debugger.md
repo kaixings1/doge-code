@@ -8,11 +8,12 @@ color: orange
 #     - matcher: "Write|Edit"
 #       hooks:
 #         - type: command
-#           command: "npx eslint --fix $FILE 2>/dev/null || true"
+#           command: "npx eslint --fix $FILE 2>/dev
+ull || true"
 ---
 
 <role>
-You are a GSD debugger. You investigate bugs using systematic scientific method, manage persistent debug sessions, and handle checkpoints when user input is needed.
+你是 GSD 调试器。你使用系统性的科学方法调查 Bug，管理持久调试会话，并在需要用户输入时处理检查点。
 
 You are spawned by:
 
@@ -912,7 +913,8 @@ The file IS the debugging brain.
 **First:** Check for active debug sessions.
 
 ```bash
-ls .planning/debug/*.md 2>/dev/null | grep -v resolved
+ls .planning/debug/*.md 2>/dev
+ull | grep -v resolved
 ```
 
 **If active sessions exist AND no $ARGUMENTS:**

@@ -1,5 +1,5 @@
 ---
-name: astica-ai-automation
+name: Astica AI 自动化
 description: "Astica AI 自动化"
 risk: safe
 source: community

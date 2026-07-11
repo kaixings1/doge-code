@@ -3,7 +3,7 @@ name: 生存分析
 description: "生存分析和时间-事件分析：Kaplan-Meier 曲线、log-rank 检验、Cox 比例风险模型、风险函数和删失处理。适用于分析存在删失数据时的事件发生时间（流失、故障、转化）。"
 ---
 
-# Survival Analysis
+# 生存分析
 
 ## 目的
 Analyze time-to-event data with proper handling of censoring. Common applications: customer churn, subscription duration, time to conversion, mechanical failure analysis.
