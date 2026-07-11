@@ -59,7 +59,7 @@ MSYS2 bash 会破坏以下字符：`"` `[` `]` `&` `(` `)` `'` `\` 等，导致�
 - `printf '%b' '\n'` → MSYS2 printf 的 `\n` 解析与非 POSIX 实现不一致
 - `find . -name "*.ts"` → 应用 Glob 替代（更准确且不会阻塞）
 - `grep -r "keyword" src/` → 应用 Grep 替代（更高效且跨平台）
-- `findstr /n "pattern\|with\|pipe" file` → MSYS2 把 `\|` 解释为管道符，报错 `command not found`
+- `grep "pattern" file` 始终可用且可靠，优先使用
 - `cmd.exe /c "echo ... > file"` → MSYS2 拦截 `>` 重定向，无法创建文件
 - `cmd.exe /c "..." & "..."` → MSYS2 把 `&` 解释为后台执行，cmd 命令被截断
 - `powershell -Command "..."` → 参数中的 `"` `\` `$` 等全被 MSYS2 转义破坏
@@ -89,52 +89,45 @@ MSYS2 bash 会破坏以下字符：`"` `[` `]` `&` `(` `)` `'` `\` 等，导致�
 
 **⚠️ 如果 Write/FileWriteTool/FileEditTool/Glob/Grep/Read 等工具均不可用：请立即停止操作，告知用户「写文件/搜索工具不可用，无法继续」，不要尝试用任何 bash 命令替代。**
 
-### 🛡️ MSYS2 防护工具（项目根目录下的 .bat 封装）
+### 🛡️ MSYS2 搜索最佳实践
 
-项目提供了两个批处理封装脚本，用于在 Git Bash 中绕过 MSYS2 的转义问题：
+**🔴 关键问题：工具底层经过 MSYS2 bash 层，任何包含 `grep`、`\|`、`--include`、`findstr` 的命令都会触发 MSYS2 fork 进程或引号破坏，导致卡死（exit 137 超时）或报错。所有搜索必须使用 Windows 原生的 `rg`（ripgrep）命令，不经过 MSYS2 层。**
 
-| 文件 | 作用 | 用法示例 |
-|------|------|----------|
-| `_grep.bat` | 封装 `findstr /n /s /p`，支持搜索子目录 | `cmd.exe /c _grep.bat "pattern1\|pattern2" file` |
-| `_findstr.bat` | 封装 `findstr`，不递归 | `cmd.exe /c _findstr.bat "pattern" file` |
+**搜索文件/内容的首选方式（按优先级）：**
+1. **单文件搜索** → `rg -n "pattern" file.txt`（ripgrep，秒出，原生 Windows 支持）
+2. **批量/递归搜索** → `rg -n "pattern" src\`（直接递归，不需要 dir + findstr 组合）
+3. **搜索技能（只搜 SKILL.md）** → `rg -n "关键词" .claude\skills\ --include="SKILL.md"`（rg 的 --include 不会触发 MSYS2 fork）
+4. **`Grep`/`Glob` 工具** — 不经过 shell，无转义问题，优先使用
 
-**为什么不直接用 Bash 的 `findstr` / `grep`？**
-- MSYS2 bash 会把 `\|`（findstr 的正则 OR）解释为 Unix 管道
-- MSYS2 会破坏 `"` `[` `]` 等字符
-- 这些 `.bat` 由 cmd.exe 直接执行，完全避开 MSYS2 转义
+**搜索命令速查：**
+```cmd
+REM ✅ 单文件搜索（rg 秒出）
+rg -n "pattern" file.txt
+rg -n "keyword1|keyword2" file.txt       REM 多关键词 OR（原生正则）
+rg -ni "keyword" file.txt                REM 忽略大小写
 
-**最佳实践（在 Git Bash 终端中）：**
-```bash
-# 方式1：显式通过 cmd.exe 调用 .bat（推荐用于 `\|` 模式）
-cmd.exe /c _grep.bat "findSuitableShell|cmdProvider" src/utils/Shell.ts
+REM ✅ 递归搜索（直接 rg，不需要 dir 组合）
+rg -n "keyword" src\
+rg -n "keyword1|keyword2" src\           REM 多关键词 OR
 
-# 方式2：直接 cmd /c 调用 findstr（不需要 .bat 文件）
-cmd.exe /c findstr /n "findSuitableShell|cmdProvider" src/utils/Shell.ts
+REM ✅ 搜索技能（只搜 SKILL.md）
+rg -n "关键词" .claude\skills\SKILL.md
 
-# 方式3：简单单关键词搜索，Bash 自带的 findstr 够用
-findstr /n "findSuitableShell" src/utils/Shell.ts
+REM ❌ 禁止：grep、findstr 命令（会触发 MSYS2 fork 或引号破坏卡死）
+REM grep -rn "pattern" src/             （不要这样用！）
+REM findstr /n "pattern" file.txt       （MSYS2 破坏引号，不可靠）
+REM cmd /c "grep ..."                   （cmd /c 在工具层中引号被破坏，不可靠）
 ```
 
 ### ⚙️ ~/.bashrc 防护配置（推荐）
 
-在 `~/.bashrc`（即 `C:\Users\<用户名>\.bashrc`）中配置以下内容，可在 Git Bash 中直接使用 `findstr` 而不遇到转义问题：
+在 `~/.bashrc`（即 `C:\Users\<用户名>\.bashrc`）中配置以下内容，提升搜索体验：
 
 ```bash
 # ===== MSYS2 防护规则 =====
 # 禁止 MSYS2 自动转换命令参数中的 Windows 路径
 export MSYS2_ENV_CONV_EXCL="*"
-# 别名：findstr 走 cmd.exe，避免 | \ 被 MSYS2 破坏
-alias findstr="cmd.exe /c findstr"
-# 快捷搜索命令
-alias _f="cmd.exe /c findstr /n"
-alias _g="cmd.exe /c findstr /n /s /p"
-```
-
-配置后重启 Git Bash，搜索命令变简洁：
-```bash
-# 多关键词搜索（\| 语法不会被 MSYS2 破坏）
-_f "findSuitableShell|cmdProvider" src/utils/Shell.ts
-_g "findSuitableShell|cmdProvider" src/utils/Shell.ts
+# 不要设置 grep 别名！grep 在 MSYS2 下会触发 fork 卡死，请用 rg（ripgrep）
 ```
 
 > ⚠️ **注意**：`.bat` 文件和 `.bashrc` 修改都是**已加入 git 管理的文件**，`git clean` 等清理操作不会删除它们。`.bashrc` 在用户目录下需手动备份。

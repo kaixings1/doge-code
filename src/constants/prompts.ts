@@ -300,6 +300,7 @@ function getUsingYourToolsSection(enabledTools: Set<string>): string {
     ...(env.platform === 'win32'
       ? [
           `🔴 Windows MSYS2 禁令：绝对禁止使用 ${BASH_TOOL_NAME} 工具执行文件写入（python3 -c "..."、node -e "..."、powershell -Command "..."、cat > file、echo > file）或包含特殊字符的内联代码。MSYS2 bash 会破坏 "、[、]、&、(、)、'、\\ 等字符，导致所有内联脚本不可靠。创建任何脚本文件必须使用 ${FILE_WRITE_TOOL_NAME}。`,
+          `🔴 MSYS2 搜索规范：禁止使用 grep 和 findstr 命令（触发 MSYS2 fork 卡死或引号破坏）。Windows 上只能用 rg（ripgrep，原生 Windows 支持，不经过 MSYS2 层）：单文件搜索用 rg -n "关键词" 文件路径；递归搜索用 rg -n "关键词" src\；搜索技能用 rg -n "关键词" .claude\skills\SKILL.md；多关键词用 rg -n "关键词1|关键词2" src\。优先使用 Grep/Glob 工具（不经过 shell 无转义问题）。rg 是 MSYS2 友好的，不会卡死。`,
         ]
       : []),
     `保留使用 ${BASH_TOOL_NAME} 专门用于需要 shell 执行的系统命令和终端操作。如果你不确定并且存在相关的专用工具，默认使用专用工具，只有在绝对必要时才回退使用 ${BASH_TOOL_NAME} 工具。`,
@@ -737,7 +738,7 @@ function getShellInfoLine(): string {
     return `Shell：${shellName}（运行于 MSYS2/Git Bash 环境，使用 Unix shell 语法，而不是 Windows — 例如，/dev/null 而不是 NUL，路径中使用正斜杠）`
   }
   if (env.platform === 'win32' && isNativeWinShell) {
-    return `Shell：${shellName}（运行于 Windows 原生 shell，请使用 Windows cmd 格式的命令：dir、type、del、findstr，路径使用反斜杠 \\，禁止使用 bash/zsh 特有语法）`
+    return `Shell：${shellName}（运行于 Windows 原生 shell，请使用 Windows cmd 格式的命令：dir、type、del、grep，路径使用反斜杠 \\，禁止使用 bash/zsh 特有语法）`
   }
   return `Shell：${shellName}`
 }
