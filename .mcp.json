@@ -14,6 +14,13 @@
     "playwright": {
       "command": "cmd",
       "args": ["/c", "npx", "@playwright/mcp"]
+    },
+    "composio-clarity": {
+      "command": "npx",
+      "args": ["-y", "@composio/mcp", "start"],
+      "env": {
+        "COMPOSIO_API_KEY": "oak_XLaVF9tjkmywQRyej6CV"
+      }
     }
   }
 }

@@ -146,6 +146,11 @@ _script_b64.txt*
 .claude/skills/test.txt
 .claude/skills/_fp_option_content.json
 
+# =========================
+# 废弃技能（自己试验过认为没用）
+# =========================
+/.useless/
+
 # src/ 汉化临时文件
 src/.batch-*
 src/AGENT_RULES.md
