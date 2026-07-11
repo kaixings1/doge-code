@@ -1,5 +1,5 @@
 ---
-name: azure-ai-projects-py
+name: 指导 Python 开发者使用 Azure AI Projects 客户端库管理
 description: "指导 Python 开发者使用 Azure AI Projects 客户端库管理 AI Foundry 中的项目和代理。"
 risk: unknown
 source: community
@@ -229,7 +229,7 @@ eval_run = openai_client.evals.runs.create(
 
 See references/evaluation.md for evaluation patterns.
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.ai.projects.aio import AIProjectClient

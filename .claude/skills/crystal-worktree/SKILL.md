@@ -1,3 +1,8 @@
+---
+name: Crystal Worktree 工作树工具
+description: Crystal Worktree — Git 工作树管理工具，支持多工作区并行开发和分支隔离。
+---
+
 # Crystal Worktree 工作树工具
   <a href="https://nimbalyst.com/">
     <picture>

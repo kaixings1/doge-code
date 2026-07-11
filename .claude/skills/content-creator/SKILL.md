@@ -1,5 +1,5 @@
 ---
-name: content-creator
+name: 专业级品牌声音分析、SEO 优化和平台特定内容框架。
 description: "专业级品牌声音分析、SEO 优化和平台特定内容框架。"
 category: marketing
 risk: unknown
@@ -17,7 +17,7 @@ Professional-grade brand voice analysis, SEO optimization, and platform-specific
 ## Keywords
 content creation, blog posts, SEO, brand voice, social media, content calendar, marketing content, content strategy, content marketing, brand consistency, content optimization, social media marketing, content planning, blog writing, content frameworks, brand guidelines, social media strategy
 
-## Quick Start
+## 快速入门
 
 ### For Brand Voice Development
 1. Run `scripts/brand_voice_analyzer.py` on existing content to establish baseline

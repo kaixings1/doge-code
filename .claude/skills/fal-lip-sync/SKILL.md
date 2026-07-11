@@ -1,5 +1,5 @@
 ---
-name: fal-lip-sync
+name: FAL 唇形同步
 description: "FAL 唇形同步 — 基于 FAL AI 的唇形同步"
 risk: unknown
 source: community

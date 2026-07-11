@@ -1,5 +1,5 @@
 ---
-name: domain-modeling
+name: 构建和精炼项目领域模型
 description: 构建和精炼项目领域模型。用于确定领域术语或通用语言、记录架构决策，或当其他技能需要维护领域模型时使用。
 category: "architecture"
 risk: "safe"
@@ -20,7 +20,7 @@ tools:
   - 游标
 ---
 
-# Domain Modeling
+# 领域建模 (Domain Modeling)
 
 ## 使用场景
 

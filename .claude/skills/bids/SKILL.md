@@ -1,5 +1,5 @@
 ---
-name: bids
+name: Bids 相关功能和最佳实践
 description: "Bids — Bids 相关功能和最佳实践"
   使用此技能当 working with Brain Imaging Data Structure (BIDS) datasets:
   organizing neuroscience and biomedical data (MRI, EEG, MEG, iEEG, PET, microscopy,

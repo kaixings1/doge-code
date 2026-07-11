@@ -1,5 +1,5 @@
 ---
-name: infinity
+name: 无限可能性和创造力
 description: "Infinity — 无限可能性和创造力"
 risk: unknown
 source: community

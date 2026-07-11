@@ -1,6 +1,6 @@
 ---
-name: makepad-splash
-description: "Makepad Splash — Makepad Splash 相关功能和最佳实践"
+name: Makepad Splash 脚本语言相关功能和最佳实践
+description: "Makepad Splash — Makepad Splash 脚本语言相关功能和最佳实践"
   CRITICAL: Use for Makepad Splash scripting language. Triggers on:
   splash language, makepad script, makepad scripting, script!, cx.eval,
   makepad dynamic, makepad AI, splash 语言, makepad 脚本

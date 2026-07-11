@@ -2,10 +2,10 @@
 name: 购物篮分析
 description: "关联规则挖掘：使用 Apriori、FP-Growth 发现经常一起购买的产品。计算支持度、置信度和提升度以提供交叉销售和追加销售建议。适用于设计产品组合或推荐系统。"
 ---
-# Market Basket Analysis
+# 购物篮分析
 
 ## 目的
-Discover product associations and co-purchase patterns for cross-sell and bundling strategies.
+发现产品关联和共同购买模式，用于交叉销售和捆绑策略。
 
 ## 工作原理
 

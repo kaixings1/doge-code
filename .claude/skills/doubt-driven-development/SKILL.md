@@ -1,9 +1,9 @@
 ---
-name: doubt-driven-development
+name: 疑问驱动开发
 description: 疑问驱动开发 — 对每个非平凡决策进行全新上下文对抗性质疑。
 ---
 
-# Doubt-Driven Development
+# 疑问驱动开发
 
 ## 概述
 
@@ -190,7 +190,7 @@ If after 3 cycles the reviewer still surfaces substantive issues, the artifact m
 
 If 3 cycles is "obviously insufficient" because the artifact is large: the artifact is too big — return to Step 2 and decompose. Do not lift the bound.
 
-## Common Rationalizations
+## 常见理由
 
 | Rationalization | Reality |
 |---|---|
@@ -204,7 +204,7 @@ If 3 cycles is "obviously insufficient" because the artifact is large: the artif
 | "Cross-model is always better" | Cross-model catches blind spots a single model shares with itself, but it adds cost and tool fragility. Offer it every interactive doubt cycle — the user decides whether the artifact warrants it. The agent's job is to surface the choice, not to gate it. |
 | "User said yes once, so I can keep invoking the CLI" | Each invocation is its own 授权. The artifact, the prompt, and the flags change between calls — re-confirm the exact command with the user before every run. |
 
-## Red Flags
+## 危险信号
 
 - Spawning a fresh-context reviewer for a one-line rename or formatting change
 - Treating reviewer output as authoritative without re-reading the artifact text
@@ -228,7 +228,7 @@ If 3 cycles is "obviously insufficient" because the artifact is large: the artif
 - **`debugging-and-error-recovery`**: when the reviewer surfaces a real failure mode, drop into the debugging skill to localize and fix.
 - **Repo orchestration rules** (`references/orchestration-patterns.md`): this skill orchestrates from the main 会话. A persona calling another persona is anti-pattern B — see Loading Constraints above.
 
-## Verification
+## 验证
 
 After applying doubt-driven development:
 

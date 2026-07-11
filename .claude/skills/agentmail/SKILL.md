@@ -1,5 +1,5 @@
 ---
-name: agentmail
+name: AgentMail 邮件基础设施
 description: AI 代理邮件基础设施：通过 API 创建账户、收发邮件、管理 webhook 和查询用量。
 risk: safe
 source: community
@@ -16,7 +16,7 @@ Base URL: `https://api.theagentmail.net`
 - You need to provision AgentMail accounts, send messages, read inbox contents, or register inbound webhooks.
 - You need to monitor karma usage or wire email events into agent automation.
 
-## Quick start
+## 快速入门
 
 All requests require `Authorization: Bearer am_...` header (API key from dashboard).
 

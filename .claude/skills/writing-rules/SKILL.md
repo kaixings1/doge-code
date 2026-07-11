@@ -16,7 +16,7 @@ Hookify 规则是带有 YAML 前置元数据的 Markdown 文件，用于定义�
 
 ```markdown
 ---
-name: my-rule
+name: 简短描述此规则的用途
 description: 简短描述此规则的用途
 ---
 

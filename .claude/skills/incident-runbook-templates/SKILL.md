@@ -1,5 +1,5 @@
 ---
-name: incident-runbook-templates
+name: 事件响应运行手册模板
 description: "事件响应运行手册模板 — 标准化事件处理流程"
 risk: unknown
 source: community

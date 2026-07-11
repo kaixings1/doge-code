@@ -1,6 +1,6 @@
 ---
-name: nanobanana-ppt
-description: "Nanobanana Ppt — Nanobanana Ppt 相关功能和最佳实践"
+name: NanoBanana PPT 生成相关功能和最佳实践
+description: "NanoBanana PPT — NanoBanana PPT 生成相关功能和最佳实践"
   通过 NanoBanana 技术栈实现 AI 驱动的 PPT 生成，支持文档分析和样式化图像。将图像生成与结构化幻灯片输出相结合。
 triggers:
   - "nanobanana ppt"

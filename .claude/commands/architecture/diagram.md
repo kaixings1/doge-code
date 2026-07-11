@@ -1,38 +1,38 @@
 基于代码库分析或描述生成 Mermaid 图表。
 
-## Steps
+## 步骤
 
-1. Determine the diagram type from the argument or context:
-   - `flowchart` - Process flows, request handling, business logic.
-   - `sequenceDiagram` - API call sequences, service interactions.
-   - `classDiagram` - Module structure, class relationships.
-   - `erDiagram` - Database schema, entity relationships.
-   - `graph` - Dependency trees, module relationships.
-   - `stateDiagram-v2` - State machines, workflow states.
-2. If generating from code:
-   - Scan imports and exports to map module dependencies.
-   - Read route definitions for sequence diagrams.
-   - Parse database schemas for ER diagrams.
-   - Analyze class hierarchies for class diagrams.
-3. If generating from description, parse the user's requirements.
-4. Build the Mermaid syntax with proper relationships and labels.
-5. Write the diagram to a markdown file or embed in an existing doc.
-6. Validate the syntax is correct Mermaid that will render properly.
+1. 从参数或上下文中确定图表类型：
+   - `flowchart` - 流程流转、请求处理、业务逻辑。
+   - `sequenceDiagram` - API 调用序列、服务交互。
+   - `classDiagram` - 模块结构、类关系。
+   - `erDiagram` - 数据库模式、实体关系。
+   - `graph` - 依赖树、模块关系。
+   - `stateDiagram-v2` - 状态机、工作流状态。
+2. 如果从代码生成：
+   - 扫描导入和导出以映射模块依赖。
+   - 读取路由定义以用于序列图。
+   - 解析数据库模式以用于 ER 图。
+   - 分析类层次结构以用于类图。
+3. 如果从描述生成，解析用户的需求。
+4. 构建带有适当关系和标签的 Mermaid 语法。
+5. 将图表写入 markdown 文件或嵌入现有文档。
+6. 验证语法是正确的 Mermaid，能够正常渲染。
 
-## Format
+## 格式
 
 ````markdown
 ```mermaid
-<diagram-type>
-    <nodes and relationships>
+<图表类型>
+    <节点和关系>
 ```
 ````
 
-## Rules
+## 规则
 
-- Keep diagrams focused; split large systems into multiple diagrams.
-- Use descriptive labels on all edges and nodes.
-- Limit diagrams to 20 nodes maximum for readability.
-- Use consistent naming conventions matching the codebase.
-- Add a brief text description above each diagram explaining what it shows.
-- Use subgraphs to group related components.
+- 保持图表聚焦；将大型系统拆分为多个图表。
+- 在所有边和节点上使用描述性标签。
+- 为保持可读性，图表最多限制为 20 个节点。
+- 使用与代码库匹配的一致命名约定。
+- 在每个图表上方添加简短文本描述，说明其展示内容。
+- 使用子图对相关组件进行分组。

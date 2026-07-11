@@ -1,5 +1,5 @@
 ---
-name: create-branch
+name: Create Branch 相关功能和最佳实践
 description: "Create Branch — Create Branch 相关功能和最佳实践"
 参数-hint: '[optional description of the work]'
 risk: critical

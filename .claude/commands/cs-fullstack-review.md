@@ -3,70 +3,70 @@ description: 全栈工程评审 — 走过 Matt Pocock 7 个强制问题，选�
 argument-hint: "<problem or codebase to review>"
 ---
 
-# /cs:fullstack-review — Fullstack engineering review
+# /cs:fullstack-review — 全栈工程评审
 
-Use the `cs-fullstack-engineer` agent (which uses `context: fork` to keep the parent thread clean) to handle this inquiry:
+使用 `cs-fullstack-engineer` 智能体（使用 `context: fork` 保持父线程干净）处理此查询：
 
 **$ARGUMENTS**
 
-## Forcing-question library
+## 强制问题库
 
-Canonical source: `engineering-team/skills/senior-fullstack/references/forcing_questions.md` (7 questions, one-per-turn, recommendation + canon citation per question).
+规范来源：`engineering-team/skills/senior-fullstack/references/forcing_questions.md`（7 个问题，每轮一个，建议 + 规范引用）
 
-1. Team size now + 12-month headcount
-2. Deployment cadence (per-PR / daily / weekly / quarterly)
-3. Customer-facing / internal tool / marketing site
-4. One-year p50 + p99 traffic forecast
-5. Hiring-against vs training-into the stack
-6. Year-one monthly cloud + SaaS budget ceiling
-7. Three verifiable success criteria with numeric targets
+1. 当前团队规模 + 12 个月人员编制
+2. 部署节奏（每 PR / 每日 / 每周 / 每季度）
+3. 面向客户 / 内部工具 / 营销站点
+4. 一年 p50 + p99 流量预测
+5. 根据技术栈招聘 vs 培训团队使用技术栈
+6. 第一年月度云 + SaaS 预算上限
+7. 三个带有数字目标的可验证成功标准
 
-## Routing protocol
+## 路由协议
 
-1. **Walk the 7 forcing questions** in `engineering-team/skills/senior-fullstack/references/forcing_questions.md`. One per turn. Recommend the answer with cited canon. Track in `/tmp/fullstack-grill-<date>.md`.
-2. **Surface kill criteria** — if any question trips one (e.g., "microservices day 1, team size 3"), STOP and resolve before proceeding.
-3. **Run the deterministic profile picker:**
+1. **遍历 7 个强制问题**，记录在 `engineering-team/skills/senior-fullstack/references/forcing_questions.md` 中。每轮一个。附规范引用提出建议。记录到 `/tmp/fullstack-grill-<date>.md`。
+2. **暴露终止条件**——如果任何问题触发了一个（例如"第一天就微服务，团队规模 3"），停止并在继续前解决。
+3. **运行确定性配置选择器：**
    ```bash
    python engineering-team/skills/senior-fullstack/scripts/fullstack_decision_engine.py \
      --team-size <N> --team-size-12mo <N12> --cadence <c> \
      --user-facing <true|false> --budget <USD/mo> \
      --traffic-p99-rps <N> --data-sensitivity <tier>
    ```
-4. **Surface the matched profile + runner-up tradeoff** (if within 15%).
-5. **Fork into specialists** (one at a time, depth-first):
-   - `api-design-reviewer` for API contract
-   - `database-designer` for schema
-   - `slo-architect` for reliability target
-   - `ci-cd-pipeline-builder` for the pipeline
-   - `performance-profiler` for perf baseline
-   - `cs-karpathy-reviewer` before any commit
+4. **暴露匹配的配置 + 亚军权衡**（如果在 15% 以内）。
+5. **分派到专家**（一次一个，深度优先）：
+   - `api-design-reviewer` 用于 API 契约
+   - `database-designer` 用于 schema
+   - `slo-architect` 用于可靠性目标
+   - `ci-cd-pipeline-builder` 用于流水线
+   - `performance-profiler` 用于性能基线
+   - `cs-karpathy-reviewer` 在任何提交前
 
-## Output expectations (≤ 200-word digest)
+## 输出期望（≤ 200 字摘要）
 
-- Matched profile + reason
-- Three verifiable success criteria with numeric targets
-- Named approver chain
-- List of specialists invoked + artifact paths
-- Recommended next sub-skill (if any)
+- 匹配的配置 + 原因
+- 三个带有数字目标的可验证成功标准
+- 命名的审批链
+- 调用的专家列表 + 工件路径
+- 推荐的下一个子技能（如有）
 
-## Anti-patterns
+## 反模式
 
-- ❌ Bundling forcing questions — one per turn.
-- ❌ Skipping the kill-criteria check.
-- ❌ Reimplementing specialist scope. Fork — don't duplicate.
-- ❌ Auto-approving production changes. Always name the human approver.
+- ❌ 捆绑强制问题——每轮一个
+- ❌ 跳过终止条件检查
+- ❌ 重新实现专家范围。分派——不要重复
+- ❌ 自动批准生产变更。始终命名人工审批人
 
-## Customization
+## 自定义
 
-Profiles live at `engineering-team/skills/senior-fullstack/profiles/`. To customize for your org:
+配置文件位于 `engineering-team/skills/senior-fullstack/profiles/`。要为你的组织自定义：
 
-1. Copy `saas-startup.json` (or whichever best fits) to `<your-org>.json`.
-2. Edit `constraints`, `stack_recommendations`, `success_thresholds`, `named_approver_chain`.
-3. The decision engine auto-discovers new profile JSONs.
+1. 复制 `saas-startup.json`（或最合适的）到 `<your-org>.json`。
+2. 编辑 `constraints`、`stack_recommendations`、`success_thresholds`、`named_approver_chain`。
+3. 决策引擎自动发现新的配置 JSON。
 
-## Related commands
+## 相关命令
 
-- `/cs:frontend-review` — frontend-only deep dive
-- `/cs:backend-review` — backend-only deep dive
-- `/cs:engineer-grill` — cross-role 21-question forcing-question runner
-- `/karpathy-check` — Karpathy 4-principle review before commit
+- `/cs:frontend-review` — 仅前端深入
+- `/cs:backend-review` — 仅后端深入
+- `/cs:engineer-grill` — 跨角色 21 问题强制问题运行器
+- `/karpathy-check` — 提交前的 Karpathy 4 原则审查

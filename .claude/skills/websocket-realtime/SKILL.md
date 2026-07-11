@@ -1,5 +1,5 @@
 ---
-name: websocket-realtime
+name: WebSocket实时通信
 description: WebSocket实时通信 — 使用WebSocket、Socket.io和SSE的实时通信模式。
 ---
 

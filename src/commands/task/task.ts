@@ -1,8 +1,9 @@
 import { randomUUID } from 'crypto';
 import type { LocalCommandCall } from '../../types/command.js';
-import { createUserMessage } from '../../utils/messages.js';
 import { createTask } from '../../utils/taskManager.js';
 import { getSessionId } from '../../bootstrap/state.js';
+import { enqueue } from '../../utils/messageQueueManager.js';
+import type { QueuedCommand } from '../../types/textInputTypes.js';
 
 export const call: LocalCommandCall = async (args, context) => {
   if (!args || args.trim() === '') {
@@ -39,7 +40,7 @@ export const call: LocalCommandCall = async (args, context) => {
     second: '2-digit',
   });
 
-  // 同时持久化任务到 taskManager
+  // 持久化任务到 taskManager
   try {
     const sessionId = getSessionId();
     await createTask(sessionId, {
@@ -52,13 +53,12 @@ export const call: LocalCommandCall = async (args, context) => {
     // taskManager 持久化失败不阻塞主流程
   }
 
-  // 自动追加用户消息，让 AI 主会话直接开始执行任务
-  context.setMessages(prev => [
-    ...prev,
-    createUserMessage({
-      content: [{ type: 'text', text: `请执行以下任务：${args}\n\n要求：\n1. 直接开始工作，完成后给出总结\n2. 不需要问我确认，直接做\n3. 完成后输出结果` }],
-    }),
-  ]);
+  // 将任务作为 prompt 加入命令队列，主循环 drainCommandQueue 会取出并让 AI 回复
+  enqueue({
+    value: `请执行以下任务：${args}\n\n要求：\n1. 直接开始工作，完成后给出总结\n2. 不需要问我确认，直接做\n3. 完成后输出结果`,
+    mode: 'prompt',
+    priority: 'next',
+  } as QueuedCommand);
 
   return {
     type: 'text',

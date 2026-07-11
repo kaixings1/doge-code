@@ -1,5 +1,5 @@
 ---
-name: api-testing-observability-api-mock
+name: API 测试可观测性 API Mock
 description: "API 测试可观测性 API Mock"
 risk: safe
 source: community

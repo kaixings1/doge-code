@@ -1,5 +1,5 @@
 ---
-name: Gumroad Automation
+name: 行 Gumroad 产品管理
 description: "通过 Composio MCP 集成使用自然语言自动执行 Gumroad 产品管理、销售跟踪、许可证验证和 webhook 订阅。"
 category: e-commerce
 requires:

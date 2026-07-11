@@ -1,5 +1,5 @@
 ---
-name: idea-refine
+name: 创意精炼
 description: "创意精炼 — 创意优化和完善"
 risk: safe
 source: community

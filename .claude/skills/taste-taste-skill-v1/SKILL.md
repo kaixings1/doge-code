@@ -1,6 +1,6 @@
 ---
-name: design-taste-frontend-v1
-description: "Taste Taste Skill V1 — Taste Taste Skill V1 相关功能和最佳实践"
+name: 设计品味 V1
+description: "设计品味 V1 — 前端设计品味 V1 版相关功能和最佳实践"
 ---
 
 # High-Agency Frontend Skill

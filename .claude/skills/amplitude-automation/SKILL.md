@@ -1,5 +1,5 @@
 ---
-name: amplitude-automation
+name: Amplitude 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Amplitude 任务：事件、用户活动、群组、用户识别。始终先搜索工具以获取当前 schema。"
 risk: critical
 source: community

@@ -5,7 +5,7 @@ description: "从公司战略到团队目标生成 OKR 级联。用法: /okr gen
 
 # /okr
 
-Generate cascaded OKR frameworks from company-level strategy down to team-level key results.
+从公司级战略到团队级关键结果生成级联的 OKR 框架。
 
 ## Usage
 

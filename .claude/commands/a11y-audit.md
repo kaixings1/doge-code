@@ -6,76 +6,76 @@ argument-hint: "[path]"
 
 # /a11y-audit
 
-Scan a frontend project for WCAG 2.2 accessibility issues, show fixes, and optionally check color contrast.
+扫描前端项目中的 WCAG 2.2 无障碍问题，展示修复方案，并可选择检查颜色对比度。
 
-## Usage
+## 用法
 
 ```bash
-/a11y-audit                     # Scan current project
-/a11y-audit ./src               # Scan specific directory
-/a11y-audit ./src --fix         # Scan and auto-fix what's possible
+/a11y-audit                     # 扫描当前项目
+/a11y-audit ./src               # 扫描指定目录
+/a11y-audit ./src --fix         # 扫描并自动修复可修复项
 ```
 
-## What It Does
+## 功能说明
 
-### Step 1: Scan
+### 步骤 1：扫描
 
-Run the a11y scanner on the target directory:
+在目标目录上运行无障碍扫描器：
 
 ```bash
 python3 {skill_path}/scripts/a11y_scanner.py {path} --json
 ```
 
-Parse the JSON output. Group findings by severity (critical → serious → moderate → minor).
+解析 JSON 输出。按严重程度分组（严重 → 较重 → 中等 → 轻微）。
 
-Display a summary:
+显示摘要：
 ```
-A11y Audit: ./src
-  Critical: 3 | Serious: 7 | Moderate: 12 | Minor: 5
-  Files scanned: 42 | Files with issues: 15
+无障碍审计：./src
+  严重: 3 | 较重: 7 | 中等: 12 | 轻微: 5
+  已扫描文件: 42 | 存在问题的文件: 15
 ```
 
-### Step 2: Fix
+### 步骤 2：修复
 
-For each finding (starting with critical):
+针对每个发现（从严重开始）：
 
-1. Read the affected file
-2. Show the violation with context (before)
-3. Apply the fix from `engineering-team/a11y-audit/skills/a11y-audit/references/framework-a11y-patterns.md`
-4. Show the result (after)
+1. 读取受影响的文件
+2. 展示违规内容及上下文（修复前）
+3. 从 `engineering-team/a11y-audit/skills/a11y-audit/references/framework-a11y-patterns.md` 应用修复
+4. 展示结果（修复后）
 
-**Auto-fixable issues** (apply without asking):
-- Missing `alt=""` on decorative images
-- Missing `lang` attribute on `<html>`
-- `tabindex` values > 0 → set to 0
-- Missing `type="button"` on non-submit buttons
-- Outline removal without replacement → add `:focus-visible` styles
+**可自动修复的问题**（无需询问直接应用）：
+- 装饰性图片缺少 `alt=""`
+- `<html>` 缺少 `lang` 属性
+- `tabindex` 值 > 0 → 设置为 0
+- 非提交按钮缺少 `type="button"`
+- 移除 outline 但未替换 → 添加 `:focus-visible` 样式
 
-**Issues requiring user input** (show fix, ask to apply):
-- Missing alt text (need description from user)
-- Missing form labels (need label text)
-- Heading restructuring (may affect layout)
-- ARIA role changes (may affect functionality)
+**需要用户输入的问题**（展示修复方案，询问是否应用）：
+- 缺少 alt 文本（需要用户提供描述）
+- 缺少表单标签（需要标签文本）
+- 标题结构调整（可能影响布局）
+- ARIA 角色变更（可能影响功能）
 
-### Step 3: Contrast Check
+### 步骤 3：对比度检查
 
-If CSS files are present, run the contrast checker:
+如果存在 CSS 文件，运行对比度检查器：
 
 ```bash
 python3 {skill_path}/scripts/contrast_checker.py --batch {path}
 ```
 
-For each failing color pair, suggest accessible alternatives.
+针对每个失败的色彩组合，建议可访问的替代方案。
 
-### Step 4: Report
+### 步骤 4：报告
 
-Generate a markdown report at `a11y-report.md`:
-- Executive summary (pass/fail, issue counts)
-- Per-file findings with before/after diffs
-- Remaining manual review items
-- WCAG criteria coverage
+在 `a11y-report.md` 生成 Markdown 报告：
+- 执行摘要（通过/失败、问题数量）
+- 每个文件的发现及前后差异
+- 剩余需要人工审查的项目
+- WCAG 标准覆盖情况
 
-## Skill Reference
+## 技能参考
 
 - `engineering-team/a11y-audit/skills/a11y-audit/SKILL.md`
 - `engineering-team/a11y-audit/skills/a11y-audit/scripts/a11y_scanner.py`

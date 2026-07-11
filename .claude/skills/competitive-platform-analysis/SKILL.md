@@ -1,5 +1,5 @@
 ---
-name: competitive-platform-analysis
+name: 竞争平台分析
 description: "竞争平台分析"
 risk: safe
 source: community

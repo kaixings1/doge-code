@@ -1,5 +1,5 @@
 ---
-name: fp-pragmatic
+name: 实用、无术语的 fp-ts 函数式编程指南
 description: "实用、无术语的 fp-ts 函数式编程指南——80/20 方法，无需学术开销即可取得成果。适用于使用 fp-ts 库编写 TypeScript。"
 risk: unknown
 source: community

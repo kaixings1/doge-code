@@ -1,6 +1,6 @@
 ---
-name: azure-monitor-opentelemetry-exporter-py
-description: "Azure Monitor Opentelemetry Exporter Py — Azure Monitor Opentelemetry Exporter Py 相关功能和最佳实践"
+name: Azure Monitor OpenTelemetry Exporter (Python)
+description: "Azure Monitor OpenTelemetry Exporter Python — Azure Monitor OpenTelemetry Exporter Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -165,7 +165,7 @@ exporter = AzureMonitorTraceExporter(
 )
 ```
 
-## Sovereign Clouds
+## 主权云
 
 ```python
 from azure.identity import AzureAuthorityHosts, DefaultAzureCredential

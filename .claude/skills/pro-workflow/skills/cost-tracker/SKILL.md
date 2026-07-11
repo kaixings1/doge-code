@@ -94,7 +94,7 @@ COST TRACKER
     - [specific suggestion]
 ```
 
-## Rules
+## 规则
 
 - Track costs as awareness, not hard limits
 - Never sacrifice code quality to save tokens

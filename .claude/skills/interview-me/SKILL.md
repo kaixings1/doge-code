@@ -1,5 +1,5 @@
 ---
-name: interview-me
+name: 面试我
 description: "面试我 — 模拟面试练习"
 risk: safe
 source: community

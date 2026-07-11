@@ -3,51 +3,51 @@ description: 时间序列趋势与季节性分析
 argument-hint: "<describe your time-series data and what trends you want to analyze>"
 ---
 
-# /analyze-trends — Trend Analysis
+# /analyze-trends — 趋势分析
 
-Analyze temporal patterns — trends, seasonality, changepoints, and growth rates.
+分析时间模式——趋势、季节性、变化点和增长率。
 
-## Invocation
-
-```
-/analyze-trends Analyze the trend in daily signups over the past year
-/analyze-trends [upload file] Decompose monthly revenue into trend and seasonal components
-/analyze-trends Is there a day-of-week pattern in our support ticket volume?
-```
-
-## Workflow
-
-### Step 1: Time Series Preparation
-Validate timestamps, detect frequency, handle gaps.
-
-### Step 2: Decomposition
-Apply **trend-analysis** skill — decompose into trend, seasonal, and residual.
-
-### Step 3: Pattern Detection
-Detect seasonality periods, changepoints, and anomalous time periods.
-
-### Step 4: Growth Analysis
-Calculate period-over-period growth, YoY comparisons, and CAGR.
-
-### Step 5: Report
+## 调用
 
 ```
-## Trend Analysis: [Metric Name]
-
-**Period**: [start] to [end] | **Frequency**: [daily/weekly/monthly]
-**Overall Trend**: [direction] at [X]% [growth rate type]
-
-### Seasonality
-- [Pattern description]
-
-### Changepoints
-- [Date]: [Description of change]
-
-### Forecast Implications
-- [What this means for future values]
+/analyze-trends 分析过去一年每日注册量的趋势
+/analyze-trends [上传文件] 将月度收入分解为趋势和季节性成分
+/analyze-trends 我们的支持工单量是否存在星期模式？
 ```
 
-Offer follow-up:
-- "Want to **forecast** future values with /forecast?"
-- "Should I **investigate a specific changepoint**?"
-- "Want to **compare trends** across segments?"
+## 工作流
+
+### 步骤 1：时间序列准备
+验证时间戳、检测频率、处理空缺。
+
+### 步骤 2：分解
+应用 **trend-analysis** 技能——分解为趋势、季节性和残差。
+
+### 步骤 3：模式检测
+检测季节性周期、变化点和异常时间段。
+
+### 步骤 4：增长分析
+计算周期环比增长、同比增长和复合年增长率。
+
+### 步骤 5：报告
+
+```
+## 趋势分析：[指标名称]
+
+**周期**：[开始] 至 [结束] | **频率**：[日/周/月]
+**整体趋势**：[方向] [X]% [增长率类型]
+
+### 季节性
+- [模式描述]
+
+### 变化点
+- [日期]：[变更描述]
+
+### 预测影响
+- [这对未来值意味着什么]
+```
+
+提供后续选项：
+- "想要使用 /forecast **预测**未来值吗？"
+- "需要我**调查某个变化点**吗？"
+- "想要**跨分段比较趋势**吗？"

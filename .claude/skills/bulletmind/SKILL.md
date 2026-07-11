@@ -1,5 +1,5 @@
 ---
-name: bulletmind
+name: 结构化要点转换
 description: "将输入转换为清晰、结构化、层次化的要点，用于摘要、笔记和结构化思考。"
 category: writing
 risk: safe
@@ -25,7 +25,7 @@ When active, responses remain in hierarchical bullet format with no paragraphs, 
 
 ---
 
-## When to Use This Skill
+## 何时使用此技能
 
 Transform input into a structured bullet hierarchy when the user asks for:
 
@@ -71,7 +71,7 @@ Use consistent indentation:
 
 ---
 
-## Rules
+## 规则
 
 - NO paragraphs
 - ONLY bullets `-`

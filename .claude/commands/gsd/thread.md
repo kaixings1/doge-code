@@ -10,9 +10,8 @@ requires: [phase]
 ---
 
 <objective>
-Create, list, close, or resume persistent context threads. Threads are lightweight
-cross-session knowledge stores for work that spans multiple sessions but
-doesn't belong to any specific phase.
+创建、列出、关闭或恢复持久上下文线程。线程是轻量级的跨会话知识存储，适用于跨越多
+个会话但不属于任何特定阶段的工作。
 </objective>
 
 <execution_context>

@@ -1,3 +1,8 @@
+---
+name: 属性基测试
+description: 多语言和智能合约的属性基测试指南。
+---
+
 # Property-Based Testing
 
 Property-based testing guidance for multiple languages and smart contracts.

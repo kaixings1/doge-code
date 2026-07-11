@@ -8,9 +8,9 @@ allowed-tools:
 requires: [config, fast, phase, update]
 ---
 
-**STOP -- DO NOT READ THIS FILE. You are already reading it. This prompt was injected into your context by Claude Code's command system. Using the Read tool on this file wastes tokens. Begin executing Step 0 immediately.**
+**停止——不要读取此文件。你已经在读取它。此提示由 Claude Code 的命令系统注入到你的上下文中。在此文件上使用 Read 工具会浪费令牌。立即开始执行步骤 0。**
 
-**CJS-only (graphify):** `graphify` subcommands are not registered on `gsd-sdk query`. Use `node $HOME/.claude/get-shit-done/bin/gsd-tools.cjs graphify …` as documented in this command and in `docs/CLI-TOOLS.md`. Other tooling may still use `gsd-sdk query` where a handler exists.
+**仅 CJS (graphify)：** `graphify` 子命令未在 `gsd-sdk query` 上注册。使用 `node $HOME/.claude/get-shit-done/bin/gsd-tools.cjs graphify …`，如此命令和 `docs/CLI-TOOLS.md` 中所述。其他工具可能仍在使用存在处理程序的 `gsd-sdk query`。
 
 ## Step 0 -- Banner
 

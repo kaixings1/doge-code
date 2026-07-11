@@ -7,52 +7,52 @@ allowed-tools:
   - Skill
 ---
 
-# Weather Orchestrator Command
+# 天气编排器命令
 
-Fetch the current temperature for Dubai, UAE and create a visual SVG weather card.
+获取阿联酋迪拜的当前温度并创建可视化 SVG 天气卡片。
 
-## Execution Contract (non-negotiable)
+## 执行契约（不可协商）
 
-You MUST complete this command by delegating to the `weather-agent` subagent. You are forbidden from:
+你**必须**通过委托给 `weather-agent` 子智能体来完成此命令。禁止以下行为：
 
-- Fetching weather data yourself via Bash, WebFetch, or any other tool
-- Skipping Step 1 (the user's unit preference is required input to the agent)
-- Calling `weather-svg-creator` before the agent returns a temperature
+- 通过 Bash、WebFetch 或任何其他工具自行获取天气数据
+- 跳过步骤 1（用户的温度单位偏好是智能体必需的输入）
+- 在智能体返回温度之前调用 `weather-svg-creator`
 
-If you cannot invoke the Agent tool, stop and report the error to the user. Do not improvise.
+如果无法调用 Agent 工具，停止并向用户报告错误。不要临时应变。
 
-## Workflow
+## 工作流
 
-### Step 1: Ask User Preference
+### 步骤 1：询问用户偏好
 
-Use the AskUserQuestion tool to ask the user whether they want the temperature in Celsius or Fahrenheit. Capture the selected unit before proceeding.
+使用 AskUserQuestion 工具询问用户想要摄氏度还是华氏度。在继续之前记录所选单位。
 
-### Step 2: Fetch Weather Data via Agent
+### 步骤 2：通过智能体获取天气数据
 
-Use the Agent tool to invoke the weather agent:
+使用 Agent 工具调用天气智能体：
 
 - subagent_type: weather-agent
 - description: 获取迪拜天气数据
-- prompt: Fetch the current temperature for Dubai, UAE in [unit requested by user]. Return the numeric temperature value and unit. The agent has a preloaded skill (weather-fetcher) that provides the detailed instructions.
+- prompt: 获取阿联酋迪拜的当前温度，单位为[用户请求的单位]。返回数值温度和单位。智能体预装了提供详细说明的技能（weather-fetcher）。
 - model: haiku
 
-Wait for the agent to complete and capture the returned temperature value and unit.
+等待智能体完成并捕获返回的温度值和单位。
 
-**Fail-closed guardrail**: If the agent does not return a numeric temperature and unit, DO NOT proceed to Step 3. Report the failure to the user and stop.
+**故障关闭护栏**：如果智能体未返回数值温度和单位，**不要**继续到步骤 3。向用户报告失败并停止。
 
-### Step 3: Create SVG Weather Card
+### 步骤 3：创建 SVG 天气卡片
 
-Use the Skill tool to invoke the weather-svg-creator skill:
+使用 Skill 工具调用 weather-svg-creator 技能：
 
 - skill: weather-svg-creator
 
-The skill will use the temperature value and unit from Step 2 (available in the current context) to create the SVG card and write output files.
+该技能将使用步骤 2 中的温度值和单位（在当前上下文中可用）来创建 SVG 卡片并写入输出文件。
 
-## Output Summary
+## 输出摘要
 
-Provide a clear summary to the user showing:
+向用户提供清晰的摘要，显示：
 
-- Temperature unit requested
-- Temperature fetched from Dubai
-- SVG card created at `orchestration-workflow/weather.svg`
-- Summary written to `orchestration-workflow/output.md`
+- 请求的温度单位
+- 从迪拜获取的温度
+- 在 `orchestration-workflow/weather.svg` 创建的 SVG 卡片
+- 写入 `orchestration-workflow/output.md` 的摘要

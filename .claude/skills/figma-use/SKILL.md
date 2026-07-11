@@ -1,6 +1,6 @@
 ---
-name: figma-use
-description: "Figma Use — Figma Use 相关功能和最佳实践"
+name: Figma 使用
+description: "Figma 使用 — Figma 使用相关功能和最佳实践"
   运行 Figma 插件 API 脚本进行画布写入、检查、变量和设计系统工作。是本目录中所有其他 Figma 技能的先决条件。
 triggers:
   - "figma use"

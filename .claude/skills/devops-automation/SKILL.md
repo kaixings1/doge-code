@@ -8,7 +8,7 @@ description: DevOps自动化 — 使用GitHub Actions、Docker、Kubernetes和Te
 ## GitHub Actions 工作流结构
 
 ```yaml
-name: CI/CD
+name: DevOps自动化
 on:
   push:
     branches: [main]

@@ -1,6 +1,6 @@
 --- 
-name: magic-animator
-description: "Magic Animator — Magic Animator 相关功能和最佳实践"
+name: Magic Animator 相关功能和最佳实践（AI 驱动动画工具）
+description: "Magic Animator — Magic Animator 相关功能和最佳实践（AI 驱动动画工具）"
 risk: safe
 source: community
 date_added: "2026-03-07"

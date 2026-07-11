@@ -1,6 +1,6 @@
 ---
-name: azure-storage-file-share-ts
-description: "Azure Storage File Share Ts — Azure Storage File Share Ts 相关功能和最佳实践"
+name: Azure Storage File Share (TypeScript)
+description: "Azure Storage File Share TypeScript — Azure Storage File Share TypeScript SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -81,7 +81,7 @@ const client = new ShareServiceClient(
 );
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 ```
 ShareServiceClient (account level)

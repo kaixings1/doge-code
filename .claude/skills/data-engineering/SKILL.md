@@ -1,11 +1,11 @@
 ---
-name: data-engineering
+name: ETL管道、数据仓库、Apache Spark和数据质量验证的数据工程模式。
 description: ETL管道、数据仓库、Apache Spark和数据质量验证的数据工程模式。
 ---
 
-# Data Engineering
+# 数据工程 (Data Engineering)
 
-## ETL Pipeline Pattern
+## ETL 管道模式
 
 ```python
 from datetime import datetime
@@ -70,7 +70,7 @@ class OrderPipeline:
         )
 ```
 
-## Apache Spark Processing
+## Apache Spark 处理
 
 ```python
 from pyspark.sql import SparkSession
@@ -112,7 +112,7 @@ daily_revenue.write \
     .parquet("s3://data-warehouse/daily_revenue/")
 ```
 
-## Data Quality Checks
+## 数据质量检查
 
 ```python
 from dataclasses import dataclass
@@ -205,20 +205,20 @@ CREATE TABLE fact_orders (
 
 ## 反模式
 
-- Processing data row-by-row instead of in batches or sets
-- Not partitioning large tables by date or category
-- Missing data quality checks between pipeline stages
-- Loading raw data directly into the warehouse without transformation
-- Using full table scans when incremental loads would suffice
-- Not tracking data lineage (where data came from, when it was processed)
+- 逐行处理数据，而非批处理或集合处理
+- 未按日期或类别对大型表进行分区
+- 管道阶段之间缺少数据质量检查
+- 未经过转换直接将原始数据加载到仓库
+- 在增量加载足够时使用全表扫描
+- 未跟踪数据血缘（数据来源、处理时间）
 
-## Checklist
+## 检查清单
 
-- [ ] Pipelines follow Extract-Transform-Load with clear stage separation
-- [ ] Incremental processing based on watermarks or change data capture
-- [ ] Data quality checks run after each pipeline stage
-- [ ] Warehouse uses star or snowflake 架构 with dimension and fact tables
-- [ ] Spark jobs use adaptive 查询 execution and appropriate partitioning
-- [ ] Idempotent loads (re-running produces the same result)
-- [ ] Data freshness monitored with automated alerts
-- [ ] 架构 evolution handled gracefully (additive changes preferred)
+- [ ] 管道遵循提取-转换-加载模式，阶段分离清晰
+- [ ] 基于水印或变更数据捕获的增量处理
+- [ ] 每个管道阶段后运行数据质量检查
+- [ ] 仓库使用星型或雪花型架构，包含维表和事实表
+- [ ] Spark 任务使用自适应查询执行和适当的分区
+- [ ] 幂等加载（重新运行产生相同结果）
+- [ ] 通过自动告警监控数据新鲜度
+- [ ] 优雅处理架构演变（优先使用添加式变更）

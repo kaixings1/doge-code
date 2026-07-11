@@ -1,6 +1,6 @@
 ---
-name: azure-resource-manager-postgresql-dotnet
-description: "Azure Resource Manager Postgresql Dotnet — Azure Resource Manager Postgresql Dotnet 相关功能和最佳实践"
+name: Azure Resource Manager PostgreSQL (.NET)
+description: "Azure Resource Manager PostgreSQL .NET — Azure Resource Manager PostgreSQL .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'

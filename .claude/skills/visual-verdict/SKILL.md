@@ -1,8 +1,10 @@
 ---
-name: visual-verdict
-description: "Visual Verdict — Visual Verdict 相关功能和最佳实践"
+name: 视觉裁决
+description: "视觉裁决 — 视觉比较和判定相关功能和最佳实践"
 level: 2
 ---
+
+# 视觉裁决
 
 <目的>
 使用此技能将生成的 UI 截图与一个或多个参考图像进行比较，并返回严格的 JSON 裁决，以驱动下一次编辑迭代。

@@ -1,9 +1,9 @@
 ---
-name: source-driven-development
+name: 源码驱动开发
 description: 源码驱动开发 — 将每个实现决策建立在官方文档和规范之上。
 ---
 
-# Source-Driven Development
+# 源码驱动开发
 
 ## 概述
 

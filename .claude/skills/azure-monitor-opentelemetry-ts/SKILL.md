@@ -1,14 +1,14 @@
 ---
-name: azure-monitor-opentelemetry-ts
+name: 指导 TypeScript 开发者使用 Azure Monitor OpenTelemetry 收集遥测数据。
 description: "指导 TypeScript 开发者使用 Azure Monitor OpenTelemetry 收集遥测数据。"
 risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
 
-# Azure Monitor OpenTelemetry SDK for TypeScript
+# Azure Monitor OpenTelemetry TypeScript SDK
 
-Auto-instrument Node.js applications with distributed tracing, metrics, and logs.
+使用分布式追踪、指标和日志自动检测 Node.js 应用。
 
 ## 安装
 
@@ -287,7 +287,7 @@ process.on("SIGTERM", async () => {
 });
 ```
 
-## Key Types
+## 关键类型
 
 ```typescript
 import {

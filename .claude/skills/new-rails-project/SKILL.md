@@ -1,5 +1,5 @@
 ---
-name: new-rails-project
+name: 创建新的 Rails 项目。
 参数-hint: [project name]
 description: 创建新的 Rails 项目。
 allowed-tools: Bash(rails *), Bash(bundle *), Bash(bin/*), Bash(npm *), Bash(yarn *)

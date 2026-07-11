@@ -1,6 +1,8 @@
+# 写作形状
+
 ---
-name: writing-shape
-description: "Writing Shape —文章塑形技能：将原始素材转化为结构清晰的文章"
+name: 文章塑形
+description: "文章塑形 — 文章塑形技能：将原始素材转化为结构清晰的文章"
 disable-model-invocation: true
 ---
 

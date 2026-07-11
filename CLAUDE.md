@@ -355,7 +355,8 @@ src/tools/             # 85+ 个工具实现，每工具一个目录
 
 - 文件系统路径使用 Windows 原生格式（`D:/doge-code/...`）
 - Bash Tool 底层由 MSYS2 驱动，**反斜杠 `\` 会自动转换为 `/`**
-- 避免在 bash 命令中直接使用 `\n` 等转义序列，改用 `chr(10)` 或 `String.fromCharCode(10)`
+- 避免在 bash 命令中直接使用 `\n` 等转义序列
+- 在 Windows/Git Bash 下运行 python3 -c 内联代码会被 MSYS2 破坏，改用 python3 脚本文件方式
 - 不使用 Linux 路径（`/tmp/`、`/dev/`、`/etc/`）
 - 临时文件放当前工作目录，不用 `/tmp`
 
@@ -372,3 +373,25 @@ src/tools/             # 85+ 个工具实现，每工具一个目录
 - `--dangerously-skip-permissions` 跳过权限确认（开发环境使用）
 - `--verbose` 输出详细日志
 - `--add-dir .` 将当前目录添加到项目列表
+```
+src/skills/bundled/high-star-imports/
+├── openai-codex-cli/ # OpenAI Codex CLI
+│ ├── source.json # 源描述（displayName/description/url）
+│ └── openai-codex-assistant.md # 技能文件 (SKILL.md 格式)
+├── anthropic-claude-code/ # Anthropic Claude Code 官方技能
+├── microsoft-autogen/ # 微软 AutoGen 多智能体
+├── crewai/ # CrewAI 多智能体编排
+├── langchain/ # LangChain 技能模板
+├── swe-agent/ # Princeton SWE-agent
+├── aider/ # Aider AI 编程助手
+├── continue-dev/ # Continue.dev
+├── google-ai-studio/ # Google AI Studio / Gemini
+├── meta-llama-agent/ # Meta Llama Agent
+├── huggingface-agents/ # HuggingFace Agents
+├── github-copilot-patterns/# GitHub Copilot 模式
+└── open-interpreter/ # Open Interpreter
+``` ### 添加新来源
+1. 在 `high-star-imports/` 下创建目录
+2. 创建 `source.json`（定义 displayName/description/url）
+3. 添加 `.md` 技能文件（YAML frontmatter 格式）
+4. `/updateskills` 命令自动发现并列出

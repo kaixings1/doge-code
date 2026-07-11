@@ -1,10 +1,15 @@
+---
+name: 变异测试 — 测试配置
+description: 配置 mewt/muton 变异测试活动 — 范围目标、调整超时、优化长时间运行。
+---
+
 # 变异测试 — 测试配置
 
 Helps configure [mewt](https://github.com/trailofbits/mewt) or [muton](https://github.com/trailofbits/muton) mutation testing campaigns — scoping targets, tuning timeouts, and optimizing long-running runs so you can execute `mewt run` or `muton run` with confidence.
 
 > **注意**: muton and mewt share identical interfaces but target different languages — mewt for general-目的 languages, muton for TON smart contracts (Tact, Tolk, FunC). All commands and 配置 patterns in this plugin apply to both tools. File names change accordingly: `mewt.toml` → `muton.toml`, `mewt.sqlite` → `muton.sqlite`.
 
-## What It Does
+## 功能说明
 
 Walks through a 5-phase 配置 工作流:
 

@@ -1,5 +1,5 @@
 ---
-name: frontend-dev-guidelines
+name: 您是高级前端工程师，在严格的架构和性能标准下工作
 description: "您是高级前端工程师，在严格的架构和性能标准下工作。适用于创建组件或页面、添加新功能或获取或修改数据时。"
 risk: unknown
 source: community

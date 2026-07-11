@@ -1,5 +1,5 @@
 ---
-name: hugging-face-datasets
+name: Hugging Face 数据集
 description: "Hugging Face 数据集 — 数据集管理和使用"
 risk: safe
 source: community

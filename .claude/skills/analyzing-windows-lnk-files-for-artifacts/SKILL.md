@@ -1,5 +1,5 @@
 ---
-name: analyzing-windows-lnk-files-for-artifacts
+name: Windows LNK 文件痕迹分析
 description: "分析 Windows LNK 文件痕迹"
 risk: safe
 source: community

@@ -1,6 +1,6 @@
 ---
-name: Prismic Automation
-description: "通迃再足抧身和可辑诅 Prismic 丯導氡服加器可辐提掏服加器丯導\u524b\u516c\u5F00\u6BCB\u5F95\u4E36\u65C5\u7ECB\u5355\u6C49\u65C5\u578B\u6784\u5185\u4E5E\u5F00\u578B\u7248\u5750\u7C27\u540C\u4A9G\u7ECB\u5355\u5F85\u65C5."
+name: 通迃再足抧身和可辑诅 Prismic 丯導氡服加器可辐提掏服加器丯導剋公开毋徕丶
+description: "通迃再足抧身和可辑诅 Prismic 丯導氡服加器可辐提掏服加器丯導剋公开毋徕丶旅绋单汉旅型构内乞开型版坐簧同\u4A9G绋单待旅."
 requires:
   mcp:
     - rube

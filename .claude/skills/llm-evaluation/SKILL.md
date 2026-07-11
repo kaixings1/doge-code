@@ -1,5 +1,5 @@
 ---
-name: llm-evaluation
+name: 掌握 LLM 应用的全面评估策略，从自动化指标到人工评估和 A/B 测试。
 description: "掌握 LLM 应用的全面评估策略，从自动化指标到人工评估和 A/B 测试。"
 risk: unknown
 source: community

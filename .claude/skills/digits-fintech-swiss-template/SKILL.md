@@ -1,6 +1,6 @@
 ---
-name: digits-fintech-swiss-template
-description: "Digits Fintech Swiss Template — Digits Fintech Swiss Template 相关功能和最佳实践"
+name: Digits 金融科技瑞士模板
+description: "Digits 金融科技瑞士模板 — Digits 金融科技瑞士模板相关功能和最佳实践"
   黑/暖纸/霓虹绿对比的瑞士网格金融科技幻灯片模板。当用户要求在一个 HTML 文件中提供具有严格模块化布局、粗体数字卡片、克制动效和键盘/点击导航的高级数据故事幻灯片时使用。
 triggers:
   - "swiss fintech template"
@@ -27,11 +27,11 @@ od:
     - file_write
 ---
 
-# Digits Fintech Swiss Template
+# Digits 金融科技瑞士模板
 
 A premium three-slide live-artifact template for data-storytelling in a Swiss grid language.
 
-## Resource map
+## 资源映射
 
 ```text
 digits-fintech-swiss-template/
@@ -54,7 +54,7 @@ digits-fintech-swiss-template/
 4. Keep motion subtle (slide fade + tiny hover lift only).
 5. Keep the file self-contained (inline CSS/JS) with no sandbox-hostile APIs.
 
-## Output contract
+## 输出契约
 
 Emit one concise orientation sentence and then one HTML artifact:
 

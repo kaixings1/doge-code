@@ -1,8 +1,6 @@
 ---
-name: discord-bot-architect
-description: "Discord Bot Architect — Discord Bot Architect 相关功能和最佳实践"
-  Covers Discord.js (JavaScript) and Pycord (Python), gateway intents, slash
-  commands, interactive components, rate limiting, and sharding.
+name: Discord Bot 架构师
+description: "Discord Bot 架构师 — Discord Bot 架构师相关功能和最佳实践，涵盖 Discord.js (JavaScript) 和 Pycord (Python)、网关意图、斜杠命令、交互式组件、速率限制和分片。"
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)
 date_added: 2026-02-27
@@ -852,7 +850,7 @@ for shard_id, guilds in bot.guilds_by_shard().items():
 - Recommended: ~1000 guilds per shard
 - Memory: Each shard runs in separate process
 
-## Sharp Edges
+## 注意事项
 
 ### Interaction Timeout (3 Second Rule)
 
@@ -1355,7 +1353,7 @@ async execute(interaction) {
 }
 ```
 
-## Validation Checks
+## 验证检查
 
 ### Hardcoded Discord 令牌
 
@@ -1437,7 +1435,7 @@ Severity: INFO
 
 Message: Bulk 操作 without rate limit handling.
 
-## Collaboration
+## 协作
 
 ### Delegation Triggers
 

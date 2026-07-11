@@ -1,5 +1,5 @@
 ---
-name: coding-standards
+name: 编码规范
 description: "编码规范"
 risk: safe
 source: community

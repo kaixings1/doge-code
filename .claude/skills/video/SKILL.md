@@ -1,6 +1,6 @@
 ---
-name: video
-description: "当用户wants to create, generate, or produce video content using AI tools or programmatic frameworks. Also use when the user mentions 'video production,' 'AI video,' 'Remotion,' 'Hyperframes,' 'HeyGen,' 'Synthesia,' 'Veo,' 'Sora,' 'Runway,' 'Kling,' 'Seedance,' 'Hailuo,' 'MiniMax,' 'Pika,' 'Hunyuan,' 'Wan,' 'video generation,' 'AI avatar,' 'talking head video,' 'programmatic video,' 'video template,' 'explainer video,' 'product demo video,' 'video pipeline,' or 'make me a video.' Use this for video creation, generation, and production workflows. For video content strategy and what to post, see social. For paid video ad creative, see ad-creative.时使用此技能。"
+name: 当用户想要使用 AI 工具或编程框架创建、生成或制作视频内容时使用此技能。当用户
+description: "当用户想要使用 AI 工具或编程框架创建、生成或制作视频内容时使用此技能。当用户提到 'video production'、'AI video'、'Remotion'、'Hyperframes'、'HeyGen'、'Synthesia'、'Veo'、'Sora'、'Runway'、'Kling'、'Seedance'、'Hailuo'、'MiniMax'、'Pika'、'Hunyuan'、'Wan'、'video generation'、'AI avatar'、'talking head video'、'programmatic video'、'video template'、'explainer video'、'product demo video'、'video pipeline' 或 'make me a video' 时也使用。用于视频创建、生成和生产工作流。关于视频内容策略和发布内容，请参阅 social。关于付费视频广告创意，请参阅 ad-creative。"
 metadata:
   version: 2.0.1
 ---

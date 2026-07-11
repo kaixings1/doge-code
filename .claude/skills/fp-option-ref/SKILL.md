@@ -1,6 +1,6 @@
 ---
-name: fp-option-ref
-description: "Fp Option Ref /u2014 Option /u5feb/u901f/u53c2/u8003/uff1aSome(value) /u6216 None"
+name: fp-ts Option 快速参考
+description: "fp-ts Option 快速参考：Some(value) 或 None 的模式匹配、映射、过滤和提取操作。"
 risk: unknown
 source: community
 version: 1.0.0

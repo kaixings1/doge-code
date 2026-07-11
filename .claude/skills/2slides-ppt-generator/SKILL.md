@@ -1,5 +1,5 @@
 ---
-name: 2slides-ppt-generator
+name: 2slides PPT 生成器
 description: "基于 AI 的演示文稿生成 — 通过 2slides API 从文本创建幻灯片、匹配参考图片样式、将文档总结为演示文稿、添加 AI 语音旁白并导出页面/音频。适用于"制作幻灯片"、"创建演示文稿"或"从此文档生成幻灯片"的请求。"
 category: api-集成
 risk: safe

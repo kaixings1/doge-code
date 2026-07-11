@@ -1,6 +1,6 @@
 ---
-name: azure-cosmos-py
-description: "Azure Cosmos Py — Azure Cosmos Py 相关功能和最佳实践"
+name: Azure Cosmos DB Python SDK 相关功能和最佳实
+description: "Azure Cosmos DB Python — Azure Cosmos DB Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -36,7 +36,7 @@ credential = DefaultAzureCredential()
 client = CosmosClient(url=端点, credential=credential)
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 | Client | Purpose | Get From |
 |--------|---------|----------|
@@ -215,7 +215,7 @@ print(f"Throughput: {offer.offer_throughput} RU/s")
 container.replace_throughput(throughput=1000)
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.cosmos.aio import CosmosClient

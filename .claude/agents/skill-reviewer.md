@@ -1,16 +1,16 @@
 ---
 name:  审查员
-description:   |（待汉化）
-  Use this agent when the user has created or modified a skill and needs quality review, asks to "review my skill", "check skill quality", "improve skill description", or wants to ensure skill follows best practices. Trigger proactively after skill creation. Examples:
+description: 技能审查者——审查技能文件的质量和完整性
+  当用户创建或修改了技能并需要质量审查，要求"审查我的技能"、"检查技能质量"、"改进技能描述"或希望确保技能遵循最佳实践时使用此代理。在技能创建后主动触发。示例：
 
   <example>
-  Context: User just created a new skill
-  user: "I've created a PDF processing skill"
-  assistant: "Great! Let me review the skill quality."
+  Context: 用户刚创建了新技能
+  user: "我创建了一个 PDF 处理技能"
+  assistant: "太好了！让我审查技能质量。"
   <commentary>
-  Skill created, proactively trigger skill-reviewer to ensure it follows best practices.
+  技能已创建，主动触发 skill-reviewer 以确保遵循最佳实践。
   </commentary>
-  assistant: "I'll use the skill-reviewer agent to review the skill."
+  assistant: "我将使用 skill-reviewer 代理审查该技能。"
   </example>
 
   <example>

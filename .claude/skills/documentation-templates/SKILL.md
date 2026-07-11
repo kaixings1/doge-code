@@ -1,12 +1,12 @@
 ---
-name: documentation-templates
+name: 文档模板和结构指南。README、API 文档、代码注释和 AI 友好型文档。
 description: "文档模板和结构指南。README、API 文档、代码注释和 AI 友好型文档。"
 risk: safe
 source: community
 date_added: "2026-02-27"
 ---
 
-# Documentation Templates
+# 文档模板 (Documentation Templates)
 
 > Templates and structure guidelines for common documentation types.
 
@@ -33,7 +33,7 @@ date_added: "2026-02-27"
 
 Brief one-line description.
 
-## Quick Start
+## 快速入门
 
 [Minimum steps to run]
 
@@ -140,7 +140,7 @@ Get a user by ID.
 ## Status
 Accepted / Deprecated / Superseded
 
-## Context
+## 上下文
 Why are we making this decision?
 
 ## Decision

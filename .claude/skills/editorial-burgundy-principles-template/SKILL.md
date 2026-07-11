@@ -1,9 +1,9 @@
 ---
-name: editorial-burgundy-principles-template
-description: "Editorial Burgundy Principles Template — Editorial Burgundy Principles Template 相关功能和最佳实践"
-  Editorial studio deck template in burgundy / blush / muted-gold palette.
-  Use when users ask for premium manifesto or culture slides with pill tags,
-  large typographic statements, principle cards, and guided keyboard/click navigation.
+name: 编辑酒红原则模板相关功能和最佳实践
+description: "Editorial Burgundy Principles Template — 编辑酒红原则模板相关功能和最佳实践"
+  编辑工作室酒红/腮红/哑金配色的演示文稿模板。
+  当用户要求高级宣言或文化幻灯片时使用，包含药丸标签、
+  大型排版声明、原则卡片和引导式键盘/点击导航。
 triggers:
   - "editorial burgundy template"
   - "studio salon deck"
@@ -33,7 +33,7 @@ od:
 
 A three-slide editorial deck for culture narratives, strategy storytelling, and internal manifestos.
 
-## Resource map
+## 资源映射
 
 ```text
 editorial-burgundy-principles-template/
@@ -59,7 +59,7 @@ editorial-burgundy-principles-template/
    - keyboard navigation (`ArrowLeft` / `ArrowRight`)
 5. Keep HTML self-contained and sandbox-safe.
 
-## Output contract
+## 输出契约
 
 Emit one concise orientation sentence and one HTML artifact:
 

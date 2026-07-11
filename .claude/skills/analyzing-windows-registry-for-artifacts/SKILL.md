@@ -1,5 +1,5 @@
 ---
-name: analyzing-windows-registry-for-artifacts
+name: Windows 注册表痕迹分析
 description: "分析 Windows 注册表痕迹"
 risk: safe
 source: community

@@ -1,6 +1,6 @@
 ---
-name: azure-eventgrid-py
-description: "Azure Eventgrid Py — Azure Eventgrid Py 相关功能和最佳实践"
+name: Azure Event Grid Python SDK 相关功能和最佳
+description: "Azure Event Grid Python — Azure Event Grid Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -116,7 +116,7 @@ event = EventGridEvent(
 )
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.eventgrid.aio import EventGridPublisherClient

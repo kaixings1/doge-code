@@ -1,6 +1,6 @@
 ---
-name: industrial-brutalist-ui
-description: "Taste Brutalist Skill — Taste Brutalist Skill 相关功能和最佳实践"
+name: 工业风粗野主义 UI
+description: "工业风粗野主义 UI — 粗野主义设计风格相关功能和最佳实践"
 ---
 
 # SKILL: Industrial Brutalism & Tactical Telemetry UI

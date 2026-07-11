@@ -6,7 +6,7 @@ license: Proprietary. LICENSE.txt has complete terms
 
 # Excel文档
 
-## All Excel files
+## 所有 Excel 文件
 
 ### Professional Font
 - Use a consistent, professional font (e.g., Arial, Times New Roman) for all deliverables unless otherwise instructed by the user

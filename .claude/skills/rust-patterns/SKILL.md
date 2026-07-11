@@ -1,6 +1,6 @@
 ---
-name: rust-patterns
-description: "Rust Patterns — Rust Patterns 相关功能和最佳实践"
+name: Rust 模式
+description: "Rust 模式 — Rust 编程模式和最佳实践"
 metadata:
   origin: ECC
 ---

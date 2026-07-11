@@ -1,5 +1,5 @@
 ---
-name: remove-bg-automation
+name: Remove Bg 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Remove Bg 任务。使用前始终先搜索工具以获取当前 schema。""
 requires:
   mcp: [rube]

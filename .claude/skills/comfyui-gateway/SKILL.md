@@ -1,5 +1,5 @@
 ---
-name: comfyui-gateway
+name: ComfyUI 网关
 description: "ComfyUI 网关"
 risk: safe
 source: community

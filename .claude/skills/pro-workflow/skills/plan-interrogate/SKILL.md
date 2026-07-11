@@ -40,7 +40,7 @@ before any code is written.
 - Rolling past an unresolved node. If a dependency is not pinned, the
   downstream question is premature.
 
-## Output contract
+## 输出契约
 
 A single decision ledger the user can paste into the plan doc. No prose
 summary. No hedging. If the user declines to decide a node, mark it

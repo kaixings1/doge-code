@@ -1,5 +1,5 @@
 ---
-name: fp-async
+name: 使用 fp-ts TaskEither 进行实用的异步错误处理模式，替代嵌套 t
 description: "使用 fp-ts TaskEither 进行实用的异步错误处理模式，替代嵌套 try/catch，构建干净的异步管道。"
 risk: unknown
 source: community

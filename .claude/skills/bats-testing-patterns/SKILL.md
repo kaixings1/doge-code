@@ -1,5 +1,5 @@
 ---
-name: bats-testing-patterns
+name: 掌握 Bash 自动化测试系统 (Bats) 进行全面的 shell 脚本测试。
 description: "掌握 Bash 自动化测试系统 (Bats) 进行全面的 shell 脚本测试。适用于为 shell 脚本编写测试、CI/CD 流水线或需要对 shell 工具进行测试驱动开发。"
 risk: unknown
 source: community

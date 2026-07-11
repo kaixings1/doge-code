@@ -1,6 +1,6 @@
 ---
-name: figma-generate-library
-description: "Figma Generate Library — Figma Generate Library 相关功能和最佳实践"
+name: Figma 生成库
+description: "Figma 生成库 — 使用 Figma 生成设计库相关功能和最佳实践"
   从代码库构建或更新 Figma 中的专业级设计系统库。用于保持 Figma 真实来源与已发布组件同步。
 triggers:
   - "figma library"

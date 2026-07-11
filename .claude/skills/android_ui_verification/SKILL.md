@@ -1,5 +1,5 @@
 ---
-name: android_ui_verification
+name: Android UI 验证
 description: "Android UI 验证"
 risk: safe
 source: community

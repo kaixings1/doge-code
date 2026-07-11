@@ -1,6 +1,6 @@
 ---
-name: azure-data-tables-py
-description: "Azure Data Tables Py — Azure Data Tables Py 相关功能和最佳实践"
+name: Azure Data Tables Python SDK 相关功能和最
+description: "Azure Data Tables Python — Azure Data Tables Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -42,7 +42,7 @@ service_client = TableServiceClient(端点=端点, credential=credential)
 table_client = TableClient(端点=端点, table_name="mytable", credential=credential)
 ```
 
-## Client Types
+## 客户端类型
 
 | Client | Purpose |
 |--------|---------|
@@ -191,7 +191,7 @@ except TableTransactionError as e:
     print(f"Transaction failed: {e}")
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.data.tables.aio import TableServiceClient, TableClient

@@ -1,5 +1,5 @@
 ---
-name: kubernetes-operations
+name: Kubernetes运维
 description: Kubernetes运维 — 包括清单、Helm图表、Operator模式、网络策略和存储。
 ---
 
@@ -173,7 +173,7 @@ kubectl get pods -A --field-selector=status.phase!=Running
 - 将密钥存储在 ConfigMaps 而不是 Secrets（或外部密钥管理器）中
 - 忽略复制部署的 pod 反亲和性
 
-## Checklist
+## 检查清单
 
 - [ ] All containers have resource requests and limits
 - [ ] Liveness and readiness probes configured

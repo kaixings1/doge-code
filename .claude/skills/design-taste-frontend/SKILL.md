@@ -1,5 +1,5 @@
 ---
-name: design-taste-frontend
+name: 适用于构建高品质前端界面，具有严格的设计品味、校准的色彩、响应式布局和动效规则的情况。
 description: "适用于构建高品质前端界面，具有严格的设计品味、校准的色彩、响应式布局和动效规则的情况。"
 category: frontend
 risk: safe

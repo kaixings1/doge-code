@@ -1,5 +1,5 @@
 ---
-name: monday-automation
+name: Monday 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Monday.com 工作管理，包括面板、项目、列、组、子项目和更新。使用前始终先搜索工具以获取当前 schema。"
 risk: critical
 source: community

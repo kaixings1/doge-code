@@ -38,7 +38,7 @@ Override per-run with `--provider openai|anthropic|openrouter|fireworks|custom`.
 
 Default model rosters per provider live in `scripts/council.js` and can be overridden via `--models` CSV and `--chairman <id>`.
 
-## Commands
+## 命令
 
 ```
 node $SKILL_ROOT/scripts/council.js run "<query>" [--models id1,id2,id3] [--chairman id] [--provider <name>] [--wiki <slug>]

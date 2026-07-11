@@ -1,5 +1,5 @@
 ---
-name: eventbrite-automation
+name: Eventbrite 自动化
 description: "Eventbrite 自动化"
 risk: safe
 source: community

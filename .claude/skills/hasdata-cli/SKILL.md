@@ -1,5 +1,5 @@
 ---
-name: hasdata-cli
+name: HasData 命令行工具
 description: "HasData CLI — HasData 命令行工具"
 risk: safe
 source: community

@@ -1,6 +1,6 @@
 ---
-name: azure-identity-py
-description: "Azure Identity Py — Azure Identity Py 相关功能和最佳实践"
+name: Azure Identity Python SDK 相关功能和最佳实践
+description: "Azure Identity Python — Azure Identity Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -162,7 +162,7 @@ print(f"令牌 expires: {令牌.expires_on}")
 令牌 = credential.get_token("https://ossrdbms-aad.database.windows.net/.default")
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.identity.aio import DefaultAzureCredential

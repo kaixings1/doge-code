@@ -1,5 +1,5 @@
 ---
-name: cirq
+name: Cirq 是 Google Quantum AI
 description: "Cirq 是 Google Quantum AI 的开源框架，用于在量子计算机和模拟器上设计、模拟和运行量子电路。"
 license: Apache-2.0 license
 metadata:
@@ -41,7 +41,7 @@ uv pip install cirq-pasqal
 uv pip install azure-quantum cirq
 ```
 
-## Quick Start
+## 快速入门
 
 ### Basic Circuit
 
@@ -94,7 +94,7 @@ for params, result in zip(sweep, results):
     print(f"θ={theta_val:.2f}: {counts}")
 ```
 
-## Core Capabilities
+## 核心能力
 
 ### Circuit Building
 For comprehensive information about building quantum circuits, including qubits, gates, operations, custom gates, and circuit patterns, see:
@@ -321,7 +321,7 @@ results = noise_comparison_study(circuit, noise_levels)
    - Parallelize independent tasks
    - Document thoroughly with metadata
 
-## Additional Resources
+## 其他资源
 
 - **Official Documentation**: https://quantumai.google/cirq
 - **API Reference**: https://quantumai.google/reference/python/cirq

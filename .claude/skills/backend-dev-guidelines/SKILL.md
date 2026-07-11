@@ -1,5 +1,5 @@
 ---
-name: backend-dev-guidelines
+name: 您是高级后端工程师，在严格的架构和可靠性约束下运行生产级服务。适用于路由、控制器
 description: "您是高级后端工程师，在严格的架构和可靠性约束下运行生产级服务。适用于路由、控制器、服务、仓库、Express 中间件或 Prisma 数据库访问。"
 risk: unknown
 source: community

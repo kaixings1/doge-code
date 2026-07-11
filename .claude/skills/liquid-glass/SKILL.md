@@ -1,5 +1,5 @@
 ---
-name: liquid-glass
+name: Liquid Glass设计系统指南
 description: Liquid Glass设计系统指南
 ---
 
@@ -22,136 +22,116 @@ description: Liquid Glass设计系统指南
 
 ## 应用结构
 
-- 优先 `NavigationSplitView` for hierarchy-driven macOS layouts. Let the
-  sidebar use the system Liquid Glass material instead of painting over it.
-- For hero artwork or large media adjacent to a floating sidebar, use
-  `backgroundExtensionEffect` so the visual can extend beyond the safe area
-  without clipping the subject.
-- Keep inspectors visually associated with the current selection and avoid
-  giving them a heavier custom background than the content they inspect.
-- If the app uses tabs, keep `TabView` for persistent top-level sections and
-  preserve each tab's local navigation state.
-- Do not force iPhone-only tab bar minimize/accessory behavior onto a Mac app.
-  On macOS, prefer a conventional top toolbar and native tab/search placement.
-- If a sheet already uses `presentationBackground` purely to imitate frosted
-  material, consider removing it and letting the system's new material render.
-- For sheet transitions that should visually originate from a toolbar button,
-  make the presenting item the source of a navigation zoom transition and mark
-  the sheet content as the destination.
+- 优先使用 `NavigationSplitView` 实现层级驱动的 macOS 布局。让
+  侧边栏使用系统的 Liquid Glass 材质，而非在上面覆盖自定义背景。
+- 对于浮动侧边栏旁边的主艺术作品或大型媒体，使用
+  `backgroundExtensionEffect` 使视觉内容可扩展到安全区域之外
+  而不裁剪主体。
+- 保持检查器与当前选择在视觉上关联，避免
+  给它们比所检查内容更重的自定义背景。
+- 如果应用使用标签页，保持 `TabView` 用于持久的顶级部分，
+  并保留每个标签页的本地导航状态。
+- 不要将仅 iPhone 的标签栏最小化/附属行为强加于 Mac 应用。
+  在 macOS 上，优先使用传统的顶部工具栏和原生标签/搜索布局。
+- 如果表单已使用 `presentationBackground` 纯粹模仿毛玻璃
+  材质，考虑移除它，让系统的新材质来渲染。
+- 对于应从工具栏按钮视觉上发起的表单过渡，
+  使呈现项成为导航缩放过渡的源，并将
+  表单内容标记为目标。
 
 ## 工具栏
 
-- Assume toolbar items are rendered on a floating Liquid Glass surface and are
-  grouped automatically.
-- Use `ToolbarSpacer` to communicate grouping:
-  - fixed spacing to split related actions into a distinct group,
-  - flexible spacing to push a leading action away from a trailing group.
-- Use `sharedBackgroundVisibility` when an item should stand alone without the
-  shared glass background, for example a profile/avatar item.
-- Add `badge` to toolbar item content for notification or status indicators.
-- Expect monochrome icon rendering in more toolbar contexts. Use `tint` only to
-  convey semantic meaning such as a primary action or alert state, not as pure
-  decoration.
-- If content underneath a toolbar has extra darkening, blur, or custom
-  background layers, remove them before judging the new automatic scroll-edge
-  effect.
-- For dense windows with many floating elements, tune the content's scroll-edge
-  treatment with `scrollEdgeEffectStyle` instead of building a custom bar
-  background.
+- 假设工具栏项渲染在浮动的 Liquid Glass 表面上，
+  并自动分组。
+- 使用 `ToolbarSpacer` 来传达分组：
+  - 固定间距将相关操作拆分为不同的组，
+  - 灵活间距将前导操作推离尾随组。
+- 当某项应独立显示而无需共享的玻璃背景时（例如头像/个人资料项），
+  使用 `sharedBackgroundVisibility`。
+- 为工具栏项内容添加 `badge` 用于通知或状态指示器。
+- 在更多工具栏上下文中期望单色图标渲染。仅在传达语义含义时使用 `tint`，
+  例如主要操作或警报状态，而非纯粹的装饰。
+- 如果工具栏下方的内容有额外的变暗、模糊或自定义
+  背景层，在判断新的自动滚动边缘效果之前先移除它们。
+- 对于具有许多浮动元素的密集窗口，使用 `scrollEdgeEffectStyle`
+  调整内容的滚动边缘处理，而非构建自定义栏背景。
 
 ## 搜索
 
-- For a search field that applies across a whole split-view hierarchy, attach
-  `searchable` to the `NavigationSplitView`, not to just one column.
-- When search is secondary and a compact affordance is better, use
-  `searchToolbarBehavior` instead of hand-rolling a toolbar button and a
-  separate field.
-- For a dedicated search page in a multi-tab app, assign the search role to one
-  tab and place `searchable` on the `TabView`.
-- Make most of the app's content discoverable from search when the field lives
-  in the top-trailing toolbar location.
-- On iPad and Mac, expect the dedicated search tab to show a centered field
-  above browsing suggestions rather than a bottom search bar.
+- 对于适用于整个拆分视图层次结构的搜索字段，将 `searchable` 附加到 `NavigationSplitView`，
+  而不仅仅是一列。
+- 当搜索是次要功能且更好的方式是紧凑控件时，使用 `searchToolbarBehavior`
+  而非手工制作工具栏按钮和独立字段。
+- 对于多标签页应用中的专用搜索页，为某个标签页分配搜索角色，
+  并将 `searchable` 放置在 `TabView` 上。
+- 当搜索字段位于顶部尾随工具栏位置时，让应用的大部分内容
+  可从搜索中发现。
+- 在 iPad 和 Mac 上，期望专用搜索标签页显示居中的字段
+  位于浏览建议上方，而非底部搜索栏。
 
 ## 控件
 
-- 优先 standard SwiftUI controls before creating custom glass components.
-- Expect bordered buttons to default to a capsule shape at larger sizes. On
-  macOS, mini/small/medium controls preserve a rounded-rectangle shape for
-  denser layouts.
-- Use `buttonBorderShape` when a button shape needs to be explicit.
-- Use `controlSize` to preserve density in inspectors and popovers, and reserve
-  extra-large sizing for truly prominent actions.
-- Use the system glass and glass-prominent button styles for primary actions
-  instead of recreating a translucent button background by hand.
-- For sliders with discrete values, pass `step` to get automatic tick marks or
-  provide specific ticks in a `ticks` closure.
-- For sliders that should expand left and right around a baseline, set
-  `neutralValue`.
-- Use `Label` or standard control initializers for menu items so icons are
-  consistently placed on the leading edge across platforms.
-- For custom shapes that must align concentrically with a sheet, card, or
-  window corner, use a concentric rectangle shape with the
-  `containerConcentric` corner 配置 instead of guessing a radius.
+- 在创建自定义玻璃组件之前，优先使用标准 SwiftUI 控件。
+- 期望带边框按钮在较大尺寸下默认为胶囊形状。在
+  macOS 上，迷你/小/中等控件为更密集的布局保留圆角矩形形状。
+- 当按钮形状需要明确时使用 `buttonBorderShape`。
+- 使用 `controlSize` 来保持检查器和弹出框中的密度，并为真正突出的操作
+  保留超大尺寸。
+- 对主要操作使用系统玻璃和玻璃突出按钮样式，
+  而不是手动重新创建半透明按钮背景。
+- 对于具有离散值的滑块，传递 `step` 以获取自动刻度标记
+  或在 `ticks` 闭包中提供特定刻度。
+- 对于应在基线左右扩展的滑块，设置 `neutralValue`。
+- 对菜单项使用 `Label` 或标准控件初始化器，以便图标
+  跨平台一致地放置在前导边缘。
+- 对于必须与表单、卡片或窗口角同心对齐的自定义形状，
+  使用带有 `containerConcentric` 角配置的同心矩形，
+  而不是猜测半径。
 
 ## 自定义灵动玻璃
 
-- Use `glassEffect` for custom glass surfaces. The default shape is capsule-like
-  and text foregrounds are automatically made vibrant and legible against
-  changing content underneath.
-- Pass an explicit shape to `glassEffect` when a capsule is not the right fit.
-- Add `tint` only when color carries meaning, such as a status or call to
-  action.
-- Use `glassEffect(... .interactive())` for custom controls or containers with
-  interactive elements so they scale, bounce, and shimmer like system glass.
-- Wrap nearby custom glass elements in one `GlassEffectContainer`. This is a
-  visual correctness rule, not just organization: separate containers cannot
-  sample each other's glass and can produce inconsistent refraction.
-- Use `glassEffectID` with a local `@Namespace` when matching glass elements
-  should morph between collapsed and expanded states.
+- 对自定义玻璃表面使用 `glassEffect`。默认形状是类胶囊形，
+  文本前景色会自动变得鲜艳且在下层内容变化时保持可读。
+- 当胶囊形状不合适时，向 `glassEffect` 传递明确的形状。
+- 仅在颜色具有含义时添加 `tint`，例如状态或行动号召。
+- 对具有交互元素的自定义控件或容器使用 `glassEffect(... .interactive())`，
+  使它们像系统玻璃一样缩放、弹跳和闪烁。
+- 将附近的自定义玻璃元素包裹在一个 `GlassEffectContainer` 中。这是一个
+  视觉正确性规则，而不仅仅是组织问题：独立的容器无法
+  采样彼此的玻璃效果，可能导致不一致的折射。
+- 当匹配的玻璃元素应在折叠和展开状态之间变形时，
+  使用带有本地 `@Namespace` 的 `glassEffectID`。
 
 ## 审查清单
 
-- Standard structures and controls were updated first before adding custom
-  glass.
-- Opaque backgrounds, dark scrims, and custom toolbar/sheet fills that fight the
-  system material were removed unless intentionally required.
-- `searchable` is attached at the correct container level for the intended
-  search scope.
-- Toolbar grouping uses `ToolbarSpacer`, `sharedBackgroundVisibility`, and
-  `badge` instead of one-off hand-built chrome.
-- Icon tint is semantic, not decorative.
-- Custom glass elements that sit near each other share a
-  `GlassEffectContainer`.
-- Morphing glass transitions use `glassEffectID` with a namespace and stable
-  identity.
-- Any SwiftPM GUI app used to test the result is launched as a `.app` bundle,
-  not as a raw executable.
+- 在添加自定义玻璃之前，先更新标准结构和控件。
+- 移除了与系统材质冲突的不透明背景、暗色遮罩和自定义工具栏/表单填充，
+  除非有意识地需要它们。
+- `searchable` 在正确的容器级别附加到预期的搜索范围。
+- 工具栏分组使用 `ToolbarSpacer`、`sharedBackgroundVisibility` 和 `badge`，
+  而非一次性手工构建的装饰。
+- 图标着色是语义性的，而非装饰性的。
+- 彼此靠近的自定义玻璃元素共享同一个 `GlassEffectContainer`。
+- 变形的玻璃过渡使用带命名空间和稳定标识的 `glassEffectID`。
+- 任何用于测试结果的 SwiftPM GUI 应用都作为 `.app` 包启动，
+  而非原始可执行文件。
 
 ## 安全护栏
 
-- Do not rebuild system sidebars, toolbars, sheets, or controls from scratch if
-  standard SwiftUI APIs already provide the modern macOS behavior.
-- Do not apply custom opaque backgrounds behind a `NavigationSplitView`
-  sidebar, system toolbar, or sheet just because an older version needed
-  one.
-- Do not scatter related glass elements across multiple
-  `GlassEffectContainer`s.
-- Do not tint every icon or glass surface for visual variety alone.
-- Do not assume an iPhone tab/search behavior is the right answer on macOS.
-  优先 desktop-native toolbar, split-view, and inspector placement.
-- Do not leave a GUI SwiftPM app launching as a bare executable when reviewing
-  Liquid Glass behavior; missing foreground activation can make a design bug
-  look like a rendering bug.
+- 如果标准 SwiftUI API 已提供现代 macOS 行为，不要从头重建系统侧边栏、
+  工具栏、表单或控件。
+- 不要仅仅因为旧版本需要就在 `NavigationSplitView` 侧边栏、
+  系统工具栏或表单后面应用自定义不透明背景。
+- 不要将相关的玻璃元素分散到多个 `GlassEffectContainer` 中。
+- 不要仅为视觉多样性而给每个图标或玻璃表面着色。
+- 不要假设 iPhone 的标签页/搜索行为在 macOS 上也是正确的答案。
+  优先使用桌面原生的工具栏、拆分视图和检查器布局。
+- 在审查 Liquid Glass 行为时，不要让 GUI SwiftPM 应用以裸可执行文件启动；
+  缺少前台激活可能使设计错误看起来像是渲染错误。
 
 ## 何时使用其他技能
 
-- Use `swiftui-patterns` when the main question is scene architecture,
-  sidebar/detail layout, commands, or settings rather than Liquid Glass-specific
-  treatment.
-- Use `view-refactor` when the main issue is file structure, state
-  ownership, and extracting large views before design changes.
-- Use `appkit-interop` when the design requires window, panel, responder-chain,
-  or AppKit-only control behavior.
-- Use `build-run-debug` when you need to launch, verify, or inspect logs
-  for the app after the visual update.
+- 当主要问题是场景架构、侧边栏/详情布局、命令或设置而非 Liquid Glass 特定处理时，使用 `swiftui-patterns`。
+- 当主要问题是文件结构、状态所有权和在设计变更前提取大型视图时，使用 `view-refactor`。
+- 当设计需要窗口、面板、响应链或仅限 AppKit 的控件行为时，使用 `appkit-interop`。
+- 当你需要在视觉更新后启动、验证或检查应用的日志时，使用 `build-run-debug`。

@@ -1,5 +1,5 @@
 ---
-name: stitch-loop
+name: Stitch Loop 相关功能和最佳实践
 description: "Stitch Loop — Stitch Loop 相关功能和最佳实践"
   迭代式设计到代码的反馈循环。批评 → 调整 → 发布循环，用于收紧需求与构建 UI 之间的视觉保真度。
 triggers:
@@ -13,15 +13,15 @@ od:
   upstream: "https://github.com/google-labs-code/skills"
 ---
 
-# stitch-loop
+# Stitch 循环
 
 > Curated from Google Labs (Stitch).
 
-## What it does
+## 功能说明
 
 Iterative design-to-code feedback loop. Critique → adjust → ship cycle for tightening visual fidelity between brief and built UI.
 
-## Source
+## 来源
 
 - Upstream: https://github.com/google-labs-code/skills
 - Category: `design-systems`

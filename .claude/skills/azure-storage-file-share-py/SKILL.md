@@ -1,6 +1,6 @@
 ---
-name: azure-storage-file-share-py
-description: "Azure Storage File Share Py — Azure Storage File Share Py 相关功能和最佳实践"
+name: Azure Storage File Share (Python)
+description: "Azure Storage File Share Python — Azure Storage File Share Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -200,7 +200,7 @@ snapshot_client = service.get_share_client(
 )
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.storage.fileshare.aio import ShareServiceClient
@@ -219,7 +219,7 @@ async def upload_file():
     await credential.close()
 ```
 
-## Client Types
+## 客户端类型
 
 | Client | Purpose |
 |--------|---------|

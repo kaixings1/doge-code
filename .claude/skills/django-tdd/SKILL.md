@@ -1,5 +1,5 @@
 ---
-name: django-tdd
+name: 使用 pytest-django 进行 Django 测试的策略、TDD 方法论
 description: 使用 pytest-django 进行 Django 测试的策略、TDD 方法论、factory_boy、Mock 模拟、测试覆盖率以及测试 Django REST Framework API。
 origin: ECC
 ---

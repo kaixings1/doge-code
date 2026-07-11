@@ -1,5 +1,5 @@
 ---
-name: haskell-pro
+name: Haskell 专业版
 description: "Haskell 专业版 — Haskell 专业开发"
 risk: unknown
 source: community

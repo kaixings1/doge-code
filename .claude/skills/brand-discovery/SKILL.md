@@ -1,5 +1,5 @@
 ---
-name: brand-discovery
+name: 品牌发现工作流
 description: 品牌发现工作流
   Use when a brand needs to discover or articulate its identity through
   structured multi-会话 interviews. Covers purpose, positioning, audience,
@@ -18,7 +18,7 @@ The interview runs across multiple sessions. Capture answers to disk as you
 go so that no elicited knowledge is lost when a conversation ends, and so a
 later 会话 can resume from where the last one stopped.
 
-## When to Activate
+## 激活时机
 
 - A brand is being created, repositioned, or needs a written identity reference to brief collaborators.
 - Multiple sessions are expected — the conversation will span days or weeks.

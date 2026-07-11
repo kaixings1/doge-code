@@ -1,5 +1,5 @@
 ---
-name: crossframe-debate
+name: 适用于crossframe suite routes explicit chin
 description: "适用于crossframe suite routes explicit chinese proposition testing, debate analysis, hidden-premise review, rebuttal design, or withdrawal condition checks.的情况。"
 category: content
 risk: safe

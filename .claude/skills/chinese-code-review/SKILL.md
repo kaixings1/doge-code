@@ -1,5 +1,5 @@
 ---
-name: chinese-code-review
+name: 中文代码审查
 description: "中文代码审查"
 risk: safe
 source: community

@@ -1,6 +1,6 @@
 ---
-name: mailtrap-testing-with-sandbox
-description: "Mailtrap Testing With Sandbox — Mailtrap Testing With Sandbox 相关功能和最佳实践"
+name: Mailtrap 沙箱测试
+description: "Mailtrap 沙箱测试 — Mailtrap 沙箱测试相关功能和最佳实践"
 risk: safe
 source: community
 date_added: "2026-06-19"

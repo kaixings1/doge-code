@@ -1,5 +1,5 @@
 ---
-name: benchling-integration
+name: Benchling Integration 相关功能和最佳实践
 description: "Benchling Integration — Benchling Integration 相关功能和最佳实践"
 license: MIT
 allowed-tools: Read Write Edit Bash
@@ -28,7 +28,7 @@ This skill should be used when:
 - Querying the Benchling Data Warehouse for analytics
 - Setting up event-driven integrations with AWS EventBridge
 
-## Core Capabilities
+## 核心能力
 
 ### 1. Authentication & Setup
 

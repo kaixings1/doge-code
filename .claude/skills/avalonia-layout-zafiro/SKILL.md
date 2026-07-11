@@ -1,5 +1,5 @@
 ---
-name: avalonia-layout-zafiro
+name: Avalonia Zafiro 布局
 description: "Avalonia Zafiro 布局"
 risk: safe
 source: community

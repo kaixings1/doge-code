@@ -1,5 +1,5 @@
 ---
-name: new_relic-automation
+name: New_relic 自动化
 description: "通过 Rube MCP (Composio) 自动执行 New Relic 任务：APM、告警、仪表盘、NRQL 查询和基础设施监控。始终先搜索工具以获取当前架构。"
 requires:
  mcp: [rube]

@@ -1,5 +1,5 @@
 ---
-name: atlas-ledger
+name: Atlas 账本
 description: "Atlas 账本"
 risk: safe
 source: community

@@ -1,6 +1,6 @@
 ---
 name:  technology-scout
-description:   technology scout - technology scout - Evaluates emerging technologies, conducts...（待汉化）
+description: 技术侦察员——评估新兴技术并进行技术尽职调查
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

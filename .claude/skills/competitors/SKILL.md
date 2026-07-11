@@ -1,5 +1,5 @@
 ---
-name: competitors
+name: 竞争对手
 description: "竞争对手"
 risk: safe
 source: community

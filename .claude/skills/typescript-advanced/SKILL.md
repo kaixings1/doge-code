@@ -1,5 +1,5 @@
 ---
-name: typescript-advanced
+name: TypeScript高级
 description: TypeScript高级 — 包括泛型、条件类型、映射类型、模板字面量类型和装饰器。
 ---
 

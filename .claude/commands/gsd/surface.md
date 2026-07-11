@@ -10,9 +10,9 @@ requires: [config, update]
 ---
 
 <objective>
-Manage the runtime skill surface without reinstall. Reads/writes `~/.claude/.gsd-surface.json`
-(sibling to `~/.claude/.gsd-profile`) and re-stages the active skills directory in place.
-Skill dirs live at `~/.claude/skills/gsd-*/`.
+无需重新安装即可管理运行时技能表面。读取/写入 `~/.claude/.gsd-surface.json`
+（`~/.claude/.gsd-profile` 的同级文件）并原地重新部署活跃技能目录。
+技能目录位于 `~/.claude/skills/gsd-*/`。
 
 Sub-commands: list · status · profile · disable · enable · reset
 </objective>

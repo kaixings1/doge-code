@@ -1,5 +1,5 @@
 ---
-name: android-ui-journey-testing
+name: Android UI 流程测试
 description: "Android UI 流程测试"
 risk: safe
 source: community

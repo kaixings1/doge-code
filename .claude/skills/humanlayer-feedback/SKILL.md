@@ -1,5 +1,5 @@
 ---
-name: humanlayer-feedback
+name: HumanLayer 反馈
 description: "HumanLayer 反馈 — AI 工作流中的人类反馈收集"
 risk: safe
 source: community

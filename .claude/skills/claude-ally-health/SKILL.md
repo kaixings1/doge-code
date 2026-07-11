@@ -1,5 +1,5 @@
 ---
-name: claude-ally-health
+name: 医疗信息分析、症状跟踪和健康指导的健康助手技能。
 description: "医疗信息分析、症状跟踪和健康指导的健康助手技能。"
 risk: safe
 source: "https://github.com/huifer/Claude-Ally-Health"

@@ -1,6 +1,6 @@
 ---
-name: github-ops
-description: "Github Ops — Github Ops 相关功能和最佳实践"
+name: GitHub 运维操作相关功能和最佳实践
+description: "Github Ops — GitHub 运维操作相关功能和最佳实践"
 metadata:
   origin: ECC
 ---
@@ -9,7 +9,7 @@ metadata:
 
 管理 GitHub 仓库，重点关注社区健康、CI 可靠性和贡献者体验。
 
-## When to Activate
+## 激活时机
 
 - Triaging issues (classifying, labeling, responding, deduplicating)
 - Managing PRs (review status, CI checks, stale PRs, merge readiness)
@@ -19,12 +19,12 @@ metadata:
 - Managing contributor experience on open-source projects
 - User says "check GitHub", "triage issues", "review PRs", "merge", "release", "CI is broken"
 
-## Tool 需求
+## 工具需求
 
 - **gh CLI** for all GitHub API operations
 - Repository access configured via `gh auth login`
 
-## Issue Triage
+## 问题分类
 
 Classify each issue by type and priority:
 
@@ -53,7 +53,7 @@ gh issue edit <number> --add-label "bug,high-priority"
 gh issue comment <number> --body "Thanks for reporting. Could you share reproduction steps?"
 ```
 
-## PR Management
+## PR 管理
 
 ### Review Checklist
 
@@ -77,7 +77,7 @@ gh issue list --label "stale" --state open
 gh pr list --json number,title,updatedAt --jq '.[] | select(.updatedAt < "2026-03-01")'
 ```
 
-## CI/CD Operations
+## CI/CD 操作
 
 When CI fails:
 
@@ -98,7 +98,7 @@ gh run view <run-id> --log-failed
 gh run rerun <run-id> --failed
 ```
 
-## Release Management
+## 发布管理
 
 When preparing a release:
 
@@ -118,7 +118,7 @@ gh release create v1.2.0 --title "v1.2.0" --generate-notes
 gh release create v1.3.0-rc1 --prerelease --title "v1.3.0 Release Candidate 1"
 ```
 
-## 安全性 Monitoring
+## 安全监控
 
 ```bash
 # Check Dependabot alerts
@@ -135,7 +135,7 @@ gh pr list --label "dependencies" --json number,title
 - Flag any critical/high severity alerts immediately
 - Check for new Dependabot alerts weekly at minimum
 
-## Quality Gate
+## 质量门禁
 
 Before completing any GitHub operations task:
 - all issues triaged have appropriate labels

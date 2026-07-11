@@ -1,6 +1,6 @@
 ---
-name: seo-content-brief
-description: "Seo Content Brief — 生成竞争性 SEO 内容简报的相关功能和最佳实践，含分节字数、竞争对手评分、关键词密度指导和页面类型模板。"
+name: SEO 内容简报
+description: "SEO 内容简报 — 生成竞争性 SEO 内容简报的相关功能和最佳实践，含分节字数、竞争对手评分、关键词密度指导和页面类型模板。"
 user-invocable: true
 参数-hint: "[url-or-keyword] [page-type]"
 license: MIT
@@ -61,7 +61,7 @@ Identify what SERP format Google rewards for this 查询: long-form guide, listi
 
 Apply the page-type template from `references/page-type-templates.md`, then customise based on competitor gaps and search intent.
 
-## Critical Rules
+## 关键规则
 
 ### Website Relevance Rule
 
@@ -87,7 +87,7 @@ For non-hub pages (single service page, blog post), use site structure to sugges
 - These are internal thinking tools only. The output must read as plain, professional advice.
 - Write for a business owner or content writer, not an SEO academic
 
-## Keyword Density and Placement
+## 关键词密度与位置
 
 Read `references/keyword-density.md` for the full rules. 总结:
 
@@ -121,7 +121,7 @@ Read `references/keyword-density.md` for the full rules. 总结:
 
 **Distribution:** Spread the primary keyword evenly. Do not front-load or cluster in one section.
 
-## Meta Tag Rules
+## 元标签规则
 
 **Title tag:**
 - 50-60 characters (never under 50, never over 60)
@@ -136,7 +136,7 @@ Read `references/keyword-density.md` for the full rules. 总结:
 - No brand name at the end (it's already in the title)
 - No quotes (Google truncates at quotes)
 
-## Information Gain (non-negotiable)
+## 信息增益（不可协商）
 
 Every brief must specify EXACTLY what new value this content adds that no current ranking page provides. Must be specific:
 - Proprietary data or original research
@@ -145,7 +145,7 @@ Every brief must specify EXACTLY what new value this content adds that no curren
 - Original synthesis or unique framework
 - NOT "more detail" or "better formatting"
 
-## E-E-A-T 需求
+## E-E-A-T 要求
 
 List the exact trust signals this content needs:
 - Author credentials and bio relevant to the topic
@@ -154,7 +154,7 @@ List the exact trust signals this content needs:
 - Last updated date
 - Especially critical for YMYL topics (health, finance, legal, safety)
 
-## Internal Linking
+## 内部链接
 
 - Suggest 3-5 specific internal link opportunities with anchor text
 - Specify whether the page is a hub (links out to cluster pages) or spoke (links to pillar page)

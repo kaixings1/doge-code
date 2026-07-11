@@ -1,5 +1,5 @@
 ---
-name: emotional-arc-designer
+name: 用户体验情感设计
 description: "用户体验情感设计"
 risk: safe
 source: community

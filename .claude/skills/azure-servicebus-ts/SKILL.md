@@ -1,5 +1,5 @@
 ---
-name: azure-servicebus-ts
+name: 指导 TypeScript 开发者使用 Azure Service Bus 客户端库实现消息队列和发布/订阅。
 description: "指导 TypeScript 开发者使用 Azure Service Bus 客户端库实现消息队列和发布/订阅。"
 risk: unknown
 source: community
@@ -188,7 +188,7 @@ for (const msg of peekedMessages) {
 }
 ```
 
-## Key Types
+## 关键类型
 
 ```typescript
 import {

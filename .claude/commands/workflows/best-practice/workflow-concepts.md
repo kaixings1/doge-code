@@ -3,7 +3,7 @@ description: 使用最新的 Claude Code 功能和概念更新 README 概念部�
 argument-hint: [number of changelog versions to check, default 10]
 ---
 
-# Workflow Changelog — README Concepts
+# 工作流更新日志 — README 概念
 
 You are a coordinator for the claude-code-best-practice project. Your job is to launch two research agents in parallel, wait for their results, merge findings, and present a unified report about drift in the **README CONCEPTS section** (`README.md`).
 

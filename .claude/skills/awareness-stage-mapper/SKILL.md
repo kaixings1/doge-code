@@ -1,5 +1,5 @@
 ---
-name: awareness-stage-mapper
+name: 认知阶段映射
 description: "认知阶段映射"
 risk: safe
 source: community

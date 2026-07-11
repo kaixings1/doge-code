@@ -1,5 +1,5 @@
 ---
-name: cloud-penetration-testing
+name: 云渗透测试
 description: "对 Microsoft Azure、Amazon Web Services 和 Google Cloud Platform 的云基础设施进行全面安全评估。"
 risk: offensive
 source: community

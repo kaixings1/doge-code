@@ -1,5 +1,5 @@
 ---
-name: high-end-visual-design
+name: 高端视觉设计 - 高级 UI/UX 架构师和动效编排师技能，专注于 150k+ 机构级数字体验设计
 description: "高端视觉设计 - 高级 UI/UX 架构师和动效编排师技能，专注于 150k+ 机构级数字体验设计"
 ---
 

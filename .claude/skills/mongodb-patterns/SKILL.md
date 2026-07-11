@@ -1,9 +1,9 @@
 ---
-name: mongodb-patterns
+name: MongoDB 数据建模
 description: MongoDB 数据建模 — 文档设计、索引策略、聚合管道、分片集群、事务处理
 ---
 
-# mongodb-patterns
+# MongoDB 模式
 
 ## 概述
 MongoDB 数据建模 — 文档设计、索引策略、聚合管道、分片集群、事务处理。

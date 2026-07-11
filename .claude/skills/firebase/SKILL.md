@@ -1,5 +1,5 @@
 ---
-name: firebase
+name: Firebase 相关功能和最佳实践
 description: "Firebase — Firebase 相关功能和最佳实践"
   存储、函数、托管。但设置的简便性隐藏了真正的复杂性。
   安全规则是你的最后一道防线，但它们经常出错。
@@ -24,7 +24,7 @@ you're thinking wrong.
 not. A poorly designed listener can cost more than a dedicated database. Plan
 your data model for your 查询 patterns, not your data relationships.
 
-## Principles
+## 原则
 
 - Design data for queries, not relationships
 - Security rules are mandatory, not optional
@@ -662,7 +662,7 @@ onIdTokenChanged(auth, async u => {
 const { claims } = await auth.currentUser.getIdTokenResult();
 const isAdmin = claims.admin === true;
 
-## Collaboration
+## 协作
 
 ### Delegation Triggers
 

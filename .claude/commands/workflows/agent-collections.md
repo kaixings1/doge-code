@@ -2,7 +2,7 @@
 description: 通过并行研究所有代理集合仓库来更新代理集合表
 ---
 
-# Workflow — Agent Collections
+# 工作流 — 代理集合
 
 Update the AGENT COLLECTIONS table in `README.md` by researching the listed repos in parallel. Launch a research agent, merge results, present changes, update table if approved.
 

@@ -1,5 +1,5 @@
 ---
-name: seo-backlinks
+name: 反向链接画像分析：引用域名、锚文本分布、毒性链接检测、竞争对手差距分析。使用免费
 description: "反向链接画像分析：引用域名、锚文本分布、毒性链接检测、竞争对手差距分析。使用免费 API（Moz、Bing Webmaster、Common Crawl）和 DataForSEO 扩展。当用户提到反向链接、链接画像、引用域名、锚文本、毒性链接、链接差距、链接建设、拒绝或反向链接审计时使用。"
 user-invocable: true
 参数-hint: "<url>"

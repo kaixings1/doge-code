@@ -1,5 +1,5 @@
 ---
-name: cpp-testing
+name: 仅在编写/更新/修复 C++ 测试、配置 GoogleTest/CTest、诊断
 description: 仅在编写/更新/修复 C++ 测试、配置 GoogleTest/CTest、诊断失败或不稳定的测试、或添加覆盖率/检测器（Sanitizers）时使用。
 origin: ECC
 ---

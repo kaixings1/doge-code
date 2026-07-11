@@ -1,5 +1,5 @@
 ---
-name: crossframe-org
+name: 适用于 CrossFrame Suite 路由到中文团队、项目、组织分析、责任链、反馈写回、修复或复盘回顾的场景。
 description: "适用于 CrossFrame Suite 路由到中文团队、项目、组织分析、责任链、反馈写回、修复或复盘回顾的场景。"
 category: business
 risk: safe

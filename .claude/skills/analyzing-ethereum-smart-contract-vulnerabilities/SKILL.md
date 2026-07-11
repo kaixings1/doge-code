@@ -1,5 +1,5 @@
 ---
-name: analyzing-ethereum-smart-contract-vulnerabilities
+name: 以太坊智能合约漏洞分析
 description: "分析以太坊智能合约漏洞"
 risk: safe
 source: community

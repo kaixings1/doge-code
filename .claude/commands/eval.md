@@ -2,7 +2,7 @@
 
 管理评测驱动开发（eval-driven development）工作流。
 
-## 用法（Usage）
+## 用法
 
 `/eval [define|check|report|list] [feature-name]`
 

@@ -1,5 +1,5 @@
 ---
-name: fda-medtech-compliance-auditor
+name: FDA 医疗技术合规审计
 description: "FDA 医疗技术合规审计 — FDA 医疗设备合规"
 risk: safe
 source: community

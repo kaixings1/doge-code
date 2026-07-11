@@ -1,8 +1,9 @@
 ---
-name: workable-automation
+name: Workable 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Workable 任务。使用前始终先搜索工具以获取当前 schema。"
 requires: mcp: [rube]
---- # Workable 自动化 — 通过 Rube MCP 通过 Rube MCP 使用 Composio 的 Workable 工具包自动化 Workable 操作。 **工具包文档**: [composio.dev/toolkits/workable](https://composio.dev/toolkits/workable) ## 前提条件 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
+---
+#  Workable 自动化 — 通过 Rube MCP 通过 Rube MCP 使用 Composio 的 Workable 工具包自动化 Workable 操作。 **工具包文档**: [composio.dev/toolkits/workable](https://composio.dev/toolkits/workable) ## 前提条件 - Rube MCP 必须已连接（RUBE_SEARCH_TOOLS 可用）
 - 通过 `RUBE_MANAGE_CONNECTIONS` 建立有效的 Workable 连接，工具包 `workable`
 - 始终先调用 `RUBE_SEARCH_TOOLS` 获取当前工具 schema ## 设置 **获取 Rube MCP**: 在客户端配置中添加 `https://rube.app/mcp` 作为 MCP 服务器。无需 API key — 只需添加端点即可使用。 1. 通过确认 `RUBE_SEARCH_TOOLS` 有响应来验证 Rube MCP 可用
 2. 使用工具包 `workable` 调用 `RUBE_MANAGE_CONNECTIONS`

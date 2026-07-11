@@ -1,5 +1,7 @@
 ---
-name: fix-review
+name: 代码审查修复技能 - 用于审查和修复代码问题
 description: "代码审查修复技能 - 用于审查和修复代码问题"
 risk: safe
 ---
+
+# 修复审查

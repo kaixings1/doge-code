@@ -1,5 +1,5 @@
 ---
-name: investor-materials
+name: 投资者材料
 description: "投资者材料 — 创建投资者演示文稿和资料"
 risk: safe
 source: community

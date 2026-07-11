@@ -1,5 +1,5 @@
 ---
-name: humanlayer-approval
+name: HumanLayer 审批
 description: "HumanLayer 审批 — AI 工作流中的人工审批"
 risk: safe
 source: community

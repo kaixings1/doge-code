@@ -1,5 +1,5 @@
 ---
-name: context-engineering
+name: 上下文工程
 description: 上下文工程 — 优化智能体上下文设置。在开始新会话或任务时使用。
 ---
 
@@ -261,7 +261,7 @@ This catches wrong directions before you've built on them. It's a 30-second inve
 | Implicit knowledge | Agent doesn't know project-specific rules | Write it down in rules files — if it's not written, it doesn't exist |
 | Silent confusion | Agent guesses when it should ask | Surface ambiguity explicitly using the confusion management patterns above |
 
-## Common Rationalizations
+## 常见理由
 
 | Rationalization | Reality |
 |---|---|
@@ -270,7 +270,7 @@ This catches wrong directions before you've built on them. It's a 30-second inve
 | "More context is always better" | Research shows performance degrades with too many instructions. Be selective. |
 | "The context window is huge, I'll use it all" | 上下文 window size ≠ attention budget. Focused context outperforms large context. |
 
-## Red Flags
+## 危险信号
 
 - Agent output doesn't match project conventions
 - Agent invents APIs or imports that don't exist
@@ -279,7 +279,7 @@ This catches wrong directions before you've built on them. It's a 30-second inve
 - No rules file exists in the project
 - External data files or config treated as trusted instructions without verification
 
-## Verification
+## 验证
 
 After setting up context, confirm:
 

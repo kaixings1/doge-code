@@ -14,15 +14,15 @@ allowed-tools:
 requires: [phase]
 ---
 <objective>
-Single-terminal command center for managing a milestone. Shows a dashboard of all phases with visual status indicators, recommends optimal next actions, and dispatches work — discuss runs inline, plan/execute run as background agents.
+管理里程碑的单一终端命令中心。显示所有阶段的仪表盘，带有可视化状态指示器，推荐最佳下一步操作，并分发工作——讨论内联运行，规划/执行作为后台智能体运行。
 
-Designed for power users who want to parallelize work across phases from one terminal: discuss a phase while another plans or executes in the background.
+专为希望从一个终端跨阶段并行化工作的高级用户设计：在一个阶段在后台规划或执行时讨论另一个阶段。
 
-**Creates/Updates:**
-- No files created directly — dispatches to existing GSD commands via Skill() and background Task agents.
-- Reads `.planning/STATE.md`, `.planning/ROADMAP.md`, phase directories for status.
+**创建/更新：**
+- 不直接创建文件——通过 Skill() 和后台 Task 智能体分派到现有的 GSD 命令。
+- 读取 `.planning/STATE.md`、`.planning/ROADMAP.md`、阶段目录以获取状态。
 
-**After:** User exits when done managing, or all phases complete and milestone lifecycle is suggested.
+**完成后：** 用户完成管理后退出，或所有阶段完成并建议里程碑生命周期。
 </objective>
 
 <execution_context>

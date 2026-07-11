@@ -1,5 +1,5 @@
 ---
-name: agentkit-seo
+name: AgentKit SEO 优化
 description: AgentKit SEO — 将宽泛或模糊的AgentKit SEO工作引导到正确的模块。
 user-invocable: true
 参数: The specific SEO optimization task or platform to focus on (e.g., GitHub, LinkedIn, CV, etc.)

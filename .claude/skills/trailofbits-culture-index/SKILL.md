@@ -1,3 +1,8 @@
+---
+name: 文化指数工具
+description: 解读个人和团队的 Culture Index 调查结果。
+---
+
 # 文化指数工具
 
 Interprets Culture Index survey results for individuals and teams.
@@ -13,7 +18,7 @@ Interprets Culture Index survey results for individuals and teams.
 - Compare multiple profiles for compatibility
 - Get motivator recommendations for specific trait types
 
-## What It Does
+## 功能说明
 
 此技能提供 expert interpretation of Culture Index behavioral assessments:
 

@@ -1,5 +1,5 @@
 ---
-name: file-uploads
+name: File Uploads 相关功能和最佳实践
 description: "File Uploads — File Uploads 相关功能和最佳实践"
   Cloudflare R2, 预签名URL, 多部分上传和图像优化。
   知道如何处理大文件而不阻塞。

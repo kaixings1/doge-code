@@ -1,5 +1,5 @@
 ---
-name: facebook-automation
+name: Facebook 自动化
 description: "Facebook 自动化"
 risk: safe
 source: community

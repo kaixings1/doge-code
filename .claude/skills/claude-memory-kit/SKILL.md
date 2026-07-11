@@ -1,5 +1,5 @@
 ---
-name: claude-memory-kit
+name: Claude Code的持久化内存系统。双层架构（热缓存+知识库），安全钩子，/
 description: Claude Code的持久化内存系统。双层架构（热缓存+知识库），安全钩子，/close-day日终合成。零外部依赖。
 author: awrshift
 version: 3.2.0
@@ -20,7 +20,7 @@ license: MIT
 - **`/close-day`** — 一个命令捕获您的整个一天
 - **`/tour`** — interactive guided walkthrough
 
-## Quick Start
+## 快速入门
 
 ```bash
 git clone https://github.com/awrshift/claude-memory-kit.git my-project

@@ -1,5 +1,5 @@
 ---
-name: cabinpanda-automation
+name: CabinPanda 自动化
 description: "CabinPanda 自动化"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: auditing-mcp-servers-for-tool-poisoning
+name: 审计 MCP 服务器工具投毒
 description: "审计 MCP 服务器工具投毒"
 risk: safe
 source: community

@@ -1,8 +1,6 @@
 ---
-name: prompt-optimizer
-description: "Prompt Optimizer — Prompt Optimizer 相关功能和最佳实践"
-  Analyze raw prompts, identify intent and gaps, match ECC components
-  (skills/commands/agents/hooks), and output a ready-to-paste optimized
+name: 提示优化器
+description: "提示优化器 — 提示优化器相关功能和最佳实践，分析原始提示、识别意图和差距、匹配 ECC 组件（技能/命令/代理/钩子）并输出可粘贴的优化提示"
   prompt. Advisory role only — never executes the task itself.
   TRIGGER when: user says "optimize prompt", "improve my prompt",
   "how to write a prompt for", "help me prompt", "rewrite this prompt",

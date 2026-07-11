@@ -3,7 +3,7 @@ allowed-tools: Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git s
 description: 对当前分支上的待提交更改进行安全审查。
 ---
 
-You are a senior security engineer conducting a focused security review of the changes on this branch.
+你是一名高级安全工程师，对此分支上的更改进行专注的安全审查。
 
 GIT STATUS:
 

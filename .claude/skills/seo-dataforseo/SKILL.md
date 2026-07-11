@@ -1,5 +1,5 @@
 ---
-name: seo-dataforseo
+name: DataForSEO 实时数据
 description: "Seo Dataforseo — 通过 DataForSEO MCP 服务器获取实时 SEO 数据的相关功能和最佳实践。"
 user-invocable: true
 参数-hint: "[command] [查询]"

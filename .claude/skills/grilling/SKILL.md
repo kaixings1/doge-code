@@ -1,5 +1,5 @@
 ---
-name: grilling
+name: Grilling 计划盘问
 description: "Grilling — 对计划或设计进行全面深入盘问，以压力测试决策和澄清需求"
 category: "productivity"
 risk: "safe"
@@ -19,6 +19,8 @@ tools:
   - codex-cli
   - 游标
 ---
+
+# 追问技巧
 
 ## 何时使用
 

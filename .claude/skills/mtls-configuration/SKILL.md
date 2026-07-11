@@ -31,7 +31,7 @@ Comprehensive guide to implementing mutual TLS for zero-trust service mesh commu
 - Compliance requirements (PCI-DSS, HIPAA)
 - Multi-cluster secure communication
 
-## Core Concepts
+## 核心概念
 
 ### 1. mTLS Flow
 

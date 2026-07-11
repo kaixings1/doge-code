@@ -1,5 +1,5 @@
 ---
-name: similarweb_digitalrank_api-automation
+name: Similarweb_digitalrank_api 自动化
 description: "通过 Rube MCP (Composio) 自动执行 SimilarWeb 任务：website traffic, rankings, and digital market intelligence. Always search tools first for current schemas."
 requires:
   mcp: [rube]
@@ -13,7 +13,7 @@ Automate SimilarWeb operations through Composio's SimilarWeb toolkit via Rube MC
 
 ## 前提条件
 
-- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
+- Rube MCP 必须已连接 (RUBE_SEARCH_TOOLS available)
 - Active SimilarWeb connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `similarweb_digitalrank_api`
 - Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
 

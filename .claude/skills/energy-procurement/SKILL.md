@@ -1,5 +1,5 @@
 ---
-name: energy-procurement
+name: 能源采购管理
 description: "能源采购管理"
 risk: safe
 source: community

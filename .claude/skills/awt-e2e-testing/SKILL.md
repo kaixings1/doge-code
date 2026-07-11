@@ -1,5 +1,5 @@
 ---
-name: awt-e2e-testing
+name: AWT 端到端测试
 description: "AWT 端到端测试"
 risk: safe
 source: community

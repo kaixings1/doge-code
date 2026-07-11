@@ -12,9 +12,9 @@ allowed-tools:
 requires: [execute-phase]
 ---
 <objective>
-Verify milestone achieved its definition of done. Check requirements coverage, cross-phase integration, and end-to-end flows.
+验证里程碑是否达到了其完成定义。检查需求覆盖范围、跨阶段集成和端到端流程。
 
-**This command IS the orchestrator.** Reads existing VERIFICATION.md files (phases already verified during execute-phase), aggregates tech debt and deferred gaps, then spawns integration checker for cross-phase wiring.
+**此命令是编排器。** 读取现有的 VERIFICATION.md 文件（在 execute-phase 期间已验证的阶段），汇总技术债务和延迟的差距，然后生成集成检查器进行跨阶段连接。
 </objective>
 
 <execution_context>
@@ -22,16 +22,16 @@ Verify milestone achieved its definition of done. Check requirements coverage, c
 </execution_context>
 
 <context>
-Version: $ARGUMENTS (optional — defaults to current milestone)
+版本：$ARGUMENTS（可选——默认为当前里程碑）
 
-Core planning files are resolved in-workflow (`init milestone-op`) and loaded only as needed.
+核心规划文件在工作流中解析（`init milestone-op`）并仅在需要时加载。
 
-**Completed Work:**
-Glob: .planning/phases/*/*-SUMMARY.md
-Glob: .planning/phases/*/*-VERIFICATION.md
+**已完成的工作：**
+Glob：.planning/phases/*/*-SUMMARY.md
+Glob：.planning/phases/*/*-VERIFICATION.md
 </context>
 
 <process>
-Execute end-to-end.
-Preserve all workflow gates (scope determination, verification reading, integration check, requirements coverage, routing).
+端到端执行。
+保留所有工作流关卡（范围确定、验证读取、集成检查、需求覆盖、路由）。
 </process>

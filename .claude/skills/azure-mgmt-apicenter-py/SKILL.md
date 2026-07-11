@@ -1,6 +1,6 @@
 ---
-name: azure-mgmt-apicenter-py
-description: "Azure Mgmt Apicenter Py — Azure Mgmt Apicenter Py 相关功能和最佳实践"
+name: Azure Management Apicenter (Python)
+description: "Azure Management API Center Python — Azure Management API Center Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -213,7 +213,7 @@ metadata = client.metadata_schemas.create_or_update(
 )
 ```
 
-## Client Types
+## 客户端类型
 
 | Client | Purpose |
 |--------|---------|

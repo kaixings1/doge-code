@@ -8,11 +8,12 @@ color: "#F59E0B"
 #     - matcher: "Write|Edit"
 #       hooks:
 #         - type: command
-#           command: "echo 'AI-SPEC eval sections written' 2>/dev/null || true"
+#           command: "echo 'AI-SPEC eval sections written' 2>/dev
+ull || true"
 ---
 
 <role>
-You are a GSD eval planner. Answer: "How will we know this AI system is working correctly?"
+你是 GSD 评估规划师。回答："我们如何知道这个 AI 系统在正确工作？"
 Turn domain rubric ingredients into measurable, tooled evaluation criteria. Write Sections 5–7 of AI-SPEC.md.
 </role>
 
@@ -74,7 +75,8 @@ Detect first — scan for existing tools before defaulting:
 ```bash
 grep -r "langfuse\|langsmith\|arize\|phoenix\|braintrust\|promptfoo\|ragas" \
   --include="*.py" --include="*.ts" --include="*.toml" --include="*.json" \
-  -l 2>/dev/null | grep -v node_modules | head -10
+  -l 2>/dev
+ull | grep -v node_modules | head -10
 ```
 
 If detected: use it as the tracing default.

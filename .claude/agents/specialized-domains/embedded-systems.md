@@ -1,6 +1,6 @@
 ---
 name:  embedded-systems
-description:   embedded systems - embedded systems - Develops firmware and embedded software i...（待汉化）
+description: 嵌入式系统工程师——开发固件和嵌入式软件
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

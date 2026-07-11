@@ -1,5 +1,5 @@
 ---
-name: x-api
+name: X(Twitter) API集成技能
 description: X(Twitter) API集成技能
 ---
 
@@ -7,7 +7,7 @@ description: X(Twitter) API集成技能
 
 Programmatic interaction with X (Twitter) for posting, reading, searching, and analytics.
 
-## When to Activate
+## 激活时机
 
 - User wants to post tweets or threads programmatically
 - Reading timeline, mentions, or user data from X
@@ -69,7 +69,7 @@ oauth = OAuth1Session(
 )
 ```
 
-## Core Operations
+## 核心操作
 
 ### Post a Tweet
 

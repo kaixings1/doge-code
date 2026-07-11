@@ -1,6 +1,6 @@
 ---
-name: azure-servicebus-dotnet
-description: "Azure Servicebus Dotnet — Azure Servicebus Dotnet 相关功能和最佳实践"
+name: Azure Service Bus .NET SDK 相关功能和最佳实
+description: "Azure Service Bus .NET — Azure Service Bus .NET SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -56,7 +56,7 @@ services.AddAzureClients(builder =>
 });
 ```
 
-## Client Hierarchy
+## 客户端层次结构
 
 ```
 ServiceBusClient

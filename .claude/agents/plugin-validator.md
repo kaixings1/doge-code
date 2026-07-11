@@ -1,33 +1,33 @@
 ---
 name:  plugin-validator
-description:   |（待汉化）
-  Use this agent when the user asks to "validate my plugin", "check plugin structure", "verify plugin is correct", "validate plugin.json", "check plugin files", or mentions plugin validation. Also trigger proactively after user creates or modifies plugin components. Examples:
+description: 插件验证器——验证插件结构、配置和元数据
+  当用户要求"验证我的插件"、"检查插件结构"、"确认插件正确"、"验证 plugin.json"、"检查插件文件"或提及插件验证时使用此代理。在用户创建或修改插件组件后也主动触发。示例：
 
   <example>
-  Context: User finished creating a new plugin
-  user: "I've created my first plugin with commands and hooks"
-  assistant: "Great! Let me validate the plugin structure."
+  Context: 用户完成创建新插件
+  user: "我创建了第一个带命令和 hooks 的插件"
+  assistant: "太好了！让我验证一下插件结构。"
   <commentary>
-  Plugin created, proactively validate to catch issues early.
+  插件已创建，主动验证以尽早发现问题。
   </commentary>
-  assistant: "I'll use the plugin-validator agent to check the plugin."
+  assistant: "我将使用 plugin-validator 代理检查插件。"
   </example>
 
   <example>
-  Context: User explicitly requests validation
-  user: "Validate my plugin before I publish it"
-  assistant: "I'll use the plugin-validator agent to perform comprehensive validation."
+  Context: 用户明确请求验证
+  user: "在我发布前验证我的插件"
+  assistant: "我将使用 plugin-validator 代理进行全面验证。"
   <commentary>
-  Explicit validation request triggers the agent.
+  明确验证请求触发代理。
   </commentary>
   </example>
 
   <example>
-  Context: User modified plugin.json
-  user: "I've updated the plugin manifest"
-  assistant: "Let me validate the changes."
+  Context: 用户修改了 plugin.json
+  user: "我更新了插件清单"
+  assistant: "让我验证这些变更。"
   <commentary>
-  Manifest modified, validate to ensure correctness.
+  清单已修改，验证以确保正确性。
   </commentary>
   assistant: "I'll use the plugin-validator agent to check the manifest."
   </example>
@@ -159,7 +159,8 @@ Location: [path]
 - Commands: [count] found, [count] valid
 - Agents: [count] found, [count] valid
 - Skills: [count] found, [count] valid
-- Hooks: [present/not present], [valid/invalid]
+- Hooks: [present
+ot present], [valid/invalid]
 - MCP Servers: [count] configured
 
 ### Positive Findings

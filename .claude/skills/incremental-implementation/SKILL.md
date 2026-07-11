@@ -1,5 +1,5 @@
 ---
-name: incremental-implementation
+name: 增量式实现
 description: "增量式实现 — 分步实现和迭代开发"
 risk: unknown
 source: community

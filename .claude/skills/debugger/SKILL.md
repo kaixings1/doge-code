@@ -1,5 +1,5 @@
 ---
-name: debugger
+name: 调试器相关功能和最佳实践。遇到任何问题时主动使用。
 description: "Debugger — 调试器相关功能和最佳实践。遇到任何问题时主动使用。"
 
   '
@@ -7,6 +7,8 @@ risk: safe
 source: community
 date_added: '2026-02-27'
 ---
+
+# 调试器
 
 ## 使用此技能的场景
 

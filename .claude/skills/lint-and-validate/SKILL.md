@@ -1,5 +1,5 @@
 ---
-name: lint-and-validate
+name: 强制：在每次代码更改后运行适当的验证工具。在代码无错误之前不要完成任务。
 description: "强制：在每次代码更改后运行适当的验证工具。在代码无错误之前不要完成任务。"
 risk: unknown
 source: community

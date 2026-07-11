@@ -1,5 +1,5 @@
 ---
-name: image-enhancer
+name: 图像增强
 description: "图像增强 — 图像质量提升"
 risk: unknown
 source: community

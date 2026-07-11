@@ -281,12 +281,12 @@ export function HooksConfigMenu(t0) {
   if (hooksDisabled_1) {
     let t21;
     if ($[35] === Symbol.for("react.memo_cache_sentinel")) {
-      t21 = <Text bold={true}>disabled</Text>;
+      t21 = <Text bold={true}>已禁用</Text>;
       $[35] = t21;
     } else {
       t21 = $[35];
     }
-    const t22 = disabledByPolicy && " by a managed settings file";
+    const t22 = disabledByPolicy && "（通过受管设置文件）";
     let t23;
     if ($[36] !== totalHooksCount) {
       t23 = <Text bold={true}>{totalHooksCount}</Text>;
@@ -313,7 +313,7 @@ export function HooksConfigMenu(t0) {
     }
     let t26;
     if ($[42] !== t22 || $[43] !== t23 || $[44] !== t24 || $[45] !== t25) {
-      t26 = <Text>All hooks are currently {t21}{t22}. You have{" "}{t23} configured{" "}{t24} that{" "}{t25} not running.</Text>;
+      t26 = <Text>所有钩子当前{t21}{t22}。您配置了 {t23} 个{t24}，它们{t25}未在运行。</Text>;
       $[42] = t22;
       $[43] = t23;
       $[44] = t24;
@@ -351,7 +351,7 @@ export function HooksConfigMenu(t0) {
     }
     let t32;
     if ($[53] !== disabledByPolicy) {
-      t32 = !disabledByPolicy && <Text dimColor={true}>To re-enable hooks, remove "disableAllHooks" from settings.json or ask Claude.</Text>;
+      t32 = !disabledByPolicy && <Text dimColor={true}>要重新启用钩子，请从 settings.json 移除 "disableAllHooks" 或询问 Claude。</Text>;
       $[53] = disabledByPolicy;
       $[54] = t32;
     } else {

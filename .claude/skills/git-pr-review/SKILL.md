@@ -1,5 +1,5 @@
 ---
-name: git-pr-review
+name: PR 描述生成器
 description: 从提交历史生成简洁结构化的 PR 描述，最小化 令牌 用量。
 risk: safe
 source: community
@@ -7,6 +7,8 @@ source_type: community
 date_added: "2026-05-03"
 author: community
 ---
+
+# Git PR 审查
 
 ## Objective
 

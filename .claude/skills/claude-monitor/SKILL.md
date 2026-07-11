@@ -1,5 +1,5 @@
 ---
-name: claude-monitor
+name: Claude Monitor 相关功能和最佳实践
 description: "Claude Monitor — Claude Monitor 相关功能和最佳实践"
 risk: safe
 source: community
@@ -24,7 +24,7 @@ tools:
 
 Monitor de performance do Claude Code e sistema local. Diagnostica lentidao, mede CPU/RAM/disco, verifica API latency e gera relatorios de saude do sistema.
 
-## When to Use This Skill
+## 何时使用此技能
 
 - When the user mentions "lento" or related topics
 - When the user mentions "lentidao" or related topics

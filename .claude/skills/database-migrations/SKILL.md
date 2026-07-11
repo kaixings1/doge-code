@@ -1,5 +1,5 @@
 ---
-name: database-migrations
+name: 跨 PostgreSQL、MySQL 及常用 ORM（Prisma、Drizzl
 description: 跨 PostgreSQL、MySQL 及常用 ORM（Prisma、Drizzle、Django、TypeORM、golang-migrate）的模式变更（架构 changes）、数据迁移、回滚及零停机部署（zero-downtime deployments）的数据库迁移最佳实践。
 origin: ECC
 ---

@@ -1,5 +1,5 @@
 ---
-name: carbone-automation
+name: Carbone 自动化
 description: "Carbone 自动化"
 risk: safe
 source: community

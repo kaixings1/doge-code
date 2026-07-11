@@ -1,5 +1,5 @@
 ---
-name: QuickJS WASM
+name: 轻量级 JavaScript/TypeScript 运行时，通过 We
 description: QuickJS WASM — 轻量级 JavaScript/TypeScript 运行时，通过 WebAssembly 嵌入宿主应用。
 ---
 

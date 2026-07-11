@@ -1,3 +1,8 @@
+---
+name: Modern Python 工具链
+description: 现代 Python 工具链和最佳实践，使用 uv、ruff、ty 和 pytest。
+---
+
 # Modern Python
 
 Modern Python tooling and 最佳实践 using uv, ruff, ty, and pytest. Based on patterns from [trailofbits/cookiecutter-python](https://github.com/trailofbits/cookiecutter-python).

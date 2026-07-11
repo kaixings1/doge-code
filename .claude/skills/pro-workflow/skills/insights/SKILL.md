@@ -89,7 +89,7 @@ Productivity (last 10 sessions)
   Learning capture: 2.1 per session
 ```
 
-## Guardrails
+## 防护措施
 
 - Use actual data from project memory and session history.
 - Surface actionable suggestions, not just numbers.

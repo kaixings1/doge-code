@@ -1,5 +1,5 @@
 ---
-name: firecrawl-crawl
+name: Firecrawl爬取技能
 description: Firecrawl爬取技能
 allowed-tools:
   - Bash(firecrawl *)
@@ -29,7 +29,7 @@ firecrawl crawl "<url>" --max-depth 3 --wait --progress -o .firecrawl/crawl.json
 firecrawl crawl <job-id>
 ```
 
-## Options
+## 选项
 
 | Option                    | Description                                 |
 | ------------------------- | ------------------------------------------- |
@@ -50,7 +50,7 @@ firecrawl crawl <job-id>
 - Use `--include-paths` to scope the crawl — don't crawl an entire site when you only need one section.
 - Crawl consumes credits per page. Check `firecrawl credit-usage` before large crawls.
 
-## See also
+## 参见
 
 - [firecrawl-scrape](../firecrawl-scrape/SKILL.md) — scrape individual pages
 - [firecrawl-map](../firecrawl-map/SKILL.md) — discover URLs before deciding to crawl

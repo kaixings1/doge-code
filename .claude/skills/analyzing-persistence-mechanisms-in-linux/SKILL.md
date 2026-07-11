@@ -1,5 +1,5 @@
 ---
-name: analyzing-persistence-mechanisms-in-linux
+name: Linux 持久化机制分析
 description: "分析 Linux 持久化机制"
 risk: safe
 source: community

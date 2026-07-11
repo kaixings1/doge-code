@@ -1,41 +1,41 @@
 将函数、组件或模块从现有代码中提取为独立的单元。
 
-## Steps
+## 步骤
 
-1. Identify the code block to extract from the argument (file path and line range, or description).
-2. Read the target file and analyze the selected code:
-   - Determine all variables used within the block that are defined outside it (parameters).
-   - Determine all variables modified within the block that are used after it (return values).
-   - Identify side effects (I/O, mutations, DOM manipulation).
-3. Choose the extraction type:
-   - **Function**: Pure logic with clear inputs and outputs.
-   - **Component**: UI rendering with props interface (React, Vue, Svelte).
-   - **Module**: Related functions that form a cohesive unit.
-   - **Hook**: Stateful logic with lifecycle concerns (React hooks).
-   - **Class method**: Logic belonging to a specific class.
-4. Create the extracted unit:
-   - Name it descriptively based on its purpose.
-   - Define a clear parameter interface (TypeScript types, Python type hints).
-   - Add a return type annotation.
-5. Replace the original code with a call to the extracted unit.
-6. Update imports in the original file and any files that need the new export.
-7. Run tests to verify the refactoring preserves behavior.
+1. 从参数中识别要提取的代码块（文件路径和行范围，或描述）。
+2. 读取目标文件并分析所选代码：
+   - 确定代码块内使用但定义在块外的所有变量（参数）。
+   - 确定代码块内修改且在块后使用的所有变量（返回值）。
+   - 识别副作用（I/O、变更、DOM 操作）。
+3. 选择提取类型：
+   - **函数**：具有清晰输入输出的纯逻辑。
+   - **组件**：带有 props 接口的 UI 渲染（React、Vue、Svelte）。
+   - **模块**：构成内聚单元的相关函数。
+   - **钩子**：具有生命周期关注点的有状态逻辑（React hooks）。
+   - **类方法**：属于特定类的逻辑。
+4. 创建提取的单元：
+   - 基于其目的进行描述性命名。
+   - 定义清晰的参数接口（TypeScript 类型、Python 类型提示）。
+   - 添加返回类型注解。
+5. 用对提取单元的调用来替换原始代码。
+6. 更新原始文件中的导入以及需要新导出的任何文件。
+7. 运行测试以验证重构保留了行为。
 
-## Format
+## 格式
 
 ```
-Extracted: <type> <name> from <source-file>
-  To: <destination-file>
-  Parameters: <param-list>
-  Returns: <return-type>
-  Lines replaced: <start>-<end>
-  Tests: <pass/fail>
+提取：<类型> <名称> 来自 <源文件>
+  到：<目标文件>
+  参数：<参数列表>
+  返回：<返回类型>
+  替换的行：<起始>-<结束>
+  测试：<通过/失败>
 ```
 
-## Rules
+## 规则
 
-- The extraction must be behavior-preserving; run tests before and after.
-- Choose names that describe the purpose, not the implementation.
-- Keep the extracted unit's parameter count under 5; use an options object if more.
-- Maintain the same error handling behavior in the extracted code.
-- Update all call sites if moving a function to a different module.
+- 提取必须保留行为；在前后运行测试。
+- 选择描述目的而非实现的名称。
+- 保持提取单元的参数数量在 5 个以下；如果更多则使用选项对象。
+- 在提取的代码中维持相同的错误处理行为。
+- 如果移动函数到不同模块，更新所有调用点。

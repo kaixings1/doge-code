@@ -1,5 +1,5 @@
 ---
-name: systematic-debugging
+name: 遇到任何 bug、测试失败或异常行为时使用，在提出修复方案之前执行
 description: 遇到任何 bug、测试失败或异常行为时使用，在提出修复方案之前执行
 version: "1.0.0"
 license: MIT

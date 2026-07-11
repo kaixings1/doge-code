@@ -1,10 +1,12 @@
 ---
-name: minecraft-bukkit-pro
+name: Minecraft Bukkit 插件开发
 description: "Minecraft Bukkit 插件开发 — Minecraft Bukkit Pro 相关功能和最佳实践。"
 risk: safe
 source: community
 date_added: '2026-02-27'
 ---
+
+# Minecraft Bukkit 专业版
 
 ## 使用此技能的场景
 

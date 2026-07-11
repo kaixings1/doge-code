@@ -1,5 +1,5 @@
 ---
-name: springboot-security
+name: Spring Boot 服务的身份验证/授权、校验、CSRF、机密管理、响应头、
 description: Spring Boot 服务的身份验证/授权、校验、CSRF、机密管理、响应头、速率限制及依赖安全的 Spring Security 最佳实践。
 origin: ECC
 ---

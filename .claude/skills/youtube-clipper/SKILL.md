@@ -1,5 +1,5 @@
 ---
-name: youtube-clipper
+name: YouTube剪辑器
 description: "YouTube剪辑器 — 基于自动化工作流生成和剪辑YouTube视频片段：拉取源视频、选取高光片段、添加字幕并导出。"
 triggers:
   - "youtube clip"

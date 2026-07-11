@@ -281,7 +281,7 @@ function hasVisibleSpaceEffect(styles: AnsiCode[]): boolean {
  *
  * @see https://mitchellh.com/writing/grapheme-clusters-in-terminals
  */
-// const enum 在编译时内联 — 无运行时对象，无属性访问
+// 单元格宽度枚举（const enum 在 ESM 下内联，因此同时导出常量值供运行时使用）
 export const enum CellWidth {
   // 非宽字符，单元格宽度 1
   Narrow = 0,
@@ -293,6 +293,12 @@ export const enum CellWidth {
   // 用于在软换行期间保持宽字符语义。
   SpacerHead = 3,
 }
+
+// 为 ESM 运行时导出枚举值（Bun/ESM 兼容）
+export const CellWidth_Narrow = CellWidth.Narrow
+export const CellWidth_Wide = CellWidth.Wide
+export const CellWidth_SpacerTail = CellWidth.SpacerTail
+export const CellWidth_SpacerHead = CellWidth.SpacerHead
 
 export type Hyperlink = string | undefined
 

@@ -1,9 +1,11 @@
 ---
-name: ultragoal
+name: 超级目标
 description: "超级目标 — 将大型任务分解为有序目标集，持久跟踪执行进度"
 参数-hint: "<brief or subcommand>"
 level: 3
 ---
+
+# UltraGoal
 
 <目的>
 Ultragoal将简报分解为有序目标集，在持久追加日志中记录开始/检查点/阻塞/失败事件，并指导活动Claude代理如何与计划一起驱动Claude Code `/goal`斜杠命令。它不能从shell修改Claude `/goal`状态；它持久化仓库状态并打印面向模型的交接说明，活动代理必须在会话中执行。

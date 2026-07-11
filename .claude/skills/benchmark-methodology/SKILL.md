@@ -1,5 +1,5 @@
 ---
-name: benchmark-methodology
+name: 基准测试方法论
 description: 基准测试方法论
   Use after competitive-platform-analysis has produced a tiered competitor set.
   Scores each competitor across nine weighted dimensions (positioning, voice,
@@ -14,7 +14,7 @@ description: 基准测试方法论
 the point: scores are only useful if the same evidence would earn the same
 number for any competitor.
 
-## When to Activate
+## 激活时机
 
 - A scoped, tiered competitor set from competitive-platform-analysis is ready to score.
 - Need comparable, evidence-anchored scores across competitors — not gut-feel rankings.

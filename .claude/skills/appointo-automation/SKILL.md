@@ -1,5 +1,5 @@
 ---
-name: appointo-automation
+name: Appointo 自动化
 description: "Appointo 自动化"
 risk: safe
 source: community

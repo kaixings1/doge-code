@@ -1,5 +1,5 @@
 ---
-name: event-staffing-compliance
+name: 活动人员合规管理
 description: "活动人员合规管理"
 risk: safe
 source: community

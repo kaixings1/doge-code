@@ -1,5 +1,5 @@
 ---
-name: claude-win11-speckit-update-skill
+name: Windows 11 系统管理
 description: "Windows 11 系统管理"
 risk: safe
 source: "https://github.com/NotMyself/claude-win11-speckit-update-skill"

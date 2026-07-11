@@ -1,6 +1,6 @@
 ---
-name: burpsuite-project-parser
-description: "Burpsuite Project Parser — Burpsuite Project Parser 相关功能和最佳实践"
+name: Burpsuite 项目解析器
+description: "Burpsuite 项目解析器 — Burpsuite 项目解析相关功能和最佳实践"
 allowed-tools:
   - Bash
   - Read

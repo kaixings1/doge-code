@@ -1,5 +1,5 @@
 ---
-name: hugging-face-papers
+name: Hugging Face 论文
 description: "Hugging Face 论文 — AI 论文浏览"
 risk: safe
 source: community

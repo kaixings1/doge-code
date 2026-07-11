@@ -1,8 +1,8 @@
 按编号审查拉取请求：获取差异、分析更改并发布评审意见。
 
-## Steps
+## 步骤
 
-1. Fetch PR details: `gh pr view <number> --json title,body,files,additions,deletions,commits`.
+1. 获取 PR 详情：`gh pr view <number> --json title,body,files,additions,deletions,commits`。
 2. Get the full diff: `gh pr diff <number>`.
 3. Read the PR description and any linked issues for context.
 4. Analyze each changed file across dimensions:

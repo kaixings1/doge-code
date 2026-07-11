@@ -1,5 +1,5 @@
 ---
-name: community-marketing
+name: 社区营销
 description: "社区营销"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: error-debugging-error-trace
+name: 错误追踪和定位
 description: "错误追踪和定位"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: analyzing-powershell-script-block-logging
+name: PowerShell 脚本块日志分析
 description: "分析 PowerShell 脚本块日志"
 risk: safe
 source: community

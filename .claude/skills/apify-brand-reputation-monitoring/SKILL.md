@@ -1,5 +1,5 @@
 ---
-name: apify-brand-reputation-monitoring
+name: Apify 品牌声誉监控
 description: "Apify 品牌声誉监控"
 risk: safe
 source: community

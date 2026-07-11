@@ -1,5 +1,5 @@
 ---
-name: etermin-automation
+name: eTermin 自动化
 description: "eTermin 自动化"
 risk: safe
 source: community

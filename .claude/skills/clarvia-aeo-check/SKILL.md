@@ -1,5 +1,5 @@
 ---
-name: clarvia-aeo-check
+name: 使用 Clarvia AEO（代理体验优化）为任何 MCP 服务器、API 或
 description: "使用 Clarvia AEO（代理体验优化）为任何 MCP 服务器、API 或 CLI 评分代理就绪性。在将工具添加到工作流之前搜索 15,400+ 个已索引工具。"
 category: tool-quality
 risk: safe
@@ -31,7 +31,7 @@ Add Clarvia MCP server to your config:
 }
 ```
 
-## When to Use This Skill
+## 何时使用此技能
 
 - Use when evaluating a new MCP server before adding it to your config
 - Use when comparing two tools for the same job

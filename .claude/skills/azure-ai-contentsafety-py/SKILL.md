@@ -1,5 +1,5 @@
 ---
-name: azure-ai-contentsafety-py
+name: Azure AI 内容安全 (Python)
 description: "Azure AI 内容安全 (Python)"
 risk: safe
 source: community

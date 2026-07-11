@@ -1,6 +1,6 @@
 ---
-name: azure-ai-textanalytics-py
-description: "Azure Ai Textanalytics Py — Azure Ai Textanalytics Py 相关功能和最佳实践"
+name: Azure AI Textanalytics (Python)
+description: "Azure AI Text Analytics Python — Azure AI Text Analytics Python SDK 相关功能和最佳实践"
 risk: unknown
 source: community
 date_added: '2026-02-27'
@@ -182,7 +182,7 @@ for doc_results in results:
             print(f"Sentiment: {result.sentiment}")
 ```
 
-## Async Client
+## 异步客户端
 
 ```python
 from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -197,7 +197,7 @@ async def analyze():
         # Process results...
 ```
 
-## Client Types
+## 客户端类型
 
 | Client | Purpose |
 |--------|---------|

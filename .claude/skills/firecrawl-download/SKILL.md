@@ -1,5 +1,5 @@
 ---
-name: firecrawl-download
+name: Firecrawl下载技能
 description: Firecrawl下载技能
 allowed-tools:
   - Bash(firecrawl *)
@@ -18,7 +18,7 @@ allowed-tools:
 - 你需要离线访问文档或内容
 - 需要以组织化的文件结构进行批量内容提取
 
-## Quick start
+## 快速入门
 
 ```bash
 # Interactive wizard (picks format, screenshots, paths for you)
@@ -61,7 +61,7 @@ firecrawl download https://docs.example.com \
 
 `-f <formats>`, `-H`, `-S`, `--screenshot`, `--full-page-screenshot`, `--only-main-content`, `--include-tags`, `--exclude-tags`, `--wait-for`, `--max-age`, `--country`, `--languages`
 
-## See also
+## 参见
 
 - [firecrawl-map](../firecrawl-map/SKILL.md) — just discover URLs without downloading
 - [firecrawl-scrape](../firecrawl-scrape/SKILL.md) — scrape individual pages

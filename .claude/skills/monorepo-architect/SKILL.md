@@ -1,5 +1,5 @@
 ---
-name: monorepo-architect
+name: 单体仓库架构、构建系统和依赖管理的规模专家。掌握 Nx、Turborepo、Ba
 description: "单体仓库架构、构建系统和依赖管理的规模专家。掌握 Nx、Turborepo、Bazel 和 Lerna，实现高效的多项目开发。主动用于单体仓库设置和优化。"
 risk: safe
 source: community

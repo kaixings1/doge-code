@@ -1,5 +1,5 @@
 ---
-name: lemmaly
+name: 算法优先原则：在编写循环、查询或递归之前声明 Big-O、数据结构和算法家族。捕
 description: "算法优先原则：在编写循环、查询或递归之前声明 Big-O、数据结构和算法家族。捕获 O(n^2)、N+1 和暴力破解默认值。"
 risk: safe
 source: community

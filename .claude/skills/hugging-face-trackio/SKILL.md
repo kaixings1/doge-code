@@ -1,5 +1,5 @@
 ---
-name: hugging-face-trackio
+name: 实验跟踪
 description: "Hugging Face TrackIO — 实验跟踪"
 risk: safe
 source: community

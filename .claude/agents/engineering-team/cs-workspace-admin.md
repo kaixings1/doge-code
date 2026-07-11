@@ -7,11 +7,11 @@ model: opus
 tools: [Read, Write, Bash, Grep, Glob]
 ---
 
-# cs-workspace-admin
+# 工作空间管理员
 
-## Role & Expertise
+## 角色与专长
 
-Google Workspace administration specialist orchestrating the gws CLI for email automation, file management, calendar scheduling, security auditing, and cross-service workflows. Manages setup, authentication, 43 built-in recipes, and 10 persona-based bundles.
+Google Workspace 管理专家，编排 gws CLI 用于邮件自动化、文件管理、日历调度、安全审计和跨服务工作流。管理设置、认证、43 个内置方案和 10 个角色绑定包。
 
 ## Skill Integration
 

@@ -1,5 +1,5 @@
 ---
-name: imagegen
+name: 图像生成
 description: "图像生成 — AI 图像生成"
 risk: unknown
 source: community

@@ -13,14 +13,14 @@ allowed-tools:
 requires: [new-project, phase, plan-phase]
 ---
 <objective>
-Guide the user through MVP-mode planning for a phase. The command:
+引导用户完成阶段的 MVP 模式规划。此命令：
 
-1. Prompts for an "As a / I want to / So that" user story (three structured questions)
-2. Runs SPIDR splitting check — if the story is too large, walks through Spike/Paths/Interfaces/Data/Rules and offers to split into multiple phases
-3. Writes `**Mode:** mvp` and the reformatted `**Goal:**` to the phase's ROADMAP.md section
-4. Delegates to `/gsd plan-phase <N>` which auto-detects MVP mode via the roadmap field
+1. 提示用户输入"作为 / 我想要 / 以便"用户故事（三个结构化问题）
+2. 运行 SPIDR 拆分检查——如果故事太大，遍历 Spike/Paths/Interfaces/Data/Rules 并提供拆分为多个阶段的选项
+3. 将 `**Mode:** mvp` 和重新格式化的 `**Goal:**` 写入阶段的 ROADMAP.md 部分
+4. 委托给 `/gsd plan-phase <N>`，它会通过路线图字段自动检测 MVP 模式
 
-Phase 1 of the vertical-mvp-slice PRD shipped the planner-side machinery; this command is the user entry point for it.
+垂直 MVP 切片 PRD 的阶段 1 提供了规划器端机制；此命令是其用户入口点。
 </objective>
 
 <execution_context>

@@ -1,6 +1,10 @@
-# Multi-Agent Workflow: Startup MVP with Persistent Memory
+---
+description: 带记忆的工作流——使用持久记忆功能的代理工作流
+---
 
-> The same startup MVP workflow from [workflow-startup-mvp.md](workflow-startup-mvp.md), but with an MCP memory server handling state between agents. No more copy-paste handoffs.
+# 多代理工作流：带持久记忆的创业 MVP
+
+> 与 [workflow-startup-mvp.md](workflow-startup-mvp.md) 相同的创业 MVP 工作流，但使用 MCP 记忆服务器处理代理之间的状态。不再需要复制粘贴交接。
 
 ## The Problem with Manual Handoffs
 
@@ -42,18 +46,18 @@ Install any MCP-compatible memory server that supports `remember`, `recall`, and
 
 ## The Scenario
 
-Same as the standard workflow: a SaaS team retrospective tool (RetroBoard), 4 weeks to MVP, solo developer.
+与标准工作流相同：一个 SaaS 团队回顾工具（RetroBoard），4 周 MVP，独立开发者。
 
 ## Agent Team
 
-| Agent | Role in this workflow |
+| 代理 | 在此工作流中的角色 |
 |-------|---------------------|
-| Sprint Prioritizer | Break the project into weekly sprints |
-| UX Researcher | Validate the idea with quick user interviews |
-| Backend Architect | Design the API and data model |
-| Frontend Developer | Build the React app |
-| Rapid Prototyper | Get the first version running fast |
-| Growth Hacker | Plan launch strategy while building |
+| Sprint Prioritizer | 将项目分解为每周冲刺 |
+| UX Researcher | 通过快速用户访谈验证想法 |
+| Backend Architect | 设计 API 和数据模型 |
+| Frontend Developer | 构建 React 应用 |
+| Rapid Prototyper | 快速运行第一个版本 |
+| Growth Hacker | 在构建的同时规划发布策略 |
 | Reality Checker | Gate each milestone before moving on |
 
 Each agent has a Memory Integration section in their prompt (see [integrations/mcp-memory/README.md](../integrations/mcp-memory/README.md) for how to add it).
@@ -224,12 +228,12 @@ The Backend Architect can see exactly what the Reality Checker flagged, recall i
 | **Multi-day projects** | Re-establish context every session | Agent picks up where it left off |
 | **Setup required** | None | Install an MCP memory server |
 
-## Key Patterns
+## 关键模式
 
-1. **Tag everything with the project name**: This is what makes recall work. Every memory gets tagged with `retroboard` (or whatever your project is).
-2. **Tag deliverables for the receiving agent**: When the Backend Architect finishes an API spec, it tags the memory with `frontend-developer` so the Frontend Developer finds it on recall.
-3. **Reality Checker gets full visibility**: Because all agents store their work in memory, the Reality Checker can recall everything for the project without you compiling it.
-4. **Rollback replaces manual undo**: When something fails, roll back to the last checkpoint instead of trying to figure out what changed.
+1. **用项目名称标记所有内容**：这是让召回工作的关键。每个记忆都用 `retroboard`（或你的项目名）标记。
+2. **为接收代理标记交付物**：当后端架构师完成 API 规范时，它用 `frontend-developer` 标记记忆，以便前端开发者在召回时找到它。
+3. **现实检查员获得完全可见性**：因为所有代理都将他们的工作存储在记忆中，现实检查员可以无需你编译就为项目召回所有内容。
+4. **回滚替代手动撤销**：当某些事情失败时，回滚到上一个检查点，而不是试图找出什么发生了变化。
 
 ## Tips
 

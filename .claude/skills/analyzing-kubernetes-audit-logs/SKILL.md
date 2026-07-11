@@ -1,5 +1,5 @@
 ---
-name: analyzing-kubernetes-audit-logs
+name: K8s 审计日志分析
 description: "分析 Kubernetes 审计日志"
 risk: safe
 source: community

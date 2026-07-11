@@ -1,5 +1,5 @@
 ---
-name: omc-doctor
+name: 诊断和修复 oh-my-claudecode 安装问题
 description: 诊断和修复 oh-my-claudecode 安装问题
 level: 3
 ---

@@ -1,5 +1,5 @@
 ---
-name: packaging-notarization
+name: macOS应用打包和公证指南
 description: macOS应用打包和公证指南
 ---
 

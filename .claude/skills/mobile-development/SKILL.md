@@ -1,5 +1,5 @@
 ---
-name: mobile-development
+name: 移动端开发
 description: 移动端开发 — React Native和Flutter的移动开发模式，包括导航和状态管理。
 ---
 
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
 - Blocking the JS thread with heavy computation (use `InteractionManager`)
 - Ignoring platform-specific UX conventions (iOS back swipe, Android back button)
 
-## Checklist
+## 检查清单
 
 - [ ] `FlatList` used for all scrollable lists with `keyExtractor`
 - [ ] Navigation typed with TypeScript route params

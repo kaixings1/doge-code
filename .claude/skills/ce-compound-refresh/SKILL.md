@@ -1,5 +1,5 @@
 ---
-name: ce-compound-refresh
+name: 复合刷新
 description: "复合刷新"
 risk: safe
 source: community

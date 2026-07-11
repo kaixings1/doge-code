@@ -1,5 +1,5 @@
 ---
-name: interview-prep
+name: 面试准备
 description: "面试准备 — 全面的面试准备指南"
 risk: safe
 source: community

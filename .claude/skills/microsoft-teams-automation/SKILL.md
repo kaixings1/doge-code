@@ -1,5 +1,5 @@
 ---
-name: microsoft-teams-automation
+name: Microsoft-teams 自动化
 description: "通过 Rube MCP (Composio) 自动执行 Microsoft Teams 任务：send messages, manage channels, create meetings, handle chats, and search messages. Always search tools first for current schemas."
 risk: critical
 source: community

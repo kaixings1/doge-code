@@ -1,5 +1,5 @@
 ---
-name: async-interview-automation
+name: 异步面试自动化
 description: "异步面试自动化"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: bun-development
+name: 使用 Bun 运行时进行快速、现代的 JavaScript/TypeScript 开发
 description: "使用 Bun 运行时进行快速、现代的 JavaScript/TypeScript 开发。"
 risk: critical
 source: community
@@ -10,7 +10,7 @@ date_added: "2026-02-27"
 
 > Fast, modern JavaScript/TypeScript development with the Bun runtime, inspired by [oven-sh/bun](https://github.com/oven-sh/bun).
 
-## When to Use This Skill
+## 何时使用此技能
 
 使用此技能当:
 

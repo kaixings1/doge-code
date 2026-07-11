@@ -1,5 +1,5 @@
 ---
-name: cpp-coding-standards
+name: 基于 C++ 核心指南 (isocpp.github.io) 的 C++ 编码规
 description: 基于 C++ 核心指南 (isocpp.github.io) 的 C++ 编码规范。在编写、评审或重构 C++ 代码时使用，以强制执行现代、安全且地道的实践。
 origin: ECC
 ---

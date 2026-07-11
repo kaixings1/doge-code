@@ -1,5 +1,5 @@
 ---
-name: planning-with-files
+name: 基于Manus风格的文件规划系统
 description: 基于Manus风格的文件规划系统
 user-invocable: true
 allowed-tools: "Read Write Edit Bash Glob Grep"

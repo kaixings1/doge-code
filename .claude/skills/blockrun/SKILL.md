@@ -1,5 +1,5 @@
 ---
-name: blockrun
+name: 与 Claude Code 和 Google Antigravity 协同工作
 description: 与 Claude Code 和 Google Antigravity 协同工作的 BlockRun 任务编排。
 risk: unknown
 source: community

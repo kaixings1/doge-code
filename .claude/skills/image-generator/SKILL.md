@@ -1,5 +1,5 @@
 ---
-name: image-generator
+name: 图像生成器
 description: "图像生成器 — AI 驱动的图像生成"
 risk: unknown
 source: community

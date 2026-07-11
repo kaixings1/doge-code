@@ -1,5 +1,5 @@
 ---
-name: iconsax-library
+name: IconSax 图标库
 description: "IconSax 图标库 — 使用 IconSax 图标集"
 risk: safe
 source: community

@@ -1,5 +1,5 @@
 ---
-name: dmux-workflows
+name: DMux工作流管理
 description: DMux工作流管理
 ---
 

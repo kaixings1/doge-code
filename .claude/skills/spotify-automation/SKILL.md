@@ -1,5 +1,5 @@
 ---
-name: Spotify Automation
+name: y 工作流，包括播放列表管理
 description: "通过 Composio 自动执行 Spotify 工作流，包括播放列表管理、音乐搜索、播放控制和用户资料访问"
 requires:
   mcp:

@@ -4,15 +4,15 @@ allowed-tools: ["Bash(test -f .claude/ralph-loop.local.md:*)", "Bash(rm .claude/
 hide-from-slash-command-tool: "true"
 ---
 
-# Cancel Ralph
+# 取消 Ralph
 
-To cancel the Ralph loop:
+要取消 Ralph 循环：
 
-1. Check if `.claude/ralph-loop.local.md` exists using Bash: `test -f .claude/ralph-loop.local.md && echo "EXISTS" || echo "NOT_FOUND"`
+1. 使用 Bash 检查 `.claude/ralph-loop.local.md` 是否存在：`test -f .claude/ralph-loop.local.md && echo "EXISTS" || echo "NOT_FOUND"`
 
-2. **If NOT_FOUND**: Say "No active Ralph loop found."
+2. **如果未找到**：提示"未找到活跃的 Ralph 循环。"
 
-3. **If EXISTS**:
-   - Read `.claude/ralph-loop.local.md` to get the current iteration number from the `iteration:` field
-   - Remove the file using Bash: `rm .claude/ralph-loop.local.md`
-   - Report: "Cancelled Ralph loop (was at iteration N)" where N is the iteration value
+3. **如果存在**：
+   - 读取 `.claude/ralph-loop.local.md` 从 `iteration:` 字段获取当前迭代编号
+   - 使用 Bash 删除文件：`rm .claude/ralph-loop.local.md`
+   - 报告："已取消 Ralph 循环（迭代次数为 N）"，其中 N 为迭代值
