@@ -402,50 +402,47 @@ export function createSkillCommand({
 }
 
 /**
- * Loads skills from a /skills/ directory path.
- * Only supports directory format: skill-name/SKILL.md
+ * Loads skills from a /skills/ directory path, supporting nested subdirectories.
+ * Supports:
+ *   - Top-level: skill-name/SKILL.md
+ *   - Namespaced: category/skill-name/SKILL.md  (name: "category:skill-name")
+ *   - Multi-level: category/subcat/skill-name/SKILL.md (name: "category:subcat:skill-name")
+ *
+ * Single .md files are NOT supported — only directory format.
  */
 async function loadSkillsFromSkillsDir(
   basePath: string,
   source: SettingSource,
+  namespacePrefix: string = '',
 ): Promise<SkillWithPath[]> {
   const fs = getFsImplementation()
 
-  skillDebugFs.writeFileSync('d:/skill_debug.log', `  loadSkillsFromSkillsDir basePath=${basePath} source=${source}\n`, { flag: 'a' })
   let entries
   try {
     entries = await fs.readdir(basePath)
-    skillDebugFs.writeFileSync('d:/skill_debug.log', `  readdir success, entries=${entries.length}\n`, { flag: 'a' })
   } catch (e: unknown) {
-    skillDebugFs.writeFileSync('d:/skill_debug.log', `  readdir error: ${e}\n`, { flag: 'a' })
     if (!isFsInaccessible(e)) logError(e)
     return []
   }
 
   const results = await Promise.all(
-    entries.map(async (entry): Promise<SkillWithPath | null> => {
+    entries.map(async (entry): Promise<SkillWithPath[] | SkillWithPath | null> => {
       try {
-        // Only support directory format: skill-name/SKILL.md
         if (!entry.isDirectory() && !entry.isSymbolicLink()) {
-          // Single .md files are NOT supported in /skills/ directory
           return null
         }
 
-        const skillDirPath = join(basePath, entry.name)
-        const skillFilePath = join(skillDirPath, 'SKILL.md')
+        const entryPath = join(basePath, entry.name)
+        const skillFilePath = join(entryPath, 'SKILL.md')
 
         let content: string
         try {
           content = await fs.readFile(skillFilePath, { encoding: 'utf-8' })
-        } catch (e: unknown) {
-          // SKILL.md doesn't exist, skip this entry. Log non-ENOENT errors
-          // (EACCES/EPERM/EIO) so permission/IO problems are diagnosable.
-          if (!isENOENT(e)) {
-            logForDebugging(`[skills] failed to read ${skillFilePath}: ${e}`, {
-              level: 'warn',
-            })
-          }
-          return null
+        } catch {
+          // No SKILL.md — this is a namespace directory. Recurse into it.
+          return loadSkillsFromSkillsDir(entryPath, source, namespacePrefix
+            ? `${namespacePrefix}:${entry.name}`
+            : entry.name)
         }
 
         const { frontmatter, content: markdownContent } = parseFrontmatter(
@@ -453,7 +450,9 @@ async function loadSkillsFromSkillsDir(
           skillFilePath,
         )
 
-        const skillName = entry.name
+        const skillName = namespacePrefix
+          ? `${namespacePrefix}:${entry.name}`
+          : entry.name
         const parsed = parseSkillFrontmatterFields(
           frontmatter,
           markdownContent,
@@ -461,18 +460,18 @@ async function loadSkillsFromSkillsDir(
         )
         const paths = parseSkillPaths(frontmatter)
 
-        return {
+        return [{
           skill: createSkillCommand({
             ...parsed,
             skillName,
             markdownContent,
             source,
-            baseDir: skillDirPath,
+            baseDir: entryPath,
             loadedFrom: 'skills',
             paths,
           }),
           filePath: skillFilePath,
-        }
+        }]
       } catch (error) {
         logError(error)
         return null
@@ -480,7 +479,7 @@ async function loadSkillsFromSkillsDir(
     }),
   )
 
-  return results.filter((r): r is SkillWithPath => r !== null)
+  return results.filter((r): r is SkillWithPath[] | SkillWithPath => r !== null).flat()
 }
 
 // --- Legacy /commands/ loader ---
