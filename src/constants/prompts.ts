@@ -297,6 +297,11 @@ function getUsingYourToolsSection(enabledTools: Set<string>): string {
           `搜索文件使用 ${GLOB_TOOL_NAME} 而非 find or ls`,
           `搜索文件内容使用 ${GREP_TOOL_NAME} 而非 grep or rg`,
         ]),
+    ...(env.platform === 'win32'
+      ? [
+          `🔴 Windows MSYS2 禁令：绝对禁止使用 ${BASH_TOOL_NAME} 工具执行文件写入（python3 -c "..."、node -e "..."、powershell -Command "..."、cat > file、echo > file）或包含特殊字符的内联代码。MSYS2 bash 会破坏 "、[、]、&、(、)、'、\\ 等字符，导致所有内联脚本不可靠。创建任何脚本文件必须使用 ${FILE_WRITE_TOOL_NAME}。`,
+        ]
+      : []),
     `保留使用 ${BASH_TOOL_NAME} 专门用于需要 shell 执行的系统命令和终端操作。如果你不确定并且存在相关的专用工具，默认使用专用工具，只有在绝对必要时才回退使用 ${BASH_TOOL_NAME} 工具。`,
   ]
 

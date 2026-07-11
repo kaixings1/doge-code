@@ -1417,12 +1417,44 @@ async function* runShellCommand({
     timeout,
     run_in_background
   } = input;
-  // 规范化 Windows 命令
-  const originalCommand = command;
-  command = normalizeWindowsCommand(command);
-  if (originalCommand !== command) {
-    console.debug(`[BashTool] 命令归一化: "${originalCommand}" → "${command}"`);
+  // 判断实际的底层 shell 类型
+  // 注意：Windows 安全保护（exec 函数内）会强制降级到 cmd.exe，
+  // 因此即使 CLAUDE_CODE_SHELL 未设置，实际执行的也可能是 cmd.exe。
+  // 我们必须在此处模拟 exec 中的降级逻辑，以确保命令归一化方向正确。
+  const shellEnv = (process.env.CLAUDE_CODE_SHELL || process.env.SHELL || '').toLowerCase()
+  const wantsNativeWinShell = shellEnv.includes('cmd') || shellEnv.includes('powershell') || shellEnv.includes('pwsh')
+  const isWindows = process.platform === 'win32'
+
+  // 🔴 Windows 关键修复：
+  // 当实际底层 shell 是 cmd.exe 或 powershell 时，跳过 normalizeWindowsCommand。
+  // normalizeWindowsCommand 会将 dir/type/findstr 转为 ls/cat/grep 等 Unix 命令，
+  // 但 cmd.exe 和 powershell 原生使用 Windows 命令，不认识 ls/cat/grep。
+  //
+  // Windows 安全保护逻辑（Shell.ts exec 函数）：
+  // - Windows 上，未设置 CLAUDE_CODE_SHELL_WANT_BASH=1 时
+  // - 且 CLAUDE_CODE_SHELL 不是 cmd/powershell/pwsh 时
+  // → 强制降级到 cmd.exe（无论 CLAUDE_CODE_SHELL 和 SHELL 设置了什么）
+  //
+  // 因此当 isWindows && !process.env.CLAUDE_CODE_SHELL_WANT_BASH 时，
+  // 实际 shell 是 cmd.exe → 必须跳过 Unix 命令归一化。
+  const actualShellIsNativeWin = isWindows
+    ? !process.env.CLAUDE_CODE_SHELL_WANT_BASH || wantsNativeWinShell
+    : false
+
+  if (!actualShellIsNativeWin) {
+    const originalCommand = command;
+    command = normalizeWindowsCommand(command);
+    if (originalCommand !== command) {
+      console.debug(`[BashTool] 命令归一化: "${originalCommand}" → "${command}"`);
+    }
   }
+
+  // 确定最终传给 exec 的 shellType
+  const resolvedShellType = wantsNativeWinShell
+    ? (shellEnv.includes('powershell') || shellEnv.includes('pwsh')
+        ? 'powershell' as const
+        : 'cmd' as const)
+    : 'bash' as const
 
   const timeoutMs = timeout || getDefaultTimeoutMs();
   let fullOutput = '';
@@ -1445,11 +1477,6 @@ async function* runShellCommand({
 
   // 确定是否应启用自动后台
   const shouldAutoBackground = !isBackgroundTasksDisabled && isAutobackgroundingAllowed(command);
-  // 根据环境变量判断 shell 类型：优先 CLAUDE_CODE_SHELL，其次 SHELL
-  const shellEnv = (process.env.CLAUDE_CODE_SHELL || process.env.SHELL || '').toLowerCase()
-  const resolvedShellType = shellEnv.includes('powershell') || shellEnv.includes('pwsh')
-    ? 'powershell' as const
-    : 'bash' as const
   const shellCommand = await exec(command, abortController.signal, resolvedShellType, {
     timeout: timeoutMs,
     onProgress(lastLines, allLines, totalLines, totalBytes, isIncomplete) {

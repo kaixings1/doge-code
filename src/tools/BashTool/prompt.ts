@@ -394,6 +394,11 @@ export function getSimplePrompt(): string {
     `读取文件：使用 ${FILE_READ_TOOL_NAME}（而非 cat/head/tail）`,
     `编辑文件：使用 ${FILE_EDIT_TOOL_NAME}（而非 sed/awk）`,
     `写入文件：使用 ${FILE_WRITE_TOOL_NAME}（而非 echo >/cat <<EOF）`,
+    ...(env.platform === 'win32'
+      ? [
+          `🔴 Windows MSYS2 禁令：禁止用此工具执行 python3 -c "..."、node -e "..."、powershell -Command "..." 等内联脚本创建文件。MSYS2 bash 会破坏 "、[、]、&、(、)、'、\\ 等字符，导致内联代码不可靠。创建脚本文件必须使用 ${FILE_WRITE_TOOL_NAME}。`,
+        ]
+      : []),
     '通信：直接输出文本（而非 echo/printf）',
   ]
 
