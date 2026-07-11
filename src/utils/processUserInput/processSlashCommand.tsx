@@ -452,8 +452,6 @@ export async function processSlashCommand(inputString: string, precedingInputBlo
     if (matchedSkill && matchedSkill.type === 'prompt') {
       // Found a matching skill — execute it directly
       logForDebugging(`[slash] Fuzzy-matched "${searchQuery}" to skill "${matchedSkill.name}"`)
-      const { getMessagesForPromptSlashCommand, processPromptSlashCommand } =
-        await import('./processSlashCommand.js')
       return getMessagesForPromptSlashCommand(matchedSkill, parsedArgs, context, precedingInputBlocks, imageContentBlocks, uuid)
     }
 
