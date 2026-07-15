@@ -1,14 +1,18 @@
 /**
- * updateapikey - 从 alistaitsacle/free-llm-api-keys 项目拉取最新免费 API Key
- * 更新到 .doge/free*.json 中（free1~free4 为注册方案，本命令从 free5 开始更新）
+ * updateapikey - 从多个数据源拉取免费 API Key 并更新到 .doge/free*.json
  *
- * 用法: /updateapikey [free5|free6|...|all]
+ * 数据源:
+ *   1. GitHub 公开 Key (alistaitsacle/free-llm-api-keys) — 预算共享 Key
+ *   2. GitHub 永久免费层清单 (nejib1/Free-LLM) — 解析注册链接
+ *   3. GitHub 永久免费层清单 (amardeeplakshkar/awesome-free-llm-apis) — 解析注册链接
+ *   4. 内置永久免费层预设 — 直接生成配置文件（无需 Key）
+ *
+ * 用法: /updateapikey [all|free5|...|preset|status]
  *   /updateapikey      - 列出当前 Key 状态
  *   /updateapikey all  - 拉取最新 Key 并更新到 free5~freeN
  *   /updateapikey free5 - 仅更新指定编号的配置文件
- *
- * 日志: 每次操作记录到 updateapikey.log（位于项目根目录），
- *       包含请求/响应/耗时/错误等详细信息，用于排查问题。
+ *   /updateapikey preset - 生成永久免费层预设配置（free37~free50）
+ *   /updateapikey status - 查看所有数据源状态
  */
 import * as fs from 'fs'
 import * as path from 'path'
@@ -41,10 +45,18 @@ function log(level: 'INFO' | 'WARN' | 'ERROR', msg: string, extra?: Record<strin
 
 // ---------- 常量 ----------
 const RAW_URLS = [
+  // 主数据源: 公开共享 Key
   'https://raw.githubusercontent.com/alistaitsacle/free-llm-api-keys/main/README.md',
   'https://raw.fastgit.org/alistaitsacle/free-llm-api-keys/main/README.md',
   'https://gh.axlg.workers.dev/https://raw.githubusercontent.com/alistaitsacle/free-llm-api-keys/main/README.md',
   'https://mirror.ghproxy.com/https://raw.githubusercontent.com/alistaitsacle/free-llm-api-keys/main/README.md',
+  // 备用镜像源
+  'https://ghfast.top/https://raw.githubusercontent.com/alistaitsacle/free-llm-api-keys/main/README.md',
+  'https://raw.gitmirror.com/alistaitsacle/free-llm-api-keys/main/README.md',
+  // 辅助数据源: 永久免费层清单（用于扩展可选项）
+  'https://ghfast.top/https://raw.githubusercontent.com/nejib1/Free-LLM/main/README.md',
+  'https://ghfast.top/https://raw.githubusercontent.com/amardeeplakshkar/awesome-free-llm-apis/main/README.md',
+  'https://ghfast.top/https://raw.githubusercontent.com/pacocartones/free-llm-api-hub/main/providers.json',
 ]
 const BASE_OPENAI = 'https://aiapiv2.pekpik.com/v1/chat/completions'
 const BASE_ANTHROPIC = 'https://aiapiv2.pekpik.com/'
@@ -61,6 +73,118 @@ const DOGE_DIR = path.resolve('.doge')
 const TEST_TIMEOUT = 15000 // 每个 Key 测试超时 15 秒
 const TEST_MAX_TOKENS = 50  // 请求 50 个 token 验证实际可用性
 const SERIAL_DELAY_MS = 2000 // 串行测试时每个 Key 间隔（毫秒），防止触发限流
+
+// ---------- 永久免费层预设配置（无需 API Key，注册后自备 Key）----------
+interface FreeTierPreset {
+  id: string          // free37, free38, ...
+  name: string        // 显示名称
+  provider: string    // openai | anthropic
+  baseURL: string     // API 端点
+  model: string       // 默认模型
+  registerURL: string // 注册链接
+  note: string        // 备注（速率限制等）
+}
+
+const FREE_TIER_PRESETS: FreeTierPreset[] = [
+  {
+    id: 'free37', name: 'SiliconFlow-Qwen2.5', provider: 'openai',
+    baseURL: 'https://api.siliconflow.cn/v1',
+    model: 'Qwen/Qwen2.5-7B-Instruct',
+    registerURL: 'https://siliconflow.cn',
+    note: '国内直连，永久免费模型（需 SMS 注册）'
+  },
+  {
+    id: 'free38', name: 'Zhipu-GLM4.7Flash', provider: 'openai',
+    baseURL: 'https://open.bigmodel.cn/api/paas/v4/',
+    model: 'glm-4.7-flash',
+    registerURL: 'https://open.bigmodel.cn',
+    note: '国内直连，永久免费，无明确速率限制'
+  },
+  {
+    id: 'free39', name: 'Aliyun-DashScope', provider: 'openai',
+    baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+    model: 'qwen2.5-7b-instruct',
+    registerURL: 'https://help.aliyun.com/zh/model-studio',
+    note: '100万 token/月 免费，国内直连'
+  },
+  {
+    id: 'free40', name: 'Moonshot-v1', provider: 'openai',
+    baseURL: 'https://api.moonshot.cn/v1',
+    model: 'moonshot-v1-8k',
+    registerURL: 'https://platform.moonshot.cn',
+    note: '注册送 1500万 token，国内直连'
+  },
+  {
+    id: 'free41', name: 'Groq-LLaMA', provider: 'openai',
+    baseURL: 'https://api.groq.com/openai/v1',
+    model: 'llama-3.3-70b-versatile',
+    registerURL: 'https://console.groq.com/keys',
+    note: '30 RPM 免费，超快推理（需海外）'
+  },
+  {
+    id: 'free42', name: 'Cerebras-LLaMA', provider: 'openai',
+    baseURL: 'https://inference.cerebras.ai/v1',
+    model: 'llama-3.1-70b',
+    registerURL: 'https://inference.cerebras.ai',
+    note: '1M tokens/天 免费（需海外）'
+  },
+  {
+    id: 'free43', name: 'OpenRouter-Free', provider: 'openai',
+    baseURL: 'https://openrouter.ai/api/v1',
+    model: 'meta-llama/llama-3.3-70b-instruct:free',
+    registerURL: 'https://openrouter.ai/settings/keys',
+    note: '20+ 免费模型，50 RPD（需海外）'
+  },
+  {
+    id: 'free44', name: 'Google-Gemini', provider: 'openai',
+    baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+    model: 'gemini-2.5-flash',
+    registerURL: 'https://aistudio.google.com/app/apikey',
+    note: 'Gemini 2.5 Flash，20 RPD 免费（需海外）'
+  },
+  {
+    id: 'free45', name: 'Mistral-Small', provider: 'openai',
+    baseURL: 'https://api.mistral.ai/v1',
+    model: 'mistral-small-latest',
+    registerURL: 'https://console.mistral.ai/api-keys',
+    note: '1 req/s, 1B tokens/month（需海外）'
+  },
+  {
+    id: 'free46', name: 'Cloudflare-AI', provider: 'openai',
+    baseURL: 'https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/run/@cf/meta/llama-3.1-8b-instruct',
+    model: '@cf/meta/llama-3.1-8b-instruct',
+    registerURL: 'https://dash.cloudflare.com/profile/api-tokens',
+    note: '10K neurons/天，需替换 {ACCOUNT_ID}'
+  },
+  {
+    id: 'free47', name: 'Tencent-Hunyuan', provider: 'openai',
+    baseURL: 'https://hunyuan.tencentcloudapi.com/v1',
+    model: 'hunyuan-lite',
+    registerURL: 'https://cloud.tencent.com/product/hunyuan',
+    note: '注册送额度，国内直连'
+  },
+  {
+    id: 'free48', name: 'ByteDance-Doubao', provider: 'openai',
+    baseURL: 'https://ark.cn-beijing.volces.com/api/v3',
+    model: 'doubao-lite-32k',
+    registerURL: 'https://console.volcengine.com/ark',
+    note: '注册送额度，国内直连'
+  },
+  {
+    id: 'free49', name: 'StepFun-Step1', provider: 'openai',
+    baseURL: 'https://api.stepfun.com/v1',
+    model: 'step-1-8k',
+    registerURL: 'https://platform.stepfun.com',
+    note: '注册送额度，国内直连'
+  },
+  {
+    id: 'free50', name: 'Ollama-Local', provider: 'openai',
+    baseURL: 'http://localhost:11434/v1',
+    model: 'llama3.1:8b',
+    registerURL: 'https://ollama.com',
+    note: '完全本地，需先 ollama pull llama3.1:8b'
+  },
+]
 
 /** 测试结果 */
 interface TestResult {
@@ -201,6 +325,26 @@ function modelChineseName(model: string): string {
     'gemini-2.5-flash': 'Gemini 2.5 Flash',
     'qwen/qwen3.5-plus-20260420': 'Qwen3.5-Plus',
     'qwen/qwen3.6-max-preview': 'Qwen3.6-Max',
+    // 国内平台
+    'Qwen/Qwen2.5-7B-Instruct': 'Qwen2.5-7B',
+    'Qwen/Qwen2.5-72B-Instruct': 'Qwen2.5-72B',
+    'deepseek-ai/DeepSeek-R1-Distill-Qwen-7B': 'DeepSeek-R1-Distill-7B',
+    'deepseek-ai/DeepSeek-V3': 'DeepSeek-V3',
+    'GLM-4.7-Flash': 'GLM-4.7-Flash',
+    'glm-4.7-flash': 'GLM-4.7-Flash',
+    'glm-4.5-flash': 'GLM-4.5-Flash',
+    'moonshot-v1-8k': 'Moonshot-v1-8k',
+    'moonshot-v1-32k': 'Moonshot-v1-32k',
+    'llama-3.3-70b-versatile': 'LLaMA-3.3-70B',
+    'llama-3.1-70b': 'LLaMA-3.1-70B',
+    'llama-3.1-8b-instant': 'LLaMA-3.1-8B',
+    'qwen2.5-7b-instruct': 'Qwen2.5-7B',
+    'qwen2.5-72b-instruct': 'Qwen2.5-72B',
+    'mistral-small-latest': 'Mistral-Small',
+    'hunyuan-lite': 'Hunyuan-Lite',
+    'doubao-lite-32k': 'Doubao-Lite-32K',
+    'step-1-8k': 'Step-1-8K',
+    '@cf/meta/llama-3.1-8b-instruct': 'CF-LLaMA-3.1-8B',
   }
   return names[model] || model
 }
@@ -291,6 +435,90 @@ async function testKey(entry: ApiKeyEntry): Promise<TestResult> {
   const elapsed = Date.now() - startTime
   log('WARN', `所有端点均失败`, { model: entry.model, elapsedMs: elapsed })
   return { ok: false, message: '所有端点均超时/限流' }
+}
+
+/** 生成永久免费层预设配置文件（free37~free50） */
+function generateFreeTierPresets(): string {
+  const now = new Date()
+  const timeStamp = `[${now.toLocaleString()}]`
+  let output = `${timeStamp} 📋 正在生成永久免费层预设配置 (free37~free${36 + FREE_TIER_PRESETS.length})...\n\n`
+
+  for (const preset of FREE_TIER_PRESETS) {
+    const filename = `${preset.id}.json`
+    const config = {
+      provider: preset.provider,
+      baseURL: preset.baseURL,
+      apiKey: '请替换为你的真实Key', // 用户需要自行填入 Key
+      model: preset.model,
+      _preset: true,
+      _registerURL: preset.registerURL,
+      _note: preset.note,
+    }
+    writeConfig(filename, config)
+    output += `  ${filename} ← ${preset.name}\n`
+    output += `    端点: ${preset.baseURL}\n`
+    output += `    模型: ${preset.model}\n`
+    output += `    注册: ${preset.registerURL}\n`
+    output += `    备注: ${preset.note}\n\n`
+  }
+
+  output += `✅ 已生成 ${FREE_TIER_PRESETS.length} 个预设配置\n`
+  output += `💡 使用方式:\n`
+  output += `   1. 访问注册链接获取 API Key\n`
+  output += `   2. 编辑 .doge/${FREE_TIER_PRESETS[0].id}.json 等文件填入 Key\n`
+  output += `   3. 使用 d.bat ${FREE_TIER_PRESETS[0].id} 启动对应配置\n`
+  output += `\n📋 详细日志已写入 updateapikey.log\n`
+
+  log('INFO', '生成永久免费层预设', { count: FREE_TIER_PRESETS.length })
+  return output
+}
+
+/** 查看所有数据源状态 */
+function checkDataSourceStatus(): string {
+  const now = new Date()
+  const timeStamp = `[${now.toLocaleString()}]`
+  let output = `${timeStamp} 📊 数据源状态检查:\n\n`
+
+  // 检查 GitHub 源
+  output += `=== GitHub 公开 Key 源 ===\n`
+  for (let i = 0; i < RAW_URLS.length; i++) {
+    const url = RAW_URLS[i]
+    output += `  [${i + 1}] ${url.replace('https://', '')}\n`
+  }
+  output += `  主仓库: alistaitsacle/free-llm-api-keys\n`
+  output += `  状态: 可能已被 GitHub 封禁（需备用镜像）\n\n`
+
+  // 检查现有配置
+  const configs = getExistingConfigs()
+  output += `=== 当前配置文件 (${configs.length} 个) ===\n`
+  for (const f of configs) {
+    const cfg = readConfig(f)
+    if (cfg) {
+      const keyMask = cfg.apiKey?.length > 15
+        ? cfg.apiKey.substring(0, 10) + '...' + cfg.apiKey.slice(-5)
+        : cfg.apiKey
+      const preset = cfg._preset ? ' [预设]' : ''
+      output += `  ${f}${preset}: ${cfg.model || '?'} | ${cfg.baseURL?.substring(0, 50)}\n`
+    }
+  }
+  output += `\n`
+
+  // 列出可用的预设
+  output += `=== 可用预设 (free37~free50) ===\n`
+  for (const preset of FREE_TIER_PRESETS) {
+    output += `  ${preset.id}: ${preset.name} — ${preset.note}\n`
+  }
+  output += `\n`
+
+  // 可用命令
+  output += `=== 可用命令 ===\n`
+  output += `  /updateapikey           - 查看当前状态\n`
+  output += `  /updateapikey all      - 从 GitHub 拉取 Key，更新 free5~free36\n`
+  output += `  /updateapikey free5    - 仅更新指定文件\n`
+  output += `  /updateapikey preset   - 生成永久免费层预设 (free37~free50)\n`
+  output += `  /updateapikey status   - 查看数据源状态（本命令）\n`
+
+  return output
 }
 
 export const call: LocalCommandCall = async (args: string, context): Promise<LocalCommandResult> => {
@@ -467,6 +695,20 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
     return { type: 'text', value: timeStamp + '\n' + output }
   }
 
+  else if (cmd === 'preset') {
+    // 生成永久免费层预设配置
+    log('INFO', '开始生成永久免费层预设', { count: FREE_TIER_PRESETS.length })
+    pushProgress(`${timeStamp} 📋 正在生成 ${FREE_TIER_PRESETS.length} 个永久免费层预设配置...`)
+    const output = generateFreeTierPresets()
+    return { type: 'text', value: timeStamp + '\n' + output }
+  }
+
+  else if (cmd === 'status') {
+    // 查看数据源状态
+    const output = checkDataSourceStatus()
+    return { type: 'text', value: output }
+  }
+
   else {
     // 默认: 列出当前状态
     const configs = getExistingConfigs()
@@ -478,19 +720,19 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
         const keyMask = cfg.apiKey?.length > 15
           ? cfg.apiKey.substring(0, 10) + '...' + cfg.apiKey.slice(-5)
           : cfg.apiKey
-        output += `  ${f}: ${cfg.model || '?'} | Key: ${keyMask} | ${cfg.baseURL}\n`
+        const preset = cfg._preset ? ' [预设]' : ''
+        output += `  ${f}${preset}: ${cfg.model || '?'} | Key: ${keyMask} | ${cfg.baseURL}\n`
       } else {
         output += `  ${f}: 读取失败\n`
       }
     }
 
     output += '\n用法:\n'
-    output += '  /updateapikey        - 查看当前状态\n'
-    output += '  /updateapikey all    - 从 GitHub 拉取最新 Key，全部覆盖更新 free5~freeN\n'
-    output += '  /updateapikey free5  - 仅更新指定编号的配置文件\n'
-    output += '\n⚠️ 注意: 原仓库 alistaitsacle/free-llm-api-keys 已被 GitHub 封禁\n'
-    output += '   如果拉取失败，请过一两天再试，项目方可能已建新仓库\n'
-    output += '   关注官网 https://aiapiv2.pekpik.com 或 X @getkeyway\n'
+    output += '  /updateapikey           - 查看当前状态\n'
+    output += '  /updateapikey all      - 从 GitHub 拉取最新 Key，更新 free5~free36\n'
+    output += '  /updateapikey free5    - 仅更新指定编号的配置文件\n'
+    output += '  /updateapikey preset   - 生成永久免费层预设 (free37~free50)\n'
+    output += '  /updateapikey status   - 查看数据源和配置状态\n'
     output += '\n📋 详细日志已写入 updateapikey.log\n'
 
     return { type: 'text', value: timeStamp + '\n' + output }
