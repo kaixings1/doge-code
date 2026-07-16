@@ -1,0 +1,129 @@
+#!/bin/sh
+
+
+if [ "$2" = "" ]; then
+  echo "
+$0 usage:
+  $0 <server_name> <user_name> [<ssh_port_number> <locale> <Prediction_type> <mosh_server_command> <Mosh_ports_range> <Ssh_private_key>]
+  "
+  exit 0
+fi
+MyServeur="$1"
+MyUser="$2"
+MyPort="$3"
+if [ "$MyPort" = "" ]; then
+  MyPort="22"
+fi
+
+
+if [ "$7" = "" ] || [ "$7" = "auto" ] || [ "$7" = "automatic" ]; then
+  MoshPort=""
+else
+  MoshPort=" -p $7"
+fi
+if [ "$8" = "" ] || [ "$8" = "none" ]; then
+  MySshKey="/NO/SSH/KEY"
+else
+  MySshKey="$8"
+fi
+if [ "$5" = "" ]; then
+  export MOSH_PREDICTION_DISPLAY="adaptive"  #adaptive,always,never
+else
+  export MOSH_PREDICTION_DISPLAY="$5"
+fi
+if [ "$6" = "" ]; then
+  MoshServer="mosh-server"
+else
+  MoshServer="$6"
+fi
+export MOSH_NO_TERM_INIT="0"
+export MOSH_TITLE_NOPREFIX="1"
+
+
+MyLocale="${LANG%%.*}"
+if [ "$MyLocale" = "" ]; then
+  MyLocale="${LOCALE%%.*}"
+fi
+if [ "$MyLocale" = "" ]; then
+  MyLocale="en_US"
+fi
+
+if [ "$4" = "" ] || [ "$4" = "auto" ]; then
+  LOCALE_ANSWER="`/bin/ssh.exe -legacy -4 -t "$MyServeur" -l "$MyUser" -p "$MyPort" -i "$MySshKey" "locale -a" 2>/dev/null`"
+  if builtin echo "$LOCALE_ANSWER" | /bin/busybox.exe egrep -q -i "^$MyLocale.utf8|^$MyLocale.UTF-8"; then
+    RemLocale="$MyLocale.UTF-8"
+  elif builtin echo "$LOCALE_ANSWER" | /bin/busybox.exe egrep -q -i "^en_US.utf8|^$en_US.UTF-8"; then
+    RemLocale="en_US.UTF-8"
+  elif builtin echo "$LOCALE_ANSWER" | /bin/busybox.exe egrep -q -i "\.utf8|\.UTF-8"; then
+    RemLocale="`builtin echo "$LOCALE_ANSWER" | /bin/busybox.exe egrep -i -m 1 "\.utf8|\.UTF-8"`"
+    RemLocale="${RemLocale%%.*}.UTF-8"
+  else
+    RemLocale="en_US.UTF-8"
+  fi
+else
+  RemLocale="$4"
+fi
+
+
+
+builtin echo "Starting MOSH server...
+      - Local charset   : $MyLocale
+      - Remote charset  : $RemLocale
+      - Remote Server   : $MyServeur
+      - Remote Username : $MyUser
+      - SSH port        : $MyPort" >&2
+
+SSH_ANSWER="`/bin/ssh.exe -legacy -4 -t "$MyServeur" -l "$MyUser" -p "$MyPort" -i "$MySshKey" "echo SSH Connection: \\\$SSH_CONNECTION; $MoshServer new -s -c 256 -l LANG=$RemLocale -l LC_ALL=$RemLocale LC_CTYPE=$RemLocale$MoshPort" 2>/tmp/mosh.$$; if [ "\$?" != "0" ]; then /bin/busybox.exe cat /tmp/mosh.$$; fi`"
+MOSH_ANSWER="`builtin echo "$SSH_ANSWER" | /bin/busybox.exe grep "MOSH CONNECT " 2>/dev/null`"
+
+if [ "$?" != "0" ] || [ "$MOSH_ANSWER" = "" ]; then
+  builtin echo "
+Error starting mosh-server on remote server.
+Output of server $1:
+" >&2
+  builtin echo "$SSH_ANSWER" >&2
+  exit 1
+fi
+
+if builtin echo "$MyServeur" | /bin/busybox grep -q -E "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*"; then
+  if [ "`builtin echo "$SSH_ANSWER" | /bin/busybox.exe grep "SSH Connection: " | /bin/busybox.exe awk '{print $5}' 2>/dev/null`" == "$MyServeur" ]; then
+    IP_ANSWER="$MyServeur"
+  fi
+fi
+if [ "$IP_ANSWER" = "" ]; then
+  IP_ANSWER="`/bin/busybox.exe nslookup "$MyServeur" | /bin/busybox.exe grep -E "Address [0-9]+: " | /bin/busybox.exe awk '{print $3}' | /bin/busybox.exe grep "\." | /bin/busybox.exe grep -v ":" | /bin/busybox.exe head -1`"
+fi
+if [ "$IP_ANSWER" = "" ]; then
+  if [ "`builtin echo "$MyServeur" | /bin/busybox.exe awk -F'.' '{print $4}'`" != "" ]; then
+    IP_ANSWER="$MyServeur"
+  fi
+fi
+if [ "$IP_ANSWER" = "" ]; then
+  IP_ANSWER="`builtin echo "$SSH_ANSWER" | /bin/busybox.exe grep "SSH Connection: " | /bin/busybox.exe awk '{print $5}' 2>/dev/null`"
+fi
+if [ "$IP_ANSWER" = "" ]; then
+  IP_ANSWER="$MyServeur"
+fi
+MOSH_PORT_ANSWER="`builtin echo "$MOSH_ANSWER" | /bin/busybox.exe awk '{print $3}'`"
+
+builtin echo "      - Server IP addr  : $IP_ANSWER
+      - Mosh UDP port   : $MOSH_PORT_ANSWER
+" >&2
+
+MOSH_KEY="`builtin echo "$MOSH_ANSWER" | /bin/busybox.exe awk '{print $4}'`" mosh-client $IP_ANSWER $MOSH_PORT_ANSWER
+
+
+unset SSH_ANSWER
+unset IP_ANSWER
+unset MOSH_ANSWER
+unset MOSH_PORT_ANSWER
+unset MyServeur
+unset MyUser
+unset MyPort
+unset MyLocale
+unset RemLocale
+unset MoshPort
+unset MoshServer
+unset MySshKey
+
+exit 0

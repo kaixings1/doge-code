@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ "$1" = "" ] || [ "${1:0:1}" = "-" ]; then
+  echo
+  echo "$0"
+  echo "Usage:"
+  echo "       $0 192"
+  echo "       (set Xserver DPI to 192 (x2 size)"
+  echo "       $0 144"
+  echo "       (set Xserver DPI to 144 (x1.5 size)"
+  echo "       $0 96"
+  echo "       (set Xserver DPI to 96 (original size)"
+  echo
+  echo
+else
+  echo Xft.dpi: $1 | xrdb -merge
+fi

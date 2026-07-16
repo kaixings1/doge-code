@@ -1,0 +1,157 @@
+#!/bin/bash.exe
+
+
+if [ -e "/bin/busybox.exe" ]; then
+  alias ls="/bin/busybox.exe ls"
+  alias mkdir="/bin/busybox.exe mkdir"
+  alias rm="/bin/busybox.exe rm"
+else
+  alias ls="/bin/toybox.exe ls"
+  alias mkdir="/bin/toybox.exe mkdir"
+  alias rm="/bin/toybox.exe rm"
+fi
+
+
+nom=""
+key=""
+
+ls "/bin/cygopenssh.dll" >/dev/null 2>/dev/null
+ls "/bin/cygcrypto-1.1.dll" >/dev/null 2>/dev/null
+ls "/bin/cygwin1.dll" >/dev/null 2>/dev/null
+ls "/bin/cygz.dll" >/dev/null 2>/dev/null
+ls "/bin/cyggssapi_krb5-2.dll" >/dev/null 2>/dev/null
+ls "/bin/cygcom_err-2.dll" >/dev/null 2>/dev/null
+ls "/bin/cygcom_err-3.dll" >/dev/null 2>/dev/null
+ls "/bin/cygkrb5support-0.dll" >/dev/null 2>/dev/null
+ls "/bin/cygintl-8.dll" >/dev/null 2>/dev/null
+ls "/bin/cygk5crypto-3.dll" >/dev/null 2>/dev/null
+ls "/bin/cygkrb5-3.dll" >/dev/null 2>/dev/null
+ls "/bin/cyggcc_s-1.dll" >/dev/null 2>/dev/null
+ls "/bin/cyggcc_s-seh-1.dll" >/dev/null 2>/dev/null
+ls "/bin/cygssp-0.dll" >/dev/null 2>/dev/null
+ls "/bin/_ssh.exe" >/dev/null 2>/dev/null
+
+
+if [ -n "${KRB5_CONFIG}" ] && [ -e "${KRB5_CONFIG}" ]; then
+  SSH_PROG="/bin/_ssh.exe -o GSSAPIAuthentication=yes -o GSSAPIDelegateCredentials=yes"
+  ls "/bin/kinit.exe" >/dev/null 2>/dev/null
+  ls "/bin/klist.exe" >/dev/null 2>/dev/null
+  ls "/bin/cygkadm5srv_mit-9.dll" >/dev/null 2>/dev/null
+  ls "/bin/cygkdb5-7.dll" >/dev/null 2>/dev/null
+  if ! klist >/dev/null 2>/dev/null; then
+    kinit 2>/dev/null
+  fi
+else
+  SSH_PROG="/bin/_ssh.exe"
+fi
+
+keyfile=".$$.ssh"
+[ -d /var/keys ] || mkdir /var/keys >/dev/null 2>/dev/null
+
+
+
+
+ProchainArgIsUser=0
+ProchainArgIsKey=0
+ARGS=""
+COUNT=$#
+for ((INDEX=0; INDEX<COUNT; ++INDEX)); do
+  ARG="$(printf "%q" "$1")"
+  if [ "$ARG" = "-1" ]; then
+    SSH_PROG="/bin/_ssh1.exe"
+  elif [ "$ARG" = "-legacy" ]; then
+    SSH_PROG="/bin/_ssh.exe -okexalgorithms=+diffie-hellman-group1-sha1,diffie-hellman-group14-sha1 -ohostkeyalgorithms=+ssh-rsa,ssh-dss"
+  elif [ "$ARG" = "-l" ]; then
+    ProchainArgIsUser=1
+  elif [ "$ARG" = "-i" ]; then
+    ProchainArgIsKey=1
+  elif [ "$ProchainArgIsUser" = "1" ]; then
+    ProchainArgIsUser=0
+    if [ "$ARG" = "PleaseAskMe" ]; then
+      builtin echo -n "Login: " >&2
+      read nom
+      [ -n "$nom" ] && ARGS="$ARGS -l $(printf "%q" "$nom")"
+    else
+      ARGS="$ARGS -l $ARG"
+    fi
+  elif [ "$ProchainArgIsKey" = "1" ]; then
+    ProchainArgIsKey=0
+    if [ "$ARG" != "/NO/SSH/KEY" ]; then
+      if [ -e "/bin/cygpath.exe" ]; then
+        /bin/MobaBox.exe MobaSendMsg MobaXterm "AskKey `eval cygpath -a -l -w $ARG`|$keyfile"
+      else
+        /bin/MobaBox.exe MobaSendMsg MobaXterm "AskKey `eval /bin/toybox.exe -w $ARG`|$keyfile"
+      fi
+      key="/var/keys/$keyfile"
+      if [ -e "$key" ]; then
+        (
+          chmod 600 "$key"
+          RES="`ls -al "$key"`"
+          if [ "${RES:4:6}" != "------" ]; then
+            chgrp 545 "$key"
+            chmod 600 "$key"
+          fi
+        ) >/dev/null 2>/dev/null
+        ARGS="$ARGS -i $key"
+      else
+        if [ -e "$ARG" ]; then
+          (
+            chmod 600 "$ARG"
+            RES="`ls -al "$ARG"`"
+            if [ "${RES:4:6}" != "------" ]; then
+              chgrp 545 "$ARG"
+              chmod 600 "$ARG"
+            fi
+          ) >/dev/null 2>/dev/null
+        fi
+        ARGS="$ARGS -i $ARG"
+      fi
+    fi
+  else
+    ARGS="$ARGS $ARG"
+  fi
+  shift
+done
+
+
+
+
+
+if [ "$DesktopEnv" != "" ]; then
+  DesktopCommande="(if ! $DesktopEnv-session; then if ! start$DesktopEnv; then if ! $DesktopEnv; then if ! ${DesktopEnv}_start; then"
+  if [ "$DesktopEnv" == "lxde" ]; then
+    DesktopCommande="$DesktopCommande if ! lxsession; then echo; fi"
+  elif [ "$DesktopEnv" == "cde" ] || [ "$DesktopEnv" == "CDE" ]; then
+    DesktopCommande="$DesktopCommande if ! dtsession; then if ! /usr/dt/bin/dtsession; then if ! /usr/dt/bin/dtwm; then echo; fi; fi; fi"
+  else
+    DesktopCommande="$DesktopCommande echo"
+  fi
+  DesktopCommande="$DesktopCommande; fi; fi; fi; fi) >/dev/null 2>/dev/null"
+  if [ "$DesktopEnv" == "gnome" ] || [ "$DesktopEnv" == "Gnome" ]; then
+    DesktopCommande="gnome-session"
+  fi
+  start-stop-daemon -m -p /tmp/.ssh-xwin-$DISPLAY.pid -q -b -S -x /bin/XWin.exe -- -noreset -silent-dup-error -notrayicon -nolisten inet6 -clipboard -ac -fp /usr/share/fonts/misc $DISPLAY >/dev/null 2>/dev/null
+  /bin/waitforX >/dev/null 2>/dev/null
+  eval ${SSH_PROG} $ARGS '$DesktopCommande'
+  RET=$?
+  start-stop-daemon -K -p /tmp/.ssh-xwin-$DISPLAY.pid >/dev/null 2>/dev/null
+  [ -e "/tmp/.ssh-xwin-$DISPLAY.pid" ] && rm -f "/tmp/.ssh-xwin-$DISPLAY.pid" >/dev/null 2>/dev/null
+else
+  PREVSTTY="`/bin/busybox.exe stty -g`"
+  eval ${SSH_PROG} $ARGS
+  RET=$?
+  if [ "$RET" != "0" ]; then
+    if /bin/busybox.exe stty | grep -q "icrnl"; then
+      if /bin/busybox.exe stty | grep -q "opost"; then
+        /bin/busybox.exe stty sane
+        /bin/busybox.exe stty "$PREVSTTY"
+      fi
+    fi
+  fi
+fi
+
+[ -e "/var/keys/$keyfile" ] && rm -f "/var/keys/$keyfile" >/dev/null 2>/dev/null
+
+[ $RET -gt 254 ] && RET=254
+
+exit $RET

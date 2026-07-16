@@ -1,0 +1,22 @@
+#!/bin/sh
+
+if [ -z "$2" ]; then
+  echo "Usage: $0 <source_file.png> <dest_file.ico>"
+else
+  if [ -d "$1" ]; then
+    for i in `ls "$1"/*.png`; do
+      $0 "$i" "$2"
+    done
+  elif [ -e "$1" ]; then
+    if [ -d "$2" ]; then
+      Ico="$1"
+      Ico="${Ico##*/}"
+      Ico="${Ico%.png}.ico"
+      Ico="$2/$Ico"
+    else
+      Ico="$2"
+    fi
+    builtin echo "$0 \"`cygpath -a -w "$1"`\" \"`cygpath -a -w "$Ico"`\""
+    MobaBox.exe MobaSendMsg MobaXterm "png2ico|`cygpath -a -w "$1"`|`cygpath -a -w "$Ico"`"
+  fi
+fi
