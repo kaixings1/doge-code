@@ -1,0 +1,21 @@
+#!/bin/bash
+
+(
+  if ! ls -al /proc/$$/fd/ | /bin/busybox.exe egrep " 1 \-> /dev/pty| 1 \-> /dev/tty| 1 \-> /dev/pts" >/dev/null 2>/dev/null; then
+    /bin/MobaBox.exe ps1 -cols 36000 -lines 36000
+  elif [ "$1" = "-once" ] || [ "$2" = "-once" ]; then
+    if [ "$1" = "-nocolor" ] || [ "$2" = "-nocolor" ]; then
+      /bin/MobaBox.exe ps1 -cols 36000 -lines 36000
+    else
+      /bin/MobaBox.exe ps2 -cols 36000 -lines 36000
+    fi
+  else
+    cd /tmp
+    if [ "$1" = "-nocolor" ] || [ "$2" = "-nocolor" ]; then
+      /bin/MobaBox.exe top1 -cols "`ttysize w`" -lines "`ttysize h`"
+    else
+      /bin/MobaBox.exe top2 -cols "`ttysize w`" -lines "`ttysize h`"
+    fi
+    cd -
+  fi
+)

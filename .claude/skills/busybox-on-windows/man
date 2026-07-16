@@ -1,0 +1,41 @@
+#!/bin/sh
+
+if [ -e "/usr/share/man/$1.man" ]; then
+  if grep -q "export PLUGIN=" "/usr/share/man/$1.man"; then
+    . "/usr/share/man/$1.man"
+    echo "Uncompressing $PLUGIN man page. Please wait..."
+    (
+      cd /
+      /bin/dd if="/home/mobaxterm/LauncherFolder/$PLUGIN.mxt" bs="`cat "/home/mobaxterm/LauncherFolder/$PLUGIN.mxt" | /bin/grep -B 999999 "####EOF####" | /bin/wc -c`" skip=1 2>/dev/null| /bin/tar -xjf - usr/share/man/
+    )
+  fi
+  /bin/vim.exe -R -u /etc/vimrc.less -c 'set ft=man nomod nolist titlestring=MANPAGE' "/usr/share/man/$1.man"
+else
+  if [ -e "/bin/groff.exe" ] && /bin/busybox.exe ls /usr/share/man/man?/$1.?.gz >/dev/null 2>/dev/null; then
+      /bin/busybox.exe zcat /usr/share/man/man?/$1.?.gz | GROFF_NO_SGR=1 groff -t -e -mandoc -Tascii | LESS_TERMCAP_mb=$(printf "\e[1;33m") LESS_TERMCAP_md=$(printf "\e[1;36m") LESS_TERMCAP_me=$(printf "\e[0m") LESS_TERMCAP_se=$(printf "\e[0m") LESS_TERMCAP_so=$(printf "\e[1;44;33m") LESS_TERMCAP_ue=$(printf "\e[0m") LESS_TERMCAP_us=$(printf "\e[1;33m") /bin/busybox.exe less -R
+  elif [ -e "/bin/groff.exe" ] && /bin/busybox.exe ls /usr/share/man/man?/$1.? >/dev/null 2>/dev/null; then
+      /bin/busybox.exe cat /usr/share/man/man?/$1.? | GROFF_NO_SGR=1 groff -t -e -mandoc -Tascii | LESS_TERMCAP_mb=$(printf "\e[1;33m") LESS_TERMCAP_md=$(printf "\e[1;36m") LESS_TERMCAP_me=$(printf "\e[0m") LESS_TERMCAP_se=$(printf "\e[0m") LESS_TERMCAP_so=$(printf "\e[1;44;33m") LESS_TERMCAP_ue=$(printf "\e[0m") LESS_TERMCAP_us=$(printf "\e[1;33m") /bin/busybox.exe less -R
+  else
+    if [ -e "/usr/share/man.tar" ]; then
+      if /bin/busybox.exe tar -tf /usr/share/man.tar $1.man >/dev/null 2>/dev/null; then
+        (
+          cd /tmp 
+          /bin/busybox.exe tar -xf /usr/share/man.tar busybox.man $1.man
+          /bin/vim -R -u /etc/vimrc.less -c 'set ft=man nomod nolist titlestring=MANPAGE' /tmp/"$1.man"
+        )
+        exit 0
+      fi
+    fi
+    if [ ! -e "/bin/groff.exe" ] && /bin/busybox.exe ls /usr/share/man/man?/$1.?* >/dev/null 2>/dev/null; then
+      echo -e "You must install \e[33mgroff\e[0m if you want to view man pages."
+      echo -e "Type \"\e[35my\e[0m\" if you want to install it now: "
+      read ans
+      if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
+        /bin/MobaBox.exe apt-get install groff
+        man "$1"
+      fi
+    else
+      echo -e "Sorry, \e[35m$1\e[0m man page not found."
+    fi
+  fi
+fi

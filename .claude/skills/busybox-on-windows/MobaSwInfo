@@ -1,0 +1,16 @@
+#!/bin/sh
+
+cd /proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall 2>/dev/null && ls | (while read i; do
+  if [ -e "$i/DisplayName" ]; then
+    cat "$i/DisplayName" | sed -e 's/\x00//g' -e 's/\x99//g'
+    echo " "
+  fi
+done)
+
+cd /proc/registry64/HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall 2>/dev/null && ls | (while read i; do
+  if [ -e "$i/DisplayName" ]; then
+    cat "$i/DisplayName" | sed -e 's/\x00//g' -e 's/\x99//g'
+    echo " "
+  fi
+done)
+

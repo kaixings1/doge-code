@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ -z "$1" ] || [ ! -e "$1" ]; then
+  builtin echo "Usage: $0 <Fortune_File_Name>"
+  exit 1
+fi
+
+DEBUT=""
+NB="`cat "$1" | grep -n "^\%" | wc -l`"
+for i in `cat "$1" | grep -n "^\%" | head -n $[$RANDOM*$NB/32767] | tail -n 2 | awk -F':' '{print $1}'`; do
+  if [ -z "$DEBUT" ]; then
+    DEBUT="$i"
+  else
+    cat "$1" | head -n $[$i-1] | tail -n $[$i-$DEBUT-1]
+  fi
+done
+

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo -e "\033[35mCPUCoreNumber\033[0m=\033[36m$(grep -c "processor   " /proc/cpuinfo)\033[0m"
+echo -e "\033[35mMemTotal\033[0m=\033[36m$[$(cat /proc/meminfo | grep "MemTotal:" | awk '{print $2}')/1024] MB\033[0m"
+echo -e "\033[35mMemFree\033[0m=\033[36m$[$(cat /proc/meminfo | grep "MemFree:" | awk '{print $2}')/1024] MB\033[0m"
+echo -e "\033[35mUptime\033[0m=\033[36m$((`cut -f1 -d' ' /proc/uptime | cut -f1 -d.` / 3600)) hours\033[0m"
+df -m | grep ":    " | awk '{print "\033[35mPartition_"$1"\033[0m=\033[36m"$2/1024" GB\033[0m"}'
+/bin/MobaBox.exe hwinfo

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+
+if [ "$1" = "-l" ]; then
+  Fichier="$PWD/`basename "$2"`"
+  builtin echo "Copying $Fichier from local directory"
+  cp "$2" "`/bin/cygpath -a -w "$Fichier"`"
+else
+  Fichier="$PWD/`basename "$1"`"
+  builtin echo "Downloading $Fichier using Windows internet settings"
+  [ -d "/var/log" ] || mkdir /var/log >/dev/null 2>/dev/null
+  /bin/MobaRTE.exe -download "$1" "`/bin/cygpath -a -w "$Fichier"`" "`/bin/cygpath -a -w "/var/log"`"
+fi
