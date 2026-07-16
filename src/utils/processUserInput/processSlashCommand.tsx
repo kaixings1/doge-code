@@ -345,40 +345,60 @@ function searchSkillByNameOrDescription(
   const scored: ScoredMatch[] = []
 
   for (const cmd of promptCommands) {
-    const nameTokens = tokenize(cmd.name)
-    const fullName = cmd.name.toLowerCase()
-
-    if (fullName === lowerQuery) {
-      return cmd
+    // 收集所有用于匹配的名称来源：
+    // 1. cmd.name（目录名/命令ID）
+    // 2. cmd.userFacingName()（SKILL.md 的 name 字段，即面向用户的显示名）
+    const namesToMatch = [cmd.name]
+    const displayName = cmd.userFacingName?.()
+    if (displayName && displayName !== cmd.name) {
+      namesToMatch.push(displayName)
     }
 
-    let score = 0
+    // 每个名称来源独立计算分数，取最高分
+    let bestScore = 0
 
-    if (fullName.startsWith(lowerQuery)) {
-      score += 100
-    }
+    for (const matchName of namesToMatch) {
+      const nameTokens = tokenize(matchName)
+      const fullName = matchName.toLowerCase()
 
-    const nameMatchCount = queryWords.filter((w: string) =>
-      nameTokens.some((t: string) => t === w || t.startsWith(w)),
-    ).length
-    score += nameMatchCount * 20
+      // 精确匹配任意名称来源 → 立即返回
+      if (fullName === lowerQuery) {
+        return cmd
+      }
 
-    const lastPart = nameTokens[nameTokens.length - 1]
-    if (lastPart) {
-      const exactLastMatch = queryWords.filter((w: string) =>
-        lastPart === w || lastPart.startsWith(w),
+      let score = 0
+
+      if (fullName.startsWith(lowerQuery)) {
+        score += 100
+      }
+
+      const nameMatchCount = queryWords.filter((w: string) =>
+        nameTokens.some((t: string) => t === w || t.startsWith(w)),
       ).length
-      score += exactLastMatch * 15
+      score += nameMatchCount * 20
+
+      const lastPart = nameTokens[nameTokens.length - 1]
+      if (lastPart) {
+        const exactLastMatch = queryWords.filter((w: string) =>
+          lastPart === w || lastPart.startsWith(w),
+        ).length
+        score += exactLastMatch * 15
+      }
+
+      const firstPart = nameTokens[0]
+      if (firstPart && firstPart !== lastPart) {
+        const nsMatch = queryWords.filter((w: string) =>
+          firstPart === w || firstPart.startsWith(w),
+        ).length
+        score += nsMatch * 10
+      }
+
+      if (score > bestScore) {
+        bestScore = score
+      }
     }
 
-    const firstPart = nameTokens[0]
-    if (firstPart && firstPart !== lastPart) {
-      const nsMatch = queryWords.filter((w: string) =>
-        firstPart === w || firstPart.startsWith(w),
-      ).length
-      score += nsMatch * 10
-    }
-
+    // 描述匹配分（所有名称来源共享同一个描述，只算一次）
     const descTokens = cmd.description
       ? cmd.description
           .toLowerCase()
@@ -389,12 +409,14 @@ function searchSkillByNameOrDescription(
     const descMatchCount = queryWords.filter((w: string) =>
       descTokens.some((t: string) => t === w || t.startsWith(w)),
     ).length
-    if (nameMatchCount > 0 && descMatchCount > 0) {
-      score += descMatchCount * 5
+
+    // 只有当 name 匹配 >0 时才加描述分（防止纯描述匹配的低质量结果）
+    if (bestScore > 0 && descMatchCount > 0) {
+      bestScore += descMatchCount * 5
     }
 
-    if (nameMatchCount > 0 || descMatchCount > 0) {
-      scored.push({ cmd, score })
+    if (bestScore > 0) {
+      scored.push({ cmd, score: bestScore })
     }
   }
 
