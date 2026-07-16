@@ -1,0 +1,2 @@
+#!/bin/sh
+i=6000;while netstat -anp TCP|grep -q ":$i";do i=$[$i+1];done;echo ":$[$i-6000]"

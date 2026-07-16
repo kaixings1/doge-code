@@ -31,7 +31,8 @@ MSYS2 bash 会破坏以下字符：`"` `[` `]` `&` `(` `)` `'` `\` 等，导致�
 2. **文件读取** → 只能用 `Read`
 3. **文件搜索** → 只能用 `Glob` / `Grep`
 4. **创建 Python/JS/PowerShell 脚本** → 只能用 `Write` 工具，**绝不用** `python3 -c "..."`、`node -e "..."`、`powershell -Command "..."`、`cat > file`、`echo > file`
-5. **Bash 的唯一合法用途**：运行 git 命令、项目开发命令（`bun run`、`bun install`、`bun run build`、`bun run lint`）、查看目录结构（`dir`）、执行已存在的脚本
+5. **修改代码保留旧内容** → 禁用直接删除旧代码。必须用注释保留原有逻辑，在旧代码上方加 `// [OLD]` 标记，下方写新代码。仅在代码完全不工作时才可替换整段。
+6. **Bash 的唯一合法用途**：运行 git 命令、项目开发命令（`bun run`、`bun install`、`bun run build`、`bun run lint`）、查看目录结构（`dir`）、执行已存在的脚本
 
 **🔴 特别禁令：禁止用 Bash 执行任何包含以下字符的内联代码：** `"` `'` `[` `]` `&` `(` `)` `\`  
 如果在 bash 命令中看到这些字符，立即改用 Write 工具写入文件后执行。

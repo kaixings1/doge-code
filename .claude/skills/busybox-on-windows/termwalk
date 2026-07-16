@@ -1,0 +1,2 @@
+#!/bin/bash.exe
+echo -e "\e[31mSorry: `basename "$0"` has been disabled in this version of MobaXterm.\e[0m"

@@ -1,0 +1,108 @@
+#!/bin/sh
+
+#APPLET="`basename "$0"`"
+APPLET="$1"
+
+if [ "$APPLET" = "MobaControlUsers" ]; then
+  control userpasswords2
+elif [ "$APPLET" = "MobaControlFolders" ]; then
+  control folders
+elif [ "$APPLET" = "MobaControlDisplay" ]; then
+  control desktop
+elif [ "$APPLET" = "MobaControlPrinters" ]; then
+  control printers
+elif [ "$APPLET" = "MobaControlMouse" ]; then
+  control mouse
+elif [ "$APPLET" = "MobaControlKeyboard" ]; then
+  control keyboard
+elif [ "$APPLET" = "MobaControlNetwork" ]; then
+  control netconnections
+elif [ "$APPLET" = "MobaControlColors" ]; then
+  control color
+elif [ "$APPLET" = "MobaControlTime" ]; then
+  control date/time
+elif [ "$APPLET" = "MobaControlScheduler" ]; then
+  control schedtasks
+elif [ "$APPLET" = "MobaControlAdminTools" ]; then
+  control admintools
+elif [ "$APPLET" = "MobaControlTelephony" ]; then
+  control telephony
+elif [ "$APPLET" = "MobaControlFonts" ]; then
+  control fonts
+elif [ "$APPLET" = "MobaControlInternational" ]; then
+  control international
+elif [ "$APPLET" = "MobaControlComputer" ]; then
+  /bin/MobaBox.exe open compmgmt.msc
+elif [ "$APPLET" = "MobaControlEvents" ]; then
+  /bin/MobaBox.exe open eventvwr.msc
+elif [ "$APPLET" = "MobaControlDevices" ]; then
+  /bin/MobaBox.exe open devmgmt.msc
+elif [ "$APPLET" = "MobaControlServices" ]; then
+  /bin/MobaBox.exe open services.msc
+elif [ "$APPLET" = "MobaControlDefrag" ]; then
+  /bin/MobaBox.exe open dfrg.msc
+elif [ "$APPLET" = "MobaControlDisks" ]; then
+  /bin/MobaBox.exe open diskmgmt.msc
+elif [ "$APPLET" = "MobaControlSecurity" ]; then
+  /bin/MobaBox.exe open secpol.msc
+elif [ "$APPLET" = "MobaControlPolicies" ]; then
+  /bin/MobaBox.exe open gpedit.msc
+elif [ "$APPLET" = "MobaControlRegistry" ]; then
+  regedit
+elif [ "$APPLET" = "MobaControlRestore" ]; then
+  rstrui
+elif [ "$APPLET" = "MobaControlStartup" ]; then
+  msconfig
+elif [ "$APPLET" = "MobaControlDirectX" ]; then
+  dxdiag
+elif [ "$APPLET" = "MobaControlTasks" ]; then
+  taskmgr
+elif [ "$APPLET" = "MobaControlAccessibility" ]; then
+  /bin/MobaBox.exe open access.cpl
+elif [ "$APPLET" = "MobaControlNewDevice" ]; then
+  /bin/MobaBox.exe open hdwwiz.cpl
+elif [ "$APPLET" = "MobaControlPrograms" ]; then
+  /bin/MobaBox.exe open appwiz.cpl
+elif [ "$APPLET" = "MobaControlUpdates" ]; then
+  /bin/MobaBox.exe open wuaucpl.cpl
+elif [ "$APPLET" = "MobaControlCertificates" ]; then
+  /bin/MobaBox.exe open certmgr.msc
+elif [ "$APPLET" = "MobaControlCheckDisks" ]; then
+  chkdsk
+elif [ "$APPLET" = "MobaControlDCom" ]; then
+  dcomcnfg
+elif [ "$APPLET" = "MobaControlClean" ]; then
+  cleanmgr
+elif [ "$APPLET" = "MobaControlSignature" ]; then
+  sigverif
+elif [ "$APPLET" = "MobaControlInternet" ]; then
+  /bin/MobaBox.exe open inetcpl.cpl
+elif [ "$APPLET" = "MobaControlUsersAdvanced" ]; then
+  /bin/MobaBox.exe open lusrmgr.msc
+elif [ "$APPLET" = "MobaControlOdbc" ]; then
+  /bin/MobaBox.exe open odbccp32.cpl
+elif [ "$APPLET" = "MobaControlPerformances" ]; then
+  /bin/MobaBox.exe open perfmon.msc
+elif [ "$APPLET" = "MobaControlShares" ]; then
+  /bin/MobaBox.exe open fsmgmt.msc
+elif [ "$APPLET" = "MobaControlAudio" ]; then
+  /bin/MobaBox.exe open mmsys.cpl
+elif [ "$APPLET" = "MobaControlCheckSystemFiles" ]; then
+  sfc /scannow
+elif [ "$APPLET" = "MobaControlSystemFiles" ]; then
+  sysedit
+elif [ "$APPLET" = "MobaControlSystem" ]; then
+  /bin/MobaBox.exe open sysdm.cpl
+elif [ "$APPLET" = "MobaControlFirewall" ]; then
+  /bin/MobaBox.exe open firewall.cpl
+elif [ "$APPLET" = "MobaControlAudioVolume" ]; then
+  sndvol
+elif [ "$APPLET" = "MobaControlWindowsVersion" ]; then
+  winver
+elif [ "$APPLET" = "MobaControlDriversList" ]; then
+  driverquery
+else
+  control
+fi
+
+

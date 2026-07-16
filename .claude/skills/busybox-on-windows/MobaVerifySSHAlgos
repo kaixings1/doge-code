@@ -1,0 +1,46 @@
+#!/bin/sh
+
+
+function CompareEntries(){
+  for i in `ssh -Q $1`; do
+    printf "%-18s  %-45s" "$2" "$i"
+    if cat /etc/ssh_config | grep -E "^$2 " | grep -E -q "[, ]${i}[, ]|[, ]${i}$"; then
+      builtin echo -e "\e[32m\e(0d\e(B\e[0m"
+    else
+      builtin echo -e "\e[31m\e(0e\e(B\e[0m"
+    fi
+  done
+}
+
+function CompareEntriesInv(){
+  for i in `cat /etc/ssh_config | grep -E "^$2 " | sed -e "s/,/ /g"`; do
+    printf "%-18s  %-45s" "$2" "$i"
+    if ssh -Q $1 | grep -q "$i"; then
+      builtin echo -e "\e[32m\e(0d\e(B\e[0m"
+    else
+      builtin echo -e "\e[31m\e(0e\e(B\e[0m"
+    fi
+  done
+}
+
+echo "Verifying algorithms which are in ssh executable and NOT in ssh_config"
+CompareEntries key HostKeyAlgorithms
+echo
+CompareEntries cipher Ciphers
+echo
+CompareEntries mac MACs
+echo
+echo
+echo
+echo
+echo
+echo
+echo
+echo
+echo "Verifying algorithms which are in ssh_config and NOT in ssh executable"
+CompareEntriesInv key HostKeyAlgorithms
+echo
+CompareEntriesInv cipher Ciphers
+echo
+CompareEntriesInv mac MACs
+echo

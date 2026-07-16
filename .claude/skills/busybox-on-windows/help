@@ -1,0 +1,290 @@
+#!/bin/sh
+
+echo -e "
+
+
+
+\033[1;32m                   MobaXterm local terminal documentation
+\033[1;0m
+
+
+
+\033[1;31m1. \033[4mFeatures\033[1;0m
+
+
+\033[1;36m1.a. Windows interactions
+\033[1;0m
+
+\033[1;32m- The open command
+\033[1;0mThis command allows you to open your local files. This command will 
+open your documents using the Windows default association for your document 
+type.
+\033[1;35mopen http://mobaxterm.mobatek.net/versions.php
+open MyDocuments/MyWork.pdf\033[1;0m
+
+\033[4mNB\033[0m: Since MobaXterm version 2.4, you can open files, directories or URL by simply \033[1;35mCtrl+clicking\033[1;0m on them.
+
+
+\033[1;32m- The cygpath command
+\033[1;0mThis command allows you to work with dos/unix paths. You can obtain 
+the Dos path from a given Unix path and vice-versa. You can also list your 
+computer paths like the Windows, System, Desktop, Profiles and Start Menu 
+paths.
+\033[1;35mecho \"/bin PATH = \$(cygpath -w /bin)\"
+echo \"System PATH = \$(cygpath -u -S)\"
+\033[1;0m
+
+\033[1;32m- The /drives mount path
+\033[1;0mThis directory contains a mount point for each drive of your computer. 
+You can for example browse your system drive by cd to /drives/c/
+\033[1;35mcat /drives/c/Windows/win.ini
+PicView /drives/d/MyPhotos/Photo36.jpg
+\033[1;0m
+
+\033[1;32m- The /registry virtual folder
+\033[1;0mThis folder is a virtual directory containing your registry keys and 
+values. You can open and read a registry key by doing a simple \"cat\" of these 
+virtual files.
+\033[1;35mcat /registry/HKEY_CURRENT_USER/Environment/TEMP
+\033[1;0m
+
+\033[1;32m- The // mount point
+\033[1;0mYou can also browse computers from your network neighborhood by typing 
+//<remote_computer>
+\033[1;35mPicView //server1/share1/Photo36.jpg
+edit //server2/Documents/program.c\033[1;0m
+
+
+\033[1;32m- Executing native Windows programs
+\033[1;0mYou can execute native Windows programs from MobaXterm as you would in 
+a \"cmd\" console.
+\033[1;35mipconfig /all
+netsh -c interface dump
+regedit
+net user
+calc
+notepad
+\033[1;0m
+
+\033[1;32m- Other useful commands
+\033[1;0mThere are several other useful commands for interacting with Windows, 
+like editrights, shutdown, regtool, ps, passwd, MobaControl, mkshortcut, 
+MobaSwInfo, MobaHwInfo, MobaTaskList, MobaKillTask, MobaControl[...]
+
+
+
+
+
+\033[1;36m1.b. Network utilities
+\033[1;0m
+
+\033[1;32m- Remote computing
+\033[1;0mMobaXterm includes some useful clients for executing commands on 
+remote computers:
+. ssh (utility to access shell accounts using a secure crypted connection)
+. telnet (useful to login to remote system hosts)
+. rlogin (same aim as telnet but using a different protocol)
+. rsh (useful for sending commands on remote computers, especially using the 
+passwordless feature)
+Do not forget that you can bookmark your connections using the bookmarks 
+feature (see the corresponding section for more information). You can also set 
+up passwordless connections with rsh or ssh, there is also a corresponding 
+section to this feature.
+
+
+\033[1;32m- DISPLAY settings
+\033[1;0mMobaXterm includes an X server so that it can display X11-based 
+graphical programs.
+By default, an X server is started at MobaXterm startup. Your DISPLAY 
+environment variable is automatically set and it is written in your terminal 
+startup message. When you use a remote computing client to connect to a Unix 
+computer, you can export your DISPLAY to your local Windows desktop thanks to 
+MobaXterm. When you use a SSH connection, if the remote server supports X11-
+Forwarding, your DISPLAY is automatically set and it will be sent through the 
+SSH connection to your Windows desktop.
+Note: if you have troubles with some kind of interfaces (Motif-based programs 
+for example), you can also run a full window manager by clicking on the 
+corresponding button in the top toolbar.
+\033[1;35mtelnet remoteserver1
+export DISPLAY=localcomputer1:0.0 
+nedit
+exit
+ssh -l root remoteserver1
+nedit
+\033[1;0m
+
+\033[1;32m- File transfer
+\033[1;0mMobaXterm includes some useful clients for transferring files
+. ftp (File Transfert Protocol)
+. sftp/scp (File Transfert using a secure crypted SSH connection)
+. rcp (Copy files to/from remote computers using the rsh protocol)
+. wget (download files through http/ftp protocol with enhanced settings)
+. rsync (synchronize directories through a network with incremental 
+capabilities and enhanced options)
+\033[1;35mscp /drives/c/Photo36.jpg root@server1:/tmp/
+\033[1;0m
+
+\033[1;32m- Xdmcp session
+\033[1;0mMobaXterm includes XDMCP capabilities for opening a remote desktop in 
+a Windows frame. This protocol allows you to show the full remote desktop just 
+like an old Terminal X. All you have to do is clicking on the corresponding 
+button in the top toolbar.
+
+
+\033[1;32m- Network monitoring
+\033[1;0mMobaXterm includes 2 useful utilities for monitoring your network:
+. TCPCapture (allows you to capture network packets)
+. MobaListPorts (allows you to list all open ports with their current state)
+. httping (monitor your web server)
+. iperf (monitor the available bandwidth on your network)
+
+
+
+
+
+\033[1;36m1.c. MobaXterm interface
+\033[1;0m
+
+\033[1;32m- Tab interface
+\033[1;0mMobaXterm can start several independent terminals thanks to a tab-
+based interface.
+Use the appropriate button to create new tabs, close existing tabs, cycling 
+through tabs or rename tabs.
+
+
+\033[1;32m- Split modes
+\033[1;0mMobaXterm allows you to display some terminals in the same Window just 
+as you would do using the \"screen\" utility.
+You can display 2 terminals in horizontal or vertical mode, or even 4 terminals 
+in the same Window
+
+
+\033[1;32m- Save/Print features
+\033[1;0mMobaXterm allows you to save your terminal output to a file, or to 
+print it using the appropriate buttons from the top toolbar.
+
+
+\033[1;32m- Options dialog
+\033[1;0mYou can edit your options using the corresponding button from the top 
+toolbar. Your options will be saved to an INI file. You can select a persistent 
+home directory for keeping your files and parameters instead of having your 
+home directory in a temporary folder. You can also select the terminal fonts, 
+colors, skin, etc...
+
+
+\033[1;32m- Bookmarks
+\033[1;0mYou can store your connection settings in bookmarks that are stored in 
+your INI file. Bookmarks can be accessed easily through the corresponding menu 
+in the top toolbar, but you can also create a desktop shortcut of each bookmark 
+in order to launch them easily.
+
+
+
+
+
+\033[1;36m1.d. Other utilities
+\033[1;0m
+
+\033[1;32m- Editors
+\033[1;0mMobaXterm includes everything you need to edit text files: vi on 
+command line, nedit for a graphical editor or MobaTextEditor which is a light 
+but powerful editor for developpers with textdiff utilities.
+
+
+\033[1;32m- Miscellaneous
+\033[1;0m. MobaPictureViewer (Display pictures in fullscreen with zoom 
+features)
+. MobaTextDiff (Diff utility for text files)
+. MobaFoldersDiff (Diff utility for folders)
+. fdupes (Find and erase duplicate files)
+. mathomatic (computer algebra system)
+
+
+\033[1;32m- Plugins
+\033[1;0mSome commands can be added to MobaXterm thanks to the use of plugins. 
+You can download some ready-to-use plugins at \033[1;35m\033[4mhttp://
+mobaxterm.mobatek.net/en/download/plugins.html\033[24m \033[1;0m.
+
+
+
+
+
+
+
+
+
+
+
+
+
+\033[1;31m2. \033[4mHow to\033[1;0m
+
+
+\033[1;36m2.a. Set up a passwordless ssh connection
+\033[1;0m
+
+You can connect to an SSH server without supplying any password: this is useful 
+if you want to run shell scripts that are not interactive. This can be done in 
+2 steps:
+
+\033[1;32m- On client side
+\033[1;0mYou will have to generate a public rsa key on the client. This can be 
+done by typing
+\033[1;35mssh-keygen -t rsa 
+\033[1;0m
+
+\033[1;32m- On server side
+\033[1;0mCopy the file that has been generated on the client
+(\".ssh/id_rsa.pub\") to the ~/.ssh/ directory of the server and rename it to
+\"authorized_keys\".
+\033[1;35mscp .ssh/id_rsa.pub user1@server1:.ssh/authorized_keys
+\033[1;0m
+
+
+
+
+\033[1;36m2.b. Set up a passwordless rsh connection
+\033[1;0m
+
+You can connect to an RSH server without supplying any password: this is useful 
+if you want to run shell scripts that are not interactive. This can be done in 
+1 step:
+
+\033[1;32m- Using /etc/hosts.equiv
+\033[1;0mEdit the /etc/hosts.equiv file on server side: you can specify in this 
+file the authorized users that will be able to connect to the server without 
+supplying any password. The file syntax is:
+\033[1;35m<computer_name> <user_name> 
+\033[1;0m
+
+\033[1;32m- Using ~/.rhosts
+\033[1;0mEdit the ~/.rhosts file on server side: you can specify in this file 
+the authorized users that will be able to connect to the server using the 
+current account without supplying any password. The file syntax is:
+\033[1;35m<computer_name> <user_name> 
+\033[1;0m
+
+
+
+
+\033[1;36m2.c. Execute a shell script at MobaXterm startup
+\033[1;0m
+
+\033[1;32m- Using commandline parameters
+\033[1;0mYou can edit a shell script (be careful, it has to be in Unix and not 
+Dos format) and run it at MobaXterm startup. You just have to launch MobaXterm 
+with the following command line:
+\033[1;35mMobaXterm.exe <script_file> 
+\033[1;0m
+
+\033[1;32m- Using bookmarks
+\033[1;0mCreate a new bookmark, select the \"Custom shell script\" option in 
+the dropdown menu and edit your shell script. You can then click on your 
+bookmark and choose to create a desktop shortcut to this bookmark.
+
+
+
+
+
+
+" | more

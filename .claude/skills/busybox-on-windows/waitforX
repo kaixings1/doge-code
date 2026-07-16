@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ -z "$DISPLAY" ]; then
+  DISPLAY=":0"
+fi
+i=0
+while [ $i -lt 36 ]; do
+  i=$[$i+1]
+  if /bin/OpenX.exe; then
+    usleep 360000
+    i=360
+  else
+    usleep 360000
+  fi
+done
+
