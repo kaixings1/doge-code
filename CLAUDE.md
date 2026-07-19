@@ -454,3 +454,71 @@ src/skills/bundled/high-star-imports/
 2. 创建 `source.json`（定义 displayName/description/url）
 3. 添加 `.md` 技能文件（YAML frontmatter 格式）
 4. `/updateskills` 命令自动发现并列出
+
+---
+
+## 实用工具脚本与操作规则
+
+### 规则 A：GitHub Topic 数据抓取脚本
+
+**脚本位置**：
+- `.firecrawl/fetch_topic.py` — 输出到 `.firecrawl/` 目录
+- `.github/fetch_topic.py` — 输出到 `.github/` 目录
+
+**功能**：调用 GitHub Search API 获取指定 topic 的热门仓库（按 stars 排序，最多 30 条）
+
+**用法**：
+```cmd
+python D:\doge-code\.firecrawl\fetch_topic.py <topic-name>
+python D:\doge-code\.github\fetch_topic.py <topic-name>
+```
+
+**预期输出**：
+- 文件：`<topic-name>.json`
+- 大小：约 150-180KB（含 30 条仓库数据）
+- 格式：`{"total_count": N, "items": [...]}`
+- 无结果时：total_count=0，items=[]，文件仅 55 字节
+
+**注意事项**：
+- GitHub 搜索 API 未认证限流：约 10 次/分钟
+- 限流时等待 60 秒：`ping -n 60 127.0.0.1 >nul`
+- 脚本使用 `echo` 创建，路径中 `&` 需转义为 `^&`
+
+### 规则 B：Windows 下无 Write 工具时的文件写入
+
+当 Write 工具不可用时，按以下优先级选择方法：
+
+**方法 1：echo 重定向（适合脚本/小文件）**
+```cmd
+echo content > file.txt          :: 覆盖写入
+echo more content >> file.txt    :: 追加写入
+```
+- `&` 需转义为 `^&`（cmd 中 & 是命令分隔符）
+- 路径用 `/` 或 `\\`，避免 `\` 转义问题
+
+**方法 2：Python urllib（适合网络数据抓取）**
+```cmd
+echo import urllib.request > fetch.py
+echo data = urllib.request.urlopen('https://...').read() >> fetch.py
+echo open('output.json', 'wb').write(data) >> fetch.py
+python fetch.py
+```
+
+**方法 3：PowerShell Invoke-RestMethod（备用）**
+```cmd
+powershell -Command "Invoke-RestMethod -Uri 'https://...' | ConvertTo-Json | Out-File output.json"
+```
+
+**关键注意事项**：
+- 中文 Windows 默认 GBK 编码，读取 UTF-8 文件需指定 `encoding='utf-8'`
+- Python 内联代码（`python -c "..."`）在 cmd 中引号易冲突，建议用 echo 创建脚本文件
+- curl 的 `-o` 参数在 Windows 下有兼容问题，如需保存文件优先用 Python
+
+### 规则 C：数据源选择
+
+| 数据源 | 状态 | 适用场景 |
+|--------|------|---------|
+| **GitHub API** | ✅ 推荐 | 获取 topic 仓库列表（限流 10次/分钟） |
+| **Firecrawl CLI** | ❌ 配额制 | 抓取网页内容（需升级计划） |
+| **Firecrawl MCP** | ⚠️ 已配置 | 已通过 `doge mcp add` 配置，需在 Doge CLI 中调用 |
+| **curl** | ⚠️ 只读 | 测试连通性，不适合保存文件 |
