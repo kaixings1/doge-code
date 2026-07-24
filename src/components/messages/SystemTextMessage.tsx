@@ -3,7 +3,7 @@ import { c as _c } from "react/compiler-runtime";
 import { Box, Text, type TextProps } from '../../ink.js';
 import { feature } from 'bun:bundle';
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { sample } from '../../vendor/lodash.js';
 import { BLACK_CIRCLE, REFERENCE_MARK, TEARDROP_ASTERISK } from '../../constants/figures.js';
 import figures from '../../vendor/figures.js';
@@ -18,7 +18,7 @@ import { TURN_COMPLETION_VERBS } from '../../constants/turnCompletionVerbs.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 import type { SystemMessage, SystemStopHookSummaryMessage, SystemBridgeStatusMessage, SystemTurnDurationMessage, SystemThinkingMessage, SystemMemorySavedMessage } from '../../types/message.js';
 import { SystemAPIErrorMessage } from './SystemAPIErrorMessage.js';
-import { formatDuration, formatNumber, formatSecondsShort } from '../../utils/format.js';
+import { formatDuration, formatNumber, formatRelativeTimeAgo, formatSecondsShort } from '../../utils/format.js';
 import { getGlobalConfig } from '../../utils/config.js';
 import Link from '../../ink/components/Link.js';
 import ThemedText from '../design-system/ThemedText.js';
@@ -490,7 +490,7 @@ function SystemTextMessageInner(t0) {
   return t7;
 }
 function TurnDurationMessage(t0) {
-  const $ = _c(17);
+  const $ = _c(19);
   const {
     message,
     addMargin
@@ -511,6 +511,14 @@ function TurnDurationMessage(t0) {
     t1 = $[1];
   }
   const [backgroundTaskSummary] = useState(t1);
+  // DOGE: tick to refresh "elapsed ago" every second
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => {
+      setTick(n => n + 1)
+    }, 1000);
+    return () => clearInterval(id);
+  }, [message.timestamp]);
   let t2;
   if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
     t2 = getGlobalConfig().showTurnDuration ?? true;
@@ -563,7 +571,9 @@ function TurnDurationMessage(t0) {
     t6 = $[8];
   }
   const endTime = message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date().toLocaleString()
-  const t7 = showTurnDuration && `${verb} for ${duration} — ${endTime}`;
+  const elapsedAgo = message.timestamp ? formatRelativeTimeAgo(new Date(message.timestamp), { now: new Date(), style: "narrow" }) : ""
+  const elapsedSuffix = elapsedAgo ? ` · ${elapsedAgo}` : ""
+  const t7 = showTurnDuration && `${verb} for ${duration} — ${endTime}${elapsedSuffix}`;
   const t8 = backgroundTaskSummary && ` \u00B7 ${backgroundTaskSummary} still running`;
   let t9;
   if ($[9] !== budgetSuffix || $[10] !== t7 || $[11] !== t8) {
