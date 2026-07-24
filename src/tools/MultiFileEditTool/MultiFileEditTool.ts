@@ -29,7 +29,8 @@ const outputSchema = z.object({
  */
 export const MultiFileEditTool: ToolDef<InputSchema, typeof outputSchema> = buildTool({
   name: 'MultiFileEdit',
-  description: '在一次调用中编辑多个文件（支持同时修改2-20个文件）。' +
+  prompt: async () => 'Use MultiFileEdit to edit multiple files at once.',
+	description: '在一次调用中编辑多个文件（支持同时修改2-20个文件）。' +
     '适用于需要跨多个文件协调修改的场景，' +
     '例如重命名函数同时更新所有引用、修改接口定义及其所有实现等。' +
     '每个操作使用精确的 old_string 到 new_string 替换。',

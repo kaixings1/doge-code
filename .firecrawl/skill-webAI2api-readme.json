@@ -1,0 +1,16 @@
+{
+  "markdown": "\\# web2api — 让每个人都能用上更便宜的 Token\n\n每个月花几百块买 API？那个网页 AI 明明免费又好用，却被锁在浏览器里。\n\\*\\*现在把它拽出来。\\*\\*\n\n上传一个 HAR 文件，web2api 自动把任何网页 AI 逆向成 OpenAI 兼容 API。\n流式、多轮对话、工具调用，全都给你。一条命令接入 Claude Code、Cursor、Continue。\n\n\\-\\-\\-\n\n\\## Token 不应该那么贵\n\n\\| 你在用什么 \\| 价格 \\|\n\\|---\\|---\\|\n\\| Claude Pro 订阅 \\| 每月 20$，还有用量限制 \\|\n\\| GPT-4 API 按量 \\| 输入 30$/M token，输出 60$/M token \\|\n\\| 国产网页 AI \\| \\*\\*免费，或者便宜一个数量级\\*\\* \\|\n\nweb2api 就是干这个的。把国产/开源网页 AI 背后的大模型能力解放出来，让你以零成本或几分之一的价格获得同等甚至更好的生成质量。\\*\\*省下的钱是你的，token 的质量一点不少。\\*\\*\n\n\\## 怎么做到的\n\n\\`\\`\\`\n你：上传 .har 文件（F12 → Network → 发条消息 → 保存）\n↓\nAI：自动分析 HAR → 找到端点、鉴权、payload 格式\n → 生成适配器 → 启动代理服务器\n↓\n你：OPENAI\\_API\\_BASE=http://localhost:8000/v1\n 该用哪个 SDK 用哪个 SDK，完全不用改代码\n\\`\\`\\`\n\n\\## 能干什么\n\n\\- \\*\\*搭私人 API\\*\\*：把免费网页 AI 变成自己的 API 端点，想调多少次调多少次\n\\- \\*\\*工具调用\\*\\*：网页不提供 function calling？DSML 注入给你安排上\n\\- \\*\\*随时续期\\*\\*：Cookie 过期了？双击 config\\_tool.py 点几下完事，不用重新找 AI\n\\- \\*\\*能跑就行\\*\\*：HTTP 也好、WebSocket 也好、有 PoW 也好，HAR 里有就能逆向\n\n\\## 特性一览\n\n\\| \\| \\|\n\\|---\\|---\\|\n\\| 零成本迁移 \\| 任何 OpenAI SDK 直接对接，一行不改 \\|\n\\| 流式输出 \\| SSE → OpenAI chunk，延迟不增加 \\|\n\\| 工具调用 \\| DSML 提示词注入，目标模型能吃 XML 就能用 \\|\n\\| 协议自适应 \\| HTTP SSE / WebSocket 自动识别 \\|\n\\| 参数透传 \\| 只传目标 API 实际支持的，不传的自动丢弃 \\|\n\\| PoW 自动求解 \\| DeepSeek 等有验证挑战的也能打 \\|\n\\| GUI 续期 \\| 改 Cookie 不用重新跑 AI，点几下就行 \\|\n\n\\## 快速上手\n\n\\`\\`\\`bash\n\\# 1\\. 浏览器 F12 → Network → 发条消息 → 右键保存 HAR\n\\# 2\\. 把 .har 扔给 AI，拿到交付的 server.py + adapter.py\n\\# 3\\. 启动：\npip install fastapi uvicorn httpx python-dotenv websockets\npython server.py\n\n\\# 4\\. 爽：\ncurl http://localhost:8000/v1/chat/completions \\\n -H \"Content-Type: application/json\" \\\n -d '{\"model\":\"gpt-4o\",\"messages\":\\[{\"role\":\"user\",\"content\":\"写一首诗\"}\\]}'\n\\`\\`\\`\n\n\\## 工具调用说明\n\n基于 \\*\\*DSML（DeepSeek Markup Language）\\*\\* 提示词注入实现，非原生 function calling，取决于目标模型对 XML 指令的理解能力。StreamSieve 实时分离文本和 DSML 标签，流式状态下同样可用。\n\n\\## 能干倒什么程度\n\n\\- 同类模型 0 成本调用\n\\- 国产大模型 API 免费白嫖（只需要有个网页账号）\n\\- 私有部署的开源模型也不用再搭一套前端，直接 web2api 一把梭\n\n\\## 限制\n\n\\- 仅文本，不支持多模态\n\\- \\`seed\\` / \\`response\\_format\\` / \\`json\\_mode\\` 不可用\n\\- 参数支持取决于目标 API\n\\- WebSocket 仅 text frame",
+  "metadata": {
+    "scrapeId": "019f64dc-c7d4-779a-83cb-52a11bdc5567",
+    "sourceURL": "https://raw.githubusercontent.com/snake-aabb-wtf/skill-webAI2api/main/README.md",
+    "url": "https://raw.githubusercontent.com/snake-aabb-wtf/skill-webAI2api/main/README.md",
+    "statusCode": 200,
+    "contentType": "text/plain; charset=utf-8",
+    "timezone": "America/New_York",
+    "proxyUsed": "basic",
+    "cacheState": "miss",
+    "indexId": "b27a6aa9-d879-4905-ae3d-4d46a745fae6",
+    "creditsUsed": 1,
+    "concurrencyLimited": false
+  }
+}

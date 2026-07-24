@@ -24,7 +24,15 @@ startKeychainPrefetch();
 import { feature } from 'bun:bundle';
 import { Command as CommanderCommand, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import chalk from 'chalk';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
+const RESTART_COUNTER_PATH = 'd:/restart_counter.txt';
+let restartCount = 0;
+try {
+  restartCount = parseInt(readFileSync(RESTART_COUNTER_PATH, 'utf8').trim(), 10) || 0;
+} catch { /* ignore */ }
+restartCount++;
+writeFileSync(RESTART_COUNTER_PATH, String(restartCount), { flag: 'w' });
+console.error('[RESTART-COUNTER] cliMain invocation #' + restartCount);
 import { mapValues } from './vendor/lodash.js';
 import { pickBy } from './vendor/lodash.js';
 import { uniqBy } from './vendor/lodash.js';
@@ -761,7 +769,7 @@ export async function main() {
   // 除非明确处于无头模式，否则应默认使用交互模式。
   const isNonInteractive = hasPrintFlag || hasInitOnlyFlag || hasSdkUrl || (process.stdout.isTTY === false);
 
-
+	console.warn(chalk.yellow('非交互模式停止捕获早期输入'));
   // 为非交互模式停止捕获早期输入
   if (isNonInteractive) {
     stopCapturingEarlyInput();
@@ -838,7 +846,7 @@ async function getInputPrompt(prompt: string, inputFormat: 'text' | 'stream-json
 }
 async function run(): Promise<CommanderCommand> {
   profileCheckpoint('run_function_start');
-
+	console.warn(chalk.yellow('run_function_start'));
   // 创建按长选项名称排序的帮助配置。
   // Commander 在运行时支持 compareOptions，但 @commander-js/extra-typings 的类型定义中不包含它，因此我们使用 Object.assign 添加。
   function createSortedHelpConfig(): {
@@ -855,34 +863,48 @@ async function run(): Promise<CommanderCommand> {
   }
   const program = new CommanderCommand().configureHelp(createSortedHelpConfig()).enablePositionalOptions();
   profileCheckpoint('run_commander_initialized');
-
+	console.warn(chalk.yellow('run_commander_initialized'));
   // 使用 preAction 钩子仅在实际执行命令时运行初始化，而不是显示帮助时。这避免了使用环境变量信号的需求。
   program.hook('preAction', async thisCommand => {
     profileCheckpoint('preAction_start');
+    const log = (msg: string) => {
+      const t = Date.now();
+      require('fs').writeFileSync('d:/init_debug.log', `[${t}] ${msg}\n`, { flag: 'a' });
+      process.stderr.write(`[MAIN-DEBUG] [${t}] ${msg}\n`);
+    };
+    log('preAction START');
     // 等待在模块评估时启动的异步子进程加载（第 12-20 行）。
     // 几乎零成本 — 子进程在上方约 135ms 的导入期间完成。
     // 必须在 init() 之前解析，init() 会触发首次设置读取（applySafeConfigEnvironmentVariables → getSettingsForSource('policySettings') → isRemoteManagedSettingsEligible → 否则同步钥匙串读取约 65ms）。
+    log('ensureMdmSettingsLoaded+ensureKeychainPrefetchCompleted START');
     await Promise.all([ensureMdmSettingsLoaded(), ensureKeychainPrefetchCompleted()]);
+    log('ensureMdmSettingsLoaded+ensureKeychainPrefetchCompleted DONE');
     profileCheckpoint('preAction_after_mdm');
+    log('init() START');
     require('fs').writeFileSync('d:/init_debug.log', `BEFORE init() at ${Date.now()}\n`, { flag: 'a' });
     await init();
     require('fs').writeFileSync('d:/init_debug.log', `AFTER init() at ${Date.now()}\n`, { flag: 'a' });
+    log('init() DONE');
     profileCheckpoint('preAction_after_init');
+    log('process.title setting');
 
     // Windows 上的 process.title 直接设置控制台标题；在 POSIX 上，终端 shell 集成可能会将进程名镜像到选项卡。
     // 在 init() 之后，settings.json 环境也可以控制此功能（gh-4765）。
+    try { require('fs').writeFileSync('d:/trace.txt', 'BEFORE_TITLE\n', {flag:'a'}); } catch(e) {}
     if (!isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_TERMINAL_TITLE)) {
-      process.title = 'claude';
+      try { process.title = 'claude'; } catch(e) { /* Windows console may hang on title change */ }
     }
-
+    try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_TITLE\n', {flag:'a'}); } catch(e) {}
+    log('附加日志接收器');
     // 附加日志接收器，以便子命令处理程序可以使用 logEvent/logError。
     // 在 PR #11106 之前，logEvent 直接派发；之后，事件会排队直到接收器附加。setup() 为默认命令附加接收器，但子命令（doctor、mcp、plugin、auth）从不调用 setup()，会在 process.exit() 时静默丢弃事件。两次初始化都是幂等的。
     const {
       initSinks
     } = await import('./utils/sinks.js');
     initSinks();
+    try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_SINKS\n', {flag:'a'}); } catch(e) {}
     profileCheckpoint('preAction_after_sinks');
-
+	log('preAction_after_sinks');
     // gh-33508: --plugin-dir 是顶级程序选项。默认操作从其自己的选项解构中读取它，但子命令（plugin list、plugin install、mcp *）有自己的操作，永远不会看到它。在此处连接它，以便 getInlinePlugins() 在任何地方都能工作。
     // thisCommand.opts() 在此处类型为 {}，因为此钩子在链中 .option('--plugin-dir', ...) 之前附加 —— extra-typings 在添加选项时构建类型。通过运行时守卫进行窄化；collect 累加器 + [] 默认值在实践中保证是 string[]。
 // (plugin list, plugin install, mcp *) have their own actions and
@@ -896,8 +918,14 @@ async function run(): Promise<CommanderCommand> {
       setInlinePlugins(pluginDir);
       clearPluginCache('preAction: --plugin-dir inline plugins');
     }
+	  log('try ');
+    try { require('fs').writeFileSync('d:/trace.txt', 'BEFORE_MIGRATIONS\n', {flag:'a'}); } catch(e) {}
     runMigrations();
+    try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_MIGRATIONS\n', {flag:'a'}); } catch(e) {}
+    try { require('fs').writeFileSync('d:/trace.txt', 'BEFORE_KAIROS_GATE\n', {flag:'a'}); } catch(e) {}
+    try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_KAIROS_GATE\n', {flag:'a'}); } catch(e) {}
     profileCheckpoint('preAction_after_migrations');
+	  log('try2');
 
     // 为企业客户加载远程托管设置（非阻塞）
     // 故障开放 - 如果获取失败，则继续而不使用远程设置
@@ -906,15 +934,16 @@ async function run(): Promise<CommanderCommand> {
     void loadRemoteManagedSettings();
     void loadPolicyLimits();
     profileCheckpoint('preAction_after_remote_settings');
-
+		
     // 加载设置同步（非阻塞，故障开放）
     // CLI：将本地设置上传到远程（CCR 下载由 print.ts 处理）
     if (feature('UPLOAD_USER_SETTINGS')) {
       void import('./services/settingsSync/index.js').then(m => m.uploadUserSettingsInBackground());
     }
-    profileCheckpoint('preAction_after_settings_sync');
+    profileCheckpoint('preAction_after_settings_sync');log('try3');
   });
-  program.name('doge').description(`Doge Code - 默认启动交互式会话，使用 -p/--print 进行非交互式输出`).argument('[prompt]', '您的提示', String)
+	console.warn(chalk.yellow('program.hook'));
+	program.name('doge').description(`Doge Code - 默认启动交互式会话，使用 -p/--print 进行非交互式输出`).argument('[prompt]', '您的提示', String)
   // 子命令通过 commander 的 copyInheritedSettings 继承 helpOption —— 在此处设置一次即可覆盖 mcp、plugin、auth 及所有其他子命令。
   .helpOption('-h, --help', '显示命令帮助').addOption(new Option('--bg, --background', '后台模式：在后台启动会话（适用于长时间运行的任务）')).option('-d, --debug [filter]', '启用调试模式，可选类别过滤（例如 "api,hooks" 或 "!1p,!file"）', (_value: string | true) => {
     // 如果提供了值，它将是过滤字符串
@@ -954,20 +983,25 @@ async function run(): Promise<CommanderCommand> {
 // --plugin-dir takes exactly one arg; repeat the flag for multiple dirs.
   .option('--plugin-dir <path>', '仅为此会话从目录加载插件（可重复：--plugin-dir A --plugin-dir B）', (val: string, prev: string[]) => [...prev, val], [] as string[]).option('--disable-slash-commands', '禁用所有技能', () => true).option('--chrome', '启用 Claude in Chrome 集成').option('--no-chrome', '禁用 Claude in Chrome 集成').option('--file <specs...>', '在启动时下载的文件资源。格式：file_id:relative_path（例如 --file file_abc:doc.txt file_def:img.png）').action(async (prompt, options) => {
     profileCheckpoint('action_handler_start');
-
+    try { require('fs').writeFileSync('d:/trace.txt', 'ACTION_HANDLER_START\n', {flag:'a'}); } catch(e) {}
+		console.warn(chalk.yellow('action_handler_start'));
+    // --- TEMP: skip all heavy init, go straight to Ink render ---
+    try { require('fs').writeFileSync('d:/trace.txt', 'BEFORE_SKIP_HEAVY\n', {flag:'a'}); } catch(e) {}
+    // --- END TEMP ---
+		console.warn(chalk.yellow('action_handler_start writeFileSync'));
     // --bare = 一键最小模式。设置 SIMPLE 以便所有现有的门控触发（CLAUDE.md、技能、executeHooks 内部的钩子、代理目录遍历）。必须在 setup() / 任何门控工作运行之前设置。
     if ((options as {
       bare?: boolean;
     }).bare) {
       process.env.CLAUDE_CODE_SIMPLE = '1';
     }
-
+		console.warn(chalk.yellow('options as'));
     // --safe-mode: 禁用所有自定义项（CLAUDE.md、插件、技能、钩子、MCP 服务器）
     if ((options as { safeMode?: boolean }).safeMode) {
       process.env.CLAUDE_CODE_SIMPLE = '1';
       process.env.CLAUDE_CODE_SAFE_MODE = '1';
     }
-
+		console.warn(chalk.yellow('options as2'));
     // 忽略 "code" 作为提示 - 将其视为无提示
     if (prompt === 'code') {
       logEvent('tengu_code_prompt_ignored', {});
@@ -975,21 +1009,21 @@ async function run(): Promise<CommanderCommand> {
       console.warn(chalk.yellow('提示：您可以仅使用 `claude` 命令启动 Claude Code'));
       prompt = undefined;
     }
-
+		console.warn(chalk.yellow('options code'));
     // 记录任何单个单词提示的事件
     if (prompt && typeof prompt === 'string' && !/\s/.test(prompt) && prompt.length > 0) {
       logEvent('tengu_single_word_prompt', {
         length: prompt.length
       });
     }
-
+	  console.warn(chalk.yellow('options string'));
     // 助手模式
     if (feature('KAIROS')) {
     } else {
     }
-
     // 助手模式：当 .claude/settings.json 具有 assistant: true 且 tengu_kairos GrowthBook 门控开启时，强制开启 brief。
-    let kairosEnabled = false;
+    console.warn(chalk.yellow('KAIROS string'));
+		let kairosEnabled = false;
     let assistantTeamContext: Awaited<ReturnType<NonNullable<typeof assistantModule>['initializeAssistantTeam']>> | undefined;
     if (feature('KAIROS') && (options as {
       assistant?: boolean;
@@ -1002,6 +1036,7 @@ async function run(): Promise<CommanderCommand> {
     !(options as {
       agentId?: unknown;
     }).agentId && kairosGate) {
+      try { require('fs').writeFileSync('d:/trace.txt', 'BEFORE_KAIROS_IF\n', {flag:'a'}); } catch(e) {}
       if (!checkHasTrustDialogAccepted()) {
         // biome-ignore lint/suspicious/noConsole:: 有意的控制台输出
         console.warn(chalk.yellow('助手模式已禁用：目录不受信任。接受信任对话框并重启。'));
@@ -1015,7 +1050,9 @@ async function run(): Promise<CommanderCommand> {
           opts.brief = true;
           setKairosActive(true);
           // 预填充一个进程内团队，以便 Agent(name: "foo") 可以在没有 TeamCreate 的情况下生成队友。必须在 setup() 捕获 teammateMode 快照之前运行（initializeAssistantTeam 内部调用 setCliTeammateModeOverride）。
+          try { require('fs').writeFileSync('d:/trace.txt', 'BEFORE_INIT_ASSISTANT_TEAM\n', {flag:'a'}); } catch(e) {}
           assistantTeamContext = await assistantModule.initializeAssistantTeam();
+          try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_INIT_ASSISTANT_TEAM\n', {flag:'a'}); } catch(e) {}
         }
       }
     }
@@ -1037,10 +1074,11 @@ async function run(): Promise<CommanderCommand> {
       includeHookEvents,
       includePartialMessages
     } = options;
+    try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_OPTIONS_DESTRUCTURE\n', {flag:'a'}); } catch(e) {}
     if (options.prefill) {
       seedEarlyInput(options.prefill);
     }
-
+		console.warn(chalk.yellow('options prefill'));
     // 文件下载的 Promise - 提前启动，在 REPL 渲染前等待
     let fileDownloadPromise: Promise<DownloadResult[]> | undefined;
     const agentsJson = options.agents;
@@ -1048,7 +1086,7 @@ async function run(): Promise<CommanderCommand> {
     if (feature('BG_SESSIONS') && agentCli) {
       process.env.CLAUDE_CODE_AGENT = agentCli;
     }
-
+	  console.warn(chalk.yellow('BG_SESSIONS'));
     // 注意：LSP 管理器初始化有意延迟到信任对话框接受之后。这可以防止在用户同意之前在不受信任的目录中执行插件 LSP 服务器代码。
 
     // 单独提取这些变量以便在需要时修改
@@ -1095,7 +1133,7 @@ async function run(): Promise<CommanderCommand> {
     const tmuxEnabled = isWorktreeModeEnabled() && (options as {
       tmux?: boolean;
     }).tmux === true;
-
+	  console.warn(chalk.yellow('提取 tmux 选项'));
     // 验证 tmux 选项
     if (tmuxEnabled) {
       if (!worktreeEnabled) {
@@ -1147,7 +1185,7 @@ async function run(): Promise<CommanderCommand> {
         getTeammateModeSnapshot().setCliTeammateModeOverride?.(teammateOpts.teammateMode);
       }
     }
-
+		console.warn(chalk.yellow('isAgentSwarmsEnabled'));
     // 提取远程 sdk 选项
     const sdkUrl = (options as {
       sdkUrl?: string;
@@ -1161,7 +1199,7 @@ async function run(): Promise<CommanderCommand> {
     if (includeHookEvents || isEnvTruthy(process.env.CLAUDE_CODE_REMOTE)) {
       setAllHookEventsEnabled(true);
     }
-
+		console.warn(chalk.yellow('includeHookEvents'));
     // 当提供 SDK URL 时自动设置输入/输出格式、详细模式和打印模式
     if (sdkUrl) {
       // 如果提供了 SDK URL，则自动使用 stream-json 格式，除非明确设置
@@ -1180,7 +1218,7 @@ async function run(): Promise<CommanderCommand> {
         print = true;
       }
     }
-
+		console.warn(chalk.yellow('sdkUrl??'));
     // 提取 teleport 选项
     const teleport = (options as {
       teleport?: string | true;
@@ -1258,7 +1296,7 @@ async function run(): Promise<CommanderCommand> {
 
     // 从状态获取 isNonInteractiveSession（在 init() 之前设置）
     const isNonInteractiveSession = getIsNonInteractiveSession();
-
+		console.warn(chalk.yellow('从状态获取??'));
     // 验证备用模型是否与主模型不同
     if (fallbackModel && options.model && fallbackModel === options.model) {
       process.stderr.write(chalk.red('错误：备用模型不能与主模型相同。请为 --fallback-model 指定不同的模型。\n'));
@@ -1312,7 +1350,7 @@ async function run(): Promise<CommanderCommand> {
       const addendum = getTeammatePromptAddendum().TEAMMATE_SYSTEM_PROMPT_ADDENDUM;
       appendSystemPrompt = appendSystemPrompt ? `${appendSystemPrompt}\n\n${addendum}` : addendum;
     }
-    
+    console.warn(chalk.yellow('队友添加特定于队友的系统提示补充??'));
     const {
       mode: permissionMode,
       notification: permissionModeNotification
@@ -1441,7 +1479,7 @@ async function run(): Promise<CommanderCommand> {
     // 存储显式的 CLI 标志，以便队友可以继承它
     setChromeFlagOverride(chromeOpts.chrome);
     const enableClaudeInChrome = shouldEnableClaudeInChrome(chromeOpts.chrome) && ("external" === 'ant' || isClaudeAISubscriber());
-    const autoEnableClaudeInChrome = !enableClaudeInChrome && shouldAutoEnableClaudeInChrome();
+    const autoEnableClaudeInChrome = !enableClaudeInChrome && !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_CIC) && shouldAutoEnableClaudeInChrome();
     if (enableClaudeInChrome) {
       const platform = getPlatform();
       try {
@@ -1504,7 +1542,7 @@ async function run(): Promise<CommanderCommand> {
         process.exit(1);
       }
     }
-
+console.warn(chalk.yellow('doesEnterpriseMcpConfigExist??'));
     // chicago MCP：受保护的计算机使用（应用允许列表 + 前台门控 + SCContentFilter 截图）。仅限 Ant，受 GrowthBook 门控 — 失败静默（这是内部试用）。平台和交互式检查内联，以便非 macOS / 打印模式的 Ant 完全跳过重型 @ant/computer-use-mcp 导入。gates.js 轻量（仅类型包导入）。
     //
     // 放在企业 MCP 配置检查之后：该检查拒绝任何带有 `type !== 'sdk'` 的 dynamicMcpConfig 条目，而我们的配置是 `type: 'stdio'`。一个启用了 GB 门控的企业配置 Ant 否则会 process.exit(1)。Chrome 有相同的潜在问题但已发布未出事故；chicago 将自己置于正确位置。
@@ -1531,7 +1569,7 @@ async function run(): Promise<CommanderCommand> {
         logForDebugging(`[Computer Use MCP] 设置失败: ${errorMessage(error)}`);
       }
     }
-
+console.warn(chalk.yellow('CHICAGO_MCP??'));
     // 存储用于 CLAUDE.md 加载的附加目录（由环境变量控制）
     setAdditionalDirectoriesForClaudeMd(addDir);
 
@@ -1605,7 +1643,7 @@ async function run(): Promise<CommanderCommand> {
         });
       }
     }
-
+console.warn(chalk.yellow('KAIROSCHICAGO_MCP??'));
     // SDK 对 SendUserMessage 的选择加入，通过 --tools。所有会话都需要明确选择加入；在 --tools 中列出表示意图。在 initializeToolPermissionContext 之前运行，以便 getToolsForDefaultPreset() 在计算基础工具禁止过滤器时将工具视为已启用。条件 require 避免将工具名称字符串泄漏到外部构建中。
     if ((feature('KAIROS') || feature('KAIROS_BRIEF')) && baseTools.length > 0) {
       /* eslint-disable @typescript-eslint/no-require-imports */
@@ -1656,7 +1694,7 @@ async function run(): Promise<CommanderCommand> {
       console.error(warning);
     });
     void assertMinVersion();
-
+		console.warn(chalk.yellow('assertMinVersion??'));
     // claude.ai 配置获取：仅 -p 模式（交互式使用 useManageMCPConnections 两阶段加载）。在此处启动以与 setup() 重叠；在 runHeadless 之前等待，以便单轮 -p 看到连接器。在企业/严格 MCP 下跳过以保持策略边界。
     const claudeaiConfigPromise: Promise<Record<string, ScopedMcpServerConfig>> = isNonInteractiveSession && !strictMcpConfig && !doesEnterpriseMcpConfigExist() &&
     // --bare / SIMPLE: 跳过 claude.ai 代理服务器（datadog、Gmail、Slack、BigQuery、PubMed — 每个连接需要 6-14 秒）。需要 MCP 的脚本化调用显式传递 --mcp-config。
@@ -1678,15 +1716,21 @@ async function run(): Promise<CommanderCommand> {
     const mcpConfigStart = Date.now();
     let mcpConfigResolvedMs: number | undefined;
     // --bare 跳过自动发现的 MCP（.mcp.json、用户设置、插件）—— 只有显式的 --mcp-config 有效。dynamicMcpConfig 在下游被展开到 allMcpConfigs 上，因此在此跳过中幸存。
-    const mcpConfigPromise = (strictMcpConfig || isBareMode() ? Promise.resolve({
+		console.warn(chalk.yellow('跳过自动发现的??'));
+    const mcpConfigPromise = (true ? Promise.resolve({
       servers: {} as Record<string, ScopedMcpServerConfig>
     }) : getClaudeCodeMcpConfigs(dynamicMcpConfig)).then(result => {
       mcpConfigResolvedMs = Date.now() - mcpConfigStart;
+      require('fs').writeFileSync('d:/trace.log', `MCP config resolved at ${Date.now()}\n`, { flag: 'a' });
       return result;
     });
+    if (!isBareMode()) {
+      require('fs').writeFileSync('d:/trace.log', `BEFORE await mcpConfigPromise at ${Date.now()}\n`, { flag: 'a' });
+      mcpConfigPromise.then(() => require('fs').writeFileSync('d:/trace.log', `AFTER await mcpConfigPromise at ${Date.now()}\n`, { flag: 'a' }));
+    }
 
     // 注意：我们在这里不调用 prefetchAllMcpResources - 这被延迟到信任对话框之后
-
+		console.warn(chalk.yellow('isBareMode??'));
     if (inputFormat && inputFormat !== 'text' && inputFormat !== 'stream-json') {
       // biome-ignore lint/suspicious/noConsole:: 有意的控制台输出
       console.error(`错误：输入格式 "${inputFormat}" 无效。`);
@@ -1697,7 +1741,7 @@ async function run(): Promise<CommanderCommand> {
       console.error(`错误：--input-format=stream-json 需要配合 output-format=stream-json 使用。`);
       process.exit(1);
     }
-
+console.warn(chalk.yellow('inputFormat??'));
     // 验证 sdkUrl 仅与适当格式一起使用（格式在上方自动设置）
     if (sdkUrl) {
       if (inputFormat !== 'stream-json' || outputFormat !== 'stream-json') {
@@ -1706,7 +1750,7 @@ async function run(): Promise<CommanderCommand> {
         process.exit(1);
       }
     }
-
+console.warn(chalk.yellow('sdkUrlsssssss??'));
     // 验证 replayUserMessages 仅与 stream-json 格式一起使用
     if (options.replayUserMessages) {
       if (inputFormat !== 'stream-json' || outputFormat !== 'stream-json') {
@@ -1715,7 +1759,7 @@ async function run(): Promise<CommanderCommand> {
         process.exit(1);
       }
     }
-
+console.warn(chalk.yellow('replayUserMessages??'));
     // 验证 includePartialMessages 仅与打印模式和 stream-json 输出一起使用
     if (effectiveIncludePartialMessages) {
       if (!isNonInteractiveSession || outputFormat !== 'stream-json') {
@@ -1732,11 +1776,15 @@ async function run(): Promise<CommanderCommand> {
     const effectivePrompt = prompt || '';
     let inputPrompt = await getInputPrompt(effectivePrompt, (inputFormat ?? 'text') as 'text' | 'stream-json');
     profileCheckpoint('action_after_input_prompt');
-
+console.warn(chalk.yellow('action_after_input_prompt??'));
     // 在 getTools() 之前激活主动模式，以便 SleepTool.isEnabled()（返回 isProactiveActive()）通过并包含 Sleep。
     // 稍后 REPL 路径中的 maybeActivateProactive() 调用是幂等的。
     maybeActivateProactive(options);
+console.warn(chalk.yellow('maybeActivateProactive??'));
+    require('fs').writeFileSync('d:/trace.log', `BEFORE getTools at ${Date.now()}\n`, { flag: 'a' });
     let tools = getTools(toolPermissionContext);
+		console.warn(chalk.yellow('toolPermissionContext??'));
+    require('fs').writeFileSync('d:/trace.log', `AFTER getTools (${tools.length} tools) at ${Date.now()}\n`, { flag: 'a' });
 
     // 为无头路径应用协调器模式工具过滤
     // （镜像 REPL/交互式路径的 useMergedTools.ts 过滤）
@@ -1769,7 +1817,7 @@ async function run(): Promise<CommanderCommand> {
         });
       }
     }
-
+console.warn(chalk.yellow('jsonSchema??'));
     // 重要：setup() 必须在任何其他依赖于工作目录或工作树设置的代码之前调用
     profileCheckpoint('action_before_setup');
     require('fs').writeFileSync('d:/init_debug.log', `BEFORE setup() import at ${Date.now()}\n`, { flag: 'a' });
@@ -1786,6 +1834,7 @@ async function run(): Promise<CommanderCommand> {
 // mostly startUdsMessaging (socket bind, ~20ms) — not disk-bound, so it
 // doesn't contend with getCommands' file reads. Gated on !worktreeEnabled
     const preSetupCwd = getCwd();
+		console.warn(chalk.yellow('getCwd??'));
     // 在启动 getCommands() 之前注册捆绑的技能/插件 —— 它们是纯内存数组推送（<1ms，零 I/O），getBundledSkills() 同步读取。之前它们在 setup() 内部约 20ms 的 await 点之后运行，因此并行 getCommands() 记忆了一个空列表。
     if (process.env.CLAUDE_CODE_ENTRYPOINT !== 'local-agent') {
       initBuiltinPlugins();
@@ -1800,7 +1849,7 @@ async function run(): Promise<CommanderCommand> {
     await setupPromise;
     logForDebugging(`[STARTUP] setup() 完成，耗时 ${Date.now() - setupStart}ms`);
     profileCheckpoint('action_after_setup');
-
+console.warn(chalk.yellow('[STARTUP] setup() 完成??'));
     // 仅当显式请求套接字时，才将用户消息重放到 stream-json。自动生成的套接字是被动的 —— 它允许工具在需要时注入，但默认开启不应为从未使用它的 SDK 消费者重塑 stream-json。
     // 希望注入并希望这些注入在流中可见的调用方显式传递 --messaging-socket-path（或 --replay-user-messages）。
     let effectiveReplayUserMessages = !!options.replayUserMessages;
@@ -1813,7 +1862,9 @@ async function run(): Promise<CommanderCommand> {
     }
     if (getIsNonInteractiveSession()) {
       // 现在应用完整合并的设置环境变量（包括项目作用域的 .claude/settings.json PATH/GIT_DIR/GIT_WORK_TREE），以便 gitExe() 和下方的 git spawn 能够看到。信任在 -p 模式下是隐含的；managedEnv.ts:96-97 的文档字符串说明这应用了来自所有来源的“潜在危险的环境变量，如 LD_PRELOAD、PATH”。稍后在 isNonInteractiveSession 块中的调用是幂等的（Object.assign，configureGlobalAgents 弹出先前的拦截器）并拾取插件初始化后插件贡献的任何环境变量。项目设置已在此处加载：init() 中的 applySafeConfigEnvironmentVariables 在 managedEnv.ts:86 处调用了 getSettings_DEPRECATED，该函数合并了所有启用的来源，包括 projectSettings/localSettings。
+      require('fs').writeFileSync('d:/init_debug.log', `BEFORE applyConfigEnvironmentVariables at ${Date.now()}\n`, { flag: 'a' });
       applyConfigEnvironmentVariables();
+      require('fs').writeFileSync('d:/init_debug.log', `AFTER applyConfigEnvironmentVariables at ${Date.now()}\n`, { flag: 'a' });
 
       // 现在生成 git status/log/branch，以便子进程执行与下方的 getCommands await 和 startDeferredPrefetches 重叠。在 setup() 之后，以便工作目录是最终的（setup.ts:254 可能为 --worktree process.chdir(worktreePath)），并且在上方的 applyConfigEnvironmentVariables 之后，以便来自所有来源（受信任 + 项目）的 PATH/GIT_DIR/GIT_WORK_TREE 被应用。getSystemContext 被记忆；startDeferredPrefetches 中的 prefetchSystemContextIfSafe 调用变为缓存命中。来自 await getIsGit() 的微任务在 getCommands 的 Promise.all await 处排空。信任在 -p 模式下是隐含的（与 prefetchSystemContextIfSafe 的门控相同）。
       void getSystemContext();
@@ -1822,13 +1873,13 @@ async function run(): Promise<CommanderCommand> {
       // 现在启动 ensureModelStringsInitialized —— 对于 Bedrock，这会触发一个 100-200ms 的配置文件获取，该获取之前在 print.ts:739 处被串行等待。updateBedrockModelStrings 被 sequential() 包装，因此 await 会加入到飞行中的获取。非 Bedrock 是同步提前返回（零成本）。
       void ensureModelStringsInitialized();
     }
-
+console.warn(chalk.yellow('getIsNonInteractiveSession??'));
     // 应用 --name：仅缓存，以便在会话 ID 通过 --continue/--resume 最终确定之前不会创建孤立文件。materializeSessionFile 在第一条用户消息时持久化；REPL 的 useTerminalTitle 通过 getCurrentSessionTitle 读取它。
     const sessionNameArg = options.name?.trim();
     if (sessionNameArg) {
       cacheSessionTitle(sessionNameArg);
     }
-
+console.warn(chalk.yellow('sessionNameArg???'));
     // Ant 模型别名（capybara-fast 等）通过 tengu_ant_model_override GrowthBook 标志解析。_CACHED_MAY_BE_STALE 同步读取磁盘；磁盘由即发即弃的写入填充。在冷缓存时，parseUserSpecifiedModel 返回未解析的别名，API 返回 404，-p 在异步写入落地前退出 —— 新 pod 上的崩溃循环。在此处等待 init 会填充 _CACHED_MAY_BE_STALE 现在首先检查的内存有效负载映射。门控使得热路径保持非阻塞：
     //  - 通过 --model 或 ANTHROPIC_MODEL 显式指定模型（两者都用于别名解析）
     //  - 无环境变量覆盖（它会在 _CACHED_MAY_BE_STALE 访问磁盘之前短路）
@@ -1837,7 +1888,7 @@ async function run(): Promise<CommanderCommand> {
     if ("external" === 'ant' && explicitModel && explicitModel !== 'default' && !hasGrowthBookEnvOverride('tengu_ant_model_override') && getGlobalConfig().cachedGrowthBookFeatures?.['tengu_ant_model_override'] == null) {
       await initializeGrowthBook();
     }
-
+console.warn(chalk.yellow('tengu_ant_model_override???'));
     // 特殊处理默认模型，使用 null 关键字
     // 注意：模型解析在 setup() 之后发生，以确保在 AWS 认证之前建立信任
     const userSpecifiedModel = options.model === 'default' ? getDefaultMainLoopModel() : options.model;
@@ -1848,10 +1899,13 @@ async function run(): Promise<CommanderCommand> {
     logForDebugging('[STARTUP] 正在加载命令和代理...');
     const commandsStart = Date.now();
     // 汇合在 setup() 之前启动的 promise（如果 worktreeEnabled 门控了早期启动，则重新开始）。两者都根据工作目录进行记忆。
+    require('fs').writeFileSync('d:/trace.log', `BEFORE Promise.all commands at ${Date.now()}\n`, { flag: 'a' });
+    require('fs').writeFileSync('d:/init_debug.log', `BEFORE Promise.all commands at ${Date.now()}\n`, { flag: 'a' });
     const [commands, agentDefinitionsResult] = await Promise.all([commandsPromise ?? getCommands(currentCwd), agentDefsPromise ?? getAgentDefinitionsWithOverrides(currentCwd)]);
+    require('fs').writeFileSync('d:/init_debug.log', `AFTER Promise.all commands at ${Date.now()}\n`, { flag: 'a' });
     logForDebugging(`[STARTUP] 命令和代理加载完成，耗时 ${Date.now() - commandsStart}ms`);
     profileCheckpoint('action_commands_loaded');
-
+console.warn(chalk.yellow('action_commands_loaded???'));
     // 如果通过 --agents 标志提供了 CLI 代理，则进行解析
     let cliAgents: typeof agentDefinitionsResult.activeAgents = [];
     if (agentsJson) {
@@ -1864,7 +1918,7 @@ async function run(): Promise<CommanderCommand> {
         logError(error);
       }
     }
-
+console.warn(chalk.yellow('agentsJson???'));
     // 将 CLI 代理与现有代理合并
     const allAgents = [...agentDefinitionsResult.allAgents, ...cliAgents];
     const agentDefinitions = {
@@ -1925,7 +1979,7 @@ async function run(): Promise<CommanderCommand> {
       effectiveModel = parseUserSpecifiedModel(mainThreadAgentDefinition.model);
     }
     setMainLoopModelOverride(effectiveModel);
-
+console.warn(chalk.yellow('setMainLoopModelOverride???'));
     // 计算用于钩子的已解析模型（使用启动时用户指定的模型）
     setInitialMainLoopModel(getUserSpecifiedModelSetting() || null);
     const initialMainLoopModel = getInitialMainLoopModel();
@@ -2016,29 +2070,38 @@ async function run(): Promise<CommanderCommand> {
     }
 
     // Ink 根节点仅交互式会话需要 — Ink 构造函数中的 patchConsole 会在无头模式下吞噬控制台输出。
+    try { require('fs').writeFileSync('d:/trace.txt', 'BEFORE_NONINTERACTIVE_CHECK\n', {flag:'a'}); } catch(e) {}
+    try { require('fs').writeFileSync('d:/trace.txt', 'BEFORE_RENDER\n', {flag:'a'}); } catch(e) {}
     let root!: Root;
     let getFpsMetrics!: () => FpsMetrics | undefined;
     let stats!: StatsStore;
 
     // 在加载命令后显示设置屏幕
     if (!isNonInteractiveSession) {
+      try { require('fs').writeFileSync('d:/trace.txt', 'BEFORE_GET_RENDER_CTX\n', {flag:'a'}); } catch(e) {}
       const ctx = getRenderContext(false);
+      try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_GET_RENDER_CTX\n', {flag:'a'}); } catch(e) {}
       getFpsMetrics = ctx.getFpsMetrics;
       stats = ctx.stats;
+      try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_RENDER_CTX\n', {flag:'a'}); } catch(e) {}
       // 在 Ink 挂载之前安装 asciicast 录像机（仅限 ant，通过 CLAUDE_CODE_TERMINAL_RECORDING=1 选择加入）
       if ("external" === 'ant') {
         installAsciicastRecorder();
       }
+      try { require('fs').writeFileSync('d:/trace.txt', 'BEFORE_CREATEROOT\n', {flag:'a'}); } catch(e) {}
       const {
         createRoot
       } = await import('./ink.js');
-      
+      try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_IMPORT_INK\n', {flag:'a'}); } catch(e) {}
+
       // 使用 Promise 链而不是 await 来绕过潜在的 Bun await 错误
       await new Promise<void>((resolve, reject) => {
         createRoot(ctx.renderOptions).then((result) => {
+          try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_CREATEROOT\n', {flag:'a'}); } catch(e) {}
           root = result;
           resolve();
         }).catch((err) => {
+          try { require('fs').writeFileSync('d:/trace.txt', 'CREATEROOT_ERR\n', {flag:'a'}); } catch(e2) {}
           reject(err);
         });
       });
@@ -2052,6 +2115,7 @@ async function run(): Promise<CommanderCommand> {
       const setupScreensStart = Date.now();
       const onboardingShown = await showSetupScreens(root, permissionMode, allowDangerouslySkipPermissions, commands, enableClaudeInChrome, devChannels);
       logForDebugging(`[STARTUP] showSetupScreens() 完成，耗时 ${Date.now() - setupScreensStart}ms`);
+      try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_SETUP_SCREENS\n', {flag:'a'}); } catch(e) {}
 
       // 现在信任已建立且 GrowthBook 拥有认证标头，解析 --remote-control / --rc 授权门控。
       if (feature('BRIDGE_MODE') && remoteControlOption !== undefined) {
@@ -2173,7 +2237,7 @@ async function run(): Promise<CommanderCommand> {
     if (!isNonInteractiveSession) {
       void refreshExampleCommands(); // 预取示例命令（运行 git log，无 API 调用）
     }
-
+console.warn(chalk.yellow('isNonInteractiveSession???'));
     // 解析 MCP 配置（提前启动，与 setup/信任对话框工作重叠）
     const {
       servers: existingMcpConfigs
@@ -2299,7 +2363,7 @@ async function run(): Promise<CommanderCommand> {
       thinkingConfig,
       assistantActivationPath: feature('KAIROS') && kairosEnabled ? assistantModule?.getAssistantActivationPath() : undefined
     });
-
+console.warn(chalk.yellow('logTenguInit???'));
     // 在初始化时记录一次上下文指标
     void logContextMetrics(regularMcpConfigs, toolPermissionContext);
     void logPermissionContextForAnts(null, 'initialization');
@@ -2809,7 +2873,7 @@ profileCheckpoint('after_connectMcp_claudeai');
         }
       })
     };
-
+console.warn(chalk.yellow('sessionConfig???'));
 
 // 用于 processResumedConversation 调用的共享上下文
 const resumeContext = {
@@ -3565,7 +3629,7 @@ if (feature('KAIROS') || feature('KAIROS_CHANNELS')) {
   program.addOption(new Option('--channels <servers...>', '其频道通知（入站推送）应注册此会话的 MCP 服务器。以空格分隔的服务器名称。').hideHelp());
   program.addOption(new Option('--dangerously-load-development-channels <servers...>', '加载不在批准白名单上的频道服务器。仅用于本地频道开发。启动时会显示确认对话框。').hideHelp());
 }
-
+console.warn(chalk.yellow('KAIROSKAIROS_CHANNELS???'));
 // 队友身份选项（由领导者在生成 tmux 队友时设置）
 // 这些选项替代 CLAUDE_CODE_* 环境变量
 program.addOption(new Option('--agent-id <id>', '队友代理 ID').hideHelp());
@@ -3607,7 +3671,7 @@ if (isPrintMode && !isCcUrl) {
   profileCheckpoint('run_after_parse');
   return program;
 }
-
+console.warn(chalk.yellow('isPrintMode???'));
 // claude mcp
 
 const mcp = program.command('mcp').description('配置和管理 MCP 服务器').configureHelp(createSortedHelpConfig()).enablePositionalOptions();
@@ -3922,7 +3986,7 @@ marketplaceCmd.command('update [name]').description('从源更新市场 — 如�
   } = await import('./cli/handlers/plugins.js');
   await marketplaceUpdateHandler(name, options);
 });
-
+console.warn(chalk.yellow('pluginCmd.command???'));
 // 插件安装命令
 pluginCmd.command('install <plugin>').alias('i').description('从可用市场安装插件（使用 plugin@marketplace 指定特定市场）').option('-s, --scope <scope>', '安装范围：user、project 或 local', 'user').addOption(coworkOption()).action(async (plugin: string, options: {
   scope?: string;
@@ -3945,7 +4009,7 @@ pluginCmd.command('uninstall <plugin>').alias('remove').alias('rm').description(
   } = await import('./cli/handlers/plugins.js');
   await pluginUninstallHandler(plugin, options);
 });
-
+console.warn(chalk.yellow('pluginCmd.command2???'));
 // 插件启用命令
 pluginCmd.command('enable <plugin>').description('启用已禁用的插件').option('-s, --scope <scope>', `安装范围：${VALID_INSTALLABLE_SCOPES.join(', ')}（默认：自动检测）`).addOption(coworkOption()).action(async (plugin: string, options: {
   scope?: string;
@@ -3980,7 +4044,7 @@ pluginCmd.command('update <plugin>').description('将插件更新到最新版本
   await pluginUpdateHandler(plugin, options);
 });
 // END ANT-ONLY
-
+console.warn(chalk.yellow('pluginCmd.command500???'));
 // 设置令牌命令
 program.command('setup-token').description('设置长期有效的认证令牌（需要 Claude 订阅）').action(async () => {
   const [{
@@ -4069,7 +4133,7 @@ program.command('doctor').description('检查 Claude Code 自动更新程序的�
   const root = await createRoot(getBaseRenderOptions(false));
   await doctorHandler(root);
 });
-
+console.warn(chalk.yellow('doctor.doctor???'));
 // claude update
 //
 // 对于符合 SemVer 的版本控制（包含构建元数据 X.X.X+SHA）：
@@ -4082,7 +4146,7 @@ program.command('update').alias('upgrade').description('检查更新并在可用
   } = await import('./cli/update.js');
   await update();
 });
-
+console.warn(chalk.yellow('update.upgrade???'));
 // claude up — 运行项目的 CLAUDE.md 中 "# claude up" 的设置指令。
 if ("external" === 'ant') {
   program.command('up').description('[仅 ANT] 使用最近 CLAUDE.md 的 "# claude up" 部分初始化或升级本地开发环境').action(async () => {
@@ -4092,7 +4156,7 @@ if ("external" === 'ant') {
 	await up();
   });
 }
-
+console.warn(chalk.yellow('update.external???'));
 // claude rollback（仅 ant）
 // 回滚到之前的版本
 if ("external" === 'ant') {
@@ -4117,7 +4181,7 @@ program.command('install [target]').description('安装 Claude Code 原生构建
   } = await import('./cli/handlers/util.js');
   await installHandler(target, options);
 });
-
+console.warn(chalk.yellow('即使已安装也强制安装???'));
 // 仅 ant 命令
 if ("external" === 'ant') {
   const validateLogId = (value: string) => {
@@ -4223,9 +4287,10 @@ profileCheckpoint('run_after_parse');
 
 // 记录最终检查点以计算总时间
 profileCheckpoint('main_after_run');
-
+console.warn(chalk.yellow('main_after_run???'));
 // 将启动性能记录到 Statsig（采样）并在启用时输出详细报告
 profileReport();
+console.warn(chalk.yellow('program???'));
 return program;
 }
 async function logTenguInit({

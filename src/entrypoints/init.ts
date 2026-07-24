@@ -59,13 +59,18 @@ export const init = memoize(async (): Promise<void> => {
   const initStartTime = Date.now()
   logForDiagnosticsNoPII('info', 'init_started')
   profileCheckpoint('init_function_start')
-  require('fs').writeFileSync('d:/init_debug.log', `init_started at ${Date.now()}\n`, { flag: 'a' });
+  const log = (msg: string) => {
+    const t = Date.now();
+    require('fs').writeFileSync('d:/init_debug.log', `[${t - initStartTime}ms] ${msg} at ${t}\n`, { flag: 'a' });
+    console.error(`[INIT-DEBUG] [${t - initStartTime}ms] ${msg}`);
+  };
+  log('init STARTED');
 
   // 验证配置是否有效并启用配置系统
   try {
     const configsStart = Date.now()
     enableConfigs()
-    require('fs').writeFileSync('d:/init_debug.log', `enableConfigs done at ${Date.now()}\n`, { flag: 'a' });
+    log('enableConfigs DONE')
     logForDiagnosticsNoPII('info', 'init_configs_enabled', {
       duration_ms: Date.now() - configsStart,
     })
@@ -74,16 +79,22 @@ export const init = memoize(async (): Promise<void> => {
     // 在信任对话框之前仅应用安全的环境变量
     // 完整的环境变量在建立信任后应用
     const envVarsStart = Date.now()
+    log('applySafeConfigEnvironmentVariables START')
     applySafeConfigEnvironmentVariables()
+    log('applySafeConfigEnvironmentVariables DONE')
 
     // 尽早将 settings.json 中的 NODE_EXTRA_CA_CERTS 应用到 process.env，
     // 在任何 TLS 连接之前。Bun 在启动时通过 BoringSSL 缓存 TLS 证书存储，
     // 因此这必须在第一次 TLS 握手之前完成。
+    log('applyExtraCACertsFromConfig START')
     applyExtraCACertsFromConfig()
+    log('applyExtraCACertsFromConfig DONE')
 
     // 初始化 Sentry（如果配置了 SENTRY_DSN）— 必须在 proxy/CA 配置之后，
     // 这样 Sentry 的网络请求会使用正确的代理和 CA 证书。
+    log('initSentry START')
     initSentry()
+    log('initSentry DONE')
 
     require('fs').writeFileSync('d:/init_debug.log', `applySafeConfigEnvironmentVariables done at ${Date.now()}\n`, { flag: 'a' });
     logForDiagnosticsNoPII('info', 'init_safe_env_vars_applied', {
@@ -92,7 +103,9 @@ export const init = memoize(async (): Promise<void> => {
     profileCheckpoint('init_safe_env_vars_applied')
 
     // 确保退出时刷新所有内容
+    log('setupGracefulShutdown START')
     setupGracefulShutdown()
+    log('setupGracefulShutdown DONE')
     profileCheckpoint('init_after_graceful_shutdown')
 
     // 初始化第一方事件日志记录（没有安全问题，但推迟到启动后以避免
@@ -139,21 +152,15 @@ export const init = memoize(async (): Promise<void> => {
 
     // 配置全局 mTLS 设置
     const mtlsStart = Date.now()
-    require('fs').writeFileSync('d:/init_debug.log', `configureGlobalMTLS starting at ${Date.now()}\n`, { flag: 'a' });
-    logForDebugging('[init] configureGlobalMTLS starting')
+    log('configureGlobalMTLS START')
     configureGlobalMTLS()
-    require('fs').writeFileSync('d:/init_debug.log', `configureGlobalMTLS done at ${Date.now()}\n`, { flag: 'a' });
-    logForDiagnosticsNoPII('info', 'init_mtls_configured', {
-      duration_ms: Date.now() - mtlsStart,
-    })
-    logForDebugging('[init] configureGlobalMTLS complete')
+    log('configureGlobalMTLS DONE')
 
     // 配置全局 HTTP 代理器（proxy 和/或 mTLS）
     const proxyStart = Date.now()
-    logForDebugging('[init] configureGlobalAgents starting')
-    require('fs').writeFileSync('d:/init_debug.log', `configureGlobalAgents starting at ${Date.now()}\n`, { flag: 'a' });
+    log('configureGlobalAgents START')
     configureGlobalAgents()
-    require('fs').writeFileSync('d:/init_debug.log', `configureGlobalAgents done at ${Date.now()}\n`, { flag: 'a' });
+    log('configureGlobalAgents DONE')
     logForDiagnosticsNoPII('info', 'init_proxy_configured', {
       duration_ms: Date.now() - proxyStart,
     })
@@ -164,7 +171,9 @@ export const init = memoize(async (): Promise<void> => {
     // 与 API 请求前约 100ms 的操作处理器工作重叠。在 CA 证书 + 代理配置之后，
     // 以便预热连接使用正确的传输。即发即弃；对于代理/mTLS/unix/云提供商
     // 会跳过，因为 SDK 的调度器不会重用全局连接池。
+    log('preconnectAnthropicApi START')
     preconnectAnthropicApi()
+    log('preconnectAnthropicApi DONE')
 
     // CCR upstreamproxy：启动本地 CONNECT 中继，以便代理子进程
     // 可以通过凭据注入访问组织配置的上游。受 CLAUDE_CODE_REMOTE + GrowthBook

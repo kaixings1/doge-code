@@ -1,0 +1,18 @@
+{
+  "markdown": "```\n404: Not Found\n```",
+  "metadata": {
+    "color-scheme": "light dark",
+    "scrapeId": "019f64d7-782c-71e0-baea-da81b171f914",
+    "sourceURL": "https://raw.githubusercontent.com/akto-api-security/awesome-api-security/main/README.md",
+    "url": "https://raw.githubusercontent.com/akto-api-security/awesome-api-security/main/README.md",
+    "statusCode": 404,
+    "error": "Not Found",
+    "contentType": "text/plain; charset=utf-8",
+    "timezone": "America/New_York",
+    "proxyUsed": "basic",
+    "cacheState": "miss",
+    "indexId": "4bc4d49f-f769-4946-8a96-8b9d5acda395",
+    "creditsUsed": 1,
+    "concurrencyLimited": false
+  }
+}

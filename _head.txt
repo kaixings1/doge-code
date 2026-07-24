@@ -1,0 +1,77 @@
+2026-07-20T09:29:41.894Z [DEBUG] MDM settings load completed in 13ms
+2026-07-20T09:29:41.900Z [DEBUG] [readCustomApiStorage] activeName: OpenRouter
+2026-07-20T09:29:41.900Z [DEBUG] [readCustomApiStorage] ✅ using project preset: OpenRouter
+2026-07-20T09:29:41.923Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-07-20T09:29:41.928Z [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-07-20T09:29:41.931Z [DEBUG] [init] configureGlobalMTLS starting
+2026-07-20T09:29:41.931Z [DEBUG] [init] configureGlobalMTLS complete
+2026-07-20T09:29:41.931Z [DEBUG] [init] configureGlobalAgents starting
+2026-07-20T09:29:41.932Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-20T09:29:41.933Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-20T09:29:41.933Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-20T09:29:41.934Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-20T09:29:41.934Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-20T09:29:41.992Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-07-20T09:29:42.002Z [DEBUG] Error log sink initialized
+2026-07-20T09:29:42.018Z [DEBUG] [Claude in Chrome] Found chrome profiles: Default
+2026-07-20T09:29:42.021Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["d:\\RemoteScreen"]
+2026-07-20T09:29:42.022Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["D:\\OpenSourceGit\\Chat2API"]
+2026-07-20T09:29:42.022Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["D:\\doge-codeClaw0Token"]
+2026-07-20T09:29:42.022Z [DEBUG] [STARTUP] 正在加载 MCP 配置...
+2026-07-20T09:29:42.055Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=true, result=true
+2026-07-20T09:29:42.056Z [DEBUG] Git remote URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T09:29:42.056Z [DEBUG] Parsed repository: github.com/kaixings1/doge-code from URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T09:29:42.059Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-07-20T09:29:42.059Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-07-20T09:29:42.061Z [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-07-20T09:29:42.061Z [DEBUG] [Claude in Chrome] Extension not found in any browser
+2026-07-20T09:30:06.978Z [DEBUG] MDM settings load completed in 23ms
+2026-07-20T09:30:06.983Z [DEBUG] [readCustomApiStorage] activeName: OpenRouter
+2026-07-20T09:30:06.984Z [DEBUG] [readCustomApiStorage] ✅ using project preset: OpenRouter
+2026-07-20T09:30:06.999Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-07-20T09:30:07.005Z [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-07-20T09:30:07.007Z [DEBUG] [init] configureGlobalMTLS starting
+2026-07-20T09:30:07.008Z [DEBUG] [init] configureGlobalMTLS complete
+2026-07-20T09:30:07.008Z [DEBUG] [init] configureGlobalAgents starting
+2026-07-20T09:30:07.008Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-20T09:30:07.009Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-20T09:30:07.009Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-20T09:30:07.009Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-20T09:30:07.010Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-20T09:30:07.058Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-07-20T09:30:07.066Z [DEBUG] Error log sink initialized
+2026-07-20T09:30:07.079Z [DEBUG] [Claude in Chrome] Found chrome profiles: Default
+2026-07-20T09:30:07.081Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["d:\\RemoteScreen"]
+2026-07-20T09:30:07.081Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["D:\\OpenSourceGit\\Chat2API"]
+2026-07-20T09:30:07.082Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["D:\\doge-codeClaw0Token"]
+2026-07-20T09:30:07.082Z [DEBUG] [STARTUP] 正在加载 MCP 配置...
+2026-07-20T09:30:07.083Z [DEBUG] [STARTUP] 正在运行 setup()...
+2026-07-20T09:30:07.084Z [DEBUG] Git remote URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T09:30:07.084Z [DEBUG] Parsed repository: github.com/kaixings1/doge-code from URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T09:30:07.093Z [DEBUG] Loading skills from: managed=C:\Program Files\ClaudeCode\.claude\skills, user=C:\Users\Administrator\.doge\skills, project=[D:\doge-code\.claude\skills]
+2026-07-20T09:30:07.094Z [DEBUG] [bare] Skipping skill dir discovery (no --add-dir)
+2026-07-20T09:30:07.097Z [DEBUG] [DEBUG] loading project dir: D:\doge-code\.claude\agents
+2026-07-20T09:30:07.098Z [DEBUG] Error log sink initialized
+2026-07-20T09:30:07.109Z [DEBUG] [STARTUP] setup() 完成，耗时 26ms
+2026-07-20T09:30:07.109Z [DEBUG] [STARTUP] 正在加载命令和代理...
+2026-07-20T09:30:07.109Z [DEBUG] getSkills 返回：0 个技能目录命令，0 个插件技能，35 个内置技能，0 个内置插件技能
+2026-07-20T09:30:07.109Z [DEBUG] === [DEBUG] plan 开头的技能:
+2026-07-20T09:30:07.112Z [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-07-20T09:30:07.112Z [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\agents: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\agents'
+2026-07-20T09:30:07.113Z [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\agents) returned 0 files
+2026-07-20T09:30:07.113Z [DEBUG] [Claude in Chrome] Extension not found in any browser
+2026-07-20T09:30:07.143Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-verifier.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.153Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-ui-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.157Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-ai-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.166Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-executor.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.167Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-ui-auditor.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.171Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-eval-planner.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.175Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-roadmapper.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.175Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-eval-auditor.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.177Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-research-synthesizer.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.177Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-domain-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.181Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-project-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.183Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-doc-writer.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.184Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-planner.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.185Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-doc-verifier.md: YAML Parse error: Unexpected token
+2026-07-20T09:30:07.190Z [WARN] Failed to parse YAML frontmatte

@@ -11,6 +11,16 @@ function isAgentTeamsFlagSet(): boolean {
   return process.argv.includes('--agent-teams')
 }
 
+// Guard against recursion during tool isEnabled() checks.
+// The following chain can cause infinite recursion:
+//   getAllBaseTools() → isAgentSwarmsEnabled() → getFeatureValue_CACHED_MAY_BE_STALE()
+//     → getGlobalConfig() → [context initialization] → getAllBaseTools() → ...
+// We use two guards:
+//   1. inProgress flag: prevents re-entry during the same call stack
+//   2. cached result: returns immediately on subsequent calls
+let cachedAgentSwarmsEnabled: boolean | null = null
+let isAgentSwarmsInProgress = false
+
 /**
  * Centralized runtime check for agent teams/teammate features.
  * This is the single gate that should be checked everywhere teammates
@@ -22,23 +32,49 @@ function isAgentTeamsFlagSet(): boolean {
  * 2. GrowthBook gate 'tengu_amber_flint' enabled (killswitch)
  */
 export function isAgentSwarmsEnabled(): boolean {
-  // Ant: always on
-  if (process.env.USER_TYPE === 'ant') {
+  // Return cached result immediately to prevent recursive GrowthBook calls
+  if (cachedAgentSwarmsEnabled !== null) {
+    return cachedAgentSwarmsEnabled
+  }
+
+  // Guard against re-entry during tool initialization
+  if (isAgentSwarmsInProgress) {
+    return false
+  }
+  isAgentSwarmsInProgress = true
+
+  try {
+    // Ant: always on
+    if (process.env.USER_TYPE === 'ant') {
+      cachedAgentSwarmsEnabled = true
+      return true
+    }
+
+    // External: require opt-in via env var or --agent-teams flag
+    if (
+      !isEnvTruthy(process.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS) &&
+      !isAgentTeamsFlagSet()
+    ) {
+      cachedAgentSwarmsEnabled = false
+      return false
+    }
+
+    // Set cache to false BEFORE calling getFeatureValue_CACHED_MAY_BE_STALE
+    // to prevent infinite recursion: getFeatureValue → refreshGrowthBookAfterAuthChange
+    // → refreshPolicyLimits → isAgentSwarmsEnabled (recursive)
+    cachedAgentSwarmsEnabled = false
+
+    const featureValue = getFeatureValue_CACHED_MAY_BE_STALE('tengu_amber_flint', true)
+
+    if (!featureValue) {
+      cachedAgentSwarmsEnabled = false
+      return false
+    }
+
+    cachedAgentSwarmsEnabled = true
     return true
+  } finally {
+    // Always reset inProgress guard, even on errors or re-entrance detection
+    isAgentSwarmsInProgress = false
   }
-
-  // External: require opt-in via env var or --agent-teams flag
-  if (
-    !isEnvTruthy(process.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS) &&
-    !isAgentTeamsFlagSet()
-  ) {
-    return false
-  }
-
-  // Killswitch — always respected for external users
-  if (!getFeatureValue_CACHED_MAY_BE_STALE('tengu_amber_flint', true)) {
-    return false
-  }
-
-  return true
 }
