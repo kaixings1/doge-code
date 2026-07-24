@@ -1,3 +1,0 @@
-#!/bin/bash
-
-/bin/kill "`/bin/busybox.exe ps -ef | /bin/busybox.exe grep " XWin " | /bin/busybox.exe grep " ${DISPLAY%%.*}" | /bin/busybox.exe awk '{print $1}'`"

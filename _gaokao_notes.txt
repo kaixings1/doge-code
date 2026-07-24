@@ -1,0 +1,1 @@
+Continue='SilentlyContinue'; =Get-Content 'D:\doge-code\.github\gaokao-notes-page1.json' -Raw | ConvertFrom-Json; .items | ForEach-Object { .full_name + '|' + .size + 'KB|' + .stargazers_count + '*|' + .description }

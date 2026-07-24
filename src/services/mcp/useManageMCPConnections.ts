@@ -771,6 +771,7 @@ export function useManageMCPConnections(
   const sessionId = getSessionId()
   useEffect(() => {
     async function initializeServersAsPending() {
+      // *** INIT RETURN MARKER ***
       const { servers: existingConfigs, errors: mcpErrors } = isStrictMcpConfig
         ? { servers: {}, errors: [] }
         : await getClaudeCodeMcpConfigs(dynamicMcpConfig)
@@ -875,6 +876,7 @@ export function useManageMCPConnections(
       // Phase 1: Load Claude Code configs. Plugin MCP servers that duplicate a
       // --mcp-config entry or a claude.ai connector are suppressed here so they
       // don't connect alongside the connector in Phase 2.
+      // *** LOADANDRETURN MARKER ***
       const { servers: claudeCodeConfigs, errors: mcpErrors } =
         isStrictMcpConfig
           ? { servers: {}, errors: [] }

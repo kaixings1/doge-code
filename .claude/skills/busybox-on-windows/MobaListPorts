@@ -1,3 +1,0 @@
-#!/bin/bash.exe
-MyArgs=(); for i in "$@"; do MyArgs+=( "`/bin/cygpath.exe -a -w "$i" 2>/dev/null`" ); done
-/bin/MobaBox.exe MobaSendMsg MobaXterm -listports "${MyArgs[@]}"

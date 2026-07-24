@@ -1,0 +1,573 @@
+2026-07-20T12:05:11.238Z [DEBUG] MDM settings load completed in 24ms
+2026-07-20T12:05:11.243Z [DEBUG] [readCustomApiStorage] activeName: OpenRouter
+2026-07-20T12:05:11.243Z [DEBUG] [readCustomApiStorage] ✅ using project preset: OpenRouter
+2026-07-20T12:05:11.259Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-07-20T12:05:11.264Z [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-07-20T12:05:11.266Z [DEBUG] [init] configureGlobalMTLS starting
+2026-07-20T12:05:11.266Z [DEBUG] [init] configureGlobalMTLS complete
+2026-07-20T12:05:11.271Z [DEBUG] [init] configureGlobalAgents starting
+2026-07-20T12:05:11.272Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-20T12:05:11.273Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-20T12:05:11.273Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-20T12:05:11.273Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-20T12:05:11.274Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-20T12:05:11.316Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-07-20T12:05:11.318Z [DEBUG] Error log sink initialized
+2026-07-20T12:05:11.328Z [DEBUG] [STARTUP] 正在加载 MCP 配置...
+2026-07-20T12:05:11.330Z [DEBUG] [STARTUP] 正在运行 setup()...
+2026-07-20T12:05:11.335Z [DEBUG] Loading skills from: managed=C:\Program Files\ClaudeCode\.claude\skills, user=C:\Users\Administrator\.doge\skills, project=[D:\doge-code\.claude\skills]
+2026-07-20T12:05:11.335Z [DEBUG] [bare] Skipping skill dir discovery (no --add-dir)
+2026-07-20T12:05:11.337Z [DEBUG] [DEBUG] loading project dir: D:\doge-code\.claude\agents
+2026-07-20T12:05:11.339Z [DEBUG] Error log sink initialized
+2026-07-20T12:05:11.348Z [DEBUG] [STARTUP] setup() 完成，耗时 18ms
+2026-07-20T12:05:11.348Z [DEBUG] [STARTUP] 正在加载命令和代理...
+2026-07-20T12:05:11.349Z [DEBUG] getSkills 返回：0 个技能目录命令，0 个插件技能，35 个内置技能，0 个内置插件技能
+2026-07-20T12:05:11.349Z [DEBUG] === [DEBUG] plan 开头的技能:
+2026-07-20T12:05:11.354Z [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\agents: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\agents'
+2026-07-20T12:05:11.358Z [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\agents) returned 0 files
+2026-07-20T12:05:11.359Z [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-07-20T12:05:11.360Z [DEBUG] Git remote URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T12:05:11.360Z [DEBUG] Parsed repository: github.com/kaixings1/doge-code from URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T12:05:11.361Z [DEBUG] [Claude in Chrome] Extension not found in any browser
+2026-07-20T12:05:11.378Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\agent-creator.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.379Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\plugin-validator.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.383Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\skill-reviewer.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.388Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-pattern-mapper.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.388Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-phase-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.389Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\engineering\engineering-embedded-firmware-engineer.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.389Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-executor.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.390Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-eval-planner.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.390Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-eval-auditor.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.390Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-domain-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.390Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-doc-writer.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.390Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-doc-verifier.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.391Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-debugger.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.392Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-verifier.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.392Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-debug-session-manager.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.392Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-roadmapper.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.392Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-codebase-mapper.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.392Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-ui-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.392Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-research-synthesizer.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.393Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-project-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.393Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-ui-auditor.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.393Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-planner.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.393Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-ai-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.393Z [DEBUG] [DEBUG] loadMarkdownFiles(D:\doge-code\.claude\agents) returned 757 files
+2026-07-20T12:05:11.404Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-07-20T12:05:11.405Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-07-20T12:05:11.405Z [DEBUG] Total plugin agents loaded: 0
+2026-07-20T12:05:11.407Z [DEBUG] [STARTUP] 命令和代理加载完成，耗时 58ms
+2026-07-20T12:05:11.410Z [DEBUG] [STARTUP] 正在运行 showSetupScreens()...
+2026-07-20T12:05:11.514Z [DEBUG] [readCustomApiStorage] activeName: OpenRouter
+2026-07-20T12:05:11.514Z [DEBUG] [readCustomApiStorage] ✅ using project preset: OpenRouter
+2026-07-20T12:05:11.514Z [DEBUG] Cleared CA certificates cache
+2026-07-20T12:05:11.514Z [DEBUG] Cleared mTLS configuration cache
+2026-07-20T12:05:11.514Z [DEBUG] Cleared proxy agent cache
+2026-07-20T12:05:11.515Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-20T12:05:11.515Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-20T12:05:11.515Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-20T12:05:11.515Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-20T12:05:11.515Z [DEBUG] [STARTUP] showSetupScreens() 完成，耗时 105ms
+2026-07-20T12:05:11.516Z [DEBUG] 跳过启动预取，上次运行于 1784549112 秒前
+2026-07-20T12:05:11.516Z [DEBUG] [STARTUP] MCP 配置在 0ms 内解析完成（在 +187ms 处等待）
+2026-07-20T12:05:11.519Z [DEBUG] [Reconnection] computeInitialTeamContext: No teammate context set (not a teammate)
+2026-07-20T12:05:11.527Z [DEBUG] Preserving file permissions: 100666
+2026-07-20T12:05:11.527Z [DEBUG] Writing to temp file: C:\Users\Administrator\.doge\.claude.json.tmp.29636.1784549111527
+2026-07-20T12:05:11.528Z [DEBUG] Temp file written successfully, size: 57423 bytes
+2026-07-20T12:05:11.529Z [DEBUG] Applied original permissions to temp file
+2026-07-20T12:05:11.529Z [DEBUG] Renaming C:\Users\Administrator\.doge\.claude.json.tmp.29636.1784549111527 to C:\Users\Administrator\.doge\.claude.json
+2026-07-20T12:05:11.529Z [DEBUG] File C:\Users\Administrator\.doge\.claude.json written atomically
+2026-07-20T12:05:11.530Z [DEBUG] Path D:\doge-code already tracked for repo kaixings1/doge-code
+2026-07-20T12:05:11.676Z [DEBUG] [keybindings] KeybindingSetup initialized with 120 bindings, 0 warnings
+2026-07-20T12:05:11.708Z [DEBUG] [TeammateModeSnapshot] Captured from config: auto
+2026-07-20T12:05:11.708Z [DEBUG] [BackendRegistry] isInProcessEnabled: true (mode=auto, insideTmux=false, inITerm2=false)
+2026-07-20T12:05:11.724Z [DEBUG] [BackendRegistry] isInProcessEnabled: true (mode=auto, insideTmux=false, inITerm2=false)
+2026-07-20T12:05:11.747Z [DEBUG] [readCustomApiStorage] activeName: OpenRouter
+2026-07-20T12:05:11.748Z [DEBUG] [readCustomApiStorage] ✅ using project preset: OpenRouter
+2026-07-20T12:05:11.749Z [DEBUG] [DOGE] Using fallback status-line script: C:\Users\Administrator\.doge\status-line.cjs
+2026-07-20T12:05:11.754Z [DEBUG] [FileIndex] getProjectFiles called, respectGitignore=true
+2026-07-20T12:05:11.755Z [DEBUG] [FileIndex] getFilesUsingGit called
+2026-07-20T12:05:11.757Z [DEBUG] [DEBUG] loading project dir: D:\doge-code\.claude\commands
+2026-07-20T12:05:11.757Z [DEBUG] [DEBUG] loading project dir: D:\doge-code\.claude\agents
+2026-07-20T12:05:11.758Z [DEBUG] [DEBUG] loading project dir: D:\doge-code\.claude\skills
+2026-07-20T12:05:11.758Z [DEBUG] [DEBUG] loading project dir: D:\doge-code\.claude\workflows
+2026-07-20T12:05:11.764Z [DEBUG] [claudeai-mcp] No access token
+2026-07-20T12:05:11.765Z [DEBUG] [keybindings] Skipping file watcher - user customization disabled
+2026-07-20T12:05:11.766Z [DEBUG] [REPL:挂载] REPL 已挂载, disabled=false
+2026-07-20T12:05:11.768Z [DEBUG] performStartupChecks called
+2026-07-20T12:05:11.768Z [DEBUG] Starting background plugin installations
+2026-07-20T12:05:11.779Z [DEBUG] [BackendRegistry] isInProcessEnabled: true (mode=auto, insideTmux=false, inITerm2=false)
+2026-07-20T12:05:11.799Z [DEBUG] AutoUpdaterWrapper: Installation type: development
+2026-07-20T12:05:11.800Z [DEBUG] [FileIndex] git ls-files error: The "signal" option has been renamed to "cancelSignal" instead.
+2026-07-20T12:05:11.802Z [DEBUG] Official marketplace auto-install skipped: unknown
+2026-07-20T12:05:11.803Z [DEBUG] performBackgroundPluginInstallations called
+2026-07-20T12:05:11.804Z [DEBUG] [FileIndex] git ls-files 返回 null，回退到 ripgrep
+2026-07-20T12:05:11.805Z [DEBUG] 显示市场安装失败通知
+2026-07-20T12:05:11.828Z [DEBUG] [FileIndex] cache refresh completed in 74ms
+2026-07-20T12:05:11.848Z [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\commands: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\commands'
+2026-07-20T12:05:11.848Z [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\commands) returned 0 files
+2026-07-20T12:05:11.848Z [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\agents: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\agents'
+2026-07-20T12:05:11.848Z [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\output-styles: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\output-styles'
+2026-07-20T12:05:11.848Z [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\output-styles: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\output-styles'
+2026-07-20T12:05:11.848Z [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\output-styles) returned 0 files
+2026-07-20T12:05:11.849Z [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\skills: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\skills'
+2026-07-20T12:05:11.849Z [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\workflows: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\workflows'
+2026-07-20T12:05:11.849Z [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\workflows: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\workflows'
+2026-07-20T12:05:11.849Z [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\workflows) returned 0 files
+2026-07-20T12:05:11.849Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-07-20T12:05:11.851Z [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\agents) returned 0 files
+2026-07-20T12:05:11.852Z [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\skills) returned 0 files
+2026-07-20T12:05:11.902Z [DEBUG] [DEBUG] loadMarkdownFiles(D:\doge-code\.claude\workflows) returned 0 files
+2026-07-20T12:05:11.904Z [DEBUG] Loaded 1 CLAUDE.md/rules files:
+  [Project] D:\doge-code\CLAUDE.md (18046 chars)
+2026-07-20T12:05:11.907Z [DEBUG] Registered 0 hooks from 0 plugins
+2026-07-20T12:05:11.907Z [DEBUG] Loaded plugins - Enabled: 0, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2026-07-20T12:05:11.911Z [DEBUG] [BackendRegistry] isInProcessEnabled: true (mode=auto, insideTmux=false, inITerm2=false)
+2026-07-20T12:05:11.946Z [DEBUG] XTVERSION: no reply (terminal ignored query)
+2026-07-20T12:05:11.947Z [DEBUG] Ripgrep first use test: FAILED (mode=builtin, path=B:\~BUN\root\vendor\ripgrep\x64-win32\rg.exe)
+2026-07-20T12:05:11.956Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\capture.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.956Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\autonomous.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.957Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\audit-uat.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.957Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\ui-review.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.957Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\audit-milestone.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.957Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\ui-phase.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.957Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\audit-fix.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.957Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\thread.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.957Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\ai-integration-phase.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.957Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\surface.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.958Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\add-tests.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.958Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\stats.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.958Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\spike.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.958Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\spec-phase.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.958Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\sketch.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.958Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\ship.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.958Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\settings.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.958Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\secure-phase.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.959Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\review.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.959Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\review-backlog.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.959Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\resume-work.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.959Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\quick.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.959Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\progress.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.960Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\profile-user.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.960Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\pr-branch.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.960Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\plan-review-convergence.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.960Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\plan-phase.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.960Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\phase.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.960Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\pause-work.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.960Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\ns-workflow.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.961Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\ns-review.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.961Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\ns-project.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.961Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\ns-manage.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.961Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\ns-ideate.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.961Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\ns-context.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.961Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\new-project.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.961Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\new-milestone.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.961Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\mvp-phase.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.961Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\milestone-summary.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.962Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\map-codebase.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.962Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\manager.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.962Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\ingest-docs.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.962Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\local-capability-report.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.962Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\inbox.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.962Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\import.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.962Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\help.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.962Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\writing-beats.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.963Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\health.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.963Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\graphify.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.963Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\forensics.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.963Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\fast.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.963Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\extract-learnings.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.963Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\explore.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.963Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\execute-phase.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.963Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\eval-review.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.964Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\docs-update.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.964Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\discuss-phase.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.964Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\debug.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.964Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\config.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.964Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\complete-milestone.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.964Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\code-review.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.964Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\cleanup.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.964Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\undo.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.965Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\ultraplan-phase.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.965Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\wiki-query.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.965Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\workstreams.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.965Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\workspace.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.965Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\wiki-lint.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.965Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\verify-work.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.965Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\validate-phase.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.966Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\wiki-init.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.966Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\wiki-ingest.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.966Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\commands\gsd\update.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.966Z [DEBUG] [DEBUG] loadMarkdownFiles(D:\doge-code\.claude\commands) returned 406 files
+2026-07-20T12:05:11.981Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\agent-creator.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.982Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-project-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.982Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-planner.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.983Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\skill-reviewer.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.983Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-phase-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.984Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-pattern-mapper.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.985Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-executor.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.985Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-eval-planner.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.985Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-eval-auditor.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.986Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-domain-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.986Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-doc-writer.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.986Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-doc-verifier.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.987Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-debugger.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.987Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-debug-session-manager.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.987Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-codebase-mapper.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.987Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-ai-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.988Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\engineering\engineering-embedded-firmware-engineer.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.990Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-ui-auditor.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.990Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-verifier.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.990Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-ui-researcher.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.991Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-roadmapper.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.991Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\gsd-research-synthesizer.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.991Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\agents\plugin-validator.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:11.992Z [DEBUG] [DEBUG] loadMarkdownFiles(D:\doge-code\.claude\agents) returned 757 files
+2026-07-20T12:05:12.003Z [DEBUG] Failed to follow symlink D:\doge-code\.claude\skills\algorithmic-art: ENOENT: no such file or directory, stat 'D:\doge-code\.claude\skills\algorithmic-art'
+2026-07-20T12:05:12.080Z [DEBUG] Failed to follow symlink D:\doge-code\.claude\skills\brand-guidelines: ENOENT: no such file or directory, stat 'D:\doge-code\.claude\skills\brand-guidelines'
+2026-07-20T12:05:12.097Z [DEBUG] Failed to follow symlink D:\doge-code\.claude\skills\canvas-design: ENOENT: no such file or directory, stat 'D:\doge-code\.claude\skills\canvas-design'
+2026-07-20T12:05:12.107Z [DEBUG] Failed to follow symlink D:\doge-code\.claude\skills\claude-api: ENOENT: no such file or directory, stat 'D:\doge-code\.claude\skills\claude-api'
+2026-07-20T12:05:12.146Z [DEBUG] Failed to follow symlink D:\doge-code\.claude\skills\doc-coauthoring: ENOENT: no such file or directory, stat 'D:\doge-code\.claude\skills\doc-coauthoring'
+2026-07-20T12:05:12.186Z [DEBUG] Failed to follow symlink D:\doge-code\.claude\skills\frontend-design: ENOENT: no such file or directory, stat 'D:\doge-code\.claude\skills\frontend-design'
+2026-07-20T12:05:12.237Z [DEBUG] Failed to follow symlink D:\doge-code\.claude\skills\internal-comms: ENOENT: no such file or directory, stat 'D:\doge-code\.claude\skills\internal-comms'
+2026-07-20T12:05:12.248Z [DEBUG] StatusLine [node "C:\Users\Administrator\.doge\status-line.cjs"] 完成，状态 0
+2026-07-20T12:05:12.367Z [DEBUG] Failed to follow symlink D:\doge-code\.claude\skills\template-skill: ENOENT: no such file or directory, stat 'D:\doge-code\.claude\skills\template-skill'
+2026-07-20T12:05:12.368Z [DEBUG] Failed to follow symlink D:\doge-code\.claude\skills\theme-factory: ENOENT: no such file or directory, stat 'D:\doge-code\.claude\skills\theme-factory'
+2026-07-20T12:05:12.389Z [DEBUG] Failed to follow symlink D:\doge-code\.claude\skills\web-artifacts-builder: ENOENT: no such file or directory, stat 'D:\doge-code\.claude\skills\web-artifacts-builder'
+2026-07-20T12:05:12.411Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\2slides-ppt-generator\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.413Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\azure-functions\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.415Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\llama-cpp\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.425Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\ai-wrapper-product\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.426Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\file-uploads\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.426Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\github-actions-advanced\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.426Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\git-pushing\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.427Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\figma-use\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.427Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\figma-implement-design\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.427Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\figma-generate-library\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.429Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\figma-generate-design\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.430Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\figma-create-new-file\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.430Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\figma-create-design-system-rules\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.430Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\figma-code-connect-components\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.431Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\gif-sticker-maker\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.431Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\agent-tool-builder\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.432Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\graphql\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.432Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\agent-builder\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.433Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\design-review\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.433Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\design-consultation\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.433Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\design-brief\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.433Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\container-security-hardening\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.434Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\deploy-to-vercel\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.434Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\conductor-validator\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.434Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\comprehensive-review-pr-enhance\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.435Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\debugger\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.435Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\elon-musk\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.436Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\d3-visualization\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.436Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\efficient-web-research\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.436Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\editorial-burgundy-principles-template\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.437Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\ecommerce-image-workflow\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.437Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\u301-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.437Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\typless-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.438Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\typefully-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.438Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\smtp2go-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.438Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\sms-alert-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.438Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\twocaptcha-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.438Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\twitch-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.438Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\smartrecruiters-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.439Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\smartproxy-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.439Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\twelve-data-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.439Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\dos-verify-done-claims\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.439Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\slides\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.439Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\slackbot-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.439Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\turso-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.439Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\skyfire-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.440Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\turbot-pipes-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.440Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\tripadvisor-content-api-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.440Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\triggercmd-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.440Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\zyte-api-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.440Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\zylvie-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.440Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\zoominfo-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.441Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\zoho-mail-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.441Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\zoho-invoice-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.441Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\zoho-inventory-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.441Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\zoho-bigin-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.441Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\zoho-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.442Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\yousearch-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.442Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\ynab-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.442Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\library-curator\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.442Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\yandex-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.443Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\y-gy-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.443Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\lex\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.443Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\creative-director\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.443Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\doc\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.444Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\writing-fragments\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.444Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\learn-claude-code\code-review\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.444Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\learn-claude-code\agent-builder\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.445Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\sitespeakai-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.445Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\simplesat-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.445Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\simple-analytics-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.445Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\simla-com-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.445Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\similarweb-digitalrank-api-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.446Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\signwell-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.446Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\digits-fintech-swiss-template\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.446Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\signpath-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.446Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\signaturely-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.446Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\security\owasp-security\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.447Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\sidetracker-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.447Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\shotstack-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.447Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\wiki-lint\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.447Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\prismic-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.447Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\shortpixel-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.447Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\shorten-rest-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.448Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\short-menu-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.448Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\short-io-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.448Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\printautopilot-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.448Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\shipengine-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.448Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\molykit\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.449Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\modelry-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.449Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\shader-dev\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.449Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\sevdesk-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.449Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\whautomate-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.449Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\moco-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.449Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\weread-year-in-review-video-template\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.450Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\webvizio-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.450Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\mocean-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.450Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\webscraping-ai-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.450Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\browser-extension-builder\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.450Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\servicem8-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.450Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\serply-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.451Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\browser-automation\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.451Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\userlist-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.451Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\uptimerobot-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.451Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\updown-io-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.451Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\waiverfile-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.452Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\unreal-thirdparty\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.452Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\wachete-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.452Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\game-studios\story-readiness\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.452Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\waboxapp-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.452Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\bids\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.452Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\seo-sitemap\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.452Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\visme-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.452Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\seo-schema\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.453Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\missive-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.453Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\seo-programmatic\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.453Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\unreal-pcg-python\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.453Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\virustotal-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.453Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\cpp-pro\references\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.453Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\seo-plan\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.453Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\unreal-gas\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.453Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\minimax-pdf\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.454Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\minimax-docx\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.454Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\video-summarizer\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.454Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\anthropics\theme-factory\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.454Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\minerstat-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.454Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\seo-page\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.454Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\seo-maps\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.455Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\seo-local\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.455Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\seo-images\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.455Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\unreal-best-practices\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.455Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\vestaboard-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.455Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\micro-saas-launcher\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.455Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\vero-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.455Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\veriphone-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.456Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\verifiedemail-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.456Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\anthropics\pptx\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.456Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\unione-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.456Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\seo-hreflang\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.456Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\postgrid-verify-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.456Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\postgrid-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.456Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\seo-google\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.457Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\game-studios\scope-check\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.457Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\anthropics\claude-api\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.458Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\math-olympiad\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.458Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\brand-extract\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.458Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\game-studios\project-stage-detect\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.459Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\full-page-screenshot\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.459Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\game-studios\help\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.459Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\conversation-memory\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.459Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\game-studios\gate-check\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.459Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\frontend-skill\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.460Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\frontend-dev\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.460Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\firecrawl\rules\install.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.461Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\firebase\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.461Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\game-studios\balance-check\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.461Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\speech\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.461Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\swiftui-design\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.462Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\poptin-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.462Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\token-budget-advisor\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.462Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\svix-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.462Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\polygon-io-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.462Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\polygon-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.462Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\supportivekoala-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.462Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\supportbee-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.463Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\superchat-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.463Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\supadata-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.463Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\streamtime-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.463Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\strava-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.463Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\stormglass-io-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.464Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\storerocket-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.464Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\storeganise-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.464Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\sourcegraph-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.464Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\achieving-cmmc-level-2-compliance\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.464Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\stitch-loop\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.464Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\statuscake-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.464Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\rosette-text-analytics-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.464Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\route4me-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.465Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\rootly-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.465Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\starton-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.465Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\rocketlane-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.465Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\stannp-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.465Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\rkvst-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.465Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\stack-exchange-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.465Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\ritekit-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.465Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\sslmate-cert-spotter-api-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.465Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\rippling-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.466Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\revops\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.466Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\spotlightr-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.466Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\spondyr-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.466Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\spoki-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.466Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\revolt-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.466Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\splitwise-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.466Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\smart-commit\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.467Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\skill-optimizer\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.467Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\prompt-optimizer\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.467Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\rev-ai-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.467Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\retently-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.467Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\retellai-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.467Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\session-handoff\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.467Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\firecrawl\rules\security.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.468Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\safe-mode\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.468Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\resend-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.468Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\synthflow-ai-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.468Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\replay-learnings\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.468Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\sympla-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.468Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\research-decision-room\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.468Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\swiss-user-research-video-template\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.469Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\swiss-creative-mode-template\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.469Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\pro-workflow\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.469Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\plan-interrogate\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.469Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\plisio-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.469Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\reply-io-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.469Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\reply-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.469Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\realphonevalidation-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.469Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\permission-tuner\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.469Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\file-watcher\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.470Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\replicate\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.470Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\re-amaze-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.470Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\repairshopr-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.470Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\wrap-up\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.470Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\renderform-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.470Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\deslop\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.470Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\parallel-worktrees\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.470Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\wiki-viewer\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.470Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\remove-bg-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.471Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\remotion\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.471Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\wiki-research-loop\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.471Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\remote-retrieval-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.471Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\wiki-query\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.471Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\cost-tracker\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.471Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\orchestrate\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.471Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\remarkety-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.472Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\raisely-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.472Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\context-optimizer\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.472Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\module-map\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.472Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\release-notes-one-pager\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.472Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\platerecognizer-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.472Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\plasmic-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.472Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\ragic-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.472Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\mcp-audit\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.472Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\context-engineering\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.473Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\rafflys-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.473Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\llm-gate\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.473Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\radar-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.473Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\compact-guard\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.473Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\wiki-builder\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.473Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\token-efficiency\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.473Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\bug-capture\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.474Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\llm-council\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.474Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\onboarding\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.474Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\thoroughness-scoring\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.474Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\refiner-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.474Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\survey-generator\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.474Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\batch-orchestration\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.474Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\sprint-status\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.474Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\auto-setup\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.474Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\reference-design-contract\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.475Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\plan-design-review\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.475Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\agent-teams\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.475Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\insights\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.475Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pro-workflow\skills\learn-rule\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.475Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\firecrawl\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.475Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\plain-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.476Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\placid-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.476Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\placekey-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.476Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\recruitee-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.476Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\nanobanana-ppt\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.476Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pipeline-crm-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.476Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pingdom-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.476Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pilvio-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.476Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\recallai-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.477Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\piloterr-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.477Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\piggy-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.477Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pexels-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.477Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\persistiq-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.477Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\perplexityai-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.477Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\perigon-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.477Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\peopledatalabs-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.478Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pdfmonkey-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.478Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pdfless-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.478Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pdf4me-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.478Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pdf-co-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.478Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\pdf-api-io-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.478Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\paywall-upgrade-cro\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.478Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\payhip-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.479Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\makepad-dsl\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.479Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\passslot-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.479Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\passcreator-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.479Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\parseur-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.479Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\parsera-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.479Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\makepad-splash\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.479Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\parsehub-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.479Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\parma-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.480Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\clarity-gate\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.480Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\makepad-platform\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.480Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\makepad-shaders\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.480Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\makepad-deployment\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.480Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\parallel-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.480Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\paradym-automation\SKILL.md: YAML Parse error: Unexpected character
+2026-07-20T12:05:12.480Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\makepad-font\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.480Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\makepad-layout\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.480Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\makepad-basics\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.481Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\ckw-design\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.481Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\makepad-event-action\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.481Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\makepad-animation\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.481Z [WARN] Failed to parse YAML frontmatter in D:\doge-code\.claude\skills\clean-code\SKILL.md: YAML Parse error: Unexpected token
+2026-07-20T12:05:12.482Z [DEBUG] [DEBUG] loadMarkdownFiles(D:\doge-code\.claude\skills) returned 4012 files
+2026-07-20T12:20:56.204Z [DEBUG] MDM settings load completed in 24ms
+2026-07-20T12:20:56.209Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-20T12:20:56.209Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-20T12:20:56.225Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-07-20T12:20:56.230Z [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-07-20T12:20:56.232Z [DEBUG] [init] configureGlobalMTLS starting
+2026-07-20T12:20:56.233Z [DEBUG] [init] configureGlobalMTLS complete
+2026-07-20T12:20:56.233Z [DEBUG] [init] configureGlobalAgents starting
+2026-07-20T12:20:56.233Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-20T12:20:56.234Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-20T12:20:56.234Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-20T12:20:56.234Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-20T12:20:56.234Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-20T12:20:56.281Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-07-20T12:20:56.283Z [DEBUG] Error log sink initialized
+2026-07-20T12:20:56.295Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-20T12:20:56.295Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-20T12:20:56.296Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-20T12:20:56.296Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-20T12:20:56.297Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-20T12:20:56.297Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-20T12:20:56.297Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-20T12:20:56.297Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-20T12:20:56.298Z [DEBUG] [STARTUP] 正在加载 MCP 配置...
+2026-07-20T12:20:56.303Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=true, result=true
+2026-07-20T12:20:56.312Z [DEBUG] Git remote URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T12:20:56.313Z [DEBUG] Parsed repository: github.com/kaixings1/doge-code from URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T12:20:56.313Z [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-07-20T12:20:56.314Z [DEBUG] [Claude in Chrome] Extension not found in any browser

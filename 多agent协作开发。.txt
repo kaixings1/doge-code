@@ -1,0 +1,178 @@
+● 我现在已经完全了解了整个多角色协作架构。以下是完整的分析：
+
+  ---
+  多角色协作架构分析
+
+
+  一、已有能力总览
+
+
+  项目已经内置了非常完整的多Agent协作系统，分为三个层次：
+
+  ---
+  二、多角色协作方式
+
+
+  方式1：协调者模式（Coordinator Mode）— 最高级
+
+
+  文件: src/coordinator/coordinatorMode.ts（367行系统提示词）
+
+  这是最成熟的多Agent协作方案。工作方式：
+  1. 协调者（Coordinator） 作为大脑/项目经理
+  2. 通过 Agent 工具派生 Worker 子代理
+  3. 每个 Worker 有完整工具链（Bash/Read/Edit/Glob/Grep + MCP）
+  4. 通过 SendMessage 与 Worker 继续通信
+  5. 典型工作流：调研 → 综合 → 实现 → 验证
+
+  工作流阶段：
+  调研 → Worker（并行多个，各自探索不同方向）
+    ↓
+  综合 → 协调者（阅读发现，制定实现规范）
+    ↓
+  实现 → Worker（按规范修改代码，提交）
+    ↓
+  验证 → Worker（独立验证，可派新 Worker 保持视角新鲜）
+
+  方式2：Swarm 团队模式（Teammate/Spawn）— 最强大
+
+
+  核心文件: src/tools/shared/spawnMultiAgent.ts（1094行）
+
+  这是真正的多进程Agent群。每个Teammate是独立的Claude Code进程：
+  - 进程内（In-Process）：同一Node进程，通过AsyncLocalStorage隔离
+  - tmux分屏：每个队友在独立的tmux窗格中运行
+  - iTerm2原生分屏：macOS iTerm2原生窗格
+
+  通信机制：
+  - SendMessage 工具：to: "名称" 发送给特定队友，to: "*" 广播
+  - 邮箱系统（mailbox）：队友间异步消息队列
+  - 跨会话（UDS/桥接）：不同机器上的Claude Code实例也能互通
+
+  团队管理：
+  - /config 中可设置 teammateDefaultModel
+  - 每个队友独立模型、独立权限模式
+  - 团队文件持久化（teamHelpers.ts）
+
+  方式3：AgentTool 子代理 — 最常用
+
+
+  文件: src/tools/AgentTool/ + src/tools/AgentTool/built-in/
+
+  内置Agent类型：
+
+  ┌───────────────────────────┬────────────────────────────┬───────────────────────────┐
+  │         Agent类型         │            职责            │           工具            │
+  ├───────────────────────────┼────────────────────────────┼───────────────────────────┤
+  │ general-purpose（通用型） │ 研究、搜索、多步骤任务     │ 所有工具                  │
+  ├───────────────────────────┼────────────────────────────┼───────────────────────────┤
+  │ Explore（探索者）         │ 只读文件搜索、代码导航     │ Glob/Grep/Read/Bash(只读) │
+  ├───────────────────────────┼────────────────────────────┼───────────────────────────┤
+  │ Plan（架构师）            │ 设计实现方案               │ Glob/Grep/Read/Bash(只读) │
+  ├───────────────────────────┼────────────────────────────┼───────────────────────────┤
+  │ verification（验证者）    │ 对抗性测试、验证代码正确性 │ Bash/Read/WebFetch/MCP    │
+  ├───────────────────────────┼────────────────────────────┼───────────────────────────┤
+  │ Claude Code Guide         │ 项目指导                   │ 对话型                    │
+  └───────────────────────────┴────────────────────────────┴───────────────────────────┘
+
+  222个自定义Agent（.claude/agents/*.md）：涵盖各种专业角色
+  - 架构师、审查员、安全审计、性能优化、测试工程师…
+  - 每个Agent可定义：model、tools、disallowedTools、color、background
+
+  方式4：Buddy 伙伴系统 — 轻量陪伴
+
+
+  文件: src/buddy/ + src/commands/buddy/
+
+  相当于一个宠物陪伴角色：
+  - 18种物种（鸭子、鹅、史莱姆、猫、龙…）
+  - 5种稀有度（普通→传说）
+  - 显示在输入框旁边，偶尔在气泡中发表评论
+  - /buddy pet 抚摸互动，/buddy off 静音
+  - 本质上是系统提示词中的嵌入式角色，不消耗额外token调用API
+
+  ---
+  三、如何创建一个"多角色交流 + 生成程序"的方案
+
+
+  基于现有架构，推荐以下策略：
+
+  方案A：用协调者模式开发小程序（最实用，立刻可用）
+
+
+  1. 启动 Coordinator Mode：set CLAUDE_CODE_COORDINATOR_MODE=1 && doge
+  2. 在对话中告诉 AI："我要开发一个XX程序"
+  3. AI（协调者）会自动：
+    - 派 Explore Agent 调研项目结构/技术栈
+    - 派 Plan Agent 设计方案
+    - 综合方案后派 Worker 实现代码
+    - 派 verification Agent 验证代码正确性
+
+  优势：无需额外配置，开箱即用
+
+  方案B：自定义专业Agent团队（最灵活）
+
+
+  在 .claude/agents/ 下创建多个专业Agent角色，例如：
+
+  .claude/agents/
+    product-manager.md    # 产品经理 - 写需求文档
+    architect.md          # 架构师 - 设计系统
+    frontend-dev.md       # 前端开发 - 写UI
+    backend-dev.md        # 后端开发 - 写API
+    tester.md             # 测试 - 写测试用例并验证
+
+  然后在对话中让AI根据需求组建团队并分配任务。
+
+  方案C：用 /task + /plan 快速开发
+
+
+  最简单快捷的方式：
+  1. /plan 进入计划模式，让AI设计方案
+  2. /task "开发一个XX程序" 一键创建并执行任务
+  3. 复杂任务可用 /task-create 管理多个任务
+
+  ---
+  四、关键发现：LocalWorkflowTask 是 stub（待实现）
+
+
+  src/tasks/LocalWorkflowTask/LocalWorkflowTask.ts 目前只是个空壳：
+  export type LocalWorkflowTaskState = Record<string, unknown>
+  export function isLocalWorkflowTask(_value: unknown): boolean {
+    return false
+  }
+
+  这个工作流任务系统如果完善，将是多角色协作生成程序的最佳基础设施。可以在此设计多阶段流水线：
+  1. 需求分析阶段
+  2. 架构设计阶段
+  3. 编码实现阶段
+  4. 测试验证阶段
+  5. 部署发布阶段
+
+  每个阶段可以自动切换不同角色Agent，传递阶段产物。
+
+  ---
+  五、最佳实践建议
+
+
+  对于快速开发小程序，直接用方案A（Coordinator Mode）：
+  set CLAUDE_CODE_COORDINATOR_MODE=1
+  doge
+  然后告诉AI你想做什么，它会自动协调多个Worker完成。
+
+  对于复杂项目，结合方案B（自定义Agent团队）：
+  1. 在 .claude/agents/ 定义你需要的角色
+  2. 告诉主AI："组建一个团队，包含架构师、前端、后端和测试"
+  3. AI会自动 spawn 多个子进程Agent协同工作
+	
+	
+	
+	
+	❯ 怎么开始？比如：给我在d:\remotescreen\目录下开发一个远程桌面系统的软件！
+
+● 我来按照标准操作流程开始这个项目。
+
+  第一步：调研现有代码库和远程桌面相关实现
+	
+	
+	

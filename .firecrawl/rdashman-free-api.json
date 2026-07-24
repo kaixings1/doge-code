@@ -1,0 +1,18 @@
+{
+  "markdown": "```\n404: Not Found\n```",
+  "metadata": {
+    "color-scheme": "light dark",
+    "scrapeId": "019f64d7-7142-73ad-bf16-d2d3905fe468",
+    "sourceURL": "https://raw.githubusercontent.com/rdashman/awesome-free-api/main/README.md",
+    "url": "https://raw.githubusercontent.com/rdashman/awesome-free-api/main/README.md",
+    "statusCode": 404,
+    "error": "Not Found",
+    "contentType": "text/plain; charset=utf-8",
+    "timezone": "America/New_York",
+    "proxyUsed": "basic",
+    "cacheState": "miss",
+    "indexId": "d29eb099-c390-4d15-98c4-e680e1a2b3cc",
+    "creditsUsed": 1,
+    "concurrencyLimited": false
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "markdown": "[![Groq](https://console.groq.com/groq-logo.svg)](https://console.groq.com/home)\n\n[Docs](https://console.groq.com/docs/overview) [Login](https://console.groq.com/home)\n\n[Playground](https://console.groq.com/playground)\n\n[API Keys](https://console.groq.com/keys)\n\n[Dashboard](https://console.groq.com/dashboard)\n\n[Docs](https://console.groq.com/docs)\n\n[Log In](https://console.groq.com/login)\n\nCreate an account or login to access this page\n\nContinue with Google\n\nContinue with GitHub\n\nContinue with SSO\n\nor\n\nContinue with email\n\nBy continuing, I accept the [Services Agreement](https://console.groq.com/docs/legal/services-agreement) and acknowledge that I have read the [Privacy Policy](https://groq.com/privacy-policy).\n\nBy continuing, I accept the [Services Agreement](https://console.groq.com/docs/legal/services-agreement) and acknowledge that I have read the [Privacy Policy](https://groq.com/privacy-policy).",
+  "metadata": {
+    "ogDescription": "Build Fast with GroqCloud",
+    "twitter:image": "https://console.groq.com/og_cloudv5.jpg",
+    "viewport": "width=device-width, initial-scale=1, maximum-scale=1",
+    "og:title": "GroqCloud - Build Fast",
+    "og:description": "Build Fast with GroqCloud",
+    "title": "API Keys - GroqCloud",
+    "language": "en",
+    "twitter:title": "GroqCloud - Build Fast",
+    "ogImage": "https://console.groq.com/og_cloudv5.jpg",
+    "twitter:card": "summary_large_image",
+    "og:image": "https://console.groq.com/og_cloudv5.jpg",
+    "next-size-adjust": "",
+    "twitter:description": "Build Fast with GroqCloud",
+    "ogUrl": "https://console.groq.com",
+    "og:url": "https://console.groq.com",
+    "ogTitle": "GroqCloud - Build Fast",
+    "og:type": "website",
+    "favicon": "https://console.groq.com/favicon.ico?cache=rounded-bolt",
+    "scrapeId": "019f662f-1c02-743a-b575-e83c24321ced",
+    "sourceURL": "https://console.groq.com/keys",
+    "url": "https://console.groq.com/keys",
+    "statusCode": 200,
+    "contentType": "text/html; charset=utf-8",
+    "proxyUsed": "basic",
+    "cacheState": "hit",
+    "cachedAt": "2026-07-14T14:51:50.114Z",
+    "creditsUsed": 1,
+    "concurrencyLimited": false
+  }
+}

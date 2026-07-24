@@ -1,0 +1,21 @@
+{
+  "markdown": "Loading\n\n# Sign in\n\nUse your Google Account\n\nEmail or phone\n\nForgot email?\n\nType the text you hear or see\n\nNot your computer? Use Guest mode to sign in privately. [Learn more about using Guest mode](https://support.google.com/chrome/answer/6130773?hl=en-US)\n\nNext\n\nCreate account\n\n- For my personal use\n- For my child\n- For work or my business\n\nEnglish (United States)\n\n- Afrikaans\n- azərbaycan\n- bosanski\n- català\n- Čeština\n- Cymraeg\n- Dansk\n- Deutsch\n- eesti\n- English (United Kingdom)\n- English (United States)\n- Español (España)\n- Español (Latinoamérica)\n- euskara\n- Filipino\n- Français (Canada)\n- Français (France)\n- Gaeilge\n- galego\n- Hrvatski\n- Indonesia\n- isiZulu\n- íslenska\n- Italiano\n- Kiswahili\n- latviešu\n- lietuvių\n- magyar\n- Melayu\n- Nederlands\n- norsk\n- o‘zbek\n- polski\n- Português (Brasil)\n- Português (Portugal)\n- română\n- shqip\n- Slovenčina\n- slovenščina\n- srpski (latinica)\n- Suomi\n- Svenska\n- Tiếng Việt\n- Türkçe\n- Ελληνικά\n- беларуская\n- български\n- кыргызча\n- қазақ тілі\n- македонски\n- монгол\n- Русский\n- српски (ћирилица)\n- Українська\n- ქართული\n- հայերեն\n- ‫עברית‬‎\n- ‫اردو‬‎\n- ‫العربية‬‎\n- ‫فارسی‬‎\n- አማርኛ\n- नेपाली\n- मराठी\n- हिन्दी\n- অসমীয়া\n- বাংলা\n- ਪੰਜਾਬੀ\n- ગુજરાતી\n- ଓଡ଼ିଆ\n- தமிழ்\n- తెలుగు\n- ಕನ್ನಡ\n- മലയാളം\n- සිංහල\n- ไทย\n- ລາວ\n- မြန်မာ\n- ខ្មែរ\n- 한국어\n- 中文（香港）\n- 日本語\n- 简体中文\n- 繁體中文\n\n- [Help](https://support.google.com/accounts?hl=en-US&p=account_iph)\n- [Privacy](https://accounts.google.com/TOS?loc=US&hl=en-US&privacy=true)\n- [Terms](https://accounts.google.com/TOS?loc=US&hl=en-US)",
+  "metadata": {
+    "title": "Sign in - Google Accounts",
+    "language": "en-US",
+    "chrome": "nointentdetection",
+    "description": "",
+    "viewport": "width=device-width, initial-scale=1",
+    "referrer": "origin",
+    "scrapeId": "019f651f-b0f8-7308-affd-06f87cdd9468",
+    "sourceURL": "https://aistudio.google.com/app/apikey",
+    "url": "https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Faistudio.google.com%2Fapp%2Fapikey%3Foriginal_referer%3Dhttps%3A%2F%2Fwww.google.com&dsh=S1278292424%3A1783992118401806&followup=https%3A%2F%2Faistudio.google.com%2Fapp%2Fapikey%3Foriginal_referer%3Dhttps%3A%2F%2Fwww.google.com&passive=1209600&flowName=GlifWebSignIn&flowEntry=ServiceLogin&ifkv=Ac50bxurKNzyjJVRrS92RriJzsuEzewtBW9Z1mYJDcHYZ4yHucPHY56cPI555uwgMfLWg8vMTiQRyw",
+    "statusCode": 200,
+    "contentType": "text/html; charset=utf-8",
+    "proxyUsed": "basic",
+    "cacheState": "hit",
+    "cachedAt": "2026-07-14T01:22:00.400Z",
+    "creditsUsed": 1,
+    "concurrencyLimited": false
+  }
+}

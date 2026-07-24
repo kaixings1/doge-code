@@ -1,9 +1,0 @@
----
-name: 勒索软件加密机制分析
-description: "分析勒索软件加密机制"
-risk: safe
-source: community
----
-# 分析勒索软件加密机制
-## 功能
-## 限制

@@ -1,3 +1,0 @@
-#!/bin/bash.exe
-export DISPLAY="`/bin/getAvailableDisplay`"
-start-stop-daemon -q -b -S --exec /bin/XWin.exe -- -noreset -silent-dup-error -notrayicon -extension RANDR -nolisten inet6 -clipboard -ac -fp /usr/share/fonts/misc $DISPLAY && /bin/waitforX && /lib/fvwm/2.4.7/fvwm.exe -f /usr/share/fvwm/config

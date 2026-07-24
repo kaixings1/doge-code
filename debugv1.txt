@@ -1,0 +1,25 @@
+2026-07-20T09:48:54.526Z [DEBUG] MDM settings load completed in 33ms
+2026-07-20T09:48:54.533Z [DEBUG] [readCustomApiStorage] activeName: custom-1784424376518
+2026-07-20T09:48:54.534Z [DEBUG] [readCustomApiStorage] ✅ using project preset: custom-1784424376518
+2026-07-20T09:48:54.556Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-07-20T09:48:54.564Z [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-07-20T09:48:54.567Z [DEBUG] [init] configureGlobalMTLS starting
+2026-07-20T09:48:54.567Z [DEBUG] [init] configureGlobalMTLS complete
+2026-07-20T09:48:54.568Z [DEBUG] [init] configureGlobalAgents starting
+2026-07-20T09:48:54.568Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-20T09:48:54.569Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-20T09:48:54.569Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-20T09:48:54.569Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-20T09:48:54.570Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-20T09:48:54.614Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-07-20T09:48:54.616Z [DEBUG] Error log sink initialized
+2026-07-20T09:48:54.626Z [DEBUG] Applying permission update: Adding 5 allow rule(s) to destination 'localSettings': ["Bash(powershell -NoProfile -Command \"\\(Get-Content 'D:\\\\doge-code\\\\src\\\\utils\\\\claudeInChrome\\\\setup.ts' -Raw\\) -replace 'if \\\\\\(shouldAutoEnable !== undefined\\\\\\)', 'if \\(shouldAutoEnable !== null\\)' | Set-Content 'D:\\\\doge-code\\\\src\\\\utils\\\\claudeInChrome\\\\setup.ts' -NoNewline\")","Bash(powershell -NoProfile -Command \"$f='D:\\\\doge-code\\\\src\\\\utils\\\\claudeInChrome\\\\setup.ts'; $t=[System.IO.File]::ReadAllText\\($f\\); $t=$t.Replace\\('if \\(shouldAutoEnable !== undefined\\) {', 'if \\(shouldAutoEnable !== null\\) {'\\); [System.IO.File]::WriteAllText\\($f, $t\\)\")","Bash(node:*)","Bash(cd /d D:doge-code)","Bash(bun run:*)"]
+2026-07-20T09:48:54.636Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["d:\\RemoteScreen"]
+2026-07-20T09:48:54.637Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["D:\\OpenSourceGit\\Chat2API"]
+2026-07-20T09:48:54.637Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["D:\\doge-codeClaw0Token"]
+2026-07-20T09:48:54.637Z [DEBUG] [STARTUP] 正在加载 MCP 配置...
+2026-07-20T09:48:54.650Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=true, result=true
+2026-07-20T09:48:54.654Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-07-20T09:48:54.654Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-07-20T09:48:54.657Z [DEBUG] Git remote URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T09:48:54.657Z [DEBUG] Parsed repository: github.com/kaixings1/doge-code from URL: https://github.com/kaixings1/doge-code.git
