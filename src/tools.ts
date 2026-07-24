@@ -23,7 +23,7 @@ const SuggestBackgroundPRTool =
         .SuggestBackgroundPRTool
     : null
 const SleepTool =
-  feature('PROACTIVE') || feature('KAIROS')
+  feature('PROACTIVE') || feature('KAIROS')||true
     ? require('./tools/SleepTool/SleepTool.js').SleepTool
     : null
 const cronTools = feature('AGENT_TRIGGERS')
@@ -108,7 +108,6 @@ import { EnterPlanModeTool } from './tools/EnterPlanModeTool/EnterPlanModeTool.j
 import { EnterWorktreeTool } from './tools/EnterWorktreeTool/EnterWorktreeTool.js'
 import { ExitWorktreeTool } from './tools/ExitWorktreeTool/ExitWorktreeTool.js'
 import { ConfigTool } from './tools/ConfigTool/ConfigTool.js'
-import { TaskCreateTool } from './tools/TaskCreateTool/TaskCreateTool.js'
 import { TaskGetTool } from './tools/TaskGetTool/TaskGetTool.js'
 import { TaskUpdateTool } from './tools/TaskUpdateTool/TaskUpdateTool.js'
 import { TaskListTool } from './tools/TaskListTool/TaskListTool.js'
@@ -219,95 +218,149 @@ export function getToolsForDefaultPreset(): string[] {
 /**
  * 注意：此列表必须与 https://console.statsig.com/4aF3Ewatb6xPVpCwxb5nA3/dynamic_configs/claude_code_global_system_caching 保持同步，以便跨用户缓存系统提示。
  */
+import { _setInToolInitCallStackForTesting } from './services/analytics/growthbook.js'
+
+// Tool initialization depth guard — prevents infinite recursion when
+// getAllBaseTools() is called during config/GrowthBook initialization.
+let _toolInitDepth = 0
+
+export function getToolInitDepth(): number {
+  return _toolInitDepth
+}
+/**
+ * Mark the start of a tool-initialization call stack.
+ * Used internally by growthbook.ts to detect recursion.
+ */
+export function _markToolInitStart(): void {
+  _toolInitDepth++
+  _setInToolInitCallStackForTesting(_toolInitDepth >= 1)
+}
+/**
+ * Mark the end of a tool-initialization call stack.
+ */
+export function _markToolInitEnd(): void {
+  _toolInitDepth--
+  if (_toolInitDepth <= 0) {
+    _toolInitDepth = 0
+    _setInToolInitCallStackForTesting(false)
+  }
+}
+
 export function getAllBaseTools(): Tools {
-  return [
-    AgentTool,
-    TaskOutputTool,
-    BashTool,
-    // Doge Code 始终包含 Glob/Grep 工具，除非通过 DISABLE_GLOB_GREP_TOOLS=1 显式禁用。
-    //（原 Ant 原生构建通过 EMBEDDED_SEARCH_TOOLS 内嵌 bfs/ugrep 来替代，Doge Code 不适用）
-    ...(hasEmbeddedSearchTools() ? [] : [GlobTool, GrepTool]),
-    ExitPlanModeV2Tool,
-    FileReadTool,
-    FileEditTool,
-    FileWriteTool,
-    NotebookEditTool,
-    WebFetchTool,
-    TodoWriteTool,
-    WebSearchTool,
-    MultiSearchTool,
-    TaskStopTool,
-    AskUserQuestionTool,
-    SkillTool,
-    EnterPlanModeTool,
-    ...(process.env.USER_TYPE === 'ant' ? [ConfigTool] : []),
-    ...(process.env.USER_TYPE === 'ant' ? [TungstenTool] : []),
-    ...(SuggestBackgroundPRTool ? [SuggestBackgroundPRTool] : []),
-    ...(WebBrowserTool ? [WebBrowserTool] : []),
-    ...(isTodoV2Enabled()
-      ? [TaskCreateTool, TaskGetTool, TaskUpdateTool, TaskListTool]
-      : []),
-    ...(OverflowTestTool ? [OverflowTestTool] : []),
-    ...(CtxInspectTool ? [CtxInspectTool] : []),
-    ...(TerminalCaptureTool ? [TerminalCaptureTool] : []),
-    ...(isEnvTruthy(process.env.ENABLE_LSP_TOOL) ? [LSPTool] : []),
-    ...(isWorktreeModeEnabled() ? [EnterWorktreeTool, ExitWorktreeTool] : []),
-    getSendMessageTool(),
-    ...(ListPeersTool ? [ListPeersTool] : []),
-    ...(isAgentSwarmsEnabled()
-      ? [getTeamCreateTool(), getTeamDeleteTool()]
-      : []),
-    ...(VerifyPlanExecutionTool ? [VerifyPlanExecutionTool] : []),
-    ...(process.env.USER_TYPE === 'ant' && REPLTool ? [REPLTool] : []),
-    ...(WorkflowTool ? [WorkflowTool] : []),
-    ...(SleepTool ? [SleepTool] : []),
-    ...cronTools,
-    ...(RemoteTriggerTool ? [RemoteTriggerTool] : []),
-    MonitorTool,
-    BriefTool,
-    ...(SendUserFileTool ? [SendUserFileTool] : []),
-    ...(PushNotificationTool ? [PushNotificationTool] : []),
-    ...(SubscribePRTool ? [SubscribePRTool] : []),
-    ...(getPowerShellTool() ? [getPowerShellTool()] : []),
-    ...(SnipTool ? [SnipTool] : []),
-    ...(process.env.NODE_ENV === 'test' ? [TestingPermissionTool] : []),
-    ListMcpResourcesTool,
-    ReadMcpResourceTool,
-    // 当工具搜索可能启用时，包含 ToolSearchTool（乐观检查）
-    // 延迟工具的实际决定在请求时于 claude.ts 中发生
-    ...(isToolSearchEnabledOptimistic() ? [ToolSearchTool] : []),
-    UltrareviewTool,
-    LessPermissionPromptsTool,
-    EffortTool,
-    ThemeTool,
-    AdvisorTool,
-    VimVisualModeTool,
-    TerminalPanelTool,
-    ContextCollapseTool,
-    WorkflowTool,
-    SnipTool,
-    TaskCreateTool,
-    PlanModeTool,
-    BranchTool,
-    CompareTool,
-    GraphqlTool,
-    HttpTool,
-    DatabaseTool,
-    ShellTool,
-    FileWatcherTool,
-    ScheduleTool,
-    CronTool,
-    WebSocketTool,
-    EventStreamTool,
-    QueueTool,
-    CacheTool,
-    LoggerTool,
-    MetricsTool,
-    MonitorTool,
-    BackupTool,
-    McpToolSearchTool,
-    MultiFileEditTool,
-  ]
+  _markToolInitStart()
+	
+  const _tools: Tool[] = [];
+  try {
+    _tools.push(AgentTool);
+    _tools.push(TaskOutputTool);
+    _tools.push(BashTool);
+    _tools.push(GlobTool, GrepTool);
+    _tools.push(ExitPlanModeV2Tool);
+    _tools.push(FileReadTool);
+    _tools.push(FileEditTool);
+    _tools.push(FileWriteTool);
+    _tools.push(NotebookEditTool);
+    _tools.push(WebFetchTool);
+    _tools.push(TodoWriteTool);
+    _tools.push(WebSearchTool);
+    _tools.push(MultiSearchTool);
+    _tools.push(TaskStopTool);
+    _tools.push(AskUserQuestionTool);
+    _tools.push(SkillTool);
+    _tools.push(EnterPlanModeTool);
+    if (process.env.USER_TYPE === 'ant') {
+      _tools.push(ConfigTool);
+    }
+    if (process.env.USER_TYPE === 'ant') {
+      _tools.push(TungstenTool);
+    }
+
+    if (isTodoV2Enabled()) {
+      _tools.push(TaskCreateTool, TaskGetTool, TaskUpdateTool, TaskListTool);
+    }
+    if (OverflowTestTool) { _tools.push(OverflowTestTool); }
+    if (CtxInspectTool) { _tools.push(CtxInspectTool); }
+    if (TerminalCaptureTool) { _tools.push(TerminalCaptureTool); }
+    if (isEnvTruthy(process.env.ENABLE_LSP_TOOL)) { _tools.push(LSPTool); }
+    if (isWorktreeModeEnabled()) { _tools.push(EnterWorktreeTool, ExitWorktreeTool); }
+    _tools.push(getSendMessageTool());
+    if (ListPeersTool) { _tools.push(ListPeersTool); }
+    if (isAgentSwarmsEnabled()) {
+      _tools.push(getTeamCreateTool(), getTeamDeleteTool());
+    }
+    if (VerifyPlanExecutionTool) { _tools.push(VerifyPlanExecutionTool); }
+    if (process.env.USER_TYPE === 'ant' && REPLTool) {
+      _tools.push(REPLTool);
+    }
+    if (WorkflowTool) { _tools.push(WorkflowTool); }
+    if (SleepTool) { _tools.push(SleepTool); }
+    if (cronTools.length > 0) { _tools.push(...cronTools); }
+    if (RemoteTriggerTool) { _tools.push(RemoteTriggerTool); }
+		if (MonitorTool) { _tools.push(MonitorTool); }
+ 
+    _tools.push(BriefTool);
+    if (SendUserFileTool) { _tools.push(SendUserFileTool); }
+    if (PushNotificationTool) { _tools.push(PushNotificationTool); }
+    if (SubscribePRTool) { _tools.push(SubscribePRTool); }
+    if (getPowerShellTool()) { _tools.push(getPowerShellTool() as Tool); }
+    if (SnipTool) { _tools.push(SnipTool); }
+    if (process.env.NODE_ENV === 'test') {
+      _tools.push(TestingPermissionTool);
+    }
+    _tools.push(ListMcpResourcesTool);
+    _tools.push(ReadMcpResourceTool);
+    if (isToolSearchEnabledOptimistic()) { _tools.push(ToolSearchTool); }
+    _tools.push(UltrareviewTool);
+    _tools.push(LessPermissionPromptsTool);
+    _tools.push(EffortTool);
+    _tools.push(ThemeTool);
+    _tools.push(AdvisorTool);
+    _tools.push(VimVisualModeTool);
+    _tools.push(TerminalPanelTool);
+    _tools.push(ContextCollapseTool);
+    _tools.push(WorkflowTool);
+    _tools.push(SnipTool);
+    _tools.push(TaskCreateTool);
+    _tools.push(PlanModeTool);
+    _tools.push(BranchTool);
+    _tools.push(CompareTool);
+    _tools.push(GraphqlTool);
+    _tools.push(HttpTool);
+    _tools.push(DatabaseTool);
+    _tools.push(ShellTool);
+    _tools.push(FileWatcherTool);
+    _tools.push(ScheduleTool);
+    _tools.push(CronTool);
+    _tools.push(WebSocketTool);
+    _tools.push(EventStreamTool);
+    _tools.push(QueueTool);
+    _tools.push(CacheTool);
+    _tools.push(LoggerTool);
+    _tools.push(MetricsTool); 
+    _tools.push(BackupTool);
+    _tools.push(McpToolSearchTool);
+    _tools.push(MultiFileEditTool);
+    if (SuggestBackgroundPRTool) { _tools.push(SuggestBackgroundPRTool); } 
+    if (WebBrowserTool) { _tools.push(WebBrowserTool); } 
+  } finally {
+    _markToolInitEnd()
+  }
+	for (let i = 0; i < _tools.length; i++) {
+		const t = _tools[i];
+		if (t === null) {
+			console.error(`❌ _tools[${i}] is null`);
+		} else if (t === undefined) {
+			console.error(`❌ _tools[${i}] is undefined`);
+		} else if (typeof t !== 'object') {
+			console.error(`❌ _tools[${i}] is primitive:`, typeof t, t);
+		} else if (typeof t.prompt !== 'function') {
+			console.error(`❌ MISSING prompt():`, t.name || '(no name)', 'at index', i);
+		}
+		else
+			console.error(`${i}prompt():`,t, t.name );
+	}
+ 
+	return _tools.filter(Boolean) as Tools;
 }
 
 /**
@@ -341,7 +394,96 @@ export const getTools = (permissionContext: ToolPermissionContext): Tools => {
       }
       return filterToolsByDenyRules(replSimple, permissionContext)
     }
-    const simpleTools: Tool[] = [BashTool, FileReadTool, FileEditTool]
+    const simpleTools: Tool[] =  [BashTool, FileReadTool, FileEditTool,
+		AgentTool,
+ TaskOutputTool,
+ BashTool,
+ GlobTool, GrepTool,
+ ExitPlanModeV2Tool,
+ FileReadTool,
+ FileEditTool,
+ FileWriteTool,
+ NotebookEditTool,
+ WebFetchTool,
+ TodoWriteTool,
+ WebSearchTool,
+ MultiSearchTool,
+ TaskStopTool,
+ AskUserQuestionTool,
+ SkillTool,
+  EnterPlanModeTool,
+
+   ConfigTool,
+
+   /*TungstenTool,*/
+    
+   //SuggestBackgroundPRTool, 
+//WebBrowserTool, 
+
+   TaskCreateTool,
+	 TaskGetTool, TaskUpdateTool, TaskListTool,
+
+//OverflowTestTool, 
+//CtxInspectTool, 
+//TerminalCaptureTool, 
+   LSPTool, 
+EnterWorktreeTool, ExitWorktreeTool, 
+  getSendMessageTool(),
+ //ListPeersTool, 
+  // getTeamCreateTool(), getTeamDeleteTool(),
+ //VerifyPlanExecutionTool, 
+   //REPLTool,
+ //WorkflowTool, 
+ SleepTool, 
+ //...cronTools, 
+ //RemoteTriggerTool, 
+ //MonitorTool,
+ BriefTool,
+ //SendUserFileTool, 
+ // PushNotificationTool, 
+ //SubscribePRTool, 
+ //getPowerShellTool() as Tool, 
+// SnipTool, 
+/*
+TestingPermissionTool,
+ListMcpResourcesTool,
+ReadMcpResourceTool,
+ToolSearchTool, 
+UltrareviewTool,
+LessPermissionPromptsTool,
+EffortTool,
+ThemeTool,
+AdvisorTool,
+VimVisualModeTool,
+TerminalPanelTool,
+ContextCollapseTool,
+//WorkflowTool,
+//SnipTool, 
+PlanModeTool,
+BranchTool,
+CompareTool,
+GraphqlTool,
+HttpTool,
+DatabaseTool,
+ShellTool,
+FileWatcherTool,
+ScheduleTool,
+CronTool,
+WebSocketTool,
+EventStreamTool,
+QueueTool,
+CacheTool,
+LoggerTool,
+MetricsTool,
+MonitorTool,
+BackupTool,
+McpToolSearchTool,
+MultiFileEditTool*/
+
+ ]
+		
+		
+		
     // 当协调者模式也激活时，包含 AgentTool 和 TaskStopTool，
     // 以便协调者获得 Task+TaskStop（通过 useMergedTools 过滤），并且
     // 工作节点获得 Bash/Read/Edit（通过 filterToolsForAgent 过滤）。
@@ -361,7 +503,7 @@ export const getTools = (permissionContext: ToolPermissionContext): Tools => {
     SYNTHETIC_OUTPUT_TOOL_NAME,
   ])
 
-  const tools = getAllBaseTools().filter(tool => !specialTools.has(tool.name))
+  const tools = getAllBaseTools() //.filter(tool => !specialTools.has(tool.name))
 
   // 过滤掉被拒绝规则拒绝的工具
   let allowedTools = filterToolsByDenyRules(tools, permissionContext)
@@ -440,4 +582,4 @@ export function getMergedTools(
 ): Tools {
   const builtInTools = getTools(permissionContext)
   return [...builtInTools, ...mcpTools]
-}
+}// FORCE_RECOMPILE_2026_07_23_2300  

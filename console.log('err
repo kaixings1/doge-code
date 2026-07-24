@@ -1,0 +1,1 @@
+const https=require('https');https.get('https://httpbin.org/get',(res)= d='';res.on('data',c==c);res.on('end',()=,100)));}).on('error',e= '+e.message)) 

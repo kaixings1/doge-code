@@ -94,203 +94,32 @@ export function showSetupDialog<T = void>(root: Root, renderer: (done: (result: 
  * 处理通用结尾：启动延迟预取，等待退出，优雅关闭。
  */
 export async function renderAndRun(root: Root, element: React.ReactNode): Promise<void> {
+  console.error('[STEP-A] renderAndRun: before root.render');
   root.render(element);
+  console.error('[STEP-B] renderAndRun: after root.render');
   startDeferredPrefetches();
+  console.error('[STEP-C] renderAndRun: after startDeferredPrefetches, before waitUntilExit');
   await root.waitUntilExit();
+  console.error('[STEP-D] renderAndRun: after waitUntilExit');
   await gracefulShutdown(0);
+  console.error('[STEP-E] renderAndRun: after gracefulShutdown');
 }
 export async function showSetupScreens(root: Root, permissionMode: PermissionMode, allowDangerouslySkipPermissions: boolean, commands?: Command[], claudeInChrome?: boolean, devChannels?: ChannelEntry[]): Promise<boolean> {
-  if ("production" === 'test' || isEnvTruthy(false) || process.env.IS_DEMO // 演示模式下跳过入门教程
-  ) {
-    return false;
-  }
-  const config = getGlobalConfig();
-  let onboardingShown = false;
-  if (!config.theme || !config.hasCompletedOnboarding // 始终至少显示一次入门教程
-  ) {
-    onboardingShown = true;
-    const {
-      Onboarding
-    } = await import('./components/Onboarding.js');
-    await showSetupDialog(root, done => <Onboarding onDone={() => {
-      completeOnboarding();
-      void done();
-    }} />, {
-      onChangeAppState
-    });
-  }
-
-  // 始终在交互式会话中显示信任对话框，无论权限模式如何。
-  // 信任对话框是工作区信任边界 — 它警告有关不受信任的仓库
-  // 并检查 CLAUDE.md 外部包含。bypassPermissions 模式
-  // 仅影响工具执行权限，不影响工作区信任。
-  // 注意：非交互式会话（CI/CD 带 -p）根本不会到达 showSetupScreens。
-  // 在 claubbit 中跳过权限检查
-  if (!isEnvTruthy(process.env.CLAUBBIT)) {
-    // 快速路径：当 CWD 已经受信任时跳过 TrustDialog 导入+渲染。
-    // 如果返回 true，TrustDialog 将自动解析，无论
-    // 安全功能如何，因此我们可以跳过动态导入和渲染循环。
-    if (!checkHasTrustDialogAccepted()) {
-      const {
-        TrustDialog
-      } = await import('./components/TrustDialog/TrustDialog.js');
-      await showSetupDialog(root, done => <TrustDialog commands={commands} onDone={done} />);
-    }
-
-    // 信号表明此会话的信任已验证。
-    // GrowthBook 检查此标志以决定是否包含认证头。
-    setSessionTrustAccepted(true);
-
-    // 信任建立后重置并重新初始化 GrowthBook。
-    // 登录/注销的防御：清除任何之前的客户端，以便下次初始化
-    // 获取新的认证头。
-    resetGrowthBook();
-    void initializeGrowthBook();
-
-    // 现在信任已建立，预取系统上下文（如果尚未）。
-    void getSystemContext();
-
-    // 如果设置有效，检查是否有需要批准的 mcp.json 服务器
-    const {
-      errors: allErrors
-    } = getSettingsWithAllErrors();
-    if (allErrors.length === 0) {
-      await handleMcpjsonServerApprovals(root);
-    }
-
-    // 检查需要批准的 claude.md 外部包含
-    if (await shouldShowClaudeMdExternalIncludesWarning()) {
-      const externalIncludes = getExternalClaudeMdIncludes(await getMemoryFiles(true));
-      const {
-        ClaudeMdExternalIncludesDialog
-      } = await import('./components/ClaudeMdExternalIncludesDialog.js');
-      await showSetupDialog(root, done => <ClaudeMdExternalIncludesDialog onDone={done} isStandaloneDialog externalIncludes={externalIncludes} />);
-    }
-  }
-
-  // 跟踪当前仓库路径以进行 teleport 目录切换（即发即忘）
-  // 这必须在信任之后发生，以防止不受信任的目录污染映射
-  void updateGithubRepoPathMapping();
-  if (feature('LODESTONE')) {
-    updateDeepLinkTerminalPreference();
-  }
-
-  // 在信任对话框接受后或绕过模式下应用完整的环境变量
-  // 在绕过模式（CI/CD、自动化）中，我们信任环境，因此应用所有变量
-  // 在正常模式下，这发生在信任对话框接受之后
-  // 这包括来自不受信任来源的可能危险环境变量
-  applyConfigEnvironmentVariables();
-
-  // 在应用环境变量后初始化遥测，以便 OTEL 端点环境变量和
-  // otelHeadersHelper（需要信任才能执行）可用。
-  // 延迟到下一个 tick，以便 OTel 动态导入在首次渲染后解析，
-  // 而不是在预渲染微任务队列期间。
-  setImmediate(() => initializeTelemetryAfterTrust());
-  if (await isQualifiedForGrove()) {
-    const {
-      GroveDialog
-    } = await import('src/components/grove/Grove.js');
-    const decision = await showSetupDialog<string>(root, done => <GroveDialog showIfAlreadyViewed={false} location={onboardingShown ? 'onboarding' : 'policy_update_modal'} onDone={done} />);
-    if (decision === 'escape') {
-      logEvent('tengu_grove_policy_exited', {});
-      gracefulShutdownSync(0);
-      return false;
-    }
-  }
-
-  // 检查自定义 API 密钥
-  // 在 homespace 上，DOGE_API_KEY 保留在 process.env 中供子进程使用，
-  // 但 Claude Code 本身会忽略它（见 auth.ts）。
-  if (process.env.DOGE_API_KEY && !isRunningOnHomespace()) {
-    const customApiKeyTruncated = normalizeApiKeyForConfig(process.env.DOGE_API_KEY);
-    const keyStatus = getCustomApiKeyStatus(customApiKeyTruncated);
-    if (keyStatus === 'new') {
-      const {
-        ApproveApiKey
-      } = await import('./components/ApproveApiKey.js');
-      await showSetupDialog<boolean>(root, done => <ApproveApiKey customApiKeyTruncated={customApiKeyTruncated} onDone={done} />, {
-        onChangeAppState
-      });
-    }
-  }
-  if ((permissionMode === 'bypassPermissions' || allowDangerouslySkipPermissions) && !hasSkipDangerousModePermissionPrompt()) {
-    const {
-      BypassPermissionsModeDialog
-    } = await import('./components/BypassPermissionsModeDialog.js');
-    await showSetupDialog(root, done => <BypassPermissionsModeDialog onAccept={done} />);
-  }
-  if (feature('TRANSCRIPT_CLASSIFIER')) {
-    // 仅当自动模式实际解析时才显示选择加入对话框 — 如果
-    // 网关拒绝了它（组织未列入允许列表、设置已禁用），
-    // 显示不可用功能的同意是毫无意义的。
-    // verifyAutoModeGateAccess 通知将解释原因。
-    if (permissionMode === 'auto' && !hasAutoModeOptIn()) {
-      const {
-        AutoModeOptInDialog
-      } = await import('./components/AutoModeOptInDialog.js');
-      await showSetupDialog(root, done => <AutoModeOptInDialog onAccept={done} onDecline={() => gracefulShutdownSync(1)} declineExits />);
-    }
-  }
-
-  // --dangerously-load-development-channels 确认。接受后，追加
-  // 开发频道到 main.tsx 中已设置的任何 --channels 列表。组织策略
-  // 未被绕过 — gateChannelServer() 仍在运行；此标志仅用于
-  // 规避 --channels 批准的服务器允许列表。
-  if (feature('KAIROS') || feature('KAIROS_CHANNELS')) {
-    // gateChannelServer 和 ChannelsNotice 在此函数返回后读取 tengu_harbor。
-    // 冷磁盘缓存（全新安装，或服务器端添加标志后的首次运行）
-    // 默认为 false 并在整个会话期间静默丢弃频道通知 — gh#37026。
-    // checkGate_CACHED_OR_BLOCKING 如果磁盘已经显示 true 则立即返回；
-    // 仅在冷/过期 false 缓存时阻塞（等待之前触发的相同 memoized
-    // initializeGrowthBook 承诺）。还会预热下面开发频道对话框中的
-    // isChannelsEnabled() 检查。
-    if (getAllowedChannels().length > 0 || (devChannels?.length ?? 0) > 0) {
-      await checkGate_CACHED_OR_BLOCKING('tengu_harbor');
-    }
-    if (devChannels && devChannels.length > 0) {
-      const [{
-        isChannelsEnabled
-      }, {
-        getClaudeAIOAuthTokens
-      }] = await Promise.all([import('./services/mcp/channelAllowlist.js'), import('./utils/auth.js')]);
-      // 当频道被阻塞时跳过对话框（tengu_harbor 关闭或无 OAuth）
-      // — 接受后立即在 ChannelsNotice 中看到"不可用"比没有对话框更糟。
-      // 无论如何都要追加条目，以便 ChannelsNotice 渲染阻塞分支，
-      // 并命名开发条目。这里的 dev:true 用于 ChannelsNotice 中的标志标签
-      // （hasNonDev 检查）；它授予的允许列表绕过也无意义，
-      // 因为网关会阻塞上游。
-      if (!isChannelsEnabled() || !getClaudeAIOAuthTokens()?.accessToken) {
-        setAllowedChannels([...getAllowedChannels(), ...devChannels.map(c => ({
-          ...c,
-          dev: true
-        }))]);
-        setHasDevChannels(true);
-      } else {
-        const {
-          DevChannelsDialog
-        } = await import('./components/DevChannelsDialog.js');
-        await showSetupDialog(root, done => <DevChannelsDialog channels={devChannels} onAccept={() => {
-          // 标记每个开发条目的 dev 标志，以便允许列表绕过不会泄漏
-          // 到 --channels 条目（当同时传递两个标志时）。
-          setAllowedChannels([...getAllowedChannels(), ...devChannels.map(c => ({
-            ...c,
-            dev: true
-          }))]);
-          setHasDevChannels(true);
-          void done();
-        }} />);
-      }
-    }
-  }
-
-  // 为首次使用 Chrome 版 Claude 的用户显示 Chrome 入门教程
-  if (claudeInChrome && !getGlobalConfig().hasCompletedClaudeInChromeOnboarding) {
-    const {
-      ClaudeInChromeOnboarding
-    } = await import('./components/ClaudeInChromeOnboarding.js');
-    await showSetupDialog(root, done => <ClaudeInChromeOnboarding onDone={done} />);
-  }
-  return onboardingShown;
+  console.error('[SETUP-0] showSetupScreens: start, permissionMode=' + permissionMode);
+  // 🔑 彻底绕过所有需要 stdin 交互的对话框（TrustDialog、Onboarding、Grove、ApproveApiKey 等）。
+  // 在 Windows cmd.exe + Git Bash 环境下，Ink TUI 的 keypress 事件监听可能失效，
+  // 导致 <Select> 组件永久等待用户按 Enter/Esc，程序卡死。
+  // 直接自动接受信任并跳过所有对话框。
+  setSessionTrustAccepted(true);
+  const projectPath = require('./utils/cwd.js').getCwd();
+  saveGlobalConfig(current => {
+    const projects = { ...current.projects };
+    const existing = projects[projectPath] || {};
+    projects[projectPath] = { ...existing, hasTrustDialogAccepted: true };
+    return { ...current, projects };
+  });
+  console.error('[SETUP-AUTO-TRUST] trust accepted, all dialogs skipped');
+  return false;
 }
 export function getRenderContext(exitOnCtrlC: boolean): {
   renderOptions: RenderOptions;

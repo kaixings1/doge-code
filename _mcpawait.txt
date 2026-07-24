@@ -1,0 +1,12 @@
+// 这些副作用必须在所有其他导入之前运行：
+// 1. profileCheckpoint 在重度模块评估开始前标记入口点
+// 2. startMdmRawRead 启动 MDM 子进程（plutil/reg query），使其与下方剩余的约 135ms 导入并行执行
+// 3. startKeychainPrefetch 并行启动两个 macOS 钥匙串读取（OAuth + 旧版 API key）—— 否则 isRemoteManagedSettingsEligible() 会在 applySafeConfigEnvironmentVariables() 内部通过同步 spawn 顺序读取它们（每次 macOS 启动约 65ms）
+
+
+
+
+
+
+
+import { profileCheckpoint, profileReport } from './utils/startupProf

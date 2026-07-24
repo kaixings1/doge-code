@@ -89,17 +89,30 @@ export const renderSync = (
         writable: false,
         configurable: true
       })
+      logForDebugging('[root.ts] Fixed stdout.isTTY to true');
     } catch (e) {
-      // Ignore read-only property errors
+      logForDebugging('[root.ts] Failed to fix stdout.isTTY: ' + (e as Error).message);
+    }
+  }
+  if (stdin.isTTY !== true && process.env.TERM && process.env.TERM !== 'dumb') {
+    try {
+      Object.defineProperty(stdin, 'isTTY', {
+        value: true,
+        writable: false,
+        configurable: true
+      })
+      logForDebugging('[root.ts] Fixed stdin.isTTY to true');
+    } catch (e) {
+      logForDebugging('[root.ts] Failed to fix stdin.isTTY: ' + (e as Error).message);
     }
   }
   // Ensure default columns and rows
   if (!stdout.columns) stdout.columns = 80
   if (!stdout.rows) stdout.rows = 24
   const inkOptions: InkOptions = {
-    stdout: process.stdout,
-    stdin: process.stdin,
-    stderr: process.stderr,
+    stdout,
+    stdin,
+    stderr,
     exitOnCtrlC: true,
     patchConsole: true,
     ...opts,
@@ -162,21 +175,35 @@ export async function createRoot({
         writable: false,
         configurable: true
       })
+      logForDebugging('[root.ts] Fixed stdout.isTTY to true');
     } catch (e) {
-      // Ignore read-only property errors
+      logForDebugging('[root.ts] Failed to fix stdout.isTTY: ' + (e as Error).message);
+    }
+  }
+  if (stdin.isTTY !== true && process.env.TERM && process.env.TERM !== 'dumb') {
+    try {
+      Object.defineProperty(stdin, 'isTTY', {
+        value: true,
+        writable: false,
+        configurable: true
+      })
+      logForDebugging('[root.ts] Fixed stdin.isTTY to true');
+    } catch (e) {
+      logForDebugging('[root.ts] Failed to fix stdin.isTTY: ' + (e as Error).message);
     }
   }
   // Ensure default columns and rows
   if (!stdout.columns) stdout.columns = 80
   if (!stdout.rows) stdout.rows = 24
-  const instance = new Ink({
+  const inkOptions: InkOptions = {
     stdout,
     stdin,
     stderr,
     exitOnCtrlC,
     patchConsole,
     onFrame,
-  })
+  }
+  const instance = new Ink(inkOptions)
 
   // Register in the instances map so that code that looks up the Ink
   // instance by stdout (e.g. external editor pause/resume) can find it.

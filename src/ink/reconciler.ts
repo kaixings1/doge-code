@@ -522,6 +522,6 @@ const reconciler = createReconciler<
 
 // Wire the reconciler's discreteUpdates into the dispatcher.
 // This breaks the import cycle: dispatcher.ts doesn't import reconciler.ts.
-dispatcher.discreteUpdates = reconciler.discreteUpdates.bind(reconciler)
+dispatcher.discreteUpdates = (fn: Function, ...args: unknown[]) => fn(...args)
 
 export default reconciler

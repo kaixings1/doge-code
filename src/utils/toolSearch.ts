@@ -266,9 +266,19 @@ export function modelSupportsToolReference(model: string): boolean {
  * use isToolSearchEnabled().
  */
 let loggedOptimistic = false
+let optimisticCache: { mode: ToolSearchMode; result: boolean } | null = null
 
 export function isToolSearchEnabledOptimistic(): boolean {
   const mode = getToolSearchMode()
+  if (optimisticCache?.mode === mode) {
+    return optimisticCache.result
+  }
+  const result = computeIsToolSearchEnabledOptimistic(mode)
+  optimisticCache = { mode, result }
+  return result
+}
+
+function computeIsToolSearchEnabledOptimistic(mode: ToolSearchMode): boolean {
   if (mode === 'standard') {
     if (!loggedOptimistic) {
       loggedOptimistic = true
@@ -754,3 +764,4 @@ async function checkAutoThreshold(
     metrics: { deferredToolDescriptionChars, charThreshold },
   }
 }
+// FORCE_RECOMPILE_2026_07_23_2300  

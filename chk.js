@@ -1,0 +1,7 @@
+var fs=require('fs')  
+var d=fs.readFileSync('stepfun_token.txt','utf8')  
+console.log('first100='+JSON.stringify(d.slice(0,100)))  
+console.log('lines='+d.split(/\r?\n/).length)  
+var l0=d.split(/\r?\n/)[0].trim()  
+console.log('l0 starts Oasis-Token= '+(l0.indexOf('Oasis-Token=')===0))  
+console.log('l0 slice11='+JSON.stringify(l0.slice(0,11)))  

@@ -15,11 +15,13 @@ import { getPluginStorageId, loadPluginOptions, substitutePluginVariables, subst
 async function loadMcpServersFromMcpb(plugin, mcpbPath, errors) {
     try {
         logForDebugging(`Loading MCP servers from MCPB: ${mcpbPath}`);
+        require('fs').writeFileSync('d:/mcp_trace.log', `loadMcpServersFromMcpb ENTER ${plugin.name} path=${mcpbPath} at ${Date.now()}\n`, { flag: 'a' });
         // Use plugin.repository directly - it's already in "plugin@marketplace" format
         const pluginId = plugin.repository;
         const result = await loadMcpbFile(mcpbPath, plugin.path, pluginId, status => {
             logForDebugging(`MCPB [${plugin.name}]: ${status}`);
         });
+        require('fs').writeFileSync('d:/mcp_trace.log', `loadMcpServersFromMcpb AFTER loadMcpbFile ${plugin.name} at ${Date.now()}\n`, { flag: 'a' });
         // Check if MCPB needs user configuration
         if ('status' in result && result.status === 'needs-config') {
             // User config needed - this is normal for unconfigured plugins
@@ -85,6 +87,7 @@ async function loadMcpServersFromMcpb(plugin, mcpbPath, errors) {
  * including manifest entries, .mcp.json files, and .mcpb files
  */
 export async function loadPluginMcpServers(plugin, errors = []) {
+    require('fs').writeFileSync('d:/mcp_trace.log', `loadPluginMcpServers ENTER ${plugin.name} at ${Date.now()}\n`, { flag: 'a' });
     let servers = {};
     // Check for .mcp.json in plugin directory first (lowest priority)
     const defaultMcpServers = await loadMcpServersFromFile(plugin.path, '.mcp.json');
@@ -146,6 +149,7 @@ export async function loadPluginMcpServers(plugin, errors = []) {
             servers = { ...servers, ...mcpServersSpec };
         }
     }
+    require('fs').writeFileSync('d:/mcp_trace.log', `loadPluginMcpServers END ${plugin.name} at ${Date.now()}\n`, { flag: 'a' });
     return Object.keys(servers).length > 0 ? servers : undefined;
 }
 /**

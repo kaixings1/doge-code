@@ -1,4 +1,0 @@
-interface:
-  display_name: "AppKit Interop"
-  short_description: "Bridge SwiftUI into AppKit for native cpp behavior"
-  default_prompt: "Use $appkit-interop to choose the smallest AppKit bridge, keep SwiftUI as the source of truth, and implement cpp-specific behavior that SwiftUI does not model cleanly."

@@ -1,7 +1,0 @@
-chore: 将试验无用技能移至.useless/目录  
-  
-- microsoft-clarity-automation -> .useless/  
-- .gitignore 添加 /.useless/ 忽略规则  
-- .mcp.json 添加 composio-clarity MCP服务器配置  
-  
-Co-Authored-By: kaixings <30445355@qq.com> 

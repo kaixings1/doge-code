@@ -118,6 +118,16 @@ REM ❌ 禁止：grep、findstr 命令（会触发 MSYS2 fork 或引号破坏卡
 REM grep -rn "pattern" src/             （不要这样用！）
 REM findstr /n "pattern" file.txt       （MSYS2 破坏引号，不可靠）
 REM cmd /c "grep ..."                   （cmd /c 在工具层中引号被破坏，不可靠）
+
+REM ✅ 大结果集：重定向到文件，避开终端转码卡顿（实时输出易因中文转码卡死）
+rg -n "removePolygonMeshesFromXRayRenderer" --encoding none --no-messages > results.txt
+
+REM ✅ 需要实时看输出且不卡顿：先切终端为 UTF-8（65001）
+chcp 65001 >nul
+rg -n "removePolygonMeshesFromXRayRenderer" --encoding none --no-messages
+
+REM ✅ 真·零匹配也别让 rg 静默：用 --no-messages 抑制无关 stderr 噪音
+rg -n "keyword" src\ --no-messages > out.txt
 ```
 
 ### ⚙️ ~/.bashrc 防护配置（推荐）

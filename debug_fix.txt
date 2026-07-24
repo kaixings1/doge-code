@@ -1,0 +1,54 @@
+2026-07-20T09:26:23.698Z [DEBUG] MDM settings load completed in 28ms
+2026-07-20T09:26:23.704Z [DEBUG] [readCustomApiStorage] activeName: OpenRouter
+2026-07-20T09:26:23.704Z [DEBUG] [readCustomApiStorage] ✅ using project preset: OpenRouter
+2026-07-20T09:26:23.725Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-07-20T09:26:23.732Z [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-07-20T09:26:23.734Z [DEBUG] [init] configureGlobalMTLS starting
+2026-07-20T09:26:23.734Z [DEBUG] [init] configureGlobalMTLS complete
+2026-07-20T09:26:23.735Z [DEBUG] [init] configureGlobalAgents starting
+2026-07-20T09:26:23.736Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-20T09:26:23.736Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-20T09:26:23.736Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-20T09:26:23.736Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-20T09:26:23.737Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-20T09:26:23.802Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-07-20T09:26:23.803Z [DEBUG] Error log sink initialized
+2026-07-20T09:26:23.826Z [DEBUG] [Claude in Chrome] Found chrome profiles: Default
+2026-07-20T09:26:23.829Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["d:\\RemoteScreen"]
+2026-07-20T09:26:23.829Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["D:\\OpenSourceGit\\Chat2API"]
+2026-07-20T09:26:23.830Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["D:\\doge-codeClaw0Token"]
+2026-07-20T09:26:23.830Z [DEBUG] [STARTUP] 正在加载 MCP 配置...
+2026-07-20T09:26:23.847Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=true, result=true
+2026-07-20T09:26:23.850Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-07-20T09:26:23.850Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-07-20T09:26:23.852Z [DEBUG] Git remote URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T09:26:23.853Z [DEBUG] Parsed repository: github.com/kaixings1/doge-code from URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T09:26:23.853Z [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-07-20T09:26:23.854Z [DEBUG] [Claude in Chrome] Extension not found in any browser
+2026-07-20T09:29:08.543Z [DEBUG] MDM settings load completed in 29ms
+2026-07-20T09:29:08.549Z [DEBUG] [readCustomApiStorage] activeName: OpenRouter
+2026-07-20T09:29:08.549Z [DEBUG] [readCustomApiStorage] ✅ using project preset: OpenRouter
+2026-07-20T09:29:08.566Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-07-20T09:29:08.571Z [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-07-20T09:29:08.574Z [DEBUG] [init] configureGlobalMTLS starting
+2026-07-20T09:29:08.574Z [DEBUG] [init] configureGlobalMTLS complete
+2026-07-20T09:29:08.574Z [DEBUG] [init] configureGlobalAgents starting
+2026-07-20T09:29:08.575Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-20T09:29:08.575Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-20T09:29:08.575Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-20T09:29:08.575Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-20T09:29:08.576Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-20T09:29:08.626Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-07-20T09:29:08.627Z [DEBUG] Error log sink initialized
+2026-07-20T09:29:08.645Z [DEBUG] [Claude in Chrome] Found chrome profiles: Default
+2026-07-20T09:29:08.648Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["d:\\RemoteScreen"]
+2026-07-20T09:29:08.648Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["D:\\OpenSourceGit\\Chat2API"]
+2026-07-20T09:29:08.648Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["D:\\doge-codeClaw0Token"]
+2026-07-20T09:29:08.649Z [DEBUG] [STARTUP] 正在加载 MCP 配置...
+2026-07-20T09:29:08.661Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=true, result=true
+2026-07-20T09:29:08.664Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-07-20T09:29:08.665Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-07-20T09:29:08.670Z [DEBUG] Git remote URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T09:29:08.670Z [DEBUG] Parsed repository: github.com/kaixings1/doge-code from URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T09:29:08.671Z [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-07-20T09:29:08.671Z [DEBUG] [Claude in Chrome] Extension not found in any browser

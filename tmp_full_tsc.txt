@@ -1,0 +1,17 @@
+src/ink/components/patch2.mjs(5,9): error TS1127: Invalid character.
+src/ink/components/patch2.mjs(5,199): error TS1002: Unterminated string literal.
+src/ink/components/patch2.mjs(6,1): error TS1005: ',' expected.
+src/ink/components/patch2.mjs(6,9): error TS1127: Invalid character.
+src/ink/components/patch2.mjs(6,177): error TS1002: Unterminated string literal.
+src/ink/components/patch2.mjs(7,1): error TS1005: ',' expected.
+src/ink/components/patch2.mjs(7,9): error TS1127: Invalid character.
+src/ink/components/patch2.mjs(7,161): error TS1002: Unterminated string literal.
+src/ink/components/patch2.mjs(8,1): error TS1005: ',' expected.
+src/ink/components/patch2.mjs(8,9): error TS1127: Invalid character.
+src/ink/components/patch2.mjs(8,169): error TS1002: Unterminated string literal.
+src/ink/components/patch2.mjs(9,1): error TS1005: ',' expected.
+src/ink/components/patch2.mjs(9,9): error TS1127: Invalid character.
+src/ink/components/patch2.mjs(9,151): error TS1002: Unterminated string literal.
+src/ink/components/patch2.mjs(10,1): error TS1005: ',' expected.
+src/services/mcp/config.ts(1274,1): error TS1472: 'catch' or 'finally' expected.
+src/services/mcp/config.ts(1599,1): error TS1005: '}' expected.

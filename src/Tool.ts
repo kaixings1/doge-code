@@ -734,6 +734,9 @@ const TOOL_DEFAULTS = {
     Promise.resolve({ behavior: 'allow', updatedInput: input }),
   toAutoClassifierInput: (_input?: unknown) => '',
   userFacingName: (_input?: unknown) => '',
+  // 新增默认 prompt 和 description
+  prompt: async (_options?: unknown) => '默认工具提示（由 buildTool 自动生成）',
+  description: async (_input?: unknown, _options?: unknown) => '默认工具描述',
 }
 
 // 默认值类型是 TOOL_DEFAULTS 的实际形状（可选参数，以便 0 参数和完整参数的调用点都能通过类型检查 —— 存根的参数数量各异，并且测试依赖于这一点），

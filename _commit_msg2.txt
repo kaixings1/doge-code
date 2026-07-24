@@ -1,0 +1,5 @@
+fix: 修复模糊搜索技能的自身动态导入bug，直接调用同文件函数  
+ 
+processSlashCommand.tsx中模糊搜索匹配技能后，原本通过import('./processSlashCommand.js')动态导入自身模块，然后解构getMessagesForPromptSlashCommand。由于该函数未export，解构得到undefined后调用报错TypeError被catch吞掉，导致技能无声失败。改为直接调用同文件内已定义的getMessagesForPromptSlashCommand函数。  
+ 
+Co-Authored-By: kaixings <30445355@qq.com>

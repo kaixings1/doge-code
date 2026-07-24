@@ -148,3 +148,13 @@ export function notifySessionMetadataChanged(
 export function notifyPermissionModeChanged(mode: PermissionMode): void {
   permissionModeListener?.(mode)
 }
+// 占位函数，供 SleepTool 等自动化工具调用
+export function notifyAutomationStateChanged(state: {
+  enabled: boolean
+  phase: 'sleeping' | null
+  next_tick_at: number | null
+  sleep_until: number | null
+} | null): void {
+  // 实现细节视你的自动化框架而定，这里先留空
+  // 后续可以在这里对接 proactive 状态通知
+}

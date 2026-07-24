@@ -1,0 +1,1 @@
+const https=require('https');const fs=require('fs');fs.mkdirSync('D:/OpenSourceGit/Chat2API/.firecrawl',{recursive:true});https.get('https://platform.stepfun.com/',{headers:{'User-Agent':'Mozilla/5.0'}},(res)= c=[];res.on('data',d=;res.on('end',()=,Buffer.concat(c));console.log('saved');})}).on('error',e=; 

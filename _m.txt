@@ -1,0 +1,9 @@
+112:import { hasNodeOption, isBareMode, isEnvTruthy, isInProtectedNamespace } from './utils/envUtils.js';
+386:  isBareMode()) {
+410:  if (!isBareMode()) {
+1663:    !isBareMode() ? fetchClaudeAIMcpConfigsIfEligible().then(configs => {
+1681:    const mcpConfigPromise = (strictMcpConfig || isBareMode() ? Promise.resolve({
+2144:    const skipStartupPrefetches = isBareMode() || bgRefreshThrottleMs > 0 && Date.now() - lastPrefetched < bgRefreshThrottleMs;
+2325:    if (isBareMode()) {
+2547:      if (!isBareMode()) {
+4309:	  is_simple: isBareMode() || undefined,

@@ -1,0 +1,11 @@
+$repos = @(
+$repos += ,@('nejib1_Free-LLM.md','nejib1/Free-LLM','main'
+$repos += ,@('amardeeplakshkar_awesome-free-llm-apis.md','amardeeplakshkar/awesome-free-llm-apis','main'
+$repos += ,@('pacocartones_free-llm-api-hub.md','pacocartones/free-llm-api-hub','main'
+$repos += ,@('cheahjs_free-llm-api-resources.md','cheahjs/free-llm-api-resources','main'
+$repos += ,@('chatanywhere_GPT_API_free.md','chatanywhere/GPT_API_free','main'
+$repos += ,@('diegosouzapw_OmniRoute.md','diegosouzapw/OmniRoute','main'
+$repos += ,@('router-for-me_CLIProxyAPI.md','router-for-me/CLIProxyAPI','main'
+$repos += ,@('fangzesheng_free-api.md','fangzesheng/free-api','master'
+$repos += ,@('LibreTranslate_LibreTranslate.md','LibreTranslate/LibreTranslate','main'
+$repos += ,@('Prity1212_arena-clone.md','Prity1212/arena-clone','main'

@@ -1,7 +1,6 @@
-import { Tool } from '../../Tool';
 import { z } from 'zod';
 
-export const WebSocketTool: Tool = {
+export const WebSocketTool = {
   name: 'websocket',
   description: 'WebSocket client for real-time communication',
   callOn: 'manual',
@@ -15,11 +14,34 @@ export const WebSocketTool: Tool = {
     data: z.string().optional().describe('Received data'),
     message: z.string().optional().describe('Status message'),
   }),
+
   exec: async ({ url, action, message }) => {
     return {
       connected: action === 'connect',
       message: `WebSocket ${action} completed`,
     };
   },
-};
 
+  // Tool 接口默认安全实现
+  isEnabled: () => true,
+  isConcurrencySafe: () => false,
+  isReadOnly: () => false,
+  isDestructive: () => false,
+  checkPermissions: (input, _ctx) =>
+    Promise.resolve({ behavior: 'allow', updatedInput: input }),
+  toAutoClassifierInput: () => '',
+  userFacingName: () => 'websocket',
+
+  renderToolUseMessage: (input) => `WebSocket: ${input?.action ?? '?'} ${input?.url ?? ''}`,
+  mapToolResultToToolResultBlockParam: (content, toolUseID) => ({
+    tool_use_id: toolUseID,
+    type: 'tool_result',
+    content: content.message || 'WebSocket operation completed',
+  }),
+  prompt: async () => 'Use websocket for real-time communication.',
+  description: async () => 'WebSocket client for real-time communication',
+  call: async (args, context, canUseTool, parentMessage, onProgress) => {
+    const result = await this.exec(args);
+    return { data: result };
+  },
+};
